@@ -179,7 +179,7 @@ public class Edit extends AbstractModuleAction {
 	public static void updatePreviewCommands(ContentContext ctx) throws Exception {
 		ctx.getRequest().setAttribute("editPreview", ctx.isEditPreview());
 		ctx.getRequest().setAttribute("components", ComponentFactory.getComponentForDisplay(ctx));
-		String previewCommandsXHTML = ServletHelper.executeJSP(ctx, "/jsp/preview/command.jsp");
+		String previewCommandsXHTML = ServletHelper.executeJSP(ctx, ctx.getGlobalContext().getStaticConfig().getPreviewCommandFilePath());
 		ctx.addAjaxZone("preview_command", previewCommandsXHTML);
 	}
 

@@ -1,3 +1,5 @@
+@import url("edit_preview_base.css");
+
 #preview_command {
 	background-color: #171717;
 	color: #AFAFAF;
@@ -98,13 +100,13 @@ body.preview-only {
 }
 
 #preview_command fieldset.closable .closable_action.open {
-	background-image: url('../images/preview/open.png');
+	background-image: url('../../../images/preview/open.png');
 	background-repeat: no-repeat;
 	background-position: left center;
 }
 
 #preview_command fieldset.closable .closable_action.close {
-	background-image: url('../images/preview/close.png');
+	background-image: url('../../../images/preview/close.png');
 	background-repeat: no-repeat;
 	background-position: left center;
 }
@@ -150,7 +152,7 @@ body.preview-only {
 
 #preview_command #paste .component {
 	padding-left: 15px;
-	background-image: url("../images/preview/copy_small.png");
+	background-image: url("../../../images/preview/copy_small.png");
 	background-repeat: no-repeat;
 	background-position: left center;
 }
@@ -209,7 +211,7 @@ body.preview-only {
 	border: 1px #5b5b5b dashed;
 	border-radius: 3px;
 	font-size: 0;
-	background-image: url("../images/preview/drop-a-file.png");
+	background-image: url("../../../images/preview/drop-a-file.png");
 	background-repeat: no-repeat;
 	background-position: center center;
 	height: 28px;
@@ -226,13 +228,13 @@ body.preview-only {
 }
 
 #preview_command #preview-delete-zone {
-	background-image: url("../images/preview/big_trash.png");
+	background-image: url("../../../images/preview/big_trash.png");
 	background-repeat: no-repeat;
 	background-position: center center;
 }
 
 #preview_command #preview-copy-zone {
-	background-image: url("../images/preview/copy.png");
+	background-image: url("../../../images/preview/copy.png");
 	background-repeat: no-repeat;
 	background-position: center center;
 }
@@ -402,7 +404,7 @@ body.preview-only {
 
 #preview_command .component span,#preview_command .navigation .sortable li a
 	{
-	background-image: url("../images/preview/drag.png");
+	background-image: url("../../../images/preview/drag.png");
 	background-position: center right;
 	background-repeat: no-repeat;
 	margin-left: 3px;
@@ -411,7 +413,7 @@ body.preview-only {
 }
 
 #preview_command .navigation .sortable li.current a {
-	background-image: url("../images/preview/drag-active.png");
+	background-image: url("../../../images/preview/drag-active.png");
 }
 
 #preview-layer span {
@@ -590,7 +592,7 @@ body.edit-preview {
 
 /** icones **/
 #preview_command #pc_command.pc_command input {
-	background-image: url("../images/preview/ico_little.png");
+	background-image: url("../../../images/preview/ico_little.png");
 	background-position: 0 -3077px;
 	background-repeat: no-repeat;
 }
@@ -605,7 +607,7 @@ body.edit-preview {
 
 
 #preview_command #pc_command.pc_command .slide a {
-	background-image: url("../images/preview/ico_little.png");
+	background-image: url("../../../images/preview/ico_little.png");
 	background-position: 0 -3397px;
 	background-repeat: no-repeat;
 	background-color: #333333;
@@ -636,7 +638,7 @@ body.edit-preview {
 
 
 #preview_command #page_properties_composition {
-	background-image: url("../images/preview/ico_little.png");
+	background-image: url("../../../images/preview/ico_little.png");
 	background-position: 0 -751px;
 	background-repeat: no-repeat;
 	float: right;
@@ -657,7 +659,7 @@ body.edit-preview {
 }
 
 #preview_command .pc_command #pc_edit_button.pc_edit_true {
-	background-image: url("../images/preview/ico_little.png");
+	background-image: url("../../../images/preview/ico_little.png");
 	background-position: 0 -1511px;
 	background-repeat: no-repeat;
 }
@@ -722,7 +724,7 @@ body.edit-preview {
 }
 
 #preview_command #pc_edit_mode_button {
-	background-image: url("../images/preview/ico.png");
+	background-image: url("../../../images/preview/ico.png");
 	background-position: 0 -3236px;
 	background-repeat: no-repeat;
 	width: 23px;
@@ -743,7 +745,7 @@ body.edit-preview {
 
 .preview-notlogged #preview_command .login span {
 	display: block;
-	background-image: url("../images/preview/ico.png");
+	background-image: url("../../../images/preview/ico.png");
 	background-position: 5px -1993px;
 	background-repeat: no-repeat;
 	height: 23px;
@@ -800,7 +802,7 @@ body.edit-preview {
 }
 
 .table-component-preview {
-	background-image: url("../images/preview/ico.png");	
+	background-image: url("../../../images/preview/ico.png");	
 	background-position: 0 -3941px;		
 	background-repeat: no-repeat;
 }
