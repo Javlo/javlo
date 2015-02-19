@@ -113,6 +113,11 @@ public class ResourceServlet extends HttpServlet {
 			e1.printStackTrace();
 			throw new ServletException(e1.getMessage());
 		}
+		
+		if (ctx.getGlobalContext().isCollaborativeMode() && ctx.getCurrentEditUser() == null) {
+			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+			return;
+		}
 
 		/* TRACKING */
 		GlobalContext globalContext = GlobalContext.getInstance(request);
