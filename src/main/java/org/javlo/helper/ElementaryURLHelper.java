@@ -209,11 +209,11 @@ public abstract class ElementaryURLHelper {
 					e.printStackTrace();
 				}
 				mode = "/" + previewPrefix + "edit/";
-				/*if (currentModule == null || ctx.getCurrentEditUser() == null) {
+				if (currentModule == null || ctx.getCurrentEditUser() == null) {
 					mode = "/" + previewPrefix + "edit/";
 				} else {
 					mode = "/" + previewPrefix + "edit-" + currentModule.getName() + "/";
-				}*/
+				}				
 			} else if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE) {
 				mode = "/preview/";
 			} else if (ctx.getRenderMode() == ContentContext.PAGE_MODE) {
