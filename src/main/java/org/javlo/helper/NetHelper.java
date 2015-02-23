@@ -26,6 +26,8 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.javlo.component.core.ComponentBean;
+import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
@@ -35,6 +37,8 @@ import org.javlo.mailing.MailService;
 import org.javlo.mailing.MailingBuilder;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.resource.Resource;
+import org.javlo.template.Template;
+import org.javlo.template.TemplateFactory;
 import org.javlo.utils.MapCollectionWrapper;
 import org.javlo.ztatic.FileCache;
 
@@ -804,6 +808,35 @@ public class NetHelper {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public static void sendXHTMLMail(ContentContext ctx, InternetAddress from, InternetAddress to,InternetAddress cc, InternetAddress bcc, String subject, String content, String templateName ) throws Exception {
+		if (templateName == null) {
+			templateName = "javlo_mailing";
+		}
+		String contentId = StringHelper.getRandomId();
+		
+		// debug
+		contentId = "142470258442657269888";
+		
+		ctx.getGlobalContext().addForcedContent(contentId, content);
+		
+		ContentContext pageCtx = ctx.getContextWithOtherRenderMode(ContentContext.PAGE_MODE);
+		pageCtx.setAbsoluteURL(true);
+		String url = URLHelper.createURL(pageCtx, "/");
+		
+		System.out.println("***** NetHelper.sendXHTMLMail : 1.url = "+url); //TODO: remove debug trace
+		
+		url = URLHelper.addParam(url, ContentContext.FORCED_CONTENT_PREFIX+ComponentBean.DEFAULT_AREA, contentId);
+		url = URLHelper.addParam(url, Template.FORCE_TEMPLATE_PARAM_NAME, templateName);	
+		System.out.println("***** NetHelper.sendXHTMLMail : 2.url = "+url); //TODO: remove debug trace
+		String XHTMLContent = NetHelper.readPageGet(new URL(url));
+		System.out.println("***** NetHelper.sendXHTMLMail : is content : "+(XHTMLContent!=null)); //TODO: remove debug trace
+		XHTMLContent = CSSParser.mergeCSS(XHTMLContent);
+		
+
+		
+		sendMail(ctx.getGlobalContext(), from, to, cc, bcc, subject, XHTMLContent, StringHelper.removeTag(content), true);
 	}
 
 	public static void sendMail(GlobalContext globalContext, InternetAddress from, InternetAddress to, InternetAddress cc, InternetAddress bcc, String subject, String content) {

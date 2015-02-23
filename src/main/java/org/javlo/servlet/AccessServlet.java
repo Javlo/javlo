@@ -23,6 +23,7 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.mail.internet.InternetAddress;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -158,7 +159,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 		System.out.println("		\\____/\\_/ \\|\\__/  \\____/\\____/");
 		System.out.println("");
 		System.out.println("");
-
+		
 		/** JSTL Constant **/
 		getServletContext().setAttribute("BACK_PARAM_NAME", ElementaryURLHelper.BACK_PARAM_NAME);
 
@@ -249,6 +250,10 @@ public class AccessServlet extends HttpServlet implements IVersion {
 								synchro.initSynchronisationThread(staticConfig, globalContext, request.getSession().getServletContext());
 								synchro.store();
 							}
+							
+							/**** DEBUG ****/
+							NetHelper.sendXHTMLMail(ctx, new InternetAddress("pvdm@javlo.be"), new InternetAddress("p@noctis.be"), null, null, "TEST EMAIL", "Ceci est le contenu", null );
+							
 						} catch (Exception e) {
 							e.printStackTrace();
 						}

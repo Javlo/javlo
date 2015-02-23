@@ -79,6 +79,8 @@ public class ContentContext {
 
 	public static String PRODUCT_NAME = "Javlo 2";
 	
+	public static String FORCED_CONTENT_PREFIX = "forced_content_";
+	
 	/**
 	 * param for render content with link to local server and not DMZ server.
 	 */

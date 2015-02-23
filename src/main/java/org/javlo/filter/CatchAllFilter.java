@@ -172,8 +172,9 @@ public class CatchAllFilter implements Filter {
 		/*****************/
 
 		String editURI = uri;
-		if (editURI.startsWith('/' + globalContext.getContextKey())) {
-			editURI = editURI.substring(globalContext.getContextKey().length() + 1);
+		
+		if (editURI.startsWith('/' + globalContext.getMainContextKey())) {
+			editURI = editURI.substring(globalContext.getMainContextKey().length() + 1);
 		}
 
 		if (user != null && AdminUserSecurity.getInstance().haveRole(user, AdminUserSecurity.CONTRIBUTOR_ROLE) && (!ContentContext.isEditPreview(httpRequest))) {
@@ -218,11 +219,10 @@ public class CatchAllFilter implements Filter {
 						e.printStackTrace();
 					}
 				}
-
-				if (query != null && query.contains("edit-logout")) {
+				if (query != null && query.contains("edit-logout")) {					
 					((HttpServletResponse) response).sendRedirect("" + httpRequest.getRequestURL());
 					return;
-				} else {
+				} else {					
 					if (editPreview) {
 						editURI = URLHelper.addParam(editURI, "previewEdit", "true");
 					}					
@@ -267,7 +267,7 @@ public class CatchAllFilter implements Filter {
 		String contextKey = globalContext.getMainContextKey();
 		if (shortURI.startsWith('/' + contextKey)) {
 			if (shortURI.length() > globalContext.getContextKey().length() + 2) {
-				shortURI = shortURI.substring(contextKey.length() + 2);
+				shortURI = shortURI.substring(globalContext.getContextKey().length() + 2);
 			} else {
 				shortURI = "";
 			}

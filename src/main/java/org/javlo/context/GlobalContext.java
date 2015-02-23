@@ -598,6 +598,8 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	private final Map<Object, Object> attributes = new HashMap<Object, Object>();
 
 	private final TimeMap<Object, Object> timeAttributes = new TimeMap<Object, Object>(60 * 5);
+	
+	private final TimeMap<String, String> forcedContent = new TimeMap<String, String>(60*60);
 
 	private Template.TemplateData templateData = null;
 
@@ -3064,6 +3066,14 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	public void setReversedLink(boolean rl) {
 		properties.setProperty("reversedLink", rl);
 		save();
+	}
+	
+	public void addForcedContent(String key, String content) {
+		forcedContent.put(key, content);
+	}
+	
+	public String getForcedContent(String key) {
+		return forcedContent.get(key);
 	}
 	
 	@Override

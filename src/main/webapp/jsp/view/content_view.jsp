@@ -66,6 +66,12 @@ if (path!=null) {
 	ctx.setPath(path);
 }
 
+String manualContent = request.getParameter(ContentContext.FORCED_CONTENT_PREFIX+area);
+if (manualContent != null) {
+	%><%=globalContext.getForcedContent(manualContent)%><%
+	return;
+}
+
 Boolean removeRepeat = StringHelper.isTrue(request.getParameter("_no-repeat"));
 Boolean displayZone = StringHelper.isTrue(request.getParameter("_display-zone"));
 
