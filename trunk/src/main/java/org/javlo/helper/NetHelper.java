@@ -71,10 +71,17 @@ public class NetHelper {
 	}
 
 	public static String readPageGet(URL url) throws Exception {
-		InputStream in=null;
+		InputStream in = null;
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		try {			
-			in = url.openStream();
+		try {
+			URLConnection conn = url.openConnection();
+			if (conn instanceof HttpURLConnection) {
+				HttpURLConnection httpConn = (HttpURLConnection) url.openConnection();
+				if (httpConn.getResponseCode() != HttpURLConnection.HTTP_OK) {
+					throw new NetException("Response code: " + httpConn.getResponseCode());
+				}
+			}
+			in = conn.getInputStream();
 			ResourceHelper.writeStreamToStream(in, out);
 		} finally {
 			ResourceHelper.closeResource(in);
@@ -149,7 +156,7 @@ public class NetHelper {
 
 			connection.setAllowUserInteraction(true);
 			connection.setInstanceFollowRedirects(true);
-			
+
 			if (userAgent != null) {
 				connection.setRequestProperty("User-Agent", userAgent);
 			}
@@ -163,7 +170,7 @@ public class NetHelper {
 			URLConnection conn = connection;
 
 			if (conn instanceof HttpURLConnection) {
-				HttpURLConnection httpConn = (HttpURLConnection) conn;				
+				HttpURLConnection httpConn = (HttpURLConnection) conn;
 				if (!noError) {
 					if (httpConn.getResponseCode() != HttpURLConnection.HTTP_OK && httpConn.getResponseCode() != HttpURLConnection.HTTP_MOVED_TEMP && httpConn.getResponseCode() != HttpURLConnection.HTTP_MOVED_PERM) {
 						logger.warning("error readpage :  '" + url + "' return error code : " + ((HttpURLConnection) conn).getResponseCode());
@@ -275,7 +282,7 @@ public class NetHelper {
 			ResourceHelper.closeResource(in);
 		}
 	}
-	
+
 	/**
 	 * read a page a put content in a Stream.
 	 * 
