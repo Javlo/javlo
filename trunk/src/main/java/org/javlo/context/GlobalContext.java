@@ -64,6 +64,7 @@ import org.javlo.module.core.IPrintInfo;
 import org.javlo.module.core.ModuleException;
 import org.javlo.module.core.ModulesContext;
 import org.javlo.module.remote.RemoteService;
+import org.javlo.module.ticket.TicketAction;
 import org.javlo.navigation.IURLFactory;
 import org.javlo.navigation.MenuElement;
 import org.javlo.navigation.URLTriggerThread;
@@ -176,7 +177,9 @@ public class GlobalContext implements Serializable, IPrintInfo {
 
 	private ServletContext application;
 
-	private URLTriggerThread changeNotificationThread;
+	private URLTriggerThread pageChangeNotificationThread;
+
+	private URLTriggerThread ticketChangeNotificationThread;
 
 	private RemoteService remoteService;
 
@@ -483,7 +486,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 					// put here code to initialize external services
 					//Start "page changes notifications"
 					if (isCollaborativeMode() && getStaticConfig().isNotificationThread()) {
-						int minBetweenCheck = getStaticConfig().getTimeBetweenChangeNotification();
+						int secBetweenCheck = getStaticConfig().getTimeBetweenChangeNotification();
 						Map<String, String> params = new HashMap<String, String>();
 						params.put("webaction", "view.checkChangesAndNotify");
 						ContentContext absoluteCtx = ctx.getContextForAbsoluteURL();
@@ -492,9 +495,27 @@ public class GlobalContext implements Serializable, IPrintInfo {
 						String url = URLHelper.createURL(absoluteCtx, "/", params);
 						try {
 							URL urlToTrigger = new URL(url);
-							changeNotificationThread = new URLTriggerThread(minBetweenCheck, urlToTrigger);
-							changeNotificationThread.start();
-							logger.info("changeNotificationThread thread started.");
+							pageChangeNotificationThread = new URLTriggerThread("PageChangeNotificationThread", secBetweenCheck, urlToTrigger);
+							pageChangeNotificationThread.start();
+							logger.info(pageChangeNotificationThread.getName() + " started.");
+						} catch (MalformedURLException ex) {
+							ex.printStackTrace();
+						}
+					}
+					//Start "ticket changes notifications"
+					if (this.getModules().contains(TicketAction.MODULE_NAME)) {
+						int secBetweenCheck = getStaticConfig().getTimeBetweenChangeNotification();
+						Map<String, String> params = new HashMap<String, String>();
+						params.put("webaction", "ticket.checkChangesAndNotify");
+						ContentContext absoluteCtx = ctx.getContextForAbsoluteURL();
+						absoluteCtx.setAjax(true);
+						absoluteCtx.setRenderMode(ContentContext.VIEW_MODE);
+						String url = URLHelper.createURL(absoluteCtx, "/", params);
+						try {
+							URL urlToTrigger = new URL(url);
+							ticketChangeNotificationThread = new URLTriggerThread("TicketChangeNotificationThread", secBetweenCheck, urlToTrigger);
+							ticketChangeNotificationThread.start();
+							logger.info(ticketChangeNotificationThread.getName() + " started.");
 						} catch (MalformedURLException ex) {
 							ex.printStackTrace();
 						}
@@ -515,8 +536,12 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	public void destroy() {
 		// put here code to destroy the global context
 		//Stop "page changes notifications"
-		if (changeNotificationThread != null) {
-			changeNotificationThread.stopThread();
+		if (pageChangeNotificationThread != null) {
+			pageChangeNotificationThread.stopThread();
+		}
+		//Stop "ticket changes notifications"
+		if (ticketChangeNotificationThread != null) {
+			ticketChangeNotificationThread.stopThread();
 		}
 		//Stop remote service
 		if (remoteService != null) {

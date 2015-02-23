@@ -15,8 +15,10 @@ public class URLTriggerThread extends Thread {
 	private CountDownLatch sleepLatch;
 	private CountDownLatch stoppingLatch;
 
-	public URLTriggerThread(int minBetweenTrigger, URL urlToTrigger) {
-		this.secBetweenTrigger = minBetweenTrigger;
+	public URLTriggerThread(String threadName, int secBetweenTrigger, URL urlToTrigger) {
+		super(threadName);
+		this.setDaemon(true);
+		this.secBetweenTrigger = secBetweenTrigger;
 		this.urlToTrigger = urlToTrigger;
 		setName(URLTriggerThread.class.getName());
 	}

@@ -152,9 +152,9 @@ public class ViewActions implements IAction {
 			Calendar cal = Calendar.getInstance();
 			cal.setTime(now);
 			int interval = globalContext.getStaticConfig().getTimeBetweenChangeNotification();
-			cal.add(Calendar.MINUTE, -interval);
+			cal.add(Calendar.SECOND, -interval);
 			timeA = cal.getTime();
-			cal.add(Calendar.MINUTE, -interval);
+			cal.add(Calendar.SECOND, -interval);
 			timeB = cal.getTime();
 		}
 		try {
