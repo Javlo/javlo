@@ -63,6 +63,7 @@ import org.javlo.mailing.MailService;
 import org.javlo.module.core.IPrintInfo;
 import org.javlo.module.core.ModuleException;
 import org.javlo.module.core.ModulesContext;
+import org.javlo.module.remote.RemoteService;
 import org.javlo.navigation.IURLFactory;
 import org.javlo.navigation.MenuElement;
 import org.javlo.navigation.URLTriggerThread;
@@ -176,6 +177,8 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	private ServletContext application;
 
 	private URLTriggerThread changeNotificationThread;
+
+	private RemoteService remoteService;
 
 	private Integer firstLoadVersion = null;
 
@@ -478,6 +481,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 				if (!externalServiceInitalized) {
 					externalServiceInitalized = true;
 					// put here code to initialize external services
+					//Start "page changes notifications"
 					if (isCollaborativeMode() && getStaticConfig().isNotificationThread()) {
 						int minBetweenCheck = getStaticConfig().getTimeBetweenChangeNotification();
 						Map<String, String> params = new HashMap<String, String>();
@@ -495,6 +499,14 @@ public class GlobalContext implements Serializable, IPrintInfo {
 							ex.printStackTrace();
 						}
 					}
+					//Start remote service
+					if (this.getModules().contains(RemoteService.MODULE_NAME)) {
+						try {
+							remoteService = RemoteService.getInstance(ctx);
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
 				}
 			}
 		}
@@ -502,8 +514,13 @@ public class GlobalContext implements Serializable, IPrintInfo {
 
 	public void destroy() {
 		// put here code to destroy the global context
+		//Stop "page changes notifications"
 		if (changeNotificationThread != null) {
 			changeNotificationThread.stopThread();
+		}
+		//Stop remote service
+		if (remoteService != null) {
+			remoteService.stopService();
 		}
 	}
 

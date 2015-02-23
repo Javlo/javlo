@@ -28,10 +28,15 @@ public class NotificationService {
 		}
 		
 		public String getDisplayMessage() {
-			if (getReceiver() == null) {
-				return getMessage() + " ("+getUserId()+')';
+			String out = getMessage();
+			if (isForAll() && getUserId() != null) {
+				out = out + " (" + getUserId() + ')';
 			}
-			return getMessage();
+			return out;
+		}
+
+		public boolean isForAll() {
+			return getReceiver() == null;
 		}
 
 		public void setMessage(String message) {
