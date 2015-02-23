@@ -12,6 +12,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang.StringUtils;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.lesscss.LessCompiler;
@@ -30,7 +31,12 @@ public class CssLess implements Filter {
 		}
 		File cssFile = new File(httpRequest.getSession().getServletContext().getRealPath(path));
 		if (!cssFile.exists()) {		
-			File lessFile = new File(cssFile.getAbsolutePath().substring(0, cssFile.getAbsolutePath().length() - 4) + ".less");			
+			File lessFile = new File(cssFile.getAbsolutePath().substring(0, cssFile.getAbsolutePath().length() - 4) + ".less");
+			
+			if (!globalContext.getContextKey().equals(globalContext.getMainContextKey())) {
+				lessFile = new File(StringUtils.replaceOnce(lessFile.getAbsolutePath(), File.separator+globalContext.getMainContextKey()+File.separator, File.separator+globalContext.getContextKey()+File.separator));
+				cssFile.getParentFile().mkdirs();
+			}
 			if (lessFile.exists()) {
 				compile (lessFile, cssFile);
 			}

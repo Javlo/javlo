@@ -58,8 +58,15 @@ public class ContentOnlyServlet extends HttpServlet {
 			InfoBean.updateInfoBean(ctx);
 
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+			
+			System.out.println("***** ContentOnlyServlet.process : globalContext.getPageIfExist(ctx, ctx.getPath(), false) = "+globalContext.getPageIfExist(ctx, ctx.getPath(), false)); //TODO: remove debug trace
+			System.out.println("***** ContentOnlyServlet.process : path = "+ctx.getPath()); //TODO: remove debug trace
 
-			if (globalContext.getPageIfExist(ctx, ctx.getPath(), false) == null) {
+			String path = ctx.getPath();
+			if (path == null || path.trim().length() == 0) {
+				path = "/";
+			}
+			if (globalContext.getPageIfExist(ctx, path, false) == null) {
 				response.setStatus(HttpServletResponse.SC_NOT_FOUND);
 			}
 
