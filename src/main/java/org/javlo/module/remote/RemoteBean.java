@@ -13,6 +13,7 @@ import java.util.Map;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.javlo.actions.DataAction;
 import org.javlo.context.ContentContext;
+import org.javlo.helper.NetException;
 import org.javlo.helper.NetHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
@@ -104,8 +105,9 @@ public class RemoteBean implements Serializable {
 			if (serverInfo != null) {
 				serverInfoOut.putAll(serverInfo);
 			}
+			String synchroCodeLocal = null;
 			try {
-				String synchroCodeLocal = StringHelper.trimAndNullify(this.synchroCode);
+				synchroCodeLocal = StringHelper.trimAndNullify(this.synchroCode);
 				if (synchroCodeLocal == null) {
 					synchroCodeLocal = defaulSynchroCode;
 				}
@@ -136,9 +138,15 @@ public class RemoteBean implements Serializable {
 				}
 			} catch (JsonSyntaxException ex) {
 				serverInfoOut.put("message", "No data.");
+			} catch (NetException ex) {
+				serverInfoOut.put("message", "Http error: " + ex.getMessage());
 			} catch (Exception ex) {
 				ex.printStackTrace();
-				serverInfoOut.put("message", "Exception when retrieving server info: " + ex.getMessage());
+				String msg = ex.getMessage();
+				if (synchroCodeLocal != null) {
+					msg = msg.replace(synchroCodeLocal, "[synchro-code]");
+				}
+				serverInfoOut.put("message", "Exception when retrieving server info: " + msg);
 			}
 			this.serverInfo = serverInfoOut;
 		}
