@@ -27,6 +27,8 @@ public class RemoteService {
 
 	private static final String KEY = RemoteService.class.getName();
 
+	public static final String MODULE_NAME = "remote";
+
 	private File folder;
 	
 	private RemoteThread remoteThread;
@@ -34,8 +36,6 @@ public class RemoteService {
 	private Map<String, RemoteBean> remotes;
 	
 	private GlobalContext globalContext;
-	
-	private String user = null;
 	
 	private String url = null;
 	
@@ -46,18 +46,20 @@ public class RemoteService {
 	private Map<String, String> sendedNotification = new TimeMap<String, String>(60*10);
 
 	public static RemoteService getInstance(ContentContext ctx) throws Exception {
-		RemoteService service = (RemoteService) ctx.getGlobalContext().getAttribute(KEY);
+		GlobalContext globalContext = ctx.getGlobalContext();
+		RemoteService service = (RemoteService) globalContext.getAttribute(KEY);
 		if (service == null) {
 			service = new RemoteService();
-			service.folder = new File(URLHelper.mergePath(ctx.getGlobalContext().getDataFolder(), "remotes"));
+			service.folder = new File(URLHelper.mergePath(globalContext.getDataFolder(), "remotes"));
 			service.loadRemote();
-			service.globalContext = ctx.getGlobalContext();
-			service.user = ctx.getCurrentUserId();
-			ctx.getGlobalContext().setAttribute(KEY, service);
+			service.globalContext = globalContext;
+			globalContext.setAttribute(KEY, service);
 			service.url = URLHelper.createInterModuleURL(ctx.getContextForAbsoluteURL().getContextWithOtherRenderMode(ContentContext.EDIT_MODE), "/", "remote");
+			service.notificationEmail = globalContext.getAdministratorEmail();
+		}
+		if (service.remoteThread == null) {
 			service.remoteThread = new RemoteThread(service);
 			service.remoteThread.start();
-			service.notificationEmail = ctx.getGlobalContext().getAdministratorEmail();			
 		}
 		return service;
 	}
@@ -118,8 +120,12 @@ public class RemoteService {
 		boolean errorFound = false;
 		for(RemoteBean bean : getRemotes()) {			
 			if (!bean.isValid() && !sendedNotification.containsKey(bean.getId())) {
-				NotificationService service = NotificationService.getInstance(globalContext);				
-				service.addNotification("RC Error ("+bean.getUrl()+" : "+bean.getError(), url, GenericMessage.ERROR , user, null);
+				NotificationService service = NotificationService.getInstance(globalContext);
+				String details = bean.getUrl();
+				if(bean.getError() != null) {
+					details = details + " : " + bean.getError();
+				}
+				service.addNotification("RC Error (" + details + ")", url, GenericMessage.ERROR, null, null);
 				errorFound = true;
 				sendedNotification.put(bean.getId(), bean.getId());
 			}
@@ -158,12 +164,17 @@ public class RemoteService {
 	public String getDefaultSynchroCode() {
 		return getGlobalContext().getStaticConfig().getSynchroCode();
 	}
-	
+
 	@Override
-	protected void finalize() throws Throwable {	
+	protected void finalize() throws Throwable {
 		super.finalize();
+		stopService();
+	}
+
+	public void stopService() {
 		if (remoteThread != null) {
 			remoteThread.setStop(true);
+			remoteThread = null;
 		}
 	}
 
