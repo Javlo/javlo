@@ -250,10 +250,6 @@ public class AccessServlet extends HttpServlet implements IVersion {
 								synchro.initSynchronisationThread(staticConfig, globalContext, request.getSession().getServletContext());
 								synchro.store();
 							}
-							
-							/**** DEBUG ****/
-							NetHelper.sendXHTMLMail(ctx, new InternetAddress("pvdm@javlo.be"), new InternetAddress("p@noctis.be"), null, null, "TEST EMAIL", "Ceci est le contenu", null );
-							
 						} catch (Exception e) {
 							e.printStackTrace();
 						}

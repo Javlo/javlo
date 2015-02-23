@@ -824,18 +824,10 @@ public class NetHelper {
 		ContentContext pageCtx = ctx.getContextWithOtherRenderMode(ContentContext.PAGE_MODE);
 		pageCtx.setAbsoluteURL(true);
 		String url = URLHelper.createURL(pageCtx, "/");
-		
-		System.out.println("***** NetHelper.sendXHTMLMail : 1.url = "+url); //TODO: remove debug trace
-		
 		url = URLHelper.addParam(url, ContentContext.FORCED_CONTENT_PREFIX+ComponentBean.DEFAULT_AREA, contentId);
 		url = URLHelper.addParam(url, Template.FORCE_TEMPLATE_PARAM_NAME, templateName);	
-		System.out.println("***** NetHelper.sendXHTMLMail : 2.url = "+url); //TODO: remove debug trace
 		String XHTMLContent = NetHelper.readPageGet(new URL(url));
-		System.out.println("***** NetHelper.sendXHTMLMail : is content : "+(XHTMLContent!=null)); //TODO: remove debug trace
 		XHTMLContent = CSSParser.mergeCSS(XHTMLContent);
-		
-
-		
 		sendMail(ctx.getGlobalContext(), from, to, cc, bcc, subject, XHTMLContent, StringHelper.removeTag(content), true);
 	}
 
