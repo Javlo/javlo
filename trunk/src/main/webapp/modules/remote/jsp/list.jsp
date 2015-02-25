@@ -38,6 +38,9 @@
      	<c:if test="${remote.serverInfo.loaded}">
      		${remote.serverInfo.localName} (${remote.serverInfo.localAddr}:${remote.serverInfo.localPort})
      	</c:if>
+     	<c:if test="${not empty remote.serverInfo.version}">
+     		v ${remote.serverInfo.version}
+     	</c:if>
      	<c:if test="${not empty remote.serverInfo.message}">
      		<c:if test="${remote.serverInfo.loaded}">
      			<br/>

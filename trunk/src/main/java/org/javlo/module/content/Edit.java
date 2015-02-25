@@ -1348,12 +1348,16 @@ public class Edit extends AbstractModuleAction {
 		if (menuElement.getParent() == null) {
 			return i18nAccess.getText("action.remove.can-not-delete");
 		}
-
+		
 		String newPath = menuElement.getParent().getPath();
-		if (menuElement.isChildrenAssociation()) {			
+		if (menuElement.isChildrenOfAssociation()) {
+			newPath = menuElement.getRootOfChildrenAssociation().getFirstChild().getPath();
+		}		
+		if (menuElement.isChildrenAssociation()) {	
 			newPath = "/";
-			menuElement = menuElement.getParent();
+			menuElement = menuElement.getParent();			
 		}
+			
 
 		if (menuElement == null) {
 			message = i18nAccess.getText("action.remove.can-not-delete");

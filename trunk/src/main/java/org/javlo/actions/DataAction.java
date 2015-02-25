@@ -61,6 +61,7 @@ import org.javlo.service.shared.ISharedContentProvider;
 import org.javlo.service.shared.LocalImageSharedContentProvider;
 import org.javlo.service.shared.SharedContentContext;
 import org.javlo.service.shared.SharedContentService;
+import org.javlo.servlet.IVersion;
 import org.javlo.template.Template;
 import org.javlo.user.User;
 import org.javlo.ztatic.StaticInfo;
@@ -177,7 +178,9 @@ public class DataAction implements IAction {
 				//, "contextPath"
 				);
 		serverInfo.put("contextKey", ctx.getGlobalContext().getContextKey());
-		ctx.getAjaxData().put("serverInfo", serverInfo);
+		serverInfo.put("version", IVersion.VERSION);
+		serverInfo.put("systemUser", System.getProperty("user.name"));
+		ctx.getAjaxData().put("serverInfo", serverInfo);		
 
 		Map<String, Object> headersOut = new LinkedHashMap<String, Object>();
 		@SuppressWarnings("unchecked")
