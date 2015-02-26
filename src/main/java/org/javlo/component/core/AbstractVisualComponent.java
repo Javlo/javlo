@@ -125,6 +125,8 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	private MenuElement page = null;
 
 	protected ComponentConfig config = null;
+	
+	private String configTemplate = null;
 
 	public static final String getComponentId(HttpServletRequest request) {
 		return (String) request.getAttribute(COMP_ID_REQUEST_PARAM);
@@ -311,7 +313,13 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	@Override
 	public ComponentConfig getConfig(ContentContext ctx) {
 		if (config != null) {
-			return config;
+			try {
+				if (configTemplate.equals(ctx.getCurrentTemplate().getName())) {
+					return config;
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 		if ((ctx == null) || (ctx.getRequest() == null) || ((ctx.getRequest().getSession() == null))) {
 			return ComponentConfig.getInstance();
@@ -319,7 +327,12 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 
 		ComponentConfig outConfig = ComponentConfig.getInstance(ctx, getType());
 		if (ctx.isAsViewMode() && outConfig != ComponentConfig.EMPTY_INSTANCE) {
-			config = outConfig;
+			try {
+				configTemplate = ctx.getCurrentTemplate().getName();
+				config = outConfig;
+			} catch (Exception e) {
+				e.printStackTrace();
+			}			
 		}
 		return outConfig;
 	}

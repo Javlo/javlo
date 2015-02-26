@@ -37,7 +37,7 @@ public class ComponentConfig {
 		Template currentTemplate;
 		ComponentConfig outCfg = null;
 		try {						
-			currentTemplate = ctx.getCurrentTemplate();			
+			currentTemplate = ctx.getCurrentTemplate();	
 			String templateId;
 			if (currentTemplate != null) {
 				templateId = currentTemplate.getId();
@@ -45,12 +45,12 @@ public class ComponentConfig {
 				return ComponentConfig.EMPTY_INSTANCE;
 			}
 			synchronized (globalContext.getLockImportTemplate()) {
-				String key = KEY + '-' + templateId + '-' + type;
+				String key = KEY + '-' + templateId + '-' + type;				
 				outCfg = (ComponentConfig) globalContext.getAttribute(key);
 				if (outCfg == null) {
 					outCfg = new ComponentConfig(ctx, currentTemplate, type);
 					globalContext.setAttribute(key, outCfg);
-				} else if (currentTemplate != null) {
+				} else {					
 					if (!currentTemplate.getBuildId().equals(outCfg.templateBuildId)) {
 						outCfg = new ComponentConfig(ctx, currentTemplate, type);
 						globalContext.setAttribute(key, outCfg);
@@ -65,7 +65,7 @@ public class ComponentConfig {
 
 	PropertiesConfiguration properties = null;
 
-	private static final String KEY = ComponentConfig.class.getName();
+	private static final String KEY = "_comp_config";
 
 	private ComponentConfig() {
 	}
