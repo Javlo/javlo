@@ -952,6 +952,20 @@ public class InfoBean {
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
 		return requestService.getParameter(ElementaryURLHelper.BACK_PARAM_NAME, null);
 	}
+	 
+	/**
+	 * if back page name is setted in as _back_page param this method return the PageBean.
+	 * @return
+	 * @throws Exception 
+	 */
+	public PageBean getBackPage() throws Exception {
+		String page = ctx.getRequest().getParameter("_back_page");
+		if (page != null) {
+			return ContentService.getInstance(ctx.getGlobalContext()).getNavigation(ctx).searchChildFromName(page).getPageBean(ctx);
+		} else {
+			return null;
+		}
+	}
 
 	public String getRootURL() {
 		return URLHelper.createURL(ctx, "/");
@@ -1126,5 +1140,6 @@ public class InfoBean {
 		}
 		return pages;	
 	}
+	
 	
 }
