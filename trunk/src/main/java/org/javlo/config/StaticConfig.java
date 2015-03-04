@@ -1367,5 +1367,15 @@ public class StaticConfig extends Observable {
 	public String getTimeTravelerFilePath() {		
 		return properties.getString("preview.timetraveler-file", "/jsp/time-traveler/command.jsp");
 	}
+	
+	public String getCssPreview() {
+		return properties.getString("preview.css", "/css/preview/edit_preview.css");
+	}
+	
+	public String getJSPreview() {
+		return properties.getString("preview.js", "/js/preview/edit_preview.js");
+	}
+	
+	
 
 }
