@@ -1,0 +1,672 @@
+/*** RESETER ***/
+#preview_command figure, #preview_command .version, #preview_command .content,
+	#preview_command .description, #preview_command, #preview_command h1,
+	#preview_command h2, #preview_command h3, #preview_command h4,
+	#preview_command li, #preview_command ul, #preview_command label,
+	#preview_command img, #preview_command div, #preview_command a,
+	#preview_command span, #preview_command input, #preview_command fieldset,
+	#preview_command legend, #preview_command form, #preview_command select,
+	#preview_command option, #preview_command .navigation {
+	margin: 0;
+	border: 0 none;
+	padding: 0;
+	background-color: transparent;
+	background-image: none;
+	font-size: 12px;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	float: none;
+	text-transform: none;
+	letter-spacing: 0;
+	color: inherit;
+	display: block;
+	list-style: none;
+	font-weight: normal;
+	width: auto;
+	height: auto;
+	text-shadow: none;
+	line-height: normal;
+	text-align: left;
+	position: static;
+	min-height: 0;
+	min-width: 0;
+	max-height: none;
+	max-width: none;	
+	opacity: 1;
+	filter: alpha(opacity = 100);
+}
+
+body.edit-preview, body.preview-only {
+	min-height: 700px;
+}
+
+#preview_command {
+	overflow: hidden;
+}
+
+#preview_command  .pc_body, #preview_command .subblock {
+	overflow: hidden;
+}
+
+._preview_over {
+	background-color: #cfcfcf;
+}
+
+._empty_area {
+	margin: 5px;
+	border-radius: 3px 3px 3px 3px;
+	border: 1px dashed #5B5B5B;
+	padding: 5px;
+	background-color: #EBEBEB;
+}
+
+._empty_area span {
+	height: 40px;
+	vertical-align: middle;
+	text-align: center;
+	font-family: sans-serif;
+	font-size: 30px;
+	color: #5B5B5B;
+	text-shadow: 1px -1px 0 #ffffff;
+	width: auto;
+	display: block;
+	border: 2px #eeeeee dashed;
+}
+
+.edit-preview .component-table td.empty .cell-wrapper, .edit-preview .open-col.empty .cell-wrapper {
+	width: auto;
+	text-align: center;
+	font-family: sans-serif;
+	font-size: 15px;
+	color: #5B5B5B;
+	text-shadow: 1px -1px 0 #ffffff;
+	vertical-align: middle;	
+	height: 40px;
+	margin: 5px;
+	border-radius: 3px 3px 3px 3px;
+	border: 1px dotted #5B5B5B;
+	padding: 0;
+	background-color: #EBEBEB;	
+}
+
+.edit-preview .close-col {
+	width: auto;
+	margin: 5px;		
+	height: 10px;	
+	border-radius: 3px 3px 3px 3px;
+	border: 1px dotted #5B5B5B;
+	padding: 0;
+	background-color: #EBEBEB;
+}
+
+
+.edit-preview .component-table td.empty .editable-component, .edit-preview .open-col.empty .editable-component {
+	margin: 0;
+	width: 100%;
+	height: 40px;		
+	display: block;
+	border: 0 none;
+	position: absolute;
+	filter: alpha(opacity = 100);
+	opacity: 1;		
+}
+
+.edit-preview .cell-name {
+	position: absolute;
+	z-index: 1;
+	top: 10px;
+	left: 50%;
+	margin-left: -10px;	
+}
+	
+
+.image-preview-loading {
+	text-align: center;
+	margin: 0 auto;
+	width: 100%;
+	display: inline-block;
+}
+
+[draggable] {
+	-moz-user-select: none;
+	-khtml-user-select: none;
+	-webkit-user-select: none;
+	user-select: none;
+}
+
+._page_associate {
+	border-bottom: 2px #3333ef dashed;
+	overflow: hidden;
+}
+
+.page-break {
+	border-bottom: 2px #33ef33 dashed;
+	font-size: 0;
+	width: 2000px;
+	position: absolute;
+	left: 0;
+}
+
+._pdf_page_limit {
+	top: 1125px;
+	position: absolute;
+	font-size: 0;
+	height: 0;
+	width: 100%;
+	border-top: 2px #ff5555 dashed;
+	left: 0;
+}
+
+.edit-preview body {
+	position: static;
+}
+
+#preview_command .pc_command select {
+	width: auto;
+	margin: 0;
+	padding: 4px 4px 3px;
+	border-radius: 3px 3px 3px 3px;
+	box-shadow: 1px 1px 3px #CCCCCC inset;
+	border: 1px solid #CCCCCC;
+	font-size: 12px;
+	outline: medium none;
+}
+
+.edit-zone {
+	border: 1px #E4A826 solid;
+	background-color: #ffffff;
+	z-index: 10000;
+	overflow: visible;
+	position: absolute;
+	right: 60px;
+	left: 60px;
+	padding: 10px;
+	margin: 1px;
+	text-align: left;
+	max-height: 400px;
+}
+
+.edit-one-component-header {
+	background-color: #FC8E2F;
+	text-align: left;
+	margin-top: -3px;
+	margin-left: -3px;
+	margin-right: -3px;
+	margin-bottom: 5px;
+	padding-right: 2px;
+	padding-top: 2px;
+	padding-bottom: 1px;
+	height: 18px;
+}
+
+.edit-one-component-header span {
+	margin: 2px;
+	color: #ffffff;
+	font-weight: bold;
+	background-image: none;
+	font-size: 10px;
+}
+
+.edit-one-component-header a {
+	margin: 2px;
+	padding: 0px;
+	width: auto;
+	height: auto;
+	color: #ffffff;
+	font-weight: bold;
+	background-image: none;
+	font-size: 10px;
+	float: right;
+}
+
+.edit-one-component-header a img {
+	margin: 0px;
+	padding: 0px;
+	width: auto;
+	height: auto;
+}
+
+.edit-one-action {
+	padding: 1px;
+	text-align: right;
+}
+
+#one-component-edit input, #one-component-edit textarea {
+	margin: 0px;
+	border: 1px #7A7A7A solid;
+	padding: 0px;
+	background-color: #DDDDDD;
+}
+
+#one-component-edit textarea {
+	width: 100%;
+	-moz-box-sizing: border-box;
+}
+
+#one-component-edit input {
+	width: auto;
+}
+
+#one-component-edit {
+	color: #000000;
+}
+
+#one-component-edit a img {
+	border: 0px none;
+}
+
+/* copy part of edit css */
+#one-component-edit .component {
+	border: 1px #bbbbbb solid;
+	padding: 0px;
+	font-size: 10px;
+}
+
+#one-component-edit .component .header {
+	background-color: #bbbbbb;
+	margin: 0px;
+	border-top: 0px none;
+	border-bottom: 1px #bbbbbb solid;
+	font-weight: bold;
+	height: 18px;
+}
+
+#one-component-edit .component .header .text {
+	padding-top: 2px;
+	padding-right: 3px;
+	padding-left: 3px;
+	float: left;
+}
+
+#one-component-edit .component .header .extract {
+	padding-top: 2px;
+	padding-right: 2px;
+	float: right;
+}
+
+#one-component-edit .component .header input {
+	font-size: 9px;
+}
+
+#one-component-edit .component .message {
+	padding: 2px;
+	border-top: 1px #BBBBBB solid;
+	height: 16px;
+	background-color: #EEEEEE;
+}
+
+#one-component-edit .component .message p {
+	margin: 0px;
+	padding-top: 2px;
+	padding-bottom: 0px;
+	padding-left: 0px;
+	padding-right: 0px;
+}
+
+#one-component-edit .component .message .error {
+	color: #ff0000;
+}
+
+#one-component-edit .component .message img {
+	float: left;
+	margin-right: 3px;
+}
+
+#one-component-edit .insert {
+	text-align: center;
+	margin: 5px;
+}
+
+#one-component-edit .component .header a {
+	padding-left: 5px;
+	color: #ffffff;
+	font-weight: normal;
+}
+
+#one-component-edit .component .header a:hover {
+	border: 0px none;
+	text-decoration: underline;
+}
+
+#one-component-edit .component .header .delete {
+	padding-top: 2px;
+	padding-right: 2px;
+	float: right;
+}
+
+#one-component-edit .component .specific {
+	padding: 3px;
+}
+
+#one-component-edit .component .container {
+	margin: 4px;
+	border: 4px #e4a826 solid;
+	padding: 4px;
+}
+
+#one-component-edit .component .select-style {
+	padding-left: 3px;
+	padding-right: 3px;
+}
+
+#one-component-edit .component .select-style label {
+	padding-right: 2px;
+}
+
+#one-component-edit .list-container .selected img {
+	border: 3px #fc8e2f solid;
+}
+
+#one-component-edit .list-container .name {
+	margin-top: 1px;
+	margin-bottom: 9px;
+	font-size: 0.9em;
+}
+
+#one-component-edit a {
+	color: #FC8E2F;
+}
+
+#one-component-edit .header a {
+	display: none;
+}
+
+#one-component-edit .file-command {
+	padding-left: 15px;
+}
+
+.reverselink-info {
+	position: absolute;
+	border: 2px yellow solid;
+	background-color: #000000;
+	color: #ffffff;
+	display: none;
+	text-align: center;
+}
+
+.reverselink-info a {
+	display: block;
+	padding: 6px;
+}
+
+.reverselink-info .title {
+	padding: 3px;
+	background-color: yellow;
+	color: #000000;
+	font-weight: bold;
+}
+
+.reverselink-info a {
+	color: #ffffff;
+}
+
+/************************
+**** preview_command ****
+*************************/
+
+#message-container .notification {
+	display: block;
+	padding: 7px;
+	width: 100%;
+	position: fixed;
+	top: 0px;
+	left: 0px;
+	right: 0px;
+	text-align: center;
+	background-color: #ddd;
+	border-bottom: 1px #777 solid;
+	font-size: 12px;
+	font-weight: bold;
+	box-shadow: 0px 0px 7px #999;
+	-moz-box-shadow: 0px 0px 7px #999;
+	-webkit-box-shadow: 0px 0px 7px #999;
+	z-index: 100000;
+	vertical-align: middle;
+	opacity: .95;
+}
+
+#message-container .error, #message-container .msgerror {
+	padding-left: 18px;
+	background-image: url('../../images/icons/error.png') no-repeat left;
+	color: #aa1111;
+}
+
+#message-container .info {
+	padding-left: 18px;
+	background-image: url('../../images/icons/info.png') no-repeat left;
+	color: #638EBD;
+}
+
+.pc_edit_action {
+	display: none;
+}
+
+.pc_empty-component {
+	margin: 2px;
+	font-size: 1.1em;
+	font-weight: bold;
+}
+
+#preview_command fieldset {
+	border: 1px #aaaaaa solid;
+	padding: 3px;
+}
+
+#preview_command .navigation a {
+	color: #3333aa;
+	text-decoration: none;
+	max-width: 165px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+#preview_command .navigation .actions {
+	overflow: hidden;
+}
+
+#preview_command .navigation .actions input {
+	padding: 2px 6px;
+	float: right;
+}
+
+#pc_login label {
+	display: block;
+	margin-bottom: 2px;
+	text-align: left;
+}
+
+#preview_command {
+	position: fixed;
+	background-color: #eeeeee;
+	z-index: 10000;
+	text-align: center;
+	box-shadow: 0px 0px 7px #999;
+	-moz-box-shadow: 0px 0px 7px #999;
+	-webkit-box-shadow: 0px 0px 7px #999;
+}
+
+#colorbox, #cboxOverlay, #cboxWrapper {
+	z-index: 10001;
+}
+
+#preview_command .navigation .have-children a:after {
+	content: "...";
+}
+
+#preview_command fieldset.closable .closable_action.open {
+	border: 2px #B1B1B1 solid;
+	height: 6px; /
+	width: 6px;
+	top: 2px;
+}
+
+#preview_command .sortable-target {
+	margin-left: -32px;
+	background-color: #EEEEEE;
+	border-bottom: 1px solid #A6C0DE;
+	border-right: 0 none;
+	border-top: 1px solid #A6C0DE;
+	color: #333333;
+	height: 20px;
+}
+
+#preview_command fieldset.closable .closable_action.close {
+	border: 2px #B1B1B1 solid;
+	height: 3px;
+	width: 6px;
+}
+
+#preview_command h4 {
+	margin: 6px 0 6px; 0;
+	font-size: 12px;
+	font-weight: bold;
+}
+
+#preview_command.pc_dragging {
+	box-shadow: 0px 0px 14px #999;
+	-moz-box-shadow: 0px 0px 14px #999;
+	-webkit-box-shadow: 0px 0px 14px #999;
+}
+
+#preview_command .pc_body {
+	padding: 5px;
+}
+
+#preview_command .pc_header {
+	background-color: #aaaaaa;
+	border-bottom: 1px #777777 solid;
+	padding: 5px 19px 0 3px;
+	vertical-align: middle;
+	height: 16px;
+}
+
+#droppable-layer {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 0;
+	height: 0;
+	overflow: hidden;
+	font-size: 0;
+	border-radius: 3px 3px 3px 3px;
+	box-shadow: 0px 0px 7px #999;
+	z-index: 100000;
+}
+
+#preview-layer.ui-draggable-dragging {
+	width: 40px;
+	height: 40px;
+	opacity: .60;
+	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=60)";
+	filter: alpha(opacity =       60);
+	-khtml-opacity: 0.60;
+	-moz-opacity: 0.60;
+}
+
+#preview-layer.ui-draggable-dragging span {
+	background-color: transparent;
+}
+
+#preview-layer span, #droppable-layer span {
+	display: block;
+	height: 9999px;
+	opacity: .30;
+	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=30)";
+	filter: alpha(opacity =       30);
+	-khtml-opacity: 0.30;
+	-moz-opacity: 0.30;
+}
+
+#preview-layer span {
+	background-color: #E3364A;
+}
+
+.free-edit-zone {
+	display: none;
+}
+
+.droppable, .drop-zone {
+	padding: 16px 8px 4px 40px;
+	display: block;
+	border-radius: 3px 3px 3px 3px;
+	background-color: #aaaaaa;
+	opacity: .60;
+	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=30)";
+	filter: alpha(opacity =       60);
+	-khtml-opacity: 0.60;
+	-moz-opacity: 0.60;
+	margin-bottom: -36px;
+}
+
+.droppable {
+	padding: 5px;
+	margin-bottom: -12px;
+	display: block;
+}
+
+.free-edit-zone.drop-ones {
+	margin-bottom: 0;
+}
+
+.free-edit-zone.drop-selected, .drop-zone {
+	background-image: url('../../images/icons/drop.png');
+	background-position: 3px 3px;
+	background-repeat: no-repeat;
+}
+
+#droppable-layer span {
+	background-color: #36E34A;
+	border: none;
+}
+
+.drop-zone span {
+	display: block;
+	border-top: 2px #777777 dashed;
+	background-color: #aaaaaa;
+}
+
+.free-edit-zone.droppable span {
+	display: block;
+	border-top: 2px #777777 dashed;
+	background-color: #aaaaaa;
+	font-size: 0;
+}
+
+.free-edit-zone.droppable.drop-selected span {
+	border-top: 2px #ffffff dashed;
+}
+
+.drop-zone {
+	margin-bottom: 0;
+	display: block;
+	overflow: hidden;
+}
+
+.drop-zone, ._empty_area.drop-selected {
+	border-radius: 3px 3px 3px 3px;
+	background-color: #aaaaaa;
+	opacity: .30;
+	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=30)";
+	filter: alpha(opacity =       30);
+	-khtml-opacity: 0.30;
+	-moz-opacity: 0.30;
+}
+
+#pc_upload #upload-zone {
+	text-align: center;
+}
+
+#pc_upload #upload-zone.dragover span {
+	color: #333333;
+	border-color: #333333;
+}
+
+#pc_upload #upload-zone span {
+	margin: 6px 0;
+	border: 1px #bbbbbb solid;
+	padding: 6px;
+	display: block;
+	font-size: 16px;
+	color: #bbbbbb;
+	text-shadow: gray;
+}

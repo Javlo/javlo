@@ -1,0 +1,114 @@
+@import url("edit_preview_base.css");
+@import url("../../../../css/bootstrap-3.3.2/less/bootstrap_preview.css");
+
+body {
+	margin-top: 42px !important;
+	margin-left: 330px !important;
+}
+
+#preview_command {
+  font-family: sans-serif;
+  -ms-text-size-adjust: 100%;
+  -webkit-text-size-adjust: 100%;
+   box-sizing: content-box;
+}
+
+#preview_command form {
+	overflow: hidden;
+}
+
+#preview_command .header {
+	position: fixed;
+	width: 100%;
+	height: 42px;
+	top: 0;
+	left: 0;	
+	box-shadow: 0 0 6px #333333;
+}
+
+#preview_command .sidebar {
+	width: 330px;
+	height: 100%;
+	position: fixed;
+	top: 42px;
+	left: 0;	
+	box-shadow: 0 3px 3px #333333;
+}
+
+#preview_command .sidebar ul {
+	display: table;
+}
+
+#preview_command .sidebar .nav > li > a {
+	padding: 3px 6px;
+}
+
+#preview_command .sidebar .tab-content {
+	padding: 3px 6px; 
+}
+
+#preview_command .navigation li {
+	margin: 2px;
+	padding-left: 10px;	
+}
+
+#preview_command .navigation .current a {
+	font-weight: bold;
+}
+
+#preview_command .navigation li.parent {
+	padding-left: 0;
+}
+
+#preview_command .form-control, #preview_command .btn-default {
+	padding: 2px 4px;
+	height: 26px;
+	line-height: 1;
+	font-size: 12px;
+}
+
+#preview_command .preview-form {
+	margin-top: 15px;
+}
+
+#preview_command .component-list .component {
+	margin: 0;
+	padding: 0;
+	width: 50%;		
+	float: left;
+}
+
+#preview_command .component-list .component span {	
+	margin: 10px;
+	background-color: #eeeeee;
+	border-bottom: 2px solid #dddddd;
+	padding: 10px;
+	color: #aaaaaa;
+	text-align: center;
+	font-weight: bold;
+}
+
+#preview_command .component-list .component span:hover {
+	background-color: #e2e2e2;
+}
+
+#preview_command .component-list .label {
+	display: block;
+	clear: both;
+	background-color: #E7E7E7;
+}
+
+
+#preview_command .header .navbar-nav li button, #preview_command .header .navbar-nav li input {
+    color: #777777;
+    line-height: 20px;
+    display: block;
+    padding: 15px;
+    position: relative;
+    color: #337ab7;
+}
+
+#preview_command .header .navbar-nav li input[disabled] {
+	color: #dddddd;
+}
+
