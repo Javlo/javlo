@@ -1,0 +1,50 @@
+/* MAIN (NewsGate) */
+
+
+
+/* ----- Import ----- */ 
+@import url(assets/globals.css);
+@import url(assets/constructor.css);
+@import url(assets/grid.css);
+
+
+/* ----- Assets ----- */
+@import url(assets/form.css);
+@import url(assets/btn.css);
+@import url(assets/tabs.css); 
+
+
+/* ----- Login-Page ----- */ 
+@import url(assets/bg-image.css);
+@import url(assets/flexslider.css);
+
+
+/* ----- Pages ----- */
+@import url(assets/login.css);
+@import url(assets/presentation.css);
+@import url(assets/page-mail-sent.css);
+
+
+/* ----- Elements ----- */  
+@import url(assets/for-info.css);
+@import url(assets/for-header.css);
+@import url(assets/for-content.css);
+@import url(assets/for-fancy.css);
+@import url(assets/for-footer.css);
+@import url(assets/for-asside.css); 
+@import url(assets/table-sorter.css);
+@import url(assets/listing.css);
+@import url(assets/tooltipster.css);
+@import url(assets/ui-datepicker.css);
+@import url(assets/contextual-box.css);
+
+
+/* ----- Edit-Mail ----- */ 
+@import url(assets/templates.css);
+@import url(assets/edit-zone.css);
+@import url(assets/editable.css);
+
+
+
+/* ----- Media ----- */ 
+@import url(assets/media.css);
