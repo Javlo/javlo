@@ -24,6 +24,7 @@ import java.util.Stack;
 import javax.servlet.ServletContext;
 
 import org.apache.commons.io.FileUtils;
+import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.i18n.I18nAccess;
@@ -677,7 +678,7 @@ public class XMLManipulationHelper {
 					out.println("<%}%>");
 					out.close();
 
-					remplacement.addReplacement(tags[i].getCloseStart() - 1, tags[i].getCloseStart(), getHTMLSufixHead(template) + new String(outStream.toByteArray()));
+					remplacement.addReplacement(tags[i].getCloseStart() - 1, tags[i].getCloseStart(), getHTMLSufixHead(globalContext.getStaticConfig(), template) + new String(outStream.toByteArray()));
 				}
 
 				/* title */
@@ -1001,7 +1002,7 @@ public class XMLManipulationHelper {
 		return outString.toString();
 	}
 
-	private static String getHTMLSufixHead(Template template) throws IOException {
+	private static String getHTMLSufixHead(StaticConfig staticConfig, Template template) throws IOException {
 
 		StringWriter outString = new StringWriter();
 		BufferedWriter out = new BufferedWriter(outString);
@@ -1018,13 +1019,15 @@ public class XMLManipulationHelper {
 		out.append("<%if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE || ctx.getRenderMode() == ContentContext.TIME_MODE) {");
 		out.newLine();
 		out.append("EditContext editCtx = EditContext.getInstance(globalContext, request.getSession());%>");
-		out.newLine();
-		out.append("<%=(ctx.isInteractiveMode() ? \"<link rel=\\\"stylesheet\\\" type=\\\"text/css\\\" href=\\\"\"+URLHelper.createStaticURL(ctx,\"/css/preview/edit_preview.css\")+\"?ts=\"+infoBean.getTs()+\"\\\" />\" : \"\")  %>");
+		out.newLine();		
+		String previewCSS = staticConfig.getCssPreview();		
+		out.append("<%=(ctx.isInteractiveMode() ? \"<link rel=\\\"stylesheet\\\" type=\\\"text/css\\\" href=\\\"\"+URLHelper.createStaticURL(ctx,\""+previewCSS+"\")+\"?ts=\"+infoBean.getTs()+\"\\\" />\" : \"\")  %>");
 		out.newLine();
 		out.append("<%String cssPreviewURL = URLHelper.mergePath(URLHelper.createStaticURL(ctx,\"/\"), globalContext.getStaticConfig().getEditTemplateFolder(), \"/preview/\"+globalContext.getEditTemplateMode()+\"/css/edit_preview.css\");%>");		
 		out.append("<%=(ctx.isInteractiveMode() ? \"<link rel=\\\"stylesheet\\\" type=\\\"text/css\\\" href=\\\"\"+cssPreviewURL+\"?ts=\"+infoBean.getTs()+\"\\\" />\" : \"\")  %>");
 		out.newLine();
-		out.append("<%=(ctx.isInteractiveMode() ? \"<script type=\\\"text/javascript\\\" src=\\\"\"+URLHelper.createStaticURL(ctx,\"/js/preview/edit_preview.js\")+\"\\\"></script>\" : \"\")  %>");
+		String previewJS = staticConfig.getJSPreview();
+		out.append("<%=(ctx.isInteractiveMode() ? \"<script type=\\\"text/javascript\\\" src=\\\"\"+URLHelper.createStaticURL(ctx,\""+previewJS+"\")+\"\\\"></script>\" : \"\")  %>");
 		out.newLine();
 		out.append("<%=(ctx.isInteractiveMode() ? \"<script type=\\\"text/javascript\\\" src=\\\"\"+URLHelper.createStaticURL(ctx,\"/js/edit/ajax.js\")+\"\\\"></script>\" : \"\")  %>");
 		out.newLine();

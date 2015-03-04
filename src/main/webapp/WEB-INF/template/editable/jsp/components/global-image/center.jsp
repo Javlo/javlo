@@ -1,1 +1,1 @@
-<center class="center" style="text-align: center;"><jsp:include page="default.jsp?nolabel=true"></jsp:include></center> 
+<center class="center" style="text-align: center;"><jsp:include page="default.jsp?nolabel=false"></jsp:include></center> 
