@@ -1,0 +1,312 @@
+/* CONTEXTUAL-BOX */
+
+
+
+/* ----- Contextual-box ----- */
+#contextual-box {
+	position:absolute;
+	right:50px;
+	top:210px !important;
+	width:230px;
+	background:#fff;
+	z-index:2002;
+}
+#contextual-box.fixed {
+	position:fixed;
+	top:70px !important;
+	right:50px;
+}
+#contextual-box h3 {
+	margin:0;
+	padding:0;
+	font-size:1.2em;
+	line-height:1em;
+}
+
+
+/* ----- Draggable ----- */
+.ui-draggable-handle {}
+.ui-draggable-dragging {
+	box-shadow:0 0 15px #128bf3;
+}
+
+
+
+
+
+
+/* ----- Drop-Files ----- */
+#drop-files {
+	background:rgba(18,139,243, .3);
+	box-shadow:1px 2px 3px rgba(0,0,0, .15);
+}
+#drop-files.hide,
+#drop-files.disable {
+	display:none;
+}
+#drop-files .head {
+	display:block;
+	padding:15px 20px;
+	position:relative;
+}
+#drop-files .head:after {
+	position:absolute;
+	right:20px;
+	top:50%;
+	margin-top:-10px;
+	width:20px;
+	height:20px;
+	border-radius:50%;
+	content:"";
+	background:#128bf3 url(../../img/bg/icon-plusminus.png) no-repeat 0 0;
+}
+#drop-files .head:hover {
+	background:#128bf3;
+	cursor:pointer;
+}
+#drop-files .head h3 {
+	color:#128bf3;
+	color:#fff;
+}
+#drop-files .content {
+	padding:5px 20px 20px 20px;
+	background:#128bf3;
+	display:none;
+}
+#drop-files.open .head {
+	background:#128bf3;
+}
+#drop-files.open .head:after {
+	background-position:0 -20px;
+}
+
+#drop-files #upload-zone {
+	display:block;
+	margin:0;
+	padding:0 10px;
+	height:54px;
+	border:2px dotted rgba(255,255,255, .3);
+	border-radius:2px;
+	background:url(../../img/bg/icon-drop.png) no-repeat center top;
+}
+#drop-files #upload-zone:hover {
+	box-shadow:0 0 5px rgba(0,0,0, .1);
+	border:2px dotted rgba(255,255,255, .5);
+	background-position:center bottom;
+}
+
+
+
+
+
+
+
+
+/* ----- Articles ----- */
+#articles {
+	background:#C4C4C6;
+	box-shadow:1px 2px 3px rgba(0,0,0, .15);
+	position:relative;
+	z-index:0;
+}
+#articles.hide,
+#articles.disable {
+	display:none;
+}
+#articles .head {
+	display:block;
+	padding:15px 20px;
+	position:relative;
+}
+#articles .head:after {
+	position:absolute; 
+	right:20px;
+	top:50%;
+	margin-top:-10px;
+	width:20px;
+	height:20px;
+	border-radius:50%;
+	content:"";
+	background:#fff url(../../img/bg/icon-plusminus.png) no-repeat -60px 0;
+}
+#articles .head:hover {
+	cursor:pointer;
+}
+#articles .head h3 { 
+	color:#fff;
+}
+
+#articles .content {
+	padding:20px;
+	background:#C4C4C6;
+	display:none;
+}
+#articles .content p {
+	line-height:1.1em;
+	color:#fff;
+	margin:0 0 10px 0;
+}
+
+
+#articles.open .head {}
+#articles.open .head:after {
+	background-position:-60px -20px;
+}
+#articles.open .head {
+	border-bottom:1px solid rgba(0,0,0, .1);
+}
+#articles.open .head:before {
+	display:block;
+	position:absolute;
+	left:0;
+	bottom:-5px;
+	height:5px;
+	width:100%;
+	content:"";
+	background:rgba(0,0,0, .03);
+	
+}
+
+
+
+
+
+
+
+
+/* ----- Clip-Board ----- */
+#clip-board {
+	background:#fff;
+	box-shadow:1px 2px 3px rgba(0,0,0, .15);
+	position:relative;
+	z-index:1;
+}
+#clip-board.hide,
+#clip-board.disable {
+	display:none;
+}
+
+#clip-board .head {
+	display:block;
+	padding:15px 20px;
+	position:relative;
+}
+#clip-board .head:after {
+	position:absolute;
+	right:20px;
+	top:50%;
+	margin-top:-10px;
+	width:20px;
+	height:20px;
+	border-radius:50%;
+	content:"";
+	background:#128bf3 url(../../img/bg/icon-plusminus.png) no-repeat 0 0;
+}
+#clip-board .head:hover {
+	cursor:pointer;
+}
+#clip-board .head h3 {
+	color:#128bf3;
+}
+#clip-board .content {
+	padding:15px 20px 10px 20px;
+	overflow:hidden;
+	background:#fff;
+	display:none;
+}
+#clip-board.open .head,
+#clip-board.open .content {
+	background:#fff;
+	
+}
+#clip-board.open .head:after {
+	background-position:0 -20px;
+}
+
+
+#clip-board.open .head {
+	border-bottom:1px solid rgba(0,0,0, .1);
+}
+#clip-board.open .head:before {
+	display:block;
+	position:absolute;
+	left:0;
+	bottom:-5px;
+	height:5px;
+	width:100%;
+	content:"";
+	background:rgba(0,0,0, .03);
+	
+}
+
+
+/* ----- Contextual-Box-Draggable ----- */
+#contextual-box-draggable {
+	position:absolute;
+	width:100%;
+	height:20px;
+	background:#C4C4C6 url(../../img/bg/zebra.png);
+	left:0;
+	top:-20px;
+	cursor:move;
+	border-radius:2px;
+	display:none;
+	z-index:3003;
+}
+#contextual-box:hover #contextual-box-draggable {
+	display:block;
+}
+#contextual-box-draggable:before {
+	display:block;
+	position:absolute;
+	left:50%;
+	bottom:-5px;
+	width:10px;
+	height:10px;
+	content:"";
+	background:#C4C4C6 url(../../img/bg/zebra.png);
+	transform:rotate(45deg);
+	-ms-transform:rotate(45deg);
+	-moz-transform:rotate(45deg);
+	-webkit-transform:rotate(45deg); 
+}
+#contextual-box-draggable:hover,
+#contextual-box-draggable:hover:before {
+	background:#999b98 url(../../img/bg/zebra.png);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
