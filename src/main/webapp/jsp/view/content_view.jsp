@@ -114,7 +114,7 @@ IContentVisualComponent previousElem = null;
 		%><div class="_empty_area"><span><%=ctx.getArea()%></span></div><%
 	} else {
 		if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE && specificComp == null && editPage) {
-			%><div id="comp_0" class="free-edit-zone editable-component"><span>&nbsp;</span></div><%
+			%><div id="comp_0" class="free-edit-zone editable-component"><span>${i18n.edit['component.insert.first']}</span></div><%
 		}
 	}
 	
