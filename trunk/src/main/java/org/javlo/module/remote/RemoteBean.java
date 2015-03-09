@@ -24,6 +24,8 @@ import com.google.gson.reflect.TypeToken;
 
 public class RemoteBean implements Serializable {
 
+	private static final String SERVER_INFO_LOADED = "loaded";
+
 	private static final long serialVersionUID = 1L;
 
 	public static final int PRIORITY_LOW = 1;
@@ -130,7 +132,7 @@ public class RemoteBean implements Serializable {
 						Map<String, List<String>> requestHeaders = dataMap.getValue("requestHeaders",
 								new TypeToken<LinkedHashMap<String, LinkedList<String>>>() {
 								}.getType());
-						serverInfoOut.put("loaded", true);
+						serverInfoOut.put(SERVER_INFO_LOADED, true);
 						serverInfoOut.remove("message");
 						serverInfoOut.putAll(serverInfo);
 						serverInfoOut.put("requestHeaders", requestHeaders);
@@ -170,6 +172,7 @@ public class RemoteBean implements Serializable {
 			return false;
 		}
 	}
+
 	public String getError() {
 		return error;
 	}
@@ -229,6 +232,40 @@ public class RemoteBean implements Serializable {
 		this.serverInfo = serverInfo;
 	}
 
+	@Transient
+	public boolean isServerInfoLoaded() {
+		if (getServerInfo() != null) {
+			Object value = getServerInfo().get(SERVER_INFO_LOADED);
+			if (value instanceof Boolean) {
+				return (Boolean) value;
+			}
+		}
+		return false;
+	}
+
+	@Transient
+	public String getServerAddress() {
+		if (getServerInfo() != null) {
+			return (String) getServerInfo().get("localAddr");
+		}
+		return null;
+	}
+
+	@Transient
+	public String getServerPort() {
+		if (getServerInfo() != null) {
+			return (String) getServerInfo().get("localPort");
+		}
+		return null;
+	}
+	@Transient
+	public String getServerHostname() {
+		if (getServerInfo() != null) {
+			return (String) getServerInfo().get("localName");
+		}
+		return null;
+	}
+
 	public int getStoreHashCode() {
 		 return new HashCodeBuilder(17, 37).
 			       append(latestValid).
@@ -241,4 +278,5 @@ public class RemoteBean implements Serializable {
 			       append(latestEditor).
 			       toHashCode();			   
 	}
+
 }
