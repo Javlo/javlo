@@ -1660,6 +1660,12 @@ public class Edit extends AbstractModuleAction {
 		if (targetPage == null) {
 			targetPage = ctx.getCurrentPage();
 		}
+		
+		System.out.println("***** Edit.performMoveComponent : comp = "+comp); //TODO: remove debug trace
+		System.out.println("***** Edit.performMoveComponent : newPrevious = "+newPrevious); //TODO: remove debug trace
+		System.out.println("***** Edit.performMoveComponent : targetPage = "+targetPage); //TODO: remove debug trace
+		System.out.println("***** Edit.performMoveComponent : area = "+area); //TODO: remove debug trace
+		
 		ComponentHelper.moveComponent(ctx, comp, newPrevious, targetPage, area);
 
 		if (ctx.isAjax()) {

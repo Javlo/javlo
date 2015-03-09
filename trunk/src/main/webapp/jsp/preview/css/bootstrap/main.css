@@ -20,17 +20,30 @@ body {
 #preview_command .header {
 	position: fixed;
 	width: 100%;
-	height: 42px;
+	height: 50px;
 	top: 0;
 	left: 0;	
 	box-shadow: 0 0 6px #333333;
+}
+
+#preview_command .header a {
+	height: 50px;
+}
+
+#preview_command .header form {
+	height: 50px;
+	padding: 15px;
+}
+
+#preview_command .header a .glyphicon {
+	margin-top: 2px;
 }
 
 #preview_command .sidebar {
 	width: 330px;
 	height: 100%;
 	position: fixed;
-	top: 42px;
+	top: 50px;
 	left: 0;	
 	box-shadow: 0 3px 3px #333333;
 }
@@ -47,13 +60,14 @@ body {
 	padding: 3px 6px; 
 }
 
-#preview_command .navigation li {
-	margin: 2px;
-	padding-left: 10px;	
-}
 
 #preview_command .navigation .current a {
 	font-weight: bold;
+}
+
+#preview_command .navigation li {
+	margin: 2px;
+	padding-left: 10px;	
 }
 
 #preview_command .navigation li.parent {
@@ -78,7 +92,8 @@ body {
 	float: left;
 }
 
-#preview_command .component-list .component span {	
+#preview_command .component-list .component span {
+	display: block;
 	margin: 10px;
 	background-color: #eeeeee;
 	border-bottom: 2px solid #dddddd;
@@ -98,17 +113,146 @@ body {
 	background-color: #E7E7E7;
 }
 
+#preview_command .header {
+	background-color: #ffffff;
+}
+
+#preview_command .header .navbar {
+	height: 42px;
+	min-height: 42px;
+	background-color: transparent;
+	border: 0 none;
+}
 
 #preview_command .header .navbar-nav li button, #preview_command .header .navbar-nav li input {
     color: #777777;
     line-height: 20px;
     display: block;
-    padding: 15px;
     position: relative;
     color: #337ab7;
+}
+
+#preview_command .navbar-brand {	
+	width: 330px;
 }
 
 #preview_command .header .navbar-nav li input[disabled] {
 	color: #dddddd;
 }
 
+#preview_command .component {
+	cursor: pointer;
+}
+
+#preview_command .modal-full {
+    width: 90%;
+}
+
+#preview_command iframe {
+	border: 0 none;
+	width: 100%;
+	height: 700px;
+}
+
+#preview_command .navbar-left {
+	width: 50%;
+}
+
+#preview_command .settings .btn .glyphicon {
+	position: absolute;
+	right: 10px;
+	top: 50%;
+	height: 12px;
+	margin-top: -6px;
+	color: #aaaaaa;
+}
+
+#preview_command .settings .btn:hover .glyphicon {
+	color: #777777;
+}
+
+#preview_command h2, #preview_command h2 .glyphicon {
+	font-size: 16px;
+}
+
+#preview_command h2 .glyphicon, #preview_command .header .glyphicon {
+	margin-right: 3px;
+}
+
+#preview_command .settings .btn {
+	overflow: auto;
+	height: auto;
+	width: 100%;	
+	background-color: #F9F9F9;
+	color: #aaaaaa;
+	position: relative;
+	margin-bottom: 6px;
+}
+
+
+#preview_command .btn .label {
+	display: block;
+	font-size: 11px;
+	margin: 10px 0 0 10px;
+	padding: 0;
+	color: #aaaaaa;
+	text-align: left;	
+}
+
+#preview_command .btn .value {
+	font-size: 14px;	
+	color: #777777;
+	margin: 0 0 10px 10px;
+}
+
+#preview-layer {
+	border: 1px #337ab7 solid;
+	cursor: pointer;
+	position: relative;	
+}
+
+#preview-layer span {
+	background-color: transparent;
+}
+
+#preview-layer h4 {		
+	text-align: center;
+	padding: 3px;	
+	font-size: 11px;
+	color: #ffffff;
+	background-color: #337ab7;	
+	margin: -18px -1px 0 -1px;
+}
+
+#preview-layer .commands {
+	position: absolute;
+	top: -46px;
+	right: -1px;
+}
+
+#preview-layer .commands button {	
+	background-color: #337ab7;
+	border-color: #337ab7;
+	color: #ffffff;	
+}
+
+#preview-layer.nocommand .commands {
+	display: none;
+}
+
+#preview-layer .commands button:hover {	
+	background-color: #448ac7;
+	border-color: #337ab7;
+	color: #ffffff;	
+}
+
+.free-edit-zone.open {
+	display: block;
+	height: 20px;
+	border: 1px #337ab7 solid;
+	background-color: #559ad7;
+	color: #ffffff;
+	text-align: center;
+	padding-top: 4px;
+	font-size: 11px;
+}

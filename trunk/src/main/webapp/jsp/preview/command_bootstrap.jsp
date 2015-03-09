@@ -36,13 +36,15 @@ if (!rightOnPage) {
 }
 request.setAttribute("editUser", ctx.getCurrentEditUser());
 %><div id="preview_command" lang="${info.editLanguage}" class="edit-${not empty editUser} ${editPreview == 'true'?'edit':'preview'}">
+	<script type="text/javascript">	
+		var i18n_preview_edit = "${i18n.edit['component.preview-edit']}";	
+		var i18n_first_component = "${i18n.edit['component.insert.first']}";
+	</script>
+	<div id="modal-container" style="display: none;">[modal]</div>
 	<div class="header">	
-		<nav class="navbar navbar-default">
+		<nav class="navbar navbar-default navbar-left">
   			<div class="container-fluid">    
-    			<div class="navbar-header">
-      				<button type="button" lang="en" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-        			<span class="sr-only" lang="en">Toggle navigation</span>
-      				</button>
+    			<div class="navbar-header">      				
       				<a class="navbar-brand" href="#">Javlo</a>
     			</div>
 			</div>			
@@ -50,18 +52,48 @@ request.setAttribute("editUser", ctx.getCurrentEditUser());
       			<ul class="nav navbar-nav">
       				<li${info.page.root?' class="active"':''}><a title="home" href="<%=URLHelper.createURL(ctx,"/")%>"><span aria-hidden="true" class="glyphicon glyphicon-home" aria-hidden="true"></span></a></li>
       				<c:if test="${not empty editUser}">        			
-        			<li><a href="#">Link</a></li>
         			<li><form id="pc_del_page_form" class="<%=readOnlyClass%>" action="${info.currentURL}" method="post">
 						<div>
 							<input type="hidden" value="${info.pageID}" name="page"/>
 							<input type="hidden" value="edit.deletePage" name="webaction"/>
 							<c:if test="${!info.page.root}">
-							<input id="pc_del_page_button" type="<%=accessType%>" value="${i18n.edit['menu.delete']}" title="${i18n.edit['menu.delete']}" onclick="if (!confirm('${i18n.edit['menu.confirm-page']}')) return false;"<%=readOnlyPageHTML%> />
+							<button type="submit" onclick="if (!confirm('${i18n.edit['menu.confirm-page']}')) return false;">
+								<span class="glyphicon glyphicon-trash" aria-hidden="true"></span> ${i18n.edit['menu.delete']}
+							</button>							
 							</c:if><c:if test="${info.page.root}">
-							<input id="pc_del_page_button" type="button" value="${i18n.edit['menu.delete']}" title="${i18n.edit['menu.delete']}" disabled="disabled" />
+							<button type="button" onclick="if (!confirm('${i18n.edit['menu.confirm-page']}')) return false;" disabled="disabled">
+								${i18n.edit['menu.delete']}
+							</button>							
 							</c:if>
 						</div>
 					</form></li>
+					<li><form class="${info.page.pageEmpty?'no-access':''}" id="copy_page" action="${info.currentURL}?webaction=edit.copyPage" method="post">
+						<button id="pc_copy_page" type="submit"><span class="glyphicon glyphicon-copy" aria-hidden="true"></span>${i18n.edit['action.copy-page']}</button>
+					</form></li>
+					<li><form class="${empty info.contextForCopy || !info.page.pageEmpty?'no-access':''}" id="paste_page" action="${info.currentURL}" method="post">
+						<input type="hidden" name="webaction" value="edit.pastePage" />
+						<button id="pc_paste_page" type="submit"><span class="glyphicon glyphicon-paste" aria-hidden="true"></span>${i18n.edit['action.paste-page-preview']}</button>							
+					</form></li>	
+					</c:if>
+        		</ul>
+        	</div>
+		</nav>
+		<nav class="navbar navbar-default navbar-right">  						
+			<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      			<ul class="nav navbar-nav">      				
+      				<c:if test="${globalContext.previewMode}"><li class="publish"><form id="pc_publish_form" action="${info.currentURL}" method="post">						
+						<input type="hidden" name="webaction" value="edit.publish" />						
+						<button type="submit">
+							<span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span>
+							${i18n.edit['command.publish']}
+						</button>						
+					</form></li></c:if>      				      				
+      				<c:if test="${not empty editUser}">        								
+	        			<li><c:if test="${!userInterface.contributor}"><a id="pc_edit_mode_button" title="${i18n.edit['global.exit']}" href="<%=URLHelper.createURL(returnEditCtx)%>">X</a></c:if>
+							<c:url var="url" value="<%=URLHelper.createURL(returnEditCtx)%>" context="/">
+								<c:param name="edit-logout" value="true" />
+							</c:url>
+						<c:if test="${userInterface.contributor}"><a id="pc_edit_mode_button" class="logout" title="${i18n.edit['global.logout']}" href="${url}">X</a></c:if></li>
 					</c:if>
         		</ul>
         	</div>
@@ -89,13 +121,13 @@ request.setAttribute("editUser", ctx.getCurrentEditUser());
 			<div role="tabpanel">  
 				<ul class="nav nav-tabs" role="tablist">
 				  <li role="presentation" class="active"><a href="#_ep_navigation" aria-controls="_ep_navigation" role="tab" data-toggle="tab">Navigation</a></li>
-				  <li role="presentation"><a href="#_ep_settings" aria-controls="_ep_settings" role="tab" data-toggle="tab">Profile</a></li>
+				  <li role="presentation"><a href="#_ep_settings" aria-controls="_ep_settings" role="tab" data-toggle="tab">Settings</a></li>
 				  <li role="presentation"><a href="#_ep_content" aria-controls="_ep_content" role="tab" data-toggle="tab">Content</a></li>
-				  <li role="presentation"><a href="#_ep_files" aria-controls="_ep_files" role="tab" data-toggle="tab">Settings</a></li>
+				  <li role="presentation"><a href="#_ep_files" aria-controls="_ep_files" role="tab" data-toggle="tab">Files</a></li>
 				</ul>
 				<div class="tab-content">
 				  <div role="tabpanel" class="tab-pane fade in active" id="_ep_navigation"><jsp:include page="bootstrap/navigation.jsp" /></div>
-				  <div role="tabpanel" class="tab-pane fade" id="_ep_settings">settings</div>
+				  <div role="tabpanel" class="tab-pane fade" id="_ep_settings"><jsp:include page="bootstrap/settings.jsp" /></div>
 				  <div role="tabpanel" class="tab-pane fade" id="_ep_content"><jsp:include page="bootstrap/component.jsp" /></div>
 				  <div role="tabpanel" class="tab-pane fade" id="_ep_files">files</div>
 				</div>
@@ -103,4 +135,22 @@ request.setAttribute("editUser", ctx.getCurrentEditUser());
 			</c:if>
 		</div>
 	</div>
+	
+	<div class="modal fade" id="preview-modal" tabindex="-1" role="dialog" aria-labelledby="previewModalTitle" aria-hidden="true">
+	  <div class="modal-dialog modal-full">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+	        <h4 class="modal-title" id="previewModalTitle">[title]</h4>
+	      </div>
+	      <div class="modal-body">
+	        <iframe id="preview-modal-frame" data-wait="/wait.html" src="/wait.html" ></iframe>
+	      </div>
+	      <div class="modal-footer">
+	        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>        
+	      </div>
+	    </div>
+	  </div>
+	</div>
+	
 </div>	 

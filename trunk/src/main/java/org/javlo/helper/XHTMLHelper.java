@@ -86,8 +86,8 @@ public class XHTMLHelper {
 	protected static java.util.logging.Logger logger = java.util.logging.Logger.getLogger(XHTMLHelper.class.getName());
 
 	private static final String[] TEXT_COLORS = { "#005", "#050", "#500", "#505", "#550", "#055", "#555" };
-	
-	public static final List<String> WEB_FONTS = Arrays.asList(new String[] {"Arial, sans-serif","Courier, monospace, serif","Myriad Pro, Myriad Pro Regular, PT Sans, sans-serif","Times New Roman, serif","Verdana, Geneva, sans-serif", "Open Sans, sans-serif"});
+
+	public static final List<String> WEB_FONTS = Arrays.asList(new String[] { "Arial, sans-serif", "Courier, monospace, serif", "Myriad Pro, Myriad Pro Regular, PT Sans, sans-serif", "Times New Roman, serif", "Verdana, Geneva, sans-serif", "Open Sans, sans-serif" });
 
 	private static final Pattern CSS_IMPORT_PATTERN = Pattern.compile("@import\\s+" +
 
@@ -149,7 +149,7 @@ public class XHTMLHelper {
 
 		return new String(outStream.toByteArray()).replaceAll("  ", "&nbsp;&nbsp;");
 	}
-	
+
 	public static boolean containsLink(String content) {
 		if (content == null) {
 			return false;
@@ -360,7 +360,7 @@ public class XHTMLHelper {
 	public static String getDropDownFromMap(String name, Map map, String value) {
 		return getDropDownFromMap(name, map, value, null, false);
 	}
-	
+
 	public static String getDropDownFromMap(String name, Map map, String value, String emptyName, boolean sortValue) {
 		return getDropDownFromMap(name, map, value, emptyName, sortValue, null);
 	}
@@ -394,7 +394,7 @@ public class XHTMLHelper {
 		if (cssClass != null) {
 			out.println("<select class=\"select\" id=\"" + name + "\" name=\"" + name + "\">");
 		} else {
-			out.println("<select class=\"select "+cssClass+"\" id=\"" + name + "\" name=\"" + name + "\">");
+			out.println("<select class=\"select " + cssClass + "\" id=\"" + name + "\" name=\"" + name + "\">");
 		}
 		if (emptyName != null) {
 			out.print("<option value=\"\">" + emptyName + "</option>");
@@ -890,11 +890,11 @@ public class XHTMLHelper {
 		content.toArray(contentArray);
 		return getInputOneSelect(name, contentArray, value, js, sort);
 	}
-	
+
 	public static String getInputOneSelect(String name, List<String> content, String value, String cssClass, String js, boolean sort) {
-	
+
 		String[][] contentArray = new String[content.size()][];
-		for (int i=0; i<content.size(); i++) {
+		for (int i = 0; i < content.size(); i++) {
 			contentArray[i] = new String[2];
 			contentArray[i][0] = content.get(i);
 			contentArray[i][1] = content.get(i);
@@ -915,7 +915,7 @@ public class XHTMLHelper {
 
 		return getInputOneSelectInternal(name, name, newContent, value, null, null, null, true);
 	}
-	
+
 	public static String getInputOneSelect(String name, Map<String, String> content, String value, String cssClass) {
 		String[][] newContent = new String[content.size()][2];
 		Collection<String> keys = content.keySet();
@@ -929,7 +929,6 @@ public class XHTMLHelper {
 
 		return getInputOneSelectInternal(name, name, newContent, value, cssClass, null, null, true);
 	}
-
 
 	public static String getInputOneSelect(String name, String[] content, String value) {
 		return getInputOneSelect(name, content, value, null, true);
@@ -958,26 +957,26 @@ public class XHTMLHelper {
 			newContent[i][0] = ids[i];
 			newContent[i][1] = labels[i];
 		}
-		return getInputOneSelectInternal(name, name, newContent, value, null, js, null, sort);		
+		return getInputOneSelectInternal(name, name, newContent, value, null, js, null, sort);
 	}
-	
+
 	public static String getInputOneSelect(String name, String[] ids, String value, String cssClass, String js, boolean sort) {
 		return getInputOneSelect(name, ids, ids, value, cssClass, js, sort);
 	}
-	
+
 	public static String getInputOneSelect(String name, String[] ids, String[] labels, String value, String cssClass, String js, boolean sort) {
 		String[][] newContent = new String[labels.length][2];
 		for (int i = 0; i < labels.length; i++) {
 			newContent[i][0] = ids[i];
 			newContent[i][1] = labels[i];
 		}
-		return getInputOneSelectInternal(name, name, newContent, value, cssClass, js, null, sort);		
+		return getInputOneSelectInternal(name, name, newContent, value, cssClass, js, null, sort);
 	}
 
 	public static String getInputOneSelect(String name, String[][] content, String value) {
 		return getInputOneSelect(name, content, value, null, true);
 	}
-	
+
 	public static String getInputOneSelect(String name, String[][] content, String value, boolean sorting) {
 		return getInputOneSelect(name, content, value, null, sorting);
 	}
@@ -1261,7 +1260,7 @@ public class XHTMLHelper {
 		out.close();
 		return res.toString();
 	}
-	
+
 	public static String getRadio(String id, String field, String value, boolean checked) throws ResourceNotFoundException {
 
 		StringWriter res = new StringWriter();
@@ -1279,7 +1278,6 @@ public class XHTMLHelper {
 		out.close();
 		return res.toString();
 	}
-
 
 	public static String getRadioInput(ContentContext ctx, FormComponent formComponent, String field, String choiceValue) {
 		return getRadioInput(ctx, formComponent, field, choiceValue, null);
@@ -1326,13 +1324,13 @@ public class XHTMLHelper {
 		PrintWriter out = new PrintWriter(res);
 
 		for (String[] value2 : values) {
-			
+
 			String radioID = value2[0];
 			if (radioID == null || radioID.trim().length() == 0) {
 				radioID = "___bl___";
 			}
-			radioID = field+'_'+radioID;		
-			
+			radioID = field + '_' + radioID;
+
 			out.print("<input type=\"radio\" id=\"" + radioID + "\" name=\"" + field + "\" value=\"" + value2[0] + "\"");
 
 			if (value2[0].equals(value)) {
@@ -1693,16 +1691,15 @@ public class XHTMLHelper {
 	public static String getTextInput(String name, String value) {
 		return getTextInput(name, value, new String[0][0], null);
 	}
-	
+
 	public static String getTextInput(String name, String value, String cssValue) {
 		return getTextInput(name, value, new String[0][0], cssValue);
 	}
 
-
 	public static String getTextInput(String name, String value, String[][] attributes) {
 		return getTextInput(name, value, attributes, null);
 	}
-	
+
 	private static String getTextInput(String name, String value, String[][] attributes, String cssClass) {
 		StringWriter res = new StringWriter();
 		PrintWriter out = new PrintWriter(res);
@@ -1712,7 +1709,7 @@ public class XHTMLHelper {
 		if (cssClass != null) {
 			out.print(" class=\"");
 			out.print(cssClass);
-			out.print("\"");			
+			out.print("\"");
 		}
 		out.print(" value=\"");
 		out.print(value.replace("\"", "&quot;"));
@@ -1727,7 +1724,6 @@ public class XHTMLHelper {
 		out.println("/>");
 		return res.toString();
 	}
-
 
 	public static String removeTag(String html, String tag) throws BadXMLException {
 		TagDescription[] tags = XMLManipulationHelper.searchAllTag(html, false);
@@ -1813,7 +1809,7 @@ public class XHTMLHelper {
 		return writer.toString();
 	}
 
-	public static boolean allReadyInsered(ContentContext ctx, String resource) {
+	public static boolean alreadyInserted(ContentContext ctx, String resource) {
 		if (resource.contains("jquery-1") || resource.contains("jquery-2") || resource.contains("jquery.min") || resource.endsWith("jquery.js")) {
 			resource = "_jquery-library_";
 		} else if (resource.contains("jquery-ui")) {
@@ -1835,7 +1831,7 @@ public class XHTMLHelper {
 	 * @param resource
 	 * @return true if tag is'nt closed but opened.
 	 */
-	public static boolean allReadyClosedIfOpen(ContentContext ctx, String resource) {
+	public static boolean alreadyClosedIfOpen(ContentContext ctx, String resource) {
 		if (resource.contains("jquery-1") || resource.contains("jquery-2") || resource.contains("jquery.min") || resource.endsWith("jquery.js")) {
 			resource = "_jquery-library_";
 		} else if (resource.contains("jquery-ui")) {
@@ -1854,12 +1850,22 @@ public class XHTMLHelper {
 		return true;
 	}
 
+	public static String renderHeaderResourceInsertionWithoutalreadyTest(ContentContext ctx, String resource) {
+		if (StringHelper.getFileExtension(resource).equalsIgnoreCase("css")) {
+			return "<link rel=\"stylesheet\" type=\"text/css\" href=\"" + URLHelper.createStaticURL(ctx, resource) + "\" />";
+		} else if (StringHelper.getFileExtension(resource).equalsIgnoreCase("js")) {
+			return "<script src=\"" + URLHelper.createStaticURL(ctx, resource) + "\" type=\"text/javascript\"></script>";
+		} else {
+			return "<!-- resource type not identified : " + resource + " -->";
+		}
+	}
+
 	public static String renderHeaderResourceInsertion(ContentContext ctx, String resource) {
-		if (!allReadyInsered(ctx, resource)) {
+		if (!alreadyInserted(ctx, resource)) {
 			if (StringHelper.getFileExtension(resource).equalsIgnoreCase("css")) {
 				return "<link rel=\"stylesheet\" type=\"text/css\" href=\"" + URLHelper.createStaticURL(ctx, resource) + "\" />";
 			} else if (StringHelper.getFileExtension(resource).equalsIgnoreCase("js")) {
-				allReadyClosedIfOpen(ctx,resource); // close </script>
+				alreadyClosedIfOpen(ctx, resource); // close </script>
 				return "<script src=\"" + URLHelper.createStaticURL(ctx, resource) + "\" type=\"text/javascript\"></script>";
 			} else {
 				return "<!-- resource type not identified : " + resource + " -->";
@@ -2033,14 +2039,14 @@ public class XHTMLHelper {
 		InfoBean infoBean = InfoBean.getCurrentInfoBean(ctx.getRequest());
 		Map<String, Object> properties = BeanUtils.describe(infoBean);
 		for (String key : properties.keySet()) {
-			String jstlStr = "${" + InfoBean.REQUEST_KEY + '.' + key + '}';			
+			String jstlStr = "${" + InfoBean.REQUEST_KEY + '.' + key + '}';
 			if (properties.get(key) != null) {
 				xhtml = xhtml.replace(jstlStr, properties.get(key).toString());
 			}
 		}
 		properties = BeanUtils.describe(infoBean.getPage());
 		for (String key : properties.keySet()) {
-			String jstlStr = "${" + InfoBean.REQUEST_KEY + ".page." + key + '}';			
+			String jstlStr = "${" + InfoBean.REQUEST_KEY + ".page." + key + '}';
 			if (properties.get(key) != null) {
 				xhtml = xhtml.replace(jstlStr, properties.get(key).toString());
 			}
@@ -2357,7 +2363,7 @@ public class XHTMLHelper {
 						String url = URLHelper.removeParam(hrefValue);
 						String params = URLHelper.getParamsAsString(hrefValue);
 						url = URLHelper.createURLCheckLg(ctx, url);
-						tag.getAttributes().put("href", URLHelper.addParams(url,params));
+						tag.getAttributes().put("href", URLHelper.addParams(url, params));
 					}
 					remplacement.addReplacement(tag.getOpenStart(), tag.getOpenEnd() + 1, tag.toString());
 				}
@@ -2365,7 +2371,7 @@ public class XHTMLHelper {
 				String src = tag.getAttribute("src", null);
 				if (src != null) {
 					if (!StringHelper.isURL(src)) { // relative path
-						String urlPrefix = URLHelper.mergePath("/",ctx.getRequest().getContextPath(), ctx.getPathPrefix(), "/");
+						String urlPrefix = URLHelper.mergePath("/", ctx.getRequest().getContextPath(), ctx.getPathPrefix(), "/");
 						if (src.startsWith(urlPrefix)) {
 							InfoBean info = InfoBean.getCurrentInfoBean(ctx);
 							src = URLHelper.mergePath(info.getHostURLPrefix(), src);
@@ -2390,7 +2396,7 @@ public class XHTMLHelper {
 		try {
 			in = new FileInputStream(targetFile);
 			InputStreamReader reader = new InputStreamReader(in, ContentContext.CHARACTER_ENCODING);
-			out = new StringWriter();			
+			out = new StringWriter();
 			CSSFastMin.minimize(reader, out);
 			newContent = out.toString();
 		} catch (Exception ex) {
@@ -2459,74 +2465,73 @@ public class XHTMLHelper {
 		// ResourceHelper.writeStringToFile(targetFile, newContent,
 		// ContentContext.CHARACTER_ENCODING);
 	}
-	
+
 	private static int listDepth(TagDescription[] tags, TagDescription tag) {
-		int depth=1;
-		for (String parent : XMLManipulationHelper.getAllParentName(tags, tag)) {			
+		int depth = 1;
+		for (String parent : XMLManipulationHelper.getAllParentName(tags, tag)) {
 			if (parent.equalsIgnoreCase("ul") || parent.equalsIgnoreCase("ol")) {
 				depth++;
 			}
 		}
 		return depth;
 	}
-	
+
 	public static String prepareToMailing(String xhtml) throws BadXMLException {
 		TagDescription[] tags = XMLManipulationHelper.searchAllTag(xhtml, false);
 		StringRemplacementHelper remplacement = new StringRemplacementHelper();
-		int[] liNumber = new int[100];		
-		for (TagDescription tag : tags) {			
+		int[] liNumber = new int[100];
+		for (TagDescription tag : tags) {
 			if (tag.getName().equalsIgnoreCase("ul") || tag.getName().equalsIgnoreCase("ol")) {
-				int ind = listDepth(tags, tag);				
+				int ind = listDepth(tags, tag);
 				if (tag.getName().equalsIgnoreCase("ol")) {
 					liNumber[ind] = 1;
 				} else {
 					liNumber[ind] = 0;
-				}				
+				}
 				List<String> parentsNames = XMLManipulationHelper.getAllParentName(tags, tag);
 				String prefix = "";
 				String suffix = "";
 				if ((parentsNames.contains("ul") || parentsNames.contains("ol")) && !parentsNames.contains("li")) {
-					prefix="<tr class=\"table-li\"><td colspan=\"2\" valign=\"top\">";
+					prefix = "<tr class=\"table-li\"><td colspan=\"2\" valign=\"top\">";
 					suffix = "</td></tr>";
 				} else if (!(parentsNames.contains("ul") || parentsNames.contains("ol"))) {
 					prefix = "<div class=\"table-list-wrapper\">";
-					suffix = "</div>";					
+					suffix = "</div>";
 				}
-				remplacement.addReplacement(tag.getOpenStart(), tag.getOpenEnd() + 1, prefix+"<table class=\"table-"+tag.getName()+"-depth-"+ind+" table-"+tag.getName()+"\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\"><tbody>");						
-				remplacement.addReplacement(tag.getCloseStart(), tag.getCloseEnd() + 1, "</tbody></table>"+suffix);
-			} else if (tag.getName().equalsIgnoreCase("li")) {				
+				remplacement.addReplacement(tag.getOpenStart(), tag.getOpenEnd() + 1, prefix + "<table class=\"table-" + tag.getName() + "-depth-" + ind + " table-" + tag.getName() + "\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\"><tbody>");
+				remplacement.addReplacement(tag.getCloseStart(), tag.getCloseEnd() + 1, "</tbody></table>" + suffix);
+			} else if (tag.getName().equalsIgnoreCase("li")) {
 				String bullet = "&bull;";
-				int ind = listDepth(tags, tag)-1;				
+				int ind = listDepth(tags, tag) - 1;
 				if (liNumber[ind] > 0) {
-					bullet = ""+liNumber[ind]+".";
+					bullet = "" + liNumber[ind] + ".";
 					liNumber[ind]++;
-				}					
-				remplacement.addReplacement(tag.getOpenStart(), tag.getOpenEnd() + 1, "<tr class=\"table-li\"><td class=\"bullet\" valign=\"top\" style=\"padding-right:3px; width: 14px;\">"+bullet+"</td><td class=\"text\" valign=\"top\">");						
-				remplacement.addReplacement(tag.getCloseStart(), tag.getCloseEnd() + 1, "</td></tr>");				
+				}
+				remplacement.addReplacement(tag.getOpenStart(), tag.getOpenEnd() + 1, "<tr class=\"table-li\"><td class=\"bullet\" valign=\"top\" style=\"padding-right:3px; width: 14px;\">" + bullet + "</td><td class=\"text\" valign=\"top\">");
+				remplacement.addReplacement(tag.getCloseStart(), tag.getCloseEnd() + 1, "</td></tr>");
 			}
 		}
 		return remplacement.start(xhtml);
 	}
-	
+
 	public static void main(String[] args) {
 		String xhtml = "<body><ol><li>item 1</li><li>item 2<ol><li>item 2.1</li><li>item 2.2</li></ol></li><li>item 3</li></ol></body>";
-		
-		try	{
-			
+
+		try {
+
 			TagDescription[] tags = XMLManipulationHelper.searchAllTag(xhtml, false);
-			for (TagDescription tag : tags) {				
+			for (TagDescription tag : tags) {
 				if (tag.getName().equals("div")) {
-					System.out.println("depth = "+listDepth(tags,tag));
+					System.out.println("depth = " + listDepth(tags, tag));
 				}
 			}
-			
+
 			ResourceHelper.writeStringToFile(new File("c:/trans/list.html"), prepareToMailing(xhtml));
-			//System.out.println(prepareToMailing(xhtml));
+			// System.out.println(prepareToMailing(xhtml));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
-	}
 
+	}
 
 }

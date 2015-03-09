@@ -24,7 +24,6 @@ import org.javlo.i18n.I18nAccess;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
 import org.javlo.service.RequestService;
-import org.javlo.utils.CSVFactory;
 import org.javlo.utils.Cell;
 
 /**
@@ -163,8 +162,7 @@ public class ComponentHelper {
 		comp.getComponentBean().setArea(area);
 		if (newPrevious != null) {
 			newPrevious.getPage().addContent(newPrevious.getId(), comp.getComponentBean());
-			comp.setPage(newPrevious.getPage());
-						
+			comp.setPage(newPrevious.getPage());						
 		} else {
 			targetPage.addContent("0", comp.getComponentBean());
 			comp.setPage(targetPage);
@@ -193,7 +191,10 @@ public class ComponentHelper {
 		}
 	}
 	
-	public static IContentVisualComponent getPreviousComponent(IContentVisualComponent inComp, ContentContext ctx) throws Exception {		
+	public static IContentVisualComponent getPreviousComponent(IContentVisualComponent inComp, ContentContext ctx) throws Exception {
+		if (inComp.getPage() == null) {
+			return null;
+		}
 		ContentContext ctxCompArea = ctx.getContextWithArea(inComp.getArea());
 		ContentElementList content = inComp.getPage().getContent(ctxCompArea);
 		IContentVisualComponent previousComp = null;
@@ -208,8 +209,11 @@ public class ComponentHelper {
 		return null;
 	}
 	
-	public static IContentVisualComponent getNextComponent(IContentVisualComponent inComp, ContentContext ctx) throws Exception {		
-		ContentContext ctxCompArea = ctx.getContextWithArea(inComp.getArea());
+	public static IContentVisualComponent getNextComponent(IContentVisualComponent inComp, ContentContext ctx) throws Exception {
+		if (inComp.getPage() == null) {
+			return null;
+		}
+		ContentContext ctxCompArea = ctx.getContextWithArea(inComp.getArea());		
 		ContentElementList content = inComp.getPage().getContent(ctxCompArea);
 		IContentVisualComponent previousComp = null;
 		IContentVisualComponent comp = null;
