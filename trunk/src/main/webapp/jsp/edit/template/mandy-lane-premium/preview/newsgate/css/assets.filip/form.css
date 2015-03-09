@@ -1,0 +1,209 @@
+/* FORM */
+
+
+
+/* ----- Form ----- */
+form {
+	margin:0;
+	padding:0;
+	font-family:inherit;
+	font-size:.9em;
+}
+
+form .hidden {
+	position:relative;
+	width:20px;
+	margin:0 0 0 -23px;
+	padding:0;
+	border:0;
+	overflow:hidden;
+}
+
+
+
+
+
+
+
+
+/* ----- Checkbox ----- */
+label.checkbox {
+	position:relative;
+	display:inline-block;
+	margin:0 0 2px 0;
+	padding:3px 0;
+	padding-left:26px;
+	background:url(../../img/bg/label-checkbox.png) no-repeat 0 0;
+	line-height:1.2em;
+}
+label.checkbox:hover {
+	background-position:0 -40px;
+}
+label.checkbox.checked {
+	background-position:0 -80px;
+	font-weight:700;
+}
+
+
+
+
+
+/* ----- Input (Globals) ----- */
+input,
+select,
+textarea {
+	margin:0;
+	padding:5px 10px;
+	font-family:inherit;
+	font-size:1em;
+	background:#fff;
+	border:1px solid rgba(0,0,0, .2);
+	border-radius:2px;
+	box-shadow:0 3px 5px -3px rgba(0,0,0, .1)inset; 
+}
+input:hover,
+select:hover,
+textarea:hover {
+	border:1px solid rgba(0,0,0, .3);
+	box-shadow:0 3px 5px -3px rgba(0,0,0, .2)inset; 
+}
+input:focus,
+select:focus,
+textarea:focus {
+	border:1px solid #128bf3;
+	box-shadow:0 0 5px #128bf3; 
+}
+
+input[type="text"],
+input[type="search"] {}
+input[type="button"] {}
+input[type="submit"] {}
+
+
+input.champ-date {
+	background-image:url(../../img/bg/icon-date.png);
+	background-repeat:no-repeat;
+	background-position:right center;
+}
+
+
+
+/* ----- Select ----- */
+select {
+	appearance:none;
+}
+
+
+
+/* ----- Textarea ----- */
+textarea {
+	min-height:75px;
+}
+
+
+
+
+/* ----- Label ----- */
+label {
+	font-weight:400;
+}
+
+
+
+
+
+
+
+/* ----- Row ----- */
+.row {
+	position:relative;
+	margin:0 0 0 -10px;
+	padding:7px 0;
+}
+.row:after {
+	display:table;
+	clear:both;
+	content:"";
+}
+.row.row-action {
+	padding:10px 0 0 0;
+}
+
+.row input[type="text"],
+.row select,
+.row textarea {
+	width:100%;
+}
+
+.row .link-plus {
+	display:block;
+	margin-top:6px;
+}
+
+.row label {
+	display:block;
+	color:#999b98;
+	margin-top:6px;
+}
+.row label span {
+	color:#ff8a00;
+}
+
+
+
+
+
+/* ----- Row-Inline ----- */
+.row .inline {
+	display:block;
+	float:left;
+	padding:0 20px 0 0;
+}
+.row .inline label {
+	color:#3b3b3b;
+}
+.row .inline input[type="radio"] {
+	margin:3px 5px 0 0;
+	display:block;
+	float:left;
+}
+
+
+
+
+/* ----- Row-Field ----- */
+.row-field {
+	background:#f9f9f9;
+	padding:10px;
+}
+
+
+
+
+/* ----- Highlight ----- */
+.highlight {
+	background:#f9f9f9 !important;
+}
+textarea.highlight {
+	min-height:125px !important;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

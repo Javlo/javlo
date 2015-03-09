@@ -1,0 +1,142 @@
+/* Login */
+
+
+
+/* ----- Login-Page ----- */
+body.login-page  {}
+
+
+
+/* ----- Login-Page (Hide) ----- */
+body.login-page #header #menu,
+body.login-page #header #admin {
+	display:none;
+}
+/* ----- Login-Page (Logo) ----- */
+body.login-page #header #logo {
+	float:none;
+	position:relative;
+	margin:0 auto;
+	width:150px;
+}
+body.login-page #header #logo a {
+	width:100%;
+}
+/* ----- Login-Page (Presentation) ----- */
+body.login-page #header #presentation {
+	position:absolute;
+	right:15px;
+	top:0;
+}
+
+
+
+
+/* ----- Login-Page (Elements) ----- */
+body.login-page .for-content {
+	margin-top:150px;
+}
+body.login-page .page-title {
+	text-align:center;
+}
+body.login-page .page-title h1 {
+	color:white;
+	font-size:3.2em;
+	text-shadow:0 -2px 6px rgba(0,0,0, .3);
+}
+
+
+
+
+
+/* ----- Login-Box ----- */
+#login-box {
+	padding:20px;
+	margin:0 150px;
+	background:rgba(255,255,255, .9);
+	box-shadow:1px 2px 3px rgba(0,0,0, .1);
+	border-radius:2px;
+	overflow:hidden;
+}
+
+#login-box input {
+	padding:10px 20px 10px 40px;
+	border:none;
+	box-shadow:0 2px 0 rgba(0,0,0, .1);
+	font-size:1.2em;
+	font-weight:700;
+	display:block;
+	float:left;
+	line-height:1em;
+	height:42px;
+}
+#login-box input:hover {
+	box-shadow:0 2px 0 rgba(0,0,0, .2);
+}
+#login-box input:focus {
+	box-shadow:0 2px 0 #128bf3;
+	color:#128bf3;
+}
+#login-box input.username {
+	width:40%;
+	margin-right:2%;
+	background:#fff url(../../img/bg/icon-login-box.png) no-repeat 10px 12px;
+}
+#login-box input.username:focus {
+	background:#fff url(../../img/bg/icon-login-box.png) no-repeat 10px -128px;
+}
+#login-box input.password {
+	width:40%;
+	margin-right:2%;
+	background:#fff url(../../img/bg/icon-login-box.png) no-repeat 10px -59px;
+}
+#login-box input.password:focus {
+	background:#fff url(../../img/bg/icon-login-box.png) no-repeat 10px -199px;
+}
+#login-box button.submit {
+	width:16%;
+	font-family:inherit;
+	padding:10px 20px ;
+	border:none;
+	box-shadow:0 2px 0 #006ecd;
+	font-size:1.2em;
+	font-weight:700;
+	display:block;
+	float:left;
+	line-height:1em;
+	background:#128bf3;
+	color:#fff;
+	border-radius:2px;
+	cursor:pointer;
+	height:42px;
+}
+
+#login-box button.submit:hover {
+	background:#007ce7;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
