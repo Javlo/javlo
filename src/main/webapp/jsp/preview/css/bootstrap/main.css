@@ -203,6 +203,8 @@ body {
 	font-size: 14px;	
 	color: #777777;
 	margin: 0 0 10px 10px;
+	max-width: 240px;
+	overflow: hidden;
 }
 
 #preview-layer {
