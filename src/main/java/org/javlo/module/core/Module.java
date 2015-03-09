@@ -348,6 +348,8 @@ public class Module {
 	private Set<String> excludeRoles;
 	private Map<String, String> config;
 
+	private final Map<String, Object> attributes = new HashMap<String, Object>();
+
 	private final File configFile;
 	private final Locale locale;
 	private final String modulePath;
@@ -1041,6 +1043,13 @@ public class Module {
 		Box box = new Box(name, title, renderer, action);
 		mainBoxes.add(box);
 		boxes.put(name, box);
+	}
+
+	public Object getAttribute(String key) {
+		return attributes.get(key);
+	}
+	public void setAttribute(String key, Object att) {
+		attributes.put(key, att);
 	}
 
 	public static void main(String[] args) {
