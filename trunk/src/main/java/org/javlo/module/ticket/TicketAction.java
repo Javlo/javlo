@@ -13,6 +13,7 @@ import java.util.Map.Entry;
 import javax.mail.internet.InternetAddress;
 
 import org.javlo.actions.AbstractModuleAction;
+import org.javlo.actions.ViewActions;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
@@ -24,7 +25,6 @@ import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
 import org.javlo.module.core.Module;
 import org.javlo.module.core.ModulesContext;
-import org.javlo.service.ContentService;
 import org.javlo.service.RequestService;
 import org.javlo.user.AdminUserFactory;
 import org.javlo.user.AdminUserSecurity;
@@ -175,12 +175,12 @@ public class TicketAction extends AbstractModuleAction {
 	/**
 	 * Send notifications for tickets modified since the last notification time 
 	 * ONLY if there is no modification since 5 min (defined in {@link StaticConfig#getTimeBetweenChangeNotification()})
+	 * Not a webaction, called from {@link ViewActions#performSendTicketChangeNotifications(ContentContext, GlobalContext)}
 	 * @param ctx
 	 * @param globalContext
-	 * @param content
 	 * @return null
 	 */
-	public static String performCheckChangesAndNotify(ContentContext ctx, GlobalContext globalContext, ContentService content) {
+	public static String computeChangesAndSendNotifications(ContentContext ctx, GlobalContext globalContext) {
 		Date now = new Date();
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(now);

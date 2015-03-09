@@ -21,6 +21,7 @@ import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.mailing.MailingBuilder;
+import org.javlo.module.ticket.TicketAction;
 import org.javlo.navigation.MenuElement;
 import org.javlo.rendering.Device;
 import org.javlo.service.ContentService;
@@ -187,6 +188,10 @@ public class ViewActions implements IAction {
 		mb.setSubject(i18nAccess.getText("collaborative.mail.modified", "Page modified: ") + page.getTitle(ctx));
 		mb.prepare(ctx);
 		mb.sendMailing(ctx);
+	}
+
+	public static String performSendTicketChangeNotifications(ContentContext ctx, GlobalContext globalContext) {
+		return TicketAction.computeChangesAndSendNotifications(ctx, globalContext);
 	}
 
 	@Override

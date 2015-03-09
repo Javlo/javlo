@@ -489,8 +489,8 @@ public class GlobalContext implements Serializable, IPrintInfo {
 						int secBetweenCheck = getStaticConfig().getTimeBetweenChangeNotification();
 						Map<String, String> params = new HashMap<String, String>();
 						params.put("webaction", "view.checkChangesAndNotify");
+						params.put(ContentContext.FORWARD_AJAX, "true");
 						ContentContext absoluteCtx = ctx.getContextForAbsoluteURL();
-						absoluteCtx.setAjax(true);
 						absoluteCtx.setRenderMode(ContentContext.VIEW_MODE);
 						String url = URLHelper.createURL(absoluteCtx, "/", params);
 						try {
@@ -506,9 +506,9 @@ public class GlobalContext implements Serializable, IPrintInfo {
 					if (this.getModules().contains(TicketAction.MODULE_NAME)) {
 						int secBetweenCheck = getStaticConfig().getTimeBetweenChangeNotification();
 						Map<String, String> params = new HashMap<String, String>();
-						params.put("webaction", "ticket.checkChangesAndNotify");
+						params.put("webaction", "view.sendTicketChangeNotifications");
+						params.put(ContentContext.FORWARD_AJAX, "true");
 						ContentContext absoluteCtx = ctx.getContextForAbsoluteURL();
-						absoluteCtx.setAjax(true);
 						absoluteCtx.setRenderMode(ContentContext.VIEW_MODE);
 						String url = URLHelper.createURL(absoluteCtx, "/", params);
 						try {
