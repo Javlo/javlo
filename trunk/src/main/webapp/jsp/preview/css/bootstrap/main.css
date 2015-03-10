@@ -1,7 +1,7 @@
 @import url("edit_preview_base.css");
 @import url("../../../../css/bootstrap-3.3.2/less/bootstrap_preview.css");
 
-body {
+html {
 	margin-top: 42px !important;
 	margin-left: 330px !important;
 }
@@ -154,8 +154,14 @@ body {
 	height: 700px;
 }
 
+@media (max-width: 1600px) {
+	#preview_command iframe {	
+		height: 500px;
+	}
+}
+
 #preview_command .navbar-left {
-	width: 50%;
+	width: 60%;
 }
 
 #preview_command .settings .btn .glyphicon {
@@ -189,14 +195,15 @@ body {
 	margin-bottom: 6px;
 }
 
-
 #preview_command .btn .label {
 	display: block;
 	font-size: 11px;
 	margin: 10px 0 0 10px;
 	padding: 0;
 	color: #aaaaaa;
-	text-align: left;	
+	text-align: left;
+	max-width: 240px;
+	overflow: hidden; 	
 }
 
 #preview_command .btn .value {
