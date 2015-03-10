@@ -60,7 +60,11 @@ editPreview.initPreview = function() {
   /** prepare preview * */
 	
 	if (pjq("#preview-layer").length == 0) {
-		pjq("body").append('<div id="preview-layer"><div class="commands btn-group btn-group-sm" role="group"><button class="delete btn btn-primary"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span>delete</button></div><h4></h4><div class="main">&nbsp;</span></div>');
+		pjq("body").append('<div id="preview-layer"><div class="commands btn-group btn-group-sm area-actions" role="group">'+
+				'<button class="btn-edit btn btn-primary"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span>edit</button>'+
+				'<button class="btn-copy btn btn-primary"><span class="glyphicon glyphicon-copy" aria-hidden="true"></span>copy</button>'+
+				'<button class="btn-delete btn btn-primary"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span>delete</button>'+
+				'</div><h4></h4><div class="main">&nbsp;</span></div>');
 		pjq("#preview-layer").css("position", "absolute");
 		pjq("#preview-layer").on('mouseleave', function (event) {	    	
 			editPreview.layerOver(null);
@@ -104,7 +108,7 @@ editPreview.initPreview = function() {
 				var previewId = subComp.attr("id").substring(3);		
 				var area = subComp.parent().attr("id");		
 				var ajaxURL = editPreview.addParam(currentURL,"webaction=edit.insert&type=" + compType + "&previous=" + previewId + "&area=" + area+ "&render-mode=3&init=true");
-				editPreview.ajaxRequest(ajaxURL, null, null);
+				editPreview.ajaxPreviewRequest(ajaxURL, null, null);
 			} else if (compId != null) { // move component
 				var subComp = pjq(this).data("comp");
 				var previewId = subComp.attr("id").substring(3);				

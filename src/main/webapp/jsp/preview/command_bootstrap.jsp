@@ -1,5 +1,4 @@
-<%@page import="org.javlo.message.GenericMessage"
-%><%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"
 %><%@ taglib uri="/WEB-INF/javlo.tld" prefix="jv"
 %><%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" 
 %><%@page contentType="text/html" import="
@@ -12,7 +11,8 @@
     	    org.javlo.module.core.ModulesContext,
     	    org.javlo.context.GlobalContext,
     	    org.javlo.module.content.Edit,
-    	    org.javlo.message.MessageRepository"
+    	    org.javlo.message.MessageRepository,
+    	    org.javlo.message.GenericMessage"
 %><%
 ContentContext ctx = ContentContext.getContentContext(request, response);
 ContentContext editCtx = new ContentContext(ctx);
@@ -136,20 +136,26 @@ request.setAttribute("editUser", ctx.getCurrentEditUser());
 		</div>
 	</div>
 	
-	<div class="modal fade" id="preview-modal" tabindex="-1" role="dialog" aria-labelledby="previewModalTitle" aria-hidden="true">
-	  <div class="modal-dialog modal-full">
-	    <div class="modal-content">
-	      <div class="modal-header">
-	        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-	        <h4 class="modal-title" id="previewModalTitle">[title]</h4>
-	      </div>
-	      <div class="modal-body">
-	        <iframe id="preview-modal-frame" data-wait="/wait.html" src="/wait.html" ></iframe>
-	      </div>
-	      <div class="modal-footer">
-	        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>        
-	      </div>
-	    </div>
+	<div class="modal fade fancybox-wrapper" id="preview-modal" tabindex="-1" role="dialog" aria-labelledby="previewModalTitle" aria-hidden="true">
+	  <div class="modal-dialog modal-full fancybox-skin">
+      <div class="fancybox-outer">
+  	    <div class="modal-content fancybox-inner">
+          <div class="for-fancy">
+    	      <div class="modal-header page-title">
+    	        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+    	        <h4 class="modal-title" id="previewModalTitle">[title]</h4>
+    	      </div>
+            <div class="box">
+      	      <div class="modal-body tabs-edit-fancy">
+      	        <iframe id="preview-modal-frame" data-wait="/wait.html" src="/wait.html" ></iframe>
+      	      </div>
+      	      <div class="modal-footer box-foot">
+      	        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>        
+      	      </div>
+            </div>
+          </div>
+  	    </div>
+      </div>
 	  </div>
 	</div>
 	
