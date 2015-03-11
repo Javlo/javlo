@@ -132,6 +132,7 @@ public class EditBasketComponent extends AbstractPropertiesComponent implements 
 		String address = rs.getParameter("address", "").trim();
 		String zip = rs.getParameter("zip", "").trim();
 		String city = rs.getParameter("city", "").trim();
+		boolean noShipping = rs.getParameter("noshipping", null) != null;
 
 		String vta = rs.getParameter("vat", "").trim();
 		String company = rs.getParameter("organization", "").trim();
@@ -153,6 +154,7 @@ public class EditBasketComponent extends AbstractPropertiesComponent implements 
 				basket.setStep(Basket.ORDER_STEP);
 				basket.setVATNumber(vta);
 				basket.setOrganization(company);
+				basket.setNoShipping(noShipping);
 			}
 		}
 

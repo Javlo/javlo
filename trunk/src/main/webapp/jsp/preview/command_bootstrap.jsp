@@ -80,7 +80,24 @@ request.setAttribute("editUser", ctx.getCurrentEditUser());
 		</nav>
 		<nav class="navbar navbar-default navbar-right">  						
 			<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-      			<ul class="nav navbar-nav">      				
+      			<ul class="nav navbar-nav">
+      				<li><c:if test="${globalContext.previewMode}"><form id="pc_form" action="${info.currentURL}" method="post">						
+						<div class="pc_line">
+							<input type="hidden" name="webaction" value="edit.previewedit" />
+							<c:if test='${!editPreview}'>								 
+								<button type="submit"><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>${i18n.edit['preview.label.edit-page']}"</button>								
+							</c:if> 
+							<c:if test='${editPreview}'>								
+								<button type="submit"><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>${i18n.edit['preview.label.not-edit-page']}</button>								
+							</c:if>
+						</div>				
+					</form></c:if>
+					<c:if test="${!globalContext.previewMode}">
+						<div class="link-wrapper">
+						<a href="${info.currentViewURL}" target="_blank"><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>${i18n.edit['preview.label.not-edit-page']}</a>
+						</div>
+					</c:if>					
+					</li>      				
       				<c:if test="${globalContext.previewMode}"><li class="publish"><form id="pc_publish_form" action="${info.currentURL}" method="post">						
 						<input type="hidden" name="webaction" value="edit.publish" />						
 						<button type="submit">

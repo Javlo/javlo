@@ -30,7 +30,7 @@ html {
 	height: 50px;
 }
 
-#preview_command .header form {
+#preview_command .header form, #preview_command .header .link-wrapper {
 	height: 50px;
 	padding: 15px;
 }
@@ -58,6 +58,10 @@ html {
 
 #preview_command .sidebar .tab-content {
 	padding: 3px 6px; 
+}
+
+#preview_command .tabpanel {
+	overflow: auto;
 }
 
 

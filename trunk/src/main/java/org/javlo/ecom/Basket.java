@@ -62,6 +62,7 @@ public class Basket implements Serializable {
 	private String description;
 	private boolean presumptiveFraud = false;
 	private double userReduction = 0;
+	private boolean noShipping = false;
 
 	private int step = START_STEP;
 
@@ -216,7 +217,7 @@ public class Basket implements Serializable {
 	}
 
 	public double getDelivery(ContentContext ctx, boolean vat) {
-		if (getDeliveryZone() == null || ctx == null) {
+		if (getDeliveryZone() == null || ctx == null || isNoShipping()) {
 			return 0;
 		}
 		DeliveryPrice priceList = null;
@@ -629,6 +630,14 @@ public class Basket implements Serializable {
 
 	public void setUserReduction(double userReduction) {
 		this.userReduction = userReduction;
+	}
+
+	public boolean isNoShipping() {
+		return noShipping;
+	}
+
+	public void setNoShipping(boolean noShipping) {
+		this.noShipping = noShipping;
 	}
 
 }

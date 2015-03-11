@@ -73,7 +73,7 @@ editPreview.initPreview = function() {
 			var compId = pjq(this).data("comp").attr("id").substring(3);
 			var editURL = editPreviewURL + "&comp_id=" + compId;
 			editPreview.openModal(i18n_preview_edit, editURL);			
-			pjq('#preview-layer .delete').on('click', function (e) {				
+			pjq('#preview-layer .btn-delete').on('click', function (e) {				
 				var subComp = pjq(this).parent().parent().data("comp");
 				var compId = subComp.attr("id").substring(3);
 				var ajaxURL = editPreview.addParam(currentURL,"webaction=edit.delete&id=" + compId);
@@ -287,9 +287,33 @@ editPreview.addParam  = function(url, params) {
 	return url;
 }
 
+editPreview.getParam = function(url, name) {
+	if (url.indexOf("?") < 0) {
+		url = '?' + url;
+	}
+	name = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
+	var regexS = "[\\?&]" + name + "=([^&#]*)";
+	var regex = new RegExp(regexS);
+	var results = regex.exec(url);
+	if (results == null)
+		return "";
+	else
+		return results[1];
+}
+
+
 pjq(document).ready(function() {
 	editPreview.initPreview();
 });
+
+pjq(window).load(function() {
+	/** scrol to latest position after refresh **/
+	var scrollTo = editPreview.getParam(window.location.href, "_scrollTo");	
+	if (scrollTo != "") {
+		window.scrollTo(0, scrollTo);
+	}
+});
+
 
 /** ************ */
 /** bootstrap * */
