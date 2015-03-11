@@ -1,0 +1,51 @@
+/* TABS */
+
+
+
+/* ----- Tabs ----- */
+.tabs {
+	overflow:hidden;
+	border-bottom:2px solid #eee;
+}
+.tabs ul {
+	margin:0 0 -2px 0;
+	padding:0;
+	list-style:none;
+	overflow:hidden;
+}
+.tabs ul li {
+	display:block;
+	float:left;
+	margin:0 2px 0 0;
+}
+.tabs ul li a {
+	display:block;
+	float:left;
+	height:36px;
+	line-height:36px;
+	padding:0 10px;
+	border:1px solid #eee;
+	border-bottom:2px solid #eee;
+}
+.tabs ul li a:hover {}
+
+
+
+
+
+/* ----- Fog ----- */
+.frog {
+	padding:20px 0 0 0;
+}
+.frog h1 {}
+.frog h2 {}
+.frog h3 {}
+.frog h4 {}
+.frog p {}
+.frog hr {}
+
+
+
+
+
+
