@@ -1,0 +1,86 @@
+/* EDIT-ZONE */
+
+
+
+/* ----- Edit-Zone ----- */
+body.edit-zone {}
+body.edit-zone .for-info {
+	display:none !important;
+}
+
+
+/* ----- Edit-Zone (Content-Fix) ----- */
+body.edit-zone .for-content {
+	padding-bottom:100px;
+}
+body.edit-zone .for-content > .container {
+	width:100%;
+	min-width:1200px;
+}
+body.edit-zone #content {
+	display:block;
+	padding-left:330px;
+}
+
+
+/* ----- Edit-Zone (Asside) ----- */
+body.edit-zone #asside {
+	display:block;
+}
+
+
+
+
+
+/* ----- Edit-Zone (Main) ----- */
+body.edit-zone #main {
+	display:block;
+}
+
+
+/* ----- Edit-Zone (Page-Title) ----- */
+body.edit-zone .page-title {
+	padding:0 50px 20px 50px;
+	margin:0;
+	position:relative;
+	border-bottom:1px solid rgba(0,0,0, .1);
+	overflow:visible;
+}
+
+body.edit-zone .page-title h1 {
+	margin:0 0 4px 0;
+	padding:0;
+	line-height:1em;
+	font-size:2em;
+}
+body.edit-zone .page-title h3 {
+	margin:0;
+	padding:0;
+	font-size:1.1em;
+	color:#999b98;
+} 
+body.edit-zone .page-title .btn {
+	float:right;
+	margin:8px 0 0 10px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
