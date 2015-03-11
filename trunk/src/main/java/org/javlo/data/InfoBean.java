@@ -355,6 +355,15 @@ public class InfoBean {
 	public String getEditTemplateURL() {
 		return URLHelper.createStaticURL(ctx, ctx.getGlobalContext().getStaticConfig().getEditTemplateFolder());
 	}
+	
+	public String getEditTemplateModeURL() {
+		if (globalContext.getEditTemplateMode() != null && globalContext.getEditTemplateMode().trim().length() > 0) {			
+			String cssLink = URLHelper.mergePath(globalContext.getStaticConfig().getEditTemplateFolder(),"css","edit_"+globalContext.getEditTemplateMode()+".css");			
+			return URLHelper.createStaticURL(ctx, cssLink);
+		} else {
+			return null;
+		}
+	}
 
 	public String getStaticRootURL() {
 		return URLHelper.createStaticURL(ctx, "/");

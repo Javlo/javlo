@@ -143,7 +143,13 @@ request.setAttribute("editUser", ctx.getCurrentEditUser());
 				  <li role="presentation"><a href="#_ep_files" aria-controls="_ep_files" role="tab" data-toggle="tab">Files</a></li>
 				</ul>
 				<div class="tab-content">
-				  <div role="tabpanel" class="tab-pane fade in active" id="_ep_navigation"><jsp:include page="bootstrap/navigation.jsp" /></div>
+				  <div role="tabpanel" class="tab-pane fade in active navigation_panel" id="_ep_navigation">
+				  <c:if test="${contentContext.currentTemplate.mailing}">							
+					<jsp:include page="bootstrap/navigation_mailing.jsp"></jsp:include>
+				  </c:if><c:if test="${!contentContext.currentTemplate.mailing}">							
+					<jsp:include page="bootstrap/navigation.jsp"></jsp:include>
+				   </c:if>
+				  </div>
 				  <div role="tabpanel" class="tab-pane fade" id="_ep_settings"><jsp:include page="bootstrap/settings.jsp" /></div>
 				  <div role="tabpanel" class="tab-pane fade" id="_ep_content"><jsp:include page="bootstrap/component.jsp" /></div>
 				  <div role="tabpanel" class="tab-pane fade" id="_ep_files">files</div>

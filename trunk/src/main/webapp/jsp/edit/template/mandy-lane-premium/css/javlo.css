@@ -12,6 +12,9 @@
 	height: 109px;
 	margin-top: 0;
 }
+.login-page h1 {
+	display: none;
+}
  
 
 /*** general ***/
