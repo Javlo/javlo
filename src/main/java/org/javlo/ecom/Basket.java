@@ -572,6 +572,57 @@ public class Basket implements Serializable {
 			out.println("   " + product);
 		}
 		out.println("");
+		out.println("TOTAL :");
+		out.println("Shiping VAT : "+getDelivery(null, valid));
+		out.println("");
+		out.println("Current Time : " + StringHelper.renderSortableTime(new Date()));
+		out.println("");
+
+		out.close();
+		return new String(outStream.toByteArray());
+	}
+	
+	public String getAdministratorEmail(ContentContext ctx) {
+		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+		PrintStream out = new PrintStream(outStream);
+		out.println("basket");
+		out.println("======");
+		out.println("");
+		out.println("id : " + getId());
+		out.println("user : " + getUser());
+		out.println("Currency : " + getCurrencyCode());
+		out.println("Date : " + StringHelper.renderSortableTime(getDate()));
+		out.println("Step : " + getStep());
+		out.println("Size : " + getSize());
+		out.println("Status : " + getStatus());
+		out.println("");
+		out.println("User:");
+		out.println("  firstName : " + getFirstName());
+		out.println("  lastName : " + getLastName());
+		out.println("  email : " + getContactEmail());
+		out.println("  phone : " + getContactPhone());
+		out.println("  adress : " + getAddress());
+		out.println("  zip : " + getZip());
+		out.println("  city : " + getCity());
+		out.println("  country : " + getCountry());
+		if (getOrganization() != null && getOrganization().trim().length() > 0) {
+			out.println("  Organization : " + getOrganization());
+		}
+		if (getVATNumber() != null && getVATNumber().trim().length() > 0) {
+			out.println("  VAT Number : " + getVATNumber());
+		}
+		out.println("");
+		out.println("Product :");
+		for (ProductBean product : getProductsBean()) {
+			out.println("   " + product);
+		}
+		out.println("");
+		out.println("Shiping VAT : "+getDelivery(ctx, true));
+		out.println("Shiping HVAT : "+getDelivery(ctx, false));
+		out.println("");
+		out.println("Total VAT : "+getTotal(ctx, true));
+		out.println("Total HVAT : "+getTotal(ctx, false));
+		out.println("");
 		out.println("Current Time : " + StringHelper.renderSortableTime(new Date()));
 		out.println("");
 
