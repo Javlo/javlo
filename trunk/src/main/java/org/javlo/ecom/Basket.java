@@ -620,8 +620,8 @@ public class Basket implements Serializable {
 		out.println("Shiping VAT : "+getDelivery(ctx, true));
 		out.println("Shiping HVAT : "+getDelivery(ctx, false));
 		out.println("");
-		out.println("Total VAT : "+getTotal(ctx, true));
-		out.println("Total HVAT : "+getTotal(ctx, false));
+		out.println("Total VAT : "+StringHelper.renderPrice(getTotal(ctx, true), getCurrencyCode()));
+		out.println("Total HVAT : "+StringHelper.renderPrice(getTotal(ctx, false), getCurrencyCode()));
 		out.println("");
 		out.println("Current Time : " + StringHelper.renderSortableTime(new Date()));
 		out.println("");
