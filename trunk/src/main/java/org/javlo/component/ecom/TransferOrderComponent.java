@@ -84,7 +84,7 @@ public class TransferOrderComponent extends AbstractOrderComponent implements IA
 		basket.payAll(ctx);
 		basket.reset(ctx);
 		
-		NetHelper.sendMailToAdministrator(globalContext, "basket confirmed with transfert : "+globalContext.getContextKey(), basket.toString());
+		NetHelper.sendMailToAdministrator(globalContext, "basket confirmed with transfert : "+globalContext.getContextKey(), basket.getAdministratorEmail(ctx));
 		
 		return null;	
 	}
