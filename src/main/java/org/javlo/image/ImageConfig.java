@@ -417,6 +417,16 @@ public class ImageConfig {
 		String key = getKey(device, filter, area, "round-corner");
 		return properties.getBoolean(key, device!=null?isRoundCorner(null, ALL, null):false);
 	}
+	
+	public boolean isHorizontalFlip(Device device, String filter, String area) {
+		String key = getKey(device, filter, area, "horizontal-flip");
+		return properties.getBoolean(key, device!=null?isHorizontalFlip(null, ALL, null):false);
+	}
+	
+	public boolean isVerticalFlip(Device device, String filter, String area) {
+		String key = getKey(device, filter, area, "vertical-flip");
+		return properties.getBoolean(key, device!=null?isVerticalFlip(null, ALL, null):false);
+	}
 
 	public boolean isGrayscale(Device device, String filter, String area) {
 		String key = getKey(device, filter, area, "grayscale");

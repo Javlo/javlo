@@ -156,6 +156,8 @@ public abstract class AbstractOrderComponent extends AbstractVisualComponent {
 			
 			double delivery = basket.getDelivery(ctx,true);			
 			params.put("delivery", Basket.renderPrice(ctx, delivery, basket.getCurrencyCode()));
+			double deliveryHVAT = basket.getDelivery(ctx,false);			
+			params.put("deliveryHVAT", Basket.renderPrice(ctx, deliveryHVAT, basket.getCurrencyCode()));
 			
 			if (basket.getVATNumber() != null && basket.getVATNumber().trim().length() > 0) {
 				params.put("vat",basket.getVATNumber());

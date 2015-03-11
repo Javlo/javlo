@@ -133,7 +133,7 @@ table.table td, table.table th {
 	vertical-align: top;
 }
 
-.global-image.full img, .global-image.banner img {
+.global-image.full img, .global-image.banner img, .global-image.full-flip img, .global-image.banner-flip img {
 	border: 0 none;
 	display: block;
 	width: 100%;

@@ -585,7 +585,7 @@ public class ImageTransformServlet extends HttpServlet {
 
 		if (config.isRoundCorner(ctx.getDevice(), filter, area)) {
 			img = ImageEngine.borderCorner(img, config.getBGColor(ctx.getDevice(), filter, area));
-		}
+		}		
 		if (layer != null) {
 			int mt = config.getMarginTop(ctx.getDevice(), filter, area);
 			int ml = config.getMarginLeft(ctx.getDevice(), filter, area);
@@ -639,6 +639,13 @@ public class ImageTransformServlet extends HttpServlet {
 		/** dashed after resize **/
 		if (config.getDashed(ctx.getDevice(), filter, area) > 1) {
 			img = ImageEngine.dashed(img, config.getDashed(ctx.getDevice(), filter, area));
+		}
+		
+		if (config.isVerticalFlip(ctx.getDevice(), filter, area)) {
+			img = ImageEngine.flip(img, true);
+		}
+		if (config.isHorizontalFlip(ctx.getDevice(), filter, area)) {
+			img = ImageEngine.flip(img, false);
 		}
 
 		// org.javlo.helper.Logger.stepCount("transform",

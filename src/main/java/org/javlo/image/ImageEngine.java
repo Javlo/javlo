@@ -1167,23 +1167,30 @@ public class ImageEngine {
 	    }
 	    raster.setPixels(0, 0, w, h, pixels);
 	}
+	
+	public static BufferedImage flip(BufferedImage image, boolean verticaly) {
+		BufferedImage outImage = new BufferedImage(image.getWidth(), image.getHeight(), image.getType());
+		for (int x = 0; x < image.getWidth(); x+=1) {
+			for (int y = 0; y < image.getHeight(); y+=1) {
+				if (verticaly) {
+					outImage.setRGB(x, image.getHeight()-y-1, image.getRGB(x, y));
+				} else {
+					outImage.setRGB(image.getWidth()-x-1, y, image.getRGB(x, y));
+				}				
+			}
+		}		
+		return outImage;
+	}
 
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		File source = new File("C:/trans/11.jpg");
+		File source = new File("C:/trans/test.jpg");
 		File target = new File("c:/trans/out.png");
 		try {		
 			BufferedImage sourceImage = ImageIO.read(source);
-			//ImageEngine.applySepiaFilter(sourceImage, 100);
-			//sourceImage = (new GrayscaleFilter()).filter(sourceImage, null);
-			//sourceImage = ImageEngine.RBGAdjust(sourceImage, Color.decode("#f9fadb"));
-			ContrastFilter filter = new ContrastFilter();
-			filter.setBrightness((float)0.8);
-			filter.setContrast((float)5);
-			sourceImage = filter.filter(sourceImage, null);
-			applySepiaFilter(sourceImage, 30);
+			sourceImage=flip(sourceImage, false);
 			ImageIO.write(sourceImage, "png", target);
 		} catch (Exception e) {
 			e.printStackTrace();
