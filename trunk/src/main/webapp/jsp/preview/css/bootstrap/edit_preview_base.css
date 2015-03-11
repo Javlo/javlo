@@ -76,6 +76,16 @@ body.edit-preview, body.preview-only {
 	border: 2px #eeeeee dashed;
 }
 
+.drop-zone, ._empty_area.drop-selected {
+	border-radius: 3px 3px 3px 3px;
+	background-color: #aaaaaa;
+	opacity: .30;
+	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=30)";
+	filter: alpha(opacity =       30);
+	-khtml-opacity: 0.30;
+	-moz-opacity: 0.30;
+}
+
 .edit-preview .component-table td.empty .cell-wrapper, .edit-preview .open-col.empty .cell-wrapper {
 	width: auto;
 	text-align: center;
@@ -195,3 +205,4 @@ body.edit-preview, body.preview-only {
 .free-edit-zone.open {
 	display: block;
 }
+

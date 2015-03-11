@@ -55,6 +55,19 @@ editPreview.openModal = function (title, url) {
 	});
 }
 
+editPreview.searchPageId = function(node) {	
+	var parent = pjq(node).parent();	
+	while (parent !== undefined && !parent.hasClass("_page_associate") && parent.prop("tagName") !== undefined) {			
+		parent = pjq(parent).parent();
+	}	
+	if (parent.prop("tagName") !== undefined) {			
+		return pjq(parent).attr("id").replace("page_","");
+	} else {
+		return null;
+	}	
+	return null;
+}
+
 editPreview.initPreview = function() {
 	
   /** prepare preview * */
@@ -78,13 +91,16 @@ editPreview.initPreview = function() {
 				var subComp = pjq(this).parent().parent().data("comp");
 				var compId = subComp.attr("id").substring(3);
 				var ajaxURL = editPreview.addParam(currentURL,"webaction=edit.delete&id=" + compId);
+				if (editPreview.searchPageId(subComp) != null) {					
+					ajaxURL = ajaxURL +'&pageCompID='+ editPreview.searchPageId(subComp);
+				}				
 				editPreview.ajaxPreviewRequest(ajaxURL, null, null);
 				editPreview.layerOver(null);
 				return false;
 			});			
 	    });
 		
-		/** drag and drop layer **/
+		/** drag and drop layer * */
 		var drop = document.querySelectorAll('#preview-layer'), el = null;
 		el = drop[0];	
 		el.addEventListener('dragover', function (event) {
@@ -104,11 +120,16 @@ editPreview.initPreview = function() {
 			event.preventDefault();			
 			var compType = event.dataTransfer.getData("type");			
 			var compId = event.dataTransfer.getData("compId");
-			if (compType != null && compType.length > 0) { // insert new component
+			if (compType != null && compType.length > 0) { // insert new
+															// component
 				var subComp = pjq(this).data("comp");		
 				var previewId = subComp.attr("id").substring(3);		
 				var area = subComp.parent().attr("id");		
-				var ajaxURL = editPreview.addParam(currentURL,"webaction=edit.insert&type=" + compType + "&previous=" + previewId + "&area=" + area+ "&render-mode=3&init=true");
+				var url = "webaction=edit.insert&type=" + compType + "&previous=" + previewId + "&area=" + area+ "&render-mode=3&init=true";
+				if (editPreview.searchPageId(this) != null) {
+					url = url +'&pageContainerID='+ editPreview.searchPageId(this);
+				}		
+				var ajaxURL = editPreview.addParam(currentURL,url);
 				editPreview.ajaxPreviewRequest(ajaxURL, null, null);
 			} else if (compId != null) { // move component
 				var subComp = pjq(this).data("comp");
@@ -121,7 +142,7 @@ editPreview.initPreview = function() {
 		})
 	}	
 
-	/** drag and drop **/	
+	/** drag and drop * */	
 	var drag = document.querySelectorAll('#preview_command .component'), el = null;
 	for (var i = 0; i < drag.length; i++) {
 		el = drag[i];    
@@ -162,34 +183,46 @@ editPreview.initPreview = function() {
 	    });
 	}
 	var drop = document.querySelectorAll('._empty_area'), el = null;
+	console.log("drop.length = "+drop.length);
 	for (var i = 0; i < drop.length; i++) {
-		el = drop[i]; 
-	    el.addEventListener('dragover', function (event) {
-	    	event.preventDefault();
-	    	pjq(this).addClass("drop-selected");
-	    	return false;
-	    });
-	    el.addEventListener('dragleave', function (event) {
-	    	event.preventDefault();
-	    	pjq(this).removeClass("drop-selected");
-	    	return false;
-	    });
-	    el.addEventListener('drop', function (event) {	    	
-	    	var compType = event.dataTransfer.getData("type");			
-			var compId = event.dataTransfer.getData("compId");
-			var area = pjq(this).parent().attr("id");
-			if (compType != null && compType.length > 0) { // insert new component
-				pjq(this).removeClass("drop-selected");
-				var subComp = pjq(this).data("comp");										
-				var ajaxURL = editPreview.addParam(currentURL,"previewEdit=true&webaction=edit.insert&type=" + compType + "&previous=0&area=" + area+ "&render-mode=3&init=true");
-				editPreview.ajaxPreviewRequest(ajaxURL, null);
-			} else if (compId != null) { // move component
-				var subComp = pjq(this).data("comp");										
-				var ajaxURL = editPreview.addParam(currentURL,"previewEdit=true&webaction=edit.moveComponent&comp-id=" + compId + "&previous=0&area=" + area+ "&render-mode=3&init=true");
-				editPreview.ajaxPreviewRequest(ajaxURL, null);
-			}
-			return false;	
-	    });
+		el = drop[i];
+		if (!el.eventsAdded) {
+			el.eventsAdded = true;			
+		    el.addEventListener('dragover', function (event) {
+		    	event.preventDefault();
+		    	pjq(this).addClass("drop-selected");
+		    	return false;
+		    });
+		    el.addEventListener('dragleave', function (event) {
+		    	event.preventDefault();
+		    	pjq(this).removeClass("drop-selected");
+		    	return false;
+		    });	    
+		    el.addEventListener('drop', function (event) {	    	
+		    	var compType = event.dataTransfer.getData("type");	    	
+				var compId = event.dataTransfer.getData("compId");
+				var area = pjq(this).parent().attr("id");
+				if (compType != null && compType.length > 0) { // insert new
+																// component
+					pjq(this).removeClass("drop-selected");
+					var subComp = pjq(this).data("comp");
+					var url = "previewEdit=true&webaction=edit.insert&type=" + compType + "&previous=0&area=" + area+ "&render-mode=3&init=true";
+					if (editPreview.searchPageId(this) != null) {					
+						url = url +'&pageContainerID='+ editPreview.searchPageId(this);
+					}
+					var ajaxURL = editPreview.addParam(currentURL,url);
+					editPreview.ajaxPreviewRequest(ajaxURL, null);
+				} else if (compId != null) { // move component
+					var subComp = pjq(this).data("comp");										
+					var ajaxURL = editPreview.addParam(currentURL,"previewEdit=true&webaction=edit.moveComponent&comp-id=" + compId + "&previous=0&area=" + area+ "&render-mode=3&init=true");				
+					if (editPreview.searchPageId(this) != null) {					
+						ajaxURL = ajaxURL +'&pageContainerID='+ editPreview.searchPageId(this);
+					}
+					editPreview.ajaxPreviewRequest(ajaxURL, null);
+				}
+				return false;	
+		    });
+		}
 	}
 	
 editPreview.reloadPreviewPage = function() {
@@ -237,7 +270,12 @@ editPreview.ajaxPreviewRequest = function(url, doneFunction) {
 				}
 			}
 			jQuery.each(jsonObj.zone, function(xhtmlId, xhtml) {
-				if (xhtmlId.indexOf("#") < 0 && xhtmlId.indexOf("#") < 0 && xhtmlId.indexOf(" ") < 0 ) { // if allready select don't add '#'
+				if (xhtmlId.indexOf("#") < 0 && xhtmlId.indexOf("#") < 0 && xhtmlId.indexOf(" ") < 0 ) { // if
+																											// allready
+																											// select
+																											// don't
+																											// add
+																											// '#'
 					xhtmlId = "#"+xhtmlId;
 				}
 				var item = jQuery(xhtmlId);			
@@ -252,7 +290,12 @@ editPreview.ajaxPreviewRequest = function(url, doneFunction) {
 				}
 			});
 			jQuery.each(jsonObj.insideZone, function(xhtmlId, xhtml) {
-				if (xhtmlId.indexOf("#") < 0 && xhtmlId.indexOf(".") < 0 && xhtmlId.indexOf(" ") < 0 ) { // if allready select don't add '#'				
+				if (xhtmlId.indexOf("#") < 0 && xhtmlId.indexOf(".") < 0 && xhtmlId.indexOf(" ") < 0 ) { // if
+																											// allready
+																											// select
+																											// don't
+																											// add
+																											// '#'
 					xhtmlId = "#"+xhtmlId;
 				}			
 				var item = jQuery(xhtmlId);
@@ -308,7 +351,7 @@ pjq(document).ready(function() {
 });
 
 pjq(window).load(function() {
-	/** scrol to latest position after refresh **/
+	/** scrol to latest position after refresh * */
 	var scrollTo = editPreview.getParam(window.location.href, "_scrollTo");	
 	if (scrollTo != "") {
 		window.scrollTo(0, scrollTo);
