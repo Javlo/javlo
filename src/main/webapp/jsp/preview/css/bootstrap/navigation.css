@@ -1,0 +1,129 @@
+#preview_command .sidebar .tab-content {
+  padding: 20px 0 0;
+}
+    
+#preview_command .pages ul.navigation , #preview_command .pages ul.navigation ul {
+	display: block;
+}
+
+#preview_command .pages ul.navigation li {
+	margin: 0;
+	padding: 0;
+}
+		
+#preview_command .pages ul.navigation {
+	padding: 0;
+}
+    
+#preview_command .pages .articles {
+	margin-top: 20px;
+}
+	
+#preview_command .pages ul {
+	position: relative;
+	margin: 0;
+	padding: 0;
+	padding-bottom: 20px;
+	list-style: none;
+}
+
+#preview_command .pages ul.empty {
+	padding-bottom: 1px;
+}
+
+#preview_command .pages ul:after {
+	position: absolute;
+	left: 54px;
+	top: 0;
+	bottom: 0;
+	width: 1px;
+	content: "";
+	background: rgba(0, 0, 0, .1);
+	z-index: 0;
+}
+
+#preview_command .pages ul.navigation li {
+	position: relative;
+	z-index: 1;
+}
+
+#preview_command .pages ul.navigation ul li {
+	position: relative;	
+	margin: 5px 0 5px 30px;
+}
+
+#preview_command .pages ul.navigation li a, #preview_command .pages ul.navigation li h4 {
+	display: block;
+	margin: 0;
+	padding: 0 10px;
+	height: 30px;
+	line-height: 30px;
+	background-color: #f9f9f9;
+	border-radius: 2px;
+	border-left: 2px solid rgba(0, 0, 0, .1);
+	color: #999b98;
+	font-size: 1em;
+}
+
+#preview_command .pages ul li a span.nr {
+	display: inline-block;
+	width: 24px;
+	height: 24px;
+	line-height: 24px;
+	margin: 0 10px 0 0;
+	text-align: center;
+	color: #999b98;
+	background: #eee;
+	border-radius: 50%;
+}
+
+#preview_command .pages ul li a span.move {
+	display: inline-block;
+	float: right;
+	width: 22px;
+	height: 22px;
+	border-radius: 2px;
+	cursor: move;
+	margin: 4px -6px;
+}
+
+#preview_command .pages ul li.current a {
+	background: #eee;
+	border-left: 2px solid #128bf3;
+	color: #128bf3;
+	font-weight: 700;
+}
+
+#preview_command .pages ul li.current a span.nr {
+	background: #128bf3;
+	border: none;
+	color: #fff;
+}
+
+#preview_command .pages ul li.title {
+	margin: 0 0 20px 0;
+}
+
+#preview_command .pages ul li.title a, #preview_command .pages ul li.title h4 {
+	height: 46px;
+	line-height: 46px;
+	font-weight: 700;
+	background: #eee;
+}
+
+#preview_command .pages ul li.title.current a {
+	border-left: 4px solid #128bf3;
+}
+
+#preview_command .pages ul li.ui-state-highlight {
+	height: 30px;
+	line-height: 30px;
+	border-radius: 2px;
+	margin-left: 0;
+	background: rgba(18, 139, 243, .3);
+}
+
+#preview_command .pages ul li.ui-sortable-helper a {
+	background: #fff;
+	border: 1px solid #128bf3;
+}
