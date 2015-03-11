@@ -12,7 +12,7 @@ editPreview.layerOver = function(item, title) {
 	var insideLayer = pjq("#preview-layer span");	
 	if (item == null) {		
 		layer.css("z-index", -1);
-		layer.css("display", "none");		
+		layer.hide();		
 		layer.data("compType", null);
 		layer.data("sharedContent", null);
 		layer.attr("title", " ");
@@ -28,7 +28,7 @@ editPreview.layerOver = function(item, title) {
 		var comp = pjq(item);
 		
 		layer.css("z-index", 10010);
-		layer.css("display", "block");		
+		layer.show();		
 		
 		layer.css("top", comp.offset().top);
 		layer.css("left", comp.offset().left);
@@ -69,6 +69,7 @@ editPreview.initPreview = function() {
 		pjq("#preview-layer").on('mouseleave', function (event) {	    	
 			editPreview.layerOver(null);
 	    });
+		pjq("#preview-layer").hide();
 		pjq("#preview-layer").on('click', function (event) {
 			var compId = pjq(this).data("comp").attr("id").substring(3);
 			var editURL = editPreviewURL + "&comp_id=" + compId;

@@ -1,4 +1,5 @@
 @import url("edit_preview_base.css");
+@import url("navigation.css");
 @import url("../../../../css/bootstrap-3.3.2/less/bootstrap_preview.css");
 
 html {
@@ -185,7 +186,7 @@ html {
 	font-size: 16px;
 }
 
-#preview_command h2 .glyphicon, #preview_command .header .glyphicon {
+#preview_command h2 .glyphicon, #preview_command .header .glyphicon, #preview_command button .glyphicon {
 	margin-right: 3px;
 }
 

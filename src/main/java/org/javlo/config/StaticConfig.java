@@ -1274,6 +1274,10 @@ public class StaticConfig extends Observable {
 		return properties.getString("platform.type", WEB_PLATFORM);
 	}
 	
+	public String getPlatformTitle() {
+		return properties.getString("platform.title", "Javlo");
+	}
+	
 	public String get404PageName() {
 		return properties.getString("404-name", "404");
 	}
