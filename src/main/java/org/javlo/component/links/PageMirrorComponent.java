@@ -164,6 +164,7 @@ public class PageMirrorComponent extends AbstractVisualComponent implements IIma
 					ctx.setPath(page.getPath());
 					RequestService rs = RequestService.getInstance(ctx.getRequest());					
 					rs.setParameter(NOT_EDIT_PREVIEW_PARAM_NAME, "true");
+					rs.setParameter(CACHE_KEY_SUFFIX_PARAM_NAME, getPage().getId());
 					String param = Edit.CONTENT_RENDERER + '?' + NOT_EDIT_PREVIEW_PARAM_NAME + "=true";
 					String xhtml = executeJSP(ctx, param);
 					rs.setParameter(NOT_EDIT_PREVIEW_PARAM_NAME, "false");

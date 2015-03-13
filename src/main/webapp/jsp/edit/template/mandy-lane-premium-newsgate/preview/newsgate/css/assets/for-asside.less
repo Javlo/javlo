@@ -75,6 +75,82 @@
 		height: 1px;
 		background: rgba(0, 0, 0, .1);
 	}
+	
+	div.drop-files {
+		box-shadow: none;
+		padding: 5px 10px 10px 10px;
+		margin-top: -10px;
+		border-radius: 2px;
+		background: #f9f9f9;
+		margin-bottom: 15px;
+		border: 0 none;
+		border-bottom: 2px solid rgba(0, 0, 0, .05);
+	}
+
+	.drop-files > h3 {
+		font-size: 15px;
+		text-align: center;
+		margin: 0 0 5px 0;
+		color: #000000;
+	}
+
+	.drop-files .upload-zone {
+		border-color: #fff;
+		background: url(../../img/bg/icon-drop-asside.png) no-repeat center top;
+	}
+
+	.drop-files .upload-zone:hover {
+		background-position: center bottom;
+	}
+	/* ----- Drop-Files ----- */
+	
+	.drop-files {
+		background:rgba(18,139,243, .3);
+		box-shadow:1px 2px 3px rgba(0,0,0, .15);
+	}
+	.drop-files.hide,
+	.drop-files.disable {
+		display:none;
+	}
+	.drop-files .head {
+		display:block;
+		padding:15px 20px;
+		position:relative;
+	}
+	.drop-files .head:after {
+		position:absolute;
+		right:20px;
+		top:50%;
+		margin-top:-10px;
+		width:20px;
+		height:20px;
+		border-radius:50%;
+		content:"";
+		background:#128bf3 url(../../img/bg/icon-plusminus.png) no-repeat 0 0;
+	}
+	.drop-files .head:hover {
+		background:#128bf3;
+		cursor:pointer;
+	}
+	.drop-files .head h3 {
+		color:#128bf3;		
+	}	
+	.drop-files .upload-zone {
+		display:block;
+		margin:0;
+		padding:0 10px;
+		height:54px;
+		border:2px dotted rgba(255,255,255, .3);
+		border-radius:2px;		
+	}
+	.drop-files .upload-zone .glyphicon {
+		display: none;
+	}
+	.drop-files .upload-zone:hover {
+		box-shadow:0 0 5px rgba(0,0,0, .1);
+		border:2px dotted rgba(255,255,255, .5);
+		background-position:center bottom;
+	}
 }
 
 #tabs-edit .frog {
@@ -580,29 +656,3 @@
 	background: #fff;
 	border: 1px solid #128bf3;
 }
-
-#asside #drop-files {
-	box-shadow: none;
-	padding: 5px 10px 10px 10px;
-	margin-top: -10px;
-	border-radius: 2px;
-	background: #f9f9f9;
-	margin-bottom: 15px;
-	border-bottom: 2px solid rgba(0, 0, 0, .05);
-}
-
-#asside #drop-files > h3 {
-	font-size: 1.1em;
-	text-align: center;
-	margin: 0 0 5px 0;
-}
-
-#asside #drop-files #upload-zone {
-	border-color: #fff;
-	background: url(../../img/bg/icon-drop-asside.png) no-repeat center top;
-}
-
-#asside #drop-files #upload-zone:hover {
-	background-position: center bottom;
-}
-
