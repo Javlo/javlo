@@ -247,27 +247,24 @@ editPreview.initPreview = function() {
 				var compId = event.dataTransfer.getData("compId");
 				var area = pjq(this).parent().attr("id");
 				var sharedId = event.dataTransfer.getData("shared");
-				if (sharedId != null && sharedId.length > 0) {					
-					var subComp = pjq(this).data("comp");
+				if (sharedId != null && sharedId.length > 0) {									
 					var previewId = "0";					
 					var ajaxURL = editPreview.addParam(currentURL, "webaction=edit.insertShared&sharedContent="
 					+ sharedId + "&previous=" + previewId
-					+ "&area=" + area+ "&render-mode=3&init=true");
-					if (editPreview.searchPageId(subComp) != null) {
-						ajaxURL = ajaxURL +'&pageContainerID='+ editPreview.searchPageId(subComp);
+					+ "&area=" + area+ "&render-mode=3&init=true");				
+					if (editPreview.searchPageId(this) != null) {
+						ajaxURL = ajaxURL +'&pageContainerID='+ editPreview.searchPageId(this);
 					}
 					editPreview.ajaxPreviewRequest(ajaxURL, null);
 				} else if (compType != null && compType.length > 0) {
-					pjq(this).removeClass("drop-selected");
-					var subComp = pjq(this).data("comp");
+					pjq(this).removeClass("drop-selected");					
 					var url = "previewEdit=true&webaction=edit.insert&type=" + compType + "&previous=0&area=" + area+ "&render-mode=3&init=true";
 					if (editPreview.searchPageId(this) != null) {					
 						url = url +'&pageContainerID='+ editPreview.searchPageId(this);
 					}
 					var ajaxURL = editPreview.addParam(currentURL,url);					
 					editPreview.ajaxPreviewRequest(ajaxURL, null);
-				} else if (compId != null) { // move component
-					var subComp = pjq(this).data("comp");										
+				} else if (compId != null) { // move component															
 					var ajaxURL = editPreview.addParam(currentURL,"previewEdit=true&webaction=edit.moveComponent&comp-id=" + compId + "&previous=0&area=" + area+ "&render-mode=3&init=true");				
 					if (editPreview.searchPageId(this) != null) {					
 						ajaxURL = ajaxURL +'&pageContainerID='+ editPreview.searchPageId(this);
