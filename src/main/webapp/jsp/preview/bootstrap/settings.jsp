@@ -17,7 +17,6 @@ editCtx.setRenderMode(ContentContext.EDIT_MODE);
   <div class="value">${info.templateName}</div>
   <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
 </button>
-
 <c:if test="${!contentContext.currentTemplate.mailing || !userInterface.light}">
 	<c:url var="url" value="<%=URLHelper.createURL(editCtx)%>" context="/">
 		<c:param name="module" value="content" />

@@ -191,7 +191,7 @@ public class CreateArticleComposition extends AbstractInteractiveMacro implement
 								/* copy article */
 								MenuElement articlePage = MacroHelper.addPageIfNotExist(ctx, newPage.getName(), newPage.getName() + "-article", false);
 								articlePage.setSharedName(articlePage.getName());
-								articlePage.setTemplateName(config.getProperty("template.article", "mailing_one_area"));
+								articlePage.setTemplateName(config.getProperty("template.article", "basic"));
 								MacroHelper.addContent(ctx.getRequestContentLanguage(), articlePage, "0", Title.TYPE, "Articles", ctx.getCurrentEditUser());
 								for (ComponentBean bean : newChild.getContent()) {
 									if (bean.getType().equals(PageMirrorComponent.TYPE)) {

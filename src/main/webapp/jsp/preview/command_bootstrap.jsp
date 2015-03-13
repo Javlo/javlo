@@ -35,7 +35,7 @@ if (!rightOnPage) {
 	accessType = "button";
 }
 request.setAttribute("editUser", ctx.getCurrentEditUser());
-%><div id="preview_command" lang="${info.editLanguage}" class="edit-${not empty editUser} ${editPreview == 'true'?'edit':'preview'}">
+%><c:set var="pdf" value="${info.device.code == 'pdf'}" /><div id="preview_command" lang="${info.editLanguage}" class="edit-${not empty editUser} ${editPreview == 'true'?'edit':'preview'}">
 	<script type="text/javascript">	
 		var i18n_preview_edit = "${i18n.edit['component.preview-edit']}";	
 		var i18n_first_component = "${i18n.edit['component.insert.first']}";
@@ -48,7 +48,7 @@ request.setAttribute("editUser", ctx.getCurrentEditUser());
       				<a class="navbar-brand" href="#">Javlo</a>
     			</div>
 			</div>			
-			<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+			<div class="collapse navbar-collapse">
       			<ul class="nav navbar-nav">
       				<li${info.page.root?' class="active"':''}><a title="home" href="<%=URLHelper.createURL(ctx,"/")%>"><span aria-hidden="true" class="glyphicon glyphicon-home" aria-hidden="true"></span></a></li>
       				<c:if test="${not empty editUser}">        			
@@ -63,7 +63,7 @@ request.setAttribute("editUser", ctx.getCurrentEditUser());
 							</c:if><c:if test="${info.page.root}">
 							<button type="button" onclick="if (!confirm('${i18n.edit['menu.confirm-page']}')) return false;" disabled="disabled">
 								${i18n.edit['menu.delete']}
-							</button>							
+							</button>
 							</c:if>
 						</div>
 					</form></li>
@@ -78,8 +78,8 @@ request.setAttribute("editUser", ctx.getCurrentEditUser());
         		</ul>
         	</div>
 		</nav>
-		<nav class="navbar navbar-default navbar-right">  						
-			<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+		<nav class="navbar navbar-default navbar-right">
+			<div class="collapse navbar-collapse">
       			<ul class="nav navbar-nav">
       				<li><c:if test="${globalContext.previewMode}"><form id="pc_form" action="${info.currentURL}" method="post">						
 						<div class="pc_line">
@@ -97,7 +97,39 @@ request.setAttribute("editUser", ctx.getCurrentEditUser());
 						<a href="${info.currentViewURL}" target="_blank"><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>${i18n.edit['preview.label.not-edit-page']}</a>
 						</div>
 					</c:if>					
-					</li>      				
+					</li>
+					<c:if test="${!pdf}"><li>
+					<c:url var="url" value="<%=URLHelper.createURL(editCtx)%>" context="/">	
+						<c:param name="module" value="mailing"></c:param>
+						<c:param name="previewEdit" value="true"></c:param>
+					</c:url>					
+					<form>					
+					<button id="pc_mailing" type="<%=accessType%>" value="${i18n.edit['preview.label.mailing']}" onclick="editPreview.openModal('${i18n.edit['preview.label.mailing']}','${url}'); return false;">
+						${i18n.edit['preview.label.mailing']}
+					</button>
+					</form>							
+					</li></c:if>
+					<c:if test="${pdf}"><li>
+					<li><form id="export_pdf_page_form" action="${info.currentPDFURL}" method="post" target="_blanck">						
+						<button id="export_pdf_button" type="submit" value="${i18n.edit['preview.label.pdf']}">${i18n.edit['preview.label.pdf']}</button>
+					</form></li>
+					</c:if>	   
+					<c:if test="${fn:length(contentContext.deviceNames)>1}">
+					<li class="renderers"><form id="renderers_form" action="${info.currentURL}" method="get">
+						<div class="pc_line">
+							<c:url var="url" value="${info.currentURL}" context="/">
+								<c:param name="${info.staticData.forceDeviceParameterName}" value=""></c:param>
+							</c:url>							
+							<select class="form-control" id="renderers_button" onchange="window.location='${url}'+pjq('#renderers_button option:selected').val();" data-toggle="tooltip" data-placement="left" title="${i18n.edit['command.renderers']}">
+								<c:forEach var="renderer" items="${contentContext.deviceNames}">
+									<c:url var="url" value="${info.currentURL}" context="/">
+										<c:param name="${info.staticData.forceDeviceParameterName}" value="${renderer}"></c:param>
+									</c:url>									 
+									<option${info.device.code eq renderer?' selected="selected"':''}>${renderer}</option>
+								</c:forEach>
+							</select>
+						</div>
+					</form></li></c:if>   				
       				<c:if test="${globalContext.previewMode}"><li class="publish"><form id="pc_publish_form" action="${info.currentURL}" method="post">						
 						<input type="hidden" name="webaction" value="edit.publish" />						
 						<button type="submit">
@@ -122,7 +154,7 @@ request.setAttribute("editUser", ctx.getCurrentEditUser());
 			<div class="panel panel-default">
 			<div class="panel-heading">${i18n.edit['login.authentification']}</div>
 			<div class="panel-body">
-				<form method="post" action="<%=URLHelper.createURL(ctx, "/") %>" id="_ep_login">
+				<form method="post" action="${info.currentURL}" id="_ep_login">
 			    	<div class="form-group">
 		    			<input type="hidden" name="login-type" value="adminlogin">
 		    			<input type="hidden" name="edit-login" value="edit-login">    		    		
@@ -152,7 +184,7 @@ request.setAttribute("editUser", ctx.getCurrentEditUser());
 				  </div>
 				  <div role="tabpanel" class="tab-pane fade" id="_ep_settings"><jsp:include page="bootstrap/settings.jsp" /></div>
 				  <div role="tabpanel" class="tab-pane fade" id="_ep_content"><jsp:include page="bootstrap/component.jsp" /></div>
-				  <div role="tabpanel" class="tab-pane fade" id="_ep_files">files</div>
+				  <div role="tabpanel" class="tab-pane fade" id="_ep_files"><jsp:include page="bootstrap/shared_content.jsp" /></div>
 				</div>
 			</div>
 			</c:if>
