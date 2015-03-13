@@ -58,7 +58,7 @@ import org.javlo.service.NotificationService.NotificationContainer;
 import org.javlo.service.PersistenceService;
 import org.javlo.service.RequestService;
 import org.javlo.service.shared.ISharedContentProvider;
-import org.javlo.service.shared.LocalImageSharedContentProvider;
+import org.javlo.service.shared.ImportedImageSharedContentProvider;
 import org.javlo.service.shared.SharedContentContext;
 import org.javlo.service.shared.SharedContentService;
 import org.javlo.servlet.IVersion;
@@ -412,7 +412,7 @@ public class DataAction implements IAction {
 		// Calendar cal = Calendar.getInstance();
 		// String importFolder = "" + (cal.get(Calendar.MONTH) + 1) + '_' +
 		// cal.get(Calendar.YEAR);
-		String importFolder = StringHelper.createFileName(ctx.getCurrentPage().getTitle(ctx.getContextForDefaultLanguage()));
+		String importFolder = StringHelper.createFileName(ctx.getCurrentPage().getTitle(ctx.getContextForDefaultLanguage()));		
 		importFolder = StringHelper.trimOn(importFolder.trim(), "_");
 		importFolder = importFolder.replace('-', '_');
 		int countImages = 0;
@@ -508,7 +508,7 @@ public class DataAction implements IAction {
 			}
 			if (!config.isCreateContentOnImportImage()) {
 				SharedContentContext sharedContentContext = SharedContentContext.getInstance(ctx.getRequest().getSession());
-				sharedContentContext.setProvider(LocalImageSharedContentProvider.NAME);
+				sharedContentContext.setProvider(ImportedImageSharedContentProvider.NAME);
 				SharedContentService.getInstance(ctx).clearCache();
 				ISharedContentProvider provider = SharedContentService.getInstance(ctx).getProvider(ctx, sharedContentContext.getProvider());
 				provider.refresh(ctx);

@@ -65,8 +65,7 @@ public class LocalImageSharedContentProvider extends AbstractSharedContentProvid
 				String imageURL = image.getPreviewURL(ctx, "shared-preview");
 				sharedContent.setTitle(imageFile.getName());				
 				sharedContent.setDescription(staticInfo.getTitle(ctx));
-				sharedContent.setImageUrl(imageURL);
-				
+				sharedContent.setImageUrl(imageURL);				
 				if (!getCategories(ctx).containsKey(category)) {
 					getCategories(ctx).put(category, category);
 				}
@@ -77,24 +76,27 @@ public class LocalImageSharedContentProvider extends AbstractSharedContentProvid
 		return content;
 	}
 	
+	protected boolean isCategoryAccepted(ContentContext ctx, String category, MenuElement cp, Template template) {
+		if ( !category.startsWith(template.getImportFolder()) && !category.startsWith(template.getImportImageFolder()) && !category.startsWith(template.getImportGalleryFolder()) && !category.startsWith(template.getImportResourceFolder())) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
 	@Override
 	public Map<String, String> getCategories(ContentContext ctx) {
 		Map<String, String> outCategories = new HashMap<String, String>();
 		MenuElement cp;
 		try {
-			cp = ctx.getCurrentPage();
-			String parentName = cp.getName();
+			cp = ctx.getCurrentPage();			
 			Template template = ctx.getCurrentTemplate();
-			if (cp.getParent() != null) {
-				parentName = cp.getParent().getName();
-			}				
 			for (String category : categories.keySet()) {
 				String catKey = category;
 				category = '/'+category;		
-				//if (category.contains(cp.getName()) || category.contains(parentName) || !category.startsWith(template.getImportFolder()) && !category.startsWith(template.getImportImageFolder()) && !category.startsWith(template.getImportGalleryFolder()) && !category.startsWith(template.getImportResourceFolder())) {
-				//if (category.contains(cp.getName()) || category.contains(parentName)) {
+				if (isCategoryAccepted(ctx, category, cp, template)) {
 					outCategories.put(catKey, catKey);
-				//}
+				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

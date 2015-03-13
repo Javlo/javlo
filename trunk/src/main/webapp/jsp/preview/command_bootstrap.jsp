@@ -46,6 +46,7 @@ request.setAttribute("editUser", ctx.getCurrentEditUser());
   			<div class="container-fluid">    
     			<div class="navbar-header">      				
       				<a class="navbar-brand" href="#">Javlo</a>
+      				<img class="ajax-loading" src="${info.ajaxLoaderURL}" alt="loading..." lang="en" />
     			</div>
 			</div>			
 			<div class="collapse navbar-collapse">
