@@ -35,8 +35,7 @@ if (!rightOnPage) {
 	accessType = "button";
 }
 request.setAttribute("editUser", ctx.getCurrentEditUser());
-%>
-<div id="preview_command" lang="${info.editLanguage}" class="edit-${not empty editUser} ${editPreview == 'true'?'edit':'preview'}">
+%><div id="preview_command" lang="${info.editLanguage}" class="edit-${not empty editUser} ${editPreview == 'true'?'edit':'preview'}">
 	<div class="pc_header"><span class="title">${i18n.edit["preview.command"]}</span>
 	<c:url var="url" value="<%=URLHelper.createURL(returnEditCtx)%>" context="/">
 		<c:param name="module" value="content" />
@@ -101,8 +100,7 @@ request.setAttribute("editUser", ctx.getCurrentEditUser());
 						<div class="pc_line">
 							<c:url var="url" value="${info.currentURL}" context="/">
 								<c:param name="${info.staticData.forceDeviceParameterName}" value=""></c:param>
-							</c:url>
-							<!-- <select id="renderers_button" onchange="jQuery('#renderers_form').attr('action','${url}'+jQuery('#renderers_button option:selected').val()); console.log('lg='+jQuery('#renderers_form').attr('action')); jQuery('#renderers_form').submit();"> -->
+							</c:url>							
 							<select id="renderers_button" onchange="window.location='${url}'+jQuery('#renderers_button option:selected').val();">
 								<c:forEach var="renderer" items="${contentContext.deviceNames}">
 									<c:url var="url" value="${info.currentURL}" context="/">

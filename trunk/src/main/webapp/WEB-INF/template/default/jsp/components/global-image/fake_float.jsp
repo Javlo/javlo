@@ -29,6 +29,9 @@
 <c:if test="${contentContext.asPreviewMode && comp.textAuto}">
 <div class="source" style="display: none;"><span class="container">${label}</span></div>
 <script type="text/javascript">
+if (pjq) {
+	jQuery = pjq;
+}
 jQuery("#comp-${compid} img").load(function() {
 	if (jQuery(this).attr("src") != "${info.ajaxLoaderURL}" && !jQuery(this).hasClass("refreshed") && jQuery(this).attr("src").indexOf("/transform/")>=0) {
 		floatZone("#comp-${compid} .source .container", "#comp-${compid} .zone1 .container", "#comp-${compid} .zone2 .container", "#comp-${compid} img");

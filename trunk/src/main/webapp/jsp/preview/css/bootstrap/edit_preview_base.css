@@ -39,6 +39,10 @@
 	display: inline;
 }
 
+/*#preview_command .height-to-bottom, #preview_command .height-to-bottom::before, #preview_command .height-to-botton::after {
+	box-sizing: content-box;
+}*/
+
 body.edit-preview, body.preview-only {
 	min-height: 700px;
 }

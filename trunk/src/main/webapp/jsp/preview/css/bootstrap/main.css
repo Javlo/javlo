@@ -49,6 +49,11 @@ html {
 	box-shadow: 0 3px 3px #333333;
 }
 
+#preview_command .height-to-bottom {
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
 #preview_command .sidebar ul {
 	display: table;
 }
@@ -64,7 +69,6 @@ html {
 #preview_command .tabpanel {
 	overflow: auto;
 }
-
 
 #preview_command .navigation .current a {
 	font-weight: bold;
@@ -95,9 +99,10 @@ html {
 	padding: 0;
 	width: 50%;		
 	float: left;
+	color: #3b3b3b;
 }
 
-#preview_command .component-list .component span {
+#preview_command .component-list .component .wrapper-in {
 	display: block;
 	margin: 10px;
 	background-color: #eeeeee;
@@ -106,6 +111,12 @@ html {
 	color: #aaaaaa;
 	text-align: center;
 	font-weight: bold;
+}
+
+#preview_command .component-list .component .wrapper-in .category {
+	text-align: center;
+	color: #999b98;
+	font-size: 0.7em;
 }
 
 #preview_command .component-list .component span:hover {
@@ -219,6 +230,16 @@ html {
 	overflow: hidden;
 }
 
+#preview_command .thumbnail img {
+	width: 100%;
+}
+
+#preview_command .thumbnail .caption {
+	overflow: hidden;
+	max-height: 90px;
+	font-size: 0.8em;
+}
+
 #preview-layer {
 	border: 1px #337ab7 solid;
 	cursor: pointer;
@@ -247,7 +268,8 @@ html {
 #preview-layer .commands button {	
 	background-color: #337ab7;
 	border-color: #337ab7;
-	color: #ffffff;	
+	color: #ffffff;
+	z-index: 1;	
 }
 
 #preview-layer.nocommand .commands {
@@ -260,6 +282,12 @@ html {
 	color: #ffffff;	
 }
 
+#preview-layer .tab-pane {	
+	height: 100%;
+	overflow: auto;
+	
+}
+
 .free-edit-zone.open {
 	display: block;
 	height: 20px;
@@ -269,4 +297,13 @@ html {
 	text-align: center;
 	padding-top: 4px;
 	font-size: 11px;
+}
+
+#preview_command .thumbnail {
+	cursor: pointer;
+}
+
+#preview_command .thumbnail:hover {
+	border-color: #337ab7;
+	background-color: #eeeeee;
 }

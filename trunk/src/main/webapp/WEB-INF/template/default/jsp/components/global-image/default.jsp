@@ -31,6 +31,9 @@
 
 <c:if test="${contentContext.asPreviewMode && filter != 'raw'}">
 <script type="text/javascript">
+if (pjq) {
+	jQuery = pjq;
+}
 jQuery("#${imageId}").attr("src", "${previewURL}");
 jQuery("#${imageId}").load(function() {	
 	if (jQuery(this).src != "${info.ajaxLoaderURL}" && !jQuery(this).hasClass("refreshed") && jQuery(this).attr("src").indexOf("/transform/")>=0) {		
