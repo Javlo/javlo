@@ -76,7 +76,7 @@ public abstract class AbstractSharedContentProvider implements ISharedContentPro
 
 	@Override
 	public Collection<SharedContent> getContent(ContentContext ctx, Collection<String> categories) {
-		if (getCategories(ctx).size() <= 1 || categories == null || categories.size() == 0) {
+		if (getCategories(ctx).size() <= 0 || categories == null || categories.size() == 0) {			
 			return getContent(ctx);
 		}
 		List<SharedContent> outList = new LinkedList<SharedContent>();

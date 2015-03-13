@@ -2,7 +2,7 @@
 %><%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"
 %><div class="well drop-files">
 	<h3>${i18n.edit['preview.upload-here']}</h3>	
-	<div class="upload-zone"><span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span></div>
+	<div class="upload-zone" data-url="${info.uploadURL}"><span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span></div>
 </div><c:if test="${not empty provider && provider.search}">
 <form id="shared-content-search-form" class="ajax" action="${info.currentURL}" method="post">
 <div>
@@ -27,9 +27,9 @@
 				<option value="${provider.name}" ${sharedContentContext.provider eq provider.name?'selected="selected"':''}>${i18n.edit[key]}</option>
 			</c:forEach>
 		</select>
-		</div>
+		</div>		
 		<c:if test="${fn:length(sharedContentCategories)>0}">
-		 <div class="form-group">
+		<div class="form-group">
 		<select name="category" class="form-control">
 			<c:forEach var="category" items="${sharedContentCategories}">
 				<option ${currentCategory eq category.key?'selected="selected"':''} value="${category.key}">${category.value}</option>

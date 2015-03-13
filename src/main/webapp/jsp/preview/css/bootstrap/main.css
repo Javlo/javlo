@@ -40,6 +40,25 @@ html {
 	padding: 15px;
 }
 
+#preview_command .ajax-loading {
+	display: none;
+}
+
+._preview_ajax-loading #preview_command .ajax-loading {
+	display: block;
+	height: 30px;
+	margin: 10px 0 0 20px;
+}
+
+._preview_ajax-loading #preview_command .header .navbar-brand {
+	display: none;
+} 
+
+._preview_ajax-loading #preview_command .header .navbar-header {
+	background-image: none;
+}
+
+
 #preview_command .header a .glyphicon {
 	margin-top: 2px;
 }
