@@ -83,6 +83,8 @@ import org.javlo.utils.SuffixPrefix;
 public abstract class AbstractVisualComponent implements IContentVisualComponent {
 
 	public static final String NOT_EDIT_PREVIEW_PARAM_NAME = "_not_edit_preview";
+	
+	public static final String CACHE_KEY_SUFFIX_PARAM_NAME = "_cache_key_suffix";
 
 	public static Logger logger = Logger.getLogger(AbstractVisualComponent.class.getName());
 
@@ -370,6 +372,10 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			e.printStackTrace();
 		}
 		String keySuffix = ctx.getGlobalContext().getContextKey() + '-' + ctx.getLanguage() + '-' + ctx.getRequestContentLanguage() + '-' + ctx.getRenderMode() + '-' + templateId + '-' + pageId;
+		RequestService requestService = RequestService.getInstance(ctx.getRequest());
+		if (requestService.getParameter(CACHE_KEY_SUFFIX_PARAM_NAME, null) != null) {
+			keySuffix = keySuffix+'-'+requestService.getParameter(CACHE_KEY_SUFFIX_PARAM_NAME, null);
+		}
 
 		if (isContentCachableByQuery(ctx)) {
 			keySuffix = keySuffix + '_' + ctx.getRequest().getQueryString();
@@ -1607,8 +1613,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	public void prepareView(ContentContext ctx) throws Exception {
 		if (logger.isLoggable(Level.FINE)) {
 			logger.fine("load : " + getType() + " on : " + URLHelper.createURL(ctx));
-		}
-		
+		}		
 		ctx.getRequest().setAttribute("comp", this);
 		ctx.getRequest().setAttribute("style", getStyle());
 		ctx.getRequest().setAttribute("value", getValue());
