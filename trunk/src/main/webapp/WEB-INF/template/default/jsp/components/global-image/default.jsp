@@ -31,19 +31,19 @@
 
 <c:if test="${contentContext.asPreviewMode && filter != 'raw'}">
 <script type="text/javascript">
-if (pjq) {
-	jQuery = pjq;
-}
-jQuery("#${imageId}").attr("src", "${previewURL}");
-jQuery("#${imageId}").load(function() {	
-	if (jQuery(this).src != "${info.ajaxLoaderURL}" && !jQuery(this).hasClass("refreshed") && jQuery(this).attr("src").indexOf("/transform/")>=0) {		
-		jQuery.post( "${info.currentAjaxURL}", { webaction: "global-image.dataFeedBack", compid: "${compid}", height: jQuery("#${imageId}").height(), width: jQuery("#${imageId}").width()}, {dataType: "json"}).done(function(data) {
-			jQuery("#${imageId}").addClass("refreshed");
-			if (typeof data.data != "undefined") {
-				jQuery("#${imageId}").attr("src", data.data.previewURL);
-			}
-		});
-	}
-});
++function($) {
+	var img = $("#${imageId}");
+	img.attr("src", "${previewURL}");
+	img.load(function() {	
+		if (img.src != "${info.ajaxLoaderURL}" && !img.hasClass("refreshed") && img.attr("src").indexOf("/transform/")>=0) {		
+			$.post( "${info.currentAjaxURL}", { webaction: "global-image.dataFeedBack", compid: "${compid}", height: img.height(), width: img.width()}, {dataType: "json"}).done(function(data) {
+				img.addClass("refreshed");
+				if (typeof data.data != "undefined") {
+					img.attr("src", data.data.previewURL);
+				}
+			});
+		}
+	});
+}(pjq);
 </script>
 </c:if>
