@@ -20,6 +20,7 @@ import org.javlo.config.StaticConfig;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
+import org.javlo.io.TransactionFile;
 
 /**
  * this class is used for cache transformation of a file. The transformation is is identified from a key.
@@ -188,6 +189,19 @@ public class FileCache {
 		}
 		OutputStream out = new FileOutputStream(file);
 		return out;
+	}
+
+	public TransactionFile saveFileTransactional(String key, String fileName) throws IOException {
+		File file = getFileName(key, fileName);
+		if (!file.exists()) {
+			try {
+				file.getParentFile().mkdirs();
+			} catch (Exception e) {
+				logger.warning("error on create file : " + file);
+				throw new IOException(e);
+			}
+		}
+		return new TransactionFile(file);
 	}
 
 	/**

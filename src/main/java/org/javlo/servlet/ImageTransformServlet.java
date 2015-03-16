@@ -44,6 +44,7 @@ import org.javlo.helper.URLHelper;
 import org.javlo.image.ImageConfig;
 import org.javlo.image.ImageEngine;
 import org.javlo.image.ImageHelper;
+import org.javlo.io.TransactionFile;
 import org.javlo.rendering.Device;
 import org.javlo.service.ContentService;
 import org.javlo.template.Template;
@@ -662,7 +663,8 @@ public class ImageTransformServlet extends HttpServlet {
 			}
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 			String dir = ImageHelper.createSpecialDirectory(ctx, globalContext.getContextKey(), filter, area, deviceCode, template, comp);
-			OutputStream outImage = fc.saveFile(dir, imageName);
+			TransactionFile transFile = fc.saveFileTransactional(dir, imageName);
+			OutputStream outImage = transFile.getOutputStream();
 
 			try {
 				logger.info("write image : " + imageType + " width: " + img.getWidth() + " height: " + img.getHeight());
@@ -681,8 +683,8 @@ public class ImageTransformServlet extends HttpServlet {
 				}
 			} finally {
 				outImage.close();
+				transFile.commit();
 			}
-
 		}
 
 	}

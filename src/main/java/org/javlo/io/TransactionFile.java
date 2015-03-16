@@ -4,8 +4,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.logging.Logger;
 
 import org.apache.commons.io.FileUtils;
@@ -47,21 +45,27 @@ public class TransactionFile {
 		try {
 			try {
 				out.close();
-				FileUtils.moveFile(targetFile, tempTargetFile);
+				if (targetFile.exists()) {
+					FileUtils.moveFile(targetFile, tempTargetFile);
+				}
 				FileUtils.moveFile(tempFile, targetFile);
 				tempFile = null;
-				tempTargetFile.delete();
 			} catch (IOException e) {
-				try {
-					FileUtils.moveFile(tempTargetFile, targetFile);
-				} catch (IOException e1) {				
-					e1.printStackTrace();
+				if (tempTargetFile.exists()) {
+					try {
+						FileUtils.moveFile(tempTargetFile, targetFile);
+					} catch (IOException e1) {
+						e1.printStackTrace();
+					}
 				}
 				e.printStackTrace();
 			}
 		} finally {
 			if (tempFile != null) {
 				tempFile.delete();
+			}
+			if (tempTargetFile.exists()) {
+				tempTargetFile.delete();
 			}
 		}
 	}

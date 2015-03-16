@@ -35,9 +35,11 @@
 	var img = $("#${imageId}");
 	img.attr("src", "${previewURL}");
 	img.load(function() {	
-		if (img.src != "${info.ajaxLoaderURL}" && !img.hasClass("refreshed") && img.attr("src").indexOf("/transform/")>=0) {		
+		if (img.src != "${info.ajaxLoaderURL}" && !img.hasClass("refreshing") && !img.hasClass("refreshed") && img.attr("src").indexOf("/transform/")>=0) {		
+			img.addClass("refreshing");
 			$.post( "${info.currentAjaxURL}", { webaction: "global-image.dataFeedBack", compid: "${compid}", height: img.height(), width: img.width()}, {dataType: "json"}).done(function(data) {
 				img.addClass("refreshed");
+				img.removeClass("refreshing");
 				if (typeof data.data != "undefined") {
 					img.attr("src", data.data.previewURL);
 				}
