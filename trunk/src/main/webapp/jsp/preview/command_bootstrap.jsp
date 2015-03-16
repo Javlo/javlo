@@ -50,12 +50,15 @@ request.setAttribute("editUser", ctx.getCurrentEditUser());
     			</div>
 			</div>			
 			<div class="collapse navbar-collapse">
-      			<ul class="nav navbar-nav">
-      				<li${info.page.root?' class="active"':''}><a title="home" href="<%=URLHelper.createURL(ctx,"/")%>"><span aria-hidden="true" class="glyphicon glyphicon-home" aria-hidden="true"></span></a></li>
+      			<ul class="nav navbar-nav menu">      				
+      				<li${info.page.root?' class="active"':''}><a class="home" title="home" href="<%=URLHelper.createURL(ctx,"/")%>"><span aria-hidden="true" class="glyphicon glyphicon-home" aria-hidden="true"></span></a></li>
+      				<li${!info.page.root?' class="active action-title"':'class="action-title"'}><span class="inwrapper"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span>${info.template.mailing?'edit mailing':'edit content'}</span></li>
+      			</ul><ul class="nav navbar-nav actions">
+      				<li class="page-title"><span class="inwrapper"><h1>${info.page.rootOfChildrenAssociation.title}</h1></span></li>
       				<c:if test="${not empty editUser}">
       				<c:if test="${fn:length(contentContext.deviceNames)>1}">
-					<li class="renderers"><form id="renderers_form" action="${info.currentURL}" method="get">
-						<div class="pc_line">
+					<li class="renderers"><form id="renderers_form" action="${info.currentURL}" method="post">
+						<div class="input-wrapper">
 							<c:url var="url" value="${info.currentURL}" context="/">
 								<c:param name="${info.staticData.forceDeviceParameterName}" value=""></c:param>
 							</c:url>							
@@ -70,7 +73,7 @@ request.setAttribute("editUser", ctx.getCurrentEditUser());
 						</div>
 					</form></li></c:if>
 					<li><form class="${info.page.pageEmpty?'no-access':''}" id="copy_page" action="${info.currentURL}?webaction=edit.copyPage" method="post">
-						<button id="pc_copy_page" type="submit" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-copy" aria-hidden="true"></span>${i18n.edit['action.copy-page']}</button>
+						<button id="pc_copy_page" type="submit" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-copy" aria-hidden="true"></span><span class="text">${i18n.edit['action.copy-page']}</span></button>
 					</form></li>
 					<li><form class="${empty info.contextForCopy || !info.page.pageEmpty?'no-access':''}" id="paste_page" action="${info.currentURL}" method="post">
 						<input type="hidden" name="webaction" value="edit.pastePage" />
@@ -124,14 +127,14 @@ request.setAttribute("editUser", ctx.getCurrentEditUser());
 						<c:param name="previewEdit" value="true"></c:param>
 					</c:url>					
 					<form>					
-					<button class="btn btn-default btn-xs" id="pc_mailing" type="<%=accessType%>" value="${i18n.edit['preview.label.mailing']}" onclick="editPreview.openModal('${i18n.edit['preview.label.mailing']}','${url}'); return false;">
-						${i18n.edit['preview.label.mailing']}
+					<button class="btn btn-default btn-xs btn-send btn-color" type="<%=accessType%>" value="${i18n.edit['preview.label.mailing']}" onclick="editPreview.openModal('${i18n.edit['preview.label.mailing']}','${url}'); return false;">
+						<span class="glyphicon glyphicon-send" aria-hidden="true"></span>${i18n.edit['preview.label.mailing']}
 					</button>
 					</form>							
 					</li></c:if>
 					<c:if test="${pdf}"><li>
 					<li><form id="export_pdf_page_form" action="${info.currentPDFURL}" method="post" target="_blanck">						
-						<button class="btn btn-default btn-xs" id="export_pdf_button" type="submit" value="${i18n.edit['preview.label.pdf']}">${i18n.edit['preview.label.pdf']}</button>
+						<button class="btn btn-default btn-xs btn-pdf btn-color" id="export_pdf_button" type="submit" value="${i18n.edit['preview.label.pdf']}">${i18n.edit['preview.label.pdf']}</button>
 					</form></li>
 					</c:if>					  				
       				<c:if test="${globalContext.previewMode}"><li class="publish"><form id="pc_publish_form" action="${info.currentURL}" method="post">						
@@ -142,11 +145,14 @@ request.setAttribute("editUser", ctx.getCurrentEditUser());
 						</button>						
 					</form></li></c:if>      				      				
       				<c:if test="${not empty editUser}">        								
-	        			<li><c:if test="${!userInterface.contributor}"><a id="pc_edit_mode_button" title="${i18n.edit['global.exit']}" href="<%=URLHelper.createURL(returnEditCtx)%>">X</a></c:if>
+	        			<li class="user"><c:if test="${!userInterface.contributor}"><a id="pc_edit_mode_button" title="${i18n.edit['global.exit']}" href="<%=URLHelper.createURL(returnEditCtx)%>">X</a></c:if>
 							<c:url var="url" value="<%=URLHelper.createURL(returnEditCtx)%>" context="/">
 								<c:param name="edit-logout" value="true" />
 							</c:url>
-						<c:if test="${userInterface.contributor}"><a id="pc_edit_mode_button" class="logout" title="${i18n.edit['global.logout']}" href="${url}">X</a></c:if></li>
+						<c:if test="${userInterface.contributor}">
+						<a href="${info.currentEditURL}?module=users&webaction=user.changeMode&mode=myself&previewEdit=true" class="as-modal"><span class="glyphicon glyphicon-user" aria-hidden="true"></span>${info.userName}</a>
+						<a id="pc_edit_mode_button" class="logout" title="${i18n.edit['global.logout']}" href="${url}">${i18n.edit["global.logout"]}</a>
+						</c:if></li>
 					</c:if>
         		</ul>
         	</div>

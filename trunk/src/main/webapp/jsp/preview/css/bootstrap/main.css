@@ -18,6 +18,29 @@ html {
 	overflow: hidden;
 }
 
+#preview_command h1 {
+	font-weight: 400;    
+    font-size: 1.2em;
+    color: #999b98;
+    font-family: "Open sans";
+}
+
+@media (max-width: 1400px) {
+	#preview_command h1, #preview_command .nav .action-title {
+		display: none;
+	}
+}
+
+@media (max-width: 1180px) {
+	#preview_command .header .text {
+		display: none;
+	}
+}
+
+#preview_command .header {
+	min-width: 980px;
+}
+
 #preview_command .header {
 	position: fixed;
 	width: 100%;
@@ -25,6 +48,12 @@ html {
 	top: 0;
 	left: 0;	
 	box-shadow: 0 0 6px #333333;
+}
+
+#preview_command .navbar-right {
+	position: absolute;
+	top: 0;
+	right: 0;
 }
 
 #preview_command .header .container-fluid::before,#preview_command .header .container-fluid::after {
@@ -35,9 +64,17 @@ html {
 	height: 50px;
 }
 
+#preview_command .header li .input-wrapper {
+	margin-right: 8px;
+}
+
 #preview_command .header form, #preview_command .header .link-wrapper {
 	height: 50px;
-	padding: 15px;
+	padding: 15px 2px;
+}
+
+#preview_command .header .user a {
+	display: inline-block;
 }
 
 #preview_command .ajax-loading {
@@ -59,7 +96,7 @@ html {
 }
 
 
-#preview_command .header a .glyphicon {
+#preview_command .header a.home .glyphicon {
 	margin-top: 2px;
 }
 
@@ -197,7 +234,7 @@ body #preview_command .btn[disabled] {
 }
 
 #preview_command .navbar-left {
-	width: 60%;
+	width: 100%;
 }
 
 #preview_command .settings .btn .glyphicon {
@@ -364,3 +401,18 @@ body #preview_command .btn[disabled] {
 #preview_command .btn-refresh .text, #preview_command .btn-delete .text {
 	display: none;
 }
+
+#preview_command .header li .inwrapper {
+    color: #3b3b3b;
+    display: block;
+    float: left;
+    height: 50px;
+    line-height: 50px;
+    padding: 0 25px;    
+    border-bottom: 10px solid transparent;    	
+}
+
+#preview_command .header .menu .action-title.active {
+	background-color: #EEEEEE;
+}
+
