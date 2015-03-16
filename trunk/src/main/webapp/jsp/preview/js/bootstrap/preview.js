@@ -107,15 +107,15 @@ editPreview.initPreview = function() {
 			var editURL = editPreviewURL + "&comp_id=" + compId;
 			editPreview.openModal(i18n_preview_edit, editURL);		
 	    });
-		pjq('#preview-layer .btn-delete').on('click', function (e) {				
+		pjq('#preview-layer .btn-delete').on('click', function (e) {
+			editPreview.layerOver(null);
 			var subComp = pjq(this).parent().parent().data("comp");
 			var compId = subComp.attr("id").substring(3);
 			var ajaxURL = editPreview.addParam(currentURL,"webaction=edit.delete&id=" + compId);
 			if (editPreview.searchPageId(subComp) != null) {					
 				ajaxURL = ajaxURL +'&pageCompID='+ editPreview.searchPageId(subComp);
 			}				
-			editPreview.ajaxPreviewRequest(ajaxURL, null, null);
-			editPreview.layerOver(null);
+			editPreview.ajaxPreviewRequest(ajaxURL, function() {editPreview.layerOver(null);}, null);			
 			return false;
 		});	
 		
@@ -396,7 +396,8 @@ editPreview.initPreview = function() {
 	}
 	
 	
-editPreview.ajaxPreviewRequest = function(url, doneFunction) {	
+editPreview.ajaxPreviewRequest = function(url, doneFunction) {
+		editPreview.startAjax();
 		if (url.indexOf("/edit-")>=0) {
 			url = url.replace("/edit-", "/ajax-");
 		} else {
@@ -469,7 +470,8 @@ editPreview.ajaxPreviewRequest = function(url, doneFunction) {
 					console.log("Exception when calling initPreview()", ex);
 				}
 			}
-			if (doneFunction != null) {			
+			editPreview.stopAjax();
+			if (doneFunction != null) {				
 				doneFunction();
 			}
 		});	

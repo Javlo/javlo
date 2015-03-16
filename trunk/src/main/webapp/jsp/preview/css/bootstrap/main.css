@@ -113,6 +113,11 @@ html {
 	font-size: 12px;
 }
 
+body #preview_command .btn[disabled] {
+	color: #e0e0e0;
+	background-color: #c4c4c6;	
+}
+
 #preview_command .preview-form {
 	margin-top: 15px;
 }
@@ -224,6 +229,16 @@ html {
 	color: #aaaaaa;
 	position: relative;
 	margin-bottom: 6px;
+}
+
+
+#preview_command .settings .btn:hover .glyphicon {
+	display: block;
+}
+
+#preview_command .settings .btn:hover {
+	background-color: #F9F9F9;
+	display: block;
 }
 
 #preview_command .btn .label {
@@ -340,4 +355,12 @@ html {
 
 #preview_command .drop-files .upload-zone {
 	text-align: center;
+}
+
+#preview_command .btn-refresh .glyphicon, #preview_command .btn-delete .glyphicon {
+	margin: 0;
+}
+
+#preview_command .btn-refresh .text, #preview_command .btn-delete .text {
+	display: none;
 }

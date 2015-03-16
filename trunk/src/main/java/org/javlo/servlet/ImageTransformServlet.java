@@ -669,8 +669,8 @@ public class ImageTransformServlet extends HttpServlet {
 				
 				imageType = StringHelper.neverNull(config.getFileExtension(ctx.getDevice(), filter, area), imageType);
 
-				if (comp != null && StringHelper.trimAndNullify(comp.getImageFilterKey(ctx)) != null) {
-					img = ((IImageFilter) comp).filterImage(ctx, img);
+				if (comp != null && StringHelper.trimAndNullify(comp.getImageFilterKey(ctx)) != null) {					
+					img = ((IImageFilter) comp).filterImage(ctx, img);					
 				}
 				if (!"png".equals(imageType) && !"gif".equals(imageType)) {
 					img = ImageEngine.removeAlpha(img);

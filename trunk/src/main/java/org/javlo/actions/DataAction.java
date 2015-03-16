@@ -405,7 +405,7 @@ public class DataAction implements IAction {
 		if (page == null) {
 			page = ctx.getCurrentPage();
 		}
-		String importFolder = StringHelper.createFileName(page.getTitle(ctx.getContextForDefaultLanguage()));		
+		String importFolder = StringHelper.createFileName(page.getName());		
 		importFolder = StringHelper.trimOn(importFolder.trim(), "_");
 		importFolder = importFolder.replace('-', '_');
 		return importFolder;
@@ -420,8 +420,7 @@ public class DataAction implements IAction {
 			return "no suffisant right.";
 		}
 		Template tpl = ctx.getCurrentTemplate();		
-		String importFolder = createImportFolder(ctx);
-		System.out.println("***** DataAction.uploadContent : importFolder = "+importFolder); //TODO: remove debug trace
+		String importFolder = createImportFolder(ctx);		
 		int countImages = 0;
 		FileItem imageItem = null;
 		try {
