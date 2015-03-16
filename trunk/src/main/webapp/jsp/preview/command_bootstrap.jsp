@@ -105,7 +105,7 @@ request.setAttribute("editUser", ctx.getCurrentEditUser());
 						<div class="pc_line">
 							<input type="hidden" name="webaction" value="edit.previewedit" />
 							<c:if test='${!editPreview}'>								 
-								<button class="btn btn-default" type="submit"><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>${i18n.edit['preview.label.edit-page']}"</button>								
+								<button class="btn btn-default btn-xs" type="submit"><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>${i18n.edit['preview.label.edit-page']}"</button>								
 							</c:if> 
 							<c:if test='${editPreview}'>								
 								<button class="btn btn-default btn-xs" type="submit"><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>${i18n.edit['preview.label.not-edit-page']}</button>								
@@ -114,7 +114,7 @@ request.setAttribute("editUser", ctx.getCurrentEditUser());
 					</form></c:if>
 					<c:if test="${!globalContext.previewMode}">
 						<div class="link-wrapper">
-						<a href="${info.currentViewURL}" target="_blank"><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>${i18n.edit['preview.label.not-edit-page']}</a>
+						<a class="btn btn-default btn-xs" href="${info.currentViewURL}" target="_blank"><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>${i18n.edit['preview.label.not-edit-page']}</a>
 						</div>
 					</c:if>					
 					</li>

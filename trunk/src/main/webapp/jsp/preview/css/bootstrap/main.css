@@ -31,7 +31,7 @@ html {
 	display: initial;
 }
 
-#preview_command .header a {
+#preview_command .header a.home {
 	height: 50px;
 }
 
