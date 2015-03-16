@@ -58,22 +58,22 @@ request.setAttribute("editUser", ctx.getCurrentEditUser());
 							<input type="hidden" value="${info.pageID}" name="page"/>
 							<input type="hidden" value="edit.deletePage" name="webaction"/>
 							<c:if test="${!info.page.root}">
-							<button type="submit" onclick="if (!confirm('${i18n.edit['menu.confirm-page']}')) return false;">
+							<button class="btn btn-default btn-xs" type="submit" onclick="if (!confirm('${i18n.edit['menu.confirm-page']}')) return false;">
 								<span class="glyphicon glyphicon-trash" aria-hidden="true"></span> ${i18n.edit['menu.delete']}
 							</button>							
 							</c:if><c:if test="${info.page.root}">
-							<button type="button" onclick="if (!confirm('${i18n.edit['menu.confirm-page']}')) return false;" disabled="disabled">
+							<button class="btn btn-default" type="button" onclick="if (!confirm('${i18n.edit['menu.confirm-page']}')) return false;" disabled="disabled">
 								${i18n.edit['menu.delete']}
 							</button>
 							</c:if>
 						</div>
 					</form></li>
 					<li><form class="${info.page.pageEmpty?'no-access':''}" id="copy_page" action="${info.currentURL}?webaction=edit.copyPage" method="post">
-						<button id="pc_copy_page" type="submit"><span class="glyphicon glyphicon-copy" aria-hidden="true"></span>${i18n.edit['action.copy-page']}</button>
+						<button id="pc_copy_page" type="submit" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-copy" aria-hidden="true"></span>${i18n.edit['action.copy-page']}</button>
 					</form></li>
 					<li><form class="${empty info.contextForCopy || !info.page.pageEmpty?'no-access':''}" id="paste_page" action="${info.currentURL}" method="post">
 						<input type="hidden" name="webaction" value="edit.pastePage" />
-						<button id="pc_paste_page" type="submit"><span class="glyphicon glyphicon-paste" aria-hidden="true"></span>${i18n.edit['action.paste-page-preview']}</button>							
+						<button class="btn btn-default btn-xs" id="pc_paste_page" type="submit"><span class="glyphicon glyphicon-paste" aria-hidden="true"></span>${i18n.edit['action.paste-page-preview']}</button>							
 					</form></li>	
 					</c:if>
         		</ul>
@@ -86,10 +86,10 @@ request.setAttribute("editUser", ctx.getCurrentEditUser());
 						<div class="pc_line">
 							<input type="hidden" name="webaction" value="edit.previewedit" />
 							<c:if test='${!editPreview}'>								 
-								<button type="submit"><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>${i18n.edit['preview.label.edit-page']}"</button>								
+								<button class="btn btn-default" type="submit"><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>${i18n.edit['preview.label.edit-page']}"</button>								
 							</c:if> 
 							<c:if test='${editPreview}'>								
-								<button type="submit"><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>${i18n.edit['preview.label.not-edit-page']}</button>								
+								<button class="btn btn-default btn-xs" type="submit"><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>${i18n.edit['preview.label.not-edit-page']}</button>								
 							</c:if>
 						</div>				
 					</form></c:if>
@@ -105,7 +105,7 @@ request.setAttribute("editUser", ctx.getCurrentEditUser());
 						<c:param name="previewEdit" value="true"></c:param>
 					</c:url>					
 					<form>					
-					<button id="pc_mailing" type="<%=accessType%>" value="${i18n.edit['preview.label.mailing']}" onclick="editPreview.openModal('${i18n.edit['preview.label.mailing']}','${url}'); return false;">
+					<button class="btn btn-default btn-xs" id="pc_mailing" type="<%=accessType%>" value="${i18n.edit['preview.label.mailing']}" onclick="editPreview.openModal('${i18n.edit['preview.label.mailing']}','${url}'); return false;">
 						${i18n.edit['preview.label.mailing']}
 					</button>
 					</form>							
@@ -133,7 +133,7 @@ request.setAttribute("editUser", ctx.getCurrentEditUser());
 					</form></li></c:if>   				
       				<c:if test="${globalContext.previewMode}"><li class="publish"><form id="pc_publish_form" action="${info.currentURL}" method="post">						
 						<input type="hidden" name="webaction" value="edit.publish" />						
-						<button type="submit">
+						<button type="submit" class="btn btn-default btn-xs">
 							<span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span>
 							${i18n.edit['command.publish']}
 						</button>						

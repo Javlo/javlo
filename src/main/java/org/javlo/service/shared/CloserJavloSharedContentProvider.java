@@ -9,6 +9,7 @@ import java.util.List;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.component.image.GlobalImage;
 import org.javlo.context.ContentContext;
+import org.javlo.helper.URLHelper;
 import org.javlo.navigation.MenuElement;
 import org.javlo.navigation.PageBean;
 
@@ -80,6 +81,13 @@ public class CloserJavloSharedContentProvider extends AbstractSharedContentProvi
 						sharedContent.setTitle(getSharedName(page, i));
 					}
 					sharedContent.setLinkInfo(page.getId());
+					sharedContent.setEditURL(URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.PREVIEW_MODE), page));
+					/*String url = URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.EDIT_MODE), page);
+					url = URLHelper.addParam(url, "previewEdit", "true");
+					url = URLHelper.addParam(url, "webaction", "editPreview");
+					url = URLHelper.addParam(url, "module", "content");					
+					sharedContent.setEditURL(url);
+					sharedContent.setEditAsModal(true);*/
 					for (ComponentBean bean : beans) {						
 						if (bean.getType().equals(GlobalImage.TYPE)) {
 							try {

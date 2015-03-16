@@ -105,19 +105,19 @@ editPreview.initPreview = function() {
 		pjq("#preview-layer").on('click', function (event) {
 			var compId = pjq(this).data("comp").attr("id").substring(3);
 			var editURL = editPreviewURL + "&comp_id=" + compId;
-			editPreview.openModal(i18n_preview_edit, editURL);			
-			pjq('#preview-layer .btn-delete').on('click', function (e) {				
-				var subComp = pjq(this).parent().parent().data("comp");
-				var compId = subComp.attr("id").substring(3);
-				var ajaxURL = editPreview.addParam(currentURL,"webaction=edit.delete&id=" + compId);
-				if (editPreview.searchPageId(subComp) != null) {					
-					ajaxURL = ajaxURL +'&pageCompID='+ editPreview.searchPageId(subComp);
-				}				
-				editPreview.ajaxPreviewRequest(ajaxURL, null, null);
-				editPreview.layerOver(null);
-				return false;
-			});			
+			editPreview.openModal(i18n_preview_edit, editURL);		
 	    });
+		pjq('#preview-layer .btn-delete').on('click', function (e) {				
+			var subComp = pjq(this).parent().parent().data("comp");
+			var compId = subComp.attr("id").substring(3);
+			var ajaxURL = editPreview.addParam(currentURL,"webaction=edit.delete&id=" + compId);
+			if (editPreview.searchPageId(subComp) != null) {					
+				ajaxURL = ajaxURL +'&pageCompID='+ editPreview.searchPageId(subComp);
+			}				
+			editPreview.ajaxPreviewRequest(ajaxURL, null, null);
+			editPreview.layerOver(null);
+			return false;
+		});	
 		
 		/** drag and drop layer * */
 		var drop = document.querySelectorAll('#preview-layer'), el = null;
@@ -299,7 +299,7 @@ editPreview.initPreview = function() {
 			    	pjq(this).removeClass("drop-selected");
 			    	return false;
 			    });
-			    el.addEventListener("drop", function(e) {
+			    el.addEventListener('drop', function(e) {
 			    	e.preventDefault();
 					pjq(this).removeClass("dragover");	
 					var url  = pjq(this).data("url");		
