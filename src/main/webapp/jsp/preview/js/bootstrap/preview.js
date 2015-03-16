@@ -89,7 +89,12 @@ editPreview.stopAjax = function() {
 
 editPreview.initPreview = function() {
 	
-  /** prepare preview * */
+	pjq('a.as-modal').on('click', function() {		
+		editPreview.openModal($(this).text(), $(this).attr('href'));		
+		return false;
+	});
+	
+	/** prepare preview * */
 	
 	if (pjq("#preview-layer").length == 0) {
 		pjq("body").append('<div id="preview-layer"><div class="commands btn-group btn-group-sm area-actions" role="group">'+

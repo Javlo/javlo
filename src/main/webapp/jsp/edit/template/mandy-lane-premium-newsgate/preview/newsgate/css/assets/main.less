@@ -1,3 +1,6 @@
+html {
+	margin-top: 162px !important;
+}
 
 #preview_command {
 	.sidebar {
@@ -31,7 +34,17 @@
 		border: 1px red solid;
 		background-color: green;
 		color: #ffffff;
+	}
+	
+	.navbar-right {
+		top: 85px;
 	}	
+	
+	.navbar-right .user {		
+		position: fixed;
+		top: 0;
+		right: 0;
+	}
 	
 }
 
@@ -39,5 +52,6 @@
 	@import "for-header.less";
 	@import "for-asside.less";
 	@import "btn.less";
+	@import "actions.less";
 }
 

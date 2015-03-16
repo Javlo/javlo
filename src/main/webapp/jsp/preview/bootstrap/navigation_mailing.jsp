@@ -2,7 +2,7 @@
 %><%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <c:set var="rootAssociation" value="${info.page.rootOfChildrenAssociation}" />
 <c:if test="${not empty rootAssociation}">
-	<div class="tabs-head"><h4>${info.page.rootOfChildrenAssociation.title}</h4></div>
+	<div class="tabs-head"><h4>Navigation</h4></div>
 	<form id="children_list" action="${info.currentURL}" method="post">
 	<div class="pages">	
 	   <ul class="navigation pages">	   
