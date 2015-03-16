@@ -1175,7 +1175,7 @@ public class GlobalImage extends Image implements IImageFilter {
 	}
 
 	@Override
-	public BufferedImage filterImage(ContentContext ctx, BufferedImage image) {
+	public BufferedImage filterImage(ContentContext ctx, BufferedImage image) {		
 		if (ctx.getDevice().getCode().equalsIgnoreCase("pdf")) {
 			return image;
 		} else {

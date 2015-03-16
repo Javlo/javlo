@@ -28,7 +28,7 @@
 			</c:forEach>
 		</select>
 		</div>		
-		<c:if test="${fn:length(sharedContentCategories)>0}">
+		<c:if test="${fn:length(sharedContentCategories)>1}">
 		<div class="form-group">
 		<select name="category" class="form-control">
 			<c:forEach var="category" items="${sharedContentCategories}">
