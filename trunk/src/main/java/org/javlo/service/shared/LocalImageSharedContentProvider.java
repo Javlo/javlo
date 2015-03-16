@@ -65,10 +65,11 @@ public class LocalImageSharedContentProvider extends AbstractSharedContentProvid
 				String imageURL = image.getPreviewURL(ctx, "shared-preview");
 				sharedContent.setTitle(imageFile.getName());				
 				sharedContent.setDescription(staticInfo.getTitle(ctx));
-				sharedContent.setImageUrl(imageURL);				
-				if (!getCategories(ctx).containsKey(category)) {
-					getCategories(ctx).put(category, category);
-				}
+				sharedContent.setImageUrl(imageURL);
+// Commented because it seems useless (getCategories(ctx) return a new map each time)
+//				if (!getCategories(ctx).containsKey(category)) {
+//					getCategories(ctx).put(category, category);
+//				}
 			} catch (Exception e) {				
 				e.printStackTrace();
 			}			
