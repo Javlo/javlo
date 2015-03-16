@@ -87,6 +87,18 @@ editPreview.stopAjax = function() {
 	pjq('body').removeClass("_preview_ajax-loading");
 }
 
+editPreview.searchArea = function(item) {	
+	var parent = pjq(item);
+	while (pjq(parent).get(0).tagName.toLowerCase() != "body" && !parent.hasClass("_area")) {									
+		parent = pjq(parent).parent();									
+	}
+	if (parent.hasClass("_area")) {
+		return pjq(parent).attr("id");
+	} else {
+		return null;
+	}
+}
+
 editPreview.initPreview = function() {
 	
 	pjq('a.as-modal').on('click', function() {		
@@ -148,7 +160,7 @@ editPreview.initPreview = function() {
 			if (sharedId != null && sharedId.length > 0) {
 				var subComp = pjq(this).data("comp");
 				var previewId = subComp.attr("id").substring(3);		
-				var area = subComp.parent().attr("id");
+				var area = editPreview.searchArea(subComp);
 				var ajaxURL = editPreview.addParam(currentURL, "webaction=edit.insertShared&sharedContent="
 				+ sharedId + "&previous=" + previewId
 				+ "&area=" + area+ "&render-mode=3&init=true");
@@ -159,7 +171,7 @@ editPreview.initPreview = function() {
 			} else if (compType != null && compType.length > 0) { // insert new component
 				var subComp = pjq(this).data("comp");		
 				var previewId = subComp.attr("id").substring(3);		
-				var area = subComp.parent().attr("id");		
+				var area = editPreview.searchArea(subComp);		
 				var url = "webaction=edit.insert&type=" + compType + "&previous=" + previewId + "&area=" + area+ "&render-mode=3&init=true";
 				if (editPreview.searchPageId(subComp) != null) {
 					url = url +'&pageContainerID='+ editPreview.searchPageId(subComp);
@@ -172,7 +184,7 @@ editPreview.initPreview = function() {
 			} else if (compId != null) { // move component
 				var subComp = pjq(this).data("comp");
 				var previewId = subComp.attr("id").substring(3);				
-				var area = subComp.parent().attr("id");		
+				var area = editPreview.searchArea(subComp);		
 				var ajaxURL = editPreview.addParam(currentURL,"webaction=edit.moveComponent&comp-id=" + compId + "&previous=" + previewId + "&area=" + area+ "&render-mode=3&init=true");
 				if (editPreview.searchPageId(subComp) != null) {
 					ajaxURL = ajaxURL +'&pageContainerID='+ editPreview.searchPageId(subComp);
@@ -258,7 +270,7 @@ editPreview.initPreview = function() {
 		    	event.preventDefault();
 		    	var compType = event.dataTransfer.getData("type");	    	
 				var compId = event.dataTransfer.getData("compId");
-				var area = pjq(this).parent().attr("id");
+				var area = editPreview.searchArea(pjq(this).parent());
 				var sharedId = event.dataTransfer.getData("shared");
 				if (sharedId != null && sharedId.length > 0) {									
 					var previewId = "0";					
