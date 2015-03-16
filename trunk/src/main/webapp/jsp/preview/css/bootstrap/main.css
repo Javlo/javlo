@@ -163,14 +163,6 @@ html {
 	border: 0 none;
 }
 
-#preview_command .header .navbar-nav li button, #preview_command .header .navbar-nav li input {
-    color: #777777;
-    line-height: 20px;
-    display: block;
-    position: relative;
-    color: #337ab7;
-}
-
 #preview_command .navbar-brand {	
 	width: 330px;
 }

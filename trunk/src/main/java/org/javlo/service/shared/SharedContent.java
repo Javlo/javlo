@@ -46,6 +46,8 @@ public class SharedContent {
 	private Collection<String> categories = new HashSet<String>();
 	private String linkInfo = null;
 	private long sortOn = -1;
+	private String editURL = null;
+	private boolean editAsModal = false;
 
 	protected List<ComponentBean> content;
 	
@@ -152,6 +154,22 @@ public class SharedContent {
 
 	public void setSortOn(long sortOn) {
 		this.sortOn = sortOn;
+	}
+
+	public String getEditURL() {
+		return editURL;
+	}
+
+	public void setEditURL(String editURL) {
+		this.editURL = editURL;
+	}
+
+	public boolean isEditAsModal() {
+		return editAsModal;
+	}
+
+	public void setEditAsModal(boolean editAsPopup) {
+		this.editAsModal = editAsPopup;
 	}
 
 }

@@ -49,6 +49,7 @@ import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
 import org.javlo.module.content.Edit;
 import org.javlo.module.ticket.TicketAction;
+import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
 import org.javlo.service.IMService;
 import org.javlo.service.IMService.IMItem;
@@ -398,6 +399,17 @@ public class DataAction implements IAction {
 
 		return targetFolder;
 	}
+	
+	public static final String createImportFolder(ContentContext ctx) throws Exception {
+		MenuElement page = ctx.getCurrentPage().getRootOfChildrenAssociation();
+		if (page == null) {
+			page = ctx.getCurrentPage();
+		}
+		String importFolder = StringHelper.createFileName(page.getTitle(ctx.getContextForDefaultLanguage()));		
+		importFolder = StringHelper.trimOn(importFolder.trim(), "_");
+		importFolder = importFolder.replace('-', '_');
+		return importFolder;
+	}
 
 	public static String uploadContent(RequestService rs, ContentContext ctx, GlobalContext gc, ContentService cs, User user, MessageRepository messageRepository, I18nAccess i18nAccess, ImportConfigBean config) throws Exception {
 		if (user == null) {
@@ -407,14 +419,9 @@ public class DataAction implements IAction {
 		if (!Edit.checkPageSecurity(ctx)) {
 			return "no suffisant right.";
 		}
-
-		Template tpl = ctx.getCurrentTemplate();
-		// Calendar cal = Calendar.getInstance();
-		// String importFolder = "" + (cal.get(Calendar.MONTH) + 1) + '_' +
-		// cal.get(Calendar.YEAR);
-		String importFolder = StringHelper.createFileName(ctx.getCurrentPage().getTitle(ctx.getContextForDefaultLanguage()));		
-		importFolder = StringHelper.trimOn(importFolder.trim(), "_");
-		importFolder = importFolder.replace('-', '_');
+		Template tpl = ctx.getCurrentTemplate();		
+		String importFolder = createImportFolder(ctx);
+		System.out.println("***** DataAction.uploadContent : importFolder = "+importFolder); //TODO: remove debug trace
 		int countImages = 0;
 		FileItem imageItem = null;
 		try {
