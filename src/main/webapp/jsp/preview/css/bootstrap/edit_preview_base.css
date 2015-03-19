@@ -6,7 +6,7 @@
 	#preview_command img, #preview_command div, #preview_command a,
 	#preview_command span, #preview_command input, #preview_command fieldset,
 	#preview_command legend, #preview_command form, #preview_command select,
-	#preview_command option, #preview_command .navigation, #preview_command .commands {
+	#preview_command option, #preview_command .navigation, #preview_command .commands, #preview_command button {
 	margin: 0;
 	border: 0 none;
 	padding: 0;

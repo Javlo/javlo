@@ -1384,6 +1384,8 @@ public class StaticConfig extends Observable {
 		return properties.getString("preview.lib.js", null);		
 	}
 	
-	
+	public Boolean isTracked() {
+		return StringHelper.isTrue(properties.getString("tracked", null), true);		
+	}
 
 }

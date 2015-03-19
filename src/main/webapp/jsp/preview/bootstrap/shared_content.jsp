@@ -1,6 +1,8 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"
 %><%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"
-%><div class="well drop-files">
+%>
+<h2><span class="glyphicon glyphicon-folder-open" aria-hidden="true"></span>Resouces</h2>
+<div class="well drop-files">
 	<h3>${i18n.edit['preview.upload-here']}</h3>	
 	<div class="upload-zone" data-url="${info.uploadURL}"><span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span></div>
 </div><c:if test="${not empty provider && provider.search}">

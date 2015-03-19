@@ -27,8 +27,21 @@
 	list-style: none;
 }
 
+#preview_command .pages.web ul {
+	position: relative;
+	margin: 0;
+	padding: 0;
+	padding-bottom: 0;
+	margin-bottom: 20px;
+	list-style: none;
+}
+
 #preview_command .pages ul.empty {
 	padding-bottom: 1px;
+}
+
+#preview_command .pages.web .selected a {	
+	background: #eee;	
 }
 
 #preview_command .pages ul:after {
@@ -50,6 +63,15 @@
 #preview_command .pages ul.navigation ul li {
 	position: relative;	
 	margin: 5px 0 5px 30px;
+}
+
+#preview_command .pages.web ul.navigation li {
+	position: relative;	
+	margin: 5px 0 5px 30px;
+}
+
+#preview_command .pages.web ul.navigation li.title {
+	margin: 5px 0 5px 0;
 }
 
 #preview_command .pages ul.navigation li a, #preview_command .pages ul.navigation li h4 {

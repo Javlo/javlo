@@ -1,0 +1,59 @@
+#preview_command .header {
+	min-width: 980px;
+}
+
+#preview_command .header {
+	position: fixed;
+	width: 100%;
+	height: 50px;
+	top: 0;
+	left: 0;	
+	box-shadow: 0 0 6px #333333;
+}
+
+#preview_command .logo, #preview_command .actions-wrapper, #preview_command .page-actions, #preview_command .users {
+	float: left;
+	height: 50px;
+	padding: 12px;
+}
+
+ #preview_command li.home {
+ 	padding: 15px;
+ }
+ 
+ #preview_command .header h1 {
+ 	margin: 0 15px;
+ 	padding: 0;
+ 	line-height: 25px;
+ 	vertical-align: middle;
+ 	max-width: 160px;
+ 	overflow: hidden;	
+ }
+
+ #preview_command .header .menu {
+ 	float: left;
+	height: 50px;
+ }
+
+#preview_command .header .select {
+	margin: 0 5px;
+}
+
+#preview_command .select, #preview_command .header .btn-group, #preview_command .header .page-title, #preview_command .header .actions {
+	float: left;
+}
+
+#preview_command .header .logo {
+	
+	width: 330px;
+	height: 50px;
+}
+
+#preview_command .header li {
+	float: left;
+	margin-right: 5px;
+}
+
+#preview_command .header .users {	
+	float :right;
+}

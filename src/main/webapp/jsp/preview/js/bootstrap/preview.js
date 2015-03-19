@@ -70,21 +70,20 @@ editPreview.searchPageId = function(node) {
 
 editPreview.heightToBottom = function(inItem) {
 	pjq("body").append('<div id="_fake_footer" style="font-size: 0; position: fixed; bottom: 0;">&nbsp;</div>');
-	var footerOffset = pjq("#_fake_footer").offset();
-	pjq("#_fake_footer").remove();
+	var fakeFolder = pjq("#_fake_footer");
+	var footerOffset = fakeFolder.offset();
+	fakeFolder.remove();
 	pjq(inItem).each(function() {
-		var item = pjq(this);		
+		var item = pjq(this);
+		var saveHeight = item.height();
 		var itemOffset = item.offset();		
-		item.css("height", footerOffset.top-itemOffset.top);		
+		item.css("height", footerOffset.top-itemOffset.top);	
+		if (saveHeight > item.height()) {
+			item.addClass("has-scrollbar");
+		} else {
+			item.removeClass("has-scrollbar");
+		}
 	});	
-}
-
-editPreview.startAjax = function() {
-	pjq('body').addClass("_preview_ajax-loading");
-}
-
-editPreview.stopAjax = function() {
-	pjq('body').removeClass("_preview_ajax-loading");
 }
 
 editPreview.searchArea = function(item) {	
@@ -105,6 +104,12 @@ editPreview.initPreview = function() {
 		editPreview.openModal($(this).text(), $(this).attr('href'));		
 		return false;
 	});
+	
+	pjq('.slow-hide').on('load', function() {
+		pjq(this).delay(5000).fadeOut(500);
+	});
+	
+	pjq('.slow-hide').delay(5000).fadeOut(500);
 	
 	/** prepare preview * */
 	
@@ -134,8 +139,18 @@ editPreview.initPreview = function() {
 			}				
 			editPreview.ajaxPreviewRequest(ajaxURL, function() {editPreview.layerOver(null);}, null);			
 			return false;
-		});	
-		
+		});
+		pjq('#preview-layer .btn-copy').on('click', function (e) {
+			editPreview.layerOver(null);
+			var subComp = pjq(this).parent().parent().data("comp");
+			var compId = subComp.attr("id").substring(3);
+			var ajaxURL = editPreview.addParam(currentURL,"webaction=edit.copy&id=" + compId);
+			if (editPreview.searchPageId(subComp) != null) {					
+				ajaxURL = ajaxURL +'&pageCompID='+ editPreview.searchPageId(subComp);
+			}				
+			editPreview.ajaxPreviewRequest(ajaxURL, function() {editPreview.layerOver(null);}, null);
+			return false;
+		});
 		/** drag and drop layer * */
 		var drop = document.querySelectorAll('#preview-layer'), el = null;
 		el = drop[0];	
@@ -153,7 +168,7 @@ editPreview.initPreview = function() {
 			pjq(".free-edit-zone").removeClass("open");
 		});
 		el.addEventListener('drop', function (event) {
-			event.preventDefault();			
+			event.preventDefault();
 			var compType = event.dataTransfer.getData("type");			
 			var compId = event.dataTransfer.getData("compId");
 			var sharedId = event.dataTransfer.getData("shared");
@@ -412,8 +427,15 @@ editPreview.initPreview = function() {
 		window.location.href = currentURL;
 	}
 	
+	editPreview.startAjax = function() {
+		pjq('body').addClass("_preview_ajax-loading");
+	}
+
+	editPreview.stopAjax = function() {
+		pjq('body').removeClass("_preview_ajax-loading");
+	}
 	
-editPreview.ajaxPreviewRequest = function(url, doneFunction) {
+	editPreview.ajaxPreviewRequest = function(url, doneFunction) {
 		editPreview.startAjax();
 		if (url.indexOf("/edit-")>=0) {
 			url = url.replace("/edit-", "/ajax-");
@@ -442,12 +464,8 @@ editPreview.ajaxPreviewRequest = function(url, doneFunction) {
 				}
 			}
 			jQuery.each(jsonObj.zone, function(xhtmlId, xhtml) {
-				if (xhtmlId.indexOf("#") < 0 && xhtmlId.indexOf("#") < 0 && xhtmlId.indexOf(" ") < 0 ) { // if
-																											// allready
-																											// select
-																											// don't
-																											// add
-																											// '#'
+				/* if allready select don't add '#' */
+				if (xhtmlId.indexOf("#") < 0 && xhtmlId.indexOf("#") < 0 && xhtmlId.indexOf(" ") < 0 ) { 
 					xhtmlId = "#"+xhtmlId;
 				}
 				var item = jQuery(xhtmlId);			
@@ -462,12 +480,8 @@ editPreview.ajaxPreviewRequest = function(url, doneFunction) {
 				}
 			});
 			jQuery.each(jsonObj.insideZone, function(xhtmlId, xhtml) {
-				if (xhtmlId.indexOf("#") < 0 && xhtmlId.indexOf(".") < 0 && xhtmlId.indexOf(" ") < 0 ) { // if
-																											// allready
-																											// select
-																											// don't
-																											// add
-																											// '#'
+				/* if allready select don't add '#' */
+				if (xhtmlId.indexOf("#") < 0 && xhtmlId.indexOf(".") < 0 && xhtmlId.indexOf(" ") < 0 ) { 
 					xhtmlId = "#"+xhtmlId;
 				}			
 				var item = jQuery(xhtmlId);
