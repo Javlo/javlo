@@ -12,6 +12,7 @@ editCtx.setRenderMode(ContentContext.EDIT_MODE);
 	<c:param name="previewEdit" value="true"></c:param>
 </c:url><div class="settings">
 <h2><span class="glyphicon glyphicon-cog" aria-hidden="true"></span>Settings</h2>
+<div class="height-to-bottom">
 <button type="button" class="btn btn-default" aria-label="Left Align" onclick="editPreview.openModal('Template', '${url}');">
   <div class="label">Template</div>
   <div class="value">${info.templateName}</div>
@@ -30,6 +31,5 @@ editCtx.setRenderMode(ContentContext.EDIT_MODE);
 	  <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
 	</button>
 </c:if>  
-
-
+</div>
 </div>

@@ -81,8 +81,6 @@ public class ImageTransformServlet extends HttpServlet {
 
 	private static final Object LOCK_LARGE_TRANSFORM = new Object();
 
-	private static final String TEMP_IMAGE_FILTER = "__TEMP_IMAGE_FILTER";
-
 	public static final String COMPONENT_ID_URL_DIR_PREFIX = "/comp-";
 	
 	public static final String HASH_PREFIX = "/hash-";
@@ -904,8 +902,8 @@ public class ImageTransformServlet extends HttpServlet {
 				response.setHeader("Cache-Control", "public,max-age=600");
 				//response.setHeader("Accept-Ranges", "bytes");
 				//response.setHeader("Transfer-Encoding", null);
-				Calendar cal = Calendar.getInstance();
-				cal.roll(Calendar.MINUTE, 10);
+				//Calendar cal = Calendar.getInstance();
+				//cal.roll(Calendar.MINUTE, 10);
 				//response.setDateHeader("Expires", cal.getTimeInMillis());
 				if (lastModified > 0) {
 					response.setDateHeader(NetHelper.HEADER_LAST_MODIFIED, lastModified);

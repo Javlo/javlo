@@ -176,10 +176,14 @@ public class Edit extends AbstractModuleAction {
 	 *            the id, null for update and previous component for insert.
 	 * @throws Exception
 	 */
-	public static void updatePreviewCommands(ContentContext ctx) throws Exception {
+	public static void updatePreviewCommands(ContentContext ctx, String tab) throws Exception {
 		ctx.getRequest().setAttribute("editPreview", ctx.isEditPreview());
 		ctx.getRequest().setAttribute("components", ComponentFactory.getComponentForDisplay(ctx));
-		String previewCommandsXHTML = ServletHelper.executeJSP(ctx, ctx.getGlobalContext().getStaticConfig().getPreviewCommandFilePath());
+		String updateURL = ctx.getGlobalContext().getStaticConfig().getPreviewCommandFilePath();
+		if (tab != null) {
+			updateURL = URLHelper.addParam(updateURL, "_preview_tab", tab);
+		}
+		String previewCommandsXHTML = ServletHelper.executeJSP(ctx, updateURL);
 		ctx.addAjaxZone("preview_command", previewCommandsXHTML);
 	}
 
@@ -802,7 +806,7 @@ public class Edit extends AbstractModuleAction {
 
 			if (id.equals("clipboard")) {
 				ClipBoard.getInstance(request).clear();
-				updatePreviewCommands(ctx);
+				updatePreviewCommands(ctx, null);
 				return null;
 			}
 
@@ -1568,7 +1572,7 @@ public class Edit extends AbstractModuleAction {
 		}
 
 		if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE) {
-			updatePreviewCommands(ctx);
+			updatePreviewCommands(ctx, "_ep_content");
 		}
 
 		return null;

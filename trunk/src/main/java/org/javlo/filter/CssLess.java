@@ -13,6 +13,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
+import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.lesscss.LessCompiler;
@@ -28,11 +29,16 @@ public class CssLess implements Filter {
 		GlobalContext globalContext = GlobalContext.getInstance(httpRequest);
 		if (path.startsWith('/' + globalContext.getContextKey())) {
 			path = path.replaceFirst('/' + globalContext.getContextKey(), "");
-		}
+		}		
 		File cssFile = new File(httpRequest.getSession().getServletContext().getRealPath(path));
-		if (!cssFile.exists()) {		
-			File lessFile = new File(cssFile.getAbsolutePath().substring(0, cssFile.getAbsolutePath().length() - 4) + ".less");
-			
+		boolean compileLess = !cssFile.exists();
+		File lessFile = new File(cssFile.getAbsolutePath().substring(0, cssFile.getAbsolutePath().length() - 4) + ".less");
+		if (!StaticConfig.getInstance(((HttpServletRequest)request).getSession().getServletContext()).isProd()) {
+			if (lessFile.lastModified()>cssFile.lastModified()) {
+				compileLess = true;
+			}
+		}
+		if (compileLess) {
 			if (!globalContext.getContextKey().equals(globalContext.getMainContextKey())) {
 				lessFile = new File(StringUtils.replaceOnce(lessFile.getAbsolutePath(), File.separator+globalContext.getMainContextKey()+File.separator, File.separator+globalContext.getContextKey()+File.separator));
 				cssFile.getParentFile().mkdirs();

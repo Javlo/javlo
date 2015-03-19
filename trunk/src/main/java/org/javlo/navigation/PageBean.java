@@ -14,6 +14,8 @@ import org.javlo.navigation.MenuElement.PageDescription;
 import org.javlo.service.exception.ServiceException;
 import org.javlo.utils.CollectionAsMap;
 
+import com.beust.jcommander.ParameterException;
+
 /**
  * bean for the page, can be use in JSTL.
  * 
@@ -29,6 +31,9 @@ public class PageBean implements Serializable {
 	 */
 
 	public PageBean(ContentContext ctx, MenuElement page) {
+		if (page == null) {
+			throw new ParameterException("page can not be null");
+		}
 		this.ctx = ctx;
 		this.page = page;
 	}
@@ -46,7 +51,12 @@ public class PageBean implements Serializable {
 	}
 	
 	public PageBean getParent() {
-		return new PageBean(ctx,page.getParent());
+		MenuElement parent = page.getParent();
+		if (parent == null) {
+			return null;
+		} else {
+			return new PageBean(ctx,parent);
+		}
 	}
 	
 	public List<PageBean> getParents() {

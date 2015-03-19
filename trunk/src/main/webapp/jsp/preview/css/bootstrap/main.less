@@ -1,10 +1,15 @@
 @import url("edit_preview_base.css");
+@import url("header.css");
 @import url("navigation.css");
 @import url("../../../../css/bootstrap-3.3.2/less/bootstrap_preview.css");
 
 html {
 	margin-top: 42px !important;
 	margin-left: 330px !important;
+}
+
+#preview_command  .link-wrapper a {
+	padding-top: 5px;
 }
 
 #preview_command {
@@ -37,44 +42,11 @@ html {
 	}
 }
 
-#preview_command .header {
-	min-width: 980px;
-}
-
-#preview_command .header {
+#preview_command .alert-wrapper {
 	position: fixed;
-	width: 100%;
-	height: 50px;
-	top: 0;
-	left: 0;	
-	box-shadow: 0 0 6px #333333;
-}
-
-#preview_command .navbar-right {
-	position: absolute;
-	top: 0;
-	right: 0;
-}
-
-#preview_command .header .container-fluid::before,#preview_command .header .container-fluid::after {
-	display: initial;
-}
-
-#preview_command .header a.home {
-	height: 50px;
-}
-
-#preview_command .header li .input-wrapper {
-	margin-right: 8px;
-}
-
-#preview_command .header form, #preview_command .header .link-wrapper {
-	height: 50px;
-	padding: 15px 2px;
-}
-
-#preview_command .header .user a {
-	display: inline-block;
+	top: 65px;
+	right: 15px;
+	z-index: 10020;
 }
 
 #preview_command .ajax-loading {
@@ -95,11 +67,6 @@ html {
 	background-image: none;
 }
 
-
-#preview_command .header a.home .glyphicon {
-	margin-top: 2px;
-}
-
 #preview_command .sidebar {
 	width: 330px;
 	height: 100%;
@@ -112,6 +79,10 @@ html {
 #preview_command .height-to-bottom {
     overflow-x: hidden;
     overflow-y: auto;
+}
+
+#preview_command .height-to-bottom.has-scrollbar {
+   padding-right: 3px;
 }
 
 #preview_command .sidebar ul {
