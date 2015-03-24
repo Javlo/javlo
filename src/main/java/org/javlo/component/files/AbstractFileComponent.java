@@ -29,6 +29,7 @@ import org.javlo.component.core.ComponentBean;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.core.ILink;
 import org.javlo.component.core.IReverseLinkComponent;
+import org.javlo.component.core.IUploadResource;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
@@ -67,7 +68,7 @@ import org.javlo.ztatic.StaticInfo;
  * 
  * @author pvandermaesen
  */
-public abstract class AbstractFileComponent extends AbstractVisualComponent implements IStaticContainer, ILink {
+public abstract class AbstractFileComponent extends AbstractVisualComponent implements IStaticContainer, ILink, IUploadResource {
 
 	static final String HEADER_V1_0 = "file storage V.1.1";
 
@@ -841,7 +842,7 @@ public abstract class AbstractFileComponent extends AbstractVisualComponent impl
 	}
 
 	protected void uploadFiles(ContentContext ctx, RequestService service) throws Exception {
-		Collection<FileItem> items = service.getAllFileItem();
+		Collection<FileItem> items = service.getAllFileItem();		
 		logger.info("upload " + items.size() + " files.");
 		for (FileItem item : items) {
 			if (item.getFieldName().equals(getFileXHTMLInputName())) {
@@ -850,12 +851,7 @@ public abstract class AbstractFileComponent extends AbstractVisualComponent impl
 				String newFileName = null;
 				if (filter.accept(file, item.getName()) && expandZip()) {
 					newFileName = item.getName();
-					expandZip(ctx, new ZipInputStream(item.getInputStream())); // TODO:
-																				// who
-																				// close
-																				// this
-																				// stream
-																				// ?
+					expandZip(ctx, new ZipInputStream(item.getInputStream())); 
 				} else {
 					newFileName = saveItem(ctx, item);
 				}
@@ -866,6 +862,11 @@ public abstract class AbstractFileComponent extends AbstractVisualComponent impl
 				}
 			}
 		}
+	}
+	
+	@Override
+	public void performUpload(ContentContext ctx) throws Exception {		
+		uploadFiles(ctx, RequestService.getInstance(ctx.getRequest()));
 	}
 
 }

@@ -172,19 +172,10 @@ public class TableBreak extends TableComponent {
 
 		if (previous == null || previous instanceof TableBreak) {
 			String previousId = ComponentHelper.getPreviousComponentId(this, ctx);
-			System.out.println("***** TableBreak.initContent : CREATE CONTENT previousId=" + previousId); // TODO:
-																											// remove
-																											// debug
-																											// trace
 			MacroHelper.addContent(ctx.getRequestContentLanguage(), getPage(), previousId, OpenCell.TYPE, "", getArea(), "", ctx.getCurrentEditUser());
 			MacroHelper.addContent(ctx.getRequestContentLanguage(), getPage(), previousId, OpenRow.TYPE, "", getArea(), "", ctx.getCurrentEditUser());
 			MacroHelper.addContent(ctx.getRequestContentLanguage(), getPage(), previousId, OpenCell.TYPE, "", getArea(), "", ctx.getCurrentEditUser());
 			MacroHelper.addContent(ctx.getRequestContentLanguage(), getPage(), previousId, OpenCell.TYPE, "", getArea(), "", ctx.getCurrentEditUser());
-		} else {
-			System.out.println("***** TableBreak.initContent : previous = " + previous.getType()); // TODO:
-																									// remove
-																									// debug
-																									// trace
 		}
 		return true;
 	}
@@ -243,21 +234,27 @@ public class TableBreak extends TableComponent {
 				MacroHelper.addContent(ctx.getRequestContentLanguage(), getPage(), rowId, OpenCell.TYPE, null, getArea(), "", ctx.getCurrentEditUser());
 			}
 		}
-		for (int i = newRow; i < row; i++) {
-			modifContent = true;
-			IContentVisualComponent prvComp = ComponentHelper.getPreviousComponent(this, ctx);
-			while (prvComp != null && !prvComp.getType().equals(OpenRow.TYPE)) {
-				prvComp = ComponentHelper.getPreviousComponent(prvComp, ctx);
-			}
-			if (prvComp != null) { // check if there are openrow before table break
-				prvComp = ComponentHelper.getPreviousComponent(this, ctx);
+		if (newRow > 0) {
+			for (int i = newRow; i < row; i++) {
+				modifContent = true;
+				IContentVisualComponent prvComp = ComponentHelper.getPreviousComponent(this, ctx);
 				while (prvComp != null && !prvComp.getType().equals(OpenRow.TYPE)) {
-					String id = prvComp.getId();
-					prvComp = ComponentHelper.getPreviousComponent(this, ctx);
-					getPage().removeContent(ctx, id);
+					prvComp = ComponentHelper.getPreviousComponent(prvComp, ctx);
 				}
-				if (prvComp != null) {
-					getPage().removeContent(ctx, prvComp.getId());
+				if (prvComp != null) { // check if there are openrow before table break
+					prvComp = ComponentHelper.getPreviousComponent(this, ctx);
+					while (prvComp != null && !prvComp.getType().equals(OpenRow.TYPE)) {
+						String id = prvComp.getId();
+						if (prvComp.getId().equals(tableContext.getFirstComponent().getId())) {
+							prvComp = null;
+						} else {
+							prvComp = ComponentHelper.getPreviousComponent(this, ctx);
+						}
+						getPage().removeContent(ctx, id);
+					}
+					if (prvComp != null) {
+						getPage().removeContent(ctx, prvComp.getId());
+					}
 				}
 			}
 		}

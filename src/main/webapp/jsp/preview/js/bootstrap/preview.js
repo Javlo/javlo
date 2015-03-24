@@ -6,8 +6,9 @@ function handleDragStart(e) {
   this.style.opacity = '0.4';  // this / e.target is the source node.
 }
 
-editPreview.layerOver = function(item, title) {	
+editPreview.layerOver = function(item, title, drop) {	
 	var layer = pjq("#preview-layer");
+	pjq("._ep_new-component-zone").remove();
 	
 	var insideLayer = pjq("#preview-layer span");	
 	if (item == null) {		
@@ -15,32 +16,33 @@ editPreview.layerOver = function(item, title) {
 		layer.hide();		
 		layer.data("compType", null);
 		layer.data("sharedContent", null);
-		layer.attr("title", " ");
-	} else {
-		if (item.getAttribute("data-name") != null && item.getAttribute("data-name").length > 0) {
-			pjq("#preview-layer h4").html(item.getAttribute("data-name"));
-			pjq("#preview-layer").removeClass("nocommand");
-		} else {
-			pjq("#preview-layer h4").html(i18n_first_component);
-			pjq("#preview-layer").addClass("nocommand");
-		}
-		
+		layer.attr("title", " ");		
+	} else {		
 		var comp = pjq(item);
+		if (drop) {
+			comp.after('<div class="_ep_new-component-zone"></div>');
+		} else  {
+			if (item.getAttribute("data-name") != null && item.getAttribute("data-name").length > 0) {
+				pjq("#preview-layer h4").html(item.getAttribute("data-name"));
+				pjq("#preview-layer").removeClass("nocommand");
+			} else {
+				pjq("#preview-layer h4").html(i18n_first_component);
+				pjq("#preview-layer").addClass("nocommand");
+			}
+			layer.css("z-index", 10010);
+			layer.show();		
 		
-		layer.css("z-index", 10010);
-		layer.show();		
+			layer.css("top", comp.offset().top);
+			layer.css("left", comp.offset().left);
 		
-		layer.css("top", comp.offset().top);
-		layer.css("left", comp.offset().left);
-		
-		var width = comp.outerWidth(false);
-		if (width > comp.parent().outerWidth(false)) {
-			width = comp.parent().outerWidth(false);
-		}
-		layer.css("width", width);			
-		layer.css("height", comp.outerHeight(false));
-		
-		layer.data("comp", comp);
+			var width = comp.outerWidth(false);
+			if (width > comp.parent().outerWidth(false)) {
+				width = comp.parent().outerWidth(false);
+			}
+			layer.css("width", width);			
+			layer.css("height", comp.outerHeight(false));		
+			layer.data("comp", comp);
+		}		
 	}
 }
 
@@ -111,13 +113,15 @@ editPreview.initPreview = function() {
 	
 	pjq('.slow-hide').delay(5000).fadeOut(500);
 	
+	/**********************/
 	/** prepare preview * */
+	/**********************/
 	
 	if (pjq("#preview-layer").length == 0) {
 		pjq("body").append('<div id="preview-layer"><div class="commands btn-group btn-group-sm area-actions" role="group">'+
-				'<button class="btn-edit btn btn-primary"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span>edit</button>'+
-				'<button class="btn-copy btn btn-primary"><span class="glyphicon glyphicon-copy" aria-hidden="true"></span>copy</button>'+
-				'<button class="btn-delete btn btn-primary"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span>delete</button>'+
+				'<button class="btn-edit btn btn-primary"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span><span class="text">edit</span></button>'+
+				'<button class="btn-copy btn btn-primary"><span class="glyphicon glyphicon-copy" aria-hidden="true"></span><span class="text">copy</span></button>'+
+				'<button class="btn-delete btn btn-primary"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span><span class="text">delete</span></button>'+
 				'</div><h4></h4><div class="main">&nbsp;</span></div>');
 		pjq("#preview-layer").css("position", "absolute");
 		pjq("#preview-layer").on('mouseleave', function (event) {	    	
@@ -151,7 +155,9 @@ editPreview.initPreview = function() {
 			editPreview.ajaxPreviewRequest(ajaxURL, function() {editPreview.layerOver(null);}, null);
 			return false;
 		});
-		/** drag and drop layer * */
+		/*************************/
+		/** drag and drop layer **/
+		/*************************/
 		var drop = document.querySelectorAll('#preview-layer'), el = null;
 		el = drop[0];	
 		el.addEventListener('dragover', function (event) {
@@ -166,65 +172,25 @@ editPreview.initPreview = function() {
 		});
 		el.addEventListener('dragend', function (event) {
 			pjq(".free-edit-zone").removeClass("open");
-		});
-		el.addEventListener('drop', function (event) {
-			event.preventDefault();
-			var compType = event.dataTransfer.getData("type");			
-			var compId = event.dataTransfer.getData("compId");
-			var sharedId = event.dataTransfer.getData("shared");
-			if (sharedId != null && sharedId.length > 0) {
-				var subComp = pjq(this).data("comp");
-				var previewId = subComp.attr("id").substring(3);		
-				var area = editPreview.searchArea(subComp);
-				var ajaxURL = editPreview.addParam(currentURL, "webaction=edit.insertShared&sharedContent="
-				+ sharedId + "&previous=" + previewId
-				+ "&area=" + area+ "&render-mode=3&init=true");
-				if (editPreview.searchPageId(subComp) != null) {
-					ajaxURL = ajaxURL +'&pageContainerID='+ editPreview.searchPageId(subComp);
-				}	
-				editPreview.ajaxPreviewRequest(ajaxURL, null);
-			} else if (compType != null && compType.length > 0) { // insert new component
-				var subComp = pjq(this).data("comp");		
-				var previewId = subComp.attr("id").substring(3);		
-				var area = editPreview.searchArea(subComp);		
-				var url = "webaction=edit.insert&type=" + compType + "&previous=" + previewId + "&area=" + area+ "&render-mode=3&init=true";
-				if (editPreview.searchPageId(subComp) != null) {
-					url = url +'&pageContainerID='+ editPreview.searchPageId(subComp);
-				}		
-				var ajaxURL = editPreview.addParam(currentURL,url);
-				if (editPreview.searchPageId(subComp) != null) {
-					ajaxURL = ajaxURL +'&pageContainerID='+ editPreview.searchPageId(subComp);
-				}	
-				editPreview.ajaxPreviewRequest(ajaxURL, null, null);
-			} else if (compId != null) { // move component
-				var subComp = pjq(this).data("comp");
-				var previewId = subComp.attr("id").substring(3);				
-				var area = editPreview.searchArea(subComp);		
-				var ajaxURL = editPreview.addParam(currentURL,"webaction=edit.moveComponent&comp-id=" + compId + "&previous=" + previewId + "&area=" + area+ "&render-mode=3&init=true");
-				if (editPreview.searchPageId(subComp) != null) {
-					ajaxURL = ajaxURL +'&pageContainerID='+ editPreview.searchPageId(subComp);
-				}	
-				editPreview.ajaxPreviewRequest(ajaxURL, null);
-			}
-			return false;	
-		})
+		});		
 	}	
-
-	/** drag and drop * */	
+	/******************************/	
+	/** drag and drop component * */
+	/******************************/
 	var drag = document.querySelectorAll('#preview_command .component'), el = null;
 	for (var i = 0; i < drag.length; i++) {
 		el = drag[i];    
 		el.setAttribute('draggable', 'true');  
 		el.addEventListener('dragstart', function (event) {
 			event.dataTransfer.setData('type', this.getAttribute("data-type"));
-			pjq(".free-edit-zone").addClass("open");
+			pjq(".free-edit-zone").addClass("open");			
 		});
 		el.addEventListener('dragend', function (event) {
 			pjq(".free-edit-zone").removeClass("open");
 		});
-		el.addEventListener('drop', function (event) { 
-			event.preventDefault();    	
-		});    
+		el.addEventListener('drop', function (event) {
+			event.preventDefault();	
+		})   
 	}
 	var drag = document.querySelectorAll('#preview_command .shared-content-item'), el = null;
 	for (var i = 0; i < drag.length; i++) {
@@ -241,31 +207,87 @@ editPreview.initPreview = function() {
 		el.addEventListener('drop', function (event) { 
 			event.preventDefault();    	
 		});    
-	}
+	}	
 	var drop = document.querySelectorAll('.editable-component'), el = null;
 	for (var i = 0; i < drop.length; i++) {
-		el = drop[i]; 
-	    el.addEventListener('dragover', function (event) {
-	    	event.preventDefault();
-	    	editPreview.layerOver(this);
-	    	return false;
-	    });
-	    el.addEventListener('mouseover', function (event) {	    	
-	    	editPreview.layerOver(this);
-	    });
+		el = drop[i];
+		if (!el.eventsAdded) {
+			el.eventsAdded = true;
+		    el.addEventListener('dragover', function (event) {
+		    	event.preventDefault();
+		    	editPreview.layerOver(this, null, true);
+		    	return false;
+		    });
+		    el.addEventListener('mouseover', function (event) {	    	
+		    	editPreview.layerOver(this, null, false);
+		    });
+		    el.addEventListener('drop', function (event) {
+				event.preventDefault();
+				var compType = event.dataTransfer.getData("type");			
+				var compId = event.dataTransfer.getData("compId");
+				var sharedId = event.dataTransfer.getData("shared");
+				var subComp = pjq(this);
+				if (sharedId != null && sharedId.length > 0) {				
+					var previewId = subComp.attr("id").substring(3);		
+					var area = editPreview.searchArea(subComp);
+					var ajaxURL = editPreview.addParam(currentURL, "webaction=edit.insertShared&sharedContent="
+					+ sharedId + "&previous=" + previewId
+					+ "&area=" + area+ "&render-mode=3&init=true");
+					if (editPreview.searchPageId(subComp) != null) {
+						ajaxURL = ajaxURL +'&pageContainerID='+ editPreview.searchPageId(subComp);
+					}	
+					editPreview.ajaxPreviewRequest(ajaxURL, null);
+				} else if (compType != null && compType.length > 0) { // insert new component
+					pjq(this).removeClass("drop-selected");
+					var previewId = subComp.attr("id").substring(3);		
+					var area = editPreview.searchArea(subComp);		
+					var url = "webaction=edit.insert&type=" + compType + "&previous=" + previewId + "&area=" + area+ "&render-mode=3&init=true";
+					if (editPreview.searchPageId(subComp) != null) {
+						url = url +'&pageContainerID='+ editPreview.searchPageId(subComp);
+					}		
+					var ajaxURL = editPreview.addParam(currentURL,url);
+					if (editPreview.searchPageId(subComp) != null) {
+						ajaxURL = ajaxURL +'&pageContainerID='+ editPreview.searchPageId(subComp);
+					}				
+					editPreview.ajaxPreviewRequest(ajaxURL, null);
+				} else if (compId != null && compId.length > 0) { // move component				
+					var previewId = subComp.attr("id").substring(3);				
+					var area = editPreview.searchArea(subComp);		
+					var ajaxURL = editPreview.addParam(currentURL,"webaction=edit.moveComponent&comp-id=" + compId + "&previous=" + previewId + "&area=" + area+ "&render-mode=3&init=true");
+					if (editPreview.searchPageId(subComp) != null) {
+						ajaxURL = ajaxURL +'&pageContainerID='+ editPreview.searchPageId(subComp);
+					}	
+					editPreview.ajaxPreviewRequest(ajaxURL, null);
+				} else if (event.dataTransfer.files.length > 0) {					
+					var previewId = subComp.attr("id").substring(3);	
+					var ajaxURL = editPreview.addParam(currentURL,"webaction=data.upload&content=true&previous=" + previewId);
+					if (editPreview.searchPageId(subComp) != null) {
+						ajaxURL = ajaxURL +'&pageContainerID='+ editPreview.searchPageId(subComp);
+					}
+					var fd=new FormData();
+					var fieldName = pjq(this).data("fieldname");
+					if (fieldName == null) {
+						filedName = "files";
+					}
+					var i = 0;
+					jQuery.each( event.dataTransfer.files, function(index, file) {
+						if (i==0) {
+							fd.append(fieldName,file);
+						} else {
+							fd.append(fieldName+"_"+i,file);
+						}
+						i++;			
+					});					
+					editPreview.ajaxPreviewRequest(ajaxURL, null, fd);
+					
+				}				
+				return false;	
+		    })   
+		}
 	}
-	var drop = document.querySelectorAll('.editable-component'), el = null;
-	for (var i = 0; i < drop.length; i++) {
-		el = drop[i]; 
-	    el.addEventListener('dragover', function (event) {
-	    	event.preventDefault();
-	    	editPreview.layerOver(this);
-	    	return false;
-	    });
-	    el.addEventListener('mouseover', function (event) {	    	
-	    	editPreview.layerOver(this);
-	    });
-	}
+	/*************************/	
+	/** drag and drop area * */
+	/********************** ***/
 	var drop = document.querySelectorAll('._empty_area'), el = null;	
 	for (var i = 0; i < drop.length; i++) {
 		el = drop[i];
@@ -287,10 +309,9 @@ editPreview.initPreview = function() {
 				var compId = event.dataTransfer.getData("compId");
 				var area = editPreview.searchArea(pjq(this).parent());
 				var sharedId = event.dataTransfer.getData("shared");
-				if (sharedId != null && sharedId.length > 0) {									
-					var previewId = "0";					
+				if (sharedId != null && sharedId.length > 0) {											
 					var ajaxURL = editPreview.addParam(currentURL, "webaction=edit.insertShared&sharedContent="
-					+ sharedId + "&previous=" + previewId
+					+ sharedId + "&previous=0"
 					+ "&area=" + area+ "&render-mode=3&init=true");				
 					if (editPreview.searchPageId(this) != null) {
 						ajaxURL = ajaxURL +'&pageContainerID='+ editPreview.searchPageId(this);
@@ -316,6 +337,51 @@ editPreview.initPreview = function() {
 		}		
 	}
 	
+	/*************************/	
+	/** drag and drop page * */
+	/*************************/
+	var drop = document.querySelectorAll('#preview_command ul.navigation a.draggable'), el = null;
+	for (var i = 0; i < drop.length; i++) {
+		el = drop[i];
+		el.setAttribute('draggable', 'true');  
+		if (!el.eventsAdded) {
+			el.eventsAdded = true;			
+		    el.addEventListener('dragover', function (event) {
+		    	event.preventDefault();
+		    	pjq("._ep_new-component-zone").remove();
+		    	pjq(this).after('<div class="_ep_new-component-zone"></div>');
+		    });
+		    el.addEventListener('dragleave', function (event) {		    	
+		    	pjq("._ep_new-component-zone").remove();		    	
+		    });	    
+		    el.addEventListener('dragstart', function (event) {
+		    	var targetPageName = pjq(this).attr("id");		    	
+		    	event.dataTransfer.setData('name', targetPageName);
+		    });
+		    el.addEventListener('drop', function (event) {
+		    	event.preventDefault();		    	
+		    	pjq("._ep_new-component-zone").remove();
+		    	var item = pjq(this);
+		    	var targetPageName = item.attr("id");
+		    	var insertAsChild = false;
+		    	if (item.parent().hasClass("title") || item.parent().parent().hasClass("title")) {
+		    		insertAsChild = true;
+		    	}
+		    	var pageName = event.dataTransfer.getData('name');	
+		    	console.log("pageName = ", pageName);
+		    	console.log("targetPageName = ", targetPageName);
+		    	console.log("insertAsChild = ", insertAsChild);
+		    	var ajaxURL = editPreview.addParam(currentURL,"previewEdit=true&webaction=edit.movePage&page=" + pageName + "&previous=" + targetPageName + "&render-mode=3&init=true&as-child="+insertAsChild);
+		    	console.log("ajaxURL = ", ajaxURL);
+				editPreview.ajaxPreviewRequest(ajaxURL, null);
+				return false;	
+		    });
+		}		
+	}
+	
+	/************/
+	/** upload **/
+	/************/
 	var drop = document.querySelectorAll('#preview_command .upload-zone'), el = null;
 	for (var i = 0; i < drop.length; i++) {
 		el = drop[i];
@@ -435,7 +501,7 @@ editPreview.initPreview = function() {
 		pjq('body').removeClass("_preview_ajax-loading");
 	}
 	
-	editPreview.ajaxPreviewRequest = function(url, doneFunction) {
+	editPreview.ajaxPreviewRequest = function(url, doneFunction, data) {		
 		editPreview.startAjax();
 		if (url.indexOf("/edit-")>=0) {
 			url = url.replace("/edit-", "/ajax-");
@@ -446,17 +512,15 @@ editPreview.initPreview = function() {
 			} else {
 				url = url.replace("/preview/", "/ajax/");
 			}
-		}	
-		var data=null;
-		var formDataSpecific = undefined;		
+		}
 		jQuery.ajax({
 			url : url,
 			cache : false,
-			contentType: formDataSpecific,
-			processData: formDataSpecific,
 			data : data,
 			type : "post",
-			dataType : "json"
+			dataType : "json",
+			processData: false,
+			contentType: false
 		}).done(function(jsonObj) {			
 			if (jsonObj.data != null) {
 				if (jsonObj.data["need-refresh"]) {

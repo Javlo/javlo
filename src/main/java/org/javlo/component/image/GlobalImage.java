@@ -25,7 +25,6 @@ import org.javlo.component.core.ComponentContext;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.core.IImageFilter;
 import org.javlo.component.core.IReverseLinkComponent;
-import org.javlo.component.links.MirrorComponent;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.EditContext;

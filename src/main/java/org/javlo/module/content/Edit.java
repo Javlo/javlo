@@ -25,6 +25,7 @@ import org.javlo.component.core.ContentElementList;
 import org.javlo.component.core.IContentComponentsList;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.core.IReverseLinkComponent;
+import org.javlo.component.core.IUploadResource;
 import org.javlo.component.dynamic.DynamicComponent;
 import org.javlo.component.links.MirrorComponent;
 import org.javlo.component.links.PageMirrorComponent;
@@ -89,7 +90,7 @@ public class Edit extends AbstractModuleAction {
 		EditContext editContext = EditContext.getInstance(globalContext, ctx.getRequest().getSession());
 		I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
 		ClipBoard clipBoard = ClipBoard.getInstance(ctx.getRequest());
-		
+
 		ctx = ctx.getContextWithOtherRenderMode(ContentContext.EDIT_MODE);
 
 		IContentVisualComponent currentTypeComponent = ComponentFactory.getComponentWithType(ctx, editContext.getActiveType());
@@ -437,7 +438,6 @@ public class Edit extends AbstractModuleAction {
 	private static boolean canModifyCurrentPage(ContentContext ctx, MenuElement page) throws Exception {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		IUserFactory adminUserFactory = AdminUserFactory.createUserFactory(globalContext, ctx.getRequest().getSession());
-
 		if (page.isBlocked()) {
 			if (!page.getBlocker().equals(adminUserFactory.getCurrentUser(ctx.getRequest().getSession()).getName())) {
 				return false;
@@ -748,7 +748,7 @@ public class Edit extends AbstractModuleAction {
 				if (globalContext.isMailingPlatform()) {
 					newId = content.createContent(ctx, targetPage, areaKey, previousId, bean, true);
 				} else {
-					ComponentBean mirrorComponentBean = new ComponentBean(MirrorComponent.TYPE, bean.getId(), ctx.getRequestContentLanguage());					
+					ComponentBean mirrorComponentBean = new ComponentBean(MirrorComponent.TYPE, bean.getId(), ctx.getRequestContentLanguage());
 					newId = content.createContent(ctx, targetPage, areaKey, previousId, mirrorComponentBean, true);
 				}
 			}
@@ -862,8 +862,16 @@ public class Edit extends AbstractModuleAction {
 		}
 		return null;
 	}
-
+	
 	public static final String performSave(ContentContext ctx, EditContext editContext, GlobalContext globalContext, ContentService content, ComponentContext componentContext, RequestService requestService, I18nAccess i18nAccess, MessageRepository messageRepository, Module currentModule, AdminUserFactory adminUserFactory) throws Exception {
+		return performModifComponent(ctx, editContext, globalContext, content, componentContext, requestService, i18nAccess, messageRepository, currentModule, adminUserFactory, false);
+	}
+	
+	public static final String performUpload(ContentContext ctx, EditContext editContext, GlobalContext globalContext, ContentService content, ComponentContext componentContext, RequestService requestService, I18nAccess i18nAccess, MessageRepository messageRepository, Module currentModule, AdminUserFactory adminUserFactory) throws Exception {		
+		return performModifComponent(ctx, editContext, globalContext, content, componentContext, requestService, i18nAccess, messageRepository, currentModule, adminUserFactory, true);
+	}
+
+	private static final String performModifComponent(ContentContext ctx, EditContext editContext, GlobalContext globalContext, ContentService content, ComponentContext componentContext, RequestService requestService, I18nAccess i18nAccess, MessageRepository messageRepository, Module currentModule, AdminUserFactory adminUserFactory, boolean upload) throws Exception {
 
 		if (!canModifyCurrentPage(ctx) || !checkPageSecurity(ctx)) {
 			messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("action.block"), GenericMessage.ERROR));
@@ -883,8 +891,18 @@ public class Edit extends AbstractModuleAction {
 			IContentVisualComponent elem = content.getComponent(ctx, compId);
 			if (elem != null && StringHelper.isTrue(requestService.getParameter("id-" + elem.getId(), null))) {
 				if (AdminUserSecurity.getInstance().canModifyConponent(ctx, compId)) {
-					elem.performConfig(ctx);
-					elem.performEdit(ctx);
+					
+					if (!upload) {
+						elem.performConfig(ctx);
+						elem.performEdit(ctx);
+					} else {
+						if (elem instanceof IUploadResource) {
+							((IUploadResource)elem).performUpload(ctx);
+						} else {
+							logger.warning("you can't upload file in "+elem.getType());
+							return "you can't upload file in "+elem.getType();
+						}
+					}
 					if (ctx.isEditPreview()) {
 						componentContext.addNewComponent(elem);
 					}
@@ -1352,16 +1370,15 @@ public class Edit extends AbstractModuleAction {
 		if (menuElement.getParent() == null) {
 			return i18nAccess.getText("action.remove.can-not-delete");
 		}
-		
+
 		String newPath = menuElement.getParent().getPath();
 		if (menuElement.isChildrenOfAssociation()) {
 			newPath = menuElement.getRootOfChildrenAssociation().getFirstChild().getPath();
-		}		
-		if (menuElement.isChildrenAssociation()) {	
-			newPath = "/";
-			menuElement = menuElement.getParent();			
 		}
-			
+		if (menuElement.isChildrenAssociation()) {
+			newPath = "/";
+			menuElement = menuElement.getParent();
+		}
 
 		if (menuElement == null) {
 			message = i18nAccess.getText("action.remove.can-not-delete");
@@ -1432,7 +1449,6 @@ public class Edit extends AbstractModuleAction {
 	}
 
 	public static String performMovePage(RequestService rs, ContentContext ctx, GlobalContext globalContext, ContentService content, I18nAccess i18nAccess, MessageRepository messageRepository) throws Exception {
-
 		String pageName = rs.getParameter("page", null);
 		String pagePreviousName = rs.getParameter("previous", null);
 		if (pageName == null || pagePreviousName == null) {
@@ -1443,12 +1459,14 @@ public class Edit extends AbstractModuleAction {
 		if (pagePreviousName.startsWith("page-")) {
 			pagePreviousName = pagePreviousName.replaceFirst("page-", "");
 			pagePrevious = content.getNavigation(ctx).searchChildFromName(pagePreviousName);
-			if (pagePrevious == null) {
-				return "previous page not found : " + pagePreviousName;
-			}
+		}
+		if (pagePrevious == null) {
+			return "previous page not found : " + pagePreviousName;
 		}
 		MenuElement page = content.getNavigation(ctx).searchChildFromName(pageName);
-
+		if (page == null) {
+			return "page not found : " + pageName;
+		}
 		if (!canModifyCurrentPage(ctx, page) || !checkPageSecurity(ctx, page)) {
 			messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("action.block"), GenericMessage.ERROR));
 			return null;
@@ -1457,15 +1475,11 @@ public class Edit extends AbstractModuleAction {
 		if (page == null) {
 			return "page not found : " + pageName;
 		}
-		if (pagePrevious == null) {
-			page.setPriority(0);
+		if (StringHelper.isTrue(rs.getParameter("as-child", null))) {
+			NavigationHelper.movePage(ctx, pagePrevious, null, page);
 		} else {
-			if (page.getPreviousBrother() != null && page.getPreviousBrother().equals(pagePrevious)) {
-				return null;
-			}
-			page.setPriority(pagePrevious.getPriority() + 1);
+			NavigationHelper.movePage(ctx, pagePrevious.getParent(), pagePrevious, page);
 		}
-		NavigationHelper.changeStepPriority(page.getParent().getChildMenuElements(), 10);
 
 		PersistenceService persistenceService = PersistenceService.getInstance(globalContext);
 		persistenceService.store(ctx);
@@ -1473,31 +1487,12 @@ public class Edit extends AbstractModuleAction {
 
 		messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("edit.message.moved", new String[][] { { "name", page.getName() } }), GenericMessage.INFO));
 
-		MenuElement currentPage = ctx.getCurrentPage();
-
-		if (ctx.isAjax() && currentPage.isChildrenAssociation()) {
-			/*
-			 * ctx.getRequest().setAttribute("pageAssociation", true); for
-			 * (MenuElement child : currentPage.getChildMenuElements()) {
-			 * Template childTemplate = TemplateFactory.getTemplate(ctx, child);
-			 * ctx.setCurrentPageCached(child);
-			 * ctx.setCurrentTemplate(childTemplate); String jspURI =
-			 * childTemplate.getRendererFullName(ctx); if
-			 * (child.getPreviousBrother() == null && child.getNextBrother() !=
-			 * null) { jspURI = URLHelper.addAllParams(jspURI,
-			 * "no-close-body=true"); } else if (child.getPreviousBrother() !=
-			 * null && child.getNextBrother() == null) { jspURI =
-			 * URLHelper.addAllParams(jspURI, "no-open-body=true"); } else {
-			 * jspURI = URLHelper.addAllParams(jspURI, "no-close-body=true",
-			 * "no-open-body=true"); }
-			 * 
-			 * String pageContent = ServletHelper.executeJSP(ctx, jspURI);
-			 * String selecterPrefix = ""; if
-			 * (currentPage.isChildrenAssociation()) { selecterPrefix = "#page_"
-			 * + child.getId(); } ctx.setCurrentPageCached(child);
-			 * ctx.getAjaxInsideZone().put(selecterPrefix, pageContent); }
-			 */
+		if (page.isChildrenOfAssociation()) {
 			ctx.setNeedRefresh(true);
+		} else {
+			if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE) {
+				updatePreviewCommands(ctx, null);
+			}
 		}
 
 		return null;
@@ -1522,7 +1517,7 @@ public class Edit extends AbstractModuleAction {
 		newCtx.setRenderMode(ContentContext.EDIT_MODE);
 		newCtx.setRequest(ctx.getRequest());
 		newCtx.setResponse(ctx.getResponse());
-		
+
 		ContentElementList elems = newCtx.getCurrentPage().getContent(newCtx);
 
 		String parentId = rs.getParameter("previous", null);
@@ -1540,7 +1535,7 @@ public class Edit extends AbstractModuleAction {
 			c++;
 		}
 
-		if (parent != null) {			
+		if (parent != null) {
 			IContentVisualComponent nextParent = parent.next();
 			IContentVisualComponent newParent = content.getComponent(ctx, parentId);
 			newParent.setNextComponent(nextParent); // reconnect the list
@@ -1600,7 +1595,7 @@ public class Edit extends AbstractModuleAction {
 		}
 		if (!ctx.isEditPreview()) {
 			ctx.setArea(editContext.getCurrentArea());
-			comp.setArea(null); // paste in current area			
+			comp.setArea(null); // paste in current area
 		}
 		comp.setLanguage(null);
 		String newId = content.createContent(ctx, targetPage, comp, previous, true);
@@ -1664,7 +1659,7 @@ public class Edit extends AbstractModuleAction {
 		if (targetPage == null) {
 			targetPage = ctx.getCurrentPage();
 		}
-		
+
 		ComponentHelper.moveComponent(ctx, comp, newPrevious, targetPage, area);
 
 		if (ctx.isAjax()) {

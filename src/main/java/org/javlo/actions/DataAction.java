@@ -24,6 +24,7 @@ import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.io.FileExistsException;
 import org.codehaus.plexus.util.StringUtils;
 import org.javlo.component.core.ComponentBean;
+import org.javlo.component.core.ComponentFactory;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.files.ArrayFileComponent;
 import org.javlo.component.files.GenericFile;
@@ -33,10 +34,12 @@ import org.javlo.component.multimedia.Multimedia;
 import org.javlo.component.title.Title;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
+import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.BeanHelper;
 import org.javlo.helper.ContentHelper;
 import org.javlo.helper.LangHelper;
+import org.javlo.helper.NavigationHelper;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.ServletHelper;
 import org.javlo.helper.StringHelper;
@@ -50,6 +53,7 @@ import org.javlo.message.MessageRepository;
 import org.javlo.module.content.Edit;
 import org.javlo.module.ticket.TicketAction;
 import org.javlo.navigation.MenuElement;
+import org.javlo.navigation.PageAssociationBean;
 import org.javlo.service.ContentService;
 import org.javlo.service.IMService;
 import org.javlo.service.IMService.IMItem;
@@ -58,6 +62,7 @@ import org.javlo.service.NotificationService.Notification;
 import org.javlo.service.NotificationService.NotificationContainer;
 import org.javlo.service.PersistenceService;
 import org.javlo.service.RequestService;
+import org.javlo.service.shared.CloserJavloSharedContentProvider;
 import org.javlo.service.shared.ISharedContentProvider;
 import org.javlo.service.shared.ImportedImageSharedContentProvider;
 import org.javlo.service.shared.SharedContentContext;
@@ -166,22 +171,13 @@ public class DataAction implements IAction {
 		}
 
 		Map<String, Object> serverInfo = new LinkedHashMap<String, Object>();
-		BeanHelper.extractPropertiesAsString(serverInfo, request,
-				"remotePort",
-				"remoteHost",
-				"remoteAddr",
-				"localAddr",
-				"localName",
-				"localPort",
-				"serverName",
-				"serverPort",
-				"characterEncoding"
-				//, "contextPath"
+		BeanHelper.extractPropertiesAsString(serverInfo, request, "remotePort", "remoteHost", "remoteAddr", "localAddr", "localName", "localPort", "serverName", "serverPort", "characterEncoding"
+		// , "contextPath"
 				);
 		serverInfo.put("contextKey", ctx.getGlobalContext().getContextKey());
 		serverInfo.put("version", IVersion.VERSION);
 		serverInfo.put("systemUser", System.getProperty("user.name"));
-		ctx.getAjaxData().put("serverInfo", serverInfo);		
+		ctx.getAjaxData().put("serverInfo", serverInfo);
 
 		Map<String, Object> headersOut = new LinkedHashMap<String, Object>();
 		@SuppressWarnings("unchecked")
@@ -201,7 +197,7 @@ public class DataAction implements IAction {
 
 		return null;
 	}
-	
+
 	public static String performOneTimeToken(ContentContext ctx, User user) {
 		if (user != null) {
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
@@ -282,7 +278,7 @@ public class DataAction implements IAction {
 	 * @return
 	 * @throws Exception
 	 */
-	protected static File createImage(ContentContext ctx, String importFolder, FileItem imageItem, ImportConfigBean config) throws Exception {
+	protected static File createImage(ContentContext ctx, String importFolder, FileItem imageItem, ImportConfigBean config, boolean content, String previousId) throws Exception {
 		GlobalContext gc = ctx.getGlobalContext();
 		String imageRelativeFolder = URLHelper.mergePath(gc.getStaticConfig().getStaticFolder(), ctx.getCurrentTemplate().getImportImageFolder(), importFolder);
 		File targetFolder = new File(URLHelper.mergePath(gc.getDataFolder(), imageRelativeFolder));
@@ -299,19 +295,22 @@ public class DataAction implements IAction {
 			out.println("file-name=" + StringHelper.getFileNameFromPath(imageItem.getName()));
 			out.println(GlobalImage.IMAGE_FILTER + "=full");
 			out.close();
-			if (config.isCreateContentOnImportImage()) {
+			if (config.isCreateContentOnImportImage() || content) {
 				ComponentBean image = new ComponentBean(GlobalImage.TYPE, new String(outStream.toByteArray()), ctx.getRequestContentLanguage());
 				image.setStyle(Image.STYLE_CENTER);
-				Collection<IContentVisualComponent> titles = ctx.getCurrentPage().getContentByType(ctx, Title.TYPE);
-				String previousId = "0";
-				if (titles.size() > 0) {
-					previousId = titles.iterator().next().getId();
-				}
-				image.setArea(config.getArea());
-				if (config.isBeforeContent()) {
-					cs.createContent(ctx.getContextWithArea(config.getArea()), image, previousId, true);
+				if (!content) {
+					Collection<IContentVisualComponent> titles = ctx.getCurrentPage().getContentByType(ctx, Title.TYPE);
+					if (titles.size() > 0) {
+						previousId = titles.iterator().next().getId();
+					}
+					image.setArea(config.getArea());
+					if (config.isBeforeContent()) {
+						cs.createContent(ctx.getContextWithArea(config.getArea()), image, previousId, true);
+					} else {
+						cs.createContentAtEnd(ctx.getContextWithArea(config.getArea()), image, true);
+					}
 				} else {
-					cs.createContentAtEnd(ctx.getContextWithArea(config.getArea()), image, true);
+					cs.createContent(ctx, image, previousId, true);
 				}
 			}
 		}
@@ -329,38 +328,50 @@ public class DataAction implements IAction {
 	 * @return
 	 * @throws Exception
 	 */
-	protected static File createOrUpdateGallery(ContentContext ctx, File targetFolder, String importFolder, Collection<FileItem> imageItem, ImportConfigBean config) throws Exception {
-		Collection<IContentVisualComponent> mediaComps = ctx.getCurrentPage().getContentByType(ctx, Multimedia.TYPE);
+	protected static File createOrUpdateGallery(ContentContext ctx, File targetFolder, String importFolder, Collection<FileItem> imageItem, ImportConfigBean config, boolean content, String previousId) throws Exception {		
 		boolean galleryFound = false;
 		Template tpl = ctx.getCurrentTemplate();
-		GlobalContext gc = ctx.getGlobalContext();
-		ContentService cs = ContentService.getInstance(gc);
+		GlobalContext globalContext = ctx.getGlobalContext();
+		ContentService cs = ContentService.getInstance(globalContext);
 		String galleryRelativeFolder = null;
 
 		String baseGalleryFolder = tpl.getImportGalleryFolder();
-		if (!config.isCreateContentOnImportImage()) {
+		if (!config.isCreateContentOnImportImage() && !content) {
 			baseGalleryFolder = tpl.getImportImageFolder();
 		}
 
+		Multimedia compGalleryFound = null;
+		Collection<IContentVisualComponent> mediaComps = ctx.getCurrentPage().getContentByType(ctx, Multimedia.TYPE);
 		if (mediaComps.size() > 0) {
 			for (IContentVisualComponent comp : mediaComps) {
 				Multimedia multimedia = (Multimedia) comp;
-				if (multimedia.getCurrentRootFolder().length() > baseGalleryFolder.length()) {
-					galleryRelativeFolder = URLHelper.mergePath(gc.getStaticConfig().getStaticFolder(), multimedia.getCurrentRootFolder());
+				if (multimedia.getCurrentRootFolder().length() > baseGalleryFolder.length() || content) {					
+					galleryRelativeFolder = URLHelper.mergePath(globalContext.getStaticConfig().getStaticFolder(), multimedia.getCurrentRootFolder());
 					galleryFound = true;
 					ctx.setNeedRefresh(true);
+					if (content) {
+						if (multimedia.getId().equals(previousId)) {
+							compGalleryFound = multimedia;
+							break;
+						}
+					} else {
+						compGalleryFound = multimedia;
+						break;
+					}
 				}
 			}
-
 		}
 		if (galleryRelativeFolder == null) {
 			String galFolder = importFolder;
 			if (galFolder.trim().length() == 0) {
 				galFolder = "images";
 			}
-			galleryRelativeFolder = URLHelper.mergePath(gc.getStaticConfig().getStaticFolder(), baseGalleryFolder, importFolder);
+			galleryRelativeFolder = URLHelper.mergePath(globalContext.getStaticConfig().getStaticFolder(), baseGalleryFolder, importFolder);
 		}
-		targetFolder = new File(URLHelper.mergePath(gc.getDataFolder(), galleryRelativeFolder));
+		targetFolder = new File(URLHelper.mergePath(globalContext.getDataFolder(), galleryRelativeFolder));
+		if (compGalleryFound != null) {
+			targetFolder = new File(URLHelper.mergePath(globalContext.getDataFolder(), globalContext.getStaticConfig().getStaticFolder(), compGalleryFound.getCurrentRootFolder()));			
+		}
 
 		if (!targetFolder.exists()) {
 			targetFolder.mkdirs();
@@ -373,20 +384,23 @@ public class DataAction implements IAction {
 			}
 		}
 
-		if (!galleryFound && config.isCreateContentOnImportImage()) {
-			ComponentBean multimedia = new ComponentBean(Multimedia.TYPE, "--12,128-" + galleryRelativeFolder.replaceFirst(gc.getStaticConfig().getStaticFolder(), "") + "---", ctx.getRequestContentLanguage());
+		if (!galleryFound && (config.isCreateContentOnImportImage() || content)) {
+			ComponentBean multimedia = new ComponentBean(Multimedia.TYPE, "--12,128-" + galleryRelativeFolder.replaceFirst(globalContext.getStaticConfig().getStaticFolder(), "") + "---", ctx.getRequestContentLanguage());
 			multimedia.setStyle(Multimedia.IMAGE);
 
-			Collection<IContentVisualComponent> titles = ctx.getCurrentPage().getContentByType(ctx, Title.TYPE);
-			String previousId = "0";
-			if (titles.size() > 0) {
+			Collection<IContentVisualComponent> titles = ctx.getCurrentPage().getContentByType(ctx, Title.TYPE);			
+			if (!content && titles.size() > 0) {
 				previousId = titles.iterator().next().getId();
 			}
-			multimedia.setArea(config.getArea());
-			if (config.isBeforeContent()) {
-				cs.createContent(ctx.getContextWithArea(config.getArea()), multimedia, previousId, true);
-			} else {
-				cs.createContentAtEnd(ctx.getContextWithArea(config.getArea()), multimedia, true);
+			if (!content) {
+				multimedia.setArea(config.getArea());
+				if (config.isBeforeContent()) {
+					cs.createContent(ctx.getContextWithArea(config.getArea()), multimedia, previousId, true);
+				} else {
+					cs.createContentAtEnd(ctx.getContextWithArea(config.getArea()), multimedia, true);
+				}
+			} else {				
+				cs.createContent(ctx, multimedia, previousId, true);
 			}
 
 			ctx.setNeedRefresh(true);
@@ -399,13 +413,13 @@ public class DataAction implements IAction {
 
 		return targetFolder;
 	}
-	
+
 	public static final String createImportFolder(ContentContext ctx) throws Exception {
 		MenuElement page = ctx.getCurrentPage().getRootOfChildrenAssociation();
 		if (page == null) {
 			page = ctx.getCurrentPage();
 		}
-		String importFolder = StringHelper.createFileName(page.getName());		
+		String importFolder = StringHelper.createFileName(page.getName());
 		importFolder = StringHelper.trimOn(importFolder.trim(), "_");
 		importFolder = importFolder.replace('-', '_');
 		return importFolder;
@@ -419,13 +433,14 @@ public class DataAction implements IAction {
 		if (!Edit.checkPageSecurity(ctx)) {
 			return "no suffisant right.";
 		}
-		Template tpl = ctx.getCurrentTemplate();		
-		String importFolder = createImportFolder(ctx);		
+		Template tpl = ctx.getCurrentTemplate();
+		String importFolder = createImportFolder(ctx);
 		int countImages = 0;
 		FileItem imageItem = null;
 		try {
+			String previousId = rs.getParameter("previous", "0");
+			boolean content = StringHelper.isTrue(rs.getParameter("content", null));
 			for (FileItem item : rs.getAllFileItem()) {
-
 				logger.info("try to import (" + ctx.getCurrentUserId() + ") : " + item.getName());
 
 				if (StringHelper.isImage(item.getName())) {
@@ -437,13 +452,23 @@ public class DataAction implements IAction {
 					InputStream in = item.getInputStream();
 					Collection<ComponentBean> beans = ContentHelper.createContentFromODT(gc, in, item.getName(), ctx.getRequestContentLanguage());
 					in.close();
-					cs.createContent(ctx, beans, "0", true);
+					cs.createContent(ctx, beans, previousId, true);
 					ctx.setNeedRefresh(true);
 				} else if (StringHelper.getFileExtension(item.getName()).equalsIgnoreCase("docx")) {
 					InputStream in = item.getInputStream();
 					Collection<ComponentBean> beans = ContentHelper.createContentFromDocx(gc, in, item.getName(), ctx.getRequestContentLanguage());
 					in.close();
-					cs.createContent(ctx, beans, "0", true);
+					MenuElement page = ctx.getCurrentPage();
+					ContentContext contentCtx = new ContentContext(ctx);
+					if (ctx.getCurrentPage().isChildrenOfAssociation() && !content) {						
+						PageAssociationBean pageAssociation = new PageAssociationBean(ctx, ctx.getCurrentPage().getRootOfChildrenAssociation());						
+						page = NavigationHelper.createChildPageAutoName(pageAssociation.getArticleRoot().getPage(), ctx);						
+						SharedContentContext sharedContentContext = SharedContentContext.getInstance(ctx.getRequest().getSession());
+						sharedContentContext.setProvider(CloserJavloSharedContentProvider.NAME);
+						SharedContentService.getInstance(ctx).clearCache();
+						contentCtx.setArea(ComponentBean.DEFAULT_AREA);
+					}
+					cs.createContent(contentCtx, page, beans, previousId, true);					
 					ctx.setNeedRefresh(true);
 				} else if (StringHelper.getFileExtension(item.getName()).equalsIgnoreCase("zip") && item.getName().startsWith("export_")) { // JCR
 					InputStream in = item.getInputStream();
@@ -456,8 +481,7 @@ public class DataAction implements IAction {
 					in.close();
 					ctx.setNeedRefresh(true);
 				} else {
-					boolean isArray = StringHelper.getFileExtension(item.getName()).equalsIgnoreCase("xls") || StringHelper.getFileExtension(item.getName()).equalsIgnoreCase("xlsx") || StringHelper.getFileExtension(item.getName()).equalsIgnoreCase("ods")
-							|| StringHelper.getFileExtension(item.getName()).equalsIgnoreCase("csv");
+					boolean isArray = StringHelper.getFileExtension(item.getName()).equalsIgnoreCase("xls") || StringHelper.getFileExtension(item.getName()).equalsIgnoreCase("xlsx") || StringHelper.getFileExtension(item.getName()).equalsIgnoreCase("ods") || StringHelper.getFileExtension(item.getName()).equalsIgnoreCase("csv");
 					String resourceRelativeFolder = URLHelper.mergePath(gc.getStaticConfig().getStaticFolder(), tpl.getImportResourceFolder(), importFolder);
 					File targetFolder = new File(URLHelper.mergePath(gc.getDataFolder(), resourceRelativeFolder));
 					if (!targetFolder.exists()) {
@@ -476,7 +500,11 @@ public class DataAction implements IAction {
 							beanType = ArrayFileComponent.TYPE;
 						}
 						ComponentBean bean = new ComponentBean(beanType, new String(outStream.toByteArray()), ctx.getRequestContentLanguage());
-						cs.createContentAtEnd(ctx, bean, true);
+						if (!content) {
+							cs.createContentAtEnd(ctx, bean, true);
+						} else {
+							cs.createContent(ctx, bean, previousId, true);
+						}
 						ctx.setNeedRefresh(true);
 						StaticInfo staticInfo = StaticInfo.getInstance(ctx, newFile);
 						staticInfo.setShared(ctx, false); // by default a simple
@@ -489,30 +517,36 @@ public class DataAction implements IAction {
 			File targetFolder = null;
 
 			File folderSelection = null;
-
+			
+			
+			ContentService contentService = ContentService.getInstance(ctx.getRequest());
+			IContentVisualComponent previousComp = contentService.getComponent(ctx, previousId);
+			if (previousComp != null && previousComp.getType().equals(Multimedia.TYPE)) {
+				countImages = 2;
+			}
 			if (countImages == 1) {
 				if (!config.isImagesAsGallery()) {
-					folderSelection = createImage(ctx, importFolder, imageItem, config);
+					folderSelection = createImage(ctx, importFolder, imageItem, config, content, previousId);
 					if (folderSelection != null) {
 						folderSelection = folderSelection.getParentFile();
 					}
 				} else {
-					folderSelection = createOrUpdateGallery(ctx, targetFolder, importFolder, Arrays.asList(new FileItem[] { imageItem }), config);
+					folderSelection = createOrUpdateGallery(ctx, targetFolder, importFolder, Arrays.asList(new FileItem[] { imageItem }), config, content, previousId);
 				}
 				ctx.setNeedRefresh(true);
 			} else if (countImages > 1) { // gallery
 				if (!config.isImagesAsImages() && ctx.getGlobalContext().getComponents().contains(Multimedia.class.getName())) {
-					folderSelection = createOrUpdateGallery(ctx, targetFolder, importFolder, rs.getAllFileItem(), config);
+					folderSelection = createOrUpdateGallery(ctx, targetFolder, importFolder, rs.getAllFileItem(), config, content, previousId);
 				} else {
 					for (FileItem file : rs.getAllFileItem()) {
-						folderSelection = createImage(ctx, importFolder, file, config);
+						folderSelection = createImage(ctx, importFolder, file, config, content, previousId);
 						if (folderSelection != null) {
 							folderSelection = folderSelection.getParentFile();
 						}
 					}
 				}
 			}
-			if (!config.isCreateContentOnImportImage()) {
+			if (!config.isCreateContentOnImportImage() && !content && countImages>0) {
 				SharedContentContext sharedContentContext = SharedContentContext.getInstance(ctx.getRequest().getSession());
 				sharedContentContext.setProvider(ImportedImageSharedContentProvider.NAME);
 				SharedContentService.getInstance(ctx).clearCache();
