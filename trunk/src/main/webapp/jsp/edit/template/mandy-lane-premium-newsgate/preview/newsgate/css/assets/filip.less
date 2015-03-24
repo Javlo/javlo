@@ -1,0 +1,226 @@
+
+
+	
+/* ----- Sidebar ----- */
+.sidebar {
+	box-shadow:none;
+	border-radius:0;
+	border:none;
+	z-index:1000;
+	top:55px;
+	
+		&:after,
+		&:before {
+			display:block;
+			position:absolute;
+			top:0;
+			right:-5px;
+			height:100%;
+			width:5px;
+			content:"";
+			background:rgba(0,0,0, .03);
+		}
+		&:before {
+			top:0;
+			right:-1px;
+			width:1px;
+			height:100%;
+			background:rgba(0,0,0, .1);
+		}
+		
+		
+		.panel-body {
+			padding:30px 15px 15px;
+		}
+}
+	
+	
+/* ----- Header ----- */
+.header {
+	box-shadow:none;
+	z-index:1000;
+	
+		&:after,
+		&:before {
+			display:block;
+			position:absolute;
+			left:0;
+			right:0;
+			bottom:-5px;
+			height:5px;
+			content:"";
+			background:rgba(0,0,0, .03);
+			z-index:3000;
+		}
+		&:before {
+			bottom:-1px;
+			height:1px;
+			background:rgba(0,0,0, .1);
+		}
+		
+		.logo {
+			background:url(../../img/bg/logo-newsgate.png) no-repeat 20px 0;
+			
+				a {
+					text-indent:-999px;
+					overflow:hidden;
+					display:block;
+					width:100%;
+					height:100%;
+				}
+		}
+		
+		
+		/* --- Menu --- */
+		.menu {
+			
+			li {
+				font-size:14px;
+				border-left:1px solid rgba(0,0,0, .1);
+				
+					.inwrapper  {
+						font-size:14px;
+					}	
+					a {
+						color:#333;
+						font-size:14px;
+					}
+					
+					&.home {
+						padding:18px 15px;
+					}
+					&.action-title {}
+			}
+			
+		}
+		
+		
+		.actions-wrapper {
+			float:none;
+			position:fixed;
+			background:#eee;
+			left:0;
+			top:50px;
+			right:0;
+			padding-left:360px;
+			height:90px;
+			z-index:100;
+				
+				&:after,
+				&:before {
+					display:block;
+					position:absolute;
+					left:0;
+					right:0;
+					bottom:-5px;
+					height:5px;
+					content:"";
+					background:rgba(0,0,0, .03);
+					z-index:3000;
+				}
+				&:before {
+					bottom:-1px;
+					height:1px;
+					background:rgba(0,0,0, .1);
+				}
+			
+				.page-title {
+					display:block;
+					float:left;
+					max-width:30%;
+					overflow:hidden;
+					padding:10px 15px 10px 0;
+					margin:15px 0 0 0;
+					border-right:1px solid rgba(0,0,0, .1);
+					
+						h1 {
+							font-size:2em;
+							margin:0 0 4px 0;
+							padding:0;
+							line-height:1em;
+							font-size:1.7em;
+							color:#333333;
+							font-family:'Open Sans', sans-serif !important;
+							display:block !important;
+						}
+				}
+				
+				
+				.actions {
+					display:block;
+					float:left;
+					max-width:70%;
+					overflow:hidden;
+					background:none;
+					border:none;
+					height:auto;
+					margin:15px 0 0 0;
+					padding:8px 0 0 15px;
+					
+						.btn-group {
+							
+							ul {
+								
+								li {
+									margin:0;
+									padding:0;
+								}
+							}
+						}
+				}
+			
+		}
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+}
+
+
+
+
+
+
+
+/* ----- Edit-Zone ----- */
+#preview-layer {
+	z-index:100 !important;
+}
+
+table.page-wrapper {
+	background:#fff;
+	box-shadow:1px 2px 3px rgba(0,0,0, .1);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

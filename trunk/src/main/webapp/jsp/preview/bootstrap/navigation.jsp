@@ -11,31 +11,31 @@
 	<c:if test="${not empty info.parent}">
 		<c:if test="${page.url eq info.currentURL}"><c:set var="asTitle" value="true" />		
 			<li class="parent title">
-				<span><a href="${info.parent.url}">${info.parent.info.title}</a></span>			
+				<span><a class="draggable" id="page-${info.parent.name}" href="${info.parent.url}">${info.parent.info.title}</a></span>			
 			</li>
 		</c:if>
 		<c:if test="${!(page.url eq info.currentURL) && not empty info.parent.parent}"><c:set var="asTitle" value="true" />
 			<li class="parent title">
-				<span><a href="${info.parent.parent.url}">${info.parent.parent.info.title}</a></span>			
+				<span><a class="draggable" id="page-${info.parent.parent.name}" href="${info.parent.parent.url}">${info.parent.parent.info.title}</a></span>			
 			</li>
 		</c:if>		
 	</c:if>
 	
 	<c:forEach var="brother" items="${page.info.previousBrothers}">
 		<li>		
-			<span><a class="editor" title="brother page" href="${brother.url}">${brother.info.title}</a></span>
+			<span><a id="page-${brother.name}" class="draggable editor" title="${brother.info.title}" href="${brother.url}">${brother.info.title}</a></span>
 		</li>
 	</c:forEach>
 	
 	<li class="${page.url eq info.currentURL?'current ':''}${!asTitle?' title':''}${page.selected?' selected':''}">
-		<span><a class="editor" title="parent page" href="${page.url}">${page.info.label}</span></a>
+		<span><a class="editor draggable" id="page-${page.name}" title="parent page" href="${page.url}">${page.info.label}</span></a>
 	</li>
 	<c:if test="${asTitle}">
 	<li><ul class="children sortable">
 	</c:if>
 	<c:forEach var="child" items="${page.children}">	
-	<li id="page-${child.name}" data-name="${child.name}" class="${child.url eq info.currentURL?'current ':''}${child.info.realContent?'real-content':''} ${fn:length(child.children) > 0?'have-children ':''}">
-	<span><a href="${child.url}">${child.info.title}</a></span>
+	<li id="page-${child.name}" class="${child.url eq info.currentURL?'current ':''}${child.info.realContent?'real-content':''} ${fn:length(child.children) > 0?'have-children ':''}">
+	<span><a href="${child.url}" id="page-${child.name}" class="draggable" title="${child.info.title}">${child.info.title}</a></span>
 	</li>
 	</c:forEach>	
 	<c:if test="${asTitle}">
@@ -43,7 +43,7 @@
 	</c:if> 
 	<c:forEach var="brother" items="${page.info.nextBrothers}">
 		<li>		
-			<span><a class="editor" title="brother page" href="${brother.url}">${brother.info.label}</span></a>
+			<span><a class="draggable editor" id="page-${brother.name}" title="${brother.info.label}" href="${brother.url}">${brother.info.label}</span></a>
 		</li>
 	</c:forEach>
 	</ul>

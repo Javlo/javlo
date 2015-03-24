@@ -58,6 +58,7 @@
 #preview_command .pages ul.navigation li {
 	position: relative;
 	z-index: 1;
+	overflow: hidden;
 }
 
 #preview_command .pages ul.navigation ul li {

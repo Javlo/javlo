@@ -11,6 +11,7 @@
     	    org.javlo.module.core.ModulesContext,
     	    org.javlo.context.GlobalContext,
     	    org.javlo.module.content.Edit,
+    	    org.javlo.context.EditContext,
     	    org.javlo.message.MessageRepository,
     	    org.javlo.message.GenericMessage"
 %><%
@@ -52,6 +53,8 @@ if (!rightOnPage) {
 	accessType = "button";
 }
 request.setAttribute("editUser", ctx.getCurrentEditUser());
+request.setAttribute("editPreview", EditContext.getInstance(globalContext, session).isEditPreview());
+
 %><c:set var="pdf" value="${info.device.code == 'pdf'}" /><div id="preview_command" lang="${info.editLanguage}" class="edit-${not empty editUser} ${editPreview == 'true'?'edit':'preview'}">
 	<script type="text/javascript">	
 		var i18n_preview_edit = "${i18n.edit['component.preview-edit']}";	
@@ -62,6 +65,7 @@ request.setAttribute("editUser", ctx.getCurrentEditUser());
 	</c:if>
 	<div id="modal-container" style="display: none;">[modal]</div>
 	<jsp:include page="bootstrap/header.jsp"></jsp:include>
+	<c:if test="${editPreview}">
 	<div class="sidebar panel panel-default">
 		<div class="panel-body">
 			<c:if test="${empty editUser}">
@@ -108,7 +112,7 @@ request.setAttribute("editUser", ctx.getCurrentEditUser());
 			</c:if>
 		</div>
 	</div>
-	
+	</c:if>	
 	<div class="modal fade fancybox-wrapper" id="preview-modal" tabindex="-1" role="dialog" aria-labelledby="previewModalTitle" aria-hidden="true">
 	  <div class="modal-dialog modal-full fancybox-skin">
       <div class="fancybox-outer">

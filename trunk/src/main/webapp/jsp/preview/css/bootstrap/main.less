@@ -8,6 +8,10 @@ html {
 	margin-left: 330px !important;
 }
 
+html.preview-only {
+	margin-left: 0 !important;
+}
+
 #preview_command  .link-wrapper a {
 	padding-top: 5px;
 }
@@ -17,6 +21,7 @@ html {
   -ms-text-size-adjust: 100%;
   -webkit-text-size-adjust: 100%;
    box-sizing: content-box;
+   z-index: 1000;   
 }
 
 #preview_command form {
@@ -74,6 +79,7 @@ html {
 	top: 50px;
 	left: 0;	
 	box-shadow: 0 3px 3px #333333;
+	background-color: #ffffff;
 }
 
 #preview_command .height-to-bottom {
@@ -165,10 +171,6 @@ body #preview_command .btn[disabled] {
 	background-color: #E7E7E7;
 }
 
-#preview_command .header {
-	background-color: #ffffff;
-}
-
 #preview_command .header .navbar {
 	height: 42px;
 	min-height: 42px;
@@ -225,8 +227,12 @@ body #preview_command .btn[disabled] {
 	font-size: 16px;
 }
 
-#preview_command h2 .glyphicon, #preview_command .header .glyphicon, #preview_command button .glyphicon {
+#preview_command .header .glyphicon, #preview_command button .glyphicon {
 	margin-right: 3px;
+}
+
+#preview_command h2 .glyphicon {
+	margin-right: 6px;
 }
 
 #preview_command .settings .btn {
@@ -301,13 +307,14 @@ body #preview_command .btn[disabled] {
 	position: absolute;
 	top: -46px;
 	right: -1px;
+	min-width: 120px;
 }
 
 #preview-layer .commands button {	
 	background-color: #337ab7;
 	border-color: #337ab7;
 	color: #ffffff;
-	z-index: 1;	
+	z-index: 1;		
 }
 
 #preview-layer.nocommand .commands {
@@ -355,7 +362,7 @@ body #preview_command .btn[disabled] {
 }
 
 #preview_command .drop-files h3 {
-	font-size: 0.6em;
+	font-size: 14px;
 	margin: 0 0 2px 0;
 	color: #3b3b3b;
 	text-align: center;
@@ -385,5 +392,22 @@ body #preview_command .btn[disabled] {
 
 #preview_command .header .menu .action-title.active {
 	background-color: #EEEEEE;
+}
+
+._ep_new-component-zone, #preview_command ._ep_new-component-zone {
+	display: block;
+	background:rgba(18,139,243, .3);
+	border-radius:2px;
+	min-height:25px;
+	margin:10px -100px;
+	border:1px solid rgba(18,139,243, .3);
+}
+
+#preview_command ._ep_new-component-zone {
+	margin:10px 0;
+}
+
+#preview_command .clipboard {
+	overflow: hidden;
 }
 

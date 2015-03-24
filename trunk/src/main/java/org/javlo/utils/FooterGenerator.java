@@ -1,5 +1,7 @@
 package org.javlo.utils;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Collection;
 import java.util.LinkedList;
 
@@ -20,20 +22,20 @@ public class FooterGenerator {
 		// File templateFolder = new
 		// File("C:/Users/pvandermaesen/Dropbox/work/data/javlo/template/galaxy-template");
 
-		/*
-		 * 
-		 * File file = new File("C:/Users/pvandermaesen/Dropbox/Documents/pro/pe/president_2014/work/footer.ods");
-		 *
+		
+		  
+		File file = new File("C:/Users/pvandermaesen/Downloads/europarlmisejourdeheadersfooterscommunssitepr/footer.ods");
+		
 		// File templateFolder = new
 		// File("C:/work/javlo2/target/javlo/work_template/galaxy-2014/the-president");
-		File templateFolder = new File("C:/work/javlo2/target/javlo/work_template/galaxy-2014/the-president");
+		/*File templateFolder = new File("C:/work/javlo2/target/javlo/work_template/galaxy-2014/the-president");
 		try {
 			OutputStream outStream = new FileOutputStream(new File(templateFolder.getAbsolutePath() + '/' + "footer_bottom.jsp"));
 			PrintStream out = new PrintStream(outStream);
 			out.println("<%@ taglib uri=\"http://java.sun.com/jsp/jstl/core\" prefix=\"c\"%><div class=\"galaxynav\">");
 
 			final Sheet sheet = SpreadSheet.createFromFile(file).getSheet(0);
-			int indice = 3;
+			int indice = 2;
 			int col = 1;
 			boolean titleOpen = false;
 			String label = sheet.getCellAt("B" + indice).getValue().toString().trim();
@@ -51,23 +53,26 @@ public class FooterGenerator {
 				}
 				title = title + "<c:otherwise>" + sheet.getCellAt("A" + indice).getValue().toString() + "</c:otherwise></c:choose>";
 				//title = label;
-				String style = "" + sheet.getCellAt("A" + indice).getValue();
-				if (style.equalsIgnoreCase("ft") || style.equalsIgnoreCase("t")) {
-					System.out.println(label);
+				String style = "" + sheet.getCellAt("A" + indice).getValue();				
+				
+				if (style.equalsIgnoreCase("ft") || style.equalsIgnoreCase("t")) {				
+					
 					out.print(localCloseCode);										
 					if (style.equalsIgnoreCase("ft")) {
+						System.out.println(label);
 						out.print(globalCloseCode);
 						out.println("<ul class=\"col-"+col+"\"><li><div class=\"ep-title\">" + title + "</div><ul>");
 						globalCloseCode = "</ul>";
 						localCloseCode = "</ul></li>";
 						col++;
-					} else {
+					} else {						
+						System.out.println("> "+label);
 						out.println("<li><div class=\"ep-title\">" + title + "</div><ul>");
 						localCloseCode = "</ul></li>";
 					}
 					titleOpen = true;				
 				} else {
-					System.out.println("   > " + label);
+					System.out.println("--> " + label);
 					out.print("<li>");
 					if (sheet.getCellAt("C" + indice).getValue().toString().trim().length() > 0) {
 						String url = sheet.getCellAt("C" + indice).getValue().toString().replace("xx", "${info.language}").replace("XX", "${info.language}").trim();
@@ -94,9 +99,9 @@ public class FooterGenerator {
 			out.println("</ul></li></ul>");
 			out.println("</div>");
 			out.close();
-			outStream.close();
+			outStream.close();*/
 
-		} catch (IOException e) {
+		/*} catch (IOException e) {
 			e.printStackTrace();
 		}*/
 	}

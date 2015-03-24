@@ -28,7 +28,7 @@ import org.javlo.service.PersistenceService;
 import org.javlo.xml.NodeXML;
 
 public class NavigationHelper {
-
+	
 	private static java.util.logging.Logger logger = java.util.logging.Logger.getLogger(NavigationHelper.class.getName());
 
 	public static final boolean canMoveDown(MenuElement elem) {
@@ -438,5 +438,31 @@ public class NavigationHelper {
 		out.println("</bookmarks>");
 		out.close();
 		return new String(outStream.toByteArray());
+	}
+	
+	public static void movePage(ContentContext ctx, MenuElement parent, MenuElement previousBrother, MenuElement page) {
+		page.moveToParent(parent);
+		if (previousBrother != null) {
+			page.setPriority(previousBrother.getPriority()+1);
+		} else {
+			page.setPriority(0);
+		}
+		NavigationHelper.changeStepPriority(page.getParent().getChildMenuElements(), 10);
+	}
+	
+	public static MenuElement createChildPageAutoName(MenuElement page, ContentContext ctx) throws Exception {
+		ContentService content = ContentService.getInstance(ctx.getRequest());
+		
+		String newPageName = page.getName()+"-1";
+		int index = 2;
+		while (content.getNavigation(ctx).searchChildFromName(newPageName) != null) {
+			newPageName = page.getName()+'-'+index;
+			index++;
+		}		
+		MenuElement newPage = MacroHelper.addPageIfNotExist(ctx, page,newPageName, true, true);
+		boolean changeNotification = true;
+		
+		newPage.setChangeNotification(changeNotification);
+		return newPage;
 	}
 }

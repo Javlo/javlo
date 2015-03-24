@@ -535,7 +535,9 @@ public class XMLManipulationHelper {
 																																	// agregator
 
 					String previewCode = "<c:if test=\"${not contentContext.pageAssociation}\">" + getPreviewCode(globalContext.getServletContext()) + "</c:if>";
-					remplacement.addReplacement(tags[i].getOpenEnd() + 1, tags[i].getOpenEnd() + 1, previewCode + getEscapeMenu(contentZone) + getResetTemplate() + getAfterBodyCode());
+					//remplacement.addReplacement(tags[i].getOpenEnd() + 1, tags[i].getOpenEnd() + 1, previewCode + getEscapeMenu(contentZone) + getResetTemplate() + getAfterBodyCode());
+					remplacement.addReplacement(tags[i].getOpenEnd() + 1, tags[i].getOpenEnd() + 1, getEscapeMenu(contentZone) + getResetTemplate() + getAfterBodyCode());
+					remplacement.addReplacement(tags[i].getCloseStart()-1, tags[i].getCloseStart()-1, previewCode);
 				}
 
 				/* link - StyleSheet */

@@ -1,3 +1,4 @@
+<%@page import="org.javlo.user.AdminUserFactory"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%><%@ taglib
 	uri="/WEB-INF/javlo.tld" prefix="jv"%><%@ taglib prefix="fn"
 	uri="http://java.sun.com/jsp/jstl/functions"%><%@page
@@ -19,16 +20,18 @@
 	ContentContext editCtx = new ContentContext(ctx);
 	editCtx.setRenderMode(ContentContext.EDIT_MODE);
 	ContentContext returnEditCtx = new ContentContext(editCtx);
+	AdminUserFactory fact = AdminUserFactory.createAdminUserFactory(ctx.getGlobalContext(), request.getSession());
 	String readOnlyPageHTML = "";
 	String readOnlyClass = "access";
 	String accessType = "submit";
-	boolean rightOnPage = Edit.checkPageSecurity(ctx);
+	boolean rightOnPage = Edit.checkPageSecurity(ctx);	
 	if (!rightOnPage) {
 		readOnlyPageHTML = " disabled";
 		readOnlyClass = "no-access";
 		accessType = "button";
 	}
-%><%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%><%@ taglib
+%><c:set var="logged" value="${not empty editUser}" />
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%><%@ taglib
 	prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%><div
 	class="header">
 	<div class="logo">
@@ -129,7 +132,7 @@
 									<c:if test="${info.page.root}">
 										<button class="btn btn-default btn-delete" type="button"
 											onclick="if (!confirm('${i18n.edit['menu.confirm-page']}')) return false;"
-											disabled="disabled">
+											disabled="disabled"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span>											
 											<span class="text">${i18n.edit['menu.delete']}</span>
 										</button>
 									</c:if>
@@ -143,13 +146,26 @@
 
 	<div class="page-actions">
 		<ul>
+			<c:if test="${!logged}">
+			<li>
+				<form id="pc_form" method="post" action="<%=URLHelper.createURL(editCtx)%>">
+					<div class="pc_line">							
+						<c:if test='${!editPreview}'>
+							<button class="btn btn-default btn-xs" type="submit">
+								<span class="glyphicon glyphicon-user" aria-hidden="true"></span>${i18n.edit['global.login']}</button>
+						</c:if>
+					</div>
+				</form>
+			</li>
+			</c:if>
+			<c:if test="${logged}">
 			<li><c:if test="${globalContext.previewMode}">
 					<form id="pc_form" action="${info.currentURL}" method="post">
 						<div class="pc_line">
 							<input type="hidden" name="webaction" value="edit.previewedit" />
 							<c:if test='${!editPreview}'>
 								<button class="btn btn-default btn-xs" type="submit">
-									<span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>${i18n.edit['preview.label.edit-page']}"</button>
+									<span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>${i18n.edit['preview.label.edit-page']}</button>
 							</c:if>
 							<c:if test='${editPreview}'>
 								<button class="btn btn-default btn-xs" type="submit">
@@ -197,6 +213,7 @@
 							${i18n.edit['command.publish']}
 						</button>
 					</form></li>
+			</c:if>
 			</c:if>
 			</ul></div><div class="users">
 			<c:if test="${not empty editUser}">

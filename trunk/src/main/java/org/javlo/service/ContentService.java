@@ -248,7 +248,12 @@ public class ContentService implements IPrintInfo {
 		ComponentBean bean = new ComponentBean(id, inBean.getType(), inBean.getValue(), ctx.getRequestContentLanguage(), false, ctx.getCurrentEditUser());
 		bean.setList(inBean.isList());
 		bean.setStyle(inBean.getStyle());
-		bean.setArea(inBean.getArea());
+		IContentVisualComponent previousComp = ContentService.getInstance(ctx.getRequest()).getComponent(ctx, parentId);
+		if (previousComp != null) {
+			bean.setArea(previousComp.getArea());
+		} else {
+			bean.setArea(inBean.getArea());
+		}		
 		bean.setRepeat(inBean.isRepeat());
 		bean.setRenderer(inBean.getRenderer());
 		bean.setModify(true);
@@ -289,6 +294,8 @@ public class ContentService implements IPrintInfo {
 	public String createContent(ContentContext ctx, MenuElement page, Collection<ComponentBean> inBean, String parentId, boolean releaseCache) throws Exception {
 		for (ComponentBean bean : inBean) {
 			IContentVisualComponent comp = ComponentFactory.createComponent(ctx, bean, null, null, null);
+			System.out.println("***** ContentService.createContent : comp = "+comp); //TODO: remove debug trace
+			System.out.println("***** ContentService.createContent : type = "+comp.getType()); //TODO: remove debug trace
 			if (!comp.isUnique() || page.getContentByType(ctx, comp.getType()).size() == 0) {
 				if (bean.getAuthors() == null || bean.getAuthors().length() == 0 && ctx.getCurrentEditUser() != null) {
 					bean.setAuthors(ctx.getCurrentEditUser().getLogin());

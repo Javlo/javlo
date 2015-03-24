@@ -5,7 +5,6 @@ import java.util.Collections;
 
 import org.javlo.actions.DataAction;
 import org.javlo.context.ContentContext;
-import org.javlo.helper.StringHelper;
 import org.javlo.navigation.MenuElement;
 import org.javlo.template.Template;
 

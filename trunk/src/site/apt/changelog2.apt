@@ -378,4 +378,10 @@
  
  * keep params for langugae link
  
-* 2.0.3.8.2 141/02/2015
+* 2.0.3.8.2 14/02/2015
+
+ * update preview edition, rewrite preview js
+ 
+ * insert edit_preview at the end of the page in place of start
+ 
+* 2.1.0.0.0 24/03/2015 
