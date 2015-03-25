@@ -1380,8 +1380,8 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		return properties.getString("mailing.report", "");
 	}
 
-	public String getMailingSender() {
-		return properties.getString("mailing.sender", "");
+	public String getMailingSenders() {
+		return properties.getString("mailing.senders", "");
 	}
 
 	public Date getMailingStartTime() {

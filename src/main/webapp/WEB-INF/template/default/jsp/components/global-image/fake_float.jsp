@@ -29,19 +29,21 @@
 <c:if test="${contentContext.asPreviewMode && comp.textAuto}">
 <div class="source" style="display: none;"><span class="container">${label}</span></div>
 <script type="text/javascript">
-if (pjq) {
-	jQuery = pjq;
+var localJQ = jQuery;
+if (typeof(pjq) !== 'undefined') {
+	localJQ = pjq;
 }
-jQuery("#comp-${compid} img").load(function() {
-	if (jQuery(this).attr("src") != "${info.ajaxLoaderURL}" && !jQuery(this).hasClass("refreshed") && jQuery(this).attr("src").indexOf("/transform/")>=0) {
-		floatZone("#comp-${compid} .source .container", "#comp-${compid} .zone1 .container", "#comp-${compid} .zone2 .container", "#comp-${compid} img");
-		var firstText=jQuery("#comp-${compid} .zone1 .container").html();
-		var secondText = jQuery("#comp-${compid} .zone2 .container").html();
-		jQuery.post( "${info.currentAjaxURL}", { webaction: "global-image.dataFeedBack", compid: "${compid}", firsttext: firstText, secondtext: secondText, height: jQuery("#comp-${compid} img").height(), width: jQuery("#comp-${compid} img").width()}, {dataType: "json"}).done(function(data) {
-			jQuery("#comp-${compid} img").addClass("refreshed");		
-			jQuery("#comp-${compid} img").attr("src", data.data.previewURL);
-		});	
++function(jQuery) {
+	jQuery("#comp-${compid} img").load(function() {
+		if (jQuery(this).attr("src") != "${info.ajaxLoaderURL}" && !jQuery(this).hasClass("refreshed") && jQuery(this).attr("src").indexOf("/transform/")>=0) {
+			floatZone("#comp-${compid} .source .container", "#comp-${compid} .zone1 .container", "#comp-${compid} .zone2 .container", "#comp-${compid} img");
+			var firstText=jQuery("#comp-${compid} .zone1 .container").html();
+			var secondText = jQuery("#comp-${compid} .zone2 .container").html();
+			jQuery.post( "${info.currentAjaxURL}", { webaction: "global-image.dataFeedBack", compid: "${compid}", firsttext: firstText, secondtext: secondText, height: jQuery("#comp-${compid} img").height(), width: jQuery("#comp-${compid} img").width()}, {dataType: "json"}).done(function(data) {
+				jQuery("#comp-${compid} img").addClass("refreshed");		
+				jQuery("#comp-${compid} img").attr("src", data.data.previewURL);
+			});		
+		}
 	}
-	//ajaxRequest(url, null, null);
-});
+}(localJQ);
 </script></c:if></div>
