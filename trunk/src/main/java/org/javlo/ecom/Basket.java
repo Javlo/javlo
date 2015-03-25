@@ -229,13 +229,15 @@ public class Basket implements Serializable {
 		if (priceList != null) {
 			double delivery = 0;
 			try {
-				for (Product product : products) {
-					double vatFactor = 1;
+				double totalWeight = 0;
+				double vatFactor = 1;
+				for (Product product : products) {					
 					if (vat) {
 						vatFactor = 1 + product.getVAT();
 					}
-					delivery += priceList.getPrice(product.getQuantity() * product.getWeight(), getDeliveryZone()) * vatFactor;
+					totalWeight = totalWeight + product.getQuantity() * product.getWeight();
 				}
+				delivery += priceList.getPrice( totalWeight, getDeliveryZone()) * vatFactor;
 			} catch (Exception e) {
 				e.printStackTrace();
 				return getEcomService(ctx).getDefaultDelivery();
