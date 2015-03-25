@@ -364,7 +364,7 @@ h2 .glyphicon {
 	display: block;
 	height: 20px;
 	border: 1px #337ab7 solid;
-	background-color: #559ad7;
+	background-color: @layer-color;
 	color: #ffffff;
 	text-align: center;
 	padding-top: 4px;
@@ -423,7 +423,7 @@ h2 .glyphicon {
 
 ._ep_new-component-zone, #preview_command ._ep_new-component-zone {
 	display: block;
-	background:rgba(18,139,243, .3);
+	background:lighten(@layer-color, 20%);
 	border-radius:2px;
 	min-height:25px;
 	margin:10px -100px;

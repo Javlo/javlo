@@ -35,8 +35,9 @@ if (typeof(pjq) !== 'undefined') {
 }
 +function(jQuery) {
 	jQuery("#comp-${compid} img").load(function() {
+	try {
 		if (jQuery(this).attr("src") != "${info.ajaxLoaderURL}" && !jQuery(this).hasClass("refreshed") && jQuery(this).attr("src").indexOf("/transform/")>=0) {
-			floatZone("#comp-${compid} .source .container", "#comp-${compid} .zone1 .container", "#comp-${compid} .zone2 .container", "#comp-${compid} img");
+			editPreview.floatZone("#comp-${compid} .source .container", "#comp-${compid} .zone1 .container", "#comp-${compid} .zone2 .container", "#comp-${compid} img");
 			var firstText=jQuery("#comp-${compid} .zone1 .container").html();
 			var secondText = jQuery("#comp-${compid} .zone2 .container").html();
 			jQuery.post( "${info.currentAjaxURL}", { webaction: "global-image.dataFeedBack", compid: "${compid}", firsttext: firstText, secondtext: secondText, height: jQuery("#comp-${compid} img").height(), width: jQuery("#comp-${compid} img").width()}, {dataType: "json"}).done(function(data) {
@@ -44,6 +45,9 @@ if (typeof(pjq) !== 'undefined') {
 				jQuery("#comp-${compid} img").attr("src", data.data.previewURL);
 			});		
 		}
-	}
+		} catch(err) {
+			console.log("err.message = ", err.message);
+		}
+	});
 }(localJQ);
 </script></c:if></div>

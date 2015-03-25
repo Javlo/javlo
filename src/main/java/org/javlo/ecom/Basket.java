@@ -232,12 +232,12 @@ public class Basket implements Serializable {
 				double totalWeight = 0;
 				double vatFactor = 1;
 				for (Product product : products) {					
-					if (vat) {
+					if (!vat) {
 						vatFactor = 1 + product.getVAT();
 					}
 					totalWeight = totalWeight + product.getQuantity() * product.getWeight();
 				}
-				delivery += priceList.getPrice( totalWeight, getDeliveryZone()) * vatFactor;
+				delivery += priceList.getPrice( totalWeight, getDeliveryZone()) / vatFactor;
 			} catch (Exception e) {
 				e.printStackTrace();
 				return getEcomService(ctx).getDefaultDelivery();
@@ -619,8 +619,8 @@ public class Basket implements Serializable {
 			out.println("   " + product);
 		}
 		out.println("");
-		out.println("Shiping VAT : "+getDelivery(ctx, true));
-		out.println("Shiping HVAT : "+getDelivery(ctx, false));
+		out.println("Shiping VAT : "+StringHelper.renderPrice(getDelivery(ctx, true), getCurrencyCode()));
+		out.println("Shiping HVAT : "+StringHelper.renderPrice(getDelivery(ctx, false), getCurrencyCode()));
 		out.println("");
 		out.println("Total VAT : "+StringHelper.renderPrice(getTotal(ctx, true), getCurrencyCode()));
 		out.println("Total HVAT : "+StringHelper.renderPrice(getTotal(ctx, false), getCurrencyCode()));

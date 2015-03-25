@@ -151,12 +151,12 @@ body.edit-preview, body.preview-only {
 }
 
 ._page_associate {
-	border-bottom: 2px #3333ef dashed;
+	border-bottom: 2px #3333ef dotted;
 	overflow: hidden;
 }
 
 .page-break {
-	border-bottom: 2px #33ef33 dashed;
+	border-bottom: 2px #33ef33 dotted;
 	font-size: 0;
 	width: 2000px;
 	position: absolute;
@@ -169,7 +169,7 @@ body.edit-preview, body.preview-only {
 	font-size: 0;
 	height: 0;
 	width: 100%;
-	border-top: 2px #ff5555 dashed;
+	border-top: 2px #ff5555 dotted;
 	left: 0;
 }
 
@@ -277,4 +277,8 @@ table.component-table .cell-wrapper {
 .editable-component .table-component-preview {
 	margin-left: 3px;
 	text-align: left;
+}
+
+.float-image .container {
+	display: block;
 }
