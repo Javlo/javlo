@@ -91,7 +91,7 @@ public abstract class AbstractOrderComponent extends AbstractVisualComponent {
 		PrintStream out = new PrintStream(outStream);
 		I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
 		
-		out.println("<table id=\"basket-details\">");
+		out.println("<table class=\"table\" id=\"basket-details\">");
 		out.println("<thead>");
 		out.println("<tr>");
 		out.println("<td>"+i18nAccess.getViewText("ecom.product")+"</td>");

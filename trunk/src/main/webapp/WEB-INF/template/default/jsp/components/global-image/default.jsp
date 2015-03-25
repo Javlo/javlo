@@ -31,6 +31,10 @@
 
 <c:if test="${contentContext.asPreviewMode && filter != 'raw'}">
 <script type="text/javascript">
+var localJQ = jQuery;
+if (typeof(pjq) !== 'undefined') {
+	localJQ = pjq;
+}
 +function($) {
 	var img = $("#${imageId}");
 	img.attr("src", "${previewURL}");
@@ -46,6 +50,6 @@
 			});
 		}
 	});
-}(pjq);
+}(localJQ);
 </script>
 </c:if>
