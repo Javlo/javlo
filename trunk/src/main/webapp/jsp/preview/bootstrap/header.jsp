@@ -30,7 +30,7 @@
 		readOnlyClass = "no-access";
 		accessType = "button";
 	}
-%><c:set var="logged" value="${not empty editUser}" />
+%><c:set var="logged" value="${not empty editUser}" /><c:set var="pdf" value="${info.device.code == 'pdf'}" />
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%><%@ taglib
 	prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%><div
 	class="header">

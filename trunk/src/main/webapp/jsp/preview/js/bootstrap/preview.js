@@ -57,6 +57,33 @@ editPreview.openModal = function (title, url) {
 	});
 }
 
+editPreview.updatePDFPosition = function() {
+	pjq("._pdf_page_limit").remove();
+	setTimeout(function () {	        
+		editPreview.realUpdatePDFPosition();	        
+    }, 1500);
+}
+
+editPreview.realUpdatePDFPosition = function() {	
+	var pdfHeight = parseInt(pjq(".page_association_fake_body").data("pdfheight"));	
+	var previousBreak = null;	
+	pjq("._page_associate").each(function() {
+		var page = pjq(this);
+		var currentTop = page.position().top;
+		pjq(".page-break").each(function() {	
+			var currentBreak = jQuery(this);
+			if (currentTop + currentBreak.position().top < pdfHeight) {
+				currentTop = currentBreak.position().top;
+			}
+		});
+		if ((page.position().top+page.height())-currentTop > pdfHeight) {			
+			page.prepend('<div class="_pdf_page_limit"><span>&nbsp;</span></div>');
+			var pdfLimit = jQuery(page.children()[0]);				
+			pdfLimit.css('top',(currentTop+pdfHeight)+'px');
+		}
+	});	
+}
+
 editPreview.searchPageId = function(node) {	
 	var parent = pjq(node).parent();	
 	while (parent !== undefined && !parent.hasClass("_page_associate") && parent.prop("tagName") !== undefined) {			
@@ -475,7 +502,75 @@ editPreview.initPreview = function() {
 					});
 			    });
 		}
+		editPreview.updatePDFPosition();
 	}
+	
+	editPreview.splitHtml = function(text,cutPos) {
+		var stackTags = [];
+		var insideTag = false;
+		var currentTag = "";
+		var textPos = 0;
+		
+		for (var pos=0; pos<text.length && textPos<cutPos; pos++) {			
+			if (!insideTag && text[pos] == '<') {
+				insideTag = true;				
+			}
+			if (insideTag && text[pos] == '>') {				
+				if (currentTag[0] == '/') {				
+					stackTags.pop();
+				} else {				
+					stackTags.push(currentTag);
+				}
+				currentTag = "";
+				insideTag = false;	
+			}
+			if (insideTag && text[pos] != '<') {
+				currentTag = currentTag + text[pos];
+			}
+			if (!insideTag && text[pos] != '<' && text[pos] != '>') {
+				textPos++;
+			}
+		}
+		
+		while (textPos > 0 && text[pos] != ' ' && text[pos] != '>') {
+			pos--;
+		}
+		pos++;
+		
+		var firstText = text.substring(0,pos);
+		var secondText = text.substring(pos,text.length);
+		
+		for (i=stackTags.length-1; i>=0; i--) {
+			firstText = firstText+"</"+stackTags[i]+">";
+			secondText = "<"+stackTags[i]+">"+secondText;
+		}
+		
+		var outText = new Array();
+		outText[0] = firstText;
+		outText[1] = secondText;
+		return outText;
+	}	
+	
+	editPreview.floatZone = function(source, zone1, zone2, image){
+		var zone1 = pjq(zone1);	
+		var zone2 = jQuery(zone2);	
+		var image = pjq(image);
+		
+		var html = pjq(source).html();
+		var sep = html.length;		
+		zone1.html(html);
+		zone2.html('');
+		while (sep > 0 && zone1.height() > image.height()) {
+			sep = sep-1;			
+			while (sep > 0 && html[sep] != ' ') {
+				sep = sep - 1;			
+			}			
+			var outText = editPreview.splitHtml(html, sep);			
+			zone1.html(outText[0]);
+			zone2.html(outText[1]);
+		}	
+		return sep;
+	};
 	
 	editPreview.reloadPreviewPage = function() {
 		var doc = document.documentElement, body = document.body;
