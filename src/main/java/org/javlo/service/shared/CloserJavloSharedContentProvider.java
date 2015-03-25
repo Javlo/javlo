@@ -82,12 +82,6 @@ public class CloserJavloSharedContentProvider extends AbstractSharedContentProvi
 					}
 					sharedContent.setLinkInfo(page.getId());
 					sharedContent.setEditURL(URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.PREVIEW_MODE), page));
-					/*String url = URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.EDIT_MODE), page);
-					url = URLHelper.addParam(url, "previewEdit", "true");
-					url = URLHelper.addParam(url, "webaction", "editPreview");
-					url = URLHelper.addParam(url, "module", "content");					
-					sharedContent.setEditURL(url);
-					sharedContent.setEditAsModal(true);*/
 					for (ComponentBean bean : beans) {						
 						if (bean.getType().equals(GlobalImage.TYPE)) {
 							try {

@@ -43,7 +43,7 @@ public class SharedContentService {
 			sharedContentProvider = new LinkedList<ISharedContentProvider>();
 			Collection<String> active = getActiveProviderNames(ctx);
 			for (ISharedContentProvider sharedContent : getAllProvider(ctx)) {
-				if (active.contains(sharedContent.getName()) && !sharedContent.isEmpty(ctx)) {
+				if (active.contains(sharedContent.getName()) && !sharedContent.isEmpty(ctx)) {					
 					sharedContentProvider.add(sharedContent);
 				}
 			}
