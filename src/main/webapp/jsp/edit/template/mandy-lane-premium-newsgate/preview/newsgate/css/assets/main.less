@@ -7,9 +7,6 @@ html {
 		.tab-content {
 			padding: 0;
 		}
-		button .glyphicon {
-			display: none;
-		}
 	}
 
 	.pages {
@@ -23,7 +20,7 @@ html {
 		}
 		
 		ul.navigation {
-			padding: 0;
+			padding: 0; 
 		}
 		.articles {
 			margin-top: 20px;
@@ -67,5 +64,14 @@ html {
 }
 
 /* ----- Filip ----- */
-@import "filip-edit.less"; 
+@import "filip-edit.less";
+
+._preview_ajax-loading #preview_command .header .logo {
+	background-image: none;
+} 
+
+._preview_ajax-loading #preview_command .header .logo a {
+	display: none;
+}
+ 
 

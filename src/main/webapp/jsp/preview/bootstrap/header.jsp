@@ -201,7 +201,7 @@
 						action="${info.currentPDFURL}" method="post" target="_blanck">
 						<button class="btn btn-default btn-xs btn-pdf btn-color"
 							id="export_pdf_button" type="submit"
-							value="${i18n.edit['preview.label.pdf']}">${i18n.edit['preview.label.pdf']}</button>
+							value="${i18n.edit['preview.label.pdf']}"><span class="glyphicon glyphicon-open-file" aria-hidden="true"></span>${i18n.edit['preview.label.pdf']}</button>
 					</form></li>
 			</c:if>
 			<c:if test="${globalContext.previewMode}">

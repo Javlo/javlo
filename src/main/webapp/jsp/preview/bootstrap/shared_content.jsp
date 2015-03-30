@@ -5,7 +5,7 @@
 <div class="well drop-files">		
 	<div class="upload-zone" data-url="${info.uploadURL}">
 	<h3>${i18n.edit['preview.upload-here']}</h3>
-	<span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>
+	<div class="picto"><span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span></div>
 	</div>
 </div><c:if test="${not empty provider && provider.search}">
 <form id="shared-content-search-form" class="ajax" action="${info.currentURL}" method="post">
