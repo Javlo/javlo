@@ -296,7 +296,7 @@ public class DataAction implements IAction {
 			out.println(GlobalImage.IMAGE_FILTER + "=full");
 			out.close();
 			if (config.isCreateContentOnImportImage() || content) {
-				ComponentBean image = new ComponentBean(GlobalImage.TYPE, new String(outStream.toByteArray()), ctx.getRequestContentLanguage());
+				ComponentBean image = new ComponentBean(GlobalImage.TYPE, new String(outStream.toByteArray()), ctx.getRequestContentLanguage());				
 				image.setStyle(Image.STYLE_CENTER);
 				if (!content) {
 					Collection<IContentVisualComponent> titles = ctx.getCurrentPage().getContentByType(ctx, Title.TYPE);
@@ -310,6 +310,7 @@ public class DataAction implements IAction {
 						cs.createContentAtEnd(ctx.getContextWithArea(config.getArea()), image, true);
 					}
 				} else {
+					image.setArea(ctx.getArea());
 					cs.createContent(ctx, image, previousId, true);
 				}
 			}
@@ -399,7 +400,8 @@ public class DataAction implements IAction {
 				} else {
 					cs.createContentAtEnd(ctx.getContextWithArea(config.getArea()), multimedia, true);
 				}
-			} else {				
+			} else {
+				multimedia.setArea(ctx.getArea());
 				cs.createContent(ctx, multimedia, previousId, true);
 			}
 
@@ -439,7 +441,8 @@ public class DataAction implements IAction {
 		FileItem imageItem = null;
 		try {
 			String previousId = rs.getParameter("previous", "0");
-			boolean content = StringHelper.isTrue(rs.getParameter("content", null));
+			boolean content = StringHelper.isTrue(rs.getParameter("content", null));			
+			ctx = ctx.getContextWithArea(rs.getParameter("area", ctx.getArea()));
 			for (FileItem item : rs.getAllFileItem()) {
 				logger.info("try to import (" + ctx.getCurrentUserId() + ") : " + item.getName());
 
@@ -500,9 +503,10 @@ public class DataAction implements IAction {
 							beanType = ArrayFileComponent.TYPE;
 						}
 						ComponentBean bean = new ComponentBean(beanType, new String(outStream.toByteArray()), ctx.getRequestContentLanguage());
-						if (!content) {
+						if (!content) {							
 							cs.createContentAtEnd(ctx, bean, true);
-						} else {
+						} else {							
+							bean.setArea(ctx.getArea());
 							cs.createContent(ctx, bean, previousId, true);
 						}
 						ctx.setNeedRefresh(true);

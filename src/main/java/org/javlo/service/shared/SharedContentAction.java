@@ -117,7 +117,7 @@ public class SharedContentAction extends AbstractModuleAction {
 		if (rs.getParameter("provider", "").length() > 0) {
 			sharedContentContext.setProvider(rs.getParameter("provider", ""));
 		}
-		if (rs.getParameter("category", "").length() > 0) {
+		if (rs.getParameter("category", null) != null) {
 			sharedContentContext.getCategories().clear();			
 			sharedContentContext.getCategories().add(rs.getParameter("category", ""));
 		}

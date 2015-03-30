@@ -1,11 +1,12 @@
 @import url("edit_preview_base.css");
 @import url("header.less");
 @import url("navigation.less");
+@import url("components.less");
 @import url("../../../../css/bootstrap-3.3.2/less/bootstrap_preview.css");
 @import url("variables.less");
 
 html {
-	margin-top: @header-height !important; 
+	margin-top: @header-height !important;
 	margin-left: @sidebar-width !important;
 }
  
@@ -134,48 +135,8 @@ a:hover {
 	font-size: 12px;
 }
 
-body #preview_command .btn[disabled] {
-	color: #e0e0e0;
-	background-color: #c4c4c6;	
-}
-
 .preview-form {
 	margin-top: 15px;
-}
-
-.component-list .component {
-	margin: 0;
-	padding: 0;
-	width: 50%;		
-	float: left;
-	color: #3b3b3b;
-}
-
-.component-list .component .wrapper-in {
-	display: block;
-	margin: 10px;
-	background-color: #eeeeee;
-	border-bottom: 2px solid #dddddd;
-	padding: 10px;
-	color: #aaaaaa;
-	text-align: center;
-	font-weight: bold;
-}
-
-.component-list .component .wrapper-in .category {
-	text-align: center;
-	color: #999b98;
-	font-size: 0.7em;
-}
-
-.component-list .component span:hover {
-	background-color: #e2e2e2;
-}
-
-.component-list .label {
-	display: block;
-	clear: both;
-	background-color: #E7E7E7;
 }
 
 .header .navbar {
@@ -253,13 +214,8 @@ h2 .glyphicon {
 }
 
 
-.settings .btn:hover .glyphicon {
-	display: block;
-}
-
 .settings .btn:hover {
 	background-color: #F9F9F9;
-	display: block;
 }
 
 .btn .label {
@@ -270,9 +226,10 @@ h2 .glyphicon {
 	color: #aaaaaa;
 	text-align: left;
 	max-width: 240px;
-	overflow: hidden; 	
+	overflow: hidden;
+	line-height: normal; 	
 }
-
+ 
 .btn .value {
 	font-size: 14px;	
 	color: #777777;
@@ -293,15 +250,25 @@ h2 .glyphicon {
 
 }
 
+body #preview_command .btn[disabled] {
+	color: #e0e0e0;
+	background-color: #c4c4c6;
+
+}
+
+._preview_ajax-loading #preview_command .logo a {
+	display: none;
+}
+
 ._preview_ajax-loading #preview_command .ajax-loading {
 	display: block;
 	height: 30px;
-	margin: 10px 0 0 20px;
+	margin: 0 0 0 20px;
 }
 
 ._preview_ajax-loading #preview_command .header .navbar-brand {
 	display: none;
-} 
+}
 
 ._preview_ajax-loading #preview_command .header .navbar-header {
 	background-image: none;
@@ -328,7 +295,7 @@ h2 .glyphicon {
 
 #preview-layer .commands {
 	position: absolute;
-	top: -42px;
+	top: -40px;
 	right: -1px;
 	min-width: 220px;
 	overflow: hidden;

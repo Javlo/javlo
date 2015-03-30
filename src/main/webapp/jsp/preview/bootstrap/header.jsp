@@ -165,7 +165,7 @@
 							<input type="hidden" name="webaction" value="edit.previewedit" />
 							<c:if test='${!editPreview}'>
 								<button class="btn btn-default btn-xs" type="submit">
-									<span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>${i18n.edit['preview.label.edit-page']}</button>
+									<span class="glyphicon glyphicon-edit" aria-hidden="true"></span>${i18n.edit['preview.label.edit-page']}</button>
 							</c:if>
 							<c:if test='${editPreview}'>
 								<button class="btn btn-default btn-xs" type="submit">

@@ -12,7 +12,7 @@
 	padding: 0;
 	background-color: transparent;
 	background-image: none;
-	font-size: 12px;
+	font-size: inherit;
 	font-family: Verdana, Arial, Helvetica, sans-serif;
 	float: none;
 	text-transform: none;
@@ -33,6 +33,10 @@
 	max-width: none;	
 	opacity: 1;
 	filter: alpha(opacity = 100);
+}
+
+#preview_command {
+	font-size: 12px;
 }
 
 #preview_command span {

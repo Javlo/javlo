@@ -252,7 +252,11 @@ public class ContentService implements IPrintInfo {
 		if (previousComp != null) {
 			bean.setArea(previousComp.getArea());
 		} else {
-			bean.setArea(inBean.getArea());
+			if (inBean.getArea() != null) {
+				bean.setArea(inBean.getArea());
+			} else {
+				bean.setArea(ctx.getArea());
+			}
 		}		
 		bean.setRepeat(inBean.isRepeat());
 		bean.setRenderer(inBean.getRenderer());

@@ -88,7 +88,7 @@ request.setAttribute("editPreview", EditContext.getInstance(globalContext, sessi
 			<div role="tabpanel">				  
 				<ul class="nav nav-tabs" role="tablist">
 				  <li role="presentation" class="active"><a href="#_ep_navigation" aria-controls="_ep_navigation" role="tab" data-toggle="tab">Navigation</a></li>
-				  <li role="presentation"><a href="#_ep_settings" aria-controls="_ep_settings" role="tab" data-toggle="tab">Settings</a></li>
+				  <li role="presentation"><a href="#_ep_commands" aria-controls="_ep_commands" role="tab" data-toggle="tab">Commands</a></li>
 				  <li role="presentation"><a href="#_ep_content" aria-controls="_ep_content" role="tab" data-toggle="tab">Content</a></li>
 				  <li role="presentation"><a href="#_ep_files" aria-controls="_ep_files" role="tab" data-toggle="tab">Resouces</a></li>
 				</ul>
@@ -100,7 +100,7 @@ request.setAttribute("editPreview", EditContext.getInstance(globalContext, sessi
 					<jsp:include page="bootstrap/navigation.jsp"></jsp:include>
 				   </c:if>
 				  </div>
-				  <div role="tabpanel" class="tab-pane fade" id="_ep_settings"><jsp:include page="bootstrap/settings.jsp" /></div>
+				  <div role="tabpanel" class="tab-pane fade" id="_ep_commands"><jsp:include page="bootstrap/commands.jsp" /></div>
 				  <div role="tabpanel" class="tab-pane fade" id="_ep_content"><jsp:include page="bootstrap/component.jsp" /></div>
 				  <div role="tabpanel" class="tab-pane fade" id="_ep_files"><jsp:include page="bootstrap/shared_content.jsp" /></div>
 				</div>
@@ -125,10 +125,7 @@ request.setAttribute("editPreview", EditContext.getInstance(globalContext, sessi
             <div class="box">
       	      <div class="modal-body tabs-edit-fancy">
       	        <iframe id="preview-modal-frame" data-wait="/wait.html" src="/wait.html" ></iframe>
-      	      </div>
-      	      <div class="modal-footer box-foot">
-      	        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>        
-      	      </div>
+      	      </div>      	      
             </div>
           </div>
   	    </div>
