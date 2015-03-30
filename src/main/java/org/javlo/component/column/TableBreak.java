@@ -184,6 +184,9 @@ public class TableBreak extends TableComponent {
 		if (newCol < 0 && newRow < 0) {
 			return false;
 		}
+		if (newCol == 0) {
+			newRow = 0;
+		}
 
 		countSize(ctx);
 		int col = Integer.parseInt(getFieldValue("col"));
