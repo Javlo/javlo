@@ -78,12 +78,12 @@ if (components.size() > 0 && components.iterator().next().getPreviousComponent()
 if (!StringHelper.isTrue(request.getParameter("noinsert")) && !StringHelper.isTrue(request.getAttribute("noinsert"))) {
 %>
 <div class="insert-line" id="insert-line-<%=previousId%>">
-	<a class="action-button ajax" onclick="scrollToFirstQuarter(jQuery('#content-edit'),this);" href="${info.currentURL}?${info.editPreview?'previewEdit=true&':''}webaction=insert&previous=<%=previousId%>&type=<%=currentTypeComponent.getType()%>"><%=insertHere%></a><%
+	<a class="btn btn-default btn-xs ajax" onclick="scrollToFirstQuarter(jQuery('#content-edit'),this);" href="${info.currentURL}?${info.editPreview?'previewEdit=true&':''}webaction=insert&previous=<%=previousId%>&type=<%=currentTypeComponent.getType()%>"><%=insertHere%></a><%
 	if (pastePageHere != null) {
-	%><a class="action-button" onclick="scrollToFirstQuarter(jQuery('#content-edit'),this);" href="${info.currentURL}?${info.editPreview?'previewEdit=true&':''}webaction=pastePage&previous=<%=previousId%>"><%=pastePageHere%></a><%
+	%><a class="btn btn-default btn-xs" onclick="scrollToFirstQuarter(jQuery('#content-edit'),this);" href="${info.currentURL}?${info.editPreview?'previewEdit=true&':''}webaction=pastePage&previous=<%=previousId%>"><%=pastePageHere%></a><%
 	}
 	if (pasteHere != null) {
-	%><a class="action-button ajax" onclick="scrollToFirstQuarter(jQuery('#content-edit'),this);" href="${info.currentURL}?${info.editPreview?'previewEdit=true&':''}webaction=pasteComp&previous=<%=previousId%>"><%=pasteHere%></a><%
+	%><a class="btn btn-default btn-xs ajax" onclick="scrollToFirstQuarter(jQuery('#content-edit'),this);" href="${info.currentURL}?${info.editPreview?'previewEdit=true&':''}webaction=pasteComp&previous=<%=previousId%>"><%=pasteHere%></a><%
 	}%>
 </div>
 <div id="comp-child-<%=previousId%>"></div>
@@ -109,7 +109,7 @@ components = allComponents;
 
 if (components.size() > 60 && request.getParameter("display-all") == null) {
 	  %><div class="insert-line">
-		<a class="action-button warning" href="${info.currentURL}?${info.editPreview?'previewEdit=true&':''}display-all=true">${i18n.edit["edit.message.display-all-components"]}</a>
+		<a class="btn btn-default btn-xs warning" href="${info.currentURL}?${info.editPreview?'previewEdit=true&':''}display-all=true">${i18n.edit["edit.message.display-all-components"]}</a>
 	  </div><%	
 } else {
 
@@ -190,12 +190,12 @@ for (IContentVisualComponent comp : components) {
   if (!StringHelper.isTrue(request.getParameter("noinsert")) && !StringHelper.isTrue(request.getAttribute("noinsert")) && !StringHelper.isTrue(request.getAttribute("lightInterface"))) {%>  
   <div class="insert-line" id="insert-line-<%=comp.getId()%>">
   
-	<a class="action-button ajax" onclick="scrollToFirstQuarter(jQuery('#content-edit'),this);" href="${info.currentURL}?${info.editPreview?'previewEdit=true&':''}webaction=insert&previous=<%=comp.getId()%>&type=<%=currentTypeComponent.getType()%>"><%=insertHere%></a><%
+	<a class="btn btn-default btn-xs ajax" onclick="scrollToFirstQuarter(jQuery('#content-edit'),this);" href="${info.currentURL}?${info.editPreview?'previewEdit=true&':''}webaction=insert&previous=<%=comp.getId()%>&type=<%=currentTypeComponent.getType()%>"><%=insertHere%></a><%
 	if (pastePageHere != null) {
-	%><a class="action-button" onclick="scrollToFirstQuarter(jQuery('#content-edit'),this);" href="${info.currentURL}?${info.editPreview?'previewEdit=true&':''}webaction=pastePage&previous=<%=comp.getId()%>"><%=pastePageHere%></a><%
+	%><a class="btn btn-default btn-xs" onclick="scrollToFirstQuarter(jQuery('#content-edit'),this);" href="${info.currentURL}?${info.editPreview?'previewEdit=true&':''}webaction=pastePage&previous=<%=comp.getId()%>"><%=pastePageHere%></a><%
 	}
 	if (pasteHere != null) {
-	%><a class="action-button ajax" onclick="scrollToFirstQuarter(jQuery('#content-edit'),this);" href="${info.currentURL}?${info.editPreview?'previewEdit=true&':''}webaction=pasteComp&previous=<%=comp.getId()%>"><%=pasteHere%></a><%
+	%><a class="btn btn-default btn-xs ajax" onclick="scrollToFirstQuarter(jQuery('#content-edit'),this);" href="${info.currentURL}?${info.editPreview?'previewEdit=true&':''}webaction=pasteComp&previous=<%=comp.getId()%>"><%=pasteHere%></a><%
 	}%>
   </div>
  </div><%

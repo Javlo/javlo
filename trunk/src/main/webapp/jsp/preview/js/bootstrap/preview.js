@@ -128,7 +128,6 @@ editPreview.searchArea = function(item) {
 }
 
 editPreview.initPreview = function() {
-	
 	pjq('a.as-modal').on('click', function() {		
 		editPreview.openModal($(this).text(), $(this).attr('href'));		
 		return false;
@@ -352,12 +351,33 @@ editPreview.initPreview = function() {
 					}
 					var ajaxURL = editPreview.addParam(currentURL,url);					
 					editPreview.ajaxPreviewRequest(ajaxURL, null);
-				} else if (compId != null) { // move component															
+				} else if (compId != null && event.dataTransfer.files.length == 0) { // move component															
 					var ajaxURL = editPreview.addParam(currentURL,"previewEdit=true&webaction=edit.moveComponent&comp-id=" + compId + "&previous=0&area=" + area+ "&render-mode=3&init=true");				
 					if (editPreview.searchPageId(this) != null) {					
 						ajaxURL = ajaxURL +'&pageContainerID='+ editPreview.searchPageId(this);
 					}
 					editPreview.ajaxPreviewRequest(ajaxURL, null);
+				} else if (event.dataTransfer.files.length > 0) {						
+					var ajaxURL = editPreview.addParam(currentURL,"webaction=data.upload&content=true&previous=0&area=" + area);
+					if (editPreview.searchPageId(this) != null) {
+						ajaxURL = ajaxURL +'&pageContainerID='+ editPreview.searchPageId(subComp);
+					}
+					var fd=new FormData();
+					var fieldName = pjq(this).data("fieldname");
+					if (fieldName == null) {
+						filedName = "files";
+					}
+					var i = 0;
+					jQuery.each( event.dataTransfer.files, function(index, file) {
+						if (i==0) {
+							fd.append(fieldName,file);
+						} else {
+							fd.append(fieldName+"_"+i,file);
+						}
+						i++;			
+					});					
+					editPreview.ajaxPreviewRequest(ajaxURL, null, fd);
+					
 				}
 				return false;	
 		    });
@@ -395,11 +415,7 @@ editPreview.initPreview = function() {
 		    		insertAsChild = true;
 		    	}
 		    	var pageName = event.dataTransfer.getData('name');	
-		    	console.log("pageName = ", pageName);
-		    	console.log("targetPageName = ", targetPageName);
-		    	console.log("insertAsChild = ", insertAsChild);
 		    	var ajaxURL = editPreview.addParam(currentURL,"previewEdit=true&webaction=edit.movePage&page=" + pageName + "&previous=" + targetPageName + "&render-mode=3&init=true&as-child="+insertAsChild);
-		    	console.log("ajaxURL = ", ajaxURL);
 				editPreview.ajaxPreviewRequest(ajaxURL, null);
 				return false;	
 		    });
@@ -588,14 +604,6 @@ editPreview.initPreview = function() {
 		window.location.href = currentURL;
 	}
 	
-	editPreview.startAjax = function() {
-		pjq('body').addClass("_preview_ajax-loading");
-	}
-
-	editPreview.stopAjax = function() {
-		pjq('body').removeClass("_preview_ajax-loading");
-	}
-	
 	editPreview.ajaxPreviewRequest = function(url, doneFunction, data) {		
 		editPreview.startAjax();
 		if (url.indexOf("/edit-")>=0) {
@@ -659,11 +667,11 @@ editPreview.initPreview = function() {
 				if (console) {
 					console.log("Exception when calling initPreview()", ex);
 				}
-			}
-			editPreview.stopAjax();
+			}			
 			if (doneFunction != null) {				
 				doneFunction();
 			}
+			editPreview.stopAjax();
 		});	
 	}	
 }
@@ -706,8 +714,19 @@ editPreview.getParam = function(url, name) {
 		return results[1];
 }
 
+editPreview.startAjax = function() {
+	pjq('body').addClass("_preview_ajax-loading");	
+}
+
+editPreview.stopAjax = function() {
+	pjq('body').removeClass("_preview_ajax-loading");
+}
+
+
 
 pjq(document).ready(function() {
+	
+	editPreview.startAjax();
 	
 	pjq(document).on("change", ".js-change-submit select", function() {
 		pjq(this.form).trigger("submit");
@@ -753,7 +772,8 @@ pjq(window).load(function() {
 	if (scrollTo != "") {
 		window.scrollTo(0, scrollTo);
 	}
-	pjq('[data-toggle="tooltip"]').tooltip()
+	pjq('[data-toggle="tooltip"]').tooltip();
+	editPreview.stopAjax();
 });
 
 

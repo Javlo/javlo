@@ -42,6 +42,11 @@ public class ModulesContext {
 		@Override
 		public int compare(Module m1, Module m2) {
 			// TODO Auto-generated method stub
+			if (m1 == null) {
+				return -1;
+			} else if (m2 == null) {
+				return 1;
+			}
 			if (m1.getOrder() == m2.getOrder()) {
 				return StringHelper.neverNull(m1.getName()).compareTo(StringHelper.neverNull(m2.getName()));
 			}

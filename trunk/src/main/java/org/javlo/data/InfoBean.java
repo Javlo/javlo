@@ -26,6 +26,10 @@ import org.javlo.helper.NetHelper;
 import org.javlo.helper.ServletHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
+import org.javlo.i18n.I18nAccess;
+import org.javlo.macro.core.IInteractiveMacro;
+import org.javlo.macro.core.IMacro;
+import org.javlo.macro.core.MacroFactory;
 import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
 import org.javlo.module.core.ModuleException;
@@ -1151,6 +1155,32 @@ public class InfoBean {
 	
 	public String getWaitURL() {
 		return URLHelper.createStaticURL(ctx, "/wait.html");
+	}
+	
+	public List<IMacro> getInteractiveMacro() {
+		List<IMacro> macros = new LinkedList<IMacro>();
+		List<String> macroName = globalContext.getMacros();		
+		MacroFactory factory = MacroFactory.getInstance(StaticConfig.getInstance(ctx.getRequest().getSession().getServletContext()));		
+		for (String name : macroName) {
+			IMacro macro = factory.getMacro(name);
+			if (macro instanceof IInteractiveMacro) {
+				macros.add(macro);
+			}
+		}
+		return macros;
+	}
+	
+	public List<IMacro> getMacro() {
+		List<IMacro> macros = new LinkedList<IMacro>();
+		List<String> macroName = globalContext.getMacros();		
+		MacroFactory factory = MacroFactory.getInstance(StaticConfig.getInstance(ctx.getRequest().getSession().getServletContext()));		
+		for (String name : macroName) {
+			IMacro macro = factory.getMacro(name);
+			if (!(macro instanceof IInteractiveMacro)) {
+				macros.add(macro);
+			}
+		}
+		return macros;
 	}
 	
 }
