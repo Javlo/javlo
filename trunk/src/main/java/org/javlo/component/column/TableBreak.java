@@ -91,7 +91,7 @@ public class TableBreak extends TableComponent {
 		} else {
 			int countRow = 1;
 			for (TableComponent comp : tableContext.getComponents()) {
-				if (comp instanceof OpenRow) {
+				if (comp instanceof OpenRow && !tableContext.isFirstComponent(comp)) {
 					countRow++;
 				}
 			}

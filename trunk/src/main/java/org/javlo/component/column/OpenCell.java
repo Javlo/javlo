@@ -35,9 +35,9 @@ public class OpenCell extends TableComponent {
 			positionCSS = "class=\""+positionCSS.trim()+"\" ";
 		}		
 		if (tableContext.isTableOpen()) {
-			out.println("</div></td><td"+getColSpanHTML(ctx)+' '+positionCSS+"style=\""+getTDStyle(ctx)+"\"><div class=\"cell-wrapper\">");
-			if (isCellEmpty(ctx) && ctx.isAsPreviewMode() && EditContext.getInstance(ctx.getGlobalContext(), ctx.getRequest().getSession()).isEditPreview() ) {
-				out.print("<span class=\"cell-name\">"+tableContext.getName(this)+"</span>");
+			out.println("</div></td>");
+			if (isRowBreak()) {
+				out.println("</tr><tr>");
 			}
 		} else {
 			tableContext.openTable();
@@ -50,10 +50,11 @@ public class OpenCell extends TableComponent {
 				border = "border=\"1\" ";
 			}
 			
-			out.println("<table "+border+"style=\""+tableStyle+"\" class=\"component-table\"><tr><td"+getColSpanHTML(ctx)+' '+positionCSS+"style=\""+getTDStyle(ctx)+"\"><div class=\"cell-wrapper\">");
-			if (isCellEmpty(ctx) && ctx.isAsPreviewMode() && EditContext.getInstance(ctx.getGlobalContext(), ctx.getRequest().getSession()).isEditPreview() ) {
-				out.print("<span class=\"cell-name\">"+tableContext.getName(this)+"</span>");
-			}
+			out.println("<table "+border+"style=\""+tableStyle+"\" class=\"component-table\"><tr>");
+		}
+		out.println("<td"+getColSpanHTML(ctx)+' '+positionCSS+"style=\""+getTDStyle(ctx)+"\"><div class=\"cell-wrapper\">");
+		if (isCellEmpty(ctx) && ctx.isAsPreviewMode() && EditContext.getInstance(ctx.getGlobalContext(), ctx.getRequest().getSession()).isEditPreview()) {
+			out.print("<span class=\"cell-name\">"+tableContext.getName(this)+"</span>");
 		}
 		out.close();
 		return new String(outStream.toByteArray());		
