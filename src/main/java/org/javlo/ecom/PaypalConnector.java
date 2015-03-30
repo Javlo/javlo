@@ -214,8 +214,7 @@ public class PaypalConnector {
 		product.setQuantity(3);
 		product.setVAT(0.21);
 		product.setReduction(0);
-		products.add(product);
-		basket.setProductsBean(products);
+		products.add(product);		
 		String approvalUrl = c.createPaypalPayment(ctx,basket, new URL("http://localhost:8080/ecom/ok"), new URL("http://localhost:8080/ecom/cancel"));
 		System.out.println("Approval url: " + approvalUrl);
 		return approvalUrl;
