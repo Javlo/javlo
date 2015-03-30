@@ -109,14 +109,17 @@ public class TableContext {
 	}
 	
 	public String getName(TableComponent inComp) {
-		int row=0;
-		int cell=0;
+		int row = -1;
+		int cell = 0;
 		for (TableComponent comp : components) {
-			if (comp instanceof OpenCell) {
-				cell++;
-			} else if (comp instanceof OpenRow) {
+			if (comp instanceof OpenRow) {
 				cell=1;
 				row++;
+			} else if (comp instanceof OpenCell) {
+				cell++;
+				if (row < 0) {
+					row = 0;
+				}
 			}
 			if (comp == inComp) {
 				return StringHelper.getNumberAsAlphabetic(row).toUpperCase()+cell;		
@@ -192,6 +195,10 @@ public class TableContext {
 		} else {
 			return null;
 		}
+	}
+	
+	public boolean isFirstComponent(TableComponent comp) {
+		return comp.getId().equals(getFirstComponentId());
 	}
 	
 	public TableComponent getLastComponent() {
