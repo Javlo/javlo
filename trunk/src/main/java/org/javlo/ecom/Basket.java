@@ -42,7 +42,6 @@ public class Basket implements Serializable {
 	private String contactPhone = "";
 	private Date date = new Date();
 	private String status = STATUS_NEW;
-	private List<Product.ProductBean> productsBean = null;
 	private String token;
 	private String payerID;
 	private String validationInfo;
@@ -143,7 +142,7 @@ public class Basket implements Serializable {
 	public static boolean isInstance(ContentContext ctx) {
 		return ctx.getRequest().getSession().getAttribute(KEY) != null;
 	}
-	
+
 	public void payAll(ContentContext ctx) {
 		for (Product product : products) {
 			product.pay(ctx);
@@ -161,7 +160,7 @@ public class Basket implements Serializable {
 		return products;
 	}
 
-	public void addProduct(Product product) {		
+	public void addProduct(Product product) {
 		setValid(false);
 		for (Product item : products) {
 			if (item.getName().equals(product.getName()) && item.getPrice() == product.getPrice()) {
@@ -170,7 +169,7 @@ public class Basket implements Serializable {
 			}
 		}
 		products.add(product);
-		productsBean = null;
+		
 	}
 
 	public void removeProduct(String id) {
@@ -193,7 +192,7 @@ public class Basket implements Serializable {
 
 	public double getTotal(ContentContext ctx, boolean vat) {
 		double result = 0;
-		for (Product.ProductBean product : getProductsBean()) {			
+		for (Product product : getProducts()) {
 			double vatFactor = 1;
 			if (!vat) {
 				vatFactor = 1 + product.getVAT();
@@ -202,7 +201,7 @@ public class Basket implements Serializable {
 		}
 		result = result * (1 - getUserReduction()) + getDelivery(ctx, vat);
 		return result;
-	} 
+	}
 
 	public String getTotalString(ContentContext ctx, boolean vat) {
 		return renderPrice(ctx, getTotal(ctx, vat), getCurrencyCode());
@@ -231,13 +230,13 @@ public class Basket implements Serializable {
 			try {
 				double totalWeight = 0;
 				double vatFactor = 1;
-				for (Product product : products) {					
+				for (Product product : products) {
 					if (!vat) {
 						vatFactor = 1 + product.getVAT();
 					}
 					totalWeight = totalWeight + product.getQuantity() * product.getWeight();
 				}
-				delivery += priceList.getPrice( totalWeight, getDeliveryZone()) / vatFactor;
+				delivery += priceList.getPrice(totalWeight, getDeliveryZone()) / vatFactor;
 			} catch (Exception e) {
 				e.printStackTrace();
 				return getEcomService(ctx).getDefaultDelivery();
@@ -247,7 +246,7 @@ public class Basket implements Serializable {
 			return getEcomService(ctx).getDefaultDelivery();
 		}
 	}
-	
+
 	protected EcomService getEcomService(ContentContext ctx) {
 		return EcomService.getInstance(ctx.getGlobalContext(), ctx.getRequest().getSession());
 	}
@@ -400,8 +399,7 @@ public class Basket implements Serializable {
 		this.info = info;
 	}
 
-	public void setProducts(List<Product> products) {
-		productsBean = null;
+	public void setProducts(List<Product> products) {		
 		this.products = products;
 	}
 
@@ -462,7 +460,6 @@ public class Basket implements Serializable {
 		product.setVAT(0.21);
 		product.setReduction(0);
 		products.add(product);
-		basket.setProductsBean(products);
 
 		System.out.println("TOTAL TVAC  = " + basket.getTotal(null, true));
 		System.out.println("TOTAL HTVAC = " + basket.getTotal(null, false));
@@ -470,15 +467,13 @@ public class Basket implements Serializable {
 	}
 
 	public List<Product.ProductBean> getProductsBean() {
-		if (productsBean == null) {
-			productsBean = new LinkedList<Product.ProductBean>();			
-			for (Product product : getProducts()) {
-				productsBean.add(product.getBean());
-			}
+		List<Product.ProductBean> productsBean = new LinkedList<Product.ProductBean>();
+		for (Product product : getProducts()) {
+			productsBean.add(product.getBean());
 		}
 		return productsBean;
 	}
-	
+
 	public String getProductsBeanToString() {
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(outStream);
@@ -487,10 +482,6 @@ public class Basket implements Serializable {
 		}
 		out.close();
 		return new String(outStream.toByteArray());
-	}
-
-	public void setProductsBean(List<Product.ProductBean> productsBean) {
-		this.productsBean = productsBean;
 	}
 
 	public String getToken() {
@@ -575,7 +566,7 @@ public class Basket implements Serializable {
 		}
 		out.println("");
 		out.println("TOTAL :");
-		out.println("Shiping VAT : "+getDelivery(null, valid));
+		out.println("Shiping VAT : " + getDelivery(null, valid));
 		out.println("");
 		out.println("Current Time : " + StringHelper.renderSortableTime(new Date()));
 		out.println("");
@@ -583,7 +574,7 @@ public class Basket implements Serializable {
 		out.close();
 		return new String(outStream.toByteArray());
 	}
-	
+
 	public String getAdministratorEmail(ContentContext ctx) {
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(outStream);
@@ -619,11 +610,11 @@ public class Basket implements Serializable {
 			out.println("   " + product);
 		}
 		out.println("");
-		out.println("Shiping VAT : "+StringHelper.renderPrice(getDelivery(ctx, true), getCurrencyCode()));
-		out.println("Shiping HVAT : "+StringHelper.renderPrice(getDelivery(ctx, false), getCurrencyCode()));
+		out.println("Shiping VAT : " + StringHelper.renderPrice(getDelivery(ctx, true), getCurrencyCode()));
+		out.println("Shiping HVAT : " + StringHelper.renderPrice(getDelivery(ctx, false), getCurrencyCode()));
 		out.println("");
-		out.println("Total VAT : "+StringHelper.renderPrice(getTotal(ctx, true), getCurrencyCode()));
-		out.println("Total HVAT : "+StringHelper.renderPrice(getTotal(ctx, false), getCurrencyCode()));
+		out.println("Total VAT : " + StringHelper.renderPrice(getTotal(ctx, true), getCurrencyCode()));
+		out.println("Total HVAT : " + StringHelper.renderPrice(getTotal(ctx, false), getCurrencyCode()));
 		out.println("");
 		out.println("Current Time : " + StringHelper.renderSortableTime(new Date()));
 		out.println("");
