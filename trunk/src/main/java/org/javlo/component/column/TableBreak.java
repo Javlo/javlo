@@ -215,7 +215,7 @@ public class TableBreak extends TableComponent {
 			tableContext.refresh(ctx, this);
 		}
 		for (int i = col; i < newCol; i++) {
-			IContentVisualComponent prvComp = ComponentHelper.getPreviousComponent(this, ctx);
+			IContentVisualComponent prvComp = this;
 			while (prvComp != null && !prvComp.getId().equals(tableContext.getFirstComponentId())) {
 				if (prvComp.getType().equals(OpenRow.TYPE)) {
 					MacroHelper.addContent(ctx.getRequestContentLanguage(), getPage(), ComponentHelper.getPreviousComponentId(prvComp, ctx), OpenCell.TYPE, null, getArea(), "", ctx.getCurrentEditUser());
