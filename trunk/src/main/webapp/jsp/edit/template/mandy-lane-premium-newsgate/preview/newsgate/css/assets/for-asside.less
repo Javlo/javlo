@@ -94,12 +94,13 @@
 		color: #000000;
 	}
 
-	.drop-files .upload-zone {
+	.drop-files .upload-zone .picto {
+	    height: 50px;
 		border-color: #fff;
 		background: url(../../img/bg/icon-drop-asside.png) no-repeat center top;
 	}
 
-	.drop-files .upload-zone:hover, .drop-files .upload-zone.drop-selected {
+	.drop-files .upload-zone:hover .picto, .drop-files .upload-zone.drop-selected {
 		background-position: center bottom;
 	}
 	/* ----- Drop-Files ----- */
@@ -138,12 +139,14 @@
 	.drop-files .upload-zone {
 		display:block;
 		margin:0;
-		padding:0 10px;
-		height:54px;
+		padding:0 10px;		
 		border:2px dotted rgba(255,255,255, .3);
 		border-radius:2px;		
 	}
 	.drop-files .upload-zone .glyphicon {
+		display: none;
+	}
+	ul.navigation button .glyphicon {
 		display: none;
 	}
 	.drop-files .upload-zone:hover {
