@@ -46,9 +46,7 @@ public class BasketTest extends TestCase {
 			product.setVAT(0.21);
 			product.setReduction(0);
 			products.add(product);			
-		}	
-		basket.setProductsBean(products);
-		
+		}
 		assertEquals(total, basket.getTotal(null, true), 0.01);
 		assertEquals(total/1.21, basket.getTotal(null, false), 0.01);
 		basket.setUserReduction(0.25);
