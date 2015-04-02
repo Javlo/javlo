@@ -124,16 +124,16 @@ public class InfoBean {
 	public String getCurrentURL() {
 		return URLHelper.createURL(ctx);
 	}
-	
-	public String getCurrentAbsoluteURLQRCode() {		
+
+	public String getCurrentAbsoluteURLQRCode() {
 		return URLHelper.createQRCodeLink(ctx, getShortLanguageURL());
 	}
-	
+
 	public String getCurrentModuleURL() {
 		ModulesContext modulesCtx;
 		try {
 			modulesCtx = ModulesContext.getInstance(ctx.getRequest().getSession(), globalContext);
-			return URLHelper.mergePath(URLHelper.createStaticURL(ctx, "/"),modulesCtx.getCurrentModule().getPath());
+			return URLHelper.mergePath(URLHelper.createStaticURL(ctx, "/"), modulesCtx.getCurrentModule().getPath());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -197,7 +197,7 @@ public class InfoBean {
 			return null;
 		}
 	}
-	
+
 	public String getCurrentDate() {
 		try {
 			return StringHelper.renderDate(new Date(), globalContext.getShortDateFormat());
@@ -206,10 +206,10 @@ public class InfoBean {
 			return null;
 		}
 	}
-	
+
 	public String getSortableDate() {
 		try {
-			return StringHelper.renderSortableDate(currentPage.getContentDateNeverNull(ctx));	
+			return StringHelper.renderSortableDate(currentPage.getContentDateNeverNull(ctx));
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
@@ -360,10 +360,10 @@ public class InfoBean {
 	public String getEditTemplateURL() {
 		return URLHelper.createStaticURL(ctx, ctx.getGlobalContext().getStaticConfig().getEditTemplateFolder());
 	}
-	
+
 	public String getEditTemplateModeURL() {
-		if (globalContext.getEditTemplateMode() != null && globalContext.getEditTemplateMode().trim().length() > 0) {			
-			String cssLink = URLHelper.mergePath(globalContext.getStaticConfig().getEditTemplateFolder(),"css","edit_"+globalContext.getEditTemplateMode()+".css");			
+		if (globalContext.getEditTemplateMode() != null && globalContext.getEditTemplateMode().trim().length() > 0) {
+			String cssLink = URLHelper.mergePath(globalContext.getStaticConfig().getEditTemplateFolder(), "css", "edit_" + globalContext.getEditTemplateMode() + ".css");
 			return URLHelper.createStaticURL(ctx, cssLink);
 		} else {
 			return null;
@@ -394,6 +394,7 @@ public class InfoBean {
 		if (avatarFakeMap == null) {
 			avatarFakeMap = new HashMap<IUserInfo, String>(0) {
 				private static final long serialVersionUID = 1L;
+
 				@Override
 				public String get(Object key) {
 					return URLHelper.createAvatarUrl(ctx, (IUserInfo) key);
@@ -406,20 +407,20 @@ public class InfoBean {
 	public String getLogoURL() {
 		return URLHelper.createStaticURL(ctx, "/logo.svg");
 	}
-	
+
 	public String getBackgroundURL() {
-		File bgFile = new File (URLHelper.mergePath(ctx.getGlobalContext().getDataFolder(), ctx.getGlobalContext().getStaticConfig().getStaticFolder(), "background.png"));
+		File bgFile = new File(URLHelper.mergePath(ctx.getGlobalContext().getDataFolder(), ctx.getGlobalContext().getStaticConfig().getStaticFolder(), "background.png"));
 		if (!bgFile.exists()) {
-			bgFile = new File (URLHelper.mergePath(ctx.getGlobalContext().getDataFolder(), ctx.getGlobalContext().getStaticConfig().getStaticFolder(), "background.jpg"));			
+			bgFile = new File(URLHelper.mergePath(ctx.getGlobalContext().getDataFolder(), ctx.getGlobalContext().getStaticConfig().getStaticFolder(), "background.jpg"));
 		}
 		if (bgFile.exists()) {
 			try {
-				return URLHelper.createTransformURL(ctx,  "/static/"+bgFile.getName(), "background");
-			} catch (Exception e) { 
+				return URLHelper.createTransformURL(ctx, "/static/" + bgFile.getName(), "background");
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
-		return null;		
+		return null;
 	}
 
 	public int getPreviewVersion() {
@@ -492,7 +493,7 @@ public class InfoBean {
 			return null;
 		}
 	}
-	
+
 	public String getRootTemplateURL() {
 		try {
 			return URLHelper.createStaticURL(ctx, URLHelper.mergePath(ctx.getCurrentTemplate().getLocalWorkTemplateFolder(), getTemplateFolder()));
@@ -501,7 +502,7 @@ public class InfoBean {
 			return null;
 		}
 	}
-	
+
 	public String getAbsoluteRootTemplateURL() {
 		try {
 			return URLHelper.createStaticURL(ctx.getContextForAbsoluteURL(), URLHelper.mergePath(ctx.getCurrentTemplate().getLocalWorkTemplateFolder(), getTemplateFolder()));
@@ -530,7 +531,7 @@ public class InfoBean {
 			return null;
 		}
 	}
-	
+
 	public String getShortLanguageURL() {
 		try {
 			return URLHelper.createStaticURL(ctx.getContextForAbsoluteURL(), ctx.getCurrentPage().getShortLanguageURL(ctx));
@@ -539,7 +540,6 @@ public class InfoBean {
 			return null;
 		}
 	}
-
 
 	public Collection<String> getTags() {
 		return globalContext.getTags();
@@ -571,7 +571,6 @@ public class InfoBean {
 		}
 		return page.getName();
 	}
-	
 
 	/**
 	 * return the url of the first level page active. "root" if current page in
@@ -599,10 +598,10 @@ public class InfoBean {
 		}
 		return URLHelper.createURL(ctx, page);
 	}
-	
+
 	/**
-	 * return the name of the second level page active. "root" if current page in
-	 * root.
+	 * return the name of the second level page active. "root" if current page
+	 * in root.
 	 * 
 	 * @return
 	 * @throws Exception
@@ -626,7 +625,7 @@ public class InfoBean {
 		}
 		return page.getName();
 	}
-	
+
 	/**
 	 * return the url of the second level page active. "root" if current page in
 	 * root.
@@ -653,10 +652,10 @@ public class InfoBean {
 		}
 		return URLHelper.createURL(ctx, page);
 	}
-	
+
 	/**
-	 * return the name of the second level page active. "root" if current page in
-	 * root.
+	 * return the name of the second level page active. "root" if current page
+	 * in root.
 	 * 
 	 * @return
 	 * @throws Exception
@@ -685,10 +684,10 @@ public class InfoBean {
 			return null;
 		}
 	}
-	
+
 	/**
-	 * return the name of the second level page active. "root" if current page in
-	 * root.
+	 * return the name of the second level page active. "root" if current page
+	 * in root.
 	 * 
 	 * @return
 	 * @throws Exception
@@ -717,7 +716,7 @@ public class InfoBean {
 			return null;
 		}
 	}
-	
+
 	/**
 	 * return the name of the first level page active. "root" if current page in
 	 * root.
@@ -749,7 +748,7 @@ public class InfoBean {
 			return null;
 		}
 	}
-	
+
 	/**
 	 * return the name of the first level page active. "root" if current page in
 	 * root.
@@ -782,7 +781,6 @@ public class InfoBean {
 		}
 	}
 
-
 	public Template getTemplate() {
 		try {
 			return ctx.getCurrentTemplate();
@@ -810,7 +808,7 @@ public class InfoBean {
 	public boolean isAdmin() {
 		return AdminUserSecurity.getInstance().isAdmin(ctx.getCurrentEditUser());
 	}
-	
+
 	public boolean isMaster() {
 		return AdminUserSecurity.getInstance().isMaster(ctx.getCurrentEditUser());
 	}
@@ -822,7 +820,7 @@ public class InfoBean {
 	public boolean isPreview() {
 		return ctx.getRenderMode() == ContentContext.PREVIEW_MODE;
 	}
-	
+
 	public boolean isView() {
 		return ctx.getRenderMode() == ContentContext.VIEW_MODE;
 	}
@@ -879,7 +877,7 @@ public class InfoBean {
 	public boolean isEditPreview() {
 		return ctx.isEditPreview();
 	}
-	
+
 	public boolean isPreviewEdit() {
 		return EditContext.getInstance(globalContext, ctx.getRequest().getSession()).isEditPreview() && ctx.isAsPreviewMode();
 	}
@@ -959,18 +957,20 @@ public class InfoBean {
 	}
 
 	public String getQRCodeLinkPrefix() {
-		return URLHelper.createQRCodeLink(ctx, (IContentVisualComponent)null);
+		return URLHelper.createQRCodeLink(ctx, (IContentVisualComponent) null);
 	}
 
 	public String getBackURL() {
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
 		return requestService.getParameter(ElementaryURLHelper.BACK_PARAM_NAME, null);
 	}
-	 
+
 	/**
-	 * if back page name is setted in as _back_page param this method return the PageBean.
+	 * if back page name is setted in as _back_page param this method return the
+	 * PageBean.
+	 * 
 	 * @return
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	public PageBean getBackPage() throws Exception {
 		String page = ctx.getRequest().getParameter("_back_page");
@@ -984,20 +984,19 @@ public class InfoBean {
 	public String getRootURL() {
 		return URLHelper.createURL(ctx, "/");
 	}
-	
-	public String getRSSAllURL()  {
+
+	public String getRSSAllURL() {
 		try {
 			return URLHelper.createRSSURL(ctx, "all");
-		} catch (Exception e) {		
+		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
 		}
 	}
-	
+
 	public String getRootAbsoluteURL() {
 		return URLHelper.createURL(ctx.getContextForAbsoluteURL(), "/");
 	}
-
 
 	public Map<String, String> getStaticData() {
 		return staticData;
@@ -1049,26 +1048,26 @@ public class InfoBean {
 	public String getRandomId() {
 		return StringHelper.getRandomId();
 	}
-	
+
 	/**
-	 * return a random number between 0 and 9 
+	 * return a random number between 0 and 9
 	 */
 	public long getRandom10() {
-		return (long)(Math.random()*10);	
-	}
-	
-	/**
-	 * return a random number between 0 and 99 
-	 */
-	public long getRandom100() {
-		return (long)(Math.random()*100);	
+		return (long) (Math.random() * 10);
 	}
 
 	/**
-	 * return a random number between 0 and 9999 
+	 * return a random number between 0 and 99
+	 */
+	public long getRandom100() {
+		return (long) (Math.random() * 100);
+	}
+
+	/**
+	 * return a random number between 0 and 9999
 	 */
 	public static long getRandom1000() {
-		return (long)(Math.random()*1000);
+		return (long) (Math.random() * 1000);
 	}
 
 	public boolean isRSSFeed() {
@@ -1082,11 +1081,11 @@ public class InfoBean {
 				return false;
 			}
 		}
-		return (Boolean)ctx.getRequest().getSession().getAttribute(RSS_SESSION_KEY);
+		return (Boolean) ctx.getRequest().getSession().getAttribute(RSS_SESSION_KEY);
 	}
-	
-	public Map<String,Boolean> getAreaEmpty() {
-		Map<String,Boolean> emptyArea = new HashMap<String, Boolean>();
+
+	public Map<String, Boolean> getAreaEmpty() {
+		Map<String, Boolean> emptyArea = new HashMap<String, Boolean>();
 		try {
 			for (String area : ctx.getCurrentTemplate().getAreas()) {
 				if (ctx.getCurrentPage().isEmpty(ctx, area)) {
@@ -1098,11 +1097,12 @@ public class InfoBean {
 		}
 		return emptyArea;
 	}
-	
+
 	/**
 	 * get the current total depth of navigation.
+	 * 
 	 * @return
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	public int getCurrentDepth() throws Exception {
 		int depth = 0;
@@ -1112,39 +1112,39 @@ public class InfoBean {
 			depth++;
 		}
 		if (getPage().isVisibleChildren()) {
-			return depth+1;
+			return depth + 1;
 		} else {
 			return depth;
 		}
 	}
-	
+
 	public String getI18nAjaxURL() throws ModuleException, Exception {
-		Map<String,String> params = new HashMap<String, String>();		
+		Map<String, String> params = new HashMap<String, String>();
 		params.put("module", ModulesContext.getInstance(ctx.getRequest().getSession(), ctx.getGlobalContext()).getCurrentModule().getName());
-		return URLHelper.createStaticURL(ctx, "/i18n/"+ctx.getRequestContentLanguage(),params);
+		return URLHelper.createStaticURL(ctx, "/i18n/" + ctx.getRequestContentLanguage(), params);
 	}
-	
+
 	public String getLogoUrl() throws Exception {
 		String logo = ctx.getGlobalContext().getTemplateData().getLogo();
 		if (logo == null || logo.equals("null")) {
 			return null;
 		} else {
-			return URLHelper.createTransformURL(ctx, URLHelper.mergePath(ctx.getGlobalContext().getStaticConfig().getStaticFolder(),logo), "logo");
+			return URLHelper.createTransformURL(ctx, URLHelper.mergePath(ctx.getGlobalContext().getStaticConfig().getStaticFolder(), logo), "logo");
 		}
 	}
-	
+
 	public boolean isCookiesMessage() throws Exception {
 		if (NetHelper.getCookie(ctx.getRequest(), ctx.getCurrentTemplate().getCookiesMessageName()) != null) {
 			VisitorsMessageService.getInstance(ctx.getRequest().getSession()).markAsDisplayed("cookies");
-		} 
-		return !VisitorsMessageService.getInstance(ctx.getRequest().getSession()).isAllReadyDisplayed("cookies");		
+		}
+		return !VisitorsMessageService.getInstance(ctx.getRequest().getSession()).isAllReadyDisplayed("cookies");
 	}
-	
+
 	public ContentContext getContextForCopy() {
 		EditContext editCtx = EditContext.getInstance(globalContext, ctx.getRequest().getSession());
 		return editCtx.getContextForCopy(ctx);
 	}
-	
+
 	public List<PageBean> getParentPageList() throws Exception {
 		LinkedList<PageBean> pages = new LinkedList<PageBean>();
 		MenuElement page = ctx.getCurrentPage();
@@ -1152,17 +1152,17 @@ public class InfoBean {
 			pages.add(0, page.getPageBean(ctx));
 			page = page.getParent();
 		}
-		return pages;	
+		return pages;
 	}
-	
+
 	public String getWaitURL() {
 		return URLHelper.createStaticURL(ctx, "/wait.html");
 	}
-	
+
 	public List<IMacro> getInteractiveMacro() {
 		List<IMacro> macros = new LinkedList<IMacro>();
-		List<String> macroName = globalContext.getMacros();		
-		MacroFactory factory = MacroFactory.getInstance(StaticConfig.getInstance(ctx.getRequest().getSession().getServletContext()));		
+		List<String> macroName = globalContext.getMacros();
+		MacroFactory factory = MacroFactory.getInstance(StaticConfig.getInstance(ctx.getRequest().getSession().getServletContext()));
 		for (String name : macroName) {
 			IMacro macro = factory.getMacro(name);
 			if (macro instanceof IInteractiveMacro) {
@@ -1171,30 +1171,32 @@ public class InfoBean {
 		}
 		return macros;
 	}
-	
+
 	public List<IMacro> getMacro() {
 		List<IMacro> macros = new LinkedList<IMacro>();
-		List<String> macroName = globalContext.getMacros();		
-		MacroFactory factory = MacroFactory.getInstance(StaticConfig.getInstance(ctx.getRequest().getSession().getServletContext()));		
+		List<String> macroName = globalContext.getMacros();
+		MacroFactory factory = MacroFactory.getInstance(StaticConfig.getInstance(ctx.getRequest().getSession().getServletContext()));
 		for (String name : macroName) {
-			IMacro macro = factory.getMacro(name);
-			if (!(macro instanceof IInteractiveMacro)) {
-				macros.add(macro);
+			if (name.trim().length() > 0) {
+				IMacro macro = factory.getMacro(name);
+				if (!(macro instanceof IInteractiveMacro)) {
+					macros.add(macro);
+				}
 			}
 		}
 		return macros;
 	}
-	
+
 	public List<SubTitleBean> getSubTitles() throws Exception {
 		List<SubTitleBean> outList = new LinkedList<SubTitleBean>();
 		ContentElementList contentList = ctx.getCurrentPage().getContent(ctx);
 		while (contentList.hasNext(ctx)) {
 			IContentVisualComponent comp = contentList.next(ctx);
 			if (comp instanceof ISubTitle) {
-				outList.add(new SubTitleBean(ctx, ((ISubTitle)comp)));
+				outList.add(new SubTitleBean(ctx, ((ISubTitle) comp)));
 			}
 		}
 		return outList;
 	}
-	
+
 }
