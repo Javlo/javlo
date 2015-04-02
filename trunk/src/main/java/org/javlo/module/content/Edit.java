@@ -831,6 +831,9 @@ public class Edit extends AbstractModuleAction {
 				clipBoard.clear();
 			}
 
+			if (comp.getPreviousComponent() != null) {
+				ctx.getRequest().setAttribute(AbstractVisualComponent.SCROLL_TO_COMP_ID_ATTRIBUTE_NAME, comp.getPreviousComponent().getId());
+			}
 			targetPage.removeContent(ctx, id);
 			GlobalContext globalContext = GlobalContext.getInstance(request);
 			PersistenceService persistenceService = PersistenceService.getInstance(globalContext);
@@ -1601,6 +1604,7 @@ public class Edit extends AbstractModuleAction {
 		comp.setLanguage(null);
 		String newId = content.createContent(ctx, targetPage, comp, previous, true);
 		if (ctx.isAjax()) {
+			ctx.getRequest().setAttribute(AbstractVisualComponent.SCROLL_TO_COMP_ID_ATTRIBUTE_NAME, newId);
 			updateComponent(ctx, currentModule, newId, previous);
 		}
 
@@ -1816,7 +1820,8 @@ public class Edit extends AbstractModuleAction {
 				for (ComponentBean componentBean : beans) {
 					componentBean.setArea(areaKey);
 				}
-				String parentID = content.createContent(ctx, targetPage, beans, previousId, true);
+				String newId = content.createContent(ctx, targetPage, beans, previousId, true);
+				ctx.getRequest().setAttribute(AbstractVisualComponent.SCROLL_TO_COMP_ID_ATTRIBUTE_NAME, newId);
 			} else {
 				ComponentBean mirrorBean = new ComponentBean(PageMirrorComponent.TYPE, sharedContent.getLinkInfo(), ctx.getRequestContentLanguage());
 				mirrorBean.setArea(areaKey);
@@ -1839,7 +1844,7 @@ public class Edit extends AbstractModuleAction {
 				if (mode != null) {
 					ctx.setRenderMode(Integer.parseInt(mode));
 				}
-				logger.info("update area : " + selecterPrefix + area);
+				logger.info("update area : " + selecterPrefix + area);				
 				ctx.getAjaxInsideZone().put(selecterPrefix + area, ServletHelper.executeJSP(ctx, "/jsp/view/content_view.jsp?area=" + areaKey));
 			}
 

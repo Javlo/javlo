@@ -89,10 +89,9 @@ editPreview.scrollToItem = function(container) {
 		return;
 	}
 	var top = pjq(container).offset().top;	
-	console.log("container top = ",top);
 	var body = $("html, body");
 	if (top > 400) {
-		body.animate({scrollTop:top-150}, '500', 'swing');
+		body.animate({scrollTop:(top-150)}, '100', 'swing');
 	}
 }
 
@@ -525,7 +524,7 @@ editPreview.initPreview = function() {
 						});				
 						pjq(document).trigger("ajaxUpdate");
 						try {
-							initPreview();					
+							editPreview.initPreview();					
 						} catch (ex) {
 							if (console) {
 								console.log(ex);
@@ -690,7 +689,10 @@ editPreview.initPreview = function() {
 			editPreview.stopAjax();
 		});	
 	}
-	editPreview.scrollToItem(pjq(".scroll-to-me"));
+	function scrollToMe() {
+		editPreview.scrollToItem(pjq(".scroll-to-me"));
+	}
+	window.setTimeout(scrollToMe, 250);
 }
 
 editPreview.addParam  = function(url, params) {
@@ -785,9 +787,10 @@ pjq(document).ready(function() {
 
 pjq(window).load(function() {
 	/** scrol to latest position after refresh * */
-	var scrollTo = editPreview.getParam(window.location.href, "_scrollTo");	
+	var scrollTo = editPreview.getParam(window.location.href, "_scrollTo");
 	if (scrollTo != "") {
-		window.scrollTo(0, scrollTo);
+		var body = $("html, body");		
+		body.animate({scrollTop:(scrollTo)}, '100', 'swing');		
 	}
 	pjq('[data-toggle="tooltip"]').tooltip();
 	editPreview.stopAjax();
