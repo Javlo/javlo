@@ -32,6 +32,7 @@ editCtx.setRenderMode(ContentContext.EDIT_MODE);
 	</button>
 </c:if> 
 
+<c:if test="${fn:length(info.interactiveMacro)>0 || fn:length(info.macro)>0}">
 <h2><span class="glyphicon glyphicon-wrench" aria-hidden="true"></span>${i18n.edit['command.macro']}</h2>
 <c:forEach var="macro" items="${info.interactiveMacro}">
 	<c:url var="url" value="<%=URLHelper.createURL(editCtx)%>" context="/">
@@ -67,5 +68,6 @@ editCtx.setRenderMode(ContentContext.EDIT_MODE);
 	  <span class="glyphicon glyphicon-play-circle" aria-hidden="true"></span>	  	  
 	</a>	
 </c:forEach>
+</c:if>
 </div>
 </div>

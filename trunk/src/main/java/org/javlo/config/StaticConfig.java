@@ -1300,7 +1300,7 @@ public class StaticConfig extends Observable {
 	 * @return
 	 */
 	public String getEditTemplateMode() {
-		return properties.getString("edit-template.mode", "dark");
+		return properties.getString("edit-template.mode", "");
 	}
 
 	public String getEditDefaultMimeTypeImage() {

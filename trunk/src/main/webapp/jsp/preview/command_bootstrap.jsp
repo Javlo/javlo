@@ -90,7 +90,7 @@ request.setAttribute("editPreview", EditContext.getInstance(globalContext, sessi
 				  <li role="presentation" class="active"><a href="#_ep_navigation" aria-controls="_ep_navigation" role="tab" data-toggle="tab">Navigation</a></li>
 				  <li role="presentation"><a href="#_ep_commands" aria-controls="_ep_commands" role="tab" data-toggle="tab">Commands</a></li>
 				  <li role="presentation"><a href="#_ep_content" aria-controls="_ep_content" role="tab" data-toggle="tab">Content</a></li>
-				  <li role="presentation"><a href="#_ep_files" aria-controls="_ep_files" role="tab" data-toggle="tab">Resouces</a></li>
+				  <li role="presentation"><a href="#_ep_files" aria-controls="_ep_files" role="tab" data-toggle="tab">Resources</a></li>
 				</ul>
 				<div class="tab-content">
 				  <div role="tabpanel" class="tab-pane fade in active navigation_panel " id="_ep_navigation">
