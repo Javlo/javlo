@@ -143,7 +143,7 @@ public class SharedContentAction extends AbstractModuleAction {
 	}
 
 	public static String performSearch(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) {
-		String providerName = rs.getParameter("provider", "");
+		String providerName = rs.getParameter("provider", "");		
 		ISharedContentProvider provider = SharedContentService.getInstance(ctx).getProvider(ctx, providerName);
 		if (provider == null) {
 			return "provider not found : " + providerName;
