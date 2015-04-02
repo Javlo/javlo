@@ -10,6 +10,7 @@ import org.javlo.component.core.ComponentLayout;
 import org.javlo.component.core.ISubTitle;
 import org.javlo.component.properties.AbstractPropertiesComponent;
 import org.javlo.context.ContentContext;
+import org.javlo.context.EditContext;
 import org.javlo.exception.ResourceNotFoundException;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
@@ -192,6 +193,7 @@ public class Heading extends AbstractPropertiesComponent implements ISubTitle {
 	public boolean initContent(ContentContext ctx) throws Exception {
 		I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
 		setFieldValue(TEXT, i18nAccess.getText("content.heading"));
+		storeProperties();
 		return true;
 	}
 
@@ -220,19 +222,20 @@ public class Heading extends AbstractPropertiesComponent implements ISubTitle {
 	}
 	
 	public String getXHTMLId(ContentContext ctx) {
-		if (ctx.getRequest().getAttribute("__subtitle__" + getId()) != null) {
-			return (String) ctx.getRequest().getAttribute("__subtitle__" + getId());
+		final String suffix = "_st_";
+		if (ctx.getRequest().getAttribute(suffix + getId()) != null) {
+			return (String) ctx.getRequest().getAttribute(suffix + getId());
 		}
-		String htmlID = StringHelper.createFileName(getValue()).replace('-', '_');
+		String htmlID = StringHelper.createFileName(getTextTitle(ctx)).replace('-', '_');
 		if (htmlID.trim().length() == 0) {
 			htmlID = "empty";
 		}
 		htmlID = "H_" + htmlID;
-		while (ctx.getRequest().getAttribute("__subtitle__" + htmlID) != null) {
+		while (ctx.getRequest().getAttribute(suffix + htmlID) != null) {
 			htmlID = htmlID + "_bis";
 		}
-		ctx.getRequest().setAttribute("__subtitle__" + htmlID, "");
-		ctx.getRequest().setAttribute("__subtitle__" + getId(), htmlID);
+		ctx.getRequest().setAttribute(suffix + htmlID, "");
+		ctx.getRequest().setAttribute(suffix + getId(), htmlID);
 		return htmlID;
 	}
 	
@@ -242,7 +245,11 @@ public class Heading extends AbstractPropertiesComponent implements ISubTitle {
 		if (isBackgroundColored()) {
 			cssClass = cssClass + " "+COLORED_WRAPPER_CLASS;
 		}
-		return '<'+getTag(ctx)+' ' + getSpecialPreviewCssClass(ctx, cssClass) + getSpecialPreviewCssId(ctx) + " "+getInlineStyle(ctx)+">";
+		if (EditContext.getInstance(ctx.getGlobalContext(), ctx.getRequest().getSession()).isEditPreview()) {
+			return '<'+getTag(ctx)+' ' + getSpecialPreviewCssClass(ctx, cssClass) + getSpecialPreviewCssId(ctx) + " "+getInlineStyle(ctx)+">";
+		} else {
+			return '<'+getTag(ctx)+' ' + " id=\""+getXHTMLId(ctx)+"\" "+getInlineStyle(ctx)+">";
+		}
 	}
 	
 	protected String getInlineStyle(ContentContext ctx) {
@@ -256,6 +263,7 @@ public class Heading extends AbstractPropertiesComponent implements ISubTitle {
 		if (getLayout() != null) {
 			inlineStyle = inlineStyle + ' ' + getLayout().getStyle();
 		}
+		inlineStyle = inlineStyle.trim();
 		if (inlineStyle.length() > 0) {
 			inlineStyle = " style=\"" + inlineStyle + "\"";
 		}
@@ -266,5 +274,6 @@ public class Heading extends AbstractPropertiesComponent implements ISubTitle {
 	public String getSuffixViewXHTMLCode(ContentContext ctx) {
 		return "</"+getTag(ctx)+'>';
 	}
+	
 
 }

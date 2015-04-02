@@ -82,6 +82,8 @@ import org.javlo.utils.SuffixPrefix;
  */
 public abstract class AbstractVisualComponent implements IContentVisualComponent {
 
+	public static final String SCROLL_TO_COMP_ID_ATTRIBUTE_NAME = "_new_id";
+	
 	public static final String NOT_EDIT_PREVIEW_PARAM_NAME = "_not_edit_preview";
 	
 	public static final String CACHE_KEY_SUFFIX_PARAM_NAME = "_cache_key_suffix";
@@ -1160,6 +1162,9 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		String specificClass = "";
 		if (getSpecificClass(ctx) != null) {
 			specificClass = getSpecificClass(ctx) + ' ';
+		}
+		if (getId().equals(ctx.getRequest().getAttribute(SCROLL_TO_COMP_ID_ATTRIBUTE_NAME))) {
+			specificClass = specificClass+"scroll-to-me ";
 		}
 		if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE) {
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());

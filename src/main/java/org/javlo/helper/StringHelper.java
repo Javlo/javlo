@@ -48,6 +48,7 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
+import org.javlo.component.list.FreeTextList;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.Comparator.StringComparator;
@@ -2357,7 +2358,7 @@ public class StringHelper {
 	 */
 	public static String textToList(GlobalContext globalContext, String text, String sep, String layout, boolean autoLink, String ulClass) {
 
-		char subListChar = '-';
+		
 
 		String firstTag = "ul";
 		String secondTag = "ul";
@@ -2384,7 +2385,7 @@ public class StringHelper {
 			if (rawLine == null) {
 				return "";
 			}
-			String line = removeFirstChar(rawLine, subListChar);
+			String line = removeFirstChar(rawLine, FreeTextList.SUBLIST_CHAR);
 			int depth = rawLine.length() - line.length();
 
 			if (ulClass == null) {
@@ -2452,7 +2453,7 @@ public class StringHelper {
 
 				rawLine = nextLine;
 				if (rawLine != null) {
-					line = removeFirstChar(rawLine, subListChar);
+					line = removeFirstChar(rawLine, FreeTextList.SUBLIST_CHAR);
 					depth = rawLine.length() - line.length();
 				}
 
