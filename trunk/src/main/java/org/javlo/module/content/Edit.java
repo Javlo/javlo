@@ -18,6 +18,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.javlo.actions.AbstractModuleAction;
+import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.component.core.ComponentContext;
 import org.javlo.component.core.ComponentFactory;
@@ -780,7 +781,7 @@ public class Edit extends AbstractModuleAction {
 			if (mode != null) {
 				ctx.setRenderMode(Integer.parseInt(mode));
 			}
-
+			ctx.getRequest().setAttribute(AbstractVisualComponent.SCROLL_TO_COMP_ID_ATTRIBUTE_NAME, newId);
 			ctx.getAjaxInsideZone().put(selecterPrefix + area, ServletHelper.executeJSP(ctx, "/jsp/view/content_view.jsp?area=" + areaKey));
 		}
 		ctx.resetCurrentPageCached();
@@ -1665,6 +1666,8 @@ public class Edit extends AbstractModuleAction {
 		if (ctx.isAjax()) {
 			// updatePreviewComponent(ctx, currentModule, comp.getId(),
 			// previous);
+			
+			ctx.getRequest().setAttribute(AbstractVisualComponent.SCROLL_TO_COMP_ID_ATTRIBUTE_NAME, compId);
 
 			MenuElement parentPage = ctx.getCurrentPage();
 

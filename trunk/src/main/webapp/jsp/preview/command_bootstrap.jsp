@@ -124,7 +124,7 @@ request.setAttribute("editPreview", EditContext.getInstance(globalContext, sessi
     	      </div>
             <div class="box">
       	      <div class="modal-body tabs-edit-fancy">
-      	        <iframe id="preview-modal-frame" data-wait="/wait.html" src="/wait.html" ></iframe>
+      	        <iframe id="preview-modal-frame" data-wait="${info.waitURL}" src="${info.waitURL}" ></iframe>
       	      </div>      	      
             </div>
           </div>

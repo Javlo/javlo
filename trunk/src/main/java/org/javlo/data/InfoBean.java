@@ -14,7 +14,10 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.javlo.component.core.ContentElementList;
 import org.javlo.component.core.IContentVisualComponent;
+import org.javlo.component.core.ISubTitle;
+import org.javlo.component.core.SubTitleBean;
 import org.javlo.component.links.RSSRegistration;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
@@ -26,7 +29,6 @@ import org.javlo.helper.NetHelper;
 import org.javlo.helper.ServletHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
-import org.javlo.i18n.I18nAccess;
 import org.javlo.macro.core.IInteractiveMacro;
 import org.javlo.macro.core.IMacro;
 import org.javlo.macro.core.MacroFactory;
@@ -1181,6 +1183,18 @@ public class InfoBean {
 			}
 		}
 		return macros;
+	}
+	
+	public List<SubTitleBean> getSubTitles() throws Exception {
+		List<SubTitleBean> outList = new LinkedList<SubTitleBean>();
+		ContentElementList contentList = ctx.getCurrentPage().getContent(ctx);
+		while (contentList.hasNext(ctx)) {
+			IContentVisualComponent comp = contentList.next(ctx);
+			if (comp instanceof ISubTitle) {
+				outList.add(new SubTitleBean(ctx, ((ISubTitle)comp)));
+			}
+		}
+		return outList;
 	}
 	
 }

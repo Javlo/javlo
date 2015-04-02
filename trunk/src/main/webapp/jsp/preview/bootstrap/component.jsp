@@ -4,12 +4,12 @@
  
  <c:if test="${not empty clipboard.copied}">
 <div id="_ep_clipboard" class="clipboard component-list">
-	<c:url var="url" value="${info.currentURL}">
+	<c:url var="url" value="${info.currentURL}" context="/">
 		<c:param name="webaction" value="edit.clearClipboard" />
 	</c:url>
 	<h2><span class="glyphicon glyphicon glyphicon-duplicate" aria-hidden="true"></span>${i18n.edit['global.clipboard']}<a href="${url}" class="ajax close">X</a></h2>
 	<div class="body">
-		<div class="component${comp.selected?' selected':''}" data-type="clipboard" data-deletable="true">
+		<div class="component" data-type="clipboard" data-deletable="true">
 			<div class="wrapper-in">
 				<div class="figure"></div>				
 				<span>${clipboard.label}</span>

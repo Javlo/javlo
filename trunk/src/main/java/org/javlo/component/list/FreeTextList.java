@@ -26,6 +26,8 @@ import org.javlo.utils.SuffixPrefix;
  * @author pvandermaesen
  */
 public class FreeTextList extends AbstractVisualComponent {
+	
+	public static final char SUBLIST_CHAR = '-';
 
 	public static final String NUMBER_LIST = "ol-ol";
 
@@ -113,12 +115,12 @@ public class FreeTextList extends AbstractVisualComponent {
 					if (sepIndex >= 0) {
 						String prefix = line.substring(0, sepIndex + 1);
 						prefix = prefix.replace(sep, "<span class=\"sep\">"+sep+"</span>");
-						lines.add(new PrefixedText(prefix, line.substring(sepIndex + 1), null));
+						lines.add(new PrefixedText(prefix, line.substring(sepIndex + 1), null,SUBLIST_CHAR));
 					} else {
-						lines.add(new PrefixedText(null, line, null));
+						lines.add(new PrefixedText(null, line, null,SUBLIST_CHAR));
 					}
 				} else {
-					lines.add(new PrefixedText(null, line, null));	
+					lines.add(new PrefixedText(null, line, null,SUBLIST_CHAR));	
 				}				
 				line = read.readLine();
 			}

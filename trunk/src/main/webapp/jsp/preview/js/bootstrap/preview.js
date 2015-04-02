@@ -84,6 +84,18 @@ editPreview.realUpdatePDFPosition = function() {
 	});	
 }
 
+editPreview.scrollToItem = function(container) {	
+	if (typeof pjq(container).offset() == 'undefined') {
+		return;
+	}
+	var top = pjq(container).offset().top;	
+	console.log("container top = ",top);
+	var body = $("html, body");
+	if (top > 400) {
+		body.animate({scrollTop:top-150}, '500', 'swing');
+	}
+}
+
 editPreview.searchPageId = function(node) {	
 	var parent = pjq(node).parent();	
 	while (parent !== undefined && !parent.hasClass("_page_associate") && parent.prop("tagName") !== undefined) {			
@@ -244,6 +256,11 @@ editPreview.initPreview = function() {
 		    	editPreview.layerOver(this, null, true);
 		    	return false;
 		    });
+		    el.addEventListener('dragleave', function (event) {
+		    	event.preventDefault();
+		    	editPreview.layerOver(null, null, true);
+		    	return false;
+		    });
 		    el.addEventListener('mouseover', function (event) {	    	
 		    	editPreview.layerOver(this, null, false);
 		    });
@@ -262,7 +279,7 @@ editPreview.initPreview = function() {
 					if (editPreview.searchPageId(subComp) != null) {
 						ajaxURL = ajaxURL +'&pageContainerID='+ editPreview.searchPageId(subComp);
 					}	
-					editPreview.ajaxPreviewRequest(ajaxURL, null);
+					editPreview.ajaxPreviewRequest(ajaxURL, null, null);
 				} else if (compType != null && compType.length > 0) { // insert new component
 					pjq(this).removeClass("drop-selected");
 					var previewId = subComp.attr("id").substring(3);		
@@ -274,8 +291,9 @@ editPreview.initPreview = function() {
 					var ajaxURL = editPreview.addParam(currentURL,url);
 					if (editPreview.searchPageId(subComp) != null) {
 						ajaxURL = ajaxURL +'&pageContainerID='+ editPreview.searchPageId(subComp);
-					}				
-					editPreview.ajaxPreviewRequest(ajaxURL, null);
+					}	
+					console.log("ajaxURL = "+ajaxURL);
+					editPreview.ajaxPreviewRequest(ajaxURL, null, null);
 				} else if (compId != null && compId.length > 0) { // move component				
 					var previewId = subComp.attr("id").substring(3);				
 					var area = editPreview.searchArea(subComp);		
@@ -283,7 +301,7 @@ editPreview.initPreview = function() {
 					if (editPreview.searchPageId(subComp) != null) {
 						ajaxURL = ajaxURL +'&pageContainerID='+ editPreview.searchPageId(subComp);
 					}	
-					editPreview.ajaxPreviewRequest(ajaxURL, null);
+					editPreview.ajaxPreviewRequest(ajaxURL, null, null);
 				} else if (event.dataTransfer.files.length > 0) {					
 					var previewId = subComp.attr("id").substring(3);	
 					var ajaxURL = editPreview.addParam(currentURL,"webaction=data.upload&content=true&previous=" + previewId);
@@ -304,8 +322,7 @@ editPreview.initPreview = function() {
 						}
 						i++;			
 					});					
-					editPreview.ajaxPreviewRequest(ajaxURL, null, fd);
-					
+					editPreview.ajaxPreviewRequest(ajaxURL, null, fd);					
 				}				
 				return false;	
 		    })   
@@ -342,7 +359,7 @@ editPreview.initPreview = function() {
 					if (editPreview.searchPageId(this) != null) {
 						ajaxURL = ajaxURL +'&pageContainerID='+ editPreview.searchPageId(this);
 					}
-					editPreview.ajaxPreviewRequest(ajaxURL, null);
+					editPreview.ajaxPreviewRequest(ajaxURL, null, null);
 				} else if (compType != null && compType.length > 0) {
 					pjq(this).removeClass("drop-selected");					
 					var url = "previewEdit=true&webaction=edit.insert&type=" + compType + "&previous=0&area=" + area+ "&render-mode=3&init=true";
@@ -350,13 +367,13 @@ editPreview.initPreview = function() {
 						url = url +'&pageContainerID='+ editPreview.searchPageId(this);
 					}
 					var ajaxURL = editPreview.addParam(currentURL,url);					
-					editPreview.ajaxPreviewRequest(ajaxURL, null);
+					editPreview.ajaxPreviewRequest(ajaxURL, null, null);
 				} else if (compId != null && event.dataTransfer.files.length == 0) { // move component															
 					var ajaxURL = editPreview.addParam(currentURL,"previewEdit=true&webaction=edit.moveComponent&comp-id=" + compId + "&previous=0&area=" + area+ "&render-mode=3&init=true");				
 					if (editPreview.searchPageId(this) != null) {					
 						ajaxURL = ajaxURL +'&pageContainerID='+ editPreview.searchPageId(this);
 					}
-					editPreview.ajaxPreviewRequest(ajaxURL, null);
+					editPreview.ajaxPreviewRequest(ajaxURL, null, null);
 				} else if (event.dataTransfer.files.length > 0) {						
 					var ajaxURL = editPreview.addParam(currentURL,"webaction=data.upload&content=true&previous=0&area=" + area);
 					if (editPreview.searchPageId(this) != null) {
@@ -376,8 +393,7 @@ editPreview.initPreview = function() {
 						}
 						i++;			
 					});					
-					editPreview.ajaxPreviewRequest(ajaxURL, null, fd);
-					
+					editPreview.ajaxPreviewRequest(ajaxURL, null, fd);					
 				}
 				return false;	
 		    });
@@ -416,7 +432,7 @@ editPreview.initPreview = function() {
 		    	}
 		    	var pageName = event.dataTransfer.getData('name');	
 		    	var ajaxURL = editPreview.addParam(currentURL,"previewEdit=true&webaction=edit.movePage&page=" + pageName + "&previous=" + targetPageName + "&render-mode=3&init=true&as-child="+insertAsChild);
-				editPreview.ajaxPreviewRequest(ajaxURL, null);
+				editPreview.ajaxPreviewRequest(ajaxURL, null, null);
 				return false;	
 		    });
 		}		
@@ -636,8 +652,8 @@ editPreview.initPreview = function() {
 					xhtmlId = "#"+xhtmlId;
 				}
 				var item = jQuery(xhtmlId);			
-				if (item != null) {
-					jQuery(xhtmlId).replaceWith(xhtml);
+				if (item != null) {					
+					jQuery(xhtmlId).replaceWith(xhtml);					
 				} else {
 					jQuery.each(jsonObj.data, function(key, value) {				
 				});
@@ -653,7 +669,7 @@ editPreview.initPreview = function() {
 				}			
 				var item = jQuery(xhtmlId);
 				if (item != null) {
-					item.html(xhtml);	
+					item.html(xhtml);
 				} else {
 					if (console) {
 						console.log("warning : component "+xhtmlId+" not found for insideZone.");
@@ -673,7 +689,8 @@ editPreview.initPreview = function() {
 			}
 			editPreview.stopAjax();
 		});	
-	}	
+	}
+	editPreview.scrollToItem(pjq(".scroll-to-me"));
 }
 
 editPreview.addParam  = function(url, params) {
