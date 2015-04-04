@@ -31,9 +31,9 @@ public class FieldBoolean extends Field {
 
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 
-		out.println("<div class=\"line checkbox\">");
+		out.println("<div class=\"form-group\"><div class=\"checkbox\">");
 		out.println(getEditLabelCode());
-		out.println("	<label>" + getLabel(new Locale(globalContext.getEditLanguage(ctx.getRequest().getSession()))) + " : ");
+		out.println("<label>");
 		String readOnlyHTML = "";
 		String checkedHTML = "";
 		if (isReadOnly()) {
@@ -42,11 +42,12 @@ public class FieldBoolean extends Field {
 		if (StringHelper.isTrue(getValue())) {
 			checkedHTML = " checked=\"checked\"";
 		}
-		out.println("	<input" + readOnlyHTML + " id=\"" + getInputName() + "\" name=\"" + getInputName() + "\" type=\"checkbox\" value=\"true\"" + checkedHTML + " />");
+		out.print("<input" + readOnlyHTML + " id=\"" + getInputName() + "\" name=\"" + getInputName() + "\" type=\"checkbox\" value=\"true\"" + checkedHTML + " />");
+		out.println(getLabel(new Locale(globalContext.getEditLanguage(ctx.getRequest().getSession()))));
 		if (getMessage() != null && getMessage().trim().length() > 0) {
 			out.println("	<div class=\"message " + getMessageTypeCSSClass() + "\">" + getMessage() + "</div>");
 		}
-		out.println("</label></div>");
+		out.println("</label></div></div>");
 
 		out.close();
 		return writer.toString();
