@@ -84,13 +84,17 @@ editPreview.realUpdatePDFPosition = function() {
 	});	
 }
 
-editPreview.scrollToItem = function(container) {	
+editPreview.scrollToItem = function(container) {
+	pjq("body").append('<div id="_fake_footer" style="font-size: 0; position: fixed; bottom: 0;">&nbsp;</div>');
+	var fakeFolder = pjq("#_fake_footer");
+	var footerOffset = fakeFolder.offset();
+	fakeFolder.remove();
 	if (typeof pjq(container).offset() == 'undefined') {
 		return;
 	}
 	var top = pjq(container).offset().top;	
-	var body = $("html, body");
-	if (top > 400) {
+	var body = $("html, body");	
+	if (top > (footerOffset.top/2+footerOffset.top/4)) {
 		body.animate({scrollTop:(top-150)}, '100', 'swing');
 	}
 }
