@@ -380,8 +380,18 @@
  
 * 2.0.3.8.2 14/02/2015
 
- * update preview edition, rewrite preview js
+ * update preview edition user bootstrap and less, rewrite preview js
  
  * insert edit_preview at the end of the page in place of start
  
-* 2.1.0.0.0 24/03/2015 
+* 2.1.0.0.0 24/03/2015
+
+ * flat edit template
+ 
+ * preview scroll positionning
+ 
+ * table component error correction
+ 
+ * tag component ready for bootstrap
+ 
+* 2.1.0.1.0 06/04/2015 

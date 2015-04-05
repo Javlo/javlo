@@ -1,0 +1,80 @@
+@import url('bootstrap/bootstrap.min.css');
+
+body {
+	overflow: hidden;
+}
+
+.main {
+	position: absolute;
+	width: 400px;
+	height: 300px;
+	top: 50%;
+	left: 50%;
+	margin-left: -200px;
+	margin-top: -150px;
+	border: 1px #cccccc solid;
+	padding: 30px;
+	background-color: #ffffff;
+	opacity: 0.85;
+    filter: alpha(opacity=85);
+}
+
+.main h1 {
+	text-align: center;
+	color: #D31996;
+}
+
+.main h1 .version {
+	color: #708D91;
+	font-size: 0.4em;
+	display: block;
+	margin: 3px 0;
+	vertical-align: bottom;
+}
+
+.alert {
+  padding: 7px;
+  text-align: center;
+}
+
+
+.bg1 {	
+	background-image: url("../images/bg/bg1.png");
+}
+
+.bg2 {
+	background-image: url("../images/bg/bg2.png");
+}
+
+.bg3 {
+	background-image: url("../images/bg/bg3.png");
+}
+
+.bg4 {
+	background-image: url("../images/bg/bg4.png");
+}
+
+.bg5 {
+	background-image: url("../images/bg/bg5.png");
+}
+
+.bg6 {
+	background-image: url("../images/bg/bg6.png");
+}
+
+.bg7 {
+	background-image: url("../images/bg/bg7.png");		
+}
+
+.bg8 {
+	background-image: url("../images/bg/bg8.png");		
+}
+
+.bg9 {
+	background-image: url("../images/bg/bg9.png");		
+}
+
+.bg10 {
+	background-image: url("../images/bg/bg10.png");		
+}
+

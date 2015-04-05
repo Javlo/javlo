@@ -508,6 +508,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 						Map<String, String> params = new HashMap<String, String>();
 						params.put("webaction", "view.sendTicketChangeNotifications");
 						params.put(ContentContext.FORWARD_AJAX, "true");
+						params.put("tracking", "false");
 						ContentContext absoluteCtx = ctx.getContextForAbsoluteURL();
 						absoluteCtx.setRenderMode(ContentContext.VIEW_MODE);
 						String url = URLHelper.createURL(absoluteCtx, "/", params);
