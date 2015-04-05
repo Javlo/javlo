@@ -142,7 +142,7 @@
     
     <!-- logo -->
     <div class="logo">
-	<img width="120" src="${info.logoURL}?color=cccccc" alt="Javlo" />	
+	<img width="120" src="${info.logoURL}?color=D31996" alt="Javlo" />	
 	</div>
     
     <div class="tabmenu">

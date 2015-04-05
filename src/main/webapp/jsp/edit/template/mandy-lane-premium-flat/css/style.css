@@ -232,7 +232,7 @@ h2.prize {
 }
 
 .loginbox button {
-	background: #4b6592 url(../images/buttonbg.png) repeat-x top left;
+	background: #708D91 url(../images/buttonbg.png) repeat-x top left;
 	font-size: 13px;
 	padding: 6px 14px;
 	width: 67px;
@@ -490,14 +490,14 @@ h2.prize {
 
 /***HEADER (all page)***/
 .header {
-	background: #333 url(../images/texturebg.png);
+	background: #333 url(../images/bg/bg9.png);
 	padding: 20px 10px 11px 10px;
 	position: relative;
 }
 
 .header {
 	border-top: 1px solid #444;
-	border-bottom: 3px solid #272727;
+	border-bottom: 3px solid #D31996;
 }
 
 .accountinfo {
@@ -573,19 +573,7 @@ h2.prize {
 	display: inline-block;
 	float: left;
 	position: relative;
-	background: #4b6592 url(../images/tabmenubg.png) repeat-x top left;
-}
-
-.tabmenu ul li:first-child {
-	-moz-border-radius: 3px 0 0 0;
-	-webkit-border-radius: 3px 0 0 0;
-	border-radius: 3px 0 0 0;
-}
-
-.tabmenu ul li:last-child {
-	-moz-border-radius: 0 3px 0 0;
-	-webkit-border-radius: 0 3px 0 0;
-	border-radius: 0 3px 0 0;
+	background-color: #708D91;
 }
 
 .tabmenu ul li a {
@@ -603,7 +591,7 @@ h2.prize {
 }
 
 .tabmenu ul li:hover {
-	background: #37507f url(../images/tabmenubg.png) repeat-x 0 -68px;
+	background-color: #9CAFB2;
 }
 
 .tabmenu ul li a span {
@@ -667,7 +655,7 @@ h2.prize {
 	left: 0;
 	display: none;
 	z-index: 100;
-	border: 1px solid #6785b0;
+	border: 1px solid #9cafb3;
 	border-bottom: 0;
 }
 
@@ -679,24 +667,24 @@ h2.prize {
 
 .tabmenu ul li .subnav li a {
 	display: block;
-	background: #83a3ca;
-	border-bottom: 1px solid #6785b0;
+	background: #9cafb3;
+	border-bottom: 1px solid #9cafb3;
 	color: #fff;
 }
 
 .tabmenu ul li .subnav li:last-child a {
-	background: #83a3ca;
+	background: #9cafb3;
 }
 
 .tabmenu ul li .subnav li a:hover {
-	background: #7293c1;
+	background: #346167;
 	color: #fff;
 }
 
 .tabmenu ul li .subnav a span {
 	padding: 5px 15px;
 	text-transform: capitalize;
-	text-shadow: 1px 1px #6785b0;
+	text-shadow: 1px 1px #9cafb3;
 }
 
 .tabmenu ul li.current .subnav {
@@ -711,7 +699,7 @@ h2.prize {
 }
 
 .tabmenu ul li.current .subnav li a:hover {
-	background: #c8d9ed;
+	background: #D2DADA;
 }
 
 .tabmenu ul li.current .subnav li a span {
@@ -724,6 +712,7 @@ h2.prize {
 	width: 220px;
 	display: block;
 	float: left;
+	color: #eee;
 }
 
 #accordion h3 {
@@ -752,20 +741,11 @@ h2.prize {
 	color: #333;
 }
 
-.leftmenu {
-	list-style: none;
-}
-
-.leftmenu li {
-	display: block;
-	margin-bottom: 1px;
-}
-
 .leftmenu li a {
 	font-size: 12px;
 	display: block;
 	padding: 5px 0 5px 30px;
-	color: #333;
+	color: #eee;
 }
 
 .leftmenu li.current a {
@@ -1232,7 +1212,7 @@ button.button:hover,.button:active {
 	text-transform: uppercase;
 	color: #fff;
 	font-weight: normal;
-	text-shadow: 1px 1px #4b6592;
+	text-shadow: 1px 1px #708D91;
 }
 
 .widgetbox h3 {
@@ -1242,8 +1222,8 @@ button.button:hover,.button:active {
 }
 
 .widgetbox h3 {
-	border: 1px solid #6082ad;
-	background: #688ab5 url(../images/titlebg.png) repeat-x top left;
+	border: 1px solid #608090;
+	background-color: #708D92;
 }
 
 .widgetbox h3 span {
@@ -1596,7 +1576,7 @@ input[type=radio],input[type=checkbox] {
 }
 
 .form_default button {
-	background: #4b6592 url(../images/buttonbg3.png) repeat-x top left;
+	background: #708D91 url(../images/buttonbg3.png) repeat-x top left;
 	color: #fff;
 	padding: 7px 20px;
 	cursor: pointer;
@@ -1649,7 +1629,7 @@ input[type=radio],input[type=checkbox] {
 .addNewButton {
 	float: right;
 	border: 1px solid #ccc;
-	background: #4b6592 url(../images/buttonbg3.png) repeat-x top left;
+	background: #708D91 url(../images/buttonbg3.png) repeat-x top left;
 	color: #fff;
 	padding: 5px 20px;
 }
@@ -2215,23 +2195,23 @@ input[type=radio],input[type=checkbox] {
 }
 
 .gallery .thumbview .info .menu a.view {
-	background: #83A3CA url("../images/icons/small/white/search.png") no-repeat 4px 4px;
+	background: #9cafb3 url("../images/icons/small/white/search.png") no-repeat 4px 4px;
 }
 
 .gallery .thumbview .info .menu a.delete {
-	background: #83A3CA url("../images/icons/small/white/close.png") no-repeat 4px 4px;
+	background: #9cafb3 url("../images/icons/small/white/close.png") no-repeat 4px 4px;
 }
 
 .gallery .thumbview .info .menu a.edit {
-    background: #83A3CA url("../images/icons/small/white/edit.png") no-repeat 4px 4px;
+    background: #9cafb3 url("../images/icons/small/white/edit.png") no-repeat 4px 4px;
 }
 
 .gallery .thumbview .info .menu a.select {
-    background: #83A3CA url("../images/icons/small/white/check.png") no-repeat 4px 4px;
+    background: #9cafb3 url("../images/icons/small/white/check.png") no-repeat 4px 4px;
 }
 
 .gallery .thumbview .info .menu a.push {
-    background: url("../images/icons/small/white/push.png") no-repeat scroll 4px 3px #83A3CA;
+    background: url("../images/icons/small/white/push.png") no-repeat scroll 4px 3px #9cafb3;
 }
 
 
@@ -2564,7 +2544,7 @@ input[type=radio],input[type=checkbox] {
 	padding: 7px 10px;
 	color: #333;
 	margin-bottom: 5px;
-	background: #c8d9ed;
+	background: #D2DADA;
 	cursor: move;
 }
 
