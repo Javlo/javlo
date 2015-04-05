@@ -298,8 +298,6 @@ public class ContentService implements IPrintInfo {
 	public String createContent(ContentContext ctx, MenuElement page, Collection<ComponentBean> inBean, String parentId, boolean releaseCache) throws Exception {
 		for (ComponentBean bean : inBean) {
 			IContentVisualComponent comp = ComponentFactory.createComponent(ctx, bean, null, null, null);
-			System.out.println("***** ContentService.createContent : comp = "+comp); //TODO: remove debug trace
-			System.out.println("***** ContentService.createContent : type = "+comp.getType()); //TODO: remove debug trace
 			if (!comp.isUnique() || page.getContentByType(ctx, comp.getType()).size() == 0) {
 				if (bean.getAuthors() == null || bean.getAuthors().length() == 0 && ctx.getCurrentEditUser() != null) {
 					bean.setAuthors(ctx.getCurrentEditUser().getLogin());
