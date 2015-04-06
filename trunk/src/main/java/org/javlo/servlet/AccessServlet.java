@@ -769,7 +769,9 @@ public class AccessServlet extends HttpServlet implements IVersion {
 									SharedContentContext sharedContentContext = SharedContentContext.getInstance(request.getSession());
 									ctx.getRequest().setAttribute("sharedContentProviders", sharedContentService.getAllActiveProvider(ctx));
 									if (ctx.getRequest().getAttribute("sharedContent") == null) {
-										ctx.getRequest().setAttribute("currentCategory", sharedContentContext.getCategory());
+										if (sharedContentContext.getSearchQuery() == null) {
+											ctx.getRequest().setAttribute("currentCategory", sharedContentContext.getCategory());
+										}
 									}
 									ISharedContentProvider provider = sharedContentService.getProvider(ctx, sharedContentContext.getProvider());
 									if (provider != null) {
@@ -780,7 +782,11 @@ public class AccessServlet extends HttpServlet implements IVersion {
 										ctx.getRequest().setAttribute("provider", provider);
 										ctx.setContentContextIfNeeded(provider);
 										if (ctx.getRequest().getAttribute("sharedContent") == null) { // no search
-											ctx.getRequest().setAttribute("sharedContent", provider.getContent(ctx, sharedContentContext.getCategories()));
+											if (sharedContentContext.getSearchQuery() == null) {
+												ctx.getRequest().setAttribute("sharedContent", provider.getContent(ctx, sharedContentContext.getCategories()));
+											} else {
+												ctx.getRequest().setAttribute("sharedContent", provider.searchContent(ctx, sharedContentContext.getSearchQuery()));
+											}
 										}
 										ctx.getRequest().setAttribute("sharedContentCategories", provider.getCategories(ctx).entrySet());
 									} else {

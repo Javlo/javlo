@@ -1787,7 +1787,7 @@ public class Edit extends AbstractModuleAction {
 		if (sharedData == null || previousId == null) {
 			return "bad request structure, need sharedData and previousId as parameter.";
 		} else {
-			sharedContentService.clearCache();
+			//sharedContentService.clearCache();
 			SharedContent sharedContent = sharedContentService.getSharedContent(ctx, sharedData);
 			if (sharedContent == null) {
 				String msg = "error : shared content not found : " + sharedData;
