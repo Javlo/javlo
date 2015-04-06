@@ -10,6 +10,7 @@ public class SharedContentContext {
 	private static final String KEY = "sharedContentContext";
 	
 	private String provider = null;
+	private String searchQuery = null;
 	private Collection<String> categories = new LinkedList<String>();
 	
 	public static final SharedContentContext getInstance(HttpSession session) {
@@ -26,6 +27,9 @@ public class SharedContentContext {
 	}
 
 	public void setProvider(String provider) {
+		if (provider != null || !this.provider.equals(provider)) {
+			setSearchQuery(null);
+		}
 		this.provider = provider;
 	}
 
@@ -43,6 +47,14 @@ public class SharedContentContext {
 		} else {
 			return null;
 		}
+	}
+
+	public String getSearchQuery() {
+		return searchQuery;
+	}
+
+	public void setSearchQuery(String searchQuery) {
+		this.searchQuery = searchQuery;
 	}
 	
 

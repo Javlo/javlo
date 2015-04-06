@@ -142,13 +142,17 @@ public class SharedContentAction extends AbstractModuleAction {
 		return null;
 	}
 
-	public static String performSearch(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) {
+	public static String performSearch(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) {		
 		String providerName = rs.getParameter("provider", "");		
 		ISharedContentProvider provider = SharedContentService.getInstance(ctx).getProvider(ctx, providerName);
 		if (provider == null) {
 			return "provider not found : " + providerName;
 		} else {
-			Collection<SharedContent> sharedContent = SharedContentService.getInstance(ctx).searchContent(ctx, provider, rs.getParameter("query", ""));		
+			String query = rs.getParameter("query", "").trim();
+			if(rs.getParameter("reset", null) != null) {
+				query = "";
+			}
+			Collection<SharedContent> sharedContent = SharedContentService.getInstance(ctx).searchContent(ctx, provider, query);		
 			ctx.getRequest().setAttribute("sharedContent", sharedContent);
 			if (ctx.isAjax()) {
 				String result;

@@ -53,6 +53,7 @@ import org.javlo.module.core.ModulesContext;
 import org.javlo.service.ContentService;
 import org.javlo.service.LogService;
 import org.javlo.service.RequestService;
+import org.javlo.service.shared.SharedContentService;
 import org.javlo.template.Template;
 import org.javlo.template.Template.TemplateData;
 import org.javlo.template.TemplateFactory;
@@ -1290,6 +1291,7 @@ public class AdminAction extends AbstractModuleAction {
 		UserFactory.createUserFactory(globalContext, session).reload(globalContext, session);
 
 		TemplateFactory.copyDefaultTemplate(session.getServletContext());
+		SharedContentService.getInstance(ctx).clearCache();
 
 		System.gc();
 		return null;
