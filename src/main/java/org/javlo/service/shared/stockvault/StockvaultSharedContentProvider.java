@@ -5,8 +5,10 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Logger;
 
 import org.htmlparser.NodeFilter;
@@ -33,11 +35,11 @@ public class StockvaultSharedContentProvider extends AbstractSharedContentProvid
 			setName("stockvault.net");
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
-		}		
+		}
 	}
 
 	@Override
-	public void refresh(ContentContext ctx) {		
+	public void refresh(ContentContext ctx) {
 		content = null;
 		getContent(ctx);
 	}
@@ -51,10 +53,11 @@ public class StockvaultSharedContentProvider extends AbstractSharedContentProvid
 	public Collection<SharedContent> searchContent(ContentContext ctx, String query) {
 		try {
 			Collection<SharedContent> outContent = new LinkedList<SharedContent>();
+			Set<String> allReadyFound = new HashSet<String>();
 			for (int page = 1; page < 4; page++) { // read 3 pages
 				URL url = new URL(URLHelper.addAllParams(URLHelper.mergePath(getURL().toString(), "/search/"), "query=" + StringHelper.toHTMLAttribute(query), "page=" + page));
 				try {
-					outContent.addAll(readURL(url));
+					outContent.addAll(readURL(url, allReadyFound));
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -66,7 +69,7 @@ public class StockvaultSharedContentProvider extends AbstractSharedContentProvid
 			return null;
 		}
 	}
-	
+
 	private void init() throws ParserException, IOException {
 		Parser htmlParser = new Parser(getURL().openConnection());
 		NodeFilter cssFilter = new CssSelectorNodeFilter(".sidebar li a");
@@ -113,6 +116,10 @@ public class StockvaultSharedContentProvider extends AbstractSharedContentProvid
 	}
 	
 	private Collection<SharedContent> readURL(URL url) throws Exception {
+		return readURL(url, null);
+	}
+
+	private Collection<SharedContent> readURL(URL url, Set<String> allReadyFound) throws Exception {
 		Collection<SharedContent> outSharedContent = new LinkedList<SharedContent>();
 
 		Parser htmlParser = new Parser(url.openConnection());
@@ -120,7 +127,7 @@ public class StockvaultSharedContentProvider extends AbstractSharedContentProvid
 		NodeList nodeList = htmlParser.extractAllNodesThatMatch(cssFilter);
 		if (nodeList.size() == 0) {
 			logger.severe("bad structure no images found.");
-		}
+		}		
 		for (int i = 0; i < nodeList.size(); i++) {
 			if (nodeList.elementAt(i) instanceof TagNode) {
 				TagNode tag = (TagNode) nodeList.elementAt(i);
@@ -130,20 +137,25 @@ public class StockvaultSharedContentProvider extends AbstractSharedContentProvid
 					String id = StringHelper.getFileNameWithoutExtension(splitedSrc[splitedSrc.length - 2]);
 					StockvaultSharedContent sharedContent = new StockvaultSharedContent(id, null);
 					String title = tag.getAttribute("alt");
-					String[] splitedTitle = title.split("-");
-					if (splitedTitle.length > 0) {
-						title = splitedTitle[1];
+					if (allReadyFound == null || !allReadyFound.contains(title)) {
+						if (allReadyFound != null) {
+							allReadyFound.add(title);
+						}
+						String[] splitedTitle = title.split("-");
+						if (splitedTitle.length > 0) {
+							title = splitedTitle[1];
+						}
+						sharedContent.setTitle(title.trim());
+						sharedContent.setImageUrl(URLHelper.mergePath(getURL().toString(), src));
+						sharedContent.setRemoteImageUrl(URLHelper.mergePath(getURL().toString(), "/photo/download/", id));
+						outSharedContent.add(sharedContent);
 					}
-					sharedContent.setTitle(title.trim());
-					sharedContent.setImageUrl(URLHelper.mergePath(getURL().toString(), src));
-					sharedContent.setRemoteImageUrl(URLHelper.mergePath(getURL().toString(), "/photo/download/", id));
-					outSharedContent.add(sharedContent);
 				}
 			}
 		}
 		return outSharedContent;
 	}
-	
+
 	@Override
 	public int getContentSize(ContentContext ctx) {
 		if (content != null) {
