@@ -50,11 +50,6 @@ public class SharedContentProviderFactory {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-			try {				
-				addContentProvider(ctx, staticContentProviders,new FotogrphSharedContentProvider());
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
 		}
 		if (contentProviders == null) {
 			contentProviders = new LinkedList<ISharedContentProvider>();
