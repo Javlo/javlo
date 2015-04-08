@@ -18,8 +18,8 @@ body .wrapper {
 @page {	size: A4; }
 
 </style>
-</head>
-<body id="body" class="pdf ${pageClass}" style="-webkit-font-smoothing: antialiased; width: 100% !important; -webkit-text-size-adjust: none; background-color: #ffffff;">
+</head><c:set var="outerBackgroundColor" value="" /><c:if test="${not empty info.template.style.outerBackgroundColor}"><c:set var="outerBackgroundColor" value="background-color: ${info.template.style.outerBackgroundColor}" /></c:if>
+<body id="body" class="pdf ${pageClass}" style="-webkit-font-smoothing: antialiased; width: 100% !important; -webkit-text-size-adjust: none;${outerBackgroundColor}">
 <table width="100%" border="0" align="center" cellpadding="0" cellspacing="0">
 	<tr>
 		<td width="100%" align="center" valign="top">

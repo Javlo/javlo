@@ -1,6 +1,6 @@
-<%@page import="org.javlo.user.AdminUserFactory"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%><%@ taglib
-	uri="/WEB-INF/javlo.tld" prefix="jv"%><%@ taglib prefix="fn"
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"
+%><%@ taglib uri="/WEB-INF/javlo.tld" prefix="jv"
+%><%@ taglib prefix="fn"
 	uri="http://java.sun.com/jsp/jstl/functions"%><%@page
 	contentType="text/html"
 	import="
@@ -14,8 +14,9 @@
     	    org.javlo.context.GlobalContext,
     	    org.javlo.module.content.Edit,
     	    org.javlo.message.MessageRepository,
-    	    org.javlo.message.GenericMessage"%>
-<%
+    	    org.javlo.user.AdminUserFactory,
+    	    org.javlo.message.GenericMessage"
+%><%
 	ContentContext ctx = ContentContext.getContentContext(request, response);
 	ContentContext editCtx = new ContentContext(ctx);
 	editCtx.setRenderMode(ContentContext.EDIT_MODE);
@@ -35,7 +36,7 @@
 	prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%><div
 	class="header">
 	<div class="logo">
-		<a href="#">Javlo</a> <img class="ajax-loading"
+		<a href="<%=URLHelper.createURL(ctx, "/")%>">Javlo</a> <img class="ajax-loading"
 			src="${info.ajaxLoaderURL}" alt="loading..." lang="en" />
 	</div>
 
@@ -85,24 +86,24 @@
 				<div class="btn-group">
 					<ul>
 						<li>
-							<form class="${info.page.pageEmpty?'no-access':''}"
+							<form class="${info.page.pageEmpty || info.page.childrenAssociation?'no-access':''}"
 								id="copy_page"
 								action="${info.currentURL}?webaction=edit.copyPage"
 								method="post">
 								<button id="pc_copy_page" type="submit"
-									class="btn btn-default btn-xs">
+									class="btn btn-default btn-xs" ${info.page.pageEmpty || info.page.childrenAssociation?'disabled="disabled"':''}>
 									<span class="glyphicon glyphicon-copy" aria-hidden="true"></span><span
 										class="text">${i18n.edit['action.copy-page']}</span>
 								</button>
 							</form>
 						</li>
 						<li><form
-								class="${empty info.contextForCopy || !info.page.pageEmpty?'no-access':''}"
+								class="${empty info.contextForCopy || !info.page.pageEmpty || info.page.childrenAssociation?'no-access':''}"
 								id="paste_page" action="${info.currentURL}" method="post">
 								<input type="hidden" name="webaction" value="edit.pastePage" />
 								<button class="btn btn-default btn-xs" id="pc_paste_page"
 									type="submit"
-									${empty info.contextForCopy || !info.page.pageEmpty?'disabled="disabled"':''}>
+									${empty info.contextForCopy || !info.page.pageEmpty || info.page.childrenAssociation?'disabled="disabled"':''}>
 									<span class="glyphicon glyphicon-paste" aria-hidden="true"></span><span
 										class="text">${i18n.edit['action.paste-page-preview']}</span>
 								</button>

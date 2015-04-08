@@ -170,7 +170,7 @@ public class UserSearch extends AbstractVisualComponent implements IAction {
 		for (IUserInfo user : users) {
 			if (BeanHelper.beanToString(user).contains(text)) {
 				if (country.length() == 0 || ((UserInfo) user).getCountry().equals(country)) {
-					if (domain.length() == 0 || ((UserInfo) user).getFunction().equals(domain)) {
+					if (domain.length() == 0 || ((UserInfo) user).getFunction().contains(domain)) {
 						if (role.length() == 0 || ((UserInfo) user).getRoles().contains(role)) {
 							result.add(user);
 						}

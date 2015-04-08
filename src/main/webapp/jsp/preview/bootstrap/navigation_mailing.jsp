@@ -1,14 +1,18 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"
 %><%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-<h2><span class="glyphicon glyphicon-menu-hamburger" aria-hidden="true"></span>Navigation</h2>
+<h2><c:if test="${not empty info.page.rootOfChildrenAssociation}"><a class="newsletter-settings pull-right as-modal" href="${info.page.rootOfChildrenAssociation.page.editUrl}?module=content&webaction=changeMode&mode=3&previewEdit=true" title="newsletter settings" lang="en">
+   		<span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
+</a></c:if><span class="glyphicon glyphicon-menu-hamburger" aria-hidden="true"></span>Navigation</h2>
 <c:set var="rootAssociation" value="${info.page.rootOfChildrenAssociation}" />
 <c:if test="${not empty rootAssociation}">
 	<div class="height-to-bottom">
 	<form id="children_list" action="${info.currentURL}" method="post">
 	<div class="pages mailing">	
+		
 	   <ul class="navigation">	   
 	   <li class="title ${rootAssociation.associationPage.url eq info.currentURL?'current ':''}${rootAssociation.associationPage.info.realContent?'real-content':''}">
 	   		<a id="page-${rootAssociation.associationPage.name}" class="construction draggable" href="${rootAssociation.associationPage.url}">${i18n.edit["composition.main-title"]}</a>
+	   			   		
 	   </li>
 	   <li><ul class="children sortable">	   
 	   <c:forEach var="page" items="${rootAssociation.pages}" varStatus="bcl">

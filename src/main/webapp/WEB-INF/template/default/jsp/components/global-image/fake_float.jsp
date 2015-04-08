@@ -24,7 +24,7 @@
 <c:if test="${url != '#'}"></a></c:if>
 </td></tr>
 </c:if>
-<tr><td class="zone2" colspan="2" style="text-align: left; ${areaStyle.textStyle}${styleWidth}"><span class="container">${comp.secondText}</span></td></tr>
+<tr><td class="zone2" colspan="3" style="text-align: left; ${areaStyle.textStyle}${styleWidth}"><span class="container">${comp.secondText}</span></td></tr>
 </c:if>
 <c:if test="${info.device.code == 'pdf'}">
 <tr><td>
