@@ -47,6 +47,11 @@ case GenericMessage.SUCCESS:
                 </div><div class="form-group">
 				<input id="j_password" class="form-control" type="password" name="j_password" placeholder="Password" />
 				</div>
+				<div class="checkbox pull-left">
+				<label>
+				<input type="checkbox" id="autologin" name="autologin" /> Remember me on this computer.
+				</label>
+				</div>
 				<button class="btn btn-default pull-right" name="submit">Login</button>
 			</form>
          </div><!-- End-main -->
