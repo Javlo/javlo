@@ -43,6 +43,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.logging.Logger;
+import java.util.zip.CRC32;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FilenameUtils;
@@ -3149,6 +3150,12 @@ public class StringHelper {
 		} catch (UnsupportedEncodingException e) {
 		}
 		return null;
+	}
+	
+	public static long getCRC32 (String text) {
+		CRC32 crc = new CRC32();
+		crc.update(text.getBytes());
+		return crc.getValue();
 	}
 
 }

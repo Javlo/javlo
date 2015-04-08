@@ -144,5 +144,9 @@ public class StringHelperTest extends TestCase {
 	  assertEquals(StringHelper.removeRepeatedChar("--javlo----love---------------", '-'), "-javlo-love-");
   }
   
+  public void testCRC32() {
+	  assertNotSame(StringHelper.getCRC32("javlo"), StringHelper.getCRC32("javlo2"));
+  }
+  
  
 }

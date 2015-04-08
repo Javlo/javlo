@@ -2487,6 +2487,7 @@ public class Template implements Comparable<Template> {
 
 	protected void loadTemplatePart(TemplatePart part, String prefix) {
 		part.setBackgroundColor(properties.getString(prefix + ".background-color"));
+		part.setOuterBackgroundColor(properties.getString(prefix + ".outer-background-color"));
 		part.setBorderColor(properties.getString(prefix + ".border-color"));
 		part.setBorderWidth(properties.getString(prefix + ".border-width"));
 		part.setFont(properties.getString(prefix + ".font", part.getDefaultFont()));
@@ -2508,6 +2509,7 @@ public class Template implements Comparable<Template> {
 	}
 
 	protected void saveTemplatePart(TemplatePart part, String prefix) {
+		properties.setProperty(prefix + ".outer-background-color", part.getOuterBackgroundColor());
 		properties.setProperty(prefix + ".background-color", part.getBackgroundColor());
 		properties.setProperty(prefix + ".border-color", part.getBorderColor());
 		properties.setProperty(prefix + ".border-width", part.getBorderWidth());

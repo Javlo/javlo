@@ -12,7 +12,6 @@ import java.util.List;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.context.INeedContentContext;
-import org.javlo.service.shared.fotogrph.FotogrphSharedContentProvider;
 import org.javlo.service.shared.stockvault.StockvaultSharedContentProvider;
 import org.javlo.service.shared.url.URLImageSharedContentProvider;
 
@@ -34,6 +33,22 @@ public class SharedContentProviderFactory {
 	private static void addContentProvider (ContentContext ctx, List<ISharedContentProvider> contentProviders, ISharedContentProvider provider) {
 		if (provider instanceof INeedContentContext) {
 			((INeedContentContext)provider).setContentContext(ctx);
+		}
+		boolean nameFound = true;
+		int number = 1;
+		while (nameFound) {
+			nameFound = false;
+			for (ISharedContentProvider iSharedContentProvider : contentProviders) {
+				if (provider.getName().equals(iSharedContentProvider.getName())) {
+					nameFound = true;
+					if (provider.getName().endsWith(" ("+number+')')) {
+						provider.setName(provider.getName().replace(" ("+number+')', " ("+(number+1+')')));
+					} else {
+						provider.setName(provider.getName()+" ("+number+')');
+					}
+					number++;
+				}
+			}			
 		}
 		contentProviders.add(provider);
 	}

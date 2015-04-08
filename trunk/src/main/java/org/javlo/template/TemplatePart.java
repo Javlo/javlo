@@ -27,6 +27,7 @@ public class TemplatePart {
 	private String linkColor = null;
 	private String textColor = null;
 	private String backgroundColor = null;
+	private String outerBackgroundColor = null;
 	private String font = null;
 	private String textSize = null;
 	private String titleColor = null;
@@ -341,6 +342,7 @@ public class TemplatePart {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((backgroundColor == null) ? 0 : backgroundColor.hashCode());
+		result = prime * result + ((outerBackgroundColor == null) ? 0 : outerBackgroundColor.hashCode());
 		result = prime * result + ((borderColor == null) ? 0 : borderColor.hashCode());
 		result = prime * result + ((borderWidth == null) ? 0 : borderWidth.hashCode());
 		result = prime * result + ((font == null) ? 0 : font.hashCode());
@@ -449,6 +451,14 @@ public class TemplatePart {
 		System.out.println("***** TemplatePart.main : part1.getWidth() = "+part1.getWidth()); //TODO: remove debug trace
 		System.out.println("***** TemplatePart.main : part2.getHeight() = "+part1.getHeight()); //TODO: remove debug trace
 		System.out.println("***** TemplatePart.main : part2.setTitleColor() = "+part1.getTitleColor()); //TODO: remove debug trace
+	}
+
+	public String getOuterBackgroundColor() {
+		return outerBackgroundColor;
+	}
+
+	public void setOuterBackgroundColor(String outerBackgroundColor) {
+		this.outerBackgroundColor = outerBackgroundColor;
 	}
 
 }

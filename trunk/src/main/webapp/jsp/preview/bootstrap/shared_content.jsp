@@ -24,7 +24,7 @@
 <form id="shared-content-form" class="js-submit" action="${info.currentURL}" method="post">
 	<div>
 		<input type="hidden" name="webaction" value="shared-content.choose" />
-		<div class="form-group">		
+		<div class="form-group form-inline">		
 		<select name="provider" class="form-control">
 			<option class="placeholder" value="">${i18n.edit["preview.choose-provider"]}</option>
 			<c:forEach var="provider" items="${sharedContentProviders}">
@@ -32,6 +32,12 @@
 				<option value="${provider.name}" ${sharedContentContext.provider eq provider.name?'selected="selected"':''}>${i18n.edit[key]}</option>
 			</c:forEach>
 		</select>
+		<c:url var="url" value="${info.currentEditURL}" context="/">
+			<c:param name="module" value="shared-content" />			
+			<c:param name="mode" value="3" />
+			<c:param name="previewEdit" value="true" />
+		</c:url>		
+		<button class="btn btn-default" title="add" lang="en" onclick="editPreview.openModal('${i18n.edit['global.page-properties']}', '${url}'); return false;"><span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span></button>
 		</div>		
 		<c:if test="${fn:length(sharedContentCategories)>1}">
 		<div class="form-group">
