@@ -35,7 +35,7 @@ public class URLImageSharedContentProvider extends AbstractSharedContentProvider
 		if (content == null) {
 			content = new LinkedList<SharedContent>();
 			try {
-				String html = NetHelper.readPage(getURL());
+				String html = NetHelper.readPageGet(getURL());
 				TagDescription[] tags = XMLManipulationHelper.searchAllTag(html, false);
 				
 				String urlPrefix = getURL().toString();
@@ -50,21 +50,29 @@ public class URLImageSharedContentProvider extends AbstractSharedContentProvider
 				for (TagDescription tag : tags) {
 					TagDescription parent = XMLManipulationHelper.searchParent(tags, tag);
 					if (tag.getName().toLowerCase().equals("img") && parent.getName().toLowerCase().equals("a")) {
-						String href = parent.getAttribute("href", "");
+						String href = parent.getAttribute("href", "").trim();
 						String src = tag.getAttribute("src", "");
 						if (StringHelper.isImage(href) && StringHelper.isImage(src)) {
 							if (StringHelper.isURL(href)) {
 								imageURL = href;
-							} else {
-								imageURL = URLHelper.mergePath(urlPrefix, href);
+							} else {	
+								if (!href.startsWith("/") || href.startsWith("..")) {									
+									imageURL = URLHelper.mergePath(urlPrefix, href);
+								} else {
+									imageURL = URLHelper.mergePath(URLHelper.removeURI(urlPrefix), href);
+								}
 							}
 							if (StringHelper.isURL(src)) {
 								imagePreviewURL = src;
-							} else {
-								imagePreviewURL = URLHelper.mergePath(urlPrefix, src);
+							} else {								
+								if (!href.startsWith("/") || href.startsWith("..")) {									
+									imagePreviewURL = URLHelper.mergePath(urlPrefix, src);
+								} else {
+									imagePreviewURL = URLHelper.mergePath(URLHelper.removeURI(urlPrefix), src);
+								}
 							}
 							imageTitle = tag.getAttribute("alt", parent.getAttribute("title", StringHelper.getFileNameWithoutExtension(StringHelper.getFileNameFromPath(imageURL))));
-							id = StringHelper.getFileNameFromPath(imagePreviewURL);							
+							id = ""+StringHelper.getCRC32(imagePreviewURL);	
 							if (imageURL != null && imagePreviewURL != null) {
 								URLSharedContent sharedContent = new URLSharedContent(id, null);
 								sharedContent.setImageUrl(imagePreviewURL);

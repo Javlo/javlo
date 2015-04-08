@@ -16,9 +16,8 @@ body .association-wrapper, body .page-wrapper {
 }
 <jsp:include page="css/dynamic_css.jsp" />
 </style>
-</head>
-
-<body id="body" style="-webkit-font-smoothing: antialiased; width: 100% !important; -webkit-text-size-adjust: none;" class="${pageClass}">
+</head><c:set var="outerBackgroundColor" value="" /><c:if test="${not empty info.template.style.outerBackgroundColor}"><c:set var="outerBackgroundColor" value="background-color: ${info.template.style.outerBackgroundColor}" /></c:if>
+<body id="body" style="-webkit-font-smoothing: antialiased; width: 100% !important; -webkit-text-size-adjust: none;${outerBackgroundColor}" class="${pageClass}">
 <div class="style_wrapper" style="color: ${info.template.style.finalTextColor};	font-size: ${info.template.style.finalTextSize}; font-family: ${info.template.style.finalFont};">
 <table width="100%" border="0" align="center" cellpadding="0" cellspacing="0">
 	<tr>

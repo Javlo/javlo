@@ -248,6 +248,7 @@ public class TemplateEditorAction extends AbstractModuleAction {
 				style.setH6Size(rs.getParameter("h6size", ""));
 
 				style.setBackgroundColor(rs.getParameter("backgroundColor", ""));
+				style.setOuterBackgroundColor(rs.getParameter("outerBackgroundColor", ""));
 				String parent = rs.getParameter("parent", null);
 				if (parent != null && !parent.equals(editorContext.getCurrentTemplate().getParentName())) {
 					Template template = TemplateFactory.getTemplates(ctx.getRequest().getSession().getServletContext()).get(parent);

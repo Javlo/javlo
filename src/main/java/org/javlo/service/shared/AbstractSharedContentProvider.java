@@ -24,7 +24,7 @@ public abstract class AbstractSharedContentProvider implements ISharedContentPro
 	public String getName() {
 		return name;
 	}
-
+	
 	@Override
 	public String getLabel(Locale locale) {
 		return getName();
@@ -61,6 +61,7 @@ public abstract class AbstractSharedContentProvider implements ISharedContentPro
 		return outList;
 	}
 
+	@Override 
 	public void setName(String name) {
 		this.name = name;
 	}

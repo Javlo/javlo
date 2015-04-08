@@ -36,6 +36,10 @@
 			<label for="backgroundColor-${part.name}">background color</label>
 			<input class="color" type="text" id="backgroundColor-${part.name}" name="backgroundColor" value="${part.backgroundColor}" />
 		</div>
+		<div class="line ${not empty exclude.backgroundColor?' disabled':''}">
+			<label for="backgroundColor-${part.name}">outer background color</label>
+			<input class="color" type="text" id="outerBackgroundColor-${part.name}" name="outerBackgroundColor" value="${part.outerBackgroundColor}" />
+		</div>
 		<div class="line ${not empty exclude.linkColor?' disabled':''}">
 			<label for="linkColor-${link.name}">link color<c:if test="${not empty part.finalLinkColor}"> (${part.finalLinkColor})</c:if></label>
 			<input class="color" type="text" id="linkColor-${part.name}" name="linkColor" value="${part.linkColor}" />

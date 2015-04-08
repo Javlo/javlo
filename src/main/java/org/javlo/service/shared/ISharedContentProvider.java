@@ -19,6 +19,8 @@ public interface ISharedContentProvider {
 	
 	public String getName();
 	
+	public void setName(String name);
+	
 	public String getLabel(Locale locale);
 	
 	/**

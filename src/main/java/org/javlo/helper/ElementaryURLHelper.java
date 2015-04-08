@@ -767,6 +767,15 @@ public abstract class ElementaryURLHelper {
 			return path;
 		}
 	}
+	
+	public static String removeURI(String inURL) throws MalformedURLException  {
+		URL url = new URL(inURL);
+		String port = "";
+		if (url.getPort()>0) {
+			port = ":"+url.getPort();
+		}
+		return url.getProtocol()+"://"+url.getHost()+port+'/';		
+	}
 
 
 }
