@@ -958,7 +958,7 @@ public class GlobalImage extends Image implements IImageFilter {
 	}
 
 	private String getWidthKey(ContentContext ctx) {
-		return "width-" + ctx.getDevice().getCode();
+		return "width-" + ctx.getDevice().getCode()+'-'+getRenderer(ctx);
 	}
 
 	public int getWidth(ContentContext ctx) {
@@ -1024,7 +1024,6 @@ public class GlobalImage extends Image implements IImageFilter {
 			String secondText = rs.getParameter("secondtext", null);
 			String height = rs.getParameter("height", null);
 			String width = rs.getParameter("width", null);
-
 			if (image.isTextAuto()) {
 				if (firstText != null && !firstText.equals(image.getFirstText())) {
 					image.setModify();

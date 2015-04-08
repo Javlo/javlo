@@ -1,7 +1,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"
 %><%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"
-%>
-<h2><span class="glyphicon glyphicon-folder-open" aria-hidden="true"></span>Resouces</h2>
+%><h2><span class="glyphicon glyphicon-folder-open" aria-hidden="true"></span>Resources</h2>
 <div class="well drop-files">		
 	<div class="upload-zone" data-url="${info.uploadURL}">
 	<h3>${i18n.edit['preview.upload-here']}</h3>
@@ -29,7 +28,8 @@
 			<option class="placeholder" value="">${i18n.edit["preview.choose-provider"]}</option>
 			<c:forEach var="provider" items="${sharedContentProviders}">
 				<c:set var="key" value="shared.${provider.name}" />
-				<option value="${provider.name}" ${sharedContentContext.provider eq provider.name?'selected="selected"':''}>${i18n.edit[key]}</option>
+				<c:set var="providerLabel" value="${i18n.edit[key]}" /><c:if test="${providerLabel == key}"><c:set var="providerLabel" value="${provider.name}" /></c:if>
+				<option value="${provider.name}" ${sharedContentContext.provider eq provider.name?'selected="selected"':''}>${providerLabel}</option>
 			</c:forEach>
 		</select>
 		<c:url var="url" value="${info.currentEditURL}" context="/">
@@ -37,7 +37,10 @@
 			<c:param name="mode" value="3" />
 			<c:param name="previewEdit" value="true" />
 		</c:url>		
-		<button class="btn btn-default" title="add" lang="en" onclick="editPreview.openModal('${i18n.edit['global.page-properties']}', '${url}'); return false;"><span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span></button>
+		<c:if test="${not empty provider.URL}">
+		<a class="btn btn-default" title="link" lang="en" href="${provider.URL}" target="_blank"><span class="glyphicon glyphicon-circle-arrow-right" aria-hidden="true"></span></a>
+		</c:if>
+		<button class="btn btn-default pull-right" title="add" lang="en" onclick="editPreview.openModal('${i18n.edit['global.page-properties']}', '${url}'); return false;"><span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span></button>
 		</div>		
 		<c:if test="${fn:length(sharedContentCategories)>1}">
 		<div class="form-group">

@@ -170,16 +170,16 @@ public class URLHelper extends ElementaryURLHelper {
 					ex.printStackTrace();
 				}
 			} else if (adminUserInfo.getFacebook() != null && adminUserInfo.getFacebook().trim().length() > 0) {
-				url = adminUserInfo.getFacebook().replace("//www.", "//graph.") + "/picture?type=small";
+				return adminUserInfo.getFacebook().replace("//www.", "//graph.") + "/picture?type=small";
 			} else if (adminUserInfo.getTwitter() != null && adminUserInfo.getTwitter().trim().length() > 0) {
-				url = "https://api.twitter.com/1/users/profile_image?screen_name=" + adminUserInfo.getTwitter().replaceAll("https://twitter.com/", "") + "&size=normal";
+				return "https://api.twitter.com/1/users/profile_image?screen_name=" + adminUserInfo.getTwitter().replaceAll("https://twitter.com/", "") + "&size=normal";
 			}
 			if (adminUserInfo.getEmail() != null) {
 				try {
-					if (!StringHelper.isURL(url)) {
+					/*if (!StringHelper.isURL(url)) {
 						url = URLHelper.createStaticURL(ctx.getContextForAbsoluteURL(), url);
-					}
-					url = URLHelper.getGravatarURL(adminUserInfo.getEmail(), url).toString();
+					}*/
+					url = URLHelper.getGravatarURL(adminUserInfo.getEmail(), null).toString();
 				} catch (MalformedURLException e) {
 					e.printStackTrace();
 				}

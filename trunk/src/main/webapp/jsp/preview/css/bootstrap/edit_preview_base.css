@@ -162,7 +162,8 @@ body.edit-preview, body.preview-only {
 .page-break {
 	border-bottom: 2px #33ef33 dotted;
 	font-size: 0;
-	width: 2000px;
+	width: 100%;
+	height: 2px;
 	position: absolute;
 	left: 0;
 }

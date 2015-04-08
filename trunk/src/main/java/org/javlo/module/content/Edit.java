@@ -1532,8 +1532,13 @@ public class Edit extends AbstractModuleAction {
 		IContentVisualComponent parent = content.getComponent(ctx, parentId);
 
 		int c = 0;
+		String latestArea = null;
 		while (elems.hasNext(ctx)) {
 			ComponentBean bean = new ComponentBean(elems.next(ctx).getComponentBean());
+			if (latestArea != null && !bean.getArea().equals(latestArea)) {
+				parentId = "0";
+			}
+			latestArea = bean.getArea();
 			bean.setLanguage(ctx.getRequestContentLanguage());
 			parentId = content.createContent(ctx, bean, parentId, true);
 			c++;
@@ -1822,7 +1827,7 @@ public class Edit extends AbstractModuleAction {
 				}
 				String newId = content.createContent(ctx, targetPage, beans, previousId, true);
 				ctx.getRequest().setAttribute(AbstractVisualComponent.SCROLL_TO_COMP_ID_ATTRIBUTE_NAME, newId);
-			} else {
+			} else {				
 				ComponentBean mirrorBean = new ComponentBean(PageMirrorComponent.TYPE, sharedContent.getLinkInfo(), ctx.getRequestContentLanguage());
 				mirrorBean.setArea(areaKey);
 				mirrorBean.setAuthors(ctx.getCurrentUserId());

@@ -39,12 +39,14 @@ public class SharedContentProviderFactory {
 		while (nameFound) {
 			nameFound = false;
 			for (ISharedContentProvider iSharedContentProvider : contentProviders) {
-				if (provider.getName().equals(iSharedContentProvider.getName())) {
-					nameFound = true;
-					if (provider.getName().endsWith(" ("+number+')')) {
-						provider.setName(provider.getName().replace(" ("+number+')', " ("+(number+1+')')));
+				String name = provider.getName();
+				if (name.equals(iSharedContentProvider.getName())) {
+					nameFound = true;					
+					if (name.endsWith(" ("+(number-1)+')')) {
+						String newName = name.substring(0,name.lastIndexOf('(')-1)+" ("+(number+")");
+						provider.setName(newName);
 					} else {
-						provider.setName(provider.getName()+" ("+number+')');
+						provider.setName(name+" ("+number+')');
 					}
 					number++;
 				}

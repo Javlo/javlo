@@ -36,9 +36,9 @@ editPreview.layerOver = function(item, title, drop) {
 			layer.css("left", comp.offset().left);
 		
 			var width = comp.outerWidth(false);
-			if (width > comp.parent().outerWidth(false)) {
+			/*if (width > comp.parent().outerWidth(false)) {
 				width = comp.parent().outerWidth(false);
-			}
+			} commment for page break */
 			layer.css("width", width);			
 			layer.css("height", comp.outerHeight(false));		
 			layer.data("comp", comp);
