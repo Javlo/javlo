@@ -466,18 +466,6 @@ ul,li {
 	margin-left: 0;
 }
 
-.action-button {
-	background: url("../images/bgbutton4.png") repeat-x scroll left top
-		transparent;
-	border: 1px solid #CCCCCC;
-	display: inline-block;
-	box-shadow: 1px 1px 0 #F7F7F7;
-	border-radius: 3px 3px 3px 3px;
-	color: #333333;
-	margin: 2px 2px;
-	padding: 2px 5px;
-}
-
 #tools .link {
 	display: inline-block;
 	margin: 2px 2px;
@@ -486,14 +474,6 @@ ul,li {
 
 #tools label {
 	width: auto;
-}
-
-.action-button:hover {
-	background: url("../images/buttonbg3.png") repeat-x scroll left top
-		transparent;
-	border: 1px solid #304978;
-	color: #FFFFFF;
-	text-shadow: 1px 1px #aaaaaa;
 }
 
 .action-button span {
@@ -1039,10 +1019,6 @@ ul,li {
 
 .navigation .children .have-children a:after {
 	content:"...";
-}
-
-.navigation .children .real-content a {
-	font-weight: bold;
 }
 
 /*** page properties ***/

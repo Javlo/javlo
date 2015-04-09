@@ -56,8 +56,7 @@ public class ColorImageEngine {
 				outImage.setRGB(0, p, c.getRGB());
 			}
 		} else {
-			outImage = new BufferedImage(size, 1, BufferedImage.TYPE_4BYTE_ABGR);
-			outImage = new BufferedImage(1, size + margin, BufferedImage.TYPE_4BYTE_ABGR);
+			outImage = new BufferedImage(size+margin, 1, BufferedImage.TYPE_4BYTE_ABGR);			
 			for (int p = 0; p < margin; p++) {
 				outImage.setRGB(p, 0, noColor.getRGB());
 			}
