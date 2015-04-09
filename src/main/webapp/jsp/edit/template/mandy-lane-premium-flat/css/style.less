@@ -1,3 +1,4 @@
+@import url("variables.less");
 
 @import url('plugins/colorpicker.css');
 
@@ -232,7 +233,7 @@ h2.prize {
 }
 
 .loginbox button {
-	background: #708D91 url(../images/buttonbg.png) repeat-x top left;
+	background: @main-bg url(../images/buttonbg.png) repeat-x top left;
 	font-size: 13px;
 	padding: 6px 14px;
 	width: 67px;
@@ -573,7 +574,7 @@ h2.prize {
 	display: inline-block;
 	float: left;
 	position: relative;
-	background-color: #708D91;
+	background-color: @main-bg;
 }
 
 .tabmenu ul li a {
@@ -591,7 +592,7 @@ h2.prize {
 }
 
 .tabmenu ul li:hover {
-	background-color: #9CAFB2;
+	background-color: @bg-light;
 }
 
 .tabmenu ul li a span {
@@ -655,7 +656,7 @@ h2.prize {
 	left: 0;
 	display: none;
 	z-index: 100;
-	border: 1px solid #9cafb3;
+	border: 1px solid @bg-lighter;
 	border-bottom: 0;
 }
 
@@ -667,24 +668,24 @@ h2.prize {
 
 .tabmenu ul li .subnav li a {
 	display: block;
-	background: #9cafb3;
-	border-bottom: 1px solid #9cafb3;
+	background: @bg-lighter;
+	border-bottom: 1px solid @bg-lighter;
 	color: #fff;
 }
 
 .tabmenu ul li .subnav li:last-child a {
-	background: #9cafb3;
+	background: @bg-lighter;
 }
 
 .tabmenu ul li .subnav li a:hover {
-	background: #346167;
+	background: @bg-dark;
 	color: #fff;
 }
 
 .tabmenu ul li .subnav a span {
 	padding: 5px 15px;
 	text-transform: capitalize;
-	text-shadow: 1px 1px #9cafb3;
+	text-shadow: 1px 1px @bg-lighter;
 }
 
 .tabmenu ul li.current .subnav {
@@ -752,12 +753,12 @@ h2.prize {
 	background-color: #eee;
 	border-right: 0;
 	color: #333;
-	border-top: 1px solid #a6c0de;
-	border-bottom: 1px solid #a6c0de;
+	border-top: 1px solid @main-bg;
+	border-bottom: 1px solid @main-bg;
 }
 
 .leftmenu li li.current a {
-	border-left: 1px solid #a6c0de;
+	border-left: 1px solid @main-bg;
 }
 
 
@@ -1212,7 +1213,7 @@ button.button:hover,.button:active {
 	text-transform: uppercase;
 	color: #fff;
 	font-weight: normal;
-	text-shadow: 1px 1px #708D91;
+	text-shadow: 1px 1px @main-bg;
 }
 
 .widgetbox h3 {
@@ -1576,7 +1577,7 @@ input[type=radio],input[type=checkbox] {
 }
 
 .form_default button {
-	background: #708D91 url(../images/buttonbg3.png) repeat-x top left;
+	background: @main-bg url(../images/buttonbg3.png) repeat-x top left;
 	color: #fff;
 	padding: 7px 20px;
 	cursor: pointer;
@@ -1629,7 +1630,7 @@ input[type=radio],input[type=checkbox] {
 .addNewButton {
 	float: right;
 	border: 1px solid #ccc;
-	background: #708D91 url(../images/buttonbg3.png) repeat-x top left;
+	background: @main-bg url(../images/buttonbg3.png) repeat-x top left;
 	color: #fff;
 	padding: 5px 20px;
 }
@@ -2195,23 +2196,23 @@ input[type=radio],input[type=checkbox] {
 }
 
 .gallery .thumbview .info .menu a.view {
-	background: #9cafb3 url("../images/icons/small/white/search.png") no-repeat 4px 4px;
+	background: @bg-lighter url("../images/icons/small/white/search.png") no-repeat 4px 4px;
 }
 
 .gallery .thumbview .info .menu a.delete {
-	background: #9cafb3 url("../images/icons/small/white/close.png") no-repeat 4px 4px;
+	background: @bg-lighter url("../images/icons/small/white/close.png") no-repeat 4px 4px;
 }
 
 .gallery .thumbview .info .menu a.edit {
-    background: #9cafb3 url("../images/icons/small/white/edit.png") no-repeat 4px 4px;
+    background: @bg-lighter url("../images/icons/small/white/edit.png") no-repeat 4px 4px;
 }
 
 .gallery .thumbview .info .menu a.select {
-    background: #9cafb3 url("../images/icons/small/white/check.png") no-repeat 4px 4px;
+    background: @bg-lighter url("../images/icons/small/white/check.png") no-repeat 4px 4px;
 }
 
 .gallery .thumbview .info .menu a.push {
-    background: url("../images/icons/small/white/push.png") no-repeat scroll 4px 3px #9cafb3;
+    background: url("../images/icons/small/white/push.png") no-repeat scroll 4px 3px @bg-lighter;
 }
 
 
@@ -2562,4 +2563,22 @@ input[type=radio],input[type=checkbox] {
 
 .bordertop {
 	border-top: 1px solid #ccc;
+}
+
+.action-button {
+	border: 1px solid #CCCCCC;
+	display: inline-block;
+	box-shadow: 1px 1px 0 #F7F7F7;
+	border-radius: 3px 3px 3px 3px;
+	color: #333333;
+	margin: 2px 2px;
+	padding: 2px 5px;
+	background-color: @bg-lightest;
+}
+
+.action-button:hover {
+	border: 1px solid #304978;
+	color: #FFFFFF;
+	text-shadow: 1px 1px #aaaaaa;
+	background-color: @bg-dark;
 }

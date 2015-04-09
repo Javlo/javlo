@@ -138,6 +138,9 @@ public class ColorServlet extends HttpServlet {
 
 				response.setContentType("image/PNG");
 				out = response.getOutputStream();
+				System.out.println("***** ColorServlet.processRequest : vertical = "+vertical); //TODO: remove debug trace
+				System.out.println("***** ColorServlet.processRequest : margin = "+margin); //TODO: remove debug trace
+				System.out.println("***** ColorServlet.processRequest : size = "+size); //TODO: remove debug trace
 				ImageIO.write(ColorImageEngine.getDegrade(vertical, margin, size, startColor, endColor, alphaMax), "png", out);
 			}
 		} catch (IOException e) {
