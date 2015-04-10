@@ -144,7 +144,7 @@ public class StaticConfig extends Observable {
 					for (String element : userPasswordList) {
 						try {
 							String[] userPassword = element.split(",");
-							User user = new User(userPassword[0], userPassword[1]);
+							User user = new User(userPassword[0], userPassword[1]);							
 							logger.info("add edit user : " + user.getName());
 
 							editUsers.put(user.getName(), user);

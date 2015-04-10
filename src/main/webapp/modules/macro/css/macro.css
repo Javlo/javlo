@@ -10,11 +10,8 @@
 }	
 
 .cancel {
+	margin-top: 10px;
 	float: right;
-}
-
-.macro-interface {
-	margin-right: 80px;
 }
 
 .macro-interface fieldset {

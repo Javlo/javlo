@@ -114,7 +114,7 @@
 	<div class="form-group country">
 		<label for="country">country
 		<c:if test="${empty list.countries}">
-			<input type="text" id="country" name="country" value="${userInfoMap["country"]}" />
+			<input type="text" id="country" name="country" class="form-control" value="${userInfoMap["country"]}" />
 		</c:if>
 		 <c:if test="${not empty list.countries}">
 		 	<select class="form-control" id="country" name="country">
@@ -132,7 +132,7 @@
 	</div>
 	<div class="form-group preferredLanguageRaw">
 		<label for="preferredLanguageRaw">preferred Language
-		<input type="text" id="preferredLanguageRaw" name="preferredLanguageRaw" value="${userInfoMap["preferredLanguageRaw"]}" /></label> 
+		<input type="text" id="preferredLanguageRaw" class="form-control" name="preferredLanguageRaw" value="${userInfoMap["preferredLanguageRaw"]}" /></label> 
 	</div>
 	<c:if test="${empty webaction}">
 	<div class="form-group token">
@@ -211,7 +211,9 @@
 			<c:choose>
 				<c:when test="${not empty info.currentUserAvatarUrl}">
 					<img src="${info.currentUserAvatarUrl}?rnd=${info.randomId}" />
+					<div class="checkbox">
 					<label><input type="checkbox" name="deleteAvatar" value="true" />${i18n.edit['global.delete']}</label> 
+					</div>
 				</c:when>
 				<c:otherwise>
 					${i18n.edit['user.no-avatar']} 
@@ -228,7 +230,7 @@
 </fieldset>
 
 <div class="form-group">
-	<input class="btn btn-default" type="submit" name="back" value="${i18n.edit['global.back']}" />
+	<input class="btn btn-default pull-right btn-primary btn-color" type="submit" name="back" value="${i18n.edit['global.back']}" />
 	<input class="btn btn-default" type="submit" name="ok" value="${i18n.edit['global.ok']}" />
 </div>
 

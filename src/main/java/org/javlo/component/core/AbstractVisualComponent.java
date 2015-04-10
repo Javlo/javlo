@@ -71,7 +71,8 @@ import org.javlo.utils.SuffixPrefix;
  * <li>{@link String} type : the component type. See {@link #getType()}</li>
  * <li>{@link String} layout : the layout of the component is css (can be null).
  * </li>
- * <li>{@link STring} componentWidth : the width of component forced by contributor (if component manage it)
+ * <li>{@link STring} componentWidth : the width of component forced by
+ * contributor (if component manage it)
  * <li>{@link String} style : the style selected for the component. See
  * <li>{@link String} previewAttributes : a string with attribute for preview
  * edition (class and data attribute).</li>
@@ -83,9 +84,9 @@ import org.javlo.utils.SuffixPrefix;
 public abstract class AbstractVisualComponent implements IContentVisualComponent {
 
 	public static final String SCROLL_TO_COMP_ID_ATTRIBUTE_NAME = "_new_id";
-	
+
 	public static final String NOT_EDIT_PREVIEW_PARAM_NAME = "_not_edit_preview";
-	
+
 	public static final String CACHE_KEY_SUFFIX_PARAM_NAME = "_cache_key_suffix";
 
 	public static Logger logger = Logger.getLogger(AbstractVisualComponent.class.getName());
@@ -129,7 +130,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	private MenuElement page = null;
 
 	protected ComponentConfig config = null;
-	
+
 	private String configTemplate = null;
 
 	public static final String getComponentId(HttpServletRequest request) {
@@ -318,8 +319,10 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	public ComponentConfig getConfig(ContentContext ctx) {
 		if (config != null) {
 			try {
-				if (configTemplate.equals(ctx.getCurrentTemplate().getName())) {
-					return config;
+				if (configTemplate != null && ctx.getCurrentTemplate() != null) {
+					if (configTemplate.equals(ctx.getCurrentTemplate().getName())) {
+						return config;
+					}
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -336,7 +339,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 				config = outConfig;
 			} catch (Exception e) {
 				e.printStackTrace();
-			}			
+			}
 		}
 		return outConfig;
 	}
@@ -376,7 +379,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		String keySuffix = ctx.getGlobalContext().getContextKey() + '-' + ctx.getLanguage() + '-' + ctx.getRequestContentLanguage() + '-' + ctx.getRenderMode() + '-' + templateId + '-' + pageId;
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
 		if (requestService.getParameter(CACHE_KEY_SUFFIX_PARAM_NAME, null) != null) {
-			keySuffix = keySuffix+'-'+requestService.getParameter(CACHE_KEY_SUFFIX_PARAM_NAME, null);
+			keySuffix = keySuffix + '-' + requestService.getParameter(CACHE_KEY_SUFFIX_PARAM_NAME, null);
 		}
 
 		if (isContentCachableByQuery(ctx)) {
@@ -489,16 +492,16 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		finalCode.append("</textarea>");
 		return finalCode.toString();
 	}
-	
+
 	public boolean isAskWidth(ContentContext ctx) {
 		return false;
 	}
-	
+
 	public String getWidth() {
-		return null; 
+		return null;
 	}
-	
-	public void setWidth(String width) {		
+
+	public void setWidth(String width) {
 	}
 
 	@Override
@@ -635,9 +638,9 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			setModify();
 			setNeedRefresh(true);
 		}
-		
+
 		if (isAskWidth(ctx)) {
-			setWidth(requestService.getParameter(getInputName("width"),""));
+			setWidth(requestService.getParameter(getInputName("width"), ""));
 		}
 
 		boolean isList = requestService.getParameter("inlist-" + getId(), null) != null;
@@ -732,7 +735,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	 * viewTimeCache.get(getContentCacheKey(ctx)); }
 	 */
 
-	protected String getEmptyCode(ContentContext ctx) throws Exception {		
+	protected String getEmptyCode(ContentContext ctx) throws Exception {
 		if ((ctx.getRenderMode() == ContentContext.PREVIEW_MODE)) {
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 			EditContext editCtx = EditContext.getInstance(globalContext, ctx.getRequest().getSession());
@@ -748,7 +751,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 					if (!isWrapped(ctx)) {
 						prefix = getForcedPrefixViewXHTMLCode(ctx);
 						suffix = getForcedSuffixViewXHTMLCode(ctx);
-					}					
+					}
 					return (prefix + "<div " + getSpecialPreviewCssClass(ctx, "pc_empty-component") + getSpecialPreviewCssId(ctx) + ">" + getEmptyXHTMLCode(ctx) + "</div>" + suffix);
 				}
 			}
@@ -966,6 +969,9 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		if (getPreviousComponent() == null || !getPreviousComponent().getType().equals(getType())) {
 			style = style + " first ";
 		}
+		if (getPreviousComponent() == null) {
+			style = style + " first-component ";
+		}
 		if (getNextComponent() == null || !getNextComponent().getType().equals(getType())) {
 			style = style + " last ";
 		}
@@ -1164,7 +1170,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			specificClass = getSpecificClass(ctx) + ' ';
 		}
 		if (getId().equals(ctx.getRequest().getAttribute(SCROLL_TO_COMP_ID_ATTRIBUTE_NAME))) {
-			specificClass = specificClass+"scroll-to-me ";
+			specificClass = specificClass + "scroll-to-me ";
 		}
 		if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE) {
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
@@ -1182,7 +1188,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 						I18nAccess i18nAccess = I18nAccess.getInstance(ctx);
 						String type = i18nAccess.getText("content." + getType(), getType());
 						String hint = "<b>" + type + "</b><br />" + i18nAccess.getViewText("preview.hint", "click for edit or drag and drop to move.");
-						return " class=\"" + specificClass + classPrefix + "editable-component" + currentClass + "\" data-hint=\"" + hint + "\" data-name=\"" + i18nAccess.getText("content."+getType(), getType()) + "\"";
+						return " class=\"" + specificClass + classPrefix + "editable-component" + currentClass + "\" data-hint=\"" + hint + "\" data-name=\"" + i18nAccess.getText("content." + getType(), getType()) + "\"";
 					}
 				}
 			} catch (Exception e) {
@@ -1196,21 +1202,22 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	}
 
 	protected String getForcedId(ContentContext ctx) {
-		/* user for	mirror mecanism */
-		String compID = (String) ctx.getRequest().getAttribute(FORCE_COMPONENT_ID); 
-		//System.out.println("***** AbstractVisualComponent.getForcedId : area="+getArea()+" type="+getType()+" compID = "+compID); //TODO: remove debug trace
+		/* user for mirror mecanism */
+		String compID = (String) ctx.getRequest().getAttribute(FORCE_COMPONENT_ID);
+		// System.out.println("***** AbstractVisualComponent.getForcedId : area="+getArea()+" type="+getType()+" compID = "+compID);
+		// //TODO: remove debug trace
 		if (compID == null) {
 			compID = getId();
 		}
 		return compID;
 	}
 
-	protected static void setForcedId(ContentContext ctx, String id) {		
+	protected static void setForcedId(ContentContext ctx, String id) {
 		if (id == null) {
 			/* user for mirror mecanism */
-			ctx.getRequest().removeAttribute(FORCE_COMPONENT_ID); 
+			ctx.getRequest().removeAttribute(FORCE_COMPONENT_ID);
 		} else {
-			/* user for mirror mecanism */			
+			/* user for mirror mecanism */
 			ctx.getRequest().setAttribute(FORCE_COMPONENT_ID, id);
 		}
 	}
@@ -1474,7 +1481,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 					prefix = getForcedPrefixViewXHTMLCode(ctx);
 					suffix = getForcedSuffixViewXHTMLCode(ctx);
 				}
-				return prefix+'[' + getType() + ']'+suffix;
+				return prefix + '[' + getType() + ']' + suffix;
 			} else {
 				return "";
 			}
@@ -1618,7 +1625,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	public void prepareView(ContentContext ctx) throws Exception {
 		if (logger.isLoggable(Level.FINE)) {
 			logger.fine("load : " + getType() + " on : " + URLHelper.createURL(ctx));
-		}		
+		}
 		ctx.getRequest().setAttribute("comp", this);
 		ctx.getRequest().setAttribute("style", getStyle());
 		ctx.getRequest().setAttribute("value", getValue());
@@ -2211,7 +2218,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	}
 
 	@Override
-	public String getEmptyXHTMLCode(ContentContext ctx) throws Exception {		
+	public String getEmptyXHTMLCode(ContentContext ctx) throws Exception {
 		if (isHiddenInMode(ctx.getRenderMode()) || !AdminUserSecurity.getInstance().canModifyConponent(ctx, getId())) {
 			return "";
 		} else {
@@ -2221,8 +2228,8 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			if (!isWrapped(ctx)) {
 				prefix = getForcedPrefixViewXHTMLCode(ctx);
 				suffix = getForcedSuffixViewXHTMLCode(ctx);
-			}				
-			return prefix+'[' + i18nAccess.getText("content." + getType(), getType()) + ']'+suffix;
+			}
+			return prefix + '[' + i18nAccess.getText("content." + getType(), getType()) + ']' + suffix;
 		}
 	}
 

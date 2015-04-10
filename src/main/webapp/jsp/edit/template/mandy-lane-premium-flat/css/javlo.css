@@ -1588,10 +1588,7 @@ body.previewEdit {
 }
 
 .content.wizard .action {
-	position: absolute;
-	top: -42px;
-	right: 10px;
-	z-index: 10;
+	margin-top: 10px;
 }
 
 .content.wizard.preview .action {

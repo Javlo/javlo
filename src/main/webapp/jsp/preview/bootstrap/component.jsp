@@ -2,13 +2,13 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"
  %><c:set var="titleCount" value="0" />
  
- <c:if test="${not empty clipboard.copied}">
-<div id="_ep_clipboard" class="clipboard component-list">
+<c:if test="${not empty clipboard.copied}">
+<div id="_ep_clipboard" class="clipboard">
 	<c:url var="url" value="${info.currentURL}" context="/">
 		<c:param name="webaction" value="edit.clearClipboard" />
 	</c:url>
 	<h2><span class="glyphicon glyphicon glyphicon-duplicate" aria-hidden="true"></span>${i18n.edit['global.clipboard']}<a href="${url}" class="ajax close">X</a></h2>
-	<div class="body">
+	<div class="body component-list">
 		<div class="component" data-type="clipboard" data-deletable="true">
 			<div class="wrapper-in">
 				<div class="figure"></div>				

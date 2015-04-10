@@ -2,6 +2,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <div class="${contentContext.editPreview?'preview ':'edit '}content wizard">
 	<form class="${contentContext.editPreview?'':'ajax '} standard-form" action="${info.currentURL}" method="post">
+		<div class="main">
 		<div>
 			<input type="hidden" name="webaction" value="wizard" />
 			<input type="hidden" name="box" value="sendwizard" />
@@ -13,9 +14,15 @@
 				<li><c:out value="${email}" escapeXml="true" /></li>
 			</c:forEach>
 		</ul>
-		<div class="action">
-			<input type="submit" name="previous" value="Previous" />
-			<input type="submit" name="send" value="Send" />
+		<c:if test="${contentContext.editPreview}">
+			<div class="mailing-preview">
+			<iframe id="mailing-preview-frame" src="${previewURL}" onload="autoIframe('mailing-preview-frame');"></iframe>
+			</div>
+		</c:if>
+		</div>
+		<div class="action pull-right">
+			<button type="submit" class="btn btn-default" name="previous">Previous</button>	
+			<button type="submit" class="btn btn-primary btn-color " name="send">Send</button>					
 		</div>
 	</form>
 	
@@ -33,10 +40,6 @@
     }
 	</script>
 	
-	<c:if test="${contentContext.editPreview}">
-	<div class="mailing-preview">
-		<iframe id="mailing-preview-frame" src="${previewURL}" onload="autoIframe('mailing-preview-frame');"></iframe>
-	</div>
-	</c:if>
+	
 	
 </div>

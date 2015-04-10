@@ -26,6 +26,6 @@
 <c:set var="field" value="${status.response.question}" scope="request" />
 <span class="status">${status.question}/${fn:length(comp.questions)}</span>
 <jsp:include page="field.jsp" />
-<input type="submit" value="${ci18n['next']}" />
+<input type="submit" class="btn btn-default" value="${ci18n['next']}" />
 </form>
 </c:if></div>

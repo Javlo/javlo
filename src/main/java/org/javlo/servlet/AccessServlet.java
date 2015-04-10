@@ -758,41 +758,13 @@ public class AccessServlet extends HttpServlet implements IVersion {
 
 							if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE && staticConfig.isFixPreview()) {
 								ctx.getRequest().setAttribute("components", ComponentFactory.getComponentForDisplay(ctx));
-								ModulesContext modulesContext = ModulesContext.getInstance(request.getSession(), globalContext);
+								
 
 								/************************/
 								/**** Shared Content ****/
 								/************************/
-
-								if (modulesContext.searchModule("shared-content") != null) {
-									SharedContentService sharedContentService = SharedContentService.getInstance(ctx);
-									SharedContentContext sharedContentContext = SharedContentContext.getInstance(request.getSession());
-									ctx.getRequest().setAttribute("sharedContentProviders", sharedContentService.getAllActiveProvider(ctx));
-									if (ctx.getRequest().getAttribute("sharedContent") == null) {
-										if (sharedContentContext.getSearchQuery() == null) {
-											ctx.getRequest().setAttribute("currentCategory", sharedContentContext.getCategory());
-										}
-									}
-									ISharedContentProvider provider = sharedContentService.getProvider(ctx, sharedContentContext.getProvider());
-									if (provider != null) {
-										// set first category by default
-										if ((sharedContentContext.getCategory() == null || !provider.getCategories(ctx).containsKey(sharedContentContext.getCategory())) && provider.getCategories(ctx).size() > 0) {
-											sharedContentContext.setCategories(new LinkedList<String>(Arrays.asList(provider.getCategories(ctx).keySet().iterator().next())));
-										}
-										ctx.getRequest().setAttribute("provider", provider);
-										ctx.setContentContextIfNeeded(provider);
-										if (ctx.getRequest().getAttribute("sharedContent") == null) { // no search
-											if (sharedContentContext.getSearchQuery() == null) {
-												ctx.getRequest().setAttribute("sharedContent", provider.getContent(ctx, sharedContentContext.getCategories()));
-											} else {
-												ctx.getRequest().setAttribute("sharedContent", provider.searchContent(ctx, sharedContentContext.getSearchQuery()));
-											}
-										}
-										ctx.getRequest().setAttribute("sharedContentCategories", provider.getCategories(ctx).entrySet());
-									} else {
-										logger.warning("shared content not found = " + sharedContentContext.getProvider());
-									}
-								}
+								SharedContentService.prepare(ctx);
+								
 							}
 
 							/** check content **/

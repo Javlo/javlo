@@ -1132,7 +1132,7 @@ public class MenuElement implements Serializable, IPrintInfo {
 						newBean[j] = element;
 						j++;
 						newBean[j] = bean;
-						parentFound = true;
+						parentFound = true;						
 						if (newBean[j].getArea() != null) {
 							bean.setArea(newBean[j].getArea());
 						}

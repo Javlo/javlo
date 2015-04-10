@@ -52,9 +52,9 @@ editCtx.setRenderMode(ContentContext.EDIT_MODE);
 	</button>	
 </c:forEach>
 <c:forEach var="macro" items="${info.macro}">
-	<c:url var="url" value="<%=URLHelper.createURL(editCtx)%>" context="/">
+	<c:url var="url" value="${info.currentURL}" context="/">
 		<c:param name="module" value="macro" />
-		<c:param name="webaction" value="macro.executeInteractiveMacro" />
+		<c:param name="webaction" value="macro.executeMacro" />
 		<c:param name="mode" value="3" />
 		<c:param name="macro" value="${macro.name}" />
 		<c:param name="macro-${macro.name}" value="${macro.name}" />

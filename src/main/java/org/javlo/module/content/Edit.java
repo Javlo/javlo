@@ -181,6 +181,7 @@ public class Edit extends AbstractModuleAction {
 	public static void updatePreviewCommands(ContentContext ctx, String tab) throws Exception {
 		ctx.getRequest().setAttribute("editPreview", ctx.isEditPreview());
 		ctx.getRequest().setAttribute("components", ComponentFactory.getComponentForDisplay(ctx));
+		SharedContentService.prepare(ctx);
 		String updateURL = ctx.getGlobalContext().getStaticConfig().getPreviewCommandFilePath();
 		if (tab != null) {
 			updateURL = URLHelper.addParam(updateURL, "_preview_tab", tab);

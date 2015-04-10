@@ -16,11 +16,11 @@
 </div>
 
 <c:if test="${comp.captcha}">
-<div class="line captcha">			
+<div class="line captcha form-group">			
 	<div class="${not empty requestService.parameterMap.webaction && empty requestService.parameterMap.captcha || not empty error_captcha?'error':''}">
 		<label for="captcha"><img src="${info.captchaURL}" alt="captcha" /></label>
 		<label for="captcha">${ci18n['label.captcha']}*</label>
-		<input type="text" id="captcha" name="captcha" value="" />
+		<input type="text" id="captcha" name="captcha" value="" class="form-control" />
 	</div>
 </div>
 </c:if>
@@ -29,8 +29,8 @@
 	<p class="required">${ci18n['message.required']}</p>
 </c:if>
 
-<div class="line action">
-	<input type="submit" value="${i18n.view['global.send']}"/>
+<div class="line action form-group">
+	<input class="form-control" type="submit" value="${i18n.view['global.send']}"/>
 </div>
 </form>
 </c:if>
