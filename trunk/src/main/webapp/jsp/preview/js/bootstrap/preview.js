@@ -143,8 +143,12 @@ editPreview.searchArea = function(item) {
 }
 
 editPreview.initPreview = function() {
-	pjq('a.as-modal').on('click', function() {		
-		editPreview.openModal($(this).text(), $(this).attr('href'));		
+	pjq('a.as-modal').on('click', function() {
+		var text = $(this).attr("title");
+		if (text == null || text.length == 0) {
+			text = $(this).text();
+		}
+		editPreview.openModal(text, $(this).attr('href'));		
 		return false;
 	});
 	
@@ -193,7 +197,7 @@ editPreview.initPreview = function() {
 			if (editPreview.searchPageId(subComp) != null) {					
 				ajaxURL = ajaxURL +'&pageCompID='+ editPreview.searchPageId(subComp);
 			}				
-			editPreview.ajaxPreviewRequest(ajaxURL, function() {editPreview.layerOver(null);}, null);
+			editPreview.ajaxPreviewRequest(ajaxURL, function() {editPreview.layerOver(null);editPreview.heightToBottom(pjq(".height-to-bottom"));}, null);
 			return false;
 		});
 		/*************************/

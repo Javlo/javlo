@@ -1,4 +1,16 @@
 /** javlo integration **/
+.form-group * {
+	 box-sizing: border-box; 
+}
+
+// Classes
+.pull-left {
+  float: left !important;
+}
+.pull-right {
+  float: right !important;
+}
+
 .form-control label, .form-control input {
 	width: auto;
 }

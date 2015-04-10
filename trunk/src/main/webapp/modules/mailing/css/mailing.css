@@ -6,6 +6,12 @@
 	min-height: 45px;
 }
 
+.content .main {
+	overflow: hidden;
+	max-height: 650px;
+	overflow: auto;
+}
+
 .content form h4 {
 	margin-top: 10px;
 }
@@ -47,9 +53,11 @@
 }
 
 .mailing-preview {
-	margin: 0 30px 30px 30px;
+	margin-top: 24px;
+	padding: 0 30px 30px 30px;
 	width: 70%;
 	float: left;
+	box-sizing: border-box; 
 }
 
 .mailing-preview iframe {

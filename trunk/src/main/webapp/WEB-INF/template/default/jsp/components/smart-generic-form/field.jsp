@@ -4,21 +4,23 @@
 	<div class="col-line">
 </c:if>
 <div class="col${field.width}${field.last?' lastcol':''}${field.first?' firstcol':''}">
-	<div class="line ${field.type}${not empty errorFields[field.name]?' error':''}">
+	<div class="line form-group ${field.type}${not empty errorFields[field.name]?' error':''}">
 		<c:set var="requireHTML"><abbr title="${ci18n['message.required']}" class="require">*</abbr></c:set>
 		<c:choose>	
 			<c:when test="${field.type eq 'text' || field.type eq 'email'}">
 				<label for="${field.name}">${field.label} ${field.require?requireHTML:''}</label>
-				<input type="text" name="${field.name}" id="${field.name}" value="${requestService.parameterMap[field.name]}" />
+				<input class="form-control" type="text" name="${field.name}" id="${field.name}" value="${requestService.parameterMap[field.name]}" />
 			</c:when>
 			<c:when test="${field.type eq 'large-text'}">
 				<label for="${field.name}">${field.label} ${field.require?requireHTML:''}</label>
-				<textarea name="${field.name}" id="${field.name}">${requestService.parameterMap[field.name]}</textarea>
+				<textarea class="form-control" name="${field.name}" id="${field.name}">${requestService.parameterMap[field.name]}</textarea>
 			</c:when>
 			<c:when test="${field.type eq 'yes-no'}">
+				<div class="radio">
 				<label for="${field.name}">${field.label} ${field.require?requireHTML:''}</label>
 				<input type="radio" name="${field.name}" value="yes" id="${field.name}-yes"${requestService.parameterMap[field.name] eq 'yes'?' checked="checked"':''} /><label class="line-label" for="${field.name}-yes">${i18n.view["global.yes"]}</label>
 				<input type="radio" name="${field.name}" value="no" id="${field.name}-no"${requestService.parameterMap[field.name] eq 'no'?' checked="checked"':''} /><label class="line-label" for="${field.name}-no">${i18n.view["global.no"]}</label>
+				</div>
 			</c:when>	
 			<c:when test="${field.type eq 'file'}">
 				<label for="${field.name}">${field.label} ${field.require?requireHTML:''}</label>
@@ -26,7 +28,7 @@
 			</c:when>	
 			<c:when test="${field.type eq 'list'}">
 				<label for="${field.name}">${field.label} ${field.require?requireHTML:''}</label>
-				<select name="${field.name}" id="${field.name}">
+				<select class="form-control" name="${field.name}" id="${field.name}">
 					<c:forEach var="item" items="${field.list}"> 
 						<option${requestService.parameterMap[field.name] eq item?' selected="selected"':''}>${item}</option> 
 					</c:forEach>
@@ -34,15 +36,18 @@
 			</c:when>		
 			<c:when test="${field.type eq 'registered-list'}">
 				<label for="${field.name}">${field.label} ${field.require?requireHTML:''}</label>
-				<select name="${field.name}" id="${field.name}">
+				<select name="${field.name}" id="${field.name}" class="form-control">
 					<c:forEach var="item" items="${list[field.registeredList]}"> 
 						<option${requestService.parameterMap[field.name] eq item?' selected="selected"':''} value="${item.key}">${item.value}</option> 
 					</c:forEach>
 				</select>
 			</c:when>
-			<c:when test="${field.type eq 'validation'}">				
-				<input type="checkbox" name="${field.name}" id="${field.name}" ${not empty requestService.parameterMap[field.name]?'checked="checked"':''} />
-				<label for="${field.name}">${field.label} ${field.require?requireHTML:''}</label>
+			<c:when test="${field.type eq 'validation'}">
+				<div class="checkbox">				
+					<label for="${field.name}">
+					<input type="checkbox" name="${field.name}" id="${field.name}" ${not empty requestService.parameterMap[field.name]?'checked="checked"':''} />
+					${field.label} ${field.require?requireHTML:''}</label>
+				</div>
 			</c:when>
 		</c:choose>
 	</div>

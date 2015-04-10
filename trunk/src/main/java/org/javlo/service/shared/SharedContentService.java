@@ -1,14 +1,20 @@
 package org.javlo.service.shared;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Logger;
 
 import org.javlo.context.ContentContext;
 import org.javlo.helper.StringHelper;
+import org.javlo.module.core.ModuleException;
+import org.javlo.module.core.ModulesContext;
 
 public class SharedContentService {
+	
+	private static Logger logger = Logger.getLogger(SharedContentService.class.getName());
 	
 	private static final String KEY = "sharedContentService";
 	
@@ -117,6 +123,39 @@ public class SharedContentService {
 
 	public void setContext(SharedContentContext context) {
 		this.context = context;
+	}
+	
+	public static void prepare(ContentContext ctx) throws ModuleException {
+		ModulesContext modulesContext = ModulesContext.getInstance(ctx.getRequest().getSession(), ctx.getGlobalContext());
+		if (modulesContext.searchModule("shared-content") != null) {
+			SharedContentService sharedContentService = SharedContentService.getInstance(ctx);
+			SharedContentContext sharedContentContext = SharedContentContext.getInstance(ctx.getRequest().getSession());
+			ctx.getRequest().setAttribute("sharedContentProviders", sharedContentService.getAllActiveProvider(ctx));
+			if (ctx.getRequest().getAttribute("sharedContent") == null) {
+				if (sharedContentContext.getSearchQuery() == null) {
+					ctx.getRequest().setAttribute("currentCategory", sharedContentContext.getCategory());
+				}
+			}
+			ISharedContentProvider provider = sharedContentService.getProvider(ctx, sharedContentContext.getProvider());
+			if (provider != null) {
+				// set first category by default
+				if ((sharedContentContext.getCategory() == null || !provider.getCategories(ctx).containsKey(sharedContentContext.getCategory())) && provider.getCategories(ctx).size() > 0) {
+					sharedContentContext.setCategories(new LinkedList<String>(Arrays.asList(provider.getCategories(ctx).keySet().iterator().next())));
+				}
+				ctx.getRequest().setAttribute("provider", provider);
+				ctx.setContentContextIfNeeded(provider);
+				if (ctx.getRequest().getAttribute("sharedContent") == null) { // no search
+					if (sharedContentContext.getSearchQuery() == null) {
+						ctx.getRequest().setAttribute("sharedContent", provider.getContent(ctx, sharedContentContext.getCategories()));
+					} else {
+						ctx.getRequest().setAttribute("sharedContent", provider.searchContent(ctx, sharedContentContext.getSearchQuery()));
+					}
+				}
+				ctx.getRequest().setAttribute("sharedContentCategories", provider.getCategories(ctx).entrySet());
+			} else {
+				logger.warning("shared content not found = " + sharedContentContext.getProvider());
+			}
+		}
 	}
 	
 }

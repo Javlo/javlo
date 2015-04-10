@@ -1060,7 +1060,7 @@ public class XMLManipulationHelper {
 		out.newLine();
 		out.append("var currentURL = \"<%=URLHelper.createURL(ctx)%>\";");
 		out.newLine();
-		out.append("var editPreviewURL = \"<%=URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.EDIT_MODE))%>?module=content&webaction=editPreview&previewEdit=true\";");
+		out.append("var editPreviewURL = \"<%=URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.EDIT_MODE))%>?module=content&webaction=edit.editPreview&previewEdit=true\";");
 		out.newLine();
 		out.append("</script><%}%>");
 

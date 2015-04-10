@@ -19,22 +19,21 @@
 </c:forEach>
 	<tr>
 		<td colspan="4">&nbsp;</td>
-		<td><input type="submit" value="send" /></td>
+		<td><input type="submit" value="send" class="btn btn-primary" /></td>
 		<td>&nbsp;</td>		
 	</tr>
 </tbody>
 </table>
 </form>
-</div>
 <div class="content">
-
-<form class="standard-form" action="${info.currentURL}" method="post">
-	<fieldset>	
-	<legend>Automatic gallery importation (URL list)</legend>
+<form  action="${info.currentURL}" method="post">
 	<input type="hidden" name="webaction" value="shared-content.URLList" />
-	<textarea name="url-list" name="" rows="20" cols="120">${urls}</textarea>
-	<input type="submit" />
-	</fieldset>
+	<div class="form-group">
+	<label>Automatic gallery importation (URL list)
+	<textarea name="url-list" name="" rows="20" cols="120" class="form-control">${urls}</textarea></label>
+	</div>
+	<input type="submit" class="btn btn-default pull-right" />
 </form>
+</div>
 
 </div>

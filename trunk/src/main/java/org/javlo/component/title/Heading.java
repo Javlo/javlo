@@ -20,7 +20,7 @@ import org.javlo.service.ContentService;
 
 public class Heading extends AbstractPropertiesComponent implements ISubTitle {
 
-	private static final String TYPE = "heading";
+	public static final String TYPE = "heading";
 
 	private static final String DEPTH = "depth";
 	private static final String TEXT = "text";

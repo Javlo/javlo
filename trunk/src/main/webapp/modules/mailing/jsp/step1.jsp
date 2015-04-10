@@ -8,7 +8,7 @@
 			<c:if test="${contentContext.editPreview}"><input type="hidden" name="previewEdit" value="true" /></c:if>
 		</div>
 
-		<div id="gallery" class="gallery main-template">
+		<div id="gallery" class="gallery main-template main">
 			<div id="gridview" class="thumbview">
 				<ul>
 					<c:forEach var="template" items="${templates}">
@@ -25,7 +25,7 @@
 		</div>
 		
 		<div class="action">
-			<input type="submit" name="next" value="Next" />
+			<input type="submit" class="btn btn-primary btn-color pull-right" name="next" value="Next" />
 		</div>
 		
 	</form>

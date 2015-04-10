@@ -21,6 +21,11 @@
 </c:if>
 
 <c:if test="${not empty macroRenderer}">
+
+<div class="macro-interface">
+<jsp:include page="${macroRenderer}"></jsp:include>
+</div>
+
 <div class="cancel">
 	<form action="${info.currentURL}" method="post">
 		<div>
@@ -31,9 +36,6 @@
 			<input class="btn btn-default" type="submit" value="${i18n.edit['global.cancel']}" />			 
 		</div>
 	</form>
-</div>
-<div class="macro-interface">
-<jsp:include page="${macroRenderer}"></jsp:include>
 </div>
 </c:if>
 </div>
