@@ -132,7 +132,7 @@ public class TemplateEditorAction extends AbstractModuleAction {
 						msg = i18nAccess.getText("template.message.error.area-digit", "Area name can not be a number.");
 					} else if (!area.getName().equals(newName)) {
 						if (editorContext.getCurrentTemplate().getArea(editorContext.getCurrentTemplate().getRows(), newName) != null) {
-							msg = i18nAccess.getText("template.message.error.area-exist", "Area allready exist : " + newName);
+							msg = i18nAccess.getText("template.message.error.area-exist", "Area already exist : " + newName);
 						} else {
 							if (area.getName().equals(ComponentBean.DEFAULT_AREA)) {
 								msg = i18nAccess.getText("template.message.error.no-content", "All template need main area : " + ComponentBean.DEFAULT_AREA);
@@ -308,7 +308,7 @@ public class TemplateEditorAction extends AbstractModuleAction {
 		if (templateName.trim().length() < 3) {
 			return "template name must be at least 4 chars.";
 		} else if (TemplateFactory.getDiskTemplate(application, templateName) != null) {
-			return "template name '" + templateName + "' allready exist.";
+			return "template name '" + templateName + "' already exist.";
 		} else {
 			Template newTemplate = TemplateFactory.createDiskTemplates(application, templateName, null);
 			newTemplate.setParentName("editable");

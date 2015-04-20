@@ -857,7 +857,7 @@ public class Module {
 	 * @param title
 	 * @param renderer
 	 * @param action
-	 * @return null if box with the same name allready exist.
+	 * @return null if box with the same name already exist.
 	 */
 	public synchronized Box createSideBox(String name, String title, String renderer, boolean action) {
 		if (getBox(name) != null) {

@@ -454,7 +454,6 @@ public class Edit extends AbstractModuleAction {
 
 	@Override
 	public String prepare(ContentContext ctx, ModulesContext modulesContext) throws Exception {
-
 		String msg = super.prepare(ctx, modulesContext);
 
 		HttpServletRequest request = ctx.getRequest();
@@ -467,7 +466,7 @@ public class Edit extends AbstractModuleAction {
 			ctx.getRequest().setAttribute("sharedContent", "true");
 		}
 
-		if (ResourceStatus.isInstance(ctx.getRequest().getSession())) {
+		if (ResourceStatus.isResource(ctx.getRequest().getSession())) {
 			ResourceStatus resourceStatus = ResourceStatus.getInstance(ctx.getRequest().getSession());
 			String previewSourceCode = "<a class=\"action-button\" href=\"" + URLHelper.createResourceURL(ctx, resourceStatus.getSource().getUri()) + "\">Download</a>";
 			String previewTargetCode = "<a class=\"action-button\" href=\"" + URLHelper.createResourceURL(ctx, resourceStatus.getTarget().getUri()) + "\">Download</a>";
@@ -956,7 +955,7 @@ public class Edit extends AbstractModuleAction {
 			messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("action.not-updated"), GenericMessage.ALERT));
 		}
 
-		if (requestService.getParameter("save", null) != null && editContext.isEditPreview() && !ResourceStatus.isInstance(ctx.getRequest().getSession()) && requestService.getParameter("upload", null) == null) {
+		if (requestService.getParameter("save", null) != null && editContext.isEditPreview() && !ResourceStatus.isResource(ctx.getRequest().getSession()) && requestService.getParameter("upload", null) == null) {
 			ctx.setParentURL(URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.PREVIEW_MODE)));
 			ctx.setClosePopup(true);
 		}
@@ -1016,7 +1015,7 @@ public class Edit extends AbstractModuleAction {
 					page.getShortURL(ctx); // create short url
 					messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("edit.message.shorturl"), GenericMessage.ALERT));
 				} else {
-					return "this page have allready short url.";
+					return "this page have already short url.";
 				}
 			}
 
@@ -1321,7 +1320,7 @@ public class Edit extends AbstractModuleAction {
 							if (!errorPageNames.contains(menuElement.getName())) {
 								errorPageNames.add(menuElement.getName());
 							}
-							logger.warning("page : " + menuElement.getName() + " is refered by a url allready user : " + url);
+							logger.warning("page : " + menuElement.getName() + " is refered by a url already user : " + url);
 							if (!errorPageNames.contains(pages.get(url))) {
 								errorPageNames.add(pages.get(url));
 							}
@@ -1763,7 +1762,7 @@ public class Edit extends AbstractModuleAction {
 	}
 
 	public static String performConfirmReplace(RequestService rs, ContentContext ctx, GlobalContext globalContext, EditContext editCtx, HttpSession session, MessageRepository messageRepository, I18nAccess i18nAccess) throws IOException {
-		if (!ResourceStatus.isInstance(session)) {
+		if (!ResourceStatus.isResource(session)) {
 			return null;
 		}
 		if (rs.getParameter("cancel", null) != null) {

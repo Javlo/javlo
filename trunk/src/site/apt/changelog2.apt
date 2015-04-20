@@ -394,4 +394,6 @@
  
  * tag component ready for bootstrap
  
-* 2.1.0.1.0 06/04/2015 
+* 2.1.0.1.0 06/04/2015
+
+ * first element mark with "first-component" class 

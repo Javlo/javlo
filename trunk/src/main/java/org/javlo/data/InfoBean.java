@@ -1137,7 +1137,7 @@ public class InfoBean {
 		if (NetHelper.getCookie(ctx.getRequest(), ctx.getCurrentTemplate().getCookiesMessageName()) != null) {
 			VisitorsMessageService.getInstance(ctx.getRequest().getSession()).markAsDisplayed("cookies");
 		}
-		return !VisitorsMessageService.getInstance(ctx.getRequest().getSession()).isAllReadyDisplayed("cookies");
+		return !VisitorsMessageService.getInstance(ctx.getRequest().getSession()).isAlReadyDisplayed("cookies");
 	}
 
 	public ContentContext getContextForCopy() {

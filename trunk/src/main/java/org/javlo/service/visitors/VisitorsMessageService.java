@@ -7,7 +7,7 @@ import javax.servlet.http.HttpSession;
 
 public class VisitorsMessageService {
 	
-	private Set<String> allReadyDisplayed = new HashSet<String>();
+	private Set<String> alReadyDisplayed = new HashSet<String>();
 	
 	public static final String SESSION_KEY = "visitorsMessageService";
 	
@@ -28,7 +28,7 @@ public class VisitorsMessageService {
 	 * @param key
 	 */
 	public void markAsDisplayed(String key) {
-		allReadyDisplayed.add(key);
+		alReadyDisplayed.add(key);
 	}
 	
 	/**
@@ -36,8 +36,8 @@ public class VisitorsMessageService {
 	 * @param key the key of the message
 	 * @return
 	 */
-	public boolean isAllReadyDisplayed(String key) {
-		return allReadyDisplayed.contains(key);
+	public boolean isAlReadyDisplayed(String key) {
+		return alReadyDisplayed.contains(key);
 	}
 
 }

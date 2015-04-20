@@ -360,7 +360,7 @@ public class XMLManipulationHelper {
 
 			PrefixHeadContext headContext = new PrefixHeadContext();
 			/**
-			 * check if description and keyword is allready defined.
+			 * check if description and keyword is already defined.
 			 */
 			for (int i = 0; i < tags.length; i++) {
 				if (!isMail) {

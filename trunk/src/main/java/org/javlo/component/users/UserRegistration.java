@@ -174,7 +174,7 @@ public class UserRegistration extends AbstractVisualComponent implements IAction
 		if (login.length() < 3) {
 			return i18nAccess.getViewText("registration.error.login_size", "login must be at least 3 characters.");
 		} else if (userFactory.getUser(login) != null) {
-			return i18nAccess.getViewText("registration.error.login_allreadyexist", "user allready exist : ");
+			return i18nAccess.getViewText("registration.error.login_allreadyexist", "user already exist : ");
 		} else if (!password.equals(password2)) {
 			return i18nAccess.getViewText("registration.error.password_notsame", "2 passwords must be the same.");
 		} else if (password.length() < 3) {

@@ -1871,7 +1871,7 @@ public class XHTMLHelper {
 				return "<!-- resource type not identified : " + resource + " -->";
 			}
 		} else {
-			return "<!-- resource allready insered : " + resource + " -->";
+			return "<!-- resource already insered : " + resource + " -->";
 		}
 	}
 

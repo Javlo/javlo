@@ -1,5 +1,7 @@
 package org.javlo.service.resource;
 
+import java.util.Stack;
+
 import javax.servlet.http.HttpSession;
 
 import org.javlo.context.ContentContext;
@@ -10,17 +12,17 @@ public class ResourceStatus {
 
 	private static final String KEY = "resourceStatus";
 
-	private LocalResource source = null;
-	private LocalResource target = null;
+	private Stack<LocalResource> sources = new Stack<LocalResource>();
+	private Stack<LocalResource> targets = new Stack<LocalResource>();
 
-	public static boolean isInstance(HttpSession session) {
-		if (session.getAttribute(KEY) == null) {
-			return false;
-		} else if (session.getAttribute(KEY) instanceof ResourceStatus) {
-			return true;
-		} else {
-			return false;
+	public static boolean isResource(HttpSession session) {
+		if (session.getAttribute(KEY) != null && session.getAttribute(KEY) instanceof ResourceStatus) {
+			ResourceStatus resourceStatus = (ResourceStatus) session.getAttribute(KEY);
+			if (!resourceStatus.sources.empty()) {
+				return true;
+			}
 		}
+		return false;
 	}
 
 	public static ResourceStatus getInstance(HttpSession session) {
@@ -33,18 +35,21 @@ public class ResourceStatus {
 	}
 
 	public void release(ContentContext ctx) {
-
 		FileCache fileCache = FileCache.getInstance(ctx.getRequest().getSession().getServletContext());
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-		fileCache.deleteAllFile(globalContext.getInstance(ctx.getRequest()).getContextKey(), source.getFile().getName());
-		ctx.getRequest().getSession().removeAttribute(KEY);
+		fileCache.deleteAllFile(globalContext.getInstance(ctx.getRequest()).getContextKey(), getSource().getFile().getName());		
 		release();
 	}
 
 	private void release() {
-		if (source.getFile().exists()) {
-			source.getFile().delete();
+		if (!sources.empty()) {
+			sources.pop().getFile().delete();
+			targets.pop();
 		}
+	}
+	
+	public int getSize() {
+		return sources.size();
 	}
 
 	@Override
@@ -54,20 +59,26 @@ public class ResourceStatus {
 	}
 
 	public LocalResource getSource() {
-		return source;
+		if (!sources.empty()) {
+			return sources.peek();
+		}
+		return null;
 	}
 
-	public void setSource(LocalResource source) {
+	public void addSource(LocalResource source) {
 		source.getFile().deleteOnExit();
-		this.source = source;
+		sources.push(source);
 	}
 
 	public LocalResource getTarget() {
-		return target;
+		if (!targets.empty()) {
+			return targets.peek();
+		}
+		return null;
 	}
 
-	public void setTarget(LocalResource target) {
-		this.target = target;
+	public void addTarget(LocalResource target) {
+		targets.push(target);
 	}
 
 }

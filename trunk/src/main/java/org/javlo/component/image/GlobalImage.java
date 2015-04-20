@@ -956,9 +956,17 @@ public class GlobalImage extends Image implements IImageFilter {
 	public int getHeight() {
 		return Integer.parseInt(properties.getProperty("height", "-1"));
 	}
+	
+	@Override
+	public void setRenderer(ContentContext ctx, String renderer) {
+		if (properties != null) {
+			properties.remove(getWidthKey(ctx));
+		}
+		super.setRenderer(ctx, renderer);
+	}
 
 	private String getWidthKey(ContentContext ctx) {
-		return "width-" + ctx.getDevice().getCode()+'-'+getRenderer(ctx);
+		return "width-" + ctx.getDevice().getCode();
 	}
 
 	public int getWidth(ContentContext ctx) {
@@ -1023,7 +1031,7 @@ public class GlobalImage extends Image implements IImageFilter {
 			String firstText = rs.getParameter("firsttext", null);
 			String secondText = rs.getParameter("secondtext", null);
 			String height = rs.getParameter("height", null);
-			String width = rs.getParameter("width", null);
+			String width = rs.getParameter("width", null);			
 			if (image.isTextAuto()) {
 				if (firstText != null && !firstText.equals(image.getFirstText())) {
 					image.setModify();
@@ -1044,7 +1052,7 @@ public class GlobalImage extends Image implements IImageFilter {
 			if (width != null && width.trim().length() > 0) {
 				int inWidth = Integer.parseInt(width);
 				if (inWidth != image.getWidth(ctx)) {
-					image.setModify();
+					image.setModify();					
 					image.setWidth(ctx, inWidth);
 				}
 			}

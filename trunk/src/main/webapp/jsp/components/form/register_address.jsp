@@ -64,6 +64,6 @@ if (fact.getCurrentUser() == null) {
 </div>
 </form>
 </div>
-<%} else { /* user allready loggged */%>
+<%} else { /* user already loggged */%>
 <%=formComponent.getViewText("form.registred")%>
 <%}%>

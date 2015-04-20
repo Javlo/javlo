@@ -82,8 +82,8 @@ public class ImportGalleryMacro implements IInteractiveMacro, IAction {
 				String fileName = URLHelper.extractFileName(imageURL.getFile());
 				File localFile = new File(URLHelper.mergePath(folder.getAbsolutePath(), fileName));
 				if (localFile.exists()) {
-					logger.warning("file allready exist : " + localFile);
-					messageRepository.setGlobalMessage(new GenericMessage("some files allready exist in local.", GenericMessage.ALERT));
+					logger.warning("file already exist : " + localFile);
+					messageRepository.setGlobalMessage(new GenericMessage("some files already exist in local.", GenericMessage.ALERT));
 				} else {
 					try {
 						logger.info("import new file : " + localFile);

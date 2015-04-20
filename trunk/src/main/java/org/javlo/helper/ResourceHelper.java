@@ -173,7 +173,7 @@ public class ResourceHelper {
 					}
 				}
 			} else {
-				logger.warning("download url error : file allready exist in local : " + localFile);
+				logger.warning("download url error : file already exist in local : " + localFile);
 			}
 
 		}
@@ -989,7 +989,7 @@ public class ResourceHelper {
 			file.createNewFile();
 		} else {
 			if (!overwrite && !rename) {
-				throw new FileExistsException("File allready exist.");
+				throw new FileExistsException("File already exist.");
 			}
 			if (rename) {
 				file = ResourceHelper.getFreeFileName(file);

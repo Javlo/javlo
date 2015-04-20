@@ -125,7 +125,7 @@ public class CreateArticleComposition extends AbstractInteractiveMacro implement
 		}
 
 		if (ContentService.getInstance(ctx.getRequest()).getNavigation(ctx).searchChildFromName(pageName) != null) {
-			return "page name allready exist.";
+			return "page name already exist.";
 		}
 
 		if (date == null || date.trim().length() == 0) {
