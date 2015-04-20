@@ -776,9 +776,9 @@ public abstract class AbstractFileComponent extends AbstractVisualComponent impl
 				File tempFile = new File(StringHelper.getFileNameWithoutExtension(f.getAbsolutePath()) + "__TEMP" + '.' + StringHelper.getFileExtension(f.getName()));
 				ResourceHelper.writeStreamToFile(in, tempFile);
 				ResourceStatus resouceStatus = ResourceStatus.getInstance(ctx.getRequest().getSession());
-				resouceStatus.setSource(new LocalResource(ctx, tempFile));
-				resouceStatus.setTarget(new LocalResource(ctx, f));
-				// throw new IOException("file allready exist");
+				resouceStatus.addSource(new LocalResource(ctx, tempFile));
+				resouceStatus.addTarget(new LocalResource(ctx, f));
+				// throw new IOException("file already exist");
 				ctx.setNeedRefresh(true);
 				return fileName;
 			}

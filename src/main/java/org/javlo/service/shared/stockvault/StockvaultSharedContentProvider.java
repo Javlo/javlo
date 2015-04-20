@@ -53,11 +53,11 @@ public class StockvaultSharedContentProvider extends AbstractSharedContentProvid
 	public Collection<SharedContent> searchContent(ContentContext ctx, String query) {
 		try {
 			Collection<SharedContent> outContent = new LinkedList<SharedContent>();
-			Set<String> allReadyFound = new HashSet<String>();
+			Set<String> alReadyFound = new HashSet<String>();
 			for (int page = 1; page < 4; page++) { // read 3 pages
 				URL url = new URL(URLHelper.addAllParams(URLHelper.mergePath(getURL().toString(), "/search/"), "query=" + StringHelper.toHTMLAttribute(query), "page=" + page));
 				try {
-					outContent.addAll(readURL(url, allReadyFound));
+					outContent.addAll(readURL(url, alReadyFound));
 				} catch (Exception e) {
 					e.printStackTrace();
 				}

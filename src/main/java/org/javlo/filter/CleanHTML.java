@@ -39,7 +39,7 @@ public class CleanHTML implements javax.servlet.Filter {
 		@Override
 		public ServletOutputStream getOutputStream() throws IOException {
 			if (printWriter != null) {
-				throw new IOException("writer allready retrieved.");
+				throw new IOException("writer already retrieved.");
 			} else {
 				if (servletOutputStream == null) {
 					stream = new ByteArrayOutputStream();
@@ -63,7 +63,7 @@ public class CleanHTML implements javax.servlet.Filter {
 		@Override
 		public PrintWriter getWriter() throws IOException {
 			if (servletOutputStream != null) {
-				throw new IOException("servletOutputStream allready retrieved.");
+				throw new IOException("servletOutputStream already retrieved.");
 			} else {
 				if (printWriter == null) {
 					writer = new StringWriter();

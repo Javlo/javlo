@@ -29,7 +29,7 @@ public class TransactionFile {
 		this.targetFile = targetFile;
 		tempFile = new File(targetFile.getAbsolutePath() + "_" + StringHelper.getRandomId() + ".tmp");
 		if (tempFile.exists()) {
-			throw new IOException("temp file : " + tempFile + " allready exist.");
+			throw new IOException("temp file : " + tempFile + " already exist.");
 		} else {
 			tempFile.createNewFile();
 		}

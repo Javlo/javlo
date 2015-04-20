@@ -31,7 +31,7 @@ public class ImportDefaultLanguageMacro extends AbstractMacro {
 		MenuElement currentPage = ctx.getCurrentPage();
 
 		if (currentPage.isRealContent(ctx)) {
-			logger.info(currentPage.getPath() + " have allready content.");
+			logger.info(currentPage.getPath() + " have already content.");
 			return null;
 		}
 
