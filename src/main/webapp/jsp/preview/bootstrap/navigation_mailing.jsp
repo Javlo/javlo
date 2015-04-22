@@ -51,7 +51,7 @@
 	   			<div>	   			
 					<input type="hidden" value="edit.addPage" name="webaction" />				
 					<input type="hidden" name="parent" value="${rootAssociation.articleRoot.name}" />
-		   			<button type="submit" class="btn btn-plus btn-default btn-xsm" value="+" title="Add a article" lang="en"><span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span>Add a article</button>
+		   			<button type="submit" class="btn btn-plus btn-default btn-xsm" value="+" title="Add an article" lang="en"><span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span>Add an article</button>
 	   			</div>
 	   		</form>	   		
 	   </div>	   	
