@@ -3,8 +3,13 @@ package org.javlo.servlet;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.net.URLConnection;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -19,6 +24,8 @@ import org.javlo.utils.TimeMap;
 
 public class ProxyServlet extends HttpServlet {
 	
+	private static Set<String> FORWARDED_HEADER_KEYS = new HashSet<String>(Arrays.asList(new String[] {"Cache-Control", "Date", "Expires", "Last-Modified", "Content-Length", "Content-Type"}));
+	
 	private static String TEST_URL = "http://upload.wikimedia.org/wikipedia/commons/5/5a/Wikipedia-logo-v2-fr.png";
 	
 	private static Map<String,URL> urls = Collections.synchronizedMap(new TimeMap<String, URL>(60*60));  
@@ -26,11 +33,13 @@ public class ProxyServlet extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;
 	
-	public synchronized static String getURLCode(URL url) {
-		if (urls.containsKey(url)) {
+	public synchronized static String getURLCode(URL url) {		
+		if (keys.containsKey(url)) {
+			urls.put(keys.get(url), url); // reset time
+			keys.put(url, keys.get(url)); // reset time
 			return keys.get(url);
 		} else {
-			String id = StringHelper.getRandomId();
+			String id = StringHelper.md5Hex(url.toString());
 			urls.put(id, url);
 			keys.put(url, id);
 			return id;
@@ -56,7 +65,16 @@ public class ProxyServlet extends HttpServlet {
 					return;
 				} 
 			}
-			InputStream in = url.openStream();
+			URLConnection conn = url.openConnection();
+			Map<String, List<String>> map = conn.getHeaderFields();
+			for (Map.Entry<String, List<String>> entry : map.entrySet()) {
+				if (FORWARDED_HEADER_KEYS.contains(entry.getKey())) {
+					for (String value : entry.getValue()) {
+						response.setHeader(entry.getKey(), value);
+					}
+				}
+			}
+			InputStream in = conn.getInputStream();
 			try {
 				ResourceHelper.writeStreamToStream(in, response.getOutputStream());
 			} finally {

@@ -4,6 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.InputStream;
 import java.io.PrintStream;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collection;
 import java.util.LinkedList;
@@ -19,6 +20,7 @@ import org.javlo.service.shared.SharedContent;
 public class URLSharedContent extends SharedContent {
 	
 	private String remoteImageUrl;
+	private String rootURL = null;
 
 	public URLSharedContent(String id, Collection<ComponentBean> content) throws Exception {		
 		super(id, content);
@@ -33,7 +35,19 @@ public class URLSharedContent extends SharedContent {
 	}
 	
 	@Override
+	public String getImageURL() {		
+		String url = super.getImageURL();
+		try {
+			return URLHelper.createProxyURL(rootURL, url);
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	@Override
 	public void loadContent(ContentContext ctx) {
+		rootURL = URLHelper.createStaticURL(ctx,  "/");
 		super.loadContent(ctx);	
 		if (content == null) {
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());

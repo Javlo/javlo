@@ -27,6 +27,7 @@ import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
 import org.javlo.service.NavigationService;
 import org.javlo.service.RequestService;
+import org.javlo.servlet.ProxyServlet;
 import org.javlo.template.Template;
 import org.javlo.template.TemplateFactory;
 import org.javlo.user.AdminUserInfo;
@@ -1196,6 +1197,20 @@ public class URLHelper extends ElementaryURLHelper {
 		File rootStatic = new File(ctx.getGlobalContext().getDataFolder());
 		String relativePath = file.getAbsolutePath().replace(rootStatic.getAbsolutePath(), "");
 		return URLHelper.createResourceURL(ctx, relativePath);
+	}
+	
+	public static String createProxyURL(ContentContext ctx, String inURL) throws MalformedURLException {
+		URL url = new URL(inURL);
+		String id = ProxyServlet.getURLCode(url);
+		String proxyURL = "/proxy/"+id+'/'+StringHelper.getFileNameFromPath(url.getPath());
+		return createStaticURL(ctx, proxyURL);
+	}
+	
+	public static String createProxyURL(String rootURL, String inURL) throws MalformedURLException {
+		URL url = new URL(inURL);
+		String id = ProxyServlet.getURLCode(url);
+		String proxyURL = "/proxy/"+id+'/'+StringHelper.getFileNameFromPath(url.getPath());
+		return URLHelper.mergePath(rootURL, proxyURL);
 	}
 
 }
