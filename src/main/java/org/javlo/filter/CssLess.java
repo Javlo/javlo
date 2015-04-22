@@ -33,9 +33,11 @@ public class CssLess implements Filter {
 		File cssFile = new File(httpRequest.getSession().getServletContext().getRealPath(path));
 		boolean compileLess = !cssFile.exists();
 		File lessFile = new File(cssFile.getAbsolutePath().substring(0, cssFile.getAbsolutePath().length() - 4) + ".less");
-		if (!StaticConfig.getInstance(((HttpServletRequest)request).getSession().getServletContext()).isProd()) {
-			if (lessFile.lastModified()>cssFile.lastModified()) {
-				compileLess = true;
+		if (!compileLess) {
+			if (!StaticConfig.getInstance(((HttpServletRequest) request).getSession().getServletContext()).isProd()) {
+				if (lessFile.lastModified() > cssFile.lastModified()) {
+					compileLess = true;
+				}
 			}
 		}
 		if (compileLess) {
