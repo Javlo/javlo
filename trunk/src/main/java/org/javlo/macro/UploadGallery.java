@@ -164,7 +164,7 @@ public class UploadGallery implements IInteractiveMacro, IAction {
 			}
 		}
 		if (someExists) {
-			messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("data.file-allready-exist", "file already exist."), GenericMessage.ALERT));
+			messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("data.file-allready-exist", "file already exists."), GenericMessage.ALERT));
 		}
 
 		return null;

@@ -46,17 +46,17 @@
 <c:if test="${not globalContext.mailingPlatform}">
 <fieldset>
 <legend>${i18n.edit['item.time-range']} (${i18n.edit['item.time-published']}:${page.insideTimeRange})</legend>
-<div class="cols">
-<div class="one_half">
-<div class="form-control">
-	<label for="start_publish">${i18n.edit['item.start-publish']}</label>
-	<input class="datepicker" type="text" id="start_publish" name="start_publish" value="${page.startPublish}" />
+<div class="row">
+<div class="col-sm-6">
+	<label for="start_publish">${i18n.edit['item.start-publish']}
+	<input class="datepicker form-control" type="text" id="start_publish" name="start_publish" value="${page.startPublish}" />
+	</label>
 </div>
-</div>
-<div class="one_half last">
-<div class="form-control">
-	<label for="end_publish">${i18n.edit['item.end-publish']}</label>
-	<input class="datepicker" type="text" id="end_publish" name="end_publish" value="${page.endPublish}" />
+<div class="col-sm-6">
+<div class="form-group">
+	<label for="end_publish">${i18n.edit['item.end-publish']}
+	<input class="datepicker form-control" type="text" id="end_publish" name="end_publish" value="${page.endPublish}" />
+	</label>
 </div>
 </div>
 </div>

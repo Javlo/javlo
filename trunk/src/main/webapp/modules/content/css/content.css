@@ -159,7 +159,7 @@ ul.menu {
 /*** css for design component in edit mode ***/
 #content-edit {
 	padding-right: 2px;
-	min-height: 480px;
+	min-height: 600px;
 }
 
 #content-edit select {

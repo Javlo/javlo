@@ -132,7 +132,7 @@ public class TemplateEditorAction extends AbstractModuleAction {
 						msg = i18nAccess.getText("template.message.error.area-digit", "Area name can not be a number.");
 					} else if (!area.getName().equals(newName)) {
 						if (editorContext.getCurrentTemplate().getArea(editorContext.getCurrentTemplate().getRows(), newName) != null) {
-							msg = i18nAccess.getText("template.message.error.area-exist", "Area already exist : " + newName);
+							msg = i18nAccess.getText("template.message.error.area-exist", "Area already exists : " + newName);
 						} else {
 							if (area.getName().equals(ComponentBean.DEFAULT_AREA)) {
 								msg = i18nAccess.getText("template.message.error.no-content", "All template need main area : " + ComponentBean.DEFAULT_AREA);
