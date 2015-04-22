@@ -265,6 +265,20 @@ public class RemoteBean implements Serializable {
 		}
 		return null;
 	}
+	@Transient
+	public String getSystemUser() {
+		if (getServerInfo() != null) {
+			return (String) getServerInfo().get("systemUser");
+		}
+		return null;
+	}
+	@Transient
+	public String getVersion() {
+		if (getServerInfo() != null) {
+			return (String) getServerInfo().get("version");
+		}
+		return null;
+	}
 
 	public int getStoreHashCode() {
 		 return new HashCodeBuilder(17, 37).

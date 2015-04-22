@@ -6,6 +6,11 @@ import java.util.List;
 public class RemoteInstance {
 
 	private String port;
+
+	private String systemUser;
+
+	private String version;
+
 	private List<RemoteBean> sites = new LinkedList<RemoteBean>();
 
 	public String getPort() {
@@ -13,6 +18,20 @@ public class RemoteInstance {
 	}
 	public void setPort(String port) {
 		this.port = port;
+	}
+
+	public String getSystemUser() {
+		return systemUser;
+	}
+	public void setSystemUser(String systemUser) {
+		this.systemUser = systemUser;
+	}
+
+	public String getVersion() {
+		return version;
+	}
+	public void setVersion(String version) {
+		this.version = version;
 	}
 
 	public List<RemoteBean> getSites() {

@@ -49,9 +49,13 @@ public class RemoteAction extends AbstractModuleAction {
 				String address = UNKNOWN_SERVER;
 				String port = UNKNOWN_SERVER;
 				String hostname = UNKNOWN_SERVER;
+				String systemUser = UNKNOWN_SERVER;
+				String version = UNKNOWN_SERVER;
 				if (remote.isServerInfoLoaded()) {
 					address = remote.getServerAddress();
 					port = remote.getServerPort();
+					systemUser = remote.getSystemUser();
+					version = remote.getVersion();
 					hostname = remote.getServerHostname();
 				}
 				RemoteServer server = serversByAddress.get(address);
@@ -67,6 +71,8 @@ public class RemoteAction extends AbstractModuleAction {
 				if (instance == null) {
 					instance = new RemoteInstance();
 					instance.setPort(port);
+					instance.setSystemUser(systemUser);
+					instance.setVersion(version);
 					server.getInstances().add(instance);
 					instancesByAddressPort.put(addressPort, instance);
 				}

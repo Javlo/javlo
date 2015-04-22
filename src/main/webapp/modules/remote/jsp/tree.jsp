@@ -11,7 +11,7 @@
 			<ul>
 				<c:forEach var="instance" items="${server.instances}">
 					<li class="instance">
-						Listening on ${instance.port}
+						Listening on ${instance.port} (user: ${instance.systemUser} - version: ${instance.version})
 						<ul>
 							<c:forEach var="remote" items="${instance.sites}">
 								<li class="site">
