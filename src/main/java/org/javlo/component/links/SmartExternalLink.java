@@ -151,12 +151,12 @@ public class SmartExternalLink extends ComplexPropertiesLink implements IReverse
 						if (pageContent == null) {
 							setLinkValid(false);
 							setMustBeRemoved(true);
-							logger.info("url: " + url + " must de removed because content unredeable.");
+							logger.fine("url: " + url + " must de removed because content unredeable.");
 						} else {
 							if (!isContentValid(pageContent)) {
 								setLinkValid(false);
 								setMustBeRemoved(true);
-								logger.info("url: " + url + " must de removed because content unvalid.");
+								logger.fine("url: " + url + " must de removed because content unvalid.");
 							} else {
 								setTitle(NetHelper.getPageTitle(pageContent));
 								setDescription(NetHelper.getPageDescription(pageContent));
@@ -175,19 +175,19 @@ public class SmartExternalLink extends ComplexPropertiesLink implements IReverse
 								} else {
 									setLinkValid(false);
 									setMustBeRemoved(true);
-									logger.info("url: " + url + " must de removed because image not found.");
+									logger.fine("url: " + url + " must de removed because image not found.");
 								}
 							}
 						}
 					} else {
 						setMustBeRemoved(true);
-						logger.info("url: " + url + " must de removed because unvalid connection.");
+						logger.fine("url: " + url + " must de removed because unvalid connection.");
 					}
 					logger.fine("refresh smart url info [END] : " + url + " [THREAD:" + CountThreadService.getInstance().getCountThread() + "]");
 				}
 			} catch (Throwable t) {
 				t.printStackTrace();
-				logger.warning(t.getMessage());
+				logger.fine(t.getMessage());
 				setLinkValid(false); // if problem -> invalid the component
 			}
 			try {

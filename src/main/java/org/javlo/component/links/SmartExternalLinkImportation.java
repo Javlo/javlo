@@ -159,13 +159,17 @@ public class SmartExternalLinkImportation extends AbstractVisualComponent {
 			BufferedReader read = new BufferedReader(stringReader);
 			String link = read.readLine();
 			while ((link != null) && (link.trim().length() > 0)) {
-				String pageContent = NetHelper.readPage(new URL(link));
+				String pageContent = NetHelper.readPageGet(new URL(link));
+				if (pageContent != null) {
 				List<URL> extLinks = NetHelper.getExternalLinks(pageContent);
 				for (URL url : extLinks) {
 					parentId = currentPage.prepareAddContent(ctx.getRequestContentLanguage(), parentId, SmartExternalLink.TYPE, getStyle(ctx), ComplexPropertiesLink.LINK_KEY + "=" + url, ctx.getCurrentEditUser());
+				}				
+				countImport++;
+				} else {
+					logger.warning("error read link : "+link);
 				}
 				link = read.readLine();
-				countImport++;
 			}
 		}
 

@@ -1132,7 +1132,7 @@ public class MenuElement implements Serializable, IPrintInfo {
 						newBean[j] = element;
 						j++;
 						newBean[j] = bean;
-						parentFound = true;						
+						parentFound = true;
 						if (newBean[j].getArea() != null) {
 							bean.setArea(newBean[j].getArea());
 						}
@@ -1350,12 +1350,14 @@ public class MenuElement implements Serializable, IPrintInfo {
 			synchronized (getLock()) {
 				List<ComponentBean> outList = new LinkedList<ComponentBean>();
 				for (int i = 0; i < componentBean.length; i++) {
-					if (!compToBeDeleted.contains(componentBean[i].getId())) {
-						outList.add(componentBean[i]);
-					} else {
-						IContentVisualComponent comp = ComponentFactory.getComponentWithType(ctx, componentBean[i].getType());
-						if (comp != null) {
-							comp.delete(ctx);
+					if (componentBean[i] != null) {
+						if (!compToBeDeleted.contains(componentBean[i].getId())) {
+							outList.add(componentBean[i]);
+						} else {
+							IContentVisualComponent comp = ComponentFactory.getComponentWithType(ctx, componentBean[i].getType());
+							if (comp != null) {
+								comp.delete(ctx);
+							}
 						}
 					}
 				}

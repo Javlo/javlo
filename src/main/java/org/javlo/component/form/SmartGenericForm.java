@@ -520,7 +520,8 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		}
 
 		if (rs.getParameter(getInputName("new-name"), "").trim().length() > 0) {
-			store(new Field(rs.getParameter(getInputName("new-name"), ""), "", "text", "", "", "", pos+20, 6));
+			String fieldName = StringHelper.createFileName(rs.getParameter(getInputName("new-name"),null));
+			store(new Field(fieldName, "", "text", "", "", "", pos+20, 6));
 		}
 
 		store(ctx);

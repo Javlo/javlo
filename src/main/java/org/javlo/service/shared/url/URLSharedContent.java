@@ -54,19 +54,16 @@ public class URLSharedContent extends SharedContent {
 			InputStream in = null;
 			try {			
 				URL imageURL = new URL(getRemoteImageUrl());
-				String baseStaticFolder = URLHelper.mergePath(SHARED_CONTENT_FOLDER, imageURL.getHost() );		
-				
+				String baseStaticFolder = URLHelper.mergePath(SHARED_CONTENT_FOLDER, imageURL.getHost() );				
 				String imageFolder = URLHelper.mergePath(globalContext.getDataFolder(), globalContext.getStaticConfig().getImageFolder(), baseStaticFolder);
-				
 				File imageFile = new File (URLHelper.mergePath(imageFolder, getId()+".jpg"));
-				
 				in = imageURL.openStream();
 				ResourceHelper.writeStreamToFile(in, imageFile);				
 				ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 				PrintStream out = new PrintStream(outStream);
 				out.println("dir=" + baseStaticFolder);
 				out.println("file-name=" + imageFile.getName());
-				out.println(GlobalImage.IMAGE_FILTER + "=full");
+				out.println(GlobalImage.IMAGE_FILTER + "=full");				
 				if (getTitle() != null) {
 					out.println("label=" + getTitle());
 				}
@@ -75,7 +72,7 @@ public class URLSharedContent extends SharedContent {
 				ComponentBean bean = new ComponentBean(GlobalImage.TYPE, value, ctx.getRequestContentLanguage());
 				bean.setArea(ctx.getArea());
 				content = new LinkedList<ComponentBean>();
-				content.add(bean);
+				content.add(bean);				
 			} catch (Exception e) {
 				e.printStackTrace();
 			} finally {

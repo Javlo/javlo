@@ -71,7 +71,7 @@ public class URLImageSharedContentProvider extends AbstractSharedContentProvider
 									imagePreviewURL = URLHelper.mergePath(URLHelper.removeURI(urlPrefix), src);
 								}
 							}
-							imageTitle = tag.getAttribute("alt", parent.getAttribute("title", StringHelper.getFileNameWithoutExtension(StringHelper.getFileNameFromPath(imageURL))));
+							imageTitle = StringHelper.neverEmpty(tag.getAttribute("alt",""), StringHelper.neverEmpty(parent.getAttribute("title",""),StringHelper.getFileNameWithoutExtension(StringHelper.getFileNameFromPath(imageURL)))); 
 							id = ""+StringHelper.getCRC32(imagePreviewURL);	
 							if (imageURL != null && imagePreviewURL != null) {
 								URLSharedContent sharedContent = new URLSharedContent(id, null);
