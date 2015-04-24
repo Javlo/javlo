@@ -125,8 +125,7 @@ public class SmartExternalLink extends ComplexPropertiesLink implements IReverse
 					setValidConnection(NetHelper.isURLValid(url));
 					storeViewData();
 
-					if (isValidConnection()) {
-						System.out.println("***** SmartExternalLink.UndateInfo.run : URL = "+url); //TODO: remove debug trace
+					if (isValidConnection()) {						
 						timeout = 60 * 1000; // if connection valid thread can
 						// run more time
 						logInfo = "read : " + url;
