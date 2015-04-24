@@ -10,7 +10,11 @@
 	<c:if test="${empty lightInterface && globalContext.staticConfig.accountSize}"><li><span class="label">Size</span>${globalContext.accountSizeLabel}</li></c:if>
 	<li><span class="label">Admin</span><a href="mailto:${globalContext.administratorEmail}">${globalContext.administratorEmail}</a></li>
 	<li><span class="label">Publish date : </span>${globalContext.publishDateLabel}</li>
-	<li><span class="label">Latest publisher : </span>${globalContext.latestPublisher}</li>	
+	<li><span class="label">Latest publisher : </span>${globalContext.latestPublisher}</li>
+	<c:if test="${not empty threadManager && threadManager.countThread>0}">
+	<li><span class="label">#Thread : </span>${threadManager.countThread}</li>
+	<li><span class="label">Current Thread : </span>${threadManager.currentThreadName}</li>
+	</c:if>	
 </ul>
 </fieldset>
 <fieldset>

@@ -103,7 +103,7 @@ public class SmartExternalLinkImportation extends AbstractVisualComponent {
 	@Override
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
 		ThreadManager threadManager = ThreadManager.getInstance(ctx.getRequest().getSession().getServletContext());
-		if (threadManager.countThread() == 0) {
+		if (threadManager.getCountThread() == 0) {
 			Calendar cal = Calendar.getInstance();
 			cal.roll(Calendar.DAY_OF_YEAR, -7);
 			Calendar pageModification = Calendar.getInstance();

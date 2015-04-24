@@ -7,7 +7,7 @@ import javax.servlet.ServletContext;
 
 public class ThreadManager extends Thread {
 
-	private static final String KEY = ThreadManager.class.getName();
+	private static final String KEY = "threadManager";
 
 	AbstractThread currentThread;
 
@@ -123,7 +123,7 @@ public class ThreadManager extends Thread {
 		this.threadDir = threadDir;
 	}
 
-	public int countThread() {
+	public int getCountThread() {
 		File[] threadFiles = threadDir.listFiles(AbstractThread.threadFileFilter);
 		if (threadFiles == null) {
 			return 0;
