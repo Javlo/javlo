@@ -4,6 +4,7 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -27,7 +28,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.javlo.component.core.ComponentBean;
-import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
@@ -38,7 +38,6 @@ import org.javlo.mailing.MailingBuilder;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.resource.Resource;
 import org.javlo.template.Template;
-import org.javlo.template.TemplateFactory;
 import org.javlo.utils.MapCollectionWrapper;
 import org.javlo.ztatic.FileCache;
 
@@ -73,14 +72,13 @@ public class NetHelper {
 	public static String readPage(URL url) throws Exception {
 		return readPage(url, false, false, null, null, null, false);
 	}
-
-	public static String readPageGet(URL url) throws Exception {
-		InputStream in = null;
+	
+	public static String readPageGet(URLConnection conn) throws Exception {
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		try {
-			URLConnection conn = url.openConnection();
+		InputStream in = null;
+		try {			
 			if (conn instanceof HttpURLConnection) {
-				HttpURLConnection httpConn = (HttpURLConnection) url.openConnection();
+				HttpURLConnection httpConn = (HttpURLConnection) conn;
 				if (httpConn.getResponseCode() != HttpURLConnection.HTTP_OK) {
 					throw new NetException("Response code: " + httpConn.getResponseCode());
 				}
@@ -91,6 +89,12 @@ public class NetHelper {
 			ResourceHelper.closeResource(in);
 		}
 		return new String(out.toByteArray(), ContentContext.CHARACTER_ENCODING);
+	}
+
+	public static String readPageGet(URL url) throws Exception {
+		URLConnection conn = url.openConnection();
+		String content = readPageGet(conn);
+		return content;
 	}
 
 	public static String readPageNoError(URL url) throws Exception {
@@ -509,6 +513,20 @@ public class NetHelper {
 	 * @return the uri to the local file
 	 */
 	public static String getLocalCopyOfPageImage(String cacheFolder, String dataFolder, URL pageURL, URL imageURL, String content, CRC32 crc32, boolean preferVertical, boolean needVertical) {
+		
+		try {
+			ResourceHelper.writeStringToFile(new File("c:/trans/content.html"), content);
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
+		logger.info("read : "+pageURL);
+
+		if (content == null || content.trim().length() == 0) {
+			logger.warning("bad content.");
+		}
+
 		if (needVertical) {
 			preferVertical = true;
 		}
@@ -519,6 +537,7 @@ public class NetHelper {
 		} else {
 			urls = extractExternalURL(pageURL, content);
 		}
+		logger.info("#URL found : " + urls.size());
 		int maxSizeFound = -1;
 		ImageSize bestImage = null;
 		boolean bestImageJpg = false;
@@ -539,6 +558,8 @@ public class NetHelper {
 					ByteArrayOutputStream imgBuffer = new ByteArrayOutputStream();
 					int imageSize = 0;
 					conn = (new URL(url)).openConnection();
+					conn.setRequestProperty("Referer", pageURL.toString());
+					conn.setRequestProperty("Host", pageURL.getHost());
 					conn.setReadTimeout(5000);
 					InputStream in = conn.getInputStream();
 					try {
@@ -553,62 +574,70 @@ public class NetHelper {
 
 					byte[] imageArray = imgBuffer.toByteArray();
 					ImageSize img = ImageHelper.getExifSize(new ByteArrayInputStream(imageArray));
-					/*if (img == null) {
-						img = ImageHelper.getJpegSize(new ByteArrayInputStream(imageArray));
-					}*/
-					if (img == null) {						
+					/*
+					 * if (img == null) { img = ImageHelper.getJpegSize(new
+					 * ByteArrayInputStream(imageArray)); }
+					 */
+					if (img == null) {
 						BufferedImage bufImg = ImageIO.read(new ByteArrayInputStream(imgBuffer.toByteArray()));
-						img = new ImageSize(bufImg.getWidth(), bufImg.getHeight());
+						if (bufImg != null) {
+							img = new ImageSize(bufImg.getWidth(), bufImg.getHeight());
+						}
 					}
-					imageArray = null;
+					if (img != null) {
+						imageArray = null;
 
-					int readImageSize = img.getWidth() * img.getHeight();					
+						int readImageSize = img.getWidth() * img.getHeight();
 
-					if ((float) img.getWidth() / (float) img.getHeight() > 0.40) { // no
-						// banner
-						if ((float) img.getHeight() / (float) img.getWidth() > 0.40) { // no
+						if ((float) img.getWidth() / (float) img.getHeight() > 0.40) { // no
 							// banner
-							if (readImageSize > MIN_IMAGE_SIZE) {
-								bestImage = img;
-								maxSizeFound = imageSize;
-								finalURL = url;								
-								String ext = StringHelper.getFileExtension(url).toLowerCase();
-								if (ext.equals("jpg") || ext.equals("jpeg")) {
-									bestImageJpg = true;
-								}								
-							} else if (imageSize > maxSizeFound) {
-								String ext = StringHelper.getFileExtension(url).toLowerCase();
-								if (ext.equals("jpg") || ext.equals("jpeg")) {
-									bestImage = img;
-									maxSizeFound = imageSize;
-									finalURL = url;									
-									bestImageJpg = true;
-								} else if (!bestImageJpg) {
+							if ((float) img.getHeight() / (float) img.getWidth() > 0.40) { // no
+								// banner
+								if (readImageSize > MIN_IMAGE_SIZE) {
 									bestImage = img;
 									maxSizeFound = imageSize;
 									finalURL = url;
-									
-								}								
-							}
-							if (readImageSize > MIN_IMAGE_SIZE) {
-								if (preferVertical) {
-									if (bestImage != null && bestImage.getWidth() < bestImage.getHeight()) {
+									String ext = StringHelper.getFileExtension(url).toLowerCase();
+									if (ext.equals("jpg") || ext.equals("jpeg")) {
+										bestImageJpg = true;
+									}
+								} else if (imageSize > maxSizeFound) {
+									String ext = StringHelper.getFileExtension(url).toLowerCase();
+									if (ext.equals("jpg") || ext.equals("jpeg")) {
+										bestImage = img;
+										maxSizeFound = imageSize;
+										finalURL = url;
+										bestImageJpg = true;
+									} else if (!bestImageJpg) {
+										bestImage = img;
+										maxSizeFound = imageSize;
+										finalURL = url;
+
+									}
+								}
+								if (readImageSize > MIN_IMAGE_SIZE) {
+									if (preferVertical) {
+										if (bestImage != null && bestImage.getWidth() < bestImage.getHeight()) {
+											imageFoundedOk = true;
+										}
+									} else {
 										imageFoundedOk = true;
 									}
-								} else {
-									imageFoundedOk = true;
+								}
+								if (imgBuffer.size() > bestBytesSize) {
+									bestBytesSize = imgBuffer.size();
+									biggerImage = bestImage;
+									finalImgBuffer = imgBuffer;
 								}
 							}
-							if (imgBuffer.size()>bestBytesSize) {
-								bestBytesSize = imgBuffer.size();
-								biggerImage = bestImage;
-								finalImgBuffer = imgBuffer;
-							}
 						}
+					} else {
+						logger.warning("can not read image : " + url);
 					}
 
 				} catch (Exception e) {
 					// just next image
+					e.printStackTrace();
 				}
 			}
 		}
@@ -899,5 +928,29 @@ public class NetHelper {
 		mb.setSubject(page.getTitle(ctx));
 		mb.prepare(ctx);
 		mb.sendMailing(ctx);
+	}
+
+	public static void main(String[] args) throws Exception {
+		// public static String getLocalCopyOfPageImage(String cacheFolder,
+		// String dataFolder, URL pageURL, URL imageURL, String content, CRC32
+		// crc32, boolean preferVertical, boolean needVertical) {
+		/*String cacheFolder = "cache";
+		String dataFolder = "c:/trans/data";
+		URL url = new URL("http://www.nsgalleries.com/hosted2/ab/pics/113011/vc06/index.php?nats=MTMwMjgzLjEuODUuODguMC4yMzM4LjAuMC4w");
+		String uri = getLocalCopyOfPageImage(cacheFolder, dataFolder, url, null, NetHelper.readPageGet(url), new CRC32(), true, false);
+		System.out.println("***** NetHelper.main : uri = " + uri); // TODO:
+																	// remove
+																	// debug
+																	// trace*/
+		
+		URL url  = new URL("http://join.ashlynnbrooke.com/gallery/MTMwMjgzLjAuODUuODguMC40MDU3LjAuMC4w");
+		URLConnection con = url.openConnection();
+		System.out.println( "orignal url: " + con.getURL() );
+		con.connect();
+		System.out.println( "connected url: " + con.getURL() );
+		InputStream is = con.getInputStream();
+		System.out.println( "redirected url: " + con.getURL() );
+		is.close();
+		System.out.println("done.");
 	}
 }

@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -129,7 +130,9 @@ public class SmartExternalLink extends ComplexPropertiesLink implements IReverse
 						timeout = 60 * 1000; // if connection valid thread can
 						// run more time
 						logInfo = "read : " + url;
-						String pageContent = NetHelper.readPageGet(url);
+						URLConnection conn = url.openConnection();						
+						String pageContent = NetHelper.readPageGet(conn);
+						url = conn.getURL();						
 						if (pageContent == null) {
 							setLinkValid(false);
 							setMustBeRemoved(true);
