@@ -514,13 +514,6 @@ public class NetHelper {
 	 */
 	public static String getLocalCopyOfPageImage(String cacheFolder, String dataFolder, URL pageURL, URL imageURL, String content, CRC32 crc32, boolean preferVertical, boolean needVertical) {
 		
-		try {
-			ResourceHelper.writeStringToFile(new File("c:/trans/content.html"), content);
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		
 		logger.info("read : "+pageURL);
 
 		if (content == null || content.trim().length() == 0) {
