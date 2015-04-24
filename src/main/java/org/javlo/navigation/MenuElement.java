@@ -3373,7 +3373,7 @@ public class MenuElement implements Serializable, IPrintInfo {
 		}
 		return isEmpty(ctx, null);
 	}
-
+	
 	public boolean isEmpty(ContentContext ctx, String area) throws Exception {
 		PageDescription desc = getPageDescriptionCached(ctx, ctx.getRequestContentLanguage());
 
@@ -3387,11 +3387,13 @@ public class MenuElement implements Serializable, IPrintInfo {
 		ContentContext ctxForceArea = new ContentContext(ctx);
 		ctxForceArea.setArea(area);
 
+		boolean empty = true;
 		IContentComponentsList contentList = getContent(ctxForceArea);
 		while ((contentList.hasNext(ctxForceArea))) {
 			IContentVisualComponent component = contentList.next(ctxForceArea);
 			if (component != null) {
 				if (!component.isEmpty(ctxForceArea) || (ctx.getCurrentTemplate() != null && ctx.getCurrentTemplate().isMailing())) {
+					empty = false;
 					if (!component.isRepeat() || component.getType() == ForceRealContent.TYPE) {
 						boolean realContent = false;
 						if (component instanceof ForceRealContent) {
@@ -3414,10 +3416,10 @@ public class MenuElement implements Serializable, IPrintInfo {
 			}
 		}
 
-		desc.setEmpty(area, true);
-		return true;
+		desc.setEmpty(area, empty);
+		return empty;
 	}
-
+	
 	/**
 	 * @return
 	 */

@@ -205,26 +205,6 @@ public class NetHelper {
 		return content;
 	}
 
-	public static void main(String[] args) {
-		URL url;
-		try {
-			url = new URL("http://www.javlo.be?test=test");
-			System.out.println("***** NetHelper.main : 1.url = " + url); // TODO:
-																			// remove
-																			// debug
-																			// trace
-			url = removeParams(url);
-			System.out.println("***** NetHelper.main : 2.url = " + url); // TODO:
-																			// remove
-																			// debug
-																			// trace
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-	}
-
 	/**
 	 * read a page a put content in a String.
 	 * 
@@ -546,7 +526,8 @@ public class NetHelper {
 		ByteArrayOutputStream finalImgBuffer = null;
 
 		boolean imageFoundedOk = false;
-
+		ImageSize biggerImage = null;
+		int bestBytesSize = 0;
 		for (Iterator<String> iterator = urls.iterator(); iterator.hasNext() && !imageFoundedOk;) {
 			String url = iterator.next();
 			if (url.contains("?")) {
@@ -572,77 +553,69 @@ public class NetHelper {
 
 					byte[] imageArray = imgBuffer.toByteArray();
 					ImageSize img = ImageHelper.getExifSize(new ByteArrayInputStream(imageArray));
-					if (img == null) {
+					/*if (img == null) {
 						img = ImageHelper.getJpegSize(new ByteArrayInputStream(imageArray));
-					}
-					if (img == null) {
-						logger.warning("no imagesize found for : " + url);
+					}*/
+					if (img == null) {						
 						BufferedImage bufImg = ImageIO.read(new ByteArrayInputStream(imgBuffer.toByteArray()));
 						img = new ImageSize(bufImg.getWidth(), bufImg.getHeight());
 					}
 					imageArray = null;
 
-					if (img != null) {
+					int readImageSize = img.getWidth() * img.getHeight();					
 
-						int readImageSize = img.getWidth() * img.getHeight();
-
-						// DEBUG
-						/*
-						 * File imgDir = new File("/tmp/tmp-images");
-						 * imgDir.mkdirs(); ImageIO.write(img, "jpg", new
-						 * File("/tmp/tmp-images/img_"
-						 * +StringHelper.getRandomId()+".jpg"));
-						 */
-
-						if ((float) img.getWidth() / (float) img.getHeight() > 0.40) { // no
+					if ((float) img.getWidth() / (float) img.getHeight() > 0.40) { // no
+						// banner
+						if ((float) img.getHeight() / (float) img.getWidth() > 0.40) { // no
 							// banner
-							if ((float) img.getHeight() / (float) img.getWidth() > 0.40) { // no
-								// banner
-								if (readImageSize > MIN_IMAGE_SIZE) {
+							if (readImageSize > MIN_IMAGE_SIZE) {
+								bestImage = img;
+								maxSizeFound = imageSize;
+								finalURL = url;								
+								String ext = StringHelper.getFileExtension(url).toLowerCase();
+								if (ext.equals("jpg") || ext.equals("jpeg")) {
+									bestImageJpg = true;
+								}								
+							} else if (imageSize > maxSizeFound) {
+								String ext = StringHelper.getFileExtension(url).toLowerCase();
+								if (ext.equals("jpg") || ext.equals("jpeg")) {
+									bestImage = img;
+									maxSizeFound = imageSize;
+									finalURL = url;									
+									bestImageJpg = true;
+								} else if (!bestImageJpg) {
 									bestImage = img;
 									maxSizeFound = imageSize;
 									finalURL = url;
-									finalImgBuffer = imgBuffer;
-									String ext = StringHelper.getFileExtension(url).toLowerCase();
-									if (ext.equals("jpg") || ext.equals("jpeg")) {
-										bestImageJpg = true;
-									}
-								} else if (imageSize > maxSizeFound) {
-									String ext = StringHelper.getFileExtension(url).toLowerCase();
-									if (ext.equals("jpg") || ext.equals("jpeg")) {
-										bestImage = img;
-										maxSizeFound = imageSize;
-										finalURL = url;
-										finalImgBuffer = imgBuffer;
-										bestImageJpg = true;
-									} else if (!bestImageJpg) {
-										bestImage = img;
-										maxSizeFound = imageSize;
-										finalURL = url;
-										finalImgBuffer = imgBuffer;
-									}
-								}
-								if (readImageSize > MIN_IMAGE_SIZE) {
-									if (preferVertical) {
-										if (bestImage.getWidth() < bestImage.getHeight()) {
-											imageFoundedOk = true;
-										}
-									} else {
+									
+								}								
+							}
+							if (readImageSize > MIN_IMAGE_SIZE) {
+								if (preferVertical) {
+									if (bestImage != null && bestImage.getWidth() < bestImage.getHeight()) {
 										imageFoundedOk = true;
 									}
+								} else {
+									imageFoundedOk = true;
 								}
+							}
+							if (imgBuffer.size()>bestBytesSize) {
+								bestBytesSize = imgBuffer.size();
+								biggerImage = bestImage;
+								finalImgBuffer = imgBuffer;
 							}
 						}
 					}
+
 				} catch (Exception e) {
 					// just next image
 				}
 			}
 		}
 
-		if (bestImage != null) {
+		if (biggerImage != null) {
 			if (needVertical) {
-				if (bestImage.getWidth() > bestImage.getHeight()) {
+				if (biggerImage.getWidth() > biggerImage.getHeight()) {
 					return null;
 				}
 			}
@@ -651,9 +624,7 @@ public class NetHelper {
 
 				String fullFileName = URLHelper.mergePath(dataFolder, cacheFolder);
 				fullFileName = URLHelper.mergePath(fullFileName, fileName);
-
 				crc32.update(finalImgBuffer.toByteArray());
-
 				FileCache.saveFile(fullFileName, new ByteArrayInputStream(finalImgBuffer.toByteArray()));
 
 				return URLHelper.mergePath(cacheFolder, fileName);
@@ -715,6 +686,35 @@ public class NetHelper {
 	}
 
 	public static List<URL> getExternalLinks(String content) {
+		List<URL> urlList = new LinkedList<URL>();
+		List<String> urlStrList = new LinkedList<String>();
+
+		int hrefIndex = content.toLowerCase().indexOf("href=\"") + "href=\"".length();
+		while (hrefIndex >= "href=\"".length()) {
+			int closeLink = content.indexOf("\"", hrefIndex + 1);
+			if (closeLink >= 0) {
+				String url = content.substring(hrefIndex, closeLink);
+				if (URLHelper.isAbsoluteURL(url)) {
+					if (!url.contains(">")) {
+						if (!urlStrList.contains(url)) {
+							try {
+								URL newURL = new URL(url);
+								urlStrList.add(url);
+								urlList.add(newURL);
+							} catch (MalformedURLException e) {
+								// if URL malformed she is not added in the list
+							}
+						}
+					}
+				}
+			}
+			hrefIndex = content.toLowerCase().indexOf("href=\"", hrefIndex) + "href=\"".length();
+		}
+
+		return urlList;
+	}
+
+	public static List<URL> getLinksFromText(String content) {
 		List<URL> urlList = new LinkedList<URL>();
 		List<String> urlStrList = new LinkedList<String>();
 
@@ -809,23 +809,23 @@ public class NetHelper {
 			e.printStackTrace();
 		}
 	}
-	
-	public static void sendXHTMLMail(ContentContext ctx, InternetAddress from, InternetAddress to,InternetAddress cc, InternetAddress bcc, String subject, String content, String templateName ) throws Exception {
+
+	public static void sendXHTMLMail(ContentContext ctx, InternetAddress from, InternetAddress to, InternetAddress cc, InternetAddress bcc, String subject, String content, String templateName) throws Exception {
 		if (templateName == null) {
 			templateName = "javlo_mailing";
 		}
 		String contentId = StringHelper.getRandomId();
-		
+
 		// debug
 		contentId = "142470258442657269888";
-		
+
 		ctx.getGlobalContext().addForcedContent(contentId, content);
-		
+
 		ContentContext pageCtx = ctx.getContextWithOtherRenderMode(ContentContext.PAGE_MODE);
 		pageCtx.setAbsoluteURL(true);
 		String url = URLHelper.createURL(pageCtx, "/");
-		url = URLHelper.addParam(url, ContentContext.FORCED_CONTENT_PREFIX+ComponentBean.DEFAULT_AREA, contentId);
-		url = URLHelper.addParam(url, Template.FORCE_TEMPLATE_PARAM_NAME, templateName);	
+		url = URLHelper.addParam(url, ContentContext.FORCED_CONTENT_PREFIX + ComponentBean.DEFAULT_AREA, contentId);
+		url = URLHelper.addParam(url, Template.FORCE_TEMPLATE_PARAM_NAME, templateName);
 		String XHTMLContent = NetHelper.readPageGet(new URL(url));
 		XHTMLContent = CSSParser.mergeCSS(XHTMLContent);
 		sendMail(ctx.getGlobalContext(), from, to, cc, bcc, subject, XHTMLContent, StringHelper.removeTag(content), true);

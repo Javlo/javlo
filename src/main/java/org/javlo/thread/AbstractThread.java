@@ -106,6 +106,7 @@ public abstract class AbstractThread {
 	 * destroy the thread, this method can be override for not delete the file after run the process (recurent process)
 	 */
 	public void destroy() {
+		System.out.println("***** AbstractThread.destroy : "+file); //TODO: remove debug trace
 		if (!file.delete()) {
 			needRunning = false;
 			logger.warning("could not delete file : " + file + ".  Thread running set to false.");

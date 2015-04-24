@@ -52,23 +52,6 @@ public class SmartExternalLink extends ComplexPropertiesLink implements IReverse
 
 		String logInfo = "";
 
-		@Override
-		public void destroy() {
-			boolean validConnection = false;
-			String stringValue = prop.getProperty(VALID_CONNECTION_KEY, null);
-			if (stringValue != null) {
-				validConnection = StringHelper.isTrue(stringValue);
-			}
-
-			if (validConnection) {
-				// prop.setProperty("mustBeRemoved", "true");
-				logInfo = "time out on : " + getURL();
-			} else {
-				logInfo = "end thread ok on : " + getURL();
-			}
-			super.destroy();
-		}
-
 		public String getCacheFodler() {
 			return this.getField("cache-folder");
 		}
@@ -138,25 +121,25 @@ public class SmartExternalLink extends ComplexPropertiesLink implements IReverse
 
 			try {
 				URL url = new URL(getURL());
-
-				if (isValidConnection() == null) {
+				if (isValidConnection() == null) {					
 					setValidConnection(NetHelper.isURLValid(url));
 					storeViewData();
 
 					if (isValidConnection()) {
+						System.out.println("***** SmartExternalLink.UndateInfo.run : URL = "+url); //TODO: remove debug trace
 						timeout = 60 * 1000; // if connection valid thread can
 						// run more time
 						logInfo = "read : " + url;
-						String pageContent = NetHelper.readPage(url);
+						String pageContent = NetHelper.readPageGet(url);
 						if (pageContent == null) {
 							setLinkValid(false);
 							setMustBeRemoved(true);
-							logger.fine("url: " + url + " must de removed because content unredeable.");
+							logger.info("url: " + url + " must de removed because content unredeable.");
 						} else {
 							if (!isContentValid(pageContent)) {
 								setLinkValid(false);
 								setMustBeRemoved(true);
-								logger.fine("url: " + url + " must de removed because content unvalid.");
+								logger.info("url: " + url + " must de removed because content unvalid.");
 							} else {
 								setTitle(NetHelper.getPageTitle(pageContent));
 								setDescription(NetHelper.getPageDescription(pageContent));
@@ -166,7 +149,7 @@ public class SmartExternalLink extends ComplexPropertiesLink implements IReverse
 									imageURL = new URL(getForceImageURL());
 								}
 								logInfo = "load image : " + StringHelper.neverNull(imageURL, "?");
-								String uri = NetHelper.getLocalCopyOfPageImage(getCacheFodler(), getDataFolder(), url, imageURL, pageContent, crc32, true, true);
+								String uri = NetHelper.getLocalCopyOfPageImage(getCacheFodler(), getDataFolder(), url, imageURL, pageContent, crc32, true, false);								
 								setImageCRC32(crc32.getValue());
 								if (uri != null) {
 									setImageURI(uri);
@@ -175,13 +158,13 @@ public class SmartExternalLink extends ComplexPropertiesLink implements IReverse
 								} else {
 									setLinkValid(false);
 									setMustBeRemoved(true);
-									logger.fine("url: " + url + " must de removed because image not found.");
+									logger.info("url: " + url + " must de removed because image not found.");
 								}
 							}
 						}
 					} else {
 						setMustBeRemoved(true);
-						logger.fine("url: " + url + " must de removed because unvalid connection.");
+						logger.info("url: " + url + " must de removed because unvalid connection.");
 					}
 					logger.fine("refresh smart url info [END] : " + url + " [THREAD:" + CountThreadService.getInstance().getCountThread() + "]");
 				}
@@ -194,7 +177,7 @@ public class SmartExternalLink extends ComplexPropertiesLink implements IReverse
 				storeViewData();
 			} catch (IOException e) {
 				e.printStackTrace();
-			}
+			}			
 		}
 
 		public void setCacheFolder(String url) {
@@ -882,5 +865,6 @@ public class SmartExternalLink extends ComplexPropertiesLink implements IReverse
 			return Integer.parseInt(getConfig(ctx).getProperty("image.priority", null));
 		}
 	}
+	
 
 }

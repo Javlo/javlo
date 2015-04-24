@@ -15,6 +15,8 @@ import java.io.PrintStream;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.ByteBuffer;
 import java.nio.charset.CharacterCodingException;
@@ -1088,7 +1090,7 @@ public class StringHelper {
 			return true;
 		}
 	}
-	
+
 	public static boolean isFloat(String str) {
 		int countSep = 0;
 		if (str == null || str.length() == 0) {
@@ -1148,7 +1150,7 @@ public class StringHelper {
 		String ext = getFileExtension(fileName);
 		return isImageExtension(ext);
 	}
-	
+
 	/**
 	 * return true if the filename in a image for wcms (sp. : tif or psd in not
 	 * a image).
@@ -1167,10 +1169,10 @@ public class StringHelper {
 		String ext = getFileExtension(fileName).trim();
 		return ext.equalsIgnoreCase("xls") || ext.equalsIgnoreCase("xlsx");
 	}
-	
+
 	/**
-	 * return true if the file extension is an image for wcms (sp. : tif or psd is not
-	 * an image).
+	 * return true if the file extension is an image for wcms (sp. : tif or psd
+	 * is not an image).
 	 * 
 	 * @param fileExtension
 	 *            file extension
@@ -1266,7 +1268,7 @@ public class StringHelper {
 		res = res || ext.equalsIgnoreCase("flac");
 		return res;
 	}
-	
+
 	public static boolean isTrue(Object inBool) {
 		return isTrue(inBool, false);
 	}
@@ -1353,8 +1355,8 @@ public class StringHelper {
 	}
 
 	public static void main(String[] args) {
-		System.out.println("StringHelper.renderNumber(4, 4) = "+StringHelper.renderNumber(4, 4));
-		System.out.println("StringHelper.renderNumber(40, 4) = "+StringHelper.renderNumber(40, 4));
+		System.out.println("StringHelper.renderNumber(4, 4) = " + StringHelper.renderNumber(4, 4));
+		System.out.println("StringHelper.renderNumber(40, 4) = " + StringHelper.renderNumber(40, 4));
 	}
 
 	/**
@@ -1692,11 +1694,11 @@ public class StringHelper {
 		}
 		return out.toString();
 	}
-	
 
 	/**
-	 * remove repeated char inside string.
-	 * sample : "javlo--love" "-" = "javlo-love".
+	 * remove repeated char inside string. sample : "javlo--love" "-" =
+	 * "javlo-love".
+	 * 
 	 * @param str
 	 * @param c
 	 * @return
@@ -1705,9 +1707,9 @@ public class StringHelper {
 		if (str == null) {
 			return null;
 		}
-		String doubleString = c+""+c;
+		String doubleString = c + "" + c;
 		while (str.contains(doubleString)) {
-			str = str.replace(doubleString, ""+c);
+			str = str.replace(doubleString, "" + c);
 		}
 		return str;
 	}
@@ -2167,6 +2169,37 @@ public class StringHelper {
 	}
 
 	/**
+	 * extract external link from a free text
+	 * 
+	 * @param text
+	 *            a free text, can be html
+	 * @return a collection of URL
+	 */
+	public static List<URL> searchLinks(String text) {
+		List<URL> outLinks = new LinkedList<URL>();
+		BufferedReader reader = new BufferedReader(new StringReader(text));
+		try {
+			String line = reader.readLine();
+			while (line != null) {
+				String[] linksCandidate = line.split(" |\\t|,|\"|;|<|>");
+				for (String element : linksCandidate) {
+					if (PatternHelper.EXTERNAL_LINK_PATTERN.matcher(element).matches()) {
+						try {
+							outLinks.add(new URL(element));
+						} catch (MalformedURLException e) {
+						}
+					}
+				}
+				line = reader.readLine();
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		return outLinks;
+	}
+
+	/**
 	 * split a String, if there are no character between two token this method
 	 * place a empty String ( != String.split )
 	 * 
@@ -2342,7 +2375,7 @@ public class StringHelper {
 		}
 		return outText;
 	}
-	
+
 	public static String textToList(GlobalContext globalContext, String text, String sep, String layout, boolean autoLink) {
 		return textToList(globalContext, text, sep, layout, autoLink, null);
 	}
@@ -2358,8 +2391,6 @@ public class StringHelper {
 	 * @return a xhtml list.
 	 */
 	public static String textToList(GlobalContext globalContext, String text, String sep, String layout, boolean autoLink, String ulClass) {
-
-		
 
 		String firstTag = "ul";
 		String secondTag = "ul";
@@ -2392,7 +2423,7 @@ public class StringHelper {
 			if (ulClass == null) {
 				writer.write("<" + firstTag + ">");
 			} else {
-				writer.write("<" + firstTag + " class=\""+ulClass+"\">");
+				writer.write("<" + firstTag + " class=\"" + ulClass + "\">");
 			}
 			boolean firstPass = true;
 			int cd = 0;
@@ -2406,7 +2437,7 @@ public class StringHelper {
 				}
 				while (depth > cd) {
 					writer.newLine();
-					writer.write("<" + secondTag + ">");					
+					writer.write("<" + secondTag + ">");
 					cd++;
 				}
 				while (depth < cd) {
@@ -2810,7 +2841,7 @@ public class StringHelper {
 	}
 
 	public static String trimLineReturn(String string) {
-		if(string== null) {
+		if (string == null) {
 			return null;
 		}
 		return string.replaceAll("(^[\r\n]+)|([\r\n]+$)", "");
@@ -2824,9 +2855,10 @@ public class StringHelper {
 			return text;
 		}
 	}
-	
+
 	/**
 	 * clean path, remove double "/"
+	 * 
 	 * @param path
 	 * @return "//web/path" >> "/web/path"
 	 */
@@ -2839,7 +2871,7 @@ public class StringHelper {
 			}
 			return path;
 		}
-		
+
 	}
 
 	/**
@@ -3151,8 +3183,8 @@ public class StringHelper {
 		}
 		return null;
 	}
-	
-	public static long getCRC32 (String text) {
+
+	public static long getCRC32(String text) {
 		CRC32 crc = new CRC32();
 		crc.update(text.getBytes());
 		return crc.getValue();

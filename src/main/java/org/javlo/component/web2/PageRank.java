@@ -85,6 +85,16 @@ public class PageRank extends AbstractVisualComponent implements IPageRank, IAct
 	public boolean isUnique() {
 		return true;
 	}
+	
+	@Override
+	public boolean isRealContent(ContentContext ctx) {
+		return true;
+	}
+	
+	@Override
+	public boolean isEmpty(ContentContext ctx) {
+		return false;
+	}
 
 	@Override
 	protected String getEditXHTMLCode(ContentContext ctx) throws Exception {
@@ -144,7 +154,7 @@ public class PageRank extends AbstractVisualComponent implements IPageRank, IAct
 		}
 
 		if (RequestHelper.isCookie(ctx.getRequest(), getId(), "voted") || voted && !DEBUG) {
-			out.println("<div class=\"score " + cssClass + "\">" + StringHelper.renderDoubleAsPercentage(currentPage.getPageRank(ctx)) + "</div>");
+			out.println("<div class=\"score " + cssClass + "\"><span class=\"result\">" + StringHelper.renderDoubleAsPercentage(currentPage.getPageRank(ctx)) + "</span><span class=\"message\">Thanks for your vote.</span></div>");
 		} else {
 			Cookie cookie = new Cookie(getId(), "voted");
 			cookie.setMaxAge(60 * 60 * 24 * 365); // 1 year
@@ -155,12 +165,12 @@ public class PageRank extends AbstractVisualComponent implements IPageRank, IAct
 			if (getValue() != null && getValue().trim().length() > 0) {
 				out.println("<p>" + getValue() + "</p>");
 			}
-			out.println("<div class=\"score " + cssClass + "\">" + StringHelper.renderDoubleAsPercentage(currentPage.getPageRank(ctx)) + "</div>");
+			out.println("<div class=\"score result " + cssClass + "\">" + StringHelper.renderDoubleAsPercentage(currentPage.getPageRank(ctx)) + "</div>");
 			out.println("<form id=\"rank-" + getId() + "\">");
 			out.println("<input type=\"hidden\" name=\"webaction\" value=\"pagerank.rank\" />");
-			out.println("<input type=\"hidden\" name=\"comp-id\" value=\"" + getId() + "\" />");
-			out.println("<input type=\"submit\" class=\"negative\" name=\"negative\" value=\"-\" />");
-			out.println("<input type=\"submit\" class=\"positive\" name=\"positive\" value=\"+\" />");
+			out.println("<input type=\"hidden\" name=\"comp-id\" value=\"" + getId() + "\" />");			
+			out.println("<button type=\"submit\" class=\"positive btn btn-primary\" name=\"positive\" title=\"yes\"><span class=\"glyphicon glyphicon-thumbs-up\"></span></button>");
+			out.println("<button type=\"submit\" class=\"negative btn btn-default\" name=\"negative\" title=\"no\"><span class=\"glyphicon glyphicon-thumbs-down\"></span></button>");
 			out.println("</form>");
 		}
 		out.close();
@@ -265,6 +275,11 @@ public class PageRank extends AbstractVisualComponent implements IPageRank, IAct
 	@Override
 	public String getActionGroupName() {
 		return "pagerank";
+	}
+	
+	@Override
+	public String getEmptyXHTMLCode(ContentContext ctx) throws Exception {
+		return getViewXHTMLCode(ctx);
 	}
 
 }

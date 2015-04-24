@@ -19,6 +19,7 @@ import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.NetHelper;
+import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.helper.XHTMLHelper;
 import org.javlo.i18n.I18nAccess;
@@ -159,9 +160,16 @@ public class SmartExternalLinkImportation extends AbstractVisualComponent {
 			BufferedReader read = new BufferedReader(stringReader);
 			String link = read.readLine();
 			while ((link != null) && (link.trim().length() > 0)) {
-				String pageContent = NetHelper.readPageGet(new URL(link));
+				String pageContent;
+				if (!link.startsWith("POST:")) {
+					pageContent = NetHelper.readPageGet(new URL(link));
+				} else {
+					URL url = new URL(link.substring("POST:".length()));
+					pageContent = NetHelper.readPage(url);
+				}
 				if (pageContent != null) {
-				List<URL> extLinks = NetHelper.getExternalLinks(pageContent);
+				List<URL> extLinks = StringHelper.searchLinks(pageContent);
+				logger.info("links found : "+extLinks.size());
 				for (URL url : extLinks) {
 					parentId = currentPage.prepareAddContent(ctx.getRequestContentLanguage(), parentId, SmartExternalLink.TYPE, getStyle(ctx), ComplexPropertiesLink.LINK_KEY + "=" + url, ctx.getCurrentEditUser());
 				}				
