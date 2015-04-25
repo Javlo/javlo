@@ -557,24 +557,17 @@ public class SmartExternalLink extends ComplexPropertiesLink implements IReverse
 				if (cssClass != null) {
 					insertCssClass = cssClass;
 				}
-				res.append("<div " + getSpecialPreviewCssClass(ctx, getStyle(ctx) + " " + getType()) + getSpecialPreviewCssId(ctx) + " >");
+				res.append("<div " + getSpecialPreviewCssClass(ctx, getStyle(ctx) + " " + getType()+" thumbnail") + getSpecialPreviewCssId(ctx) + " >");
 				res.append("<a" + getSpecialPreviewCssClass(ctx, insertCssClass) + getSpecialPreviewCssId(ctx) + " href=\" ");
 				res.append(link);
 				res.append("\">");
 				if (getImageURI(ctx) != null) {
 					res.append("<span class=\"image\">");
 					String imageURL = URLHelper.createTransformURL(ctx, getImageURI(ctx), "extern");
-					res.append("<img src=\"" + imageURL + "\" alt=\"" + getTitle(ctx) + "\" />");
+					res.append("<img class=\"img-responsive\" src=\"" + imageURL + "\" alt=\"" + getTitle(ctx) + "\" />");
 					res.append("</span>");
 				}
-				if (getLinkDescription(ctx) != null) {
-					res.append("<span class=\"description\">");
-					res.append(StringHelper.removeTag(getLinkDescription(ctx)));
-					res.append("</span>");
-				}
-				res.append("<span class=\"label\">");
-				res.append(StringHelper.removeTag(getLabel(ctx)));
-				res.append("</span>");
+				res.append("<div class=\"caption\"><h3>"+getTitle(ctx)+"</h3></div>");								
 				res.append("</a></div>");
 			} else {
 				refreshAutoInfo(ctx);

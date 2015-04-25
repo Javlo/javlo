@@ -36,7 +36,7 @@ public abstract class ComplexPropertiesLink extends AbstractVisualComponent {
 	}
 
 	public String getLinkLabelName() {
-		return "label" + ID_SEPARATOR + getId();
+		return LABEL_KEY + ID_SEPARATOR + getId();
 	}
 	
 	@Override
