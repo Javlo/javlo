@@ -29,12 +29,7 @@ public class MenuElementPopularityComparator implements Comparator<MenuElement> 
 	
 	public int compare(MenuElement elem1, MenuElement elem2) {
 		try {
-			int outComp = (int)Math.round((elem1.getPageRank(ctx)-elem2.getPageRank(ctx))*100)*multiply;
-			if (outComp != 0) {// no equality
-				return outComp;
-			} else {
-				return 1;
-			}
+			return (int)Math.round((elem1.getPageRank(ctx)-elem2.getPageRank(ctx))*100)*multiply;			
 		} catch (Exception e) { 
 			e.printStackTrace();
 		}
