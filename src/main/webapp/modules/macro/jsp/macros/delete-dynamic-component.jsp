@@ -20,7 +20,3 @@
 </c:if>
 </fieldset>
 </form>
-
-
-
-
