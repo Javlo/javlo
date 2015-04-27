@@ -580,7 +580,7 @@ public class GlobalImage extends Image implements IImageFilter {
 
 	@Override
 	public String getURL(ContentContext ctx) {
-		if (getLink() != null && getLink().trim().length() > 0) {
+		if (getLink() != null && getLink().trim().length() > 0 && !getLink().equals("#")) {
 			if (!StringHelper.isURL(getLink())) {
 				ContentService content = ContentService.getInstance(ctx.getRequest());
 				MenuElement targetPage;
@@ -598,7 +598,7 @@ public class GlobalImage extends Image implements IImageFilter {
 				url = URLHelper.createResourceURL(ctx, url);
 			}
 			return url;
-		} else if (getFileName() != null) {
+		} else if (getFileName() != null  && !getLink().equals("#")) {
 			String fileLink = getResourceURL(ctx, getFileName());
 			return URLHelper.createResourceURL(ctx, getPage(), fileLink).replace('\\', '/');
 		}

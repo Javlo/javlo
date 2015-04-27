@@ -2462,6 +2462,9 @@ public class MenuElement implements Serializable, IPrintInfo {
 				IContentVisualComponent elem = contentList.next(newCtx);
 				if (elem instanceof ILink && !elem.isRepeat()) {
 					res = ((ILink) elem).getURL(newCtx);
+					if (res != null && res.equals("#")) {
+						res = "";
+					}
 				}
 			}
 			desc.linkOn = res;
