@@ -2181,7 +2181,7 @@ public class StringHelper {
 		try {
 			String line = reader.readLine();
 			while (line != null) {
-				String[] linksCandidate = line.split(" |\\t|,|\"|;|<|>");
+				String[] linksCandidate = line.split(" |\\t|\\||,|\"|;|<|>");
 				for (String element : linksCandidate) {
 					if (PatternHelper.EXTERNAL_LINK_PATTERN.matcher(element).matches()) {
 						try {
