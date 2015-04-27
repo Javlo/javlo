@@ -344,7 +344,7 @@ public class ImageConfig {
 		String bg = properties.getString(key,properties.getString(getKey(null, ALL,null, "background-color"),null));
 		return  bg != null && !bg.equals("transparent");	
 	}
-
+	
 	public Color getBGColor(Device device, String filter, String area) {
 
 		String key = getKey(device, filter, area, "background-color");
@@ -467,6 +467,11 @@ public class ImageConfig {
 		String key = getKey(device, filter, area, "edge");
 		return properties.getBoolean(key, device!=null?isEdge(null,ALL,null):false);
 	}
+	
+	public boolean isIndexed(Device device, String filter, String area) {
+		String key = getKey(device, filter, area, "indexed");
+		return properties.getBoolean(key, device!=null?isIndexed(null,ALL,null):false);
+	}
 
 	public boolean isCropResize(Device device, String filter, String area) {
 		String key = getKey(device, filter, area, "crop-resize");
@@ -491,6 +496,11 @@ public class ImageConfig {
 	public boolean isEmboss(Device device, String filter, String area) {
 		String key = getKey(device, filter, area, "emboss");
 		return properties.getBoolean(key, device!=null?isEmboss(null,ALL,null):false);
+	}
+	
+	public int getResizeDashed(Device device, String filter, String area) {
+		String key = getKey(device, filter, area, "resize-dashed");
+		return properties.getInteger(key, device!=null?getResizeDashed(null,ALL,null):1);
 	}
 
 	public boolean isWeb2(Device device, String filter, String area) {

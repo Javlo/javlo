@@ -1066,7 +1066,7 @@ public class InfoBean {
 	/**
 	 * return a random number between 0 and 9999
 	 */
-	public static long getRandom1000() {
+	public long getRandom1000() {
 		return (long) (Math.random() * 1000);
 	}
 

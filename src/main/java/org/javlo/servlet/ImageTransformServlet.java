@@ -504,6 +504,9 @@ public class ImageTransformServlet extends HttpServlet {
 		if (config.isEdge(ctx.getDevice(), filter, area)) {
 			img = (new EdgeFilter()).filter(img, null);
 		}
+		if (config.isIndexed(ctx.getDevice(), filter, area)) {
+			img = ImageEngine.convertRGBAToIndexed(img);
+		}
 		// org.javlo.helper.Logger.stepCount("transform",
 		// "start - transformation - 2.4");
 		if (config.isEmboss(ctx.getDevice(), filter, area)) {
@@ -645,6 +648,9 @@ public class ImageTransformServlet extends HttpServlet {
 		}
 		if (config.isHorizontalFlip(ctx.getDevice(), filter, area)) {
 			img = ImageEngine.flip(img, false);
+		}
+		if (config.getResizeDashed(ctx.getDevice(), filter, area) > 0) {
+			img = ImageEngine.resizeDashed(img, config.getResizeDashed(ctx.getDevice(), filter, area));
 		}
 
 		// org.javlo.helper.Logger.stepCount("transform",

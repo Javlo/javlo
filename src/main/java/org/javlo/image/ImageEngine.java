@@ -1,6 +1,7 @@
 package org.javlo.image;
 
 import java.awt.Color;
+import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.Transparency;
@@ -10,7 +11,9 @@ import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.awt.image.BufferedImageOp;
 import java.awt.image.ColorConvertOp;
+import java.awt.image.ColorModel;
 import java.awt.image.ConvolveOp;
+import java.awt.image.IndexColorModel;
 import java.awt.image.Kernel;
 import java.awt.image.WritableRaster;
 import java.io.File;
@@ -29,8 +32,6 @@ import javax.imageio.plugins.jpeg.JPEGImageWriteParam;
 import org.imgscalr.Scalr;
 import org.javlo.helper.StringHelper;
 
-import com.jhlabs.image.ContrastFilter;
-import com.jhlabs.image.GrayscaleFilter;
 import com.jhlabs.image.RGBAdjustFilter;
 
 public class ImageEngine {
@@ -1077,6 +1078,22 @@ public class ImageEngine {
 		return outImage;
 	}
 	
+	/**
+	 * create transparent dash
+	 * 
+	 * @param image
+	 * @return a image width same width and same height.
+	 */
+	public static BufferedImage resizeDashed(BufferedImage image, int factor) {
+		BufferedImage outImage = new BufferedImage(image.getWidth()*factor, image.getHeight()*factor, BufferedImage.TYPE_4BYTE_ABGR);
+		for (int x = 0; x < image.getWidth(); x++) {
+			for (int y = 0; y < image.getHeight(); y++) {
+				outImage.setRGB(x*factor, y*factor, image.getRGB(x, y));				
+			}
+		}
+		return outImage;
+	}
+	
 	public static BufferedImage grayscale(BufferedImage inImage) {
 		ColorSpace cs = ColorSpace.getInstance(ColorSpace.CS_GRAY);  
 		ColorConvertOp op = new ColorConvertOp(cs, null);  
@@ -1182,18 +1199,41 @@ public class ImageEngine {
 		return outImage;
 	}
 
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
+	
+	public static void main(String[] args) throws Exception {
 		File source = new File("C:/trans/test.jpg");
 		File target = new File("c:/trans/out.png");
-		try {		
-			BufferedImage sourceImage = ImageIO.read(source);
-			sourceImage=flip(sourceImage, false);
-			ImageIO.write(sourceImage, "png", target);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+
+	    BufferedImage src = convertRGBAToIndexed(ImageIO.read(source));
+	    ImageIO.write(src, "png", target);
+	}
+
+	public static BufferedImage convertRGBAToIndexed(BufferedImage src) {
+	    BufferedImage outImage = new BufferedImage(src.getWidth(), src.getHeight(), BufferedImage.TYPE_BYTE_INDEXED);
+	    Graphics g = outImage.getGraphics();
+	    g.setColor(new Color(231, 20, 189));
+	    g.fillRect(0, 0, outImage.getWidth(), outImage.getHeight());
+	    outImage = makeTransparent(outImage, 0, 0);
+	    outImage.createGraphics().drawImage(src, 0, 0, null);
+	    return outImage;
+	}
+
+	private static BufferedImage makeTransparent(BufferedImage image, int x, int y) {
+	    ColorModel cm = image.getColorModel();
+	    if (!(cm instanceof IndexColorModel)) {
+	        return image;
+	    }
+	    IndexColorModel icm = (IndexColorModel) cm;
+	    WritableRaster raster = image.getRaster();
+	    int pixel = raster.getSample(x, y, 0); // pixel is offset in ICM's palette
+	    int size = icm.getMapSize();
+	    byte[] reds = new byte[size];
+	    byte[] greens = new byte[size];
+	    byte[] blues = new byte[size];
+	    icm.getReds(reds);
+	    icm.getGreens(greens);
+	    icm.getBlues(blues);
+	    IndexColorModel icm2 = new IndexColorModel(8, size, reds, greens, blues, pixel);
+	    return new BufferedImage(icm2, raster, image.isAlphaPremultiplied(), null);
 	}
 }
