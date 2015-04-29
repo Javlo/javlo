@@ -9,3 +9,7 @@
 ._page_associate .last-page #footer-row {
 	display: block;
 }
+
+@media screen and (max-width: 640px) {
+	.responsive-true td, td.responsive-true {display:block !important;width:100% !important;float:left\9;}
+}

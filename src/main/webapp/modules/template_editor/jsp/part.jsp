@@ -46,13 +46,16 @@
 		</div>
 		</div>
 		<div class="one_half last">	
-		<div class="line${not empty exclude.titleColor?' disabled':''}">
-			<label for="titleColor-${part.name}">title color<c:if test="${not empty part.finalTitleColor}"> (${part.finalTitleColor})</c:if></label>
-			<input class="color" type="text" id="titleColor-${part.name}" name="titleColor" value="${part.titleColor}" />
+		<div class="line${not empty exclude.responsive?' disabled':''}">
+			<label for="responsive-${part.name}">responsive <input type="checkbox" id="responsive-${part.name}" name="responsive" ${part.responsive?'checked="checked"':''} /></label>			
 		</div>		
 		<div class="line${not empty exclude.padding?' disabled':''}">
 			<label for="padding-${part.name}">padding <c:if test="${not empty part.finalPadding}"> (${part.finalPadding})</c:if></label>
 			<input type="text" id="padding-${part.name}" name="padding" value="${part.padding}" />
+		</div>
+		<div class="line${not empty exclude.titleColor?' disabled':''}">
+			<label for="titleColor-${part.name}">title color<c:if test="${not empty part.finalTitleColor}"> (${part.finalTitleColor})</c:if></label>
+			<input class="color" type="text" id="titleColor-${part.name}" name="titleColor" value="${part.titleColor}" />
 		</div>
 		<div class="line${not empty exclude.textColor?' disabled':''}">
 			<label for="textColor-${part.name}">text color<c:if test="${not empty part.finalTextColor}"> (${part.finalTextColor})</c:if></label>

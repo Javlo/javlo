@@ -155,6 +155,7 @@ public class TemplateEditorAction extends AbstractModuleAction {
 				area.setTextSize(rs.getParameter("textSize", ""));
 				area.setFont(rs.getParameter("font", ""));
 				area.setBackgroundColor(rs.getParameter("backgroundColor", ""));
+				area.setResponsive(""+StringHelper.isTrue(rs.getParameter("responsive", "false")));
 
 				area.setH1Size(rs.getParameter("h1size", ""));
 				area.setH2Size(rs.getParameter("h2size", ""));
@@ -196,6 +197,7 @@ public class TemplateEditorAction extends AbstractModuleAction {
 					row.setFont(rs.getParameter("font", ""));
 					row.setBackgroundColor(rs.getParameter("backgroundColor", ""));
 					row.setLinkColor(rs.getParameter("linkColor", ""));
+					row.setResponsive(""+StringHelper.isTrue(rs.getParameter("responsive", "false")));
 
 					row.setH1Size(rs.getParameter("h1size", ""));
 					row.setH2Size(rs.getParameter("h2size", ""));
@@ -239,6 +241,7 @@ public class TemplateEditorAction extends AbstractModuleAction {
 				style.setLinkColor(rs.getParameter("linkColor", ""));
 				style.setTextSize(rs.getParameter("textSize", ""));
 				style.setFont(rs.getParameter("font", ""));
+				style.setResponsive(""+StringHelper.isTrue(rs.getParameter("responsive", "false")));
 
 				style.setH1Size(rs.getParameter("h1size", ""));
 				style.setH2Size(rs.getParameter("h2size", ""));

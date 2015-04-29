@@ -1044,6 +1044,10 @@ public class InfoBean {
 	public String getAjaxLoaderURL() {
 		return URLHelper.createStaticURL(ctx, "/images/ajax_loader.gif");
 	}
+	
+	public String getViewAjaxLoaderURL() {
+		return URLHelper.createStaticURL(ctx, "/images/ajax-loader-circle.gif");
+	}
 
 	public String getRandomId() {
 		return StringHelper.getRandomId();

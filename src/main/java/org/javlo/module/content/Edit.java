@@ -114,12 +114,12 @@ public class Edit extends AbstractModuleAction {
 			previewParam = "previewEdit=true&";
 		}
 
-		String insertXHTML = "<a class=\"action-button ajax\" href=\"" + URLHelper.createURL(ctx) + "?" + previewParam + "webaction=insert&previous=0&type=" + currentTypeComponent.getType() + "\">" + insertHere + "</a>";
+		String insertXHTML = "<a class=\"btn btn-default ajax btn-xs\" href=\"" + URLHelper.createURL(ctx) + "?" + previewParam + "webaction=insert&previous=0&type=" + currentTypeComponent.getType() + "\">" + insertHere + "</a>";
 		if (pastePageHere != null) {
-			insertXHTML = insertXHTML + "<a class=\"action-button\" href=\"" + URLHelper.createURL(ctx) + "?" + previewParam + "webaction=pastePage&previous=0\">" + pastePageHere + "</a>";
+			insertXHTML = insertXHTML + "<a class=\"btn btn-default btn-xs\" href=\"" + URLHelper.createURL(ctx) + "?" + previewParam + "webaction=pastePage&previous=0\">" + pastePageHere + "</a>";
 		}
 		if (pasteHere != null) {
-			insertXHTML = insertXHTML + "<a class=\"action-button ajax\" href=\"" + URLHelper.createURL(ctx) + "?" + previewParam + "webaction=pasteComp&previous=0\">" + pasteHere + "</a>";
+			insertXHTML = insertXHTML + "<a class=\"btn btn-default btn-xs ajax\" href=\"" + URLHelper.createURL(ctx) + "?" + previewParam + "webaction=pasteComp&previous=0\">" + pasteHere + "</a>";
 		}
 		ctx.addAjaxInsideZone("insert-line-0", insertXHTML);
 
@@ -128,12 +128,12 @@ public class Edit extends AbstractModuleAction {
 		IContentComponentsList elems = ctx.getCurrentPage().getContent(areaCtx);
 		while (elems.hasNext(areaCtx)) {
 			IContentVisualComponent comp = elems.next(areaCtx);
-			insertXHTML = "<a class=\"action-button ajax\" href=\"" + URLHelper.createURL(ctx) + "?" + previewParam + "webaction=insert&previous=" + comp.getId() + "&type=" + currentTypeComponent.getType() + "\">" + insertHere + "</a>";
+			insertXHTML = "<a class=\"btn btn-default btn-xs ajax\" href=\"" + URLHelper.createURL(ctx) + "?" + previewParam + "webaction=insert&previous=" + comp.getId() + "&type=" + currentTypeComponent.getType() + "\">" + insertHere + "</a>";
 			if (pastePageHere != null) {
-				insertXHTML = insertXHTML + "<a class=\"action-button\" href=\"" + URLHelper.createURL(ctx) + "?" + previewParam + "webaction=pastePage&previous=" + comp.getId() + "\">" + pastePageHere + "</a>";
+				insertXHTML = insertXHTML + "<a class=\"btn btn-default btn-xs\" href=\"" + URLHelper.createURL(ctx) + "?" + previewParam + "webaction=pastePage&previous=" + comp.getId() + "\">" + pastePageHere + "</a>";
 			}
 			if (pasteHere != null) {
-				insertXHTML = insertXHTML + "<a class=\"action-button ajax\" href=\"" + URLHelper.createURL(ctx) + "?" + previewParam + "webaction=pasteComp&previous=" + comp.getId() + "\">" + pasteHere + "</a>";
+				insertXHTML = insertXHTML + "<a class=\"btn btn-default btn-xs ajax\" href=\"" + URLHelper.createURL(ctx) + "?" + previewParam + "webaction=pasteComp&previous=" + comp.getId() + "\">" + pasteHere + "</a>";
 			}
 			ctx.addAjaxInsideZone("insert-line-" + comp.getId(), insertXHTML);
 		}

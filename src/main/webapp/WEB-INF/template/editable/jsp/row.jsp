@@ -3,7 +3,7 @@
 %><c:set var="rowEmpty" value="true" />
 <c:forEach var="currentArea" items="${row.areas}"><c:if test="${empty info.areaEmpty[currentArea.name]}"><c:set var="rowEmpty" value="false" /></c:if></c:forEach>
 <c:if test="${(not rowEmpty) || info.previewEdit || param['_display-zone']}">
-<c:set var="template" value="${row}" scope="request" /><table width="100%" cellspacing="0" border="0"><tr id="${row.name}">
+<c:set var="template" value="${row}" scope="request" /><table width="100%" cellspacing="0" border="0"><tr id="${row.name}" class="responsive-${row.responsive}">
 <c:forEach var="currentArea" items="${row.areas}"><c:set var="areaStyle" value="${currentArea}" scope="request" />
 <jsp:include page="area.jsp" />
 </c:forEach></tr></table>

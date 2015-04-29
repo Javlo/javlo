@@ -37,6 +37,7 @@ public class TemplatePart {
 	private String h4Size = null;
 	private String h5Size = null;
 	private String h6Size = null;
+	private String responsive = "false";
 
 	public String getDefaultH1Size() {
 		return null;
@@ -459,6 +460,14 @@ public class TemplatePart {
 
 	public void setOuterBackgroundColor(String outerBackgroundColor) {
 		this.outerBackgroundColor = outerBackgroundColor;
+	}
+
+	public String getResponsive() {
+		return responsive;
+	}
+
+	public void setResponsive(String responsive) {
+		this.responsive = responsive;
 	}
 
 }

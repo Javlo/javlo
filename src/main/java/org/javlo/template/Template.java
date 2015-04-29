@@ -2499,6 +2499,7 @@ public class Template implements Comparable<Template> {
 		part.setTextSize(properties.getString(prefix + ".text-size", part.getDefaultTextSize()));
 		part.setWidth(properties.getString(prefix + ".width", part.getDefaultWidth()));
 		part.setTitleColor(properties.getString(prefix + ".title-color"));
+		part.setResponsive(properties.getString(prefix+".responsive", "false"));
 
 		part.setH1Size(properties.getString(prefix + ".h1.size", part.getDefaultH1Size()));
 		part.setH2Size(properties.getString(prefix + ".h2.size", part.getDefaultH2Size()));
@@ -2522,6 +2523,7 @@ public class Template implements Comparable<Template> {
 		properties.setProperty(prefix + ".text-size", part.getTextSize());
 		properties.setProperty(prefix + ".width", part.getWidth());
 		properties.setProperty(prefix + ".title-color", part.getTitleColor());
+		properties.setProperty(prefix + ".responsive", part.getResponsive());
 
 		properties.setProperty(prefix + ".h1.size", part.getH1Size());
 		properties.setProperty(prefix + ".h2.size", part.getH2Size());
