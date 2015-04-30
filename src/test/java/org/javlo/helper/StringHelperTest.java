@@ -3,6 +3,9 @@ package org.javlo.helper;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.mail.internet.AddressException;
+import javax.mail.internet.InternetAddress;
+
 import junit.framework.TestCase;
 
 public class StringHelperTest extends TestCase {
@@ -146,6 +149,13 @@ public class StringHelperTest extends TestCase {
   
   public void testCRC32() {
 	  assertNotSame(StringHelper.getCRC32("javlo"), StringHelper.getCRC32("javlo2"));
+  }
+  
+  public void testSearchStructuredEmail() {
+	  assertEquals(StringHelper.searchStructuredEmail("first last <info@javlo.org>;first last <info2@javlo.org>").size(), 2);
+	  assertEquals(StringHelper.searchStructuredEmail("first last <info@javlo.org>;first last2 <info2@javlo.org>").iterator().next().getPersonal(), "first last");
+	  assertEquals(StringHelper.searchStructuredEmail("first last <info@javlo.org>;first last2 <info2@javlo.org>").iterator().next().getAddress(), "info@javlo.org");
+	  
   }
   
  

@@ -37,6 +37,10 @@
 				<label for="mailing-recipients">${i18n.edit['mailing.form.recipients']}</label>
 				<textarea id="mailing-recipients" name="recipients" class="form-control"> <c:out value="${mailing.recipients}" escapeXml="true" /></textarea>
 			</div>
+			<div class="form-group">
+				<label for="mailing-structured-recipients">${i18n.edit['mailing.form.structured-recipients']}</label>
+				<textarea id="mailing-structured-recipients" name="structuredRecipients" class="form-control"> <c:out value="${mailing.structuredRecipients}" escapeXml="true" /></textarea>
+			</div>
 			<div class="checkbox">	
 				<label class="suffix">	
 				<input type="checkbox" id="mailing-test-mailing" name="test-mailing" ${mailing.testMailing?'checked="checked"':''} />

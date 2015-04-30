@@ -9,13 +9,16 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -24,6 +27,7 @@ import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.stream.ImageOutputStream;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -84,6 +88,56 @@ public class ImageTransformServlet extends HttpServlet {
 	public static final String COMPONENT_ID_URL_DIR_PREFIX = "/comp-";
 	
 	public static final String HASH_PREFIX = "/hash-";
+	
+	private static final class ImageTransformThread extends Thread {
+		
+		ServletContext application;
+		ContentContext ctx;		
+		ImageConfig config;
+		StaticInfo staticInfo;
+		String filter;
+		String area;
+		Template template;
+		IImageFilter comp;
+		File imageFile;
+		String imageName;
+		String inFileExtention;
+		private Exception exception = null;		
+		
+		
+		public Exception getException() {
+			return exception;
+		}
+
+		public void setException(Exception exception) {
+			this.exception = exception;
+		}
+
+		public ImageTransformThread(ServletContext application, ContentContext ctx, ImageConfig config, StaticInfo staticInfo, String filter, String area, Template template, IImageFilter comp, File imageFile, String imageName, String inFileExtention) {
+			super();
+			this.application = application;
+			this.ctx = ctx;
+			this.config = config;
+			this.staticInfo = staticInfo;
+			this.filter = filter;
+			this.area = area;
+			this.template = template;
+			this.comp = comp;
+			this.imageFile = imageFile;
+			this.imageName = imageName;
+			this.inFileExtention = inFileExtention;
+		}
+
+		@Override
+		public void run() {			
+			try {
+				ImageTransformServlet.imageTransformForThread(application, ctx, config, staticInfo, filter, area, template, comp, imageFile, imageName, inFileExtention);
+			} catch (IOException e) {
+				setException(e);
+				e.printStackTrace();
+			}			
+		}
+	}
 
 	public static final class ImageTransforming {
 		private final File file;
@@ -348,12 +402,27 @@ public class ImageTransformServlet extends HttpServlet {
 
 			} finally {
 				outImage.close();
-			}
-
+			}			
+		}
+	}
+	
+	private void imageTransform(ContentContext ctx, ImageConfig config, StaticInfo staticInfo, String filter, String area, Template template, IImageFilter comp, File imageFile, String imageName, String inFileExtention) throws Exception {
+		ImageTransformThread imageThread = new ImageTransformThread(getServletContext(), ctx, config, staticInfo, filter, area, template, comp, imageFile, imageName, inFileExtention);
+		ExecutorService executor = Executors.newSingleThreadExecutor();
+		executor.execute(imageThread);
+		executor.shutdown();
+		try {
+			executor.awaitTermination(30, TimeUnit.SECONDS);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		executor.shutdownNow();
+		if (imageThread.getException() != null) {
+			throw imageThread.getException();
 		}
 	}
 
-	private void imageTransform(ContentContext ctx, ImageConfig config, StaticInfo staticInfo, String filter, String area, Template template, IImageFilter comp, File imageFile, String imageName, String inFileExtention) throws IOException {
+	private static void imageTransformForThread(ServletContext application, ContentContext ctx, ImageConfig config, StaticInfo staticInfo, String filter, String area, Template template, IImageFilter comp, File imageFile, String imageName, String inFileExtention) throws IOException {
 		
 		String fileSize = StringHelper.renderSize(imageFile.length());
 
@@ -660,7 +729,7 @@ public class ImageTransformServlet extends HttpServlet {
 			logger.severe("image : " + imageFile + " could not be resized.");
 		} else {
 			/* create cache image */
-			FileCache fc = FileCache.getInstance(getServletContext());
+			FileCache fc = FileCache.getInstance(application);
 			String deviceCode = "no-device";
 			if (ctx.getDevice() != null) {
 				deviceCode = ctx.getDevice().getCode();

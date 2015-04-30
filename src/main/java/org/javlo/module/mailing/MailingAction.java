@@ -162,6 +162,7 @@ public class MailingAction extends AbstractModuleAction {
 			mailingContext.setReportTo(rs.getParameter("report-to", null));
 			mailingContext.setGroups(rs.getParameterListValues("groups", new LinkedList<String>()));
 			mailingContext.setRecipients(rs.getParameter("recipients", null));
+			mailingContext.setStructuredRecipients(rs.getParameter("structuredRecipients", null));
 			mailingContext.setTestMailing(rs.getParameter("test-mailing", null) != null);			
 			boolean isValid = mailingContext.validate(ctx);
 			if (ctx.isAjax()) {

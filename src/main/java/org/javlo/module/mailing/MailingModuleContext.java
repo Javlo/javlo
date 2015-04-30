@@ -65,6 +65,7 @@ public class MailingModuleContext extends AbstractModuleContext {
 	private String reportTo;
 	private List<String> groups;
 	private String recipients;
+	private String structuredRecipients;
 	private boolean isTestMailing;
 	private Set<InternetAddress> allRecipients = new LinkedHashSet<InternetAddress>();
 	private final List<LinkToRenderer> navigation = new LinkedList<LinkToRenderer>();
@@ -200,6 +201,13 @@ public class MailingModuleContext extends AbstractModuleContext {
 					}
 				}
 			}
+			if (structuredRecipients != null) {
+				for (InternetAddress email : StringHelper.searchStructuredEmail(structuredRecipients)) {					
+					if (!allRecipients.contains(email)) {
+						allRecipients.add(email);
+					}
+				}
+			}
 			return true;
 		} catch (UnsupportedEncodingException ex) {
 			throw new RuntimeException(ex);
@@ -214,6 +222,7 @@ public class MailingModuleContext extends AbstractModuleContext {
 		reportTo = null;
 		groups = null;
 		recipients = null;
+		structuredRecipients = null;
 		isTestMailing = false;
 		allRecipients.clear();
 	}
@@ -243,6 +252,14 @@ public class MailingModuleContext extends AbstractModuleContext {
 		m.setRoles(groups);
 		m.setSendDate(new Date());
 		m.store(ctx.getRequest().getSession().getServletContext());
+	}
+
+	public String getStructuredRecipients() {
+		return structuredRecipients;
+	}
+
+	public void setStructuredRecipients(String structuredRecipients) {
+		this.structuredRecipients = structuredRecipients;
 	}
 
 }

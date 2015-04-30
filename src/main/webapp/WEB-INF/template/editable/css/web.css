@@ -11,5 +11,5 @@
 }
 
 @media screen and (max-width: 640px) {
-	.responsive-true td, td.responsive-true {display:block !important;width:100% !important;float:left\9;}
+	tr.responsive-true td, td.responsive-true {display:block !important;width:100% !important;float:left\9;}
 }

@@ -47,6 +47,9 @@ import java.util.Set;
 import java.util.logging.Logger;
 import java.util.zip.CRC32;
 
+import javax.mail.internet.AddressException;
+import javax.mail.internet.InternetAddress;
+
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.RandomStringUtils;
@@ -2136,6 +2139,36 @@ public class StringHelper {
 		} catch (Throwable e) {
 			return defaultValue;
 		}
+	}
+
+	/**
+	 * extract email from a free text
+	 * 
+	 * @param text
+	 *            a free text
+	 * @return a collection of email address
+	 */
+	public static Collection<InternetAddress> searchStructuredEmail(String text) {
+		Collection<InternetAddress> outEmails = new LinkedList<InternetAddress>();
+		BufferedReader reader = new BufferedReader(new StringReader(text));
+		try {
+			String line = reader.readLine();
+			while (line != null) {
+				String[] mailCandidate = line.split(",|;|:");
+				for (String element : mailCandidate) {
+					try {
+						InternetAddress email = new InternetAddress(element.trim());
+						outEmails.add(email);
+					} catch (AddressException e) {
+					}
+				}
+				line = reader.readLine();
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		return outEmails;
 	}
 
 	/**

@@ -400,4 +400,16 @@
  
  * GitHub
  
-* 2.1.0.2.0 22/04/2015 
+* 2.1.0.2.0 22/04/2015
+
+ * GitHub change version for finalize integration 
+
+* 2.1.0.2.1 22/04/2015
+
+ * send mailing email vrac import structured
+ 
+ * responsive editable template
+ 
+ * ImageTransformServlet : create and wrap ImageTransforming thread with ExecuterService for timeout
+ 
+ * 2.1.0.2.2 30/04/2015

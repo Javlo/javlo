@@ -17,7 +17,7 @@ body .association-wrapper, body .page-wrapper {
 }
 <jsp:include page="css/dynamic_css.jsp" />
 @media screen and (max-width: ${info.template.style.width}) {
-	body table.association-wrapper {width: 100%;}
+	.responsive-true table.association-wrapper {width: 100%;}
 }
 </style>
 </head><c:set var="outerBackgroundColor" value="" /><c:if test="${not empty info.template.style.outerBackgroundColor}"><c:set var="outerBackgroundColor" value="background-color: ${info.template.style.outerBackgroundColor}" /></c:if>
