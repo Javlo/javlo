@@ -519,7 +519,7 @@ public class StaticConfig extends Observable {
 	}
 
 	public String getImageCacheFolder() {
-		return properties.getString("image-cache-folder", FileCache.BASE_DIR);
+		return replaceFolderVariable(properties.getString("image-cache-folder", FileCache.BASE_DIR));
 	}
 
 	public String getFlashFolder() {
