@@ -442,14 +442,25 @@ public class NetHelper {
 
 	public static List<String> extractExternalURL(URL inURL, String content) {
 		List<String> urlList = new LinkedList<String>();
-
+		
+		String baseURL = URLHelper.extractPath(inURL.toString());
+		int baseIndex = content.toLowerCase().indexOf("<base");
+		if (baseIndex>0) {
+			String baseTag = content.substring(baseIndex, baseIndex+content.substring(baseIndex).indexOf('>'));
+			int hrefIndex = baseTag.toLowerCase().indexOf("href");
+			if (hrefIndex > 0) {
+				int startIndex = hrefIndex+baseTag.substring(hrefIndex).indexOf('"');
+				int endIndex = startIndex+baseTag.substring(startIndex+1).indexOf('"')+1;
+				baseURL = baseTag.substring(startIndex+1, endIndex);
+			}
+		}
 		int hrefIndex = content.toLowerCase().indexOf("href=\"") + "href=\"".length();
 		while (hrefIndex >= "href=\"".length()) {
 			int closeLink = content.indexOf("\"", hrefIndex + 1);
 			if (closeLink >= 0) {
 				String url = content.substring(hrefIndex, closeLink);
 				if (!URLHelper.isAbsoluteURL(url)) {
-					url = URLHelper.mergePath(URLHelper.extractPath(inURL.toString()), url);
+					url = URLHelper.mergePath(baseURL, url);
 				}
 				if (!url.contains(">")) {
 					if (!urlList.contains(url)) {
@@ -924,26 +935,8 @@ public class NetHelper {
 	}
 
 	public static void main(String[] args) throws Exception {
-		// public static String getLocalCopyOfPageImage(String cacheFolder,
-		// String dataFolder, URL pageURL, URL imageURL, String content, CRC32
-		// crc32, boolean preferVertical, boolean needVertical) {
-		/*String cacheFolder = "cache";
-		String dataFolder = "c:/trans/data";
-		URL url = new URL("http://www.nsgalleries.com/hosted2/ab/pics/113011/vc06/index.php?nats=MTMwMjgzLjEuODUuODguMC4yMzM4LjAuMC4w");
-		String uri = getLocalCopyOfPageImage(cacheFolder, dataFolder, url, null, NetHelper.readPageGet(url), new CRC32(), true, false);
-		System.out.println("***** NetHelper.main : uri = " + uri); // TODO:
-																	// remove
-																	// debug
-																	// trace*/
-		
-		URL url  = new URL("http://join.ashlynnbrooke.com/gallery/MTMwMjgzLjAuODUuODguMC40MDU3LjAuMC4w");
-		URLConnection con = url.openConnection();
-		System.out.println( "orignal url: " + con.getURL() );
-		con.connect();
-		System.out.println( "connected url: " + con.getURL() );
-		InputStream is = con.getInputStream();
-		System.out.println( "redirected url: " + con.getURL() );
-		is.close();
-		System.out.println("done.");
+		URL url  = new URL("http://www.javlo.org");
+		String content = "<head><base href=\"http://www.w3schools.com/images/\" target=\"_blank\"></head><body><img src=\"stickman.gif\" width=\"24\" height=\"39\" alt=\"Stickman\"><a href=\"http://www.w3schools.com\">W3Schools</a></body>\"";
+		extractExternalURL(url, content);
 	}
 }
