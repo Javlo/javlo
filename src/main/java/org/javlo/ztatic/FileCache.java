@@ -48,7 +48,12 @@ public class FileCache {
 	
 		StaticConfig staticConfig = StaticConfig.getInstance(application);
 		baseDirName = staticConfig.getImageCacheFolder();
-		String realCacheFolder = application.getRealPath(baseDirName);
+		String realCacheFolder;
+		if (!baseDirName.startsWith("/")) {
+			realCacheFolder = application.getRealPath(baseDirName);
+		} else {
+			realCacheFolder = baseDirName;
+		}
 		if (realCacheFolder == null) {
 			throw new RuntimeException(baseDirName+" can't be converted to absolute path.");
 		}
