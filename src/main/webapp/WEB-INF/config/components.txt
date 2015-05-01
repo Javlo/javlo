@@ -15,6 +15,7 @@ org.javlo.component.title.WebSiteTitle
 org.javlo.component.meta.DateComponent
 org.javlo.component.meta.LocationComponent
 org.javlo.component.meta.TimeRangeComponent
+org.javlo.component.meta.EventDefinitionComponent
 org.javlo.component.text.Description
 org.javlo.component.meta.Keywords
 org.javlo.component.meta.PageWeight

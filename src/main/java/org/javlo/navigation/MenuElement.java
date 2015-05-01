@@ -42,6 +42,7 @@ import org.javlo.component.image.ImageTitleBean;
 import org.javlo.component.links.PageMirrorComponent;
 import org.javlo.component.meta.Category;
 import org.javlo.component.meta.DateComponent;
+import org.javlo.component.meta.EventDefinitionComponent;
 import org.javlo.component.meta.ForceRealContent;
 import org.javlo.component.meta.Keywords;
 import org.javlo.component.meta.LocationComponent;
@@ -66,6 +67,7 @@ import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
 import org.javlo.module.core.IPrintInfo;
 import org.javlo.service.PersistenceService;
+import org.javlo.service.event.Event;
 import org.javlo.service.exception.ServiceException;
 import org.javlo.service.resource.Resource;
 import org.javlo.template.Template;
@@ -131,6 +133,7 @@ public class MenuElement implements Serializable, IPrintInfo {
 		int priority;
 		String type = PAGE_TYPE_DEFAULT;
 		String sharedName = null;
+		Event event = null;
 
 		public ImageTitleBean imageLink;
 
@@ -396,6 +399,14 @@ public class MenuElement implements Serializable, IPrintInfo {
 
 		public void setSharedName(String sharedName) {
 			this.sharedName = sharedName;
+		}
+		
+		public Event getEvent() {
+			return event;
+		}
+		
+		public void setEvent(Event event) {
+			this.event = event;
 		}
 
 	}
@@ -4434,6 +4445,40 @@ public class MenuElement implements Serializable, IPrintInfo {
 
 	public void setUrlNumber(int urlNumber) {
 		this.urlNumber = urlNumber;
+	}
+	
+	/**
+	 * get event if menu element contains event info.
+	 * @param ctx
+	 * @return a event, null if this page does'nt contains event information
+	 * @throws Exception 
+	 */
+	public Event getEvent(ContentContext ctx) throws Exception {
+		PageDescription desc = getPageDescriptionCached(ctx, ctx.getRequestContentLanguage());
+		if (desc.event != null) {
+			if (desc.event == Event.NO_EVENT) {
+				return null;
+			} else {
+				return desc.event;
+			}
+		} else {
+			ContentElementList content = getContent(ctx);
+			while (content.hasNext(ctx)) {
+				IContentVisualComponent comp = content.next(ctx);
+				if (comp instanceof EventDefinitionComponent) {
+					EventDefinitionComponent eventComp = (EventDefinitionComponent)comp;
+					Event event = new Event(getId(), eventComp.getStartDate(), eventComp.getEndDate(), getTitle(ctx), getDescription(ctx));
+					event.setCategory(getCategory(ctx));
+					event.setLocation(getLocation(ctx));
+					event.setUrl(new URL(URLHelper.createAbsoluteURL(ctx, getPath())));
+					event.setUser(getCreator());
+					desc.event = event;
+					return desc.event;
+				}
+			}
+		}
+		desc.event = Event.NO_EVENT;
+		return desc.event;
 	}
 
 }

@@ -11,13 +11,11 @@ import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadMXBean;
 import java.net.URL;
 import java.text.DecimalFormat;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
@@ -60,10 +58,9 @@ import org.javlo.service.ListService;
 import org.javlo.service.PDFConvertion;
 import org.javlo.service.PersistenceService;
 import org.javlo.service.RequestService;
+import org.javlo.service.event.Event;
 import org.javlo.service.remote.RemoteMessage;
 import org.javlo.service.remote.RemoteMessageService;
-import org.javlo.service.shared.ISharedContentProvider;
-import org.javlo.service.shared.SharedContentContext;
 import org.javlo.service.shared.SharedContentService;
 import org.javlo.service.social.SocialService;
 import org.javlo.service.syncro.SynchroThread;
@@ -689,6 +686,28 @@ public class AccessServlet extends HttpServlet implements IVersion {
 						 */
 						PDFConvertion.getInstance().convertXHTMLToPDF(new URL(url), staticConfig.getApplicationLogin(), staticConfig.getApplicationPassword(), out);
 
+					}  else if (ctx.getFormat().equalsIgnoreCase("ical") || ctx.getFormat().equalsIgnoreCase("icalendar")) {						
+						OutputStream out = response.getOutputStream();
+						Event event = ctx.getCurrentPage().getEvent(ctx);
+						if (event == null)  {
+							response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+							return;
+						} else {
+							System.out.println("***** AccessServlet.process : EVENT FOUND."); //TODO: remove debug trace
+							response.setContentType("text/calendar;");
+							PrintWriter outPrint = new PrintWriter(out);
+							outPrint.println("BEGIN:VCALENDAR");
+							outPrint.println("VERSION:2.0");
+							outPrint.println("PRODID:"+event.getProdID());
+							outPrint.println("BEGIN:VJOURNAL");
+							outPrint.println("UID:"+event.getUser());
+							outPrint.println("CATEGORIES:"+event.getCategory());
+							outPrint.println("SUMMARY:"+event.getSummary());
+							outPrint.println("DESCRIPTION:"+event.getDescription());
+							outPrint.println("END:VJOURNAL");
+							outPrint.println("END:VCALENDAR");
+							outPrint.close();
+						}
 					} else if (ctx.getFormat().equalsIgnoreCase("cxml")) {
 
 						String realPath = ContentManager.getPath(request);
