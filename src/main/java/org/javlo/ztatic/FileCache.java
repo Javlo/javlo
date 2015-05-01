@@ -13,6 +13,7 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.logging.Logger;
 
+import javax.management.RuntimeErrorException;
 import javax.servlet.ServletContext;
 
 import org.apache.commons.io.FileUtils;
@@ -46,9 +47,13 @@ public class FileCache {
 		application.setAttribute(KEY, this);
 	
 		StaticConfig staticConfig = StaticConfig.getInstance(application);
-		baseDirName = staticConfig.getImageCacheFolder();		
+		baseDirName = staticConfig.getImageCacheFolder();
+		String realCacheFolder = application.getRealPath(baseDirName);
+		if (realCacheFolder == null) {
+			throw new RuntimeException(baseDirName+" can't be converted to absolute path.");
+		}
 		try {
-			baseDir = new File(application.getRealPath(baseDirName)).getCanonicalFile();
+			baseDir = new File(realCacheFolder).getCanonicalFile();
 		} catch (IOException e) {
 			logger.severe("problem create baseDir width : "+baseDirName);
 			e.printStackTrace();

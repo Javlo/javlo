@@ -72,8 +72,8 @@ public class TimeRangeComponent extends DateComponent {
 	protected String getEditXHTMLCode(ContentContext ctx) throws Exception {
 		StringBuffer finalCode = new StringBuffer();
 		finalCode.append(getSpecialInputTag());
-		finalCode.append("<input id=\"contentdate\" style=\"width: 120px;\" type=\"text\" id=\"" + getInputStartDateName() + "\" name=\"" + getInputStartDateName() + "\" value=\"" + StringHelper.renderDateWithDefaultValue(getStartDate(), "") + "\"/> - ");
-		finalCode.append("<input style=\"width: 120px;\" type=\"text\" id=\"" + getInputEndDateName() + "\" name=\"" + getInputEndDateName() + "\" value=\"" + StringHelper.renderDateWithDefaultValue(getEndDate(), "") + "\"/>");
+		finalCode.append("<div class=\"row\"><div class=\"col-sm-6\"><div class=\"form-group\"><label>Start : <input class=\"form-control\" id=\"contentdate\" style=\"width: 120px;\" type=\"text\" id=\"" + getInputStartDateName() + "\" name=\"" + getInputStartDateName() + "\" value=\"" + StringHelper.renderDateWithDefaultValue(getStartDate(), "") + "\"/></label></div></div>");
+		finalCode.append("<div class=\"col-sm-6\"><div class=\"form-group\"><label>End : <input class=\"form-control\" style=\"width: 120px;\" type=\"text\" id=\"" + getInputEndDateName() + "\" name=\"" + getInputEndDateName() + "\" value=\"" + StringHelper.renderDateWithDefaultValue(getEndDate(), "") + "\"/></label></div></div></div>");
 		return finalCode.toString();
 	}
 
@@ -173,9 +173,6 @@ public class TimeRangeComponent extends DateComponent {
 				setNeedRefresh(true);
 			}
 			
-			System.out.println("***** TimeRangeComponent.performEdit : newEndDate = "+newEndDate); //TODO: remove debug trace
-			System.out.println("***** TimeRangeComponent.performEdit : endDate = "+endDate); //TODO: remove debug trace
-
 			String dateStr = StringHelper.renderTime(startDate) + '-' + StringHelper.renderTime(endDate);
 			if (!dateStr.equals(getValue())) {
 				setValue(dateStr);
