@@ -10,8 +10,10 @@ import java.io.StringWriter;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.TreeSet;
 import java.util.Vector;
@@ -39,12 +41,15 @@ import org.javlo.navigation.MenuElement;
 import org.javlo.service.RequestService;
 import org.javlo.service.ReverseLinkService;
 import org.javlo.thread.AbstractThread;
+import org.javlo.utils.TimeMap;
 
 /**
  * @author pvandermaesen
  */
 
 public class SmartExternalLink extends ComplexPropertiesLink implements IReverseLinkComponent, IImageTitle {
+	
+	private static Map<String,String> BAD_LINKS = Collections.synchronizedMap(new TimeMap<String, String>(60*60*24)); // 1 day cache for bad link
 
 	public static class UndateInfo extends AbstractThread {
 
@@ -123,7 +128,7 @@ public class SmartExternalLink extends ComplexPropertiesLink implements IReverse
 
 			try {
 				URL url = new URL(getURL());
-				if (isValidConnection() == null) {					
+				if (isValidConnection() == null || BAD_LINKS.containsKey(url.toString())) {					
 					setValidConnection(NetHelper.isURLValid(url));
 					storeViewData();
 
@@ -140,6 +145,7 @@ public class SmartExternalLink extends ComplexPropertiesLink implements IReverse
 							logger.info("url: " + url + " must de removed because content unredeable.");
 						} else {
 							if (!isContentValid(pageContent)) {
+								BAD_LINKS.put(url.toString(), "");
 								setLinkValid(false);
 								setMustBeRemoved(true);
 								logger.info("url: " + url + " must de removed because content unvalid.");
@@ -159,6 +165,7 @@ public class SmartExternalLink extends ComplexPropertiesLink implements IReverse
 									setLinkValid(true);
 									setMustBeRemoved(false);
 								} else {
+									BAD_LINKS.put(url.toString(), "");
 									setLinkValid(false);
 									setMustBeRemoved(true);
 									logger.info("url: " + url + " must de removed because image not found.");
@@ -166,6 +173,7 @@ public class SmartExternalLink extends ComplexPropertiesLink implements IReverse
 							}
 						}
 					} else {
+						BAD_LINKS.put(url.toString(), "");
 						setMustBeRemoved(true);
 						logger.info("url: " + url + " must de removed because unvalid connection.");
 					}

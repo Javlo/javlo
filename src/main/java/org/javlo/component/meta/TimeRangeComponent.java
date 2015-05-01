@@ -72,8 +72,8 @@ public class TimeRangeComponent extends DateComponent {
 	protected String getEditXHTMLCode(ContentContext ctx) throws Exception {
 		StringBuffer finalCode = new StringBuffer();
 		finalCode.append(getSpecialInputTag());
-		finalCode.append("<div class=\"row\"><div class=\"col-sm-6\"><div class=\"form-group\"><label>Start : <input class=\"form-control\" id=\"contentdate\" style=\"width: 120px;\" type=\"text\" id=\"" + getInputStartDateName() + "\" name=\"" + getInputStartDateName() + "\" value=\"" + StringHelper.renderDateWithDefaultValue(getStartDate(), "") + "\"/></label></div></div>");
-		finalCode.append("<div class=\"col-sm-6\"><div class=\"form-group\"><label>End : <input class=\"form-control\" style=\"width: 120px;\" type=\"text\" id=\"" + getInputEndDateName() + "\" name=\"" + getInputEndDateName() + "\" value=\"" + StringHelper.renderDateWithDefaultValue(getEndDate(), "") + "\"/></label></div></div></div>");
+		finalCode.append("<div class=\"row\"><div class=\"col-sm-6\"><div class=\"form-group date\"><label>Start : <input class=\"form-control\" id=\"contentdate\" style=\"width: 120px;\" type=\"text\" id=\"" + getInputStartDateName() + "\" name=\"" + getInputStartDateName() + "\" value=\"" + StringHelper.renderDateWithDefaultValue(getStartDate(), "") + "\"/></label></div></div>");
+		finalCode.append("<div class=\"col-sm-6\"><div class=\"form-group\"><label>End : <input class=\"form-control date\" style=\"width: 120px;\" type=\"text\" id=\"" + getInputEndDateName() + "\" name=\"" + getInputEndDateName() + "\" value=\"" + StringHelper.renderDateWithDefaultValue(getEndDate(), "") + "\"/></label></div></div></div>");
 		return finalCode.toString();
 	}
 
@@ -173,7 +173,7 @@ public class TimeRangeComponent extends DateComponent {
 				setNeedRefresh(true);
 			}
 			
-			String dateStr = StringHelper.renderTime(startDate) + '-' + StringHelper.renderTime(endDate);
+			String dateStr = StringHelper.renderTime(startDate) + VALUE_SEPARATOR + StringHelper.renderTime(endDate);
 			if (!dateStr.equals(getValue())) {
 				setValue(dateStr);
 				setModify();
