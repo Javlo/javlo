@@ -451,11 +451,11 @@ public class NetHelper {
 			if (hrefIndex > 0) {
 				int startIndex = hrefIndex+baseTag.substring(hrefIndex).indexOf('"');
 				int endIndex = startIndex+baseTag.substring(startIndex+1).indexOf('"')+1;
-				if (startIndex<0) {
+				if (startIndex<hrefIndex) {
 					startIndex = hrefIndex+baseTag.substring(hrefIndex).indexOf('\'');
 					endIndex = startIndex+baseTag.substring(startIndex+1).indexOf('\'')+1;					
 				}
-				baseURL = baseTag.substring(startIndex+1, endIndex);
+				baseURL = baseTag.substring(startIndex+1, endIndex);				
 			}
 		}
 		int hrefIndex = content.toLowerCase().indexOf("href=\"") + "href=\"".length();
@@ -940,7 +940,7 @@ public class NetHelper {
 
 	public static void main(String[] args) throws Exception {
 		URL url  = new URL("http://www.javlo.org");
-		String content = "<head><base href=\"http://www.w3schools.com/images/\" target=\"_blank\"></head><body><img src=\"stickman.gif\" width=\"24\" height=\"39\" alt=\"Stickman\"><a href=\"http://www.w3schools.com\">W3Schools</a></body>\"";
+		String content = ResourceHelper.loadStringFromFile(new File("c:/trans/test.html"));
 		extractExternalURL(url, content);
 	}
 }
