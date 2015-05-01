@@ -451,6 +451,10 @@ public class NetHelper {
 			if (hrefIndex > 0) {
 				int startIndex = hrefIndex+baseTag.substring(hrefIndex).indexOf('"');
 				int endIndex = startIndex+baseTag.substring(startIndex+1).indexOf('"')+1;
+				if (startIndex<0) {
+					startIndex = hrefIndex+baseTag.substring(hrefIndex).indexOf('\'');
+					endIndex = startIndex+baseTag.substring(startIndex+1).indexOf('\'')+1;					
+				}
 				baseURL = baseTag.substring(startIndex+1, endIndex);
 			}
 		}
