@@ -23,6 +23,7 @@ public class Event implements Serializable {
 	private String user;
 
 	public Event(String id, Date start, Date end, String summary, String description) {
+		System.out.println("***** Event.Event : summary = "+summary); //TODO: remove debug trace
 		this.id = id;
 		this.start = start;
 		this.end = end;

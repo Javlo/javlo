@@ -694,13 +694,18 @@ public class AccessServlet extends HttpServlet implements IVersion {
 							return;
 						} else {
 							System.out.println("***** AccessServlet.process : EVENT FOUND."); //TODO: remove debug trace
+							System.out.println("***** AccessServlet.process : title = "+ctx.getCurrentPage().getTitle(ctx)); //TODO: remove debug trace
 							response.setContentType("text/calendar;");
 							PrintWriter outPrint = new PrintWriter(out);
 							outPrint.println("BEGIN:VCALENDAR");
 							outPrint.println("VERSION:2.0");
-							outPrint.println("PRODID:"+event.getProdID());
+							if (event.getProdID() != null) {
+								outPrint.println("PRODID:"+event.getProdID());
+							}
 							outPrint.println("BEGIN:VJOURNAL");
-							outPrint.println("UID:"+event.getUser());
+							if (event.getUser() != null) {
+								;outPrint.println("UID:"+event.getUser());
+							}
 							outPrint.println("CATEGORIES:"+event.getCategory());
 							outPrint.println("SUMMARY:"+event.getSummary());
 							outPrint.println("DESCRIPTION:"+event.getDescription());
