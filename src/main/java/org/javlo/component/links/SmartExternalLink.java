@@ -573,7 +573,7 @@ public class SmartExternalLink extends ComplexPropertiesLink implements IReverse
 				if (getImageURI(ctx) != null) {
 					res.append("<span class=\"image\">");
 					String imageURL = URLHelper.createTransformURL(ctx, getImageURI(ctx), "extern");
-					String jsImage = "<img class=\"img-responsive lazy\" src=\""+InfoBean.getCurrentInfoBean(ctx).getViewAjaxLoaderURL()+"\" data-src=\"" + imageURL + "\" alt=\"" + getTitle(ctx) + "\" />";
+					String jsImage = "<img class=\"img-responsive lazy\" src=\""+InfoBean.getCurrentInfoBean(ctx).getViewAjaxLoaderURL()+"\" data-src=\"" + imageURL + "\" alt=\"" +getTitle(ctx).replace('\'', ' ') + "\" />";
 					String noJsImage = "<img class=\"img-responsive\" src=\"" + imageURL + "\" alt=\"" + getTitle(ctx).replace('\'', ' ') + "\" />";
 					res.append("<noscript>"+noJsImage+"</noscript>");
 					res.append("<script>document.write('"+jsImage+"');</script>");
