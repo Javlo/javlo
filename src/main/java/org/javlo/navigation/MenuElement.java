@@ -85,8 +85,10 @@ import org.javlo.ztatic.StaticInfo;
 public class MenuElement implements Serializable, IPrintInfo {
 
 	public static final String PAGE_TYPE_DEFAULT = "default";
+	
+	public static final double VOTES_MULTIPLY = 100000;
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;	
 
 	/**
 	 * the description bean of the page, use for cache and JSTL.
@@ -2765,7 +2767,7 @@ public class MenuElement implements Serializable, IPrintInfo {
 				}
 				if (votes > 0) {
 					desc.pageRank = (((IPageRank) comp).getRankValue(ctx, getPath())) / (double) votes;
-					desc.pageRank = desc.pageRank +  (double) (votes)/100000;
+					desc.pageRank = desc.pageRank +  (double) (votes)/VOTES_MULTIPLY;
 					return desc.pageRank;
 				}
 			}
