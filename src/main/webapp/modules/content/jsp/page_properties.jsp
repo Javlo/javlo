@@ -95,6 +95,10 @@
 	<label>${i18n.edit['item.last-access']}</label>
 	<span>${page.lastAccess}</span>
 </div>
+<div class="line">
+	<label>${i18n.edit['item.page-rank']}</label>
+	<span>${page.pageRank}</span>
+</div>
 
 </c:if>
 

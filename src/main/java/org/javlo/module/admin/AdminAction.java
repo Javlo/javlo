@@ -135,6 +135,10 @@ public class AdminAction extends AbstractModuleAction {
 		private String userFactoryClassName = "";
 		private String adminUserFactoryClassName = "";
 		
+		private String mailingSenders = "";
+		private String mailingSubject = "";
+		private String mailingReport = "";
+		
 		private boolean reversedlink;
 
 		private TemplateData templateData = null;
@@ -198,6 +202,10 @@ public class AdminAction extends AbstractModuleAction {
 			setProxyPathPrefix(globalContext.getProxyPathPrefix());
 			
 			setReversedlink(globalContext.isReversedLink());
+			
+			setMailingSenders(globalContext.getMailingSenders());
+			setMailingSubject(globalContext.getMailingSubject());
+			setMailingReport(globalContext.getMailingReport());
 
 			Properties properties = new Properties();
 			properties.putAll(globalContext.getURIAlias());
@@ -660,6 +668,30 @@ public class AdminAction extends AbstractModuleAction {
 			this.reversedlink = reversedlink;
 		}
 
+		public String getMailingSenders() {
+			return mailingSenders;
+		}
+
+		public void setMailingSenders(String mailingSenders) {
+			this.mailingSenders = mailingSenders;
+		}
+
+		public String getMailingSubject() {
+			return mailingSubject;
+		}
+
+		public void setMailingSubject(String mailingSubject) {
+			this.mailingSubject = mailingSubject;
+		}
+
+		public String getMailingReport() {
+			return mailingReport;
+		}
+
+		public void setMailingReport(String mailingReport) {
+			this.mailingReport = mailingReport;
+		}
+
 	}
 
 	public static class ComponentBean {
@@ -1037,6 +1069,10 @@ public class AdminAction extends AbstractModuleAction {
 					currentGlobalContext.setDMZServerInter(requestService.getParameter("dmz-inter", ""));
 					currentGlobalContext.setDMZServerIntra(requestService.getParameter("dmz-intra", ""));
 					currentGlobalContext.setProxyPathPrefix(requestService.getParameter("proxy-prefix", ""));
+					
+					currentGlobalContext.setMailingSenders(requestService.getParameter("mailing-senders", ""));
+					currentGlobalContext.setMailingSubject(requestService.getParameter("mailing-subject", ""));
+					currentGlobalContext.setMailingReport(requestService.getParameter("mailing-report", ""));
 
 					String dateFormat = requestService.getParameter("short-date", null);
 					if (dateFormat != null) {

@@ -2426,9 +2426,9 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		}
 	}
 
-	public void setMailingSender(String sender) {
+	public void setMailingSenders(String sender) {
 		synchronized (properties) {
-			properties.setProperty("mailing.sender", sender);
+			properties.setProperty("mailing.senders", sender);
 			save();
 		}
 	}

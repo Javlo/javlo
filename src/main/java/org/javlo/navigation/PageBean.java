@@ -292,6 +292,15 @@ public class PageBean implements Serializable {
 			return -1;
 		}
 	}
+	
+	public double getPageRank() {
+		try {
+			return page.getPageRank(ctx);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return -1;
+		}
+	}
 
 	public String getStartPublish() {
 		return StringHelper.renderTime(page.getStartPublishDate());

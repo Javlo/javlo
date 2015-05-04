@@ -2759,11 +2759,13 @@ public class MenuElement implements Serializable, IPrintInfo {
 		while (contentList.hasNext(ctx)) {
 			IContentVisualComponent comp = contentList.next(ctx);
 			if (comp instanceof IPageRank) {
-				if (((IPageRank) comp).getVotes(ctx, getPath()) == 0) {
+				int votes = ((IPageRank) comp).getVotes(ctx, getPath());
+				if (votes == 0) {
 					return defaultValue;
 				}
-				if (((IPageRank) comp).getVotes(ctx, getPath()) > 0) {
-					desc.pageRank = (((IPageRank) comp).getRankValue(ctx, getPath())) / (double) (((IPageRank) comp).getVotes(ctx, getPath()));
+				if (votes > 0) {
+					desc.pageRank = (((IPageRank) comp).getRankValue(ctx, getPath())) / (double) votes;
+					desc.pageRank = desc.pageRank +  (double) (votes)/100000;
 					return desc.pageRank;
 				}
 			}

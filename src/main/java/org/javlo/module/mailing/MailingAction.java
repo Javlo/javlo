@@ -17,6 +17,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
 import org.javlo.actions.AbstractModuleAction;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
@@ -47,7 +48,7 @@ public class MailingAction extends AbstractModuleAction {
 	private static Logger logger = Logger.getLogger(MailingAction.class.getName());
 
 	public static final String SEND_WIZARD_BOX = "sendwizard";
-	
+
 	public static final String SEND_WIZARD_BOX_PREVIEW = "main-renderer";
 
 	@Override
@@ -76,20 +77,20 @@ public class MailingAction extends AbstractModuleAction {
 
 		HashMap<String, String> params = new HashMap<String, String>();
 		params.put(ContentContext.NO_DMZ_PARAM_NAME, "true");
-		request.setAttribute("previewURL", URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.PAGE_MODE),params));
+		request.setAttribute("previewURL", URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.PAGE_MODE), params));
 
 		MailingModuleContext mailingContext = MailingModuleContext.getInstance(request);
 		request.setAttribute("mailing", mailingContext);
-		
+
 		Module currentModule = modulesContext.getCurrentModule();
-		if (ctx.isEditPreview()) {						
+		if (ctx.isEditPreview()) {
 			if (mailingContext.getWizardStep(SEND_WIZARD_BOX) == 1) {
-				mailingContext.setWizardStep(SEND_WIZARD_BOX,2);
-				//mailingContext.setCurrentTemplate(ctx.getCurrentTemplate().getId());				
+				mailingContext.setWizardStep(SEND_WIZARD_BOX, 2);
+				// mailingContext.setCurrentTemplate(ctx.getCurrentTemplate().getId());
 				currentModule.setRenderer("/jsp/step2.jsp");
 				request.setAttribute("currentTemplate", mailingContext.getCurrentTemplate());
-			} else {				
-				currentModule.setRenderer("/jsp/step"+mailingContext.getWizardStep(SEND_WIZARD_BOX)+".jsp");				
+			} else {
+				currentModule.setRenderer("/jsp/step" + mailingContext.getWizardStep(SEND_WIZARD_BOX) + ".jsp");
 			}
 		} else {
 			if (mailingContext.getCurrentLink().equals("send")) {
@@ -107,7 +108,7 @@ public class MailingAction extends AbstractModuleAction {
 				}
 			}
 		}
-		
+
 		switch (mailingContext.getWizardStep(SEND_WIZARD_BOX)) {
 		case 1:
 			Collection<Template> allTemplate = TemplateFactory.getAllDiskTemplates(ctx.getRequest().getSession().getServletContext());
@@ -135,8 +136,13 @@ public class MailingAction extends AbstractModuleAction {
 			IUserFactory userFactory = UserFactory.createUserFactory(request);
 			Set<String> roles = userFactory.getAllRoles(globalContext, session);
 			request.setAttribute("groups", roles);
-			if (ctx.getCurrentTemplate().getSenders() != null) {
-				request.setAttribute("senders", ctx.getCurrentTemplate().getSenders());
+			String senders = globalContext.getMailingSenders().trim();
+			if (senders.trim().length() > 0) {
+				request.setAttribute("senders", StringUtils.split(senders, ","));
+			} else {
+				if (ctx.getCurrentTemplate().getSenders() != null) {
+					request.setAttribute("senders", ctx.getCurrentTemplate().getSenders());
+				}
 			}
 			break;
 		case 3:
@@ -163,7 +169,7 @@ public class MailingAction extends AbstractModuleAction {
 			mailingContext.setGroups(rs.getParameterListValues("groups", new LinkedList<String>()));
 			mailingContext.setRecipients(rs.getParameter("recipients", null));
 			mailingContext.setStructuredRecipients(rs.getParameter("structuredRecipients", null));
-			mailingContext.setTestMailing(rs.getParameter("test-mailing", null) != null);			
+			mailingContext.setTestMailing(rs.getParameter("test-mailing", null) != null);
 			boolean isValid = mailingContext.validate(ctx);
 			if (ctx.isAjax()) {
 				currentModule.getBox(SEND_WIZARD_BOX).update(ctx);
@@ -182,7 +188,7 @@ public class MailingAction extends AbstractModuleAction {
 				if (ctx.isAjax()) {
 					currentModule.getBox(SEND_WIZARD_BOX).update(ctx);
 				}
-				if (ctx.isEditPreview()) {					
+				if (ctx.isEditPreview()) {
 					ctx.setClosePopup(true);
 					if (ctx.getParentURL() != null) {
 						ctx.setParentURL(messageRepository.forwardMessage(ctx.getParentURL()));
@@ -207,37 +213,37 @@ public class MailingAction extends AbstractModuleAction {
 		}
 		return null;
 	}
-	
+
 	public static String performUnsubscribe(ServletContext application, HttpServletRequest request, RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
 		String mfb = rs.getParameter(MailingAction.MAILING_FEEDBACK_PARAM_NAME, null);
 		if (mfb != null) {
-			DataToIDService serv = DataToIDService.getInstance(application);			
+			DataToIDService serv = DataToIDService.getInstance(application);
 			Map<String, String> params = StringHelper.uriParamToMap(serv.getData(mfb));
 			String to = params.get("to");
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-			logger.info("mailing unsubscribe : "+to+" site:"+globalContext.getContextKey());
+			logger.info("mailing unsubscribe : " + to + " site:" + globalContext.getContextKey());
 			InternetAddress add;
 			try {
-				add = new InternetAddress(to);	
+				add = new InternetAddress(to);
 				IUserFactory userFactory = UserFactory.createUserFactory(request);
 				User user = userFactory.getUser(add.getAddress());
-				if (user != null) {					
-					Set<String> roles = new HashSet<String>(StringHelper.stringToCollection(rs.getParameter("roles", ""),";"));
+				if (user != null) {
+					Set<String> roles = new HashSet<String>(StringHelper.stringToCollection(rs.getParameter("roles", ""), ";"));
 					user.getUserInfo().removeRoles(roles);
 					userFactory.store();
 				} else {
 					ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 					PrintStream out = new PrintStream(outStream);
-					
-					out.println("Site title : "+globalContext.getGlobalTitle());
-					out.println("E-Mail     : "+to);
+
+					out.println("Site title : " + globalContext.getGlobalTitle());
+					out.println("E-Mail     : " + to);
 					out.println("");
 					out.println("--");
-					out.println("Direct Link : "+URLHelper.createAbsoluteViewURL(ctx, "/"));
+					out.println("Direct Link : " + URLHelper.createAbsoluteViewURL(ctx, "/"));
 					out.close();
 					String mailContent = new String(outStream.toByteArray());
-					
-					NetHelper.sendMailToAdministrator(ctx.getGlobalContext(), new InternetAddress(to), "Mailing unsubscribe : "+globalContext.getContextKey(), mailContent);
+
+					NetHelper.sendMailToAdministrator(ctx.getGlobalContext(), new InternetAddress(to), "Mailing unsubscribe : " + globalContext.getContextKey(), mailContent);
 				}
 			} catch (AddressException e) {
 				// TODO Auto-generated catch block

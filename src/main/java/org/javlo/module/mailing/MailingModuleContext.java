@@ -16,6 +16,7 @@ import javax.mail.internet.InternetAddress;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.codehaus.plexus.util.StringUtils;
 import org.javlo.bean.LinkToRenderer;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
@@ -48,6 +49,18 @@ public class MailingModuleContext extends AbstractModuleContext {
 		Module module = ModulesContext.getInstance(session, globalContext).searchModule(MODULE_NAME);
 
 		MailingModuleContext outContext = (MailingModuleContext) AbstractModuleContext.getInstance(session, globalContext, module, MailingModuleContext.class);
+		
+		if (globalContext.getMailingReport().trim().length() > 0 && outContext.getReportTo() == null) {
+			outContext.setReportTo(globalContext.getMailingReport());
+		} 
+		
+		if (globalContext.getMailingSubject().trim().length() > 0 && outContext.getSubject() == null) {
+			outContext.setSubject(globalContext.getMailingSubject());
+		} 
+		
+		if (globalContext.getMailingSenders().trim().length() > 0 && outContext.getSender() == null) {
+			outContext.setSender(StringUtils.split(globalContext.getMailingSenders(),",")[0]);
+		}
 
 		if (outContext.navigation.size() == 0) {
 			LinkToRenderer defaultNav = new LinkToRenderer(I18nAccess.getInstance(request).getText("mailing.title.send"), "send", "../content/jsp/preview.jsp");			

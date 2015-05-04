@@ -1360,6 +1360,8 @@ public class StringHelper {
 	public static void main(String[] args) {
 		System.out.println("StringHelper.renderNumber(4, 4) = " + StringHelper.renderNumber(4, 4));
 		System.out.println("StringHelper.renderNumber(40, 4) = " + StringHelper.renderNumber(40, 4));
+		
+		System.out.println("***** StringHelper.toXMLAttribute : "+toXMLAttribute("ceci est un \"test\".")); //TODO: remove debug trace
 	}
 
 	/**

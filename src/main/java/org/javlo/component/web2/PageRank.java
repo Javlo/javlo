@@ -245,10 +245,11 @@ public class PageRank extends AbstractVisualComponent implements IPageRank, IAct
 					comp.setRankValue(ctx, comp.getRankValue(ctx, currentPage.getPath()) + 1);
 					comp.setVotes(ctx, comp.getVotes(ctx, currentPage.getPath()) + 1);
 				} else if (requestService.getParameter("negative", null) != null) {
-					comp.setRankValue(ctx, comp.getRankValue(ctx, currentPage.getPath()) - 1);
+					//comp.setRankValue(ctx, comp.getRankValue(ctx, currentPage.getPath()) - 1);
 					comp.setVotes(ctx, comp.getVotes(ctx, currentPage.getPath()) + 1);
 					positive = false;
 				}
+				logger.info("vote on '"+ctx.getCurrentPage().getName()+"' : rank value = "+comp.getRankValue(ctx, currentPage.getPath())+" / "+comp.getVotes(ctx, currentPage.getPath()));
 				comp.getPage().releaseCache();
 				currentPage.releaseCache();
 				comp.storeViewData(ctx);
