@@ -6,6 +6,7 @@ package org.javlo.component.web2;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.Map;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -24,6 +25,7 @@ import org.javlo.helper.URLHelper;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
 import org.javlo.service.RequestService;
+import org.javlo.utils.TimeMap;
 
 /**
  * @author pvandermaesen
@@ -36,6 +38,8 @@ public class PageRank extends AbstractVisualComponent implements IPageRank, IAct
 	private static final String VALUE_KEY = "value";
 
 	private static final boolean DEBUG = false;
+	
+	Map<String,Boolean> ipVoted = new TimeMap<String,Boolean>(60*5); // on ip can vote only 1 time between 5 minutes
 
 	@Override
 	public String getPrefixViewXHTMLCode(ContentContext ctx) {
@@ -85,12 +89,12 @@ public class PageRank extends AbstractVisualComponent implements IPageRank, IAct
 	public boolean isUnique() {
 		return true;
 	}
-	
+
 	@Override
 	public boolean isRealContent(ContentContext ctx) {
 		return true;
 	}
-	
+
 	@Override
 	public boolean isEmpty(ContentContext ctx) {
 		return false;
@@ -109,6 +113,21 @@ public class PageRank extends AbstractVisualComponent implements IPageRank, IAct
 		return writer.toString();
 	}
 
+	private boolean isVoted(ContentContext ctx) throws Exception {		
+		String ip = ctx.getRequest().getRemoteAddr();
+		MenuElement currentPage = ctx.getCurrentPage();
+		if (ipVoted.get(ip+currentPage.getId()) != null) {
+			return true;
+		} else {
+			ipVoted.put(ip+currentPage.getId(), true);
+		}
+		if (ctx.getRequest().getSession().getAttribute(generateKey(currentPage.getPath(), "VOTED")) != null && !DEBUG) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
 	@Override
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
 		MenuElement currentPage = ctx.getCurrentPage();
@@ -121,7 +140,7 @@ public class PageRank extends AbstractVisualComponent implements IPageRank, IAct
 		}
 
 		boolean voted = false;
-		if (ctx.getRequest().getSession().getAttribute(generateKey(currentPage.getPath(), "VOTED")) != null && !DEBUG) {
+		if (isVoted(ctx)) {
 			voted = true;
 		}
 
@@ -168,7 +187,7 @@ public class PageRank extends AbstractVisualComponent implements IPageRank, IAct
 			out.println("<div class=\"score result " + cssClass + "\">" + StringHelper.renderDoubleAsPercentage(currentPage.getPageRank(ctx)) + "</div>");
 			out.println("<form id=\"rank-" + getId() + "\">");
 			out.println("<input type=\"hidden\" name=\"webaction\" value=\"pagerank.rank\" />");
-			out.println("<input type=\"hidden\" name=\"comp-id\" value=\"" + getId() + "\" />");			
+			out.println("<input type=\"hidden\" name=\"comp-id\" value=\"" + getId() + "\" />");
 			out.println("<button type=\"submit\" class=\"positive btn btn-primary\" name=\"positive\" title=\"yes\"><span class=\"glyphicon glyphicon-thumbs-up\"></span></button>");
 			out.println("<button type=\"submit\" class=\"negative btn btn-default\" name=\"negative\" title=\"no\"><span class=\"glyphicon glyphicon-thumbs-down\"></span></button>");
 			out.println("</form>");
@@ -245,11 +264,12 @@ public class PageRank extends AbstractVisualComponent implements IPageRank, IAct
 					comp.setRankValue(ctx, comp.getRankValue(ctx, currentPage.getPath()) + 1);
 					comp.setVotes(ctx, comp.getVotes(ctx, currentPage.getPath()) + 1);
 				} else if (requestService.getParameter("negative", null) != null) {
-					//comp.setRankValue(ctx, comp.getRankValue(ctx, currentPage.getPath()) - 1);
+					// comp.setRankValue(ctx, comp.getRankValue(ctx,
+					// currentPage.getPath()) - 1);
 					comp.setVotes(ctx, comp.getVotes(ctx, currentPage.getPath()) + 1);
 					positive = false;
 				}
-				logger.info("vote on '"+ctx.getCurrentPage().getName()+"' : rank value = "+comp.getRankValue(ctx, currentPage.getPath())+" / "+comp.getVotes(ctx, currentPage.getPath()));
+				logger.info("vote on '" + ctx.getCurrentPage().getName() + "' : rank value = " + comp.getRankValue(ctx, currentPage.getPath()) + " / " + comp.getVotes(ctx, currentPage.getPath()));
 				comp.getPage().releaseCache();
 				currentPage.releaseCache();
 				comp.storeViewData(ctx);
@@ -277,7 +297,7 @@ public class PageRank extends AbstractVisualComponent implements IPageRank, IAct
 	public String getActionGroupName() {
 		return "pagerank";
 	}
-	
+
 	@Override
 	public String getEmptyXHTMLCode(ContentContext ctx) throws Exception {
 		return getViewXHTMLCode(ctx);
