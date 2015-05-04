@@ -314,7 +314,7 @@ public class TemplateEditorAction extends AbstractModuleAction {
 			return "template name '" + templateName + "' already exist.";
 		} else {
 			Template newTemplate = TemplateFactory.createDiskTemplates(application, templateName, null);
-			newTemplate.setParentName("editable");
+			newTemplate.setParentName(staticConfig.getDefaultParentEditableTemplate());
 			Row row = new Row(newTemplate);
 			row.setName("row-1");
 			Area area = new Area();

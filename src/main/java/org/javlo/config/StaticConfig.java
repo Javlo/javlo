@@ -1387,5 +1387,9 @@ public class StaticConfig extends Observable {
 	public Boolean isTracked() {
 		return StringHelper.isTrue(properties.getString("tracked", null), true);		
 	}
+	
+	public String getDefaultParentEditableTemplate() {
+		return properties.getString("template.editable.parent", "editable");		
+	}
 
 }
