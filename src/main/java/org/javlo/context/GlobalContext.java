@@ -887,6 +887,10 @@ public class GlobalContext implements Serializable, IPrintInfo {
 
 		return components;
 	}
+	
+	public boolean hasComponent(String className) {
+		return getComponents().contains(className);
+	}
 
 	public List<String> getUsersAccess() {
 		String usersRaw = properties.getString("users", null);

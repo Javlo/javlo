@@ -35,6 +35,7 @@
 	   </div>	   	
 	   </li>
 	   </ul>
+	   <c:if test="${globalContext.staticConfig.sharedImportDocument}">
 	   <ul class="navigation articles">
 	   <li class="title"><h4>articles</h4></li>   
 	   <li><ul class="children sortable ${fn:length(rootAssociation.articles)==0?'empty':'not-empty'}"><c:forEach var="page" items="${rootAssociation.articles}" varStatus="bcl">
@@ -56,7 +57,7 @@
 	   		</form>	   		
 	   </div>	   	
 	   </li>
-	   </ul>
+	   </ul></c:if>
     </div>
     </form>
 	</div>

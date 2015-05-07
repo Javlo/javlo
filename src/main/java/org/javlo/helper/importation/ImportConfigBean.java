@@ -16,6 +16,8 @@ public class ImportConfigBean {
 	private String area = ComponentBean.DEFAULT_AREA;
 	
 	private boolean beforeContent = true;
+
+	private boolean sharedImportDocument = false;
 	
 	public ImportConfigBean(ContentContext ctx) throws ModuleException {
 		if (ctx.getGlobalContext().getStaticConfig().isCreateContentOnImportImage()) {
@@ -28,6 +30,7 @@ public class ImportConfigBean {
 				createContentOnImportImage = true;
 			}
 		}		
+		sharedImportDocument = ctx.getGlobalContext().getStaticConfig().isSharedImportDocument();
 	}
 
 	public boolean isImagesAsGallery() {
@@ -64,6 +67,10 @@ public class ImportConfigBean {
 
 	public void setBeforeContent(boolean beforeContent) {
 		this.beforeContent = beforeContent;
+	}
+	
+	public boolean isSharedImportDocument() {
+		return sharedImportDocument ;
 	}
 	
 }
