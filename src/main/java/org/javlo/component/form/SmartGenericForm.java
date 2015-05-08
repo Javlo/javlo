@@ -81,7 +81,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		private boolean last = false;
 		private boolean first  = false;
 
-		protected static Collection<? extends Object> FIELD_TYPES = Arrays.asList(new String[] { "text", "large-text", "yes-no", "email", "list", "registered-list", "file", "validation" });
+		protected static Collection<? extends Object> FIELD_TYPES = Arrays.asList(new String[] { "text", "large-text", "yes-no", "email", "radio", "list", "registered-list", "file", "validation" });
 
 		public Field(String name, String label, String type, String value, String list, String registeredList, int order, int width) {
 			this.name = name;
@@ -314,7 +314,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		out.println("<td><input type=\"text\" name=\"" + getInputName("name-" + field.getName()) + "\" value=\"" + field.getName() + "\"/></td>");
 		out.println("<td><input type=\"text\" name=\"" + getInputName("label-" + field.getName()) + "\" value=\"" + field.getLabel() + "\"/></td>");
 		if (isList()) {
-			if (field.getType().equals("list")) {
+			if (field.getType().equals("radio") || field.getType().equals("list")) {
 				out.println("<td><textarea name=\"" + getInputName("list-" + field.getName()) + "\">" + StringHelper.collectionToText(field.getList()) + "</textarea></td>");
 			} else if (field.getType().equals("registered-list")) {
 				out.println("<td><input name=\"" + getInputName("registered-list-" + field.getName()) + "\" placeholder=\"list name\" value=\""+field.getRegisteredList()+"\"/></td>");

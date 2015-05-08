@@ -19,6 +19,19 @@
 			<label for="${field.name}">${field.label} ${field.require?requireHTML:''}</label>
 			<input type="file" name="${field.name}" />
 		</c:when>	
+		<c:when test="${field.type eq 'radio'}">
+			<div class="field-label">
+				<label>${field.label} ${field.require?requireHTML:''}</label>
+			</div>
+			<div class="field-control">
+				<c:forEach var="item" items="${field.list}" varStatus="iter"> 
+					<div class="field-item">
+						<input type="radio" name="${field.name}" value="${item}" id="${field.name}-${iter.index}">
+						<label class="line-label" for="${field.name}-${iter.index}">${item}</label>
+					</div>
+				</c:forEach>
+			</div>
+		</c:when>		
 		<c:when test="${field.type eq 'list'}">
 			<label for="${field.name}">${field.label} ${field.require?requireHTML:''}</label>
 			<select name="${field.name}">
