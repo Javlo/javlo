@@ -32,6 +32,7 @@ public class TransactionFile {
 			throw new IOException("temp file : " + tempFile + " already exists.");
 		} else {
 			tempFile.createNewFile();
+			logger.info("create temp file : "+tempFile);
 		}
 		out = new FileOutputStream(tempFile);
 	}
