@@ -34,7 +34,7 @@ public class FileCache {
 	private static Logger logger = Logger.getLogger(FileCache.class.getName());
 
 	private static final String KEY = FileCache.class.getName();
-	public static final String BASE_DIR = "/temp";
+	public static final String BASE_DIR = "/tmp";
 	
 	private final String baseDirName;
 
@@ -59,6 +59,7 @@ public class FileCache {
 		}
 		try {
 			baseDir = new File(realCacheFolder).getCanonicalFile();
+			baseDir.mkdirs();
 		} catch (IOException e) {
 			logger.severe("problem create baseDir width : "+baseDirName);
 			e.printStackTrace();

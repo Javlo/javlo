@@ -31,7 +31,9 @@ public class TransactionFile {
 		if (tempFile.exists()) {
 			throw new IOException("temp file : " + tempFile + " already exists.");
 		} else {
-			tempFile.createNewFile();
+			logger.info("create temp file : "+tempFile);
+			tempFile.getParentFile().mkdirs();
+			tempFile.createNewFile();			
 		}
 		out = new FileOutputStream(tempFile);
 	}
