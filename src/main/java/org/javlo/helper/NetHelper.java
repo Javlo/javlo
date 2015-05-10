@@ -482,7 +482,6 @@ public class NetHelper {
 				}
 				if (!url.contains(">")) {
 					if (!urlList.contains(url)) {
-						System.out.println("***** NetHelper.extractExternalURL : url = "+url); //TODO: remove debug trace
 						urlList.add(url);
 					}
 				}
