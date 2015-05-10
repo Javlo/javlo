@@ -464,10 +464,25 @@ public class NetHelper {
 			if (closeLink >= 0) {
 				String url = content.substring(hrefIndex, closeLink);
 				if (!URLHelper.isAbsoluteURL(url)) {
-					url = URLHelper.mergePath(baseURL, url);
+					if (!url.startsWith("/")) {
+						url = URLHelper.mergePath(baseURL, url);
+					} else {
+						URL baseURLParser;
+						try {
+							baseURLParser = new URL(baseURL);
+							if (baseURLParser.getPort()>0) {
+								url = URLHelper.mergePath(baseURLParser.getProtocol()+':'+baseURLParser.getPort()+"://"+baseURLParser.getHost(), url);
+							} else {
+								url = URLHelper.mergePath(baseURLParser.getProtocol()+"://"+baseURLParser.getHost(), url);
+							}
+						} catch (MalformedURLException e) {
+							e.printStackTrace();
+						}						
+					}
 				}
 				if (!url.contains(">")) {
 					if (!urlList.contains(url)) {
+						System.out.println("***** NetHelper.extractExternalURL : url = "+url); //TODO: remove debug trace
 						urlList.add(url);
 					}
 				}
