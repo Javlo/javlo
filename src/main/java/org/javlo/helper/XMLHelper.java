@@ -160,76 +160,78 @@ public class XMLHelper {
 	static void insertXMLContent(PrintWriter out, MenuElement page, String defaultLg) throws Exception {
 		ComponentBean[] beans = page.getAllLocalContentBean();
 		for (int j = 0; j < beans.length; j++) {
+			if (beans[j] != null) {
+				String id = beans[j].getId();
+				String type = beans[j].getType();
+				String language = beans[j].getLanguage();
+				String value = beans[j].getValue();
+				/*
+				 * if (value.startsWith("test renomage")) {
+				 * System.out.println("***** value = "+value); }
+				 */
+				String repeat = "" + beans[j].isRepeat();
+				String style = beans[j].getStyle();
+				String inlist = "" + beans[j].isList();
 
-			String id = beans[j].getId();
-			String type = beans[j].getType();
-			String language = beans[j].getLanguage();
-			String value = beans[j].getValue();
-			/*
-			 * if (value.startsWith("test renomage")) { System.out.println("***** value = "+value); }
-			 */
-			String repeat = "" + beans[j].isRepeat();
-			String style = beans[j].getStyle();
-			String inlist = "" + beans[j].isList();
+				out.print("<component id=\"");
+				out.print(id);
+				out.print("\" type=\"");
+				out.print(type);
+				if (StringHelper.isTrue(inlist)) {
+					out.print("\" inlist=\"");
+					out.print(inlist);
+				}
+				if (!ComponentBean.DEFAULT_AREA.equals(beans[j].getArea())) {
+					out.print("\" area=\"");
+					out.print(beans[j].getArea());
+				}
 
-			out.print("<component id=\"");
-			out.print(id);
-			out.print("\" type=\"");
-			out.print(type);
-			if (StringHelper.isTrue(inlist)) {
-				out.print("\" inlist=\"");
-				out.print(inlist);
-			}
-			if (!ComponentBean.DEFAULT_AREA.equals(beans[j].getArea())) {
-				out.print("\" area=\"");
-				out.print(beans[j].getArea());
-			}
+				out.print("\" language=\"");
+				out.print(language);
 
-			out.print("\" language=\"");
-			out.print(language);
+				out.print("\" authors=\"");
+				out.print(StringHelper.neverNull(beans[j].getAuthors()));
 
-			out.print("\" authors=\"");
-			out.print(StringHelper.neverNull(beans[j].getAuthors()));
+				out.print("\" creationDate=\"");
+				out.print(StringHelper.renderTime(beans[j].getCreationDate()));
 
-			out.print("\" creationDate=\"");
-			out.print(StringHelper.renderTime(beans[j].getCreationDate()));
+				out.print("\" modificationDate=\"");
+				out.print(StringHelper.renderTime(beans[j].getModificationDate()));
 
-			out.print("\" modificationDate=\"");
-			out.print(StringHelper.renderTime(beans[j].getModificationDate()));
-
-			if (style != null && style.length() > 0) {
-				out.print("\" style=\"");
-				out.print(StringHelper.toXMLAttribute(style));
+				if (style != null && style.length() > 0) {
+					out.print("\" style=\"");
+					out.print(StringHelper.toXMLAttribute(style));
+				}
+				if (beans[j].getBackgroundColor() != null && beans[j].getBackgroundColor().trim().length() > 0) {
+					out.print("\" bgcol=\"");
+					out.print(beans[j].getBackgroundColor());
+				}
+				if (beans[j].getTextColor() != null && beans[j].getTextColor().trim().length() > 0) {
+					out.print("\" txtcol=\"");
+					out.print(beans[j].getTextColor());
+				}
+				if (StringHelper.isTrue(repeat)) {
+					out.print("\" repeat=\"");
+					out.print(repeat);
+				}
+				if (beans[j].getRenderer() != null) {
+					out.print("\" renderer=\"");
+					out.print(beans[j].getRenderer());
+				}
+				if (beans[j].getLayout() != null) {
+					out.print("\" layout=\"");
+					out.print(beans[j].getLayout().getLayout());
+				}
+				if (beans[j].getHiddenModes() != null && !beans[j].getHiddenModes().isEmpty()) {
+					out.print("\" hiddenModes=\"");
+					out.print(StringHelper.collectionToString(beans[j].getHiddenModes(), ","));
+				}
+				out.print("\" >");
+				out.print("<![CDATA[");
+				out.print(value);
+				out.print("]]>");
+				out.println("</component>");
 			}
-			if (beans[j].getBackgroundColor() != null && beans[j].getBackgroundColor().trim().length() > 0) {
-				out.print("\" bgcol=\"");
-				out.print(beans[j].getBackgroundColor());
-			}
-			if (beans[j].getTextColor() != null && beans[j].getTextColor().trim().length() > 0) {
-				out.print("\" txtcol=\"");
-				out.print(beans[j].getTextColor());
-			}
-			if (StringHelper.isTrue(repeat)) {
-				out.print("\" repeat=\"");
-				out.print(repeat);
-			}
-			if (beans[j].getRenderer() != null) {
-				out.print("\" renderer=\"");
-				out.print(beans[j].getRenderer());
-			}
-			if (beans[j].getLayout() != null) {
-				out.print("\" layout=\"");
-				out.print(beans[j].getLayout().getLayout());
-			}
-			if (beans[j].getHiddenModes() != null && !beans[j].getHiddenModes().isEmpty()) {
-				out.print("\" hiddenModes=\"");
-				out.print(StringHelper.collectionToString(beans[j].getHiddenModes(), ","));
-			}
-			out.print("\" >");
-			out.print("<![CDATA[");
-			out.print(value);
-			out.print("]]>");
-			out.println("</component>");
 		}
 	}
 
@@ -308,12 +310,12 @@ public class XMLHelper {
 			if (page.isBreakRepeat()) {
 				out.print("\" breakrepeat=\"");
 				out.print(page.isBreakRepeat());
-			}	
+			}
 			if (page.isChildrenAssociation()) {
 				out.print("\" childrenAssociation=\"");
 				out.print(page.isChildrenAssociation());
-			}	
-			if ( page.isChangeNotification()) {
+			}
+			if (page.isChangeNotification()) {
 				out.print("\" changeNotification=\"");
 				out.print(page.isChangeNotification());
 			}
@@ -375,7 +377,8 @@ public class XMLHelper {
 			}
 			out.println("\">");
 
-			if (page.getLinkedURL().trim().length() == 0) { // not save the remote content
+			if (page.getLinkedURL().trim().length() == 0) { // not save the
+															// remote content
 				insertXMLContent(out, page, defaultLg);
 				if (recu) {
 					insertXMLPage(out, pageList, page.getChildMenuElements(), defaultLg, true);
@@ -401,7 +404,7 @@ public class XMLHelper {
 		PrintWriter out = new PrintWriter(inOut, true);
 
 		out.println("<?xml version=\"1.0\" encoding=\"" + ContentContext.CHARACTER_ENCODING + "\"?>");
-		out.println("<content cmsversion=\"" + AccessServlet.VERSION + "\" version=\"" + version + "\" date=\""+PersistenceService.renderDate(new Date())+"\">");
+		out.println("<content cmsversion=\"" + AccessServlet.VERSION + "\" version=\"" + version + "\" date=\"" + PersistenceService.renderDate(new Date()) + "\">");
 		insertXMLPage(out, Arrays.asList(new MenuElement[] { menu }), defaultLg);
 		insertMap(out, contentMap, PersistenceService.GLOBAL_MAP_NAME);
 		out.println("</content>");
