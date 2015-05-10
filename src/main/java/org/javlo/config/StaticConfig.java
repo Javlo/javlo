@@ -1391,5 +1391,9 @@ public class StaticConfig extends Observable {
 	public String getDefaultParentEditableTemplate() {
 		return properties.getString("template.editable.parent", "editable");		
 	}
+	
+	public boolean isSharedImportDocument() {		
+		return StringHelper.isTrue(properties.getString("shared.import-document", null), true);
+	}
 
 }

@@ -318,7 +318,7 @@ editPreview.initPreview = function() {
 					var fd=new FormData();
 					var fieldName = pjq(this).data("fieldname");
 					if (fieldName == null) {
-						filedName = "files";
+						fieldName = "files";
 					}
 					var i = 0;
 					jQuery.each( event.dataTransfer.files, function(index, file) {
@@ -384,7 +384,7 @@ editPreview.initPreview = function() {
 				} else if (event.dataTransfer.files.length > 0) {						
 					var ajaxURL = editPreview.addParam(currentURL,"webaction=data.upload&content=true&previous=0&area=" + area);
 					if (editPreview.searchPageId(this) != null) {
-						ajaxURL = ajaxURL +'&pageContainerID='+ editPreview.searchPageId(subComp);
+						ajaxURL = ajaxURL +'&pageContainerID='+ editPreview.searchPageId(this);
 					}
 					var fd=new FormData();
 					var fieldName = pjq(this).data("fieldname");

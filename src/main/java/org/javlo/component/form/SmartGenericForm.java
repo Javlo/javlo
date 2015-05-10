@@ -394,7 +394,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 
 	public boolean isList() {
 		for (Field field : getFields()) {
-			if (field.getType().contains("list")) {
+			if (field.getType().contains("list") || field.getType().contains("radio")) {
 				return true;
 			}
 		}

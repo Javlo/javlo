@@ -350,7 +350,7 @@ public class ContentHelper {
 		}
 		
 		// import content
-		List<ComponentBean> beans = DocxUtils.extractContent(new ByteArrayInputStream(out.toByteArray()), baseStaticFolder);
+		List<ComponentBean> beans = DocxUtils.extractContent(gc, new ByteArrayInputStream(out.toByteArray()), baseStaticFolder);
 		for (ComponentBean bean : beans) {
 			bean.setLanguage(lang);
 		}
@@ -367,7 +367,7 @@ public static List<ComponentBean> createContentFromArray(GlobalContext gc, Input
 		String baseStaticFolder = "/import/" + name;
 		
 		// import content
-		List<ComponentBean> beans = DocxUtils.extractContent(new ByteArrayInputStream(out.toByteArray()), baseStaticFolder);
+		List<ComponentBean> beans = DocxUtils.extractContent(gc, new ByteArrayInputStream(out.toByteArray()), baseStaticFolder);
 		for (ComponentBean bean : beans) {
 			bean.setLanguage(lang);
 		}

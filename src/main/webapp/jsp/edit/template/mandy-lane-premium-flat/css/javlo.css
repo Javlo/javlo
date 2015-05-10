@@ -41,6 +41,7 @@
 
 input, textarea, select {	
 	box-shadow: 1px 1px 3px #CCCCCC inset;
+	color: #555555;
 }
 
 .colorpicker input, .colorpicker textarea, .colorpicker select {
