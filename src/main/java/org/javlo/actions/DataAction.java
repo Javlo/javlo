@@ -451,13 +451,13 @@ public class DataAction implements IAction {
 					if (imageItem == null) {
 						imageItem = item;
 					}
-				} else if (StringHelper.getFileExtension(item.getName()).equalsIgnoreCase("odt")) {
+				} else if (StringHelper.getFileExtension(item.getName()).equalsIgnoreCase("odt") && config.isSharedImportDocument()) {
 					InputStream in = item.getInputStream();
 					Collection<ComponentBean> beans = ContentHelper.createContentFromODT(gc, in, item.getName(), ctx.getRequestContentLanguage());
 					in.close();
 					cs.createContent(ctx, beans, previousId, true);
 					ctx.setNeedRefresh(true);
-				} else if (StringHelper.getFileExtension(item.getName()).equalsIgnoreCase("docx")) {
+				} else if (StringHelper.getFileExtension(item.getName()).equalsIgnoreCase("docx") && config.isSharedImportDocument()) {
 					InputStream in = item.getInputStream();
 					Collection<ComponentBean> beans = ContentHelper.createContentFromDocx(gc, in, item.getName(), ctx.getRequestContentLanguage());
 					in.close();
@@ -491,15 +491,15 @@ public class DataAction implements IAction {
 						targetFolder.mkdirs();
 					}
 					File newFile = ResourceHelper.writeFileItemToFolder(item, targetFolder, false, true);
-					if (newFile != null && newFile.exists()) {
+					if (newFile != null && newFile.exists()) {						
 						ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 						PrintStream out = new PrintStream(outStream);
 						String dir = resourceRelativeFolder.replaceFirst(gc.getStaticConfig().getFileFolder(), "");
 						out.println("dir=" + dir);
 						out.println("file-name=" + StringHelper.getFileNameFromPath(newFile.getName()));
 						out.close();
-						String beanType = GenericFile.TYPE;
-						if (isArray) {
+						String beanType = GenericFile.TYPE;						
+						if (isArray && ctx.getGlobalContext().hasComponent(ArrayFileComponent.class.getCanonicalName())) {
 							beanType = ArrayFileComponent.TYPE;
 						}
 						ComponentBean bean = new ComponentBean(beanType, new String(outStream.toByteArray()), ctx.getRequestContentLanguage());

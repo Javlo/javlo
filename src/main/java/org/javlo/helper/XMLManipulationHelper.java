@@ -904,7 +904,7 @@ public class XMLManipulationHelper {
 //		out.println("   })();");
 //		out.print("</script><%}%>");
 
-		out.print("<script>");
+		out.print("<%if (globalContext.getGoogleAnalyticsUACCT().length() > 4 && ctx.isTrackingContext()) {%><script>");
 		out.println("  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){");
 		out.println("(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),");
 		out.println("m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)");
@@ -913,7 +913,7 @@ public class XMLManipulationHelper {
 		out.println("ga('create', '<%=globalContext.getGoogleAnalyticsUACCT()%>', 'auto');");
 		out.println("ga('send', 'pageview');");
 
-		out.println("</script>");
+		out.println("</script><%}%>");
 
 		out.close();
 		return writer.toString();

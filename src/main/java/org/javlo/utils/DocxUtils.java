@@ -3,7 +3,6 @@ package org.javlo.utils;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
@@ -15,9 +14,11 @@ import org.javlo.component.core.ComponentBean;
 import org.javlo.component.image.GlobalImage;
 import org.javlo.component.list.FreeTextList;
 import org.javlo.component.text.WysiwygParagraph;
+import org.javlo.component.title.Heading;
 import org.javlo.component.title.SubTitle;
 import org.javlo.component.title.Title;
 import org.javlo.context.ContentContext;
+import org.javlo.context.GlobalContext;
 import org.javlo.helper.URLHelper;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -32,17 +33,6 @@ import fr.opensagres.xdocreport.core.document.DocumentKind;
 
 public class DocxUtils {
 
-	public static void main(String[] args) {
-		try {
-			InputStream in = new FileInputStream(new File("c:/trans/test.docx"));
-			for (ComponentBean bean : extractContent(in, "/")) {
-				System.out.println(bean.getType());
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
 	/**
 	 * extract title level from class.
 	 * 
@@ -54,7 +44,7 @@ public class DocxUtils {
 			return 0;
 		} else {
 			String[] allCss = cssClass.split(" ");
-			if (allCss.length > 1) {			
+			if (allCss.length > 1) {
 				allCss = Arrays.copyOfRange(allCss, 1, allCss.length);
 				for (String item : allCss) {
 					item = item.trim();
@@ -84,14 +74,16 @@ public class DocxUtils {
 		return false;
 	}
 
-	public static List<ComponentBean> extractContent(InputStream in, String resourceFolder) throws XDocConverterException, IOException {
+	public static List<ComponentBean> extractContent(GlobalContext globalContext, InputStream in, String resourceFolder) throws XDocConverterException, IOException {
 		Options options = Options.getFrom(DocumentKind.DOCX).to(ConverterTypeTo.XHTML);
 		IConverter converter = ConverterRegistry.getRegistry().getConverter(options);
 
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		converter.convert(in, out, options);
 
-		//ResourceHelper.writeStreamToFile(new ByteArrayInputStream(out.toByteArray()), new File("c:/trans/docx/test.html"));
+		// ResourceHelper.writeStreamToFile(new
+		// ByteArrayInputStream(out.toByteArray()), new
+		// File("c:/trans/docx/test.html"));
 
 		List<ComponentBean> outContent = new LinkedList<ComponentBean>();
 
@@ -125,13 +117,18 @@ public class DocxUtils {
 						bean.setType(WysiwygParagraph.TYPE);
 						bean.setValue(text);
 					} else {
-						if (titleLevel == 1) {
-							bean.setType(Title.TYPE);
-							bean.setValue(text);
+						if (globalContext.hasComponent(Heading.TYPE)) {
+							bean.setType(Heading.TYPE);
+							bean.setValue("text=" + text + "\ndepth=" + titleLevel);
 						} else {
-							bean.setType(SubTitle.TYPE);
-							bean.setValue(text);
-							bean.setStyle("" + titleLevel);
+							if (titleLevel == 1) {
+								bean.setType(Title.TYPE);
+								bean.setValue(text);
+							} else {
+								bean.setType(SubTitle.TYPE);
+								bean.setValue(text);
+								bean.setStyle("" + titleLevel);
+							}
 						}
 					}
 				} else if (item.tagName().equals("img") && item.attr("src") != null && item.attr("src").trim().length() > 0) {
