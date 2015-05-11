@@ -55,6 +55,7 @@ import org.javlo.helper.Comparator.StringSizeComparator;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.message.GenericMessage;
 import org.javlo.navigation.MenuElement;
+import org.javlo.navigation.PageBean;
 import org.javlo.rendering.Device;
 import org.javlo.service.PersistenceService;
 import org.javlo.service.RequestService;
@@ -66,6 +67,7 @@ import org.javlo.utils.SuffixPrefix;
  * This class is the first class for component. <h4>exposed variables :</h4>
  * <ul>
  * <li>{@link String} compid : the id of the components. See {@link #getId()}</li>
+ * <li>{@link String} compPage : a page bean of the page contain's the component.</li>
  * <li>{@link String} value : the raw value of the component. See
  * {@link #getValue()}</li>
  * <li>{@link String} type : the component type. See {@link #getType()}</li>
@@ -935,7 +937,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	public MenuElement getPage() {
 		return page;
 	}
-
+	
 	protected String getTag(ContentContext ctx) {
 		return getConfig(ctx).getProperty("tag", "div");
 	}
@@ -1627,6 +1629,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			logger.fine("load : " + getType() + " on : " + URLHelper.createURL(ctx));
 		}
 		ctx.getRequest().setAttribute("comp", this);
+		ctx.getRequest().setAttribute("compPage", new PageBean(ctx, getPage()));
 		ctx.getRequest().setAttribute("style", getStyle());
 		ctx.getRequest().setAttribute("value", getValue());
 		ctx.getRequest().setAttribute("type", getType());

@@ -73,6 +73,23 @@ public class PageBean implements Serializable {
 		return URLHelper.createURL(ctx, page);
 	}
 	
+	public String getPdfUrl() {
+		ContentContext pdfCtx = ctx.getFreeContentContext();
+		pdfCtx.setFormat("pdf");
+		return URLHelper.createURL(pdfCtx);		
+	}
+	
+	public String getPdfAbsoluteUrl() {
+		ContentContext pdfCtx = ctx.getFreeContentContext();
+		pdfCtx.setFormat("pdf");
+		pdfCtx.setAbsoluteURL(true);
+		return URLHelper.createURL(pdfCtx,page.getPath());		
+	}
+	
+	public String getAbsoluteUrl() {
+		return URLHelper.createAbsoluteURL(ctx, page.getPath());
+	}
+	
 	public String getEditUrl() {
 		return URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.EDIT_MODE), page);
 	}
