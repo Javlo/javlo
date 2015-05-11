@@ -275,5 +275,8 @@ public class Heading extends AbstractPropertiesComponent implements ISubTitle {
 		return "</"+getTag(ctx)+'>';
 	}
 	
-
+	@Override
+	public boolean isRealContent(ContentContext ctx) {	
+		return false;
+	}
 }
