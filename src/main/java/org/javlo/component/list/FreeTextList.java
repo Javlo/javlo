@@ -230,5 +230,10 @@ public class FreeTextList extends AbstractVisualComponent {
 		setValue(new String(outStream.toByteArray()));
 		return true;
 	}
+	
+	@Override
+	public boolean isRealContent(ContentContext ctx) {
+		return getValue() != null && getValue().length() > 0;
+	}
 
 }
