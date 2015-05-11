@@ -784,6 +784,8 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 	private static final String WIDTH_EMPTY_PAGE_PROP_KEY = "width_empty";
 
 	private static final String ONLY_PAGE_WITHOUT_CHILDREN = "only_without_children";
+	
+	private static final String ONLY_EVENT = "only_event";
 
 	private static final String INTRANET_MODE_KEY = "intranet_mode";
 
@@ -913,6 +915,9 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 			return false;
 		}
 		if (!page.isChildOf(getParentNode())) {
+			return false;
+		}
+		if (page.getEvent(ctx) == null && isOnlyEvent()) {
 			return false;
 		}
 
@@ -1080,6 +1085,10 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		out.println("<div class=\"line\">");
 		out.println(XHTMLHelper.getCheckbox(getOnlyWithoutChildrenInputName(), isOnlyPageWithoutChildren()));
 		out.println("<label for=\"" + getOnlyWithoutChildrenInputName() + "\">" + i18nAccess.getText("content.page-teaser.only-without-children") + "</label></div>");
+		
+		out.println("<div class=\"line\">");
+		out.println(XHTMLHelper.getCheckbox(getEventInputName(), isOnlyEvent()));
+		out.println("<label for=\"" + getEventInputName() + "\">" + i18nAccess.getText("content.page-teaser.event") + "</label></div>");
 
 		if (isUIFilterOnEditUsers(ctx)) {
 			out.println("<div class=\"line\">");
@@ -1476,6 +1485,10 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 	protected String getOnlyWithoutChildrenInputName() {
 		return "only-without-children-" + getId();
 	}
+	
+	protected String getEventInputName() {
+		return getInputName("event");
+	}
 
 	protected String getIntranetModeInputName() {
 		return "intranet-mode-" + getId();
@@ -1574,6 +1587,10 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 
 	private boolean isOnlyPageWithoutChildren() {
 		return StringHelper.isTrue(properties.getProperty(ONLY_PAGE_WITHOUT_CHILDREN, "false"));
+	}
+	
+	private boolean isOnlyEvent() {
+		return StringHelper.isTrue(properties.getProperty(ONLY_EVENT, "false"));
 	}
 
 	private boolean isIntranetMode() {
@@ -1873,6 +1890,13 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 				setReverseOrder(newReserveOrder);
 				setModify();
 			}
+			
+			String eventOnly = requestService.getParameter(getEventInputName(), "false");
+			boolean newEventOnly = StringHelper.isTrue(eventOnly);			
+			if (isOnlyEvent() != newEventOnly) {
+				setEventOnly(newEventOnly);
+				setModify();
+			}			
 
 			String firstPageNumber = requestService.getParameter(getFirstPageNumberInputName(), "1");
 			if (!firstPageNumber.equals("" + getFirstPageNumber())) {
@@ -1985,6 +2009,10 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 
 	protected void setReverseOrder(boolean reverseOrder) {
 		properties.setProperty(CHANGE_ORDER_KEY, "" + reverseOrder);
+	}
+	
+	protected void setEventOnly(boolean onlyEvent) {
+		properties.setProperty(ONLY_EVENT, "" + onlyEvent);
 	}
 
 	protected void setDynamicOrder(boolean dynamicOrder) {

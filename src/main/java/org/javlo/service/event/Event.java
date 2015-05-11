@@ -6,7 +6,7 @@ import java.util.Date;
 
 public class Event implements Serializable {
 	
-	public static final Event NO_EVENT = new Event(null,null,null,null,null);
+	public static final Event NO_EVENT = new Event(null,null,null,"no event",null);
 
 	private static final long serialVersionUID = 1L;
 
@@ -22,8 +22,7 @@ public class Event implements Serializable {
 	private int sequence;
 	private String user;
 
-	public Event(String id, Date start, Date end, String summary, String description) {
-		System.out.println("***** Event.Event : summary = "+summary); //TODO: remove debug trace
+	public Event(String id, Date start, Date end, String summary, String description) {		
 		this.id = id;
 		this.start = start;
 		this.end = end;

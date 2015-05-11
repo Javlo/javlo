@@ -10,7 +10,9 @@ import java.io.Writer;
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadMXBean;
 import java.net.URL;
+import java.text.DateFormat;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -693,8 +695,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 							response.setStatus(HttpServletResponse.SC_NOT_FOUND);
 							return;
 						} else {
-							System.out.println("***** AccessServlet.process : EVENT FOUND."); //TODO: remove debug trace
-							System.out.println("***** AccessServlet.process : title = "+ctx.getCurrentPage().getTitle(ctx)); //TODO: remove debug trace
+							DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd'T'HHmmss");
 							response.setContentType("text/calendar;");
 							PrintWriter outPrint = new PrintWriter(out);
 							outPrint.println("BEGIN:VCALENDAR");
@@ -702,14 +703,16 @@ public class AccessServlet extends HttpServlet implements IVersion {
 							if (event.getProdID() != null) {
 								outPrint.println("PRODID:"+event.getProdID());
 							}
-							outPrint.println("BEGIN:VJOURNAL");
+							outPrint.println("BEGIN:VEVENT");
 							if (event.getUser() != null) {
 								;outPrint.println("UID:"+event.getUser());
 							}
+							outPrint.println("DTSTART:"+dateFormat.format(event.getStart()));
+							outPrint.println("DTEND:"+dateFormat.format(event.getEnd()));
 							outPrint.println("CATEGORIES:"+event.getCategory());
 							outPrint.println("SUMMARY:"+event.getSummary());
 							outPrint.println("DESCRIPTION:"+event.getDescription());
-							outPrint.println("END:VJOURNAL");
+							outPrint.println("END:VEVENT");
 							outPrint.println("END:VCALENDAR");
 							outPrint.close();
 						}
