@@ -84,13 +84,10 @@ public class ExportComponents extends HttpServlet {
 				} else if (componentType.toLowerCase().endsWith(".xlsx")) {
 					response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
 					String[] splittedPath = StringUtils.split(request.getPathInfo(), '/');
-					GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-					String lg = globalContext.getDefaultLanguage();
+					GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());					
 					if (splittedPath.length > 1) {
 						if (splittedPath[0].length() == 2) {
-							if (globalContext.getContentLanguages().contains(splittedPath[0])) {
-								lg = splittedPath[0];
-							} else {
+							if (!globalContext.getContentLanguages().contains(splittedPath[0])) {
 								logger.warning("bad path structure : " + componentType);
 								response.setStatus(HttpServletResponse.SC_NOT_FOUND, "lang not found.");
 								return;

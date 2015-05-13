@@ -317,7 +317,7 @@ public class InfoBean {
 			return null;
 		}
 	}
-
+	
 	public PageBean getRoot() {
 		try {
 			return currentPage.getRoot().getPageBean(ctx);
@@ -823,6 +823,10 @@ public class InfoBean {
 
 	public boolean isView() {
 		return ctx.getRenderMode() == ContentContext.VIEW_MODE;
+	}
+	
+	public boolean isPageMode() {
+		return ctx.getRenderMode() == ContentContext.PAGE_MODE;
 	}
 
 	public String getPublishDate() {

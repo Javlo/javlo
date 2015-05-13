@@ -412,7 +412,7 @@
  
  * ImageTransformServlet : create and wrap ImageTransforming thread with ExecuterService for timeout
  
- * 2.1.0.2.2 30/04/2015
+* 2.1.0.2.2 30/04/2015
  
  * create temp image folder
  
@@ -420,4 +420,8 @@
  
  * AbstractVisualComponent explode compPage (page bean of the page of the component)
  
- * 2.1.0.2.3 11/05/2015
+* 2.1.0.2.3 11/05/2015
+ 
+ * page can be a event, a user can register to it.
+ 
+* 2.1.0.2.4 13/05/2015

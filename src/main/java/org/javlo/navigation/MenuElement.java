@@ -4466,9 +4466,10 @@ public class MenuElement implements Serializable, IPrintInfo {
 				return desc.event;
 			}
 		} else {
-			ContentElementList content = getContent(ctx);
-			while (content.hasNext(ctx)) {
-				IContentVisualComponent comp = content.next(ctx);
+			ContentContext noAreaCtx = ctx.getContextWithArea(null);
+			ContentElementList content = getContent(noAreaCtx);
+			while (content.hasNext(noAreaCtx)) {
+				IContentVisualComponent comp = content.next(noAreaCtx);
 				if (comp instanceof EventDefinitionComponent) {
 					EventDefinitionComponent eventComp = (EventDefinitionComponent)comp;
 					Event event = new Event(getId(), eventComp.getStartDate(), eventComp.getEndDate(), getTitle(ctx), getDescription(ctx));

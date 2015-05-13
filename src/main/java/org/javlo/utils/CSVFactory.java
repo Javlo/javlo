@@ -47,6 +47,8 @@ public class CSVFactory {
 
 	private String[][] array = null;
 
+	private int indexArray = 0;
+
 	private static final Object lock = new Object();
 
 	/**
@@ -166,26 +168,26 @@ public class CSVFactory {
 		try {
 			PrintStream out = new PrintStream(outStream, false, ContentContext.CHARACTER_ENCODING);
 			synchronized (lock) {
-
 				for (String[] element : array) {
 					String sep = "";
 					String line = "";
-					for (String element2 : element) {
-						String elem = element2;
-						if (elem == null) {
-							elem = "\"\"";
-						} else {
-							elem = "\"" + replace(elem, "\"", "\"\"") + "\"";
+					if (element != null) {
+						for (String element2 : element) {
+							String elem = element2;
+							if (elem == null) {
+								elem = "\"\"";
+							} else {
+								elem = "\"" + replace(elem, "\"", "\"\"") + "\"";
+							}
+							out.print(sep);
+							out.print(elem);
+							line = line + sep + elem;
+							sep = separator;
 						}
-						out.print(sep);
-						out.print(elem);
-						line = line + sep + elem;
-						sep = separator;
 					}
 					out.println();
 				}
 				out.close();
-
 			}
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
@@ -201,10 +203,8 @@ public class CSVFactory {
 		exportRowCSV(outStream, STANDARD_SEPARATOR, row);
 	}
 
-	public void exportRowCSV(OutputStream outStream, String separator, String[] row) {
-
+	public static void exportRowCSV(OutputStream outStream, String separator, String[] row) {
 		synchronized (lock) {
-
 			PrintStream out = new PrintStream(outStream);
 			String sep = "";
 			String line = "";
@@ -221,7 +221,13 @@ public class CSVFactory {
 				sep = separator;
 			}
 			out.println();
+		}
+	}
 
+	public void appendRow(String[] row) {
+		synchronized (lock) {
+			array[indexArray] = row;
+			indexArray++;
 		}
 	}
 
@@ -366,7 +372,7 @@ public class CSVFactory {
 	public static void storeContentAsMap(File file, List<Map<String, String>> content) throws IOException {
 		Writer out = null;
 		try {
-			out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), ContentContext.CHARACTER_ENCODING));			
+			out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), ContentContext.CHARACTER_ENCODING));
 			storeContentAsMap(out, content);
 		} finally {
 			ResourceHelper.closeResource(out);
@@ -397,7 +403,7 @@ public class CSVFactory {
 			}
 		}
 
-		CSVPrinter printer = new CSVPrinter(out);		
+		CSVPrinter printer = new CSVPrinter(out);
 		printer.setAlwaysQuote(true);
 		printer.writeln(rawContent);
 	}
