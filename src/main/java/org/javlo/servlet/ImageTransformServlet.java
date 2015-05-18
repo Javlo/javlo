@@ -18,7 +18,9 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -58,6 +60,7 @@ import org.javlo.tracking.Tracker;
 import org.javlo.user.IUserFactory;
 import org.javlo.user.User;
 import org.javlo.user.UserFactory;
+import org.javlo.utils.NamedThreadFactory;
 import org.javlo.ztatic.FileCache;
 import org.javlo.ztatic.StaticInfo;
 
@@ -89,7 +92,7 @@ public class ImageTransformServlet extends HttpServlet {
 	
 	public static final String HASH_PREFIX = "/hash-";
 	
-	private static final class ImageTransformThread extends Thread {
+	private static final class ImageTransformThread implements Callable<Void> {
 		
 		ServletContext application;
 		ContentContext ctx;		
@@ -102,16 +105,6 @@ public class ImageTransformServlet extends HttpServlet {
 		File imageFile;
 		String imageName;
 		String inFileExtention;
-		private Exception exception = null;		
-		
-		
-		public Exception getException() {
-			return exception;
-		}
-
-		public void setException(Exception exception) {
-			this.exception = exception;
-		}
 
 		public ImageTransformThread(ServletContext application, ContentContext ctx, ImageConfig config, StaticInfo staticInfo, String filter, String area, Template template, IImageFilter comp, File imageFile, String imageName, String inFileExtention) {
 			super();
@@ -129,14 +122,16 @@ public class ImageTransformServlet extends HttpServlet {
 		}
 
 		@Override
-		public void run() {			
+		public Void call() throws Exception {
 			try {
 				ImageTransformServlet.imageTransformForThread(application, ctx, config, staticInfo, filter, area, template, comp, imageFile, imageName, inFileExtention);
-			} catch (IOException e) {
-				setException(e);
-				e.printStackTrace();
-			}			
+			} catch (Exception ex) {
+				ex.printStackTrace();
+				throw ex;
+			}
+			return null;
 		}
+
 	}
 
 	public static final class ImageTransforming {
@@ -223,10 +218,22 @@ public class ImageTransformServlet extends HttpServlet {
 
 	private static final String DEFAULT_IMAGE_TYPE = "png";
 
+	private ExecutorService executor;
+
 	@Override
 	public void init() throws ServletException {
 		super.init();
 		getServletContext().setAttribute("imagesTransforming", imageTransforming);
+		StaticConfig staticConfig = StaticConfig.getInstance(getServletContext());
+		int tc = (int) staticConfig.getTransformingSize();
+		NamedThreadFactory tf = new NamedThreadFactory(ImageTransformServlet.class.getSimpleName() + "-executor");
+		executor = Executors.newFixedThreadPool(tc, tf);
+	}
+
+	@Override
+	public void destroy() {
+		executor.shutdownNow();
+		super.destroy();
 	}
 
 	/**
@@ -408,17 +415,14 @@ public class ImageTransformServlet extends HttpServlet {
 	
 	private void imageTransform(ContentContext ctx, ImageConfig config, StaticInfo staticInfo, String filter, String area, Template template, IImageFilter comp, File imageFile, String imageName, String inFileExtention) throws Exception {
 		ImageTransformThread imageThread = new ImageTransformThread(getServletContext(), ctx, config, staticInfo, filter, area, template, comp, imageFile, imageName, inFileExtention);
-		ExecutorService executor = Executors.newSingleThreadExecutor();
-		executor.execute(imageThread);
-		executor.shutdown();
+		Future<Void> future = executor.submit(imageThread);
 		try {
-			executor.awaitTermination(30, TimeUnit.SECONDS);
+			future.get(30, TimeUnit.SECONDS);
+		} catch (TimeoutException ex) {
+			future.cancel(true);
+			throw ex;
 		} catch (InterruptedException e) {
 			e.printStackTrace();
-		}
-		executor.shutdownNow();
-		if (imageThread.getException() != null) {
-			throw imageThread.getException();
 		}
 	}
 
