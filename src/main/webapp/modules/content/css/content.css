@@ -376,3 +376,15 @@ li.line {
 .reactions ul li.first {
 	border-top: 0;
 }
+
+.light-edit .ui-tabs-nav, .light-edit .insert-line, .light-edit .header-info, .light-edit #tools {
+	display: none;
+}
+
+.light-edit .insert-line.action {
+	display: block;
+}
+
+.light-edit .component-wrapper {
+	margin-top: 35px;
+}

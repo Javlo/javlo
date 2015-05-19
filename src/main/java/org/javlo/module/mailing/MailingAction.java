@@ -37,6 +37,7 @@ import org.javlo.service.RequestService;
 import org.javlo.service.syncro.SynchroHelper;
 import org.javlo.template.Template;
 import org.javlo.template.TemplateFactory;
+import org.javlo.user.AdminUserFactory;
 import org.javlo.user.IUserFactory;
 import org.javlo.user.User;
 import org.javlo.user.UserFactory;
@@ -136,6 +137,8 @@ public class MailingAction extends AbstractModuleAction {
 			IUserFactory userFactory = UserFactory.createUserFactory(request);
 			Set<String> roles = userFactory.getAllRoles(globalContext, session);
 			request.setAttribute("groups", roles);
+			request.setAttribute("adminGroups", globalContext.getAdminUserRoles());
+			
 			String senders = globalContext.getMailingSenders().trim();
 			if (senders.trim().length() > 0) {
 				request.setAttribute("senders", StringUtils.split(senders, ","));
@@ -167,6 +170,7 @@ public class MailingAction extends AbstractModuleAction {
 			mailingContext.setSubject(rs.getParameter("subject", null));
 			mailingContext.setReportTo(rs.getParameter("report-to", null));
 			mailingContext.setGroups(rs.getParameterListValues("groups", new LinkedList<String>()));
+			mailingContext.setAdminGroups(rs.getParameterListValues("admin-groups", new LinkedList<String>()));
 			mailingContext.setRecipients(rs.getParameter("recipients", null));
 			mailingContext.setStructuredRecipients(rs.getParameter("structuredRecipients", null));
 			mailingContext.setTestMailing(rs.getParameter("test-mailing", null) != null);

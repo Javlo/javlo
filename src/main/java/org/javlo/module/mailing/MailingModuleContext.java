@@ -32,6 +32,7 @@ import org.javlo.module.core.AbstractModuleContext;
 import org.javlo.module.core.Module;
 import org.javlo.module.core.ModuleException;
 import org.javlo.module.core.ModulesContext;
+import org.javlo.user.AdminUserFactory;
 import org.javlo.user.IUserFactory;
 import org.javlo.user.IUserInfo;
 import org.javlo.user.UserFactory;
@@ -77,6 +78,7 @@ public class MailingModuleContext extends AbstractModuleContext {
 	private String subject;
 	private String reportTo;
 	private List<String> groups;
+	private List<String> adminGroups;
 	private String recipients;
 	private String structuredRecipients;
 	private boolean isTestMailing;
@@ -166,6 +168,7 @@ public class MailingModuleContext extends AbstractModuleContext {
 			HttpServletRequest request = ctx.getRequest();
 			GlobalContext globalContext = GlobalContext.getInstance(request);
 			IUserFactory userFactory = UserFactory.createUserFactory(globalContext, request.getSession());
+			IUserFactory adminUserFactory = AdminUserFactory.createUserFactory(globalContext, request.getSession());
 
 			if (sender == null || (sender = sender.trim()).isEmpty()) {
 				String msg = i18nAccess.getText("mailing.message.sender.mandatory");
@@ -206,6 +209,21 @@ public class MailingModuleContext extends AbstractModuleContext {
 					}
 				}
 			}
+			if (adminGroups != null) {
+				for (String group : adminGroups) {
+					System.out.println("***** MailingModuleContext.validate : group = "+group); //TODO: remove debug trace
+					List<IUserInfo> users = adminUserFactory.getUserInfoForRoles(new String[] { group });
+					for (IUserInfo user : users) {
+						System.out.println("***** MailingModuleContext.validate : user = "+user); //TODO: remove debug trace
+						if (!StringHelper.isEmpty(user.getEmail())) {
+							InternetAddress email = new InternetAddress(user.getEmail(), StringHelper.neverNull(user.getFirstName()) + " " + StringHelper.neverNull(user.getLastName()));
+							if (!allRecipients.contains(email)) {
+								allRecipients.add(email);
+							}
+						}
+					}
+				}
+			}
 			if (recipients != null) {
 				for (String fullEmail : StringHelper.searchEmail(recipients)) {
 					InternetAddress email = new InternetAddress(fullEmail);
@@ -234,6 +252,7 @@ public class MailingModuleContext extends AbstractModuleContext {
 		subject = null;
 		reportTo = null;
 		groups = null;
+		adminGroups = null;
 		recipients = null;
 		structuredRecipients = null;
 		isTestMailing = false;
@@ -278,6 +297,14 @@ public class MailingModuleContext extends AbstractModuleContext {
 
 	public void setStructuredRecipients(String structuredRecipients) {
 		this.structuredRecipients = structuredRecipients;
+	}
+
+	public List<String> getAdminGroups() {
+		return adminGroups;
+	}
+
+	public void setAdminGroups(List<String> adminGroups) {
+		this.adminGroups = adminGroups;
 	}
 
 }

@@ -168,8 +168,8 @@ public class AdminUserFactory extends UserFactory {
 
 	@Override
 	public Set<String> getAllRoles(GlobalContext globalContext, HttpSession session) {
-		EditContext ctx = EditContext.getInstance(globalContext, session);
-		return ctx.getAdminUserRoles();
+		EditContext editContext = EditContext.getInstance(globalContext, session);
+		return editContext.getAdminUserRoles();
 	}
 
 	@Override

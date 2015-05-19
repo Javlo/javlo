@@ -222,6 +222,7 @@ public class CreateArticle implements IInteractiveMacro, IAction {
 					newEditURL = URLHelper.addParam(newEditURL, "module", "content");
 					newEditURL = URLHelper.addParam(newEditURL, "webaction", "editPreview");
 					newEditURL = URLHelper.addParam(newEditURL, "previewEdit", "true");
+					newEditURL = URLHelper.addParam(newEditURL, "lightEdit", "true");
 				}
 				if (create) {
 					NetHelper.sendRedirectTemporarily(ctx.getResponse(), newEditURL);

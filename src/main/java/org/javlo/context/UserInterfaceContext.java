@@ -24,6 +24,8 @@ public class UserInterfaceContext {
 	private boolean lightInterface = true;
 
 	private boolean contributor = true;
+	
+	private boolean mailing = false;
 
 	private String currentModule = null;
 
@@ -44,6 +46,15 @@ public class UserInterfaceContext {
 			instance = new UserInterfaceContext();
 			instance.session = session;
 			instance.globalContext = globalContext;
+			
+			System.out.println("***** UserInterfaceContext.getInstance : globalContext.getModules().contains('mailing') = "+globalContext.getModules().contains("mailing")); //TODO: remove debug trace
+			System.out.println("***** UserInterfaceContext.getInstance : AdminUserSecurity.getInstance().haveRole(user, AdminUserSecurity.MAILING_ROLE) = "+AdminUserSecurity.getInstance().canRole(user, AdminUserSecurity.MAILING_ROLE)); //TODO: remove debug trace
+			
+			if (globalContext.getModules().contains("mailing") && AdminUserSecurity.getInstance().canRole(user, AdminUserSecurity.MAILING_ROLE)) {
+				instance.mailing = true;
+			} else {
+				instance.mailing = false;
+			}
 
 			instance.fromString(user.getUserInfo().getInfo());
 
@@ -115,5 +126,13 @@ public class UserInterfaceContext {
 
 	public boolean isContributor() {
 		return contributor;
+	}
+
+	public boolean isMailing() {
+		return mailing;
+	}
+
+	public void setMailing(boolean mailing) {
+		this.mailing = mailing;
 	}
 }

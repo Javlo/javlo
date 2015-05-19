@@ -94,7 +94,7 @@
 
 </head>
 
-<body class="bodygrey ${not empty param.previewEdit?'previewEdit':''}">
+<body class="bodygrey ${not empty param.previewEdit?'previewEdit':''}${requestService.parameterMap.lightEdit?' light-edit':''}">
 
 <c:if test="${empty param.previewEdit}">
 <div class="header">

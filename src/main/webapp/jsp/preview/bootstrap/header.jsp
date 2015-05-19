@@ -182,7 +182,7 @@
 							aria-hidden="true"></span>${i18n.edit['preview.label.not-edit-page']}</a>
 					</div>
 				</c:if></li>
-			<c:if test="${!pdf}">
+			<c:if test="${!pdf && userInterface.mailing}">
 				<li><c:url var="url" value="<%=URLHelper.createURL(editCtx)%>"
 						context="/">
 						<c:param name="module" value="mailing"></c:param>
