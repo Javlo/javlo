@@ -23,7 +23,7 @@ public class SocialAction extends AbstractModuleAction {
 		String msg = super.prepare(ctx, modulesContext);
 
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-		SocialService socialService = SocialService.getInstance(globalContext);
+		SocialService socialService = SocialService.getInstance(ctx);
 
 		ctx.getRequest().setAttribute("networks", socialService.getAllNetworks());
 
@@ -38,7 +38,7 @@ public class SocialAction extends AbstractModuleAction {
 			return "bad request structure, need the 'name' of social network as parameter.";
 		}
 
-		SocialService socialService = SocialService.getInstance(globalContext);
+		SocialService socialService = SocialService.getInstance(ctx);
 		ISocialNetwork network = socialService.getNetwork(name);
 		if (network == null) {
 			return "network '" + name + "' not found.";

@@ -31,7 +31,9 @@ import org.javlo.component.core.ContentElementList;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.image.GlobalImage;
 import org.javlo.component.meta.DateComponent;
+import org.javlo.component.meta.EventDefinitionComponent;
 import org.javlo.component.meta.Tags;
+import org.javlo.component.meta.TimeRangeComponent;
 import org.javlo.component.text.Description;
 import org.javlo.component.text.Paragraph;
 import org.javlo.component.title.SubTitle;
@@ -51,6 +53,7 @@ import org.javlo.service.ContentService;
 import org.javlo.service.NavigationService;
 import org.javlo.service.PersistenceService;
 import org.javlo.user.User;
+import org.jfree.data.time.DateRange;
 
 public class MacroHelper {
 
@@ -783,18 +786,19 @@ public class MacroHelper {
 		if (!StringHelper.isTrue("" + componentsType.get("all-languages"))) {
 			lgs = Arrays.asList(new String[] { ctx.getRequestContentLanguage() });
 		}
-
+		ContentService content = ContentService.getInstance(ctx.getRequest());
 		for (String lg : lgs) {
 			String parentId = "0";
 			Set<String> keysSet = componentsType.keySet();
 			List<String> keys = new LinkedList<String>();
 			keys.addAll(keysSet);
-			Collections.sort(keys);
+			Collections.sort(keys);			
 			for (String compName : keys) {
-				if (compName.contains(".") && !compName.endsWith(".style") && !compName.endsWith(".list") && !compName.endsWith(".area")) {
+				if (compName.contains(".") && !compName.endsWith(".style") && !compName.endsWith(".list") && !compName.endsWith(".area") && !compName.endsWith(".init-content")) {
 					String style = (String) componentsType.get(compName + ".style");
 					boolean asList = StringHelper.isTrue(componentsType.get(compName + ".list"));
 					String area = (String) componentsType.get(compName + ".area");
+					boolean initContent= StringHelper.isTrue(componentsType.get(compName + ".init-content"));
 
 					String type = StringHelper.split(compName, ".")[1];
 
@@ -806,12 +810,19 @@ public class MacroHelper {
 							value = LoremIpsumGenerator.getParagraph(50, false, true);
 						}
 					}
-					if (type.equals(DateComponent.TYPE) && date != null) {
+					if (type.equalsIgnoreCase(EventDefinitionComponent.TYPE) || type.equalsIgnoreCase(TimeRangeComponent.TYPE)) {
+						String dateStr = StringHelper.renderTime(date);
+						value = dateStr+TimeRangeComponent.VALUE_SEPARATOR+dateStr;
+					} else if (type.equals(DateComponent.TYPE) && date != null) {
 						value = StringHelper.renderTime(date);
 					} else if (type.equals(Tags.TYPE) && tags != null) {
 						value = StringHelper.collectionToString(tags, ";");
 					}
 					parentId = MacroHelper.addContent(lg, page, parentId, type, style, area, value, asList, ctx.getCurrentEditUser());
+					if (initContent) {
+						IContentVisualComponent comp = content.getComponent(ctx, parentId);
+						comp.initContent(ctx);
+					}
 				}
 			}
 		}
@@ -946,9 +957,9 @@ public class MacroHelper {
 			params.put("webaction", "macro.executeInteractiveMacro");
 			params.put("macro", macro);
 			String url = URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.EDIT_MODE), params);
-			String actionURL = "jQuery.colorbox({href : '" + url + "',opacity : 0.6,iframe : true,width : '95%',	height : '95%'}); return false;";
+			String actionURL = "try{jQuery.colorbox({href : '" + url + "',opacity : 0.6,iframe : true,width : '95%',	height : '95%'});} catch(err) {}; return false;";
 			out.println("<div class=\"macro\">");
-			out.println("<a href=\"#\" onclick=\"" + actionURL + "\">" + label + "</a>");
+			out.println("<a class=\"as-modal\" href=\""+url+"\" onclick=\"" + actionURL + "\">" + label + "</a>");
 			out.println("</div>");
 		} else {
 			out.println("<div class=\"macro\">");

@@ -10,7 +10,7 @@
   	<form action="${info.currentURL}" method="post">
   			<input type="hidden" name="webaction" value="event-registration.confirm" />
 			<input type="hidden" name="comp-id" value="${compid}" />		
-			<div class="btn-group" role="group">				
+			<div class="btn-group pull-right" role="group">				
 				<c:if test="${!confirmed && !canceled}">
 				<button class="btn btn-primary" type="submit" name="confirm">${fields.confirm}</button>
 				<button class="btn btn-default" type="submit" name="cancel">${fields.cancel}</button>
@@ -27,4 +27,15 @@
   </c:if><c:if test="${!globalContext.collaborativeMode}">
   	<a href="${info.absolutePreviewURL}">${fields.mailingButton}</a>
   </c:if></c:if>
+</div>
+<h3>${fields.participants}</h3>
+<div class="participants">
+	<c:if test="${fn:length(participants)==0}">${fields.noParticipant}</c:if>
+	<c:if test="${fn:length(participants)>0}">
+	<ul>
+	<c:forEach var="user" items="${participants}">
+	<li><a href="mailto:${user.userInfo.email}">${user.label}</a></li>
+	</c:forEach>
+	</ul>
+	</c:if>  	
 </div>

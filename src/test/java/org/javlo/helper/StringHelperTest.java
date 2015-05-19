@@ -1,10 +1,10 @@
 package org.javlo.helper;
 
+import java.io.IOException;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
-
-import javax.mail.internet.AddressException;
-import javax.mail.internet.InternetAddress;
+import java.util.Map;
 
 import junit.framework.TestCase;
 
@@ -156,6 +156,19 @@ public class StringHelperTest extends TestCase {
 	  assertEquals(StringHelper.searchStructuredEmail("first last <info@javlo.org>;first last2 <info2@javlo.org>").iterator().next().getPersonal(), "first last");
 	  assertEquals(StringHelper.searchStructuredEmail("first last <info@javlo.org>;first last2 <info2@javlo.org>").iterator().next().getAddress(), "info@javlo.org");
 	  
+  }
+  
+  public void testMapToString() throws IOException {
+	  Map<String,String> testMap = new HashMap<String, String>();
+	  testMap.put("entry1", "value1");
+	  testMap.put("entry2", "value2");
+	  testMap.put("entry3", "value3");
+	  String encodedMap = StringHelper.mapToString(testMap);
+	  Map<String,String> decodedMap = StringHelper.stringToMap(encodedMap);
+	  assertEquals(decodedMap.get("entry1"), testMap.get("entry1"));
+	  assertEquals(decodedMap.get("entry2"), testMap.get("entry2"));
+	  assertEquals(decodedMap.get("entry3"), testMap.get("entry3"));
+	  assertEquals(decodedMap.size(), testMap.size());	  
   }
   
  

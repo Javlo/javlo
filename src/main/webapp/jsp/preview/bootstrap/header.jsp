@@ -21,6 +21,7 @@
 	ContentContext editCtx = new ContentContext(ctx);
 	editCtx.setRenderMode(ContentContext.EDIT_MODE);
 	ContentContext returnEditCtx = new ContentContext(editCtx);
+	returnEditCtx.setEditPreview(false);
 	AdminUserFactory fact = AdminUserFactory.createAdminUserFactory(ctx.getGlobalContext(), request.getSession());
 	String readOnlyPageHTML = "";
 	String readOnlyClass = "access";

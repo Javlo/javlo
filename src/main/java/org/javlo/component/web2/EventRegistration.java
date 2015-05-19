@@ -4,7 +4,10 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.javlo.actions.IAction;
@@ -17,6 +20,11 @@ import org.javlo.i18n.I18nAccess;
 import org.javlo.message.MessageRepository;
 import org.javlo.service.RequestService;
 import org.javlo.service.event.Event;
+import org.javlo.user.AdminUserFactory;
+import org.javlo.user.IUserFactory;
+import org.javlo.user.SortUserOnLabel;
+import org.javlo.user.User;
+import org.javlo.user.UserFactory;
 
 public class EventRegistration extends AbstractPropertiesComponent implements IAction {
 	
@@ -34,6 +42,10 @@ public class EventRegistration extends AbstractPropertiesComponent implements IA
 	
 	private static final String RESET = "reset";
 	
+	private static final String PARTICIPANTS = "participants";
+	
+	private static final String NO_PARTICIPANT = "noParticipant";
+	
 	private static final String NOTLOGGED = "notlogged";
 	
 	private static final String MAILING_BUTTON = "mailingButton";
@@ -42,7 +54,7 @@ public class EventRegistration extends AbstractPropertiesComponent implements IA
 
 	public static final String TYPE = "event-registration";
 	
-	private static List<String> FIELDS = Arrays.asList(new String[] {CANCEL, CONFIRM, QUESTION,CHANGE, RESET, CONFIRMED, CANCELED, NOTLOGGED, MAILING_BUTTON, TOO_LATE});
+	private static List<String> FIELDS = Arrays.asList(new String[] {CANCEL, CONFIRM, QUESTION,CHANGE, RESET, CONFIRMED, CANCELED, NOTLOGGED, MAILING_BUTTON, TOO_LATE, PARTICIPANTS, NO_PARTICIPANT});
 
 	public EventRegistration() {
 		// TODO Auto-generated constructor stub
@@ -61,7 +73,9 @@ public class EventRegistration extends AbstractPropertiesComponent implements IA
 		if (event != null && event.getStart() != null && event.getStart().getTime() < (new Date()).getTime()) {
 			ctx.getRequest().setAttribute("closeEvent", event);
 		}		
-		ctx.getRequest().setAttribute("user", getUser(ctx));
+		ctx.getRequest().setAttribute("user", getUser(ctx));		
+		ctx.getRequest().setAttribute("participants", getParticipants(ctx));
+		
 	}
 
 	@Override
@@ -201,6 +215,8 @@ public class EventRegistration extends AbstractPropertiesComponent implements IA
 		setFieldValue(NOTLOGGED, "You must be logged in to confirm you participation.");
 		setFieldValue(MAILING_BUTTON, "Click here to register");
 		setFieldValue(TOO_LATE, "You can't register to this event.");
+		setFieldValue(PARTICIPANTS, "participants");
+		setFieldValue(NO_PARTICIPANT, "not yet participants registered.");
 		storeProperties();
 		setModify();		
 		return out;				
@@ -214,6 +230,28 @@ public class EventRegistration extends AbstractPropertiesComponent implements IA
 	@Override
 	public boolean isContentCachable(ContentContext ctx) {
 		return false;
+	}
+	
+	public List<User> getParticipants(ContentContext ctx) throws Exception {
+		List<User> outUsers = new LinkedList<User>();		
+		Collection<String> allUsersId = getConfirmedUser(ctx);
+		IUserFactory adminUserFactory = AdminUserFactory.createUserFactory(ctx.getGlobalContext(), ctx.getRequest().getSession());
+		IUserFactory userFactory = UserFactory.createUserFactory(ctx.getGlobalContext(), ctx.getRequest().getSession());
+		for (String login : allUsersId) {
+			User user = userFactory.getUser(login);
+			if (user != null) {
+				outUsers.add(user);
+			} else {
+				user = adminUserFactory.getUser(login);
+				if (user != null) {
+					outUsers.add(user);
+				} else {
+					logger.warning("user not found : "+login);
+				}
+			}
+		}
+		Collections.sort(outUsers, new SortUserOnLabel());
+		return outUsers;
 	}
 
 }

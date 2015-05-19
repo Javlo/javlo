@@ -12,7 +12,7 @@
 <textarea id="body" name="body"></textarea>
 </div>
 <div class="actions">
-<input type="submit" >
+<button class="btn btn-default pull-right" type="submit" >${i18n.edit['global.create']}</button>
 </div>
 </fieldset>
 </form>

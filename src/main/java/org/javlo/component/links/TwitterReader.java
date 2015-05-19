@@ -120,7 +120,7 @@ public class TwitterReader extends AbstractVisualComponent {
 		if (getValue().trim().length() > 0) {
 			return new URL(getValue());
 		} else {
-			String twitterURL = SocialService.getInstance(ctx.getGlobalContext()).getTwitter().getURL();
+			String twitterURL = SocialService.getInstance(ctx).getTwitter().getURL();
 			if (twitterURL != null && twitterURL.trim().length() > 0) {
 				return new URL(twitterURL);
 			}

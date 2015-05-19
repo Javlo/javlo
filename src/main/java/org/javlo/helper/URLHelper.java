@@ -161,6 +161,9 @@ public class URLHelper extends ElementaryURLHelper {
 	}
 
 	public static String createAvatarUrl(ContentContext ctx, IUserInfo userInfo) {
+		if (userInfo.getAvatarURL() != null) {
+			return userInfo.getAvatarURL();
+		}
 		if (userInfo instanceof AdminUserInfo) {
 			AdminUserInfo adminUserInfo = (AdminUserInfo) userInfo;
 			String url = mergePath(ctx.getGlobalContext().getStaticConfig().getAvatarFolder(), userInfo.getLogin() + ".png");
@@ -177,9 +180,6 @@ public class URLHelper extends ElementaryURLHelper {
 			}
 			if (adminUserInfo.getEmail() != null) {
 				try {
-					/*if (!StringHelper.isURL(url)) {
-						url = URLHelper.createStaticURL(ctx.getContextForAbsoluteURL(), url);
-					}*/
 					url = URLHelper.getGravatarURL(adminUserInfo.getEmail(), null).toString();
 				} catch (MalformedURLException e) {
 					e.printStackTrace();

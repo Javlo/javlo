@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.oltu.oauth2.common.OAuthProviderType;
 import org.javlo.helper.NetHelper;
 import org.javlo.user.IUserInfo;
 import org.javlo.user.UserInfo;
@@ -65,6 +66,11 @@ public class Facebook extends AbstractSocialNetwork {
 		ui.setFirstName(""+info.get(0).get("first_name"));
 		ui.setLastName(""+info.get(0).get("last_name"));
 		return ui;
+	}
+	
+	@Override
+	public OAuthProviderType getProviderType() {	
+		return OAuthProviderType.FACEBOOK;
 	}
 
 }

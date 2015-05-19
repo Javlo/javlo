@@ -604,7 +604,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 					localLogger.endCount("edit", "include edit");
 				} else { // view
 
-					request.setAttribute("social", SocialService.getInstance(globalContext));
+					request.setAttribute("social", SocialService.getInstance(ctx));
 
 					localLogger.startCount("content");
 
@@ -688,7 +688,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 						 */
 						PDFConvertion.getInstance().convertXHTMLToPDF(new URL(url), staticConfig.getApplicationLogin(), staticConfig.getApplicationPassword(), out);
 
-					}  else if (ctx.getFormat().equalsIgnoreCase("ical") || ctx.getFormat().equalsIgnoreCase("icalendar")) {						
+					}  else if (ctx.getFormat().equalsIgnoreCase("ics") || ctx.getFormat().equalsIgnoreCase("ical") || ctx.getFormat().equalsIgnoreCase("icalendar")) {						
 						OutputStream out = response.getOutputStream();
 						Event event = ctx.getCurrentPage().getEvent(ctx);
 						if (event == null)  {

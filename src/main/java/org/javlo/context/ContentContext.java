@@ -1229,6 +1229,12 @@ public class ContentContext {
 		res.append("area=");
 		res.append(area);
 		res.append(" - ");
+		res.append("editPreview=");
+		res.append(editPreview);
+		res.append(" - ");
+		res.append("isEditPreview(request)=");
+		res.append(isEditPreview(request));
+		res.append(" - ");
 		res.append("super.toString=");
 		res.append(super.toString());
 		return res.toString();
