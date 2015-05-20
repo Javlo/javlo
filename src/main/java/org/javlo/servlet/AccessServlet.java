@@ -711,6 +711,9 @@ public class AccessServlet extends HttpServlet implements IVersion {
 							outPrint.println("DTEND:"+dateFormat.format(event.getEnd()));
 							outPrint.println("CATEGORIES:"+event.getCategory());
 							outPrint.println("SUMMARY:"+event.getSummary());
+							if (StringHelper.neverNull(event.getLocation()).trim().length() > 0) {
+								outPrint.println("LOCATION:"+event.getLocation());
+							}
 							outPrint.println("DESCRIPTION:"+event.getDescription());
 							outPrint.println("END:VEVENT");
 							outPrint.println("END:VCALENDAR");

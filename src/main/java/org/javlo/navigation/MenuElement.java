@@ -4483,7 +4483,7 @@ public class MenuElement implements Serializable, IPrintInfo {
 			}
 		}
 		desc.event = Event.NO_EVENT;
-		return desc.event;
+		return null;
 	}
 
 }

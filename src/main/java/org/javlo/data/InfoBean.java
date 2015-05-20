@@ -163,6 +163,17 @@ public class InfoBean {
 	public String getCurrentPreviewURL() {
 		return URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.PREVIEW_MODE).getFreeContentContext());
 	}
+	
+	public String getCurrentPageICalURL() throws Exception {
+		MenuElement currentPage = ctx.getCurrentPage();
+		if (currentPage.getEvent(ctx) == null) {			
+			return null;
+		} else {
+			ContentContext icalCtx = new ContentContext(ctx);
+			icalCtx.setFormat("ical");			
+			return URLHelper.createURL(icalCtx);
+		}		
+	}
 
 	public String getCurrentPageURL() {
 		return URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.PAGE_MODE).getFreeContentContext());
