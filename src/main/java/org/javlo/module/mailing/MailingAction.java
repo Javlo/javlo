@@ -3,6 +3,7 @@ package org.javlo.module.mailing;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -134,10 +135,13 @@ public class MailingAction extends AbstractModuleAction {
 			if (mailingContext.getReportTo() == null) {
 				mailingContext.setReportTo(globalContext.getAdministratorEmail());
 			}
-			IUserFactory userFactory = UserFactory.createUserFactory(request);
-			Set<String> roles = userFactory.getAllRoles(globalContext, session);
-			request.setAttribute("groups", roles);
-			request.setAttribute("adminGroups", globalContext.getAdminUserRoles());
+			IUserFactory userFactory = UserFactory.createUserFactory(request);			
+			List<String> groups = new LinkedList(userFactory.getAllRoles(globalContext, session));
+			Collections.sort(groups);
+			request.setAttribute("groups", groups);
+			List<String> adminGroups = new LinkedList(globalContext.getAdminUserRoles());
+			Collections.sort(adminGroups);
+			request.setAttribute("adminGroups", adminGroups);
 			
 			String senders = globalContext.getMailingSenders().trim();
 			if (senders.trim().length() > 0) {
