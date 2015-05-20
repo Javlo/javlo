@@ -35,6 +35,7 @@ import org.javlo.module.core.ModulesContext;
 import org.javlo.user.AdminUserFactory;
 import org.javlo.user.IUserFactory;
 import org.javlo.user.IUserInfo;
+import org.javlo.user.User;
 import org.javlo.user.UserFactory;
 
 //TODO Use MailingBuilder
@@ -210,11 +211,9 @@ public class MailingModuleContext extends AbstractModuleContext {
 				}
 			}
 			if (adminGroups != null) {
-				for (String group : adminGroups) {
-					System.out.println("***** MailingModuleContext.validate : group = "+group); //TODO: remove debug trace
+				for (String group : adminGroups) {					
 					List<IUserInfo> users = adminUserFactory.getUserInfoForRoles(new String[] { group });
-					for (IUserInfo user : users) {
-						System.out.println("***** MailingModuleContext.validate : user = "+user); //TODO: remove debug trace
+					for (IUserInfo user : users) {						
 						if (!StringHelper.isEmpty(user.getEmail())) {
 							InternetAddress email = new InternetAddress(user.getEmail(), StringHelper.neverNull(user.getFirstName()) + " " + StringHelper.neverNull(user.getLastName()));
 							if (!allRecipients.contains(email)) {
@@ -276,10 +275,14 @@ public class MailingModuleContext extends AbstractModuleContext {
 		m.setContextKey(ctx.getGlobalContext().getContextKey());
 		StaticConfig sc = ctx.getGlobalContext().getStaticConfig();
 		String content;
-		if (sc.getApplicationLogin() != null) {
+		if (sc.getApplicationLogin() != null) {			
 			content = NetHelper.readPageForMailing(url, sc.getApplicationLogin(), sc.getApplicationPassword());
 		} else {
-			content = NetHelper.readPageForMailing(url, ctx.getCurrentEditUser().getUserInfo().getToken());
+			User user = AdminUserFactory.createUserFactory(globalContext, ctx.getRequest().getSession()).getUser(ctx.getCurrentEditUser().getLogin());			
+			if (user.getUserInfo().getToken() == null || user.getUserInfo().getToken().trim().length() == 0) {				
+				user.getUserInfo().setToken(StringHelper.getRandomIdBase64());
+			}
+			content = NetHelper.readPageForMailing(url, user.getUserInfo().getToken());
 		}
 		if (content == null) {
 			logger.severe("error on read : " + url);
