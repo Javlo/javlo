@@ -222,6 +222,7 @@ public class CreateArticle implements IInteractiveMacro, IAction {
 				if (newURL != null && create) {					
 					newEditURL = URLHelper.addParam(newEditURL, "module", "content");
 					newEditURL = URLHelper.addParam(newEditURL, "webaction", "editPreview");
+					newEditURL = URLHelper.addParam(newEditURL, "webaction", "edit.changeArea");
 					newEditURL = URLHelper.addParam(newEditURL, "previewEdit", "true");
 					newEditURL = URLHelper.addParam(newEditURL, "lightEdit", "true");
 					newEditURL = URLHelper.addParam(newEditURL, "area", ComponentBean.DEFAULT_AREA);
