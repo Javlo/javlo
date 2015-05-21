@@ -151,11 +151,12 @@
 			<c:if test="${!logged}">
 			<li>
 				<form id="pc_form" method="post" action="<%=URLHelper.createURL(editCtx)%>">
-					<div class="pc_line">							
+					<div class="pc_line">				
 						<c:if test='${!editPreview}'>
 							<button class="btn btn-default btn-xs" type="submit">
 								<span class="glyphicon glyphicon-user" aria-hidden="true"></span>${i18n.edit['global.login']}</button>
 						</c:if>
+						<input type="hidden" name="backPreview" value="true" />
 					</div>
 				</form>
 			</li>
@@ -219,20 +220,15 @@
 			</c:if>
 			</ul></div><div class="users">
 			<c:if test="${not empty editUser}">
+				<c:url var="logoutURL" value="<%=URLHelper.createURL(ctx)%>" context="/">
+					<c:param name="edit-logout" value="true" />
+				</c:url> 
 				<li class="user"><c:if test="${!userInterface.contributor}">
-						<a id="pc_edit_mode_button" class="close" title="${i18n.edit['global.exit']}"
-							href="<%=URLHelper.createURL(returnEditCtx)%>">X</a>
-					</c:if> <c:url var="url" value="<%=URLHelper.createURL(returnEditCtx)%>"
-						context="/">
-						<c:param name="edit-logout" value="true" />
-					</c:url> <c:if test="${userInterface.contributor}">
-						<a
-							href="${info.currentEditURL}?module=users&webaction=user.changeMode&mode=myself&previewEdit=true"
-							class="as-modal"><span class="glyphicon glyphicon-user"
-							aria-hidden="true"></span>${info.userName}</a>
-						<a id="pc_edit_mode_button" class="logout"
-							title="${i18n.edit['global.logout']}" href="${url}">${i18n.edit["global.logout"]}</a>
-					</c:if></li>
+				<a id="pc_edit_mode_button" class="btn btn-default" title="${i18n.edit['global.exit']}" href="<%=URLHelper.createURL(returnEditCtx)%>"><span class="glyphicon glyphicon-briefcase"></span>edit</a>	
+				</c:if>
+				<a href="${info.currentEditURL}?module=users&webaction=user.changeMode&mode=myself&previewEdit=true" class="as-modal btn btn-default"><span class="glyphicon glyphicon-user" aria-hidden="true"></span>${info.userName}</a>					
+				<a class="btn btn-default" title="${i18n.edit['global.logout']}" href="${logoutURL}"><span class="glyphicon glyphicon-log-out"></span>${i18n.edit["global.logout"]}</a>				
+				</li>
 			</c:if>
 			</div>
 		

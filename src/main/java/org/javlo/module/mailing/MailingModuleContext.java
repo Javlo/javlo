@@ -278,11 +278,15 @@ public class MailingModuleContext extends AbstractModuleContext {
 		if (sc.getApplicationLogin() != null) {			
 			content = NetHelper.readPageForMailing(url, sc.getApplicationLogin(), sc.getApplicationPassword());
 		} else {
-			User user = AdminUserFactory.createUserFactory(globalContext, ctx.getRequest().getSession()).getUser(ctx.getCurrentEditUser().getLogin());			
-			if (user.getUserInfo().getToken() == null || user.getUserInfo().getToken().trim().length() == 0) {				
-				user.getUserInfo().setToken(StringHelper.getRandomIdBase64());
+			User user = AdminUserFactory.createUserFactory(globalContext, ctx.getRequest().getSession()).getUser(ctx.getCurrentEditUser().getLogin());
+			String token = null;
+			if (user != null) {
+				if (user.getUserInfo().getToken() == null || user.getUserInfo().getToken().trim().length() == 0) {				
+					user.getUserInfo().setToken(StringHelper.getRandomIdBase64());
+				}
+				token = user.getUserInfo().getToken();
 			}
-			content = NetHelper.readPageForMailing(url, user.getUserInfo().getToken());
+			content = NetHelper.readPageForMailing(url, token);
 		}
 		if (content == null) {
 			logger.severe("error on read : " + url);

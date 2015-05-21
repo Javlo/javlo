@@ -75,11 +75,11 @@ request.setAttribute("editPreview", EditContext.getInstance(globalContext, sessi
 				<form method="post" action="${info.currentURL}" id="_ep_login">
 			    	<div class="form-group">
 		    			<input type="hidden" name="login-type" value="adminlogin">
-		    			<input type="hidden" name="edit-login" value="edit-login">    		    		
+		    			<input type="hidden" name="edit-login" value="edit-login">		    			    		    		
 		            	<input type="text" name="j_username" id="j_username" class="form-control" placeholder="${i18n.edit['login.user']}">
 		            </div><div class="form-group">
 		            	<input type="password" name="j_password" id="j_password" class="form-control" placeholder="${i18n.edit['login.password']}">
-		            </div>
+		            </div>		            
 		            <button class="btn btn-default pull-right">Login</button>	        	        
 				</form>
 			</div>

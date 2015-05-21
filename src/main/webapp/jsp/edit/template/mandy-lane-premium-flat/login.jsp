@@ -36,12 +36,13 @@ case GenericMessage.SUCCESS:
 				<div class="alert-wrapper slow-hide"><div class="alert alert-<%=bootstrapType%>">${messages.globalMessage.message}</div></div>
 			</c:if>
             <h1><img src="${info.logoURL}?color=D31996" height="40px" alt="Javlo" /><span class="version">(<%=IVersion.VERSION%>)</span></h1>
-            <form action="${info.currentEditURL}" method="post" role="form">
+            <form action="${empty param.backPreview?info.currentEditURL:info.currentPreviewURL}" method="post" role="form">
             	<c:if test="${not empty param.previewEdit}">
 					<input type="hidden" name="previewEdit" value="${param.previewEdit}" />
 				</c:if>
 				<input type="hidden" value="adminlogin" name="login-type" />
 				<input type="hidden" value="edit-login" name="edit-login" />
+				<c:if test="${param.editPreview}"><input type="hidden" value="editPreview" name="true" /></c:if>
 				<div class="form-group">    							
                 <input id="j_username" class="form-control" type="text" name="j_username" placeholder="User name" />
                 </div><div class="form-group">
