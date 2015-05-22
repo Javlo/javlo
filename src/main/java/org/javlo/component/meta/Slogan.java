@@ -53,5 +53,20 @@ public class Slogan extends AbstractVisualComponent {
 		setModify();
 		return true;
 	}
+	
+	@Override
+	public boolean isHidden(ContentContext ctx) {
+		return true;
+	}
+	
+	@Override
+	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
+		return "";
+	}
+	
+	@Override
+	protected boolean isWrapped(ContentContext ctx) {	
+		return ctx.isEdit();
+	}
 
 }
