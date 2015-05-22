@@ -14,11 +14,6 @@ public class Slogan extends AbstractVisualComponent {
 
 	public static final String TYPE = "slogan";
 
-	@Override
-	public boolean isInline() {
-		return true;
-	}
-
 	protected boolean isPrefixed() {
 		return false;
 	}
@@ -55,18 +50,13 @@ public class Slogan extends AbstractVisualComponent {
 	}
 	
 	@Override
-	public boolean isHidden(ContentContext ctx) {
-		return true;
-	}
-	
-	@Override
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
 		return "";
 	}
 	
 	@Override
 	protected boolean isWrapped(ContentContext ctx) {	
-		return ctx.isEdit();
+		return ctx.isEditPreview();
 	}
 
 }
