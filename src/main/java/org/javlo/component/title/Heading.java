@@ -279,4 +279,5 @@ public class Heading extends AbstractPropertiesComponent implements ISubTitle {
 	public boolean isRealContent(ContentContext ctx) {	
 		return false;
 	}
+
 }

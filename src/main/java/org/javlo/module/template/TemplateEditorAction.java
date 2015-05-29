@@ -316,7 +316,7 @@ public class TemplateEditorAction extends AbstractModuleAction {
 			Template newTemplate = TemplateFactory.createDiskTemplates(application, templateName, null);
 			newTemplate.setParentName(staticConfig.getDefaultParentEditableTemplate());
 			Row row = new Row(newTemplate);
-			row.setName("row-1");
+			row.setName("row-0001");
 			Area area = new Area();
 			area.setName("content");
 			row.addArea(area);
