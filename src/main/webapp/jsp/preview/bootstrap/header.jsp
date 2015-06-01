@@ -197,7 +197,7 @@
 							<span class="glyphicon glyphicon-send" aria-hidden="true"></span>${i18n.edit['preview.label.mailing']}
 						</button>
 					</form></li>
-			</c:if>
+			</c:if>			
 			<c:if test="${pdf}">
 				<li>
 				<li><form id="export_pdf_page_form"
@@ -217,6 +217,21 @@
 						</button>
 					</form></li>
 			</c:if>
+			</c:if>
+			<c:if test="${!pdf && userInterface.ticket}">
+				<li><c:url var="url" value="<%=URLHelper.createURL(editCtx)%>"
+						context="/">
+						<c:param name="module" value="ticket"></c:param>
+						<c:param name="previewEdit" value="true"></c:param>
+					</c:url>
+					<form>
+						<button class="btn btn-default btn-xs btn-tickets btn-color"
+							type="<%=accessType%>"
+							value="${i18n.edit['preview.label.ticket']}"
+							onclick="editPreview.openModal('${i18n.edit['preview.label.ticket']}','${url}'); return false;">
+							<span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span><span class="text">${i18n.edit['preview.label.ticket']}</span>
+						</button>
+					</form></li>
 			</c:if>
 			</ul></div><div class="users">
 			<c:if test="${not empty editUser}">

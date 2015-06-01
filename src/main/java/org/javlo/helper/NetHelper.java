@@ -872,7 +872,7 @@ public class NetHelper {
 
 	public static void sendXHTMLMail(ContentContext ctx, InternetAddress from, InternetAddress to, InternetAddress cc, InternetAddress bcc, String subject, String content, String templateName) throws Exception {
 		if (templateName == null) {
-			templateName = "javlo_mailing";
+			templateName = "basic_mailing";
 		}
 		String contentId = StringHelper.getRandomId();
 

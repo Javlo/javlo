@@ -315,6 +315,7 @@ public class ImageTransformServlet extends HttpServlet {
 				
 				image = ImageEngine.resize(image, thumbWidth, thumbHeight, config.isCropResize(ctx.getDevice(), filter, area), config.isAddBorder(ctx.getDevice(), filter, area), mt, ml, mr, mb, config.getBGColor(ctx.getDevice(), filter, area), info.getFocusZoneX(ctx), info.getFocusZoneY(ctx), true, config.isHighQuality(ctx.getDevice(),filter, area));
 				ImageEngine.insertImage(image, img, x * thumbWidth, y * thumbHeight);
+				image.flush();
 			}
 		}
 
@@ -409,6 +410,9 @@ public class ImageTransformServlet extends HttpServlet {
 
 			} finally {
 				outImage.close();
+				if (img != null) {
+					img.flush();
+				}
 			}			
 		}
 	}
@@ -667,6 +671,8 @@ public class ImageTransformServlet extends HttpServlet {
 			int mr = config.getMarginRigth(ctx.getDevice(), filter, area);
 			int mb = config.getMarginBottom(ctx.getDevice(), filter, area);
 			img = ImageEngine.applyFilter(img, layer, config.isCropResize(ctx.getDevice(), filter, area), config.isAddBorder(ctx.getDevice(), filter, area), mt, ml, mr, mb, focusX, focusY, config.isFocusZone(ctx.getDevice(), filter, area), config.getBGColor(ctx.getDevice(), filter, area), hq);
+			layer.flush();
+			layer = null;
 		}
 
 		// org.javlo.helper.Logger.stepCount("transform",
@@ -761,6 +767,9 @@ public class ImageTransformServlet extends HttpServlet {
 			} finally {
 				outImage.close();
 				transFile.commit();
+				if (img != null) {
+					img.flush();
+				}
 			}
 		}
 
@@ -1051,6 +1060,7 @@ public class ImageTransformServlet extends HttpServlet {
 										image = ImageEngine.resizeWidth(image, maxWidth,true);
 										ImageIO.write(image, StringHelper.getFileExtension(imageFile.getName().toLowerCase()), imageFile);
 									}
+									image.flush();
 								} else {
 									logger.warning("Could'nt read image : " + imageFile);
 								}
