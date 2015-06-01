@@ -429,3 +429,5 @@ change log
  * ImageTransform thread manager optimisation
  
  * Social netword login: google
+ 
+ * ticket accessible from preview, call img.flush in ImageTransformServlet and force SC_ACCEPTED in CssLess filter.
