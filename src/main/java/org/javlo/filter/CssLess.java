@@ -53,7 +53,7 @@ public class CssLess implements Filter {
 			if (lessFile.exists()) {
 				if (compile (lessFile, cssFile)) {					
 					try {
-						Thread.sleep(1000); // check why on linux we need the sleep.
+						Thread.sleep(2*1000); // check why on linux we need the sleep.
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
