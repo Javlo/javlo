@@ -1,10 +1,8 @@
 package org.javlo.filter;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.logging.Logger;
 
 import javax.servlet.Filter;
@@ -14,7 +12,6 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
 import org.javlo.config.StaticConfig;
@@ -53,7 +50,7 @@ public class CssLess implements Filter {
 			if (lessFile.exists()) {
 				if (compile (lessFile, cssFile)) {					
 					try {
-						Thread.sleep(2*1000); // check why on linux we need the sleep.
+						Thread.sleep(5*1000); // check why on linux we need the sleep.
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
