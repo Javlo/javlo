@@ -4,6 +4,7 @@
 	<groupId>org.javlo</groupId>
 	<artifactId>javlo-visual-testing</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
+
 	<dependencies>
 
 		<dependency>
@@ -48,20 +49,14 @@
 			<groupId>com.googlecode.fighting-layout-bugs</groupId>
 			<artifactId>fighting-layout-bugs</artifactId>
 			<version>0.6</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>commons-logging</artifactId>
+					<groupId>commons-logging</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 	</dependencies>
-
-	<dependencyManagement>
-		<dependencies>
-			<dependency>
-				<groupId>commons-logging</groupId>
-				<artifactId>commons-logging</artifactId>
-				<version>1.2</version>
-				<scope>runtime</scope>
-				<optional>true</optional>
-			</dependency>
-		</dependencies>
-	</dependencyManagement>
 
 	<build>
 		<plugins>

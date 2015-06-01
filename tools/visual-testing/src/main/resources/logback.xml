@@ -17,6 +17,6 @@
 		<appender-ref ref="STDOUT" />
 	</root>
 
-<!-- 	<logger name="be.lg2dc" level="trace" /> -->
+	<logger name="org.javlo" level="trace" />
 
 </configuration>

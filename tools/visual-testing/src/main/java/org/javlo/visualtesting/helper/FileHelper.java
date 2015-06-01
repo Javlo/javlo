@@ -1,11 +1,13 @@
-package org.javlo.visualtesting;
+package org.javlo.visualtesting.helper;
 
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class FileUtils {
+public class FileHelper {
 
 	public static String encodeAsFileName(String text) {
 		final char special = '%';
@@ -28,6 +30,12 @@ public class FileUtils {
 			sb.append(text);
 		}
 		return sb.toString();
+	}
+
+	public static final DateTimeFormatter FILE_DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss-SSS");
+
+	public static String createFileName(LocalDateTime dateTime) {
+		return FILE_DATE_TIME_FORMATTER.format(ZonedDateTime.of(dateTime, ZoneId.systemDefault()));
 	}
 
 }
