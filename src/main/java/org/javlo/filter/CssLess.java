@@ -1,6 +1,7 @@
 package org.javlo.filter;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.logging.Logger;
 
@@ -17,6 +18,7 @@ import org.apache.commons.lang.StringUtils;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
+import org.javlo.helper.ResourceHelper;
 import org.lesscss.LessCompiler;
 
 public class CssLess implements Filter {
@@ -47,18 +49,8 @@ public class CssLess implements Filter {
 				cssFile.getParentFile().mkdirs();
 			}
 			if (lessFile.exists()) {
-				if (compile (lessFile, cssFile)) {
-					System.out.println("***** CssLess.doFilter : WAIT..."); //TODO: remove debug trace
-					try {
-						Thread.sleep(100);
-					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-					System.out.println("***** CssLess.doFilter : cssFile exist : "+cssFile.exists()); //TODO: remove debug trace
+				if (compile (lessFile, cssFile)) {					
 					((HttpServletResponse)response).setStatus(HttpServletResponse.SC_ACCEPTED);
-				} else {
-					System.out.println("***** CssLess.doFilter : ERROR COMPILE LESSs"); //TODO: remove debug trace
 				}
 			}
 		}
@@ -67,14 +59,21 @@ public class CssLess implements Filter {
 	
 	private static boolean compile(File lessFile, File cssFile) {		
 		LessCompiler lessCompiler = new LessCompiler();
+		FileOutputStream out = null;
 		try {
 			lessCompiler.setEncoding(ContentContext.CHARACTER_ENCODING);					
-			lessCompiler.compile(lessFile, cssFile);
+			String cssContent = lessCompiler.compile(lessFile);
+			out = new FileOutputStream(cssFile);
+			ResourceHelper.writeStringToStream(cssContent, out, ContentContext.CHARACTER_ENCODING);
+			out.flush();
+			out.getFD().sync();			
 			return true;
 		} catch (Exception e) {
 			logger.severe("error on less file '"+lessFile+"' : "+e.getMessage());
 			e.printStackTrace();
 			return false;
+		} finally {
+			ResourceHelper.closeResource(out);
 		}
 	}
 
