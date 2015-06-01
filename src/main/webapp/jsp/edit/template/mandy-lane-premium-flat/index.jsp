@@ -42,7 +42,7 @@
 <link rel="stylesheet" media="screen" href="${info.editTemplateURL}/css/style.css?ts=${info.ts}" />
 <link rel="stylesheet" media="screen" href="${info.editTemplateURL}/css/javlo.css?ts=${info.ts}" />
 <link rel="stylesheet" media="screen" href="${info.editTemplateURL}/css/plugins/colorbox.css" />
-<link rel="stylesheet" media="screen" href="${info.editTemplateURL}/css/edit_${globalContext.editTemplateMode}.css" />
+<c:if test="${not empty globalContext.editTemplateMode}"><link rel="stylesheet" media="screen" href="${info.editTemplateURL}/css/edit_${globalContext.editTemplateMode}.css" /></c:if>
 <c:if test="${not empty specificCSS}">
 <link rel="stylesheet" media="screen" href="${specificCSS}" />
 </c:if>
