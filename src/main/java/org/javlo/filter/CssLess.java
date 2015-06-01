@@ -50,7 +50,7 @@ public class CssLess implements Filter {
 				if (compile (lessFile, cssFile)) {
 					System.out.println("***** CssLess.doFilter : WAIT..."); //TODO: remove debug trace
 					try {
-						Thread.sleep(5*1000);
+						Thread.sleep(100);
 					} catch (InterruptedException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
