@@ -48,7 +48,10 @@ public class CssLess implements Filter {
 			}
 			if (lessFile.exists()) {
 				if (compile (lessFile, cssFile)) {
+					System.out.println("***** CssLess.doFilter : cssFile exist : "+cssFile.exists()); //TODO: remove debug trace
 					((HttpServletResponse)response).setStatus(HttpServletResponse.SC_ACCEPTED);
+				} else {
+					System.out.println("***** CssLess.doFilter : ERROR COMPILE LESSs"); //TODO: remove debug trace
 				}
 			}
 		}
