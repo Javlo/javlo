@@ -208,6 +208,10 @@ public class InfoBean {
 			return null;
 		}
 	}
+	
+	public Date getNow() {
+		return new Date();
+	}
 
 	public String getCurrentDate() {
 		try {

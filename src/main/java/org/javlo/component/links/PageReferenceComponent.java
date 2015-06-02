@@ -54,6 +54,7 @@ import org.javlo.navigation.ReactionMenuElementComparator;
 import org.javlo.service.ContentService;
 import org.javlo.service.NavigationService;
 import org.javlo.service.RequestService;
+import org.javlo.service.event.Event;
 import org.javlo.template.Template;
 import org.javlo.template.TemplateFactory;
 
@@ -75,6 +76,25 @@ import org.javlo.template.TemplateFactory;
 public class PageReferenceComponent extends ComplexPropertiesLink implements IAction {
 
 	public static final String MOUNT_FORMAT = "MMMM yyyy";
+	
+	public static class PageEvent {
+		private Date start = null;
+		private Date end = null;
+		
+		public Date getStart() {
+			return start;
+		}
+		public void setStart(Date startDate) {
+			this.start = startDate;
+		}
+		public Date getEnd() {
+			return end;
+		}
+		public void setEnd(Date endDate) {
+			this.end = endDate;
+		}
+		
+	}
 
 	public static class PageBean {
 
@@ -231,6 +251,14 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 			bean.sortableModificationDate = StringHelper.renderShortDate(lgCtx, page.getModificationDate());
 			bean.sortableCreationDate = StringHelper.renderSortableDate(page.getCreationDate());
 			bean.priority = page.getPriority();
+			bean.event = new PageEvent();
+			Event event = page.getEvent(realContentCtx);
+			if (event != null) {
+				bean.event.setStart(event.getStart());
+				bean.event.setEnd(event.getEnd());
+			} else {
+				bean.event.setStart(page.getContentDate(realContentCtx));
+			}
 			if (page.getContentDate(lgCtx) != null) {
 				bean.date = StringHelper.renderShortDate(lgCtx, page.getContentDate(lgCtx));
 				bean.sortableDate = StringHelper.renderSortableDate(page.getContentDate(lgCtx));
@@ -361,6 +389,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		private MenuElement page;
 		private PageReferenceComponent comp;
 		private List<PageBean> children = null;
+		private PageEvent event = null;
 
 		private Collection<String> tags = new LinkedList<String>();
 		private final Collection<String> tagsLabel = new LinkedList<String>();
@@ -698,6 +727,14 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 			this.image = image;
 		}
 
+		public PageEvent getEvent() {
+			return event;
+		}
+
+		public void setEvent(PageEvent pageEvent) {
+			this.event = pageEvent;
+		}
+
 	}
 
 	public static class PagesStatus {
@@ -725,6 +762,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		public void setTotalSize(int totalSize) {
 			this.totalSize = totalSize;
 		}
+	
 	}
 
 	public static final String TYPE = "page-reference";
@@ -1797,13 +1835,10 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 	}
 
 	public static void main(String[] args) {
-		Collection<String> commands = extractCommandFromFilter(":checked");
-		for (String string : commands) {
-			System.out.println("***** PageReferenceComponent.main : command=" + string); // TODO:
-																							// remove
-																							// debug
-																							// trace
-		}
+		Date date = new Date();
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+		System.out.println("date : "+format.format(date));
+		
 	}
 
 	private void popularitySorting(ContentContext ctx, List<MenuElement> pages, int pertinentPageToBeSort) throws Exception {
