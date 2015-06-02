@@ -39,6 +39,7 @@
 <link rel="stylesheet" media="screen" href="${info.editTemplateURL}/css/bootstrap/forms.css?ts=${info.ts}" />
 <link rel="stylesheet" media="screen" href="${info.editTemplateURL}/css/bootstrap/cols.css?ts=${info.ts}" />
 <link rel="stylesheet" media="screen" href="${info.editTemplateURL}/css/bootstrap/helper.css?ts=${info.ts}" />
+<link rel="stylesheet" media="screen" href="${info.editTemplateURL}/css/bootstrap/glyphicons.css?ts=${info.ts}" />
 <link rel="stylesheet" media="screen" href="${info.editTemplateURL}/css/style.css?ts=${info.ts}" />
 <link rel="stylesheet" media="screen" href="${info.editTemplateURL}/css/javlo.css?ts=${info.ts}" />
 <link rel="stylesheet" media="screen" href="${info.editTemplateURL}/css/plugins/colorbox.css" />

@@ -150,10 +150,6 @@ ul.menu {
 	margin-left: 6px;
 }
 
-#content-edit .smart-generic-form .action {
-	width: 140px;
-}
-
 /** components **/
 
 /*** css for design component in edit mode ***/
@@ -387,4 +383,20 @@ li.line {
 
 .light-edit .component-wrapper {
 	margin-top: 35px;
+}
+
+.smart-generic-form table td {
+	width: auto;
+}
+
+.smart-generic-form td.buttons {
+	width: 170px;
+}
+
+.smart-generic-form td.required {
+	width: 50px;
+}
+
+.smart-generic-form td.width {
+	width: 50px;
 }
