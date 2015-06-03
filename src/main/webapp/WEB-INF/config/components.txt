@@ -89,6 +89,7 @@ org.javlo.component.column.OpenRow
 org.javlo.component.column.TableBreak
 org.javlo.component.column.OpenCol
 org.javlo.component.column.CloseCol
+org.javlo.component.files.VFSFile
 
 --content.title.ecom
 
