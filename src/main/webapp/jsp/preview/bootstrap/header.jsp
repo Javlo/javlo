@@ -21,6 +21,7 @@
 	ContentContext editCtx = new ContentContext(ctx);
 	editCtx.setRenderMode(ContentContext.EDIT_MODE);
 	ContentContext returnEditCtx = new ContentContext(editCtx);
+	returnEditCtx.setEditPreview(false);
 	AdminUserFactory fact = AdminUserFactory.createAdminUserFactory(ctx.getGlobalContext(), request.getSession());
 	String readOnlyPageHTML = "";
 	String readOnlyClass = "access";
@@ -150,11 +151,12 @@
 			<c:if test="${!logged}">
 			<li>
 				<form id="pc_form" method="post" action="<%=URLHelper.createURL(editCtx)%>">
-					<div class="pc_line">							
+					<div class="pc_line">				
 						<c:if test='${!editPreview}'>
 							<button class="btn btn-default btn-xs" type="submit">
 								<span class="glyphicon glyphicon-user" aria-hidden="true"></span>${i18n.edit['global.login']}</button>
 						</c:if>
+						<input type="hidden" name="backPreview" value="true" />
 					</div>
 				</form>
 			</li>
@@ -181,7 +183,7 @@
 							aria-hidden="true"></span>${i18n.edit['preview.label.not-edit-page']}</a>
 					</div>
 				</c:if></li>
-			<c:if test="${!pdf}">
+			<c:if test="${!pdf && userInterface.mailing}">
 				<li><c:url var="url" value="<%=URLHelper.createURL(editCtx)%>"
 						context="/">
 						<c:param name="module" value="mailing"></c:param>
@@ -195,7 +197,7 @@
 							<span class="glyphicon glyphicon-send" aria-hidden="true"></span>${i18n.edit['preview.label.mailing']}
 						</button>
 					</form></li>
-			</c:if>
+			</c:if>			
 			<c:if test="${pdf}">
 				<li>
 				<li><form id="export_pdf_page_form"
@@ -216,22 +218,32 @@
 					</form></li>
 			</c:if>
 			</c:if>
+			<c:if test="${!pdf && userInterface.ticket}">
+				<li><c:url var="url" value="<%=URLHelper.createURL(editCtx)%>"
+						context="/">
+						<c:param name="module" value="ticket"></c:param>
+						<c:param name="previewEdit" value="true"></c:param>
+					</c:url>
+					<form>
+						<button class="btn btn-default btn-xs btn-tickets btn-color"
+							type="<%=accessType%>"
+							value="${i18n.edit['preview.label.ticket']}"
+							onclick="editPreview.openModal('${i18n.edit['preview.label.ticket']}','${url}'); return false;">
+							<span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span><span class="text">${i18n.edit['preview.label.ticket']}</span>
+						</button>
+					</form></li>
+			</c:if>
 			</ul></div><div class="users">
 			<c:if test="${not empty editUser}">
+				<c:url var="logoutURL" value="<%=URLHelper.createURL(ctx)%>" context="/">
+					<c:param name="edit-logout" value="true" />
+				</c:url> 
 				<li class="user"><c:if test="${!userInterface.contributor}">
-						<a id="pc_edit_mode_button" class="close" title="${i18n.edit['global.exit']}"
-							href="<%=URLHelper.createURL(returnEditCtx)%>">X</a>
-					</c:if> <c:url var="url" value="<%=URLHelper.createURL(returnEditCtx)%>"
-						context="/">
-						<c:param name="edit-logout" value="true" />
-					</c:url> <c:if test="${userInterface.contributor}">
-						<a
-							href="${info.currentEditURL}?module=users&webaction=user.changeMode&mode=myself&previewEdit=true"
-							class="as-modal"><span class="glyphicon glyphicon-user"
-							aria-hidden="true"></span>${info.userName}</a>
-						<a id="pc_edit_mode_button" class="logout"
-							title="${i18n.edit['global.logout']}" href="${url}">${i18n.edit["global.logout"]}</a>
-					</c:if></li>
+				<a id="pc_edit_mode_button" class="btn btn-default" title="${i18n.edit['global.exit']}" href="<%=URLHelper.createURL(returnEditCtx)%>"><span class="glyphicon glyphicon-briefcase"></span>edit</a>	
+				</c:if>
+				<a href="${info.currentEditURL}?module=users&webaction=user.changeMode&mode=myself&previewEdit=true" class="as-modal btn btn-default"><span class="glyphicon glyphicon-user" aria-hidden="true"></span>${info.userName}</a>					
+				<a class="btn btn-default" title="${i18n.edit['global.logout']}" href="${logoutURL}"><span class="glyphicon glyphicon-log-out"></span>${i18n.edit["global.logout"]}</a>				
+				</li>
 			</c:if>
 			</div>
 		

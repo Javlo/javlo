@@ -48,6 +48,7 @@ import org.javlo.component.meta.Keywords;
 import org.javlo.component.meta.LocationComponent;
 import org.javlo.component.meta.MetaDescription;
 import org.javlo.component.meta.NotSearchPage;
+import org.javlo.component.meta.Slogan;
 import org.javlo.component.meta.Tags;
 import org.javlo.component.meta.TimeRangeComponent;
 import org.javlo.component.title.GroupTitle;
@@ -136,6 +137,7 @@ public class MenuElement implements Serializable, IPrintInfo {
 		String type = PAGE_TYPE_DEFAULT;
 		String sharedName = null;
 		Event event = null;
+		String slogan;
 
 		public ImageTitleBean imageLink;
 
@@ -409,6 +411,14 @@ public class MenuElement implements Serializable, IPrintInfo {
 		
 		public void setEvent(Event event) {
 			this.event = event;
+		}
+		
+		public void setSlogan(String slogan) {
+			this.slogan = slogan;
+		}
+		
+		public String getSlogan() {
+			return slogan;
 		}
 
 	}
@@ -796,6 +806,15 @@ public class MenuElement implements Serializable, IPrintInfo {
 				return null;
 			} else {
 				return StringHelper.renderDate(contentDate, ctx.getGlobalContext().getFullDateFormat());
+			}
+		}
+		
+		public String getSlogan() {
+			try {
+				return page.getSlogan(ctx);
+			} catch (Exception e) { 
+				e.printStackTrace();
+				return null;
 			}
 		}
 
@@ -1606,6 +1625,39 @@ public class MenuElement implements Serializable, IPrintInfo {
 		desc.category = StringUtils.replace(res, "\"", "&quot;");
 
 		return desc.category;
+	}
+	
+	/**
+	 * get the slogan of the page (slogan component)
+	 * 
+	 * @param ctx
+	 * @return
+	 * @throws Exception
+	 */
+	public String getSlogan(ContentContext ctx) throws Exception {
+
+		PageDescription desc = getPageDescriptionCached(ctx, ctx.getRequestContentLanguage());
+
+		if (desc.slogan != null) {
+			return desc.slogan;
+		}
+		String res = "";
+		ContentContext noAreaCtx = ctx.getContextWithoutArea();
+
+		if (noAreaCtx.getRenderMode() == ContentContext.EDIT_MODE) {
+			noAreaCtx.setRenderMode(ContentContext.PREVIEW_MODE); 
+		}
+
+		IContentComponentsList contentList = getContent(noAreaCtx);
+		while (contentList.hasNext(noAreaCtx)) {
+			IContentVisualComponent elem = contentList.next(noAreaCtx);
+			if (elem.getType().equals(Slogan.TYPE)) {
+				res = elem.getValue(noAreaCtx);
+			}
+		}
+		desc.slogan = StringUtils.replace(res, "\"", "&quot;");
+
+		return desc.slogan;
 	}
 
 	ArrayList<MenuElement> getChildElementRecursive(ContentContext ctx, MenuElement elem, String type, int deph) throws Exception {
@@ -4466,12 +4518,13 @@ public class MenuElement implements Serializable, IPrintInfo {
 				return desc.event;
 			}
 		} else {
-			ContentElementList content = getContent(ctx);
-			while (content.hasNext(ctx)) {
-				IContentVisualComponent comp = content.next(ctx);
+			ContentContext noAreaCtx = ctx.getContextWithArea(null);
+			ContentElementList content = getContent(noAreaCtx);
+			while (content.hasNext(noAreaCtx)) {
+				IContentVisualComponent comp = content.next(noAreaCtx);
 				if (comp instanceof EventDefinitionComponent) {
 					EventDefinitionComponent eventComp = (EventDefinitionComponent)comp;
-					Event event = new Event(getId(), eventComp.getStartDate(), eventComp.getEndDate(), getTitle(ctx), getDescription(ctx));
+					Event event = new Event(eventComp.getId(), eventComp.getStartDate(), eventComp.getEndDate(), getTitle(ctx), getDescription(ctx));
 					event.setCategory(getCategory(ctx));
 					event.setLocation(getLocation(ctx));
 					event.setUrl(new URL(URLHelper.createAbsoluteURL(ctx, getPath())));
@@ -4482,7 +4535,7 @@ public class MenuElement implements Serializable, IPrintInfo {
 			}
 		}
 		desc.event = Event.NO_EVENT;
-		return desc.event;
+		return null;
 	}
 
 }

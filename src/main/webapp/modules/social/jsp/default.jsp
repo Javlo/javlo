@@ -1,24 +1,33 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
-<form class="standard-form ajax" action="${info.currentURL}" method="post">
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"
+%><%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"
+%><form class="ajax" action="${info.currentURL}" method="post">
 	<fieldset>
 		<legend>${network.name}</legend>
 		<input type="hidden" name="webaction" value="updateNetwork" />
 		<input type="hidden" name="name" value="${network.name}" />
-		<div class="line">
+		<div class="row">
+		<div class="col-xs-6">
+		<div class="form-group">
 			<label for="login">login</label>
-			<input type="text" name="login" id="login" value="${network.login}" />
+			<input class="form-control" type="text" name="login" id="login" value="${network.login}" />
 		</div>
-		<div class="line">
-			<label for="token">token</label>
-			<input type="text" name="token" id="token" value="${network.token}" />
-		</div>
-		<div class="line">
+		<div class="form-group">
 			<label for="url">url</label>
-			<input type="text" name="url" id="url" value="${network.URL}" />
-		</div>	
-		<div class="action">			
-			<input type="submit" name="ok" value="${i18n.view["global.ok"]}" />
-		</div>			
+			<input class="form-control" type="text" name="url" id="url" value="${network.URL}" />
+		</div>
+		</div><div class="col-xs-6">
+		<div class="form-group">
+			<label for="clientid">client id*</label>
+			<input class="form-control" type="text" name="clientid" id="clientid" value="${network.clientId}" />
+		</div>
+		<div class="form-group">
+			<label for="clientsecret">client secret*</label>
+			<input class="form-control" type="text" name="clientsecret" id="clientsecret" value="${network.clientSecret}" />
+		</div>		
+		</div></div>	
+		<div class="form-group">			
+			<button class="btn btn-default pull-right" type="submit" name="ok">${i18n.view["global.ok"]}</button>
+		</div>
+		
 	</fieldset>
 </form>

@@ -311,19 +311,19 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(outStream);
 		out.println("<tr class=\"field-line\">");
-		out.println("<td><input type=\"text\" name=\"" + getInputName("name-" + field.getName()) + "\" value=\"" + field.getName() + "\"/></td>");
-		out.println("<td><input type=\"text\" name=\"" + getInputName("label-" + field.getName()) + "\" value=\"" + field.getLabel() + "\"/></td>");
+		out.println("<td class=\"input\"><input type=\"text\" name=\"" + getInputName("name-" + field.getName()) + "\" value=\"" + field.getName() + "\"/></td>");
+		out.println("<td class=\"input\"><input type=\"text\" name=\"" + getInputName("label-" + field.getName()) + "\" value=\"" + field.getLabel() + "\"/></td>");
 		if (isList()) {
 			if (field.getType().equals("radio") || field.getType().equals("list")) {
-				out.println("<td><textarea name=\"" + getInputName("list-" + field.getName()) + "\">" + StringHelper.collectionToText(field.getList()) + "</textarea></td>");
+				out.println("<td class=\"list\"><textarea name=\"" + getInputName("list-" + field.getName()) + "\">" + StringHelper.collectionToText(field.getList()) + "</textarea></td>");
 			} else if (field.getType().equals("registered-list")) {
-				out.println("<td><input name=\"" + getInputName("registered-list-" + field.getName()) + "\" placeholder=\"list name\" value=\""+field.getRegisteredList()+"\"/></td>");
+				out.println("<td class=\"list\"><input name=\"" + getInputName("registered-list-" + field.getName()) + "\" placeholder=\"list name\" value=\""+field.getRegisteredList()+"\"/></td>");
 			} else {
-				out.println("<td>&nbsp;</td>");
+				out.println("<td class=\"list\">&nbsp;</td>");
 			}
 		}
-		out.println("<td>" + XHTMLHelper.getInputOneSelect(getInputName("type-" + field.getName()), field.getFieldTypes(), field.getType()) + "</td>");
-		out.println("<td><select name=\"" + getInputName("width-" + field.getName()) + "\" >");
+		out.println("<td class=\"type\">" + XHTMLHelper.getInputOneSelect(getInputName("type-" + field.getName()), field.getFieldTypes(), field.getType()) + "</td>");
+		out.println("<td class=\"width\"><select name=\"" + getInputName("width-" + field.getName()) + "\" >");
 		for (int i=1; i<=12; i++) {
 			String selected = "";
 			if (i==field.getWidth()) {
@@ -336,11 +336,11 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		if (field.isRequire()) {
 			required = " checked=\"checked\"";
 		}		
-		out.println("<td><input type=\"checkbox\" name=\"" + getInputName("require-" + field.getName()) + "\"" + required + " /></td>");
-		out.println("<td><div  class=\"action\">");
-		out.println("  <input class=\"up\" type=\"submit\" name=\"" + getInputName("up-" + field.getName()) + "\" value=\"up\" />");
-		out.println("  <input class=\"down\" type=\"submit\" name=\"" + getInputName("down-" + field.getName()) + "\" value=\"down\" />");
-		out.println("  <input class=\"needconfirm\" type=\"submit\" name=\"" + getInputName("del-" + field.getName()) + "\" value=\"del\" />");
+		out.println("<td class=\"required\"><input type=\"checkbox\" name=\"" + getInputName("require-" + field.getName()) + "\"" + required + " /></td>");
+		out.println("<td class=\"buttons\"><div  class=\"row\">");
+		out.println("  <div class=\"col-xs-4\"><button class=\"up btn btn-default btn-sm\" type=\"submit\" name=\"" + getInputName("up-" + field.getName()) + "\" ><span class=\"glyphicon glyphicon-menu-up\" aria-hidden=\"true\"></span></button></div>");
+		out.println("  <div class=\"col-xs-4\"><button class=\"down btn btn-default btn-sm\" type=\"submit\" name=\"" + getInputName("down-" + field.getName()) + "\"><span class=\"glyphicon glyphicon-menu-down\" aria-hidden=\"true\"></span></button></div>");
+		out.println("  <div class=\"col-xs-4\"><button class=\"needconfirm btn btn-default btn-sm\" type=\"submit\" name=\"" + getInputName("del-" + field.getName()) + "\" ><span class=\"glyphicon glyphicon-trash\" aria-hidden=\"true\"></span></button></div>");
 		out.println("</div></td>");
 		out.println("</tr>");
 		out.close();

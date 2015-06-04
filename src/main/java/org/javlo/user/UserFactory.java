@@ -114,34 +114,12 @@ public class UserFactory implements IUserFactory, Serializable {
 
 	@Override
 	public User autoLogin(HttpServletRequest request, String login) {
-		GlobalContext globalCtx = GlobalContext.getInstance(request);
 		GlobalContext globalContext = GlobalContext.getInstance(request);
-		EditContext editCtx = EditContext.getInstance(globalContext, request.getSession());
-
-		boolean logged = request.getUserPrincipal() != null && request.getUserPrincipal().getName().equals(login);
 		User user = getUser(login);
-
-		if (user == null) {
-			// administrator auto login not possible
-			if (editCtx.getEditUser(login) != null && (logged || editCtx.hardAutoLogin(login))) {
-				user = createUser(login, (new HashSet(Arrays.asList(new String[] { AdminUserSecurity.GENERAL_ADMIN, AdminUserSecurity.FULL_CONTROL_ROLE }))));
-				editCtx.setEditUser(user);
-			} else {
-				user = null;
-			}
-		}
-
-		if (user != null && globalCtx.getAdministrator().equals(user.getLogin())) {
-			user.getUserInfo().addRoles(new HashSet(Arrays.asList(new String[] { AdminUserSecurity.FULL_CONTROL_ROLE })));
-		}
-		if (user != null && editCtx.getEditUser(user.getLogin()) != null) {
-			user.getUserInfo().addRoles(new HashSet(Arrays.asList(new String[] { AdminUserSecurity.GENERAL_ADMIN, AdminUserSecurity.FULL_CONTROL_ROLE })));
-		}
 		if (user != null) {
 			user.setContext(globalContext.getContextKey());
 			request.getSession().setAttribute(SESSION_KEY, user);
 		}
-
 		return user;
 	}
 

@@ -5,6 +5,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
 
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -109,6 +112,6 @@ public class CleanHTML implements javax.servlet.Filter {
 
 	@Override
 	public void init(FilterConfig arg0) throws ServletException {
-	}
+	}	
 
 }

@@ -154,7 +154,7 @@ public class VFSFile extends AbstractFileComponent implements IReverseLinkCompon
 
 	@Override
 	public String getHexColor() {
-		return IContentVisualComponent.DEFAULT_COLOR;
+		return IContentVisualComponent.CONTAINER_COLOR;
 	}
 
 	@Override
@@ -219,6 +219,15 @@ public class VFSFile extends AbstractFileComponent implements IReverseLinkCompon
 	@Override
 	public int getPopularity(ContentContext ctx) {
 		return 0;
+	}
+	
+	@Override
+	public String getEmptyXHTMLCode(ContentContext ctx) throws Exception {
+		if (getFileName() == null || getFileName().length() == 0) {
+			return super.getEmptyXHTMLCode(ctx);
+		} else {
+			return getViewXHTMLCode(ctx);
+		}
 	}
 
 }

@@ -32,8 +32,10 @@ import org.javlo.module.core.AbstractModuleContext;
 import org.javlo.module.core.Module;
 import org.javlo.module.core.ModuleException;
 import org.javlo.module.core.ModulesContext;
+import org.javlo.user.AdminUserFactory;
 import org.javlo.user.IUserFactory;
 import org.javlo.user.IUserInfo;
+import org.javlo.user.User;
 import org.javlo.user.UserFactory;
 
 //TODO Use MailingBuilder
@@ -49,21 +51,21 @@ public class MailingModuleContext extends AbstractModuleContext {
 		Module module = ModulesContext.getInstance(session, globalContext).searchModule(MODULE_NAME);
 
 		MailingModuleContext outContext = (MailingModuleContext) AbstractModuleContext.getInstance(session, globalContext, module, MailingModuleContext.class);
-		
+
 		if (globalContext.getMailingReport().trim().length() > 0 && outContext.getReportTo() == null) {
 			outContext.setReportTo(globalContext.getMailingReport());
-		} 
-		
+		}
+
 		if (globalContext.getMailingSubject().trim().length() > 0 && outContext.getSubject() == null) {
 			outContext.setSubject(globalContext.getMailingSubject());
-		} 
-		
+		}
+
 		if (globalContext.getMailingSenders().trim().length() > 0 && outContext.getSender() == null) {
-			outContext.setSender(StringUtils.split(globalContext.getMailingSenders(),",")[0]);
+			outContext.setSender(StringUtils.split(globalContext.getMailingSenders(), ",")[0]);
 		}
 
 		if (outContext.navigation.size() == 0) {
-			LinkToRenderer defaultNav = new LinkToRenderer(I18nAccess.getInstance(request).getText("mailing.title.send"), "send", "../content/jsp/preview.jsp");			
+			LinkToRenderer defaultNav = new LinkToRenderer(I18nAccess.getInstance(request).getText("mailing.title.send"), "send", "../content/jsp/preview.jsp");
 			outContext.navigation.add(defaultNav);
 			outContext.navigation.add(new LinkToRenderer(I18nAccess.getInstance(request).getText("mailing.title.history"), "history", "jsp/history.jsp"));
 			outContext.setCurrentLink(defaultNav.getName());
@@ -77,6 +79,7 @@ public class MailingModuleContext extends AbstractModuleContext {
 	private String subject;
 	private String reportTo;
 	private List<String> groups;
+	private List<String> adminGroups;
 	private String recipients;
 	private String structuredRecipients;
 	private boolean isTestMailing;
@@ -166,6 +169,7 @@ public class MailingModuleContext extends AbstractModuleContext {
 			HttpServletRequest request = ctx.getRequest();
 			GlobalContext globalContext = GlobalContext.getInstance(request);
 			IUserFactory userFactory = UserFactory.createUserFactory(globalContext, request.getSession());
+			IUserFactory adminUserFactory = AdminUserFactory.createUserFactory(globalContext, request.getSession());
 
 			if (sender == null || (sender = sender.trim()).isEmpty()) {
 				String msg = i18nAccess.getText("mailing.message.sender.mandatory");
@@ -206,6 +210,19 @@ public class MailingModuleContext extends AbstractModuleContext {
 					}
 				}
 			}
+			if (adminGroups != null) {
+				for (String group : adminGroups) {					
+					List<IUserInfo> users = adminUserFactory.getUserInfoForRoles(new String[] { group });
+					for (IUserInfo user : users) {						
+						if (!StringHelper.isEmpty(user.getEmail())) {
+							InternetAddress email = new InternetAddress(user.getEmail(), StringHelper.neverNull(user.getFirstName()) + " " + StringHelper.neverNull(user.getLastName()));
+							if (!allRecipients.contains(email)) {
+								allRecipients.add(email);
+							}
+						}
+					}
+				}
+			}
 			if (recipients != null) {
 				for (String fullEmail : StringHelper.searchEmail(recipients)) {
 					InternetAddress email = new InternetAddress(fullEmail);
@@ -215,7 +232,7 @@ public class MailingModuleContext extends AbstractModuleContext {
 				}
 			}
 			if (structuredRecipients != null) {
-				for (InternetAddress email : StringHelper.searchStructuredEmail(structuredRecipients)) {					
+				for (InternetAddress email : StringHelper.searchStructuredEmail(structuredRecipients)) {
 					if (!allRecipients.contains(email)) {
 						allRecipients.add(email);
 					}
@@ -234,6 +251,7 @@ public class MailingModuleContext extends AbstractModuleContext {
 		subject = null;
 		reportTo = null;
 		groups = null;
+		adminGroups = null;
 		recipients = null;
 		structuredRecipients = null;
 		isTestMailing = false;
@@ -256,7 +274,20 @@ public class MailingModuleContext extends AbstractModuleContext {
 		m.setNotif(new InternetAddress(reportTo));
 		m.setContextKey(ctx.getGlobalContext().getContextKey());
 		StaticConfig sc = ctx.getGlobalContext().getStaticConfig();
-		String content = NetHelper.readPageForMailing(url, sc.getApplicationLogin(), sc.getApplicationPassword());
+		String content;
+		if (sc.getApplicationLogin() != null) {			
+			content = NetHelper.readPageForMailing(url, sc.getApplicationLogin(), sc.getApplicationPassword());
+		} else {
+			User user = AdminUserFactory.createUserFactory(globalContext, ctx.getRequest().getSession()).getUser(ctx.getCurrentEditUser().getLogin());
+			String token = null;
+			if (user != null) {
+				if (user.getUserInfo().getToken() == null || user.getUserInfo().getToken().trim().length() == 0) {				
+					user.getUserInfo().setToken(StringHelper.getRandomIdBase64());
+				}
+				token = user.getUserInfo().getToken();
+			}
+			content = NetHelper.readPageForMailing(url, token);
+		}
 		if (content == null) {
 			logger.severe("error on read : " + url);
 		}
@@ -273,6 +304,14 @@ public class MailingModuleContext extends AbstractModuleContext {
 
 	public void setStructuredRecipients(String structuredRecipients) {
 		this.structuredRecipients = structuredRecipients;
+	}
+
+	public List<String> getAdminGroups() {
+		return adminGroups;
+	}
+
+	public void setAdminGroups(List<String> adminGroups) {
+		this.adminGroups = adminGroups;
 	}
 
 }

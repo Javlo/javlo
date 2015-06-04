@@ -19,7 +19,7 @@ import org.javlo.service.RequestService;
  */
 public class TimeRangeComponent extends DateComponent {
 
-	protected static final String VALUE_SEPARATOR = "%";
+	public static final String VALUE_SEPARATOR = "%";
 
 	/**
 	 * create a static logger.
@@ -166,8 +166,12 @@ public class TimeRangeComponent extends DateComponent {
 			}
 
 			Date endDate = new Date();
+			
 			try {
 				endDate = StringHelper.parseDateOrTime(newEndDate);
+				if (endDate.getTime() < startDate.getTime()) {
+					endDate = startDate;
+				}
 			} catch (ParseException p) {
 				p.printStackTrace();
 				setNeedRefresh(true);

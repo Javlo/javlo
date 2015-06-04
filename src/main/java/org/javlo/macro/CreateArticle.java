@@ -15,6 +15,7 @@ import java.util.logging.Logger;
 import javax.mail.internet.InternetAddress;
 
 import org.javlo.actions.IAction;
+import org.javlo.component.core.ComponentBean;
 import org.javlo.context.ContentContext;
 import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
@@ -221,7 +222,10 @@ public class CreateArticle implements IInteractiveMacro, IAction {
 				if (newURL != null && create) {					
 					newEditURL = URLHelper.addParam(newEditURL, "module", "content");
 					newEditURL = URLHelper.addParam(newEditURL, "webaction", "editPreview");
+					newEditURL = URLHelper.addParam(newEditURL, "webaction", "edit.changeArea");
 					newEditURL = URLHelper.addParam(newEditURL, "previewEdit", "true");
+					newEditURL = URLHelper.addParam(newEditURL, "lightEdit", "true");
+					newEditURL = URLHelper.addParam(newEditURL, "area", ComponentBean.DEFAULT_AREA);
 				}
 				if (create) {
 					NetHelper.sendRedirectTemporarily(ctx.getResponse(), newEditURL);

@@ -42,5 +42,10 @@ public class Breadcrumb extends AbstractVisualComponent {
 	public boolean isContentCachable(ContentContext ctx) {
 		return true;
 	}
+	
+	@Override
+	public boolean isEmpty(ContentContext ctx) {
+		return false;
+	}
 
 }

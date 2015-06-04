@@ -465,4 +465,14 @@ public class NavigationHelper {
 		newPage.setChangeNotification(changeNotification);
 		return newPage;
 	}
+	
+	public static MenuElement getPageById(ContentContext ctx, String id) throws Exception {
+		ContentService content = ContentService.getInstance(ctx.getRequest());
+		MenuElement root = content.getNavigation(ctx);
+		if (root.getId().equals(id)) {
+			return root;
+		} else {
+			return root.searchChildFromId(id);
+		}
+	}
 }

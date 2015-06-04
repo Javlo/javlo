@@ -2,13 +2,24 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <div class="content">
 <form class="standard-form" id="create-ticket" method="post" action="${info.currentURL}">
+<c:if test="${not empty newTicket}">
+<div class="row">
+	<div class="col-md-12">
+		<div class="form-group">
+			<input type="text" name="title" placeholder="title" />
+		</div><div class="form-group">
+			<textarea class="form-control" rows="4" cols="20" name="message" placeholder="message"></textarea>
+		</div>
+	</div>
+</div>
+</c:if>
 <div class="col-container">
 <div class="one_half">
 		<input type="hidden" name="webaction" value="ticket.update" />
 		<input type="hidden" name="id" value="${ticket.id}" />
 		<div class="line">
 			<label>authors :</label>${ticket.authors}
-		</div>
+		</div>		
 		<div class="line">
 			<label for="priority">priority : </label>
 			<select id="priority" name="priority">
@@ -91,15 +102,16 @@
 		<div class="line">
 			<label>url : </label><a href="${ticket.url}">${ticket.url}</a>			
 		</div>
-		</c:if>
-					
+		</c:if>					
+		<c:if test="${empty newTicket}">
 		<div class="line">
 			<label>message</label>
 			<div class="message">${ticket.message}</div>			
 		</div>
-		
+		</c:if>
 		</div>
 		
+	<c:if test="${empty newTicket}">
 	<h2>comments</h2>
 	<c:if test="${fn:length(ticket.comments) > 0}">
 	<c:forEach var="comment" items="${ticket.comments}">
@@ -114,6 +126,7 @@
 		<label for="comment">new comments</label>
 		<textarea id="comment" name="comment"></textarea>
 	</div>
+	</c:if>
 	
 	<div class="action">
 		<input type="submit" name="delete" class="warning needconfirm" title="${i18n.edit['global.delete']}" value="${i18n.edit['global.delete']}" />

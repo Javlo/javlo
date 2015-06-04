@@ -136,6 +136,17 @@
 		<servlet-name>SiteMapServlet</servlet-name>
 		<url-pattern>/sitemap.xml</url-pattern>
 	</servlet-mapping>
+	
+	<servlet>
+		<servlet-name>oauth2callback</servlet-name>
+		<servlet-class>org.javlo.servlet.OauthServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	
+	<servlet-mapping>
+		<servlet-name>oauth2callback</servlet-name>
+		<url-pattern>/oauth2callback</url-pattern>
+	</servlet-mapping>	
 
 	<servlet>
 		<servlet-name>ZIPServlet</servlet-name>

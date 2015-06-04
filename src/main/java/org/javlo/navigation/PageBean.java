@@ -90,6 +90,10 @@ public class PageBean implements Serializable {
 		return URLHelper.createAbsoluteURL(ctx, page.getPath());
 	}
 	
+	public String getAbsolutePreviewUrl() {
+		return URLHelper.createAbsoluteURL(ctx.getContextWithOtherRenderMode(ContentContext.PREVIEW_MODE), page.getPath());
+	}
+	
 	public String getEditUrl() {
 		return URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.EDIT_MODE), page);
 	}

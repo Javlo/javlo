@@ -35,9 +35,9 @@
 			<input id="fb" type="button" onclick="goLogin()" value="Facebook login" />
 		</div>	
 		<div class="action">			
-			<input type="submit" name="ok" value="${i18n.view['global.ok']}" />
+			<button class="btn btn-default" type="submit" name="ok">${i18n.view['global.ok']}</button>
 			<div style="display:none;" id="loginFB">
-			<input type="button" onclick="goLogin()" value="Facebook login" />
+			<button class="btn btn-default" onclick="goLogin()">Facebook login</button>
 			</div>
 		</div>			
 	</fieldset>

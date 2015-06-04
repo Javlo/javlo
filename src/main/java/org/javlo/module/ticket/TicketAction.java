@@ -58,7 +58,7 @@ public class TicketAction extends AbstractModuleAction {
 			}
 		} else {
 			for (TicketBean ticket : tickets) {
-				if (ctx.getCurrentEditUser() != null && (AdminUserSecurity.getInstance().isAdmin(ctx.getCurrentEditUser()) || ticket.getAuthors().equals(ctx.getCurrentEditUser().getLogin())) && ticket.getContext().equals(globalContext.getContextKey())) {
+				if (ctx.getCurrentEditUser() != null && (AdminUserSecurity.getInstance().isAdmin(ctx.getCurrentEditUser()) || ticket.getAuthors().equals(ctx.getCurrentEditUser().getLogin())) &&  ticket.getContext() != null && ticket.getContext().equals(globalContext.getContextKey())) {
 					if (status == null || status.trim().length() == 0 || ticket.getStatus().equals(status)) {
 						myTickets.put(ticket.getId(), ticket);
 					}
@@ -99,19 +99,32 @@ public class TicketAction extends AbstractModuleAction {
 		Map<String, TicketBean> myTickets = getMyTicket(ctx);
 		ctx.getRequest().setAttribute("tickets", myTickets.values());
 
-		TicketBean ticket = myTickets.get(rs.getParameter("id", null));
-		if (ticket != null && rs.getParameter("back", null) == null && !StringHelper.isTrue(ctx.getRequest().getAttribute("back-list"))) {
-			if (ticket != null && ticket.getAuthors().equals(ctx.getCurrentEditUser().getLogin())) {
-				ticket.setRead(true);
+		String ticketId = rs.getParameter("id", null);
+		if (ticketId != null) {
+			TicketBean ticket = myTickets.get(ticketId);
+			if (ticketId.equals("new")) {
+				ticket = new TicketBean();
+				ticket.setAuthors(ctx.getCurrentUserId());
+				ticket.setContext(ctx.getGlobalContext().getContextKey());
+				ticket.setUrl(URLHelper.createURL(ctx));
+				TicketService ticketService = TicketService.getInstance(ctx.getGlobalContext());
+				ticketService.updateTicket(ctx, ticket);
+				rs.setParameter("id", ticket.getId());
+				ctx.getRequest().setAttribute("newTicket", "true");
+			} 
+			if (ticket != null && rs.getParameter("back", null) == null && !StringHelper.isTrue(ctx.getRequest().getAttribute("back-list"))) {
+				if (ticket.getAuthors().equals(ctx.getCurrentEditUser().getLogin())) {
+					ticket.setRead(true);
+				}
+				ctx.getRequest().setAttribute("ticket", ticket);
+				if (ticketModule.getBox("main") == null) {
+					ticketModule.addMainBox("main", "update ticket : " + rs.getParameter("id", ""), "/jsp/update_ticket.jsp", true);
+					ticketModule.setRenderer(null);
+				}
+			} else {
+				ticketModule.setRenderer("/jsp/list.jsp");
+				ticketModule.restoreBoxes();
 			}
-			ctx.getRequest().setAttribute("ticket", ticket);
-			if (ticketModule.getBox("main") == null) {
-				ticketModule.addMainBox("main", "update ticket : " + rs.getParameter("id", ""), "/jsp/update_ticket.jsp", true);
-				ticketModule.setRenderer(null);
-			}
-		} else {
-			ticketModule.setRenderer("/jsp/list.jsp");
-			ticketModule.restoreBoxes();
 		}
 
 		UserFactory userFactory = AdminUserFactory.createUserFactory(ctx.getGlobalContext(), ctx.getRequest().getSession());
@@ -130,7 +143,11 @@ public class TicketAction extends AbstractModuleAction {
 		String id = rs.getParameter("id", "");
 		TicketBean ticket;
 		if (id.trim().length() > 0) { // update
-			ticket = getMyTicket(ctx).get(id);
+			if ("new".equals(id)) {
+				ticket = new TicketBean();
+			} else {
+				ticket = getMyTicket(ctx).get(id);
+			}
 			if (ticket == null) {
 				return "ticket not found : " + id;
 			} else {
@@ -156,6 +173,8 @@ public class TicketAction extends AbstractModuleAction {
 			ticket.setStatus(rs.getParameter("status", ticket.getStatus()));
 			ticket.setShare(rs.getParameter("share", ticket.getShare()));
 			ticket.setUrl(rs.getParameter("url", ticket.getUrl()));
+			ticket.setTitle(rs.getParameter("title", ticket.getTitle()));
+			ticket.setMessage(rs.getParameter("message", ticket.getMessage()));
 			ticket.setUsers(rs.getParameterListValues("users", Collections.<String> emptyList()));
 			if (rs.getParameter("comment", "").trim().length() > 0) {
 				ticket.addComments(new Comment(user.getLogin(), rs.getParameter("comment", "")));
@@ -173,9 +192,12 @@ public class TicketAction extends AbstractModuleAction {
 	}
 
 	/**
-	 * Send notifications for tickets modified since the last notification time 
-	 * ONLY if there is no modification since 5 min (defined in {@link StaticConfig#getTimeBetweenChangeNotification()})
-	 * Not a webaction, called from {@link ViewActions#performSendTicketChangeNotifications(ContentContext, GlobalContext)}
+	 * Send notifications for tickets modified since the last notification time
+	 * ONLY if there is no modification since 5 min (defined in
+	 * {@link StaticConfig#getTimeBetweenChangeNotification()}) Not a webaction,
+	 * called from
+	 * {@link ViewActions#performSendTicketChangeNotifications(ContentContext, GlobalContext)}
+	 * 
 	 * @param ctx
 	 * @param globalContext
 	 * @return null
@@ -202,7 +224,8 @@ public class TicketAction extends AbstractModuleAction {
 					}
 					if (mod != null) {
 						if (mod.after(inProgressTime)) {
-							return null; //Work in progress detected: notification canceled
+							return null; // Work in progress detected:
+											// notification canceled
 						}
 						if (mod.after(lastNotificationTime)) {
 							toNotify.add(ticket);
@@ -210,7 +233,9 @@ public class TicketAction extends AbstractModuleAction {
 					}
 				}
 			}
-			lastNotificationTime = inProgressTime; // Should be equivalent to "now" because no change between the 2 dates
+			lastNotificationTime = inProgressTime; // Should be equivalent to
+													// "now" because no change
+													// between the 2 dates
 			globalContext.setAttribute(LAST_NOTIFICATION_TIME, lastNotificationTime);
 			if (!toNotify.isEmpty()) {
 				sendTicketSummaryNotification(ctx, toNotify);
@@ -265,11 +290,7 @@ public class TicketAction extends AbstractModuleAction {
 					content.append("</li>");
 				}
 				content.append("</ul>");
-				NetHelper.sendXHTMLMail(ctx,
-						new InternetAddress(globalContext.getAdministratorEmail()),
-						new InternetAddress(email),
-						null, null,
-						"Ticket updates on " + siteTitle, content.toString(), null);
+				NetHelper.sendXHTMLMail(ctx, new InternetAddress(globalContext.getAdministratorEmail()), new InternetAddress(email), null, null, "Ticket updates on " + siteTitle, content.toString(), null);
 			}
 		}
 	}

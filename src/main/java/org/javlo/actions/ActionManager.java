@@ -84,7 +84,7 @@ public class ActionManager {
 		GlobalContext globalContext = GlobalContext.getInstance(request);
 		ModulesContext moduleContext = ModulesContext.getInstance(request.getSession(), globalContext);
 		Collection<Module> modules = moduleContext.getModules();
-		IAction action = null;		
+		IAction action = null;	
 		for (Module module : modules) {
 			action = module.getAction();			
 			if (group.equals(action.getActionGroupName())) {

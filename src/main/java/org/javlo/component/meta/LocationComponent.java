@@ -5,6 +5,7 @@ package org.javlo.component.meta;
 
 import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.context.ContentContext;
+import org.javlo.helper.XHTMLHelper;
 
 
 /**
@@ -18,15 +19,6 @@ public class LocationComponent extends AbstractVisualComponent {
 		return TYPE;
 	}
 	
-	@Override
-	protected String getEditXHTMLCode(ContentContext ctx) throws Exception {
-		StringBuffer finalCode = new StringBuffer();
-		finalCode.append(getSpecialInputTag());
-		finalCode.append("<div id=\"" + getValue() + "\"><input style=\"width: 100%;\" type=\"text\" id=\"" + getContentName() + "\" name=\""
-				+ getContentName() + "\" value=\"" + getValue() + "\"/></div>");
-		return finalCode.toString();
-	}
-	
 	public String getInputDateName() {
 		return "__" + getId() + ID_SEPARATOR + "date";
 	}
@@ -34,19 +26,9 @@ public class LocationComponent extends AbstractVisualComponent {
 	public String getInputTimeName() {
 		return "__" + getId() + ID_SEPARATOR + "time";
 	}
-
-	@Override
-	public String getPrefixViewXHTMLCode(ContentContext ctx) {
-		return "<div " + getSpecialPreviewCssClass(ctx, getStyle(ctx) + " " + getType()) + getSpecialPreviewCssId(ctx) + ">";
-	}
-
-	@Override
-	public String getSuffixViewXHTMLCode(ContentContext ctx) {
-		String sep ="";
-		if (getValue().trim().length() > 0) {
-			sep = "<span class=\"separator\"> - </span>";
-		}
-		return sep+"</div>";
+	
+	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
+		return XHTMLHelper.textToXHTML(getValue());
 	}
 
 	@Override

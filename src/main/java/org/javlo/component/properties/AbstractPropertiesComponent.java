@@ -5,7 +5,9 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import org.javlo.component.core.AbstractVisualComponent;
@@ -22,6 +24,16 @@ public abstract class AbstractPropertiesComponent extends AbstractVisualComponen
 	protected String createKeyWithField(String inField) {
 		return getInputName(inField);
 	}
+	
+	@Override
+	public void prepareView(ContentContext ctx) throws Exception {	
+		super.prepareView(ctx);
+		Map<String,String> fields = new HashMap<String, String>();
+		for (String field : getFields(ctx)) {
+			fields.put(field, getFieldValue(field));
+		}
+		ctx.getRequest().setAttribute("fields", fields);
+	}
 
 	@Override
 	protected String getEditXHTMLCode(ContentContext ctx) throws Exception {
@@ -33,22 +45,21 @@ public abstract class AbstractPropertiesComponent extends AbstractVisualComponen
 
 		List<String> fields = getFields(ctx);
 
-		out.println("<div class=\"edit\" style=\"padding: 3px;\">");
-		for (String field : fields) {
-			out.println("<div class=\"field-label\">");
+		out.println("<div class=\"row\">");
+		for (String field : fields) {			
+			out.println("<div class=\"col-md-4 col-xs-6\">");
+			out.println("<div class=\"form-group\">");
 			out.println("<label for=\"" + createKeyWithField(field) + "\">");						
 			out.println(i18nAccess.getText("field." + field, field));
 			out.println("</label>");
-			out.println("</div>");
-			out.println("<div class=\"field-input\">");
-			out.print("<textarea rows=\"" + getRowSize(field) + "\" id=\"");
+			out.print("<textarea class=\"form-control\" rows=\"" + getRowSize(field) + "\" id=\"");
 			out.print(createKeyWithField(field));
 			out.print("\" name=\"");
 			out.print(createKeyWithField(field));
 			out.print("\">");
 			out.print(getFieldValue(field));
 			out.println("</textarea>");
-			out.println("</div>");
+			out.println("</div></div>");
 		}
 		out.println("</div>");
 

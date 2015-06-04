@@ -5,5 +5,6 @@
 <input type="hidden" name="webaction" value="macro-create-children.create" />
 <legend>Create children</legend>
 <textarea name="children"></textarea>
-<input type="submit" >
+<button class="btn btn-default pull-right" type="submit" >${i18n.edit['global.create']}</button>
+</fieldset>
 </form>

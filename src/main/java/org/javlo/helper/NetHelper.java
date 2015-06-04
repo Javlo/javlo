@@ -31,6 +31,7 @@ import org.javlo.component.core.ComponentBean;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
+import org.javlo.filter.LoginFilter;
 import org.javlo.image.ImageHelper;
 import org.javlo.image.ImageSize;
 import org.javlo.mailing.MailService;
@@ -62,15 +63,19 @@ public class NetHelper {
 	public static final String HEADER_IF_MODIFIED_SINCE_ETAG = "if-None-Match";
 
 	public static String readPageForMailing(URL url) throws Exception {
-		return readPage(url, true, true, null, null, null, false);
+		return readPage(url, true, true, null, null, null, null, false);
 	}
 
 	public static String readPageForMailing(URL url, String login, String pwd) throws Exception {
-		return readPage(url, true, true, null, login, pwd, false);
+		return readPage(url, true, true, null, login, pwd, null, false);
+	}
+	
+	public static String readPageForMailing(URL url, String token) throws Exception {
+		return readPage(url, true, true, null, null, null, token, false);
 	}
 
 	public static String readPage(URL url) throws Exception {
-		return readPage(url, false, false, null, null, null, false);
+		return readPage(url, false, false, null, null, null, null, false);
 	}
 	
 	public static String readPageGet(URLConnection conn) throws Exception {
@@ -98,19 +103,19 @@ public class NetHelper {
 	}
 
 	public static String readPageNoError(URL url) throws Exception {
-		return readPage(url, false, false, null, null, null, true);
+		return readPage(url, false, false, null, null, null, null, true);
 	}
 
 	public static String readPage(URL url, final String userName, final String password) throws Exception {
-		return readPage(url, false, false, null, userName, password, false);
+		return readPage(url, false, false, null, userName, password, null, false);
 	}
 
 	public static String readPage(String inURL, boolean cssInline) throws Exception {
-		return readPage(new URL(inURL), cssInline, cssInline, null, null, null, false);
+		return readPage(new URL(inURL), cssInline, cssInline, null, null, null, null, false);
 	}
 
 	public static String readPage(URL url, boolean cssInline, String userAgent) throws Exception {
-		return readPage(url, cssInline, cssInline, userAgent, null, null, false);
+		return readPage(url, cssInline, cssInline, userAgent, null, null, null, false);
 	}
 
 	/**
@@ -121,9 +126,9 @@ public class NetHelper {
 	 * @return code returned by the http request on the URL.
 	 * @throws IOException
 	 */
-	private static String readPage(URL url, boolean cssInline, boolean mailing, String userAgent, final String userName, final String password, boolean noError) throws Exception {
+	private static String readPage(URL url, boolean cssInline, boolean mailing, String userAgent, final String userName, final String password, String userToken, boolean noError) throws Exception {
 
-		logger.info("readPage : " + url + "  user:" + userName + "  password found:" + (StringHelper.neverNull(password).length() > 1));
+		logger.info("readPage : " + url + "  user:" + userName + "  password found:" + (StringHelper.neverNull(password).length() > 1)+ "  token found:" + (StringHelper.neverNull(userToken).length() > 1));
 
 		if (null != userName && userName.trim().length() != 0 && null != password && password.trim().length() != 0) {
 
@@ -147,6 +152,10 @@ public class NetHelper {
 
 		InputStream in = null;
 		try {
+			
+			if (userToken != null) {
+				url = new URL(URLHelper.addParam(url.toString(), LoginFilter.TOKEN_PARAM, userToken));
+			}
 
 			String query = StringHelper.neverNull(url.getQuery(), "");
 			url = removeParams(url);
@@ -863,7 +872,7 @@ public class NetHelper {
 
 	public static void sendXHTMLMail(ContentContext ctx, InternetAddress from, InternetAddress to, InternetAddress cc, InternetAddress bcc, String subject, String content, String templateName) throws Exception {
 		if (templateName == null) {
-			templateName = "javlo_mailing";
+			templateName = "basic_mailing";
 		}
 		String contentId = StringHelper.getRandomId();
 

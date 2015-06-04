@@ -77,6 +77,8 @@ public class UserRegistration extends AbstractVisualComponent implements IAction
 	public void prepareView(ContentContext ctx) throws Exception {
 		super.prepareView(ctx);
 		
+		SocialService.getInstance(ctx).prepare(ctx);
+		
 		DeliveryPrice deliveryPrice = DeliveryPrice.getInstance(ctx);
 		if (deliveryPrice != null) {
 			ListService.getInstance(ctx).addList("countries", deliveryPrice.getZone());			
@@ -92,6 +94,7 @@ public class UserRegistration extends AbstractVisualComponent implements IAction
 	@Override
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
 		prepareView(ctx);
+		
 		I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
 		if (ctx.getRequest().getAttribute("registration-message") == null) {
 			Module userModule = ModulesContext.getInstance(ctx.getRequest().getSession(), ctx.getGlobalContext()).searchModule("users");
@@ -110,6 +113,7 @@ public class UserRegistration extends AbstractVisualComponent implements IAction
 			ctx.getRequest().setAttribute("functions", LangHelper.collectionToMap(functions));
 
 			String jsp = "/modules/users/jsp/edit_current.jsp";
+			
 			return ServletHelper.executeJSP(ctx, jsp);
 		} else {
 			return "<div class=\"message info\">" + ctx.getRequest().getAttribute("registration-message") + "</div>";
@@ -334,7 +338,7 @@ public class UserRegistration extends AbstractVisualComponent implements IAction
 	
 	public static String performFacebookLogin(RequestService rs, ContentContext ctx, HttpSession session, GlobalContext globalContext, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {		
 		String token = rs.getParameter("token", null);		
-		Facebook facebook = SocialService.getInstance(globalContext).getFacebook();
+		Facebook facebook = SocialService.getInstance(ctx).getFacebook();
 		IUserInfo ui = facebook.getInitialUserInfo(token);
 		if (!StringHelper.isMail(ui.getEmail())) {
 			return "technical error : facebook have not returned a valid email ("+ui.getEmail()+')';

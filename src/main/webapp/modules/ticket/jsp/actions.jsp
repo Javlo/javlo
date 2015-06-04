@@ -1,5 +1,10 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<c:url var="createURL" value="${info.currentURL}">
+	<c:param name="id" value="new" />
+</c:url>
+<a class="action-button more page" href="${createURL}"><span>${i18n.edit['global.create']}</span></a>
+
 <div class="special">
 <form id="select-status js-submit" method="post" action="${info.currentURL}">
     <div class="line">

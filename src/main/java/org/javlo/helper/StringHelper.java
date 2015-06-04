@@ -3224,5 +3224,30 @@ public class StringHelper {
 		crc.update(text.getBytes());
 		return crc.getValue();
 	}
+	
+	
+	public static String mapToString(Map<String,String> maps) {
+		List<String> mapList = new LinkedList<String>();
+		for (String key : maps.keySet()) {
+			String[] keyValue = new String[2];
+			keyValue[0] = key;
+			keyValue[1] = maps.get(key);
+			mapList.add(arrayToString(keyValue));
+		}
+		String mapString = collectionToString(mapList);
+		String base64 = asBase64(mapString.getBytes());
+		return base64;
+	}
+	
+	public static Map<String,String> stringToMap(String encodedMap) throws IOException {
+		String mapStr = new String(decodeBase64(encodedMap));
+		List<String> mapList = stringToCollection(mapStr);
+		Map<String,String> outMap = new HashMap<String, String>();
+		for (String mapEntry : mapList) {
+			String[] entry = stringToArray(mapEntry);
+			outMap.put(entry[0], entry[1]);
+		}
+		return outMap;
+	}
 
 }

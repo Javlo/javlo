@@ -6,7 +6,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
+import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
+import org.javlo.helper.URLHelper;
 
 public class SocialService {
 
@@ -16,20 +19,37 @@ public class SocialService {
 
 	private Facebook facebook;
 	private ISocialNetwork twitter;
+	private ISocialNetwork google;
+	private String redirectURL = null;
 
-	public static SocialService getInstance(GlobalContext globalContext) {
+	public static SocialService getInstance(ContentContext ctx) {
+		GlobalContext globalContext = ctx.getGlobalContext();
 		final String KEY = "social";
 		SocialService outService = (SocialService) globalContext.getAttribute(KEY);
 		if (outService == null) {
 			outService = new SocialService();
 			outService.globalContext = globalContext;
+			outService.redirectURL = URLHelper.createStaticURL(ctx.getContextForAbsoluteURL(), "/oauth2callback");
 			globalContext.setAttribute(KEY, outService);
 
 		}
+		
 		return outService;
+	}
+	
+	/**
+	 * prepare rendering
+	 * @param ctx
+	 * @throws Exception 
+	 */
+	public void prepare(ContentContext ctx) throws Exception {
+		for (ISocialNetwork network : getAllNetworks()) {
+			network.prepare(ctx);
+		}
 	}
 
 	private void initSocialNetwork(ISocialNetwork socialNetwork) {
+		socialNetwork.setRedirectURL(redirectURL);
 		Collection<Object> objects = globalContext.getDataKeys();
 		for (Object keyObj : objects) {
 			String key = "" + keyObj;
@@ -45,6 +65,7 @@ public class SocialService {
 		List<ISocialNetwork> networks = new LinkedList<ISocialNetwork>();
 		networks.add(getFacebook());
 		networks.add(getTwitter());
+		networks.add(getGoogle());
 		return networks;
 	}
 
@@ -71,6 +92,14 @@ public class SocialService {
 			initSocialNetwork(twitter);
 		}
 		return twitter;
+	}
+	
+	public ISocialNetwork getGoogle() {		
+		if (google == null) {
+			google = new Google();
+			initSocialNetwork(google);
+		}
+		return google;
 	}
 
 	public void store() {

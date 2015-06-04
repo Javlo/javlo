@@ -3,6 +3,7 @@ package org.javlo.module.mailing;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -31,12 +32,15 @@ import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
 import org.javlo.module.core.AbstractModuleContext;
 import org.javlo.module.core.Module;
+import org.javlo.module.core.ModuleException;
 import org.javlo.module.core.ModulesContext;
 import org.javlo.service.DataToIDService;
 import org.javlo.service.RequestService;
 import org.javlo.service.syncro.SynchroHelper;
 import org.javlo.template.Template;
 import org.javlo.template.TemplateFactory;
+import org.javlo.user.AdminUserFactory;
+import org.javlo.user.AdminUserSecurity;
 import org.javlo.user.IUserFactory;
 import org.javlo.user.User;
 import org.javlo.user.UserFactory;
@@ -133,9 +137,14 @@ public class MailingAction extends AbstractModuleAction {
 			if (mailingContext.getReportTo() == null) {
 				mailingContext.setReportTo(globalContext.getAdministratorEmail());
 			}
-			IUserFactory userFactory = UserFactory.createUserFactory(request);
-			Set<String> roles = userFactory.getAllRoles(globalContext, session);
-			request.setAttribute("groups", roles);
+			IUserFactory userFactory = UserFactory.createUserFactory(request);			
+			List<String> groups = new LinkedList(userFactory.getAllRoles(globalContext, session));
+			Collections.sort(groups);
+			request.setAttribute("groups", groups);
+			List<String> adminGroups = new LinkedList(globalContext.getAdminUserRoles());
+			Collections.sort(adminGroups);
+			request.setAttribute("adminGroups", adminGroups);
+			
 			String senders = globalContext.getMailingSenders().trim();
 			if (senders.trim().length() > 0) {
 				request.setAttribute("senders", StringUtils.split(senders, ","));
@@ -152,8 +161,27 @@ public class MailingAction extends AbstractModuleAction {
 		}
 		return msg;
 	}
+	
+	private static boolean checkRight(ContentContext ctx) {
+		AdminUserFactory userFactory = AdminUserFactory.createUserFactory(ctx.getGlobalContext(), ctx.getRequest().getSession());
+		User user = userFactory.getCurrentUser(ctx.getRequest().getSession());
+		if (user == null) {
+			return false;
+		} else {
+			if (user.validForRoles(AdminUserSecurity.MAILING_ROLE)) {
+				return true;
+			} else {
+				return false;
+			}
+		}
+	}
 
 	public String performWizard(ContentContext ctx, GlobalContext globalContext, ServletContext application, StaticConfig staticConfig, HttpServletRequest request, RequestService rs, Module currentModule, MessageRepository messageRepository, MailingModuleContext mailingContext, I18nAccess i18nAccess) throws Exception {
+		
+		if (!checkRight(ctx)) {
+			return "Security error.";
+		}		
+		
 		switch (mailingContext.getWizardStep(SEND_WIZARD_BOX)) {
 		case 1:
 			if (mailingContext.getCurrentTemplate() == null) {
@@ -167,6 +195,7 @@ public class MailingAction extends AbstractModuleAction {
 			mailingContext.setSubject(rs.getParameter("subject", null));
 			mailingContext.setReportTo(rs.getParameter("report-to", null));
 			mailingContext.setGroups(rs.getParameterListValues("groups", new LinkedList<String>()));
+			mailingContext.setAdminGroups(rs.getParameterListValues("admin-groups", new LinkedList<String>()));
 			mailingContext.setRecipients(rs.getParameter("recipients", null));
 			mailingContext.setStructuredRecipients(rs.getParameter("structuredRecipients", null));
 			mailingContext.setTestMailing(rs.getParameter("test-mailing", null) != null);
@@ -252,6 +281,11 @@ public class MailingAction extends AbstractModuleAction {
 
 		}
 		return null;
+	}
+	
+	@Override
+	public Boolean haveRight(HttpSession session, User user) throws ModuleException {
+		return Boolean.TRUE;
 	}
 
 }

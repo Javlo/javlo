@@ -7,8 +7,7 @@
 }
 
 .content .main {
-	overflow: hidden;
-	max-height: 650px;
+	overflow: hidden;	
 	overflow: auto;
 }
 

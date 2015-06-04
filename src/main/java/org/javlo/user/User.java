@@ -142,5 +142,13 @@ public class User implements Principal, Serializable {
 	public void setEditor(boolean editor) {
 		this.editor = editor;
 	}
+	
+	public String getLabel() {
+		if (userInfo.getFirstName() != null && userInfo.getFirstName().trim().length() > 0) {
+			return userInfo.getFirstName()+' '+StringHelper.neverNull(getUserInfo().getLastName());
+		} else {
+			return login;
+		}
+	}
 
 }

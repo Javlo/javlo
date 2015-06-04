@@ -38,9 +38,13 @@ public class LoginLogoutLink extends AbstractVisualComponent {
 			out.println("<input type=\"hidden\" name=\"previewEdit\" value=\"true\" />");
 			out.println("</c:if>");
 			I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
-			out.println("<input class=\"username\" id=\"j_username\" type=\"text\" name=\"j_username\" placeholder=\""+i18nAccess.getAllText("form.login", "login")+"\" />");
-			out.println("<input class=\"password\" id=\"j_password\" type=\"password\" name=\"j_password\"  placeholder=\""+i18nAccess.getAllText("form.password", "login")+"\" />");
-			out.println("<button name=\"submit\" class=\"submit\" >Login</button>");
+			out.println("<div class=\"row\"><div class=\"col-sm-6\">");
+			out.println("<input class=\"username form-control\" id=\"j_username\" type=\"text\" name=\"j_username\" placeholder=\""+i18nAccess.getAllText("form.login", "login")+"\" />");
+			out.println("</div><div class=\"col-sm-6\">");
+			out.println("<input class=\"password form-control\" id=\"j_password\" type=\"password\" name=\"j_password\"  placeholder=\""+i18nAccess.getAllText("form.password", "login")+"\" />");
+			out.println("</div></div><div class=\"checkbox\"><label>");
+			out.println("<input type=\"checkbox\" name=\"autologin\" /> "+i18nAccess.getAllText("login.auto", "Remember me on this computer"));
+			out.println("</label><button name=\"submit\" class=\"submit btn btn-primary btn-xs\" >Login</button>");
 			out.println("</div>");
 			out.println("</form>");
 		} else {

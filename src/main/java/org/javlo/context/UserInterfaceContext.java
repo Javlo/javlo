@@ -24,6 +24,10 @@ public class UserInterfaceContext {
 	private boolean lightInterface = true;
 
 	private boolean contributor = true;
+	
+	private boolean mailing = false;
+	
+	private boolean ticket = false;
 
 	private String currentModule = null;
 
@@ -40,10 +44,19 @@ public class UserInterfaceContext {
 			if (userFact == null || user == null) {
 				return FAKE_INSTACE;
 			}
-
 			instance = new UserInterfaceContext();
 			instance.session = session;
 			instance.globalContext = globalContext;
+			if (globalContext.getModules().contains("mailing") && AdminUserSecurity.getInstance().canRole(user, AdminUserSecurity.MAILING_ROLE)) {
+				instance.mailing = true;
+			} else {
+				instance.mailing = false;
+			}
+			if (globalContext.getModules().contains("ticket")) {
+				instance.setTicket(true);
+			} else {
+				instance.setTicket(false);
+			}
 
 			instance.fromString(user.getUserInfo().getInfo());
 
@@ -115,5 +128,21 @@ public class UserInterfaceContext {
 
 	public boolean isContributor() {
 		return contributor;
+	}
+
+	public boolean isMailing() {
+		return mailing;
+	}
+
+	public void setMailing(boolean mailing) {
+		this.mailing = mailing;
+	}
+
+	public boolean isTicket() {
+		return ticket;
+	}
+
+	public void setTicket(boolean ticket) {
+		this.ticket = ticket;
 	}
 }

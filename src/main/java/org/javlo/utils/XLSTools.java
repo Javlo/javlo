@@ -157,10 +157,10 @@ public class XLSTools {
 		}
 		return outCell;
 	}
-	
+
 	public static Cell[][] getCellArray(String[][] array) throws Exception {
 		Cell[][] outArray = new Cell[array.length][];
-		for (int y = 0; y < array.length; y++) {	
+		for (int y = 0; y < array.length; y++) {
 			outArray[y] = new Cell[array[y].length];
 			for (int x = 0; x < array[y].length; x++) {
 				String val = array[y][x];
@@ -168,9 +168,9 @@ public class XLSTools {
 				if (StringHelper.isFloat(val)) {
 					dblVal = Double.parseDouble(val);
 				}
-				if (val!=null) {					
+				if (val != null) {
 					outArray[y][x] = new Cell(val, dblVal, outArray, x, y);
-				} 
+				}
 			}
 		}
 		return outArray;
@@ -302,37 +302,41 @@ public class XLSTools {
 				HSSFCell excelCell = excelRow.createCell(cellNum);
 				if (cell == null) {
 					excelCell.setCellType(HSSFCell.CELL_TYPE_BLANK);
-				} else if (StringHelper.isDigit(cell.getValue())) {
-					excelCell.setCellType(HSSFCell.CELL_TYPE_NUMERIC);
-					excelCell.setCellValue(Integer.parseInt(cell.getValue()));
 				} else {
-					excelCell.setCellType(HSSFCell.CELL_TYPE_STRING);
-					excelCell.setCellValue(cell.getValue());
+					try {
+						excelCell.setCellType(HSSFCell.CELL_TYPE_NUMERIC);
+						excelCell.setCellValue(Integer.parseInt(cell.getValue()));
+					} catch (NumberFormatException e) {
+						excelCell.setCellType(HSSFCell.CELL_TYPE_STRING);
+						excelCell.setCellValue(cell.getValue());
+					}
 				}
 				cellNum++;
 			}
 		}
 		workbook.write(out);
 	}
-	
-	public static void writeXLSX(Cell[][] array, OutputStream out) throws IOException {		
+
+	public static void writeXLSX(Cell[][] array, OutputStream out) throws IOException {
 		XSSFWorkbook workbook = new XSSFWorkbook();
 		XSSFSheet sheet = workbook.createSheet();
 		int rowNum = 0;
 		for (Cell[] row : array) {
 			XSSFRow excelRow = sheet.createRow(rowNum);
 			rowNum++;
-			int cellNum = 0;			
-			for (Cell cell : row) {				
+			int cellNum = 0;
+			for (Cell cell : row) {
 				XSSFCell excelCell = excelRow.createCell(cellNum);
 				if (cell == null) {
 					excelCell.setCellType(HSSFCell.CELL_TYPE_BLANK);
-				} else if (StringHelper.isDigit(cell.getValue())) {
-					excelCell.setCellType(HSSFCell.CELL_TYPE_NUMERIC);
-					excelCell.setCellValue(Integer.parseInt(cell.getValue()));
 				} else {
-					excelCell.setCellType(HSSFCell.CELL_TYPE_STRING);
-					excelCell.setCellValue(cell.getValue());
+					try {
+						excelCell.setCellType(HSSFCell.CELL_TYPE_NUMERIC);
+						excelCell.setCellValue(Long.parseLong(cell.getValue()));
+					} catch (NumberFormatException e) {
+						excelCell.setCellType(HSSFCell.CELL_TYPE_STRING);
+						excelCell.setCellValue(cell.getValue());
+					}
 				}
 				cellNum++;
 			}
@@ -341,14 +345,24 @@ public class XLSTools {
 	}
 
 	public static void main(String[] args) {
-		File test = new File("C:/trans/member.csv");
-		
-		try {			
-			CSVFactory csvFactory = new CSVFactory(test);
-			FileOutputStream out = new FileOutputStream(new  File("c:/trans/out.xlsx"));
-			XLSTools.writeXLSX(XLSTools.getCellArray(csvFactory.getArray()), out);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		// File test = new File("C:/trans/member.csv");
+		//
+		//
+		//
+		// try {
+		// CSVFactory csvFactory = new CSVFactory(test);
+		// FileOutputStream out = new FileOutputStream(new
+		// File("c:/trans/out.xlsx"));
+		// XLSTools.writeXLSX(XLSTools.getCellArray(csvFactory.getArray()),
+		// out);
+		// } catch (Exception e) {
+		// e.printStackTrace();
+		// }
+
+		String value = "143152014916634422045";
+		System.out.println("***** XLSTools.main : long = " + Long.decode(value)); // TODO:
+																					// remove
+																					// debug
+																					// trace
 	}
 }

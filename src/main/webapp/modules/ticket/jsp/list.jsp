@@ -34,17 +34,20 @@
 </colgroup>
 <tbody> 
  <c:forEach var="ticket" items="${tickets}">
- <tr class="gradeX${ticket.deleted?' deleted':''}">	 
-     <td class="con0"><a class="${ticket.read?'read':'unread'}" href="${info.currentURL}?id=${ticket.id}">${ticket.title}</a><span class="hidden">${ticket.message}</span></td>     	 
+ <tr class="gradeX${ticket.deleted?' deleted':''}">
+ 	 <c:url var="ticketURL" value="${info.currentURL}">
+ 	 	<c:param name="id" value="${ticket.id}" />
+ 	 </c:url>	 
+     <td class="con0"><a class="${ticket.read?'read':'unread'}" href="${ticketURL}">${ticket.title}</a><span class="hidden">${ticket.message}</span></td>     	 
      <td class="con1">${ticket.priority}</td>     
      <td class="con0">${ticket.creationDateLabel}</td>
      <td class="con1">${ticket.lastUpdateDateLabel}</td>
      <td class="con0">${fn:length(ticket.comments)}</td>     
-     <td class="con1"><a class="status ${ticket.status}" href="${info.currentURL}?id=${ticket.id}">${ticket.status}</a></td>
+     <td class="con1"><a class="status ${ticket.status}" href="${ticketURL}">${ticket.status}</a></td>
      <c:if test="${globalContext.master}">
      <td class="con0">${ticket.authors}</td>
      <td class="con1">${ticket.context}</td>
-     <td class="con0"><a class="share ${ticket.share}" href="${info.currentURL}?id=${ticket.id}"><c:if test="${empty ticket.share}">none</c:if>${ticket.share}</a></td>
+     <td class="con0"><a class="share ${ticket.share}" href="${ticketURL}"><c:if test="${empty ticket.share}">none</c:if>${ticket.share}</a></td>
      </c:if>
  </tr>     
 </c:forEach>

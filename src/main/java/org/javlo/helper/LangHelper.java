@@ -1,5 +1,6 @@
 package org.javlo.helper;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -71,7 +72,8 @@ public class LangHelper {
 	 *         <li>PersistenceService</li>
 	 *         <li>User</li>
 	 *         <li>AbstractModuleContext : return the current module context</li>
-	 *         <li>? extends AbstractModuleContext : instanciate a abstract module</li>>
+	 *         <li>? extends AbstractModuleContext : instanciate a abstract
+	 *         module</li>>
 	 *         <li>String : the query parameter (when user make a search)</li>
 	 *         <li>NotificationService</li>
 	 *         <li>SharedContentService</li>
@@ -187,7 +189,7 @@ public class LangHelper {
 		}
 		return out;
 	}
-	
+
 	public static void putAllIfNotExist(Map map1, Map map2) {
 		for (Object key : map2.keySet()) {
 			if (!map1.containsKey(key)) {
@@ -278,13 +280,41 @@ public class LangHelper {
 			return arrays[i];
 		}
 	}
-	
-	public static Map<?,?> collectionToMap(Collection<?> col) {
+
+	public static Map<?, ?> collectionToMap(Collection<?> col) {
 		Map outMap = new HashMap();
 		for (Object object : col) {
 			outMap.put(object, object);
 		}
 		return outMap;
+	}
+
+	/**
+	 * put item as first of a list
+	 * 
+	 * @param list
+	 * @param item
+	 * @return false if item not found in list.
+	 */
+	public static boolean asFirst(List list, Object item) {
+		if (list.contains(item)) {
+			list.remove(item);
+			list.add(0, item);
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	public static void main(String[] args) {
+		List<String> test = new LinkedList(Arrays.asList(new String[] { "a", "b", "c" }));
+		asFirst(test, "d");
+		for (String string : test) {
+			System.out.println("***** LangHelper.main : " + string); // TODO:
+																		// remove
+																		// debug
+																		// trace
+		}
 	}
 
 }

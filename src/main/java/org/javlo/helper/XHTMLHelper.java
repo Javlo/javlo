@@ -2352,20 +2352,23 @@ public class XHTMLHelper {
 			if (tag.getName().equalsIgnoreCase("a") || tag.getName().equalsIgnoreCase("area")) {
 				String hrefValue = tag.getAttributes().get("href");
 				if (hrefValue != null) {
-					if (hrefValue.toLowerCase().startsWith("rss")) {
-						String channel = "";
-						if (hrefValue.contains(":")) {
-							channel = hrefValue.split(":")[1];
+					hrefValue = hrefValue.trim();
+					if (!hrefValue.startsWith("#")) {
+						if (hrefValue.toLowerCase().startsWith("rss")) {
+							String channel = "";
+							if (hrefValue.contains(":")) {
+								channel = hrefValue.split(":")[1];
+							}
+							hrefValue = URLHelper.createRSSURL(ctx, channel);
+							tag.getAttributes().put("href", hrefValue);
+						} else if (!StringHelper.isURL(hrefValue) && (!StringHelper.isMailURL(hrefValue)) && !hrefValue.contains("${") && !ResourceHelper.isResourceURL(ctx, hrefValue) && !ResourceHelper.isTransformURL(ctx, hrefValue)) {
+							String url = URLHelper.removeParam(hrefValue);
+							String params = URLHelper.getParamsAsString(hrefValue);
+							url = URLHelper.createURLCheckLg(ctx, url);
+							tag.getAttributes().put("href", URLHelper.addParams(url, params));
 						}
-						hrefValue = URLHelper.createRSSURL(ctx, channel);
-						tag.getAttributes().put("href", hrefValue);
-					} else if ((hrefValue != null) && (!StringHelper.isURL(hrefValue)) && (!StringHelper.isMailURL(hrefValue)) && !hrefValue.contains("${") && !ResourceHelper.isResourceURL(ctx, hrefValue) && !ResourceHelper.isTransformURL(ctx, hrefValue)) {
-						String url = URLHelper.removeParam(hrefValue);
-						String params = URLHelper.getParamsAsString(hrefValue);
-						url = URLHelper.createURLCheckLg(ctx, url);
-						tag.getAttributes().put("href", URLHelper.addParams(url, params));
+						remplacement.addReplacement(tag.getOpenStart(), tag.getOpenEnd() + 1, tag.toString());
 					}
-					remplacement.addReplacement(tag.getOpenStart(), tag.getOpenEnd() + 1, tag.toString());
 				}
 			} else if (tag.getName().equalsIgnoreCase("img")) {
 				String src = tag.getAttribute("src", null);

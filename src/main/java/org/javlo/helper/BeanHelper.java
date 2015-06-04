@@ -236,7 +236,7 @@ public class BeanHelper {
 	}
 
 	public static String[] getAllLabels(Object bean) {
-		Collection<String> labels = new LinkedList<String>();
+		List<String> labels = new LinkedList<String>();
 		Method[] methods = bean.getClass().getMethods();
 
 		boolean rolesFound = false;
@@ -259,6 +259,49 @@ public class BeanHelper {
 			labels.add("rolesRaw");
 		}
 		String[] res = new String[labels.size()];
+		labels.toArray(res);
+		return res;
+	}
+	
+	/**
+	 * sort label by buisness importance, start with, login, email, firstName, lastName
+	 * @param bean
+	 * @return
+	 */
+	public static String[] getAllLabelsSorted(Object bean) {
+		List<String> labels = new LinkedList<String>();
+		Method[] methods = bean.getClass().getMethods();
+
+		boolean rolesFound = false;
+
+		int j = 0;
+		for (Method method : methods) {
+			if (method.getName().startsWith("get")) {
+				if (method.getReturnType().equals(String.class)) {
+					String name = method.getName().substring(3);
+					if (name.equals("RolesRaw")) {
+						rolesFound = true;
+					}
+					name = StringHelper.firstLetterLower(name);
+					j++;
+					labels.add(name);
+				}
+			}
+		}
+		if (!rolesFound) {
+			labels.add("rolesRaw");
+		}
+		String[] res = new String[labels.size()];
+		
+		LangHelper.asFirst(labels, "country");
+		LangHelper.asFirst(labels, "mobile");
+		LangHelper.asFirst(labels, "phone");
+		LangHelper.asFirst(labels, "organization");
+		LangHelper.asFirst(labels, "lastName");
+		LangHelper.asFirst(labels, "firstName");
+		LangHelper.asFirst(labels, "email");
+		LangHelper.asFirst(labels, "login");		
+		
 		labels.toArray(res);
 		return res;
 	}

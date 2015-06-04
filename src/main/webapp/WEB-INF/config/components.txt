@@ -20,6 +20,7 @@ org.javlo.component.text.Description
 org.javlo.component.meta.Keywords
 org.javlo.component.meta.PageWeight
 org.javlo.component.meta.AutoNumberComponent
+org.javlo.component.meta.Slogan
 
 
 --content.title.text
@@ -88,6 +89,7 @@ org.javlo.component.column.OpenRow
 org.javlo.component.column.TableBreak
 org.javlo.component.column.OpenCol
 org.javlo.component.column.CloseCol
+org.javlo.component.files.VFSFile
 
 --content.title.ecom
 

@@ -163,6 +163,17 @@ public class InfoBean {
 	public String getCurrentPreviewURL() {
 		return URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.PREVIEW_MODE).getFreeContentContext());
 	}
+	
+	public String getCurrentPageICalURL() throws Exception {
+		MenuElement currentPage = ctx.getCurrentPage();
+		if (currentPage.getEvent(ctx) == null) {			
+			return null;
+		} else {
+			ContentContext icalCtx = new ContentContext(ctx);
+			icalCtx.setFormat("ical");			
+			return URLHelper.createURL(icalCtx);
+		}		
+	}
 
 	public String getCurrentPageURL() {
 		return URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.PAGE_MODE).getFreeContentContext());
@@ -196,6 +207,10 @@ public class InfoBean {
 			e.printStackTrace();
 			return null;
 		}
+	}
+	
+	public Date getNow() {
+		return new Date();
 	}
 
 	public String getCurrentDate() {
@@ -317,7 +332,7 @@ public class InfoBean {
 			return null;
 		}
 	}
-
+	
 	public PageBean getRoot() {
 		try {
 			return currentPage.getRoot().getPageBean(ctx);
@@ -823,6 +838,10 @@ public class InfoBean {
 
 	public boolean isView() {
 		return ctx.getRenderMode() == ContentContext.VIEW_MODE;
+	}
+	
+	public boolean isPageMode() {
+		return ctx.getRenderMode() == ContentContext.PAGE_MODE;
 	}
 
 	public String getPublishDate() {

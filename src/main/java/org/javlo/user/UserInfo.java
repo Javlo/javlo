@@ -53,6 +53,7 @@ public class UserInfo implements Comparable<IUserInfo>, IUserInfo, Serializable 
 	private String info = "";
 	private String token = "";
 	private String accountType = "default";
+	private String avatarURL = null;
 	private String[] preferredLanguage = new String[0];
 	private Set<String> roles = new HashSet<String>();
 	private Date creationDate = new Date();
@@ -516,6 +517,14 @@ public class UserInfo implements Comparable<IUserInfo>, IUserInfo, Serializable 
 
 	public void setUrl(String url) {
 		this.url = url;
+	}
+
+	public String getAvatarURL() {
+		return avatarURL;
+	}
+
+	public void setAvatarURL(String avatarURL) {
+		this.avatarURL = avatarURL;
 	}
 	
 	

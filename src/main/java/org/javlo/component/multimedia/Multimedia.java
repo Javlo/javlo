@@ -409,6 +409,7 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 		String backURL = URLHelper.createModuleURL(ctx, ctx.getPath(), "content");
 		backURL = URLHelper.addParam(backURL, "comp_id", "cp_" + getId());
 		backURL = URLHelper.addParam(backURL, "webaction", "editPreview");
+		backURL = URLHelper.addParam(backURL, "previewEdit", "true");
 		
 		Map<String, String> filesParams = new HashMap<String, String>();
 		filesParams.put("path", URLHelper.mergePath(FileAction.getPathPrefix(ctx), getCurrentRootFolder()));

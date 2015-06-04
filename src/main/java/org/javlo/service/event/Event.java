@@ -2,7 +2,17 @@ package org.javlo.service.event;
 
 import java.io.Serializable;
 import java.net.URL;
+import java.util.Collection;
 import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
+
+import org.javlo.component.web2.EventRegistration;
+import org.javlo.context.ContentContext;
+import org.javlo.service.ContentService;
+import org.javlo.user.AdminUserFactory;
+import org.javlo.user.IUserFactory;
+import org.javlo.user.User;
 
 public class Event implements Serializable {
 	
@@ -120,6 +130,13 @@ public class Event implements Serializable {
 
 	public void setUser(String user) {
 		this.user = user;
+	}
+	
+	public List<User> getParticipants(ContentContext ctx) throws Exception {
+		List<User> outUsers = new LinkedList<User>();
+		ContentService content = ContentService.getInstance(ctx.getRequest());
+		EventRegistration comp = (EventRegistration)content.getComponent(ctx, getId());		
+		return comp.getParticipants(ctx);
 	}
 
 }
