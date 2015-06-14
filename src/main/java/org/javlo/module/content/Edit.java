@@ -30,6 +30,7 @@ import org.javlo.component.core.IUploadResource;
 import org.javlo.component.dynamic.DynamicComponent;
 import org.javlo.component.links.MirrorComponent;
 import org.javlo.component.links.PageMirrorComponent;
+import org.javlo.component.title.Heading;
 import org.javlo.component.title.Title;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
@@ -1216,7 +1217,11 @@ public class Edit extends AbstractModuleAction {
 					List<ComponentBean> initContent = new LinkedList<ComponentBean>();
 					for (String lg : globalContext.getContentLanguages()) {
 						i18nAccess.requestInit(ctx);
-						initContent.add(new ComponentBean("", Title.TYPE, elem.getName(), lg, false, ctx.getCurrentEditUser()));
+						if (globalContext.hasComponent(Title.class)) {
+							initContent.add(new ComponentBean("", Title.TYPE, elem.getName(), lg, false, ctx.getCurrentEditUser()));
+						} else if (globalContext.hasComponent(Heading.class)) {
+							initContent.add(new ComponentBean("", Heading.TYPE, "", lg, false, ctx.getCurrentEditUser()));
+						}
 					}
 					content.createContent(ctx, elem, initContent, "0", false);
 				}
