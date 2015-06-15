@@ -34,31 +34,63 @@ public abstract class AbstractPropertiesComponent extends AbstractVisualComponen
 		}
 		ctx.getRequest().setAttribute("fields", fields);
 	}
-
+	
+	protected static String getFieldName(String field) {
+		if (!field.contains("#")) {
+			return field;
+		} else {
+			return field.substring(0, field.indexOf('#'));
+		}
+	}
+	
+	protected static String getFieldType(String field) {
+		if (!field.contains("#")) {
+			return "text";
+		} else {
+			return field.substring(field.indexOf('#')+1);
+		}
+	}
+	
 	@Override
 	protected String getEditXHTMLCode(ContentContext ctx) throws Exception {
-
 		StringWriter writer = new StringWriter();
 		PrintWriter out = new PrintWriter(writer);
-
 		I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
-
 		List<String> fields = getFields(ctx);
-
 		out.println("<div class=\"row\">");
-		for (String field : fields) {			
+		for (String field : fields) {
+			String fieldName = getFieldName(field);
+			String fieldType = getFieldType(field);
 			out.println("<div class=\"col-md-4 col-xs-6\">");
 			out.println("<div class=\"form-group\">");
-			out.println("<label for=\"" + createKeyWithField(field) + "\">");						
-			out.println(i18nAccess.getText("field." + field, field));
-			out.println("</label>");
-			out.print("<textarea class=\"form-control\" rows=\"" + getRowSize(field) + "\" id=\"");
-			out.print(createKeyWithField(field));
-			out.print("\" name=\"");
-			out.print(createKeyWithField(field));
-			out.print("\">");
-			out.print(getFieldValue(field));
-			out.println("</textarea>");
+			if (fieldType.equals("text")) {
+				out.println("<label for=\"" + createKeyWithField(fieldName) + "\">");						
+				out.println(i18nAccess.getText("field." + fieldName, fieldName));
+				out.println("</label>");
+				out.print("<textarea class=\"form-control\" rows=\"" + getRowSize(fieldName) + "\" id=\"");
+				out.print(createKeyWithField(field));
+				out.print("\" name=\"");
+				out.print(createKeyWithField(fieldName));
+				out.print("\">");
+				out.print(getFieldValue(fieldName));
+				out.println("</textarea>");				
+			} else if (fieldType.equals("checkbox")) {
+				out.println("<div class=\"checkbox\"><label>");				
+				String checked = "";
+				if (getFieldValue(fieldName).length()>0) {
+					checked=" checked=\"checked\"";
+				}
+				out.print("<input type=\"checkbox\" id=\"");
+				out.print(createKeyWithField(field));
+				out.print("\" name=\"");
+				out.print(createKeyWithField(fieldName));
+				out.print("\" "+checked+" />");
+				out.println(i18nAccess.getText("field." + fieldName, fieldName));
+				out.println("</label>");				
+				out.println("</div>");
+			} else {
+				out.println("type not found : "+fieldType);
+			}
 			out.println("</div></div>");
 		}
 		out.println("</div>");
@@ -83,8 +115,8 @@ public abstract class AbstractPropertiesComponent extends AbstractVisualComponen
 
 	public abstract List<String> getFields(ContentContext ctx) throws Exception;
 
-	protected String getFieldValue(String inField) {
-		return properties.getProperty(inField, "");
+	protected String getFieldValue(String inField) {		
+		return properties.getProperty(getFieldName(inField), "");
 	}
 
 	protected String getFieldValue(String inField, String defaultValue) {
@@ -151,7 +183,8 @@ public abstract class AbstractPropertiesComponent extends AbstractVisualComponen
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
 
 		List<String> fields = getFields(ctx);
-		for (String field : fields) {
+		for (String fieldKey : fields) {
+			String field = getFieldName(fieldKey);
 			String fieldValue = requestService.getParameter(createKeyWithField(field), null);
 			String[] fieldValues = requestService.getParameterValues(createKeyWithField(field), null);
 			if (fieldValues != null && fieldValues.length > 1) {

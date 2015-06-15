@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.javlo.component.properties.AbstractPropertiesComponent;
 import org.javlo.context.ContentContext;
+import org.javlo.helper.StringHelper;
 import org.javlo.navigation.MenuElement;
 import org.javlo.navigation.PageBean;
 import org.javlo.service.ContentService;
@@ -30,8 +31,9 @@ public class Menu extends AbstractPropertiesComponent {
 	private static final String START_LEVEL = "start-level";
 	private static final String END_LEVEL = "end-level";
 	private static final String ROOT_PAGE = "root-page";
+	private static final String ALL_PAGES = "all-pages#checkbox";
 
-	private static final List<String> FIELDS = Arrays.asList(new String[] { TITLE, START_LEVEL, END_LEVEL, ROOT_PAGE });
+	private static final List<String> FIELDS = Arrays.asList(new String[] { TITLE, START_LEVEL, END_LEVEL, ROOT_PAGE, ALL_PAGES });
 
 	@Override
 	public List<String> getFields(ContentContext ctx) throws Exception {
@@ -55,6 +57,10 @@ public class Menu extends AbstractPropertiesComponent {
 	
 	private String getTitle() {
 		return getFieldValue(TITLE);
+	}
+	
+	private boolean isAllPages() {
+		return StringHelper.isTrue(getFieldValue(ALL_PAGES), false);
 	}
 	
 	/**
@@ -103,6 +109,7 @@ public class Menu extends AbstractPropertiesComponent {
 		ctx.getRequest().setAttribute("page", page.getPageBean(ctx));
 		ctx.getRequest().setAttribute("start", getStartLevel());
 		ctx.getRequest().setAttribute("end", getEndLevel());
+		ctx.getRequest().setAttribute("allPages", isAllPages());
 	}
 
 	@Override
