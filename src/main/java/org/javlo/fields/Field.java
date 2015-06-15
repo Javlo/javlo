@@ -381,8 +381,8 @@ public class Field implements Cloneable {
 		PrintWriter out = new PrintWriter(writer);
 
 		out.println("<div class=\"line form-group\">");
-		out.println(getEditLabelCode());
-
+		out.println(getEditLabelCode());		
+		
 		out.println("	<label for=\"" + getInputName() + "\">" + getLabel(new Locale(ctx.getContextRequestLanguage())) + " : </label>");
 		String readOnlyHTML = "";
 		if (isReadOnly()) {
@@ -640,11 +640,9 @@ public class Field implements Cloneable {
 	}
 
 	protected String getLabel(Locale locale) {
-
 		if (getLabel().trim().length() != 0) {
 			return getLabel();
 		}
-
 		String label = properties.getProperty(createKey("label." + locale.getLanguage()));
 		if (label == null) {
 			label = properties.getProperty(createKey("label"));

@@ -28,7 +28,7 @@ public class FieldLargeText extends Field {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 
 		out.println("<div class=\"line " + getType() + "\">");
-		out.println("<label for=\"" + getInputName() + "\">" + getLabel(new Locale(globalContext.getEditLanguage(ctx.getRequest().getSession()))) + " : </label>");
+		out.println("<label for=\"" + getInputName() + "\">" + getLabel(new Locale(ctx.getContextRequestLanguage())) + " : </label>");
 		String readOnlyHTML = "";
 		if (isReadOnly()) {
 			readOnlyHTML = " readonly=\"readonly\"";

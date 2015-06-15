@@ -13,7 +13,6 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import org.javlo.context.ContentContext;
-import org.javlo.context.GlobalContext;
 import org.javlo.helper.StringHelper;
 import org.javlo.service.RequestService;
 
@@ -36,10 +35,8 @@ public class FieldMultiList extends Field {
 
 		StringWriter writer = new StringWriter();
 		PrintWriter out = new PrintWriter(writer);
-
-		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		out.println("<div class=\"line\">");
-		out.println("<label class=\"control-label\">" + getLabel(new Locale(globalContext.getEditLanguage(ctx.getRequest().getSession()))) + " : </label>");
+		out.println("<label class=\"control-label\">" + getLabel(new Locale(ctx.getContextRequestLanguage())) + " : </label>");
 		out.println(getEditLabelCode());
 		if (ctx.isAsEditMode()) {
 			out.println("<div class=\"checkbox-inline\">");

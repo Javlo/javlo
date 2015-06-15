@@ -18,7 +18,7 @@ public class FieldEnormousText extends Field {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 
 		out.println("<div class=\"line\">");
-		out.println("<label for=\"" + getInputName() + "\">" + getLabel(new Locale(globalContext.getEditLanguage(ctx.getRequest().getSession()))) + " : </label>");
+		out.println("<label for=\"" + getInputName() + "\">" + getLabel(new Locale(ctx.getContextRequestLanguage())) + " : </label>");
 		out.print("<textarea class=\"form-control\" rows=\"30\" id=\"" + getInputName() + "\" name=\"" + getInputName() + "\">");
 		out.print(StringHelper.neverNull(getValue()));
 		out.println("</textarea>");
