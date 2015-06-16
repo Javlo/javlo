@@ -119,9 +119,12 @@ public class AdminUserFactory extends UserFactory {
 		EditContext editCtx = EditContext.getInstance(globalContext, request.getSession());
 
 		boolean logged = request.getUserPrincipal() != null && request.getUserPrincipal().getName().equals(login);
+		
+		User currentUser = getCurrentUser(request.getSession());	
 		User user = getUser(login);
-
-		if (user == null) {
+		if (currentUser != null && user != null && currentUser.getPassword().equals(user.getPassword())) {
+			return null;
+		} else if (user == null) {
 			// administrator auto login not possible
 			if (editCtx.getEditUser(login) != null && (logged || editCtx.hardAutoLogin(login))) {
 				user = createUser(login, (new HashSet(Arrays.asList(new String[] { AdminUserSecurity.GENERAL_ADMIN, AdminUserSecurity.FULL_CONTROL_ROLE }))));

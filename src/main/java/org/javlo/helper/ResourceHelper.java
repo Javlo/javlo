@@ -81,6 +81,8 @@ import org.javlo.helper.Comparator.FileComparator;
 import org.javlo.module.core.Module;
 import org.javlo.module.core.ModuleException;
 import org.javlo.module.core.ModulesContext;
+import org.javlo.service.ContentService;
+import org.javlo.service.PersistenceService;
 import org.javlo.service.resource.Resource;
 import org.javlo.ztatic.FileCache;
 import org.javlo.ztatic.IStaticContainer;
@@ -885,6 +887,9 @@ public class ResourceHelper {
 		// delete old ref in cache
 		String fromDataFolder = file.getAbsolutePath().replace(globalContext.getDataFolder(), "");
 		FileCache.getInstance(ctx.getRequest().getSession().getServletContext()).delete(fromDataFolder);
+		
+		PersistenceService.getInstance(globalContext).store(ctx);
+		ContentService.clearCache(ctx, globalContext);		
 	}
 
 	/**

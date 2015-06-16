@@ -115,8 +115,11 @@ public class UserFactory implements IUserFactory, Serializable {
 	@Override
 	public User autoLogin(HttpServletRequest request, String login) {
 		GlobalContext globalContext = GlobalContext.getInstance(request);
+		User currentUser = getCurrentUser(request.getSession());	
 		User user = getUser(login);
-		if (user != null) {
+		if (currentUser != null && user != null && currentUser.getPassword().equals(user.getPassword())) {
+			return null;
+		} else if (user != null) {
 			user.setContext(globalContext.getContextKey());
 			request.getSession().setAttribute(SESSION_KEY, user);
 		}
