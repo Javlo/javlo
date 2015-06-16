@@ -431,3 +431,5 @@ change log
  * Social netword login: google
  
  * ticket accessible from preview, call img.flush in ImageTransformServlet and force SC_ACCEPTED in CssLess filter.
+ 
+ * check password on autologin + reset cache on rename ressources
