@@ -156,6 +156,10 @@ public class UserSearch extends AbstractVisualComponent implements IAction {
 						info.append("<h3>More info</h3>");
 						info.append(user.getInfo());
 					}
+					if (user.getSpecialFunction() != null && user.getSpecialFunction().trim().length() > 0) {
+						info.append("<h3>Function</h3>");
+						info.append(user.getSpecialFunction());
+					}
 					
 					out.println("<tr class=\"" + oddEven + "\"><td>" + avatar + "</td><td>" + user.getFirstName() + ' ' + user.getLastName() + "</td><td><a href=\"mailto:" + user.getEmail() + "\">"+ user.getEmail() +"</a></td><td>" + organization + "</td><td>" + country + "</td><td>" + function + "</td><td>" + user.getPhone() + "</td><td>" + info + "</td></tr>");
 				}
