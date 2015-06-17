@@ -47,7 +47,7 @@
 <fieldset>
 <legend>${i18n.edit['user.info']}</legend>
 <div class="row">
-<div class="col-xs-6">
+<div class="col-xs-4">
 	<div class="form-group login">
 		<label for="login">login
 		<input class="form-control" type="text" id="login" name="login" value="${userInfoMap["login"]}" /></label> 
@@ -98,7 +98,7 @@
 		<input type="text" id="mobile" class="form-control" name="mobile" value="${userInfoMap["mobile"]}" /></label> 
 	</div>
 </div>
-<div class="col-xs-6 address">
+<div class="col-xs-4 address">
 	<div class="form-group">
 		<label for="address">address
 		<input type="text" id="address" class="form-control" name="address" value="${userInfoMap["address"]}" /></label> 
@@ -130,6 +130,10 @@
 		<label for="url">url
 		<input class="form-control" type="text" id="url" name="url" value="${userInfoMap["url"]}" /></label> 
 	</div>
+	<div class="form-group">
+		<label for="specialFunction">Special function
+		<input class="form-control" type="text" id="specialFunction" name="specialFunction" value="${userInfoMap["specialFunction"]}" /></label> 
+	</div>
 	<div class="form-group preferredLanguageRaw">
 		<label for="preferredLanguageRaw">preferred Language
 		<input type="text" id="preferredLanguageRaw" class="form-control" name="preferredLanguageRaw" value="${userInfoMap["preferredLanguageRaw"]}" /></label> 
@@ -147,11 +151,23 @@
 			<input class="btn btn-default" type="submit" name="notoken" value="${i18n.edit['global.delete']}" />
 		</c:if>
 	</div>
-	</c:if>
-	<div class="form-group">
-		<label for="moreinfo">More info
-		<textarea class="form-control" id="moreinfo" name="moreinfo">${userInfoMap['moreinfo']}</textarea></label>
+	</c:if>	
+</div>
+<div class="col-xs-4">
+<div class="form-group">
+		<label for="experience">Experience
+		<textarea class="form-control" id="experience" name="experience">${userInfoMap['experience']}</textarea></label>
+</div>
+<div class="form-group">
+		<label for="recommendation">Recommendation
+		<textarea class="form-control" id="recommendation" name="recommendation">${userInfoMap['recommendation']}</textarea></label>
+</div>
+<div class="form-group">
+		<label for="info">More info
+		<textarea class="form-control" id="info" name="info">${userInfoMap['info']}</textarea></label>
 	</div>
+</div>
+</div>
 </div>
 </div>
 <div class="form-group function">
@@ -229,9 +245,9 @@
 	</div>
 </fieldset>
 
-<div class="form-group">
+<div class="form-group btn-group">
+	<input class="btn btn-default pull-right" type="submit" name="ok" value="${i18n.edit['global.ok']}" />
 	<input class="btn btn-default pull-right btn-primary btn-color" type="submit" name="back" value="${i18n.edit['global.back']}" />
-	<input class="btn btn-default" type="submit" name="ok" value="${i18n.edit['global.ok']}" />
 </div>
 
 </form>

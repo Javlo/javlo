@@ -44,6 +44,10 @@ public class UserInfo implements Comparable<IUserInfo>, IUserInfo, Serializable 
 	private String organization = "";
 	private String vat = "";
 	private String function = "";
+	private String specialFunction = "";
+	private String experience = "";
+	private String recommendation = "";
+	private String parent = "";
 	private String address = "";
 	private String postCode = "";
 	private String city = "";
@@ -525,6 +529,38 @@ public class UserInfo implements Comparable<IUserInfo>, IUserInfo, Serializable 
 
 	public void setAvatarURL(String avatarURL) {
 		this.avatarURL = avatarURL;
+	}
+
+	public String getExperience() {
+		return experience;
+	}
+
+	public void setExperience(String experience) {
+		this.experience = experience;
+	}
+
+	public String getRecommendation() {
+		return recommendation;
+	}
+
+	public void setRecommendation(String recommendation) {
+		this.recommendation = recommendation;
+	}
+
+	public String getParent() {
+		return parent;
+	}
+
+	public void setParent(String parent) {
+		this.parent = parent;
+	}
+
+	public String getSpecialFunction() {
+		return specialFunction;
+	}
+
+	public void setSpecialFunction(String specialFunction) {
+		this.specialFunction = specialFunction;
 	}
 	
 	

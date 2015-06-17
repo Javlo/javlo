@@ -161,13 +161,14 @@ public class URLHelper extends ElementaryURLHelper {
 	}
 
 	public static String createAvatarUrl(ContentContext ctx, IUserInfo userInfo) {
-		if (userInfo.getAvatarURL() != null) {
+		if (userInfo.getAvatarURL() != null && userInfo.getAvatarURL().trim().length() > 0) {
 			return userInfo.getAvatarURL();
 		}
 		if (userInfo instanceof AdminUserInfo) {
 			AdminUserInfo adminUserInfo = (AdminUserInfo) userInfo;
 			String url = mergePath(ctx.getGlobalContext().getStaticConfig().getAvatarFolder(), userInfo.getLogin() + ".png");
-			if (new File(mergePath(ctx.getGlobalContext().getDataFolder(), url)).exists()) {
+			File avatarFile = new File(mergePath(ctx.getGlobalContext().getDataFolder(), url));
+			if (avatarFile.exists()) {
 				try {
 					return createTransformURL(ctx, url, "avatar");
 				} catch (Exception ex) {

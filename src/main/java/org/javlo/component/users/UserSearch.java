@@ -52,7 +52,7 @@ public class UserSearch extends AbstractVisualComponent implements IAction {
 		out.println("<form id=\"search-user\">");
 		out.println("<input type=\"hidden\" name=\"webaction\" value=\"user-search.search\"");
 		out.println("<fieldset>");
-		out.println("<legend>search users</legend>");
+		out.println("<legend>search users</legend><div class=\"row\"><div class=\"col-xs-6\">");
 		out.println("<div class=\"line\"><label id=\"user\">text</label>");
 		out.println("<input type=\"text\" id=\"user\" name=\"text\" value=\"" + rs.getParameter("text", "") + "\" />");
 		out.println("</div>");
@@ -71,7 +71,7 @@ public class UserSearch extends AbstractVisualComponent implements IAction {
 			}
 			out.println("</select>");
 		}
-		out.println("</div>");
+		out.println("</div></div><div class=\"col-xs-6\">");
 		out.println("<div class=\"line\"><label id=\"domain\">domain</label>");
 		if (functions == null) {
 			out.println("<input type=\"text\" id=\"domain\" name=\"domain\" value=\"" + rs.getParameter("domain", "") + "\" />");
@@ -104,7 +104,7 @@ public class UserSearch extends AbstractVisualComponent implements IAction {
 			out.println("</select></div>");
 		}
 
-		out.println("<input type=\"submit\" value=\"search...\" />");
+		out.println("</div><div class=\"col-xs-12\"><input class=\"pull-right\" type=\"submit\" value=\"search...\" /></div></div>");
 		out.println("</fieldset>");
 		out.println("</from>");
 
@@ -123,7 +123,7 @@ public class UserSearch extends AbstractVisualComponent implements IAction {
 				}
 				out.println("<table>");
 				I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
-				out.println("<tr><th>Photo</th><th>Firstname</th><th>Lastname</th><th>email (<a href=\"mailto:"+emails+"\">all</a>)</th><th>"+i18nAccess.getAllText("field.organization", "organization")+"</th><th>country</th><th>"+i18nAccess.getAllText("field.domain", "domain")+"</th><th>phone</th></tr>");
+				out.println("<tr><th>Photo</th><th>Name</th><th>email (<a href=\"mailto:"+emails+"\">all</a>)</th><th>"+i18nAccess.getAllText("field.organization", "organization")+"</th><th>country</th><th>"+i18nAccess.getAllText("field.domain", "domain")+"</th><th>phone</th><th>Info</th></tr>");
 				int i = 0;
 				for (UserInfo user : users) {
 					i++;
@@ -143,8 +143,21 @@ public class UserSearch extends AbstractVisualComponent implements IAction {
 					if (user.getUrl() != null && user.getUrl().trim().length() > 0) {
 						organization = "<a href=\""+user.getUrl()+"\">"+organization+"</a>";
 					}
-
-					out.println("<tr class=\"" + oddEven + "\"><td>" + avatar + "</td><td>" + user.getFirstName() + "</td><td>" + user.getLastName() + "</td><td><a href=\"mailto:" + user.getEmail() + "\">"+ user.getEmail() +"</a></td><td>" + organization + "</td><td>" + country + "</td><td>" + function + "</td><td>" + user.getPhone() + "</td></tr>");
+					StringBuffer info = new StringBuffer();
+					if (user.getExperience() != null && user.getExperience().trim().length() > 0) {
+						info.append("<h3>Experience</h3>");
+						info.append(user.getExperience());
+					}
+					if (user.getRecommendation() != null && user.getRecommendation().trim().length() > 0) {
+						info.append("<h3>Recommendation</h3>");
+						info.append(user.getRecommendation());
+					}
+					if (user.getInfo() != null && user.getInfo().trim().length() > 0) {
+						info.append("<h3>More info</h3>");
+						info.append(user.getInfo());
+					}
+					
+					out.println("<tr class=\"" + oddEven + "\"><td>" + avatar + "</td><td>" + user.getFirstName() + ' ' + user.getLastName() + "</td><td><a href=\"mailto:" + user.getEmail() + "\">"+ user.getEmail() +"</a></td><td>" + organization + "</td><td>" + country + "</td><td>" + function + "</td><td>" + user.getPhone() + "</td><td>" + info + "</td></tr>");
 				}
 				out.println("</table>");
 			}
