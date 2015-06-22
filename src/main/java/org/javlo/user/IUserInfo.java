@@ -14,6 +14,12 @@ public interface IUserInfo {
 	 * return the encrypt login the encrypt login can change when we restart. 
 	 */
 	public String getEncryptLogin();
+	
+	/**
+	 * get the parent of the user, a parent can be a manager.
+	 * @return
+	 */
+	public String getParent();
 
 	public String getTitle();
 
