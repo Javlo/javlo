@@ -1,11 +1,12 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd"
+>
 
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.javlo</groupId>
-	<artifactId>javlo2</artifactId>
-	<version>2.1</version>	
-	<packaging>war</packaging>
+	<artifactId>javlo2${artifact.extension}</artifactId>
+	<version>2.1</version>
+	<packaging>${packaging.type}</packaging>
 	<name>Javlo 2</name>
 	<url>http://www.javlo.org/</url>
 	<inceptionYear>2012</inceptionYear>
@@ -455,71 +456,95 @@
 					<artifactId>maven-site-plugin</artifactId>
 					<version>2.0.1</version>
 				</plugin>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-resources-plugin</artifactId>
-					<version>2.3</version>
-					<executions>
-						<execution>
-							<id>filter-resources</id>
-							<phase>process-resources</phase>
-							<goals>
-								<goal>copy-resources</goal>
-							</goals>
-							<configuration>
-								<outputDirectory>${project.build.directory}/${project.build.finalName}/WEB-INF/config</outputDirectory>
-								<resources>
-									<resource>
-										<directory>src/main/config</directory>
-										<filtering>true</filtering>
-									</resource>
-								</resources>
-							</configuration>
-						</execution>
-
-						<execution>
-							<id>filter-webxml</id>
-							<phase>process-resources</phase>
-							<goals>
-								<goal>copy-resources</goal>
-							</goals>
-							<configuration>
-								<outputDirectory>${project.build.directory}/${project.build.finalName}/WEB-INF</outputDirectory>
-								<resources>
-									<resource>
-										<directory>src/main/webapp/WEB-INF</directory>
-										<filtering>true</filtering>
-										<includes>
-											<include>*.xml</include>
-										</includes>
-									</resource>
-								</resources>
-							</configuration>
-						</execution>
-
-						<execution>
-							<id>deploy local lib</id>
-							<phase>process-resources</phase>
-							<goals>
-								<goal>copy-resources</goal>
-							</goals>
-							<configuration>
-								<outputDirectory>${project.build.directory}/${project.build.finalName}/WEB-INF/lib</outputDirectory>
-								<resources>
-									<resource>
-										<directory>src/main/lib</directory>
-										<filtering>false</filtering>
-									</resource>
-								</resources>
-							</configuration>
-						</execution>
-					</executions>
-				</plugin>
 			</plugins>
 		</pluginManagement>
 	</build>
 
 	<profiles>
+		<profile>
+			<id>webapp</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<properties>
+				<packaging.type>war</packaging.type>
+				<artifact.extension></artifact.extension>
+			</properties>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-resources-plugin</artifactId>
+						<version>2.3</version>
+						<executions>
+							<execution>
+								<id>filter-resources</id>
+								<phase>process-resources</phase>
+								<goals>
+									<goal>copy-resources</goal>
+								</goals>
+								<configuration>
+									<outputDirectory>${project.build.directory}/${project.build.finalName}/WEB-INF/config</outputDirectory>
+									<resources>
+										<resource>
+											<directory>src/main/config</directory>
+											<filtering>true</filtering>
+										</resource>
+									</resources>
+								</configuration>
+							</execution>
+
+							<execution>
+								<id>filter-webxml</id>
+								<phase>process-resources</phase>
+								<goals>
+									<goal>copy-resources</goal>
+								</goals>
+								<configuration>
+									<outputDirectory>${project.build.directory}/${project.build.finalName}/WEB-INF</outputDirectory>
+									<resources>
+										<resource>
+											<directory>src/main/webapp/WEB-INF</directory>
+											<filtering>true</filtering>
+											<includes>
+												<include>*.xml</include>
+											</includes>
+										</resource>
+									</resources>
+								</configuration>
+							</execution>
+
+							<execution>
+								<id>deploy local lib</id>
+								<phase>process-resources</phase>
+								<goals>
+									<goal>copy-resources</goal>
+								</goals>
+								<configuration>
+									<outputDirectory>${project.build.directory}/${project.build.finalName}/WEB-INF/lib</outputDirectory>
+									<resources>
+										<resource>
+											<directory>src/main/lib</directory>
+											<filtering>false</filtering>
+										</resource>
+									</resources>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>core</id>
+			<properties>
+				<packaging.type>jar</packaging.type>
+				<artifact.extension>-core</artifact.extension>
+			</properties>
+			<build>
+				<directory>${project.basedir}/target-core</directory>
+			</build>
+		</profile>
 		<profile>
 			<id>include-webstart</id>
 			<build>
