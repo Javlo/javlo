@@ -3444,6 +3444,15 @@ public class MenuElement implements Serializable, IPrintInfo {
 		return isEmpty(ctx, null);
 	}
 	
+	public boolean isNoComponent(ContentContext ctx) throws Exception {
+		return getContent(ctx).size(ctx) == 0;
+	}
+	
+	public boolean isNoComponent(ContentContext ctx, String area) throws Exception {
+		ContentContext langCtx = ctx.getContextWithArea(area);
+		return isNoComponent(langCtx);
+	}
+	
 	public boolean isEmpty(ContentContext ctx, String area) throws Exception {
 		PageDescription desc = getPageDescriptionCached(ctx, ctx.getRequestContentLanguage());
 

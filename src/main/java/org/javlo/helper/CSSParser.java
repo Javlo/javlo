@@ -1,14 +1,14 @@
 package org.javlo.helper;
 
-import java.io.File;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.EmptyStackException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Stack;
 import java.util.StringTokenizer;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.javlo.css.CSSElement;
 import org.javlo.helper.XMLManipulationHelper.BadXMLException;
@@ -157,18 +157,6 @@ public class CSSParser {
 		return result;
 	}
 
-	public static void main(String[] args) {
-		try {
-			File testFile = new File("c:/trans/test.html");
-			String html = FileUtils.readFileToString(testFile);
-			//html = cssInline(html);
-			FileUtils.writeStringToFile(new File("c:/trans/test_result.html"), html);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-
 	public static boolean match(TagDescription[] tags, TagDescription tag, CSSElement elem) {
 		Stack<CSSElement.Tag> cssStack = new Stack<CSSElement.Tag>();
 
@@ -199,21 +187,25 @@ public class CSSParser {
 		return false;
 	}
 
-	public static String mergeCSS(String html) throws BadXMLException {
+	public static String mergeCSS(String html, boolean removeCSS) throws BadXMLException {
 		html = html.replace("<br>", "<br />");
 		TagDescription[] tags = XMLManipulationHelper.searchAllTag(html, true);
 		StringBuffer css = new StringBuffer();
 		StringRemplacementHelper remp = new StringRemplacementHelper();
+		String htmlWithoutCSS = html;
 		for (TagDescription tag : tags) {
 			if (tag.getName().toLowerCase().equals("style")) {
-				remp.addReplacement(tag.getOpenStart(), tag.getCloseEnd() + 1, "");
+				if (removeCSS) {
+					remp.addReplacement(tag.getOpenStart(), tag.getCloseEnd() + 1, "");
+				}
 				String inside = html.substring(tag.getOpenEnd() + 1, tag.getCloseStart() - 1);
 				css.append(inside);
 			}
 		}
-		String htmlWithoutCSS = remp.start(html);
+		if (removeCSS) {
+			htmlWithoutCSS = remp.start(html);
+		}
 		String cssFinal = StringHelper.removeSequence(css.toString(), "/*", "*/");
-
 		return mergeCSS(cssFinal, htmlWithoutCSS);
 	}
 

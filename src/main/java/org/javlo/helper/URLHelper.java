@@ -164,29 +164,40 @@ public class URLHelper extends ElementaryURLHelper {
 		if (userInfo.getAvatarURL() != null && userInfo.getAvatarURL().trim().length() > 0) {
 			return userInfo.getAvatarURL();
 		}
-		if (userInfo instanceof AdminUserInfo) {
-			AdminUserInfo adminUserInfo = (AdminUserInfo) userInfo;
-			String url = mergePath(ctx.getGlobalContext().getStaticConfig().getAvatarFolder(), userInfo.getLogin() + ".png");
-			File avatarFile = new File(mergePath(ctx.getGlobalContext().getDataFolder(), url));
+
+		String url = mergePath(ctx.getGlobalContext().getStaticConfig().getAvatarFolder(), userInfo.getLogin() + ".png");
+		File avatarFile = new File(mergePath(ctx.getGlobalContext().getDataFolder(), url));
+		if (avatarFile.exists()) {
+			try {
+				return createTransformURL(ctx, url, "avatar");
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+		} else {
+			url = mergePath(ctx.getGlobalContext().getStaticConfig().getAvatarFolder(), userInfo.getLogin() + ".jpg");
+			avatarFile = new File(mergePath(ctx.getGlobalContext().getDataFolder(), url));
 			if (avatarFile.exists()) {
 				try {
 					return createTransformURL(ctx, url, "avatar");
 				} catch (Exception ex) {
 					ex.printStackTrace();
 				}
-			} else if (adminUserInfo.getFacebook() != null && adminUserInfo.getFacebook().trim().length() > 0) {
-				return adminUserInfo.getFacebook().replace("//www.", "//graph.") + "/picture?type=small";
-			} else if (adminUserInfo.getTwitter() != null && adminUserInfo.getTwitter().trim().length() > 0) {
-				return "https://api.twitter.com/1/users/profile_image?screen_name=" + adminUserInfo.getTwitter().replaceAll("https://twitter.com/", "") + "&size=normal";
-			}
-			if (adminUserInfo.getEmail() != null) {
-				try {
-					url = URLHelper.getGravatarURL(adminUserInfo.getEmail(), null).toString();
-				} catch (MalformedURLException e) {
-					e.printStackTrace();
+			} else if (userInfo instanceof AdminUserInfo) {
+				AdminUserInfo adminUserInfo = (AdminUserInfo) userInfo;
+				if (adminUserInfo.getFacebook() != null && adminUserInfo.getFacebook().trim().length() > 0) {
+					return adminUserInfo.getFacebook().replace("//www.", "//graph.") + "/picture?type=small";
+				} else if (adminUserInfo.getTwitter() != null && adminUserInfo.getTwitter().trim().length() > 0) {
+					return "https://api.twitter.com/1/users/profile_image?screen_name=" + adminUserInfo.getTwitter().replaceAll("https://twitter.com/", "") + "&size=normal";
 				}
-			}
-			return url;
+				if (adminUserInfo.getEmail() != null) {
+					try {
+						url = URLHelper.getGravatarURL(adminUserInfo.getEmail(), null).toString();
+					} catch (MalformedURLException e) {
+						e.printStackTrace();
+					}
+				}
+				return url;
+			}			
 		}
 		return null;
 	}
@@ -610,7 +621,7 @@ public class URLHelper extends ElementaryURLHelper {
 			char sep = '?';
 			if (path.indexOf('?') >= 0) {
 				sep = '&';
-			}		
+			}
 			Iterator keys = params.keySet().iterator();
 			while (keys.hasNext()) {
 				String key = (String) keys.next();
@@ -1199,18 +1210,18 @@ public class URLHelper extends ElementaryURLHelper {
 		String relativePath = file.getAbsolutePath().replace(rootStatic.getAbsolutePath(), "");
 		return URLHelper.createResourceURL(ctx, relativePath);
 	}
-	
+
 	public static String createProxyURL(ContentContext ctx, String inURL) throws MalformedURLException {
 		URL url = new URL(inURL);
 		String id = ProxyServlet.getURLCode(url);
-		String proxyURL = "/proxy/"+id+'/'+StringHelper.getFileNameFromPath(url.getPath());
+		String proxyURL = "/proxy/" + id + '/' + StringHelper.getFileNameFromPath(url.getPath());
 		return createStaticURL(ctx, proxyURL);
 	}
-	
+
 	public static String createProxyURL(String rootURL, String inURL) throws MalformedURLException {
 		URL url = new URL(inURL);
 		String id = ProxyServlet.getURLCode(url);
-		String proxyURL = "/proxy/"+id+'/'+StringHelper.getFileNameFromPath(url.getPath());
+		String proxyURL = "/proxy/" + id + '/' + StringHelper.getFileNameFromPath(url.getPath());
 		return URLHelper.mergePath(rootURL, proxyURL);
 	}
 

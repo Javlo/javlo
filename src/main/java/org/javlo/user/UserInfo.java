@@ -40,6 +40,7 @@ public class UserInfo implements Comparable<IUserInfo>, IUserInfo, Serializable 
 	private String url = "";
 	private String firstName = "";
 	private String lastName = "";
+	private String gender = "";
 	private String email = "";
 	private String organization = "";
 	private String vat = "";
@@ -58,10 +59,11 @@ public class UserInfo implements Comparable<IUserInfo>, IUserInfo, Serializable 
 	private String token = "";
 	private String accountType = "default";
 	private String avatarURL = null;
+	private String birthdate = null;
 	private String[] preferredLanguage = new String[0];
 	private Set<String> roles = new HashSet<String>();
 	private Date creationDate = new Date();
-	private Date modificationDate = new Date();
+	private Date modificationDate = new Date();	
 
 	@Override
 	public String getTitle() {
@@ -438,6 +440,14 @@ public class UserInfo implements Comparable<IUserInfo>, IUserInfo, Serializable 
 	public Date getModificationDate() {
 		return modificationDate;
 	}
+	
+	public String getBirthdate() {
+		return birthdate;
+	}
+	
+	public void setBirthdate(String date) {
+		birthdate = date;
+	}
 
 	@Override
 	public void removeRoles(Set<String> strings) {
@@ -561,6 +571,14 @@ public class UserInfo implements Comparable<IUserInfo>, IUserInfo, Serializable 
 
 	public void setSpecialFunction(String specialFunction) {
 		this.specialFunction = specialFunction;
+	}
+
+	public String getGender() {
+		return gender;
+	}
+
+	public void setGender(String gender) {
+		this.gender = gender;
 	}
 	
 	

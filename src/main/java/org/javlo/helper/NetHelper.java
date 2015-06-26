@@ -213,7 +213,7 @@ public class NetHelper {
 																// -> array
 		}
 		if (cssInline) {
-			return CSSParser.mergeCSS(content);
+			return CSSParser.mergeCSS(content, false);
 		}
 		return content;
 	}
@@ -887,7 +887,7 @@ public class NetHelper {
 		url = URLHelper.addParam(url, ContentContext.FORCED_CONTENT_PREFIX + ComponentBean.DEFAULT_AREA, contentId);
 		url = URLHelper.addParam(url, Template.FORCE_TEMPLATE_PARAM_NAME, templateName);
 		String XHTMLContent = NetHelper.readPageGet(new URL(url));
-		XHTMLContent = CSSParser.mergeCSS(XHTMLContent);
+		XHTMLContent = CSSParser.mergeCSS(XHTMLContent, false);
 		sendMail(ctx.getGlobalContext(), from, to, cc, bcc, subject, XHTMLContent, StringHelper.removeTag(content), true);
 	}
 

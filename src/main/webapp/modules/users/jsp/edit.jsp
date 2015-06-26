@@ -5,25 +5,63 @@
 <h3><span>${i18n.edit['user.title.edit']} : ${user.name}</span></h3>
 <div class="content">
 
-<form id="form-edit-user" class="standard-form" action="${info.currentURL}" method="post" enctype="multipart/form-data">
+<form id="form-edit-user"  action="${info.currentURL}" method="post" enctype="multipart/form-data">
 
 <div>
 	<input type="hidden" name="webaction" value="update" />
 	<input type="hidden" name="user" value="${user.name}" />
 </div>
 
+
+
+<fieldset>
+<legend>${i18n.edit['user.main-info']}</legend>
+<div class="row">
+	<div class="col-xs-4">
+		<div class="form-group">
+			<label>login <input class="form-control" name="login" value="${userInfoMap['login']}" /></label>
+		</div>
+		<div class="form-group">
+			<label>password <input class="form-control" name="password" value="${userInfoMap['password']}" /></label>
+		</div>
+	</div>	
+	<div class="col-xs-4">
+		<div class="form-group">
+			<label>firstName <input class="form-control" name="firstName" value="${userInfoMap['firstName']}" /></label>
+		</div>
+		<div class="form-group">
+			<label>lastName <input class="form-control" name="lastName" value="${userInfoMap['lastName']}" /></label>
+		</div>
+	</div>
+	<div class="col-xs-4">
+		<div class="form-group">
+			<label>title <input class="form-control" name="title" value="${userInfoMap['title']}" /></label>
+		</div>	
+		<div class="form-group"> 
+			<label>email <input class="form-control" name="email" value="${userInfoMap['email']}" /></label>
+		</div>			
+	</div>
+</div>
+</fieldset>
+
 <fieldset>
 <legend>${i18n.edit['user.info']}</legend>
-<div class="one_half">
+<div class="row">
+<div class="col-xs-4">
+<c:set var="fieldIndex" value="0" />
 <c:forEach var="key" items="${userInfoKeys}" varStatus="status">
-	<div class="line">
-		<label for="${key}">${key}</label>
-		<input type="text" id="${key}" name="${key}" value="${userInfoMap[key]}" /> 
+<c:if test="${key != 'login' && key != 'password' && key != 'email' && key != 'firstName' && key != 'lastName' && key != 'title'}">
+	<div class="form-group">		 
+		<label>${key}	
+		<input class="form-control" type="text" name="${key}" value="${userInfoMap[key]}" /></label>		 
 	</div>
-	<c:if test="${status.count >= fn:length(userInfoKeys)/2 && status.count < fn:length(userInfoKeys)/2+1}">
-		</div><div class="one_half">
+	<c:set var="fieldIndex" value="${fieldIndex+1}" />
+	<c:if test="${fieldIndex>(fn:length(userInfoKeys)-6)/3}"><c:set var="fieldIndex" value="0" />
+		</div><div class="col-xs-4">
 	</c:if>
+	</c:if>	
 </c:forEach>
+</div>
 </div>
 </fieldset>
 
@@ -31,46 +69,35 @@
 <fieldset>
 <legend>${i18n.edit['user.roles']}</legend>
 <c:forEach var="role" items="${roles}">
-
-<div class="inline">	
 	<c:set var="contains" value="false" />
 	<c:forEach var="userRole" items="${user.roles}">
  		 <c:if test="${userRole eq role}">
    		 <c:set var="contains" value="true" />
  		 </c:if>
 	</c:forEach>
-	<input type="checkbox" id="role-${role}" name="role-${role}" <c:if test="${contains}">checked="checked"</c:if> />
-	<label class="suffix" for="role-${role}">${role}</label>
-</div>
-
+	<label class="checkbox-inline"><input type="checkbox" id="role-${role}" name="role-${role}" <c:if test="${contains}">checked="checked"</c:if> />${role}</label>
 </c:forEach>
 </fieldset>
 </c:if>
-
 
 <c:if test="${not empty contextRoles}">
 <fieldset>
 <legend>${i18n.edit['user.context-roles']}</legend>
 <c:forEach var="role" items="${contextRoles}">
-
-<div class="inline">	
 	<c:set var="contains" value="false" />
 	<c:forEach var="userRole" items="${user.roles}">
  		 <c:if test="${userRole eq role}">
    		 <c:set var="contains" value="true" />
  		 </c:if>
 	</c:forEach>
-	<input type="checkbox" id="role-${role}" name="role-${role}" <c:if test="${contains}">checked="checked"</c:if> />
-	<label class="suffix" for="role-${role}">${role}</label>
-</div>
-
+	<label class="checkbox-inline"><input type="checkbox" id="role-${role}" name="role-${role}" <c:if test="${contains}">checked="checked"</c:if> />${role}</label>
 </c:forEach>
 </fieldset>
 </c:if>
 
-<div class="action">
-	<input type="submit" name="back" value="${i18n.edit['global.back']}" />
-	<input type="submit" name="ok" value="${i18n.edit['global.ok']}" />
+<div class="btn-group pull-right">
+	<button type="submit" name="back" class="btn btn-default">${i18n.edit['global.back']}</button>
+	<input type="submit" name="ok" class="btn btn-primary" value="${i18n.edit['global.ok']}" />
 </div>
 
 </form>

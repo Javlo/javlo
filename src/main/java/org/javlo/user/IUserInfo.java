@@ -26,6 +26,8 @@ public interface IUserInfo {
 	public String getFirstName();
 
 	public String getLastName();
+	
+	public String getGender();
 
 	public String getPassword();
 
@@ -36,6 +38,8 @@ public interface IUserInfo {
 	public String getInfo();
 
 	public String getToken();
+	
+	public String getBirthdate();
 
 	public String[] getPreferredLanguage();
 

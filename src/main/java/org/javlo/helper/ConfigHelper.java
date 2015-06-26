@@ -21,7 +21,7 @@ import javax.servlet.ServletContext;
 import org.javlo.exception.ResourceNotFoundException;
 import org.javlo.filter.PropertiesFilter;
 
-/**
+/**l
  * @author pvandermaesen
  */
 public class ConfigHelper {
