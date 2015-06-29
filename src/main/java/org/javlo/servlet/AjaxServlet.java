@@ -91,6 +91,7 @@ public class AjaxServlet extends HttpServlet {
 					if (ctx.getAjaxMap() == null) {
 						String msgXhtml = ServletHelper.executeJSP(ctx, editCtx.getMessageTemplate());
 						ctx.addAjaxInsideZone("message-container", msgXhtml);
+						outMap.put("messageText", StringHelper.removeTag(msgXhtml));
 						if (editCtx.getUserPrincipal() != null) {
 							int unreadNotification = NotificationService.getInstance(globalContext).getUnreadNotificationSize(editCtx.getUserPrincipal().getName(), 99);
 							ctx.addAjaxInsideZone("notification-count", "" + unreadNotification);
