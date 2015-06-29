@@ -8,6 +8,8 @@ import java.util.Map;
 
 import junit.framework.TestCase;
 
+import org.apache.commons.lang3.tuple.Pair;
+
 public class StringHelperTest extends TestCase {
 	
   public void testIsImage() throws Exception {
@@ -170,6 +172,54 @@ public class StringHelperTest extends TestCase {
 	  assertEquals(decodedMap.get("entry3"), testMap.get("entry3"));
 	  assertEquals(decodedMap.size(), testMap.size());	  
   }
-  
+
+	@SuppressWarnings("unchecked")
+	public void testRangeMatches() {
+		List<Pair<List<String>, List<Pair<Integer, Boolean>>>> tests = Arrays.asList(
+				Pair.of(Arrays.asList("<25", "-25"), Arrays.asList(
+						Pair.of(-1, true),
+						Pair.of(0, true),
+						Pair.of(23, true),
+						Pair.of(24, true),
+						Pair.of(25, false),
+						Pair.of(26, false)
+						)),
+				Pair.of(Arrays.asList("25-30"), Arrays.asList(
+						Pair.of(-1, false),
+						Pair.of(0, false),
+						Pair.of(23, false),
+						Pair.of(24, false),
+						Pair.of(25, true),
+						Pair.of(26, true),
+						Pair.of(29, true),
+						Pair.of(30, true),
+						Pair.of(31, false),
+						Pair.of(32, false),
+						Pair.of(99, false)
+						)),
+				Pair.of(Arrays.asList("30+", "30>", ">30", "+30"), Arrays.asList(
+						Pair.of(-1, false),
+						Pair.of(0, false),
+						Pair.of(29, false),
+						Pair.of(30, false),
+						Pair.of(31, true),
+						Pair.of(32, true),
+						Pair.of(99, true)
+						))
+
+				);
+		for (Pair<List<String>, List<Pair<Integer, Boolean>>> test : tests) {
+			for (String range : test.getLeft()) {
+				for (Pair<Integer, Boolean> testCase : test.getRight()) {
+					Integer value = testCase.getLeft();
+					boolean result = testCase.getRight();
+					String caseLabel = "StringHelper.rangeMatches(range='" + range + "',value='" + value + "')";
+					boolean execResult = StringHelper.rangeMatches(range, value);
+					System.out.println(caseLabel + " == " + execResult);
+					assertEquals(caseLabel, result, execResult);
+				}
+			}
+		}
+	}
  
 }

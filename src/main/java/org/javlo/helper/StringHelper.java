@@ -45,6 +45,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.zip.CRC32;
 
 import javax.mail.internet.AddressException;
@@ -91,7 +93,8 @@ public class StringHelper {
 
 	private static final char DEFAULT_ESCAPE = '\\';
 
-	public static final String[][] TXT2HTML = { { "\u00c1", "&Aacute;" }, { "\u00e1", "&aacute;" }, { "\u00c0", "&Agrave;" }, { "\u00e0", "&agrave;" }, { "\u00e7", "&ccedil;" }, { "\u00c7", "&Ccedil;" }, { "\u00c9", "&Eacute;" }, { "\u00e9", "&eacute;" }, { "\u00c8", "&Egrave;" }, { "\u00e8", "&egrave;" }, { "\u00ca", "&Ecirc;" }, { "\u00ea", "&ecirc;" }, { "\u00cf", "&Iuml;" }, { "\u00ef", "&iuml;" }, { "\u00f9", "&ugrave;" }, { "\u00d9", "&Ugrave;" }, { "\u2019", "'" }, { "\u00D6", "&Ouml;" }, { "\u00F6", "&ouml;" } };
+	public static final String[][] TXT2HTML = { { "\u00c1", "&Aacute;" }, { "\u00e1", "&aacute;" }, { "\u00c0", "&Agrave;" }, { "\u00e0", "&agrave;" }, { "\u00e7", "&ccedil;" }, { "\u00c7", "&Ccedil;" }, { "\u00c9", "&Eacute;" }, { "\u00e9", "&eacute;" }, { "\u00c8", "&Egrave;" },
+			{ "\u00e8", "&egrave;" }, { "\u00ca", "&Ecirc;" }, { "\u00ea", "&ecirc;" }, { "\u00cf", "&Iuml;" }, { "\u00ef", "&iuml;" }, { "\u00f9", "&ugrave;" }, { "\u00d9", "&Ugrave;" }, { "\u2019", "'" }, { "\u00D6", "&Ouml;" }, { "\u00F6", "&ouml;" } };
 
 	public static SimpleDateFormat RFC822DATEFORMAT = new SimpleDateFormat("EEE', 'dd' 'MMM' 'yyyy' 'HH:mm:ss' 'Z", Locale.US);
 
@@ -112,6 +115,10 @@ public class StringHelper {
 	private static String previousDateId = "";
 
 	public static final String[] EMPTY_STRING_ARRAY = new String[0];
+
+	public static final Pattern RANGE_MATCHER_LOWER = Pattern.compile("^[-<]([0-9]+)$");
+	public static final Pattern RANGE_MATCHER_BETWEEN = Pattern.compile("^([0-9]+)-([0-9]+)$");
+	public static final Pattern RANGE_MATCHER_GREATER = Pattern.compile("^[+>]([0-9]+)$|^([0-9]+)[+>]$");
 
 	public static String addSufixToFileName(String fileName, String sufix) {
 		return FilenameUtils.removeExtension(fileName) + sufix + "." + FilenameUtils.getExtension(fileName);
@@ -1361,7 +1368,7 @@ public class StringHelper {
 		System.out.println("StringHelper.renderNumber(4, 4) = " + StringHelper.renderNumber(4, 4));
 		System.out.println("StringHelper.renderNumber(40, 4) = " + StringHelper.renderNumber(40, 4));
 		
-		System.out.println("***** StringHelper.toXMLAttribute : "+toXMLAttribute("ceci est un \"test\".")); //TODO: remove debug trace
+		System.out.println("***** StringHelper.toXMLAttribute : " + toXMLAttribute("ceci est un \"test\".")); //TODO: remove debug trace
 	}
 
 	/**
@@ -3224,9 +3231,8 @@ public class StringHelper {
 		crc.update(text.getBytes());
 		return crc.getValue();
 	}
-	
-	
-	public static String mapToString(Map<String,String> maps) {
+
+	public static String mapToString(Map<String, String> maps) {
 		List<String> mapList = new LinkedList<String>();
 		for (String key : maps.keySet()) {
 			String[] keyValue = new String[2];
@@ -3238,16 +3244,47 @@ public class StringHelper {
 		String base64 = asBase64(mapString.getBytes());
 		return base64;
 	}
-	
-	public static Map<String,String> stringToMap(String encodedMap) throws IOException {
+
+	public static Map<String, String> stringToMap(String encodedMap) throws IOException {
 		String mapStr = new String(decodeBase64(encodedMap));
 		List<String> mapList = stringToCollection(mapStr);
-		Map<String,String> outMap = new HashMap<String, String>();
+		Map<String, String> outMap = new HashMap<String, String>();
 		for (String mapEntry : mapList) {
 			String[] entry = stringToArray(mapEntry);
 			outMap.put(entry[0], entry[1]);
 		}
 		return outMap;
+	}
+
+	/**
+	 * Test if the value is included in the range.
+	 * @param range Range values are like -25,25-30,31-35,35+ 
+	 * @param value the integer to test
+	 * @return <code>true</code> is the value is in the range <code>false</code> otherwise
+	 */
+	public static boolean rangeMatches(String range, Integer value) {
+		Matcher m;
+		m = RANGE_MATCHER_BETWEEN.matcher(range);
+		if (m.matches()) {
+			int bottom = Integer.parseInt(m.group(1));
+			int top = Integer.parseInt(m.group(2));
+			return value >= bottom && value <= top;
+		}
+		m = RANGE_MATCHER_LOWER.matcher(range);
+		if (m.matches()) {
+			int bound = Integer.parseInt(m.group(1));
+			return value < bound;
+		}
+		m = RANGE_MATCHER_GREATER.matcher(range);
+		if (m.matches()) {
+			String str = m.group(1);
+			if (str == null) {
+				str = m.group(2);
+			}
+			int bound = Integer.parseInt(str);
+			return value > bound;
+		}
+		throw new IllegalArgumentException("Wrong range parameter.");
 	}
 
 }
