@@ -99,6 +99,15 @@ editPreview.scrollToItem = function(container) {
 	}
 }
 
+editPreview.isScrollBottom = function(container) {
+	var item = pjq(container);
+	var scrollTop = item.scrollTop();
+	item.scrollTop(99999);
+	var outScrollBottom = scrollTop == item.scrollTop();
+	item.scrollTop(scrollTop);
+	return outScrollBottom;	
+}
+
 editPreview.searchPageId = function(node) {	
 	var parent = pjq(node).parent();	
 	while (parent !== undefined && !parent.hasClass("_page_associate") && parent.prop("tagName") !== undefined) {			
@@ -226,11 +235,15 @@ editPreview.initPreview = function() {
 	for (var i = 0; i < drag.length; i++) {
 		el = drag[i];    
 		el.setAttribute('draggable', 'true');  
-		el.addEventListener('dragstart', function (event) {
+		el.addEventListener('dragstart', function (event) {			
+			var scrollBottom = editPreview.isScrollBottom(pjq('html'));
 			event.dataTransfer.setData('type', this.getAttribute("data-type"));
-			pjq(".free-edit-zone").addClass("open");			
+			pjq(".free-edit-zone").addClass("open");	
+			if (scrollBottom) {
+				pjq('html').scrollTop(99999);
+			}
 		});
-		el.addEventListener('dragend', function (event) {
+		el.addEventListener('dragend', function (event)  {
 			pjq(".free-edit-zone").removeClass("open");
 		});
 		el.addEventListener('drop', function (event) {
@@ -242,9 +255,13 @@ editPreview.initPreview = function() {
 		el = drag[i];    
 		el.setAttribute('draggable', 'true');  
 		el.addEventListener('dragstart', function (event) {
+			var scrollBottom = editPreview.isScrollBottom(pjq('html'));
 			var sharedId = this.getAttribute("data-shared");			
 			event.dataTransfer.setData('shared', sharedId);
 			pjq(".free-edit-zone").addClass("open");
+			if (scrollBottom) {
+				pjq('html').scrollTop(99999);
+			}
 		});
 		el.addEventListener('dragend', function (event) {
 			pjq(".free-edit-zone").removeClass("open");
@@ -298,8 +315,7 @@ editPreview.initPreview = function() {
 					var ajaxURL = editPreview.addParam(currentURL,url);
 					if (editPreview.searchPageId(subComp) != null) {
 						ajaxURL = ajaxURL +'&pageContainerID='+ editPreview.searchPageId(subComp);
-					}	
-					console.log("ajaxURL = "+ajaxURL);
+					}					
 					editPreview.ajaxPreviewRequest(ajaxURL, null, null);
 				} else if (compId != null && compId.length > 0) { // move component				
 					var previewId = subComp.attr("id").substring(3);				
