@@ -2026,10 +2026,7 @@ public class MenuElement implements Serializable, IPrintInfo {
 		newCtx.setArea(null);
 
 		if (newCtx.getRenderMode() == ContentContext.EDIT_MODE) {
-			newCtx.setRenderMode(ContentContext.PREVIEW_MODE); // get info for
-																// preview mode
-																// (with repeat
-																// elements)
+			newCtx.setRenderMode(ContentContext.PREVIEW_MODE); 
 		}
 
 		IContentComponentsList contentList = getAllContent(newCtx);

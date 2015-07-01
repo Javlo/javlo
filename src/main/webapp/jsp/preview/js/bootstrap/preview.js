@@ -220,8 +220,8 @@ editPreview.initPreview = function() {
 	    });
 		el.setAttribute('draggable', 'true');  
 		el.addEventListener('dragstart', function (event) {
-			var subComp = pjq(this).data("comp");			
-			event.dataTransfer.setData('compId', subComp.attr("id").substring(3));
+			var subComp = pjq(this).data("comp");
+			event.dataTransfer.setData("text", ","+subComp.attr("id").substring(3));			
 			pjq(".free-edit-zone").addClass("open");
 		});
 		el.addEventListener('dragend', function (event) {
@@ -237,7 +237,7 @@ editPreview.initPreview = function() {
 		el.setAttribute('draggable', 'true');  
 		el.addEventListener('dragstart', function (event) {			
 			var scrollBottom = editPreview.isScrollBottom(pjq('html'));
-			event.dataTransfer.setData('type', this.getAttribute("data-type"));
+			event.dataTransfer.setData("text", this.getAttribute("data-type"));
 			pjq(".free-edit-zone").addClass("open");	
 			if (scrollBottom) {
 				pjq('html').scrollTop(99999);
@@ -257,7 +257,7 @@ editPreview.initPreview = function() {
 		el.addEventListener('dragstart', function (event) {
 			var scrollBottom = editPreview.isScrollBottom(pjq('html'));
 			var sharedId = this.getAttribute("data-shared");			
-			event.dataTransfer.setData('shared', sharedId);
+			event.dataTransfer.setData('text', ",,"+sharedId);
 			pjq(".free-edit-zone").addClass("open");
 			if (scrollBottom) {
 				pjq('html').scrollTop(99999);
@@ -290,9 +290,15 @@ editPreview.initPreview = function() {
 		    });
 		    el.addEventListener('drop', function (event) {
 				event.preventDefault();
-				var compType = event.dataTransfer.getData("type");			
-				var compId = event.dataTransfer.getData("compId");
-				var sharedId = event.dataTransfer.getData("shared");
+				
+				var rowData = event.dataTransfer.getData("text").split(",");
+				var compType = rowData[0];
+				if (rowData.length > 1) {
+					var compId = rowData[1];
+					if (rowData.length > 2) {
+						var sharedId = rowData[2];
+					}
+				}			
 				var subComp = pjq(this);
 				if (sharedId != null && sharedId.length > 0) {				
 					var previewId = subComp.attr("id").substring(3);		
@@ -371,10 +377,15 @@ editPreview.initPreview = function() {
 		    });	    
 		    el.addEventListener('drop', function (event) {
 		    	event.preventDefault();
-		    	var compType = event.dataTransfer.getData("type");	    	
-				var compId = event.dataTransfer.getData("compId");
-				var area = editPreview.searchArea(pjq(this).parent());
-				var sharedId = event.dataTransfer.getData("shared");
+				var rowData = event.dataTransfer.getData("text").split(",");
+				var compType = rowData[0];
+				if (rowData.length > 1) {
+					var compId = rowData[1];
+					if (rowData.length > 2) {
+						var sharedId = rowData[2];
+					}
+				}				
+				var area = editPreview.searchArea(pjq(this).parent());			
 				if (sharedId != null && sharedId.length > 0) {											
 					var ajaxURL = editPreview.addParam(currentURL, "webaction=edit.insertShared&sharedContent="
 					+ sharedId + "&previous=0"
@@ -442,7 +453,7 @@ editPreview.initPreview = function() {
 		    });	    
 		    el.addEventListener('dragstart', function (event) {
 		    	var targetPageName = pjq(this).attr("id");		    	
-		    	event.dataTransfer.setData('name', targetPageName);
+		    	event.dataTransfer.setData('text', targetPageName);
 		    });
 		    el.addEventListener('drop', function (event) {
 		    	event.preventDefault();		    	
@@ -453,7 +464,7 @@ editPreview.initPreview = function() {
 		    	if (item.parent().hasClass("title") || item.parent().parent().hasClass("title")) {
 		    		insertAsChild = true;
 		    	}
-		    	var pageName = event.dataTransfer.getData('name');	
+		    	var pageName = event.dataTransfer.getData('text');	
 		    	var ajaxURL = editPreview.addParam(currentURL,"previewEdit=true&webaction=edit.movePage&page=" + pageName + "&previous=" + targetPageName + "&render-mode=3&init=true&as-child="+insertAsChild);
 				editPreview.ajaxPreviewRequest(ajaxURL, null, null);
 				return false;	
@@ -765,9 +776,12 @@ editPreview.stopAjax = function() {
 	pjq('body').removeClass("_preview_ajax-loading");
 }
 
-
-
 pjq(document).ready(function() {
+	editPreview.onReadyFunction();
+});
+
+
+editPreview.onReadyFunction = function() {
 	
 	editPreview.startAjax();
 	
@@ -807,7 +821,7 @@ pjq(document).ready(function() {
 	if (activeTab != null) {
 		pjq(".nav-tabs a[href='"+activeTab+"']").tab("show");
 	}
-});
+}
 
 pjq(window).load(function() {
 	/** scrol to latest position after refresh * */

@@ -77,5 +77,10 @@ public class AnchorComponent extends AbstractVisualComponent {
 			setNeedRefresh(true);
 		}
 	}
+	
+	@Override
+	public boolean isContentCachable(ContentContext ctx) {
+		return true;
+	}
 
 }

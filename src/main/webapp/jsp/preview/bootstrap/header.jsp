@@ -225,12 +225,39 @@
 						<c:param name="previewEdit" value="true"></c:param>
 					</c:url>
 					<form>
-						<button class="btn btn-default btn-xs btn-tickets btn-color"
+						<button class="btn btn-default btn-xs btn-tickets btn-color btn-notext"
 							type="<%=accessType%>"
 							value="${i18n.edit['preview.label.ticket']}"
 							onclick="editPreview.openModal('${i18n.edit['preview.label.ticket']}','${url}'); return false;">
-							<span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span><span class="text">${i18n.edit['preview.label.ticket']}</span>
+							<span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span><span class="text">${i18n.edit['preview.label.ticket']}</span>					
 						</button>
+						
+						<c:if test="${fn:length(integrities.checker)>0}">
+						<a class="btn btn-default btn-xs btn-tickets btn-color alert-${integrities.levelLabel} btn-notext" data-toggle="collapse" data-target="#integrity-list" href="#integrity-list"  aria-expanded="false" aria-controls="integrity-list">
+							<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+						</a>
+						<div class="integrity-message collapse" id="integrity-list">
+							<ul class="list-group"><c:forEach var="checker" items="${integrities.checker}"><c:if test="${checker.errorCount>0}">								
+  								<li class="list-group-item list-group-item-${checker.levelLabel}">
+    								<span class="badge">${checker.errorCount}</span>${checker.errorMessage}    									
+  								</li></c:if></c:forEach>
+							</ul>
+						</div>
+						</c:if>
+						<c:if test="${fn:length(integrities.checker)==0}">						
+						<a class="btn btn-default btn-xs btn-tickets btn-color alert-success btn-notext" data-toggle="collapse" data-target="#integrity-list" href="#integrity-list"  aria-expanded="false" aria-controls="integrity-list">
+							<span class="glyphicon glyphicon-check" aria-hidden="true"></span>
+						</a>
+						<div class="integrity-message collapse" id="integrity-list">
+							<ul class="list-group">								
+  								<li class="list-group-item list-group-item-success">
+    								${i18n.edit['integrity.no_error']}   									
+  								</li>
+							</ul>
+						</div>
+						</c:if>
+						
+						
 					</form></li>
 			</c:if>
 			</ul></div><div class="users">

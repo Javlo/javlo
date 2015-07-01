@@ -68,6 +68,7 @@ import org.javlo.service.PersistenceService;
 import org.javlo.service.PublishListener;
 import org.javlo.service.RequestService;
 import org.javlo.service.ReverseLinkService;
+import org.javlo.service.integrity.IntegrityFactory;
 import org.javlo.service.resource.ResourceStatus;
 import org.javlo.service.shared.ISharedContentProvider;
 import org.javlo.service.shared.JavloSharedContentProvider;
@@ -183,6 +184,7 @@ public class Edit extends AbstractModuleAction {
 		ctx.getRequest().setAttribute("editPreview", ctx.isEditPreview());
 		ctx.getRequest().setAttribute("components", ComponentFactory.getComponentForDisplay(ctx));
 		SharedContentService.prepare(ctx);
+		IntegrityFactory.getInstance(ctx);
 		String updateURL = ctx.getGlobalContext().getStaticConfig().getPreviewCommandFilePath();
 		if (tab != null) {
 			updateURL = URLHelper.addParam(updateURL, "_preview_tab", tab);
@@ -790,6 +792,10 @@ public class Edit extends AbstractModuleAction {
 		persistenceService.store(ctx);
 		modifPage(ctx, targetPage);
 		autoPublish(request, response);
+		
+		if (ctx.isPreview()) {
+			updatePreviewCommands(ctx,null);
+		}
 
 		return null;
 	}
@@ -863,6 +869,10 @@ public class Edit extends AbstractModuleAction {
 
 			modifPage(ctx, targetPage);
 			autoPublish(request, response);
+			
+			if (ctx.isPreview()) {
+				updatePreviewCommands(ctx,null);
+			}
 
 		}
 		return null;

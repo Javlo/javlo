@@ -61,6 +61,7 @@ import org.javlo.service.PDFConvertion;
 import org.javlo.service.PersistenceService;
 import org.javlo.service.RequestService;
 import org.javlo.service.event.Event;
+import org.javlo.service.integrity.IntegrityFactory;
 import org.javlo.service.remote.RemoteMessage;
 import org.javlo.service.remote.RemoteMessageService;
 import org.javlo.service.shared.SharedContentService;
@@ -465,6 +466,9 @@ public class AccessServlet extends HttpServlet implements IVersion {
 					if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE) {
 						EditContext editCtx = EditContext.getInstance(globalContext, request.getSession());
 						checkContentAviability = !editCtx.isEditPreview();
+						
+						IntegrityFactory.getInstance(ctx);
+						
 					}
 					ContentContext newCtx = new ContentContext(ctx);
 					if (checkContentAviability) {

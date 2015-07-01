@@ -71,3 +71,4 @@ editCtx.setRenderMode(ContentContext.EDIT_MODE);
 </c:if>
 </div>
 </div>
+<c:if test="${contentContext.ajax}"><script>editPreview.onReadyFunction();</script></c:if>

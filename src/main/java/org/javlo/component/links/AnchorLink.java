@@ -174,5 +174,10 @@ public class AnchorLink extends ComplexPropertiesLink {
 	public boolean isListable() {
 		return true;
 	}
+	
+	@Override
+	public boolean isContentCachable(ContentContext ctx) {
+		return true;
+	}
 
 }
