@@ -232,6 +232,7 @@
 							<span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span><span class="text">${i18n.edit['preview.label.ticket']}</span>					
 						</button>
 						
+						<c:if test="${not empty integrities}">
 						<c:if test="${fn:length(integrities.checker)>0}">
 						<a class="btn btn-default btn-xs btn-tickets btn-color alert-${integrities.levelLabel} btn-notext" data-toggle="collapse" data-target="#integrity-list" href="#integrity-list"  aria-expanded="false" aria-controls="integrity-list">
 							<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
@@ -255,8 +256,7 @@
   								</li>
 							</ul>
 						</div>
-						</c:if>
-						
+						</c:if></c:if>
 						
 					</form></li>
 			</c:if>

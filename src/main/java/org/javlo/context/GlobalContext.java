@@ -1355,6 +1355,20 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	public String getLicence() {
 		return properties.getString("licence", "free");
 	}
+	
+	public String getContentIntegrity() {
+		return properties.getString("integrity", "");
+	}
+	
+	public IntegrityBean getIntegrityDefinition() {
+		return new IntegrityBean(getContentIntegrity());
+	}
+	
+	public void setContentIntegrity(String value) {
+		properties.setProperty("integrity", value);
+		save();
+	}
+
 
 	public File getLogo() {
 		File logo = new File(ElementaryURLHelper.mergePath(ElementaryURLHelper.mergePath(getDataFolder(), staticConfig.getStaticFolder()), LOGO_FILE_NAME));
