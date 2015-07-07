@@ -92,6 +92,10 @@
 			<input class="file-date" type="text" id="date-${file.id}" name="date-${file.id}" value="${file.manualDate}" />
 		</div>
 		<div class="line">
+			<div class="label">${i18n.edit["field.file-date"]}</div>
+			<div class="value">${file.date}</div>
+		</div>
+		<div class="line">
 			<div class="label">${i18n.edit["field.creation-date"]}</div>
 			<div class="value">${file.creationDate}</div>
 		</div>
