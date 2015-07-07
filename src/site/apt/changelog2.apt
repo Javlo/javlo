@@ -432,10 +432,12 @@ change log
  
  * ticket accessible from preview, call img.flush in ImageTransformServlet and force SC_ACCEPTED in CssLess filter.
  
- * check password on autologin + reset cache on rename ressources
- 
- * integrity check
+ * check password on autologin + reset cache on rename ressources 
  
  * preview.js ok for IE
  
 * 2.1.0.2.5 01/07/2015
+
+ * multimedia filter
+ 
+ * integrity check
