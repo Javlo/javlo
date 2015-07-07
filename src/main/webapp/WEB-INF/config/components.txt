@@ -71,6 +71,7 @@ org.javlo.component.links.TwitterReader
 org.javlo.component.image.GlobalImage
 org.javlo.component.image.Image
 org.javlo.component.multimedia.Multimedia
+org.javlo.component.multimedia.MultimediaFilter
 org.javlo.component.multimedia.Gallery
 org.javlo.component.multimedia.FolderedMultimedia
 org.javlo.component.multimedia.Video
@@ -132,6 +133,7 @@ org.javlo.component.links.UserInfoLink
 org.javlo.component.form.FormMailingComponent
 org.javlo.component.users.UserSearch
 org.javlo.component.users.UserRegistration
+org.javlo.component.users.UserLogin
 org.javlo.component.ecom.MoneybookersPayement
 org.javlo.component.core.RendererReferenceComponent
 org.javlo.component.extranet.LaunchMacro

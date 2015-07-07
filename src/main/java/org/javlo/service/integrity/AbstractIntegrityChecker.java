@@ -36,7 +36,7 @@ public abstract class AbstractIntegrityChecker implements IIntegrityChecker {
 		return LEVEL_LABEL[getLevel(ctx)];
 	}
 	
-	public void setMessage(String message) {
+	public void setErrorMessage(String message) {
 		this.message = message;
 	}
 	

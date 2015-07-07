@@ -4,7 +4,8 @@ import java.util.regex.Pattern;
 
 public class PatternHelper {
 	
-	public static final Pattern MAIL_PATTERN = Pattern.compile("^[\\w\\s\u00E9\u00E8\u00E0\u00E7\u00EF\u00E4\u00F6\u00FC\u00EB\u00E2\u00EE\u00F4\u00FB\u00EA\u00F9S\u00C9\u00C8\u00C0\u00C7\u00CF\u00C4\u00D6\u00DC\u00CB\u00C2\u00CE\u00D4\u00DB\u00CA\u00D9-]*<?[a-zA-Z][\\w\\.-]*[a-zA-Z0-9]?@[a-zA-Z0-9][\\w\\.-]*[a-zA-Z0-9]\\.[a-zA-Z][a-zA-Z\\.]*[a-zA-Z]>?$");
+	public static final Pattern MAIL_PATTERN = Pattern.compile("^['\\w\\s\u00E9\u00E8\u00E0\u00E7\u00EF\u00E4\u00F6\u00FC\u00EB\u00E2\u00EE\u00F4\u00FB\u00EA\u00F9S\u00C9\u00C8\u00C0\u00C7\u00CF\u00C4\u00D6\u00DC\u00CB\u00C2\u00CE\u00D4\u00DB\u00CA\u00D9-]*<?[a-zA-Z][\\w\\.-]*[a-zA-Z0-9]?@[a-zA-Z0-9][\\w\\.-]*[a-zA-Z0-9]\\.[a-zA-Z][a-zA-Z\\.]*[a-zA-Z]>?$");
+	
 	public static final Pattern MULTI_MAIL_PATTERN = Pattern.compile("^([\\w\\s]*<?[a-zA-Z][\\w\\.-]*[a-zA-Z0-9]@[a-zA-Z0-9][\\w\\.-]*[a-zA-Z0-9]\\.[a-zA-Z][a-zA-Z\\.]*[a-zA-Z]>?\\,?)*$"); //TODO: terminate this pattern
 	public static final Pattern PHONE_PATTERN = Pattern.compile("\\+?+[\\d\\s()]++$");
 	public static final Pattern ALPHANNUM_NOSPACE_PATTERN = Pattern.compile("([a-z]|[A-Z]|[0-9]|_|-)*");

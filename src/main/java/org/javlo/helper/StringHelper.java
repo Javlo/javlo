@@ -56,6 +56,7 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.validator.routines.EmailValidator;
 import org.javlo.component.list.FreeTextList;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
@@ -1238,9 +1239,13 @@ public class StringHelper {
 	}
 
 	public static boolean isMail(String email) {
+		if (email == null || email.length() == 0) {
+			return false;
+		}		
+		//return EmailValidator.getInstance().isValid(email);
 		return PatternHelper.MAIL_PATTERN.matcher(email).matches();
 	}
-
+	
 	// TODO: create a better method
 	public static boolean isMailURL(String url) {
 		return url.trim().toLowerCase().startsWith("mailto");
@@ -1365,10 +1370,7 @@ public class StringHelper {
 	}
 
 	public static void main(String[] args) {
-		System.out.println("StringHelper.renderNumber(4, 4) = " + StringHelper.renderNumber(4, 4));
-		System.out.println("StringHelper.renderNumber(40, 4) = " + StringHelper.renderNumber(40, 4));
-		
-		System.out.println("***** StringHelper.toXMLAttribute : " + toXMLAttribute("ceci est un \"test\".")); //TODO: remove debug trace
+		System.out.println("test email = "+isMail("dlsfqj_dfd_df"));
 	}
 
 	/**
@@ -1447,6 +1449,22 @@ public class StringHelper {
 
 	public static Date parseDate(String inDate) throws ParseException {
 		return parseDate(inDate, "dd/MM/yyyy");
+	}
+	
+	public static Date[] parseRangeDate(String date) throws ParseException {
+		Date[] outDate;
+		if (date.contains("-")) {
+			int i = date.indexOf("-");
+			String startDate = date.substring(0,i);
+			String endDate = date.substring(i+1);
+			outDate = new Date[2];
+			outDate[0] = StringHelper.parseDate(startDate);
+			outDate[1] = StringHelper.parseDate(endDate);
+		} else {
+			outDate = new Date[1];
+			outDate[0] = StringHelper.parseDate(date);
+		}
+		return outDate;
 	}
 
 	public static Date parseDate(String inDate, char sep) throws ParseException {

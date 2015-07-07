@@ -23,10 +23,12 @@
 			<c:param name="${BACK_PARAM_NAME}" value="${param[BACK_PARAM_NAME]}" />
 		</c:if>
 	</c:url>
-	<li class="${file.directory?'directory':'file'} ${not empty param.select?'select':'no-select'}">
+	<li class="${file.directory?'directory':'file'} ${not empty param.select?'select':'no-select'} unlock item">
 		<c:if test="${param.select != 'image' || file.image || file.directory}">
 	    <c:set var="popularity" value=" - #${file.popularity}" />	    
-		<div class="title">
+		<div class="title">		
+			<a class="lock" href="#" onclick="var list=jQuery(this).parent().parent();list.removeClass('lock'); list.addClass('unlock'); return false;"><span class="glyphicon glyphicon-lock"></span></a>
+			<a class="unlock" href="#" onclick="var list=jQuery(this).parent().parent();list.removeClass('unlock'); list.addClass('lock'); return false;"><span class="glyphicon glyphicon-link"></span></a>
 			<span class="filename"><a href="${fileURL}" title="${file.name}">${file.name}</a></span>
 			<c:if test="${empty param.select}">
 				<c:url value="${info.currentURL}" var="deleteURL" context="/">
@@ -35,7 +37,7 @@
 					<c:if test="${not empty param[BACK_PARAM_NAME]}">
 						<c:param name="${BACK_PARAM_NAME}" value="${param[BACK_PARAM_NAME]}" />
 					</c:if>
-				</c:url>			
+				</c:url>							
 				<span class="delete"><a class="needconfirm" href="${deleteURL}">X</a></span>
 			</c:if>
 			<span class="size">${file.size} <span class="popularity">${info.admin?popularity:''}</span></span>
@@ -82,6 +84,10 @@
 			<input class="file-location" type="text" id="location-${file.id}" name="location-${file.id}" value="<c:out value="${file.location}" escapeXml="true" />" />
 		</div>
 		<div class="line">
+			<label for="copyright-${file.id}">${i18n.edit["field.copyright"]}</label>
+			<input class="file-copyright" type="text" id="copyright-${file.id}" name="copyright-${file.id}" value="<c:out value="${file.copyright}" escapeXml="true" />" />
+		</div>
+		<div class="line">
 			<label for="date-${file.id}">${i18n.edit["field.date"]}</label>
 			<input class="file-date" type="text" id="date-${file.id}" name="date-${file.id}" value="${file.manualDate}" />
 		</div>
@@ -98,7 +104,7 @@
 		<fieldset class="tags">
 		<legend>${i18n.edit["field.tags"]}</legend>
 		    <c:forEach var="tag" items="${tags}">		    	
-				<span><input type="checkbox" id="tag_${tag}_${file.id}" name="tag_${tag}_${file.id}" ${not empty file.tags[tag]?'checked="checked"':''}/><label for="tag_${tag}_${file.id}">${tag}</label></span>
+				<span><input class="tag-${tag} tag" type="checkbox" id="tag_${tag}_${file.id}" name="tag_${tag}_${file.id}" ${not empty file.tags[tag]?'checked="checked"':''}/><label for="tag_${tag}_${file.id}">${tag}</label></span>
 			</c:forEach>
 		</fieldset>
 		</c:if>
@@ -106,7 +112,7 @@
 		<fieldset class="roles">
 		<legend>${i18n.edit["field.read-roles"]}</legend>
 		    <c:forEach var="role" items="${readRoles}">		    	
-				<span><input type="checkbox" id="readrole_${role}_${file.id}" name="readrole_${role}_${file.id}" ${not empty file.readRoles[role]?'checked="checked"':''}/><label for="readrole_${role}_${file.id}">${role}</label></span>
+				<span><input class="role-${role}" type="checkbox" id="readrole_${role}_${file.id}" name="readrole_${role}_${file.id}" ${not empty file.readRoles[role]?'checked="checked"':''}/><label for="readrole_${role}_${file.id}">${role}</label></span>
 			</c:forEach>
 		</fieldset>
 		</c:if>

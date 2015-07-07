@@ -277,6 +277,10 @@ public class FileAction extends AbstractModuleAction {
 				if (location != null) {
 					staticInfo.setLocation(ctx, location);
 				}
+				String copyright = rs.getParameter("copyright-" + fileBean.getId(), null);
+				if (copyright != null) {
+					staticInfo.setCopyright(ctx, copyright);
+				}
 				boolean shared = rs.getParameter("shared-" + fileBean.getId(), null) != null;
 				if (title != null) {
 					staticInfo.setShared(ctx, shared);

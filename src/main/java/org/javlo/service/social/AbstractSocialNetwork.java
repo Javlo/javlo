@@ -152,7 +152,7 @@ public abstract class AbstractSocialNetwork implements ISocialNetwork {
 			return null;
 		}
 		Map<String,String> params = new HashMap<String, String>();
-		params.put("socialNetword", getName());
+		params.put("socialNetwork", getName());
 		params.put("page", URLHelper.createURL(ctx));
 		OAuthClientRequest request = OAuthClientRequest
 				   .authorizationProvider(getProviderType())

@@ -22,9 +22,11 @@
 	<c:if test="${not (contentContext.asPreviewMode && filter != 'raw')}">
 		<c:set var="imageWidthTag" value='width="${imageWidth}" ' />
 		<img ${not empty imageWidth && filter!='raw'?imageWidthTag:''}src="${previewURL}" alt="${not empty description?cleanDescription:cleanLabel}"${styleWidth} />
-	</c:if>
+	</c:if>	
 </a>
-<c:if test="${empty param.nolabel}"><figcaption>${not empty label?label:description}</figcaption></c:if>
+<c:set var="copyrightHTML" value="" />
+<c:if test="${not empty copyright}"><c:set var="copyrightHTML" value='<span class="copyright">${copyright}</span>' /></c:if>
+<c:if test="${empty param.nolabel || not empty copyright}"><figcaption>${not empty label?label:description}${copyrightHTML}</figcaption></c:if>
 </figure>
 </c:otherwise>
 </c:choose>

@@ -1,6 +1,5 @@
 package org.javlo.service.social;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -20,8 +19,6 @@ import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
 import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
 import org.apache.oltu.oauth2.common.message.types.GrantType;
 import org.javlo.context.ContentContext;
-import org.javlo.helper.StringHelper;
-import org.javlo.helper.URLHelper;
 import org.javlo.utils.JSONMap;
 
 

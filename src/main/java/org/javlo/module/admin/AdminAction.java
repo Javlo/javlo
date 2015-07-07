@@ -1025,6 +1025,7 @@ public class AdminAction extends AbstractModuleAction {
 					currentGlobalContext.setCollaborativeMode((StringHelper.isTrue(requestService.getParameter("collaborative-mode", null))));
 					currentGlobalContext.setPlatformType(requestService.getParameter("platform", StaticConfig.MAILING_PLATFORM));
 					currentGlobalContext.setReversedLink(requestService.getParameter("reversedlink", null) != null);
+					currentGlobalContext.setContentIntegrity(requestService.getParameter("integrity", ""));
 					try {
 						currentGlobalContext.setURLFactory(requestService.getParameter("urlfactory", ""));
 					} catch (Exception e1) {

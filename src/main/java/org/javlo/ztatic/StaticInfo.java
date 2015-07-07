@@ -27,6 +27,7 @@ import org.apache.commons.lang.StringUtils;
 import org.javlo.cache.ICache;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
+import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
@@ -1181,13 +1182,11 @@ public class StaticInfo {
 		}
 	}
 
-	public void removeReadRole(ContentContext ctx, String roles) {
-		if (readRoles == null || readRoles == Collections.EMPTY_LIST) {
-			readRoles = new LinkedList<String>();
-		}
-		if (readRoles.contains(roles)) {
-			readRoles.remove(roles);
-			storeTags(ctx);
+	public void removeReadRole(ContentContext ctx, String role) {		
+		readRoles = getReadRoles(ctx);		
+		if (readRoles.contains(role)) {			
+			readRoles.remove(role);
+			storeReadRoles(ctx);
 		}
 	}
 
@@ -1229,6 +1228,16 @@ public class StaticInfo {
 			}
 		}
 		return null;
+	}
+	
+	public String getCopyright(ContentContext ctx) {
+		ContentService content = ContentService.getInstance(ctx.getRequest());		
+		return content.getAttribute(ctx, getKey("copyright"), "");
+	}
+	
+	public void setCopyright(ContentContext ctx, String copyright) {
+		ContentService content = ContentService.getInstance(ctx.getRequest());		
+		content.setAttribute(ctx, getKey("copyright"), copyright);
 	}
 
 	public String getFullHTMLTitle(ContentContext ctx) throws Exception {

@@ -165,8 +165,15 @@ public abstract class AbstractFileComponent extends AbstractVisualComponent impl
 			ctx.getRequest().setAttribute("label", staticInfo.getTitle(ctx));
 			ctx.getRequest().setAttribute("cleanLabel", StringHelper.toXMLAttribute(StringHelper.removeTag(staticInfo.getTitle(ctx))));
 			ctx.getRequest().setAttribute("htmlLabel", XHTMLHelper.textToXHTML(XHTMLHelper.autoLink(getLabel())));
+			ctx.getRequest().setAttribute("resource", staticInfo);
+		}
+		if (staticInfo != null) {
+			if (!StringHelper.isEmpty(staticInfo.getCopyright(ctx))) {
+				ctx.getRequest().setAttribute("copyright", staticInfo.getCopyright(ctx));
+			}
 		}
 		ctx.getRequest().setAttribute("resource", staticInfo);
+
 	}
 
 	/**
@@ -320,7 +327,7 @@ public abstract class AbstractFileComponent extends AbstractVisualComponent impl
 		if ((getDirList(getFileDirectory(ctx)) != null) && (getDirList(getFileDirectory(ctx)).length > 0)) {
 			finalCode.append("<div class=\"form-group\"><label for=\"" + getDirInputName() + "\">");
 			finalCode.append(getDirLabelTitle(ctx));
-			finalCode.append(" : </label>");			
+			finalCode.append(" : </label>");
 			finalCode.append(XHTMLHelper.getInputOneSelect(getDirInputName(), ArrayHelper.addFirstElem(getDirList(getFileDirectory(ctx)), ""), getDirSelected(), "form-control", getJSOnChange(ctx), true));
 			finalCode.append("</div>");
 		}
@@ -335,21 +342,21 @@ public abstract class AbstractFileComponent extends AbstractVisualComponent impl
 			for (String encoding : globalContext.getEncodings()) {
 				encodings[i] = encoding;
 				i++;
-			}			
+			}
 			finalCode.append(XHTMLHelper.getInputOneSelect(getEncodingXHTMLInputName(), encodings, getEncoding(), "form-control", null, false));
 			finalCode.append("</div>");
 		}
 
 		if (canUpload(ctx)) {
 			finalCode.append("<div class=\"form-group\">");
-			finalCode.append("<label for=\""+getFileXHTMLInputName()+"\">"+getImageUploadTitle(ctx)+"</label>");			
+			finalCode.append("<label for=\"" + getFileXHTMLInputName() + "\">" + getImageUploadTitle(ctx) + "</label>");
 			finalCode.append("<input class=\"form-control\" name=\"" + getFileXHTMLInputName() + "\" id=\"" + getFileXHTMLInputName() + "\" type=\"file\"/></div>");
 		}
 
 		String[] fileList = getFileList(getFileDirectory(ctx), getFileFilter());
 		if (fileList.length > 0) {
 			finalCode.append("<div class=\"form-group\">");
-			finalCode.append("<label for=\""+getSelectXHTMLInputName()+"\">");
+			finalCode.append("<label for=\"" + getSelectXHTMLInputName() + "\">");
 			finalCode.append(getImageChangeTitle(ctx));
 			finalCode.append("</label>");
 
@@ -357,7 +364,7 @@ public abstract class AbstractFileComponent extends AbstractVisualComponent impl
 			fileListBlanck[0] = "";
 			System.arraycopy(fileList, 0, fileListBlanck, 1, fileList.length);
 
-			finalCode.append(XHTMLHelper.getInputOneSelect(getSelectXHTMLInputName(), fileListBlanck, getFileName(),"form-control", getJSOnChange(ctx), true));
+			finalCode.append(XHTMLHelper.getInputOneSelect(getSelectXHTMLInputName(), fileListBlanck, getFileName(), "form-control", getJSOnChange(ctx), true));
 
 			if (ctx.getRenderMode() == ContentContext.EDIT_MODE && !ctx.isEditPreview()) {
 				if (isLinkToStatic()) {
@@ -842,7 +849,7 @@ public abstract class AbstractFileComponent extends AbstractVisualComponent impl
 	}
 
 	protected void uploadFiles(ContentContext ctx, RequestService service) throws Exception {
-		Collection<FileItem> items = service.getAllFileItem();		
+		Collection<FileItem> items = service.getAllFileItem();
 		logger.info("upload " + items.size() + " files.");
 		for (FileItem item : items) {
 			if (item.getFieldName().equals(getFileXHTMLInputName())) {
@@ -851,7 +858,7 @@ public abstract class AbstractFileComponent extends AbstractVisualComponent impl
 				String newFileName = null;
 				if (filter.accept(file, item.getName()) && expandZip()) {
 					newFileName = item.getName();
-					expandZip(ctx, new ZipInputStream(item.getInputStream())); 
+					expandZip(ctx, new ZipInputStream(item.getInputStream()));
 				} else {
 					newFileName = saveItem(ctx, item);
 				}
@@ -863,9 +870,9 @@ public abstract class AbstractFileComponent extends AbstractVisualComponent impl
 			}
 		}
 	}
-	
+
 	@Override
-	public void performUpload(ContentContext ctx) throws Exception {		
+	public void performUpload(ContentContext ctx) throws Exception {
 		uploadFiles(ctx, RequestService.getInstance(ctx.getRequest()));
 	}
 

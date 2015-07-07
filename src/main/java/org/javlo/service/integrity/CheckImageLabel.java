@@ -33,7 +33,7 @@ public class CheckImageLabel extends AbstractIntegrityChecker {
 		}
 		if (error > 0) {
 			I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
-			setMessage(i18nAccess.getText("integrity.error.image_label", "Some images have no label."));
+			setErrorMessage(i18nAccess.getText("integrity.error.image_label", "Some images have no label."));
 			setErrorCount(error);
 			return false;
 		} else {

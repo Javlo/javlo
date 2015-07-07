@@ -45,10 +45,30 @@
 <input class="action-field filter-field" type="text" name="filter" placeholder="${i18n.edit['global.filter']}" onkeyup="filter(this.value, '#form-meta li');"/>
 <c:if test="${empty param.select}">
 <form id="fill-all-form">
-<input type="text" id="allTitle" name="all-title" placeholder="${i18n.edit['action.change-all-title']}" onkeyup="jQuery('.file-title').each(function(){var t = jQuery(this);if (t.val().length == 0 || t.data('empty') == true) {t.data('empty',true);t.val(jQuery('#allTitle').val())}});"/>
-<input type="text" id="allDescription" name="all-descritpion" placeholder="${i18n.edit['action.change-all-description']}" onkeyup="jQuery('.file-description').each(function(){var t = jQuery(this);if (t.val().length == 0 || t.data('empty') == true) {t.data('empty',true);t.val(jQuery('#allDescription').val())}});"/>
-<input type="text" id="allLocation" name="all-location" placeholder="${i18n.edit['action.change-all-location']}" onkeyup="jQuery('.file-location').each(function(){var t = jQuery(this);if (t.val().length == 0 || t.data('empty') == true) {t.data('empty',true);t.val(jQuery('#allLocation').val())}});"/>
-<input type="text" id="allDate" name="all-date" placeholder="${i18n.edit['action.change-all-date']}" onkeyup="jQuery('.file-date').each(function(){var t = jQuery(this);if (t.val().length == 0 || t.data('empty') == true) {t.data('empty',true);t.val(jQuery('#allDate').val())}});"/>
+<a title="lock all" href="#" onclick="jQuery('li.item').addClass('lock');jQuery('li.item').removeClass('unlock');"><span class="glyphicon glyphicon-lock lock"></span></a>
+<a title="unlock all" href="#" onclick="jQuery('li.item').addClass('unlock');jQuery('li.item').removeClass('lock');"><span class="glyphicon glyphicon-link lock"></span></a>
+<input type="text" id="allTitle" name="all-title" placeholder="${i18n.edit['action.change-all-title']}" onkeyup="jQuery('.unlock .file-title').each(function(){var t = jQuery(this);if (t.val().length == 0 || t.data('empty') == true) {t.data('empty',true);t.val(jQuery('#allTitle').val())}});"/>
+<input type="text" id="allDescription" name="all-descritpion" placeholder="${i18n.edit['action.change-all-description']}" onkeyup="jQuery('.unlock .file-description').each(function(){var t = jQuery(this);if (t.val().length == 0 || t.data('empty') == true) {t.data('empty',true);t.val(jQuery('#allDescription').val())}});"/>
+<input type="text" id="allLocation" name="all-location" placeholder="${i18n.edit['action.change-all-location']}" onkeyup="jQuery('.unlock .file-location').each(function(){var t = jQuery(this);if (t.val().length == 0 || t.data('empty') == true) {t.data('empty',true);t.val(jQuery('#allLocation').val())}});"/>
+<input type="text" id="allCopyright" name="all-copyright" placeholder="${i18n.edit['action.change-all-copyright']}" onkeyup="jQuery('.unlock .file-copyright').each(function(){var t = jQuery(this);if (t.val().length == 0 || t.data('empty') == true) {t.data('empty',true);t.val(jQuery('#allCopyright').val())}});"/>
+<input type="text" id="allDate" name="all-date" placeholder="${i18n.edit['action.change-all-date']}" onkeyup="jQuery('.unlock .file-date').each(function(){var t = jQuery(this);if (t.val().length == 0 || t.data('empty') == true) {t.data('empty',true);t.val(jQuery('#allDate').val())}});"/>
+<c:if test="${fn:length(info.tags) > 0}">
+<select id="allTag" name="all-tag" onchange="jQuery('.tag-'+this.value).attr('checked', 'checked');">
+<option>tag</option>
+<c:forEach var="tag" items="${info.tags}">
+<option>${tag}</option>
+</c:forEach>
+</select>
+</c:if><c:if test="${fn:length(readRoles) > 0}">
+<select id="allRoles" name="all-role" onchange="jQuery('.role-'+this.value).attr('checked', 'checked');">
+<option>role</option>
+<c:forEach var="role" items="${readRoles}">
+<option>${role}</option>
+</c:forEach>
+</select>
+</c:if>
+
+
 </form>
 </c:if>
 </c:if>

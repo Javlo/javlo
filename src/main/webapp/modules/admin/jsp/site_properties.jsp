@@ -1,7 +1,6 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-
-<div class="widgetbox site-properties">
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"
+%><%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"
+%><div class="widgetbox site-properties">
 <h3><span>${i18n.edit['admin.site-properties']}</span></h3>
 <div class="content">
 
@@ -139,13 +138,9 @@
 	<label for="platform">${i18n.edit['admin.title.platform']}</label>
 	<input class="form-control" type="text" id="platform" name="platform" value="${currentContext.platformType}" />	
 </div>
-
 </div>
 
-
-
 <div class="col-sm-6">
-
 <div class="form-group">		
 	<label for="homepage">${i18n.edit['admin.form.homepage']}</label>
 	<input class="form-control" type="text" id="homepage" name="homepage" value="${currentContext.homepage}" />	
@@ -394,7 +389,12 @@
 <textarea class="form-control" id="plugin-config" rows="10" cols="10" name="template-plugin-config">${templatePluginConfig}</textarea>
 </div>
 </fieldset>
-
+<c:if test="${globalContext.staticConfig.integrityCheck}">
+<fieldset>
+<legend>${i18n.edit['admin.title.integrity']}</legend>
+<textarea class="form-control" id="integrity" rows="10" cols="10" name="integrity">${globalContext.contentIntegrity}</textarea>
+</fieldset>
+</c:if>
 <fieldset>
 <legend>${i18n.edit['admin.title.graphic-charter']}</legend>
 

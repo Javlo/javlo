@@ -49,7 +49,8 @@ import org.javlo.ztatic.StaticInfo;
  * <li>inherited from {@link AbstractVisualComponent}</li>
  * <li>{@link String} title : the title.</li>
  * <li>{@link PaginationContext} pagination : pagination context.</li>
- * <li>{@link MultimediaResource} resources : list of resources to be displayed.</li>
+ * <li>{@link MultimediaResource} resources : list of resources to be displayed.
+ * </li>
  * </ul>
  * 
  * @author pvandermaesen
@@ -67,7 +68,7 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 
 	protected static final String ORDER_BY_ACCESS = "order by access";
 	protected static final String REVERSE_ORDER = "reverse order";
-	protected static final String NAME_ORDER = "name order";	
+	protected static final String NAME_ORDER = "name order";
 
 	public static final String ALL = "all";
 	public static final String IMAGE = "image";
@@ -116,6 +117,14 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 		if (info.getDate(ctx) == null && (startDate != null || endDate != null)) {
 			afterAccept = false;
 			beforeAccept = false; // not necessary, just more "clean" :-)
+		}
+
+		if (info.getReadRoles(ctx).size() > 0) {
+			if (ctx.getCurrentUser() == null) {
+				return false;
+			} else if (Collections.disjoint(info.getReadRoles(ctx), ctx.getCurrentUser().getRoles())) {
+				return false;
+			}
 		}
 
 		return (info.isShared(ctx) || !isDisplayOnlyShared()) && afterAccept && beforeAccept;
@@ -343,7 +352,9 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 		}
 
 		/*
-		 * if (isOrderByAccess(ctx)) { Collections.sort(files, new StaticInfo.StaticFileSortByPopularity(ctx, false)); } else { Collections.sort(files, new StaticInfo.StaticFileSort(ctx, false)); }
+		 * if (isOrderByAccess(ctx)) { Collections.sort(files, new
+		 * StaticInfo.StaticFileSortByPopularity(ctx, false)); } else {
+		 * Collections.sort(files, new StaticInfo.StaticFileSort(ctx, false)); }
 		 */
 
 		return files;
@@ -399,7 +410,7 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 		if (isFolder()) {
 			RequestService requestService = RequestService.getInstance(ctx.getRequest());
 			String folder = getCurrentRootFolder();
-			String newFolder = URLHelper.removeStaticFolderPrefix(ctx,requestService.getParameter("path", ""));
+			String newFolder = URLHelper.removeStaticFolderPrefix(ctx, requestService.getParameter("path", ""));
 			if (newFolder.trim().length() > 1) {
 				folder = newFolder;
 			}
@@ -410,13 +421,13 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 		backURL = URLHelper.addParam(backURL, "comp_id", "cp_" + getId());
 		backURL = URLHelper.addParam(backURL, "webaction", "editPreview");
 		backURL = URLHelper.addParam(backURL, "previewEdit", "true");
-		
+
 		Map<String, String> filesParams = new HashMap<String, String>();
 		filesParams.put("path", URLHelper.mergePath(FileAction.getPathPrefix(ctx), getCurrentRootFolder()));
 		filesParams.put("webaction", "changeRenderer");
 		filesParams.put("page", "meta");
 		filesParams.put(ElementaryURLHelper.BACK_PARAM_NAME, backURL);
-		
+
 		String staticURL = URLHelper.createModuleURL(ctx, ctx.getPath(), "file", filesParams);
 		out.println("<a class=\"" + EDIT_ACTION_CSS_CLASS + " btn btn-default btn-xs\" href=\"" + staticURL + "\">");
 		out.println(i18nAccess.getText("content.goto-static"));
@@ -438,10 +449,10 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 		out.println("<label>" + i18nAccess.getText("content.multimedia-gallery.page-size"));
 		out.println(" : <input class=\"form-control\" type=\"text\" id=\"" + getInputPageSizeName() + "\" name=\"" + getInputPageSizeName() + "\" value=\"" + getPageSize() + "\"/></label>");
 		out.println("</div></div></div>");
-		
+
 		out.println("<fieldset class=\"order\">");
 		out.println("<legend>" + i18nAccess.getText("global.order") + "</legend>");
-				
+
 		out.println("<div class=\"checkbox-inline\">");
 		out.print("<label><input type=\"checkbox\" name=\"" + getInputNameReverseOrder() + "\" id=\"" + getInputNameReverseOrder() + "\" ");
 		if (isReverseOrder(ctx)) {
@@ -450,7 +461,7 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 		out.print("/>");
 		out.println("reverse order.</label>");
 		out.println("</div>");
-		
+
 		out.println("<div class=\"checkbox-inline\">");
 		out.print("<label><input type=\"checkbox\" name=\"" + getInputNameNameOrder() + "\" id=\"" + getInputNameNameOrder() + "\" ");
 		if (isNameOrder(ctx)) {
@@ -459,8 +470,7 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 		out.print("/>");
 		out.println(" order by name.</label>");
 		out.println("</div>");
-		
-		
+
 		out.println("<div class=\"checkbox-inline\">");
 		out.print("<label><input type=\"checkbox\" name=\"" + getInputNameOrderByAccess() + "\" id=\"" + getInputNameOrderByAccess() + "\" ");
 		if (isOrderByAccess(ctx)) {
@@ -493,7 +503,11 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 	public Collection<String> getExternalResources(ContentContext ctx) {
 		Collection<String> resources = new LinkedList<String>();
 		/*
-		 * resources.add("/js/mootools.js"); resources.add("/js/global.js"); resources.add("/js/shadowbox/src/adapter/shadowbox-base.js"); resources.add("/js/shadowbox/src/shadowbox.js"); resources.add("/js/shadowboxOptions.js"); resources.add("/js/onLoadFunctions.js");
+		 * resources.add("/js/mootools.js"); resources.add("/js/global.js");
+		 * resources.add("/js/shadowbox/src/adapter/shadowbox-base.js");
+		 * resources.add("/js/shadowbox/src/shadowbox.js");
+		 * resources.add("/js/shadowboxOptions.js");
+		 * resources.add("/js/onLoadFunctions.js");
 		 */
 		return resources;
 	}
@@ -543,11 +557,11 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 	protected String getInputNameOrderByAccess() {
 		return "order_by_access_" + getId();
 	}
-	
+
 	protected String getInputNameReverseOrder() {
 		return "reverse_order_" + getId();
 	}
-	
+
 	protected String getInputNameNameOrder() {
 		return getInputName("name_order");
 	}
@@ -662,20 +676,19 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 	public String getType() {
 		return TYPE;
 	}
-	
+
 	protected MultimediaResource getFirstResource(ContentContext ctx) throws Exception {
-		List<MultimediaResource> resources = getMultimediaResources(ctx);	
+		List<MultimediaResource> resources = getMultimediaResources(ctx);
 		if (resources.size() == 0) {
 			return null;
-		} else {			
-			MultimediaResource resource = resources.get(0);			
+		} else {
+			MultimediaResource resource = resources.get(0);
 			String fileName = ResourceHelper.removeDataFolderDir(ctx.getGlobalContext(), resource.getPath());
 			resource.setURL(fileName);
 			resource.setPreviewURL(fileName);
 			return resource;
 		}
 	}
-
 
 	protected MultimediaResource _getFirstResource(ContentContext ctx) throws Exception {
 		Collection<File> mulFiles = getAllMultimediaFiles(ctx);
@@ -715,14 +728,14 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 	protected List<MultimediaResource> getMultimediaResources(ContentContext ctx) throws Exception {
 		super.prepareView(ctx);
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-		
+
 		Collection<File> mulFiles = getAllMultimediaFiles(ctx);
 
 		List<MultimediaResource> allResource = new LinkedList<MultimediaResource>();
 		Map<String, MultimediaResource> allURL = new HashMap<String, MultimediaResource>();
-		
+
 		boolean countAccess = isCountAccess(ctx);
-		
+
 		for (File file : mulFiles) {
 
 			String cssClass = "embed";
@@ -746,7 +759,7 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 			}
 			ContentContext lgCtx = new ContentContext(ctx);
 			Iterator<String> defaultLg = globalContext.getDefaultLanguages().iterator();
-			lgCtx.setRequestContentLanguage(lgCtx.getRequestContentLanguage()); // if the page is defined only in a lang the information must still be display in current lg
+			lgCtx.setRequestContentLanguage(lgCtx.getRequestContentLanguage()); 
 			StaticInfo info = StaticInfo.getInstance(lgCtx, file);
 
 			while (!info.isPertinent(lgCtx) && defaultLg.hasNext()) {
@@ -793,13 +806,13 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 				resource.setTags(info.getTags(lgCtx));
 				resource.setLanguage(lgCtx.getRequestContentLanguage());
 				resource.setIndex(info.getAccessFromSomeDays(lgCtx));
-				resource.setPath(info.getFile().getAbsolutePath() );
+				resource.setPath(info.getFile().getAbsolutePath());
 
 				allURL.put(resource.getURL(), resource);
 
 				resource.setPreviewURL(previewURL);
 
-				if (isRenderInfo(ctx)) {					
+				if (isRenderInfo(ctx)) {
 					allResource.add(resource);
 				}
 			}
@@ -811,9 +824,27 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 			List<MultimediaResource> contentVideos = getContentVideo(ctx);
 			for (MultimediaResource resource : contentVideos) {
 				if (acceptResource(ctx, resource)) {
-					if (allURL.get(resource.getURL()) != null) { // equals and hash is overidded on MultimediaResource -> two "equals" resource can be different (sample : a static resource and a component resource linked with same file).
+					if (allURL.get(resource.getURL()) != null) { // equals and
+																	// hash is
+																	// overidded
+																	// on
+																	// MultimediaResource
+																	// -> two
+																	// "equals"
+																	// resource
+																	// can be
+																	// different
+																	// (sample :
+																	// a static
+																	// resource
+																	// and a
+																	// component
+																	// resource
+																	// linked
+																	// with same
+																	// file).
 						allResource.remove(allURL.get(resource.getURL()));
-					} 
+					}
 					allResource.add(resource);
 					countContentResource++;
 				}
@@ -821,7 +852,15 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 		}
 		logger.fine("load content resource : " + countContentResource);
 
-		
+		MultimediaResourceFilter filter = MultimediaResourceFilter.getInstance(ctx);
+		if (filter.isActive()) {
+			for (Iterator<MultimediaResource> iterRsc = allResource.listIterator(); iterRsc.hasNext();) {
+				MultimediaResource rsc = iterRsc.next();
+				if (!filter.accept(rsc)) {
+					iterRsc.remove();
+				}
+			}
+		}
 
 		if (isOrderByAccess(ctx)) {
 			Collections.sort(allResource, new MultimediaResource.SortByIndex(true));
@@ -834,7 +873,7 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 		}
 		return allResource;
 	}
-	
+
 	@Override
 	public void prepareView(ContentContext ctx) throws Exception {
 		List<MultimediaResource> allResource = getMultimediaResources(ctx);
@@ -858,11 +897,15 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 
 	@Override
 	public boolean isContentCachable(ContentContext ctx) {
-		String contentCache = getConfig(ctx).getProperty("cache.content", null);
-		if (contentCache != null) {
-			return StringHelper.isTrue(contentCache);
+		if (ctx.getCurrentUser() != null) {
+			return false;
+		} else {
+			String contentCache = getConfig(ctx).getProperty("cache.content", null);
+			if (contentCache != null) {
+				return StringHelper.isTrue(contentCache);
+			}
+			return !isOrderByAccess(ctx);
 		}
-		return !isOrderByAccess(ctx);
 	}
 
 	@Override
@@ -881,7 +924,7 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 		}
 		return true;
 	}
-	
+
 	protected boolean isDisplayOnlyShared() {
 		return true;
 	}
@@ -898,12 +941,12 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 	public boolean isOrderByAccess(ContentContext ctx) {
 		return getValue(ctx).contains(ORDER_BY_ACCESS);
 	}
-	
+
 	public boolean isReverseOrder(ContentContext ctx) {
 		return getValue(ctx).endsWith(REVERSE_ORDER);
 	}
-	
-	public boolean 	isNameOrder(ContentContext ctx) {
+
+	public boolean isNameOrder(ContentContext ctx) {
 		return getValue(ctx).contains(NAME_ORDER);
 	}
 
@@ -961,7 +1004,7 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 			}
 			if (isReverseOrder) {
 				multimediaInfo = multimediaInfo + VALUE_SEPARATOR + REVERSE_ORDER;
-			}			
+			}
 			if (!multimediaInfo.equals(getValue())) {
 				setValue(multimediaInfo);
 				setModify();
@@ -1012,7 +1055,7 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 	protected Object getLock(ContentContext ctx) {
 		return ctx.getGlobalContext().getLockLoadContent();
 	}
-	
+
 	@Override
 	public int getPriority(ContentContext ctx) {
 		if (getConfig(ctx).getProperty("image.priority", null) == null) {

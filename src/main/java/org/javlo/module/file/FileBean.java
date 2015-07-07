@@ -162,6 +162,11 @@ public class FileBean {
 	public String getTitle() {
 		return staticInfo.getTitle(ctx);
 	}
+	
+	public String getCopyright() {
+		return staticInfo.getCopyright(ctx);
+	}
+
 
 	public String getId() {
 		return getName().replace('.', '_');

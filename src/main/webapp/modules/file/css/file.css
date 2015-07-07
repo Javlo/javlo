@@ -66,3 +66,15 @@
 #fill-all-form input:FOCUS, .filter-field:FOCUS {
 	width: 160px;
 }
+
+.unlock .lock {
+	display: hidden;
+}
+
+.unlock .lock {
+	display: none;
+}
+
+.lock .unlock {
+	display: none;
+}

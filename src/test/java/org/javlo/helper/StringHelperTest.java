@@ -1,7 +1,9 @@
 package org.javlo.helper;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -172,6 +174,27 @@ public class StringHelperTest extends TestCase {
 	  assertEquals(decodedMap.get("entry3"), testMap.get("entry3"));
 	  assertEquals(decodedMap.size(), testMap.size());	  
   }
+  
+  public void testParseRangeDate() throws IOException, ParseException {
+	  String range = "02/06/2015 - 04/06/2015";
+	  Date[] date = StringHelper.parseRangeDate(range);
+	  assertEquals(StringHelper.renderDate(date[0]),"02/06/2015");
+	  assertEquals(StringHelper.renderDate(date[1]),"04/06/2015");
+	  range = "02/06/2015";
+	  date = StringHelper.parseRangeDate(range);
+	  assertEquals(StringHelper.renderDate(date[0]),"02/06/2015");
+	  assertEquals(date.length, 1);
+  }
+  
+  public void testiIsMail() {
+	  assertFalse(StringHelper.isMail(null));
+	  assertFalse(StringHelper.isMail(""));
+	  assertFalse(StringHelper.isMail("test_at_javlo.org"));
+	  assertTrue(StringHelper.isMail("webmaster@javlo.org"));	  
+	  assertTrue(StringHelper.isMail("webmaster <webmaster@javlo.org>"));
+	  assertTrue(StringHelper.isMail("webmaster <webmaster@javlo.org>"));
+	  assertTrue(StringHelper.isMail("webmaster's <webmaster@javlo.org>"));	  
+  }
 
 	@SuppressWarnings("unchecked")
 	public void testRangeMatches() {
@@ -214,8 +237,7 @@ public class StringHelperTest extends TestCase {
 					Integer value = testCase.getLeft();
 					boolean result = testCase.getRight();
 					String caseLabel = "StringHelper.rangeMatches(range='" + range + "',value='" + value + "')";
-					boolean execResult = StringHelper.rangeMatches(range, value);
-					System.out.println(caseLabel + " == " + execResult);
+					boolean execResult = StringHelper.rangeMatches(range, value);					
 					assertEquals(caseLabel, result, execResult);
 				}
 			}
