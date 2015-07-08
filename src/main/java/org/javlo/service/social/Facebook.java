@@ -45,6 +45,9 @@ public class Facebook extends AbstractSocialNetwork {
 	
 	@Override
 	public String getSigninURL(ContentContext ctx) throws Exception {
+		if (getClientId() == null || getClientSecret() == null) {
+			return null;
+		}
 		if (getClientId().length() == 0 || getClientSecret().length() == 0) {
 			return null;
 		}

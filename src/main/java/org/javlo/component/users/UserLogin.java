@@ -45,11 +45,6 @@ public class UserLogin extends AbstractVisualComponent implements IAction {
 		super.prepareView(ctx);
 		
 		SocialService.getInstance(ctx).prepare(ctx);
-		
-		DeliveryPrice deliveryPrice = DeliveryPrice.getInstance(ctx);
-		if (deliveryPrice != null) {
-			ListService.getInstance(ctx).addList("countries", deliveryPrice.getZone());			
-		}
 
 		if (ctx.getCurrentUser() != null) {
 			ctx.getRequest().setAttribute("user", ctx.getCurrentUser());
