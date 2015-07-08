@@ -2,9 +2,11 @@ package org.javlo.context;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
+import java.io.Reader;
 import java.io.Serializable;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Constructor;
@@ -54,10 +56,12 @@ import org.javlo.config.StaticConfig;
 import org.javlo.helper.ContentHelper;
 import org.javlo.helper.ElementaryURLHelper;
 import org.javlo.helper.ElementaryURLHelper.Code;
+import org.javlo.helper.NavigationHelper;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.ServletHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
+import org.javlo.io.AppendableTextFile;
 import org.javlo.io.TransactionFile;
 import org.javlo.mailing.MailService;
 import org.javlo.module.core.IPrintInfo;
@@ -86,7 +90,7 @@ import org.javlo.utils.TimeMap;
 import org.javlo.ztatic.StaticInfo;
 
 public class GlobalContext implements Serializable, IPrintInfo {
-	
+
 	private static int COUNT_INSTANCE = 0;
 
 	private static final long serialVersionUID = 1L;
@@ -95,24 +99,30 @@ public class GlobalContext implements Serializable, IPrintInfo {
 
 	private final Object lockDataFile = new Object();
 
+	private final Object lockUrlFile = new Object();
+
 	private final Object lockImportTemplate = new Object();
 
 	private final Object lockLoadContent = new Object();
 
+	private AppendableTextFile redirectURLList = null;
+
+	private Properties redirectURLMap = null;
+
 	private static class StorePropertyThread extends Thread {
-		
+
 		private boolean stopStoreThread = false;
 
 		private static final int SLEEP_BETWEEN_STORAGE = 2 * 1000; // 10 sec
-		
+
 		private Properties dataProperties = null;
-		
+
 		private Object lockDataFile;
-		
+
 		private String contextKey;
-		
+
 		private File dataFile;
-		
+
 		private BooleanBean needStoreData = null;
 
 		public StorePropertyThread(GlobalContext globalContext) {
@@ -123,28 +133,28 @@ public class GlobalContext implements Serializable, IPrintInfo {
 			this.lockDataFile = globalContext.lockDataFile;
 			try {
 				this.dataFile = globalContext.getDataFile();
-			} catch (IOException e) {				
+			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
 
 		@Override
 		public void run() {
-			logger.info("start store property thread : "+this.getName());
+			logger.info("start store property thread : " + this.getName());
 			while (!stopStoreThread) {
 				if (needStoreData.isValue()) {
 					needStoreData.setValue(false);
 					saveData(dataProperties, lockDataFile, contextKey, dataFile);
-				} 
+				}
 				try {
 					Thread.sleep(SLEEP_BETWEEN_STORAGE);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
 			}
-			logger.info("stop store property thread : "+this.getName());
+			logger.info("stop store property thread : " + this.getName());
 		}
-		
+
 		public void setDataProperties(Properties dataProperties) {
 			this.dataProperties = dataProperties;
 		}
@@ -186,13 +196,15 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	private Integer firstLoadVersion = null;
 
 	private Integer latestUndoVersion = null;
-	
+
 	private StorePropertyThread storePropertyThread = null;
 
 	/**
 	 * create a static logger.
 	 */
 	protected static Logger logger = Logger.getLogger(GlobalContext.class.getName());
+
+	private static final String REDIRECT_URL_LIST = "redirect_url_list.properties";
 
 	private static final String KEY = "globalContext";
 
@@ -206,16 +218,16 @@ public class GlobalContext implements Serializable, IPrintInfo {
 
 	public GlobalContext(String contextKey) {
 		this.contextKey = contextKey;
-		properties.setDelimiterParsingDisabled(true);	
+		properties.setDelimiterParsingDisabled(true);
 		COUNT_INSTANCE++;
-		logger.info("create globalContext : "+contextKey+" [total globalContext : "+COUNT_INSTANCE+']');
+		logger.info("create globalContext : " + contextKey + " [total globalContext : " + COUNT_INSTANCE + ']');
 	}
-	
+
 	private void startThread() {
-		if (storePropertyThread == null || storePropertyThread.stopStoreThread) {			
+		if (storePropertyThread == null || storePropertyThread.stopStoreThread) {
 			storePropertyThread = new StorePropertyThread(this);
 			storePropertyThread.start();
-		}		
+		}
 	}
 
 	private static void addResources(ContentContext ctx, File dir, Collection<StaticInfo> resources) throws Exception {
@@ -360,6 +372,10 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		return getRealInstance(session, contextKey, true);
 	}
 
+	private File getRedirectURLListFile() {
+		return new File(URLHelper.mergePath(getDataFolder(), REDIRECT_URL_LIST));
+	}
+
 	private static GlobalContext getRealInstance(HttpSession session, String contextKey, boolean copyDefaultContext) throws IOException, ConfigurationException {
 		contextKey = StringHelper.stringToFileName(contextKey);
 
@@ -372,7 +388,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 			if (newInstance == null) {
 				newInstance = new GlobalContext(contextKey);
 				newInstance.staticConfig = staticConfig;
-				newInstance.application = session.getServletContext();				
+				newInstance.application = session.getServletContext();
 			} else {
 				newInstance.staticConfig = staticConfig;
 				return newInstance;
@@ -468,6 +484,24 @@ public class GlobalContext implements Serializable, IPrintInfo {
 				newInstance.properties.setProperty("access-date", StringHelper.renderTime(new Date()));
 			}
 
+			if (newInstance.redirectURLList == null) {
+				try {
+					File redirectURLListFile = newInstance.getRedirectURLListFile();
+					System.out.println("***** GlobalContext.getRealInstance : redirectURLListFile = " + redirectURLListFile); // TODO:
+																																// remove
+																																// debug
+																																// trace
+					if (!redirectURLListFile.exists()) {
+						redirectURLListFile.getParentFile().mkdirs();
+						redirectURLListFile.createNewFile();
+						logger.info("create url history file : " + redirectURLListFile);
+					}
+					newInstance.redirectURLList = new AppendableTextFile(redirectURLListFile);
+				} catch (Throwable t) {
+					t.printStackTrace();
+				}
+			}
+
 			newInstance.initCacheManager();
 
 			newInstance.writeInfo(session, System.out);
@@ -484,7 +518,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 				if (!externalServiceInitalized) {
 					externalServiceInitalized = true;
 					// put here code to initialize external services
-					//Start "page changes notifications"
+					// Start "page changes notifications"
 					if (isCollaborativeMode() && getStaticConfig().isNotificationThread()) {
 						int secBetweenCheck = getStaticConfig().getTimeBetweenChangeNotification();
 						Map<String, String> params = new HashMap<String, String>();
@@ -502,7 +536,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 							ex.printStackTrace();
 						}
 					}
-					//Start "ticket changes notifications"
+					// Start "ticket changes notifications"
 					if (this.getModules().contains(TicketAction.MODULE_NAME)) {
 						int secBetweenCheck = getStaticConfig().getTimeBetweenChangeNotification();
 						Map<String, String> params = new HashMap<String, String>();
@@ -521,7 +555,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 							ex.printStackTrace();
 						}
 					}
-					//Start remote service
+					// Start remote service
 					if (this.getModules().contains(RemoteService.MODULE_NAME)) {
 						try {
 							remoteService = RemoteService.getInstance(ctx);
@@ -536,15 +570,15 @@ public class GlobalContext implements Serializable, IPrintInfo {
 
 	public void destroy() {
 		// put here code to destroy the global context
-		//Stop "page changes notifications"
+		// Stop "page changes notifications"
 		if (pageChangeNotificationThread != null) {
 			pageChangeNotificationThread.stopThread();
 		}
-		//Stop "ticket changes notifications"
+		// Stop "ticket changes notifications"
 		if (ticketChangeNotificationThread != null) {
 			ticketChangeNotificationThread.stopThread();
 		}
-		//Stop remote service
+		// Stop remote service
 		if (remoteService != null) {
 			remoteService.stopService();
 		}
@@ -624,8 +658,8 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	private final Map<Object, Object> attributes = new HashMap<Object, Object>();
 
 	private final TimeMap<Object, Object> timeAttributes = new TimeMap<Object, Object>(60 * 5);
-	
-	private final TimeMap<String, String> forcedContent = new TimeMap<String, String>(60*60);
+
+	private final TimeMap<String, String> forcedContent = new TimeMap<String, String>(60 * 60);
 
 	private Template.TemplateData templateData = null;
 
@@ -641,7 +675,11 @@ public class GlobalContext implements Serializable, IPrintInfo {
 
 	private String dataFolder = null;
 
-	private final Map<String, String> oneTimeTokens = Collections.synchronizedMap(new TimeMap<String, String>(60 * 60)); // one time token live 1h
+	private final Map<String, String> oneTimeTokens = Collections.synchronizedMap(new TimeMap<String, String>(60 * 60)); // one
+																															// time
+																															// token
+																															// live
+																															// 1h
 
 	public final Object RELEASE_CACHE = new Object();
 
@@ -746,6 +784,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	@Override
 	protected void finalize() throws Throwable {
 		storePropertyThread.stopStoreThread = true;
+		ResourceHelper.closeResource(redirectURLList);
 		COUNT_INSTANCE--;
 		super.finalize();
 	}
@@ -887,11 +926,11 @@ public class GlobalContext implements Serializable, IPrintInfo {
 
 		return components;
 	}
-	
+
 	public boolean hasComponent(String className) {
 		return getComponents().contains(className);
 	}
-	
+
 	public boolean hasComponent(Class clazz) {
 		return getComponents().contains(clazz.getCanonicalName());
 	}
@@ -994,7 +1033,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		}
 		return prop.getProperty(key);
 	}
-	
+
 	public String getData(String key, String defaultValue) {
 		Properties prop = dataProperties;
 		if (prop == null) {
@@ -1115,7 +1154,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		}
 		return dataFolder;
 	}
-	
+
 	public File getDataBaseFolder() {
 		File dataBaseFolder = new File(getDataFolder(), "db");
 		return dataBaseFolder;
@@ -1256,22 +1295,22 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		}
 		return firstPassWord;
 	}
-	
+
 	public String getPlatformType() {
 		return properties.getString("platform.type", staticConfig.getPlatformType());
 	}
-	
+
 	public void setPlatformType(String type) {
 		properties.setProperty("platform.type", type);
 		save();
 	}
-	
+
 	public boolean isMailingPlatform() {
-		return getPlatformType().equals(StaticConfig.MAILING_PLATFORM);			
+		return getPlatformType().equals(StaticConfig.MAILING_PLATFORM);
 	}
-	
+
 	public boolean isWebPlatform() {
-		return getPlatformType().equals(StaticConfig.WEB_PLATFORM);			
+		return getPlatformType().equals(StaticConfig.WEB_PLATFORM);
 	}
 
 	/**
@@ -1355,20 +1394,19 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	public String getLicence() {
 		return properties.getString("licence", "free");
 	}
-	
+
 	public String getContentIntegrity() {
 		return properties.getString("integrity", "");
 	}
-	
+
 	public IntegrityBean getIntegrityDefinition() {
 		return new IntegrityBean(getContentIntegrity());
 	}
-	
+
 	public void setContentIntegrity(String value) {
 		properties.setProperty("integrity", value);
 		save();
 	}
-
 
 	public File getLogo() {
 		File logo = new File(ElementaryURLHelper.mergePath(ElementaryURLHelper.mergePath(getDataFolder(), staticConfig.getStaticFolder()), LOGO_FILE_NAME));
@@ -1493,18 +1531,19 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	public String getPathPrefix() {
 		return pathPrefix;
 	}
-	
+
 	/**
 	 * set a special path prefix needed by proxy.
+	 * 
 	 * @return
 	 */
 	public void setProxyPathPrefix(String prefix) {
 		properties.setProperty("proxy-path-prefix", prefix);
 		save();
 	}
-	
+
 	public String getProxyPathPrefix() {
-		return properties.getString("proxy-path-prefix","");
+		return properties.getString("proxy-path-prefix", "");
 	}
 
 	public Date getPublishDate() throws ParseException {
@@ -2186,7 +2225,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	private void askStoreData() {
 		needStoreData.setValue(true);
 	}
-	
+
 	private void saveData() {
 		try {
 			saveData(dataProperties, lockDataFile, getContextKey(), getDataFile());
@@ -2857,7 +2896,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		String sessionKey = getContextKey() + "___" + key;
 		session.setAttribute(sessionKey, value);
 	}
-	
+
 	public void writeInstanceInfo(ContentContext ctx, PrintStream out) throws Exception {
 		out.println("****************************************************************");
 		out.println("****************************************************************");
@@ -2867,24 +2906,24 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		out.println("**** ContextKey         :  " + getContextKey());
 		out.println("**** Alias of           :  " + getAliasOf());
 		out.println("**** Data folder        :  " + getDataFolder());
-		
+
 		out.println("****");
-		
+
 		ContentService content = ContentService.getInstance(ctx.getRequest());
 		ContentContext localContext = new ContentContext(ctx);
 		localContext.setRenderMode(ContentContext.VIEW_MODE);
 		MenuElement root = content.getNavigation(ctx);
-		out.println("**** #MenuElement View    :  " + (root.getAllChildren().length+1));
+		out.println("**** #MenuElement View    :  " + (root.getAllChildren().length + 1));
 		out.println("**** #Comp bean View      :  " + (ContentHelper.getAllComponentsOfChildren(root).size()));
 		out.println("**** #Comp icv View       :  " + content.getAllContent(localContext).size());
 		localContext.setRenderMode(ContentContext.PREVIEW_MODE);
 		root = content.getNavigation(ctx);
-		out.println("**** #MenuElement Preview :  " + (root.getAllChildren().length+1));
+		out.println("**** #MenuElement Preview :  " + (root.getAllChildren().length + 1));
 		out.println("**** #Comp bean Preview   :  " + (ContentHelper.getAllComponentsOfChildren(root).size()));
 		out.println("**** #Comp icv Preview    :  " + content.getAllContent(localContext).size());
 		out.println("****");
-		printInfo(ctx,out);
-		content.printInfo(ctx, out);	
+		printInfo(ctx, out);
+		content.printInfo(ctx, out);
 	}
 
 	public void writeInfo(HttpSession session, PrintStream out) {
@@ -2973,8 +3012,6 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		}
 
 	}
-	
-	
 
 	public String createOneTimeToken(String token) {
 		String newToken = StringHelper.getRandomIdBase64();
@@ -2994,7 +3031,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		if (token == null) {
 			return null;
 		}
-		return oneTimeTokens.remove(token);		
+		return oneTimeTokens.remove(token);
 	}
 
 	public boolean isEhCache() {
@@ -3106,34 +3143,82 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	public void setMainContextKey(String mainContextKey) {
 		this.mainContextKey = mainContextKey;
 	}
-	
+
 	public boolean isReversedLink() {
 		return properties.getBoolean("reversedLink", true);
 	}
-	
+
 	public void setReversedLink(boolean rl) {
 		properties.setProperty("reversedLink", rl);
 		save();
 	}
-	
+
 	public void addForcedContent(String key, String content) {
 		forcedContent.put(key, content);
 	}
-	
+
 	public String getForcedContent(String key) {
 		return forcedContent.get(key);
 	}
-	
+
+	private Properties getRedirectUrlMap() {
+		if (redirectURLMap == null) {
+			synchronized (lockUrlFile) {
+				if (redirectURLMap == null) {
+					Properties prop = new Properties();
+					Reader reader = null;
+					try {
+						reader = new FileReader(redirectURLList.getFile());
+						prop.load(reader);
+					} catch (Exception e) {
+						e.printStackTrace();
+					} finally {
+						ResourceHelper.closeResource(reader);
+					}
+					redirectURLMap = prop;
+				}
+			}
+		}
+		return redirectURLMap;
+	}
+
+	private static String encodeURLAsKey(String url) {
+		return StringHelper.createFileName(url);
+	}
+
+	public MenuElement convertOldURL(ContentContext ctx, String url) throws Exception {
+		if (ctx.isAsViewMode()) {
+			String pageId = getRedirectUrlMap().getProperty(encodeURLAsKey(url));
+			if (pageId != null) {
+				return NavigationHelper.getPageById(ctx, pageId);
+			} else {
+				return null;
+			}
+		} else {
+			return null;
+		}
+	}
+
+	public void storeUrl(ContentContext ctx, String url, String pageId) throws Exception {
+		if (ctx.isAsViewMode()) {
+			String key = encodeURLAsKey(url);
+			if (getRedirectUrlMap().getProperty(key) == null) {
+				redirectURLList.println(key + '=' + pageId);
+				getRedirectUrlMap().setProperty(key, pageId);
+			}
+		}
+	}
+
 	@Override
-	public void printInfo(ContentContext ctx, PrintStream out) {		
+	public void printInfo(ContentContext ctx, PrintStream out) {
 		out.println("****");
-		out.println("**** GlobalContext : "+getContextKey());
-		out.println("****");		
-		out.println("**** #cacheMaps        : "+cacheMaps.size());
-		out.println("**** #eternalCacheMaps : "+eternalCacheMaps.size());
-		out.println("**** #viewPages        : "+viewPages.size());
-		out.println("****");		
-		
+		out.println("**** GlobalContext : " + getContextKey());
+		out.println("****");
+		out.println("**** #cacheMaps        : " + cacheMaps.size());
+		out.println("**** #eternalCacheMaps : " + eternalCacheMaps.size());
+		out.println("**** #viewPages        : " + viewPages.size());
+		out.println("****");
+
 	}
 
 }

@@ -673,7 +673,7 @@ public class ContentContext {
 		}
 		return null;
 	}
-
+	
 	private MenuElement getCurrentPage(boolean urlFacotry) throws Exception {
 		if (getCurrentPageCached() != null) {
 			return getCurrentPageCached();
@@ -684,16 +684,21 @@ public class ContentContext {
 			return root;
 		} else {
 			if (getPath().trim().length() > 0) {
-				if (!getPath().trim().equals("/Home")) {
-					// (new Exception()).printStackTrace();
-				}
 				MenuElement elem = globalContext.getPageIfExist(this, getPath(), urlFacotry);
 				if (elem != null) {
+					globalContext.storeUrl(this, getPath(), elem.getId());
 					setCurrentPageCached(elem);
-				} else {
-					setContentFound(false);
-					elem = root;
-					setPath(root.getPath());
+				} else {					
+					elem = globalContext.convertOldURL(this, getPath());
+					if (elem != null) {						
+						String newURL = URLHelper.createURL(this, elem);
+						response.sendRedirect(newURL);
+						setCurrentPageCached(elem);
+					} else {					
+						setContentFound(false);
+						elem = root;
+						setPath(root.getPath());
+					}
 				}
 				return elem;
 			} else {

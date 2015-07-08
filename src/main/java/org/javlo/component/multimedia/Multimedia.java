@@ -289,7 +289,7 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 
 	public Collection<File> getAllMultimediaFiles(ContentContext ctx) {
 		List<File> files = new LinkedList<File>();
-		Collection<String> filesName = new HashSet<String>();
+		/*Collection<String> filesName = new HashSet<String>();*/
 
 		/** Images **/
 		File imageDir = null;
@@ -299,11 +299,12 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 				imageDir = newImageDir;
 				if (imageDir.exists()) {
 					Collection<File> filesLg = ResourceHelper.getAllFiles(imageDir, new ImageFileFilter());
+					System.out.println("***** Multimedia.getAllMultimediaFiles : filesLg = "+filesLg.size()); //TODO: remove debug trace
 					for (File file : filesLg) {
-						if (!filesName.contains(file.getName())) {
-							filesName.add(file.getName());
+						/*if (!filesName.contains(file.getName())) {
+							filesName.add(file.getName());*/
 							files.add(file);
-						}
+						/*}*/
 					}
 				}
 			}
@@ -315,10 +316,10 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 			if (videoDir.exists()) {
 				Collection<File> filesLg = ResourceHelper.getAllFiles(videoDir, new VideoOrURLFileFilter());
 				for (File file : filesLg) {
-					if (!filesName.contains(file.getName())) {
-						filesName.add(file.getName());
+					/*if (!filesName.contains(file.getName())) {
+						filesName.add(file.getName());*/
 						files.add(file);
-					}
+					/*}*/
 				}
 			}
 		}
@@ -329,10 +330,10 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 			if (soundDir.exists()) {
 				Collection<File> filesLg = ResourceHelper.getAllFiles(soundDir, new SoundFileFilter());
 				for (File file : filesLg) {
-					if (!filesName.contains(file.getName())) {
-						filesName.add(file.getName());
+					/*if (!filesName.contains(file.getName())) {
+						filesName.add(file.getName());*/
 						files.add(file);
-					}
+					/*}*/
 				}
 			}
 		}
@@ -343,10 +344,10 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 			if (embedDir.exists()) {
 				Collection<File> filesLg = ResourceHelper.getAllFiles(embedDir, new HTMLFileFilter());
 				for (File file : filesLg) {
-					if (!filesName.contains(file.getName())) {
-						filesName.add(file.getName());
+					/*if (!filesName.contains(file.getName())) {
+						filesName.add(file.getName());*/
 						files.add(file);
-					}
+					/*}*/
 				}
 			}
 		}
@@ -735,7 +736,7 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 		Map<String, MultimediaResource> allURL = new HashMap<String, MultimediaResource>();
 
 		boolean countAccess = isCountAccess(ctx);
-
+		
 		for (File file : mulFiles) {
 
 			String cssClass = "embed";
