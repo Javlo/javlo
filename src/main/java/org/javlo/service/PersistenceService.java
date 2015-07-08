@@ -196,6 +196,10 @@ public class PersistenceService {
 	public static final String GLOBAL_MAP_NAME = "global";
 
 	private static int UNDO_DEPTH = 255;
+	
+	private BufferedWriter trackWriter = null;
+	
+	private String trackWriterFileName = null;
 
 	public static final Date parseDate(String date) throws ParseException {
 		synchronized (PERSISTENCE_DATE_FORMAT) {
@@ -455,21 +459,36 @@ public class PersistenceService {
 		return outReader;
 	}
 
-	private Writer getTrackWriter(Calendar cal) throws IOException {
+	private BufferedWriter getTrackWriter(Calendar cal) throws IOException {
 		int year = cal.get(Calendar.YEAR);
 		int mount = cal.get(Calendar.MONTH);
 		int day = cal.get(Calendar.DAY_OF_MONTH);
-
+		
 		File dir = new File(getTrackingDirectory() + '/' + year + '/' + mount);
+		File file = new File(getTrackingDirectory() + '/' + year + '/' + mount + "/tracks-" + day + ".csv");
+		
+		if (file.getName().equals(trackWriterFileName)) {
+			return trackWriter;
+		} else {
+			ResourceHelper.closeResource(trackWriter);
+		}
+		
 		if (!dir.exists()) {
 			dir.mkdirs();
 		}
-		File file = new File(getTrackingDirectory() + '/' + year + '/' + mount + "/tracks-" + day + ".csv");
+		
 		if (!file.exists()) {
 			file.createNewFile();
-		}
-		Writer outWriter = new FileWriter(file, true);
-		return outWriter;
+		}		
+		trackWriterFileName = file.getName();
+		trackWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file),ContentContext.CHARACTER_ENCODING));
+		return trackWriter;
+	}
+	
+	@Override
+	protected void finalize() throws Throwable {
+		super.finalize();
+		ResourceHelper.closeResource(trackWriter);
 	}
 
 	public int getVersion() {
@@ -1354,11 +1373,9 @@ public class PersistenceService {
 	public void store(Track track) throws Exception {
 		Calendar cal = GregorianCalendar.getInstance();
 		cal.setTimeInMillis(track.getTime());
-		Writer trackWriter = getTrackWriter(cal);
-		BufferedWriter writer = new BufferedWriter(trackWriter);
+		BufferedWriter writer = getTrackWriter(cal);
 		writer.write(trackToString(track));
-		writer.newLine();
-		releaseTrackWriter(writer);
+		writer.newLine();		
 	}
 
 	void storeCurrentView(ContentContext ctx) throws IOException, ParseException {
