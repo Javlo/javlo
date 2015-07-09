@@ -32,6 +32,13 @@ public class FieldMultiList extends Field {
 		if (getListName() == null) {
 			return "list not found !";
 		}
+		
+		Collection<Map.Entry<String, String>> valuesCol = getList(ctx, getListName(), new Locale(ctx.getContextLanguage())).entrySet();
+		Collection<Map.Entry<String, String>> values = valuesCol;
+		if (values.size() == 0) {
+			return "";
+		}
+
 
 		StringWriter writer = new StringWriter();
 		PrintWriter out = new PrintWriter(writer);
@@ -43,11 +50,6 @@ public class FieldMultiList extends Field {
 		} else {
 			out.println("<div class=\"checkbox\">");
 		}
-		// out.println("	<select multiple=\"multiple\" id=\"" + getInputName() +
-		// "\" name=\"" + getInputName() + "\" value=\"" +
-		// StringHelper.neverNull(getValue()) + "\">");
-		Collection<Map.Entry<String, String>> valuesCol = getList(ctx, getListName(), new Locale(ctx.getContextLanguage())).entrySet();
-		Collection<Map.Entry<String, String>> values = valuesCol;
 
 		for (Map.Entry<String, String> value : values) {
 			String checked = "";

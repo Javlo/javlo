@@ -28,13 +28,18 @@ public class FieldList extends Field {
 
 		StringWriter writer = new StringWriter();
 		PrintWriter out = new PrintWriter(writer);
+		
+		Collection<Map.Entry<String, String>> valuesCol = getList(ctx, getListName(), new Locale(ctx.getContextLanguage())).entrySet();
+		Collection<Map.Entry<String, String>> values = valuesCol;
+		if (values.size() == 0) {
+			return "";
+		}
 
 		out.println("<div class=\"line form-group\">");
 		out.println(getEditLabelCode());
 		out.println("	<label for=\"" + getInputName() + "\">" + getLabel(new Locale(ctx.getContextRequestLanguage())) + " : </label>");
 		out.println("	<select class=\"form-control\" id=\"" + getInputName() + "\" name=\"" + getInputName() + "\" value=\"" + StringHelper.neverNull(getValue()) + "\">");
-		Collection<Map.Entry<String, String>> valuesCol = getList(ctx, getListName(), new Locale(ctx.getContextLanguage())).entrySet();
-		Collection<Map.Entry<String, String>> values = valuesCol;
+		
 
 		for (Map.Entry<String, String> value : values) {
 			String selected = "";

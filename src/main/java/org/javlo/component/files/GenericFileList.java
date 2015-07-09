@@ -50,7 +50,7 @@ public class GenericFileList extends AbstractVisualComponent implements IAction 
 		out.println("<fieldset>");
 		out.println("<legend>" + getValue() + "</legend>");		
 		if (getFolder(ctx).exists()) {
-			out.println("<table class=\"file-list\">");
+			out.println("<table class=\"file-list table\">");
 			String firstClass = " class=\"first\"";
 			List<File> files = new LinkedList<File>(Arrays.asList(getFolder(ctx).listFiles()));
 			Collections.sort(files, new FileComparator(FileComparator.LASTMODIFIED, true));
@@ -80,12 +80,12 @@ public class GenericFileList extends AbstractVisualComponent implements IAction 
 			out.println("</table>");
 		}
 		if (!ctx.isAsPageMode()) {
-			out.println("<form id=\"upload-form-" + getId() + "\" class=\"upload-form\" enctype=\"multipart/form-data\" method=\"post\"><div class=\"field-wrapper\">");
+			out.println("<form class=\"inline-form\" id=\"upload-form-" + getId() + "\" class=\"upload-form\" enctype=\"multipart/form-data\" method=\"post\"><div class=\"field-wrapper\"><div class=\"form-group\">");
 			out.println("<input type=\"hidden\" name=\"webaction\" value=\"file-list.upload\" />");
 			out.println("<input type=\"hidden\" name=\"" + IContentVisualComponent.COMP_ID_REQUEST_PARAM + "\" value=\"" + getId() + "\" />");
 			out.println("<input type=\"file\" multiple=\"multiple\" name=\"files\" />");
 			I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
-			out.println("<input type=\"submit\" value=\"" + i18nAccess.getViewText("global.send") + "\" />");
+			out.println("</div><button class=\"btn btn-primary\" type=\"submit\">" + i18nAccess.getViewText("global.send") + "</button>");
 			out.println("</div></form>");
 		}
 		out.println("</fieldset>");

@@ -6,7 +6,6 @@ import java.util.logging.Logger;
 import org.javlo.actions.IAction;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.component.core.ContentElementList;
-import org.javlo.component.core.MessageContainer;
 import org.javlo.component.text.WysiwygParagraph;
 import org.javlo.component.title.Title;
 import org.javlo.context.ContentContext;
