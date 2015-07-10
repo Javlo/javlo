@@ -89,9 +89,13 @@ public class Facebook extends AbstractSocialNetwork {
 
 	@Override
 	protected SocialUser getSocialUser(String accessToken, OAuthClient oAuthClient) throws Exception {
-		OAuthClientRequest request = new OAuthBearerClientRequest("https://graph.facebook.com/me")
-				.setAccessToken(accessToken)
-				.buildQueryMessage();
+		OAuthBearerClientRequest builder = new OAuthBearerClientRequest("https://graph.facebook.com/me") {
+			{
+				parameters.put("fields", "email,first_name,last_name");
+			}
+		};
+		builder.setAccessToken(accessToken);
+		OAuthClientRequest request = builder.buildQueryMessage();
 
 		OAuthResourceResponse resourceResponse = oAuthClient.resource(request, OAuth.HttpMethod.GET, OAuthResourceResponse.class);
 		String body = resourceResponse.getBody();
