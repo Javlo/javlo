@@ -41,6 +41,7 @@ import org.javlo.helper.ExifHelper;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
+import org.javlo.image.ImageEngine;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
 import org.javlo.service.NavigationService;
@@ -1182,9 +1183,10 @@ public class StaticInfo {
 	 */
 
 
-	public static void main(String[] args) throws ImageReadException, IOException {
+	public static void main(String[] args) throws Exception {
 
-		File jpegFile = new File("c:/trans/test3.jpg");
+		File jpegFile = new File("c:/trans/test_local.jpg");
+		File target = new File("c:/trans/test_local_2.jpg");
 		// File jpegFile = new
 		// File("C:/Users/pvandermaesen/data/javlo/data-ctx/data-sexy/static/galleries/alone/test3.jpg");
 
@@ -1193,6 +1195,15 @@ public class StaticInfo {
 			System.out.println("pos  = "+ExifHelper.readPosition(jpegFile));
 			System.out.println("date = "+ExifHelper.readDate(jpegFile));
 		}
+		
+		BufferedImage bi = ImageIO.read(jpegFile);
+		bi = ImageEngine.resizeWidth(bi, 1024, false);
+		ImageIO.write(bi, "jpg", target);
+		
+		//ExifHelper.setExifGPSTag(jpegFile, target);
+		
+		ImageMetadata md = ExifHelper.readMetadata(jpegFile);		
+		ExifHelper.writeMetadata(md, target);
 	}
 
 	private static String getAccessKey(Date date) {

@@ -35,11 +35,13 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.imaging.common.ImageMetadata;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.core.IImageFilter;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
+import org.javlo.helper.ExifHelper;
 import org.javlo.helper.NetHelper;
 import org.javlo.helper.PDFHelper;
 import org.javlo.helper.RequestHelper;
@@ -1057,8 +1059,10 @@ public class ImageTransformServlet extends HttpServlet {
 								BufferedImage image = ImageIO.read(imageFile);
 								if (image != null) {									
 									if (image.getWidth() > maxWidth) {
+										ImageMetadata md = ExifHelper.readMetadata(imageFile);										
 										image = ImageEngine.resizeWidth(image, maxWidth,true);
 										ImageIO.write(image, StringHelper.getFileExtension(imageFile.getName().toLowerCase()), imageFile);
+										ExifHelper.writeMetadata(md, imageFile);
 									}
 									image.flush();
 								} else {
