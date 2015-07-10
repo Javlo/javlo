@@ -7,7 +7,7 @@
 		<input type="hidden" name="name" value="${network.name}" />
 		<div class="line">
 			<label for="client_id">client id</label>
-			<input type="text" name="clientid" id="client_id" value="${network.clientId}" />
+			<input type="text" name="clientid" id="client_id" value="${network.clientId}" /> 
 		</div>
 		<c:if test="${empty network.clientId}">
 		<div class="line">
