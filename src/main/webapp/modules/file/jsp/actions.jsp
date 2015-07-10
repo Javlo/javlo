@@ -35,7 +35,7 @@
 <c:if test="${not empty param[BACK_PARAM_NAME]}"><input type="hidden" name="${BACK_PARAM_NAME}" value="${param[BACK_PARAM_NAME]}" /></c:if>
 <select class="action-field" name="order">
 	<option value="1"${sort == '1'?' selected="selected"':''}>${i18n.edit['action.sort.date']}</option>
-	<option value="2"${sort == '2'?' selected="selected"':''}>${i18n.edit['action.sort.name']}</option>	
+	<option value="2"${sort == '2'?' selected="selected"':''}>${i18n.edit['action.sort.name']}</option>
 	<option value="3"${sort == '3'?' selected="selected"':''}>${i18n.edit['action.sort.title']}</option>		
 	<option value="4"${sort == '4'?' selected="selected"':''}>${i18n.edit['action.sort.creation-date']}</option>
 </select>
