@@ -636,6 +636,21 @@ public class StaticInfo {
 			return getLinkedLocation(ctx);
 		}
 	}
+	
+	public String getGeoLocation(ContentContext ctx) {
+		
+		Metadata md = getImageMetadata();
+		if (md != null) {
+			// obtain the Exif directory
+			ExifSubIFDDirectory directory = md.getFirstDirectoryOfType(ExifSubIFDDirectory.class);
+			// query the tag's value
+			if (directory != null) {
+				//directory.getDouble(ExifSubIFDDirectory.TAG_DATETIME_ORIGINAL);
+			}
+		}
+		return null;
+		
+	}
 
 	public void setLocation(ContentContext ctx, String location) {
 		ContentService content = ContentService.getInstance(ctx.getRequest());
@@ -1061,7 +1076,7 @@ public class StaticInfo {
 	}
 
 	public static void main(String[] args) {
-		File jpegFile = new File("c:/trans/test.jpg");
+		File jpegFile = new File("c:/trans/test_local.jpg");
 		Metadata metadata;
 		try {
 			metadata = ImageMetadataReader.readMetadata(jpegFile);
@@ -1071,7 +1086,7 @@ public class StaticInfo {
 				}
 			}
 
-			ExifSubIFDDirectory directory = metadata.getDirectory(ExifSubIFDDirectory.class);
+			ExifSubIFDDirectory directory = metadata.getFirstDirectoryOfType(ExifSubIFDDirectory.class);
 			// query the tag's value
 			if (directory != null) {
 				System.out.println("date : " + directory.getDate(ExifSubIFDDirectory.TAG_DATETIME_ORIGINAL));
@@ -1221,7 +1236,7 @@ public class StaticInfo {
 		Metadata md = getImageMetadata();
 		if (md != null) {
 			// obtain the Exif directory
-			ExifSubIFDDirectory directory = md.getDirectory(ExifSubIFDDirectory.class);
+			ExifSubIFDDirectory directory = md.getFirstDirectoryOfType(ExifSubIFDDirectory.class);
 			// query the tag's value
 			if (directory != null) {
 				return directory.getDate(ExifSubIFDDirectory.TAG_DATETIME_ORIGINAL);
