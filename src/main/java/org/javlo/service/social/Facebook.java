@@ -94,7 +94,10 @@ public class Facebook extends AbstractSocialNetwork {
 				.buildQueryMessage();
 
 		OAuthResourceResponse resourceResponse = oAuthClient.resource(request, OAuth.HttpMethod.GET, OAuthResourceResponse.class);
-		Map<String, Object> userInformation = JSONMap.parseMap(resourceResponse.getBody());
+		String body = resourceResponse.getBody();
+		//TODO remove sysout
+		System.out.println("Facebook.getSocialUser() - Response body:" + body);
+		Map<String, Object> userInformation = JSONMap.parseMap(body);
 		return new SocialUser()
 				.setEmail((String) userInformation.get("email"))
 				.setFirstName((String) userInformation.get("first_name"))

@@ -37,7 +37,7 @@ public class JSONMap implements Map<String, Object> {
 	}
 
 	public static Object transform(JsonElement element) {
-		if (element.isJsonNull()) {
+		if (element == null || element.isJsonNull()) {
 			return null;
 		} else if (element.isJsonPrimitive()) {
 			return JSON.fromJson(element, Object.class);
