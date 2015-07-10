@@ -80,8 +80,12 @@
 			<textarea class="file-description" id="description-${file.id}" name="description-${file.id}" rows="5" cols="10">${file.description}</textarea>
 		</div>
 		<div class="line">
-			<label for="location-${file.id}">${i18n.edit["field.location"]}</label>
-			<input class="file-location" type="text" id="location-${file.id}" name="location-${file.id}" value="<c:out value="${file.location}" escapeXml="true" />" />
+			<label for="location-${file.id}">${i18n.edit["field.location"]} <c:if test="${not empty file.position}">
+			<a class="set-location" title="get location from image" href="#" onclick="loadLocalisation('${info.currentAjaxURL}', ${file.position.longitude}, ${file.position.latitude},'${info.language}', '#location-${file.id}'); return false;">
+				<span class="glyphicon glyphicon-map-marker"></span>
+			</a>
+			</c:if></label>
+			<input class="file-location" type="text" id="location-${file.id}" name="location-${file.id}" value="<c:out value="${file.location}" escapeXml="true" />" />			
 		</div>
 		<div class="line">
 			<label for="copyright-${file.id}">${i18n.edit["field.copyright"]}</label>

@@ -61,6 +61,38 @@ public class StaticInfo {
 	 */
 	protected static Logger logger = Logger.getLogger(StaticInfo.class.getName());
 
+	public static final class Position {
+		private double longitude = 0;
+		private double latitude = 0;
+
+		public Position(double longitude, double latiture) {
+			super();
+			this.longitude = longitude;
+			this.latitude = latiture;
+		}
+
+		public double getLongitude() {
+			return longitude;
+		}
+
+		public void setLongitude(double longitude) {
+			this.longitude = longitude;
+		}
+
+		public double getLatitude() {
+			return latitude;
+		}
+
+		public void setLatitude(double latiture) {
+			this.latitude = latiture;
+		}
+		@Override
+		public String toString() {
+			return getLatitude()+", "+getLongitude();
+		}
+
+	}
+
 	public static final class StaticInfoBean {
 		private final ContentContext ctx;
 		private final StaticInfo staticInfo;
@@ -140,6 +172,10 @@ public class StaticInfo {
 
 		public StaticInfoBean getFolder() {
 			return folder;
+		}
+		
+		public Position getPosition() {
+			return staticInfo.getPosition(ctx);
 		}
 
 	}
@@ -365,7 +401,7 @@ public class StaticInfo {
 		}
 
 	}
-	
+
 	public static class StaticInfoSortByCreationDate implements Comparator<StaticInfo> {
 		ContentContext ctx;
 		boolean ascending = true;
@@ -409,7 +445,7 @@ public class StaticInfo {
 	private String linkedLocation;
 
 	private List<String> tags = null;
-	
+
 	private List<String> readRoles = null;
 
 	private long size = -1;
@@ -487,7 +523,7 @@ public class StaticInfo {
 
 		if (outStaticInfo == null) {
 			StaticInfo staticInfo = new StaticInfo();
-			//init creation data
+			// init creation data
 			staticInfo.getCreationDate(ctx);
 			staticInfo.staticURL = inStaticURL;
 
@@ -592,15 +628,15 @@ public class StaticInfo {
 		ContentService content = ContentService.getInstance(ctx.getRequest());
 		return content.getAttribute(ctx, getKey("description-" + ctx.getRequestContentLanguage()), "");
 	}
-	
+
 	public boolean isResized(ContentContext ctx) {
 		ContentService content = ContentService.getInstance(ctx.getRequest());
 		return StringHelper.isTrue(content.getAttribute(ctx, getKey("resized"), null));
 	}
-	
+
 	public void setResized(ContentContext ctx, boolean resized) {
 		ContentService content = ContentService.getInstance(ctx.getRequest());
-		content.setAttribute(ctx, getKey("resized"), ""+resized);		
+		content.setAttribute(ctx, getKey("resized"), "" + resized);
 	}
 
 	public String getDescription(ContentContext ctx) {
@@ -638,20 +674,27 @@ public class StaticInfo {
 			return getLinkedLocation(ctx);
 		}
 	}
-	
-	public String getGeoLocation(ContentContext ctx) {		
+
+	public Position getPosition(ContentContext ctx) {
 		Metadata md = getImageMetadata();
-		if (md != null) {
-			GpsDirectory gpsDirectory = (GpsDirectory) md.getDirectoriesOfType(GpsDirectory.class).iterator().next();
-			GeoLocation geoLocation = gpsDirectory.getGeoLocation();
-			try {
-				return LocationService.getLocation(geoLocation.getLatitude(), geoLocation.getLongitude(), "fr").getFullLocality();
-			} catch (IOException e) {
-				e.printStackTrace();
+		if (md != null && md.getDirectoriesOfType(GpsDirectory.class) != null) {
+			Iterator<GpsDirectory> directories = md.getDirectoriesOfType(GpsDirectory.class).iterator();
+			if (directories.hasNext()) {
+				GpsDirectory gpsDirectory = (GpsDirectory) directories.next();
+				GeoLocation geoLocation = gpsDirectory.getGeoLocation();
+				return new Position(geoLocation.getLatitude(), geoLocation.getLongitude());
 			}
 		}
 		return null;
-		
+	}
+
+	public String getGeoLocation(ContentContext ctx) throws IOException {
+		Position pos = getPosition(ctx);
+		if (pos != null) {
+			return LocationService.getLocation(pos.getLatitude(), pos.getLongitude(), ctx.getLanguage()).getFullLocality();
+		} else {
+			return null;
+		}
 	}
 
 	public void setLocation(ContentContext ctx, String location) {
@@ -689,7 +732,7 @@ public class StaticInfo {
 		}
 		return null;
 	}
-	
+
 	public Date getCreationDate(ContentContext ctx) {
 		ContentService content = ContentService.getInstance(ctx.getRequest());
 		String dateStr = content.getAttribute(ctx, getKey("creation-date"), null);
@@ -698,23 +741,23 @@ public class StaticInfo {
 			content.setAttribute(ctx, getKey("creation-date"), dateStr);
 			try {
 				PersistenceService.getInstance(ctx.getGlobalContext()).setAskStore(true);
-			} catch (ServiceException e) {				
+			} catch (ServiceException e) {
 				e.printStackTrace();
 				return null;
 			}
-		}		
+		}
 		try {
 			return StringHelper.parseTime(dateStr);
 		} catch (ParseException e) {
-		}		
+		}
 		return null;
 	}
-	
+
 	public String getAuthors(ContentContext ctx) {
 		ContentService content = ContentService.getInstance(ctx.getRequest());
 		return content.getAttribute(ctx, getKey("authors"), "");
 	}
-	
+
 	public void setAuthors(ContentContext ctx, String authors) {
 		ContentService content = ContentService.getInstance(ctx.getRequest());
 		content.setAttribute(ctx, getKey("authors"), authors);
@@ -1084,16 +1127,16 @@ public class StaticInfo {
 			metadata = ImageMetadataReader.readMetadata(jpegFile);
 			for (Directory directory : metadata.getDirectories()) {
 				for (Tag tag : directory.getTags()) {
-					//System.out.println(tag);
+					// System.out.println(tag);
 				}
 			}
-			
+
 			GpsDirectory gpsDirectory = (GpsDirectory) metadata.getDirectoriesOfType(GpsDirectory.class).iterator().next();
 			GeoLocation geoLocation = gpsDirectory.getGeoLocation();
-			
-			System.out.println("geoLocation.getLatitude() = "+geoLocation.getLatitude());
-			System.out.println("geoLocation.getLongitude() = "+geoLocation.getLongitude());			
-			System.out.println("localisation : "+LocationService.getLocation(geoLocation.getLatitude(), geoLocation.getLongitude(), "fr").getFullLocality());
+
+			System.out.println("geoLocation.getLatitude() = " + geoLocation.getLatitude());
+			System.out.println("geoLocation.getLongitude() = " + geoLocation.getLongitude());
+			System.out.println("localisation : " + LocationService.getLocation(geoLocation.getLatitude(), geoLocation.getLongitude(), "fr").getFullLocality());
 
 			ExifSubIFDDirectory directory = metadata.getFirstDirectoryOfType(ExifSubIFDDirectory.class);
 			// query the tag's value
@@ -1154,7 +1197,7 @@ public class StaticInfo {
 		}
 		return tags;
 	}
-	
+
 	public void addTag(ContentContext ctx, String tag) {
 		if (tags == null || tags == Collections.EMPTY_LIST) {
 			tags = new LinkedList<String>();
@@ -1174,7 +1217,7 @@ public class StaticInfo {
 			storeTags(ctx);
 		}
 	}
-	
+
 	private void storeReadRoles(ContentContext ctx) {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		String key = getKey("read-roles");
@@ -1195,7 +1238,7 @@ public class StaticInfo {
 		}
 		return readRoles;
 	}
-	
+
 	public void addReadRole(ContentContext ctx, String role) {
 		if (readRoles == null || readRoles == Collections.EMPTY_LIST) {
 			readRoles = new LinkedList<String>();
@@ -1206,9 +1249,9 @@ public class StaticInfo {
 		}
 	}
 
-	public void removeReadRole(ContentContext ctx, String role) {		
-		readRoles = getReadRoles(ctx);		
-		if (readRoles.contains(role)) {			
+	public void removeReadRole(ContentContext ctx, String role) {
+		readRoles = getReadRoles(ctx);
+		if (readRoles.contains(role)) {
 			readRoles.remove(role);
 			storeReadRoles(ctx);
 		}
@@ -1232,7 +1275,7 @@ public class StaticInfo {
 				try {
 					imageMetadata = ImageMetadataReader.readMetadata(getFile());
 				} catch (ImageProcessingException e) {
-					logger.warning("["+getFile()+"] error : "+e.getMessage());
+					logger.warning("[" + getFile() + "] error : " + e.getMessage());
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
@@ -1253,14 +1296,14 @@ public class StaticInfo {
 		}
 		return null;
 	}
-	
+
 	public String getCopyright(ContentContext ctx) {
-		ContentService content = ContentService.getInstance(ctx.getRequest());		
+		ContentService content = ContentService.getInstance(ctx.getRequest());
 		return content.getAttribute(ctx, getKey("copyright"), "");
 	}
-	
+
 	public void setCopyright(ContentContext ctx, String copyright) {
-		ContentService content = ContentService.getInstance(ctx.getRequest());		
+		ContentService content = ContentService.getInstance(ctx.getRequest());
 		content.setAttribute(ctx, getKey("copyright"), copyright);
 	}
 

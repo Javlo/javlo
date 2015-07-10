@@ -13,6 +13,7 @@ import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.user.AdminUserSecurity;
 import org.javlo.ztatic.StaticInfo;
+import org.javlo.ztatic.StaticInfo.Position;
 
 public class FileBean {
 
@@ -182,6 +183,10 @@ public class FileBean {
 
 	public String getSize() {
 		return StringHelper.renderSize(staticInfo.getFile().length());
+	}
+	
+	public Position getPosition() {
+		return staticInfo.getPosition(ctx);
 	}
 
 	public String getManType() {

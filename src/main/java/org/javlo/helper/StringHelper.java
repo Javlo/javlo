@@ -2160,6 +2160,14 @@ public class StringHelper {
 		}
 	}
 
+	public static Double safeParseDouble(String string, Double defaultValue) {
+		try {
+			return Double.parseDouble(string);
+		} catch (Throwable e) {
+			return defaultValue;
+		}
+	}
+
 	public static Integer safeParseInt(String string, Integer defaultValue) {
 		try {
 			return Integer.parseInt(string);

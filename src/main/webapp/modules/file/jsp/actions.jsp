@@ -49,6 +49,9 @@
 <a title="unlock all" href="#" onclick="jQuery('li.item').addClass('unlock');jQuery('li.item').removeClass('lock');"><span class="glyphicon glyphicon-link lock"></span></a>
 <input type="text" id="allTitle" name="all-title" placeholder="${i18n.edit['action.change-all-title']}" onkeyup="jQuery('.unlock .file-title').each(function(){var t = jQuery(this);if (t.val().length == 0 || t.data('empty') == true) {t.data('empty',true);t.val(jQuery('#allTitle').val())}});"/>
 <input type="text" id="allDescription" name="all-descritpion" placeholder="${i18n.edit['action.change-all-description']}" onkeyup="jQuery('.unlock .file-description').each(function(){var t = jQuery(this);if (t.val().length == 0 || t.data('empty') == true) {t.data('empty',true);t.val(jQuery('#allDescription').val())}});"/>
+<a title="set all location" href="#" onclick="jQuery('.set-location').click();">
+	<span class="glyphicon glyphicon-map-marker"></span>
+</a>
 <input type="text" id="allLocation" name="all-location" placeholder="${i18n.edit['action.change-all-location']}" onkeyup="jQuery('.unlock .file-location').each(function(){var t = jQuery(this);if (t.val().length == 0 || t.data('empty') == true) {t.data('empty',true);t.val(jQuery('#allLocation').val())}});"/>
 <input type="text" id="allCopyright" name="all-copyright" placeholder="${i18n.edit['action.change-all-copyright']}" onkeyup="jQuery('.unlock .file-copyright').each(function(){var t = jQuery(this);if (t.val().length == 0 || t.data('empty') == true) {t.data('empty',true);t.val(jQuery('#allCopyright').val())}});"/>
 <input type="text" id="allDate" name="all-date" placeholder="${i18n.edit['action.change-all-date']}" onkeyup="jQuery('.unlock .file-date').each(function(){var t = jQuery(this);if (t.val().length == 0 || t.data('empty') == true) {t.data('empty',true);t.val(jQuery('#allDate').val())}});"/>

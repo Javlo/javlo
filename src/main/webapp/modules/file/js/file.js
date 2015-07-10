@@ -70,3 +70,21 @@ function openMetaEditor(textarea, editorURL) {
 		  }
 		});
 }
+
+function loadLocalisation(url,lat,long,lg,queryInput) {
+	var sep="?";
+	if (url.indexOf("?")>=0) {
+		sep="&";
+	}
+	url = url + sep+"webaction=data.location&lat="+lat+"&long="+long+"&lg="+lg;	
+	try {
+		jQuery.ajax({
+			  url: url,		  
+			  dataType: "json"
+			}).done(function(json) {
+			  jQuery(queryInput).val(json.data.location);
+			});
+	} catch(e) {
+		console.log(e);
+	}	
+}

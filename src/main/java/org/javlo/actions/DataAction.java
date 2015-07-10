@@ -2,6 +2,7 @@ package org.javlo.actions;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.text.ParseException;
@@ -62,6 +63,7 @@ import org.javlo.service.NotificationService.Notification;
 import org.javlo.service.NotificationService.NotificationContainer;
 import org.javlo.service.PersistenceService;
 import org.javlo.service.RequestService;
+import org.javlo.service.location.LocationService;
 import org.javlo.service.shared.CloserJavloSharedContentProvider;
 import org.javlo.service.shared.ISharedContentProvider;
 import org.javlo.service.shared.ImportedImageSharedContentProvider;
@@ -582,5 +584,19 @@ public class DataAction implements IAction {
 	public static String performTab(RequestService rs, HttpSession session) {
 		session.setAttribute("tab", rs.getParameter("tab", null));
 		return null;
+	}
+	
+	public static String performLocation(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws NumberFormatException, IOException {		
+		if (ctx.getCurrentEditUser() == null) {
+			return null;
+		}		
+		Double lat = StringHelper.safeParseDouble(rs.getParameter("lat", null),null);
+		Double lg = StringHelper.safeParseDouble(rs.getParameter("long", null),null);				
+		if (lat != null && lg != null) {		
+			ctx.getAjaxData().put("location", LocationService.getLocation(lat, lg, rs.getParameter("lg", "en")).getFullLocality());
+			return "";
+		} else {
+			return null;
+		}
 	}
 }
