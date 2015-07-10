@@ -55,5 +55,13 @@ public class Location {
 	public String toString() {	
 		return getCountry()+' '+getLocality()+' '+getRoute()+' '+getNumber();
 	}
+	
+	public String getFullLocality() {
+		String outLocality = getCountry();
+		if (getLocality() != null) {
+			outLocality=outLocality+", "+getLocality();
+		}
+		return outLocality;
+	}
 
 }

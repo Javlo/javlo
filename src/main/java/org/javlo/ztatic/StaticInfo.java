@@ -27,7 +27,6 @@ import org.apache.commons.lang.StringUtils;
 import org.javlo.cache.ICache;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
-import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
@@ -37,14 +36,17 @@ import org.javlo.service.ContentService;
 import org.javlo.service.NavigationService;
 import org.javlo.service.PersistenceService;
 import org.javlo.service.exception.ServiceException;
+import org.javlo.service.location.LocationService;
 import org.javlo.ztatic.InitInterest.Point;
 
 import com.drew.imaging.ImageMetadataReader;
 import com.drew.imaging.ImageProcessingException;
+import com.drew.lang.GeoLocation;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.Tag;
 import com.drew.metadata.exif.ExifSubIFDDirectory;
+import com.drew.metadata.exif.GpsDirectory;
 
 public class StaticInfo {
 
@@ -637,15 +639,15 @@ public class StaticInfo {
 		}
 	}
 	
-	public String getGeoLocation(ContentContext ctx) {
-		
+	public String getGeoLocation(ContentContext ctx) {		
 		Metadata md = getImageMetadata();
 		if (md != null) {
-			// obtain the Exif directory
-			ExifSubIFDDirectory directory = md.getFirstDirectoryOfType(ExifSubIFDDirectory.class);
-			// query the tag's value
-			if (directory != null) {
-				//directory.getDouble(ExifSubIFDDirectory.TAG_DATETIME_ORIGINAL);
+			GpsDirectory gpsDirectory = (GpsDirectory) md.getDirectoriesOfType(GpsDirectory.class).iterator().next();
+			GeoLocation geoLocation = gpsDirectory.getGeoLocation();
+			try {
+				return LocationService.getLocation(geoLocation.getLatitude(), geoLocation.getLongitude(), "fr").getFullLocality();
+			} catch (IOException e) {
+				e.printStackTrace();
 			}
 		}
 		return null;
@@ -1076,15 +1078,22 @@ public class StaticInfo {
 	}
 
 	public static void main(String[] args) {
-		File jpegFile = new File("c:/trans/test_local.jpg");
+		File jpegFile = new File("c:/trans/test2.jpg");
 		Metadata metadata;
 		try {
 			metadata = ImageMetadataReader.readMetadata(jpegFile);
 			for (Directory directory : metadata.getDirectories()) {
 				for (Tag tag : directory.getTags()) {
-					System.out.println(tag);
+					//System.out.println(tag);
 				}
 			}
+			
+			GpsDirectory gpsDirectory = (GpsDirectory) metadata.getDirectoriesOfType(GpsDirectory.class).iterator().next();
+			GeoLocation geoLocation = gpsDirectory.getGeoLocation();
+			
+			System.out.println("geoLocation.getLatitude() = "+geoLocation.getLatitude());
+			System.out.println("geoLocation.getLongitude() = "+geoLocation.getLongitude());			
+			System.out.println("localisation : "+LocationService.getLocation(geoLocation.getLatitude(), geoLocation.getLongitude(), "fr").getFullLocality());
 
 			ExifSubIFDDirectory directory = metadata.getFirstDirectoryOfType(ExifSubIFDDirectory.class);
 			// query the tag's value
