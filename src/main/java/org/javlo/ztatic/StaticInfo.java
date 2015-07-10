@@ -682,7 +682,9 @@ public class StaticInfo {
 			if (directories.hasNext()) {
 				GpsDirectory gpsDirectory = (GpsDirectory) directories.next();
 				GeoLocation geoLocation = gpsDirectory.getGeoLocation();
-				return new Position(geoLocation.getLatitude(), geoLocation.getLongitude());
+				if (geoLocation != null) { 
+					return new Position(geoLocation.getLatitude(), geoLocation.getLongitude());
+				}
 			}
 		}
 		return null;
