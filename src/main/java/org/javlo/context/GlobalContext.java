@@ -2,9 +2,9 @@ package org.javlo.context;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.io.Reader;
 import java.io.Serializable;
@@ -482,24 +482,6 @@ public class GlobalContext implements Serializable, IPrintInfo {
 
 			synchronized (newInstance.properties) {
 				newInstance.properties.setProperty("access-date", StringHelper.renderTime(new Date()));
-			}
-
-			if (newInstance.redirectURLList == null) {
-				try {
-					File redirectURLListFile = newInstance.getRedirectURLListFile();
-					System.out.println("***** GlobalContext.getRealInstance : redirectURLListFile = " + redirectURLListFile); // TODO:
-																																// remove
-																																// debug
-																																// trace
-					if (!redirectURLListFile.exists()) {
-						redirectURLListFile.getParentFile().mkdirs();
-						redirectURLListFile.createNewFile();
-						logger.info("create url history file : " + redirectURLListFile);
-					}
-					newInstance.redirectURLList = new AppendableTextFile(redirectURLListFile);
-				} catch (Throwable t) {
-					t.printStackTrace();
-				}
 			}
 
 			newInstance.initCacheManager();
@@ -3160,6 +3142,23 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	public String getForcedContent(String key) {
 		return forcedContent.get(key);
 	}
+	
+	private AppendableTextFile getRedirectUrlList() {
+		if (redirectURLList == null) {
+			try {
+				File redirectURLListFile = getRedirectURLListFile();
+				if (!redirectURLListFile.exists()) {
+					redirectURLListFile.getParentFile().mkdirs();
+					redirectURLListFile.createNewFile();
+					logger.info("create url history file : " + redirectURLListFile);
+				}
+				redirectURLList = new AppendableTextFile(redirectURLListFile);
+			} catch (Throwable t) {
+				t.printStackTrace();
+			}
+		}
+		return redirectURLList;
+	}
 
 	private Properties getRedirectUrlMap() {
 		if (redirectURLMap == null) {
@@ -3168,7 +3167,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 					Properties prop = new Properties();
 					Reader reader = null;
 					try {
-						reader = new FileReader(redirectURLList.getFile());
+						reader = new InputStreamReader(new FileInputStream(getRedirectUrlList().getFile()), ContentContext.CHARACTER_ENCODING);
 						prop.load(reader);
 					} catch (Exception e) {
 						e.printStackTrace();
@@ -3203,7 +3202,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		if (ctx.isAsViewMode()) {
 			String key = encodeURLAsKey(url);
 			if (getRedirectUrlMap().getProperty(key) == null) {
-				redirectURLList.println(key + '=' + pageId);
+				getRedirectUrlList().println(key + '=' + pageId);
 				getRedirectUrlMap().setProperty(key, pageId);
 			}
 		}

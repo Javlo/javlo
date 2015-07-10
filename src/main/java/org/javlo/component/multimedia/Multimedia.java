@@ -298,8 +298,7 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 			if (imageDir == null || !newImageDir.equals(imageDir)) {
 				imageDir = newImageDir;
 				if (imageDir.exists()) {
-					Collection<File> filesLg = ResourceHelper.getAllFiles(imageDir, new ImageFileFilter());
-					System.out.println("***** Multimedia.getAllMultimediaFiles : filesLg = "+filesLg.size()); //TODO: remove debug trace
+					Collection<File> filesLg = ResourceHelper.getAllFiles(imageDir, new ImageFileFilter());					
 					for (File file : filesLg) {
 						/*if (!filesName.contains(file.getName())) {
 							filesName.add(file.getName());*/

@@ -3,28 +3,24 @@ package org.javlo.io;
 import java.io.BufferedWriter;
 import java.io.Closeable;
 import java.io.File;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.OutputStreamWriter;
+
+import org.javlo.context.ContentContext;
 
 public class AppendableTextFile implements Closeable {
 	
 	private File file;
-	private PrintWriter writer;
+	private BufferedWriter writer;
 
 	public AppendableTextFile(File file) throws IOException {		
 		this.file = file;
 	}
 	
-	protected PrintWriter getWriter() throws IOException {
-		if (writer != null) {
-			if (writer.checkError()) {
-				close();
-				writer = null;
-			}
-		}
+	protected BufferedWriter getWriter() throws IOException {
 		if (writer == null) {
-			writer = new PrintWriter(new BufferedWriter(new FileWriter(file, true)));
+			writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file, true), ContentContext.CHARACTER_ENCODING));
 		}
 		return writer;
 	}
@@ -42,12 +38,13 @@ public class AppendableTextFile implements Closeable {
 		close();
 	}
 	
-	public synchronized void println(String line) throws IOException {
-		getWriter().println(line);
+	public synchronized void println(String line) throws IOException {		
+		getWriter().append(line);
+		getWriter().newLine();
 	}
 	
 	public synchronized void print(String line) throws IOException {
-		getWriter().print(line);
+		getWriter().append(line);
 	}
 	
 	public static void main(String[] args) throws IOException {
