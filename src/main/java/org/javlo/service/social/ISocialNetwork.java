@@ -5,7 +5,6 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.oltu.oauth2.common.OAuthProviderType;
 import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
 import org.javlo.context.ContentContext;
 
@@ -47,8 +46,6 @@ public interface ISocialNetwork {
 	public void prepare(ContentContext ctx) throws  Exception;
 	
 	public String getSigninURL(ContentContext ctx) throws Exception;
-	
-	public OAuthProviderType getProviderType();
 	
 	public void setRedirectURL(String url);
 	
