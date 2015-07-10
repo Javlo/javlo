@@ -593,7 +593,7 @@ public class DataAction implements IAction {
 		Double lat = StringHelper.safeParseDouble(rs.getParameter("lat", null),null);
 		Double lg = StringHelper.safeParseDouble(rs.getParameter("long", null),null);				
 		if (lat != null && lg != null) {		
-			ctx.getAjaxData().put("location", LocationService.getLocation(lat, lg, rs.getParameter("lg", "en")).getFullLocality());
+			ctx.getAjaxData().put("location", LocationService.getLocation(lg, lat, rs.getParameter("lg", "en")).getFullLocality());
 			return "";
 		} else {
 			return null;

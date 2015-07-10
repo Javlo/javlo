@@ -1055,7 +1055,7 @@ public class ImageTransformServlet extends HttpServlet {
 							if (!staticInfo.isResized(ctx) && !imageFile.isDirectory()) {
 								logger.info("source image to large resize to " + maxWidth + " : " + imageFile);
 								BufferedImage image = ImageIO.read(imageFile);
-								if (image != null) {
+								if (image != null) {									
 									if (image.getWidth() > maxWidth) {
 										image = ImageEngine.resizeWidth(image, maxWidth,true);
 										ImageIO.write(image, StringHelper.getFileExtension(imageFile.getName().toLowerCase()), imageFile);

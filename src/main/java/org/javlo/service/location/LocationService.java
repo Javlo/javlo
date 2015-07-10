@@ -12,14 +12,13 @@ import com.google.code.geocoder.model.GeocoderRequest;
 
 public class LocationService {
 	
-	public static Location getLocation(double latitude, double longitude, String lg) throws IOException {		
+	public static Location getLocation(double longitude, double latitude, String lg) throws IOException {		
 		DecimalFormat format = (DecimalFormat) DecimalFormat.getInstance(Locale.ENGLISH);
 		format.setMinimumFractionDigits(6);
-		return getLocation(""+format.format(latitude)+", "+format.format(longitude), lg);
+		return getLocation(""+format.format(longitude)+", "+format.format(latitude), lg);
 	}
 	
 	public static Location getLocation(String coord, String lg) throws IOException {
-		System.out.println("***** LocationService.getLocation : coord = "+coord); //TODO: remove debug trace
 		final Geocoder geocoder = new Geocoder();
 		GeocoderRequest geocoderRequest = new GeocoderRequestBuilder().setAddress(coord).setLanguage(lg).getGeocoderRequest();
 		GeocodeResponse geocoderResponse = geocoder.geocode(geocoderRequest);

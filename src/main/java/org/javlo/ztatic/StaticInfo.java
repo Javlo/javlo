@@ -22,12 +22,22 @@ import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.configuration.ConfigurationException;
+import org.apache.commons.imaging.ImageReadException;
+import org.apache.commons.imaging.Imaging;
+import org.apache.commons.imaging.common.ImageMetadata;
+import org.apache.commons.imaging.common.RationalNumber;
+import org.apache.commons.imaging.formats.jpeg.JpegImageMetadata;
+import org.apache.commons.imaging.formats.tiff.TiffField;
+import org.apache.commons.imaging.formats.tiff.TiffImageMetadata;
+import org.apache.commons.imaging.formats.tiff.constants.GpsTagConstants;
+import org.apache.commons.imaging.formats.tiff.taginfos.TagInfo;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.javlo.cache.ICache;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
+import org.javlo.helper.ExifHelper;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
@@ -38,15 +48,6 @@ import org.javlo.service.PersistenceService;
 import org.javlo.service.exception.ServiceException;
 import org.javlo.service.location.LocationService;
 import org.javlo.ztatic.InitInterest.Point;
-
-import com.drew.imaging.ImageMetadataReader;
-import com.drew.imaging.ImageProcessingException;
-import com.drew.lang.GeoLocation;
-import com.drew.metadata.Directory;
-import com.drew.metadata.Metadata;
-import com.drew.metadata.Tag;
-import com.drew.metadata.exif.ExifSubIFDDirectory;
-import com.drew.metadata.exif.GpsDirectory;
 
 public class StaticInfo {
 
@@ -86,9 +87,10 @@ public class StaticInfo {
 		public void setLatitude(double latiture) {
 			this.latitude = latiture;
 		}
+
 		@Override
 		public String toString() {
-			return getLatitude()+", "+getLongitude();
+			return getLatitude() + ", " + getLongitude();
 		}
 
 	}
@@ -173,7 +175,7 @@ public class StaticInfo {
 		public StaticInfoBean getFolder() {
 			return folder;
 		}
-		
+
 		public Position getPosition() {
 			return staticInfo.getPosition(ctx);
 		}
@@ -467,7 +469,7 @@ public class StaticInfo {
 
 	private int accessFromSomeDays = -1;
 
-	private Metadata imageMetadata = null;
+	// private Metadata imageMetadata = null;
 
 	/**
 	 * instance of static info sur shared file
@@ -676,17 +678,37 @@ public class StaticInfo {
 	}
 
 	public Position getPosition(ContentContext ctx) {
-		Metadata md = getImageMetadata();
-		if (md != null && md.getDirectoriesOfType(GpsDirectory.class) != null) {
-			Iterator<GpsDirectory> directories = md.getDirectoriesOfType(GpsDirectory.class).iterator();
-			if (directories.hasNext()) {
-				GpsDirectory gpsDirectory = (GpsDirectory) directories.next();
-				GeoLocation geoLocation = gpsDirectory.getGeoLocation();
-				if (geoLocation != null) { 
-					return new Position(geoLocation.getLatitude(), geoLocation.getLongitude());
-				}
-			}
+		try {
+			return ExifHelper.readPosition(getFile());
+		} catch (ImageReadException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
+
+		/*
+		 * System.out.println("***** StaticInfo.getPosition : name = "+file.getName
+		 * ()); //TODO: remove debug trace
+		 * 
+		 * Metadata md = getImageMetadata(); if (md != null &&
+		 * md.getDirectoriesOfType(GpsDirectory.class) != null) {
+		 * Iterator<GpsDirectory> directories =
+		 * md.getDirectoriesOfType(GpsDirectory.class).iterator(); if
+		 * (directories.hasNext()) { GpsDirectory gpsDirectory = (GpsDirectory)
+		 * directories.next(); GeoLocation geoLocation =
+		 * gpsDirectory.getGeoLocation(); if (geoLocation != null) {
+		 * System.out.println("***** StaticInfo.getPosition : OK"); //TODO:
+		 * remove debug trace return new Position(geoLocation.getLatitude(),
+		 * geoLocation.getLongitude()); } else {
+		 * System.out.println("***** StaticInfo.getPosition : no geo"); //TODO:
+		 * remove debug trace } }
+		 * System.out.println("***** StaticInfo.getPosition : NO NEXT"); //TODO:
+		 * remove debug trace } else {
+		 * System.out.println("***** StaticInfo.getPosition : md="+md); //TODO:
+		 * remove debug trace
+		 * System.out.println("***** StaticInfo.getPosition : NULL"); //TODO:
+		 * remove debug trace }
+		 */
 		return null;
 	}
 
@@ -1122,37 +1144,55 @@ public class StaticInfo {
 		return accessFromSomeDays;
 	}
 
-	public static void main(String[] args) {
-		File jpegFile = new File("c:/trans/test2.jpg");
-		Metadata metadata;
-		try {
-			metadata = ImageMetadataReader.readMetadata(jpegFile);
-			for (Directory directory : metadata.getDirectories()) {
-				for (Tag tag : directory.getTags()) {
-					// System.out.println(tag);
-				}
-			}
+	/*
+	 * public static void main(String[] args) { //File jpegFile = new
+	 * File("c:/trans/test3.jpg"); File jpegFile = new File(
+	 * "C:/Users/pvandermaesen/data/javlo/data-ctx/data-sexy/static/galleries/alone/test3.jpg"
+	 * );
+	 * 
+	 * Metadata metadata; try { metadata =
+	 * ImageMetadataReader.readMetadata(jpegFile); for (Directory directory :
+	 * metadata.getDirectories()) { for (Tag tag : directory.getTags()) {
+	 * System.out.println(tag); } }
+	 * 
+	 * 
+	 * Metadata md = metadata; if (md != null &&
+	 * md.getDirectoriesOfType(GpsDirectory.class) != null) {
+	 * Iterator<GpsDirectory> directories =
+	 * md.getDirectoriesOfType(GpsDirectory.class).iterator(); if
+	 * (directories.hasNext()) { GpsDirectory gpsDirectory = (GpsDirectory)
+	 * directories.next(); GeoLocation geoLocation =
+	 * gpsDirectory.getGeoLocation(); if (geoLocation != null) {
+	 * System.out.println("geoLocation.getLatitude() = " +
+	 * geoLocation.getLatitude());
+	 * System.out.println("geoLocation.getLongitude() = " +
+	 * geoLocation.getLongitude()); System.out.println("localisation : " +
+	 * LocationService.getLocation(geoLocation.getLatitude(),
+	 * geoLocation.getLongitude(), "fr").getFullLocality()); } } }
+	 * 
+	 * ExifSubIFDDirectory directory =
+	 * metadata.getFirstDirectoryOfType(ExifSubIFDDirectory.class); // query the
+	 * tag's value if (directory != null) { System.out.println("date : " +
+	 * directory.getDate(ExifSubIFDDirectory.TAG_DATETIME_ORIGINAL)); } } catch
+	 * (ImageProcessingException e) { // TODO Auto-generated catch block
+	 * e.printStackTrace(); } catch (IOException e) { // TODO Auto-generated
+	 * catch block e.printStackTrace(); }
+	 * 
+	 * }
+	 */
 
-			GpsDirectory gpsDirectory = (GpsDirectory) metadata.getDirectoriesOfType(GpsDirectory.class).iterator().next();
-			GeoLocation geoLocation = gpsDirectory.getGeoLocation();
 
-			System.out.println("geoLocation.getLatitude() = " + geoLocation.getLatitude());
-			System.out.println("geoLocation.getLongitude() = " + geoLocation.getLongitude());
-			System.out.println("localisation : " + LocationService.getLocation(geoLocation.getLatitude(), geoLocation.getLongitude(), "fr").getFullLocality());
+	public static void main(String[] args) throws ImageReadException, IOException {
 
-			ExifSubIFDDirectory directory = metadata.getFirstDirectoryOfType(ExifSubIFDDirectory.class);
-			// query the tag's value
-			if (directory != null) {
-				System.out.println("date : " + directory.getDate(ExifSubIFDDirectory.TAG_DATETIME_ORIGINAL));
-			}
-		} catch (ImageProcessingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		File jpegFile = new File("c:/trans/test3.jpg");
+		// File jpegFile = new
+		// File("C:/Users/pvandermaesen/data/javlo/data-ctx/data-sexy/static/galleries/alone/test3.jpg");
+
+		final ImageMetadata metadata = Imaging.getMetadata(jpegFile);
+		if (metadata instanceof JpegImageMetadata) {
+			System.out.println("pos  = "+ExifHelper.readPosition(jpegFile));
+			System.out.println("date = "+ExifHelper.readDate(jpegFile));
 		}
-
 	}
 
 	private static String getAccessKey(Date date) {
@@ -1271,31 +1311,32 @@ public class StaticInfo {
 		return versionHash + getCRC32();
 	}
 
-	private Metadata getImageMetadata() {
-		if (imageMetadata == null) {
-			if (StringHelper.isImage(getFile().getName()) && getFile().exists()) {
-				try {
-					imageMetadata = ImageMetadataReader.readMetadata(getFile());
-				} catch (ImageProcessingException e) {
-					logger.warning("[" + getFile() + "] error : " + e.getMessage());
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-		}
-		return imageMetadata;
-	}
+	/*
+	 * private Metadata getImageMetadata() { if (imageMetadata == null) { if
+	 * (StringHelper.isImage(getFile().getName()) && getFile().exists()) { try {
+	 * imageMetadata = ImageMetadataReader.readMetadata(getFile()); } catch
+	 * (ImageProcessingException e) { logger.warning("[" + getFile() +
+	 * "] error : " + e.getMessage()); } catch (IOException e) {
+	 * e.printStackTrace(); } } } return imageMetadata; }
+	 */
 
 	public Date getExifDate() {
-		Metadata md = getImageMetadata();
-		if (md != null) {
-			// obtain the Exif directory
-			ExifSubIFDDirectory directory = md.getFirstDirectoryOfType(ExifSubIFDDirectory.class);
-			// query the tag's value
-			if (directory != null) {
-				return directory.getDate(ExifSubIFDDirectory.TAG_DATETIME_ORIGINAL);
-			}
+		
+		try {
+			return ExifHelper.readDate(getFile());
+		} catch (ImageReadException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
+		
+		/*
+		 * Metadata md = getImageMetadata(); if (md != null) { // obtain the
+		 * Exif directory ExifSubIFDDirectory directory =
+		 * md.getFirstDirectoryOfType(ExifSubIFDDirectory.class); // query the
+		 * tag's value if (directory != null) { return
+		 * directory.getDate(ExifSubIFDDirectory.TAG_DATETIME_ORIGINAL); } }
+		 */
 		return null;
 	}
 
