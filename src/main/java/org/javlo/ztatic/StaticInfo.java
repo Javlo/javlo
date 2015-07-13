@@ -25,12 +25,7 @@ import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.imaging.ImageReadException;
 import org.apache.commons.imaging.Imaging;
 import org.apache.commons.imaging.common.ImageMetadata;
-import org.apache.commons.imaging.common.RationalNumber;
 import org.apache.commons.imaging.formats.jpeg.JpegImageMetadata;
-import org.apache.commons.imaging.formats.tiff.TiffField;
-import org.apache.commons.imaging.formats.tiff.TiffImageMetadata;
-import org.apache.commons.imaging.formats.tiff.constants.GpsTagConstants;
-import org.apache.commons.imaging.formats.tiff.taginfos.TagInfo;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.javlo.cache.ICache;
@@ -91,7 +86,7 @@ public class StaticInfo {
 
 		@Override
 		public String toString() {
-			return getLatitude() + ", " + getLongitude();
+			return getLatitude() + "," + getLongitude();
 		}
 
 	}
@@ -463,6 +458,8 @@ public class StaticInfo {
 
 	private Date date;
 
+	private String id = null;
+
 	/**
 	 * false if date come from last modified of the file.
 	 */
@@ -739,6 +736,19 @@ public class StaticInfo {
 		String key = getKey("title-" + ctx.getRequestContentLanguage());
 		String title = content.getAttribute(ctx, key, "");
 		return title;
+	}
+
+	public String getId(ContentContext ctx) {
+		if (id == null) {
+			ContentService content = ContentService.getInstance(ctx.getRequest());
+			String key = getKey("id-" + ctx.getRequestContentLanguage());
+			id = content.getAttribute(ctx, key, "");
+			if (id.trim().length() == 0) {
+				id = StringHelper.getRandomId();
+				content.setAttribute(ctx, key, id);
+			}
+		}
+		return id;
 	}
 
 	public void setTitle(ContentContext ctx, String title) {
@@ -1182,7 +1192,6 @@ public class StaticInfo {
 	 * }
 	 */
 
-
 	public static void main(String[] args) throws Exception {
 
 		File jpegFile = new File("c:/trans/test_local.jpg");
@@ -1192,17 +1201,17 @@ public class StaticInfo {
 
 		final ImageMetadata metadata = Imaging.getMetadata(jpegFile);
 		if (metadata instanceof JpegImageMetadata) {
-			System.out.println("pos  = "+ExifHelper.readPosition(jpegFile));
-			System.out.println("date = "+ExifHelper.readDate(jpegFile));
+			System.out.println("pos  = " + ExifHelper.readPosition(jpegFile));
+			System.out.println("date = " + ExifHelper.readDate(jpegFile));
 		}
-		
+
 		BufferedImage bi = ImageIO.read(jpegFile);
 		bi = ImageEngine.resizeWidth(bi, 1024, false);
 		ImageIO.write(bi, "jpg", target);
-		
-		//ExifHelper.setExifGPSTag(jpegFile, target);
-		
-		ImageMetadata md = ExifHelper.readMetadata(jpegFile);		
+
+		// ExifHelper.setExifGPSTag(jpegFile, target);
+
+		ImageMetadata md = ExifHelper.readMetadata(jpegFile);
 		ExifHelper.writeMetadata(md, target);
 	}
 
@@ -1332,7 +1341,6 @@ public class StaticInfo {
 	 */
 
 	public Date getExifDate() {
-		
 		try {
 			return ExifHelper.readDate(getFile());
 		} catch (ImageReadException e) {
@@ -1340,7 +1348,7 @@ public class StaticInfo {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
+
 		/*
 		 * Metadata md = getImageMetadata(); if (md != null) { // obtain the
 		 * Exif directory ExifSubIFDDirectory directory =

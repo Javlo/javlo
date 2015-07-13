@@ -793,9 +793,12 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 					previewURL = URLHelper.createTransformURL(lgCtx, getPage(), getImageFilePath(ctx, fileName), getTransformFilter(file));
 				}
 
+				resource.setId(info.getId(lgCtx));
+				resource.setName(file.getName());
 				resource.setTitle(info.getTitle(lgCtx));
 				resource.setRelation(getHTMLRelation(lgCtx));
 				resource.setLocation(info.getLocation(lgCtx));
+				resource.setCopyright(info.getCopyright(lgCtx));
 				resource.setDescription(info.getDescription(lgCtx));
 				resource.setFullDescription(StringHelper.removeTag(info.getFullDescription(lgCtx)));
 				resource.setDate(info.getDate(lgCtx));
@@ -807,6 +810,9 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 				resource.setLanguage(lgCtx.getRequestContentLanguage());
 				resource.setIndex(info.getAccessFromSomeDays(lgCtx));
 				resource.setPath(info.getFile().getAbsolutePath());
+				if (info.getPosition(lgCtx) != null) {
+					resource.setGpsPosition(info.getPosition(lgCtx).toString());
+				}
 
 				allURL.put(resource.getURL(), resource);
 

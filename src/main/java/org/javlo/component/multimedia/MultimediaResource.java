@@ -106,14 +106,17 @@ public class MultimediaResource {
 	private String description;
 	private String fullDescription;
 	private String shortDate;
+	private String copyright;
 	private String mediumDate;
 	private String fullDate;
+	private String name;
 	private Date date;
 	private String cssClass;
 	private String title;
 	private String relation;
 	private int index;
 	private String location;
+	private String gpsPosition;
 	private String language;
 	private String accessURL;
 	private final List<MultimediaResource> translation = new LinkedList<MultimediaResource>();
@@ -374,5 +377,29 @@ public class MultimediaResource {
 
 	public void setId(String id) {
 		this.id = id;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getGpsPosition() {
+		return gpsPosition;
+	}
+
+	public void setGpsPosition(String gpsPosition) {
+		this.gpsPosition = gpsPosition;
+	}
+
+	public String getCopyright() {
+		return copyright;
+	}
+
+	public void setCopyright(String copyright) {
+		this.copyright = copyright;
 	}
 }
