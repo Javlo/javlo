@@ -106,6 +106,10 @@ public class StaticInfo {
 				this.folder = null;
 			}
 		}
+		
+		public String getId() {
+			return staticInfo.getId(ctx);
+		}
 
 		public String getTitle() {
 			return staticInfo.getManualTitle(ctx);
@@ -113,6 +117,10 @@ public class StaticInfo {
 
 		public String getDescription() {
 			return staticInfo.getManualDescription(ctx);
+		}
+		
+		public String getCopyright() {
+			return staticInfo.getCopyright(ctx);
 		}
 
 		public String getLocation() {
@@ -127,7 +135,7 @@ public class StaticInfo {
 				return null;
 			}
 		}
-
+		
 		public String getShortDate() {
 			try {
 				return StringHelper.renderShortDate(ctx, staticInfo.getDate(ctx));
@@ -174,6 +182,10 @@ public class StaticInfo {
 
 		public Position getPosition() {
 			return staticInfo.getPosition(ctx);
+		}
+		
+		public String getName() {
+			return staticInfo.getFile().getName();
 		}
 
 	}
