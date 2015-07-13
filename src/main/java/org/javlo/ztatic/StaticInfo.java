@@ -55,7 +55,7 @@ public class StaticInfo {
 
 	/**
 	 * create a static logger.
-	 */
+	 */ 
 	protected static Logger logger = Logger.getLogger(StaticInfo.class.getName());
 
 	public static final class Position {
