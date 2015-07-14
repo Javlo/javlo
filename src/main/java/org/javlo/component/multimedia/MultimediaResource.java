@@ -123,6 +123,7 @@ public class MultimediaResource {
 	private String gpsPosition;
 	private String language;
 	private String accessURL;
+	private boolean freeAccess = true;
 	private final List<MultimediaResource> translation = new LinkedList<MultimediaResource>();
 	private List<String> tags;
 
@@ -437,5 +438,13 @@ public class MultimediaResource {
 
 	public void setAccessToken(String accessToken) {
 		this.accessToken = accessToken;
+	}
+
+	public boolean isFreeAccess() {
+		return freeAccess;
+	}
+
+	public void setFreeAccess(boolean publik) {
+		this.freeAccess = publik;
 	}
 }
