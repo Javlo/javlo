@@ -1,5 +1,8 @@
 package org.javlo.helper;
 
+import java.util.Calendar;
+import java.util.Date;
+
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
 
@@ -43,30 +46,6 @@ public class StringSecurityUtil {
 		return finalKey;
 
 	}
-
-	/*
-	 * public static String encode(String data, String inKey) throws Exception {
-	 * if (data.length() > charList.length()) { throw new
-	 * Exception("encoded data to big : "+data); } String key =
-	 * generateFinalKey(inKey); StringBuffer encodedData = new StringBuffer();
-	 * char[] dataChars = data.toCharArray(); for (int i = 0; i <
-	 * dataChars.length; i++) { char newChar = DELIMITER; int keyPos =
-	 * key.indexOf(dataChars[i]); if (keyPos != -1) { newChar =
-	 * charList.charAt(keyPos); } if (newChar == DELIMITER) {
-	 * encodedData.append(DELIMITER); encodedData.append(dataChars[i]); } else {
-	 * encodedData.append(newChar); } } if (encodedData.length() >
-	 * charList.length()) { throw new Exception("encoded data to big : "+data);
-	 * } return encodedData.toString(); }
-	 *
-	 * public static String decode(String data, String inKey) { String key =
-	 * generateFinalKey(inKey); StringBuffer decodedData = new StringBuffer();
-	 * char[] dataChars = data.toCharArray(); int realPos = 0; for (int i = 0; i
-	 * < dataChars.length; i++) { char newChar = dataChars[i]; if (newChar ==
-	 * DELIMITER) { i++; newChar = dataChars[i]; } else { int keyPos =
-	 * charList.indexOf(dataChars[i]); if (keyPos != -1) { newChar =
-	 * getCharWithInfinitePosition(key, keyPos); } } realPos++;
-	 * decodedData.append(newChar); } return decodedData.toString(); }
-	 */
 
 	private static String keyOnBytes(String key, int sizeInByte) {
 		while (key.getBytes().length < sizeInByte) {
@@ -132,6 +111,27 @@ public class StringSecurityUtil {
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * return a access token valid for specified time
+	 * @param time time in seconds
+	 * @return access token
+	 */
+	public static String getTimeAccessToken(int time) {
+		return ""+((new Date()).getTime()+(time*1000))+StringHelper.getRandomString(12, StringHelper.ALPHANUM);
+	}
+	
+	public static boolean isValidAccessToken(String token) {
+		if (token == null || token.length() < 14) {
+			return false;
+		} else {
+			String timeStr = token.substring(0, token.length()-12);
+			Calendar now = Calendar.getInstance();
+			Calendar endTokenCal = Calendar.getInstance();
+			endTokenCal.setTime(new Date(Long.parseLong(timeStr)));
+			return endTokenCal.after(now);
 		}
 	}
 

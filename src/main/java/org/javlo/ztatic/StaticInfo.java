@@ -35,6 +35,7 @@ import org.javlo.context.GlobalContext;
 import org.javlo.helper.ExifHelper;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
+import org.javlo.helper.StringSecurityUtil;
 import org.javlo.helper.URLHelper;
 import org.javlo.image.ImageEngine;
 import org.javlo.navigation.MenuElement;
@@ -43,6 +44,7 @@ import org.javlo.service.NavigationService;
 import org.javlo.service.PersistenceService;
 import org.javlo.service.exception.ServiceException;
 import org.javlo.service.location.LocationService;
+import org.javlo.user.User;
 import org.javlo.ztatic.InitInterest.Point;
 
 public class StaticInfo {
@@ -55,7 +57,7 @@ public class StaticInfo {
 
 	/**
 	 * create a static logger.
-	 */ 
+	 */
 	protected static Logger logger = Logger.getLogger(StaticInfo.class.getName());
 
 	public static final class Position {
@@ -106,7 +108,7 @@ public class StaticInfo {
 				this.folder = null;
 			}
 		}
-		
+
 		public String getId() {
 			return staticInfo.getId(ctx);
 		}
@@ -118,13 +120,17 @@ public class StaticInfo {
 		public String getDescription() {
 			return staticInfo.getManualDescription(ctx);
 		}
-		
+
 		public String getCopyright() {
 			return staticInfo.getCopyright(ctx);
 		}
 
 		public String getLocation() {
 			return staticInfo.getManualLocation(ctx);
+		}
+
+		public String getAccessToken() {
+			return staticInfo.getAccessToken(ctx);
 		}
 
 		public String getFullTitle() {
@@ -135,7 +141,7 @@ public class StaticInfo {
 				return null;
 			}
 		}
-		
+
 		public String getShortDate() {
 			try {
 				return StringHelper.renderShortDate(ctx, staticInfo.getDate(ctx));
@@ -183,7 +189,7 @@ public class StaticInfo {
 		public Position getPosition() {
 			return staticInfo.getPosition(ctx);
 		}
-		
+
 		public String getName() {
 			return staticInfo.getFile().getName();
 		}
@@ -1455,4 +1461,34 @@ public class StaticInfo {
 		}
 		return title;
 	}
+
+	public Boolean canRead(ContentContext ctx, User user, String accessToken) {
+		if (accessToken != null && accessToken.equals(getAccessToken(ctx))) {
+			return true;
+		}
+		List<String> roles = getReadRoles(ctx);
+		if (roles == null || roles.size() == 0) {
+			return true;
+		}
+		if (user == null) {
+			return false;
+		} else {
+			return !Collections.disjoint(roles, user.getUserInfo().getRoles());
+		}
+	}
+
+	public void setAccessToken(ContentContext ctx, String token) {
+		ctx.getGlobalContext().setTimeAttribute(getKey("accesstoken"), token, 120);
+	}
+
+	public String getAccessToken(ContentContext ctx) {
+		String key = getKey("accesstoken");		
+		String token = (String) ctx.getGlobalContext().getTimeAttribute(key);		
+		if (token == null) {			
+			token = StringHelper.getRandomString(32, StringHelper.ALPHANUM);
+			setAccessToken(ctx, token);
+		}
+		return token;
+	}
+
 }

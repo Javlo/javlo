@@ -23,6 +23,7 @@ import org.javlo.helper.URLHelper;
 import org.javlo.service.syncro.FileStructureFactory;
 import org.javlo.tracking.Track;
 import org.javlo.tracking.Tracker;
+import org.javlo.user.AdminUserFactory;
 import org.javlo.user.IUserFactory;
 import org.javlo.user.User;
 import org.javlo.user.UserFactory;
@@ -118,7 +119,7 @@ public class ResourceServlet extends HttpServlet {
 			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 			return;
 		}
-
+		
 		/* TRACKING */
 		GlobalContext globalContext = GlobalContext.getInstance(request);
 		IUserFactory fact = UserFactory.createUserFactory(globalContext, request.getSession());
@@ -170,10 +171,14 @@ public class ResourceServlet extends HttpServlet {
 			if (!pathInfo.equals(FILE_INFO)) {
 				File file = new File(URLHelper.mergePath(dataFolder, resourceURI));
 				StaticInfo info = StaticInfo.getInstance(ctx, file);
-				if (!UserSecurity.isCurrentUserCanRead(ctx, info)) {
-					response.setStatus(401);
-					return;
+				
+				if (AdminUserFactory.createUserFactory(ctx.getGlobalContext(), request.getSession()).getCurrentUser(request.getSession()) == null) {
+					if (!info.canRead(ctx, UserFactory.createUserFactory(ctx.getGlobalContext(), request.getSession()).getCurrentUser(request.getSession()), request.getParameter(ImageTransformServlet. RESOURCE_TOKEN_KEY))) {
+						response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+						return;
+					}
 				}
+				
 				if (file.exists()) {
 					response.setContentLength((int) file.length());
 					StaticInfo.getInstance(ctx, file).addAccess(ctx);

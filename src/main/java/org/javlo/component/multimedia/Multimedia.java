@@ -817,6 +817,9 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 
 				resource.setId(info.getId(lgCtx));
 				resource.setName(file.getName());
+				if (info.getReadRoles(absCtx).size() > 0) {
+					resource.setAccessToken(info.getAccessToken(ctx));
+				}
 				resource.setTitle(info.getTitle(lgCtx));
 				resource.setRelation(getHTMLRelation(lgCtx));
 				resource.setLocation(info.getLocation(lgCtx));

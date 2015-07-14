@@ -9,6 +9,7 @@ import java.util.List;
 import org.javlo.context.ContentContext;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
+import org.javlo.servlet.ImageTransformServlet;
 
 public class MultimediaResource {
 
@@ -116,6 +117,7 @@ public class MultimediaResource {
 	private String cssClass;
 	private String title;
 	private String relation;
+	private String accessToken;
 	private int index;
 	private String location;
 	private String gpsPosition;
@@ -406,7 +408,11 @@ public class MultimediaResource {
 	}
 
 	public String getAbsoluteURL() {
-		return absoluteURL;
+		if (getAccessToken() != null) {
+			return URLHelper.addParam(absoluteURL, ImageTransformServlet.RESOURCE_TOKEN_KEY, getAccessToken());
+		} else {
+			return absoluteURL;
+		}
 	}
 
 	public void setAbsoluteURL(String absoluteURL) {
@@ -414,10 +420,22 @@ public class MultimediaResource {
 	}
 
 	public String getAbsolutePreviewURL() {
-		return absolutePreviewURL;
+		if (getAccessToken() != null) {
+			return URLHelper.addParam(absolutePreviewURL, ImageTransformServlet.RESOURCE_TOKEN_KEY, getAccessToken());
+		} else {
+			return absolutePreviewURL;
+		}
 	}
 
 	public void setAbsolutePreviewURL(String absolutePreviewURL) {
 		this.absolutePreviewURL = absolutePreviewURL;
+	}
+
+	public String getAccessToken() {
+		return accessToken;
+	}
+
+	public void setAccessToken(String accessToken) {
+		this.accessToken = accessToken;
 	}
 }

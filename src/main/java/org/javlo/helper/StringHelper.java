@@ -56,7 +56,6 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.validator.routines.EmailValidator;
 import org.javlo.component.list.FreeTextList;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
@@ -80,13 +79,13 @@ public class StringHelper {
 
 	public static final String REQUEST_KEY_FORM_VALID = "__form_request_valid__";
 
-	public static String alphabet = "abcdefghijklmnopqrstuvwxyz";
+	public static final String ALPHABET = "abcdefghijklmnopqrstuvwxyz";
 
-	public static String numeric = "0123456789";
+	public static final String NUMERIC = "0123456789";
 
-	public static final String BASIC_CHAR = alphabet.toLowerCase() + alphabet.toUpperCase() + numeric + "_-+= ,.;:*|&\"'";
+	public static final String BASIC_CHAR = ALPHABET.toLowerCase() + ALPHABET.toUpperCase() + NUMERIC + "_-+= ,.;:*|&\"'";
 
-	public static String alphaNum = alphabet + numeric;
+	public static final String ALPHANUM = ALPHABET + NUMERIC;
 
 	public static String specialChar = " &\u00e9\"'(\u00a7\u00e8!\u00e7\u00e0)-^$\u00f9\u00b5=:;,+/.?\u00a3%*\u00a8_\u00b0\u00b2\u00b3|@#{[^\u00e8!{})";
 
@@ -606,16 +605,16 @@ public class StringHelper {
 
 		// find code size
 		int codeLength = 1;
-		double maxLenghtPosible = Math.pow(alphaNum.length(), codeLength) - noChars.length() * codeLength;
+		double maxLenghtPosible = Math.pow(ALPHANUM.length(), codeLength) - noChars.length() * codeLength;
 		while (maxLenghtPosible < data.length()) {
 			codeLength++;
-			maxLenghtPosible = Math.pow(alphaNum.length(), codeLength) - noChars.length() * codeLength;
+			maxLenghtPosible = Math.pow(ALPHANUM.length(), codeLength) - noChars.length() * codeLength;
 		}
 
 		for (int i = 0; i < noChars.length(); i++) {
-			String code = RandomStringUtils.random(codeLength, alphaNum.toCharArray());
+			String code = RandomStringUtils.random(codeLength, ALPHANUM.toCharArray());
 			while (outData.contains(code)) {
-				code = RandomStringUtils.random(codeLength, alphaNum.toCharArray());
+				code = RandomStringUtils.random(codeLength, ALPHANUM.toCharArray());
 			}
 			outData = StringUtils.replace(outData, "" + noChars.charAt(i), code);
 			footer = footer + code;
@@ -3146,9 +3145,9 @@ public class StringHelper {
 		while (number > 25) {
 			int modNumber = number % 25;
 			number = number - 26;
-			outStr.insert(0, StringHelper.alphabet.charAt(modNumber));
+			outStr.insert(0, StringHelper.ALPHABET.charAt(modNumber));
 		}
-		outStr.insert(0, StringHelper.alphabet.charAt(number));
+		outStr.insert(0, StringHelper.ALPHABET.charAt(number));
 		return outStr.toString();
 	}
 
