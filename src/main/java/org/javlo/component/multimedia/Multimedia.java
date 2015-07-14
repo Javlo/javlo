@@ -230,6 +230,7 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 		MultimediaResource resource = new MultimediaResource();
 		ContentContext lgCtx = getValidVideoCtx(ctx, video);
 		resource.setURL(video.getURL(lgCtx));
+		resource.setAbsoluteURL(video.getURL(lgCtx.getContextForAbsoluteURL()));
 		resource.setDescription(video.getImageDescription(lgCtx));
 		resource.setPreviewURL(video.getPreviewURL(ctx, getImageFilter(lgCtx)));
 		resource.setDate(video.getDate(lgCtx));
@@ -773,6 +774,7 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 			if (acceptStaticInfo(ctx, info)) {
 
 				String multimediaURL = URLHelper.createResourceURL(lgCtx, getPage(), getMultimediaFileURL(ctx, currentLg, file));
+				String absoluteMultimediaURL = URLHelper.createResourceURL(lgCtx.getContextForAbsoluteURL(), getPage(), getMultimediaFileURL(ctx, currentLg, file));
 
 				String previewURL = multimediaURL;
 				String fileName = ResourceHelper.removeDataFolderDir(globalContext, file.getAbsolutePath());
@@ -806,6 +808,7 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 				resource.setMediumDate(StringHelper.renderDate(resource.getDate(), globalContext.getMediumDateFormat()));
 				resource.setFullDate(StringHelper.renderDate(resource.getDate(), globalContext.getFullDateFormat()));
 				resource.setURL(multimediaURL);
+				resource.setAbsoluteURL(absoluteMultimediaURL);
 				resource.setTags(info.getTags(lgCtx));
 				resource.setLanguage(lgCtx.getRequestContentLanguage());
 				resource.setIndex(info.getAccessFromSomeDays(lgCtx));

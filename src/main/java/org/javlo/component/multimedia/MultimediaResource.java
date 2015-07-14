@@ -101,6 +101,7 @@ public class MultimediaResource {
 
 	private String id;
 	private String URL;
+	private String absoluteURL;
 	private String previewURL;
 	private String path;
 	private String description;
@@ -401,5 +402,13 @@ public class MultimediaResource {
 
 	public void setCopyright(String copyright) {
 		this.copyright = copyright;
+	}
+
+	public String getAbsoluteURL() {
+		return absoluteURL;
+	}
+
+	public void setAbsoluteURL(String absoluteURL) {
+		this.absoluteURL = absoluteURL;
 	}
 }

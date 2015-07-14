@@ -251,6 +251,7 @@ public class FolderedMultimedia extends TimeRangeComponent implements IImageTitl
 		MultimediaResource resource = new MultimediaResource();
 		ContentContext lgCtx = getValidVideoCtx(ctx, video);
 		resource.setURL(video.getURL(lgCtx));
+		resource.setAbsoluteURL(video.getURL(lgCtx.getContextForAbsoluteURL()));
 		resource.setDescription(video.getImageDescription(lgCtx));
 		resource.setPreviewURL(video.getPreviewURL(ctx, getImageFilter(lgCtx)));
 		resource.setDate(video.getDate(lgCtx));
