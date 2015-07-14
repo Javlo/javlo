@@ -103,6 +103,7 @@ public class MultimediaResource {
 	private String URL;
 	private String absoluteURL;
 	private String previewURL;
+	private String absolutePreviewURL;
 	private String path;
 	private String description;
 	private String fullDescription;
@@ -410,5 +411,13 @@ public class MultimediaResource {
 
 	public void setAbsoluteURL(String absoluteURL) {
 		this.absoluteURL = absoluteURL;
+	}
+
+	public String getAbsolutePreviewURL() {
+		return absolutePreviewURL;
+	}
+
+	public void setAbsolutePreviewURL(String absolutePreviewURL) {
+		this.absolutePreviewURL = absolutePreviewURL;
 	}
 }

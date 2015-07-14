@@ -232,6 +232,7 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 		resource.setURL(video.getURL(lgCtx));
 		resource.setAbsoluteURL(video.getURL(lgCtx.getContextForAbsoluteURL()));
 		resource.setDescription(video.getImageDescription(lgCtx));
+		resource.setAbsolutePreviewURL(video.getPreviewURL(ctx.getContextForAbsoluteURL(), getImageFilter(lgCtx)));
 		resource.setPreviewURL(video.getPreviewURL(ctx, getImageFilter(lgCtx)));
 		resource.setDate(video.getDate(lgCtx));
 		resource.renderDate(lgCtx);
@@ -794,6 +795,25 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 				} else {
 					previewURL = URLHelper.createTransformURL(lgCtx, getPage(), getImageFilePath(ctx, fileName), getTransformFilter(file));
 				}
+				
+				String absolutePreviewURL = multimediaURL;			
+				ContentContext absCtx = lgCtx.getContextForAbsoluteURL();
+				if (StringHelper.isImage(file.getName())) {
+					if (countAccess) {
+						absolutePreviewURL = URLHelper.createTransformURL(absCtx, getPage(), getImageFilePath(ctx, fileName), getPreviewFilter(file));
+					} else {
+						absolutePreviewURL = URLHelper.createTransformURLWithoutCountAccess(absCtx, getImageFilePath(ctx, fileName), getPreviewFilter(file));
+					}
+				} else if (StringHelper.isVideo(file.getName())) {
+					String imageName = StringHelper.getFileNameWithoutExtension(fileName) + ".jpg";
+					if (countAccess) {
+						absolutePreviewURL = URLHelper.createTransformURL(absCtx, getPage(), getImageFilePath(ctx, imageName), getPreviewFilter(file));
+					} else {
+						absolutePreviewURL = URLHelper.createTransformURLWithoutCountAccess(absCtx, getImageFilePath(ctx, imageName), getPreviewFilter(file));
+					}
+				} else {
+					absolutePreviewURL = URLHelper.createTransformURL(absCtx, getPage(), getImageFilePath(ctx, fileName), getTransformFilter(file));
+				}
 
 				resource.setId(info.getId(lgCtx));
 				resource.setName(file.getName());
@@ -820,6 +840,7 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 				allURL.put(resource.getURL(), resource);
 
 				resource.setPreviewURL(previewURL);
+				resource.setAbsolutePreviewURL(absolutePreviewURL);
 
 				if (isRenderInfo(ctx)) {
 					allResource.add(resource);
