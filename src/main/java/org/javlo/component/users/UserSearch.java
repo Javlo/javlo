@@ -226,6 +226,11 @@ public class UserSearch extends AbstractVisualComponent implements IAction {
 				out.println("<div class=\"data\"><span class=\"label\">Phone</span>");
 				out.println(user.getPhone() + "</div>");
 			}
+			if (user.getMobile().trim().length() > 0) {
+				out.println("<div class=\"data\"><span class=\"label\">Mobile</span>");
+				out.println(user.getMobile() + "</div>");
+			}
+
 			if (user.getEmail().trim().length() > 0) {
 				out.println("<div class=\"data\"><span class=\"label\">E-Mail</span>");
 				out.println("<a href=\"mailto:" + user.getEmail() + "\">" + user.getEmail() + "</a></div>");
