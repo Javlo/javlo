@@ -245,6 +245,33 @@
 	</div>
 </fieldset>
 
+<fieldset class="Attachments">
+<legend>${i18n.edit['user.files']}</legend>
+	<div class="col-xs-6">
+		<div class="form-group">
+			<label>${i18n.edit['user.current-files']}</label>
+			<c:if test="${fn:length(files)>0}">
+			<ul>
+			<c:forEach var="file" items="${files}">
+				<c:url var="delFile" value="${info.currentURL}">
+					<c:param name="webaction" value="deleteFile" />
+					<c:param name="name" value="${file.name}" />
+				</c:url>
+				<li><a href="${delFile}"><span class="glyphicon glyphicon-remove-circle"></span> </a><a target="_blank" href="${file.URL}">${file.name}</a>
+			</c:forEach>
+			</ul>
+			</c:if>
+		</div>
+	</div>
+	<div class="col-xs-6">
+		<div class="form-group">			
+			<label for="userFile">${i18n.edit['user.new-files']}</label>
+			<input type="file" id="userFile" name="userFile" /> 
+		</div>
+	</div>
+</fieldset>
+
+
 <div class="form-group btn-group">
 	<input class="btn btn-default pull-right" type="submit" name="ok" value="${i18n.edit['global.ok']}" />
 	<input class="btn btn-default pull-right btn-primary btn-color" type="submit" name="back" value="${i18n.edit['global.back']}" />

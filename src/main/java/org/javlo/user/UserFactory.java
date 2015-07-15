@@ -315,7 +315,6 @@ public class UserFactory implements IUserFactory, Serializable {
 				if (userInfoList == null) {
 					String userInfoPath = getFileName();
 					File userInfoFile = new File(userInfoPath);
-
 					if (!userInfoFile.exists()) {
 						logger.fine(userInfoFile.getPath() + " not found.");
 						return new LinkedList<IUserInfo>();

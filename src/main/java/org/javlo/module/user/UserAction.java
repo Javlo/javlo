@@ -54,6 +54,8 @@ import org.javlo.user.UserInfoSorting;
 import org.javlo.user.exception.UserAllreadyExistException;
 import org.javlo.utils.CSVFactory;
 import org.javlo.ztatic.FileCache;
+import org.javlo.ztatic.StaticInfo;
+import org.javlo.ztatic.StaticInfo.StaticInfoBean;
 
 public class UserAction extends AbstractModuleAction {
 
@@ -116,7 +118,7 @@ public class UserAction extends AbstractModuleAction {
 			if (user == null) {
 				return "user not found : " + requestService.getParameter("user", null);
 			}
-			
+
 			Map<String, String> userInfoMap = BeanHelper.bean2Map(user.getUserInfo());
 			ctx.getRequest().setAttribute("functions", LangHelper.collectionToMap(StringHelper.stringToCollection(userInfoMap.get("function"), ";")));
 
@@ -128,6 +130,15 @@ public class UserAction extends AbstractModuleAction {
 			keys.remove("encryptLogin");
 			keys.remove("rolesRaw");
 			ctx.getRequest().setAttribute("userInfoKeys", keys);
+
+			List<StaticInfoBean> files = new LinkedList<StaticInfoBean>();
+			File userFolder = new File(ctx.getGlobalContext().getUserFolder(user));
+			if (userFolder.isDirectory()) {
+				for (File file : userFolder.listFiles()) {
+					files.add(new StaticInfoBean(ctx, StaticInfo.getInstance(ctx, file)));
+				}
+			}
+			ctx.getRequest().setAttribute("files", files);
 
 		}
 
@@ -209,10 +220,21 @@ public class UserAction extends AbstractModuleAction {
 				}
 
 				String avatarFileName = userInfo.getLogin() + ".png";
-				File avatarFile = new File(URLHelper.mergePath(globalContext.getDataFolder(),
-						staticConfig.getAvatarFolder(), avatarFileName));
+				File avatarFile = new File(URLHelper.mergePath(globalContext.getDataFolder(), staticConfig.getAvatarFolder(), avatarFileName));
 				if (StringHelper.isTrue(requestService.getParameter("deleteAvatar", null))) {
 					avatarFile.delete();
+				}
+				FileItem userFile = requestService.getFileItem("userFile");
+				if (userFile != null && userFile.getSize() > 0) {
+					InputStream in = null;
+					try {
+						in = userFile.getInputStream();
+						File newFile = new File(URLHelper.mergePath(ctx.getGlobalContext().getUserFolder(user), userFile.getName()));
+						ResourceHelper.writeStreamToFile(in, newFile);
+					} finally {
+						ResourceHelper.safeClose(in);
+					}
+					FileCache.getInstance(ctx.getRequest().getSession().getServletContext()).deleteAllFile(globalContext.getContextKey(), avatarFileName);
 				}
 				FileItem newAvatar = requestService.getFileItem("avatar");
 				if (newAvatar != null && newAvatar.getSize() > 0) {
@@ -226,8 +248,7 @@ public class UserAction extends AbstractModuleAction {
 					} finally {
 						ResourceHelper.safeClose(in);
 					}
-					FileCache.getInstance(ctx.getRequest().getSession().getServletContext())
-							.deleteAllFile(globalContext.getContextKey(), avatarFileName);
+					FileCache.getInstance(ctx.getRequest().getSession().getServletContext()).deleteAllFile(globalContext.getContextKey(), avatarFileName);
 				}
 
 				userFactory.updateUserInfo(userInfo);
@@ -278,8 +299,8 @@ public class UserAction extends AbstractModuleAction {
 						newRoles.add(role);
 					}
 				}
-				
-				boolean admin = userFactory instanceof AdminUserFactory;				
+
+				boolean admin = userFactory instanceof AdminUserFactory;
 				IUserInfo ui = user.getUserInfo();
 				if (!admin || adminUserSecurity.haveRight(adminUserFactory.getCurrentUser(ctx.getRequest().getSession()), AdminUserSecurity.ADMIN_USER_ROLE, AdminUserSecurity.GENERAL_ADMIN)) {
 					ui.setRoles(newRoles);
@@ -479,8 +500,8 @@ public class UserAction extends AbstractModuleAction {
 
 				// if (userInfoList.size() > 0) {
 				if (!merge) {
-					userFact.clearUserInfoList();	
-				}				
+					userFact.clearUserInfoList();
+				}
 				for (Object element2 : userInfoList) {
 					IUserInfo element = (IUserInfo) element2;
 					try {
@@ -568,8 +589,8 @@ public class UserAction extends AbstractModuleAction {
 		int pageSize = Integer.parseInt(rs.getParameter("iDisplayLength", "10"));
 		int displayStart = Integer.parseInt(rs.getParameter("iDisplayStart", "0"));
 		int sortingCol = Integer.parseInt(rs.getParameter("iSortingCols", "0"));
-		boolean ascSorting = rs.getParameter("sSortDir_0",  "asc").equals("asc");
-		
+		boolean ascSorting = rs.getParameter("sSortDir_0", "asc").equals("asc");
+
 		switch (sortingCol) {
 		case 1:
 			Collections.sort(users, new UserInfoSorting(UserInfoSorting.LOGIN, ascSorting));
@@ -589,7 +610,7 @@ public class UserAction extends AbstractModuleAction {
 		default:
 			break;
 		}
-		
+
 		String query = rs.getParameter("sSearch", null);
 		if (query != null && query.trim().length() == 0) {
 			query = null;
@@ -601,17 +622,17 @@ public class UserAction extends AbstractModuleAction {
 		int record = 0;
 
 		for (IUserInfo userInfo : users) {
-			if (query == null || StringHelper.arrayToString(userInfo.getAllValues()).contains(query)) {				
+			if (query == null || StringHelper.arrayToString(userInfo.getAllValues()).contains(query)) {
 				if (record >= displayStart && record < displayStart + pageSize) {
-					out.print(sep + '[' + '"' + "<input type=\\\"checkbox\\\" name=\\\""+userInfo.getLogin()+"\\\" />" + '"' + ',');
-					Map<String,String> params = new HashMap<String, String>();
+					out.print(sep + '[' + '"' + "<input type=\\\"checkbox\\\" name=\\\"" + userInfo.getLogin() + "\\\" />" + '"' + ',');
+					Map<String, String> params = new HashMap<String, String>();
 					params.put("webaction", "edit");
 					params.put("cuser", userInfo.getEncryptLogin());
 					String editURL = URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.EDIT_MODE), params);
-					out.print('"' + "<a href=\\\""+editURL+"\\\">" + userInfo.getLogin() + "</a>" + '"' + ',');
+					out.print('"' + "<a href=\\\"" + editURL + "\\\">" + userInfo.getLogin() + "</a>" + '"' + ',');
 					out.print('"' + userInfo.getFirstName() + '"' + ',');
 					out.print('"' + userInfo.getLastName() + '"' + ',');
-					out.print('"' + userInfo.getEmail() + '"' + ',');					
+					out.print('"' + userInfo.getEmail() + '"' + ',');
 					out.print('"' + StringHelper.renderSortableTime(userInfo.getCreationDate()) + '"' + ']');
 					sep = ",";
 				}
@@ -633,6 +654,19 @@ public class UserAction extends AbstractModuleAction {
 		String json = new String(outStream.toByteArray());
 		ctx.setSpecificJson(json);
 
+		return null;
+	}
+
+	public static String performDeleteFile(RequestService rs, User user, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) {
+		File userFolder = new File(ctx.getGlobalContext().getUserFolder(user));
+		String fileName = rs.getParameter("name", null);
+		if (userFolder.isDirectory()) {
+			for (File file : userFolder.listFiles()) {
+				if (file.getName().equals(fileName)) {
+					file.delete();
+				}
+			}
+		}
 		return null;
 	}
 }

@@ -35,7 +35,6 @@ import org.javlo.context.GlobalContext;
 import org.javlo.helper.ExifHelper;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
-import org.javlo.helper.StringSecurityUtil;
 import org.javlo.helper.URLHelper;
 import org.javlo.image.ImageEngine;
 import org.javlo.navigation.MenuElement;
@@ -192,6 +191,10 @@ public class StaticInfo {
 
 		public String getName() {
 			return staticInfo.getFile().getName();
+		}
+		
+		public String getURL() {
+			return URLHelper.createResourceURL(ctx, staticInfo.getFile());
 		}
 
 	}
@@ -1489,6 +1492,10 @@ public class StaticInfo {
 			setAccessToken(ctx, token);
 		}
 		return token;
+	}
+	
+	public String getURL(ContentContext ctx) {
+		return URLHelper.createResourceURL(ctx, getFile());
 	}
 
 }

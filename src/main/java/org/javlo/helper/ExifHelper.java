@@ -49,16 +49,18 @@ public class ExifHelper {
 	}
 
 	public static Date readDate(File file) throws ImageReadException, IOException {
-		final ImageMetadata metadata = Imaging.getMetadata(file);
-		if (metadata instanceof JpegImageMetadata) {
-			final JpegImageMetadata jpegMetadata = (JpegImageMetadata) metadata;
-			final TiffField field = jpegMetadata.findEXIFValueWithExactMatch(ExifTagConstants.EXIF_TAG_DATE_TIME_ORIGINAL);
-			if (field != null) {
-				try {
-					SimpleDateFormat format = new SimpleDateFormat("yyyy:MM:dd HH:mm:ss");
-					return format.parse(field.getValue().toString());
-				} catch (ParseException e) {
-					e.printStackTrace();
+		if (StringHelper.isJpeg(file.getName())) {
+			final ImageMetadata metadata = Imaging.getMetadata(file);
+			if (metadata instanceof JpegImageMetadata) {
+				final JpegImageMetadata jpegMetadata = (JpegImageMetadata) metadata;
+				final TiffField field = jpegMetadata.findEXIFValueWithExactMatch(ExifTagConstants.EXIF_TAG_DATE_TIME_ORIGINAL);
+				if (field != null) {
+					try {
+						SimpleDateFormat format = new SimpleDateFormat("yyyy:MM:dd HH:mm:ss");
+						return format.parse(field.getValue().toString());
+					} catch (ParseException e) {
+						e.printStackTrace();
+					}
 				}
 			}
 		}
@@ -147,7 +149,7 @@ public class ExifHelper {
 
 	public static void writeMetadata(ImageMetadata metadata, final File file) throws ImageWriteException, ImageReadException, IOException {
 		OutputStream os = null;
-		boolean canThrow = false;		
+		boolean canThrow = false;
 		byte[] data = FileUtils.readFileToByteArray(file);
 		try {
 			final JpegImageMetadata jpegMetadata = (JpegImageMetadata) metadata;

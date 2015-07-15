@@ -82,6 +82,7 @@ import org.javlo.servlet.ImageTransformServlet;
 import org.javlo.template.Template;
 import org.javlo.user.AdminUserFactory;
 import org.javlo.user.IUserFactory;
+import org.javlo.user.IUserInfo;
 import org.javlo.user.User;
 import org.javlo.utils.BooleanBean;
 import org.javlo.utils.SmartMap;
@@ -108,7 +109,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	private AppendableTextFile redirectURLList = null;
 
 	private Properties redirectURLMap = null;
-
+	
 	private static class StorePropertyThread extends Thread {
 
 		private boolean stopStoreThread = false;
@@ -215,6 +216,8 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	public static final String LICENCE_CORPORATE = "corporate";
 
 	public static final String LOGO_FILE_NAME = "dynamic_template/logo.png";
+	
+	public static final String USERS_FOLDER = "users_files";
 
 	public GlobalContext(String contextKey) {
 		this.contextKey = contextKey;
@@ -3218,6 +3221,22 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		out.println("**** #viewPages        : " + viewPages.size());
 		out.println("****");
 
+	}
+	
+	public String getUserFolder(User user) {
+		if (user == null) {
+			return null;
+		} else {
+			return getUserFolder(user.getUserInfo());
+		}
+	}
+	
+	public String getUserFolder(IUserInfo user) {
+		if (user == null) {
+			return null;
+		} else {
+			return URLHelper.mergePath(getStaticFolder(),USERS_FOLDER,user.getUserFolder());
+		}
 	}
 
 }

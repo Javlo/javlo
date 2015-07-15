@@ -41,9 +41,9 @@ public class LoginLogoutLink extends AbstractVisualComponent {
 		PrintStream out = new PrintStream(outStream);
 		IUserFactory userFactory;
 		if (getStyle(ctx).equals(VISITOR)) {
-			userFactory = UserFactory.createUserFactory(ctx.getRequest());
+			userFactory = UserFactory.createUserFactory(ctx.getGlobalContext(), ctx.getRequest().getSession());
 		} else {
-			userFactory = AdminUserFactory.createUserFactory(ctx.getRequest());
+			userFactory = AdminUserFactory.createUserFactory(ctx.getGlobalContext(), ctx.getRequest().getSession());
 		}
 		User user = userFactory.getCurrentUser(ctx.getRequest().getSession());
 		if (user == null) {

@@ -1160,6 +1160,25 @@ public class StringHelper {
 		String ext = getFileExtension(fileName);
 		return isImageExtension(ext);
 	}
+	
+	/**
+	 * return true if the filename in a image for wcms (sp. : tif or psd in not
+	 * a image).
+	 * 
+	 * @param fileName
+	 *            file name with extension
+	 * @return true if file name is a image
+	 */
+	public static final boolean isJpeg(String fileName) {
+		if (fileName == null) {
+			return false;
+		}
+		if (fileName.contains("?")) {
+			fileName = fileName.substring(0, fileName.indexOf('?'));
+		}
+		String ext = getFileExtension(fileName);
+		return isJpgExtension(ext);
+	}
 
 	/**
 	 * return true if the filename in a image for wcms (sp. : tif or psd in not
@@ -1194,6 +1213,21 @@ public class StringHelper {
 		res = res || fileExtension.equalsIgnoreCase("jpeg");
 		res = res || fileExtension.equalsIgnoreCase("gif");
 		res = res || fileExtension.equalsIgnoreCase("png");
+		return res;
+	}
+	
+	/**
+	 * return true if the file extension is an image for wcms (sp. : tif or psd
+	 * is not an image).
+	 * 
+	 * @param fileExtension
+	 *            file extension
+	 * @return true if file name is a image
+	 * @see #getFileExtension(String)
+	 */
+	public static final boolean isJpgExtension(String fileExtension) {
+		boolean res = fileExtension.equalsIgnoreCase("jpg");
+		res = res || fileExtension.equalsIgnoreCase("jpeg");
 		return res;
 	}
 

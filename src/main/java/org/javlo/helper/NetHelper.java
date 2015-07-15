@@ -31,7 +31,6 @@ import org.javlo.component.core.ComponentBean;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
-import org.javlo.filter.LoginFilter;
 import org.javlo.image.ImageHelper;
 import org.javlo.image.ImageSize;
 import org.javlo.mailing.MailService;
@@ -39,6 +38,7 @@ import org.javlo.mailing.MailingBuilder;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.resource.Resource;
 import org.javlo.template.Template;
+import org.javlo.user.IUserFactory;
 import org.javlo.utils.MapCollectionWrapper;
 import org.javlo.ztatic.FileCache;
 
@@ -154,7 +154,7 @@ public class NetHelper {
 		try {
 			
 			if (userToken != null) {
-				url = new URL(URLHelper.addParam(url.toString(), LoginFilter.TOKEN_PARAM, userToken));
+				url = new URL(URLHelper.addParam(url.toString(), IUserFactory.TOKEN_PARAM, userToken));
 			}
 
 			String query = StringHelper.neverNull(url.getQuery(), "");

@@ -580,6 +580,11 @@ public class UserInfo implements Comparable<IUserInfo>, IUserInfo, Serializable 
 	public void setGender(String gender) {
 		this.gender = gender;
 	}
+
+	@Override
+	public String getUserFolder() {
+		return StringHelper.createFileName(getLogin());
+	}
 	
 	
 }

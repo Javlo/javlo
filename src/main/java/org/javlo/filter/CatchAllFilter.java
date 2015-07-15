@@ -55,6 +55,7 @@ import org.javlo.utils.DebugListening;
 
 public class CatchAllFilter implements Filter {
 
+	private static final String JAVLO_LOGIN_ID = "javlo_login_id";
 	/**
 	 * create a static logger.
 	 */
@@ -451,7 +452,7 @@ public class CatchAllFilter implements Filter {
 							if (request.getParameter("autologin") != null) {
 								DataToIDService service = DataToIDService.getInstance(httpRequest.getSession().getServletContext());
 								String codeId = service.setData(login, IUserFactory.AUTO_LOGIN_AGE_SEC);
-								RequestHelper.setCookieValue(httpResponse, "javlo_login_id", codeId, IUserFactory.AUTO_LOGIN_AGE_SEC, null);
+								RequestHelper.setCookieValue(httpResponse, JAVLO_LOGIN_ID, codeId, IUserFactory.AUTO_LOGIN_AGE_SEC, null);
 							}
 
 							if (login == null && httpRequest.getUserPrincipal() != null) {
@@ -474,25 +475,24 @@ public class CatchAllFilter implements Filter {
 			if (fact.getCurrentUser(((HttpServletRequest) request).getSession()) == null) {
 
 				/* AUTO LOGIN */
-				String autoLoginId = RequestHelper.getCookieValue(httpRequest, "javlo_login_id");
+				String autoLoginId = RequestHelper.getCookieValue(httpRequest, JAVLO_LOGIN_ID);
 				String autoLoginUser = null;
 				if (autoLoginId != null) {
 					DataToIDService service = DataToIDService.getInstance(httpRequest.getSession().getServletContext());
 					service.clearTimeData();
 					autoLoginUser = service.getData(autoLoginId);
-
 					if (autoLoginUser != null) {
-						logger.info("autologin for : " + autoLoginUser);
-						String msg = i18nAccess.getText("user.autologin", new String[][] { { "login", autoLoginUser } });
-						MessageRepository messageRepository = MessageRepository.getInstance(((HttpServletRequest) request));
-						messageRepository.setGlobalMessage(new GenericMessage(msg, GenericMessage.INFO));
-						newUser = true;
+						logger.info("try autologin for : " + autoLoginUser);						
 					}
 				}
 				if (autoLoginUser != null) {
 					IUserFactory adminFactory = AdminUserFactory.createUserFactory(globalContext, httpRequest.getSession());
 					User principalUser = adminFactory.autoLogin(httpRequest, autoLoginUser);
 					if (principalUser != null) {
+						String msg = i18nAccess.getText("user.autologin", new String[][] { { "login", principalUser.getLabel() } });
+						MessageRepository messageRepository = MessageRepository.getInstance(((HttpServletRequest) request));
+						messageRepository.setGlobalMessage(new GenericMessage(msg, GenericMessage.INFO));
+						newUser = true;
 						globalContext.addPrincipal(principalUser);
 						newUser = true;
 						if (request.getParameter("edit-login") != null) {
@@ -517,8 +517,8 @@ public class CatchAllFilter implements Filter {
 				if (editUser != null) {
 					if (request.getParameter("autologin") != null) {
 						DataToIDService service = DataToIDService.getInstance(httpRequest.getSession().getServletContext());
-						String codeId = service.setData(login, ((long) IUserFactory.AUTO_LOGIN_AGE_SEC) * 1000);
-						RequestHelper.setCookieValue(httpResponse, "javlo_login_id", codeId, IUserFactory.AUTO_LOGIN_AGE_SEC, null);
+						String codeId = service.setData(editUser.getLogin(), ((long) IUserFactory.AUTO_LOGIN_AGE_SEC) * 1000);
+						RequestHelper.setCookieValue(httpResponse, JAVLO_LOGIN_ID, codeId, IUserFactory.AUTO_LOGIN_AGE_SEC, null);
 					}
 					globalContext.addPrincipal(editUser);
 					globalContext.eventLogin(editUser.getLogin());

@@ -80,7 +80,7 @@ public class AdminUserFactory extends UserFactory {
 			return null;
 		}
 		List<IUserInfo> users = getUserInfoList();
-		for (IUserInfo user : users) {
+		for (IUserInfo user : users) {			
 			if (user.getLogin().equals(login)) {
 				if (master) {
 					user.addRoles(MASTER_ROLES);
@@ -113,15 +113,16 @@ public class AdminUserFactory extends UserFactory {
 	}
 
 	@Override
-	public User autoLogin(HttpServletRequest request, String login) {
+	public User autoLogin(HttpServletRequest request, String login) {		
 		GlobalContext globalCtx = GlobalContext.getInstance(request);
 		GlobalContext globalContext = GlobalContext.getInstance(request);
 		EditContext editCtx = EditContext.getInstance(globalContext, request.getSession());
 
 		boolean logged = request.getUserPrincipal() != null && request.getUserPrincipal().getName().equals(login);
 		
-		User currentUser = getCurrentUser(request.getSession());	
+		User currentUser = getCurrentUser(request.getSession());		
 		User user = getUser(login);
+		System.out.println("***** AdminUserFactory.autoLogin : user found = "+currentUser); //TODO: remove debug trace
 		if (currentUser != null && user != null && currentUser.getPassword().equals(user.getPassword())) {
 			return null;
 		} else if (user == null) {
@@ -129,8 +130,6 @@ public class AdminUserFactory extends UserFactory {
 			if (editCtx.getEditUser(login) != null && (logged || editCtx.hardAutoLogin(login))) {
 				user = createUser(login, (new HashSet(Arrays.asList(new String[] { AdminUserSecurity.GENERAL_ADMIN, AdminUserSecurity.FULL_CONTROL_ROLE }))));
 				editCtx.setEditUser(user);
-			} else {
-				user = null;
 			}
 		}
 
@@ -146,7 +145,7 @@ public class AdminUserFactory extends UserFactory {
 		}
 
 		EditContext editContext = EditContext.getInstance(globalContext, request.getSession());
-		editContext.setEditUser(user);
+		editContext.setEditUser(user);		
 		if (user != null) {
 			user.setEditor(true);
 		}

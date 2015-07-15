@@ -20,7 +20,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
-import org.javlo.filter.LoginFilter;
 import org.javlo.helper.NetHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
@@ -194,12 +193,12 @@ public class MailingBuilder {
 			if (reportTo != null) {
 				m.setNotif(new InternetAddress(reportTo));
 			}
-			User user = AdminUserFactory.createAdminUserFactory(globalContext, ctx.getRequest().getSession()).getUser(receiver.getValue());
+			User user = AdminUserFactory.createUserFactory(globalContext, ctx.getRequest().getSession()).getUser(receiver.getValue());
 			if (user != null) {
 				if (user.getUserInfo().getToken() == null || user.getUserInfo().getToken().trim().length() == 0) {
 					user.getUserInfo().setToken(StringHelper.getRandomIdBase64());
 				}
-				url = URLHelper.addParam(url, LoginFilter.TOKEN_PARAM, user.getUserInfo().getToken());				
+				url = URLHelper.addParam(url, IUserFactory.TOKEN_PARAM, user.getUserInfo().getToken());				
 			}			
 			String content = NetHelper.readPageForMailing(new URL(url));
 			if (content != null) {
