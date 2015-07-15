@@ -192,97 +192,97 @@ public class UserSearch extends AbstractVisualComponent implements IAction {
 		out.println("<div class=\"user-list\">");
 		I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
 		int i = 0;
-		
-		out.println("<a class=\"btn btn-default btn-sendmail\" href=\"mailto:" + emails + "\">Send email to all list ("+users.size()+").</a>");
-		
-		
+
+		out.println("<a class=\"btn btn-default btn-sendmail\" href=\"mailto:" + emails + "\">Send email to all list.</a>");
+
 		for (UserInfo user : users) {
-			i++;
-			String oddEven = "odd";
-			if (i % 2 == 0) {
-				oddEven = "even";
-			}
-
-			String country = XHTMLHelper.renderListItem(countries, user.getCountry());
-			String function = XHTMLHelper.renderMultiListItem(functions, StringHelper.stringToCollection(user.getFunction(), ";"));
-			String organization = XHTMLHelper.renderListItem(organizations, user.getOrganization());
-			if (user.getUrl() != null && user.getUrl().trim().length() > 0) {
-				organization = "<a target=\"_blank\" href=\"" + user.getUrl() + "\">" + organization + "</a>";
-			}
-
-			out.println("<div class=\"panel panel-default user-item " + oddEven + "\">");
-			out.println("<div class=\"panel-heading\">" + user.getFirstName() + ' ' + user.getLastName() + "</div>");
-			out.println("<div class=\"panel-body\"><div class=\"row\">");
-			out.println("<div class=\"col-sm-2\">");
-			String avatarURL = URLHelper.createAvatarUrl(ctx, user);
-			String avatar = "&nbsp;";
-			if (avatarURL != null) {
-				avatar = "<img src=\"" + avatarURL + "\" alt=\"" + user.getFirstName() + ' ' + user.getLastName() + "\" />";
-			}
-			out.println(avatar);
-			out.println("</div><div class=\"col-sm-5\">");
-
-			if (user.getPhone().trim().length() > 0) {
-				out.println("<div class=\"data\"><span class=\"label\">Phone</span>");
-				out.println(user.getPhone() + "</div>");
-			}
-			if (user.getMobile().trim().length() > 0) {
-				out.println("<div class=\"data\"><span class=\"label\">Mobile</span>");
-				out.println(user.getMobile() + "</div>");
-			}
-
-			if (user.getEmail().trim().length() > 0) {
-				out.println("<div class=\"data\"><span class=\"label\">E-Mail</span>");
-				out.println("<a href=\"mailto:" + user.getEmail() + "\">" + user.getEmail() + "</a></div>");
-			}
-			if (country.trim().length() > 0) {
-				out.println("<div class=\"data\"><span class=\"label\">Country</span>");
-				out.println(country + "</div>");
-			}
-			out.println("</div><div class=\"col-sm-5\">");
-			if (organization.trim().length() > 0) {
-				out.println("<div class=\"data\"><span class=\"label\">Organization</span>");
-				out.println(organization + "</div>");
-			}
-			out.println("<div class=\"data\"><span class=\"label\">Function</span>");
-			out.println(user.getSpecialFunction() + "</div>");
-			out.println("</div>");
-			out.println("</div><hr />");
-			out.println("<div class=\"row\">");
-			out.println("<div class=\"col-sm-3\">");
-			out.println("<h3>Experience</h3>");
-			out.println("<p>" + user.getExperience() + "</p>");
-			out.println("</div><div class=\"col-sm-4\">");
-			out.println("<h3>Recommendation</h3>");
-			out.println("<p>" + user.getRecommendation() + "</p>");
-			out.println("</div><div class=\"col-sm-4\">");
-			out.println("<h3>Area of specialisation</h3>");
-			out.println("<p>" + function + "</p>");
-			out.println("</div>");			
-			out.println("</div>");
-			
-			File userFolder = new File(ctx.getGlobalContext().getUserFolder(user));
-			if (userFolder.isDirectory() && userFolder.listFiles().length>0) {
-			out.println("<hr /><h3>Attachments</h3><ul class=\"files\">");			
-				for (File file : userFolder.listFiles()) {
-					try {
-						StaticInfo info = StaticInfo.getInstance(ctx, file);
-						out.println("<li><a target=\"_blank\" href=\"" + info.getURL(ctx) + "\">" + info.getFile().getName() + "</a></li>");
-					} catch (Exception e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+			if (!StringHelper.isEmpty(user.getFirstName())) {
+				i++;
+				String oddEven = "odd";
+				if (i % 2 == 0) {
+					oddEven = "even";
 				}
-				out.println("</ul>");
-			}			
 
-			if (user.getInfo().trim().length() > 0) {
-				out.println("<hr /><h3>More info</h3>");
-				out.println("<p>" + user.getInfo() + "</p>");
+				String country = XHTMLHelper.renderListItem(countries, user.getCountry());
+				String function = XHTMLHelper.renderMultiListItem(functions, StringHelper.stringToCollection(user.getFunction(), ";"));
+				String organization = XHTMLHelper.renderListItem(organizations, user.getOrganization());
+				if (user.getUrl() != null && user.getUrl().trim().length() > 0) {
+					organization = "<a target=\"_blank\" href=\"" + user.getUrl() + "\">" + organization + "</a>";
+				}
+
+				out.println("<div class=\"panel panel-default user-item " + oddEven + "\">");
+				out.println("<div class=\"panel-heading\">" + user.getFirstName() + ' ' + user.getLastName() + "</div>");
+				out.println("<div class=\"panel-body\"><div class=\"row\">");
+				out.println("<div class=\"col-sm-2\">");
+				String avatarURL = URLHelper.createAvatarUrl(ctx, user);
+				String avatar = "&nbsp;";
+				if (avatarURL != null) {
+					avatar = "<img src=\"" + avatarURL + "\" alt=\"" + user.getFirstName() + ' ' + user.getLastName() + "\" />";
+				}
+				out.println(avatar);
+				out.println("</div><div class=\"col-sm-5\">");
+
+				if (user.getPhone().trim().length() > 0) {
+					out.println("<div class=\"data\"><span class=\"label\">Phone</span>");
+					out.println(user.getPhone() + "</div>");
+				}
+				if (user.getMobile().trim().length() > 0) {
+					out.println("<div class=\"data\"><span class=\"label\">Mobile</span>");
+					out.println(user.getMobile() + "</div>");
+				}
+
+				if (user.getEmail().trim().length() > 0) {
+					out.println("<div class=\"data\"><span class=\"label\">E-Mail</span>");
+					out.println("<a href=\"mailto:" + user.getEmail() + "\">" + user.getEmail() + "</a></div>");
+				}
+				if (country.trim().length() > 0) {
+					out.println("<div class=\"data\"><span class=\"label\">Country</span>");
+					out.println(country + "</div>");
+				}
+				out.println("</div><div class=\"col-sm-5\">");
+				if (organization.trim().length() > 0) {
+					out.println("<div class=\"data\"><span class=\"label\">Organization</span>");
+					out.println(organization + "</div>");
+				}
+				out.println("<div class=\"data\"><span class=\"label\">Function</span>");
+				out.println(user.getSpecialFunction() + "</div>");
+				out.println("</div>");
+				out.println("</div><hr />");
+				out.println("<div class=\"row\">");
+				out.println("<div class=\"col-sm-3\">");
+				out.println("<h3>Experience</h3>");
+				out.println("<p>" + user.getExperience() + "</p>");
+				out.println("</div><div class=\"col-sm-4\">");
+				out.println("<h3>Recommendation</h3>");
+				out.println("<p>" + user.getRecommendation() + "</p>");
+				out.println("</div><div class=\"col-sm-4\">");
+				out.println("<h3>Area of specialisation</h3>");
+				out.println("<p>" + function + "</p>");
+				out.println("</div>");
+				out.println("</div>");
+
+				File userFolder = new File(ctx.getGlobalContext().getUserFolder(user));
+				if (userFolder.isDirectory() && userFolder.listFiles().length > 0) {
+					out.println("<hr /><h3>Attachments</h3><ul class=\"files\">");
+					for (File file : userFolder.listFiles()) {
+						try {
+							StaticInfo info = StaticInfo.getInstance(ctx, file);
+							out.println("<li><a target=\"_blank\" href=\"" + info.getURL(ctx) + "\">" + info.getFile().getName() + "</a></li>");
+						} catch (Exception e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
+					out.println("</ul>");
+				}
+
+				if (user.getInfo().trim().length() > 0) {
+					out.println("<hr /><h3>More info</h3>");
+					out.println("<p>" + user.getInfo() + "</p>");
+				}
+
+				out.println("</div></div>");
 			}
-
-			out.println("</div></div>");
-
 		}
 		out.println("</div>");
 		out.close();
