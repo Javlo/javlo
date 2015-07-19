@@ -46,8 +46,7 @@ public class MultimediaResourceFilter {
 				endCal.roll(Calendar.YEAR, true);
 				outFilter.endDate = endCal;
 				outFilter.active = true;
-			}
-			if (rangeDate.trim().length()>0) {
+			} else if (rangeDate.trim().length()>0) {
 				Date[] date = StringHelper.parseRangeDate(rangeDate);
 				outFilter.active = true;
 				outFilter.startDate = Calendar.getInstance();
