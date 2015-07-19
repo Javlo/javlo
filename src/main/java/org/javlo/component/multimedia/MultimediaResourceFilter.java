@@ -32,6 +32,21 @@ public class MultimediaResourceFilter {
 			outFilter.setQuery(rs.getParameter("mqr", null));
 			String startDate = rs.getParameter("msd", null);
 			String rangeDate = rs.getParameter("mrd", "");
+			if (rs.getParameter("y", null) != null) {
+				Calendar cal = Calendar.getInstance();
+				cal.set(Calendar.YEAR, Integer.parseInt(rs.getParameter("y", null)));
+				cal.set(Calendar.MONTH, 0);
+				cal.set(Calendar.DAY_OF_MONTH, 1);
+				cal.set(Calendar.HOUR_OF_DAY, 0);
+				cal.set(Calendar.MINUTE, 0);
+				cal.set(Calendar.SECOND, 0);
+				outFilter.startDate = cal;
+				Calendar endCal = Calendar.getInstance();
+				endCal.setTime(cal.getTime());				
+				endCal.roll(Calendar.YEAR, true);
+				outFilter.endDate = endCal;
+				outFilter.active = true;
+			}
 			if (rangeDate.trim().length()>0) {
 				Date[] date = StringHelper.parseRangeDate(rangeDate);
 				outFilter.active = true;

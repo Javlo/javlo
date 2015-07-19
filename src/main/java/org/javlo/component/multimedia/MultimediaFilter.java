@@ -1,5 +1,9 @@
 package org.javlo.component.multimedia;
 
+import java.io.ByteArrayInputStream;
+import java.util.Calendar;
+import java.util.Properties;
+
 import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.context.ContentContext;
 
@@ -15,6 +19,13 @@ public class MultimediaFilter extends AbstractVisualComponent {
 	@Override
 	public void prepareView(ContentContext ctx) throws Exception {
 		super.prepareView(ctx);
+		
+		Properties prop = new Properties();
+		prop.load(new ByteArrayInputStream(getValue(ctx).getBytes()));
+		ctx.getRequest().setAttribute("prop", prop);
+		ctx.getRequest().setAttribute("lastYear", Calendar.getInstance().get(Calendar.YEAR));
+		
+		
 		MultimediaResourceFilter.getInstance(ctx);
 	}
 	

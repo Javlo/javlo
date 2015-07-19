@@ -1,16 +1,21 @@
 package org.javlo.component.users;
 
+import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.InputStream;
 import java.io.PrintStream;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.imageio.ImageIO;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.fileupload.FileItem;
 import org.javlo.actions.IAction;
 import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.component.core.ComponentBean;
@@ -22,11 +27,13 @@ import org.javlo.helper.LangHelper;
 import org.javlo.helper.NetHelper;
 import org.javlo.helper.PatternHelper;
 import org.javlo.helper.RequestParameterMap;
+import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.ServletHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.helper.XHTMLHelper;
 import org.javlo.i18n.I18nAccess;
+import org.javlo.image.ImageEngine;
 import org.javlo.mailing.MailService;
 import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
@@ -44,6 +51,7 @@ import org.javlo.user.IUserInfo;
 import org.javlo.user.User;
 import org.javlo.user.UserFactory;
 import org.javlo.user.UserInfo;
+import org.javlo.ztatic.FileCache;
 
 public class UserRegistration extends AbstractVisualComponent implements IAction {
 
@@ -233,6 +241,37 @@ public class UserRegistration extends AbstractVisualComponent implements IAction
 			}
 			out.println("");
 			out.close();
+			
+			FileItem userFile = rs.getFileItem("userFile");
+			if (userFile != null && userFile.getSize() > 0) {
+				InputStream in = null;
+				try {
+					in = userFile.getInputStream();
+					File newFile = new File(URLHelper.mergePath(ctx.getGlobalContext().getUserFolder(userInfo), userFile.getName()));
+					ResourceHelper.writeStreamToFile(in, newFile);
+				} finally {
+					ResourceHelper.safeClose(in);
+				}
+			}
+			String avatarFileName = userInfo.getLogin() + ".png";
+			File avatarFile = new File(URLHelper.mergePath(globalContext.getDataFolder(), ctx.getGlobalContext().getStaticConfig().getAvatarFolder(), avatarFileName));
+			if (StringHelper.isTrue(rs.getParameter("deleteAvatar", null))) {
+				avatarFile.delete();
+			}
+			FileItem newAvatar = rs.getFileItem("avatar");
+			if (newAvatar != null && newAvatar.getSize() > 0) {
+				InputStream in = null;
+				try {
+					in = newAvatar.getInputStream();
+					BufferedImage img = ImageIO.read(in);
+					img = ImageEngine.resizeWidth(img, 255, true);
+					avatarFile.getParentFile().mkdirs();
+					ImageIO.write(img, "png", avatarFile);
+				} finally {
+					ResourceHelper.safeClose(in);
+				}
+				FileCache.getInstance(ctx.getRequest().getSession().getServletContext()).deleteAllFile(globalContext.getContextKey(), avatarFileName);
+			}
 
 			MailService mailService = MailService.getInstance(globalContext.getStaticConfig());
 			InternetAddress newUser = new InternetAddress(userInfo.getEmail());

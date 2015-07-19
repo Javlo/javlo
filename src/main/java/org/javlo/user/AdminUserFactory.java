@@ -122,7 +122,6 @@ public class AdminUserFactory extends UserFactory {
 		
 		User currentUser = getCurrentUser(request.getSession());		
 		User user = getUser(login);
-		System.out.println("***** AdminUserFactory.autoLogin : user found = "+currentUser); //TODO: remove debug trace
 		if (currentUser != null && user != null && currentUser.getPassword().equals(user.getPassword())) {
 			return null;
 		} else if (user == null) {

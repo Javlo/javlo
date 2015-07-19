@@ -219,11 +219,7 @@ public class UserAction extends AbstractModuleAction {
 					userInfo.setToken("");
 				}
 
-				String avatarFileName = userInfo.getLogin() + ".png";
-				File avatarFile = new File(URLHelper.mergePath(globalContext.getDataFolder(), staticConfig.getAvatarFolder(), avatarFileName));
-				if (StringHelper.isTrue(requestService.getParameter("deleteAvatar", null))) {
-					avatarFile.delete();
-				}
+				
 				FileItem userFile = requestService.getFileItem("userFile");
 				if (userFile != null && userFile.getSize() > 0) {
 					InputStream in = null;
@@ -234,7 +230,11 @@ public class UserAction extends AbstractModuleAction {
 					} finally {
 						ResourceHelper.safeClose(in);
 					}
-					FileCache.getInstance(ctx.getRequest().getSession().getServletContext()).deleteAllFile(globalContext.getContextKey(), avatarFileName);
+				}
+				String avatarFileName = userInfo.getLogin() + ".png";
+				File avatarFile = new File(URLHelper.mergePath(globalContext.getDataFolder(), staticConfig.getAvatarFolder(), avatarFileName));
+				if (StringHelper.isTrue(requestService.getParameter("deleteAvatar", null))) {
+					avatarFile.delete();
 				}
 				FileItem newAvatar = requestService.getFileItem("avatar");
 				if (newAvatar != null && newAvatar.getSize() > 0) {

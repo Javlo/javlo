@@ -738,6 +738,7 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 
 		boolean countAccess = isCountAccess(ctx);
 		
+		Date firstDate = new Date();
 		for (File file : mulFiles) {
 
 			String cssClass = "embed";
@@ -830,6 +831,9 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 				resource.setDescription(info.getDescription(lgCtx));
 				resource.setFullDescription(StringHelper.removeTag(info.getFullDescription(lgCtx)));
 				resource.setDate(info.getDate(lgCtx));
+				if (firstDate.getTime()>info.getDate(lgCtx).getTime()) {
+					firstDate = info.getDate(lgCtx);
+				}
 				resource.setShortDate(StringHelper.renderDate(resource.getDate(), globalContext.getShortDateFormat()));
 				resource.setMediumDate(StringHelper.renderDate(resource.getDate(), globalContext.getMediumDateFormat()));
 				resource.setFullDate(StringHelper.renderDate(resource.getDate(), globalContext.getFullDateFormat()));
@@ -853,6 +857,11 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 				}
 			}
 		}
+		
+		Calendar firstCal = Calendar.getInstance();
+		firstCal.setTime(firstDate);
+		ctx.getRequest().setAttribute("firstYear", firstCal.get(Calendar.YEAR));
+		ctx.getRequest().setAttribute("lastYear", Calendar.getInstance().get(Calendar.YEAR));
 
 		int countContentResource = 0;
 
