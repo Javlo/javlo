@@ -28,7 +28,10 @@ public class MultimediaResourceFilter {
 			outFilter = new MultimediaResourceFilter();
 			ctx.getRequest().getSession().setAttribute("multimediaFilter", outFilter);
 		}
-		if (rs.getParameter("filter", null) != null) {
+		if (rs.getParameter("clear", null) != null) {
+			outFilter = new MultimediaResourceFilter();
+			ctx.getRequest().getSession().setAttribute("multimediaFilter", outFilter);
+		} else if (rs.getParameter("filter", null) != null) {
 			outFilter.setQuery(rs.getParameter("mqr", null));
 			String startDate = rs.getParameter("msd", null);
 			String rangeDate = rs.getParameter("mrd", "");
