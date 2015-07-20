@@ -4,7 +4,7 @@
 <div class="widgetbox edit-user">
 <h3><span>${i18n.edit['user.change-password']}</span></h3>
 <div class="content">
-<form id="form-edit-user" action="${info.currentURL}" method="post" role="form">
+<form id="form-edit-pwd" action="${info.currentURL}" method="post" role="form">
 <div class="row">
 <div>
 	<input type="hidden" name="webaction" value="changePassword" />
@@ -168,8 +168,8 @@
 	</div>
 </div>
 </div>
-</div>
-</div>
+</fieldset>
+
 <div class="form-group function">
 		<label for="function">area of specialisation</label>
 		<c:if test="${empty list.functions}">
@@ -181,10 +181,8 @@
 	 		<label class="checkbox-inline" for="function-${status.index}"><input type="checkbox" name="function" id="function-${status.index}" value="${function.key}" ${not empty functions[function.key]?' checked="checked"':''}/>${function.value}</label>
 	 		</c:forEach>	 		
 	 		</div>		
-		 </c:if> 
-		 </label>
-	</div>
-</fieldset>
+		 </c:if>
+</div>
 
 <c:if test="${not empty webaction}">
 	<div class="form-group">
@@ -192,7 +190,6 @@
 		<textarea class="form-control" id="message" name="message">${param.message}</textarea></label>
 	</div>
 </c:if>
-
 
 <fieldset class="social">
 <legend>${i18n.edit['user.social']}</legend>
@@ -272,9 +269,9 @@
 </fieldset>
 
 
-<div class="form-group btn-group">
-	<input class="btn btn-default pull-right" type="submit" name="ok" value="${i18n.edit['global.ok']}" />
-	<input class="btn btn-default pull-right btn-primary btn-color" type="submit" name="back" value="${i18n.edit['global.back']}" />
+<div class="form-group btn-group pull-right">	
+	<input class="btn btn-default btn-primary btn-color btn-back" type="submit" name="back" value="${i18n.edit['global.back']}" />
+	<input class="btn btn-default" type="submit" name="ok" value="${i18n.edit['global.ok']}" />
 </div>
 
 </form>

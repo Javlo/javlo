@@ -95,6 +95,9 @@ public class UserRegistration extends AbstractVisualComponent implements IAction
 		if (ctx.getCurrentUser() != null) {
 			ctx.getRequest().setAttribute("user", ctx.getCurrentUser());
 			ctx.getRequest().setAttribute("userInfoMap", ctx.getCurrentUser().getUserInfo());
+		} else {
+			RequestService requestService = RequestService.getInstance(ctx.getRequest());			
+			ctx.getRequest().setAttribute("userInfoMap", requestService.getParameterMap());
 		}
 
 	}
