@@ -207,7 +207,11 @@ public class UserSearch extends AbstractVisualComponent implements IAction {
 				String function = XHTMLHelper.renderMultiListItem(functions, StringHelper.stringToCollection(user.getFunction(), ";"));
 				String organization = XHTMLHelper.renderListItem(organizations, user.getOrganization());
 				if (user.getUrl() != null && user.getUrl().trim().length() > 0) {
-					organization = "<a target=\"_blank\" href=\"" + user.getUrl() + "\">" + organization + "</a>";
+					String url = user.getUrl();
+					if (!StringHelper.isURL(url)) {
+						url = "http://"+url;
+					}
+					organization = "<a target=\"_blank\" href=\"" + url + "\">" + organization + "</a>";
 				}
 
 				out.println("<div class=\"panel panel-default user-item " + oddEven + "\">");
