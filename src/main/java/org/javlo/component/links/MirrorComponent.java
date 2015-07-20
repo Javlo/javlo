@@ -484,7 +484,7 @@ public class MirrorComponent extends AbstractVisualComponent implements IFieldCo
 		IContentVisualComponent comp = null;
 		try {
 			comp = getMirrorComponent(ctx);
-			if (comp instanceof IImageTitle) {
+			if (comp instanceof ISubTitle) {
 				return ((ISubTitle) comp).getSubTitleLevel(ctx);
 			}
 		} catch (Exception e) {

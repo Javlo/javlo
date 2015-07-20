@@ -140,7 +140,7 @@ public class ContentContext {
 	public static ContentContext getContentContext(HttpServletRequest request, HttpServletResponse response, boolean correctPath) throws Exception {
 		ContentContext ctx = (ContentContext) request.getAttribute(CONTEXT_REQUEST_KEY);
 		try {
-			if (ctx == null) {
+			if (ctx == null) {				
 				ctx = createContentContext(request, response, true);
 				ctx.setUser();
 				ctx.setFree(false);

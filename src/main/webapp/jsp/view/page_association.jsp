@@ -31,10 +31,10 @@ int lastPage = currentPage.getChildMenuElements().size();
 String positionStr = " first-page";
 for (MenuElement child : currentPage.getChildMenuElements()) {	
 	Template childTemplate = TemplateFactory.getTemplate(ctx, child);
-	ctx.setCurrentPageCached(child);
-	ctx.setCurrentTemplate(childTemplate);
+	ctx.setCurrentPageCached(child);	
 	String jspURI = childTemplate.getRendererFullName(ctx);
 	jspURI = URLHelper.addParam(jspURI, "pageAssociation", "true");
+	jspURI = URLHelper.addParam(jspURI, Template.FORCE_TEMPLATE_PARAM_NAME, childTemplate.getName());
 	request.setAttribute("pageClass", "page-"+pageNumber+positionStr);
 	if (pageNumber<lastPage) {
 		positionStr="";
@@ -42,6 +42,7 @@ for (MenuElement child : currentPage.getChildMenuElements()) {
 		positionStr=" last-page";
 	}
 	pageNumber++;
+	ctx.setCurrentTemplate(null);
 	%><jsp:include page="<%=jspURI%>" /><%
 }
 ctx.setPageAssociation(savePageAssocitation);

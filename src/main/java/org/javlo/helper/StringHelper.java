@@ -1833,6 +1833,11 @@ public class StringHelper {
 		}
 		return notTagStr.toString();
 	}
+	
+	public static String renderShortTime(ContentContext ctx, Date date) throws FileNotFoundException, IOException {
+		String outDate = renderShortDate(ctx, date);		
+		return outDate + ' ' + renderDate(date, "HH:mm");
+	}
 
 	/**
 	 * render a date, search the format in I18n files.

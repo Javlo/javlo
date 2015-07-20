@@ -29,7 +29,7 @@ function loadWysiwyg(cssQuery, complexity, chooseFileURL) {
 		    plugins: [
 		        "advlist autolink lists link image charmap print preview anchor",
 		        "searchreplace visualblocks code fullscreen",
-		        "insertdatetime media table paste textcolor"
+		        "insertdatetime media table paste textcolor colorpicker"
 		    ],
 		    //paste_word_valid_elements: "b,strong,i,em,h1,h2,h3,h4,h5,h6,table,tr,th,td,ul,ol,li,p,a,div",
 		    toolbar: "undo redo searchreplace | bold italic forecolor backcolor | charmap | alignleft aligncenter alignright alignjustify | link | bullist numlist outdent indent"
@@ -46,7 +46,7 @@ function loadWysiwyg(cssQuery, complexity, chooseFileURL) {
 		        "advlist autolink lists link image charmap print preview hr anchor pagebreak",
 		        "searchreplace wordcount visualblocks visualchars code fullscreen",
 		        "insertdatetime media nonbreaking save table directionality",
-		        "emoticons template paste textcolor"
+		        "emoticons template paste textcolor colorpicker "
 		    ],
 		    toolbar1: "bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | forecolor backcolor | table charmap code",		    
 		    image_advtab: true,

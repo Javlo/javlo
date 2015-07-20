@@ -247,9 +247,13 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 			bean.selected = page.isSelected(lgCtx);
 			bean.linkOn = page.getLinkOn(lgCtx);
 			bean.creationDate = StringHelper.renderShortDate(lgCtx, page.getCreationDate());
+			bean.setCreationTime(StringHelper.renderShortTime(lgCtx, page.getCreationDate()));
 			bean.modificationDate = StringHelper.renderShortDate(lgCtx, page.getModificationDate());
+			bean.modificationTime = StringHelper.renderShortTime(lgCtx, page.getModificationDate());
 			bean.sortableModificationDate = StringHelper.renderShortDate(lgCtx, page.getModificationDate());
+			bean.sortableModificationTime = StringHelper.renderShortTime(lgCtx, page.getModificationDate());
 			bean.sortableCreationDate = StringHelper.renderSortableDate(page.getCreationDate());
+			bean.sortableCreationTime = StringHelper.renderSortableTime(page.getCreationDate());
 			bean.priority = page.getPriority();
 			bean.event = new PageEvent();
 			Event event = page.getEvent(realContentCtx);
@@ -361,9 +365,13 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		private String date = null;
 		private String sortableDate = null;
 		private String creationDate = null;
+		private String creationTime = null;
 		private String modificationDate = null;
+		private String modificationTime = null;
 		private String sortableModificationDate = null;
+		private String sortableModificationTime = null;
 		private String sortableCreationDate = null;
+		private String sortableCreationTime = null;
 		private String startDate = null;
 		private String endDate = null;
 		private String url = null;
@@ -733,6 +741,38 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 
 		public void setEvent(PageEvent pageEvent) {
 			this.event = pageEvent;
+		}
+
+		public String getSortableCreationTime() {
+			return sortableCreationTime;
+		}
+
+		public void setSortableCreationTime(String sortableCreationTime) {
+			this.sortableCreationTime = sortableCreationTime;
+		}
+
+		public String getSortableModificationTime() {
+			return sortableModificationTime;
+		}
+
+		public void setSortableModificationTime(String sortableModificationTime) {
+			this.sortableModificationTime = sortableModificationTime;
+		}
+
+		public String getModificationTime() {
+			return modificationTime;
+		}
+
+		public void setModificationTime(String modificationTime) {
+			this.modificationTime = modificationTime;
+		}
+
+		public String getCreationTime() {
+			return creationTime;
+		}
+
+		public void setCreationTime(String creationTime) {
+			this.creationTime = creationTime;
 		}
 
 	}

@@ -102,8 +102,12 @@ editPreview.scrollToItem = function(container) {
 editPreview.isScrollBottom = function(container) {
 	var item = pjq(container);
 	var scrollTop = item.scrollTop();
+	console.log("scrollTop = "+scrollTop);
 	item.scrollTop(99999);
-	var outScrollBottom = scrollTop == item.scrollTop();
+	var outScrollBottom = (scrollTop == item.scrollTop());
+	console.log("scrollTop = "+scrollTop);
+	console.log("item.scrollTop() = "+item.scrollTop());
+	console.log("outScrollBottom = "+outScrollBottom);
 	item.scrollTop(scrollTop);
 	return outScrollBottom;	
 }
@@ -239,6 +243,7 @@ editPreview.initPreview = function() {
 			var scrollBottom = editPreview.isScrollBottom(pjq('html'));
 			event.dataTransfer.setData("text", this.getAttribute("data-type"));
 			pjq(".free-edit-zone").addClass("open");	
+			console.log("scrollBottom = "+scrollBottom);
 			if (scrollBottom) {
 				pjq('html').scrollTop(99999);
 			}

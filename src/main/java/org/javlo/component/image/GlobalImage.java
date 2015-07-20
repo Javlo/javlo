@@ -206,7 +206,7 @@ public class GlobalImage extends Image implements IImageFilter {
 
 	@Override
 	public void prepareView(ContentContext ctx) throws Exception {
-		ctx.setCurrentTemplate(null); // reset template
+		//ctx.setCurrentTemplate(null); // reset template
 		super.prepareView(ctx);
 		ctx.getRequest().setAttribute("link", getLink());
 		String imageURL = getImageURL(ctx);
@@ -866,6 +866,12 @@ public class GlobalImage extends Image implements IImageFilter {
 		}
 
 		super.performEdit(ctx);
+
+		if (getWidth() != null && getWidth().trim().length() > 0) {
+			if (StringHelper.isDigit(getWidth())) {
+				MessageRepository.getInstance(ctx).setGlobalMessage(new GenericMessage(I18nAccess.getInstance(ctx).getText("content.image.width-noext", "Image 'width' need unity like px or %." ), GenericMessage.ERROR));
+			}
+		}
 
 	}
 
