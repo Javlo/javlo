@@ -66,7 +66,7 @@
 									<c:param name="${info.staticData.forceDeviceParameterName}"
 										value=""></c:param>
 								</c:url>
-								<select class="form-control" id="renderers_button"
+								<select class="form-control input-sm" id="renderers_button"
 									onchange="window.location='${url}'+pjq('#renderers_button option:selected').val();"
 									data-toggle="tooltip" data-placement="left"
 									title="${i18n.edit['command.renderers']}">
@@ -92,7 +92,7 @@
 								action="${info.currentURL}?webaction=edit.copyPage"
 								method="post">
 								<button id="pc_copy_page" type="submit"
-									class="btn btn-default btn-xs" ${info.page.pageEmpty || info.page.childrenAssociation?'disabled="disabled"':''}>
+									class="btn btn-default btn-sm" ${info.page.pageEmpty || info.page.childrenAssociation?'disabled="disabled"':''}>
 									<span class="glyphicon glyphicon-copy" aria-hidden="true"></span><span
 										class="text">${i18n.edit['action.copy-page']}</span>
 								</button>
@@ -102,7 +102,7 @@
 								class="${empty info.contextForCopy || !info.page.pageEmpty || info.page.childrenAssociation?'no-access':''}"
 								id="paste_page" action="${info.currentURL}" method="post">
 								<input type="hidden" name="webaction" value="edit.pastePage" />
-								<button class="btn btn-default btn-xs" id="pc_paste_page"
+								<button class="btn btn-default btn-sm" id="pc_paste_page"
 									type="submit"
 									${empty info.contextForCopy || !info.page.pageEmpty || info.page.childrenAssociation?'disabled="disabled"':''}>
 									<span class="glyphicon glyphicon-paste" aria-hidden="true"></span><span
@@ -112,7 +112,7 @@
 						<li><form
 								class="${empty info.contextForCopy || !info.page.pageEmpty?'no-access':''}"
 								action="${info.currentURL}" method="get">
-								<button class="btn btn-default btn-xs btn-refresh"
+								<button class="btn btn-default btn-sm btn-refresh"
 									id="pc_paste_page" type="submit">
 									<span class="glyphicon glyphicon-refresh" aria-hidden="true"></span><span
 										class="text">${i18n.edit['global.refresh']}</span>
@@ -124,7 +124,7 @@
 									<input type="hidden" value="${info.pageID}" name="page" /> <input
 										type="hidden" value="edit.deletePage" name="webaction" />
 									<c:if test="${!info.page.root}">
-										<button class="btn btn-default btn-xs btn-delete"
+										<button class="btn btn-default btn-sm btn-delete"
 											type="submit"
 											onclick="if (!confirm('${i18n.edit['menu.confirm-page']}')) return false;">
 											<span class="glyphicon glyphicon-trash" aria-hidden="true"></span><span
@@ -153,7 +153,7 @@
 				<form id="pc_form" method="post" action="<%=URLHelper.createURL(editCtx)%>">
 					<div class="pc_line">				
 						<c:if test='${!editPreview}'>
-							<button class="btn btn-default btn-xs" type="submit">
+							<button class="btn btn-default btn-sm" type="submit">
 								<span class="glyphicon glyphicon-user" aria-hidden="true"></span>${i18n.edit['global.login']}</button>
 						</c:if>
 						<input type="hidden" name="backPreview" value="true" />
@@ -167,53 +167,72 @@
 						<div class="pc_line">
 							<input type="hidden" name="webaction" value="edit.previewedit" />
 							<c:if test='${!editPreview}'>
-								<button class="btn btn-default btn-xs" type="submit">
-									<span class="glyphicon glyphicon-edit" aria-hidden="true"></span>${i18n.edit['preview.label.edit-page']}</button>
+								<button class="btn btn-default btn-sm" type="submit">
+									<span class="glyphicon glyphicon-edit" aria-hidden="true"></span><span class="text">${i18n.edit['preview.label.edit-page']}</span></button>
 							</c:if>
 							<c:if test='${editPreview}'>
-								<button class="btn btn-default btn-xs" type="submit">
-									<span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>${i18n.edit['preview.label.not-edit-page']}</button>
+								<button class="btn btn-default btn-sm" type="submit">
+									<span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span><span class="text">${i18n.edit['preview.label.not-edit-page']}</span></button>
 							</c:if>
 						</div>
 					</form>
 				</c:if> <c:if test="${!globalContext.previewMode}">
 					<div class="link-wrapper">
-						<a class="btn btn-default btn-xs" href="${info.currentViewURL}"
+						<a class="btn btn-default btn-sm" href="${info.currentViewURL}"
 							target="_blank"><span class="glyphicon glyphicon-eye-open"
 							aria-hidden="true"></span>${i18n.edit['preview.label.not-edit-page']}</a>
 					</div>
 				</c:if></li>
-			<c:if test="${!pdf && userInterface.mailing}">
+			<c:if test="${!pdf && userInterface.mailing}">				
 				<li><c:url var="url" value="<%=URLHelper.createURL(editCtx)%>"
 						context="/">
 						<c:param name="module" value="mailing"></c:param>
 						<c:param name="previewEdit" value="true"></c:param>
+						<c:param name="wizardStep" value="2"></c:param>
+						<c:param name="box" value="sendwizard"></c:param>
+						<c:param name="webaction" value="mailing.wizard"></c:param>
 					</c:url>
 					<form>
-						<button class="btn btn-default btn-xs btn-send btn-color"
+						<div class="btn-group">
+						<button class="btn btn-default btn-sm btn-send btn-color"
 							type="<%=accessType%>"
 							value="${i18n.edit['preview.label.mailing']}"
 							onclick="editPreview.openModal('${i18n.edit['preview.label.mailing']}','${url}'); return false;">
-							<span class="glyphicon glyphicon-send" aria-hidden="true"></span>${i18n.edit['preview.label.mailing']}
+							<span class="glyphicon glyphicon-send" aria-hidden="true"></span><span class="text">${i18n.edit['preview.label.mailing']}</span>
 						</button>
-					</form></li>
+					<c:url var="url" value="<%=URLHelper.createURL(editCtx)%>"
+						context="/">
+						<c:param name="module" value="mailing"></c:param>
+						<c:param name="wizardStep" value="4"></c:param>
+						<c:param name="webaction" value="mailing.wizard"></c:param>
+						<c:param name="box" value="sendwizard"></c:param>												
+						<c:param name="previewEdit" value="true"></c:param>
+					</c:url>
+						<button class="btn btn-default btn-sm btn-export btn-color"
+							type="<%=accessType%>"
+							value="${i18n.edit['preview.label.export-mailing']}"
+							onclick="editPreview.openModal('${i18n.edit['preview.label.export-mailing']}','${url}'); return false;">
+							<span class="glyphicon glyphicon-open-file" aria-hidden="true"></span><span class="text">${i18n.edit['preview.label.export-mailing']}</span>
+						</button>
+						</div>
+					</form></li>				
 			</c:if>			
 			<c:if test="${pdf}">
 				<li>
 				<li><form id="export_pdf_page_form"
 						action="${info.currentPDFURL}" method="post" target="_blanck">
-						<button class="btn btn-default btn-xs btn-pdf btn-color"
+						<button class="btn btn-default btn-sm btn-pdf btn-color"
 							id="export_pdf_button" type="submit"
-							value="${i18n.edit['preview.label.pdf']}"><span class="glyphicon glyphicon-open-file" aria-hidden="true"></span>${i18n.edit['preview.label.pdf']}</button>
+							value="${i18n.edit['preview.label.pdf']}"><span class="glyphicon glyphicon-open-file" aria-hidden="true"></span><span class="text">${i18n.edit['preview.label.pdf']}</span></button>
 					</form></li>
 			</c:if>
 			<c:if test="${globalContext.previewMode}">
 				<li class="publish"><form id="pc_publish_form"
 						action="${info.currentURL}" method="post">
 						<input type="hidden" name="webaction" value="edit.publish" />
-						<button type="submit" class="btn btn-default btn-xs">
+						<button type="submit" class="btn btn-default btn-sm">
 							<span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span>
-							${i18n.edit['command.publish']}
+							<span class="text">${i18n.edit['command.publish']}</span>
 						</button>
 					</form></li>
 			</c:if>
@@ -225,7 +244,7 @@
 						<c:param name="previewEdit" value="true"></c:param>
 					</c:url>
 					<form>
-						<button class="btn btn-default btn-xs btn-tickets btn-color btn-notext"
+						<button class="btn btn-default btn-sm btn-tickets btn-color btn-notext"
 							type="<%=accessType%>"
 							value="${i18n.edit['preview.label.ticket']}"
 							onclick="editPreview.openModal('${i18n.edit['preview.label.ticket']}','${url}'); return false;">
@@ -234,7 +253,7 @@
 						
 						<c:if test="${not empty integrities}">
 						<c:if test="${fn:length(integrities.checker)>0}">
-						<a class="btn btn-default btn-xs btn-tickets btn-color alert-${integrities.levelLabel} btn-notext" data-toggle="collapse" data-target="#integrity-list" href="#integrity-list"  aria-expanded="false" aria-controls="integrity-list">
+						<a class="btn btn-default btn-sm btn-tickets btn-color alert-${integrities.levelLabel} btn-notext" data-toggle="collapse" data-target="#integrity-list" href="#integrity-list"  aria-expanded="false" aria-controls="integrity-list">
 							<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
 						</a>
 						<div class="integrity-message collapse" id="integrity-list">
@@ -246,7 +265,7 @@
 						</div>
 						</c:if>
 						<c:if test="${fn:length(integrities.checker)==0}">						
-						<a class="btn btn-default btn-xs btn-tickets btn-color alert-success btn-notext" data-toggle="collapse" data-target="#integrity-list" href="#integrity-list"  aria-expanded="false" aria-controls="integrity-list">
+						<a class="btn btn-default btn-sm btn-tickets btn-color alert-success btn-notext" data-toggle="collapse" data-target="#integrity-list" href="#integrity-list"  aria-expanded="false" aria-controls="integrity-list">
 							<span class="glyphicon glyphicon-check" aria-hidden="true"></span>
 						</a>
 						<div class="integrity-message collapse" id="integrity-list">
@@ -266,10 +285,10 @@
 					<c:param name="edit-logout" value="true" />
 				</c:url> 
 				<li class="user"><c:if test="${!userInterface.contributor}">
-				<a id="pc_edit_mode_button" class="btn btn-default" title="${i18n.edit['global.exit']}" href="<%=URLHelper.createURL(returnEditCtx)%>"><span class="glyphicon glyphicon-briefcase"></span>edit</a>	
+				<a id="pc_edit_mode_button" class="btn btn-default btn-sm" title="${i18n.edit['global.exit']}" href="<%=URLHelper.createURL(returnEditCtx)%>"><span class="glyphicon glyphicon-briefcase"></span><span class="text">edit</span></a>	
 				</c:if>
-				<a href="${info.currentEditURL}?module=users&webaction=user.changeMode&mode=myself&previewEdit=true" class="as-modal btn btn-default"><span class="glyphicon glyphicon-user" aria-hidden="true"></span>${info.userName}</a>					
-				<a class="btn btn-default" title="${i18n.edit['global.logout']}" href="${logoutURL}"><span class="glyphicon glyphicon-log-out"></span>${i18n.edit["global.logout"]}</a>				
+				<a href="${info.currentEditURL}?module=users&webaction=user.changeMode&mode=myself&previewEdit=true" class="as-modal btn btn-default btn-sm"><span class="glyphicon glyphicon-user" aria-hidden="true"></span><span class="text">${info.userName}</span></a>					
+				<a class="btn btn-default btn-sm" title="${i18n.edit['global.logout']}" href="${logoutURL}"><span class="glyphicon glyphicon-log-out"></span><span class="text">${i18n.edit["global.logout"]}</span></a>				
 				</li>
 			</c:if>
 			</div>

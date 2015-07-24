@@ -58,8 +58,10 @@
 				${i18n.edit['mailing.form.test-mailing']}</label>
 			</div>
 			<div class="action">
-				<c:if test="${!contentContext.editPreview}"><button type="submit" class="btn btn-default pull-right" name="previous">Previous</button></c:if>
-				<button class="btn btn-primary btn-color pull-right" type="submit" name="next">next</button>
+				<div class="btn-group pull-right">
+				<c:if test="${!contentContext.editPreview}"><button type="submit" class="btn btn-default" name="previous">Previous</button></c:if>
+				<button class="btn btn-primary btn-color" type="submit" name="next">next</button>
+				</div>
 			</div>
 		</div>
 	</form>

@@ -55,6 +55,7 @@ import org.javlo.utils.DebugListening;
 
 public class CatchAllFilter implements Filter {
 
+	public static final String CHECK_CONTEXT_PARAM = "__check_context";
 	private static final String JAVLO_LOGIN_ID = "javlo_login_id";
 	/**
 	 * create a static logger.
@@ -104,7 +105,7 @@ public class CatchAllFilter implements Filter {
 		try {
 			String hostName = ServletHelper.getSiteKey(httpRequest);			
 			if (!hostDefineSite && !staticConfig.isExcludeContextDomain(hostName)) {
-				if (StringHelper.isTrue(requestService.getParameter("__check_context", "true"))) {
+				if (StringHelper.isTrue(requestService.getParameter(CHECK_CONTEXT_PARAM, "true"))) {
 					String contextURI = ContentManager.getContextName(httpRequest);
 					if (GlobalContext.isExist(httpRequest, contextURI)) {
 						globalContext = GlobalContext.getInstance(httpRequest.getSession(), contextURI);
@@ -115,7 +116,7 @@ public class CatchAllFilter implements Filter {
 						if (httpRequest.getQueryString() != null) {
 							newURI = newURI + '?' + httpRequest.getQueryString();
 						}
-						newURI = URLHelper.addParam(newURI, "__check_context", "false");
+						newURI = URLHelper.addParam(newURI, CHECK_CONTEXT_PARAM, "false");
 						forwardURI = newURI;
 					}
 				} else {
@@ -124,7 +125,7 @@ public class CatchAllFilter implements Filter {
 			}
 			if (globalContext == null) { // if no context found search a host
 											// context.
-				if (StringHelper.isTrue(requestService.getParameter("__check_context", "false"))) {
+				if (StringHelper.isTrue(requestService.getParameter(CHECK_CONTEXT_PARAM, "false"))) {
 					globalContext = GlobalContext.getInstance(httpRequest);
 				}
 				if (globalContext == null) {

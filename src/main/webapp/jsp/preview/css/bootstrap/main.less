@@ -56,13 +56,22 @@ a:hover {
 }
 
 
-@media (max-width: 1400px) {
-	h1, .nav .action-title {
+@media (max-width: 1760px) {
+	h1, .menu .action-title {
+		display: none;
+	}
+	#copy_page .text {
+		display: none;
+	}
+	#paste_page .text {
+		display: none;
+	}
+	.users .text {
 		display: none;
 	}
 }
 
-@media (max-width: 1180px) {
+@media (max-width: 1290px) {
 	.header .text {
 		display: none;
 	}
@@ -126,12 +135,6 @@ a:hover {
 
 .navigation li.parent {
 	padding-left: 0;
-}
-
-.form-control, .btn-default {
-	padding: 2px 4px;
-	height: 26px;	
-	font-size: 12px;
 }
 
 .preview-form {

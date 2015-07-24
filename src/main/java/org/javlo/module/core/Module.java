@@ -828,6 +828,10 @@ public class Module {
 	public void restoreToolsRenderer() {
 		toolsRenderer = defaultToolsRenderer;
 	}
+	
+	public synchronized List<Box> getBoxes() {
+		return new LinkedList(boxes.values());
+	}
 
 	public synchronized Box getBox(String name) {
 		return boxes.get(name);

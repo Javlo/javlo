@@ -63,3 +63,10 @@
 	width: 100%;
 }
 
+.previewEdit .breadcrumbs {
+	margin-bottom: 15px;
+}
+
+.previewEdit .btn-back {
+	display: none;
+}

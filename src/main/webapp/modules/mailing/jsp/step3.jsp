@@ -20,7 +20,7 @@
 			</div>
 		</c:if>
 		</div>
-		<div class="action pull-right">
+		<div class="action pull-right btn-group">
 			<button type="submit" class="btn btn-default" name="previous">Previous</button>	
 			<button type="submit" class="btn btn-primary btn-color " name="send">Send</button>					
 		</div>

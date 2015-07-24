@@ -77,20 +77,25 @@ public abstract class AbstractModuleAction implements IModuleAction {
 		}
 		if (b.getSteps() == null) {
 			return "the box '" + boxName + "' don't have wizard steps.";
-		}
+		} 
 		boolean doNext = null != rs.getParameter("next", null);
 		boolean doPrevious = null != rs.getParameter("previous", null);
-		int step = moduleContext.getWizardStep(boxName);
-		if (doNext) {
-			step++;
-		} else if (doPrevious) {
-			step--;
+		int step;
+		if (rs.getParameter("wizardStep", null) != null) {
+			step = Integer.parseInt(rs.getParameter("wizardStep", null));
+		} else {
+			step = moduleContext.getWizardStep(boxName);
+			if (doNext) {
+				step++;
+			} else if (doPrevious) {
+				step--;
+			}
 		}
 		step = Math.max(step, 1);
 		step = Math.min(step, b.getSteps().size());
 		moduleContext.setWizardStep(boxName, step);
 		BoxStep s = b.getSteps().get(step - 1);
-		b.setTitle(s.getTitle());
+		b.setTitle(s.getTitle());		
 		b.setRenderer(s.getRenderer());
 
 		if (ctx.isAjax()) {

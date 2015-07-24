@@ -1,5 +1,6 @@
 package org.javlo.servlet;
 
+import java.net.URL;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.logging.Logger;
@@ -12,7 +13,12 @@ import javax.servlet.http.HttpServletResponse;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.data.InfoBean;
+import org.javlo.filter.CatchAllFilter;
+import org.javlo.helper.NetHelper;
+import org.javlo.helper.URLHelper;
 import org.javlo.helper.RequestHelper;
+import org.javlo.helper.ResourceHelper;
+import org.javlo.helper.StringHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.module.mailing.MailingModuleContext;
 import org.javlo.service.RequestService;
@@ -20,7 +26,7 @@ import org.javlo.template.Template;
 import org.javlo.template.TemplateFactory;
 
 public class ContentOnlyServlet extends HttpServlet {
-
+	
 	public static final String TEMPLATE_PARAM_NAME = "template";
 	
 	private static final long serialVersionUID = 1L;
@@ -66,6 +72,26 @@ public class ContentOnlyServlet extends HttpServlet {
 			if (globalContext.getPageIfExist(ctx, path, false) == null) {
 				response.setStatus(HttpServletResponse.SC_NOT_FOUND);
 			}
+			
+			if (StringHelper.isTrue(request.getParameter("mailing"))) {
+				String query = request.getQueryString().replace("mailing=", "_removed=");
+				query = request.getQueryString().replace(CatchAllFilter.CHECK_CONTEXT_PARAM+'=', "_removed=");
+				
+				String newURL = URLHelper.createURL(ctx.getContextForAbsoluteURL().getContextWithOtherRenderMode(ContentContext.PAGE_MODE));
+				newURL = URLHelper.addParams(newURL, query);
+				URL url = new URL(newURL);
+				String content = NetHelper.readPageForMailing(url);				
+				if (content == null) {
+					logger.warning("could not read : "+url);
+					response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+					return;
+				} else {
+					response.setContentType("text/html; charset=" + ContentContext.CHARACTER_ENCODING);
+					ResourceHelper.writeStringToStream(content, response.getOutputStream(), ContentContext.CHARACTER_ENCODING);
+					return;
+				}
+			}
+			
 
 			RequestHelper.traceMailingFeedBack(ctx);
 

@@ -40,11 +40,11 @@ public class LoginLogoutLink extends AbstractVisualComponent {
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(outStream);
 		IUserFactory userFactory;
-		if (getStyle(ctx).equals(VISITOR)) {
+		if (getStyle().equals(VISITOR)) {
 			userFactory = UserFactory.createUserFactory(ctx.getGlobalContext(), ctx.getRequest().getSession());
 		} else {
 			userFactory = AdminUserFactory.createUserFactory(ctx.getGlobalContext(), ctx.getRequest().getSession());
-		}
+		}		
 		User user = userFactory.getCurrentUser(ctx.getRequest().getSession());
 		if (user == null) {
 			if (getStyle().equals(VISITOR)) {

@@ -215,14 +215,14 @@ a.popup span {
 }
 
 .box  h3 {
-	background: url("../images/titlebg.png") repeat-x scroll left top
-		#688AB5;
-	border: 1px solid #6082AD;
-	color: #FFFFFF;
-	font-size: 12px;
-	font-weight: normal;
-	text-shadow: 1px 1px #4B6592;
-	text-transform: uppercase;
+    background-color: #708d92;
+    border: 1px solid #608090;
+    border-radius: 3px 3px 0 0;
+    color: #fff;
+    font-size: 12px;
+    font-weight: normal;
+    text-shadow: 1px 1px #708d91;
+    text-transform: uppercase;
 }
 
 .box h3 span {
@@ -358,7 +358,8 @@ a.popup span {
 }
 
 .standard-form .action {
-	margin-top: 10px;	
+	margin-top: 10px;
+	overflow: hidden;	
 }
 
 .standard-form .action.top {

@@ -1,10 +1,9 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" 
 %><%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" 
-%><%@ taglib uri="/WEB-INF/javlo.tld" prefix="jv" %>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+%><%@ taglib uri="/WEB-INF/javlo.tld" prefix="jv"
+%><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-
 <c:if test="${contentContext.closePopup}">
 <script type="text/javascript">
     var url = top.location.href; // close iframe and refresh parent frame
@@ -191,7 +190,6 @@
 </div><!-- header -->
 </c:if>
 
-
 <c:if test="${empty param.previewEdit}">
 <div class="sidebar">
 	<div id="navigation">
@@ -240,7 +238,7 @@
 		</c:if>	
 		<c:forEach var="currentBox" items="${currentModule.mainBoxes}">
 			<c:set var="box" value="${currentBox}" scope="request" />
-			<div class="mainBox" id="${box.id}">		
+			<div class="mainBox" id="${box.id}">
 			<jsp:include page="box.jsp" />
 			</div>
 		</c:forEach>
@@ -254,7 +252,7 @@
 <div class="right">
 	<c:forEach var="currentBox" items="${currentModule.sideBoxes}">
 		<c:set var="box" value="${currentBox}" scope="request" />
-		<div class="sidebox" id="${box.id}">	
+		<div class="sidebox" id="${box.id}">
 		<jsp:include page="box.jsp" />
 		</div>
 	</c:forEach>

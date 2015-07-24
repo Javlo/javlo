@@ -249,6 +249,8 @@ public class ResourceHelper {
 		if (!file2.exists()) {
 			file2.getParentFile().mkdirs();
 			file2.createNewFile();
+		} else {
+			return;
 		}
 		String content = FileUtils.readFileToString(file1, ContentContext.CHARACTER_ENCODING);
 		List<String> keys = new LinkedList<String>(filter.keySet());
@@ -263,13 +265,31 @@ public class ResourceHelper {
 				content = content.replace(key.toUpperCase(), filter.get(key));
 			}
 		}
+		
 		FileUtils.writeStringToFile(file2, content, ContentContext.CHARACTER_ENCODING);
+	}
+	
+	public static void copyDir (File dir1, File dir2, boolean overwrite, FileFilter filter) throws IOException {
+		if (dir1.isFile()) {
+			if (dir2.exists() && !overwrite) {
+				return;
+			}
+			if (filter == null || filter.accept(dir1)) {
+				writeFileToFile(dir1, dir2);
+			}
+		} else {
+			for (File child : dir1.listFiles()) {
+				copyDir(child, new File (dir2.getAbsolutePath()+'/'+child.getName()), overwrite, filter);
+			}
+		}
 	}
 
 	public static void filteredFileCopyEscapeScriplet(File file1, File file2, Map<String, String> filter) throws IOException {
 		if (!file2.exists()) {
 			file2.getParentFile().mkdirs();
 			file2.createNewFile();
+		} else {
+			return;
 		}
 		String content = FileUtils.readFileToString(file1);
 
@@ -934,7 +954,6 @@ public class ResourceHelper {
 
 	public static final int writeStreamToFile(InputStream in, File file, long maxSize) throws IOException {
 		int countByte = 0;
-
 		if (file.getParentFile() != null && !file.getParentFile().exists()) {
 			file.getParentFile().mkdirs();
 		}
@@ -1377,16 +1396,11 @@ public class ResourceHelper {
 		}
 	}
 
-	public static void main(String[] args) {
-		List<String> keys = new LinkedList<String>(Arrays.asList(new String[] { "patrick", "pat", "Patrick Vandermaesen" }));
-		Collections.sort(keys, new Comparator<String>() {
-			public int compare(String s1, String s2) {
-				return s2.length() - s1.length();
-			}
-		});
-		for (String string : keys) {
-			System.out.println(string);
-		}
+	public static void main(String[] args) throws IOException {
+		File dir1 = new File("c:/trans/bnd");
+		File dir2 = new File("c:/trans/target");
+		dir2.mkdirs();
+		copyDir(dir1, dir2, false, null);
 	}
 
 	/**

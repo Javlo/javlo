@@ -2,6 +2,7 @@ package org.javlo.module.mailing;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.net.URL;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -34,6 +35,8 @@ import org.javlo.module.core.AbstractModuleContext;
 import org.javlo.module.core.Module;
 import org.javlo.module.core.ModuleException;
 import org.javlo.module.core.ModulesContext;
+import org.javlo.module.core.Module.Box;
+import org.javlo.module.core.Module.BoxStep;
 import org.javlo.service.DataToIDService;
 import org.javlo.service.RequestService;
 import org.javlo.service.syncro.SynchroHelper;
@@ -87,14 +90,40 @@ public class MailingAction extends AbstractModuleAction {
 		request.setAttribute("mailing", mailingContext);
 
 		Module currentModule = modulesContext.getCurrentModule();
+		if (mailingContext.getWizardStep(SEND_WIZARD_BOX) == 4) {
+			String content;
+			StaticConfig sc = globalContext.getStaticConfig();
+			URL url = new URL(URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.PAGE_MODE).getContextForAbsoluteURL()));
+			if (sc.getApplicationLogin() != null) {
+				content = NetHelper.readPageForMailing(url, sc.getApplicationLogin(), sc.getApplicationPassword());
+			} else {
+				User user = AdminUserFactory.createUserFactory(globalContext, ctx.getRequest().getSession()).getUser(ctx.getCurrentEditUser().getLogin());
+				String token = null;
+				if (user != null) {
+					if (user.getUserInfo().getToken() == null || user.getUserInfo().getToken().trim().length() == 0) {
+						user.getUserInfo().setToken(StringHelper.getRandomIdBase64());
+					}
+					token = user.getUserInfo().getToken();
+				}
+				content = NetHelper.readPageForMailing(url, token);
+			}
+			if (content == null) {
+				logger.severe("error on read : " + url);
+				content = "error on read : " + url;
+			}
+			request.setAttribute("content", content);
+			url = new URL(URLHelper.addParam(URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.PAGE_MODE).getContextForAbsoluteURL()), "mailing", "true"));
+			request.setAttribute("exportURL", url);
+		}
 		if (ctx.isEditPreview()) {
 			if (mailingContext.getWizardStep(SEND_WIZARD_BOX) == 1) {
 				mailingContext.setWizardStep(SEND_WIZARD_BOX, 2);
-				// mailingContext.setCurrentTemplate(ctx.getCurrentTemplate().getId());
 				currentModule.setRenderer("/jsp/step2.jsp");
 				request.setAttribute("currentTemplate", mailingContext.getCurrentTemplate());
 			} else {
-				currentModule.setRenderer("/jsp/step" + mailingContext.getWizardStep(SEND_WIZARD_BOX) + ".jsp");
+				Box b = currentModule.getBox(SEND_WIZARD_BOX);
+				BoxStep s = b.getSteps().get(mailingContext.getWizardStep(SEND_WIZARD_BOX) - 1);
+				currentModule.setRenderer(s.getRenderer());
 			}
 		} else {
 			if (mailingContext.getCurrentLink().equals("send")) {
@@ -137,14 +166,14 @@ public class MailingAction extends AbstractModuleAction {
 			if (mailingContext.getReportTo() == null) {
 				mailingContext.setReportTo(globalContext.getAdministratorEmail());
 			}
-			IUserFactory userFactory = UserFactory.createUserFactory(request);			
+			IUserFactory userFactory = UserFactory.createUserFactory(request);
 			List<String> groups = new LinkedList(userFactory.getAllRoles(globalContext, session));
 			Collections.sort(groups);
 			request.setAttribute("groups", groups);
 			List<String> adminGroups = new LinkedList(globalContext.getAdminUserRoles());
 			Collections.sort(adminGroups);
 			request.setAttribute("adminGroups", adminGroups);
-			
+
 			String senders = globalContext.getMailingSenders().trim();
 			if (senders.trim().length() > 0) {
 				request.setAttribute("senders", StringUtils.split(senders, ","));
@@ -159,9 +188,10 @@ public class MailingAction extends AbstractModuleAction {
 			request.setAttribute("confirmMessage", confirmMessage);
 			break;
 		}
+
 		return msg;
 	}
-	
+
 	private static boolean checkRight(ContentContext ctx) {
 		AdminUserFactory userFactory = AdminUserFactory.createUserFactory(ctx.getGlobalContext(), ctx.getRequest().getSession());
 		User user = userFactory.getCurrentUser(ctx.getRequest().getSession());
@@ -177,55 +207,57 @@ public class MailingAction extends AbstractModuleAction {
 	}
 
 	public String performWizard(ContentContext ctx, GlobalContext globalContext, ServletContext application, StaticConfig staticConfig, HttpServletRequest request, RequestService rs, Module currentModule, MessageRepository messageRepository, MailingModuleContext mailingContext, I18nAccess i18nAccess) throws Exception {
-		
+
 		if (!checkRight(ctx)) {
 			return "Security error.";
-		}		
-		
-		switch (mailingContext.getWizardStep(SEND_WIZARD_BOX)) {
-		case 1:
-			if (mailingContext.getCurrentTemplate() == null) {
-				String msg = i18nAccess.getText("mailing.message.no-template-selected");
-				MessageRepository.getInstance(ctx).setGlobalMessageAndNotification(ctx, new GenericMessage(msg, GenericMessage.ALERT));
-				return null;
-			}
-			break;
-		case 2:
-			mailingContext.setSender(rs.getParameter("sender", null));
-			mailingContext.setSubject(rs.getParameter("subject", null));
-			mailingContext.setReportTo(rs.getParameter("report-to", null));
-			mailingContext.setGroups(rs.getParameterListValues("groups", new LinkedList<String>()));
-			mailingContext.setAdminGroups(rs.getParameterListValues("admin-groups", new LinkedList<String>()));
-			mailingContext.setRecipients(rs.getParameter("recipients", null));
-			mailingContext.setStructuredRecipients(rs.getParameter("structuredRecipients", null));
-			mailingContext.setTestMailing(rs.getParameter("test-mailing", null) != null);
-			boolean isValid = mailingContext.validate(ctx);
-			if (ctx.isAjax()) {
-				currentModule.getBox(SEND_WIZARD_BOX).update(ctx);
-			}
-			if (!isValid) {
-				return null;
-			}
-			break;
-		case 3:
-			if (rs.getParameter("send", null) != null) {
-				mailingContext.sendMailing(ctx);
-				String msg = i18nAccess.getText("mailing.message.sent");
-				messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(msg, GenericMessage.SUCCESS));
-				mailingContext.reset();
-				mailingContext.setWizardStep(SEND_WIZARD_BOX, null);
+		}
+
+		if (ctx.getRequest().getParameter("wizardStep") == null) {
+			switch (mailingContext.getWizardStep(SEND_WIZARD_BOX)) {
+			case 1:
+				if (mailingContext.getCurrentTemplate() == null) {
+					String msg = i18nAccess.getText("mailing.message.no-template-selected");
+					MessageRepository.getInstance(ctx).setGlobalMessageAndNotification(ctx, new GenericMessage(msg, GenericMessage.ALERT));
+					return null;
+				}
+				break;
+			case 2:
+				mailingContext.setSender(rs.getParameter("sender", null));
+				mailingContext.setSubject(rs.getParameter("subject", null));
+				mailingContext.setReportTo(rs.getParameter("report-to", null));
+				mailingContext.setGroups(rs.getParameterListValues("groups", new LinkedList<String>()));
+				mailingContext.setAdminGroups(rs.getParameterListValues("admin-groups", new LinkedList<String>()));
+				mailingContext.setRecipients(rs.getParameter("recipients", null));
+				mailingContext.setStructuredRecipients(rs.getParameter("structuredRecipients", null));
+				mailingContext.setTestMailing(rs.getParameter("test-mailing", null) != null);
+				boolean isValid = mailingContext.validate(ctx);
 				if (ctx.isAjax()) {
 					currentModule.getBox(SEND_WIZARD_BOX).update(ctx);
 				}
-				if (ctx.isEditPreview()) {
-					ctx.setClosePopup(true);
-					if (ctx.getParentURL() != null) {
-						ctx.setParentURL(messageRepository.forwardMessage(ctx.getParentURL()));
-					}
+				if (!isValid) {
+					return null;
 				}
-				SynchroHelper.performSynchro(application, staticConfig, globalContext);
+				break;
+			case 3:
+				if (rs.getParameter("send", null) != null) {
+					mailingContext.sendMailing(ctx);
+					String msg = i18nAccess.getText("mailing.message.sent");
+					messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(msg, GenericMessage.SUCCESS));
+					mailingContext.reset();
+					mailingContext.setWizardStep(SEND_WIZARD_BOX, null);
+					if (ctx.isAjax()) {
+						currentModule.getBox(SEND_WIZARD_BOX).update(ctx);
+					}
+					if (ctx.isEditPreview()) {
+						ctx.setClosePopup(true);
+						if (ctx.getParentURL() != null) {
+							ctx.setParentURL(messageRepository.forwardMessage(ctx.getParentURL()));
+						}
+					}
+					SynchroHelper.performSynchro(application, staticConfig, globalContext);
+				}
+				break;
 			}
-			break;
 		}
 		return super.performWizard(ctx, rs, currentModule, mailingContext);
 	}
@@ -282,7 +314,7 @@ public class MailingAction extends AbstractModuleAction {
 		}
 		return null;
 	}
-	
+
 	@Override
 	public Boolean haveRight(HttpSession session, User user) throws ModuleException {
 		return Boolean.TRUE;

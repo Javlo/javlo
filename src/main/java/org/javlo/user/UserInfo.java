@@ -44,6 +44,7 @@ public class UserInfo implements Comparable<IUserInfo>, IUserInfo, Serializable 
 	private String email = "";
 	private String organization = "";
 	private String vat = "";
+	private String department = "";
 	private String function = "";
 	private String specialFunction = "";
 	private String experience = "";
@@ -584,6 +585,14 @@ public class UserInfo implements Comparable<IUserInfo>, IUserInfo, Serializable 
 	@Override
 	public String getUserFolder() {
 		return StringHelper.createFileName(getLogin());
+	}
+
+	public String getDepartment() {
+		return department;
+	}
+
+	public void setDepartment(String department) {
+		this.department = department;
 	}
 	
 	

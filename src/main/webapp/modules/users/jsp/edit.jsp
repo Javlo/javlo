@@ -1,7 +1,6 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-
-<div class="widgetbox edit-user">
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"
+%><%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"
+%><div class="widgetbox edit-user">
 <h3><span>${i18n.edit['user.title.edit']} : ${user.name}</span></h3>
 <div class="content">
 
