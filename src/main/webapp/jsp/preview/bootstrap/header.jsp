@@ -230,7 +230,11 @@
 				<li class="publish"><form id="pc_publish_form"
 						action="${info.currentURL}" method="post">
 						<input type="hidden" name="webaction" value="edit.publish" />
-						<button type="submit" class="btn btn-default btn-sm">
+						<c:set var="tooltip" value="" />
+						<c:if test="${i18n.edit['command.publish.tooltip'] != 'command.publish.tooltip'}">
+							<c:set var="tooltip" value='data-toggle="tooltip" data-placement="left" title="${i18n.edit[\'command.publish.tooltip\']}"' />
+						</c:if>
+						<button type="submit" class="btn btn-default btn-sm" ${tooltip}>
 							<span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span>
 							<span class="text">${i18n.edit['command.publish']}</span>
 						</button>
@@ -244,10 +248,14 @@
 						<c:param name="previewEdit" value="true"></c:param>
 					</c:url>
 					<form>
+						<c:set var="tooltip" value="" />
+						<c:if test="${i18n.edit['preview.label.ticket.tooltip'] != 'preview.label.ticket.tooltip'}">
+							<c:set var="tooltip" value=' data-toggle="tooltip" data-placement="left" title="${i18n.edit[\'preview.label.ticket.tooltip\']}"' />
+						</c:if>
 						<button class="btn btn-default btn-sm btn-tickets btn-color btn-notext"
 							type="<%=accessType%>"
 							value="${i18n.edit['preview.label.ticket']}"
-							onclick="editPreview.openModal('${i18n.edit['preview.label.ticket']}','${url}'); return false;">
+							onclick="editPreview.openModal('${i18n.edit['preview.label.ticket']}','${url}'); return false;"${tooltip}>
 							<span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span><span class="text">${i18n.edit['preview.label.ticket']}</span>					
 						</button>
 						
