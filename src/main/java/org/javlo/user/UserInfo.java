@@ -61,6 +61,7 @@ public class UserInfo implements Comparable<IUserInfo>, IUserInfo, Serializable 
 	private String accountType = "default";
 	private String avatarURL = null;
 	private String birthdate = null;
+	private String memberdate = null;
 	private String[] preferredLanguage = new String[0];
 	private Set<String> roles = new HashSet<String>();
 	private Date creationDate = new Date();
@@ -593,6 +594,14 @@ public class UserInfo implements Comparable<IUserInfo>, IUserInfo, Serializable 
 
 	public void setDepartment(String department) {
 		this.department = department;
+	}
+
+	public String getMemberdate() {
+		return memberdate;
+	}
+
+	public void setMemberdate(String memberdate) {
+		this.memberdate = memberdate;
 	}
 	
 	
