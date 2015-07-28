@@ -659,7 +659,7 @@ public class StaticConfig extends Observable {
 	}
 
 	public String getLocalShareDataFolder() {
-		String path = properties.getString("share-folder", "/share-files");		
+		String path = properties.getString("local-share-folder", "/share-files");		
 		return path;
 	}
 	
