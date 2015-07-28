@@ -61,6 +61,7 @@ public class SharedContentProviderFactory {
 			addContentProvider(ctx, staticContentProviders,new JavloSharedContentProvider());
 			addContentProvider(ctx, staticContentProviders,new CloserJavloSharedContentProvider());
 			addContentProvider(ctx, staticContentProviders,new LocalImageSharedContentProvider());
+			addContentProvider(ctx, staticContentProviders,new GlobalImageSharedContentProvider());			
 			addContentProvider(ctx, staticContentProviders,new ImportedImageSharedContentProvider());
 			try {				
 				addContentProvider(ctx, staticContentProviders,new StockvaultSharedContentProvider());

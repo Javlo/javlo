@@ -905,13 +905,11 @@ public class ImageTransformServlet extends HttpServlet {
 
 			boolean localFile = false;
 			StaticInfo staticInfo = null;
-
+			
 			if (imageName.substring(1).startsWith(staticConfig.getShareDataFolderKey())) {
 				imageName = imageName.substring(staticConfig.getShareDataFolderKey().length() + 2);
-				dataFolder = staticConfig.getShareDataFolder();
-				if (imageName != null) {
-					staticInfo = StaticInfo.getShareInstance(ctx, imageName.replaceFirst("/static", ""));
-				}
+				dataFolder = globalContext.getSharedDataFolder(request.getSession());
+				staticInfo = StaticInfo.getShareInstance(ctx, imageName.replaceFirst("/static", ""));
 			} else if (imageName.startsWith("/static")) {
 				staticInfo = StaticInfo.getInstance(ctx, imageName.replaceFirst("/static", ""));
 			} else if (imageName.startsWith("/local")) {

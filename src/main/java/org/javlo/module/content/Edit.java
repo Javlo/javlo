@@ -113,7 +113,7 @@ public class Edit extends AbstractModuleAction {
 
 		String previewParam = "";
 		if (ctx.isEditPreview()) {
-			previewParam = "previewEdit=true&";
+			previewParam = ContentContext.PREVIEW_EDIT_PARAM+"=true&";
 		}
 
 		String insertXHTML = "<a class=\"btn btn-default ajax btn-xs\" href=\"" + URLHelper.createURL(ctx) + "?" + previewParam + "webaction=insert&previous=0&type=" + currentTypeComponent.getType() + "\">" + insertHere + "</a>";
@@ -181,6 +181,7 @@ public class Edit extends AbstractModuleAction {
 	 * @throws Exception
 	 */
 	public static void updatePreviewCommands(ContentContext ctx, String tab) throws Exception {
+		System.out.println("***** Edit.updatePreviewCommands : Refresh preview command."); //TODO: remove debug trace
 		ctx.getRequest().setAttribute("editPreview", ctx.isEditPreview());
 		ctx.getRequest().setAttribute("components", ComponentFactory.getComponentForDisplay(ctx));
 		SharedContentService.prepare(ctx);
@@ -789,7 +790,7 @@ public class Edit extends AbstractModuleAction {
 		}
 		ctx.resetCurrentPageCached();
 		PersistenceService persistenceService = PersistenceService.getInstance(globalContext);
-		persistenceService.store(ctx);
+		persistenceService.setAskStore(true);
 		modifPage(ctx, targetPage);
 		autoPublish(request, response);
 		
@@ -957,9 +958,6 @@ public class Edit extends AbstractModuleAction {
 		PersistenceService.getInstance(globalContext).setAskStore(true);
 
 		if (message == null) {
-			// NavigationService navigationService =
-			// NavigationService.getInstance(globalContext);
-			// navigationService.clearPage(ctx);
 			messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("action.updated"), GenericMessage.INFO));
 			autoPublish(ctx.getRequest(), ctx.getResponse());
 		} else {
@@ -1237,7 +1235,7 @@ public class Edit extends AbstractModuleAction {
 				}
 
 				PersistenceService persistenceService = PersistenceService.getInstance(globalContext);
-				persistenceService.store(ctx);
+				persistenceService.setAskStore(true);
 				autoPublish(ctx.getRequest(), ctx.getResponse());
 
 				NavigationService navigationService = NavigationService.getInstance(globalContext);
@@ -1501,7 +1499,7 @@ public class Edit extends AbstractModuleAction {
 		}
 
 		PersistenceService persistenceService = PersistenceService.getInstance(globalContext);
-		persistenceService.store(ctx);
+		persistenceService.setAskStore(true);
 		autoPublish(ctx.getRequest(), ctx.getResponse());
 
 		messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("edit.message.moved", new String[][] { { "name", page.getName() } }), GenericMessage.INFO));
@@ -1568,7 +1566,7 @@ public class Edit extends AbstractModuleAction {
 			}
 		}
 		modifPage(ctx, ctx.getCurrentPage());
-		PersistenceService.getInstance(globalContext).store(ctx);
+		PersistenceService.getInstance(globalContext).setAskStore(true);
 		autoPublish(ctx.getRequest(), ctx.getResponse());
 
 		messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("edit.message.paste-page", new String[][] { { "count", "" + c } }), GenericMessage.INFO));
@@ -1631,7 +1629,7 @@ public class Edit extends AbstractModuleAction {
 		String msg = i18nAccess.getText("action.component.created", new String[][] { { "type", comp.getType() } });
 		messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(msg, GenericMessage.INFO));
 
-		persistenceService.store(ctx);
+		persistenceService.setAskStore(true);
 		modifPage(ctx, ctx.getCurrentPage());
 		autoPublish(ctx.getRequest(), ctx.getResponse());
 
@@ -1744,7 +1742,7 @@ public class Edit extends AbstractModuleAction {
 		String msg = i18nAccess.getText("action.component.moved", new String[][] { { "type", comp.getType() } });
 		messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(msg, GenericMessage.INFO));
 
-		persistenceService.store(ctx);
+		persistenceService.setAskStore(true);
 		modifPage(ctx, ctx.getCurrentPage());
 		autoPublish(ctx.getRequest(), ctx.getResponse());
 
@@ -1768,7 +1766,7 @@ public class Edit extends AbstractModuleAction {
 		}
 		if ((pageToBeMoved != null) && (pageToBeMoved.getParent() != null)) {
 			pageToBeMoved.moveToParent(ctx.getCurrentPage());
-			persistenceService.store(ctx);
+			persistenceService.setAskStore(true);
 			String[][] balises = { { "path", path }, { "new-path", pageToBeMoved.getPath() } };
 			String msg = i18nAccess.getText("navigation.move", balises);
 			MessageRepository.getInstance(ctx).setGlobalMessage(new GenericMessage(msg, GenericMessage.INFO));
@@ -1849,7 +1847,7 @@ public class Edit extends AbstractModuleAction {
 				content.createContent(ctx, targetPage, mirrorBean, previousId, true);
 			}
 
-			PersistenceService.getInstance(globalContext).store(ctx);
+			PersistenceService.getInstance(globalContext).setAskStore(true);
 
 			if (ctx.isAjax()) {
 				// updateComponent(ctx, currentModule, newId, previousId);
@@ -1873,7 +1871,7 @@ public class Edit extends AbstractModuleAction {
 		return null;
 	}
 
-	public static String performRefresh(StaticConfig staticConfig, ServletContext application, GlobalContext globalContext) throws Exception {
+	public static String performRefresh(StaticConfig staticConfig, ServletContext application, GlobalContext globalContext) throws Exception {		
 		SynchroHelper.performSynchro(application, staticConfig, globalContext);
 		return null;
 	}

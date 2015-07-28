@@ -114,7 +114,7 @@ public class CreateChildrenStructureMacro extends AbstractMacro {
 			reader.close();
 
 			PersistenceService persistenceService = PersistenceService.getInstance(globalContext);
-			persistenceService.store(localCtx);
+			persistenceService.setAskStore(true);
 
 		}
 

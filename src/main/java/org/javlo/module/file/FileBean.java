@@ -64,14 +64,14 @@ public class FileBean {
 	public String getURL() {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		if (!isDirectory()) {
-			return URLHelper.createResourceURL(ctx, '/' + globalContext.getStaticConfig().getStaticFolder() + staticInfo.getStaticURL());
+			return URLHelper.createResourceURL(ctx, '/' + (staticInfo.isStaticFolder()?globalContext.getStaticConfig().getStaticFolder():"") + staticInfo.getStaticURL());
 		} else {
 			String currentURL;
 			try {
 				currentURL = InfoBean.getCurrentInfoBean(ctx).getCurrentURL();
 				String path = staticInfo.getStaticURL();
 				if (AdminUserSecurity.getInstance().isGod(ctx.getCurrentEditUser())) {
-					path = URLHelper.mergePath("/" + globalContext.getStaticConfig().getStaticFolder(), staticInfo.getStaticURL());
+					path = URLHelper.mergePath("/" + (staticInfo.isStaticFolder()?globalContext.getStaticConfig().getStaticFolder():""), staticInfo.getStaticURL());
 				}
 				return URLHelper.addParam(currentURL, "path", path);
 			} catch (Exception e) {
@@ -85,14 +85,14 @@ public class FileBean {
 		ContentContext ctx = this.ctx.getContextForAbsoluteURL();
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		if (!isDirectory()) {
-			return URLHelper.createResourceURL(ctx, '/' + globalContext.getStaticConfig().getStaticFolder() + staticInfo.getStaticURL());
+			return URLHelper.createResourceURL(ctx, '/' + (staticInfo.isStaticFolder()?globalContext.getStaticConfig().getStaticFolder():"") + staticInfo.getStaticURL());
 		} else {
 			String currentURL;
 			try {
 				currentURL = InfoBean.getCurrentInfoBean(ctx).getCurrentURL();
 				String path = staticInfo.getStaticURL();
 				if (AdminUserSecurity.getInstance().isGod(ctx.getCurrentEditUser())) {
-					path = URLHelper.mergePath("/" + globalContext.getStaticConfig().getStaticFolder(), staticInfo.getStaticURL());
+					path = URLHelper.mergePath("/" + (staticInfo.isStaticFolder()?globalContext.getStaticConfig().getStaticFolder():""), staticInfo.getStaticURL());
 				}
 				return URLHelper.addParam(currentURL, "path", path);
 			} catch (Exception e) {
@@ -124,12 +124,12 @@ public class FileBean {
 
 	public String getThumbURL() throws Exception {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-		return URLHelper.createTransformURL(ctx, globalContext.getStaticConfig().getStaticFolder() + staticInfo.getStaticURL(), "list") + "?ts=" + staticInfo.getFile().lastModified();
+		return URLHelper.createTransformURL(ctx, (staticInfo.isStaticFolder()?globalContext.getStaticConfig().getStaticFolder():"") + staticInfo.getStaticURL(), "list") + "?ts=" + staticInfo.getFile().lastModified();
 	}
 
 	public String getFreeURL() throws Exception {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-		return URLHelper.createTransformURL(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE), null, globalContext.getStaticConfig().getStaticFolder() + staticInfo.getStaticURL(), "free", "${info.templateName}");
+		return URLHelper.createTransformURL(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE), null, (staticInfo.isStaticFolder()?globalContext.getStaticConfig().getStaticFolder():"") + staticInfo.getStaticURL(), "free", "${info.templateName}");
 	}
 
 	public StaticInfo getStaticInfo() {

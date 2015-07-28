@@ -69,7 +69,7 @@ public class CurrentLgExpandMacro extends AbstractMacro {
 		MessageRepository.getInstance(ctx).setGlobalMessage(new GenericMessage(msg, GenericMessage.INFO));
 
 		PersistenceService persistenceService = PersistenceService.getInstance(globalContext);
-		persistenceService.store(ctx);
+		persistenceService.setAskStore(true);
 
 		return null;
 	}

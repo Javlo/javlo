@@ -162,10 +162,6 @@ public class ActionManager {
 	}
 
 	static public final String perform(String actionName, HttpServletRequest request, HttpServletResponse response) throws Exception {
-		
-		
-		
-		
 		GlobalContext globalContext = GlobalContext.getInstance(request);
 		logger.fine("perform action : " + actionName);
 

@@ -112,6 +112,7 @@
 						<li><form
 								class="${empty info.contextForCopy || !info.page.pageEmpty?'no-access':''}"
 								action="${info.currentURL}" method="get">
+								<div class="hidden"><input type="hidden" name="webaction" value="edit.refresh" /></div>
 								<button class="btn btn-default btn-sm btn-refresh"
 									id="pc_paste_page" type="submit">
 									<span class="glyphicon glyphicon-refresh" aria-hidden="true"></span><span
@@ -226,6 +227,20 @@
 							value="${i18n.edit['preview.label.pdf']}"><span class="glyphicon glyphicon-open-file" aria-hidden="true"></span><span class="text">${i18n.edit['preview.label.pdf']}</span></button>
 					</form></li>
 			</c:if>
+			<li class="undo${contentContext.canUndo?'':' no-access'}"><form
+								class="${!info.page.pageEmpty?'no-access':''}"
+								action="${info.currentURL}" method="get">
+								<div class="hidden"><input type="hidden" name="webaction" value="time.undoRedo" /><input type="hidden" name="previous" value="true" /></div>
+								<c:set var="tooltip" value="" />
+								<c:if test="${i18n.edit['command.undo.tooltip'] != 'command.undo.tooltip'}">
+									<c:set var="tooltip" value='data-toggle="tooltip" data-placement="left" title="${i18n.edit[\'command.undo.tooltip\']}"' />
+								</c:if>								
+								<button class="btn btn-default btn-sm btn-refresh"
+									id="pc_paste_page" type="submit" ${contentContext.canUndo?'':' disabled="disabled"'} ${tooltip}>
+									<span class="fa fa-undo" aria-hidden="true"></span>
+										<span class="text">${i18n.edit['global.undo']}</span>
+								</button>
+							</form></li>
 			<c:if test="${globalContext.previewMode}">
 				<li class="publish"><form id="pc_publish_form"
 						action="${info.currentURL}" method="post">

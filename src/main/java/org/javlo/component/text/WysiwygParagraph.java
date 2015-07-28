@@ -49,7 +49,7 @@ public class WysiwygParagraph extends AbstractVisualComponent {
 		filesParams.put("webaction", "changeRenderer");
 		filesParams.put("page", "meta");
 		filesParams.put("select", "_TYPE_");
-		filesParams.put("previewEdit", "true");
+		filesParams.put(ContentContext.PREVIEW_EDIT_PARAM, "true");
 				
 		String chooseImageURL = URLHelper.createModuleURL(ctx, ctx.getPath(), "file", filesParams);
 		finalCode.append("<script type=\"text/javascript\">jQuery(document).ready(loadWysiwyg('#" + getContentName() + "','"+getEditorComplexity(ctx)+"','"+chooseImageURL+"'));</script>");

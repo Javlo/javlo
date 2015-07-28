@@ -34,7 +34,7 @@ public class DeleteChildrenAndContent extends AbstractMacro {
 		ctx.getCurrentPage().releaseCache();
 
 		PersistenceService persistenceService = PersistenceService.getInstance(globalContext);
-		persistenceService.store(ctx);
+		persistenceService.setAskStore(true);
 
 		return null;
 	}

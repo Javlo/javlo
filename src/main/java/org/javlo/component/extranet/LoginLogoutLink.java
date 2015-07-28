@@ -56,7 +56,7 @@ public class LoginLogoutLink extends AbstractVisualComponent {
 			if (!getStyle().equals(VISITOR)) {
 				out.println("<input type=\"hidden\" value=\"adminlogin\" name=\"login-type\" />");
 				out.println("<input type=\"hidden\" value=\"edit-login\" name=\"edit-login\" />");
-				out.println("<input type=\"hidden\" name=\"previewEdit\" value=\"true\" />");
+				out.println("<input type=\"hidden\" name=\""+ContentContext.PREVIEW_EDIT_PARAM+"\" value=\"true\" />");
 			}			
 			I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
 			out.println("<div class=\"row\"><div class=\"col-sm-6\">");
@@ -69,7 +69,7 @@ public class LoginLogoutLink extends AbstractVisualComponent {
 			out.println("</div>");
 			out.println("</form>");
 		} else {
-			out.println("<a class=\"btn btn-default\" href=\"" + URLHelper.createURL(ctx) + "?edit-logout=logout\">logout ("+userFactory.getCurrentUser(ctx.getRequest().getSession()).getLogin()+")</a>");
+			out.println("<a class=\"btn btn-default btn-logout\" href=\"" + URLHelper.createURL(ctx) + "?edit-logout=logout\">logout ("+userFactory.getCurrentUser(ctx.getRequest().getSession()).getLogin()+")</a>");
 		}
 		out.close();
 		return new String(outStream.toByteArray());

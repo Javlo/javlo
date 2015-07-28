@@ -226,7 +226,7 @@ public class CatchAllFilter implements Filter {
 					return;
 				} else {					
 					if (editPreview) {
-						editURI = URLHelper.addParam(editURI, "previewEdit", "true");
+						editURI = URLHelper.addParam(editURI, ContentContext.PREVIEW_EDIT_PARAM, "true");
 					}					
 					httpRequest.getRequestDispatcher(editURI).forward(request, response);
 					return;

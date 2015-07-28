@@ -5,6 +5,8 @@ import java.util.logging.Logger;
 
 import javax.servlet.ServletContext;
 
+import org.javlo.service.NotificationService;
+
 public class ThreadManager extends Thread {
 
 	private static final String KEY = "threadManager";
@@ -44,6 +46,8 @@ public class ThreadManager extends Thread {
 	public Boolean stop = false;
 
 	private File threadDir = null;
+	
+	private NotificationService notificationService = null;
 
 	private ThreadManager() {
 		setName("Javlo Thread Manager");
@@ -60,16 +64,13 @@ public class ThreadManager extends Thread {
 
 	@Override
 	public void run() {
-
 		/*** start by big sleep, wait web site loading ***/
 		try {
 			Thread.sleep(5 * 1000); // wait 5 secs before run thread
 		} catch (InterruptedException e1) {
 			e1.printStackTrace();
 		}
-
 		logger.info("start thread manager on : " + threadDir);
-
 		while (!stop) {
 			File[] threadFiles = threadDir.listFiles(AbstractThread.threadFileFilter);
 			if (threadFiles != null) {
@@ -154,6 +155,14 @@ public class ThreadManager extends Thread {
 			return currentThread.logInfo();
 		}
 		return "";
+	}
+
+	public NotificationService getNotificationService() {
+		return notificationService;
+	}
+
+	public void setNotificationService(NotificationService notificationService) {
+		this.notificationService = notificationService;
 	}
 
 }

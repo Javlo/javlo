@@ -94,12 +94,16 @@ public abstract class ElementaryURLHelper {
 			return url = url + '?' + name + '=' + StringHelper.neverNull(value);
 		}
 	}
-	
-	public static String addParams(String url,String params) {
-		if (url.contains("?")) {
-			return url = url + '&' + StringHelper.neverNull(params);
+
+	public static String addParams(String url, String params) {
+		if (StringHelper.isEmpty(params)) {
+			return url;
 		} else {
-			return url = url + '?' + StringHelper.neverNull(params);
+			if (url.contains("?")) {
+				return url = url + '&' + StringHelper.neverNull(params);
+			} else {
+				return url = url + '?' + StringHelper.neverNull(params);
+			}
 		}
 	}
 
@@ -213,7 +217,7 @@ public abstract class ElementaryURLHelper {
 					mode = "/" + previewPrefix + "edit/";
 				} else {
 					mode = "/" + previewPrefix + "edit-" + currentModule.getName() + "/";
-				}				
+				}
 			} else if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE) {
 				mode = "/preview/";
 			} else if (ctx.getRenderMode() == ContentContext.PAGE_MODE) {
@@ -258,7 +262,7 @@ public abstract class ElementaryURLHelper {
 			newUri = URLHelper.addParam(newUri, "editPreview", "true");
 		}
 		if (!ctx.isInternalURL() && ctx.getGlobalContext().getProxyPathPrefix().length() > 0) {
-			newUri = URLHelper.mergePath(ctx.getGlobalContext().getProxyPathPrefix(),newUri);
+			newUri = URLHelper.mergePath(ctx.getGlobalContext().getProxyPathPrefix(), newUri);
 		}
 		return newUri;
 	}
@@ -312,7 +316,7 @@ public abstract class ElementaryURLHelper {
 		}
 		url = url.replace('\\', '/');
 		if (!ctx.isInternalURL() && ctx.getGlobalContext().getProxyPathPrefix().length() > 0) {
-			url = URLHelper.mergePath(ctx.getGlobalContext().getProxyPathPrefix(),url);
+			url = URLHelper.mergePath(ctx.getGlobalContext().getProxyPathPrefix(), url);
 		}
 		return url;
 	}
@@ -387,7 +391,7 @@ public abstract class ElementaryURLHelper {
 			} else {
 				templateName = template.getId();
 			}
-			url = createTransformURLInternal(ctx, referencePage, url, filter, templateName, comp, (comp!=null?comp.getImageHash(ctx):null));
+			url = createTransformURLInternal(ctx, referencePage, url, filter, templateName, comp, (comp != null ? comp.getImageHash(ctx) : null));
 		} else {
 			if (filter.equals("template")) {
 				url = ElementaryURLHelper.mergePath(TRANSFORM + '/' + filter, url);
@@ -399,7 +403,7 @@ public abstract class ElementaryURLHelper {
 		url = URLHelper.addMailingFeedback(ctx, url);
 		if (ctx.getDevice().isForced()) {
 			url = addParam(url, Device.FORCE_DEVICE_PARAMETER_NAME, ctx.getDevice().getCode());
-		}		
+		}
 		return url;
 	}
 
@@ -408,7 +412,7 @@ public abstract class ElementaryURLHelper {
 	}
 
 	public static String createTransformURL(ContentContext ctx, MenuElement referencePage, String url, String filter, String templateName) throws Exception {
-		return createTransformURLInternal(ctx, referencePage, url, filter, templateName, null,null);
+		return createTransformURLInternal(ctx, referencePage, url, filter, templateName, null, null);
 	}
 
 	private static String createTransformURLInternal(ContentContext ctx, MenuElement referencePage, String url, String filter, String templateName, IImageFilter comp, String hash) throws Exception {
@@ -422,11 +426,11 @@ public abstract class ElementaryURLHelper {
 		} else {
 			baseUrl = baseUrl + "/[edit]/" + ComponentBean.DEFAULT_AREA;
 		}
-		if (comp != null) {			
+		if (comp != null) {
 			baseUrl = baseUrl + ImageTransformServlet.COMPONENT_ID_URL_DIR_PREFIX + comp.getId();
 		}
 		if (hash != null) {
-			baseUrl = baseUrl + ImageTransformServlet.HASH_PREFIX + hash;			
+			baseUrl = baseUrl + ImageTransformServlet.HASH_PREFIX + hash;
 		}
 		url = ElementaryURLHelper.mergePath(baseUrl, url);
 
@@ -579,7 +583,7 @@ public abstract class ElementaryURLHelper {
 		}
 		return res;
 	}
-	
+
 	public static void resetPathPrefix(ContentContext ctx) {
 		String CACHE_KEY = "javlo-path-prefix-" + ctx.getPathPrefix();
 		ctx.getRequest().removeAttribute(CACHE_KEY);
@@ -598,7 +602,10 @@ public abstract class ElementaryURLHelper {
 	 */
 
 	public static void main(String[] args) {
-		System.out.println("***** ElementaryURLHelper.main : getParamsAsString = "+getParamsAsString("http://www.lesoir.be?test=test")); //TODO: remove debug trace
+		System.out.println("***** ElementaryURLHelper.main : getParamsAsString = " + getParamsAsString("http://www.lesoir.be?test=test")); // TODO:
+																																			// remove
+																																			// debug
+																																			// trace
 	}
 
 	/**
@@ -616,22 +623,22 @@ public abstract class ElementaryURLHelper {
 			return url.substring(0, url.indexOf('?'));
 		}
 	}
-	
-	public static final String removeSite (GlobalContext globalContext, String url) {
-		if (url.startsWith("/"+globalContext.getContextKey())) {
-			return url.substring(("/"+globalContext.getContextKey()).length());			
+
+	public static final String removeSite(GlobalContext globalContext, String url) {
+		if (url.startsWith("/" + globalContext.getContextKey())) {
+			return url.substring(("/" + globalContext.getContextKey()).length());
 		} else {
 			return url;
 		}
 	}
-	
+
 	public static final String getParamsAsString(String url) {
 		if (url == null) {
 			return null;
 		} else if (!url.contains("?")) {
 			return "";
 		} else {
-			return url.substring(url.indexOf('?')+1,url.length());
+			return url.substring(url.indexOf('?') + 1, url.length());
 		}
 	}
 
@@ -727,10 +734,10 @@ public abstract class ElementaryURLHelper {
 	 * @return
 	 */
 	public static String createForwardURL(ContentContext ctx, String url) {
-		if (ctx.getRequest().getContextPath() != null && ctx.getRequest().getContextPath().length() > 1) {			
+		if (ctx.getRequest().getContextPath() != null && ctx.getRequest().getContextPath().length() > 1) {
 			if (!url.startsWith("/")) {
 				return url;
-			} else {				
+			} else {
 				url = url.substring(1);
 				if (url.contains("/")) {
 					url = url.substring(url.indexOf('/'));
@@ -739,22 +746,24 @@ public abstract class ElementaryURLHelper {
 		}
 		return url;
 	}
-	
+
 	/**
-	 * creata a URL to gravatar of email, alternativeURL is the url use if no avatar registered on gravatar.
+	 * creata a URL to gravatar of email, alternativeURL is the url use if no
+	 * avatar registered on gravatar.
+	 * 
 	 * @param email
 	 * @param alternativeURL
 	 * @return
 	 * @throws MalformedURLException
 	 */
-	public static URL getGravatarURL(String email,String alternativeURL) throws MalformedURLException {
+	public static URL getGravatarURL(String email, String alternativeURL) throws MalformedURLException {
 		if (alternativeURL != null) {
-			return new URL("http://www.gravatar.com/avatar/"+StringHelper.md5Hex(email)+"?d="+alternativeURL);	
+			return new URL("http://www.gravatar.com/avatar/" + StringHelper.md5Hex(email) + "?d=" + alternativeURL);
 		} else {
-			return new URL("http://www.gravatar.com/avatar/"+StringHelper.md5Hex(email));
+			return new URL("http://www.gravatar.com/avatar/" + StringHelper.md5Hex(email));
 		}
 	}
-	
+
 	/**
 	 * remove static folder at the start of the path.
 	 */
@@ -767,15 +776,14 @@ public abstract class ElementaryURLHelper {
 			return path;
 		}
 	}
-	
-	public static String removeURI(String inURL) throws MalformedURLException  {
+
+	public static String removeURI(String inURL) throws MalformedURLException {
 		URL url = new URL(inURL);
 		String port = "";
-		if (url.getPort()>0) {
-			port = ":"+url.getPort();
+		if (url.getPort() > 0) {
+			port = ":" + url.getPort();
 		}
-		return url.getProtocol()+"://"+url.getHost()+port+'/';		
+		return url.getProtocol() + "://" + url.getHost() + port + '/';
 	}
-
 
 }

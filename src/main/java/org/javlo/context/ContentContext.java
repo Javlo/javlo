@@ -45,6 +45,8 @@ import org.javlo.user.UserFactory;
  */
 public class ContentContext {
 
+	public static final String PREVIEW_EDIT_PARAM = "previewEdit";
+
 	private static final String HOST_DEFINED_SITE = "____host-defined-site";
 
 	private static final String FORCE_PATH_PREFIX = "____force-path-prefix";
@@ -730,7 +732,7 @@ public class ContentContext {
 			String forceTemplate = rs.getParameter(Template.FORCE_TEMPLATE_PARAM_NAME,null);
 			GlobalContext globalContext = GlobalContext.getInstance(getRequest());
 			if (forceTemplate != null) {
-				logger.info("force template : " + forceTemplate);
+				logger.fine("force template : " + forceTemplate);
 				template = Template.getApplicationInstance(getRequest().getSession().getServletContext(), this, forceTemplate);
 			}
 			if (template == null) {
@@ -1629,7 +1631,7 @@ public class ContentContext {
 
 	public static boolean isEditPreview(HttpServletRequest request) {
 		RequestService rs = RequestService.getInstance(request);
-		return StringHelper.isTrue(rs.getParameter("previewEdit", null));
+		return StringHelper.isTrue(rs.getParameter(PREVIEW_EDIT_PARAM, null));
 	}
 
 	public static void setForcePathPrefix(ServletRequest request, String forcePathPrefix) {		

@@ -38,7 +38,7 @@ public class ImportDefaultLanguageMacro extends AbstractMacro {
 		MacroHelper.copyLanguageStructure(currentPage, deftLanguageCtx, Arrays.asList(new ContentContext[] { ctx }), true);
 
 		PersistenceService persistenceService = PersistenceService.getInstance(globalContext);
-		persistenceService.store(ctx);
+		persistenceService.setAskStore(true);
 
 		return null;
 	}

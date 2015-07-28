@@ -189,12 +189,16 @@ public class Image extends AbstractFileComponent implements IImageTitle, IPrevie
 			url = URLHelper.createTransformURL(ctx, getPage(), getResourceURL(ctx, getFileName()), "list");
 			url = URLHelper.addParam(url, "hash", getStaticInfo(ctx).getVersionHash());
 			out.println("<img src=\"" + url + "\" />&nbsp;");
-			out.println("<div class=\"focus-point\">x</div>");
-			out.println("<input class=\"posx\" type=\"hidden\" name=\"posx-" + file.getId() + "\" value=\"" + file.getFocusZoneX() + "\" />");
-			out.println("<input class=\"posy\" type=\"hidden\" name=\"posy-" + file.getId() + "\" value=\"" + file.getFocusZoneY() + "\" />");
-			out.println("<input class=\"path\" type=\"hidden\" name=\"image_path-" + file.getId() + "\" value=\"" + URLHelper.mergePath(getRelativeFileDirectory(ctx), getDirSelected()) + "\" />");
-			out.println("</div></div>");
-			out.println("<script type=\"text/javascript\">initFocusPoint();</script>");
+			if (!isFromShared(ctx)) {
+				out.println("<div class=\"focus-point\">x</div>");
+				out.println("<input class=\"posx\" type=\"hidden\" name=\"posx-" + file.getId() + "\" value=\"" + file.getFocusZoneX() + "\" />");
+				out.println("<input class=\"posy\" type=\"hidden\" name=\"posy-" + file.getId() + "\" value=\"" + file.getFocusZoneY() + "\" />");
+				out.println("<input class=\"path\" type=\"hidden\" name=\"image_path-" + file.getId() + "\" value=\"" + URLHelper.mergePath(getRelativeFileDirectory(ctx), getDirSelected()) + "\" />");
+				out.println("</div></div>");
+				out.println("<script type=\"text/javascript\">initFocusPoint();</script>");
+			} else {
+				out.println("</div></div>");
+			}
 		} else {
 			imageList = true;
 		}
@@ -211,11 +215,11 @@ public class Image extends AbstractFileComponent implements IImageTitle, IPrevie
 						selected = " class=\"preview-image selected\"";
 					}
 					String realURL = URLHelper.createResourceURL(ctx, getPage(), '/' + getResourceURL(ctx, image));
-					realURL = URLHelper.addParam(realURL, "CRC32", ""+staticInfo.getCRC32());
+					realURL = URLHelper.addParam(realURL, "CRC32", "" + staticInfo.getCRC32());
 					String previewURL = URLHelper.createTransformURL(ctx, getPage(), getResourceURL(ctx, image), "preview");
-					previewURL = URLHelper.addParam(previewURL,"CRC32",""+ staticInfo.getCRC32());
+					previewURL = URLHelper.addParam(previewURL, "CRC32", "" + staticInfo.getCRC32());
 					url = URLHelper.createTransformURL(ctx, getPage(), getResourceURL(ctx, image), "list");
-					url = URLHelper.addParam(url,"hash",staticInfo.getVersionHash());
+					url = URLHelper.addParam(url, "hash", staticInfo.getVersionHash());
 					String id = "image_name_select__" + getId();
 					// if (i < maxDisplayedImage || isSelectedImage) {
 					out.print("<div " + selected + ">");
@@ -238,6 +242,9 @@ public class Image extends AbstractFileComponent implements IImageTitle, IPrevie
 			params.put("webaction", "image.loadImages");
 			params.put("comp_id", getId());
 			String ajaxURL = URLHelper.createAjaxURL(ctx, params);
+			if (ctx.isEditPreview()) {
+				ajaxURL = URLHelper.addParam(ajaxURL, ContentContext.PREVIEW_EDIT_PARAM, "true");
+			}
 			out.println("<div class=\"action\">");
 			I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
 			out.println("<a class=\"action-button ajax\" href=\"" + ajaxURL + "\">" + i18nAccess.getText("content.image.load") + "</a>");
@@ -297,7 +304,11 @@ public class Image extends AbstractFileComponent implements IImageTitle, IPrevie
 
 	public String getResourceURL(ContentContext ctx, String fileLink) {
 		StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
-		return URLHelper.mergePath(staticConfig.getImageFolder(), URLHelper.mergePath(getDirSelected(), fileLink));
+		if (isFromShared(ctx)) {
+			return URLHelper.mergePath(staticConfig.getShareDataFolderKey(), staticConfig.getImageFolderName(), getDirSelected(), fileLink.replaceFirst(staticConfig.getShareDataFolderKey(), ""));
+		} else {
+			return URLHelper.mergePath(staticConfig.getImageFolder(), URLHelper.mergePath(getDirSelected(), fileLink));
+		}
 	}
 
 	@Override
@@ -488,7 +499,7 @@ public class Image extends AbstractFileComponent implements IImageTitle, IPrevie
 			return false;
 		}
 	}
-	
+
 	@Override
 	public int getPriority(ContentContext ctx) {
 		if (getConfig(ctx).getProperty("image.priority", null) == null) {
@@ -497,7 +508,7 @@ public class Image extends AbstractFileComponent implements IImageTitle, IPrevie
 			return Integer.parseInt(getConfig(ctx).getProperty("image.priority", null));
 		}
 	}
-	
+
 	protected boolean isAllowRAW(ContentContext ctx) {
 		return StringHelper.isTrue(getConfig(ctx).getProperty("filter.allow-raw", null), true);
 	}

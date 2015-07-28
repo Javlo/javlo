@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
+import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.fileupload.FileItem;
 import org.javlo.component.core.ComponentContext;
 import org.javlo.component.core.IContentVisualComponent;
@@ -100,7 +101,7 @@ public class GlobalImage extends Image implements IImageFilter {
 
 	@Override
 	protected boolean canUpload(ContentContext ctx) {
-		return true;
+		return !isFromShared(ctx);
 	}
 
 	@Override
@@ -162,15 +163,10 @@ public class GlobalImage extends Image implements IImageFilter {
 	protected String getDefaultFilter() {
 		return "standard";
 	}
-
+	
 	@Override
 	public String getPreviewURL(ContentContext ctx, String filter) {
 		try {
-			// TODO: check if I can change getPage with ctx.getcurrentPage, I
-			// need this for render image with correct filter in
-			// PageMirrorComponent.
-			// String url = URLHelper.createTransformURL(ctx, getPage(),
-			// getResourceURL(ctx, getFileName()), filter);
 			String url = null;
 			try {
 				url = URLHelper.createTransformURL(ctx, ctx.getVirtualCurrentPage(), TemplateFactory.getTemplate(ctx, ctx.getVirtualCurrentPage()), getResourceURL(ctx, getFileName()), filter, this);
@@ -325,9 +321,11 @@ public class GlobalImage extends Image implements IImageFilter {
 		filesParams.put(ElementaryURLHelper.BACK_PARAM_NAME, backURL);
 
 		String staticURL = URLHelper.createModuleURL(ctx, ctx.getPath(), "file", filesParams);
-		finalCode.append("<a class=\"" + EDIT_ACTION_CSS_CLASS + " btn btn-default btn-xs\" href=\"" + staticURL + "\">");
-		finalCode.append(i18nAccess.getText("content.goto-static"));
-		finalCode.append("</a>");
+		if (canUpload(ctx)) {
+			finalCode.append("<a class=\"" + EDIT_ACTION_CSS_CLASS + " btn btn-default btn-xs\" href=\"" + staticURL + "\">");
+			finalCode.append(i18nAccess.getText("content.goto-static"));
+			finalCode.append("</a>");
+		}
 		finalCode.append("</div>");
 
 		/* filter */
@@ -366,8 +364,13 @@ public class GlobalImage extends Image implements IImageFilter {
 			String[] fileListBlanck = new String[fileList.length + 1];
 			fileListBlanck[0] = "";
 			System.arraycopy(fileList, 0, fileListBlanck, 1, fileList.length);
+			String fileName =  getFileName();
+			if (isFromShared(ctx)) {
+				fileName = fileName.replaceFirst(ctx.getGlobalContext().getStaticConfig().getShareDataFolderKey()+'/', "");
+				
+			}
 
-			finalCode.append(XHTMLHelper.getInputOneSelect(getSelectXHTMLInputName(), fileListBlanck, getFileName(), getJSOnChange(ctx), true));
+			finalCode.append(XHTMLHelper.getInputOneSelect(getSelectXHTMLInputName(), fileListBlanck, fileName, getJSOnChange(ctx), true));
 			finalCode.append("</div>");
 		}
 
@@ -538,7 +541,16 @@ public class GlobalImage extends Image implements IImageFilter {
 		String folder;
 		StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-		folder = URLHelper.mergePath(globalContext.getDataFolder(), staticConfig.getImageFolder());
+		if (isFromShared(ctx)) {
+			try {
+				folder = URLHelper.mergePath(globalContext.getSharedDataFolder(ctx.getRequest().getSession()), staticConfig.getImageFolderName());
+			} catch (Exception e) {
+				e.printStackTrace();
+				folder = null;
+			}
+		} else {
+			folder = URLHelper.mergePath(globalContext.getDataFolder(), staticConfig.getImageFolder());
+		}
 		return folder;
 	}
 
@@ -1119,7 +1131,7 @@ public class GlobalImage extends Image implements IImageFilter {
 		filesParams.put("webaction", "changeRenderer");
 		filesParams.put("page", "meta");
 		filesParams.put("select", "_TYPE_");
-		filesParams.put("previewEdit", "true");
+		filesParams.put(ContentContext.PREVIEW_EDIT_PARAM, "true");
 		String chooseImageURL = URLHelper.createModuleURL(ctx, ctx.getPath(), "file", filesParams);
 
 		out.println("<div class=\"text\">");

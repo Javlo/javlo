@@ -41,7 +41,7 @@ public class CreateExternalNewsMacro extends AbstractMacro {
 
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		PersistenceService persistenceService = PersistenceService.getInstance(globalContext);
-		persistenceService.store(ctx);
+		persistenceService.setAskStore(true);
 
 		return null;
 	}

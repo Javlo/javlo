@@ -43,6 +43,8 @@ import org.javlo.ztatic.StaticInfo;
  * @author pvandermaesen the class for seralize the a track event and read the track event.
  */
 public class Tracker {
+	
+	public static final String TRACKING_PARAM = "tracking";
 
 	Logger logger = Logger.getLogger(Tracker.class.getName());
 
@@ -67,6 +69,9 @@ public class Tracker {
 	}
 
 	public static void trace(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		if (!StringHelper.isTrue(request.getParameter(TRACKING_PARAM), true)) {
+			return;
+		}
 		GlobalContext globalContext = GlobalContext.getInstance(request);
 		Tracker tracker = Tracker.getTracker(globalContext, request.getSession());
 		IUserFactory fact = UserFactory.createUserFactory(globalContext, request.getSession());

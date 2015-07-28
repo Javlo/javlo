@@ -74,9 +74,11 @@ public class ContentOnlyServlet extends HttpServlet {
 			}
 			
 			if (StringHelper.isTrue(request.getParameter("mailing"))) {
-				String query = request.getQueryString().replace("mailing=", "_removed=");
-				query = request.getQueryString().replace(CatchAllFilter.CHECK_CONTEXT_PARAM+'=', "_removed=");
-				
+				String query = "";
+				if (request.getQueryString() != null) {
+					query = request.getQueryString().replace("mailing=", "_removed=");
+					query = request.getQueryString().replace(CatchAllFilter.CHECK_CONTEXT_PARAM+'=', "_removed=");
+				}				
 				String newURL = URLHelper.createURL(ctx.getContextForAbsoluteURL().getContextWithOtherRenderMode(ContentContext.PAGE_MODE));
 				newURL = URLHelper.addParams(newURL, query);
 				URL url = new URL(newURL);

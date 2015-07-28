@@ -51,6 +51,7 @@ import org.javlo.service.ReverseLinkService;
 import org.javlo.service.resource.LocalResource;
 import org.javlo.service.resource.Resource;
 import org.javlo.service.resource.ResourceStatus;
+import org.javlo.servlet.AccessServlet;
 import org.javlo.ztatic.IStaticContainer;
 import org.javlo.ztatic.StaticInfo;
 
@@ -501,11 +502,11 @@ public abstract class AbstractFileComponent extends AbstractVisualComponent impl
 	}
 
 	public String getJSOnChange(ContentContext ctx) {
-		// String ajaxURL = URLHelper.createAjaxURL(ctx);
-		// String formRef = "document.forms['content_update']";
-		// return "updateComponent(" + formRef + ",'" + ajaxURL +
-		// "'); reloadComponent('" + getId() + "','" + ajaxURL + "');";
-		return "jQuery(this.form).trigger('submit')";
+		String js = "";
+		if (ctx.isEditPreview()) {
+			js = "jQuery(this.form).append('<input type=&quot;hidden&quot; name=&quot;" + AccessServlet.PERSISTENCE_PARAM + "&quot; value=&quot;false&quot; />');";
+		}
+		return js + "jQuery(this.form).trigger('submit')";
 	}
 
 	public String getLabel() {
@@ -631,13 +632,21 @@ public abstract class AbstractFileComponent extends AbstractVisualComponent impl
 		return false;
 	}
 
+	protected boolean isFromShared(ContentContext ctx) {
+		StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
+		return getFileName().startsWith(staticConfig.getShareDataFolderKey());
+	}
+
 	@Override
 	public void performEdit(ContentContext ctx) throws Exception {
+
+		boolean fromShared = isFromShared(ctx);
+
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
 		I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
 
 		String label = requestService.getParameter(getLabelXHTMLInputName(), "");
-		String fileName = requestService.getParameter(getFileXHTMLInputName(), "");
+		String fileName = requestService.getParameter(getFileXHTMLInputName(), "");		
 		String newDir = requestService.getParameter(getNewDirInputName(), "");
 		String selectedDir = requestService.getParameter(getDirInputName(), "");
 		String description = requestService.getParameter(getDescriptionName(), "");
@@ -661,46 +670,54 @@ public abstract class AbstractFileComponent extends AbstractVisualComponent impl
 			}
 		}
 
-		if (fileName != null) {
-
-			if (fileName.trim().length() == 0) {
-				fileName = requestService.getParameter(getSelectXHTMLInputName(), "");
-				fileName = StringHelper.getFileNameFromPath(fileName);
-			}
-
-			if ((!label.equals(getLabel())) || (!fileName.equals(getFileName()))) {
-				setModify();
-			}
-			if (!reverseLink.equals(properties.getProperty(REVERSE_LINK_KEY))) {
-				properties.setProperty(REVERSE_LINK_KEY, reverseLink);
-				setModify();
-
-				GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-				ReverseLinkService reverlinkService = ReverseLinkService.getInstance(globalContext);
-				reverlinkService.clearCache();
-			}
-
-			if (!getDirSelected().equals(selectedDir)) {
-				fileName = "";
-				MessageRepository messageRepository = MessageRepository.getInstance(ctx);
-				messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("content.file.info.select-dir", new String[][] { { "group", selectedDir } }), GenericMessage.INFO));
-				setModify();
-				setNeedRefresh(true);
-			}
-
-			if (needEncoding()) {
-				String encoding = requestService.getParameter(getEncodingXHTMLInputName(), null);
-				if (encoding != null) {
-					properties.setProperty(ENCODING_KEY, encoding);
-					setModify();
-				}
-			}
-
-			setDirSelected(selectedDir);
-			setFileName(fileName);
-			setLabel(label);
-			properties.setProperty(DESCRIPTION_KEY, description);
+		if (fileName.trim().length() == 0) {
+			fileName = requestService.getParameter(getSelectXHTMLInputName(), "");
+			fileName = StringHelper.getFileNameFromPath(fileName);
 		}
+		
+		if (fromShared && fileName != null) {
+			fileName = URLHelper.mergePath(ctx.getGlobalContext().getStaticConfig().getShareDataFolderKey(), fileName);
+		}
+
+		if ((!label.equals(getLabel())) || (!fileName.equals(getFileName()))) {
+			setModify();
+		}
+		if (!reverseLink.equals(properties.getProperty(REVERSE_LINK_KEY))) {
+			properties.setProperty(REVERSE_LINK_KEY, reverseLink);
+			setModify();
+
+			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+			ReverseLinkService reverlinkService = ReverseLinkService.getInstance(globalContext);
+			reverlinkService.clearCache();
+		}
+
+		if (!getDirSelected().equals(selectedDir)) {
+			System.out.println("***** AbstractFileComponent.performEdit : getDirSelected() = "+getDirSelected()); //TODO: remove debug trace
+			System.out.println("***** AbstractFileComponent.performEdit : selectedDir = "+selectedDir); //TODO: remove debug trace			
+			fileName = "";
+			if (fromShared) {
+				fileName = ctx.getGlobalContext().getStaticConfig().getShareDataFolderKey();
+			}
+			MessageRepository messageRepository = MessageRepository.getInstance(ctx);
+			messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("content.file.info.select-dir", new String[][] { { "group", selectedDir } }), GenericMessage.INFO));
+			setModify();
+			setNeedRefresh(true);
+		}
+
+		if (needEncoding()) {
+			String encoding = requestService.getParameter(getEncodingXHTMLInputName(), null);
+			if (encoding != null) {
+				properties.setProperty(ENCODING_KEY, encoding);
+				setModify();
+			}
+		}
+		
+		System.out.println("***** AbstractFileComponent.performEdit : fileName = "+fileName); //TODO: remove debug trace
+
+		setDirSelected(selectedDir);
+		setFileName(fileName);
+		setLabel(label);
+		properties.setProperty(DESCRIPTION_KEY, description);
 
 		// if (canUpload(ctx)) {
 		if (isFileNameValid(fileName)) {

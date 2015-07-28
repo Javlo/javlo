@@ -70,7 +70,7 @@ public class VFSServlet extends HttpServlet {
 					} else {
 						if (pathInfo.startsWith(staticConfig.getShareDataFolderKey())) {
 							pathInfo = pathInfo.substring(staticConfig.getShareDataFolderKey().length() + 1);
-							dataFolder = staticConfig.getShareDataFolder();
+							dataFolder = globalContext.getSharedDataFolder(request.getSession());
 						}
 						String resourceURI = pathInfo;
 						resourceURI = resourceURI.replace('\\', '/');

@@ -37,6 +37,10 @@ public class TimeTravelerActions implements IAction {
 	public synchronized static String performUndoRedo(RequestService rs, ContentContext ctx, GlobalContext globalContext, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
 		boolean previous = rs.getParameter("previous", null) != null;
 		PersistenceService pers = PersistenceService.getInstance(globalContext);
+		
+		System.out.println("***** TimeTravelerActions.performUndoRedo : undo"); //TODO: remove debug trace
+		System.out.println("***** TimeTravelerActions.performUndoRedo : previous = "+previous); //TODO: remove debug trace
+		System.out.println("***** TimeTravelerActions.performUndoRedo : ctx.isCanUndo() = "+ctx.isCanUndo()); //TODO: remove debug trace
 
 		final String NOT_FOUND_MSG = i18nAccess.getText("message.error.no-undo");
 
@@ -153,7 +157,7 @@ public class TimeTravelerActions implements IAction {
 
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		PersistenceService persistenceService = PersistenceService.getInstance(globalContext);
-		persistenceService.store(ctx);
+		persistenceService.setAskStore(true);
 
 		return null;
 	}
@@ -233,7 +237,7 @@ public class TimeTravelerActions implements IAction {
 		}
 
 		PersistenceService persistenceService = PersistenceService.getInstance(globalContext);
-		persistenceService.store(editCtx);
+		persistenceService.setAskStore(true);
 
 		content.releaseTimeTravelerNav(timeCtx);
 		content.releasePreviewNav(editCtx);

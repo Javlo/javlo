@@ -144,7 +144,7 @@ public class NavigationService {
 	public void removeNavigation(ContentContext ctx, MenuElement elem) throws Exception {
 		Set<String> pageDeleted = new HashSet<String>();
 		removeNavigationRec(pageDeleted, elem);
-		persistenceService.store(ctx);		
+		persistenceService.setAskStore(true);		
 		for (IContentVisualComponent comp : ComponentFactory.getAllComponentsFromContext(ctx)) {
 			if (comp instanceof PageMirrorComponent) {
 				PageMirrorComponent pageMirror = (PageMirrorComponent)comp;

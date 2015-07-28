@@ -17,7 +17,6 @@ public class SynchronisationThread extends AbstractThread {
 		setMailingHistoryFolder(staticConfig.getMailingHistoryFolder());
 		setTemplateFolder(staticConfig.getTemplateFolder());
 		setMailingTemplateFolder(staticConfig.getMailingTemplateFolder());
-		setShareFolder(staticConfig.getShareDataFolder());
 		setContext(globalContext.getAllValue());
 		setSynchroCode(staticConfig.getSynchroCode());
 		setProxyHost(staticConfig.getProxyHost());
@@ -78,10 +77,6 @@ public class SynchronisationThread extends AbstractThread {
 
 	public void setMailingTemplateFolder(String templateFolder) {
 		setField("mailing-template-folder", templateFolder);
-	}
-
-	public void setShareFolder(String dateContextFolder) {
-		setField("share", dateContextFolder);
 	}
 
 	public String getShareFolder() {

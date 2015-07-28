@@ -335,7 +335,7 @@ public class MacroHelper {
 			}
 			if (store) {
 				PersistenceService persistenceService = PersistenceService.getInstance(globalContext);
-				persistenceService.store(ctx);
+				persistenceService.setAskStore(true);
 			}
 			ctx.setPath(newPage.getPath());
 
@@ -656,13 +656,13 @@ public class MacroHelper {
 				macroFound = true;
 				out.println("<div class=\"macro\">");
 				if (macro instanceof IInteractiveMacro) {
-					String url = URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.EDIT_MODE)) + "?module=macro&previewEdit=true&webaction=macro.executeInteractiveMacro&macro-" + name + '=' + name + "&macro=" + name;
+					String url = URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.EDIT_MODE)) + "?module=macro&"+ContentContext.PREVIEW_EDIT_PARAM+"=true&webaction=macro.executeInteractiveMacro&macro-" + name + '=' + name + "&macro=" + name;
 					String js = "jQuery.colorbox({href : '" + url + "',opacity : 0.6,iframe : true,width : '95%',	height : '95%'});";
 					out.println("<a class=\"action-button\" href=\"#\" onclick=\"" + js + " return false;\">" + i18nAccess.getText("macro.name." + name, name) + "</a>");
 				} else {
 					out.println("<form method=\"post\" action=\"" + URLHelper.createURL(ctx) + "\">");
 					out.println("<input type=\"hidden\" name=\"module\" value=\"macro\" />");
-					out.println("<input type=\"hidden\" name=\"previewEdit\" value=\"true\" />");
+					out.println("<input type=\"hidden\" name=\""+ContentContext.PREVIEW_EDIT_PARAM+"\" value=\"true\" />");
 					out.println("<input type=\"hidden\" name=\"webaction\" value=\"macro.executeMacro\" />");
 					out.println("<input type=\"hidden\" name=\"macro-" + name + "\" value=\"" + name + "\" />");
 					out.println("<input type=\"hidden\" name=\"macro\" value=\"" + name + "\" />");
@@ -953,7 +953,7 @@ public class MacroHelper {
 			Map<String, String> params = new HashMap<String, String>();
 			params.put("editPreview", "true");
 			params.put("module", "macro");
-			params.put("previewEdit", "true");
+			params.put(ContentContext.PREVIEW_EDIT_PARAM, "true");
 			params.put("webaction", "macro.executeInteractiveMacro");
 			params.put("macro", macro);
 			String url = URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.EDIT_MODE), params);
@@ -965,7 +965,7 @@ public class MacroHelper {
 			out.println("<div class=\"macro\">");
 			out.println("<form action=\"" + URLHelper.createURL(ctx) + "\" method=\"post\">");
 			out.println("<input type=\"hidden\" value=\"macro\" name=\"module\">");
-			out.println("<input type=\"hidden\" value=\"true\" name=\"previewEdit\">");
+			out.println("<input type=\"hidden\" value=\"true\" name=\""+ContentContext.PREVIEW_EDIT_PARAM+"\">");
 			out.println("<input type=\"hidden\" value=\"macro.executeMacro\" name=\"webaction\">");
 			out.println("<input type=\"hidden\" value=\"" + macro + "\" name=\"macro\">");
 			out.println("<input class=\"action-button\" type=\"submit\" value=\"" + label + "\">");

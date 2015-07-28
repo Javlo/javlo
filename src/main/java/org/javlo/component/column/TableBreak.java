@@ -3,6 +3,7 @@ package org.javlo.component.column;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -267,6 +268,26 @@ public class TableBreak extends TableComponent {
 
 	@Override
 	public void delete(ContentContext ctx) {
+		try {			
+			setFieldValue("col", "0");
+			setFieldValue("row", "0");
+			Collection<String> toDel = new LinkedList<String>();
+			Collection<String> prepareDel = new LinkedList<String>();
+			IContentVisualComponent comp = ComponentHelper.getPreviousComponent(this, ctx);
+			while (comp != null && !comp.getType().equals(TYPE)) {
+				prepareDel.add(comp.getId());
+				if (comp instanceof OpenRow || comp instanceof OpenCell) {
+					toDel.addAll(prepareDel);
+					prepareDel.clear();
+				}				
+				comp = ComponentHelper.getPreviousComponent(comp, ctx);
+			}
+			for (String toDelComp : toDel) {
+				getPage().removeContent(ctx, toDelComp, false);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		super.delete(ctx);
 	}
 
@@ -277,5 +298,6 @@ public class TableBreak extends TableComponent {
 		int newRow = Integer.parseInt(getFieldValue("row"));
 		updateTable(ctx, newCol, newRow);
 	}
+	
 
 }

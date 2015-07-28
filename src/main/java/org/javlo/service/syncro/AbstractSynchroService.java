@@ -3,6 +3,7 @@ package org.javlo.service.syncro;
 import java.util.List;
 import java.util.logging.Logger;
 
+import org.javlo.service.NotificationService;
 import org.javlo.service.syncro.AbstractSynchroContext.SynchroAction;
 import org.javlo.service.syncro.AbstractSynchroContext.SynchroSide;
 import org.javlo.service.syncro.AbstractSynchroContext.SynchroState;
@@ -31,7 +32,7 @@ public abstract class AbstractSynchroService<SC extends AbstractSynchroContext> 
 	 * @return the ditant name
 	 */
 	public abstract String getDistantName();
-
+	
 	/**
 	 * The synchronisation process main method.
 	 * @return <code>true</code> if the synchronisation ended without error.
@@ -266,5 +267,5 @@ public abstract class AbstractSynchroService<SC extends AbstractSynchroContext> 
 		previousOutState = context.getOutState();
 		context.shutdown();
 	}
-
+	
 }

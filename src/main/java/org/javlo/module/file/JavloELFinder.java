@@ -241,7 +241,7 @@ public class JavloELFinder extends ELFinder {
 				file.getFile().renameTo(newFile);
 				staticInfo.renameFile(ctx, newFile);
 				GlobalContext globalContext = GlobalContext.getInstance(request);
-				PersistenceService.getInstance(globalContext).store(ctx);
+				PersistenceService.getInstance(globalContext).setAskStore(true);
 				if (file.getFile().isDirectory()) {
 					FileCache.getInstance(request.getSession().getServletContext()).clear(globalContext.getContextKey());
 				} else {

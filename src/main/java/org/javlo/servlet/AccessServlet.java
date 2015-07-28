@@ -79,6 +79,8 @@ import org.xhtmlrenderer.util.FSImageWriter;
 
 public class AccessServlet extends HttpServlet implements IVersion {
 
+	public static final String PERSISTENCE_PARAM = "persistence";
+
 	private static final long serialVersionUID = 1L;
 
 	public static long COUNT_ACCESS = 0;
@@ -158,7 +160,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 		System.out.println("		\\____/\\_/ \\|\\__/  \\____/\\____/");
 		System.out.println("");
 		System.out.println("");
-		
+
 		/** JSTL Constant **/
 		getServletContext().setAttribute("BACK_PARAM_NAME", ElementaryURLHelper.BACK_PARAM_NAME);
 
@@ -242,13 +244,13 @@ public class AccessServlet extends HttpServlet implements IVersion {
 					if (FIRST_REQUEST) {
 						FIRST_REQUEST = false;
 						try {
-							GlobalContext.getDefaultContext(request.getSession()); 
+							GlobalContext.getDefaultContext(request.getSession());
 							GlobalContext.getMasterContext(request.getSession());
-							if (globalContext.getDMZServerIntra() != null) {
+							/*if (globalContext.getDMZServerIntra() != null) {
 								SynchroThread synchro = (SynchroThread) AbstractThread.createInstance(staticConfig.getThreadFolder(), SynchroThread.class);
 								synchro.initSynchronisationThread(staticConfig, globalContext, request.getSession().getServletContext());
 								synchro.store();
-							}
+							}*/
 						} catch (Exception e) {
 							e.printStackTrace();
 						}
@@ -459,16 +461,16 @@ public class AccessServlet extends HttpServlet implements IVersion {
 					}
 				}
 				Template template = ctx.getCurrentTemplate();
-				
+
 				if (ctx.getRenderMode() != ContentContext.EDIT_MODE) {
 					/*** CHECK CONTENT AVAIBILITY ***/
 					boolean checkContentAviability = true;
 					if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE) {
 						EditContext editCtx = EditContext.getInstance(globalContext, request.getSession());
 						checkContentAviability = !editCtx.isEditPreview();
-						
+
 						IntegrityFactory.getInstance(ctx);
-						
+
 					}
 					ContentContext newCtx = new ContentContext(ctx);
 					if (checkContentAviability) {
@@ -533,12 +535,10 @@ public class AccessServlet extends HttpServlet implements IVersion {
 				/** ******* */
 				/* TRACKING */
 				/** ******* */
-				
-				if (StringHelper.isTrue(request.getParameter("tracking"), true)) {
-					localLogger.startCount("tracking1");
-					Tracker.trace(request, response);
-					localLogger.endCount("tracking", "tracking user");
-				}
+
+				localLogger.startCount("tracking1");
+				Tracker.trace(request, response);
+				localLogger.endCount("tracking", "tracking user");
 
 				if (logger.isLoggable(Level.FINE)) {
 					logger.fine(requestLabel + " : tracking " + df.format((double) (System.currentTimeMillis() - startTime) / (double) 1000) + " sec.");
@@ -580,7 +580,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 						response.setContentType("text/html; charset=" + ContentContext.CHARACTER_ENCODING);
 
 						File editCSS = new File(URLHelper.mergePath(globalContext.getStaticFolder(), "/edit/specific.css"));
-						if (editCSS.exists()) {								
+						if (editCSS.exists()) {
 							String savePathPrefix = ctx.getPathPrefix();
 							ContentContext.setForcePathPrefix(request, globalContext.getContextKey());
 							String cssURL = URLHelper.createResourceURL(ctx, URLHelper.mergePath(globalContext.getStaticConfig().getStaticFolder(), "/edit/specific.css"));
@@ -591,7 +591,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 							GlobalContext masterContext = GlobalContextFactory.getMasterGlobalContext(request.getSession().getServletContext());
 							if (masterContext != null) {
 								editCSS = new File(URLHelper.mergePath(masterContext.getStaticFolder(), "/edit/specific.css"));
-								if (editCSS.exists()) {								
+								if (editCSS.exists()) {
 									String savePathPrefix = ctx.getPathPrefix();
 									ContentContext.setForcePathPrefix(request, masterContext.getContextKey());
 									String cssURL = URLHelper.createResourceURL(ctx, URLHelper.mergePath(globalContext.getStaticConfig().getStaticFolder(), "/edit/specific.css"));
@@ -602,7 +602,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 								logger.severe("master context not found.");
 							}
 						}
-						
+
 						getServletContext().getRequestDispatcher(editCtx.getEditTemplate()).include(request, response);
 					}
 					localLogger.endCount("edit", "include edit");
@@ -692,10 +692,10 @@ public class AccessServlet extends HttpServlet implements IVersion {
 						 */
 						PDFConvertion.getInstance().convertXHTMLToPDF(new URL(url), staticConfig.getApplicationLogin(), staticConfig.getApplicationPassword(), out);
 
-					}  else if (ctx.getFormat().equalsIgnoreCase("ics") || ctx.getFormat().equalsIgnoreCase("ical") || ctx.getFormat().equalsIgnoreCase("icalendar")) {						
+					} else if (ctx.getFormat().equalsIgnoreCase("ics") || ctx.getFormat().equalsIgnoreCase("ical") || ctx.getFormat().equalsIgnoreCase("icalendar")) {
 						OutputStream out = response.getOutputStream();
 						Event event = ctx.getCurrentPage().getEvent(ctx);
-						if (event == null)  {
+						if (event == null) {
 							response.setStatus(HttpServletResponse.SC_NOT_FOUND);
 							return;
 						} else {
@@ -705,20 +705,21 @@ public class AccessServlet extends HttpServlet implements IVersion {
 							outPrint.println("BEGIN:VCALENDAR");
 							outPrint.println("VERSION:2.0");
 							if (event.getProdID() != null) {
-								outPrint.println("PRODID:"+event.getProdID());
+								outPrint.println("PRODID:" + event.getProdID());
 							}
 							outPrint.println("BEGIN:VEVENT");
 							if (event.getUser() != null) {
-								;outPrint.println("UID:"+event.getUser());
+								;
+								outPrint.println("UID:" + event.getUser());
 							}
-							outPrint.println("DTSTART:"+dateFormat.format(event.getStart()));
-							outPrint.println("DTEND:"+dateFormat.format(event.getEnd()));
-							outPrint.println("CATEGORIES:"+event.getCategory());
-							outPrint.println("SUMMARY:"+event.getSummary());
+							outPrint.println("DTSTART:" + dateFormat.format(event.getStart()));
+							outPrint.println("DTEND:" + dateFormat.format(event.getEnd()));
+							outPrint.println("CATEGORIES:" + event.getCategory());
+							outPrint.println("SUMMARY:" + event.getSummary());
 							if (StringHelper.neverNull(event.getLocation()).trim().length() > 0) {
-								outPrint.println("LOCATION:"+event.getLocation());
+								outPrint.println("LOCATION:" + event.getLocation());
 							}
-							outPrint.println("DESCRIPTION:"+event.getDescription());
+							outPrint.println("DESCRIPTION:" + event.getDescription());
 							outPrint.println("END:VEVENT");
 							outPrint.println("END:VCALENDAR");
 							outPrint.close();
@@ -792,29 +793,28 @@ public class AccessServlet extends HttpServlet implements IVersion {
 
 							if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE && staticConfig.isFixPreview()) {
 								ctx.getRequest().setAttribute("components", ComponentFactory.getComponentForDisplay(ctx));
-								
 
 								/************************/
 								/**** Shared Content ****/
 								/************************/
 								SharedContentService.prepare(ctx);
-								
+
 							}
 
 							/** check content **/
 							if (!ctx.isContentFound()) {
-								
+
 								if (staticConfig.isRedirectWidthName()) {
 									String pageName = StringHelper.getFileNameWithoutExtension(StringHelper.getFileNameFromPath(request.getRequestURI()));
 									MenuElement newPage = content.getNavigation(ctx).searchChildFromName(pageName);
 									if (newPage != null) {
 										String forwardURL = URLHelper.createURL(ctx, newPage);
 										NetHelper.sendRedirectPermanently(response, forwardURL);
-										logger.info("redirect permanently : "+pageName+" to "+forwardURL);
+										logger.info("redirect permanently : " + pageName + " to " + forwardURL);
 										return;
-									} 
+									}
 								}
-								
+
 								ctx.getResponse().setStatus(HttpServletResponse.SC_NOT_FOUND, "page not found : " + ctx.getPath());
 								if (ctx.isAsViewMode()) {
 									MenuElement page404 = content.getNavigation(ctx).searchChildFromName(staticConfig.get404PageName());
@@ -857,14 +857,15 @@ public class AccessServlet extends HttpServlet implements IVersion {
 				Writer out = response.getWriter();
 				out.write("<div style=\"margin-top: 50px; margin-left: auto; margin-right: auto; border: 2px #ff0000 solid; width: 500px; padding: 3px;\" id=\"fatal-error\">");
 				out.write("<h1 style=\"margin: 0px; padding: 1px; font-size: 120%; text-align: center;\">Techinal error.</h1>");
-				out.write("<p style=\"text-align: center;\"><a href=\"mailto:"+staticConfig.getManualErrorEmail()+"?subject=fatal error in javlo : " + globalContext.getContextKey() + "\">Describe your error in a email.</a></p>");
+				out.write("<p style=\"text-align: center;\"><a href=\"mailto:" + staticConfig.getManualErrorEmail() + "?subject=fatal error in javlo : " + globalContext.getContextKey() + "\">Describe your error in a email.</a></p>");
 				out.write("<p style=\"padding: 10px 10px 10px 10px; margin-bottom: 10px; color: #000000; border: 1px solid #ff0000; background-color: #ffeaea;\">" + t.getMessage() + "</p>");
 				out.write("</div>");
 
 				DebugListening.getInstance().sendError(request, t, "path=" + request.getRequestURI());
 			} finally {
 				PersistenceService persistenceService = PersistenceService.getInstance(globalContext);
-				if (persistenceService.isAskStore()) {
+				String persistenceParam = requestService.getParameter(PERSISTENCE_PARAM, null);
+				if (persistenceService.isAskStore() && StringHelper.isTrue(persistenceParam, true)) {
 					persistenceService.store(ctx);
 				}
 			}

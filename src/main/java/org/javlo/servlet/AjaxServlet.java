@@ -53,11 +53,9 @@ public class AjaxServlet extends HttpServlet {
 		try {
 			ContentContext ctx = ContentContext.getContentContext(request, response);
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+			RequestService rs = RequestService.getInstance(request);
 			try {
-
-				Tracker.trace(request, response);
-
-				RequestService rs = RequestService.getInstance(request);
+				Tracker.trace(request, response);				
 				if (rs.getParameter(ContentContext.FORCE_MODE_PARAMETER_NAME, null) != null) {
 					ctx.setRenderMode(Integer.parseInt(rs.getParameter(ContentContext.FORCE_MODE_PARAMETER_NAME, null)));
 				} else {
@@ -75,10 +73,7 @@ public class AjaxServlet extends HttpServlet {
 
 				InfoBean.updateInfoBean(ctx);
 
-				String action = ServletHelper.execAction(ctx);
-				if (action != null) {
-					logger.info("exec action : " + action);
-				}
+				ServletHelper.execAction(ctx);
 
 				ServletHelper.prepareModule(ctx);
 
@@ -129,7 +124,8 @@ public class AjaxServlet extends HttpServlet {
 				DebugListening.getInstance().sendError(request, t, "path=" + request.getRequestURI());
 			} finally {
 				PersistenceService persistenceService = PersistenceService.getInstance(globalContext);
-				if (persistenceService.isAskStore()) {
+				String persistenceParam = rs.getParameter(AccessServlet.PERSISTENCE_PARAM, null);
+				if (persistenceService.isAskStore() && StringHelper.isTrue(persistenceParam, true)) {
 					persistenceService.store(ctx);
 				}
 			}

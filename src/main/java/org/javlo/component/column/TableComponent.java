@@ -230,4 +230,5 @@ public abstract class TableComponent extends AbstractPropertiesComponent {
 	public boolean isRowBreak() {
 		return false;
 	}
+	
 }

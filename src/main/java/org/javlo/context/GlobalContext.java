@@ -80,6 +80,7 @@ import org.javlo.service.exception.ServiceException;
 import org.javlo.servlet.AccessServlet;
 import org.javlo.servlet.ImageTransformServlet;
 import org.javlo.template.Template;
+import org.javlo.tracking.Tracker;
 import org.javlo.user.AdminUserFactory;
 import org.javlo.user.IUserFactory;
 import org.javlo.user.IUserInfo;
@@ -527,7 +528,8 @@ public class GlobalContext implements Serializable, IPrintInfo {
 						Map<String, String> params = new HashMap<String, String>();
 						params.put("webaction", "view.sendTicketChangeNotifications");
 						params.put(ContentContext.FORWARD_AJAX, "true");
-						params.put("tracking", "false");
+						params.put(Tracker.TRACKING_PARAM, "false");
+						params.put(AccessServlet.PERSISTENCE_PARAM, "false");
 						ContentContext absoluteCtx = ctx.getContextForAbsoluteURL();
 						absoluteCtx.setRenderMode(ContentContext.VIEW_MODE);
 						String url = URLHelper.createURL(absoluteCtx, "/", params);
@@ -659,6 +661,8 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	private Long accountSize = null;
 
 	private String dataFolder = null;
+	
+	private String sharedDataFolder = null;
 
 	private final Map<String, String> oneTimeTokens = Collections.synchronizedMap(new TimeMap<String, String>(60 * 60)); // one
 																															// time
@@ -1138,6 +1142,25 @@ public class GlobalContext implements Serializable, IPrintInfo {
 			}
 		}
 		return dataFolder;
+	}
+
+	public String getSharedDataFolder(HttpSession session) throws ConfigurationException, IOException {
+		if (sharedDataFolder == null) {
+			sharedDataFolder = staticConfig.getLocalShareDataFolder();
+			if (getFolder() != null) {
+				sharedDataFolder = ElementaryURLHelper.mergePath(getMasterContext(session).getDataFolder(), sharedDataFolder);
+			}
+			try {
+				File folderFile = new File(sharedDataFolder);
+				sharedDataFolder = folderFile.getCanonicalPath();
+				if (!folderFile.exists()) {
+					folderFile.mkdirs();
+				}
+			} catch (IOException e) {
+				logger.warning(e.getMessage());
+			}
+		}
+		return sharedDataFolder;
 	}
 
 	public File getDataBaseFolder() {

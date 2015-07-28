@@ -480,6 +480,8 @@ public class StaticInfo {
 	private Date date;
 
 	private String id = null;
+	
+	private boolean staticFolder = true;
 
 	/**
 	 * false if date come from last modified of the file.
@@ -517,16 +519,24 @@ public class StaticInfo {
 
 		String fullURL = URLHelper.cleanPath(file.getPath(), false);
 
+		boolean staticFolder = true;
 		String fullStaticFolder = URLHelper.mergePath(globalContext.getDataFolder(), staticConfig.getStaticFolder());
 		if (ResourceHelper.isTemplateFile(globalContext, file)) {
 			fullStaticFolder = staticConfig.getTemplateFolder();
+		} else if (!file.getAbsolutePath().contains('/'+staticConfig.getStaticFolder()+'/')) { // before /static
+			fullStaticFolder = globalContext.getDataFolder();
+			staticFolder = false;
 		}
-
+		
+		fullStaticFolder=URLHelper.cleanPath(fullStaticFolder, false);
+		
 		String relURL = "/";
 		if (fullURL.length() > fullStaticFolder.length()) {
 			relURL = StringUtils.replace(fullURL, fullStaticFolder, "");
 		}
-		return getInstance(ctx, relURL);
+		StaticInfo staticInfo = getInstance(ctx, relURL);
+		staticInfo.setStaticFolder(staticFolder);
+		return staticInfo;
 	}
 
 	public static StaticInfo getInstance(ContentContext ctx, String inStaticURL) throws Exception {
@@ -670,7 +680,7 @@ public class StaticInfo {
 
 	public void save(ContentContext ctx) throws ServiceException, Exception {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-		PersistenceService.getInstance(globalContext).store(ctx);
+		PersistenceService.getInstance(globalContext).setAskStore(true);
 	}
 
 	public void setDescription(ContentContext ctx, String description) {
@@ -1496,6 +1506,14 @@ public class StaticInfo {
 	
 	public String getURL(ContentContext ctx) {
 		return URLHelper.createResourceURL(ctx, getFile());
+	}
+
+	public boolean isStaticFolder() {
+		return staticFolder;
+	}
+
+	public void setStaticFolder(boolean staticFolder) {
+		this.staticFolder = staticFolder;
 	}
 
 }

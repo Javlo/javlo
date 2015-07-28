@@ -21,7 +21,6 @@ public class SynchroThread extends AbstractThread {
 		setMailingFolder(staticConfig.getMailingFolder());
 		setMailingHistoryFolder(staticConfig.getMailingHistoryFolder());
 		setTemplateFolder(staticConfig.getTemplateFolder());
-		setShareFolder(staticConfig.getShareDataFolder());
 
 		setContext(globalContext.getAllValue());
 		setSynchroCode(staticConfig.getSynchroCode());

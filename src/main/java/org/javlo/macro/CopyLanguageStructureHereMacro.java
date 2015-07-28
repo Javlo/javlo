@@ -35,7 +35,7 @@ public class CopyLanguageStructureHereMacro extends AbstractMacro {
 			MacroHelper.copyLanguageStructure(currentPage, ctx, otherLanguageContexts, true);
 
 			PersistenceService persistenceService = PersistenceService.getInstance(globalContext);
-			persistenceService.store(ctx);
+			persistenceService.setAskStore(true);
 		}
 
 		return null;

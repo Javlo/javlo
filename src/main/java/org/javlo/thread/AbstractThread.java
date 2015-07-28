@@ -13,6 +13,7 @@ import java.util.logging.Logger;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
+import org.javlo.service.NotificationService;
 
 public abstract class AbstractThread {
 
@@ -41,6 +42,8 @@ public abstract class AbstractThread {
 
 	private Properties properties = null;
 	private File file = null;
+	
+	private NotificationService notificationService = null;
 
 	public static AbstractThread createInstance(String threadFolder, Class<? extends AbstractThread> clazz) throws InstantiationException, IllegalAccessException {
 		String name = "t_" + StringHelper.getRandomId();
@@ -131,5 +134,39 @@ public abstract class AbstractThread {
 	}
 
 	public abstract void run();
+
+	public NotificationService getNotificationService() {
+		return notificationService;
+	}
+
+	public void setNotificationService(NotificationService notificationService) {
+		System.out.println("################################################################");
+		System.out.println("################################################################");
+		System.out.println("################################################################");
+		System.out.println("################################################################");
+		System.out.println("################################################################");
+		System.out.println("################################################################");
+		System.out.println("################################################################");
+		System.out.println("################################################################");
+		System.out.println("################################################################");
+		System.out.println("################################################################");
+		System.out.println("################################################################");
+		System.out.println("################################################################");
+		System.out.println("################################################################");
+		System.out.println("################################################################");
+		System.out.println("################################################################");
+		System.out.println("################################################################");
+		System.out.println("################################################################");
+		System.out.println("################################################################");
+		System.out.println("################################################################");
+		System.out.println("################################################################");
+		System.out.println("################################################################");
+		System.out.println("################################################################");
+		System.out.println("################################################################");
+		System.out.println("################################################################");
+		
+		System.out.println("***** AbstractThread.setNotificationService : notificationService = "+notificationService); //TODO: remove debug trace
+		this.notificationService = notificationService;
+	}
 
 }

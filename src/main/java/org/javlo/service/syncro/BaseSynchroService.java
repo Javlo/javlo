@@ -26,6 +26,8 @@ import org.javlo.context.ContentContext;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
+import org.javlo.message.GenericMessage;
+import org.javlo.service.NotificationService;
 import org.javlo.service.syncro.AbstractSynchroContext.SynchroAction;
 import org.javlo.service.syncro.AbstractSynchroContext.SynchroSide;
 import org.javlo.service.syncro.exception.SynchroFatalException;

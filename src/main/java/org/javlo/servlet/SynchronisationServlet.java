@@ -172,13 +172,7 @@ public class SynchronisationServlet extends HttpServlet {
 				baseFolder = staticConfig.getMailingTemplateFolder();
 				manageDeletedFiles = false;
 				splitBigFiles = false;
-			} else if (fileName.startsWith(SHARE_PREFIX)) {
-				fileName = fileName.replace(SHARE_PREFIX, "");
-				baseFolder = staticConfig.getShareDataFolder();
-				manageDeletedFiles = false;
-				splitBigFiles = false;
 			}
-
 			fileName = URLHelper.cleanPath(fileName, true);
 
 			if (fileName.equals(FILE_INFO)) {

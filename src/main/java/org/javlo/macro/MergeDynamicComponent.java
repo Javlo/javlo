@@ -83,7 +83,7 @@ public class MergeDynamicComponent extends AbstractMacro {
 		}
 
 		PersistenceService persistenceService = PersistenceService.getInstance(globalContext);
-		persistenceService.store(ctx);
+		persistenceService.setAskStore(true);
 
 		return null;
 	}

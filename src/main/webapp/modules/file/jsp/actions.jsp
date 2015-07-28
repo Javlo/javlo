@@ -19,6 +19,11 @@
 
 <c:if test="${not empty param[BACK_PARAM_NAME]}"><a class="action-button back" href="${param[BACK_PARAM_NAME]}&path=${param.path}"><span>${i18n.edit['action.back']}</span></a></c:if>
 <c:if test="${empty param.templateid && empty param.select}"><a class="action-button save" href="#save" onclick="jQuery('#form-meta').submit(); return false;"><span>${i18n.edit['action.update']}</span></a></c:if>
+<c:if test="${not empty globalContext.DMZServerInter}">
+<c:url var="synchroURL" value="${info.currentURL}">
+	<c:param name="webaction" value="file.synchro" />
+</c:url>
+<a class="action-button synchro" href="${synchroURL}"><span>${i18n.edit['action.synchro']}</span></a></c:if>
 <c:url var="uploadCurrentURL" value="${info.currentURL}" context="/" />
 <c:url var="uploadJSPURL" value="${info.absoluteLocalURLPrefix}${currentModule.path}/jsp/upload.jsp" >
 	<c:param name="currentURL" value="${uploadCurrentURL}" />

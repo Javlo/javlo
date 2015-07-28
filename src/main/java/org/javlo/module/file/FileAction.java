@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
@@ -22,6 +23,7 @@ import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.io.filefilter.FileFileFilter;
 import org.javlo.actions.AbstractModuleAction;
 import org.javlo.bean.LinkToRenderer;
+import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
@@ -43,6 +45,7 @@ import org.javlo.module.core.ModuleException;
 import org.javlo.module.core.ModulesContext;
 import org.javlo.service.PersistenceService;
 import org.javlo.service.RequestService;
+import org.javlo.service.syncro.SynchroHelper;
 import org.javlo.user.AdminUserFactory;
 import org.javlo.user.AdminUserSecurity;
 import org.javlo.user.User;
@@ -53,7 +56,7 @@ public class FileAction extends AbstractModuleAction {
 
 	private static Logger logger = Logger.getLogger(FileAction.class.getName());
 
-		@Override
+	@Override
 	public String getActionGroupName() {
 		return "file";
 	}
@@ -72,7 +75,7 @@ public class FileAction extends AbstractModuleAction {
 
 	@Override
 	public String prepare(ContentContext ctx, ModulesContext modulesContext) throws Exception {
-		
+
 		String msg = super.prepare(ctx, modulesContext);
 		FileModuleContext fileModuleContext = (FileModuleContext) LangHelper.smartInstance(ctx.getRequest(), ctx.getResponse(), FileModuleContext.class);
 
@@ -238,7 +241,7 @@ public class FileAction extends AbstractModuleAction {
 					found = true;
 					staticInfo.setFocusZoneX(ctx, (int) Math.round(Double.parseDouble(newFocusX)));
 					staticInfo.setFocusZoneY(ctx, (int) Math.round(Double.parseDouble(newFocusY)));
-					PersistenceService.getInstance(globalContext).store(ctx);
+					PersistenceService.getInstance(globalContext).setAskStore(true);
 					// messageRepository.setGlobalMessageAndNotification(ctx,
 					// new
 					// GenericMessage(i18nAccess.getText("file.message.updatefocus",
@@ -312,13 +315,13 @@ public class FileAction extends AbstractModuleAction {
 						staticInfo.removeTag(ctx, tag);
 					}
 				}
-				
+
 				/* roles */
 				Collection<String> roles = globalContext.getUserRoles();
 				for (String role : roles) {
-					if (rs.getParameter("readrole_" + role + '_' + fileBean.getId(), null) != null) {						
+					if (rs.getParameter("readrole_" + role + '_' + fileBean.getId(), null) != null) {
 						staticInfo.addReadRole(ctx, role);
-					} else {						
+					} else {
 						staticInfo.removeReadRole(ctx, role);
 					}
 				}
@@ -327,7 +330,7 @@ public class FileAction extends AbstractModuleAction {
 					ctx.setClosePopup(true);
 				}
 			}
-			PersistenceService.getInstance(globalContext).store(ctx);
+			PersistenceService.getInstance(globalContext).setAskStore(true);
 			messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("file.message.updatemeta"), GenericMessage.INFO));
 		} else {
 			return "folder not found : " + folder;
@@ -397,7 +400,7 @@ public class FileAction extends AbstractModuleAction {
 		if (folderName.length() > 0) {
 			folder = new File(sourceFolder, URLHelper.mergePath(fileModuleContext.getPath(), folderName));
 			if (!folder.exists()) {
-				folder.mkdir();				
+				folder.mkdir();
 			}
 		}
 
@@ -452,6 +455,11 @@ public class FileAction extends AbstractModuleAction {
 		} else {
 			return "bad request structure : need 'sort' param.";
 		}
+		return null;
+	}
+
+	public static String performSynchro(StaticConfig staticConfig, ServletContext application, GlobalContext globalContext) throws Exception {
+		SynchroHelper.performSynchro(application, staticConfig, globalContext);
 		return null;
 	}
 

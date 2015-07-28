@@ -659,8 +659,7 @@ public class StaticConfig extends Observable {
 	}
 
 	public String getLocalShareDataFolder() {
-		String path = properties.getString("share-folder", "/WEB-INF/share-files");
-		path = replaceFolderVariable(path);
+		String path = properties.getString("share-folder", "/share-files");		
 		return path;
 	}
 	
@@ -824,7 +823,7 @@ public class StaticConfig extends Observable {
 		return properties.getString("security.secret-key", "fju43l7m");
 	}
 
-	public String getShareDataFolder() {
+	/*public String getShareDataFolder() {
 		String folder = getLocalShareDataFolder();
 		if (isDataFolderRelative()) {
 			folder = application.getRealPath(folder);
@@ -834,7 +833,7 @@ public class StaticConfig extends Observable {
 			file.mkdirs();
 		}
 		return folder;
-	}
+	}*/
 
 	public String getShareDataFolderKey() {
 		return properties.getString("share-folder-key", "___share-files___");

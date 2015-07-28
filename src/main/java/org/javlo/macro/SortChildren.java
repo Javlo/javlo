@@ -33,7 +33,7 @@ public class SortChildren extends AbstractMacro {
 		mustSorted=null;
 
 		PersistenceService persistenceService = PersistenceService.getInstance(globalContext);
-		persistenceService.store(ctx);
+		persistenceService.setAskStore(true);
 
 		return null;
 	}

@@ -908,7 +908,7 @@ public class ResourceHelper {
 		String fromDataFolder = file.getAbsolutePath().replace(globalContext.getDataFolder(), "");
 		FileCache.getInstance(ctx.getRequest().getSession().getServletContext()).delete(fromDataFolder);
 		
-		PersistenceService.getInstance(globalContext).store(ctx);
+		PersistenceService.getInstance(globalContext).setAskStore(true);
 		ContentService.clearCache(ctx, globalContext);		
 	}
 

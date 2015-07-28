@@ -106,7 +106,7 @@ public class CreateBusinessComponent implements IInteractiveMacro, IAction {
 				newEditURL = URLHelper.addParam(newEditURL, "comp_id", compId);
 				newEditURL = URLHelper.addParam(newEditURL, "module", "content");
 				newEditURL = URLHelper.addParam(newEditURL, "webaction", "editPreview");
-				newEditURL = URLHelper.addParam(newEditURL, "previewEdit", "true");
+				newEditURL = URLHelper.addParam(newEditURL, ContentContext.PREVIEW_EDIT_PARAM, "true");
 				NetHelper.sendRedirectTemporarily(ctx.getResponse(), newEditURL);
 			}
 		} catch (Exception e) {

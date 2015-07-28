@@ -412,7 +412,7 @@ public class DataAction implements IAction {
 
 		if (ctx.isNeedRefresh()) { // if there are modification >>>
 									// store new contnet.
-			PersistenceService.getInstance(ctx.getGlobalContext()).store(ctx);
+			PersistenceService.getInstance(ctx.getGlobalContext()).setAskStore(true);
 		}
 
 		return targetFolder;

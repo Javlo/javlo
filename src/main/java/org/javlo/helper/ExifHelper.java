@@ -8,6 +8,7 @@ import java.io.OutputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.logging.Logger;
 
 import org.apache.commons.imaging.ImageReadException;
 import org.apache.commons.imaging.ImageWriteException;
@@ -26,12 +27,18 @@ import org.apache.commons.io.FileUtils;
 import org.javlo.ztatic.StaticInfo.Position;
 
 public class ExifHelper {
+	
+	private static Logger logger = Logger.getLogger(ExifHelper.class.getName());
 
 	public ExifHelper() {
 		// TODO Auto-generated constructor stub
 	}
 
 	public static Position readPosition(File file) throws ImageReadException, IOException {
+		if (!file.exists()) {
+			logger.warning("file not found : "+file);
+			return null;
+		}
 		final ImageMetadata metadata = Imaging.getMetadata(file);
 		if (metadata instanceof JpegImageMetadata) {
 			final JpegImageMetadata jpegMetadata = (JpegImageMetadata) metadata;
@@ -49,6 +56,10 @@ public class ExifHelper {
 	}
 
 	public static Date readDate(File file) throws ImageReadException, IOException {
+		if (!file.exists()) {
+			logger.warning("file not found : "+file);
+			return null;
+		}
 		if (StringHelper.isJpeg(file.getName())) {
 			final ImageMetadata metadata = Imaging.getMetadata(file);
 			if (metadata instanceof JpegImageMetadata) {
@@ -72,6 +83,10 @@ public class ExifHelper {
 	}
 
 	public static void setExifGPSTag(final File jpegImageFile, final File dst) throws IOException, ImageReadException, ImageWriteException {
+		if (!jpegImageFile.exists()) {
+			logger.warning("file not found : "+jpegImageFile);
+			return;
+		}
 		OutputStream os = null;
 		boolean canThrow = false;
 		try {
@@ -113,6 +128,10 @@ public class ExifHelper {
 	}
 
 	public static void changeExifMetadata(final File jpegImageFile, final File dst) throws IOException, ImageReadException, ImageWriteException {
+		if (!jpegImageFile.exists()) {
+			logger.warning("file not found : "+jpegImageFile);
+			return;
+		}
 		OutputStream os = null;
 		boolean canThrow = false;
 		try {
@@ -148,6 +167,10 @@ public class ExifHelper {
 	}
 
 	public static void writeMetadata(ImageMetadata metadata, final File file) throws ImageWriteException, ImageReadException, IOException {
+		if (!file.exists()) {
+			logger.warning("file not found : "+file);
+			return;
+		}
 		OutputStream os = null;
 		boolean canThrow = false;
 		byte[] data = FileUtils.readFileToByteArray(file);

@@ -1316,14 +1316,10 @@ public class PersistenceService {
 		store(ctx, renderMode, true);
 	}
 
-	public synchronized void store(ContentContext ctx, int renderMode, boolean async) throws Exception {
-		
+	public synchronized void store(ContentContext ctx, int renderMode, boolean async) throws Exception {		
 		setAskStore(false);
-
 		synchronized (ctx.getGlobalContext().getLockLoadContent()) {
-
 			logger.info("store in " + renderMode + " mode.");
-
 			PersistenceThread persThread = new PersistenceThread();
 			ContentService content = ContentService.getInstance(globalContext);
 			MenuElement menuElement = content.getNavigation(ctx);
@@ -1336,19 +1332,15 @@ public class PersistenceService {
 			persThread.setPersistenceService(this);
 			persThread.setDefaultLg(defaultLg);
 			persThread.setGlobalContentMap(content.getGlobalMap(ctx));
-
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 			persThread.setDataFolder(globalContext.getDataFolder());
-
 			StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession().getServletContext());
 			if (StaticInfo._STATIC_INFO_DIR != null) {
 				String staticInfo = URLHelper.mergePath(globalContext.getDataFolder(), StaticInfo._STATIC_INFO_DIR);
 				persThread.addFolderToSave(new File(staticInfo));
 			}
 			persThread.addFolderToSave(new File(URLHelper.mergePath(globalContext.getDataFolder(), staticConfig.getUserInfoFile())));
-
 			persThread.start(async);
-
 		}
 	}
 

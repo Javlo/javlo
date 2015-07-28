@@ -29,7 +29,7 @@ public class DeleteChildren extends AbstractMacro {
 		mustDelete=null;
 
 		PersistenceService persistenceService = PersistenceService.getInstance(globalContext);
-		persistenceService.store(ctx);
+		persistenceService.setAskStore(true);
 
 		return null;
 	}

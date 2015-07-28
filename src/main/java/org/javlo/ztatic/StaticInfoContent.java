@@ -325,7 +325,7 @@ public class StaticInfoContent {
 
 	public void save(ContentContext ctx) throws ServiceException, Exception {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-		PersistenceService.getInstance(globalContext).store(ctx);
+		PersistenceService.getInstance(globalContext).setAskStore(true);
 	}
 
 	public void setDescription(ContentContext ctx, String description) {

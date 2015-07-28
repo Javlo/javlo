@@ -1388,6 +1388,7 @@ public class MenuElement implements Serializable, IPrintInfo {
 						} else {
 							IContentVisualComponent comp = ComponentFactory.getComponentWithType(ctx, componentBean[i].getType());
 							if (comp != null) {
+								((AbstractVisualComponent) comp).setPage(this);
 								comp.delete(ctx);
 							}
 						}
@@ -3761,27 +3762,28 @@ public class MenuElement implements Serializable, IPrintInfo {
 		synchronized (getLock()) {
 			List<ComponentBean> outList = new LinkedList<ComponentBean>();
 			boolean delete = false;
-			for (int i = 0; i < componentBean.length; i++) {
-				IContentVisualComponent comp = ComponentFactory.getComponentWithType(ctx, componentBean[i].getType());
-
+			for (int i = 0; i < componentBean.length; i++) {				
+				if (componentBean[i].getId().equals(id)) {
+					IContentVisualComponent comp = ComponentFactory.getComponentWithType(ctx, componentBean[i].getType());
+					if (comp != null) {
+						((AbstractVisualComponent) comp).setComponentBean(componentBean[i]);
+						((AbstractVisualComponent) comp).setPage(this);
+						comp.delete(ctx);
+						type = comp.getType();
+					} else {
+						logger.warning("comp type not found : "+componentBean[i].getType());
+					}
+				}
+			}
+			for (int i = 0; i < componentBean.length; i++) {				
 				if (!componentBean[i].getId().equals(id)) {
 					if (!delete) {
 						outList.add(componentBean[i]);
 					}
-				} else {
-					if (comp != null) {
-						// added by plm for portlet delete purpose
-						((AbstractVisualComponent) comp).setComponentBean(componentBean[i]);
-
-						comp.delete(ctx);
-						type = comp.getType();
-					}
 				}
 			}
-			// if (type != null) {
 			componentBean = new ComponentBean[outList.size()];
 			outList.toArray(componentBean);
-			// }
 		}
 		if (releaseCache) {
 			releaseCache();

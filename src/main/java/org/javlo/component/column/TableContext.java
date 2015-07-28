@@ -45,6 +45,9 @@ public class TableContext {
 		cellWidth = false; 
 		
 		MenuElement page = currentComponent.getPage();
+		if (page == null) {
+			throw new Exception("page not found on component : "+currentComponent.getType()+" id:"+currentComponent.getId());
+		}
 		ContentElementList content = page.getContent(ctx);			
 		IContentVisualComponent comp = content.next(ctx);
 		IContentVisualComponent firstComp = null;
