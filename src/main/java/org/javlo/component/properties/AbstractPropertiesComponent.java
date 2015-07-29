@@ -20,7 +20,7 @@ import org.javlo.service.RequestService;
 public abstract class AbstractPropertiesComponent extends AbstractVisualComponent {
 
 	protected Properties properties = new Properties();
-
+	
 	protected String createKeyWithField(String inField) {
 		return getInputName(inField);
 	}
@@ -177,6 +177,10 @@ public abstract class AbstractPropertiesComponent extends AbstractVisualComponen
 	protected String getListSeparator() {
 		return ",";
 	}
+	
+	public boolean validateField(ContentContext ctx, String fieldName, String fieldValue) throws Exception {
+		return true;
+	}
 
 	@Override
 	public void performEdit(ContentContext ctx) throws Exception {
@@ -186,6 +190,9 @@ public abstract class AbstractPropertiesComponent extends AbstractVisualComponen
 		for (String fieldKey : fields) {
 			String field = getFieldName(fieldKey);
 			String fieldValue = requestService.getParameter(createKeyWithField(field), null);
+			
+			validateField(ctx, field, fieldValue);
+			
 			String[] fieldValues = requestService.getParameterValues(createKeyWithField(field), null);
 			if (fieldValues != null && fieldValues.length > 1) {
 				fieldValue = StringHelper.arrayToString(fieldValues, getListSeparator());

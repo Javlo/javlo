@@ -33,6 +33,7 @@ import org.javlo.service.RequestService;
 import org.javlo.service.shared.SharedContentService;
 import org.javlo.user.AdminUserFactory;
 import org.javlo.user.AdminUserSecurity;
+import org.javlo.user.IUserInfo;
 import org.javlo.user.User;
 import org.javlo.user.UserFactory;
 import org.javlo.ztatic.FileCache;
@@ -316,5 +317,5 @@ public class LangHelper {
 																		// trace
 		}
 	}
-
+	
 }

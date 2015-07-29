@@ -3,7 +3,9 @@ package org.javlo.component.column;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.javlo.component.core.ContentElementList;
 import org.javlo.component.core.IContentVisualComponent;
@@ -11,10 +13,15 @@ import org.javlo.component.properties.AbstractPropertiesComponent;
 import org.javlo.context.ContentContext;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.XHTMLHelper;
+import org.javlo.i18n.I18nAccess;
+import org.javlo.message.GenericMessage;
+import org.javlo.message.MessageRepository;
 
 public abstract class TableComponent extends AbstractPropertiesComponent {
 
 	private static final List<String> fields = Arrays.asList(new String[] { "padding", "width", "valign", "align", "colspan", "backgroundcolor" });
+
+	protected static final Set<String> FIELD_NEED_UNITY = new HashSet<String>(Arrays.asList(new String[] { "padding", "margin", "width" }));
 
 	public TableComponent() {
 	}
@@ -34,12 +41,16 @@ public abstract class TableComponent extends AbstractPropertiesComponent {
 
 		String padding = getPadding(ctx);
 		if (padding != null && padding.trim().length() > 0) {
-			if ((tableContext.isFirst(this) || tableContext.isLast(this)) && (!tableContext.getTableBreak().isGrid(ctx) && !tableContext.getTableBreak().isBorder(ctx)) && getCellBackgroundColor(ctx).length() < 2) {				
-				if (tableContext.isFirst(this)) {
-					outStyle.append("padding: " + padding + ' ' + padding + ' ' + padding + ' ' + '0' + ';');
-				}
-				if (tableContext.isLast(this)) {
-					outStyle.append("padding: " + padding + ' ' + '0' + ' ' + padding + " " + padding + ';');
+			if ((tableContext.isFirst(this) || tableContext.isLast(this)) && (!tableContext.getTableBreak().isGrid(ctx) && !tableContext.getTableBreak().isBorder(ctx)) && getCellBackgroundColor(ctx).length() < 2) {
+				if (tableContext.isFirst(this) && tableContext.isLast(this)) {
+					outStyle.append("padding:" + padding + ';');
+				} else {
+					if (tableContext.isFirst(this)) {
+						outStyle.append("padding: " + padding + ' ' + padding + ' ' + padding + ' ' + '0' + ';');
+					}
+					if (tableContext.isLast(this)) {
+						outStyle.append("padding: " + padding + ' ' + '0' + ' ' + padding + " " + padding + ';');
+					}
 				}
 			} else {
 				outStyle.append("padding:" + padding + ';');
@@ -163,6 +174,18 @@ public abstract class TableComponent extends AbstractPropertiesComponent {
 	}
 
 	@Override
+	public boolean validateField(ContentContext ctx, String fieldName, String fieldValue) throws Exception {
+		boolean out = super.validateField(ctx, fieldName, fieldValue);
+		if (FIELD_NEED_UNITY.contains(fieldName)) {
+			if (StringHelper.isDigit(fieldValue)) {
+				MessageRepository.getInstance(ctx).setGlobalMessage(new GenericMessage(fieldName + ' ' + I18nAccess.getInstance(ctx).getText("content.field.need-unity", "need unity like px or %."), GenericMessage.ERROR));
+				out = false;
+			}
+		}
+		return out;
+	}
+
+	@Override
 	protected String getEditXHTMLCode(ContentContext ctx) throws Exception {
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(outStream);
@@ -230,5 +253,5 @@ public abstract class TableComponent extends AbstractPropertiesComponent {
 	public boolean isRowBreak() {
 		return false;
 	}
-	
+
 }

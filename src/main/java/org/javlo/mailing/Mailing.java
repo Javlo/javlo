@@ -9,6 +9,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.lang.reflect.InvocationTargetException;
 import java.text.ParseException;
 import java.util.Collection;
 import java.util.Collections;
@@ -37,6 +38,8 @@ import org.javlo.context.ContentContext;
 import org.javlo.helper.PatternHelper;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
+import org.javlo.user.IUserInfo;
+import org.javlo.user.UserFactory;
 import org.javlo.utils.CSVFactory;
 
 public class Mailing {
@@ -57,6 +60,8 @@ public class Mailing {
 	private static final String RECEIVERS_FILE = "receivers.properties";
 
 	private static final String CONFIG_FILE = "mailing.properties";
+	
+	private static final String USERS_FILE = "users.csv";
 
 	private static final String SENT_FILE = "sent.properties";
 
@@ -122,6 +127,8 @@ public class Mailing {
 	private Date date = null;
 
 	private String templateId = null;
+	
+	private Map<InternetAddress,IUserInfo> users = null;
 
 	String getUnsubscribeURL(String mail) {
 		String params = "?webaction=mailing.Unsubscriberole&mail=" + mail + "&roles=" + StringHelper.collectionToString(roles);
@@ -273,6 +280,22 @@ public class Mailing {
 			}
 			setSend(config.getBoolean("send", true));
 			content = FileUtils.readFileToString(contentFile, encoding);
+			
+			File userFile = new File(dir.getAbsolutePath() + '/' + USERS_FILE);
+			if (userFile.exists()) {
+				try {					
+					Map<InternetAddress, IUserInfo> users = new HashMap<InternetAddress, IUserInfo>();
+					for (IUserInfo userInfo : UserFactory.load(userFile)) {
+						if (userInfo.getInternetAddress() != null) {
+							users.put(userInfo.getInternetAddress(), userInfo);
+						}
+					}
+					setUsers(users);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+			
 		} catch (RuntimeException e1) {
 			logger.warning(e1.getMessage());
 		}
@@ -361,6 +384,18 @@ public class Mailing {
 			config.setProperty("admin.email", adminEmail);
 		}
 		ResourceHelper.writePropertiesToFile(config, configFile);
+		
+		if (getUsers() != null) {
+			File userFile = new File(dir.getAbsolutePath() + '/' + USERS_FILE);
+			List<IUserInfo> users;
+			Collection<IUserInfo> usersCol = getUsers().values();
+			if (usersCol instanceof List) {
+				users = (List<IUserInfo>)usersCol;
+			} else {
+				users = new LinkedList<IUserInfo>(usersCol);
+			}
+			UserFactory.store(users, userFile);
+		}
 	}
 
 	public void close(ServletContext application) throws IOException {
@@ -632,6 +667,14 @@ public class Mailing {
 		File receiversFile = new File(dir.getAbsolutePath() + '/' + RECEIVERS_FILE);
 		File configFile = new File(dir.getAbsolutePath() + '/' + CONFIG_FILE);
 		return contentFile.exists() && receiversFile.exists() && configFile.exists();
+	}
+
+	public Map<InternetAddress,IUserInfo> getUsers() {
+		return users;
+	}
+
+	public void setUsers(Map<InternetAddress,IUserInfo> users) {
+		this.users = users;
 	}
 	
 }

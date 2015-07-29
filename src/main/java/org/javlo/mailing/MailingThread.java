@@ -3,6 +3,7 @@ package org.javlo.mailing;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedList;
@@ -20,6 +21,7 @@ import org.apache.commons.configuration.ConfigurationException;
 import org.javlo.config.StaticConfig;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
+import org.javlo.helper.XHTMLHelper;
 import org.javlo.service.DataToIDService;
 
 public class MailingThread extends Thread {
@@ -95,7 +97,6 @@ public class MailingThread extends Thread {
 		try {
 			mailService.sendMail(null, mailing.getFrom(), mailing.getNotif(), null, bcc, "report mailing : " + mailing.getSubject(), content, false);
 		} catch (Exception ex) {
-			// TODO Auto-generated catch block
 			ex.printStackTrace();
 		}
 
@@ -128,6 +129,14 @@ public class MailingThread extends Thread {
 				mailing.addData("roles", StringHelper.collectionToString(mailing.getRoles(), ";"));
 
 				String content = extractContent(mailing);
+				
+				if (mailing.getUsers() != null) {
+					try {
+						content = XHTMLHelper.replaceJSTLUserInfo(content, mailing.getUsers().get(to));
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
 
 				try {
 					mailingManager.sendMail(transport, mailing.getFrom(), to, mailing.getSubject(), content, true);

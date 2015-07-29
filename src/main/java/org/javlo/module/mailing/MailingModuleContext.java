@@ -4,10 +4,13 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
 
@@ -202,7 +205,7 @@ public class MailingModuleContext extends AbstractModuleContext {
 					List<IUserInfo> users = userFactory.getUserInfoForRoles(new String[] { group });
 					for (IUserInfo user : users) {
 						if (!StringHelper.isEmpty(user.getEmail())) {
-							InternetAddress email = new InternetAddress(user.getEmail(), StringHelper.neverNull(user.getFirstName()) + " " + StringHelper.neverNull(user.getLastName()));
+							InternetAddress email = user.getInternetAddress();
 							if (!allRecipients.contains(email)) {
 								allRecipients.add(email);
 							}
@@ -295,6 +298,17 @@ public class MailingModuleContext extends AbstractModuleContext {
 		m.setHtml(true);
 		m.setRoles(groups);
 		m.setSendDate(new Date());
+		
+		Map<InternetAddress, IUserInfo> users = new HashMap<InternetAddress, IUserInfo>();
+		if (globalContext.getStaticConfig().isMailingWidthUserInfo()) {
+			for (IUserInfo userInfo : UserFactory.createUserFactory(globalContext, ctx.getRequest().getSession()).getUserInfoList()) {
+				if (!Collections.disjoint(userInfo.getRoles(), groups)) {
+					users.put(userInfo.getInternetAddress(), userInfo);
+				}
+			}
+			m.setUsers(users);
+		}
+		
 		m.store(ctx.getRequest().getSession().getServletContext());
 	}
 

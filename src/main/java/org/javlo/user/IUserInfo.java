@@ -3,6 +3,8 @@ package org.javlo.user;
 import java.util.Date;
 import java.util.Set;
 
+import javax.mail.internet.InternetAddress;
+
 public interface IUserInfo {
 
 	public static final char ROLES_SEPARATOR = ';';
@@ -86,6 +88,8 @@ public interface IUserInfo {
 	public String getAvatarURL();
 	
 	public String getUserFolder();
+	
+	public InternetAddress getInternetAddress();
 
 	/**
 	 * get the type of account (default, facebook, google account...)

@@ -32,7 +32,7 @@ function loadWysiwyg(cssQuery, complexity, chooseFileURL) {
 		        "insertdatetime media table paste textcolor colorpicker"
 		    ],
 		    //paste_word_valid_elements: "b,strong,i,em,h1,h2,h3,h4,h5,h6,table,tr,th,td,ul,ol,li,p,a,div",
-		    toolbar: "undo redo searchreplace | bold italic forecolor backcolor | charmap | alignleft aligncenter alignright alignjustify | link | bullist numlist outdent indent"
+		    toolbar: "undo redo searchreplace | bold italic fontsizeselect forecolor backcolor | charmap | alignleft aligncenter alignright alignjustify | link | bullist numlist outdent indent"
 		});
 	} else if (complexity == "high") {		
 		tinymce.init({
@@ -48,7 +48,7 @@ function loadWysiwyg(cssQuery, complexity, chooseFileURL) {
 		        "insertdatetime media nonbreaking save table directionality",
 		        "emoticons template paste textcolor colorpicker "
 		    ],
-		    toolbar1: "bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | forecolor backcolor | table charmap code",		    
+		    toolbar1: "bold italic underline strikethrough fontsizeselect | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | forecolor backcolor | table charmap code",		    
 		    image_advtab: true,
 		    //paste_word_valid_elements: "b,strong,i,em,h1,h2,h3,h4,h5,h6,table,tr,th,td,ul,ol,li,p,a,div",
 		    file_browser_callback: function(field_name, url, type, win) {
@@ -102,7 +102,7 @@ function loadWysiwyg(cssQuery, complexity, chooseFileURL) {
 		selector: cssQuery,
 		plugins: "paste link",
 		//paste_word_valid_elements: "b,strong,i,em,h1,h2,h3,h4,h5,h6,table,tr,th,td,ul,ol,li,p,a,div",
-		toolbar: "undo redo | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link pastetext"
+		toolbar: "undo redo | bold italic fontsizeselect | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link pastetext"
 		});	 
 	}
 }

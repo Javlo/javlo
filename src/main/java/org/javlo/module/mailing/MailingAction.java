@@ -114,6 +114,7 @@ public class MailingAction extends AbstractModuleAction {
 			request.setAttribute("content", content);
 			url = new URL(URLHelper.addParam(URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.PAGE_MODE).getContextForAbsoluteURL()), "mailing", "true"));
 			request.setAttribute("exportURL", url);
+			SynchroHelper.performSynchro(ctx.getRequest().getSession().getServletContext(), globalContext.getStaticConfig(), globalContext);
 		}
 		if (ctx.isEditPreview()) {
 			if (mailingContext.getWizardStep(SEND_WIZARD_BOX) == 1) {

@@ -60,11 +60,11 @@ import org.javlo.helper.Comparator.MapEntryComparator;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.message.GenericMessage;
 import org.javlo.navigation.MenuElement;
-import org.javlo.navigation.PageBean;
 import org.javlo.service.ContentService;
 import org.javlo.service.ListService;
 import org.javlo.service.RequestService;
 import org.javlo.service.ReverseLinkService;
+import org.javlo.user.IUserInfo;
 import org.javlo.user.User;
 import org.javlo.utils.SuffixPrefix;
 import org.javlo.ztatic.StaticInfo;
@@ -2061,6 +2061,17 @@ public class XHTMLHelper {
 			}
 		}
 
+		return xhtml;
+	}
+	
+	public static String replaceJSTLUserInfo(String xhtml, IUserInfo userInfo) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, UnsupportedEncodingException {				
+		Map<String, Object> properties = BeanUtils.describe(userInfo);
+		for (String key : properties.keySet()) {
+			String jstlStr = "${user." + key + '}';
+			if (properties.get(key) != null) {
+				xhtml = xhtml.replace(jstlStr, properties.get(key).toString());
+			}
+		}
 		return xhtml;
 	}
 

@@ -39,6 +39,15 @@
 </div>
 </c:if>
 
+<c:if test="${not empty sourcePage}">
+<div class="checkbox">
+	<label>
+	<input type="checkbox" id="duplicate" name="duplicate" checked="checked" /> Duplicate : ${sourcePage.info.title}
+	<input type="hidden" name="page" value="${sourcePage.id}" />
+	</label>
+</div>
+</c:if>
+
 <div class="action">
 	<input type="submit" value="create"  class="btn btn-default" />
 </div>

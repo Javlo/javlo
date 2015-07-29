@@ -5,10 +5,12 @@ package org.javlo.user;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
@@ -302,6 +304,25 @@ public class UserFactory implements IUserFactory, Serializable {
 		}
 		return outUserList;
 	}
+	
+	public static final List<IUserInfo> load(File file) throws IOException, SecurityException, IllegalArgumentException, IllegalAccessException, InvocationTargetException {
+		InputStream in = new FileInputStream(file);
+		CSVFactory fact;
+		try {
+			fact = new CSVFactory(in);
+		} finally {
+			ResourceHelper.closeResource(in);
+		}
+		String[][] csvArray = fact.getArray();
+		List<IUserInfo> userInfoList = new LinkedList<IUserInfo>();
+		for (int i = 1; i < csvArray.length; i++) {
+			IUserInfo newUserInfo = new UserInfo();
+			Map<String, String> values = JavaHelper.createMap(csvArray[0], csvArray[i]);
+			BeanHelper.copy(values, newUserInfo);
+			userInfoList.add(newUserInfo);
+		}
+		return userInfoList;
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -527,7 +548,6 @@ public class UserFactory implements IUserFactory, Serializable {
 			unlockStore();
 		}
 	}
-
 	private void unlockStore() throws IOException {
 
 		List<IUserInfo> userInfoList = getUserInfoList();
@@ -568,6 +588,38 @@ public class UserFactory implements IUserFactory, Serializable {
 			}
 		}
 
+	}
+
+	public static void store(List<IUserInfo> userInfoList, File userInfoFile) throws IOException {
+
+		String[][] csvArray = new String[userInfoList.size() + 1][];
+
+		csvArray[0] = new UserInfo().getAllLabels();
+
+		for (int i = 0; i < userInfoList.size(); i++) {
+			String[] values = userInfoList.get(i).getAllValues();
+			csvArray[i + 1] = values;
+		}
+
+		if (!userInfoFile.exists()) {
+			userInfoFile.getParentFile().mkdirs();
+			Logger.log(Logger.WARNING, userInfoFile.getPath() + " not found.");
+		}
+		FileOutputStream out = null;
+		try {
+			CSVFactory fact = new CSVFactory(csvArray);
+			out = new FileOutputStream(userInfoFile);
+			fact.exportCSV(out);
+			out.close();
+		} finally {
+			if (out != null) {
+				try {
+					out.close();
+				} catch (IOException e1) {
+					Logger.log(e1);
+				}
+			}
+		}
 	}
 
 	/*

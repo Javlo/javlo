@@ -13,6 +13,8 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
 
+import javax.mail.internet.InternetAddress;
+
 import org.javlo.helper.Logger;
 import org.javlo.helper.StringHelper;
 
@@ -602,6 +604,20 @@ public class UserInfo implements Comparable<IUserInfo>, IUserInfo, Serializable 
 
 	public void setMemberdate(String memberdate) {
 		this.memberdate = memberdate;
+	}
+
+	@Override
+	public InternetAddress getInternetAddress() {
+		if (getEmail() == null) {
+			return null;
+		} else {
+			try {
+				return new InternetAddress(getEmail(), StringHelper.neverNull(getFirstName()) + " " + StringHelper.neverNull(getLastName()));
+			} catch (Exception e) {
+				e.printStackTrace();
+				return null;
+			}
+		}
 	}
 	
 	

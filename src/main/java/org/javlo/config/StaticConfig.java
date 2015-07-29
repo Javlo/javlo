@@ -1071,6 +1071,10 @@ public class StaticConfig extends Observable {
 	public boolean isMailingAsContent() {
 		return properties.getBoolean("mailing.content", false);
 	}
+	
+	public boolean isMailingWidthUserInfo() {
+		return properties.getBoolean("mailing.users", true);
+	}
 
 	public boolean isMailingThread() {
 		return StringHelper.isTrue(properties.getString("mailing.thread", "true"));
