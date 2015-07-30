@@ -1,6 +1,8 @@
 package org.javlo.image;
 
 import java.awt.Color;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Collections;
@@ -11,6 +13,7 @@ import java.util.logging.Logger;
 
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.ResourceHelper;
@@ -34,6 +37,14 @@ public class ImageConfig {
 	private static final String ALL = "all";
 
 	private List<String> filters = new LinkedList<String>();
+	
+	private ImageConfig(File file) {
+		try {
+			properties.load(file);
+		} catch (ConfigurationException e) {
+			e.printStackTrace();
+		}
+	}
 
 	private ImageConfig(GlobalContext globalContext, HttpSession session, Template template) {
 
@@ -432,6 +443,21 @@ public class ImageConfig {
 		String key = getKey(device, filter, area, "grayscale");
 		return properties.getBoolean(key, device!=null?isGrayscale(null, ALL, null):false);
 	}
+	
+	public boolean isGrayscaleAveraging(Device device, String filter, String area) {
+		String key = getKey(device, filter, area, "grayscale-averaging");
+		return properties.getBoolean(key, device!=null?isGrayscaleAveraging(null, ALL, null):false);
+	}
+	
+	public boolean isGrayscaleLuminosity(Device device, String filter, String area) {
+		String key = getKey(device, filter, area, "grayscale-luminosity");
+		return properties.getBoolean(key, device!=null?isGrayscaleLuminosity(null, ALL, null):false);
+	}	
+	
+	public boolean isGrayscaleDesaturation(Device device, String filter, String area) {
+		String key = getKey(device, filter, area, "grayscale-luminosity");
+		return properties.getBoolean(key, device!=null?isGrayscaleDesaturation(null, ALL, null):false);
+	}
 
 	public boolean isCrystallize(Device device, String filter, String area) {
 		String key = getKey(device, filter, area, "crystallize");
@@ -525,5 +551,11 @@ public class ImageConfig {
 	public PropertiesConfiguration getProperties() {
 		return properties;
 	}
+	
+	public static void main(String[] args) {
+		ImageConfig imageConfig = new ImageConfig(new File("c:/trans/image.properties"));
+		System.out.println("***** ImageConfig.main : grayscale ? "+imageConfig.isGrayscaleLuminosity(null, "preview", ALL)); //TODO: remove debug trace
+	}
+	
 
 }

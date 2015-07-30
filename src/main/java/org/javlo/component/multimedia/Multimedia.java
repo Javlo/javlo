@@ -69,6 +69,7 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 	protected static final String ORDER_BY_ACCESS = "order by access";
 	protected static final String REVERSE_ORDER = "reverse order";
 	protected static final String NAME_ORDER = "name order";
+	protected static final String RANDOM_ORDER = "random order";
 
 	public static final String ALL = "all";
 	public static final String IMAGE = "image";
@@ -480,6 +481,15 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 		}
 		out.print("/>");
 		out.println(" order by access.</label>");
+		out.println("</div>");
+		
+		out.println("<div class=\"checkbox-inline\">");
+		out.print("<label><input type=\"checkbox\" name=\"" + getInputNameRandomOrder() + "\" id=\"" + getInputNameRandomOrder() + "\" ");
+		if (isOrderRandom(ctx)) {
+			out.print("checked=\"checked\" ");
+		}
+		out.print("/>");
+		out.println(" random.</label>");
 		out.println("</div></fieldset>");
 
 		/* tags */
@@ -558,6 +568,10 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 
 	protected String getInputNameOrderByAccess() {
 		return "order_by_access_" + getId();
+	}
+	
+	protected String getInputNameRandomOrder() {
+		return "order_random_" + getId();
 	}
 
 	protected String getInputNameReverseOrder() {
@@ -912,6 +926,8 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 		} else {
 			if (isNameOrder(ctx)) {
 				Collections.sort(allResource, new MultimediaResource.SortByName(isReverseOrder(ctx)));
+			} else if (isOrderRandom(ctx)) {
+				Collections.shuffle(allResource);
 			} else {
 				Collections.sort(allResource, new MultimediaResource.SortByDate(isReverseOrder(ctx)));
 			}
@@ -949,12 +965,15 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 			if (contentCache != null) {
 				return StringHelper.isTrue(contentCache);
 			}
+			if (isOrderRandom(ctx)) {
+				return false;
+			}
 			return !isOrderByAccess(ctx);
 		}
 	}
 
 	@Override
-	public boolean isContentTimeCachable(ContentContext ctx) {
+	public boolean isContentTimeCachable(ContentContext ctx) {		
 		return isOrderByAccess(ctx);
 	}
 
@@ -985,6 +1004,10 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 
 	public boolean isOrderByAccess(ContentContext ctx) {
 		return getValue(ctx).contains(ORDER_BY_ACCESS);
+	}
+	
+	public boolean isOrderRandom(ContentContext ctx) {
+		return getValue(ctx).contains(RANDOM_ORDER);
 	}
 
 	public boolean isReverseOrder(ContentContext ctx) {
@@ -1024,6 +1047,7 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 			boolean isOrderByAcess = requestService.getParameter(getInputNameOrderByAccess(), null) != null;
 			boolean isReverseOrder = requestService.getParameter(getInputNameReverseOrder(), null) != null;
 			boolean isNameOrder = requestService.getParameter(getInputNameNameOrder(), null) != null;
+			boolean isRandom = requestService.getParameter(getInputNameRandomOrder(), null) != null;
 
 			Date startDate = StringHelper.parseDateOrTime(newStartDate);
 			Date endDate = StringHelper.parseDateOrTime(newEndDate);
@@ -1049,6 +1073,9 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 			}
 			if (isReverseOrder) {
 				multimediaInfo = multimediaInfo + VALUE_SEPARATOR + REVERSE_ORDER;
+			}
+			if (isRandom) {
+				multimediaInfo = multimediaInfo + VALUE_SEPARATOR + RANDOM_ORDER;
 			}
 			if (!multimediaInfo.equals(getValue())) {
 				setValue(multimediaInfo);

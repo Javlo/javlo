@@ -32,6 +32,9 @@ import org.javlo.helper.Logger;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
+import org.javlo.i18n.I18nAccess;
+import org.javlo.message.GenericMessage;
+import org.javlo.message.MessageRepository;
 import org.javlo.user.exception.UserAllreadyExistException;
 import org.javlo.utils.CSVFactory;
 import org.javlo.utils.TimeMap;
@@ -57,6 +60,8 @@ public class UserFactory implements IUserFactory, Serializable {
 	public static final String USER_FACTORY_KEY = "_user_factory_";
 
 	private String userInfoFile = null;
+	
+	public String DEFAULT_PASSWORD = "changeme";
 
 	private static Map<String, IUserInfo> changePasswordReference = new TimeMap<String, IUserInfo>();
 
@@ -472,8 +477,17 @@ public class UserFactory implements IUserFactory, Serializable {
 		if (user != null) {
 			user.setContext(globalContext.getContextKey());
 			request.getSession().setAttribute(SESSION_KEY, user);
+			
+			if (DEFAULT_PASSWORD.equals(password)) {
+				I18nAccess i18nAccess;
+				try {
+					i18nAccess = I18nAccess.getInstance(request);
+					MessageRepository.getInstance(request).setGlobalMessage(new GenericMessage(i18nAccess.getAllText("user.change-password", "Please change you password."), GenericMessage.ALERT));
+				} catch (Exception e) {
+					e.printStackTrace();					
+				}				
+			}
 		}
-
 		return user;
 	}
 

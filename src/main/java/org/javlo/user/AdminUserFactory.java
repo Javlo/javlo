@@ -12,6 +12,9 @@ import javax.servlet.http.HttpSession;
 import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.URLHelper;
+import org.javlo.i18n.I18nAccess;
+import org.javlo.message.GenericMessage;
+import org.javlo.message.MessageRepository;
 import org.javlo.module.core.ModuleException;
 import org.javlo.module.core.ModulesContext;
 
@@ -96,6 +99,17 @@ public class AdminUserFactory extends UserFactory {
 	@Override
 	public User login(HttpServletRequest request, String login, String password) {
 		User outUser = super.login(request, login, password);
+		
+		if (DEFAULT_PASSWORD.equals(password)) {
+			I18nAccess i18nAccess;
+			try {
+				i18nAccess = I18nAccess.getInstance(request);
+				MessageRepository.getInstance(request).setGlobalMessage(new GenericMessage(i18nAccess.getText("user.change-password", "Please change you password."), GenericMessage.ALERT));
+			} catch (Exception e) {
+				e.printStackTrace();					
+			}				
+		}
+		
 		GlobalContext globalContext = GlobalContext.getInstance(request);
 		EditContext editContext = EditContext.getInstance(globalContext, request.getSession());
 		editContext.setEditUser(outUser);

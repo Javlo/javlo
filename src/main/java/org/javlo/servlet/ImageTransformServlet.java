@@ -332,6 +332,15 @@ public class ImageTransformServlet extends HttpServlet {
 		if (config.isGrayscale(ctx.getDevice(), filter, area)) {
 			img = (new GrayscaleFilter()).filter(img, null);
 		}
+		if (config.isGrayscaleDesaturation(ctx.getDevice(), filter, area)) {
+			img = ImageEngine.desaturation(img);
+		}
+		if (config.isGrayscaleAveraging(ctx.getDevice(), filter, area)) {
+			img = ImageEngine.avg(img);
+		}		
+		if (config.isGrayscaleLuminosity(ctx.getDevice(), filter, area)) {		
+			img = ImageEngine.luminosity(img);
+		}
 		// org.javlo.helper.Logger.stepCount("transform",
 		// "start - transformation - 2.2");
 		if (config.isCrystallize(ctx.getDevice(), filter, area)) {
@@ -576,6 +585,15 @@ public class ImageTransformServlet extends HttpServlet {
 		if (config.isGrayscale(ctx.getDevice(), filter, area)) {
 			// img = (new GrayscaleFilter()).filter(img, null);
 			img = ImageEngine.grayscale(img);
+		}
+		if (config.isGrayscaleDesaturation(ctx.getDevice(), filter, area)) {
+			img = ImageEngine.desaturation(img);
+		}
+		if (config.isGrayscaleAveraging(ctx.getDevice(), filter, area)) {
+			img = ImageEngine.avg(img);
+		}		
+		if (config.isGrayscaleLuminosity(ctx.getDevice(), filter, area)) {		
+			img = ImageEngine.luminosity(img);
 		}
 		int sepia = config.getSepiaIntensity(ctx.getDevice(), filter, area);
 		if (sepia > 0) {
