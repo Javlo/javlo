@@ -56,21 +56,9 @@ public class MultimediaResource {
 		@Override
 		public int compare(MultimediaResource o1, MultimediaResource o2) {
 			int out = 0;
-
-			String name1 = StringHelper.getFileNameFromPath(o1.getURL());
-			String name2 = StringHelper.getFileNameFromPath(o2.getURL());
-
-			if (name1 != null || name2 != null) {
-				if (name1 == null) {
-					out = 1;
-				} else if (name2 == null) {
-					out = -1;
-				} else if (name1.equals(name2)) {
-					out = 1;
-				} else {
-					out = name1.compareTo(name2);
-				}
-			}
+			String name1 = StringHelper.neverNull(StringHelper.getFileNameFromPath(o1.getURL()));
+			String name2 = StringHelper.neverNull(StringHelper.getFileNameFromPath(o2.getURL()));
+			out = name1.compareTo(name2);
 			if (reverse) {
 				return -out;
 			} else {

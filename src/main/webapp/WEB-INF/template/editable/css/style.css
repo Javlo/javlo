@@ -192,3 +192,11 @@ table.float-image, table.float-image  td, table.float-image  th {
 table.float-image-width {
 	width: 100%;
 }
+
+.important {
+	font-weight: bold;
+}
+
+.italic {
+	font-style: italic;
+}

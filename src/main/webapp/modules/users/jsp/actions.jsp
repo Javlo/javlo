@@ -18,6 +18,7 @@
 <form class="form_default js-change-submit" id="form-select-role" action="${info.currentURL}" method="post">
 <div>
 <input type="hidden" name="webaction" value="selectRole" />
+<input type="hidden" name="admin" value="${admin}" />
 <label for="select-roles">${i18n.edit['user.select-role']}</label>
 <select id="select-roles" name="role">
 <option value=""></option>
@@ -26,6 +27,8 @@
 </c:forEach>
 </select>
 <input type="submit" class="action-button add-user" value="${i18n.edit['global.ok']}" />
+<input type="submit" style="display: inline;" class="action-button needconfirm" name="add" title="${i18n.edit['user.remove-role']}" value="+" />
+<input type="submit" style="display: inline;" class="action-button needconfirm" name="remove" title="${i18n.edit['user.add-role']}" value="-" />
 </div>
 </form>
 </c:if>

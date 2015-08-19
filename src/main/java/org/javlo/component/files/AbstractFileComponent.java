@@ -692,8 +692,6 @@ public abstract class AbstractFileComponent extends AbstractVisualComponent impl
 		}
 
 		if (!getDirSelected().equals(selectedDir)) {
-			System.out.println("***** AbstractFileComponent.performEdit : getDirSelected() = "+getDirSelected()); //TODO: remove debug trace
-			System.out.println("***** AbstractFileComponent.performEdit : selectedDir = "+selectedDir); //TODO: remove debug trace			
 			fileName = "";
 			if (fromShared) {
 				fileName = ctx.getGlobalContext().getStaticConfig().getShareDataFolderKey();
@@ -712,8 +710,6 @@ public abstract class AbstractFileComponent extends AbstractVisualComponent impl
 			}
 		}
 		
-		System.out.println("***** AbstractFileComponent.performEdit : fileName = "+fileName); //TODO: remove debug trace
-
 		setDirSelected(selectedDir);
 		setFileName(fileName);
 		setLabel(label);

@@ -28,9 +28,10 @@ public class GenericMessage {
 	String URL = null;
 
 	public static final GenericMessage EMPTY_MESSAGE = new GenericMessage("", null, 0);
-	
+
 	/***
 	 * create generic message from raw
+	 * 
 	 * @param rawMessage
 	 */
 	public GenericMessage(String rawMessage) {
@@ -38,7 +39,7 @@ public class GenericMessage {
 		type = Integer.parseInt(data.get(0));
 		message = data.get(1);
 		if (data.get(2).length() > 0) {
-			key = data.get(2);		
+			key = data.get(2);
 		}
 		if (data.get(3).length() > 0) {
 			URL = data.get(3);
@@ -48,7 +49,7 @@ public class GenericMessage {
 	public GenericMessage(String msg, int newType) {
 		this(msg, null, newType);
 	}
-	
+
 	public GenericMessage(String msg, int newType, String url) {
 		this(msg, null, newType, url);
 	}
@@ -107,6 +108,29 @@ public class GenericMessage {
 		}
 	}
 
+	public String getBootstrapType() {
+		switch (type) {
+		case ERROR:
+			return "danger";
+
+		case INFO:
+			return "info";
+
+		case HELP:
+			return "info";
+
+		case ALERT:
+			return "warning";
+
+		case SUCCESS:
+			return "success";
+
+		default:
+			return null;
+		}
+
+	}
+
 	public String getTypeLabel() {
 		return getTypeLabel(type);
 	}
@@ -131,9 +155,9 @@ public class GenericMessage {
 		out.close();
 		return new String(outStream.toByteArray());
 	}
-	
+
 	public String getRawMessage() {
-		return StringHelper.collectionToString(Arrays.asList(new String[] {""+type,message,StringHelper.neverNull(key),StringHelper.neverNull(URL)}),",");
+		return StringHelper.collectionToString(Arrays.asList(new String[] { "" + type, message, StringHelper.neverNull(key), StringHelper.neverNull(URL) }), ",");
 	}
 
 	@Override

@@ -759,5 +759,26 @@ public interface IContentVisualComponent extends Comparable<IContentVisualCompon
 	 * @return
 	 */
 	public String getListGroup();
+	
+	/**
+	 * warning message on content tab
+	 * @param ctx
+	 * @return
+	 */
+	public GenericMessage getContentMessage(ContentContext ctx);
+	
+	/**
+	 * warning message on text tab
+	 * @param ctx
+	 * @return
+	 */
+	public GenericMessage getTextMessage(ContentContext ctx);
+	
+	/**
+	 * warning message on config tab
+	 * @param ctx
+	 * @return
+	 */
+	public GenericMessage getConfigMessage(ContentContext ctx);
 
 }

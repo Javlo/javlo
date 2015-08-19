@@ -1016,6 +1016,10 @@ public class InfoBean {
 	public String getRootAbsoluteURL() {
 		return URLHelper.createURL(ctx.getContextForAbsoluteURL(), "/");
 	}
+	
+	public String getRootAbsoluteViewURL() {
+		return URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE).getContextForAbsoluteURL(), "/");
+	}
 
 	public Map<String, String> getStaticData() {
 		return staticData;
@@ -1065,7 +1069,7 @@ public class InfoBean {
 	}
 	
 	public String getViewAjaxLoaderURL() {
-		return URLHelper.createStaticURL(ctx, "/images/ajax-loader-circle.gif");
+		return URLHelper.createStaticURL(ctx, "/images/ajax-loader-circle-white.gif");
 	}
 
 	public String getRandomId() {

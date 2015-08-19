@@ -48,9 +48,9 @@ public class LoginLogoutLink extends AbstractVisualComponent {
 		User user = userFactory.getCurrentUser(ctx.getRequest().getSession());
 		if (user == null) {
 			if (getStyle().equals(VISITOR)) {
-				out.println("<form id=\"loginform\" action=\""+URLHelper.createURL(ctx)+"\" method=\"post\">");
+				out.println("<form class=\"hidden-print\" id=\"loginform\" action=\""+URLHelper.createURL(ctx)+"\" method=\"post\">");
 			} else {
-				out.println("<form id=\"loginform\" action=\""+URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.PREVIEW_MODE))+"\" method=\"post\">");
+				out.println("<form class=\"hidden-print\" id=\"loginform\" action=\""+URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.PREVIEW_MODE))+"\" method=\"post\">");
 			}
 			out.println("<div class=\"line\">");
 			if (!getStyle().equals(VISITOR)) {
@@ -69,7 +69,7 @@ public class LoginLogoutLink extends AbstractVisualComponent {
 			out.println("</div>");
 			out.println("</form>");
 		} else {
-			out.println("<a class=\"btn btn-default btn-logout\" href=\"" + URLHelper.createURL(ctx) + "?edit-logout=logout\">logout ("+userFactory.getCurrentUser(ctx.getRequest().getSession()).getLogin()+")</a>");
+			out.println("<a class=\"btn btn-default btn-logout hidden-print\" href=\"" + URLHelper.createURL(ctx) + "?edit-logout=logout\">logout ("+userFactory.getCurrentUser(ctx.getRequest().getSession()).getLogin()+")</a>");
 		}
 		out.close();
 		return new String(outStream.toByteArray());

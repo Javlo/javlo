@@ -223,13 +223,12 @@ public class InternalLink extends ComplexPropertiesLink implements IInternalLink
 	 */
 	@Override
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
-
-		String style = getStyle(ctx);
+		String style = getStyle();
 		if (style == null) {
 			style = TITLE;
 		}
 
-		if (style.contains(HIDDEN)) {
+		if (style.equals(HIDDEN)) {
 			return "";
 		}
 
@@ -240,15 +239,15 @@ public class InternalLink extends ComplexPropertiesLink implements IInternalLink
 		// MenuElement child = nav.searchChildFromId(linkId);
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		NavigationService navigationService = NavigationService.getInstance(globalContext);
-		MenuElement child = navigationService.getPage(ctx, linkId);
-		if (child != null) {
+		MenuElement linkedPage = navigationService.getPage(ctx, linkId);
+		if (linkedPage != null) {
 			String link = "#";
-			link = child.getPath();
+			link = linkedPage.getPath();
 			String label = properties.getProperty(LABEL_KEY, "");
 			if (label.trim().length() == 0) {
-				label = child.getLabel(ctx);
-			}
-			String url = URLHelper.createURL(ctx, child);
+				label = linkedPage.getLabel(ctx);
+			}			
+			String url = URLHelper.createURL(ctx, linkedPage);
 			if (style.contains(DESCRIPTION) || style.contains(IMAGE)) {
 				res.append("<div class=\"details\">");
 				res.append("<div class=\"title\">");
@@ -294,13 +293,13 @@ public class InternalLink extends ComplexPropertiesLink implements IInternalLink
 					}
 				}
 				res.append("\">");
-				if (child.getImage(ctx) != null) {
-					res.append("<img src=\"" + ElementaryURLHelper.createTransformURL(ctx, child, child.getImage(ctx).getResourceURL(ctx), "internal-link") + "\" alt=\"" + child.getImage(ctx).getImageDescription(ctx) + "\" />");
+				if (linkedPage.getImage(ctx) != null) {
+					res.append("<img src=\"" + ElementaryURLHelper.createTransformURL(ctx, linkedPage, linkedPage.getImage(ctx).getResourceURL(ctx), "internal-link") + "\" alt=\"" + linkedPage.getImage(ctx).getImageDescription(ctx) + "\" />");
 				}
 				res.append("</a>");
 			}
-			if (style.contains(DESCRIPTION) && child.getDescription(ctx).trim().length() > 0) {
-				res.append(child.getDescription(ctx));
+			if (style.contains(DESCRIPTION) && linkedPage.getDescription(ctx).trim().length() > 0) {
+				res.append(linkedPage.getDescription(ctx));
 			}
 			if (style.contains(DESCRIPTION) || style.contains(IMAGE)) {
 				res.append("</p></div>");

@@ -2249,5 +2249,20 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	public boolean isReversedLink(ContentContext ctx) {
 		return ctx.getGlobalContext().isReversedLink();
 	}
+	
+	@Override
+	public GenericMessage getContentMessage(ContentContext ctx) {
+		return null;
+	}
+	
+	@Override
+	public GenericMessage getTextMessage(ContentContext ctx) {
+		return null;
+	}
+	
+	@Override
+	public GenericMessage getConfigMessage(ContentContext ctx) {
+		return null;
+	}
 
 }

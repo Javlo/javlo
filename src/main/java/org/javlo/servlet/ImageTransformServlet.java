@@ -996,7 +996,7 @@ public class ImageTransformServlet extends HttpServlet {
 				if (!imageFile.exists() || imageFile.isDirectory()) {
 					File dirFile = new File(StringHelper.getFileNameWithoutExtension(imageFile.getAbsolutePath()));
 					if (!dirFile.exists()) {
-						logger.warning("file not found : " + imageFile);
+						logger.warning("file not found 2 : " + imageFile);
 						response.setStatus(HttpServletResponse.SC_NOT_FOUND);
 						return;
 					} else {

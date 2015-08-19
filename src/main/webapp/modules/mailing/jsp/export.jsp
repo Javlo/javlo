@@ -15,6 +15,10 @@
 		</div>
 		
 		<a target="_blank" class="btn btn-defaut" href="${exportURL}">link to export.</a>
+		<c:url var="downloadURL" value="${exportURL}" context="/">
+			<c:param name="download" value="true" />
+		</c:url>
+		<a target="_blank" class="btn btn-primary btn-color" href="${downloadURL}">download export.</a>
 		
 	</form>
 </div>

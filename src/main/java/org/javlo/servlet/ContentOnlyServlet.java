@@ -88,7 +88,11 @@ public class ContentOnlyServlet extends HttpServlet {
 					response.setStatus(HttpServletResponse.SC_NOT_FOUND);
 					return;
 				} else {
-					response.setContentType("text/html; charset=" + ContentContext.CHARACTER_ENCODING);
+					if (StringHelper.isTrue(request.getParameter("download"))) {
+						response.setContentType("application/octet-stream; charset=" + ContentContext.CHARACTER_ENCODING); 
+					} else {
+						response.setContentType("text/html; charset=" + ContentContext.CHARACTER_ENCODING);
+					}
 					ResourceHelper.writeStringToStream(content, response.getOutputStream(), ContentContext.CHARACTER_ENCODING);
 					return;
 				}

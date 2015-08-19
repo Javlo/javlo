@@ -219,7 +219,6 @@ public class UserAction extends AbstractModuleAction {
 					userInfo.setToken("");
 				}
 
-				
 				FileItem userFile = requestService.getFileItem("userFile");
 				if (userFile != null && userFile.getSize() > 0) {
 					InputStream in = null;
@@ -545,14 +544,42 @@ public class UserAction extends AbstractModuleAction {
 		return msg;
 	}
 
-	public static String performSelectRole(HttpServletRequest request, ContentContext ctx, GlobalContext globalContext, HttpSession session, MessageRepository messageRepository, I18nAccess i18nAccess) {
+	public static String performSelectRole(HttpServletRequest request, ContentContext ctx, GlobalContext globalContext, HttpSession session, MessageRepository messageRepository, I18nAccess i18nAccess) throws IOException {
 		String role = request.getParameter("role");
-		if (role == null) {
-			return "bad request structure : need 'role' as parameter.";
+		
+		boolean admin = StringHelper.isTrue(request.getParameter("admin"));
+		
+		IUserFactory userFact;
+		if (admin) {
+			userFact = AdminUserFactory.createUserFactory(globalContext, session);
+		} else {
+			userFact = UserFactory.createUserFactory(globalContext, session);
 		}
-		UserModuleContext context = UserModuleContext.getInstance(request);
-		context.setCurrentRole(role);
-		messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("user.message.ok-change-role") + ' ' + role, GenericMessage.INFO));
+
+		Set<String> roleSet = new HashSet<String>();
+		roleSet.add(role);
+		if (!StringHelper.isEmpty(request.getParameter("remove"))) {
+			for(IUserInfo user : userFact.getUserInfoList()) {
+				user.removeRoles(roleSet);
+				userFact.updateUserInfo(user);
+				messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("user.message.ok-remove-role", "Role removed from all users : ") + ' ' + role, GenericMessage.INFO));
+			}
+		} else if (!StringHelper.isEmpty(request.getParameter("add"))) {
+			for(IUserInfo user : userFact.getUserInfoList()) {
+				user.addRoles(roleSet);
+				userFact.updateUserInfo(user);
+				messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("user.message.ok-add-role", "Role added to all users : ") + ' ' + role, GenericMessage.INFO));
+			}
+		} else {
+
+			if (role == null) {
+				return "bad request structure : need 'role' as parameter.";
+			}
+			UserModuleContext context = UserModuleContext.getInstance(request);
+			context.setCurrentRole(role);
+			messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("user.message.ok-change-role") + ' ' + role, GenericMessage.INFO));
+
+		}
 		return null;
 
 	}

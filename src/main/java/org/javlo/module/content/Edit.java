@@ -180,8 +180,7 @@ public class Edit extends AbstractModuleAction {
 	 *            the id, null for update and previous component for insert.
 	 * @throws Exception
 	 */
-	public static void updatePreviewCommands(ContentContext ctx, String tab) throws Exception {
-		System.out.println("***** Edit.updatePreviewCommands : Refresh preview command."); //TODO: remove debug trace
+	public static void updatePreviewCommands(ContentContext ctx, String tab) throws Exception {		
 		ctx.getRequest().setAttribute("editPreview", ctx.isEditPreview());
 		ctx.getRequest().setAttribute("components", ComponentFactory.getComponentForDisplay(ctx));
 		SharedContentService.prepare(ctx);

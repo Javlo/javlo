@@ -165,7 +165,7 @@ public class URLHelper extends ElementaryURLHelper {
 			return userInfo.getAvatarURL();
 		}
 
-		String url = mergePath(ctx.getGlobalContext().getStaticConfig().getAvatarFolder(), userInfo.getLogin() + ".png");
+		String url = mergePath(ctx.getGlobalContext().getStaticConfig().getAvatarFolder(), userInfo.getLogin().toLowerCase() + ".png");
 		File avatarFile = new File(mergePath(ctx.getGlobalContext().getDataFolder(), url));
 		if (avatarFile.exists()) {
 			try {
@@ -174,7 +174,7 @@ public class URLHelper extends ElementaryURLHelper {
 				ex.printStackTrace();
 			}
 		} else {
-			url = mergePath(ctx.getGlobalContext().getStaticConfig().getAvatarFolder(), userInfo.getLogin() + ".jpg");
+			url = mergePath(ctx.getGlobalContext().getStaticConfig().getAvatarFolder(), userInfo.getLogin().toLowerCase() + ".jpg");
 			avatarFile = new File(mergePath(ctx.getGlobalContext().getDataFolder(), url));
 			if (avatarFile.exists()) {
 				try {

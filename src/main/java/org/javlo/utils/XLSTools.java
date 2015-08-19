@@ -113,7 +113,12 @@ public class XLSTools {
 				break;
 			}
 		} else {
-			outCell = formatter.formatCellValue(cell);
+			try {
+				outCell = formatter.formatCellValue(cell);
+			} catch (RuntimeException r) {
+				r.printStackTrace();
+				outCell = "ERR:" + r.getMessage();
+			}
 		}
 		if (cell.getHyperlink() != null) {
 			String target = "";

@@ -144,7 +144,7 @@ for (IContentVisualComponent comp : components) {
         	%><li><a href="#tab11<%=inputSuffix%>"><%=tabTitle%></a></li><% 
           }
           %>
-          <li class="<%if (!comp.isConfig(ctx)) {%>disabled<%} else {%>enabled<%}%>"><a class="link"<%=linkTag%>>${i18n.edit["global.config"]}</a></li>          
+          <li class="<%if (!comp.isConfig(ctx)) {%>disabled<%} else {%>enabled<%}%>"><a class="link"<%=linkTag%>>${i18n.edit["global.settings"]}</a></li>          
           <%if (helpText != null) {%><li><a href="#tab3<%=inputSuffix%>">${i18n.edit["global.help"]}</a></li><%}%>
           <%if (admin) {%><li><a href="#tab4<%=inputSuffix%>">raw</a></li><%}%>
       </ul>
@@ -168,15 +168,18 @@ for (IContentVisualComponent comp : components) {
       	%>
       </div>
       <div id="tab1<%=inputSuffix%>">
-          <%=comp.getXHTMLCode(ctx)%>
+      	  <%if (comp.getContentMessage(ctx) != null) {%><div class="alert alert-<%=comp.getContentMessage(ctx).getBootstrapType()%>" role="alert"><%=comp.getContentMessage(ctx)%></div><%}
+      	  %><%=comp.getXHTMLCode(ctx)%>
       </div><%
       if (tabTitle != null) {%>
       <div id="tab11<%=inputSuffix%>">
-          <%=comp.getSpecialTagXHTML(ctx)%>
+          <%if (comp.getTextMessage(ctx) != null) {%><div class="alert alert-<%=comp.getTextMessage(ctx).getBootstrapType()%>" role="alert"><%=comp.getTextMessage(ctx)%></div><%}
+      	%><%=comp.getSpecialTagXHTML(ctx)%>
       </div><%
       }%>
       <div id="tab2<%=inputSuffix%>" class="config">
-      	<%=comp.getXHTMLConfig(ctx)%>
+      	<%if (comp.getConfigMessage(ctx) != null) {%><div class="alert alert-<%=comp.getConfigMessage(ctx).getBootstrapType()%>" role="alert"><%=comp.getConfigMessage(ctx)%></div><%}
+      	%><%=comp.getXHTMLConfig(ctx)%>
       </div>
       <%if (helpText != null) {%>
       <div id="tab3<%=inputSuffix%>" class="help">

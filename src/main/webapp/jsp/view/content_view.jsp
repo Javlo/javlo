@@ -201,4 +201,4 @@ if (ColContext.isInstance(ctx)) {
 currentPage.endRendering(ctx);
 } /* end else getSpecialContentRenderer() */
 
-%><div class="end-area end-area-<%=area%>">&nbsp;</div>
+%><%if (ctx.getCurrentTemplate().isEndAreaTag()) {%><div class="end-area end-area-<%=area%>">&nbsp;</div><%}%>

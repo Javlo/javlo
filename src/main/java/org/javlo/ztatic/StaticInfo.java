@@ -525,7 +525,7 @@ public class StaticInfo {
 			fullStaticFolder = staticConfig.getTemplateFolder();
 		} else if (!file.getAbsolutePath().contains('/'+staticConfig.getStaticFolder()+'/')) { // before /static
 			fullStaticFolder = globalContext.getDataFolder();
-			staticFolder = false;
+			//staticFolder = false;
 		}
 		
 		fullStaticFolder=URLHelper.cleanPath(fullStaticFolder, false);
@@ -562,27 +562,15 @@ public class StaticInfo {
 			if (inStaticURL.startsWith(staticConfig.getStaticFolder())) {
 				inStaticURL = inStaticURL.substring(staticConfig.getStaticFolder().length());
 			}
-
-			/* load real file */
-
 			GlobalContext globalContext = GlobalContext.getInstance(request);
 			String realPath = URLHelper.mergePath(globalContext.getDataFolder(), staticConfig.getStaticFolder());
 			realPath = URLHelper.mergePath(realPath, inStaticURL);
 
 			File file = new File(realPath);
-			/*
-			 * if (!file.exists()) { logger.fine(
-			 * "could not instancied resource because file does'nt exist : " +
-			 * file + " context name : " + globalContext.getContextKey()); }
-			 * else if (file.isDirectory()) { if
-			 * (!staticInfo.staticURL.endsWith("/")) { staticInfo.staticURL =
-			 * staticInfo.staticURL + '/'; } }
-			 */
 			staticInfo.setFile(file);
 			staticInfo.size = file.length();
 
 			outStaticInfo = staticInfo;
-			// globalContext.setAttribute(inStaticURL, outStaticInfo);
 			request.setAttribute(inStaticURL, outStaticInfo);
 		}
 

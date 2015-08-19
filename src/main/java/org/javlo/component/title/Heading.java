@@ -10,7 +10,6 @@ import org.javlo.component.core.ComponentLayout;
 import org.javlo.component.core.ISubTitle;
 import org.javlo.component.properties.AbstractPropertiesComponent;
 import org.javlo.context.ContentContext;
-import org.javlo.context.EditContext;
 import org.javlo.exception.ResourceNotFoundException;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
@@ -239,18 +238,7 @@ public class Heading extends AbstractPropertiesComponent implements ISubTitle {
 		return htmlID;
 	}
 	
-	@Override
-	public String getPrefixViewXHTMLCode(ContentContext ctx) {
-		String cssClass = "";
-		if (isBackgroundColored()) {
-			cssClass = cssClass + " "+COLORED_WRAPPER_CLASS;
-		}
-		if (EditContext.getInstance(ctx.getGlobalContext(), ctx.getRequest().getSession()).isEditPreview()) {
-			return '<'+getTag(ctx)+' ' + getSpecialPreviewCssClass(ctx, cssClass) + getSpecialPreviewCssId(ctx) + " "+getInlineStyle(ctx)+">";
-		} else {
-			return '<'+getTag(ctx)+' ' + " id=\""+getXHTMLId(ctx)+"\" "+getInlineStyle(ctx)+">";
-		}
-	}
+	
 	
 	protected String getInlineStyle(ContentContext ctx) {
 		String inlineStyle = "";

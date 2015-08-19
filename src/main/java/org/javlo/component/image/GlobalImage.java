@@ -20,7 +20,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
-import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.fileupload.FileItem;
 import org.javlo.component.core.ComponentContext;
 import org.javlo.component.core.IContentVisualComponent;
@@ -54,7 +53,8 @@ import org.javlo.user.AdminUserSecurity;
 import org.javlo.user.User;
 
 /**
- * standard image component. <h4>exposed variable :</h4>
+ * standard image component.
+ * <h4>exposed variable :</h4>
  * <ul>
  * <li>inherited from {@link Image}</li>
  * <li>{@link String} image : url of image.</li>
@@ -144,12 +144,12 @@ public class GlobalImage extends Image implements IImageFilter {
 	public void setTranslatedID(String id) {
 		properties.setProperty("translated", id);
 	}
-	
+
 	@Override
 	public boolean isAskWidth(ContentContext ctx) {
 		return true;
 	}
-	
+
 	@Override
 	public String getWidth() {
 		return properties.getProperty("width", null);
@@ -163,7 +163,7 @@ public class GlobalImage extends Image implements IImageFilter {
 	protected String getDefaultFilter() {
 		return "standard";
 	}
-	
+
 	@Override
 	public String getPreviewURL(ContentContext ctx, String filter) {
 		try {
@@ -202,7 +202,7 @@ public class GlobalImage extends Image implements IImageFilter {
 
 	@Override
 	public void prepareView(ContentContext ctx) throws Exception {
-		//ctx.setCurrentTemplate(null); // reset template
+		// ctx.setCurrentTemplate(null); // reset template
 		super.prepareView(ctx);
 		ctx.getRequest().setAttribute("link", getLink());
 		String imageURL = getImageURL(ctx);
@@ -299,14 +299,14 @@ public class GlobalImage extends Image implements IImageFilter {
 					dir = dir.substring(1);
 				}
 				dirsCol.add(dir);
-			}						
+			}
 			if (ctx.getRequest().getParameter("path") != null) {
 				String newFolder = URLHelper.removeStaticFolderPrefix(ctx, ctx.getRequest().getParameter("path"));
-				newFolder = newFolder.replaceFirst("/"+ctx.getGlobalContext().getStaticConfig().getImageFolderName()+'/', "");
+				newFolder = newFolder.replaceFirst("/" + ctx.getGlobalContext().getStaticConfig().getImageFolderName() + '/', "");
 				if (newFolder.trim().length() > 1) {
 					folder = newFolder;
 				}
-			}			
+			}
 			finalCode.append(XHTMLHelper.getInputOneSelect(getDirInputName(), dirsCol, folder, "form-control", getJSOnChange(ctx), true));
 		}
 
@@ -364,10 +364,10 @@ public class GlobalImage extends Image implements IImageFilter {
 			String[] fileListBlanck = new String[fileList.length + 1];
 			fileListBlanck[0] = "";
 			System.arraycopy(fileList, 0, fileListBlanck, 1, fileList.length);
-			String fileName =  getFileName();
+			String fileName = getFileName();
 			if (isFromShared(ctx)) {
-				fileName = fileName.replaceFirst(ctx.getGlobalContext().getStaticConfig().getShareDataFolderKey()+'/', "");
-				
+				fileName = fileName.replaceFirst(ctx.getGlobalContext().getStaticConfig().getShareDataFolderKey() + '/', "");
+
 			}
 
 			finalCode.append(XHTMLHelper.getInputOneSelect(getSelectXHTMLInputName(), fileListBlanck, fileName, getJSOnChange(ctx), true));
@@ -610,7 +610,7 @@ public class GlobalImage extends Image implements IImageFilter {
 				url = URLHelper.createResourceURL(ctx, url);
 			}
 			return url;
-		} else if (getFileName() != null  && !getLink().equals("#")) {
+		} else if (getFileName() != null && !getLink().equals("#")) {
 			String fileLink = getResourceURL(ctx, getFileName());
 			return URLHelper.createResourceURL(ctx, getPage(), fileLink).replace('\\', '/');
 		}
@@ -881,7 +881,7 @@ public class GlobalImage extends Image implements IImageFilter {
 
 		if (getWidth() != null && getWidth().trim().length() > 0) {
 			if (StringHelper.isDigit(getWidth())) {
-				MessageRepository.getInstance(ctx).setGlobalMessage(new GenericMessage(I18nAccess.getInstance(ctx).getText("content.image.width-noext", "Image 'width' need unity like px or %." ), GenericMessage.ERROR));
+				MessageRepository.getInstance(ctx).setGlobalMessage(new GenericMessage(I18nAccess.getInstance(ctx).getText("content.image.width-noext", "Image 'width' need unity like px or %."), GenericMessage.ERROR));
 			}
 		}
 
@@ -974,7 +974,7 @@ public class GlobalImage extends Image implements IImageFilter {
 	public int getHeight() {
 		return Integer.parseInt(properties.getProperty("height", "-1"));
 	}
-	
+
 	@Override
 	public void setRenderer(ContentContext ctx, String renderer) {
 		if (properties != null) {
@@ -1041,15 +1041,16 @@ public class GlobalImage extends Image implements IImageFilter {
 		if (comp instanceof GlobalImage) {
 			image = (GlobalImage) comp;
 		}
-		/*} else if (comp instanceof MirrorComponent) {
-			image = (GlobalImage)((MirrorComponent) comp).getMirrorComponent(ctx);
-		}*/
+		/*
+		 * } else if (comp instanceof MirrorComponent) { image =
+		 * (GlobalImage)((MirrorComponent) comp).getMirrorComponent(ctx); }
+		 */
 		if (image != null && image.getConfig(ctx).isDataFeedBack() && currentUser != null && currentUser.validForRoles(AdminUserSecurity.CONTENT_ROLE)) {
 			logger.info("exec data feed back (template:" + ctx.getCurrentTemplate().getName() + ").");
 			String firstText = rs.getParameter("firsttext", null);
 			String secondText = rs.getParameter("secondtext", null);
 			String height = rs.getParameter("height", null);
-			String width = rs.getParameter("width", null);			
+			String width = rs.getParameter("width", null);
 			if (image.isTextAuto()) {
 				if (firstText != null && !firstText.equals(image.getFirstText())) {
 					image.setModify();
@@ -1070,7 +1071,7 @@ public class GlobalImage extends Image implements IImageFilter {
 			if (width != null && width.trim().length() > 0) {
 				int inWidth = Integer.parseInt(width);
 				if (inWidth != image.getWidth(ctx)) {
-					image.setModify();					
+					image.setModify();
 					image.setWidth(ctx, inWidth);
 				}
 			}
@@ -1115,7 +1116,7 @@ public class GlobalImage extends Image implements IImageFilter {
 	protected String getLabelTextInputName() {
 		return getId() + ID_SEPARATOR + "label-text";
 	}
-	
+
 	protected String getEditorComplexity(ContentContext ctx) {
 		return getConfig(ctx).getProperty("editor-complexity", "light");
 	}
@@ -1145,7 +1146,7 @@ public class GlobalImage extends Image implements IImageFilter {
 		String id = "special-label-" + getId();
 		String[][] paramsLabelText = new String[][] { { "rows", "3" }, { "cols", "100" }, { "class", "tinymce-light" }, { "id", id } };
 		out.println(XHTMLHelper.getTextArea(getLabelTextInputName(), getLabel(), paramsLabelText));
-		out.println("<script type=\"text/javascript\">jQuery(document).ready(loadWysiwyg('#" + id + "','"+getEditorComplexity(ctx)+"','" + chooseImageURL + "'));</script>");
+		out.println("<script type=\"text/javascript\">jQuery(document).ready(loadWysiwyg('#" + id + "','" + getEditorComplexity(ctx) + "','" + chooseImageURL + "'));</script>");
 		out.println("</div>");
 
 		if (isFloatText(ctx)) {
@@ -1199,7 +1200,7 @@ public class GlobalImage extends Image implements IImageFilter {
 	}
 
 	@Override
-	public BufferedImage filterImage(ContentContext ctx, BufferedImage image) {		
+	public BufferedImage filterImage(ContentContext ctx, BufferedImage image) {
 		if (ctx.getDevice().getCode().equalsIgnoreCase("pdf")) {
 			return image;
 		} else {
@@ -1211,6 +1212,19 @@ public class GlobalImage extends Image implements IImageFilter {
 	@Override
 	public boolean isListable() {
 		return true;
+	}
+
+	@Override
+	public GenericMessage getTextMessage(ContentContext ctx) {
+		if (isFloatText(ctx)) {
+			try {
+				I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
+				return new GenericMessage(i18nAccess.getText("content.message.pdf-warning", "This feature does not work in pdf."), GenericMessage.ALERT);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return null;
 	}
 
 }

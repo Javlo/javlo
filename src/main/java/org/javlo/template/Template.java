@@ -2761,5 +2761,9 @@ public class Template implements Comparable<Template> {
 	public boolean isLanguageLinkKeepGetParams() {
 		return StringHelper.isTrue(properties.getString("language.keepParams"));
 	}
+	
+	public boolean isEndAreaTag() {
+		return StringHelper.isTrue(properties.getString("area.end-tag"),true);
+	}
 
 }
