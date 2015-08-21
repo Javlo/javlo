@@ -36,7 +36,6 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -1446,4 +1445,17 @@ public class ResourceHelper {
 			}
 		}
 	}
+
+	public static void writeUrlToFile(URL url, File imageFile) throws IOException {
+		InputStream in = null;
+		FileOutputStream out = null;
+		try {
+			in = url.openStream();
+			out = new FileOutputStream(imageFile);
+			writeStreamToStream(in, out);
+		} finally {
+			safeClose(in, out);
+		}
+	}
+
 }

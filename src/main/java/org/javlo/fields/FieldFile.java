@@ -389,11 +389,11 @@ public class FieldFile extends Field implements IStaticContainer {
 		properties.setProperty("field." + getUnicName() + ".value.link", link);
 	}
 
-	protected String getCurrentFolder() {
+	public String getCurrentFolder() {
 		return properties.getProperty("field." + getUnicName() + ".value.folder", "");
 	}
 
-	protected void setCurrentFolder(String folder) {
+	public void setCurrentFolder(String folder) {
 		properties.setProperty("field." + getUnicName() + ".value.folder", folder);
 	}
 
@@ -401,7 +401,7 @@ public class FieldFile extends Field implements IStaticContainer {
 		return properties.getProperty("field." + getUnicName() + ".value.file", null);
 	}
 
-	protected void setCurrentFile(String file) {
+	public void setCurrentFile(String file) {
 		properties.setProperty("field." + getUnicName() + ".value.file", file);
 	}
 
