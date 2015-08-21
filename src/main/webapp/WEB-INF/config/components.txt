@@ -91,6 +91,7 @@ org.javlo.component.column.TableBreak
 org.javlo.component.column.OpenCol
 org.javlo.component.column.CloseCol
 org.javlo.component.files.VFSFile
+org.javlo.component.dynamic.DyanmicComponentFactory
 
 --content.title.ecom
 

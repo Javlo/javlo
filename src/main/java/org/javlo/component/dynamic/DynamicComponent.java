@@ -50,6 +50,8 @@ import org.javlo.ztatic.IStaticContainer;
 public class DynamicComponent extends AbstractVisualComponent implements IStaticContainer, IFieldContainer, IDate, ILink, IImageTitle, ISubTitle {
 
 	public static final String HIDDEN = "hidden";
+	
+	private static final String DYNAMIC_ID_KEY = "_dynamic_id";
 
 	/**
 	 * create a static logger.
@@ -929,6 +931,16 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 	@Override
 	public String getXHTMLId(ContentContext ctx) {
 		return getType()+'-'+getId();
+	}
+	
+	public String getDynamicId() {
+		return properties.getProperty(DYNAMIC_ID_KEY);
+	}
+	
+	public void setDynamicId(String id) {
+		properties.setProperty(DYNAMIC_ID_KEY, id);
+		storeProperties();
+		setModify();
 	}
 
 }
