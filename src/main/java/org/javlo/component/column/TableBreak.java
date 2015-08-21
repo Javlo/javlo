@@ -8,6 +8,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.javlo.component.core.ComponentBean;
+import org.javlo.component.core.ContentElementList;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.context.ContentContext;
 import org.javlo.helper.ComponentHelper;
@@ -16,9 +17,9 @@ import org.javlo.helper.StringHelper;
 
 public class TableBreak extends TableComponent {
 
-	private static final List<String> tableFields = Arrays.asList(new String[] { "padding", "width", "valign", "align", "border", "grid", "spacing", "col", "row", "backgroundcolor" });
+	private static final List<String> tableFields = Arrays.asList(new String[] { "padding", "width", "valign", "align", "border", "grid", "spacing", "col", "row", "backgroundcolor", "bordersize", "bordercolor" });
 
-	private String TYPE = "table-break";
+	public static String TYPE = "table-break";
 
 	@Override
 	public void init(ComponentBean bean, ContentContext newContext) throws Exception {
@@ -179,6 +180,30 @@ public class TableBreak extends TableComponent {
 			MacroHelper.addContent(ctx.getRequestContentLanguage(), getPage(), previousId, OpenCell.TYPE, "", getArea(), "", ctx.getCurrentEditUser());
 		}
 		return true;
+	}
+	
+	public TableComponent getOpenTableComponent(ContentContext ctx) throws Exception {
+		ContentContext compAreaContext = ctx.getContextWithArea(getArea());
+		ContentElementList content = getPage().getContent(compAreaContext);
+		boolean inTable = false;
+		IContentVisualComponent firstComp = null;
+		while (content.hasNext(compAreaContext)) {
+			IContentVisualComponent comp = content.next(compAreaContext);
+			if (firstComp == null) {
+				firstComp = comp;
+			}
+			if (!inTable && comp instanceof TableComponent) {
+				inTable = true;
+				firstComp = comp;
+			}
+			if (comp.getId().equals(getId())) {
+				return (TableComponent)firstComp;
+			} else if (comp instanceof TableBreak) {
+				inTable = false;
+			}
+		}
+		System.out.println("***** TableBreak.getOpenTableComponent : ERROR Table break not found."); //TODO: remove debug trace
+		return null;
 	}
 
 	protected boolean updateTable(ContentContext ctx, int newCol, int newRow) throws Exception {

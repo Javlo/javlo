@@ -12,6 +12,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import org.javlo.component.column.TableBreak;
+import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.component.core.ContentElementList;
 import org.javlo.component.core.IContentVisualComponent;
@@ -157,7 +159,7 @@ public class ComponentHelper {
 		return res.toString();
 	}
 	
-	public static void moveComponent(ContentContext ctx, IContentVisualComponent comp, IContentVisualComponent newPrevious, MenuElement targetPage, String area) throws Exception {
+	private static void internalMoveComponent(ContentContext ctx, IContentVisualComponent comp, IContentVisualComponent newPrevious, MenuElement targetPage, String area) throws Exception {
 		comp.getPage().removeContent(ctx, comp.getId());
 		comp.getComponentBean().setArea(area);
 		if (newPrevious != null) {
@@ -169,6 +171,33 @@ public class ComponentHelper {
 		}	
 		ContentContext areaCtx = ctx.getContextWithArea(comp.getArea());
 		updateNextAndPreviouv(areaCtx, comp.getPage().getContent(areaCtx).getIterable(areaCtx));
+	}
+	
+	public static void moveComponent(ContentContext ctx, IContentVisualComponent comp, IContentVisualComponent newPrevious, MenuElement targetPage, String area) throws Exception {
+		if (!(comp instanceof TableBreak)) {
+			internalMoveComponent(ctx, comp, newPrevious,targetPage, area);
+		} else {						
+			IContentVisualComponent openTable = ((TableBreak)comp).getOpenTableComponent(ctx);
+			if (openTable == null) {
+				return;				
+			} else {
+				ContentContext compCtx = ctx.getContextWithArea(comp.getArea());
+				ContentElementList tableContent = comp.getPage().getContent(compCtx);
+				boolean inTable = false;				
+				while (tableContent.hasNext(compCtx)) {
+					IContentVisualComponent nextComp =  tableContent.next(compCtx);
+					if (nextComp != null) {
+						if (nextComp.getId().equals(openTable.getId())) {
+							inTable = true;
+						}
+						if (inTable) {	
+							internalMoveComponent(ctx, nextComp, newPrevious,targetPage, area);
+							newPrevious = nextComp;
+						}
+					}
+				}
+			}
+		}
 	}
 	
 	/**

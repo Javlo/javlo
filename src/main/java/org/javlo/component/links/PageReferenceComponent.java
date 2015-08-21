@@ -774,6 +774,15 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		public void setCreationTime(String creationTime) {
 			this.creationTime = creationTime;
 		}
+		
+		public PageBean getParent() {
+			try {
+				return PageBean.getInstance(ctx, lgCtx, page.getParent(), comp);
+			} catch (Exception e) {
+				e.printStackTrace();
+				return null;
+			}
+		}
 
 	}
 

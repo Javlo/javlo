@@ -18,6 +18,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.javlo.actions.AbstractModuleAction;
+import org.javlo.component.column.TableBreak;
 import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.component.core.ComponentContext;
@@ -113,7 +114,7 @@ public class Edit extends AbstractModuleAction {
 
 		String previewParam = "";
 		if (ctx.isEditPreview()) {
-			previewParam = ContentContext.PREVIEW_EDIT_PARAM+"=true&";
+			previewParam = ContentContext.PREVIEW_EDIT_PARAM + "=true&";
 		}
 
 		String insertXHTML = "<a class=\"btn btn-default ajax btn-xs\" href=\"" + URLHelper.createURL(ctx) + "?" + previewParam + "webaction=insert&previous=0&type=" + currentTypeComponent.getType() + "\">" + insertHere + "</a>";
@@ -180,7 +181,7 @@ public class Edit extends AbstractModuleAction {
 	 *            the id, null for update and previous component for insert.
 	 * @throws Exception
 	 */
-	public static void updatePreviewCommands(ContentContext ctx, String tab) throws Exception {		
+	public static void updatePreviewCommands(ContentContext ctx, String tab) throws Exception {
 		ctx.getRequest().setAttribute("editPreview", ctx.isEditPreview());
 		ctx.getRequest().setAttribute("components", ComponentFactory.getComponentForDisplay(ctx));
 		SharedContentService.prepare(ctx);
@@ -405,8 +406,8 @@ public class Edit extends AbstractModuleAction {
 		Collection<Edit.ComponentWrapper> comps = ComponentFactory.getComponentForDisplay(ctx);
 		/*
 		 * for (IContentComponentsList iContentComponentsList : comps) {
-		 * System.out
-		 * .println("***** Edit.loadComponentList : iContentComponentsList = "
+		 * System.out .println(
+		 * "***** Edit.loadComponentList : iContentComponentsList = "
 		 * +iContentComponentsList); //TODO: remove debug trace }
 		 */
 		ctx.getRequest().setAttribute("components", comps);
@@ -452,6 +453,7 @@ public class Edit extends AbstractModuleAction {
 	}
 
 	/***************/
+
 	/** WEBACTION **/
 	/***************/
 
@@ -749,15 +751,48 @@ public class Edit extends AbstractModuleAction {
 				return "error no item in clipBoard";
 			} else {
 				ComponentBean bean = (ComponentBean) copied;
-				if (globalContext.isMailingPlatform()) {
-					newId = content.createContent(ctx, targetPage, areaKey, previousId, bean, true);
+				if (!bean.getType().equals(TableBreak.TYPE)) {
+					if (globalContext.isMailingPlatform()) {
+						newId = content.createContent(ctx, targetPage, areaKey, previousId, bean, true);
+					} else {
+						ComponentBean mirrorComponentBean = new ComponentBean(MirrorComponent.TYPE, bean.getId(), ctx.getRequestContentLanguage());
+						newId = content.createContent(ctx, targetPage, areaKey, previousId, mirrorComponentBean, true);
+					}
 				} else {
-					ComponentBean mirrorComponentBean = new ComponentBean(MirrorComponent.TYPE, bean.getId(), ctx.getRequestContentLanguage());
-					newId = content.createContent(ctx, targetPage, areaKey, previousId, mirrorComponentBean, true);
+					IContentVisualComponent currentComp = content.getComponent(ctx, bean.getId());					
+					IContentVisualComponent openTable = ((TableBreak)currentComp).getOpenTableComponent(ctx);
+					if (openTable == null) {
+						return "error table empty";				
+					} else {
+						ContentContext compAreaContext = ctx.getContextWithArea(currentComp.getArea());
+						ContentElementList tableContent = currentComp.getPage().getContent(compAreaContext);
+						boolean inTable = false;
+						newId = null;
+						while (tableContent.hasNext(compAreaContext)) {
+							IContentVisualComponent nextComp =  tableContent.next(compAreaContext);
+							if (nextComp.getId().equals(openTable.getId())) {
+								inTable = true;
+							}
+							if (inTable) {								
+								newId = content.createContent(compAreaContext, targetPage, areaKey, previousId, nextComp.getComponentBean(), true);
+								if (compAreaContext.isAjax()) {
+									compAreaContext.getRequest().setAttribute(AbstractVisualComponent.SCROLL_TO_COMP_ID_ATTRIBUTE_NAME, newId);									
+								}
+								previousId = newId;
+								if (nextComp instanceof TableBreak) {
+									inTable = false;
+								}
+							}
+						}
+					}
 				}
 			}
 		} else {
 			newId = content.createContent(ctx, targetPage, areaKey, previousId, type, "", true);
+		}
+		
+		if (newId == null) {
+			return "error no component create.";
 		}
 
 		IContentVisualComponent comp = content.getComponent(ctx, newId);
@@ -792,9 +827,9 @@ public class Edit extends AbstractModuleAction {
 		persistenceService.setAskStore(true);
 		modifPage(ctx, targetPage);
 		autoPublish(request, response);
-		
+
 		if (ctx.isPreview()) {
-			updatePreviewCommands(ctx,null);
+			updatePreviewCommands(ctx, null);
 		}
 
 		return null;
@@ -869,20 +904,20 @@ public class Edit extends AbstractModuleAction {
 
 			modifPage(ctx, targetPage);
 			autoPublish(request, response);
-			
+
 			if (ctx.isPreview()) {
-				updatePreviewCommands(ctx,null);
+				updatePreviewCommands(ctx, null);
 			}
 
 		}
 		return null;
 	}
-	
+
 	public static final String performSave(ContentContext ctx, EditContext editContext, GlobalContext globalContext, ContentService content, ComponentContext componentContext, RequestService requestService, I18nAccess i18nAccess, MessageRepository messageRepository, Module currentModule, AdminUserFactory adminUserFactory) throws Exception {
 		return performModifComponent(ctx, editContext, globalContext, content, componentContext, requestService, i18nAccess, messageRepository, currentModule, adminUserFactory, false);
 	}
-	
-	public static final String performUpload(ContentContext ctx, EditContext editContext, GlobalContext globalContext, ContentService content, ComponentContext componentContext, RequestService requestService, I18nAccess i18nAccess, MessageRepository messageRepository, Module currentModule, AdminUserFactory adminUserFactory) throws Exception {		
+
+	public static final String performUpload(ContentContext ctx, EditContext editContext, GlobalContext globalContext, ContentService content, ComponentContext componentContext, RequestService requestService, I18nAccess i18nAccess, MessageRepository messageRepository, Module currentModule, AdminUserFactory adminUserFactory) throws Exception {
 		return performModifComponent(ctx, editContext, globalContext, content, componentContext, requestService, i18nAccess, messageRepository, currentModule, adminUserFactory, true);
 	}
 
@@ -906,16 +941,16 @@ public class Edit extends AbstractModuleAction {
 			IContentVisualComponent elem = content.getComponent(ctx, compId);
 			if (elem != null && StringHelper.isTrue(requestService.getParameter("id-" + elem.getId(), null))) {
 				if (AdminUserSecurity.getInstance().canModifyConponent(ctx, compId)) {
-					
+
 					if (!upload) {
 						elem.performConfig(ctx);
 						elem.performEdit(ctx);
 					} else {
 						if (elem instanceof IUploadResource) {
-							((IUploadResource)elem).performUpload(ctx);
+							((IUploadResource) elem).performUpload(ctx);
 						} else {
-							logger.warning("you can't upload file in "+elem.getType());
-							return "you can't upload file in "+elem.getType();
+							logger.warning("you can't upload file in " + elem.getType());
+							return "you can't upload file in " + elem.getType();
 						}
 					}
 					if (ctx.isEditPreview()) {
@@ -1619,12 +1654,13 @@ public class Edit extends AbstractModuleAction {
 			comp.setArea(null); // paste in current area
 		}
 		comp.setLanguage(null);
-		String newId = content.createContent(ctx, targetPage, comp, previous, true);
-		if (ctx.isAjax()) {
-			ctx.getRequest().setAttribute(AbstractVisualComponent.SCROLL_TO_COMP_ID_ATTRIBUTE_NAME, newId);
-			updateComponent(ctx, currentModule, newId, previous);
-		}
-
+		
+			String newId = content.createContent(ctx, targetPage, comp, previous, true);
+			if (ctx.isAjax()) {
+				ctx.getRequest().setAttribute(AbstractVisualComponent.SCROLL_TO_COMP_ID_ATTRIBUTE_NAME, newId);
+				updateComponent(ctx, currentModule, newId, previous);
+			}
+		
 		String msg = i18nAccess.getText("action.component.created", new String[][] { { "type", comp.getType() } });
 		messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(msg, GenericMessage.INFO));
 
@@ -1687,7 +1723,7 @@ public class Edit extends AbstractModuleAction {
 		if (ctx.isAjax()) {
 			// updatePreviewComponent(ctx, currentModule, comp.getId(),
 			// previous);
-			
+
 			ctx.getRequest().setAttribute(AbstractVisualComponent.SCROLL_TO_COMP_ID_ATTRIBUTE_NAME, compId);
 
 			MenuElement parentPage = ctx.getCurrentPage();
@@ -1804,7 +1840,7 @@ public class Edit extends AbstractModuleAction {
 		if (sharedData == null || previousId == null) {
 			return "bad request structure, need sharedData and previousId as parameter.";
 		} else {
-			//sharedContentService.clearCache();
+			// sharedContentService.clearCache();
 			SharedContent sharedContent = sharedContentService.getSharedContent(ctx, sharedData);
 			if (sharedContent == null) {
 				String msg = "error : shared content not found : " + sharedData;
@@ -1839,7 +1875,7 @@ public class Edit extends AbstractModuleAction {
 				}
 				String newId = content.createContent(ctx, targetPage, beans, previousId, true);
 				ctx.getRequest().setAttribute(AbstractVisualComponent.SCROLL_TO_COMP_ID_ATTRIBUTE_NAME, newId);
-			} else {				
+			} else {
 				ComponentBean mirrorBean = new ComponentBean(PageMirrorComponent.TYPE, sharedContent.getLinkInfo(), ctx.getRequestContentLanguage());
 				mirrorBean.setArea(areaKey);
 				mirrorBean.setAuthors(ctx.getCurrentUserId());
@@ -1861,7 +1897,7 @@ public class Edit extends AbstractModuleAction {
 				if (mode != null) {
 					ctx.setRenderMode(Integer.parseInt(mode));
 				}
-				logger.info("update area : " + selecterPrefix + area);				
+				logger.info("update area : " + selecterPrefix + area);
 				ctx.getAjaxInsideZone().put(selecterPrefix + area, ServletHelper.executeJSP(ctx, "/jsp/view/content_view.jsp?area=" + areaKey));
 			}
 
@@ -1870,7 +1906,7 @@ public class Edit extends AbstractModuleAction {
 		return null;
 	}
 
-	public static String performRefresh(StaticConfig staticConfig, ServletContext application, GlobalContext globalContext) throws Exception {		
+	public static String performRefresh(StaticConfig staticConfig, ServletContext application, GlobalContext globalContext) throws Exception {
 		SynchroHelper.performSynchro(application, staticConfig, globalContext);
 		return null;
 	}

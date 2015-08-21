@@ -52,7 +52,7 @@ public class ComponentBean implements Serializable, Comparable<ComponentBean> {
 		language = "";
 	}
 
-	public ComponentBean(String newType, String newValue, String newLanguague) {
+	public ComponentBean(String newType, String newValue, String newLanguague) {		
 		type = newType;
 		value = newValue;
 		language = newLanguague;

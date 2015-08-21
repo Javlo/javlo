@@ -19,7 +19,7 @@ import org.javlo.message.MessageRepository;
 
 public abstract class TableComponent extends AbstractPropertiesComponent {
 
-	private static final List<String> fields = Arrays.asList(new String[] { "padding", "width", "valign", "align", "colspan", "backgroundcolor" });
+	private static final List<String> fields = Arrays.asList(new String[] { "padding", "width", "valign", "align", "colspan", "backgroundcolor", "bordersize", "bordercolor" });
 
 	protected static final Set<String> FIELD_NEED_UNITY = new HashSet<String>(Arrays.asList(new String[] { "padding", "margin", "width" }));
 
@@ -34,6 +34,11 @@ public abstract class TableComponent extends AbstractPropertiesComponent {
 	public String getCellBackgroundColor(ContentContext ctx) {
 		return getFieldValue("backgroundcolor");
 	}
+	
+	private boolean isAnyBorder(ContentContext ctx) throws Exception {
+		TableContext tableContext = getContext(ctx);
+		return tableContext.getTableBreak().isGrid(ctx) || tableContext.getTableBreak().isBorder(ctx) || (getBorderSize(ctx) != null && getBorderSize(ctx).length()>1);
+	}
 
 	protected String getTDStyle(ContentContext ctx) throws Exception {
 		StringBuffer outStyle = new StringBuffer();
@@ -41,7 +46,7 @@ public abstract class TableComponent extends AbstractPropertiesComponent {
 
 		String padding = getPadding(ctx);
 		if (padding != null && padding.trim().length() > 0) {
-			if ((tableContext.isFirst(this) || tableContext.isLast(this)) && (!tableContext.getTableBreak().isGrid(ctx) && !tableContext.getTableBreak().isBorder(ctx)) && getCellBackgroundColor(ctx).length() < 2) {
+			if ((tableContext.isFirst(this) || tableContext.isLast(this)) && (!isAnyBorder(ctx)) && getCellBackgroundColor(ctx).length() < 2) {
 				if (tableContext.isFirst(this) && tableContext.isLast(this)) {
 					outStyle.append("padding:" + padding + ';');
 				} else {
@@ -59,6 +64,10 @@ public abstract class TableComponent extends AbstractPropertiesComponent {
 
 		if (getCellBackgroundColor(ctx).length() > 2) {
 			outStyle.append("background-color:" + getCellBackgroundColor(ctx) + ';');
+		}
+		String borderSize = getBorderSize(ctx);
+		if (borderSize != null && borderSize.length() > 1) {
+			outStyle.append("border:" + borderSize + ' ' + getBorderColor(ctx) + " solid;");
 		}
 
 		String width = getWidth(ctx);
@@ -105,6 +114,14 @@ public abstract class TableComponent extends AbstractPropertiesComponent {
 
 	protected String getPadding(ContentContext ctx) {
 		return getFieldValue("padding");
+	}
+
+	protected String getBorderSize(ContentContext ctx) {
+		return getFieldValue("bordersize");
+	}
+
+	protected String getBorderColor(ContentContext ctx) {
+		return getFieldValue("bordercolor");
 	}
 
 	protected String getWidth(ContentContext ctx) {
@@ -173,6 +190,14 @@ public abstract class TableComponent extends AbstractPropertiesComponent {
 		return createKeyWithField("colspan");
 	}
 
+	protected String getBorderColorInputName() {
+		return createKeyWithField("bordercolor");
+	}
+
+	protected String getBorderSizeInputName() {
+		return createKeyWithField("bordersize");
+	}
+
 	@Override
 	public boolean validateField(ContentContext ctx, String fieldName, String fieldValue) throws Exception {
 		boolean out = super.validateField(ctx, fieldName, fieldValue);
@@ -189,6 +214,16 @@ public abstract class TableComponent extends AbstractPropertiesComponent {
 	protected String getEditXHTMLCode(ContentContext ctx) throws Exception {
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(outStream);
+		
+		out.println("<div class=\"line\">");
+		out.println("<label for=\"" + getBorderColorInputName() + "\">border color : </label>");
+		out.println("<input class=\"color form-control\" name=\"" + getBorderColorInputName() + "\" value=\"" + getFieldValue("bordercolor") + "\" />");
+		out.println("</div>");
+		out.println("<div class=\"line\">");
+		out.println("<label for=\"" + getBorderSizeInputName() + "\">border size : </label>");
+		out.println("<input class=\"form-control\" name=\"" + getBorderSizeInputName() + "\" value=\"" + getFieldValue("bordersize") + "\" />");
+		out.println("</div>");
+		
 		out.println("<div class=\"line\">");
 		out.println("<label for=\"" + getBackgroundColorInputName() + "\">background color : </label>");
 		out.println("<input class=\"color form-control\" name=\"" + getBackgroundColorInputName() + "\" value=\"" + getFieldValue("backgroundcolor") + "\" />");
