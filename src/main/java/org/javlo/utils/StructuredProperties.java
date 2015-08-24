@@ -2,6 +2,8 @@ package org.javlo.utils;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
@@ -16,6 +18,7 @@ import org.apache.commons.lang.StringUtils;
 
 public class StructuredProperties extends Properties {
 
+	private static final String INTERNAL_ENCODING = "8859_1";
 	/** A table of hex digits */
 	private static final char[] hexDigit = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
 
@@ -32,6 +35,11 @@ public class StructuredProperties extends Properties {
 	@Override
 	public void store(Writer writer, String comments) throws IOException {
 		store0((writer instanceof BufferedWriter) ? (BufferedWriter) writer : new BufferedWriter(writer), comments, false);
+	}
+	
+	@Override
+	public synchronized void load(InputStream inStream) throws IOException {		 
+		super.load(new InputStreamReader(inStream, INTERNAL_ENCODING));
 	}
 
 	private static void writeComments(BufferedWriter bw, String comments) throws IOException {
@@ -141,7 +149,7 @@ public class StructuredProperties extends Properties {
 
 	@Override
 	public void store(OutputStream out, String comments) throws IOException {
-		store0(new BufferedWriter(new OutputStreamWriter(out, "8859_1")), comments, true);
+		store0(new BufferedWriter(new OutputStreamWriter(out, INTERNAL_ENCODING)), comments, true);
 	}
 
 	private void store0(BufferedWriter bw, String comments, boolean escUnicode) throws IOException {

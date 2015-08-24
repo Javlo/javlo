@@ -104,7 +104,7 @@ public class ExternalLink extends ComplexPropertiesLink implements IReverseLinkC
 			res.append("<a" + getSpecialPreviewCssClass(ctx, insertCssClass) + getSpecialPreviewCssId(ctx) + " " + target + "href=\"");
 			res.append(link);
 			res.append("\">");
-			res.append(getLabel());
+			res.append(getLabel().trim().length()==0?getLabel():link);
 			if (getConfig(ctx).getProperty("wai.mark-external-link", null) != null && StringHelper.isTrue(getConfig(ctx).getProperty("wai.mark-external-link", "false"))) {
 				res.append("<span class=\"wai\">" + I18nAccess.getInstance(ctx.getRequest()).getViewText("wai.external-link") + "</span>");
 			}

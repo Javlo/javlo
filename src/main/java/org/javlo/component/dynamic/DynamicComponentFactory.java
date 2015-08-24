@@ -19,6 +19,7 @@ import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.fields.Field;
+import org.javlo.fields.FieldExternalLink;
 import org.javlo.fields.FieldImage;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
@@ -84,7 +85,7 @@ public class DynamicComponentFactory extends AbstractVisualComponent {
 
 	public void update(ContentContext ctx) throws Exception {
 
-		String dynamicComponentType = StringHelper.trimAndNullify(getDynamicComponentType());
+		String dynamicComponentType = StringHelper.trimAndNullify(getDynamicComponentType());		
 		String idField = StringHelper.trimAndNullify(getIdField());
 		if (dynamicComponentType == null || idField == null) {
 			return;
@@ -128,8 +129,8 @@ public class DynamicComponentFactory extends AbstractVisualComponent {
 					if (field instanceof FieldImage) {
 						try {
 							String extension = StringHelper.getFileExtension(value);
-							String imageFileName = idValue + "." + extension;
-							File imageFile = new File(imageFolder, imageFileName);
+							String imageFileName = StringHelper.createFileName(idValue) + "." + extension;
+							File imageFile = new File(imageFolder, imageFileName);							
 							ResourceHelper.writeUrlToFile(new URL(value), imageFile);
 							FieldImage img = (FieldImage) field;
 							img.setCurrentFolder(imageFolderSubPath);
@@ -137,6 +138,8 @@ public class DynamicComponentFactory extends AbstractVisualComponent {
 						} catch (Exception ex) {
 							ex.printStackTrace();
 						}
+					} else if (field instanceof FieldExternalLink) {
+						((FieldExternalLink)field).setCurrentLink(value);
 					} else {
 						field.setValue(value);
 					}
@@ -173,6 +176,11 @@ public class DynamicComponentFactory extends AbstractVisualComponent {
 		fetcher.setListSelector(listSelector);
 		fetcher.setFields(fields);
 		return fetcher;
+	}
+	
+	@Override
+	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
+		return "";
 	}
 
 	private List<FetchField> getFetchFields(ContentContext ctx) {

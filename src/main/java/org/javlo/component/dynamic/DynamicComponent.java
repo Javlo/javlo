@@ -561,7 +561,7 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 	@Override
 	public IContentVisualComponent newInstance(ComponentBean bean, ContentContext newCtx) throws Exception {
 		DynamicComponent res = (DynamicComponent) this.clone();
-		Properties newProp = new StructuredProperties();
+		Properties newProp = new Properties();
 		newProp.putAll(getConfigProperties());
 		res.setProperties(newProp); // transfert meta-data of
 		// dynamiccomponent

@@ -15,8 +15,10 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.io.PrintWriter;
+import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
@@ -2091,6 +2093,14 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 
 	public InputStream stringToStream(String str) {
 		return new ByteArrayInputStream(str.getBytes());
+	}
+	
+	public Reader stringToReader(String str, String encoding) throws UnsupportedEncodingException {
+		return new InputStreamReader(stringToStream(str), encoding);		
+	}
+	
+	public Reader stringToReader(String str) throws UnsupportedEncodingException {
+		return stringToReader(str, ContentContext.CHARACTER_ENCODING);		
 	}
 
 	/**

@@ -2,12 +2,15 @@ package org.javlo.helper;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.Serializable;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
+
+import org.javlo.context.ContentContext;
 
 public class Jsp2String extends HttpServletResponseWrapper {
 
@@ -37,10 +40,10 @@ public class Jsp2String extends HttpServletResponseWrapper {
 			cache.write(buf, offset, len);
 		}
 	}
-
+	
 	private ByteArrayOutputStream cache = new ByteArrayOutputStream();
-	private PrintWriter printWriterCache = new PrintWriter(cache);
-	private JCacheOutputStream fakeServletOutputStream = new JCacheOutputStream();;
+	private PrintWriter printWriterCache;
+	private JCacheOutputStream fakeServletOutputStream = new JCacheOutputStream();
 
 	public Jsp2String(HttpServletResponse response) {
 		super(response);
@@ -48,6 +51,9 @@ public class Jsp2String extends HttpServletResponseWrapper {
 
 	@Override
 	public PrintWriter getWriter() throws IOException {
+		if (printWriterCache == null) {
+			printWriterCache = new PrintWriter(new OutputStreamWriter(cache,ContentContext.CHARACTER_ENCODING));
+		}
 		return printWriterCache;
 	}
 
@@ -58,8 +64,10 @@ public class Jsp2String extends HttpServletResponseWrapper {
 
 	@Override
 	public String toString() {
-		printWriterCache.flush();
-		return new String(cache.toByteArray());
+		if (printWriterCache != null) {
+			printWriterCache.flush();
+		}
+		return new String(cache.toByteArray(), ContentContext.CHARSET_DEFAULT);
 	}
 
 }

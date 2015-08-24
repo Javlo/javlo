@@ -166,7 +166,7 @@ public class FieldExternalLink extends MetaField implements ILink {
 		return properties.getProperty("field." + getUnicName() + ".value.link", "");
 	}
 
-	protected void setCurrentLink(String link) {
+	public void setCurrentLink(String link) {
 		properties.setProperty("field." + getUnicName() + ".value.link", link);
 	}
 

@@ -12,7 +12,7 @@
 	<input type="hidden" name="webaction" value="shared-content.search" />
 	<input type="hidden" name="provider" value="${provider.name}" />
 	<div class="form-inline form-group">
-		<input type="text" name="query" placeholder="${i18n.edit['content.search']}" class="form-control" value="${sharedContentContext.searchQuery}"/>		
+		<input type="text" name="query" placeholder="${i18n.edit['content.search']}" class="form-control query" value="${sharedContentContext.searchQuery}"/>		
 		<input type="submit" class="btn btn-default" value="${i18n.edit['global.ok']}" />
 		<input type="submit" name="reset" class="btn btn-default pull-right" value="${i18n.edit['global.reset']}" />
 	</div>
