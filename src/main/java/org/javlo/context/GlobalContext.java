@@ -40,9 +40,6 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import net.sf.ehcache.Cache;
-import net.sf.ehcache.CacheManager;
-
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.io.FileUtils;
@@ -50,7 +47,6 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 import org.javlo.cache.ICache;
 import org.javlo.cache.MapCache;
-import org.javlo.cache.ehCache.EHCacheWrapper;
 import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.config.StaticConfig;
 import org.javlo.helper.ContentHelper;
@@ -170,8 +166,6 @@ public class GlobalContext implements Serializable, IPrintInfo {
 			System.out.println(entry.getKey() + " = " + entry.getValue());
 		}
 	}
-
-	private CacheManager cacheManager;
 
 	private final Map<String, ICache> cacheMaps = new Hashtable<String, ICache>();
 
@@ -359,17 +353,11 @@ public class GlobalContext implements Serializable, IPrintInfo {
 					newInstance.properties.setProperty("access-date", StringHelper.renderTime(new Date()));
 					newInstance.contextFile = configFile;
 					newInstance.save();
-
-					newInstance.initCacheManager();
 				}
 				newInstance.startThread();
 			}
 		}
 		return newInstance;
-	}
-
-	private void initCacheManager() throws IOException {
-		cacheManager = staticConfig.getEhCacheManager();
 	}
 
 	public static GlobalContext getRealInstance(HttpSession session, String contextKey) throws IOException, ConfigurationException {
@@ -487,9 +475,6 @@ public class GlobalContext implements Serializable, IPrintInfo {
 			synchronized (newInstance.properties) {
 				newInstance.properties.setProperty("access-date", StringHelper.renderTime(new Date()));
 			}
-
-			newInstance.initCacheManager();
-
 			newInstance.writeInfo(session, System.out);
 
 			// TODO : init resource Id
@@ -841,11 +826,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	}
 
 	public ICache getCache(String cacheName) {
-		if (staticConfig.useEhCache()) {
-			return getEhCacheCache(cacheName);
-		} else {
-			return getMapCache(cacheName);
-		}
+		return getMapCache(cacheName);		
 	}
 
 	public ICache getEternalCache(String cacheName) {
@@ -859,15 +840,11 @@ public class GlobalContext implements Serializable, IPrintInfo {
 
 	public List<ICache> getAllCache() {
 		List<ICache> outCaches = new LinkedList<ICache>();
-		if (cacheManager != null) {
-			for (String cacheName : cacheManager.getCacheNames()) {
-				outCaches.add(getCache(cacheName));
-			}
-		} else {
-			for (String cacheName : cacheMaps.keySet()) {
-				outCaches.add(getCache(cacheName));
-			}
+	
+		for (String cacheName : cacheMaps.keySet()) {
+			outCaches.add(getCache(cacheName));
 		}
+	
 		return outCaches;
 	}
 
@@ -880,32 +857,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		return cache;
 	}
 
-	private ICache getEhCacheCache(String cacheName) {
-		ICache outCache = cacheMaps.get(cacheName);
-		if (outCache == null) {
-			Cache cache = cacheManager.getCache(cacheName);
-			if (cache == null) {
-				synchronized (cacheManager) {
-					cache = cacheManager.getCache(cacheName);
-					if (cache == null) {
-						if (cacheName.equals(AbstractVisualComponent.TIME_CACHE_NAME)) {
-							cache = new Cache(cacheName, 0, true, false, 60, 60 * 60); // time
-																						// cache
-																						// config
-						} else {
-							cache = new Cache(cacheName, 0, true, false, 60 * 60 * 24, 60 * 60 * 24); // default
-																										// cache
-																										// config
-						}
-						cacheManager.addCache(cache);
-					}
-				}
-			}
-			outCache = new EHCacheWrapper(getContextKey(), cacheName, cache);
-			cacheMaps.put(cacheName, outCache);
-		}
-		return outCache;
-	}
+	
 
 	public List<String> getComponents() {
 		List<String> components = new LinkedList<String>();
@@ -2974,51 +2926,6 @@ public class GlobalContext implements Serializable, IPrintInfo {
 			out.println("**** Content 304         : " + AccessServlet.COUNT_304 + " on " + AccessServlet.COUNT_ACCESS + " Access (" + Math.round(AccessServlet.COUNT_304 * 100 / AccessServlet.COUNT_ACCESS) + "%).");
 		}
 
-		if (cacheManager != null) {
-			String[] cachesName = cacheManager.getCacheNames();
-			for (String cacheName : cachesName) {
-				Cache cache = cacheManager.getCache(cacheName);
-				if (cache != null) {
-					out.println("**** cache name : " + cacheName);
-					out.println("**** mem. store size : " + cache.getMemoryStoreSize());
-					out.println("**** disk store size : " + cache.getDiskStoreSize());
-					out.println("**** cache size      : " + cache.getSize());
-					out.println("**** CONFIG ****");
-					out.println("**** MaxElementsInMemory : " + cache.getCacheConfiguration().getMaxElementsInMemory());
-					out.println("**** MaxElementsOnDisk   : " + cache.getCacheConfiguration().getMaxElementsOnDisk());
-					out.println("**** TimeToLiveSeconds   : " + cache.getCacheConfiguration().getTimeToLiveSeconds());
-					out.println("**** TimeToIdleSeconds   : " + cache.getCacheConfiguration().getTimeToIdleSeconds());
-					out.println("**** Eternal ?           : " + cache.getCacheConfiguration().isEternal());
-					out.println("**** Disk Persistent ?   : " + cache.getCacheConfiguration().isDiskPersistent());
-					out.println("**** Over flow to disk ? : " + cache.getCacheConfiguration().isOverflowToDisk());
-
-					/*
-					 * out.println("**** stat cache hits : " +
-					 * stat.getCacheHits());
-					 * out.println("           memory    : " +
-					 * stat.getInMemoryHits());
-					 * out.println("           disk      : " +
-					 * stat.getDiskStoreObjectCount());
-					 * out.println("**** cache Misses    : " +
-					 * stat.getCacheMisses());
-					 * out.println("**** cache count     : " +
-					 * stat.getObjectCount());
-					 */
-					out.println("****");
-				}
-			}
-
-			out.println("****************************************************************");
-			out.println("****************************************************************");
-			out.println("attributes : ");
-			for (Map.Entry<Object, Object> entry : attributes.entrySet()) {
-				out.println(entry.getKey() + " = " + entry.getValue());
-			}
-			out.println("****************************************************************");
-			out.println("****************************************************************");
-
-		}
-
 	}
 
 	public String createOneTimeToken(String token) {
@@ -3040,10 +2947,6 @@ public class GlobalContext implements Serializable, IPrintInfo {
 			return null;
 		}
 		return oneTimeTokens.remove(token);
-	}
-
-	public boolean isEhCache() {
-		return cacheManager != null;
 	}
 
 	public Object getLockImportTemplate() {
