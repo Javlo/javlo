@@ -14,6 +14,7 @@ import org.javlo.helper.LoremIpsumGenerator;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.XHTMLHelper;
 import org.javlo.i18n.I18nAccess;
+import org.javlo.navigation.MenuElement;
 import org.javlo.service.ReverseLinkService;
 import org.javlo.utils.SuffixPrefix;
 
@@ -137,10 +138,8 @@ public class Description extends AbstractVisualComponent {
 	@Override
 	public String getPageDescription(ContentContext ctx) {	
 		try {
-			System.out.println("***** Description.getPageDescription : 1"); //TODO: remove debug trace
-			String content = XHTMLHelper.replaceJSTLData(ctx, getValue(ctx));
-			System.out.println("***** Description.getPageDescription : 2"); //TODO: remove debug trace
-			return content;
+			ctx.getRequest().setAttribute(MenuElement.FAKE_DESCRIPTION, "no desc");
+			return XHTMLHelper.replaceJSTLData(ctx, getValue(ctx));
 		} catch (Exception e) {
 			e.printStackTrace();
 			return getValue();

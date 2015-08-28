@@ -85,6 +85,8 @@ import org.javlo.ztatic.StaticInfo;
  */
 public class MenuElement implements Serializable, IPrintInfo {
 
+	public static final String FAKE_DESCRIPTION = "FAKE_DESCRIPTION";
+
 	public static final String PAGE_TYPE_DEFAULT = "default";
 	
 	public static final double VOTES_MULTIPLY = 100000;
@@ -2017,6 +2019,11 @@ public class MenuElement implements Serializable, IPrintInfo {
 	 * @throws Exception
 	 */
 	public String getDescription(ContentContext ctx) throws Exception {
+		
+		if (ctx.getRequest().getAttribute(FAKE_DESCRIPTION) != null) {
+			return (String)ctx.getRequest().getAttribute(FAKE_DESCRIPTION);
+		}
+		
 		PageDescription desc = getPageDescriptionCached(ctx, ctx.getRequestContentLanguage());
 
 		if (desc.description != null) {
