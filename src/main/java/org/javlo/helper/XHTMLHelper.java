@@ -2072,7 +2072,6 @@ public class XHTMLHelper {
 				}
 			}
 		}
-
 		return xhtml;
 	}
 	

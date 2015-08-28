@@ -136,7 +136,15 @@ public class Description extends AbstractVisualComponent {
 	
 	@Override
 	public String getPageDescription(ContentContext ctx) {	
-		return getValue();
+		try {
+			System.out.println("***** Description.getPageDescription : 1"); //TODO: remove debug trace
+			String content = XHTMLHelper.replaceJSTLData(ctx, getValue(ctx));
+			System.out.println("***** Description.getPageDescription : 2"); //TODO: remove debug trace
+			return content;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return getValue();
+		}
 	}
 
 }
