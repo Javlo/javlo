@@ -415,7 +415,7 @@ public class XMLManipulationHelper {
 						boolean list = StringHelper.isTrue(getValue(options, "tagid.language.list", "true"));
 						boolean languageJS = StringHelper.isTrue(getValue(options, "tagid.language.auto-change", "true"));
 						if (list) {
-							remplacement.addReplacement(tags[i].getOpenEnd() + 1, tags[i].getCloseStart(), "<%=XHTMLHelper.renderLanguage(ctx)%>");
+							remplacement.addReplacement(tags[i].getOpenEnd() + 1, tags[i].getCloseStart(), "<%=XHTMLHelper.renderLanguage(ctx, \""+getValue(options, "language.class", null)+"\" )%>");
 						} else {
 							String selectID = getValue(options, "tagid.language.select-id", "select_language");
 							String selectInputID = getValue(options, "tagid.language.select-input-id", "select_language_submit");

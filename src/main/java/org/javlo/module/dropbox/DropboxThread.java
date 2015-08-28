@@ -1,8 +1,8 @@
 package org.javlo.module.dropbox;
 
 import java.io.File;
+import java.util.logging.Logger;
 
-import org.apache.log4j.Logger;
 import org.javlo.context.ContentContext;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;

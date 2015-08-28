@@ -1874,8 +1874,12 @@ public class XHTMLHelper {
 			return "<!-- resource already insered : " + resource + " -->";
 		}
 	}
-
+	
 	public static String renderLanguage(ContentContext ctx) {
+		return renderLanguage(ctx, (String)null);
+	}
+
+	public static String renderLanguage(ContentContext ctx, String cssClass) {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		Set<String> languages;
 		if (ctx.getRenderMode() == ContentContext.VIEW_MODE) {
@@ -1883,14 +1887,18 @@ public class XHTMLHelper {
 		} else {
 			languages = globalContext.getLanguages();
 		}
-		return renderLanguage(ctx, languages);
+		return renderLanguage(ctx, languages, cssClass);
 	}
 
-	private static String renderLanguage(ContentContext ctx, Set<String> languages) {
+	private static String renderLanguage(ContentContext ctx, Set<String> languages, String ulCssClass) {
 		StringWriter out = new StringWriter();
 		BufferedWriter writer = new BufferedWriter(out);
 		try {
-			writer.write("<ul>");
+			if (ulCssClass == null) {
+				writer.write("<ul>");
+			} else {
+				writer.write("<ul class=\""+ulCssClass+"\">");
+			}
 			writer.newLine();
 			for (String lg : languages) {
 				ContentContext localCtx = new ContentContext(ctx);
@@ -1899,7 +1907,11 @@ public class XHTMLHelper {
 				localCtx.setRequestContentLanguage(lg);
 				String cssClass = "class=\"" + lg;
 				if (ctx.getLanguage().equals(lg)) {
-					cssClass = cssClass + " selected\"";
+					try {
+						cssClass = cssClass + " "+ctx.getCurrentTemplate().getSelectedClass()+"\"";
+					} catch (Exception e) {					
+						e.printStackTrace();
+					}
 				} else {
 					cssClass = cssClass + "\"";
 				}
