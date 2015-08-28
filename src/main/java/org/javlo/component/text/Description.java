@@ -136,12 +136,7 @@ public class Description extends AbstractVisualComponent {
 	
 	@Override
 	public String getPageDescription(ContentContext ctx) {	
-		try {
-			return XHTMLHelper.replaceJSTLData(ctx, getValue(ctx));
-		} catch (Exception e) {
-			e.printStackTrace();
-			return getValue();
-		}
+		return getValue();
 	}
 
 }
