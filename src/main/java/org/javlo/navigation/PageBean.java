@@ -87,7 +87,7 @@ public class PageBean implements Serializable {
 	}
 	
 	public String getAbsoluteUrl() {
-		return URLHelper.createAbsoluteURL(ctx, page.getPath());
+		return URLHelper.createURL(ctx.getContextForAbsoluteURL(), page.getPath());
 	}
 	
 	public String getAbsolutePreviewUrl() {
