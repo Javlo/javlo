@@ -19,3 +19,7 @@
  	 font-size: 10px;
    }
 }
+
+img {
+   	page-break-before: avoid;
+}

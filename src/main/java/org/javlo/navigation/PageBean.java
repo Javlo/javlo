@@ -303,6 +303,15 @@ public class PageBean implements Serializable {
 			return null;
 		}
 	}
+	
+	public String getSlogan() {
+		try {
+			return page.getSlogan(ctx);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
 
 
 	public int getLastAccess() {

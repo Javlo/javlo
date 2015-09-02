@@ -34,6 +34,7 @@ org.javlo.component.core.DebugNote
 org.javlo.component.files.CSVArrayComponent
 org.javlo.component.files.ArrayFileComponent
 org.javlo.component.files.FileFinder
+org.javlo.component.text.Code
 
 --content.title.links
 

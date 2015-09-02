@@ -13,6 +13,7 @@ import java.util.Set;
 import java.util.logging.Logger;
 
 import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -819,7 +820,7 @@ public class Edit extends AbstractModuleAction {
 			if (mode != null) {
 				ctx.setRenderMode(Integer.parseInt(mode));
 			}
-			ctx.getRequest().setAttribute(AbstractVisualComponent.SCROLL_TO_COMP_ID_ATTRIBUTE_NAME, newId);
+			ctx.getRequest().setAttribute(AbstractVisualComponent.SCROLL_TO_COMP_ID_ATTRIBUTE_NAME, newId);			
 			ctx.getAjaxInsideZone().put(selecterPrefix + area, ServletHelper.executeJSP(ctx, "/jsp/view/content_view.jsp?area=" + areaKey));
 		}
 		ctx.resetCurrentPageCached();
@@ -893,8 +894,7 @@ public class Edit extends AbstractModuleAction {
 					}
 					ctx.setCurrentPageCached(targetPage);
 				}
-
-				ctx.getAjaxInsideZone().put(selecterPrefix + comp.getArea(), ServletHelper.executeJSP(ctx, "/jsp/view/content_view.jsp?area=" + comp.getArea()));
+				updateArea(ctx, selecterPrefix, comp);
 				if (ctx.isEditPreview()) {
 					ctx.setClosePopup(true);
 				}
@@ -911,6 +911,13 @@ public class Edit extends AbstractModuleAction {
 
 		}
 		return null;
+	}
+
+	private static void updateArea(ContentContext ctx, String selecterPrefix, IContentVisualComponent comp) throws Exception {
+		selecterPrefix = StringHelper.neverNull(selecterPrefix);
+		Template template = TemplateFactory.getTemplate(ctx, comp.getPage());
+		String areaHTMLid = template.getAreasMap().get(comp.getArea());
+		ctx.getAjaxInsideZone().put(selecterPrefix + areaHTMLid, ServletHelper.executeJSP(ctx, "/jsp/view/content_view.jsp?area=" + comp.getArea()));
 	}
 
 	public static final String performSave(ContentContext ctx, EditContext editContext, GlobalContext globalContext, ContentService content, ComponentContext componentContext, RequestService requestService, I18nAccess i18nAccess, MessageRepository messageRepository, Module currentModule, AdminUserFactory adminUserFactory) throws Exception {
@@ -1746,7 +1753,7 @@ public class Edit extends AbstractModuleAction {
 					ctx.setCurrentPageCached(compToBeUpdated.getPage());
 				}
 				ctx.setCurrentPageCached(compToBeUpdated.getPage());
-				ctx.getAjaxInsideZone().put(selecterPrefix + areaMap.get(compToBeUpdated.getArea()), ServletHelper.executeJSP(ctx, "/jsp/view/content_view.jsp?area=" + compToBeUpdated.getArea()));
+				updateArea(ctx, selecterPrefix, compToBeUpdated);				
 			}
 			String selecterPrefix = "";
 			if (parentPage.isChildrenAssociation()) {
@@ -1769,7 +1776,8 @@ public class Edit extends AbstractModuleAction {
 				fromPageSelector = "#page_" + fromPage.getId() + " #";
 				ctx.setCurrentPageCached(fromPage);
 			}
-			ctx.getAjaxInsideZone().put(fromPageSelector + fromArea, ServletHelper.executeJSP(ctx, "/jsp/view/content_view.jsp?area=" + fromArea));
+			String fromAreaId = TemplateFactory.getTemplate(ctx, fromPage).getAreasMap().get(fromArea);
+			ctx.getAjaxInsideZone().put(fromPageSelector + fromAreaId, ServletHelper.executeJSP(ctx, "/jsp/view/content_view.jsp?area=" + fromArea));
 
 			ctx.setCurrentPageCached(parentPage);
 		}

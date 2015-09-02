@@ -708,6 +708,7 @@ editPreview.initPreview = function() {
 				}			
 				var item = jQuery(xhtmlId);
 				if (item != null) {
+					console.log(xhtml);
 					item.html(xhtml);
 				} else {
 					if (console) {

@@ -41,7 +41,6 @@ import org.javlo.helper.URLHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.navigation.PageBean;
 import org.javlo.service.resource.Resource;
-import org.javlo.utils.StructuredProperties;
 import org.javlo.ztatic.IStaticContainer;
 
 /**

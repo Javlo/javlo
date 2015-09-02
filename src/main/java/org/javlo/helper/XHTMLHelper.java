@@ -2049,13 +2049,16 @@ public class XHTMLHelper {
 			xhtml = xhtml.replace("${param." + param + "}", URLDecoder.decode(requestService.getParameter(param, ""), ContentContext.CHARACTER_ENCODING));
 		}
 		InfoBean infoBean = InfoBean.getCurrentInfoBean(ctx.getRequest());
+		if (infoBean == null) {
+			return xhtml;
+		}
 		Map<String, Object> properties = BeanUtils.describe(infoBean);
 		for (String key : properties.keySet()) {
 			String jstlStr = "${" + InfoBean.REQUEST_KEY + '.' + key + '}';
 			if (properties.get(key) != null) {
 				xhtml = xhtml.replace(jstlStr, properties.get(key).toString());
 			}
-		}
+		}		
 		properties = BeanUtils.describe(infoBean.getPage());
 		for (String key : properties.keySet()) {
 			String jstlStr = "${" + InfoBean.REQUEST_KEY + ".page." + key + '}';
