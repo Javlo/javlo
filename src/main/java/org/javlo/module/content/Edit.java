@@ -13,13 +13,13 @@ import java.util.Set;
 import java.util.logging.Logger;
 
 import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.javlo.actions.AbstractModuleAction;
 import org.javlo.component.column.TableBreak;
+import org.javlo.component.container.IContainer;
 import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.component.core.ComponentContext;
@@ -702,7 +702,7 @@ public class Edit extends AbstractModuleAction {
 		return message;
 	}
 
-	public static final String performInsert(HttpServletRequest request, HttpServletResponse response, RequestService rs, GlobalContext globalContext, HttpSession session, EditContext editContext, ContentContext ctx, ContentService content, Module currentModule, I18nAccess i18nAccess, MessageRepository messageRepository) throws Exception {
+	public static final String performInsert(HttpServletRequest request, HttpServletResponse response, RequestService rs, ContentService contentService, GlobalContext globalContext, HttpSession session, EditContext editContext, ContentContext ctx, ContentService content, Module currentModule, I18nAccess i18nAccess, MessageRepository messageRepository) throws Exception {
 
 		if (!canModifyCurrentPage(ctx) || !checkPageSecurity(ctx)) {
 			messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("action.block"), GenericMessage.ERROR));
@@ -744,7 +744,7 @@ public class Edit extends AbstractModuleAction {
 			areaKey = EditContext.getInstance(globalContext, session).getCurrentArea();
 		}
 
-		String newId;
+		String newId = null;
 		if (type.equals("clipboard")) {
 			ClipBoard cb = ClipBoard.getInstance(ctx.getRequest());
 			Object copied = cb.getCopied();
@@ -756,28 +756,55 @@ public class Edit extends AbstractModuleAction {
 					if (globalContext.isMailingPlatform()) {
 						newId = content.createContent(ctx, targetPage, areaKey, previousId, bean, true);
 					} else {
-						ComponentBean mirrorComponentBean = new ComponentBean(MirrorComponent.TYPE, bean.getId(), ctx.getRequestContentLanguage());
-						newId = content.createContent(ctx, targetPage, areaKey, previousId, mirrorComponentBean, true);
+						IContentVisualComponent sourceComp = contentService.getComponent(ctx, bean.getId());
+						if (!(sourceComp instanceof IContainer)) {
+							ComponentBean mirrorComponentBean = new ComponentBean(MirrorComponent.TYPE, bean.getId(), ctx.getRequestContentLanguage());
+							newId = content.createContent(ctx, targetPage, areaKey, previousId, mirrorComponentBean, true);
+						} else {
+							IContentVisualComponent nextComp = sourceComp;
+							newId = content.createContent(ctx, targetPage, areaKey, newId, nextComp.getComponentBean(), true);
+							boolean closeFound = false;
+							int depth = 0;
+							while (!closeFound) {
+								nextComp = ComponentHelper.getNextComponent(nextComp, ctx);
+								if (nextComp != null) {
+									newId = content.createContent(ctx, targetPage, areaKey, newId, nextComp.getComponentBean(), true);
+									if (nextComp.getType().equals(sourceComp.getType())) {
+										if (((IContainer) nextComp).isOpen(ctx)) {
+											depth++;
+										} else {
+											if (depth == 0) {
+												closeFound = true;
+											} else {
+												depth--;
+											}
+										}
+									}
+								} else {
+									closeFound = true;
+								}
+							}
+						}
 					}
-				} else {
-					IContentVisualComponent currentComp = content.getComponent(ctx, bean.getId());					
-					IContentVisualComponent openTable = ((TableBreak)currentComp).getOpenTableComponent(ctx);
+				} else if (bean.getType().equals(TableBreak.TYPE)) {
+					IContentVisualComponent currentComp = content.getComponent(ctx, bean.getId());
+					IContentVisualComponent openTable = ((TableBreak) currentComp).getOpenTableComponent(ctx);
 					if (openTable == null) {
-						return "error table empty";				
+						return "error table empty";
 					} else {
 						ContentContext compAreaContext = ctx.getContextWithArea(currentComp.getArea());
 						ContentElementList tableContent = currentComp.getPage().getContent(compAreaContext);
 						boolean inTable = false;
 						newId = null;
 						while (tableContent.hasNext(compAreaContext)) {
-							IContentVisualComponent nextComp =  tableContent.next(compAreaContext);
+							IContentVisualComponent nextComp = tableContent.next(compAreaContext);
 							if (nextComp.getId().equals(openTable.getId())) {
 								inTable = true;
 							}
-							if (inTable) {								
+							if (inTable) {
 								newId = content.createContent(compAreaContext, targetPage, areaKey, previousId, nextComp.getComponentBean(), true);
 								if (compAreaContext.isAjax()) {
-									compAreaContext.getRequest().setAttribute(AbstractVisualComponent.SCROLL_TO_COMP_ID_ATTRIBUTE_NAME, newId);									
+									compAreaContext.getRequest().setAttribute(AbstractVisualComponent.SCROLL_TO_COMP_ID_ATTRIBUTE_NAME, newId);
 								}
 								previousId = newId;
 								if (nextComp instanceof TableBreak) {
@@ -790,8 +817,21 @@ public class Edit extends AbstractModuleAction {
 			}
 		} else {
 			newId = content.createContent(ctx, targetPage, areaKey, previousId, type, "", true);
+			IContentVisualComponent newComp = contentService.getComponent(ctx, newId);
+			if (newComp instanceof IContainer) {
+				IContentVisualComponent nextComp = ComponentHelper.getNextComponent(newComp, ctx);
+				if (nextComp == null) {
+					nextComp = newComp;
+				}
+				newId = content.createContent(ctx, targetPage, areaKey, nextComp.getId(), type, "", true);
+				IContentVisualComponent closeComp = contentService.getComponent(ctx, newId);
+				IContentVisualComponent containerBody = contentService.getComponent(ctx, previousId);
+				((IContainer) newComp).setOpen(ctx, false);
+				((IContainer) closeComp).setOpen(ctx, true);
+				ComponentHelper.moveComponent(ctx, containerBody, newComp, targetPage, area);
+			}
 		}
-		
+
 		if (newId == null) {
 			return "error no component create.";
 		}
@@ -820,7 +860,7 @@ public class Edit extends AbstractModuleAction {
 			if (mode != null) {
 				ctx.setRenderMode(Integer.parseInt(mode));
 			}
-			ctx.getRequest().setAttribute(AbstractVisualComponent.SCROLL_TO_COMP_ID_ATTRIBUTE_NAME, newId);			
+			ctx.getRequest().setAttribute(AbstractVisualComponent.SCROLL_TO_COMP_ID_ATTRIBUTE_NAME, newId);
 			ctx.getAjaxInsideZone().put(selecterPrefix + area, ServletHelper.executeJSP(ctx, "/jsp/view/content_view.jsp?area=" + areaKey));
 		}
 		ctx.resetCurrentPageCached();
@@ -877,7 +917,31 @@ public class Edit extends AbstractModuleAction {
 			if (comp.getPreviousComponent() != null) {
 				ctx.getRequest().setAttribute(AbstractVisualComponent.SCROLL_TO_COMP_ID_ATTRIBUTE_NAME, comp.getPreviousComponent().getId());
 			}
-			targetPage.removeContent(ctx, id);
+			if (comp instanceof IContainer) {
+				List<String> compToRemove = new LinkedList<String>();
+				compToRemove.add(comp.getId());
+				boolean closeFound = false;
+				IContentVisualComponent nextComp = ComponentHelper.getNextComponent(comp, ctx);
+				while (!closeFound) {
+					if (nextComp != null) {
+						compToRemove.add(nextComp.getId());
+					}
+					nextComp = ComponentHelper.getNextComponent(nextComp, ctx);
+					if (nextComp != null) {
+						if (nextComp.getType().equals(comp.getType()) && !((IContainer) nextComp).isOpen(ctx)) {
+							compToRemove.add(nextComp.getId());
+							closeFound = true;
+						}
+					} else {
+						closeFound = true;
+					}
+				}
+				for (String idToRemove : compToRemove) {
+					targetPage.removeContent(ctx, idToRemove);
+				}
+			} else {
+				targetPage.removeContent(ctx, id);
+			}
 			GlobalContext globalContext = GlobalContext.getInstance(request);
 			PersistenceService persistenceService = PersistenceService.getInstance(globalContext);
 			persistenceService.setAskStore(true);
@@ -1661,13 +1725,13 @@ public class Edit extends AbstractModuleAction {
 			comp.setArea(null); // paste in current area
 		}
 		comp.setLanguage(null);
-		
-			String newId = content.createContent(ctx, targetPage, comp, previous, true);
-			if (ctx.isAjax()) {
-				ctx.getRequest().setAttribute(AbstractVisualComponent.SCROLL_TO_COMP_ID_ATTRIBUTE_NAME, newId);
-				updateComponent(ctx, currentModule, newId, previous);
-			}
-		
+
+		String newId = content.createContent(ctx, targetPage, comp, previous, true);
+		if (ctx.isAjax()) {
+			ctx.getRequest().setAttribute(AbstractVisualComponent.SCROLL_TO_COMP_ID_ATTRIBUTE_NAME, newId);
+			updateComponent(ctx, currentModule, newId, previous);
+		}
+
 		String msg = i18nAccess.getText("action.component.created", new String[][] { { "type", comp.getType() } });
 		messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(msg, GenericMessage.INFO));
 
@@ -1725,7 +1789,7 @@ public class Edit extends AbstractModuleAction {
 			targetPage = ctx.getCurrentPage();
 		}
 
-		ComponentHelper.moveComponent(ctx, comp, newPrevious, targetPage, area);
+		ComponentHelper.smartMoveComponent(ctx, comp, newPrevious, targetPage, area);
 
 		if (ctx.isAjax()) {
 			// updatePreviewComponent(ctx, currentModule, comp.getId(),
@@ -1753,7 +1817,7 @@ public class Edit extends AbstractModuleAction {
 					ctx.setCurrentPageCached(compToBeUpdated.getPage());
 				}
 				ctx.setCurrentPageCached(compToBeUpdated.getPage());
-				updateArea(ctx, selecterPrefix, compToBeUpdated);				
+				updateArea(ctx, selecterPrefix, compToBeUpdated);
 			}
 			String selecterPrefix = "";
 			if (parentPage.isChildrenAssociation()) {

@@ -12,6 +12,8 @@ import org.javlo.helper.URLHelper;
 import org.javlo.module.content.Edit;
 import org.javlo.navigation.MenuElement.PageDescription;
 import org.javlo.service.exception.ServiceException;
+import org.javlo.template.Template;
+import org.javlo.template.TemplateFactory;
 import org.javlo.utils.CollectionAsMap;
 
 import com.beust.jcommander.ParameterException;
@@ -181,6 +183,10 @@ public class PageBean implements Serializable {
 
 	public String getTemplateId() {
 		return page.getTemplateId();
+	}
+	
+	public Template getTemplate() throws Exception {
+		return TemplateFactory.getTemplate(ctx, getPage());
 	}
 
 	public boolean isLastSelected() {

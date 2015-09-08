@@ -1171,6 +1171,7 @@ public class AdminAction extends AbstractModuleAction {
 					/** template data **/
 					TemplateData td = currentGlobalContext.getTemplateData();
 					td.setBackground(StringHelper.parseColor(requestService.getParameter("background", "" + td.getBackground())));
+					td.setBackgroundActive(StringHelper.parseColor(requestService.getParameter("backgroundActive", "" + td.getBackgroundActive())));
 					td.setForeground(StringHelper.parseColor(requestService.getParameter("foreground", "" + td.getForeground())));
 					td.setBorder(StringHelper.parseColor(requestService.getParameter("border", "" + td.getBorder())));
 					td.setBackgroundMenu(StringHelper.parseColor(requestService.getParameter("backgroundMenu", "" + td.getBackgroundMenu())));

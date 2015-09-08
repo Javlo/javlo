@@ -166,7 +166,7 @@ if (globalContext.isCollaborativeMode() && ctx.getRenderMode() == ContentContext
 String xhtmlCode = elem.getXHTMLCode(ctx);
 
 %><c:if test="${editPreview}"><%
-if (xhtmlCode != null && StringHelper.removeTag(xhtmlCode).trim().length() == 0 && !xhtmlCode.toLowerCase().contains("<img")) {
+if (xhtmlCode != null && StringHelper.removeTag(xhtmlCode).trim().length() == 0 && !xhtmlCode.toLowerCase().contains("<img") && elem.isDispayEmptyXHTMLCode(ctx)) {
 	I18nAccess i18nAccess = I18nAccess.getInstance(ctx);
 	xhtmlCode = elem.getEmptyXHTMLCode(ctx);	
 }%></c:if><%=elem.getPrefixViewXHTMLCode(ctx)%><%=xhtmlCode%><%=elem.getSuffixViewXHTMLCode(ctx)%><%

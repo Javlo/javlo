@@ -59,29 +59,33 @@ editPreview.openModal = function (title, url) {
 
 editPreview.updatePDFPosition = function() {
 	pjq("._pdf_page_limit").remove();
-	setTimeout(function () {	        
-		editPreview.realUpdatePDFPosition();	        
-    }, 1500);
+	if (pjq('body').hasClass('pdf')) {		
+		setTimeout(function () {	        
+			editPreview.realUpdatePDFPosition();	        
+		}, 1500);
+	}
 }
 
-editPreview.realUpdatePDFPosition = function() {	
-	var pdfHeight = parseInt(pjq(".page_association_fake_body").data("pdfheight"));	
-	var previousBreak = null;	
-	pjq("._page_associate").each(function() {
-		var page = pjq(this);
-		var currentTop = page.position().top;
-		pjq(".page-break").each(function() {	
-			var currentBreak = jQuery(this);
-			if (currentTop + currentBreak.position().top < pdfHeight) {
-				currentTop = currentBreak.position().top;
+editPreview.realUpdatePDFPosition = function() {
+	if (pjq('body').hasClass('pdf')) {
+		var pdfHeight = parseInt(pjq(".page_association_fake_body").data("pdfheight"));	
+		var previousBreak = null;	
+		pjq("._page_associate").each(function() {
+			var page = pjq(this);
+			var currentTop = page.position().top;
+			pjq(".page-break").each(function() {	
+				var currentBreak = jQuery(this);
+				if (currentTop + currentBreak.position().top < pdfHeight) {
+					currentTop = currentBreak.position().top;
+				}
+			});
+			if ((page.position().top+page.height())-currentTop > pdfHeight) {			
+				page.prepend('<div class="_pdf_page_limit"><span>&nbsp;</span></div>');
+				var pdfLimit = jQuery(page.children()[0]);				
+				pdfLimit.css('top',(currentTop+pdfHeight)+'px');
 			}
-		});
-		if ((page.position().top+page.height())-currentTop > pdfHeight) {			
-			page.prepend('<div class="_pdf_page_limit"><span>&nbsp;</span></div>');
-			var pdfLimit = jQuery(page.children()[0]);				
-			pdfLimit.css('top',(currentTop+pdfHeight)+'px');
-		}
-	});	
+		});	
+	}
 }
 
 editPreview.scrollToItem = function(container) {

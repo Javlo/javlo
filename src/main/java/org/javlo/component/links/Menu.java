@@ -81,21 +81,17 @@ public class Menu extends AbstractPropertiesComponent {
 		return endLevel;
 	}
 	
-	@Override
-	public void prepareView(ContentContext ctx) throws Exception {
+	private MenuElement getPage(ContentContext ctx) throws Exception {
 		ContentService content = ContentService.getInstance(ctx.getRequest());
-		MenuElement page = content.getNavigation(ctx);
-		
+		MenuElement page = content.getNavigation(ctx);		
 		if (getRootPage() != null) {
 			MenuElement rootPage = page.searchChildFromName(getRootPage());
 			if (rootPage != null) {
 				page = rootPage;
 			}
-		}
-		
+		}		
 		int level = 0;
-		int startLevel = getStartLevel();
-		
+		int startLevel = getStartLevel();		
 		while (level > startLevel && page.getChildList().length > 0) {
 			List<MenuElement> children = page.getChildMenuElementsList();
 			for (MenuElement child : children) {
@@ -105,6 +101,12 @@ public class Menu extends AbstractPropertiesComponent {
 				}
 			}
 		}
+		return page;
+	}
+	
+	@Override
+	public void prepareView(ContentContext ctx) throws Exception {		
+		MenuElement page = getPage(ctx);
 		ctx.getRequest().setAttribute("title", getTitle());
 		ctx.getRequest().setAttribute("page", page.getPageBean(ctx));
 		ctx.getRequest().setAttribute("start", getStartLevel());
@@ -126,5 +128,15 @@ public class Menu extends AbstractPropertiesComponent {
 	public String getHexColor() {
 		return LINK_COLOR;
 	}	
+	
+	@Override
+	public boolean isRealContent(ContentContext ctx) {
+		try {
+			return getPage(ctx).isHaveChild();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
 
 }

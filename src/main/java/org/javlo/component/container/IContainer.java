@@ -12,6 +12,8 @@ public interface IContainer {
 	
 	public boolean isOpen(ContentContext ctx);
 	
+	public void setOpen(ContentContext ctx, boolean open);
+	
 	/**
 	 * get the container code "open code" for open component.
 	 * @param ctx

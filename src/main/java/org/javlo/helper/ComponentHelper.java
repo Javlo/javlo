@@ -13,7 +13,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.javlo.component.column.TableBreak;
-import org.javlo.component.core.AbstractVisualComponent;
+import org.javlo.component.container.IContainer;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.component.core.ContentElementList;
 import org.javlo.component.core.IContentVisualComponent;
@@ -34,7 +34,8 @@ import org.javlo.utils.Cell;
 public class ComponentHelper {
 
 	/**
-	 * create a dynamic paragraph with a specific content on a page with a DynamicParagraph
+	 * create a dynamic paragraph with a specific content on a page with a
+	 * DynamicParagraph
 	 * 
 	 * @throws Exception
 	 */
@@ -59,9 +60,12 @@ public class ComponentHelper {
 	}
 
 	/*
-	 * public static final boolean DisplayTitle(IContentVisualComponent[] comps, int i) { if (i >= comps.length) { return false; } for (int j = i + 1; (j < comps.length) && !(comps[j] instanceof SpecialTitle); j++) { if (comps[j].isVisible()) { return true; } } return false; }
+	 * public static final boolean DisplayTitle(IContentVisualComponent[] comps,
+	 * int i) { if (i >= comps.length) { return false; } for (int j = i + 1; (j
+	 * < comps.length) && !(comps[j] instanceof SpecialTitle); j++) { if
+	 * (comps[j].isVisible()) { return true; } } return false; }
 	 */
-	
+
 	public static IContentVisualComponent getComponentFromRequest(ContentContext ctx) throws Exception {
 		return getComponentFromRequest(ctx, IContentVisualComponent.COMP_ID_REQUEST_PARAM);
 	}
@@ -158,40 +162,82 @@ public class ComponentHelper {
 		res.append("</a>");
 		return res.toString();
 	}
-	
-	private static void internalMoveComponent(ContentContext ctx, IContentVisualComponent comp, IContentVisualComponent newPrevious, MenuElement targetPage, String area) throws Exception {
+
+	public static void moveComponent(ContentContext ctx, IContentVisualComponent comp, IContentVisualComponent newPrevious, MenuElement targetPage, String area) throws Exception {
 		comp.getPage().removeContent(ctx, comp.getId());
 		comp.getComponentBean().setArea(area);
 		if (newPrevious != null) {
 			newPrevious.getPage().addContent(newPrevious.getId(), comp.getComponentBean());
-			comp.setPage(newPrevious.getPage());						
+			comp.setPage(newPrevious.getPage());
 		} else {
 			targetPage.addContent("0", comp.getComponentBean());
 			comp.setPage(targetPage);
-		}	
+		}
 		ContentContext areaCtx = ctx.getContextWithArea(comp.getArea());
 		updateNextAndPreviouv(areaCtx, comp.getPage().getContent(areaCtx).getIterable(areaCtx));
 	}
-	
-	public static void moveComponent(ContentContext ctx, IContentVisualComponent comp, IContentVisualComponent newPrevious, MenuElement targetPage, String area) throws Exception {
-		if (!(comp instanceof TableBreak)) {
-			internalMoveComponent(ctx, comp, newPrevious,targetPage, area);
-		} else {						
-			IContentVisualComponent openTable = ((TableBreak)comp).getOpenTableComponent(ctx);
+
+	public static void smartMoveComponent(ContentContext ctx, IContentVisualComponent comp, IContentVisualComponent newPrevious, MenuElement targetPage, String area) throws Exception {
+		if (!(comp instanceof TableBreak) && !(comp instanceof IContainer)) {
+			moveComponent(ctx, comp, newPrevious, targetPage, area);
+		} else if (comp instanceof IContainer) {
+			if (!((IContainer) comp).isOpen(ctx)) {
+				moveComponent(ctx, comp, newPrevious, targetPage, area);
+			} else {
+				String openType = comp.getType();
+				IContentVisualComponent nextComp = comp;
+				List<IContentVisualComponent> componentToMove = new LinkedList<IContentVisualComponent>();
+				componentToMove.add(nextComp);
+				nextComp = ComponentHelper.getNextComponent(nextComp, ctx);
+				boolean closeFound = nextComp == null;
+				int depth = 0;
+				while (!closeFound) {
+					if (newPrevious != null && nextComp.getId().equals(newPrevious.getId())) { /* if target inside the container */
+						moveComponent(ctx, comp, newPrevious, targetPage, area);
+						return;
+					}
+					componentToMove.add(nextComp);
+					nextComp = ComponentHelper.getNextComponent(nextComp, ctx);
+					if (nextComp != null) {
+						if (nextComp.getType().equals(openType)) {
+						if (((IContainer) nextComp).isOpen(ctx)) {
+							depth++;
+						} else {
+							if (depth == 0) {
+								closeFound = true;
+							} else {
+								depth--;
+							}
+						}
+						}
+					} else {
+						closeFound = true;
+					}
+				}
+				if (nextComp != null) {
+					componentToMove.add(nextComp);
+				}
+				for (IContentVisualComponent moveComp : componentToMove) {
+					moveComponent(ctx, moveComp, newPrevious, targetPage, area);
+					newPrevious = moveComp;
+				}
+			}
+		} else if (!(comp instanceof TableBreak)) {
+			IContentVisualComponent openTable = ((TableBreak) comp).getOpenTableComponent(ctx);
 			if (openTable == null) {
-				return;				
+				return;
 			} else {
 				ContentContext compCtx = ctx.getContextWithArea(comp.getArea());
 				ContentElementList tableContent = comp.getPage().getContent(compCtx);
-				boolean inTable = false;				
+				boolean inTable = false;
 				while (tableContent.hasNext(compCtx)) {
-					IContentVisualComponent nextComp =  tableContent.next(compCtx);
+					IContentVisualComponent nextComp = tableContent.next(compCtx);
 					if (nextComp != null) {
 						if (nextComp.getId().equals(openTable.getId())) {
 							inTable = true;
 						}
-						if (inTable) {	
-							internalMoveComponent(ctx, nextComp, newPrevious,targetPage, area);
+						if (inTable) {
+							moveComponent(ctx, nextComp, newPrevious, targetPage, area);
 							newPrevious = nextComp;
 						}
 					}
@@ -199,18 +245,21 @@ public class ComponentHelper {
 			}
 		}
 	}
-	
+
 	/**
 	 * change all area of a componentBean list.
-	 * @param beans list of content.
-	 * @param newArea new area, can be null.
+	 * 
+	 * @param beans
+	 *            list of content.
+	 * @param newArea
+	 *            new area, can be null.
 	 */
 	public static void changeAllArea(Collection<ComponentBean> beans, String newArea) {
 		for (ComponentBean bean : beans) {
 			bean.setArea(newArea);
 		}
 	}
-	
+
 	public static String getPreviousComponentId(IContentVisualComponent inComp, ContentContext ctx) throws Exception {
 		IContentVisualComponent previous = getPreviousComponent(inComp, ctx);
 		if (previous != null) {
@@ -219,7 +268,7 @@ public class ComponentHelper {
 			return "0";
 		}
 	}
-	
+
 	public static IContentVisualComponent getPreviousComponent(IContentVisualComponent inComp, ContentContext ctx) throws Exception {
 		if (inComp.getPage() == null) {
 			return null;
@@ -237,12 +286,12 @@ public class ComponentHelper {
 		}
 		return null;
 	}
-	
+
 	public static IContentVisualComponent getNextComponent(IContentVisualComponent inComp, ContentContext ctx) throws Exception {
 		if (inComp.getPage() == null) {
 			return null;
 		}
-		ContentContext ctxCompArea = ctx.getContextWithArea(inComp.getArea());		
+		ContentContext ctxCompArea = ctx.getContextWithArea(inComp.getArea());
 		ContentElementList content = inComp.getPage().getContent(ctxCompArea);
 		IContentVisualComponent previousComp = null;
 		IContentVisualComponent comp = null;
@@ -255,57 +304,59 @@ public class ComponentHelper {
 		}
 		return null;
 	}
-	
+
 	/**
-	 * get the position of the component in the list of component with same type with current ContentContext
-	 * return -1 if component is not found. 
-	 * @throws Exception 
+	 * get the position of the component in the list of component with same type
+	 * with current ContentContext return -1 if component is not found.
+	 * 
+	 * @throws Exception
 	 */
 	public static int getComponentPosition(ContentContext ctx, IContentVisualComponent comp) throws Exception {
 		int componentPosition = 1;
 		ContentContext ctxCompArea = ctx.getContextWithArea(comp.getArea());
 		ContentElementList content = comp.getPage().getContent(ctxCompArea);
 		while (content.hasNext(ctxCompArea)) {
-				IContentVisualComponent nextComp = content.next(ctxCompArea);
-				if (nextComp.getId().equals(comp.getId())) {
-					return componentPosition;
-				}
-				if (nextComp.getType().equals(comp.getType())) {
-					componentPosition++;
-				}
+			IContentVisualComponent nextComp = content.next(ctxCompArea);
+			if (nextComp.getId().equals(comp.getId())) {
+				return componentPosition;
+			}
+			if (nextComp.getType().equals(comp.getType())) {
+				componentPosition++;
+			}
 		}
 		return -1;
 	}
-	
+
 	/**
-	 * get the the component with the position in the list of component with same type with current ContentContext
-	 * return null if position is to big 
-	 * @throws Exception 
+	 * get the the component with the position in the list of component with
+	 * same type with current ContentContext return null if position is to big
+	 * 
+	 * @throws Exception
 	 */
 	public static IContentVisualComponent getComponentWidthPosition(ContentContext ctx, MenuElement page, String area, String type, int position) throws Exception {
-		int componentPosition =	0;
+		int componentPosition = 0;
 		ContentContext ctxCompArea = ctx.getContextWithArea(area);
 		ContentElementList content = page.getContent(ctxCompArea);
 		while (content.hasNext(ctxCompArea)) {
-				IContentVisualComponent nextComp = content.next(ctxCompArea);				
-				if (nextComp.getType().equals(type)) {
-					componentPosition++;
-				}
-				if (componentPosition == position) {
-					return nextComp;
-				}
+			IContentVisualComponent nextComp = content.next(ctxCompArea);
+			if (nextComp.getType().equals(type)) {
+				componentPosition++;
+			}
+			if (componentPosition == position) {
+				return nextComp;
+			}
 		}
 		return null;
 	}
-	
-	public static void updateNextAndPreviouv (ContentContext ctx, Iterable<IContentVisualComponent> comps) throws Exception {
+
+	public static void updateNextAndPreviouv(ContentContext ctx, Iterable<IContentVisualComponent> comps) throws Exception {
 		for (IContentVisualComponent comp : comps) {
 			comp.setPreviousComponent(getPreviousComponent(comp, ctx));
 			comp.setNextComponent(getNextComponent(comp, ctx));
 		}
 	}
-	
-	public static Cell[][] componentsToArray (ContentContext ctx, Collection<IContentVisualComponent> components, String type) throws Exception {
+
+	public static Cell[][] componentsToArray(ContentContext ctx, Collection<IContentVisualComponent> components, String type) throws Exception {
 		boolean firstLine = true;
 		List<String[]> cols = new LinkedList<String[]>();
 		for (IContentVisualComponent comp : components) {
@@ -319,12 +370,12 @@ public class ComponentHelper {
 						values.add("authors");
 						values.add("style");
 						values.add("area");
-						List<Field> fields = dcomp.getFields(ctx);						
+						List<Field> fields = dcomp.getFields(ctx);
 						for (Field field : fields) {
 							values.add(field.getName());
 						}
 						String[] row = new String[values.size()];
-						int i=0;
+						int i = 0;
 						for (String val : values) {
 							row[i] = val;
 							i++;
@@ -342,7 +393,7 @@ public class ComponentHelper {
 						values.add(field.getValue(new Locale(ctx.getRequestContentLanguage())));
 					}
 					String[] row = new String[values.size()];
-					int i=0;
+					int i = 0;
 					for (String val : values) {
 						row[i] = val;
 						i++;
@@ -365,28 +416,27 @@ public class ComponentHelper {
 					values.add(comp.getStyle(ctx));
 					values.add(comp.getArea());
 					String[] row = new String[values.size()];
-					int i=0;
+					int i = 0;
 					for (String val : values) {
 						row[i] = val;
 						i++;
 					}
-					cols.add(row);				
+					cols.add(row);
 				}
 			}
 		}
 		Cell[][] cells = new Cell[cols.size()][];
-		int i=0;
+		int i = 0;
 		for (String[] row : cols) {
 			cells[i] = new Cell[row.length];
-			int j=0;
-			for (String cell : row) {				
-				cells[i][j] = new Cell(cell,null,cells,i,j);
+			int j = 0;
+			for (String cell : row) {
+				cells[i][j] = new Cell(cell, null, cells, i, j);
 				j++;
 			}
 			i++;
 		}
 		return cells;
 	}
-
 
 }

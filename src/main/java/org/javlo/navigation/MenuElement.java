@@ -2656,11 +2656,11 @@ public class MenuElement implements Serializable, IPrintInfo {
 		}
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(pageDate);
-		if (isChildrenAssociation()) {
+		if (isRootChildrenAssociation()) {
 			for (MenuElement child : getChildMenuElements()) {
 				Calendar childCat = Calendar.getInstance();
 				childCat.setTime(child.getModificationDate());
-				if (childCat.after(cal)) {
+				if (childCat.after(cal)) {					
 					cal = childCat;
 				}
 			}
@@ -4366,6 +4366,13 @@ public class MenuElement implements Serializable, IPrintInfo {
 
 	public boolean isChildrenAssociation() {
 		return childrenAssociation;
+	}
+	
+	public boolean isRootChildrenAssociation() {
+		if (getChildMenuElements().size() > 0) {
+			return getChildMenuElements().iterator().next().isChildrenAssociation();
+		}
+		return false;
 	}
 
 	/**

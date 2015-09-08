@@ -14,11 +14,11 @@
 		<button class="btn btn-defaut btn-back" type="submit" name="wizardStep" value="1">back</button>
 		</div>
 		
-		<a target="_blank" class="btn btn-defaut" href="${exportURL}">link to export.</a>
+		<a target="_blank" class="btn btn-defaut" href="${exportURL}">Export HTML</a>
 		<c:url var="downloadURL" value="${exportURL}" context="/">
 			<c:param name="download" value="true" />
 		</c:url>
-		<a target="_blank" class="btn btn-primary btn-color" href="${downloadURL}">download export.</a>
+		<a target="_blank" class="btn btn-primary btn-color" href="${downloadURL}">Save as HTML</a>
 		
 	</form>
 </div>

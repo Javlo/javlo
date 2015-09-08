@@ -33,7 +33,6 @@ jQuery(document).ready(function() {
 		var	form = jQuery(this);
 		var ajaxSubmit = true;
 		if (form.data("ajaxSubmit") != null) {
-			alert("ajaxSubmit = "+form.data("ajaxSubmit"))
 			ajaxSubmit = form.data("ajaxSubmit");
 		}
 		if (!canPostDataWithAjax()) {

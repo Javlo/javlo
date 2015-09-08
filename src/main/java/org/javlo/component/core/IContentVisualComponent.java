@@ -84,6 +84,14 @@ public interface IContentVisualComponent extends Comparable<IContentVisualCompon
 	public String getXHTMLCode(ContentContext ctx) throws Exception;
 	
 	/**
+	 * display empty xhtml code if empty
+	 * @param ctx
+	 * @return
+	 * @throws Exception
+	 */
+	public boolean isDispayEmptyXHTMLCode(ContentContext ctx) throws Exception;
+	
+	/**
 	 * return the code if component contain's no data.
 	 */
 	public String getEmptyXHTMLCode(ContentContext ctx) throws Exception;

@@ -13,8 +13,9 @@ body .association-wrapper, body .page-wrapper {
 	<jsp:include page="css/styles.jsp" />
 	margin-left: auto;
 	margin-right: auto;
+	border-spacing: 0;
 }
-<jsp:include page="css/dynamic_css.jsp" />
+<jsp:include page="css/dynamic_css_wrapper.jsp" />
 @media screen and (max-width: ${info.template.style.width}) {
 	.responsive-true table.association-wrapper {width: 100%;}
 }
@@ -25,7 +26,7 @@ body .association-wrapper, body .page-wrapper {
 <table width="100%" border="0" align="center" cellpadding="0" cellspacing="0">
 	<tr>
 		<td width="100%" align="center" valign="top">		
-			<table class="${not param.pageAssociation?'page-wrapper':'inside-wrapper'}" border="0" align="center" cellpadding="0" cellspacing="0">
+			<table class="${not param.pageAssociation?'page-wrapper':'inside-wrapper'}" border="0" align="center" cellpadding="0" cellspacing="0" >
 				<c:if test="${empty param.lastRowFooter}">
 				<tr id="header-container">
 					<td align="center">

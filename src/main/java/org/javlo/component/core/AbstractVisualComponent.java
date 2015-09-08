@@ -762,6 +762,11 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		}
 		return null;
 	}
+	
+	@Override
+	public boolean isDispayEmptyXHTMLCode(ContentContext ctx) throws Exception {
+		return true;
+	}
 
 	@Override
 	public String getErrorMessage(String fieldName) throws ResourceNotFoundException {

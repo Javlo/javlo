@@ -2,11 +2,13 @@ package org.javlo.component.container;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.util.Arrays;
 
 import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.context.ContentContext;
 import org.javlo.helper.StringHelper;
+import org.javlo.helper.XHTMLHelper;
 import org.javlo.service.RequestService;
 
 public class Box extends AbstractVisualComponent implements IContainer {
@@ -15,6 +17,14 @@ public class Box extends AbstractVisualComponent implements IContainer {
 
 	protected String getCloseBoxInputName() {
 		return "close_box_" + getId();
+	}
+
+	protected String getTitleBoxInputName() {
+		return "title_" + getId();
+	}
+	
+	protected String getFooterBoxInputName() {
+		return "footer_" + getId();
 	}
 
 	protected String getCSSClass(ContentContext ctx) {
@@ -33,6 +43,15 @@ public class Box extends AbstractVisualComponent implements IContainer {
 			return new String[0];
 		}
 	}
+	
+	@Override
+	public void prepareView(ContentContext ctx) throws Exception {	
+		super.prepareView(ctx);
+		ctx.getRequest().setAttribute("closeBox", isCloseBox());
+		ctx.getRequest().setAttribute("titleBox", getTitle());
+		ctx.getRequest().setAttribute("footerBox", getFooter());
+	}
+	
 
 	@Override
 	protected String getEditXHTMLCode(ContentContext ctx) throws Exception {
@@ -46,7 +65,8 @@ public class Box extends AbstractVisualComponent implements IContainer {
 		}
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(outStream);
-		out.println("<div class=\"line\">");
+
+		out.println("<div class=\"checkbox\">");
 
 		if (getValue().trim().length() == 0) {
 			setValue("true");
@@ -55,7 +75,7 @@ public class Box extends AbstractVisualComponent implements IContainer {
 			}
 			setModify();
 		}
-		out.println("<label for=\"" + getCloseBoxInputName() + "\">close box ?</label>");
+		out.println("<label>");
 		if (isCloseBox()) {
 			if (prevComp != null) {
 				setStyle(ctx, prevComp.getStyle(ctx));
@@ -64,8 +84,25 @@ public class Box extends AbstractVisualComponent implements IContainer {
 		} else {
 			out.println("<input type=\"checkbox\" name=\"" + getCloseBoxInputName() + "\" />");
 		}
+		out.println(" close box ?</label></div>");
 
-		out.println("</div>");
+		if (!isCloseBox()) {
+			out.println("<div class=\"form-group\">");
+			if (getValue().trim().length() == 0) {
+				setValue("true");
+				if (prevComp != null) {
+					setStyle(ctx, prevComp.getStyle(ctx));
+				}
+				setModify();
+			}
+			out.println("<label for=\"" + getTitleBoxInputName() + "\">Title</label>");
+			out.println("<input class=\"form-control\" type=\"text\" name=\"" + getTitleBoxInputName() + "\" value=\""+XHTMLHelper.stringToAttribute(getTitle())+"\" />");
+			out.println("</div>");
+			out.println("<div class=\"form-group\">");
+			out.println("<label for=\"" + getFooterBoxInputName() + "\">Footer</label>");
+			out.println("<input class=\"form-control\" type=\"text\" name=\"" + getFooterBoxInputName() + "\" value=\""+XHTMLHelper.stringToAttribute(getFooter())+"\" />");
+			out.println("</div>");
+		}
 
 		out.close();
 		return new String(outStream.toByteArray());
@@ -108,18 +145,51 @@ public class Box extends AbstractVisualComponent implements IContainer {
 	}
 
 	protected boolean isCloseBox() {
-		return StringHelper.isTrue(getValue());
+		if (getValue().contains(";")) {
+			return StringHelper.isTrue(StringHelper.stringToCollection(getValue(), ";").get(0));
+		} else {
+			return StringHelper.isTrue(getValue());
+		}
+	}
+	
+	protected String getTitle() {
+		if (getValue().contains(";")) {			
+			return StringHelper.stringToCollection(getValue(), ";").get(1);
+		} else {
+			return "";
+		}		
+	}
+	
+	protected String getFooter() {
+		if (getValue().contains(";")) {			
+			return StringHelper.stringToCollection(getValue(), ";").get(2);
+		} else {
+			return "";
+		}		
 	}
 
 	@Override
 	public void performEdit(ContentContext ctx) throws Exception {
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
 		boolean closeBox = requestService.getParameter(getCloseBoxInputName(), null) != null;
-		if (closeBox ^ isCloseBox()) {
-			setValue("" + closeBox);
+		String title = requestService.getParameter(getTitleBoxInputName(), "");
+		String footer = requestService.getParameter(getFooterBoxInputName(), "");		
+		if (closeBox) {
+			title = getTitle();
+			footer = getFooter();
+		}		 
+		String newValue = StringHelper.collectionToString(Arrays.asList(new String[] {""+closeBox, title, footer }), ";");
+		if (!newValue.equals(getValue())) {
+			setValue(newValue);
 			setModify();
 			setNeedRefresh(true);
 		}
+	}
+	
+	@Override
+	public void setOpen(ContentContext ctx, boolean open) {
+		String newValue = StringHelper.collectionToString(Arrays.asList(new String[] {""+open, getTitle(), getFooter()}), ";");
+		setValue(newValue);
 	}
 
 	@Override
@@ -139,17 +209,27 @@ public class Box extends AbstractVisualComponent implements IContainer {
 
 	@Override
 	public int getComplexityLevel(ContentContext ctx) {
-		return AbstractVisualComponent.COMPLEXITY_STANDARD;
+		return getConfig(ctx).getComplexity(AbstractVisualComponent.COMPLEXITY_STANDARD);
 	}
 
 	@Override
 	public String getHexColor() {
 		return IContentVisualComponent.CONTAINER_COLOR;
 	}
-	
+
 	@Override
 	public boolean isContentCachable(ContentContext ctx) {
 		return true;
+	}
+	
+	@Override
+	public boolean isEmpty(ContentContext ctx) {
+		return false;
+	}
+	
+	@Override
+	public boolean isDispayEmptyXHTMLCode(ContentContext ctx) throws Exception {
+		return false;
 	}
 
 

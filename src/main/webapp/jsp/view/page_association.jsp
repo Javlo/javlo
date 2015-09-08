@@ -18,7 +18,7 @@ if (ctx.isInteractiveMode() && ctx.getRenderMode() == ContentContext.PREVIEW_MOD
 		<div class="notification <%=messageRepository.getGlobalMessage().getTypeLabel()%>"><%=messageRepository.getGlobalMessage().getMessage()%></div>
 	<%}%></div><%
 }
-%><center><table class="association-wrapper"><tbody><tr><td><%
+%><center><table class="association-wrapper" cellpadding="0" cellspacing="0"><tbody><tr><td><%
 MenuElement currentPage = ctx.getCurrentPage();
 boolean savePageAssocitation = ctx.isPageAssociation();
 

@@ -402,6 +402,7 @@
 <div class="col-sm-6">
 <jsp:include page="template_data.jsp?name=background&value=${currentContext.templateData.background}" />
 <jsp:include page="template_data.jsp?name=backgroundMenu&value=${currentContext.templateData.backgroundMenu}" />
+<jsp:include page="template_data.jsp?name=backgroundActive&value=${currentContext.templateData.backgroundActive}" />
 <jsp:include page="template_data.jsp?name=foreground&value=${currentContext.templateData.foreground}" />
 <jsp:include page="template_data.jsp?name=border&value=${currentContext.templateData.border}" />
 <jsp:include page="template_data.jsp?name=textMenu&value=${currentContext.templateData.textMenu}" />

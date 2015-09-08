@@ -85,6 +85,7 @@ public class Template implements Comparable<Template> {
 		private CssColor title = null;
 		private CssColor special = null;
 		private CssColor backgroundMenu = null;
+		private CssColor backgroundActive = null;
 		private CssColor textMenu = null;
 		private CssColor border = null;
 		private CssColor link = null;
@@ -142,6 +143,10 @@ public class Template implements Comparable<Template> {
 					if (data[i].length() > 0) {
 						setLogo(data[i]);
 					}
+					i++;
+					if (data.length>i && data[i].length() > 0) {
+						setBackgroundActive(Color.decode('#' + data[i]));
+					}
 				}
 			} catch (NumberFormatException e) {
 				e.printStackTrace();
@@ -155,6 +160,10 @@ public class Template implements Comparable<Template> {
 
 		public Color getBackgroundMenu() {
 			return backgroundMenu;
+		}
+		
+		public Color getBackgroundActive() {
+			return backgroundActive;
 		}
 
 		public Color getBorder() {
@@ -192,7 +201,11 @@ public class Template implements Comparable<Template> {
 		public void setBackgroundMenu(Color backgroundMenu) {
 			this.backgroundMenu = CssColor.getInstance(backgroundMenu);
 		}
-
+		
+		public void setBackgroundActive(Color backgroundActive) {
+			this.backgroundActive = CssColor.getInstance(backgroundActive);
+		}
+		
 		public void setBorder(Color border) {
 			this.border = CssColor.getInstance(border);
 		}
@@ -261,6 +274,8 @@ public class Template implements Comparable<Template> {
 			out.append(getToolsServer());
 			out.append(';');
 			out.append(getLogo());
+			out.append(';');
+			out.append(StringHelper.colorToHexStringNotNull(getBackgroundActive()));
 			return out.toString();
 		}
 
@@ -1911,6 +1926,11 @@ public class Template implements Comparable<Template> {
 			Color color = Color.decode('#' + backgroundMenu);
 			templateData.setBackgroundMenu(color);
 		}
+		String backgroundActive = properties.getString("data.color.menu.active", null);
+		if (backgroundActive != null) {
+			Color color = Color.decode('#' + backgroundActive);
+			templateData.setBackgroundActive(color);
+		}
 		String title = properties.getString("data.color.title", null);
 		if (title != null) {
 			Color color = Color.decode('#' + title);
@@ -1972,6 +1992,9 @@ public class Template implements Comparable<Template> {
 		}
 		if (templateData.getBackgroundMenu() != null) {
 			templateDataMap.put(StringHelper.colorToHexStringNotNull(templateData.getBackgroundMenu()), StringHelper.colorToHexStringNotNull(templateDataUser.getBackgroundMenu()));
+		}
+		if (templateData.getBackgroundActive() != null) {
+			templateDataMap.put(StringHelper.colorToHexStringNotNull(templateData.getBackgroundActive()), StringHelper.colorToHexStringNotNull(templateDataUser.getBackgroundActive()));
 		}
 		if (templateData.getTextMenu() != null) {
 			templateDataMap.put(StringHelper.colorToHexStringNotNull(templateData.getTextMenu()), StringHelper.colorToHexStringNotNull(templateDataUser.getTextMenu()));
