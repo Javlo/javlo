@@ -456,11 +456,15 @@ change log
 
  * multimedia random gallery
  
- * 2.1.0.2.8 30/07/2015
+* 2.1.0.2.8 30/07/2015
  
  * box delete, move and copied grouped
  
  * different type of grayscale 
  
- * 2.1.0.2.9 08/09/2015
+* 2.1.0.2.9 08/09/2015
+ 
+ * duplicate page
+  
+ * block preview popup on error
   
