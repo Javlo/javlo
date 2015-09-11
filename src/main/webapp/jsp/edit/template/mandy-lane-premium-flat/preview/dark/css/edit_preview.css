@@ -19,6 +19,10 @@
     border-color: #333333;
 }
 
+#preview_command .component-list .component:HOVER .wrapper-in, #preview_command .thumbnail:HOVER .caption {
+	color: #333333;
+}
+
 #preview_command .pages.web .selected a {
     color: #333333;
 }
