@@ -136,7 +136,7 @@ public class ChangeLanguageLink extends ComplexPropertiesLink implements IIntern
 	}
 
 	@Override
-	public void performEdit(ContentContext ctx) {
+	public String performEdit(ContentContext ctx) {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
@@ -158,6 +158,8 @@ public class ChangeLanguageLink extends ComplexPropertiesLink implements IIntern
 				e.printStackTrace();
 			}
 		}
+		
+		return null;
 	}
 
 	@Override

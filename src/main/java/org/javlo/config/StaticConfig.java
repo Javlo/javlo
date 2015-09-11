@@ -1302,7 +1302,7 @@ public class StaticConfig extends Observable {
 	}
 	
 	public boolean isUndo() {
-		return properties.getBoolean("function.undo", false);
+		return properties.getBoolean("function.undo", true);
 	}
 	
 	public boolean isExcludeContextDomain(String domain) {

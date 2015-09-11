@@ -194,7 +194,7 @@ public class ContactText extends AbstractVisualComponent {
 	}
 
 	@Override
-	public void performEdit(ContentContext ctx) throws Exception {
+	public String performEdit(ContentContext ctx) throws Exception {
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
 
 		String previousValue = getValue();
@@ -224,7 +224,7 @@ public class ContactText extends AbstractVisualComponent {
 			this.content = content;
 		}
 
-		super.performEdit(ctx);
+		return super.performEdit(ctx);
 	}
 
 	@Override

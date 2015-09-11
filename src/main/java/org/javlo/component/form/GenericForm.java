@@ -259,9 +259,10 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 	}
 
 	@Override
-	public void performEdit(ContentContext ctx) throws Exception {
-		super.performEdit(ctx);
+	public String performEdit(ContentContext ctx) throws Exception {
+		String msg = super.performEdit(ctx);
 		getLocalConfig(true);
+		return msg;
 	}
 
 	public boolean isCaptcha() {

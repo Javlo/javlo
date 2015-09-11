@@ -66,7 +66,7 @@ public class ContentContext {
 	public static final int MODULE_MODE = 8; // view module outside cms context.
 
 	public static final String FORWARD_PATH_REQUEST_KEY = "forward-path";
-	
+
 	public static final String FORWARD_AJAX = "ajax-request";
 
 	public static final String FORCE_MODE_PARAMETER_NAME = "render-mode";
@@ -80,14 +80,13 @@ public class ContentContext {
 	public static Charset CHARSET_DEFAULT = Charset.forName(CHARACTER_ENCODING);
 
 	public static String PRODUCT_NAME = "Javlo 2";
-	
+
 	public static String FORCED_CONTENT_PREFIX = "forced_content_";
-	
+
 	/**
 	 * param for render content with link to local server and not DMZ server.
 	 */
 	public static final String NO_DMZ_PARAM_NAME = "nodmz";
-
 
 	/**
 	 * create a static logger.
@@ -101,7 +100,7 @@ public class ContentContext {
 	private MenuElement virtualCurrentPage = null;
 
 	private boolean pageAssociation = false;
-	
+
 	private boolean postRequest = false;
 
 	private static ContentContext createContentContext(HttpServletRequest request, HttpServletResponse response, boolean free) {
@@ -142,7 +141,7 @@ public class ContentContext {
 	public static ContentContext getContentContext(HttpServletRequest request, HttpServletResponse response, boolean correctPath) throws Exception {
 		ContentContext ctx = (ContentContext) request.getAttribute(CONTEXT_REQUEST_KEY);
 		try {
-			if (ctx == null) {				
+			if (ctx == null) {
 				ctx = createContentContext(request, response, true);
 				ctx.setUser();
 				ctx.setFree(false);
@@ -216,7 +215,7 @@ public class ContentContext {
 		IUserFactory fact = UserFactory.createUserFactory(globalContext, getRequest().getSession());
 		currentUser = fact.getCurrentUser(request.getSession());
 		fact = AdminUserFactory.createUserFactory(globalContext, getRequest().getSession());
-		setCurrentEditUser(fact.getCurrentUser(request.getSession()));		
+		setCurrentEditUser(fact.getCurrentUser(request.getSession()));
 		storeInRequest(request);
 	}
 
@@ -338,14 +337,14 @@ public class ContentContext {
 	boolean array = false;
 
 	int renderMode = VIEW_MODE;
-	
+
 	boolean viewPrefix = false;
 
 	boolean pageRequest = false;
 
 	boolean correctPath = true;
-	
-	private boolean  componentCache = true;
+
+	private boolean componentCache = true;
 
 	IURLFactory urlFactory = null;
 	URL dmzServerInter = null;
@@ -358,7 +357,7 @@ public class ContentContext {
 	public Boolean contentExistForContext = null;
 
 	public Boolean editPreview = null;
-	
+
 	private boolean checkContentArea = true;
 
 	/** cache **/
@@ -376,7 +375,7 @@ public class ContentContext {
 	private boolean needRefresh = false;
 
 	private String hostName = null;
-	
+
 	private boolean internalURL = false;
 
 	private int hostPort = -1;
@@ -466,11 +465,11 @@ public class ContentContext {
 		currentPageCached = ctx.currentPageCached;
 
 		pageAssociation = ctx.pageAssociation;
-		
+
 		componentCache = ctx.componentCache;
-		
+
 		internalURL = ctx.internalURL;
-		
+
 		checkContentArea = ctx.checkContentArea;
 	}
 
@@ -480,7 +479,7 @@ public class ContentContext {
 
 	/**
 	 * @return
-	 * @throws Exception 
+	 * @throws Exception
 	 * @deprecated Prefer use of {@link #getRequestContentLanguage()}.
 	 */
 	@Deprecated
@@ -537,13 +536,13 @@ public class ContentContext {
 		outContext.setRenderMode(mode);
 		return outContext;
 	}
-	
+
 	public ContentContext getContextWidthOtherRequestLanguage(String lang) {
 		ContentContext outContext = new ContentContext(this);
 		outContext.setRequestContentLanguage(lang);
 		return outContext;
 	}
-	
+
 	public ContentContext getContextWithInternalURL() {
 		ContentContext outContext = new ContentContext(this);
 		outContext.setInternalURL(true);
@@ -675,7 +674,7 @@ public class ContentContext {
 		}
 		return null;
 	}
-	
+
 	private MenuElement getCurrentPage(boolean urlFacotry) throws Exception {
 		if (getCurrentPageCached() != null) {
 			return getCurrentPageCached();
@@ -690,13 +689,13 @@ public class ContentContext {
 				if (elem != null) {
 					globalContext.storeUrl(this, getPath(), elem.getId());
 					setCurrentPageCached(elem);
-				} else {					
+				} else {
 					elem = globalContext.convertOldURL(this, getPath());
-					if (elem != null) {						
+					if (elem != null) {
 						String newURL = URLHelper.createURL(this, elem);
 						response.sendRedirect(newURL);
 						setCurrentPageCached(elem);
-					} else {					
+					} else {
 						setContentFound(false);
 						elem = root;
 						setPath(root.getPath());
@@ -726,17 +725,17 @@ public class ContentContext {
 
 		if (currentTemplate == null) {
 			Template template = null;
-			
+
 			RequestService rs = RequestService.getInstance(request);
 
-			String forceTemplate = rs.getParameter(Template.FORCE_TEMPLATE_PARAM_NAME,null);
+			String forceTemplate = rs.getParameter(Template.FORCE_TEMPLATE_PARAM_NAME, null);
 			GlobalContext globalContext = GlobalContext.getInstance(getRequest());
 			if (forceTemplate != null) {
 				logger.fine("force template : " + forceTemplate);
 				template = Template.getApplicationInstance(getRequest().getSession().getServletContext(), this, forceTemplate);
 			}
 			if (template == null) {
-				if (getVirtualCurrentPage() == null) {					
+				if (getVirtualCurrentPage() == null) {
 					template = TemplateFactory.getTemplate(this, getCurrentPage());
 				} else {
 					template = TemplateFactory.getTemplate(this, getVirtualCurrentPage());
@@ -792,7 +791,7 @@ public class ContentContext {
 	public URL getDMZServerInter() {
 		return dmzServerInter;
 	}
-	
+
 	/**
 	 * reset DMZ for force local absolute URL.
 	 */
@@ -925,10 +924,10 @@ public class ContentContext {
 	public boolean isAsPreviewMode() {
 		return getRenderMode() == PREVIEW_MODE;
 	}
-	
+
 	public boolean isAsPageMode() {
 		return getRenderMode() == PAGE_MODE;
-	}	
+	}
 
 	public boolean isAsEditMode() {
 		return getRenderMode() == EDIT_MODE;
@@ -1121,7 +1120,7 @@ public class ContentContext {
 		}
 		if (availableLanguages.contains(lg)) {
 			language = lg;
-		} else {			
+		} else {
 			logger.warning("language not available : " + lg);
 			language = GlobalContext.getInstance(request).getDefaultLanguage();
 		}
@@ -1492,23 +1491,17 @@ public class ContentContext {
 	 */
 	public boolean isResourceGZip() throws Exception {
 
-		/*if (!getGlobalContext().getStaticConfig().isProd()) {
-			return false;
-		}
-
-		if (!isAsViewMode()) {
-			return false;
-		}
-
-		boolean outValue = false;
-		if (getCurrentTemplate() != null) {
-			outValue = getCurrentTemplate().isCompressResources();
-		}
-		String acceptEncoding = request.getHeader("Accept-Encoding");
-		if (acceptEncoding != null) {
-			outValue = outValue && acceptEncoding.toLowerCase().contains("gzip");
-		}
-		return outValue;*/
+		/*
+		 * if (!getGlobalContext().getStaticConfig().isProd()) { return false; }
+		 * 
+		 * if (!isAsViewMode()) { return false; }
+		 * 
+		 * boolean outValue = false; if (getCurrentTemplate() != null) {
+		 * outValue = getCurrentTemplate().isCompressResources(); } String
+		 * acceptEncoding = request.getHeader("Accept-Encoding"); if
+		 * (acceptEncoding != null) { outValue = outValue &&
+		 * acceptEncoding.toLowerCase().contains("gzip"); } return outValue;
+		 */
 		return false;
 	}
 
@@ -1634,11 +1627,11 @@ public class ContentContext {
 		return StringHelper.isTrue(rs.getParameter(PREVIEW_EDIT_PARAM, null));
 	}
 
-	public static void setForcePathPrefix(ServletRequest request, String forcePathPrefix) {		
+	public static void setForcePathPrefix(ServletRequest request, String forcePathPrefix) {
 		request.setAttribute(FORCE_PATH_PREFIX, forcePathPrefix);
 	}
-	
-	public void setForcePathPrefix(String forcePathPrefix) {		
+
+	public void setForcePathPrefix(String forcePathPrefix) {
 		getRequest().setAttribute(FORCE_PATH_PREFIX, forcePathPrefix);
 		URLHelper.resetPathPrefix(this);
 	}
@@ -1747,13 +1740,21 @@ public class ContentContext {
 	public int getEditMode() {
 		return EDIT_MODE;
 	}
-	
-	public boolean isCanUndo() throws ServiceException {
-		if (!getGlobalContext().getStaticConfig().isUndo() || getGlobalContext().getFirstLoadVersion() == null) {
+
+	public boolean isCanUndo() throws Exception {
+		if (getCurrentPage().getParent() == null) {
 			return false;
+		} else {
+			if (!getGlobalContext().getStaticConfig().isUndo() || getGlobalContext().getFirstLoadVersion() == null) {
+				return false;
+			}
+			PersistenceService persistenceService = PersistenceService.getInstance(getGlobalContext());
+			if (persistenceService.isAskStore()) {
+				return true;
+			} else {
+				return persistenceService.getVersion() > getGlobalContext().getFirstLoadVersion() && (getGlobalContext().getLatestUndoVersion() == null || persistenceService.getVersion() - 1 != getGlobalContext().getLatestUndoVersion());
+			}
 		}
-		PersistenceService persistenceService = PersistenceService.getInstance(getGlobalContext());
-		return persistenceService.getVersion() > getGlobalContext().getFirstLoadVersion() && (getGlobalContext().getLatestUndoVersion() == null || persistenceService.getVersion()-1 != getGlobalContext().getLatestUndoVersion());
 	}
 
 	public boolean isComponentCache() {
@@ -1765,7 +1766,9 @@ public class ContentContext {
 	}
 
 	/**
-	 * don't use proxy for rendering (URL don't use getProxyPrefix on globalContext)
+	 * don't use proxy for rendering (URL don't use getProxyPrefix on
+	 * globalContext)
+	 * 
 	 * @return
 	 */
 	public boolean isInternalURL() {

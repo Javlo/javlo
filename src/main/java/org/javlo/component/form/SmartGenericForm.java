@@ -449,7 +449,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 	}
 
 	@Override
-	public void performEdit(ContentContext ctx) throws Exception {
+	public String performEdit(ContentContext ctx) throws Exception {
 		RequestService rs = RequestService.getInstance(ctx.getRequest());
 		getLocalConfig(false).setProperty("title", rs.getParameter(getInputName("title"), ""));
 		getLocalConfig(false).setProperty("filename", rs.getParameter(getInputName("filename"), ""));
@@ -525,6 +525,8 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		}
 
 		store(ctx);
+		
+		return null;
 	}
 	
 	protected String getMailHeader(ContentContext ctx) {

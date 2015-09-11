@@ -198,7 +198,7 @@ public class SmartLink extends ComplexPropertiesLink implements ILink, IAction {
 	}
 
 	@Override
-	public void performEdit(ContentContext ctx) throws Exception {
+	public String performEdit(ContentContext ctx) throws Exception {
 		RequestService rs = RequestService.getInstance(ctx.getRequest());
 		setURL(rs.getParameter(getURLInputName(), ""));
 		setImageURL(rs.getParameter(getImageInputName(), ""));
@@ -206,6 +206,7 @@ public class SmartLink extends ComplexPropertiesLink implements ILink, IAction {
 		setTitle((rs.getParameter(getTitleInputName(), "")));
 		setDate((rs.getParameter(getDateInputName(), "")));
 		storeProperties();
+		return null;
 	}
 
 	@Override

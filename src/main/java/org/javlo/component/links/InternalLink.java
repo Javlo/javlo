@@ -348,7 +348,7 @@ public class InternalLink extends ComplexPropertiesLink implements IInternalLink
 	}
 
 	@Override
-	public void performEdit(ContentContext ctx) {
+	public String performEdit(ContentContext ctx) {
 
 		ContentService content = ContentService.getInstance(ctx.getRequest());
 
@@ -394,6 +394,7 @@ public class InternalLink extends ComplexPropertiesLink implements IInternalLink
 				e.printStackTrace();
 			}
 		}
+		return null;
 	}
 
 	@Override

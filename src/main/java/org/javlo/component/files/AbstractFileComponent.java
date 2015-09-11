@@ -638,7 +638,7 @@ public abstract class AbstractFileComponent extends AbstractVisualComponent impl
 	}
 
 	@Override
-	public void performEdit(ContentContext ctx) throws Exception {
+	public String performEdit(ContentContext ctx) throws Exception {
 
 		boolean fromShared = isFromShared(ctx);
 
@@ -731,6 +731,8 @@ public abstract class AbstractFileComponent extends AbstractVisualComponent impl
 		}
 
 		storeProperties();
+		
+		return null;
 	}
 
 	protected void setLabel(String label) {

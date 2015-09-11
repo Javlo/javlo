@@ -114,7 +114,7 @@ public class NavigationHelper {
 		target.setModificationDate(src.getModificationDate());
 		target.setLatestEditor(src.getLatestEditor());
 		target.setPriority(src.getPriority());
-		target.setTemplateName(src.getTemplateId());
+		target.setTemplateId(src.getTemplateId());
 		List<MenuElement> vParent = new LinkedList<MenuElement>();
 		vParent.addAll(src.getVirtualParent());
 		target.setVirtualParent(vParent);

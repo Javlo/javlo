@@ -1086,7 +1086,7 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 	}
 
 	@Override
-	public void performEdit(ContentContext ctx) throws Exception {
+	public String performEdit(ContentContext ctx) throws Exception {
 
 		java.util.List<Field> fieldsName = getFields(ctx);
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
@@ -1121,6 +1121,7 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 			}
 		}
 		storeProperties();
+		return null;
 	}
 
 	private void addChildrenToDelete(Reaction parent, Collection<Reaction> reactions, Collection<Reaction> reactionToBeDeleted) {

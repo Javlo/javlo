@@ -105,7 +105,7 @@ public class UserInfoLink extends AbstractVisualComponent {
 	}
 
 	@Override
-	public void performEdit(ContentContext ctx) throws Exception {
+	public String performEdit(ContentContext ctx) throws Exception {
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
 
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
@@ -125,7 +125,7 @@ public class UserInfoLink extends AbstractVisualComponent {
 			setValue(value);
 			setModify();
 		}
-
+		return null;
 	}
 
 	@Override

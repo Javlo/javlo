@@ -22,7 +22,7 @@ public class Heading extends AbstractPropertiesComponent implements ISubTitle {
 	public static final String TYPE = "heading";
 
 	private static final String DEPTH = "depth";
-	private static final String TEXT = "text";
+	public static final String TEXT = "text";
 	private static final String LINK = "link";
 	private static final List<String> FIELDS = new LinkedList<String>(Arrays.asList(new String[] { DEPTH, TEXT, LINK }));
 

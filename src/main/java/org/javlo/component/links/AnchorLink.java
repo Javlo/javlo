@@ -141,7 +141,7 @@ public class AnchorLink extends ComplexPropertiesLink {
 	}
 
 	@Override
-	public void performEdit(ContentContext ctx) {
+	public String performEdit(ContentContext ctx) {
 
 		RequestService requestSercice = RequestService.getInstance(ctx.getRequest());
 
@@ -163,6 +163,8 @@ public class AnchorLink extends ComplexPropertiesLink {
 				e.printStackTrace();
 			}
 		}
+		
+		return null;
 	}
 
 	@Override

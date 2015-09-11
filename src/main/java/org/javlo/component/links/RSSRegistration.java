@@ -137,7 +137,7 @@ public class RSSRegistration extends AbstractPropertiesComponent {
 	}
 
 	@Override
-	public void performEdit(ContentContext ctx) {
+	public String performEdit(ContentContext ctx) {
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
 
 		String channel = requestService.getParameter(getChannelName(), "");
@@ -153,6 +153,7 @@ public class RSSRegistration extends AbstractPropertiesComponent {
 				setModify();
 			}
 		}
+		return null;
 	}
 
 	// useless, actually, or maybe for a call to super for raw data...

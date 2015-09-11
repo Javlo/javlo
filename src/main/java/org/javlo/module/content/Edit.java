@@ -1015,7 +1015,7 @@ public class Edit extends AbstractModuleAction {
 
 					if (!upload) {
 						elem.performConfig(ctx);
-						elem.performEdit(ctx);
+						message = elem.performEdit(ctx);
 					} else {
 						if (elem instanceof IUploadResource) {
 							((IUploadResource) elem).performUpload(ctx);
@@ -1071,7 +1071,9 @@ public class Edit extends AbstractModuleAction {
 
 		if (requestService.getParameter("save", null) != null && editContext.isEditPreview() && !ResourceStatus.isResource(ctx.getRequest().getSession()) && requestService.getParameter("upload", null) == null) {
 			ctx.setParentURL(URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.PREVIEW_MODE)));
-			ctx.setClosePopup(true);
+			if (message == null) {
+				ctx.setClosePopup(true);
+			}
 		}
 
 		if (ctx.isEditPreview() && componentContext.getNewComponents() != null && componentContext.getNewComponents().size() == 1) {
@@ -1215,13 +1217,13 @@ public class Edit extends AbstractModuleAction {
 																							// check
 																							// this
 																							// test
-						page.setTemplateName(template.getName());
+						page.setTemplateId(template.getName());
 						modify = true;
 					} else {
 						return "template not found : " + templateName;
 					}
 				} else {
-					page.setTemplateName(null); // inherited
+					page.setTemplateId(null); // inherited
 				}
 				ctx.setCurrentTemplate(null); // reset current template
 			}
@@ -1852,6 +1854,10 @@ public class Edit extends AbstractModuleAction {
 		persistenceService.setAskStore(true);
 		modifPage(ctx, ctx.getCurrentPage());
 		autoPublish(ctx.getRequest(), ctx.getResponse());
+		
+		if (ctx.isAjax()) {
+			updatePreviewCommands(ctx, null);
+		}
 
 		return null;
 	}

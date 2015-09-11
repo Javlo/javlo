@@ -189,7 +189,7 @@ public class RSSLink extends ComplexPropertiesLink {
 	 */
 
 	@Override
-	public void performEdit(ContentContext ctx) {
+	public String performEdit(ContentContext ctx) {
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
 
 		String label = requestService.getParameter(getLinkLabelName(), null);
@@ -205,6 +205,8 @@ public class RSSLink extends ComplexPropertiesLink {
 				setModify();
 			}
 		}
+		
+		return null;
 	}
 
 }

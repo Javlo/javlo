@@ -469,7 +469,7 @@ public static List<ComponentBean> createContentFromArray(GlobalContext gc, Input
 			newBeans[i].setId(StringHelper.getRandomId());
 		}
 		target.setContent(newBeans);
-		target.setTemplateName(source.getTemplateId());
+		target.setTemplateId(source.getTemplateId());
 	}
 	
 	/**

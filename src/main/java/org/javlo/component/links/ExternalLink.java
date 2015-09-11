@@ -191,7 +191,7 @@ public class ExternalLink extends ComplexPropertiesLink implements IReverseLinkC
 	}
 
 	@Override
-	public void performEdit(ContentContext ctx) throws Exception {
+	public String performEdit(ContentContext ctx) throws Exception {
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
 		String label = requestService.getParameter(getLinkLabelName(), null);
 		String link = requestService.getParameter(getLinkName(), "");
@@ -243,6 +243,7 @@ public class ExternalLink extends ComplexPropertiesLink implements IReverseLinkC
 			}
 			storeProperties();
 		}
+		return null;
 	}
 
 	public static void main(String[] args) {

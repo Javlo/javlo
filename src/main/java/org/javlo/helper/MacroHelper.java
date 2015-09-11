@@ -768,7 +768,7 @@ public class MacroHelper {
 						isArticleRoot = true;
 					}
 				}
-				if (isArticleRoot) {
+				if (isArticleRoot && (page.getDepth() < 3)) {
 					outPages.add(page);
 				}
 			}

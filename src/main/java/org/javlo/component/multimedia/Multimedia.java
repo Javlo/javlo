@@ -1032,7 +1032,7 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 	}
 
 	@Override
-	public void performEdit(ContentContext ctx) throws Exception {
+	public String performEdit(ContentContext ctx) throws Exception {
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
 		String folder = requestService.getParameter(getInputBaseFolderName(), null);
 		String newStartDate = requestService.getParameter(getInputStartDateName(), null);
@@ -1082,6 +1082,7 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 				setModify();
 			}
 		}
+		return null;
 	}
 
 	@Override

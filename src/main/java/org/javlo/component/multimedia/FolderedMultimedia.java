@@ -880,7 +880,7 @@ public class FolderedMultimedia extends TimeRangeComponent implements IImageTitl
 	}
 
 	@Override
-	public void performEdit(ContentContext ctx) throws Exception {
+	public String performEdit(ContentContext ctx) throws Exception {
 
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
 		String folder = requestService.getParameter(getInputBaseFolderName(), null);
@@ -924,7 +924,9 @@ public class FolderedMultimedia extends TimeRangeComponent implements IImageTitl
 				multimediaFolder = null;
 			}
 		}
+		return null;
 	}
+	
 
 	@Override
 	public String getImageDescription(ContentContext ctx) {

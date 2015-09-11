@@ -453,7 +453,7 @@ public class SimplePoll extends AbstractVisualComponent implements IAction {
 	}
 
 	@Override
-	public void performEdit(ContentContext ctx) throws Exception {
+	public String performEdit(ContentContext ctx) throws Exception {
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
 		String newContent = requestService.getParameter(getContentName(), null);
 		String question = requestService.getParameter(getSeparatorInputName(), "");
@@ -468,6 +468,7 @@ public class SimplePoll extends AbstractVisualComponent implements IAction {
 				setModify();
 			}
 		}
+		return null;
 	}
 
 	@Override

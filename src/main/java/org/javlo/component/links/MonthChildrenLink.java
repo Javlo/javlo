@@ -153,8 +153,8 @@ public class MonthChildrenLink extends AbstractVisualComponent implements IActio
 	}
 
 	@Override
-	public void performEdit(ContentContext ctx) throws Exception {
-
+	public String performEdit(ContentContext ctx) throws Exception {
+		return null;
 	}
 
 }

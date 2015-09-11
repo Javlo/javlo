@@ -56,6 +56,7 @@ public class UserInfo implements Comparable<IUserInfo>, IUserInfo, Serializable 
 	private String postCode = "";
 	private String city = "";
 	private String country = "";
+	private String region = "";
 	private String phone = "";
 	private String mobile = "";
 	private String info = "";
@@ -618,6 +619,14 @@ public class UserInfo implements Comparable<IUserInfo>, IUserInfo, Serializable 
 				return null;
 			}
 		}
+	}
+
+	public String getRegion() {
+		return region;
+	}
+
+	public void setRegion(String region) {
+		this.region = region;
 	}
 	
 	

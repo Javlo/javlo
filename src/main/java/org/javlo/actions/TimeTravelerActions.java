@@ -38,10 +38,6 @@ public class TimeTravelerActions implements IAction {
 		boolean previous = rs.getParameter("previous", null) != null;
 		PersistenceService pers = PersistenceService.getInstance(globalContext);
 		
-		System.out.println("***** TimeTravelerActions.performUndoRedo : undo"); //TODO: remove debug trace
-		System.out.println("***** TimeTravelerActions.performUndoRedo : previous = "+previous); //TODO: remove debug trace
-		System.out.println("***** TimeTravelerActions.performUndoRedo : ctx.isCanUndo() = "+ctx.isCanUndo()); //TODO: remove debug trace
-
 		final String NOT_FOUND_MSG = i18nAccess.getText("message.error.no-undo");
 
 		if (previous) {

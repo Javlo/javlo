@@ -1917,7 +1917,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	}
 
 	@Override
-	public void performEdit(ContentContext ctx) throws Exception {
+	public String performEdit(ContentContext ctx) throws Exception {
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
 		String newContent = requestService.getParameter(getContentName(), null);
 		if (newContent != null) {
@@ -1926,6 +1926,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 				setModify();
 			}
 		}
+		return null;
 	}
 
 	public final void performUpdate(HttpServletRequest request, HttpServletResponse response) throws Exception {

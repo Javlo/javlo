@@ -746,7 +746,7 @@ public class SmartExternalLink extends ComplexPropertiesLink implements IReverse
 	}
 
 	@Override
-	public void performEdit(ContentContext ctx) throws Exception {
+	public String performEdit(ContentContext ctx) throws Exception {
 
 		loadData(ctx);
 
@@ -795,6 +795,7 @@ public class SmartExternalLink extends ComplexPropertiesLink implements IReverse
 			}
 		}
 		storeProperties();
+		return null;
 	}
 
 	protected void refreshAutoInfo(ContentContext ctx) throws Exception {

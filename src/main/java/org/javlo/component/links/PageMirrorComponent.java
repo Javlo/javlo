@@ -210,7 +210,7 @@ public class PageMirrorComponent extends AbstractVisualComponent implements IIma
 	}
 
 	@Override
-	public void performEdit(ContentContext ctx) throws Exception {
+	public String performEdit(ContentContext ctx) throws Exception {
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
 		String newPage = requestService.getParameter(getCurrentInputName(), getValue());
 		if (newPage != null) {
@@ -235,6 +235,7 @@ public class PageMirrorComponent extends AbstractVisualComponent implements IIma
 				ctx.setClosePopup(true);
 			}
 		}
+		return null;
 	}
 	
 	public boolean isDeleteIfNoSource() {

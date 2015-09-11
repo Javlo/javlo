@@ -650,12 +650,13 @@ public class Video extends GlobalImage implements IAction, IVideo {
 	}
 
 	@Override
-	public void performEdit(ContentContext ctx) throws Exception {
-		super.performEdit(ctx);
+	public String performEdit(ContentContext ctx) throws Exception {
+		String msg = super.performEdit(ctx);
 		if (isModify() && isYouTube()) {
 			if (getRenderes(ctx).get("youtube") != null) {
 				setRenderer(ctx, "youtube");
 			}
 		}
+		return msg;
 	}
 }

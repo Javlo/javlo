@@ -41,7 +41,7 @@ public class ForceRealContent extends AbstractVisualComponent {
 	}
 	
 	@Override
-	public void performEdit(ContentContext ctx) throws Exception {
+	public String performEdit(ContentContext ctx) throws Exception {
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
 		String newContent = requestService.getParameter(getContentName(), "false");
 		if (requestService.getParameter(getInputName("submit"), null) != null) {
@@ -50,6 +50,7 @@ public class ForceRealContent extends AbstractVisualComponent {
 				setModify();
 			}
 		}
+		return null;
 	}
 
 	@Override

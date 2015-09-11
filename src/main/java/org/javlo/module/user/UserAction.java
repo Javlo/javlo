@@ -408,6 +408,7 @@ public class UserAction extends AbstractModuleAction {
 				try {
 					userFactory.updateUserInfo(ui);
 					userFactory.store();
+					userFactory.reload(globalContext, session);
 					messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("user.message.ok-change-password"), GenericMessage.INFO));
 
 					if (editContext.isEditPreview()) {

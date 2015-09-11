@@ -1,22 +1,28 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"
+%><%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"
+%><c:set var="canCreate" value="${not empty param.canCreate}" />
 
 <form method="post" action="${info.currentURL}">
 <fieldset>
-<legend>Create article</legend>
+<legend>Create newsletter ${canCreate}</legend>
 <input type="hidden" name="webaction" value="macro-create-article-composition.create" />
 <input type="hidden" name="module" value="macro" />
-
-<c:if test="${fn:length(pages)>1}">
+<c:if test="${fn:length(pages)>1 || canCreate}">
 <div class="form-group">
 <label for="root">group</label>
-<select id="root" name="root" class="form-control">
+<select id="root" name="root" class="form-control" onchange="if (this.value == 'new') {document.getElementById('new-group').className = 'form-group';} else {document.getElementById('new-group').className = 'form-group hidden';}">
 <c:forEach var="page" items="${pages}">
 <option value="${page.key}">${page.value}</option>
 </c:forEach>
+<c:if test="${canCreate}"><option value="new">create group...</option></c:if>
 </select>
 </div>
 </c:if>
+
+<c:if test="${canCreate}"><div id="new-group" class="form-group hidden">
+	<label for="newgroup">New group</label>
+	<input type="text" id="newgroup" name="newgroup" value="" class="form-control" />
+</div></c:if>
 
 <c:if test="${fn:length(pages)==1}">
 <c:forEach var="page" items="${pages}">

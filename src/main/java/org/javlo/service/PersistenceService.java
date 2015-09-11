@@ -673,7 +673,7 @@ public class PersistenceService {
 		page.setVisible(StringHelper.isTrue(visible));
 		page.setHttps(StringHelper.isTrue(https));
 
-		page.setTemplateName(layout);
+		page.setTemplateId(layout);
 		page.setUserRoles(new HashSet<String>(StringHelper.stringToCollection(roles, ";")));
 
 		page.setValid(StringHelper.isTrue(pageXML.getAttributeValue("valid", "false")));
@@ -807,7 +807,7 @@ public class PersistenceService {
 				reversedLink = StringHelper.writeLines(StringHelper.stringToArray(reversedLink, "#"));
 				root.setReversedLink(reversedLink);
 
-				root.setTemplateName(page.getAttributeValue("layout"));
+				root.setTemplateId(page.getAttributeValue("layout"));
 
 				String creationDate = page.getAttributeValue("creationDate");
 				if (creationDate == null) {

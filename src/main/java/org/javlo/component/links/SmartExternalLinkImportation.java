@@ -216,13 +216,15 @@ public class SmartExternalLinkImportation extends AbstractVisualComponent {
 	}
 
 	@Override
-	public void performEdit(ContentContext ctx) throws Exception {
+	public String performEdit(ContentContext ctx) throws Exception {
 
-		super.performEdit(ctx);
+		String msg = super.performEdit(ctx);
 
 		if (isModify()) {
 			importLinks(ctx);
 		}
+		
+		return msg;
 	}
 
 }

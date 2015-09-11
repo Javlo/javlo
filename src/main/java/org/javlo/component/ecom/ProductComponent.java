@@ -162,8 +162,8 @@ public class ProductComponent extends AbstractPropertiesComponent implements IAc
 	}
 
 	@Override
-	public void performEdit(ContentContext ctx) throws Exception {
-		super.performEdit(ctx);
+	public String performEdit(ContentContext ctx) throws Exception {
+		String msg = super.performEdit(ctx);
 		
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
 
@@ -183,6 +183,8 @@ public class ProductComponent extends AbstractPropertiesComponent implements IAc
 			}
 		} catch (Exception e) {
 		}
+		
+		return msg;
 	}
 
 	@Override

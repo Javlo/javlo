@@ -4022,7 +4022,7 @@ public class MenuElement implements Serializable, IPrintInfo {
 		this.reversedLink = reversedLink;
 	}
 
-	public void setTemplateName(String inTemplate) {
+	public void setTemplateId(String inTemplate) {
 		synchronized (getLock()) {
 			templateId = inTemplate;
 		}

@@ -60,7 +60,7 @@ public class UserFactory implements IUserFactory, Serializable {
 	public static final String USER_FACTORY_KEY = "_user_factory_";
 
 	private String userInfoFile = null;
-	
+
 	public String DEFAULT_PASSWORD = "changeme";
 
 	private static Map<String, IUserInfo> changePasswordReference = new TimeMap<String, IUserInfo>();
@@ -122,7 +122,7 @@ public class UserFactory implements IUserFactory, Serializable {
 	@Override
 	public User autoLogin(HttpServletRequest request, String login) {
 		GlobalContext globalContext = GlobalContext.getInstance(request);
-		User currentUser = getCurrentUser(request.getSession());	
+		User currentUser = getCurrentUser(request.getSession());
 		User user = getUser(login);
 		if (currentUser != null && user != null && currentUser.getPassword().equals(user.getPassword())) {
 			return null;
@@ -197,28 +197,19 @@ public class UserFactory implements IUserFactory, Serializable {
 	 * @see org.javlo.user.IUserFactory#getCurrentUser()
 	 */
 	@Override
-	/**public User getCurrentUser(HttpSession session) {
-		User user = (User) session.getAttribute(SESSION_KEY);
-		String globalContextKey = GlobalContext.getSessionContextKey(session);
-		if (globalContextKey != null && user != null) {
-			if (user.getContext().equals(globalContextKey)) {
-				return user;
-			} else {
-				if (AdminUserSecurity.getInstance().isGod(user)) {
-					return user;
-				}
-				try {
-					EditContext.getInstance(GlobalContext.getInstance(session, globalContextKey), session).setEditUser(null);					
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-				logger.info("remove user '"+user.getLogin()+"' context does'nt match.");
-				session.removeAttribute(SESSION_KEY);
-				return null;
-			}
-		}		
-		return user;
-	}**/
+	/**
+	 * public User getCurrentUser(HttpSession session) { User user = (User)
+	 * session.getAttribute(SESSION_KEY); String globalContextKey =
+	 * GlobalContext.getSessionContextKey(session); if (globalContextKey != null
+	 * && user != null) { if (user.getContext().equals(globalContextKey)) {
+	 * return user; } else { if (AdminUserSecurity.getInstance().isGod(user)) {
+	 * return user; } try {
+	 * EditContext.getInstance(GlobalContext.getInstance(session,
+	 * globalContextKey), session).setEditUser(null); } catch (Exception e) {
+	 * e.printStackTrace(); } logger.info("remove user '"+user.getLogin()+
+	 * "' context does'nt match."); session.removeAttribute(SESSION_KEY); return
+	 * null; } } return user; }
+	 **/
 	public User getCurrentUser(HttpSession session) {
 		User user = (User) session.getAttribute(SESSION_KEY);
 		if (user != null) {
@@ -309,7 +300,7 @@ public class UserFactory implements IUserFactory, Serializable {
 		}
 		return outUserList;
 	}
-	
+
 	public static final List<IUserInfo> load(File file) throws IOException, SecurityException, IllegalArgumentException, IllegalAccessException, InvocationTargetException {
 		InputStream in = new FileInputStream(file);
 		CSVFactory fact;
@@ -477,15 +468,15 @@ public class UserFactory implements IUserFactory, Serializable {
 		if (user != null) {
 			user.setContext(globalContext.getContextKey());
 			request.getSession().setAttribute(SESSION_KEY, user);
-			
+
 			if (DEFAULT_PASSWORD.equals(password)) {
 				I18nAccess i18nAccess;
 				try {
 					i18nAccess = I18nAccess.getInstance(request);
 					MessageRepository.getInstance(request).setGlobalMessage(new GenericMessage(i18nAccess.getAllText("user.change-password", "Please change you password."), GenericMessage.ALERT));
 				} catch (Exception e) {
-					e.printStackTrace();					
-				}				
+					e.printStackTrace();
+				}
 			}
 		}
 		return user;
@@ -549,6 +540,11 @@ public class UserFactory implements IUserFactory, Serializable {
 	@Override
 	public void reload(GlobalContext globalContext, HttpSession session) {
 		releaseUserInfoList();
+		if (getCurrentUser(session) != null) {
+			User newUser = getUser(getCurrentUser(session).getLogin());
+			newUser.setContext(globalContext.getContextKey());
+			session.setAttribute(SESSION_KEY, newUser);
+		}
 	}
 
 	/*
@@ -562,6 +558,7 @@ public class UserFactory implements IUserFactory, Serializable {
 			unlockStore();
 		}
 	}
+
 	private void unlockStore() throws IOException {
 
 		List<IUserInfo> userInfoList = getUserInfoList();

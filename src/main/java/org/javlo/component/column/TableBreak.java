@@ -202,7 +202,6 @@ public class TableBreak extends TableComponent {
 				inTable = false;
 			}
 		}
-		System.out.println("***** TableBreak.getOpenTableComponent : ERROR Table break not found."); //TODO: remove debug trace
 		return null;
 	}
 
@@ -317,11 +316,12 @@ public class TableBreak extends TableComponent {
 	}
 
 	@Override
-	public void performEdit(ContentContext ctx) throws Exception {
-		super.performEdit(ctx);
+	public String performEdit(ContentContext ctx) throws Exception {
+		String msg = super.performEdit(ctx);
 		int newCol = Integer.parseInt(getFieldValue("col"));
 		int newRow = Integer.parseInt(getFieldValue("row"));
 		updateTable(ctx, newCol, newRow);
+		return msg;
 	}
 	
 

@@ -93,8 +93,8 @@ public class WeekChildrenLink extends AbstractVisualComponent implements IAction
 	}
 
 	@Override
-	public void performEdit(ContentContext ctx) throws Exception {
-
+	public String performEdit(ContentContext ctx) throws Exception {
+		return null;
 	}
 
 	@Override

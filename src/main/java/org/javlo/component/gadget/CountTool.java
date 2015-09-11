@@ -162,12 +162,12 @@ public class CountTool extends AbstractVisualComponent {
 	}
 
 	@Override
-	public void performEdit(ContentContext ctx) throws Exception {
+	public String performEdit(ContentContext ctx) throws Exception {
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
 		String date = requestService.getParameter(getDateName(), "");
 		String link = requestService.getParameter(getLinkName(), null);
 		if (link == null) {
-			return;
+			return null;
 		}
 		if (!link.equals(getLink())) {
 			setModify();
@@ -185,6 +185,7 @@ public class CountTool extends AbstractVisualComponent {
 			String[] values = new String[] { date, link };
 			setValue(StringHelper.arrayToString(values));
 		}
+		return null;
 	}
-
+	
 }

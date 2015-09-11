@@ -153,7 +153,7 @@ public class MirrorLinkImportation extends AbstractVisualComponent {
 	}
 
 	@Override
-	public void performEdit(ContentContext ctx) throws Exception {
+	public String performEdit(ContentContext ctx) throws Exception {
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
 		String newLg = requestService.getParameter(getLanguageName(), null);
 		if (newLg != null) {
@@ -177,6 +177,7 @@ public class MirrorLinkImportation extends AbstractVisualComponent {
 			setValue(value);
 
 		}
+		return null;
 	}
 
 }

@@ -231,7 +231,7 @@ public class MirrorComponent extends AbstractVisualComponent implements IFieldCo
 	}
 
 	@Override
-	public void performEdit(ContentContext ctx) throws Exception {
+	public String performEdit(ContentContext ctx) throws Exception {
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
 		String newLink = requestService.getParameter(getCurrentInputName(), getMirrorComponentId());
 		if (requestService.getParameter(getUnlinkInputName(), null) != null) {
@@ -253,6 +253,7 @@ public class MirrorComponent extends AbstractVisualComponent implements IFieldCo
 				setNeedRefresh(true);
 			}
 		}
+		return null;
 	}
 
 	@Override

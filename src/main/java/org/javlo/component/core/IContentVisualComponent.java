@@ -68,13 +68,11 @@ public interface IContentVisualComponent extends Comparable<IContentVisualCompon
 
 	/**
 	 * action call when update the content page.
+	 * @return the error message, null if no error
 	 * 
 	 * @throws Exception
 	 */
-	public void performEdit(ContentContext ctx) throws Exception; // TODO:
-																	// change
-																	// name with
-																	// "perform"
+	public String performEdit(ContentContext ctx) throws Exception; 
 
 	/**
 	 * the code for view the element in XHTML environment.

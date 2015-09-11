@@ -499,7 +499,7 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 	}
 
 	@Override
-	public void performEdit(ContentContext ctx) throws Exception {
+	public String performEdit(ContentContext ctx) throws Exception {
 
 		java.util.List<Field> fieldsName = getFields(ctx);
 
@@ -528,6 +528,8 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 		if (isModify()) {
 			storeProperties();
 		}
+		
+		return null;
 	}
 
 	@Override

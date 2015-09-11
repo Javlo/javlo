@@ -116,7 +116,7 @@ public class WysiwygParagraph extends AbstractVisualComponent {
 	}
 	
 	@Override
-	public void performEdit(ContentContext ctx) throws Exception {	
+	public String performEdit(ContentContext ctx) throws Exception {	
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
 		String newContent = requestService.getParameter(getContentName(), null);		
 		if (newContent != null) {
@@ -128,6 +128,7 @@ public class WysiwygParagraph extends AbstractVisualComponent {
 				setModify();
 			}
 		}
+		return null;
 	}
 
 }

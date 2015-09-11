@@ -189,7 +189,7 @@ public class FreeTextList extends AbstractVisualComponent {
 	}
 
 	@Override
-	public void performEdit(ContentContext ctx) throws Exception {
+	public String performEdit(ContentContext ctx) throws Exception {
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
 		String newContent = requestService.getParameter(getContentName(), null);
 		String sepValue = requestService.getParameter(getSeparatorInputName(), "");
@@ -206,6 +206,7 @@ public class FreeTextList extends AbstractVisualComponent {
 				setModify();
 			}
 		}
+		return null;
 	}
 
 	@Override

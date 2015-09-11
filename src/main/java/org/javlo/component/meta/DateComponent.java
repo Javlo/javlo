@@ -178,7 +178,7 @@ public class DateComponent extends AbstractVisualComponent implements IDate {
 	}
 
 	@Override
-	public void performEdit(ContentContext ctx) throws Exception {
+	public String performEdit(ContentContext ctx) throws Exception {
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
 		String newDate = requestService.getParameter(getInputDateName(), null);
 		String newTime = requestService.getParameter(getInputTimeName(), null);
@@ -189,6 +189,7 @@ public class DateComponent extends AbstractVisualComponent implements IDate {
 				setModify();
 			}
 		}
+		return null;
 	}
 
 	@Override

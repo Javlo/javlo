@@ -144,7 +144,7 @@ public class ImageTitle extends Image {
 	}
 
 	@Override
-	public void performEdit(ContentContext ctx) throws Exception {
+	public String performEdit(ContentContext ctx) throws Exception {
 		String subTitle = ContentManager.getParameterValue(ctx.getRequest(), getSubTitleXHTMLInputName(), null);
 		if (subTitle != null) {
 			if ((!subTitle.equals(getSubTitle()))) {
@@ -153,6 +153,7 @@ public class ImageTitle extends Image {
 			}
 			super.performEdit(ctx);
 		}
+		return null;
 	}
 
 	/**

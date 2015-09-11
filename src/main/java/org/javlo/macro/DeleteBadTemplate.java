@@ -24,7 +24,7 @@ public class DeleteBadTemplate extends AbstractMacro {
 		int modif = 0;
 		for (MenuElement page : content.getNavigation(ctx).getAllChildren()) {
 			if (templates.get(page.getTemplateId()) == null) {
-				page.setTemplateName(null);
+				page.setTemplateId(null);
 				modif++;
 			}
 		}

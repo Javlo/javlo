@@ -178,20 +178,24 @@ public abstract class AbstractPropertiesComponent extends AbstractVisualComponen
 		return ",";
 	}
 	
-	public boolean validateField(ContentContext ctx, String fieldName, String fieldValue) throws Exception {
-		return true;
+	public String validateField(ContentContext ctx, String fieldName, String fieldValue) throws Exception {
+		return null;
 	}
 
 	@Override
-	public void performEdit(ContentContext ctx) throws Exception {
+	public String performEdit(ContentContext ctx) throws Exception {
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
 
 		List<String> fields = getFields(ctx);
+		String msg = null;
 		for (String fieldKey : fields) {
 			String field = getFieldName(fieldKey);
 			String fieldValue = requestService.getParameter(createKeyWithField(field), null);
 			
-			validateField(ctx, field, fieldValue);
+			String newMsg = validateField(ctx, field, fieldValue);
+			if (newMsg != null) {
+				msg = newMsg;
+			}
 			
 			String[] fieldValues = requestService.getParameterValues(createKeyWithField(field), null);
 			if (fieldValues != null && fieldValues.length > 1) {
@@ -215,7 +219,8 @@ public abstract class AbstractPropertiesComponent extends AbstractVisualComponen
 		if (isModify()) {
 			storeProperties();
 		}
-
+		
+		return msg;
 	}
 
 	protected void setFieldValue(String inField, String value) {

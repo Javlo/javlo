@@ -78,7 +78,7 @@ public class LaunchMacro extends AbstractVisualComponent {
 	}
 	
 	@Override
-	public void performEdit(ContentContext ctx) throws Exception {
+	public String performEdit(ContentContext ctx) throws Exception {
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
 		
 		String macro = requestService.getParameter(getInputName("macro"), null);
@@ -91,6 +91,8 @@ public class LaunchMacro extends AbstractVisualComponent {
 			setValue(newValue);
 			setModify();
 		}
+		
+		return null;
 	}
 
 }

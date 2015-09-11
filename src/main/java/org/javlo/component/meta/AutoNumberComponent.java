@@ -59,12 +59,13 @@ public class AutoNumberComponent extends AbstractVisualComponent {
 	}
 	
 	@Override
-	public void performEdit(ContentContext ctx) throws Exception {	
-		super.performEdit(ctx);
+	public String performEdit(ContentContext ctx) throws Exception {	
+		String msg = super.performEdit(ctx);
 		if (isModify()) {
 			getViewData(ctx).clear();
 			storeViewData(ctx);
 		}
+		return null;
 	}
 
 }

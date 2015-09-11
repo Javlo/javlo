@@ -749,7 +749,7 @@ public class GlobalImage extends Image implements IImageFilter {
 	}
 
 	@Override
-	public void performEdit(ContentContext ctx) throws Exception {
+	public String performEdit(ContentContext ctx) throws Exception {
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
 		String link = requestService.getParameter(getLinkXHTMLInputName(), null);
 		String filter = requestService.getParameter(getImageFilterInputName(), null);
@@ -877,13 +877,15 @@ public class GlobalImage extends Image implements IImageFilter {
 			}
 		}
 
-		super.performEdit(ctx);
+		String msg = super.performEdit(ctx);
 
 		if (getWidth() != null && getWidth().trim().length() > 0) {
 			if (StringHelper.isDigit(getWidth())) {
-				MessageRepository.getInstance(ctx).setGlobalMessage(new GenericMessage(I18nAccess.getInstance(ctx).getText("content.image.width-noext", "Image 'width' need unity like px or %."), GenericMessage.ERROR));
+				msg = I18nAccess.getInstance(ctx).getText("content.image.width-noext", "Image 'width' need unity like px or %.");
 			}
 		}
+		
+		return msg;
 
 	}
 

@@ -169,7 +169,7 @@ public class Box extends AbstractVisualComponent implements IContainer {
 	}
 
 	@Override
-	public void performEdit(ContentContext ctx) throws Exception {
+	public String performEdit(ContentContext ctx) throws Exception {
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
 		boolean closeBox = requestService.getParameter(getCloseBoxInputName(), null) != null;
 		String title = requestService.getParameter(getTitleBoxInputName(), "");
@@ -184,6 +184,7 @@ public class Box extends AbstractVisualComponent implements IContainer {
 			setModify();
 			setNeedRefresh(true);
 		}
+		return null;
 	}
 	
 	@Override

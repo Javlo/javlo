@@ -157,12 +157,12 @@ public class Tags extends ComplexPropertiesLink {
 	}
 
 	@Override
-	public void performEdit(ContentContext ctx) {
+	public String performEdit(ContentContext ctx) {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
 		List<String> tags = globalContext.getTags();
 		if (requestService.getParameter("tag-" + getId(), null) == null) { // not a real refresh
-			return;
+			return null;
 		}
 		String finalTags = "";
 		String sep = "";
@@ -177,6 +177,7 @@ public class Tags extends ComplexPropertiesLink {
 			setValue(finalTags);
 			setModify();
 		}
+		return null;
 	}
 
 }

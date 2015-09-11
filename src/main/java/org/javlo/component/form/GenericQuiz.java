@@ -287,8 +287,8 @@ public class GenericQuiz extends SmartGenericForm {
 	}
 
 	@Override
-	public void performEdit(ContentContext ctx) throws Exception {
-		super.performEdit(ctx);
+	public String performEdit(ContentContext ctx) throws Exception {
+		String msg = super.performEdit(ctx);
 		RequestService rs = RequestService.getInstance(ctx.getRequest());
 		getLocalConfig(false).setProperty("qtitle", rs.getParameter(getInputName("qtitle"), ""));
 		getLocalConfig(false).setProperty("result-title", rs.getParameter(getInputName("result-title"), ""));
@@ -329,6 +329,7 @@ public class GenericQuiz extends SmartGenericForm {
 			store(question);
 		}
 		store(ctx);
+		return msg;
 	}
 
 	@Override

@@ -77,7 +77,7 @@ public class RendererReferenceComponent extends AbstractVisualComponent {
 	}
 	
 	@Override
-	public void performEdit(ContentContext ctx) throws Exception {		
+	public String performEdit(ContentContext ctx) throws Exception {		
 		RequestService rs = RequestService.getInstance(ctx.getRequest());
 		
 		String renderer = rs.getParameter(getRendererInputName(), "");
@@ -91,7 +91,8 @@ public class RendererReferenceComponent extends AbstractVisualComponent {
 		if (!config.equals(getValue())) {
 			setModify();
 			setValue(config);
-		}		
+		}
+		return null;
 	}
 	
 	@Override

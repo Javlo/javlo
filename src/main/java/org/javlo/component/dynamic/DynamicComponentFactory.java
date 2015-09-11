@@ -218,11 +218,12 @@ public class DynamicComponentFactory extends AbstractVisualComponent {
 	}
 
 	@Override
-	public void performEdit(ContentContext ctx) throws Exception {	
-		super.performEdit(ctx);
+	public String performEdit(ContentContext ctx) throws Exception {	
+		String msg = super.performEdit(ctx);
 		properties.clear();
 		properties.load(stringToStream(getValue()));
 		update(ctx);
+		return msg;
 	}
 
 }

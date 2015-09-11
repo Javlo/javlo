@@ -200,7 +200,7 @@ public class Contact extends AbstractVisualComponent implements ICSS, IAction {
 	}
 
 	@Override
-	public void performEdit(ContentContext ctx) {
+	public String performEdit(ContentContext ctx) {
 
 		String rawInfo = "";
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
@@ -218,6 +218,8 @@ public class Contact extends AbstractVisualComponent implements ICSS, IAction {
 			setModify();
 			setValue(rawInfo);
 		}
+		
+		return null;
 	}
 
 	@Override

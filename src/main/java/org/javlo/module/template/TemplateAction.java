@@ -445,7 +445,7 @@ public class TemplateAction extends AbstractModuleAction {
 
 	public static String performSelectTemplate(RequestService rs, ContentContext ctx, EditContext editContext, MenuElement currentPage, MessageRepository messageRepository, I18nAccess i18nAccess) throws FileNotFoundException, InstantiationException, IllegalAccessException, ModuleException, IOException, ServiceException {
 		String templateName = rs.getParameter("templateid", null);
-		currentPage.setTemplateName(templateName);
+		currentPage.setTemplateId(templateName);
 
 		MailingModuleContext mailingCtx = MailingModuleContext.getInstance(ctx.getRequest());
 		mailingCtx.setCurrentTemplate(null);

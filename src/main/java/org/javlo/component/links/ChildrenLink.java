@@ -538,7 +538,7 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 	}
 
 	@Override
-	public void performEdit(ContentContext ctx) throws Exception {
+	public String performEdit(ContentContext ctx) throws Exception {
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
 		if (requestService.getParameter("comp-" + getId(), null) == null) { // this
 																			// component
@@ -547,7 +547,7 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 																			// in
 																			// edit
 																			// form
-			return;
+			return null;
 		}
 		String newValue = "";
 		if (requestService.getParameter(getInputNameDescription(), null) != null) {
@@ -570,6 +570,8 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 			setValue(newValue);
 			setModify();
 		}
+		
+		return null;
 	}
 
 	private void setChildImageComponent(ContentContext ctx, IImageTitle imageTitle) {

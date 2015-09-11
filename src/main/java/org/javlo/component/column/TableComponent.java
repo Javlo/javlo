@@ -21,7 +21,7 @@ public abstract class TableComponent extends AbstractPropertiesComponent {
 
 	private static final List<String> fields = Arrays.asList(new String[] { "padding", "width", "valign", "align", "colspan", "backgroundcolor", "bordersize", "bordercolor" });
 
-	protected static final Set<String> FIELD_NEED_UNITY = new HashSet<String>(Arrays.asList(new String[] { "padding", "margin", "width" }));
+	protected static final Set<String> FIELD_NEED_UNITY = new HashSet<String>(Arrays.asList(new String[] { "padding", "margin", "width", "bordersize" }));
 
 	public TableComponent() {
 	}
@@ -199,12 +199,11 @@ public abstract class TableComponent extends AbstractPropertiesComponent {
 	}
 
 	@Override
-	public boolean validateField(ContentContext ctx, String fieldName, String fieldValue) throws Exception {
-		boolean out = super.validateField(ctx, fieldName, fieldValue);
+	public String validateField(ContentContext ctx, String fieldName, String fieldValue) throws Exception {
+		String out = super.validateField(ctx, fieldName, fieldValue);
 		if (FIELD_NEED_UNITY.contains(fieldName)) {
 			if (StringHelper.isDigit(fieldValue)) {
-				MessageRepository.getInstance(ctx).setGlobalMessage(new GenericMessage(fieldName + ' ' + I18nAccess.getInstance(ctx).getText("content.field.need-unity", "need unity like px or %."), GenericMessage.ERROR));
-				out = false;
+				out = fieldName + ' ' + I18nAccess.getInstance(ctx).getText("content.field.need-unity", "need unity like px or %.");
 			}
 		}
 		return out;
