@@ -235,6 +235,13 @@ public class ComponentConfig {
 		return StringHelper.isTrue(properties.getString("comp.color.text", null));
 	}
 	
+	public boolean isFontStyle() {
+		if (properties == null) {
+			return false;
+		}
+		return StringHelper.isTrue(properties.getString("comp.font-style", null));
+	}
+	
 	public boolean isPreviewEditable() {
 		if (properties == null || properties.getString("edit.preview", null) == null) {
 			return true;

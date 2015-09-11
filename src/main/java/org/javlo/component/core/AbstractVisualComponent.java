@@ -507,7 +507,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 
 	public void setWidth(String width) {
 	}
-
+	
 	@Override
 	public String getXHTMLConfig(ContentContext ctx) throws Exception {
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
@@ -572,6 +572,19 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			out.println(XHTMLHelper.getRadio(id, name, "right", layout.isRight()));
 			out.println(i18nAccess.getText("component.layout.right"));
 			out.println("</label>");
+			
+			if (getConfig(ctx).isFontStyle()) {
+				id = "layout-bold-" + getId();
+				out.println("<label for=\"" + id + "\">");
+				out.println(XHTMLHelper.getCheckbox(id, layout.isBold()));
+				out.println(i18nAccess.getText("component.layout.bold", "bold"));
+				out.println("</label>");
+				id = "layout-italic-" + getId();
+				out.println("<label for=\"" + id + "\">");
+				out.println(XHTMLHelper.getCheckbox(id, layout.isItalic()));
+				out.println(i18nAccess.getText("component.layout.italic", "italic"));
+				out.println("</label>");
+			}
 			out.println("</div>");
 		}
 		if (getConfig(ctx).isChooseBackgoundColor()) {
@@ -683,6 +696,10 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			layout.setLeft(requestService.getParameter("layout-align-" + getId(), "").equals("left"));
 			layout.setRight(requestService.getParameter("layout-align-" + getId(), "").equals("right"));
 			layout.setCenter(requestService.getParameter("layout-align-" + getId(), "").equals("center"));
+			layout.setBold(requestService.getParameter("layout-bold-" + getId(), null) != null);
+			layout.setItalic(requestService.getParameter("layout-italic-" + getId(), null) != null);
+			layout.setLineThrough(requestService.getParameter("layout-linethrough-" + getId(), null) != null);
+			layout.setUnderline(requestService.getParameter("layout-underline-" + getId(), null) != null);
 			if (!getLayout().getLayout().equals(layout.getLayout())) {
 				getComponentBean().setLayout(layout);
 				setModify();

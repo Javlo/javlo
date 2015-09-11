@@ -26,6 +26,7 @@ org.javlo.component.meta.Slogan
 --content.title.text
 
 org.javlo.component.text.Paragraph
+org.javlo.component.text.Text
 org.javlo.component.text.WysiwygParagraph
 org.javlo.component.text.FullWysiwygParagraph
 org.javlo.component.list.FreeTextList

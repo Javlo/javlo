@@ -200,3 +200,11 @@ table.float-image-width {
 .italic {
 	font-style: italic;
 }
+
+.text.small {
+	font-size: 0.8em;
+}
+
+.text.big {
+	font-size: 1.2em;
+}
