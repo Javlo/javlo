@@ -125,6 +125,9 @@ public class TicketAction extends AbstractModuleAction {
 				ticketModule.setRenderer("/jsp/list.jsp");
 				ticketModule.restoreBoxes();
 			}
+		} else {
+			ticketModule.setRenderer("/jsp/list.jsp");
+			ticketModule.restoreBoxes();
 		}
 
 		UserFactory userFactory = AdminUserFactory.createUserFactory(ctx.getGlobalContext(), ctx.getRequest().getSession());
@@ -176,6 +179,14 @@ public class TicketAction extends AbstractModuleAction {
 			ticket.setTitle(rs.getParameter("title", ticket.getTitle()));
 			ticket.setMessage(rs.getParameter("message", ticket.getMessage()));
 			ticket.setUsers(rs.getParameterListValues("users", Collections.<String> emptyList()));
+			if (ticket.getUsers() == null || ticket.getUsers().isEmpty()) {
+				AdminUserFactory userFactory = AdminUserFactory.createUserFactory(ctx.getGlobalContext(), ctx.getRequest().getSession());
+				List<String> users = new LinkedList<String>();
+				for (IUserInfo info : userFactory.getUserInfoForRoles(new String[] { AdminUserSecurity.FULL_CONTROL_ROLE })) {
+					users.add(info.getLogin());
+				}
+				ticket.setUsers(users);
+			}
 			if (rs.getParameter("comment", "").trim().length() > 0) {
 				ticket.addComments(new Comment(user.getLogin(), rs.getParameter("comment", "")));
 				if (!ticket.getAuthors().equals(ctx.getCurrentEditUser().getLogin())) {

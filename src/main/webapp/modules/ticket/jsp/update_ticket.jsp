@@ -7,7 +7,8 @@
 	<div class="col-md-12">
 		<div class="form-group">
 			<input type="text" name="title" placeholder="title" />
-		</div><div class="form-group">
+		</div>
+		<div class="form-group">
 			<textarea class="form-control" rows="4" cols="20" name="message" placeholder="message"></textarea>
 		</div>
 	</div>
@@ -20,49 +21,70 @@
 		<div class="line">
 			<label>authors :</label>${ticket.authors}
 		</div>		
-		<div class="line">
-			<label for="priority">priority : </label>
-			<select id="priority" name="priority">
-				<option value="0" ${ticket.priority == 0?'selected="selected"':''}>none</option>
-				<option value="1" ${ticket.priority == 1?'selected="selected"':''}>low</option>
-				<option value="2" ${ticket.priority == 2?'selected="selected"':''}>middle</option>
-				<option value="3" ${ticket.priority == 3?'selected="selected"':''}>high</option>
-			</select>
-		</div>
+		<c:if test="${info.editContext.lightInterface}">
+			<input type="hidden" name="priority" value="${empty ticket.priority ? '1' : ticket.priority}" />
+		</c:if>
+		<c:if test="${not info.editContext.lightInterface}">
+			<div class="line">
+				<label for="priority">priority : </label>
+				<select id="priority" name="priority">
+					<option value="0" ${ticket.priority == 0?'selected="selected"':''}>none</option>
+					<option value="1" ${ticket.priority == 1?'selected="selected"':''}>low</option>
+					<option value="2" ${ticket.priority == 2?'selected="selected"':''}>middle</option>
+					<option value="3" ${ticket.priority == 3?'selected="selected"':''}>high</option>
+				</select>
+			</div>
+		</c:if>
 		<div class="line">
 			<label for="status">status : </label>
-			<select id="status" name="status">
-				<option ${ticket.status == 'new'?'selected="selected"':''}>new</option>
-				<option ${ticket.status == 'working'?'selected="selected"':''}>working</option>
-				<option value="onhold" ${ticket.status == 'onhold'?'selected="selected"':''}>on hold</option>
-				<option ${ticket.status == 'rejected'?'selected="selected"':''}>rejected</option>
-				<option ${ticket.status == 'done'?'selected="selected"':''}>done</option>
-				<option ${ticket.status == 'archived'?'selected="selected"':''}>archived</option>
-			</select>
+			<c:if test="${info.editContext.lightInterface}">
+				<span>${ticket.status}</span>
+				<input type="hidden" name="status" value="${empty ticket.status ? 'new' : ticket.status}" />
+			</c:if>
+			<c:if test="${not info.editContext.lightInterface}">
+				<select id="status" name="status">
+					<option ${ticket.status == 'new'?'selected="selected"':''}>new</option>
+					<option ${ticket.status == 'working'?'selected="selected"':''}>working</option>
+					<option value="onhold" ${ticket.status == 'onhold'?'selected="selected"':''}>on hold</option>
+					<option ${ticket.status == 'rejected'?'selected="selected"':''}>rejected</option>
+					<option ${ticket.status == 'done'?'selected="selected"':''}>done</option>
+					<option ${ticket.status == 'archived'?'selected="selected"':''}>archived</option>
+				</select>
+			</c:if>
 		</div>
-		<div class="line">
-			<label for="share">share : </label>
-			<select id="share" name="share" ${ticket.debugNote ? 'disabled="disabled"' : ''}>
-				<option value="">none</option>
-				<option value="site" ${ticket.share == 'site'?'selected="selected"':''}>${ticket.context}</option>
-				<option value="allsites" ${ticket.share == 'allsites'?'selected="selected"':''}>all sites</option>
-			    <option value="public" ${ticket.share == '"public"'?'selected="selected"':''}>public</option>
-			</select>
-		</div>
+		<c:if test="${info.editContext.lightInterface}">
+			<input type="hidden" name="share" value="${empty ticket.share ? 'site' : ticket.share}" />
+		</c:if>
+		<c:if test="${not info.editContext.lightInterface}">
+			<div class="line">
+				<label for="share">share : </label>
+				<select id="share" name="share" ${ticket.debugNote ? 'disabled="disabled"' : ''}>
+					<option value="">none</option>
+					<option value="site" ${ticket.share == 'site'?'selected="selected"':''}>${ticket.context}</option>
+					<option value="allsites" ${ticket.share == 'allsites'?'selected="selected"':''}>all sites</option>
+				    <option value="public" ${ticket.share == '"public"'?'selected="selected"':''}>public</option>
+				</select>
+			</div>
+		</c:if>
 </div><div class="one_half">			
-		<div class="line">
-			<label>creation date :</label>${ticket.creationDateLabel}
-		</div>
+		<c:if test="${not info.editContext.lightInterface}">
+			<div class="line">
+				<label>creation date :</label>${ticket.creationDateLabel}
+			</div>
+		</c:if>
 		<div class="line">
 			<label>last update date :</label>${ticket.lastUpdateDateLabel}
 		</div>
-		<div class="line">
-			<label>title :</label>${ticket.title}
-		</div>
-		<div class="line">
-			<label>category : </label>${ticket.category}			
-		</div>
+		<c:if test="${not info.editContext.lightInterface}">
+			<div class="line">
+				<label>title :</label>${ticket.title}
+			</div>
+			<div class="line">
+				<label>category : </label>${ticket.category}			
+			</div>
+		</c:if>
 </div></div>
+<c:if test="${not info.editContext.lightInterface}">
 		<c:set var="strListSeparator" value="|||"/>
 		<c:set var="knownUsers" value="${strListSeparator}"/>
 		<c:set var="ticketUsers" value="${strListSeparator}"/>
@@ -95,6 +117,7 @@
 			</fieldset>
 		</c:set>
 		<c:if test="${minOne}"><c:out value="${buffer}" escapeXml="false" /></c:if>
+</c:if>
 		<div class="frame">
 		
 		<c:if test="${not empty ticket.url}">	

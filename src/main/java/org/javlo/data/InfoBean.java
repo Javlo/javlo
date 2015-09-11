@@ -901,6 +901,10 @@ public class InfoBean {
 		return EditContext.getInstance(globalContext, ctx.getRequest().getSession()).isEditPreview() && ctx.isAsPreviewMode();
 	}
 
+	public EditContext getEditContext() {
+		return EditContext.getInstance(globalContext, ctx.getRequest().getSession());
+	}
+
 	public PageBean getFirstLevelPage() {
 		MenuElement page;
 		try {

@@ -6,8 +6,10 @@
  <thead>
      <tr>       
        <th class="head0">title</th>                  
+       <c:if test="${not info.editContext.lightInterface}">
        <th class="head1">priority</th>       
        <th class="head0">create</th>
+       </c:if>
        <th class="head1">update</th>       
        <th class="head0">#comments</th>
        <th class="head1">status</th>
@@ -21,8 +23,10 @@
 <colgroup>   
     
     <col class="con0" />
+    <c:if test="${not info.editContext.lightInterface}">
     <col class="con1" />
     <col class="con0" />
+    </c:if>
     <col class="con1" />            
     <col class="con0" />
     <col class="con1" />
@@ -38,9 +42,11 @@
  	 <c:url var="ticketURL" value="${info.currentURL}">
  	 	<c:param name="id" value="${ticket.id}" />
  	 </c:url>	 
-     <td class="con0"><a class="${ticket.read?'read':'unread'}" href="${ticketURL}">${ticket.title}</a><span class="hidden">${ticket.message}</span></td>     	 
+     <td class="con0"><a class="${ticket.read?'read':'unread'}" href="${ticketURL}">${empty ticket.title ? '?' : ticket.title}</a><span class="hidden">${ticket.message}</span></td>
+     <c:if test="${not info.editContext.lightInterface}">
      <td class="con1">${ticket.priority}</td>     
      <td class="con0">${ticket.creationDateLabel}</td>
+     </c:if>
      <td class="con1">${ticket.lastUpdateDateLabel}</td>
      <td class="con0">${fn:length(ticket.comments)}</td>     
      <td class="con1"><a class="status ${ticket.status}" href="${ticketURL}">${ticket.status}</a></td>
@@ -56,8 +62,10 @@
    <tr>       
         <tr>       
         <th class="head0">title</th>                  
+       <c:if test="${not info.editContext.lightInterface}">
        <th class="head1">priority</th>       
        <th class="head0">create</th>
+       </c:if>
        <th class="head1">update</th>       
        <th class="head0">#comments</th>
        <th class="head1 filter">status</th>
@@ -75,11 +83,13 @@
 jQuery(document).ready(function() {
 	jQuery('#notes').dataTable( {
 		 "sPaginationType": "full_numbers",
-		 "aaSorting": [[ 3, "desc" ]],
+		 "aaSorting": [[ ${not info.editContext.lightInterface ? 3 : 1}, "desc" ]],
 		 "aoColumns": [
 		               null,
+		               <c:if test="${not info.editContext.lightInterface}">
 		               null,
 		               null,
+		               </c:if>
 		               null,
 		               null,		               
 		               <c:if test="${globalContext.master}">
