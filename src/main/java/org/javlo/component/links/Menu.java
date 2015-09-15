@@ -119,7 +119,7 @@ public class Menu extends AbstractPropertiesComponent {
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(outStream);
 		out.println(super.getEditXHTMLCode(ctx));
-		out.println(getSelectRendererXHTML(ctx));
+		out.println(getSelectRendererXHTML(ctx,true));
 		out.close();
 		return new String(outStream.toByteArray());
 	}
