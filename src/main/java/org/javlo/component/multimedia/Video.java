@@ -657,6 +657,19 @@ public class Video extends GlobalImage implements IAction, IVideo {
 				setRenderer(ctx, "youtube");
 			}
 		}
+		
+		if (isModify()) {
+			if (isLink()) {
+				setRenderer(ctx, "link");
+			} else if (isYouTube()) {
+				setRenderer(ctx, "youtube");
+			} else if (isVimeo()) {
+				setRenderer(ctx, "vimeo");
+			} else if (StringHelper.isVideo(getFileName())) {
+				setRenderer(ctx, "local");
+			}
+		}
+		
 		return msg;
 	}
 }

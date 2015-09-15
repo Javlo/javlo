@@ -208,6 +208,8 @@ public class GlobalImage extends Image implements IImageFilter {
 		String imageURL = getImageURL(ctx);
 		if (imageURL != null) {
 			ctx.getRequest().setAttribute("image", imageURL);
+		} else {
+			ctx.getRequest().setAttribute("image", null);
 		}
 		if (getFilter(ctx).equals(RAW_FILTER)) {
 			ctx.getRequest().setAttribute("previewURL", URLHelper.createResourceURL(ctx, getResourceURL(ctx, getFileName())));
@@ -349,7 +351,7 @@ public class GlobalImage extends Image implements IImageFilter {
 				filtersArray[i][1] = i18nAccess.getText("template.image.type." + filter, filter);
 				i++;
 			}
-			finalCode.append(XHTMLHelper.getInputOneSelect(getImageFilterInputName(), filtersArray, getFilter(ctx)));
+			finalCode.append(XHTMLHelper.getInputOneSelect(getImageFilterInputName(), filtersArray, getFilter(ctx), "no-submit"));
 			finalCode.append("</div>");
 
 		} else {

@@ -616,7 +616,11 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		}
 
 		if (getRenderes(ctx) == null || getRenderes(ctx).size() > 1) {
-			out.println(getSelectRendererXHTML(ctx));
+			if (!isAutoRenderer()) {
+				out.println(getSelectRendererXHTML(ctx));
+			} else {
+				out.println("<div>"+getRenderer(ctx)+"</div>");
+			}
 		}
 
 		if (AdminUserSecurity.getInstance().isAdmin(ctx.getCurrentEditUser())) {
@@ -1061,6 +1065,14 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 
 	public Map<String, String> getRenderes(ContentContext ctx) {
 		return getConfig(ctx).getRenderes();
+	}
+	
+	/**
+	 * return true if end user could not select the renderer.
+	 * @return
+	 */
+	protected boolean isAutoRenderer() {
+		return false;
 	}
 
 	/**

@@ -49,8 +49,6 @@ public class StaticConfig extends Observable {
 	public static String MAILING_PLATFORM = "mailing";
 	private static final List<String> PLATFORMS = new LinkedList<String>(Arrays.asList(new String[] {WEB_PLATFORM, MAILING_PLATFORM}));
 
-	private static final String EHCACHE_FILE = "/WEB-INF/config/ehcache.xml";
-
 	protected static Logger logger = Logger.getLogger(StaticConfig.class.getName());
 
 	PropertiesConfiguration properties = new PropertiesConfiguration();

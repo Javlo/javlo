@@ -201,9 +201,11 @@ jQuery(document).ready(function() {
 
 	jQuery(".js-change-submit select").each(function() {
 		var item = jQuery(this);
-		item.live("change", function() {
-			jQuery(this.form).trigger("submit");
-		});
+		if (item.hasClass('no-submit')) {
+			item.live("change", function() {
+				jQuery(this.form).trigger("submit");
+			});
+		}
 	});
 
 	jQuery(".js-submit select").each(function() {

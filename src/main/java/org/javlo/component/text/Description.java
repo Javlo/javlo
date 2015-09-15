@@ -120,7 +120,7 @@ public class Description extends AbstractVisualComponent {
 
 	@Override
 	public boolean initContent(ContentContext ctx) {
-		setValue(LoremIpsumGenerator.getParagraph(40, true, true));
+		setValue(LoremIpsumGenerator.getParagraph(24, true, true));
 		setModify();
 		return true;
 	}
