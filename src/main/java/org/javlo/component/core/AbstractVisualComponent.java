@@ -66,10 +66,13 @@ import org.javlo.utils.DebugListening;
 import org.javlo.utils.SuffixPrefix;
 
 /**
- * This class is the first class for component. <h4>exposed variables :</h4>
+ * This class is the first class for component.
+ * <h4>exposed variables :</h4>
  * <ul>
- * <li>{@link String} compid : the id of the components. See {@link #getId()}</li>
- * <li>{@link String} compPage : a page bean of the page contain's the component.</li>
+ * <li>{@link String} compid : the id of the components. See {@link #getId()}
+ * </li>
+ * <li>{@link String} compPage : a page bean of the page contain's the
+ * component.</li>
  * <li>{@link String} value : the raw value of the component. See
  * {@link #getValue()}</li>
  * <li>{@link String} type : the component type. See {@link #getType()}</li>
@@ -507,7 +510,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 
 	public void setWidth(String width) {
 	}
-	
+
 	@Override
 	public String getXHTMLConfig(ContentContext ctx) throws Exception {
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
@@ -572,7 +575,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			out.println(XHTMLHelper.getRadio(id, name, "right", layout.isRight()));
 			out.println(i18nAccess.getText("component.layout.right"));
 			out.println("</label>");
-			
+
 			if (getConfig(ctx).isFontStyle()) {
 				id = "layout-bold-" + getId();
 				out.println("<label for=\"" + id + "\">");
@@ -616,11 +619,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		}
 
 		if (getRenderes(ctx) == null || getRenderes(ctx).size() > 1) {
-			if (!isAutoRenderer()) {
-				out.println(getSelectRendererXHTML(ctx));
-			} else {
-				out.println("<div>"+getRenderer(ctx)+"</div>");
-			}
+			out.println(getSelectRendererXHTML(ctx, isAutoRenderer()));
 		}
 
 		if (AdminUserSecurity.getInstance().isAdmin(ctx.getCurrentEditUser())) {
@@ -783,7 +782,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		}
 		return null;
 	}
-	
+
 	@Override
 	public boolean isDispayEmptyXHTMLCode(ContentContext ctx) throws Exception {
 		return true;
@@ -965,7 +964,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	public MenuElement getPage() {
 		return page;
 	}
-	
+
 	protected String getTag(ContentContext ctx) {
 		return getConfig(ctx).getProperty("tag", "div");
 	}
@@ -1066,9 +1065,10 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	public Map<String, String> getRenderes(ContentContext ctx) {
 		return getConfig(ctx).getRenderes();
 	}
-	
+
 	/**
 	 * return true if end user could not select the renderer.
+	 * 
 	 * @return
 	 */
 	protected boolean isAutoRenderer() {
@@ -1121,7 +1121,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		return SEARCH_LEVEL_LOW;
 	}
 
-	protected String getSelectRendererXHTML(ContentContext ctx) throws Exception, IOException {
+	protected String getSelectRendererXHTML(ContentContext ctx, boolean justDisplay) throws Exception, IOException {
 		if (getCurrentRenderer(ctx) == null && (getRenderer(ctx) == null || getRenderer(ctx).length() <= 1)) {
 			return "";
 		}
@@ -1138,27 +1138,32 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			out.println("<legend>" + i18nAccess.getText("content.page-teaser.display-type") + "</legend><div class=\"line\">");
 
 			if (getRendererTitle() != null) { /*
-											 * for use title you must implement
-											 * method getRendererTitle and
-											 * return empty string if empty and
-											 * not null (default value).
-											 */
+												 * for use title you must
+												 * implement method
+												 * getRendererTitle and return
+												 * empty string if empty and not
+												 * null (default value).
+												 */
 				out.println("<div class=\"line\">");
 				out.println("<label for=\"" + getInputNameRendererTitle() + "\">" + i18nAccess.getText("global.title") + " : </label>");
 				out.println("<input type=\"text\" id=\"" + getInputNameRendererTitle() + "\" name=\"" + getInputNameRendererTitle() + "\" value=\"" + getRendererTitle() + "\"  />");
 				out.println("</div>");
 			}
 
-			out.println("<div class=\"line\">");
-			/* display as slide show */
+			if (justDisplay) {
+				out.println("<p>"+getCurrentRenderer(ctx)+"</p>");
+			} else {
+				out.println("<div class=\"line\">");
+				/* display as slide show */
 
-			Map<String, String> renderers = getRenderes(ctx);
-			List<String> keys = new LinkedList<String>(renderers.keySet());
-			Collections.sort(keys);
-			for (String key : keys) {
-				if (!key.contains(".")) {
-					out.println(XHTMLHelper.getRadio(getInputNameRenderer(), key, getCurrentRenderer(ctx)));
-					out.println("<label for=\"" + key + "\">" + key + "</label></div><div class=\"line\">");
+				Map<String, String> renderers = getRenderes(ctx);
+				List<String> keys = new LinkedList<String>(renderers.keySet());
+				Collections.sort(keys);
+				for (String key : keys) {
+					if (!key.contains(".")) {
+						out.println(XHTMLHelper.getRadio(getInputNameRenderer(), key, getCurrentRenderer(ctx)));
+						out.println("<label for=\"" + key + "\">" + key + "</label></div><div class=\"line\">");
+					}
 				}
 			}
 
@@ -1242,7 +1247,8 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	protected String getForcedId(ContentContext ctx) {
 		/* user for mirror mecanism */
 		String compID = (String) ctx.getRequest().getAttribute(FORCE_COMPONENT_ID);
-		// System.out.println("***** AbstractVisualComponent.getForcedId : area="+getArea()+" type="+getType()+" compID = "+compID);
+		// System.out.println("***** AbstractVisualComponent.getForcedId :
+		// area="+getArea()+" type="+getType()+" compID = "+compID);
 		// //TODO: remove debug trace
 		if (compID == null) {
 			compID = getId();
@@ -2129,13 +2135,13 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	public InputStream stringToStream(String str) {
 		return new ByteArrayInputStream(str.getBytes());
 	}
-	
+
 	public Reader stringToReader(String str, String encoding) throws UnsupportedEncodingException {
-		return new InputStreamReader(stringToStream(str), encoding);		
+		return new InputStreamReader(stringToStream(str), encoding);
 	}
-	
+
 	public Reader stringToReader(String str) throws UnsupportedEncodingException {
-		return stringToReader(str, ContentContext.CHARACTER_ENCODING);		
+		return stringToReader(str, ContentContext.CHARACTER_ENCODING);
 	}
 
 	/**
@@ -2294,17 +2300,17 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	public boolean isReversedLink(ContentContext ctx) {
 		return ctx.getGlobalContext().isReversedLink();
 	}
-	
+
 	@Override
 	public GenericMessage getContentMessage(ContentContext ctx) {
 		return null;
 	}
-	
+
 	@Override
 	public GenericMessage getTextMessage(ContentContext ctx) {
 		return null;
 	}
-	
+
 	@Override
 	public GenericMessage getConfigMessage(ContentContext ctx) {
 		return null;
