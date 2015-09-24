@@ -16,6 +16,7 @@ import org.javlo.component.files.AbstractFileComponent;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
+import org.javlo.filter.ImageFileFilter;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.i18n.I18nAccess;
@@ -160,6 +161,10 @@ public class Image extends AbstractFileComponent implements IImageTitle, IPrevie
 	@Override
 	public String getPreviewCode(ContentContext ctx, int maxDisplayedImage) throws Exception {
 		return getPreviewCode(ctx, maxDisplayedImage, false);
+	}
+	
+	protected String[] getFileList(String directory) {
+		return getFileList(directory, new ImageFileFilter());
 	}
 
 	public String getPreviewCode(ContentContext ctx, int maxDisplayedImage, boolean imageList) throws Exception {
@@ -484,6 +489,9 @@ public class Image extends AbstractFileComponent implements IImageTitle, IPrevie
 	@Override
 	public boolean initContent(ContentContext ctx) throws Exception {
 		super.initContent(ctx);
+		if (isEditOnCreate(ctx)) {
+			return false;
+		}
 
 		String defaultFileName = "default.jpg";
 		File defaultFile = new File(URLHelper.mergePath(getFileDirectory(ctx), defaultFileName));

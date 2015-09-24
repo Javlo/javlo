@@ -786,5 +786,27 @@ public interface IContentVisualComponent extends Comparable<IContentVisualCompon
 	 * @return
 	 */
 	public GenericMessage getConfigMessage(ContentContext ctx);
+	
+	/**
+	 * mark component as new in the current request
+	 * @param ctx
+	 * @return
+	 */
+	public void markAsNew(ContentContext ctx);
+	
+	/**
+	 * check if this component has maked has new in the current request
+	 * @param ctx
+	 * @return
+	 */
+	public boolean isNew(ContentContext ctx);
+	
+	/**
+	 * return true if the component is directly edited when it is insered.
+	 * @param ctx
+	 * @return
+	 */
+	public boolean isEditOnCreate(ContentContext ctx);
+	
 
 }

@@ -25,7 +25,7 @@ public class TableBreak extends TableComponent {
 	public void init(ComponentBean bean, ContentContext newContext) throws Exception {
 		super.init(bean, newContext);
 	}
-
+	
 	@Override
 	public String getType() {
 		return TYPE;
@@ -68,7 +68,11 @@ public class TableBreak extends TableComponent {
 			style.append(" border: 1px #333333 solid;");
 		}
 		if (getSpacing(ctx) != null && getSpacing(ctx).trim().length() > 0) {
-			style.append("border-spacing:" + getSpacing(ctx) + "; border-collapse: separate;");
+			String spacing = getSpacing(ctx);
+			if (StringHelper.isDigit(spacing)) {
+				spacing = spacing + "px";
+			}
+			style.append("border-spacing:" + spacing + "; border-collapse: separate;");
 		}
 		return style.toString();
 	}
@@ -164,8 +168,11 @@ public class TableBreak extends TableComponent {
 	}
 
 	@Override
-	public boolean initContent(ContentContext ctx) throws Exception {
+	public boolean initContent(ContentContext ctx) throws Exception {		
 		super.initContent(ctx);
+		if (isEditOnCreate(ctx)) {
+			return false;
+		}
 
 		IContentVisualComponent previous = ComponentHelper.getPreviousComponent(this, ctx);
 		while (previous != null && !(previous instanceof TableComponent)) {

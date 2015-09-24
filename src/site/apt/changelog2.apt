@@ -468,4 +468,21 @@ change log
   
  * block preview popup on error
  
- * text component + font style  
+ * text component + font style
+ 
+ * change header icone for export  
+ 
+* 2.1.0.2.10 18/09/2015
+
+ * correction bug on firefox : drop a element on him self
+ 
+* 2.1.0.2.11 22/09/2015
+ 
+ * Edit directely on create in preview mode
+ 
+ * Synchronization block the persistence
+ 
+ * you can stop the undo (sample: in macro)
+ 
+* 2.1.0.2.12 25/09/2015 
+ 

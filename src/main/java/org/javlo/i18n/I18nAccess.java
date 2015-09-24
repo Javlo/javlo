@@ -31,7 +31,6 @@ import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.context.ContentContext;
-import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.ConfigHelper;
 import org.javlo.helper.ResourceHelper;
@@ -65,6 +64,8 @@ public class I18nAccess implements Serializable {
 	static final String I18N_COUNTRIES_FILE_NAME = "/WEB-INF/i18n/countries_";
 
 	public static final Properties FAKE_I18N_FILE = new Properties();
+
+	public static final String KEY_NOT_FOUND = "[KEY NOT FOUND";
 
 	public static I18nAccess getInstance(ContentContext ctx) throws ServiceException, Exception {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
@@ -493,7 +494,7 @@ public class I18nAccess implements Serializable {
 		}
 
 		if (text == null) {
-			text = "[KEY NOT FOUND : " + key + "]";
+			text = KEY_NOT_FOUND + " : " + key + "]";
 		}
 		return text;
 	}

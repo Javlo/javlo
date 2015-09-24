@@ -3,8 +3,6 @@
  */
 package org.javlo.component.text;
 
-import java.io.UnsupportedEncodingException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 import org.javlo.component.core.AbstractVisualComponent;
@@ -138,7 +136,7 @@ public class Description extends AbstractVisualComponent {
 	@Override
 	public String getPageDescription(ContentContext ctx) {	
 		try {
-			ctx.getRequest().setAttribute(MenuElement.FAKE_DESCRIPTION, "no desc");
+			ctx.getRequest().setAttribute(MenuElement.FAKE_DESCRIPTION+getPage().getId(), getValue());
 			return XHTMLHelper.replaceJSTLData(ctx, getValue(ctx));
 		} catch (Exception e) {
 			e.printStackTrace();

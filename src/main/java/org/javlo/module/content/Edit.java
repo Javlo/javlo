@@ -837,6 +837,7 @@ public class Edit extends AbstractModuleAction {
 		}
 
 		IContentVisualComponent comp = content.getComponent(ctx, newId);
+		comp.markAsNew(ctx);
 		comp.setPreviousComponent(ComponentHelper.getPreviousComponent(comp, ctx));
 		comp.setNextComponent(ComponentHelper.getNextComponent(comp, ctx));
 		if (!type.equals("clipboard") && StringHelper.isTrue(rs.getParameter("init", null))) {
@@ -1654,13 +1655,15 @@ public class Edit extends AbstractModuleAction {
 		int c = 0;
 		String latestArea = null;
 		while (elems.hasNext(ctx)) {
-			ComponentBean bean = new ComponentBean(elems.next(ctx).getComponentBean());
+			IContentVisualComponent comp = elems.next(ctx);
+			ComponentBean bean = new ComponentBean(comp.getComponentBean());
 			if (latestArea != null && !bean.getArea().equals(latestArea)) {
 				parentId = "0";
 			}
 			latestArea = bean.getArea();
 			bean.setLanguage(ctx.getRequestContentLanguage());
-			parentId = content.createContent(ctx, bean, parentId, true);
+			//parentId = content.createContent(ctx, bean, parentId, true);
+			parentId = content.createContent(ctx, ctx.getCurrentPage(), bean, parentId, true);
 			c++;
 		}
 

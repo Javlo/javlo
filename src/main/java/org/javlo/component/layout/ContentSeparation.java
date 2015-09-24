@@ -98,6 +98,19 @@ public class ContentSeparation extends AbstractVisualComponent {
 			return renderViewXHTMLCode(ctx);
 		}
 	}
+	
+	@Override
+	public boolean initContent(ContentContext ctx) throws Exception {
+		if (isEditOnCreate(ctx)) {
+			return false;
+		}
+		setStyle(ctx, "visible-separation");
+		return true;
+	}
 
+	@Override
+	public boolean isEditOnCreate(ContentContext ctx) {	
+		return false;
+	}
 
 }

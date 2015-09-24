@@ -44,5 +44,10 @@ public class PageBreak extends AbstractVisualComponent {
 	public boolean isEmpty(ContentContext ctx) {
 		return true;
 	}
+	
+	@Override
+	public boolean isEditOnCreate(ContentContext ctx) {
+		return false;
+	}
 
 }

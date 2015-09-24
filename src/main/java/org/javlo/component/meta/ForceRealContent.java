@@ -77,5 +77,10 @@ public class ForceRealContent extends AbstractVisualComponent {
 	public int getComplexityLevel(ContentContext ctx) {
 		return AbstractVisualComponent.COMPLEXITY_ADMIN;
 	}
+	
+	@Override
+	public boolean isEditOnCreate(ContentContext ctx) {
+		return false;
+	}
 
 }

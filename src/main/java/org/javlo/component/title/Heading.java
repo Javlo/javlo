@@ -7,6 +7,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.javlo.component.core.ComponentLayout;
+import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.core.ISubTitle;
 import org.javlo.component.properties.AbstractPropertiesComponent;
 import org.javlo.context.ContentContext;
@@ -66,14 +67,15 @@ public class Heading extends AbstractPropertiesComponent implements ISubTitle {
 		String depthValue = getFieldValue(DEPTH); 
 		if (depthValue == null || depthValue.length() != 1) {
 			if (ctx != null) {
-				try {
-					if (ctx.getCurrentPage().isRealContent(ctx)) {
-						setFieldValue(DEPTH, "2");
-						return 2;
-					} else {
-						setFieldValue(DEPTH, "1");
-						return 1;
+				try {					
+					for (IContentVisualComponent comp : ctx.getCurrentPage().getContentByType(ctx, getType())) {
+						if (((Heading)comp).getFieldValue(DEPTH).equals("1")) {
+							setFieldValue(DEPTH, "2");
+							return 2;
+						}
 					}
+					setFieldValue(DEPTH, "1");
+					return 1;
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -190,6 +192,9 @@ public class Heading extends AbstractPropertiesComponent implements ISubTitle {
 
 	@Override
 	public boolean initContent(ContentContext ctx) throws Exception {
+		if (isEditOnCreate(ctx)) {
+			return false;
+		}
 		I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
 		setFieldValue(TEXT, i18nAccess.getText("content.heading"));
 		storeProperties();

@@ -3,7 +3,6 @@ package org.javlo.service.syncro;
 import java.util.List;
 import java.util.logging.Logger;
 
-import org.javlo.service.NotificationService;
 import org.javlo.service.syncro.AbstractSynchroContext.SynchroAction;
 import org.javlo.service.syncro.AbstractSynchroContext.SynchroSide;
 import org.javlo.service.syncro.AbstractSynchroContext.SynchroState;

@@ -1231,7 +1231,14 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 						I18nAccess i18nAccess = I18nAccess.getInstance(ctx);
 						String type = i18nAccess.getText("content." + getType(), getType());
 						String hint = "<b>" + type + "</b><br />" + i18nAccess.getViewText("preview.hint", "click for edit or drag and drop to move.");
-						return " class=\"" + specificClass + classPrefix + "editable-component" + currentClass + "\" data-hint=\"" + hint + "\" data-name=\"" + i18nAccess.getText("content." + getType(), getType()) + "\"";
+						String newClass = "";
+						if (isNew(ctx)) {
+							newClass = " new-component";
+							if (isEditOnCreate(ctx)) {
+								newClass = newClass+" edit-component";
+							}
+						}
+						return " class=\"" + specificClass + classPrefix + "editable-component" + currentClass + newClass + "\" data-hint=\"" + hint + "\" data-name=\"" + i18nAccess.getText("content." + getType(), getType()) + "\"";
 					}
 				}
 			} catch (Exception e) {
@@ -2315,5 +2322,33 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	public GenericMessage getConfigMessage(ContentContext ctx) {
 		return null;
 	}
+	
+	/**
+	 * mark component as new in the current request
+	 * @param ctx
+	 * @return
+	 */
+	public void markAsNew(ContentContext ctx) {
+		ctx.getRequest().setAttribute("new-component", getId());
+	}
+	
+	/**
+	 * check if this component has maked has new in the current request
+	 * @param ctx
+	 * @return
+	 */
+	public boolean isNew(ContentContext ctx) {
+		return ctx.getRequest().getAttribute("new-component") != null && ctx.getRequest().getAttribute("new-component").equals(getId()); 
+	}
+	
+	/**
+	 * return true if the component is directly edited when it is insered.
+	 * @param ctx
+	 * @return
+	 */
+	public boolean isEditOnCreate(ContentContext ctx) {
+		return ctx.getGlobalContext().getStaticConfig().isEditOnCreate();
+	}
+	
 
 }

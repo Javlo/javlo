@@ -2,7 +2,7 @@
 %><%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <h2><c:if test="${not empty info.page.rootOfChildrenAssociation}"><a class="newsletter-settings pull-right as-modal" href="${info.page.rootOfChildrenAssociation.page.editUrl}?module=content&webaction=changeMode&mode=3&previewEdit=true" title="newsletter settings" lang="en">
    		<span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
-</a></c:if><span class="glyphicon glyphicon-menu-hamburger" aria-hidden="true"></span>Navigation</h2>
+</a></c:if><span class="glyphicon glyphicon-th-list" aria-hidden="true"></span>Navigation</h2>
 <c:set var="rootAssociation" value="${info.page.rootOfChildrenAssociation}" />
 <c:if test="${not empty rootAssociation}">
 	<div class="height-to-bottom">

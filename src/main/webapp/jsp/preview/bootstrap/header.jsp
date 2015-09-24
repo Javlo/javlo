@@ -213,7 +213,7 @@
 							type="<%=accessType%>"
 							value="${i18n.edit['preview.label.export-mailing']}"
 							onclick="editPreview.openModal('${i18n.edit['preview.label.export-mailing']}','${url}'); return false;">
-							<span class="glyphicon glyphicon-open-file" aria-hidden="true"></span><span class="text">${i18n.edit['preview.label.export-mailing']}</span>
+							<span class="glyphicon glyphicon-export" aria-hidden="true"></span><span class="text">${i18n.edit['preview.label.export-mailing']}</span>
 						</button>
 						</div>
 					</form></li>				

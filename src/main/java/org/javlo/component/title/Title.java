@@ -149,6 +149,9 @@ public class Title extends AbstractVisualComponent {
 
 	@Override
 	public boolean initContent(ContentContext ctx) {
+		if (isEditOnCreate(ctx)) {
+			return false;
+		}
 		setValue(LoremIpsumGenerator.getParagraph(4, true, true));
 		setModify();
 		return true;

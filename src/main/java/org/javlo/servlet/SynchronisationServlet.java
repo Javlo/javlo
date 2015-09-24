@@ -27,6 +27,7 @@ import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.service.ContentService;
+import org.javlo.service.PersistenceService;
 import org.javlo.service.RequestService;
 import org.javlo.service.syncro.FileInfo;
 import org.javlo.service.syncro.FileStructureFactory;
@@ -234,8 +235,12 @@ public class SynchronisationServlet extends HttpServlet {
 					} else if (request.getParameter("refresh") != null) {
 						ContentContext ctx = ContentContext.getContentContext(request, response);
 						ContentService.clearCache(ctx, globalContext);
+						ContentService.getInstance(globalContext).getNavigation(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE));
+						ContentService.getInstance(globalContext).getNavigation(ctx.getContextWithOtherRenderMode(ContentContext.PREVIEW_MODE));
 					} else if (request.getParameter("refresh-all") != null) {
 						ContentContext ctx = ContentContext.getContentContext(request, response);
+						ContentService.getInstance(globalContext).getNavigation(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE));
+						ContentService.getInstance(globalContext).getNavigation(ctx.getContextWithOtherRenderMode(ContentContext.PREVIEW_MODE));
 						ContentService.clearAllCache(ctx, globalContext);
 					} else if (request.getParameter("context") != null) {
 						// System.out.println("****************************");

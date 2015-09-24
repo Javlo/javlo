@@ -9,6 +9,7 @@ import java.util.LinkedList;
 import java.util.Set;
 
 import org.javlo.component.container.RepeatContainer;
+import org.javlo.component.title.LinkLabel;
 import org.javlo.component.title.MenuTitle;
 import org.javlo.component.title.PageTitle;
 import org.javlo.component.title.SubTitle;
@@ -239,7 +240,7 @@ public class ContentElementList implements IContentComponentsList {
 			while (elems.hasNext()) {
 				IContentVisualComponent comp = (IContentVisualComponent) elems.next();
 				if (comp.getLabelLevel(ctx)>currentLabelLevel) {
-					res = comp.getTextLabel();
+					res = comp.getTextTitle(ctx);
 					if (res == null) {
 						res = "";
 					} else {
@@ -324,6 +325,19 @@ public class ContentElementList implements IContentComponentsList {
 						bestSubTitle = res;
 					}
 				}
+			}
+		}
+		return bestSubTitle;
+	}
+	
+	public String getLinkLabel(ContentContext ctx) {
+		String res = "";
+		Iterator elems = contentElements.iterator();		
+		String bestSubTitle = "";
+		while (elems.hasNext()) {
+			IContentVisualComponent comp = (IContentVisualComponent) elems.next();			
+			if (comp instanceof LinkLabel) {				
+				return comp.getValue(ctx);
 			}
 		}
 		return bestSubTitle;

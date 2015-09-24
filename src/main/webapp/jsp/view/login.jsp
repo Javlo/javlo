@@ -1,4 +1,6 @@
-<%@page contentType="text/html"
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" 
+%><%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" 
+%><%@page contentType="text/html"
 import="org.javlo.i18n.I18nAccess,
         org.javlo.user.User,
         org.javlo.user.IUserFactory,
@@ -10,9 +12,11 @@ User user = userFactory.getCurrentUser(session);
 if ( user == null ) {
 %>
 <div class="login center-block">
-	<%if ( request.getParameter("login") == null ) {%><p class="alert alert-info"><%=i18nAccess.getViewText ( "login.intro" )%></p><%}%>
-	<%if ( request.getParameter("login") != null ) {%><div class="message"><div class="error alert alert-danger"><%=i18nAccess.getViewText ( "login.error" )%></div></div><%}%>	
-	<form name="login" method="post">		
+	<c:set var="notFound" value="<%=I18nAccess.KEY_NOT_FOUND%>" />
+    <c:if test="${!fn:contains(i18n.view['login.message'],notFound) && not empty i18n.view['login.message']}"><div class="alert alert-info login-welcome" role="alert">${i18n.view['login.message']}</div></c:if>
+	<%if ( request.getParameter("j_username") == null ) {%><p class="alert alert-info"><%=i18nAccess.getViewText ( "login.intro" )%></p><%}%>
+	<%if ( request.getParameter("j_username") != null ) {%><div class="message"><div class="error alert alert-danger"><%=i18nAccess.getViewText ( "login.error" )%></div></div><%}%>	
+	<form name="login" method="post" action="${info.currentURL}">		
 		<div class="panel panel-default">
 		  	<div class="panel-body">
 			<div class="line form-group">

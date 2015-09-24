@@ -24,6 +24,8 @@ import org.javlo.servlet.zip.ZipManagement;
 
 public class PersistenceThread implements Runnable {
 
+	public static boolean ONE_INSTANCE_RUN = false;
+
 	private static AtomicInteger COUNT_THREAD = new AtomicInteger(0);
 
 	private static Logger logger = Logger.getLogger(PersistenceThread.class.getName());
@@ -43,6 +45,8 @@ public class PersistenceThread implements Runnable {
 	private String defaultLg = null;
 
 	private PersistenceService persistenceService;
+
+	public static Object specialLock = null;
 
 	public void addFolderToSave(File file) {
 		folderToSave.add(file);
@@ -81,28 +85,42 @@ public class PersistenceThread implements Runnable {
 		}
 	}
 
+	public static boolean oneThreadRun() {
+		return COUNT_THREAD.get() > 0;
+	}
+
 	@Override
 	public void run() {
-		COUNT_THREAD.incrementAndGet();
-		File file = null;
-		try {
-			logger.info("before start persitence thread (#THREAD:" + COUNT_THREAD + ')');
-			synchronized (menuElement.getLock()) {
-				logger.info("start persitence thread (#THREAD:" + COUNT_THREAD + ')');
-				long startTime = System.currentTimeMillis();
-				file = store(menuElement, mode, getDefaultLg());
-				logger.info("end persitence thread (" + StringHelper.renderTimeInSecond(System.currentTimeMillis() - startTime) + " sec.).");
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
+		Object specialLockLocal = specialLock;
+		if (specialLockLocal == null) {
+			specialLockLocal = new Object();		
+		} else {
+			logger.info("persistenceThread blocked");
+		}
+		synchronized (specialLockLocal) {			
+			COUNT_THREAD.incrementAndGet();
+			File file = null;
 			try {
-				persistenceService.sendPersistenceErrorToAdministrator("Error in PersistanceThread.", file, e);
-			} catch (AddressException e1) {
-				logger.warning(e1.getMessage());
+				logger.info("before start persitence thread (#THREAD:" + COUNT_THREAD + ')');
+				synchronized (menuElement.getLock()) {
+					logger.info("start persitence thread (#THREAD:" + COUNT_THREAD + ')');
+					long startTime = System.currentTimeMillis();
+
+					file = store(menuElement, mode, getDefaultLg());
+
+					logger.info("end persitence thread (" + StringHelper.renderTimeInSecond(System.currentTimeMillis() - startTime) + " sec.).");
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+				try {
+					persistenceService.sendPersistenceErrorToAdministrator("Error in PersistanceThread.", file, e);
+				} catch (AddressException e1) {
+					logger.warning(e1.getMessage());
+				}
+			} finally {
+				running = false;
+				COUNT_THREAD.decrementAndGet();
 			}
-		} finally {
-			running = false;
-			COUNT_THREAD.decrementAndGet();
 		}
 	}
 

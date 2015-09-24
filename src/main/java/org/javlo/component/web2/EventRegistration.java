@@ -205,6 +205,9 @@ public class EventRegistration extends AbstractPropertiesComponent implements IA
 	@Override
 	public boolean initContent(ContentContext ctx) throws Exception {
 		boolean out = super.initContent(ctx);
+		if (isEditOnCreate(ctx)) {
+			return out;
+		}
 		setFieldValue(CANCEL, "cancel");
 		setFieldValue(CONFIRM, "confirm");
 		setFieldValue(CANCELED, "You will not go to this event.");

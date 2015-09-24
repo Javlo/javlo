@@ -12,6 +12,7 @@ org.javlo.component.title.PageTitle
 org.javlo.component.title.MenuTitle
 org.javlo.component.title.GroupTitle
 org.javlo.component.title.WebSiteTitle
+org.javlo.component.title.LinkLabel
 org.javlo.component.meta.DateComponent
 org.javlo.component.meta.LocationComponent
 org.javlo.component.meta.TimeRangeComponent

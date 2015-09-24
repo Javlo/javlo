@@ -175,6 +175,9 @@ public class SubTitle extends AbstractVisualComponent implements ISubTitle {
 
 	@Override
 	public boolean initContent(ContentContext ctx) {
+		if (isEditOnCreate(ctx)) {
+			return false;
+		}
 		setValue(LoremIpsumGenerator.getParagraph(4, false, true));
 		setModify();
 		return true;

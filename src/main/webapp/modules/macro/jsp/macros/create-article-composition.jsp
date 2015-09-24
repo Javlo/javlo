@@ -35,6 +35,12 @@
 	<input type="text" id="title" name="title" value="${param.title}" class="form-control" />
 </div>
 
+<div class="checkbox">
+	<label>
+	<input type="checkbox" id="hidden" name="hidden" checked="checked" /> Hidden newsletter for other users.
+	</label>
+</div>
+
 <div><input type="hidden" id="date" name="date" value="${info.date}"/></div>
 
 <c:if test="${not empty info.page.rootOfChildrenAssociation}">

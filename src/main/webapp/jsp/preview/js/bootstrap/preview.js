@@ -106,12 +106,8 @@ editPreview.scrollToItem = function(container) {
 editPreview.isScrollBottom = function(container) {
 	var item = pjq(container);
 	var scrollTop = item.scrollTop();
-	console.log("scrollTop = "+scrollTop);
 	item.scrollTop(99999);
 	var outScrollBottom = (scrollTop == item.scrollTop());
-	console.log("scrollTop = "+scrollTop);
-	console.log("item.scrollTop() = "+item.scrollTop());
-	console.log("outScrollBottom = "+outScrollBottom);
 	item.scrollTop(scrollTop);
 	return outScrollBottom;	
 }
@@ -227,10 +223,14 @@ editPreview.initPreview = function() {
 	    	return false;
 	    });
 		el.setAttribute('draggable', 'true');  
-		el.addEventListener('dragstart', function (event) {
+		el.addEventListener('dragstart', function (event) {			
 			var subComp = pjq(this).data("comp");
 			event.dataTransfer.setData("text", ","+subComp.attr("id").substring(3));			
 			pjq(".free-edit-zone").addClass("open");
+		});
+		el.addEventListener('drop', function (event) {
+			event.preventDefault();    	
+	    	return false;
 		});
 		el.addEventListener('dragend', function (event) {
 			pjq(".free-edit-zone").removeClass("open");
@@ -238,16 +238,15 @@ editPreview.initPreview = function() {
 	}	
 	/******************************/	
 	/** drag and drop component * */
-	/******************************/
+	/******************************/	
 	var drag = document.querySelectorAll('#preview_command .component'), el = null;
 	for (var i = 0; i < drag.length; i++) {
 		el = drag[i];    
 		el.setAttribute('draggable', 'true');  
-		el.addEventListener('dragstart', function (event) {			
+		el.addEventListener('dragstart', function (event) {	
 			var scrollBottom = editPreview.isScrollBottom(pjq('html'));
 			event.dataTransfer.setData("text", this.getAttribute("data-type"));
 			pjq(".free-edit-zone").addClass("open");	
-			console.log("scrollBottom = "+scrollBottom);
 			if (scrollBottom) {
 				pjq('html').scrollTop(99999);
 			}
@@ -283,7 +282,7 @@ editPreview.initPreview = function() {
 	for (var i = 0; i < drop.length; i++) {
 		el = drop[i];
 		if (!el.eventsAdded) {
-			el.eventsAdded = true;
+			el.eventsAdded = true;			
 		    el.addEventListener('dragover', function (event) {
 		    	event.preventDefault();
 		    	editPreview.layerOver(this, null, true);
@@ -299,7 +298,6 @@ editPreview.initPreview = function() {
 		    });
 		    el.addEventListener('drop', function (event) {
 				event.preventDefault();
-				
 				var rowData = event.dataTransfer.getData("text").split(",");
 				var compType = rowData[0];
 				if (rowData.length > 1) {
@@ -331,7 +329,13 @@ editPreview.initPreview = function() {
 					if (editPreview.searchPageId(subComp) != null) {
 						ajaxURL = ajaxURL +'&pageContainerID='+ editPreview.searchPageId(subComp);
 					}					
-					editPreview.ajaxPreviewRequest(ajaxURL, null, null);
+					editPreview.ajaxPreviewRequest(ajaxURL, function() {
+						if (pjq(".edit-component").length > 0) {
+							var compId = pjq(".edit-component").attr("id").substring(3);						
+							var editURL = editPreviewURL + "&comp_id=" + compId;
+							editPreview.openModal(i18n_preview_edit, editURL);
+						}
+					}, null);
 				} else if (compId != null && compId.length > 0) { // move component				
 					var previewId = subComp.attr("id").substring(3);				
 					var area = editPreview.searchArea(subComp);		
@@ -410,7 +414,13 @@ editPreview.initPreview = function() {
 						url = url +'&pageContainerID='+ editPreview.searchPageId(this);
 					}
 					var ajaxURL = editPreview.addParam(currentURL,url);					
-					editPreview.ajaxPreviewRequest(ajaxURL, null, null);
+					editPreview.ajaxPreviewRequest(ajaxURL, function() {
+						if (pjq(".edit-component").length > 0) {
+							var compId = pjq(".edit-component").attr("id").substring(3);						
+							var editURL = editPreviewURL + "&comp_id=" + compId;
+							editPreview.openModal(i18n_preview_edit, editURL);
+						}
+					}, null);
 				} else if (compId != null && event.dataTransfer.files.length == 0) { // move component															
 					var ajaxURL = editPreview.addParam(currentURL,"previewEdit=true&webaction=edit.moveComponent&comp-id=" + compId + "&previous=0&area=" + area+ "&render-mode=3&init=true");				
 					if (editPreview.searchPageId(this) != null) {					
@@ -712,7 +722,6 @@ editPreview.initPreview = function() {
 				}			
 				var item = jQuery(xhtmlId);
 				if (item != null) {
-					console.log(xhtml);
 					item.html(xhtml);
 				} else {
 					if (console) {

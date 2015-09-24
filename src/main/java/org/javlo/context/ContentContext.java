@@ -1745,7 +1745,7 @@ public class ContentContext {
 		if (getCurrentPage().getParent() == null) {
 			return false;
 		} else {
-			if (!getGlobalContext().getStaticConfig().isUndo() || getGlobalContext().getFirstLoadVersion() == null) {
+			if (!getGlobalContext().getStaticConfig().isUndo() || getGlobalContext().getFirstLoadVersion() == null || getGlobalContext().isStopUndo()) {
 				return false;
 			}
 			PersistenceService persistenceService = PersistenceService.getInstance(getGlobalContext());

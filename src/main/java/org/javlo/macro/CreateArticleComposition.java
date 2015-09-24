@@ -135,6 +135,7 @@ public class CreateArticleComposition extends AbstractInteractiveMacro implement
 		boolean duplicate = rs.getParameter("duplicate", null) != null;
 		String pageId = rs.getParameter("page", null);
 		String pageName = rs.getParameter("title", null);
+		boolean hidden = StringHelper.isTrue(rs.getParameter("hidden",null), false);
 		
 		if (newgroup.trim().length() > 0) {
 			MenuElement firstArticleGroup = MacroHelper.searchArticleRoot(ctx).iterator().next();
@@ -210,6 +211,7 @@ public class CreateArticleComposition extends AbstractInteractiveMacro implement
 				if (sourcePage != null) {
 					assBean = new PageAssociationBean(ctx, sourcePage.getRootOfChildrenAssociation());
 				}
+				
 				String yearPageName = rootPage.getName() + "-" + cal.get(Calendar.YEAR);
 				MenuElement yearPage = MacroHelper.addPageIfNotExist(ctx, rootPage.getName(), yearPageName, true);
 				MacroHelper.createMonthStructure(ctx, yearPage);
@@ -219,6 +221,7 @@ public class CreateArticleComposition extends AbstractInteractiveMacro implement
 					MenuElement newPage = MacroHelper.addPageIfNotExist(ctx, mountPage, pageName, true, false);
 					MacroHelper.addContent(ctx.getRequestContentLanguage(), newPage, "0", ForceRealContent.TYPE, "", ctx.getCurrentEditUser());
 					if (newPage != null) {
+						newPage.setVisible(!hidden);
 						MenuElement layoutPage = MacroHelper.addPageIfNotExist(ctx, newPage.getName(), newPage.getName() + "-composition", false);
 						if (assBean != null) {
 							newPage.setTemplateId(assBean.getPage().getTemplateId());
@@ -295,6 +298,7 @@ public class CreateArticleComposition extends AbstractInteractiveMacro implement
 					ctx.setParentURL(newURL);
 				}
 			}
+			ctx.getGlobalContext().setStopUndo(true);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return e.getMessage();

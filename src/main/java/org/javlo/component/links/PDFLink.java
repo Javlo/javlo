@@ -44,6 +44,9 @@ public class PDFLink extends AbstractVisualComponent {
 	@Override
 	public boolean initContent(ContentContext ctx) throws Exception {	
 		super.initContent(ctx);
+		if (isEditOnCreate(ctx)) {
+			return false;
+		}
 		setValue("pdf");
 		return true;
 	}

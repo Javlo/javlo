@@ -52,7 +52,7 @@ public class deleteComponentInBadArea extends AbstractMacro {
 
 	@Override
 	public boolean isPreview() {
-		return true;
+		return false;
 	}
 
 }

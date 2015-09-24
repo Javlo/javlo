@@ -110,12 +110,10 @@
 </div>
 <div class="one_half last">
 
-<c:if test="${not globalContext.mailingPlatform}">
 <div class="form-group">
 	<input type="checkbox" id="page_visible" name="view" ${page.info.visible?'checked="checked"':''} value="true" />
 	<label class="suffix" for="page_visible">${i18n.edit['item.visible']}</label>
 </div>
-</c:if>
 
 <c:if test="${fn:length(info.template.pageTypes) > 1}">
 <fieldset>

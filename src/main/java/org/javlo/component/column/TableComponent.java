@@ -14,16 +14,18 @@ import org.javlo.context.ContentContext;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.XHTMLHelper;
 import org.javlo.i18n.I18nAccess;
-import org.javlo.message.GenericMessage;
-import org.javlo.message.MessageRepository;
 
 public abstract class TableComponent extends AbstractPropertiesComponent {
 
 	private static final List<String> fields = Arrays.asList(new String[] { "padding", "width", "valign", "align", "colspan", "backgroundcolor", "bordersize", "bordercolor" });
 
-	protected static final Set<String> FIELD_NEED_UNITY = new HashSet<String>(Arrays.asList(new String[] { "padding", "margin", "width", "bordersize" }));
+	protected static final Set<String> FIELD_NEED_UNITY = new HashSet<String>(Arrays.asList(new String[] { "padding", "margin", "bordersize" }));
 
 	public TableComponent() {
+	}
+	
+	protected Set<String> getFieldNeedUnity() {
+		return FIELD_NEED_UNITY;
 	}
 
 	@Override
@@ -201,7 +203,7 @@ public abstract class TableComponent extends AbstractPropertiesComponent {
 	@Override
 	public String validateField(ContentContext ctx, String fieldName, String fieldValue) throws Exception {
 		String out = super.validateField(ctx, fieldName, fieldValue);
-		if (FIELD_NEED_UNITY.contains(fieldName)) {
+		if (getFieldNeedUnity().contains(fieldName)) {
 			if (StringHelper.isDigit(fieldValue)) {
 				out = fieldName + ' ' + I18nAccess.getInstance(ctx).getText("content.field.need-unity", "need unity like px or %.");
 			}

@@ -54,6 +54,9 @@ public class Text extends AbstractVisualComponent {
 	@Override
 	public boolean initContent(ContentContext ctx) throws Exception {	
 		boolean out =  super.initContent(ctx);
+		if (isEditOnCreate(ctx)) {
+			return out;
+		}
 		setStyle(ctx, "normal");
 		setValue(LoremIpsumGenerator.getParagraph(3, false, false));
 		return out;

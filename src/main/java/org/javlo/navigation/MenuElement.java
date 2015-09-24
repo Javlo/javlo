@@ -85,6 +85,7 @@ import org.javlo.ztatic.StaticInfo;
  */
 public class MenuElement implements Serializable, IPrintInfo {
 
+	// need for jstl replacement in description
 	public static final String FAKE_DESCRIPTION = "FAKE_DESCRIPTION";
 
 	public static final String PAGE_TYPE_DEFAULT = "default";
@@ -113,7 +114,7 @@ public class MenuElement implements Serializable, IPrintInfo {
 		Collection<IImageTitle> images = null;
 		Collection<Link> staticResources = null;
 		String description = null;
-		String metaDescription = null;
+		String metaDescription = null;		
 		String keywords = null;
 		String globalTitle = null;
 		Date contentDate = null;
@@ -140,6 +141,7 @@ public class MenuElement implements Serializable, IPrintInfo {
 		String sharedName = null;
 		Event event = null;
 		String slogan;
+		String linkLabel = null;
 
 		public ImageTitleBean imageLink;
 
@@ -421,6 +423,14 @@ public class MenuElement implements Serializable, IPrintInfo {
 		
 		public String getSlogan() {
 			return slogan;
+		}
+		
+		public String getLinkLabel() {
+			return linkLabel;
+		}
+		
+		public void setLinkLabel(String linkLabel) {
+			this.linkLabel = linkLabel;
 		}
 
 	}
@@ -2021,8 +2031,9 @@ public class MenuElement implements Serializable, IPrintInfo {
 	 */
 	public String getDescription(ContentContext ctx) throws Exception {
 		
-		if (ctx.getRequest().getAttribute(FAKE_DESCRIPTION) != null) {
-			return (String)ctx.getRequest().getAttribute(FAKE_DESCRIPTION);
+		// need for jstl replacement in description
+		if (ctx.getRequest().getAttribute(FAKE_DESCRIPTION+getId()) != null) {
+			return (String)ctx.getRequest().getAttribute(FAKE_DESCRIPTION+getId());
 		}
 		
 		PageDescription desc = getPageDescriptionCached(ctx, ctx.getRequestContentLanguage());
@@ -3051,6 +3062,31 @@ public class MenuElement implements Serializable, IPrintInfo {
 		}
 
 		return desc.subTitle;
+	}
+	
+	/**
+	 * label of the link to page.
+	 * @param ctx
+	 * @return
+	 * @throws Exception
+	 */
+	public String getLinkLabel(ContentContext ctx) throws Exception {
+
+		ContentContext newCtx = new ContentContext(ctx);
+
+		PageDescription desc = getPageDescriptionCached(ctx, newCtx.getRequestContentLanguage());
+
+		if (desc.linkLabel != null) {
+			return desc.linkLabel;
+		}
+
+		newCtx.setArea(null);
+		desc.linkLabel = getLocalContent(newCtx).getLinkLabel(newCtx);
+		if (desc.linkLabel == null) {
+			desc.linkLabel = getContent(newCtx).getLinkLabel(newCtx);
+		}
+
+		return desc.linkLabel;
 	}
 
 	public int getSubTitleLevel(ContentContext ctx) throws Exception {

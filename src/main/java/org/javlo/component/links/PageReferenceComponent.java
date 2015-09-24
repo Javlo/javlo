@@ -256,6 +256,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 			bean.sortableCreationTime = StringHelper.renderSortableTime(page.getCreationDate());
 			bean.priority = page.getPriority();
 			bean.event = new PageEvent();
+			bean.setLinkLabel(page.getLinkLabel(lgCtx));
 			Event event = page.getEvent(realContentCtx);
 			if (event != null) {
 				bean.event.setStart(event.getStart());
@@ -382,6 +383,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		private String path = null;
 		private String creator = null;
 		private String publishURL;
+		private String linkLabel = null;
 		private int priority = 0;
 		private boolean childrenOfAssociation = false;
 		private boolean childrenAssociation = false;
@@ -782,6 +784,14 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 				e.printStackTrace();
 				return null;
 			}
+		}
+
+		public String getLinkLabel() {
+			return linkLabel;
+		}
+
+		public void setLinkLabel(String linkLabel) {
+			this.linkLabel = linkLabel;
 		}
 
 	}
@@ -2176,6 +2186,9 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 	@Override
 	public boolean initContent(ContentContext ctx) throws Exception {
 		super.initContent(ctx);
+		if (isEditOnCreate(ctx)) {
+			return false;
+		}
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(outStream);
 

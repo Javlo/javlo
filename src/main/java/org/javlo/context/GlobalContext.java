@@ -190,6 +190,8 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	private RemoteService remoteService;
 
 	private Integer firstLoadVersion = null;
+	
+	private int stopUndoVersion = 0;
 
 	private Integer latestUndoVersion = null;
 
@@ -3028,6 +3030,38 @@ public class GlobalContext implements Serializable, IPrintInfo {
 			}
 		}
 		return firstLoadVersion;
+	}
+	
+	public void setStopUndo(boolean stopUndo) {
+		if (stopUndo) {
+			try {			
+				PersistenceService persistenceService = PersistenceService.getInstance(this);
+				int version = persistenceService.getVersion();
+				if (version >= 0) {
+					if (persistenceService.isAskStore()) {
+						version++;
+					}
+					stopUndoVersion = version;
+				}
+			} catch (ServiceException e) {
+				e.printStackTrace();
+			}		
+		} else {
+			stopUndoVersion = -1;
+		}
+	}
+	
+	public boolean isStopUndo() {
+		int version;
+		try {
+			version = PersistenceService.getInstance(this).getVersion();
+			if (version >= 0) {
+				return stopUndoVersion == version;
+			}
+		} catch (ServiceException e) {
+			e.printStackTrace();
+		}
+		return false;
 	}
 
 	public Integer getLatestUndoVersion() {
