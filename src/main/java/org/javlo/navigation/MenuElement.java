@@ -2817,7 +2817,7 @@ public class MenuElement implements Serializable, IPrintInfo {
 	 */
 	public double getPageRank(ContentContext ctx) throws Exception {
 
-		final double defaultValue = 0;
+		final double defaultValue = 0.5;
 
 		PageDescription desc = getPageDescriptionCached(ctx, ctx.getRequestContentLanguage());
 
