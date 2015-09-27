@@ -264,7 +264,6 @@ public class ResourceHelper {
 				content = content.replace(key.toUpperCase(), filter.get(key));
 			}
 		}
-		
 		FileUtils.writeStringToFile(file2, content, ContentContext.CHARACTER_ENCODING);
 	}
 	

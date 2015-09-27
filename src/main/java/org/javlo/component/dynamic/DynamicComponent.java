@@ -36,6 +36,7 @@ import org.javlo.fields.FieldFactory;
 import org.javlo.fields.FieldImage;
 import org.javlo.fields.IFieldContainer;
 import org.javlo.fields.MetaField;
+import org.javlo.helper.ComponentHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.i18n.I18nAccess;
@@ -56,6 +57,17 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 	 * create a static logger.
 	 */
 	protected static Logger logger = Logger.getLogger(DynamicComponent.class.getName());
+	
+	@Override
+	public void prepareView(ContentContext ctx) throws Exception {
+		super.prepareView(ctx);
+		if (getNextComponent() == null) {
+			setNextComponent(ComponentHelper.getNextComponent(this, ctx));
+		}
+		if (getPreviousComponent() == null) {
+			setPreviousComponent(ComponentHelper.getPreviousComponent(this, ctx));
+		}
+	}
 
 	@Override
 	public String[] getStyleList(ContentContext ctx) {

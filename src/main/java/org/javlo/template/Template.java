@@ -595,7 +595,7 @@ public class Template implements Comparable<Template> {
 				return false;
 			}
 			String ext = FilenameUtils.getExtension(file.getName());
-			if ((ext.equalsIgnoreCase("html") && jsp) || ext.equalsIgnoreCase("html") || ext.equalsIgnoreCase("css") || ext.equalsIgnoreCase("htm") || ext.equalsIgnoreCase("js")) {
+			if ((ext.equalsIgnoreCase("html") && jsp) || ext.equalsIgnoreCase("html") || ext.equalsIgnoreCase("css") || ext.equalsIgnoreCase("htm") || ext.equalsIgnoreCase("js") || ext.equalsIgnoreCase("less")) {
 				return accept;
 			} else {
 				return !accept;
@@ -1757,15 +1757,7 @@ public class Template implements Comparable<Template> {
 			renderer = getParent().getRendererFile(device);
 		} else {
 			if (device != null && !device.isDefault()) {
-				System.out.println("***** Template.getRendererFile : 1.renderer = " + renderer); // TODO:
-																									// remove
-																									// debug
-																									// trace
 				renderer = StringHelper.addSufixToFileName(renderer, '-' + device.getCode());
-				System.out.println("***** Template.getRendererFile : 2.renderer = " + renderer); // TODO:
-																									// remove
-																									// debug
-																									// trace
 			}
 		}
 		return renderer;

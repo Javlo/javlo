@@ -46,10 +46,10 @@ public class ReverseLinkService {
 		public void setPage(MenuElement page) {
 			this.page = page;
 		}
-		
+
 		public IContentVisualComponent getPrevious() {
 			if (!previousSearched) {
-				IContentVisualComponent prev = ((IContentVisualComponent)component).getPreviousComponent();
+				IContentVisualComponent prev = ((IContentVisualComponent) component).getPreviousComponent();
 				// search previous component without link.
 				while (prev != null && prev instanceof IReverseLinkComponent) {
 					prev = prev.getPreviousComponent();
@@ -59,7 +59,7 @@ public class ReverseLinkService {
 			}
 			return previous;
 		}
-		
+
 	}
 
 	public static final String NONE = "none";
@@ -137,7 +137,7 @@ public class ReverseLinkService {
 					ContentContext noAreaCtx = ctx.getContextWithArea(null);
 					reversedLinkComponentCacheLang = ctx.getRequestContentLanguage();
 					reversedLinkComponentCache = new HashMap<String, ComponentPage>();
-					MenuElement[] children = elem.getAllChildren();					
+					MenuElement[] children = elem.getAllChildren();
 					for (MenuElement element : children) {
 						ContentElementList content = element.getLocalContentCopy(noAreaCtx);
 
@@ -153,10 +153,10 @@ public class ReverseLinkService {
 									String text = ((IReverseLinkComponent) comp).getLinkText(noAreaCtx);
 									ComponentPage componentPage = new ComponentPage();
 									componentPage.setComponent((IReverseLinkComponent) comp);
-									componentPage.setPage(element);									
+									componentPage.setPage(element);
 									reversedLinkComponentCache.put(text, componentPage);
 									String transformText = XHTMLHelper.escapeXHTML(text);
-									if (!transformText.equals(text)) {										
+									if (!transformText.equals(text)) {
 										reversedLinkComponentCache.put(transformText, componentPage);
 									}
 								}
@@ -182,7 +182,7 @@ public class ReverseLinkService {
 	}
 
 	public String replaceLink(ContentContext ctx, IContentVisualComponent comp, String contentValue) throws Exception {
-		
+
 		if (!ctx.getGlobalContext().isReversedLink()) {
 			return contentValue;
 		}
@@ -195,7 +195,7 @@ public class ReverseLinkService {
 		MenuElement parentPage = null;
 
 		StringRemplacementHelper remplacement = new StringRemplacementHelper();
-		
+
 		for (Object element : texts) {
 			String text = (String) element;
 			if (text.trim().length() > 0) {
@@ -248,26 +248,26 @@ public class ReverseLinkService {
 						if (replace) {
 							url = StringHelper.toXMLAttribute(url);
 							if (componentPage != null && componentPage.getComponent() != null && componentPage.getComponent().isOnlyPreviousComponent()) {
-								IContentVisualComponent prevComp = ComponentHelper.getPreviousComponent((IContentVisualComponent)componentPage.getComponent(), ctx);
+								IContentVisualComponent prevComp = ComponentHelper.getPreviousComponent((IContentVisualComponent) componentPage.getComponent(), ctx);
 								if (prevComp != null && comp != null && prevComp.getId().equals(comp.getId())) {
 									remplacement.addReplacement(textPos, textPos + text.length(), "<a href=\"" + url + "\"" + target + ">" + text + "</a>");
 								}
 							} else {
 								if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE) {
-									StringBuffer linkInfo = new StringBuffer();
-									String randomId = StringHelper.getRandomId();
-									linkInfo.append("<span id=\"box-link-" + randomId + "\" class=\"reverselink-info\">");
-									I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
-									String reverseLinkTitle = i18nAccess.getText("item.reversed-link.title");
-									linkInfo.append("<span class=\"title\">" + reverseLinkTitle + "</span>");
-									ContentContext editCtx = new ContentContext(ctx);
-									editCtx.setRenderMode(ContentContext.EDIT_MODE);
-									String pageURL = URLHelper.createURL(editCtx, parentPage.getPath());
-									linkInfo.append("<a href=\"" + pageURL + "\">" + parentPage.getLabel(ctx) + "</a>");
-									linkInfo.append("</span>");
-									if (componentPage != null && ctx.getRequest().getAttribute("replaced-" + componentPage.hashCode()) == null) {
-										if (!componentPage.getComponent().isOnlyThisPage() || componentPage.getPage().equals(currentPage)) {
-											remplacement.addReplacement(textPos, textPos + text.length(), linkInfo + "<a class=\"reverse-link-preview\" href=\"" + url + "\" id=\"link-" + randomId + "\">" + text + "</a>");
+									if (parentPage != null) {
+										StringBuffer linkInfo = new StringBuffer();
+										String randomId = StringHelper.getRandomId();
+										linkInfo.append("<span id=\"box-link-" + randomId + "\" class=\"reverselink-info\">");
+										I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
+										String reverseLinkTitle = i18nAccess.getText("item.reversed-link.title");
+										linkInfo.append("<span class=\"title\">" + reverseLinkTitle + "</span>");
+										String pageURL = URLHelper.createURL(ctx, parentPage.getPath());
+										linkInfo.append("<a title=\"" + reverseLinkTitle + parentPage.getLabel(ctx) + "\" href=\"" + pageURL + "\"><span class=\"glyphicon glyphicon-link\" aria-hidden=\"true\"></span>" + parentPage.getLabel(ctx) + "</a>");
+										linkInfo.append("</span>");
+										if (componentPage != null && ctx.getRequest().getAttribute("replaced-" + componentPage.hashCode()) == null) {
+											if (!componentPage.getComponent().isOnlyThisPage() || componentPage.getPage().equals(currentPage)) {
+												remplacement.addReplacement(textPos, textPos + text.length(), linkInfo + "<a class=\"reverse-link-preview\" href=\"" + url + "\" id=\"link-" + randomId + "\">" + text + "</a>");
+											}
 										}
 									}
 								} else if (componentPage != null) {

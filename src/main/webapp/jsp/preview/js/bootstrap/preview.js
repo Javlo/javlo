@@ -10,6 +10,7 @@ editPreview.layerOver = function(item, title, drop) {
 	var layer = pjq("#preview-layer");
 	pjq("._ep_new-component-zone").remove();
 	
+	
 	var insideLayer = pjq("#preview-layer span");	
 	if (item == null) {		
 		layer.css("z-index", -1);
@@ -34,6 +35,12 @@ editPreview.layerOver = function(item, title, drop) {
 		
 			layer.css("top", comp.offset().top);
 			layer.css("left", comp.offset().left);
+			
+			if (comp.offset().top<80) {
+				layer.addClass('bottom');
+			} else {
+				layer.removeClass('bottom');
+			}
 		
 			var width = comp.outerWidth(false);
 			/*if (width > comp.parent().outerWidth(false)) {

@@ -19,7 +19,7 @@ html.preview-only {
   -ms-text-size-adjust: 100%;
   -webkit-text-size-adjust: 100%;
    box-sizing: content-box;
-   z-index: 9000;   
+   z-index: 11000;   
 }
 
 #preview_command {
@@ -81,7 +81,7 @@ a:hover {
 	position: fixed;
 	top: @header-height+15;
 	right: 15px;
-	z-index: 10020;
+	z-index: 11020;
 }
 
 .ajax-loading {
@@ -164,8 +164,8 @@ a:hover {
     width: 90%;
 }
 
-.modal-dialog {
-    z-index: 100000;
+#preview-modal {
+    z-index: 12000;
 }
 
 iframe {
@@ -306,7 +306,19 @@ body #preview_command .btn[disabled] {
 	right: -1px;
 	min-width: 220px;
 	overflow: hidden;
-	text-align: right;
+	text-align: right;	
+}
+
+#preview-layer.bottom .commands {	
+	top: auto;
+	bottom: -40px;		
+}
+
+#preview-layer.bottom h4 {
+	position: absolute;
+	top: auto;
+	width: 100%;
+	bottom: -18px;
 }
 
 #preview-layer .commands .btn {	
@@ -425,3 +437,13 @@ body #preview_command .btn[disabled] {
 #preview_command #shared-content-search-form .query {
 	width: 60%;
 }
+
+.reverselink-info {
+	font-size: 0;	
+}
+
+.reverselink-info .glyphicon {
+	font-size: 12px;
+	margin-right: 5px;
+}
+

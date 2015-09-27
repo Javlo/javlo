@@ -930,7 +930,12 @@ public class StaticInfo {
 				try {
 					if (getFile().exists()) {
 						BufferedImage img = ImageIO.read(getFile());
-						Point point = InitInterest.getPointOfInterest(img);
+						Point point = null;
+						try {
+							point = InitInterest.getPointOfInterest(img);
+						} catch (Throwable t) {
+							t.printStackTrace();
+						}
 						if (point != null) {
 							int focusX = (point.getX() * 1000) / img.getWidth();
 							int focusY = (point.getY() * 1000) / img.getHeight();
