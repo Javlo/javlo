@@ -275,7 +275,8 @@ public class InfoBean {
 
 	public String getPageDescription() {
 		try {
-			return XHTMLHelper.replaceJSTLData(ctx, currentPage.getDescription(ctx));
+			//return XHTMLHelper.replaceJSTLData(ctx, currentPage.getDescription(ctx));
+			return currentPage.getDescription(ctx);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
