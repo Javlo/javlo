@@ -676,35 +676,42 @@ public class ContentContext {
 	}
 
 	private MenuElement getCurrentPage(boolean urlFacotry) throws Exception {
-		if (getCurrentPageCached() != null) {
-			return getCurrentPageCached();
-		}
-		GlobalContext globalContext = GlobalContext.getInstance(request);
-		MenuElement root = ContentService.getInstance(globalContext).getNavigation(this);
-		if (getPath().equals("/")) {
-			return root;
-		} else {
-			if (getPath().trim().length() > 0) {
-				MenuElement elem = globalContext.getPageIfExist(this, getPath(), urlFacotry);
-				if (elem != null) {
-					globalContext.storeUrl(this, getPath(), elem.getId());
-					setCurrentPageCached(elem);
-				} else {
-					elem = globalContext.convertOldURL(this, getPath());
+		MenuElement outPage = getCurrentPageCached();
+		if (outPage == null) {
+			GlobalContext globalContext = GlobalContext.getInstance(request);
+			MenuElement root = ContentService.getInstance(globalContext).getNavigation(this);
+
+			if (getPath().equals("/")) {
+				outPage = root;
+			} else {
+				if (getPath().trim().length() > 0) {
+					MenuElement elem = globalContext.getPageIfExist(this, getPath(), urlFacotry);
 					if (elem != null) {
-						String newURL = URLHelper.createURL(this, elem);
-						response.sendRedirect(newURL);
+						globalContext.storeUrl(this, getPath(), elem.getId());
 						setCurrentPageCached(elem);
 					} else {
-						setContentFound(false);
-						elem = root;
-						setPath(root.getPath());
+						elem = globalContext.convertOldURL(this, getPath());
+						if (elem != null) {
+							String newURL = URLHelper.createURL(this, elem);
+							response.sendRedirect(newURL);
+							setCurrentPageCached(elem);
+						} else {
+							setContentFound(false);
+							elem = root;
+							setPath(root.getPath());
+						}
 					}
+					outPage = elem;
+				} else {
+					outPage = root;
 				}
-				return elem;
-			} else {
-				return root;
 			}
+		}
+		if (isAsViewMode() && outPage != null && !outPage.isActive()) {
+			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+			return null;
+		} else {
+			return outPage;
 		}
 	};
 

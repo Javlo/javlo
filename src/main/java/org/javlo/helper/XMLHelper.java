@@ -303,6 +303,10 @@ public class XMLHelper {
 				out.print("\" visible=\"");
 				out.print(visible);
 			}
+			if (!page.isActive()) {
+				out.print("\" active=\"");
+				out.print(page.isActive());
+			}			
 			if (!page.getType().equals(MenuElement.PAGE_TYPE_DEFAULT)) {
 				out.print("\" type=\"");
 				out.print(page.getType());

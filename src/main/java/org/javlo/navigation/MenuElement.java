@@ -85,9 +85,6 @@ import org.javlo.ztatic.StaticInfo;
  */
 public class MenuElement implements Serializable, IPrintInfo {
 
-	// need for jstl replacement in description
-	public static final String FAKE_DESCRIPTION = "FAKE_DESCRIPTION";
-
 	public static final String PAGE_TYPE_DEFAULT = "default";
 	
 	public static final double VOTES_MULTIPLY = 100000;
@@ -452,6 +449,15 @@ public class MenuElement implements Serializable, IPrintInfo {
 			} catch (Exception e) {
 				logger.warning(e.getMessage());
 				return false;
+			}
+		}
+		
+		public boolean isActive() {
+			try {
+				return page.isActive(ctx);
+			} catch (Exception e) {
+				logger.warning(e.getMessage());
+				return true;
 			}
 		}
 
@@ -874,6 +880,10 @@ public class MenuElement implements Serializable, IPrintInfo {
 		return pageDescription;
 	}
 
+	public boolean isActive(ContentContext ctx) {
+		return isActive();
+	}
+
 	public PageDescription getSmartPageDescription(ContentContext ctx) {
 		return new SmartPageDescription(ctx, this);
 	}
@@ -967,6 +977,8 @@ public class MenuElement implements Serializable, IPrintInfo {
 	private String templateId;
 
 	boolean visible = true;
+	
+	boolean active = true;
 
 	List<MenuElement> virtualParent = new LinkedList<MenuElement>();
 
@@ -2029,14 +2041,9 @@ public class MenuElement implements Serializable, IPrintInfo {
 	 * @return
 	 * @throws Exception
 	 */
-	public String getDescription(ContentContext ctx) throws Exception {
-		
-		// need for jstl replacement in description
-		if (ctx.getRequest().getAttribute(FAKE_DESCRIPTION+getId()) != null) {
-			return (String)ctx.getRequest().getAttribute(FAKE_DESCRIPTION+getId());
-		}
-		
+	public String getDescription(ContentContext ctx) throws Exception {		
 		PageDescription desc = getPageDescriptionCached(ctx, ctx.getRequestContentLanguage());
+		
 
 		if (desc.description != null) {
 			return desc.description;
@@ -3684,6 +3691,14 @@ public class MenuElement implements Serializable, IPrintInfo {
 	public boolean isVisible() throws Exception {
 		return visible;
 	}
+	
+	public boolean isActive() {
+		return active;
+	}
+	
+	public void setActive(boolean active) {
+		this.active = active;
+	}
 
 	/**
 	 * @return
@@ -3693,6 +3708,9 @@ public class MenuElement implements Serializable, IPrintInfo {
 		if (!visible) {
 			return false;
 		} else {
+			if (!isActive()) {
+				return false;
+			}
 			ContentContext contentAreaCtx = new ContentContext(ctx);
 			contentAreaCtx.setArea(ComponentBean.DEFAULT_AREA);
 			ContentElementList content = this.getContent(contentAreaCtx);

@@ -1090,7 +1090,7 @@ public class Edit extends AbstractModuleAction {
 		return null;
 	}
 
-	public static final String performPageProperties(ServletContext application, GlobalContext globalContext, ContentContext ctx, ContentService content, EditContext editCtx, RequestService requestService, I18nAccess i18nAccess, MessageRepository messageRepository) throws Exception {
+	public static final String performPageProperties(ServletContext application, GlobalContext globalContext, ContentContext ctx, HttpSession session, ContentService content, EditContext editCtx, RequestService requestService, I18nAccess i18nAccess, MessageRepository messageRepository) throws Exception {
 
 		if (!canModifyCurrentPage(ctx) || !checkPageSecurity(ctx)) {
 			messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("action.block"), GenericMessage.ERROR));
@@ -1125,6 +1125,15 @@ public class Edit extends AbstractModuleAction {
 			if (page.isVisible() != isView) {
 				page.setVisible(isView);
 				modify = true;
+			}
+			
+			UserInterfaceContext userInterface = UserInterfaceContext.getInstance(session, globalContext);
+			if (!userInterface.isLight()) {
+				boolean isActive = StringHelper.isTrue(requestService.getParameter("active", null));
+				if (page.isActive() != isActive) {
+					page.setActive(isActive);
+					modify = true;
+				}
 			}
 
 			if (requestService.getParameter("shorturl", null) != null) {

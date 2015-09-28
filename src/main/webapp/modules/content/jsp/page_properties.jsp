@@ -110,6 +110,13 @@
 </div>
 <div class="one_half last">
 
+<c:if test="${!userInterface.light}">
+<div class="form-group">
+	<input type="checkbox" id="page_active" name="active" ${page.info.active?'checked="checked"':''} value="true" />
+	<label class="suffix" for="page_active">${i18n.edit['item.active']}</label>
+</div>
+</c:if>
+
 <div class="form-group">
 	<input type="checkbox" id="page_visible" name="view" ${page.info.visible?'checked="checked"':''} value="true" />
 	<label class="suffix" for="page_visible">${i18n.edit['item.visible']}</label>

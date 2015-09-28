@@ -488,4 +488,6 @@ change log
 
  * reverlink better display + .less bug on deploy correction
  
+ * remove jstl replacement in MenuElement and transfert it in InfoBean.getPageDescription
  
+ * add active property on page 

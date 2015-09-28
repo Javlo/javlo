@@ -671,6 +671,7 @@ public class PersistenceService {
 		page.setName(name);
 		page.setPriority(Integer.parseInt(priority));
 		page.setVisible(StringHelper.isTrue(visible));
+		page.setActive(StringHelper.isTrue(pageXML.getAttributeValue("active",null),true));
 		page.setHttps(StringHelper.isTrue(https));
 
 		page.setTemplateId(layout);
@@ -774,6 +775,7 @@ public class PersistenceService {
 				root.setName(page.getAttributeValue("name"));
 				root.setPriority(Integer.parseInt(page.getAttributeValue("priority")));
 				root.setVisible(StringHelper.isTrue(page.getAttributeValue("visible", "false")));
+				root.setActive(StringHelper.isTrue(page.getAttributeValue("active", "true")));
 				root.setHttps(StringHelper.isTrue(page.getAttributeValue("https", "false")));
 				root.setCreator(page.getAttributeValue("creator", ""));
 

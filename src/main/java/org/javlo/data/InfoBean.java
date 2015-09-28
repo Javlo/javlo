@@ -29,6 +29,7 @@ import org.javlo.helper.NetHelper;
 import org.javlo.helper.ServletHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
+import org.javlo.helper.XHTMLHelper;
 import org.javlo.macro.core.IInteractiveMacro;
 import org.javlo.macro.core.IMacro;
 import org.javlo.macro.core.MacroFactory;
@@ -274,7 +275,7 @@ public class InfoBean {
 
 	public String getPageDescription() {
 		try {
-			return currentPage.getDescription(ctx);
+			return XHTMLHelper.replaceJSTLData(ctx, currentPage.getDescription(ctx));
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
