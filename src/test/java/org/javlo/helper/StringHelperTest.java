@@ -195,6 +195,14 @@ public class StringHelperTest extends TestCase {
 	  assertTrue(StringHelper.isMail("webmaster <webmaster@javlo.org>"));
 	  assertTrue(StringHelper.isMail("webmaster's <webmaster@javlo.org>"));	  
   }
+  public void testListContainsItem() {
+	  assertTrue(StringHelper.listContainsItem("itemA,itemB,itemC,itemD", ",", "itemA"));
+	  assertTrue(StringHelper.listContainsItem("itemA,itemB,itemC,itemD", ",", "itemC"));
+	  assertTrue(StringHelper.listContainsItem("itemA,itemB,itemC,itemD", ",", "itemD"));	  
+	  assertFalse(StringHelper.listContainsItem("itemA,itemB,itemC,itemD", ",", "itemE"));
+	  assertFalse(StringHelper.listContainsItem("itemA,itemB,itemC,itemD", ",", "item"));
+	  assertTrue(StringHelper.listContainsItem("itemA", ",", "itemA"));
+  }
 
 	@SuppressWarnings("unchecked")
 	public void testRangeMatches() {

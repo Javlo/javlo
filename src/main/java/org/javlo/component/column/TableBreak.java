@@ -4,8 +4,10 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import org.javlo.component.core.ComponentBean;
 import org.javlo.component.core.ContentElementList;
@@ -19,13 +21,20 @@ public class TableBreak extends TableComponent {
 
 	private static final List<String> tableFields = Arrays.asList(new String[] { "padding", "width", "valign", "align", "border", "grid", "spacing", "col", "row", "backgroundcolor", "bordersize", "bordercolor" });
 
+	protected static final Set<String> FIELD_NUMBER_ONLY = new HashSet<String>(Arrays.asList(new String[] { "width", "colspan", "col", "row" }));
+
 	public static String TYPE = "table-break";
 
 	@Override
 	public void init(ComponentBean bean, ContentContext newContext) throws Exception {
 		super.init(bean, newContext);
 	}
-	
+
+	@Override
+	protected Set<String> getFieldNumberOnly() {
+		return FIELD_NUMBER_ONLY;
+	}
+
 	@Override
 	public String getType() {
 		return TYPE;
@@ -168,7 +177,7 @@ public class TableBreak extends TableComponent {
 	}
 
 	@Override
-	public boolean initContent(ContentContext ctx) throws Exception {		
+	public boolean initContent(ContentContext ctx) throws Exception {
 		super.initContent(ctx);
 		if (isEditOnCreate(ctx)) {
 			return false;
@@ -188,7 +197,7 @@ public class TableBreak extends TableComponent {
 		}
 		return true;
 	}
-	
+
 	public TableComponent getOpenTableComponent(ContentContext ctx) throws Exception {
 		ContentContext compAreaContext = ctx.getContextWithArea(getArea());
 		ContentElementList content = getPage().getContent(compAreaContext);
@@ -204,7 +213,7 @@ public class TableBreak extends TableComponent {
 				firstComp = comp;
 			}
 			if (comp.getId().equals(getId())) {
-				return (TableComponent)firstComp;
+				return (TableComponent) firstComp;
 			} else if (comp instanceof TableBreak) {
 				inTable = false;
 			}
@@ -276,7 +285,8 @@ public class TableBreak extends TableComponent {
 				while (prvComp != null && !prvComp.getType().equals(OpenRow.TYPE)) {
 					prvComp = ComponentHelper.getPreviousComponent(prvComp, ctx);
 				}
-				if (prvComp != null) { // check if there are openrow before table break
+				if (prvComp != null) { // check if there are openrow before
+										// table break
 					prvComp = ComponentHelper.getPreviousComponent(this, ctx);
 					while (prvComp != null && !prvComp.getType().equals(OpenRow.TYPE)) {
 						String id = prvComp.getId();
@@ -299,7 +309,7 @@ public class TableBreak extends TableComponent {
 
 	@Override
 	public void delete(ContentContext ctx) {
-		try {			
+		try {
 			setFieldValue("col", "0");
 			setFieldValue("row", "0");
 			Collection<String> toDel = new LinkedList<String>();
@@ -310,7 +320,7 @@ public class TableBreak extends TableComponent {
 				if (comp instanceof OpenRow || comp instanceof OpenCell) {
 					toDel.addAll(prepareDel);
 					prepareDel.clear();
-				}				
+				}
 				comp = ComponentHelper.getPreviousComponent(comp, ctx);
 			}
 			for (String toDelComp : toDel) {
@@ -325,11 +335,14 @@ public class TableBreak extends TableComponent {
 	@Override
 	public String performEdit(ContentContext ctx) throws Exception {
 		String msg = super.performEdit(ctx);
-		int newCol = Integer.parseInt(getFieldValue("col"));
-		int newRow = Integer.parseInt(getFieldValue("row"));
-		updateTable(ctx, newCol, newRow);
+		try {
+			int newCol = Integer.parseInt(getFieldValue("col"));
+			int newRow = Integer.parseInt(getFieldValue("row"));
+			updateTable(ctx, newCol, newRow);
+		} catch (Throwable t) {
+			logger.warning(t.getMessage());
+		}
 		return msg;
 	}
-	
 
 }

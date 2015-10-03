@@ -47,7 +47,6 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 import org.javlo.cache.ICache;
 import org.javlo.cache.MapCache;
-import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.config.StaticConfig;
 import org.javlo.helper.ContentHelper;
 import org.javlo.helper.ElementaryURLHelper;

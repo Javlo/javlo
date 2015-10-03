@@ -8,6 +8,12 @@
 <jsp:include page="css/pdf.css" />
 <jsp:include page="css/pagination.jsp" />
 <jsp:include page="css/integration.css" />
+@font-face {
+    font-family: Myriad Pro Regular;
+    src: url("${info.absoluteTemplateFolder}/css/fonts/myriad-web-pro.ttf");
+    -fs-pdf-font-embed: embed;
+    -fs-pdf-font-encoding: Identity-H;
+}
 
 <c:set var="template" value="${info.template.style}" scope="request" />
 body .wrapper {

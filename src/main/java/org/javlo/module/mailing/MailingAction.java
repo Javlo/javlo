@@ -19,7 +19,6 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.lang.StringUtils;
 import org.javlo.actions.AbstractModuleAction;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
@@ -33,10 +32,10 @@ import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
 import org.javlo.module.core.AbstractModuleContext;
 import org.javlo.module.core.Module;
-import org.javlo.module.core.ModuleException;
-import org.javlo.module.core.ModulesContext;
 import org.javlo.module.core.Module.Box;
 import org.javlo.module.core.Module.BoxStep;
+import org.javlo.module.core.ModuleException;
+import org.javlo.module.core.ModulesContext;
 import org.javlo.service.DataToIDService;
 import org.javlo.service.RequestService;
 import org.javlo.service.syncro.SynchroHelper;
@@ -168,16 +167,23 @@ public class MailingAction extends AbstractModuleAction {
 				mailingContext.setReportTo(globalContext.getAdministratorEmail());
 			}
 			IUserFactory userFactory = UserFactory.createUserFactory(request);
+			AdminUserFactory adminUserFactory = AdminUserFactory.createUserFactory(globalContext, session);
 			List<String> groups = new LinkedList(userFactory.getAllRoles(globalContext, session));
 			Collections.sort(groups);
 			request.setAttribute("groups", groups);
 			List<String> adminGroups = new LinkedList(globalContext.getAdminUserRoles());
 			Collections.sort(adminGroups);
 			request.setAttribute("adminGroups", adminGroups);
-
-			String senders = globalContext.getMailingSenders().trim();
+			
+			String senders  = adminUserFactory.getRoleWrapper(ctx, adminUserFactory.getCurrentUser(session)).getMailingSenders();
+			if (senders == null || senders.trim().length() == 0) {
+				senders = globalContext.getMailingSenders().trim();
+			} else {
+				senders = (senders + ',' + globalContext.getMailingSenders()).trim();
+			}
 			if (senders.trim().length() > 0) {
-				request.setAttribute("senders", StringUtils.split(senders, ","));
+				/* hash for remove same entry */
+				request.setAttribute("senders", new HashSet(StringHelper.stringToCollection(senders, ","))); 
 			} else {
 				if (ctx.getCurrentTemplate().getSenders() != null) {
 					request.setAttribute("senders", ctx.getCurrentTemplate().getSenders());

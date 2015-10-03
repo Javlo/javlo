@@ -9,6 +9,7 @@ import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.javlo.context.ContentContext;
 import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.URLHelper;
@@ -231,6 +232,11 @@ public class AdminUserFactory extends UserFactory {
 			outUser.setEditor(true);
 		}
 		return outUser;
+	}
+	
+	@Override
+	protected Set<String> getRoleList(ContentContext ctx) {
+		return ctx.getGlobalContext().getAdminUserRoles();
 	}
 
 }

@@ -275,8 +275,15 @@ public class InfoBean {
 
 	public String getPageDescription() {
 		try {
-			//return XHTMLHelper.replaceJSTLData(ctx, currentPage.getDescription(ctx));
-			return currentPage.getDescription(ctx);
+			final String noRecursiveRequestKey = "_pageDescritionCalled";
+			if (ctx.getRequest().getAttribute(noRecursiveRequestKey) == null) {
+				ctx.getRequest().setAttribute(noRecursiveRequestKey,1);
+				String description = XHTMLHelper.replaceJSTLData(ctx, currentPage.getMetaDescription(ctx));
+				ctx.getRequest().setAttribute(noRecursiveRequestKey,null);
+				return description;
+			} else {
+				return currentPage.getDescription(ctx);
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
@@ -532,7 +539,7 @@ public class InfoBean {
 	public String getAbsoluteTemplateFolder() {
 		try {
 			if (ctx.getCurrentTemplate() != null) {
-				return URLHelper.createStaticTemplateURL(ctx, "/");
+				return URLHelper.createStaticTemplateURL(ctx.getContextForAbsoluteURL(), "/");
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

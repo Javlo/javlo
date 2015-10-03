@@ -95,6 +95,7 @@ org.javlo.component.column.OpenCol
 org.javlo.component.column.CloseCol
 org.javlo.component.files.VFSFile
 org.javlo.component.dynamic.DynamicComponentFactory
+org.javlo.component.container.IubendaRemoteImport
 
 --content.title.ecom
 

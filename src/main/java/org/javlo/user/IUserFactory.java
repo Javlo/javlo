@@ -7,6 +7,7 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.user.exception.UserAllreadyExistException;
 
@@ -70,5 +71,7 @@ public interface IUserFactory {
 	public abstract boolean isStandardStorage();
 
 	User getUserByEmail(String email);
+	
+	public RoleWrapper getRoleWrapper(ContentContext ctx, User user);
 
 }

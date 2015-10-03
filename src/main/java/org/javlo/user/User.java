@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.javlo.context.ContentContext;
 import org.javlo.helper.StringHelper;
 
 /**
@@ -64,6 +65,7 @@ public class User implements Principal, Serializable {
 	public Set<String> getRoles() {
 		return roles;
 	}
+	
 	
 	/**
 	 * check if user can work with this roles.

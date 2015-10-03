@@ -1,56 +1,56 @@
 #preview_command a {
-    color: #D31996;
+    color: #D31996 !important;;
 }
 
 #preview_command .header, #preview_command .sidebar {
 	background-color: #464646;
-	color: #dddddd;
+	color: #dddddd !important;
 	border: 0 none;
 	box-shadow: 0 0 6px #bbbbbb;
 }
 
 #preview_command .header li .inwrapper {
-    color: #cccccc;
+    color: #cccccc !important;;
 }
 
 #preview_command .btn-default, #preview_command .settings .btn, #preview_command .component-list .component .wrapper-in, #preview_command .thumbnail {
-    color: #dddddd;
+    color: #dddddd !important;;
     background-color: #555555;
     border-color: #333333;
 }
 
 #preview_command .component-list .component:HOVER .wrapper-in, #preview_command .thumbnail:HOVER .caption {
-	color: #333333;
+	color: #333333 !important;;
 }
 
 #preview_command .pages.web .selected a {
-    color: #333333;
+    color: #333333 !important;;
 }
 
 #preview_command .settings .btn .label, #preview_command .thumbnail .caption {
-	color: #dddddd;	
+	color: #dddddd !important;;	
 }
 
 #preview_command .settings .btn .value {
-	color: #cccccc;	
+	color: #cccccc !important;;	
 }
 
 #preview_command .settings .btn:hover .label {
-	color: #333333;	
+	color: #333333 !important;;	
 }
 
 #preview_command .settings .btn:hover .value {
-	color: #555555;	
+	color: #555555 !important;;	
 }
 
 #preview_command .pages ul.navigation li a, #preview_command .pages ul.navigation li h4 {
-	color: #dddddd;
+	color: #dddddd !important;;
     background-color: #555555;	
 }
 
 #preview_command .pages ul li.current a {
     background: #eee;
     border-left: 2px solid #007ce7;
-    color: #007ce7;
+    color: #007ce7 !important;;
     font-weight: 700;
 }

@@ -56,7 +56,9 @@ import org.javlo.service.exception.ServiceException;
 import org.javlo.servlet.zip.ZipManagement;
 import org.javlo.template.Template;
 import org.javlo.template.TemplateFactory;
+import org.javlo.user.AdminUserFactory;
 import org.javlo.user.AdminUserSecurity;
+import org.javlo.user.RoleWrapper;
 import org.javlo.utils.ReadOnlyPropertiesConfigurationMap;
 import org.javlo.utils.StructuredProperties;
 import org.javlo.ztatic.FileCache;
@@ -125,21 +127,27 @@ public class TemplateAction extends AbstractModuleAction {
 		Collection<String> contextTemplates = globalContext.getTemplatesNames();
 
 		Collection<Template.TemplateBean> templates = new LinkedList<Template.TemplateBean>();
-		
+
 		templateContext.checkEditMode(ctx);
-		
+
 		if (templateContext.getCurrentLink().equals(TemplateContext.MY_TEMPLATES_LINK.getUrl())) {
 			ctx.getRequest().setAttribute("nobrowse", "true");
 		}
+
+		RoleWrapper roleWrapper = AdminUserFactory.createUserFactory(globalContext, ctx.getRequest().getSession()).getRoleWrapper(ctx, ctx.getCurrentEditUser());
+
 		for (Template template : allTemplate) {
 			if (!template.isTemplateInWebapp(ctx)) {
 				template.importTemplateInWebapp(StaticConfig.getInstance(ctx.getRequest().getSession().getServletContext()), ctx);
 			}
-			if (!templateContext.getCurrentLink().equals(TemplateContext.MY_TEMPLATES_LINK.getUrl()) || contextTemplates.contains(template.getName())) {
-				if (template.visibleForRoles(ctx.getCurrentEditUser().getRoles())) {
-					templates.add(new Template.TemplateBean(ctx, template));
-				}
+			Boolean acceptTemplate = roleWrapper.acceptTemplate(template.getName());
+			if (acceptTemplate == null) {
+				acceptTemplate = !templateContext.getCurrentLink().equals(TemplateContext.MY_TEMPLATES_LINK.getUrl()) || contextTemplates.contains(template.getName());
 			}
+			if (template.visibleForRoles(ctx.getCurrentEditUser().getRoles()) && acceptTemplate) {
+				templates.add(new Template.TemplateBean(ctx, template));
+			}
+
 		}
 		ctx.getRequest().setAttribute("templates", templates);
 
@@ -439,7 +447,7 @@ public class TemplateAction extends AbstractModuleAction {
 	}
 
 	public static String performChangeFromPreview(RequestService rs, HttpSession session, ContentContext ctx, Module currentModule, MessageRepository messageRepository, I18nAccess i18nAccess) throws FileNotFoundException, IOException {
-		TemplateContext.getInstance(session, ctx.getGlobalContext(), currentModule).checkEditMode(ctx);		
+		TemplateContext.getInstance(session, ctx.getGlobalContext(), currentModule).checkEditMode(ctx);
 		return null;
 	}
 
@@ -453,7 +461,7 @@ public class TemplateAction extends AbstractModuleAction {
 		if (ctx.isEditPreview()) {
 			ctx.setClosePopup(true);
 		}
-		
+
 		PersistenceService.getInstance(ctx.getGlobalContext()).setAskStore(true);
 
 		return null;

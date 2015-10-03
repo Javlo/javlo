@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.sql.DataSource;
 
+import org.javlo.context.ContentContext;
 import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.user.exception.UserAllreadyExistException;
@@ -196,4 +197,8 @@ public abstract class AbstractDBUserFactory extends UserFactory {
 	public void updateUserInfo(IUserInfo userInfo) {
 	}
 
+	@Override
+	public RoleWrapper getRoleWrapper(ContentContext ctx, User user) {
+		return super.getRoleWrapper(ctx, user);
+	}
 }

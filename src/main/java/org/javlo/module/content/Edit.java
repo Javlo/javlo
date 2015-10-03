@@ -981,8 +981,10 @@ public class Edit extends AbstractModuleAction {
 	private static void updateArea(ContentContext ctx, String selecterPrefix, IContentVisualComponent comp) throws Exception {
 		selecterPrefix = StringHelper.neverNull(selecterPrefix);
 		Template template = TemplateFactory.getTemplate(ctx, comp.getPage());
-		String areaHTMLid = template.getAreasMap().get(comp.getArea());
-		ctx.getAjaxInsideZone().put(selecterPrefix + areaHTMLid, ServletHelper.executeJSP(ctx, "/jsp/view/content_view.jsp?area=" + comp.getArea()));
+		if (template != null && template.getAreasMap() != null) {
+			String areaHTMLid = template.getAreasMap().get(comp.getArea());
+			ctx.getAjaxInsideZone().put(selecterPrefix + areaHTMLid, ServletHelper.executeJSP(ctx, "/jsp/view/content_view.jsp?area=" + comp.getArea()));
+		}
 	}
 
 	public static final String performSave(ContentContext ctx, EditContext editContext, GlobalContext globalContext, ContentService content, ComponentContext componentContext, RequestService requestService, I18nAccess i18nAccess, MessageRepository messageRepository, Module currentModule, AdminUserFactory adminUserFactory) throws Exception {

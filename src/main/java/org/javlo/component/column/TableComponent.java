@@ -20,12 +20,18 @@ public abstract class TableComponent extends AbstractPropertiesComponent {
 	private static final List<String> fields = Arrays.asList(new String[] { "padding", "width", "valign", "align", "colspan", "backgroundcolor", "bordersize", "bordercolor" });
 
 	protected static final Set<String> FIELD_NEED_UNITY = new HashSet<String>(Arrays.asList(new String[] { "padding", "margin", "bordersize" }));
+	
+	protected static final Set<String> FIELD_NUMBER_ONLY = new HashSet<String>(Arrays.asList(new String[] { "width", "colspan" }));
 
 	public TableComponent() {
 	}
 	
 	protected Set<String> getFieldNeedUnity() {
 		return FIELD_NEED_UNITY;
+	}
+	
+	protected Set<String> getFieldNumberOnly() {
+		return FIELD_NUMBER_ONLY;
 	}
 
 	@Override
@@ -204,10 +210,17 @@ public abstract class TableComponent extends AbstractPropertiesComponent {
 	public String validateField(ContentContext ctx, String fieldName, String fieldValue) throws Exception {
 		String out = super.validateField(ctx, fieldName, fieldValue);
 		if (getFieldNeedUnity().contains(fieldName)) {
-			if (StringHelper.isDigit(fieldValue)) {
+			fieldValue = fieldValue.trim();
+			if (fieldValue.length()>0 && !fieldValue.toLowerCase().endsWith("px") && !fieldValue.toLowerCase().endsWith("%")) {
 				out = fieldName + ' ' + I18nAccess.getInstance(ctx).getText("content.field.need-unity", "need unity like px or %.");
 			}
 		}
+		if (getFieldNumberOnly().contains(fieldName)) {
+			if (fieldValue.length()>0 && !StringHelper.isDigit(fieldValue)) {
+				out = fieldName + ' ' + I18nAccess.getInstance(ctx).getText("content.field.only-number", "must be a number.");
+			}
+		}
+		
 		return out;
 	}
 

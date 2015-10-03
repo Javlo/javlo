@@ -1,0 +1,15 @@
+.mainBox {
+   margin-top: 0;
+}
+
+.table tr, .table td {
+	width: 33.33%;
+} 
+
+label {
+	vertical-align: middle;
+}
+
+.templates .input-group {
+	margin-bottom: 3px;
+}

@@ -975,7 +975,7 @@ public class XMLManipulationHelper {
 			out.append("<%}%>");
 		}
 		if (context.isDescription()) {
-			out.append("<%if (currentPage.getMetaDescription(ctx).length()>0){%><meta name=\"description\" content=\"<%=currentPage.getMetaDescription(ctx)%>\" />");
+			out.append("<%if (currentPage.getMetaDescription(ctx).length()>0){%><meta name=\"description\" content=\"${info.pageDescription}\" />");
 			out.newLine();
 			out.append("<%}%>");
 		}

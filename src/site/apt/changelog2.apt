@@ -491,3 +491,9 @@ change log
  * remove jstl replacement in MenuElement and transfert it in InfoBean.getPageDescription
  
  * add active property on page 
+ 
+ * IubendaRemoteImport
+ 
+ * Role editor
+ 
+* 2.1.0.2.13 03/10/2015

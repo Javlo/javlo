@@ -3350,5 +3350,17 @@ public class StringHelper {
 		}
 		throw new IllegalArgumentException("Wrong range parameter.");
 	}
+	
+	public static boolean listContainsItem(String list, String sep, String item) {		
+		if (list.contains(sep+item+sep)) {
+			return true;
+		} else if (list.startsWith(item+sep)) {
+			return true;
+		} else if (list.endsWith(sep+item)) {
+			return true;
+		} else {
+			return list.equals(item);
+		}
+	}
 
 }

@@ -5,7 +5,6 @@ package org.javlo.user;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -24,6 +23,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.javlo.config.StaticConfig;
+import org.javlo.context.ContentContext;
 import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.BeanHelper;
@@ -542,8 +542,13 @@ public class UserFactory implements IUserFactory, Serializable {
 		releaseUserInfoList();
 		if (getCurrentUser(session) != null) {
 			User newUser = getUser(getCurrentUser(session).getLogin());
-			newUser.setContext(globalContext.getContextKey());
-			session.setAttribute(SESSION_KEY, newUser);
+			if (newUser != null) {
+				newUser.setContext(globalContext.getContextKey());
+				session.setAttribute(SESSION_KEY, newUser);
+			} else {
+				//TODO: check validy of this line
+				session.setAttribute(SESSION_KEY, null);
+			}
 		}
 	}
 
@@ -672,6 +677,20 @@ public class UserFactory implements IUserFactory, Serializable {
 		String passwordCode = StringHelper.getRandomString(32, "0123456789abcdefghijklmnopqrstuvwxyz") + StringHelper.getRandomId();
 		changePasswordReference.put(passwordCode, user);
 		return passwordCode;
+	}
+	
+	protected Set<String> getRoleList(ContentContext ctx) {
+		return ctx.getGlobalContext().getUserRoles();
+	}
+	
+	public RoleWrapper getRoleWrapper(ContentContext ctx, User user) {
+		RoleWrapper roleWrapper = new RoleWrapper();
+		for (String role : user.getRoles()) {
+			if (getRoleList(ctx).contains(role)) {
+				roleWrapper.addRole(RolesFactory.getInstance(ctx.getGlobalContext()).getRole(ctx.getGlobalContext(), role));
+			}
+		}
+		return roleWrapper;
 	}
 
 }
