@@ -13,12 +13,23 @@ public class Role {
 	Properties properties = new Properties();
 	String name;
 	File file;
+	Role parent = null;
 
 	public Role(GlobalContext globalContext, String name) throws IOException {
 		this.name = name;
 		file = getFile(globalContext, name);
 		if (file.exists()) {
 			load(globalContext, name);
+		}
+		parent = getParent(globalContext);
+	}
+	
+	public Role getParent(GlobalContext globalContext) throws IOException {
+		String parent = getParent();
+		if (parent != null && parent.length() > 0) {
+			return new Role(globalContext, getParent());
+		} else {
+			return null;
 		}
 	}
 	
@@ -48,6 +59,15 @@ public class Role {
 	}
 
 	public String getMailingSenders() {
+		String senders = getLocalMailingSenders();
+		if (senders.length() == 0 && parent != null) {
+			return parent.getMailingSenders();
+		} else {
+			return senders;
+		}
+	}
+	
+	public String getLocalMailingSenders() {		
 		return properties.getProperty("mailing.senders", "");
 	}
 	
@@ -57,6 +77,15 @@ public class Role {
 	}
 	
 	public String getTemplateIncluded() {
+		String included = getLocalTemplateIncluded();
+		if (included.length() == 0 && parent != null) {
+			return parent.getTemplateIncluded();
+		} else {
+			return included;
+		}
+	}
+	
+	public String getLocalTemplateIncluded() {
 		return properties.getProperty("template.included", "");
 	}
 	
@@ -66,11 +95,33 @@ public class Role {
 	}
 	
 	public String getTemplateExcluded() {
+		String excluded = getLocalTemplateExcluded();
+		if (excluded.length() == 0 && parent != null) {
+			return parent.getTemplateExcluded();
+		} else {
+			return excluded;
+		}
+	}
+	
+	public String getLocalTemplateExcluded() {
 		return properties.getProperty("template.excluded", "");
 	}
 	
 	public void setTemplateExcluded(String templates) throws IOException {
 		properties.setProperty("template.excluded", templates);
+		store();
+	}
+	
+	public String getParent() {
+		return properties.getProperty("parent", "");
+	}
+	
+	public Role getParentRole() {
+		return parent;
+	}
+	
+	public void setParent(String parent) throws IOException {
+		properties.setProperty("parent", parent);
 		store();
 	}
 }

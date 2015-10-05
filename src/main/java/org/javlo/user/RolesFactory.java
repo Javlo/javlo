@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.javlo.context.GlobalContext;
+import org.xhtmlrenderer.css.parser.property.PrimitivePropertyBuilders.Clear;
 
 /**
  * @author pvandermaesen
@@ -47,5 +48,9 @@ public class RolesFactory {
 			}
 			return outRole;
 		}
+	}
+	
+	public void clear() {
+		roles.clear();
 	}
 }

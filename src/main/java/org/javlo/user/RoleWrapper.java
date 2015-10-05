@@ -38,8 +38,7 @@ public class RoleWrapper {
 	 */
 	public Boolean acceptTemplate(String template) {
 		Boolean accept = null;
-		for (Role role : roles) {
-			System.out.println("***** RoleWrapper.acceptTemplate : role = "+role.getName()+"   role.getTemplateIncluded()="+role.getTemplateIncluded()+"  tpl="+template); //TODO: remove debug trace
+		for (Role role : roles) {			
 			if (StringHelper.listContainsItem(role.getTemplateIncluded(), ",", template)) {
 				return true;
 			} else if (accept == null && StringHelper.listContainsItem(role.getTemplateExcluded(), ",", template)) {

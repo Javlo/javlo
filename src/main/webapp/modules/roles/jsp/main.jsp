@@ -6,9 +6,20 @@
 			<input type="hidden" name="webaction" value="roles.update" />
 			<input type="hidden" name="role" value="${role.name}" />
 		</div>
+		
 		<div class="form-group">
-			<label for="mailingSenders">${i18n.edit['role.senders']}</label>
-			<input class="form-control" type="text" id="mailingSenders" name="mailingSenders" value="${role.mailingSenders}" />
+			<label for="parent">${i18n.edit['roles.parent']}</label>
+			<select class="form-control" id="parent" name="parent">
+			<option></option>
+			<c:forEach var="roleName" items="${info.adminRoles}">
+				<c:if test="${roleName != role.name}"><option${role.parent == roleName?' selected="selected"':''}>${roleName}</option></c:if>
+			</c:forEach>
+			</select>
+		</div>
+		
+		<div class="form-group">
+			<label for="mailingSenders">${i18n.edit['role.senders']} <c:if test="${not empty role.parentRole}"><span class="badge">${role.parentRole.mailingSenders}</span></c:if></label>
+			<input class="form-control" type="text" id="mailingSenders" name="mailingSenders" value="${role.localMailingSenders}" />
 		</div>
 		
 		<div class="panel panel-default">
@@ -17,9 +28,9 @@
 		<table class="table table-bordered templates">
 			<thead>
 				<tr>
-					<th>Inherited <button type="submit" name="templateAction" value="inherited" class="btn btn-default btn-xs pull-right">move selection here</button></th>
-					<th>Included <button type="submit" name="templateAction" value="included" class="btn btn-default btn-xs pull-right">move selection here</button></th>
-					<th>Excluded <button type="submit" name="templateAction" value="excluded" class="btn btn-default btn-xs pull-right">move selection here</button></th>
+					<th>Inherited from instance<button type="submit" name="templateAction" value="inherited" class="btn btn-default btn-xs pull-right">move selection here</button></th>
+					<th>Included <c:if test="${not empty templateIncludedInheritedSize}"><span class="badge">${templateIncludedInheritedSize}</span></c:if><button type="submit" name="templateAction" value="included" class="btn btn-default btn-xs pull-right">move selection here</button></th>
+					<th>Excluded <c:if test="${not empty templateExcludedInheritedSize}"><span class="badge">${templateExcludedInheritedSize}</span></c:if><button type="submit" name="templateAction" value="excluded" class="btn btn-default btn-xs pull-right">move selection here</button></th>
 				</tr>
 			</thead>
 			<tbody>

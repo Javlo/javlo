@@ -1505,7 +1505,10 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	}
 
 	protected String executeCurrentRenderer(ContentContext ctx) throws ServletException, IOException {
-		String url = getRenderer(ctx);
+		return executeRenderer(ctx, getRenderer(ctx));
+	}
+	
+	protected String executeRenderer(ContentContext ctx, String url) throws ServletException, IOException {
 		if (url != null) {
 			ctx.getRequest().setAttribute(COMPONENT_KEY, this);
 			if (!url.startsWith("/")) {
