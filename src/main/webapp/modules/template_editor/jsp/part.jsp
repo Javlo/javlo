@@ -14,8 +14,15 @@
 		<div class="line">
 			<label for="parent-${part.name}">parent :</label>
 			<select name="parent" id="parent-${part.name}">			
-			<c:forEach var="currentTemplate" items="${parentTemplates}"><option ${template.parent == currentTemplate?' selected="selected"':''}>${currentTemplate}</option></c:forEach>			
+			<c:set var="templateFound" value="${false}"/>
+			<c:forEach var="currentTemplate" items="${parentTemplates}">
+			<option ${template.parent == currentTemplate?' selected="selected"':''}>${currentTemplate}</option>
+			<c:if test="${template.parent == currentTemplate}"><c:set var="templateFound" value="${true}"/></c:if>
+			</c:forEach>
 			</select>
+			<c:if test="${not templateFound}">
+			<option value="${template.parent}" selected="selected">*${template.parent}</option>
+			</c:if>
 		</div>		
 		</c:if>
 		<div class="cols">
