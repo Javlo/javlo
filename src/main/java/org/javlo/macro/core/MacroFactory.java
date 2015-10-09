@@ -1,6 +1,5 @@
 package org.javlo.macro.core;
 
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -70,9 +69,6 @@ public class MacroFactory {
 
 	private final List<IMacro> macros = new LinkedList<IMacro>();
 
-	private static final List<IMacro> defaultMacros = Arrays.asList(new IMacro[] { new CreateFakeUsers(), new CreateContentChildren(), new DeleteDynamicComponent(), new DeleteComponent(), new AddChildMacro(), new DuplicatePage(), new CreateChildren(), new ImportContent(), new SmartImport(), new CreateAllContentSample(), new CreateArticle(), new CreateAlphabeticChildrenHereMacro(), new CreateArticleComposition(), new ImportHTMLPageMacro(), new ImportJCRPageMacro(), new ImportGalleryMacro(), new CreateDefaultPageStructure(), new CreatePressReleaseTodayMacro(), new CreatePressReleaseHereMacro(), new CreateExternalNewsMacro(), new CreateWeekHereMacro(), new CreateMonthHereMacro(), new CreatePressReleaseTodayHereMacro(), new CreateMonthStructureMacro(), new CreateBaseStructureMacro(), new CreateChildrenStructureMacro(), new DeletePageFromSpecificUser(), new MergeDynamicComponent(), new ReduceSubtitleLevelMacro(), new IncreaseSubtitleLevelMacro(), new CleanResourceImageMacro(), new CleanResourceNameMacro(), new CopyLanguageStructureMacro(), new CopyLanguageStructureHereMacro(), new ImportDefaultLanguageMacro(), new DeleteSmartExternalLinkMacro(), new ImageAfterDescriptionMacro(), new MacroRendererCorrection(), new ImageAfterDescriptionChildrenMacro(), new NoClickableImageMacro(),
-			new CurrentLgExpandMacro(), new EncryptPasswordComponent(), new EncryptVisitorsPasswordMacro(), new CreateRolesFromUserList(), new PasteCopiedElementInAllLanguageMacro(), new ImportDataBase(), new DeleteChildren(), new SortChildren(), new DeleteChildrenContent(), new DuplicateChildren(), new DeleteBadTemplate(), new DownDateMacro(), new UpDateMacro(), new DashOnImageMacro(), new DeleteChildrenAndContent(), new DeleteSameComponent(), new deleteComponentInBadArea(), new UploadGallery(), new CreateBusinessComponent() });
-
 	private static MacroFactory instance = null;
 
 	public synchronized static final MacroFactory getInstance(StaticConfig staticConfig) {
@@ -85,8 +81,66 @@ public class MacroFactory {
 		return instance;
 	}
 
-	private MacroFactory() {
-		macros.addAll(defaultMacros);
+	private MacroFactory() {		
+		macros.add(new CreateFakeUsers());
+		macros.add(new CreateContentChildren());
+		macros.add(new DeleteDynamicComponent());
+		macros.add(new DeleteComponent());
+		macros.add(new AddChildMacro());
+		macros.add(new DuplicatePage());
+		macros.add(new CreateChildren());
+		macros.add(new ImportContent());
+		macros.add(new SmartImport());
+		macros.add(new CreateAllContentSample());
+		macros.add(new CreateArticle());
+		macros.add(new CreateAlphabeticChildrenHereMacro());
+		macros.add(new CreateArticleComposition());
+		macros.add(new ImportHTMLPageMacro());
+		macros.add(new ImportJCRPageMacro());
+		macros.add(new ImportGalleryMacro());
+		macros.add(new CreateDefaultPageStructure());
+		macros.add(new CreatePressReleaseTodayMacro());
+		macros.add(new CreatePressReleaseHereMacro());
+		macros.add(new CreateExternalNewsMacro());
+		macros.add(new CreateWeekHereMacro());
+		macros.add(new CreateMonthHereMacro());
+		macros.add(new CreatePressReleaseTodayHereMacro());
+		macros.add(new CreateMonthStructureMacro());
+		macros.add(new CreateBaseStructureMacro());
+		macros.add(new CreateChildrenStructureMacro());
+		macros.add(new DeletePageFromSpecificUser());
+		macros.add(new MergeDynamicComponent());
+		macros.add(new ReduceSubtitleLevelMacro());
+		macros.add(new IncreaseSubtitleLevelMacro());
+		macros.add(new CleanResourceImageMacro());
+		macros.add(new CleanResourceNameMacro());
+		macros.add(new CopyLanguageStructureMacro());
+		macros.add(new CopyLanguageStructureHereMacro());
+		macros.add(new ImportDefaultLanguageMacro());
+		macros.add(new DeleteSmartExternalLinkMacro());
+		macros.add(new ImageAfterDescriptionMacro());
+		macros.add(new MacroRendererCorrection());
+		macros.add(new ImageAfterDescriptionChildrenMacro());
+		macros.add(new NoClickableImageMacro());
+		macros.add(new CurrentLgExpandMacro());
+		macros.add(new EncryptPasswordComponent());
+		macros.add(new EncryptVisitorsPasswordMacro());
+		macros.add(new CreateRolesFromUserList());
+		macros.add(new PasteCopiedElementInAllLanguageMacro());
+		macros.add(new ImportDataBase());
+		macros.add(new DeleteChildren());
+		macros.add(new SortChildren());
+		macros.add(new DeleteChildrenContent());
+		macros.add(new DuplicateChildren());
+		macros.add(new DeleteBadTemplate());
+		macros.add(new DownDateMacro());
+		macros.add(new UpDateMacro());
+		macros.add(new DashOnImageMacro());
+		macros.add(new DeleteChildrenAndContent());
+		macros.add(new DeleteSameComponent());
+		macros.add(new deleteComponentInBadArea());
+		macros.add(new UploadGallery());
+		macros.add(new CreateBusinessComponent());
 	}
 
 	public IMacro getMacro(String name) {
