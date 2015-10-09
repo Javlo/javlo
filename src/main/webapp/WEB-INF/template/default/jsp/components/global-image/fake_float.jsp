@@ -8,7 +8,7 @@
 <c:if test="${url != '#'}">
 <c:set var="rel" value="${fn:startsWith(url,'http://')?'external':'shadowbox'}" />
 <c:set var="rel" value="${fn:endsWith(url,'.pdf')?'pdf':rel}" />
-<a rel="${rel}" class="${type}" href="${url}" title="${not empty label?cleanLabel:cleanDescription}"></c:if>
+<a rel="${rel}" class="${type}" href="${url}"></c:if>
 <img src="${fn:replace(previewURL,'/full/', '/float/')}" />
 <c:if test="${url != '#'}"></a></c:if>
 </td><td class="sep" style="width: 10px; font-size: 0;">&nbsp;</td><td class="zone1" style="text-align: left;"><span class="container">${comp.firstText}</span></td></tr>
@@ -19,7 +19,7 @@
 <c:if test="${url != '#'}">
 <c:set var="rel" value="${fn:startsWith(url,'http://')?'external':'shadowbox'}" />
 <c:set var="rel" value="${fn:endsWith(url,'.pdf')?'pdf':rel}" />
-<a rel="${rel}" class="${type}" href="${url}" title="${not empty label?cleanLabel:cleanDescription}"></c:if>
+<a rel="${rel}" class="${type}" href="${url}"></c:if>
 <img ${not empty imageWidth?imageWidthTag:''}src="${fn:replace(previewURL,'/full/', '/float/')}" />
 <c:if test="${url != '#'}"></a></c:if>
 </td></tr>
@@ -34,7 +34,7 @@
 <c:if test="${url != '#'}">
 <c:set var="rel" value="${fn:startsWith(url,'http://')?'external':'shadowbox'}" />
 <c:set var="rel" value="${fn:endsWith(url,'.pdf')?'pdf':rel}" />
-<a rel="${rel}" class="${type}" href="${url}" title="${not empty label?cleanLabel:cleanDescription}"></c:if>
+<a rel="${rel}" class="${type}" href="${url}"></c:if>
 <img ${not empty imageWidth?imageWidthTag:''}src="${fn:replace(previewURL,'/full/', '/float/')}" />
 <c:if test="${url != '#'}"></a></c:if>
 </div><div class="text">${label}</div>

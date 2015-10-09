@@ -1116,6 +1116,7 @@ public class MenuElement implements Serializable, IPrintInfo {
 			if (childMenuElements == Collections.EMPTY_LIST) {
 				childMenuElements = new LinkedList<MenuElement>();
 			}
+			menuElement.setUserRoles(getUserRoles());
 			childMenuElements.add(menuElement);
 			sortChild();
 		}
@@ -1136,6 +1137,8 @@ public class MenuElement implements Serializable, IPrintInfo {
 			}
 
 			menuElement.setPriority(priority + 10);
+			menuElement.setUserRoles(getUserRoles());
+			menuElement.addEditorRoles(getEditorRoles());
 			childMenuElements.add(menuElement);
 			sortChild();
 		}
@@ -1161,6 +1164,7 @@ public class MenuElement implements Serializable, IPrintInfo {
 				priority = 10;
 			}
 			menuElement.setPriority(priority - 5);
+			menuElement.setUserRoles(getUserRoles());
 			childMenuElements.add(menuElement);
 			sortChild();
 		}
@@ -1212,8 +1216,12 @@ public class MenuElement implements Serializable, IPrintInfo {
 		}
 	}
 
-	public void addEditorRoles(String group) {
+	public void addEditorRole(String group) {
 		editGroups.add(group);
+	}
+	
+	public void addEditorRoles(Collection<String> groups) {
+		editGroups.addAll(groups);
 	}
 
 	/**
@@ -3977,6 +3985,9 @@ public class MenuElement implements Serializable, IPrintInfo {
 
 	public void setCreator(String creator) {
 		synchronized (getLock()) {
+			if (StringHelper.isEmpty(latestEditor)) {
+				latestEditor = creator;
+			}
 			this.creator = creator;
 		}
 	}
@@ -4601,11 +4612,11 @@ public class MenuElement implements Serializable, IPrintInfo {
 				IContentVisualComponent comp = content.next(noAreaCtx);
 				if (comp instanceof EventDefinitionComponent) {
 					EventDefinitionComponent eventComp = (EventDefinitionComponent)comp;
-					Event event = new Event(eventComp.getId(), eventComp.getStartDate(), eventComp.getEndDate(), getTitle(ctx), getDescription(ctx));
+					Event event = new Event(eventComp.getId(), eventComp.getStartDate(), eventComp.getEndDate(), getTitle(ctx), getDescription(ctx),getImage(noAreaCtx));
 					event.setCategory(getCategory(ctx));
 					event.setLocation(getLocation(ctx));
-					event.setUrl(new URL(URLHelper.createAbsoluteURL(ctx, getPath())));
-					event.setUser(getCreator());
+					event.setUrl(new URL(URLHelper.createURL(ctx.getContextForAbsoluteURL(), this)));
+					event.setUser(getCreator());					
 					desc.event = event;
 					return desc.event;
 				}

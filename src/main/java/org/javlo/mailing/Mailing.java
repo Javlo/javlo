@@ -9,7 +9,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
-import java.lang.reflect.InvocationTargetException;
 import java.text.ParseException;
 import java.util.Collection;
 import java.util.Collections;
@@ -54,13 +53,13 @@ public class Mailing {
 	}
 
 	private static final String CONTENT_FILE = "content.txt";
-	
+
 	private static final String FEEDBACK_FILE = "feedback.csv";
 
 	private static final String RECEIVERS_FILE = "receivers.properties";
 
 	private static final String CONFIG_FILE = "mailing.properties";
-	
+
 	private static final String USERS_FILE = "users.csv";
 
 	private static final String SENT_FILE = "sent.properties";
@@ -127,8 +126,10 @@ public class Mailing {
 	private Date date = null;
 
 	private String templateId = null;
-	
-	private Map<InternetAddress,IUserInfo> users = null;
+
+	private Map<InternetAddress, IUserInfo> users = null;
+
+	public static final Object SYNCRO_LOCK = new Object();
 
 	String getUnsubscribeURL(String mail) {
 		String params = "?webaction=mailing.Unsubscriberole&mail=" + mail + "&roles=" + StringHelper.collectionToString(roles);
@@ -280,10 +281,10 @@ public class Mailing {
 			}
 			setSend(config.getBoolean("send", true));
 			content = FileUtils.readFileToString(contentFile, encoding);
-			
+
 			File userFile = new File(dir.getAbsolutePath() + '/' + USERS_FILE);
 			if (userFile.exists()) {
-				try {					
+				try {
 					Map<InternetAddress, IUserInfo> users = new HashMap<InternetAddress, IUserInfo>();
 					for (IUserInfo userInfo : UserFactory.load(userFile)) {
 						if (userInfo.getInternetAddress() != null) {
@@ -295,7 +296,7 @@ public class Mailing {
 					e.printStackTrace();
 				}
 			}
-			
+
 		} catch (RuntimeException e1) {
 			logger.warning(e1.getMessage());
 		}
@@ -334,67 +335,69 @@ public class Mailing {
 
 	public void store(ServletContext application) throws IOException, ConfigurationException {
 
-		setId(application, getId());
-		if (!dir.exists()) {
-			logger.info("create directory : " + dir);
-			dir.mkdirs();
-		}
-
-		logger.info("create emailing directory : " + dir);
-
-		File contentFile = new File(dir.getAbsolutePath() + '/' + CONTENT_FILE);
-		ResourceHelper.writeStringToFile(contentFile, content, ContentContext.CHARACTER_ENCODING);
-		File receiversFile = new File(dir.getAbsolutePath() + '/' + RECEIVERS_FILE);
-		Collection<String> lines = new LinkedList<String>();
-		for (InternetAddress receiver : receivers) {
-			if (receiver != null) {
-				lines.add(receiver.toUnicodeString());
+		synchronized (SYNCRO_LOCK) {
+			setId(application, getId());
+			if (!dir.exists()) {
+				logger.info("create directory : " + dir);
+				dir.mkdirs();
 			}
-		}
-		FileUtils.writeLines(receiversFile, lines);
 
-		PropertiesConfiguration config = new PropertiesConfiguration();
-		File configFile = new File(dir.getAbsolutePath() + '/' + CONFIG_FILE);
-		config.setProperty("subject", subject);
-		config.setProperty("language", language);
-		config.setProperty("sender", from.toUnicodeString());
-		if (notif != null) {
-			config.setProperty("notif", notif.toUnicodeString());
-		}
-		config.setProperty("send", new Boolean(isSend()));
-		config.setProperty("roles", StringHelper.collectionToString(roles));
-		config.setProperty("encoding", encoding);
-		config.setProperty("date", StringHelper.renderTime(new Date()));		
-		config.setProperty("test", TEST);		
-		config.setProperty("context-key", contextKey);
-		if (sendDate != null) {
-			config.setProperty("send-date", StringHelper.renderTime(sendDate));
-		}
-		if (templateId != null) {
-			config.setProperty("template", templateId);
-		}
-		Collection<Map.Entry<String, String>> dataKeys = data.entrySet();
-		for (Map.Entry<String, String> entry : dataKeys) {
-			config.setProperty(entry.getKey(), entry.getValue());
-		}
-		if (getUnsubscribeURL() != null) {
-			config.setProperty("unsubscribeURL", getUnsubscribeURL());
-		}
-		if (adminEmail != null) {
-			config.setProperty("admin.email", adminEmail);
-		}
-		ResourceHelper.writePropertiesToFile(config, configFile);
-		
-		if (getUsers() != null) {
-			File userFile = new File(dir.getAbsolutePath() + '/' + USERS_FILE);
-			List<IUserInfo> users;
-			Collection<IUserInfo> usersCol = getUsers().values();
-			if (usersCol instanceof List) {
-				users = (List<IUserInfo>)usersCol;
-			} else {
-				users = new LinkedList<IUserInfo>(usersCol);
+			logger.info("create emailing directory : " + dir);
+
+			File contentFile = new File(dir.getAbsolutePath() + '/' + CONTENT_FILE);
+			ResourceHelper.writeStringToFile(contentFile, content, ContentContext.CHARACTER_ENCODING);
+			File receiversFile = new File(dir.getAbsolutePath() + '/' + RECEIVERS_FILE);
+			Collection<String> lines = new LinkedList<String>();
+			for (InternetAddress receiver : receivers) {
+				if (receiver != null) {
+					lines.add(receiver.toUnicodeString());
+				}
 			}
-			UserFactory.store(users, userFile);
+			FileUtils.writeLines(receiversFile, lines);
+
+			PropertiesConfiguration config = new PropertiesConfiguration();
+			File configFile = new File(dir.getAbsolutePath() + '/' + CONFIG_FILE);
+			config.setProperty("subject", subject);
+			config.setProperty("language", language);
+			config.setProperty("sender", from.toUnicodeString());
+			if (notif != null) {
+				config.setProperty("notif", notif.toUnicodeString());
+			}
+			config.setProperty("send", new Boolean(isSend()));
+			config.setProperty("roles", StringHelper.collectionToString(roles));
+			config.setProperty("encoding", encoding);
+			config.setProperty("date", StringHelper.renderTime(new Date()));
+			config.setProperty("test", TEST);
+			config.setProperty("context-key", contextKey);
+			if (sendDate != null) {
+				config.setProperty("send-date", StringHelper.renderTime(sendDate));
+			}
+			if (templateId != null) {
+				config.setProperty("template", templateId);
+			}
+			Collection<Map.Entry<String, String>> dataKeys = data.entrySet();
+			for (Map.Entry<String, String> entry : dataKeys) {
+				config.setProperty(entry.getKey(), entry.getValue());
+			}
+			if (getUnsubscribeURL() != null) {
+				config.setProperty("unsubscribeURL", getUnsubscribeURL());
+			}
+			if (adminEmail != null) {
+				config.setProperty("admin.email", adminEmail);
+			}
+			ResourceHelper.writePropertiesToFile(config, configFile);
+
+			if (getUsers() != null) {
+				File userFile = new File(dir.getAbsolutePath() + '/' + USERS_FILE);
+				List<IUserInfo> users;
+				Collection<IUserInfo> usersCol = getUsers().values();
+				if (usersCol instanceof List) {
+					users = (List<IUserInfo>) usersCol;
+				} else {
+					users = new LinkedList<IUserInfo>(usersCol);
+				}
+				UserFactory.store(users, userFile);
+			}
 		}
 	}
 
@@ -567,9 +570,9 @@ public class Mailing {
 		}
 		return outFB;
 	}
-	
+
 	public int getCountReaders() throws IOException {
-		int c=0;
+		int c = 0;
 		Set<String> allReadyCounted = new HashSet<String>();
 		for (FeedBackMailingBean feedBack : getFeedBack()) {
 			if (!allReadyCounted.contains(feedBack.getEmail())) {
@@ -579,23 +582,23 @@ public class Mailing {
 		}
 		return c;
 	}
-	
-	public int getCountForward() throws IOException {		
-		Map<String,List<String>> mailAgents = new HashMap<String, List<String>>();
+
+	public int getCountForward() throws IOException {
+		Map<String, List<String>> mailAgents = new HashMap<String, List<String>>();
 		for (FeedBackMailingBean feedBack : getFeedBack()) {
 			List<String> agents = mailAgents.get(feedBack.getEmail());
 			if (agents == null) {
-				agents = new LinkedList<String>();				
+				agents = new LinkedList<String>();
 				mailAgents.put(feedBack.getEmail(), agents);
 			}
 			if (!agents.contains(feedBack.getAgent())) {
 				agents.add(feedBack.getAgent());
 			}
 		}
-		int c=0;
+		int c = 0;
 		for (List<String> agents : mailAgents.values()) {
-			if (agents.size()>1) {
-				c = c+(agents.size()-1);
+			if (agents.size() > 1) {
+				c = c + (agents.size() - 1);
 			}
 		}
 		return c;
@@ -636,7 +639,7 @@ public class Mailing {
 	public Date getSendDate() {
 		return sendDate;
 	}
-	
+
 	public String getDateString() {
 		if (sendDate != null) {
 			return StringHelper.renderSortableTime(sendDate);
@@ -669,12 +672,12 @@ public class Mailing {
 		return contentFile.exists() && receiversFile.exists() && configFile.exists();
 	}
 
-	public Map<InternetAddress,IUserInfo> getUsers() {
+	public Map<InternetAddress, IUserInfo> getUsers() {
 		return users;
 	}
 
-	public void setUsers(Map<InternetAddress,IUserInfo> users) {
+	public void setUsers(Map<InternetAddress, IUserInfo> users) {
 		this.users = users;
 	}
-	
+
 }

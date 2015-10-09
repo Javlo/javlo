@@ -327,6 +327,7 @@ public class MacroHelper {
 			newPage = MenuElement.getInstance(globalContext);
 			EditContext editCtx = EditContext.getInstance(globalContext, ctx.getRequest().getSession());
 			newPage.setName(pageName);
+			newPage.addEditorRoles(parentPage.getEditorRoles());
 			newPage.setCreator(editCtx.getUserPrincipal().getName());
 			if (top) {
 				parentPage.addChildMenuElementOnTop(newPage);
@@ -441,6 +442,7 @@ public class MacroHelper {
 		if (parentPage != null) {
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 			newPage = MenuElement.getInstance(globalContext);
+			newPage.addEditorRoles(parentPage.getEditorRoles());
 			EditContext editCtx = EditContext.getInstance(globalContext, ctx.getRequest().getSession());
 			newPage.setName(pageName);
 			newPage.setCreator(editCtx.getUserPrincipal().getName());

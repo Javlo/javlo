@@ -68,7 +68,7 @@ public class I18nAccess implements Serializable {
 	public static final String KEY_NOT_FOUND = "[KEY NOT FOUND";
 
 	public static I18nAccess getInstance(ContentContext ctx) throws ServiceException, Exception {
-		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());		
 		I18nAccess i18n = getInstance(ctx.getRequest());
 		if (ctx.getRenderMode() == ContentContext.EDIT_MODE || ctx.getRenderMode() == ContentContext.PREVIEW_MODE) {
 			i18n.initEdit(globalContext, ctx.getRequest().getSession());
@@ -169,6 +169,8 @@ public class I18nAccess implements Serializable {
 	private Module currentModule;
 
 	private String contextKey;
+	
+	private Object lock = null;
 
 	public synchronized void setCurrentModule(GlobalContext globalContext, HttpSession session, Module currentModule) throws IOException {
 		if (this.currentModule == null || !currentModule.getName().equals(this.currentModule.getName())) {
@@ -184,6 +186,7 @@ public class I18nAccess implements Serializable {
 	}
 
 	private I18nAccess(GlobalContext globalContext) {
+		lock = globalContext.getI18nLock();
 		servletContext = globalContext.getServletContext();
 		PropertiesConfiguration.setDelimiter((char) 0);
 		i18nResource = I18nResource.getInstance(globalContext);
@@ -234,7 +237,7 @@ public class I18nAccess implements Serializable {
 		}
 		String text = "[KEY NULL : " + key + "]";
 		if (key != null) {
-			synchronized (propContentView) {
+			synchronized (lock) {
 				text = propContentView.getString(key);
 			}
 		}
@@ -250,7 +253,7 @@ public class I18nAccess implements Serializable {
 		}
 		String text = null;
 		if (key != null && propContentView != null) {
-			synchronized (propContentView) {
+			synchronized (lock) {
 				text = propContentView.getString(key);
 			}
 		}
@@ -285,7 +288,7 @@ public class I18nAccess implements Serializable {
 		boolean createPropEditMap = false;
 
 		if (propEditMap == null) {
-			synchronized (this) {
+			synchronized (lock) {
 				if (propEditMap == null) {
 					propEditMap = new MapDisplayKeyIfNotFound(new Hashtable<String, String>());
 					createPropEditMap = true;
@@ -455,7 +458,7 @@ public class I18nAccess implements Serializable {
 		}
 
 		boolean createPropViewMap = false;
-		synchronized (lockViewMap) {
+		synchronized (lock) {
 			if (propViewMap == null) {
 				propViewMap = new ReadOnlyMultiMap<String, String>();
 				createPropViewMap = true;
@@ -486,7 +489,7 @@ public class I18nAccess implements Serializable {
 			}
 			if (text == null) {
 				if (propView != null) {
-					synchronized (propView) {
+					synchronized (lock) {
 						text = propView.getString(key);
 					}
 				}
@@ -529,7 +532,7 @@ public class I18nAccess implements Serializable {
 				text = templateView.getProperty(key);
 			}
 			if (text == null) {
-				synchronized (propView) {
+				synchronized (lock) {
 					text = propView.getString(key);
 				}
 			}
@@ -692,32 +695,6 @@ public class I18nAccess implements Serializable {
 			cal.roll(Calendar.MONTH, true);
 		}
 		return months;
-	}
-
-	public static void main(String[] args) {
-		Properties zagreb = new Properties();
-		zagreb.put("test", "val zagreb");
-		Properties io = new Properties();
-		io.put("test", "val io");
-		Properties galaxy = new Properties();
-		galaxy.put("test", "val galaxy");
-		Stack<Properties> stack = new Stack<Properties>();
-		stack.push(zagreb);
-		stack.push(io);
-		stack.push(galaxy);
-
-		Properties templateView = new Properties();
-		templateView.clear();
-		while (!stack.empty()) {
-			templateView.putAll(stack.pop());
-		}
-
-		templateView.putAll(galaxy);
-		templateView.putAll(io);
-		templateView.putAll(zagreb);
-
-		System.out.println("***** I18nAccess.test = " + templateView.getProperty("test")); // TODO: remove debug trace
-
 	}
 
 	public String getAllText(String key, String defautlValue) {

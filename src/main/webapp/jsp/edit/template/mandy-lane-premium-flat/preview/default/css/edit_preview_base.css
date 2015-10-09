@@ -527,6 +527,15 @@ body.edit-preview, body.preview-only {
 	filter: alpha(opacity = 100);
 }
 
+#preview_command a::after {
+	width: auto;
+	height: auto;
+	border: none;
+	border-width: 0;
+	right: 0;
+	top: 0;
+}
+
 #message-container .notification {
 	display: block;
 	padding: 7px;

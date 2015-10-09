@@ -2,21 +2,19 @@ package org.javlo.service.event;
 
 import java.io.Serializable;
 import java.net.URL;
-import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.javlo.component.image.IImageTitle;
 import org.javlo.component.web2.EventRegistration;
 import org.javlo.context.ContentContext;
 import org.javlo.service.ContentService;
-import org.javlo.user.AdminUserFactory;
-import org.javlo.user.IUserFactory;
 import org.javlo.user.User;
 
 public class Event implements Serializable {
 	
-	public static final Event NO_EVENT = new Event(null,null,null,"no event",null);
+	public static final Event NO_EVENT = new Event(null,null,null,"no event",null, null);
 
 	private static final long serialVersionUID = 1L;
 
@@ -29,15 +27,18 @@ public class Event implements Serializable {
 	private String category;
 	private String status;
 	private String description;
+	private IImageTitle image;
 	private int sequence;
 	private String user;
+	private String participantsFileURL = null;
 
-	public Event(String id, Date start, Date end, String summary, String description) {		
+	public Event(String id, Date start, Date end, String summary, String description, IImageTitle image) {		
 		this.id = id;
 		this.start = start;
 		this.end = end;
 		this.summary = summary;
-		this.description = description;
+		this.description = description;		
+		this.image = image;
 	}
 
 	public Date getStart() {
@@ -132,11 +133,27 @@ public class Event implements Serializable {
 		this.user = user;
 	}
 	
-	public List<User> getParticipants(ContentContext ctx) throws Exception {
-		List<User> outUsers = new LinkedList<User>();
+	public List<User> getParticipants(ContentContext ctx) throws Exception {		
 		ContentService content = ContentService.getInstance(ctx.getRequest());
-		EventRegistration comp = (EventRegistration)content.getComponent(ctx, getId());		
+		EventRegistration comp = (EventRegistration)content.getComponent(ctx, getId());
+		participantsFileURL = comp.getUserLink(ctx);
 		return comp.getParticipants(ctx);
+	}
+
+	public IImageTitle getImage() {
+		return image;
+	}
+
+	public void setImage(IImageTitle image) {
+		this.image = image;
+	}
+
+	public String getParticipantsFileURL() {
+		return participantsFileURL;
+	}
+
+	public void setParticipantsFileURL(String participantsFileURL) {
+		this.participantsFileURL = participantsFileURL;
 	}
 
 }

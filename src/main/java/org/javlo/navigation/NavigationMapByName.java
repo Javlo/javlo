@@ -26,7 +26,7 @@ public class NavigationMapByName implements Map<String, PageBean> {
 
 	@Override
 	public void clear() {
-		throw new NotImplementedException();
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
@@ -41,7 +41,7 @@ public class NavigationMapByName implements Map<String, PageBean> {
 
 	@Override
 	public Set<java.util.Map.Entry<String, PageBean>> entrySet() {
-		throw new NotImplementedException();
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
@@ -70,22 +70,22 @@ public class NavigationMapByName implements Map<String, PageBean> {
 
 	@Override
 	public Set<String> keySet() {
-		throw new NotImplementedException();
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public PageBean put(String arg0, PageBean arg1) {
-		throw new NotImplementedException();
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public void putAll(Map<? extends String, ? extends PageBean> arg0) {
-		throw new NotImplementedException();
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public PageBean remove(Object arg0) {
-		throw new NotImplementedException();
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
@@ -99,7 +99,7 @@ public class NavigationMapByName implements Map<String, PageBean> {
 
 	@Override
 	public Collection<PageBean> values() {
-		throw new NotImplementedException();
+		throw new UnsupportedOperationException();
 	}
 
 }

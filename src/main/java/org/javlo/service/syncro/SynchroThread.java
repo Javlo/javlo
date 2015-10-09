@@ -6,6 +6,7 @@ import javax.servlet.ServletContext;
 
 import org.javlo.config.StaticConfig;
 import org.javlo.context.GlobalContext;
+import org.javlo.mailing.Mailing;
 import org.javlo.service.PersistenceThread;
 import org.javlo.thread.AbstractThread;
 
@@ -145,54 +146,50 @@ public class SynchroThread extends AbstractThread {
 
 	@Override
 	public void run() {
-		
+
 		logger.info("start SynchroThread");
-		
-		try {			
-			Object lock = new Object();
-			PersistenceThread.specialLock = lock;
-			synchronized (lock) {
-				if (getTemplateFolder() != null) {
-					ServerSynchroService synchroService = ServerSynchroService.getInstanceForTemplate(getLocalName(), getServerURL(), getProxyHost(), getProxyPort(), getSynchroCode(), getTemplateFolder());
-					synchroService.setRefreshAll(true);
-					if (!synchroService.synchronize()) {
-						return;
-					}
+
+		try {
+
+			if (getTemplateFolder() != null) {
+				ServerSynchroService synchroService = ServerSynchroService.getInstanceForTemplate(getLocalName(), getServerURL(), getProxyHost(), getProxyPort(), getSynchroCode(), getTemplateFolder());
+				synchroService.setRefreshAll(true);
+				if (!synchroService.synchronize()) {
+					return;
 				}
+			}
+			synchronized (PersistenceThread.SYNCRO_LOCK) {
 				if (getDataCtxFolder() != null) {
 					ServerSynchroService synchroService = ServerSynchroService.getInstance(getLocalName(), getServerURL(), getProxyHost(), getProxyPort(), getSynchroCode(), getDataCtxFolder());
-					int countCycle = 0;
-					while (PersistenceThread.oneThreadRun() && countCycle < 20) {
-						Thread.sleep(500);
-						countCycle++;
-					}
 					if (!synchroService.synchronize()) {
 						return;
 					}
 					synchroService.pushContext(getContext());
-					synchroService.sendRefresh();					
+					synchroService.sendRefresh();
 
 				}
-				if (getMailingHistoryFolder() != null) {
-					ServerSynchroService synchroService = ServerSynchroService.getInstanceForMailingHistory(getLocalName(), getServerURL(), getProxyHost(), getProxyPort(), getSynchroCode(), getMailingHistoryFolder());
-					if (!synchroService.synchronize()) {
-						return;
-					}
+			}
+			if (getMailingHistoryFolder() != null) {
+				ServerSynchroService synchroService = ServerSynchroService.getInstanceForMailingHistory(getLocalName(), getServerURL(), getProxyHost(), getProxyPort(), getSynchroCode(), getMailingHistoryFolder());
+				if (!synchroService.synchronize()) {
+					return;
 				}
+			}
+			synchronized (Mailing.SYNCRO_LOCK) {
 				if (getMailingFolder() != null) {
 					ServerSynchroService synchroService = ServerSynchroService.getInstanceForMailing(getLocalName(), getServerURL(), getProxyHost(), getProxyPort(), getSynchroCode(), getMailingFolder());
 					if (!synchroService.synchronize()) {
 						return;
 					}
 				}
-				if (getShareFolder() != null) {
-					ServerSynchroService synchroService = ServerSynchroService.getInstanceForShareFiles(getLocalName(), getServerURL(), getProxyHost(), getProxyPort(), getSynchroCode(), getShareFolder());
-					if (!synchroService.synchronize()) {
-						return;
-					}
-				}
-				PersistenceThread.specialLock = null;
 			}
+			if (getShareFolder() != null) {
+				ServerSynchroService synchroService = ServerSynchroService.getInstanceForShareFiles(getLocalName(), getServerURL(), getProxyHost(), getProxyPort(), getSynchroCode(), getShareFolder());
+				if (!synchroService.synchronize()) {
+					return;
+				}
+			}
+
 			logger.info("end SynchroThread");
 		} catch (Exception e) {
 			logger.log(Level.SEVERE, "Unexcepted exception in SynchroThread: " + e.getMessage(), e);

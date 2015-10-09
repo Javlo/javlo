@@ -195,6 +195,8 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	private Integer latestUndoVersion = null;
 
 	private StorePropertyThread storePropertyThread = null;
+	
+	private final Object i18nLock = new Object();
 
 	/**
 	 * create a static logger.
@@ -3196,6 +3198,10 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		} else {
 			return URLHelper.mergePath(getStaticFolder(),USERS_FOLDER,user.getUserFolder());
 		}
+	}
+
+	public Object getI18nLock() {
+		return i18nLock;
 	}
 
 }

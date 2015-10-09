@@ -426,6 +426,8 @@ public class ContentContext {
 
 	private boolean contentFound = true;
 
+	private GlobalContext forceGlobalContext = null;
+
 	public ContentContext(ContentContext ctx) {
 		path = ctx.path;
 		language = ctx.language;
@@ -1657,7 +1659,15 @@ public class ContentContext {
 	}
 
 	public GlobalContext getGlobalContext() {
-		return GlobalContext.getInstance(request);
+		if (forceGlobalContext == null) {
+			return GlobalContext.getInstance(request);
+		} else {
+			return forceGlobalContext;
+		}
+	}
+	
+	public void setForceGlobalContext(GlobalContext forceGlobalContext) {
+		this.forceGlobalContext = forceGlobalContext;
 	}
 
 	public boolean isContentFound() {

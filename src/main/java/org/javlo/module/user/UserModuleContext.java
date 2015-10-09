@@ -2,6 +2,7 @@ package org.javlo.module.user;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -45,7 +46,7 @@ public class UserModuleContext {
 		GlobalContext globalContext = GlobalContext.getInstance(request);
 		AdminUserFactory adminUserFactory = AdminUserFactory.createAdminUserFactory(globalContext, session);
 
-		userContext.modes = new LinkedList<String>(allModes);
+		userContext.modes = Collections.synchronizedList(new LinkedList<String>(allModes));
 
 		if (adminUserFactory.getCurrentUser(session) != null && !adminUserFactory.getCurrentUser(session).validForRoles(new HashSet<String>(Arrays.asList(AdminUserSecurity.ADMIN_USER_ROLE)))) {
 			userContext.modes.remove(ADMIN_USERS_LIST);

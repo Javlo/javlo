@@ -24,7 +24,7 @@ public abstract class AbstractSharedContentProvider implements ISharedContentPro
 	public String getName() {
 		return name;
 	}
-	
+
 	@Override
 	public String getLabel(Locale locale) {
 		return getName();
@@ -49,7 +49,7 @@ public abstract class AbstractSharedContentProvider implements ISharedContentPro
 		for (SharedContent content : getContent(ctx)) {
 			if (content.getContent() != null) {
 				for (ComponentBean bean : content.getContent()) {
-					if (bean != null && !outList.contains(content) && StringHelper.createFileName(bean.getValue()).contains(query)) {
+					if (bean != null && !outList.contains(content) && (StringHelper.createFileName(bean.getValue()).contains(query) || bean.getValue().toLowerCase().contains(query.toLowerCase()))) {
 						outList.add(content);
 					}
 				}
@@ -61,7 +61,7 @@ public abstract class AbstractSharedContentProvider implements ISharedContentPro
 		return outList;
 	}
 
-	@Override 
+	@Override
 	public void setName(String name) {
 		this.name = name;
 	}
@@ -77,16 +77,19 @@ public abstract class AbstractSharedContentProvider implements ISharedContentPro
 
 	@Override
 	public Collection<SharedContent> getContent(ContentContext ctx, Collection<String> categories) {
-		if (getCategories(ctx).size() <= 0 || categories == null || categories.size() == 0) {			
+		if (getCategories(ctx).size() <= 0 || categories == null || categories.size() == 0) {
 			return getContent(ctx);
 		}
 		List<SharedContent> outList = new LinkedList<SharedContent>();
-		for (SharedContent content : getContent(ctx)) {
-			if (!Collections.disjoint(content.getCategories(), categories)) {							
-				outList.add(content);
+		Collection<SharedContent> contents = getContent(ctx);
+		if (contents != null) {
+			for (SharedContent content : contents) {
+				if (!Collections.disjoint(content.getCategories(), categories)) {
+					outList.add(content);
+				}
 			}
-		}		
-		Collections.sort(outList, new SharedContent.SortOnComparator(false));	
+			Collections.sort(outList, new SharedContent.SortOnComparator(false));
+		}
 		return outList;
 	}
 

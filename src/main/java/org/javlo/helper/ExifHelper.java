@@ -27,7 +27,7 @@ import org.apache.commons.io.FileUtils;
 import org.javlo.ztatic.StaticInfo.Position;
 
 public class ExifHelper {
-	
+
 	private static Logger logger = Logger.getLogger(ExifHelper.class.getName());
 
 	public ExifHelper() {
@@ -36,19 +36,21 @@ public class ExifHelper {
 
 	public static Position readPosition(File file) throws ImageReadException, IOException {
 		if (!file.exists()) {
-			logger.warning("file not found : "+file);
+			logger.warning("file not found : " + file);
 			return null;
 		}
-		final ImageMetadata metadata = Imaging.getMetadata(file);
-		if (metadata instanceof JpegImageMetadata) {
-			final JpegImageMetadata jpegMetadata = (JpegImageMetadata) metadata;
-			final TiffImageMetadata exifMetadata = jpegMetadata.getExif();
-			if (null != exifMetadata) {
-				final TiffImageMetadata.GPSInfo gpsInfo = exifMetadata.getGPS();
-				if (null != gpsInfo) {
-					final double longitude = gpsInfo.getLongitudeAsDegreesEast();
-					final double latitude = gpsInfo.getLatitudeAsDegreesNorth();
-					return new Position(longitude, latitude);
+		if (StringHelper.isJpeg(file.getName())) {
+			final ImageMetadata metadata = Imaging.getMetadata(file);
+			if (metadata instanceof JpegImageMetadata) {
+				final JpegImageMetadata jpegMetadata = (JpegImageMetadata) metadata;
+				final TiffImageMetadata exifMetadata = jpegMetadata.getExif();
+				if (null != exifMetadata) {
+					final TiffImageMetadata.GPSInfo gpsInfo = exifMetadata.getGPS();
+					if (null != gpsInfo) {
+						final double longitude = gpsInfo.getLongitudeAsDegreesEast();
+						final double latitude = gpsInfo.getLatitudeAsDegreesNorth();
+						return new Position(longitude, latitude);
+					}
 				}
 			}
 		}
@@ -57,7 +59,7 @@ public class ExifHelper {
 
 	public static Date readDate(File file) throws ImageReadException, IOException {
 		if (!file.exists()) {
-			logger.warning("file not found : "+file);
+			logger.warning("file not found : " + file);
 			return null;
 		}
 		if (StringHelper.isJpeg(file.getName())) {
@@ -84,7 +86,7 @@ public class ExifHelper {
 
 	public static void setExifGPSTag(final File jpegImageFile, final File dst) throws IOException, ImageReadException, ImageWriteException {
 		if (!jpegImageFile.exists()) {
-			logger.warning("file not found : "+jpegImageFile);
+			logger.warning("file not found : " + jpegImageFile);
 			return;
 		}
 		OutputStream os = null;
@@ -129,7 +131,7 @@ public class ExifHelper {
 
 	public static void changeExifMetadata(final File jpegImageFile, final File dst) throws IOException, ImageReadException, ImageWriteException {
 		if (!jpegImageFile.exists()) {
-			logger.warning("file not found : "+jpegImageFile);
+			logger.warning("file not found : " + jpegImageFile);
 			return;
 		}
 		OutputStream os = null;
@@ -168,7 +170,7 @@ public class ExifHelper {
 
 	public static void writeMetadata(ImageMetadata metadata, final File file) throws ImageWriteException, ImageReadException, IOException {
 		if (!file.exists()) {
-			logger.warning("file not found : "+file);
+			logger.warning("file not found : " + file);
 			return;
 		}
 		OutputStream os = null;

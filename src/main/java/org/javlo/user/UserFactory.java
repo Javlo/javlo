@@ -8,6 +8,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
@@ -33,6 +34,7 @@ import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.i18n.I18nAccess;
+import org.javlo.io.TransactionFile;
 import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
 import org.javlo.user.exception.UserAllreadyExistException;
@@ -587,20 +589,18 @@ public class UserFactory implements IUserFactory, Serializable {
 			userInfoFile.getParentFile().mkdirs();
 			Logger.log(Logger.WARNING, userInfoFile.getPath() + " not found.");
 		}
-		FileOutputStream out = null;
+		OutputStream out = null;
+		TransactionFile transactionFile = new TransactionFile(userInfoFile);
 		try {
-			CSVFactory fact = new CSVFactory(csvArray);
-			out = new FileOutputStream(userInfoFile);
+			CSVFactory fact = new CSVFactory(csvArray);			
+			out = transactionFile.getOutputStream();
+			//out = new FileOutputStream(userInfoFile);
 			fact.exportCSV(out);
-			out.close();
+			transactionFile.commit();
 			releaseUserInfoList();
 		} finally {
 			if (out != null) {
-				try {
-					out.close();
-				} catch (IOException e1) {
-					Logger.log(e1);
-				}
+				ResourceHelper.closeResource(out);
 			}
 		}
 

@@ -1,6 +1,5 @@
 package org.javlo.macro;
 
-import java.io.IOException;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
@@ -135,8 +134,8 @@ public class CreateArticleComposition extends AbstractInteractiveMacro implement
 		boolean duplicate = rs.getParameter("duplicate", null) != null;
 		String pageId = rs.getParameter("page", null);
 		String pageName = rs.getParameter("title", null);
-		boolean hidden = StringHelper.isTrue(rs.getParameter("hidden",null), false);
-		
+		boolean hidden = StringHelper.isTrue(rs.getParameter("hidden", null), false);
+
 		if (newgroup.trim().length() > 0) {
 			MenuElement firstArticleGroup = MacroHelper.searchArticleRoot(ctx).iterator().next();
 			if (firstArticleGroup.getParent() == null) {
@@ -144,27 +143,25 @@ public class CreateArticleComposition extends AbstractInteractiveMacro implement
 			}
 			MenuElement rootArticle = firstArticleGroup.getParent();
 			String newPageName = StringHelper.createFileName(newgroup);
-			MenuElement newPage = MacroHelper.addPage(ctx, rootArticle, newPageName, false, false);
-			newPage.setTemplateId(firstArticleGroup.getTemplateId());
+			MenuElement newPage = MacroHelper.addPage(ctx, rootArticle, newPageName, false, false);			
 			if (newPage == null) {
 				return "a page with this name allready exist.";
 			}
-			rootPageName=newPageName;
-			MacroHelper.addContent(ctx.getRequestContentLanguage(), newPage, "0", Heading.TYPE, Heading.TEXT+'='+newgroup, ctx.getCurrentEditUser());
-			MenuElement yearPage = MacroHelper.addPage(ctx, newPage, newPageName+'-'+Calendar.getInstance().get(Calendar.YEAR), false, false);
-			MacroHelper.addContent(ctx.getRequestContentLanguage(), yearPage, "0", Heading.TYPE,  Heading.TEXT+'='+Calendar.getInstance().get(Calendar.YEAR), ctx.getCurrentEditUser());
+			newPage.setTemplateId(firstArticleGroup.getTemplateId());
+			rootPageName = newPageName;
+			MacroHelper.addContent(ctx.getRequestContentLanguage(), newPage, "0", Heading.TYPE, Heading.TEXT + '=' + newgroup, ctx.getCurrentEditUser());
+			MenuElement yearPage = MacroHelper.addPage(ctx, newPage, newPageName + '-' + Calendar.getInstance().get(Calendar.YEAR), false, false);
+			MacroHelper.addContent(ctx.getRequestContentLanguage(), yearPage, "0", Heading.TYPE, Heading.TEXT + '=' + Calendar.getInstance().get(Calendar.YEAR), ctx.getCurrentEditUser());
 			if (pageName == null || pageName.trim().length() == 0) {
 				return null;
 			}
 		}
-		
-		
+
 		MenuElement sourcePage = null;
 		if (pageId != null) {
 			sourcePage = ContentService.getInstance(ctx.getRequest()).getNavigation(ctx).searchChildFromId(pageId);
 		}
 
-		
 		if (pageName == null || pageName.trim().length() == 0) {
 			return "page name not defined.";
 		}
@@ -211,14 +208,28 @@ public class CreateArticleComposition extends AbstractInteractiveMacro implement
 				if (sourcePage != null) {
 					assBean = new PageAssociationBean(ctx, sourcePage.getRootOfChildrenAssociation());
 				}
-				
+
 				String yearPageName = rootPage.getName() + "-" + cal.get(Calendar.YEAR);
 				MenuElement yearPage = MacroHelper.addPageIfNotExist(ctx, rootPage.getName(), yearPageName, true);
 				MacroHelper.createMonthStructure(ctx, yearPage);
 				String mountPageName = MacroHelper.getMonthPageName(ctx, yearPage.getName(), articleDate);
 				MenuElement mountPage = ContentService.getInstance(ctx.getRequest()).getNavigation(ctx).searchChildFromName(mountPageName);
+
+				List<String> selectedRole;
+				if (ctx.getGlobalContext().isCollaborativeMode()) {
+					selectedRole = new LinkedList<String>();
+					for (String role : roles) {
+						if (rs.getParameter("role-" + role, null) != null) {
+							selectedRole.add(role);
+						}
+					}
+				} else {
+					selectedRole = roles;
+				}
+
 				if (mountPage != null) {
 					MenuElement newPage = MacroHelper.addPageIfNotExist(ctx, mountPage, pageName, true, false);
+					newPage.addEditorRoles(selectedRole);
 					MacroHelper.addContent(ctx.getRequestContentLanguage(), newPage, "0", ForceRealContent.TYPE, "", ctx.getCurrentEditUser());
 					if (newPage != null) {
 						newPage.setVisible(!hidden);
@@ -267,7 +278,8 @@ public class CreateArticleComposition extends AbstractInteractiveMacro implement
 								layoutPage.setTemplateId(config.getProperty("template.composition", null));
 							}
 							layoutPage.setChildrenAssociation(true);
-							MacroHelper.addPageIfNotExist(ctx, layoutPage.getName(), layoutPage.getName() + "-1", false);
+							MacroHelper.addPageIfNotExist(ctx, layoutPage.getName(), layoutPage.getName() + "-1", false).addEditorRoles(selectedRole);
+							;
 
 							MenuElement articlePage = MacroHelper.addPageIfNotExist(ctx, newPage.getName(), newPage.getName() + "-article", false);
 							articlePage.setSharedName(articlePage.getName());
@@ -277,13 +289,6 @@ public class CreateArticleComposition extends AbstractInteractiveMacro implement
 
 						newURL = URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.PREVIEW_MODE), layoutPage);
 
-						List<String> selectedRole = new LinkedList<String>();
-						for (String role : roles) {
-							if (rs.getParameter("role-" + role, null) != null) {
-								newPage.addEditorRoles(role);
-								selectedRole.add(role);
-							}
-						}
 					}
 				} else {
 					message = "mount page not found : " + mountPageName;

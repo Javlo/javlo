@@ -154,6 +154,13 @@ public class EventRegistration extends AbstractPropertiesComponent implements IA
 		return getCanceledUser(ctx).contains(login); 
 	}
 	
+	public String getUserLink(ContentContext ctx) throws Exception {
+		String userLink = URLHelper.createStaticURL(ctx, URLHelper.mergePath("users-list", StringHelper.createFileName(getPage().getTitle(ctx)+".xlsx")));
+		userLink = URLHelper.addParam(userLink, "admin", "true");
+		userLink = URLHelper.addParam(userLink, "event", getId());
+		return userLink;
+	}
+	
 	@Override
 	public String getEditXHTMLCode(ContentContext ctx) throws Exception {
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
@@ -167,9 +174,7 @@ public class EventRegistration extends AbstractPropertiesComponent implements IA
 		out.println("<div class=\"col-md-3\">");
 		out.println("<h3>Confirmed ("+confirmedUser.size()+")</h3>");
 		out.println("</div><div class=\"col-md-3\">");
-		String userLink = URLHelper.createStaticURL(ctx, URLHelper.mergePath("users-list", StringHelper.createFileName(getPage().getTitle(ctx)+".xlsx")));
-		userLink = URLHelper.addParam(userLink, "admin", "true");
-		userLink = URLHelper.addParam(userLink, "event", getId());
+		String userLink = getUserLink(ctx);
 		out.println("<a class=\"btn btn-primary\" href=\""+userLink+"\">Download Excel</a>");
 		out.println("</div><div class=\"col-md-3\">");
 		out.println("<h3>Canceled ("+canceledUser.size()+")</h3>");

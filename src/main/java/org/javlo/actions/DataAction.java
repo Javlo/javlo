@@ -294,7 +294,7 @@ public class DataAction implements IAction {
 			ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 			PrintStream out = new PrintStream(outStream);
 			out.println("dir=" + dir);
-			out.println("file-name=" + StringHelper.getFileNameFromPath(imageItem.getName()));
+			out.println("file-name=" + StringHelper.getFileNameFromPath(newFile.getName()));
 			out.println(GlobalImage.IMAGE_FILTER + "=full");
 			out.close();
 			if (config.isCreateContentOnImportImage() || content) {

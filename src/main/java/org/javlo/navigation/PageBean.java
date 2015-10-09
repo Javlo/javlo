@@ -99,6 +99,10 @@ public class PageBean implements Serializable {
 	public String getEditUrl() {
 		return URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.EDIT_MODE), page);
 	}
+	
+	public String getCreator() {
+		return page.getCreator();
+	}
 
 	public boolean isSelected() {
 		try {

@@ -336,8 +336,6 @@ public class SynchronisationService {
 
 	public String syncroResource(String previousResult) throws IOException {
 		
-		System.out.println("***** SynchronisationService.syncroResource : START."); //TODO: remove debug trace
-
 		if (serverURL == null) {
 			throw new NullPointerException("serverURL is null");
 		}
@@ -475,10 +473,8 @@ public class SynchronisationService {
 				} else {
 					// Intra = Exist, DMZ = Exist > The process is already done in the first loop.
 				}
-			}
-			System.out.println("***** SynchronisationService.syncroResource : 1.needRefresh = "+needRefresh); //TODO: remove debug trace
-		} finally {
-			System.out.println("***** SynchronisationService.syncroResource : 2.needRefresh = "+needRefresh); //TODO: remove debug trace
+			}			
+		} finally {			
 			if (needRefresh && refreshDMZContent) {
 				sendCommand("refresh", "true");
 			}

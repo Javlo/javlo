@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
+import java.util.regex.Pattern;
 
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
@@ -386,7 +387,7 @@ public class UserAction extends AbstractModuleAction {
 
 	public static String performChangePassword(RequestService rs, ContentContext ctx, EditContext editContext, GlobalContext globalContext, HttpSession session, StaticConfig staticConfig, MessageRepository messageRepository, I18nAccess i18nAccess) {
 		String pwd = rs.getParameter("password", null);
-		String newPwd = rs.getParameter("newpassword", null);
+		String newPwd = rs.getParameter("newpassword", null);		
 
 		UserModuleContext userContext = UserModuleContext.getInstance(ctx.getRequest());
 		IUserFactory userFactory = userContext.getUserFactory(ctx);
@@ -424,6 +425,35 @@ public class UserAction extends AbstractModuleAction {
 			messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("user.message.bad-password"), GenericMessage.ERROR));
 		}
 
+		return null;
+	}
+	
+	public static String performChangePassword2Check(RequestService rs, HttpSession session, ContentContext ctx, StaticConfig staticConfig, MessageRepository messageRepository, I18nAccess i18nAccess) throws IOException {
+		String newPwd = rs.getParameter("newpassword", "");
+		String newPwd2 = rs.getParameter("newpassword2", null);		
+		
+		Pattern validPassword = Pattern.compile(staticConfig.getPasswordRegularExpression());		
+		
+		if (!validPassword.matcher(newPwd).matches()) {
+			return i18nAccess.getViewText("login.password.error");
+		} else {
+			if (!newPwd.equals(newPwd2)) {
+				return i18nAccess.getViewText("login.message.password-not-same");
+			} else {			
+				IUserFactory userFactory = UserFactory.createUserFactory(ctx.getGlobalContext(), session);
+				User user = userFactory.getCurrentUser(session);
+				IUserInfo ui = user.getUserInfo();
+				if (staticConfig.isPasswordEncryt()) {
+					newPwd = StringHelper.encryptPassword(newPwd);
+				}
+				ui.setPassword(newPwd);
+				userFactory.updateUserInfo(ui);
+				userFactory.store();
+				userFactory.reload(ctx.getGlobalContext(), session);
+				messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("user.message.ok-change-password"), GenericMessage.INFO));
+				ctx.getRequest().setAttribute("passwordChanged", true);
+			}
+		}
 		return null;
 	}
 

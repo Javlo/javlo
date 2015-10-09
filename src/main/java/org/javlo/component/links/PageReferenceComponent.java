@@ -256,6 +256,19 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 			bean.sortableCreationTime = StringHelper.renderSortableTime(page.getCreationDate());
 			bean.priority = page.getPriority();
 			bean.event = new PageEvent();
+			
+			/** check right **/
+			Set<String> roles = page.getEditorRoles();
+			if (roles.size() == 0) {
+				bean.setCurrentUserAsRight(true);
+			} else {
+				if(!Collections.disjoint(roles, ctx.getCurrentUser().getRoles())) {
+					bean.setCurrentUserAsRight(true);
+				} else {
+					bean.setCurrentUserAsRight(false);
+				}
+			}
+			
 			bean.setLinkLabel(page.getLinkLabel(lgCtx));
 			Event event = page.getEvent(realContentCtx);
 			if (event != null) {
@@ -390,6 +403,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		private boolean mailing = false;
 		private boolean realContent = false;
 		private boolean visible = false;
+		private boolean currentUserAsRight = false;
 		private Collection<Link> links = new LinkedList<Link>();
 		private Collection<Link> staticResources = new LinkedList<Link>();
 		private final Collection<Image> images = new LinkedList<Image>();
@@ -792,6 +806,14 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 
 		public void setLinkLabel(String linkLabel) {
 			this.linkLabel = linkLabel;
+		}
+
+		public boolean isCurrentUserAsRight() {
+			return currentUserAsRight;
+		}
+
+		public void setCurrentUserAsRight(boolean currentUserAsRight) {
+			this.currentUserAsRight = currentUserAsRight;
 		}
 
 	}
@@ -1355,7 +1377,11 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 	}
 
 	private int getFirstPageNumber() {
-		return Integer.parseInt(properties.getProperty(PAGE_START_PROP_KEY, "1"));
+		if (StringHelper.isDigit(properties.getProperty(PAGE_START_PROP_KEY, null))) {
+			return Integer.parseInt(properties.getProperty(PAGE_START_PROP_KEY, "1"));
+		} else {
+			return 1;
+		}
 	}
 
 	private String getFirstPageNumberInputName() {

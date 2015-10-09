@@ -630,7 +630,7 @@ public class PersistenceService {
 		if (editorRoles != null) {
 			for (String group : editorRoles) {
 				if (group.trim().length() > 0) {
-					page.addEditorRoles(group);
+					page.addEditorRole(group);
 				}
 			}
 		}
@@ -800,7 +800,7 @@ public class PersistenceService {
 				if (editorRoles != null) {
 					for (String roles : editorRoles) {
 						if (roles.trim().length() > 0) {
-							root.addEditorRoles(roles);
+							root.addEditorRole(roles);
 						}
 					}
 				}

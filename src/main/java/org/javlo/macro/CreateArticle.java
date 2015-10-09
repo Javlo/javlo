@@ -162,7 +162,7 @@ public class CreateArticle implements IInteractiveMacro, IAction {
 						List<String> selectedRole = new LinkedList<String>();
 						for (String role :roles) {
 							if (rs.getParameter("role-"+role, null) != null) {
-								newPage.addEditorRoles(role);
+								newPage.addEditorRole(role);
 								selectedRole.add(role);
 							}
 						}

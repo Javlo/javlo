@@ -9,7 +9,7 @@
 
 <ul class="users-list">	
 	<c:forEach var="user" items="${users}">		
-		<c:url var="editURL" value="${info.currentURL}">
+		<c:url var="editURL" value="${info.currentURL}" context="/">
 			<c:param name="webaction" value="user.edit" />
 			<c:param name="module" value="users" />
 			<c:param name="cuser" value="${user.encryptLogin}" />

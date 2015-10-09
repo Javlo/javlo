@@ -15,7 +15,7 @@ editCtx.setRenderMode(ContentContext.EDIT_MODE);
 <div class="height-to-bottom">
 <button type="button" class="btn btn-default" aria-label="Left Align" onclick="editPreview.openModal('Template', '${url}');">
   <div class="label">Template</div>
-  <div class="value">${info.templateName}</div>
+  <div class="value">${empty info.page.templateId?'<span class="glyphicon glyphicon-download normal"></span>':''} ${info.templateName}</div>
   <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
 </button>
 <c:if test="${!contentContext.currentTemplate.mailing || !userInterface.light}">

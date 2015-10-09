@@ -1181,7 +1181,7 @@ public class Edit extends AbstractModuleAction {
 			page.clearEditorGroups();
 			for (String role : infoBean.getAdminRoles()) {
 				if (requestService.getParameter("admin-" + role, null) != null) {
-					page.addEditorRoles(role);
+					page.addEditorRole(role);
 				}
 			}
 
@@ -1287,7 +1287,7 @@ public class Edit extends AbstractModuleAction {
 	}
 
 	public static String performAddPage(RequestService requestService, ContentContext ctx, ContentService content) {
-
+		
 		String message = null;
 
 		try {
@@ -1306,7 +1306,6 @@ public class Edit extends AbstractModuleAction {
 			if (nodeName != null && nameExist(nodeName, ctx, content)) {
 				message = i18nAccess.getText("action.validation.name-allready-exist", new String[][] { { "name", nodeName } });
 			}
-
 			if (message == null) {
 				MenuElement elem = MenuElement.getInstance(globalContext);
 
@@ -1330,7 +1329,7 @@ public class Edit extends AbstractModuleAction {
 					}
 				}
 				elem.setName(nodeName);
-				if (requestService.getParameter("add-first", null) == null) {
+				if (requestService.getParameter("add-first", null) == null) {					
 					parent.addChildMenuElementAutoPriority(elem);
 				} else {
 					elem.setPriority(0);

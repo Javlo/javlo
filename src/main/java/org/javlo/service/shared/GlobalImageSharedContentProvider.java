@@ -13,6 +13,7 @@ import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.filter.ImageFileFilter;
 import org.javlo.helper.ResourceHelper;
+import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.ztatic.StaticInfo;
 
@@ -50,21 +51,26 @@ public class GlobalImageSharedContentProvider extends LocalImageSharedContentPro
 			if (category.startsWith("/")) {
 				category = category.substring(1);
 			}
+			category = category.trim();
 			if (!categories.containsKey(category)) {
 				categories.put(category, category);
 			}
-			ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-			PrintStream out = new PrintStream(outStream);
-			out.println("dir=" + category);
-			out.println("file-name="+ URLHelper.mergePath(staticConfig.getShareDataFolderKey(),imageFile.getName()));
-			out.println(GlobalImage.IMAGE_FILTER + "=full");
-			out.close();
-			String value = new String(outStream.toByteArray());
-			ComponentBean imageBean = new ComponentBean(GlobalImage.TYPE, value, ctx.getRequestContentLanguage());
-			imageBean.setArea(ctx.getArea());
-			SharedContent sharedContent;
 			try {
-				StaticInfo staticInfo = StaticInfo.getInstance(ctx, imageFile);
+				ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+				PrintStream out = new PrintStream(outStream);
+				out.println("dir=" + category);
+				out.println("file-name="+ URLHelper.mergePath(staticConfig.getShareDataFolderKey(),imageFile.getName()));
+				ContentContext masterContext = new ContentContext(ctx);
+				masterContext.setForceGlobalContext(ctx.getGlobalContext().getMasterContext(ctx.getRequest().getSession()));
+				StaticInfo staticInfo = StaticInfo.getInstance(masterContext, imageFile);				
+				String desc = staticInfo.getTitle(masterContext)+' '+staticInfo.getDescription(masterContext)+' '+StringHelper.collectionToString(staticInfo.getTags(masterContext));
+				out.println("meta="+ desc);
+				out.println(GlobalImage.IMAGE_FILTER + "=full");
+				out.close();
+				String value = new String(outStream.toByteArray());
+				ComponentBean imageBean = new ComponentBean(GlobalImage.TYPE, value, ctx.getRequestContentLanguage());
+				imageBean.setArea(ctx.getArea());
+				SharedContent sharedContent;							
 				sharedContent = new SharedContent(""+imageFile.hashCode(), imageBean);
 				sharedContent.addCategory(category);
 				sharedContent.setSortOn(staticInfo.getCreationDate(ctx).getTime());

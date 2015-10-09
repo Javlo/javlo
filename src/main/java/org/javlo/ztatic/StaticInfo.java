@@ -513,12 +513,10 @@ public class StaticInfo {
 		return KEY + inStaticURL + '-' + key;
 	}
 
-	public static StaticInfo getInstance(ContentContext ctx, File file) throws Exception {
+	public static StaticInfo getInstance(ContentContext ctx,  File file) throws Exception {
 		StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
-		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-
+		GlobalContext globalContext = ctx.getGlobalContext();
 		String fullURL = URLHelper.cleanPath(file.getPath(), false);
-
 		boolean staticFolder = true;
 		String fullStaticFolder = URLHelper.mergePath(globalContext.getDataFolder(), staticConfig.getStaticFolder());
 		if (ResourceHelper.isTemplateFile(globalContext, file)) {
@@ -526,10 +524,8 @@ public class StaticInfo {
 		} else if (!file.getAbsolutePath().contains('/'+staticConfig.getStaticFolder()+'/')) { // before /static
 			fullStaticFolder = globalContext.getDataFolder();
 			//staticFolder = false;
-		}
-		
-		fullStaticFolder=URLHelper.cleanPath(fullStaticFolder, false);
-		
+		}		
+		fullStaticFolder=URLHelper.cleanPath(fullStaticFolder, false);		
 		String relURL = "/";
 		if (fullURL.length() > fullStaticFolder.length()) {
 			relURL = StringUtils.replace(fullURL, fullStaticFolder, "");
@@ -644,17 +640,17 @@ public class StaticInfo {
 	}
 
 	public String getManualDescription(ContentContext ctx) {
-		ContentService content = ContentService.getInstance(ctx.getRequest());
+		ContentService content = ContentService.getInstance(ctx.getGlobalContext());
 		return content.getAttribute(ctx, getKey("description-" + ctx.getRequestContentLanguage()), "");
 	}
 
 	public boolean isResized(ContentContext ctx) {
-		ContentService content = ContentService.getInstance(ctx.getRequest());
+		ContentService content = ContentService.getInstance(ctx.getGlobalContext());
 		return StringHelper.isTrue(content.getAttribute(ctx, getKey("resized"), null));
 	}
 
 	public void setResized(ContentContext ctx, boolean resized) {
-		ContentService content = ContentService.getInstance(ctx.getRequest());
+		ContentService content = ContentService.getInstance(ctx.getGlobalContext());
 		content.setAttribute(ctx, getKey("resized"), "" + resized);
 	}
 
@@ -672,7 +668,7 @@ public class StaticInfo {
 	}
 
 	public void setDescription(ContentContext ctx, String description) {
-		ContentService content = ContentService.getInstance(ctx.getRequest());
+		ContentService content = ContentService.getInstance(ctx.getGlobalContext());
 		content.setAttribute(ctx, getKey("description-" + ctx.getRequestContentLanguage()), description);
 		// properties.setProperty("description-" +
 		// ctx.getRequestContentLanguage(), description);
@@ -680,7 +676,7 @@ public class StaticInfo {
 	}
 
 	public String getManualLocation(ContentContext ctx) {
-		ContentService content = ContentService.getInstance(ctx.getRequest());
+		ContentService content = ContentService.getInstance(ctx.getGlobalContext());
 		return content.getAttribute(ctx, getKey("location-" + ctx.getRequestContentLanguage()), "");
 		// return properties.getString("location-" +
 		// ctx.getRequestContentLanguage(), "");
@@ -739,7 +735,7 @@ public class StaticInfo {
 	}
 
 	public void setLocation(ContentContext ctx, String location) {
-		ContentService content = ContentService.getInstance(ctx.getRequest());
+		ContentService content = ContentService.getInstance(ctx.getGlobalContext());
 		content.setAttribute(ctx, getKey("location-" + ctx.getRequestContentLanguage()), location);
 	}
 
@@ -750,8 +746,8 @@ public class StaticInfo {
 		return "";
 	}
 
-	public String getManualTitle(ContentContext ctx) {
-		ContentService content = ContentService.getInstance(ctx.getRequest());
+	public String getManualTitle(ContentContext ctx) {		
+		ContentService content = ContentService.getInstance(ctx.getGlobalContext());
 		String key = getKey("title-" + ctx.getRequestContentLanguage());
 		String title = content.getAttribute(ctx, key, "");
 		return title;
@@ -759,7 +755,7 @@ public class StaticInfo {
 
 	public String getId(ContentContext ctx) {
 		if (id == null) {
-			ContentService content = ContentService.getInstance(ctx.getRequest());
+			ContentService content = ContentService.getInstance(ctx.getGlobalContext());
 			String key = getKey("id-" + ctx.getRequestContentLanguage());
 			id = content.getAttribute(ctx, key, "");
 			if (id.trim().length() == 0) {
@@ -771,12 +767,12 @@ public class StaticInfo {
 	}
 
 	public void setTitle(ContentContext ctx, String title) {
-		ContentService content = ContentService.getInstance(ctx.getRequest());
+		ContentService content = ContentService.getInstance(ctx.getGlobalContext());
 		content.setAttribute(ctx, getKey("title-" + ctx.getRequestContentLanguage()), title);
 	}
 
 	public Date getManualDate(ContentContext ctx) {
-		ContentService content = ContentService.getInstance(ctx.getRequest());
+		ContentService content = ContentService.getInstance(ctx.getGlobalContext());
 		String dateStr = content.getAttribute(ctx, getKey("date"), null);
 		if (dateStr != null) {
 			try {
@@ -788,7 +784,7 @@ public class StaticInfo {
 	}
 
 	public Date getCreationDate(ContentContext ctx) {
-		ContentService content = ContentService.getInstance(ctx.getRequest());
+		ContentService content = ContentService.getInstance(ctx.getGlobalContext());
 		String dateStr = content.getAttribute(ctx, getKey("creation-date"), null);
 		if (dateStr == null) {
 			dateStr = StringHelper.renderTime(new Date());
@@ -808,12 +804,12 @@ public class StaticInfo {
 	}
 
 	public String getAuthors(ContentContext ctx) {
-		ContentService content = ContentService.getInstance(ctx.getRequest());
+		ContentService content = ContentService.getInstance(ctx.getGlobalContext());
 		return content.getAttribute(ctx, getKey("authors"), "");
 	}
 
 	public void setAuthors(ContentContext ctx, String authors) {
-		ContentService content = ContentService.getInstance(ctx.getRequest());
+		ContentService content = ContentService.getInstance(ctx.getGlobalContext());
 		content.setAttribute(ctx, getKey("authors"), authors);
 	}
 
@@ -850,7 +846,7 @@ public class StaticInfo {
 	}
 
 	public void setDate(ContentContext ctx, Date date) {
-		ContentService content = ContentService.getInstance(ctx.getRequest());
+		ContentService content = ContentService.getInstance(ctx.getGlobalContext());
 		if (date == null) {
 			content.removeAttribute(ctx, getKey("date"));
 		} else {
@@ -859,22 +855,22 @@ public class StaticInfo {
 	}
 
 	public String getResource(ContentContext ctx) {
-		ContentService content = ContentService.getInstance(ctx.getRequest());
+		ContentService content = ContentService.getInstance(ctx.getGlobalContext());
 		return content.getAttribute(ctx, getKey("resource"), "");
 	}
 
 	public void setResource(ContentContext ctx, String resource) {
-		ContentService content = ContentService.getInstance(ctx.getRequest());
+		ContentService content = ContentService.getInstance(ctx.getGlobalContext());
 		content.setAttribute(ctx, getKey("resource"), resource);
 	}
 
 	public void setEmptyDate(ContentContext ctx) {
-		ContentService content = ContentService.getInstance(ctx.getRequest());
+		ContentService content = ContentService.getInstance(ctx.getGlobalContext());
 		content.setAttribute(ctx, getKey("date"), "");
 	}
 
 	public boolean isEmptyDate(ContentContext ctx) {
-		ContentService content = ContentService.getInstance(ctx.getRequest());
+		ContentService content = ContentService.getInstance(ctx.getGlobalContext());
 		return content.getAttribute(ctx, getKey("date"), null) == null;
 	}
 
@@ -883,13 +879,13 @@ public class StaticInfo {
 	}
 
 	public String getLinkedPageId(ContentContext ctx) {
-		ContentService content = ContentService.getInstance(ctx.getRequest());
+		ContentService content = ContentService.getInstance(ctx.getGlobalContext());
 		return content.getAttribute(ctx, getKey("linked-page-id"));
 	}
 
 	public void setLinkedPageId(ContentContext ctx, String pageId) {
 		if (pageId != null) {
-			ContentService content = ContentService.getInstance(ctx.getRequest());
+			ContentService content = ContentService.getInstance(ctx.getGlobalContext());
 			content.setAttribute(ctx, getKey("linked-page-id"), pageId);
 		}
 	}
@@ -919,7 +915,7 @@ public class StaticInfo {
 	 */
 	public int getFocusZoneX(ContentContext ctx) {
 
-		ContentService content = ContentService.getInstance(ctx.getRequest());
+		ContentService content = ContentService.getInstance(ctx.getGlobalContext());
 
 		ContentContext editCtx = ctx.getContextWithOtherRenderMode(ContentContext.EDIT_MODE);
 		if (!content.isNavigationLoaded(editCtx)) {
@@ -964,7 +960,7 @@ public class StaticInfo {
 	 * @return
 	 */
 	public int getFocusZoneY(ContentContext ctx) {
-		ContentService content = ContentService.getInstance(ctx.getRequest());
+		ContentService content = ContentService.getInstance(ctx.getGlobalContext());
 		ContentContext editCtx = ctx.getContextWithOtherRenderMode(ContentContext.EDIT_MODE);
 		if (!content.isNavigationLoaded(editCtx)) {
 			editCtx = ctx;
@@ -977,12 +973,12 @@ public class StaticInfo {
 	}
 
 	public boolean isShared(ContentContext ctx) {
-		ContentService content = ContentService.getInstance(ctx.getRequest());
+		ContentService content = ContentService.getInstance(ctx.getGlobalContext());
 		return StringHelper.isTrue(content.getAttribute(ctx, getKey("shared"), "true"));
 	}
 
 	public void setShared(ContentContext ctx, boolean shared) {
-		ContentService content = ContentService.getInstance(ctx.getRequest());
+		ContentService content = ContentService.getInstance(ctx.getGlobalContext());
 		content.setAttribute(ctx, getKey("shared"), "" + shared);
 	}
 
@@ -993,7 +989,7 @@ public class StaticInfo {
 	 * @param focusZoneX
 	 */
 	public void setFocusZoneX(ContentContext ctx, int focusZoneX) {
-		ContentService content = ContentService.getInstance(ctx.getRequest());
+		ContentService content = ContentService.getInstance(ctx.getGlobalContext());
 		if (focusZoneX == DEFAULT_FOCUS_X) {
 			content.removeAttribute(ctx, getKey("focus-zone-x"));
 		} else {
@@ -1009,7 +1005,7 @@ public class StaticInfo {
 	 * @param focusZoneY
 	 */
 	public void setFocusZoneY(ContentContext ctx, int focusZoneY) {
-		ContentService content = ContentService.getInstance(ctx.getRequest());
+		ContentService content = ContentService.getInstance(ctx.getGlobalContext());
 		if (focusZoneY == DEFAULT_FOCUS_Y) {
 			content.removeAttribute(ctx, getKey("focus-zone-y"));
 		} else {
@@ -1127,7 +1123,7 @@ public class StaticInfo {
 	}
 
 	public boolean delete(ContentContext ctx) {
-		ContentService content = ContentService.getInstance(ctx.getRequest());
+		ContentService content = ContentService.getInstance(ctx.getGlobalContext());
 		content.deleteKeys(getKey(""));
 		return true;
 	}
@@ -1158,7 +1154,7 @@ public class StaticInfo {
 	}
 
 	public void renameFile(ContentContext ctx, File newFile) throws Exception {
-		ContentService content = ContentService.getInstance(ctx.getRequest());
+		ContentService content = ContentService.getInstance(ctx.getGlobalContext());
 		StaticInfo newStaticInfo = StaticInfo.getInstance(ctx, newFile);
 		content.renameKeys(getKey(""), newStaticInfo.getKey(""));
 	}
@@ -1384,12 +1380,12 @@ public class StaticInfo {
 	}
 
 	public String getCopyright(ContentContext ctx) {
-		ContentService content = ContentService.getInstance(ctx.getRequest());
+		ContentService content = ContentService.getInstance(ctx.getGlobalContext());
 		return content.getAttribute(ctx, getKey("copyright"), "");
 	}
 
 	public void setCopyright(ContentContext ctx, String copyright) {
-		ContentService content = ContentService.getInstance(ctx.getRequest());
+		ContentService content = ContentService.getInstance(ctx.getGlobalContext());
 		content.setAttribute(ctx, getKey("copyright"), copyright);
 	}
 
@@ -1508,5 +1504,4 @@ public class StaticInfo {
 	public void setStaticFolder(boolean staticFolder) {
 		this.staticFolder = staticFolder;
 	}
-
 }

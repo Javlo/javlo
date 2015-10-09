@@ -2,7 +2,7 @@
 %><%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"
 %><c:set var="canCreate" value="${not empty param.canCreate}" />
 
-<form method="post" action="${info.currentURL}">
+<form method="post" action="${info.currentURL}" class="standard-form">
 <fieldset>
 <legend>Create newsletter ${canCreate}</legend>
 <input type="hidden" name="webaction" value="macro-create-article-composition.create" />
@@ -58,6 +58,20 @@
 	<input type="hidden" name="page" value="${sourcePage.id}" />
 	</label>
 </div>
+</c:if>
+
+<c:if test="${globalContext.collaborativeMode}">	
+	<div class="roles">	
+	<fieldset>
+		<legend>choose group (no selection = everybody)</legend>		
+		<c:forEach var="role" items="${adminRoles}">
+			<div class="inline">			
+				<input type="checkbox" id="role-${role}" name="role-${role}" />
+				<label class="suffix" for="role-${role}">${role}</label>
+			</div>
+		</c:forEach>
+	</fieldset>
+	</div>
 </c:if>
 
 <div class="action">

@@ -42,7 +42,9 @@ public class RolesAction extends AbstractModuleAction {
 		ctx.getRequest().setAttribute("role", role);
 
 		AdminUserFactory adminUserFactory = AdminUserFactory.createUserFactory(ctx.getGlobalContext(), ctx.getRequest().getSession());
-		ctx.getRequest().setAttribute("users", adminUserFactory.getUserInfoForRoles(new String[] { role.getName() }));
+		if (role != null) {
+			ctx.getRequest().setAttribute("users", adminUserFactory.getUserInfoForRoles(new String[] { role.getName() }));
+		}
 
 		List<String> templateIncluded = StringHelper.stringToCollection(role.getLocalTemplateIncluded(),",");
 		

@@ -82,6 +82,12 @@
 </div>
 
 <div class="line">
+	<label>${i18n.edit['item.creator']}</label>
+	<span>${page.creator}</span>
+</div>
+
+
+<div class="line">
 	<label>${i18n.edit['item.creation-date']}</label>
 	<span>${page.creationDate}</span>
 </div>

@@ -46,7 +46,7 @@ public class PersistenceThread implements Runnable {
 
 	private PersistenceService persistenceService;
 
-	public static Object specialLock = null;
+	public static final Object SYNCRO_LOCK = new Object();
 
 	public void addFolderToSave(File file) {
 		folderToSave.add(file);
@@ -90,14 +90,8 @@ public class PersistenceThread implements Runnable {
 	}
 
 	@Override
-	public void run() {
-		Object specialLockLocal = specialLock;
-		if (specialLockLocal == null) {
-			specialLockLocal = new Object();		
-		} else {
-			logger.info("persistenceThread blocked");
-		}
-		synchronized (specialLockLocal) {			
+	public void run() {		
+		synchronized (SYNCRO_LOCK) {			
 			COUNT_THREAD.incrementAndGet();
 			File file = null;
 			try {
@@ -172,9 +166,9 @@ public class PersistenceThread implements Runnable {
 		if (renderMode == ContentContext.PREVIEW_MODE) {
 			file = new File(persistenceService.getDirectory() + "/content_" + ContentContext.PREVIEW_MODE + '_' + localVersion + ".xml");
 			if (!file.exists()) {
+				file.getParentFile().mkdirs();
 				file.createNewFile();
 			}
-
 			FileOutputStream fileStream = new FileOutputStream(file);
 			OutputStreamWriter fileWriter = new OutputStreamWriter(fileStream, ContentContext.CHARACTER_ENCODING);
 			try {

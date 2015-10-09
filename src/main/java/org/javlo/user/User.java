@@ -86,7 +86,7 @@ public class User implements Principal, Serializable {
 	}
 
 	public boolean validForRoles(Set<String> rolesSet) {
-		if (AdminUserSecurity.getInstance().isAdmin(this)) {
+		if (AdminUserSecurity.getInstance().isAdmin(this) || rolesSet.size() == 0) {
 			return true;
 		}
 		Set<String> workingRoles = new HashSet<String>();

@@ -44,8 +44,7 @@
 		</div>		
 		<c:if test="${fn:length(sharedContentCategories)>1}">
 		<div class="form-group">
-		<select name="category" class="form-control">
-			<option></option>
+		<select name="category" class="form-control">			
 			<c:forEach var="category" items="${sharedContentCategories}">
 				<option ${currentCategory eq category.key?'selected="selected"':''} value="${category.key}">${category.value}</option>
 			</c:forEach>

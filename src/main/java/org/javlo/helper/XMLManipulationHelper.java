@@ -34,7 +34,7 @@ import org.javlo.template.TemplatePlugin;
 
 public class XMLManipulationHelper {
 
-	private static final Set<String> autoCloseTag = new HashSet<String>(Arrays.asList(new String[] { "input", "meta", "link", "script", "img", "hr" }));
+	private static final Set<String> autoCloseTag = new HashSet<String>(Arrays.asList(new String[] { "input", "meta", "link", "script", "img", "hr", "br" }));
 
 	public static class BadXMLException extends Exception {
 
@@ -1144,7 +1144,7 @@ public class XMLManipulationHelper {
 		 */
 		try {
 
-			String html = "<html><head></head><body><div><ul><li>list</li></ul></div></body></html>";
+			String html = "<body><ul><li>patrick</li><li>catherine<br>barbara</li></ul></body>";
 			TagDescription[] description = searchAllTag(html, false);
 			for (TagDescription element : description) {
 				System.out.println("tag : " + element.getName());

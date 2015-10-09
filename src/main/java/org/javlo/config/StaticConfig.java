@@ -113,6 +113,8 @@ public class StaticConfig extends Observable {
 	private String adminUserFactoryClassName = "";
 
 	private Map<String, String> devices = null;
+	
+	private String encryptedFirstPassword = null;
 
 	public static final List<String> BASIC_MODULES = Arrays.asList(new String[] { "admin", "content", "file" });
 
@@ -655,7 +657,7 @@ public class StaticConfig extends Observable {
 	}
 
 	public String getLocalShareDataFolder() {
-		String path = properties.getString("local-share-folder", "/share-files");		
+		String path = properties.getString("local-share-folder", "/static/share-files");		
 		return path;
 	}
 	
@@ -1015,11 +1017,10 @@ public class StaticConfig extends Observable {
 	}
 
 	public boolean isAutoCreation() {
-		if (isHostDefineSite()) { // if host don't define site we can create it
-									// automaticely.
+		if (isHostDefineSite()) {
 			return properties.getBoolean("auto-creation", true);
 		} else {
-			return false;
+			return properties.getBoolean("auto-creation", false);
 		}
 	}
 
@@ -1083,6 +1084,25 @@ public class StaticConfig extends Observable {
 	public boolean isPasswordEncryt() {
 		return properties.getBoolean("security.encrypt-password", true);
 	}
+	
+	public boolean isFirstPasswordMustBeChanged() {
+		return properties.getBoolean("security.change-password", true);
+	}
+	
+	public String getFirstPasswordEncryptedIfNeeded() {
+		if (encryptedFirstPassword == null) {
+			if (isPasswordEncryt()) {
+				encryptedFirstPassword = StringHelper.encryptPassword(getFirstPassword());
+			} else {
+				encryptedFirstPassword = getFirstPassword();
+			}
+		}
+		return encryptedFirstPassword;
+	}
+	
+	public String getFirstPassword() {
+		return properties.getString("security.first-password", "changeme");
+	}
 
 	public boolean isRequestWrapper() {
 		return properties.getBoolean("request-wrapper", true);
@@ -1117,6 +1137,7 @@ public class StaticConfig extends Observable {
 			adminUserFactoryClassName = "";
 			devices = null;
 			excludeContextDomain = null;
+			encryptedFirstPassword = null;
 		}
 	}
 
@@ -1289,6 +1310,10 @@ public class StaticConfig extends Observable {
 	
 	public String getApplicationPassword() {
 		return properties.getString("security.application-password", null);
+	}
+	
+	public String getPasswordRegularExpression() {
+		return properties.getString("security.password.regular-expression", "...+");
 	}
 	
 	/**

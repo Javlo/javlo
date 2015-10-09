@@ -246,11 +246,16 @@ public class AccessServlet extends HttpServlet implements IVersion {
 						try {
 							GlobalContext.getDefaultContext(request.getSession());
 							GlobalContext.getMasterContext(request.getSession());
-							/*if (globalContext.getDMZServerIntra() != null) {
-								SynchroThread synchro = (SynchroThread) AbstractThread.createInstance(staticConfig.getThreadFolder(), SynchroThread.class);
-								synchro.initSynchronisationThread(staticConfig, globalContext, request.getSession().getServletContext());
-								synchro.store();
-							}*/
+							/*
+							 * if (globalContext.getDMZServerIntra() != null) {
+							 * SynchroThread synchro = (SynchroThread)
+							 * AbstractThread.createInstance(staticConfig.
+							 * getThreadFolder(), SynchroThread.class);
+							 * synchro.initSynchronisationThread(staticConfig,
+							 * globalContext,
+							 * request.getSession().getServletContext());
+							 * synchro.store(); }
+							 */
 						} catch (Exception e) {
 							e.printStackTrace();
 						}
@@ -767,10 +772,14 @@ public class AccessServlet extends HttpServlet implements IVersion {
 								if (ctx.getCurrentUser() == null) {
 									ctx.setSpecialContentRenderer("/jsp/view/login.jsp");
 								} else {
-									Set<String> roles = new HashSet<String>(ctx.getCurrentUser().getRoles());
-									roles.retainAll(ctx.getCurrentPage().getUserRoles());
-									if (roles.size() == 0 && !(ctx.getCurrentUser().isEditor() && AdminUserSecurity.getInstance().haveRight(ctx.getCurrentUser(), AdminUserSecurity.CONTENT_ROLE))) {
-										ctx.setSpecialContentRenderer("/jsp/view/login.jsp");
+									if (ctx.getCurrentUser().getPassword() != null && staticConfig.isFirstPasswordMustBeChanged() && ctx.getCurrentUser().getPassword().equals(staticConfig.getFirstPasswordEncryptedIfNeeded())) {
+										ctx.setSpecialContentRenderer("/jsp/view/change_password.jsp");
+									} else {
+										Set<String> roles = new HashSet<String>(ctx.getCurrentUser().getRoles());
+										roles.retainAll(ctx.getCurrentPage().getUserRoles());
+										if (roles.size() == 0 && !(ctx.getCurrentUser().isEditor() && AdminUserSecurity.getInstance().haveRight(ctx.getCurrentUser(), AdminUserSecurity.CONTENT_ROLE))) {
+											ctx.setSpecialContentRenderer("/jsp/view/login.jsp");
+										}
 									}
 								}
 							}
@@ -783,6 +792,14 @@ public class AccessServlet extends HttpServlet implements IVersion {
 																																							// registration
 																																							// page.
 									if (ctx.getCurrentEditUser() == null || !ctx.getCurrentEditUser().validForRoles(pageRoles)) {
+										System.out.println("***** AccessServlet.process : NO ACCESS. : "+pageRoles); //TODO: remove debug trace
+										MenuElement parent = ctx.getCurrentPage().getParent();
+										System.out.println("***** AccessServlet.process : ctx.getCurrentPage().getEditorRoles = "+ctx.getCurrentPage().getEditorRoles()); //TODO: remove debug trace
+										while (parent != null) {
+											System.out.println("***** AccessServlet.process : parent ["+parent.getName()+"] = "+parent.getEditorRoles()); //TODO: remove debug trace
+											parent = parent.getParent();
+										}
+										
 										response.setStatus(HttpServletResponse.SC_FORBIDDEN);
 										ctx.setSpecialContentRenderer("/jsp/view/no_access.jsp");
 									}

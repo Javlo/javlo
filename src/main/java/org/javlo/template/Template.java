@@ -1663,9 +1663,9 @@ public class Template implements Comparable<Template> {
 			} else {
 				parent = TemplateFactory.getTemplates(ctx.getRequest().getSession().getServletContext()).get(parentId);
 			}
-			if (parent == null) {
+			/*if (parent == null) {
 				throw new ConfigurationException("parent not found : " + parent);
-			}
+			}*/
 		}
 		return parent;
 	}
