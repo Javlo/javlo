@@ -53,7 +53,6 @@ import org.javlo.service.ContentService;
 import org.javlo.service.NavigationService;
 import org.javlo.service.PersistenceService;
 import org.javlo.user.User;
-import org.jfree.data.time.DateRange;
 
 public class MacroHelper {
 

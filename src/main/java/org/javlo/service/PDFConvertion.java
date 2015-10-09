@@ -21,7 +21,7 @@ public class PDFConvertion {
 		return instance;
 	}
 
-	public void convertXHTMLToPDF(String url, OutputStream out) throws com.lowagie.text.DocumentException {
+	public void convertXHTMLToPDF(String url, OutputStream out) throws Exception {
 		org.xhtmlrenderer.pdf.ITextRenderer pdfRenderer = new org.xhtmlrenderer.pdf.ITextRenderer();
 		logger.info("create PDF : " + url);
 		pdfRenderer.setDocument("" + url);
