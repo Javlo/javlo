@@ -22,9 +22,14 @@
 		<c:if test="${not empty inheritedTemplate}">
 		<option value="">${i18n.edit['global.inherited']} (${inheritedTemplate.name})</option>
 		</c:if>
+		<c:set var="templateFound" value="${false}"/>
 		<c:forEach var="template" items="${templates}">
 		<option value="${template.name}" ${template.name eq page.templateId?'selected="selected"':''} >${template.name}</option>
+		<c:if test="${template.name eq page.templateId}"><c:set var="templateFound" value="${true}"/></c:if>
 		</c:forEach>
+		<c:if test="${not templateFound}">
+		<option value="${page.templateId}" selected="selected">*${page.templateId}</option>
+		</c:if>
 	</select>	
 </div>
 </c:if>
