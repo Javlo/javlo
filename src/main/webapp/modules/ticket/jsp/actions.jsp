@@ -5,6 +5,7 @@
 </c:url>
 <a class="action-button more page" href="${createURL}"><span>${i18n.edit['global.create']}</span></a>
 
+<c:if test="${not noFilter}">
 <div class="special">
 <form id="select-status js-submit" method="post" action="${info.currentURL}">
     <div class="line">
@@ -22,3 +23,4 @@
 	</div>
 </form>
 </div>
+</c:if>

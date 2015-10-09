@@ -121,6 +121,7 @@ public class TicketAction extends AbstractModuleAction {
 					ticketModule.addMainBox("main", "update ticket : " + rs.getParameter("id", ""), "/jsp/update_ticket.jsp", true);
 					ticketModule.setRenderer(null);
 				}
+				ctx.getRequest().setAttribute("noFilter", true);
 			} else {
 				ticketModule.setRenderer("/jsp/list.jsp");
 				ticketModule.restoreBoxes();
