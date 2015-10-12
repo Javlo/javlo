@@ -918,6 +918,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 		out.println("**** TPLT DIR          :  " + staticConfig.getTemplateFolder());
 		out.println("**** MAIL TPLT DIR     :  " + staticConfig.getMailingTemplateFolder());
 		out.println("**** THREAD DIR        :  " + staticConfig.getThreadFolder());
+		out.println("**** TEMP DIR          :  " + staticConfig.getTempDir());
 		out.println("**** EHCACHE FILE      :  " + staticConfig.getEHCacheConfigFile());
 		out.println("**** MAIL THREAD       :  " + staticConfig.isMailingThread());
 		out.println("**** ALL LOG LVL       :  " + staticConfig.getAllLogLevel());
