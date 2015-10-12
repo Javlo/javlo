@@ -887,7 +887,7 @@ public class StaticConfig extends Observable {
 	}
 
 	public String getSynchroCode() {
-		return properties.getString("synchro-code", "120857013478039430485203984");
+		return properties.getString("synchro-code", "120857013478039430485203984").trim();
 	}
 
 	public Level getSynchroLogLevel() {
