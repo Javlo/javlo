@@ -24,11 +24,12 @@
 			<label for="token">token</label>
 			<input type="text" name="token" id="token" value="${network.token}" />
 		</div>
+		</c:if>
 		<div class="line">
 			<label for="url">url</label>
 			<span id="url-container"><input type="text" name="url" id="url" value="${network.URL}" /></span>
 		</div>		
-		</c:if>
+		
 		
 		<div class="line" style="display:none;" id="loginFB">
 			<label for="fb">activation</label>

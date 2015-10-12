@@ -8,6 +8,7 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
+import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 
 public class SocialService {
@@ -16,9 +17,10 @@ public class SocialService {
 
 	private GlobalContext globalContext;
 
-	private Facebook facebook;
+	private Facebook facebook;	
 	private ISocialNetwork twitter;
 	private ISocialNetwork google;
+	private ISocialNetwork linkedin;
 	private String redirectURL = null;
 
 	public static SocialService getInstance(ContentContext ctx) {
@@ -65,6 +67,7 @@ public class SocialService {
 		networks.add(getFacebook());
 		networks.add(getTwitter());
 		networks.add(getGoogle());
+		networks.add(getLinkedin());
 		return networks;
 	}
 
@@ -84,6 +87,14 @@ public class SocialService {
 		}
 		return facebook;
 	}
+	
+	public ISocialNetwork getLinkedin() {
+		if (linkedin == null) {
+			linkedin = new Linkedin();
+			initSocialNetwork(linkedin);
+		}
+		return linkedin;
+	}
 
 	public ISocialNetwork getTwitter() {
 		if (twitter == null) {
@@ -99,6 +110,10 @@ public class SocialService {
 			initSocialNetwork(google);
 		}
 		return google;
+	}
+	
+	public boolean isActive() {
+		return StringHelper.isEmpty(getFacebook().getURL()) || StringHelper.isEmpty(getTwitter().getURL()) || StringHelper.isEmpty(getGoogle().getURL());
 	}
 
 	public void store() {

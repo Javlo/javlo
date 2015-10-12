@@ -4,7 +4,7 @@
 		<div class="${msg.typeLabel}"><p>${msg.message}</p></div>
 	</div>	</c:if>	<c:if test="${empty valid}">
 <h3>${comp.title}</h3>
-<form method="post" action="${info.currentURL}" ${comp.file?' enctype="multipart/form-data"':''}>
+<form id="form-${compid}" method="post" action="${info.currentURL}" ${comp.file?' enctype="multipart/form-data"':''} onchange="form${compid}Change()">
 <input type="hidden" name="webaction" value="smart-form.submit" />
 <input type="hidden" name="comp_id" value="${comp.id}" />
 
@@ -35,3 +35,5 @@
 </form>
 </c:if>
 </div>
+
+<jsp:include page="condition.jsp" />

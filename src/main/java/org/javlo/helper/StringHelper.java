@@ -31,6 +31,7 @@ import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
@@ -1403,7 +1404,8 @@ public class StringHelper {
 	}
 
 	public static void main(String[] args) {
-		System.out.println("test email = "+isMail("dlsfqj_dfd_df"));
+		Collection<String> cols = Arrays.asList(new String[] { "", "on", "off" });
+		System.out.println(collectionToText(cols));
 	}
 
 	/**
