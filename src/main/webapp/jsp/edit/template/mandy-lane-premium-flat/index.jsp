@@ -209,7 +209,7 @@
 
 <div class="maincontent ${currentModule.name}">
 
-<c:if test="${currentModule.breadcrumb}">
+<c:if test="${currentModule.breadcrumb && empty param.nobreadcrumbs}">
 	<div id="breadcrumbs" class="breadcrumbs">
 		<jsp:include page="breadcrumbs.jsp" />
 	</div>
@@ -231,7 +231,10 @@
 			</div>
 		</c:if>
 		<c:if test="${currentModule.renderer != null}">
-			<div id="main-renderer"><jsp:include page="${currentModule.renderer}" /></div>
+			<div id="main-renderer">
+			<c:if test="${not empty specialEditRenderer}"><jsp:include page="${specialEditRenderer}" /></c:if>
+			<c:if test="${empty specialEditRenderer}"><jsp:include page="${currentModule.renderer}" /></c:if>
+			</div>
 		</c:if>	
 		<c:forEach var="currentBox" items="${currentModule.mainBoxes}">
 			<c:set var="box" value="${currentBox}" scope="request" />

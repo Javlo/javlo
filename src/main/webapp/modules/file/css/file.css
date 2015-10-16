@@ -78,3 +78,9 @@
 .lock .unlock {
 	display: none;
 }
+
+.item.one {
+	margin: 0 auto;
+	display: block;
+	float: none;
+}

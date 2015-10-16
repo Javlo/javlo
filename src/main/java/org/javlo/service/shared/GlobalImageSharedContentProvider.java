@@ -80,7 +80,6 @@ public class GlobalImageSharedContentProvider extends LocalImageSharedContentPro
 				String imageURL = image.getPreviewURL(ctx, "shared-preview");
 				sharedContent.setTitle(imageFile.getName());				
 				sharedContent.setDescription(staticInfo.getTitle(ctx));
-				sharedContent.setImageUrl(imageURL);
 			} catch (Exception e) {				
 				e.printStackTrace();
 			}			

@@ -5,11 +5,12 @@
 <form id="form-meta" action="${info.currentURL}" method="post">
 
 <input type="hidden" name="webaction" value="file.updateMeta" />
+
 <c:if test="${not empty param.select}">
 	<input type="hidden" name="select" value="${param.select}" />	
 </c:if>
-<c:if test="${not empty param.close}">
-	<input type="hidden" name="close" value="${param.close}" />
+<c:if test="${not empty param.close || not empty param.one}">
+	<input type="hidden" name="close" value="${empty param.one?param.close:'true'}" />
 </c:if>
 <c:if test="${not empty param[BACK_PARAM_NAME]}"><input type="hidden" name="${BACK_PARAM_NAME}" value="${param[BACK_PARAM_NAME]}" /></c:if>
 
@@ -23,12 +24,14 @@
 			<c:param name="${BACK_PARAM_NAME}" value="${param[BACK_PARAM_NAME]}" />
 		</c:if>
 	</c:url>
-	<li class="${file.directory?'directory':'file'} ${not empty param.select?'select':'no-select'} unlock item">
+	<li class="${file.directory?'directory':'file'} ${not empty param.select?'select':'no-select'} unlock item ${not empty param.one?'one':''}">
 		<c:if test="${param.select != 'image' || file.image || file.directory}">
 	    <c:set var="popularity" value=" - #${file.popularity}" />	    
 		<div class="title">		
+			<c:if test="${empty param.one}">
 			<a class="lock" href="#" onclick="var list=jQuery(this).parent().parent();list.removeClass('lock'); list.addClass('unlock'); return false;"><span class="glyphicon glyphicon-lock"></span></a>
 			<a class="unlock" href="#" onclick="var list=jQuery(this).parent().parent();list.removeClass('unlock'); list.addClass('lock'); return false;"><span class="glyphicon glyphicon-link"></span></a>
+			</c:if>
 			<span class="filename"><a href="${fileURL}" title="${file.name}">${file.name}</a></span>
 			<c:if test="${empty param.select}">
 				<c:url value="${info.currentURL}" var="deleteURL" context="/">
@@ -38,7 +41,7 @@
 						<c:param name="${BACK_PARAM_NAME}" value="${param[BACK_PARAM_NAME]}" />
 					</c:if>
 				</c:url>							
-				<span class="delete"><a class="needconfirm" href="${deleteURL}">X</a></span>
+				<span class="delete"><a class="needconfirm" href="${deleteURL}"><span class="glyphicon glyphicon-trash last"></a></span>
 			</c:if>
 			<span class="size">${file.size} <span class="popularity">${info.admin?popularity:''}</span></span>
 			<span class="last">${file.manType}</span>

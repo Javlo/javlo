@@ -1282,6 +1282,18 @@ body.previewEdit {
     vertical-align: middle;
 }
 
+.form-list .title span.last {
+	background: none no-repeat scroll right center transparent;
+    color: #006699;
+    display: inline-block;
+    margin-right: 0;
+    padding: 6px;
+    max-width: 70%;
+    overflow: hidden;
+    vertical-align: middle;
+}
+
+
 .form-list .title .popularity {
 	overflow: visible;
 	padding-top: 0;

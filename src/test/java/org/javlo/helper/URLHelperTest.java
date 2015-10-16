@@ -5,11 +5,11 @@ import java.net.URL;
 
 import javax.servlet.http.HttpServletRequest;
 
-import junit.framework.TestCase;
-
 import org.javlo.context.ContentContext;
 import org.javlo.test.servlet.FakeHttpContext;
 import org.javlo.test.servlet.TestRequest;
+
+import junit.framework.TestCase;
 
 public class URLHelperTest extends TestCase {
 	
@@ -57,6 +57,11 @@ public class URLHelperTest extends TestCase {
 		assertEquals(URLHelper.createForwardURL(ctx, "/javlo/view/fr/index.html"), "/javlo/view/fr/index.html");
 		request.setContextPath("/javlo");
 		assertEquals(URLHelper.createForwardURL(ctx, "/javlo/view/fr/index.html"), "/view/fr/index.html");
+	}
+	
+	public void encodeURLForAttribute() throws Exception {
+		String text =  "/folder and test/out.txt";
+		assertEquals(text, URLHelper.decodePathForAttribute(URLHelper.encodePathForAttribute(text)));
 	}
 	
 

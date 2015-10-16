@@ -6,9 +6,9 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -326,7 +326,7 @@ public class FileAction extends AbstractModuleAction {
 					}
 				}
 
-				if (editContext.isEditPreview() && StringHelper.isTrue(rs.getParameter("close", null))) {
+				if (StringHelper.isTrue(rs.getParameter("close", null))) {
 					ctx.setClosePopup(true);
 				}
 			}
@@ -441,6 +441,9 @@ public class FileAction extends AbstractModuleAction {
 			File file = new File(URLHelper.mergePath(globalContext.getStaticFolder(), filePath));
 			file.delete();
 		}
+		if (ctx.isEditPreview()) {
+			ctx.setClosePopup(true);
+		}
 		return null;
 	}
 
@@ -460,6 +463,23 @@ public class FileAction extends AbstractModuleAction {
 
 	public static String performSynchro(StaticConfig staticConfig, ServletContext application, GlobalContext globalContext) throws Exception {
 		SynchroHelper.performSynchro(application, staticConfig, globalContext);
+		return null;
+	}
+	
+	public static final String performPreviewedit(HttpServletRequest request, ContentContext ctx, RequestService rs, EditContext editCtx) throws Exception {
+		GlobalContext globalContext = GlobalContext.getInstance(request);
+		if (globalContext.isPreviewMode()) {			
+			String path = URLHelper.decodePathForAttribute(request.getParameter("file"));
+			File file = new File(path);
+			FileModuleContext.getInstance(ctx.getRequest());
+			String sourceFolder = URLHelper.cleanPath(getContextROOTFolder(ctx), false);
+			String parentPath = URLHelper.cleanPath(file.getParentFile().getCanonicalPath().replaceFirst(sourceFolder, ""), false);
+			FileModuleContext.getInstance(ctx.getRequest()).setPath(parentPath.replace(sourceFolder, ""));		
+			FileBean fileBean = new FileBean(ctx, StaticInfo.getInstance(ctx, file));
+			request.setAttribute("files", Arrays.asList(new FileBean[] {fileBean}));
+			InfoBean.getCurrentInfoBean(ctx).setFakeCurrentURL(request.getParameter("currentURL"));
+		}
+		ctx.getRequest().setAttribute("specialEditRenderer", "/modules/file/jsp/meta.jsp?one=true");			
 		return null;
 	}
 

@@ -197,7 +197,7 @@ public class URLHelper extends ElementaryURLHelper {
 					}
 				}
 				return url;
-			}			
+			}
 		}
 		return null;
 	}
@@ -1223,6 +1223,23 @@ public class URLHelper extends ElementaryURLHelper {
 		String id = ProxyServlet.getURLCode(url);
 		String proxyURL = "/proxy/" + id + '/' + StringHelper.getFileNameFromPath(url.getPath());
 		return URLHelper.mergePath(rootURL, proxyURL);
+	}
+
+	public static String encodePathForAttribute(String path) {
+		String outPath = path.replace(" ", "_BLK_");
+		outPath = outPath.replace("/", "_SLA_");
+		outPath = outPath.replace("\\", "_BSL_");
+		return outPath;
+	}
+
+	public static String decodePathForAttribute(String path) {
+		if (path == null) {
+			return null;
+		}
+		String outPath = path.replace("_BLK_", " ");
+		outPath = outPath.replace("_SLA_", "/");
+		outPath = outPath.replace("_BSL_", "\\");
+		return outPath;
 	}
 
 }

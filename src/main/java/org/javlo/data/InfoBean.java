@@ -62,6 +62,8 @@ public class InfoBean {
 	public static final String REQUEST_KEY = "info";
 
 	public static final String NEW_SESSION_PARAM = "__new_session";
+	
+	private String fakeCurrentURL = null;
 
 	private static final Map<String, String> staticData = Collections.unmodifiableMap(new HashMap<String, String>() {
 		{
@@ -123,7 +125,11 @@ public class InfoBean {
 	}
 
 	public String getCurrentURL() {
-		return URLHelper.createURL(ctx);
+		if (fakeCurrentURL != null) {
+			return fakeCurrentURL;
+		} else {
+			return URLHelper.createURL(ctx);
+		}
 	}
 
 	public String getCurrentAbsoluteURLQRCode() {
@@ -1237,6 +1243,14 @@ public class InfoBean {
 			}
 		}
 		return outList;
+	}
+
+	public String getFakeCurrentURL() {
+		return fakeCurrentURL;
+	}
+
+	public void setFakeCurrentURL(String fakeCurrentURL) {
+		this.fakeCurrentURL = fakeCurrentURL;
 	}
 
 }

@@ -13,6 +13,7 @@ import org.javlo.component.image.GlobalImage;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.filter.ImageFileFilter;
+import org.javlo.helper.NetHelper;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.navigation.MenuElement;
@@ -65,7 +66,16 @@ public class LocalImageSharedContentProvider extends AbstractSharedContentProvid
 				String imageURL = image.getPreviewURL(ctx, "shared-preview");
 				sharedContent.setTitle(imageFile.getName());				
 				sharedContent.setDescription(staticInfo.getTitle(ctx));
-				sharedContent.setImageUrl(imageURL);
+				sharedContent.setImageUrl(imageURL);				
+				sharedContent.setEditAsModal(true);
+				String url = URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.EDIT_MODE));
+				url = URLHelper.addParam(url, "webaction", "file.previewEdit");
+				url = URLHelper.addParam(url, "module", "file");
+				url = URLHelper.addParam(url, "nobreadcrumbs", "true");				
+				url = URLHelper.addParam(url, "file", URLHelper.encodePathForAttribute(imageFile.getPath()));
+				url = URLHelper.addParam(url, "previewEdit", "true");		
+				sharedContent.setEditURL(url);
+
 // Commented because it seems useless (getCategories(ctx) return a new map each time)
 //				if (!getCategories(ctx).containsKey(category)) {
 //					getCategories(ctx).put(category, category);
