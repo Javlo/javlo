@@ -400,3 +400,19 @@ li.line {
 .smart-generic-form td.width {
 	width: 50px;
 }
+
+.validation-email .col-sm-3 {
+	padding-left: 0;
+}
+
+.validation-email .col-sm-9 {
+	padding-right: 0;
+}
+
+.validation-email .row {
+	width: 60%;
+}
+
+.validation-email input, .validation-email select {
+	width: 100%;	
+}

@@ -891,13 +891,13 @@ public class XHTMLHelper {
 		return getInputOneSelect(name, contentArray, value, js, sort);
 	}
 
-	public static String getInputOneSelect(String name, List<String> content, String value, String cssClass, String js, boolean sort) {
+	public static String getInputOneSelect(String name, List<? extends Object> content, String value, String cssClass, String js, boolean sort) {
 
 		String[][] contentArray = new String[content.size()][];
 		for (int i = 0; i < content.size(); i++) {
 			contentArray[i] = new String[2];
-			contentArray[i][0] = content.get(i);
-			contentArray[i][1] = content.get(i);
+			contentArray[i][0] = (String)content.get(i);
+			contentArray[i][1] = (String)content.get(i);
 		}
 		return getInputOneSelectInternal(name, name, contentArray, value, cssClass, js, null, sort);
 	}
@@ -2216,7 +2216,18 @@ public class XHTMLHelper {
 		PrintStream out = new PrintStream(outStream);
 		out.println("<div class=\"line\">");
 		out.println("<label for=\"" + inputName + "\">" + label + "</label>");
-		out.println("<input type=\"text\" id=\"" + inputName + "\" name=\"" + inputName + "\" value=\"" + value + "\" />");
+		out.println("<input class=\"form-control\" type=\"text\" id=\"" + inputName + "\" name=\"" + inputName + "\" value=\"" + value + "\" />");
+		out.println("</div>");
+		out.close();
+		return new String(outStream.toByteArray());
+	}
+	
+	public static String renderLine(String label, String value) {
+		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+		PrintStream out = new PrintStream(outStream);
+		out.println("<div class=\"line\">");
+		out.println("<label>" + label + "</label>");
+		out.println("<div class=\"value\">"+value+"</div>");
 		out.println("</div>");
 		out.close();
 		return new String(outStream.toByteArray());
@@ -2231,7 +2242,7 @@ public class XHTMLHelper {
 		if (checked) {
 			chechedHTML = " checked=\"checked\"";
 		}
-		out.println("<input type=\"checkbox\" id=\"" + inputName + "\" name=\"" + inputName + "\"" + chechedHTML + " />");
+		out.println("<input class=\"form-control\" type=\"checkbox\" id=\"" + inputName + "\" name=\"" + inputName + "\"" + chechedHTML + " />");
 		out.println("</div>");
 		out.close();
 		return new String(outStream.toByteArray());

@@ -117,6 +117,16 @@ public class TimeRangeComponent extends DateComponent {
 		}
 		return "</div>";
 	}
+	
+	@Override
+	public void prepareView(ContentContext ctx) throws Exception {	
+		super.prepareView(ctx);
+		String range = "";
+		if (getStartDate() != null && getEndDate() != null) {
+			range = renderDate(ctx, getStartDate()) + " - " + renderDate(ctx, getEndDate());
+		}		
+		ctx.getRequest().setAttribute("range", range );
+	}
 
 	@Override
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {		

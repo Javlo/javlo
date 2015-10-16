@@ -36,7 +36,7 @@ public class Field {
 	private boolean last = false;
 	private boolean first = false;
 
-	protected static Collection<? extends Object> FIELD_TYPES = Arrays.asList(new String[] { "text", "large-text", "yes-no", "email", "radio", "list", "registered-list", "file", "validation" });
+	protected static List<? extends Object> FIELD_TYPES = Arrays.asList(new String[] { "text", "large-text", "yes-no", "email", "radio", "list", "registered-list", "file", "validation" });
 
 	public Field(String name, String label, String type, String condition, String value, String list, String registeredList, int order, int width) {
 		this.name = name;
@@ -127,7 +127,7 @@ public class Field {
 		return "field";
 	}
 
-	public Collection<? extends Object> getFieldTypes() {
+	public List<? extends Object> getFieldTypes() {
 		return FIELD_TYPES;
 	}
 

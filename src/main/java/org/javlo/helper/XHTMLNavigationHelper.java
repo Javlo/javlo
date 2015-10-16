@@ -5,6 +5,7 @@ import java.io.StringWriter;
 import java.util.Collection;
 import java.util.List;
 
+import org.apache.xalan.templates.ElemSort;
 import org.javlo.component.core.ContentElementList;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.links.RSSLink;
@@ -176,13 +177,16 @@ public class XHTMLNavigationHelper {
 
 	public static String renderComboNavigation(ContentContext ctx, Collection<MenuElement> pages) throws Exception {
 		MenuElement currentPage = ctx.getCurrentPage();
-		return renderComboNavigation(ctx, pages, ContentContext.FORWARD_PATH_REQUEST_KEY, currentPage.getPath());
+		return renderComboNavigation(ctx, pages, ContentContext.FORWARD_PATH_REQUEST_KEY, currentPage.getPath(), true);
 	}
 
-	public static String renderComboNavigation(ContentContext ctx, Collection<MenuElement> pages, String id, String currentPath) throws Exception {
+	public static String renderComboNavigation(ContentContext ctx, Collection<MenuElement> pages, String id, String currentPath, boolean filter) throws Exception {
 		StringWriter res = new StringWriter();
 		PrintWriter out = new PrintWriter(res);
-		out.println("<select name=\"" + id + "\" id=\"" + id + "\">");
+		if (filter) {
+			out.println("<div class=\"row\"><div class=\"col-sm-3\"><input type=\"text\" class=\"form-control\" placeholder=\"search...\" /></div><div class=\"col-sm-9\">");
+		}
+		out.println("<select class=\"form-control\" name=\"" + id + "\" id=\"" + id + "\">");
 		for (MenuElement page : pages) {
 			String path = URLHelper.createURL(ctx, page);
 			if ((currentPath != null) && (currentPath.equals(page.getPath()))) {
@@ -194,26 +198,34 @@ public class XHTMLNavigationHelper {
 			out.println("</option>");
 		}
 		out.println("</select>");
+		if (filter) {
+			out.println("</div></div>");
+		}
 		out.close();
 		return res.toString();
 	}
 
-	public static String renderComboNavigation(ContentContext ctx, MenuElement rootPage, String id, String currentValue) throws Exception {
+	public static String renderComboNavigation(ContentContext ctx, MenuElement rootPage, String id, String currentValue, boolean filter) throws Exception {
 		StringWriter res = new StringWriter();
 		PrintWriter out = new PrintWriter(res);
+		if (filter) {
+			out.println("<div class=\"row\"><div class=\"col-sm-3\"><input type=\"text\" data-filtered=\""+id+"\" class=\"form-control filter\" placeholder=\"search...\" /></div><div class=\"col-sm-9\">");
+		}
 		out.println("<select class=\"form-control\" name=\"" + id + "\" id=\"" + id + "\">");
-		MenuElement elem = rootPage;
-		String[] values = elem.getChildList();
-		for (String value : values) {
-			if ((currentValue != null) && (currentValue.equals(value))) {
-				out.println("<option value=\"" + value + "\" selected=\"true\">");
+		MenuElement elem = rootPage;		
+		for (MenuElement page : elem.getAllChildren()) {
+			if ((currentValue != null) && (currentValue.equals(page.getPath()))) {
+				out.println("<option data-search=\""+StringHelper.toHTMLAttribute(page.getTitle(ctx))+"\" value=\"" + page.getPath() + "\" selected=\"true\">");
 			} else {
-				out.print("<option value=\"" + value + "\">");
+				out.print("<option data-search=\""+StringHelper.toHTMLAttribute(page.getTitle(ctx))+"\" value=\"" + page.getPath() + "\">");
 			}
-			out.print(value);
+			out.print(page.getPath());
 			out.println("</option>");
 		}
 		out.println("</select>");
+		if (filter) {
+			out.println("</div></div>");
+		}
 		out.close();
 		return res.toString();
 	}

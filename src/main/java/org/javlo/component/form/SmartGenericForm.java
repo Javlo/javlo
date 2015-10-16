@@ -1,13 +1,16 @@
 package org.javlo.component.form;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -31,29 +34,36 @@ import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.LangHelper;
+import org.javlo.helper.NetHelper;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.helper.XHTMLHelper;
+import org.javlo.helper.XHTMLNavigationHelper;
 import org.javlo.helper.Comparator.StringComparator;
+import org.javlo.i18n.I18nAccess;
 import org.javlo.mailing.MailService;
 import org.javlo.message.GenericMessage;
 import org.javlo.service.CaptchaService;
 import org.javlo.service.ContentService;
 import org.javlo.service.RequestService;
+import org.javlo.service.event.Event;
 import org.javlo.utils.CSVFactory;
 import org.javlo.utils.CollectionAsMap;
+import org.javlo.utils.TimeMap;
 import org.javlo.ztatic.StaticInfo;
 
 public class SmartGenericForm extends AbstractVisualComponent implements IAction {
 
 	private Properties bundle;
 
+	private Integer countCache = null;
+	
+	private Map<String,String> cacheFrom = new TimeMap<String, String>(60*60); // 1 hours validity
+
 	private static Logger logger = Logger.getLogger(SmartGenericForm.class.getName());
 
 	protected static final Object LOCK = new Object();
-
-	
 
 	public Properties getLocalConfig(boolean reload) {
 		if (bundle == null || reload) {
@@ -89,6 +99,29 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		return StringHelper.isTrue(getLocalConfig(false).getProperty("captcha", "true"));
 	}
 
+	public int getCountSubscription(ContentContext ctx) throws IOException {
+		if (countCache == null) {
+			File file = getFile(ctx);
+			if (!file.exists()) {
+				countCache = 0;
+			} else {
+				BufferedReader reader = new BufferedReader(new FileReader(file));
+				try {
+					int countLine = 0;
+					String read = reader.readLine();
+					while (read != null) {
+						countLine++;
+						read = reader.readLine();
+					}
+					countCache = countLine - 1;
+				} finally {
+					ResourceHelper.closeResource(reader);
+				}
+			}
+		}
+		return countCache;
+	}
+
 	public static final String TYPE = "smart-generic-form";
 
 	@Override
@@ -110,6 +143,8 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		out.println(XHTMLHelper.renderLine("mail from :", getInputName("from"), getLocalConfig(false).getProperty("mail.from", "")));
 		out.println(XHTMLHelper.renderLine("mail from field :", getInputName("from-field"), getLocalConfig(false).getProperty("mail.from.field", "")));
 		out.println("</fieldset></div>");
+
+		/** MESSAGE **/
 		out.println("<div class=\"one_half\"><fieldset><legend>message</legend>");
 		out.println(XHTMLHelper.renderLine("field required :", getInputName("message-required"), getLocalConfig(false).getProperty("message.required", "")));
 		out.println(XHTMLHelper.renderLine("error required :", getInputName("error-required"), getLocalConfig(false).getProperty("error.required", "")));
@@ -124,6 +159,22 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 			out.println(XHTMLHelper.renderLine("file to big :", getInputName("message-tobig-file"), getLocalConfig(false).getProperty("message.tobig-file", "")));
 		}
 		out.println("</fieldset></div></div>");
+
+		/** EVENT **/
+		out.println("<fieldset><legend>Event</legend><div class=\"col-group\"><div class=\"one_half\">");
+		out.println(XHTMLHelper.renderLine("subscribe limit :", getInputName("event-limit"), getLocalConfig(false).getProperty("event.limit", "")));
+		out.println(XHTMLHelper.renderLine("confirm subject :", getInputName("mail-confirm-subject"), getLocalConfig(false).getProperty("mail.confirm.subject", "")));
+		out.println("<div class=\"line validation-email\"><label>Confirm Email page : </label>");
+		out.println(XHTMLNavigationHelper.renderComboNavigation(ctx, getPage().getRoot(), getInputName("mail-confirm-link"), getLocalConfig(false).getProperty("mail.confirm.link", ""), true) + "</div>");
+		out.println(XHTMLHelper.renderLine("open message :", getInputName("event-open-message"), getLocalConfig(false).getProperty("event.open.message", "")));
+		out.println("</div><div class=\"one_half\">");
+		out.println(XHTMLHelper.renderLine("current subscription :", "" + getCountSubscription(ctx)));
+		out.println(XHTMLHelper.renderLine("closed subject :", getInputName("mail-closed-subject"), getLocalConfig(false).getProperty("mail.closed.subject", "")));
+		out.println("<div class=\"line validation-email\"><label>Closed Email page : </label>");
+		out.println(XHTMLNavigationHelper.renderComboNavigation(ctx, getPage().getRoot(), getInputName("mail-closed-link"), getLocalConfig(false).getProperty("mail.closed.link", ""), true) + "</div>");
+		out.println(XHTMLHelper.renderLine("close message :", getInputName("event-close-message"), getLocalConfig(false).getProperty("event.close.message", "")));
+		out.println("</div></fieldset>");
+
 		out.println("<div class=\"action-add\"><input type=\"text\" name=\"" + getInputName("new-name") + "\" placeholder=\"field name\" /> <input type=\"submit\" name=\"" + getInputName("add") + "\" value=\"add field\" /></div>");
 		if (getFields().size() > 0) {
 			out.println("<table class=\"sTable2\">");
@@ -149,20 +200,20 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(outStream);
 		out.println("<tr class=\"field-line\">");
-		out.println("<td class=\"input\"><input type=\"text\" name=\"" + getInputName("name-" + field.getName()) + "\" value=\"" + field.getName() + "\"/></td>");
-		out.println("<td class=\"input\"><input type=\"text\" name=\"" + getInputName("label-" + field.getName()) + "\" value=\"" + field.getLabel() + "\"/></td>");
-		out.println("<td class=\"input\"><input type=\"text\" name=\"" + getInputName("condition-" + field.getName()) + "\" value=\"" + field.getCondition() + "\"/></td>");
+		out.println("<td class=\"input\"><input class=\"form-control\" type=\"text\" name=\"" + getInputName("name-" + field.getName()) + "\" value=\"" + field.getName() + "\"/></td>");
+		out.println("<td class=\"input\"><input class=\"form-control\" type=\"text\" name=\"" + getInputName("label-" + field.getName()) + "\" value=\"" + field.getLabel() + "\"/></td>");
+		out.println("<td class=\"input\"><input class=\"form-control\" type=\"text\" name=\"" + getInputName("condition-" + field.getName()) + "\" value=\"" + field.getCondition() + "\"/></td>");
 		if (isList()) {
 			if (field.getType().equals("radio") || field.getType().equals("list")) {
-				out.println("<td class=\"list\"><textarea name=\"" + getInputName("list-" + field.getName()) + "\">" + StringHelper.collectionToText(field.getList()) + "</textarea></td>");
+				out.println("<td class=\"list\"><textarea class=\"form-control\" name=\"" + getInputName("list-" + field.getName()) + "\">" + StringHelper.collectionToText(field.getList()) + "</textarea></td>");
 			} else if (field.getType().equals("registered-list")) {
-				out.println("<td class=\"list\"><input name=\"" + getInputName("registered-list-" + field.getName()) + "\" placeholder=\"list name\" value=\"" + field.getRegisteredList() + "\"/></td>");
+				out.println("<td class=\"list\"><input class=\"form-control\" name=\"" + getInputName("registered-list-" + field.getName()) + "\" placeholder=\"list name\" value=\"" + field.getRegisteredList() + "\"/></td>");
 			} else {
 				out.println("<td class=\"list\">&nbsp;</td>");
 			}
 		}
-		out.println("<td class=\"type\">" + XHTMLHelper.getInputOneSelect(getInputName("type-" + field.getName()), field.getFieldTypes(), field.getType()) + "</td>");
-		out.println("<td class=\"width\"><select name=\"" + getInputName("width-" + field.getName()) + "\" >");
+		out.println("<td class=\"type\">" + XHTMLHelper.getInputOneSelect(getInputName("type-" + field.getName()), field.getFieldTypes(), field.getType(), "form-control", (String) null, true) + "</td>");
+		out.println("<td class=\"width\"><select class=\"form-control\" name=\"" + getInputName("width-" + field.getName()) + "\" >");
 		for (int i = 1; i <= 12; i++) {
 			String selected = "";
 			if (i == field.getWidth()) {
@@ -176,10 +227,10 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 			required = " checked=\"checked\"";
 		}
 		out.println("<td class=\"required\"><input type=\"checkbox\" name=\"" + getInputName("require-" + field.getName()) + "\"" + required + " /></td>");
-		out.println("<td class=\"buttons\"><div  class=\"row\">");
-		out.println("  <div class=\"col-xs-4\"><button class=\"up btn btn-default btn-sm\" type=\"submit\" name=\"" + getInputName("up-" + field.getName()) + "\" ><span class=\"glyphicon glyphicon-menu-up\" aria-hidden=\"true\"></span></button></div>");
-		out.println("  <div class=\"col-xs-4\"><button class=\"down btn btn-default btn-sm\" type=\"submit\" name=\"" + getInputName("down-" + field.getName()) + "\"><span class=\"glyphicon glyphicon-menu-down\" aria-hidden=\"true\"></span></button></div>");
-		out.println("  <div class=\"col-xs-4\"><button class=\"needconfirm btn btn-default btn-sm\" type=\"submit\" name=\"" + getInputName("del-" + field.getName()) + "\" ><span class=\"glyphicon glyphicon-trash\" aria-hidden=\"true\"></span></button></div>");
+		out.println("<td class=\"buttons\"><div  class=\"btn-group btn-group-sm\">");
+		out.println("  <button class=\"up btn btn-default btn-sm\" type=\"submit\" name=\"" + getInputName("up-" + field.getName()) + "\" ><span class=\"glyphicon glyphicon-menu-up\" aria-hidden=\"true\"></span></button>");
+		out.println("  <button class=\"down btn btn-default btn-sm\" type=\"submit\" name=\"" + getInputName("down-" + field.getName()) + "\"><span class=\"glyphicon glyphicon-menu-down\" aria-hidden=\"true\"></span></button>");
+		out.println("  <button class=\"needconfirm btn btn-default btn-sm\" type=\"submit\" name=\"" + getInputName("del-" + field.getName()) + "\" ><span class=\"glyphicon glyphicon-trash\" aria-hidden=\"true\"></span></button>");
 		out.println("</div></td>");
 		out.println("</tr>");
 		out.close();
@@ -272,10 +323,48 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		}
 	}
 
+	public boolean isClose(ContentContext ctx) throws IOException {
+		Properties localConfig = getLocalConfig(false);
+		String eventLimistStr = localConfig.getProperty("event.limit");
+		if (StringHelper.isDigit(eventLimistStr)) {
+			int maxSubscription = Integer.parseInt(eventLimistStr);
+			if (maxSubscription > 0) {
+				int countSubscription = getCountSubscription(ctx);				
+				if (countSubscription >= maxSubscription) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
 	@Override
 	public void prepareView(ContentContext ctx) throws Exception {
 		super.prepareView(ctx);
-		ctx.getRequest().setAttribute("ci18n", getLocalConfig(false));
+		Properties localConfig = getLocalConfig(false);
+		ctx.getRequest().setAttribute("ci18n", localConfig);
+		String code = StringHelper.getRandomId();
+		cacheFrom.put(code, "");
+		ctx.getRequest().setAttribute("formCode", code);
+		String eventLimistStr = localConfig.getProperty("event.limit");
+		ctx.getRequest().setAttribute("openEvent", true);
+		if (StringHelper.isDigit(eventLimistStr)) {
+			int maxSubscription = Integer.parseInt(eventLimistStr);
+			if (maxSubscription > 0) {
+				int countSubscription = getCountSubscription(ctx);
+				ctx.getRequest().setAttribute("countSubscription", countSubscription);
+				GenericMessage msg;
+				if (countSubscription < maxSubscription) {
+					msg = new GenericMessage((String) localConfig.get("event.open.message"), GenericMessage.INFO);
+				} else {
+					ctx.getRequest().setAttribute("openEvent", false);
+					msg = new GenericMessage((String) localConfig.get("event.close.message"), GenericMessage.ALERT);
+				}
+				if (ctx.getRequest().getAttribute("msg") == null) {
+					ctx.getRequest().setAttribute("msg", msg);
+				}
+			}
+		}
 	}
 
 	protected long getMaxFileSize() {
@@ -292,7 +381,11 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		RequestService rs = RequestService.getInstance(ctx.getRequest());
 		getLocalConfig(false).setProperty("title", rs.getParameter(getInputName("title"), ""));
 		getLocalConfig(false).setProperty("filename", rs.getParameter(getInputName("filename"), ""));
+		boolean oldCaptcha = isCaptcha();
 		getLocalConfig(false).setProperty("captcha", rs.getParameter(getInputName("captcha"), ""));
+		if (oldCaptcha != isCaptcha()) {
+			ctx.setClosePopup(false);
+		}
 		getLocalConfig(false).setProperty("file.max-size", rs.getParameter(getInputName("filesize"), ""));
 		getLocalConfig(false).setProperty("mail.to", rs.getParameter(getInputName("to"), ""));
 		getLocalConfig(false).setProperty("mail.cc", rs.getParameter(getInputName("cc"), ""));
@@ -301,12 +394,19 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		getLocalConfig(false).setProperty("mail.subject.field", rs.getParameter(getInputName("subject-field"), ""));
 		getLocalConfig(false).setProperty("mail.from", rs.getParameter(getInputName("from"), ""));
 		getLocalConfig(false).setProperty("mail.from.field", rs.getParameter(getInputName("from-field"), ""));
-
 		getLocalConfig(false).setProperty("message.required", rs.getParameter(getInputName("message-required"), ""));
 		getLocalConfig(false).setProperty("error.required", rs.getParameter(getInputName("error-required"), ""));
 		getLocalConfig(false).setProperty("message.thanks", rs.getParameter(getInputName("message-thanks"), ""));
 		getLocalConfig(false).setProperty("message.error", rs.getParameter(getInputName("message-error"), ""));
 		getLocalConfig(false).setProperty("message.reset", rs.getParameter(getInputName("message-reset"), ""));
+
+		getLocalConfig(false).setProperty("event.limit", rs.getParameter(getInputName("event-limit"), ""));
+		getLocalConfig(false).setProperty("mail.confirm.subject", rs.getParameter(getInputName("mail-confirm-subject"), ""));
+		getLocalConfig(false).setProperty("mail.confirm.link", rs.getParameter(getInputName("mail-confirm-link"), ""));
+		getLocalConfig(false).setProperty("mail.closed.subject", rs.getParameter(getInputName("mail-closed-subject"), ""));
+		getLocalConfig(false).setProperty("mail.closed.link", rs.getParameter(getInputName("mail-closed-link"), ""));
+		getLocalConfig(false).setProperty("event.open.message", rs.getParameter(getInputName("event-open-message"), ""));
+		getLocalConfig(false).setProperty("event.close.message", rs.getParameter(getInputName("event-close-message"), ""));
 
 		if (isCaptcha()) {
 			getLocalConfig(false).setProperty("label.captcha", rs.getParameter(getInputName("label-captcha"), ""));
@@ -332,7 +432,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 				field.setName(rs.getParameter(getInputName("name-" + oldName), ""));
 				field.setRequire(rs.getParameter(getInputName("require-" + oldName), null) != null);
 				field.setLabel(rs.getParameter(getInputName("label-" + oldName), ""));
-				String cond = rs.getParameter(getInputName("condition-" + oldName),"");
+				String cond = rs.getParameter(getInputName("condition-" + oldName), "");
 				field.setCondition(cond);
 				field.setType(rs.getParameter(getInputName("type-" + oldName), ""));
 				field.setWidth(Integer.parseInt(rs.getParameter(getInputName("width-" + oldName), "6")));
@@ -363,10 +463,12 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 
 		if (rs.getParameter(getInputName("new-name"), "").trim().length() > 0) {
 			String fieldName = StringHelper.createFileName(rs.getParameter(getInputName("new-name"), null));
-			store(new Field(fieldName, "", "", "text", "", "", "", pos + 20, 6));
+			store(new Field(fieldName, "", "", "", "text", "", "", pos + 20, 6));
 		}
 
 		store(ctx);
+		
+		countCache = null;
 
 		return null;
 	}
@@ -425,6 +527,27 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 	protected boolean isSendEmail() {
 		return true;
 	}
+	
+	protected InternetAddress getConfirmToEmail(ContentContext ctx) {
+		String emailConformField = getLocalConfig(false).getProperty("mail.confirm.field", null);
+		if (emailConformField == null) {
+			for (Field field : getFields()) {
+				if (field.getType().equals("email") && emailConformField == null) {
+					emailConformField = field.getName();
+				}
+			}
+		}
+		RequestService requestService = RequestService.getInstance(ctx.getRequest());
+		if (emailConformField != null && requestService.getParameter(emailConformField, "") != null) {
+			String tmpEmail = requestService.getParameter(emailConformField, "");
+			try {
+				return new InternetAddress(tmpEmail);
+			} catch (Exception e) {
+				logger.warning(e.getMessage());
+			}
+		}
+		return null;
+	}
 
 	public static String performSubmit(HttpServletRequest request, HttpServletResponse response) throws Exception {
 
@@ -432,6 +555,16 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		ContentContext ctx = ContentContext.getContentContext(request, response);
 		ContentService content = ContentService.getInstance(request);
 		SmartGenericForm comp = (SmartGenericForm) content.getComponent(ctx, requestService.getParameter("comp_id", null));
+		boolean eventClose = comp.isClose(ctx);
+		
+		String code = requestService.getParameter("_form-code", "");
+		if (!comp.cacheFrom.containsKey(code)) {
+			I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
+			GenericMessage msg = new GenericMessage(i18nAccess.getViewText("error.bad-from-version", "This form has experied, try again."), GenericMessage.ERROR);
+			request.setAttribute("msg", msg);
+			return "This form has experied, try again.";
+		}
+		comp.cacheFrom.remove(code);
 
 		/** check captcha **/
 		String captcha = requestService.getParameter("captcha", null);
@@ -439,7 +572,6 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		if (comp.isCaptcha(ctx)) {
 			if (captcha == null || CaptchaService.getInstance(request.getSession()).getCurrentCaptchaCode() == null || !CaptchaService.getInstance(request.getSession()).getCurrentCaptchaCode().equals(captcha)) {
 				GenericMessage msg = new GenericMessage(comp.getLocalConfig(false).getProperty("error.captcha", "bad captcha."), GenericMessage.ERROR);
-
 				request.setAttribute("msg", msg);
 				request.setAttribute("error_captcha", "true");
 				return null;
@@ -467,6 +599,11 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		result.put("__X-Forwarded-For", request.getHeader("x-forwarded-for"));
 		result.put("__X-Real-IP", request.getHeader("x-real-ip"));
 		result.put("__referer", request.getHeader("referer"));
+		
+		String registrationID = StringHelper.getShortRandomId();
+		result.put("_registrationID", registrationID);
+		result.put("_event-close", ""+comp.isClose(ctx));
+		
 
 		String fakeField = comp.getLocalConfig(false).getProperty("field.fake", "fake");
 		boolean withXHTML = StringHelper.isTrue(comp.getLocalConfig(false).getProperty("field.xhtml", null));
@@ -612,8 +749,47 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 					if (bccEmail != null) {
 						bccList = Arrays.asList(bccEmail);
 					}
+					
+					comp.countCache = null;
 
 					mailService.sendMail(null, fromEmail, toEmail, ccList, bccList, subject, mailContent, comp.isHTMLMail());
+
+					String mailPath;
+					String mailSubject;
+					if (!eventClose) {						
+						mailPath = comp.getLocalConfig(false).getProperty("mail.confirm.link", null);	
+						mailSubject = comp.getLocalConfig(false).getProperty("mail.confirm.subject", null);
+					} else {						
+						mailPath = comp.getLocalConfig(false).getProperty("mail.closed.link", null);	
+						mailSubject = comp.getLocalConfig(false).getProperty("mail.closed.subject", null);
+					}
+					ContentContext pageCtx = ctx.getContextForAbsoluteURL();
+					pageCtx.setRenderMode(ContentContext.PAGE_MODE);
+					String email = NetHelper.readPageForMailing(new URL(URLHelper.createURL(pageCtx, mailPath)));
+					if (email != null && email.length() > 0) {						
+						InternetAddress to = comp.getConfirmToEmail(ctx);
+						if (to != null) {							
+							for (Field field : comp.getFields()) {
+								email = email.replace("${field."+field.getName()+"}", requestService.getParameter(field.getName(), ""));
+							}
+							email = email.replace("${registrationID}", registrationID);
+							email = email.replace("${communication}", StringHelper.encodeAsStructuredCommunicationMod97(registrationID));
+							
+							email = email.replace("${event.title}", comp.getPage().getTitle(pageCtx));
+							email = email.replace("${event.location}", comp.getPage().getLocation(pageCtx));
+							email = email.replace("${event.description}", comp.getPage().getDescription(pageCtx));
+							Event event = comp.getPage().getEvent(pageCtx);
+							if (event != null) {
+								email = email.replace("${event.start}", StringHelper.renderDate(event.getStart()));	
+								email = email.replace("${event.end}", StringHelper.renderDate(event.getEnd()));
+							}						
+							
+							InternetAddress registrationFrom = new InternetAddress(comp.getLocalConfig(false).getProperty("mail.from", StaticConfig.getInstance(request.getSession()).getSiteEmail()));
+							NetHelper.sendMail(ctx.getGlobalContext(), registrationFrom, to, null,  bccEmail, mailSubject, email, null, true);
+						} else {
+							return "warning : no recipient found.";
+						}						
+					}
 				} catch (Exception e) {
 					e.printStackTrace();
 					GenericMessage msg = new GenericMessage(comp.getLocalConfig(false).getProperty("message.error", "technical error."), GenericMessage.ERROR);
@@ -650,6 +826,11 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 
 	@Override
 	public boolean isEmpty(ContentContext ctx) {
+		return false;
+	}
+	
+	@Override
+	public boolean isContentCachableByQuery(ContentContext ctx) {
 		return false;
 	}
 }

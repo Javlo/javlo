@@ -35,6 +35,7 @@ import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
+import org.javlo.helper.BeanHelper;
 import org.javlo.helper.NetHelper;
 import org.javlo.helper.PatternHelper;
 import org.javlo.helper.ResourceHelper;
@@ -49,6 +50,8 @@ import org.javlo.service.CaptchaService;
 import org.javlo.service.ContentService;
 import org.javlo.service.ListService;
 import org.javlo.service.RequestService;
+import org.javlo.user.IUserFactory;
+import org.javlo.user.UserFactory;
 import org.javlo.utils.CSVFactory;
 import org.javlo.utils.CollectionAsMap;
 import org.javlo.ztatic.StaticInfo;
@@ -175,6 +178,16 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 				listService.addList(((String)key).replaceFirst("list.", ""), StringHelper.stringToCollection(prop.getProperty(((String)key)), ";"));				
 			}
 		}		
+		RequestService rs = RequestService.getInstance(ctx.getRequest());
+		IUserFactory userFactory = UserFactory.createUserFactory(ctx.getRequest());
+		if (userFactory.getCurrentUser(ctx.getRequest().getSession()) != null) {
+			Map<String,String> userInfo = BeanHelper.bean2Map(userFactory.getCurrentUser(ctx.getRequest().getSession()).getUserInfo());
+			for (String key : userInfo.keySet()) {
+				if (!StringHelper.isEmpty(userInfo.get(key)) && StringHelper.isEmpty(rs.getParameter(key, null))) {
+					rs.setParameter(key, userInfo.get(key));					
+				}
+			}
+		}
 	}
 
 	@Override

@@ -141,7 +141,7 @@ public class GenericQuiz extends SmartGenericForm {
 
 		private static String PREFIX = "question";
 
-		protected static Collection<? extends Object> FIELD_TYPES = Arrays.asList(new String[] { "text", "large-text", "yes-no", "list" });
+		protected static List<? extends Object> FIELD_TYPES = Arrays.asList(new String[] { "text", "large-text", "yes-no", "list" });
 
 		private String response = "";
 
@@ -179,7 +179,7 @@ public class GenericQuiz extends SmartGenericForm {
 		}
 
 		@Override
-		public Collection<? extends Object> getFieldTypes() {
+		public List<? extends Object> getFieldTypes() {
 			return FIELD_TYPES;
 		}
 		

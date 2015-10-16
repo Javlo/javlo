@@ -1218,7 +1218,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		/* parent node */
 		out.println("<div class=\"line\"><div class=\"row\"><div class=\"col-xs-10\">");		
 		out.println("<label for=\"" + getParentNodeInputName() + "\">" + i18nAccess.getText("content.page-teaser.parent-node") + " : </label>");
-		out.println(XHTMLNavigationHelper.renderComboNavigation(ctx, menu, getParentNodeInputName(), getParentNode()));
+		out.println(XHTMLNavigationHelper.renderComboNavigation(ctx, menu, getParentNodeInputName(), getParentNode(), true));
 		out.println("</div><div class=\"col-xs-2\">");
 		out.println("<input type=\"button\" class=\"btn btn-default btn-xs\" onclick=\"jQuery('#"+getParentNodeInputName()+"').val('"+ctx.getCurrentPage().getPath()+"');\" value=\""+i18nAccess.getText("global.current-page")+"\" >");
 		out.println("</div></div></div>");

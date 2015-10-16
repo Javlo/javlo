@@ -156,6 +156,17 @@ jQuery(window).load(function() {
 	}
 });
 
+var openSelect = function(selector){
+    var element = jQuery(selector)[0], worked = false;
+   if (document.createEvent) { // all browsers
+       var e = document.createEvent("MouseEvents");
+       e.initMouseEvent("mousedown", true, true, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+       worked = element.dispatchEvent(e);
+   } else if (element.fireEvent) { // ie
+       worked = element.fireEvent("onmousedown");
+   }
+}
+
 jQuery(document).ready(function() {
 	
 	jQuery( window ).mousemove(function( event ) {
@@ -166,7 +177,24 @@ jQuery(document).ready(function() {
 	updateColorInput();
 
 	jQuery("body").addClass("js");
-
+	
+	jQuery('input.filter').keydown( function() {
+		var input = jQuery(this);
+		var targetId = input.data("filtered");
+		var target = jQuery('#'+targetId);
+		target.find('option').each(function() {
+			var option = jQuery(this);
+			var text = option.val() +' ' + option.data('search');
+			console.log("text = "+text);
+			console.log("input.value = "+input.val());
+			if (!text.contains(input.val())) {
+				option.addClass('hidden');
+			} else {
+				option.removeClass('hidden');
+			}
+		})
+	});	
+	
 	closableFieldSet(jQuery(".closable"));
 
 	jQuery("input.label-inside").each(function() {

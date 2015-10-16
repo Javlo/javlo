@@ -406,7 +406,7 @@ public class ContentContext {
 
 	private boolean refreshParent = false;
 
-	private boolean closePopup = false;
+	private Boolean closePopup = null;
 
 	private String parentURL = null;
 
@@ -1612,11 +1612,17 @@ public class ContentContext {
 	}
 
 	public boolean isClosePopup() {
-		return closePopup;
+		if (closePopup == null) {
+			return false;
+		} else {
+			return closePopup;
+		}
 	}
 
 	public void setClosePopup(boolean closePopup) {
-		this.closePopup = closePopup;
+		if (this.closePopup == null) {
+			this.closePopup = closePopup;
+		}
 	}
 
 	public boolean isEditPreview() {

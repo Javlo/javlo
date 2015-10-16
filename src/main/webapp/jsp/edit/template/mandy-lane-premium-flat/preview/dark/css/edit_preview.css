@@ -9,6 +9,10 @@
 	box-shadow: 0 0 6px #bbbbbb;
 }
 
+#preview_command .action-title {
+	display: none;
+}
+
 #preview_command .header li .inwrapper {
     color: #cccccc !important;;
 }
@@ -17,6 +21,12 @@
     color: #dddddd !important;;
     background-color: #555555;
     border-color: #333333;
+}
+
+#preview_command .btn-default:hover {
+    color: #dddddd !important;;
+    background-color: #555555;
+    border-color: #cccccc;
 }
 
 #preview_command .component-list .component:HOVER .wrapper-in, #preview_command .thumbnail:HOVER .caption {

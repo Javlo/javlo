@@ -25,7 +25,7 @@
 	   <ul class="navigation actions">
 	   <li>
 	   	 <div class="actions">
-	   		<form id="add-page">
+	   		<form id="add-page" action="${info.currentURL}" method="post">
 	   			<div>
 	   				<input type="hidden" value="edit.addPage" name="webaction" />				
 					<input type="hidden" name="parent" value="${rootAssociation.associationPage.name}" />
@@ -46,7 +46,7 @@
 	   </ul><ul class="navigation actions">
 	   <li>
 	   	 <div class="actions">
-	   		<form id="add-page">
+	   		<form id="add-page-article" action="${info.currentURL}" method="post">
 	   			<div>	   			
 					<input type="hidden" value="edit.addPage" name="webaction" />				
 					<input type="hidden" name="parent" value="${rootAssociation.articleRoot.name}" />

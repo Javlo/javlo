@@ -136,20 +136,20 @@ public class DateComponent extends AbstractVisualComponent implements IDate {
 	}
 
 	protected String renderDate(ContentContext ctx, Date date) throws FileNotFoundException, IOException {
-		if (getStyle(ctx).equals(USER_FRIENDLY_DATE_TYPE)) {
+		if (getStyle().equals(USER_FRIENDLY_DATE_TYPE)) {
 			return StringHelper.renderUserFriendlyDate(ctx, date);
-		} else if (getStyle(ctx).equals(MEDIUM_DATE_TYPE)) {
+		} else if (getStyle().equals(MEDIUM_DATE_TYPE)) {
 			return StringHelper.renderMediumDate(ctx, date);
-		} else if (getStyle(ctx).equals(SHORT_DATE_TYPE)) {
+		} else if (getStyle().equals(SHORT_DATE_TYPE)) {
 			return StringHelper.renderShortDate(ctx, date);
-		} else if (getStyle(ctx).equals(SHORT_DATE_WIDTH_DAY)) {
+		} else if (getStyle().equals(SHORT_DATE_WIDTH_DAY)) {
 			return StringHelper.renderShortDateWidthDay(ctx, date);
-		} else if (getStyle(ctx).equals(VISIBLE_DATE_TYPE)) {
+		} else if (getStyle().equals(VISIBLE_DATE_TYPE)) {
 			return StringHelper.renderDate(date);
-		} else if (getStyle(ctx).equals(VISIBLE_TIME_TYPE)) {
+		} else if (getStyle().equals(VISIBLE_TIME_TYPE)) {
 			return StringHelper.renderTime(date);
 		}
-		return "";
+		return "style not found : "+getStyle();
 	}
 
 	@Override

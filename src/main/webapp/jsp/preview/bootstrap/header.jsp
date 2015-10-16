@@ -87,22 +87,32 @@
 				<div class="btn-group">
 					<ul>
 						<li>
+							<c:set var="tooltip" value='' />
+							<c:if test="${i18n.edit['command.copy-page.tooltip'] != 'command.copy-page.tooltip'}">
+								<c:set var="tooltip" value='data-toggle="tooltip" data-placement="bottom" title="${i18n.edit[\'command.copy-page.tooltip\']}"' />
+							</c:if>
+						
 							<form class="${info.page.pageEmpty || info.page.childrenAssociation?'no-access':''}"
 								id="copy_page"
 								action="${info.currentURL}?webaction=edit.copyPage"
 								method="post">
-								<button id="pc_copy_page" type="submit"
+								<button ${tooltip} id="pc_copy_page" type="submit"
 									class="btn btn-default btn-sm" ${info.page.pageEmpty || info.page.childrenAssociation?'disabled="disabled"':''}>
 									<span class="glyphicon glyphicon-copy" aria-hidden="true"></span><span
 										class="text">${i18n.edit['action.copy-page']}</span>
 								</button>
 							</form>
 						</li>
-						<li><form
+						<li>
+						<c:set var="tooltip" value='' />
+						<c:if test="${i18n.edit['command.paste-page.tooltip'] != 'command.paste-page.tooltip'}">
+							<c:set var="tooltip" value='data-toggle="tooltip" data-placement="bottom" title="${i18n.edit[\'command.paste-page.tooltip\']}"' />
+						</c:if>						
+						<form
 								class="${empty info.contextForCopy || !info.page.pageEmpty || info.page.childrenAssociation?'no-access':''}"
 								id="paste_page" action="${info.currentURL}" method="post">
 								<input type="hidden" name="webaction" value="edit.pastePage" />
-								<button class="btn btn-default btn-sm" id="pc_paste_page"
+								<button ${tooltip} class="btn btn-default btn-sm" id="pc_paste_page"
 									type="submit"
 									${empty info.contextForCopy || !info.page.pageEmpty || info.page.childrenAssociation?'disabled="disabled"':''}>
 									<span class="glyphicon glyphicon-paste" aria-hidden="true"></span><span

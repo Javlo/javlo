@@ -5,9 +5,7 @@
 	</div>	</c:if>	<c:if test="${empty valid}">
 <h3>${comp.title}</h3>
 <form id="form-${compid}" method="post" action="${info.currentURL}" ${comp.file?' enctype="multipart/form-data"':''} onchange="form${compid}Change()">
-<input type="hidden" name="webaction" value="smart-form.submit" />
-<input type="hidden" name="comp_id" value="${comp.id}" />
-
+<jsp:include page="basic.jsp"></jsp:include>
 <div class="cols">
 <c:forEach var="localField" items="${comp.fields}">
 	<c:set var="field" value="${localField}" scope="request" />	
