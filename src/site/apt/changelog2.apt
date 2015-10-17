@@ -503,3 +503,7 @@ change log
  * SmartForm event
 
  * edit direct metadata from sharing
+ 
+ * need admin right for change shared-content config
+ 
+ * add NoExtURLPathTitleCreatorOneLevel only section and title in url

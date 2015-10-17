@@ -54,6 +54,7 @@ import org.javlo.i18n.I18nAccess;
 import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
 import org.javlo.module.core.AbstractModuleContext;
+import org.javlo.module.core.IMainModuleName;
 import org.javlo.module.core.Module;
 import org.javlo.module.core.Module.Box;
 import org.javlo.module.core.ModulesContext;
@@ -468,7 +469,7 @@ public class Edit extends AbstractModuleAction {
 
 		Module currentModule = modulesContext.getCurrentModule();
 
-		if (modulesContext.searchModule("shared-content") != null) {
+		if (modulesContext.searchModule(IMainModuleName.TICKET) != null) {
 			ctx.getRequest().setAttribute("sharedContent", "true");
 		}
 
@@ -1934,7 +1935,7 @@ public class Edit extends AbstractModuleAction {
 			// sharedContentService.clearCache();
 			SharedContent sharedContent = sharedContentService.getSharedContent(ctx, sharedData);
 			if (sharedContent == null) {
-				String msg = "error : shared content not found : " + sharedData;
+				String msg = "error : shared content not found : " + sharedData + " container:"+sharedContentService.getClass().getName();
 				logger.warning(msg);
 				return msg;
 			}

@@ -32,6 +32,7 @@ import org.javlo.mailing.Mailing;
 import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
 import org.javlo.module.core.AbstractModuleContext;
+import org.javlo.module.core.IMainModuleName;
 import org.javlo.module.core.Module;
 import org.javlo.module.core.ModuleException;
 import org.javlo.module.core.ModulesContext;
@@ -46,7 +47,7 @@ public class MailingModuleContext extends AbstractModuleContext {
 
 	private static Logger logger = Logger.getLogger(MailingModuleContext.class.getName());
 
-	private static final String MODULE_NAME = "mailing";
+	private static final String MODULE_NAME = IMainModuleName.MAILING;
 
 	public static MailingModuleContext getInstance(HttpServletRequest request) throws ModuleException, FileNotFoundException, IOException, InstantiationException, IllegalAccessException {
 		GlobalContext globalContext = GlobalContext.getInstance(request);

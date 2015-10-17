@@ -9,6 +9,7 @@ import java.util.logging.Logger;
 
 import org.javlo.context.ContentContext;
 import org.javlo.helper.StringHelper;
+import org.javlo.module.core.IMainModuleName;
 import org.javlo.module.core.ModuleException;
 import org.javlo.module.core.ModulesContext;
 
@@ -127,7 +128,7 @@ public class SharedContentService {
 	
 	public static void prepare(ContentContext ctx) throws ModuleException {
 		ModulesContext modulesContext = ModulesContext.getInstance(ctx.getRequest().getSession(), ctx.getGlobalContext());
-		if (modulesContext.searchModule("shared-content") != null) {
+		if (modulesContext.searchModule(IMainModuleName.SHARED_CONTENT) != null) {
 			SharedContentService sharedContentService = SharedContentService.getInstance(ctx);
 			SharedContentContext sharedContentContext = SharedContentContext.getInstance(ctx.getRequest().getSession());
 			ctx.getRequest().setAttribute("sharedContentProviders", sharedContentService.getAllActiveProvider(ctx));

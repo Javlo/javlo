@@ -24,7 +24,7 @@
 	<div>
 		<input type="hidden" name="webaction" value="shared-content.choose" />
 		<div class="form-group form-inline">		
-		<select name="provider" class="form-control">
+		<select name="provider" class="form-control ${!info.admin && empty provider.URL?'max-width':''}">
 			<option class="placeholder" value="">${i18n.edit["preview.choose-provider"]}</option>
 			<c:forEach var="provider" items="${sharedContentProviders}">
 				<c:set var="key" value="shared.${provider.name}" />
@@ -40,7 +40,9 @@
 		<c:if test="${not empty provider.URL}">
 		<a class="btn btn-default" title="link" lang="en" href="${provider.URL}" target="_blank"><span class="glyphicon glyphicon-circle-arrow-right" aria-hidden="true"></span></a>
 		</c:if>
+		<c:if test="${info.admin}">
 		<button class="btn btn-default pull-right" title="add" lang="en" onclick="editPreview.openModal('${i18n.edit['global.page-properties']}', '${url}'); return false;"><span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span></button>
+		</c:if>
 		</div>		
 		<c:if test="${fn:length(sharedContentCategories)>1}">
 		<div class="form-group">

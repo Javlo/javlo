@@ -2,6 +2,7 @@ package org.javlo.helper.importation;
 
 import org.javlo.component.core.ComponentBean;
 import org.javlo.context.ContentContext;
+import org.javlo.module.core.IMainModuleName;
 import org.javlo.module.core.ModuleException;
 import org.javlo.module.core.ModulesContext;
 
@@ -24,7 +25,7 @@ public class ImportConfigBean {
 			createContentOnImportImage = true; 
 		} else {
 			ModulesContext modulesContext = ModulesContext.getInstance(ctx.getRequest().getSession(), ctx.getGlobalContext());			
-			if (modulesContext.isModule("shared-content")) {
+			if (modulesContext.isModule(IMainModuleName.SHARED_CONTENT)) {
 				createContentOnImportImage = false;
 			} else {
 				createContentOnImportImage = true;

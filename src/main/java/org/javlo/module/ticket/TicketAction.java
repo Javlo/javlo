@@ -23,6 +23,7 @@ import org.javlo.helper.URLHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
+import org.javlo.module.core.IMainModuleName;
 import org.javlo.module.core.Module;
 import org.javlo.module.core.ModulesContext;
 import org.javlo.service.RequestService;
@@ -35,7 +36,7 @@ import org.javlo.user.UserFactory;
 public class TicketAction extends AbstractModuleAction {
 
 	private static final String LAST_NOTIFICATION_TIME = TicketAction.class.getName() + ".LAST";
-	public static final String MODULE_NAME = "ticket";
+	public static final String MODULE_NAME = IMainModuleName.TICKET;
 
 	@Override
 	public String getActionGroupName() {

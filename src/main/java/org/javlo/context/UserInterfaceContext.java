@@ -6,6 +6,7 @@ import java.util.logging.Logger;
 import javax.servlet.http.HttpSession;
 
 import org.javlo.helper.StringHelper;
+import org.javlo.module.core.IMainModuleName;
 import org.javlo.user.AdminUserFactory;
 import org.javlo.user.AdminUserSecurity;
 import org.javlo.user.IUserInfo;
@@ -40,19 +41,19 @@ public class UserInterfaceContext {
 		AdminUserFactory userFact = AdminUserFactory.createUserFactory(globalContext, session);
 		User user = userFact.getCurrentUser(session);
 
-		if (instance == null) {
+		if (instance == null || instance.globalContext != globalContext) {			
 			if (userFact == null || user == null) {
 				return FAKE_INSTACE;
 			}
 			instance = new UserInterfaceContext();
 			instance.session = session;
 			instance.globalContext = globalContext;
-			if (globalContext.getModules().contains("mailing") && AdminUserSecurity.getInstance().canRole(user, AdminUserSecurity.MAILING_ROLE)) {
+			if (globalContext.getModules().contains(IMainModuleName.MAILING) && AdminUserSecurity.getInstance().canRole(user, AdminUserSecurity.MAILING_ROLE)) {
 				instance.mailing = true;
 			} else {
 				instance.mailing = false;
 			}
-			if (globalContext.getModules().contains("ticket")) {
+			if (globalContext.getModules().contains(IMainModuleName.TICKET)) {
 				instance.setTicket(true);
 			} else {
 				instance.setTicket(false);
@@ -144,5 +145,9 @@ public class UserInterfaceContext {
 
 	public void setTicket(boolean ticket) {
 		this.ticket = ticket;
+	}
+	
+	public boolean isPreviewResourcesTab() {
+		return globalContext.getModules().contains(IMainModuleName.SHARED_CONTENT);
 	}
 }
