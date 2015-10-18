@@ -58,8 +58,10 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 	private Properties bundle;
 
 	private Integer countCache = null;
-	
-	private Map<String,String> cacheFrom = new TimeMap<String, String>(60*60); // 1 hours validity
+
+	private Map<String, String> cacheFrom = new TimeMap<String, String>(60 * 60); // 1
+																					// hours
+																					// validity
 
 	private static Logger logger = Logger.getLogger(SmartGenericForm.class.getName());
 
@@ -329,7 +331,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		if (StringHelper.isDigit(eventLimistStr)) {
 			int maxSubscription = Integer.parseInt(eventLimistStr);
 			if (maxSubscription > 0) {
-				int countSubscription = getCountSubscription(ctx);				
+				int countSubscription = getCountSubscription(ctx);
 				if (countSubscription >= maxSubscription) {
 					return true;
 				}
@@ -467,7 +469,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		}
 
 		store(ctx);
-		
+
 		countCache = null;
 
 		return null;
@@ -527,7 +529,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 	protected boolean isSendEmail() {
 		return true;
 	}
-	
+
 	protected InternetAddress getConfirmToEmail(ContentContext ctx) {
 		String emailConformField = getLocalConfig(false).getProperty("mail.confirm.field", null);
 		if (emailConformField == null) {
@@ -556,7 +558,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		ContentService content = ContentService.getInstance(request);
 		SmartGenericForm comp = (SmartGenericForm) content.getComponent(ctx, requestService.getParameter("comp_id", null));
 		boolean eventClose = comp.isClose(ctx);
-		
+
 		String code = requestService.getParameter("_form-code", "");
 		if (!comp.cacheFrom.containsKey(code)) {
 			I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
@@ -599,11 +601,10 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		result.put("__X-Forwarded-For", request.getHeader("x-forwarded-for"));
 		result.put("__X-Real-IP", request.getHeader("x-real-ip"));
 		result.put("__referer", request.getHeader("referer"));
-		
+
 		String registrationID = StringHelper.getShortRandomId();
 		result.put("_registrationID", registrationID);
-		result.put("_event-close", ""+comp.isClose(ctx));
-		
+		result.put("_event-close", "" + comp.isClose(ctx));
 
 		String fakeField = comp.getLocalConfig(false).getProperty("field.fake", "fake");
 		boolean withXHTML = StringHelper.isTrue(comp.getLocalConfig(false).getProperty("field.xhtml", null));
@@ -749,46 +750,48 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 					if (bccEmail != null) {
 						bccList = Arrays.asList(bccEmail);
 					}
-					
+
 					comp.countCache = null;
 
 					mailService.sendMail(null, fromEmail, toEmail, ccList, bccList, subject, mailContent, comp.isHTMLMail());
 
 					String mailPath;
 					String mailSubject;
-					if (!eventClose) {						
-						mailPath = comp.getLocalConfig(false).getProperty("mail.confirm.link", null);	
+					if (!eventClose) {
+						mailPath = comp.getLocalConfig(false).getProperty("mail.confirm.link", null);
 						mailSubject = comp.getLocalConfig(false).getProperty("mail.confirm.subject", null);
-					} else {						
-						mailPath = comp.getLocalConfig(false).getProperty("mail.closed.link", null);	
+					} else {
+						mailPath = comp.getLocalConfig(false).getProperty("mail.closed.link", null);
 						mailSubject = comp.getLocalConfig(false).getProperty("mail.closed.subject", null);
 					}
 					ContentContext pageCtx = ctx.getContextForAbsoluteURL();
 					pageCtx.setRenderMode(ContentContext.PAGE_MODE);
-					String email = NetHelper.readPageForMailing(new URL(URLHelper.createURL(pageCtx, mailPath)));
-					if (email != null && email.length() > 0) {						
-						InternetAddress to = comp.getConfirmToEmail(ctx);
-						if (to != null) {							
-							for (Field field : comp.getFields()) {
-								email = email.replace("${field."+field.getName()+"}", requestService.getParameter(field.getName(), ""));
+					if (!StringHelper.isEmpty(mailPath)) {
+						String email = NetHelper.readPageForMailing(new URL(URLHelper.createURL(pageCtx, mailPath)));
+						if (email != null && email.length() > 0) {
+							InternetAddress to = comp.getConfirmToEmail(ctx);
+							if (to != null) {
+								for (Field field : comp.getFields()) {
+									email = email.replace("${field." + field.getName() + "}", requestService.getParameter(field.getName(), ""));
+								}
+								email = email.replace("${registrationID}", registrationID);
+								email = email.replace("${communication}", StringHelper.encodeAsStructuredCommunicationMod97(registrationID));
+
+								email = email.replace("${event.title}", comp.getPage().getTitle(pageCtx));
+								email = email.replace("${event.location}", comp.getPage().getLocation(pageCtx));
+								email = email.replace("${event.description}", comp.getPage().getDescription(pageCtx));
+								Event event = comp.getPage().getEvent(pageCtx);
+								if (event != null) {
+									email = email.replace("${event.start}", StringHelper.renderDate(event.getStart()));
+									email = email.replace("${event.end}", StringHelper.renderDate(event.getEnd()));
+								}
+
+								InternetAddress registrationFrom = new InternetAddress(comp.getLocalConfig(false).getProperty("mail.from", StaticConfig.getInstance(request.getSession()).getSiteEmail()));
+								NetHelper.sendMail(ctx.getGlobalContext(), registrationFrom, to, null, bccEmail, mailSubject, email, null, true);
+							} else {
+								return "warning : no recipient found.";
 							}
-							email = email.replace("${registrationID}", registrationID);
-							email = email.replace("${communication}", StringHelper.encodeAsStructuredCommunicationMod97(registrationID));
-							
-							email = email.replace("${event.title}", comp.getPage().getTitle(pageCtx));
-							email = email.replace("${event.location}", comp.getPage().getLocation(pageCtx));
-							email = email.replace("${event.description}", comp.getPage().getDescription(pageCtx));
-							Event event = comp.getPage().getEvent(pageCtx);
-							if (event != null) {
-								email = email.replace("${event.start}", StringHelper.renderDate(event.getStart()));	
-								email = email.replace("${event.end}", StringHelper.renderDate(event.getEnd()));
-							}						
-							
-							InternetAddress registrationFrom = new InternetAddress(comp.getLocalConfig(false).getProperty("mail.from", StaticConfig.getInstance(request.getSession()).getSiteEmail()));
-							NetHelper.sendMail(ctx.getGlobalContext(), registrationFrom, to, null,  bccEmail, mailSubject, email, null, true);
-						} else {
-							return "warning : no recipient found.";
-						}						
+						}
 					}
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -828,7 +831,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 	public boolean isEmpty(ContentContext ctx) {
 		return false;
 	}
-	
+
 	@Override
 	public boolean isContentCachableByQuery(ContentContext ctx) {
 		return false;
