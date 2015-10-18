@@ -24,8 +24,9 @@ public class Heading extends AbstractPropertiesComponent implements ISubTitle {
 
 	private static final String DEPTH = "depth";
 	public static final String TEXT = "text";
+	public static final String SMALL_TEXT = "smtext";
 	private static final String LINK = "link";
-	private static final List<String> FIELDS = new LinkedList<String>(Arrays.asList(new String[] { DEPTH, TEXT, LINK }));
+	private static final List<String> FIELDS = new LinkedList<String>(Arrays.asList(new String[] { DEPTH, TEXT, SMALL_TEXT, LINK }));
 
 	@Override
 	public String getType() {
@@ -42,34 +43,52 @@ public class Heading extends AbstractPropertiesComponent implements ISubTitle {
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(outStream);
 		I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
-		out.println("<div class=\"form-group\"><label>" + i18nAccess.getText("content.heading.depth", "depth")+ "</label>");
+		out.println("<div class=\"form-group\"><label>" + i18nAccess.getText("content.heading.depth", "depth") + "</label>");
 		int depth = getDepth(ctx);
 		for (int i = 1; i < 7; i++) {
 			out.println("<label class=\"radio-inline\">");
-			out.println("<input type=\"radio\" value=\""+i+"\" name=\""+getInputName(DEPTH)+"\""+(depth==i?" checked=\"checked\"":"")+"/>"+i+"</label>");
+			out.println("<input type=\"radio\" value=\"" + i + "\" name=\"" + getInputName(DEPTH) + "\"" + (depth == i ? " checked=\"checked\"" : "") + "/>" + i + "</label>");
 		}
 		out.println("</select></div>");
+		
+		
+		if (!ctx.getGlobalContext().isMailingPlatform()) {
+			out.println("<div class=\"row\"><div class=\"col-sm-8\">");
+		}
 		out.println("<div class=\"form-group\">");
 		out.println("<label for=\"" + getInputName(TEXT) + "\">" + i18nAccess.getText("content.header.text", "text") + "</label>");
-		out.println("<input class=\"form-control\" type=\"text\" id=\"" + getInputName(TEXT) + "\" name=\"" + getInputName(TEXT) + "\" value=\"" + getTextTitle(ctx) + "\" >");
+		out.println("<input class=\"form-control\" type=\"text\" id=\"" + getInputName(TEXT) + "\" name=\"" + getInputName(TEXT) + "\" value=\"" + getFieldValue(TEXT) + "\" >");
 		out.println("</div>");
 
+		if (!ctx.getGlobalContext().isMailingPlatform()) {
+			out.println("</div><div class=\"col-sm-4\"><div class=\"form-group\">");
+			out.println("<label for=\"" + getInputName(SMALL_TEXT) + "\">" + i18nAccess.getText("content.header.smtext", "small text") + "</label>");
+			out.println("<input class=\"form-control\" type=\"text\" id=\"" + getInputName(SMALL_TEXT) + "\" name=\"" + getInputName(SMALL_TEXT) + "\" value=\"" + getFieldValue(SMALL_TEXT) + "\" >");
+			out.println("</div></div></div>");
+		}
+
+		if (!ctx.getGlobalContext().isMailingPlatform()) {
+			out.println("<div class=\"row\"><div class=\"col-sm-8\">");
+		}
 		out.println("<div class=\"form-group\">");
 		out.println("<label for=\"" + getInputName(LINK) + "\">" + i18nAccess.getText("content.header.link", "link") + "</label>");
 		out.println("<input class=\"form-control\" type=\"text\" id=\"" + getInputName(LINK) + "\" name=\"" + getInputName(LINK) + "\" value=\"" + getFieldValue(LINK) + "\" >");
 		out.println("</div>");
+		if (!ctx.getGlobalContext().isMailingPlatform()) {
+			out.println("</div></div>");
+		}
 
 		out.close();
 		return new String(outStream.toByteArray());
 	}
 
 	public int getDepth(ContentContext ctx) {
-		String depthValue = getFieldValue(DEPTH); 
+		String depthValue = getFieldValue(DEPTH);
 		if (depthValue == null || depthValue.length() != 1) {
 			if (ctx != null) {
-				try {					
+				try {
 					for (IContentVisualComponent comp : ctx.getCurrentPage().getContentByType(ctx, getType())) {
-						if (((Heading)comp).getFieldValue(DEPTH).equals("1")) {
+						if (((Heading) comp).getFieldValue(DEPTH).equals("1")) {
 							setFieldValue(DEPTH, "2");
 							return 2;
 						}
@@ -103,7 +122,12 @@ public class Heading extends AbstractPropertiesComponent implements ISubTitle {
 
 	@Override
 	public String getTextTitle(ContentContext ctx) {
-		return getFieldValue(TEXT);
+		String smText = getFieldValue(SMALL_TEXT);
+		if (StringHelper.isEmpty(smText)) {
+			return getFieldValue(TEXT);
+		} else {
+			return smText;
+		}
 	}
 
 	@Override
@@ -116,7 +140,7 @@ public class Heading extends AbstractPropertiesComponent implements ISubTitle {
 			}
 			if (!link.contains("://")) {
 				if (link.contains(".")) {
-					link = "http://"+link;
+					link = "http://" + link;
 				} else {
 					ContentService content = ContentService.getInstance(ctx.getRequest());
 					MenuElement targetPage = content.getNavigation(ctx).searchChildFromName(link);
@@ -128,28 +152,28 @@ public class Heading extends AbstractPropertiesComponent implements ISubTitle {
 		} else {
 			link = null;
 		}
-		
-		String style="";		
+
+		String style = "";
 		if (link != null) {
 			if (getBackgroundColor() != null && getBackgroundColor().length() > 2) {
-				style = "border: 1px "+getBackgroundColor()+" solid; ";
+				style = "border: 1px " + getBackgroundColor() + " solid; ";
 			}
 			if (getTextColor() != null && getTextColor().length() > 2) {
-				style = style + "color:"+getTextColor()+";";
+				style = style + "color:" + getTextColor() + ";";
 			}
-			if (style.length()>0) {
-				style=" style=\""+style+"\"";
+			if (style.length() > 0) {
+				style = " style=\"" + style + "\"";
 			}
-			return "<a"+style+" href=\""+link+"\""+target+">"+getTextTitle(ctx)+"</a>";
+			return "<a" + style + " href=\"" + link + "\"" + target + ">" + getFieldValue(TEXT) + "</a>";
 		} else {
 			if (getBackgroundColor() != null && getBackgroundColor().length() > 2) {
-				style = " style=\"border: 1px "+getBackgroundColor()+" solid; \"";
+				style = " style=\"border: 1px " + getBackgroundColor() + " solid; \"";
 			}
 			String tag = "span";
 			if (ctx.getGlobalContext().isMailingPlatform()) {
 				tag = "div";
 			}
-			return "<"+tag+" class=\"inside-wrapper\""+style+">"+getTextTitle(ctx)+"</"+tag+">";
+			return "<" + tag + " class=\"inside-wrapper\"" + style + ">" + getFieldValue(TEXT) + "</" + tag + ">";
 		}
 	}
 
@@ -181,7 +205,7 @@ public class Heading extends AbstractPropertiesComponent implements ISubTitle {
 	public String getHexColor() {
 		return META_COLOR;
 	}
-	
+
 	@Override
 	protected void init() throws ResourceNotFoundException {
 		super.init();
@@ -213,18 +237,18 @@ public class Heading extends AbstractPropertiesComponent implements ISubTitle {
 	public int getSubTitleLevel(ContentContext ctx) {
 		return getDepth(ctx);
 	}
-	
+
 	@Override
 	public int getLabelLevel(ContentContext ctx) {
-		if (getDepth(ctx) == 1) { 
+		if (getDepth(ctx) == 1) {
 			return HIGH_LABEL_LEVEL;
-		} else if (getDepth(ctx) > 1) { 
-			return MIDDLE_LABEL_LEVEL-getDepth(ctx);
+		} else if (getDepth(ctx) > 1) {
+			return MIDDLE_LABEL_LEVEL - getDepth(ctx);
 		} else {
 			return 0;
 		}
 	}
-	
+
 	public String getXHTMLId(ContentContext ctx) {
 		final String suffix = "_st_";
 		if (ctx.getRequest().getAttribute(suffix + getId()) != null) {
@@ -242,11 +266,11 @@ public class Heading extends AbstractPropertiesComponent implements ISubTitle {
 		ctx.getRequest().setAttribute(suffix + getId(), htmlID);
 		return htmlID;
 	}
-	
+
 	protected String getInlineStyle(ContentContext ctx) {
 		String inlineStyle = "";
 		if (getBackgroundColor() != null && getBackgroundColor().length() > 2) {
-			inlineStyle = " overflow: hidden; border: 1px "+getBackgroundColor()+" solid; background-color: " + getBackgroundColor() + ';';
+			inlineStyle = " overflow: hidden; border: 1px " + getBackgroundColor() + " solid; background-color: " + getBackgroundColor() + ';';
 		}
 		if (getTextColor() != null && getTextColor().length() > 2) {
 			inlineStyle = inlineStyle + " color: " + getTextColor() + ';';
@@ -260,14 +284,14 @@ public class Heading extends AbstractPropertiesComponent implements ISubTitle {
 		}
 		return inlineStyle;
 	}
-	
+
 	@Override
 	public String getSuffixViewXHTMLCode(ContentContext ctx) {
-		return "</"+getTag(ctx)+'>';
+		return "</" + getTag(ctx) + '>';
 	}
-	
+
 	@Override
-	public boolean isRealContent(ContentContext ctx) {	
+	public boolean isRealContent(ContentContext ctx) {
 		return false;
 	}
 
