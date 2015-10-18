@@ -143,7 +143,7 @@
 										</button>
 									</c:if>
 									<c:if test="${info.page.root}">
-										<button class="btn btn-default btn-delete" type="button"
+										<button class="btn btn-default btn-sm btn-delete" type="button"
 											onclick="if (!confirm('${i18n.edit['menu.confirm-page']}')) return false;"
 											disabled="disabled"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span>											
 											<span class="text">${i18n.edit['menu.delete']}</span>
