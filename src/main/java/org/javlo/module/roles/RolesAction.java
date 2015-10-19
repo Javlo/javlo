@@ -46,11 +46,9 @@ public class RolesAction extends AbstractModuleAction {
 			ctx.getRequest().setAttribute("users", adminUserFactory.getUserInfoForRoles(new String[] { role.getName() }));
 		}
 
-		List<String> templateIncluded = StringHelper.stringToCollection(role.getLocalTemplateIncluded(),",");
-		
-		List<String> templateExcluded = StringHelper.stringToCollection(role.getLocalTemplateExcluded(),",");
-		
-		Set<String> allTemplates = TemplateFactory.getTemplates(ctx.getRequest().getSession().getServletContext()).keySet();		
+		List<String> templateIncluded = StringHelper.stringToCollection(role.getLocalTemplateIncluded(),",");		
+		List<String> templateExcluded = StringHelper.stringToCollection(role.getLocalTemplateExcluded(),",");		
+		Set<String> allTemplates = new HashSet(TemplateFactory.getTemplates(ctx.getRequest().getSession().getServletContext()).keySet());		
 		allTemplates.removeAll(templateIncluded);
 		allTemplates.removeAll(templateExcluded);
 		Collections.sort(templateIncluded);

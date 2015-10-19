@@ -354,7 +354,7 @@ public class TemplateFactory {
 		synchronized (TEMPLATE_KEY) {
 			outTemplate = (Map<String, Template>) application.getAttribute(TEMPLATE_KEY);
 			if (outTemplate == null) {
-				outTemplate = getDiskTemplates(application);
+				outTemplate = Collections.unmodifiableMap(getDiskTemplates(application));
 				application.setAttribute(TEMPLATE_KEY, outTemplate);
 			}
 		}

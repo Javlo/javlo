@@ -170,6 +170,11 @@ public class DashboardAction extends AbstractModuleAction {
 		}
 		Tracker tracker = Tracker.getTracker(globalContext, session);
 		StatContext statCtx = StatContext.getInstance(request);
+		// 30 days is default period
+		Calendar now = Calendar.getInstance();
+		statCtx.setTo(new Date(now.getTime().getTime()));
+		now.add(Calendar.DAY_OF_YEAR, -30);
+		statCtx.setFrom(new Date(now.getTime().getTime()));
 
 		if (type.equals("languages")) {
 			ObjectBuilder ajaxMap = LangHelper.object();
@@ -218,7 +223,7 @@ public class DashboardAction extends AbstractModuleAction {
 			Calendar end = Calendar.getInstance();
 			start.add(Calendar.HOUR, -1);
 			Track[] trackers = tracker.getTracks(start.getTime(), end.getTime());
-			;
+
 			start.setTime(end.getTime()); // reset start date
 
 			Calendar endRange = Calendar.getInstance();
