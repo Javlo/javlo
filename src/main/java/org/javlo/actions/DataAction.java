@@ -180,8 +180,8 @@ public class DataAction implements IAction {
 		serverInfo.put("version", IVersion.VERSION);
 		serverInfo.put("systemUser", System.getProperty("user.name"));
 
-		serverInfo.put("lastPublishedDate", StringHelper.renderTime(new Date()));
-		serverInfo.put("lastPublisher", "userAdm");
+		serverInfo.put("lastPublishDate", globalContext.getPublishDateLabel());
+		serverInfo.put("lastPublisher", globalContext.getLatestPublisher());
 
 		CountService countService = CountService.getInstance(ctx.getRequest().getSession().getServletContext());
 		serverInfo.put("countServiceCount", "" + countService.getCount());

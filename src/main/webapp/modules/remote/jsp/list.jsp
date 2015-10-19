@@ -41,7 +41,7 @@
      			v ${remote.serverInfo.version}
      		</c:if>
      		(Req/Min: ${remote.serverInfo.countServiceCount} [${remote.serverInfo.countServiceAverage}])
-     		${remote.serverInfo.lastPublishedDate}
+     		${remote.serverInfo.lastPublishDate}
      		${remote.serverInfo.lastPublisher}
      		<c:if test="${remote.serverInfo.connectedUsers != null}">
      			<c:set var="userList"><c:forEach var="u" varStatus="status" items="${remote.serverInfo.connectedUsers}">${u}${not status.last ? ', ' : ''}</c:forEach></c:set>
