@@ -78,9 +78,9 @@
 <tfoot>
    <tr>
      <th class="head0">${i18n.edit['admin.title.context-key']}</th>
-     <th class="head1">${i18n.edit['admin.title.context-key']}</th>
+     <th class="head1">${i18n.edit['admin.title.admin']}</th>
      <th class="head0">${i18n.edit['admin.title.alias']}</th>
-     <th class="head1">${i18n.edit['admin.title.alias']}</th>
+     <th class="head1">${i18n.edit['admin.title.creation']}</th>
      <th class="head0">${i18n.edit['admin.title.latest-login']}</th>
      <th class="head1">${i18n.edit['admin.title.count-user']}</th>
 	 <th class="head0">${i18n.edit['admin.title.loaded']}</th>         
