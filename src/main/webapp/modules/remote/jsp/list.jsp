@@ -2,7 +2,7 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <div class="content">
 
-<table cellpadding="0" cellspacing="0" border="0" class="dyntable" id="notes">
+<table cellpadding="0" cellspacing="0" border="0" class="dyntable" id="remotelist">
  <thead>
      <tr>       
        <th class="head0">url</th>                  
@@ -59,9 +59,9 @@
    <tr>       
        <th class="head0">url</th>                  
        <th class="head1">priority</th>       
-       <th class="head0">valid ?</th>
-       <th class="head1">#error</th>       
-       <th class="head0">#valid</th>
+       <th class="head0">online ?</th>
+       <th class="head1">change date</th>       
+       <th class="head0">text</th>
        <th class="head1">message</th>
        <th class="head0">server info</th>
        <th class="head1">&nbsp;</th>
@@ -71,10 +71,11 @@
 
 <script type="text/javascript">
 jQuery(document).ready(function() {
-	jQuery('#notes').dataTable( {
+	jQuery('#remotelist').dataTable( {
 		 "sPaginationType": "full_numbers",
 		 "aaSorting": [[ 2, "desc" ]],
 		 "aoColumns": [
+		               null,
 		               null,
 		               null,
 		               null,
