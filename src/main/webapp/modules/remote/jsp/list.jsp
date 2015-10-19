@@ -37,9 +37,16 @@
      <td class="con1">
      	<c:if test="${remote.serverInfo.loaded}">
      		${remote.serverInfo.localName} (${remote.serverInfo.localAddr}:${remote.serverInfo.localPort})
-     	</c:if>
-     	<c:if test="${not empty remote.serverInfo.version}">
-     		v ${remote.serverInfo.version}
+     		<c:if test="${not empty remote.serverInfo.version}">
+     			v ${remote.serverInfo.version}
+     		</c:if>
+     		(Req/Min: ${remote.serverInfo.countServiceCount} [${remote.serverInfo.countServiceAverage}])
+     		${remote.serverInfo.lastPublishedDate}
+     		${remote.serverInfo.lastPublisher}
+     		<c:if test="${remote.serverInfo.connectedUsers != null}">
+     			<c:set var="userList"><c:forEach var="u" varStatus="status" items="${remote.serverInfo.connectedUsers}">${u}${not status.last ? ', ' : ''}</c:forEach></c:set>
+     			<span title="Users: ${empty userList ? '-' : userList}">(${fn:length(remote.serverInfo.connectedUsers)} connected users)</span>
+     		</c:if>
      	</c:if>
      	<c:if test="${not empty remote.serverInfo.message}">
      		<c:if test="${remote.serverInfo.loaded}">

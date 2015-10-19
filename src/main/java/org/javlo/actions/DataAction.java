@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
+import java.security.Principal;
 import java.text.ParseException;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -25,7 +26,6 @@ import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.io.FileExistsException;
 import org.codehaus.plexus.util.StringUtils;
 import org.javlo.component.core.ComponentBean;
-import org.javlo.component.core.ComponentFactory;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.files.ArrayFileComponent;
 import org.javlo.component.files.GenericFile;
@@ -35,7 +35,6 @@ import org.javlo.component.multimedia.Multimedia;
 import org.javlo.component.title.Title;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
-import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.BeanHelper;
 import org.javlo.helper.ContentHelper;
@@ -56,6 +55,7 @@ import org.javlo.module.ticket.TicketAction;
 import org.javlo.navigation.MenuElement;
 import org.javlo.navigation.PageAssociationBean;
 import org.javlo.service.ContentService;
+import org.javlo.service.CountService;
 import org.javlo.service.IMService;
 import org.javlo.service.IMService.IMItem;
 import org.javlo.service.NotificationService;
@@ -158,7 +158,7 @@ public class DataAction implements IAction {
 		return null;
 	}
 
-	public static String performServerInfo(HttpServletRequest request, ContentContext ctx, RequestService requestService, StaticConfig staticConfig, HttpServletResponse response) {
+	public static String performServerInfo(HttpServletRequest request, ContentContext ctx, RequestService requestService, GlobalContext globalContext, StaticConfig staticConfig, HttpServletResponse response) {
 
 		String clientSynchroCode = requestService.getParameter(SYNCHRO_CODE_PARAM, null);
 
@@ -179,6 +179,21 @@ public class DataAction implements IAction {
 		serverInfo.put("contextKey", ctx.getGlobalContext().getContextKey());
 		serverInfo.put("version", IVersion.VERSION);
 		serverInfo.put("systemUser", System.getProperty("user.name"));
+
+		serverInfo.put("lastPublishedDate", StringHelper.renderTime(new Date()));
+		serverInfo.put("lastPublisher", "userAdm");
+
+		CountService countService = CountService.getInstance(ctx.getRequest().getSession().getServletContext());
+		serverInfo.put("countServiceCount", "" + countService.getCount());
+		serverInfo.put("countServiceAverage", "" + countService.getAverage());
+
+		List<String> connectedUsers = new LinkedList<String>();
+		List<Principal> list = globalContext.getAllPrincipals();
+		for (Principal user : list) {
+			connectedUsers.add(user.getName());
+		}
+		serverInfo.put("connectedUsers", connectedUsers);
+
 		ctx.getAjaxData().put("serverInfo", serverInfo);
 
 		Map<String, Object> headersOut = new LinkedHashMap<String, Object>();
