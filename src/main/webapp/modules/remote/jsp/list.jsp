@@ -12,7 +12,10 @@
        <th class="head0">text</th>
        <th class="head1">message</th>
        <th class="head0">server info</th>
-       <th class="head1">&nbsp;</th>
+       <th class="head1">req/min</th>
+       <th class="head0">online users</th>
+       <th class="head1">last publish</th>
+       <th class="head0">&nbsp;</th>
      </tr>     
 </thead>
 <colgroup>    
@@ -24,28 +27,24 @@
     <col class="con1" />
     <col class="con0" />
     <col class="con1" />
+    <col class="con0" />
+    <col class="con1" />
+    <col class="con0" />
 </colgroup>
 <tbody> 
  <c:forEach var="remote" items="${remotes}">
  <tr class="gradeX${remote.valid?' valid':' error'}">	 
      <td class="con0"><a href="${remote.url}" target="_blank">${remote.url}</a></td>     	 
      <td class="con1">${remote.priority}</td>     
-     <td class="con1 valid-cell"><span>${remote.valid}</span></td>
-     <td class="con0">${remote.latestChangeDisplay}</td>
-     <td class="con1">${remote.text}</td>
-     <td class="con0">${remote.error}</td>   
-     <td class="con1">
+     <td class="con0 valid-cell"><span>${remote.valid}</span></td>
+     <td class="con1">${remote.latestChangeDisplay}</td>
+     <td class="con0">${remote.text}</td>
+     <td class="con1">${remote.error}</td>   
+     <td class="con0">
      	<c:if test="${remote.serverInfo.loaded}">
      		${remote.serverInfo.localName} (${remote.serverInfo.localAddr}:${remote.serverInfo.localPort})
      		<c:if test="${not empty remote.serverInfo.version}">
      			v ${remote.serverInfo.version}
-     		</c:if>
-     		(Req/Min: ${remote.serverInfo.countServiceCount} [${remote.serverInfo.countServiceAverage}])
-     		${remote.serverInfo.lastPublishDate}
-     		${remote.serverInfo.lastPublisher}
-     		<c:if test="${remote.serverInfo.connectedUsers != null}">
-     			<c:set var="userList"><c:forEach var="u" varStatus="status" items="${remote.serverInfo.connectedUsers}">${u}${not status.last ? ', ' : ''}</c:forEach></c:set>
-     			<span title="Users: ${empty userList ? '-' : userList}">(${fn:length(remote.serverInfo.connectedUsers)} connected users)</span>
      		</c:if>
      	</c:if>
      	<c:if test="${not empty remote.serverInfo.message}">
@@ -53,6 +52,22 @@
      			<br/>
      		</c:if>
      		${remote.serverInfo.message}
+     	</c:if>
+     </td>
+     <td class="con1">
+     	<c:if test="${remote.serverInfo.loaded}">
+     		${remote.serverInfo.countServiceCount} (${remote.serverInfo.countServiceAverage})
+     	</c:if>
+     </td>
+     <td class="con0">
+     	<c:if test="${remote.serverInfo.connectedUsers != null}">
+     		<c:set var="userList"><c:forEach var="u" varStatus="status" items="${remote.serverInfo.connectedUsers}">${u}${not status.last ? ', ' : ''}</c:forEach></c:set>
+     		<span title="Users: ${empty userList ? '-' : userList}">${fn:length(remote.serverInfo.connectedUsers)}</span>
+     	</c:if>
+     </td>   
+     <td class="con1">
+     	<c:if test="${remote.serverInfo.loaded}">
+     		${remote.serverInfo.lastPublishDate} (${remote.serverInfo.lastPublisher})
      	</c:if>
      </td>
      <td class="con0">
@@ -71,7 +86,10 @@
        <th class="head0">text</th>
        <th class="head1">message</th>
        <th class="head0">server info</th>
-       <th class="head1">&nbsp;</th>
+       <th class="head1">req/min</th>
+       <th class="head0">online users</th>
+       <th class="head1">last publish</th>
+       <th class="head0">&nbsp;</th>
      </tr>
 </tfoot>
 </table>
@@ -89,7 +107,10 @@ jQuery(document).ready(function() {
 		               null,
 		               null,
 		               null,
-		               null
+		               null,
+		               null,
+		               null,
+		               { "asSorting": [ "" ] }
 		           ], 
 		 "oLanguage": {"sUrl": "${info.editTemplateURL}/js/plugins/i18n/datatable_${info.editLanguage}.txt"},
 		 "fnInitComplete": updateLayout
