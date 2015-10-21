@@ -507,3 +507,5 @@ change log
  * need admin right for change shared-content config
  
  * add NoExtURLPathTitleCreatorOneLevel only section and title in url
+ 
+ * Wysiwyg field + ps in place of pt + track module
