@@ -3,8 +3,11 @@ package org.javlo.filter;
 import java.io.IOException;
 import java.net.URL;
 import java.security.Principal;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Logger;
 
 import javax.servlet.Filter;
@@ -54,6 +57,8 @@ import org.javlo.user.UserPrincipal;
 import org.javlo.utils.DebugListening;
 
 public class CatchAllFilter implements Filter {
+	
+	private static final Set<String> COMPRESS_EXT = new HashSet<String> (Arrays.asList(new String[] { "js", "jpg", "jpeg", "png", "css", "font", "woff", "gif" }));
 
 	public static final String CHECK_CONTEXT_PARAM = "__check_context";
 	private static final String JAVLO_LOGIN_ID = "javlo_login_id";
@@ -373,11 +378,13 @@ public class CatchAllFilter implements Filter {
 			}
 		}
 
-		if (httpRequest.getRequestURI().endsWith(".js") || httpRequest.getRequestURI().endsWith(".css") || httpRequest.getRequestURI().endsWith(".jpg") || httpRequest.getRequestURI().endsWith(".png") || httpRequest.getRequestURI().endsWith(".woff")) {
+		String ext = StringHelper.getFileExtension(httpRequest.getRequestURI()).toLowerCase();
+		if (COMPRESS_EXT.contains(ext)) {
 			String cacheTime = staticConfig.getStaticResourceCacheTime();
 			if (cacheTime != null && cacheTime.length() > 0) {
 				HttpServletResponse resp = (HttpServletResponse) response;
 				resp.setHeader("Cache-Control", "max-age=" + cacheTime);
+				resp.setHeader("Content-Type", ResourceHelper.getFileExtensionToMineType(ext));
 			}
 		}
 
