@@ -1372,6 +1372,10 @@ public class StaticConfig extends Observable {
 		return properties.getString("preview.js", "/js/preview/edit_preview.js");
 	}
 	
+	public String getStaticResourceCacheTime() {
+		return properties.getString("resources.cache-time", "3600");
+	}
+	
 	public String getJSLibPreview() {
 		return properties.getString("preview.lib.js", null);		
 	}

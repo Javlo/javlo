@@ -68,7 +68,7 @@ public class CatchAllFilter implements Filter {
 
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain next) throws IOException, ServletException {
-		
+
 		logger.fine("start catch all servelt.");
 
 		HttpServletRequest httpRequest = (HttpServletRequest) request;
@@ -81,7 +81,7 @@ public class CatchAllFilter implements Filter {
 			((HttpServletResponse) response).sendRedirect(forwardURL);
 			return;
 		}
-		
+
 		String uri = RequestService.getURI(httpRequest);
 
 		if (uri.endsWith(Template.GZ_FILE_EXT)) {
@@ -103,7 +103,7 @@ public class CatchAllFilter implements Filter {
 		boolean hostDefineSite = staticConfig.isHostDefineSite();
 		RequestService requestService = RequestService.getInstance(httpRequest);
 		try {
-			String hostName = ServletHelper.getSiteKey(httpRequest);			
+			String hostName = ServletHelper.getSiteKey(httpRequest);
 			if (!hostDefineSite && !staticConfig.isExcludeContextDomain(hostName)) {
 				if (StringHelper.isTrue(requestService.getParameter(CHECK_CONTEXT_PARAM, "true"))) {
 					String contextURI = ContentManager.getContextName(httpRequest);
@@ -149,17 +149,17 @@ public class CatchAllFilter implements Filter {
 			((HttpServletResponse) response).setStatus(HttpServletResponse.SC_NOT_FOUND, "context not found.");
 			return;
 		}
-		
-		if (StringHelper.isTrue(request.getParameter(ContentContext.FORWARD_AJAX))) {			
+
+		if (StringHelper.isTrue(request.getParameter(ContentContext.FORWARD_AJAX))) {
 			try {
-				ContentContext ctx = ContentContext.getContentContext(httpRequest, (HttpServletResponse)response);
-				String url = URLHelper.createAjaxURL(ctx);				
-				String forwardURL = URLHelper.removeSite(globalContext, url);				
+				ContentContext ctx = ContentContext.getContentContext(httpRequest, (HttpServletResponse) response);
+				String url = URLHelper.createAjaxURL(ctx);
+				String forwardURL = URLHelper.removeSite(globalContext, url);
 				((HttpServletRequest) request).getRequestDispatcher(forwardURL).forward(httpRequest, response);
 				return;
 			} catch (Exception e) {
 				e.printStackTrace();
-			}			
+			}
 		}
 
 		/***************/
@@ -174,7 +174,7 @@ public class CatchAllFilter implements Filter {
 		/*****************/
 
 		String editURI = uri;
-		
+
 		if (editURI.startsWith('/' + globalContext.getMainContextKey())) {
 			editURI = editURI.substring(globalContext.getMainContextKey().length() + 1);
 		}
@@ -221,13 +221,13 @@ public class CatchAllFilter implements Filter {
 						e.printStackTrace();
 					}
 				}
-				if (query != null && query.contains("edit-logout")) {					
+				if (query != null && query.contains("edit-logout")) {
 					((HttpServletResponse) response).sendRedirect("" + httpRequest.getRequestURL());
 					return;
-				} else {					
+				} else {
 					if (editPreview) {
 						editURI = URLHelper.addParam(editURI, ContentContext.PREVIEW_EDIT_PARAM, "true");
-					}					
+					}
 					httpRequest.getRequestDispatcher(editURI).forward(request, response);
 					return;
 				}
@@ -276,7 +276,7 @@ public class CatchAllFilter implements Filter {
 		} else if (shortURI.startsWith("/")) {
 			shortURI = shortURI.substring(1);
 		}
-		
+
 		if (shortURI.length() == globalContext.getStaticConfig().getShortURLSize() + 1 && shortURI.startsWith("U")) {
 			ContentContext ctx = null;
 			try {
@@ -370,6 +370,14 @@ public class CatchAllFilter implements Filter {
 						return;
 					}
 				}
+			}
+		}
+
+		if (httpRequest.getRequestURI().endsWith(".js") || httpRequest.getRequestURI().endsWith(".css") || httpRequest.getRequestURI().endsWith(".jpg") || httpRequest.getRequestURI().endsWith(".png")) {
+			String cacheTime = staticConfig.getStaticResourceCacheTime();
+			if (cacheTime != null && cacheTime.length() > 0) {
+				HttpServletResponse resp = (HttpServletResponse) response;
+				resp.setHeader("Cache-Control", "max-age=" + cacheTime);
 			}
 		}
 
@@ -483,7 +491,7 @@ public class CatchAllFilter implements Filter {
 					service.clearTimeData();
 					autoLoginUser = service.getData(autoLoginId);
 					if (autoLoginUser != null) {
-						logger.info("try autologin for : " + autoLoginUser);						
+						logger.info("try autologin for : " + autoLoginUser);
 					}
 				}
 				if (autoLoginUser != null) {

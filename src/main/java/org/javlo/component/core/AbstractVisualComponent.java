@@ -19,6 +19,8 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
@@ -1689,7 +1691,13 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		ctx.getRequest().setAttribute("renderer", getCurrentRenderer(ctx));
 		ctx.getRequest().setAttribute("previewAttributes", getSpecialPreviewCssClass(ctx, getStyle(ctx)) + getSpecialPreviewCssId(ctx));	
 		if (isAskWidth(ctx) && getWidth() != null) {
-			ctx.getRequest().setAttribute("componentWidth", getWidth());
+			String width = getWidth().trim();
+			if (width.endsWith("%")) {			
+				Float withInt = Float.parseFloat(width.substring(0,width.length()-1));		
+				NumberFormat df = DecimalFormat.getInstance(Locale.ENGLISH);
+				ctx.getRequest().setAttribute("componentOpositeWidth", df.format((100-withInt))+"%");
+			}
+			ctx.getRequest().setAttribute("componentWidth", width);
 		} else {
 			ctx.getRequest().removeAttribute("componentWidth");
 		}
@@ -2351,6 +2359,14 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	 */
 	public boolean isEditOnCreate(ContentContext ctx) {
 		return ctx.getGlobalContext().getStaticConfig().isEditOnCreate();
+	}
+	
+	public static void main(String[] args) {
+		String width = "12%";
+		Float withInt = Float.parseFloat(width.substring(0,width.length()-1));
+		System.out.println(withInt);
+		NumberFormat df = DecimalFormat.getInstance(Locale.ENGLISH);
+		System.out.println(df.format((100-withInt))+"%");
 	}
 	
 

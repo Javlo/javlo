@@ -12,7 +12,7 @@
 		<filter-name>CharsetFilter</filter-name>
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
-	
+
 	<filter>
 		<filter-name>CleanHTML</filter-name>
 		<filter-class>org.javlo.filter.CleanHTML</filter-class>
@@ -21,7 +21,7 @@
 		<filter-name>CleanHTML</filter-name>
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
-	
+
 	<filter>
 		<filter-name>cssLess</filter-name>
 		<filter-class>org.javlo.filter.CssLess</filter-class>
@@ -30,7 +30,7 @@
 		<filter-name>cssLess</filter-name>
 		<url-pattern>*.css</url-pattern>
 	</filter-mapping>
-	
+
 	<filter>
 		<filter-name>CatchAll</filter-name>
 		<filter-class>org.javlo.filter.CatchAllFilter</filter-class>
@@ -39,7 +39,7 @@
 		<filter-name>CatchAll</filter-name>
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
-	
+
 	<servlet>
 		<servlet-name>AccessServlet</servlet-name>
 		<servlet-class>org.javlo.servlet.AccessServlet</servlet-class>
@@ -75,7 +75,7 @@
 		<servlet-name>AjaxServlet</servlet-name>
 		<url-pattern>/ajax/*</url-pattern>
 	</servlet-mapping>
-	
+
 	<servlet>
 		<servlet-name>ProxyServlet</servlet-name>
 		<servlet-class>org.javlo.servlet.ProxyServlet</servlet-class>
@@ -105,7 +105,7 @@
 		<servlet-name>VFSServlet</servlet-name>
 		<url-pattern>/vfs/*</url-pattern>
 	</servlet-mapping>
-	
+
 	<servlet>
 		<servlet-name>expcomp</servlet-name>
 		<servlet-class>org.javlo.servlet.ExportComponents</servlet-class>
@@ -115,7 +115,7 @@
 		<servlet-name>expcomp</servlet-name>
 		<url-pattern>/expcomp/*</url-pattern>
 	</servlet-mapping>
-	
+
 	<servlet>
 		<servlet-name>QRCode</servlet-name>
 		<servlet-class>org.javlo.servlet.QRCodeServlet</servlet-class>
@@ -131,22 +131,22 @@
 		<servlet-class>org.javlo.servlet.SiteMapServlet</servlet-class>
 		<load-on-startup>1</load-on-startup>
 	</servlet>
-	
+
 	<servlet-mapping>
 		<servlet-name>SiteMapServlet</servlet-name>
 		<url-pattern>/sitemap.xml</url-pattern>
 	</servlet-mapping>
-	
+
 	<servlet>
 		<servlet-name>oauth2callback</servlet-name>
 		<servlet-class>org.javlo.servlet.OauthServlet</servlet-class>
 		<load-on-startup>1</load-on-startup>
 	</servlet>
-	
+
 	<servlet-mapping>
 		<servlet-name>oauth2callback</servlet-name>
 		<url-pattern>/oauth2callback</url-pattern>
-	</servlet-mapping>	
+	</servlet-mapping>
 
 	<servlet>
 		<servlet-name>ZIPServlet</servlet-name>
@@ -187,16 +187,16 @@
 		<servlet-name>UserListServlet</servlet-name>
 		<url-pattern>/users-list/*</url-pattern>
 	</servlet-mapping>
-	
+
 	<servlet>
 		<servlet-name>resource</servlet-name>
 		<servlet-class>org.javlo.servlet.ResourceServlet</servlet-class>
 		<load-on-startup>1</load-on-startup>
-	</servlet>	
+	</servlet>
 	<servlet-mapping>
 		<servlet-name>resource</servlet-name>
 		<url-pattern>/resource/*</url-pattern>
-	</servlet-mapping>	
+	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>resource</servlet-name>
 		<url-pattern>/favicon.ico</url-pattern>
@@ -235,7 +235,7 @@
 		<servlet-name>xml</servlet-name>
 		<url-pattern>/xml/*</url-pattern>
 	</servlet-mapping>
-	
+
 	<servlet>
 		<servlet-name>cssmap</servlet-name>
 		<servlet-class>org.javlo.servlet.CssMapServlet</servlet-class>
@@ -266,7 +266,7 @@
 		<servlet-name>RemoteResourceServlet</servlet-name>
 		<url-pattern>/market/*</url-pattern>
 	</servlet-mapping>
-	
+
 	<servlet>
 		<servlet-name>FolderServlet</servlet-name>
 		<servlet-class>org.javlo.servlet.FolderServlet</servlet-class>
@@ -276,7 +276,7 @@
 		<servlet-name>FolderServlet</servlet-name>
 		<url-pattern>/folder/*</url-pattern>
 	</servlet-mapping>
-	
+
 	<servlet>
 		<servlet-name>ModuleServlet</servlet-name>
 		<servlet-class>org.javlo.servlet.ModuleServlet</servlet-class>
@@ -286,7 +286,7 @@
 		<servlet-name>ModuleServlet</servlet-name>
 		<url-pattern>/module/*</url-pattern>
 	</servlet-mapping>
-	
+
 	<servlet>
 		<servlet-name>ClassServlet</servlet-name>
 		<servlet-class>org.javlo.servlet.ClassServlet</servlet-class>
@@ -296,35 +296,35 @@
 		<servlet-name>ClassServlet</servlet-name>
 		<url-pattern>/class/*</url-pattern>
 	</servlet-mapping>
-	
+
 	<servlet>
-        <servlet-name>captcha</servlet-name>
-        <servlet-class>org.javlo.servlet.ImageCaptchaServlet</servlet-class>
-        <load-on-startup>0</load-on-startup>
-    </servlet>
-    
-    <servlet-mapping>
-        <servlet-name>captcha</servlet-name>
-        <url-pattern>/captcha.jpg</url-pattern>
-    </servlet-mapping>
-    
-    <servlet>
-        <servlet-name>logo</servlet-name>
-        <servlet-class>org.javlo.servlet.LogoServlet</servlet-class>
-        <load-on-startup>0</load-on-startup>
-    </servlet>
-    
-    <servlet-mapping>
-        <servlet-name>logo</servlet-name>
-        <url-pattern>/logo.svg</url-pattern>
-    </servlet-mapping>
-    
-    <servlet>
+		<servlet-name>captcha</servlet-name>
+		<servlet-class>org.javlo.servlet.ImageCaptchaServlet</servlet-class>
+		<load-on-startup>0</load-on-startup>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>captcha</servlet-name>
+		<url-pattern>/captcha.jpg</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>logo</servlet-name>
+		<servlet-class>org.javlo.servlet.LogoServlet</servlet-class>
+		<load-on-startup>0</load-on-startup>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>logo</servlet-name>
+		<url-pattern>/logo.svg</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
 		<servlet-name>ServletWrapper</servlet-name>
 		<servlet-class>org.javlo.servlet.servletwrapper.ServletWrapperServlet</servlet-class>
 		<load-on-startup>1</load-on-startup>
 	</servlet>
-	
+
 	<servlet>
 		<servlet-name>i18n</servlet-name>
 		<servlet-class>org.javlo.servlet.I18nServlet</servlet-class>
@@ -334,48 +334,26 @@
 	<servlet-mapping>
 		<servlet-name>i18n</servlet-name>
 		<url-pattern>/i18n/*</url-pattern>
-	</servlet-mapping>	
+	</servlet-mapping>
 
 	<servlet-mapping>
 		<servlet-name>ServletWrapper</servlet-name>
 		<url-pattern>/wrapper/*</url-pattern>
 	</servlet-mapping>
 
-    
-    <!--  <security-constraint>
-        <web-resource-collection>
-          <web-resource-name>Javlo Administration</web-resource-name>
-          <url-pattern>/*</url-pattern>    	 
-          <http-method>GET</http-method>
-          <http-method>POST</http-method>
-        </web-resource-collection>
-        <auth-constraint>
-           <role-name>javlousers</role-name>
-        </auth-constraint>
-     </security-constraint>
-    
-    <login-config>
-        <auth-method>EPAUTH</auth-method>
-        <realm-name>epauth</realm-name>
-    </login-config>  -->    
-     
-   <!-- <security-constraint>
-    	<web-resource-collection>
-    		<web-resource-name>Security</web-resource-name>
-    		<url-pattern>/*</url-pattern>
-    		<http-method>GET</http-method>
-    		<http-method>POST</http-method>
-    	</web-resource-collection>
-    	<auth-constraint>
-    		<role-name>javlo</role-name>
-    	</auth-constraint>
-    	<user-data-constraint>
-    		<transport-guarantee>NONE</transport-guarantee>
-    	</user-data-constraint>
-    </security-constraint>   
-	
-	<login-config>
-		<auth-method>BASIC</auth-method>
-	</login-config>   -->  
-	
+
+	<!-- <security-constraint> <web-resource-collection> <web-resource-name>Javlo 
+		Administration</web-resource-name> <url-pattern>/*</url-pattern> <http-method>GET</http-method> 
+		<http-method>POST</http-method> </web-resource-collection> <auth-constraint> 
+		<role-name>javlousers</role-name> </auth-constraint> </security-constraint> 
+		<login-config> <auth-method>EPAUTH</auth-method> <realm-name>epauth</realm-name> 
+		</login-config> -->
+
+	<!-- <security-constraint> <web-resource-collection> <web-resource-name>Security</web-resource-name> 
+		<url-pattern>/*</url-pattern> <http-method>GET</http-method> <http-method>POST</http-method> 
+		</web-resource-collection> <auth-constraint> <role-name>javlo</role-name> 
+		</auth-constraint> <user-data-constraint> <transport-guarantee>NONE</transport-guarantee> 
+		</user-data-constraint> </security-constraint> <login-config> <auth-method>BASIC</auth-method> 
+		</login-config> -->
+
 </web-app>
