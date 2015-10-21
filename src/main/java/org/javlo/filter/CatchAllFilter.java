@@ -373,7 +373,7 @@ public class CatchAllFilter implements Filter {
 			}
 		}
 
-		if (httpRequest.getRequestURI().endsWith(".js") || httpRequest.getRequestURI().endsWith(".css") || httpRequest.getRequestURI().endsWith(".jpg") || httpRequest.getRequestURI().endsWith(".png")) {
+		if (httpRequest.getRequestURI().endsWith(".js") || httpRequest.getRequestURI().endsWith(".css") || httpRequest.getRequestURI().endsWith(".jpg") || httpRequest.getRequestURI().endsWith(".png") || httpRequest.getRequestURI().endsWith(".woff")) {
 			String cacheTime = staticConfig.getStaticResourceCacheTime();
 			if (cacheTime != null && cacheTime.length() > 0) {
 				HttpServletResponse resp = (HttpServletResponse) response;
