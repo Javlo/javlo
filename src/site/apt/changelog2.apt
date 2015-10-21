@@ -509,3 +509,5 @@ change log
  * add NoExtURLPathTitleCreatorOneLevel only section and title in url
  
 * 2.1.0.2.14 21/10/2015
+
+ * cache-control for static resources
