@@ -50,6 +50,7 @@ function loadWysiwyg(cssQuery, complexity, chooseFileURL) {
 		    ],
 		    toolbar1: "bold italic underline strikethrough fontsizeselect | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | forecolor backcolor | table charmap code",		    
 		    image_advtab: true,
+		    fontsize_formats: "8px 10px 12px 14px 18px 24px",
 		    //paste_word_valid_elements: "b,strong,i,em,h1,h2,h3,h4,h5,h6,table,tr,th,td,ul,ol,li,p,a,div",
 		    file_browser_callback: function(field_name, url, type, win) {
 		    	
@@ -101,6 +102,7 @@ function loadWysiwyg(cssQuery, complexity, chooseFileURL) {
 		menubar : false,
 		selector: cssQuery,
 		plugins: "paste link",
+		fontsize_formats: "8px 10px 12px 14px 18px 24px",
 		//paste_word_valid_elements: "b,strong,i,em,h1,h2,h3,h4,h5,h6,table,tr,th,td,ul,ol,li,p,a,div",
 		toolbar: "undo redo | bold italic underline fontsizeselect | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link pastetext"
 		});	 

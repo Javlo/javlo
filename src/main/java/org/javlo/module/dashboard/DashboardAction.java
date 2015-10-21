@@ -130,7 +130,10 @@ public class DashboardAction extends AbstractModuleAction {
 	}
 
 	public static void main(String[] args) {
-		System.out.println("***** DashboardAction.main : time = " + StringHelper.renderTime(new Date(Long.parseLong("1345208695440")))); // TODO: remove debug trace
+		System.out.println("***** DashboardAction.main : time = " + StringHelper.renderTime(new Date(Long.parseLong("1345208695440")))); // TODO:
+																																			// remove
+																																			// debug
+																																			// trace
 	}
 
 	@Override
@@ -146,19 +149,33 @@ public class DashboardAction extends AbstractModuleAction {
 		NotificationService notificationService = NotificationService.getInstance(globalContext);
 		ctx.getRequest().setAttribute("notification", notificationService.getNotifications(9999));
 
-		/* debug notes */
-		ContentService content = ContentService.getInstance(ctx.getRequest());
-		List<IContentVisualComponent> components = content.getAllContent(ctx);
-		Collection<DebugNoteBean> debugNoteList = new LinkedList<DebugNoteBean>();
-		for (IContentVisualComponent comp : components) {
-			if (comp.getType() == DebugNote.TYPE) {
-				Map<String, String> params = new HashMap<String, String>();
-				params.put("module", "content");
-				String url = URLHelper.createURL(ctx, comp.getPage().getPath(), params);
-				debugNoteList.add(new DebugNoteBean(((DebugNote)comp).getText(), ((DebugNote)comp).getPriority(), ((DebugNote)comp).getUserList().contains(ctx.getCurrentEditUser().getLogin()), ((DebugNote)comp).getModifDate(), comp.getAuthors(), comp.getArea(), url, comp.getPage().getPageBean(ctx)));
-			}
+		ModulesContext dashboardContext = ModulesContext.getInstance(ctx.getRequest().getSession(), ctx.getGlobalContext());
+		if (dashboardContext.getCurrentModule().getBoxes().size() > 1) {
+			ctx.getRequest().setAttribute("page", "main");
+		} else {
+			ctx.getRequest().setAttribute("page", "tracker");
 		}
-		ctx.getRequest().setAttribute("debugNotes", debugNoteList);
+
+		String trackerDate = ctx.getRequest().getParameter("date");		
+		if (trackerDate != null) {
+			Date date = StringHelper.smartParseDate(trackerDate);			
+			ctx.getRequest().setAttribute("date", StringHelper.renderDate(date));			
+			ctx.getRequest().setAttribute("tracks", Tracker.getTracker(globalContext, ctx.getRequest().getSession()).getAllTrack(date));
+		} else {
+			/* debug notes */
+			ContentService content = ContentService.getInstance(ctx.getRequest());
+			List<IContentVisualComponent> components = content.getAllContent(ctx);
+			Collection<DebugNoteBean> debugNoteList = new LinkedList<DebugNoteBean>();
+			for (IContentVisualComponent comp : components) {
+				if (comp.getType() == DebugNote.TYPE) {
+					Map<String, String> params = new HashMap<String, String>();
+					params.put("module", "content");
+					String url = URLHelper.createURL(ctx, comp.getPage().getPath(), params);
+					debugNoteList.add(new DebugNoteBean(((DebugNote) comp).getText(), ((DebugNote) comp).getPriority(), ((DebugNote) comp).getUserList().contains(ctx.getCurrentEditUser().getLogin()), ((DebugNote) comp).getModifDate(), comp.getAuthors(), comp.getArea(), url, comp.getPage().getPageBean(ctx)));
+				}
+			}
+			ctx.getRequest().setAttribute("debugNotes", debugNoteList);
+		}
 
 		return msg;
 	}
@@ -334,5 +351,19 @@ public class DashboardAction extends AbstractModuleAction {
 		}
 
 		return null;
+	}
+
+	public static String performMainPage(RequestService rs, ContentContext ctx, HttpSession session, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
+		ModulesContext dashboardContext = ModulesContext.getInstance(session, ctx.getGlobalContext());
+		dashboardContext.getCurrentModule().restoreAll();
+		return null;
+	}
+
+	public static String performTrackerPage(RequestService rs, ContentContext ctx, HttpSession session, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
+		ModulesContext dashboardContext = ModulesContext.getInstance(session, ctx.getGlobalContext());
+		dashboardContext.getCurrentModule().clearAllBoxes();
+		dashboardContext.getCurrentModule().addMainBox("tracker", "tracker", "/jsp/tracker.jsp", false);
+		return null;
+
 	}
 }

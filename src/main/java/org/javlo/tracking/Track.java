@@ -3,6 +3,11 @@
  */
 package org.javlo.tracking;
 
+import java.util.Date;
+
+import org.javlo.helper.StringHelper;
+import org.javlo.helper.URLHelper;
+
 /**
  * @author pvandermaesen
  * a element of tracking
@@ -134,6 +139,10 @@ public class Track implements Comparable<Track> {
 	public String getRefered() {
 		return refered;
 	}
+	
+	public String getReferedHost() {
+		return URLHelper.extractName(refered);
+	}
 
 	public void setRefered(String refered) {
 		this.refered = refered;
@@ -146,6 +155,11 @@ public class Track implements Comparable<Track> {
 	public void setUserAgent(String userAgent) {
 		this.userAgent = userAgent;
 	}
-	
+	public String getSortableTime() {
+		return StringHelper.renderSortableTime(new Date(time));
+	}
+	public boolean isResource() {
+		return !(getPath().contains("/view/") || getPath().contains("/preview/") || getPath().contains("/edit/") || getPath().contains("/ajax/"));
+	}
 
 }

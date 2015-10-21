@@ -40,17 +40,19 @@ import org.javlo.user.UserFactory;
 import org.javlo.ztatic.StaticInfo;
 
 /**
- * @author pvandermaesen the class for seralize the a track event and read the track event.
+ * @author pvandermaesen the class for seralize the a track event and read the
+ *         track event.
  */
 public class Tracker {
-	
+
 	public static final String TRACKING_PARAM = "tracking";
 
 	Logger logger = Logger.getLogger(Tracker.class.getName());
 
 	PersistenceService persistenceService = null;
 
-	//private TimeMap<String, Object> cache = new TimeMap<String, Object>(60 * 5); // 5 minutes cache
+	// private TimeMap<String, Object> cache = new TimeMap<String, Object>(60 *
+	// 5); // 5 minutes cache
 
 	private static final String TRACKER_KEY = "tracker_key";
 
@@ -63,9 +65,9 @@ public class Tracker {
 		}
 		return tracker;
 	}
-	
+
 	public void clearCache() {
-		//cache.clear();
+		// cache.clear();
 	}
 
 	public static void trace(HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -126,7 +128,8 @@ public class Tracker {
 	/**
 	 * return a count of access by language
 	 * 
-	 * @return a array of language, key is language, value if a Interger ; click for the language
+	 * @return a array of language, key is language, value if a Interger ; click
+	 *         for the language
 	 */
 	public Map<String, Integer> getLanguage(StatContext statCtx) {
 
@@ -210,12 +213,14 @@ public class Tracker {
 	}
 
 	/**
-	 * return click by a moment define by constant in Calendar object (sp. Calendar.DAY_OF_WEEK ).
+	 * return click by a moment define by constant in Calendar object (sp.
+	 * Calendar.DAY_OF_WEEK ).
 	 * 
 	 * @param statCtx
 	 *            statistic context
 	 * @param moment
-	 *            a moment define by constant in Calendar object (sp. Calendar.DAY_OF_WEEK ).
+	 *            a moment define by constant in Calendar object (sp.
+	 *            Calendar.DAY_OF_WEEK ).
 	 * @return a map day (Calendar) is the key count of click is the value
 	 * @throws DAOException
 	 */
@@ -246,7 +251,7 @@ public class Tracker {
 	private synchronized String[][] getPagesTracking(Date from, Date to, String parentPath) {
 
 		String key = "" + from.getTime() + " " + to.getTime();
-		//String[][] content = (String[][]) cache.get(key);
+		// String[][] content = (String[][]) cache.get(key);
 		String[][] content = null;
 		if (content != null) {
 			return content;
@@ -298,7 +303,7 @@ public class Tracker {
 		String[][] res = new String[collection.size()][];
 		collection.toArray(res);
 
-		//cache.put(key, res);
+		// cache.put(key, res);
 
 		return res;
 	}
@@ -317,7 +322,10 @@ public class Tracker {
 			}
 		}
 		/*
-		 * for (int i = 0; i < allPages.length; i++) { if (allPages[i][0] != null && allPages[i][0].equals("view")) { if (StringHelper.getFileNameWithoutExtension(allPages[i][1]).endsWith(path)) { return Integer.parseInt(allPages[i][2]); } } }
+		 * for (int i = 0; i < allPages.length; i++) { if (allPages[i][0] !=
+		 * null && allPages[i][0].equals("view")) { if
+		 * (StringHelper.getFileNameWithoutExtension(allPages[i][1]).endsWith(
+		 * path)) { return Integer.parseInt(allPages[i][2]); } } }
 		 */
 		return c;
 	}
@@ -373,23 +381,40 @@ public class Tracker {
 	 */
 	private synchronized Collection<Track> getResourceTracking(Date from, Date to, String parentPath) {
 		Collection<Track> collection;
-		//synchronized (cache) {
-			String key = "resource_" + from.getTime() + " " + to.getTime();
-			logger.finest("create Tracker info : " + key);
-			Collection<Track> content = null;
-			//Collection<Track> content = (Collection<Track>) cache.get(key);
-			if (content != null) {
-				return content;
-			}
-			collection = new LinkedList<Track>();
-			Track[] tracks = getResourceTracks(from, to);
-			for (Track track : tracks) {
-				collection.add(track);
-			}
-			//cache.put(key, collection);
-			//cache.clearCache();
-		//}
+		// synchronized (cache) {
+		String key = "resource_" + from.getTime() + " " + to.getTime();
+		logger.finest("create Tracker info : " + key);
+		Collection<Track> content = null;
+		// Collection<Track> content = (Collection<Track>) cache.get(key);
+		if (content != null) {
+			return content;
+		}
+		collection = new LinkedList<Track>();
+		Track[] tracks = getResourceTracks(from, to);
+		for (Track track : tracks) {
+			collection.add(track);
+		}
+		// cache.put(key, collection);
+		// cache.clearCache();
+		// }
 		return collection;
+	}
+
+	/**
+	 * get list of track access to a resource.
+	 * 
+	 * @return a list of track.
+	 */
+	public synchronized Track[] getAllTrack(Date day) {
+		Calendar from = Calendar.getInstance();
+		from.setTime(day);
+		from = TimeHelper.convertRemoveAfterDay(from);
+		Calendar to = Calendar.getInstance();
+		to.setTime(day);
+		to.add(Calendar.DAY_OF_YEAR, 1);
+		to = TimeHelper.convertRemoveAfterDay(to);
+		Track[] tracks = persistenceService.loadTracks(from.getTime(), to.getTime(), false, false);
+		return tracks;
 	}
 
 	public Track[] getResourceTracks(Date from, Date to) {
@@ -418,7 +443,12 @@ public class Tracker {
 			outAccess = outAccess + getResourcePathCountAccess(from.getTime(), to.getTime(), path);
 		}
 		/*
-		 * StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession()); path = URLHelper.createTransformURL(viewCtx, URLHelper.mergePath(staticConfig.getStaticFolder(), staticInfo.getResource()) , "thumb-view"); outAccess = outAccess + getCountAccessNoTemplate(from.getTime(), to.getTime(), path);
+		 * StaticConfig staticConfig =
+		 * StaticConfig.getInstance(ctx.getRequest().getSession()); path =
+		 * URLHelper.createTransformURL(viewCtx,
+		 * URLHelper.mergePath(staticConfig.getStaticFolder(),
+		 * staticInfo.getResource()) , "thumb-view"); outAccess = outAccess +
+		 * getCountAccessNoTemplate(from.getTime(), to.getTime(), path);
 		 */
 		return outAccess;
 	}
@@ -460,12 +490,14 @@ public class Tracker {
 	}
 
 	/**
-	 * return session open by a moment define by constant in Calendar object (sp. Calendar.DAY_OF_WEEK ).
+	 * return session open by a moment define by constant in Calendar object
+	 * (sp. Calendar.DAY_OF_WEEK ).
 	 * 
 	 * @param statCtx
 	 *            statistic context
 	 * @param moment
-	 *            a moment define by constant in Calendar object (sp. Calendar.DAY_OF_WEEK ).
+	 *            a moment define by constant in Calendar object (sp.
+	 *            Calendar.DAY_OF_WEEK ).
 	 * @return a map day (Calendar) is the key count of click is the value
 	 * @throws DAOException
 	 */
@@ -510,9 +542,11 @@ public class Tracker {
 	}
 
 	/**
-	 * return the time pass on a page ( time between the click on the page and the next click in the same session )
+	 * return the time pass on a page ( time between the click on the page and
+	 * the next click in the same session )
 	 * 
-	 * @return a map with path as key and a array with total time in index 0 and click count in index 1
+	 * @return a map with path as key and a array with total time in index 0 and
+	 *         click count in index 1
 	 * @throws DAOException
 	 */
 	public Map<String, double[]> getTimeTracking(StatContext statCtx) {
@@ -552,15 +586,15 @@ public class Tracker {
 
 	public Track[] getViewClickTracks(Date from, Date to) {
 
-		String key = "getViewClickTracks_" + StringHelper.renderDate(from) + "_" + StringHelper.renderDate(to);		
+		String key = "getViewClickTracks_" + StringHelper.renderDate(from) + "_" + StringHelper.renderDate(to);
 		Track[] trackers = null;
-		//synchronized (cache) {
-			//trackers = (Track[]) cache.get(key);
-			if (trackers == null) {
-				trackers = persistenceService.loadTracks(from, to, true, false);
-				//cache.put(key, trackers);
-			}
-		//}
+		// synchronized (cache) {
+		// trackers = (Track[]) cache.get(key);
+		if (trackers == null) {
+			trackers = persistenceService.loadTracks(from, to, true, false);
+			// cache.put(key, trackers);
+		}
+		// }
 		return trackers;
 	}
 

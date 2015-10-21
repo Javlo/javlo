@@ -287,3 +287,7 @@ div.wysiwyg-paragraph textarea {
 	height: 300px;
 	display: block;
 }
+
+.component textarea.wysiwyg {
+	width: 98%;
+}

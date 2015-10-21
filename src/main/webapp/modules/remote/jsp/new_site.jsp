@@ -1,5 +1,5 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<div class="content">
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"
+%><div class="content">
 
 <form class="standard-form" id="create-site" method="post" action="${info.currentURL}">
 	<input type="hidden" name="webaction" value="remote.update" />
