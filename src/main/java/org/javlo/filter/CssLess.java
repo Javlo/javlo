@@ -18,6 +18,7 @@ import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.ResourceHelper;
+import org.javlo.helper.XHTMLHelper;
 import org.lesscss.LessCompiler;
 
 public class CssLess implements Filter {
@@ -64,12 +65,13 @@ public class CssLess implements Filter {
 		LessCompiler lessCompiler = new LessCompiler();
 		FileOutputStream out = null;
 		try {
-			lessCompiler.setEncoding(ContentContext.CHARACTER_ENCODING);					
+			lessCompiler.setEncoding(ContentContext.CHARACTER_ENCODING);
+			lessCompiler.setCompress(true);
 			String cssContent = lessCompiler.compile(lessFile);
 			out = new FileOutputStream(cssFile);
 			ResourceHelper.writeStringToStream(cssContent, out, ContentContext.CHARACTER_ENCODING);
 			out.flush();
-			out.getFD().sync();			
+			out.getFD().sync();		
 			return true;
 		} catch (Exception e) {
 			logger.severe("error on less file '"+lessFile+"' : "+e.getMessage());
