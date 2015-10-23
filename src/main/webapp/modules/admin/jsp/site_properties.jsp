@@ -400,16 +400,17 @@
 
 <div class="row">
 <div class="col-sm-6">
-<jsp:include page="template_data.jsp?name=background&value=${currentContext.templateData.background}" />
-<jsp:include page="template_data.jsp?name=backgroundMenu&value=${currentContext.templateData.backgroundMenu}" />
-<jsp:include page="template_data.jsp?name=backgroundActive&value=${currentContext.templateData.backgroundActive}" />
-<jsp:include page="template_data.jsp?name=foreground&value=${currentContext.templateData.foreground}" />
-<jsp:include page="template_data.jsp?name=border&value=${currentContext.templateData.border}" />
-<jsp:include page="template_data.jsp?name=textMenu&value=${currentContext.templateData.textMenu}" />
-<jsp:include page="template_data.jsp?name=text&value=${currentContext.templateData.text}" />
-<jsp:include page="template_data.jsp?name=title&value=${currentContext.templateData.title}" />
-<jsp:include page="template_data.jsp?name=link&value=${currentContext.templateData.link}" />
-<jsp:include page="template_data.jsp?name=special&value=${currentContext.templateData.special}" />
+<jsp:include page="template_data.jsp?name=background&value=${currentContext.templateData.background}&class=color" />
+<jsp:include page="template_data.jsp?name=backgroundMenu&value=${currentContext.templateData.backgroundMenu}&class=color" />
+<jsp:include page="template_data.jsp?name=backgroundActive&value=${currentContext.templateData.backgroundActive}&class=color" />
+<jsp:include page="template_data.jsp?name=foreground&value=${currentContext.templateData.foreground}&class=color" />
+<jsp:include page="template_data.jsp?name=border&value=${currentContext.templateData.border}&class=color" />
+<jsp:include page="template_data.jsp?name=textMenu&value=${currentContext.templateData.textMenu}&class=color" />
+<jsp:include page="template_data.jsp?name=text&value=${currentContext.templateData.text}&class=color" />
+<jsp:include page="template_data.jsp?name=title&value=${currentContext.templateData.title}&class=color" />
+<jsp:include page="template_data.jsp?name=link&value=${currentContext.templateData.link}&class=color" />
+<jsp:include page="template_data.jsp?name=special&value=${currentContext.templateData.special}&class=color" />
+<jsp:include page="template_data.jsp?name=font&value=${currentContext.templateData.font}&class=font" />
 </div><div class="col-sm-6">
 <div class="form-group">
 	<label for="logo">logo : </label>

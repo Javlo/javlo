@@ -27,6 +27,7 @@ import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
 import org.javlo.service.NavigationService;
 import org.javlo.service.RequestService;
+import org.javlo.servlet.ImageTransformServlet;
 import org.javlo.servlet.ProxyServlet;
 import org.javlo.template.Template;
 import org.javlo.template.TemplateFactory;
@@ -512,6 +513,18 @@ public class URLHelper extends ElementaryURLHelper {
 		}
 		url = url.replace('\\', '/');
 		url = URLHelper.mergePath(TRANSFORM + '/' + filter + '/' + templateFullPath, url);
+		return createStaticURL(ctx, url);
+	}
+	
+	public static String createTransformLocalTemplateURL(ContentContext ctx, String template, String filter, String url) throws Exception {
+		if (template == null) {			
+			template = ctx.getCurrentTemplate().getId();
+		}
+		if (url == null) {
+			return null;
+		}
+		url = url.replace('\\', '/');
+		url = URLHelper.mergePath(TRANSFORM,filter, template+ImageTransformServlet.LOCAL_TEMPLATE_SUFFIX, ctx.getGlobalContext().getContextKey(), url);
 		return createStaticURL(ctx, url);
 	}
 

@@ -34,7 +34,6 @@ import org.javlo.i18n.I18nAccess;
 import org.javlo.message.GenericMessage;
 import org.javlo.service.ReverseLinkService;
 
-
 public class ArrayFileComponent extends GenericFile {
 
 	public static final String REQUEST_ATTRIBUTE_KEY = "array";
@@ -134,6 +133,22 @@ public class ArrayFileComponent extends GenericFile {
 			} else {
 				return false;
 			}
+		}
+		
+		public String getType() {
+			String content = getValue();
+			String type;
+			if (content == null || content.trim().length() == 0) {
+				type = "empty";
+			} else if (StringHelper.isLikeNumber(getValue())) {
+				type = "number";
+			} else {
+				type = "text";
+			}
+			if (getValue().trim().length() == 1) {
+				type = type+" char";
+			}
+			return type;
 		}
 	}
 
@@ -278,7 +293,7 @@ public class ArrayFileComponent extends GenericFile {
 		super.prepareView(ctx);
 		ctx.getRequest().setAttribute(REQUEST_ATTRIBUTE_KEY, null);
 		ctx.getRequest().setAttribute("summary", getLabel());
-		
+
 		getArray(ctx);
 		ctx.getRequest().setAttribute("colHead", "th");
 		ctx.getRequest().setAttribute("rowHead", "th");
@@ -310,9 +325,11 @@ public class ArrayFileComponent extends GenericFile {
 			 * (StringHelper.getFileExtension(file.getName()).equalsIgnoreCase
 			 * ("csv")) { outArray = getCSVArray(ctx, file); } else
 			 */
-			/*if (StringHelper.getFileExtension(file.getName()).equalsIgnoreCase("ods")) {
-				outArray = getODSArray(ctx, file);
-			} else*/ if (StringHelper.getFileExtension(file.getName()).equalsIgnoreCase("xlsx")) {
+			/*
+			 * if
+			 * (StringHelper.getFileExtension(file.getName()).equalsIgnoreCase(
+			 * "ods")) { outArray = getODSArray(ctx, file); } else
+			 */ if (StringHelper.getFileExtension(file.getName()).equalsIgnoreCase("xlsx")) {
 				outArray = getXLSXArray(ctx, file);
 			} else if (StringHelper.getFileExtension(file.getName()).equalsIgnoreCase("xls")) {
 				outArray = getXLSArray(ctx, file);
@@ -359,17 +376,17 @@ public class ArrayFileComponent extends GenericFile {
 				outCell = cell.getStringCellValue();
 				break;
 			case HSSFCell.CELL_TYPE_NUMERIC:
-				outCell = StringHelper.renderDouble(cell.getNumericCellValue(),new Locale(ctx.getRequestContentLanguage()));				
+				outCell = StringHelper.renderDouble(cell.getNumericCellValue(), new Locale(ctx.getRequestContentLanguage()));
 				break;
 			case HSSFCell.CELL_TYPE_BOOLEAN:
-				outCell = ""+cell.getBooleanCellValue();
+				outCell = "" + cell.getBooleanCellValue();
 				break;
 			default:
 				outCell = "?";
 				break;
-			}			
+			}
 		} else {
-			outCell = formatter.formatCellValue(cell);			
+			outCell = formatter.formatCellValue(cell);
 		}
 		if (cell.getHyperlink() != null) {
 			String target = "";
@@ -391,17 +408,17 @@ public class ArrayFileComponent extends GenericFile {
 				outCell = cell.getStringCellValue();
 				break;
 			case HSSFCell.CELL_TYPE_NUMERIC:
-				outCell = StringHelper.renderDouble(cell.getNumericCellValue(),new Locale(ctx.getRequestContentLanguage()));				
+				outCell = StringHelper.renderDouble(cell.getNumericCellValue(), new Locale(ctx.getRequestContentLanguage()));
 				break;
 			case HSSFCell.CELL_TYPE_BOOLEAN:
-				outCell = ""+cell.getBooleanCellValue();
+				outCell = "" + cell.getBooleanCellValue();
 				break;
 			default:
 				outCell = "?";
 				break;
-			}			
+			}
 		} else {
-			outCell = formatter.formatCellValue(cell);			
+			outCell = formatter.formatCellValue(cell);
 		}
 		if (cell.getHyperlink() != null) {
 			String target = "";
@@ -414,41 +431,25 @@ public class ArrayFileComponent extends GenericFile {
 		return outCell;
 	}
 
-	/*private static String readOpenDocCell(MutableCell<SpreadSheet> mutableCell) {
-		return mutableCell.getValue().toString();
-	}
-
-	protected Cell[][] getODSArray(ContentContext ctx, File odsFile) throws Exception {
-		final Sheet sheet = SpreadSheet.createFromFile(odsFile).getSheet(0);
-		int w = 0;
-		int h = 0;
-		for (int x = 0; x < Math.min(sheet.getColumnCount(), 32); x++) {
-			for (int y = 0; y < Math.min(sheet.getRowCount(), 512); y++) {
-				Object value = sheet.getCellAt(x, y).getValue();
-				if (value != null && value.toString().trim().length() > 0) {
-					if (x > h) {
-						h = x;
-					}
-					if (y > w) {
-						w = y;
-					}
-				}
-			}
-		}
-		w++;
-		h++;
-		Cell[][] outArray = new Cell[w][];
-		for (int x = 0; x < w; x++) {
-			outArray[x] = new Cell[h];
-			for (int y = 0; y < h; y++) {
-				if (sheet.getCellAt(y, x).getValue() != null) {
-					outArray[x][y] = new Cell(renderCell(readOpenDocCell(sheet.getCellAt(y, x))), outArray, x, y);
-				}
-			}
-		}
-
-		return outArray;
-	}*/
+	/*
+	 * private static String readOpenDocCell(MutableCell<SpreadSheet>
+	 * mutableCell) { return mutableCell.getValue().toString(); }
+	 * 
+	 * protected Cell[][] getODSArray(ContentContext ctx, File odsFile) throws
+	 * Exception { final Sheet sheet =
+	 * SpreadSheet.createFromFile(odsFile).getSheet(0); int w = 0; int h = 0;
+	 * for (int x = 0; x < Math.min(sheet.getColumnCount(), 32); x++) { for (int
+	 * y = 0; y < Math.min(sheet.getRowCount(), 512); y++) { Object value =
+	 * sheet.getCellAt(x, y).getValue(); if (value != null &&
+	 * value.toString().trim().length() > 0) { if (x > h) { h = x; } if (y > w)
+	 * { w = y; } } } } w++; h++; Cell[][] outArray = new Cell[w][]; for (int x
+	 * = 0; x < w; x++) { outArray[x] = new Cell[h]; for (int y = 0; y < h; y++)
+	 * { if (sheet.getCellAt(y, x).getValue() != null) { outArray[x][y] = new
+	 * Cell(renderCell(readOpenDocCell(sheet.getCellAt(y, x))), outArray, x, y);
+	 * } } }
+	 * 
+	 * return outArray; }
+	 */
 
 	protected Cell[][] getXLSXArray(ContentContext ctx, File xslxFile) throws Exception {
 		InputStream in = new FileInputStream(xslxFile);
@@ -504,14 +505,12 @@ public class ArrayFileComponent extends GenericFile {
 		try {
 			HSSFWorkbook workbook = new HSSFWorkbook(in);
 			HSSFSheet sheet = workbook.getSheetAt(0);
-			
-			
-			
+
 			Iterator<Row> rowIterator = sheet.iterator();
 			int w = 0;
-			int h = sheet.getLastRowNum()+1;
+			int h = sheet.getLastRowNum() + 1;
 			while (rowIterator.hasNext()) {
-				//h++;
+				// h++;
 				Row row = rowIterator.next();
 				if (row.getLastCellNum() > w) {
 					w = row.getLastCellNum();
@@ -666,8 +665,14 @@ public class ArrayFileComponent extends GenericFile {
 					if (content == null || content.trim().length() == 0) {
 						cssClass = " empty";
 						content = "";
+					} else if (cell.getValue().trim().length() == 1) {
+						cssClass = " char";
+					} else if (StringHelper.isLikeNumber(cell.getValue())) {
+						cssClass = " number";
+					} else {
+						cssClass = " text";
 					}
-
+					
 					String spanHTML = "";
 					if (cell.getColSpan() > 1) {
 						spanHTML = " colspan=\"" + cell.getColSpan() + "\"";
@@ -696,10 +701,10 @@ public class ArrayFileComponent extends GenericFile {
 		return stringWriter.toString();
 	}
 
-	public static String renderArray(File file) throws Exception {
+	public String renderArray(File file) throws Exception {
 		String colTH = "th";
 		String rowTH = "th";
-		String style = "";
+		String style = getStyle();
 		if (style != null) {
 			if (style.equals("th-td")) {
 				rowTH = "td";
@@ -753,6 +758,12 @@ public class ArrayFileComponent extends GenericFile {
 					if (content == null || content.trim().length() == 0) {
 						cssClass = " empty";
 						content = "";
+					} else if (cell.getValue().trim().length() == 1) {
+						cssClass = " char";
+					} else if (StringHelper.isLikeNumber(cell.getValue())) {
+						cssClass = " number";
+					} else {
+						cssClass = " char";
 					}
 
 					String spanHTML = "";
@@ -768,8 +779,6 @@ public class ArrayFileComponent extends GenericFile {
 					} else {
 						stringWriter.append('<' + tag + " class=\"even" + cssClass + "\"" + spanHTML + '>');
 					}
-
-					content = content;
 
 					stringWriter.append(content);
 					stringWriter.append("</" + tag + '>');
@@ -880,24 +889,10 @@ public class ArrayFileComponent extends GenericFile {
 
 		return finalCode.toString();
 	}
-	
-	@Override
-	public boolean isRealContent(ContentContext ctx) {	
-		return getValue().trim().length() > 0;
-	}
 
-	public static void main(String[] args) {
-		File test = new File("c:/trans/test.xlsx");
-		File outFile = new File("c:/trans/test.html");
-		try {
-			ResourceHelper.writeStringToFile(outFile, renderArray(test));
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+	@Override
+	public boolean isRealContent(ContentContext ctx) {
+		return getValue().trim().length() > 0;
 	}
 
 }

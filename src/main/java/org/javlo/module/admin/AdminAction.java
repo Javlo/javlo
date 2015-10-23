@@ -1180,7 +1180,8 @@ public class AdminAction extends AbstractModuleAction {
 					td.setLink(StringHelper.parseColor(requestService.getParameter("link", "" + td.getLink())));
 					td.setTitle(StringHelper.parseColor(requestService.getParameter("title", "" + td.getTitle())));
 					td.setSpecial(StringHelper.parseColor(requestService.getParameter("special", "" + td.getSpecial())));
-
+					td.setFont(requestService.getParameter("font", "" + td.getFont()));
+					
 					for (FileItem file : requestService.getAllFileItem()) {
 						if (file.getFieldName().equals("logo")) {
 							File oldLogo = null;

@@ -62,7 +62,7 @@ import org.javlo.remote.IRemoteResource;
 import org.javlo.rendering.Device;
 import org.javlo.service.ListService;
 import org.javlo.service.exception.ServiceException;
-import org.javlo.servlet.zip.ZipManagement;
+import org.javlo.utils.ReadOnlyPropertiesConfigurationMap;
 
 public class Template implements Comparable<Template> {
 
@@ -91,6 +91,7 @@ public class Template implements Comparable<Template> {
 		private CssColor link = null;
 		private String toolsServer = null;
 		private String logo = null;
+		private String font = null;
 
 		public TemplateData() {
 		};
@@ -146,6 +147,10 @@ public class Template implements Comparable<Template> {
 					i++;
 					if (data.length>i && data[i].length() > 0) {
 						setBackgroundActive(Color.decode('#' + data[i]));
+					}
+					i++;
+					if (data.length>i && data[i].length() > 0) {
+						setFont(data[i]);
 					}
 				}
 			} catch (NumberFormatException e) {
@@ -276,6 +281,8 @@ public class Template implements Comparable<Template> {
 			out.append(getLogo());
 			out.append(';');
 			out.append(StringHelper.colorToHexStringNotNull(getBackgroundActive()));
+			out.append(';');
+			out.append(getFont());
 			return out.toString();
 		}
 
@@ -294,7 +301,16 @@ public class Template implements Comparable<Template> {
 			result = prime * result + ((textMenu == null) ? 0 : textMenu.hashCode());
 			result = prime * result + ((title == null) ? 0 : title.hashCode());
 			result = prime * result + ((toolsServer == null) ? 0 : toolsServer.hashCode());
+			result = prime * result + ((font == null) ? 0 : font.hashCode());
 			return result;
+		}
+
+		public String getFont() {
+			return font;
+		}
+
+		public void setFont(String font) {
+			this.font = font;
 		}
 	}
 
@@ -644,6 +660,8 @@ public class Template implements Comparable<Template> {
 	public static final String GZ_FILE_EXT = "httpgz";
 
 	private final PropertiesConfiguration properties = new PropertiesConfiguration();
+	
+	private final ReadOnlyPropertiesConfigurationMap configMap = new ReadOnlyPropertiesConfigurationMap(properties, false);
 
 	private final PropertiesConfiguration privateProperties = new PropertiesConfiguration();
 
@@ -1946,6 +1964,10 @@ public class Template implements Comparable<Template> {
 		if (logo != null && !logo.equals("null")) {
 			templateData.setLogo(logo);
 		}
+		String font = properties.getString("data.font", null);
+		if (font != null && !font.equals("null")) {
+			templateData.setFont(font);
+		}
 
 		String freeDataPrefix = "data.free.";
 		Iterator keys = properties.getKeys();
@@ -2006,6 +2028,10 @@ public class Template implements Comparable<Template> {
 		if (templateData.getToolsServer() != null) {
 			templateDataMap.put(templateData.getToolsServer(), templateDataUser.getToolsServer());
 		}
+		
+		if (templateData.getFont() != null) {
+			templateDataMap.put(templateData.getFont(), templateDataUser.getFont());
+		}		
 		return templateDataMap;
 	}
 
@@ -2165,10 +2191,10 @@ public class Template implements Comparable<Template> {
 					if (isJs) {
 						XHTMLHelper.compressJS(targetFile);
 					}
-					if (isCss || isJs) {
+					/*if (isCss || isJs) {
 						File gzTargetFile = new File(targetFile.getAbsoluteFile().getAbsolutePath() + "." + GZ_FILE_EXT);
 						ZipManagement.gzipFile(gzTargetFile, targetFile);
-					}
+					}*/
 				}
 			}
 		}
@@ -2779,6 +2805,10 @@ public class Template implements Comparable<Template> {
 	
 	public boolean isEndAreaTag() {
 		return StringHelper.isTrue(properties.getString("area.end-tag"),true);
+	}
+	
+	public Map<String,String> getConfig() {
+		return configMap;
 	}
 
 }

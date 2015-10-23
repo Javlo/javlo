@@ -40,7 +40,31 @@
             <description>params list sample ("tag=news").</description>
             <rtexprvalue>true</rtexprvalue>
         </attribute>
-    </tag>    
+    </tag>  
+    <tag>
+        <name>imagetransform</name>
+        <tag-class>org.javlo.tag.JVImageTransformTag</tag-class>
+        <body-content>empty</body-content>
+        <info>This Tag create a filtered link to a image.</info>
+        <attribute>
+            <name>src</name>
+            <required>true</required>
+            <description>a link to image resource.</description>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+         <attribute>
+            <name>var</name>
+            <required>false</required>
+            <description>create a attribute in scope request for url.</description>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>filter</name>
+            <required>true</required>
+            <description>the reference to the filter (defined in image-config.properties)</description>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>   
      <tag>
         <name>autolink</name>
         <bodycontent>JSP</bodycontent>

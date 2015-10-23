@@ -18,7 +18,6 @@ import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.ResourceHelper;
-import org.javlo.helper.XHTMLHelper;
 import org.lesscss.LessCompiler;
 
 public class CssLess implements Filter {
@@ -49,7 +48,7 @@ public class CssLess implements Filter {
 				cssFile.getParentFile().mkdirs();
 			}
 			if (lessFile.exists()) {
-				if (compile (lessFile, cssFile)) {					
+				if (compile (lessFile, cssFile, globalContext.getStaticConfig().isProd())) {					
 					try {
 						Thread.sleep(5*1000); // check why on linux we need the sleep.
 					} catch (InterruptedException e) {
@@ -61,12 +60,12 @@ public class CssLess implements Filter {
 		next.doFilter(request, response);
 	}
 	
-	private static boolean compile(File lessFile, File cssFile) {		
+	private static boolean compile(File lessFile, File cssFile, boolean compress) {		
 		LessCompiler lessCompiler = new LessCompiler();
 		FileOutputStream out = null;
 		try {
 			lessCompiler.setEncoding(ContentContext.CHARACTER_ENCODING);
-			lessCompiler.setCompress(true);
+			lessCompiler.setCompress(compress);
 			String cssContent = lessCompiler.compile(lessFile);
 			out = new FileOutputStream(cssFile);
 			ResourceHelper.writeStringToStream(cssContent, out, ContentContext.CHARACTER_ENCODING);
@@ -88,18 +87,6 @@ public class CssLess implements Filter {
 
 	@Override
 	public void destroy() {
-	}
-	
-	public static void main(String[] args) {
-		// Instantiate the LESS compiler
-		LessCompiler lessCompiler = new LessCompiler();
-		System.out.println("***** CssLess.main : less js = "+lessCompiler.getLesscJs()); //TODO: remove debug tracelessCompiler.getLesscJs();
-		try {			
-			File bootStrap = new File("C:/Users/pvandermaesen/Dropbox/work/data/javlo/template/bootstrap-3.2.0/css/bootstrap.less");			
-			compile(bootStrap, new File("c:/trans/bootstrap.css"));			
-		} catch (Exception e) {		
-			e.printStackTrace();
-		}		
 	}
 
 }

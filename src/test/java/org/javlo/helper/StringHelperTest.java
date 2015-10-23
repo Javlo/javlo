@@ -251,5 +251,25 @@ public class StringHelperTest extends TestCase {
 			}
 		}
 	}
+	
+	public void testIsDigit() {
+		assertTrue(StringHelper.isDigit("0"));
+		assertTrue(StringHelper.isDigit("125"));
+		assertTrue(StringHelper.isDigit("-12"));
+		assertFalse(StringHelper.isDigit("abc"));
+		assertFalse(StringHelper.isDigit("12€"));
+	}
+	
+	public void testIsLikeDigit() {
+		assertTrue(StringHelper.isLikeNumber("0"));
+		assertTrue(StringHelper.isLikeNumber("125"));
+		assertTrue(StringHelper.isLikeNumber("-12"));
+		assertFalse(StringHelper.isLikeNumber("abc"));
+		assertTrue(StringHelper.isLikeNumber("12€"));
+		assertTrue(StringHelper.isLikeNumber("12 €"));
+		assertTrue(StringHelper.isLikeNumber("12 %"));
+		assertTrue(StringHelper.isLikeNumber("12,3 %"));
+		assertTrue(StringHelper.isLikeNumber("-12,3"));
+	}
  
 }

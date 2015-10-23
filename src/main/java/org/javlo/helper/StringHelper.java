@@ -1083,12 +1083,28 @@ public class StringHelper {
 		case '7':
 		case '8':
 		case '9':
+		case '-':
 			return true;
 		default:
 			return false;
 		}
 	}
-
+	
+	/**
+	 * check if string contains somthing similar to digital number
+	 * @param str
+	 * @return
+	 */
+	public static boolean isLikeNumber(String str) {
+		str = str.replaceAll("€|\\$|\\.|\\,|\\%| ", "0");
+		return isDigit(str);
+	}
+	
+	/**
+	 * check if stirng contains only digital number
+	 * @param str
+	 * @return
+	 */
 	public static boolean isDigit(String str) {
 		if (str == null || str.length() == 0) {
 			return false;
@@ -1404,8 +1420,10 @@ public class StringHelper {
 	}
 
 	public static void main(String[] args) {
-		Collection<String> cols = Arrays.asList(new String[] { "", "on", "off" });
-		System.out.println(collectionToText(cols));
+		String str = "20 %";
+		str = str.replaceAll("€|\\$|\\.|\\,|\\%| ", "0");
+		//str = str.replaceAll("%|€|\\$", "9");
+		System.out.println(str);
 	}
 
 	/**

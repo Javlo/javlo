@@ -511,3 +511,5 @@ change log
 * 2.1.0.2.14 21/10/2015
 
  * cache-control for static resources
+ 
+ * create filtered reference to a template local image

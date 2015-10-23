@@ -223,6 +223,8 @@ public class ImageTransformServlet extends HttpServlet {
 
 	private static final String DEFAULT_IMAGE_TYPE = "png";
 
+	public static final String LOCAL_TEMPLATE_SUFFIX = "-local";
+
 	private ExecutorService executor;
 
 	@Override
@@ -337,8 +339,8 @@ public class ImageTransformServlet extends HttpServlet {
 		}
 		if (config.isGrayscaleAveraging(ctx.getDevice(), filter, area)) {
 			img = ImageEngine.avg(img);
-		}		
-		if (config.isGrayscaleLuminosity(ctx.getDevice(), filter, area)) {		
+		}
+		if (config.isGrayscaleLuminosity(ctx.getDevice(), filter, area)) {
 			img = ImageEngine.luminosity(img);
 		}
 		// org.javlo.helper.Logger.stepCount("transform",
@@ -547,16 +549,22 @@ public class ImageTransformServlet extends HttpServlet {
 		}
 
 		// org.javlo.helper.Logger.stepCount("transform",
-		// "start - transformation - 2 (src image size : "+img.getWidth()+","+img.getHeight()+")");
+		// "start - transformation - 2 (src image size :
+		// "+img.getWidth()+","+img.getHeight()+")");
+		
+		int focusX = StaticInfo.DEFAULT_FOCUS_X;
+		int focusY = StaticInfo.DEFAULT_FOCUS_Y;
 
-		int focusX = staticInfo.getFocusZoneX(ctx);
-		int focusY = staticInfo.getFocusZoneY(ctx);
+		if (staticInfo != null) {
+			focusX = staticInfo.getFocusZoneX(ctx);
+			focusY = staticInfo.getFocusZoneY(ctx);
 
-		if (config.getZoom(ctx.getDevice(), filter, area) > 1) {
-			double zoom = config.getZoom(ctx.getDevice(), filter, area);
-			img = ImageEngine.zoom(img, zoom, focusX, focusY);
-			focusX = (int) Math.round(focusX / zoom);
-			focusY = (int) Math.round(focusY / zoom);
+			if (config.getZoom(ctx.getDevice(), filter, area) > 1) {
+				double zoom = config.getZoom(ctx.getDevice(), filter, area);
+				img = ImageEngine.zoom(img, zoom, focusX, focusY);
+				focusX = (int) Math.round(focusX / zoom);
+				focusY = (int) Math.round(focusY / zoom);
+			}
 		}
 
 		if (config.isBackGroudColor(ctx.getDevice(), filter, area) && img.getColorModel().hasAlpha()) {
@@ -591,8 +599,8 @@ public class ImageTransformServlet extends HttpServlet {
 		}
 		if (config.isGrayscaleAveraging(ctx.getDevice(), filter, area)) {
 			img = ImageEngine.avg(img);
-		}		
-		if (config.isGrayscaleLuminosity(ctx.getDevice(), filter, area)) {		
+		}
+		if (config.isGrayscaleLuminosity(ctx.getDevice(), filter, area)) {
 			img = ImageEngine.luminosity(img);
 		}
 		int sepia = config.getSepiaIntensity(ctx.getDevice(), filter, area);
@@ -872,6 +880,7 @@ public class ImageTransformServlet extends HttpServlet {
 			Template template = null;
 			IImageFilter comp = null;
 			int slachIndex = pathInfo.indexOf('/');
+			boolean imageFromTemplateFolder = false;
 			if (slachIndex > 0) {
 				try {
 					filter = pathInfo.substring(0, slachIndex);
@@ -909,6 +918,11 @@ public class ImageTransformServlet extends HttpServlet {
 					}
 
 					try {
+						/** image is in template folder **/
+						if (templateId.endsWith(LOCAL_TEMPLATE_SUFFIX)) {
+							templateId = templateId.substring(0, templateId.indexOf(LOCAL_TEMPLATE_SUFFIX));
+							imageFromTemplateFolder = true;
+						}
 						if (!Template.EDIT_TEMPLATE_CODE.equals(templateId)) {
 							template = TemplateFactory.getTemplates(getServletContext()).get(templateId);
 						}
@@ -923,8 +937,11 @@ public class ImageTransformServlet extends HttpServlet {
 
 			boolean localFile = false;
 			StaticInfo staticInfo = null;
-			
-			if (imageName.substring(1).startsWith(staticConfig.getShareDataFolderKey())) {
+
+			if (imageFromTemplateFolder && template != null) {
+				localFile = true;
+				imageName = URLHelper.mergePath(template.getLocalWorkTemplateFolder(), template.getId(), globalContext.getContextKey(), imageName);
+			} else if (imageName.substring(1).startsWith(staticConfig.getShareDataFolderKey())) {
 				imageName = imageName.substring(staticConfig.getShareDataFolderKey().length() + 2);
 				dataFolder = globalContext.getSharedDataFolder(request.getSession());
 				staticInfo = StaticInfo.getShareInstance(ctx, imageName.replaceFirst("/static", ""));
@@ -938,7 +955,7 @@ public class ImageTransformServlet extends HttpServlet {
 				staticInfo = StaticInfo.getInstance(ctx, imageName);
 			}
 
-			if (staticInfo != null) {				
+			if (staticInfo != null) {
 				if (AdminUserFactory.createUserFactory(ctx.getGlobalContext(), request.getSession()).getCurrentUser(request.getSession()) == null) {
 					if (!staticInfo.canRead(ctx, UserFactory.createUserFactory(globalContext, request.getSession()).getCurrentUser(request.getSession()), request.getParameter(RESOURCE_TOKEN_KEY))) {
 						response.setStatus(HttpServletResponse.SC_FORBIDDEN);
@@ -1053,7 +1070,7 @@ public class ImageTransformServlet extends HttpServlet {
 					int maxWidth = staticConfig.getImageMaxWidth();
 					if (maxWidth > 0) {
 						synchronized (LOCK_LARGE_TRANSFORM) {
-							if (!staticInfo.isResized(ctx) && !imageFile.isDirectory()) {
+							if ((staticInfo != null && !staticInfo.isResized(ctx)) && !imageFile.isDirectory()) {
 								logger.info("source image to large resize to " + maxWidth + " : " + imageFile);
 								BufferedImage image = ImageIO.read(imageFile);
 								if (image != null) {
@@ -1067,7 +1084,9 @@ public class ImageTransformServlet extends HttpServlet {
 								} else {
 									logger.warning("Could'nt read image : " + imageFile);
 								}
-								staticInfo.setResized(ctx, true);
+								if (staticInfo != null) {
+									staticInfo.setResized(ctx, true);
+								}
 							}
 						}
 					}
