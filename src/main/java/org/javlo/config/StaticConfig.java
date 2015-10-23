@@ -1373,7 +1373,7 @@ public class StaticConfig extends Observable {
 	}
 	
 	public String getStaticResourceCacheTime() {
-		return properties.getString("resources.cache-time", "3600");
+		return properties.getString("resources.cache-time", "240");
 	}
 	
 	public String getJSLibPreview() {
