@@ -1287,7 +1287,13 @@ public class Edit extends AbstractModuleAction {
 		return null;
 	}
 
-	public static String performAddPage(RequestService requestService, ContentContext ctx, ContentService content) {
+	public static String performAddPage(RequestService requestService, ContentContext ctx, I18nAccess i18nAccess, ContentService content) throws Exception {
+		
+		if (!canModifyCurrentPage(ctx) || !checkPageSecurity(ctx)) {
+			MessageRepository messageRepository = MessageRepository.getInstance(ctx);
+			messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("action.block"), GenericMessage.ERROR));
+			return null;
+		}
 		
 		String message = null;
 
@@ -1299,7 +1305,6 @@ public class Edit extends AbstractModuleAction {
 			String nodeName = requestService.getParameter("name", null);
 			String parentName = requestService.getParameter("parent", null);
 
-			I18nAccess i18nAccess = I18nAccess.getInstance(globalContext, ctx.getRequest().getSession());
 			if (nodeName != null) {
 				message = validNodeName(nodeName, i18nAccess);
 			}
@@ -1489,12 +1494,12 @@ public class Edit extends AbstractModuleAction {
 
 	public static String performDeletePage(GlobalContext globalContext, ContentService content, ContentContext ctx, I18nAccess i18nAccess) throws Exception {
 
-		if (!canModifyCurrentPage(ctx)) {
+		if (!canModifyCurrentPage(ctx) || !checkPageSecurity(ctx)) {
 			MessageRepository messageRepository = MessageRepository.getInstance(ctx);
 			messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("action.block"), GenericMessage.ERROR));
 			return null;
 		}
-
+		
 		String message = null;
 
 		String id = ctx.getRequest().getParameter("page");
@@ -1585,6 +1590,12 @@ public class Edit extends AbstractModuleAction {
 	}
 
 	public static String performMovePage(RequestService rs, ContentContext ctx, GlobalContext globalContext, ContentService content, I18nAccess i18nAccess, MessageRepository messageRepository) throws Exception {
+		
+		if (!canModifyCurrentPage(ctx) || !checkPageSecurity(ctx)) {
+			messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("action.block"), GenericMessage.ERROR));
+			return null;
+		}
+		
 		String pageName = rs.getParameter("page", null);
 		String pagePreviousName = rs.getParameter("previous", null);
 		if (pageName == null || pagePreviousName == null) {
@@ -1886,12 +1897,18 @@ public class Edit extends AbstractModuleAction {
 	}
 
 	public static String performInsertPage(RequestService rs, ContentContext ctx, MessageRepository messageRepository, ContentService content, EditContext editContext, PersistenceService persistenceService, I18nAccess i18nAccess) throws Exception {
+		
+		if (!canModifyCurrentPage(ctx) || !checkPageSecurity(ctx)) {
+			messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("action.block"), GenericMessage.ERROR));
+			return null;
+		}
+		
 		String path = editContext.getContextForCopy(ctx).getPath();
 		MenuElement pageToBeMoved = content.getNavigation(ctx).searchChild(ctx, path);
 		if (pageToBeMoved == null) {
 			return "page not found : " + path;
 		}
-		if ((pageToBeMoved != null) && (pageToBeMoved.getParent() != null)) {
+		if (pageToBeMoved.getParent() != null) {
 			pageToBeMoved.moveToParent(ctx.getCurrentPage());
 			persistenceService.setAskStore(true);
 			String[][] balises = { { "path", path }, { "new-path", pageToBeMoved.getPath() } };
@@ -1925,6 +1942,11 @@ public class Edit extends AbstractModuleAction {
 	}
 
 	public static String performInsertShared(RequestService rs, ContentContext ctx, GlobalContext globalContext, EditContext editContext, ContentService content, SharedContentService sharedContentService, Module currentModule, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
+		
+		if (!canModifyCurrentPage(ctx) || !checkPageSecurity(ctx)) {
+			messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("action.block"), GenericMessage.ERROR));
+			return null;
+		}
 
 		String sharedData = rs.getParameter("sharedContent", null);
 		String previousId = rs.getParameter("previous", null);

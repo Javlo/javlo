@@ -284,6 +284,21 @@ public class DataAction implements IAction {
 	public static String performUpload(RequestService rs, ContentContext ctx, GlobalContext gc, ContentService cs, User user, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
 		return uploadContent(rs, ctx, gc, cs, user, messageRepository, i18nAccess, new ImportConfigBean(ctx));
 	}
+	
+	public static String performUploadShared(RequestService rs, ContentContext ctx, GlobalContext gc, ContentService cs, User user, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
+		SharedContentService sharedContentService = SharedContentService.getInstance(ctx);
+		SharedContentContext sharedContentContext = SharedContentContext.getInstance(ctx.getRequest().getSession());
+		ISharedContentProvider provider = sharedContentService.getProvider(ctx, sharedContentContext.getProvider());
+		if (provider != null) {
+			for (FileItem item : rs.getAllFileItem()) {
+				InputStream in = item.getInputStream();
+				provider.upload(ctx, item.getName(), in, sharedContentContext.getCategory());
+				ResourceHelper.closeResource(in);
+			}
+		}
+		Edit.updatePreviewCommands(ctx, null);
+		return null;
+	}
 
 	/**
 	 * upload image and return the local file.

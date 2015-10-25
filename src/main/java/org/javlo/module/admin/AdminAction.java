@@ -1311,6 +1311,7 @@ public class AdminAction extends AbstractModuleAction {
 		if (!AdminUserSecurity.getInstance().isAdmin(user)) {
 			return "security error !";
 		}
+		globalContext.clearTransformShortURL();
 		String currentContextKey = request.getParameter("context");
 		if (currentContextKey == null) { // param context is used only for check
 											// the type of call, but you can
@@ -1331,7 +1332,6 @@ public class AdminAction extends AbstractModuleAction {
 
 		TemplateFactory.copyDefaultTemplate(session.getServletContext());
 		SharedContentService.getInstance(ctx).clearCache();
-
 		System.gc();
 		return null;
 	}

@@ -513,3 +513,5 @@ change log
  * cache-control for static resources
  
  * create filtered reference to a template local image
+ 
+ * delete folder from files meta-data view

@@ -682,7 +682,6 @@ public class ContentContext {
 		if (outPage == null) {
 			GlobalContext globalContext = GlobalContext.getInstance(request);
 			MenuElement root = ContentService.getInstance(globalContext).getNavigation(this);
-
 			if (getPath().equals("/")) {
 				outPage = root;
 			} else {

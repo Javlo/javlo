@@ -501,6 +501,18 @@ editPreview.initPreview = function() {
 	/************/
 	/** upload **/
 	/************/
+	var drop = document.querySelectorAll('#preview_command .no-upload'), el = null;
+	for (var i = 0; i < drop.length; i++) {
+		el = drop[i];
+		if (!el.eventsAdded) {
+			el.eventsAdded = true;
+			 el.addEventListener('dragover', function (event) {
+			    	event.preventDefault();
+			    	pjq(this).addClass("no-drop");
+			    	return false;
+			    });
+		}
+	}
 	var drop = document.querySelectorAll('#preview_command .upload-zone'), el = null;
 	for (var i = 0; i < drop.length; i++) {
 		el = drop[i];
@@ -553,8 +565,7 @@ editPreview.initPreview = function() {
 						dataType : "json",
 						processData: false,
 						contentType: false
-					}).done(function(jsonObj) {
-						editPreview.stopAjax();
+					}).done(function(jsonObj) {						
 						if (jsonObj.data != null) {
 							pjq.each(jsonObj.data, function(key, value) {
 								if (key == "need-refresh" && value) {						
@@ -591,6 +602,7 @@ editPreview.initPreview = function() {
 								console.log(ex);
 							}
 						}
+						editPreview.stopAjax();
 					});
 			    });
 		}

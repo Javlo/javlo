@@ -1,14 +1,24 @@
 package org.javlo.service.shared;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.logging.Logger;
 
 import org.javlo.actions.DataAction;
 import org.javlo.context.ContentContext;
+import org.javlo.context.GlobalContext;
+import org.javlo.helper.ContentHelper;
+import org.javlo.helper.ResourceHelper;
+import org.javlo.helper.URLHelper;
 import org.javlo.navigation.MenuElement;
 import org.javlo.template.Template;
 
 public class ImportedImageSharedContentProvider extends LocalImageSharedContentProvider {
+	
+	private static Logger logger = Logger.getLogger(ImportedImageSharedContentProvider.class.getName());
 
 	public static final String NAME = "import-image";
 
@@ -40,7 +50,21 @@ public class ImportedImageSharedContentProvider extends LocalImageSharedContentP
 			e.printStackTrace();
 		}
 		return false;
-
+	}
+	
+	@Override
+	public void upload(ContentContext ctx, String fileName, InputStream in, String category) throws IOException {
+		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+		File imageFolder = new File(URLHelper.mergePath(globalContext.getDataFolder(), globalContext.getStaticConfig().getImageFolder()));
+		try {
+			imageFolder = new File(URLHelper.mergePath(imageFolder.getAbsolutePath(), URLHelper.mergePath(ContentHelper.IMPORT_FOLDER,DataAction.createImportFolder(ctx))));			
+		} catch (Exception e) {
+			throw new IOException(e);
+		}
+		File newFile = new File(URLHelper.mergePath(imageFolder.getAbsolutePath(), fileName));
+		newFile = ResourceHelper.getFreeFileName(newFile);		
+		ResourceHelper.writeStreamToFile(in, newFile);
+		logger.info("imported file : "+newFile);
 	}
 
 }

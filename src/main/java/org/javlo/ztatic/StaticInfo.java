@@ -473,7 +473,7 @@ public class StaticInfo {
 
 	private File file;
 
-	private String versionHash = StringHelper.getRandomId();
+	private String versionHash = "0";
 
 	private Long crc32 = null;
 

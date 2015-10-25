@@ -177,6 +177,10 @@
 		<servlet-name>ImageTransformServlet</servlet-name>
 		<url-pattern>/transform/*</url-pattern>
 	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>ImageTransformServlet</servlet-name>
+		<url-pattern>/img/*</url-pattern>
+	</servlet-mapping>
 
 	<servlet>
 		<servlet-name>UserListServlet</servlet-name>

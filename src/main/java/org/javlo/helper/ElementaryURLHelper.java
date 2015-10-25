@@ -377,14 +377,7 @@ public abstract class ElementaryURLHelper {
 
 		ContentService.getInstance(ctx.getRequest());
 
-		if (template != null || ctx.getRenderMode() == ContentContext.EDIT_MODE) { // TODO:
-																					// check
-																					// the
-																					// second
-																					// part
-																					// of
-																					// the
-																					// test.
+		if (template != null || ctx.getRenderMode() == ContentContext.EDIT_MODE) { 
 			String templateName;
 			if (ctx.getRenderMode() == ContentContext.EDIT_MODE) {
 				templateName = Template.EDIT_TEMPLATE_CODE;
@@ -433,6 +426,10 @@ public abstract class ElementaryURLHelper {
 			baseUrl = baseUrl + ImageTransformServlet.HASH_PREFIX + hash;
 		}
 		url = ElementaryURLHelper.mergePath(baseUrl, url);
+		
+		if (ctx.isLikeViewRenderMode() && ctx.getGlobalContext().getStaticConfig().isImageShortURL()) {
+			url =  URLHelper.mergePath("img", ctx.getGlobalContext().setTransformShortURL(url.replace(TRANSFORM+'/', "")));
+		}
 
 		return createStaticURL(ctx, referencePage, url, true);
 	}

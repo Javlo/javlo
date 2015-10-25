@@ -1,5 +1,7 @@
 package org.javlo.service.shared;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.Collection;
 import java.util.Collections;
@@ -120,6 +122,15 @@ public abstract class AbstractSharedContentProvider implements ISharedContentPro
 	@Override
 	public int getCategoriesSize(ContentContext ctx) {
 		return getCategories(ctx).size();
+	}
+	
+	@Override
+	public boolean isUploadable() {	
+		return false;
+	}
+	
+	@Override
+	public void upload(ContentContext ctx, String fileName, InputStream in, String category) throws IOException {
 	}
 
 }

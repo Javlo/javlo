@@ -1,15 +1,26 @@
 package org.javlo.component.image;
 
 import java.io.Serializable;
+import java.util.Comparator;
 
 import org.javlo.context.ContentContext;
 
 public class ImageTitleBean implements IImageTitle, Serializable {
 	
+	
+	
 	private final String imageDescription;
 	private final String imageURL;
 	private final String imageLink;
 	private final int priority;
+	
+	public ImageTitleBean(String imageDescription, String imageURL, String imageLink, int priority) {
+		super();
+		this.imageDescription = imageDescription;
+		this.imageURL = imageURL;
+		this.imageLink = imageLink;
+		this.priority = priority;
+	}
 	
 	public ImageTitleBean(String imageDescription, String imageURL, String imageLink) {
 		super();

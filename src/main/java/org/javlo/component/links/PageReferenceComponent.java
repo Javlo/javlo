@@ -262,7 +262,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 			if (roles.size() == 0) {
 				bean.setCurrentUserAsRight(true);
 			} else {
-				if(!Collections.disjoint(roles, ctx.getCurrentUser().getRoles())) {
+				if( ctx.getCurrentUser() != null && !Collections.disjoint(roles, ctx.getCurrentUser().getRoles())) {
 					bean.setCurrentUserAsRight(true);
 				} else {
 					bean.setCurrentUserAsRight(false);

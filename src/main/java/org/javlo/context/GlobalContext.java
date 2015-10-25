@@ -105,7 +105,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	private AppendableTextFile redirectURLList = null;
 
 	private Properties redirectURLMap = null;
-	
+
 	private static class StorePropertyThread extends Thread {
 
 		private boolean stopStoreThread = false;
@@ -189,13 +189,13 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	private RemoteService remoteService;
 
 	private Integer firstLoadVersion = null;
-	
+
 	private int stopUndoVersion = 0;
 
 	private Integer latestUndoVersion = null;
 
 	private StorePropertyThread storePropertyThread = null;
-	
+
 	private final Object i18nLock = new Object();
 
 	/**
@@ -214,7 +214,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	public static final String LICENCE_CORPORATE = "corporate";
 
 	public static final String LOGO_FILE_NAME = "dynamic_template/logo.png";
-	
+
 	public static final String USERS_FOLDER = "users_files";
 
 	public GlobalContext(String contextKey) {
@@ -618,6 +618,10 @@ public class GlobalContext implements Serializable, IPrintInfo {
 
 	private static final String URI_ALIAS_KEY_PREFIX = "uri-alias.";
 
+	private static final String TRANSFORM_SHORT_KEY_PREFIX = "tsf-short-";
+
+	private static final String TRANSFORM_LONG_KEY_PREFIX = "tsf-long-";
+
 	public static final String LICENCE_FREE = "free";
 
 	public static final String LICENCE_FREE_PLUS = "free+";
@@ -649,7 +653,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	private Long accountSize = null;
 
 	private String dataFolder = null;
-	
+
 	private String sharedDataFolder = null;
 
 	private final Map<String, String> oneTimeTokens = Collections.synchronizedMap(new TimeMap<String, String>(60 * 60)); // one
@@ -829,7 +833,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	}
 
 	public ICache getCache(String cacheName) {
-		return getMapCache(cacheName);		
+		return getMapCache(cacheName);
 	}
 
 	public ICache getEternalCache(String cacheName) {
@@ -843,11 +847,11 @@ public class GlobalContext implements Serializable, IPrintInfo {
 
 	public List<ICache> getAllCache() {
 		List<ICache> outCaches = new LinkedList<ICache>();
-	
+
 		for (String cacheName : cacheMaps.keySet()) {
 			outCaches.add(getCache(cacheName));
 		}
-	
+
 		return outCaches;
 	}
 
@@ -859,8 +863,6 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		}
 		return cache;
 	}
-
-	
 
 	public List<String> getComponents() {
 		List<String> components = new LinkedList<String>();
@@ -3032,10 +3034,10 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		}
 		return firstLoadVersion;
 	}
-	
+
 	public void setStopUndo(boolean stopUndo) {
 		if (stopUndo) {
-			try {			
+			try {
 				PersistenceService persistenceService = PersistenceService.getInstance(this);
 				int version = persistenceService.getVersion();
 				if (version >= 0) {
@@ -3046,12 +3048,12 @@ public class GlobalContext implements Serializable, IPrintInfo {
 				}
 			} catch (ServiceException e) {
 				e.printStackTrace();
-			}		
+			}
 		} else {
 			stopUndoVersion = -1;
 		}
 	}
-	
+
 	public boolean isStopUndo() {
 		int version;
 		try {
@@ -3106,7 +3108,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	public String getForcedContent(String key) {
 		return forcedContent.get(key);
 	}
-	
+
 	private AppendableTextFile getRedirectUrlList() {
 		if (redirectURLList == null) {
 			try {
@@ -3183,7 +3185,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		out.println("****");
 
 	}
-	
+
 	public String getUserFolder(User user) {
 		if (user == null) {
 			return null;
@@ -3191,12 +3193,12 @@ public class GlobalContext implements Serializable, IPrintInfo {
 			return getUserFolder(user.getUserInfo());
 		}
 	}
-	
+
 	public String getUserFolder(IUserInfo user) {
 		if (user == null) {
 			return null;
 		} else {
-			return URLHelper.mergePath(getStaticFolder(),USERS_FOLDER,user.getUserFolder());
+			return URLHelper.mergePath(getStaticFolder(), USERS_FOLDER, user.getUserFolder());
 		}
 	}
 
@@ -3204,4 +3206,38 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		return i18nLock;
 	}
 
+	public void clearTransformShortURL() {
+		for (Object keyIt : new LinkedList<Object>(getDataKeys())) {
+			String key = (String) keyIt;
+			if (key.startsWith(TRANSFORM_LONG_KEY_PREFIX)) {
+				removeData(key);
+			} else if (key.startsWith(TRANSFORM_SHORT_KEY_PREFIX)) {
+				removeData(key);
+			}
+		}
+	}
+
+	public String getTransformShortURL(String url) {
+		return getData(TRANSFORM_LONG_KEY_PREFIX + url);
+	}
+
+	public String setTransformShortURL(String url) {
+		String shortURL = getData(TRANSFORM_SHORT_KEY_PREFIX + url);
+		if (shortURL != null) {
+			return shortURL;
+		} else {
+			String fileName = StringHelper.getFileNameFromPath(url);
+			shortURL = fileName;
+			int i = 1;
+			String fileOnly = StringHelper.getFileNameWithoutExtension(fileName);
+			String ext = StringHelper.getFileExtension(fileName);
+			while (getData(TRANSFORM_LONG_KEY_PREFIX + shortURL) != null) {
+				shortURL = fileOnly + '_' + i + '.' + ext;
+				i++;
+			}
+			setData(TRANSFORM_SHORT_KEY_PREFIX + url, shortURL);
+			setData(TRANSFORM_LONG_KEY_PREFIX + shortURL, url);
+			return shortURL;
+		}
+	}
 }

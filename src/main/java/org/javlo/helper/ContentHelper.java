@@ -24,7 +24,6 @@ import java.util.zip.ZipException;
 import java.util.zip.ZipInputStream;
 
 import org.javlo.component.core.ComponentBean;
-import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.image.GlobalImage;
 import org.javlo.component.image.Image;
 import org.javlo.component.links.ExternalLink;
@@ -48,6 +47,7 @@ import org.javlo.xml.XMLFactory;
 
 public class ContentHelper {
 
+	public static final String IMPORT_FOLDER = "/import/";
 	private static java.util.logging.Logger logger = java.util.logging.Logger.getLogger(ContentHelper.class.getName());
 
 	/**
@@ -212,7 +212,7 @@ public class ContentHelper {
 		List<ComponentBean> outBeans = new LinkedList<ComponentBean>();
 		ZipInputStream zipIn = new ZipInputStream(in);
 		ZipEntry entry = zipIn.getNextEntry();
-		String baseStaticFolder = "/import/" + name;
+		String baseStaticFolder = IMPORT_FOLDER + name;
 
 		while (entry != null) {
 			if (gc != null && StringHelper.isImage(entry.getName())) {
@@ -339,7 +339,7 @@ public class ContentHelper {
 		
 		ZipInputStream zipIn = new ZipInputStream(new ByteArrayInputStream(out.toByteArray()));
 		ZipEntry entry = zipIn.getNextEntry();
-		String baseStaticFolder = "/import/" + name;
+		String baseStaticFolder = IMPORT_FOLDER + name;
 
 		// import static images
 		while (entry != null) {
@@ -364,7 +364,7 @@ public static List<ComponentBean> createContentFromArray(GlobalContext gc, Input
 		
 		ZipInputStream zipIn = new ZipInputStream(new ByteArrayInputStream(out.toByteArray()));
 		ZipEntry entry = zipIn.getNextEntry();
-		String baseStaticFolder = "/import/" + name;
+		String baseStaticFolder = IMPORT_FOLDER + name;
 		
 		// import content
 		List<ComponentBean> beans = DocxUtils.extractContent(gc, new ByteArrayInputStream(out.toByteArray()), baseStaticFolder);

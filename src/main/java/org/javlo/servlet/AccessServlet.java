@@ -69,7 +69,6 @@ import org.javlo.service.social.SocialService;
 import org.javlo.service.syncro.SynchroThread;
 import org.javlo.template.Template;
 import org.javlo.template.TemplateFactory;
-import org.javlo.thread.AbstractThread;
 import org.javlo.thread.ThreadManager;
 import org.javlo.tracking.Tracker;
 import org.javlo.user.AdminUserSecurity;
@@ -792,11 +791,8 @@ public class AccessServlet extends HttpServlet implements IVersion {
 																																							// registration
 																																							// page.
 									if (ctx.getCurrentEditUser() == null || !ctx.getCurrentEditUser().validForRoles(pageRoles)) {
-										System.out.println("***** AccessServlet.process : NO ACCESS. : "+pageRoles); //TODO: remove debug trace
-										MenuElement parent = ctx.getCurrentPage().getParent();
-										System.out.println("***** AccessServlet.process : ctx.getCurrentPage().getEditorRoles = "+ctx.getCurrentPage().getEditorRoles()); //TODO: remove debug trace
+										MenuElement parent = ctx.getCurrentPage().getParent();										
 										while (parent != null) {
-											System.out.println("***** AccessServlet.process : parent ["+parent.getName()+"] = "+parent.getEditorRoles()); //TODO: remove debug trace
 											parent = parent.getParent();
 										}
 										

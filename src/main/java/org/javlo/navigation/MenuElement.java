@@ -39,6 +39,7 @@ import org.javlo.component.dynamic.DynamicComponent;
 import org.javlo.component.image.IImageTitle;
 import org.javlo.component.image.ImageBean;
 import org.javlo.component.image.ImageTitleBean;
+import org.javlo.component.image.SortImageTitleByPriority;
 import org.javlo.component.links.PageMirrorComponent;
 import org.javlo.component.meta.Category;
 import org.javlo.component.meta.DateComponent;
@@ -86,10 +87,10 @@ import org.javlo.ztatic.StaticInfo;
 public class MenuElement implements Serializable, IPrintInfo {
 
 	public static final String PAGE_TYPE_DEFAULT = "default";
-	
+
 	public static final double VOTES_MULTIPLY = 100000;
 
-	private static final long serialVersionUID = 1L;	
+	private static final long serialVersionUID = 1L;
 
 	/**
 	 * the description bean of the page, use for cache and JSTL.
@@ -108,10 +109,10 @@ public class MenuElement implements Serializable, IPrintInfo {
 		String pageTitle = null;
 		String forcedPageTitle = null;
 		String linkOn = null;
-		Collection<IImageTitle> images = null;
+		List<IImageTitle> images = null;
 		Collection<Link> staticResources = null;
 		String description = null;
-		String metaDescription = null;		
+		String metaDescription = null;
 		String keywords = null;
 		String globalTitle = null;
 		Date contentDate = null;
@@ -405,27 +406,27 @@ public class MenuElement implements Serializable, IPrintInfo {
 		public void setSharedName(String sharedName) {
 			this.sharedName = sharedName;
 		}
-		
+
 		public Event getEvent() {
 			return event;
 		}
-		
+
 		public void setEvent(Event event) {
 			this.event = event;
 		}
-		
+
 		public void setSlogan(String slogan) {
 			this.slogan = slogan;
 		}
-		
+
 		public String getSlogan() {
 			return slogan;
 		}
-		
+
 		public String getLinkLabel() {
 			return linkLabel;
 		}
-		
+
 		public void setLinkLabel(String linkLabel) {
 			this.linkLabel = linkLabel;
 		}
@@ -451,7 +452,7 @@ public class MenuElement implements Serializable, IPrintInfo {
 				return false;
 			}
 		}
-		
+
 		public boolean isActive() {
 			try {
 				return page.isActive(ctx);
@@ -827,11 +828,11 @@ public class MenuElement implements Serializable, IPrintInfo {
 				return StringHelper.renderDate(contentDate, ctx.getGlobalContext().getFullDateFormat());
 			}
 		}
-		
+
 		public String getSlogan() {
 			try {
 				return page.getSlogan(ctx);
-			} catch (Exception e) { 
+			} catch (Exception e) {
 				e.printStackTrace();
 				return null;
 			}
@@ -977,7 +978,7 @@ public class MenuElement implements Serializable, IPrintInfo {
 	private String templateId;
 
 	boolean visible = true;
-	
+
 	boolean active = true;
 
 	List<MenuElement> virtualParent = new LinkedList<MenuElement>();
@@ -1219,7 +1220,7 @@ public class MenuElement implements Serializable, IPrintInfo {
 	public void addEditorRole(String group) {
 		editGroups.add(group);
 	}
-	
+
 	public void addEditorRoles(Collection<String> groups) {
 		editGroups.addAll(groups);
 	}
@@ -1271,7 +1272,8 @@ public class MenuElement implements Serializable, IPrintInfo {
 						out.println("");
 						out.close();
 						// NetHelper.sendMailToAdministrator(ctx,
-						// "bad structure in contentToBeAdded : more that one parent id not found",
+						// "bad structure in contentToBeAdded : more that one
+						// parent id not found",
 						// writer.toString());
 						logger.warning(writer.toString());
 					} else {
@@ -1660,7 +1662,7 @@ public class MenuElement implements Serializable, IPrintInfo {
 
 		return desc.category;
 	}
-	
+
 	/**
 	 * get the slogan of the page (slogan component)
 	 * 
@@ -1679,7 +1681,7 @@ public class MenuElement implements Serializable, IPrintInfo {
 		ContentContext noAreaCtx = ctx.getContextWithoutArea();
 
 		if (noAreaCtx.getRenderMode() == ContentContext.EDIT_MODE) {
-			noAreaCtx.setRenderMode(ContentContext.PREVIEW_MODE); 
+			noAreaCtx.setRenderMode(ContentContext.PREVIEW_MODE);
 		}
 
 		IContentComponentsList contentList = getContent(noAreaCtx);
@@ -2049,9 +2051,8 @@ public class MenuElement implements Serializable, IPrintInfo {
 	 * @return
 	 * @throws Exception
 	 */
-	public String getDescription(ContentContext ctx) throws Exception {		
+	public String getDescription(ContentContext ctx) throws Exception {
 		PageDescription desc = getPageDescriptionCached(ctx, ctx.getRequestContentLanguage());
-		
 
 		if (desc.description != null) {
 			return desc.description;
@@ -2061,7 +2062,7 @@ public class MenuElement implements Serializable, IPrintInfo {
 		newCtx.setArea(null);
 
 		if (newCtx.getRenderMode() == ContentContext.EDIT_MODE) {
-			newCtx.setRenderMode(ContentContext.PREVIEW_MODE); 
+			newCtx.setRenderMode(ContentContext.PREVIEW_MODE);
 		}
 
 		IContentComponentsList contentList = getAllContent(newCtx);
@@ -2385,18 +2386,18 @@ public class MenuElement implements Serializable, IPrintInfo {
 		if (desc.imageLink != null) {
 			return desc.imageLink;
 		}
-		ContentContext noAreaCtx = ctx.getContextWithArea(null);
-		IContentComponentsList contentList = getAllContent(noAreaCtx);
+		ContentContext specialCtx = ctx.getContextWithArea(ComponentBean.DEFAULT_AREA);
+		IContentComponentsList contentList = getAllContent(specialCtx);
 		IImageTitle bestImageTitle = null;
 		int bestPriority = Integer.MIN_VALUE;
 		while (contentList.hasNext(ctx)) {
-			IContentVisualComponent elem = contentList.next(noAreaCtx);
-			if ((elem instanceof IImageTitle) && (!elem.isEmpty(noAreaCtx)) && (!elem.isRepeat())) {
+			IContentVisualComponent elem = contentList.next(specialCtx);
+			if ((elem instanceof IImageTitle) && (!elem.isEmpty(specialCtx)) && (!elem.isRepeat())) {
 				IImageTitle imageComp = (IImageTitle) elem;
-				if (imageComp.isImageValid(noAreaCtx)) {
-					int priority = imageComp.getPriority(noAreaCtx);
+				if (imageComp.isImageValid(specialCtx)) {
+					int priority = imageComp.getPriority(specialCtx);
 					if (priority == 9) {
-						desc.imageLink = new ImageTitleBean(noAreaCtx, imageComp);
+						desc.imageLink = new ImageTitleBean(specialCtx, imageComp);
 						return imageComp;
 					} else if (priority > bestPriority) {
 						bestPriority = priority;
@@ -2405,15 +2406,38 @@ public class MenuElement implements Serializable, IPrintInfo {
 				}
 			}
 		}
+
+		if (bestImageTitle == null) {
+			/** search on all area **/
+			specialCtx = ctx.getContextWithArea(null);
+			contentList = getAllContent(specialCtx);			
+			bestPriority = Integer.MIN_VALUE;
+			while (contentList.hasNext(ctx)) {
+				IContentVisualComponent elem = contentList.next(specialCtx);
+				if ((elem instanceof IImageTitle) && (!elem.isEmpty(specialCtx)) && (!elem.isRepeat())) {
+					IImageTitle imageComp = (IImageTitle) elem;
+					if (imageComp.isImageValid(specialCtx)) {
+						int priority = imageComp.getPriority(specialCtx);
+						if (priority == 9) {
+							desc.imageLink = new ImageTitleBean(specialCtx, imageComp);
+							return imageComp;
+						} else if (priority > bestPriority) {
+							bestPriority = priority;
+							bestImageTitle = imageComp;
+						}
+					}
+				}
+			}
+		}
 		if (bestImageTitle != null) {
-			desc.imageLink = new ImageTitleBean(noAreaCtx, bestImageTitle);
+			desc.imageLink = new ImageTitleBean(specialCtx, bestImageTitle);
 		}
 		return desc.imageLink;
 	}
 
-	public Collection<IImageTitle> getImages(ContentContext ctx) throws Exception {
+	public List<IImageTitle> getImages(ContentContext ctx) throws Exception {
 		PageDescription desc = getPageDescriptionCached(ctx, ctx.getRequestContentLanguage());
-		Collection<IImageTitle> res = null;
+		List<IImageTitle> res = null;
 		if (desc.images != null) {
 			res = desc.images;
 		}
@@ -2421,13 +2445,13 @@ public class MenuElement implements Serializable, IPrintInfo {
 			return res;
 		}
 		res = new LinkedList<IImageTitle>();
-		IContentComponentsList contentList = getAllContent(ctx);
+		IContentComponentsList contentList = getAllContent(ctx);		
 		while (contentList.hasNext(ctx)) {
 			IContentVisualComponent elem = contentList.next(ctx);
 			if ((elem instanceof IImageTitle) && (!elem.isEmpty(ctx)) && (!elem.isRepeat())) {
 				IImageTitle imageComp = (IImageTitle) elem;
 				if (imageComp.isImageValid(ctx)) {
-					res.add(new ImageTitleBean(imageComp.getImageDescription(ctx), imageComp.getResourceURL(ctx), imageComp.getImageLinkURL(ctx)));
+					res.add(new ImageTitleBean(imageComp.getImageDescription(ctx), imageComp.getResourceURL(ctx), imageComp.getImageLinkURL(ctx), elem.getArea().equals(ComponentBean.DEFAULT_AREA)?6:4 ));					
 				}
 			}
 		}
@@ -2445,6 +2469,7 @@ public class MenuElement implements Serializable, IPrintInfo {
 				}
 			}
 		}
+		Collections.sort(res, new SortImageTitleByPriority(ctx));
 		desc.images = res;
 		return desc.images;
 	}
@@ -2686,7 +2711,7 @@ public class MenuElement implements Serializable, IPrintInfo {
 			for (MenuElement child : getChildMenuElements()) {
 				Calendar childCat = Calendar.getInstance();
 				childCat.setTime(child.getModificationDate());
-				if (childCat.after(cal)) {					
+				if (childCat.after(cal)) {
 					cal = childCat;
 				}
 			}
@@ -2851,7 +2876,7 @@ public class MenuElement implements Serializable, IPrintInfo {
 				}
 				if (votes > 0) {
 					desc.pageRank = (((IPageRank) comp).getRankValue(ctx, getPath())) / (double) votes;
-					desc.pageRank = desc.pageRank +  (double) (votes)/VOTES_MULTIPLY;
+					desc.pageRank = desc.pageRank + (double) (votes) / VOTES_MULTIPLY;
 					return desc.pageRank;
 				}
 			}
@@ -3078,9 +3103,10 @@ public class MenuElement implements Serializable, IPrintInfo {
 
 		return desc.subTitle;
 	}
-	
+
 	/**
 	 * label of the link to page.
+	 * 
 	 * @param ctx
 	 * @return
 	 * @throws Exception
@@ -3500,16 +3526,16 @@ public class MenuElement implements Serializable, IPrintInfo {
 		}
 		return isEmpty(ctx, null);
 	}
-	
+
 	public boolean isNoComponent(ContentContext ctx) throws Exception {
 		return getContent(ctx).size(ctx) == 0;
 	}
-	
+
 	public boolean isNoComponent(ContentContext ctx, String area) throws Exception {
 		ContentContext langCtx = ctx.getContextWithArea(area);
 		return isNoComponent(langCtx);
 	}
-	
+
 	public boolean isEmpty(ContentContext ctx, String area) throws Exception {
 		PageDescription desc = getPageDescriptionCached(ctx, ctx.getRequestContentLanguage());
 
@@ -3555,7 +3581,7 @@ public class MenuElement implements Serializable, IPrintInfo {
 		desc.setEmpty(area, empty);
 		return empty;
 	}
-	
+
 	/**
 	 * @return
 	 */
@@ -3699,11 +3725,11 @@ public class MenuElement implements Serializable, IPrintInfo {
 	public boolean isVisible() throws Exception {
 		return visible;
 	}
-	
+
 	public boolean isActive() {
 		return active;
 	}
-	
+
 	public void setActive(boolean active) {
 		this.active = active;
 	}
@@ -3740,14 +3766,10 @@ public class MenuElement implements Serializable, IPrintInfo {
 			for (MenuElement child : children) {
 				content = child.getContent(ctx);
 				while (content.hasNext(contentAreaCtx)) {
-					if (!content.next(contentAreaCtx).isEmpty(contentAreaCtx) /*
-																			 * &&
-																			 * child
-																			 * .
-																			 * isVisible
-																			 * (
-																			 * )
-																			 */) { // TODO:
+					if (!content.next(contentAreaCtx).isEmpty(
+							contentAreaCtx) /*
+											 * && child . isVisible ( )
+											 */) { // TODO:
 						return isInsideTimeRange();
 					}
 				}
@@ -3832,7 +3854,7 @@ public class MenuElement implements Serializable, IPrintInfo {
 		synchronized (getLock()) {
 			List<ComponentBean> outList = new LinkedList<ComponentBean>();
 			boolean delete = false;
-			for (int i = 0; i < componentBean.length; i++) {				
+			for (int i = 0; i < componentBean.length; i++) {
 				if (componentBean[i].getId().equals(id)) {
 					IContentVisualComponent comp = ComponentFactory.getComponentWithType(ctx, componentBean[i].getType());
 					if (comp != null) {
@@ -3841,11 +3863,11 @@ public class MenuElement implements Serializable, IPrintInfo {
 						comp.delete(ctx);
 						type = comp.getType();
 					} else {
-						logger.warning("comp type not found : "+componentBean[i].getType());
+						logger.warning("comp type not found : " + componentBean[i].getType());
 					}
 				}
 			}
-			for (int i = 0; i < componentBean.length; i++) {				
+			for (int i = 0; i < componentBean.length; i++) {
 				if (!componentBean[i].getId().equals(id)) {
 					if (!delete) {
 						outList.add(componentBean[i]);
@@ -4432,7 +4454,7 @@ public class MenuElement implements Serializable, IPrintInfo {
 	public boolean isChildrenAssociation() {
 		return childrenAssociation;
 	}
-	
+
 	public boolean isRootChildrenAssociation() {
 		if (getChildMenuElements().size() > 0) {
 			return getChildMenuElements().iterator().next().isChildrenAssociation();
@@ -4590,12 +4612,13 @@ public class MenuElement implements Serializable, IPrintInfo {
 	public void setUrlNumber(int urlNumber) {
 		this.urlNumber = urlNumber;
 	}
-	
+
 	/**
 	 * get event if menu element contains event info.
+	 * 
 	 * @param ctx
 	 * @return a event, null if this page does'nt contains event information
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	public Event getEvent(ContentContext ctx) throws Exception {
 		PageDescription desc = getPageDescriptionCached(ctx, ctx.getRequestContentLanguage());
@@ -4611,12 +4634,12 @@ public class MenuElement implements Serializable, IPrintInfo {
 			while (content.hasNext(noAreaCtx)) {
 				IContentVisualComponent comp = content.next(noAreaCtx);
 				if (comp instanceof EventDefinitionComponent) {
-					EventDefinitionComponent eventComp = (EventDefinitionComponent)comp;
-					Event event = new Event(eventComp.getId(), eventComp.getStartDate(), eventComp.getEndDate(), getTitle(ctx), getDescription(ctx),getImage(noAreaCtx));
+					EventDefinitionComponent eventComp = (EventDefinitionComponent) comp;
+					Event event = new Event(eventComp.getId(), eventComp.getStartDate(), eventComp.getEndDate(), getTitle(ctx), getDescription(ctx), getImage(noAreaCtx));
 					event.setCategory(getCategory(ctx));
 					event.setLocation(getLocation(ctx));
 					event.setUrl(new URL(URLHelper.createURL(ctx.getContextForAbsoluteURL(), this)));
-					event.setUser(getCreator());					
+					event.setUser(getCreator());
 					desc.event = event;
 					return desc.event;
 				}

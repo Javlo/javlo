@@ -20,6 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.FileFileFilter;
 import org.javlo.actions.AbstractModuleAction;
 import org.javlo.bean.LinkToRenderer;
@@ -433,13 +434,17 @@ public class FileAction extends AbstractModuleAction {
 		return null;
 	}
 
-	public static String performDelete(GlobalContext globalContext, RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) {
+	public static String performDelete(GlobalContext globalContext, RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws IOException {
 		String filePath = rs.getParameter("file", null);
 		if (filePath == null) {
 			return "bad request structure : need file parameter.";
 		} else {
 			File file = new File(URLHelper.mergePath(globalContext.getStaticFolder(), filePath));
-			file.delete();
+			if (file.isFile()) {
+				file.delete();
+			} else if (file.isDirectory()) {
+				FileUtils.deleteDirectory(file);
+			}
 		}
 		if (ctx.isEditPreview()) {
 			ctx.setClosePopup(true);
@@ -465,21 +470,21 @@ public class FileAction extends AbstractModuleAction {
 		SynchroHelper.performSynchro(application, staticConfig, globalContext);
 		return null;
 	}
-	
+
 	public static final String performPreviewedit(HttpServletRequest request, ContentContext ctx, RequestService rs, EditContext editCtx) throws Exception {
 		GlobalContext globalContext = GlobalContext.getInstance(request);
-		if (globalContext.isPreviewMode()) {			
+		if (globalContext.isPreviewMode()) {
 			String path = URLHelper.decodePathForAttribute(request.getParameter("file"));
 			File file = new File(path);
 			FileModuleContext.getInstance(ctx.getRequest());
 			String sourceFolder = URLHelper.cleanPath(getContextROOTFolder(ctx), false);
 			String parentPath = URLHelper.cleanPath(file.getParentFile().getCanonicalPath().replaceFirst(sourceFolder, ""), false);
-			FileModuleContext.getInstance(ctx.getRequest()).setPath(parentPath.replace(sourceFolder, ""));		
+			FileModuleContext.getInstance(ctx.getRequest()).setPath(parentPath.replace(sourceFolder, ""));
 			FileBean fileBean = new FileBean(ctx, StaticInfo.getInstance(ctx, file));
-			request.setAttribute("files", Arrays.asList(new FileBean[] {fileBean}));
+			request.setAttribute("files", Arrays.asList(new FileBean[] { fileBean }));
 			InfoBean.getCurrentInfoBean(ctx).setFakeCurrentURL(request.getParameter("currentURL"));
 		}
-		ctx.getRequest().setAttribute("specialEditRenderer", "/modules/file/jsp/meta.jsp?one=true");			
+		ctx.getRequest().setAttribute("specialEditRenderer", "/modules/file/jsp/meta.jsp?one=true");
 		return null;
 	}
 

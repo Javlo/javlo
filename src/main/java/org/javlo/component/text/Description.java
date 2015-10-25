@@ -12,7 +12,6 @@ import org.javlo.helper.LoremIpsumGenerator;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.XHTMLHelper;
 import org.javlo.i18n.I18nAccess;
-import org.javlo.navigation.MenuElement;
 import org.javlo.service.ReverseLinkService;
 import org.javlo.utils.SuffixPrefix;
 

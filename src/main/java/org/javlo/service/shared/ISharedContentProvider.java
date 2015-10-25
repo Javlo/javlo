@@ -1,5 +1,7 @@
 package org.javlo.service.shared;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.Collection;
 import java.util.Locale;
@@ -59,5 +61,9 @@ public interface ISharedContentProvider {
 	public int getCategoriesSize(ContentContext ctx);
 	
 	public int getContentSize(ContentContext ctx);
+	
+	public boolean isUploadable();
+	
+	public void upload(ContentContext ctx, String fileName, InputStream in, String category) throws IOException; 
 
 }

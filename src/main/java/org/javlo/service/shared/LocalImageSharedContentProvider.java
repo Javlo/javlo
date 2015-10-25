@@ -2,18 +2,20 @@ package org.javlo.service.shared;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintStream;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import org.javlo.component.core.ComponentBean;
 import org.javlo.component.image.GlobalImage;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.filter.ImageFileFilter;
-import org.javlo.helper.NetHelper;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.navigation.MenuElement;
@@ -21,6 +23,8 @@ import org.javlo.template.Template;
 import org.javlo.ztatic.StaticInfo;
 
 public class LocalImageSharedContentProvider extends AbstractSharedContentProvider {
+	
+	private static Logger logger = Logger.getLogger(LocalImageSharedContentProvider.class.getName());
 	
 	public static final String NAME = "local-image";
 	
@@ -76,10 +80,6 @@ public class LocalImageSharedContentProvider extends AbstractSharedContentProvid
 				url = URLHelper.addParam(url, "previewEdit", "true");		
 				sharedContent.setEditURL(url);
 
-// Commented because it seems useless (getCategories(ctx) return a new map each time)
-//				if (!getCategories(ctx).containsKey(category)) {
-//					getCategories(ctx).put(category, category);
-//				}
 			} catch (Exception e) {				
 				e.printStackTrace();
 			}			
@@ -121,4 +121,19 @@ public class LocalImageSharedContentProvider extends AbstractSharedContentProvid
 		return TYPE_IMAGE;
 	}
 	
+	@Override
+	public boolean isUploadable() {
+		return true;
+	}
+	
+	@Override
+	public void upload(ContentContext ctx, String fileName, InputStream in, String category) throws IOException {
+		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+		File imageFolder = new File(URLHelper.mergePath(globalContext.getDataFolder(), globalContext.getStaticConfig().getImageFolder()));
+		imageFolder = new File(URLHelper.mergePath(imageFolder.getAbsolutePath(), category));
+		File newFile = new File(URLHelper.mergePath(imageFolder.getAbsolutePath(), fileName));
+		newFile = ResourceHelper.getFreeFileName(newFile);		
+		ResourceHelper.writeStreamToFile(in, newFile);
+		logger.info("imported file : "+newFile);
+	}
 }

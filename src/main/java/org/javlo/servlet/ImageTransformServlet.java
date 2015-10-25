@@ -9,6 +9,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Map;
@@ -862,8 +863,13 @@ public class ImageTransformServlet extends HttpServlet {
 		// org.javlo.helper.Logger.stepCount("transform", "end tracking");
 
 		String pathInfo = request.getPathInfo().substring(1);
-
+		
 		pathInfo = pathInfo.replace('\\', '/'); // for windows server
+
+		String realURL = globalContext.getTransformShortURL(pathInfo);
+		if (realURL != null) {
+			pathInfo = realURL;
+		}
 
 		String dataFolder = globalContext.getDataFolder();
 
@@ -1036,9 +1042,9 @@ public class ImageTransformServlet extends HttpServlet {
 				response.setHeader("Cache-Control", "public,max-age=600");
 				// response.setHeader("Accept-Ranges", "bytes");
 				// response.setHeader("Transfer-Encoding", null);
-				// Calendar cal = Calendar.getInstance();
-				// cal.roll(Calendar.MINUTE, 10);
-				// response.setDateHeader("Expires", cal.getTimeInMillis());
+				Calendar cal = Calendar.getInstance();
+				cal.roll(Calendar.MINUTE, 10);
+				response.setDateHeader("Expires", cal.getTimeInMillis());
 				if (lastModified > 0) {
 					response.setDateHeader(NetHelper.HEADER_LAST_MODIFIED, lastModified);
 				}

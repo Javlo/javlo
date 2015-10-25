@@ -158,6 +158,12 @@ public class InfoBean {
 		params.put("webaction", "data.upload");
 		return URLHelper.createAjaxURL(ctx, params);
 	}
+	
+	public String getUploadSharedURL() {
+		Map<String, String> params = new HashMap<String, String>();
+		params.put("webaction", "data.uploadShared");
+		return URLHelper.createAjaxURL(ctx, params);
+	}
 
 	public String getCurrentViewURL() {
 		return URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE).getFreeContentContext());
@@ -169,7 +175,7 @@ public class InfoBean {
 
 	public String getCurrentPreviewURL() {
 		return URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.PREVIEW_MODE).getFreeContentContext());
-	}
+	} 
 	
 	public String getCurrentPageICalURL() throws Exception {
 		MenuElement currentPage = ctx.getCurrentPage();
