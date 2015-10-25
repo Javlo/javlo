@@ -3217,16 +3217,16 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		}
 	}
 
-	public String getTransformShortURL(String url) {
-		return getData(TRANSFORM_LONG_KEY_PREFIX + url);
+	public String getTransformShortURL(String shortURL) {
+		return getData(TRANSFORM_LONG_KEY_PREFIX + shortURL);
 	}
 
-	public String setTransformShortURL(String url) {
-		String shortURL = getData(TRANSFORM_SHORT_KEY_PREFIX + url);
+	public String setTransformShortURL(String longURL) {
+		String shortURL = getData(TRANSFORM_SHORT_KEY_PREFIX + longURL);
 		if (shortURL != null) {
 			return shortURL;
 		} else {
-			String fileName = StringHelper.getFileNameFromPath(url);
+			String fileName = StringHelper.getFileNameFromPath(longURL);
 			shortURL = fileName;
 			int i = 1;
 			String fileOnly = StringHelper.getFileNameWithoutExtension(fileName);
@@ -3235,8 +3235,8 @@ public class GlobalContext implements Serializable, IPrintInfo {
 				shortURL = fileOnly + '_' + i + '.' + ext;
 				i++;
 			}
-			setData(TRANSFORM_SHORT_KEY_PREFIX + url, shortURL);
-			setData(TRANSFORM_LONG_KEY_PREFIX + shortURL, url);
+			setData(TRANSFORM_SHORT_KEY_PREFIX + longURL, shortURL);
+			setData(TRANSFORM_LONG_KEY_PREFIX + shortURL, longURL);
 			return shortURL;
 		}
 	}

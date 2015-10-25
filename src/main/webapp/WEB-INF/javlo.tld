@@ -42,6 +42,36 @@
         </attribute>
     </tag>  
     <tag>
+        <name>changeFilter</name>
+        <tag-class>org.javlo.tag.JVImageChangeFilter</tag-class>
+        <body-content>empty</body-content>
+        <info>This tag change to filter on a image.</info>
+        <attribute>
+            <name>url</name>
+            <required>true</required>
+            <description>url to a image.</description>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+         <attribute>
+            <name>var</name>
+            <required>false</required>
+            <description>create a attribute in scope request for url.</description>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>filter</name>
+            <required>false</required>
+            <description>current image filter</description>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+         <attribute>
+            <name>newFilter</name>
+            <required>false</required>
+            <description>new image filter</description>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>  
+    <tag>
         <name>imagetransform</name>
         <tag-class>org.javlo.tag.JVImageTransformTag</tag-class>
         <body-content>empty</body-content>
