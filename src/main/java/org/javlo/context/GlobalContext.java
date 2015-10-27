@@ -1677,7 +1677,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	}
 
 	public String getURLFactoryClass() {
-		if (urlFactory == null) {
+		if (urlFactory == null || urlFactory == NO_URL_FACTORY) {
 			return "";
 		} else {
 			return urlFactory.getClass().getName();

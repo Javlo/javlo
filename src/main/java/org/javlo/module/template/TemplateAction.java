@@ -662,7 +662,7 @@ public class TemplateAction extends AbstractModuleAction {
 			InputStream in = file.getInputStream();
 			try {
 				if (!uploadTemplate(ctx, in, newFile) && in != null && file.getName().trim().length() > 0) {
-					messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("template.error.bad-template-file"), GenericMessage.ERROR));
+					messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("template.error.bad-template-file"), GenericMessage.ALERT));
 				}
 			} finally {
 				ResourceHelper.closeResource(in);
@@ -677,7 +677,7 @@ public class TemplateAction extends AbstractModuleAction {
 				File newFile = new File(URLHelper.mergePath(folder.getAbsolutePath(), StringHelper.createFileName(StringHelper.getFileNameFromPath(urlStr))));
 				newFile = ResourceHelper.getFreeFileName(newFile);
 				if (!uploadTemplate(ctx, in, newFile)) {
-					messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("template.error.bad-template-file"), GenericMessage.ERROR));
+					messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("template.error.bad-template-file"), GenericMessage.ALERT));
 				}
 			} finally {
 				ResourceHelper.closeResource(in);
