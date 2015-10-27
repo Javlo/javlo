@@ -18,9 +18,27 @@
 }
 
 #preview_command .btn-default, #preview_command .settings .btn, #preview_command .component-list .component .wrapper-in, #preview_command .thumbnail {
-    color: #dddddd !important;;
+    color: #dddddd !important;
     background-color: #555555;
     border-color: #333333;
+}
+
+#preview_command .alert-danger {
+    background-color: #f2dede;
+    border-color: #ebccd1;
+    color: #a94442 !important;
+}
+
+#preview_command .alert-warning {
+    background-color: #fcf8e3;
+    border-color: #faebcc;
+    color: #8a6d3b !important;
+}
+
+#preview_command .alert-success {
+    background-color: #dff0d8;
+    border-color: #d6e9c6;
+    color: #3c763d !important;
 }
 
 #preview_command .btn-default:hover {
