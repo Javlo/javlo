@@ -256,6 +256,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 			bean.sortableCreationTime = StringHelper.renderSortableTime(page.getCreationDate());
 			bean.priority = page.getPriority();
 			bean.event = new PageEvent();
+			bean.editable = page.isEditabled(realContentCtx);
 			
 			/** check right **/
 			Set<String> roles = page.getEditorRoles();
@@ -414,6 +415,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		private PageReferenceComponent comp;
 		private List<PageBean> children = null;
 		private PageEvent event = null;
+		private boolean editable;
 
 		private Collection<String> tags = new LinkedList<String>();
 		private final Collection<String> tagsLabel = new LinkedList<String>();
@@ -814,6 +816,14 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 
 		public void setCurrentUserAsRight(boolean currentUserAsRight) {
 			this.currentUserAsRight = currentUserAsRight;
+		}
+
+		public boolean isEditable() {
+			return editable;
+		}
+
+		public void setEditable(boolean editable) {
+			this.editable = editable;
 		}
 
 	}

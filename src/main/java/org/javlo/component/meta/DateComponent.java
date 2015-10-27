@@ -148,8 +148,11 @@ public class DateComponent extends AbstractVisualComponent implements IDate {
 			return StringHelper.renderDate(date);
 		} else if (getStyle().equals(VISIBLE_TIME_TYPE)) {
 			return StringHelper.renderTime(date);
+		} else if (getStyle().equals(NOT_VISIBLE_TYPE)) {
+			return "";
+		} else {
+			return "style not found : "+getStyle();
 		}
-		return "style not found : "+getStyle();
 	}
 
 	@Override

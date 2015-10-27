@@ -71,6 +71,7 @@ import org.javlo.service.shared.SharedContentContext;
 import org.javlo.service.shared.SharedContentService;
 import org.javlo.servlet.IVersion;
 import org.javlo.template.Template;
+import org.javlo.user.AdminUserSecurity;
 import org.javlo.user.User;
 import org.javlo.ztatic.StaticInfo;
 
@@ -99,10 +100,11 @@ public class DataAction implements IAction {
 				lastDate = StringHelper.parseFileTime(rs.getParameter("lastdate", null));
 			}
 			List<NotificationContainer> finalNotifs = new LinkedList<NotificationService.NotificationContainer>();
-			if (lastDate != null) {
-				Calendar startCal = Calendar.getInstance();
+			AdminUserSecurity userSecurity = AdminUserSecurity.getInstance();
+			if (lastDate != null) {				Calendar startCal = Calendar.getInstance();
 				startCal.setTime(lastDate);
-				List<NotificationContainer> notifs = notif.getNotifications(user.getLogin(), 999, StringHelper.isTrue(rs.getParameter("markread", null)));
+				
+				List<NotificationContainer> notifs = notif.getNotifications(user.getLogin(), userSecurity.isAdmin(ctx.getCurrentEditUser()), 999, StringHelper.isTrue(rs.getParameter("markread", null)));
 				Calendar cal = Calendar.getInstance();
 				for (NotificationContainer notificationContainer : notifs) {
 					cal.setTime(notificationContainer.getNotification().getCreationDate());
@@ -111,7 +113,7 @@ public class DataAction implements IAction {
 					}
 				}
 			} else {
-				finalNotifs.addAll(notif.getNotifications(user.getLogin(), 999, StringHelper.isTrue(rs.getParameter("markread", null))));
+				finalNotifs.addAll(notif.getNotifications(user.getLogin(), userSecurity.isAdmin(ctx.getCurrentEditUser()), 999, StringHelper.isTrue(rs.getParameter("markread", null))));
 			}
 			IMService imService = IMService.getInstance(session);
 			String currentSite = globalContext.getContextKey();

@@ -22,6 +22,7 @@ import org.javlo.service.NotificationService;
 import org.javlo.service.PersistenceService;
 import org.javlo.service.RequestService;
 import org.javlo.tracking.Tracker;
+import org.javlo.user.AdminUserSecurity;
 import org.javlo.utils.DebugListening;
 import org.javlo.utils.JSONMap;
 
@@ -88,7 +89,8 @@ public class AjaxServlet extends HttpServlet {
 						ctx.addAjaxInsideZone("message-container", msgXhtml);
 						outMap.put("messageText", StringHelper.removeTag(msgXhtml));
 						if (editCtx.getUserPrincipal() != null) {
-							int unreadNotification = NotificationService.getInstance(globalContext).getUnreadNotificationSize(editCtx.getUserPrincipal().getName(), 99);
+							AdminUserSecurity userSecurity = AdminUserSecurity.getInstance();
+							int unreadNotification = NotificationService.getInstance(globalContext).getUnreadNotificationSize(editCtx.getUserPrincipal().getName(),userSecurity.isAdmin(editCtx.getEditUser()), 99);
 							ctx.addAjaxInsideZone("notification-count", "" + unreadNotification);
 						}
 						AjaxHelper.render(ctx, ctx.getAjaxInsideZone(), ctx.getScheduledAjaxInsideZone());

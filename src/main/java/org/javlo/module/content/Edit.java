@@ -366,7 +366,7 @@ public class Edit extends AbstractModuleAction {
 				if (!adminUserFactory.getCurrentUser(ctx.getRequest().getSession()).validForRoles(page.getEditorRoles())) {
 					MessageRepository messageRepository = MessageRepository.getInstance(ctx);
 					I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
-					messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("action.security.noright-onpage"), GenericMessage.ERROR));
+					messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("action.security.noright-onpage"), GenericMessage.ERROR), false);
 					return false;
 				}
 			}
@@ -601,7 +601,7 @@ public class Edit extends AbstractModuleAction {
 		if (ctx.getCurrentPage() == null) {
 			I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
 			MessageRepository messageRepository = MessageRepository.getInstance(ctx);
-			messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("edit.message.no-content"), GenericMessage.ERROR));
+			messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("edit.message.no-content"), GenericMessage.ERROR), false);
 		}
 
 		if (ctx.getCurrentTemplate() == null) {
@@ -630,7 +630,7 @@ public class Edit extends AbstractModuleAction {
 			MessageRepository messageRepository = MessageRepository.getInstance(ctx);
 			ContentContext absCtx = ctx.getContextForAbsoluteURL();
 			String url = URLHelper.createURL(absCtx);
-			messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("edit.message.bad-area") + " \"" + badArea + "\"", GenericMessage.ALERT, url));
+			messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("edit.message.bad-area") + " \"" + badArea + "\"", GenericMessage.ALERT, url),false);
 		}
 
 		return msg;
@@ -706,7 +706,7 @@ public class Edit extends AbstractModuleAction {
 	public static final String performInsert(HttpServletRequest request, HttpServletResponse response, RequestService rs, ContentService contentService, GlobalContext globalContext, HttpSession session, EditContext editContext, ContentContext ctx, ContentService content, Module currentModule, I18nAccess i18nAccess, MessageRepository messageRepository) throws Exception {
 
 		if (!canModifyCurrentPage(ctx) || !checkPageSecurity(ctx)) {
-			messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("action.block"), GenericMessage.ERROR));
+			messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("action.block"), GenericMessage.ERROR), false);
 			return i18nAccess.getText("action.block");
 		}
 		String previousId = rs.getParameter("previous", null);
@@ -881,7 +881,7 @@ public class Edit extends AbstractModuleAction {
 	public static final String performDelete(ContentContext ctx, HttpServletRequest request, ContentService content, EditContext editContext, HttpServletResponse response, I18nAccess i18nAccess, MessageRepository messageRepository) throws Exception {
 
 		if (!canModifyCurrentPage(ctx) || !checkPageSecurity(ctx)) {
-			messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("action.block"), GenericMessage.ERROR));
+			messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("action.block"), GenericMessage.ERROR), false);
 			return null;
 		}
 
@@ -999,7 +999,7 @@ public class Edit extends AbstractModuleAction {
 	private static final String performModifComponent(ContentContext ctx, EditContext editContext, GlobalContext globalContext, ContentService content, ComponentContext componentContext, RequestService requestService, I18nAccess i18nAccess, MessageRepository messageRepository, Module currentModule, AdminUserFactory adminUserFactory, boolean upload) throws Exception {
 
 		if (!canModifyCurrentPage(ctx) || !checkPageSecurity(ctx)) {
-			messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("action.block"), GenericMessage.ERROR));
+			messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("action.block"), GenericMessage.ERROR), false);
 			return null;
 		}
 
@@ -1096,7 +1096,7 @@ public class Edit extends AbstractModuleAction {
 	public static final String performPageProperties(ServletContext application, GlobalContext globalContext, ContentContext ctx, HttpSession session, ContentService content, EditContext editCtx, RequestService requestService, I18nAccess i18nAccess, MessageRepository messageRepository) throws Exception {
 
 		if (!canModifyCurrentPage(ctx) || !checkPageSecurity(ctx)) {
-			messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("action.block"), GenericMessage.ERROR));
+			messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("action.block"), GenericMessage.ERROR), false);
 			return null;
 		}
 
@@ -1142,7 +1142,7 @@ public class Edit extends AbstractModuleAction {
 			if (requestService.getParameter("shorturl", null) != null) {
 				if (!page.isShortURL()) {
 					page.getShortURL(ctx); // create short url
-					messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("edit.message.shorturl"), GenericMessage.ALERT));
+					messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("edit.message.shorturl"), GenericMessage.ALERT), false);
 				} else {
 					return "this page have already short url.";
 				}
@@ -1241,10 +1241,10 @@ public class Edit extends AbstractModuleAction {
 				ctx.setCurrentTemplate(null); // reset current template
 			}
 			if (errorMessage != null) {
-				messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(errorMessage, GenericMessage.ERROR));
+				messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(errorMessage, GenericMessage.ERROR), false);
 			} else {
 				if (modify) {
-					messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("message.update-page-properties"), GenericMessage.INFO));
+					messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("message.update-page-properties"), GenericMessage.INFO), false);
 				}
 			}
 
@@ -1424,7 +1424,7 @@ public class Edit extends AbstractModuleAction {
 				content.releaseViewNav(ctx, globalContext);
 
 				String msg = i18nAccess.getText("content.published");
-				MessageRepository.getInstance(ctx).setGlobalMessageAndNotificationToAll(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE), new GenericMessage(msg, GenericMessage.INFO));
+				MessageRepository.getInstance(ctx).setGlobalMessageAndNotificationToAll(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE), new GenericMessage(msg, GenericMessage.INFO), false);
 				// MessageRepository.getInstance(ctx).setGlobalMessage(new
 				// GenericMessage(msg, GenericMessage.INFO));
 
@@ -1473,7 +1473,7 @@ public class Edit extends AbstractModuleAction {
 
 			if (dblURL != null) {
 				String msg = i18nAccess.getText("action.publish.error.same-url", new String[][] { { "url", dblURL }, { "pages", StringHelper.collectionToString(errorPageNames, ",") } });
-				MessageRepository.getInstance(ctx).setGlobalMessageAndNotification(ctx, new GenericMessage(msg, GenericMessage.ALERT));
+				MessageRepository.getInstance(ctx).setGlobalMessageAndNotification(ctx, new GenericMessage(msg, GenericMessage.ALERT), false);
 			}
 
 			// trick for PortletManager to clear view data, but should be
@@ -1615,7 +1615,7 @@ public class Edit extends AbstractModuleAction {
 			return "page not found : " + pageName;
 		}
 		if (!canModifyCurrentPage(ctx, page) || !checkPageSecurity(ctx, page)) {
-			messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("action.block"), GenericMessage.ERROR));
+			messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("action.block"), GenericMessage.ERROR), false);
 			return null;
 		}
 
@@ -1632,7 +1632,7 @@ public class Edit extends AbstractModuleAction {
 		persistenceService.setAskStore(true);
 		autoPublish(ctx.getRequest(), ctx.getResponse());
 
-		messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("edit.message.moved", new String[][] { { "name", page.getName() } }), GenericMessage.INFO));
+		messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("edit.message.moved", new String[][] { { "name", page.getName() } }), GenericMessage.INFO), false);
 
 		if (page.isChildrenOfAssociation()) {
 			ctx.setNeedRefresh(true);
@@ -1647,7 +1647,7 @@ public class Edit extends AbstractModuleAction {
 
 	public static String performCopyPage(RequestService rs, ContentContext ctx, EditContext editCtx, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
 		editCtx.setPathForCopy(ctx);
-		messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("edit.message.copy-page", new String[][] { { "name", ctx.getCurrentPage().getName() } }), GenericMessage.INFO));
+		messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("edit.message.copy-page", new String[][] { { "name", ctx.getCurrentPage().getName() } }), GenericMessage.INFO), false);
 		prepareUpdateInsertLine(ctx);
 		return null;
 	}
@@ -1656,7 +1656,7 @@ public class Edit extends AbstractModuleAction {
 		String msg = null;
 
 		if (!canModifyCurrentPage(ctx) || !checkPageSecurity(ctx)) {
-			messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("action.block"), GenericMessage.ERROR));
+			messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("action.block"), GenericMessage.ERROR), false);
 			return null;
 		}
 
@@ -1701,7 +1701,7 @@ public class Edit extends AbstractModuleAction {
 		PersistenceService.getInstance(globalContext).setAskStore(true);
 		autoPublish(ctx.getRequest(), ctx.getResponse());
 
-		messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("edit.message.paste-page", new String[][] { { "count", "" + c } }), GenericMessage.INFO));
+		messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("edit.message.paste-page", new String[][] { { "count", "" + c } }), GenericMessage.INFO), false);
 
 		return msg;
 	}
@@ -1716,7 +1716,7 @@ public class Edit extends AbstractModuleAction {
 			return "component not found : " + compId;
 		} else {
 			clipBoard.copy(ctx, new ComponentBean(comp.getComponentBean()));
-			messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("edit.message.copy", new String[][] { { "type", "" + comp.getType() } }), GenericMessage.INFO));
+			messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("edit.message.copy", new String[][] { { "type", "" + comp.getType() } }), GenericMessage.INFO), false);
 			prepareUpdateInsertLine(ctx);
 		}
 
@@ -1730,7 +1730,7 @@ public class Edit extends AbstractModuleAction {
 	public static String performPasteComp(RequestService rs, ContentContext ctx, ContentService content, EditContext editContext, ClipBoard clipboard, Module currentModule, PersistenceService persistenceService, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
 
 		if (!canModifyCurrentPage(ctx) || !checkPageSecurity(ctx)) {
-			messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("action.block"), GenericMessage.ERROR));
+			messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("action.block"), GenericMessage.ERROR), false);
 			return null;
 		}
 
@@ -1760,7 +1760,7 @@ public class Edit extends AbstractModuleAction {
 		}
 
 		String msg = i18nAccess.getText("action.component.created", new String[][] { { "type", comp.getType() } });
-		messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(msg, GenericMessage.INFO));
+		messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(msg, GenericMessage.INFO), false);
 
 		persistenceService.setAskStore(true);
 		modifPage(ctx, ctx.getCurrentPage());
@@ -1772,7 +1772,7 @@ public class Edit extends AbstractModuleAction {
 	public static String performMoveComponent(RequestService rs, ContentContext ctx, ContentService content, ClipBoard clipboard, Module currentModule, PersistenceService persistenceService, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
 
 		if (!canModifyCurrentPage(ctx) || !checkPageSecurity(ctx)) {
-			messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("action.block"), GenericMessage.ERROR));
+			messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("action.block"), GenericMessage.ERROR), false);
 			return null;
 		}
 
@@ -1874,7 +1874,7 @@ public class Edit extends AbstractModuleAction {
 		}
 
 		String msg = i18nAccess.getText("action.component.moved", new String[][] { { "type", comp.getType() } });
-		messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(msg, GenericMessage.INFO));
+		messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(msg, GenericMessage.INFO), false);
 
 		persistenceService.setAskStore(true);
 		modifPage(ctx, ctx.getCurrentPage());

@@ -39,7 +39,7 @@ public class JVImageChangeFilter extends TagSupport {
 					url = url.substring(url.indexOf(img)+img.length());
 					url = ctx.getGlobalContext().getTransformShortURL(url);
 					newURL = url.replaceFirst(filter + '/', newFilter + '/');
-					newURL = ctx.getGlobalContext().setTransformShortURL(newURL);
+					newURL = ctx.getGlobalContext().setTransformShortURL(newURL, null);
 					newURL = URLHelper.createStaticURL(ctx, URLHelper.mergePath("img", newURL));
 				} else {
 					logger.warning("bad image url : " + url);

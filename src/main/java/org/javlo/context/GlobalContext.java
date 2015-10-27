@@ -66,6 +66,7 @@ import org.javlo.module.remote.RemoteService;
 import org.javlo.module.ticket.TicketAction;
 import org.javlo.navigation.IURLFactory;
 import org.javlo.navigation.MenuElement;
+import org.javlo.navigation.NoURLFactory;
 import org.javlo.navigation.URLTriggerThread;
 import org.javlo.service.ContentService;
 import org.javlo.service.PersistenceService;
@@ -105,6 +106,8 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	private AppendableTextFile redirectURLList = null;
 
 	private Properties redirectURLMap = null;
+	
+	private static final IURLFactory NO_URL_FACTORY = new NoURLFactory();
 
 	private static class StorePropertyThread extends Thread {
 
@@ -1647,9 +1650,14 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		return uriAlias;
 	}
 
+	
 	public IURLFactory getURLFactory(ContentContext ctx) {
 		if (urlFactory != null) {
-			return urlFactory;
+			if (urlFactory == NO_URL_FACTORY) {
+				return null;
+			} else {
+				return urlFactory;
+			}
 		} else {
 			String urlClass = properties.getString("url-factory", null);
 			if (urlClass != null && urlClass.trim().length() > 0) {
@@ -1657,9 +1665,12 @@ public class GlobalContext implements Serializable, IPrintInfo {
 					urlFactory = ((Class<IURLFactory>) Class.forName(urlClass)).newInstance();
 				} catch (Exception e) {
 					e.printStackTrace();
+					urlFactory = NO_URL_FACTORY;
 					return null;
 				}
 				return urlFactory;
+			} else {
+				urlFactory = NO_URL_FACTORY;
 			}
 		}
 		return null;
@@ -3217,16 +3228,36 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		}
 	}
 
+	/**
+	 * get the long url of a short url
+	 * @param shortURL
+	 * @return
+	 */
 	public String getTransformShortURL(String shortURL) {
 		return getData(TRANSFORM_LONG_KEY_PREFIX + shortURL);
 	}
 
-	public String setTransformShortURL(String longURL) {
-		String shortURL = getData(TRANSFORM_SHORT_KEY_PREFIX + longURL);
+	/**
+	 * create a short url with a long URL
+	 * @param longURL
+	 * @param newName propose a new name for the file
+	 * @return
+	 */
+	public String setTransformShortURL(String longURL, String newName) {
+		String shortURL = getData(TRANSFORM_SHORT_KEY_PREFIX + longURL);		
 		if (shortURL != null) {
 			return shortURL;
 		} else {
-			String fileName = StringHelper.getFileNameFromPath(longURL);
+			String fileName;
+			if(newName == null) {
+				fileName = StringHelper.getFileNameFromPath(longURL);				
+			} else {
+				newName = StringHelper.stringToFileName(newName);
+				if (!newName.contains(".")) {
+					newName = newName + '.' + StringHelper.getFileExtension(longURL);					
+				}
+				fileName = newName;
+			}
 			shortURL = fileName;
 			int i = 1;
 			String fileOnly = StringHelper.getFileNameWithoutExtension(fileName);

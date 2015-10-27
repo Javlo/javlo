@@ -22,11 +22,12 @@ public class NotificationService {
 		private Date creationDate;
 		private String userId;
 		private String receiver;
+		private boolean admin = false;
 
 		public String getMessage() {
 			return message;
 		}
-		
+
 		public String getDisplayMessage() {
 			String out = getMessage();
 			if (isForAll() && getUserId() != null) {
@@ -99,18 +100,27 @@ public class NotificationService {
 		public void setReceiver(String receiver) {
 			this.receiver = receiver;
 		}
+
+		public boolean isAdmin() {
+			return admin;
+		}
+
+		public void setAdmin(boolean admin) {
+			this.admin = admin;
+		}
 	}
 
 	public static final class NotificationContainer {
+
+		private Notification notification;
+		private boolean read = false;
+		private String userId;
+
 		public NotificationContainer(Notification notification, boolean read, String userId) {
 			this.notification = notification;
 			this.read = read;
 			this.userId = userId;
 		}
-
-		private Notification notification;
-		private boolean read = false;
-		private String userId;
 
 		public Notification getNotification() {
 			return notification;
@@ -135,6 +145,7 @@ public class NotificationService {
 		public void setUserId(String userId) {
 			this.userId = userId;
 		}
+
 	}
 
 	private static final String KEY = NotificationService.class.getName();
@@ -195,7 +206,7 @@ public class NotificationService {
 		return false;
 	}
 
-	public List<NotificationContainer> getNotifications(String userId, int maxSize, boolean markRead) {
+	public List<NotificationContainer> getNotifications(String userId, boolean admin, int maxSize, boolean markRead) {
 		cleanList();
 		List<WeakReference<Notification>> markAsRead = allReadyReaded.get(userId);
 		List<NotificationContainer> outNotif = new LinkedList<NotificationContainer>();
@@ -203,10 +214,12 @@ public class NotificationService {
 		synchronized (notifications) {
 			for (Notification notif : notifications) {
 				if (notif.getReceiver() == null || notif.getReceiver().equals(userId) || notif.getUserId().equals(USER_SYSTEM)) {
-					size++;
-					outNotif.add(new NotificationContainer(notif, isAllReadyReaded(notif, userId), userId));
-					if (markRead) {
-						markAsRead.add(new WeakReference<NotificationService.Notification>(notif));
+					if (admin || !notif.isAdmin()) {
+						size++;
+						outNotif.add(new NotificationContainer(notif, isAllReadyReaded(notif, userId), userId));
+						if (markRead) {
+							markAsRead.add(new WeakReference<NotificationService.Notification>(notif));
+						}
 					}
 				}
 				if (size == maxSize) {
@@ -233,8 +246,8 @@ public class NotificationService {
 		return outNotif;
 	}
 
-	public int getUnreadNotificationSize(String userId, int maxSize) {
-		List<NotificationContainer> notifs = getNotifications(userId, maxSize, false);
+	public int getUnreadNotificationSize(String userId, boolean admin, int maxSize) {
+		List<NotificationContainer> notifs = getNotifications(userId, admin, maxSize, false);
 		int outUnreadCount = 0;
 		for (NotificationContainer notif : notifs) {
 			if (!notif.isRead()) {
@@ -244,12 +257,12 @@ public class NotificationService {
 		return outUnreadCount;
 	}
 
-	public void addNotification(String message, int type, String userId) {
-		addNotification(message, null, type, userId);
+	public void addNotification(String message, int type, String userId, boolean admin) {
+		addNotification(message, null, type, userId,admin);
 	}
 
-	public void addSystemNotification(String message, int type) {
-		addNotification(message, null, type, USER_SYSTEM);
+	public void addSystemNotification(String message, int type, boolean admin) {
+		addNotification(message, null, type, USER_SYSTEM, admin);
 	}
 
 	/**
@@ -262,13 +275,14 @@ public class NotificationService {
 	 * @param type
 	 *            the type of the message (same type than GenericMessage)
 	 * @param userId
-	 *            a notification can be specific for a user or for everybody (userId null)
+	 *            a notification can be specific for a user or for everybody
+	 *            (userId null)
 	 */
-	public void addNotification(String message, String url, int type, String userId) {
-		addNotification(message, url, type, userId, userId);
+	public void addNotification(String message, String url, int type, String userId, boolean admin) {
+		addNotification(message, url, type, userId, userId,admin);
 	}
-	
-	public void addNotification(String message, String url, int type, String userId, String receiver) {
+
+	public void addNotification(String message, String url, int type, String userId, String receiver, boolean admin) {
 		Notification notif = new Notification();
 		notif.setMessage(message);
 		notif.setUrl(url);
@@ -276,6 +290,7 @@ public class NotificationService {
 		notif.setType(type);
 		notif.setUserId(userId);
 		notif.setReceiver(receiver);
+		notif.setAdmin(admin);
 		synchronized (notifications) {
 			notifications.add(0, notif);
 		}

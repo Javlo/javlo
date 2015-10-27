@@ -137,7 +137,7 @@ public class Persistence extends AbstractModuleAction {
 			}
 			content.releasePreviewNav(ctx);
 			String msg = i18nAccess.getText("edit.message.uploaded");
-			MessageRepository.getInstance(ctx).setGlobalMessageAndNotification(ctx, new GenericMessage(msg, GenericMessage.INFO));
+			MessageRepository.getInstance(ctx).setGlobalMessageAndNotification(ctx, new GenericMessage(msg, GenericMessage.INFO), false);
 		}
 
 		for (FileItem item : fileItems) {
@@ -151,7 +151,7 @@ public class Persistence extends AbstractModuleAction {
 					}
 					content.releasePreviewNav(ctx);
 					String msg = i18nAccess.getText("edit.message.uploaded");
-					MessageRepository.getInstance(ctx).setGlobalMessageAndNotification(ctx, new GenericMessage(msg, GenericMessage.INFO));
+					MessageRepository.getInstance(ctx).setGlobalMessageAndNotification(ctx, new GenericMessage(msg, GenericMessage.INFO), false);
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -203,7 +203,7 @@ public class Persistence extends AbstractModuleAction {
 				} else {
 					logger.warning("resources node not found in : " + url);
 				}
-				MessageRepository.getInstance(ctx).setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("persistence.message.imported", new String[][] { { "countResources", "" + countResources } }), GenericMessage.INFO));
+				MessageRepository.getInstance(ctx).setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("persistence.message.imported", new String[][] { { "countResources", "" + countResources } }), GenericMessage.INFO), false);
 			} catch (Exception e) {
 				e.printStackTrace();
 				MessageRepository.getInstance(ctx).setGlobalMessage(new GenericMessage(e.getMessage(), GenericMessage.ERROR));
@@ -228,7 +228,7 @@ public class Persistence extends AbstractModuleAction {
 
 		content.releasePreviewNav(ctx);
 
-		MessageRepository.getInstance(ctx).setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("persistence.message.new-version", new String[][] { { "version", "" + newVersion } }), GenericMessage.INFO));
+		MessageRepository.getInstance(ctx).setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("persistence.message.new-version", new String[][] { { "version", "" + newVersion } }), GenericMessage.INFO), false);
 
 		return null;
 	}

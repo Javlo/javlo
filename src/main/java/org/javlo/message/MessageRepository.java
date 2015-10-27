@@ -157,7 +157,7 @@ public class MessageRepository {
 	 * @param globalMessage
 	 *            a global message
 	 */
-	public void setGlobalMessageAndNotificationToAll(ContentContext ctx, GenericMessage globalMessage) {
+	public void setGlobalMessageAndNotificationToAll(ContentContext ctx, GenericMessage globalMessage, boolean admin) {
 		if (this.globalMessage != null) {
 			if (this.globalMessage.getType() == 0 || globalMessage.getType() < this.globalMessage.getType()) {
 				this.globalMessage = globalMessage;
@@ -168,7 +168,11 @@ public class MessageRepository {
 		if (url == null) {
 			url = URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.PREVIEW_MODE).getContextForAbsoluteURL());
 		}
-		notifService.addNotification(globalMessage.getMessage(), url, globalMessage.getType(), ctx.getCurrentUserId(), null);
+		notifService.addNotification(globalMessage.getMessage(), url, globalMessage.getType(), ctx.getCurrentUserId(), null, admin);
+	}
+	
+	public void setGlobalMessageAndNotification(ContentContext ctx, GenericMessage globalMessage) {
+		setGlobalMessageAndNotification(ctx,globalMessage, false);
 	}
 
 	/**
@@ -178,7 +182,7 @@ public class MessageRepository {
 	 * @param globalMessage
 	 *            a global message
 	 */
-	public void setGlobalMessageAndNotification(ContentContext ctx, GenericMessage globalMessage) {
+	public void setGlobalMessageAndNotification(ContentContext ctx, GenericMessage globalMessage, boolean admin) {
 		if (this.globalMessage != null) {
 			if (this.globalMessage.getType() == 0 || globalMessage.getType() < this.globalMessage.getType()) {
 				this.globalMessage = globalMessage;
@@ -189,7 +193,7 @@ public class MessageRepository {
 		if (url == null) {
 			url = URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.PREVIEW_MODE).getContextForAbsoluteURL());
 		}
-		notifService.addNotification(globalMessage.getMessage(), url, globalMessage.getType(), ctx.getCurrentUserId());
+		notifService.addNotification(globalMessage.getMessage(), url, globalMessage.getType(), ctx.getCurrentUserId(),admin);
 	}
 
 	public void clearGlobalMessage() {

@@ -517,3 +517,13 @@ change log
  * delete folder from files meta-data view
  
  * tag change filter / short image url
+ 
+ * change update of the page
+ 
+ * user right update
+ 
+ * correct bug on delete image
+ 
+ * disabled tab if no access to the page
+ 
+ * preview font-awesome url error fixed 

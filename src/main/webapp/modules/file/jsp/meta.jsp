@@ -40,6 +40,9 @@
 					<c:if test="${not empty param[BACK_PARAM_NAME]}">
 						<c:param name="${BACK_PARAM_NAME}" value="${param[BACK_PARAM_NAME]}" />
 					</c:if>
+					<c:if test="${param.nobreadcrumbs}">
+						<c:param name="close" value="true" />
+					</c:if>
 				</c:url>							
 				<span class="delete"><a class="needconfirm" href="${deleteURL}"><span class="glyphicon glyphicon-trash last"></a></span>
 			</c:if>

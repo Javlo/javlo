@@ -1,5 +1,6 @@
 package org.javlo.helper;
 
+import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
@@ -23,6 +24,7 @@ import org.javlo.rendering.Device;
 import org.javlo.service.ContentService;
 import org.javlo.servlet.ImageTransformServlet;
 import org.javlo.template.Template;
+import org.javlo.ztatic.StaticInfo;
 
 /**
  * countain the method with efficient body for URLHelper.
@@ -425,10 +427,17 @@ public abstract class ElementaryURLHelper {
 		if (hash != null) {
 			baseUrl = baseUrl + ImageTransformServlet.HASH_PREFIX + hash;
 		}
+		String fileURL = url;
 		url = ElementaryURLHelper.mergePath(baseUrl, url);
 		
-		if (ctx.isLikeViewRenderMode() && ctx.getGlobalContext().getStaticConfig().isImageShortURL()) {
-			url =  URLHelper.mergePath("img", ctx.getGlobalContext().setTransformShortURL(url.replace(TRANSFORM+'/', "")));
+		if (ctx.isLikeViewRenderMode() && ctx.getGlobalContext().getStaticConfig().isImageShortURL()) {			
+			File file = new File(URLHelper.mergePath(ctx.getGlobalContext().getDataFolder(), fileURL));
+			StaticInfo staticInfo = StaticInfo.getInstance(ctx, file);			
+			String fileName = null;			
+			if (staticInfo != null && !StringHelper.isEmpty(staticInfo.getTitle(ctx))) {			
+				fileName = staticInfo.getTitle(ctx);
+			}
+			url =  URLHelper.mergePath("img", ctx.getGlobalContext().setTransformShortURL(url.replace(TRANSFORM+'/', ""), fileName));
 		}
 
 		return createStaticURL(ctx, referencePage, url, true);

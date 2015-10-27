@@ -5,6 +5,12 @@ import java.util.List;
 
 import org.javlo.context.ContentContext;
 
+/**
+ * factory for the content integrity tester.
+ * content integrity could check site of component like description or title.
+ * @author pvandermaesen
+ *
+ */
 public class IntegrityFactory {
 
 	private int errorLevel = 0;

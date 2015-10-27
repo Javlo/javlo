@@ -192,7 +192,7 @@ public class ActionManager {
 						if (!moduleContext.getCurrentModule().haveRight(request.getSession(), currentUser)) {
 							I18nAccess i18nAccess = I18nAccess.getInstance(request);
 							MessageRepository msgRepo = MessageRepository.getInstance(ctx);
-							msgRepo.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("global.message.noright") + " (" + actionName + ')', GenericMessage.ERROR));
+							msgRepo.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("global.message.noright") + " (" + actionName + ')', GenericMessage.ERROR), true);
 							return null;
 						}
 					}
@@ -227,7 +227,7 @@ public class ActionManager {
 		ContentContext ctx = ContentContext.getContentContext(request, response);
 		MessageRepository msgRepo = MessageRepository.getInstance(ctx);
 		if (message != null) {
-			msgRepo.setGlobalMessageAndNotification(ctx, new GenericMessage(message, GenericMessage.ERROR));
+			msgRepo.setGlobalMessageAndNotification(ctx, new GenericMessage(message, GenericMessage.ERROR), true);
 		}
 
 		return message;

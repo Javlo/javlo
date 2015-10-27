@@ -446,7 +446,7 @@ public class FileAction extends AbstractModuleAction {
 				FileUtils.deleteDirectory(file);
 			}
 		}
-		if (ctx.isEditPreview()) {
+		if (StringHelper.isTrue(rs.getParameter("close", null))) {
 			ctx.setClosePopup(true);
 		}
 		return null;

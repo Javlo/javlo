@@ -243,7 +243,7 @@ public class AdminUserSecurity implements Serializable {
 				if (!adminUserFactory.getCurrentUser(ctx.getRequest().getSession()).validForRoles(page.getEditorRoles())) {
 					MessageRepository messageRepository = MessageRepository.getInstance(ctx);
 					I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
-					messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("action.security.noright-onpage"), GenericMessage.ERROR));
+					messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("action.security.noright-onpage"), GenericMessage.ERROR), false);
 					return false;
 				}
 			}

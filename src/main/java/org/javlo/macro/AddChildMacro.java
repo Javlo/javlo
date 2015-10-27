@@ -8,6 +8,10 @@ import org.javlo.helper.MacroHelper;
 import org.javlo.helper.NetHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
+import org.javlo.i18n.I18nAccess;
+import org.javlo.message.GenericMessage;
+import org.javlo.message.MessageRepository;
+import org.javlo.module.content.Edit;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
 
@@ -22,7 +26,7 @@ public class AddChildMacro extends AbstractMacro {
 
 	public void addChild(ContentContext ctx) throws Exception {
 		MenuElement currentPage = ctx.getCurrentPage();
-
+		
 		ContentService content = ContentService.getInstance(ctx.getRequest());
 
 		String newPageName = currentPage.getName() + "-1";
@@ -58,6 +62,14 @@ public class AddChildMacro extends AbstractMacro {
 
 	@Override
 	public String perform(ContentContext ctx, Map<String, Object> params) throws Exception {
+		
+		if (!Edit.checkPageSecurity(ctx)) {
+			MessageRepository messageRepository = MessageRepository.getInstance(ctx);
+			I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
+			messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("action.block"), GenericMessage.ERROR));
+			return null;
+		}
+		
 		addChild(ctx);
 		return null;
 	}

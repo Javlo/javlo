@@ -67,6 +67,7 @@ import org.javlo.helper.XHTMLHelper;
 import org.javlo.helper.XMLManipulationHelper;
 import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
+import org.javlo.module.content.Edit;
 import org.javlo.module.core.IPrintInfo;
 import org.javlo.service.PersistenceService;
 import org.javlo.service.event.Event;
@@ -835,6 +836,15 @@ public class MenuElement implements Serializable, IPrintInfo {
 			} catch (Exception e) {
 				e.printStackTrace();
 				return null;
+			}
+		}
+		
+		public boolean isEditable() {
+			try {
+				return page.isEditabled(ctx);
+			} catch (Exception e) {
+				e.printStackTrace();
+				return true;
 			}
 		}
 
@@ -2099,7 +2109,11 @@ public class MenuElement implements Serializable, IPrintInfo {
 	}
 
 	public Set<String> getEditorRoles() {
-		return editGroups;
+		if (isChildrenOfAssociation()) {
+			return getRootOfChildrenAssociation().getEditorRoles();
+		} else  {
+			return editGroups;
+		}
 	}
 
 	public Set<String> getEditorRolesAndParent() {
@@ -4647,6 +4661,10 @@ public class MenuElement implements Serializable, IPrintInfo {
 		}
 		desc.event = Event.NO_EVENT;
 		return null;
+	}
+	
+	public boolean isEditabled(ContentContext ctx) throws Exception {
+		return Edit.checkPageSecurity(ctx, parent);
 	}
 
 }

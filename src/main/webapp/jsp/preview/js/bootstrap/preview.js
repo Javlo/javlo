@@ -848,16 +848,19 @@ editPreview.onReadyFunction = function() {
 	pjq( window ).resize(function() {
 		editPreview.heightToBottom(pjq(".height-to-bottom"));
 	});
-	pjq('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+	pjq('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {		
 		editPreview.heightToBottom(pjq(".height-to-bottom"));
-		document.cookie="preview_tab="+pjq(this).attr("href");
+		document.cookie="preview_tab="+pjq(this).attr("href");		
 	});
 	
 	editPreview.initPreview();
 	
 	var activeTab = editPreview.readCookie("preview_tab");	
 	if (activeTab != null) {
-		pjq(".nav-tabs a[href='"+activeTab+"']").tab("show");
+		var tab = pjq(".nav-tabs a[href='"+activeTab+"']");	
+		if (!tab.parent().hasClass("disabled")) {
+			tab.tab("show");
+		}
 	}
 }
 

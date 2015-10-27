@@ -89,9 +89,9 @@ request.setAttribute("editPreview", EditContext.getInstance(globalContext, sessi
 				<ul class="nav nav-tabs" role="tablist">
 				  <li role="presentation" class="active"><a href="#_ep_navigation" aria-controls="_ep_navigation" role="tab" data-toggle="tab">Navigation</a></li>
 				  <li role="presentation"><a href="#_ep_commands" aria-controls="_ep_commands" role="tab" data-toggle="tab">Commands</a></li>
-				  <li role="presentation"><a href="#_ep_content" aria-controls="_ep_content" role="tab" data-toggle="tab">Content</a></li>
+				  <li role="presentation" ${!info.pageEditable?'class="disabled"':''}><a href="#_ep_content" aria-controls="_ep_content" role="tab" ${info.pageEditable?'data-toggle="tab"':''}>Content</a></li>
 				  <c:if test="${userInterface.previewResourcesTab}">
-				  	<li role="presentation"><a href="#_ep_files" aria-controls="_ep_files" role="tab" data-toggle="tab">Resources</a></li>
+				  	<li role="presentation" ${!info.pageEditable?'class="disabled"':''}><a href="#_ep_files" aria-controls="_ep_files" role="tab" ${info.pageEditable?'data-toggle="tab"':''}>Resources</a></li>
 				  </c:if>
 				</ul>
 				<div class="tab-content">

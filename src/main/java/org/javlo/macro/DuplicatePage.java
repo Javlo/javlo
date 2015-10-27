@@ -5,6 +5,10 @@ import java.util.Map;
 import org.javlo.component.core.ContentElementList;
 import org.javlo.context.ContentContext;
 import org.javlo.helper.MacroHelper;
+import org.javlo.i18n.I18nAccess;
+import org.javlo.message.GenericMessage;
+import org.javlo.message.MessageRepository;
+import org.javlo.module.content.Edit;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
 
@@ -20,6 +24,13 @@ public class DuplicatePage extends AbstractMacro {
 		MenuElement currentPage = ctx.getCurrentPage();
 		if (currentPage.getParent() == null) {
 			return "you can't duplicate the root page.";
+		}
+		
+		if (!Edit.checkPageSecurity(ctx, currentPage.getParent())) {
+			MessageRepository messageRepository = MessageRepository.getInstance(ctx);
+			I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
+			messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("action.block"), GenericMessage.ERROR));
+			return null;
 		}
 
 		ContentService content = ContentService.getInstance(ctx.getRequest());

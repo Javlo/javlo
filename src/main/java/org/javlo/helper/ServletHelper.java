@@ -23,6 +23,7 @@ import org.javlo.message.MessageRepository;
 import org.javlo.module.core.ModulesContext;
 import org.javlo.service.NotificationService;
 import org.javlo.service.RequestService;
+import org.javlo.user.AdminUserSecurity;
 
 public class ServletHelper {
 
@@ -102,7 +103,8 @@ public class ServletHelper {
 		}
 
 		NotificationService notifService = NotificationService.getInstance(globalContext);
-		ctx.getRequest().setAttribute("notificationSize", notifService.getUnreadNotificationSize(ctx.getCurrentUserId(), 99));
+		AdminUserSecurity userSecurity = AdminUserSecurity.getInstance();
+		ctx.getRequest().setAttribute("notificationSize", notifService.getUnreadNotificationSize(ctx.getCurrentUserId(), userSecurity.isAdmin(ctx.getCurrentEditUser()),99));
 
 		String errorMsg = moduleContext.getCurrentModule().getAction().prepare(ctx, moduleContext);
 		if (errorMsg != null) {

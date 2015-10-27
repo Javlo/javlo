@@ -35,6 +35,7 @@ import org.javlo.macro.core.IMacro;
 import org.javlo.macro.core.MacroFactory;
 import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
+import org.javlo.module.content.Edit;
 import org.javlo.module.core.ModuleException;
 import org.javlo.module.core.ModulesContext;
 import org.javlo.navigation.MenuElement;
@@ -1257,6 +1258,15 @@ public class InfoBean {
 
 	public void setFakeCurrentURL(String fakeCurrentURL) {
 		this.fakeCurrentURL = fakeCurrentURL;
+	}
+	
+	/**
+	 * check if current user can edit the current page
+	 * @return
+	 * @throws Exception 
+	 */
+	public boolean isPageEditable() throws Exception  {
+		return Edit.checkPageSecurity(ctx);
 	}
 
 }

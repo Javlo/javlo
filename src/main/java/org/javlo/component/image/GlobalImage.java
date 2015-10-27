@@ -969,6 +969,7 @@ public class GlobalImage extends Image implements IImageFilter {
 				setModify();
 				storeProperties();
 			}
+			setLink(getConfig(ctx).getProperty("content.link", ""));
 			return true;
 		} else {
 			return false;

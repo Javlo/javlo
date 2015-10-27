@@ -41,6 +41,7 @@ import org.javlo.i18n.I18nAccess;
 import org.javlo.image.ImageConfig;
 import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
+import org.javlo.module.content.Edit;
 import org.javlo.module.core.Module;
 import org.javlo.module.core.ModuleException;
 import org.javlo.module.core.ModulesContext;
@@ -451,7 +452,13 @@ public class TemplateAction extends AbstractModuleAction {
 		return null;
 	}
 
-	public static String performSelectTemplate(RequestService rs, ContentContext ctx, EditContext editContext, MenuElement currentPage, MessageRepository messageRepository, I18nAccess i18nAccess) throws FileNotFoundException, InstantiationException, IllegalAccessException, ModuleException, IOException, ServiceException {
+	public static String performSelectTemplate(RequestService rs, ContentContext ctx, EditContext editContext, MenuElement currentPage, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
+		
+		if (!Edit.checkPageSecurity(ctx)) {
+			messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("action.block"), GenericMessage.ERROR));
+			return null;
+		}
+		
 		String templateName = rs.getParameter("templateid", null);
 		currentPage.setTemplateId(templateName);
 

@@ -212,3 +212,7 @@ table.float-image-width {
 .text.big {
 	font-size: 1.2em;
 }
+
+.inside-wrapper {
+	width: 100%;
+}

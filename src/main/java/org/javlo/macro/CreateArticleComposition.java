@@ -252,7 +252,7 @@ public class CreateArticleComposition extends AbstractInteractiveMacro implement
 								/* copy article */
 								MenuElement articlePage = MacroHelper.addPageIfNotExist(ctx, newPage.getName(), newPage.getName() + "-article", false);
 								articlePage.setSharedName(articlePage.getName());
-								articlePage.setTemplateId(config.getProperty("template.article", "basic_mailing"));
+								articlePage.setTemplateId(config.getProperty("template.article", null));
 								MacroHelper.addContent(ctx.getRequestContentLanguage(), articlePage, "0", Title.TYPE, "Articles", ctx.getCurrentEditUser());
 								for (ComponentBean bean : newChild.getContent()) {
 									if (bean.getType().equals(PageMirrorComponent.TYPE)) {
@@ -273,7 +273,7 @@ public class CreateArticleComposition extends AbstractInteractiveMacro implement
 								}
 							}
 						} else {
-							newPage.setTemplateId(config.getProperty("template.article", "mailing_one_area"));
+							newPage.setTemplateId(config.getProperty("template.article", null));
 							if (config.getProperty("template.composition", null) != null) {
 								layoutPage.setTemplateId(config.getProperty("template.composition", null));
 							}
@@ -283,7 +283,7 @@ public class CreateArticleComposition extends AbstractInteractiveMacro implement
 
 							MenuElement articlePage = MacroHelper.addPageIfNotExist(ctx, newPage.getName(), newPage.getName() + "-article", false);
 							articlePage.setSharedName(articlePage.getName());
-							articlePage.setTemplateId(config.getProperty("template.article", "basic_mailing"));
+							articlePage.setTemplateId(config.getProperty("template.article", null));
 							MacroHelper.addContent(ctx.getRequestContentLanguage(), articlePage, "0", Title.TYPE, "Articles", ctx.getCurrentEditUser());
 						}
 
