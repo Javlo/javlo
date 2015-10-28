@@ -188,7 +188,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 			out.println("<tbody>");
 			List<Field> fields = getFields();
 			for (Field field : fields) {
-				out.println(getEditXHTML(field));
+				out.println(getEditXHTML(ctx,field));
 			}
 			out.println("</tbody>");
 			out.println("</table>");
@@ -198,10 +198,14 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		return new String(outStream.toByteArray());
 	}
 
-	public String getEditXHTML(Field field) {
+	public String getEditXHTML(ContentContext ctx, Field field) {
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(outStream);
-		out.println("<tr class=\"field-line\">");
+		String scrollToMe = "";
+		if (StringHelper.neverNull(ctx.getRequest().getAttribute(getNewFieldKey())).equals(field.getName())) {
+			scrollToMe = " scroll-to-me";
+		}
+		out.println("<tr class=\"field-line"+scrollToMe+"\">");
 		out.println("<td class=\"input\"><input class=\"form-control\" type=\"text\" name=\"" + getInputName("name-" + field.getName()) + "\" value=\"" + field.getName() + "\"/></td>");
 		out.println("<td class=\"input\"><input class=\"form-control\" type=\"text\" name=\"" + getInputName("label-" + field.getName()) + "\" value=\"" + field.getLabel() + "\"/></td>");
 		out.println("<td class=\"input\"><input class=\"form-control\" type=\"text\" name=\"" + getInputName("condition-" + field.getName()) + "\" value=\"" + field.getCondition() + "\"/></td>");
@@ -377,6 +381,10 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 			return 0;
 		}
 	}
+	
+	protected String getNewFieldKey() {
+		return "_new_field_"+getId();
+	}
 
 	@Override
 	public String performEdit(ContentContext ctx) throws Exception {
@@ -466,6 +474,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		if (rs.getParameter(getInputName("new-name"), "").trim().length() > 0) {
 			String fieldName = StringHelper.createFileName(rs.getParameter(getInputName("new-name"), null));
 			store(new Field(fieldName, "", "", "", "text", "", "", pos + 20, 6));
+			ctx.getRequest().setAttribute(getNewFieldKey(), fieldName);
 		}
 
 		store(ctx);

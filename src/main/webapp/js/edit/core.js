@@ -172,7 +172,7 @@ jQuery(document).ready(function() {
 	jQuery( window ).mousemove(function( event ) {
 		mouseX = event.pageX;
 		mouseY = event.pageY;
-	});
+	});	
 	
 	updateColorInput();
 
@@ -255,6 +255,12 @@ jQuery(document).ready(function() {
 	});
 
 	initFocusPoint();
+	
+	var scrollTarget = jQuery(".scroll-to-me");
+	if (scrollTarget.length > 0) {
+		console.log("scrollTarget.top=",scrollTarget.position().top);
+		window.scrollTo(0,scrollTarget.position().top);
+	}
 });
 
 jQuery.fn.extend({
