@@ -2217,7 +2217,7 @@ public class MenuElement implements Serializable, IPrintInfo {
 		newCtx.setRequestContentLanguage(ctx.getLanguage()); // label is from
 		// navigation
 		// language
-		desc.label = getContent(newCtx).getLabel(ctx);
+		desc.label = getLocalContent(newCtx).getLabel(ctx);
 
 		if (desc.label != null) {
 			if ((desc.label.trim().length() == 0) && (name != null)) {
@@ -3267,7 +3267,7 @@ public class MenuElement implements Serializable, IPrintInfo {
 			return desc.title;
 		}
 
-		desc.title = getContent(newCtx).getLocalTitle(ctx);
+		desc.title = getContent(newCtx).getTitle(ctx);
 
 		if (desc.title != null) {
 			if ((desc.title.trim().length() == 0) && (name != null)) {
