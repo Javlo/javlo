@@ -526,4 +526,8 @@ change log
  
  * disabled tab if no access to the page
  
- * preview font-awesome url error fixed 
+ * preview font-awesome url error fixed
+ 
+ * localfile sharing module + mimetype mecanisme and svg
+ 
+* 2.1.0.2.15 28/10/2015 
