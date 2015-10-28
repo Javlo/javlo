@@ -530,4 +530,6 @@ change log
  
  * localfile sharing module + mimetype mecanisme and svg
  
+ * title of the page don't get the title from parent page (repeat)
+ 
 * 2.1.0.2.15 28/10/2015 
