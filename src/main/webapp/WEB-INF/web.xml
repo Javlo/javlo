@@ -105,6 +105,16 @@
 		<servlet-name>VFSServlet</servlet-name>
 		<url-pattern>/vfs/*</url-pattern>
 	</servlet-mapping>
+	
+	<servlet>
+		<servlet-name>MimeType</servlet-name>
+		<servlet-class>org.javlo.servlet.MimeTypeServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>MimeType</servlet-name>
+		<url-pattern>/mimetype/*</url-pattern>
+	</servlet-mapping>
 
 	<servlet>
 		<servlet-name>expcomp</servlet-name>

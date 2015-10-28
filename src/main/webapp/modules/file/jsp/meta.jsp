@@ -50,33 +50,24 @@
 			<span class="last">${file.manType}</span>
 		</div>		
 		<div class="body">
-		<c:if test="${file.image}">		
-		<div class="download picture">
-			<div class="focus-zone">
+		
+		<div class="download ${file.image?'picture':''}">
+			<div ${file.image?'class="focus-zone"':''} >
 			<c:if test="${empty param.select}">	
-			<a class="image" rel="image" href="${file.URL}"><img src="${file.thumbURL}" />&nbsp;</a>
+			<a ${file.image?'class="image" rel="image"':''} href="${file.URL}"><img src="${file.thumbURL}" />&nbsp;</a>
 			</c:if>
 			<c:if test="${not empty param.select}">	
 			<a class="select-item" href="${file.URL}" data-url="${file.freeURL}"><img src="${file.thumbURL}" />&nbsp;</a>
 			</c:if>
+			<c:if test="${file.image}">
 			<div class="focus-point">x</div>			
 			<input class="posx" type="hidden" name="posx-${file.id}" value="${file.focusZoneX}" />
-			<input class="posy" type="hidden" name="posy-${file.id}" value="${file.focusZoneY}" />
-			</div>	
-		</div>
-		</c:if>
-		<c:if test="${not file.image}">		
-			
-			<div class="download file ${file.type}">
-			<c:if test="${empty param.select || file.type == 'directory'}">	
-				<a href="${fileURL}"><span>${file.name}</span></a>
-				</c:if>
-				<c:if test="${not empty param.select && file.type != 'directory'}">	
-				<a class="select-item"  data-url="${fileURL}" href="${fileURL}"><span>${file.name}</span></a>
-				</c:if>
+			<input class="posy" type="hidden" name="posy-${file.id}" value="${file.focusZoneY}" />				
+			</c:if>
 			</div>
-			
-		</c:if>
+		</div>
+		
+		
 		<div class="line">
 			<label for="title-${file.id}">${i18n.edit["field.title"]}</label>			
 			<input class="file-title" type="text" id="title-${file.id}" name="title-${file.id}" value="<c:out value="${file.title}" escapeXml="true" />" />

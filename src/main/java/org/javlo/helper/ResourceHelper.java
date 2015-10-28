@@ -594,6 +594,12 @@ public class ResourceHelper {
 			return "application/msword";
 		} else if (ext.equals("xlsx")) {
 			return "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+		} else if (ext.equals("odp")) {
+			return "application/vnd.oasis.opendocument.presentation";
+		} else if (ext.equals("odt")) {
+			return "application/vnd.oasis.opendocument.text";
+		} else if (ext.equals("ods")) {
+			return "application/vnd.oasis.opendocument.spreadsheet";
 		}
 		return "application/octet-stream";
 	}

@@ -1269,6 +1269,7 @@ body.previewEdit {
 
 .form-list .title .filename {
 	white-space: nowrap;
+	max-width: 130px;
 }
 
 .form-list .title span {
@@ -1309,6 +1310,7 @@ body.previewEdit {
 .form-list .title span.last {
 	background: none;
 	color: #333333;
+	max-width: 190px;
 }
 
 .form-list .title span.size {

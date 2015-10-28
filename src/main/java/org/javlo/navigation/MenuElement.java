@@ -3267,7 +3267,7 @@ public class MenuElement implements Serializable, IPrintInfo {
 			return desc.title;
 		}
 
-		desc.title = getContent(newCtx).getTitle(ctx);
+		desc.title = getContent(newCtx).getLocalTitle(ctx);
 
 		if (desc.title != null) {
 			if ((desc.title.trim().length() == 0) && (name != null)) {

@@ -63,6 +63,9 @@ public class SharedContentProviderFactory {
 			addContentProvider(ctx, staticContentProviders,new LocalImageSharedContentProvider());
 			addContentProvider(ctx, staticContentProviders,new GlobalImageSharedContentProvider());			
 			addContentProvider(ctx, staticContentProviders,new ImportedImageSharedContentProvider());
+			addContentProvider(ctx, staticContentProviders,new LocalFileSharedContentProvider());
+			addContentProvider(ctx, staticContentProviders,new ImportedFileSharedContentProvider());
+			
 			try {				
 				addContentProvider(ctx, staticContentProviders,new StockvaultSharedContentProvider());
 			} catch (Exception e) {

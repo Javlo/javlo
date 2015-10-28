@@ -39,6 +39,8 @@ import org.javlo.user.IUserInfo;
  */
 public class URLHelper extends ElementaryURLHelper {
 
+	public static final String MINETYPE_FOLDER = "/images/mimetypes/";
+
 	public static String REQUEST_MANAGER_PARAMATER_KEY = "req_man";
 
 	public static String VFS_SERVLET_NAME = "vfs";
@@ -515,16 +517,16 @@ public class URLHelper extends ElementaryURLHelper {
 		url = URLHelper.mergePath(TRANSFORM + '/' + filter + '/' + templateFullPath, url);
 		return createStaticURL(ctx, url);
 	}
-	
+
 	public static String createTransformLocalTemplateURL(ContentContext ctx, String template, String filter, String url) throws Exception {
-		if (template == null) {			
+		if (template == null) {
 			template = ctx.getCurrentTemplate().getId();
 		}
 		if (url == null) {
 			return null;
 		}
 		url = url.replace('\\', '/');
-		url = URLHelper.mergePath(TRANSFORM,filter, template+ImageTransformServlet.LOCAL_TEMPLATE_SUFFIX, ctx.getGlobalContext().getContextKey(), url);
+		url = URLHelper.mergePath(TRANSFORM, filter, template + ImageTransformServlet.LOCAL_TEMPLATE_SUFFIX, ctx.getGlobalContext().getContextKey(), url);
 		return createStaticURL(ctx, url);
 	}
 
@@ -1253,6 +1255,21 @@ public class URLHelper extends ElementaryURLHelper {
 		outPath = outPath.replace("_SLA_", "/");
 		outPath = outPath.replace("_BSL_", "\\");
 		return outPath;
+	}
+
+	public static String getFileTypeURL(ContentContext ctx, String fileType, boolean folder) {
+		String imageFolder = MINETYPE_FOLDER;
+		if (folder) {
+			return createStaticURL(ctx, imageFolder + "application-folder.svg");
+		} else {
+			String mineType = ResourceHelper.getFileExtensionToMineType(fileType).replace('/', '-').toLowerCase();
+			File imageFile = new File(URLHelper.mergePath(ctx.getRequest().getSession().getServletContext().getRealPath(imageFolder), mineType + ".svg"));
+			if (imageFile.exists()) {
+				return createStaticURL(ctx, imageFolder + mineType + ".svg");
+			} else {
+				return createStaticURL(ctx, "/mimetype/"+fileType+".svg");
+			}
+		}
 	}
 
 }

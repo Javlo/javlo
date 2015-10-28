@@ -66,6 +66,7 @@ import org.javlo.service.RequestService;
 import org.javlo.service.location.LocationService;
 import org.javlo.service.shared.CloserJavloSharedContentProvider;
 import org.javlo.service.shared.ISharedContentProvider;
+import org.javlo.service.shared.ImportedFileSharedContentProvider;
 import org.javlo.service.shared.ImportedImageSharedContentProvider;
 import org.javlo.service.shared.SharedContentContext;
 import org.javlo.service.shared.SharedContentService;
@@ -101,9 +102,10 @@ public class DataAction implements IAction {
 			}
 			List<NotificationContainer> finalNotifs = new LinkedList<NotificationService.NotificationContainer>();
 			AdminUserSecurity userSecurity = AdminUserSecurity.getInstance();
-			if (lastDate != null) {				Calendar startCal = Calendar.getInstance();
+			if (lastDate != null) {
+				Calendar startCal = Calendar.getInstance();
 				startCal.setTime(lastDate);
-				
+
 				List<NotificationContainer> notifs = notif.getNotifications(user.getLogin(), userSecurity.isAdmin(ctx.getCurrentEditUser()), 999, StringHelper.isTrue(rs.getParameter("markread", null)));
 				Calendar cal = Calendar.getInstance();
 				for (NotificationContainer notificationContainer : notifs) {
@@ -177,7 +179,7 @@ public class DataAction implements IAction {
 		Map<String, Object> serverInfo = new LinkedHashMap<String, Object>();
 		BeanHelper.extractPropertiesAsString(serverInfo, request, "remotePort", "remoteHost", "remoteAddr", "localAddr", "localName", "localPort", "serverName", "serverPort", "characterEncoding"
 		// , "contextPath"
-				);
+		);
 		serverInfo.put("contextKey", ctx.getGlobalContext().getContextKey());
 		serverInfo.put("version", IVersion.VERSION);
 		serverInfo.put("systemUser", System.getProperty("user.name"));
@@ -286,7 +288,7 @@ public class DataAction implements IAction {
 	public static String performUpload(RequestService rs, ContentContext ctx, GlobalContext gc, ContentService cs, User user, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
 		return uploadContent(rs, ctx, gc, cs, user, messageRepository, i18nAccess, new ImportConfigBean(ctx));
 	}
-	
+
 	public static String performUploadShared(RequestService rs, ContentContext ctx, GlobalContext gc, ContentService cs, User user, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
 		SharedContentService sharedContentService = SharedContentService.getInstance(ctx);
 		SharedContentContext sharedContentContext = SharedContentContext.getInstance(ctx.getRequest().getSession());
@@ -330,7 +332,7 @@ public class DataAction implements IAction {
 			out.println(GlobalImage.IMAGE_FILTER + "=full");
 			out.close();
 			if (config.isCreateContentOnImportImage() || content) {
-				ComponentBean image = new ComponentBean(GlobalImage.TYPE, new String(outStream.toByteArray()), ctx.getRequestContentLanguage());				
+				ComponentBean image = new ComponentBean(GlobalImage.TYPE, new String(outStream.toByteArray()), ctx.getRequestContentLanguage());
 				image.setStyle(Image.STYLE_CENTER);
 				if (!content) {
 					Collection<IContentVisualComponent> titles = ctx.getCurrentPage().getContentByType(ctx, Title.TYPE);
@@ -363,7 +365,7 @@ public class DataAction implements IAction {
 	 * @return
 	 * @throws Exception
 	 */
-	protected static File createOrUpdateGallery(ContentContext ctx, File targetFolder, String importFolder, Collection<FileItem> imageItem, ImportConfigBean config, boolean content, String previousId) throws Exception {		
+	protected static File createOrUpdateGallery(ContentContext ctx, File targetFolder, String importFolder, Collection<FileItem> imageItem, ImportConfigBean config, boolean content, String previousId) throws Exception {
 		boolean galleryFound = false;
 		Template tpl = ctx.getCurrentTemplate();
 		GlobalContext globalContext = ctx.getGlobalContext();
@@ -380,7 +382,7 @@ public class DataAction implements IAction {
 		if (mediaComps.size() > 0) {
 			for (IContentVisualComponent comp : mediaComps) {
 				Multimedia multimedia = (Multimedia) comp;
-				if (multimedia.getCurrentRootFolder().length() > baseGalleryFolder.length() || content) {					
+				if (multimedia.getCurrentRootFolder().length() > baseGalleryFolder.length() || content) {
 					galleryRelativeFolder = URLHelper.mergePath(globalContext.getStaticConfig().getStaticFolder(), multimedia.getCurrentRootFolder());
 					galleryFound = true;
 					ctx.setNeedRefresh(true);
@@ -405,7 +407,7 @@ public class DataAction implements IAction {
 		}
 		targetFolder = new File(URLHelper.mergePath(globalContext.getDataFolder(), galleryRelativeFolder));
 		if (compGalleryFound != null) {
-			targetFolder = new File(URLHelper.mergePath(globalContext.getDataFolder(), globalContext.getStaticConfig().getStaticFolder(), compGalleryFound.getCurrentRootFolder()));			
+			targetFolder = new File(URLHelper.mergePath(globalContext.getDataFolder(), globalContext.getStaticConfig().getStaticFolder(), compGalleryFound.getCurrentRootFolder()));
 		}
 
 		if (!targetFolder.exists()) {
@@ -423,7 +425,7 @@ public class DataAction implements IAction {
 			ComponentBean multimedia = new ComponentBean(Multimedia.TYPE, "--12,128-" + galleryRelativeFolder.replaceFirst(globalContext.getStaticConfig().getStaticFolder(), "") + "---", ctx.getRequestContentLanguage());
 			multimedia.setStyle(Multimedia.IMAGE);
 
-			Collection<IContentVisualComponent> titles = ctx.getCurrentPage().getContentByType(ctx, Title.TYPE);			
+			Collection<IContentVisualComponent> titles = ctx.getCurrentPage().getContentByType(ctx, Title.TYPE);
 			if (!content && titles.size() > 0) {
 				previousId = titles.iterator().next().getId();
 			}
@@ -475,7 +477,7 @@ public class DataAction implements IAction {
 		FileItem imageItem = null;
 		try {
 			String previousId = rs.getParameter("previous", "0");
-			boolean content = StringHelper.isTrue(rs.getParameter("content", null));			
+			boolean content = StringHelper.isTrue(rs.getParameter("content", null));
 			ctx = ctx.getContextWithArea(rs.getParameter("area", ctx.getArea()));
 			for (FileItem item : rs.getAllFileItem()) {
 				logger.info("try to import (" + ctx.getCurrentUserId() + ") : " + item.getName());
@@ -497,15 +499,15 @@ public class DataAction implements IAction {
 					in.close();
 					MenuElement page = ctx.getCurrentPage();
 					ContentContext contentCtx = new ContentContext(ctx);
-					if (ctx.getCurrentPage().isChildrenOfAssociation() && !content) {						
-						PageAssociationBean pageAssociation = new PageAssociationBean(ctx, ctx.getCurrentPage().getRootOfChildrenAssociation());						
-						page = NavigationHelper.createChildPageAutoName(pageAssociation.getArticleRoot().getPage(), ctx);						
+					if (ctx.getCurrentPage().isChildrenOfAssociation() && !content) {
+						PageAssociationBean pageAssociation = new PageAssociationBean(ctx, ctx.getCurrentPage().getRootOfChildrenAssociation());
+						page = NavigationHelper.createChildPageAutoName(pageAssociation.getArticleRoot().getPage(), ctx);
 						SharedContentContext sharedContentContext = SharedContentContext.getInstance(ctx.getRequest().getSession());
 						sharedContentContext.setProvider(CloserJavloSharedContentProvider.NAME);
 						SharedContentService.getInstance(ctx).clearCache();
 						contentCtx.setArea(ComponentBean.DEFAULT_AREA);
 					}
-					cs.createContent(contentCtx, page, beans, previousId, true);					
+					cs.createContent(contentCtx, page, beans, previousId, true);
 					ctx.setNeedRefresh(true);
 				} else if (StringHelper.getFileExtension(item.getName()).equalsIgnoreCase("zip") && item.getName().startsWith("export_")) { // JCR
 					InputStream in = item.getInputStream();
@@ -525,28 +527,39 @@ public class DataAction implements IAction {
 						targetFolder.mkdirs();
 					}
 					File newFile = ResourceHelper.writeFileItemToFolder(item, targetFolder, false, true);
-					if (newFile != null && newFile.exists()) {						
+					if (newFile != null && newFile.exists()) {
 						ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 						PrintStream out = new PrintStream(outStream);
 						String dir = resourceRelativeFolder.replaceFirst(gc.getStaticConfig().getFileFolder(), "");
 						out.println("dir=" + dir);
 						out.println("file-name=" + StringHelper.getFileNameFromPath(newFile.getName()));
 						out.close();
-						String beanType = GenericFile.TYPE;						
+						String beanType = GenericFile.TYPE;
 						if (isArray && ctx.getGlobalContext().hasComponent(ArrayFileComponent.class.getCanonicalName())) {
 							beanType = ArrayFileComponent.TYPE;
 						}
-						ComponentBean bean = new ComponentBean(beanType, new String(outStream.toByteArray()), ctx.getRequestContentLanguage());
-						if (!content) {							
-							cs.createContentAtEnd(ctx, bean, true);
-						} else {							
-							bean.setArea(ctx.getArea());
-							cs.createContent(ctx, bean, previousId, true);
-						}
-						ctx.setNeedRefresh(true);
+
 						StaticInfo staticInfo = StaticInfo.getInstance(ctx, newFile);
-						staticInfo.setShared(ctx, false); // by default a simple
-															// image is'nt share
+
+						SharedContentContext sharedContentContext = SharedContentContext.getInstance(ctx.getRequest().getSession());
+						SharedContentService sharedContentService = SharedContentService.getInstance(ctx);
+						if (sharedContentService.getActiveProviderNames(ctx).contains(ImportedFileSharedContentProvider.NAME)) {
+							sharedContentContext.setProvider(ImportedFileSharedContentProvider.NAME);
+							sharedContentService.clearCache();
+							ISharedContentProvider provider = SharedContentService.getInstance(ctx).getProvider(ctx, sharedContentContext.getProvider());
+							provider.refresh(ctx);
+							provider.getContent(ctx); // refresh categories list
+						} else {
+							ComponentBean bean = new ComponentBean(beanType, new String(outStream.toByteArray()), ctx.getRequestContentLanguage());
+							if (!content) {
+								cs.createContentAtEnd(ctx, bean, true);
+							} else {
+								bean.setArea(ctx.getArea());
+								cs.createContent(ctx, bean, previousId, true);
+							}
+						}
+						staticInfo.setShared(ctx, false);
+						ctx.setNeedRefresh(true);
 					} else {
 						return "error upload file : " + item.getName();
 					}
@@ -555,8 +568,7 @@ public class DataAction implements IAction {
 			File targetFolder = null;
 
 			File folderSelection = null;
-			
-			
+
 			ContentService contentService = ContentService.getInstance(ctx.getRequest());
 			IContentVisualComponent previousComp = contentService.getComponent(ctx, previousId);
 			if (previousComp != null && previousComp.getType().equals(Multimedia.TYPE)) {
@@ -572,6 +584,12 @@ public class DataAction implements IAction {
 					folderSelection = createOrUpdateGallery(ctx, targetFolder, importFolder, Arrays.asList(new FileItem[] { imageItem }), config, content, previousId);
 				}
 				ctx.setNeedRefresh(true);
+				SharedContentContext sharedContentContext = SharedContentContext.getInstance(ctx.getRequest().getSession());
+				sharedContentContext.setProvider(ImportedImageSharedContentProvider.NAME);
+				SharedContentService.getInstance(ctx).clearCache();
+				ISharedContentProvider provider = SharedContentService.getInstance(ctx).getProvider(ctx, sharedContentContext.getProvider());
+				provider.refresh(ctx);
+				provider.getContent(ctx); // refresh categories list
 			} else if (countImages > 1) { // gallery
 				if (!config.isImagesAsImages() && ctx.getGlobalContext().getComponents().contains(Multimedia.class.getName())) {
 					folderSelection = createOrUpdateGallery(ctx, targetFolder, importFolder, rs.getAllFileItem(), config, content, previousId);
@@ -583,8 +601,14 @@ public class DataAction implements IAction {
 						}
 					}
 				}
+				SharedContentContext sharedContentContext = SharedContentContext.getInstance(ctx.getRequest().getSession());
+				sharedContentContext.setProvider(ImportedImageSharedContentProvider.NAME);
+				SharedContentService.getInstance(ctx).clearCache();
+				ISharedContentProvider provider = SharedContentService.getInstance(ctx).getProvider(ctx, sharedContentContext.getProvider());
+				provider.refresh(ctx);
+				provider.getContent(ctx); // refresh categories list
 			}
-			if (!config.isCreateContentOnImportImage() && !content && countImages>0) {
+			if (!config.isCreateContentOnImportImage() && !content && countImages > 0) {
 				SharedContentContext sharedContentContext = SharedContentContext.getInstance(ctx.getRequest().getSession());
 				sharedContentContext.setProvider(ImportedImageSharedContentProvider.NAME);
 				SharedContentService.getInstance(ctx).clearCache();
@@ -617,14 +641,14 @@ public class DataAction implements IAction {
 		session.setAttribute("tab", rs.getParameter("tab", null));
 		return null;
 	}
-	
-	public static String performLocation(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws NumberFormatException, IOException {		
+
+	public static String performLocation(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws NumberFormatException, IOException {
 		if (ctx.getCurrentEditUser() == null) {
 			return null;
-		}		
-		Double lat = StringHelper.safeParseDouble(rs.getParameter("lat", null),null);
-		Double lg = StringHelper.safeParseDouble(rs.getParameter("long", null),null);				
-		if (lat != null && lg != null) {		
+		}
+		Double lat = StringHelper.safeParseDouble(rs.getParameter("lat", null), null);
+		Double lg = StringHelper.safeParseDouble(rs.getParameter("long", null), null);
+		if (lat != null && lg != null) {
 			ctx.getAjaxData().put("location", LocationService.getLocation(lg, lat, rs.getParameter("lg", "en")).getFullLocality());
 			return "";
 		} else {

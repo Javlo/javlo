@@ -466,6 +466,18 @@ public class StringHelper {
 			}
 		}
 	}
+	
+	public String noRepeatChar(String text, char chr) {
+		StringBuffer outStr = new StringBuffer();
+		char latestChar = 0;
+		for (char c : text.toCharArray()) {
+			if (!(latestChar == chr && latestChar == c)) {
+				outStr.append(c);
+			}
+			latestChar = c;
+		}
+		return outStr.toString();
+	}
 
 	/**
 	 * replace CR with a space

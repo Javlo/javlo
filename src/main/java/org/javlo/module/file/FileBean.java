@@ -123,8 +123,12 @@ public class FileBean {
 	}
 
 	public String getThumbURL() throws Exception {
-		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-		return URLHelper.createTransformURL(ctx, (staticInfo.isStaticFolder()?globalContext.getStaticConfig().getStaticFolder():"") + staticInfo.getStaticURL(), "list") + "?ts=" + staticInfo.getFile().lastModified();
+		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());	
+		if (StringHelper.isImage(getName())) {
+			return URLHelper.createTransformURL(ctx, (staticInfo.isStaticFolder()?globalContext.getStaticConfig().getStaticFolder():"") + staticInfo.getStaticURL(), "list") + "?ts=" + staticInfo.getFile().lastModified();
+		} else {
+			return URLHelper.getFileTypeURL(ctx, getFileExtension(), staticInfo.getFile().isDirectory());
+		}
 	}
 
 	public String getFreeURL() throws Exception {

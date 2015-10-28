@@ -150,4 +150,5 @@ public class UserInterfaceContext {
 	public boolean isPreviewResourcesTab() {
 		return globalContext.getModules().contains(IMainModuleName.SHARED_CONTENT);
 	}
+	
 }

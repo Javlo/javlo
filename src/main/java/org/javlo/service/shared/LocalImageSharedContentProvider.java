@@ -2,6 +2,7 @@ package org.javlo.service.shared;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
@@ -33,15 +34,43 @@ public class LocalImageSharedContentProvider extends AbstractSharedContentProvid
 	LocalImageSharedContentProvider() {
 		setName(NAME);
 	}
+	
+	protected ComponentBean getComponentBean(String name, String category, String specialValue, String lg) {
+		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+		PrintStream out = new PrintStream(outStream);
+		out.println("dir=" + category);
+		out.println("file-name=" + name);
+		if (specialValue != null) {
+			out.println(specialValue);
+		}
+		out.close();
+		String value = new String(outStream.toByteArray());
+		ComponentBean imageBean = new ComponentBean(GlobalImage.TYPE, value, lg);
+		return imageBean;
+	}
+	
+	protected String getPreviewURL(ContentContext ctx, ComponentBean compBean) throws Exception {
+		GlobalImage image = new GlobalImage();
+		image.init(compBean, ctx);
+		return image.getPreviewURL(ctx, "shared-preview");
+	}
+	
+	
+	protected FileFilter getFilter() {
+		return new ImageFileFilter();
+	}
+	
+	protected File getRootFolder(ContentContext ctx) {
+		return new File(URLHelper.mergePath(ctx.getGlobalContext().getDataFolder(), ctx.getGlobalContext().getStaticConfig().getImageFolder()));
+	}
 
 	@Override
 	public Collection<SharedContent> getContent(ContentContext ctx) {		
 		setCategories(new HashMap<String, String>());
 		content.clear();
-		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-		File imageFolder = new File(URLHelper.mergePath(globalContext.getDataFolder(), globalContext.getStaticConfig().getImageFolder()));
-		for (File imageFile : ResourceHelper.getAllFiles(imageFolder, new ImageFileFilter() ) ) {			
-			String category = imageFile.getParentFile().getAbsolutePath().replace(imageFolder.getAbsolutePath(), "");
+		File rootFolder = getRootFolder(ctx);
+		for (File file : ResourceHelper.getAllFiles(rootFolder, getFilter() ) ) {			
+			String category = file.getParentFile().getAbsolutePath().replace(rootFolder.getAbsolutePath(), "");
 			category = category.replace('\\', '/');
 			if (category.startsWith("/")) {
 				category = category.substring(1);
@@ -49,34 +78,25 @@ public class LocalImageSharedContentProvider extends AbstractSharedContentProvid
 			if (!categories.containsKey(category)) {
 				categories.put(category, category);
 			}
-			ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-			PrintStream out = new PrintStream(outStream);
-			out.println("dir=" + category);
-			out.println("file-name=" + imageFile.getName());
-			out.println(GlobalImage.IMAGE_FILTER + "=full");
-			out.close();
-			String value = new String(outStream.toByteArray());
-			ComponentBean imageBean = new ComponentBean(GlobalImage.TYPE, value, ctx.getRequestContentLanguage());
-			imageBean.setArea(ctx.getArea());
+			ComponentBean compBean = getComponentBean(file.getName(), category, GlobalImage.IMAGE_FILTER + "=full", ctx.getRequestContentLanguage());
+			compBean.setArea(ctx.getArea());
 			SharedContent sharedContent;
 			try {
-				StaticInfo staticInfo = StaticInfo.getInstance(ctx, imageFile);
-				sharedContent = new SharedContent(""+imageFile.hashCode(), imageBean);
+				StaticInfo staticInfo = StaticInfo.getInstance(ctx, file);
+				sharedContent = new SharedContent(""+file.hashCode(), compBean);
 				sharedContent.addCategory(category);
 				sharedContent.setSortOn(staticInfo.getCreationDate(ctx).getTime());
 				content.add(sharedContent);				
-				GlobalImage image = new GlobalImage();
-				image.init(imageBean, ctx);
-				String imageURL = image.getPreviewURL(ctx, "shared-preview");
-				sharedContent.setTitle(imageFile.getName());				
+				
+				sharedContent.setTitle(file.getName());				
 				sharedContent.setDescription(staticInfo.getTitle(ctx));
-				sharedContent.setImageUrl(imageURL);				
+				sharedContent.setImageUrl(getPreviewURL(ctx, compBean));				
 				sharedContent.setEditAsModal(true);
 				String url = URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.EDIT_MODE));
 				url = URLHelper.addParam(url, "webaction", "file.previewEdit");
 				url = URLHelper.addParam(url, "module", "file");
 				url = URLHelper.addParam(url, "nobreadcrumbs", "true");				
-				url = URLHelper.addParam(url, "file", URLHelper.encodePathForAttribute(imageFile.getPath()));
+				url = URLHelper.addParam(url, "file", URLHelper.encodePathForAttribute(file.getPath()));
 				url = URLHelper.addParam(url, "previewEdit", "true");		
 				sharedContent.setEditURL(url);
 
@@ -87,6 +107,8 @@ public class LocalImageSharedContentProvider extends AbstractSharedContentProvid
 		return content;
 	}
 	
+	
+
 	protected boolean isCategoryAccepted(ContentContext ctx, String category, MenuElement cp, Template template) {
 		if ( !category.startsWith(template.getImportFolder()) && !category.startsWith(template.getImportImageFolder()) && !category.startsWith(template.getImportGalleryFolder()) && !category.startsWith(template.getImportResourceFolder())) {
 			return true;
@@ -129,7 +151,7 @@ public class LocalImageSharedContentProvider extends AbstractSharedContentProvid
 	@Override
 	public void upload(ContentContext ctx, String fileName, InputStream in, String category) throws IOException {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-		File imageFolder = new File(URLHelper.mergePath(globalContext.getDataFolder(), globalContext.getStaticConfig().getImageFolder()));
+		File imageFolder = getRootFolder(ctx);
 		imageFolder = new File(URLHelper.mergePath(imageFolder.getAbsolutePath(), category));
 		File newFile = new File(URLHelper.mergePath(imageFolder.getAbsolutePath(), fileName));
 		newFile = ResourceHelper.getFreeFileName(newFile);		
