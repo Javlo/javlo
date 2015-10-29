@@ -127,7 +127,7 @@ public class StockvaultSharedContentProvider extends AbstractSharedContentProvid
 		NodeList nodeList = htmlParser.extractAllNodesThatMatch(cssFilter);
 		if (nodeList.size() == 0) {
 			logger.severe("bad structure no images found.");
-		}		
+		}
 		for (int i = 0; i < nodeList.size(); i++) {
 			if (nodeList.elementAt(i) instanceof TagNode) {
 				TagNode tag = (TagNode) nodeList.elementAt(i);

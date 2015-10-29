@@ -630,7 +630,7 @@ public class Edit extends AbstractModuleAction {
 			MessageRepository messageRepository = MessageRepository.getInstance(ctx);
 			ContentContext absCtx = ctx.getContextForAbsoluteURL();
 			String url = URLHelper.createURL(absCtx);
-			messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("edit.message.bad-area") + " \"" + badArea + "\"", GenericMessage.ALERT, url),false);
+			messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("edit.message.bad-area") + " \"" + badArea + "\"", GenericMessage.ALERT, url), false);
 		}
 
 		return msg;
@@ -1097,169 +1097,170 @@ public class Edit extends AbstractModuleAction {
 
 		if (!canModifyCurrentPage(ctx) || !checkPageSecurity(ctx)) {
 			messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("action.block"), GenericMessage.ERROR), false);
-			return null;
-		}
-
-		boolean isView = requestService.getParameter("view", null) != null;
-
-		String pageName = requestService.getParameter("name", null);
-		String newName = requestService.getParameter("new_name", null);
-		if (pageName == null || newName == null) {
-			return "bad parameter for change page properties.";
-		}
-		MenuElement page = content.getNavigation(ctx).searchChildFromName(pageName);
-		if (page == null) {
-			return "page not found : " + pageName;
 		} else {
-			String errorMessage = null;
-			boolean modify = false;
-			if (!pageName.equals(StringHelper.createFileName(newName))) {
 
-				if (nameExist(ctx, newName)) {
-					errorMessage = i18nAccess.getText("action.validation.name-allready-exist", new String[][] { { "name", pageName } });
-				}
+			boolean isView = requestService.getParameter("view", null) != null;
 
-				if (errorMessage == null) {
-					page.setName(newName);
-					modify = true;
-				}
+			String pageName = requestService.getParameter("name", null);
+			String newName = requestService.getParameter("new_name", null);
+			if (pageName == null || newName == null) {
+				return "bad parameter for change page properties.";
 			}
-
-			if (page.isVisible() != isView) {
-				page.setVisible(isView);
-				modify = true;
-			}
-			
-			UserInterfaceContext userInterface = UserInterfaceContext.getInstance(session, globalContext);
-			if (!userInterface.isLight()) {
-				boolean isActive = StringHelper.isTrue(requestService.getParameter("active", null));
-				if (page.isActive() != isActive) {
-					page.setActive(isActive);
-					modify = true;
-				}
-			}
-
-			if (requestService.getParameter("shorturl", null) != null) {
-				if (!page.isShortURL()) {
-					page.getShortURL(ctx); // create short url
-					messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("edit.message.shorturl"), GenericMessage.ALERT), false);
-				} else {
-					return "this page have already short url.";
-				}
-			}
-
-			boolean postCheck = requestService.getParameter("special_input", null) != null;
-
-			boolean isBreakRepeat = requestService.getParameter("break_repeat", null) != null;
-			if (postCheck && page.isBreakRepeat() != isBreakRepeat) {
-				page.setBreakRepeat(isBreakRepeat);
-				modify = true;
-			}
-
-			/** children agregator **/
-			boolean childrenAssociation = StringHelper.isTrue(requestService.getParameter("association", null));
-			if (postCheck && page.isChildrenAssociation() != childrenAssociation) {
-				page.setChildrenAssociation(childrenAssociation);
-				modify = true;
-			}
-
-			/** change notifications **/
-			boolean changeNotification = StringHelper.isTrue(requestService.getParameter("changeNotification", null));
-			if (postCheck && page.isChangeNotification() != changeNotification) {
-				page.setChangeNotification(changeNotification);
-				modify = true;
-			}
-
-			/** roles **/
-			InfoBean infoBean = InfoBean.getCurrentInfoBean(ctx);
-			Set<String> userRoles = new HashSet<String>();
-			for (String role : infoBean.getRoles()) {
-				if (requestService.getParameter("user-" + role, null) != null) {
-					userRoles.add(role);
-				}
-			}
-			page.setUserRoles(userRoles);
-			page.clearEditorGroups();
-			for (String role : infoBean.getAdminRoles()) {
-				if (requestService.getParameter("admin-" + role, null) != null) {
-					page.addEditorRole(role);
-				}
-			}
-
-			/** page type **/
-			String pageType = requestService.getParameter("page_type", null);
-			if (pageType != null) {
-				page.setType(pageType);
-			}
-
-			/** shared **/
-			String pageShared = requestService.getParameter("share", null);
-			if (pageShared != null) {
-				page.setSharedName(pageShared);
-				ISharedContentProvider provider = SharedContentService.getInstance(ctx).getProvider(ctx, JavloSharedContentProvider.NAME);
-				if (provider != null) {
-					provider.refresh(ctx);
-				}
-			}
-
-			/** publish time range **/
-			if (requestService.getParameter("start_publish", null) != null) {
-				String startPublish = requestService.getParameter("start_publish", "").trim();
-				if (startPublish.length() > 0) {
-					Date startDate = StringHelper.smartParseDate(startPublish);
-					page.setStartPublishDate(startDate);
-				} else {
-					page.setStartPublishDate(null);
-				}
-				String endPublish = requestService.getParameter("end_publish", "").trim();
-				if (endPublish.length() > 0) {
-					Date endDate = StringHelper.smartParseDate(endPublish);
-					page.setEndPublishDate(endDate);
-				} else {
-					page.setEndPublishDate(null);
-				}
-			}
-
-			String templateName = requestService.getParameter("template", null);
-			if (templateName != null) {
-				MailingModuleContext mailingCtx = MailingModuleContext.getInstance(ctx.getRequest());
-				mailingCtx.setCurrentTemplate(null);
-				if (templateName.length() > 1) {
-					Template template = TemplateFactory.getTemplates(application).get(templateName);
-					if (template != null && ctx.getCurrentTemplates().contains(template)) { // TODO:
-																							// check
-																							// this
-																							// test
-						page.setTemplateId(template.getName());
-						modify = true;
-					} else {
-						return "template not found : " + templateName;
-					}
-				} else {
-					page.setTemplateId(null); // inherited
-				}
-				ctx.setCurrentTemplate(null); // reset current template
-			}
-			if (errorMessage != null) {
-				messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(errorMessage, GenericMessage.ERROR), false);
+			MenuElement page = content.getNavigation(ctx).searchChildFromName(pageName);
+			if (page == null) {
+				return "page not found : " + pageName;
 			} else {
-				if (modify) {
-					messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("message.update-page-properties"), GenericMessage.INFO), false);
+				String errorMessage = null;
+				boolean modify = false;
+				if (!pageName.equals(StringHelper.createFileName(newName))) {
+
+					if (nameExist(ctx, newName)) {
+						errorMessage = i18nAccess.getText("action.validation.name-allready-exist", new String[][] { { "name", pageName } });
+					}
+
+					if (errorMessage == null) {
+						page.setName(newName);
+						modify = true;
+					}
 				}
+
+				if (page.isVisible() != isView) {
+					page.setVisible(isView);
+					modify = true;
+				}
+
+				UserInterfaceContext userInterface = UserInterfaceContext.getInstance(session, globalContext);
+				if (!userInterface.isLight()) {
+					boolean isActive = StringHelper.isTrue(requestService.getParameter("active", null));
+					if (page.isActive() != isActive) {
+						page.setActive(isActive);
+						modify = true;
+					}
+				}
+
+				if (requestService.getParameter("shorturl", null) != null) {
+					if (!page.isShortURL()) {
+						page.getShortURL(ctx); // create short url
+						messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("edit.message.shorturl"), GenericMessage.ALERT), false);
+					} else {
+						return "this page have already short url.";
+					}
+				}
+
+				boolean postCheck = requestService.getParameter("special_input", null) != null;
+
+				boolean isBreakRepeat = requestService.getParameter("break_repeat", null) != null;
+				if (postCheck && page.isBreakRepeat() != isBreakRepeat) {
+					page.setBreakRepeat(isBreakRepeat);
+					modify = true;
+				}
+
+				/** children agregator **/
+				boolean childrenAssociation = StringHelper.isTrue(requestService.getParameter("association", null));
+				if (postCheck && page.isChildrenAssociation() != childrenAssociation) {
+					page.setChildrenAssociation(childrenAssociation);
+					modify = true;
+				}
+
+				/** change notifications **/
+				boolean changeNotification = StringHelper.isTrue(requestService.getParameter("changeNotification", null));
+				if (postCheck && page.isChangeNotification() != changeNotification) {
+					page.setChangeNotification(changeNotification);
+					modify = true;
+				}
+
+				/** roles **/
+				InfoBean infoBean = InfoBean.getCurrentInfoBean(ctx);
+				Set<String> userRoles = new HashSet<String>();
+				for (String role : infoBean.getRoles()) {
+					if (requestService.getParameter("user-" + role, null) != null) {
+						userRoles.add(role);
+					}
+				}
+				page.setUserRoles(userRoles);
+				page.clearEditorGroups();
+				for (String role : infoBean.getAdminRoles()) {
+					if (requestService.getParameter("admin-" + role, null) != null) {
+						page.addEditorRole(role);
+					}
+				}
+
+				/** page type **/
+				String pageType = requestService.getParameter("page_type", null);
+				if (pageType != null) {
+					page.setType(pageType);
+				}
+
+				/** shared **/
+				String pageShared = requestService.getParameter("share", null);
+				if (pageShared != null) {
+					page.setSharedName(pageShared);
+					ISharedContentProvider provider = SharedContentService.getInstance(ctx).getProvider(ctx, JavloSharedContentProvider.NAME);
+					if (provider != null) {
+						provider.refresh(ctx);
+					}
+				}
+
+				/** publish time range **/
+				if (requestService.getParameter("start_publish", null) != null) {
+					String startPublish = requestService.getParameter("start_publish", "").trim();
+					if (startPublish.length() > 0) {
+						Date startDate = StringHelper.smartParseDate(startPublish);
+						page.setStartPublishDate(startDate);
+					} else {
+						page.setStartPublishDate(null);
+					}
+					String endPublish = requestService.getParameter("end_publish", "").trim();
+					if (endPublish.length() > 0) {
+						Date endDate = StringHelper.smartParseDate(endPublish);
+						page.setEndPublishDate(endDate);
+					} else {
+						page.setEndPublishDate(null);
+					}
+				}
+
+				String templateName = requestService.getParameter("template", null);
+				if (templateName != null) {
+					MailingModuleContext mailingCtx = MailingModuleContext.getInstance(ctx.getRequest());
+					mailingCtx.setCurrentTemplate(null);
+					if (templateName.length() > 1) {
+						Template template = TemplateFactory.getTemplates(application).get(templateName);
+						if (template != null && ctx.getCurrentTemplates().contains(template)) { // TODO:
+																								// check
+																								// this
+																								// test
+							page.setTemplateId(template.getName());
+							modify = true;
+						} else {
+							return "template not found : " + templateName;
+						}
+					} else {
+						page.setTemplateId(null); // inherited
+					}
+					ctx.setCurrentTemplate(null); // reset current template
+				}
+				if (errorMessage != null) {
+					messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(errorMessage, GenericMessage.ERROR), false);
+				} else {
+					if (modify) {
+						messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("message.update-page-properties"), GenericMessage.INFO), false);
+					}
+				}
+
+				page.clearPageBean(ctx);
+				PersistenceService.getInstance(globalContext).setAskStore(true);
 			}
-
-			page.clearPageBean(ctx);
-			PersistenceService.getInstance(globalContext).setAskStore(true);
-
 			if (ctx.isEditPreview()) {
 				String url = URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.PREVIEW_MODE), page.getPath());
 				if (page.getChildMenuElements().size() > 0 && page.getChildMenuElements().iterator().next().isChildrenAssociation()) {
 					url = URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.PREVIEW_MODE), page.getChildMenuElements().iterator().next().getPath());
 				}
 				ctx.setParentURL(url);
-				ctx.setClosePopup(true);
 			}
+		}
 
+		if (ctx.isEditPreview()) {
+			ctx.setClosePopup(true);
 		}
 
 		return null;
@@ -1288,13 +1289,13 @@ public class Edit extends AbstractModuleAction {
 	}
 
 	public static String performAddPage(RequestService requestService, ContentContext ctx, I18nAccess i18nAccess, ContentService content) throws Exception {
-		
+
 		if (!canModifyCurrentPage(ctx) || !checkPageSecurity(ctx)) {
 			MessageRepository messageRepository = MessageRepository.getInstance(ctx);
 			messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("action.block"), GenericMessage.ERROR));
 			return null;
 		}
-		
+
 		String message = null;
 
 		try {
@@ -1335,7 +1336,7 @@ public class Edit extends AbstractModuleAction {
 					}
 				}
 				elem.setName(nodeName);
-				if (requestService.getParameter("add-first", null) == null) {					
+				if (requestService.getParameter("add-first", null) == null) {
 					parent.addChildMenuElementAutoPriority(elem);
 				} else {
 					elem.setPriority(0);
@@ -1499,7 +1500,7 @@ public class Edit extends AbstractModuleAction {
 			messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("action.block"), GenericMessage.ERROR));
 			return null;
 		}
-		
+
 		String message = null;
 
 		String id = ctx.getRequest().getParameter("page");
@@ -1590,12 +1591,12 @@ public class Edit extends AbstractModuleAction {
 	}
 
 	public static String performMovePage(RequestService rs, ContentContext ctx, GlobalContext globalContext, ContentService content, I18nAccess i18nAccess, MessageRepository messageRepository) throws Exception {
-		
+
 		if (!canModifyCurrentPage(ctx) || !checkPageSecurity(ctx)) {
 			messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("action.block"), GenericMessage.ERROR));
 			return null;
 		}
-		
+
 		String pageName = rs.getParameter("page", null);
 		String pagePreviousName = rs.getParameter("previous", null);
 		if (pageName == null || pagePreviousName == null) {
@@ -1684,7 +1685,7 @@ public class Edit extends AbstractModuleAction {
 			}
 			latestArea = bean.getArea();
 			bean.setLanguage(ctx.getRequestContentLanguage());
-			//parentId = content.createContent(ctx, bean, parentId, true);
+			// parentId = content.createContent(ctx, bean, parentId, true);
 			parentId = content.createContent(ctx, ctx.getCurrentPage(), bean, parentId, true);
 			c++;
 		}
@@ -1879,7 +1880,7 @@ public class Edit extends AbstractModuleAction {
 		persistenceService.setAskStore(true);
 		modifPage(ctx, ctx.getCurrentPage());
 		autoPublish(ctx.getRequest(), ctx.getResponse());
-		
+
 		if (ctx.isAjax()) {
 			updatePreviewCommands(ctx, null);
 		}
@@ -1897,12 +1898,12 @@ public class Edit extends AbstractModuleAction {
 	}
 
 	public static String performInsertPage(RequestService rs, ContentContext ctx, MessageRepository messageRepository, ContentService content, EditContext editContext, PersistenceService persistenceService, I18nAccess i18nAccess) throws Exception {
-		
+
 		if (!canModifyCurrentPage(ctx) || !checkPageSecurity(ctx)) {
 			messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("action.block"), GenericMessage.ERROR));
 			return null;
 		}
-		
+
 		String path = editContext.getContextForCopy(ctx).getPath();
 		MenuElement pageToBeMoved = content.getNavigation(ctx).searchChild(ctx, path);
 		if (pageToBeMoved == null) {
@@ -1942,7 +1943,7 @@ public class Edit extends AbstractModuleAction {
 	}
 
 	public static String performInsertShared(RequestService rs, ContentContext ctx, GlobalContext globalContext, EditContext editContext, ContentService content, SharedContentService sharedContentService, Module currentModule, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
-		
+
 		if (!canModifyCurrentPage(ctx) || !checkPageSecurity(ctx)) {
 			messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("action.block"), GenericMessage.ERROR));
 			return null;
@@ -1957,7 +1958,7 @@ public class Edit extends AbstractModuleAction {
 			// sharedContentService.clearCache();
 			SharedContent sharedContent = sharedContentService.getSharedContent(ctx, sharedData);
 			if (sharedContent == null) {
-				String msg = "error : shared content not found : " + sharedData + " container:"+sharedContentService.getClass().getName();
+				String msg = "error : shared content not found : " + sharedData + " container:" + sharedContentService.getClass().getName();
 				logger.warning(msg);
 				return msg;
 			}

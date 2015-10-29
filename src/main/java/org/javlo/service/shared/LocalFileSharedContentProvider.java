@@ -45,7 +45,7 @@ public class LocalFileSharedContentProvider extends LocalImageSharedContentProvi
 	protected String getPreviewURL(ContentContext ctx, ComponentBean compBean) throws Exception {
 		GenericFile file = new GenericFile();
 		file.init(compBean, ctx);
-		return URLHelper.getFileTypeURL(ctx, StringHelper.getFileExtension(file.getFileName()), false);
+		return URLHelper.getFileTypeURL(ctx, file.getFile(ctx));
 	}
 
 }

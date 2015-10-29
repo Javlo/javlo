@@ -86,6 +86,8 @@ public abstract class ElementaryURLHelper {
 
 	public static final String BACK_PARAM_NAME = "__back";
 
+	public static final String IMG_SERVLET_PATH = "img";
+
 	/**
 	 * add get param to a url
 	 */
@@ -437,7 +439,7 @@ public abstract class ElementaryURLHelper {
 			if (staticInfo != null && !StringHelper.isEmpty(staticInfo.getTitle(ctx))) {			
 				fileName = staticInfo.getTitle(ctx);
 			}
-			url =  URLHelper.mergePath("img", ctx.getGlobalContext().setTransformShortURL(url.replace(TRANSFORM+'/', ""), fileName));
+			url =  URLHelper.mergePath(IMG_SERVLET_PATH, ctx.getGlobalContext().setTransformShortURL(url.replace(TRANSFORM+'/', ""), fileName));
 		}
 
 		return createStaticURL(ctx, referencePage, url, true);

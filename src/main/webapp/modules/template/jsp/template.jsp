@@ -1,6 +1,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"
-%><%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-<li class="${template.valid?'valid':'unvalid'}${info.page.templateId == template.name?' active':''}">
+%><%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"
+%><li class="${template.valid?'valid':'unvalid'}${info.page.templateId == template.name?' active':''}">
 		<c:if test="${not empty selectUrl}"><a href="${selectUrl}&template=${template.name}" title="select ${template.name}"></c:if>
         <div class="thumb">
         	<c:if test="${empty param.previewEdit}">
@@ -19,14 +19,14 @@
 				   <p>
                    <label>${i18n.edit['global.name']}:</label>
                    <span>${template.name}</span>
-	               </p>	             
-	               <p>
-	                   <label>${i18n.edit['global.author']}:</label>
-	                   <span>${template.authors}</span>
-	               </p>
+	               </p>	               
 	               <p>
 	                   <label>${i18n.edit['template.parent']}:</label>
 	                   <span>${template.parent}</span>
+	               </p>
+	               <p>
+	                   <label>${i18n.edit['global.version']}:</label>
+	                   <span>${template.version}</span>
 	               </p>
 	               <p>
 	                   <label>${i18n.edit['template.creation-date']}:</label>
@@ -42,13 +42,13 @@
                     <label>${i18n.edit['global.name']}:</label>
                     <span>${template.name}</span>
                 </p>
-                <c:if test="${empty selectUrl}"><p>
-                    <label>${i18n.edit['admin.file-source']}:</label>
-                     <span><a href="${template.htmlUrl}">${template.htmlFile}</a></span>
+                <c:if test="${not empty template.parent}"><p>
+                    <label>${i18n.edit['template.parent']}:</label>
+	                   <span>${template.parent}</span>
                 </p></c:if>
                 <p>
-                    <label>${i18n.edit['global.author']}:</label>
-                    <span>${template.authors}</span>
+                    <label>${i18n.edit['global.version']}:</label>
+                    <span>${template.version}</span>
                 </p>
                 <p>
                     <label>${i18n.edit['template.creation-date']}:</label>

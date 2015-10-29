@@ -2390,7 +2390,10 @@ public class XHTMLHelper {
 				if (hrefValue != null) {
 					hrefValue = hrefValue.trim();
 					if (!hrefValue.startsWith("#")) {
-						if (hrefValue.toLowerCase().startsWith("rss")) {
+						if (hrefValue.startsWith("page:")) {
+							String pageName = hrefValue.substring("page:".length());
+							tag.getAttributes().put("href", URLHelper.createURLFromPageName(ctx, pageName));
+						} else if (hrefValue.toLowerCase().startsWith("rss")) {
 							String channel = "";
 							if (hrefValue.contains(":")) {
 								channel = hrefValue.split(":")[1];

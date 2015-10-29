@@ -6,6 +6,7 @@
 <div class="select-languages form_default">
 	<input type="hidden" name="webaction" value="edit.changeLanguage" />	
 	<c:if test="${not empty param[BACK_PARAM_NAME]}"><input type="hidden" name="${BACK_PARAM_NAME}" value="${param[BACK_PARAM_NAME]}" /></c:if>
+	<c:if test="${not empty param['select']}"><input type="hidden" name="select" value="true" /></c:if>
 	<select name="language">
 	<c:forEach var="lang" items="${info.contentLanguages}">
 		<option value="${lang}"${lang eq info.contentLanguage?' selected="selected"':''}>${lang}</option>
@@ -28,6 +29,7 @@
 <c:url var="uploadJSPURL" value="${info.absoluteLocalURLPrefix}${currentModule.path}/jsp/upload.jsp" >
 	<c:param name="currentURL" value="${uploadCurrentURL}" />
 	<c:if test="${not empty param[BACK_PARAM_NAME]}"><c:param name="${BACK_PARAM_NAME}" value="${param[BACK_PARAM_NAME]}" /></c:if>
+	<c:if test="${not empty param['select']}"><c:param name="select" value="true" /></c:if>
 </c:url>
 <a href="${uploadJSPURL}" class="popup cboxElement action-button"><span>${i18n.edit['action.add-files']}</span></a>
 <c:if test="${not empty param.templateid}">
@@ -38,6 +40,7 @@
 <form id="form-sorted" action="${info.currentURL}" method="get" class="js-submit">
 <input type="hidden" name="webaction" value="file.order" />
 <c:if test="${not empty param[BACK_PARAM_NAME]}"><input type="hidden" name="${BACK_PARAM_NAME}" value="${param[BACK_PARAM_NAME]}" /></c:if>
+<c:if test="${not empty param['select']}"><input type="hidden" name="select" value="true" /></c:if>
 <select class="action-field" name="order">
 	<option value="1"${sort == '1'?' selected="selected"':''}>${i18n.edit['action.sort.date']}</option>
 	<option value="2"${sort == '2'?' selected="selected"':''}>${i18n.edit['action.sort.name']}</option>

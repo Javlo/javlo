@@ -183,9 +183,9 @@ public class GlobalImage extends Image implements IImageFilter {
 	@Override
 	public String getImageHash(ContentContext ctx) {
 		if (getWidth(ctx) < 0) {
-			return getStaticInfo(ctx).getVersionHash();
+			return getStaticInfo(ctx).getVersionHash(ctx);
 		} else {
-			return getStaticInfo(ctx).getVersionHash() + '_' + getWidth(ctx);
+			return getStaticInfo(ctx).getVersionHash(ctx) + '_' + getWidth(ctx);
 		}
 	}
 
@@ -625,7 +625,7 @@ public class GlobalImage extends Image implements IImageFilter {
 		} else if (getFileName() != null) {
 			String fileLink = getResourceURL(ctx, getFileName());
 			String url = URLHelper.createTransformURL(ctx, getPage(), fileLink, "thumb-view").replace('\\', '/');
-			url = URLHelper.addParam(url, "hash", getStaticInfo(ctx).getVersionHash());
+			url = URLHelper.addParam(url, "hash", getStaticInfo(ctx).getVersionHash(ctx));
 			return url;
 		}
 		return null;
@@ -695,7 +695,7 @@ public class GlobalImage extends Image implements IImageFilter {
 					openLink = true;
 				}
 			}
-			thumbURL = URLHelper.addParam(thumbURL, "hash", getStaticInfo(ctx).getVersionHash());
+			thumbURL = URLHelper.addParam(thumbURL, "hash", getStaticInfo(ctx).getVersionHash(ctx));
 			res.append("<img src=\"");
 			res.append(thumbURL);
 			res.append("\" alt=\"");

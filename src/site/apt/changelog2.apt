@@ -533,3 +533,9 @@ change log
  * get label of a page without repeat
  
 * 2.1.0.2.15 28/10/2015 
+
+ * help link
+ 
+ * page:${page.name} for create link to a page
+ 
+ * amelioration of resource browser for full wysiwyg

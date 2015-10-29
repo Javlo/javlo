@@ -114,8 +114,7 @@ if (components.size() > 60 && request.getParameter("display-all") == null) {
 } else {
 
 for (IContentVisualComponent comp : components) {	 
-	String inputSuffix = "-"+comp.getId();
-	String helpText = componentContext.getHelpHTML(ctx, comp);
+	String inputSuffix = "-"+comp.getId();	
 	if (comp instanceof IContainer && ((IContainer)comp).isOpen(ctx)) {
 		closeContainerStack.push(((IContainer)comp).getCloseCode(ctx));
 	     %><%=((IContainer)comp).getOpenCode(ctx)%><%
@@ -145,7 +144,6 @@ for (IContentVisualComponent comp : components) {
           }
           %>
           <li class="<%if (!comp.isConfig(ctx)) {%>disabled<%} else {%>enabled<%}%>"><a class="link"<%=linkTag%>>${i18n.edit["global.settings"]}</a></li>          
-          <%if (helpText != null) {%><li><a href="#tab3<%=inputSuffix%>">${i18n.edit["global.help"]}</a></li><%}%>
           <%if (admin) {%><li><a href="#tab4<%=inputSuffix%>">raw</a></li><%}%>
       </ul>
       <div class="header-action"><%
@@ -155,6 +153,7 @@ for (IContentVisualComponent comp : components) {
       	 String actionURL = URLHelper.createURL(ctx, params);
       	 if (!ctx.isEditPreview() && AdminUserSecurity.getInstance().canModifyConponent(ctx, comp.getId())) {%><a class="delete ajax" title="${i18n.edit['global.delete']}" href="<%=actionURL%>"></a><%}
       	 if (!ctx.isEditPreview()) {%><a class="copy ajax" title="${i18n.edit['content.copy']}" href="${info.currentURL}?webaction=copy&id=<%=comp.getId()%>"></a><%}%>
+      	 <%if(comp.isHelpURL(ctx)) {%><a class="help" title="help" target="_blanck" href="<%=comp.getHelpURL(ctx)%>"></a><%}%>
       </div>
       <div class="header-info">
       	<%
@@ -181,10 +180,7 @@ for (IContentVisualComponent comp : components) {
       	<%if (comp.getConfigMessage(ctx) != null) {%><div class="alert alert-<%=comp.getConfigMessage(ctx).getBootstrapType()%>" role="alert"><%=comp.getConfigMessage(ctx)%></div><%}
       	%><%=comp.getXHTMLConfig(ctx)%>
       </div>
-      <%if (helpText != null) {%>
-      <div id="tab3<%=inputSuffix%>" class="help">
-      	<%=helpText%>
-      </div><%}%><%if (admin) {%>
+      <%if (admin) {%>
       <div id="tab4<%=inputSuffix%>" class="help">
       	<textarea rows="5" cols="10" id="raw_value_<%=comp.getId()%>" name="" onchange="var item=jQuery('#raw_value_<%=comp.getId()%>'); item.attr('name', item.attr('id'));"><%=comp.getValue(ctx)%></textarea>
       </div><%}%>

@@ -2,6 +2,11 @@
 	max-width: none; /* hack ie 9 */
 }
 
+i.mce-ico {
+	padding-top: 2px;
+	height: 18px;
+}
+
 #jv_escape_menu {
 	display: none;
 }

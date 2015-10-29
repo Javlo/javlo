@@ -159,6 +159,15 @@ public class StringHelper {
 	public static String asBase64(int value) {
 		return asBase64(JavaHelper.intToByteArray(value));
 	}
+	
+	/**
+	 * generate a base 64 string with a long
+	 * 
+	 * @return a unique id.
+	 */
+	public static String asBase64(long value) {
+		return asBase64(JavaHelper.longToByteArray(value));
+	}
 
 	/**
 	 * change the file extension of the path

@@ -192,7 +192,7 @@ public class Image extends AbstractFileComponent implements IImageTitle, IPrevie
 		String url;
 		if (getFileName().trim().length() > 0) {
 			url = URLHelper.createTransformURL(ctx, getPage(), getResourceURL(ctx, getFileName()), "list");
-			url = URLHelper.addParam(url, "hash", getStaticInfo(ctx).getVersionHash());
+			url = URLHelper.addParam(url, "hash", getStaticInfo(ctx).getVersionHash(ctx));
 			out.println("<img src=\"" + url + "\" />&nbsp;");
 			if (!isFromShared(ctx)) {
 				out.println("<div class=\"focus-point\">x</div>");
@@ -224,7 +224,7 @@ public class Image extends AbstractFileComponent implements IImageTitle, IPrevie
 					String previewURL = URLHelper.createTransformURL(ctx, getPage(), getResourceURL(ctx, image), "preview");
 					previewURL = URLHelper.addParam(previewURL, "CRC32", "" + staticInfo.getCRC32());
 					url = URLHelper.createTransformURL(ctx, getPage(), getResourceURL(ctx, image), "list");
-					url = URLHelper.addParam(url, "hash", staticInfo.getVersionHash());
+					url = URLHelper.addParam(url, "hash", staticInfo.getVersionHash(ctx));
 					String id = "image_name_select__" + getId();
 					// if (i < maxDisplayedImage || isSelectedImage) {
 					out.print("<div " + selected + ">");

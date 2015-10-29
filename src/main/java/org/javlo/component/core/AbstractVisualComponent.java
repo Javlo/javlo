@@ -63,7 +63,10 @@ import org.javlo.navigation.PageBean;
 import org.javlo.rendering.Device;
 import org.javlo.service.PersistenceService;
 import org.javlo.service.RequestService;
+import org.javlo.servlet.IVersion;
+import org.javlo.user.AdminUserFactory;
 import org.javlo.user.AdminUserSecurity;
+import org.javlo.user.User;
 import org.javlo.utils.DebugListening;
 import org.javlo.utils.SuffixPrefix;
 
@@ -265,8 +268,18 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 
 	protected String getBaseHelpURL(ContentContext ctx) {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-		String helpURL = globalContext.getHelpURL().replace("${language}", globalContext.getEditLanguage(ctx.getRequest().getSession()));
+		String helpURL = globalContext.getHelpURL();
+		if(helpURL.contains("${language}")) {
+			helpURL = helpURL.replace("${language}", globalContext.getEditLanguage(ctx.getRequest().getSession()));
+		} else {
+			helpURL = URLHelper.mergePath(helpURL, 'v'+IVersion.VERSION.substring(0,3).replace('.', '-'), globalContext.getEditLanguage(ctx.getRequest().getSession()));
+		}
 		return helpURL;
+	}
+	
+	@Override
+	public boolean isHelpURL(ContentContext ctx) {
+		return !StringHelper.isEmpty(ctx.getGlobalContext().getHelpURL());
 	}
 
 	@Override
@@ -845,24 +858,29 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	}
 
 	@Override
-	public final String getHelpURL(ContentContext ctx, String lang) {
+	public final String getHelpURL(ContentContext ctx) {
+		User user = AdminUserFactory.createUserFactory(ctx.getGlobalContext(), ctx.getRequest().getSession()).getCurrentUser(ctx.getRequest().getSession());
+		String lang = "en";
+		if (user.getUserInfo().getPreferredLanguage().length > 0) {
+			lang = user.getUserInfo().getPreferredLanguage()[0];
+		}
 		if (getBaseHelpURL(ctx) == null || getBaseHelpURL(ctx).trim().length() == 0) {
 			return null;
 		}
-
-		String baseURL;
-
-		baseURL = getBaseHelpURL(ctx).replaceFirst("/view/", "/page/");
-
+		String baseURL = getBaseHelpURL(ctx);
 		ContentContext lgCtx = new ContentContext(ctx);
 		lgCtx.setAllLanguage(lang);
 		String url = URLHelper.mergePath(baseURL, getHelpURI(ctx));
 		return url;
 
 	}
+	
+	protected String getHelpType() {
+		return getType();
+	}
 
 	protected String getHelpURI(ContentContext ctx) {
-		return "/components/" + getType() + ".html";
+		return "/components/" + getHelpType() + ".html";
 	}
 
 	@Override

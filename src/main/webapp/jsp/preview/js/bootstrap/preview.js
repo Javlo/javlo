@@ -62,6 +62,9 @@ editPreview.openModal = function (title, url) {
 		pjq('#previewModalTitle').html('');
 		pjq('#preview-modal-frame').attr("src", pjq('#preview-modal-frame').data("wait"));
 	});
+	var modalMargin = parseInt(pjq('#preview-modal .modal-dialog').css("margin-top").replace("px", ""))*2;
+	var bodyPadding = parseInt(pjq('#preview-modal .modal-body').css("padding-top").replace("px", ""))+parseInt(pjq('#preview-modal .modal-body').css("padding-bottom").replace("px", ""));
+	pjq('#preview-modal .modal-body iframe').height(pjq(window).height()-(pjq('#preview-modal .modal-header').outerHeight(true)+modalMargin+bodyPadding));
 }
 
 editPreview.updatePDFPosition = function() {
@@ -196,7 +199,8 @@ editPreview.initPreview = function() {
 		pjq("#preview-layer").on('click', function (event) {
 			var compId = pjq(this).data("comp").attr("id").substring(3);
 			var editURL = editPreviewURL + "&comp_id=" + compId;
-			editPreview.openModal(i18n_preview_edit, editURL);		
+			editPreview.openModal(i18n_preview_edit, editURL);	
+			
 	    });
 		pjq('#preview-layer .btn-delete').on('click', function (e) {
 			editPreview.layerOver(null);
@@ -300,8 +304,10 @@ editPreview.initPreview = function() {
 		    	editPreview.layerOver(null, null, true);
 		    	return false;
 		    });
-		    el.addEventListener('mouseover', function (event) {	    	
-		    	editPreview.layerOver(this, null, false);
+		    el.addEventListener('mouseover', function (event) {
+		    	if (!event.ctrlKey) {
+		    		editPreview.layerOver(this, null, false);
+		    	}
 		    });
 		    el.addEventListener('drop', function (event) {
 				event.preventDefault();

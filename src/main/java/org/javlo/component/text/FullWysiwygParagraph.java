@@ -12,6 +12,11 @@ public class FullWysiwygParagraph extends WysiwygParagraph {
 	}
 	
 	@Override
+	protected String getHelpType() {	
+		return super.getType();
+	}
+	
+	@Override
 	protected String getEditorComplexity(ContentContext ctx) {
 		return getConfig(ctx).getProperty("complexity", "high");
 	}

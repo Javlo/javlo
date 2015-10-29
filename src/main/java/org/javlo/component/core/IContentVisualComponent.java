@@ -545,7 +545,9 @@ public interface IContentVisualComponent extends Comparable<IContentVisualCompon
 	 *            the langage of the edit interface
 	 * @return url to a help page or null if no help page defined
 	 */
-	public String getHelpURL(ContentContext ctx, String lang);
+	public String getHelpURL(ContentContext ctx);
+	
+	public boolean isHelpURL(ContentContext ctx);
 
 	/**
 	 * if you set true the page is refresh after update

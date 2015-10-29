@@ -1257,10 +1257,22 @@ public class URLHelper extends ElementaryURLHelper {
 		return outPath;
 	}
 
-	public static String getFileTypeURL(ContentContext ctx, String fileType, boolean folder) {
+	public static String getFileTypeURL(ContentContext ctx, File file) {
+		String fileType = StringHelper.getFileExtension(file.getName());
+		boolean folder = file.isDirectory();
 		String imageFolder = MINETYPE_FOLDER;
 		if (folder) {
-			return createStaticURL(ctx, imageFolder + "application-folder.svg");
+			if (file.listFiles().length==0) {
+				return createStaticURL(ctx, imageFolder + "folder-empty.svg");
+			} else {
+				if (file.getName().contains("import")) {					
+					return createStaticURL(ctx, imageFolder + "folder-download.svg");
+				} else if (StringHelper.isImage(file.listFiles()[0].getName())) {
+					return createStaticURL(ctx, imageFolder + "folder-pictures.svg");
+				} else {
+					return createStaticURL(ctx, imageFolder + "folder-documents.svg");
+				}
+			}
 		} else {
 			String mineType = ResourceHelper.getFileExtensionToMineType(fileType).replace('/', '-').toLowerCase();
 			File imageFile = new File(URLHelper.mergePath(ctx.getRequest().getSession().getServletContext().getRealPath(imageFolder), mineType + ".svg"));

@@ -266,8 +266,8 @@ public class ResourceHelper {
 		}
 		FileUtils.writeStringToFile(file2, content, ContentContext.CHARACTER_ENCODING);
 	}
-	
-	public static void copyDir (File dir1, File dir2, boolean overwrite, FileFilter filter) throws IOException {
+
+	public static void copyDir(File dir1, File dir2, boolean overwrite, FileFilter filter) throws IOException {
 		if (dir1.isFile()) {
 			if (dir2.exists() && !overwrite) {
 				return;
@@ -277,7 +277,7 @@ public class ResourceHelper {
 			}
 		} else {
 			for (File child : dir1.listFiles()) {
-				copyDir(child, new File (dir2.getAbsolutePath()+'/'+child.getName()), overwrite, filter);
+				copyDir(child, new File(dir2.getAbsolutePath() + '/' + child.getName()), overwrite, filter);
 			}
 		}
 	}
@@ -315,7 +315,8 @@ public class ResourceHelper {
 	 * Standart method to format the checksum into a {@link String}. <br/>
 	 * This method is private because, only the following functions can call it:
 	 * {@link #getChecksumInputStream(InputStream)},
-	 * {@link #getChecksumResult(InputStream)}, {@link #computeChecksum(File)} <br/>
+	 * {@link #getChecksumResult(InputStream)}, {@link #computeChecksum(File)}
+	 * <br/>
 	 * and because the implementation of the format can be changed in future.
 	 * 
 	 * @param crc32
@@ -436,7 +437,8 @@ public class ResourceHelper {
 	/**
 	 * Add a checksum computing layer to the given {@link InputStream}. <br/>
 	 * Give the returned {@link InputStream} to
-	 * {@link #getChecksumResult(InputStream)} to retrieve the checksum result. <br/>
+	 * {@link #getChecksumResult(InputStream)} to retrieve the checksum result.
+	 * <br/>
 	 * The following functions are complementary:
 	 * {@link #getChecksumResult(InputStream)}, {@link #computeChecksum(File)},
 	 * {@link #formatChecksum(long)}
@@ -560,6 +562,8 @@ public class ResourceHelper {
 			return "image/JPEG";
 		} else if (ext.equals("mpg") || ext.equals("mpeg") || ext.equals("mpe")) {
 			return "video/mpeg";
+		} else if (ext.equals("svg")) {
+			return "image/svg+xml";
 		} else if (ext.equals("mp4")) {
 			return "video/mp4";
 		} else if (ext.equals("avi") || ext.equals("wmv")) {
@@ -584,10 +588,14 @@ public class ResourceHelper {
 			return "text/html";
 		} else if (ext.equals("swf")) {
 			return "application/x-shockwave-flash";
+		} else if (ext.equals("zip")) {
+			return "application/zip";
 		} else if (ext.equals("properties")) {
 			return "text/text";
 		} else if (ext.equals("xls")) {
 			return "application/vnd.ms-excel";
+		} else if (ext.equals("ppt")) {
+			return "application/vnd.ms-powerpoint";
 		} else if (ext.equals("xlsx")) {
 			return "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
 		} else if (ext.equals("doc")) {
@@ -739,7 +747,8 @@ public class ResourceHelper {
 
 	public static boolean isResourceURL(ContentContext ctx, String url) {
 		String startURL = URLHelper.createResourceURL(ctx, "/");
-		return url.startsWith(startURL);
+		String shortURL = URLHelper.createStaticURL(ctx, ElementaryURLHelper.IMG_SERVLET_PATH);
+		return url.startsWith(shortURL) || url.startsWith(startURL);
 	}
 
 	public static boolean isTransformURL(ContentContext ctx, String url) throws Exception {
@@ -911,9 +920,9 @@ public class ResourceHelper {
 		// delete old ref in cache
 		String fromDataFolder = file.getAbsolutePath().replace(globalContext.getDataFolder(), "");
 		FileCache.getInstance(ctx.getRequest().getSession().getServletContext()).delete(fromDataFolder);
-		
+
 		PersistenceService.getInstance(globalContext).setAskStore(true);
-		ContentService.clearCache(ctx, globalContext);		
+		ContentService.clearCache(ctx, globalContext);
 	}
 
 	/**

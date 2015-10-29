@@ -943,6 +943,13 @@ ul,li {
 	right: 15px;
 }
 
+.component .header-action .help {
+	background: url("../images/icons/help.png") no-repeat scroll 0 0
+		transparent;
+		right: 25px;
+		padding-left: 0;
+}
+
 .component .header-info {
 	display: block;
 	position: absolute;
@@ -1343,17 +1350,12 @@ body.previewEdit {
     width: 535px;    
 }
 
-.form-list li.select {
+.form-list li.small {
 	width: auto;
 }
 
-.form-list li.select .title {
+.form-list li.small .title {
 	padding-right: 12px; 
-}
-
-.form-list li.select .line, .form-list li.select .last, .form-list li.select .popularity {
-	display: none;
-	
 }
 
 .form-list .title span a {
@@ -1375,10 +1377,34 @@ body.previewEdit {
 	text-align: center;
 }
 
+.small .download {
+	width: 140px;
+	height: 200px;
+}
+
+.small .download img {
+	width: 100%;
+}
+
 .form-list .download a {
 	display: block;
 	line-height: 220px;	
 	vertical-align: middle;
+}
+
+.small .download a {
+	line-height: normal;
+}
+
+.form-list .download .label {
+	width: 100%;
+	overflow: hidden;
+}
+
+.form-list .download .label a {
+	display: blok;
+	text-align: center;
+	line-height: normal;
 }
 
 .form-list .download a img {
@@ -1449,16 +1475,6 @@ body.previewEdit {
 
 .one_half {
 	width: 46%;
-}
-
-.download.file a {
-	margin-top: 86px;	
-	background-image: url('../images/filemanager/icons-big.png');
-	background-repeat: no-repeat;
-	background-position: center top;	
-	width: 220px;
-	height: 48px;
-	
 }
 
 .download.pdf a {

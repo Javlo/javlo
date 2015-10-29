@@ -43,7 +43,6 @@ import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
 import org.javlo.module.content.Edit;
 import org.javlo.module.core.Module;
-import org.javlo.module.core.ModuleException;
 import org.javlo.module.core.ModulesContext;
 import org.javlo.module.file.FileModuleContext;
 import org.javlo.module.mailing.MailingModuleContext;
@@ -53,7 +52,6 @@ import org.javlo.navigation.MenuElement;
 import org.javlo.remote.IRemoteResource;
 import org.javlo.service.PersistenceService;
 import org.javlo.service.RequestService;
-import org.javlo.service.exception.ServiceException;
 import org.javlo.servlet.zip.ZipManagement;
 import org.javlo.template.Template;
 import org.javlo.template.TemplateFactory;
@@ -453,17 +451,16 @@ public class TemplateAction extends AbstractModuleAction {
 	}
 
 	public static String performSelectTemplate(RequestService rs, ContentContext ctx, EditContext editContext, MenuElement currentPage, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
-		
+
 		if (!Edit.checkPageSecurity(ctx)) {
 			messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("action.block"), GenericMessage.ERROR));
-			return null;
-		}
-		
-		String templateName = rs.getParameter("templateid", null);
-		currentPage.setTemplateId(templateName);
+		} else {
+			String templateName = rs.getParameter("templateid", null);
+			currentPage.setTemplateId(templateName);
 
-		MailingModuleContext mailingCtx = MailingModuleContext.getInstance(ctx.getRequest());
-		mailingCtx.setCurrentTemplate(null);
+			MailingModuleContext mailingCtx = MailingModuleContext.getInstance(ctx.getRequest());
+			mailingCtx.setCurrentTemplate(null);
+		}
 
 		if (ctx.isEditPreview()) {
 			ctx.setClosePopup(true);

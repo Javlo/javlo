@@ -3,6 +3,7 @@
  */
 package org.javlo.helper;
 
+import java.nio.ByteBuffer;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
@@ -33,6 +34,10 @@ public class JavaHelper {
 
 	public static final byte[] intToByteArray(int value) {
 		return new byte[] { (byte) (value >>> 24), (byte) (value >>> 16), (byte) (value >>> 8), (byte) value };
+	}
+	
+	public static final byte[] longToByteArray(long value) {
+		return ByteBuffer.allocate(Long.SIZE / Byte.SIZE).putLong(value).array();
 	}
 
 	public static final int byteArrayToInt(byte[] b) {

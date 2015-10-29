@@ -473,8 +473,6 @@ public class StaticInfo {
 
 	private File file;
 
-	private String versionHash = "0";
-
 	private Long crc32 = null;
 
 	private Date date;
@@ -994,8 +992,7 @@ public class StaticInfo {
 			content.removeAttribute(ctx, getKey("focus-zone-x"));
 		} else {
 			content.setAttribute(ctx, getKey("focus-zone-x"), "" + focusZoneX);
-		}
-		versionHash = StringHelper.getRandomId();
+		}		
 	}
 
 	/**
@@ -1010,8 +1007,7 @@ public class StaticInfo {
 			content.removeAttribute(ctx, getKey("focus-zone-y"));
 		} else {
 			content.setAttribute(ctx, getKey("focus-zone-y"), "" + focusZoneY);
-		}
-		versionHash = StringHelper.getRandomId();
+		}		
 	}
 
 	public void setLinkedPage(MenuElement linkedPage) {
@@ -1347,8 +1343,8 @@ public class StaticInfo {
 		}
 	}
 
-	public String getVersionHash() {
-		return versionHash + getCRC32();
+	public String getVersionHash(ContentContext ctx) {
+		return StringHelper.asBase64(getFocusZoneX(ctx)*getFocusZoneY(ctx)) + StringHelper.asBase64(getCRC32());
 	}
 
 	/*
@@ -1356,7 +1352,7 @@ public class StaticInfo {
 	 * (StringHelper.isImage(getFile().getName()) && getFile().exists()) { try {
 	 * imageMetadata = ImageMetadataReader.readMetadata(getFile()); } catch
 	 * (ImageProcessingException e) { logger.warning("[" + getFile() +
-	 * "] error : " + e.getMessage()); } catch (IOException e) {
+	 * "] error : " + e.getMessage()); ²} catch (IOException e) {
 	 * e.printStackTrace(); } } } return imageMetadata; }
 	 */
 
@@ -1504,4 +1500,5 @@ public class StaticInfo {
 	public void setStaticFolder(boolean staticFolder) {
 		this.staticFolder = staticFolder;
 	}
-}
+	
+	}

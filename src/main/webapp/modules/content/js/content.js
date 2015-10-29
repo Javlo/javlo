@@ -32,7 +32,6 @@ function loadWysiwyg(cssQuery, complexity, chooseFileURL) {
 		        "insertdatetime media table paste textcolor colorpicker"
 		    ],
 		    fontsize_formats: "10px 11px 12px 13px 14px 16px 18px 20px",
-		    //paste_word_valid_elements: "b,strong,i,em,h1,h2,h3,h4,h5,h6,table,tr,th,td,ul,ol,li,p,a,div",
 		    toolbar: "undo redo searchreplace | bold italic underline fontsizeselect forecolor backcolor | charmap | alignleft aligncenter alignright alignjustify | link | bullist numlist outdent indent"
 		});
 	} else if (complexity == "high") {		

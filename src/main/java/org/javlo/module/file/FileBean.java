@@ -127,7 +127,7 @@ public class FileBean {
 		if (StringHelper.isImage(getName())) {
 			return URLHelper.createTransformURL(ctx, (staticInfo.isStaticFolder()?globalContext.getStaticConfig().getStaticFolder():"") + staticInfo.getStaticURL(), "list") + "?ts=" + staticInfo.getFile().lastModified();
 		} else {
-			return URLHelper.getFileTypeURL(ctx, getFileExtension(), staticInfo.getFile().isDirectory());
+			return URLHelper.getFileTypeURL(ctx, staticInfo.getFile());
 		}
 	}
 

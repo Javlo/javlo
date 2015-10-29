@@ -2,19 +2,10 @@ package org.javlo.component.core;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-
-import org.javlo.context.ContentContext;
-import org.javlo.context.GlobalContext;
-import org.javlo.helper.NetHelper;
-import org.javlo.helper.StringHelper;
-import org.javlo.helper.URLHelper;
-import org.javlo.helper.XHTMLHelper;
-import org.javlo.utils.TimeMap;
 
 public class ComponentContext {
 
@@ -70,45 +61,5 @@ public class ComponentContext {
 	public static void clearPreparedComponent(HttpSession session) {
 		session.removeAttribute(INSERTION_COMPONENT_KEY);
 	}
-
-	private Map<String, String> getHelpCache(GlobalContext globalContext) {
-		final String KEY = "help-cache";
-		Map<String, String> helpCache = (Map<String, String>) globalContext.getAttribute(KEY);
-		if (helpCache == null) {
-			helpCache = new TimeMap<String, String>(24 * 60); // 1 day cache
-			globalContext.setAttribute(KEY, helpCache);
-		}
-		return helpCache;
-	}
-
-	public String getHelpHTML(ContentContext ctx, IContentVisualComponent comp) {
-		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-		String fullURL = comp.getHelpURL(ctx.getContextWithOtherRenderMode(ContentContext.PAGE_MODE), globalContext.getEditLanguage(ctx.getRequest().getSession()));
-		String url = fullURL;
-		if (fullURL == null) {
-			return null;
-		} else {
-			fullURL = fullURL + "?force-template=notemplate";
-		}
-		String helpCacheKey = comp.getType() + '-' + globalContext.getEditLanguage(ctx.getRequest().getSession());
-		String xhtml = getHelpCache(globalContext).get(helpCacheKey);
-		if (xhtml == null) {
-			logger.info("load help for component fullURL : " + fullURL);
-			try {
-				xhtml = NetHelper.readPage(fullURL, false);
-				if (xhtml != null && xhtml.trim().length() > 0) {
-					xhtml = XHTMLHelper.extractBody(xhtml);
-					url = URLHelper.changeMode(url, "");
-					xhtml = "<div class=\"help-link\"><a title=\"help : " + comp.getType() + "\" target=\"_blank\" href=\"" + url + "\">" + url + "</a></div>" + xhtml;
-				}
-			} catch (Exception e) {
-				logger.warning(e.getMessage());
-			}
-			getHelpCache(globalContext).put(helpCacheKey, StringHelper.neverNull(xhtml));
-		}
-		if (xhtml != null && xhtml.trim().length() == 0) {
-			xhtml = null;
-		}
-		return xhtml;
-	}
+		
 }
