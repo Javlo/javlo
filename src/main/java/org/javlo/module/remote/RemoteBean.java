@@ -102,7 +102,7 @@ public class RemoteBean implements Serializable {
 		return check(defaulSynchroCode, false);
 	}
 	public boolean check(String defaulSynchroCode, boolean forceLoadServerInfo) {
-		if (serverInfo == null || forceLoadServerInfo) {
+		if (serverInfo == null || serverInfo.isEmpty() || forceLoadServerInfo) {
 			Map<String, Object> serverInfoOut = new LinkedHashMap<String, Object>();
 			if (serverInfo != null) {
 				serverInfoOut.putAll(serverInfo);
@@ -113,6 +113,7 @@ public class RemoteBean implements Serializable {
 				if (synchroCodeLocal == null) {
 					synchroCodeLocal = defaulSynchroCode;
 				}
+				synchroCodeLocal = StringHelper.timedTokenGenerate(synchroCodeLocal, System.currentTimeMillis());
 				String srvUrl = url;
 				srvUrl = URLHelper.addParam(srvUrl, ContentContext.FORWARD_AJAX, "true");
 				srvUrl = URLHelper.addParam(srvUrl, "webaction", "data.serverInfo");
@@ -218,9 +219,9 @@ public class RemoteBean implements Serializable {
 	
 	public String getLatestChangeDisplay() {
 		if (isValid()) {
-			return StringHelper.renderTime(getLatestUnvalid());
-		} else {
 			return StringHelper.renderTime(getLatestValid());
+		} else {
+			return StringHelper.renderTime(getLatestUnvalid());
 		}
 	}
 

@@ -166,56 +166,53 @@ public class DataAction implements IAction {
 
 		String clientSynchroCode = requestService.getParameter(SYNCHRO_CODE_PARAM, null);
 
+		Map<String, Object> serverInfo = new LinkedHashMap<String, Object>();
+		serverInfo.put("version", IVersion.VERSION);
+
 		if (clientSynchroCode == null) {
 			logger.warning("no synchro code sent to webaction data.serverInfo");
-			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-			return null;
-		} else if (!clientSynchroCode.equals(staticConfig.getSynchroCode())) {
+			serverInfo.put("message", "No synchro code!");
+		} else if (!StringHelper.timedTokenValidate(clientSynchroCode, staticConfig.getSynchroCode(), 1, System.currentTimeMillis())) {
 			logger.warning("bad synchro code sent to webaction data.serverInfo");
-			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-			return null;
-		}
+			serverInfo.put("message", "Synchro code not valid!");
+		} else {
+			BeanHelper.extractPropertiesAsString(serverInfo, request, "remotePort", "remoteHost", "remoteAddr", "localAddr", "localName", "localPort", "serverName", "serverPort", "characterEncoding"
+					// , "contextPath"
+					);
+			serverInfo.put("contextKey", ctx.getGlobalContext().getContextKey());
+			serverInfo.put("systemUser", System.getProperty("user.name"));
 
-		Map<String, Object> serverInfo = new LinkedHashMap<String, Object>();
-		BeanHelper.extractPropertiesAsString(serverInfo, request, "remotePort", "remoteHost", "remoteAddr", "localAddr", "localName", "localPort", "serverName", "serverPort", "characterEncoding"
-		// , "contextPath"
-		);
-		serverInfo.put("contextKey", ctx.getGlobalContext().getContextKey());
-		serverInfo.put("version", IVersion.VERSION);
-		serverInfo.put("systemUser", System.getProperty("user.name"));
+			serverInfo.put("lastPublishDate", globalContext.getPublishDateLabel());
+			serverInfo.put("lastPublisher", globalContext.getLatestPublisher());
 
-		serverInfo.put("lastPublishDate", globalContext.getPublishDateLabel());
-		serverInfo.put("lastPublisher", globalContext.getLatestPublisher());
+			CountService countService = CountService.getInstance(ctx.getRequest().getSession().getServletContext());
+			serverInfo.put("countServiceCount", "" + countService.getCount());
+			serverInfo.put("countServiceAverage", "" + countService.getAverage());
 
-		CountService countService = CountService.getInstance(ctx.getRequest().getSession().getServletContext());
-		serverInfo.put("countServiceCount", "" + countService.getCount());
-		serverInfo.put("countServiceAverage", "" + countService.getAverage());
-
-		List<String> connectedUsers = new LinkedList<String>();
-		List<Principal> list = globalContext.getAllPrincipals();
-		for (Principal user : list) {
-			connectedUsers.add(user.getName());
-		}
-		serverInfo.put("connectedUsers", connectedUsers);
-
-		ctx.getAjaxData().put("serverInfo", serverInfo);
-
-		Map<String, Object> headersOut = new LinkedHashMap<String, Object>();
-		@SuppressWarnings("unchecked")
-		Enumeration<String> headers = request.getHeaderNames();
-		while (headers.hasMoreElements()) {
-			String headerName = headers.nextElement();
-			@SuppressWarnings("unchecked")
-			Enumeration<String> values = request.getHeaders(headerName);
-			List<String> valuesOut = new LinkedList<String>();
-			while (values.hasMoreElements()) {
-				String headerValue = values.nextElement();
-				valuesOut.add(headerValue);
+			List<String> connectedUsers = new LinkedList<String>();
+			List<Principal> list = globalContext.getAllPrincipals();
+			for (Principal user : list) {
+				connectedUsers.add(user.getName());
 			}
-			headersOut.put(headerName, valuesOut);
-		}
-		ctx.getAjaxData().put("requestHeaders", headersOut);
+			serverInfo.put("connectedUsers", connectedUsers);
 
+			Map<String, Object> headersOut = new LinkedHashMap<String, Object>();
+			@SuppressWarnings("unchecked")
+			Enumeration<String> headers = request.getHeaderNames();
+			while (headers.hasMoreElements()) {
+				String headerName = headers.nextElement();
+				@SuppressWarnings("unchecked")
+				Enumeration<String> values = request.getHeaders(headerName);
+				List<String> valuesOut = new LinkedList<String>();
+				while (values.hasMoreElements()) {
+					String headerValue = values.nextElement();
+					valuesOut.add(headerValue);
+				}
+				headersOut.put(headerName, valuesOut);
+			}
+			ctx.getAjaxData().put("requestHeaders", headersOut);
+		}
+		ctx.getAjaxData().put("serverInfo", serverInfo);
 		return null;
 	}
 

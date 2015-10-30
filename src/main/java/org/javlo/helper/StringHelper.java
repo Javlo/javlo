@@ -31,7 +31,6 @@ import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
@@ -120,6 +119,8 @@ public class StringHelper {
 	public static final Pattern RANGE_MATCHER_LOWER = Pattern.compile("^[-<]([0-9]+)$");
 	public static final Pattern RANGE_MATCHER_BETWEEN = Pattern.compile("^([0-9]+)-([0-9]+)$");
 	public static final Pattern RANGE_MATCHER_GREATER = Pattern.compile("^[+>]([0-9]+)$|^([0-9]+)[+>]$");
+
+	public static final long TIMED_TOKEN_DIVIDER = 1000 * 60; //Millis to minutes
 
 	public static String addSufixToFileName(String fileName, String sufix) {
 		return FilenameUtils.removeExtension(fileName) + sufix + "." + FilenameUtils.getExtension(fileName);
@@ -1117,7 +1118,7 @@ public class StringHelper {
 	 * @return
 	 */
 	public static boolean isLikeNumber(String str) {
-		str = str.replaceAll("€|\\$|\\.|\\,|\\%| ", "0");
+		str = str.replaceAll("ï¿½|\\$|\\.|\\,|\\%| ", "0");
 		return isDigit(str);
 	}
 	
@@ -1442,8 +1443,8 @@ public class StringHelper {
 
 	public static void main(String[] args) {
 		String str = "20 %";
-		str = str.replaceAll("€|\\$|\\.|\\,|\\%| ", "0");
-		//str = str.replaceAll("%|€|\\$", "9");
+		str = str.replaceAll("ï¿½|\\$|\\.|\\,|\\%| ", "0");
+		//str = str.replaceAll("%|ï¿½|\\$", "9");
 		System.out.println(str);
 	}
 
@@ -3402,6 +3403,26 @@ public class StringHelper {
 		} else {
 			return list.equals(item);
 		}
+	}
+
+	public static String timedTokenGenerate(String data, long timeInMillis) {
+		long now = timeInMillis / TIMED_TOKEN_DIVIDER;
+		return md5Hex(data + now);
+	}
+
+	public static boolean timedTokenValidate(String tokenData, String orignalData, int validityRangeInMinutes, long timeInMillis) {
+		if (tokenData == null) {
+			return false;
+		}
+		long now = timeInMillis / TIMED_TOKEN_DIVIDER;
+		long start = now - validityRangeInMinutes;
+		long end = now + validityRangeInMinutes;
+		for (long current = start; current <= end; current++) {
+			if (md5Hex(orignalData + current).equals(tokenData)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 }
