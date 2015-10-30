@@ -410,6 +410,10 @@ public class InfoBean {
 	public String getStaticRootURL() {
 		return URLHelper.createStaticURL(ctx, "/");
 	}
+	
+	public String getContextKey() {
+		return ctx.getGlobalContext().getContextKey();
+	}
 
 	public String getContextDownloadURL() {
 		return URLHelper.createStaticURL(ctx, "/context");

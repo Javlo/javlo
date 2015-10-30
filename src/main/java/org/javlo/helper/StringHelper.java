@@ -2705,7 +2705,7 @@ public class StringHelper {
 			return "";
 		}
 		value = value.replace("&", "&amp;");
-		return XHTMLHelper.escapeXML(removeTag(value).replace("\"", "&quot;"));
+		return XHTMLHelper.escapeXML(removeTag(value).replace("\"", "&quot;").replace("\n", ""));
 	}
 
 	/**

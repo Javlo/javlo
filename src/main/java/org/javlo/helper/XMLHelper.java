@@ -94,6 +94,9 @@ public class XMLHelper {
 					if (element.getDepth() > 1) {
 						changefreq = "monthly";
 					}
+					if (element.isReference(lgCtx)) {
+						changefreq = "daily";
+					}
 					out.println("<changefreq>" + changefreq + "</changefreq>");
 					out.println("<priority>" + element.getSiteMapPriority(lgCtx) + "</priority>");
 					out.println("</url>");

@@ -1177,6 +1177,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 
 		I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
 
+		out.println("<div class=\"row\"><div class=\"col-sm-8\">");
 		out.println("<input type=\"hidden\" name=\"" + getCompInputName() + "\" value=\"true\" />");
 
 		out.println("<fieldset class=\"config\">");
@@ -1254,8 +1255,6 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		if (isUITimeSelection(ctx)) {
 			out.println("<div class=\"line-inline\">");
 			out.println("<label>" + i18nAccess.getText("content.page-teaser.time-selection") + " : </label>");
-			// out.println(XHTMLHelper.getInputOneSelectFirstEnpty(getTimeSelectionInputName(null),
-			// getTimeSelectionOptions(), ""+getTimeSelection(), false));
 			for (String option : getTimeSelectionOptions()) {
 				String selected = "";
 				if (getTimeSelection().contains(option)) {
@@ -1268,6 +1267,8 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		}
 
 		out.println("</fieldset>");
+		
+		out.println("</div><div class=\"col-sm-4\">");
 
 		out.println("<fieldset class=\"order\">");
 		out.println("<legend>" + i18nAccess.getText("global.order") + "</legend>");
@@ -1298,6 +1299,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 			out.println("<label for=\"popularity\">" + i18nAccess.getText("content.page-teaser.order-popularity") + "</label></div>");
 		}
 		out.println("</fieldset>");
+		out.println("</div></div>"); // row
 
 		out.println("<fieldset class=\"page-list\">");
 		out.println("<legend>" + i18nAccess.getText("content.page-teaser.page-list") + "</legend>");

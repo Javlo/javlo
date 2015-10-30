@@ -94,13 +94,13 @@ ul.menu {
 	overflow: hidden;
 }
 
-.component input,.component textarea,.component select {
+/*.component input,.component textarea,.component select {
 	width: 60%;
-}
+}*/
 
-.row input, .row textarea, .row select {
+/*.row input, .row textarea, .row select {
 	width: 100%;
-}
+}*/
 
 .component input.color {
 	width: auto;
@@ -424,4 +424,8 @@ li.line {
 
 .validation-email input, .validation-email select {
 	width: 100%;	
+}
+
+.raw textarea {
+	width: 98%;
 }

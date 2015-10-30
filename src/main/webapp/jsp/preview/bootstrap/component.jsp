@@ -19,6 +19,7 @@
 	</div>
 </div>
 </c:if>
+<c:if test="${info.admin}"><button onclick="editPreview.openModal('Components', '${info.currentEditURL}?module=admin&context=${info.contextKey}&webaction=admin.previewEditComponent&previewEdit=true'); return false;" class="btn btn-default btn-xs pull-right"><span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span></button></c:if>
  <h2><span class="glyphicon glyphicon-briefcase" aria-hidden="true"></span>Content</h2>
 <div class="component-list height-to-bottom">
 <c:set var="cat" value="" />

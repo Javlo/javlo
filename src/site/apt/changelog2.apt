@@ -539,3 +539,15 @@ change log
  * page:${page.name} for create link to a page
  
  * amelioration of resource browser for full wysiwyg
+ 
+ * sitemap.xml page with reference is considered of daily updated
+ 
+ * wysiwyg height optimisation for HD screen
+ 
+ * pdfbox update version to 1.8.10
+ 
+ * page reference layout on 2 cols in edition
+ 
+ * filter children page correction + title on option tag
+ 
+ * change component list directly from preview (if admin)

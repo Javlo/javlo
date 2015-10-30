@@ -23,6 +23,10 @@
 	overflow: hidden;
 }
 
+.max-width {
+	width: 100%;
+}
+
 .closer .one_half, .closer .one_third, .closer .two_third, .closer .three_fourth, .closer .one_fourth, .closer .one_fifth, .closer .two_fifth, .closer .three_fifth, .closer .four_fifth, .closer .one_sixth, .closer .five_sixth {
     margin-right: 2%;
 }

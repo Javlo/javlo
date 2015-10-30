@@ -209,15 +209,15 @@ public class XHTMLNavigationHelper {
 		StringWriter res = new StringWriter();
 		PrintWriter out = new PrintWriter(res);
 		if (filter) {
-			out.println("<div class=\"row\"><div class=\"col-sm-3\"><input type=\"text\" data-filtered=\""+id+"\" class=\"form-control filter\" placeholder=\"search...\" /></div><div class=\"col-sm-9\">");
+			out.println("<div class=\"row\"><div class=\"col-sm-3\"><input type=\"text\" data-filtered=\""+id+"\" class=\"form-control filter max-width\" placeholder=\"filter...\" /></div><div class=\"col-sm-9\">");
 		}
-		out.println("<select class=\"form-control\" name=\"" + id + "\" id=\"" + id + "\">");
+		out.println("<select class=\"form-control max-width\" name=\"" + id + "\" id=\"" + id + "\">");
 		MenuElement elem = rootPage;		
 		for (MenuElement page : elem.getAllChildren()) {
 			if ((currentValue != null) && (currentValue.equals(page.getPath()))) {
-				out.println("<option data-search=\""+StringHelper.toHTMLAttribute(page.getTitle(ctx))+"\" value=\"" + page.getPath() + "\" selected=\"true\">");
+				out.println("<option title=\""+StringHelper.toXMLAttribute(page.getTitle(ctx))+"\" value=\"" + page.getPath() + "\" selected=\"true\">");
 			} else {
-				out.print("<option data-search=\""+StringHelper.toHTMLAttribute(page.getTitle(ctx))+"\" value=\"" + page.getPath() + "\">");
+				out.print("<option title=\""+StringHelper.toXMLAttribute(page.getTitle(ctx))+"\" value=\"" + page.getPath() + "\">");
 			}
 			out.print(page.getPath());
 			out.println("</option>");

@@ -751,8 +751,8 @@ public class AdminAction extends AbstractModuleAction {
 		/*** current context ***/
 
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+		currentModule.restoreToolsRenderer();
 		if (!globalContext.isMaster()) {
-
 			User user = ctx.getCurrentEditUser();
 			if (user.getUserInfo().getToken() != null && user.getUserInfo().getToken().length() > 1) {
 				Map<String, String> params = new HashMap<String, String>();
@@ -765,8 +765,11 @@ public class AdminAction extends AbstractModuleAction {
 				ctx.getRequest().setAttribute("editAutoURL", editAutoURL);
 				ctx.getRequest().setAttribute("qrcode", qrcodeImg);
 			}
-
-			editGlobalContext(ctx, currentModule, globalContext);
+			if (request.getAttribute("componentsPreview") == null) {
+				editGlobalContext(ctx, currentModule, globalContext);
+			} else {
+				currentModule.setToolsRenderer(null);
+			}
 			currentModule.setBreadcrumb(false);
 		} else {
 			AdminUserSecurity adminUserSecurity = AdminUserSecurity.getInstance();
@@ -957,6 +960,14 @@ public class AdminAction extends AbstractModuleAction {
 		}
 		return null;
 	}
+	
+	public static final String performPreviewEditComponent(HttpServletRequest request, RequestService requestService, ContentContext ctx, Module currentModule) throws FileNotFoundException, IOException, NoSuchMethodException, ClassNotFoundException, IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException {
+		request.setAttribute("componentsPreview", true);
+		currentModule.setRenderer("/jsp/components.jsp");
+		currentModule.setToolsRenderer("/jsp/components_actions.jsp");
+		return null;
+	}
+	
 
 	@Override
 	public Boolean haveRight(HttpSession session, User user) throws ModuleException {
@@ -1244,7 +1255,12 @@ public class AdminAction extends AbstractModuleAction {
 		return msg;
 	}
 
-	public static final String performComponentsSelect(HttpServletRequest request, ContentContext ctx, RequestService requestService, MessageRepository messageRepository, I18nAccess i18nAccess, Module currentModule) throws Exception {
+	public static final String performComponentsSelect(HttpServletRequest request, ContentContext ctx, User user, RequestService requestService, MessageRepository messageRepository, I18nAccess i18nAccess, Module currentModule) throws Exception {
+		
+		if (!AdminUserSecurity.getInstance().isAdmin(user)) {
+			return "no suffisant right!";
+		}
+		
 		String msg = null;
 		if (requestService.getParameter("back", null) != null) {
 			currentModule.restoreAll();
@@ -1271,6 +1287,9 @@ public class AdminAction extends AbstractModuleAction {
 				}
 			} else {
 				msg = "bad request structure need 'context' as parameter.";
+			}
+			if (ctx.isEditPreview()) {
+				ctx.setClosePopup(true);
 			}
 		}
 		return msg;

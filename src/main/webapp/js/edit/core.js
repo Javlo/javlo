@@ -184,10 +184,8 @@ jQuery(document).ready(function() {
 		var target = jQuery('#'+targetId);
 		target.find('option').each(function() {
 			var option = jQuery(this);
-			var text = option.val() +' ' + option.data('search');
-			console.log("text = "+text);
-			console.log("input.value = "+input.val());
-			if (!text.contains(input.val())) {
+			var text = option.val() + ' ' + option.attr('title');
+			if (text.indexOf(input.val()) < 0) {
 				option.addClass('hidden');
 			} else {
 				option.removeClass('hidden');

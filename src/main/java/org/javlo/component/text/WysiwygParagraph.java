@@ -37,7 +37,7 @@ public class WysiwygParagraph extends AbstractVisualComponent {
 		finalCode.append(getDebugHeader(ctx));
 		finalCode.append(getSpecialInputTag());
 		finalCode.append("<textarea class=\"tinymce-light\" id=\"" + getContentName() + "\" name=\"" + getContentName() + "\"");
-		finalCode.append(" rows=\"30\">");
+		finalCode.append(" rows=\"25\">");
 		
 		String hostPrefix = InfoBean.getCurrentInfoBean(ctx).getAbsoluteURLPrefix();		
 		finalCode.append(getValue().replace("${info.hostURLPrefix}", hostPrefix));

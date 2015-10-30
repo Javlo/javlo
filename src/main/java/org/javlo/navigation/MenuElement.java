@@ -40,7 +40,9 @@ import org.javlo.component.image.IImageTitle;
 import org.javlo.component.image.ImageBean;
 import org.javlo.component.image.ImageTitleBean;
 import org.javlo.component.image.SortImageTitleByPriority;
+import org.javlo.component.links.ChildrenLink;
 import org.javlo.component.links.PageMirrorComponent;
+import org.javlo.component.links.PageReferenceComponent;
 import org.javlo.component.meta.Category;
 import org.javlo.component.meta.DateComponent;
 import org.javlo.component.meta.EventDefinitionComponent;
@@ -4665,6 +4667,23 @@ public class MenuElement implements Serializable, IPrintInfo {
 	
 	public boolean isEditabled(ContentContext ctx) throws Exception {
 		return Edit.checkPageSecurity(ctx, parent);
+	}
+	
+	/**
+	 * is a page with reference to other page, like page reference of children link
+	 * @param ctx
+	 * @return
+	 * @throws Exception 
+	 */
+	public boolean isReference(ContentContext ctx) throws Exception {
+		ContentElementList content = getLocalContent(ctx);
+		while (content.hasNext(ctx)) {
+			IContentVisualComponent comp = content.next(ctx);
+			if (comp.getType().equals(ChildrenLink.TYPE) || comp.getType().equals(PageReferenceComponent.TYPE)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 }
