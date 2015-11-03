@@ -15,7 +15,7 @@ import java.util.Set;
 
 import javax.mail.internet.InternetAddress;
 
-import org.javlo.helper.Logger;
+import org.javlo.helper.LocalLogger;
 import org.javlo.helper.StringHelper;
 
 /**
@@ -301,7 +301,7 @@ public class UserInfo implements Comparable<IUserInfo>, IUserInfo, Serializable 
 					res[i] = value;
 				}
 			} catch (Exception e) {
-				Logger.log(e);
+				LocalLogger.log(e);
 			}
 		}
 		return res;
@@ -328,7 +328,7 @@ public class UserInfo implements Comparable<IUserInfo>, IUserInfo, Serializable 
 					Method method = this.getClass().getMethod(methodName, new Class[] { Date.class });
 					method.invoke(this, new Object[] { StringHelper.parseTime(values[i]) });
 				} catch (Exception e2) {
-					Logger.log(e2);
+					LocalLogger.log(e2);
 				}
 			}
 		}

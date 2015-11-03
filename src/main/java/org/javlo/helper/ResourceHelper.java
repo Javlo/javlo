@@ -67,7 +67,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.util.PDFTextStripper;
+import org.apache.pdfbox.text.PDFTextStripper;
 import org.apache.poi.hwpf.extractor.WordExtractor;
 import org.javlo.component.core.ComponentFactory;
 import org.javlo.component.core.IContentVisualComponent;
@@ -537,6 +537,7 @@ public class ResourceHelper {
 				}
 			} else if (ext.toLowerCase().equals("pdf")) {
 				PDDocument doc = PDDocument.load(file);
+				
 				PDFTextStripper text = new PDFTextStripper();
 				outContent = text.getText(doc);
 				doc.close();
@@ -1441,8 +1442,9 @@ public class ResourceHelper {
 
 	public static List<String> removePrefixFromPathList(Collection<? extends Object> pathList, String prefix) {
 		List<String> outPathList = new LinkedList<String>();
+		prefix =  StringHelper.cleanPath(prefix);
 		for (Object path : pathList) {
-			outPathList.add(StringUtils.replaceOnce(path.toString(), prefix, ""));
+			outPathList.add(StringUtils.replaceOnce(StringHelper.cleanPath(path.toString()),prefix, ""));
 		}
 		return outPathList;
 	}

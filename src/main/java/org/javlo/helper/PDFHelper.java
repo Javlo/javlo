@@ -2,12 +2,13 @@ package org.javlo.helper;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.PDPageTree;
+import org.apache.pdfbox.rendering.ImageType;
+import org.apache.pdfbox.rendering.PDFRenderer;
 
 public class PDFHelper {
 
@@ -18,10 +19,11 @@ public class PDFHelper {
 		PDDocument doc = null;
 		try {
 			doc = PDDocument.load(pdfFile);
-			@SuppressWarnings("unchecked")
-			List<PDPage> pages = doc.getDocumentCatalog().getAllPages();
-			if (pages.size() > 0) {
-				out = pages.get(0).convertToImage(BufferedImage.TYPE_INT_ARGB, 300);
+			PDFRenderer pdfRenderer = new PDFRenderer(doc);			
+			PDPageTree pages = doc.getDocumentCatalog().getPages();
+			int pageCounter = 0;
+			if (pages.getCount() > 0) {
+				return pdfRenderer.renderImageWithDPI(pageCounter, 300, ImageType.RGB);				
 			}
 		} catch (Exception e) {
 			logger.log(Level.SEVERE, "Exception when generating PDF thumbnail: " + e.getMessage(), e);

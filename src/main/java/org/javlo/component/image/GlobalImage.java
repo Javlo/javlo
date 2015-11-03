@@ -33,6 +33,7 @@ import org.javlo.exception.ResourceNotFoundException;
 import org.javlo.helper.ComponentHelper;
 import org.javlo.helper.ElementaryURLHelper;
 import org.javlo.helper.NetHelper;
+import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.helper.XHTMLHelper;
@@ -204,7 +205,11 @@ public class GlobalImage extends Image implements IImageFilter {
 	public void prepareView(ContentContext ctx) throws Exception {
 		// ctx.setCurrentTemplate(null); // reset template
 		super.prepareView(ctx);
-		ctx.getRequest().setAttribute("link", getLink());
+		String link = getLink();
+		if (link.startsWith('/'+ctx.getGlobalContext().getStaticConfig().getStaticFolder())) {
+			link = URLHelper.createResourceURL(ctx, link);
+		}
+		ctx.getRequest().setAttribute("link", link);
 		String imageURL = getImageURL(ctx);
 		if (imageURL != null) {
 			ctx.getRequest().setAttribute("image", imageURL);
@@ -226,10 +231,25 @@ public class GlobalImage extends Image implements IImageFilter {
 		if (width >= 0) {
 			ctx.getRequest().setAttribute("imageWidth", width);
 		}
+		
+	}
+	
+	protected String getNewLinkParamName() {
+		return "_new-link-"+getId();
 	}
 	
 	@Override
 	protected String getEditXHTMLCode(ContentContext ctx) throws Exception {
+		
+		if (ctx.getRequest().getParameter("path") != null) {
+			String newFolder = URLHelper.removeStaticFolderPrefix(ctx, ctx.getRequest().getParameter("path"));
+			newFolder = newFolder.replaceFirst("/" + ctx.getGlobalContext().getStaticConfig().getImageFolderName() + '/', "");
+			if (newFolder.trim().length() > 1 && !getDirSelected().equals(newFolder)) {
+				setDirSelected(newFolder);
+				setFileName("");
+			}
+		}
+		
 		StringBuffer finalCode = new StringBuffer();
 		finalCode.append(getSpecialInputTag());
 
@@ -279,10 +299,35 @@ public class GlobalImage extends Image implements IImageFilter {
 			finalCode.append("</fieldset>");
 		}
 
+		String folder = getDirSelected();
+		Map<String, String> filesParams = new HashMap<String, String>();
+		String path = URLHelper.mergePath(FileAction.getPathPrefix(ctx), StaticConfig.getInstance(ctx.getRequest().getSession()).getImageFolderName(), folder);
+		filesParams.put("path", path);
+		filesParams.put("webaction", "changeRenderer");
+		filesParams.put("page", "meta");
+		String backURL = URLHelper.createModuleURL(ctx, ctx.getPath(), "content");
+		if (ctx.isEditPreview()) {
+			backURL = URLHelper.addParam(backURL, "comp_id", "cp_" + getId());
+			backURL = URLHelper.addParam(backURL, "webaction", "editPreview");
+		}
+		backURL = URLHelper.addParam(backURL, "previewEdit", ctx.getRequest().getParameter("previewEdit"));
+		filesParams.put(ElementaryURLHelper.BACK_PARAM_NAME, backURL+'&'+getNewLinkParamName()+"=/"+ctx.getGlobalContext().getStaticConfig().getStaticFolder()+'/');
+
+		String staticLinkURL = URLHelper.createModuleURL(ctx, ctx.getPath(), "file", filesParams);
+		filesParams.remove(ElementaryURLHelper.BACK_PARAM_NAME);
+		filesParams.put(ElementaryURLHelper.BACK_PARAM_NAME, backURL);
 		if (isLink()) {
 			finalCode.append("<div class=\"line\"><label for=\"img_link_" + getId() + "\">");
 			finalCode.append(getImageLinkTitle(ctx));
-			finalCode.append(" : </label><input class=\"form-control\" id=\"img_link_" + getId() + "\" name=\"" + getLinkXHTMLInputName() + "\" type=\"text\" value=\"" + getLink() + "\"/></div>");
+			String linkToResources = "<a class=\"browse-link btn btn-default btn-xs\" href=\""+URLHelper.addParam(staticLinkURL, "select", "back")+"\">"+i18nAccess.getText("content.goto-static")+"</a>";
+			String link = getLink();
+			if (ctx.getRequest().getParameter(getNewLinkParamName()) != null) {
+				if (!ctx.getRequest().getParameter(getNewLinkParamName()).equals('/'+ctx.getGlobalContext().getStaticConfig().getStaticFolder()+'/')) {
+					link = ctx.getRequest().getParameter(getNewLinkParamName());
+				}
+			}
+			
+			finalCode.append(" : </label><input class=\"form-control\" id=\"img_link_" + getId() + "\" name=\"" + getLinkXHTMLInputName() + "\" type=\"text\" value=\"" + link + "\"/>"+linkToResources+"</div>");
 		}
 
 		finalCode.append("<div class=\"line\"><label for=\"new_dir_" + getId() + "\">");
@@ -291,7 +336,7 @@ public class GlobalImage extends Image implements IImageFilter {
 		finalCode.append("<div class=\"line\"><label for=\"" + getDirInputName() + "\">");
 		finalCode.append(getDirLabelTitle(ctx));
 		finalCode.append(" : </label>");
-		String folder = getDirSelected();
+		
 		if ((getDirList(getFileDirectory(ctx)) != null) && (getDirList(getFileDirectory(ctx)).length > 0)) {
 			List<String> dirsCol = new LinkedList<String>();
 			dirsCol.add("");
@@ -302,28 +347,12 @@ public class GlobalImage extends Image implements IImageFilter {
 				}
 				dirsCol.add(dir);
 			}
-			if (ctx.getRequest().getParameter("path") != null) {
-				String newFolder = URLHelper.removeStaticFolderPrefix(ctx, ctx.getRequest().getParameter("path"));
-				newFolder = newFolder.replaceFirst("/" + ctx.getGlobalContext().getStaticConfig().getImageFolderName() + '/', "");
-				if (newFolder.trim().length() > 1) {
-					folder = newFolder;
-				}
-			}
+		
 			finalCode.append(XHTMLHelper.getInputOneSelect(getDirInputName(), dirsCol, folder, "form-control", getJSOnChange(ctx), true));
 		}
 
-		Map<String, String> filesParams = new HashMap<String, String>();
-		String path = URLHelper.mergePath(FileAction.getPathPrefix(ctx), StaticConfig.getInstance(ctx.getRequest().getSession()).getImageFolderName(), folder);
-		filesParams.put("path", path);
-		filesParams.put("webaction", "changeRenderer");
-		filesParams.put("page", "meta");
-		String backURL = URLHelper.createModuleURL(ctx, ctx.getPath(), "content");
-		backURL = URLHelper.addParam(backURL, "comp_id", "cp_" + getId());
-		backURL = URLHelper.addParam(backURL, "webaction", "editPreview");
-		filesParams.put(ElementaryURLHelper.BACK_PARAM_NAME, backURL);
-
-		String staticURL = URLHelper.createModuleURL(ctx, ctx.getPath(), "file", filesParams);
 		if (canUpload(ctx)) {
+			String staticURL = URLHelper.createModuleURL(ctx, ctx.getPath(), "file", filesParams);
 			finalCode.append("<a class=\"" + EDIT_ACTION_CSS_CLASS + " btn btn-default btn-xs\" href=\"" + staticURL + "\">");
 			finalCode.append(i18nAccess.getText("content.goto-static"));
 			finalCode.append("</a>");

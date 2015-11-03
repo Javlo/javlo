@@ -17,6 +17,7 @@ import org.javlo.helper.MacroHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
+import org.javlo.module.content.Edit;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
 import org.javlo.service.NavigationService;
@@ -35,6 +36,12 @@ public class TimeTravelerActions implements IAction {
 	}
 
 	public synchronized static String performUndoRedo(RequestService rs, ContentContext ctx, GlobalContext globalContext, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
+		
+		if (!Edit.checkPageSecurity(ctx)) {
+			messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("action.block"), GenericMessage.ERROR));
+			return null;
+		}
+		
 		boolean previous = rs.getParameter("previous", null) != null;
 		PersistenceService pers = PersistenceService.getInstance(globalContext);
 		

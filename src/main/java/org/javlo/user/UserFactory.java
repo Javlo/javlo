@@ -29,7 +29,7 @@ import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.BeanHelper;
 import org.javlo.helper.JavaHelper;
-import org.javlo.helper.Logger;
+import org.javlo.helper.LocalLogger;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
@@ -355,7 +355,7 @@ public class UserFactory implements IUserFactory, Serializable {
 								userInfoList.add(newUserInfo);
 							}
 						} catch (Exception e) {
-							Logger.log(e);
+							LocalLogger.log(e);
 							userInfoList = new LinkedList<IUserInfo>();
 						}
 					}
@@ -587,7 +587,7 @@ public class UserFactory implements IUserFactory, Serializable {
 		File userInfoFile = new File(userInfoPath);
 		if (!userInfoFile.exists()) {
 			userInfoFile.getParentFile().mkdirs();
-			Logger.log(Logger.WARNING, userInfoFile.getPath() + " not found.");
+			LocalLogger.log(LocalLogger.WARNING, userInfoFile.getPath() + " not found.");
 		}
 		OutputStream out = null;
 		TransactionFile transactionFile = new TransactionFile(userInfoFile);
@@ -619,7 +619,7 @@ public class UserFactory implements IUserFactory, Serializable {
 
 		if (!userInfoFile.exists()) {
 			userInfoFile.getParentFile().mkdirs();
-			Logger.log(Logger.WARNING, userInfoFile.getPath() + " not found.");
+			LocalLogger.log(LocalLogger.WARNING, userInfoFile.getPath() + " not found.");
 		}
 		FileOutputStream out = null;
 		try {
@@ -632,7 +632,7 @@ public class UserFactory implements IUserFactory, Serializable {
 				try {
 					out.close();
 				} catch (IOException e1) {
-					Logger.log(e1);
+					LocalLogger.log(e1);
 				}
 			}
 		}
@@ -656,7 +656,7 @@ public class UserFactory implements IUserFactory, Serializable {
 				}
 				unlockStore();
 			} catch (Exception e) {
-				Logger.log(e);
+				LocalLogger.log(e);
 			}
 		}
 

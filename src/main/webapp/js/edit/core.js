@@ -259,6 +259,107 @@ jQuery(document).ready(function() {
 		console.log("scrollTarget.top=",scrollTarget.position().top);
 		window.scrollTo(0,scrollTarget.position().top);
 	}
+	
+	/************/
+	/** upload **/
+	/************/
+	var drop = document.querySelectorAll('.no-upload'), el = null;
+	for (var i = 0; i < drop.length; i++) {
+		el = drop[i];
+		if (!el.eventsAdded) {
+			el.eventsAdded = true;
+			 el.addEventListener('dragover', function (event) {
+			    	event.preventDefault();
+			    	jQuery(this).addClass("no-drop");
+			    	return false;
+			    });
+		}
+	}
+	var drop = document.querySelectorAll('.upload-zone'), el = null;
+	for (var i = 0; i < drop.length; i++) {
+		el = drop[i];
+		if (!el.eventsAdded) {
+			el.eventsAdded = true;
+			 el.addEventListener('dragover', function (event) {
+			    	event.preventDefault();
+			    	jQuery(this).addClass("drop-selected");
+			    	return false;
+			    });
+			    el.addEventListener('dragleave', function (event) {
+			    	event.preventDefault();
+			    	jQuery(this).removeClass("drop-selected");
+			    	return false;
+			    });
+			    el.addEventListener('drop', function(e) {
+			    	e.preventDefault();
+					jQuery(this).removeClass("dragover");	
+					var url  = jQuery(this).data("url");		
+					if (url.indexOf("/edit-")>=0) {
+						url = url.replace("/edit-", "/ajax-");
+					} else {
+						url = url.replace("/edit/", "/ajax/");
+						if (url.indexOf("/preview-")>=0) {
+							url = url.replace("/preview-", "/ajax-");
+						} else {
+							url = url.replace("/preview/", "/ajax/");
+						}
+					}	
+					var fieldName = jQuery(this).data("fieldname");
+					if (fieldName == null) {
+						filedName = "files";
+					}							
+					var i = 0;					
+					var fd=new FormData();
+					jQuery.each( e.dataTransfer.files, function(index, file) {
+						if (i==0) {
+							fd.append(fieldName,file);
+						} else {
+							fd.append(fieldName+"_"+i,file);
+						}
+						i++;			
+					});	
+					jQuery.ajax({
+						url : url,
+						cache : false,
+						data: fd,
+						type : "post",
+						dataType : "json",
+						processData: false,
+						contentType: false
+					}).done(function(jsonObj) {						
+						if (jsonObj.data != null) {
+							jQuery.each(jsonObj.data, function(key, value) {
+								if (key == "need-refresh" && value) {						
+									window.location.href=window.location.href;
+								}
+							});
+						}
+						jQuery.each(jsonObj.zone, function(xhtmlId, xhtml) {
+							var item = jQuery("#" + xhtmlId);			
+							if (item != null) {
+								jQuery("#" + xhtmlId).replaceWith(xhtml);
+							} else {
+								if (console) {
+									console.log("warning : component "+xhtmlId+" not found for zone.");
+								}
+							}
+						});
+						jQuery.each(jsonObj.insideZone, function(xhtmlId, xhtml) {
+							var item = jQuery("#" + xhtmlId);
+							if (item != null) {
+								item.html(xhtml);	
+							} else {
+								if (console) {
+									console.log("warning : component "+xhtmlId+" not found for insideZone.");
+								}
+							}
+
+						});				
+						jQuery(document).trigger("ajaxUpdate");
+					});
+			    });
+		}
+	}
 });
 
 jQuery.fn.extend({
@@ -553,3 +654,4 @@ function addToolTips(selector, text, position) {
 		}
 	}
 }
+

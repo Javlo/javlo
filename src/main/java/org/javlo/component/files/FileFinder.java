@@ -6,15 +6,21 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.javlo.component.properties.AbstractPropertiesComponent;
+import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
+import org.javlo.helper.ElementaryURLHelper;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.helper.XHTMLHelper;
+import org.javlo.i18n.I18nAccess;
+import org.javlo.module.file.FileAction;
 import org.javlo.module.file.FileBean;
 import org.javlo.user.UserSecurity;
 import org.javlo.ztatic.StaticInfo;
@@ -142,13 +148,39 @@ public class FileFinder extends AbstractPropertiesComponent {
 	protected String getEditXHTMLCode(ContentContext ctx) throws Exception {
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(outStream);
+		
+		if (ctx.getRequest().getParameter("path") != null) {
+			String newFolder = URLHelper.removeStaticFolderPrefix(ctx, ctx.getRequest().getParameter("path"));
+			newFolder = '/'+newFolder.replaceFirst("/" + ctx.getGlobalContext().getStaticConfig().getFileFolderName() + '/', "");
+			if (newFolder.trim().length() > 1 && !getFieldValue("root").equals(newFolder)) {
+				setFieldValue("root", newFolder);				
+			}
+		}
+		
+		Map<String, String> filesParams = new HashMap<String, String>();
+		String path = URLHelper.mergePath(FileAction.getPathPrefix(ctx), StaticConfig.getInstance(ctx.getRequest().getSession()).getFileFolderName(), getFieldValue("root"));
+		filesParams.put("path", path);
+		filesParams.put("webaction", "changeRenderer");
+		filesParams.put("page", "meta");
+		String backURL = URLHelper.createModuleURL(ctx, ctx.getPath(), "content");
+		backURL = URLHelper.addParam(backURL, "comp_id", "cp_" + getId());
+		backURL = URLHelper.addParam(backURL, "webaction", "editPreview");
+		if (ctx.isEditPreview()) {
+			backURL = URLHelper.addParam(backURL, "previewEdit", ctx.getRequest().getParameter("previewEdit"));
+		}
+		filesParams.put(ElementaryURLHelper.BACK_PARAM_NAME, backURL);
+		String staticLinkURL = URLHelper.createModuleURL(ctx, ctx.getPath(), "file", filesParams);
+		I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
+		String linkToResources = "<a class=\"browse-link btn btn-default btn-xs\" href=\""+staticLinkURL+"\">"+i18nAccess.getText("content.goto-static")+"</a>";
+		
 		out.println("<div class=\"line\">");
 		out.println("<label for=\"" + getInputName("root") + "\">root</label>");
 		FileFilter filter = FileFilter.getInstance(ctx);
 		List<File> dirList = ResourceHelper.getAllDirList(filter.getRoot());
 		dirList.add(0, filter.getRoot());
 		out.println(XHTMLHelper.getInputOneSelect(createKeyWithField("root"), ResourceHelper.removePrefixFromPathList(dirList, filter.getRoot().getCanonicalPath()), getFieldValue("root"), true));
-		out.println("</div>");
+		out.println(linkToResources+"</div>");
+		
 		out.println("<div class=\"line\">");
 		out.println("<div class=\"label\">tags</div>");
 		List<String> tags = getTags();

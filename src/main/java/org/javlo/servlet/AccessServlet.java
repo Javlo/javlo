@@ -42,6 +42,7 @@ import org.javlo.context.GlobalContextFactory;
 import org.javlo.data.InfoBean;
 import org.javlo.helper.DebugHelper;
 import org.javlo.helper.ElementaryURLHelper;
+import org.javlo.helper.LocalLogger;
 import org.javlo.helper.NetHelper;
 import org.javlo.helper.RequestHelper;
 import org.javlo.helper.ServletHelper;
@@ -138,6 +139,11 @@ public class AccessServlet extends HttpServlet implements IVersion {
 		}
 		super.destroy();
 		StaticConfig.getInstance(getServletContext()).shutdown();
+		try {
+			org.javlo.helper.LocalLogger.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override
@@ -153,6 +159,8 @@ public class AccessServlet extends HttpServlet implements IVersion {
 	@Override
 	public void init() throws ServletException {
 		super.init();
+		
+		LocalLogger.init(getServletContext());
 
 		System.out.println("");
 		System.out.println("");
@@ -393,7 +401,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 				}
 			}
 
-			org.javlo.helper.Logger localLogger = new org.javlo.helper.Logger();
+			org.javlo.helper.LocalLogger localLogger = new org.javlo.helper.LocalLogger();
 
 			localLogger.startCount("sid");
 

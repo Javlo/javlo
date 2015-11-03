@@ -73,6 +73,7 @@ public class FileBean {
 				if (AdminUserSecurity.getInstance().isGod(ctx.getCurrentEditUser())) {
 					path = URLHelper.mergePath("/" + (staticInfo.isStaticFolder()?globalContext.getStaticConfig().getStaticFolder():""), staticInfo.getStaticURL());
 				}
+				path = StringHelper.cleanPath(path);
 				return URLHelper.addParam(currentURL, "path", path);
 			} catch (Exception e) {
 				e.printStackTrace();

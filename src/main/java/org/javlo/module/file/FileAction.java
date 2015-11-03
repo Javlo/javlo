@@ -116,25 +116,29 @@ public class FileAction extends AbstractModuleAction {
 			}
 		}
 
-		if (fileModuleContext.getCurrentLink().equals(FileModuleContext.PAGE_META)) {
-			modulesContext.getCurrentModule().setToolsRenderer("/jsp/actions.jsp");
-			modulesContext.getCurrentModule().clearAllBoxes();
-			File folder = getFolder(ctx);
-			if (folder.exists()) {
-				List<FileBean> allFileInfo = new LinkedList<FileBean>();
-				for (File file : folder.listFiles(new DirectoryFilter())) {
-					allFileInfo.add(new FileBean(ctx, StaticInfo.getInstance(ctx, file)));
+		if (fileModuleContext.getCurrentLink().equals(FileModuleContext.PAGE_META)) {			
+			if (ctx.getRequest().getAttribute("files") == null) {
+				modulesContext.getCurrentModule().setToolsRenderer("/jsp/actions.jsp");
+				modulesContext.getCurrentModule().clearAllBoxes();
+				File folder = getFolder(ctx);
+				if (folder.exists()) {
+					List<FileBean> allFileInfo = new LinkedList<FileBean>();
+					for (File file : folder.listFiles(new DirectoryFilter())) {
+						allFileInfo.add(new FileBean(ctx, StaticInfo.getInstance(ctx, file)));
+					}
+					List<FileBean> fileList = new LinkedList<FileBean>();
+					for (File file : folder.listFiles((FileFilter) FileFileFilter.FILE)) {
+						fileList.add(new FileBean(ctx, StaticInfo.getInstance(ctx, file)));
+					}
+					Collections.sort(fileList, new FileBean.FileBeanComparator(ctx, fileModuleContext.getSort()));
+					Collections.sort(allFileInfo, new FileBean.FileBeanComparator(ctx, fileModuleContext.getSort()));
+					allFileInfo.addAll(fileList);
+					ctx.getRequest().setAttribute("files", allFileInfo);
+				} else {
+					logger.warning("folder not found : " + folder);
 				}
-				List<FileBean> fileList = new LinkedList<FileBean>();
-				for (File file : folder.listFiles((FileFilter) FileFileFilter.FILE)) {
-					fileList.add(new FileBean(ctx, StaticInfo.getInstance(ctx, file)));
-				}
-				Collections.sort(fileList, new FileBean.FileBeanComparator(ctx, fileModuleContext.getSort()));
-				Collections.sort(allFileInfo, new FileBean.FileBeanComparator(ctx, fileModuleContext.getSort()));
-				allFileInfo.addAll(fileList);
-				ctx.getRequest().setAttribute("files", allFileInfo);
 			} else {
-				logger.warning("folder not found : " + folder);
+				modulesContext.getCurrentModule().setToolsRenderer(null);
 			}
 		} else {
 			if (modulesContext.getCurrentModule().getToolsRenderer() != null && modulesContext.getFromModule() == null) {
@@ -415,6 +419,8 @@ public class FileAction extends AbstractModuleAction {
 				} finally {
 					ResourceHelper.closeResource(in);
 				}
+				fileModuleContext.setSort(4);
+				ctx.setNeedRefresh(true);
 			}
 		}
 

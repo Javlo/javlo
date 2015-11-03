@@ -1006,9 +1006,9 @@ public class ImageEngine {
 	}
 
 	public static BufferedImage applyBgColor(BufferedImage image, Color bgColor) {
-		org.javlo.helper.Logger.stepCount("transform", "start - transformation - 2.0.1");
+		org.javlo.helper.LocalLogger.stepCount("transform", "start - transformation - 2.0.1");
 		BufferedImage outImage = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
-		org.javlo.helper.Logger.stepCount("transform", "start - transformation - 2.0.2");
+		org.javlo.helper.LocalLogger.stepCount("transform", "start - transformation - 2.0.2");
 		for (int x = 0; x < image.getWidth(); x++) {
 			for (int y = 0; y < image.getHeight(); y++) {
 				Color filterColor = new Color(image.getRGB(x, y), true);
@@ -1018,7 +1018,7 @@ public class ImageEngine {
 				outImage.setRGB(x, y, filterColor.getRGB());
 			}
 		}
-		org.javlo.helper.Logger.stepCount("transform", "start - transformation - 2.0.3");
+		org.javlo.helper.LocalLogger.stepCount("transform", "start - transformation - 2.0.3");
 		return outImage;
 	}
 

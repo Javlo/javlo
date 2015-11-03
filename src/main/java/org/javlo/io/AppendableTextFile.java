@@ -13,6 +13,7 @@ public class AppendableTextFile implements Closeable {
 	
 	private File file;
 	private BufferedWriter writer;
+	private boolean autoFlush = false;
 
 	public AppendableTextFile(File file) throws IOException {		
 		this.file = file;
@@ -41,10 +42,17 @@ public class AppendableTextFile implements Closeable {
 	public synchronized void println(String line) throws IOException {		
 		getWriter().append(line);
 		getWriter().newLine();
+		if (autoFlush) {
+			getWriter().flush();
+		}
 	}
+	
 	
 	public synchronized void print(String line) throws IOException {
 		getWriter().append(line);
+		if (autoFlush) {
+			getWriter().flush();
+		}
 	}
 	
 	public static void main(String[] args) throws IOException {
@@ -61,6 +69,14 @@ public class AppendableTextFile implements Closeable {
 	
 	public File getFile() {
 		return file;
+	}
+
+	public boolean isAutoFlush() {
+		return autoFlush;
+	}
+
+	public void setAutoFlush(boolean autoFlush) {
+		this.autoFlush = autoFlush;
 	}
 
 }

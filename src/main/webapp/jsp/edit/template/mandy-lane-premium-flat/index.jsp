@@ -3,8 +3,9 @@
 %><%@ taglib uri="/WEB-INF/javlo.tld" prefix="jv"
 %><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
-<head>
+
 <c:if test="${contentContext.closePopup}">
+<head>
 <script type="text/javascript">
     var url = top.location.href; // close iframe and refresh parent frame
     
@@ -31,7 +32,9 @@
 		top.location.href=url; // close iframe and refresh parent frame
     }    
 </script>
+</head><body></body>
 </c:if>
+<c:if test="${!contentContext.closePopup}">
 
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>Javlo : ${currentModule.title}</title>
@@ -280,4 +283,5 @@
 </c:if>
 <div id="layer">&nbsp;</div>
 </body>
+</c:if>
 </html>

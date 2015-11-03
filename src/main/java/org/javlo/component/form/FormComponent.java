@@ -10,7 +10,7 @@ import org.javlo.actions.IAction;
 import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.context.ContentContext;
 import org.javlo.exception.ResourceNotFoundException;
-import org.javlo.helper.Logger;
+import org.javlo.helper.LocalLogger;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.message.GenericMessage;
 
@@ -29,7 +29,7 @@ public abstract class FormComponent extends AbstractVisualComponent implements I
 				message = "form.unvalid";
 			}
 		} catch (RuntimeException e) {
-			Logger.log(e);
+			LocalLogger.log(e);
 		}
 
 		return message;
@@ -89,7 +89,7 @@ public abstract class FormComponent extends AbstractVisualComponent implements I
 			i18n = I18nAccess.getInstance(ctx.getRequest());
 			res = i18n.getContentViewText(key.trim());
 		} catch (Exception e) {
-			Logger.log(e);
+			LocalLogger.log(e);
 		}
 		return res;
 	}

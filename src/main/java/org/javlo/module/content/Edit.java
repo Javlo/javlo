@@ -1003,7 +1003,7 @@ public class Edit extends AbstractModuleAction {
 			return null;
 		}
 
-		org.javlo.helper.Logger.forceStartCount("save");
+		org.javlo.helper.LocalLogger.forceStartCount("save");
 
 		String message = null;
 

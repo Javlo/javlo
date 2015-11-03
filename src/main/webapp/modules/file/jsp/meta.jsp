@@ -1,6 +1,16 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"
 %><%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-<div id="meta-edit" class="form-list">
+<c:url var="uploadURL" value="${info.currentURL}" context="/">
+	<c:if test="${not empty param.select}">
+		<c:param name="select" value="${param.select}"></c:param>
+	</c:if>
+	<c:if test="${not empty param[BACK_PARAM_NAME]}">
+		<c:param name="${BACK_PARAM_NAME}" value="${param[BACK_PARAM_NAME]}" />
+	</c:if>
+	<c:param name="webaction" value="file.upload" />
+</c:url>
+<div class="upload-zone" data-url="${uploadURL}">
+<div id="meta-edit" class="form-list" >
 
 <form id="form-meta" action="${info.currentURL}" method="post">
 
@@ -39,7 +49,7 @@
 					<c:param name="webaction" value="file.delete" />
 					<c:param name="module" value="file" />
 					<c:param name="file" value="${file.path}" />
-					<c:if test="${not empty param['select']}"><c:param name="select" value="true" /></c:if>
+					<c:if test="${not empty param['select']}"><c:param name="select" value="${param.select}" /></c:if>
 					<c:if test="${not empty param[BACK_PARAM_NAME]}">
 						<c:param name="${BACK_PARAM_NAME}" value="${param[BACK_PARAM_NAME]}" />
 					</c:if>
@@ -55,16 +65,23 @@
 		</c:if>		
 		<div class="body">
 		
-		<div class="download ${file.image?'picture':''}">
+		<div class="download ${file.image && param.select != 'back'?'picture':''}">
 			<div ${file.image?'class="focus-zone"':'no-focus'} >			
 			<c:url var="fileSelectURL" value="${file.URL}">
-				<c:if test="${not empty param.select}"><c:param name="select" value="true" /></c:if>
+				<c:if test="${not empty param.select}"><c:param name="select" value="${param.select}" /></c:if>
+				<c:if test="${not empty param.editPreview}"><c:param name="previewEdit" value="${param.previewEdit}" /></c:if>
+				<c:if test="${not empty param[BACK_PARAM_NAME]}">
+					<c:param name="${BACK_PARAM_NAME}" value="${param[BACK_PARAM_NAME]}" />
+				</c:if>
 			</c:url>
+			<c:if test="${param.select == 'back' && !file.directory}">
+				<c:set var="fileSelectURL" value="${param[BACK_PARAM_NAME]}${file.path}" />
+			</c:if>
 			<c:set var="dataURL" value="" />
 			<c:if test="${not empty param.select && !file.directory}">
 				<c:set var="dataURL" value='data-url="${file.freeURL}"' />
 			</c:if>				
-			<a ${!file.directory && not empty param.select?'class="select-item"':''} href="${fileSelectURL}" ${dataURL}><img src="${file.thumbURL}" />&nbsp;</a>			
+			<a ${!file.directory && not empty param.select?'class="select-item"':''} href="${fileSelectURL}" ${dataURL}><img src="${file.thumbURL}" /></a>			
 			<c:if test="${file.image}">
 			<div class="focus-point">x</div>			
 			<input class="posx" type="hidden" name="posx-${file.id}" value="${file.focusZoneX}" />
@@ -147,8 +164,9 @@
 </form>
 
 </div>
+</div>
 
-<c:if test="${not empty param.select}">
+<c:if test="${not empty param.select && param.select != 'back'}">
 	<script type="text/javascript">
 		jQuery(".select-item").click(function() {
 			if (parent.tinyMCE !== undefined) {

@@ -64,5 +64,10 @@ public class ImportedFileSharedContentProvider extends LocalFileSharedContentPro
 		ResourceHelper.writeStreamToFile(in, newFile);
 		logger.info("imported file : "+newFile);
 	}
+	
+	@Override
+	public boolean isSearch() {
+		return false;
+	}
 
 }

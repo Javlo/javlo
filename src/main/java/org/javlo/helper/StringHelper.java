@@ -3005,7 +3005,7 @@ public class StringHelper {
 	}
 
 	/**
-	 * clean path, remove double "/"
+	 * clean path, remove double "/" and replace "\" by "/"
 	 * 
 	 * @param path
 	 * @return "//web/path" >> "/web/path"
@@ -3014,6 +3014,7 @@ public class StringHelper {
 		if (path == null) {
 			return null;
 		} else {
+			path = path.replace('\\',  '/');
 			while (path.indexOf("//") >= 0) {
 				path = path.replace("//", "/");
 			}

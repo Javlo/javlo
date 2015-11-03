@@ -15,6 +15,8 @@ import java.util.Map;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.context.ContentContext;
 import org.javlo.helper.StringHelper;
+import org.javlo.navigation.MenuElement;
+import org.javlo.template.Template;
 
 public abstract class AbstractSharedContentProvider implements ISharedContentProvider {
 
@@ -49,18 +51,37 @@ public abstract class AbstractSharedContentProvider implements ISharedContentPro
 		Collection<SharedContent> outList = new HashSet<SharedContent>();
 		query = StringHelper.createFileName(query);
 		for (SharedContent content : getContent(ctx)) {
-			if (content.getContent() != null) {
-				for (ComponentBean bean : content.getContent()) {
-					if (bean != null && !outList.contains(content) && (StringHelper.createFileName(bean.getValue()).contains(query) || bean.getValue().toLowerCase().contains(query.toLowerCase()))) {
-						outList.add(content);
+			try {
+
+				if (content.getContent() != null) {
+					for (ComponentBean bean : content.getContent()) {
+						if (bean != null && !outList.contains(content) && (StringHelper.createFileName(bean.getValue()).contains(query) || bean.getValue().toLowerCase().contains(query.toLowerCase()))) {
+							outList.add(content);
+						}
 					}
 				}
+
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
 			if (!outList.contains(content) && StringHelper.createFileName(content.getTitle() + ' ' + content.getDescription()).contains(query)) {
 				outList.add(content);
 			}
 		}
 		return outList;
+	}
+
+	protected boolean isCategoryAccepted(ContentContext ctx, Collection<String> categories, MenuElement cp, Template template) {
+		for (String category : categories) {
+			if (isCategoryAccepted(ctx, category, cp, template)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	protected boolean isCategoryAccepted(ContentContext ctx, String category, MenuElement cp, Template template) {
+		return true;
 	}
 
 	@Override
@@ -82,8 +103,8 @@ public abstract class AbstractSharedContentProvider implements ISharedContentPro
 		if (getCategories(ctx).size() <= 0 || categories == null || categories.size() == 0) {
 			return getContent(ctx);
 		}
-		List<SharedContent> outList = new LinkedList<SharedContent>();
-		Collection<SharedContent> contents = getContent(ctx);
+		List<SharedContent> outList = new LinkedList<SharedContent>();		
+		Collection<SharedContent> contents = getContent(ctx);		
 		if (contents != null) {
 			for (SharedContent content : contents) {
 				if (!Collections.disjoint(content.getCategories(), categories)) {
@@ -97,7 +118,7 @@ public abstract class AbstractSharedContentProvider implements ISharedContentPro
 
 	@Override
 	public boolean isEmpty(ContentContext ctx) {
-		return getContent(ctx).size() == 0;
+		return getContent(ctx) == null || getContent(ctx).size() == 0;
 	}
 
 	@Override
@@ -123,12 +144,12 @@ public abstract class AbstractSharedContentProvider implements ISharedContentPro
 	public int getCategoriesSize(ContentContext ctx) {
 		return getCategories(ctx).size();
 	}
-	
+
 	@Override
-	public boolean isUploadable() {	
+	public boolean isUploadable() {
 		return false;
 	}
-	
+
 	@Override
 	public void upload(ContentContext ctx, String fileName, InputStream in, String category) throws IOException {
 	}

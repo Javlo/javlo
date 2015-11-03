@@ -295,6 +295,11 @@ editPreview.initPreview = function() {
 		if (!el.eventsAdded) {
 			el.eventsAdded = true;			
 		    el.addEventListener('dragover', function (event) {
+		    	var rowData = event.dataTransfer.getData("text").split(",");
+				var compType = rowData[0];
+				if (compType.indexOf("page:") == 0) {
+		    		return;
+				}
 		    	event.preventDefault();
 		    	editPreview.layerOver(this, null, true);
 		    	return false;
@@ -313,6 +318,9 @@ editPreview.initPreview = function() {
 				event.preventDefault();
 				var rowData = event.dataTransfer.getData("text").split(",");
 				var compType = rowData[0];
+				if (compType.indexOf("page:") == 0) {
+		    		return;
+				}
 				if (rowData.length > 1) {
 					var compId = rowData[1];
 					if (rowData.length > 2) {
@@ -404,7 +412,11 @@ editPreview.initPreview = function() {
 		    el.addEventListener('drop', function (event) {
 		    	event.preventDefault();
 				var rowData = event.dataTransfer.getData("text").split(",");
-				var compType = rowData[0];
+				var compType = rowData[0];				
+				if (compType != null && compType.length > 0 && compType.indexOf("page:") == 0) {
+					pjq(this).removeClass("drop-selected");
+		    		return false;
+				}
 				if (rowData.length > 1) {
 					var compId = rowData[1];
 					if (rowData.length > 2) {
@@ -485,7 +497,7 @@ editPreview.initPreview = function() {
 		    });	    
 		    el.addEventListener('dragstart', function (event) {
 		    	var targetPageName = pjq(this).attr("id");		    	
-		    	event.dataTransfer.setData('text', targetPageName);
+		    	event.dataTransfer.setData('text', "page:"+targetPageName);
 		    });
 		    el.addEventListener('drop', function (event) {
 		    	event.preventDefault();		    	
@@ -496,9 +508,12 @@ editPreview.initPreview = function() {
 		    	if (item.parent().hasClass("title") || item.parent().parent().hasClass("title")) {
 		    		insertAsChild = true;
 		    	}
-		    	var pageName = event.dataTransfer.getData('text');	
-		    	var ajaxURL = editPreview.addParam(currentURL,"previewEdit=true&webaction=edit.movePage&page=" + pageName + "&previous=" + targetPageName + "&render-mode=3&init=true&as-child="+insertAsChild);
-				editPreview.ajaxPreviewRequest(ajaxURL, null, null);
+		    	var pageName = event.dataTransfer.getData('text');		    	
+		    	if (pageName.indexOf("page:") == 0) {
+		    		pageName = pageName.substring(5);		    		
+		    		var ajaxURL = editPreview.addParam(currentURL,"previewEdit=true&webaction=edit.movePage&page=" + pageName + "&previous=" + targetPageName + "&render-mode=3&init=true&as-child="+insertAsChild);
+					editPreview.ajaxPreviewRequest(ajaxURL, null, null);
+		    	}
 				return false;	
 		    });
 		}		

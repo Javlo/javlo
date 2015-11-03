@@ -1382,8 +1382,8 @@ body.previewEdit {
 }
 
 .small .download {
-	width: 140px;
-	height: 200px;
+	width: 180px;
+	height: 220px;
 }
 
 .small .download img {
@@ -1414,6 +1414,7 @@ body.previewEdit {
 .form-list .download a img {
 	vertical-align: middle;
 	display: inline;
+	width: 100%;
 }
 
 .form-list .picture a {
