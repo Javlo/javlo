@@ -28,6 +28,7 @@ import org.codehaus.plexus.util.StringUtils;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.files.ArrayFileComponent;
+import org.javlo.component.files.FileFinder;
 import org.javlo.component.files.GenericFile;
 import org.javlo.component.image.GlobalImage;
 import org.javlo.component.image.Image;
@@ -177,8 +178,8 @@ public class DataAction implements IAction {
 			serverInfo.put("message", "Synchro code not valid!");
 		} else {
 			BeanHelper.extractPropertiesAsString(serverInfo, request, "remotePort", "remoteHost", "remoteAddr", "localAddr", "localName", "localPort", "serverName", "serverPort", "characterEncoding"
-					// , "contextPath"
-					);
+			// , "contextPath"
+			);
 			serverInfo.put("contextKey", ctx.getGlobalContext().getContextKey());
 			serverInfo.put("systemUser", System.getProperty("user.name"));
 
@@ -568,7 +569,9 @@ public class DataAction implements IAction {
 
 			ContentService contentService = ContentService.getInstance(ctx.getRequest());
 			IContentVisualComponent previousComp = contentService.getComponent(ctx, previousId);
-			if (previousComp != null && previousComp.getType().equals(Multimedia.TYPE)) {
+			if (previousComp != null && previousComp.getType().equals(FileFinder.TYPE)) {
+				
+			} else if (previousComp != null && previousComp.getType().equals(Multimedia.TYPE)) {
 				countImages = 2;
 			}
 			if (countImages == 1) {

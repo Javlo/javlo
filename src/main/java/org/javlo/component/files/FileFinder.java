@@ -27,7 +27,7 @@ import org.javlo.ztatic.StaticInfo;
 
 public class FileFinder extends AbstractPropertiesComponent {
 
-	private static final String TYPE = "file-finder";
+	public static final String TYPE = "file-finder";
 
 	private static class FileFilter {
 		private ContentContext ctx = null;

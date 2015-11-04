@@ -125,7 +125,7 @@ public class FileBean {
 
 	public String getThumbURL() throws Exception {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());	
-		if (StringHelper.isImage(getName())) {
+		if (StringHelper.isImage(getName()) || StringHelper.isPDF(getName())) {
 			return URLHelper.createTransformURL(ctx, (staticInfo.isStaticFolder()?globalContext.getStaticConfig().getStaticFolder():"") + staticInfo.getStaticURL(), "list") + "?ts=" + staticInfo.getFile().lastModified();
 		} else {
 			return URLHelper.getFileTypeURL(ctx, staticInfo.getFile());
