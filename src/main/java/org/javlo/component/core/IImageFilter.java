@@ -2,16 +2,16 @@ package org.javlo.component.core;
 
 import java.awt.image.BufferedImage;
 
-import org.javlo.context.ContentContext;
+import org.javlo.rendering.Device;
 
 public interface IImageFilter {
 
 	String getId();
 
-	String getImageFilterKey(ContentContext ctx);
+	String getImageFilterKey(Device device);
 
-	BufferedImage filterImage(ContentContext ctx, BufferedImage image);
+	BufferedImage filterImage(Device device, BufferedImage image);
 	
-	String getImageHash(ContentContext ctx);
+	String getImageHash(Device device);
 
 }

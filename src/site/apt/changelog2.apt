@@ -551,3 +551,7 @@ change log
  * filter children page correction + title on option tag
  
  * change component list directly from preview (if admin)
+ 
+ * remove reference to contentcontext in imagetransform thread
+ 
+* 2.1.0.2.16 04/11/2015 

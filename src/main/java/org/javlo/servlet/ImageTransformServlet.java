@@ -35,6 +35,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.apache.commons.imaging.common.ImageMetadata;
 import org.javlo.component.core.IContentVisualComponent;
@@ -100,8 +101,9 @@ public class ImageTransformServlet extends HttpServlet {
 
 	private static final class ImageTransformThread implements Callable<Void> {
 
-		ServletContext application;
-		ContentContext ctx;
+		HttpSession session;
+		Device device;
+		GlobalContext globalContext;
 		ImageConfig config;
 		StaticInfo staticInfo;
 		String filter;
@@ -111,11 +113,12 @@ public class ImageTransformServlet extends HttpServlet {
 		File imageFile;
 		String imageName;
 		String inFileExtention;
+		int focusX;
+		int focusY;
 
-		public ImageTransformThread(ServletContext application, ContentContext ctx, ImageConfig config, StaticInfo staticInfo, String filter, String area, Template template, IImageFilter comp, File imageFile, String imageName, String inFileExtention) {
-			super();
-			this.application = application;
-			this.ctx = ctx;
+		public ImageTransformThread(ContentContext ctx, ImageConfig config, StaticInfo staticInfo, String filter, String area, Template template, IImageFilter comp, File imageFile, String imageName, String inFileExtention) {
+			super();			
+			this.session = ctx.getRequest().getSession();
 			this.config = config;
 			this.staticInfo = staticInfo;
 			this.filter = filter;
@@ -125,12 +128,21 @@ public class ImageTransformServlet extends HttpServlet {
 			this.imageFile = imageFile;
 			this.imageName = imageName;
 			this.inFileExtention = inFileExtention;
+			this.device = ctx.getDevice();
+			this.globalContext = ctx.getGlobalContext();
+			
+			focusX = StaticInfo.DEFAULT_FOCUS_X;
+			focusY = StaticInfo.DEFAULT_FOCUS_Y;
+			if (staticInfo != null) {
+				focusX = staticInfo.getFocusZoneX(ctx);
+				focusY = staticInfo.getFocusZoneY(ctx);
+			}
 		}
 
 		@Override
 		public Void call() throws Exception {
 			try {
-				ImageTransformServlet.imageTransformForThread(application, ctx, config, staticInfo, filter, area, template, comp, imageFile, imageName, inFileExtention);
+				ImageTransformServlet.imageTransformForThread(session, globalContext, device, config, staticInfo, filter, area, template, comp, imageFile, imageName, inFileExtention, focusX, focusY);
 			} catch (Exception ex) {
 				ex.printStackTrace();
 				throw ex;
@@ -278,7 +290,7 @@ public class ImageTransformServlet extends HttpServlet {
 			deviceCode = device.getCode();
 		}
 		FileCache fc = FileCache.getInstance(getServletContext());
-		long lm = fc.getLastModified(ImageHelper.createSpecialDirectory(ctx, ctx.getGlobalContext().getContextKey(), filter, area, deviceCode, template, comp), name);
+		long lm = fc.getLastModified(ImageHelper.createSpecialDirectory(ctx.getDevice(), ctx.getGlobalContext().getContextKey(), filter, area, deviceCode, template, comp), name);
 		return lm;
 	}
 
@@ -396,7 +408,7 @@ public class ImageTransformServlet extends HttpServlet {
 				deviceCode = ctx.getDevice().getCode();
 			}
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-			String dir = ImageHelper.createSpecialDirectory(ctx, globalContext.getContextKey(), filter, area, deviceCode, template, comp);
+			String dir = ImageHelper.createSpecialDirectory(ctx.getDevice(), globalContext.getContextKey(), filter, area, deviceCode, template, comp);
 
 			String fileExtension = config.getFileExtension(ctx.getDevice(), filter, area);
 			if (fileExtension == null) {
@@ -407,8 +419,8 @@ public class ImageTransformServlet extends HttpServlet {
 			try {
 				logger.info("write image (folder) : " + fileExtension + " width: " + img.getWidth() + " height: " + img.getHeight());
 
-				if (comp != null && StringHelper.trimAndNullify(comp.getImageFilterKey(ctx)) != null) {
-					img = ((IImageFilter) comp).filterImage(ctx, img);
+				if (comp != null && StringHelper.trimAndNullify(comp.getImageFilterKey(ctx.getDevice())) != null) {
+					img = ((IImageFilter) comp).filterImage(ctx.getDevice(), img);
 				}
 				if (!"png".equals(fileExtension) && !"gif".equals(fileExtension)) {
 					img = ImageEngine.removeAlpha(img);
@@ -435,7 +447,14 @@ public class ImageTransformServlet extends HttpServlet {
 	}
 
 	private void imageTransform(ContentContext ctx, ImageConfig config, StaticInfo staticInfo, String filter, String area, Template template, IImageFilter comp, File imageFile, String imageName, String inFileExtention) throws Exception {
-		ImageTransformThread imageThread = new ImageTransformThread(getServletContext(), ctx, config, staticInfo, filter, area, template, comp, imageFile, imageName, inFileExtention);
+		int focusX = StaticInfo.DEFAULT_FOCUS_X;
+		int focusY = StaticInfo.DEFAULT_FOCUS_Y;
+
+		if (staticInfo != null) {
+			focusX = staticInfo.getFocusZoneX(ctx);
+			focusY = staticInfo.getFocusZoneY(ctx);
+		}
+		ImageTransformThread imageThread = new ImageTransformThread(ctx, config, staticInfo, filter, area, template, comp, imageFile, imageName, inFileExtention);
 		Future<Void> future = executor.submit(imageThread);
 		try {
 			future.get(30, TimeUnit.SECONDS);
@@ -447,10 +466,12 @@ public class ImageTransformServlet extends HttpServlet {
 		}
 	}
 
-	private static void imageTransformForThread(ServletContext application, ContentContext ctx, ImageConfig config, StaticInfo staticInfo, String filter, String area, Template template, IImageFilter comp, File imageFile, String imageName, String inFileExtention) throws IOException {
+	private static void imageTransformForThread(HttpSession session, GlobalContext globalContext, Device device, ImageConfig config, StaticInfo staticInfo, String filter, String area, Template template, IImageFilter comp, File imageFile, String imageName, String inFileExtention, int focusX, int focusY) throws IOException {
+		
+		ServletContext application = session.getServletContext();
 
 		String fileSize = StringHelper.renderSize(imageFile.length());
-
+		
 		if (template != null) {
 			logger.info("image transform, file:" + imageFile + " (size:" + fileSize + ") filter:" + filter + " area: " + area + " template:" + template.getName());
 		} else {
@@ -470,12 +491,12 @@ public class ImageTransformServlet extends HttpServlet {
 		// org.javlo.helper.Logger.stepCount("transform",
 		// "start - transformation");
 
-		int width = config.getWidth(ctx.getDevice(), filter, area);
-		int height = config.getHeight(ctx.getDevice(), filter, area);
+		int width = config.getWidth(device, filter, area);
+		int height = config.getHeight(device, filter, area);
 
 		BufferedImage layer = null;
-		if (config.getLayer(ctx.getDevice(), filter, area) != null) {
-			String layerName = ctx.getRequest().getSession().getServletContext().getRealPath(config.getLayer(ctx.getDevice(), filter, area));
+		if (config.getLayer(device, filter, area) != null) {
+			String layerName = application.getRealPath(config.getLayer(device, filter, area));
 			File layerFile = new File(layerName);
 			if (layerFile.exists()) {
 				layer = ImageIO.read(layerFile);
@@ -518,16 +539,16 @@ public class ImageTransformServlet extends HttpServlet {
 		if (img == null) { // Icon from template
 			File mimeTypeImageFile = null;
 			if (template != null) {
-				String mimeTypeImageFilename = template.getMimeTypeImage(ctx.getGlobalContext(), inFileExtention);
+				String mimeTypeImageFilename = template.getMimeTypeImage(globalContext, inFileExtention);
 				if (mimeTypeImageFilename != null) {
-					String workTemplatePath = template.getWorkTemplateRealPath(ctx.getGlobalContext());
+					String workTemplatePath = template.getWorkTemplateRealPath(globalContext);
 					mimeTypeImageFile = new File(URLHelper.mergePath(workTemplatePath, mimeTypeImageFilename));
 				}
 			} else {
-				StaticConfig staticConfig = ctx.getGlobalContext().getStaticConfig();
+				StaticConfig staticConfig = globalContext.getStaticConfig();
 				String defaultMimeTypeImage = staticConfig.getEditDefaultMimeTypeImage();
 				defaultMimeTypeImage = URLHelper.mergePath(staticConfig.getEditTemplateFolder(), defaultMimeTypeImage);
-				defaultMimeTypeImage = ctx.getRequest().getSession().getServletContext().getRealPath(defaultMimeTypeImage);
+				defaultMimeTypeImage = application.getRealPath(defaultMimeTypeImage);
 				mimeTypeImageFile = new File(defaultMimeTypeImage);
 			}
 			if (mimeTypeImageFile != null) {
@@ -537,7 +558,7 @@ public class ImageTransformServlet extends HttpServlet {
 		}
 		if (img == null || imageType == null) {
 			logger.warning("could'nt read : " + imageFile);
-			ctx.getResponse().setStatus(404);
+			//ctx.getResponse().setStatus(404);
 			return;
 		}
 		IIOMetadata metadata = null;
@@ -553,37 +574,22 @@ public class ImageTransformServlet extends HttpServlet {
 		// "start - transformation - 2 (src image size :
 		// "+img.getWidth()+","+img.getHeight()+")");
 		
-		int focusX = StaticInfo.DEFAULT_FOCUS_X;
-		int focusY = StaticInfo.DEFAULT_FOCUS_Y;
-
-		if (staticInfo != null) {
-			focusX = staticInfo.getFocusZoneX(ctx);
-			focusY = staticInfo.getFocusZoneY(ctx);
-
-			if (config.getZoom(ctx.getDevice(), filter, area) > 1) {
-				double zoom = config.getZoom(ctx.getDevice(), filter, area);
-				img = ImageEngine.zoom(img, zoom, focusX, focusY);
-				focusX = (int) Math.round(focusX / zoom);
-				focusY = (int) Math.round(focusY / zoom);
-			}
-		}
-
-		if (config.isBackGroudColor(ctx.getDevice(), filter, area) && img.getColorModel().hasAlpha()) {
-			img = ImageEngine.applyBgColor(img, config.getBGColor(ctx.getDevice(), filter, area));
+		if (config.isBackGroudColor(device, filter, area) && img.getColorModel().hasAlpha()) {
+			img = ImageEngine.applyBgColor(img, config.getBGColor(device, filter, area));
 		}
 		// org.javlo.helper.Logger.stepCount("transform",
 		// "start - transformation - 2.1");
 
 		// org.javlo.helper.Logger.stepCount("transform",
 		// "start - transformation - 2.2");
-		if (config.isCrystallize(ctx.getDevice(), filter, area)) {
+		if (config.isCrystallize(device, filter, area)) {
 			img = (new CrystallizeFilter()).filter(img, null);
 		}
-		if (config.isGlow(ctx.getDevice(), filter, area)) {
+		if (config.isGlow(device, filter, area)) {
 			img = (new GlowFilter()).filter(img, null);
 		}
-		float contrast = config.getConstrast(ctx.getDevice(), filter, area);
-		float brightness = config.getBrightness(ctx.getDevice(), filter, area);
+		float contrast = config.getConstrast(device, filter, area);
+		float brightness = config.getBrightness(device, filter, area);
 		if (contrast != 1 || brightness != 1) {
 			ContrastFilter imageFilter = new ContrastFilter();
 			imageFilter.setContrast(contrast);
@@ -591,45 +597,45 @@ public class ImageTransformServlet extends HttpServlet {
 			imageFilter.setBrightness(brightness);
 			img = imageFilter.filter(img, null);
 		}
-		if (config.isGrayscale(ctx.getDevice(), filter, area)) {
+		if (config.isGrayscale(device, filter, area)) {
 			// img = (new GrayscaleFilter()).filter(img, null);
 			img = ImageEngine.grayscale(img);
 		}
-		if (config.isGrayscaleDesaturation(ctx.getDevice(), filter, area)) {
+		if (config.isGrayscaleDesaturation(device, filter, area)) {
 			img = ImageEngine.desaturation(img);
 		}
-		if (config.isGrayscaleAveraging(ctx.getDevice(), filter, area)) {
+		if (config.isGrayscaleAveraging(device, filter, area)) {
 			img = ImageEngine.avg(img);
 		}
-		if (config.isGrayscaleLuminosity(ctx.getDevice(), filter, area)) {
+		if (config.isGrayscaleLuminosity(device, filter, area)) {
 			img = ImageEngine.luminosity(img);
 		}
-		int sepia = config.getSepiaIntensity(ctx.getDevice(), filter, area);
+		int sepia = config.getSepiaIntensity(device, filter, area);
 		if (sepia > 0) {
 			ImageEngine.applySepiaFilter(img, sepia);
 		}
 		// org.javlo.helper.Logger.stepCount("transform",
 		// "start - transformation - 2.3");
-		if (config.isEdge(ctx.getDevice(), filter, area)) {
+		if (config.isEdge(device, filter, area)) {
 			img = (new EdgeFilter()).filter(img, null);
 		}
-		if (config.isIndexed(ctx.getDevice(), filter, area)) {
+		if (config.isIndexed(device, filter, area)) {
 			img = ImageEngine.convertRGBAToIndexed(img);
 		}
 		// org.javlo.helper.Logger.stepCount("transform",
 		// "start - transformation - 2.4");
-		if (config.isEmboss(ctx.getDevice(), filter, area)) {
+		if (config.isEmboss(device, filter, area)) {
 			img = (new EmbossFilter()).filter(img, null);
 		}
 		// org.javlo.helper.Logger.stepCount("transform",
 		// "start - transformation - 2.5");
-		img = ImageEngine.RBGAdjust(img, config.getAdjustColor(ctx.getDevice(), filter, area));
+		img = ImageEngine.RBGAdjust(img, config.getAdjustColor(device, filter, area));
 		// org.javlo.helper.Logger.stepCount("transform",
 		// "start - transformation - 2.6");
-		img = ImageEngine.replaceAlpha(img, config.getReplaceAlpha(ctx.getDevice(), filter, area));
+		img = ImageEngine.replaceAlpha(img, config.getReplaceAlpha(device, filter, area));
 		// org.javlo.helper.Logger.stepCount("transform",
 		// "start - transformation - 2.7");
-		img = ImageEngine.createAlpha(img, config.getAlpha(ctx.getDevice(), filter, area));
+		img = ImageEngine.createAlpha(img, config.getAlpha(device, filter, area));
 		// org.javlo.helper.Logger.stepCount("transform",
 		// "start - transformation - 3");
 
@@ -643,49 +649,56 @@ public class ImageTransformServlet extends HttpServlet {
 			img = newImg;
 		}
 
-		boolean hq = config.isHighQuality(ctx.getDevice(), filter, area);
+		boolean hq = config.isHighQuality(device, filter, area);
+		
+		if (config.getZoom(device, filter, area) > 1) {
+			double zoom = config.getZoom(device, filter, area);
+			img = ImageEngine.zoom(img, zoom, focusX, focusY);
+			focusX = (int) Math.round(focusX / zoom);
+			focusY = (int) Math.round(focusY / zoom);
+		}
 
 		// resize and border
 		if (layer == null) {
 			if ((height > 0) && (width > 0)) {
-				if (config.isFraming(ctx.getDevice(), filter, area)) {
+				if (config.isFraming(device, filter, area)) {
 					// org.javlo.helper.Logger.stepCount("transform",
 					// "start - transformation - 3.1");
 					if ((float) img.getWidth() / (float) width > (float) img.getHeight() / (float) height) {
 						img = ImageEngine.resizeWidth(img, width, hq);
 					} else {
-						img = ImageEngine.resizeHeight(img, height, config.getBGColor(ctx.getDevice(), filter, area), hq);
+						img = ImageEngine.resizeHeight(img, height, config.getBGColor(device, filter, area), hq);
 					}
 				} else {
-					int mt = config.getMarginTop(ctx.getDevice(), filter, area);
-					int ml = config.getMarginLeft(ctx.getDevice(), filter, area);
-					int mr = config.getMarginRigth(ctx.getDevice(), filter, area);
-					int mb = config.getMarginBottom(ctx.getDevice(), filter, area);
-					img = ImageEngine.resize(img, width, height, config.isCropResize(ctx.getDevice(), filter, area), config.isAddBorder(ctx.getDevice(), filter, area), mt, ml, mr, mb, config.getBGColor(ctx.getDevice(), filter, area), focusX, focusY, config.isFocusZone(ctx.getDevice(), filter, area), hq);
+					int mt = config.getMarginTop(device, filter, area);
+					int ml = config.getMarginLeft(device, filter, area);
+					int mr = config.getMarginRigth(device, filter, area);
+					int mb = config.getMarginBottom(device, filter, area);
+					img = ImageEngine.resize(img, width, height, config.isCropResize(device, filter, area), config.isAddBorder(device, filter, area), mt, ml, mr, mb, config.getBGColor(device, filter, area), focusX, focusY, config.isFocusZone(device, filter, area), hq);
 				}
 			} else {
-				int mt = config.getMarginTop(ctx.getDevice(), filter, area);
-				int ml = config.getMarginLeft(ctx.getDevice(), filter, area);
-				int mr = config.getMarginRigth(ctx.getDevice(), filter, area);
-				int mb = config.getMarginBottom(ctx.getDevice(), filter, area);
+				int mt = config.getMarginTop(device, filter, area);
+				int ml = config.getMarginLeft(device, filter, area);
+				int mr = config.getMarginRigth(device, filter, area);
+				int mb = config.getMarginBottom(device, filter, area);
 
-				if (config.isCropResize(ctx.getDevice(), filter, area)) {
+				if (config.isCropResize(device, filter, area)) {
 					// org.javlo.helper.Logger.stepCount("transform",
 					// "start - transformation - 3.3");
-					img = ImageEngine.resize(img, width, height, true, false, mt, ml, mr, mb, null, focusX, focusY, config.isFocusZone(ctx.getDevice(), filter, area), hq);
+					img = ImageEngine.resize(img, width, height, true, false, mt, ml, mr, mb, null, focusX, focusY, config.isFocusZone(device, filter, area), hq);
 				} else {
 					if (width > 0) {
 						// org.javlo.helper.Logger.stepCount("transform",
 						// "start - transformation - 3.4");
 
-						img = ImageEngine.resizeWidth(img, width, mt, ml, mr, mb, config.getBGColor(ctx.getDevice(), filter, area), hq);
+						img = ImageEngine.resizeWidth(img, width, mt, ml, mr, mb, config.getBGColor(device, filter, area), hq);
 						// org.javlo.helper.Logger.stepCount("transform",
 						// "start - transformation - 3.4.1");
 					}
 					if (height > 0) {
 						// org.javlo.helper.Logger.stepCount("transform",
 						// "start - transformation - 3.5");
-						img = ImageEngine.resizeHeight(img, height, config.getBGColor(ctx.getDevice(), filter, area), hq);
+						img = ImageEngine.resizeHeight(img, height, config.getBGColor(device, filter, area), hq);
 					}
 				}
 			}
@@ -694,15 +707,15 @@ public class ImageTransformServlet extends HttpServlet {
 		// org.javlo.helper.Logger.stepCount("transform",
 		// "start - transformation - 4");
 
-		if (config.isRoundCorner(ctx.getDevice(), filter, area)) {
-			img = ImageEngine.borderCorner(img, config.getBGColor(ctx.getDevice(), filter, area));
+		if (config.isRoundCorner(device, filter, area)) {
+			img = ImageEngine.borderCorner(img, config.getBGColor(device, filter, area));
 		}
 		if (layer != null) {
-			int mt = config.getMarginTop(ctx.getDevice(), filter, area);
-			int ml = config.getMarginLeft(ctx.getDevice(), filter, area);
-			int mr = config.getMarginRigth(ctx.getDevice(), filter, area);
-			int mb = config.getMarginBottom(ctx.getDevice(), filter, area);
-			img = ImageEngine.applyFilter(img, layer, config.isCropResize(ctx.getDevice(), filter, area), config.isAddBorder(ctx.getDevice(), filter, area), mt, ml, mr, mb, focusX, focusY, config.isFocusZone(ctx.getDevice(), filter, area), config.getBGColor(ctx.getDevice(), filter, area), hq);
+			int mt = config.getMarginTop(device, filter, area);
+			int ml = config.getMarginLeft(device, filter, area);
+			int mr = config.getMarginRigth(device, filter, area);
+			int mb = config.getMarginBottom(device, filter, area);
+			img = ImageEngine.applyFilter(img, layer, config.isCropResize(device, filter, area), config.isAddBorder(device, filter, area), mt, ml, mr, mb, focusX, focusY, config.isFocusZone(device, filter, area), config.getBGColor(device, filter, area), hq);
 			layer.flush();
 			layer = null;
 		}
@@ -710,11 +723,11 @@ public class ImageTransformServlet extends HttpServlet {
 		// org.javlo.helper.Logger.stepCount("transform",
 		// "start - transformation - 5");
 
-		if (config.isWeb2(ctx.getDevice(), filter, area)) {
-			if (config.isBackGroudColor(ctx.getDevice(), filter, area)) {
-				img = ImageEngine.web2(img, config.getBGColor(ctx.getDevice(), filter, area), config.getWeb2Height(ctx.getDevice(), filter, area), config.getWeb2Separation(ctx.getDevice(), filter, area));
+		if (config.isWeb2(device, filter, area)) {
+			if (config.isBackGroudColor(device, filter, area)) {
+				img = ImageEngine.web2(img, config.getBGColor(device, filter, area), config.getWeb2Height(device, filter, area), config.getWeb2Separation(device, filter, area));
 			} else {
-				img = ImageEngine.web2(img, null, config.getWeb2Height(ctx.getDevice(), filter, area), config.getWeb2Separation(ctx.getDevice(), filter, area));
+				img = ImageEngine.web2(img, null, config.getWeb2Height(device, filter, area), config.getWeb2Separation(device, filter, area));
 			}
 		}
 
@@ -722,46 +735,46 @@ public class ImageTransformServlet extends HttpServlet {
 		// "start - transformation - 6");
 
 		/** max width and max height **/
-		if (config.getMaxWidth(ctx.getDevice(), filter, area) > 0) {
-			if (img.getWidth() > config.getMaxWidth(ctx.getDevice(), filter, area)) {
-				if (!config.isCropResize(ctx.getDevice(), filter, area)) {
-					img = ImageEngine.resizeWidth(img, config.getMaxWidth(ctx.getDevice(), filter, area), hq);
+		if (config.getMaxWidth(device, filter, area) > 0) {
+			if (img.getWidth() > config.getMaxWidth(device, filter, area)) {
+				if (!config.isCropResize(device, filter, area)) {
+					img = ImageEngine.resizeWidth(img, config.getMaxWidth(device, filter, area), hq);
 				} else {
-					img = ImageEngine.resize(img, config.getMaxWidth(ctx.getDevice(), filter, area), img.getHeight(), true, false, 0, 0, 0, 0, null, focusX, focusY, config.isFocusZone(ctx.getDevice(), filter, area), hq);
+					img = ImageEngine.resize(img, config.getMaxWidth(device, filter, area), img.getHeight(), true, false, 0, 0, 0, 0, null, focusX, focusY, config.isFocusZone(device, filter, area), hq);
 				}
 			}
 		}
 
-		if (config.getMaxHeight(ctx.getDevice(), filter, area) > 0) {
-			if (img.getHeight() > config.getMaxHeight(ctx.getDevice(), filter, area)) {
-				if (!config.isCropResize(ctx.getDevice(), filter, area)) {
-					img = ImageEngine.resizeHeight(img, config.getMaxHeight(ctx.getDevice(), filter, area), config.getBGColor(ctx.getDevice(), filter, area), hq);
+		if (config.getMaxHeight(device, filter, area) > 0) {
+			if (img.getHeight() > config.getMaxHeight(device, filter, area)) {
+				if (!config.isCropResize(device, filter, area)) {
+					img = ImageEngine.resizeHeight(img, config.getMaxHeight(device, filter, area), config.getBGColor(device, filter, area), hq);
 				} else {
-					img = ImageEngine.resize(img, img.getWidth(), config.getMaxHeight(ctx.getDevice(), filter, area), true, false, 0, 0, 0, 0, null, focusX, focusY, config.isFocusZone(ctx.getDevice(), filter, area), hq);
+					img = ImageEngine.resize(img, img.getWidth(), config.getMaxHeight(device, filter, area), true, false, 0, 0, 0, 0, null, focusX, focusY, config.isFocusZone(device, filter, area), hq);
 				}
 			}
 		}
 
 		/** align on grid **/
-		int newWidth = ImageConfig.alignToGrid(img.getWidth(), config.getGridWidth(ctx.getDevice(), filter, area));
-		int newHeight = ImageConfig.alignToGrid(img.getHeight(), config.getGridHeight(ctx.getDevice(), filter, area));
+		int newWidth = ImageConfig.alignToGrid(img.getWidth(), config.getGridWidth(device, filter, area));
+		int newHeight = ImageConfig.alignToGrid(img.getHeight(), config.getGridHeight(device, filter, area));
 		if (newWidth != img.getWidth() || newHeight != img.getHeight()) {
-			img = ImageEngine.resize(img, newWidth, newHeight, true, false, 0, 0, 0, 0, null, focusX, focusY, config.isFocusZone(ctx.getDevice(), filter, area), hq);
+			img = ImageEngine.resize(img, newWidth, newHeight, true, false, 0, 0, 0, 0, null, focusX, focusY, config.isFocusZone(device, filter, area), hq);
 		}
 
 		/** dashed after resize **/
-		if (config.getDashed(ctx.getDevice(), filter, area) > 1) {
-			img = ImageEngine.dashed(img, config.getDashed(ctx.getDevice(), filter, area));
+		if (config.getDashed(device, filter, area) > 1) {
+			img = ImageEngine.dashed(img, config.getDashed(device, filter, area));
 		}
 
-		if (config.isVerticalFlip(ctx.getDevice(), filter, area)) {
+		if (config.isVerticalFlip(device, filter, area)) {
 			img = ImageEngine.flip(img, true);
 		}
-		if (config.isHorizontalFlip(ctx.getDevice(), filter, area)) {
+		if (config.isHorizontalFlip(device, filter, area)) {
 			img = ImageEngine.flip(img, false);
 		}
-		if (config.getResizeDashed(ctx.getDevice(), filter, area) > 0) {
-			img = ImageEngine.resizeDashed(img, config.getResizeDashed(ctx.getDevice(), filter, area));
+		if (config.getResizeDashed(device, filter, area) > 0) {
+			img = ImageEngine.resizeDashed(img, config.getResizeDashed(device, filter, area));
 		}
 
 		// org.javlo.helper.Logger.stepCount("transform",
@@ -773,21 +786,20 @@ public class ImageTransformServlet extends HttpServlet {
 			/* create cache image */
 			FileCache fc = FileCache.getInstance(application);
 			String deviceCode = "no-device";
-			if (ctx.getDevice() != null) {
-				deviceCode = ctx.getDevice().getCode();
-			}
-			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-			String dir = ImageHelper.createSpecialDirectory(ctx, globalContext.getContextKey(), filter, area, deviceCode, template, comp);
+			if (device != null) {
+				deviceCode = device.getCode();
+			}			
+			String dir = ImageHelper.createSpecialDirectory(device, globalContext.getContextKey(), filter, area, deviceCode, template, comp);
 			TransactionFile transFile = fc.saveFileTransactional(dir, imageName);
 			OutputStream outImage = transFile.getOutputStream();
 
 			try {
 				logger.info("write image : " + imageType + " width: " + img.getWidth() + " height: " + img.getHeight());
 
-				imageType = StringHelper.neverNull(config.getFileExtension(ctx.getDevice(), filter, area), imageType);
+				imageType = StringHelper.neverNull(config.getFileExtension(device, filter, area), imageType);
 
-				if (comp != null && StringHelper.trimAndNullify(comp.getImageFilterKey(ctx)) != null) {
-					img = ((IImageFilter) comp).filterImage(ctx, img);
+				if (comp != null && StringHelper.trimAndNullify(comp.getImageFilterKey(device)) != null) {
+					img = ((IImageFilter) comp).filterImage(device, img);
 				}
 				if (!"png".equals(imageType) && !"gif".equals(imageType)) {
 					img = ImageEngine.removeAlpha(img);
@@ -813,7 +825,7 @@ public class ImageTransformServlet extends HttpServlet {
 			deviceCode = device.getCode();
 		}
 		FileCache fc = FileCache.getInstance(getServletContext());
-		return fc.getFile(ImageHelper.createSpecialDirectory(ctx, ctx.getGlobalContext().getContextKey(), filter, area, deviceCode, template, comp), name, lastModificationDate);
+		return fc.getFile(ImageHelper.createSpecialDirectory(ctx.getDevice(), ctx.getGlobalContext().getContextKey(), filter, area, deviceCode, template, comp), name, lastModificationDate);
 	}
 
 	/**
@@ -1103,7 +1115,7 @@ public class ImageTransformServlet extends HttpServlet {
 					}
 					imageKey = imageFile.getAbsolutePath() + '_' + filter + '_' + area + '_' + ctx.getDevice() + '_' + templateId;
 					if (comp != null) {
-						String compFilterKey = StringHelper.trimAndNullify(comp.getImageFilterKey(ctx));
+						String compFilterKey = StringHelper.trimAndNullify(comp.getImageFilterKey(ctx.getDevice()));
 						if (compFilterKey != null) {
 							imageKey = imageKey + "_" + compFilterKey;
 						}

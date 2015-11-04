@@ -153,7 +153,7 @@ public abstract class AbstractFileComponent extends AbstractVisualComponent impl
 	public void prepareView(ContentContext ctx) throws Exception {
 		super.prepareView(ctx);
 		String url = getURL(ctx);
-		if (url.startsWith('/'+ctx.getGlobalContext().getStaticConfig().getStaticFolder())) {
+		if (url != null && url.startsWith('/'+ctx.getGlobalContext().getStaticConfig().getStaticFolder())) {
 			url = URLHelper.createResourceURL(ctx, url);
 		}
 		ctx.getRequest().setAttribute("url", url);

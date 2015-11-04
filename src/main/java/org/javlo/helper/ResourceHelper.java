@@ -755,7 +755,9 @@ public class ResourceHelper {
 	public static boolean isTransformURL(ContentContext ctx, String url) throws Exception {
 		final String FAKE_FILTER = "___FAKE_FILTER___";
 		String startURL = URLHelper.createTransformURL(ctx, "/", FAKE_FILTER);
-		startURL = startURL.substring(0, startURL.indexOf(FAKE_FILTER));
+		if (startURL.contains(FAKE_FILTER)) {
+			startURL = startURL.substring(0, startURL.indexOf(FAKE_FILTER));
+		}
 		return url.startsWith(startURL);
 	}
 
