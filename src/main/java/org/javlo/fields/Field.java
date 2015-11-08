@@ -21,6 +21,8 @@ import org.javlo.component.dynamic.DynamicComponent;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
+import org.javlo.data.rest.IRestItem;
+import org.javlo.helper.BeanHelper;
 import org.javlo.helper.ComponentHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.XHTMLHelper;
@@ -32,7 +34,7 @@ import org.javlo.service.ListService.Item;
 import org.javlo.service.RequestService;
 import org.javlo.service.ReverseLinkService;
 
-public class Field implements Cloneable {
+public class Field implements Cloneable, IRestItem {
 
 	public class FieldBean {
 
@@ -884,6 +886,11 @@ public class Field implements Cloneable {
 	
 	public boolean isRealContent(ContentContext ctx) {
 		return getValue() != null && getValue().trim().length() > 0;
+	}
+
+	@Override
+	public Map<String, Object> getContentAsMap(ContentContext ctx) throws Exception {
+		return BeanHelper.bean2Map(newFieldBean(ctx));
 	}
 
 

@@ -111,7 +111,7 @@ public abstract class AbstractSharedContentProvider implements ISharedContentPro
 					outList.add(content);
 				}
 			}
-			Collections.sort(outList, new SharedContent.SortOnComparator(false));
+			Collections.sort(outList, new SharedContent.SortOnComparator());
 		}
 		return outList;
 	}

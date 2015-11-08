@@ -14,29 +14,31 @@ import org.javlo.component.title.Title;
 import org.javlo.context.ContentContext;
 
 public class SharedContent {
-	
+
 	public static final class SortOnComparator implements Comparator<SharedContent> {
-		
-		private int ascendant = 1;
-		
-		public SortOnComparator(boolean ascendant) {
-			if (!ascendant) {
-				this.ascendant = -1;
-			}
-		}
 
 		@Override
 		public int compare(SharedContent o1, SharedContent o2) {
-			if (o1 == null) {
-				return ascendant;
-			} else if (o2 == null) {
-				return -ascendant;
+			if (o1 == o2) {
+				return 0;
+			} else {
+				if (o1 == null) {
+					return -1;
+				} else if (o2 == null) {
+					return 1;
+				}
+				if (o2.getSortOn() == o1.getSortOn()) {
+					return 0;
+				} else if (o1.getSortOn() > o2.getSortOn()) {
+					return -1;
+				} else {
+					return 1;
+				}				
 			}
-			return (int)(o1.getSortOn()-o2.getSortOn())*ascendant;
 		}
-		
+
 	}
-	
+
 	public static final String SHARED_CONTENT_FOLDER = "shared";
 
 	private String title = null;
@@ -50,17 +52,17 @@ public class SharedContent {
 	private boolean editAsModal = false;
 
 	protected List<ComponentBean> content;
-	
+
 	public SharedContent(String id, ComponentBean content) throws Exception {
-		init(id, Arrays.asList(new ComponentBean[] {content}));		
+		init(id, Arrays.asList(new ComponentBean[] { content }));
 	}
-	
+
 	public SharedContent(String id, Collection<ComponentBean> content) throws Exception {
 		init(id, content);
 	}
 
 	private void init(String id, Collection<ComponentBean> content) throws Exception {
-		this.id = id;		
+		this.id = id;
 		if (content != null) {
 			this.content = new LinkedList<ComponentBean>();
 			for (ComponentBean bean : content) {
@@ -79,16 +81,19 @@ public class SharedContent {
 			}
 		}
 	}
-	
+
 	/**
 	 * load content if remote, do nothing if local.
+	 * 
 	 * @param ctx
 	 */
 	public void loadContent(ContentContext ctx) {
 	}
 
 	/**
-	 * get the content as javlo ComponentBean.  Sometime the method need convertion.
+	 * get the content as javlo ComponentBean. Sometime the method need
+	 * convertion.
+	 * 
 	 * @return
 	 */
 	public List<ComponentBean> getContent() {
@@ -136,8 +141,9 @@ public class SharedContent {
 	}
 
 	/**
-	 * get information for create a linked content.
-	 * A linked content change if the source is modified.
+	 * get information for create a linked content. A linked content change if
+	 * the source is modified.
+	 * 
 	 * @return null if content not linkable.
 	 */
 	public String getLinkInfo() {
@@ -151,6 +157,15 @@ public class SharedContent {
 	public long getSortOn() {
 		return sortOn;
 	}
+	
+	/*@Override
+	public boolean equals(Object obj) {
+		if (!(obj instanceof SharedContent)) {
+			return super.equals(obj);
+		} else {
+			return ((SharedContent)obj).getSortOn() == getSortOn();
+		}
+	}*/
 
 	public void setSortOn(long sortOn) {
 		this.sortOn = sortOn;

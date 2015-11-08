@@ -11,7 +11,7 @@
 		
 	   <ul class="navigation">	   
 	   <li class="title ${rootAssociation.associationPage.url eq info.currentURL?'current ':''}${rootAssociation.associationPage.info.realContent?'real-content':''}">
-	   		<a id="page-${rootAssociation.associationPage.name}" class="construction draggable" href="${rootAssociation.associationPage.url}">${i18n.edit["composition.main-title"]}</a>
+	   		<a id="page-${rootAssociation.associationPage.name}" class="construction" href="${rootAssociation.associationPage.url}">${i18n.edit["composition.main-title"]}</a>
 	   			   		
 	   </li>
 	   <li><ul class="children sortable">	   

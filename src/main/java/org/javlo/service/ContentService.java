@@ -35,8 +35,6 @@ import org.javlo.module.core.IPrintInfo;
 import org.javlo.navigation.MenuElement;
 import org.javlo.template.TemplateFactory;
 
-import sun.misc.Perf.GetPerfAction;
-
 /**
  * @author pvanderm represent a content
  */
@@ -475,6 +473,16 @@ public class ContentService implements IPrintInfo {
 			components.remove(getComponentKey(ctx, id));
 		}
 		return component;
+	}
+	
+	public List<IContentVisualComponent> getComponentByType(ContentContext ctx, String type) throws Exception {
+		List<IContentVisualComponent> outContent = new LinkedList<IContentVisualComponent>();
+		MenuElement root = getNavigation(ctx);
+		outContent.addAll(root.getContentByType(ctx, type));
+		for (MenuElement child : root.getAllChildren()) {
+			outContent.addAll(child.getContentByType(ctx, type));
+		}
+		return outContent;
 	}
 
 	public IContentVisualComponent getComponentAllLanguage(ContentContext ctx, String id) throws Exception {

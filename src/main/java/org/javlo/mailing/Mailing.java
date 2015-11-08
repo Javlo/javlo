@@ -126,6 +126,11 @@ public class Mailing {
 	private Date date = null;
 
 	private String templateId = null;
+	
+	private String smtpHost;
+	private String smtpPort;
+	private String smtpUser;
+	private String smtpPassword;
 
 	private Map<InternetAddress, IUserInfo> users = null;
 
@@ -266,6 +271,12 @@ public class Mailing {
 			roles = StringHelper.stringToCollection(config.getString("roles", ""));
 			templateId = config.getString("template", null);
 			adminEmail = config.getString("admin.email", null);
+			
+			setSmtpHost(config.getString("smtp.host", null));
+			setSmtpPort(config.getString("smtp.port", null));
+			setSmtpUser(config.getString("smtp.user", null));
+			setSmtpPassword(config.getString("smtp.password", null));
+			
 			try {
 				date = StringHelper.parseTime(config.getString("date"));
 			} catch (ParseException e) {
@@ -369,6 +380,20 @@ public class Mailing {
 			config.setProperty("date", StringHelper.renderTime(new Date()));
 			config.setProperty("test", TEST);
 			config.setProperty("context-key", contextKey);
+			
+			if (!StringHelper.isEmpty(getSmtpHost())) {
+				config.setProperty("smtp.host", getSmtpHost());
+			}			
+			if (!StringHelper.isEmpty(getSmtpPort())) {
+				config.setProperty("smtp.port", getSmtpPort());
+			}
+			if (!StringHelper.isEmpty(getSmtpUser())) {
+				config.setProperty("smtp.user", getSmtpUser());
+			}
+			if (!StringHelper.isEmpty(getSmtpPassword())) {
+				config.setProperty("smtp.password", getSmtpPassword());
+			}
+			
 			if (sendDate != null) {
 				config.setProperty("send-date", StringHelper.renderTime(sendDate));
 			}
@@ -678,6 +703,38 @@ public class Mailing {
 
 	public void setUsers(Map<InternetAddress, IUserInfo> users) {
 		this.users = users;
+	}
+
+	public String getSmtpHost() {
+		return smtpHost;
+	}
+
+	public void setSmtpHost(String smtpHost) {
+		this.smtpHost = smtpHost;
+	}
+
+	public String getSmtpPort() {
+		return smtpPort;
+	}
+
+	public void setSmtpPort(String smtpPort) {
+		this.smtpPort = smtpPort;
+	}
+
+	public String getSmtpUser() {
+		return smtpUser;
+	}
+
+	public void setSmtpUser(String smtpUser) {
+		this.smtpUser = smtpUser;
+	}
+
+	public String getSmtpPassword() {
+		return smtpPassword;
+	}
+
+	public void setSmtpPassword(String smtpPassword) {
+		this.smtpPassword = smtpPassword;
 	}
 
 }

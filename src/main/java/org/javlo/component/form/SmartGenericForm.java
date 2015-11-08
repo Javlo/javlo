@@ -42,6 +42,7 @@ import org.javlo.helper.XHTMLHelper;
 import org.javlo.helper.XHTMLNavigationHelper;
 import org.javlo.helper.Comparator.StringComparator;
 import org.javlo.i18n.I18nAccess;
+import org.javlo.mailing.MailConfig;
 import org.javlo.mailing.MailService;
 import org.javlo.message.GenericMessage;
 import org.javlo.service.CaptchaService;
@@ -739,7 +740,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 
 				try {
 
-					MailService mailService = MailService.getInstance(globalContext.getStaticConfig());
+					MailService mailService = MailService.getInstance(new MailConfig(globalContext, globalContext.getStaticConfig(), null));
 					InternetAddress fromEmail = new InternetAddress(emailFrom);
 					InternetAddress toEmail = new InternetAddress(emailTo);
 					InternetAddress ccEmail = null;

@@ -29,6 +29,7 @@ import org.javlo.helper.StringSecurityUtil;
 import org.javlo.helper.URLHelper;
 import org.javlo.helper.XHTMLHelper;
 import org.javlo.i18n.I18nAccess;
+import org.javlo.mailing.MailConfig;
 import org.javlo.mailing.MailService;
 import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
@@ -307,7 +308,7 @@ public class FormMailingComponent extends AbstractVisualComponent implements IAc
 				confirmEmail = confirmEmail.replace("##lastname##", lastName);
 			}
 
-			MailService mailService = MailService.getInstance(staticConfig);
+			MailService mailService = MailService.getInstance(new MailConfig(globalContext, StaticConfig.getInstance(request.getSession()), null));
 			mailService.sendMail(new InternetAddress(globalContext.getAdministratorEmail()), new InternetAddress(email), comp.getEmailSubject(), confirmEmail, true);
 
 			GenericMessage msg = new GenericMessage(i18nAccess.getContentViewText("user.error.email-send"), GenericMessage.INFO);

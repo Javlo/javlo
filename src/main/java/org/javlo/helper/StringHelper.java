@@ -1118,7 +1118,7 @@ public class StringHelper {
 	 * @return
 	 */
 	public static boolean isLikeNumber(String str) {
-		str = str.replaceAll("�|\\$|\\.|\\,|\\%| ", "0");
+		str = str.replaceAll("€|\\$|\\.|\\,|\\%| ", "0");
 		return isDigit(str);
 	}
 	

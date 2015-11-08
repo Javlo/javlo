@@ -58,7 +58,7 @@ public class Text extends AbstractVisualComponent {
 			return out;
 		}
 		setStyle(ctx, "normal");
-		setValue(LoremIpsumGenerator.getParagraph(3, false, false));
+		setValue(LoremIpsumGenerator.getParagraph(7, false, false));
 		return out;
 	}
 	

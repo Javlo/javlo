@@ -19,6 +19,7 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
+import java.io.Writer;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Calendar;
@@ -48,7 +49,9 @@ import org.javlo.context.ContentContext;
 import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.context.UserInterfaceContext;
+import org.javlo.data.rest.IRestItem;
 import org.javlo.exception.ResourceNotFoundException;
+import org.javlo.helper.BeanHelper;
 import org.javlo.helper.ConfigHelper;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.ServletHelper;
@@ -2387,5 +2390,12 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		System.out.println(df.format((100-withInt))+"%");
 	}
 	
+	@Override
+	public Map<String, Object> getContentAsMap(ContentContext ctx) throws Exception {
+		Map<String, Object> map = new HashMap<String, Object>();		
+		map.putAll(BeanHelper.bean2Map(getComponentBean()));
+		map.put("path", getPage().getPath());
+		return map;
+	}
 
 }

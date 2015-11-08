@@ -13,6 +13,7 @@ import javax.servlet.http.HttpSession;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.StringHelper;
+import org.javlo.mailing.MailConfig;
 import org.javlo.mailing.MailService;
 import org.javlo.user.AdminUserFactory;
 import org.javlo.user.IUserFactory;
@@ -96,7 +97,7 @@ public class DebugListening {
 
 				if (SEND_ERROR_MAIL) {
 					if (staticConfig.getErrorMailReport() != null) {
-						MailService mailService = MailService.getInstance(staticConfig);
+						MailService mailService = MailService.getInstance(new MailConfig(globalContext, StaticConfig.getInstance(request.getSession()), null));
 						mailService.sendMail(new InternetAddress(staticConfig.getErrorMailReport()), new InternetAddress(staticConfig.getErrorMailReport()), subject, new String(arrayOut.toByteArray()), false);
 						logger.warning("SEND ERROR TO ADMINISTRATOR");
 					} else {
@@ -135,9 +136,7 @@ public class DebugListening {
 			try {
 				if (staticConfig.getErrorMailReport() != null) {
 					String subject = "wcms error report : " + staticConfig.getInstanceId();
-
-					MailService mailService = MailService.getInstance(staticConfig);
-
+					MailService mailService = MailService.getInstance(new MailConfig(null, staticConfig, null));
 					mailService.sendMail(new InternetAddress(staticConfig.getErrorMailReport()), new InternetAddress(staticConfig.getErrorMailReport()), subject, message, false);
 				} else {
 					logger.warning("no error email defined, the error message will be displayed in log.");

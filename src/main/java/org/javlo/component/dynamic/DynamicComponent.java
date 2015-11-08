@@ -23,6 +23,7 @@ import java.util.logging.Logger;
 import org.javlo.bean.Link;
 import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.component.core.ComponentBean;
+import org.javlo.component.core.ContentElementList;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.core.IDate;
 import org.javlo.component.core.ILink;
@@ -954,6 +955,17 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 		properties.setProperty(DYNAMIC_ID_KEY, id);
 		storeProperties();
 		setModify();
+	}
+	
+	@Override
+	public Map<String, Object> getContentAsMap(ContentContext ctx) throws Exception {
+		Map<String, Object> content = super.getContentAsMap(ctx);
+		List<Map<String, Object>> contentArray = new LinkedList<Map<String, Object>>();
+		for (Field field : getFields(ctx)) {
+			contentArray.add(field.getContentAsMap(ctx));
+		}
+		content.put("value", contentArray);
+		return content;
 	}
 
 }

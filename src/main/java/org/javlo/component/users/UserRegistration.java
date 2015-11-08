@@ -34,6 +34,7 @@ import org.javlo.helper.URLHelper;
 import org.javlo.helper.XHTMLHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.image.ImageEngine;
+import org.javlo.mailing.MailConfig;
 import org.javlo.mailing.MailService;
 import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
@@ -276,7 +277,7 @@ public class UserRegistration extends AbstractVisualComponent implements IAction
 				FileCache.getInstance(ctx.getRequest().getSession().getServletContext()).deleteAllFile(globalContext.getContextKey(), avatarFileName);
 			}
 
-			MailService mailService = MailService.getInstance(globalContext.getStaticConfig());
+			MailService mailService = MailService.getInstance(new MailConfig(globalContext, globalContext.getStaticConfig(), null));
 			InternetAddress newUser = new InternetAddress(userInfo.getEmail());
 			InternetAddress admin = new InternetAddress(globalContext.getAdministratorEmail());
 

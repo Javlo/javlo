@@ -6,6 +6,7 @@ import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.Serializable;
 import java.io.StringWriter;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -61,6 +62,8 @@ import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.ContentManager;
 import org.javlo.context.GlobalContext;
+import org.javlo.data.rest.IRestItem;
+import org.javlo.helper.BeanHelper;
 import org.javlo.helper.NavigationHelper;
 import org.javlo.helper.NetHelper;
 import org.javlo.helper.StringHelper;
@@ -72,6 +75,7 @@ import org.javlo.message.MessageRepository;
 import org.javlo.module.content.Edit;
 import org.javlo.module.core.IPrintInfo;
 import org.javlo.service.PersistenceService;
+import org.javlo.service.RequestService;
 import org.javlo.service.event.Event;
 import org.javlo.service.exception.ServiceException;
 import org.javlo.service.resource.Resource;
@@ -87,7 +91,7 @@ import org.javlo.ztatic.StaticInfo;
 /**
  * @author pvanderm
  */
-public class MenuElement implements Serializable, IPrintInfo {
+public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 
 	public static final String PAGE_TYPE_DEFAULT = "default";
 
@@ -840,7 +844,7 @@ public class MenuElement implements Serializable, IPrintInfo {
 				return null;
 			}
 		}
-		
+
 		public boolean isEditable() {
 			try {
 				return page.isEditabled(ctx);
@@ -1046,6 +1050,8 @@ public class MenuElement implements Serializable, IPrintInfo {
 	private String type = PAGE_TYPE_DEFAULT;
 
 	private int urlNumber = 0;
+
+	private boolean restWidthChildren = false;
 
 	/**
 	 * protect page localy if there are linked with other website.
@@ -2113,7 +2119,7 @@ public class MenuElement implements Serializable, IPrintInfo {
 	public Set<String> getEditorRoles() {
 		if (isChildrenOfAssociation()) {
 			return getRootOfChildrenAssociation().getEditorRoles();
-		} else  {
+		} else {
 			return editGroups;
 		}
 	}
@@ -2426,7 +2432,7 @@ public class MenuElement implements Serializable, IPrintInfo {
 		if (bestImageTitle == null) {
 			/** search on all area **/
 			specialCtx = ctx.getContextWithArea(null);
-			contentList = getAllContent(specialCtx);			
+			contentList = getAllContent(specialCtx);
 			bestPriority = Integer.MIN_VALUE;
 			while (contentList.hasNext(ctx)) {
 				IContentVisualComponent elem = contentList.next(specialCtx);
@@ -2461,13 +2467,13 @@ public class MenuElement implements Serializable, IPrintInfo {
 			return res;
 		}
 		res = new LinkedList<IImageTitle>();
-		IContentComponentsList contentList = getAllContent(ctx);		
+		IContentComponentsList contentList = getAllContent(ctx);
 		while (contentList.hasNext(ctx)) {
 			IContentVisualComponent elem = contentList.next(ctx);
 			if ((elem instanceof IImageTitle) && (!elem.isEmpty(ctx)) && (!elem.isRepeat())) {
 				IImageTitle imageComp = (IImageTitle) elem;
 				if (imageComp.isImageValid(ctx)) {
-					res.add(new ImageTitleBean(imageComp.getImageDescription(ctx), imageComp.getResourceURL(ctx), imageComp.getImageLinkURL(ctx), elem.getArea().equals(ComponentBean.DEFAULT_AREA)?6:4 ));					
+					res.add(new ImageTitleBean(imageComp.getImageDescription(ctx), imageComp.getResourceURL(ctx), imageComp.getImageLinkURL(ctx), elem.getArea().equals(ComponentBean.DEFAULT_AREA) ? 6 : 4));
 				}
 			}
 		}
@@ -4664,16 +4670,18 @@ public class MenuElement implements Serializable, IPrintInfo {
 		desc.event = Event.NO_EVENT;
 		return null;
 	}
-	
+
 	public boolean isEditabled(ContentContext ctx) throws Exception {
 		return Edit.checkPageSecurity(ctx, parent);
 	}
-	
+
 	/**
-	 * is a page with reference to other page, like page reference of children link
+	 * is a page with reference to other page, like page reference of children
+	 * link
+	 * 
 	 * @param ctx
 	 * @return
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	public boolean isReference(ContentContext ctx) throws Exception {
 		ContentElementList content = getLocalContent(ctx);
@@ -4684,6 +4692,72 @@ public class MenuElement implements Serializable, IPrintInfo {
 			}
 		}
 		return false;
+	}
+
+	@Override
+	public Map<String, Object> getContentAsMap(ContentContext ctx) throws IllegalArgumentException, IllegalAccessException, InvocationTargetException, Exception {
+
+		RequestService rs = RequestService.getInstance(ctx.getRequest());
+		String lgParam = rs.getParameter("lg", null);
+		Collection<String> langs = ctx.getGlobalContext().getContentLanguages();
+		if (lgParam != null) {
+			ctx.setAllLanguage(lgParam);
+			langs = new LinkedList<String>(Arrays.asList(new String[] { lgParam }));
+		}
+
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("id", getId());
+		if (lgParam != null) {
+			map.putAll(BeanHelper.bean2Map(getPageDescription(ctx)));
+			map.put("realContent", isRealContent(ctx));
+		} else {
+			map.put("type", getType());
+			map.put("realContentAnyLanguage", isRealContentAnyLanguage(ctx));
+		}
+		map.put("path", getPath());
+		map.put("visible", isVisible());
+		map.put("active", isActive());
+		map.put("editorRoles", getEditorRoles());
+		map.put("userRoles", getUserRoles());
+		map.put("sharedName", getSharedName());
+		if (getStartPublishDate() != null) {
+			map.put("startPublishDate", StringHelper.renderSortableTime(getStartPublishDate()));
+		}
+		if (getEndPublishDate() != null) {
+			map.put("endPublishDate", StringHelper.renderSortableTime(getEndPublishDate()));
+		}
+		map.put("creationDate", StringHelper.renderSortableTime(getCreationDate()));
+		map.put("creator", getCreator());
+		map.put("latestEditor", getLatestEditor());
+		
+		List<Map<String, Object>> contentArray = new LinkedList<Map<String, Object>>();
+		for (String lg : langs) {
+			ContentContext langCtx = ctx.getContextWidthOtherRequestLanguage(lg);
+			ContentElementList content = getLocalContent(langCtx);			
+			while (content.hasNext(langCtx)) {
+				contentArray.add(content.next(langCtx).getContentAsMap(langCtx));
+			}			
+		}
+		map.put("content", contentArray);
+		if (isRestWidthChildren()) {
+			Collection<MenuElement> childrenMenuElement = getChildMenuElements();
+			List<Map<String, Object>> childrenArray = new LinkedList<Map<String, Object>>();
+			for (MenuElement child : childrenMenuElement) {
+				childrenArray.add(child.getContentAsMap(ctx));
+			}
+			map.put("children", childrenArray);
+		}
+		return map;
+	}
+
+	
+
+	public boolean isRestWidthChildren() {
+		return restWidthChildren;
+	}
+
+	public void setRestWidthChildren(boolean restWidthChildren) {
+		this.restWidthChildren = restWidthChildren;
 	}
 
 }

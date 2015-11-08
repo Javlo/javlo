@@ -54,7 +54,7 @@ public class LocalImageSharedContentProvider extends AbstractSharedContentProvid
 	protected String getPreviewURL(ContentContext ctx, ComponentBean compBean) throws Exception {
 		GlobalImage image = new GlobalImage();
 		image.init(compBean, ctx);
-		return image.getPreviewURL(ctx, "shared-preview");
+		return image.getPreviewURL(ctx.getContextWithArea(ComponentBean.DEFAULT_AREA), "shared-preview");
 	}
 
 	protected FileFilter getFilter() {

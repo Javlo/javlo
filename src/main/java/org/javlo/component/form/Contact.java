@@ -25,6 +25,7 @@ import org.javlo.helper.PatternHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.i18n.I18nAccess;
+import org.javlo.mailing.MailConfig;
 import org.javlo.mailing.MailService;
 import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
@@ -262,7 +263,7 @@ public class Contact extends AbstractVisualComponent implements ICSS, IAction {
 					out.println("    " + field + " = " + info);
 				}
 			}
-			MailService mailService = MailService.getInstance(StaticConfig.getInstance(request.getSession()));
+			MailService mailService = MailService.getInstance(new MailConfig(globalContext, StaticConfig.getInstance(request.getSession()), null));
 			try {
 				InternetAddress to = new InternetAddress(targetMail);
 				InternetAddress from = new InternetAddress(globalContext.getAdministratorEmail());

@@ -84,7 +84,7 @@ public class MailingThread extends Thread {
 		}
 		mailOut.close();
 
-		MailService mailService = MailService.getInstance(StaticConfig.getInstance(application));
+		MailService mailService = MailService.getInstance(new MailConfig(null, StaticConfig.getInstance(application), mailing));
 		String content = new String(mailBody.toByteArray());
 		List<InternetAddress> bcc = new LinkedList<InternetAddress>();
 		if (mailing.getAdminEmail() != null) {
@@ -116,11 +116,11 @@ public class MailingThread extends Thread {
 		StaticConfig staticConfig = StaticConfig.getInstance(application);
 		Transport transport = null;
 		try {
-			transport = MailService.getMailTransport(staticConfig);
+			transport = MailService.getMailTransport(staticConfig, new MailConfig(null, null, mailing));
 			mailing.onStartMailing();
 			InternetAddress to = mailing.getNextReceiver();
 
-			MailService mailingManager = MailService.getInstance(StaticConfig.getInstance(application));
+			MailService mailingManager = MailService.getInstance(new MailConfig(null, StaticConfig.getInstance(application), mailing));
 
 			while (to != null) {
 				DataToIDService dataToID = DataToIDService.getInstance(application);

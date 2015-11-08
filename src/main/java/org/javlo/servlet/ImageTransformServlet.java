@@ -43,6 +43,7 @@ import org.javlo.component.core.IImageFilter;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
+import org.javlo.helper.ElementaryURLHelper;
 import org.javlo.helper.ExifHelper;
 import org.javlo.helper.NetHelper;
 import org.javlo.helper.PDFHelper;
@@ -880,7 +881,7 @@ public class ImageTransformServlet extends HttpServlet {
 
 		String realURL = globalContext.getTransformShortURL(pathInfo);
 		if (realURL != null) {
-			pathInfo = realURL;
+			pathInfo = realURL;			
 		}
 
 		String dataFolder = globalContext.getDataFolder();
@@ -1004,6 +1005,8 @@ public class ImageTransformServlet extends HttpServlet {
 
 			/** * CHECK CACHE ** */
 			if (imageName != null) {
+				
+				response.setHeader("link", "<"+URLHelper.createResourceURL(ctx.getContextForAbsoluteURL(), imageName)+">; rel=\"canonical\"");
 
 				boolean returnImageDescription = false;
 

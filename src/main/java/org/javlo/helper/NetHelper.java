@@ -33,6 +33,7 @@ import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.image.ImageHelper;
 import org.javlo.image.ImageSize;
+import org.javlo.mailing.MailConfig;
 import org.javlo.mailing.MailService;
 import org.javlo.mailing.MailingBuilder;
 import org.javlo.navigation.MenuElement;
@@ -862,7 +863,7 @@ public class NetHelper {
 	}
 
 	public static void sendMailToAdministrator(GlobalContext globalContext, InternetAddress from, String subject, String content) {
-		MailService mailService = MailService.getInstance(globalContext.getStaticConfig());
+		MailService mailService = MailService.getInstance(new MailConfig(globalContext, globalContext.getStaticConfig(), null));
 		try {
 			mailService.sendMail(from, new InternetAddress(globalContext.getAdministratorEmail()), subject, content, false);
 		} catch (Exception e) {
@@ -892,7 +893,7 @@ public class NetHelper {
 	}
 
 	public static void sendMail(GlobalContext globalContext, InternetAddress from, InternetAddress to, InternetAddress cc, InternetAddress bcc, String subject, String content) {
-		MailService mailService = MailService.getInstance(globalContext.getStaticConfig());
+		MailService mailService = MailService.getInstance(new MailConfig(globalContext, globalContext.getStaticConfig(), null));
 		try {
 			mailService.sendMail(null, from, to, cc, bcc, subject, content, false);
 		} catch (Exception e) {
@@ -901,7 +902,7 @@ public class NetHelper {
 	}
 
 	public static void sendMail(GlobalContext globalContext, InternetAddress from, InternetAddress to, InternetAddress cc, InternetAddress bcc, String subject, String content, String contentTxt, boolean isHTML) {
-		MailService mailService = MailService.getInstance(globalContext.getStaticConfig());
+		MailService mailService = MailService.getInstance(new MailConfig(globalContext, globalContext.getStaticConfig(), null));
 		try {
 			mailService.sendMail(null, from, to, cc, bcc, subject, content, contentTxt, isHTML);
 		} catch (Exception e) {

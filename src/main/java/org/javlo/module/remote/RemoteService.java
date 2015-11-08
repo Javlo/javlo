@@ -16,6 +16,7 @@ import org.javlo.context.GlobalContext;
 import org.javlo.helper.PatternHelper;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.URLHelper;
+import org.javlo.mailing.MailConfig;
 import org.javlo.mailing.MailService;
 import org.javlo.message.GenericMessage;
 import org.javlo.service.NotificationService;
@@ -139,7 +140,7 @@ public class RemoteService {
 			if (!notificationEmailSended) {
 				notificationEmailSended = true;
 				if (PatternHelper.MAIL_PATTERN.matcher(notificationEmail).matches()) {
-					MailService mailService = MailService.getInstance(globalContext.getStaticConfig());
+					MailService mailService = MailService.getInstance(new MailConfig(globalContext, globalContext.getStaticConfig(), null));
 					InternetAddress admin;
 					try {
 						admin = new InternetAddress(notificationEmail);

@@ -166,6 +166,9 @@ editPreview.searchArea = function(item) {
 }
 
 editPreview.initPreview = function() {
+	
+	pjq('#preview_command a').attr('draggable', 'false');  
+	
 	pjq('a.as-modal').on('click', function() {
 		var text = $(this).attr("title");
 		if (text == null || text.length == 0) {
@@ -290,6 +293,7 @@ editPreview.initPreview = function() {
 		});    
 	}	
 	var drop = document.querySelectorAll('.editable-component'), el = null;
+	var countDrop = 0;
 	for (var i = 0; i < drop.length; i++) {
 		el = drop[i];
 		if (!el.eventsAdded) {
@@ -328,6 +332,12 @@ editPreview.initPreview = function() {
 					}
 				}			
 				var subComp = pjq(this);
+				
+				countDrop++;
+				if (countDrop>1) {
+					return false;
+				}
+				
 				if (sharedId != null && sharedId.length > 0) {				
 					var previewId = subComp.attr("id").substring(3);		
 					var area = editPreview.searchArea(subComp);

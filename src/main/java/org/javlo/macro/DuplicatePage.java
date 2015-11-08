@@ -25,6 +25,9 @@ public class DuplicatePage extends AbstractMacro {
 		if (currentPage.getParent() == null) {
 			return "you can't duplicate the root page.";
 		}
+		if (ctx.getCurrentPage().getChildMenuElements().size() > 0) {
+			return "you can't duplicate a page without children.";
+		}
 		
 		if (!Edit.checkPageSecurity(ctx, currentPage.getParent())) {
 			MessageRepository messageRepository = MessageRepository.getInstance(ctx);

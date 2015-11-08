@@ -167,6 +167,16 @@
 		<servlet-name>ZIPServlet</servlet-name>
 		<url-pattern>/zip/*</url-pattern>
 	</servlet-mapping>
+	
+	<servlet>
+		<servlet-name>rest</servlet-name>
+		<servlet-class>org.javlo.servlet.RestDataServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>rest</servlet-name>
+		<url-pattern>/rest/*</url-pattern>
+	</servlet-mapping>
 
 	<servlet>
 		<servlet-name>SynchronisationServlet</servlet-name>

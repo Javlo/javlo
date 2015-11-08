@@ -58,6 +58,7 @@ import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.io.AppendableTextFile;
 import org.javlo.io.TransactionFile;
+import org.javlo.mailing.MailConfig;
 import org.javlo.mailing.MailService;
 import org.javlo.module.core.IPrintInfo;
 import org.javlo.module.core.ModuleException;
@@ -106,7 +107,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	private AppendableTextFile redirectURLList = null;
 
 	private Properties redirectURLMap = null;
-	
+
 	private static final IURLFactory NO_URL_FACTORY = new NoURLFactory();
 
 	private static class StorePropertyThread extends Thread {
@@ -1650,7 +1651,6 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		return uriAlias;
 	}
 
-	
 	public IURLFactory getURLFactory(ContentContext ctx) {
 		if (urlFactory != null) {
 			if (urlFactory == NO_URL_FACTORY) {
@@ -2045,7 +2045,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	}
 
 	public void sendMailToAdministrator(String subjet, String body) throws MessagingException {
-		MailService mailService = MailService.getInstance(staticConfig);
+		MailService mailService = MailService.getInstance(new MailConfig(null, staticConfig, null));
 		mailService.sendMail(new InternetAddress(getAdministratorEmail()), new InternetAddress(getAdministratorEmail()), subjet, body, false);
 	}
 
@@ -3230,6 +3230,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 
 	/**
 	 * get the long url of a short url
+	 * 
 	 * @param shortURL
 	 * @return
 	 */
@@ -3239,22 +3240,24 @@ public class GlobalContext implements Serializable, IPrintInfo {
 
 	/**
 	 * create a short url with a long URL
+	 * 
 	 * @param longURL
-	 * @param newName propose a new name for the file
+	 * @param newName
+	 *            propose a new name for the file
 	 * @return
 	 */
 	public String setTransformShortURL(String longURL, String newName) {
-		String shortURL = getData(TRANSFORM_SHORT_KEY_PREFIX + longURL);		
+		String shortURL = getData(TRANSFORM_SHORT_KEY_PREFIX + longURL);
 		if (shortURL != null) {
 			return shortURL;
 		} else {
 			String fileName;
-			if(newName == null) {
-				fileName = StringHelper.getFileNameFromPath(longURL);				
+			if (newName == null) {
+				fileName = StringHelper.getFileNameFromPath(longURL);
 			} else {
 				newName = StringHelper.stringToFileName(newName);
 				if (!newName.contains(".")) {
-					newName = newName + '.' + StringHelper.getFileExtension(longURL);					
+					newName = newName + '.' + StringHelper.getFileExtension(longURL);
 				}
 				fileName = newName;
 			}
@@ -3270,5 +3273,37 @@ public class GlobalContext implements Serializable, IPrintInfo {
 			setData(TRANSFORM_LONG_KEY_PREFIX + shortURL, longURL);
 			return shortURL;
 		}
+	}
+
+	public String getSMTPHost() {
+		return properties.getString(StaticConfig.SMTP_HOST_PARAM, null);
+	}
+	
+	public void setSMTPHost(String host) {
+		properties.setProperty(StaticConfig.SMTP_HOST_PARAM, host);
+	}
+
+	public String getSMTPPasswordParam() {
+		return properties.getString(StaticConfig.SMTP_PASSWORD_PARAM, null);
+	}
+	
+	public void setSMTPPasswordParam(String pwd) {
+		properties.getString(StaticConfig.SMTP_PASSWORD_PARAM, pwd);
+	}
+
+	public String getSMTPPort() {
+		return properties.getString(StaticConfig.SMTP_PORT_PARAM, null);
+	}
+	
+	public void setSMTPPort(String port) {
+		properties.setProperty(StaticConfig.SMTP_PORT_PARAM, port);
+	}
+
+	public String getSMTPUser() {
+		return properties.getString(StaticConfig.SMTP_USER_PARAM, null);
+	}
+	
+	public void setSMTPUser(String user) {
+		properties.setProperty(StaticConfig.SMTP_USER_PARAM, user);
 	}
 }

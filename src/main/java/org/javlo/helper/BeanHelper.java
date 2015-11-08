@@ -116,11 +116,13 @@ public class BeanHelper {
 				if (method.getReturnType().equals(String.class)) {
 					String name = method.getName().substring(3);
 					name = StringHelper.firstLetterLower(name);
-					String value = (String) method.invoke(bean, (Object[]) null);
-					if (value == null) {
-						value = "";
-					}					
-					res.put(name, value);
+					if (method.getParameterTypes().length == 0) {
+						String value = (String) method.invoke(bean, (Object[]) null);
+						if (value == null) {
+							value = "";
+						}
+						res.put(name, value);
+					}
 				}
 			}
 		}
@@ -159,7 +161,8 @@ public class BeanHelper {
 	 *            generic map
 	 * @param bean
 	 *            a class with set and get method.
-	 * @return the number of key found in bean without set equivalent method in bean.
+	 * @return the number of key found in bean without set equivalent method in
+	 *         bean.
 	 */
 	public static int copy(Map map, Object bean) throws SecurityException, IllegalArgumentException, IllegalAccessException, InvocationTargetException {
 		Iterator keys = map.keySet().iterator();
@@ -208,8 +211,7 @@ public class BeanHelper {
 				}
 				out.put(propertyName, value);
 			} catch (Exception e) {
-				throw new RuntimeException("Exception when reading property: '" + propertyName +
-						"' on class: " + beanClass, e);
+				throw new RuntimeException("Exception when reading property: '" + propertyName + "' on class: " + beanClass, e);
 			}
 		}
 	}
@@ -227,9 +229,18 @@ public class BeanHelper {
 		BeanUtils.copyProperties(bean2, bean1);
 
 		/*
-		 * Method[] methods = bean1.getClass().getDeclaredMethods(); int notFound = 0; for (int i = 0; i < methods.length; i++) { if (methods[i].getName().startsWith("get")||methods[i].getName().startsWith("is")) {
+		 * Method[] methods = bean1.getClass().getDeclaredMethods(); int
+		 * notFound = 0; for (int i = 0; i < methods.length; i++) { if
+		 * (methods[i].getName().startsWith("get")||methods[i].getName().
+		 * startsWith("is")) {
 		 * 
-		 * String name = methods[i].getName().substring(3); name = StringHelper.firstLetterLower(name); Object value = methods[i].invoke(bean1, (Object[]) null); String method2 = "set" + StringHelper.firstLetterUpper(name); try { Method method = bean2.getClass().getMethod(method2, new Class[] { String.class }); method.invoke(bean2, new Object[] { value }); } catch (NoSuchMethodException e) { notFound++; }
+		 * String name = methods[i].getName().substring(3); name =
+		 * StringHelper.firstLetterLower(name); Object value =
+		 * methods[i].invoke(bean1, (Object[]) null); String method2 = "set" +
+		 * StringHelper.firstLetterUpper(name); try { Method method =
+		 * bean2.getClass().getMethod(method2, new Class[] { String.class });
+		 * method.invoke(bean2, new Object[] { value }); } catch
+		 * (NoSuchMethodException e) { notFound++; }
 		 * 
 		 * } }
 		 */
@@ -262,9 +273,11 @@ public class BeanHelper {
 		labels.toArray(res);
 		return res;
 	}
-	
+
 	/**
-	 * sort label by buisness importance, start with, login, email, firstName, lastName
+	 * sort label by buisness importance, start with, login, email, firstName,
+	 * lastName
+	 * 
 	 * @param bean
 	 * @return
 	 */
@@ -292,7 +305,7 @@ public class BeanHelper {
 			labels.add("rolesRaw");
 		}
 		String[] res = new String[labels.size()];
-		
+
 		LangHelper.asFirst(labels, "country");
 		LangHelper.asFirst(labels, "mobile");
 		LangHelper.asFirst(labels, "phone");
@@ -300,14 +313,14 @@ public class BeanHelper {
 		LangHelper.asFirst(labels, "lastName");
 		LangHelper.asFirst(labels, "firstName");
 		LangHelper.asFirst(labels, "email");
-		LangHelper.asFirst(labels, "login");		
-		
+		LangHelper.asFirst(labels, "login");
+
 		labels.toArray(res);
 		return res;
 	}
-	
+
 	public static void storeBeanToCSV(File file, Collection<Object> beans) throws IllegalArgumentException, IllegalAccessException, InvocationTargetException, IOException {
-		List<Map<String,String>> allMap = new LinkedList<Map<String,String>>();
+		List<Map<String, String>> allMap = new LinkedList<Map<String, String>>();
 		for (Object object : beans) {
 			Map map = bean2Map(object);
 			allMap.add(map);
@@ -372,13 +385,17 @@ public class BeanHelper {
 		bean1.setPassword("AZE");
 		bean1.setEmail("p@bean.com");
 
-		System.out.println("[BeanHelper.java]-[test NC]-bean2.getLogin()=" + bean2.getLogin()); /* TODO: REMOVE TRACE */
-		System.out.println("[BeanHelper.java]-[test NC]-bean2.getPassword()=" + bean2.getPassword()); /* TODO: REMOVE TRACE */
+		System.out.println("[BeanHelper.java]-[test NC]-bean2.getLogin()="
+				+ bean2.getLogin()); /* TODO: REMOVE TRACE */
+		System.out.println("[BeanHelper.java]-[test NC]-bean2.getPassword()="
+				+ bean2.getPassword()); /* TODO: REMOVE TRACE */
 
 		copy(bean1, bean2);
 
-		System.out.println("[BeanHelper.java]-[test]-bean2.getLogin()=" + bean2.getLogin()); /* TODO: REMOVE TRACE */
-		System.out.println("[BeanHelper.java]-[test]-bean2.getPassword()=" + bean2.getPassword()); /* TODO: REMOVE TRACE */
+		System.out.println("[BeanHelper.java]-[test]-bean2.getLogin()="
+				+ bean2.getLogin()); /* TODO: REMOVE TRACE */
+		System.out.println("[BeanHelper.java]-[test]-bean2.getPassword()="
+				+ bean2.getPassword()); /* TODO: REMOVE TRACE */
 
 		Map map = new Hashtable();
 		map.put("login", "plemarchand");
@@ -386,8 +403,10 @@ public class BeanHelper {
 
 		copy(map, bean2);
 
-		System.out.println("[BeanHelper.java]-[test]-bean2.getLogin()=" + bean2.getLogin()); /* TODO: REMOVE TRACE */
-		System.out.println("[BeanHelper.java]-[test]-bean2.getPassword()=" + bean2.getPassword()); /* TODO: REMOVE TRACE */
+		System.out.println("[BeanHelper.java]-[test]-bean2.getLogin()="
+				+ bean2.getLogin()); /* TODO: REMOVE TRACE */
+		System.out.println("[BeanHelper.java]-[test]-bean2.getPassword()="
+				+ bean2.getPassword()); /* TODO: REMOVE TRACE */
 
 	}
 

@@ -89,7 +89,7 @@
 						<li>
 							<c:set var="tooltip" value='' />
 							<c:if test="${i18n.edit['command.copy-page.tooltip'] != 'command.copy-page.tooltip'}">
-								<c:set var="tooltip" value='data-toggle="tooltip" data-placement="bottom" title="${i18n.edit[\'command.copy-page.tooltip\']}"' />
+								<c:set var="tooltip" value='data-toggle="tooltip" data-placement="left" title="${i18n.edit[\'command.copy-page.tooltip\']}"' />
 							</c:if>
 						
 							<form class="${info.page.pageEmpty || info.page.childrenAssociation?'no-access':''}"
@@ -106,12 +106,16 @@
 						<li>
 						<c:set var="tooltip" value='' />
 						<c:if test="${i18n.edit['command.paste-page.tooltip'] != 'command.paste-page.tooltip'}">
-							<c:set var="tooltip" value='data-toggle="tooltip" data-placement="bottom" title="${i18n.edit[\'command.paste-page.tooltip\']}"' />
+							<c:set var="tooltip" value='data-toggle="tooltip" data-placement="left" title="${i18n.edit[\'command.paste-page.tooltip\']}"' />
 						</c:if>						
 						<form
 								class="${empty info.contextForCopy || !info.page.pageEmpty || info.page.childrenAssociation?'no-access':''}"
 								id="paste_page" action="${info.currentURL}" method="post">
 								<input type="hidden" name="webaction" value="edit.pastePage" />
+								<c:set var="tooltip" value='' />
+								<c:if test="${i18n.edit['action.paste-page-preview'] != 'action.paste-page-preview'}">
+									<c:set var="tooltip" value='data-toggle="tooltip" data-placement="left" title="${i18n.edit[\'action.paste-page-preview\']}"' />
+								</c:if>
 								<button ${tooltip} class="btn btn-default btn-sm" id="pc_paste_page"
 									type="submit"
 									${empty info.contextForCopy || !info.page.pageEmpty || info.page.childrenAssociation?'disabled="disabled"':''}>
@@ -123,7 +127,11 @@
 								class="${empty info.contextForCopy || !info.page.pageEmpty?'no-access':''}"
 								action="${info.currentURL}" method="get">
 								<div class="hidden"><input type="hidden" name="webaction" value="edit.refresh" /></div>
-								<button class="btn btn-default btn-sm btn-refresh"
+								<c:set var="tooltip" value='' />
+								<c:if test="${i18n.edit['global.refresh'] != 'global.refresh'}">
+									<c:set var="tooltip" value='data-toggle="tooltip" data-placement="left" title="${i18n.edit[\'global.refresh\']}"' />
+								</c:if>
+								<button ${tooltip} class="btn btn-default btn-sm btn-refresh"
 									id="pc_paste_page" type="submit">
 									<span class="glyphicon glyphicon-refresh" aria-hidden="true"></span><span
 										class="text">${i18n.edit['global.refresh']}</span>
@@ -135,7 +143,11 @@
 									<input type="hidden" value="${info.pageID}" name="page" /> <input
 										type="hidden" value="edit.deletePage" name="webaction" />
 									<c:if test="${!info.page.root}">
-										<button class="btn btn-default btn-sm btn-delete"
+										<c:set var="tooltip" value="" />
+										<c:if test="${i18n.edit['preview.label.delete.tooltip'] != 'preview.label.delete.tooltip'}">
+											<c:set var="tooltip" value=' data-toggle="tooltip" data-placement="left" title="${i18n.edit[\'preview.label.delete.tooltip\']}"' />
+										</c:if>
+										<button ${tooltip} class="btn btn-default btn-sm btn-delete"
 											type="submit"
 											onclick="if (!confirm('${i18n.edit['menu.confirm-page']}')) return false;">
 											<span class="glyphicon glyphicon-trash" aria-hidden="true"></span><span
@@ -205,7 +217,11 @@
 					</c:url>
 					<form>
 						<div class="btn-group">
-						<button class="btn btn-default btn-sm btn-send btn-color"
+						<c:set var="tooltip" value="" />
+						<c:if test="${i18n.edit['command.mailing.tooltip'] != 'command.mailing.tooltip'}">
+							<c:set var="tooltip" value='data-toggle="tooltip" data-placement="left" title="${i18n.edit[\'command.mailing.tooltip\']}"' />
+						</c:if>
+						<button ${tooltip} class="btn btn-default btn-sm btn-send btn-color"
 							type="<%=accessType%>"
 							value="${i18n.edit['preview.label.mailing']}"
 							onclick="editPreview.openModal('${i18n.edit['preview.label.mailing']}','${url}'); return false;">
@@ -219,7 +235,11 @@
 						<c:param name="box" value="sendwizard"></c:param>												
 						<c:param name="previewEdit" value="true"></c:param>
 					</c:url>
-						<button class="btn btn-default btn-sm btn-export btn-color"
+					<c:set var="tooltip" value='' />
+					<c:if test="${i18n.edit['command.export.tooltip'] != 'command.export.tooltip'}">
+							<c:set var="tooltip" value='data-toggle="tooltip" data-placement="left" title="${i18n.edit[\'command.export.tooltip\']}"' />
+					</c:if>
+						<button ${tooltip} class="btn btn-default btn-sm btn-export btn-color"
 							type="<%=accessType%>"
 							value="${i18n.edit['preview.label.export-mailing']}"
 							onclick="editPreview.openModal('${i18n.edit['preview.label.export-mailing']}','${url}'); return false;">
@@ -277,7 +297,7 @@
 						<c:if test="${i18n.edit['preview.label.ticket.tooltip'] != 'preview.label.ticket.tooltip'}">
 							<c:set var="tooltip" value=' data-toggle="tooltip" data-placement="left" title="${i18n.edit[\'preview.label.ticket.tooltip\']}"' />
 						</c:if>
-						<button class="btn btn-default btn-sm btn-tickets btn-color btn-notext"
+						<button ${tooltip} class="btn btn-default btn-sm btn-tickets btn-color btn-notext"
 							type="<%=accessType%>"
 							value="${i18n.edit['preview.label.ticket']}"
 							onclick="editPreview.openModal('${i18n.edit['preview.label.ticket']}','${url}'); return false;"${tooltip}>
@@ -317,10 +337,18 @@
 				<c:url var="logoutURL" value="<%=URLHelper.createURL(ctx)%>" context="/">
 					<c:param name="edit-logout" value="true" />
 				</c:url> 
-				<li class="user"><c:if test="${!userInterface.contributor}">
-				<a id="pc_edit_mode_button" class="btn btn-default btn-sm" title="${i18n.edit['global.exit']}" href="<%=URLHelper.createURL(returnEditCtx)%>"><span class="glyphicon glyphicon-briefcase"></span><span class="text">edit</span></a>	
+				<c:set var="tooltip" value="" />
+				<c:if test="${i18n.edit['preview.label.edit.tooltip'] != 'preview.label.edit.tooltip'}">
+					<c:set var="tooltip" value=' data-toggle="tooltip" data-placement="left" title="${i18n.edit[\'preview.label.edit.tooltip\']}"' />
 				</c:if>
-				<a href="${info.currentEditURL}?module=users&webaction=user.changeMode&mode=myself&previewEdit=true" class="as-modal btn btn-default btn-sm"><span class="glyphicon glyphicon-user" aria-hidden="true"></span><span class="text">${info.userName}</span></a>					
+				<li class="user"><c:if test="${!userInterface.contributor}">
+				<a ${tooltip} id="pc_edit_mode_button" class="btn btn-default btn-sm" title="${i18n.edit['global.exit']}" href="<%=URLHelper.createURL(returnEditCtx)%>"><span class="glyphicon glyphicon-briefcase"></span><span class="text">edit</span></a>	
+				</c:if>
+				<c:set var="tooltip" value="" />
+				<c:if test="${i18n.edit['preview.label.user.tooltip'] != 'preview.label.user.tooltip'}">
+					<c:set var="tooltip" value=' data-toggle="tooltip" data-placement="left" title="${i18n.edit[\'preview.label.user.tooltip\']}"' />
+				</c:if>
+				<a ${tooltip} href="${info.currentEditURL}?module=users&webaction=user.changeMode&mode=myself&previewEdit=true" class="as-modal btn btn-default btn-sm"><span class="glyphicon glyphicon-user" aria-hidden="true"></span><span class="text">${info.userName}</span></a>					
 				<a class="btn btn-default btn-sm" title="${i18n.edit['global.logout']}" href="${logoutURL}"><span class="glyphicon glyphicon-log-out"></span><span class="text">${i18n.edit["global.logout"]}</span></a>				
 				</li>
 			</c:if>

@@ -81,7 +81,7 @@ public class GlobalImageSharedContentProvider extends LocalImageSharedContentPro
 					content.add(sharedContent);
 					GlobalImage image = new GlobalImage();
 					image.init(imageBean, ctx);
-					String imageURL = image.getPreviewURL(ctx, "shared-preview");
+					String imageURL = image.getPreviewURL(ctx.getContextWithArea(ComponentBean.DEFAULT_AREA), "shared-preview");
 					sharedContent.setTitle(imageFile.getName());
 					sharedContent.setDescription(staticInfo.getTitle(ctx));
 					sharedContent.setImageUrl(imageURL);

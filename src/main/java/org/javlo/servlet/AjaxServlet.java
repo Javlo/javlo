@@ -84,7 +84,7 @@ public class AjaxServlet extends HttpServlet {
 				StringWriter strWriter = new StringWriter();
 
 				if (ctx.getSpecificJson() == null) {
-					if (ctx.getAjaxMap() == null) {
+					if (ctx.getAjaxMap() == null) {						
 						String msgXhtml = ServletHelper.executeJSP(ctx, editCtx.getMessageTemplate());
 						ctx.addAjaxInsideZone("message-container", msgXhtml);
 						outMap.put("messageText", StringHelper.removeTag(msgXhtml));

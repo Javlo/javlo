@@ -85,7 +85,8 @@ public class MailService {
 	// private static final String DEFAULT_SMTP_PORT = "25";
 
 	private Properties props;
-	private StaticConfig staticConfig;
+	//private StaticConfig staticConfig;
+	private MailConfig mailConfig;
 	private String tempDir;
 
 	private static MailService instance = null;
@@ -93,20 +94,41 @@ public class MailService {
 	private MailService() {
 	}
 
-	private void updateInfo(StaticConfig staticConfig) {
+	private void updateInfo(MailConfig mailConfig) {
+		Properties finalProps = new Properties();
+
+		if (mailConfig.getSMTPHost() != null) {
+			finalProps.put(SMTP_HOST_PARAM, mailConfig.getSMTPHost());
+		}
+		if (mailConfig.getSMTPPort() != null) {
+			finalProps.put(SMTP_PORT_PARAM, mailConfig.getSMTPPort());
+		}
+		if (mailConfig.getLogin() != null) {
+			finalProps.put(SMTP_USER_PARAM, mailConfig.getLogin());
+		}
+		if (mailConfig.getPassword() != null) {
+			finalProps.put(SMTP_PASSWORD_PARAM, mailConfig.getPassword());
+		}
+
+		this.tempDir = mailConfig.getTempDir();
+
+		this.props = finalProps;
+	}
+	
+	private void updateInfo(StaticConfig staticConfig, Mailing mailing) {
 		Properties finalProps = new Properties();
 
 		if (staticConfig.getSMTPHost() != null) {
-			finalProps.put(SMTP_HOST_PARAM, staticConfig.getSMTPHost());
+			finalProps.put(SMTP_HOST_PARAM, StringHelper.neverEmpty(mailing.getSmtpHost(), staticConfig.getSMTPHost()));
 		}
 		if (staticConfig.getSMTPPort() != null) {
-			finalProps.put(SMTP_PORT_PARAM, staticConfig.getSMTPPort());
+			finalProps.put(SMTP_PORT_PARAM, StringHelper.neverEmpty(mailing.getSmtpPort(), staticConfig.getSMTPPort()));
 		}
 		if (staticConfig.getSMTPUser() != null) {
-			finalProps.put(SMTP_USER_PARAM, staticConfig.getSMTPUser());
+			finalProps.put(SMTP_USER_PARAM, StringHelper.neverEmpty(mailing.getSmtpUser(), staticConfig.getSMTPUser()));
 		}
 		if (staticConfig.getSMTPPasswordParam() != null) {
-			finalProps.put(SMTP_PASSWORD_PARAM, staticConfig.getSMTPPasswordParam());
+			finalProps.put(SMTP_PASSWORD_PARAM, StringHelper.neverEmpty(mailing.getSmtpPassword(),staticConfig.getSMTPPasswordParam()));
 		}
 
 		this.tempDir = staticConfig.getTempDir();
@@ -117,37 +139,33 @@ public class MailService {
 	/**
 	 * This method is kept to be able to use this class outside a Servlet
 	 * context
-	 * 
-	 * @param props
-	 *            Properties with necessary parameters to connect to the smtp
-	 *            server in /WEB-INF/config/mailing.properties
-	 * 
+	 * @param mailConfig config for mailing.
 	 * @return the MailingManager singleton
 	 */
-	public static MailService getInstance(StaticConfig staticConfig) {
+	public static MailService getInstance(MailConfig mailConfig) {
 		if (instance == null) {
 			instance = new MailService();
 		}
-		instance.updateInfo(staticConfig);
-		instance.staticConfig = staticConfig;
+		instance.updateInfo(mailConfig);
+		instance.mailConfig = mailConfig;
 		return instance;
-	}
+	}	
 
-	private static Properties getMailInfo(StaticConfig staticConfig) {
+	private static Properties getMailInfo(MailConfig mailing) {
 		Properties finalProps = new Properties();
-
-		if (staticConfig != null) {
-			if (staticConfig.getSMTPHost() != null) {
-				finalProps.put(MailService.SMTP_HOST_PARAM, staticConfig.getSMTPHost());
+		
+		if (mailing != null) {			
+			if (mailing.getSMTPHost() != null ) {
+				finalProps.put(MailService.SMTP_HOST_PARAM, mailing.getSMTPHost());
 			}
-			if (staticConfig.getSMTPPort() != null) {
-				finalProps.put(MailService.SMTP_PORT_PARAM, staticConfig.getSMTPPort());
+			if (mailing.getSMTPPort() != null) {
+				finalProps.put(MailService.SMTP_PORT_PARAM, mailing.getSMTPPort());
 			}
-			if (staticConfig.getSMTPUser() != null) {
-				finalProps.put(MailService.SMTP_USER_PARAM, staticConfig.getSMTPUser());
+			if (mailing.getLogin() != null) {
+				finalProps.put(MailService.SMTP_USER_PARAM, mailing.getLogin());
 			}
-			if (staticConfig.getSMTPPasswordParam() != null) {
-				finalProps.put(MailService.SMTP_PASSWORD_PARAM, staticConfig.getSMTPPasswordParam());
+			if (mailing.getPassword() != null) {
+				finalProps.put(MailService.SMTP_PASSWORD_PARAM, mailing.getPassword());
 			}
 		} else {
 			finalProps.put(MailService.SMTP_HOST_PARAM, "localhost");
@@ -157,18 +175,18 @@ public class MailService {
 		return finalProps;
 
 	}
-
-	private static Properties getMailInfo(String host) {
-		Properties finalProps = new Properties();
-		finalProps.put(MailService.SMTP_HOST_PARAM, host);
-		finalProps.put(MailService.SMTP_PORT_PARAM, 25);
-		return finalProps;
-	}
-
-	public static final Transport getMailTransport(StaticConfig staticConfig) throws MessagingException {
-		Session mailSession = Session.getDefaultInstance(getMailInfo(staticConfig));
+	
+	public static final Transport getMailTransport(StaticConfig staticConfig, MailConfig mailConfig) throws MessagingException {
+		Session mailSession = Session.getDefaultInstance(getMailInfo(mailConfig));
 		Transport transport = mailSession.getTransport("smtp");
-		transport.connect(staticConfig.getSMTPHost(), staticConfig.getSMTPUser(), staticConfig.getSMTPPasswordParam());
+		transport.connect(mailConfig.getSMTPHost(), mailConfig.getSMTPPortInt(), mailConfig.getLogin(), mailConfig.getPassword());
+		return transport;
+	}
+	
+	public static final Transport getMailTransport(MailConfig mailConfig) throws MessagingException {
+		Session mailSession = Session.getDefaultInstance(getMailInfo(mailConfig));
+		Transport transport = mailSession.getTransport("smtp");
+		transport.connect(mailConfig.getSMTPHost(),mailConfig.getSMTPPortInt(), mailConfig.getLogin(), mailConfig.getPassword());
 		return transport;
 	}
 
@@ -280,7 +298,7 @@ public class MailService {
 			msg.saveChanges();
 
 			if (transport == null || !transport.isConnected()) {
-				transport = getMailTransport(staticConfig);
+				transport = getMailTransport(mailConfig);
 				try {
 					transport.sendMessage(msg, msg.getAllRecipients());
 				} finally {

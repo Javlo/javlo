@@ -13,6 +13,7 @@ import java.util.Map;
 
 import org.javlo.component.config.ComponentConfig;
 import org.javlo.context.ContentContext;
+import org.javlo.data.rest.IRestItem;
 import org.javlo.exception.ResourceNotFoundException;
 import org.javlo.message.GenericMessage;
 import org.javlo.navigation.MenuElement;
@@ -22,7 +23,7 @@ import org.javlo.utils.SuffixPrefix;
  * @author pvandermaesen
  * 
  */
-public interface IContentVisualComponent extends Comparable<IContentVisualComponent> {
+public interface IContentVisualComponent extends Comparable<IContentVisualComponent>, IRestItem {
 
 	public static final String ID_SEPARATOR = "__";
 

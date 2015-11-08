@@ -46,6 +46,7 @@ import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.helper.XHTMLHelper;
 import org.javlo.i18n.I18nAccess;
+import org.javlo.mailing.MailConfig;
 import org.javlo.mailing.MailService;
 import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
@@ -428,7 +429,7 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 			try {
 				from = new InternetAddress(sender);
 				InternetAddress to = new InternetAddress(getEmail(ctx));
-				MailService.getInstance(StaticConfig.getInstance(ctx.getRequest().getSession())).sendMail(from, to, "comment validation on " + globalContext.getContextKey(), writer.toString(), false);
+				MailService.getInstance(new MailConfig(globalContext, globalContext.getStaticConfig(), null)).sendMail(from, to, "comment validation on " + globalContext.getContextKey(), writer.toString(), false);
 			} catch (AddressException e) {
 				e.printStackTrace();
 			} catch (MessagingException e) {

@@ -87,7 +87,7 @@ public class CloserJavloSharedContentProvider extends AbstractSharedContentProvi
 							try {
 								GlobalImage image = new GlobalImage();
 								image.init(bean, ctx);
-								String imageURL = image.getPreviewURL(ctx, "shared-preview");
+								String imageURL = image.getPreviewURL(ctx.getContextWithArea(ComponentBean.DEFAULT_AREA), "shared-preview");
 								sharedContent.setImageUrl(imageURL);								
 								if (page.getParent() != null) {
 									if (!getCategories(ctx).containsKey(page.getParent().getName())) {

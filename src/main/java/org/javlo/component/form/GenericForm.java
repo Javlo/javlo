@@ -43,6 +43,7 @@ import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.helper.XHTMLHelper;
 import org.javlo.helper.Comparator.StringComparator;
+import org.javlo.mailing.MailConfig;
 import org.javlo.mailing.MailService;
 import org.javlo.message.GenericMessage;
 import org.javlo.navigation.MenuElement;
@@ -531,7 +532,7 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 				MenuElement pageConfirmation = content.getNavigation(ctx).searchChildFromName(pageMailing);
 
 				try {
-					MailService mailService = MailService.getInstance(globalContext.getStaticConfig());
+					MailService mailService = MailService.getInstance(new MailConfig(globalContext, StaticConfig.getInstance(request.getSession()), null));
 					
 					String adminEmailTo = comp.getLocalConfig(false).getProperty("mail.admin.to", globalContext.getAdministratorEmail());
 					

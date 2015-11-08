@@ -93,7 +93,7 @@ public class ContentManager {
 		return lg;
 	}
 
-	private static String getLanguage(HttpServletRequest request, int index) {
+	public static String getLanguage(HttpServletRequest request, int index) {
 
 		String lg = "";
 

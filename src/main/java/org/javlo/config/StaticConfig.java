@@ -62,10 +62,10 @@ public class StaticConfig extends Observable {
 	private static final String FILE_NAME = "static-config.properties";
 	private static final String DEFAULT_CONFIG_DIR = "/WEB-INF/config";
 
-	private static final String SMTP_HOST_PARAM = "mail.smtp.host";
-	private static final String SMTP_PORT_PARAM = "mail.smtp.port";
-	private static final String SMTP_USER_PARAM = "mail.smtp.user";
-	private static final String SMTP_PASSWORD_PARAM = "mail.smtp.password";
+	public static final String SMTP_HOST_PARAM = "mail.smtp.host";
+	public static final String SMTP_PORT_PARAM = "mail.smtp.port";
+	public static final String SMTP_USER_PARAM = "mail.smtp.user";
+	public static final String SMTP_PASSWORD_PARAM = "mail.smtp.password";
 
 	private static final String STATIC_CONFIG_RELATIVE_KEY = "static-config.relative";
 	private static final String STATIC_CONFIG_KEY = "static-config.directory";

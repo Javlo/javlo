@@ -2,8 +2,6 @@ package org.javlo.servlet;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -49,7 +47,6 @@ import org.javlo.helper.ServletHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.TimeHelper;
 import org.javlo.helper.URLHelper;
-import org.javlo.helper.XHTMLHelper;
 import org.javlo.helper.XMLHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.mailing.MailingThread;
@@ -246,6 +243,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 			Thread.currentThread().setName("AccessServlet-" + globalContext.getContextKey());
 
 			ContentContext ctx = ContentContext.getContentContext(request, response);
+			
 			ctx.setPostRequest(post);
 
 			globalContext.initExternalService(ctx);

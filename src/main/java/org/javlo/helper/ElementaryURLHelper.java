@@ -70,7 +70,7 @@ public abstract class ElementaryURLHelper {
 
 	static final int HTTPS_PORT = 8443;
 
-	static final String TRANSFORM = "/transform";
+	public static final String TRANSFORM = "/transform";
 
 	static final String RESOURCE = "/resource";
 

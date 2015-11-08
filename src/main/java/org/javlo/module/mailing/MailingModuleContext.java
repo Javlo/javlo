@@ -277,6 +277,13 @@ public class MailingModuleContext extends AbstractModuleContext {
 		m.setAdminEmail(globalContext.getAdministratorEmail());
 		m.setNotif(new InternetAddress(reportTo));
 		m.setContextKey(ctx.getGlobalContext().getContextKey());
+		
+		System.out.println("***** MailingModuleContext.sendMailing : ctx.getGlobalContext().getSMTPHost() = "+ctx.getGlobalContext().getSMTPHost()); //TODO: remove debug trace
+		m.setSmtpHost(ctx.getGlobalContext().getSMTPHost());
+		m.setSmtpPort(ctx.getGlobalContext().getSMTPPort());
+		m.setSmtpUser(ctx.getGlobalContext().getSMTPUser());
+		m.setSmtpPassword(ctx.getGlobalContext().getSMTPPasswordParam());
+		
 		StaticConfig sc = ctx.getGlobalContext().getStaticConfig();
 		String content;
 		if (sc.getApplicationLogin() != null) {			

@@ -244,7 +244,32 @@
 	<input class="form-control" type="text" id="mailing-subject" name="mailing-subject" value="${currentContext.mailingSubject}" />	
 </div>
 </div>
-
+</div>
+<div class="row">
+<div class="col-sm-6">
+<div class="form-group">		
+	<label for="mailing-smtphost">${i18n.edit['admin.mailing.smtphost']}</label>
+	<input class="form-control" type="text" id="mailing-smtphost" name="mailing-smtphost" value="${currentContext.smtphost}" />	
+</div>
+</div>
+<div class="col-sm-6"><div class="form-group">		
+	<label for="mailing-smtpport">${i18n.edit['admin.mailing.smtpport']}</label>
+	<input class="form-control" type="text" id="mailing-smtphost" name="mailing-smtpport" value="${currentContext.smtpport}" />	
+</div>
+</div>
+</div>
+<div class="row">
+<div class="col-sm-6">
+<div class="form-group">		
+	<label for="mailing-smtphost">${i18n.edit['admin.mailing.smtpuser']}</label>
+	<input class="form-control" type="text" id="mailing-smtpuser" name="mailing-smtpuser" value="${currentContext.smtpuser}" />	
+</div>
+</div>
+<div class="col-sm-6"><div class="form-group">		
+	<label for="mailing-smtppassword">${i18n.edit['admin.mailing.smtppassword']}</label>
+	<input class="form-control" type="text" id="mailing-smtppassword" name="mailing-smtppassword" value="" />	
+</div>
+</div>
 </div>
 </fieldset>
 

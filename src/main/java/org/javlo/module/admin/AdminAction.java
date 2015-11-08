@@ -139,6 +139,11 @@ public class AdminAction extends AbstractModuleAction {
 		private String mailingSubject = "";
 		private String mailingReport = "";
 		
+		private String smtphost;
+		private String smtpport;
+		private String smtpuser;
+		private String smtppassword;
+		
 		private boolean reversedlink;
 
 		private TemplateData templateData = null;
@@ -206,6 +211,11 @@ public class AdminAction extends AbstractModuleAction {
 			setMailingSenders(globalContext.getMailingSenders());
 			setMailingSubject(globalContext.getMailingSubject());
 			setMailingReport(globalContext.getMailingReport());
+			
+			setSmtphost(globalContext.getSMTPHost());
+			setSmtpport(globalContext.getSMTPPort());
+			setSmtpuser(globalContext.getSMTPUser());
+			setSmtppassword(globalContext.getSMTPPasswordParam());
 
 			Properties properties = new Properties();
 			properties.putAll(globalContext.getURIAlias());
@@ -692,6 +702,38 @@ public class AdminAction extends AbstractModuleAction {
 			this.mailingReport = mailingReport;
 		}
 
+		public String getSmtphost() {
+			return smtphost;
+		}
+
+		public void setSmtphost(String smtphost) {
+			this.smtphost = smtphost;
+		}
+
+		public String getSmtpport() {
+			return smtpport;
+		}
+
+		public void setSmtpport(String smtpport) {
+			this.smtpport = smtpport;
+		}
+
+		public String getSmtpuser() {
+			return smtpuser;
+		}
+
+		public void setSmtpuser(String smtpuser) {
+			this.smtpuser = smtpuser;
+		}
+
+		public String getSmtppassword() {
+			return smtppassword;
+		}
+
+		public void setSmtppassword(String smtppassword) {
+			this.smtppassword = smtppassword;
+		}
+
 	}
 
 	public static class ComponentBean {
@@ -1085,6 +1127,14 @@ public class AdminAction extends AbstractModuleAction {
 					currentGlobalContext.setMailingSenders(requestService.getParameter("mailing-senders", ""));
 					currentGlobalContext.setMailingSubject(requestService.getParameter("mailing-subject", ""));
 					currentGlobalContext.setMailingReport(requestService.getParameter("mailing-report", ""));
+					
+					/** SMTP **/
+					currentGlobalContext.setSMTPHost(requestService.getParameter("mailing-smtphost",null));
+					currentGlobalContext.setSMTPPort(requestService.getParameter("mailing-smtpport",null));
+					currentGlobalContext.setSMTPUser(requestService.getParameter("mailing-smtpuser",null));
+					if (requestService.getParameter("mailing-smtppassword","").length() > 0) {
+						currentGlobalContext.setSMTPPasswordParam(requestService.getParameter("mailing-smtppassword",null));
+					}
 
 					String dateFormat = requestService.getParameter("short-date", null);
 					if (dateFormat != null) {

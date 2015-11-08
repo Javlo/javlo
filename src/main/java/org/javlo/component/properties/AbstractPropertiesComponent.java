@@ -13,6 +13,7 @@ import java.util.Properties;
 import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.context.ContentContext;
+import org.javlo.helper.BeanHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.service.RequestService;
@@ -258,6 +259,13 @@ public abstract class AbstractPropertiesComponent extends AbstractVisualComponen
 			e.printStackTrace();
 		}
 		return false;
+	}
+	
+	@Override
+	public Map<String, Object> getContentAsMap(ContentContext ctx) throws Exception {		
+		Map<String, Object> content = super.getContentAsMap(ctx);		
+		content.put("value", properties);
+		return content;
 	}
 
 }
