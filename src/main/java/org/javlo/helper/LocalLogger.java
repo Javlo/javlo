@@ -5,7 +5,8 @@ package org.javlo.helper;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Date;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.Hashtable;
 import java.util.Map;
 
@@ -17,12 +18,12 @@ import org.javlo.io.AppendableTextFile;
  * @author pvandermaesen
  */
 public class LocalLogger {
+	
+	public static File SPECIAL_LOG_FILE = null;
 
 	public static boolean PRINT_TIME = false;
 	
 	public static boolean ERROR_ON_INIT = false;
-
-	private static final File LOG_FILE = new File("c:/trans/javlo.log");
 
 	private static AppendableTextFile specialLogFile = null;
 
@@ -124,14 +125,30 @@ public class LocalLogger {
 			specialLogFile.close();
 		}
 	}
+	
+	public static final void log(boolean print, String text) {
+		if (print) {
+			log(text);
+		}
+	}
+	
+	public static final void logStack(boolean print) {
+		if (print) {
+			StringWriter out = new StringWriter();
+			Exception e = new Exception();
+			e.printStackTrace(new PrintWriter(out));
+			log(out.toString());
+		}
+	}
 
 	public static final void log(String text) {
-		if (ERROR_ON_INIT) {
+		if (ERROR_ON_INIT || SPECIAL_LOG_FILE == null) {
 			return;
 		}
 		try {
 			if (specialLogFile == null) {
-				specialLogFile = new AppendableTextFile(new File("c:/trans/javlo.log"));
+				SPECIAL_LOG_FILE.getParentFile().mkdirs();
+				specialLogFile = new AppendableTextFile(SPECIAL_LOG_FILE);
 				specialLogFile.setAutoFlush(true);
 			}
 			specialLogFile.println(text);

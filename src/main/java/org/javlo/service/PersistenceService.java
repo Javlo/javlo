@@ -9,7 +9,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -622,7 +621,7 @@ public class PersistenceService {
 		DebugHelper.checkStructure(visible == null, "no visible defined in a page node.");
 		String roles = pageXML.getAttributeValue("userRoles", "");
 		String layout = pageXML.getAttributeValue("layout", null);
-
+		
 		/* modification management */
 		String creator = pageXML.getAttributeValue("creator", "");
 		String latestEditor = pageXML.getAttributeValue("latestEditor", "");
@@ -675,8 +674,9 @@ public class PersistenceService {
 		page.setHttps(StringHelper.isTrue(https));
 
 		page.setTemplateId(layout);
+		
 		page.setUserRoles(new HashSet<String>(StringHelper.stringToCollection(roles, ";")));
-
+		
 		page.setValid(StringHelper.isTrue(pageXML.getAttributeValue("valid", "false")));
 		page.setValidater(pageXML.getAttributeValue("validater", ""));
 		page.setValidationDate(validationDate);

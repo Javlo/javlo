@@ -3,14 +3,18 @@ package org.javlo.component.files;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintStream;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.fileupload.FileItem;
+import org.javlo.component.core.IUploadResource;
 import org.javlo.component.properties.AbstractPropertiesComponent;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
@@ -22,12 +26,20 @@ import org.javlo.helper.XHTMLHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.module.file.FileAction;
 import org.javlo.module.file.FileBean;
+import org.javlo.service.RequestService;
 import org.javlo.user.UserSecurity;
 import org.javlo.ztatic.StaticInfo;
 
-public class FileFinder extends AbstractPropertiesComponent {
+public class FileFinder extends AbstractPropertiesComponent implements IUploadResource {
 
 	public static final String TYPE = "file-finder";
+	
+	private static String SORT_NAME = "sort_name";
+	private static String SORT_TITLE = "sort_title";
+	private static String SORT_DATE = "sort_creation_date";
+	private static String SORT_MODIFDATE = "sort_date";
+	
+	private static String[] styleList = new String[] {SORT_NAME, SORT_TITLE, SORT_DATE, SORT_MODIFDATE};
 
 	private static class FileFilter {
 		private ContentContext ctx = null;
@@ -44,7 +56,7 @@ public class FileFinder extends AbstractPropertiesComponent {
 			outFilter.text = ctx.getRequest().getParameter("text");
 			outFilter.root = new File(URLHelper.mergePath(ctx.getGlobalContext().getDataFolder(), ctx.getGlobalContext().getStaticConfig().getFileFolder()));
 			return outFilter;
-		}
+		}		
 
 		public boolean match(ContentContext ctx, StaticInfo file) {
 			if (file == null || file.getFile() == null) {
@@ -72,7 +84,7 @@ public class FileFinder extends AbstractPropertiesComponent {
 			}
 			return false;
 		}
-
+		
 		public File getRoot() {
 			if (root == null) {
 
@@ -108,16 +120,30 @@ public class FileFinder extends AbstractPropertiesComponent {
 			this.tags = tags;
 		}
 	}
+	
+	@Override
+	public String[] getStyleList(ContentContext ctx) {		
+		return styleList;
+	}
 
-	public static List<FileBean> getFileList(ContentContext ctx, FileFilter filter) throws Exception {
+	protected List<FileBean> getFileList(ContentContext ctx, FileFilter filter) throws Exception {
 		List<FileBean> outFileList = new LinkedList<FileBean>();
 		for (File file : ResourceHelper.getAllFiles(filter.getRoot(), null)) {
 			StaticInfo info = StaticInfo.getInstance(ctx, file);
 			if (filter.match(ctx, info)) {
 				outFileList.add(new FileBean(ctx, info));
 			}
+			if (getStyle().contentEquals(SORT_NAME)) {
+				Collections.sort(outFileList, new FileBean.FileBeanComparator(ctx, 2));
+			} else if (getStyle().contentEquals(SORT_DATE)) {
+				Collections.sort(outFileList, new FileBean.FileBeanComparator(ctx, 4));
+			} else if (getStyle().contentEquals(SORT_MODIFDATE)) {
+				Collections.sort(outFileList, new FileBean.FileBeanComparator(ctx, -1));
+			} else if (getStyle().contentEquals(SORT_TITLE)) {
+				Collections.sort(outFileList, new FileBean.FileBeanComparator(ctx, 3));
+			}
 		}
-		Collections.sort(outFileList, new FileBean.FileBeanComparator(ctx, 2));
+		
 		return outFileList;
 	}
 
@@ -128,13 +154,13 @@ public class FileFinder extends AbstractPropertiesComponent {
 		super.prepareView(ctx);
 		FileFilter filter = FileFilter.getInstance(ctx);
 		filter.setTags(getTags());
-		filter.setExt(StringHelper.stringToCollection(getFieldValue("ext"),","));
-		filter.setNoext(StringHelper.stringToCollection(getFieldValue("noext"),","));
+		filter.setExt(StringHelper.stringToCollection(getFieldValue("ext"), ","));
+		filter.setNoext(StringHelper.stringToCollection(getFieldValue("noext"), ","));
 		filter.setRoot(new File(URLHelper.mergePath(filter.getRoot().getCanonicalPath(), getFieldValue("root"))));
-		ctx.getRequest().setAttribute("filter", filter);
+		ctx.getRequest().setAttribute("filter", filter);		
 		ctx.getRequest().setAttribute("files", getFileList(ctx, filter));
 	}
-	
+
 	@Override
 	public String getType() {
 		return TYPE;
@@ -148,15 +174,15 @@ public class FileFinder extends AbstractPropertiesComponent {
 	protected String getEditXHTMLCode(ContentContext ctx) throws Exception {
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(outStream);
-		
+
 		if (ctx.getRequest().getParameter("path") != null) {
 			String newFolder = URLHelper.removeStaticFolderPrefix(ctx, ctx.getRequest().getParameter("path"));
-			newFolder = '/'+newFolder.replaceFirst("/" + ctx.getGlobalContext().getStaticConfig().getFileFolderName() + '/', "");
+			newFolder = '/' + newFolder.replaceFirst("/" + ctx.getGlobalContext().getStaticConfig().getFileFolderName() + '/', "");
 			if (newFolder.trim().length() > 1 && !getFieldValue("root").equals(newFolder)) {
-				setFieldValue("root", newFolder);				
+				setFieldValue("root", newFolder);
 			}
 		}
-		
+
 		Map<String, String> filesParams = new HashMap<String, String>();
 		String path = URLHelper.mergePath(FileAction.getPathPrefix(ctx), StaticConfig.getInstance(ctx.getRequest().getSession()).getFileFolderName(), getFieldValue("root"));
 		filesParams.put("path", path);
@@ -171,16 +197,16 @@ public class FileFinder extends AbstractPropertiesComponent {
 		filesParams.put(ElementaryURLHelper.BACK_PARAM_NAME, backURL);
 		String staticLinkURL = URLHelper.createModuleURL(ctx, ctx.getPath(), "file", filesParams);
 		I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
-		String linkToResources = "<a class=\"browse-link btn btn-default btn-xs\" href=\""+staticLinkURL+"\">"+i18nAccess.getText("content.goto-static")+"</a>";
-		
+		String linkToResources = "<a class=\"browse-link btn btn-default btn-xs\" href=\"" + staticLinkURL + "\">" + i18nAccess.getText("content.goto-static") + "</a>";
+
 		out.println("<div class=\"line\">");
 		out.println("<label for=\"" + getInputName("root") + "\">root</label>");
 		FileFilter filter = FileFilter.getInstance(ctx);
 		List<File> dirList = ResourceHelper.getAllDirList(filter.getRoot());
 		dirList.add(0, filter.getRoot());
 		out.println(XHTMLHelper.getInputOneSelect(createKeyWithField("root"), ResourceHelper.removePrefixFromPathList(dirList, filter.getRoot().getCanonicalPath()), getFieldValue("root"), true));
-		out.println(linkToResources+"</div>");
-		
+		out.println(linkToResources + "</div>");
+
 		out.println("<div class=\"line\">");
 		out.println("<div class=\"label\">tags</div>");
 		List<String> tags = getTags();
@@ -206,5 +232,33 @@ public class FileFinder extends AbstractPropertiesComponent {
 	public List<String> getFields(ContentContext ctx) throws Exception {
 		return FIELDS;
 	}
+	
+
+	@Override
+	public void performUpload (ContentContext ctx) throws Exception {
+		RequestService requestService = RequestService.getInstance(ctx.getRequest());
+		Collection<FileItem> items = requestService.getAllFileItem();		
+		for (FileItem item : items) {
+			File file = new File(item.getName());
+			FileFilter filter = FileFilter.getInstance(ctx);
+			filter.setRoot(new File(URLHelper.mergePath(filter.getRoot().getCanonicalPath(), getFieldValue("root"))));
+			File targetFile = new File(URLHelper.mergePath(filter.getRoot().getAbsolutePath(), StringHelper.createFileName(file.getName())));
+			targetFile = ResourceHelper.getFreeFileName(targetFile);
+			InputStream in = item.getInputStream();
+			try {
+				ResourceHelper.writeStreamToFile(in, targetFile);
+			} finally {
+				ResourceHelper.closeResource(in);
+			}
+		}
+	}
+	
+	@Override
+	public boolean isUploadOnDrop() {	
+		return true;
+	}
+	
+	
+
 
 }

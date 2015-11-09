@@ -64,6 +64,7 @@ import org.javlo.context.ContentManager;
 import org.javlo.context.GlobalContext;
 import org.javlo.data.rest.IRestItem;
 import org.javlo.helper.BeanHelper;
+import org.javlo.helper.LocalLogger;
 import org.javlo.helper.NavigationHelper;
 import org.javlo.helper.NetHelper;
 import org.javlo.helper.StringHelper;
@@ -81,6 +82,7 @@ import org.javlo.service.exception.ServiceException;
 import org.javlo.service.resource.Resource;
 import org.javlo.template.Template;
 import org.javlo.template.TemplateFactory;
+import org.javlo.user.AdminUserSecurity;
 import org.javlo.user.User;
 import org.javlo.utils.TimeRange;
 import org.javlo.xml.NodeXML;
@@ -904,7 +906,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 	public PageDescription getSmartPageDescription(ContentContext ctx) {
 		return new SmartPageDescription(ctx, this);
 	}
-
+	
 	public static MenuElement getInstance(GlobalContext globalContext) {
 		MenuElement outMenuElement = new MenuElement();
 		outMenuElement.releaseCache = true;
@@ -1135,7 +1137,9 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 			if (childMenuElements == Collections.EMPTY_LIST) {
 				childMenuElements = new LinkedList<MenuElement>();
 			}
-			menuElement.setUserRoles(getUserRoles());
+			if (menuElement.getUserRoles().size() == 0) {
+				menuElement.setUserRoles(getUserRoles());
+			}
 			childMenuElements.add(menuElement);
 			sortChild();
 		}
@@ -3336,6 +3340,23 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 	public Set<String> getUserRoles() {
 		return userRoles;
 	}
+	
+	public boolean isReadAccess(ContentContext ctx, User user) {
+		System.out.println("***** MenuElement.isReadAccess : userRoles.size() = "+userRoles.size() ); //TODO: remove debug trace
+		
+		if (userRoles.size() > 0) {
+			if (user == null) {
+				return false;
+			}
+			Set<String> roles = new HashSet<String>(user.getRoles());
+			roles.retainAll(getUserRoles());
+			System.out.println("***** MenuElement.isReadAccess : roles.size() = "+roles.size()); //TODO: remove debug trace
+			if (roles.size() == 0 && !(ctx.getCurrentUser().isEditor() && AdminUserSecurity.getInstance().haveRight(ctx.getCurrentUser(), AdminUserSecurity.CONTENT_ROLE))) {
+				return false;
+			}
+		}
+		return true;
+	}
 
 	public String getValidater() {
 		return validater;
@@ -4140,7 +4161,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 	/**
 	 * @param strings
 	 */
-	public void setUserRoles(Set<String> roles) {
+	public void setUserRoles(Set<String> roles) {				
 		userRoles = roles;
 	}
 
@@ -4696,6 +4717,12 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 
 	@Override
 	public Map<String, Object> getContentAsMap(ContentContext ctx) throws IllegalArgumentException, IllegalAccessException, InvocationTargetException, Exception {
+		
+		if (!isReadAccess(ctx, ctx.getCurrentUser())) {
+			Map<String, Object> map = new HashMap<String, Object>();
+			map.put("blocked", "no read access for : "+ctx.getCurrentUser());			
+			return map;
+		}
 
 		RequestService rs = RequestService.getInstance(ctx.getRequest());
 		String lgParam = rs.getParameter("lg", null);

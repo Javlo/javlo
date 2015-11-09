@@ -17,7 +17,6 @@ import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -73,7 +72,6 @@ import org.javlo.template.Template;
 import org.javlo.template.TemplateFactory;
 import org.javlo.thread.ThreadManager;
 import org.javlo.tracking.Tracker;
-import org.javlo.user.AdminUserSecurity;
 import org.javlo.utils.DebugListening;
 import org.xhtmlrenderer.swing.Java2DRenderer;
 import org.xhtmlrenderer.util.FSImageWriter;
@@ -158,7 +156,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 		super.init();
 		
 		LocalLogger.init(getServletContext());
-
+		
 		System.out.println("");
 		System.out.println("");
 		System.out.println("		    _  ____  _     _     ____");
@@ -180,6 +178,8 @@ public class AccessServlet extends HttpServlet implements IVersion {
 		}
 
 		StaticConfig staticConfig = StaticConfig.getInstance(getServletContext());
+		
+		LocalLogger.SPECIAL_LOG_FILE = new File(staticConfig.getSpecialLogFile());
 
 		writeInfo(System.out);
 
@@ -777,6 +777,10 @@ public class AccessServlet extends HttpServlet implements IVersion {
 								}
 							}
 
+							System.out.println("***** AccessServlet.process : page = "+ctx.getCurrentPage()); //TODO: remove debug trace
+							System.out.println("***** AccessServlet.process : ctx.getCurrentPage() name = "+ctx.getCurrentPage().getName()); //TODO: remove debug trace
+							System.out.println("***** AccessServlet.process : ctx.getCurrentPage() id = "+ctx.getCurrentPage().getId()); //TODO: remove debug trace
+							System.out.println("***** AccessServlet.process : ctx.getCurrentPage().getUserRoles().size() = "+ctx.getCurrentPage().getUserRoles().size()); //TODO: remove debug trace
 							if (ctx.getCurrentPage().getUserRoles().size() > 0) {
 								if (ctx.getCurrentUser() == null) {
 									ctx.setSpecialContentRenderer("/jsp/view/login.jsp");
@@ -784,9 +788,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 									if (ctx.getCurrentUser().getPassword() != null && staticConfig.isFirstPasswordMustBeChanged() && ctx.getCurrentUser().getPassword().equals(staticConfig.getFirstPasswordEncryptedIfNeeded())) {
 										ctx.setSpecialContentRenderer("/jsp/view/change_password.jsp");
 									} else {
-										Set<String> roles = new HashSet<String>(ctx.getCurrentUser().getRoles());
-										roles.retainAll(ctx.getCurrentPage().getUserRoles());
-										if (roles.size() == 0 && !(ctx.getCurrentUser().isEditor() && AdminUserSecurity.getInstance().haveRight(ctx.getCurrentUser(), AdminUserSecurity.CONTENT_ROLE))) {
+										if (!ctx.getCurrentPage().isReadAccess(ctx, ctx.getCurrentUser())) {											
 											ctx.setSpecialContentRenderer("/jsp/view/login.jsp");
 										}
 									}

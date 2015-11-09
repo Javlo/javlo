@@ -520,4 +520,9 @@ public class Image extends AbstractFileComponent implements IImageTitle, IPrevie
 	protected boolean isAllowRAW(ContentContext ctx) {
 		return StringHelper.isTrue(getConfig(ctx).getProperty("filter.allow-raw", null), true);
 	}
+	
+	@Override
+	public boolean isUploadOnDrop() {
+		return false;
+	}
 }

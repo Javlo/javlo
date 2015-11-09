@@ -296,5 +296,10 @@ public class GenericFile extends AbstractFileComponent implements IReverseLinkCo
 	public String getListGroup() {
 		return "link";
 	}
+	
+	@Override
+	public boolean isUploadOnDrop() {
+		return false;
+	}
 
 }

@@ -310,5 +310,10 @@ public class CSVArrayComponent extends AbstractFileComponent {
 	public int getPopularity(ContentContext ctx) {
 		return 0;
 	}
+	
+	@Override
+	public boolean isUploadOnDrop() {
+		return false;
+	}
 
 }

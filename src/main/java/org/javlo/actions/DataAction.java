@@ -26,7 +26,9 @@ import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.io.FileExistsException;
 import org.codehaus.plexus.util.StringUtils;
 import org.javlo.component.core.ComponentBean;
+import org.javlo.component.core.ComponentFactory;
 import org.javlo.component.core.IContentVisualComponent;
+import org.javlo.component.core.IUploadResource;
 import org.javlo.component.files.ArrayFileComponent;
 import org.javlo.component.files.FileFinder;
 import org.javlo.component.files.GenericFile;
@@ -475,156 +477,164 @@ public class DataAction implements IAction {
 		FileItem imageItem = null;
 		try {
 			String previousId = rs.getParameter("previous", "0");
-			boolean content = StringHelper.isTrue(rs.getParameter("content", null));
-			ctx = ctx.getContextWithArea(rs.getParameter("area", ctx.getArea()));
-			for (FileItem item : rs.getAllFileItem()) {
-				logger.info("try to import (" + ctx.getCurrentUserId() + ") : " + item.getName());
 
-				if (StringHelper.isImage(item.getName())) {
-					countImages++;
-					if (imageItem == null) {
-						imageItem = item;
-					}
-				} else if (StringHelper.getFileExtension(item.getName()).equalsIgnoreCase("odt") && config.isSharedImportDocument()) {
-					InputStream in = item.getInputStream();
-					Collection<ComponentBean> beans = ContentHelper.createContentFromODT(gc, in, item.getName(), ctx.getRequestContentLanguage());
-					in.close();
-					cs.createContent(ctx, beans, previousId, true);
-					ctx.setNeedRefresh(true);
-				} else if (StringHelper.getFileExtension(item.getName()).equalsIgnoreCase("docx") && config.isSharedImportDocument()) {
-					InputStream in = item.getInputStream();
-					Collection<ComponentBean> beans = ContentHelper.createContentFromDocx(gc, in, item.getName(), ctx.getRequestContentLanguage());
-					in.close();
-					MenuElement page = ctx.getCurrentPage();
-					ContentContext contentCtx = new ContentContext(ctx);
-					if (ctx.getCurrentPage().isChildrenOfAssociation() && !content) {
-						PageAssociationBean pageAssociation = new PageAssociationBean(ctx, ctx.getCurrentPage().getRootOfChildrenAssociation());
-						page = NavigationHelper.createChildPageAutoName(pageAssociation.getArticleRoot().getPage(), ctx);
-						SharedContentContext sharedContentContext = SharedContentContext.getInstance(ctx.getRequest().getSession());
-						sharedContentContext.setProvider(CloserJavloSharedContentProvider.NAME);
-						SharedContentService.getInstance(ctx).clearCache();
-						contentCtx.setArea(ComponentBean.DEFAULT_AREA);
-					}
-					cs.createContent(contentCtx, page, beans, previousId, true);
-					ctx.setNeedRefresh(true);
-				} else if (StringHelper.getFileExtension(item.getName()).equalsIgnoreCase("zip") && item.getName().startsWith("export_")) { // JCR
-					InputStream in = item.getInputStream();
-					ImportJCRPageMacro.importFile(ctx, in, item.getName(), ctx.getCurrentPage());
-					ResourceHelper.closeResource(in);
-					ctx.setNeedRefresh(true);
-				} else if (item.getName().contains("-tanuki-")) {
-					InputStream in = item.getInputStream();
-					TanukiImportTools.createContentFromTanuki(ctx, in, item.getName(), ctx.getRequestContentLanguage());
-					in.close();
-					ctx.setNeedRefresh(true);
-				} else {
-					boolean isArray = StringHelper.getFileExtension(item.getName()).equalsIgnoreCase("xls") || StringHelper.getFileExtension(item.getName()).equalsIgnoreCase("xlsx") || StringHelper.getFileExtension(item.getName()).equalsIgnoreCase("ods") || StringHelper.getFileExtension(item.getName()).equalsIgnoreCase("csv");
-					String resourceRelativeFolder = URLHelper.mergePath(gc.getStaticConfig().getStaticFolder(), tpl.getImportResourceFolder(), importFolder);
-					File targetFolder = new File(URLHelper.mergePath(gc.getDataFolder(), resourceRelativeFolder));
-					if (!targetFolder.exists()) {
-						targetFolder.mkdirs();
-					}
-					File newFile = ResourceHelper.writeFileItemToFolder(item, targetFolder, false, true);
-					if (newFile != null && newFile.exists()) {
-						ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-						PrintStream out = new PrintStream(outStream);
-						String dir = resourceRelativeFolder.replaceFirst(gc.getStaticConfig().getFileFolder(), "");
-						out.println("dir=" + dir);
-						out.println("file-name=" + StringHelper.getFileNameFromPath(newFile.getName()));
-						out.close();
-						String beanType = GenericFile.TYPE;
-						if (isArray && ctx.getGlobalContext().hasComponent(ArrayFileComponent.class.getCanonicalName())) {
-							beanType = ArrayFileComponent.TYPE;
+			IContentVisualComponent comp = cs.getCachedComponent(ctx, previousId);
+			if (comp != null && comp instanceof IUploadResource && ((IUploadResource) comp).isUploadOnDrop()) {
+				((IUploadResource) comp).performUpload(ctx);
+				ctx.setNeedRefresh(true);
+			} else {
+				boolean content = StringHelper.isTrue(rs.getParameter("content", null));
+				ctx = ctx.getContextWithArea(rs.getParameter("area", ctx.getArea()));
+				for (FileItem item : rs.getAllFileItem()) {
+					logger.info("try to import (" + ctx.getCurrentUserId() + ") : " + item.getName());
+
+					if (StringHelper.isImage(item.getName())) {
+						countImages++;
+						if (imageItem == null) {
+							imageItem = item;
 						}
-
-						StaticInfo staticInfo = StaticInfo.getInstance(ctx, newFile);
-
-						SharedContentContext sharedContentContext = SharedContentContext.getInstance(ctx.getRequest().getSession());
-						SharedContentService sharedContentService = SharedContentService.getInstance(ctx);
-						if (sharedContentService.getActiveProviderNames(ctx).contains(ImportedFileSharedContentProvider.NAME)) {
-							sharedContentContext.setProvider(ImportedFileSharedContentProvider.NAME);
-							sharedContentService.clearCache();
-							ISharedContentProvider provider = SharedContentService.getInstance(ctx).getProvider(ctx, sharedContentContext.getProvider());
-							provider.refresh(ctx);
-							provider.getContent(ctx); // refresh categories list
-						} else {
-							ComponentBean bean = new ComponentBean(beanType, new String(outStream.toByteArray()), ctx.getRequestContentLanguage());
-							if (!content) {
-								cs.createContentAtEnd(ctx, bean, true);
-							} else {
-								bean.setArea(ctx.getArea());
-								cs.createContent(ctx, bean, previousId, true);
-							}
+					} else if (StringHelper.getFileExtension(item.getName()).equalsIgnoreCase("odt") && config.isSharedImportDocument()) {
+						InputStream in = item.getInputStream();
+						Collection<ComponentBean> beans = ContentHelper.createContentFromODT(gc, in, item.getName(), ctx.getRequestContentLanguage());
+						in.close();
+						cs.createContent(ctx, beans, previousId, true);
+						ctx.setNeedRefresh(true);
+					} else if (StringHelper.getFileExtension(item.getName()).equalsIgnoreCase("docx") && config.isSharedImportDocument()) {
+						InputStream in = item.getInputStream();
+						Collection<ComponentBean> beans = ContentHelper.createContentFromDocx(gc, in, item.getName(), ctx.getRequestContentLanguage());
+						in.close();
+						MenuElement page = ctx.getCurrentPage();
+						ContentContext contentCtx = new ContentContext(ctx);
+						if (ctx.getCurrentPage().isChildrenOfAssociation() && !content) {
+							PageAssociationBean pageAssociation = new PageAssociationBean(ctx, ctx.getCurrentPage().getRootOfChildrenAssociation());
+							page = NavigationHelper.createChildPageAutoName(pageAssociation.getArticleRoot().getPage(), ctx);
+							SharedContentContext sharedContentContext = SharedContentContext.getInstance(ctx.getRequest().getSession());
+							sharedContentContext.setProvider(CloserJavloSharedContentProvider.NAME);
+							SharedContentService.getInstance(ctx).clearCache();
+							contentCtx.setArea(ComponentBean.DEFAULT_AREA);
 						}
-						staticInfo.setShared(ctx, false);
+						cs.createContent(contentCtx, page, beans, previousId, true);
+						ctx.setNeedRefresh(true);
+					} else if (StringHelper.getFileExtension(item.getName()).equalsIgnoreCase("zip") && item.getName().startsWith("export_")) { // JCR
+						InputStream in = item.getInputStream();
+						ImportJCRPageMacro.importFile(ctx, in, item.getName(), ctx.getCurrentPage());
+						ResourceHelper.closeResource(in);
+						ctx.setNeedRefresh(true);
+					} else if (item.getName().contains("-tanuki-")) {
+						InputStream in = item.getInputStream();
+						TanukiImportTools.createContentFromTanuki(ctx, in, item.getName(), ctx.getRequestContentLanguage());
+						in.close();
 						ctx.setNeedRefresh(true);
 					} else {
-						return "error upload file : " + item.getName();
+						boolean isArray = StringHelper.getFileExtension(item.getName()).equalsIgnoreCase("xls") || StringHelper.getFileExtension(item.getName()).equalsIgnoreCase("xlsx") || StringHelper.getFileExtension(item.getName()).equalsIgnoreCase("ods") || StringHelper.getFileExtension(item.getName()).equalsIgnoreCase("csv");
+						String resourceRelativeFolder = URLHelper.mergePath(gc.getStaticConfig().getStaticFolder(), tpl.getImportResourceFolder(), importFolder);
+						File targetFolder = new File(URLHelper.mergePath(gc.getDataFolder(), resourceRelativeFolder));
+						if (!targetFolder.exists()) {
+							targetFolder.mkdirs();
+						}
+						File newFile = ResourceHelper.writeFileItemToFolder(item, targetFolder, false, true);
+						if (newFile != null && newFile.exists()) {
+							ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+							PrintStream out = new PrintStream(outStream);
+							String dir = resourceRelativeFolder.replaceFirst(gc.getStaticConfig().getFileFolder(), "");
+							out.println("dir=" + dir);
+							out.println("file-name=" + StringHelper.getFileNameFromPath(newFile.getName()));
+							out.close();
+							String beanType = GenericFile.TYPE;
+							if (isArray && ctx.getGlobalContext().hasComponent(ArrayFileComponent.class.getCanonicalName())) {
+								beanType = ArrayFileComponent.TYPE;
+							}
+
+							StaticInfo staticInfo = StaticInfo.getInstance(ctx, newFile);
+
+							SharedContentContext sharedContentContext = SharedContentContext.getInstance(ctx.getRequest().getSession());
+							SharedContentService sharedContentService = SharedContentService.getInstance(ctx);
+							if (sharedContentService.getActiveProviderNames(ctx).contains(ImportedFileSharedContentProvider.NAME)) {
+								sharedContentContext.setProvider(ImportedFileSharedContentProvider.NAME);
+								sharedContentService.clearCache();
+								ISharedContentProvider provider = SharedContentService.getInstance(ctx).getProvider(ctx, sharedContentContext.getProvider());
+								provider.refresh(ctx);
+								provider.getContent(ctx); // refresh categories
+															// list
+							} else {
+								ComponentBean bean = new ComponentBean(beanType, new String(outStream.toByteArray()), ctx.getRequestContentLanguage());
+								if (!content) {
+									cs.createContentAtEnd(ctx, bean, true);
+								} else {
+									bean.setArea(ctx.getArea());
+									cs.createContent(ctx, bean, previousId, true);
+								}
+							}
+							staticInfo.setShared(ctx, false);
+							ctx.setNeedRefresh(true);
+						} else {
+							return "error upload file : " + item.getName();
+						}
 					}
 				}
-			}
-			File targetFolder = null;
+				File targetFolder = null;
 
-			File folderSelection = null;
+				File folderSelection = null;
 
-			ContentService contentService = ContentService.getInstance(ctx.getRequest());
-			IContentVisualComponent previousComp = contentService.getComponent(ctx, previousId);
-			if (previousComp != null && previousComp.getType().equals(FileFinder.TYPE)) {
-				
-			} else if (previousComp != null && previousComp.getType().equals(Multimedia.TYPE)) {
-				countImages = 2;
-			}
-			if (countImages == 1) {
-				if (!config.isImagesAsGallery()) {
-					folderSelection = createImage(ctx, importFolder, imageItem, config, content, previousId);
-					if (folderSelection != null) {
-						folderSelection = folderSelection.getParentFile();
-					}
-				} else {
-					folderSelection = createOrUpdateGallery(ctx, targetFolder, importFolder, Arrays.asList(new FileItem[] { imageItem }), config, content, previousId);
+				ContentService contentService = ContentService.getInstance(ctx.getRequest());
+				IContentVisualComponent previousComp = contentService.getComponent(ctx, previousId);
+				if (previousComp != null && previousComp.getType().equals(FileFinder.TYPE)) {
+
+				} else if (previousComp != null && previousComp.getType().equals(Multimedia.TYPE)) {
+					countImages = 2;
 				}
-				ctx.setNeedRefresh(true);
-				SharedContentContext sharedContentContext = SharedContentContext.getInstance(ctx.getRequest().getSession());
-				sharedContentContext.setProvider(ImportedImageSharedContentProvider.NAME);
-				SharedContentService.getInstance(ctx).clearCache();
-				ISharedContentProvider provider = SharedContentService.getInstance(ctx).getProvider(ctx, sharedContentContext.getProvider());
-				provider.refresh(ctx);
-				provider.getContent(ctx); // refresh categories list
-			} else if (countImages > 1) { // gallery
-				if (!config.isImagesAsImages() && ctx.getGlobalContext().getComponents().contains(Multimedia.class.getName())) {
-					folderSelection = createOrUpdateGallery(ctx, targetFolder, importFolder, rs.getAllFileItem(), config, content, previousId);
-				} else {
-					for (FileItem file : rs.getAllFileItem()) {
-						folderSelection = createImage(ctx, importFolder, file, config, content, previousId);
+				if (countImages == 1) {
+					if (!config.isImagesAsGallery()) {
+						folderSelection = createImage(ctx, importFolder, imageItem, config, content, previousId);
 						if (folderSelection != null) {
 							folderSelection = folderSelection.getParentFile();
 						}
+					} else {
+						folderSelection = createOrUpdateGallery(ctx, targetFolder, importFolder, Arrays.asList(new FileItem[] { imageItem }), config, content, previousId);
 					}
-				}
-				SharedContentContext sharedContentContext = SharedContentContext.getInstance(ctx.getRequest().getSession());
-				sharedContentContext.setProvider(ImportedImageSharedContentProvider.NAME);
-				SharedContentService.getInstance(ctx).clearCache();
-				ISharedContentProvider provider = SharedContentService.getInstance(ctx).getProvider(ctx, sharedContentContext.getProvider());
-				provider.refresh(ctx);
-				provider.getContent(ctx); // refresh categories list
-			}
-			if (!config.isCreateContentOnImportImage() && !content && countImages > 0) {
-				SharedContentContext sharedContentContext = SharedContentContext.getInstance(ctx.getRequest().getSession());
-				sharedContentContext.setProvider(ImportedImageSharedContentProvider.NAME);
-				SharedContentService.getInstance(ctx).clearCache();
-				ISharedContentProvider provider = SharedContentService.getInstance(ctx).getProvider(ctx, sharedContentContext.getProvider());
-				provider.refresh(ctx);
-				provider.getContent(ctx); // refresh categories list
-				String prefix = URLHelper.mergePath(gc.getDataFolder(), gc.getStaticConfig().getImageFolder()).replace('\\', '/');
-				if (folderSelection != null) {
-					String currentPath = folderSelection.getAbsolutePath().replace('\\', '/');
-					String cat = StringUtils.replace(currentPath, prefix, "");
-					if (cat.length() > 1) { // remove '/'
-						cat = cat.substring(1);
+					ctx.setNeedRefresh(true);
+					SharedContentContext sharedContentContext = SharedContentContext.getInstance(ctx.getRequest().getSession());
+					sharedContentContext.setProvider(ImportedImageSharedContentProvider.NAME);
+					SharedContentService.getInstance(ctx).clearCache();
+					ISharedContentProvider provider = SharedContentService.getInstance(ctx).getProvider(ctx, sharedContentContext.getProvider());
+					provider.refresh(ctx);
+					provider.getContent(ctx); // refresh categories list
+				} else if (countImages > 1) { // gallery
+					if (!config.isImagesAsImages() && ctx.getGlobalContext().getComponents().contains(Multimedia.class.getName())) {
+						folderSelection = createOrUpdateGallery(ctx, targetFolder, importFolder, rs.getAllFileItem(), config, content, previousId);
+					} else {
+						for (FileItem file : rs.getAllFileItem()) {
+							folderSelection = createImage(ctx, importFolder, file, config, content, previousId);
+							if (folderSelection != null) {
+								folderSelection = folderSelection.getParentFile();
+							}
+						}
 					}
-					sharedContentContext.setCategories(new LinkedList<String>(Arrays.asList(new String[] { cat })));
+					SharedContentContext sharedContentContext = SharedContentContext.getInstance(ctx.getRequest().getSession());
+					sharedContentContext.setProvider(ImportedImageSharedContentProvider.NAME);
+					SharedContentService.getInstance(ctx).clearCache();
+					ISharedContentProvider provider = SharedContentService.getInstance(ctx).getProvider(ctx, sharedContentContext.getProvider());
+					provider.refresh(ctx);
+					provider.getContent(ctx); // refresh categories list
 				}
-				ctx.setNeedRefresh(true);
+				if (!config.isCreateContentOnImportImage() && !content && countImages > 0) {
+					SharedContentContext sharedContentContext = SharedContentContext.getInstance(ctx.getRequest().getSession());
+					sharedContentContext.setProvider(ImportedImageSharedContentProvider.NAME);
+					SharedContentService.getInstance(ctx).clearCache();
+					ISharedContentProvider provider = SharedContentService.getInstance(ctx).getProvider(ctx, sharedContentContext.getProvider());
+					provider.refresh(ctx);
+					provider.getContent(ctx); // refresh categories list
+					String prefix = URLHelper.mergePath(gc.getDataFolder(), gc.getStaticConfig().getImageFolder()).replace('\\', '/');
+					if (folderSelection != null) {
+						String currentPath = folderSelection.getAbsolutePath().replace('\\', '/');
+						String cat = StringUtils.replace(currentPath, prefix, "");
+						if (cat.length() > 1) { // remove '/'
+							cat = cat.substring(1);
+						}
+						sharedContentContext.setCategories(new LinkedList<String>(Arrays.asList(new String[] { cat })));
+					}
+					ctx.setNeedRefresh(true);
+				}
 			}
 		} catch (FileExistsException e) {
 			messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("data.file-allready-exist", "file already exists."), GenericMessage.ERROR));

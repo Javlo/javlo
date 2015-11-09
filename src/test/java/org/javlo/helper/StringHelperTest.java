@@ -269,5 +269,11 @@ public class StringHelperTest extends TestCase {
 		assertTrue(StringHelper.isLikeNumber("12,3 %"));
 		assertTrue(StringHelper.isLikeNumber("-12,3"));
 	}
+	
+	public void testCreateCleanName() {
+		assertEquals(StringHelper.createFileName("test.jpg"), "test.jpg");	
+		assertEquals(StringHelper.createFileName("test יא$.jpg"), "test-eausd.jpg");
+		assertEquals(StringHelper.createFileName("test  end.jpg"), "test-end.jpg");
+	}
  
 }

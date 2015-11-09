@@ -407,10 +407,10 @@ public class StringHelper {
 					res.append('C');
 					break;
 				case '\u20ac':
-					res.append("EUR.");
+					res.append("EUR");
 					break;
 				case '$':
-					res.append("USD.");
+					res.append("USD");
 					break;
 				case '/':
 				case '\\':
@@ -423,7 +423,11 @@ public class StringHelper {
 
 			}
 		}
-		return res.toString();
+		String cleanName = res.toString();
+		while (cleanName.contains((""+defaultReplaceChar)+defaultReplaceChar)) {
+			cleanName = cleanName.replace((""+defaultReplaceChar)+defaultReplaceChar, ""+defaultReplaceChar);
+		}
+		return cleanName;
 	}
 
 	/**

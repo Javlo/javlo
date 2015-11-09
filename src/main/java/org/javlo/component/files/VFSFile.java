@@ -229,5 +229,10 @@ public class VFSFile extends AbstractFileComponent implements IReverseLinkCompon
 			return getViewXHTMLCode(ctx);
 		}
 	}
+	
+	@Override
+	public boolean isUploadOnDrop() {
+		return false;
+	}
 
 }
