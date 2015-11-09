@@ -271,8 +271,7 @@ public class StringHelperTest extends TestCase {
 	}
 	
 	public void testCreateCleanName() {
-		assertEquals(StringHelper.createFileName("test.jpg"), "test.jpg");	
-		assertEquals(StringHelper.createFileName("test יא$.jpg"), "test-eausd.jpg");
+		assertEquals(StringHelper.createFileName("test.jpg"), "test.jpg");		
 		assertEquals(StringHelper.createFileName("test  end.jpg"), "test-end.jpg");
 	}
  
