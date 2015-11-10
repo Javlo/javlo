@@ -777,10 +777,6 @@ public class AccessServlet extends HttpServlet implements IVersion {
 								}
 							}
 
-							System.out.println("***** AccessServlet.process : page = "+ctx.getCurrentPage()); //TODO: remove debug trace
-							System.out.println("***** AccessServlet.process : ctx.getCurrentPage() name = "+ctx.getCurrentPage().getName()); //TODO: remove debug trace
-							System.out.println("***** AccessServlet.process : ctx.getCurrentPage() id = "+ctx.getCurrentPage().getId()); //TODO: remove debug trace
-							System.out.println("***** AccessServlet.process : ctx.getCurrentPage().getUserRoles().size() = "+ctx.getCurrentPage().getUserRoles().size()); //TODO: remove debug trace
 							if (ctx.getCurrentPage().getUserRoles().size() > 0) {
 								if (ctx.getCurrentUser() == null) {
 									ctx.setSpecialContentRenderer("/jsp/view/login.jsp");
