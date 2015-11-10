@@ -91,6 +91,9 @@ public class MailConfig {
 		this.tempDir = tempDir;
 	}
 	
-	
+	@Override
+	public String toString() {	
+		return "SMTP [host:"+getSMTPHost()+" port:"+getSMTPPort()+" user:"+getLogin()+" pwd?:"+!StringHelper.isEmpty(getPassword())+']';
+	}
 
 }

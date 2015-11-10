@@ -448,5 +448,9 @@ public class MailService {
 	public void sendMail(InternetAddress sender, InternetAddress recipient, String subject, String content, boolean isHTML) throws MessagingException {
 		sendMail(null, sender, recipient, (List<InternetAddress>) null, (List<InternetAddress>) null, subject, content, isHTML);
 	}
+	
+	public static void resetInstance() {
+		instance = null;
+	}
 
 }

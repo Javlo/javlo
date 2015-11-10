@@ -45,6 +45,7 @@ import org.javlo.helper.URLHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.macro.core.IMacro;
 import org.javlo.macro.core.MacroFactory;
+import org.javlo.mailing.MailService;
 import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
 import org.javlo.module.core.Module;
@@ -1242,6 +1243,8 @@ public class AdminAction extends AbstractModuleAction {
 					td.setTitle(StringHelper.parseColor(requestService.getParameter("title", "" + td.getTitle())));
 					td.setSpecial(StringHelper.parseColor(requestService.getParameter("special", "" + td.getSpecial())));
 					td.setFont(requestService.getParameter("font", "" + td.getFont()));
+					
+					MailService.resetInstance();
 					
 					for (FileItem file : requestService.getAllFileItem()) {
 						if (file.getFieldName().equals("logo")) {

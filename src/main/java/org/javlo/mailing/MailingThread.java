@@ -3,7 +3,6 @@ package org.javlo.mailing;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedList;
@@ -58,6 +57,8 @@ public class MailingThread extends Thread {
 			return;
 		}
 		
+		MailConfig mailConfig = new MailConfig(null, StaticConfig.getInstance(application), mailing);
+		
 		ByteArrayOutputStream mailBody = new ByteArrayOutputStream();
 		PrintWriter mailOut = new PrintWriter(mailBody);
 		mailOut.println("MAILING REPORT");
@@ -66,6 +67,7 @@ public class MailingThread extends Thread {
 		mailOut.println("subject : " + mailing.getSubject());
 		mailOut.println("from : " + mailing.getFrom());
 		mailOut.println("sent? : " + mailing.isSend());
+		mailOut.println("config : " + mailConfig);
 		mailOut.println("");
 		mailOut.println("");
 		mailOut.println("receivers detail :");
@@ -84,7 +86,7 @@ public class MailingThread extends Thread {
 		}
 		mailOut.close();
 
-		MailService mailService = MailService.getInstance(new MailConfig(null, StaticConfig.getInstance(application), mailing));
+		MailService mailService = MailService.getInstance(mailConfig);
 		String content = new String(mailBody.toByteArray());
 		List<InternetAddress> bcc = new LinkedList<InternetAddress>();
 		if (mailing.getAdminEmail() != null) {
@@ -120,7 +122,10 @@ public class MailingThread extends Thread {
 			mailing.onStartMailing();
 			InternetAddress to = mailing.getNextReceiver();
 
-			MailService mailingManager = MailService.getInstance(new MailConfig(null, StaticConfig.getInstance(application), mailing));
+			MailConfig mailConfig = new MailConfig(null, StaticConfig.getInstance(application), mailing);
+			MailService mailingManager = MailService.getInstance(mailConfig);
+			
+			logger.info("send mailling '"+mailing.getSubject()+"' config:"+mailConfig);
 
 			while (to != null) {
 				DataToIDService dataToID = DataToIDService.getInstance(application);
