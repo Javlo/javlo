@@ -811,5 +811,7 @@ public interface IContentVisualComponent extends Comparable<IContentVisualCompon
 	 */
 	public boolean isEditOnCreate(ContentContext ctx);
 	
+	public boolean isNolink();
+	
 
 }

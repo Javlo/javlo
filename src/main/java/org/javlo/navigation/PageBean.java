@@ -11,6 +11,7 @@ import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.module.content.Edit;
 import org.javlo.navigation.MenuElement.PageDescription;
+import org.javlo.service.ContentService;
 import org.javlo.service.exception.ServiceException;
 import org.javlo.template.Template;
 import org.javlo.template.TemplateFactory;
@@ -440,6 +441,10 @@ public class PageBean implements Serializable {
 	
 	public boolean isPageEmpty() throws Exception {
 		return page.isEmpty(ctx);
+	}
+	
+	public boolean isTrash() {
+		return ContentService.TRASH_PAGE_NAME.equals(getName());
 	}
 
 }

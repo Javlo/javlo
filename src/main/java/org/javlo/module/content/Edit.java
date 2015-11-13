@@ -1546,6 +1546,40 @@ public class Edit extends AbstractModuleAction {
 		return message;
 	}
 
+	public static String performMovePageToTrash(RequestService rs, ContentContext ctx, ContentService content, PersistenceService persistenceService, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
+		if (!canModifyCurrentPage(ctx) || !checkPageSecurity(ctx)) {
+			messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("action.block"), GenericMessage.ERROR));
+			return null;
+		}
+		String message = null;
+		String id = ctx.getRequest().getParameter("page");
+		MenuElement menuElement;
+		menuElement = content.getNavigation(ctx).searchChildFromId(id);
+		String newPath = menuElement.getParent().getPath();
+		if (menuElement.isChildrenOfAssociation()) {
+			newPath = menuElement.getRootOfChildrenAssociation().getFirstChild().getPath();
+		}
+		if (menuElement.isChildrenAssociation()) {
+			newPath = "/";
+			menuElement = menuElement.getParent();
+		}
+		if (menuElement.getParent() == null) {
+			return i18nAccess.getText("action.remove.can-not-delete");
+
+		}
+		menuElement.setSavedParent(menuElement.getParent().getId());
+		NavigationHelper.movePage(ctx, content.getTrashPage(ctx), null, menuElement);		
+		String msg = i18nAccess.getText("action.remove.deleted", new String[][] { { "path", menuElement.getPath() } });
+		MessageRepository.getInstance(ctx).setGlobalMessage(new GenericMessage(msg, GenericMessage.INFO));
+		autoPublish(ctx.getRequest(), ctx.getResponse());
+		ctx.setPath(newPath);
+		ctx.setClosePopup(true);
+		
+		persistenceService.setAskStore(true);
+
+		return message;
+	}
+
 	public static final String performPreviewedit(HttpServletRequest request, RequestService rs, EditContext editCtx) {
 		GlobalContext globalContext = GlobalContext.getInstance(request);
 		if (globalContext.isPreviewMode()) {

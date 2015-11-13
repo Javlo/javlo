@@ -1,7 +1,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<title></title>
+<title>${not empty info.page.rootOfChildrenAssociation?info.page.rootOfChildrenAssociation.title:info.template.name}</title>
 <link rel="stylesheet" href="css/font.css" type="text/css" />
 <style type="text/css">
 <jsp:include page="css/style.css" />
@@ -19,7 +19,7 @@
 body .wrapper {
 	<jsp:include page="css/styles.jsp" />
 }
-<jsp:include page="css/dynamic_css_wrapper.jsp" />
+<jsp:include page="css/dynamic_c<title>${not empty info.page.rootOfChildrenAssociation?info.page.rootOfChildrenAssociation.title:info.template.name}</title>ss_wrapper.jsp" />
 
 @page {	size: A4; }
 

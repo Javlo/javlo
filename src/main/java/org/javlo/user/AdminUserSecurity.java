@@ -81,7 +81,7 @@ public class AdminUserSecurity implements Serializable {
 		String[] designRights = { "changeview", "goEditTemplate", "changeRenderer", "validate", "browse", "delete" };
 		Set<String> designRightsSet = new HashSet<String>(Arrays.asList(designRights));
 		rights.put(DESIGN_ROLE, designRightsSet);
-		
+
 		/* USER RIGHT */
 		String[] userRights = { "upload", "ajaxUserList" };
 		Set<String> userRightsSet = new HashSet<String>(Arrays.asList(userRights));
@@ -148,9 +148,9 @@ public class AdminUserSecurity implements Serializable {
 				for (String role : roles) {
 					if (role.equals(FULL_CONTROL_ROLE)) {
 						return true;
-					}					
+					}
 				}
-				return haveRole(user,inRole);
+				return haveRole(user, inRole);
 			}
 		}
 		return false;
@@ -226,7 +226,7 @@ public class AdminUserSecurity implements Serializable {
 	 * @return
 	 * @throws Exception
 	 */
-	public static boolean canModifyPage(ContentContext ctx, MenuElement page) throws Exception {
+	public static boolean canModifyPage(ContentContext ctx, MenuElement page, boolean createMessage) throws Exception {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		IUserFactory adminUserFactory = AdminUserFactory.createUserFactory(globalContext, ctx.getRequest().getSession());
 
@@ -241,9 +241,11 @@ public class AdminUserSecurity implements Serializable {
 		if (page.getEditorRoles().size() > 0) {
 			if (!adminUserSecurity.haveRight(adminUserFactory.getCurrentUser(ctx.getRequest().getSession()), AdminUserSecurity.FULL_CONTROL_ROLE)) {
 				if (!adminUserFactory.getCurrentUser(ctx.getRequest().getSession()).validForRoles(page.getEditorRoles())) {
-					MessageRepository messageRepository = MessageRepository.getInstance(ctx);
-					I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
-					messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("action.security.noright-onpage"), GenericMessage.ERROR), false);
+					if (createMessage) {
+						MessageRepository messageRepository = MessageRepository.getInstance(ctx);
+						I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
+						messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("action.security.noright-onpage"), GenericMessage.ERROR), false);
+					}
 					return false;
 				}
 			}

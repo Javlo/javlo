@@ -544,6 +544,11 @@ public class PersistenceService {
 			if (strRepeat != null) {
 				isRepeat = StringHelper.isTrue(strRepeat);
 			}
+			boolean isNolink = false;
+			String strAutolink = contentNode.getAttributeValue("nolink", null);
+			if (strAutolink != null) {
+				isNolink = StringHelper.isTrue(strAutolink);
+			}
 			String authors = contentNode.getAttributeValue("authors", null);
 			Set<Integer> hiddenModes = null;
 			String hiddenModesStr = contentNode.getAttributeValue("hiddenModes", null);
@@ -569,6 +574,7 @@ public class PersistenceService {
 			ComponentBean bean = new ComponentBean(type, content, lg);
 			bean.setId(id);
 			bean.setRepeat(isRepeat);
+			bean.setNolink(isNolink);
 			bean.setStyle(style);
 			bean.setList(StringHelper.isTrue(inlist));
 			bean.setArea(contentNode.getAttributeValue("area", ComponentBean.DEFAULT_AREA));
@@ -621,6 +627,7 @@ public class PersistenceService {
 		DebugHelper.checkStructure(visible == null, "no visible defined in a page node.");
 		String roles = pageXML.getAttributeValue("userRoles", "");
 		String layout = pageXML.getAttributeValue("layout", null);
+		String freeData = pageXML.getAttributeValue("savedParent", null); 
 		
 		/* modification management */
 		String creator = pageXML.getAttributeValue("creator", "");
@@ -674,6 +681,7 @@ public class PersistenceService {
 		page.setHttps(StringHelper.isTrue(https));
 
 		page.setTemplateId(layout);
+		page.setSavedParent(freeData);
 		
 		page.setUserRoles(new HashSet<String>(StringHelper.stringToCollection(roles, ";")));
 		
@@ -810,6 +818,7 @@ public class PersistenceService {
 				root.setReversedLink(reversedLink);
 
 				root.setTemplateId(page.getAttributeValue("layout"));
+				root.setSavedParent(page.getAttributeValue("savedParent"));
 
 				String creationDate = page.getAttributeValue("creationDate");
 				if (creationDate == null) {

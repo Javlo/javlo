@@ -1662,12 +1662,20 @@ public class XHTMLHelper {
 		String[][] attributes = { { "rows", "2" }, { "cols", "20" } };
 		return getTextArea(name, value, attributes);
 	}
-
+	
 	public static String getTextArea(String name, String value, String[][] attributes) {
+		return getTextArea(name, value, attributes, null);
+	}
+
+	public static String getTextArea(String name, String value, String[][] attributes, String cssClass) {
 		StringWriter res = new StringWriter();
 		PrintWriter out = new PrintWriter(res);
+		
+		if (!StringHelper.isEmpty(cssClass)) {
+			cssClass = " class=\""+cssClass+"\"";
+		}
 
-		out.print("<textarea name=\"");
+		out.print("<textarea"+cssClass+" name=\"");
 		out.print(name);
 		out.print("\"");
 		for (String[] attribute : attributes) {
@@ -1735,6 +1743,14 @@ public class XHTMLHelper {
 			}
 		}
 		return remplacement.start(html);
+	}
+	
+	public static String removeEscapeTag(String html) {
+		if (html == null) {
+			return null;
+		} else {
+			return html.replaceAll("\\&lt;(.+?)\\&gt;", "");
+		}
 	}
 
 	public static String renderContentLanguage(ContentContext ctx) {
@@ -2557,22 +2573,8 @@ public class XHTMLHelper {
 	}
 
 	public static void main(String[] args) {
-		String xhtml = "<body><ol><li>item 1</li><li>item 2<ol><li>item 2.1</li><li>item 2.2</li></ol></li><li>item 3</li></ol></body>";
-
-		try {
-
-			TagDescription[] tags = XMLManipulationHelper.searchAllTag(xhtml, false);
-			for (TagDescription tag : tags) {
-				if (tag.getName().equals("div")) {
-					System.out.println("depth = " + listDepth(tags, tag));
-				}
-			}
-
-			ResourceHelper.writeStringToFile(new File("c:/trans/list.html"), prepareToMailing(xhtml));
-			// System.out.println(prepareToMailing(xhtml));
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		String xhtml = "<body><b>test</b>&lt;b&gt;patrick&lt;/b&gt;</body>";
+		System.out.println(removeEscapeTag(xhtml));
 
 	}
 

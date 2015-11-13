@@ -1,5 +1,8 @@
 package org.javlo.component.image;
 
+import org.javlo.context.ContentContext;
+import org.javlo.helper.URLHelper;
+
 public class ImageBean {
 	
 	private String url;
@@ -13,6 +16,13 @@ public class ImageBean {
 		this.description = descrition;
 		this.link = link;
 		this.setPreviewURL(previewURL);
+	}
+	public ImageBean(ContentContext ctx, IImageTitle image, String filter) throws Exception {
+		super();
+		this.url = image.getResourceURL(ctx);
+		this.description = image.getImageDescription(ctx);
+		this.link = image.getImageLinkURL(ctx);
+		this.setPreviewURL(URLHelper.createTransformURL(ctx, ctx.getCurrentPage(), image.getResourceURL(ctx), filter));
 	}
 	public String getUrl() {
 		return url;

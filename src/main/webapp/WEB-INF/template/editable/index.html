@@ -3,7 +3,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-<title>${info.template.name}</title>
+<title>${not empty info.page.rootOfChildrenAssociation?info.page.rootOfChildrenAssociation.title:info.template.name}</title>
 <style type="text/css">
 <jsp:include page="css/style.css" />
 <jsp:include page="css/web.css" />

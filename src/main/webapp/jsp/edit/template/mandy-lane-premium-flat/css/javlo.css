@@ -1650,3 +1650,7 @@ body.previewEdit {
 	padding-top: 15px;
 	text-align: center;
 }
+
+.line .form-control {
+	width: 98%;
+}

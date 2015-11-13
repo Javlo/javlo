@@ -39,6 +39,7 @@ import org.javlo.component.core.IPageRank;
 import org.javlo.component.dynamic.DynamicComponent;
 import org.javlo.component.image.IImageTitle;
 import org.javlo.component.image.ImageBean;
+import org.javlo.component.image.ImageHeader;
 import org.javlo.component.image.ImageTitleBean;
 import org.javlo.component.image.SortImageTitleByPriority;
 import org.javlo.component.links.ChildrenLink;
@@ -64,7 +65,6 @@ import org.javlo.context.ContentManager;
 import org.javlo.context.GlobalContext;
 import org.javlo.data.rest.IRestItem;
 import org.javlo.helper.BeanHelper;
-import org.javlo.helper.LocalLogger;
 import org.javlo.helper.NavigationHelper;
 import org.javlo.helper.NetHelper;
 import org.javlo.helper.StringHelper;
@@ -75,6 +75,7 @@ import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
 import org.javlo.module.content.Edit;
 import org.javlo.module.core.IPrintInfo;
+import org.javlo.service.ContentService;
 import org.javlo.service.PersistenceService;
 import org.javlo.service.RequestService;
 import org.javlo.service.event.Event;
@@ -151,6 +152,8 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 		String linkLabel = null;
 
 		public ImageTitleBean imageLink;
+
+		public ImageTitleBean imageHeader;
 
 		public Collection<String> needdedResources = null;
 
@@ -906,7 +909,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 	public PageDescription getSmartPageDescription(ContentContext ctx) {
 		return new SmartPageDescription(ctx, this);
 	}
-	
+
 	public static MenuElement getInstance(GlobalContext globalContext) {
 		MenuElement outMenuElement = new MenuElement();
 		outMenuElement.releaseCache = true;
@@ -994,6 +997,8 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 	Set<String> userRoles = new HashSet<String>();
 
 	private String templateId;
+
+	private String savedParent;
 
 	boolean visible = true;
 
@@ -1191,6 +1196,12 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 			childMenuElements.add(menuElement);
 			sortChild();
 		}
+	}
+
+	public void addChildMenuElementOnBottom(MenuElement menuElement) {
+		menuElement.setPriority(Integer.MAX_VALUE);
+		addChildMenuElement(menuElement);
+		NavigationHelper.changeStepPriority(getChildMenuElements(), 10);
 	}
 
 	public void addCompToDelete(String id) {
@@ -2407,6 +2418,42 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 		return id;
 	}
 
+	public IImageTitle getImageHeader(ContentContext ctx) throws Exception {
+		PageDescription desc = getPageDescriptionCached(ctx, ctx.getRequestContentLanguage());
+		if (desc.imageHeader != null) {
+			if (desc.imageHeader == ImageTitleBean.EMPTY_BEAN) {
+				return null;
+			} else {
+				return desc.imageHeader;
+			}
+		}
+		ContentContext specialCtx = ctx.getContextWithArea(ComponentBean.DEFAULT_AREA);
+		IContentComponentsList contentList = getAllContent(specialCtx);
+		int bestPriority = Integer.MIN_VALUE;
+		while (contentList.hasNext(ctx)) {
+			IContentVisualComponent elem = contentList.next(specialCtx);
+			if ((elem instanceof ImageHeader) && !elem.isEmpty(specialCtx)) {
+				IImageTitle imageComp = (IImageTitle) elem;
+				if (imageComp.isImageValid(specialCtx)) {
+					int priority = imageComp.getPriority(specialCtx);
+					if (priority == 9) {
+						desc.imageHeader = new ImageTitleBean(specialCtx, imageComp);
+						return imageComp;
+					} else if (priority > bestPriority) {
+						desc.imageHeader = new ImageTitleBean(specialCtx, imageComp);
+						bestPriority = priority;
+					}
+				}
+			}
+		}
+		if (desc.imageHeader == null) {
+			desc.imageHeader = ImageTitleBean.EMPTY_BEAN;
+			return null;
+		} else {
+			return desc.imageHeader;
+		}
+	}
+
 	public IImageTitle getImage(ContentContext ctx) throws Exception {
 		PageDescription desc = getPageDescriptionCached(ctx, ctx.getRequestContentLanguage());
 		if (desc.imageLink != null) {
@@ -2418,7 +2465,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 		int bestPriority = Integer.MIN_VALUE;
 		while (contentList.hasNext(ctx)) {
 			IContentVisualComponent elem = contentList.next(specialCtx);
-			if ((elem instanceof IImageTitle) && (!elem.isEmpty(specialCtx)) && (!elem.isRepeat())) {
+			if ((elem instanceof IImageTitle) && !(elem instanceof ImageHeader) && (!elem.isEmpty(specialCtx)) && (!elem.isRepeat())) {
 				IImageTitle imageComp = (IImageTitle) elem;
 				if (imageComp.isImageValid(specialCtx)) {
 					int priority = imageComp.getPriority(specialCtx);
@@ -3340,22 +3387,23 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 	public Set<String> getUserRoles() {
 		return userRoles;
 	}
-	
+
 	public boolean isReadAccess(ContentContext ctx, User user) {
-		System.out.println("***** MenuElement.isReadAccess : userRoles.size() = "+userRoles.size() ); //TODO: remove debug trace
-		
 		if (userRoles.size() > 0) {
 			if (user == null) {
 				return false;
 			}
 			Set<String> roles = new HashSet<String>(user.getRoles());
 			roles.retainAll(getUserRoles());
-			System.out.println("***** MenuElement.isReadAccess : roles.size() = "+roles.size()); //TODO: remove debug trace
 			if (roles.size() == 0 && !(ctx.getCurrentUser().isEditor() && AdminUserSecurity.getInstance().haveRight(ctx.getCurrentUser(), AdminUserSecurity.CONTENT_ROLE))) {
 				return false;
 			}
 		}
 		return true;
+	}
+
+	public boolean isEditAccess(ContentContext ctx) throws Exception {
+		return AdminUserSecurity.canModifyPage(ctx, this, false);
 	}
 
 	public String getValidater() {
@@ -4161,7 +4209,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 	/**
 	 * @param strings
 	 */
-	public void setUserRoles(Set<String> roles) {				
+	public void setUserRoles(Set<String> roles) {
 		userRoles = roles;
 	}
 
@@ -4717,10 +4765,10 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 
 	@Override
 	public Map<String, Object> getContentAsMap(ContentContext ctx) throws IllegalArgumentException, IllegalAccessException, InvocationTargetException, Exception {
-		
+
 		if (!isReadAccess(ctx, ctx.getCurrentUser())) {
 			Map<String, Object> map = new HashMap<String, Object>();
-			map.put("blocked", "no read access for : "+ctx.getCurrentUser());			
+			map.put("blocked", "no read access for : " + ctx.getCurrentUser());
 			return map;
 		}
 
@@ -4756,14 +4804,14 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 		map.put("creationDate", StringHelper.renderSortableTime(getCreationDate()));
 		map.put("creator", getCreator());
 		map.put("latestEditor", getLatestEditor());
-		
+
 		List<Map<String, Object>> contentArray = new LinkedList<Map<String, Object>>();
 		for (String lg : langs) {
 			ContentContext langCtx = ctx.getContextWidthOtherRequestLanguage(lg);
-			ContentElementList content = getLocalContent(langCtx);			
+			ContentElementList content = getLocalContent(langCtx);
 			while (content.hasNext(langCtx)) {
 				contentArray.add(content.next(langCtx).getContentAsMap(langCtx));
-			}			
+			}
 		}
 		map.put("content", contentArray);
 		if (isRestWidthChildren()) {
@@ -4777,14 +4825,24 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 		return map;
 	}
 
-	
-
 	public boolean isRestWidthChildren() {
 		return restWidthChildren;
 	}
 
 	public void setRestWidthChildren(boolean restWidthChildren) {
 		this.restWidthChildren = restWidthChildren;
+	}
+
+	public String getSavedParent() {
+		return savedParent;
+	}
+
+	public void setSavedParent(String freeData) {
+		this.savedParent = freeData;
+	}
+
+	public boolean isTrash() {
+		return ContentService.TRASH_PAGE_NAME.equals(getName());
 	}
 
 }

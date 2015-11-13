@@ -40,6 +40,8 @@ import org.javlo.template.TemplateFactory;
  */
 public class ContentService implements IPrintInfo {
 
+	public static final String TRASH_PAGE_NAME = "_trash_page_";
+
 	/**
 	 * create a static logger.
 	 */
@@ -591,6 +593,20 @@ public class ContentService implements IPrintInfo {
 		}
 
 		return res;
+	}
+	
+	public MenuElement getTrashPage(ContentContext ctx) throws Exception {
+		MenuElement root = getNavigation(ctx);
+		MenuElement trashPage = getNavigation(ctx).searchChildFromName(TRASH_PAGE_NAME);
+		if (trashPage == null) {
+			trashPage = MenuElement.getInstance(ctx.getGlobalContext());
+			trashPage.setName(TRASH_PAGE_NAME);
+			trashPage.setPriority(9999);
+			trashPage.setActive(false);
+			trashPage.setVisible(false);
+			root.addChildMenuElement(trashPage);
+		}
+		return trashPage;
 	}
 
 	/**

@@ -198,19 +198,18 @@ public class Image extends AbstractFileComponent implements IImageTitle, IPrevie
 				out.println("<div class=\"focus-point\">x</div>");
 				out.println("<input class=\"posx\" type=\"hidden\" name=\"posx-" + file.getId() + "\" value=\"" + file.getFocusZoneX() + "\" />");
 				out.println("<input class=\"posy\" type=\"hidden\" name=\"posy-" + file.getId() + "\" value=\"" + file.getFocusZoneY() + "\" />");
-				out.println("<input class=\"path\" type=\"hidden\" name=\"image_path-" + file.getId() + "\" value=\"" + URLHelper.mergePath(getRelativeFileDirectory(ctx), getDirSelected()) + "\" />");
-				out.println("</div></div>");
-				out.println("<script type=\"text/javascript\">initFocusPoint();</script>");
-			} else {
-				out.println("</div></div>");
-			}
+				out.println("<input class=\"path\" type=\"hidden\" name=\"image_path-" + file.getId() + "\" value=\"" + URLHelper.mergePath(getRelativeFileDirectory(ctx), getDirSelected()) + "\" />");				
+			} 
 		} else {
 			imageList = true;
 		}
-
+		out.println("</div></div>");
+		if (!isFromShared(ctx)) {
+			out.println("<script type=\"text/javascript\">initFocusPoint();</script>");
+		}
 		if (imageList) {
 			out.println("<div class=\"name\">" + getFileName() + "</div>");
-			out.println("</div><div class=\"image-list\">");
+			out.println("<div class=\"image-list\">");
 			for (String image : images) {
 				if ((image != null) && (image.trim().length() > 0)) {
 					StaticInfo staticInfo = StaticInfo.getInstance(ctx, getFileURL(ctx, image));
@@ -255,7 +254,7 @@ public class Image extends AbstractFileComponent implements IImageTitle, IPrevie
 			out.println("<a class=\"action-button ajax\" href=\"" + ajaxURL + "\">" + i18nAccess.getText("content.image.load") + "</a>");
 			out.println("</div>");
 		}
-
+		out.println("</div>");
 		// TODO : create this javascrit method with a other mecanism
 		/*
 		 * out.println("<script language=\"javascript\">");

@@ -1,13 +1,12 @@
 package org.javlo.component.image;
 
 import java.io.Serializable;
-import java.util.Comparator;
 
 import org.javlo.context.ContentContext;
 
 public class ImageTitleBean implements IImageTitle, Serializable {
 	
-	
+	public static final ImageTitleBean EMPTY_BEAN = new ImageTitleBean(null,null,null);
 	
 	private final String imageDescription;
 	private final String imageURL;

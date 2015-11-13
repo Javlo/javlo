@@ -19,7 +19,6 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
-import java.io.Writer;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Calendar;
@@ -49,7 +48,6 @@ import org.javlo.context.ContentContext;
 import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.context.UserInterfaceContext;
-import org.javlo.data.rest.IRestItem;
 import org.javlo.exception.ResourceNotFoundException;
 import org.javlo.helper.BeanHelper;
 import org.javlo.helper.ConfigHelper;
@@ -554,6 +552,15 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			out.println(XHTMLHelper.getCheckbox("repeat-" + getId(), isRepeat()));
 			out.println("</div>");
 		}
+		
+		if (isNoLinkable()) {
+			out.println("<div class=\"line\">");
+			if (showRepeat) {
+				out.println("<label for=\"nolink-" + getId() + "\">" + i18nAccess.getText("content.nolink") + "</label>");
+			}
+			out.println(XHTMLHelper.getCheckbox("nolink-" + getId(), isNolink()));
+			out.println("</div>");
+		}
 
 		if (isListable()) {
 			out.println("<div class=\"line\">");
@@ -673,6 +680,13 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		boolean isRepeat = requestService.getParameter("repeat-" + getId(), null) != null;
 		if (isRepeat != isRepeat()) {
 			setRepeat(isRepeat);
+			setModify();
+			setNeedRefresh(true);
+		}
+		
+		boolean isNolink = requestService.getParameter("nolink-" + getId(), null) != null;
+		if (isNolink != isNolink()) {
+			setNolink(isNolink);
 			setModify();
 			setNeedRefresh(true);
 		}
@@ -1250,7 +1264,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 				}
 				RequestService rs = RequestService.getInstance(ctx.getRequest());
 				if (!StringHelper.isTrue(rs.getParameter(NOT_EDIT_PREVIEW_PARAM_NAME, null))) {
-					if (getConfig(ctx).isPreviewEditable() && editCtx.isEditPreview() && (!isRepeat() || getPage().equals(ctx.getCurrentPage())) && AdminUserSecurity.canModifyPage(ctx, ctx.getCurrentPage())) {
+					if (getConfig(ctx).isPreviewEditable() && editCtx.isEditPreview() && (!isRepeat() || getPage().equals(ctx.getCurrentPage())) && AdminUserSecurity.canModifyPage(ctx, ctx.getCurrentPage(), true)) {
 						I18nAccess i18nAccess = I18nAccess.getInstance(ctx);
 						String type = i18nAccess.getText("content." + getType(), getType());
 						String hint = "<b>" + type + "</b><br />" + i18nAccess.getViewText("preview.hint", "click for edit or drag and drop to move.");
@@ -1906,10 +1920,18 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	public boolean isRepeat() {
 		return componentBean.isRepeat();
 	}
+	
+	public boolean isNolink() {
+		return componentBean.isNolink();
+	}
 
 	@Override
 	public boolean isRepeatable() {
 		return true;
+	}
+	
+	public boolean isNoLinkable() {
+		return false;
 	}
 
 	@Override
@@ -2125,6 +2147,16 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			return;
 		} else {
 			componentBean.setRepeat(newRepeat);
+			setModify();
+			setNeedRefresh(true);
+		}
+	}
+	
+	public void setNolink(boolean noLink) {
+		if (noLink == componentBean.isNolink()) {
+			return;
+		} else {
+			componentBean.setNolink(noLink);
 			setModify();
 			setNeedRefresh(true);
 		}

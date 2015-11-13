@@ -14,9 +14,12 @@ import org.javlo.context.ContentContext;
 import org.javlo.exception.ResourceNotFoundException;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
+import org.javlo.helper.XHTMLHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
+import org.javlo.service.ReverseLinkService;
+import org.javlo.service.exception.ServiceException;
 
 public class Heading extends AbstractPropertiesComponent implements ISubTitle {
 
@@ -36,6 +39,12 @@ public class Heading extends AbstractPropertiesComponent implements ISubTitle {
 	@Override
 	public List<String> getFields(ContentContext ctx) throws Exception {
 		return FIELDS;
+	}
+	
+	@Override
+	public void prepareView(ContentContext ctx) throws Exception {	
+		super.prepareView(ctx);
+		ctx.getRequest().setAttribute("title", getTitle(ctx));
 	}
 
 	@Override
@@ -164,7 +173,7 @@ public class Heading extends AbstractPropertiesComponent implements ISubTitle {
 			if (style.length() > 0) {
 				style = " style=\"" + style + "\"";
 			}
-			return "<a" + style + " href=\"" + link + "\"" + target + ">" + getFieldValue(TEXT) + "</a>";
+			return "<a" + style + " href=\"" + link + "\"" + target + ">" + getTitle(ctx) + "</a>";
 		} else {
 			if (getBackgroundColor() != null && getBackgroundColor().length() > 2) {
 				style = " style=\"border: 1px " + getBackgroundColor() + " solid; \"";
@@ -173,8 +182,17 @@ public class Heading extends AbstractPropertiesComponent implements ISubTitle {
 			if (ctx.getGlobalContext().isMailingPlatform()) {
 				tag = "div";
 			}
-			return "<" + tag + " class=\"inside-wrapper\"" + style + ">" + getFieldValue(TEXT) + "</" + tag + ">";
+			return "<" + tag + " class=\"inside-wrapper\"" + style + ">" + getTitle(ctx) + "</" + tag + ">";
 		}
+	}
+	
+	protected String getTitle(ContentContext ctx) throws ServiceException, Exception {
+		String html = getFieldValue(TEXT);
+		if (!isNolink()) {
+			html = ReverseLinkService.getInstance(ctx.getGlobalContext()).replaceLink(ctx, this, html);
+			html = XHTMLHelper.autoLink(html, ctx.getGlobalContext());
+		}
+		return html;
 	}
 
 	@Override
@@ -284,6 +302,12 @@ public class Heading extends AbstractPropertiesComponent implements ISubTitle {
 		}
 		return inlineStyle;
 	}
+	
+	@Override
+	public String getXHTMLConfig(ContentContext ctx) throws Exception {
+		String xhtml = super.getXHTMLConfig(ctx);
+		return xhtml;
+	}
 
 	@Override
 	public String getSuffixViewXHTMLCode(ContentContext ctx) {
@@ -294,5 +318,10 @@ public class Heading extends AbstractPropertiesComponent implements ISubTitle {
 	public boolean isRealContent(ContentContext ctx) {
 		return false;
 	}
+	
+	@Override
+	public boolean isNoLinkable() {
+		return true;
+	}	
 
 }

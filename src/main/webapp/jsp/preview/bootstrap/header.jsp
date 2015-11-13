@@ -141,7 +141,7 @@
 								action="${info.currentURL}" method="post">
 								<div>
 									<input type="hidden" value="${info.pageID}" name="page" /> <input
-										type="hidden" value="edit.deletePage" name="webaction" />
+										type="hidden" value="edit.movePageToTrash" name="webaction" />
 									<c:if test="${!info.page.root}">
 										<c:set var="tooltip" value="" />
 										<c:if test="${i18n.edit['preview.label.delete.tooltip'] != 'preview.label.delete.tooltip'}">
@@ -190,11 +190,11 @@
 						<div class="pc_line">
 							<input type="hidden" name="webaction" value="edit.previewedit" />
 							<c:if test='${!editPreview}'>
-								<button class="btn btn-default btn-sm" type="submit">
+								<button class="btn btn-default btn-sm btn-mode" type="submit">
 									<span class="glyphicon glyphicon-edit" aria-hidden="true"></span><span class="text">${i18n.edit['preview.label.edit-page']}</span></button>
 							</c:if>
 							<c:if test='${editPreview}'>
-								<button class="btn btn-default btn-sm" type="submit">
+								<button class="btn btn-default btn-sm btn-mode" type="submit">
 									<span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span><span class="text">${i18n.edit['preview.label.not-edit-page']}</span></button>
 							</c:if>
 						</div>

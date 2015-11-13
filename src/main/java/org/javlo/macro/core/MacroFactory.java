@@ -59,6 +59,7 @@ import org.javlo.macro.PasteCopiedElementInAllLanguageMacro;
 import org.javlo.macro.ReduceSubtitleLevelMacro;
 import org.javlo.macro.SmartImport;
 import org.javlo.macro.SortChildren;
+import org.javlo.macro.UndeletePage;
 import org.javlo.macro.UpDateMacro;
 import org.javlo.macro.UploadGallery;
 import org.javlo.macro.deleteComponentInBadArea;
@@ -141,6 +142,7 @@ public class MacroFactory {
 		macros.add(new deleteComponentInBadArea());
 		macros.add(new UploadGallery());
 		macros.add(new CreateBusinessComponent());
+		macros.add(new UndeletePage());
 	}
 
 	public IMacro getMacro(String name) {

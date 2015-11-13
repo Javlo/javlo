@@ -38,6 +38,7 @@ public class ComponentBean implements Serializable, Comparable<ComponentBean> {
 
 	private boolean repeat = false;
 	private boolean modify = false;
+	private boolean nolink = false;
 	private Set<Integer> hiddenModes;
 
 	private Date creationDate = new Date();
@@ -245,6 +246,14 @@ public class ComponentBean implements Serializable, Comparable<ComponentBean> {
 
 	public void setLayout(ComponentLayout layout) {
 		this.layout = layout;
+	}
+
+	public boolean isNolink() {
+		return nolink;
+	}
+
+	public void setNolink(boolean autolink) {
+		this.nolink = autolink;
 	}
 
 }

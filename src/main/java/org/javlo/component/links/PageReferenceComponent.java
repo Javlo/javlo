@@ -203,10 +203,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 			bean.page = page;
 			bean.comp = comp;
 			bean.language = lgCtx.getRequestContentLanguage();
-			lgCtx.setRequestContentLanguage(bean.language); // fix
-															// requestContentLanguage
-															// in case of
-															// navigation area
+			lgCtx.setRequestContentLanguage(bean.language);
 			bean.title = page.getContentTitle(lgCtx);
 			if (page.isChildrenAssociation() && page.getChildMenuElements().size() > 0) {
 				bean.title = page.getChildMenuElements().iterator().next().getTitle(lgCtx);
@@ -260,7 +257,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 			
 			/** check right **/
 			Set<String> roles = page.getEditorRoles();
-			if (roles.size() == 0) {
+			if (roles.size() == 0 && ctx.getCurrentUser() != null) {
 				bean.setCurrentUserAsRight(true);
 			} else {
 				if( ctx.getCurrentUser() != null && !Collections.disjoint(roles, ctx.getCurrentUser().getRoles())) {

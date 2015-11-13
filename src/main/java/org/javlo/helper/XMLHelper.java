@@ -173,6 +173,7 @@ public class XMLHelper {
 				 * System.out.println("***** value = "+value); }
 				 */
 				String repeat = "" + beans[j].isRepeat();
+				boolean nolink = beans[j].isNolink();
 				String style = beans[j].getStyle();
 				String inlist = "" + beans[j].isList();
 
@@ -216,6 +217,10 @@ public class XMLHelper {
 				if (StringHelper.isTrue(repeat)) {
 					out.print("\" repeat=\"");
 					out.print(repeat);
+				}
+				if (nolink) {
+					out.print("\" nolink=\"");
+					out.print(nolink);
 				}
 				if (beans[j].getRenderer() != null) {
 					out.print("\" renderer=\"");
@@ -317,6 +322,10 @@ public class XMLHelper {
 			if (page.isBreakRepeat()) {
 				out.print("\" breakrepeat=\"");
 				out.print(page.isBreakRepeat());
+			}
+			if (!StringHelper.isEmpty(page.getSavedParent())) {
+				out.print("\" savedParent=\"");
+				out.print(StringHelper.toXMLAttribute(page.getSavedParent()));
 			}
 			if (page.isChildrenAssociation()) {
 				out.print("\" childrenAssociation=\"");

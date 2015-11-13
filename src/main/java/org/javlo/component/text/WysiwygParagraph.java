@@ -123,6 +123,9 @@ public class WysiwygParagraph extends AbstractVisualComponent {
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
 		String newContent = requestService.getParameter(getContentName(), null);		
 		if (newContent != null) {
+			if (!StringHelper.isTrue(getConfig(ctx).getProperty("html", null), false)) {
+				newContent = XHTMLHelper.removeEscapeTag(newContent);
+			}			
 			if (!getValue().equals(newContent)) {
 				if (StringHelper.isTrue(getConfig(ctx).getProperty("clean-html", "false"))) {
 					newContent = XHTMLHelper.cleanHTML(newContent);					

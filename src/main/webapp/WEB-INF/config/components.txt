@@ -72,6 +72,7 @@ org.javlo.component.links.TwitterReader
 --content.title.graphic
 
 org.javlo.component.image.GlobalImage
+org.javlo.component.image.ImageHeader
 org.javlo.component.image.Image
 org.javlo.component.multimedia.Multimedia
 org.javlo.component.multimedia.MultimediaFilter

@@ -161,11 +161,12 @@ public class ExternalLink extends ComplexPropertiesLink implements IReverseLinkC
 			out.println("<label for=\"" + getLinkName() + "\">" + linkTitle + "</label>");
 			out.print("<input class=\"form-control\" id=\"" + getLinkName() + "\" name=\"" + getLinkName() + "\" value=\"");
 			out.print(link);
-			out.println("\"/></div><div class=\"line suffix\">");
+			out.println("\"/></div>");
 			out.print("<label for=\"" + getLinkLabelName() + "\">" + labelTitle + "</label>");
-			out.print("<input class=\"form-control\" id=\"" + getLinkLabelName() + "\" name=\"" + getLinkLabelName() + "\" value=\"" + label + "\" />");
-			out.println("<input class=\"btn btn-primary\" type=\"submit\" name=\"" + getDownloadTitleInputName() + "\" value=\"" + i18nAccess.getText("action.read-title") + "\" />");
-			out.println("</div></div>");
+			out.print("<div class=\"row\"><div class=\"col-sm-9\"><div class=\"line suffix\">");			
+			out.print("<input class=\"form-control\" id=\"" + getLinkLabelName() + "\" name=\"" + getLinkLabelName() + "\" value=\"" + label + "\" /></div></div><div class=\"col-sm-3\">");
+			out.println("<input class=\"btn btn-primary btn-xs\" type=\"submit\" name=\"" + getDownloadTitleInputName() + "\" value=\"" + i18nAccess.getText("action.read-title") + "\" />");
+			out.println("</div></div></div>");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

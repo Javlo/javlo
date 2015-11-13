@@ -18,6 +18,8 @@ import org.javlo.component.core.ContentElementList;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.core.ISubTitle;
 import org.javlo.component.core.SubTitleBean;
+import org.javlo.component.image.IImageTitle;
+import org.javlo.component.image.ImageBean;
 import org.javlo.component.links.RSSRegistration;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
@@ -63,8 +65,10 @@ public class InfoBean {
 	public static final String REQUEST_KEY = "info";
 
 	public static final String NEW_SESSION_PARAM = "__new_session";
-	
+
 	private String fakeCurrentURL = null;
+
+	private ImageBean imageHeader = null;
 
 	private static final Map<String, String> staticData = Collections.unmodifiableMap(new HashMap<String, String>() {
 		{
@@ -159,7 +163,7 @@ public class InfoBean {
 		params.put("webaction", "data.upload");
 		return URLHelper.createAjaxURL(ctx, params);
 	}
-	
+
 	public String getUploadSharedURL() {
 		Map<String, String> params = new HashMap<String, String>();
 		params.put("webaction", "data.uploadShared");
@@ -176,17 +180,17 @@ public class InfoBean {
 
 	public String getCurrentPreviewURL() {
 		return URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.PREVIEW_MODE).getFreeContentContext());
-	} 
-	
+	}
+
 	public String getCurrentPageICalURL() throws Exception {
 		MenuElement currentPage = ctx.getCurrentPage();
-		if (currentPage.getEvent(ctx) == null) {			
+		if (currentPage.getEvent(ctx) == null) {
 			return null;
 		} else {
 			ContentContext icalCtx = new ContentContext(ctx);
-			icalCtx.setFormat("ical");			
+			icalCtx.setFormat("ical");
 			return URLHelper.createURL(icalCtx);
-		}		
+		}
 	}
 
 	public String getCurrentPageURL() {
@@ -222,7 +226,7 @@ public class InfoBean {
 			return null;
 		}
 	}
-	
+
 	public Date getNow() {
 		return new Date();
 	}
@@ -290,9 +294,9 @@ public class InfoBean {
 		try {
 			final String noRecursiveRequestKey = "_pageDescritionCalled";
 			if (ctx.getRequest().getAttribute(noRecursiveRequestKey) == null) {
-				ctx.getRequest().setAttribute(noRecursiveRequestKey,1);
+				ctx.getRequest().setAttribute(noRecursiveRequestKey, 1);
 				String description = XHTMLHelper.replaceJSTLData(ctx, currentPage.getMetaDescription(ctx));
-				ctx.getRequest().setAttribute(noRecursiveRequestKey,null);
+				ctx.getRequest().setAttribute(noRecursiveRequestKey, null);
 				return description;
 			} else {
 				return currentPage.getDescription(ctx);
@@ -354,7 +358,7 @@ public class InfoBean {
 			return null;
 		}
 	}
-	
+
 	public PageBean getRoot() {
 		try {
 			return currentPage.getRoot().getPageBean(ctx);
@@ -410,7 +414,7 @@ public class InfoBean {
 	public String getStaticRootURL() {
 		return URLHelper.createStaticURL(ctx, "/");
 	}
-	
+
 	public String getContextKey() {
 		return ctx.getGlobalContext().getContextKey();
 	}
@@ -865,7 +869,7 @@ public class InfoBean {
 	public boolean isView() {
 		return ctx.getRenderMode() == ContentContext.VIEW_MODE;
 	}
-	
+
 	public boolean isPageMode() {
 		return ctx.getRenderMode() == ContentContext.PAGE_MODE;
 	}
@@ -1046,7 +1050,7 @@ public class InfoBean {
 	public String getRootAbsoluteURL() {
 		return URLHelper.createURL(ctx.getContextForAbsoluteURL(), "/");
 	}
-	
+
 	public String getRootAbsoluteViewURL() {
 		return URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE).getContextForAbsoluteURL(), "/");
 	}
@@ -1097,7 +1101,7 @@ public class InfoBean {
 	public String getAjaxLoaderURL() {
 		return URLHelper.createStaticURL(ctx, "/images/ajax_loader.gif");
 	}
-	
+
 	public String getViewAjaxLoaderURL() {
 		return URLHelper.createStaticURL(ctx, "/images/ajax-loader-circle-white.gif");
 	}
@@ -1263,14 +1267,28 @@ public class InfoBean {
 	public void setFakeCurrentURL(String fakeCurrentURL) {
 		this.fakeCurrentURL = fakeCurrentURL;
 	}
-	
+
 	/**
 	 * check if current user can edit the current page
+	 * 
 	 * @return
-	 * @throws Exception 
+	 * @throws Exception
 	 */
-	public boolean isPageEditable() throws Exception  {
+	public boolean isPageEditable() throws Exception {
 		return Edit.checkPageSecurity(ctx);
+	}
+
+	public ImageBean getImageHeader() throws Exception {
+		if (imageHeader != null) {
+			return imageHeader;
+		} else {
+			IImageTitle imageTitle = ctx.getCurrentPage().getImageHeader(ctx);
+			if (imageTitle != null) {
+				return new ImageBean(ctx, imageTitle, "main-banner");
+			} else {
+				return null;
+			}
+		}
 	}
 
 }

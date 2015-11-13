@@ -254,11 +254,11 @@ public class GlobalImage extends Image implements IImageFilter {
 		StringBuffer finalCode = new StringBuffer();
 		finalCode.append(getSpecialInputTag());
 
-		finalCode.append("<table class=\"js-change-submit edit normal-layout image\"><tr><td style=\"vertical-align: middle;text-align: center;\">");
+		finalCode.append("<div class=\"js-change-submit image row form-group\"><div class=\"col-sm-5\">");
 
 		finalCode.append(getPreviewCode(ctx));
 
-		finalCode.append("</td><td>");
+		finalCode.append("</div><div class=\"col-sm-7\">");
 
 		if (this instanceof IReverseLinkComponent) {
 			finalCode.append("<div class=\"line\">");
@@ -268,11 +268,11 @@ public class GlobalImage extends Image implements IImageFilter {
 		}
 
 		if (!isMeta() && !ctx.getGlobalContext().isMailingPlatform()) {
-			finalCode.append("<div class=\"line\">");
-			finalCode.append("<label for=\"" + getLabelXHTMLInputName() + "\">" + getImageLabelTitle(ctx) + " : </label>");
+			finalCode.append("<div class=\"row form-group\"><div class=\"col-sm-3\">");
+			finalCode.append("<label for=\"" + getLabelXHTMLInputName() + "\">" + getImageLabelTitle(ctx) + " : </label></div><div class=\"col-sm-9\">");
 			final String[][] params = { { "rows", "3" }, { "cols", "40" }, { "class", "form-control" } };
-			finalCode.append(XHTMLHelper.getTextArea(getLabelXHTMLInputName(), getLabel(), params));
-			finalCode.append("</div>");
+			finalCode.append(XHTMLHelper.getTextArea(getLabelXHTMLInputName(), getLabel(), params, "form-control"));
+			finalCode.append("</div></div>");
 		}
 
 		I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
@@ -280,23 +280,22 @@ public class GlobalImage extends Image implements IImageFilter {
 		if (isMeta()) {
 			finalCode.append("<fieldset>");
 			finalCode.append("<legend>" + i18nAccess.getText("global.metadata") + "</legend>");
-			finalCode.append("<div class=\"line\">");
-			finalCode.append("<label for=\"" + getInputNameDate() + "\">" + i18nAccess.getText("global.date") + " : </label>");
+			finalCode.append("<div class=\"row form-group\"><div class=\"col-sm-3\">");
+			finalCode.append("<label for=\"" + getInputNameDate() + "\">" + i18nAccess.getText("global.date") + " : </label></div><div class=\"col-sm-9\">");
 			finalCode.append("<input class=\"form-control\" type=\"text\" name=\"" + getInputNameDate() + "\" value=\"" + StringHelper.neverNull(StringHelper.renderTime(getDate())) + "\" />");
-			finalCode.append("</div><div class=\"line\">");
-			finalCode.append("<label for=\"" + getInputNameLocation() + "\">" + i18nAccess.getText("global.location") + " : </label>");
-			finalCode.append("<input class=\"form-control\" type=\"text\" name=\"" + getInputNameLocation() + "\" value=\"" + getLocation() + "\" />");
-			finalCode.append("</div><div class=\"line\">");
-			finalCode.append("<label for=\"" + getInputNameTitle() + "\">" + i18nAccess.getText("global.title") + " : </label>");
-			finalCode.append("<input class=\"form-control\" type=\"text\" name=\"" + getInputNameTitle() + "\" value=\"" + getTitle() + "\" />");
+			finalCode.append("</div></div><div class=\"row form-group\"><div class=\"col-sm-3\">");
+			finalCode.append("<label for=\"" + getInputNameLocation() + "\">" + i18nAccess.getText("global.location") + " : </label></div>");
+			finalCode.append("<div class=\"col-sm-9\"><input class=\"form-control\" type=\"text\" name=\"" + getInputNameLocation() + "\" value=\"" + getLocation() + "\" /></div>");
+			finalCode.append("</div><div class=\"row form-group\"><div class=\"col-sm-3\">");
+			finalCode.append("<label for=\"" + getInputNameTitle() + "\">" + i18nAccess.getText("global.title") + " : </label></div>");
+			finalCode.append("<div class=\"col-sm-9\"><input class=\"form-control\" type=\"text\" name=\"" + getInputNameTitle() + "\" value=\"" + getTitle() + "\" /></div>");
 			finalCode.append("</div>");
 			if (getTranslatableResources(ctx).size() > 0) {
-				finalCode.append("<div class=\"line\">");
-				finalCode.append("<label for=\"" + getInputNameTranslation() + "\">" + i18nAccess.getText("content.resource.translationof") + " : </label>");
+				finalCode.append("<div class=\"row form-group\"><div class=\"col-sm-3\">");
+				finalCode.append("<label for=\"" + getInputNameTranslation() + "\">" + i18nAccess.getText("content.resource.translationof") + " : </label></div><div class=\"col-sm-9\">");
 				finalCode.append(XHTMLHelper.getDropDownFromMap(getInputNameTranslation(), getTranslatableResources(ctx), getTranslatedID(), "", true, "form-control"));
-				finalCode.append("</div>");
+				finalCode.append("</div></div>");
 			}
-			finalCode.append("</div>");
 			finalCode.append("</fieldset>");
 		}
 
@@ -318,25 +317,24 @@ public class GlobalImage extends Image implements IImageFilter {
 		filesParams.remove(ElementaryURLHelper.BACK_PARAM_NAME);
 		filesParams.put(ElementaryURLHelper.BACK_PARAM_NAME, backURL);
 		if (isLink()) {
-			finalCode.append("<div class=\"line\"><label for=\"img_link_" + getId() + "\">");
-			finalCode.append(getImageLinkTitle(ctx));
-			String linkToResources = "<a class=\"browse-link btn btn-default btn-xs\" href=\""+URLHelper.addParam(staticLinkURL, "select", "back")+"\">"+i18nAccess.getText("content.goto-static")+"</a>";
+			finalCode.append("<div class=\"row form-group\"><div class=\"col-sm-3\"><label for=\"img_link_" + getId() + "\">");
+			finalCode.append(getImageLinkTitle(ctx)+" : </label></div>");
+			String linkToResources = "<div class=\"col-sm-2\"><a class=\"browse-link btn btn-default btn-xs\" href=\""+URLHelper.addParam(staticLinkURL, "select", "back")+"\">"+i18nAccess.getText("content.goto-static")+"</a></div>";
 			String link = getLink();
 			if (ctx.getRequest().getParameter(getNewLinkParamName()) != null) {
 				if (!ctx.getRequest().getParameter(getNewLinkParamName()).equals('/'+ctx.getGlobalContext().getStaticConfig().getStaticFolder()+'/')) {
 					link = ctx.getRequest().getParameter(getNewLinkParamName());
 				}
-			}
-			
-			finalCode.append(" : </label><input class=\"form-control\" id=\"img_link_" + getId() + "\" name=\"" + getLinkXHTMLInputName() + "\" type=\"text\" value=\"" + link + "\"/>"+linkToResources+"</div>");
+			}			
+			finalCode.append("<div class=\"col-sm-7\"><input class=\"form-control\" id=\"img_link_" + getId() + "\" name=\"" + getLinkXHTMLInputName() + "\" type=\"text\" value=\"" + link + "\"/></div>"+linkToResources+"</div>");
 		}
 
-		finalCode.append("<div class=\"line\"><label for=\"new_dir_" + getId() + "\">");
+		finalCode.append("<div class=\"row form-group\"><div class=\"col-sm-3\"><label for=\"new_dir_" + getId() + "\">");
 		finalCode.append(getNewDirLabelTitle(ctx));
-		finalCode.append(" : </label><input class=\"form-control\" id=\"new_dir_" + getId() + "\" name=\"" + getNewDirInputName() + "\" type=\"text\"/></div>");
-		finalCode.append("<div class=\"line\"><label for=\"" + getDirInputName() + "\">");
+		finalCode.append(" : </label></div><div class=\"col-sm-9\"><input class=\"form-control\" id=\"new_dir_" + getId() + "\" name=\"" + getNewDirInputName() + "\" type=\"text\"/></div></div>");
+		finalCode.append("<div class=\"row form-group\"><div class=\"col-sm-3\"><label for=\"" + getDirInputName() + "\">");
 		finalCode.append(getDirLabelTitle(ctx));
-		finalCode.append(" : </label>");
+		finalCode.append(" : </label></div>");
 		
 		if ((getDirList(getFileDirectory(ctx)) != null) && (getDirList(getFileDirectory(ctx)).length > 0)) {
 			List<String> dirsCol = new LinkedList<String>();
@@ -348,25 +346,30 @@ public class GlobalImage extends Image implements IImageFilter {
 				}
 				dirsCol.add(dir);
 			}
-		
+			if (canUpload(ctx)) {
+				finalCode.append("<div class=\"col-sm-7\">");
+			} else {
+				finalCode.append("<div class=\"col-sm-9\">");
+			}
 			finalCode.append(XHTMLHelper.getInputOneSelect(getDirInputName(), dirsCol, folder, "form-control", getJSOnChange(ctx), true));
+			finalCode.append("</div>");
 		}
 
 		if (canUpload(ctx)) {
 			String staticURL = URLHelper.createModuleURL(ctx, ctx.getPath(), "file", filesParams);
-			finalCode.append("<a class=\"" + EDIT_ACTION_CSS_CLASS + " btn btn-default btn-xs\" href=\"" + staticURL + "\">");
+			finalCode.append("<div class=\"col-sm-2\"><a class=\"" + EDIT_ACTION_CSS_CLASS + " btn btn-default btn-xs\" href=\"" + staticURL + "\">");
 			finalCode.append(i18nAccess.getText("content.goto-static"));
-			finalCode.append("</a>");
+			finalCode.append("</a></div>");
 		}
 		finalCode.append("</div>");
 
 		/* filter */
 		Template currentTemplate = ctx.getCurrentTemplate();
 		if (currentTemplate != null && isImageFilter()) {
-			finalCode.append("<div class=\"line\"><label for=\"filter-" + getImageFilterInputName() + "\">");
+			finalCode.append("<div class=\"row form-group\"><div class=\"col-sm-3\"><label for=\"filter-" + getImageFilterInputName() + "\">");
 
 			finalCode.append(i18nAccess.getText("content.global-image.image-filter"));
-			finalCode.append(" : </label>");
+			finalCode.append(" : </label></div><div class=\"col-sm-7\">");
 
 			List<String> filters = new ArrayList<String>();
 			if (isAllowRAW(ctx)) {
@@ -382,7 +385,7 @@ public class GlobalImage extends Image implements IImageFilter {
 				i++;
 			}
 			finalCode.append(XHTMLHelper.getInputOneSelect(getImageFilterInputName(), filtersArray, getFilter(ctx), "no-submit"));
-			finalCode.append("</div>");
+			finalCode.append("</div></div>");
 
 		} else {
 			logger.severe("template null in GlobalImage");
@@ -390,9 +393,7 @@ public class GlobalImage extends Image implements IImageFilter {
 
 		String[] fileList = getFileList(getFileDirectory(ctx), getFileFilter());
 		if (fileList.length > 0 && isMutlimediaResource()) {
-
-			finalCode.append("<div class=\"line\"><label for=\"" + getSelectXHTMLInputName() + "\">" + getImageChangeTitle(ctx) + " : </label>");
-
+			finalCode.append("<div class=\"row form-group\"><div class=\"col-sm-3\"><label for=\"" + getSelectXHTMLInputName() + "\">" + getImageChangeTitle(ctx) + " : </label></div>");
 			String[] fileListBlanck = new String[fileList.length + 1];
 			fileListBlanck[0] = "";
 			System.arraycopy(fileList, 0, fileListBlanck, 1, fileList.length);
@@ -401,38 +402,39 @@ public class GlobalImage extends Image implements IImageFilter {
 				fileName = fileName.replaceFirst(ctx.getGlobalContext().getStaticConfig().getShareDataFolderKey() + '/', "");
 
 			}
-
-			finalCode.append(XHTMLHelper.getInputOneSelect(getSelectXHTMLInputName(), fileListBlanck, fileName, getJSOnChange(ctx), true));
-			finalCode.append("</div>");
+			finalCode.append("<div class=\"col-sm-9\">");
+			finalCode.append(XHTMLHelper.getInputOneSelect(getSelectXHTMLInputName(), fileListBlanck, fileName, "form-control", getJSOnChange(ctx), true));
+			finalCode.append("</div></div>");
 		}
 
 		if (canUpload(ctx)) {
-			finalCode.append("<div class=\"line\"><label for=\"" + getFileXHTMLInputName() + "\">" + getImageUploadTitle(ctx) + " : </label>");
-			finalCode.append("<input name=\"" + getFileXHTMLInputName() + "\" type=\"file\"/>");
-			finalCode.append(" <button name=\"upload\" type=\"submit\" class=\"btn btn-default btn-xs\" onclick=\"jQuery(this).parent().find('.ajax-loader').addClass('active');\">" + getFileUploadActionTitle(ctx) + "</button>");
-			finalCode.append("<span class=\"ajax-loader\"></span>");
+			finalCode.append("<div class=\"row form-group\"><div class=\"col-sm-3\"><label for=\"" + getFileXHTMLInputName() + "\">" + getImageUploadTitle(ctx) + " : </label></div>");
+			finalCode.append("<div class=\"col-sm-7\"><input name=\"" + getFileXHTMLInputName() + "\" type=\"file\"/></div>");
+			finalCode.append("<div class=\"col-sm-2\"><button name=\"upload\" type=\"submit\" class=\"btn btn-default btn-xs\" onclick=\"jQuery(this).parent().find('.ajax-loader').addClass('active');\">" + getFileUploadActionTitle(ctx) + "</button>");
+			finalCode.append("<span class=\"ajax-loader\"></span></div>");
 			finalCode.append("</div>");
-
 		}
 
 		if (isDecorationImage()) {
-			finalCode.append("<div class=\"line deco-image\">");
-			finalCode.append("<label for=\"" + getDecoImageFileXHTMLInputName() + "\">" + getImageDecorativeTitle(ctx) + " :</label>");
-			finalCode.append("<input  id=\"" + getDecoImageFileXHTMLInputName() + "\" name=\"" + getDecoImageFileXHTMLInputName() + "\" type=\"file\"/>");
+			finalCode.append("<div class=\"row form-group deco-image\"><div class=\"col-sm-3\">");
+			finalCode.append("<label for=\"" + getDecoImageFileXHTMLInputName() + "\">" + getImageDecorativeTitle(ctx) + " : </label></div>");
+			finalCode.append("<div class=\"col-sm-9\"><input class=\"form-control\" id=\"" + getDecoImageFileXHTMLInputName() + "\" name=\"" + getDecoImageFileXHTMLInputName() + "\" type=\"file\"/></div>");
 			finalCode.append("</div>");
 
 			fileList = getFileList(getFileDirectory(ctx), getDecorationFilter());
 			if (fileList.length > 0) {
-				finalCode.append("<div class=\"line\">");
+				finalCode.append("<div class=\"row form-group\"><div class=\"col-sm-3\">");
 				finalCode.append("<label for=\"" + getDecoImageXHTMLInputName() + "\">");
 				finalCode.append(getImageSelectTitle(ctx));
-				finalCode.append("</label>");
+				finalCode.append("</label></div>");
 
 				String[] fileListBlanck = new String[fileList.length + 1];
 				fileListBlanck[0] = "";
 				System.arraycopy(fileList, 0, fileListBlanck, 1, fileList.length);
 
-				finalCode.append(XHTMLHelper.getInputOneSelect(getDecoImageXHTMLInputName(), fileListBlanck, getDecorationImage(), getJSOnChange(ctx), true));
+				finalCode.append("<div class=\"col-sm-9\">");
+				finalCode.append(XHTMLHelper.getInputOneSelect(getDecoImageXHTMLInputName(), fileListBlanck, getDecorationImage(), "form-control", getJSOnChange(ctx), true));
+				finalCode.append("</div>");
 
 				// actionURL=actionURL+"?"+RequestHelper.CLOSE_WINDOW_PARAMETER+"=true&"+RequestHelper.CLOSE_WINDOW_URL_PARAMETER+"="+actionURL;
 
@@ -442,29 +444,29 @@ public class GlobalImage extends Image implements IImageFilter {
 
 		if (isWithDescription()) {
 			String descriptionTitle = i18nAccess.getText("component.link.description");
-			finalCode.append("<div class=\"description\">");
+			finalCode.append("<div class=\"description row form-group\"><div class=\"col-sm-3\">");
 			finalCode.append("<label style=\"margin-bottom: 3px;\" for=\"" + getDescriptionName() + "\">");
 			finalCode.append(descriptionTitle);
-			finalCode.append("</label>");
+			finalCode.append("</label></div><div class=\"col-sm-9\">");
 			finalCode.append("<textarea id=\"" + getDescriptionName() + "\" name=\"" + getDescriptionName() + "\">");
 			finalCode.append(getDescription());
-			finalCode.append("</textarea></div>");
+			finalCode.append("</textarea></div></div>");
 		}
 
 		if (isEmbedCode()) {
 			// String descriptionTitle =
 			// i18nAccess.getText("component.link.description");
-			finalCode.append("<div class=\"embed\">");
+			finalCode.append("<div class=\"embed row form-group\"><div class=\"col-sm-3\">");
 			finalCode.append("<label style=\"margin-bottom: 3px;\" for=\"" + getEmbedCodeName() + "\">");
 			finalCode.append("embed code");
-			finalCode.append("</label>");
-			finalCode.append("<textarea id=\"" + getEmbedCodeName() + "\" name=\"" + getEmbedCodeName() + "\">");
+			finalCode.append("</label></div>");
+			finalCode.append("<div class=\"col-sm-9\"><textarea class=\"form-control\" id=\"" + getEmbedCodeName() + "\" name=\"" + getEmbedCodeName() + "\">");
 			finalCode.append(getEmbedCode());
-			finalCode.append("</textarea></div>");
+			finalCode.append("</textarea></div></div>");
 
 		}
 
-		finalCode.append("</td></tr></table>");
+		finalCode.append("</div></div>");
 
 		// validation
 		if ((getFileName().trim().length() > 0) && (getLabel().trim().length() == 0)) {
