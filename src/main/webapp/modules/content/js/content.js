@@ -25,20 +25,22 @@ function loadWysiwyg(cssQuery, complexity, chooseFileURL) {
 		    selector: cssQuery,
 		    convert_urls: false,
 		    menubar : false,
+		    nonbreaking_force_tab: true,
 		    content_css: wysiwygCss,
 		    plugins: [
 		        "advlist autolink lists link image charmap print preview anchor",
 		        "searchreplace visualblocks code fullscreen",
-		        "insertdatetime media table paste textcolor colorpicker"
+		        "insertdatetime media table paste textcolor colorpicker nonbreaking"
 		    ],
 		    fontsize_formats: "10px 11px 12px 13px 14px 16px 18px 20px",
-		    toolbar: "undo redo searchreplace | bold italic underline fontsizeselect forecolor backcolor | charmap | alignleft aligncenter alignright alignjustify | link | bullist numlist outdent indent"
+		    toolbar: "undo redo searchreplace | bold italic underline fontsizeselect forecolor backcolor | charmap nonbreaking | alignleft aligncenter alignright alignjustify | link | bullist numlist outdent indent"
 		});
 	} else if (complexity == "high") {		
 		tinymce.init({
 		    selector: cssQuery,		
 		    convert_urls: false,
 		    menubar : false,
+		    nonbreaking_force_tab: true,
 		    theme: "modern",
 		    content_css: wysiwygCss,
 		    textcolor_map : ["111111","MyBlack","993300","My Burnt orange"],
@@ -46,9 +48,9 @@ function loadWysiwyg(cssQuery, complexity, chooseFileURL) {
 		        "advlist autolink lists link image charmap print preview hr anchor pagebreak",
 		        "searchreplace wordcount visualblocks visualchars code fullscreen",
 		        "insertdatetime media nonbreaking save table directionality",
-		        "emoticons template paste textcolor colorpicker "
+		        "emoticons template paste textcolor colorpicker nonbreaking"
 		    ],
-		    toolbar1: "bold italic underline strikethrough fontsizeselect | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | forecolor backcolor | table charmap code",		    
+		    toolbar1: "bold italic underline strikethrough fontsizeselect | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | forecolor backcolor | table charmap nonbreaking code",		    
 		    image_advtab: true,
 		    fontsize_formats: "10px 11px 12px 13px 14px 16px 18px 20px",
 		    //paste_word_valid_elements: "b,strong,i,em,h1,h2,h3,h4,h5,h6,table,tr,th,td,ul,ol,li,p,a,div",
@@ -101,10 +103,11 @@ function loadWysiwyg(cssQuery, complexity, chooseFileURL) {
 		add_form_submit_trigger: true,	
 		menubar : false,
 		selector: cssQuery,
-		plugins: "paste link",
+		plugins: "paste link nonbreaking",
 		fontsize_formats: "10px 11px 12px 13px 14px 16px 18px 20px",
+	    nonbreaking_force_tab: true,
 		//paste_word_valid_elements: "b,strong,i,em,h1,h2,h3,h4,h5,h6,table,tr,th,td,ul,ol,li,p,a,div",
-		toolbar: "undo redo | bold italic underline fontsizeselect | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link pastetext"
+		toolbar: "undo redo | bold italic underline fontsizeselect | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link pastetext nonbreaking"
 		});	 
 	}
 }

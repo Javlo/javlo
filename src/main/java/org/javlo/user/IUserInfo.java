@@ -64,7 +64,7 @@ public interface IUserInfo {
 	public void setInfo(String info);
 
 	public void setToken(String token);
-
+	
 	public void setPreferredLanguage(String[] preferredLanguage);
 
 	public void setRoles(Set<String> strings);

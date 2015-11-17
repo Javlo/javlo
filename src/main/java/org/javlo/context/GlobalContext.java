@@ -3283,12 +3283,12 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		properties.setProperty(StaticConfig.SMTP_HOST_PARAM, host);
 	}
 
-	public String getSMTPPasswordParam() {
+	public String getSMTPPassword() {
 		return properties.getString(StaticConfig.SMTP_PASSWORD_PARAM, null);
 	}
 	
-	public void setSMTPPasswordParam(String pwd) {
-		properties.getString(StaticConfig.SMTP_PASSWORD_PARAM, pwd);
+	public void setSMTPPassword(String pwd) {
+		properties.setProperty(StaticConfig.SMTP_PASSWORD_PARAM, pwd);
 	}
 
 	public String getSMTPPort() {

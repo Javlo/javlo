@@ -62,7 +62,7 @@ public class Facebook extends AbstractSocialNetwork {
 		ui.setLogin("" + info.get(0).get("email"));
 		ui.setEmail("" + info.get(0).get("email"));
 		ui.setFirstName("" + info.get(0).get("first_name"));
-		ui.setLastName("" + info.get(0).get("last_name"));
+		ui.setLastName("" + info.get(0).get("last_name"));		
 		return ui;
 	}
 
@@ -88,7 +88,7 @@ public class Facebook extends AbstractSocialNetwork {
 	}
 
 	@Override
-	protected SocialUser getSocialUser(String accessToken, OAuthClient oAuthClient) throws Exception {
+	protected SocialUser getSocialUser(String accessToken, OAuthClient oAuthClient) throws Exception {		
 		OAuthBearerClientRequest builder = new OAuthBearerClientRequest("https://graph.facebook.com/me") {
 			{
 				parameters.put("fields", "email,first_name,last_name");
@@ -100,7 +100,7 @@ public class Facebook extends AbstractSocialNetwork {
 		OAuthResourceResponse resourceResponse = oAuthClient.resource(request, OAuth.HttpMethod.GET, OAuthResourceResponse.class);
 		String body = resourceResponse.getBody();
 		//TODO remove sysout
-		System.out.println("Facebook.getSocialUser() - Response body:" + body);
+		
 		Map<String, Object> userInformation = JSONMap.parseMap(body);
 		return new SocialUser()
 				.setEmail((String) userInformation.get("email"))

@@ -15,6 +15,15 @@ public class MailConfig {
 	private String password = null;
 	
 	private String tempDir = null;
+	
+	public MailConfig(String host, int post, String login, String password) {
+		this.SMTPHost = host;
+		if (post > 0) {
+		this.SMTPPort = ""+post;
+		}
+		this.login = login;
+		this.password = password;		
+	}
 
 	public MailConfig(GlobalContext globalContext, StaticConfig staticConfig, Mailing mailing) {
 		if (staticConfig != null) {
@@ -30,7 +39,7 @@ public class MailConfig {
 			SMTPHost =  globalContext.getSMTPHost();
 			SMTPPort = globalContext.getSMTPPort();
 			login = globalContext.getSMTPUser();
-			password = globalContext.getSMTPPasswordParam();
+			password = globalContext.getSMTPPassword();
 		} else if (staticConfig != null && !StringHelper.isEmpty(staticConfig.getSMTPHost())) {
 			SMTPHost =  staticConfig.getSMTPHost();
 			SMTPPort = staticConfig.getSMTPPort();

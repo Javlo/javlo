@@ -6,6 +6,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.apache.oltu.oauth2.client.HttpClient;
 import org.apache.oltu.oauth2.client.OAuthClient;
@@ -24,6 +25,7 @@ import org.apache.oltu.oauth2.common.message.types.GrantType;
 import org.javlo.context.ContentContext;
 import org.javlo.helper.StringHelper;
 import org.javlo.user.IUserFactory;
+import org.javlo.user.TransientUserInfo;
 import org.javlo.user.User;
 import org.javlo.user.UserFactory;
 import org.javlo.user.UserInfo;
@@ -211,6 +213,7 @@ public abstract class AbstractSocialNetwork implements ISocialNetwork {
 			OAuthAuthzResponse oar = OAuthAuthzResponse.oauthCodeAuthzResponse(request);
 			String code = oar.getCode();
 			String accessToken = getAccessToken(code, oAuthClient);
+			TransientUserInfo.getInstance(request.getSession()).setToken(accessToken);
 			SocialUser user = getSocialUser(accessToken, oAuthClient);
 			if (user == null || user.getEmail() == null || user.getEmail().isEmpty()) {
 				logger.warning("OAuth login failed with provider: " + getName());
@@ -297,5 +300,5 @@ public abstract class AbstractSocialNetwork implements ISocialNetwork {
 
 	protected void fillUserInfo(UserInfo userInfo, SocialUser socialUser) {
 	}
-
+	
 }

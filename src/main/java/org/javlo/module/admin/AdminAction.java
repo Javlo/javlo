@@ -21,6 +21,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import javax.mail.MessagingException;
+import javax.mail.Transport;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -38,6 +40,7 @@ import org.javlo.context.GlobalContext;
 import org.javlo.context.GlobalContextFactory;
 import org.javlo.helper.DebugHelper;
 import org.javlo.helper.LangHelper;
+import org.javlo.helper.NetHelper;
 import org.javlo.helper.PatternHelper;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
@@ -45,6 +48,7 @@ import org.javlo.helper.URLHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.macro.core.IMacro;
 import org.javlo.macro.core.MacroFactory;
+import org.javlo.mailing.MailConfig;
 import org.javlo.mailing.MailService;
 import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
@@ -216,7 +220,7 @@ public class AdminAction extends AbstractModuleAction {
 			setSmtphost(globalContext.getSMTPHost());
 			setSmtpport(globalContext.getSMTPPort());
 			setSmtpuser(globalContext.getSMTPUser());
-			setSmtppassword(globalContext.getSMTPPasswordParam());
+			setSmtppassword(globalContext.getSMTPPassword());
 
 			Properties properties = new Properties();
 			properties.putAll(globalContext.getURIAlias());
@@ -1133,9 +1137,29 @@ public class AdminAction extends AbstractModuleAction {
 					currentGlobalContext.setSMTPHost(requestService.getParameter("mailing-smtphost",null));
 					currentGlobalContext.setSMTPPort(requestService.getParameter("mailing-smtpport",null));
 					currentGlobalContext.setSMTPUser(requestService.getParameter("mailing-smtpuser",null));
-					if (requestService.getParameter("mailing-smtppassword","").length() > 0) {
-						currentGlobalContext.setSMTPPasswordParam(requestService.getParameter("mailing-smtppassword",null));
+					String pwd = requestService.getParameter("mailing-smtppassword","");
+					if (pwd.length() > 0) {
+						currentGlobalContext.setSMTPPassword(pwd);
+					}	
+					if (!StringHelper.isEmpty(currentGlobalContext.getSMTPHost())) {
+						Transport t = null;
+						try {
+							t = MailService.getMailTransport(new MailConfig(currentGlobalContext, null, null));
+							logger.info("smtp:"+currentGlobalContext.getSMTPHost()+" connected ? "+t.isConnected());							
+						} catch (MessagingException e) {
+							messageRepository.setGlobalMessage(new GenericMessage(e.getMessage(), GenericMessage.ERROR));
+							e.printStackTrace();
+						} finally {
+							if (t != null) {
+								try {
+									t.close();
+								} catch (MessagingException e) {
+									e.printStackTrace();
+								}
+							}
+						}
 					}
+					
 
 					String dateFormat = requestService.getParameter("short-date", null);
 					if (dateFormat != null) {

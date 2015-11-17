@@ -31,6 +31,7 @@ import javax.mail.util.ByteArrayDataSource;
 
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
+import org.javlo.helper.LocalLogger;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 
@@ -162,7 +163,8 @@ public class MailService {
 				finalProps.put(MailService.SMTP_PORT_PARAM, mailing.getSMTPPort());
 			}
 			if (mailing.getLogin() != null) {
-				finalProps.put(MailService.SMTP_USER_PARAM, mailing.getLogin());
+				finalProps.put(MailService.SMTP_USER_PARAM, mailing.getLogin());				
+				finalProps.put("mail.smtp.auth", "true");				
 			}
 			if (mailing.getPassword() != null) {
 				finalProps.put(MailService.SMTP_PASSWORD_PARAM, mailing.getPassword());
@@ -176,16 +178,12 @@ public class MailService {
 
 	}
 	
-	public static final Transport getMailTransport(StaticConfig staticConfig, MailConfig mailConfig) throws MessagingException {
-		Session mailSession = Session.getDefaultInstance(getMailInfo(mailConfig));
-		Transport transport = mailSession.getTransport("smtp");
-		transport.connect(mailConfig.getSMTPHost(), mailConfig.getSMTPPortInt(), mailConfig.getLogin(), mailConfig.getPassword());
-		return transport;
-	}
+	
 	
 	public static final Transport getMailTransport(MailConfig mailConfig) throws MessagingException {
 		Session mailSession = Session.getDefaultInstance(getMailInfo(mailConfig));
 		Transport transport = mailSession.getTransport("smtp");
+		logger.info("get transport [host:"+mailConfig.getSMTPHost()+" port:"+mailConfig.getSMTPPortInt()+" login:"+mailConfig.getLogin()+" pwd:"+!StringHelper.isEmpty(mailConfig.getPassword())+']');
 		transport.connect(mailConfig.getSMTPHost(),mailConfig.getSMTPPortInt(), mailConfig.getLogin(), mailConfig.getPassword());
 		return transport;
 	}

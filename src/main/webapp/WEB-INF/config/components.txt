@@ -123,6 +123,7 @@ org.javlo.component.web2.PageRank
 org.javlo.component.web2.SimplePoll
 org.javlo.component.web2.Survey
 org.javlo.component.web2.EventRegistration
+org.javlo.component.social.FacebookChooseFriend
 
 --content.title.special
 

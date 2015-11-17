@@ -11,13 +11,12 @@ import org.javlo.helper.StringHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
-import org.javlo.module.ecom.DeliveryPrice;
-import org.javlo.service.ListService;
 import org.javlo.service.RequestService;
 import org.javlo.service.social.Facebook;
 import org.javlo.service.social.SocialService;
 import org.javlo.user.IUserFactory;
 import org.javlo.user.IUserInfo;
+import org.javlo.user.TransientUserInfo;
 import org.javlo.user.User;
 import org.javlo.user.UserFactory;
 
@@ -78,7 +77,8 @@ public class UserLogin extends AbstractVisualComponent implements IAction {
 	public static String performFacebookLogin(RequestService rs, ContentContext ctx, HttpSession session, GlobalContext globalContext, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {		
 		String token = rs.getParameter("token", null);		
 		Facebook facebook = SocialService.getInstance(ctx).getFacebook();
-		IUserInfo ui = facebook.getInitialUserInfo(token);
+		IUserInfo ui = facebook.getInitialUserInfo(token);		
+		TransientUserInfo.getInstance(session).setToken(token);
 		if (!StringHelper.isMail(ui.getEmail())) {
 			return "technical error : facebook have not returned a valid email ("+ui.getEmail()+')';
 		}
