@@ -115,27 +115,6 @@ public class MailService {
 		this.props = finalProps;
 	}
 	
-	private void updateInfo(StaticConfig staticConfig, Mailing mailing) {
-		Properties finalProps = new Properties();
-
-		if (staticConfig.getSMTPHost() != null) {
-			finalProps.put(SMTP_HOST_PARAM, StringHelper.neverEmpty(mailing.getSmtpHost(), staticConfig.getSMTPHost()));
-		}
-		if (staticConfig.getSMTPPort() != null) {
-			finalProps.put(SMTP_PORT_PARAM, StringHelper.neverEmpty(mailing.getSmtpPort(), staticConfig.getSMTPPort()));
-		}
-		if (staticConfig.getSMTPUser() != null) {
-			finalProps.put(SMTP_USER_PARAM, StringHelper.neverEmpty(mailing.getSmtpUser(), staticConfig.getSMTPUser()));
-		}
-		if (staticConfig.getSMTPPasswordParam() != null) {
-			finalProps.put(SMTP_PASSWORD_PARAM, StringHelper.neverEmpty(mailing.getSmtpPassword(),staticConfig.getSMTPPasswordParam()));
-		}
-
-		this.tempDir = staticConfig.getTempDir();
-
-		this.props = finalProps;
-	}
-
 	/**
 	 * This method is kept to be able to use this class outside a Servlet
 	 * context
@@ -221,7 +200,7 @@ public class MailService {
 		}
 
 		if (props != null) {
-			logger.info("Sending mail with subject: " + subject + " to: " + recipients.size() + " recipients: " + recipientsStr + "\n" + "Using smtp: " + props.getProperty(SMTP_HOST_PARAM, DEFAULT_SMTP_HOST) + " / " + props.getProperty(SMTP_USER_PARAM) + " / " + props.getProperty(SMTP_PASSWORD_PARAM));
+			logger.info("Sending mail with subject: " + subject + " to: " + recipients.size() + " recipients: " + recipientsStr);
 		}
 
 		Date sendDate = new Date();

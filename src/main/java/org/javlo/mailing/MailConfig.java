@@ -34,8 +34,7 @@ public class MailConfig {
 			SMTPPort = mailing.getSmtpPort();
 			login = mailing.getSmtpUser();
 			password = mailing.getSmtpPassword();
-		}
-		if (globalContext != null && !StringHelper.isEmpty(globalContext.getSMTPHost())) {
+		} else if (globalContext != null && !StringHelper.isEmpty(globalContext.getSMTPHost())) {
 			SMTPHost =  globalContext.getSMTPHost();
 			SMTPPort = globalContext.getSMTPPort();
 			login = globalContext.getSMTPUser();
