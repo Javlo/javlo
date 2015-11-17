@@ -31,7 +31,6 @@ import javax.mail.util.ByteArrayDataSource;
 
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
-import org.javlo.helper.LocalLogger;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 
@@ -266,18 +265,14 @@ public class MailService {
 						 * sb.append("<img src=\"cid:"); sb.append(id);
 						 * sb.append("\" alt=\"ATTACHMENT\"/>\n");
 						 */
-
 						MimeBodyPart attachment = new MimeBodyPart();
-
 						DataSource fds = new ByteArrayDataSource(attach.getData(), ResourceHelper.getFileExtensionToMineType(StringHelper.getFileExtension(attach.getName())));
 						attachment.setDataHandler(new DataHandler(fds));
 						attachment.setHeader("Content-ID", "<" + id + ">");
 						attachment.setFileName(attach.getName());
-
 						contentMail.addBodyPart(attachment);
 					}
 				}
-
 				contentMail.addBodyPart(wrap);
 				msg.setContent(contentMail);
 				msg.setSentDate(new Date());

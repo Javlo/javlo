@@ -8,21 +8,12 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 import java.util.logging.Logger;
 
-import javax.mail.Message.RecipientType;
-import javax.activation.DataHandler;
-import javax.activation.DataSource;
 import javax.mail.MessagingException;
-import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeBodyPart;
-import javax.mail.internet.MimeMessage;
-import javax.mail.internet.MimeMultipart;
-import javax.mail.util.ByteArrayDataSource;
 import javax.servlet.ServletContext;
 
 import org.apache.commons.configuration.ConfigurationException;
@@ -30,7 +21,6 @@ import org.javlo.config.StaticConfig;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.XHTMLHelper;
-import org.javlo.mailing.MailService.Attachment;
 import org.javlo.service.DataToIDService;
 
 public class MailingThread extends Thread {
