@@ -77,6 +77,7 @@ import org.javlo.context.GlobalContext;
 import org.javlo.exception.ResourceNotFoundException;
 import org.javlo.filter.DirectoryFilter;
 import org.javlo.helper.Comparator.FileComparator;
+import org.javlo.io.TransactionFile;
 import org.javlo.module.core.Module;
 import org.javlo.module.core.ModuleException;
 import org.javlo.module.core.ModulesContext;
@@ -282,6 +283,32 @@ public class ResourceHelper {
 		}
 	}
 
+	/**
+	 * transactional copy a file other file
+	 * @param source the source file, must exist
+	 * @param destination the target file, could not exist
+	 * @param overwrite if true and file desctination exist, this method done nothing
+	 * @return true if file is copied, false otherwise
+	 * @throws IOException error width IO, file destination is'nt modified if there are error
+	 */
+	public static boolean copyFile(File source, File destination, boolean overwrite) throws IOException {
+		if (!overwrite && destination.exists()) {
+			return false;
+		} else {
+			FileInputStream in = null;
+			try {
+				TransactionFile transactionFile = new TransactionFile(destination);
+				in = new FileInputStream(source);
+				writeStreamToStream(in, transactionFile.getOutputStream());
+				closeResource(in);
+				transactionFile.commit();
+			} finally {
+				closeResource(in);
+			}
+			return true;
+		}
+	}
+
 	public static void filteredFileCopyEscapeScriplet(File file1, File file2, Map<String, String> filter) throws IOException {
 		if (!file2.exists()) {
 			file2.getParentFile().mkdirs();
@@ -315,8 +342,7 @@ public class ResourceHelper {
 	 * Standart method to format the checksum into a {@link String}. <br/>
 	 * This method is private because, only the following functions can call it:
 	 * {@link #getChecksumInputStream(InputStream)},
-	 * {@link #getChecksumResult(InputStream)}, {@link #computeChecksum(File)}
-	 * <br/>
+	 * {@link #getChecksumResult(InputStream)}, {@link #computeChecksum(File)} <br/>
 	 * and because the implementation of the format can be changed in future.
 	 * 
 	 * @param crc32
@@ -437,8 +463,7 @@ public class ResourceHelper {
 	/**
 	 * Add a checksum computing layer to the given {@link InputStream}. <br/>
 	 * Give the returned {@link InputStream} to
-	 * {@link #getChecksumResult(InputStream)} to retrieve the checksum result.
-	 * <br/>
+	 * {@link #getChecksumResult(InputStream)} to retrieve the checksum result. <br/>
 	 * The following functions are complementary:
 	 * {@link #getChecksumResult(InputStream)}, {@link #computeChecksum(File)},
 	 * {@link #formatChecksum(long)}
@@ -537,7 +562,7 @@ public class ResourceHelper {
 				}
 			} else if (ext.toLowerCase().equals("pdf")) {
 				PDDocument doc = PDDocument.load(file);
-				
+
 				PDFTextStripper text = new PDFTextStripper();
 				outContent = text.getText(doc);
 				doc.close();
@@ -1413,10 +1438,10 @@ public class ResourceHelper {
 	}
 
 	public static void main(String[] args) throws IOException {
-		File dir1 = new File("c:/trans/bnd");
-		File dir2 = new File("c:/trans/target");
-		dir2.mkdirs();
-		copyDir(dir1, dir2, false, null);
+		File dir1 = new File("c:/trans/javlo.log");
+		File dir2 = new File("c:/trans/javlo_target.log");
+		// dir2.mkdirs();
+		copyFile(dir1, dir2, true);
 	}
 
 	/**
@@ -1444,9 +1469,9 @@ public class ResourceHelper {
 
 	public static List<String> removePrefixFromPathList(Collection<? extends Object> pathList, String prefix) {
 		List<String> outPathList = new LinkedList<String>();
-		prefix =  StringHelper.cleanPath(prefix);
+		prefix = StringHelper.cleanPath(prefix);
 		for (Object path : pathList) {
-			outPathList.add(StringUtils.replaceOnce(StringHelper.cleanPath(path.toString()),prefix, ""));
+			outPathList.add(StringUtils.replaceOnce(StringHelper.cleanPath(path.toString()), prefix, ""));
 		}
 		return outPathList;
 	}

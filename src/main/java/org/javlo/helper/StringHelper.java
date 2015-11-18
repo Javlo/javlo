@@ -1317,8 +1317,7 @@ public class StringHelper {
 	public static boolean isMail(String email) {
 		if (email == null || email.length() == 0) {
 			return false;
-		}		
-		//return EmailValidator.getInstance().isValid(email);
+		}
 		return PatternHelper.MAIL_PATTERN.matcher(email).matches();
 	}
 	

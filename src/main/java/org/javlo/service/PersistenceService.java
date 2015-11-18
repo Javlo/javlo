@@ -1036,7 +1036,7 @@ public class PersistenceService {
 		if (file != null) {
 			logger.info("try to correct xml structure : " + file.getAbsolutePath());
 			String content = ResourceHelper.loadStringFromFile(file);
-			FileUtils.copyFile(file, new File(file.getAbsolutePath() + ".error"));
+			ResourceHelper.copyFile(file, new File(file.getAbsolutePath() + ".error"), true);
 			BufferedWriter writer = null;
 			try {
 				writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), ContentContext.CHARACTER_ENCODING));
@@ -1051,41 +1051,6 @@ public class PersistenceService {
 			} finally {
 				ResourceHelper.closeResource(writer);
 			}
-		}
-	}
-
-	public static void main(String[] args) {
-		File file = new File("c:/trans/content_3_5000.xml");
-
-		try {
-			NodeXML nodeXML = XMLFactory.getFirstNode(file);
-			System.out.println("***** PersistenceService.main : size = " + nodeXML.getChildren().size()); // TODO:
-																											// remove
-																											// debug
-																											// trace
-		} catch (Exception e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-
-		File finalFile = new File("c:/trans/content_2_corrected.xml");
-
-		try {
-			FileUtils.copyFile(file, finalFile);
-			correctCharacterEncoding(finalFile);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-		try {
-			NodeXML nodeXML = XMLFactory.getFirstNode(finalFile);
-			System.out.println("***** PersistenceService.main : final size = " + nodeXML.getChildren().size()); // TODO:
-																												// remove
-																												// debug
-																												// trace
-		} catch (Exception e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
 		}
 	}
 
@@ -1246,7 +1211,7 @@ public class PersistenceService {
 		if (file.exists()) {
 			file.delete();
 		}
-		FileUtils.copyFile(previewFile, file);
+		ResourceHelper.copyFile(previewFile, file, true);
 	}
 
 	public void redo() {

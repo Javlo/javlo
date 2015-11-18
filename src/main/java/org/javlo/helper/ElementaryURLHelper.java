@@ -289,6 +289,11 @@ public abstract class ElementaryURLHelper {
 	}
 
 	protected static String createStaticURL(ContentContext ctx, MenuElement referencePage, String inUrl, boolean withPathPrefix) {
+		
+		if (StringHelper.isMail(inUrl)) {
+			return "mailto:"+inUrl;
+		}
+		
 		ContentContext newCtx = ctx;
 		if (referencePage != null && referencePage.isRemote()) {
 			String linkedURLStr = NavigationHelper.getLinkedURL(referencePage);
@@ -308,7 +313,7 @@ public abstract class ElementaryURLHelper {
 				}
 			}
 		}
-
+		
 		String url = inUrl;
 		if (withPathPrefix) {
 			String pathPrefix = getPathPrefix(ctx);

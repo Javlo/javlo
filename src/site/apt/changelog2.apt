@@ -567,3 +567,9 @@ change log
  * image header
  
  * Mailing smtp authentification correction
+ 
+ * reverlink with email on external-link
+ 
+ * remove FileUtils.copyFile replace with transactional copy on ResoureceHelper
+ 
+* 2.1.0.3.0

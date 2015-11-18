@@ -1673,6 +1673,8 @@ public class XHTMLHelper {
 		
 		if (!StringHelper.isEmpty(cssClass)) {
 			cssClass = " class=\""+cssClass+"\"";
+		} else {
+			cssClass = "";
 		}
 
 		out.print("<textarea"+cssClass+" name=\"");

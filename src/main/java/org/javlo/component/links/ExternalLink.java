@@ -63,7 +63,7 @@ public class ExternalLink extends ComplexPropertiesLink implements IReverseLinkC
 
 	private String getLink() {
 		String link = properties.getProperty(LINK_KEY, "");
-		if (link.contains("@") && !link.contains("http://") && !link.contains("https://")) {
+		if (StringHelper.isMail(link)) {
 			link = "mailto:" + link;
 		}
 		return link;
@@ -221,7 +221,9 @@ public class ExternalLink extends ComplexPropertiesLink implements IReverseLinkC
 					// Complete url
 				} else if (link.equals("#")) {
 					// Dummy url
-				} else if (link.startsWith("/")) {
+				} else if (link.contains("@")) {
+					// email
+				}else if (link.startsWith("/")) {
 					// Absolute site URL
 				} else if (!link.contains(".") && !link.contains("/")) {
 					// Page name
@@ -268,7 +270,7 @@ public class ExternalLink extends ComplexPropertiesLink implements IReverseLinkC
 
 	@Override
 	public String getLinkURL(ContentContext ctx) {
-		return properties.getProperty(LINK_KEY, "");
+		return getLink();
 	}
 
 	@Override
