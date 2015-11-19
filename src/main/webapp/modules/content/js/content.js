@@ -60,7 +60,6 @@ function loadWysiwyg(cssQuery, complexity, chooseFileURL) {
 	    	 	
 	    	 	
 	    	 	var fileURL = chooseFileURL.replace("_TYPE_",type);
-	    	 	console.log("fileURL = "+fileURL);
 	    	 	
 		    	tinyMCE.activeEditor.windowManager.open({
 		            file : fileURL,
@@ -179,7 +178,6 @@ function selectPreviousItem(compId, index) {
 }
 
 function displayFigureSize(figure) {
-	console.log("displayFigureSize : "+figure);
 	var fakeImg = new Image();		
 	fakeImg.caption = jQuery(figure).find("figcaption");		
 	fakeImg.onload = function() {				
