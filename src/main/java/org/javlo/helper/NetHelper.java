@@ -4,7 +4,6 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -336,12 +335,13 @@ public class NetHelper {
 	 * @return the title of the page.
 	 */
 	public static String getPageDescription(String content) {
-
 		String contentLowerCase = content.toLowerCase();
 		int indexDescriptionStart = contentLowerCase.indexOf("name=\"description\"");
+		if (indexDescriptionStart < 0) {
+			return null;
+		}
 		indexDescriptionStart = contentLowerCase.indexOf("content=\"", indexDescriptionStart) + "content=\"".length();
 		int indexDescriptionEnd = contentLowerCase.indexOf("\"", indexDescriptionStart + "content=\"".length() + 1);
-
 		if ((indexDescriptionStart >= 0) && (indexDescriptionEnd >= 0) && indexDescriptionEnd > indexDescriptionStart) {
 			return content.substring(indexDescriptionStart, indexDescriptionEnd);
 		}
@@ -963,8 +963,8 @@ public class NetHelper {
 	}
 
 	public static void main(String[] args) throws Exception {
-		URL url  = new URL("http://www.javlo.org");
-		String content = ResourceHelper.loadStringFromFile(new File("c:/trans/test.html"));
-		extractExternalURL(url, content);
+		URL url  = new URL("http://www.nsgalleries.com/hosted2/ab/pics/113011/hr02/index.php?nats=MTMwMjgzLjEuODUuODguMC4yMzI4LjAuMC4w");
+		String content = NetHelper.readPage(url);
+		System.out.println("description:"+getPageDescription(content));
 	}
 }

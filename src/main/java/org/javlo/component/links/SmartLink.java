@@ -118,14 +118,15 @@ public class SmartLink extends ComplexPropertiesLink implements ILink, IAction {
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(outStream);
+		out.println("<div class=\"row\"><div class=\"col-sm-3\">");
 		out.println("<a class=\"" + getType() + "\" href=\"" + getURL() + "\">");
-		out.println("<figure><img src=\"" + getImageURL() + "\" /></figure>");
+		out.println("<figure><img class=\"img-responsive\" src=\"" + getImageURL() + "\" /></figure></div><div class=\"col-sm-9\">");
 		if (getDate().trim().length() > 0) {
 			out.println("<span class=\"date\">" + StringHelper.renderDate(getTime()) + "<span>" + StringHelper.renderTimeOnly(getTime()) + "</span></span>");
 		}
 		out.println("<h4>" + getTitle() + "</h4>");
 		out.println("<p>" + getDescription() + "</p>");
-		out.println("</a>");
+		out.println("</a></div></div>");
 		out.close();
 		return new String(outStream.toByteArray());
 	}
@@ -142,8 +143,8 @@ public class SmartLink extends ComplexPropertiesLink implements ILink, IAction {
 		try {
 			I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
 			out.println("<div class=\"main\">");
-			out.println("<div class=\"line-full\">");
-			out.println("<input type=\"text\" class=\"link\" placeholder=\"" + i18nAccess.getText("global.link") + "\" name=\"" + getURLInputName() + "\" value=\"" + getURL() + "\" />");
+			out.println("<div class=\"form-group\">");
+			out.println("<input type=\"text\" class=\"link form-control\" placeholder=\"" + i18nAccess.getText("global.link") + "\" name=\"" + getURLInputName() + "\" value=\"" + getURL() + "\" />");
 			out.println("</div>");
 			out.println("<div class=\"body\" id=\"" + getBodyId() + "\">");
 			if (getTitle() != null && getTitle().trim().length() > 0) {

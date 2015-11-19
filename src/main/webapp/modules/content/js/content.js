@@ -132,18 +132,30 @@ function smartLinkAction(item) {
 	if (parent == null) {
 		alert("smart-link not found.");
 	} else {
-		var compId = parent.attr("id").substring(5);			
-		var url = urlPrefix+"?webaction=smartlink.loadlink&url="+jQuery(item).val()+"&comp_id="+compId;			
+		var compId = parent.attr("id").substring(5);
+		if (urlPrefix.indexOf('webaction=smartlink.loadlink') < 0) {
+			if (urlPrefix.indexOf('?') < 0) {
+				var url = urlPrefix+"?webaction=smartlink.loadlink&url="+jQuery(item).val()+"&comp_id="+compId;
+			} else {
+				var url = urlPrefix+"&webaction=smartlink.loadlink&url="+jQuery(item).val()+"&comp_id="+compId;
+			}
+		}
 		ajaxRequest(url, null);
 	}
 }
 
-function initSmartLink() {	
+function initSmartLink() {
 	jQuery(".smart-link .link").keydown (function(event) {
 		smartLinkAction(this);		
 	});
 	jQuery(".smart-link .link").change (function(event) {
 		smartLinkAction(this);		
+	});
+	jQuery(".smart-link .link").on('paste', function(event) {
+		var element = this;
+		setTimeout(function () {
+			smartLinkAction(element);
+		  }, 100); 		
 	});
 };
 
