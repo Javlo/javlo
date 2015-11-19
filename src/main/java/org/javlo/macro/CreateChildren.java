@@ -1,12 +1,14 @@
 package org.javlo.macro;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import java.io.StringReader;
 import java.util.Map;
 import java.util.logging.Logger;
 
 import org.javlo.actions.IAction;
-import org.javlo.component.title.Title;
+import org.javlo.component.title.Heading;
 import org.javlo.context.ContentContext;
 import org.javlo.context.EditContext;
 import org.javlo.helper.MacroHelper;
@@ -48,12 +50,22 @@ public class CreateChildren implements IInteractiveMacro, IAction {
 
 	@Override
 	public String prepare(ContentContext ctx) {
+		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+		PrintStream out = new PrintStream(outStream);
+		try {
+			for(MenuElement child : ctx.getCurrentPage().getChildMenuElements()) {
+				out.println(child.getName()+'='+child.getTitle(ctx));
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		out.close();
+		ctx.getRequest().setAttribute("exportList", new String(outStream.toByteArray()));
 		return null;
 	}
 
 	public static String performCreate(RequestService rs, EditContext editCtx, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
 		int error = 0;
-		
 		String childrenNames = rs.getParameter("children",null);
 		if (childrenNames == null) {
 			return "request structure error : 'children' parameter needed.";
@@ -65,11 +77,15 @@ public class CreateChildren implements IInteractiveMacro, IAction {
 				line = line.trim();
 				if (line.length() > 0) {
 					String pageName = StringHelper.removeRepeatedChar(StringHelper.createFileName(line),'-');
+					if (line.contains("=")) {
+						pageName = StringHelper.split(line, "=")[0];
+						line = StringHelper.split(line, "=")[1];
+					}
 					MenuElement newPage = MacroHelper.addPage(ctx, currentPage, pageName, false, false);
 					if (newPage == null) {
 						error++;
 					} else {
-						MacroHelper.addContent(ctx.getRequestContentLanguage(), newPage, "0", Title.TYPE, line, ctx.getCurrentEditUser());
+						MacroHelper.addContent(ctx.getRequestContentLanguage(), newPage, "0", Heading.TYPE, "depth=1\ntext="+line, ctx.getCurrentEditUser());
 					}
 				}
 				line = reader.readLine();

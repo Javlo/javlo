@@ -30,3 +30,7 @@
 .create-content-children textarea {
 	height: 160px;
 }
+
+textarea.form-control {
+	width: 98%;
+}
