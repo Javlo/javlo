@@ -71,7 +71,7 @@ public class WysiwygParagraph extends AbstractVisualComponent {
 		super.prepareView(ctx);
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		ReverseLinkService reverserLinkService = ReverseLinkService.getInstance(globalContext);
-		ctx.getRequest().setAttribute("text",XHTMLHelper.replaceLinks(ctx,XHTMLHelper.replaceJSTLData(ctx, reverserLinkService.replaceLink(ctx, this, getValue()))));
+		ctx.getRequest().setAttribute("text",XHTMLHelper.autoLink(XHTMLHelper.replaceLinks(ctx,XHTMLHelper.replaceJSTLData(ctx, reverserLinkService.replaceLink(ctx, this, getValue()))),globalContext));
 	}
 
 	@Override

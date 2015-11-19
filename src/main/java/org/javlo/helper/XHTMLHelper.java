@@ -187,8 +187,26 @@ public class XHTMLHelper {
 
 				String[] splitLine = StringHelper.splitStaySeparator(line, " ,;()[]{}<>\n");
 
+				boolean inLink = false;
+				boolean inTag = false;
 				for (String element : splitLine) {
-					writer.append(createHTMLLink(element, notFollow, globalContext));
+					if (element.toLowerCase().startsWith("<")) {
+						inTag = true;
+					} else if (element.toLowerCase().startsWith(">")) {
+						inTag = false;
+					}
+					if (inTag) {
+						if (element.equalsIgnoreCase("a")) {
+							inLink = true;
+						} else if (element.toLowerCase().startsWith("/a")) {
+							inLink = false;
+						}
+					}
+					if (!inLink) {
+						writer.append(createHTMLLink(element, notFollow, globalContext));
+					} else {
+						writer.append(element);
+					}
 				}
 				line = reader.readLine();
 				if (line != null) {
@@ -2575,8 +2593,8 @@ public class XHTMLHelper {
 	}
 
 	public static void main(String[] args) {
-		String xhtml = "<body><b>test</b>&lt;b&gt;patrick&lt;/b&gt;</body>";
-		System.out.println(removeEscapeTag(xhtml));
+		String xhtml = "<body><b>test</b>pvdm@noctis.be <a href=\"mailto:pvdm@noctis.be\">pvdm@noctis.be</a></body>";
+		System.out.println(autoLink(xhtml));
 
 	}
 

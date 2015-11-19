@@ -107,7 +107,7 @@ public class TicketAction extends AbstractModuleAction {
 				ticket = new TicketBean();
 				ticket.setAuthors(ctx.getCurrentUserId());
 				ticket.setContext(ctx.getGlobalContext().getContextKey());
-				ticket.setUrl(URLHelper.createURL(ctx));
+				ticket.setUrl(URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.PREVIEW_MODE)));
 				TicketService ticketService = TicketService.getInstance(ctx.getGlobalContext());
 				ticketService.updateTicket(ctx, ticket);
 				rs.setParameter("id", ticket.getId());
