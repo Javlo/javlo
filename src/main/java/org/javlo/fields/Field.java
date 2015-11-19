@@ -382,7 +382,7 @@ public class Field implements Cloneable, IRestItem {
 		StringWriter writer = new StringWriter();
 		PrintWriter out = new PrintWriter(writer);
 
-		out.println("<div class=\"line form-group\">");
+		out.println("<div class=\"row form-group\"><div class=\"col-sm-3\">");
 		out.println(getEditLabelCode());		
 		
 		out.println("	<label for=\"" + getInputName() + "\">" + getLabel(new Locale(ctx.getContextRequestLanguage())) + " : </label>");
@@ -390,11 +390,11 @@ public class Field implements Cloneable, IRestItem {
 		if (isReadOnly()) {
 			readOnlyHTML = " readonly=\"readonly\"";
 		}
-		out.println("	<input" + readOnlyHTML + " id=\"" + getInputName() + "\" class=\"form-control"+getSpecialClass()+"\" name=\"" + getInputName() + "\" value=\"" + StringHelper.neverNull(getValue()) + "\"/>");
+		out.println("</div><div class=\"col-sm-9\"><input" + readOnlyHTML + " id=\"" + getInputName() + "\" class=\"form-control"+getSpecialClass()+"\" name=\"" + getInputName() + "\" value=\"" + StringHelper.neverNull(getValue()) + "\"/>");
 		if (getMessage() != null && getMessage().trim().length() > 0) {
 			out.println("	<div class=\"message " + getMessageTypeCSSClass() + "\">" + getMessage() + "</div>");
 		}
-		out.println("</div>");
+		out.println("</div></div>");
 
 		out.close();
 		return writer.toString();

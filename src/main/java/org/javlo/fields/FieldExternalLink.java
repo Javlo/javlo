@@ -98,25 +98,23 @@ public class FieldExternalLink extends MetaField implements ILink {
 		StringWriter writer = new StringWriter();
 		PrintWriter out = new PrintWriter(writer);
 
-		out.println("<fieldset>");
+		out.println("<div class=\"form-group\"><fieldset>");
 		out.println("<legend>" + getUserLabel(new Locale(ctx.getRequestContentLanguage())) + "</legend>");
 
-		out.println("<div class=\"line\">");
-		out.println("<label for=\"" + getInputLinkName() + "\">" + getLinkLabel() + " : </label>");
-		out.println("<input class=\"form-control\" id=\"" + getInputLinkName() + "\" name=\"" + getInputLinkName() + "\" value=\"" + StringHelper.neverNull(getCurrentLink()) + "\"/>");
+		out.println("<div class=\"row form-group\"><div class=\"col-sm-3\">");
+		out.println("<label for=\"" + getInputLinkName() + "\">" + getLinkLabel() + " : </label></div>");
+		out.println("<div class=\"col-sm-9\"><input class=\"form-control\" id=\"" + getInputLinkName() + "\" name=\"" + getInputLinkName() + "\" value=\"" + StringHelper.neverNull(getCurrentLink()) + "\"/></div></div>");
 		if (getCurrentLinkErrorMessage().trim().length() > 0) {
-			out.println("<div class=\"error-message\">");
+			out.println("<div class=\"alert alert-danger\" role=\"alert\">");
 			out.println(getCurrentLinkErrorMessage());
 			out.println("</div>");
 		}
+		out.println("<div class=\"row form-group\"><div class=\"col-sm-3\">");
+		out.println("<label for=\"" + getInputLabelName() + "\">" + getLabelLabel() + " : </label></div>");
+		out.println("<div class=\"col-sm-9\"><input class=\"form-control\" id=\"" + getInputLabelName() + "\" name=\"" + getInputLabelName() + "\" value=\"" + StringHelper.neverNull(getCurrentLabel()) + "\"/></div>");
 		out.println("</div>");
 
-		out.println("<div class=\"line\">");
-		out.println("<label for=\"" + getInputLabelName() + "\">" + getLabelLabel() + " : </label>");
-		out.println("<input class=\"form-control\" id=\"" + getInputLabelName() + "\" name=\"" + getInputLabelName() + "\" value=\"" + StringHelper.neverNull(getCurrentLabel()) + "\"/>");
-		out.println("</div>");
-
-		out.println("</fieldset>");
+		out.println("</fieldset></div>");
 
 		out.close();
 		return writer.toString();

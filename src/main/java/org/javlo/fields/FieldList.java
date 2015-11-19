@@ -35,10 +35,10 @@ public class FieldList extends Field {
 			return "";
 		}
 
-		out.println("<div class=\"line form-group\">");
+		out.println("<div class=\"form-group\">");
 		out.println(getEditLabelCode());
-		out.println("	<label for=\"" + getInputName() + "\">" + getLabel(new Locale(ctx.getContextRequestLanguage())) + " : </label>");
-		out.println("	<select class=\"form-control\" id=\"" + getInputName() + "\" name=\"" + getInputName() + "\" value=\"" + StringHelper.neverNull(getValue()) + "\">");
+		out.println("<div class=\"row\"><div class=\"col-sm-3\"><label for=\"" + getInputName() + "\">" + getLabel(new Locale(ctx.getContextRequestLanguage())) + " : </label></div>");
+		out.println("<div class=\"col-sm-9\"><select class=\"form-control\" id=\"" + getInputName() + "\" name=\"" + getInputName() + "\" value=\"" + StringHelper.neverNull(getValue()) + "\">");
 		
 
 		for (Map.Entry<String, String> value : values) {
@@ -59,7 +59,7 @@ public class FieldList extends Field {
 		if (getMessage() != null && getMessage().trim().length() > 0) {
 			out.println("	<div class=\"message " + getMessageTypeCSSClass() + "\">" + getMessage() + "</div>");
 		}
-		out.println("</div>");
+		out.println("</div></div></div>");
 
 		out.close();
 		return writer.toString();

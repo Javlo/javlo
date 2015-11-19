@@ -23,7 +23,6 @@ import java.util.logging.Logger;
 import org.javlo.bean.Link;
 import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.component.core.ComponentBean;
-import org.javlo.component.core.ContentElementList;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.core.IDate;
 import org.javlo.component.core.ILink;
@@ -449,16 +448,21 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 			out.println("<div class=\"dynamic-component not-valid cols\">");
 		}
 		int colSize = 0;
+		
+		String firstItem = "first ";
 		for (Field field : fields) {
 			if (field != null) {
-
+				
 				colSize = colSize + field.getColsWidth(ctx);
 				String last = "";
 				if (colSize >= 12) {
 					colSize = 0;
 					last = "lastcol ";
 				}
-				out.println("<div class=\"" + last + "col" + field.getColsWidth(ctx) + "\">");
+				out.println("<div class=\"" + firstItem + last + "col" + field.getColsWidth(ctx) + "\">");
+				if (firstItem.length() == 0) {
+					out.println("<hr />");
+				}
 
 				if (field.getTranslation() != null) {
 					I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
@@ -485,9 +489,9 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 				}
 				if (field.getTranslation() != null) {
 					out.println("</fieldset>");
-				}
+				}				
+				firstItem="";
 				out.println("</div>");
-
 			}
 		}
 		out.println("</div>");

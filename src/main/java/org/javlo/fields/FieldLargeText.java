@@ -5,7 +5,6 @@ import java.io.StringWriter;
 import java.util.Locale;
 
 import org.javlo.context.ContentContext;
-import org.javlo.context.GlobalContext;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.XHTMLHelper;
 
@@ -25,9 +24,8 @@ public class FieldLargeText extends Field {
 		
 		StringWriter writer = new StringWriter();
 		PrintWriter out = new PrintWriter(writer);
-		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 
-		out.println("<div class=\"line " + getType() + "\">");
+		out.println("<div class=\"form-group " + getType() + "\">");
 		out.println("<label for=\"" + getInputName() + "\">" + getLabel(new Locale(ctx.getContextRequestLanguage())) + " : </label>");
 		String readOnlyHTML = "";
 		if (isReadOnly()) {

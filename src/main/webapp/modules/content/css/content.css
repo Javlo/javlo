@@ -429,3 +429,17 @@ li.line {
 .raw textarea {
 	width: 98%;
 }
+
+.dynamic-component hr {
+	display: none;
+    height: 1px;
+    border: 0;
+    border-top: 1px solid #cccccc;
+    margin: 0 0 1em 0;
+    padding: 0;	
+}
+
+.radio-inline+.radio-inline, .checkbox-inline+.checkbox-inline {
+    margin-left: 0;
+    margin-right: 10px;
+}

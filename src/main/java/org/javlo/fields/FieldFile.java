@@ -180,48 +180,49 @@ public class FieldFile extends Field implements IStaticContainer {
 		StringWriter writer = new StringWriter();
 		PrintWriter out = new PrintWriter(writer);
 
+		out.println("<div class=\"form-group\">");
 		out.println("<fieldset>");
 		out.println("<legend>" + getLabel(new Locale(globalContext.getEditLanguage(ctx.getRequest().getSession()))) + "</legend>");
 		out.println("<div class=\"commands\">");
 
-		out.println("<div class=\"line suffix\">");
+		out.println("<div class=\"row form-group\"><div class=\"col-sm-3\">");
 		out.println("<label for=\"" + getInputCreateFolderName() + "\">" + getCreateFolderLabel() + " : </label>");
-		out.println("<input class=\"form-control\" type=\"text\" id=\"" + getInputCreateFolderName() + "\" name=\"" + getInputCreateFolderName() + "\" />");
-		out.println("<input type=\"submit\" class=\"ajax_update_click\" name=\"create\" value=\">>\" />");
-		out.println("</div>");
+		out.println("</div><div class=\"col-sm-8\"><input class=\"form-control\" type=\"text\" id=\"" + getInputCreateFolderName() + "\" name=\"" + getInputCreateFolderName() + "\" /></div>");
+		out.println("<div class=\"col-sm-1\"><input type=\"submit\" class=\"ajax_update_click btn btn-default btn-xs pull-right\" name=\"create\" value=\">>\" />");
+		out.println("</div></div>");
 
-		out.println("<div class=\"line\">");
-		out.println("<label for=\"" + getInputFolderName() + "\">" + getFolderLabel() + " : </label>");
+		out.println("<div class=\"row form-group\"><div class=\"col-sm-3\">");
+		out.println("<label for=\"" + getInputFolderName() + "\">" + getFolderLabel() + " : </label></div><div class=\"col-sm-9\">");
 		out.println(XHTMLHelper.getInputOneSelect(getInputFolderName(), getFolderListForSelection(), getCurrentFolder(), "form-control", "jQuery(this.form).trigger('submit');", true));
-		out.println("</div>");
+		out.println("</div></div>");
 
-		out.println("<div class=\"line\">");
-		out.println("<label for=\"" + getInputFileName() + "\">" + getFileLabel() + " : </label>");
+		out.println("<div class=\"row form-group\"><div class=\"col-sm-3\">");
+		out.println("<label for=\"" + getInputFileName() + "\">" + getFileLabel() + " : </label></div><div class=\"col-sm-9\">");
 		out.println(XHTMLHelper.getInputOneSelect(getInputFileName(), getFileList(), getCurrentFile(), "form-control", "jQuery(this.form).trigger('submit');", true));
-		out.println("</div>");
+		out.println("</div></div>");
 
-		out.println("<div class=\"line\">");
+		out.println("<div class=\"row form-group\"><div class=\"col-sm-3\">");
 		out.println("<label for=\"" + getInputLabelFileName() + "\">" + getLabelLabel() + " : </label>");
-		out.println("<input class=\"form-control\" type=\"text\" id=\"" + getInputLabelFileName() + "\" name=\"" + getInputLabelFileName() + "\" value=\"" + getCurrentLabel() + "\" />");
-		out.println("</div>");
+		out.println("</div><div class=\"col-sm-9\"><input class=\"form-control\" type=\"text\" id=\"" + getInputLabelFileName() + "\" name=\"" + getInputLabelFileName() + "\" value=\"" + getCurrentLabel() + "\" />");
+		out.println("</div></div>");
 
-		out.println("<div class=\"line\">");
+		out.println("<div class=\"row form-group\"><div class=\"col-sm-3\">");
 		out.println("<label for=\"" + getInputAddFileName() + "\">" + getAddFileLabel() + " : </label>");
-		out.println("<input type=\"file\" id=\"" + getInputAddFileName() + "\" name=\"" + getInputAddFileName() + "\" />");
-		out.println("</div>");
+		out.println("</div><div class=\"col-sm-9\"><input type=\"file\" id=\"" + getInputAddFileName() + "\" name=\"" + getInputAddFileName() + "\" />");
+		out.println("</div></div>");
 
 		if (isWithLink()) {
-			out.println("<div class=\"line\">");
+			out.println("<div class=\"row form-group\"><div class=\"col-sm-3\">");
 			out.println("<label for=\"" + getInputLabelLinkName() + "\">" + getLinkLabel() + " : </label>");
-			out.println("<input class=\"form-control\" type=\"text\" id=\"" + getInputLabelLinkName() + "\" name=\"" + getInputLabelLinkName() + "\" value=\"" + getCurrentLink() + "\" />");
-			out.println("</div>");
+			out.println("</div><div class=\"col-sm-9\"><input class=\"form-control\" type=\"text\" id=\"" + getInputLabelLinkName() + "\" name=\"" + getInputLabelLinkName() + "\" value=\"" + getCurrentLink() + "\" />");
+			out.println("</div></div>");
 		}
 
 		out.println("</div>");
 		out.println("<div class=\"preview\">");
 		out.println(getPreviewCode(ctx, true));
 		out.println("</div>");
-		out.println("</fieldset>");
+		out.println("</fieldset></div>");
 
 		out.close();
 		return writer.toString();

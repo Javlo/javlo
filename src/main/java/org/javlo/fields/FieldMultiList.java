@@ -42,14 +42,10 @@ public class FieldMultiList extends Field {
 
 		StringWriter writer = new StringWriter();
 		PrintWriter out = new PrintWriter(writer);
-		out.println("<div class=\"line\">");
-		out.println("<label class=\"control-label\">" + getLabel(new Locale(ctx.getContextRequestLanguage())) + " : </label>");
+		out.println("<div class=\"form-group\"><div class=\"row\"><div class=\"col-sm-3\">");
+		out.println("<label>" + getLabel(new Locale(ctx.getContextRequestLanguage())) + " : </label></div>");
 		out.println(getEditLabelCode());
-		if (ctx.isAsEditMode()) {
-			out.println("<div class=\"checkbox-inline\">");
-		} else {
-			out.println("<div class=\"checkbox\">");
-		}
+		out.println("<div class=\"col-sm-9\">");
 
 		for (Map.Entry<String, String> value : values) {
 			String checked = "";
@@ -60,14 +56,12 @@ public class FieldMultiList extends Field {
 			}
 			String key = StringHelper.neverNull(value.getKey(), value.getValue());
 			String label = StringHelper.neverEmpty(value.getValue(), i18nAccess.getViewText("global.none", "?"));
-			out.println("<label><input type=\"checkbox\" name=\"" + getInputName() + "\" id=\"cb-" + key + "\" value=\"" + key + "\"" + checked + "/>" + label + "</label>");
+			out.println("<label class=\"checkbox-inline\"><input type=\"checkbox\" name=\"" + getInputName() + "\" id=\"cb-" + key + "\" value=\"" + key + "\"" + checked + "/>" + label + "</label>");
 		}
-
-		// out.println("	</select>");
 		if (getMessage() != null && getMessage().trim().length() > 0) {
 			out.println("	<div class=\"message " + getMessageTypeCSSClass() + "\">" + getMessage() + "</div>");
 		}
-		out.println("</div></div>");
+		out.println("</div></div></div>");
 
 		out.close();
 		return writer.toString();

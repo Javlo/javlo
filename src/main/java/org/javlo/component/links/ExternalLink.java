@@ -145,28 +145,29 @@ public class ExternalLink extends ComplexPropertiesLink implements IReverseLinkC
 			String labelTitle = i18nAccess.getText("component.link.label");
 			String reverseLinkLabel = i18nAccess.getText("component.link.reverse");
 
-			out.println("<div class=\"edit three-col-layout\">");
+			
 			String reverseLink = properties.getProperty(REVERSE_LINK_KEY, ReverseLinkService.NONE);
 
 			if (isReversedLink(ctx)) {
-				out.println("<div class=\"line\">");
+				out.println("<div class=\"row form-group\">");
 				if (StringHelper.isTrue(reverseLink)) {
 					reverseLink = ReverseLinkService.ALL;
 				}
-				out.println("<label for=\"" + getReverseLinkName() + "\">" + reverseLinkLabel + " : </label>");
+				out.println("<div class=\"col-sm-3\"><label for=\"" + getReverseLinkName() + "\">" + reverseLinkLabel + " : </label></div><div class=\"col-sm-9\">");
 				out.println(XHTMLHelper.getReverlinkSelectType(ctx, getReverseLinkName(), reverseLink));
-				out.println("</div>");
+				out.println("</div></div>");
 			}
-			out.println("<div class=\"line\">");
-			out.println("<label for=\"" + getLinkName() + "\">" + linkTitle + "</label>");
-			out.print("<input class=\"form-control\" id=\"" + getLinkName() + "\" name=\"" + getLinkName() + "\" value=\"");
+			out.println("<div class=\"row form-group\"><div class=\"col-sm-3\">");
+			out.println("<label for=\"" + getLinkName() + "\">" + linkTitle + "</label></div>");
+			out.print("<div class=\"col-sm-9\"><input class=\"form-control\" id=\"" + getLinkName() + "\" name=\"" + getLinkName() + "\" value=\"");
 			out.print(link);
-			out.println("\"/></div>");
-			out.print("<label for=\"" + getLinkLabelName() + "\">" + labelTitle + "</label>");
-			out.print("<div class=\"row\"><div class=\"col-sm-9\"><div class=\"line suffix\">");			
-			out.print("<input class=\"form-control\" id=\"" + getLinkLabelName() + "\" name=\"" + getLinkLabelName() + "\" value=\"" + label + "\" /></div></div><div class=\"col-sm-3\">");
-			out.println("<input class=\"btn btn-primary btn-xs\" type=\"submit\" name=\"" + getDownloadTitleInputName() + "\" value=\"" + i18nAccess.getText("action.read-title") + "\" />");
-			out.println("</div></div></div>");
+			out.println("\"/></div></div>");
+			out.println("<div class=\"row form-group\"><div class=\"col-sm-3\">");
+			out.print("<label for=\"" + getLinkLabelName() + "\">" + labelTitle + "</label></div>");
+			out.print("<div class=\"col-sm-7\">");			
+			out.print("<input class=\"form-control\" id=\"" + getLinkLabelName() + "\" name=\"" + getLinkLabelName() + "\" value=\"" + label + "\" /></div><div class=\"col-sm-2\">");
+			out.println("<input class=\"btn btn-default btn-xs pull-right\" type=\"submit\" name=\"" + getDownloadTitleInputName() + "\" value=\"" + i18nAccess.getText("action.read-title") + "\" />");
+			out.println("</div></div>");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
