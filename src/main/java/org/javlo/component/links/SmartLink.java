@@ -118,15 +118,21 @@ public class SmartLink extends ComplexPropertiesLink implements ILink, IAction {
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(outStream);
-		out.println("<div class=\"row\"><div class=\"col-sm-3\">");
 		out.println("<a class=\"" + getType() + "\" href=\"" + getURL() + "\">");
+		out.println("<h4>" + getTitle() + "</h4>");
+		out.println("</a>");		
+		if (getDate().trim().length() > 0) {
+			out.println("<span class=\"date\">" + StringHelper.renderDate(getTime()) + "<span>" + StringHelper.renderTimeOnly(getTime()) + "</span></span>");
+		}
+		out.println("<div class=\"row\"><div class=\"col-sm-3\">");
+		
 		out.println("<figure><img class=\"img-responsive\" src=\"" + getImageURL() + "\" /></figure></div><div class=\"col-sm-9\">");
 		if (getDate().trim().length() > 0) {
 			out.println("<span class=\"date\">" + StringHelper.renderDate(getTime()) + "<span>" + StringHelper.renderTimeOnly(getTime()) + "</span></span>");
 		}
-		out.println("<h4>" + getTitle() + "</h4>");
+		
 		out.println("<p>" + getDescription() + "</p>");
-		out.println("</a></div></div>");
+		out.println("</div></div>");
 		out.close();
 		return new String(outStream.toByteArray());
 	}
