@@ -88,13 +88,9 @@ public class DynamicComponentList extends AbstractPropertiesComponent {
 	}
 
 	boolean fieldMatch(ContentContext ctx, String name, String value) {
-		if (value == null) {
-			return true;
-		}
-
 		String filterType = properties.getProperty(name + FILTER_TYPE_SUFFIX, CONTAINS);
 		String filter = properties.getProperty(name + FILTER_SUFFIX, "");
-
+		
 		if (value == null) {
 			return filter == null || filter.trim().length() == 0;
 		}
@@ -116,7 +112,7 @@ public class DynamicComponentList extends AbstractPropertiesComponent {
 				Pattern p = Pattern.compile(filter);
 				return p.matcher(value).matches();
 			}
-			return true;
+			return false;
 		}
 	}
 
