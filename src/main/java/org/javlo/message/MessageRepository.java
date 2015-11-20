@@ -169,6 +169,7 @@ public class MessageRepository {
 			url = URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.PREVIEW_MODE).getContextForAbsoluteURL());
 		}
 		notifService.addNotification(globalMessage.getMessage(), url, globalMessage.getType(), ctx.getCurrentUserId(), null, admin);
+		notifService.notifExternalService(ctx,globalMessage.getMessage(),globalMessage.getType(),url,ctx.getCurrentUserId(),admin);
 	}
 	
 	public void setGlobalMessageAndNotification(ContentContext ctx, GenericMessage globalMessage) {
@@ -193,7 +194,7 @@ public class MessageRepository {
 		if (url == null) {
 			url = URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.PREVIEW_MODE).getContextForAbsoluteURL());
 		}
-		notifService.addNotification(globalMessage.getMessage(), url, globalMessage.getType(), ctx.getCurrentUserId(),admin);
+		notifService.addNotification(globalMessage.getMessage(), url, globalMessage.getType(), ctx.getCurrentUserId(),admin);		
 	}
 
 	public void clearGlobalMessage() {

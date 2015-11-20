@@ -129,13 +129,13 @@ public class ConvertToCurrentVersion {
 
 			if (convertion > 0) {
 				String msg = "component converted (mode:" + ctx.getRenderMode() + ") : " + convertion;
-				notificationService.addSystemNotification(msg, GenericMessage.INFO, false);
+				notificationService.addSystemNotification(ctx, msg, GenericMessage.INFO, false);
 				logger.info(msg);
 			}
 
 		} catch (Exception e) {
 			e.printStackTrace();
-			notificationService.addSystemNotification("content convertion error : " + e.getMessage(), GenericMessage.ERROR, false);
+			notificationService.addSystemNotification(ctx,"content convertion error : " + e.getMessage(), GenericMessage.ERROR, false);
 		}
 	}
 }

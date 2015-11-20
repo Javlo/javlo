@@ -17,7 +17,7 @@ import org.javlo.helper.URLHelper;
 import org.javlo.message.GenericMessage;
 import org.javlo.user.AdminUserFactory;
 import org.javlo.user.AdminUserInfo;
-import org.javlo.user.User;
+import org.javlo.user.IUserInfo;
 import org.javlo.utils.JSONMap;
 import org.javlo.utils.MapCollectionWrapper;
 
@@ -271,47 +271,43 @@ public class NotificationService {
 		addNotification(message, null, type, userId, admin);
 	}
 
-	public void addSystemNotification(String message, int type, boolean admin) {
+	public void addSystemNotification(ContentContext ctx, String message, int type, boolean admin) {
 		addNotification(message, null, type, USER_SYSTEM, admin);
+		notifExternalService(ctx, message, type, null, null, admin);
 	}
 
-	public static void notifExternalService(ContentContext ctx, String message, int type, boolean admin) {
+	public static void notifExternalService(ContentContext ctx, String message, int type, String inURL, String userId, boolean admin) {
+		notifExternalService(ctx,message,type,inURL,userId,admin,null);
+	}
 
+	public static void notifExternalService(ContentContext ctx, String message, int type, String inURL, String userId, boolean admin, Collection<String> targetUsers) {
 		List<String> tokens = new LinkedList<String>();
-		
-		for (User user : AdminUserFactory.createUserFactory(ctx.getGlobalContext(), ctx.getRequest().getSession())) {
-			if (user.getUserInfo() instanceof AdminUserInfo) {
-				String userToken = ((AdminUserInfo) ctx.getCurrentEditUser().getUserInfo()).getPushbulletToken();
-				if (!St)
+		for (IUserInfo userInfo : AdminUserFactory.createUserFactory(ctx.getGlobalContext(), ctx.getRequest().getSession()).getUserInfoList()) {
+			if (userInfo instanceof AdminUserInfo) {
+				if (targetUsers == null || targetUsers.contains(userInfo.getLogin())) {
+					String userToken = ((AdminUserInfo) userInfo).getPushbulletToken();
+					if (!StringHelper.isEmpty(userToken)) {
+						tokens.add(userToken);
+					}
+				}
 			}
 		}
-		
-		
 		for (String token : tokens) {
 			String url = "https://api.pushbullet.com/v2/pushes";
 			Map<String, String> header = new HashMap<String, String>();
 			header.put("Access-Token", token);
 			Map<String, String> json = new HashMap<String, String>();
 			json.put("body", message);
-			json.put("title", ctx.getGlobalContext().getGlobalTitle());
-			json.put("url", URLHelper.createAbsoluteURL(ctx, url));
+			json.put("title", ctx.getGlobalContext().getGlobalTitle() + " [" + type + ' ' + StringHelper.neverEmpty(userId, "?") + ']');
+			json.put("url", inURL);
 			json.put("type", "link");
 			try {
 				NetHelper.postJsonRequest(new URL(url), null, header, JSONMap.JSON.toJson(json));
 			} catch (Exception e1) {
 				e1.printStackTrace();
-			}
-			url = URLHelper.addAllParams(url, "Access-Token=", "type=note", "title=test javlo");
-			String page;
-			try {
-				page = NetHelper.readPage(new URL(url));
-				System.out.println(page);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+			}			
 		}
 	}
-
 
 	/**
 	 * add a notification.

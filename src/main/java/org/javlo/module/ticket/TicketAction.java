@@ -26,6 +26,7 @@ import org.javlo.message.MessageRepository;
 import org.javlo.module.core.IMainModuleName;
 import org.javlo.module.core.Module;
 import org.javlo.module.core.ModulesContext;
+import org.javlo.service.NotificationService;
 import org.javlo.service.RequestService;
 import org.javlo.user.AdminUserFactory;
 import org.javlo.user.AdminUserSecurity;
@@ -198,8 +199,10 @@ public class TicketAction extends AbstractModuleAction {
 		}
 		ticket.onUpdate(user.getLogin());
 		ticketService.updateTicket(ctx, ticket);
-
+		
 		messageRepository.addMessage(new GenericMessage("ticket updated.", GenericMessage.INFO));
+		NotificationService.getInstance(globalContext).notifExternalService(ctx, ticket.getTitle(), GenericMessage.INFO, URLHelper.createAbsoluteURL(ctx, ctx.getPath()), ticket.getAuthors(), false, ticket.getUsers());
+		
 		return null;
 	}
 

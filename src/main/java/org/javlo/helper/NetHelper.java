@@ -119,7 +119,7 @@ public class NetHelper {
 	}
 
 	public static String postJsonRequest(URL url, String userAgent, Map<String, String> header, String json) throws Exception {
-		logger.info("readPage (json) : " + url);
+		logger.fine("postJsonRequest : " + url);
 
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 
@@ -131,8 +131,10 @@ public class NetHelper {
 			HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 			connection.setRequestMethod("POST");
 			connection.setRequestProperty("Content-Type", "application/json");
+			
+			byte[] bytes = json.getBytes(ContentContext.CHARSET_DEFAULT);
 
-			connection.setRequestProperty("Content-Length", "" + Integer.toString(json.getBytes().length));
+			connection.setRequestProperty("Content-Length", "" + Integer.toString(bytes.length));
 			connection.setRequestProperty("Accept-Charset", ContentContext.CHARACTER_ENCODING);
 			
 			for (Map.Entry<String, String> entry : header.entrySet()) {
@@ -152,7 +154,7 @@ public class NetHelper {
 
 			// Send request
 			DataOutputStream wr = new DataOutputStream(connection.getOutputStream());
-			wr.writeBytes(json);
+			wr.write(bytes);
 			wr.flush();
 			wr.close();
 
