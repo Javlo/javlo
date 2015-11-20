@@ -201,7 +201,7 @@ public class TicketAction extends AbstractModuleAction {
 		ticketService.updateTicket(ctx, ticket);
 		
 		messageRepository.addMessage(new GenericMessage("ticket updated.", GenericMessage.INFO));
-		NotificationService.getInstance(globalContext).notifExternalService(ctx, ticket.getTitle(), GenericMessage.INFO, URLHelper.createAbsoluteURL(ctx, ctx.getPath()), ticket.getAuthors(), false, ticket.getUsers());
+		NotificationService.getInstance(globalContext).notifExternalService(ctx, ticket.getTitle(), GenericMessage.INFO, ticket.getUrl(), ticket.getAuthors(), false, ticket.getUsers());
 		
 		return null;
 	}
