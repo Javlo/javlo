@@ -2,12 +2,15 @@ package org.javlo.module.ticket;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
+import org.javlo.helper.BeanHelper;
 import org.javlo.helper.StringHelper;
 
-public class TicketBean implements Serializable {
+public class TicketBean implements Serializable, Ticket {
 
 	private static final long serialVersionUID = 1L;
 
@@ -29,7 +32,7 @@ public class TicketBean implements Serializable {
 	private String authors;
 	private String latestEditor;
 	private String category;
-	private boolean read = false;
+	private Set<String> readers = new HashSet<String>();
 	private boolean deleted = false;
 	private Date creationDate = new Date();
 	private Date lastUpdateDate = new Date();
@@ -38,6 +41,18 @@ public class TicketBean implements Serializable {
 	private List<Comment> comments = new LinkedList<Comment>();
 	private List<String> users = new LinkedList<String>();
 
+	public TicketBean() {
+	}
+
+	public TicketBean(Ticket ticket) {
+		try {
+			BeanHelper.copy(ticket, this);
+		} catch (Exception e) {
+			throw new RuntimeException("Exception when copying Ticket", e);
+		}
+	}
+
+	@Override
 	public String getTitle() {
 		return title;
 	}
@@ -46,6 +61,7 @@ public class TicketBean implements Serializable {
 		this.title = title;
 	}
 
+	@Override
 	public String getMessage() {
 		return message;
 	}
@@ -54,6 +70,7 @@ public class TicketBean implements Serializable {
 		this.message = message;
 	}
 
+	@Override
 	public String getContext() {
 		return context;
 	}
@@ -62,6 +79,7 @@ public class TicketBean implements Serializable {
 		this.context = context;
 	}
 
+	@Override
 	public String getUrl() {
 		return url;
 	}
@@ -70,6 +88,7 @@ public class TicketBean implements Serializable {
 		this.url = url;
 	}
 
+	@Override
 	public int getPriority() {
 		return priority;
 	}
@@ -78,6 +97,7 @@ public class TicketBean implements Serializable {
 		this.priority = priority;
 	}
 
+	@Override
 	public String getStatus() {
 		return status;
 	}
@@ -86,6 +106,7 @@ public class TicketBean implements Serializable {
 		this.status = status;
 	}
 
+	@Override
 	public String getAuthors() {
 		return authors;
 	}
@@ -97,6 +118,7 @@ public class TicketBean implements Serializable {
 		}
 	}
 
+	@Override
 	public String getId() {
 		return id;
 	}
@@ -105,6 +127,7 @@ public class TicketBean implements Serializable {
 		this.id = id;
 	}
 
+	@Override
 	public String getCategory() {
 		return category;
 	}
@@ -113,10 +136,12 @@ public class TicketBean implements Serializable {
 		this.category = category;
 	}
 
+	@Override
 	public boolean isDebugNote() {
 		return CATEGORY_DEBUG_NOTE.equals(this.category);
 	}
 
+	@Override
 	public Date getCreationDate() {
 		return creationDate;
 	}
@@ -125,6 +150,7 @@ public class TicketBean implements Serializable {
 		this.creationDate = creationDate;
 	}
 
+	@Override
 	public Date getLastUpdateDate() {
 		return lastUpdateDate;
 	}
@@ -133,6 +159,7 @@ public class TicketBean implements Serializable {
 		this.lastUpdateDate = lastUpdateDate;
 	}
 
+	@Override
 	public String getLatestEditor() {
 		return latestEditor;
 	}
@@ -141,6 +168,7 @@ public class TicketBean implements Serializable {
 		this.latestEditor = latestEditor;
 	}
 
+	@Override
 	public List<Comment> getComments() {
 		return comments;
 	}
@@ -153,22 +181,26 @@ public class TicketBean implements Serializable {
 		this.comments.add(comment);
 	}
 
+	@Override
 	public String getCreationDateLabel() {
 		return StringHelper.renderSortableTime(getCreationDate());
 	}
 
+	@Override
 	public String getLastUpdateDateLabel() {
 		return StringHelper.renderSortableTime(getLastUpdateDate());
 	}
 
-	public boolean isRead() {
-		return read;
+	@Override
+	public Set<String> getReaders() {
+		return readers;
 	}
 
-	public void setRead(boolean read) {
-		this.read = read;
+	public void setReaders(Set<String> readers) {
+		this.readers = readers;
 	}
 
+	@Override
 	public boolean isDeleted() {
 		return deleted;
 	}
@@ -177,6 +209,7 @@ public class TicketBean implements Serializable {
 		this.deleted = deleted;
 	}
 
+	@Override
 	public String getShare() {
 		return share;
 	}
@@ -185,12 +218,24 @@ public class TicketBean implements Serializable {
 		this.share = share;
 	}
 
+	@Override
 	public List<String> getUsers() {
 		return users;
 	}
 
 	public void setUsers(List<String> users) {
 		this.users = users;
+	}
+
+	@Override
+	public void onUpdate(String login) {
+		readers.clear();
+		onRead(login);
+	}
+
+	@Override
+	public void onRead(String login) {
+		readers.add(login);
 	}
 
 }

@@ -43,9 +43,9 @@ public class TicketAction extends AbstractModuleAction {
 		return "ticket";
 	}
 
-	public static Map<String, TicketBean> getMyTicket(ContentContext ctx) throws Exception {
+	public static Map<String, TicketUserWrapper> getMyTicket(ContentContext ctx) throws Exception {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-		Map<String, TicketBean> myTickets = new HashMap<String, TicketBean>();
+		Map<String, TicketUserWrapper> myTickets = new HashMap<String, TicketUserWrapper>();
 
 		String status = ctx.getRequest().getParameter("filter_status");
 
@@ -54,14 +54,14 @@ public class TicketAction extends AbstractModuleAction {
 		if (globalContext.isMaster() && ctx.getCurrentEditUser() != null) {
 			for (TicketBean ticket : tickets) {
 				if (status == null || status.trim().length() == 0 || ticket.getStatus().equals(status)) {
-					myTickets.put(ticket.getId(), ticket);
+					myTickets.put(ticket.getId(), new TicketUserWrapper(ticket, ctx));
 				}
 			}
 		} else {
 			for (TicketBean ticket : tickets) {
 				if (ctx.getCurrentEditUser() != null && (AdminUserSecurity.getInstance().isAdmin(ctx.getCurrentEditUser()) || ticket.getAuthors().equals(ctx.getCurrentEditUser().getLogin())) &&  ticket.getContext() != null && ticket.getContext().equals(globalContext.getContextKey())) {
 					if (status == null || status.trim().length() == 0 || ticket.getStatus().equals(status)) {
-						myTickets.put(ticket.getId(), ticket);
+						myTickets.put(ticket.getId(), new TicketUserWrapper(ticket, ctx));
 					}
 				} else { // sharing ticket
 					boolean sharing = false;
@@ -81,7 +81,7 @@ public class TicketAction extends AbstractModuleAction {
 					}
 					if (sharing) {
 						if (status == null || status.trim().length() == 0 || ticket.getStatus().equals(status)) {
-							myTickets.put(ticket.getId(), ticket);
+							myTickets.put(ticket.getId(), new TicketUserWrapper(ticket, ctx));
 						}
 					}
 				}
@@ -97,26 +97,27 @@ public class TicketAction extends AbstractModuleAction {
 		RequestService rs = RequestService.getInstance(ctx.getRequest());
 
 		Module ticketModule = modulesContext.getCurrentModule();
-		Map<String, TicketBean> myTickets = getMyTicket(ctx);
+		Map<String, TicketUserWrapper> myTickets = getMyTicket(ctx);
 		ctx.getRequest().setAttribute("tickets", myTickets.values());
 
 		String ticketId = rs.getParameter("id", null);
 		if (ticketId != null) {
-			TicketBean ticket = myTickets.get(ticketId);
+			TicketUserWrapper ticket;
 			if (ticketId.equals("new")) {
-				ticket = new TicketBean();
-				ticket.setAuthors(ctx.getCurrentUserId());
-				ticket.setContext(ctx.getGlobalContext().getContextKey());
-				ticket.setUrl(URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.PREVIEW_MODE)));
+				TicketBean newTicket = new TicketBean();
+				newTicket.setAuthors(ctx.getCurrentUserId());
+				newTicket.setContext(ctx.getGlobalContext().getContextKey());
+				newTicket.setUrl(URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.PREVIEW_MODE)));
 				TicketService ticketService = TicketService.getInstance(ctx.getGlobalContext());
-				ticketService.updateTicket(ctx, ticket);
-				rs.setParameter("id", ticket.getId());
+				ticketService.updateTicket(ctx, newTicket);
+				rs.setParameter("id", newTicket.getId());
 				ctx.getRequest().setAttribute("newTicket", "true");
-			} 
+				ticket = new TicketUserWrapper(newTicket, ctx);
+			} else {
+				ticket = myTickets.get(ticketId);
+			}
 			if (ticket != null && rs.getParameter("back", null) == null && !StringHelper.isTrue(ctx.getRequest().getAttribute("back-list"))) {
-				if (ticket.getAuthors().equals(ctx.getCurrentEditUser().getLogin())) {
-					ticket.setRead(true);
-				}
+				ticket.onRead(ctx.getCurrentEditUser().getLogin());
 				ctx.getRequest().setAttribute("ticket", ticket);
 				if (ticketModule.getBox("main") == null) {
 					ticketModule.addMainBox("main", "update ticket : " + rs.getParameter("id", ""), "/jsp/update_ticket.jsp", true);
@@ -151,11 +152,11 @@ public class TicketAction extends AbstractModuleAction {
 			if ("new".equals(id)) {
 				ticket = new TicketBean();
 			} else {
-				ticket = getMyTicket(ctx).get(id);
-			}
-			if (ticket == null) {
-				return "ticket not found : " + id;
-			} else {
+				TicketUserWrapper existing = getMyTicket(ctx).get(id);
+				if (existing == null) {
+					return "ticket not found : " + id;
+				}
+				ticket = new TicketBean(existing);
 				ticket.setLastUpdateDate(new Date());
 				ticket.setLatestEditor(user.getLogin());
 			}
@@ -191,13 +192,11 @@ public class TicketAction extends AbstractModuleAction {
 			}
 			if (rs.getParameter("comment", "").trim().length() > 0) {
 				ticket.addComments(new Comment(user.getLogin(), rs.getParameter("comment", "")));
-				if (!ticket.getAuthors().equals(ctx.getCurrentEditUser().getLogin())) {
-					ticket.setRead(false);
-				}
 			} else {
 				ctx.getRequest().setAttribute("back-list", true);
 			}
 		}
+		ticket.onUpdate(user.getLogin());
 		ticketService.updateTicket(ctx, ticket);
 
 		messageRepository.addMessage(new GenericMessage("ticket updated.", GenericMessage.INFO));

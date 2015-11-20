@@ -40,6 +40,8 @@ import org.javlo.message.MessageRepository;
 import org.javlo.module.content.Edit;
 import org.javlo.module.core.ModuleException;
 import org.javlo.module.core.ModulesContext;
+import org.javlo.module.ticket.TicketAction;
+import org.javlo.module.ticket.TicketUserWrapper;
 import org.javlo.navigation.MenuElement;
 import org.javlo.navigation.NavigationMapByName;
 import org.javlo.navigation.PageBean;
@@ -1289,6 +1291,17 @@ public class InfoBean {
 				return null;
 			}
 		}
+	}
+
+	public List<TicketUserWrapper> getUnreadTickets() throws Exception {
+		List<TicketUserWrapper> out = new LinkedList<TicketUserWrapper>();
+		Map<String, TicketUserWrapper> tickets = TicketAction.getMyTicket(ctx);
+		for (TicketUserWrapper ticket : tickets.values()) {
+			if (!ticket.isRead()) {
+				out.add(ticket);
+			}
+		}
+		return out;
 	}
 
 }
