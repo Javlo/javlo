@@ -301,7 +301,9 @@
 							type="<%=accessType%>"
 							value="${i18n.edit['preview.label.ticket']}"
 							onclick="editPreview.openModal('${i18n.edit['preview.label.ticket']}','${url}'); return false;"${tooltip}>
-							<span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span><span class="text">${i18n.edit['preview.label.ticket']}</span>					
+							<span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span><span class="text">${i18n.edit['preview.label.ticket']}</span>
+							<c:set var="unreadTicketsize" value="${fn:length(info.unreadTickets)}" />
+							<c:if test="${unreadTicketsize>0}"><div class="badge unread-count">${unreadTicketsize}</div></c:if>					
 						</button>
 						
 						<c:if test="${not empty integrities}">
