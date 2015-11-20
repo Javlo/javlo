@@ -173,7 +173,7 @@
 <div class="form-group function">
 		<label for="function">area of specialisation</label>
 		<c:if test="${empty list.functions}">
-		<input class="form-control" type="text" id="function" name="function" value="${userInfoMap["function"]}" />
+		<input class="form-control" type="text" id="function" name="function" value="${userInfoMap['function']}" />
 		</c:if>
 		 <c:if test="${not empty list.functions}">
 		 	<div class="form-group">
@@ -193,26 +193,31 @@
 
 <fieldset class="social">
 <legend>${i18n.edit['user.social']}</legend>
-	<div class="col-xs-6">
+	<div class="col-xs-4">
 		<div class="form-group">
 			<label for="facebook">facebook
-			<input class="form-control" type="text" id="facebook" name="facebook" value="${userInfoMap["facebook"]}" /></label> 
+			<input class="form-control" type="text" id="facebook" name="facebook" value="${userInfoMap['facebook']}" /></label> 
 		</div>
 		<div class="form-group">
 			<label for="googleplus">google+
-			<input class="form-control" type="text" id="googleplus" name="googleplus" value="${userInfoMap["googleplus"]}" /></label> 
+			<input class="form-control" type="text" id="googleplus" name="googleplus" value="${userInfoMap['googleplus']}" /></label> 
 		</div>
 	</div>
-	<div class="col-xs-6">
+	<div class="col-xs-4">
 	<div class="form-group">
-		<label for=linkedin">linkedin
-		<input class="form-control" type="text" id="linkedin" name="linkedin" value="${userInfoMap["linkedin"]}" /></label> 
+		<label for="linkedin">linkedin
+		<input class="form-control" type="text" id="linkedin" name="linkedin" value="${userInfoMap['linkedin']}" /></label> 
 	</div>
 	<div class="form-group">
-		<label for=twitter">twitter
-		<input class="form-control" type="text" id="twitter" name="twitter" value="${userInfoMap["twitter"]}" /></label> 
+		<label for="twitter">twitter
+		<input class="form-control" type="text" id="twitter" name="twitter" value="${userInfoMap['twitter']}" /></label> 
 	</div>
-	
+	</div>
+	<div class="col-xs-4">
+	<div class="form-group">
+		<label for="pushbulletToken">pushbullet token
+		<input class="form-control" type="text" id="pushbulletToken" name="pushbulletToken" value="${userInfoMap['pushbulletToken']}" /></label> 
+	</div>
 	</div>
 </fieldset>
 
