@@ -21,6 +21,7 @@ public class SocialService {
 	private ISocialNetwork twitter;
 	private ISocialNetwork google;
 	private ISocialNetwork linkedin;
+	private ISocialNetwork pushbullet;
 	private String redirectURL = null;
 
 	public static SocialService getInstance(ContentContext ctx) {
@@ -68,6 +69,7 @@ public class SocialService {
 		networks.add(getTwitter());
 		networks.add(getGoogle());
 		networks.add(getLinkedin());
+		networks.add(getPushbullet());
 		return networks;
 	}
 
@@ -94,6 +96,14 @@ public class SocialService {
 			initSocialNetwork(linkedin);
 		}
 		return linkedin;
+	}
+	
+	public ISocialNetwork getPushbullet() {
+		if (pushbullet == null) {
+			pushbullet = new Pushbullet();
+			initSocialNetwork(pushbullet);
+		}
+		return pushbullet;
 	}
 
 	public ISocialNetwork getTwitter() {

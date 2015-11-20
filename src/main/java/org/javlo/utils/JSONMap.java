@@ -187,27 +187,5 @@ public class JSONMap implements Map<String, Object> {
 		}
 		return outSet;
 	}
-
-	public static void main(String[] args) {
-		Map test = new HashMap();
-		Map[] maps = new Map[2];
-		maps[0] = new HashMap();
-		maps[1] = new HashMap();
-
-		maps[0].put("url", "http://123fetiche.com/photos/MetArt-35-203//002.jpg");
-		maps[1].put("url", "http://123fetiche.com/photos/MetArt-35-203//004.jpg");
-		test.put("images", maps);
-
-		String objStr = JSON.toJson(test);
-		System.out.println("test : " + objStr);
-
-
-		// {"images":{"url1":"url 2","url":"url 1"}}
-
-		String data = "[{\"name\":\"Patrick Vandermaesen\",\"first_name\":\"Patrick\",\"last_name\":\"Vandermaesen\",\"uid\":\"693608149\",\"email\":\"pvandermaesen\u0040noctis.be\"}]";
-		TypeToken<ArrayList<Map<String,String>>> list = new TypeToken<ArrayList<Map<String,String>>>(){};
-		ArrayList<Map<String,String>> info = (ArrayList<Map<String,String>>)JSONMap.JSON.fromJson(data,list.getType());
-		
-		System.out.println("***** JSONMap.main : name = " + info.get(0).get("name")); // TODO: remove debug trace
-	}
+	
 }

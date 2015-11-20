@@ -1,14 +1,24 @@
 package org.javlo.service;
 
 import java.lang.ref.WeakReference;
+import java.net.URL;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
+import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
+import org.javlo.helper.NetHelper;
 import org.javlo.helper.StringHelper;
+import org.javlo.helper.URLHelper;
 import org.javlo.message.GenericMessage;
+import org.javlo.user.AdminUserFactory;
+import org.javlo.user.AdminUserInfo;
+import org.javlo.user.User;
+import org.javlo.utils.JSONMap;
 import org.javlo.utils.MapCollectionWrapper;
 
 public class NotificationService {
@@ -258,12 +268,50 @@ public class NotificationService {
 	}
 
 	public void addNotification(String message, int type, String userId, boolean admin) {
-		addNotification(message, null, type, userId,admin);
+		addNotification(message, null, type, userId, admin);
 	}
 
 	public void addSystemNotification(String message, int type, boolean admin) {
 		addNotification(message, null, type, USER_SYSTEM, admin);
 	}
+
+	public static void notifExternalService(ContentContext ctx, String message, int type, boolean admin) {
+
+		List<String> tokens = new LinkedList<String>();
+		
+		for (User user : AdminUserFactory.createUserFactory(ctx.getGlobalContext(), ctx.getRequest().getSession())) {
+			if (user.getUserInfo() instanceof AdminUserInfo) {
+				String userToken = ((AdminUserInfo) ctx.getCurrentEditUser().getUserInfo()).getPushbulletToken();
+				if (!St)
+			}
+		}
+		
+		
+		for (String token : tokens) {
+			String url = "https://api.pushbullet.com/v2/pushes";
+			Map<String, String> header = new HashMap<String, String>();
+			header.put("Access-Token", token);
+			Map<String, String> json = new HashMap<String, String>();
+			json.put("body", message);
+			json.put("title", ctx.getGlobalContext().getGlobalTitle());
+			json.put("url", URLHelper.createAbsoluteURL(ctx, url));
+			json.put("type", "link");
+			try {
+				NetHelper.postJsonRequest(new URL(url), null, header, JSONMap.JSON.toJson(json));
+			} catch (Exception e1) {
+				e1.printStackTrace();
+			}
+			url = URLHelper.addAllParams(url, "Access-Token=", "type=note", "title=test javlo");
+			String page;
+			try {
+				page = NetHelper.readPage(new URL(url));
+				System.out.println(page);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
 
 	/**
 	 * add a notification.
@@ -279,7 +327,7 @@ public class NotificationService {
 	 *            (userId null)
 	 */
 	public void addNotification(String message, String url, int type, String userId, boolean admin) {
-		addNotification(message, url, type, userId, userId,admin);
+		addNotification(message, url, type, userId, userId, admin);
 	}
 
 	public void addNotification(String message, String url, int type, String userId, String receiver, boolean admin) {

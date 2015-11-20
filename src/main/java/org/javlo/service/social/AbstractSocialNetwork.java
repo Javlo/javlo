@@ -24,6 +24,7 @@ import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
 import org.apache.oltu.oauth2.common.message.types.GrantType;
 import org.javlo.context.ContentContext;
 import org.javlo.helper.StringHelper;
+import org.javlo.helper.URLHelper;
 import org.javlo.user.IUserFactory;
 import org.javlo.user.TransientUserInfo;
 import org.javlo.user.User;
@@ -160,7 +161,11 @@ public abstract class AbstractSocialNetwork implements ISocialNetwork {
 		return StringHelper.mapToString(params);
 	}
 
-	public abstract OAuthProviderType getProviderType();
+	//public abstract OAuthProviderType getProviderType();
+	
+	public abstract String getAuthzEndpoint(); 
+	
+	public abstract String getTokenEndpoint();
 
 	@Override
 	public String getSigninURL(ContentContext ctx) throws Exception {
@@ -179,8 +184,7 @@ public abstract class AbstractSocialNetwork implements ISocialNetwork {
 	}
 
 	protected AuthenticationRequestBuilder createAuthenticationRequest() {
-		return OAuthClientRequest
-				.authorizationProvider(getProviderType());
+		return OAuthClientRequest.authorizationLocation(getAuthzEndpoint());
 	}
 
 	protected void configureAuthenticationRequest(AuthenticationRequestBuilder builder, String clientId, ContentContext ctx) throws Exception {
@@ -260,7 +264,7 @@ public abstract class AbstractSocialNetwork implements ISocialNetwork {
 	}
 
 	protected TokenRequestBuilder createTokenRequest() {
-		return OAuthClientRequest.tokenProvider(getProviderType());
+		return OAuthClientRequest.tokenLocation(getTokenEndpoint());
 	}
 
 	protected void configureTokenRequest(TokenRequestBuilder builder, String clientId, String clientSecret, String code) {
@@ -299,6 +303,14 @@ public abstract class AbstractSocialNetwork implements ISocialNetwork {
 	}
 
 	protected void fillUserInfo(UserInfo userInfo, SocialUser socialUser) {
+	}
+	
+	public String getLoginURL() {
+		String url = getAuthzEndpoint();
+		url = URLHelper.addParam(url, "client_id", getClientId());
+		url = URLHelper.addParam(url, "redirect_uri", getRedirectURL());
+		url = URLHelper.addParam(url, "response_type", "code");
+		return url;
 	}
 	
 }

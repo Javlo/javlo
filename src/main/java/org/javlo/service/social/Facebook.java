@@ -39,10 +39,16 @@ public class Facebook extends AbstractSocialNetwork {
 	public String getName() {
 		return "facebook";
 	}
+	
+	@Override
+	public String getAuthzEndpoint() {
+		return OAuthProviderType.FACEBOOK.getAuthzEndpoint();
+	}
+
 
 	@Override
-	public OAuthProviderType getProviderType() {
-		return OAuthProviderType.FACEBOOK;
+	public String getTokenEndpoint() {
+		return OAuthProviderType.FACEBOOK.getTokenEndpoint();
 	}
 
 	@Deprecated

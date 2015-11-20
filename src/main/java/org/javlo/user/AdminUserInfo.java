@@ -7,6 +7,7 @@ public class AdminUserInfo extends UserInfo {
 	private String googleplus;
 	private String linkedin;
 	private String twitter;
+	private String pushbulletToken;
 
 	public String getFacebook() {
 		return facebook;
@@ -38,6 +39,14 @@ public class AdminUserInfo extends UserInfo {
 
 	public void setTwitter(String twitter) {
 		this.twitter = twitter;
+	}
+
+	public String getPushbulletToken() {
+		return pushbulletToken;
+	}
+
+	public void setPushbulletToken(String pushbulletToken) {
+		this.pushbulletToken = pushbulletToken;
 	}
 
 }

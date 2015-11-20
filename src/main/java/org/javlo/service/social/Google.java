@@ -24,8 +24,13 @@ public class Google extends AbstractSocialNetwork {
 	}
 
 	@Override
-	public OAuthProviderType getProviderType() {
-		return OAuthProviderType.GOOGLE;
+	public String getAuthzEndpoint() {
+		return OAuthProviderType.GOOGLE.getAuthzEndpoint();
+	}
+
+	@Override
+	public String getTokenEndpoint() {
+		return OAuthProviderType.GOOGLE.getTokenEndpoint();
 	}
 
 	@Override

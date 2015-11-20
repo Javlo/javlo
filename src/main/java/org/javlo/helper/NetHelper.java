@@ -69,7 +69,7 @@ public class NetHelper {
 	public static String readPageForMailing(URL url, String login, String pwd) throws Exception {
 		return readPage(url, true, true, null, login, pwd, null, false);
 	}
-	
+
 	public static String readPageForMailing(URL url, String token) throws Exception {
 		return readPage(url, true, true, null, null, null, token, false);
 	}
@@ -77,11 +77,11 @@ public class NetHelper {
 	public static String readPage(URL url) throws Exception {
 		return readPage(url, false, false, null, null, null, null, false);
 	}
-	
+
 	public static String readPageGet(URLConnection conn) throws Exception {
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		InputStream in = null;
-		try {			
+		try {
 			if (conn instanceof HttpURLConnection) {
 				HttpURLConnection httpConn = (HttpURLConnection) conn;
 				if (httpConn.getResponseCode() != HttpURLConnection.HTTP_OK) {
@@ -118,6 +118,71 @@ public class NetHelper {
 		return readPage(url, cssInline, cssInline, userAgent, null, null, null, false);
 	}
 
+	public static String postJsonRequest(URL url, String userAgent, Map<String, String> header, String json) throws Exception {
+		logger.info("readPage (json) : " + url);
+
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+
+		InputStream in = null;
+		try {
+
+			url = removeParams(url);
+
+			HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+			connection.setRequestMethod("POST");
+			connection.setRequestProperty("Content-Type", "application/json");
+
+			connection.setRequestProperty("Content-Length", "" + Integer.toString(json.getBytes().length));
+			connection.setRequestProperty("Accept-Charset", ContentContext.CHARACTER_ENCODING);
+			
+			for (Map.Entry<String, String> entry : header.entrySet()) {
+				connection.setRequestProperty(entry.getKey(), entry.getValue());
+			}
+
+			connection.setUseCaches(false);
+			connection.setDoInput(true);
+			connection.setDoOutput(true);
+
+			connection.setAllowUserInteraction(true);
+			connection.setInstanceFollowRedirects(true);
+
+			if (userAgent != null) {
+				connection.setRequestProperty("User-Agent", userAgent);
+			}
+
+			// Send request
+			DataOutputStream wr = new DataOutputStream(connection.getOutputStream());
+			wr.writeBytes(json);
+			wr.flush();
+			wr.close();
+
+			URLConnection conn = connection;
+
+			if (conn instanceof HttpURLConnection) {
+				HttpURLConnection httpConn = (HttpURLConnection) conn;
+
+				if (httpConn.getResponseCode() != HttpURLConnection.HTTP_OK && httpConn.getResponseCode() != HttpURLConnection.HTTP_MOVED_TEMP && httpConn.getResponseCode() != HttpURLConnection.HTTP_MOVED_PERM) {
+					logger.warning("error readpage :  '" + url + "' return error code : " + ((HttpURLConnection) conn).getResponseCode());
+					return null;
+				}
+
+				if (url.getProtocol().equalsIgnoreCase("http") || url.getProtocol().equalsIgnoreCase("https")) {
+					if (httpConn.getResponseCode() != HttpURLConnection.HTTP_OK && httpConn.getResponseCode() != HttpURLConnection.HTTP_MOVED_TEMP && httpConn.getResponseCode() != HttpURLConnection.HTTP_MOVED_PERM) {
+						logger.warning("error readpage : " + httpConn.getResponseCode());
+						return null;
+					}
+				}
+
+			}
+			in = conn.getInputStream();
+			ResourceHelper.writeStreamToStream(in, out);
+		} finally {
+			ResourceHelper.closeResource(in);
+		}
+		String content = new String(out.toByteArray(), ContentContext.CHARACTER_ENCODING);
+		return content;
+	}
+
 	/**
 	 * read a page a put content in a String.
 	 * 
@@ -128,7 +193,7 @@ public class NetHelper {
 	 */
 	private static String readPage(URL url, boolean cssInline, boolean mailing, String userAgent, final String userName, final String password, String userToken, boolean noError) throws Exception {
 
-		logger.info("readPage : " + url + "  user:" + userName + "  password found:" + (StringHelper.neverNull(password).length() > 1)+ "  token found:" + (StringHelper.neverNull(userToken).length() > 1));
+		logger.info("readPage : " + url + "  user:" + userName + "  password found:" + (StringHelper.neverNull(password).length() > 1) + "  token found:" + (StringHelper.neverNull(userToken).length() > 1));
 
 		if (null != userName && userName.trim().length() != 0 && null != password && password.trim().length() != 0) {
 
@@ -152,7 +217,7 @@ public class NetHelper {
 
 		InputStream in = null;
 		try {
-			
+
 			if (userToken != null) {
 				url = new URL(URLHelper.addParam(url.toString(), IUserFactory.TOKEN_PARAM, userToken));
 			}
@@ -452,20 +517,20 @@ public class NetHelper {
 
 	public static List<String> extractExternalURL(URL inURL, String content) {
 		List<String> urlList = new LinkedList<String>();
-		
+
 		String baseURL = URLHelper.extractPath(inURL.toString());
 		int baseIndex = content.toLowerCase().indexOf("<base");
-		if (baseIndex>0) {
-			String baseTag = content.substring(baseIndex, baseIndex+content.substring(baseIndex).indexOf('>'));
+		if (baseIndex > 0) {
+			String baseTag = content.substring(baseIndex, baseIndex + content.substring(baseIndex).indexOf('>'));
 			int hrefIndex = baseTag.toLowerCase().indexOf("href");
 			if (hrefIndex > 0) {
-				int startIndex = hrefIndex+baseTag.substring(hrefIndex).indexOf('"');
-				int endIndex = startIndex+baseTag.substring(startIndex+1).indexOf('"')+1;
-				if (startIndex<hrefIndex) {
-					startIndex = hrefIndex+baseTag.substring(hrefIndex).indexOf('\'');
-					endIndex = startIndex+baseTag.substring(startIndex+1).indexOf('\'')+1;					
+				int startIndex = hrefIndex + baseTag.substring(hrefIndex).indexOf('"');
+				int endIndex = startIndex + baseTag.substring(startIndex + 1).indexOf('"') + 1;
+				if (startIndex < hrefIndex) {
+					startIndex = hrefIndex + baseTag.substring(hrefIndex).indexOf('\'');
+					endIndex = startIndex + baseTag.substring(startIndex + 1).indexOf('\'') + 1;
 				}
-				baseURL = baseTag.substring(startIndex+1, endIndex);				
+				baseURL = baseTag.substring(startIndex + 1, endIndex);
 			}
 		}
 		int hrefIndex = content.toLowerCase().indexOf("href=\"") + "href=\"".length();
@@ -480,14 +545,14 @@ public class NetHelper {
 						URL baseURLParser;
 						try {
 							baseURLParser = new URL(baseURL);
-							if (baseURLParser.getPort()>0) {
-								url = URLHelper.mergePath(baseURLParser.getProtocol()+':'+baseURLParser.getPort()+"://"+baseURLParser.getHost(), url);
+							if (baseURLParser.getPort() > 0) {
+								url = URLHelper.mergePath(baseURLParser.getProtocol() + ':' + baseURLParser.getPort() + "://" + baseURLParser.getHost(), url);
 							} else {
-								url = URLHelper.mergePath(baseURLParser.getProtocol()+"://"+baseURLParser.getHost(), url);
+								url = URLHelper.mergePath(baseURLParser.getProtocol() + "://" + baseURLParser.getHost(), url);
 							}
 						} catch (MalformedURLException e) {
 							e.printStackTrace();
-						}						
+						}
 					}
 				}
 				if (!url.contains(">")) {
@@ -552,8 +617,8 @@ public class NetHelper {
 	 * @return the uri to the local file
 	 */
 	public static String getLocalCopyOfPageImage(String cacheFolder, String dataFolder, URL pageURL, URL imageURL, String content, CRC32 crc32, boolean preferVertical, boolean needVertical) {
-		
-		logger.info("read : "+pageURL);
+
+		logger.info("read : " + pageURL);
 
 		if (content == null || content.trim().length() == 0) {
 			logger.warning("bad content.");
@@ -963,8 +1028,8 @@ public class NetHelper {
 	}
 
 	public static void main(String[] args) throws Exception {
-		URL url  = new URL("http://www.nsgalleries.com/hosted2/ab/pics/113011/hr02/index.php?nats=MTMwMjgzLjEuODUuODguMC4yMzI4LjAuMC4w");
+		URL url = new URL("http://www.nsgalleries.com/hosted2/ab/pics/113011/hr02/index.php?nats=MTMwMjgzLjEuODUuODguMC4yMzI4LjAuMC4w");
 		String content = NetHelper.readPage(url);
-		System.out.println("description:"+getPageDescription(content));
+		System.out.println("description:" + getPageDescription(content));
 	}
 }

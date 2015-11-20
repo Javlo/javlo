@@ -7,6 +7,7 @@
 		<input type="hidden" name="name" value="${network.name}" />
 		<div class="row">
 		<div class="col-xs-6">
+		<c:if test="${empty network.clientId}">
 		<div class="form-group">
 			<label for="login">login</label>
 			<input class="form-control" type="text" name="login" id="login" value="${network.login}" />
@@ -15,6 +16,12 @@
 			<label for="url">url</label>
 			<input class="form-control" type="text" name="url" id="url" value="${network.URL}" />
 		</div>
+		</c:if>
+		<c:if test="${not empty network.clientId}">
+		<div class="form-group">
+			<a class="btn btn-default" href="${network.loginURL}">login</a>
+		</div>
+		</c:if>
 		</div><div class="col-xs-6">
 		<div class="form-group">
 			<label for="clientid">client id*</label>

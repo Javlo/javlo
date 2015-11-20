@@ -10,8 +10,12 @@ public class Linkedin extends AbstractSocialNetwork {
 	}
 
 	@Override
-	public OAuthProviderType getProviderType() {
-		// TODO Auto-generated method stub
-		return null;
-	}	
+	public String getAuthzEndpoint() {
+		return OAuthProviderType.LINKEDIN.getAuthzEndpoint();
+	}
+
+	@Override
+	public String getTokenEndpoint() {
+		return OAuthProviderType.LINKEDIN.getTokenEndpoint();
+	}
 }
