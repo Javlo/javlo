@@ -101,8 +101,8 @@ public class SubTitle extends AbstractVisualComponent implements ISubTitle {
 					}
 				}
 				res.append("<h" + level + " id=\"" + getXHTMLId(ctx) + "\" class=\"subtitle"+colored+"\""+style+">");
-				ReverseLinkService reverserLinkService = ReverseLinkService.getInstance(globalContext);
-				value = reverserLinkService.replaceLink(ctx, this, value);
+				/*ReverseLinkService reverserLinkService = ReverseLinkService.getInstance(globalContext);
+				value = reverserLinkService.replaceLink(ctx, this, value);*/
 				res.append(XHTMLHelper.textToXHTML(value));
 				res.append("</h" + level + ">");
 			}

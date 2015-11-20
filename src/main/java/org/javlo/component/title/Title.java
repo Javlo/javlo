@@ -103,8 +103,8 @@ public class Title extends AbstractVisualComponent {
 
 		String value = getValue();
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-		ReverseLinkService reverserLinkService = ReverseLinkService.getInstance(globalContext);
-		value = reverserLinkService.replaceLink(ctx, this, value);
+		/*ReverseLinkService reverserLinkService = ReverseLinkService.getInstance(globalContext);
+		value = reverserLinkService.replaceLink(ctx, this, value);*/
 
 		res.append(value);
 		res.append("</"+getInsideTag(ctx)+"></h1>");
