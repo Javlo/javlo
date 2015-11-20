@@ -123,7 +123,7 @@
 		<c:if test="${not empty ticket.url}">	
 		
 		<div class="line">
-			<label>url : </label><a href="${ticket.url}">${ticket.url}</a>			
+			<label>url : </label><a target="_blank" href="${ticket.url}">${ticket.url}</a>			
 		</div>
 		</c:if>					
 		<c:if test="${empty newTicket}">
