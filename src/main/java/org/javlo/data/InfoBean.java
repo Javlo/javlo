@@ -138,6 +138,16 @@ public class InfoBean {
 			return URLHelper.createURL(ctx);
 		}
 	}
+	
+	public Map<String,String> getLanguageURLs() {
+		Map<String,String> urls = new HashMap<String, String>();
+		for (String lg : ctx.getGlobalContext().getContentLanguages()) {
+			ContentContext lgCtx = new ContentContext(ctx);
+			lgCtx.setAllLanguage(lg);
+			urls.put(lg, URLHelper.createURL(lgCtx));
+		}
+		return urls;
+	}
 
 	public String getCurrentAbsoluteURLQRCode() {
 		return URLHelper.createQRCodeLink(ctx, getShortLanguageURL());

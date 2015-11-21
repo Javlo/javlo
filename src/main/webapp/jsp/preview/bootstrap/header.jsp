@@ -297,7 +297,7 @@
 						<c:if test="${i18n.edit['preview.label.ticket.tooltip'] != 'preview.label.ticket.tooltip'}">
 							<c:set var="tooltip" value=' data-toggle="tooltip" data-placement="left" title="${i18n.edit[\'preview.label.ticket.tooltip\']}"' />
 						</c:if>
-						<button ${tooltip} class="btn btn-default btn-sm btn-tickets btn-color btn-notext"
+						<button ${tooltip} class="btn btn-default btn-sm btn-tickets btn-color btn-notext badged"
 							type="<%=accessType%>"
 							value="${i18n.edit['preview.label.ticket']}"
 							onclick="editPreview.openModal('${i18n.edit['preview.label.ticket']}','${url}'); return false;"${tooltip}>
@@ -308,8 +308,9 @@
 						
 						<c:if test="${not empty integrities}">
 						<c:if test="${fn:length(integrities.checker)>0}">
-						<a class="btn btn-default btn-sm btn-tickets btn-color alert-${integrities.levelLabel} btn-notext" data-toggle="collapse" data-target="#integrity-list" href="#integrity-list"  aria-expanded="false" aria-controls="integrity-list">
+						<a class="btn btn-default btn-sm btn-tickets btn-color alert-${integrities.levelLabel} btn-notext badged" data-toggle="collapse" data-target="#integrity-list" href="#integrity-list"  aria-expanded="false" aria-controls="integrity-list">
 							<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+							<c:if test="${fn:length(integrities.checker)>0}"><div class="badge unread-count">${fn:length(integrities.checker)}</div></c:if>
 						</a>
 						<div class="integrity-message collapse" id="integrity-list">
 							<ul class="list-group"><c:forEach var="checker" items="${integrities.checker}"><c:if test="${checker.errorCount>0}">								
