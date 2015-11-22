@@ -127,7 +127,15 @@ public class Menu extends AbstractPropertiesComponent {
 	@Override
 	public String getHexColor() {
 		return LINK_COLOR;
-	}	
+	}
+	
+	@Override
+	public boolean initContent(ContentContext ctx) throws Exception {
+		boolean outInit = super.initContent(ctx);
+		setFieldValue(ROOT_PAGE, ctx.getCurrentPage().getName());
+		setRepeat(StringHelper.isTrue(getConfig(ctx).getProperty("repeat", null), true));
+		return outInit;
+	}
 	
 	@Override
 	public boolean isRealContent(ContentContext ctx) {
