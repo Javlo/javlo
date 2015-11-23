@@ -20,6 +20,20 @@ editPreview.layerOver = function(item, title, drop) {
 		layer.attr("title", " ");		
 	} else {		
 		var comp = pjq(item);
+		
+		var parent = comp.parent();
+		var area = "";
+		c = 1;
+		while (parent.attr("id") != "top" && c < 20) {
+			c++;
+			console.log("parent=",parent);
+			if (parent.hasClass("_area")) {
+				area = parent.attr("id");
+			}
+			parent = parent.parent();
+		}
+		pjq('#area-name').text(area);
+		
 		if (drop) {
 			comp.after('<div class="_ep_new-component-zone"></div>');
 		} else  {
@@ -43,10 +57,12 @@ editPreview.layerOver = function(item, title, drop) {
 			}
 		
 			var width = comp.outerWidth(false);
-			/*if (width > comp.parent().outerWidth(false)) {
-				width = comp.parent().outerWidth(false);
-			} commment for page break */
-			layer.css("width", width);			
+			layer.css("width", width);
+			if (width < 350) {
+				layer.addClass("small");
+			} else {
+				layer.removeClass("small");
+			}
 			layer.css("height", comp.outerHeight(false));		
 			layer.data("comp", comp);
 		}		
@@ -189,7 +205,7 @@ editPreview.initPreview = function() {
 	/**********************/
 	
 	if (pjq("#preview-layer").length == 0) {
-		pjq("body").append('<div id="preview-layer"><div class="commands btn-group btn-group-sm area-actions" role="group">'+
+		pjq("body").append('<div id="preview-layer"><div class="commands btn-group btn-group-sm area-actions" role="group"><span class=\"btn area-name\"><span class="glyphicon glyphicon-th-large" aria-hidden="true"></span><span id=\"area-name\"></span></span>'+
 				'<button class="btn-edit btn btn-primary"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span><span class="text">edit</span></button>'+
 				'<button class="btn-copy btn btn-primary"><span class="glyphicon glyphicon-copy" aria-hidden="true"></span><span class="text">copy</span></button>'+
 				'<button class="btn-delete btn btn-primary"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span><span class="text">delete</span></button>'+
