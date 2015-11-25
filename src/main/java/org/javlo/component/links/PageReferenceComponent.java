@@ -1029,7 +1029,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 	protected boolean filterPage(ContentContext ctx, MenuElement page, String filter) throws Exception {
 		
 		if (!page.isActive()) {
-			return falses;
+			return false;
 		}
 		
 		Collection<String> commands = extractCommandFromFilter(filter);
