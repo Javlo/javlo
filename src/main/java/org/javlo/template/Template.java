@@ -1362,6 +1362,10 @@ public class Template implements Comparable<Template> {
 	public String getHTMLHomeFile() {
 		return properties.getString("home", getParent().getHTMLHomeFile());
 	}
+	
+	public String get404File() {
+		return properties.getString("404", getParent().get404File());
+	}
 
 	public synchronized Map getI18nProperties(GlobalContext globalContext, Locale locale, int mode) throws IOException {
 		String filePrefix = I18N_VIEW_FILE;

@@ -841,6 +841,14 @@ public class AccessServlet extends HttpServlet implements IVersion {
 									MenuElement page404 = content.getNavigation(ctx).searchChildFromName(staticConfig.get404PageName());
 									if (page404 != null) {
 										ctx.setCurrentPageCached(page404);
+									} else {
+										Template defaultTemplate = TemplateFactory.getDiskTemplates(getServletContext()).get(globalContext.getDefaultTemplate());
+										defaultTemplate.importTemplateInWebapp(staticConfig, ctx);
+										File file404 = new File(URLHelper.mergePath(defaultTemplate.getWorkTemplateRealPath(globalContext),defaultTemplate.get404File()));
+										if (file404.exists()) {
+											String forwardURL = URLHelper.createForwardURL(ctx, URLHelper.mergePath(defaultTemplate.getLocalWorkTemplateFolder(), defaultTemplate.getFolder(globalContext.getContextKey()), defaultTemplate.get404File()));
+											getServletContext().getRequestDispatcher(forwardURL).include(request, response);
+										}
 									}
 								}
 							}

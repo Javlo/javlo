@@ -60,7 +60,7 @@ public class DefaultTemplate extends Template {
 	public String getHTMLFile() {
 		return "index.html";
 	}
-	
+
 	@Override
 	public String getMenuRenderer(Device device) {
 		return null;
@@ -69,6 +69,11 @@ public class DefaultTemplate extends Template {
 	@Override
 	public String getHTMLHomeFile() {
 		return null;
+	}
+
+	@Override
+	public String get404File() {
+		return "404.html";
 	}
 
 	@Override
@@ -84,7 +89,7 @@ public class DefaultTemplate extends Template {
 	public String getLocalWorkTemplateFolder() {
 		return "/work_template";
 	}
-	
+
 	@Override
 	public String getWysiwygCss() {
 		return null;
@@ -125,7 +130,12 @@ public class DefaultTemplate extends Template {
 	@Override
 	public boolean isTemplateInWebapp(ContentContext ctx) throws IOException {
 		/*
-		 * GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest()); File templateTgt = new File(URLHelper.mergePath(getWorkTemplateFolder(), getFolder(globalContext))); if (isMailing()) { templateTgt = new File(URLHelper.mergePath(getWorkMailingTemplateFolder(), getFolder(globalContext))); } return templateTgt.exists();
+		 * GlobalContext globalContext =
+		 * GlobalContext.getInstance(ctx.getRequest()); File templateTgt = new
+		 * File(URLHelper.mergePath(getWorkTemplateFolder(),
+		 * getFolder(globalContext))); if (isMailing()) { templateTgt = new
+		 * File(URLHelper.mergePath(getWorkMailingTemplateFolder(),
+		 * getFolder(globalContext))); } return templateTgt.exists();
 		 */
 		return true;
 	}
@@ -340,42 +350,42 @@ public class DefaultTemplate extends Template {
 	public String getPageTypesRAW() {
 		return MenuElement.PAGE_TYPE_DEFAULT;
 	}
-	
+
 	@Override
 	public int getPDFHeigth() {
 		return 1024;
 	}
-	
+
 	@Override
-	public int getQRCodeSize() {	
+	public int getQRCodeSize() {
 		return 125;
 	}
-	
+
 	@Override
 	protected String getRAWPlugins() {
 		return null;
 	}
-	
+
 	@Override
-	public boolean isMailing() {	
+	public boolean isMailing() {
 		return false;
 	}
-	
+
 	@Override
 	public List<String> getRenderers() {
 		return Collections.EMPTY_LIST;
 	}
-	
+
 	@Override
 	protected String getExcludeProperties(String zone) {
 		return null;
 	}
-	
+
 	@Override
-	public String getHTMLFileParams(Device device) {	
+	public String getHTMLFileParams(Device device) {
 		return null;
 	}
-	
+
 	@Override
 	public List<InternetAddress> getSenders() {
 		return null;
