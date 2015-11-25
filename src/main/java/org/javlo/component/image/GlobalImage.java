@@ -319,14 +319,17 @@ public class GlobalImage extends Image implements IImageFilter {
 		if (isLink()) {
 			finalCode.append("<div class=\"row form-group\"><div class=\"col-sm-3\"><label for=\"img_link_" + getId() + "\">");
 			finalCode.append(getImageLinkTitle(ctx)+" : </label></div>");
-			String linkToResources = "<div class=\"col-sm-2\"><a class=\"browse-link btn btn-default btn-xs\" href=\""+URLHelper.addParam(staticLinkURL, "select", "back")+"\">"+i18nAccess.getText("content.goto-static")+"</a></div>";
+			String linkToResources ="";
+			if (!ctx.getGlobalContext().isMailingPlatform()) {
+				linkToResources = "<div class=\"col-sm-2\"><a class=\"browse-link btn btn-default btn-xs\" href=\""+URLHelper.addParam(staticLinkURL, "select", "back")+"\">"+i18nAccess.getText("content.goto-static")+"</a></div>";
+			}
 			String link = getLink();
 			if (ctx.getRequest().getParameter(getNewLinkParamName()) != null) {
 				if (!ctx.getRequest().getParameter(getNewLinkParamName()).equals('/'+ctx.getGlobalContext().getStaticConfig().getStaticFolder()+'/')) {
 					link = ctx.getRequest().getParameter(getNewLinkParamName());
 				}
 			}			
-			finalCode.append("<div class=\"col-sm-7\"><input class=\"form-control\" id=\"img_link_" + getId() + "\" name=\"" + getLinkXHTMLInputName() + "\" type=\"text\" value=\"" + link + "\"/></div>"+linkToResources+"</div>");
+			finalCode.append("<div class=\"col-sm-"+(linkToResources.length()==0?9:7)+"\"><input class=\"form-control\" id=\"img_link_" + getId() + "\" name=\"" + getLinkXHTMLInputName() + "\" type=\"text\" value=\"" + link + "\"/></div>"+linkToResources+"</div>");
 		}
 
 		finalCode.append("<div class=\"row form-group\"><div class=\"col-sm-3\"><label for=\"new_dir_" + getId() + "\">");
@@ -346,7 +349,7 @@ public class GlobalImage extends Image implements IImageFilter {
 				}
 				dirsCol.add(dir);
 			}
-			if (canUpload(ctx)) {
+			if (canUpload(ctx) && !ctx.getGlobalContext().isMailingPlatform()) {
 				finalCode.append("<div class=\"col-sm-7\">");
 			} else {
 				finalCode.append("<div class=\"col-sm-9\">");
@@ -355,7 +358,7 @@ public class GlobalImage extends Image implements IImageFilter {
 			finalCode.append("</div>");
 		}
 
-		if (canUpload(ctx)) {
+		if (canUpload(ctx) && !ctx.getGlobalContext().isMailingPlatform()) {
 			String staticURL = URLHelper.createModuleURL(ctx, ctx.getPath(), "file", filesParams);
 			finalCode.append("<div class=\"col-sm-2\"><a class=\"" + EDIT_ACTION_CSS_CLASS + " btn btn-default btn-xs\" href=\"" + staticURL + "\">");
 			finalCode.append(i18nAccess.getText("content.goto-static"));

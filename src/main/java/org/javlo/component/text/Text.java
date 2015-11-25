@@ -79,5 +79,11 @@ public class Text extends AbstractVisualComponent {
 		}
 		return inlineStyle;
 	}
+	
+	@Override
+	protected String getDefaultHelpURI(ContentContext ctx) {
+		return null;
+	}
+
 
 }

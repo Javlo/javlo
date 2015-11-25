@@ -817,6 +817,18 @@ public class Edit extends AbstractModuleAction {
 				}
 			}
 		} else {
+			boolean foundType = false;
+			System.out.println("TYPE = "+type);
+			for (IContentVisualComponent comp : ComponentFactory.getComponents(globalContext)) {
+				System.out.println("**** comp.getType() = "+comp.getType());
+				if (comp.getType().equals(type)) {					
+					foundType = true;
+				}
+			}
+			if (!foundType) {
+				ctx.setNeedRefresh(true);
+				return "component type not found : "+type;
+			}
 			newId = content.createContent(ctx, targetPage, areaKey, previousId, type, "", true);
 			IContentVisualComponent newComp = contentService.getComponent(ctx, newId);
 			if (newComp instanceof IContainer) {

@@ -26,12 +26,14 @@ public class ImportedFileSharedContentProvider extends LocalFileSharedContentPro
 	}
 	
 	@Override
-	public Collection<SharedContent> getContent(ContentContext ctx, Collection<String> categories) {
+	public Collection<SharedContent> getContent(ContentContext ctx, Collection<String> categories) {		
 		if (getCategories(ctx).size() == 0) {
-			return Collections.EMPTY_LIST;
-		} else {
-			return super.getContent(ctx, categories);
+			getContent(ctx);
+			if (getCategories(ctx).size() == 0) {			
+				return Collections.EMPTY_LIST;
+			}
 		}
+		return super.getContent(ctx, categories);
 	}
 
 	@Override

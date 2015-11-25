@@ -167,5 +167,10 @@ public class Title extends AbstractVisualComponent {
 	public int getLabelLevel(ContentContext ctx) {
 		return HIGH_LABEL_LEVEL;
 	}
+	
+	@Override
+	protected String getDefaultHelpURI(ContentContext ctx) {
+		return null;
+	}
 
 }

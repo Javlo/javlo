@@ -116,7 +116,7 @@ public class FileAction extends AbstractModuleAction {
 			}
 		}
 
-		if (fileModuleContext.getCurrentLink().equals(FileModuleContext.PAGE_META)) {			
+		if (fileModuleContext.getCurrentLink().equals(FileModuleContext.PAGE_META)) {
 			if (ctx.getRequest().getAttribute("files") == null) {
 				modulesContext.getCurrentModule().setToolsRenderer("/jsp/actions.jsp");
 				modulesContext.getCurrentModule().clearAllBoxes();
@@ -442,7 +442,10 @@ public class FileAction extends AbstractModuleAction {
 
 	public static String performDelete(GlobalContext globalContext, RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws IOException {
 		String filePath = rs.getParameter("file", null);
-		System.out.println("***** FileAction.performDelete : filePath = "+filePath); //TODO: remove debug trace
+		System.out.println("***** FileAction.performDelete : filePath = " + filePath); // TODO:
+																						// remove
+																						// debug
+																						// trace
 		if (filePath == null) {
 			return "bad request structure : need file parameter.";
 		} else {
@@ -479,18 +482,18 @@ public class FileAction extends AbstractModuleAction {
 	}
 
 	public static final String performPreviewedit(HttpServletRequest request, ContentContext ctx, RequestService rs, EditContext editCtx) throws Exception {
-		GlobalContext globalContext = GlobalContext.getInstance(request);
-		if (globalContext.isPreviewMode()) {
-			String path = URLHelper.decodePathForAttribute(request.getParameter("file"));
-			File file = new File(path);
-			FileModuleContext.getInstance(ctx.getRequest());
-			String sourceFolder = URLHelper.cleanPath(getContextROOTFolder(ctx), false);
-			String parentPath = URLHelper.cleanPath(file.getParentFile().getCanonicalPath().replaceFirst(sourceFolder, ""), false);
-			FileModuleContext.getInstance(ctx.getRequest()).setPath(parentPath.replace(sourceFolder, ""));
-			FileBean fileBean = new FileBean(ctx, StaticInfo.getInstance(ctx, file));
-			request.setAttribute("files", Arrays.asList(new FileBean[] { fileBean }));
-			InfoBean.getCurrentInfoBean(ctx).setFakeCurrentURL(request.getParameter("currentURL"));
+		String path = URLHelper.decodePathForAttribute(request.getParameter("file"));
+		File file = new File(path);
+		if (!file.exists()) {
+			return "file not found : " + file;
 		}
+		FileModuleContext.getInstance(ctx.getRequest());
+		String sourceFolder = URLHelper.cleanPath(getContextROOTFolder(ctx), false);
+		String parentPath = URLHelper.cleanPath(file.getParentFile().getCanonicalPath().replaceFirst(sourceFolder, ""), false);
+		FileModuleContext.getInstance(ctx.getRequest()).setPath(parentPath.replace(sourceFolder, ""));
+		FileBean fileBean = new FileBean(ctx, StaticInfo.getInstance(ctx, file));
+		request.setAttribute("files", Arrays.asList(new FileBean[] { fileBean }));
+		InfoBean.getCurrentInfoBean(ctx).setFakeCurrentURL(request.getParameter("currentURL"));
 		ctx.getRequest().setAttribute("specialEditRenderer", "/modules/file/jsp/meta.jsp?one=true");
 		return null;
 	}

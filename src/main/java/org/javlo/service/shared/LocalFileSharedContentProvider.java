@@ -9,7 +9,6 @@ import org.javlo.component.core.ComponentBean;
 import org.javlo.component.files.GenericFile;
 import org.javlo.context.ContentContext;
 import org.javlo.filter.NotDirectoryFilter;
-import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 
 public class LocalFileSharedContentProvider extends LocalImageSharedContentProvider {

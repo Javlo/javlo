@@ -127,7 +127,7 @@ public class SharedContentService {
 	}
 	
 	public static void prepare(ContentContext ctx) throws ModuleException {
-		ModulesContext modulesContext = ModulesContext.getInstance(ctx.getRequest().getSession(), ctx.getGlobalContext());
+		ModulesContext modulesContext = ModulesContext.getInstance(ctx.getRequest().getSession(), ctx.getGlobalContext());		
 		if (modulesContext.searchModule(IMainModuleName.SHARED_CONTENT) != null) {
 			SharedContentService sharedContentService = SharedContentService.getInstance(ctx);
 			SharedContentContext sharedContentContext = SharedContentContext.getInstance(ctx.getRequest().getSession());

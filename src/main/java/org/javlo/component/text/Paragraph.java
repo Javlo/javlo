@@ -49,6 +49,11 @@ public class Paragraph extends AbstractVisualComponent {
 			return "</p>";
 		}
 	}
+	
+	@Override
+	protected String getDefaultHelpURI(ContentContext ctx) {
+		return null;
+	}
 
 	protected boolean isPrefixed() {
 		return false;

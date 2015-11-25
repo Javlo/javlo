@@ -172,12 +172,12 @@ public class FreeTextList extends AbstractVisualComponent {
 		StringBuffer finalCode = new StringBuffer();
 		I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
 		finalCode.append(getSpecialInputTag());
-		finalCode.append("<div class=\"line\">");
-		finalCode.append("<label for=\"" + getSeparatorInputName() + "\">" + i18nAccess.getText("content.text-list.separator") + " :</label>");
-		finalCode.append("<input id=\"" + getSeparatorInputName() + "\" name=\"" + getSeparatorInputName() + "\" value=\"" + getSeparatorValue() + "\" />");
-		finalCode.append("</div>");
-		finalCode.append("<textarea id=\"" + getContentName() + "\" name=\"" + getContentName() + "\"");
-		finalCode.append(" rows=\"" + (countLine() + 1) + "\">");
+		finalCode.append("<div class=\"form-group\"><div class=\"row\"><div class=\"col-sm-2\">");
+		finalCode.append("<label for=\"" + getSeparatorInputName() + "\">" + i18nAccess.getText("content.text-list.separator") + " :</label></div><div class=\"col-sm-3\">");
+		finalCode.append("<input class=\"form-control\" id=\"" + getSeparatorInputName() + "\" name=\"" + getSeparatorInputName() + "\" value=\"" + getSeparatorValue() + "\" />");
+		finalCode.append("</div></div></div>");
+		finalCode.append("<textarea class=\"form-control\" id=\"" + getContentName() + "\" name=\"" + getContentName() + "\"");
+		finalCode.append(" rows=\"" + (Math.max(countLine(),4) + 1) + "\">");
 		String value = getValue();
 		if (getSeparatorValue().length() > 0) {
 			value = value.substring(3);

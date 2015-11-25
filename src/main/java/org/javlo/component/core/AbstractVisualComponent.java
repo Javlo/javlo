@@ -273,14 +273,14 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		if(helpURL.contains("${language}")) {
 			helpURL = helpURL.replace("${language}", globalContext.getEditLanguage(ctx.getRequest().getSession()));
 		} else {
-			helpURL = URLHelper.mergePath(helpURL, 'v'+IVersion.VERSION.substring(0,3).replace('.', '-'), globalContext.getEditLanguage(ctx.getRequest().getSession()));
+			helpURL = URLHelper.mergePath(helpURL +'_'+'v'+IVersion.VERSION.substring(0,3).replace('.', '_'), globalContext.getEditLanguage(ctx.getRequest().getSession()));
 		}
 		return helpURL;
 	}
 	
 	@Override
 	public boolean isHelpURL(ContentContext ctx) {
-		return !StringHelper.isEmpty(ctx.getGlobalContext().getHelpURL());
+		return !StringHelper.isEmpty(ctx.getGlobalContext().getHelpURL()) && !StringHelper.isEmpty(getHelpURI(ctx));
 	}
 
 	@Override
@@ -895,9 +895,13 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	protected String getHelpType() {
 		return getType();
 	}
+	
+	protected String getDefaultHelpURI(ContentContext ctx) {
+		return "/components/" + getHelpType() + ".html";
+	}
 
 	protected String getHelpURI(ContentContext ctx) {
-		return "/components/" + getHelpType() + ".html";
+		return getConfig(ctx).getProperty("help.uri", getDefaultHelpURI(ctx));		
 	}
 
 	@Override

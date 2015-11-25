@@ -9,18 +9,18 @@
 <input type="hidden" name="module" value="macro" />
 <c:if test="${fn:length(pages)>1 || canCreate}">
 <div class="form-group">
-<label for="root">group</label>
+<label for="root">folder</label>
 <select id="root" name="root" class="form-control" onchange="if (this.value == 'new') {document.getElementById('new-group').className = 'form-group';} else {document.getElementById('new-group').className = 'form-group hidden';}">
 <c:forEach var="page" items="${pages}">
 <option value="${page.key}">${page.value}</option>
 </c:forEach>
-<c:if test="${canCreate}"><option value="new">create group...</option></c:if>
+<c:if test="${canCreate}"><option value="new">create folder...</option></c:if>
 </select>
 </div>
 </c:if>
 
 <c:if test="${canCreate}"><div id="new-group" class="form-group hidden">
-	<label for="newgroup">New group</label>
+	<label for="newgroup">New folder</label>
 	<input type="text" id="newgroup" name="newgroup" value="" class="form-control" />
 </div></c:if>
 
@@ -63,7 +63,7 @@
 <c:if test="${globalContext.collaborativeMode}">	
 	<div class="roles">	
 	<fieldset>
-		<legend>choose group (no selection = everybody)</legend>		
+		<legend>choose folder (no selection = everybody)</legend>		
 		<c:forEach var="role" items="${adminRoles}">
 			<div class="inline">			
 				<input type="checkbox" id="role-${role}" name="role-${role}" />

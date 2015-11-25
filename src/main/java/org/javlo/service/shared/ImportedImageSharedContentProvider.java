@@ -29,10 +29,12 @@ public class ImportedImageSharedContentProvider extends LocalImageSharedContentP
 	@Override
 	public Collection<SharedContent> getContent(ContentContext ctx, Collection<String> categories) {
 		if (getCategories(ctx).size() == 0) {
-			return Collections.EMPTY_LIST;
-		} else {
-			return super.getContent(ctx, categories);
+			getContent(ctx);
+			if (getCategories(ctx).size() == 0) {			
+				return Collections.EMPTY_LIST;
+			}
 		}
+		return super.getContent(ctx, categories);		
 	}
 
 	@Override
@@ -71,5 +73,11 @@ public class ImportedImageSharedContentProvider extends LocalImageSharedContentP
 	public boolean isSearch() {
 		return false;
 	}
+	
+	@Override
+	public boolean isEmpty(ContentContext ctx) {
+		return false;
+	}
+
 
 }

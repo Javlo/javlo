@@ -69,7 +69,7 @@ public class LocalImageSharedContentProvider extends AbstractSharedContentProvid
 	public Collection<SharedContent> getContent(ContentContext ctx) {
 		setCategories(new HashMap<String, String>());
 		content.clear();
-		File rootFolder = getRootFolder(ctx);
+		File rootFolder = getRootFolder(ctx);		
 		for (File file : ResourceHelper.getAllFiles(rootFolder, getFilter())) {			
 			String category = StringHelper.cleanPath(file.getParentFile().getAbsolutePath().replace(rootFolder.getAbsolutePath(), ""));
 			if (category.startsWith("/")) {

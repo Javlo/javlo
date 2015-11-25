@@ -198,5 +198,8 @@ public class SubTitle extends AbstractVisualComponent implements ISubTitle {
 		return getTitleLevel(ctx);
 	}
 	
-
+	@Override
+	protected String getDefaultHelpURI(ContentContext ctx) {
+		return null;
+	}
 }
