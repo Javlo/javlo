@@ -37,7 +37,7 @@
 
 <div class="checkbox">
 	<label>
-	<input type="checkbox" id="hidden" name="hidden" checked="checked" /> Hidden newsletter for other users.
+	<input type="checkbox" id="visible" name="visible" /> Newsletter visible for other users.
 	</label>
 </div>
 

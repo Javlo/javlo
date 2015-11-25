@@ -134,7 +134,7 @@ public class CreateArticleComposition extends AbstractInteractiveMacro implement
 		boolean duplicate = rs.getParameter("duplicate", null) != null;
 		String pageId = rs.getParameter("page", null);
 		String pageName = rs.getParameter("title", null);
-		boolean hidden = StringHelper.isTrue(rs.getParameter("hidden", null), false);
+		boolean visible = StringHelper.isTrue(rs.getParameter("visible", null), false);
 
 		if (newgroup.trim().length() > 0) {
 			MenuElement firstArticleGroup = MacroHelper.searchArticleRoot(ctx).iterator().next();
@@ -229,10 +229,10 @@ public class CreateArticleComposition extends AbstractInteractiveMacro implement
 
 				if (mountPage != null) {
 					MenuElement newPage = MacroHelper.addPageIfNotExist(ctx, mountPage, pageName, true, false);
-					newPage.addEditorRoles(selectedRole);
-					MacroHelper.addContent(ctx.getRequestContentLanguage(), newPage, "0", ForceRealContent.TYPE, "", ctx.getCurrentEditUser());
 					if (newPage != null) {
-						newPage.setVisible(!hidden);
+						newPage.addEditorRoles(selectedRole);
+						MacroHelper.addContent(ctx.getRequestContentLanguage(), newPage, "0", ForceRealContent.TYPE, "", ctx.getCurrentEditUser());					
+						newPage.setVisible(visible);
 						MenuElement layoutPage = MacroHelper.addPageIfNotExist(ctx, newPage.getName(), newPage.getName() + "-composition", false);
 						if (assBean != null) {
 							newPage.setTemplateId(assBean.getPage().getTemplateId());

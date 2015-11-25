@@ -26,7 +26,6 @@ editPreview.layerOver = function(item, title, drop) {
 		c = 1;
 		while (parent.attr("id") != "top" && c < 20) {
 			c++;
-			console.log("parent=",parent);
 			if (parent.hasClass("_area")) {
 				area = parent.attr("id");
 			}
@@ -183,7 +182,7 @@ editPreview.searchArea = function(item) {
 
 editPreview.initPreview = function() {
 	
-	pjq('#preview_command a').attr('draggable', 'false');  
+	//pjq('#preview_command a').attr('draggable', 'false');  
 	
 	pjq('a.as-modal').on('click', function() {
 		var text = $(this).attr("title");
@@ -252,7 +251,7 @@ editPreview.initPreview = function() {
 	    	event.preventDefault();    	
 	    	return false;
 	    });
-		el.setAttribute('draggable', 'true');  
+		el.setAttribute('draggable', 'true');
 		el.addEventListener('dragstart', function (event) {			
 			var subComp = pjq(this).data("comp");
 			event.dataTransfer.setData("text", ","+subComp.attr("id").substring(3));			

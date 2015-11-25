@@ -26,7 +26,11 @@ public class DuplicatePage extends AbstractMacro {
 			return "you can't duplicate the root page.";
 		}
 		if (ctx.getCurrentPage().getChildMenuElements().size() > 0) {
-			return "you can't duplicate a page without children.";
+			if (ctx.getCurrentPage().isChildrenOfAssociation()) {
+				return "No page selected. Please choose a page to duplicate an try again.";
+			} else {
+				return "you can't duplicate a page width children.";
+			}
 		}
 		
 		if (!Edit.checkPageSecurity(ctx, currentPage.getParent())) {

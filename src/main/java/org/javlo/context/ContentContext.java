@@ -10,6 +10,7 @@ import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -32,7 +33,6 @@ import org.javlo.rendering.Device;
 import org.javlo.service.ContentService;
 import org.javlo.service.PersistenceService;
 import org.javlo.service.RequestService;
-import org.javlo.service.exception.ServiceException;
 import org.javlo.template.Template;
 import org.javlo.template.TemplateFactory;
 import org.javlo.user.AdminUserFactory;
@@ -295,12 +295,20 @@ public class ContentContext {
 					try {
 						MenuElement page = ctx.getCurrentPage(true);
 						if (page != null) {
-							while (!page.isRealContent(ctx) && page.getChildMenuElements().size() > 0) {
-								page = page.getChildMenuElements().iterator().next();
+							while (page != null && !page.isRealContent(ctx) && page.getChildMenuElements().size() > 0) {
+								Iterator<MenuElement> children = page.getChildMenuElements().iterator();
+								page = children.next();
+								while (page != null && !page.isActive()) {
+									page = children.next();
+								}
 							}
-							if (page.isRealContent(ctx)) {
-								ctx.setCurrentPageCached(page);
-								ctx.setPath(page.getPath());
+							if (page != null) {
+								if (page.isRealContent(ctx)) {
+									ctx.setCurrentPageCached(page);
+									ctx.setPath(page.getPath());
+								}
+							} else {
+								page = ctx.getCurrentPage(true);
 							}
 						}
 					} catch (Exception e) {
@@ -1670,7 +1678,7 @@ public class ContentContext {
 			return forceGlobalContext;
 		}
 	}
-	
+
 	public void setForceGlobalContext(GlobalContext forceGlobalContext) {
 		this.forceGlobalContext = forceGlobalContext;
 	}

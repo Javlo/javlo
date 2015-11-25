@@ -339,10 +339,10 @@ public class GlobalImage extends Image implements IImageFilter {
 		finalCode.append(getDirLabelTitle(ctx));
 		finalCode.append(" : </label></div>");
 		
-		if ((getDirList(getFileDirectory(ctx)) != null) && (getDirList(getFileDirectory(ctx)).length > 0)) {
+		if ((getDirList(ctx, getFileDirectory(ctx)) != null) && (getDirList(ctx, getFileDirectory(ctx)).length > 0)) {
 			List<String> dirsCol = new LinkedList<String>();
 			dirsCol.add("");
-			String[] dirs = getDirList(getFileDirectory(ctx));
+			String[] dirs = getDirList(ctx, getFileDirectory(ctx));
 			for (String dir : dirs) {
 				if (dir.length() > 0 && dir.startsWith("/")) {
 					dir = dir.substring(1);

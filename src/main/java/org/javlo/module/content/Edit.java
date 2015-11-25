@@ -819,8 +819,7 @@ public class Edit extends AbstractModuleAction {
 		} else {
 			boolean foundType = false;
 			System.out.println("TYPE = "+type);
-			for (IContentVisualComponent comp : ComponentFactory.getComponents(globalContext)) {
-				System.out.println("**** comp.getType() = "+comp.getType());
+			for (IContentVisualComponent comp : ComponentFactory.getComponents(globalContext)) {				
 				if (comp.getType().equals(type)) {					
 					foundType = true;
 				}
@@ -1588,6 +1587,10 @@ public class Edit extends AbstractModuleAction {
 		ctx.setClosePopup(true);
 		
 		persistenceService.setAskStore(true);
+		
+		ctx.setPath(newPath);
+		String forwardURL = ctx.getResponse().encodeRedirectURL(URLHelper.createURL(ctx));
+		ctx.getResponse().sendRedirect(forwardURL);
 
 		return message;
 	}

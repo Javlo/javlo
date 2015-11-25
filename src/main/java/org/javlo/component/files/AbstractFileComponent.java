@@ -23,6 +23,7 @@ import java.util.zip.ZipInputStream;
 
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.lang.StringUtils;
+import org.javlo.actions.DataAction;
 import org.javlo.bean.Link;
 import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.component.core.ComponentBean;
@@ -256,16 +257,28 @@ public abstract class AbstractFileComponent extends AbstractVisualComponent impl
 		return i18nAccess.getText("action.add-image.dir");
 	}
 
-	protected String[] getDirList(String inFolder) {
+	protected String[] getDirList(ContentContext ctx, String inFolder) throws Exception {
 		File folder = new File(inFolder);
-		Collection<File> children = ResourceHelper.getAllDirList(folder);
+		Collection<File> sourceChildren = ResourceHelper.getAllDirList(folder);
+		Collection<String> children = new LinkedList<String>();
+		String importFolder = ctx.getCurrentTemplate().getImportFolder();
+		if (importFolder.length() > 1 && importFolder.startsWith("/")) {
+			importFolder = importFolder.substring(1);
+		}
+		String currentImportFolder = importFolder+'/'+DataAction.createImportFolder(ctx);
+		for (File dir : sourceChildren) {
+			String child = StringUtils.replace(dir.getAbsolutePath(), folder.getAbsolutePath(), "").replace('\\', '/');
+			if (child.length() > 1 && child.startsWith("/")) {
+				child = child.substring(1);
+			}
+			if (!child.startsWith(importFolder) || child.startsWith(currentImportFolder)) {
+				children.add(child);
+			}
+		}
 		String[] folders = new String[children.size()];
 		int i = 0;
-		for (File dir : children) {
-			folders[i] = StringUtils.replace(dir.getAbsolutePath(), folder.getAbsolutePath(), "").replace('\\', '/');
-			if (folders[i].length() > 1 && folders[i].startsWith("/")) {
-				folders[i] = folders[i].substring(1);
-			}
+		for (String dir : children) {
+			folders[i] = dir;
 			i++;
 		}
 		return folders;
@@ -328,11 +341,11 @@ public abstract class AbstractFileComponent extends AbstractVisualComponent impl
 			finalCode.append(" : </label><input class=\"form-control\" id=\"new_dir_" + getId() + "\" name=\"" + getNewDirInputName() + "\" type=\"text\"/></div>");
 		}
 
-		if ((getDirList(getFileDirectory(ctx)) != null) && (getDirList(getFileDirectory(ctx)).length > 0)) {
+		if ((getDirList(ctx,getFileDirectory(ctx)) != null) && (getDirList(ctx,getFileDirectory(ctx)).length > 0)) {
 			finalCode.append("<div class=\"form-group\"><label for=\"" + getDirInputName() + "\">");
 			finalCode.append(getDirLabelTitle(ctx));
 			finalCode.append(" : </label>");
-			finalCode.append(XHTMLHelper.getInputOneSelect(getDirInputName(), ArrayHelper.addFirstElem(getDirList(getFileDirectory(ctx)), ""), getDirSelected(), "form-control", getJSOnChange(ctx), true));
+			finalCode.append(XHTMLHelper.getInputOneSelect(getDirInputName(), ArrayHelper.addFirstElem(getDirList(ctx,getFileDirectory(ctx)), ""), getDirSelected(), "form-control", getJSOnChange(ctx), true));
 			finalCode.append("</div>");
 		}
 
