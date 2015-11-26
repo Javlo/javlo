@@ -274,5 +274,15 @@ public class StringHelperTest extends TestCase {
 		assertEquals(StringHelper.createFileName("test.jpg"), "test.jpg");		
 		assertEquals(StringHelper.createFileName("test  end.jpg"), "test-end.jpg");
 	}
+	
+	public void testIsAllEmpty() {
+		assertFalse(StringHelper.isAllEmpty("test", "test2"));
+		assertTrue(StringHelper.isAllEmpty("", null));
+	}
+	
+	public void testIsOneEmpty() {
+		assertFalse(StringHelper.isOneEmpty("test", "test2"));
+		assertTrue(StringHelper.isOneEmpty("coucou", null));
+	}
  
 }

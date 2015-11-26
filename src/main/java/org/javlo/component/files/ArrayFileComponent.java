@@ -838,11 +838,11 @@ public class ArrayFileComponent extends GenericFile {
 			finalCode.append(" : </label><input id=\"new_dir_" + getId() + "\" name=\"" + getNewDirInputName() + "\" type=\"text\"/></div>");
 		}
 
-		if ((getDirList(getFileDirectory(ctx)) != null) && (getDirList(getFileDirectory(ctx)).length > 0)) {
+		if ((getDirList(ctx, getFileDirectory(ctx)) != null) && (getDirList(ctx, getFileDirectory(ctx)).length > 0)) {
 			finalCode.append("<div class=\"line\"><label for=\"" + getDirInputName() + "\">");
 			finalCode.append(getDirLabelTitle(ctx));
 			finalCode.append(" : </label>");
-			finalCode.append(XHTMLHelper.getInputOneSelect(getDirInputName(), ArrayHelper.addFirstElem(getDirList(getFileDirectory(ctx)), ""), getDirSelected(), getJSOnChange(ctx), true));
+			finalCode.append(XHTMLHelper.getInputOneSelect(getDirInputName(), ArrayHelper.addFirstElem(getDirList(ctx, getFileDirectory(ctx)), ""), getDirSelected(), getJSOnChange(ctx), true));
 			finalCode.append("</div>");
 		}
 

@@ -51,10 +51,15 @@ import org.javlo.service.RequestService;
 import org.javlo.service.event.Event;
 import org.javlo.utils.CSVFactory;
 import org.javlo.utils.CollectionAsMap;
+import org.javlo.utils.JSONMap;
 import org.javlo.utils.TimeMap;
 import org.javlo.ztatic.StaticInfo;
 
 public class SmartGenericForm extends AbstractVisualComponent implements IAction {
+
+	private static final String RECAPTCHASECRETKEY = "recaptchasecretkey";
+
+	private static final String RECAPTCHAKEY = "recaptchakey";
 
 	private Properties bundle;
 
@@ -102,6 +107,14 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		return StringHelper.isTrue(getLocalConfig(false).getProperty("captcha", "true"));
 	}
 
+	public String getRecaptchaKey() {
+		return getLocalConfig(false).getProperty(RECAPTCHAKEY, null);
+	}
+
+	public String getRecaptchaSecretKey() {
+		return getLocalConfig(false).getProperty(RECAPTCHASECRETKEY, null);
+	}
+
 	public int getCountSubscription(ContentContext ctx) throws IOException {
 		if (countCache == null) {
 			File file = getFile(ctx);
@@ -133,7 +146,13 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		PrintStream out = new PrintStream(outStream);
 		out.println(XHTMLHelper.renderLine("title", getInputName("title"), getLocalConfig(false).getProperty("title", "")));
 		out.println(XHTMLHelper.renderLine("filename", getInputName("filename"), getLocalConfig(false).getProperty("filename", "")));
+		out.println("<div class=\"row\"><div class=\"col-sm-2\">");
 		out.println(XHTMLHelper.renderLine("captcha", getInputName("captcha"), StringHelper.isTrue(getLocalConfig(false).getProperty("captcha", null))));
+		out.println("</div><div class=\"col-sm-5\">");
+		out.println(XHTMLHelper.renderLine("google recaptcha site key", getInputName(RECAPTCHAKEY), getLocalConfig(false).getProperty(RECAPTCHAKEY, "")));
+		out.println("</div><div class=\"col-sm-5\">");
+		out.println(XHTMLHelper.renderLine("google recaptcha secret key", getInputName(RECAPTCHASECRETKEY), getLocalConfig(false).getProperty(RECAPTCHASECRETKEY, "")));
+		out.println("</div></div>");
 		if (isFile()) {
 			out.println(XHTMLHelper.renderLine("max file size (Kb)", getInputName("filesize"), "" + getMaxFileSize()));
 		}
@@ -189,7 +208,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 			out.println("<tbody>");
 			List<Field> fields = getFields();
 			for (Field field : fields) {
-				out.println(getEditXHTML(ctx,field));
+				out.println(getEditXHTML(ctx, field));
 			}
 			out.println("</tbody>");
 			out.println("</table>");
@@ -206,7 +225,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		if (StringHelper.neverNull(ctx.getRequest().getAttribute(getNewFieldKey())).equals(field.getName())) {
 			scrollToMe = " scroll-to-me";
 		}
-		out.println("<tr class=\"field-line"+scrollToMe+"\">");
+		out.println("<tr class=\"field-line" + scrollToMe + "\">");
 		out.println("<td class=\"input\"><input class=\"form-control\" type=\"text\" name=\"" + getInputName("name-" + field.getName()) + "\" value=\"" + field.getName() + "\"/></td>");
 		out.println("<td class=\"input\"><input class=\"form-control\" type=\"text\" name=\"" + getInputName("label-" + field.getName()) + "\" value=\"" + field.getLabel() + "\"/></td>");
 		out.println("<td class=\"input\"><input class=\"form-control\" type=\"text\" name=\"" + getInputName("condition-" + field.getName()) + "\" value=\"" + field.getCondition() + "\"/></td>");
@@ -382,9 +401,9 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 			return 0;
 		}
 	}
-	
+
 	protected String getNewFieldKey() {
-		return "_new_field_"+getId();
+		return "_new_field_" + getId();
 	}
 
 	@Override
@@ -394,6 +413,8 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		getLocalConfig(false).setProperty("filename", rs.getParameter(getInputName("filename"), ""));
 		boolean oldCaptcha = isCaptcha();
 		getLocalConfig(false).setProperty("captcha", rs.getParameter(getInputName("captcha"), ""));
+		getLocalConfig(false).setProperty(RECAPTCHAKEY, rs.getParameter(getInputName(RECAPTCHAKEY), ""));
+		getLocalConfig(false).setProperty(RECAPTCHASECRETKEY, rs.getParameter(getInputName(RECAPTCHASECRETKEY), ""));
 		if (oldCaptcha != isCaptcha()) {
 			ctx.setClosePopup(false);
 		}
@@ -563,13 +584,13 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 
 	public static String performSubmit(HttpServletRequest request, HttpServletResponse response) throws Exception {
 
-		RequestService requestService = RequestService.getInstance(request);
+		RequestService rs = RequestService.getInstance(request);
 		ContentContext ctx = ContentContext.getContentContext(request, response);
 		ContentService content = ContentService.getInstance(request);
-		SmartGenericForm comp = (SmartGenericForm) content.getComponent(ctx, requestService.getParameter("comp_id", null));
+		SmartGenericForm comp = (SmartGenericForm) content.getComponent(ctx, rs.getParameter("comp_id", null));
 		boolean eventClose = comp.isClose(ctx);
 
-		String code = requestService.getParameter("_form-code", "");
+		String code = rs.getParameter("_form-code", "");
 		if (!comp.cacheFrom.containsKey(code)) {
 			I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
 			GenericMessage msg = new GenericMessage(i18nAccess.getViewText("error.bad-from-version", "This form has experied, try again."), GenericMessage.ERROR);
@@ -579,16 +600,37 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		comp.cacheFrom.remove(code);
 
 		/** check captcha **/
-		String captcha = requestService.getParameter("captcha", null);
+		String captcha = rs.getParameter("captcha", null);
+		
+		String userIP = request.getHeader("x-real-ip");
+		if (StringHelper.isEmpty(userIP)) {
+			userIP = request.getRemoteAddr();
+		}
 
 		if (comp.isCaptcha(ctx)) {
-			if (captcha == null || CaptchaService.getInstance(request.getSession()).getCurrentCaptchaCode() == null || !CaptchaService.getInstance(request.getSession()).getCurrentCaptchaCode().equals(captcha)) {
-				GenericMessage msg = new GenericMessage(comp.getLocalConfig(false).getProperty("error.captcha", "bad captcha."), GenericMessage.ERROR);
-				request.setAttribute("msg", msg);
-				request.setAttribute("error_captcha", "true");
-				return null;
+			if (StringHelper.isOneEmpty(comp.getRecaptchaKey(), comp.getRecaptchaSecretKey())) {
+				if (captcha == null || CaptchaService.getInstance(request.getSession()).getCurrentCaptchaCode() == null || !CaptchaService.getInstance(request.getSession()).getCurrentCaptchaCode().equals(captcha)) {
+					GenericMessage msg = new GenericMessage(comp.getLocalConfig(false).getProperty("error.captcha", "bad captcha."), GenericMessage.ERROR);
+					request.setAttribute("msg", msg);
+					request.setAttribute("error_captcha", "true");
+					return null;
+				} else {
+					CaptchaService.getInstance(request.getSession()).setCurrentCaptchaCode("");
+				}
 			} else {
-				CaptchaService.getInstance(request.getSession()).setCurrentCaptchaCode("");
+				Map<String,String> params = new HashMap<String, String>();
+				params.put("secret", comp.getRecaptchaKey());
+				params.put("response", rs.getParameter("g-recaptcha-response", ""));
+				params.put("remoteip", request.getRemoteAddr());				
+				String url = URLHelper.addAllParams("https://www.google.com/recaptcha/api/siteverify", "secret="+comp.getRecaptchaSecretKey(), "response="+rs.getParameter("g-recaptcha-response", ""), "remoteip="+userIP);
+				String captchaResponse = NetHelper.readPage(new URL(url));
+				JSONMap map = JSONMap.parseMap(captchaResponse);
+				if (map == null || !StringHelper.isTrue(map.get("success"))) {
+					GenericMessage msg = new GenericMessage(comp.getLocalConfig(false).getProperty("error.captcha", "bad captcha."), GenericMessage.ERROR);
+					request.setAttribute("msg", msg);
+					request.setAttribute("error_captcha", "true");
+					return null;
+				}
 			}
 		}
 
@@ -596,13 +638,13 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 
 		String subject = "GenericForm submit : '" + globalContext.getGlobalTitle() + "' ";
 		String subjectField = comp.getLocalConfig(false).getProperty("mail.subject.field", null);
-		if (subjectField != null && requestService.getParameter(subjectField, null) != null) {
-			subject = comp.getLocalConfig(false).getProperty("mail.subject", "") + requestService.getParameter(subjectField, null);
+		if (subjectField != null && rs.getParameter(subjectField, null) != null) {
+			subject = comp.getLocalConfig(false).getProperty("mail.subject", "") + rs.getParameter(subjectField, null);
 		} else {
 			subject = comp.getLocalConfig(false).getProperty("mail.subject", subject);
 		}
 
-		Map<String, Object> params = requestService.getParameterMap();
+		Map<String, Object> params = rs.getParameterMap();
 		Map<String, String> result = new HashMap<String, String>();
 		List<String> errorFields = new LinkedList<String>();
 		result.put("__registration time", StringHelper.renderSortableTime(new Date()));
@@ -631,7 +673,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		List<String> badFileFormat = StringHelper.stringToCollection(badFileFormatRAW, ",");
 		long maxFileSize = comp.getMaxFileSize();
 
-		for (FileItem file : requestService.getAllFileItem()) {
+		for (FileItem file : rs.getAllFileItem()) {
 			String ext = StringHelper.getFileExtension(file.getName()).toLowerCase();
 			if (badFileFormat.contains(ext)) {
 				logger.warning("file blocked because bad extenstion : " + file.getName());
@@ -671,7 +713,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 			if (specialValues.get(key) != null) {
 				value = specialValues.get(key);
 			}
-			String finalValue = requestService.getParameter(key, "");
+			String finalValue = rs.getParameter(key, "");
 			if (specialValues.get(key) != null) {
 				finalValue = specialValues.get(key);
 			}
@@ -725,8 +767,8 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 
 				String emailFrom = comp.getLocalConfig(false).getProperty("mail.from", StaticConfig.getInstance(request.getSession()).getSiteEmail());
 				String emailFromField = comp.getLocalConfig(false).getProperty("mail.from.field", null);
-				if (emailFromField != null && requestService.getParameter(emailFromField, "") != null) {
-					String tmpEmail = requestService.getParameter(emailFromField, "");
+				if (emailFromField != null && rs.getParameter(emailFromField, "") != null) {
+					String tmpEmail = rs.getParameter(emailFromField, "");
 					try {
 						new InternetAddress(tmpEmail);
 						emailFrom = tmpEmail;
@@ -782,7 +824,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 							InternetAddress to = comp.getConfirmToEmail(ctx);
 							if (to != null) {
 								for (Field field : comp.getFields()) {
-									email = email.replace("${field." + field.getName() + "}", requestService.getParameter(field.getName(), ""));
+									email = email.replace("${field." + field.getName() + "}", rs.getParameter(field.getName(), ""));
 								}
 								email = email.replace("${registrationID}", registrationID);
 								email = email.replace("${communication}", StringHelper.encodeAsStructuredCommunicationMod97(registrationID));

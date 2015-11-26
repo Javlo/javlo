@@ -2856,6 +2856,24 @@ public class StringHelper {
 	public static boolean isEmpty(Object value) {
 		return (value == null || value.toString().trim().length() == 0);
 	}
+	
+	public static boolean isAllEmpty(Object... values) {
+		for (Object val : values) {
+			if (!isEmpty(val)) {
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	public static boolean isOneEmpty(Object... values) {
+		for (Object val : values) {
+			if (isEmpty(val)) {
+				return true;
+			}
+		}
+		return false;
+	}
 
 	/**
 	 * extract a subtext from a text. sample : Hi patrick how are you ?, extr
