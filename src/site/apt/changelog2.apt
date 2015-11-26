@@ -579,3 +579,5 @@ change log
 * 2.1.0.3.1 20/11/2015
 
  * defautl menu value (repeat + current page as reference) + update same component figure
+ 
+ * g-recaptcha
