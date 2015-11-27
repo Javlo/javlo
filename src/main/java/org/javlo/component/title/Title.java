@@ -65,8 +65,8 @@ public class Title extends AbstractVisualComponent {
 		super.prepareView(ctx);
 		String value = getValue();
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-		ReverseLinkService reverserLinkService = ReverseLinkService.getInstance(globalContext);
-		value = reverserLinkService.replaceLink(ctx, this, value);
+		/*ReverseLinkService reverserLinkService = ReverseLinkService.getInstance(globalContext);
+		value = reverserLinkService.replaceLink(ctx, this, value);*/
 		ctx.getRequest().setAttribute("value", value);
 	}
 	
@@ -102,7 +102,7 @@ public class Title extends AbstractVisualComponent {
 		res.append("<h1"+style+" " + getSpecialPreviewCssClass(ctx, getStyle(ctx)+colorClass) + getSpecialPreviewCssId(ctx) + "><"+getInsideTag(ctx)+">");
 
 		String value = getValue();
-		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+		//GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		/*ReverseLinkService reverserLinkService = ReverseLinkService.getInstance(globalContext);
 		value = reverserLinkService.replaceLink(ctx, this, value);*/
 
