@@ -79,7 +79,7 @@ public class TicketService {
 		} else {
 			IContentVisualComponent component = ContentService.getInstance(ctx.getGlobalContext()).getComponent(ctx, bean.getId());
 			DebugNote d = (DebugNote) component;
-			mapTicketToDebugNote(bean, d);
+			mapTicketToDebugNote(bean, d, ctx);
 			PersistenceService.getInstance(ctx.getGlobalContext()).setAskStore(true);
 		}
 	}
@@ -135,6 +135,7 @@ public class TicketService {
 		t.setLastUpdateDate(StringHelper.parseSortableTime(d.getModifDate()));
 		t.setTitle(I18nAccess.getInstance(ctx).getText("content." + DebugNote.TYPE) + ": " + d.getPage().getTitle(ctx));
 		t.setShare(TicketBean.SHARE_SITE);
+		t.setReaders(d.getReaders(ctx));
 		t.setComments(new LinkedList<Comment>());
 		Reader in = new StringReader(d.getText());
 		BufferedReader r = new BufferedReader(in);
@@ -178,7 +179,8 @@ public class TicketService {
 		t.setUrl(url);
 	}
 
-	private void mapTicketToDebugNote(TicketBean t, DebugNote d) {
+	private void mapTicketToDebugNote(TicketBean t, DebugNote d, ContentContext ctx) throws IOException {
+		d.setReaders(ctx, t.getReaders());
 		d.setModifDate(StringHelper.renderSortableTime(t.getLastUpdateDate()));
 		StringWriter text = new StringWriter();
 		PrintWriter w = new PrintWriter(text);

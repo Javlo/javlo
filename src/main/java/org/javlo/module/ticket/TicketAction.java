@@ -103,13 +103,13 @@ public class TicketAction extends AbstractModuleAction {
 
 		String ticketId = rs.getParameter("id", null);
 		if (ticketId != null) {
+			TicketService ticketService = TicketService.getInstance(ctx.getGlobalContext());
 			TicketUserWrapper ticket;
 			if (ticketId.equals("new")) {
 				TicketBean newTicket = new TicketBean();
 				newTicket.setAuthors(ctx.getCurrentUserId());
 				newTicket.setContext(ctx.getGlobalContext().getContextKey());
 				newTicket.setUrl(URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.PREVIEW_MODE)));
-				TicketService ticketService = TicketService.getInstance(ctx.getGlobalContext());
 				ticketService.updateTicket(ctx, newTicket);
 				rs.setParameter("id", newTicket.getId());
 				ctx.getRequest().setAttribute("newTicket", "true");
@@ -119,6 +119,7 @@ public class TicketAction extends AbstractModuleAction {
 			}
 			if (ticket != null && rs.getParameter("back", null) == null && !StringHelper.isTrue(ctx.getRequest().getAttribute("back-list"))) {
 				ticket.onRead(ctx.getCurrentEditUser().getLogin());
+				ticketService.updateTicket(ctx, new TicketBean(ticket));
 				ctx.getRequest().setAttribute("ticket", ticket);
 				if (ticketModule.getBox("main") == null) {
 					ticketModule.addMainBox("main", "update ticket : " + rs.getParameter("id", ""), "/jsp/update_ticket.jsp", true);

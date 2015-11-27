@@ -3,11 +3,16 @@
  */
 package org.javlo.component.core;
 
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Properties;
+import java.util.Set;
 
 import org.javlo.component.properties.AbstractPropertiesComponent;
 import org.javlo.context.ContentContext;
@@ -33,6 +38,8 @@ public class DebugNote extends AbstractPropertiesComponent {
 	private static final String MODIF_DATE = "modif_date";
 
 	private static final List<String> FIELDS = Arrays.asList(new String[] { TEXT, STATUS, USER, PRIORITY, MODIF_DATE });
+
+	private static final String READERS = "readers";
 
 	public static final String TYPE = "debug-note";
 	
@@ -95,6 +102,25 @@ public class DebugNote extends AbstractPropertiesComponent {
 	
 	public void setModifDate(String text) {
 		setFieldValue(MODIF_DATE, text);
+	}
+
+	public Set<String> getReaders(ContentContext ctx) throws IOException {
+		Properties data = getViewData(ctx);
+		List<String> list = StringHelper.stringToCollection(data.getProperty(READERS));
+		if (list != null) {
+			return new HashSet<String>(list);
+		} else {
+			return new HashSet<String>();
+		}
+	}
+	public void setReaders(ContentContext ctx, Set<String> readers) throws IOException {
+		Properties data = getViewData(ctx);
+		if (readers != null) {
+			data.setProperty(READERS, StringHelper.collectionToString(readers));
+		} else {
+			data.remove(READERS);
+		}
+		storeViewData(ctx);
 	}
 
 	@Override
@@ -203,6 +229,7 @@ public class DebugNote extends AbstractPropertiesComponent {
 		String msg = super.performEdit(ctx);
 		if (isModify()) {
 			setModifDate(StringHelper.renderSortableTime(new Date()));
+			setReaders(ctx, Collections.singleton(ctx.getCurrentUserId()));
 			storeProperties();
 		}
 		return msg;
