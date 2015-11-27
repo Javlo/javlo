@@ -5,7 +5,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.function.Predicate;
 
 import org.javlo.visualtesting.helper.FileHelper;
 import org.javlo.visualtesting.helper.ForwardException;
@@ -15,9 +14,9 @@ import org.javlo.visualtesting.helper.ResourceHelper;
 public class SnapshotedPage {
 
 	private static final String PAGE_PREFIX = "page-";
-	public static final Predicate<? super Path> FILTER = (p) -> {
+	public static boolean isPageFolder(Path p) {
 		return p.getFileName().toString().startsWith(PAGE_PREFIX) && Files.isDirectory(p);
-	};
+	}
 
 	private transient Snapshot parentSnapshot;
 	private String url;

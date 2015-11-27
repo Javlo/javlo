@@ -1,9 +1,7 @@
 package org.javlo.visualtesting.helper;
 
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -19,10 +17,12 @@ public class FileHelper {
 		if (result) {
 			do {
 				m.appendReplacement(sb, "");
-				m.group().chars().forEach((c) -> {
+				String str = m.group();
+				int length = str.length();
+				for (int i = 0; i < length; i++) {
 					sb.append(special);
-					sb.append(Integer.toHexString(c));
-				});
+					sb.append(Integer.toHexString(str.charAt(i)));
+				}
 				result = m.find();
 			} while (result);
 			m.appendTail(sb);
@@ -32,10 +32,8 @@ public class FileHelper {
 		return sb.toString();
 	}
 
-	public static final DateTimeFormatter FILE_DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss-SSS");
-
-	public static String createFileName(LocalDateTime dateTime) {
-		return FILE_DATE_TIME_FORMATTER.format(ZonedDateTime.of(dateTime, ZoneId.systemDefault()));
+	public static String createFileName(Date dateTime) {
+		return new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss-SSS").format(dateTime);
 	}
 
 }

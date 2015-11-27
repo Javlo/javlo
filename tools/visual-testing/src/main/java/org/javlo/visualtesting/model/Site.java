@@ -2,13 +2,15 @@ package org.javlo.visualtesting.model;
 
 import java.io.IOException;
 import java.net.URL;
+import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.javlo.visualtesting.helper.FileHelper;
 import org.javlo.visualtesting.helper.ForwardException;
@@ -22,11 +24,13 @@ public class Site {
 	private String siteUrl;
 	private Path outputFolder;
 	private Path snapshotsFolder;
+	private Path comparisonsFolder;
 
 	public Site(Path rootOutputFolder, String siteUrl) {
 		this.siteUrl = siteUrl;
 		this.outputFolder = rootOutputFolder.resolve(FileHelper.encodeAsFileName(siteUrl));
 		this.snapshotsFolder = this.outputFolder.resolve("snapshots");
+		this.comparisonsFolder = this.outputFolder.resolve("comparisons");
 	}
 
 	public String getUrl() {
@@ -50,7 +54,7 @@ public class Site {
 	}
 
 	public Snapshot createNewSnapshot() {
-		LocalDateTime snapshotDate = LocalDateTime.now();
+		Date snapshotDate = new Date();
 		Path snapshotFolder = snapshotsFolder.resolve(formatSnapshotFolderName(snapshotDate));
 		Snapshot snapshot = new Snapshot(this, snapshotFolder);
 		for (String pageUrl : getUrlToProcess()) {
@@ -59,24 +63,57 @@ public class Site {
 		return snapshot;
 	}
 
-	private String formatSnapshotFolderName(LocalDateTime now) {
+	private String formatSnapshotFolderName(Date now) {
 		return FileHelper.createFileName(now);
 	}
 
 	public List<Snapshot> getSnapshots() {
-		try {
-			return Files.list(snapshotsFolder)
-					.sorted((p1, p2) -> p1.getFileName().toString().compareTo(p2.getFileName().toString()))
-					.map((p) -> new Snapshot(this, p))
-					.collect(Collectors.toCollection(LinkedList::new));
+		try (DirectoryStream<Path> s = Files.newDirectoryStream(snapshotsFolder)) {
+			List<Snapshot> out = new LinkedList<>();
+			for (Path p : s) {
+				out.add(buildSnapshot(p));
+			}
+			Collections.sort(out, new Comparator<Snapshot>() {
+				@Override
+				public int compare(Snapshot s1, Snapshot s2) {
+					return s1.getName().compareTo(s2.getName());
+				}
+			});
+			return out;
 		} catch (IOException e) {
 			throw new ForwardException(e);
 		}
 	}
 
+	public Snapshot getSnapshotByName(String name) {
+		try (DirectoryStream<Path> s = Files.newDirectoryStream(snapshotsFolder)) {
+			List<Snapshot> out = new LinkedList<>();
+			for (Path p : s) {
+				if (p.getFileName().toString().equals(name)) {
+					return buildSnapshot(p);
+				}
+			}
+			return null;
+		} catch (IOException e) {
+			throw new ForwardException(e);
+		}
+	}
+
+	protected Snapshot buildSnapshot(Path snapshotFolder) {
+		return new Snapshot(this, snapshotFolder);
+	}
+
 	public SnapshotComparison createNewComparison(Snapshot oldSnap, Snapshot newSnap) {
-		// TODO Auto-generated method stub
-		return null;
+		Path comparisonFolder = comparisonsFolder.resolve(formatComparisonFolderName(oldSnap, newSnap));
+		SnapshotComparison comparison = new SnapshotComparison(this, comparisonFolder);
+//		for (String pageUrl : getUrlToProcess()) {
+//			comparison.getPages().add(new SnapshotedPage(snapshot, pageUrl));
+//		}
+		return comparison;
+	}
+
+	private String formatComparisonFolderName(Snapshot oldSnap, Snapshot newSnap) {
+		return oldSnap.getName() + SnapshotComparison.SEPARATOR + newSnap.getName();
 	}
 
 }

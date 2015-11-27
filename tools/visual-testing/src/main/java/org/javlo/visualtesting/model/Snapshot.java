@@ -1,11 +1,11 @@
 package org.javlo.visualtesting.model;
 
 import java.io.IOException;
+import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.LinkedList;
-import java.util.stream.Collectors;
 
 import org.javlo.visualtesting.helper.ForwardException;
 
@@ -22,6 +22,10 @@ public class Snapshot {
 		this.layoutBugsFolder = snapshotFolder.resolve("layout-bugs");
 	}
 
+	public String getName() {
+		return snapshotFolder.getFileName().toString();
+	}
+
 	public Site getParentSite() {
 		return parentSite;
 	}
@@ -29,11 +33,14 @@ public class Snapshot {
 	public Collection<SnapshotedPage> getPages() {
 		if (pages == null) {
 			if (Files.exists(snapshotFolder)) {
-				try {
-					pages = Files.list(snapshotFolder)
-							.filter(SnapshotedPage.FILTER)
-							.map((p) -> new SnapshotedPage(this, p))
-							.collect(Collectors.toCollection(LinkedList::new));
+				try (DirectoryStream<Path> s = Files.newDirectoryStream(snapshotFolder)) {
+					Collection<SnapshotedPage> out = new LinkedList<>();
+					for (Path p : s) {
+						if (SnapshotedPage.isPageFolder(p)) {
+							out.add(new SnapshotedPage(this, p));
+						}
+					}
+					return out;
 				} catch (IOException e) {
 					throw new ForwardException(e);
 				}
