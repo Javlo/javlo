@@ -299,6 +299,9 @@ public class NotificationService {
 			Map<String, String> json = new HashMap<String, String>();
 			json.put("body", message);
 			json.put("title", ctx.getGlobalContext().getGlobalTitle() + " [" + type + ' ' + StringHelper.neverEmpty(userId, "?") + ']');
+			if (!StringHelper.isURL(inURL)) {
+				inURL = URLHelper.createStaticURL(ctx.getContextForAbsoluteURL(), inURL);
+			}
 			json.put("url", inURL);
 			json.put("type", "link");
 			try {
