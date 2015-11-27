@@ -166,11 +166,13 @@ public class ComponentHelper {
 	public static void moveComponent(ContentContext ctx, IContentVisualComponent comp, IContentVisualComponent newPrevious, MenuElement targetPage, String area) throws Exception {
 		comp.getPage().removeContent(ctx, comp.getId());
 		comp.getComponentBean().setArea(area);
+		ComponentBean newComp = comp.getComponentBean();
+		newComp.setLanguage(ctx.getRequestContentLanguage()); // component could be move between two different browser
 		if (newPrevious != null) {
-			newPrevious.getPage().addContent(newPrevious.getId(), comp.getComponentBean());
+			newPrevious.getPage().addContent(newPrevious.getId(), newComp);
 			comp.setPage(newPrevious.getPage());
 		} else {
-			targetPage.addContent("0", comp.getComponentBean());
+			targetPage.addContent("0", newComp);
 			comp.setPage(targetPage);
 		}
 		ContentContext areaCtx = ctx.getContextWithArea(comp.getArea());
