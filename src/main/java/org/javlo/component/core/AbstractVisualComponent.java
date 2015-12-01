@@ -116,7 +116,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 
 	protected static final String VALUE_SEPARATOR = "-";
 
-	protected static final String HIDDEN = "hidden";
+	public static final String HIDDEN = "hidden";
 
 	public static final String FORCE_COMPONENT_ID = "___FORCE_COMPONENT_ID";
 

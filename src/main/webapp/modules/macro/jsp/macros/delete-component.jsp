@@ -24,7 +24,8 @@
 </div>
 <div class="form-group">
 	<div class="row">
-	<div class="col-sm-12"><label><input name="allpages" type="checkbox" /> all pages.</label></div>
+	<div class="col-sm-6"><label><input name="allpages" type="checkbox" /> all pages.</label></div>
+	<div class="col-sm-6"><label><input name="hidden" type="checkbox" /> juste mark as hiden.</label></div>
 	</div>
 </div>
 
