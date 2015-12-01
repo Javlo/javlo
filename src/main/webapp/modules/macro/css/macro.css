@@ -34,3 +34,7 @@
 textarea.form-control {
 	width: 98%;
 }
+
+.macro-interface {
+	overflow: hidden;
+}

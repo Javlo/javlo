@@ -1347,15 +1347,6 @@ public class StaticInfo {
 		return StringHelper.asBase64(getFocusZoneX(ctx)*getFocusZoneY(ctx)) + StringHelper.asBase64(getCRC32());
 	}
 
-	/*
-	 * private Metadata getImageMetadata() { if (imageMetadata == null) { if
-	 * (StringHelper.isImage(getFile().getName()) && getFile().exists()) { try {
-	 * imageMetadata = ImageMetadataReader.readMetadata(getFile()); } catch
-	 * (ImageProcessingException e) { logger.warning("[" + getFile() +
-	 * "] error : " + e.getMessage()); ²} catch (IOException e) {
-	 * e.printStackTrace(); } } } return imageMetadata; }
-	 */
-
 	public Date getExifDate() {
 		try {
 			return ExifHelper.readDate(getFile());
