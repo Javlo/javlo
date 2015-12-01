@@ -24,7 +24,6 @@ import org.javlo.message.MessageRepository;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
 import org.javlo.service.RequestService;
-import org.junit.internal.JUnitSystem;
 
 public class DeleteComponent implements IInteractiveMacro, IAction {
 
