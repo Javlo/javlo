@@ -158,6 +158,7 @@ public abstract class AbstractFileComponent extends AbstractVisualComponent impl
 			url = URLHelper.createResourceURL(ctx, url);
 		}
 		ctx.getRequest().setAttribute("url", url);
+		ctx.getRequest().setAttribute("linkToImage", StringHelper.isImage(url));
 		ctx.getRequest().setAttribute("blank", ctx.getGlobalContext().isOpenExternalLinkAsPopup(url));
 		ctx.getRequest().setAttribute("descritpion", getDescription());
 		ctx.getRequest().setAttribute("cleanDescription", StringHelper.toXMLAttribute(StringHelper.removeTag(getDescription())));
