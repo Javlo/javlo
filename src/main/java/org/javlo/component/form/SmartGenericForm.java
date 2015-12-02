@@ -175,6 +175,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		out.println(XHTMLHelper.renderLine("reset :", getInputName("message-reset"), getLocalConfig(false).getProperty("message.reset", "")));
 		if (isCaptcha()) {
 			out.println(XHTMLHelper.renderLine("captcha :", getInputName("label-captcha"), getLocalConfig(false).getProperty("label.captcha", "")));
+			out.println(XHTMLHelper.renderLine("captcha error :", getInputName("error.captcha"), getLocalConfig(false).getProperty("error.captcha", "")));
 		}
 		if (isFile()) {
 			out.println(XHTMLHelper.renderLine("bad file format :", getInputName("message-bad-file"), getLocalConfig(false).getProperty("message.bad-file", "")));
@@ -444,6 +445,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 
 		if (isCaptcha()) {
 			getLocalConfig(false).setProperty("label.captcha", rs.getParameter(getInputName("label-captcha"), ""));
+			getLocalConfig(false).setProperty("error.captcha", rs.getParameter(getInputName("error.captcha"), ""));
 		}
 		// getLocalConfig(false).setProperty("",
 		// rs.getParameter(getInputName(""), ""));

@@ -21,7 +21,7 @@
 		<label for="captcha">${ci18n['label.captcha']}*</label>
 		<input type="text" id="captcha" name="captcha" value="" class="form-control" />
 	</div></c:if><c:if test=${comp.captcha && not empty comp.recaptchaKey && not empty comp.recaptchaSecretKey}">
-	<div class="g-recaptcha" data-sitekey="6Lf51xETAAAAAGpzA1Up9W_BWFLW31FkHFoAi-ML"></div>
+	<div class="g-recaptcha" data-sitekey="${comp.recaptchaKey}"></div>
 	</c:if>
 </div>
 </c:if>

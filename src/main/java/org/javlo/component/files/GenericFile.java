@@ -175,14 +175,11 @@ public class GenericFile extends AbstractFileComponent implements IReverseLinkCo
 		fullName = ElementaryURLHelper.mergePath(globalContext.getDataFolder(), fullName);
 		ctx.getRequest().setAttribute("ext", StringHelper.getFileExtension(getFileName()));
 		ctx.getRequest().setAttribute("size", StringHelper.getFileSize(fullName));
-		/*String url = ElementaryURLHelper.mergePath(getDirSelected(), getFileName());
-		ctx.getRequest().setAttribute("url", StringHelper.toXMLAttribute(url));*/
 		if (getLabel().trim().length() == 0) {
 			ctx.getRequest().setAttribute("label", getFileName());			
 		} else {
 			ctx.getRequest().setAttribute("label", textToXHTML(getLabel()));
 		}
-
 	}
 
 	/**
@@ -300,6 +297,23 @@ public class GenericFile extends AbstractFileComponent implements IReverseLinkCo
 	@Override
 	public boolean isUploadOnDrop() {
 		return false;
+	}
+	
+	@Override
+	public String getFirstPrefix(ContentContext ctx) {
+		System.out.println("***** GenericFile.getFirstPrefix : isList(ctx) = "+isList(ctx)); //TODO: remove debug trace
+		if (!isList(ctx)) {
+			return getConfig(ctx).getProperty("prefix.first", "");
+		} else {
+			String cssClass = "";
+			if (getStyle(ctx) != null && getStyle(ctx).trim().length() > 0) {
+				cssClass = ' ' + getStyle(ctx);
+			}
+			if (getListClass(ctx) != null) {
+				cssClass = cssClass + ' ' + getListClass(ctx);
+			}
+			return "<" + getListTag(ctx) + " class=\"" + getType() + cssClass + "\">";
+		}
 	}
 
 }
