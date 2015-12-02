@@ -394,7 +394,7 @@ public class SearchResult {
 
 						if (componentType == null || componentType.contains(cpt.getType())) {
 							if (cpt.getSearchLevel() > 0) {
-								String compSearchText = StringHelper.createFileName(cpt.getTextForSearch()).toLowerCase();
+								String compSearchText = StringHelper.createFileName(cpt.getTextForSearch(ctx)).toLowerCase();
 
 								int cptSearchLevel = StringUtils.countMatches(compSearchText, searchText) * cpt.getSearchLevel();
 								searchLevel = searchLevel + cptSearchLevel;

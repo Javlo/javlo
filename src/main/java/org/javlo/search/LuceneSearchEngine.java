@@ -206,7 +206,7 @@ public class LuceneSearchEngine implements ISearchEngine {
 				ContentElementList elemList = page.getLocalContentCopy(ctxWithContent);
 				for (IContentVisualComponent cpt : elemList.getIterable(ctxWithContent)) {
 					if (cpt.getSearchLevel() > 0) {
-						doc.add(new TextField(LEVEL_FIELD_PREFIX + cpt.getSearchLevel(), cpt.getTextForSearch(), Field.Store.NO));
+						doc.add(new TextField(LEVEL_FIELD_PREFIX + cpt.getSearchLevel(), cpt.getTextForSearch(ctx), Field.Store.NO));
 						// TODO Automatic boost? (currently done via StaticConfig.getSearchEngineLucenePattern())
 						//field.setBoost(1F + ((float) cpt.getSearchLevel()) / 10F);
 					}

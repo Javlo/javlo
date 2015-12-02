@@ -762,7 +762,7 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 	}
 
 	@Override
-	public String getTextForSearch() {
+	public String getTextForSearch(ContentContext ctx) {
 		StringBuffer outText = new StringBuffer();
 		for (Object key : properties.keySet()) {
 			outText.append(properties.get(key));

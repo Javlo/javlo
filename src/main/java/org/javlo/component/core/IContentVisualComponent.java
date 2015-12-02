@@ -308,7 +308,7 @@ public interface IContentVisualComponent extends Comparable<IContentVisualCompon
 	 * @return a text represent the content of the component for the search
 	 *         module
 	 */
-	public String getTextForSearch();
+	public String getTextForSearch(ContentContext ctx);
 
 	/**
 	 * return the level of the component is a search.

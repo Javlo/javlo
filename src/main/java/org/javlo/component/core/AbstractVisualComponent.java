@@ -1451,7 +1451,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	}
 
 	@Override
-	public String getTextForSearch() {
+	public String getTextForSearch(ContentContext ctx) {
 		return StringEscapeUtils.unescapeHtml(getValue());
 	}
 
