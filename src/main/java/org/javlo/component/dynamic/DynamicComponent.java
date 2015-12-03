@@ -113,7 +113,7 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 		reloadProperties();
 	}
 
-	protected void reloadProperties() {
+	public void reloadProperties() {
 		try {
 			if (properties != null) {
 				properties.load(stringToStream(getValue()));

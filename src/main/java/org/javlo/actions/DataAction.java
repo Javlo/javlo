@@ -26,7 +26,6 @@ import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.io.FileExistsException;
 import org.codehaus.plexus.util.StringUtils;
 import org.javlo.component.core.ComponentBean;
-import org.javlo.component.core.ComponentFactory;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.core.IUploadResource;
 import org.javlo.component.files.ArrayFileComponent;

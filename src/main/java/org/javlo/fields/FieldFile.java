@@ -82,7 +82,7 @@ public class FieldFile extends Field implements IStaticContainer {
 	}
 
 	protected boolean isCategoryRecursive() {
-		return StringHelper.isTrue(this.properties.getProperty("field." + getName() + ".recursive", null));
+		return StringHelper.isTrue(this.properties.getProperty("field." + getName() + ".recursive", null), true);
 	}
 
 	protected String getFileTypeFolder() {

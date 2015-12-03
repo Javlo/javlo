@@ -48,6 +48,7 @@ import org.javlo.macro.ImageAfterDescriptionMacro;
 import org.javlo.macro.ImportContent;
 import org.javlo.macro.ImportDataBase;
 import org.javlo.macro.ImportDefaultLanguageMacro;
+import org.javlo.macro.ImportExternalPage;
 import org.javlo.macro.ImportGalleryMacro;
 import org.javlo.macro.ImportHTMLPageMacro;
 import org.javlo.macro.ImportJCRPageMacro;
@@ -142,6 +143,7 @@ public class MacroFactory {
 		macros.add(new deleteComponentInBadArea());
 		macros.add(new UploadGallery());
 		macros.add(new CreateBusinessComponent());
+		macros.add(new ImportExternalPage());
 		macros.add(new UndeletePage());
 	}
 

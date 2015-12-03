@@ -206,11 +206,11 @@ table.float-image-width {
 }
 
 .text.small {
-	font-size: 0.8em;
+	font-size: 0.8em !important;
 }
 
 .text.big {
-	font-size: 1.2em;
+	font-size: 1.6em !important;
 }
 
 .inside-wrapper {

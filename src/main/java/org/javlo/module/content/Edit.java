@@ -818,8 +818,7 @@ public class Edit extends AbstractModuleAction {
 			}
 		} else {
 			boolean foundType = false;
-			System.out.println("TYPE = "+type);
-			for (IContentVisualComponent comp : ComponentFactory.getComponents(globalContext)) {				
+			for (ComponentWrapper comp : ComponentFactory.getComponentForDisplay(ctx)) {
 				if (comp.getType().equals(type)) {					
 					foundType = true;
 				}

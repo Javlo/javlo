@@ -18,6 +18,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 
 import org.javlo.component.core.ComponentBean;
+import org.javlo.component.title.Heading;
 import org.javlo.config.StaticConfig;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
@@ -80,7 +81,7 @@ public class EditContext implements Serializable {
 
 	public static final String USER_ROLES_SEPARATOR = ";";
 
-	String activeType = "paragraph"; // TODO: clean this init.
+	String activeType = Heading.TYPE; // TODO: clean this init.
 
 	String teasersDirectory = null;
 
