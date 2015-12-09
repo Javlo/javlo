@@ -3631,7 +3631,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 		return isEmpty(ctx, area, true);
 	}
 
-	public boolean isEmptyNoRepeat(ContentContext ctx, String area) throws Exception {
+	public boolean isLocalEmpty(ContentContext ctx, String area) throws Exception {
 		return isEmpty(ctx, area, false);
 	}
 

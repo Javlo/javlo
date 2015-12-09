@@ -92,12 +92,12 @@
 								<c:set var="tooltip" value='data-toggle="tooltip" data-placement="left" title="${i18n.edit[\'command.copy-page.tooltip\']}"' />
 							</c:if>
 						
-							<form class="${info.page.pageEmpty || info.page.childrenAssociation?'no-access':''}"
+							<form class="${info.page.pageLocalEmpty || info.page.childrenAssociation?'no-access':''}"
 								id="copy_page"
 								action="${info.currentURL}?webaction=edit.copyPage"
 								method="post">
 								<button ${tooltip} id="pc_copy_page" type="submit"
-									class="btn btn-default btn-sm" ${info.page.pageEmpty || info.page.childrenAssociation?'disabled="disabled"':''}>
+									class="btn btn-default btn-sm" ${info.page.pageLocalEmpty || info.page.childrenAssociation?'disabled="disabled"':''}>
 									<span class="glyphicon glyphicon-copy" aria-hidden="true"></span><span
 										class="text">${i18n.edit['action.copy-page']}</span>
 								</button>
@@ -109,7 +109,7 @@
 							<c:set var="tooltip" value='data-toggle="tooltip" data-placement="left" title="${i18n.edit[\'command.paste-page.tooltip\']}"' />
 						</c:if>						
 						<form
-								class="${empty info.contextForCopy || !info.page.pageEmpty || info.page.childrenAssociation?'no-access':''}"
+								class="${empty info.contextForCopy || !info.page.pageLocalEmpty || info.page.childrenAssociation?'no-access':''}"
 								id="paste_page" action="${info.currentURL}" method="post">
 								<input type="hidden" name="webaction" value="edit.pastePage" />
 								<c:set var="tooltip" value='' />
@@ -118,7 +118,7 @@
 								</c:if>
 								<button ${tooltip} class="btn btn-default btn-sm" id="pc_paste_page"
 									type="submit"
-									${empty info.contextForCopy || !info.page.pageEmpty || info.page.childrenAssociation?'disabled="disabled"':''}>
+									${empty info.contextForCopy || !info.page.pageLocalEmpty || info.page.childrenAssociation?'disabled="disabled"':''}>
 									<span class="glyphicon glyphicon-paste" aria-hidden="true"></span><span
 										class="text">${i18n.edit['action.paste-page-preview']}</span>
 								</button>
@@ -258,7 +258,7 @@
 					</form></li>
 			</c:if>
 			<li class="undo${contentContext.canUndo?'':' no-access'}"><form
-								class="${!info.page.pageEmpty?'no-access':''}"
+								class="${!info.page.pageLocalEmpty?'no-access':''}"
 								action="${info.currentURL}" method="get">
 								<div class="hidden"><input type="hidden" name="webaction" value="time.undoRedo" /><input type="hidden" name="previous" value="true" /></div>
 								<c:set var="tooltip" value="" />
