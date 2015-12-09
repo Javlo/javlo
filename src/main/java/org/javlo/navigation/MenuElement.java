@@ -3628,11 +3628,15 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 	}
 
 	public boolean isEmpty(ContentContext ctx, String area) throws Exception {
-		PageDescription desc = getPageDescriptionCached(ctx, ctx.getRequestContentLanguage());
+		return isEmpty(ctx, area, true);
+	}
 
-		if (desc.isEmpty(area) != null) {
-			return desc.isEmpty(area);
-		}
+	public boolean isEmptyNoRepeat(ContentContext ctx, String area) throws Exception {
+		return isEmpty(ctx, area, false);
+	}
+
+	private boolean isEmpty(ContentContext ctx, String area, boolean withRepeat) throws Exception {
+		PageDescription desc = getPageDescriptionCached(ctx, ctx.getRequestContentLanguage());
 
 		if (ctx.getRequestContentLanguage() == null) {
 			return true;
@@ -3645,16 +3649,20 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 		while ((contentList.hasNext(ctxForceArea))) {
 			IContentVisualComponent component = contentList.next(ctxForceArea);
 			if (component != null) {
-				if (!component.isEmpty(ctxForceArea) || (ctx.getCurrentTemplate() != null && ctx.getCurrentTemplate().isMailing())) {
-					empty = false;
-					if (!component.isRepeat() || component.getType() == ForceRealContent.TYPE) {
-						boolean realContent = false;
-						if (component instanceof ForceRealContent) {
-							ForceRealContent fComp = (ForceRealContent) component;
-							realContent = StringHelper.isTrue(fComp.getValue());
+				if (ctx.getCurrentTemplate().getAreas().contains(component.getArea())) {
+					if (!component.isEmpty(ctxForceArea) || (ctx.getCurrentTemplate() != null && ctx.getCurrentTemplate().isMailing())) {
+						if (!component.isRepeat() || withRepeat) {
+							empty = false;
 						}
-						desc.setEmpty(area, realContent);
-						return realContent;
+						if (!component.isRepeat() || component.getType() == ForceRealContent.TYPE) {
+							boolean realContent = false;
+							if (component instanceof ForceRealContent) {
+								ForceRealContent fComp = (ForceRealContent) component;
+								realContent = StringHelper.isTrue(fComp.getValue());
+							}
+							desc.setEmpty(area, realContent);
+							return realContent;
+						}
 					}
 				}
 			}

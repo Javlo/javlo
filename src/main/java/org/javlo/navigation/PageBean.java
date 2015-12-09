@@ -440,7 +440,7 @@ public class PageBean implements Serializable {
 	}
 	
 	public boolean isPageEmpty() throws Exception {
-		return page.isEmpty(ctx);
+		return page.isEmptyNoRepeat(ctx,null);
 	}
 	
 	public boolean isTrash() {

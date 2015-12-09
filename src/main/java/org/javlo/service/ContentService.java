@@ -578,11 +578,12 @@ public class ContentService implements IPrintInfo {
 		} else {
 			if (getViewNav() == null) {
 				synchronized (ctx.getGlobalContext().getLockLoadContent()) {
-					if (getViewNav() == null) {
+					if (getViewNav() == null) {						
 						long startTime = System.currentTimeMillis();
 						PersistenceService persistenceService = PersistenceService.getInstance(globalContext);
 						Map<String, String> contentAttributeMap = new HashMap<String, String>();
-						setViewNav(persistenceService.load(ctx, ContentContext.VIEW_MODE, contentAttributeMap, null));
+						MenuElement page = persistenceService.load(ctx, ContentContext.VIEW_MODE, contentAttributeMap, null);
+						setViewNav(page);
 						viewGlobalMap = contentAttributeMap;
 						NavigationService.checkSameUrl(ctx);
 						logger.info("load view of '" + globalContext.getContextKey() + "' nav in " + StringHelper.renderTimeInSecond((System.currentTimeMillis() - startTime) / 1000) + " sec.");

@@ -816,16 +816,24 @@ public class Edit extends AbstractModuleAction {
 					}
 				}
 			}
+		} else if (type.equals("clipboard-page")) {
+			EditContext editCtx = EditContext.getInstance(globalContext, session);
+			if (editCtx.getContextForCopy(ctx).getCurrentPage().getId().equals(targetPage.getId())) {
+				return i18nAccess.getText("edit.message.page_paste_it_self", "couldn't paste the page on it self");
+			} else {
+				ComponentBean mirrorComponentBean = new ComponentBean(PageMirrorComponent.TYPE, editCtx.getContextForCopy(ctx).getCurrentPage().getId(), ctx.getRequestContentLanguage());
+				newId = content.createContent(ctx, targetPage, areaKey, previousId, mirrorComponentBean, true);
+			}
 		} else {
 			boolean foundType = false;
 			for (ComponentWrapper comp : ComponentFactory.getComponentForDisplay(ctx)) {
-				if (comp.getType().equals(type)) {					
+				if (comp.getType().equals(type)) {
 					foundType = true;
 				}
 			}
 			if (!foundType) {
 				ctx.setNeedRefresh(true);
-				return "component type not found : "+type;
+				return "component type not found : " + type;
 			}
 			newId = content.createContent(ctx, targetPage, areaKey, previousId, type, "", true);
 			IContentVisualComponent newComp = contentService.getComponent(ctx, newId);
@@ -1578,15 +1586,15 @@ public class Edit extends AbstractModuleAction {
 
 		}
 		menuElement.setSavedParent(menuElement.getParent().getId());
-		NavigationHelper.movePage(ctx, content.getTrashPage(ctx), null, menuElement);		
+		NavigationHelper.movePage(ctx, content.getTrashPage(ctx), null, menuElement);
 		String msg = i18nAccess.getText("action.remove.deleted", new String[][] { { "path", menuElement.getPath() } });
 		MessageRepository.getInstance(ctx).setGlobalMessage(new GenericMessage(msg, GenericMessage.INFO));
 		autoPublish(ctx.getRequest(), ctx.getResponse());
 		ctx.setPath(newPath);
 		ctx.setClosePopup(true);
-		
+
 		persistenceService.setAskStore(true);
-		
+
 		ctx.setPath(newPath);
 		String forwardURL = ctx.getResponse().encodeRedirectURL(URLHelper.createURL(ctx));
 		ctx.getResponse().sendRedirect(forwardURL);
@@ -1777,6 +1785,48 @@ public class Edit extends AbstractModuleAction {
 	}
 
 	public static String performPasteComp(RequestService rs, ContentContext ctx, ContentService content, EditContext editContext, ClipBoard clipboard, Module currentModule, PersistenceService persistenceService, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
+
+		if (!canModifyCurrentPage(ctx) || !checkPageSecurity(ctx)) {
+			messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("action.block"), GenericMessage.ERROR), false);
+			return null;
+		}
+
+		String previous = rs.getParameter("previous", null);
+		if (previous == null) {
+			return "bad request structure : need 'previous' parameter.";
+		}
+		ComponentBean comp = clipboard.getCopiedComponent(ctx);
+		if (comp == null) {
+			return "nothing to paste.";
+		}
+
+		MenuElement targetPage = content.getNavigation(ctx).searchChildFromId(rs.getParameter("pageContainerID", null));
+		if (targetPage == null) {
+			targetPage = ctx.getCurrentPage();
+		}
+		if (!ctx.isEditPreview()) {
+			ctx.setArea(editContext.getCurrentArea());
+			comp.setArea(null); // paste in current area
+		}
+		comp.setLanguage(null);
+
+		String newId = content.createContent(ctx, targetPage, comp, previous, true);
+		if (ctx.isAjax()) {
+			ctx.getRequest().setAttribute(AbstractVisualComponent.SCROLL_TO_COMP_ID_ATTRIBUTE_NAME, newId);
+			updateComponent(ctx, currentModule, newId, previous);
+		}
+
+		String msg = i18nAccess.getText("action.component.created", new String[][] { { "type", comp.getType() } });
+		messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(msg, GenericMessage.INFO), false);
+
+		persistenceService.setAskStore(true);
+		modifPage(ctx, ctx.getCurrentPage());
+		autoPublish(ctx.getRequest(), ctx.getResponse());
+
+		return null;
+	}
+
+	public static String performPasteCompAsPage(RequestService rs, ContentContext ctx, ContentService content, EditContext editContext, ClipBoard clipboard, Module currentModule, PersistenceService persistenceService, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
 
 		if (!canModifyCurrentPage(ctx) || !checkPageSecurity(ctx)) {
 			messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("action.block"), GenericMessage.ERROR), false);

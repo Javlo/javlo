@@ -447,7 +447,7 @@ editPreview.initPreview = function() {
 					if (rowData.length > 2) {
 						var sharedId = rowData[2];
 					}
-				}				
+				}	
 				var area = editPreview.searchArea(pjq(this).parent());			
 				if (sharedId != null && sharedId.length > 0) {											
 					var ajaxURL = editPreview.addParam(currentURL, "webaction=edit.insertShared&sharedContent="

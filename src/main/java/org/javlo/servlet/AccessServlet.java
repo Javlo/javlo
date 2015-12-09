@@ -36,6 +36,7 @@ import org.javlo.context.ContentManager;
 import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.context.GlobalContextFactory;
+import org.javlo.data.EditInfoBean;
 import org.javlo.data.InfoBean;
 import org.javlo.helper.DebugHelper;
 import org.javlo.helper.ElementaryURLHelper;
@@ -243,6 +244,10 @@ public class AccessServlet extends HttpServlet implements IVersion {
 			Thread.currentThread().setName("AccessServlet-" + globalContext.getContextKey());
 
 			ContentContext ctx = ContentContext.getContentContext(request, response);
+			if (ctx.getCurrentEditUser() != null) {
+				// edit edit info bean
+				EditInfoBean.getCurrentInfoBean(ctx);
+			}
 			
 			ctx.setPostRequest(post);
 
@@ -356,7 +361,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 				}
 			}
 
-			if (request.getServletPath().equals("/edit")) {
+			if (request.getServletPath().equals("/edit")) {				
 				EditContext editCtx = EditContext.getInstance(globalContext, request.getSession());
 				ctx.setArea(editCtx.getCurrentArea());
 				if (ctx.getCurrentEditUser() == null) {

@@ -94,12 +94,12 @@ public class XHTMLHelper {
 	// optional 'url(' part (non capturing subpattern) with optional quote
 			"(?:url\\(\\s*)?" + "[\"']?" +
 
-			// file path ending with '.?ss' in capturing subpattern 1
-			// word characters, slashes, dash, underscore, dot,
-			// colon and question mark (possible for absolute urls) are allowed
-			"([\\w\\\\/\\-_.:?]+?\\.?ss)" +
+	// file path ending with '.?ss' in capturing subpattern 1
+	// word characters, slashes, dash, underscore, dot,
+	// colon and question mark (possible for absolute urls) are allowed
+	"([\\w\\\\/\\-_.:?]+?\\.?ss)" +
 
-			// the rest of the line until semicolon or line break
+	// the rest of the line until semicolon or line break
 			"[^;$]*?(;|$)", Pattern.MULTILINE);
 
 	public static String _textToXHTML(String text, boolean popup) {
@@ -914,8 +914,8 @@ public class XHTMLHelper {
 		String[][] contentArray = new String[content.size()][];
 		for (int i = 0; i < content.size(); i++) {
 			contentArray[i] = new String[2];
-			contentArray[i][0] = (String)content.get(i);
-			contentArray[i][1] = (String)content.get(i);
+			contentArray[i][0] = (String) content.get(i);
+			contentArray[i][1] = (String) content.get(i);
 		}
 		return getInputOneSelectInternal(name, name, contentArray, value, cssClass, js, null, sort);
 	}
@@ -1680,7 +1680,7 @@ public class XHTMLHelper {
 		String[][] attributes = { { "rows", "2" }, { "cols", "20" } };
 		return getTextArea(name, value, attributes);
 	}
-	
+
 	public static String getTextArea(String name, String value, String[][] attributes) {
 		return getTextArea(name, value, attributes, null);
 	}
@@ -1688,14 +1688,14 @@ public class XHTMLHelper {
 	public static String getTextArea(String name, String value, String[][] attributes, String cssClass) {
 		StringWriter res = new StringWriter();
 		PrintWriter out = new PrintWriter(res);
-		
+
 		if (!StringHelper.isEmpty(cssClass)) {
-			cssClass = " class=\""+cssClass+"\"";
+			cssClass = " class=\"" + cssClass + "\"";
 		} else {
 			cssClass = "";
 		}
 
-		out.print("<textarea"+cssClass+" name=\"");
+		out.print("<textarea" + cssClass + " name=\"");
 		out.print(name);
 		out.print("\"");
 		for (String[] attribute : attributes) {
@@ -1764,7 +1764,7 @@ public class XHTMLHelper {
 		}
 		return remplacement.start(html);
 	}
-	
+
 	public static String removeEscapeTag(String html) {
 		if (html == null) {
 			return null;
@@ -1910,9 +1910,9 @@ public class XHTMLHelper {
 			return "<!-- resource already insered : " + resource + " -->";
 		}
 	}
-	
+
 	public static String renderLanguage(ContentContext ctx) {
-		return renderLanguage(ctx, (String)null);
+		return renderLanguage(ctx, (String) null);
 	}
 
 	public static String renderLanguage(ContentContext ctx, String cssClass) {
@@ -1933,7 +1933,7 @@ public class XHTMLHelper {
 			if (ulCssClass == null) {
 				writer.write("<ul>");
 			} else {
-				writer.write("<ul class=\""+ulCssClass+"\">");
+				writer.write("<ul class=\"" + ulCssClass + "\">");
 			}
 			writer.newLine();
 			for (String lg : languages) {
@@ -1944,8 +1944,8 @@ public class XHTMLHelper {
 				String cssClass = "class=\"" + lg;
 				if (ctx.getLanguage().equals(lg)) {
 					try {
-						cssClass = cssClass + " "+ctx.getCurrentTemplate().getSelectedClass()+"\"";
-					} catch (Exception e) {					
+						cssClass = cssClass + " " + ctx.getCurrentTemplate().getSelectedClass() + "\"";
+					} catch (Exception e) {
 						e.printStackTrace();
 					}
 				} else {
@@ -2094,7 +2094,7 @@ public class XHTMLHelper {
 			if (properties.get(key) != null) {
 				xhtml = xhtml.replace(jstlStr, properties.get(key).toString());
 			}
-		}		
+		}
 		properties = BeanUtils.describe(infoBean.getPage());
 		for (String key : properties.keySet()) {
 			String jstlStr = "${" + InfoBean.REQUEST_KEY + ".page." + key + '}';
@@ -2113,8 +2113,8 @@ public class XHTMLHelper {
 		}
 		return xhtml;
 	}
-	
-	public static String replaceJSTLUserInfo(String xhtml, IUserInfo userInfo) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, UnsupportedEncodingException {				
+
+	public static String replaceJSTLUserInfo(String xhtml, IUserInfo userInfo) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, UnsupportedEncodingException {
 		Map<String, Object> properties = BeanUtils.describe(userInfo);
 		for (String key : properties.keySet()) {
 			String jstlStr = "${user." + key + '}';
@@ -2257,13 +2257,13 @@ public class XHTMLHelper {
 		out.close();
 		return new String(outStream.toByteArray());
 	}
-	
+
 	public static String renderLine(String label, String value) {
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(outStream);
 		out.println("<div class=\"line\">");
 		out.println("<label>" + label + "</label>");
-		out.println("<div class=\"value\">"+value+"</div>");
+		out.println("<div class=\"value\">" + value + "</div>");
 		out.println("</div>");
 		out.close();
 		return new String(outStream.toByteArray());
@@ -2495,53 +2495,41 @@ public class XHTMLHelper {
 	}
 
 	public static void compressJS(final File targetFile) throws IOException {
-		// Disabled to wait right YUI dependency
-		// String newContent;
-		// FileInputStream in = null;
-		// StringWriter out = null;
-		// try {
-		// in = new FileInputStream(targetFile);
-		// InputStreamReader reader = new InputStreamReader(in,
-		// ContentContext.CHARACTER_ENCODING);
-		// out = new StringWriter();
-		// ErrorReporter reporter = new ErrorReporter() {
-		//
-		// @Override
-		// public void warning(String message, String sourceName, int line,
-		// String lineSource, int lineOffset) {
-		// logger.warning("JS compressor warning: " + message + " (" +
-		// targetFile + " L:" + line + " C:" + lineOffset + ")");
-		// }
-		//
-		// @Override
-		// public EvaluatorException runtimeError(String message, String
-		// sourceName, int line, String lineSource, int lineOffset) {
-		// logger.warning("JS compressor runtimeError: " + message + " (" +
-		// targetFile + " L:" + line + " C:" + lineOffset + ")");
-		// return new EvaluatorException(message, sourceName, line, lineSource,
-		// lineOffset);
-		// }
-		//
-		// @Override
-		// public void error(String message, String sourceName, int line, String
-		// lineSource, int lineOffset) {
-		// logger.warning("JS compressor error: " + message + " (" + targetFile
-		// + " L:" + line + " C:" + lineOffset + ")");
-		// }
-		// };
-		// new JavaScriptCompressor(reader, reporter).compress(out, 0, false,
-		// false, false, false);
-		// newContent = out.toString();
-		// }catch (Exception ex) {
-		// logger.log(Level.WARNING, "Compress JS failed for '" + targetFile +
-		// "'.", ex);
-		// return; //Don't write on error, let the original as it is.
-		// } finally {
-		// ResourceHelper.closeResource(in);
-		// ResourceHelper.closeResource(out);
-		// }
-		// ResourceHelper.writeStringToFile(targetFile, newContent,
-		// ContentContext.CHARACTER_ENCODING);
+//		String newContent;
+//		FileInputStream in = null;
+//		StringWriter out = null;
+//		try {
+//			in = new FileInputStream(targetFile);
+//			InputStreamReader reader = new InputStreamReader(in, ContentContext.CHARACTER_ENCODING);
+//			out = new StringWriter();
+//			ErrorReporter reporter = new ErrorReporter() {
+//
+//				@Override
+//				public void warning(String message, String sourceName, int line, String lineSource, int lineOffset) {
+//					logger.warning("JS compressor warning: " + message + " (" + targetFile + " L:" + line + " C:" + lineOffset + ")");
+//				}
+//
+//				@Override
+//				public EvaluatorException runtimeError(String message, String sourceName, int line, String lineSource, int lineOffset) {
+//					logger.warning("JS compressor runtimeError: " + message + " (" + targetFile + " L:" + line + " C:" + lineOffset + ")");
+//					return new EvaluatorException(message, sourceName, line, lineSource, lineOffset);
+//				}
+//
+//				@Override
+//				public void error(String message, String sourceName, int line, String lineSource, int lineOffset) {
+//					logger.warning("JS compressor error: " + message + " (" + targetFile + " L:" + line + " C:" + lineOffset + ")");
+//				}
+//			};
+//			new JavaScriptCompressor(reader, reporter).compress(out, 0, false, false, false, false);
+//			newContent = out.toString();
+//		} catch (Exception ex) {
+//			logger.log(Level.WARNING, "Compress JS failed for '" + targetFile + "'.", ex);
+//			return; // Don't write on error, let the original as it is.
+//		} finally {
+//			ResourceHelper.closeResource(in);
+//			ResourceHelper.closeResource(out);
+//		}
+//		ResourceHelper.writeStringToFile(targetFile, newContent, ContentContext.CHARACTER_ENCODING);
 	}
 
 	private static int listDepth(TagDescription[] tags, TagDescription tag) {

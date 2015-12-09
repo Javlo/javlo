@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.javlo.context.ContentContext;
 import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
+import org.javlo.data.EditInfoBean;
 import org.javlo.data.InfoBean;
 import org.javlo.helper.AjaxHelper;
 import org.javlo.helper.ServletHelper;
@@ -61,6 +62,11 @@ public class AjaxServlet extends HttpServlet {
 					ctx.setRenderMode(Integer.parseInt(rs.getParameter(ContentContext.FORCE_MODE_PARAMETER_NAME, null)));
 				} else {
 					ctx.setRenderMode(ContentContext.PREVIEW_MODE);
+				}
+				
+				if (ctx.getCurrentEditUser() != null) {
+					// edit edit info bean
+					EditInfoBean.getCurrentInfoBean(ctx);
 				}
 
 				ctx.setAjax(true);

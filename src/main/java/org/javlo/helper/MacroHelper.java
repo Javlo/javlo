@@ -547,7 +547,18 @@ public class MacroHelper {
 			currentPage.removeContent(ctx, component.getId());
 		}
 	}
-
+	
+	public static boolean removeContent(ContentContext ctx, String id) throws Exception {
+		ContentService content = ContentService.getInstance(ctx.getRequest());
+		IContentVisualComponent comp = content.getComponent(ctx, id);
+		if (comp != null) {
+			comp.getPage().removeContent(ctx, id);
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
 	public static Date getCurrentMacroDate(HttpSession session) {
 		Date date = (Date) session.getAttribute(MACRO_DATE_KEY);
 		if (date == null) {

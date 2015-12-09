@@ -13,8 +13,11 @@ import java.util.logging.Logger;
 import org.javlo.actions.IAction;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.dynamic.DynamicComponent;
+import org.javlo.component.layout.ContentSeparation;
 import org.javlo.component.multimedia.Multimedia;
 import org.javlo.component.text.Description;
+import org.javlo.component.text.WysiwygParagraph;
+import org.javlo.component.title.Heading;
 import org.javlo.context.ContentContext;
 import org.javlo.context.EditContext;
 import org.javlo.helper.MacroHelper;
@@ -27,6 +30,7 @@ import org.javlo.macro.core.IInteractiveMacro;
 import org.javlo.message.MessageRepository;
 import org.javlo.service.ContentService;
 import org.javlo.service.RequestService;
+import org.javlo.ztatic.StaticInfo;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -75,13 +79,26 @@ public class ImportExternalPage implements IInteractiveMacro, IAction {
 		}
 		String where = doc.select("h2 strong").text();
 		String code = doc.select("#id_form-0-product_id").text();
-		String description = doc.select("#leftCntr p").first().text();
+		String description = null;
+		String text = "";
+		for (Element paragraph : doc.select("#leftCntr p")) {
+			if (description == null) {
+				description = paragraph.text();				
+			} else {
+				text = text + "<p>" + paragraph.text() + "</p>";
+			}
+		}
 		String finalPrice = "";
 		int minPrice = Integer.MAX_VALUE;
 		for (Element price : doc.select(".para .right strong")) {
 			String cleanPrice = price.text().replace('€', ' ').trim();
 			if (StringHelper.isLikeNumber(cleanPrice)) {
-				int localPrice = Integer.parseInt(cleanPrice);
+				int localPrice = 0;
+				try {
+					localPrice = Integer.parseInt(cleanPrice);
+				} catch (NumberFormatException e) {
+					System.out.println(e.getMessage());
+				}
 				if (localPrice < minPrice) {
 					finalPrice = "&euro; "+localPrice;
 					minPrice = localPrice;
@@ -116,6 +133,8 @@ public class ImportExternalPage implements IInteractiveMacro, IAction {
 			String imageRelativeFolder = URLHelper.mergePath(ctx.getGlobalContext().getStaticConfig().getStaticFolder(), ctx.getCurrentTemplate().getImportImageFolder(), ctx.getCurrentPage().getName());
 			folder = URLHelper.mergePath(ctx.getCurrentTemplate().getImportImageFolder(), ctx.getCurrentPage().getName());
 			File targetFile = new File(URLHelper.mergePath(ctx.getGlobalContext().getDataFolder(), imageRelativeFolder, StringHelper.createFileName(StringHelper.getFileNameFromPath(imageURL))));
+			StaticInfo si = StaticInfo.getInstance(ctx, targetFile);
+			si.setTitle(ctx, title);
 			targetFile.getParentFile().mkdirs();
 			ResourceHelper.writeUrlToFile(new URL(imageURL), targetFile);
 			if (image == null) {
@@ -191,7 +210,13 @@ public class ImportExternalPage implements IInteractiveMacro, IAction {
 		IContentVisualComponent comp = content.getComponent(ctx, parent);
 		((DynamicComponent) comp).reloadProperties();		
 		parent = MacroHelper.addContentIfNotExist(ctx, ctx.getCurrentPage(), parent, Description.TYPE, description);
-
+		parent = MacroHelper.addContentIfNotExist(ctx, ctx.getCurrentPage(), parent, WysiwygParagraph.TYPE, text);
+		parent = MacroHelper.addContentIfNotExist(ctx, ctx.getCurrentPage(), parent, ContentSeparation.TYPE, "");
+		if (ctx.getContextRequestLanguage().equals("fr")) {
+			parent = MacroHelper.addContentIfNotExist(ctx, ctx.getCurrentPage(), parent, Heading.TYPE, "depth=2\ntext=Gallerie");
+		} else {
+			parent = MacroHelper.addContentIfNotExist(ctx, ctx.getCurrentPage(), parent, Heading.TYPE, "depth=2\ntext=Gallery");
+		}		
 		parent = MacroHelper.addContentIfNotExist(ctx, ctx.getCurrentPage(), parent, Multimedia.TYPE, "%%0,16%" + folder + "%%%Images");
 		ContentService.getInstance(ctx.getGlobalContext()).getComponent(ctx, parent).setRenderer(ctx, "blocs");
 
