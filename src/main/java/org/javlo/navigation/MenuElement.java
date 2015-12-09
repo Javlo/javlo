@@ -3649,7 +3649,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 		while ((contentList.hasNext(ctxForceArea))) {
 			IContentVisualComponent component = contentList.next(ctxForceArea);
 			if (component != null) {
-				if (ctx.getCurrentTemplate().getAreas().contains(component.getArea())) {
+				if (ctx.getCurrentTemplate() == null || ctx.getCurrentTemplate().getAreas().contains(component.getArea())) {
 					if (!component.isEmpty(ctxForceArea) || (ctx.getCurrentTemplate() != null && ctx.getCurrentTemplate().isMailing())) {
 						if (!component.isRepeat() || withRepeat) {
 							empty = false;

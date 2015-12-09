@@ -15,7 +15,7 @@ public class ResourceHelperTest extends TestCase {
 	public void testIsTranformURL() throws Exception {
 		FakeHttpContext httpContext = FakeHttpContext.getInstance();		 
 		TestRequest request = httpContext.getRequest("http://demo.javlo.org/view/en/media.html?webaction=test");
-		request.setContextPath("context");
+		request.setContextPath("context");		
 		ContentContext ctx = ContentContext.getContentContext(request, httpContext.getResponse());		
 		assertTrue(ResourceHelper.isTransformURL(ctx, "/context/transform/free/template/zonea/static/gallery/image.jpg"));
 		assertFalse(ResourceHelper.isTransformURL(ctx, "/context/free/template/zonea/static/gallery/image.jpg"));		
