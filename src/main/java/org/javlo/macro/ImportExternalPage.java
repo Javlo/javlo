@@ -103,7 +103,7 @@ public class ImportExternalPage implements IInteractiveMacro, IAction {
 					System.out.println(e.getMessage());
 				}
 				if (localPrice < minPrice) {
-					finalPrice = ""+localPrice;
+					finalPrice = "" + localPrice;
 					minPrice = localPrice;
 				}
 			}
@@ -165,15 +165,14 @@ public class ImportExternalPage implements IInteractiveMacro, IAction {
 				if (StringHelper.isDigit(startDateStr.trim()) && endDateDate != null) {
 					Calendar endDateCal = Calendar.getInstance();
 					endDateCal.setTime(endDateDate);
-					startDateStr = startDateStr.trim()+" "+formatSuffix.format(endDateDate);
+					startDateStr = startDateStr.trim() + " " + formatSuffix.format(endDateDate);
 				}
 				Date startDateDate = format.parse(startDateStr);
 				startDate = StringHelper.renderDate(startDateDate);
 			} catch (Throwable e) {
 				e.printStackTrace();
 			}
-			
-	
+
 		}
 
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
@@ -191,17 +190,17 @@ public class ImportExternalPage implements IInteractiveMacro, IAction {
 		out.println("field.location.search=true");
 		out.println("field.title.type=h1");
 		out.println("field.photo.order=400");
-		out.println("field.location.order=700");		
-		out.println("field.location.value=" + data.get("Locatie"));		
+		out.println("field.location.order=700");
+		out.println("field.location.value=" + data.get("Locatie"));
 		out.println("field.photo.label=photo");
 		out.println("field.photo.value.file=" + image);
-		out.println("field.location.label=location");		
+		out.println("field.location.label=location");
 		out.println("field.location.label.nl=Locatie");
 		out.println("field.url.type=text");
 		out.println("field.photo.image.filter=bloc-6-6");
 		out.println("field.photo.value.folder=" + folder.replaceFirst("/images/", ""));
-		out.println("field.type.label.nl=Genre");		
-		out.println("field.code.search=true");		
+		out.println("field.type.label.nl=Genre");
+		out.println("field.code.search=true");
 		out.println("field.type.order=600");
 		out.println("field.url.order=800");
 		out.println("field.url.label.fr=r\u00E9server");
@@ -217,7 +216,7 @@ public class ImportExternalPage implements IInteractiveMacro, IAction {
 		out.println("field.type.type=text");
 		out.println("field.title.label=Title");
 		out.println("field.code.order=10");
-		out.println("field.location.type=text");		
+		out.println("field.location.type=text");
 
 		out.println("field.country.value=" + country);
 		out.println("field.country.type=open-list");
@@ -253,13 +252,17 @@ public class ImportExternalPage implements IInteractiveMacro, IAction {
 		out.println("field.enddate.value=" + endDate);
 
 		out.println("field.price.type=number");
-		out.println("field.price.label=Max Price (&euro;)");
-		out.println("field.price.label.fr=Budget max (&euro;)");
-		out.println("field.price.label.nl=Max Budgets (&euro;)");
+		out.println("field.price.label=From");
+		out.println("field.price.label.fr=A partir de");
+		out.println("field.price.label.nl=Vanaf");
+		out.println("field.price.label.search=Max Price (&euro;)");
+		out.println("field.price.label.search.fr=Budget max (&euro;)");
+		out.println("field.price.label.search.nl=Max Budgets (&euro;)");
+		
 		out.println("field.price.search=true");
 		out.println("field.price.search.type=<=");
 		out.println("field.price.order=650");
-		out.println("field.price.value="+finalPrice);
+		out.println("field.price.value=" + finalPrice);
 
 		out.println("component.list-renderer=/components/destination_list.jsp");
 		out.close();
@@ -268,7 +271,7 @@ public class ImportExternalPage implements IInteractiveMacro, IAction {
 		parent = MacroHelper.addContentIfNotExist(ctx, ctx.getCurrentPage(), parent, "destination", new String(outStream.toByteArray()));
 		IContentVisualComponent comp = content.getComponent(ctx, parent);
 		((DynamicComponent) comp).reloadProperties();
-		
+
 		parent = MacroHelper.addContentIfNotExist(ctx, ctx.getCurrentPage(), parent, WysiwygParagraph.TYPE, text);
 		parent = MacroHelper.addContentIfNotExist(ctx, ctx.getCurrentPage(), parent, ContentSeparation.TYPE, "");
 		if (ctx.getContextRequestLanguage().equals("fr")) {

@@ -2008,6 +2008,9 @@ public class Edit extends AbstractModuleAction {
 			return "page not found : " + path;
 		}
 		if (pageToBeMoved.getParent() != null) {
+			if (pageToBeMoved.getId().equals(ctx.getCurrentPage().getId())) {
+				return "you can't paste a page a page on him self.";
+			}
 			pageToBeMoved.moveToParent(ctx.getCurrentPage());
 			persistenceService.setAskStore(true);
 			String[][] balises = { { "path", path }, { "new-path", pageToBeMoved.getPath() } };

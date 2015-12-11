@@ -30,7 +30,7 @@ editCtx.setRenderMode(ContentContext.EDIT_MODE);
 	  <div class="value">${info.pageName}</div>
 	  <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
 	</button>
-</c:if> 
+</c:if>
 
 <c:if test="${fn:length(info.interactiveMacro)>0 || fn:length(info.macro)>0}">
 <h2><span class="glyphicon glyphicon-wrench" aria-hidden="true"></span>${i18n.edit['command.macro']}</h2>
