@@ -3,7 +3,7 @@
 <fieldset>
 <legend>Site</legend>
 <ul class="site">
-	<li><span class="label">ContextKey</span>${globalContext.contextKey}</li>	
+	<li><span class="label">ContextKey</span>${globalContext.contextKey}</li>
 	<c:if test="${empty lightInterface}"><li><span class="label">Folder</span>${globalContext.folder}</li></c:if>
 	<c:if test="${empty lightInterface}"><li><span class="label">User Factory</span>${globalContext.userFactoryClassName}</li></c:if>
 	<c:if test="${empty lightInterface}"><li><span class="label">Admin User Factory</span>${globalContext.adminUserFactoryClassName}</li></c:if>
@@ -14,12 +14,14 @@
 	<c:if test="${not empty threadManager && threadManager.countThread>0}">
 	<li><span class="label">#Thread : </span>${threadManager.countThread}</li>
 	<li><span class="label">Current Thread : </span>${threadManager.currentThreadName}</li>
-	</c:if>	
+	</c:if>
 </ul>
 </fieldset>
 <fieldset>
 <legend>Server</legend>
 <ul class="server">
+<li><span class="label">Revision : </span>${globalContext.staticConfig.sourceRevision}</li>
+<li><span class="label">Build : </span>${globalContext.staticConfig.buildTime}</li>
 <li><span class="label">Request/minute : </span>${globalCount.count} (${globalCount.average})</li>
 </ul>
 </fieldset>

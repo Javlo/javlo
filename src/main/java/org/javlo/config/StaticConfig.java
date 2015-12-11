@@ -20,6 +20,8 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
@@ -44,7 +46,7 @@ import org.javlo.user.User;
 import org.javlo.ztatic.FileCache;
 
 public class StaticConfig extends Observable {
-	
+
 	public static String WEB_PLATFORM = "web";
 	public static String MAILING_PLATFORM = "mailing";
 	private static final List<String> PLATFORMS = new LinkedList<String>(Arrays.asList(new String[] {WEB_PLATFORM, MAILING_PLATFORM}));
@@ -73,7 +75,7 @@ public class StaticConfig extends Observable {
 	private static final String KEY = StaticConfig.class.getName();
 
 	private static final String HOME = System.getProperty("user.home");
-	
+
 	private Set<String> excludeContextDomain = null;
 
 	/**
@@ -106,6 +108,10 @@ public class StaticConfig extends Observable {
 
 	private String staticConfigLocalisation;
 
+	private String sourceRevision;
+
+	private String buildTime;
+
 	private Class<IUserFactory> adminUserFactoryClass = null;
 
 	private AdminUserFactory admimUserFactory = null;
@@ -113,7 +119,7 @@ public class StaticConfig extends Observable {
 	private String adminUserFactoryClassName = "";
 
 	private Map<String, String> devices = null;
-	
+
 	private String encryptedFirstPassword = null;
 
 	public static final List<String> BASIC_MODULES = Arrays.asList(new String[] { "admin", "content", "file" });
@@ -142,7 +148,7 @@ public class StaticConfig extends Observable {
 					for (String element : userPasswordList) {
 						try {
 							String[] userPassword = element.split(",");
-							User user = new User(userPassword[0], userPassword[1]);							
+							User user = new User(userPassword[0], userPassword[1]);
 							logger.info("add edit user : " + user.getName());
 
 							editUsers.put(user.getName(), user);
@@ -184,7 +190,20 @@ public class StaticConfig extends Observable {
 					properties.setFile(file);
 					properties.load();
 				}
-				
+
+				{ // Load product version
+					String productVersion = webappProps.getProperty("product.version");
+					Pattern parser = Pattern.compile("Rev=(.*) BuildTime=(.*)");
+					Matcher m = parser.matcher(productVersion);
+					if (m.find()) {
+						sourceRevision = m.group(1);
+						buildTime = m.group(2);
+					} else {
+						sourceRevision = productVersion;
+						buildTime = null;
+					}
+				}
+
 			}
 			if (application != null) {
 				application.setAttribute(KEY, this);
@@ -193,6 +212,14 @@ public class StaticConfig extends Observable {
 			logger.log(Level.WARNING, "static config file location not found (" + staticConfigLocalisation + "), using default location inside webapp", e);
 		}
 
+	}
+
+	public String getSourceRevision() {
+		return sourceRevision;
+	}
+
+	public String getBuildTime() {
+		return buildTime;
 	}
 
 	public Level getAbstractComponentLogLevel() {
@@ -248,7 +275,7 @@ public class StaticConfig extends Observable {
 
 	/**
 	 * return the folder of data context.
-	 * 
+	 *
 	 * @return the folder of data context.
 	 */
 	public String getAllDataFolder() {
@@ -307,7 +334,7 @@ public class StaticConfig extends Observable {
 
 	/**
 	 * cache between two update for linked page (in second)
-	 * 
+	 *
 	 * @return a time in second.
 	 */
 	public int getCacheLinkedPage() {
@@ -443,7 +470,7 @@ public class StaticConfig extends Observable {
 	 * config the device. device config strucure : device.[device code].[config]
 	 * sample : device.phone = iphone device.phone = htc
 	 * device.phone.pointer-device = false
-	 * 
+	 *
 	 * @return
 	 */
 	public Map<String, String> getDevices() {
@@ -497,20 +524,20 @@ public class StaticConfig extends Observable {
 	public String getEnv() {
 		return properties.getString("deploy.env", "prod");
 	}
-	
+
 	public boolean isProd() {
 		return getEnv().equalsIgnoreCase("prod");
 	}
-	
+
 	public boolean isImageShortURL() {
 		return properties.getBoolean("image.short-url", false);
 	}
 
-	
+
 	public boolean testInstance() {
 		return getEnv().equals("dev") || getEnv().equals("local");
 	}
-	
+
 	/* mailing */
 
 	public String getErrorMailReport() {
@@ -520,7 +547,7 @@ public class StaticConfig extends Observable {
 	public String getFileFolder() {
 		return ElementaryURLHelper.mergePath(getStaticFolder(), getFileFolderName());
 	}
-	
+
 	public String getFileFolderName() {
 		return properties.getString("file-folder", "files");
 	}
@@ -666,10 +693,10 @@ public class StaticConfig extends Observable {
 	}
 
 	public String getLocalShareDataFolder() {
-		String path = properties.getString("local-share-folder", "/static/share-files");		
+		String path = properties.getString("local-share-folder", "/static/share-files");
 		return path;
 	}
-	
+
 	public boolean isCreateContentOnImportImage() {
 		return properties.getBoolean("import.image.content", false);
 	}
@@ -1039,7 +1066,7 @@ public class StaticConfig extends Observable {
 
 	/**
 	 * cancul account size of true. Account size is always -1 if false.
-	 * 
+	 *
 	 * @return
 	 */
 	public boolean isAccountSize() {
@@ -1077,7 +1104,7 @@ public class StaticConfig extends Observable {
 	public boolean isMailingAsContent() {
 		return properties.getBoolean("mailing.content", false);
 	}
-	
+
 	public boolean isMailingWidthUserInfo() {
 		return properties.getBoolean("mailing.users", true);
 	}
@@ -1085,7 +1112,7 @@ public class StaticConfig extends Observable {
 	public boolean isMailingThread() {
 		return StringHelper.isTrue(properties.getString("mailing.thread", "true"));
 	}
-	
+
 	public boolean isNotificationThread() {
 		return StringHelper.isTrue(properties.getString("noctification.thread", "true"));
 	}
@@ -1093,11 +1120,11 @@ public class StaticConfig extends Observable {
 	public boolean isPasswordEncryt() {
 		return properties.getBoolean("security.encrypt-password", true);
 	}
-	
+
 	public boolean isFirstPasswordMustBeChanged() {
 		return properties.getBoolean("security.change-password", true);
 	}
-	
+
 	public String getFirstPasswordEncryptedIfNeeded() {
 		if (encryptedFirstPassword == null) {
 			if (isPasswordEncryt()) {
@@ -1108,7 +1135,7 @@ public class StaticConfig extends Observable {
 		}
 		return encryptedFirstPassword;
 	}
-	
+
 	public String getFirstPassword() {
 		return properties.getString("security.first-password", "changeme");
 	}
@@ -1212,9 +1239,9 @@ public class StaticConfig extends Observable {
 	public String getSiteEmail() {
 		return properties.getString("site.email", "webmaster@javlo.org");
 	}
-	
+
 	public String getManualErrorEmail() {
-		return properties.getString("manual-error.email", getSiteEmail());		
+		return properties.getString("manual-error.email", getSiteEmail());
 	}
 
 
@@ -1262,23 +1289,23 @@ public class StaticConfig extends Observable {
 	public boolean isFixPreview() {
 		return properties.getBoolean("fix-preview", true);
 	}
-	
+
 	public List<String> getPlatformTypes() {
 		return PLATFORMS;
 	}
-	
+
 	public String getPlatformType() {
 		return properties.getString("platform.type", WEB_PLATFORM);
 	}
-	
+
 	public String getPlatformTitle() {
 		return properties.getString("platform.title", "Javlo");
 	}
-	
+
 	public String get404PageName() {
 		return properties.getString("404-name", "404");
 	}
-	
+
 	/**
 	 * if page not found, search a page with the same name and redirect to it.
 	 * @return
@@ -1286,11 +1313,11 @@ public class StaticConfig extends Observable {
 	public boolean isRedirectWidthName() {
 		return properties.getBoolean("url.redirect-width-name", true);
 	}
-	
+
 	public String getEditTemplateFolder() {
 		return properties.getString("edit-template.folder", "/jsp/edit/template/mandy-lane-premium-flat");
 	}
-	
+
 	/**
 	 * default mode of the edit template (mode is defined in GlobalContext), can be used in template renderer for include special css or js.
 	 * preview css is : edit_preview_[mode].css
@@ -1310,21 +1337,21 @@ public class StaticConfig extends Observable {
 	 * @return
 	 */
 	public int getTimeBetweenChangeNotification() {
-		return Integer.parseInt(properties.getString("time-between-change-notification", ""+5*60)); 
+		return Integer.parseInt(properties.getString("time-between-change-notification", "" + 5 * 60));
 	}
-	
+
 	public String getApplicationLogin() {
 		return properties.getString("security.application-login", null);
 	}
-	
+
 	public String getApplicationPassword() {
 		return properties.getString("security.application-password", null);
 	}
-	
+
 	public String getPasswordRegularExpression() {
 		return properties.getString("security.password.regular-expression", "...+");
 	}
-	
+
 	/**
 	 * all image uploaded was resize under this max-size
 	 * @return
@@ -1332,11 +1359,11 @@ public class StaticConfig extends Observable {
 	public int getImageMaxWidth() {
 		return properties.getInt("image.max-width", 0);
 	}
-	
+
 	public boolean isUndo() {
 		return properties.getBoolean("function.undo", true);
 	}
-	
+
 	public boolean isExcludeContextDomain(String domain) {
 		if (excludeContextDomain == null) {
 			excludeContextDomain = new HashSet<String>();
@@ -1344,7 +1371,7 @@ public class StaticConfig extends Observable {
 			if (hostNames != null && hostNames.trim().length() > 0) {
 				hostNames = hostNames.trim();
 				excludeContextDomain.addAll(StringHelper.stringToCollection(hostNames, ","));
-			}			
+			}
 		}
 		return excludeContextDomain.contains(domain);
 	}
@@ -1356,59 +1383,59 @@ public class StaticConfig extends Observable {
 	public String getSearchEngineLucenePattern() {
 		return properties.getString("searchengine.lucene.pattern", "level3:{QUERY}^3 level2:{QUERY}^2 level1:{QUERY}^1").trim();
 	}
-	
+
 	public String getDropboxAppKey() {
-		return properties.getString("dropbox.app-key", null);		
+		return properties.getString("dropbox.app-key", null);
 	}
 
-	public String getDropboxAppSecret() {		
+	public String getDropboxAppSecret() {
 		return properties.getString("dropbox.app-secret", null);
 	}
-	
-	public String getPreviewCommandFilePath() {		
+
+	public String getPreviewCommandFilePath() {
 		return properties.getString("preview.command-file", "/jsp/preview/command.jsp");
 	}
-	
-	public String getTimeTravelerFilePath() {		
+
+	public String getTimeTravelerFilePath() {
 		return properties.getString("preview.timetraveler-file", "/jsp/time-traveler/command.jsp");
 	}
-	
+
 	public String getCssPreview() {
 		return properties.getString("preview.css", "/css/preview/edit_preview.css");
 	}
-	
+
 	public String getJSPreview() {
 		return properties.getString("preview.js", "/js/preview/edit_preview.js");
 	}
-	
+
 	public String getStaticResourceCacheTime() {
 		return properties.getString("resources.cache-time", "240");
 	}
-	
+
 	public String getJSLibPreview() {
-		return properties.getString("preview.lib.js", null);		
+		return properties.getString("preview.lib.js", null);
 	}
-	
+
 	public Boolean isTracked() {
-		return StringHelper.isTrue(properties.getString("tracked", null), true);		
+		return StringHelper.isTrue(properties.getString("tracked", null), true);
 	}
-	
+
 	public String getDefaultParentEditableTemplate() {
-		return properties.getString("template.editable.parent", "editable");		
+		return properties.getString("template.editable.parent", "editable");
 	}
-	
-	public boolean isSharedImportDocument() {		
+
+	public boolean isSharedImportDocument() {
 		return StringHelper.isTrue(properties.getString("shared.import-document", null), true);
 	}
-	
+
 	public boolean isIntegrityCheck() {
 		return StringHelper.isTrue(properties.getString("content.integrity-checker", null), false);
 	}
-	
+
 	public boolean isEditOnCreate() {
 		return StringHelper.isTrue(properties.getString("content.edit-on-create", null), false);
 	}
-	
+
 	public String getSpecialLogFile() {
 		return properties.getString("debug.special-file", "/tmp/javlo.log");
 	}
