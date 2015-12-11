@@ -498,6 +498,14 @@ public class Field implements Cloneable, IRestItem {
 		}
 		return outValue;
 	}
+	
+	public String getPropertyValue(String suffix, String defaultValue) {
+		return properties.getProperty("field." + getUnicName() + '.' + suffix, defaultValue);
+	}
+	
+	public String getSearchType() {
+		return getPropertyValue("search.type", "default");
+	}
 
 	public String getFieldSuffix(ContentContext ctx) {
 		return properties.getProperty("field." + getUnicName() + ".suffix", "");

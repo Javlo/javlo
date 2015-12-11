@@ -92,7 +92,7 @@ public class ImportExternalPage implements IInteractiveMacro, IAction {
 		String finalPrice = "";
 		int minPrice = Integer.MAX_VALUE;
 		for (Element price : doc.select(".para .right strong")) {
-			String cleanPrice = price.text().replace('€', ' ').trim();
+			String cleanPrice = price.text().replace('â‚¬', ' ').trim();
 			if (StringHelper.isLikeNumber(cleanPrice)) {
 				int localPrice = 0;
 				try {
@@ -259,7 +259,7 @@ public class ImportExternalPage implements IInteractiveMacro, IAction {
 		String finalPrice = "";
 		int minPrice = Integer.MAX_VALUE;
 		for (Element price : doc.select(".para .right strong")) {
-			String cleanPrice = price.text().replace('€', ' ').trim();
+			String cleanPrice = price.text().replace('â‚¬', ' ').trim();
 			if (StringHelper.isLikeNumber(cleanPrice)) {
 				int localPrice = Integer.parseInt(cleanPrice);
 				if (localPrice < minPrice) {
