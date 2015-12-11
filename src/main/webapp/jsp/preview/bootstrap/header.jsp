@@ -217,6 +217,7 @@
 					</c:url>
 					<form>
 						<div class="btn-group">
+						<c:if test="${userInterface.sendMailing}">
 						<c:set var="tooltip" value="" />
 						<c:if test="${i18n.edit['command.mailing.tooltip'] != 'command.mailing.tooltip'}">
 							<c:set var="tooltip" value='data-toggle="tooltip" data-placement="left" title="${i18n.edit[\'command.mailing.tooltip\']}"' />
@@ -227,6 +228,7 @@
 							onclick="editPreview.openModal('${i18n.edit['preview.label.mailing']}','${url}'); return false;">
 							<span class="glyphicon glyphicon-send" aria-hidden="true"></span><span class="text">${i18n.edit['preview.label.mailing']}</span>
 						</button>
+						</c:if>
 					<c:url var="url" value="<%=URLHelper.createURL(editCtx)%>"
 						context="/">
 						<c:param name="module" value="mailing"></c:param>

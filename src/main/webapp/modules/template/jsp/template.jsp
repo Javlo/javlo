@@ -9,7 +9,7 @@
             <c:if test="${not empty param.previewEdit}">
             
              	<c:url value="${info.currentURL}" var="selectURL" context="/">
-                    	<c:param name="webaction" value="selectTemplate" />
+                    	<c:param name="webaction" value="template.selectTemplate" />
                     	<c:param name="templateid" value="${template.name}" />
                 </c:url>  
             

@@ -86,7 +86,7 @@ public class DynamicComponentFilter extends AbstractPropertiesComponent implemen
 		out.println("<div class=\"fields panel-body\"><input type=\"hidden\" name=\"webaction\" value=\"" + getActionGroupName() + ".filter\" />");
 		out.println("<input type=\"hidden\" name=\"" + IContentVisualComponent.COMP_ID_REQUEST_PARAM + "\" value=\"" + getId() + "\">");
 		for (Field field : (List<Field>) ctx.getRequest().getAttribute("fields")) {
-			out.println(field.getEditXHTMLCode(ctx));
+			out.println(field.getSearchEditXHTMLCode(ctx));
 		}
 		I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
 		out.println("<div class=\"action\"><input type=\"submit\" class=\"btn btn-default\" name=\"filter\" value=\"" + i18nAccess.getViewText("global.ok") + "\" /></div>");

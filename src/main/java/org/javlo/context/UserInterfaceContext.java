@@ -5,8 +5,11 @@ import java.util.logging.Logger;
 
 import javax.servlet.http.HttpSession;
 
+import org.javlo.helper.LocalLogger;
 import org.javlo.helper.StringHelper;
+import org.javlo.mailing.MailConfig;
 import org.javlo.module.core.IMainModuleName;
+import org.javlo.module.mailing.MailingModuleContext;
 import org.javlo.user.AdminUserFactory;
 import org.javlo.user.AdminUserSecurity;
 import org.javlo.user.IUserInfo;
@@ -28,6 +31,8 @@ public class UserInterfaceContext {
 	
 	private boolean mailing = false;
 	
+	private boolean sendMailing = true;
+	
 	private boolean ticket = false;
 
 	private String currentModule = null;
@@ -40,14 +45,17 @@ public class UserInterfaceContext {
 		UserInterfaceContext instance = (UserInterfaceContext) session.getAttribute(KEY);
 		AdminUserFactory userFact = AdminUserFactory.createUserFactory(globalContext, session);
 		User user = userFact.getCurrentUser(session);
-
 		if (instance == null || instance.globalContext != globalContext) {			
 			if (userFact == null || user == null) {
 				return FAKE_INSTACE;
 			}
 			instance = new UserInterfaceContext();
 			instance.session = session;
-			instance.globalContext = globalContext;
+			instance.globalContext = globalContext;			
+			MailConfig config = new MailConfig(globalContext, globalContext.getStaticConfig(), null);
+			if (StringHelper.isEmpty(config.getSMTPHost()) || config.getSMTPPort() == null || config.getSMTPPort().equals("0")) {
+				instance.sendMailing = false;
+			}			
 			if (globalContext.getModules().contains(IMainModuleName.MAILING) && AdminUserSecurity.getInstance().canRole(user, AdminUserSecurity.MAILING_ROLE)) {
 				instance.mailing = true;
 			} else {
@@ -58,9 +66,7 @@ public class UserInterfaceContext {
 			} else {
 				instance.setTicket(false);
 			}
-
 			instance.fromString(user.getUserInfo().getInfo());
-
 			session.setAttribute(KEY, instance);
 		}
 
@@ -149,6 +155,14 @@ public class UserInterfaceContext {
 	
 	public boolean isPreviewResourcesTab() {
 		return globalContext.getModules().contains(IMainModuleName.SHARED_CONTENT);
+	}
+
+	public boolean isSendMailing() {
+		return sendMailing;
+	}
+
+	public void setSendMailing(boolean sendMailing) {
+		this.sendMailing = sendMailing;
 	}
 	
 }

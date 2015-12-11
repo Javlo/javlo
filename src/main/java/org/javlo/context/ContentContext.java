@@ -952,6 +952,10 @@ public class ContentContext {
 	public boolean isAsViewMode() {
 		return getRenderMode() == VIEW_MODE || getRenderMode() == TIME_MODE;
 	}
+	
+	public boolean isVisualMode() {
+		return isAsViewMode() || isAsPreviewMode();
+	}
 
 	/**
 	 * true if the current request must be tracked.

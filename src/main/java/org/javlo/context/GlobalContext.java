@@ -492,7 +492,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 
 	public void initExternalService(ContentContext ctx) {
 		if (!externalServiceInitalized) {
-			synchronized (externalServiceInitalized) {
+			synchronized (this) {
 				if (!externalServiceInitalized) {
 					externalServiceInitalized = true;
 					// put here code to initialize external services

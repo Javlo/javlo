@@ -196,7 +196,7 @@ public class Field implements Cloneable, IRestItem {
 	private Map<String, String> keyValue = null;
 	private Map<String, String> replacementCode = null;
 	private Locale currentLocale = null;
-	private IContentVisualComponent comp = null;
+	protected IContentVisualComponent comp = null;
 
 	/**
 	 * Filed can only be create with FieldFactory
@@ -284,7 +284,7 @@ public class Field implements Cloneable, IRestItem {
 		} else {
 			return getName() + '-' + getId();
 		}
-	}
+	}	
 
 	public String getInputLabelName() {
 		return getName() + "-label-" + getId();
@@ -398,6 +398,10 @@ public class Field implements Cloneable, IRestItem {
 
 		out.close();
 		return writer.toString();
+	}
+	
+	public String getSearchEditXHTMLCode(ContentContext ctx) throws Exception {
+		return getEditXHTMLCode(ctx);
 	}
 
 	public String getFieldPrefix(ContentContext ctx) {
@@ -539,6 +543,14 @@ public class Field implements Cloneable, IRestItem {
 			key = createKey("value-" + getCurrentLocale());
 		}
 		return properties.getProperty(key);
+	}
+	
+	public Collection<String> getValues() {
+		return StringHelper.stringToCollection(getValue(), ",");
+	}
+	
+	protected void setValue(Collection<String> values) {
+		setValue(StringHelper.collectionToString(values));
 	}
 
 	public boolean isSearch() {

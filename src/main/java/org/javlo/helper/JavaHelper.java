@@ -14,10 +14,10 @@ import java.util.Map.Entry;
  */
 public class JavaHelper {
 
-	public static class MapEntriesSortOnValue implements Comparator<Map.Entry<Comparable, Comparable>> {
+	public static class MapEntriesSortOnValue implements Comparator<Map.Entry<? extends Comparable, ? extends Comparable>> {
 
 		@Override
-		public int compare(Entry<Comparable, Comparable> o1, Entry<Comparable, Comparable> o2) {
+		public int compare(Entry<? extends Comparable, ? extends Comparable> o1, Entry<? extends Comparable, ? extends Comparable> o2) {
 			return o1.getValue().compareTo(o2.getValue());
 		}
 

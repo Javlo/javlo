@@ -77,13 +77,14 @@ public class ImportExternalPage implements IInteractiveMacro, IAction {
 		if (title.contains(",")) {
 			title = title.substring(0, title.indexOf(','));
 		}
-		String where = doc.select("h2 strong").text();
+		String where = doc.select("h2 strong").text();		
+		
 		String code = doc.select("#id_form-0-product_id").text();
 		String description = null;
 		String text = "";
 		for (Element paragraph : doc.select("#leftCntr p")) {
 			if (description == null) {
-				description = paragraph.text();				
+				description = paragraph.text();
 			} else {
 				text = text + "<p>" + paragraph.text() + "</p>";
 			}
@@ -100,7 +101,7 @@ public class ImportExternalPage implements IInteractiveMacro, IAction {
 					System.out.println(e.getMessage());
 				}
 				if (localPrice < minPrice) {
-					finalPrice = "&euro; "+localPrice;
+					finalPrice = "&euro; " + localPrice;
 					minPrice = localPrice;
 				}
 			}
@@ -124,6 +125,14 @@ public class ImportExternalPage implements IInteractiveMacro, IAction {
 		System.out.println("Genre=" + data.get("Genre"));
 		System.out.println("Locatie=" + data.get("Locatie"));
 		System.out.println("images :");
+		
+		String country = data.get("Waar?");
+		String city = "";
+		if (country.contains(",")) {
+			city = StringHelper.stringToArray(country, ",")[0];
+			country = StringHelper.stringToArray(country, ",")[1];				
+		}
+		
 		for (String img : images) {
 			System.out.println("   " + img);
 		}
@@ -143,24 +152,22 @@ public class ImportExternalPage implements IInteractiveMacro, IAction {
 		}
 
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-		PrintStream out = new PrintStream(outStream);
-		out.println("field.where.value=" + where);
-		out.println("field.code.value=" + code);
+		PrintStream out = new PrintStream(outStream);		
+		
 		out.println("component.renderer=/components/destination.jsp");
-		out.println("component.type=destination");
-		out.println("field.code.label=code");
-		out.println("field.where.label=Where?");
+		out.println("component.type=destination");				
 		out.println("component.label=destination");
+		out.println("image.priority=9");
+		out.println("field.code.label=code");
+		out.println("field.code.value=" + code);
 		out.println("field.location.label.fr=Localisation");
 		out.println("field.type.label.fr=Genre");
 		out.println("field.title.search=true");
-		out.println("field.date.label.nl=Wanner?");
-		out.println("image.priority=9");
+		out.println("field.date.label.nl=Wanner?");		
 		out.println("field.location.search=true");
 		out.println("field.date.type=text");
 		out.println("field.title.type=text");
-		out.println("field.photo.order=400");
-		out.println("field.where.type=text");
+		out.println("field.photo.order=400");		
 		out.println("field.location.order=700");
 		out.println("field.price.type=text");
 		out.println("field.location.value=" + data.get("Locatie"));
@@ -168,14 +175,13 @@ public class ImportExternalPage implements IInteractiveMacro, IAction {
 		out.println("field.date.order=200");
 		out.println("field.photo.label=photo");
 		out.println("field.photo.value.file=" + image);
-		out.println("field.location.label=location");
-		out.println("field.where.label.fr=O\u00F9?");
+		out.println("field.location.label=location");		
 		out.println("field.price.order=650");
 		out.println("field.date.value=" + data.get("Wanneer?"));
 		out.println("field.location.label.nl=Locatie");
 		out.println("field.url.type=text");
 		out.println("field.photo.image.filter=bloc-6-6");
-		out.println("field.photo.value.folder="+folder.replaceFirst("/images/", ""));
+		out.println("field.photo.value.folder=" + folder.replaceFirst("/images/", ""));
 		out.println("field.date.label=When?");
 		out.println("field.type.label.nl=Genre");
 		out.println("field.price.value=" + finalPrice);
@@ -187,8 +193,7 @@ public class ImportExternalPage implements IInteractiveMacro, IAction {
 		out.println("field.url.label.fr=r\u00E9server");
 		out.println("field.title.order=100");
 		out.println("field.url.value=" + url + "#tickets");
-		out.println("field.type.value=" + data.get("Genre"));
-		out.println("field.where.search=true");
+		out.println("field.type.value=" + data.get("Genre"));		
 		out.println("field.type.label=type");
 		out.println("field.url.label=book");
 		out.println("field.photo.type=image");
@@ -196,19 +201,34 @@ public class ImportExternalPage implements IInteractiveMacro, IAction {
 		out.println("field.code.type=text");
 		out.println("field.code.i18n=false");
 		out.println("field.type.type=text");
-		out.println("field.title.label=Title");
-		out.println("field.where.label.nl=Waar?");
-		out.println("field.code.order=10");
-		out.println("field.where.order=150");
+		out.println("field.title.label=Title");		
+		out.println("field.code.order=10");		
 		out.println("field.date.search=true");
 		out.println("field.location.type=text");
 		out.println("field.price.label.fr=\u00E0 partir de");
+
+		out.println("field.country.value="+country);
+		out.println("field.country.type=open-list");
+		out.println("field.country.label=Country");
+		out.println("field.country.label.fr=Pays");
+		out.println("field.country.label.nl=Land");
+		out.println("field.country.search=true");
+		out.println("field.country.order=150");
+
+		out.println("field.city.value="+city);
+		out.println("field.city.type=text");
+		out.println("field.city.label=City");
+		out.println("field.city.label.fr=Ville");
+		out.println("field.city.label.nl=Stad");
+		out.println("field.city.search=true");
+		out.println("field.city.order=170");
+
 		out.println("component.list-renderer=/components/destination_list.jsp");
 		out.close();
 
 		String parent = MacroHelper.addContentIfNotExist(ctx, ctx.getCurrentPage(), "0", "destination", new String(outStream.toByteArray()));
 		IContentVisualComponent comp = content.getComponent(ctx, parent);
-		((DynamicComponent) comp).reloadProperties();		
+		((DynamicComponent) comp).reloadProperties();
 		parent = MacroHelper.addContentIfNotExist(ctx, ctx.getCurrentPage(), parent, Description.TYPE, description);
 		parent = MacroHelper.addContentIfNotExist(ctx, ctx.getCurrentPage(), parent, WysiwygParagraph.TYPE, text);
 		parent = MacroHelper.addContentIfNotExist(ctx, ctx.getCurrentPage(), parent, ContentSeparation.TYPE, "");
@@ -216,7 +236,7 @@ public class ImportExternalPage implements IInteractiveMacro, IAction {
 			parent = MacroHelper.addContentIfNotExist(ctx, ctx.getCurrentPage(), parent, Heading.TYPE, "depth=2\ntext=Gallerie");
 		} else {
 			parent = MacroHelper.addContentIfNotExist(ctx, ctx.getCurrentPage(), parent, Heading.TYPE, "depth=2\ntext=Gallery");
-		}		
+		}
 		parent = MacroHelper.addContentIfNotExist(ctx, ctx.getCurrentPage(), parent, Multimedia.TYPE, "%%0,16%" + folder + "%%%Images");
 		ContentService.getInstance(ctx.getGlobalContext()).getComponent(ctx, parent).setRenderer(ctx, "blocs");
 
@@ -248,10 +268,6 @@ public class ImportExternalPage implements IInteractiveMacro, IAction {
 				}
 			}
 		}
-		System.out.println("***** ImportExternalPage.main : finalPrice = " + finalPrice); // TODO:
-																							// remove
-																							// debug
-																							// trace
 
 		Elements factBox = doc.select(".factBox li");
 		Map<String, String> data = new HashMap<String, String>();
