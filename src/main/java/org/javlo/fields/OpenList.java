@@ -2,7 +2,6 @@ package org.javlo.fields;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -34,9 +33,9 @@ public class OpenList extends Field {
 	public Map<String, String> getList(ContentContext ctx) throws Exception {
 		Map<String, String> outList = new HashMap<String, String>();
 		ContentService content = ContentService.getInstance(ctx.getRequest());
-		for (IContentVisualComponent comp : content.getComponentByType(ctx, comp.getType())) {
-			if (comp instanceof DynamicComponent) {
-				DynamicComponent dynComp = (DynamicComponent) comp;
+		for (IContentVisualComponent component : content.getComponentByType(ctx, comp.getType())) {
+			if (component instanceof DynamicComponent) {
+				DynamicComponent dynComp = (DynamicComponent) component;
 				if (dynComp.getField(ctx, getName()) != null) {
 					String val = dynComp.getField(ctx, getName()).getValue();
 					if (val != null) {
