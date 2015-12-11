@@ -17,7 +17,6 @@ import org.javlo.context.GlobalContext;
 import org.javlo.fields.Field;
 import org.javlo.fields.IFieldContainer;
 import org.javlo.helper.ComponentHelper;
-import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.helper.XHTMLHelper;
 import org.javlo.i18n.I18nAccess;
@@ -115,10 +114,9 @@ public class DynamicComponentFilter extends AbstractPropertiesComponent implemen
 				boolean display = true;
 				List<Field> fields = container.getFields(ctx);
 				for (Field field : fields) {
-					Field searchField = fieldsSearch.get(field.getName());
-					String value = StringHelper.neverNull(field.getValue());
+					Field searchField = fieldsSearch.get(field.getName());					
 					if (searchField != null && searchField.getValue() != null && searchField.getValue().trim().length() > 0) {
-						if (!value.toLowerCase().contains(searchField.getValue().toLowerCase().trim())) {
+						if (!field.search(ctx,searchField.getValue().trim())) {
 							display = false;
 						}
 					}

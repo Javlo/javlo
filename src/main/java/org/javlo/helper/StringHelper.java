@@ -2065,7 +2065,7 @@ public class StringHelper {
 		} else {
 			dateFormat = DateFormat.getDateInstance(DateFormat.FULL, new Locale(ctx.getContextRequestLanguage()));
 		}
-
+		
 		return dateFormat.format(date);
 	}
 

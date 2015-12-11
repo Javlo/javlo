@@ -442,10 +442,6 @@ public class FileAction extends AbstractModuleAction {
 
 	public static String performDelete(GlobalContext globalContext, RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws IOException {
 		String filePath = rs.getParameter("file", null);
-		System.out.println("***** FileAction.performDelete : filePath = " + filePath); // TODO:
-																						// remove
-																						// debug
-																						// trace
 		if (filePath == null) {
 			return "bad request structure : need file parameter.";
 		} else {

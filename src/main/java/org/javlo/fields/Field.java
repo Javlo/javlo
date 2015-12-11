@@ -4,6 +4,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -24,6 +25,7 @@ import org.javlo.context.GlobalContext;
 import org.javlo.data.rest.IRestItem;
 import org.javlo.helper.BeanHelper;
 import org.javlo.helper.ComponentHelper;
+import org.javlo.helper.JavaHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.XHTMLHelper;
 import org.javlo.i18n.I18nAccess;
@@ -35,6 +37,8 @@ import org.javlo.service.RequestService;
 import org.javlo.service.ReverseLinkService;
 
 public class Field implements Cloneable, IRestItem {
+	
+	protected static final String DEFAULT_SEARCH_TYPE = "default";
 
 	public class FieldBean {
 
@@ -504,7 +508,7 @@ public class Field implements Cloneable, IRestItem {
 	}
 	
 	public String getSearchType() {
-		return getPropertyValue("search.type", "default");
+		return getPropertyValue("search.type", DEFAULT_SEARCH_TYPE);
 	}
 
 	public String getFieldSuffix(ContentContext ctx) {
@@ -677,6 +681,21 @@ public class Field implements Cloneable, IRestItem {
 			label = i18nAccess.getAllText(key.trim(), label);
 		}
 
+		return label;
+	}
+	
+	protected String getSearchLabel(Locale locale) {
+		String label = properties.getProperty(createKey("label.search." + locale.getLanguage()));
+		if (label == null) {
+			label = properties.getProperty(createKey("label.search."));
+			if (label == null) {
+				label = getLabel(locale);
+			}
+		}
+		String key = properties.getProperty(createKey("label.search.key"));
+		if (key != null) {
+			label = i18nAccess.getAllText(key.trim(), label);
+		}
 		return label;
 	}
 
@@ -904,6 +923,49 @@ public class Field implements Cloneable, IRestItem {
 		}		
 	}
 	
+	public String renderSelect(ContentContext ctx, String label, String inValue, Map<String,String> inValues, boolean sort) throws Exception {
+		StringWriter writer = new StringWriter();
+		PrintWriter out = new PrintWriter(writer);
+		Map<String,String> valuesMap = inValues;				
+		List<Map.Entry<String, String>> values = new LinkedList(valuesMap.entrySet());
+		if (sort) {
+			Collections.sort(values, new JavaHelper.MapEntriesSortOnValue());
+		}
+		if (label == null) {
+			label = getLabel(new Locale(ctx.getContextRequestLanguage()));
+		}
+
+		out.println("<div class=\"form-group\">");
+		out.println(getEditLabelCode());
+		out.println("<div class=\"row\"><div class=\"col-sm-3\"><label for=\"" + getInputName() + "\">" + label + " : </label></div>");
+		out.println("<div class=\"col-sm-9\"><select class=\"form-control\" id=\"" + getInputName() + "\" name=\"" + getInputName() + "\" value=\"" + StringHelper.neverNull(getValue()) + "\">");
+ 
+		for (Map.Entry<String, String> value : values) {
+			String selected = "";
+			if (getValue() != null) {
+				if (getValue().equals(value.getKey())) {
+					selected = " selected=\"selected\"";
+				}
+			}
+			if (value.getKey() != null) {
+				out.println("		<option value=\"" + value.getKey() + "\"" + selected + ">" + value.getValue() + "</option>");
+			} else {
+				out.println("		<option" + selected + ">" + value.getValue() + "</option>");
+			}
+		}
+
+		out.println("	</select>");
+		if (getMessage() != null && getMessage().trim().length() > 0) {
+			out.println("	<div class=\"message " + getMessageTypeCSSClass() + "\">" + getMessage() + "</div>");
+		}
+		out.println("</div>");
+		
+		out.println("</div></div>");
+
+		out.close();
+		return writer.toString();
+	}
+	
 	public boolean isRealContent(ContentContext ctx) {
 		return getValue() != null && getValue().trim().length() > 0;
 	}
@@ -912,6 +974,8 @@ public class Field implements Cloneable, IRestItem {
 	public Map<String, Object> getContentAsMap(ContentContext ctx) throws Exception {
 		return BeanHelper.bean2Map(newFieldBean(ctx));
 	}
-
-
+	
+	public boolean search(ContentContext ctx, String query) {
+		return getValue().toLowerCase().contains(query.toLowerCase().trim());
+	}
 }
