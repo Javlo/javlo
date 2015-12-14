@@ -21,6 +21,8 @@ public class RestContainerFactory {
 			factories.put(fact.getName(), fact);
 			fact = new ComponentRestFactory();
 			factories.put(fact.getName(), fact);
+			fact = new ThreadRunRest();
+			factories.put(fact.getName(), fact);
 		}
 		return factories;
 	}

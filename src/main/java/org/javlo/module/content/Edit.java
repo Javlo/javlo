@@ -1447,7 +1447,7 @@ public class Edit extends AbstractModuleAction {
 				// MessageRepository.getInstance(ctx).setGlobalMessage(new
 				// GenericMessage(msg, GenericMessage.INFO));
 
-				SynchroHelper.performSynchro(application, staticConfig, globalContext);
+				SynchroHelper.performSynchro(ctx);
 
 				NavigationService navigationService = NavigationService.getInstance(globalContext);
 				navigationService.clearAllViewPage();
@@ -2011,8 +2011,11 @@ public class Edit extends AbstractModuleAction {
 			if (pageToBeMoved.getId().equals(ctx.getCurrentPage().getId())) {
 				return "you can't paste a page a page on him self.";
 			}
+			
 			pageToBeMoved.moveToParent(ctx.getCurrentPage());
+			pageToBeMoved.setPriority(1);			
 			persistenceService.setAskStore(true);
+			editContext.setPathForCopy(null);
 			String[][] balises = { { "path", path }, { "new-path", pageToBeMoved.getPath() } };
 			String msg = i18nAccess.getText("navigation.move", balises);
 			MessageRepository.getInstance(ctx).setGlobalMessage(new GenericMessage(msg, GenericMessage.INFO));
@@ -2122,8 +2125,8 @@ public class Edit extends AbstractModuleAction {
 		return null;
 	}
 
-	public static String performRefresh(StaticConfig staticConfig, ServletContext application, GlobalContext globalContext) throws Exception {
-		SynchroHelper.performSynchro(application, staticConfig, globalContext);
+	public static String performRefresh(ContentContext ctx) throws Exception {
+		SynchroHelper.performSynchro(ctx);
 		return null;
 	}
 }

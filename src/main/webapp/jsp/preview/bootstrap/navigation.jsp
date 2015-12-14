@@ -14,7 +14,7 @@
 	<c:if test="${not empty info.parent}">
 		<c:if test="${page.url eq info.currentURL}"><c:if test="${!page.trash}"><c:set var="asTitle" value="true" />		
 			<li class="parent title">
-				<c:if test="${not empty info.contextForCopy}"><a title="${i18n.edit['navigation.insert-page']}" class="paste-page" href="${pasteURL}"><span class="glyphicon glyphicon-collapse-down" aria-hidden="true"></span></a></c:if>
+				<c:if test="${not empty info.contextForCopy && (child.url eq info.currentURL)}"><a title="${i18n.edit['navigation.insert-page']}" class="paste-page" href="${pasteURL}"><span class="glyphicon glyphicon-collapse-down" aria-hidden="true"></span></a></c:if>
 				<span><a class="draggable" id="page-${info.parent.name}" href="${info.parent.url}">${info.parent.info.title}</a></span>			
 			</li></c:if>
 		</c:if>

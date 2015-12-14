@@ -12,6 +12,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.SequenceInputStream;
 import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.net.URLEncoder;
 import java.util.Collections;
 import java.util.Comparator;
@@ -29,10 +31,13 @@ import javax.servlet.ServletContext;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
+import org.javlo.helper.NetHelper;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
+import org.javlo.service.PersistenceService;
 import org.javlo.service.syncro.exception.SynchroNonFatalException;
+import org.javlo.servlet.SynchronisationServlet;
 import org.javlo.thread.AbstractThread;
 
 public class SynchroHelper {
@@ -294,11 +299,35 @@ public class SynchroHelper {
 		return path;
 	}
 	
-	public static String performSynchro(ServletContext application, StaticConfig staticConfig, GlobalContext globalContext) throws Exception {
-		if (globalContext.getDMZServerIntra() != null) {
+	public static void deletedRemoteCacheFile(ContentContext ctx, String fileName) {
+		String url = URLHelper.mergePath(ctx.getGlobalContext().getDMZServerIntra().toString(), BaseSynchroService.SERVLET_RELATIVE_PATH, SynchronisationServlet.CLEAR_CACHE_SPECIAL_FILE_NAME);
+		url = URLHelper.addParam(url, "file", fileName);
+		url = URLHelper.addParam(url, SynchronisationServlet.SHYNCRO_CODE_PARAM_NAME, ctx.getGlobalContext().getStaticConfig().getSynchroCode());
+		try {
+			NetHelper.readPageGet(new URL(url));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * launch synchronization 
+	 * @param application
+	 * @param staticConfig
+	 * @param globalContext
+	 * @return id of the thread
+	 * @throws Exception
+	 */
+	public static String performSynchro(ContentContext ctx) throws Exception {		
+		GlobalContext globalContext = ctx.getGlobalContext();		
+		PersistenceService.getInstance(globalContext).store(ctx);
+		StaticConfig staticConfig = globalContext.getStaticConfig();
+		ServletContext application = ctx.getRequest().getSession().getServletContext();
+		if (globalContext.getDMZServerIntra() != null) {			
 			SynchroThread synchro = (SynchroThread) AbstractThread.createInstance(staticConfig.getThreadFolder(), SynchroThread.class);
 			synchro.initSynchronisationThread(staticConfig, globalContext, application);
 			synchro.store();
+			return synchro.getId();
 		}
 		return null;
 	}

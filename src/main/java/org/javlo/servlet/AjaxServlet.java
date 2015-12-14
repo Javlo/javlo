@@ -132,8 +132,8 @@ public class AjaxServlet extends HttpServlet {
 				DebugListening.getInstance().sendError(request, t, "path=" + request.getRequestURI());
 			} finally {
 				PersistenceService persistenceService = PersistenceService.getInstance(globalContext);
-				String persistenceParam = rs.getParameter(AccessServlet.PERSISTENCE_PARAM, null);
-				if (persistenceService.isAskStore() && StringHelper.isTrue(persistenceParam, true)) {
+				String persistenceParam = rs.getParameter(AccessServlet.PERSISTENCE_PARAM, null);				
+				if (persistenceService.isAskStore() && StringHelper.isTrue(persistenceParam, true)) {					
 					persistenceService.store(ctx);
 				}
 			}

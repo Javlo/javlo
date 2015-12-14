@@ -37,6 +37,7 @@ import org.javlo.user.AdminUserFactory;
 import org.javlo.user.AdminUserSecurity;
 import org.javlo.user.IUserFactory;
 import org.javlo.user.User;
+import org.javlo.ztatic.FileCache;
 
 public class SynchronisationServlet extends HttpServlet {
 
@@ -55,6 +56,8 @@ public class SynchronisationServlet extends HttpServlet {
 	public static final String SHARE_PREFIX = "___SHARE___";
 
 	public static final String SHYNCRO_CODE_PARAM_NAME = "synchro-code";
+	
+	public static final String CLEAR_CACHE_SPECIAL_FILE_NAME = "clear_cache_file";
 
 	public static final String PUSH_RESOURCES_DESCRIPTION_URI = "/synchro";
 
@@ -92,7 +95,6 @@ public class SynchronisationServlet extends HttpServlet {
 	}
 
 	private void process(HttpServletRequest request, HttpServletResponse response) throws ServletException {
-
 		OutputStream out = null;
 		InputStream fileStream = null;
 		try {
@@ -106,18 +108,18 @@ public class SynchronisationServlet extends HttpServlet {
 				IUserFactory adminUserFactory = AdminUserFactory.createUserFactory(globalContext, request.getSession());
 				User user = adminUserFactory.getCurrentUser(request.getSession());
 				if (user == null) {
-					response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+					response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);					
 					return;
 				}
 				AdminUserSecurity adminUserSecurity = AdminUserSecurity.getInstance();
 				if (!adminUserSecurity.haveRight(user, AdminUserSecurity.SYNCHRO_CLIENT)) {
-					response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+					response.setStatus(HttpServletResponse.SC_FORBIDDEN);					
 					return;
 				}
 				isOnlyStatic = !adminUserSecurity.haveRight(user, AdminUserSecurity.SYNCHRO_ADMIN);
 			} else if (!clientSynchroCode.equals(staticConfig.getSynchroCode())) {
 				logger.warning("bad synchro code send to SynchronisationServlet");
-				response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+				response.setStatus(HttpServletResponse.SC_FORBIDDEN);				
 				return;
 			} else {
 				// Synchro with valid synchro code is always complete.
@@ -134,6 +136,13 @@ public class SynchronisationServlet extends HttpServlet {
 			}
 			while (fileName.startsWith("/")) {
 				fileName = fileName.substring(1);
+			}
+			
+			if (fileName.equals(CLEAR_CACHE_SPECIAL_FILE_NAME)) {
+				FileCache fileCache = FileCache.getInstance(getServletContext());
+				System.out.println("***** SynchronisationServlet.process : DELETE : "+request.getParameter("file")); //TODO: remove debug trace
+				fileCache.delete(null,request.getParameter("file"));
+				return;
 			}
 
 			logger.info("synchro file : " + fileName);

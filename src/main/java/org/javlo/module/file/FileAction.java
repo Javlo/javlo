@@ -254,7 +254,7 @@ public class FileAction extends AbstractModuleAction {
 					// GenericMessage.INFO));
 
 					FileCache fileCache = FileCache.getInstance(ctx.getRequest().getSession().getServletContext());
-					fileCache.delete(file.getName());
+					fileCache.delete(ctx, file.getName());
 				}
 			}
 			if (!found) {
@@ -472,8 +472,8 @@ public class FileAction extends AbstractModuleAction {
 		return null;
 	}
 
-	public static String performSynchro(StaticConfig staticConfig, ServletContext application, GlobalContext globalContext) throws Exception {
-		SynchroHelper.performSynchro(application, staticConfig, globalContext);
+	public static String performSynchro(ContentContext ctx) throws Exception {
+		SynchroHelper.performSynchro(ctx);
 		return null;
 	}
 

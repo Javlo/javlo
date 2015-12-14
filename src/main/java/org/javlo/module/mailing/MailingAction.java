@@ -113,7 +113,13 @@ public class MailingAction extends AbstractModuleAction {
 			request.setAttribute("content", content);
 			url = new URL(URLHelper.addParam(URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.PAGE_MODE).getContextForAbsoluteURL()), "mailing", "true"));
 			request.setAttribute("exportURL", url);
-			SynchroHelper.performSynchro(ctx.getRequest().getSession().getServletContext(), globalContext.getStaticConfig(), globalContext);
+			if (request.getParameter("wizardStep") != null && request.getParameter("wizardStep").equals("4")) {
+				String threadId = SynchroHelper.performSynchro(ctx);
+				request.setAttribute("threadId", threadId);
+				if (threadId != null) {
+					request.setAttribute("checkThreadURL", URLHelper.createStaticURL(ctx, "/rest/thread/"+threadId));
+				}
+			}			
 		}
 		if (ctx.isEditPreview()) {
 			if (mailingContext.getWizardStep(SEND_WIZARD_BOX) == 1) {
@@ -261,7 +267,7 @@ public class MailingAction extends AbstractModuleAction {
 							ctx.setParentURL(messageRepository.forwardMessage(ctx.getParentURL()));
 						}
 					}
-					SynchroHelper.performSynchro(application, staticConfig, globalContext);
+					SynchroHelper.performSynchro(ctx);
 				}
 				break;
 			}

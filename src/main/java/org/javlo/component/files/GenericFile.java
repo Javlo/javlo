@@ -300,8 +300,7 @@ public class GenericFile extends AbstractFileComponent implements IReverseLinkCo
 	}
 	
 	@Override
-	public String getFirstPrefix(ContentContext ctx) {
-		System.out.println("***** GenericFile.getFirstPrefix : isList(ctx) = "+isList(ctx)); //TODO: remove debug trace
+	public String getFirstPrefix(ContentContext ctx) {		
 		if (!isList(ctx)) {
 			return getConfig(ctx).getProperty("prefix.first", "");
 		} else {

@@ -5,6 +5,7 @@ import java.util.logging.Logger;
 
 import javax.servlet.ServletContext;
 
+import org.javlo.helper.URLHelper;
 import org.javlo.service.NotificationService;
 
 public class ThreadManager extends Thread {
@@ -163,6 +164,15 @@ public class ThreadManager extends Thread {
 
 	public void setNotificationService(NotificationService notificationService) {
 		this.notificationService = notificationService;
+	}
+	
+	public boolean isThreadRunning(String id) {
+		File file = new File(URLHelper.mergePath(threadDir.getAbsolutePath(), AbstractThread.getFileName(id)));		
+		if (!file.exists()) {
+			return false;
+		} else {
+			return true;
+		}
 	}
 
 }

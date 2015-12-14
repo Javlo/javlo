@@ -44,17 +44,22 @@ public abstract class AbstractThread {
 	private File file = null;
 	
 	private NotificationService notificationService = null;
+	
+	public static String getFileName(String id) {
+		return "t_"+id+'.'+THREAD_FILE_EXTENSION;
+	}
 
-	public static AbstractThread createInstance(String threadFolder, Class<? extends AbstractThread> clazz) throws InstantiationException, IllegalAccessException {
-		String name = "t_" + StringHelper.getRandomId();
+	public static AbstractThread createInstance(String threadFolder, Class<? extends AbstractThread> clazz) throws InstantiationException, IllegalAccessException {		
 		AbstractThread thread = clazz.newInstance();
 		File threadFolderFile = new File(threadFolder);
 		if (!threadFolderFile.exists()) {
 			threadFolderFile.mkdirs();
 		}
-		thread.file = new File(URLHelper.mergePath(threadFolder, name + "." + THREAD_FILE_EXTENSION));
+		String id = StringHelper.getRandomId();
+		thread.file = new File(URLHelper.mergePath(threadFolder, getFileName(id)));		
 		thread.properties = new Properties();
 		thread.setField(THREAD_CLASS_NAME, clazz.getName());
+		thread.setId(id);
 		return thread;
 	}
 
@@ -137,6 +142,24 @@ public abstract class AbstractThread {
 
 	public NotificationService getNotificationService() {
 		return notificationService;
+	}
+	
+	public String getId() {
+		String id = getField("id");
+		if (id == null) {
+			synchronized (this) {
+				id = getField("id");
+				if (id == null) {
+					id = StringHelper.getRandomId();
+					setId(id);
+				}
+			}
+		}
+		return id;
+	}
+
+	public void setId(String id) {
+		setField("id", id);
 	}
 
 	public void setNotificationService(NotificationService notificationService) {

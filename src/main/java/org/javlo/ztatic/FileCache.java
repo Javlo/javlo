@@ -18,10 +18,12 @@ import javax.servlet.ServletContext;
 
 import org.apache.commons.io.FileUtils;
 import org.javlo.config.StaticConfig;
+import org.javlo.context.ContentContext;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.io.TransactionFile;
+import org.javlo.service.syncro.SynchroHelper;
 
 /**
  * this class is used for cache transformation of a file. The transformation is is identified from a key.
@@ -281,7 +283,15 @@ public class FileCache {
 	 * @param fileName
 	 *            a file name.
 	 */
-	public void delete(String fileName) {
+	public void delete(ContentContext ctx, String fileName) {
+		if (fileName == null) {
+			return;
+		}
+		
+		if (ctx != null && ctx.getGlobalContext().getDMZServerIntra() != null) {
+			SynchroHelper.deletedRemoteCacheFile(ctx, fileName);
+		}
+		
 		File cacheDir = getCacheDir();
 		// File[] keys = cacheDir.listFiles(new DirectoryFilter());
 
