@@ -140,7 +140,6 @@ public class SynchronisationServlet extends HttpServlet {
 			
 			if (fileName.equals(CLEAR_CACHE_SPECIAL_FILE_NAME)) {
 				FileCache fileCache = FileCache.getInstance(getServletContext());
-				System.out.println("***** SynchronisationServlet.process : DELETE : "+request.getParameter("file")); //TODO: remove debug trace
 				fileCache.delete(null,request.getParameter("file"));
 				return;
 			}

@@ -583,3 +583,9 @@ change log
  * g-recaptcha
  
  * openlist field
+ 
+ * remove delete file in cache
+ 
+ * export wait synchronization
+ 
+* 2.1.0.3.2 14/12/2015
