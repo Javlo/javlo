@@ -186,7 +186,7 @@ public class JavloELFinder extends ELFinder {
 		if (file.getFile().exists()) {
 			StaticConfig staticConfig = StaticConfig.getInstance(application);
 			String fromDateFolderURL = URLHelper.mergePath(staticConfig.getStaticFolder(), file.getStaticInfo().getStaticURL());
-			FileCache.getInstance(application).delete(fromDateFolderURL);
+			FileCache.getInstance(application).delete(null, fromDateFolderURL);
 		}
 	}
 

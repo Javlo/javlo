@@ -947,7 +947,7 @@ public class ResourceHelper {
 
 		// delete old ref in cache
 		String fromDataFolder = file.getAbsolutePath().replace(globalContext.getDataFolder(), "");
-		FileCache.getInstance(ctx.getRequest().getSession().getServletContext()).delete(fromDataFolder);
+		FileCache.getInstance(ctx.getRequest().getSession().getServletContext()).delete(ctx, fromDataFolder);
 
 		PersistenceService.getInstance(globalContext).setAskStore(true);
 		ContentService.clearCache(ctx, globalContext);
