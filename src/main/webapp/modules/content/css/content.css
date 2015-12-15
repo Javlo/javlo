@@ -443,3 +443,7 @@ li.line {
     margin-left: 0;
     margin-right: 10px;
 }
+
+.other-roles {
+	display: none;
+}

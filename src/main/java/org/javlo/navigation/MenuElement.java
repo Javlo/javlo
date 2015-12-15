@@ -1250,8 +1250,12 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 		}
 	}
 
-	public void addEditorRole(String group) {
-		editGroups.add(group);
+	public void addEditorRole(String group) {		
+		if (isChildrenOfAssociation()) {
+			getRootOfChildrenAssociation().addEditorRole(group);
+		} else {
+			editGroups.add(group);
+		}
 	}
 
 	public void addEditorRoles(Collection<String> groups) {
@@ -1379,8 +1383,12 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 		}
 	}
 
-	public void clearEditorGroups() {
-		editGroups.clear();
+	public void clearEditorGroups() {		
+		if (isChildrenOfAssociation()) {
+			getRootOfChildrenAssociation().clearEditorGroups();
+		} else {
+			editGroups.clear();
+		}		
 	}
 
 	public Map<String, ContentElementList> getContentElementListMap() {

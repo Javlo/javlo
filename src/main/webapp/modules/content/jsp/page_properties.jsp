@@ -201,6 +201,13 @@
 		<input type="checkbox" name="admin-${role}" id="admin-${role}" ${not empty page.adminRoles[role]?'checked="checked"':''} />
 		${role}</label>
 	</c:forEach>
+	<div class="other-roles">
+	<c:forEach var="role" items="${adminOtherRole}">
+		<label class="checkbox-inline">	
+		<input type="checkbox" name="admin-${role}" id="admin-${role}" ${not empty page.adminRoles[role]?'checked="checked"':''} />
+		${role}</label>
+	</c:forEach>
+	</div>
 	</fieldset>
 </div>
 </c:if> 

@@ -534,17 +534,22 @@ public class Edit extends AbstractModuleAction {
 			}
 
 			List<String> roles = new LinkedList<String>();
+			List<String> adminOtherRole = new LinkedList<String>();
 			Set<String> roleSet = new HashSet<String>();
+			
 			if (ctx.getCurrentEditUser() != null) {
 				for (String role : globalContext.getAdminUserRoles()) {
 					roleSet.clear();
 					roleSet.add(role);
 					if (ctx.getCurrentEditUser().validForRoles(roleSet)) {
-						roles.add(role);
+						roles.add(role);			
+					} else {
+						adminOtherRole.add(role);
 					}
 				}
 				Collections.sort(roles);
 				ctx.getRequest().setAttribute("adminRoles", roles);
+				ctx.getRequest().setAttribute("adminOtherRole", adminOtherRole);
 			}
 		}
 
