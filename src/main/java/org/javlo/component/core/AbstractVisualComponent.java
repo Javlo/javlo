@@ -273,7 +273,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		if(helpURL.contains("${language}")) {
 			helpURL = helpURL.replace("${language}", globalContext.getEditLanguage(ctx.getRequest().getSession()));
 		} else {
-			helpURL = URLHelper.mergePath(helpURL +'v'+IVersion.VERSION.substring(0,3).replace('.', '_'), globalContext.getEditLanguage(ctx.getRequest().getSession()));
+			helpURL = URLHelper.mergePath(helpURL +'v'+IVersion.VERSION.substring(0,3).replace('.', '-'), globalContext.getEditLanguage(ctx.getRequest().getSession()));
 		}
 		return helpURL;
 	}
