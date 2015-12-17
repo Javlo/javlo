@@ -1800,6 +1800,15 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 	public List<MenuElement> getChildMenuElements() {
 		return childMenuElements;
 	}
+	
+	public int getChildPosition(MenuElement child) {
+		int pos = childMenuElements.indexOf(child);
+		if (pos<0) {
+			return -1;
+		} else {
+			return pos+1;			
+		}		
+	}
 
 	public List<MenuElement> getChildMenuElements(ContentContext ctx, boolean visible) throws Exception {
 		if (visible) {

@@ -628,6 +628,26 @@ public class InfoBean {
 		}
 		return page.getName();
 	}
+	
+	public int getSectionNumber() {
+		MenuElement page;
+		try {
+			page = ctx.getCurrentPage();
+		} catch (Exception e) {
+			return -1;
+		}
+		if (page == null) {
+			return -1;
+		}
+		if (page.getParent() == null) {
+			return -1;
+		} else {
+			while (page.getParent().getParent() != null) {
+				page = page.getParent();
+			}
+		}
+		return page.getParent().getChildPosition(page);
+	}
 
 	/**
 	 * return the url of the first level page active. "root" if current page in

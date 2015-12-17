@@ -14,7 +14,33 @@ import org.javlo.service.ContentService;
 import org.javlo.service.RequestService;
 
 public class FieldInternalLink extends Field {
+	
+	public class InternalLinkBean extends FieldBean {
+		
+		public InternalLinkBean(ContentContext ctx) {
+			super(ctx);
+		}
 
+		private String internalLink = null;
+
+		public String getLink() {
+			return internalLink;
+		}
+
+		public void setLink(String internalLink) {
+			this.internalLink = internalLink;
+		}
+
+	}
+
+	protected FieldBean newFieldBean(ContentContext ctx) {
+		InternalLinkBean bean = new InternalLinkBean(ctx);		
+		if (!StringHelper.isEmpty(getCurrentLink())) {
+			bean.setLink(URLHelper.createURL(ctx, getCurrentLink()));
+		}
+		return bean;
+	}
+	
 	protected String getCurrentLabel() {
 		return properties.getProperty("field." + getUnicName() + ".value.label", "");
 	}
