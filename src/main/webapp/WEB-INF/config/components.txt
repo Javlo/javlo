@@ -75,6 +75,7 @@ org.javlo.component.image.GlobalImage
 org.javlo.component.image.ImageHeader
 org.javlo.component.image.Image
 org.javlo.component.multimedia.Multimedia
+org.javlo.component.multimedia.PDFMultimedia
 org.javlo.component.multimedia.MultimediaFilter
 org.javlo.component.multimedia.Gallery
 org.javlo.component.multimedia.FolderedMultimedia

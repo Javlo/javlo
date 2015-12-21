@@ -45,6 +45,7 @@ public class Heading extends AbstractPropertiesComponent implements ISubTitle {
 	public void prepareView(ContentContext ctx) throws Exception {	
 		super.prepareView(ctx);
 		ctx.getRequest().setAttribute("title", getTitle(ctx));
+		ctx.setTitleDepth(getDepth(ctx));
 	}
 
 	@Override

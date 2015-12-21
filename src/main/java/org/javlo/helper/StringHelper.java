@@ -1666,7 +1666,7 @@ public class StringHelper {
 	}
 
 	public static Date parseDateOrTime(String inDate) throws ParseException {
-		if (inDate.trim().length() == 0) {
+		if (inDate == null || inDate.trim().length() == 0) {
 			return null;
 		}
 		Date outDate = null;

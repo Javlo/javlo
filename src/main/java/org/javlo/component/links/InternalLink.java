@@ -18,6 +18,7 @@ import org.javlo.helper.ElementaryURLHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.helper.XHTMLHelper;
+import org.javlo.helper.XHTMLNavigationHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.message.GenericMessage;
 import org.javlo.module.mailing.MailingAction;
@@ -89,15 +90,17 @@ public class InternalLink extends ComplexPropertiesLink implements IInternalLink
 				if (reverseLink == null) {
 					reverseLink = "none";
 				}
-				out.println("<div class=\"line\"><label for=\"" + getReverseLinkName() + "\">" + reverseLinkLabel + " : </label>");
+				out.println("<div class=\"input-group\"><label for=\"" + getReverseLinkName() + "\">" + reverseLinkLabel + " : </label>");
 				out.println(XHTMLHelper.getReverlinkSelectType(ctx, getReverseLinkName(), reverseLink));
 				out.println("</div>");
 			}
 
-			out.println("<div class=\"line\"><label for=\"" + getLinkName() + "\">");
+			out.println("<label for=\"" + getLinkName() + "\">");
 
 			out.println(linkTitle + " : ");
-			out.println("</label><select class=\"form-control\" id=\"" + getLinkName() + "\" name=\"" + getLinkName() + "\">");
+			out.println("</label>");
+			out.println(XHTMLNavigationHelper.renderComboNavigation(ctx, content.getNavigation(ctx), getLinkName(), link, true));
+			/*out.println("<select class=\"form-control\" id=\"" + getLinkName() + "\" name=\"" + getLinkName() + "\">");
 			MenuElement elem = content.getNavigation(ctx);
 			String[] values = elem.getChildList();
 			String currentLink = null;
@@ -111,16 +114,16 @@ public class InternalLink extends ComplexPropertiesLink implements IInternalLink
 				out.println(value);
 				out.println("</option>");
 			}
-			out.println("</select>");
-			if (currentLink != null) {
+			out.println("</select>");*/
+			/*if (currentLink != null) {
 				out.print("<a href=\"");
 				out.print(URLHelper.createURL(ctx, currentLink));
 				out.println("\">&nbsp;&gt;&gt;</a>");
 				setMessage(null);
 			} else {
 				setMessage(new GenericMessage(i18nAccess.getText("component.message.help.choose_link"), GenericMessage.HELP));
-			}
-			out.println("</div><div class=\"line\"><label for=\"" + getLinkLabelName() + "\">");
+			}*/
+			out.println("<div class=\"input-group\"><label for=\"" + getLinkLabelName() + "\">");
 			out.print(labelTitle);
 			out.print(" : </label>");
 			out.println(XHTMLHelper.getTextInput(getLinkLabelName(), label, "form-control"));

@@ -44,7 +44,8 @@ import org.javlo.service.RequestService;
 import org.javlo.ztatic.StaticInfo;
 
 /**
- * standard image component. <h4>exposed variable :</h4>
+ * standard image component.
+ * <h4>exposed variable :</h4>
  * <ul>
  * <li>inherited from {@link AbstractVisualComponent}</li>
  * <li>{@link String} title : the title.</li>
@@ -292,7 +293,7 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 
 	public Collection<File> getAllMultimediaFiles(ContentContext ctx) {
 		List<File> files = new LinkedList<File>();
-		/*Collection<String> filesName = new HashSet<String>();*/
+		/* Collection<String> filesName = new HashSet<String>(); */
 
 		/** Images **/
 		File imageDir = null;
@@ -301,12 +302,14 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 			if (imageDir == null || !newImageDir.equals(imageDir)) {
 				imageDir = newImageDir;
 				if (imageDir.exists()) {
-					Collection<File> filesLg = ResourceHelper.getAllFiles(imageDir, new ImageFileFilter());					
+					Collection<File> filesLg = ResourceHelper.getAllFiles(imageDir, new ImageFileFilter());
 					for (File file : filesLg) {
-						/*if (!filesName.contains(file.getName())) {
-							filesName.add(file.getName());*/
-							files.add(file);
-						/*}*/
+						/*
+						 * if (!filesName.contains(file.getName())) {
+						 * filesName.add(file.getName());
+						 */
+						files.add(file);
+						/* } */
 					}
 				}
 			}
@@ -318,10 +321,12 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 			if (videoDir.exists()) {
 				Collection<File> filesLg = ResourceHelper.getAllFiles(videoDir, new VideoOrURLFileFilter());
 				for (File file : filesLg) {
-					/*if (!filesName.contains(file.getName())) {
-						filesName.add(file.getName());*/
-						files.add(file);
-					/*}*/
+					/*
+					 * if (!filesName.contains(file.getName())) {
+					 * filesName.add(file.getName());
+					 */
+					files.add(file);
+					/* } */
 				}
 			}
 		}
@@ -332,10 +337,12 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 			if (soundDir.exists()) {
 				Collection<File> filesLg = ResourceHelper.getAllFiles(soundDir, new SoundFileFilter());
 				for (File file : filesLg) {
-					/*if (!filesName.contains(file.getName())) {
-						filesName.add(file.getName());*/
-						files.add(file);
-					/*}*/
+					/*
+					 * if (!filesName.contains(file.getName())) {
+					 * filesName.add(file.getName());
+					 */
+					files.add(file);
+					/* } */
 				}
 			}
 		}
@@ -346,10 +353,12 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 			if (embedDir.exists()) {
 				Collection<File> filesLg = ResourceHelper.getAllFiles(embedDir, new HTMLFileFilter());
 				for (File file : filesLg) {
-					/*if (!filesName.contains(file.getName())) {
-						filesName.add(file.getName());*/
-						files.add(file);
-					/*}*/
+					/*
+					 * if (!filesName.contains(file.getName())) {
+					 * filesName.add(file.getName());
+					 */
+					files.add(file);
+					/* } */
 				}
 			}
 		}
@@ -384,15 +393,7 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 		return "display-as-" + getId();
 	}
 
-	@Override
-	protected String getEditXHTMLCode(ContentContext ctx) throws Exception {
-		I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
-		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-
-		StringWriter writer = new StringWriter();
-		PrintWriter out = new PrintWriter(writer);
-		out.println(getSpecialInputTag());
-
+	protected Collection<String> getSelection(ContentContext ctx) {
 		String baseDir = getBaseStaticDir(ctx);
 		File rootDir = new File(baseDir);
 		Collection<File> files = ResourceHelper.getAllFiles(rootDir, null);
@@ -403,7 +404,31 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 				folderSelection.add(file.getAbsolutePath().replace('\\', '/').replaceFirst(baseDir, ""));
 			}
 		}
+		return folderSelection;
+	}
 
+	protected boolean isDateRange() {
+		return true;
+	}
+
+	protected boolean isOrder() {
+		return true;
+	}
+
+	protected boolean isTag() {
+		return true;
+	}
+
+	@Override
+	protected String getEditXHTMLCode(ContentContext ctx) throws Exception {
+		I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
+		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+
+		StringWriter writer = new StringWriter();
+		PrintWriter out = new PrintWriter(writer);
+		out.println(getSpecialInputTag());
+
+		Collection<String> folderSelection = getSelection(ctx);
 		out.println("<div class=\"form-group form-inline\">");
 		out.println("<label>" + i18nAccess.getText("global.title"));
 		out.println(" : <input class=\"form-control\" type=\"text\" id=\"" + getInputTitle() + "\" name=\"" + getInputTitle() + "\" value=\"" + getTitle() + "\"/></label>");
@@ -437,11 +462,16 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 		out.println("</a>");
 		out.println("</div>");
 
-		out.println("<div class=\"row\"><div class=\"col-xs-3 form-inline\"><div class=\"form-group\">");
-		out.println("<label for=\"" + getInputStartDateName() + "\">" + i18nAccess.getText("content.multimedia-gallery.date-range") + "</label>");
-		out.println(" : <input class=\"form-control\" id=\"contentdate\" type=\"text\" id=\"" + getInputStartDateName() + "\" name=\"" + getInputStartDateName() + "\" value=\"" + StringHelper.renderDateWithDefaultValue(getStartDate(), "") + "\"/> - ");
-		out.println("<input class=\"form-control\" type=\"text\" id=\"" + getInputEndDateName() + "\" name=\"" + getInputEndDateName() + "\" value=\"" + StringHelper.renderDateWithDefaultValue(getEndDate(), "") + "\"/>");
-		out.println("</div></div><div class=\"col-xs-2 form-inline\">");
+		out.println("<div class=\"row\">");
+		if (isDateRange()) {
+			out.println("<div class=\"col-xs-3 form-inline\">");
+			out.println("<div class=\"form-group\">");
+			out.println("<label for=\"" + getInputStartDateName() + "\">" + i18nAccess.getText("content.multimedia-gallery.date-range") + "</label>");
+			out.println(" : <input class=\"form-control\" id=\"contentdate\" type=\"text\" id=\"" + getInputStartDateName() + "\" name=\"" + getInputStartDateName() + "\" value=\"" + StringHelper.renderDateWithDefaultValue(getStartDate(), "") + "\"/> - ");
+			out.println("<input class=\"form-control\" type=\"text\" id=\"" + getInputEndDateName() + "\" name=\"" + getInputEndDateName() + "\" value=\"" + StringHelper.renderDateWithDefaultValue(getEndDate(), "") + "\"/>");
+			out.println("</div></div>");
+		}
+		out.println("<div class=\"col-xs-2 form-inline\">");
 
 		out.println("<div class=\"form-group\">");
 		out.println("<label>" + i18nAccess.getText("content.multimedia-gallery.list-size"));
@@ -453,61 +483,66 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 		out.println(" : <input class=\"form-control\" type=\"text\" id=\"" + getInputPageSizeName() + "\" name=\"" + getInputPageSizeName() + "\" value=\"" + getPageSize() + "\"/></label>");
 		out.println("</div></div></div>");
 
-		out.println("<fieldset class=\"order\">");
-		out.println("<legend>" + i18nAccess.getText("global.order") + "</legend>");
+		if (isOrder()) {
+			out.println("<fieldset class=\"order\">");
+			out.println("<legend>" + i18nAccess.getText("global.order") + "</legend>");
 
-		out.println("<div class=\"checkbox-inline\">");
-		out.print("<label><input type=\"checkbox\" name=\"" + getInputNameReverseOrder() + "\" id=\"" + getInputNameReverseOrder() + "\" ");
-		if (isReverseOrder(ctx)) {
-			out.print("checked=\"checked\" ");
-		}
-		out.print("/>");
-		out.println("reverse order.</label>");
-		out.println("</div>");
-
-		out.println("<div class=\"checkbox-inline\">");
-		out.print("<label><input type=\"checkbox\" name=\"" + getInputNameNameOrder() + "\" id=\"" + getInputNameNameOrder() + "\" ");
-		if (isNameOrder(ctx)) {
-			out.print("checked=\"checked\" ");
-		}
-		out.print("/>");
-		out.println(" order by name.</label>");
-		out.println("</div>");
-
-		out.println("<div class=\"checkbox-inline\">");
-		out.print("<label><input type=\"checkbox\" name=\"" + getInputNameOrderByAccess() + "\" id=\"" + getInputNameOrderByAccess() + "\" ");
-		if (isOrderByAccess(ctx)) {
-			out.print("checked=\"checked\" ");
-		}
-		out.print("/>");
-		out.println(" order by access.</label>");
-		out.println("</div>");
-		
-		out.println("<div class=\"checkbox-inline\">");
-		out.print("<label><input type=\"checkbox\" name=\"" + getInputNameRandomOrder() + "\" id=\"" + getInputNameRandomOrder() + "\" ");
-		if (isOrderRandom(ctx)) {
-			out.print("checked=\"checked\" ");
-		}
-		out.print("/>");
-		out.println(" random.</label>");
-		out.println("</div></fieldset>");
-
-		/* tags */
-		Collection<String> tags = globalContext.getTags();
-		Collection<String> selectedTags = getTags();
-		if (tags.size() > 0) {
-			out.println("<fieldset class=\"tags\">");
-			out.println("<legend>" + i18nAccess.getText("global.tags") + "</legend>");
-			for (String tag : tags) {
-				String checked = "";
-				if (selectedTags.contains(tag)) {
-					checked = " checked=\"checked\"";
-				}
-				out.println("<span class=\"checkbox-inline\"><label class=\"checkbox-inline\"><input type=\"checkbox\" id=\"" + getInputTag(tag) + "\" name=\"" + getInputTag(tag) + "\"" + checked + " /> " + tag + "</label></span>");
+			out.println("<div class=\"checkbox-inline\">");
+			out.print("<label><input type=\"checkbox\" name=\"" + getInputNameReverseOrder() + "\" id=\"" + getInputNameReverseOrder() + "\" ");
+			if (isReverseOrder(ctx)) {
+				out.print("checked=\"checked\" ");
 			}
-			out.println("</fieldset>");
+			out.print("/>");
+			out.println("reverse order.</label>");
+			out.println("</div>");
+
+			out.println("<div class=\"checkbox-inline\">");
+			out.print("<label><input type=\"checkbox\" name=\"" + getInputNameNameOrder() + "\" id=\"" + getInputNameNameOrder() + "\" ");
+			if (isNameOrder(ctx)) {
+				out.print("checked=\"checked\" ");
+			}
+			out.print("/>");
+			out.println(" order by name.</label>");
+			out.println("</div>");
+
+			out.println("<div class=\"checkbox-inline\">");
+			out.print("<label><input type=\"checkbox\" name=\"" + getInputNameOrderByAccess() + "\" id=\"" + getInputNameOrderByAccess() + "\" ");
+			if (isOrderByAccess(ctx)) {
+				out.print("checked=\"checked\" ");
+			}
+			out.print("/>");
+			out.println(" order by access.</label>");
+			out.println("</div>");
+
+			out.println("<div class=\"checkbox-inline\">");
+			out.print("<label><input type=\"checkbox\" name=\"" + getInputNameRandomOrder() + "\" id=\"" + getInputNameRandomOrder() + "\" ");
+			if (isOrderRandom(ctx)) {
+				out.print("checked=\"checked\" ");
+			}
+			out.print("/>");
+			out.println(" random.</label>");
+			out.println("</div></fieldset>");
+		}
+
+		if (isTag()) {
+			/* tags */
+			Collection<String> tags = globalContext.getTags();
+			Collection<String> selectedTags = getTags();
+			if (tags.size() > 0) {
+				out.println("<fieldset class=\"tags\">");
+				out.println("<legend>" + i18nAccess.getText("global.tags") + "</legend>");
+				for (String tag : tags) {
+					String checked = "";
+					if (selectedTags.contains(tag)) {
+						checked = " checked=\"checked\"";
+					}
+					out.println("<span class=\"checkbox-inline\"><label class=\"checkbox-inline\"><input type=\"checkbox\" id=\"" + getInputTag(tag) + "\" name=\"" + getInputTag(tag) + "\"" + checked + " /> " + tag + "</label></span>");
+				}
+				out.println("</fieldset>");
+			}
 		}
 		out.close();
+
 		return writer.toString();
 	}
 
@@ -569,7 +604,7 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 	protected String getInputNameOrderByAccess() {
 		return "order_by_access_" + getId();
 	}
-	
+
 	protected String getInputNameRandomOrder() {
 		return "order_random_" + getId();
 	}
@@ -751,7 +786,7 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 		Map<String, MultimediaResource> allURL = new HashMap<String, MultimediaResource>();
 
 		boolean countAccess = isCountAccess(ctx);
-		
+
 		Date firstDate = new Date();
 		for (File file : mulFiles) {
 
@@ -776,7 +811,7 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 			}
 			ContentContext lgCtx = new ContentContext(ctx);
 			Iterator<String> defaultLg = globalContext.getDefaultLanguages().iterator();
-			lgCtx.setRequestContentLanguage(lgCtx.getRequestContentLanguage()); 
+			lgCtx.setRequestContentLanguage(lgCtx.getRequestContentLanguage());
 			StaticInfo info = StaticInfo.getInstance(lgCtx, file);
 
 			while (!info.isPertinent(lgCtx) && defaultLg.hasNext()) {
@@ -810,8 +845,8 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 				} else {
 					previewURL = URLHelper.createTransformURL(lgCtx, getPage(), getImageFilePath(ctx, fileName), getTransformFilter(file));
 				}
-				
-				String absolutePreviewURL = multimediaURL;			
+
+				String absolutePreviewURL = multimediaURL;
 				ContentContext absCtx = lgCtx.getContextForAbsoluteURL();
 				if (StringHelper.isImage(file.getName())) {
 					if (countAccess) {
@@ -845,7 +880,7 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 				resource.setDescription(info.getDescription(lgCtx));
 				resource.setFullDescription(StringHelper.removeTag(info.getFullDescription(lgCtx)));
 				resource.setDate(info.getDate(lgCtx));
-				if (firstDate.getTime()>info.getDate(lgCtx).getTime()) {
+				if (firstDate.getTime() > info.getDate(lgCtx).getTime()) {
 					firstDate = info.getDate(lgCtx);
 				}
 				resource.setShortDate(StringHelper.renderDate(resource.getDate(), globalContext.getShortDateFormat()));
@@ -871,7 +906,7 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 				}
 			}
 		}
-		
+
 		Calendar firstCal = Calendar.getInstance();
 		firstCal.setTime(firstDate);
 		ctx.getRequest().setAttribute("firstYear", firstCal.get(Calendar.YEAR));
@@ -973,7 +1008,7 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 	}
 
 	@Override
-	public boolean isContentTimeCachable(ContentContext ctx) {		
+	public boolean isContentTimeCachable(ContentContext ctx) {
 		return isOrderByAccess(ctx);
 	}
 
@@ -1005,7 +1040,7 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 	public boolean isOrderByAccess(ContentContext ctx) {
 		return getValue(ctx).contains(ORDER_BY_ACCESS);
 	}
-	
+
 	public boolean isOrderRandom(ContentContext ctx) {
 		return getValue(ctx).contains(RANDOM_ORDER);
 	}
@@ -1042,7 +1077,7 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 		String newDisplayType = requestService.getParameter(getDisplayAsInputName(), null);
 		String title = requestService.getParameter(getInputTitle(), null);
 
-		if (newStartDate != null && newEndDate != null && newListSizeDate != null) {
+		if (title != null) {
 
 			boolean isOrderByAcess = requestService.getParameter(getInputNameOrderByAccess(), null) != null;
 			boolean isReverseOrder = requestService.getParameter(getInputNameReverseOrder(), null) != null;

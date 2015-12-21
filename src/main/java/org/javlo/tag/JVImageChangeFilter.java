@@ -37,17 +37,22 @@ public class JVImageChangeFilter extends TagSupport {
 				int imgPos = url.indexOf(img);
 				if (imgPos >= 0) {
 					url = url.substring(url.indexOf(img)+img.length());
-					url = ctx.getGlobalContext().getTransformShortURL(url);
-					newURL = url.replaceFirst(filter + '/', newFilter + '/');
+					newURL = ctx.getGlobalContext().getTransformShortURL(url);
+					if (newURL == null) {
+						logger.severe("url not found");
+						ctx.getRequest().setAttribute(getVar(), url);
+						return SKIP_BODY;
+					}
+					newURL = newURL.replaceFirst(filter + '/', newFilter + '/');
 					newURL = ctx.getGlobalContext().setTransformShortURL(newURL, null);
 					newURL = URLHelper.createStaticURL(ctx, URLHelper.mergePath("img", newURL));
 				} else {
-					logger.warning("bad image url : " + url);
 					newURL = url;
 				}
 			}
 			ctx.getRequest().setAttribute(getVar(), newURL);
 		} catch (Exception ioe) {
+			ioe.printStackTrace();
 			throw new JspException("Error: " + ioe.getMessage());
 		}
 		return SKIP_BODY;

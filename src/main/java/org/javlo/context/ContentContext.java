@@ -102,6 +102,8 @@ public class ContentContext {
 	private boolean pageAssociation = false;
 
 	private boolean postRequest = false;
+	
+	private int titleDepth = 1;
 
 	private static ContentContext createContentContext(HttpServletRequest request, HttpServletResponse response, boolean free) {
 		ContentContext ctx = new ContentContext();
@@ -1827,5 +1829,13 @@ public class ContentContext {
 
 	public void setPostRequest(boolean postRequest) {
 		this.postRequest = postRequest;
+	}
+
+	public int getTitleDepth() {
+		return titleDepth;
+	}
+
+	public void setTitleDepth(int titleDepth) {
+		this.titleDepth = titleDepth;
 	}
 }

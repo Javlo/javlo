@@ -64,9 +64,13 @@ public class ImageHelper {
 		return createSpecialDirectory(width, 0);
 	}
 
-	public static String createSpecialDirectory(Device device, String context, String filter, String area, String deviceCode, Template template, IImageFilter comp) {
+	public static String createSpecialDirectory(Device device, String context, String filter, String area, String deviceCode, Template template, IImageFilter comp, int page) {
 		context = StringHelper.createFileName(context);
-		String out = context + '/' + filter + '/' + deviceCode + '/' + area + '/';
+		String pageIndice = "";
+		if (page > 1) {
+			pageIndice = "page_"+page+"/";
+		}
+		String out = context + '/' + filter + '/' + deviceCode + '/' + area + '/' + pageIndice;
 		if (template == null) {
 			out += Template.EDIT_TEMPLATE_CODE;
 		} else {

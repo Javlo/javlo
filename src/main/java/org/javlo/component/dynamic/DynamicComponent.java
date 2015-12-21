@@ -616,6 +616,9 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 
 	@Override
 	public boolean isRealContent(ContentContext ctx) {
+		if (!getPage().isActive()) {
+			return false;
+		}
 		try {
 			for (Field field : getFields(ctx)) {
 				if (field.isRealContent(ctx)) {
