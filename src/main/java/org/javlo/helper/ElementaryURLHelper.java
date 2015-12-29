@@ -446,8 +446,11 @@ public abstract class ElementaryURLHelper {
 			}
 			url =  URLHelper.mergePath(IMG_SERVLET_PATH, ctx.getGlobalContext().setTransformShortURL(url.replace(TRANSFORM+'/', ""), fileName));
 		}
-
-		return createStaticURL(ctx, referencePage, url, true);
+		url = createStaticURL(ctx, referencePage, url, true);
+		if (ctx.getRequest().getParameter("lowdef") != null) {
+			url = URLHelper.addParam(url, "lowdef", ctx.getRequest().getParameter("lowdef"));
+		}
+		return url;
 	}
 
 	public static String createTransformURL(ContentContext ctx, String url, String filter) throws Exception {

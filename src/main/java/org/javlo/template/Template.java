@@ -2635,7 +2635,7 @@ public class Template implements Comparable<Template> {
 		return outRows;
 	}
 
-	public void resetRows() {
+	public synchronized void resetRows() {
 		rows = null;
 	}
 
@@ -2661,7 +2661,7 @@ public class Template implements Comparable<Template> {
 		resetRows();
 	}
 
-	public void storeRows(Collection<Row> rows) {
+	public synchronized void storeRows(Collection<Row> rows) {
 		Iterator keys = properties.getKeys();
 		while (keys.hasNext()) {
 			String key = (String) keys.next();

@@ -28,6 +28,7 @@ import org.javlo.service.ReverseLinkService;
 public class ExternalLink extends ComplexPropertiesLink implements IReverseLinkComponent, ILink {
 
 	private static final String REVERSE_LINK_KEY = "reverse-link";
+	
 	public static final String TYPE = "external-link";
 
 	@Override
@@ -113,6 +114,11 @@ public class ExternalLink extends ComplexPropertiesLink implements IReverseLinkC
 		} else {
 			return "";
 		}
+	}
+	
+	@Override
+	protected boolean isWrapped(ContentContext ctx) {	
+		return isList(ctx);
 	}
 
 	@Override

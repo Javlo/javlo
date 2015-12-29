@@ -2,7 +2,6 @@ package org.javlo.image;
 
 import java.awt.Color;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Collections;
@@ -11,6 +10,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Logger;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.configuration.ConfigurationException;
@@ -23,6 +23,33 @@ import org.javlo.rendering.Device;
 import org.javlo.template.Template;
 
 public class ImageConfig {
+	
+	public static class ImageParameters {
+		private int page = 1;
+		private boolean lowDef = false;
+		public ImageParameters(HttpServletRequest request) {
+			if (request.getParameter("page") != null && StringHelper.isDigit(request.getParameter("page"))) {
+				page = Integer.parseInt(request.getParameter("page"));
+			}
+			lowDef = StringHelper.isTrue(request.getParameter("lowdef"));
+		}
+		public int getPage() {
+			return page;
+		}
+		public void setPage(int page) {
+			this.page = page;
+		}
+		public boolean isLowDef() {
+			return lowDef;
+		}
+		public void setLowDef(boolean lowDef) {
+			this.lowDef = lowDef;
+		}
+		public String getKey() {
+			return ""+page+'-'+lowDef;
+		}
+		
+	}
 
 	/**
 	 * create a static logger.

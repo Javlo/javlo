@@ -1,3 +1,5 @@
+var PREVIEWLOG = false;
+
 var editPreview = editPreview||{};
 
 +function($,jQuery,pjq) {
@@ -19,8 +21,7 @@ editPreview.layerOver = function(item, title, drop) {
 		layer.data("sharedContent", null);
 		layer.attr("title", " ");		
 	} else {		
-		var comp = pjq(item);
-		
+		var comp = pjq(item);		
 		var parent = comp.parent();
 		var area = "";
 		c = 1;
@@ -309,7 +310,7 @@ editPreview.initPreview = function() {
 	}	
 	var drop = document.querySelectorAll('.editable-component'), el = null;
 	var countDrop = 0;
-	for (var i = 0; i < drop.length; i++) {
+	for (var i = 0; i < drop.length; i++) {		
 		el = drop[i];
 		if (!el.eventsAdded) {
 			el.eventsAdded = true;			
@@ -332,10 +333,18 @@ editPreview.initPreview = function() {
 		    	if (!event.ctrlKey) {
 		    		editPreview.layerOver(this, null, false);
 		    	}
-		    });
+		    });		    
 		    el.addEventListener('drop', function (event) {
+		    	
+		    	if (PREVIEWLOG) {
+		    		console.log("*** DROP COMPONENT ***");
+		    	}
+		    	
 				event.preventDefault();
 				var rowData = event.dataTransfer.getData("text").split(",");
+				if (PREVIEWLOG) {
+		    		console.log("rowData   = ",rowData);
+		    	}
 				var compType = rowData[0];
 				if (compType.indexOf("page:") == 0) {
 		    		return;
@@ -349,9 +358,17 @@ editPreview.initPreview = function() {
 				var subComp = pjq(this);
 				
 				countDrop++;
+				if (PREVIEWLOG) {
+		    		console.log("compId    = ",compId);
+		    		console.log("compType  = ",compType);
+		    		console.log("area      = ",area);
+		    		console.log("sharedId  = ",sharedId);
+		    		console.log("countDrop = ",countDrop);
+		    	}				
 				if (countDrop>1) {
+					countDrop--;
 					return false;
-				}
+				}			
 				
 				if (sharedId != null && sharedId.length > 0) {				
 					var previewId = subComp.attr("id").substring(3);		
@@ -414,7 +431,7 @@ editPreview.initPreview = function() {
 				}				
 				return false;	
 		    })   
-		}
+		}		
 	}
 	/*************************/	
 	/** drag and drop area * */
@@ -434,9 +451,15 @@ editPreview.initPreview = function() {
 		    	pjq(this).removeClass("drop-selected");
 		    	return false;
 		    });	    
-		    el.addEventListener('drop', function (event) {
+		    el.addEventListener('drop', function (event) {		    	
+		    	if (PREVIEWLOG) {
+		    		console.log("*** DROP AREA ***");
+		    	}		    	
 		    	event.preventDefault();
 				var rowData = event.dataTransfer.getData("text").split(",");
+				if (PREVIEWLOG) {
+		    		console.log("rowData   = ",rowData);
+		    	}
 				var compType = rowData[0];				
 				if (compType != null && compType.length > 0 && compType.indexOf("page:") == 0) {
 					pjq(this).removeClass("drop-selected");
@@ -447,7 +470,13 @@ editPreview.initPreview = function() {
 					if (rowData.length > 2) {
 						var sharedId = rowData[2];
 					}
-				}	
+				}
+				if (PREVIEWLOG) {
+		    		console.log("compId   = ",compId);
+		    		console.log("compType = ",compType);
+		    		console.log("area     = ",area);
+		    		console.log("sharedId = ",sharedId);
+		    	}
 				var area = editPreview.searchArea(pjq(this).parent());			
 				if (sharedId != null && sharedId.length > 0) {											
 					var ajaxURL = editPreview.addParam(currentURL, "webaction=edit.insertShared&sharedContent="

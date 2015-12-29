@@ -1272,6 +1272,7 @@ public class AdminAction extends AbstractModuleAction {
 					
 					for (FileItem file : requestService.getAllFileItem()) {
 						if (file.getFieldName().equals("logo")) {
+							System.out.println("***** AdminAction.performUpdateGlobalContext : logo file.getName() = "+file.getName()); //TODO: remove debug trace
 							File oldLogo = null;
 							if (td.getLink() != null) {
 								oldLogo = new File(URLHelper.mergePath(currentGlobalContext.getStaticFolder(), td.getLogo()));
@@ -1281,6 +1282,7 @@ public class AdminAction extends AbstractModuleAction {
 								File logo = new File(URLHelper.mergePath(currentGlobalContext.getStaticFolder(), logoPath));
 								td.setLogo(logoPath);
 								ResourceHelper.writeStreamToFile(file.getInputStream(), logo);
+								System.out.println("***** AdminAction.performUpdateGlobalContext : logo = "+logo); //TODO: remove debug trace
 								if (oldLogo != null && oldLogo.exists() && !oldLogo.getName().equals(file.getName())) {
 									oldLogo.delete();
 								}

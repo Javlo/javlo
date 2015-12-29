@@ -1246,7 +1246,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	public String getSpecificClass(ContentContext ctx) {
 		return null;
 	}
-
+	
 	public String getSpecialPreviewCssClass(ContentContext ctx, String currentClass) {
 		if (currentClass == null) {
 			currentClass = "";

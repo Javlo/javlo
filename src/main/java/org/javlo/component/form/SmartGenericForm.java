@@ -832,7 +832,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 
 								email = email.replace("${event.title}", comp.getPage().getTitle(pageCtx));
 								email = email.replace("${event.location}", comp.getPage().getLocation(pageCtx));
-								email = email.replace("${event.description}", comp.getPage().getDescription(pageCtx));
+								email = email.replace("${event.description}", XHTMLHelper.textToXHTML(comp.getPage().getDescription(pageCtx), globalContext));
 								Event event = comp.getPage().getEvent(pageCtx);
 								if (event != null) {
 									email = email.replace("${event.start}", StringHelper.renderDate(event.getStart()));

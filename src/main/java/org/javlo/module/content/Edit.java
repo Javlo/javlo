@@ -1248,10 +1248,7 @@ public class Edit extends AbstractModuleAction {
 					mailingCtx.setCurrentTemplate(null);
 					if (templateName.length() > 1) {
 						Template template = TemplateFactory.getTemplates(application).get(templateName);
-						if (template != null && ctx.getCurrentTemplates().contains(template)) { // TODO:
-																								// check
-																								// this
-																								// test
+						if (template != null && ctx.getCurrentTemplates().contains(template)) { 
 							page.setTemplateId(template.getName());
 							modify = true;
 						} else {

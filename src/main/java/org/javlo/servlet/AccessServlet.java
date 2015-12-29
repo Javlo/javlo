@@ -695,12 +695,16 @@ public class AccessServlet extends HttpServlet implements IVersion {
 
 						if (request.getParameter(Template.FORCE_TEMPLATE_PARAM_NAME) != null) {
 							params.put(Template.FORCE_TEMPLATE_PARAM_NAME, request.getParameter(Template.FORCE_TEMPLATE_PARAM_NAME));
+						}	
+						
+						if (request.getParameter("lowdef") != null) {
+							params.put("lowdef", request.getParameter("lowdef"));
 						}
 
 						params.put("clean-html", "true");
-
+						
 						String url = URLHelper.createURL(viewCtx, params);
-
+						
 						/*
 						 * if (staticConfig.getApplicationLogin() != null) { url
 						 * = URLHelper.addCredential(url,

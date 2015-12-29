@@ -9,16 +9,31 @@ import org.javlo.i18n.I18nAccess;
 public class PDFLink extends AbstractVisualComponent {
 	
 	public static final String TYPE = "pdf-link";
+	
+	private static final String LOWDEF = "lowdef";
+	
+	public static final String[] STYLES = new String[] {"normal", LOWDEF};
 
 	@Override
 	public String getType() {
 		return TYPE;
 	}
 	
+	@Override
+	public String[] getStyleList(ContentContext ctx) { 
+		return STYLES;
+	}
+	
 	protected String getURL(ContentContext ctx) {
 		ContentContext pdfCtx = new ContentContext(ctx);
 		pdfCtx.setFormat("pdf");
-		return URLHelper.createURL(pdfCtx);
+		String url;
+		if (getStyle().equals(LOWDEF)) {
+			url = URLHelper.addParam(URLHelper.createURL(pdfCtx), "lowdef", "true");
+		} else {
+			url = URLHelper.createURL(pdfCtx);
+		}
+		return url;
 	}
 	
 	public void prepareView(ContentContext ctx) throws Exception {

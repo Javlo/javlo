@@ -22,10 +22,10 @@ import javax.servlet.ServletContext;
 
 import org.apache.commons.lang.StringUtils;
 import org.javlo.component.core.IImageFilter;
-import org.javlo.context.ContentContext;
 import org.javlo.helper.LangHelper;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
+import org.javlo.helper.URLHelper;
 import org.javlo.rendering.Device;
 import org.javlo.template.Template;
 
@@ -64,13 +64,17 @@ public class ImageHelper {
 		return createSpecialDirectory(width, 0);
 	}
 
-	public static String createSpecialDirectory(Device device, String context, String filter, String area, String deviceCode, Template template, IImageFilter comp, int page) {
+	public static String createSpecialDirectory(Device device, String context, String filter, String area, String deviceCode, Template template, IImageFilter comp, ImageConfig.ImageParameters param) {
 		context = StringHelper.createFileName(context);
 		String pageIndice = "";
-		if (page > 1) {
-			pageIndice = "page_"+page+"/";
+		if (param.getPage() > 1) {
+			pageIndice = "page_"+param.getPage()+"/";
 		}
 		String out = context + '/' + filter + '/' + deviceCode + '/' + area + '/' + pageIndice;
+		if (param.isLowDef()) {
+			out = URLHelper.mergePath(out, "low")+"/";
+		}
+		
 		if (template == null) {
 			out += Template.EDIT_TEMPLATE_CODE;
 		} else {
@@ -85,6 +89,7 @@ public class ImageHelper {
 		} else {
 			out += "/" + StringHelper.createFileName(compFilterKey);
 		}	
+		
 		return out;
 	}
 
