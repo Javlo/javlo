@@ -976,6 +976,10 @@ public class Field implements Cloneable, IRestItem {
 	}
 	
 	public boolean search(ContentContext ctx, String query) {
-		return getValue().toLowerCase().contains(query.toLowerCase().trim());
+		if (getValue() == null || query == null) {
+			return false;
+		} else {
+			return getValue().toLowerCase().contains(query.toLowerCase().trim());
+		}
 	}
 }

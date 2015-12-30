@@ -36,13 +36,13 @@ public class DynamicComponentList extends AbstractPropertiesComponent {
 
 	private static final String FILTER_SUFFIX = "-filter";
 	private static final String FILTER_TYPE_SUFFIX = "-filter-type";
-
+	
 	private Boolean realContent = null;
 
 	@Override
 	public String getType() {
 		return TYPE;
-	}
+	}	
 
 	@Override
 	protected String getEditXHTMLCode(ContentContext ctx) throws Exception {
@@ -159,10 +159,16 @@ public class DynamicComponentList extends AbstractPropertiesComponent {
 		}
 		int index = 0;
 		ctx.getRequest().setAttribute("componentSize", visibleContainers.size());
+		ctx.getRequest().setAttribute("first", true);
+		ctx.getRequest().setAttribute("last", false);
 		for (IFieldContainer container : visibleContainers) {
 			index++;
 			ctx.getRequest().setAttribute("componentIndex", index);
+			if (index == visibleContainers.size()) {
+				ctx.getRequest().setAttribute("last", true);
+			}
 			out.println(container.getViewListXHTMLCode(ctx));
+			ctx.getRequest().setAttribute("first", false);			
 		}
 
 		out.close();

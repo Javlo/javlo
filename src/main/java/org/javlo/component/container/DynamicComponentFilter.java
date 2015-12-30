@@ -36,12 +36,19 @@ import org.javlo.service.RequestService;
 public class DynamicComponentFilter extends AbstractPropertiesComponent implements IAction {
 
 	public static final String TYPE = "dynamic-component-filter";
+	
+	private static final String STYLE_ALL = "default_all";
 
 	private Boolean realContent = null;
 
 	@Override
 	public String getType() {
 		return TYPE;
+	}
+	
+	@Override
+	public String[] getStyleList(ContentContext ctx) {	
+		return new String[] {"default_none", STYLE_ALL};
 	}
 
 	@Override
@@ -99,7 +106,7 @@ public class DynamicComponentFilter extends AbstractPropertiesComponent implemen
 
 		Map<String, Field> fieldsSearch = new HashMap<String, Field>();
 
-		boolean isFilter = false;
+		boolean isFilter = getStyle().equals(STYLE_ALL);
 
 		for (Field field : getSearchField(ctx)) {
 			fieldsSearch.put(field.getName(), field);

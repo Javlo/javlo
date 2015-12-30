@@ -33,6 +33,6 @@ public interface IFieldContainer extends IContentVisualComponent {
 	
 	public boolean isFieldContainer(ContentContext ctx);
 	
-	public MenuElement getPage();
+	public MenuElement getPage();	
 
 }

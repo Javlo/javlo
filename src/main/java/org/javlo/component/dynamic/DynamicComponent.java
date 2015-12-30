@@ -974,5 +974,5 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 		content.put("value", contentArray);
 		return content;
 	}
-
+	
 }

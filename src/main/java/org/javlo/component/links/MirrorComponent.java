@@ -528,5 +528,6 @@ public class MirrorComponent extends AbstractVisualComponent implements IFieldCo
 	public String getXHTMLId(ContentContext ctx) {
 		return getType()+'-'+getId();
 	}
+	
 
 }
