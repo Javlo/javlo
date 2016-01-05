@@ -292,6 +292,12 @@
 			<artifactId>lesscss</artifactId>
 			<version>1.7.0.1.1</version>
 		</dependency>
+		
+		<!--dependency>
+			<groupId>com.vaadin</groupId>
+			<artifactId>vaadin-sass-compiler</artifactId>
+			<version>0.9.13</version>
+		</dependency-->
 
 		<dependency>
 			<groupId>net.glxn</groupId>

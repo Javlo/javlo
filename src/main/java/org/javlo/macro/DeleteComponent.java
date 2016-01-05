@@ -84,7 +84,7 @@ public class DeleteComponent implements IInteractiveMacro, IAction {
 			List<String> deleteId = new LinkedList<String>();
 			ContentElementList list = page.getContent(ctx);
 			while (list.hasNext(ctx)) {
-				IContentVisualComponent comp = list.next(ctx);			
+				IContentVisualComponent comp = list.next(ctx);				
 				if (types.contains(comp.getType())) {
 					if (comp.getTextForSearch(ctx).contains(contentContains) || contentContains.length() == 0) {
 						countDelete++;

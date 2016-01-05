@@ -13,6 +13,9 @@
 		<label><input class="types" name="types" value="${comp.type}" type="checkbox" /> ${comp.type}</label>
 	</div>	
 </c:forEach>
+<div class="col-sm-3">
+		<label><input class="types" name="types" value="unknow" type="checkbox" /><b> unknow</b></label>
+	</div>
 </div>
 </fieldset>
 </div>
