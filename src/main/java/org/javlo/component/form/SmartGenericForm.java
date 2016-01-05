@@ -138,6 +138,10 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		return countCache;
 	}
 
+	public boolean isEvent() {
+		return true;
+	}
+
 	public static final String TYPE = "smart-generic-form";
 
 	@Override
@@ -184,21 +188,23 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		out.println("</fieldset></div></div>");
 
 		/** EVENT **/
-		out.println("<fieldset><legend>Event</legend><div class=\"col-group\"><div class=\"one_half\">");
-		out.println(XHTMLHelper.renderLine("subscribe limit :", getInputName("event-limit"), getLocalConfig(false).getProperty("event.limit", "")));
-		out.println("</div><div class=\"one_half\">");
-		out.println(XHTMLHelper.renderLine("current subscription :", "" + getCountSubscription(ctx)));
-		out.println("</div></div><div class=\"col-group\"><div class=\"one_half\">");
-		out.println(XHTMLHelper.renderLine("confirm subject :", getInputName("mail-confirm-subject"), getLocalConfig(false).getProperty("mail.confirm.subject", "")));
-		out.println("<div class=\"line validation-email\"><label>Confirm Email page : </label>");
-		out.println(XHTMLNavigationHelper.renderComboNavigation(ctx, getPage().getRoot(), getInputName("mail-confirm-link"), getLocalConfig(false).getProperty("mail.confirm.link", ""), true) + "</div>");
-		out.println(XHTMLHelper.renderLine("open message :", getInputName("event-open-message"), getLocalConfig(false).getProperty("event.open.message", "")));
-		out.println("</div><div class=\"one_half\">");		
-		out.println(XHTMLHelper.renderLine("closed subject :", getInputName("mail-closed-subject"), getLocalConfig(false).getProperty("mail.closed.subject", "")));
-		out.println("<div class=\"line validation-email\"><label>Closed Email page : </label>");
-		out.println(XHTMLNavigationHelper.renderComboNavigation(ctx, getPage().getRoot(), getInputName("mail-closed-link"), getLocalConfig(false).getProperty("mail.closed.link", ""), true) + "</div>");
-		out.println(XHTMLHelper.renderLine("close message :", getInputName("event-close-message"), getLocalConfig(false).getProperty("event.close.message", "")));
-		out.println("</div></fieldset>");
+		if (isEvent()) {
+			out.println("<fieldset><legend>Event</legend><div class=\"col-group\"><div class=\"one_half\">");
+			out.println(XHTMLHelper.renderLine("subscribe limit :", getInputName("event-limit"), getLocalConfig(false).getProperty("event.limit", "")));
+			out.println("</div><div class=\"one_half\">");
+			out.println(XHTMLHelper.renderLine("current subscription :", "" + getCountSubscription(ctx)));
+			out.println("</div></div><div class=\"col-group\"><div class=\"one_half\">");
+			out.println(XHTMLHelper.renderLine("confirm subject :", getInputName("mail-confirm-subject"), getLocalConfig(false).getProperty("mail.confirm.subject", "")));
+			out.println("<div class=\"line validation-email\"><label>Confirm Email page : </label>");
+			out.println(XHTMLNavigationHelper.renderComboNavigation(ctx, getPage().getRoot(), getInputName("mail-confirm-link"), getLocalConfig(false).getProperty("mail.confirm.link", ""), true) + "</div>");
+			out.println(XHTMLHelper.renderLine("open message :", getInputName("event-open-message"), getLocalConfig(false).getProperty("event.open.message", "")));
+			out.println("</div><div class=\"one_half\">");
+			out.println(XHTMLHelper.renderLine("closed subject :", getInputName("mail-closed-subject"), getLocalConfig(false).getProperty("mail.closed.subject", "")));
+			out.println("<div class=\"line validation-email\"><label>Closed Email page : </label>");
+			out.println(XHTMLNavigationHelper.renderComboNavigation(ctx, getPage().getRoot(), getInputName("mail-closed-link"), getLocalConfig(false).getProperty("mail.closed.link", ""), true) + "</div>");
+			out.println(XHTMLHelper.renderLine("close message :", getInputName("event-close-message"), getLocalConfig(false).getProperty("event.close.message", "")));
+			out.println("</div></fieldset>");
+		}
 
 		out.println("<div class=\"action-add\"><input type=\"text\" name=\"" + getInputName("new-name") + "\" placeholder=\"field name\" /> <input type=\"submit\" name=\"" + getInputName("add") + "\" value=\"add field\" /></div>");
 		if (getFields().size() > 0) {
@@ -605,7 +611,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 
 		/** check captcha **/
 		String captcha = rs.getParameter("captcha", null);
-		
+
 		String userIP = request.getHeader("x-real-ip");
 		if (StringHelper.isEmpty(userIP)) {
 			userIP = request.getRemoteAddr();
@@ -622,11 +628,11 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 					CaptchaService.getInstance(request.getSession()).setCurrentCaptchaCode("");
 				}
 			} else {
-				Map<String,String> params = new HashMap<String, String>();
+				Map<String, String> params = new HashMap<String, String>();
 				params.put("secret", comp.getRecaptchaKey());
 				params.put("response", rs.getParameter("g-recaptcha-response", ""));
-				params.put("remoteip", request.getRemoteAddr());				
-				String url = URLHelper.addAllParams("https://www.google.com/recaptcha/api/siteverify", "secret="+comp.getRecaptchaSecretKey(), "response="+rs.getParameter("g-recaptcha-response", ""), "remoteip="+userIP);
+				params.put("remoteip", request.getRemoteAddr());
+				String url = URLHelper.addAllParams("https://www.google.com/recaptcha/api/siteverify", "secret=" + comp.getRecaptchaSecretKey(), "response=" + rs.getParameter("g-recaptcha-response", ""), "remoteip=" + userIP);
 				String captchaResponse = NetHelper.readPage(new URL(url));
 				JSONMap map = JSONMap.parseMap(captchaResponse);
 				if (map == null || !StringHelper.isTrue(map.get("success"))) {
@@ -726,7 +732,8 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 				fakeFilled = true;
 			}
 
-			if (finalValue.trim().length() == 0 && key.length() > 0 && StringHelper.containsUppercase(key.substring(0, 1))) { // needed field
+			if (finalValue.trim().length() == 0 && key.length() > 0 && StringHelper.containsUppercase(key.substring(0, 1))) { // needed
+																																// field
 				errorFields.add(key);
 				GenericMessage msg = new GenericMessage(comp.getLocalConfig(false).getProperty("error.required", "please could you fill all required fields."), GenericMessage.ERROR);
 				request.setAttribute("msg", msg);

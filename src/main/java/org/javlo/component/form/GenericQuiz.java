@@ -3,13 +3,10 @@ package org.javlo.component.form;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
-
-import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
 import org.javlo.context.ContentContext;
@@ -17,6 +14,7 @@ import org.javlo.helper.LangHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.XHTMLHelper;
 import org.javlo.i18n.I18nAccess;
+import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
 import org.javlo.service.ContentService;
 import org.javlo.service.RequestService;
@@ -25,7 +23,7 @@ public class GenericQuiz extends SmartGenericForm {
 
 	public static final String TYPE = "generic-quiz";
 	
-	public static final int QUESTION_INDEX = 8;
+	public static final int QUESTION_INDEX = 9;
 
 	@Override
 	public String getType() {
@@ -38,18 +36,27 @@ public class GenericQuiz extends SmartGenericForm {
 
 		private int question = 1;
 
-		public static Status getInstance(HttpSession session, GenericQuiz comp) {
-			String KEY = "status-" + comp.getId();
-			Status status = (Status) session.getAttribute(KEY);
+		private static Status getInstance(ContentContext ctx, GenericQuiz comp) {
+			String KEY = "status-" + comp.getId()+ "-"+ctx.isAsViewMode();
+			Status status = (Status) ctx.getRequest().getSession().getAttribute(KEY);
 			if (status == null) {
 				status = new Status();
-				session.setAttribute(KEY, status);
+				ctx.getRequest().getSession().setAttribute(KEY, status);
 				for (Question question : comp.getQuestions()) {
 					Response response = new GenericQuiz.Response(question, null);
 					status.responses.add(response);
 				}
 			}
 			return status;
+		}
+		
+		public void reset(GenericQuiz comp) {
+			question = 1;
+			responses.clear();
+			for (Question question : comp.getQuestions()) {
+				Response response = new GenericQuiz.Response(question, null);
+				responses.add(response);
+			}
 		}
 
 		public int getQuestion() {
@@ -111,7 +118,7 @@ public class GenericQuiz extends SmartGenericForm {
 		PrintStream out = new PrintStream(outStream);
 		out.println("<h3>" + getQuizTitle() + "</h3>");
 		out.println("<ul>");
-		for (Response response : Status.getInstance(ctx.getRequest().getSession(), this).getResponses()) {
+		for (Response response : Status.getInstance(ctx, this).getResponses()) {
 			String style = "";
 			if (response.getQuestion().getResponse() != null && response.getQuestion().getResponse().trim().length() > 0) {
 				if (response.getQuestion().getResponse().equals(response.getResponse())) {
@@ -130,11 +137,11 @@ public class GenericQuiz extends SmartGenericForm {
 	@Override
 	public void prepareView(ContentContext ctx) throws Exception {
 		super.prepareView(ctx);
-		Status status = Status.getInstance(ctx.getRequest().getSession(), this);
+		Status status = Status.getInstance(ctx, this);
 		if (status.getQuestion() <= getQuestions().size()) {
 			ctx.getRequest().setAttribute("quiz", true);
 		}
-		ctx.getRequest().setAttribute("status", Status.getInstance(ctx.getRequest().getSession(), this));
+		ctx.getRequest().setAttribute("status", Status.getInstance(ctx, this));
 	}
 
 	public static class Question extends Field {
@@ -255,7 +262,7 @@ public class GenericQuiz extends SmartGenericForm {
 		PrintStream out = new PrintStream(outStream);
 
 		out.println(XHTMLHelper.renderLine("title", getInputName("qtitle"), getLocalConfig(false).getProperty("qtitle", "")));
-		out.println(XHTMLHelper.renderLine("result title", getInputName("result-title"), getLocalConfig(false).getProperty("result-title", "")));
+		out.println(XHTMLHelper.renderLine("result title", getInputName("result-title"), getLocalConfig(false).getProperty("result-title", "")));		
 		out.println(XHTMLHelper.renderLine("'next'  button", getInputName("next"), getLocalConfig(false).getProperty("next", "next")));
 
 		out.println("<div class=\"action-add\"><input type=\"submit\" name=\"" + getInputName("addq") + "\" value=\"add question\" /></div>");
@@ -329,12 +336,20 @@ public class GenericQuiz extends SmartGenericForm {
 			store(question);
 		}
 		store(ctx);
+		if (isModify()) {
+			Status.getInstance(ctx, this).reset(this);
+		}
 		return msg;
 	}
 
 	@Override
 	public String getActionGroupName() {
 		return "quiz";
+	}
+	
+	@Override
+	public boolean isEvent() {	
+		return false;
 	}
 
 	public static String performResponse(RequestService rs, ContentService content, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
@@ -343,10 +358,15 @@ public class GenericQuiz extends SmartGenericForm {
 			return "compId not found.";
 		} else {
 			GenericQuiz quiz = (GenericQuiz) content.getComponent(ctx, compId);
-			Status status = Status.getInstance(ctx.getRequest().getSession(), quiz);
+			Status status = Status.getInstance(ctx, quiz);
 			Response response = status.getResponses().get(status.getQuestion() - 1);
-			response.setResponse(rs.getParameter(response.getQuestion().getName(), null));
-			status.setQuestion(status.getQuestion() + 1);
+			if (!StringHelper.isEmpty(rs.getParameter(response.getQuestion().getName(), null))) {
+				response.setResponse(rs.getParameter(response.getQuestion().getName(), null));
+				status.setQuestion(status.getQuestion() + 1);
+			} else {
+				GenericMessage msg = new GenericMessage(quiz.getLocalConfig(false).getProperty("error.required", "please fill the fields."), GenericMessage.ERROR);
+				ctx.getRequest().setAttribute("msg", msg);
+			}
 		}
 		return null;
 	}
@@ -355,4 +375,5 @@ public class GenericQuiz extends SmartGenericForm {
 	public int getComplexityLevel(ContentContext ctx) {
 		return COMPLEXITY_EASY;
 	}
+	
 }
