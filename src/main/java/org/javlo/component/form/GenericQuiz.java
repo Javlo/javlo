@@ -50,7 +50,7 @@ public class GenericQuiz extends SmartGenericForm {
 			return status;
 		}
 		
-		public void reset(GenericQuiz comp) {
+		public void reset(ContentContext ctx, GenericQuiz comp) {
 			question = 1;
 			responses.clear();
 			for (Question question : comp.getQuestions()) {
@@ -83,6 +83,7 @@ public class GenericQuiz extends SmartGenericForm {
 	public static class Response {
 		private Question question;
 		private String response;
+		private String responseLabel;
 
 		public Response(Question question, String response) {
 			super();
@@ -104,6 +105,14 @@ public class GenericQuiz extends SmartGenericForm {
 
 		public void setResponse(String response) {
 			this.response = response;
+		}
+
+		public String getResponseLabel() {
+			return responseLabel;
+		}
+
+		public void setResponseLabel(String responseLabel) {
+			this.responseLabel = responseLabel;
 		}
 	}
 
@@ -148,7 +157,7 @@ public class GenericQuiz extends SmartGenericForm {
 
 		private static String PREFIX = "question";
 
-		protected static List<? extends Object> FIELD_TYPES = Arrays.asList(new String[] { "text", "large-text", "yes-no", "list" });
+		protected static List<? extends Object> FIELD_TYPES = Arrays.asList(new String[] { "text", "large-text", "yes-no", "true-false", "list" });
 
 		private String response = "";
 
@@ -218,7 +227,7 @@ public class GenericQuiz extends SmartGenericForm {
 		return fields;
 	}
 
-	public boolean isQuizList() {
+	public boolean isQuizList(ContentContext ctx) {
 		for (Field field : getQuestions()) {
 			if (field.getType().equals("list")) {
 				return true;
@@ -235,13 +244,13 @@ public class GenericQuiz extends SmartGenericForm {
 		return getLocalConfig(false).getProperty("result-title");
 	}
 
-	public String getEditXHTML(Question question) {
+	public String getEditXHTML(ContentContext ctx, Question question) {
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(outStream);
 		out.println("<tr class=\"field-line\">");
 		out.println("<td><input type=\"text\" name=\"" + getInputName("order-" + question.getName()) + "\" value=\"" + question.getOrder() + "\"/></td>");
 		out.println("<td><input type=\"text\" name=\"" + getInputName("label-" + question.getName()) + "\" value=\"" + question.getLabel() + "\"/></td>");
-		if (isQuizList()) {
+		if (isQuizList(ctx)) {
 			if (question.getType().equals("list")) {
 				out.println("<td><textarea name=\"" + getInputName("list-" + question.getName()) + "\">" + StringHelper.collectionToText(question.getList()) + "</textarea></td>");
 			} else {
@@ -269,14 +278,14 @@ public class GenericQuiz extends SmartGenericForm {
 		if (getQuestions().size() > 0) {
 			out.println("<table class=\"sTable2\">");
 			String listTitle = "";
-			if (isQuizList()) {
+			if (isQuizList(ctx)) {
 				listTitle = "<td>list</td>";
 			}
 			out.println("<thead><tr><td>order</td><td>label</td>" + listTitle + "<td>type</td><td>response</td><td>action</td></tr></thead>");
 			out.println("<tbody>");
 			List<Question> fields = getQuestions();
 			for (Question field : fields) {
-				out.println(getEditXHTML(field));
+				out.println(getEditXHTML(ctx, field));
 			}
 			out.println("</tbody>");
 			out.println("</table>");
@@ -337,7 +346,7 @@ public class GenericQuiz extends SmartGenericForm {
 		}
 		store(ctx);
 		if (isModify()) {
-			Status.getInstance(ctx, this).reset(this);
+			Status.getInstance(ctx, this).reset(ctx, this);
 		}
 		return msg;
 	}
@@ -361,7 +370,12 @@ public class GenericQuiz extends SmartGenericForm {
 			Status status = Status.getInstance(ctx, quiz);
 			Response response = status.getResponses().get(status.getQuestion() - 1);
 			if (!StringHelper.isEmpty(rs.getParameter(response.getQuestion().getName(), null))) {
-				response.setResponse(rs.getParameter(response.getQuestion().getName(), null));
+				response.setResponse(rs.getParameter(response.getQuestion().getName(), null));				
+				if (response.getQuestion().getType().equals("true-false") || response.getQuestion().getType().equals("yes-no")) {
+					response.setResponseLabel(i18nAccess.getViewText("global."+rs.getParameter(response.getQuestion().getName(), null)));	
+				} else {
+					response.setResponseLabel(rs.getParameter(response.getQuestion().getName(), null));
+				}
 				status.setQuestion(status.getQuestion() + 1);
 			} else {
 				GenericMessage msg = new GenericMessage(quiz.getLocalConfig(false).getProperty("error.required", "please fill the fields."), GenericMessage.ERROR);

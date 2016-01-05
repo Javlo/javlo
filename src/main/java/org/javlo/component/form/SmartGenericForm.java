@@ -65,9 +65,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 
 	private Integer countCache = null;
 
-	private Map<String, String> cacheFrom = new TimeMap<String, String>(60 * 60); // 1
-																					// hours
-																					// validity
+	private Map<String, String> cacheFrom = new TimeMap<String, String>(60 * 60); // 1 hours validity
 
 	private static Logger logger = Logger.getLogger(SmartGenericForm.class.getName());
 
