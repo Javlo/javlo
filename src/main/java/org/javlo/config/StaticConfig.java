@@ -926,6 +926,10 @@ public class StaticConfig extends Observable {
 		return properties.getString("synchro-code", "120857013478039430485203984").trim();
 	}
 
+	public int getSynchroTokenValidityMinutes() {
+		return properties.getInt("synchro-token.validity-minutes", 5);
+	}
+
 	public Level getSynchroLogLevel() {
 		try {
 			return Level.parse(properties.getString("log.synchro", "INFO"));

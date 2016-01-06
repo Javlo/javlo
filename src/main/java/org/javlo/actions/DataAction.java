@@ -174,7 +174,7 @@ public class DataAction implements IAction {
 		if (clientSynchroCode == null) {
 			logger.warning("no synchro code sent to webaction data.serverInfo");
 			serverInfo.put("message", "No synchro code!");
-		} else if (!StringHelper.timedTokenValidate(clientSynchroCode, staticConfig.getSynchroCode(), 1, System.currentTimeMillis())) {
+		} else if (!StringHelper.timedTokenValidate(clientSynchroCode, staticConfig.getSynchroCode(), staticConfig.getSynchroTokenValidityMinutes(), System.currentTimeMillis())) {
 			logger.warning("bad synchro code sent to webaction data.serverInfo");
 			serverInfo.put("message", "Synchro code not valid!");
 		} else {
