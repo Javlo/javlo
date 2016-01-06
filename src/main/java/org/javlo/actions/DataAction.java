@@ -172,11 +172,11 @@ public class DataAction implements IAction {
 		serverInfo.put("version", IVersion.VERSION);
 
 		long now = System.currentTimeMillis();
-		//TODO remove trace
-		System.out.println("======================= Process data.serverInfo webaction: clientSynchroCode=" + clientSynchroCode
-				+ ", now=" + now
-				+ ", staticConfig.getSynchroCode()=" + staticConfig.getSynchroCode()
-				+ ", staticConfig.getSynchroTokenValidityMinutes()=" + staticConfig.getSynchroTokenValidityMinutes());
+//		//TODO remove trace
+//		System.out.println("======================= Process data.serverInfo webaction: clientSynchroCode=" + clientSynchroCode
+//				+ ", now=" + now
+//				+ ", staticConfig.getSynchroCode()=" + staticConfig.getSynchroCode()
+//				+ ", staticConfig.getSynchroTokenValidityMinutes()=" + staticConfig.getSynchroTokenValidityMinutes());
 		if (clientSynchroCode == null) {
 			logger.warning("no synchro code sent to webaction data.serverInfo");
 			serverInfo.put("message", "No synchro code!");
