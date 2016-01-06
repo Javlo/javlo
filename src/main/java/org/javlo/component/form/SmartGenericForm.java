@@ -599,13 +599,12 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		boolean eventClose = comp.isClose(ctx);
 
 		String code = rs.getParameter("_form-code", "");
-		if (!comp.cacheFrom.containsKey(code)) {
+		if (!comp.cacheFrom.containsKey(code) && !comp.isCaptcha(ctx)) {
 			I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
 			GenericMessage msg = new GenericMessage(i18nAccess.getViewText("error.bad-from-version", "This form has experied, try again."), GenericMessage.ERROR);
 			request.setAttribute("msg", msg);
 			return "This form has experied, try again.";
 		}
-		comp.cacheFrom.remove(code);
 
 		/** check captcha **/
 		String captcha = rs.getParameter("captcha", null);
@@ -863,6 +862,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 			GenericMessage msg = new GenericMessage(comp.getLocalConfig(false).getProperty("message.thanks"), GenericMessage.INFO);
 			request.setAttribute("msg", msg);
 			request.setAttribute("valid", "true");
+			comp.cacheFrom.remove(code);
 		} else {
 			request.setAttribute("errorFields", new CollectionAsMap<String>(errorFields));
 		}
