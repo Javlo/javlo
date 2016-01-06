@@ -160,15 +160,17 @@ public class GenericQuiz extends SmartGenericForm {
 		protected static List<? extends Object> FIELD_TYPES = Arrays.asList(new String[] { "text", "large-text", "yes-no", "true-false", "list" });
 
 		private String response = "";
+		private String explanation = "";
 
 		public Question(String name, String label, String type, String value, String list) {
 			super(name, label, type, "", value, list, "", 0, 12);
 		}
 
-		public Question(String label, String type, String value, String list, int order, String response) {
+		public Question(String label, String type, String value, String list, int order, String response, String explanation) {
 			super(null, label, type, "", value, list, "", 0, 12);
 			setResponse(response);
-			setOrder(order);
+			setExplanation(explanation);
+			setOrder(order);			
 		}
 
 		public String getResponse() {
@@ -181,7 +183,7 @@ public class GenericQuiz extends SmartGenericForm {
 
 		@Override
 		public String toString() {
-			return super.toString() + SEP + response;
+			return super.toString() + SEP + response + SEP + explanation;
 		}
 
 		@Override
@@ -197,6 +199,14 @@ public class GenericQuiz extends SmartGenericForm {
 		@Override
 		public List<? extends Object> getFieldTypes() {
 			return FIELD_TYPES;
+		}
+
+		public String getExplanation() {
+			return explanation;
+		}
+
+		public void setExplanation(String explanation) {
+			this.explanation = explanation;
 		}
 		
 
@@ -218,7 +228,8 @@ public class GenericQuiz extends SmartGenericForm {
 					String list = (String) LangHelper.arrays(data, 3, "");
 					int order = Integer.parseInt((String) LangHelper.arrays(data, 4, "0"));
 					String response = (String) LangHelper.arrays(data, QUESTION_INDEX, "");
-					Question field = new Question(label, type, value, list, order, response);
+					String explanation = (String) LangHelper.arrays(data, QUESTION_INDEX+1, "");
+					Question field = new Question(label, type, value, list, order, response, explanation);
 					fields.add(field);
 				}
 			}
@@ -259,6 +270,7 @@ public class GenericQuiz extends SmartGenericForm {
 		}
 		out.println("<td>" + XHTMLHelper.getInputOneSelect(getInputName("type-" + question.getName()), question.getFieldTypes(), question.getType()) + "</td>");
 		out.println("<td><input type=\"text\" name=\"" + getInputName("response-" + question.getName()) + "\" value=\"" + question.getResponse() + "\"/></td>");
+		out.println("<td><input type=\"text\" name=\"" + getInputName("explanation-" + question.getName()) + "\" value=\"" + question.getExplanation()+ "\"/></td>");
 		out.println("<td><input class=\"needconfirm\" type=\"submit\" name=\"" + getInputName("del-" + question.getName()) + "\" value=\"del\" /></td>");
 		out.println("</tr>");
 		out.close();
@@ -273,6 +285,7 @@ public class GenericQuiz extends SmartGenericForm {
 		out.println(XHTMLHelper.renderLine("title", getInputName("qtitle"), getLocalConfig(false).getProperty("qtitle", "")));
 		out.println(XHTMLHelper.renderLine("result title", getInputName("result-title"), getLocalConfig(false).getProperty("result-title", "")));		
 		out.println(XHTMLHelper.renderLine("'next'  button", getInputName("next"), getLocalConfig(false).getProperty("next", "next")));
+		out.println(XHTMLHelper.renderLine("'reset'  button", getInputName("reset"), getLocalConfig(false).getProperty("reset", "reset")));
 
 		out.println("<div class=\"action-add\"><input type=\"submit\" name=\"" + getInputName("addq") + "\" value=\"add question\" /></div>");
 		if (getQuestions().size() > 0) {
@@ -281,7 +294,7 @@ public class GenericQuiz extends SmartGenericForm {
 			if (isQuizList(ctx)) {
 				listTitle = "<td>list</td>";
 			}
-			out.println("<thead><tr><td>order</td><td>label</td>" + listTitle + "<td>type</td><td>response</td><td>action</td></tr></thead>");
+			out.println("<thead><tr><td>order</td><td>label</td>" + listTitle + "<td>type</td><td>response</td><td>explanation</td><td>action</td></tr></thead>");
 			out.println("<tbody>");
 			List<Question> fields = getQuestions();
 			for (Question field : fields) {
@@ -309,6 +322,7 @@ public class GenericQuiz extends SmartGenericForm {
 		getLocalConfig(false).setProperty("qtitle", rs.getParameter(getInputName("qtitle"), ""));
 		getLocalConfig(false).setProperty("result-title", rs.getParameter(getInputName("result-title"), ""));
 		getLocalConfig(false).setProperty("next", rs.getParameter(getInputName("next"), ""));
+		getLocalConfig(false).setProperty("reset", rs.getParameter(getInputName("reset"), ""));
 
 		for (Question question : getQuestions()) {
 			String oldName = question.getName();
@@ -325,6 +339,7 @@ public class GenericQuiz extends SmartGenericForm {
 				question.setLabel(rs.getParameter(getInputName("label-" + oldName), ""));
 				question.setType(rs.getParameter(getInputName("type-" + oldName), ""));
 				question.setResponse(rs.getParameter(getInputName("response-" + oldName), ""));
+				question.setExplanation(rs.getParameter(getInputName("explanation-" + oldName), ""));
 				if (!oldName.equals(question.getName())) {
 					delQuestion(oldName);
 				}
@@ -341,7 +356,7 @@ public class GenericQuiz extends SmartGenericForm {
 			if (questions.size() > 0) {
 				order = questions.get(questions.size() - 1).getOrder() + 1;
 			}
-			Question question = new Question("text", "", "", "", order, "");
+			Question question = new Question("text", "", "", "", order, "", "");
 			store(question);
 		}
 		store(ctx);
@@ -383,6 +398,17 @@ public class GenericQuiz extends SmartGenericForm {
 			}
 		}
 		return null;
+	}
+	
+	public static String performReset(RequestService rs, ContentService content, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
+		String compId = rs.getParameter("comp-id", null);
+		if (compId == null) {
+			return "compId not found.";
+		} else {
+			GenericQuiz quiz = (GenericQuiz) content.getComponent(ctx, compId);		
+			Status.getInstance(ctx, quiz).reset(ctx, quiz);
+			return null;
+		}
 	}
 
 	@Override
