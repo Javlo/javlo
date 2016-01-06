@@ -23,10 +23,10 @@ import org.javlo.context.GlobalContext;
 import org.javlo.helper.ResourceHelper;
 import org.lesscss.LessCompiler;
 
-//import com.vaadin.sass.internal.ScssContext;
-//import com.vaadin.sass.internal.ScssStylesheet;
-//import com.vaadin.sass.internal.handler.SCSSDocumentHandlerImpl;
-//import com.vaadin.sass.internal.handler.SCSSErrorHandler;
+import com.vaadin.sass.internal.ScssContext;
+import com.vaadin.sass.internal.ScssStylesheet;
+import com.vaadin.sass.internal.handler.SCSSDocumentHandlerImpl;
+import com.vaadin.sass.internal.handler.SCSSErrorHandler;
 
 public class CssCompilationFilter implements Filter {
 
@@ -84,46 +84,50 @@ public class CssCompilationFilter implements Filter {
 	}
 
 	private static boolean compileSass(File in, File out) {
-//		ScssContext.UrlMode urlMode = ScssContext.UrlMode.MIXED;
-//
-//		boolean minify = true;
-//		boolean ignoreWarnings = true;
-//		try {
-//
-//			if (!in.canRead()) {
-//				System.err.println(in.getCanonicalPath() + " could not be read!");
-//				System.exit(-1);
-//			}
-//			String input = in.getCanonicalPath();
-//
-//			SCSSErrorHandler errorHandler = new SCSSErrorHandler();
-//			errorHandler.setWarningsAreErrors(!ignoreWarnings);
-//
-//			// Parse stylesheet
-//			ScssStylesheet scss = ScssStylesheet.get(input, null, new SCSSDocumentHandlerImpl(), errorHandler);
-//			if (scss == null) {
-//				System.err.println("The scss file " + input + " could not be found.");
-//				return false;
-//			}
-//
-//			// Compile scss -> css
-//			scss.compile(urlMode);
-//
-//			// Write result
-//			Writer writer = createOutputWriter(out.getAbsolutePath());
-//			scss.write(writer, minify);
-//			writer.close();
-//
-//			if (errorHandler.isErrorsDetected()) {
-//				logger.warning("error on sass transform.");
-//				return false;
-//			}
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//			return false;
-//		}
-//		return true;
-		return false;
+		ScssContext.UrlMode urlMode = ScssContext.UrlMode.MIXED;
+
+		boolean minify = true;
+		boolean ignoreWarnings = true;
+		try {
+
+			if (!in.canRead()) {
+				System.err.println(in.getCanonicalPath() + " could not be read!");
+				System.exit(-1);
+			}
+			String input = in.getCanonicalPath();
+
+			SCSSErrorHandler errorHandler = new SCSSErrorHandler();
+			errorHandler.setWarningsAreErrors(!ignoreWarnings);
+
+			// Parse stylesheet
+			ScssStylesheet scss = ScssStylesheet.get(input, null, new SCSSDocumentHandlerImpl(), errorHandler);
+			if (scss == null) {
+				System.err.println("The scss file " + input + " could not be found.");
+				return false;
+			}
+
+			// Compile scss -> css
+			scss.compile(urlMode);
+
+			// Write result
+			Writer writer = null;
+			try {
+				writer = createOutputWriter(out.getAbsolutePath());
+				scss.write(writer, minify);
+				writer.close();
+			} finally {
+				ResourceHelper.safeClose(writer);
+			}
+
+			if (errorHandler.isErrorsDetected()) {
+				logger.warning("error on sass transform.");
+				return false;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+		return true;
 	}
 
 	private static Writer createOutputWriter(String filename) throws IOException {
