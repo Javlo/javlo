@@ -113,11 +113,18 @@ public class RemoteBean implements Serializable {
 				if (synchroCodeLocal == null) {
 					synchroCodeLocal = defaulSynchroCode;
 				}
-				synchroCodeLocal = StringHelper.timedTokenGenerate(synchroCodeLocal, System.currentTimeMillis());
+				long now = System.currentTimeMillis();
+				String synchroToken = StringHelper.timedTokenGenerate(synchroCodeLocal, now);
 				String srvUrl = url;
 				srvUrl = URLHelper.addParam(srvUrl, ContentContext.FORWARD_AJAX, "true");
 				srvUrl = URLHelper.addParam(srvUrl, "webaction", "data.serverInfo");
-				srvUrl = URLHelper.addParam(srvUrl, DataAction.SYNCHRO_CODE_PARAM, synchroCodeLocal);
+				srvUrl = URLHelper.addParam(srvUrl, DataAction.SYNCHRO_CODE_PARAM, synchroToken);
+				//TODO remove trace
+				System.out.println("======================= Remote request to data.serverInfo: url=" + url
+						+ ", synchroCodeLocal=" + synchroCodeLocal
+						+ ", now=" + now
+						+ ", synchroToken=" + synchroToken
+						+ ", fullUrl=" + srvUrl);
 				String content = NetHelper.readPageGet(new URL(srvUrl));
 				if (content == null) {
 					serverInfoOut.put("message", "Error: No content read (The url targets a javlo server? Synchro code is correct?)");

@@ -171,10 +171,16 @@ public class DataAction implements IAction {
 		Map<String, Object> serverInfo = new LinkedHashMap<String, Object>();
 		serverInfo.put("version", IVersion.VERSION);
 
+		long now = System.currentTimeMillis();
+		//TODO remove trace
+		System.out.println("======================= Process data.serverInfo webaction: clientSynchroCode=" + clientSynchroCode
+				+ ", now=" + now
+				+ ", staticConfig.getSynchroCode()=" + staticConfig.getSynchroCode()
+				+ ", staticConfig.getSynchroTokenValidityMinutes()=" + staticConfig.getSynchroTokenValidityMinutes());
 		if (clientSynchroCode == null) {
 			logger.warning("no synchro code sent to webaction data.serverInfo");
 			serverInfo.put("message", "No synchro code!");
-		} else if (!StringHelper.timedTokenValidate(clientSynchroCode, staticConfig.getSynchroCode(), staticConfig.getSynchroTokenValidityMinutes(), System.currentTimeMillis())) {
+		} else if (!StringHelper.timedTokenValidate(clientSynchroCode, staticConfig.getSynchroCode(), staticConfig.getSynchroTokenValidityMinutes(), now)) {
 			logger.warning("bad synchro code sent to webaction data.serverInfo");
 			serverInfo.put("message", "Synchro code not valid!");
 		} else {
