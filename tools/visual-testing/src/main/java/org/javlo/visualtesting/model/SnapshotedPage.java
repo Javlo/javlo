@@ -22,23 +22,21 @@ public class SnapshotedPage {
 	private String url;
 	private List<PageBug> layoutBugs;
 	private transient Path pageFolder;
-	private transient Path screenshotFile;
-	private transient Path dataFile;
+	private transient Path _screenshotFile;
+	private transient Path _dataFile;
 
 	public SnapshotedPage(Snapshot snapshot, String pageUrl) {
 		this.parentSnapshot = snapshot;
 		this.url = pageUrl;
-		String siteurl = parentSnapshot.getParentSite().getUrl();
+//		String siteurl = parentSnapshot.getParentSite().getUrl();
 		String shortPageUrl;
-		if (pageUrl.startsWith(siteurl)) {
-			shortPageUrl = pageUrl.substring(siteurl.length());
-		} else {
-			shortPageUrl = pageUrl;
-		}
+//		if (pageUrl.startsWith(siteurl)) {
+//			shortPageUrl = pageUrl.substring(siteurl.length());
+//		} else {
+		shortPageUrl = pageUrl;
+//		}
 		String pageFolderName = PAGE_PREFIX + FileHelper.encodeAsFileName(shortPageUrl);
 		this.pageFolder = parentSnapshot.getFolder().resolve(pageFolderName);
-		this.screenshotFile = this.pageFolder.resolve("screenshot.png");
-		this.dataFile = this.pageFolder.resolve("data.json");
 		this.layoutBugs = new LinkedList<>();
 		commonInit();
 	}
@@ -46,8 +44,7 @@ public class SnapshotedPage {
 	public SnapshotedPage(Snapshot snapshot, Path pageFolder) {
 		this.parentSnapshot = snapshot;
 		this.pageFolder = pageFolder;
-		this.dataFile = this.pageFolder.resolve("data.json");
-		SnapshotedPage loaded = JsonHelper.load(this.dataFile, SnapshotedPage.class);
+		SnapshotedPage loaded = JsonHelper.load(this.getDataFile(), SnapshotedPage.class);
 		this.url = loaded.url;
 		this.layoutBugs = loaded.layoutBugs;
 		if (this.layoutBugs == null) {
@@ -67,12 +64,22 @@ public class SnapshotedPage {
 		return url;
 	}
 
+	public Path getDataFile() {
+		if (_dataFile == null) {
+			_dataFile = pageFolder.resolve("data.json");
+		}
+		return _dataFile;
+	}
+
 	public Path getScreenShotFile() {
-		return screenshotFile;
+		if (_screenshotFile == null) {
+			_screenshotFile = this.pageFolder.resolve("screenshot.png");
+		}
+		return _screenshotFile;
 	}
 
 	public void save() {
-		JsonHelper.save(dataFile, this);
+		JsonHelper.save(getDataFile(), this);
 	}
 
 	public void addLayoutBugs(String description, String html, Path screenshotFile) {

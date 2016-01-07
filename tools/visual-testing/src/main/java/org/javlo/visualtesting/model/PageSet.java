@@ -1,8 +1,8 @@
 package org.javlo.visualtesting.model;
 
 import java.io.IOException;
-import java.net.URL;
 import java.nio.file.DirectoryStream;
+import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
@@ -12,51 +12,46 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.commons.io.FileUtils;
 import org.javlo.visualtesting.helper.FileHelper;
 import org.javlo.visualtesting.helper.ForwardException;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 
-public class Site {
+public class PageSet {
 
-	private String siteUrl;
 	private Path outputFolder;
 	private Path snapshotsFolder;
 	private Path comparisonsFolder;
+	private Collection<String> pageUrls;
 
-	public Site(Path rootOutputFolder, String siteUrl) {
-		this.siteUrl = siteUrl;
-		this.outputFolder = rootOutputFolder.resolve(FileHelper.encodeAsFileName(siteUrl));
+	public PageSet(Path outputFolder) {
+		this.outputFolder = outputFolder;
 		this.snapshotsFolder = this.outputFolder.resolve("snapshots");
 		this.comparisonsFolder = this.outputFolder.resolve("comparisons");
 	}
 
-	public String getUrl() {
-		return siteUrl;
-	}
-
 	public Collection<String> getUrlToProcess() {
-		try {
-			Collection<String> out = new LinkedList<>();
-			URL siteMapUrl = new URL(siteUrl + "/sitemap.xml");
-			Document doc = Jsoup.parse(siteMapUrl, 5000);
-			Elements urls = doc.select("urlset url");
-			for (Element urlNode : urls) {
-				String pageUrl = urlNode.select("loc").text();
-				out.add(pageUrl);
-			}
-			return out;
-		} catch (IOException ex) {
-			throw new ForwardException(ex);
-		}
+		return pageUrls;
 	}
 
-	public Snapshot createNewSnapshot() {
+	public void addUrlToProcess(String url) {
+		if (pageUrls == null) {
+			pageUrls = new LinkedList<>();
+		}
+		pageUrls.add(url);
+	}
+
+	public Snapshot createNewSnapshot(String snapshotName, boolean deleteExisting) throws IOException {
 		Date snapshotDate = new Date();
-		Path snapshotFolder = snapshotsFolder.resolve(formatSnapshotFolderName(snapshotDate));
-		Snapshot snapshot = new Snapshot(this, snapshotFolder);
+		if (snapshotName == null) {
+			snapshotName = formatSnapshotFolderName(snapshotDate);
+		}
+		Path snapshotFolder = snapshotsFolder.resolve(snapshotName);
+		if (deleteExisting) {
+			FileUtils.deleteDirectory(snapshotFolder.toFile());
+		} else {
+			throw new FileAlreadyExistsException(snapshotFolder.toString());
+		}
+		Snapshot snapshot = new Snapshot(this, snapshotName, snapshotFolder);
 		for (String pageUrl : getUrlToProcess()) {
 			snapshot.getPages().add(new SnapshotedPage(snapshot, pageUrl));
 		}
@@ -87,7 +82,6 @@ public class Site {
 
 	public Snapshot getSnapshotByName(String name) {
 		try (DirectoryStream<Path> s = Files.newDirectoryStream(snapshotsFolder)) {
-			List<Snapshot> out = new LinkedList<>();
 			for (Path p : s) {
 				if (p.getFileName().toString().equals(name)) {
 					return buildSnapshot(p);
@@ -100,16 +94,17 @@ public class Site {
 	}
 
 	protected Snapshot buildSnapshot(Path snapshotFolder) {
-		return new Snapshot(this, snapshotFolder);
+		return new Snapshot(this, snapshotFolder.getFileName().toString(), snapshotFolder);
 	}
 
-	public SnapshotComparison createNewComparison(Snapshot oldSnap, Snapshot newSnap) {
+	public SnapshotComparison createNewComparison(Snapshot oldSnap, Snapshot newSnap, boolean deleteExisting) throws IOException {
 		Path comparisonFolder = comparisonsFolder.resolve(formatComparisonFolderName(oldSnap, newSnap));
-		SnapshotComparison comparison = new SnapshotComparison(this, comparisonFolder);
-//		for (String pageUrl : getUrlToProcess()) {
-//			comparison.getPages().add(new SnapshotedPage(snapshot, pageUrl));
-//		}
-		return comparison;
+		if (deleteExisting) {
+			FileUtils.deleteDirectory(comparisonFolder.toFile());
+		} else {
+			throw new FileAlreadyExistsException(comparisonFolder.toString());
+		}
+		return new SnapshotComparison(this, comparisonFolder);
 	}
 
 	private String formatComparisonFolderName(Snapshot oldSnap, Snapshot newSnap) {

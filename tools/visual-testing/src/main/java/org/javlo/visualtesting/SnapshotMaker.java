@@ -8,46 +8,50 @@ import java.util.Collection;
 
 import org.apache.commons.io.FileUtils;
 import org.javlo.visualtesting.helper.ResourceHelper;
+import org.javlo.visualtesting.model.PageSet;
 import org.javlo.visualtesting.model.Snapshot;
 import org.javlo.visualtesting.model.SnapshotedPage;
+import org.openqa.selenium.Dimension;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.internal.Killable;
 
-import com.googlecode.fightinglayoutbugs.FightingLayoutBugs;
-import com.googlecode.fightinglayoutbugs.LayoutBug;
-import com.googlecode.fightinglayoutbugs.WebPage;
-
 public class SnapshotMaker implements AutoCloseable {
 
-	private Snapshot snap;
 	private Path tmpFolder;
 
 	private WebDriver drv;
-	private FightingLayoutBugs fightBugs;
+//	private FightingLayoutBugs fightBugs;
 
-	public SnapshotMaker(Snapshot snap, Path tmpFolder) {
-		this.snap = snap;
+	public SnapshotMaker(Path tmpFolder) {
 		this.tmpFolder = tmpFolder;
 	}
 
-	public Snapshot getSnapshot() {
-		return snap;
-	}
-
-	protected void configure() throws IOException {
+	protected void configure(int pageWidth) throws IOException {
 		Files.createDirectories(tmpFolder);
 		drv = new FirefoxDriver();
-		fightBugs = new FightingLayoutBugs();
-		fightBugs.setScreenshotDir(tmpFolder.toFile());
+		setViewportWidth(pageWidth);
+//		fightBugs = new FightingLayoutBugs();
+//		fightBugs.setScreenshotDir(tmpFolder.toFile());
+	}
+
+	private void setViewportWidth(int width) {
+		Dimension sz = drv.manage().window().getSize();
+		int window = sz.getWidth();
+		int viewport = Integer.parseInt("" + ((JavascriptExecutor) drv).executeScript("return window.innerWidth"));
+		width = width + (window - viewport);
+		drv.manage().window().setSize(new Dimension(width, sz.height));
 	}
 
 	@Override
 	public void close() {
 		try {
-			drv.quit();
+			if (drv != null) {
+				drv.quit();
+			}
 		} catch (RuntimeException ex) {
 			if (drv instanceof Killable) {
 				((Killable) drv).kill();
@@ -62,11 +66,14 @@ public class SnapshotMaker implements AutoCloseable {
 		}
 	}
 
-	public void processSite() throws IOException {
+	public Snapshot snapshot(PageSet site, String snapshotName, boolean deleteExisting) throws IOException {
+		Snapshot snap = site.createNewSnapshot(snapshotName, deleteExisting);
 		Collection<SnapshotedPage> pages = snap.getPages();
 		for (SnapshotedPage page : pages) {
+			System.out.println("Snapshot: " + page.getUrl());
 			processPage(snap, page);
 		}
+		return snap;
 	}
 
 	private void processPage(Snapshot snap, SnapshotedPage page) throws IOException {
@@ -80,17 +87,17 @@ public class SnapshotMaker implements AutoCloseable {
 		}
 
 		//Find layout bugs
-		try {
-			WebPage webPage = new WebPage(drv);
-			Collection<LayoutBug> bugs = fightBugs.findLayoutBugsIn(webPage);
-			if (!bugs.isEmpty()) {
-				for (LayoutBug bug : bugs) {
-					page.addLayoutBugs(bug.getDescription(), bug.getHtml(), bug.getScreenshot().toPath());
-				}
-			}
-		} catch (Exception ex) {
-			//throw new ForwardException(ex);
-		}
+//		try {
+//			WebPage webPage = new WebPage(drv);
+//			Collection<LayoutBug> bugs = fightBugs.findLayoutBugsIn(webPage);
+//			if (!bugs.isEmpty()) {
+//				for (LayoutBug bug : bugs) {
+//					page.addLayoutBugs(bug.getDescription(), bug.getHtml(), bug.getScreenshot().toPath());
+//				}
+//			}
+//		} catch (Exception ex) {
+//			//throw new ForwardException(ex);
+//		}
 		page.save();
 	}
 

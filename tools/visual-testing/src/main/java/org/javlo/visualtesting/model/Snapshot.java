@@ -5,28 +5,37 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
+import java.util.Date;
 import java.util.LinkedList;
 
 import org.javlo.visualtesting.helper.ForwardException;
 
 public class Snapshot {
 
-	private Site parentSite;
+	private PageSet parentSite;
+	private String name;
+	private Date time;
 	private Path snapshotFolder;
 	private Path layoutBugsFolder;
 	private Collection<SnapshotedPage> pages;
 
-	public Snapshot(Site parentSite, Path snapshotFolder) {
+	public Snapshot(PageSet parentSite, String snapshotName, Path snapshotFolder) {
 		this.parentSite = parentSite;
+		this.name = snapshotName;
 		this.snapshotFolder = snapshotFolder;
 		this.layoutBugsFolder = snapshotFolder.resolve("layout-bugs");
+		this.time = new Date();
 	}
 
 	public String getName() {
-		return snapshotFolder.getFileName().toString();
+		return this.name;
 	}
 
-	public Site getParentSite() {
+	public Date getTime() {
+		return this.time;
+	}
+
+	public PageSet getParentSite() {
 		return parentSite;
 	}
 
