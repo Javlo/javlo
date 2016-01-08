@@ -729,8 +729,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 				fakeFilled = true;
 			}
 
-			if (finalValue.trim().length() == 0 && key.length() > 0 && StringHelper.containsUppercase(key.substring(0, 1))) { // needed
-																																// field
+			if (!field.isFilledWidth(finalValue) && StringHelper.containsUppercase(key.substring(0, 1))) {
 				errorFields.add(key);
 				GenericMessage msg = new GenericMessage(comp.getLocalConfig(false).getProperty("error.required", "please could you fill all required fields."), GenericMessage.ERROR);
 				request.setAttribute("msg", msg);

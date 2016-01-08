@@ -198,5 +198,14 @@ public class Field {
 		}
 		
 	}
+	
+	public boolean isFilledWidth( String value ) {
+		List<String> list = getList();
+		if (list.size() == 0) {
+			return getName().length() > 0 && !StringHelper.isEmpty(value);
+		} else {
+			return value != null && !list.iterator().next().equals(value);
+		}
+	}
 
 }
