@@ -589,3 +589,5 @@ change log
  * export wait synchronization
  
 * 2.1.0.3.2 14/12/2015
+
+ * reverse link not on my self + select box first item select is'nt a selection
