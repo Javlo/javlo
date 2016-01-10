@@ -285,6 +285,7 @@ public class GenericQuiz extends SmartGenericForm {
 		out.println(XHTMLHelper.renderLine("title", getInputName("qtitle"), getLocalConfig(false).getProperty("qtitle", "")));
 		out.println(XHTMLHelper.renderLine("result title", getInputName("result-title"), getLocalConfig(false).getProperty("result-title", "")));		
 		out.println(XHTMLHelper.renderLine("'next'  button", getInputName("next"), getLocalConfig(false).getProperty("next", "next")));
+		out.println(XHTMLHelper.renderLine("'skip'  button", getInputName("skip"), getLocalConfig(false).getProperty("skip", "")));
 		out.println(XHTMLHelper.renderLine("'reset'  button", getInputName("reset"), getLocalConfig(false).getProperty("reset", "reset")));
 
 		out.println("<div class=\"action-add\"><input type=\"submit\" name=\"" + getInputName("addq") + "\" value=\"add question\" /></div>");
@@ -322,6 +323,7 @@ public class GenericQuiz extends SmartGenericForm {
 		getLocalConfig(false).setProperty("qtitle", rs.getParameter(getInputName("qtitle"), ""));
 		getLocalConfig(false).setProperty("result-title", rs.getParameter(getInputName("result-title"), ""));
 		getLocalConfig(false).setProperty("next", rs.getParameter(getInputName("next"), ""));
+		getLocalConfig(false).setProperty("skip", rs.getParameter(getInputName("skip"), ""));
 		getLocalConfig(false).setProperty("reset", rs.getParameter(getInputName("reset"), ""));
 
 		for (Question question : getQuestions()) {
@@ -384,6 +386,8 @@ public class GenericQuiz extends SmartGenericForm {
 			GenericQuiz quiz = (GenericQuiz) content.getComponent(ctx, compId);
 			Status status = Status.getInstance(ctx, quiz);
 			Response response = status.getResponses().get(status.getQuestion() - 1);
+			boolean skip = !StringHelper.isEmpty(rs.getParameter("skip", null));
+			if (!skip) {
 			if (!StringHelper.isEmpty(rs.getParameter(response.getQuestion().getName(), null))) {
 				response.setResponse(rs.getParameter(response.getQuestion().getName(), null));				
 				if (response.getQuestion().getType().equals("true-false") || response.getQuestion().getType().equals("yes-no")) {
@@ -395,6 +399,9 @@ public class GenericQuiz extends SmartGenericForm {
 			} else {
 				GenericMessage msg = new GenericMessage(quiz.getLocalConfig(false).getProperty("error.required", "please fill the fields."), GenericMessage.ERROR);
 				ctx.getRequest().setAttribute("msg", msg);
+			}
+			} else {
+				status.setQuestion(quiz.getQuestions().size()+1);
 			}
 		}
 		return null;
