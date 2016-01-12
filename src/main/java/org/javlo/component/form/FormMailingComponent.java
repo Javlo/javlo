@@ -166,7 +166,7 @@ public class FormMailingComponent extends AbstractVisualComponent implements IAc
 
 		out.println(getDebugHeader(ctx));
 
-		out.println("<div class=\"line\">");
+		out.println("<div class=\"form-group\">");
 		out.print("<label for=\"");
 		out.print(getInputRolesName());
 		out.print("\">");
@@ -174,32 +174,32 @@ public class FormMailingComponent extends AbstractVisualComponent implements IAc
 		out.println("</label>");
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		EditContext editCtx = EditContext.getInstance(globalContext, ctx.getRequest().getSession());
-		out.print(XHTMLHelper.getInputMultiSelect(getInputRolesName(), editCtx.getUserRoles(), getRolesAsArray()));
+		out.print(XHTMLHelper.getInputMultiSelect(getInputRolesName(), editCtx.getUserRoles(), getRoles(), "form-control"));
 		out.println("</div>");
 
-		out.println("<div class=\"line\">");
+		out.println("<div class=\"checkbox\">");
 		String checked = "";
 		if (isNeedName()) {
 			checked = " checked=\"checked\"";
 		}
-		out.println("<input type=\"checkbox\" id=\"" + getInputNameName() + "\" name=\"" + getInputNameName() + "\"" + checked + " />");
 		out.println("<label for=\"" + getInputNameName() + "\">");
+		out.println("<input type=\"checkbox\" id=\"" + getInputNameName() + "\" name=\"" + getInputNameName() + "\"" + checked + " /> ");		
 		out.print(i18n.getText("content.form-mailing.use-name"));
 		out.println("</label>");
 		out.println("</div>");
 
-		out.println("<div class=\"line\">");
+		out.println("<div class=\"form-group\">");
 		out.println("<label for=\"" + getInputEmailSubjectName() + "\">");
 		out.print(i18n.getText("field.subject"));
 		out.println("</label>");
-		out.println("<input id=\"" + getInputEmailSubjectName() + "\" name=\"" + getInputEmailSubjectName() + "\" value=\"" + StringHelper.removeTag(getEmailSubject()) + "\" />");
+		out.println("<input class=\"form-control\" id=\"" + getInputEmailSubjectName() + "\" name=\"" + getInputEmailSubjectName() + "\" value=\"" + StringHelper.removeTag(getEmailSubject()) + "\" />");
 		out.println("</div>");
 
-		out.println("<div class=\"line\">");
+		out.println("<div class=\"form-group\">");
 		out.println("<label for=\"" + getInputConfirmEmailName() + "\">");
 		out.print(i18n.getText("content.form-mailing.confirm-email"));
 		out.println("</label>");
-		out.println("<textarea id=\"" + getInputConfirmEmailName() + "\" rows=\"6\" cols=\"60\" name=\"" + getInputConfirmEmailName() + "\">");
+		out.println("<textarea class=\"form-control\" id=\"" + getInputConfirmEmailName() + "\" rows=\"6\" cols=\"60\" name=\"" + getInputConfirmEmailName() + "\">");
 		out.println(StringHelper.escapeHTML(StringHelper.neverEmpty(getConfirmEmail(), "")));
 		out.println("</textarea>");
 		out.println("</div>");

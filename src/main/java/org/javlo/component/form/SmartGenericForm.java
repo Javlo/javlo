@@ -893,4 +893,12 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 	public boolean isContentCachableByQuery(ContentContext ctx) {
 		return false;
 	}
+	
+	@Override
+	public boolean initContent(ContentContext ctx) throws Exception {		
+		boolean outB = super.initContent(ctx);
+		getLocalConfig(false).setProperty("title", getType());
+		store(ctx);
+		return outB;
+	}
 }

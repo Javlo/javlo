@@ -35,7 +35,7 @@ public class RestDataServlet extends HttpServlet {
 	}
 	
 	public void process(HttpServletRequest request, HttpServletResponse response, boolean post) throws ServletException {
-		String path = request.getRequestURI();
+		String path = request.getServletPath();
 		String[] pathItem = StringUtils.split(path, '/');
 		if (pathItem.length < 2) {
 			logger.warning("bad rest url format : min size : 2");

@@ -780,6 +780,26 @@ public class XHTMLHelper {
 		}
 		return getInputMultiSelect(name, newContent, value, null, (String) null);
 	}
+	
+	public static String getInputMultiSelect(String name, Collection<String> content, Collection<String> values, String cssClass) {
+		String[][] dblContent = new String[content.size()][];
+		Iterator<String> contentIt = content.iterator();
+		for (int i = 0; i < content.size(); i++) {
+			dblContent[i] = new String[2];
+			String v = contentIt.next();
+			dblContent[i][0] = v;
+			dblContent[i][1] = v;
+		}
+		String[] contentValue = new String[0];
+		if (values != null) {
+			contentValue = new String[values.size()];
+			Iterator valueIt = values.iterator();
+			for (int i = 0; i < contentValue.length; i++) {
+				contentValue[i] = valueIt.next().toString();
+			}
+		}
+		return getInputMultiSelect(name, dblContent, contentValue, cssClass, (String) null);
+	}
 
 	public static String getInputMultiSelect(String name, String[] content, String[] values, String cssClass) {
 		String[][] dblContent = new String[content.length][];
