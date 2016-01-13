@@ -1075,6 +1075,30 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	public IContentVisualComponent getPreviousComponent() {
 		return previousComponent;
 	}
+	
+	/**
+	 * return true if the previous component have the same type.
+	 * @return
+	 */
+	public boolean isPreviousSame() {
+		if (getPreviousComponent() ==  null) {
+			return false;
+		} else {
+			return getPreviousComponent().getType().equals(getType());
+		}
+	}
+	
+	/**
+	 * return true if the next component have the same type.
+	 * @return
+	 */
+	public boolean isNextSame() {
+		if (getNextComponent() ==  null) {
+			return false;
+		} else {
+			return getNextComponent().getType().equals(getType());
+		}
+	}
 
 	public List<SuffixPrefix> getQuotationLanguageMarkerList(ContentContext ctx) {
 		List<SuffixPrefix> out = new LinkedList<SuffixPrefix>();

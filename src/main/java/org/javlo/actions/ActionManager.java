@@ -73,6 +73,8 @@ public class ActionManager {
 		IAction outAction = getActionModule(request, group);
 		if (outAction == null) {
 			outAction = getActionComponent(request, group);
+		} else {			
+			ModulesContext.getInstance(request.getSession(), GlobalContext.getInstance(request)).setCurrentModuleByActionGroup(group);
 		}
 		if (outAction == null) {
 			outAction = getActionMacro(request, group);

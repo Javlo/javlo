@@ -322,6 +322,19 @@ public class ModulesContext {
 	public boolean isCurrentModule() {
 		return currentModule != null;
 	}
+	
+	/**
+	 * active module with action group associate.
+	 * @param actionGroup
+	 */
+	public void setCurrentModuleByActionGroup(String actionGroup) {
+		setCurrentModule((Module) null);
+		for (Module module : modules) {			
+			if (module.getAction() != null && module.getAction().getActionGroupName().equals(actionGroup)) {
+				this.currentModule = module;
+			}
+		}
+	}
 
 	public void setCurrentModule(String moduleName) {
 		setCurrentModule((Module) null);

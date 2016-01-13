@@ -117,6 +117,7 @@ public class DynamicComponentFilter extends AbstractPropertiesComponent implemen
 
 		if (isFilter) {
 			out.println("<ul class=\"filter-list\">");
+			ctx.getRequest().setAttribute("inList", true);
 			for (IFieldContainer container : containers) {
 				boolean display = true;
 				List<Field> fields = container.getFields(ctx);
@@ -137,6 +138,7 @@ public class DynamicComponentFilter extends AbstractPropertiesComponent implemen
 					out.println("</li>");
 				}
 			}
+			ctx.getRequest().removeAttribute("inList");
 			out.println("</ul>");
 			if (!realContent) {
 				out.println("<div class=\"alert alert-warning\" role=\"alert\">"+i18nAccess.getViewText("global.no-result")+"</div>");

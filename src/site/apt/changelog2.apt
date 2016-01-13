@@ -595,3 +595,5 @@ change log
  * mailing registration ready for bootstrap
  
 * 2.1.0.3.3 12/01/2016
+
+ * active module on action call (solve i18n bug)

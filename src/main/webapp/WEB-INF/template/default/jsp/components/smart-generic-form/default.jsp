@@ -15,12 +15,12 @@
 
 <c:if test="${comp.captcha}">
 <div class="line captcha form-group">
-	<c:if test=${empty comp.recaptchaKey ||  empty comp.recaptchaSecretKey}">			
+	<c:if test="${empty comp.recaptchaKey ||  empty comp.recaptchaSecretKey}">			
 	<div class="${not empty requestService.parameterMap.webaction && empty requestService.parameterMap.captcha || not empty error_captcha?'error':''}">
 		<label for="captcha"><img src="${info.captchaURL}" alt="captcha" /></label>
 		<label for="captcha">${ci18n['label.captcha']}*</label>
 		<input type="text" id="captcha" name="captcha" value="" class="form-control" />
-	</div></c:if><c:if test=${comp.captcha && not empty comp.recaptchaKey && not empty comp.recaptchaSecretKey}">
+	</div></c:if><c:if test="${comp.captcha && not empty comp.recaptchaKey && not empty comp.recaptchaSecretKey}">
 	<div class="g-recaptcha" data-sitekey="${comp.recaptchaKey}"></div>
 	</c:if>
 </div>

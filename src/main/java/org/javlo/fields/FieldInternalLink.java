@@ -22,6 +22,7 @@ public class FieldInternalLink extends Field {
 		}
 
 		private String internalLink = null;
+		private String linkLabel = null;
 
 		public String getLink() {
 			return internalLink;
@@ -31,13 +32,22 @@ public class FieldInternalLink extends Field {
 			this.internalLink = internalLink;
 		}
 
+		public String getLinkLabel() {
+			return linkLabel;
+		}
+
+		public void setLinkLabel(String linkLabel) {
+			this.linkLabel = linkLabel;
+		}
+
 	}
 
 	protected FieldBean newFieldBean(ContentContext ctx) {
 		InternalLinkBean bean = new InternalLinkBean(ctx);		
 		if (!StringHelper.isEmpty(getCurrentLink())) {
-			bean.setLink(URLHelper.createURL(ctx, getCurrentLink()));
+			bean.setLink(URLHelper.createURL(ctx, getCurrentLink()));			
 		}
+		bean.setLinkLabel(getCurrentLabel());
 		return bean;
 	}
 	
