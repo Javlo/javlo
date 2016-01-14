@@ -62,13 +62,13 @@
                     <a href="${template.viewUrl}" class="view" title="${template.name}"></a>
                     
                     <c:url value="${info.currentURL}" var="editURL" context="/">
-                    	<c:param name="webaction" value="goEditTemplate" />
+                    	<c:param name="webaction" value="template.goEditTemplate" />
                     	<c:param name="templateid" value="${template.name}" />
                     </c:url>                    
                     <a href="${editURL}" class="edit"></a>
 
                     <c:url value="${info.currentURL}" var="deleteURL" context="/">
-                    	<c:param name="webaction" value="delete" />
+                    	<c:param name="webaction" value="template.delete" />
                     	<c:param name="id" value="${template.name}" />
                     </c:url>
                     <a href="${deleteURL}" class="delete needconfirm"></a>
@@ -82,7 +82,7 @@
                     
                     <c:if test="${not template.valid}">
                     <c:url value="${info.currentURL}" var="validURL" context="/">
-                    	<c:param name="webaction" value="validate" />
+                    	<c:param name="webaction" value="template.validate" />
                     	<c:param name="id" value="${template.name}" />
                     </c:url>
                     <a href="${validURL}" class="validate" title="validate"></a>

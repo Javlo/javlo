@@ -681,7 +681,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		for (FileItem file : rs.getAllFileItem()) {
 			String ext = StringHelper.getFileExtension(file.getName()).toLowerCase();
 			if (badFileFormat.contains(ext)) {
-				logger.warning("file blocked because bad extenstion : " + file.getName());
+				logger.warning("file blocked because bad extention : " + file.getName());
 				GenericMessage msg = new GenericMessage(comp.getLocalConfig(false).getProperty("message.bad-file", "bad file format."), GenericMessage.ERROR);
 				request.setAttribute("msg", msg);
 				return null;
@@ -710,7 +710,8 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(outStream);
-
+		String errorFieldList = " (";
+		String errorFieldSep = "";
 		for (Field field : comp.getFields()) {
 			String key = field.getName();
 
@@ -728,10 +729,12 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 			} else if (!withXHTML && (finalValue.toLowerCase().contains("</a>") || finalValue.toLowerCase().contains("</div>"))) {
 				fakeFilled = true;
 			}
-
+			
 			if (!field.isFilledWidth(finalValue) && StringHelper.containsUppercase(key.substring(0, 1))) {
 				errorFields.add(key);
-				GenericMessage msg = new GenericMessage(comp.getLocalConfig(false).getProperty("error.required", "please could you fill all required fields."), GenericMessage.ERROR);
+				errorFieldList = errorFieldList+errorFieldSep+field.getLabel();
+				errorFieldSep=",";
+				GenericMessage msg = new GenericMessage(comp.getLocalConfig(false).getProperty("error.required", "please could you fill all required fields.")+errorFieldList+')', GenericMessage.ERROR);
 				request.setAttribute("msg", msg);
 			}
 
