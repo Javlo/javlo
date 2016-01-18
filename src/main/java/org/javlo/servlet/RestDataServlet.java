@@ -35,13 +35,13 @@ public class RestDataServlet extends HttpServlet {
 	}
 	
 	public void process(HttpServletRequest request, HttpServletResponse response, boolean post) throws ServletException {
-		String path = request.getServletPath();
+		String path = request.getPathInfo();
 		String[] pathItem = StringUtils.split(path, '/');
 		if (pathItem.length < 2) {
 			logger.warning("bad rest url format : min size : 2");
 			response.setStatus(HttpServletResponse.SC_NOT_FOUND);			
 		} else {
-			String restFactoryName = pathItem[1];			
+			String restFactoryName = pathItem[0];			
 			IRestFactory restFactory = RestContainerFactory.getRestFactory(restFactoryName);
 			if (restFactory == null) {
 				logger.warning("RestFactory not found : "+restFactoryName);
@@ -51,8 +51,8 @@ public class RestDataServlet extends HttpServlet {
 				try {
 					response.setContentType("application/json; charset=" + ContentContext.CHARACTER_ENCODING);					
 					ctx = ContentContext.getContentContext(request, response);
-					path = path.substring(pathItem[0].length()+pathItem[1].length()+2);
-					IRestItem item = restFactory.search(ctx, path);
+					path = path.substring(pathItem[0].length()+2);					
+					IRestItem item = restFactory.search(ctx, path);					
 					if (item == null) {
 						logger.warning("Rest item not found : "+path);
 						response.setStatus(HttpServletResponse.SC_NOT_FOUND);

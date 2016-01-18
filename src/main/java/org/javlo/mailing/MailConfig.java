@@ -103,5 +103,9 @@ public class MailConfig {
 	public String toString() {	
 		return "SMTP [host:"+getSMTPHost()+" port:"+getSMTPPort()+" user:"+getLogin()+" pwd?:"+!StringHelper.isEmpty(getPassword())+']';
 	}
+	
+	public boolean isAuthentification() {
+		return !StringHelper.isEmpty(getLogin());
+	}
 
 }

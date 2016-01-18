@@ -13,7 +13,6 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.logging.Logger;
 
-import javax.management.RuntimeErrorException;
 import javax.servlet.ServletContext;
 
 import org.apache.commons.io.FileUtils;

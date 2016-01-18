@@ -53,9 +53,9 @@ public class UserInterfaceContext {
 			instance.session = session;
 			instance.globalContext = globalContext;			
 			MailConfig config = new MailConfig(globalContext, globalContext.getStaticConfig(), null);
-			if (StringHelper.isEmpty(config.getSMTPHost()) || config.getSMTPPort() == null || config.getSMTPPort().equals("0")) {
+			if ((StringHelper.isEmpty(config.getSMTPHost()) || config.getSMTPPort() == null || config.getSMTPPort().equals("0")) && StringHelper.isEmpty(globalContext.getDMZServerIntra())) {
 				instance.sendMailing = false;
-			}			
+			}	
 			if (globalContext.getModules().contains(IMainModuleName.MAILING) && AdminUserSecurity.getInstance().canRole(user, AdminUserSecurity.MAILING_ROLE)) {
 				instance.mailing = true;
 			} else {

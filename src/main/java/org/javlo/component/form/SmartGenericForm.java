@@ -786,10 +786,12 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 				String emailTo = comp.getLocalConfig(false).getProperty("mail.to", globalContext.getAdministratorEmail());
 				String emailCC = comp.getLocalConfig(false).getProperty("mail.cc", null);
 				String emailBCC = comp.getLocalConfig(false).getProperty("mail.bcc", null);
+				
+				MailService mailService = null;
 
 				try {
 
-					MailService mailService = MailService.getInstance(new MailConfig(globalContext, globalContext.getStaticConfig(), null));
+					mailService = MailService.getInstance(new MailConfig(globalContext, globalContext.getStaticConfig(), null));
 					InternetAddress fromEmail = new InternetAddress(emailFrom);
 					InternetAddress toEmail = new InternetAddress(emailTo);
 					InternetAddress ccEmail = null;
@@ -852,7 +854,14 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 							}
 						}
 					}
-				} catch (Exception e) {
+				} catch (Exception e) {					
+					if (mailService != null && mailService.getMailConfig() != null) {
+						System.out.println("SMTP host  = "+mailService.getMailConfig().getSMTPHost());
+						System.out.println("SMTP port  = "+mailService.getMailConfig().getSMTPPort());
+						System.out.println("SMTP login = "+mailService.getMailConfig().getLogin());
+						System.out.println("SMTP pwd?  = "+StringHelper.isEmpty(mailService.getMailConfig().getPassword()));
+					}
+					
 					e.printStackTrace();
 					GenericMessage msg = new GenericMessage(comp.getLocalConfig(false).getProperty("message.error", "technical error."), GenericMessage.ERROR);
 					request.setAttribute("msg", msg);

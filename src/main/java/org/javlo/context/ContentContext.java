@@ -696,7 +696,7 @@ public class ContentContext {
 				outPage = root;
 			} else {
 				if (getPath().trim().length() > 0) {
-					MenuElement elem = globalContext.getPageIfExist(this, getPath(), urlFacotry);
+					MenuElement elem = globalContext.getPageIfExist(this, getPath(), urlFacotry);					
 					if (elem != null) {
 						globalContext.storeUrl(this, getPath(), elem.getId());
 						setCurrentPageCached(elem);

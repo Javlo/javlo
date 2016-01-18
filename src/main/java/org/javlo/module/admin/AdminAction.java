@@ -1138,9 +1138,9 @@ public class AdminAction extends AbstractModuleAction {
 					currentGlobalContext.setSMTPPort(requestService.getParameter("mailing-smtpport",null));
 					currentGlobalContext.setSMTPUser(requestService.getParameter("mailing-smtpuser",null));
 					String pwd = requestService.getParameter("mailing-smtppassword","");
-					if (pwd.length() > 0) {
+					if (pwd.length() > 0) {					
 						currentGlobalContext.setSMTPPassword(pwd);
-					}	
+					}
 					if (!StringHelper.isEmpty(currentGlobalContext.getSMTPHost())) {
 						Transport t = null;
 						try {

@@ -21,15 +21,16 @@ import javax.activation.DataHandler;
 import javax.activation.DataSource;
 import javax.mail.Message;
 import javax.mail.MessagingException;
+import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.mail.Transport;
+import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import javax.mail.util.ByteArrayDataSource;
 
-import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
@@ -45,7 +46,7 @@ public class MailService {
 	public static class Attachment {
 		private String name;
 		private byte[] data;
-		
+
 		public Attachment(String name, byte[] data) {
 			super();
 			this.name = name;
@@ -85,7 +86,7 @@ public class MailService {
 	// private static final String DEFAULT_SMTP_PORT = "25";
 
 	private Properties props;
-	//private StaticConfig staticConfig;
+	// private StaticConfig staticConfig;
 	private MailConfig mailConfig;
 	private String tempDir;
 
@@ -114,11 +115,13 @@ public class MailService {
 
 		this.props = finalProps;
 	}
-	
+
 	/**
 	 * This method is kept to be able to use this class outside a Servlet
 	 * context
-	 * @param mailConfig config for mailing.
+	 * 
+	 * @param mailConfig
+	 *            config for mailing.
 	 * @return the MailingManager singleton
 	 */
 	public static MailService getInstance(MailConfig mailConfig) {
@@ -128,21 +131,21 @@ public class MailService {
 		instance.updateInfo(mailConfig);
 		instance.mailConfig = mailConfig;
 		return instance;
-	}	
+	}
 
 	private static Properties getMailInfo(MailConfig mailing) {
 		Properties finalProps = new Properties();
-		
-		if (mailing != null) {			
-			if (mailing.getSMTPHost() != null ) {
+
+		if (mailing != null) {
+			if (mailing.getSMTPHost() != null) {
 				finalProps.put(MailService.SMTP_HOST_PARAM, mailing.getSMTPHost());
 			}
 			if (mailing.getSMTPPort() != null) {
 				finalProps.put(MailService.SMTP_PORT_PARAM, mailing.getSMTPPort());
 			}
 			if (mailing.getLogin() != null) {
-				finalProps.put(MailService.SMTP_USER_PARAM, mailing.getLogin());				
-				finalProps.put("mail.smtp.auth", "true");				
+				finalProps.put(MailService.SMTP_USER_PARAM, mailing.getLogin());
+				finalProps.put("mail.smtp.auth", "true");
 			}
 			if (mailing.getPassword() != null) {
 				finalProps.put(MailService.SMTP_PASSWORD_PARAM, mailing.getPassword());
@@ -156,13 +159,26 @@ public class MailService {
 
 	}
 	
-	
-	
-	public static final Transport getMailTransport(MailConfig mailConfig) throws MessagingException {
-		Session mailSession = Session.getDefaultInstance(getMailInfo(mailConfig));
+	public static final Session getMailSession(final MailConfig mailConfig) throws MessagingException {
+		Session mailSession;
+		if (mailConfig == null || !mailConfig.isAuthentification()) {
+			mailSession = Session.getDefaultInstance(getMailInfo(mailConfig));
+		} else {
+			mailSession = Session.getInstance(getMailInfo(mailConfig), new javax.mail.Authenticator() {
+				protected PasswordAuthentication getPasswordAuthentication() {
+					return new PasswordAuthentication(mailConfig.getLogin(), mailConfig.getPassword());
+				}
+			});
+		}
+		return mailSession;
+	}
+
+	public static final Transport getMailTransport(final MailConfig mailConfig) throws MessagingException {
+		Session mailSession = getMailSession(mailConfig);		
+		mailSession.setDebug(true);
 		Transport transport = mailSession.getTransport("smtp");
-		logger.info("get transport [host:"+mailConfig.getSMTPHost()+" port:"+mailConfig.getSMTPPortInt()+" login:"+mailConfig.getLogin()+" pwd:"+!StringHelper.isEmpty(mailConfig.getPassword())+']');
-		transport.connect(mailConfig.getSMTPHost(),mailConfig.getSMTPPortInt(), mailConfig.getLogin(), mailConfig.getPassword());
+		logger.info("get transport [host:" + mailConfig.getSMTPHost() + " port:" + mailConfig.getSMTPPortInt() + " login:" + mailConfig.getLogin() + " pwd:" + !StringHelper.isEmpty(mailConfig.getPassword()) + ']');
+		transport.connect(mailConfig.getSMTPHost(), mailConfig.getSMTPPortInt(), mailConfig.getLogin(), mailConfig.getPassword());
 		return transport;
 	}
 
@@ -206,7 +222,8 @@ public class MailService {
 		Date sendDate = new Date();
 
 		if (!DEBUG) {
-			Session mailSession = Session.getDefaultInstance(props);
+			//Session mailSession = Session.getDefaultInstance(props);
+			Session mailSession = getMailSession(mailConfig);
 
 			MimeMessage msg = new MimeMessage(mailSession);
 			msg.setSentDate(sendDate);
@@ -271,7 +288,7 @@ public class MailService {
 
 			if (transport == null || !transport.isConnected()) {
 				transport = getMailTransport(mailConfig);
-				try {
+				try {					
 					transport.sendMessage(msg, msg.getAllRecipients());
 				} finally {
 					transport.close();
@@ -391,6 +408,10 @@ public class MailService {
 		sendMail(transport, sender, recipientsList, ccRecipientsList, bccRecipientsList, subject, content, contentTxt, isHTML, null);
 	}
 
+	public MailConfig getMailConfig() {
+		return mailConfig;
+	}
+
 	/**
 	 * Send one mail to one recipient.
 	 * 
@@ -420,7 +441,7 @@ public class MailService {
 	public void sendMail(InternetAddress sender, InternetAddress recipient, String subject, String content, boolean isHTML) throws MessagingException {
 		sendMail(null, sender, recipient, (List<InternetAddress>) null, (List<InternetAddress>) null, subject, content, isHTML);
 	}
-	
+
 	public static void resetInstance() {
 		instance = null;
 	}

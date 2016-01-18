@@ -1145,15 +1145,6 @@ public class URLHelper extends ElementaryURLHelper {
 		}
 	}
 
-	public static void main(String[] args) {
-
-		System.out.println("***** URLHelper.main : " + addCredential("http://www.javlo.org", "admin", "adminpwd")); // TODO:
-																													// remove
-																													// debug
-																													// trace
-
-	}
-
 	public static String replaceFolderVariable(ContentContext ctx, String url) {
 		String outURL = url;
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
@@ -1255,6 +1246,17 @@ public class URLHelper extends ElementaryURLHelper {
 		outPath = outPath.replace("_SLA_", "/");
 		outPath = outPath.replace("_BSL_", "\\");
 		return outPath;
+	}
+	
+	private static String removeJsessionid (String url) {
+		String outURL = url;
+		if (url.contains(";jsessionid=")) {
+			outURL = outURL.substring(0, url.indexOf(";jsessionid="));
+		} 
+		if (url.contains("&")) {
+			outURL = outURL + url.substring(url.indexOf("?"));
+		}
+		return outURL;
 	}
 
 	public static String getFileTypeURL(ContentContext ctx, File file) {
