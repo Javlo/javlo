@@ -597,3 +597,6 @@ change log
 * 2.1.0.3.3 12/01/2016
 
  * active module on action call (solve i18n bug)
+ 
+ * correction smtp authentification
+ 
