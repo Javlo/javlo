@@ -974,20 +974,7 @@ public class ImageTransformServlet extends HttpServlet {
 			} else {
 				staticInfo = StaticInfo.getInstance(ctx, imageName);
 			}
-
-			if (staticInfo != null) {
-				if (AdminUserFactory.createUserFactory(ctx.getGlobalContext(), request.getSession()).getCurrentUser(request.getSession()) == null) {
-					if (!staticInfo.canRead(ctx, UserFactory.createUserFactory(globalContext, request.getSession()).getCurrentUser(request.getSession()), request.getParameter(RESOURCE_TOKEN_KEY))) {
-						response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-						return;
-					}
-				}
-
-				if (globalContext.getImageViewFilter().contains(filter) && !StringHelper.isTrue(request.getParameter("no-access"))) {
-					staticInfo.addAccess(ctx);
-				}
-			}
-
+			
 			ImageConfig config = ImageConfig.getInstance(globalContext, request.getSession(), template);
 			
 			ImageConfig.ImageParameters imageParam = new ImageConfig.ImageParameters(request);
@@ -1001,6 +988,20 @@ public class ImageTransformServlet extends HttpServlet {
 			} else {
 				response.setContentType(ImageHelper.getImageExtensionToManType(DEFAULT_IMAGE_TYPE));
 			}
+
+			if (staticInfo != null) {
+				if (AdminUserFactory.createUserFactory(ctx.getGlobalContext(), request.getSession()).getCurrentUser(request.getSession()) == null) {
+					if (!staticInfo.canRead(ctx, UserFactory.createUserFactory(globalContext, request.getSession()).getCurrentUser(request.getSession()), request.getParameter(RESOURCE_TOKEN_KEY))) {
+						response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+						return;
+					}
+				}
+
+				if (globalContext.getImageViewFilter().contains(filter) && !StringHelper.isTrue(request.getParameter("no-access"))) {
+					staticInfo.addAccess(ctx);
+				}
+			}
+			
 			out = response.getOutputStream();
 
 			// org.javlo.helper.Logger.stepCount("transform",

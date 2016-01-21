@@ -477,7 +477,6 @@ public class PersistenceService {
 		}
 		
 		if (!file.exists()) {
-			file.getParentFile().mkdirs();
 			file.createNewFile();
 		}		
 		trackWriterFileName = file.getName();
