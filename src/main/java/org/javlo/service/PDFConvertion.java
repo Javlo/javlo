@@ -48,9 +48,7 @@ public class PDFConvertion {
 		}
 
 		try {
-
-			java.net.HttpURLConnection con = (java.net.HttpURLConnection) url.openConnection();
-			
+			java.net.HttpURLConnection con = (java.net.HttpURLConnection) url.openConnection();			
 			DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder builder = documentBuilderFactory.newDocumentBuilder();
 			builder.setEntityResolver(FSEntityResolver.instance());

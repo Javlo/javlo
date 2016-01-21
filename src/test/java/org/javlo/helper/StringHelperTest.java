@@ -257,7 +257,7 @@ public class StringHelperTest extends TestCase {
 		assertTrue(StringHelper.isDigit("125"));
 		assertTrue(StringHelper.isDigit("-12"));
 		assertFalse(StringHelper.isDigit("abc"));
-		assertFalse(StringHelper.isDigit("12€"));
+		assertFalse(StringHelper.isDigit("12ï¿½"));
 	}
 	
 	public void testIsLikeDigit() {
@@ -283,6 +283,30 @@ public class StringHelperTest extends TestCase {
 	public void testIsOneEmpty() {
 		assertFalse(StringHelper.isOneEmpty("test", "test2"));
 		assertTrue(StringHelper.isOneEmpty("coucou", null));
+	}
+	
+	public void testGetColNum() {
+		assertEquals(1, StringHelper.getColNum("A"));
+		assertEquals(1, StringHelper.getColNum("a"));
+		assertNotSame(1, StringHelper.getColNum("b"));
+		assertEquals(4, StringHelper.getColNum("d"));
+		assertEquals(27, StringHelper.getColNum("aa"));
+		assertEquals(30, StringHelper.getColNum("ad"));
+	}
+	
+	public void testGetColName() {
+		assertEquals("A", StringHelper.getColName(1));
+		assertEquals("AA", StringHelper.getColName(27));
+		assertEquals("AD", StringHelper.getColName(30));
+	}
+	
+	public void testOnlyAlphaNumeric() {		
+		assertEquals("aaa", StringHelper.onlyAlphaNumeric("aaa", true));
+		assertEquals("a2a", StringHelper.onlyAlphaNumeric("a2a", true));
+		assertEquals("aaabc", StringHelper.onlyAlphaNumeric("aaa bc", false));
+		assertEquals("aaabc", StringHelper.onlyAlphaNumeric("aaa (bc){?./}", false));
+		assertEquals("aaa", StringHelper.onlyAlphaNumeric("aaa (bc){?./}", true));
+		
 	}
  
 }

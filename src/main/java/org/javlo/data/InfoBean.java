@@ -380,6 +380,10 @@ public class InfoBean {
 		}
 	}
 
+	/**
+	 * get the list of the pages from current to root
+	 * @return
+	 */
 	public List<PageBean> getPagePath() {
 
 		MenuElement page = currentPage;

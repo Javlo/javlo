@@ -78,6 +78,12 @@ public class SnapshotMaker implements AutoCloseable {
 
 	private void processPage(Snapshot snap, SnapshotedPage page) throws IOException {
 		drv.navigate().to(page.getUrl());
+		
+		try {
+			Thread.sleep(2000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 
 		//Take screen shot
 		if(drv instanceof TakesScreenshot) {

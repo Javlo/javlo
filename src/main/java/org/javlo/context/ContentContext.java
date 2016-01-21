@@ -1460,8 +1460,9 @@ public class ContentContext {
 			if (isLikeViewRenderMode() && globalContext.getURLFactory(this) != null) {
 				format = globalContext.getURLFactory(this).getFormat(request.getRequestURI());
 			} else {
-				format = StringHelper.getFileExtension(request.getRequestURI());
+				format = StringHelper.getFileExtension(request.getRequestURI());				
 			}
+			format = StringHelper.onlyAlphaNumeric(format, true);
 		}
 		if (format == null || format.trim().length() == 0) {
 			return "html";

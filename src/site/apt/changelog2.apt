@@ -599,4 +599,7 @@ change log
  * active module on action call (solve i18n bug)
  
  * correction smtp authentification
+
+ * owasp encode
  
+* 2.1.0.3.4 20/01/2016

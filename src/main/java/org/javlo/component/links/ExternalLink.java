@@ -46,11 +46,11 @@ public class ExternalLink extends ComplexPropertiesLink implements IReverseLinkC
 	}
 
 	public String getLabel() {
-		String label = properties.getProperty(LABEL_KEY, "");
-		String link = properties.getProperty(LINK_KEY, "");
+		String label = properties.getProperty(LABEL_KEY, "");		 
 		if (label.trim().length() == 0) {
-			label = link;
+			label = properties.getProperty(LINK_KEY, "");;
 		}
+		label = label.replace("/", "/<wbr />");
 		return label;
 	}
 

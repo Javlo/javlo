@@ -25,6 +25,7 @@ import org.javlo.service.ContentService;
 import org.javlo.servlet.ImageTransformServlet;
 import org.javlo.template.Template;
 import org.javlo.ztatic.StaticInfo;
+import org.owasp.encoder.Encode;
 
 /**
  * countain the method with efficient body for URLHelper.
@@ -93,9 +94,9 @@ public abstract class ElementaryURLHelper {
 	 */
 	public static String addParam(String url, String name, String value) {
 		if (url.contains("?")) {
-			return url = url + '&' + name + '=' + StringHelper.neverNull(value);
+			return url = url + '&' + name + '=' + Encode.forUriComponent(StringHelper.neverNull(value));
 		} else {
-			return url = url + '?' + name + '=' + StringHelper.neverNull(value);
+			return url = url + '?' + name + '=' + Encode.forUriComponent(StringHelper.neverNull(value));
 		}
 	}
 
@@ -801,5 +802,6 @@ public abstract class ElementaryURLHelper {
 		}
 		return url.getProtocol() + "://" + url.getHost() + port + '/';
 	}
+	
 
 }

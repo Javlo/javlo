@@ -1439,6 +1439,10 @@ public class StaticConfig extends Observable {
 	public boolean isEditOnCreate() {
 		return StringHelper.isTrue(properties.getString("content.edit-on-create", null), false);
 	}
+	
+	public boolean isRestServlet() {
+		return StringHelper.isTrue(properties.getString("security.rest-servlet", null), true);
+	}
 
 	public String getSpecialLogFile() {
 		return properties.getString("debug.special-file", "/tmp/javlo.log");

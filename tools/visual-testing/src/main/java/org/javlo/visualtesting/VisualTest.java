@@ -51,7 +51,7 @@ public class VisualTest {
 
 		try (SnapshotMaker snapshotMaker = new SnapshotMaker(tmpFolder);
 				SnapshotComparisonMaker comparisonMaker = new SnapshotComparisonMaker(tmpFolder)) {
-			snapshotMaker.configure(1024);
+			snapshotMaker.configure(1280);			
 			comparisonMaker.configure();
 			new VisualTest(snapshotMaker, comparisonMaker, workDirFolder).run();
 		}

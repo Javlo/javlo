@@ -984,7 +984,7 @@ public class XHTMLHelper {
 		}
 		return getInputOneSelect(name, newContent, value, js, sort);
 	}
-
+	
 	public static String getInputOneSelect(String name, String[] ids, String[] labels, String value, String js) {
 		return getInputOneSelect(name, ids, labels, value, js, true);
 	}

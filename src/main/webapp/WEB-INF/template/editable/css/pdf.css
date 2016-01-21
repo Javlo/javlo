@@ -22,3 +22,13 @@
 	postition: absolute;
 	bottom: 0;
 }
+
+figure a, .float-image a {
+	display: inline-block;
+}
+
+img {
+    page-break-before: auto;
+    page-break-after: auto;
+    page-break-inside: avoid;
+}

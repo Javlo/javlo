@@ -7,11 +7,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
 import java.nio.charset.Charset;
+import java.util.AbstractMap;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
+import org.apache.commons.collections.keyvalue.AbstractMapEntry;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFDataFormatter;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -37,8 +41,57 @@ import org.javlo.service.ReverseLinkService;
 public class ArrayFileComponent extends GenericFile {
 
 	public static final String REQUEST_ATTRIBUTE_KEY = "array";
-
+	
+	public static final String REQUEST_ATTRIBUTE_MAP_KEY = "dataArray";
+	
 	public static final String TYPE = "array-file";
+	
+	public static class ArrayMap extends AbstractMap<String, Cell> {
+		
+		private Cell[][] data;
+		private int titleRaw = 0;
+		private int dataRaw = 0;
+
+		public ArrayMap(Cell[][] inData) {
+			this.data = inData;
+			for (int row = 0; row < Math.min(inData.length, 10); row++) {
+				if (!StringHelper.isEmpty(data[row][0]) && !StringHelper.isEmpty(data[row][1])) {
+					titleRaw = row;								
+					row = 99;
+				}
+			}
+			for (int row = titleRaw+1; row < Math.min(inData.length, 10); row++) {
+				if (!StringHelper.isEmpty(data[row][0]) && !StringHelper.isEmpty(data[row][1])) {
+					dataRaw = row;								
+					row = 99;
+				}
+			}
+			System.out.println("titleRaw = "+dataRaw);
+		}
+
+		@Override
+		public Set<java.util.Map.Entry<String, Cell>> entrySet() {
+			Set<java.util.Map.Entry<String, Cell>> outEntries = new HashSet<Map.Entry<String,Cell>>();
+			String key = data[titleRaw][0].toString();
+			Cell value = data[dataRaw][0];	
+			int i=1;
+			while ((!StringHelper.isEmpty(key) || !StringHelper.isEmpty(value)) && (i<data[titleRaw].length)) {
+				Map.Entry<String, Cell> entry = new AbstractMapEntry(key,value) {};
+				outEntries.add(entry);
+				entry = new AbstractMapEntry(""+i,value) {};
+				outEntries.add(entry);
+				entry = new AbstractMapEntry(StringHelper.getColName(i),value) {};
+				outEntries.add(entry);							
+				key = data[titleRaw][i].toString();
+				entry = new AbstractMapEntry(StringHelper.getColName(i)+"_title",key) {};
+				outEntries.add(entry);
+				value = data[dataRaw][i];	
+				i++;
+			}
+			return outEntries;
+		}
+
+	}
 
 	public static class Cell {
 		private String value = "";
@@ -292,6 +345,7 @@ public class ArrayFileComponent extends GenericFile {
 	public void prepareView(ContentContext ctx) throws Exception {
 		super.prepareView(ctx);
 		ctx.getRequest().setAttribute(REQUEST_ATTRIBUTE_KEY, null);
+		ctx.getRequest().setAttribute(REQUEST_ATTRIBUTE_MAP_KEY, null);
 		ctx.getRequest().setAttribute("summary", getLabel());
 
 		getArray(ctx);
@@ -319,23 +373,14 @@ public class ArrayFileComponent extends GenericFile {
 			String basePath = URLHelper.mergePath(getFileDirectory(ctx), getDirSelected());
 			basePath = URLHelper.mergePath(basePath, getFileName());
 			File file = new File(basePath);
-
-			/*
-			 * if
-			 * (StringHelper.getFileExtension(file.getName()).equalsIgnoreCase
-			 * ("csv")) { outArray = getCSVArray(ctx, file); } else
-			 */
-			/*
-			 * if
-			 * (StringHelper.getFileExtension(file.getName()).equalsIgnoreCase(
-			 * "ods")) { outArray = getODSArray(ctx, file); } else
-			 */ if (StringHelper.getFileExtension(file.getName()).equalsIgnoreCase("xlsx")) {
+			if (StringHelper.getFileExtension(file.getName()).equalsIgnoreCase("xlsx")) {
 				outArray = getXLSXArray(ctx, file);
 			} else if (StringHelper.getFileExtension(file.getName()).equalsIgnoreCase("xls")) {
 				outArray = getXLSArray(ctx, file);
 			}
 			optimizeRowSpan(outArray);
 			ctx.getRequest().setAttribute(REQUEST_ATTRIBUTE_KEY, outArray);
+			ctx.getRequest().setAttribute(REQUEST_ATTRIBUTE_MAP_KEY, new ArrayMap(outArray));
 		}
 		return outArray;
 	}
@@ -430,26 +475,6 @@ public class ArrayFileComponent extends GenericFile {
 		}
 		return outCell;
 	}
-
-	/*
-	 * private static String readOpenDocCell(MutableCell<SpreadSheet>
-	 * mutableCell) { return mutableCell.getValue().toString(); }
-	 * 
-	 * protected Cell[][] getODSArray(ContentContext ctx, File odsFile) throws
-	 * Exception { final Sheet sheet =
-	 * SpreadSheet.createFromFile(odsFile).getSheet(0); int w = 0; int h = 0;
-	 * for (int x = 0; x < Math.min(sheet.getColumnCount(), 32); x++) { for (int
-	 * y = 0; y < Math.min(sheet.getRowCount(), 512); y++) { Object value =
-	 * sheet.getCellAt(x, y).getValue(); if (value != null &&
-	 * value.toString().trim().length() > 0) { if (x > h) { h = x; } if (y > w)
-	 * { w = y; } } } } w++; h++; Cell[][] outArray = new Cell[w][]; for (int x
-	 * = 0; x < w; x++) { outArray[x] = new Cell[h]; for (int y = 0; y < h; y++)
-	 * { if (sheet.getCellAt(y, x).getValue() != null) { outArray[x][y] = new
-	 * Cell(renderCell(readOpenDocCell(sheet.getCellAt(y, x))), outArray, x, y);
-	 * } } }
-	 * 
-	 * return outArray; }
-	 */
 
 	protected Cell[][] getXLSXArray(ContentContext ctx, File xslxFile) throws Exception {
 		InputStream in = new FileInputStream(xslxFile);
@@ -721,10 +746,6 @@ public class ArrayFileComponent extends GenericFile {
 		stringWriter.append("<table border=\"1\">");
 
 		Cell[][] array = TESTgetXLSArray(file);
-		System.out.println("***** ArrayFileComponent.renderArray : size = " + array[0].length); // TODO:
-																								// remove
-																								// debug
-																								// trace
 
 		optimizeRowSpan(array);
 
@@ -827,30 +848,33 @@ public class ArrayFileComponent extends GenericFile {
 		StringBuffer finalCode = new StringBuffer();
 		finalCode.append(getSpecialInputTag());
 
-		finalCode.append("<div class=\"line\"><label for=\"" + getLabelXHTMLInputName() + "\">" + i18nAccess.getText("global.summary") + " : </label>");
-		String[][] params = { { "rows", "1" } };
-		finalCode.append(XHTMLHelper.getTextArea(getLabelXHTMLInputName(), getLabel(), params));
+		finalCode.append("<div class=\"form-group\"><label for=\"" + getLabelXHTMLInputName() + "\">" + i18nAccess.getText("global.summary") + " : </label>");
+		String[][] params = { { "rows", "2" } };
+		finalCode.append(XHTMLHelper.getTextArea(getLabelXHTMLInputName(), getLabel(), params, "form-control"));
 		finalCode.append("</div>");
 
 		if (canUpload(ctx)) {
-			finalCode.append("<div class=\"line\"><label for=\"new_dir_" + getId() + "\">");
+			finalCode.append("<div class=\"form-group\"><label for=\"new_dir_" + getId() + "\">");
 			finalCode.append(getNewDirLabelTitle(ctx));
-			finalCode.append(" : </label><input id=\"new_dir_" + getId() + "\" name=\"" + getNewDirInputName() + "\" type=\"text\"/></div>");
+			finalCode.append(" : </label><input class=\"form-control\" id=\"new_dir_" + getId() + "\" name=\"" + getNewDirInputName() + "\" type=\"text\"/></div>");
 		}
 
 		if ((getDirList(ctx, getFileDirectory(ctx)) != null) && (getDirList(ctx, getFileDirectory(ctx)).length > 0)) {
-			finalCode.append("<div class=\"line\"><label for=\"" + getDirInputName() + "\">");
+			finalCode.append("<div class=\"form-group\"><label for=\"" + getDirInputName() + "\">");
 			finalCode.append(getDirLabelTitle(ctx));
 			finalCode.append(" : </label>");
-			finalCode.append(XHTMLHelper.getInputOneSelect(getDirInputName(), ArrayHelper.addFirstElem(getDirList(ctx, getFileDirectory(ctx)), ""), getDirSelected(), getJSOnChange(ctx), true));
+			
+			String[] values = ArrayHelper.addFirstElem(getDirList(ctx, getFileDirectory(ctx)), "");			
+			//finalCode.append(XHTMLHelper.getInputOneSelect(getDirInputName(), ArrayHelper.addFirstElem(getDirList(ctx, getFileDirectory(ctx)), ""), getDirSelected(), getJSOnChange(ctx), true));
+			finalCode.append(XHTMLHelper.getInputOneSelect(getDirInputName(), values, values, getDirSelected(), "form-control", getJSOnChange(ctx), true));
 			finalCode.append("</div>");
 		}
 
 		if (canUpload(ctx)) {
-			finalCode.append("<div class=\"line\">");
+			finalCode.append("<div class=\"form-group\">");
 			String uploadId = "update-" + getId();
 			finalCode.append("<label for=\"" + uploadId + "\">" + getImageUploadTitle(ctx) + " :</label>");
-			finalCode.append("<input id=\"" + uploadId + "\" name=\"" + getFileXHTMLInputName() + "\" type=\"file\"/>");
+			finalCode.append("<input class=\"form-control\" id=\"" + uploadId + "\" name=\"" + getFileXHTMLInputName() + "\" type=\"file\"/>");
 			finalCode.append("</div");
 		}
 
@@ -859,13 +883,13 @@ public class ArrayFileComponent extends GenericFile {
 
 			finalCode.append(getImageChangeTitle(ctx));
 
-			finalCode.append("<div class=\"line\">");
+			finalCode.append("<div class=\"form-group\">");
 			String[] fileListBlanck = new String[fileList.length + 1];
 			fileListBlanck[0] = "";
 			System.arraycopy(fileList, 0, fileListBlanck, 1, fileList.length);
 
-			finalCode.append("</div><div class=\"line\"><label>&nbsp</label>");
-			finalCode.append(XHTMLHelper.getInputOneSelect(getSelectXHTMLInputName(), fileListBlanck, getFileName(), getJSOnChange(ctx), true));
+			finalCode.append("</div><div class=\"form-group\"><label>&nbsp</label>");
+			finalCode.append(XHTMLHelper.getInputOneSelect(getSelectXHTMLInputName(), fileListBlanck, fileListBlanck, getFileName(), "form-control", getJSOnChange(ctx), true));
 			finalCode.append("</div>");
 
 			if (ctx.getRenderMode() == ContentContext.EDIT_MODE && !ctx.isEditPreview()) {
@@ -875,7 +899,7 @@ public class ArrayFileComponent extends GenericFile {
 					filesParams.put("path", URLHelper.mergePath("/", getRelativeFileDirectory(ctx), getDirSelected()));
 					String staticURL = URLHelper.createModuleURL(ctx, ctx.getPath(), "file", filesParams);
 
-					finalCode.append("&nbsp;<a class=\"" + IContentVisualComponent.EDIT_ACTION_CSS_CLASS + "\" href=\"" + staticURL + "\" >");
+					finalCode.append("&nbsp;<a class=\"btn btn-default btn-sm" + IContentVisualComponent.EDIT_ACTION_CSS_CLASS + "\" href=\"" + staticURL + "\" >");
 					finalCode.append(i18nAccess.getText("content.goto-static"));
 					finalCode.append("</a>");
 				}

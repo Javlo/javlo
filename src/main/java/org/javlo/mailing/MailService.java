@@ -175,7 +175,6 @@ public class MailService {
 
 	public static final Transport getMailTransport(final MailConfig mailConfig) throws MessagingException {
 		Session mailSession = getMailSession(mailConfig);		
-		mailSession.setDebug(true);
 		Transport transport = mailSession.getTransport("smtp");
 		logger.info("get transport [host:" + mailConfig.getSMTPHost() + " port:" + mailConfig.getSMTPPortInt() + " login:" + mailConfig.getLogin() + " pwd:" + !StringHelper.isEmpty(mailConfig.getPassword()) + ']');
 		transport.connect(mailConfig.getSMTPHost(), mailConfig.getSMTPPortInt(), mailConfig.getLogin(), mailConfig.getPassword());

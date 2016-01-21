@@ -62,6 +62,7 @@ import org.javlo.context.GlobalContext;
 import org.javlo.helper.Comparator.StringComparator;
 import org.javlo.i18n.I18nAccess;
 import org.jsoup.Jsoup;
+import org.owasp.encoder.Encode;
 
 import com.beust.jcommander.ParameterException;
 
@@ -1445,10 +1446,9 @@ public class StringHelper {
 	}
 
 	public static void main(String[] args) {
-		String str = "20 %";
-		str = str.replaceAll("�|\\$|\\.|\\,|\\%| ", "0");
-		//str = str.replaceAll("%|�|\\$", "9");
-		System.out.println(str);
+		StringBuilder outCleanData = new StringBuilder();
+		outCleanData.append("patrick");
+		System.out.println("outCleanData="+outCleanData);
 	}
 
 	/**
@@ -2708,7 +2708,7 @@ public class StringHelper {
 			return "";
 		}
 		value = value.replace("&", "&amp;");
-		return XHTMLHelper.escapeXML(removeTag(value).replace("\"", "&quot;").replace("\n", ""));
+		return Encode.forXmlAttribute(XHTMLHelper.escapeXML(removeTag(value).replace("\"", "&quot;").replace("\n", "")));
 	}
 
 	/**
@@ -2722,7 +2722,7 @@ public class StringHelper {
 			return "";
 		}
 		try {
-			return URLEncoder.encode(value, ContentContext.CHARACTER_ENCODING);
+			return Encode.forXmlAttribute(URLEncoder.encode(value, ContentContext.CHARACTER_ENCODING));
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 			return null;
@@ -2854,7 +2854,7 @@ public class StringHelper {
 	}
 
 	public static boolean isEmpty(Object value) {
-		return (value == null || value.toString().trim().length() == 0);
+		return (value == null || value.toString() == null || value.toString().trim().length() == 0);
 	}
 	
 	public static boolean isAllEmpty(Object... values) {
@@ -3426,6 +3426,33 @@ public class StringHelper {
 			return list.equals(item);
 		}
 	}
+	
+	public static int getColNum (String colName) {
+	    colName = colName.trim();
+	    StringBuffer buff = new StringBuffer(colName);
+	    char chars[] = buff.reverse().toString().toLowerCase().toCharArray();
+	    int retVal=0, multiplier=0;
+	    for(int i = 0; i < chars.length;i++){
+	        multiplier = (int)chars[i]-96;
+	        retVal += multiplier * Math.pow(26, i);
+	    }
+	    return retVal;
+	}
+	
+	public static String getColName(int colIndex)
+	{
+	    int div = colIndex;
+	    String colLetter = "";
+	    int mod = 0;
+	 
+	    while (div > 0)
+	    {
+	        mod = (div - 1) % 26;
+	        colLetter = (char)(65 + mod) + colLetter;
+	        div = (int)((div - mod) / 26);
+	    }
+	    return colLetter;
+	}
 
 	public static String timedTokenGenerate(String data, long timeInMillis) {
 		long now = timeInMillis / TIMED_TOKEN_DIVIDER;
@@ -3446,5 +3473,20 @@ public class StringHelper {
 		}
 		return false;
 	}
+	
+	public static String onlyAlphaNumeric(String data, boolean stopOnBadChar) {
+		StringBuilder outCleanData = new StringBuilder();
+		for (int i=0; i<data.length(); i++) {
+			if (Character.isAlphabetic(data.charAt(i)) || Character.isDigit(data.charAt(i))) {
+				outCleanData.append(data.charAt(i));
+			} else if (stopOnBadChar) {
+				break;
+			}
+		}
+		return outCleanData.toString();
+	}
+	
+	
+	
 
 }

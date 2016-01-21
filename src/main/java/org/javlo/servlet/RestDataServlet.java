@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
+import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.data.rest.IRestFactory;
 import org.javlo.data.rest.IRestItem;
@@ -37,7 +38,10 @@ public class RestDataServlet extends HttpServlet {
 	public void process(HttpServletRequest request, HttpServletResponse response, boolean post) throws ServletException {
 		String path = request.getPathInfo();
 		String[] pathItem = StringUtils.split(path, '/');
-		if (pathItem.length < 2) {
+		if (!StaticConfig.getInstance(request.getSession().getServletContext()).isRestServlet()) {
+			logger.warning("rest servlet not activated, change static-config to use.");
+			response.setStatus(HttpServletResponse.SC_NOT_FOUND);			
+		} else if (pathItem.length < 2) {
 			logger.warning("bad rest url format : min size : 2");
 			response.setStatus(HttpServletResponse.SC_NOT_FOUND);			
 		} else {
