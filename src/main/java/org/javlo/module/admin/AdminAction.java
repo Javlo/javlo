@@ -1271,8 +1271,7 @@ public class AdminAction extends AbstractModuleAction {
 					MailService.resetInstance();
 					
 					for (FileItem file : requestService.getAllFileItem()) {
-						if (file.getFieldName().equals("logo")) {
-							System.out.println("***** AdminAction.performUpdateGlobalContext : logo file.getName() = "+file.getName()); //TODO: remove debug trace
+						if (file.getFieldName().equals("logo")) {							
 							File oldLogo = null;
 							if (td.getLink() != null) {
 								oldLogo = new File(URLHelper.mergePath(currentGlobalContext.getStaticFolder(), td.getLogo()));
@@ -1281,8 +1280,7 @@ public class AdminAction extends AbstractModuleAction {
 								String logoPath = URLHelper.mergePath("logo", file.getName());
 								File logo = new File(URLHelper.mergePath(currentGlobalContext.getStaticFolder(), logoPath));
 								td.setLogo(logoPath);
-								ResourceHelper.writeStreamToFile(file.getInputStream(), logo);
-								System.out.println("***** AdminAction.performUpdateGlobalContext : logo = "+logo); //TODO: remove debug trace
+								ResourceHelper.writeStreamToFile(file.getInputStream(), logo);								
 								if (oldLogo != null && oldLogo.exists() && !oldLogo.getName().equals(file.getName())) {
 									oldLogo.delete();
 								}
@@ -1411,6 +1409,7 @@ public class AdminAction extends AbstractModuleAction {
 		}
 		globalContext.clearTransformShortURL();
 		globalContext.resetURLFactory();
+		globalContext.storeRedirectUrlList();
 		String currentContextKey = request.getParameter("context");
 		if (currentContextKey == null) { // param context is used only for check
 											// the type of call, but you can

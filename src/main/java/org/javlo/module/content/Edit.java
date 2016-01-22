@@ -1441,6 +1441,7 @@ public class Edit extends AbstractModuleAction {
 
 				globalContext.setPublishDate(new Date());
 				globalContext.setLatestPublisher(ctx.getCurrentEditUser().getLogin());
+				globalContext.storeRedirectUrlList();
 
 				content.releaseViewNav(ctx, globalContext);
 

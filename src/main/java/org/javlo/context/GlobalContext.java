@@ -1,11 +1,14 @@
 package org.javlo.context;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
+import java.io.PrintWriter;
 import java.io.Reader;
 import java.io.Serializable;
 import java.lang.ref.WeakReference;
@@ -104,7 +107,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 
 	private final Object lockLoadContent = new Object();
 
-	private AppendableTextFile redirectURLList = null;
+	private PrintWriter redirectURLList = null;
 
 	private Properties redirectURLMap = null;
 
@@ -3124,7 +3127,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		return forcedContent.get(key);
 	}
 
-	private AppendableTextFile getRedirectUrlList() {
+	private PrintWriter getRedirectUrlList() {
 		if (redirectURLList == null) {
 			try {
 				File redirectURLListFile = getRedirectURLListFile();
@@ -3133,12 +3136,16 @@ public class GlobalContext implements Serializable, IPrintInfo {
 					redirectURLListFile.createNewFile();
 					logger.info("create url history file : " + redirectURLListFile);
 				}
-				redirectURLList = new AppendableTextFile(redirectURLListFile);
+				redirectURLList = new PrintWriter(new BufferedWriter(new FileWriter(getRedirectURLListFile(), true)));
 			} catch (Throwable t) {
 				t.printStackTrace();
 			}
 		}
 		return redirectURLList;
+	}
+	
+	public void storeRedirectUrlList() {
+		getRedirectUrlList().flush();
 	}
 
 	private Properties getRedirectUrlMap() {
@@ -3148,7 +3155,8 @@ public class GlobalContext implements Serializable, IPrintInfo {
 					Properties prop = new Properties();
 					Reader reader = null;
 					try {
-						reader = new InputStreamReader(new FileInputStream(getRedirectUrlList().getFile()), ContentContext.CHARACTER_ENCODING);
+						File redirectURLListFile = getRedirectURLListFile();
+						reader = new InputStreamReader(new FileInputStream(redirectURLListFile), ContentContext.CHARACTER_ENCODING);
 						prop.load(reader);
 					} catch (Exception e) {
 						e.printStackTrace();
