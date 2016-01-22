@@ -2722,7 +2722,7 @@ public class StringHelper {
 			return "";
 		}
 		try {
-			return Encode.forXmlAttribute(URLEncoder.encode(value, ContentContext.CHARACTER_ENCODING));
+			return Encode.forHtmlAttribute(URLEncoder.encode(value, ContentContext.CHARACTER_ENCODING));
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 			return null;

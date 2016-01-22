@@ -238,7 +238,7 @@ public class ModulesContext {
 					if (parent != null) {
 						parent.addChild(module);
 					} else {
-						logger.warning("parent not found : " + module.getParent());
+						logger.fine("parent not found : " + module.getParent());
 					}
 				}
 			}

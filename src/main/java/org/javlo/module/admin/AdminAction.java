@@ -1410,6 +1410,7 @@ public class AdminAction extends AbstractModuleAction {
 			return "security error !";
 		}
 		globalContext.clearTransformShortURL();
+		globalContext.resetURLFactory();
 		String currentContextKey = request.getParameter("context");
 		if (currentContextKey == null) { // param context is used only for check
 											// the type of call, but you can

@@ -73,7 +73,7 @@ public class MessageRepository {
 	 */
 	public String forwardMessage(String url) {
 		if (globalMessage != null) {
-			return URLHelper.addParam(url, PARAMETER_NAME, getRawGlobalMessage());
+			return URLHelper.addRawParam(url, PARAMETER_NAME, getRawGlobalMessage());
 		} else {
 			return url;
 		}

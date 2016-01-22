@@ -38,6 +38,7 @@ import org.javlo.helper.URLHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
+import org.javlo.module.content.Edit;
 import org.javlo.module.core.AbstractModuleContext;
 import org.javlo.module.core.Module;
 import org.javlo.module.core.Module.Box;
@@ -475,6 +476,10 @@ public class FileAction extends AbstractModuleAction {
 	public static String performSynchro(ContentContext ctx) throws Exception {
 		SynchroHelper.performSynchro(ctx);
 		return null;
+	}
+	
+	public static final String performChangeLanguage(RequestService requestService, ContentContext ctx, GlobalContext globalContext, I18nAccess i18nAccess, MessageRepository messageRepository) throws IOException {		
+		return Edit.performChangeLanguage(requestService, ctx, globalContext, i18nAccess, messageRepository);
 	}
 
 	public static final String performPreviewedit(HttpServletRequest request, ContentContext ctx, RequestService rs, EditContext editCtx) throws Exception {

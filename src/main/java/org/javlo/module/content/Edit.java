@@ -1296,9 +1296,9 @@ public class Edit extends AbstractModuleAction {
 			ctx.setRequestContentLanguage(lg);
 			messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("edit.message.new-language") + ' ' + lg, GenericMessage.INFO));
 			String newURL = URLHelper.createURL(ctx);
-
+	
 			if (requestService.getParameter(ElementaryURLHelper.BACK_PARAM_NAME, null) != null) {
-				newURL = URLHelper.addParam(newURL, ElementaryURLHelper.BACK_PARAM_NAME, requestService.getParameter(ElementaryURLHelper.BACK_PARAM_NAME, null));
+				newURL = URLHelper.addRawParam(newURL, ElementaryURLHelper.BACK_PARAM_NAME, requestService.getParameter(ElementaryURLHelper.BACK_PARAM_NAME, null));
 			}
 			newURL = messageRepository.forwardMessage(newURL);
 			ctx.sendRedirect(newURL);
@@ -1507,6 +1507,8 @@ public class Edit extends AbstractModuleAction {
 			}
 
 			ReverseLinkService.getInstance(globalContext).clearCache();
+			
+			globalContext.resetURLFactory();
 
 			return message;
 		}

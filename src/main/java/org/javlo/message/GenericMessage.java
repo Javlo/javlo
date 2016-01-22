@@ -10,6 +10,7 @@ import java.util.List;
 
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.XHTMLHelper;
+import org.owasp.encoder.Encode;
 
 /**
  * @author pvandermaesen object for set a global message.
@@ -75,8 +76,8 @@ public class GenericMessage {
 	public String getMessage() {
 		if (message == null) {
 			return "";
-		}
-		return XHTMLHelper.escapeXHTML(message); // secure CSS attack
+		}		
+		return Encode.forHtmlContent(message); // secure CSS attack
 	}
 
 	/**

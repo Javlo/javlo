@@ -113,12 +113,12 @@ public class ResourceServlet extends HttpServlet {
 			e1.printStackTrace();
 			throw new ServletException(e1.getMessage());
 		}
-		
+
 		if (ctx.getGlobalContext().isCollaborativeMode() && ctx.getCurrentEditUser() == null) {
 			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 			return;
 		}
-		
+
 		/* TRACKING */
 		GlobalContext globalContext = GlobalContext.getInstance(request);
 		IUserFactory fact = UserFactory.createUserFactory(globalContext, request.getSession());
@@ -154,7 +154,7 @@ public class ResourceServlet extends HttpServlet {
 
 			if (pathInfo.startsWith(staticConfig.getShareDataFolderKey())) {
 				pathInfo = pathInfo.substring(staticConfig.getShareDataFolderKey().length() + 1);
-				dataFolder = globalContext.getSharedDataFolder(request.getSession());				
+				dataFolder = globalContext.getSharedDataFolder(request.getSession());
 			} else if (pathInfo.startsWith(URLHelper.TEMPLATE_RESOURCE_PREFIX)) {
 				pathInfo = pathInfo.substring(URLHelper.TEMPLATE_RESOURCE_PREFIX.length() + 1);
 				dataFolder = staticConfig.getTemplateFolder();
@@ -170,29 +170,28 @@ public class ResourceServlet extends HttpServlet {
 			if (!pathInfo.equals(FILE_INFO)) {
 				File file = new File(URLHelper.mergePath(dataFolder, resourceURI));
 				StaticInfo info = StaticInfo.getInstance(ctx, file);
-				
+
 				if (AdminUserFactory.createUserFactory(ctx.getGlobalContext(), request.getSession()).getCurrentUser(request.getSession()) == null) {
-					if (!info.canRead(ctx, UserFactory.createUserFactory(ctx.getGlobalContext(), request.getSession()).getCurrentUser(request.getSession()), request.getParameter(ImageTransformServlet. RESOURCE_TOKEN_KEY))) {
+					if (!info.canRead(ctx, UserFactory.createUserFactory(ctx.getGlobalContext(), request.getSession()).getCurrentUser(request.getSession()), request.getParameter(ImageTransformServlet.RESOURCE_TOKEN_KEY))) {
 						response.setStatus(HttpServletResponse.SC_FORBIDDEN);
 						return;
 					}
 				}
-				
-				if (file.exists()) {
-					response.setContentLength((int) file.length());
+
+				if (file.exists()) {					
 					StaticInfo.getInstance(ctx, file).addAccess(ctx);
 				} else {
 					if (StringHelper.isExcelFile(file.getName())) {
 						File csvFile = new File(ResourceHelper.changeExtention(file.getAbsolutePath(), "csv"));
-						if (csvFile.exists()) {							
+						if (csvFile.exists()) {
 							csvFile = new File(URLHelper.mergePath(dataFolder, ResourceHelper.changeExtention(resourceURI, "csv")));
 							response.setContentType(ResourceHelper.getFileExtensionToMineType(StringHelper.getFileExtension(file.getName())));
 							response.setHeader("Cache-Control", "no-cache");
 							response.setHeader("Accept-Ranges", "bytes");
-							CSVFactory csvFactory = new CSVFactory(csvFile);							
+							CSVFactory csvFactory = new CSVFactory(csvFile);
 							if (StringHelper.getFileExtension(file.getName()).equals("xls")) {
 								XLSTools.writeXLS(XLSTools.getCellArray(csvFactory.getArray()), response.getOutputStream());
-							} else 	{
+							} else {
 								XLSTools.writeXLSX(XLSTools.getCellArray(csvFactory.getArray()), response.getOutputStream());
 							}
 							return;
@@ -214,20 +213,18 @@ public class ResourceServlet extends HttpServlet {
 
 					File file = new File(finalName);
 					response.setContentType(ResourceHelper.getFileExtensionToMineType(StringHelper.getFileExtension(file.getName())));
-					response.setHeader("Cache-Control", "no-cache");
-					response.setHeader("Accept-Ranges", "bytes");
-					response.setDateHeader(NetHelper.HEADER_LAST_MODIFIED, file.lastModified());
-					response.setContentLength((int) file.length());
+					response.setHeader("Cache-Control", "no-cache");					
+					response.setDateHeader(NetHelper.HEADER_LAST_MODIFIED, file.lastModified());					
 					long lastModifiedInBrowser = request.getDateHeader(NetHelper.HEADER_IF_MODIFIED_SINCE);
 					if (file.lastModified() > 0 && file.lastModified() / 1000 <= lastModifiedInBrowser / 1000) {
-						response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
-						return;
-					}
-
-					fileStream = new FileInputStream(file);
-
-					if ((fileStream != null)) {
-						ResourceHelper.writeStreamToStream(fileStream, out);
+						response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);						
+					} else {
+						response.setHeader("Accept-Ranges", "bytes");
+						response.setContentLength((int) file.length());
+						fileStream = new FileInputStream(file);
+						if ((fileStream != null)) {
+							ResourceHelper.writeStreamToStream(fileStream, out);
+						}
 					}
 				}
 

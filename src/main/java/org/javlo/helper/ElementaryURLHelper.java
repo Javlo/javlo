@@ -89,14 +89,30 @@ public abstract class ElementaryURLHelper {
 
 	public static final String IMG_SERVLET_PATH = "img";
 
+	public static String addParam(String url, String name, String value) {
+		return addParam(url, name, value, true);
+	}
+
+	public static String addRawParam(String url, String name, String value) {
+		return addParam(url, name, value, false);
+	}
+
 	/**
 	 * add get param to a url
 	 */
-	public static String addParam(String url, String name, String value) {
-		if (url.contains("?")) {
-			return url = url + '&' + name + '=' + Encode.forUriComponent(StringHelper.neverNull(value));
+	private static String addParam(String url, String name, String value, boolean encode) {
+		if (encode) {
+			if (url.contains("?")) {
+				return url = url + '&' + name + '=' + Encode.forUriComponent(StringHelper.neverNull(value));
+			} else {
+				return url = url + '?' + name + '=' + Encode.forUriComponent(StringHelper.neverNull(value));
+			}
 		} else {
-			return url = url + '?' + name + '=' + Encode.forUriComponent(StringHelper.neverNull(value));
+			if (url.contains("?")) {
+				return url = url + '&' + name + '=' + StringHelper.neverNull(value);
+			} else {
+				return url = url + '?' + name + '=' + StringHelper.neverNull(value);
+			}
 		}
 	}
 
@@ -290,11 +306,11 @@ public abstract class ElementaryURLHelper {
 	}
 
 	protected static String createStaticURL(ContentContext ctx, MenuElement referencePage, String inUrl, boolean withPathPrefix) {
-		
+
 		if (StringHelper.isMail(inUrl)) {
-			return "mailto:"+inUrl;
+			return "mailto:" + inUrl;
 		}
-		
+
 		ContentContext newCtx = ctx;
 		if (referencePage != null && referencePage.isRemote()) {
 			String linkedURLStr = NavigationHelper.getLinkedURL(referencePage);
@@ -314,7 +330,7 @@ public abstract class ElementaryURLHelper {
 				}
 			}
 		}
-		
+
 		String url = inUrl;
 		if (withPathPrefix) {
 			String pathPrefix = getPathPrefix(ctx);
@@ -387,7 +403,7 @@ public abstract class ElementaryURLHelper {
 
 		ContentService.getInstance(ctx.getRequest());
 
-		if (template != null || ctx.getRenderMode() == ContentContext.EDIT_MODE) { 
+		if (template != null || ctx.getRenderMode() == ContentContext.EDIT_MODE) {
 			String templateName;
 			if (ctx.getRenderMode() == ContentContext.EDIT_MODE) {
 				templateName = Template.EDIT_TEMPLATE_CODE;
@@ -437,15 +453,15 @@ public abstract class ElementaryURLHelper {
 		}
 		String fileURL = url;
 		url = ElementaryURLHelper.mergePath(baseUrl, url);
-		
-		if (ctx.isLikeViewRenderMode() && ctx.getGlobalContext().getStaticConfig().isImageShortURL()) {			
+
+		if (ctx.isLikeViewRenderMode() && ctx.getGlobalContext().getStaticConfig().isImageShortURL()) {
 			File file = new File(URLHelper.mergePath(ctx.getGlobalContext().getDataFolder(), fileURL));
-			StaticInfo staticInfo = StaticInfo.getInstance(ctx, file);			
-			String fileName = null;			
-			if (staticInfo != null && !StringHelper.isEmpty(staticInfo.getTitle(ctx))) {			
+			StaticInfo staticInfo = StaticInfo.getInstance(ctx, file);
+			String fileName = null;
+			if (staticInfo != null && !StringHelper.isEmpty(staticInfo.getTitle(ctx))) {
 				fileName = staticInfo.getTitle(ctx);
 			}
-			url =  URLHelper.mergePath(IMG_SERVLET_PATH, ctx.getGlobalContext().setTransformShortURL(url.replace(TRANSFORM+'/', ""), fileName));
+			url = URLHelper.mergePath(IMG_SERVLET_PATH, ctx.getGlobalContext().setTransformShortURL(url.replace(TRANSFORM + '/', ""), fileName));
 		}
 		url = createStaticURL(ctx, referencePage, url, true);
 		if (ctx.getRequest().getParameter("lowdef") != null) {
@@ -802,6 +818,5 @@ public abstract class ElementaryURLHelper {
 		}
 		return url.getProtocol() + "://" + url.getHost() + port + '/';
 	}
-	
 
 }

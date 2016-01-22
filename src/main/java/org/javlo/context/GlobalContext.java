@@ -1650,6 +1650,10 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		}
 		return uriAlias;
 	}
+	
+	public void resetURLFactory() {
+		urlFactory = null;
+	}
 
 	public IURLFactory getURLFactory(ContentContext ctx) {
 		if (urlFactory != null) {

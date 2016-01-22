@@ -215,7 +215,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 	}
 
 	public void process(HttpServletRequest request, HttpServletResponse response, boolean post) throws ServletException {
-
+		
 		try {
 
 			COUNT_ACCESS++;

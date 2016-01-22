@@ -45,6 +45,13 @@ public class TitleURLCreator extends AbstractURLFactory {
 		} else {
 			url = '/' + url;
 		}
+		
+		String baseURL = url;
+		int i=1;
+		while (this.addAndCheckExistURL(currentPage, url)) {
+			url = baseURL+'_'+i;
+			i++;
+		}
 
 		return url;
 	}

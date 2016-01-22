@@ -4,7 +4,7 @@
 <div class="special${empty componentsList?' last':''}">
 <form id="form-languages" action="${info.currentURL}" method="get" class="js-submit">
 <div class="select-languages form_default">
-	<input type="hidden" name="webaction" value="edit.changeLanguage" />	
+	<input type="hidden" name="webaction" value="file.changeLanguage" />	
 	<c:if test="${not empty param[BACK_PARAM_NAME]}"><input type="hidden" name="${BACK_PARAM_NAME}" value="${param[BACK_PARAM_NAME]}" /></c:if>
 	<c:if test="${not empty param['select']}"><input type="hidden" name="select" value="true" /></c:if>
 	<select name="language">
