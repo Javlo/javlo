@@ -21,6 +21,8 @@ import java.util.Properties;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+import javax.websocket.DecodeException;
+
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.lang.StringUtils;
 import org.javlo.actions.DataAction;
@@ -55,6 +57,7 @@ import org.javlo.service.resource.ResourceStatus;
 import org.javlo.servlet.AccessServlet;
 import org.javlo.ztatic.IStaticContainer;
 import org.javlo.ztatic.StaticInfo;
+import org.owasp.encoder.Encode;
 
 /**
  * Abstract component for access to a file (file,image...) <h4>exposed variable
@@ -164,12 +167,12 @@ public abstract class AbstractFileComponent extends AbstractVisualComponent impl
 		ctx.getRequest().setAttribute("cleanDescription", StringHelper.toXMLAttribute(StringHelper.removeTag(getDescription())));
 		StaticInfo staticInfo = getStaticInfo(ctx);
 		if (getLabel() != null && getLabel().length() > 0) {
-			ctx.getRequest().setAttribute("label", getLabel());
-			ctx.getRequest().setAttribute("cleanLabel", StringHelper.toXMLAttribute(StringHelper.removeTag(getLabel())));
-			ctx.getRequest().setAttribute("htmlLabel", XHTMLHelper.textToXHTML(XHTMLHelper.autoLink(getLabel())));
+			ctx.getRequest().setAttribute("label", getLabel());			
+			ctx.getRequest().setAttribute("cleanLabel", Encode.forHtmlAttribute(getLabel()));
+			ctx.getRequest().setAttribute("htmlLabel", Encode.forHtmlAttribute(getLabel()));
 		} else if (staticInfo != null) {
 			ctx.getRequest().setAttribute("label", staticInfo.getTitle(ctx));
-			ctx.getRequest().setAttribute("cleanLabel", StringHelper.toXMLAttribute(StringHelper.removeTag(staticInfo.getTitle(ctx))));
+			ctx.getRequest().setAttribute("cleanLabel", Encode.forHtmlAttribute(staticInfo.getTitle(ctx)));
 			ctx.getRequest().setAttribute("htmlLabel", XHTMLHelper.textToXHTML(XHTMLHelper.autoLink(getLabel())));
 			ctx.getRequest().setAttribute("resource", staticInfo);
 		}
