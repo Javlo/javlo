@@ -59,7 +59,6 @@ import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.ServletHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
-import org.javlo.io.AppendableTextFile;
 import org.javlo.io.TransactionFile;
 import org.javlo.mailing.MailConfig;
 import org.javlo.mailing.MailService;
