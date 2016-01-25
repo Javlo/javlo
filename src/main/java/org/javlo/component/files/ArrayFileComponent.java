@@ -888,13 +888,13 @@ public class ArrayFileComponent extends GenericFile {
 			fileListBlanck[0] = "";
 			System.arraycopy(fileList, 0, fileListBlanck, 1, fileList.length);
 
-			finalCode.append("</div><div class=\"form-group\"><label>&nbsp</label>");
+			finalCode.append("</div><div class=\"row\"><div class=\"col-sm-10\"><div class=\"form-group\">");
 			finalCode.append(XHTMLHelper.getInputOneSelect(getSelectXHTMLInputName(), fileListBlanck, fileListBlanck, getFileName(), "form-control", getJSOnChange(ctx), true));
-			finalCode.append("</div>");
+			String url = URLHelper.createResourceURL(ctx, URLHelper.mergePath(ctx.getGlobalContext().getStaticConfig().getFileFolder(), getDirSelected(), getFileName()));
+			finalCode.append("</div></div><div class=\"col-sm-2\"><a target=\"_blank\" href=\""+url+"\"> ["+i18nAccess.getText("global.download")+"]</a></div></div>");
 
 			if (ctx.getRenderMode() == ContentContext.EDIT_MODE && !ctx.isEditPreview()) {
 				if (isLinkToStatic()) {
-
 					Map<String, String> filesParams = new HashMap<String, String>();
 					filesParams.put("path", URLHelper.mergePath("/", getRelativeFileDirectory(ctx), getDirSelected()));
 					String staticURL = URLHelper.createModuleURL(ctx, ctx.getPath(), "file", filesParams);
