@@ -783,6 +783,10 @@ public class AdminAction extends AbstractModuleAction {
 
 	@Override
 	public String prepare(ContentContext ctx, ModulesContext moduleContext) throws Exception {
+		
+		if (ctx.getCurrentEditUser() == null) {
+			return null;
+		}
 
 		super.prepare(ctx, moduleContext);
 
