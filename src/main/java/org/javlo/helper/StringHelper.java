@@ -94,8 +94,7 @@ public class StringHelper {
 
 	private static final char DEFAULT_ESCAPE = '\\';
 
-	public static final String[][] TXT2HTML = { { "\u00c1", "&Aacute;" }, { "\u00e1", "&aacute;" }, { "\u00c0", "&Agrave;" }, { "\u00e0", "&agrave;" }, { "\u00e7", "&ccedil;" }, { "\u00c7", "&Ccedil;" }, { "\u00c9", "&Eacute;" }, { "\u00e9", "&eacute;" }, { "\u00c8", "&Egrave;" },
-			{ "\u00e8", "&egrave;" }, { "\u00ca", "&Ecirc;" }, { "\u00ea", "&ecirc;" }, { "\u00cf", "&Iuml;" }, { "\u00ef", "&iuml;" }, { "\u00f9", "&ugrave;" }, { "\u00d9", "&Ugrave;" }, { "\u2019", "'" }, { "\u00D6", "&Ouml;" }, { "\u00F6", "&ouml;" } };
+	public static final String[][] TXT2HTML = { { "\u00c1", "&Aacute;" }, { "\u00e1", "&aacute;" }, { "\u00c0", "&Agrave;" }, { "\u00e0", "&agrave;" }, { "\u00e7", "&ccedil;" }, { "\u00c7", "&Ccedil;" }, { "\u00c9", "&Eacute;" }, { "\u00e9", "&eacute;" }, { "\u00c8", "&Egrave;" }, { "\u00e8", "&egrave;" }, { "\u00ca", "&Ecirc;" }, { "\u00ea", "&ecirc;" }, { "\u00cf", "&Iuml;" }, { "\u00ef", "&iuml;" }, { "\u00f9", "&ugrave;" }, { "\u00d9", "&Ugrave;" }, { "\u2019", "'" }, { "\u00D6", "&Ouml;" }, { "\u00F6", "&ouml;" } };
 
 	public static SimpleDateFormat RFC822DATEFORMAT = new SimpleDateFormat("EEE', 'dd' 'MMM' 'yyyy' 'HH:mm:ss' 'Z", Locale.US);
 
@@ -121,7 +120,8 @@ public class StringHelper {
 	public static final Pattern RANGE_MATCHER_BETWEEN = Pattern.compile("^([0-9]+)-([0-9]+)$");
 	public static final Pattern RANGE_MATCHER_GREATER = Pattern.compile("^[+>]([0-9]+)$|^([0-9]+)[+>]$");
 
-	public static final long TIMED_TOKEN_DIVIDER = 1000 * 60; //Millis to minutes
+	public static final long TIMED_TOKEN_DIVIDER = 1000 * 60; // Millis to
+																// minutes
 
 	public static String addSufixToFileName(String fileName, String sufix) {
 		return FilenameUtils.removeExtension(fileName) + sufix + "." + FilenameUtils.getExtension(fileName);
@@ -161,7 +161,7 @@ public class StringHelper {
 	public static String asBase64(int value) {
 		return asBase64(JavaHelper.intToByteArray(value));
 	}
-	
+
 	/**
 	 * generate a base 64 string with a long
 	 * 
@@ -425,8 +425,8 @@ public class StringHelper {
 			}
 		}
 		String cleanName = res.toString();
-		while (cleanName.contains((""+defaultReplaceChar)+defaultReplaceChar)) {
-			cleanName = cleanName.replace((""+defaultReplaceChar)+defaultReplaceChar, ""+defaultReplaceChar);
+		while (cleanName.contains(("" + defaultReplaceChar) + defaultReplaceChar)) {
+			cleanName = cleanName.replace(("" + defaultReplaceChar) + defaultReplaceChar, "" + defaultReplaceChar);
 		}
 		return cleanName;
 	}
@@ -481,7 +481,7 @@ public class StringHelper {
 			}
 		}
 	}
-	
+
 	public String noRepeatChar(String text, char chr) {
 		StringBuffer outStr = new StringBuffer();
 		char latestChar = 0;
@@ -1116,9 +1116,10 @@ public class StringHelper {
 			return false;
 		}
 	}
-	
+
 	/**
 	 * check if string contains somthing similar to digital number
+	 * 
 	 * @param str
 	 * @return
 	 */
@@ -1126,9 +1127,10 @@ public class StringHelper {
 		str = str.replaceAll("€|\\$|\\.|\\,|\\%| ", "0");
 		return isDigit(str);
 	}
-	
+
 	/**
 	 * check if stirng contains only digital number
+	 * 
 	 * @param str
 	 * @return
 	 */
@@ -1204,7 +1206,7 @@ public class StringHelper {
 		String ext = getFileExtension(fileName);
 		return isImageExtension(ext);
 	}
-	
+
 	/**
 	 * return true if the filename in a image for wcms (sp. : tif or psd in not
 	 * a image).
@@ -1259,7 +1261,7 @@ public class StringHelper {
 		res = res || fileExtension.equalsIgnoreCase("png");
 		return res;
 	}
-	
+
 	/**
 	 * return true if the file extension is an image for wcms (sp. : tif or psd
 	 * is not an image).
@@ -1321,7 +1323,7 @@ public class StringHelper {
 		}
 		return PatternHelper.MAIL_PATTERN.matcher(email).matches();
 	}
-	
+
 	// TODO: create a better method
 	public static boolean isMailURL(String url) {
 		return url.trim().toLowerCase().startsWith("mailto");
@@ -1448,7 +1450,7 @@ public class StringHelper {
 	public static void main(String[] args) {
 		StringBuilder outCleanData = new StringBuilder();
 		outCleanData.append("patrick");
-		System.out.println("outCleanData="+outCleanData);
+		System.out.println("outCleanData=" + outCleanData);
 	}
 
 	/**
@@ -1528,13 +1530,13 @@ public class StringHelper {
 	public static Date parseDate(String inDate) throws ParseException {
 		return parseDate(inDate, "dd/MM/yyyy");
 	}
-	
+
 	public static Date[] parseRangeDate(String date) throws ParseException {
 		Date[] outDate;
 		if (date.contains("-")) {
 			int i = date.indexOf("-");
-			String startDate = date.substring(0,i);
-			String endDate = date.substring(i+1);
+			String startDate = date.substring(0, i);
+			String endDate = date.substring(i + 1);
 			outDate = new Date[2];
 			outDate[0] = StringHelper.parseDate(startDate);
 			outDate[1] = StringHelper.parseDate(endDate);
@@ -1878,9 +1880,9 @@ public class StringHelper {
 		}
 		return notTagStr.toString();
 	}
-	
+
 	public static String renderShortTime(ContentContext ctx, Date date) throws FileNotFoundException, IOException {
-		String outDate = renderShortDate(ctx, date);		
+		String outDate = renderShortDate(ctx, date);
 		return outDate + ' ' + renderDate(date, "HH:mm");
 	}
 
@@ -2065,7 +2067,7 @@ public class StringHelper {
 		} else {
 			dateFormat = DateFormat.getDateInstance(DateFormat.FULL, new Locale(ctx.getContextRequestLanguage()));
 		}
-		
+
 		return dateFormat.format(date);
 	}
 
@@ -2856,7 +2858,7 @@ public class StringHelper {
 	public static boolean isEmpty(Object value) {
 		return (value == null || value.toString() == null || value.toString().trim().length() == 0);
 	}
-	
+
 	public static boolean isAllEmpty(Object... values) {
 		for (Object val : values) {
 			if (!isEmpty(val)) {
@@ -2865,7 +2867,7 @@ public class StringHelper {
 		}
 		return true;
 	}
-	
+
 	public static boolean isOneEmpty(Object... values) {
 		for (Object val : values) {
 			if (isEmpty(val)) {
@@ -3035,7 +3037,7 @@ public class StringHelper {
 		if (path == null) {
 			return null;
 		} else {
-			path = path.replace('\\',  '/');
+			path = path.replace('\\', '/');
 			while (path.indexOf("//") >= 0) {
 				path = path.replace("//", "/");
 			}
@@ -3386,9 +3388,13 @@ public class StringHelper {
 
 	/**
 	 * Test if the value is included in the range.
-	 * @param range Range values are like -25,25-30,31-35,35+ 
-	 * @param value the integer to test
-	 * @return <code>true</code> is the value is in the range <code>false</code> otherwise
+	 * 
+	 * @param range
+	 *            Range values are like -25,25-30,31-35,35+
+	 * @param value
+	 *            the integer to test
+	 * @return <code>true</code> is the value is in the range <code>false</code>
+	 *         otherwise
 	 */
 	public static boolean rangeMatches(String range, Integer value) {
 		Matcher m;
@@ -3414,44 +3420,42 @@ public class StringHelper {
 		}
 		throw new IllegalArgumentException("Wrong range parameter.");
 	}
-	
-	public static boolean listContainsItem(String list, String sep, String item) {		
-		if (list.contains(sep+item+sep)) {
+
+	public static boolean listContainsItem(String list, String sep, String item) {
+		if (list.contains(sep + item + sep)) {
 			return true;
-		} else if (list.startsWith(item+sep)) {
+		} else if (list.startsWith(item + sep)) {
 			return true;
-		} else if (list.endsWith(sep+item)) {
+		} else if (list.endsWith(sep + item)) {
 			return true;
 		} else {
 			return list.equals(item);
 		}
 	}
-	
-	public static int getColNum (String colName) {
-	    colName = colName.trim();
-	    StringBuffer buff = new StringBuffer(colName);
-	    char chars[] = buff.reverse().toString().toLowerCase().toCharArray();
-	    int retVal=0, multiplier=0;
-	    for(int i = 0; i < chars.length;i++){
-	        multiplier = (int)chars[i]-96;
-	        retVal += multiplier * Math.pow(26, i);
-	    }
-	    return retVal;
+
+	public static int getColNum(String colName) {
+		colName = colName.trim();
+		StringBuffer buff = new StringBuffer(colName);
+		char chars[] = buff.reverse().toString().toLowerCase().toCharArray();
+		int retVal = 0, multiplier = 0;
+		for (int i = 0; i < chars.length; i++) {
+			multiplier = (int) chars[i] - 96;
+			retVal += multiplier * Math.pow(26, i);
+		}
+		return retVal;
 	}
-	
-	public static String getColName(int colIndex)
-	{
-	    int div = colIndex;
-	    String colLetter = "";
-	    int mod = 0;
-	 
-	    while (div > 0)
-	    {
-	        mod = (div - 1) % 26;
-	        colLetter = (char)(65 + mod) + colLetter;
-	        div = (int)((div - mod) / 26);
-	    }
-	    return colLetter;
+
+	public static String getColName(int colIndex) {
+		int div = colIndex;
+		String colLetter = "";
+		int mod = 0;
+
+		while (div > 0) {
+			mod = (div - 1) % 26;
+			colLetter = (char) (65 + mod) + colLetter;
+			div = (int) ((div - mod) / 26);
+		}
+		return colLetter;
 	}
 
 	public static String timedTokenGenerate(String data, long timeInMillis) {
@@ -3473,20 +3477,24 @@ public class StringHelper {
 		}
 		return false;
 	}
-	
+
 	public static String onlyAlphaNumeric(String data, boolean stopOnBadChar) {
 		StringBuilder outCleanData = new StringBuilder();
-		for (int i=0; i<data.length(); i++) {
-			if (Character.isAlphabetic(data.charAt(i)) || Character.isDigit(data.charAt(i))) {
+		for (int i = 0; i < data.length(); i++) {
+			/*
+			 * JDK17 if (Character.isAlphabetic(data.charAt(i)) ||
+			 * Character.isDigit(data.charAt(i))) {
+			 * outCleanData.append(data.charAt(i)); } else if (stopOnBadChar) {
+			 * break; }
+			 */
+			if ((data.charAt(i) >= 'a' && data.charAt(i) <= 'z') || (data.charAt(i) >= '0' && data.charAt(i) <= '9') || (data.charAt(i) >= 'A' && data.charAt(i) <= 'Z')) {
 				outCleanData.append(data.charAt(i));
 			} else if (stopOnBadChar) {
 				break;
 			}
 		}
+
 		return outCleanData.toString();
 	}
-	
-	
-	
 
 }

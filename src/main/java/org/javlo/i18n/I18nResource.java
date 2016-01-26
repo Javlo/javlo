@@ -108,7 +108,12 @@ public class I18nResource {
 						Reader reader = null;
 						try {
 							reader = new InputStreamReader(stream, ContentContext.CHARACTER_ENCODING);
-							i18nProp.load(reader);
+							Properties prop = new Properties();
+							prop.load(reader);
+							for (Object key : prop.keySet()) {
+								i18nProp.clearProperty(key.toString());
+								i18nProp.addProperty(key.toString(), prop.get(key));
+							}							
 						} finally {
 							ResourceHelper.closeResource(reader);
 							ResourceHelper.closeResource(stream);

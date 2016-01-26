@@ -183,7 +183,7 @@ public class Heading extends AbstractPropertiesComponent implements ISubTitle {
 			if (ctx.getGlobalContext().isMailingPlatform()) {
 				tag = "div";
 			}
-			return "<" + tag + " class=\"inside-wrapper\"" + style + ">" + getTitle(ctx) + "</" + tag + ">";
+			return "<" + tag + " class=\"inside-wrapper\"" + style + ">" + cleanValue(ctx, getTitle(ctx)) + "</" + tag + ">";
 		}
 	}
 	

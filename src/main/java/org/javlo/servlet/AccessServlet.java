@@ -408,9 +408,9 @@ public class AccessServlet extends HttpServlet implements IVersion {
 
 			localLogger.startCount("sid");
 
-			/** ************************** */
-			/** EXCECUTE CRYPTED ACTION * */
-			/** ************************** */
+			/** *********************** **/
+			/** EXCECUTE CRYPTED ACTION **/
+			/** *********************** **/
 
 			String encodedParam = requestService.getParameter("_sid_", null);
 
@@ -950,6 +950,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 		out.println("**** ABST COMP LOG LVL :  " + staticConfig.getAbstractComponentLogLevel());
 		out.println("**** BACKUP EXCL. PAT. :  " + staticConfig.getBackupExcludePatterns());
 		out.println("**** BACKUP INCL. PAT. :  " + staticConfig.getBackupIncludePatterns());
+		out.println("**** HIGH SECURE      	:  " + staticConfig.isHighSecure());
 		out.println("**** HARD USERS        :  " + StringHelper.collectionToString(staticConfig.getEditUsers().keySet(), ","));
 		out.println("**** USE EHCACHE       :  " + staticConfig.useEhCache());
 		out.println("**** TOTAL MEMORY      :  " + runtime.totalMemory() + " (" + runtime.totalMemory() / 1024 + " KB)" + " (" + runtime.totalMemory() / 1024 / 1024 + " MB)");

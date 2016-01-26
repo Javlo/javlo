@@ -301,12 +301,18 @@ public class StringHelperTest extends TestCase {
 	}
 	
 	public void testOnlyAlphaNumeric() {		
-		assertEquals("aaa", StringHelper.onlyAlphaNumeric("aaa", true));
+		assertEquals("anz", StringHelper.onlyAlphaNumeric("anz", true));
 		assertEquals("a2a", StringHelper.onlyAlphaNumeric("a2a", true));
 		assertEquals("aaabc", StringHelper.onlyAlphaNumeric("aaa bc", false));
 		assertEquals("aaabc", StringHelper.onlyAlphaNumeric("aaa (bc){?./}", false));
-		assertEquals("aaa", StringHelper.onlyAlphaNumeric("aaa (bc){?./}", true));
+		assertEquals("AANzZ", StringHelper.onlyAlphaNumeric("AANzZ (bc){?./}", true));
 		
+	}
+	
+	public static void main(String[] args) {
+		for (char i=16; i<255; i++) {
+			System.out.println((int)i+" = " +i);
+		}
 	}
  
 }

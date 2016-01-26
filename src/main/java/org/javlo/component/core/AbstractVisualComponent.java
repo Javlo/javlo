@@ -70,6 +70,7 @@ import org.javlo.user.AdminUserSecurity;
 import org.javlo.user.User;
 import org.javlo.utils.DebugListening;
 import org.javlo.utils.SuffixPrefix;
+import org.owasp.encoder.Encode;
 
 /**
  * This class is the first class for component.
@@ -1620,9 +1621,17 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			return getViewXHTMLCode(ctx);
 		}
 	}
+	
+	protected String cleanValue (ContentContext ctx, String value) {
+		if (ctx.getGlobalContext().getStaticConfig().isHighSecure()) {
+			return Encode.forHtmlContent(value);
+		} else {
+			return value;
+		}
+	}
 
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
-		return getValue();
+		return cleanValue(ctx, getValue());
 	}
 
 	@Override

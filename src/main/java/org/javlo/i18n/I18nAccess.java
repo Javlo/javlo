@@ -327,6 +327,16 @@ public class I18nAccess implements Serializable {
 
 		return propEditMap;
 	}
+	
+	public static void main(String[] args) {
+		PropertiesConfiguration propEditMap = new PropertiesConfiguration();
+		
+		propEditMap.addProperty("test", "patrick");
+		propEditMap.clearProperty("test");
+		propEditMap.addProperty("test", "catherine");
+		System.out.println("val="+propEditMap.getProperty("test"));
+		
+	}
 
 	/* EDIT */
 

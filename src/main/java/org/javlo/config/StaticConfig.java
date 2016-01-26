@@ -1443,6 +1443,10 @@ public class StaticConfig extends Observable {
 	public boolean isRestServlet() {
 		return StringHelper.isTrue(properties.getString("security.rest-servlet", null), true);
 	}
+	
+	public boolean isHighSecure() {
+		return StringHelper.isTrue(properties.getString("security.high", null), true);
+	}
 
 	public String getSpecialLogFile() {
 		return properties.getString("debug.special-file", "/tmp/javlo.log");
