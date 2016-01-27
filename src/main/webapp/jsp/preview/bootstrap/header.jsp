@@ -62,10 +62,7 @@
 						<form id="renderers_form" action="${info.currentURL}"
 							method="post">
 							<div class="input-wrapper">
-								<c:url var="url" value="${info.currentURL}" context="/">
-									<c:param name="${info.staticData.forceDeviceParameterName}"
-										value=""></c:param>
-								</c:url>
+								<c:url var="url" value="${info.currentURL}" context="/"><c:param name="${info.staticData.forceDeviceParameterName}" value=""></c:param></c:url>
 								<select class="form-control input-sm" id="renderers_button"
 									onchange="window.location='${url}'+pjq('#renderers_button option:selected').val();"
 									data-toggle="tooltip" data-placement="left"
@@ -74,9 +71,7 @@
 										<c:url var="url" value="${info.currentURL}" context="/">
 											<c:param name="${info.staticData.forceDeviceParameterName}"
 												value="${renderer}"></c:param>
-										</c:url>
-										<option
-											${info.device.code eq renderer?' selected="selected"':''}>${renderer}</option>
+										</c:url><option ${info.device.code eq renderer?' selected="selected"':''}>${renderer}</option>
 									</c:forEach>
 								</select>
 							</div>

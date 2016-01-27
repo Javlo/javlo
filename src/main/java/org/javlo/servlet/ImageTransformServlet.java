@@ -1034,11 +1034,16 @@ public class ImageTransformServlet extends HttpServlet {
 
 				File imageFile = new File(URLHelper.mergePath(baseFolder, imageName));
 				String baseExtension = StringHelper.getFileExtension(imageFile.getName());
+				if (!imageFile.exists()) {
+					imageName = "/images/noimage.png";
+					imageFile = new File(ctx.getRequest().getSession().getServletContext().getRealPath(imageName));
+				}
 
 				if (!imageFile.exists() || imageFile.isDirectory()) {
+					 
 					File dirFile = new File(StringHelper.getFileNameWithoutExtension(imageFile.getAbsolutePath()));
 					if (!dirFile.exists()) {
-						logger.warning("file not found 2 : " + imageFile);
+						logger.warning("file not found : " + imageFile);
 						response.setStatus(HttpServletResponse.SC_NOT_FOUND);
 						return;
 					} else {

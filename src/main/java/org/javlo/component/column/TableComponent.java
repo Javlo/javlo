@@ -18,12 +18,18 @@ import org.javlo.i18n.I18nAccess;
 public abstract class TableComponent extends AbstractPropertiesComponent {
 
 	private static final List<String> fields = Arrays.asList(new String[] { "padding", "width", "valign", "align", "colspan", "backgroundcolor", "bordersize", "bordercolor" });
+	
+	protected static final Set<String> FIELD_NEED_PX = new HashSet<String>(Arrays.asList(new String[] { "bordersize" }));
 
-	protected static final Set<String> FIELD_NEED_UNITY = new HashSet<String>(Arrays.asList(new String[] { "padding", "margin", "bordersize" }));
+	protected static final Set<String> FIELD_NEED_UNITY = new HashSet<String>(Arrays.asList(new String[] { "padding", "margin" }));
 	
 	protected static final Set<String> FIELD_NUMBER_ONLY = new HashSet<String>(Arrays.asList(new String[] { "width", "colspan" }));
 
 	public TableComponent() {
+	}
+	
+	protected Set<String> getFieldNeedPixel() {
+		return FIELD_NEED_PX;
 	}
 	
 	protected Set<String> getFieldNeedUnity() {
@@ -209,6 +215,12 @@ public abstract class TableComponent extends AbstractPropertiesComponent {
 	@Override
 	public String validateField(ContentContext ctx, String fieldName, String fieldValue) throws Exception {
 		String out = super.validateField(ctx, fieldName, fieldValue);
+		if (getFieldNeedPixel().contains(fieldName)) {
+			fieldValue = fieldValue.trim();			
+			if (fieldValue.length()>0 && !fieldValue.toLowerCase().endsWith("px")) {
+				out = fieldName + ' ' + I18nAccess.getInstance(ctx).getText("content.field.need-px", "need unity px");
+			}
+		}
 		if (getFieldNeedUnity().contains(fieldName)) {
 			fieldValue = fieldValue.trim();
 			if (fieldValue.length()>0 && !fieldValue.toLowerCase().endsWith("px") && !fieldValue.toLowerCase().endsWith("%")) {
@@ -301,6 +313,6 @@ public abstract class TableComponent extends AbstractPropertiesComponent {
 	 */
 	public boolean isRowBreak() {
 		return false;
-	}
+	}	
 
 }

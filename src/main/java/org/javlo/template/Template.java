@@ -325,7 +325,7 @@ public class Template implements Comparable<Template> {
 		List<String> ids;
 		List<String> css;
 		Map<String, String> areaMap;
-		List<String> areas;
+		List<String> areas;		
 		boolean valid;
 		String imageURL;
 		String url;
@@ -342,6 +342,7 @@ public class Template implements Comparable<Template> {
 		String parent;
 		String imageFilter;
 		List<String> htmls;
+		List<String> renderers;
 		private Map<String, String> s = null;
 
 		public TemplateBean() {
@@ -390,6 +391,7 @@ public class Template implements Comparable<Template> {
 			css = template.getCSS();
 			htmls = new LinkedList<String>();
 			htmls.add(template.getHTMLFile(ctx.getDevice()));
+			renderers = template.getRenderers();
 			mailing = template.isMailing();
 
 		}
@@ -429,6 +431,10 @@ public class Template implements Comparable<Template> {
 
 		public Map<String, String> getAreasMap() {
 			return areaMap;
+		}
+		
+		public List<String> getRenderers() {
+			return renderers;
 		}
 
 		public boolean isValid() {
@@ -1794,16 +1800,21 @@ public class Template implements Comparable<Template> {
 		List<String> outRenderes = new LinkedList<String>();
 		Iterator keys = properties.getKeys();
 		outRenderes.add("");
+		boolean unvalidatedRenderer = false;
 		while (keys.hasNext()) {
 			String key = (String) keys.next();
 			if (key.startsWith("html.")) {
 				String renderer = key.replaceFirst("html.", "");
 				if (!renderer.contains(".")) {
-					outRenderes.add(renderer);
+					if (properties.getString(key).equals("-1")) {
+						unvalidatedRenderer = true;
+					} else {
+						outRenderes.add(renderer);	
+					}
 				}
 			}
 		}
-		if (outRenderes.size() == 1) {
+		if (outRenderes.size() == 1 && !unvalidatedRenderer) {
 			return getParent().getRenderers();
 		}
 		return outRenderes;

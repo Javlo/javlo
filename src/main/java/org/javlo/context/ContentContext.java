@@ -102,7 +102,7 @@ public class ContentContext {
 	private boolean pageAssociation = false;
 
 	private boolean postRequest = false;
-	
+
 	private int titleDepth = 1;
 
 	private static ContentContext createContentContext(HttpServletRequest request, HttpServletResponse response, boolean free) {
@@ -267,10 +267,6 @@ public class ContentContext {
 			ctx.setLanguage(lg);
 			String contentLg = ContentManager.getContentLanguage(ctx);
 
-			if (ctx.getDevice() == null) {
-				ctx.setDevice(Device.getDevice(request));
-			}
-
 			// TODO : optimise this with option in global context
 
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
@@ -317,6 +313,10 @@ public class ContentContext {
 						e.printStackTrace();
 					}
 				}
+			}
+
+			if (ctx.getDevice() == null) {
+				ctx.setDevice(Device.getDevice(ctx));
 			}
 
 			StaticConfig config = StaticConfig.getInstance(request.getSession());
@@ -696,7 +696,7 @@ public class ContentContext {
 				outPage = root;
 			} else {
 				if (getPath().trim().length() > 0) {
-					MenuElement elem = globalContext.getPageIfExist(this, getPath(), urlFacotry);					
+					MenuElement elem = globalContext.getPageIfExist(this, getPath(), urlFacotry);
 					if (elem != null) {
 						globalContext.storeUrl(this, getPath(), elem.getId());
 						setCurrentPageCached(elem);
@@ -954,7 +954,7 @@ public class ContentContext {
 	public boolean isAsViewMode() {
 		return getRenderMode() == VIEW_MODE || getRenderMode() == TIME_MODE;
 	}
-	
+
 	public boolean isVisualMode() {
 		return isAsViewMode() || isAsPreviewMode();
 	}
@@ -1460,7 +1460,7 @@ public class ContentContext {
 			if (isLikeViewRenderMode() && globalContext.getURLFactory(this) != null) {
 				format = globalContext.getURLFactory(this).getFormat(request.getRequestURI());
 			} else {
-				format = StringHelper.getFileExtension(request.getRequestURI());				
+				format = StringHelper.getFileExtension(request.getRequestURI());
 			}
 			format = StringHelper.onlyAlphaNumeric(format, true);
 		}
@@ -1505,6 +1505,15 @@ public class ContentContext {
 
 	public void setCurrentTemplate(Template template) {
 		this.currentTemplate = template;
+		try {
+			if (this.currentTemplate != null && getDeviceNames() != null && getDevice() != null) {
+				if (!getDeviceNames().contains(getDevice().getCode())) {
+					getDevice().setForcedCode(null);
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	/**

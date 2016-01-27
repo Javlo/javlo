@@ -177,7 +177,13 @@ public class Heading extends AbstractPropertiesComponent implements ISubTitle {
 			return "<a" + style + " href=\"" + link + "\"" + target + ">" + getTitle(ctx) + "</a>";
 		} else {
 			if (getBackgroundColor() != null && getBackgroundColor().length() > 2) {
-				style = " style=\"border: 1px " + getBackgroundColor() + " solid; \"";
+				style = "border: 1px " + getBackgroundColor() + " solid; ";
+			}
+			if (getTextColor() != null && getTextColor().length() > 2) {
+				style = style + "color:" + getTextColor() + ";";
+			}
+			if (getBackgroundColor() != null && getBackgroundColor().length() > 2) {
+				style = " style=\"border: 1px " + getBackgroundColor() + " solid; "+style+"\"";
 			}
 			String tag = "span";
 			if (ctx.getGlobalContext().isMailingPlatform()) {

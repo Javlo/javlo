@@ -120,7 +120,7 @@ public class ViewActions implements IAction {
 	}
 
 	public static String performForcedefaultdevice(HttpServletRequest request, HttpServletResponse response) throws Exception {
-		Device device = Device.getDevice(request);
+		Device device = Device.getDevice(ContentContext.getContentContext(request, response));
 		device.forceDefault();
 		logger.info("force default device : " + device.getCode());
 		return null;

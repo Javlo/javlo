@@ -191,7 +191,6 @@ public abstract class AbstractPropertiesComponent extends AbstractVisualComponen
 		for (String fieldKey : fields) {
 			String field = getFieldName(fieldKey);
 			String fieldValue = requestService.getParameter(createKeyWithField(field), null);
-			
 			String newMsg = validateField(ctx, field, fieldValue);
 			if (newMsg != null) {
 				msg = newMsg;

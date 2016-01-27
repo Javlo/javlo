@@ -9,39 +9,41 @@ import java.util.regex.Pattern;
 import javax.servlet.http.HttpServletRequest;
 
 import org.javlo.config.StaticConfig;
+import org.javlo.context.ContentContext;
 import org.javlo.helper.NetHelper;
 import org.javlo.helper.StringHelper;
 
 public class Device implements Serializable {
 
 	public static final String FORCE_DEVICE_PARAMETER_NAME = "force-device-code";
-	
+
 	public static final String DEFAULT = "default";
-	
+
 	private static Logger logger = Logger.getLogger(Device.class.getName());
 
-	public static final Device getDevice(HttpServletRequest request) {
+	public static final Device getDevice(ContentContext ctx) {
+		HttpServletRequest request = ctx.getRequest();
 		Device currentDevice = (Device) request.getSession().getAttribute(Device.class.getCanonicalName());
 		if (currentDevice == null) {
 			StaticConfig staticConfig = StaticConfig.getInstance(request.getSession());
-			String userAgent = request.getHeader("User-Agent");			
+			String userAgent = request.getHeader("User-Agent");
 			currentDevice = new Device();
 			currentDevice.devices = staticConfig.getDevices();
 			currentDevice.setUserAgent(userAgent);
 			request.getSession().setAttribute(Device.class.getCanonicalName(), currentDevice);
 			logger.fine("Create new device : '" + currentDevice.getCode() + "' userAgent : " + userAgent);
-		}
+		}		
+
 		String forcedCode = request.getParameter(FORCE_DEVICE_PARAMETER_NAME);
 		if (forcedCode != null) {
 			if (forcedCode.equals(DEFAULT)) {
-				currentDevice.setForcedCode(null );
+				currentDevice.setForcedCode(null);
 			} else {
 				currentDevice.setForcedCode(forcedCode);
 			}
 		}
 		return currentDevice;
 	}
-
 
 	private String userAgent = null;
 
@@ -106,7 +108,7 @@ public class Device implements Serializable {
 		}
 		return StringHelper.isTrue(pointerDevice);
 	}
-	
+
 	public boolean isMobileDevice() {
 		String pointerDevice = devices.get(getCode() + '.' + "mobile");
 
@@ -124,12 +126,15 @@ public class Device implements Serializable {
 		this.userAgent = userAgent;
 		Collection<Map.Entry<String, String>> entries = devices.entrySet();
 		for (Map.Entry<String, String> entry : entries) {
-			if (entry.getKey().endsWith(".in")) { // if "." also this not a device but config of device.
+			if (entry.getKey().endsWith(".in")) { // if "." also this not a
+													// device but config of
+													// device.
 				Pattern pattern = Pattern.compile(entry.getValue());
 				if (userAgent != null && pattern.matcher(userAgent).matches()) {
 					String localCode = entry.getKey().split("\\.")[0];
 					String exclude = devices.get(localCode + ".out");
-					if (exclude != null) { // if "." also this not a device but config of device.
+					if (exclude != null) { // if "." also this not a device but
+											// config of device.
 						pattern = Pattern.compile(exclude);
 						if (!pattern.matcher(userAgent).matches()) {
 							code = localCode;
@@ -150,7 +155,7 @@ public class Device implements Serializable {
 	public boolean isHuman() {
 		return !NetHelper.isUserAgentRobot(getUserAgent());
 	}
-	
+
 	public boolean isForced() {
 		return forcedCode != null;
 	}
@@ -158,11 +163,11 @@ public class Device implements Serializable {
 	public void unforceDefault() {
 		forcedCode = null;
 	}
-	
+
 	public static void main(String[] args) {
 		String entry = "pdf?hash=1412688870812559429731099310123";
 		String localCode = entry.split("\\.|\\?")[0];
-		System.out.println("localCode = "+localCode);
+		System.out.println("localCode = " + localCode);
 	}
 
 }

@@ -290,11 +290,12 @@ public class FileAction extends AbstractModuleAction {
 				if (copyright != null) {
 					staticInfo.setCopyright(ctx, copyright);
 				}
-				boolean shared = rs.getParameter("shared-" + fileBean.getId(), null) != null;
-				if (title != null) {
-					staticInfo.setShared(ctx, shared);
+				if (!globalContext.isMailingPlatform()) {
+					boolean shared = rs.getParameter("shared-" + fileBean.getId(), null) != null;				
+					if (title != null) {
+						staticInfo.setShared(ctx, shared);
+					}
 				}
-
 				String date = rs.getParameter("date-" + fileBean.getId(), null);
 				if (date != null) {
 					if (date.trim().length() == 0) {
@@ -449,7 +450,15 @@ public class FileAction extends AbstractModuleAction {
 			File file = new File(URLHelper.mergePath(globalContext.getStaticFolder(), filePath));
 			if (file.isFile()) {
 				file.delete();
+				if (StringHelper.isImage(file.getName())) {
+					FileCache.getInstance(ctx.getRequest().getSession().getServletContext()).deleteAllFile(globalContext.getContextKey(), file.getName());
+				}
 			} else if (file.isDirectory()) {
+				for (File child : file.listFiles()) {
+					if (StringHelper.isImage(child.getName())) {
+						FileCache.getInstance(ctx.getRequest().getSession().getServletContext()).deleteAllFile(globalContext.getContextKey(), child.getName());
+					}
+				}
 				FileUtils.deleteDirectory(file);
 			}
 		}

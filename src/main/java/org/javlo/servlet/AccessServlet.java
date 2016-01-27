@@ -61,6 +61,7 @@ import org.javlo.service.ContentService;
 import org.javlo.service.ListService;
 import org.javlo.service.PDFConvertion;
 import org.javlo.service.PersistenceService;
+import org.javlo.service.PersistenceThread;
 import org.javlo.service.RequestService;
 import org.javlo.service.event.Event;
 import org.javlo.service.integrity.IntegrityFactory;
@@ -179,6 +180,10 @@ public class AccessServlet extends HttpServlet implements IVersion {
 		}
 
 		StaticConfig staticConfig = StaticConfig.getInstance(getServletContext());
+		Integer undoDepth = staticConfig.getUndoDepth();
+		if (undoDepth != null) {
+			PersistenceService.UNDO_DEPTH = undoDepth;
+		}
 		
 		LocalLogger.SPECIAL_LOG_FILE = new File(staticConfig.getSpecialLogFile());
 
@@ -212,6 +217,8 @@ public class AccessServlet extends HttpServlet implements IVersion {
 
 		MultiReadRequestWrapper.clearTempDir(getServletContext());
 		TemplateFactory.copyDefaultTemplate(getServletContext());
+		
+		
 	}
 
 	public void process(HttpServletRequest request, HttpServletResponse response, boolean post) throws ServletException {

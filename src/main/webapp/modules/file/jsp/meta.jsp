@@ -129,11 +129,12 @@
 			<div class="label">${i18n.edit["field.creation-date"]}</div>
 			<div class="value">${file.creationDate}</div>
 		</div>
+		<c:if test="${!globalContext.mailingPlatform}">
 		<div class="line">
 			<label for="shared-${file.id}">${i18n.edit["field.shared"]}</label>
 			<input type="checkbox" id="shared-${file.id}" name="shared-${file.id}" ${file.shared?'checked="checked"':''} />
 		</div>				
-						
+		</c:if>
 		<c:if test="${fn:length(tags) > 0}">
 		<fieldset class="tags">
 		<legend>${i18n.edit["field.tags"]}</legend>

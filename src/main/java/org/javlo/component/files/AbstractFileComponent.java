@@ -163,21 +163,26 @@ public abstract class AbstractFileComponent extends AbstractVisualComponent impl
 		ctx.getRequest().setAttribute("descritpion", getDescription());
 		ctx.getRequest().setAttribute("cleanDescription", StringHelper.toXMLAttribute(StringHelper.removeTag(getDescription())));
 		StaticInfo staticInfo = getStaticInfo(ctx);
+		String cleanLabel=null;
+		if (staticInfo != null) {
+			cleanLabel = StringHelper.toXMLAttribute(StringHelper.removeTag(staticInfo.getTitle(ctx)));
+			if (!StringHelper.isEmpty(staticInfo.getCopyright(ctx))) {
+				ctx.getRequest().setAttribute("copyright", staticInfo.getCopyright(ctx));
+			}
+			ctx.getRequest().setAttribute("resourceLabel", staticInfo.getTitle(ctx));
+			ctx.getRequest().setAttribute("resourceCleanLabel", cleanLabel);
+		}
 		if (getLabel() != null && getLabel().length() > 0) {
 			ctx.getRequest().setAttribute("label", getLabel());
 			ctx.getRequest().setAttribute("cleanLabel", StringHelper.toXMLAttribute(StringHelper.removeTag(getLabel())));
 			ctx.getRequest().setAttribute("htmlLabel", XHTMLHelper.textToXHTML(XHTMLHelper.autoLink(getLabel())));
 		} else if (staticInfo != null) {
-			ctx.getRequest().setAttribute("label", staticInfo.getTitle(ctx));
-			ctx.getRequest().setAttribute("cleanLabel", StringHelper.toXMLAttribute(StringHelper.removeTag(staticInfo.getTitle(ctx))));
+			ctx.getRequest().setAttribute("label", staticInfo.getTitle(ctx));			
+			ctx.getRequest().setAttribute("cleanLabel", cleanLabel);
 			ctx.getRequest().setAttribute("htmlLabel", XHTMLHelper.textToXHTML(XHTMLHelper.autoLink(getLabel())));
 			ctx.getRequest().setAttribute("resource", staticInfo);
-		}
-		if (staticInfo != null) {
-			if (!StringHelper.isEmpty(staticInfo.getCopyright(ctx))) {
-				ctx.getRequest().setAttribute("copyright", staticInfo.getCopyright(ctx));
-			}
-		}
+		}		
+		
 		ctx.getRequest().setAttribute("resource", staticInfo);
 
 	}

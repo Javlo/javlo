@@ -194,7 +194,7 @@ public class PersistenceService {
 
 	public static final String GLOBAL_MAP_NAME = "global";
 
-	private static int UNDO_DEPTH = 255;
+	public static int UNDO_DEPTH = 255;
 	
 	private BufferedWriter trackWriter = null;
 	

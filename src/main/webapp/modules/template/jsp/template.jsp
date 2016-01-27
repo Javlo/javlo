@@ -32,6 +32,10 @@
 	                   <label>${i18n.edit['template.creation-date']}:</label>
 	                   <span>${template.creationDate}</span>
 	               </p>
+	               <p>
+	                   <label>${i18n.edit['template.count-renderers']}:</label>
+	                   <span>${fn:length(template.renderers)}</span>
+	               </p>
 	            </div>
 	            </a>
             </c:if>
@@ -54,6 +58,10 @@
                     <label>${i18n.edit['template.creation-date']}:</label>
                     <span>${template.creationDate}</span>
                 </p>
+                <p>
+	                   <label>${i18n.edit['template.count-renderers']}:</label>
+	                   <span>${fn:length(template.renderers)}</span>
+	               </p>
                  <c:if test="${empty selectUrl}"><p>
                 	<a href="${template.downloadURL}">${i18n.edit['admin.download-template']}</a>                	
                 </p></c:if>  
