@@ -1445,7 +1445,7 @@ public class StaticConfig extends Observable {
 	}
 	
 	public boolean isHighSecure() {
-		return StringHelper.isTrue(properties.getString("security.high", null), true);
+		return StringHelper.isTrue(properties.getString("security.high", null), false);
 	}
 
 	public String getSpecialLogFile() {

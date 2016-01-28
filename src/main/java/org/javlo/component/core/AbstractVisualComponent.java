@@ -1622,7 +1622,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		}
 	}
 	
-	protected String cleanValue (ContentContext ctx, String value) {
+	protected String cleanValue (ContentContext ctx, String value) {		
 		if (ctx.getGlobalContext().getStaticConfig().isHighSecure()) {
 			return Encode.forHtmlContent(value);
 		} else {

@@ -148,7 +148,7 @@ public class SynchronisationServlet extends HttpServlet {
 
 			GlobalContext globalContext = GlobalContext.getInstance(request);
 			String baseFolder = globalContext.getDataFolder();
-			Set<String> included = null;
+			Set<String> included = null;			
 			if (isOnlyStatic) {
 				included = new HashSet<String>();
 				String folder = staticConfig.getStaticFolder();
@@ -181,9 +181,8 @@ public class SynchronisationServlet extends HttpServlet {
 				baseFolder = staticConfig.getMailingTemplateFolder();
 				manageDeletedFiles = false;
 				splitBigFiles = false;
-			}
-			fileName = URLHelper.cleanPath(fileName, true);
-
+			}			
+			fileName = URLHelper.cleanPath(fileName, true);			
 			if (fileName.equals(FILE_INFO)) {
 				FileStructureFactory fsf = FileStructureFactory.getInstance(new File(baseFolder));
 				List<FileInfo> fileTree = fsf.fileTreeToList(manageDeletedFiles, manageDeletedFiles);

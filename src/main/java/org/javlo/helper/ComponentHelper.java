@@ -11,6 +11,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import org.javlo.component.column.TableBreak;
 import org.javlo.component.container.IContainer;
@@ -32,6 +33,8 @@ import org.javlo.utils.Cell;
  * @author pvandermaesen some method for help create component.
  */
 public class ComponentHelper {
+	
+	private static Logger logger = Logger.getLogger(ComponentHelper.class.getName());
 
 	/**
 	 * create a dynamic paragraph with a specific content on a page with a
@@ -180,6 +183,9 @@ public class ComponentHelper {
 	}
 
 	public static void smartMoveComponent(ContentContext ctx, IContentVisualComponent comp, IContentVisualComponent newPrevious, MenuElement targetPage, String area) throws Exception {
+		if (comp.getId().equals(newPrevious.getId())) {
+			return;
+		}
 		if (!(comp instanceof TableBreak) && !(comp instanceof IContainer)) {
 			moveComponent(ctx, comp, newPrevious, targetPage, area);
 		} else if (comp instanceof IContainer) {
@@ -224,9 +230,10 @@ public class ComponentHelper {
 					newPrevious = moveComp;
 				}
 			}
-		} else if (!(comp instanceof TableBreak)) {
+		} else if (comp instanceof TableBreak) {
 			IContentVisualComponent openTable = ((TableBreak) comp).getOpenTableComponent(ctx);
 			if (openTable == null) {
+				logger.warning("table not open : "+comp.getId());
 				return;
 			} else {
 				ContentContext compCtx = ctx.getContextWithArea(comp.getArea());

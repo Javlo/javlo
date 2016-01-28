@@ -301,8 +301,8 @@ public class SynchroHelper {
 	
 	public static void deletedRemoteCacheFile(ContentContext ctx, String fileName) {
 		String url = URLHelper.mergePath(ctx.getGlobalContext().getDMZServerIntra().toString(), BaseSynchroService.SERVLET_RELATIVE_PATH, SynchronisationServlet.CLEAR_CACHE_SPECIAL_FILE_NAME);
-		url = URLHelper.addParam(url, "file", fileName);
-		url = URLHelper.addParam(url, SynchronisationServlet.SHYNCRO_CODE_PARAM_NAME, ctx.getGlobalContext().getStaticConfig().getSynchroCode());
+		url = URLHelper.addRawParam(url, "file", fileName);
+		url = URLHelper.addRawParam(url, SynchronisationServlet.SHYNCRO_CODE_PARAM_NAME, ctx.getGlobalContext().getStaticConfig().getSynchroCode());
 		try {
 			NetHelper.readPageGet(new URL(url));
 		} catch (Exception e) {

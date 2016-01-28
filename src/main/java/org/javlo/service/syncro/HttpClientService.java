@@ -137,7 +137,7 @@ public class HttpClientService {
 		}
 		String out = URLHelper.mergePath(serverURL, relativeURL);
 		if (synchroCode != null) {
-			out = URLHelper.addParam(out, SynchronisationServlet.SHYNCRO_CODE_PARAM_NAME, synchroCode);
+			out = URLHelper.addRawParam(out, SynchronisationServlet.SHYNCRO_CODE_PARAM_NAME, synchroCode);
 		}
 		return out;
 	}
@@ -242,8 +242,8 @@ public class HttpClientService {
 			if (username == null || password == null) {
 				throw new IOException("no credential for retreive login id.");
 			}
-			relativeURL = URLHelper.addParam(relativeURL, "login", URLEncoder.encode(username, ContentContext.CHARACTER_ENCODING));
-			relativeURL = URLHelper.addParam(relativeURL, "password", URLEncoder.encode(password, ContentContext.CHARACTER_ENCODING));
+			relativeURL = URLHelper.addRawParam(relativeURL, "login", URLEncoder.encode(username, ContentContext.CHARACTER_ENCODING));
+			relativeURL = URLHelper.addRawParam(relativeURL, "password", URLEncoder.encode(password, ContentContext.CHARACTER_ENCODING));
 
 			String url = encodeURL(relativeURL);
 			HttpGet req = new HttpGet(url);

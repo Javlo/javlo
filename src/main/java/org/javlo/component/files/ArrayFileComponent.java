@@ -53,14 +53,15 @@ public class ArrayFileComponent extends GenericFile {
 		private int dataRaw = 0;
 
 		public ArrayMap(Cell[][] inData) {
+			System.out.println("***** ArrayFileComponent.ArrayMap.ArrayMap : inData.length = "+inData.length); //TODO: remove debug trace
 			this.data = inData;
-			for (int row = 0; row < Math.min(inData.length, 10); row++) {
+			for (int row = 0; row < Math.min(inData.length, 99); row++) {
 				if (!StringHelper.isEmpty(data[row][0]) && !StringHelper.isEmpty(data[row][1])) {
 					titleRaw = row;								
 					row = 99;
 				}
 			}
-			for (int row = titleRaw+1; row < Math.min(inData.length, 10); row++) {
+			for (int row = titleRaw+1; row < Math.min(inData.length, 99); row++) {
 				if (!StringHelper.isEmpty(data[row][0]) && !StringHelper.isEmpty(data[row][1])) {
 					dataRaw = row;								
 					row = 99;
@@ -73,11 +74,14 @@ public class ArrayFileComponent extends GenericFile {
 		public Set<java.util.Map.Entry<String, Cell>> entrySet() {
 			Set<java.util.Map.Entry<String, Cell>> outEntries = new HashSet<Map.Entry<String,Cell>>();
 			String key = data[titleRaw][0].toString();
-			Cell value = data[dataRaw][0];	
-			int i=1;
+			Cell value = data[dataRaw][0];
+			int i=0;
 			while ((!StringHelper.isEmpty(key) || !StringHelper.isEmpty(value)) && (i<data[titleRaw].length)) {
 				Map.Entry<String, Cell> entry = new AbstractMapEntry(key,value) {};
 				outEntries.add(entry);
+				System.out.println("***** ArrayFileComponent.ArrayMap.entrySet : i                          = "+i); //TODO: remove debug trace
+				System.out.println("***** ArrayFileComponent.ArrayMap.entrySet : StringHelper.getColName(i) = "+StringHelper.getColName(i)); //TODO: remove debug trace
+				System.out.println("***** ArrayFileComponent.ArrayMap.entrySet : value                      = "+value); //TODO: remove debug trace
 				entry = new AbstractMapEntry(""+i,value) {};
 				outEntries.add(entry);
 				entry = new AbstractMapEntry(StringHelper.getColName(i),value) {};

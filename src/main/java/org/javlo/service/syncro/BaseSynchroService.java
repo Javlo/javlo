@@ -181,7 +181,7 @@ public abstract class BaseSynchroService extends AbstractSynchroService<BaseSync
 		try {
 			paramValue = URLEncoder.encode(paramValue, ContentContext.CHARACTER_ENCODING);
 			String relativeURL = buildURL("");
-			relativeURL = URLHelper.addParam(relativeURL, paramName, paramValue);
+			relativeURL = URLHelper.addRawParam(relativeURL, paramName, paramValue);
 			return httpClientService.callURL(relativeURL).getStatusCode() == HttpStatus.SC_OK;
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -208,14 +208,14 @@ public abstract class BaseSynchroService extends AbstractSynchroService<BaseSync
 			File localFile = buildLocalFile(localInfo);
 
 			String relativeURL = buildURL(SynchroHelper.encodeURLPath(localInfo.getPath()));
-			relativeURL = URLHelper.addParam(relativeURL, "checksum", "" + localInfo.getChecksum());
+			relativeURL = URLHelper.addRawParam(relativeURL, "checksum", "" + localInfo.getChecksum());
 
 			HttpResponse resp = null;
 			try {
 				HttpUriRequest request;
 				if (splitBigFiles && SynchroHelper.isBigFile(localInfo.getSize())) {
 					//Just send "mergeBigFile" command
-					relativeURL = URLHelper.addParam(relativeURL, "mergeBigFile", "true");
+					relativeURL = URLHelper.addRawParam(relativeURL, "mergeBigFile", "true");
 					String finalURL = httpClientService.encodeURL(relativeURL);
 					request = new HttpGet(finalURL);
 				} else {
@@ -382,7 +382,7 @@ public abstract class BaseSynchroService extends AbstractSynchroService<BaseSync
 		File localFile = buildLocalFile(distantInfo);
 
 		String relativeURL = buildURL(SynchroHelper.encodeURLPath(distantInfo.getPath()));
-		relativeURL = URLHelper.addParam(relativeURL, "delete", "true");
+		relativeURL = URLHelper.addRawParam(relativeURL, "delete", "true");
 
 		try {
 			StatusLine status = httpClientService.callURL(relativeURL);

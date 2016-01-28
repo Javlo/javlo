@@ -39,6 +39,7 @@ public class PDFLink extends AbstractVisualComponent {
 	public void prepareView(ContentContext ctx) throws Exception {
 		super.prepareView(ctx);
 		ctx.getRequest().setAttribute("url", getURL(ctx));
+		ctx.getRequest().setAttribute("label", getValue());
 	};
 	
 	@Override

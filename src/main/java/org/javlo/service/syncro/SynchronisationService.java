@@ -68,7 +68,7 @@ public class SynchronisationService {
 		String outURL = "" + serverURL;
 		outURL = URLHelper.mergePath(outURL, RESOURCES_DESCRIPTION_URI);
 		outURL = URLHelper.mergePath(outURL, URI_PREFIX);
-		outURL = URLHelper.addParam(outURL, SynchronisationServlet.SHYNCRO_CODE_PARAM_NAME, synchroCode);
+		outURL = URLHelper.addRawParam(outURL, SynchronisationServlet.SHYNCRO_CODE_PARAM_NAME, synchroCode);
 		return outURL;
 	}
 
@@ -80,7 +80,7 @@ public class SynchronisationService {
 
 		try {
 			paramValue = URLEncoder.encode(paramValue, ContentContext.CHARACTER_ENCODING);
-			URL url = new URL(URLHelper.addParam(getURL(), paramName, paramValue));
+			URL url = new URL(URLHelper.addRawParam(getURL(), paramName, paramValue));
 			URLConnection conn = url.openConnection();
 			in = conn.getInputStream();
 			in.read();
@@ -210,7 +210,7 @@ public class SynchronisationService {
 		PostMethod filePost = null;
 		boolean filedeleted = false;
 		try {
-			String finalURL = URLHelper.addParam(targetURL, "checksum", "" + fileInfo.getChecksum());
+			String finalURL = URLHelper.addRawParam(targetURL, "checksum", "" + fileInfo.getChecksum());
 			filePost = new PostMethod(finalURL);
 			PartBase[] parts = { new FilePart(targetFile.getName(), targetFile) };
 			filePost.setRequestEntity(new MultipartRequestEntity(parts, filePost.getParams()));
@@ -303,7 +303,7 @@ public class SynchronisationService {
 
 		String targetURL = URLHelper.mergePath(getURL(), URLHelper.path2URL(fileInfo.getPath()));
 
-		URL url = new URL(URLHelper.addParam(targetURL, "delete", "true"));
+		URL url = new URL(URLHelper.addRawParam(targetURL, "delete", "true"));
 		InputStream in = null;
 		try {
 			URLConnection conn = url.openConnection();

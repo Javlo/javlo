@@ -224,7 +224,7 @@ public class GlobalImage extends Image implements IImageFilter {
 		}
 		ctx.getRequest().setAttribute("media", this);
 		ctx.getRequest().setAttribute("shortDate", StringHelper.renderShortDate(ctx, getDate()));
-		if (isMeta()) {
+		if (isMeta()) {			
 			ctx.getRequest().setAttribute("label", cleanValue(ctx, getTitle()));
 			ctx.getRequest().setAttribute("cleanLabel", getTitle());
 		}

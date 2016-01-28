@@ -2131,7 +2131,7 @@ public class Edit extends AbstractModuleAction {
 	}
 
 	public static String performRefresh(ContentContext ctx) throws Exception {
-		SynchroHelper.performSynchro(ctx);
+		//SynchroHelper.performSynchro(ctx);		
 		return null;
 	}
 }
