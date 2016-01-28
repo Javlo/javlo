@@ -165,7 +165,7 @@ public abstract class AbstractFileComponent extends AbstractVisualComponent impl
 		StaticInfo staticInfo = getStaticInfo(ctx);
 		String cleanLabel=null;
 		if (staticInfo != null) {
-			cleanLabel = StringHelper.toXMLAttribute(StringHelper.removeTag(staticInfo.getTitle(ctx)));
+			cleanLabel = StringHelper.toHTMLAttribute(StringHelper.removeTag(staticInfo.getTitle(ctx)));
 			if (!StringHelper.isEmpty(staticInfo.getCopyright(ctx))) {
 				ctx.getRequest().setAttribute("copyright", staticInfo.getCopyright(ctx));
 			}
