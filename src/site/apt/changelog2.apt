@@ -604,4 +604,6 @@ change log
  
 * 2.1.0.3.4 20/01/2016
 
- * no share image on mailing platform, undo depth configurable from static config 
+ * no share image on mailing platform, undo depth configurable from static config
+ 
+ * clean security + correction bug paste comp on him self 
