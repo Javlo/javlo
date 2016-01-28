@@ -183,7 +183,7 @@ public class ComponentHelper {
 	}
 
 	public static void smartMoveComponent(ContentContext ctx, IContentVisualComponent comp, IContentVisualComponent newPrevious, MenuElement targetPage, String area) throws Exception {
-		if (comp.getId().equals(newPrevious.getId())) {
+		if (comp != null && newPrevious != null && comp.getId().equals(newPrevious.getId())) {
 			return;
 		}
 		if (!(comp instanceof TableBreak) && !(comp instanceof IContainer)) {
