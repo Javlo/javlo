@@ -3152,7 +3152,9 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	}
 
 	public void storeRedirectUrlList() {
-		getRedirectUrlList().flush();
+		PrintWriter localWriter = redirectURLList;
+		redirectURLList = null;
+		ResourceHelper.closeResource(localWriter);		
 	}
 
 	private Properties getRedirectUrlMap() {
