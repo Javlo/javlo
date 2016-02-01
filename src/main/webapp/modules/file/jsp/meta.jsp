@@ -67,7 +67,7 @@
 		
 		<div class="download ${file.image && param.select != 'back'?'picture':''}">
 			<div ${file.image?'class="focus-zone"':'no-focus'} >			
-			<c:url var="fileSelectURL" value="${file.URL}">
+			<c:url var="fileSelectURL" value="${file.URL}" context="/">
 				<c:if test="${not empty param.select}"><c:param name="select" value="${param.select}" /></c:if>
 				<c:if test="${not empty param.editPreview}"><c:param name="previewEdit" value="${param.previewEdit}" /></c:if>
 				<c:if test="${not empty param[BACK_PARAM_NAME]}">
@@ -81,7 +81,7 @@
 			<c:if test="${not empty param.select && !file.directory}">
 				<c:set var="dataURL" value='data-url="${file.freeURL}"' />
 			</c:if>				
-			<a ${!file.directory && not empty param.select?'class="select-item"':''} href="${fileSelectURL}" ${dataURL}><img src="${file.thumbURL}" /></a>			
+			<img src="${file.thumbURL}" />			
 			<c:if test="${file.image}">
 			<div class="focus-point">x</div>			
 			<input class="posx" type="hidden" name="posx-${file.id}" value="${file.focusZoneX}" />

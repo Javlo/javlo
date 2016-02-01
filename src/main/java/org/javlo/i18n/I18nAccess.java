@@ -1,5 +1,5 @@
 /*
- * Created on 20 ao�t 2003
+ * Created on 20 aout 2003
  */
 package org.javlo.i18n;
 

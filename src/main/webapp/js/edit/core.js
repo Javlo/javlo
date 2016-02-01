@@ -227,7 +227,7 @@ jQuery(document).ready(function() {
 
 	jQuery(".js-change-submit select").each(function() {
 		var item = jQuery(this);
-		if (item.hasClass('no-submit')) {
+		if (!item.hasClass('no-submit')) {
 			item.live("change", function() {
 				jQuery(this.form).trigger("submit");
 			});

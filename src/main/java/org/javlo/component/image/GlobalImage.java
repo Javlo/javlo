@@ -388,7 +388,7 @@ public class GlobalImage extends Image implements IImageFilter {
 				filtersArray[i][1] = i18nAccess.getText("template.image.type." + filter, filter);
 				i++;
 			}
-			finalCode.append(XHTMLHelper.getInputOneSelect(getImageFilterInputName(), filtersArray, getFilter(ctx), "no-submit"));
+			finalCode.append(XHTMLHelper.getInputOneSelectWithClass(getImageFilterInputName(), filtersArray, getFilter(ctx), "no-submit"));
 			finalCode.append("</div></div>");
 
 		} else {

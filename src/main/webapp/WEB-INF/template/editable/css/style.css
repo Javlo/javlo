@@ -151,6 +151,10 @@ table.table td, table.table th {
 	text-align: right;
 }
 
+.float-image td {
+	padding: 0;
+}
+
 .full .float-image .image-wrapper, .banner .float-image .image-wrapper {
 	width: 50%;
 	margin: 0 0 5px 0;

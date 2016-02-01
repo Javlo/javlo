@@ -1056,6 +1056,10 @@ public class XHTMLHelper {
 		}
 		return getInputOneSelect(inputName, values, currentValue, null, sort);
 	}
+	
+	public static String getInputOneSelectWithClass(String name, String[][] content, String value, String cssClass) {
+		return getInputOneSelectInternal(name, name, content, value, cssClass, null, null, true);
+	}
 
 	/**
 	 * generate a one select widget in XHTML

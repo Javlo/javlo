@@ -21,7 +21,7 @@
 <input type="hidden" name="admin" value="${admin}" />
 <label for="select-roles">${i18n.edit['user.select-role']}</label>
 <select id="select-roles" name="role">
-<option value=""></option>
+<option value="">&nbsp;</option>
 <c:forEach var="role" items="${roles}">
 <option${userContext.currentRole == role?' selected="selected"':''}>${role}</option>
 </c:forEach>
