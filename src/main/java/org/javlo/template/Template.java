@@ -41,6 +41,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.filefilter.FileFilterUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.xmlbeans.impl.piccolo.util.RecursionException;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
@@ -695,7 +696,7 @@ public class Template implements Comparable<Template> {
 
 	private TemplateStyle style = null;
 
-	public static Template getApplicationInstance(ServletContext application, ContentContext ctx, String templateDir) throws ConfigurationException, IOException {
+	public static Template getApplicationInstance(ServletContext application, ContentContext ctx, String templateDir) throws Exception {
 
 		Template outTemplate = null;
 		if (templateDir == null) {
@@ -712,7 +713,7 @@ public class Template implements Comparable<Template> {
 			outTemplate.importTemplateInWebapp(StaticConfig.getInstance(application), ctx);
 		}
 
-		outTemplate.parent = outTemplate.getParent(StaticConfig.getInstance(application), ctx);
+		outTemplate.parent = outTemplate.getParent(StaticConfig.getInstance(application), ctx, null);
 		if (outTemplate.parent == null) { // parent must be never null
 			outTemplate.parent = DefaultTemplate.INSTANCE;
 		}
@@ -725,11 +726,11 @@ public class Template implements Comparable<Template> {
 		return outTemplate;
 	}
 
-	public static Template getInstance(StaticConfig config, ContentContext ctx, String templateDir) throws ConfigurationException, IOException {
-		return getInstance(config, ctx, templateDir, true);
+	public static Template getInstance(StaticConfig config, ContentContext ctx, String templateDir) throws Exception {
+		return getInstance(config, ctx, templateDir, true, null);
 	}
 
-	private static Template getInstance(StaticConfig config, ContentContext ctx, String templateDir, boolean alternativeTemplate) throws ConfigurationException, IOException {
+	private static Template getInstance(StaticConfig config, ContentContext ctx, String templateDir, boolean alternativeTemplate, Set<String> parents) throws Exception {
 
 		if (config == null) {
 			throw new RuntimeException("StaticConfig can not be null.");
@@ -775,7 +776,7 @@ public class Template implements Comparable<Template> {
 			// t.printStackTrace();
 		}
 
-		template.parent = template.getParent(config, ctx);
+		template.parent = template.getParent(config, ctx, parents);
 		if (template.parent == null) { // parent must be never null
 			template.parent = DefaultTemplate.INSTANCE;
 		}
@@ -790,8 +791,8 @@ public class Template implements Comparable<Template> {
 		return template;
 	}
 
-	public static Template getMailingInstance(StaticConfig config, ContentContext ctx, String templateDir) throws ConfigurationException, IOException {
-		return getInstance(config, ctx, templateDir, true);
+	public static Template getMailingInstance(StaticConfig config, ContentContext ctx, String templateDir) throws Exception {
+		return getInstance(config, ctx, templateDir, true, null);
 	}
 
 	private Template parent = null;
@@ -884,11 +885,11 @@ public class Template implements Comparable<Template> {
 		return "_alternate_template";
 	}
 
-	private Template getAlternativeTemplate(StaticConfig config, ContentContext ctx) throws IOException, ConfigurationException {
+	private Template getAlternativeTemplate(StaticConfig config, ContentContext ctx) throws Exception {
 		Template aTemplate = this;
 		String alternativeTemplate = getAlternativeTemplateName();
 		if (alternativeTemplate != null) {
-			aTemplate = Template.getInstance(config, ctx, alternativeTemplate, false);
+			aTemplate = Template.getInstance(config, ctx, alternativeTemplate, false, null);
 		}
 		return aTemplate;
 	}
@@ -897,11 +898,11 @@ public class Template implements Comparable<Template> {
 		return properties.getString("template.alternative", null);
 	}
 
-	private Template getMobileTemplate(StaticConfig config, ContentContext ctx) throws IOException, ConfigurationException {
+	private Template getMobileTemplate(StaticConfig config, ContentContext ctx) throws Exception {
 		Template aTemplate = this;
 		String alternativeTemplate = getMobileTemplate();
 		if (alternativeTemplate != null) {
-			aTemplate = Template.getInstance(config, ctx, alternativeTemplate, false);
+			aTemplate = Template.getInstance(config, ctx, alternativeTemplate, false, null);
 		}
 		return aTemplate;
 	}
@@ -1242,7 +1243,7 @@ public class Template implements Comparable<Template> {
 	 * @throws ConfigurationException
 	 * @throws IOException
 	 */
-	public Template getFinalTemplate(ContentContext ctx) throws ConfigurationException, IOException {
+	public Template getFinalTemplate(ContentContext ctx) throws Exception {
 		if (ctx != null) {
 			if (ctx.getRenderMode() == ContentContext.VIEW_MODE || ctx.getRenderMode() == ContentContext.PREVIEW_MODE) {
 				if (isAlternativeTemplate(ctx)) {
@@ -1682,12 +1683,22 @@ public class Template implements Comparable<Template> {
 		return parent;
 	}
 
-	private Template getParent(StaticConfig config, ContentContext ctx) throws IOException, ConfigurationException {
+	private Template getParent(StaticConfig config, ContentContext ctx, Set<String> parents) throws Exception {
+		if (parents == null) {
+			parents = new HashSet<String>();
+		}
 		Template parent = null;
 		String parentId = getParentName();
+		
+		if (parents.contains(parentId)) {
+			throw new RecursionException("template "+getName()+" create cylce with parent:"+parentId);
+		}		
+		parents.add(parentId);
+		
 		if (parentId != null && !parentId.equals(getName())) {
+			
 			if (ctx == null) {
-				parent = Template.getInstance(config, ctx, parentId, false);
+				parent = Template.getInstance(config, ctx, parentId, false, parents);
 			} else {
 				parent = TemplateFactory.getTemplates(ctx.getRequest().getSession().getServletContext()).get(parentId);
 			}
@@ -2266,6 +2277,20 @@ public class Template implements Comparable<Template> {
 
 	protected boolean isParent() {
 		return getParent() != null && !getParent().getName().equals(DefaultTemplate.NAME);
+	}
+	
+	public boolean isChildOf(String templateId) {
+		Set<String> parents = new HashSet<String>();
+		Template parent = getParent();
+		while(parent != null && !parents.contains(parent.getName())) {
+			if (parent.getName().equals(templateId)) {
+				return true;
+			} else {
+				parents.add(parent.getName());
+				parent = getParent();
+			}
+		}
+		return false;
 	}
 
 	public boolean isPDFFile() {

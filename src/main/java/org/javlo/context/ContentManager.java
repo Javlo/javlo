@@ -32,14 +32,14 @@ public class ContentManager {
 			if (lg.trim().length() == 0) {
 				lg = globalContext.getContentLanguages().iterator().next();
 			}
-		} else {
+		} /*else {
 			try {
 				I18nAccess i18n = I18nAccess.getInstance(ctx.getRequest());
 				i18n.changeViewLanguage(ctx);
 			} catch (Exception e) {
 				logger.log(Level.INFO, "impossible to change content view language in I18NAccess", e);
 			}
-		}
+		}*/
 		return lg;
 	}
 	
@@ -81,7 +81,7 @@ public class ContentManager {
 			if (lg.trim().length() == 0) {
 				lg = globalContext.getLanguages().iterator().next();
 			}
-		} else {
+		}/* else {
 			try {
 				I18nAccess i18n = I18nAccess.getInstance(ctx.getRequest());
 				ctx.setPageRequest(true);
@@ -89,7 +89,7 @@ public class ContentManager {
 			} catch (Exception e) {
 				logger.log(Level.INFO, "impossible to change view language in I18NAccess", e);
 			}
-		}
+		}*/
 		return lg;
 	}
 

@@ -214,7 +214,7 @@ public class TemplateEditorAction extends AbstractModuleAction {
 		return null;
 	}
 
-	public static String performUpdateStyle(RequestService rs, ServletContext application, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws IOException {
+	public static String performUpdateStyle(RequestService rs, ServletContext application, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
 		TemplateEditorContext editorContext = TemplateEditorContext.getInstance(ctx.getRequest().getSession());
 		TemplateStyle style = editorContext.getCurrentTemplate().getStyle();
 
@@ -295,7 +295,7 @@ public class TemplateEditorAction extends AbstractModuleAction {
 		return null;
 	}
 
-	public static String performChangeTemplate(RequestService rs, ServletContext application, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws IOException {
+	public static String performChangeTemplate(RequestService rs, ServletContext application, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
 		String templateName = rs.getParameter("template", "");
 		TemplateEditorContext editorContext = TemplateEditorContext.getInstance(ctx.getRequest().getSession());
 		Template template = TemplateFactory.getTemplates(application).get(templateName);
@@ -306,7 +306,7 @@ public class TemplateEditorAction extends AbstractModuleAction {
 		return null;
 	}
 
-	public static String performCreateTemplate(RequestService rs, ContentContext ctx, StaticConfig staticConfig, ServletContext application, MessageRepository messageRepository, I18nAccess i18nAccess) throws IOException {
+	public static String performCreateTemplate(RequestService rs, ContentContext ctx, StaticConfig staticConfig, ServletContext application, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
 		String templateName = rs.getParameter("template", "");
 		if (templateName.trim().length() < 3) {
 			return "template name must be at least 4 chars.";

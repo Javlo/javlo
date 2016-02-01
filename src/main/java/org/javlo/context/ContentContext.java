@@ -1413,7 +1413,7 @@ public class ContentContext {
 		return ajaxMap;
 	}
 
-	public List<Template> getCurrentTemplates() throws IOException {
+	public List<Template> getCurrentTemplates() throws Exception {
 		String KEY = "__current_templates___";
 		List<Template> outTemplates = (List<Template>) request.getAttribute(KEY);
 		if (outTemplates == null) {
@@ -1491,7 +1491,7 @@ public class ContentContext {
 		Template template;
 		try {
 			template = TemplateFactory.getDiskTemplates(request.getSession().getServletContext()).get(templateId);
-		} catch (IOException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 			return false;
 		}

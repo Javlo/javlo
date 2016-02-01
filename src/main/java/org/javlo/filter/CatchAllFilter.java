@@ -73,12 +73,14 @@ public class CatchAllFilter implements Filter {
 
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain next) throws IOException, ServletException {
+		
+
 
 		logger.fine("start catch all servelt.");
 
 		HttpServletRequest httpRequest = (HttpServletRequest) request;
 		ServletContext servletContext = httpRequest.getSession().getServletContext();
-
+		
 		CountService.getInstance(servletContext).touch();
 
 		if (request.getParameter(ContentContext.FORWARD_PATH_REQUEST_KEY) != null) {
@@ -414,7 +416,6 @@ public class CatchAllFilter implements Filter {
 
 			GlobalContext globalContext = GlobalContext.getInstance(httpRequest);
 
-			I18nAccess i18nAccess = I18nAccess.getInstance(globalContext, httpRequest.getSession());
 			RequestService requestService = RequestService.getInstance(httpRequest);
 
 			Principal logoutUser = null;
@@ -437,11 +438,12 @@ public class CatchAllFilter implements Filter {
 			/** STANDARD LOGIN **/
 			IUserFactory fact = UserFactory.createUserFactory(globalContext, httpRequest.getSession());
 			User user = fact.getCurrentUser(((HttpServletRequest) request).getSession());
-			EditContext editContext = EditContext.getInstance(GlobalContext.getInstance(((HttpServletRequest) request).getSession(), globalContext.getContextKey()), ((HttpServletRequest) request).getSession());
-			if (user != null) {
+			
+			if (user != null) {		
+				EditContext editContext = EditContext.getInstance(GlobalContext.getInstance(((HttpServletRequest) request).getSession(), globalContext.getContextKey()), ((HttpServletRequest) request).getSession());
 				if (!user.getContext().equals(globalContext.getContextKey())) {
 					if (!AdminUserSecurity.getInstance().isGod(user) && !AdminUserSecurity.getInstance().isMaster(user)) {
-						try {
+						try {							
 							editContext.setEditUser(null);
 							logger.info("remove user '" + user.getLogin() + "' context does'nt match.");
 							user = null;
@@ -450,10 +452,9 @@ public class CatchAllFilter implements Filter {
 						}
 					}
 				}
-			}
-
-			if (user != null && editContext.getEditUser() == null && user.isEditor()) {
-				editContext.setEditUser(user);
+				if (editContext.getEditUser() == null && user.isEditor()) {
+					editContext.setEditUser(user);
+				}
 			}
 
 			if (fact.getCurrentUser(((HttpServletRequest) request).getSession()) == null) {
@@ -474,6 +475,7 @@ public class CatchAllFilter implements Filter {
 							if (login == null && httpRequest.getUserPrincipal() != null) {
 								login = httpRequest.getUserPrincipal().getName();
 							} else if (fact.login(httpRequest, login, request.getParameter("j_password")) == null) {
+								I18nAccess i18nAccess = I18nAccess.getInstance(globalContext, httpRequest.getSession());
 								String msg = i18nAccess.getText("user.error.msg");
 								MessageRepository messageRepository = MessageRepository.getInstance(((HttpServletRequest) request));
 								messageRepository.setGlobalMessage(new GenericMessage(msg, GenericMessage.ERROR));
@@ -505,6 +507,7 @@ public class CatchAllFilter implements Filter {
 					IUserFactory adminFactory = AdminUserFactory.createUserFactory(globalContext, httpRequest.getSession());
 					User principalUser = adminFactory.autoLogin(httpRequest, autoLoginUser);
 					if (principalUser != null) {
+						I18nAccess i18nAccess = I18nAccess.getInstance(globalContext, httpRequest.getSession());
 						String msg = i18nAccess.getText("user.autologin", new String[][] { { "login", principalUser.getLabel() } });
 						MessageRepository messageRepository = MessageRepository.getInstance(((HttpServletRequest) request));
 						messageRepository.setGlobalMessage(new GenericMessage(msg, GenericMessage.INFO));
@@ -550,6 +553,7 @@ public class CatchAllFilter implements Filter {
 						logger.info(login + " fail to login.");
 					}
 					if (user == null) {
+						I18nAccess i18nAccess = I18nAccess.getInstance(globalContext, httpRequest.getSession());
 						logger.info(login + " fail to login.");
 						String msg = i18nAccess.getText("user.error.msg");
 						MessageRepository messageRepository = MessageRepository.getInstance(((HttpServletRequest) request));

@@ -1058,7 +1058,7 @@ public class AdminAction extends AbstractModuleAction {
 		}
 	}
 
-	public static String performUpdateGlobalContext(RequestService requestService, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess, Module currentModule) throws ConfigurationException, IOException, org.javlo.user.exception.JavloSecurityException {
+	public static String performUpdateGlobalContext(RequestService requestService, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess, Module currentModule) throws Exception {
 		String msg = null;
 		if (requestService.getParameter("back", null) != null) {
 			currentModule.restoreRenderer();

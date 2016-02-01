@@ -170,7 +170,7 @@ public class MarketAction extends AbstractModuleAction {
 		return null;
 	}
 
-	public static String performDelete(RequestService rs, ServletContext application, ContentContext ctx, GlobalContext globalContext, MessageRepository messageRepository, I18nAccess i18nAccess) throws IOException {
+	public static String performDelete(RequestService rs, ServletContext application, ContentContext ctx, GlobalContext globalContext, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
 		String id = rs.getParameter("lid", null);
 		if (id == null) {
 			return "bad request structure, need 'lid' as parameter";

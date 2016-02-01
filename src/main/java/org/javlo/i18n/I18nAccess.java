@@ -104,7 +104,7 @@ public class I18nAccess implements Serializable {
 	 */
 	public static final I18nAccess getInstance(GlobalContext globalContext, HttpSession session) throws FileNotFoundException, IOException {
 		I18nAccess i18nAccess = (I18nAccess) session.getAttribute(SESSION_KEY);
-		if (i18nAccess == null || !i18nAccess.getContextKey().equals(globalContext.getContextKey())) {
+		if (i18nAccess == null || !i18nAccess.getContextKey().equals(globalContext.getContextKey())) { 
 			i18nAccess = new I18nAccess(globalContext);
 			try {
 				i18nAccess.initEdit(globalContext, session);

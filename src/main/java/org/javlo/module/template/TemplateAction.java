@@ -251,7 +251,7 @@ public class TemplateAction extends AbstractModuleAction {
 		return msg;
 	}
 
-	public String performEditTemplate(ServletContext application, StaticConfig staticConfig, ContentContext ctx, RequestService requestService, Module module, I18nAccess i18nAccess, MessageRepository messageRepository) throws IOException {
+	public String performEditTemplate(ServletContext application, StaticConfig staticConfig, ContentContext ctx, RequestService requestService, Module module, I18nAccess i18nAccess, MessageRepository messageRepository) throws Exception {
 		String msg = null;
 		Template template = TemplateFactory.getTemplates(application).get(requestService.getParameter("templateid", null));
 		if (template == null) {
@@ -339,7 +339,7 @@ public class TemplateAction extends AbstractModuleAction {
 		return null;
 	}
 
-	public String performDeleteArea(ServletContext application, RequestService requestService) throws IOException {
+	public String performDeleteArea(ServletContext application, RequestService requestService) throws Exception {
 		String area = requestService.getParameter("area", null);
 		if (area == null) {
 			return "bad request structure, need 'area' as parameter.";
@@ -405,7 +405,7 @@ public class TemplateAction extends AbstractModuleAction {
 		return null;
 	}
 
-	public String performValidate(RequestService requestService, HttpSession session, ContentContext ctx) throws IOException {
+	public String performValidate(RequestService requestService, HttpSession session, ContentContext ctx) throws Exception {
 		Template template = TemplateFactory.getTemplates(session.getServletContext()).get(requestService.getParameter("id", null));
 		if (template == null) {
 			Collection<Template> templates;
@@ -419,7 +419,7 @@ public class TemplateAction extends AbstractModuleAction {
 		return null;
 	}
 
-	public String performDelete(RequestService requestService, HttpSession session, ContentContext ctx) throws IOException {
+	public String performDelete(RequestService requestService, HttpSession session, ContentContext ctx) throws Exception {
 		Template template = TemplateFactory.getDiskTemplate(session.getServletContext(), requestService.getParameter("id", null));
 		if (template != null) {
 			template.delete();
@@ -427,14 +427,14 @@ public class TemplateAction extends AbstractModuleAction {
 		return null;
 	}
 
-	public String performCommit(RequestService requestService, ServletContext application, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws IOException {
+	public String performCommit(RequestService requestService, ServletContext application, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
 		Template template = TemplateFactory.getDiskTemplate(application, requestService.getParameter("templateid", null));
 		template.clearRenderer(ctx);
 		messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("template.message.commited", new String[][] { { "name", requestService.getParameter("templateid", null) } }), GenericMessage.INFO));
 		return null;
 	}
 
-	public String performCommitChildren(RequestService requestService, ServletContext application, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws IOException {
+	public String performCommitChildren(RequestService requestService, ServletContext application, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
 		Template template = TemplateFactory.getDiskTemplate(application, requestService.getParameter("templateid", null));
 		template.clearRenderer(ctx);
 		Collection<Template> children = TemplateFactory.getTemplateAllChildren(application, template);
@@ -471,7 +471,7 @@ public class TemplateAction extends AbstractModuleAction {
 		return null;
 	}
 
-	public static String performUpdateFilter(RequestService rs, ServletContext application, GlobalContext globalContext, HttpSession session, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws IOException, ConfigurationException {
+	public static String performUpdateFilter(RequestService rs, ServletContext application, GlobalContext globalContext, HttpSession session, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
 		String filter = rs.getParameter("filter", null);
 
 		if (filter == null) {
@@ -569,7 +569,7 @@ public class TemplateAction extends AbstractModuleAction {
 		return null;
 	}
 
-	public static String performEditHTML(RequestService rs, ServletContext application, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws IOException {
+	public static String performEditHTML(RequestService rs, ServletContext application, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
 		String html = rs.getParameter("html", null);
 		if (html == null) {
 			return "error : no 'html' param.";
@@ -600,7 +600,7 @@ public class TemplateAction extends AbstractModuleAction {
 		return null;
 	}
 
-	public static String performEditCSS(RequestService rs, ServletContext application, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws IOException {
+	public static String performEditCSS(RequestService rs, ServletContext application, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
 		String css = rs.getParameter("css", null);
 		if (css == null) {
 			return "error : no 'css' param.";

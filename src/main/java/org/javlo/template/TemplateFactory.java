@@ -27,6 +27,7 @@ import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.navigation.DefaultTemplate;
 import org.javlo.navigation.MenuElement;
+import org.javlo.navigation.NavigationWithContent;
 import org.javlo.user.AdminUserSecurity;
 import org.javlo.user.User;
 
@@ -43,7 +44,7 @@ public class TemplateFactory {
 
 	private static final Set<String> templateNotExist = new HashSet<String>();
 
-	public static void cleanAllRenderer(ContentContext ctx, boolean secure) throws IOException {
+	public static void cleanAllRenderer(ContentContext ctx, boolean secure) throws Exception {
 		cleanRenderer(ctx, null, secure);
 
 	}
@@ -59,7 +60,7 @@ public class TemplateFactory {
 	 * @param secure
 	 * @throws IOException
 	 */
-	public static void cleanRenderer(ContentContext ctx, Collection<String> inTemplates, boolean secure) throws IOException {
+	public static void cleanRenderer(ContentContext ctx, Collection<String> inTemplates, boolean secure) throws Exception {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		EditContext editCtx = EditContext.getInstance(globalContext, ctx.getRequest().getSession());
 		AdminUserSecurity security = AdminUserSecurity.getInstance();
@@ -85,7 +86,7 @@ public class TemplateFactory {
 		templateNotExist.clear();
 	}
 
-	public static List<String> getAllAuthors(ServletContext application) throws IOException {
+	public static List<String> getAllAuthors(ServletContext application) throws Exception {
 		Collection<Template> templates = getAllTemplates(application);
 		List<String> authors = new LinkedList<String>();
 		for (Template template : templates) {
@@ -96,7 +97,7 @@ public class TemplateFactory {
 		return authors;
 	}
 
-	public static Collection<String> getAllCategories(ServletContext application) throws IOException {
+	public static Collection<String> getAllCategories(ServletContext application) throws Exception {
 		return getAllCategories(application, null);
 	}
 
@@ -109,7 +110,7 @@ public class TemplateFactory {
 	 * @return
 	 * @throws IOException
 	 */
-	public static Collection<String> getAllCategories(ServletContext application, User user) throws IOException {
+	public static Collection<String> getAllCategories(ServletContext application, User user) throws Exception {
 		Collection<Template> templates;
 		templates = getAllTemplates(application);
 
@@ -122,7 +123,7 @@ public class TemplateFactory {
 		return categories;
 	}
 
-	public static List<String> getAllSources(ServletContext application) throws IOException {
+	public static List<String> getAllSources(ServletContext application) throws Exception {
 		Collection<Template> templates = getAllTemplates(application);
 		List<String> sources = new LinkedList<String>();
 		for (Template template : templates) {
@@ -133,13 +134,13 @@ public class TemplateFactory {
 		return sources;
 	}
 
-	public static List<Template> getAllTemplates(ServletContext application) throws IOException {
+	public static List<Template> getAllTemplates(ServletContext application) throws Exception {
 		List<Template> outList = new LinkedList(getTemplates(application).values());
 		Collections.sort(outList, Template.TemplateDateComparator.instance);
 		return outList;
 	}
 	
-	public static List<Template> getAllTemplatesFromContext(GlobalContext context) throws IOException {
+	public static List<Template> getAllTemplatesFromContext(GlobalContext context) throws Exception {
 		List<Template> outTemplates = new LinkedList<Template>();
 		Set<String> templatesName = new HashSet<String>(context.getTemplatesNames());
 		for (Template template : TemplateFactory.getAllTemplates(context.getServletContext())) {
@@ -150,7 +151,7 @@ public class TemplateFactory {
 		return outTemplates;
 	}
 
-	private static void getTemplateChildren(List<Template> outList, ServletContext application, Template template) throws IOException {
+	private static void getTemplateChildren(List<Template> outList, ServletContext application, Template template) throws Exception {
 		if (template != DefaultTemplate.INSTANCE) {
 			return;
 		}
@@ -173,7 +174,7 @@ public class TemplateFactory {
 	 * @return
 	 * @throws IOException
 	 */
-	public static Collection<Template> getTemplateChildren(ServletContext application, Template template) throws IOException {
+	public static Collection<Template> getTemplateChildren(ServletContext application, Template template) throws Exception {
 		List<Template> outList = new LinkedList<Template>();
 		List<Template> templates = getAllTemplates(application);
 		for (Template tpl : templates) {
@@ -187,7 +188,7 @@ public class TemplateFactory {
 		return outList;
 	}
 
-	private static void searchAllChildren(List<Template> currentChildren, ServletContext application, Template template) throws IOException {
+	private static void searchAllChildren(List<Template> currentChildren, ServletContext application, Template template) throws Exception {
 		Collection<Template> children = getTemplateChildren(application, template);
 		for (Template child : children) {
 			if (!currentChildren.contains(child)) {
@@ -205,7 +206,7 @@ public class TemplateFactory {
 	 * @return
 	 * @throws IOException
 	 */
-	public static Collection<Template> getTemplateAllChildren(ServletContext application, Template template) throws IOException {
+	public static Collection<Template> getTemplateAllChildren(ServletContext application, Template template) throws Exception {
 		List<Template> outList = new LinkedList<Template>();
 		searchAllChildren(outList, application, template);
 		return outList;
@@ -218,7 +219,7 @@ public class TemplateFactory {
 	 * @return
 	 * @throws IOException
 	 */
-	public static List<Template> getAllDiskTemplates(ServletContext application) throws IOException {
+	public static List<Template> getAllDiskTemplates(ServletContext application) throws Exception {
 		List<Template> outList = new LinkedList(getDiskTemplates(application).values());
 		Collections.sort(outList, Template.TemplateDateComparator.instance);
 		return outList;
@@ -234,7 +235,7 @@ public class TemplateFactory {
 	 * @return
 	 * @throws IOException
 	 */
-	public static Template getDiskTemplate(ServletContext application, String templateName) throws IOException {
+	public static Template getDiskTemplate(ServletContext application, String templateName) throws Exception {
 		templateName = StringHelper.createFileName(templateName);
 		List<Template> templates = new LinkedList(getDiskTemplates(application).values());
 		Template outTemplate = null;
@@ -246,7 +247,7 @@ public class TemplateFactory {
 		return outTemplate;
 	}
 
-	public static List<Template> getAllValidTemplates(ServletContext application) throws IOException {
+	public static List<Template> getAllValidTemplates(ServletContext application) throws Exception {
 		List<Template> outTemplate = new LinkedList<Template>();
 		Collection<Template> templates = getAllTemplates(application);
 		for (Template template : templates) {
@@ -264,7 +265,7 @@ public class TemplateFactory {
 	 * @return
 	 * @throws IOException
 	 */
-	public synchronized static Map<String, Template> getDiskTemplates(ServletContext application) throws IOException {
+	public synchronized static Map<String, Template> getDiskTemplates(ServletContext application) throws Exception {
 		StaticConfig staticConfig = StaticConfig.getInstance(application);
 		File templateFolder = new File(staticConfig.getTemplateFolder());
 		File[] allTemplateFile = templateFolder.listFiles(new VisibleDirectoryFilter());
@@ -291,7 +292,7 @@ public class TemplateFactory {
 	 * @return
 	 * @throws IOException
 	 */
-	public static Template createDiskTemplates(ServletContext application, String name) throws IOException {
+	public static Template createDiskTemplates(ServletContext application, String name) throws Exception {
 		StaticConfig staticConfig = StaticConfig.getInstance(application);
 		File templateFolder = new File(URLHelper.mergePath(staticConfig.getTemplateFolder(), StringHelper.createFileName(name)));
 		if (templateFolder.exists()) {
@@ -319,7 +320,7 @@ public class TemplateFactory {
 	 * @return
 	 * @throws IOException
 	 */
-	public static Template createDiskTemplates(ServletContext application, String name, String source) throws IOException {
+	public static Template createDiskTemplates(ServletContext application, String name, String source) throws Exception {
 		StaticConfig staticConfig = StaticConfig.getInstance(application);
 		name = StringHelper.createFileName(name);
 		File templateFolder = new File(URLHelper.mergePath(staticConfig.getTemplateFolder(), name));
@@ -349,7 +350,7 @@ public class TemplateFactory {
 	 * @return
 	 * @throws IOException
 	 */
-	public static Map<String, Template> getTemplates(ServletContext application) throws IOException {
+	public static Map<String, Template> getTemplates(ServletContext application) throws Exception {
 		Map<String, Template> outTemplate = null;
 		synchronized (TEMPLATE_KEY) {
 			outTemplate = (Map<String, Template>) application.getAttribute(TEMPLATE_KEY);
@@ -361,7 +362,7 @@ public class TemplateFactory {
 		return outTemplate;
 	}
 
-	public static boolean isTemplateExistOnDisk(ServletContext application, String templateID, boolean mailing) throws IOException {
+	public static boolean isTemplateExistOnDisk(ServletContext application, String templateID, boolean mailing) throws Exception {
 		Collection<Template> templates = getAllDiskTemplates(application);
 		for (Template template : templates) {
 			if (template.getId().equals(templateID)) {
@@ -415,4 +416,6 @@ public class TemplateFactory {
 			}
 		}
 	}
+	
+	
 }

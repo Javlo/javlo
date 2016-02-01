@@ -348,22 +348,25 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		GlobalContext newInstance = (GlobalContext) application.getAttribute(contextKey);
 		if (newInstance == null) {
 			synchronized (LOCK_GLOBAL_CONTEXT_LOAD) {
-				newInstance = new GlobalContext(contextKey);
-				newInstance.application = application;
-				synchronized (newInstance.properties) {
-					newInstance.staticConfig = staticConfig;
-					application.setAttribute(contextKey, newInstance);
-					if (configFile.exists()) {
-						newInstance.properties.clear();
-						newInstance.properties.load(configFile);
+				newInstance = (GlobalContext) application.getAttribute(contextKey);
+				if (newInstance == null) {
+					newInstance = new GlobalContext(contextKey);
+					newInstance.application = application;
+					synchronized (newInstance.properties) {
+						newInstance.staticConfig = staticConfig;
+						application.setAttribute(contextKey, newInstance);
+						if (configFile.exists()) {
+							newInstance.properties.clear();
+							newInstance.properties.load(configFile);
+						}
+						int countAccess = newInstance.properties.getInt("session-count", 0);
+						newInstance.properties.setProperty("session-count", countAccess + 1);
+						newInstance.properties.setProperty("access-date", StringHelper.renderTime(new Date()));
+						newInstance.contextFile = configFile;
+						newInstance.save();
 					}
-					int countAccess = newInstance.properties.getInt("session-count", 0);
-					newInstance.properties.setProperty("session-count", countAccess + 1);
-					newInstance.properties.setProperty("access-date", StringHelper.renderTime(new Date()));
-					newInstance.contextFile = configFile;
-					newInstance.save();
+					newInstance.startThread();
 				}
-				newInstance.startThread();
 			}
 		}
 		return newInstance;
@@ -582,6 +585,11 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	}
 
 	public static boolean isExist(HttpServletRequest request, String contextKey) throws IOException, ConfigurationException {
+		
+		if (request.getSession().getServletContext().getAttribute(contextKey) != null) {		
+			return true;
+		}
+		
 		contextKey = StringHelper.stringToFileName(contextKey);
 		String fileName = contextKey + ".properties";
 
@@ -1652,7 +1660,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		}
 		return uriAlias;
 	}
-	
+
 	public void resetURLFactory() {
 		urlFactory = null;
 	}
@@ -3142,7 +3150,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		}
 		return redirectURLList;
 	}
-	
+
 	public void storeRedirectUrlList() {
 		getRedirectUrlList().flush();
 	}
@@ -3155,8 +3163,10 @@ public class GlobalContext implements Serializable, IPrintInfo {
 					Reader reader = null;
 					try {
 						File redirectURLListFile = getRedirectURLListFile();
-						reader = new InputStreamReader(new FileInputStream(redirectURLListFile), ContentContext.CHARACTER_ENCODING);
-						prop.load(reader);
+						if (redirectURLListFile.exists()) {
+							reader = new InputStreamReader(new FileInputStream(redirectURLListFile), ContentContext.CHARACTER_ENCODING);
+							prop.load(reader);
+						}
 					} catch (Exception e) {
 						e.printStackTrace();
 					} finally {
@@ -3289,7 +3299,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	public String getSMTPHost() {
 		return properties.getString(StaticConfig.SMTP_HOST_PARAM, null);
 	}
-	
+
 	public void setSMTPHost(String host) {
 		properties.setProperty(StaticConfig.SMTP_HOST_PARAM, host);
 	}
@@ -3297,7 +3307,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	public String getSMTPPassword() {
 		return properties.getString(StaticConfig.SMTP_PASSWORD_PARAM, null);
 	}
-	
+
 	public void setSMTPPassword(String pwd) {
 		properties.setProperty(StaticConfig.SMTP_PASSWORD_PARAM, pwd);
 	}
@@ -3305,7 +3315,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	public String getSMTPPort() {
 		return properties.getString(StaticConfig.SMTP_PORT_PARAM, null);
 	}
-	
+
 	public void setSMTPPort(String port) {
 		properties.setProperty(StaticConfig.SMTP_PORT_PARAM, port);
 	}
@@ -3313,7 +3323,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	public String getSMTPUser() {
 		return properties.getString(StaticConfig.SMTP_USER_PARAM, null);
 	}
-	
+
 	public void setSMTPUser(String user) {
 		properties.setProperty(StaticConfig.SMTP_USER_PARAM, user);
 	}

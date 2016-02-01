@@ -366,7 +366,7 @@ editPreview.initPreview = function() {
 		    		console.log("countDrop = ",countDrop);
 		    	}				
 				if (countDrop>1) {
-					countDrop--;
+					countDrop=0;
 					return false;
 				}			
 				

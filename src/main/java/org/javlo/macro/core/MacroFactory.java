@@ -73,7 +73,7 @@ public class MacroFactory {
 
 	private static MacroFactory instance = null;
 
-	public synchronized static final MacroFactory getInstance(StaticConfig staticConfig) {
+	public static final MacroFactory getInstance(StaticConfig staticConfig) {
 		if (instance == null) {
 			instance = new MacroFactory();
 			if (staticConfig.getSpecialMacros().size() > 0) {
