@@ -295,7 +295,7 @@ public class ContentService implements IPrintInfo {
 		return id;
 	}
 
-	public String createContent(ContentContext ctx, MenuElement page, Collection<ComponentBean> inBean, String parentId, boolean releaseCache) throws Exception {
+	public String createContent(ContentContext ctx, MenuElement page, Iterable<ComponentBean> inBean, String parentId, boolean releaseCache) throws Exception {
 		for (ComponentBean bean : inBean) {
 			IContentVisualComponent comp = ComponentFactory.createComponent(ctx, bean, null, null, null);
 			if (!comp.isUnique() || page.getContentByType(ctx, comp.getType()).size() == 0) {

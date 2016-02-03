@@ -27,6 +27,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.javlo.component.core.ComponentBean;
 import org.javlo.component.core.ComponentFactory;
@@ -43,6 +44,7 @@ import org.javlo.helper.ElementaryURLHelper;
 import org.javlo.helper.LocalLogger;
 import org.javlo.helper.NetHelper;
 import org.javlo.helper.RequestHelper;
+import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.ServletHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.TimeHelper;
@@ -61,7 +63,6 @@ import org.javlo.service.ContentService;
 import org.javlo.service.ListService;
 import org.javlo.service.PDFConvertion;
 import org.javlo.service.PersistenceService;
-import org.javlo.service.PersistenceThread;
 import org.javlo.service.RequestService;
 import org.javlo.service.event.Event;
 import org.javlo.service.integrity.IntegrityFactory;
@@ -156,9 +157,9 @@ public class AccessServlet extends HttpServlet implements IVersion {
 	@Override
 	public void init() throws ServletException {
 		super.init();
-		
+
 		LocalLogger.init(getServletContext());
-		
+
 		System.out.println("");
 		System.out.println("");
 		System.out.println("		    _  ____  _     _     ____");
@@ -184,7 +185,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 		if (undoDepth != null) {
 			PersistenceService.UNDO_DEPTH = undoDepth;
 		}
-		
+
 		LocalLogger.SPECIAL_LOG_FILE = new File(staticConfig.getSpecialLogFile());
 
 		writeInfo(System.out);
@@ -217,12 +218,11 @@ public class AccessServlet extends HttpServlet implements IVersion {
 
 		MultiReadRequestWrapper.clearTempDir(getServletContext());
 		TemplateFactory.copyDefaultTemplate(getServletContext());
-		
-		
+
 	}
 
 	public void process(HttpServletRequest request, HttpServletResponse response, boolean post) throws ServletException {
-		
+
 		try {
 
 			COUNT_ACCESS++;
@@ -255,7 +255,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 				// edit edit info bean
 				EditInfoBean.getCurrentInfoBean(ctx);
 			}
-			
+
 			ctx.setPostRequest(post);
 
 			globalContext.initExternalService(ctx);
@@ -368,7 +368,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 				}
 			}
 
-			if (request.getServletPath().equals("/edit")) {				
+			if (request.getServletPath().equals("/edit")) {
 				EditContext editCtx = EditContext.getInstance(globalContext, request.getSession());
 				ctx.setArea(editCtx.getCurrentArea());
 				if (ctx.getCurrentEditUser() == null) {
@@ -696,22 +696,23 @@ public class AccessServlet extends HttpServlet implements IVersion {
 						params.put(Device.FORCE_DEVICE_PARAMETER_NAME, "pdf");
 						params.put(ContentContext.FORCE_ABSOLUTE_URL, "true");
 						params.put(ContentContext.NO_DMZ_PARAM_NAME, "true");
+						params.put(ContentContext.CLEAR_SESSION_PARAM, "true");
 						if (!globalContext.isView() && globalContext.getBlockPassword() != null) {
 							params.put("block-password", globalContext.getBlockPassword());
 						}
 
 						if (request.getParameter(Template.FORCE_TEMPLATE_PARAM_NAME) != null) {
 							params.put(Template.FORCE_TEMPLATE_PARAM_NAME, request.getParameter(Template.FORCE_TEMPLATE_PARAM_NAME));
-						}	
-						
+						}
+
 						if (request.getParameter("lowdef") != null) {
 							params.put("lowdef", request.getParameter("lowdef"));
 						}
 
 						params.put("clean-html", "true");
-						
+
 						String url = URLHelper.createURL(viewCtx, params);
-						
+
 						/*
 						 * if (staticConfig.getApplicationLogin() != null) { url
 						 * = URLHelper.addCredential(url,
@@ -800,7 +801,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 									if (ctx.getCurrentUser().getPassword() != null && staticConfig.isFirstPasswordMustBeChanged() && ctx.getCurrentUser().getPassword().equals(staticConfig.getFirstPasswordEncryptedIfNeeded())) {
 										ctx.setSpecialContentRenderer("/jsp/view/change_password.jsp");
 									} else {
-										if (!ctx.getCurrentPage().isReadAccess(ctx, ctx.getCurrentUser())) {											
+										if (!ctx.getCurrentPage().isReadAccess(ctx, ctx.getCurrentUser())) {
 											ctx.setSpecialContentRenderer("/jsp/view/login.jsp");
 										}
 									}
@@ -815,11 +816,11 @@ public class AccessServlet extends HttpServlet implements IVersion {
 																																							// registration
 																																							// page.
 									if (ctx.getCurrentEditUser() == null || !ctx.getCurrentEditUser().validForRoles(pageRoles)) {
-										MenuElement parent = ctx.getCurrentPage().getParent();										
+										MenuElement parent = ctx.getCurrentPage().getParent();
 										while (parent != null) {
 											parent = parent.getParent();
 										}
-										
+
 										response.setStatus(HttpServletResponse.SC_FORBIDDEN);
 										ctx.setSpecialContentRenderer("/jsp/view/no_access.jsp");
 									}
@@ -855,15 +856,18 @@ public class AccessServlet extends HttpServlet implements IVersion {
 								ctx.getResponse().setStatus(HttpServletResponse.SC_NOT_FOUND, "page not found : " + ctx.getPath());
 								if (ctx.isAsViewMode()) {
 									MenuElement page404 = content.getNavigation(ctx).searchChildFromName(staticConfig.get404PageName());
-									if (page404 != null) {
-										ctx.setCurrentPageCached(page404);
+									if (page404 != null) {										
+										ctx.setCurrentPageCached(page404);										
+										template = TemplateFactory.getTemplate(ctx, page404);
+										ctx.setCurrentTemplate(template);
 									} else {
 										Template defaultTemplate = TemplateFactory.getDiskTemplates(getServletContext()).get(globalContext.getDefaultTemplate());
 										defaultTemplate.importTemplateInWebapp(staticConfig, ctx);
-										File file404 = new File(URLHelper.mergePath(defaultTemplate.getWorkTemplateRealPath(globalContext),defaultTemplate.get404File()));
+										File file404 = new File(URLHelper.mergePath(defaultTemplate.getWorkTemplateRealPath(globalContext), defaultTemplate.get404File()));
 										if (file404.exists()) {
-											String forwardURL = URLHelper.createForwardURL(ctx, URLHelper.mergePath(defaultTemplate.getLocalWorkTemplateFolder(), defaultTemplate.getFolder(globalContext.getContextKey()), defaultTemplate.get404File()));
-											getServletContext().getRequestDispatcher(forwardURL).include(request, response);
+											response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+											ResourceHelper.writeFileToStream(file404, response.getOutputStream());
+											return;
 										}
 									}
 								}
@@ -912,6 +916,10 @@ public class AccessServlet extends HttpServlet implements IVersion {
 				String persistenceParam = requestService.getParameter(PERSISTENCE_PARAM, null);
 				if (persistenceService.isAskStore() && StringHelper.isTrue(persistenceParam, true)) {
 					persistenceService.store(ctx);
+				}
+				if (ctx.isClearSession()) {
+					HttpSession session = ctx.getRequest().getSession();
+					session.invalidate();
 				}
 			}
 		} catch (Exception ioe) {

@@ -1862,6 +1862,10 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 	public ComponentBean[] getContent() {
 		return componentBean;
 	}
+	
+	public List<ComponentBean> getContentAsList() {
+		return Arrays.asList(componentBean);
+	}
 
 	/**
 	 * get content of the current area

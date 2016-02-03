@@ -657,12 +657,14 @@ public abstract class ElementaryURLHelper {
 		}
 	}
 
-	public static final String removeSite(GlobalContext globalContext, String url) {
-		if (url.startsWith("/" + globalContext.getContextKey())) {
-			return url.substring(("/" + globalContext.getContextKey()).length());
-		} else {
-			return url;
-		}
+	public static final String removeSite(ContentContext ctx, String url) {		
+		if (ctx.getRequest().getContextPath().length()>1 && url.startsWith(ctx.getRequest().getContextPath())) {
+			url = url.substring(ctx.getRequest().getContextPath().length());
+		}		
+		if (url.startsWith("/" + ctx.getGlobalContext().getContextKey())) {
+			url = url.substring(("/" + ctx.getGlobalContext().getContextKey()).length());
+		}		
+		return url;		
 	}
 
 	public static final String getParamsAsString(String url) {

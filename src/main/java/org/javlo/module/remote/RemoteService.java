@@ -77,10 +77,12 @@ public class RemoteService {
 	}
 	
 	public synchronized boolean deleteBean(String id) {
-		File remoteFile = new File(URLHelper.mergePath(folder.getAbsolutePath(), id + ".xml"));
+		File remoteFile = new File(URLHelper.mergePath(folder.getAbsolutePath(), id + ".xml"));		
 		boolean outDel = remoteFile.delete();
 		if (outDel) {
 			remotes.remove(id);
+		} else {
+			logger.warning("error on delete file : " + remoteFile);
 		}
 		return outDel;
 	}

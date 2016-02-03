@@ -84,7 +84,7 @@ public class ThreadManager extends Thread {
 						try {
 							currentThread = AbstractThread.getInstance(file);
 							if (currentThread != null && currentThread.needRunning()) {
-								LocalThread localThread = new LocalThread(currentThread);
+								LocalThread localThread = new LocalThread(currentThread);								
 								localThread.start();
 								long startTime = System.currentTimeMillis();
 								long currentTime = System.currentTimeMillis() - startTime;

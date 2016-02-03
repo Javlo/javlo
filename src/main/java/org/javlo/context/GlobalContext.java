@@ -527,6 +527,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 						params.put(ContentContext.FORWARD_AJAX, "true");
 						params.put(Tracker.TRACKING_PARAM, "false");
 						params.put(AccessServlet.PERSISTENCE_PARAM, "false");
+						params.put(ContentContext.CLEAR_SESSION_PARAM, "true");
 						ContentContext absoluteCtx = ctx.getContextForAbsoluteURL();
 						absoluteCtx.setRenderMode(ContentContext.VIEW_MODE);
 						String url = URLHelper.createURL(absoluteCtx, "/", params);

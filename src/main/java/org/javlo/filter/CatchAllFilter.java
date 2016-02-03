@@ -73,9 +73,6 @@ public class CatchAllFilter implements Filter {
 
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain next) throws IOException, ServletException {
-		
-
-
 		logger.fine("start catch all servelt.");
 
 		HttpServletRequest httpRequest = (HttpServletRequest) request;
@@ -161,7 +158,7 @@ public class CatchAllFilter implements Filter {
 			try {
 				ContentContext ctx = ContentContext.getContentContext(httpRequest, (HttpServletResponse) response);
 				String url = URLHelper.createAjaxURL(ctx);
-				String forwardURL = URLHelper.removeSite(globalContext, url);
+				String forwardURL = URLHelper.removeSite(ctx, url);				
 				((HttpServletRequest) request).getRequestDispatcher(forwardURL).forward(httpRequest, response);
 				return;
 			} catch (Exception e) {
@@ -372,7 +369,7 @@ public class CatchAllFilter implements Filter {
 						String newPath = "/view" + viewURI;
 						if (httpRequest.getSession().isNew()) {
 							httpRequest.getSession().setAttribute(InfoBean.NEW_SESSION_PARAM, true);
-						}
+						}						
 						httpRequest.getRequestDispatcher(newPath).forward(httpRequest, response);
 						return;
 					}

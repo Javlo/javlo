@@ -263,7 +263,7 @@ public class ComponentHelper {
 	 * @param newArea
 	 *            new area, can be null.
 	 */
-	public static void changeAllArea(Collection<ComponentBean> beans, String newArea) {
+	public static void changeAllArea(Iterable<ComponentBean> beans, String newArea) {
 		for (ComponentBean bean : beans) {
 			bean.setArea(newArea);
 		}

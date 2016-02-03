@@ -78,7 +78,7 @@ public class NetHelper {
 		return readPage(url, false, false, null, null, null, null, false);
 	}
 
-	public static String readPageGet(URLConnection conn) throws Exception {
+	public static String readPageGet(URLConnection conn) throws Exception {		
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		InputStream in = null;
 		try {
@@ -294,7 +294,6 @@ public class NetHelper {
 	 * @throws IOException
 	 */
 	public static JsonElement readJson(URL url) throws Exception {
-
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 
 		InputStream in = null;

@@ -384,7 +384,7 @@ public class PageMirrorComponent extends AbstractVisualComponent implements IIma
 		MenuElement page;
 		try {
 			page = getMirrorPage(ctx);
-			if (page != null) {
+			if (page != null) { 
 				return page.getSubTitleLevel(ctx);
 			} else {
 				return 0;

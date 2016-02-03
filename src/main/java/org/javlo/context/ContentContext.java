@@ -88,6 +88,8 @@ public class ContentContext {
 	 */
 	public static final String NO_DMZ_PARAM_NAME = "nodmz";
 
+	public static final String CLEAR_SESSION_PARAM = "_clear_session";
+
 	/**
 	 * create a static logger.
 	 */
@@ -104,6 +106,8 @@ public class ContentContext {
 	private boolean postRequest = false;
 
 	private int titleDepth = 1;
+	
+	private boolean clearSession = false;
 
 	private static ContentContext createContentContext(HttpServletRequest request, HttpServletResponse response, boolean free) {
 		ContentContext ctx = new ContentContext();
@@ -329,6 +333,9 @@ public class ContentContext {
 			}
 			if (StringHelper.isTrue(requestService.getParameter(NO_DMZ_PARAM_NAME, null))) {
 				ctx.resetDMZServerInter();
+			}
+			if (StringHelper.isTrue(requestService.getParameter(CLEAR_SESSION_PARAM, null))) {
+				ctx.clearSession = true;
 			}
 		} catch (RuntimeException e) {
 			e.printStackTrace();
@@ -706,7 +713,7 @@ public class ContentContext {
 							String newURL = URLHelper.createURL(this, elem);
 							response.sendRedirect(newURL);
 							setCurrentPageCached(elem);
-						} else {
+						} else {							
 							setContentFound(false);
 							elem = root;
 							setPath(root.getPath());
@@ -1091,9 +1098,8 @@ public class ContentContext {
 		response.addCookie(cookie);
 	}
 
-	public void setCurrentPageCached(MenuElement currentPageCached) {
-
-		this.currentPageCached = currentPageCached;
+	public void setCurrentPageCached(MenuElement currentPageCached) throws Exception {
+		this.currentPageCached = currentPageCached;		
 	}
 
 	public void resetCurrentPageCached() {
@@ -1487,7 +1493,7 @@ public class ContentContext {
 	 * @param templateId
 	 * @return false if template not found else true
 	 */
-	public boolean setCurrentTemplateId(String templateId) {
+	public boolean setCurrentTemplateId(String templateId) {		
 		Template template;
 		try {
 			template = TemplateFactory.getDiskTemplates(request.getSession().getServletContext()).get(templateId);
@@ -1847,5 +1853,13 @@ public class ContentContext {
 
 	public void setTitleDepth(int titleDepth) {
 		this.titleDepth = titleDepth;
+	}
+
+	public boolean isClearSession() {
+		return clearSession;
+	}
+
+	public void setClearSession(boolean clearSession) {
+		this.clearSession = clearSession;
 	}
 }

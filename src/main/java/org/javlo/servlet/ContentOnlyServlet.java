@@ -9,6 +9,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
@@ -57,9 +58,10 @@ public class ContentOnlyServlet extends HttpServlet {
 	}
 
 	private void process(HttpServletRequest request, HttpServletResponse response) throws ServletException {
+		ContentContext ctx  = null; 
 		try {
-			response.setContentType("text/html");
-			ContentContext ctx = ContentContext.getContentContext(request, response);
+			ctx = ContentContext.getContentContext(request, response);
+			response.setContentType("text/html");			
 			
 			InfoBean.updateInfoBean(ctx);
 
@@ -160,6 +162,11 @@ public class ContentOnlyServlet extends HttpServlet {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
+		} finally {			
+			if (ctx != null && ctx.isClearSession()) {
+				HttpSession session = ctx.getRequest().getSession();
+				session.invalidate();
+			}
 		}
 	}
 }

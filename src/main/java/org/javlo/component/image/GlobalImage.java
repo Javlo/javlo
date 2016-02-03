@@ -1025,7 +1025,11 @@ public class GlobalImage extends Image implements IImageFilter {
 	}
 
 	private String getWidthKey(Device device) {
-		return "width-" + device.getCode();
+		if (device == null) {
+			return "width-"+Device.DEFAULT;
+		} else {
+			return "width-" + device.getCode();
+		}
 	}
 
 	public int getWidth(Device device) {

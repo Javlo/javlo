@@ -9,6 +9,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.javlo.context.ContentContext;
 import org.javlo.context.EditContext;
@@ -135,6 +136,10 @@ public class AjaxServlet extends HttpServlet {
 				String persistenceParam = rs.getParameter(AccessServlet.PERSISTENCE_PARAM, null);				
 				if (persistenceService.isAskStore() && StringHelper.isTrue(persistenceParam, true)) {					
 					persistenceService.store(ctx);
+				}				
+				if (ctx.isClearSession()) {
+					HttpSession session = ctx.getRequest().getSession();
+					session.invalidate();
 				}
 			}
 		} catch (Throwable t) {
