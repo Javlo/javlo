@@ -55,6 +55,7 @@ import org.javlo.service.resource.ResourceStatus;
 import org.javlo.servlet.AccessServlet;
 import org.javlo.ztatic.IStaticContainer;
 import org.javlo.ztatic.StaticInfo;
+import org.owasp.encoder.Encode;
 
 /**
  * Abstract component for access to a file (file,image...) <h4>exposed variable
@@ -161,7 +162,7 @@ public abstract class AbstractFileComponent extends AbstractVisualComponent impl
 		ctx.getRequest().setAttribute("linkToImage", StringHelper.isImage(url));
 		ctx.getRequest().setAttribute("blank", ctx.getGlobalContext().isOpenExternalLinkAsPopup(url));
 		ctx.getRequest().setAttribute("descritpion", getDescription());
-		ctx.getRequest().setAttribute("cleanDescription", StringHelper.toXMLAttribute(StringHelper.removeTag(getDescription())));
+		ctx.getRequest().setAttribute("cleanDescription", Encode.forHtmlContent(getDescription()));
 		StaticInfo staticInfo = getStaticInfo(ctx);
 		String cleanLabel=null;
 		if (staticInfo != null) {
