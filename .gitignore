@@ -1,5 +1,8 @@
 /.settings/
 /target/
+/_target/
 /target-core/
 /.classpath
 /.project
+/tools/visual-testing/workdir
+/tools/visual-testing/output

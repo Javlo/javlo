@@ -218,7 +218,7 @@ public class ContentService implements IPrintInfo {
 	public boolean contentExistForContext(ContentContext ctx) throws Exception {
 		if (ctx.contentExistForContext == null) {
 			if (ctx.getCurrentPage() != null) {
-				ctx.contentExistForContext = !ctx.getCurrentPage().isEmpty(ctx, ComponentBean.DEFAULT_AREA);
+				ctx.contentExistForContext = !ctx.getCurrentPage().isLocalEmpty(ctx, ComponentBean.DEFAULT_AREA);
 			} else {
 				ctx.contentExistForContext = false;
 			}
