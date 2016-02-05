@@ -20,6 +20,7 @@ import java.security.Principal;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -125,8 +126,12 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		private String contextKey;
 
 		private File dataFile;
+		
+		private File lastBakup;
 
 		private BooleanBean needStoreData = null;
+		
+		private Calendar lastBakcup = Calendar.getInstance();
 
 		public StorePropertyThread(GlobalContext globalContext) {
 			super(StorePropertyThread.class.getSimpleName() + "-" + globalContext.getContextKey());
@@ -134,8 +139,10 @@ public class GlobalContext implements Serializable, IPrintInfo {
 			this.needStoreData = globalContext.needStoreData;
 			this.dataProperties = globalContext.dataProperties;
 			this.lockDataFile = globalContext.lockDataFile;
+			this.lastBakcup.roll(Calendar.DAY_OF_MONTH, false);
 			try {
 				this.dataFile = globalContext.getDataFile();
+				this.lastBakup = globalContext.getDataBackupFile();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -146,8 +153,22 @@ public class GlobalContext implements Serializable, IPrintInfo {
 			logger.info("start store property thread : " + this.getName());
 			while (!stopStoreThread) {
 				if (needStoreData.isValue()) {
-					needStoreData.setValue(false);
+					needStoreData.setValue(false);					
 					saveData(dataProperties, lockDataFile, contextKey, dataFile);
+					Calendar today = Calendar.getInstance();
+					if (today.get(Calendar.DAY_OF_YEAR) != lastBakcup.get(Calendar.DAY_OF_YEAR)) {
+						synchronized(this) {
+							if (today.get(Calendar.DAY_OF_YEAR) != lastBakcup.get(Calendar.DAY_OF_YEAR)) {
+								lastBakcup = today;
+								try {
+									logger.warning("store backup data : "+lastBakup);
+									ResourceHelper.writeFileToFile(dataFile, lastBakup);
+								} catch (IOException e) {
+									e.printStackTrace();
+								}
+							}					
+						}
+					}
 				}
 				try {
 					Thread.sleep(SLEEP_BETWEEN_STORAGE);
@@ -1091,6 +1112,14 @@ public class GlobalContext implements Serializable, IPrintInfo {
 
 	private File getDataFile() throws IOException {
 		File file = new File(ElementaryURLHelper.mergePath(getDataFolder(), "context_data.properties"));
+		if (!file.exists()) {
+			file.createNewFile();
+		}
+		return file;
+	}
+	
+	private File getDataBackupFile() throws IOException {
+		File file = new File(ElementaryURLHelper.mergePath(getDataFolder(), "context_data_backup.properties"));
 		if (!file.exists()) {
 			file.createNewFile();
 		}
@@ -2217,13 +2246,13 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		needStoreData.setValue(true);
 	}
 
-	private void saveData() {
+	/*private void saveData() {
 		try {
 			saveData(dataProperties, lockDataFile, getContextKey(), getDataFile());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-	}
+	}*/
 
 	private static void saveData(Properties dataProperties, Object lockDataFile, String contextKey, File dataFile) {
 		if (dataProperties != null) {

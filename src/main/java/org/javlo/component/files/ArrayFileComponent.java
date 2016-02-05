@@ -52,8 +52,7 @@ public class ArrayFileComponent extends GenericFile {
 		private int titleRaw = 0;
 		private int dataRaw = 0;
 
-		public ArrayMap(Cell[][] inData) {
-			System.out.println("***** ArrayFileComponent.ArrayMap.ArrayMap : inData.length = "+inData.length); //TODO: remove debug trace
+		public ArrayMap(Cell[][] inData) {			
 			this.data = inData;
 			for (int row = 0; row < Math.min(inData.length, 99); row++) {
 				if (!StringHelper.isEmpty(data[row][0]) && !StringHelper.isEmpty(data[row][1])) {
@@ -79,17 +78,19 @@ public class ArrayFileComponent extends GenericFile {
 			while ((!StringHelper.isEmpty(key) || !StringHelper.isEmpty(value)) && (i<data[titleRaw].length)) {
 				Map.Entry<String, Cell> entry = new AbstractMapEntry(key,value) {};
 				outEntries.add(entry);
+				String colName = StringHelper.getColName(i);
 				System.out.println("***** ArrayFileComponent.ArrayMap.entrySet : i                          = "+i); //TODO: remove debug trace
-				System.out.println("***** ArrayFileComponent.ArrayMap.entrySet : StringHelper.getColName(i) = "+StringHelper.getColName(i)); //TODO: remove debug trace
+				System.out.println("***** ArrayFileComponent.ArrayMap.entrySet : StringHelper.getColName(i) = "+colName); //TODO: remove debug trace
 				System.out.println("***** ArrayFileComponent.ArrayMap.entrySet : value                      = "+value); //TODO: remove debug trace
+				System.out.println("***** ArrayFileComponent.ArrayMap.entrySet : key                      = "+key); //TODO: remove debug trace
 				entry = new AbstractMapEntry(""+i,value) {};
 				outEntries.add(entry);
-				entry = new AbstractMapEntry(StringHelper.getColName(i),value) {};
-				outEntries.add(entry);							
-				key = data[titleRaw][i].toString();
-				entry = new AbstractMapEntry(StringHelper.getColName(i)+"_title",key) {};
+				entry = new AbstractMapEntry(colName,value) {};
+				outEntries.add(entry);				
+				entry = new AbstractMapEntry(colName+"_title",key) {};
 				outEntries.add(entry);
-				value = data[dataRaw][i];	
+				value = data[dataRaw][i];
+				key = data[titleRaw][i].toString();
 				i++;
 			}
 			return outEntries;

@@ -217,7 +217,7 @@ public abstract class TableComponent extends AbstractPropertiesComponent {
 		String out = super.validateField(ctx, fieldName, fieldValue);
 		if (getFieldNeedPixel().contains(fieldName)) {
 			fieldValue = fieldValue.trim();			
-			if (fieldValue.length()>0 && !fieldValue.toLowerCase().endsWith("px")) {
+			if (fieldValue.length()>0 && (!fieldValue.toLowerCase().endsWith("px") && !StringHelper.isDigit(fieldValue))) {
 				out = fieldName + ' ' + I18nAccess.getInstance(ctx).getText("content.field.need-px", "need unity px");
 			}
 		}
@@ -247,7 +247,7 @@ public abstract class TableComponent extends AbstractPropertiesComponent {
 		out.println("</div>");
 		out.println("<div class=\"line\">");
 		out.println("<label for=\"" + getBorderSizeInputName() + "\">border size : </label>");
-		out.println("<input class=\"form-control\" name=\"" + getBorderSizeInputName() + "\" value=\"" + getFieldValue("bordersize") + "\" />");
+		out.println("<input name=\"" + getBorderSizeInputName() + "\" value=\"" + getFieldValue("bordersize") + "\" />");
 		out.println("</div>");
 		
 		out.println("<div class=\"line\">");
@@ -304,6 +304,16 @@ public abstract class TableComponent extends AbstractPropertiesComponent {
 			}
 		}
 		return false;
+	}
+	
+	@Override
+	public String performEdit(ContentContext ctx) throws Exception {
+		String msg = super.performEdit(ctx);
+		String borderSize = getFieldValue("bordersize");
+		if (borderSize.length()>0 && StringHelper.isDigit(borderSize)) {
+			setFieldValue("bordersize", borderSize+"px");
+		}
+		return msg;
 	}
 
 	/**
