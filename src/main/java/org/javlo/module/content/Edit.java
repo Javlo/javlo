@@ -709,7 +709,7 @@ public class Edit extends AbstractModuleAction {
 	}
 
 	public static final String performInsert(HttpServletRequest request, HttpServletResponse response, RequestService rs, ContentService contentService, GlobalContext globalContext, HttpSession session, EditContext editContext, ContentContext ctx, ContentService content, Module currentModule, I18nAccess i18nAccess, MessageRepository messageRepository) throws Exception {
-
+		
 		if (!canModifyCurrentPage(ctx) || !checkPageSecurity(ctx)) {
 			messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("action.block"), GenericMessage.ERROR), false);
 			return i18nAccess.getText("action.block");
@@ -719,6 +719,7 @@ public class Edit extends AbstractModuleAction {
 		String type = request.getParameter("type");
 
 		if (previousId == null || type == null) {
+			logger.warning("bad insert request need previousId and component type.");
 			return "bad insert request need previousId and component type.";
 		}
 
@@ -740,6 +741,7 @@ public class Edit extends AbstractModuleAction {
 				}
 			}
 			if (areaKey == null) {
+				logger.warning("area not found : " + area);
 				return "area not found : " + area;
 			}
 			// ctx = ctx.getContextWithArea(areaKey);

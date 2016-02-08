@@ -376,7 +376,7 @@ public class XMLManipulationHelper {
 
 			for (int i = 0; i < tags.length; i++) {
 				Map<String, String> attributes = tags[i].getAttributes();
-				String idValue = attributes.get("id");
+				String idValue = attributes.get("id");				
 				if (ids != null && idValue != null) {
 					ids.add(idValue);
 				}
