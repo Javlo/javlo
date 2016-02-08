@@ -1,0 +1,30 @@
+package org.javlo.navigation;
+
+import java.io.OutputStream;
+import java.io.PrintWriter;
+
+import org.javlo.context.ContentContext;
+import org.javlo.helper.URLHelper;
+import org.javlo.service.ContentService;
+
+public class RobotsTxt {
+
+	private RobotsTxt() {}
+	
+	public static void renderRobotTxt(ContentContext ctx, OutputStream outStream) throws Exception {
+		PrintWriter out = new PrintWriter(outStream);
+		ContentService content = ContentService.getInstance(ctx.getRequest());
+		out.println("User-agent: *");
+		for (MenuElement page : content.getNavigation(ctx).getAllChildren()) {
+			System.out.println("***** RobotsTxt.renderRobotTxt : page = "+page.getName()+"  final seo height = "+page.getFinalSeoWeight()); //TODO: remove debug trace
+			if (page.getFinalSeoWeight() == MenuElement.SEO_HEIGHT_NULL) {
+				ctx.setFormat("html");
+				out.println("Disallow: "+URLHelper.createURL(ctx, page));
+				ctx.setFormat("pdf");
+				out.println("Disallow: "+URLHelper.createURL(ctx, page));
+			}
+		}
+		out.flush();
+	}	
+
+}
