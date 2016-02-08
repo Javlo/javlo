@@ -101,6 +101,12 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 	public static final double VOTES_MULTIPLY = 100000;
 
 	private static final long serialVersionUID = 1L;
+	
+	public static final int SEO_HEIGHT_INHERITED = -1;
+	public static final int SEO_HEIGHT_NULL = 0;
+	public static final int SEO_HEIGHT_LOW = 1;
+	public static final int SEO_HEIGHT_NORMAL = 2;
+	public static final int SEO_HEIGHT_HIGHT = 3;
 
 	/**
 	 * the description bean of the page, use for cache and JSTL.
@@ -858,6 +864,10 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 				return true;
 			}
 		}
+		
+		public int getSeoWeight() {
+			return page.getSeoWeight();
+		}
 
 	}
 
@@ -1003,6 +1013,8 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 	boolean visible = true;
 
 	boolean active = true;
+	
+	private int seoWeight = SEO_HEIGHT_INHERITED;
 
 	List<MenuElement> virtualParent = new LinkedList<MenuElement>();
 
@@ -3169,6 +3181,18 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 		try {
 			double pageRank = getPageRank(ctx);
 			if (pageRank == 0) {
+				switch (getSeoWeight()) {				
+				case SEO_HEIGHT_NULL:
+					return 0;					
+				case SEO_HEIGHT_LOW:
+					return 1/4;
+				case SEO_HEIGHT_NORMAL:
+					return 1/2;
+				case SEO_HEIGHT_HIGHT:
+					return 1;
+				default:
+					break;
+				}
 				return 1 / 2;
 			} else {
 				return pageRank;
@@ -4872,6 +4896,30 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 
 	public boolean isTrash() {
 		return ContentService.TRASH_PAGE_NAME.equals(getName());
+	}
+	
+	public int getFinalSeoWeight() {
+		if (getSeoWeight() == MenuElement.SEO_HEIGHT_INHERITED) {
+			if (getParent() == null) {
+				return SEO_HEIGHT_NORMAL;
+			} else {
+				return getParent().getFinalSeoWeight();
+			}
+		} else {
+			return getSeoWeight();
+		}
+	}
+	
+	public boolean isNoIndex() {
+		return getFinalSeoWeight() == SEO_HEIGHT_NULL;
+	}
+
+	public int getSeoWeight() {
+		return seoWeight;
+	}
+
+	public void setSeoWeight(int searchEngineWeight) {		
+		this.seoWeight = searchEngineWeight;
 	}
 
 }

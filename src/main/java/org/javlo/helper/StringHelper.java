@@ -1530,6 +1530,20 @@ public class StringHelper {
 	public static Date parseDate(String inDate) throws ParseException {
 		return parseDate(inDate, "dd/MM/yyyy");
 	}
+	
+	/**
+	 * null save parse int.
+	 * @param value a string with a int inside
+	 * @param defaultValue the value if string value is null
+	 * @return
+	 */
+	public static int parseInt(String value, int defaultValue) {
+		if (value == null) {
+			return defaultValue;
+		} else {
+			return Integer.parseInt(value);
+		}
+	}
 
 	public static Date[] parseRangeDate(String date) throws ParseException {
 		Date[] outDate;

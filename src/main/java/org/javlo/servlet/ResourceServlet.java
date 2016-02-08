@@ -20,6 +20,7 @@ import org.javlo.helper.RequestHelper;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
+import org.javlo.navigation.RobotsTxt;
 import org.javlo.service.syncro.FileStructureFactory;
 import org.javlo.tracking.Track;
 import org.javlo.tracking.Tracker;
@@ -86,7 +87,11 @@ public class ResourceServlet extends HttpServlet {
 							ResourceHelper.writeStreamToStream(fileStream, response.getOutputStream());
 						}
 					} else {
-						response.setStatus(404, "not found : " + filePath);
+						if (request.getServletPath().equals("/robots.txt")) {							
+							RobotsTxt.renderRobotTxt(ContentContext.getContentContext(request, response), response.getOutputStream());
+						} else {
+							response.setStatus(404, "not found : " + filePath);
+						}
 						return;
 					}
 				} catch (Exception e) {

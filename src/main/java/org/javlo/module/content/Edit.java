@@ -1213,6 +1213,13 @@ public class Edit extends AbstractModuleAction {
 				if (pageType != null) {
 					page.setType(pageType);
 				}
+				
+				/** seo weight **/
+				String seoWeight = requestService.getParameter("seo_weight", null);
+				if (seoWeight != null) {
+					page.setSeoWeight(Integer.parseInt(seoWeight));
+				}
+
 
 				/** shared **/
 				String pageShared = requestService.getParameter("share", null);

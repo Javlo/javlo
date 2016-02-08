@@ -633,6 +633,8 @@ public class XMLManipulationHelper {
 					/** template plugin **/
 					ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 					PrintStream out = new PrintStream(outStream);
+					
+					out.println("<%if (ctx.getCurrentPage().isNoIndex()) {%><meta name=\"robots\" content=\"noindex, follow\" /><%}%>");
 
 					/** wysiwyg init css **/
 					if (template.getWysiwygCss() != null) {
@@ -662,10 +664,7 @@ public class XMLManipulationHelper {
 									tag.getAttributes().put("href", "<%=URLHelper.createStaticTemplatePluginURL(ctx, \"" + tag.getAttributes().get("href") + "\", \"" + plugin.getFolder() + "\")%>");
 								}
 								String inside = tag.getInside(headHTML);
-								if (tag.getName().equalsIgnoreCase("link")) { // auto
-																				// close
-																				// link
-																				// tag
+								if (tag.getName().equalsIgnoreCase("link")) {
 									inside = null;
 								}
 								String outHead = tag.render(inside);

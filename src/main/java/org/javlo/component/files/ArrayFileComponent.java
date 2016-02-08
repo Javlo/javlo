@@ -79,10 +79,6 @@ public class ArrayFileComponent extends GenericFile {
 				Map.Entry<String, Cell> entry = new AbstractMapEntry(key,value) {};
 				outEntries.add(entry);
 				String colName = StringHelper.getColName(i);
-				System.out.println("***** ArrayFileComponent.ArrayMap.entrySet : i                          = "+i); //TODO: remove debug trace
-				System.out.println("***** ArrayFileComponent.ArrayMap.entrySet : StringHelper.getColName(i) = "+colName); //TODO: remove debug trace
-				System.out.println("***** ArrayFileComponent.ArrayMap.entrySet : value                      = "+value); //TODO: remove debug trace
-				System.out.println("***** ArrayFileComponent.ArrayMap.entrySet : key                      = "+key); //TODO: remove debug trace
 				entry = new AbstractMapEntry(""+i,value) {};
 				outEntries.add(entry);
 				entry = new AbstractMapEntry(colName,value) {};

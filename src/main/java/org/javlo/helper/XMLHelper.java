@@ -91,10 +91,10 @@ public class XMLHelper {
 					SimpleDateFormat dataFormat = new SimpleDateFormat("yyyy-MM-dd");
 					out.println("<lastmod>" + dataFormat.format(element.getModificationDate()) + "</lastmod>");
 					String changefreq = "weekly";
-					if (element.getDepth() > 1) {
+					if (element.getDepth() > 1 && element.getSeoWeight() == MenuElement.SEO_HEIGHT_LOW) {
 						changefreq = "monthly";
 					}
-					if (element.isReference(lgCtx)) {
+					if (element.isReference(lgCtx) || element.getSeoWeight() == MenuElement.SEO_HEIGHT_HIGHT) {
 						changefreq = "daily";
 					}
 					out.println("<changefreq>" + changefreq + "</changefreq>");
@@ -338,6 +338,10 @@ public class XMLHelper {
 			if (page.getSharedName() != null && page.getSharedName().trim().length() > 0) {
 				out.print("\" sharedName=\"");
 				out.print(page.getSharedName());
+			}
+			if (page.getSeoWeight() != MenuElement.SEO_HEIGHT_INHERITED) {
+				out.print("\" seoWeight=\"");
+				out.print(page.getSeoWeight());				
 			}
 			if (page.isHttps())
 				if (validationDate != null && validationDate.trim().length() > 0) {

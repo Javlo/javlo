@@ -690,6 +690,7 @@ public class PersistenceService {
 		page.setValidationDate(validationDate);
 		page.setBlocked(StringHelper.isTrue(pageXML.getAttributeValue("blocked", "false")));
 		page.setBlocker(pageXML.getAttributeValue("blocker", ""));
+		page.setSeoWeight(StringHelper.parseInt(pageXML.getAttributeValue("seoWeight", null), MenuElement.SEO_HEIGHT_INHERITED));
 
 		page.setChildrenAssociation(StringHelper.isTrue(pageXML.getAttributeValue("childrenAssociation", null)));
 		page.setChangeNotification(StringHelper.isTrue(pageXML.getAttributeValue("changeNotification", "false")));
@@ -782,8 +783,9 @@ public class PersistenceService {
 				root.setId(page.getAttributeValue("id"));
 				root.setName(page.getAttributeValue("name"));
 				root.setPriority(Integer.parseInt(page.getAttributeValue("priority")));
-				root.setVisible(StringHelper.isTrue(page.getAttributeValue("visible", "false")));
-				root.setActive(StringHelper.isTrue(page.getAttributeValue("active", "true")));
+				root.setVisible(StringHelper.isTrue(page.getAttributeValue("visible", "false")));				
+				root.setActive(StringHelper.isTrue(page.getAttributeValue("active", "true")));				
+				root.setSeoWeight(StringHelper.parseInt(page.getAttributeValue("seoWeight", null),MenuElement.SEO_HEIGHT_INHERITED));
 				root.setHttps(StringHelper.isTrue(page.getAttributeValue("https", "false")));
 				root.setCreator(page.getAttributeValue("creator", ""));
 

@@ -133,6 +133,19 @@
 	<label class="suffix" for="page_visible">${i18n.edit['item.visible']}</label>
 </div>
 
+<c:if test="${not globalContext.mailingPlatform}">
+<div class="form-group">
+	<label for="seoWeight">${i18n.edit['item.seo-weight']}</label>
+	<select class="form-control" id="seoWeight" name="seo_weight">
+		<option value="-1" ${page.info.seoWeight == -1?'selected="selected"':''}>${i18n.edit['global.inherited']}</option>
+		<option value="0" ${page.info.seoWeight == 0?'selected="selected"':''}>${i18n.edit['item.seo-weight.0']}</option>
+		<option value="1" ${page.info.seoWeight == 1?'selected="selected"':''}>${i18n.edit['item.seo-weight.1']}</option>
+		<option value="2" ${page.info.seoWeight == 2?'selected="selected"':''}>${i18n.edit['item.seo-weight.2']}</option>
+		<option value="3" ${page.info.seoWeight == 3?'selected="selected"':''}>${i18n.edit['item.seo-weight.3']}</option>
+	</select>	
+</div>
+</c:if>
+
 <c:if test="${fn:length(info.template.pageTypes) > 1}">
 <fieldset>
 	<legend>${i18n.edit['item.types']}</legend>
