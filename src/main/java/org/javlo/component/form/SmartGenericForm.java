@@ -135,6 +135,12 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		}
 		return countCache;
 	}
+	
+	@Override
+	public void setValue(String inContent) {	
+		super.setValue(inContent);
+		bundle = null;
+	}
 
 	public boolean isEvent() {
 		return true;

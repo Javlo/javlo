@@ -1039,7 +1039,6 @@ public class Edit extends AbstractModuleAction {
 			IContentVisualComponent elem = content.getComponent(ctx, compId);
 			if (elem != null && StringHelper.isTrue(requestService.getParameter("id-" + elem.getId(), null))) {
 				if (AdminUserSecurity.getInstance().canModifyConponent(ctx, compId)) {
-
 					if (!upload) {
 						elem.performConfig(ctx);
 						message = elem.performEdit(ctx);
@@ -1054,10 +1053,9 @@ public class Edit extends AbstractModuleAction {
 					if (ctx.isEditPreview()) {
 						componentContext.addNewComponent(elem);
 					}
-					if (!elem.isModify()) { // if elem not modified check
-											// modification via rawvalue
-						String rawValue = requestService.getParameter("raw_value_" + elem.getId(), null);
-						if (rawValue != null && !rawValue.equals(elem.getValue(ctx))) {
+					String rawValue = requestService.getParameter("raw_value_" + elem.getId(), null);					
+					if (rawValue != null) { // if elem not modified check modification via rawvalue						
+						if (!rawValue.equals(elem.getValue(ctx))) {
 							logger.info("raw value modification for " + elem.getType());
 							elem.setValue(rawValue);
 							elem.setNeedRefresh(true);
