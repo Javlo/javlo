@@ -411,7 +411,7 @@ public class CatchAllFilter implements Filter {
 			HttpServletRequest httpRequest = (HttpServletRequest) request;
 			HttpServletResponse httpResponse = (HttpServletResponse) response;
 
-			GlobalContext globalContext = GlobalContext.getInstance(httpRequest);
+			GlobalContext globalContext = GlobalContext.getInstance(httpRequest);			
 
 			RequestService requestService = RequestService.getInstance(httpRequest);
 
@@ -449,7 +449,7 @@ public class CatchAllFilter implements Filter {
 						}
 					}
 				}
-				if (editContext.getEditUser() == null && user.isEditor()) {
+				if (editContext != null && user != null && editContext.getEditUser() == null && user.isEditor()) {
 					editContext.setEditUser(user);
 				}
 			}

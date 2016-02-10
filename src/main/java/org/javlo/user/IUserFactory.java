@@ -50,6 +50,8 @@ public interface IUserFactory {
 	public abstract IUserInfo getUserInfos(String id);
 
 	public abstract List<IUserInfo> getUserInfoForRoles(String[] inRoles);
+	
+	public abstract String getTokenCreateIfNotExist(User user)  throws IOException;
 
 	/**
 	 * get all roles of the user.

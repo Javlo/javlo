@@ -54,64 +54,67 @@ public class UserSearch extends AbstractVisualComponent implements IAction {
 
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(outStream);
-		out.println("<form id=\"search-user\">");
-		out.println("<input type=\"hidden\" name=\"webaction\" value=\"user-search.search\"");
-		out.println("<fieldset>");
-		out.println("<legend>search users</legend><div class=\"row\"><div class=\"col-xs-6\">");
-		out.println("<div class=\"line\"><label id=\"user\">text</label>");
-		out.println("<input type=\"text\" id=\"user\" name=\"text\" value=\"" + rs.getParameter("text", "") + "\" />");
-		out.println("</div>");
-		out.println("<div class=\"line\"><label id=\"country\">country</label>");
-		if (countries == null) {
-			out.println("<input type=\"text\" id=\"country\" name=\"country\" value=\"" + rs.getParameter("domain", "") + "\" />");
-		} else {
-			out.println("<select id=\"country\" name=\"country\">");
-			out.println("<option></option>");
-			for (Item item : countries) {
-				String selected = "";
-				if (rs.getParameter("country", "").equals(item.getKey())) {
-					selected = " selected=\"selected\"";
-				}
-				out.println("<option value=\"" + item.getKey() + "\"" + selected + ">" + item.getValue() + "</option>");
-			}
-			out.println("</select>");
-		}
-		out.println("</div></div><div class=\"col-xs-6\">");
-		out.println("<div class=\"line\"><label id=\"domain\">domain</label>");
-		if (functions == null) {
-			out.println("<input type=\"text\" id=\"domain\" name=\"domain\" value=\"" + rs.getParameter("domain", "") + "\" />");
-		} else {
-			out.println("<select id=\"domain\" name=\"domain\">");
-			out.println("<option></option>");
-			for (Item item : functions) {
-				String selected = "";
-				if (rs.getParameter("domain", "").equals(item.getKey())) {
-					selected = " selected=\"selected\"";
-				}
-				out.println("<option value=\"" + item.getKey() + "\"" + selected + ">" + item.getValue() + "</option>");
-			}
-			out.println("</select>");
-		}
-		out.println("</div>");
 
-		GlobalContext globalContext = ctx.getGlobalContext();
-		if (globalContext.getAdminUserRoles() != null && globalContext.getAdminUserRoles().size() > 0) {
-			out.println("<div class=\"line\"><label id=\"role\">group</label>");
-			out.println("<select id=\"role\" name=\"role\">");
-			out.println("<option></option>");
-			for (String role : globalContext.getAdminUserRoles()) {
-				String selected = "";
-				if (rs.getParameter("role", "").equals(role)) {
-					selected = " selected=\"selected\"";
+		if (!ctx.getDevice().getCode().equals("pdf")) {
+			out.println("<form id=\"search-user\">");
+			out.println("<input type=\"hidden\" name=\"webaction\" value=\"user-search.search\" />");
+			out.println("<fieldset>");
+			out.println("<legend>search users</legend><div class=\"row\"><div class=\"col-xs-6\">");
+			out.println("<div class=\"line\"><label id=\"user\">text</label>");
+			out.println("<input type=\"text\" id=\"user\" name=\"text\" value=\"" + rs.getParameter("text", "") + "\" />");
+			out.println("</div>");
+			out.println("<div class=\"line\"><label id=\"country\">country</label>");
+			if (countries == null) {
+				out.println("<input type=\"text\" id=\"country\" name=\"country\" value=\"" + rs.getParameter("domain", "") + "\" />");
+			} else {
+				out.println("<select id=\"country\" name=\"country\">");
+				out.println("<option></option>");
+				for (Item item : countries) {
+					String selected = "";
+					if (rs.getParameter("country", "").equals(item.getKey())) {
+						selected = " selected=\"selected\"";
+					}
+					out.println("<option value=\"" + item.getKey() + "\"" + selected + ">" + item.getValue() + "</option>");
 				}
-				out.println("<option value=\"" + role + "\"" + selected + ">" + role + "</option>");
+				out.println("</select>");
 			}
-			out.println("</select></div>");
-		}
+			out.println("</div></div><div class=\"col-xs-6\">");
+			out.println("<div class=\"line\"><label id=\"domain\">domain</label>");
+			if (functions == null) {
+				out.println("<input type=\"text\" id=\"domain\" name=\"domain\" value=\"" + rs.getParameter("domain", "") + "\" />");
+			} else {
+				out.println("<select id=\"domain\" name=\"domain\">");
+				out.println("<option></option>");
+				for (Item item : functions) {
+					String selected = "";
+					if (rs.getParameter("domain", "").equals(item.getKey())) {
+						selected = " selected=\"selected\"";
+					}
+					out.println("<option value=\"" + item.getKey() + "\"" + selected + ">" + item.getValue() + "</option>");
+				}
+				out.println("</select>");
+			}
+			out.println("</div>");
 
-		out.println("</div><div class=\"col-xs-12\"><input class=\"pull-right btn btn-primary\" type=\"submit\" value=\"search...\" /></div></div>");
-		out.println("</fieldset>");
-		out.println("</from>");
+			GlobalContext globalContext = ctx.getGlobalContext();
+			if (globalContext.getAdminUserRoles() != null && globalContext.getAdminUserRoles().size() > 0) {
+				out.println("<div class=\"line\"><label id=\"role\">group</label>");
+				out.println("<select id=\"role\" name=\"role\">");
+				out.println("<option></option>");
+				for (String role : globalContext.getAdminUserRoles()) {
+					String selected = "";
+					if (rs.getParameter("role", "").equals(role)) {
+						selected = " selected=\"selected\"";
+					}
+					out.println("<option value=\"" + role + "\"" + selected + ">" + role + "</option>");
+				}
+				out.println("</select></div>");
+			}
+
+			out.println("</div><div class=\"col-xs-12\"><input class=\"pull-right btn btn-primary\" type=\"submit\" value=\"search...\" /></div></div>");
+			out.println("</fieldset>");
+			out.println("</from>");
+		}
 
 		List<UserInfo> users = (List<UserInfo>) ctx.getRequest().getAttribute("users");
 		if (users != null) {
@@ -186,13 +189,26 @@ public class UserSearch extends AbstractVisualComponent implements IAction {
 		return new String(outStream.toByteArray());
 	}
 
-	private static String renderList(ContentContext ctx, Collection<UserInfo> users, String emails, List<ListService.Item> countries, List<ListService.Item> functions, List<ListService.Item> organizations) throws FileNotFoundException, IOException {
+	private static String renderList(ContentContext ctx, Collection<UserInfo> users, String emails, List<ListService.Item> countries, List<ListService.Item> functions, List<ListService.Item> organizations) throws Exception {
+		
+		
+		
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(outStream);
-		out.println("<div class=\"user-list\">");
-		I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
+		out.println("<div class=\"user-list\">");		
 		int i = 0;
-
+		
+		if (ctx.getCurrentTemplate().isPDFRenderer()) {
+			ContentContext pdfCtx = new ContentContext(ctx);
+			pdfCtx.setFormat("pdf");
+			String url = URLHelper.createURL(pdfCtx);
+			for (Object key : ctx.getRequest().getParameterMap().keySet()) {
+				if (!key.equals("__check_context")) {
+					url = URLHelper.addParam(url, key.toString(), ctx.getRequest().getParameter(key.toString()));
+				}
+			}
+			out.println("<a class=\"btn btn-default btn-exportpdf pull-right\" href=\"" + url + "\">Download PDF</a>");
+		}
 		out.println("<a class=\"btn btn-default btn-sendmail\" href=\"mailto:" + emails + "\">Send email to all list.</a>");
 
 		for (UserInfo user : users) {
@@ -209,7 +225,7 @@ public class UserSearch extends AbstractVisualComponent implements IAction {
 				if (user.getUrl() != null && user.getUrl().trim().length() > 0) {
 					String url = user.getUrl();
 					if (!StringHelper.isURL(url)) {
-						url = "http://"+url;
+						url = "http://" + url;
 					}
 					organization = "<a target=\"_blank\" href=\"" + url + "\">" + organization + "</a>";
 				}

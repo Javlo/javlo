@@ -75,6 +75,7 @@ import org.javlo.template.Template;
 import org.javlo.template.TemplateFactory;
 import org.javlo.thread.ThreadManager;
 import org.javlo.tracking.Tracker;
+import org.javlo.user.UserFactory;
 import org.javlo.utils.DebugListening;
 import org.xhtmlrenderer.swing.Java2DRenderer;
 import org.xhtmlrenderer.util.FSImageWriter;
@@ -693,6 +694,20 @@ public class AccessServlet extends HttpServlet implements IVersion {
 						viewCtx.resetDMZServerInter();
 
 						Map<String, String> params = new HashMap<String, String>();
+						
+						for (Object key : ctx.getRequest().getParameterMap().keySet()) {
+
+							if (!key.equals("__check_context")) {
+								params.put(key.toString(), ctx.getRequest().getParameter(key.toString()));
+							}
+						}
+						
+						if (ctx.getCurrentUser() != null) {							
+							String userToken = UserFactory.createUserFactory(ctx.getGlobalContext(), request.getSession()).getTokenCreateIfNotExist(ctx.getCurrentUser());
+							String token = globalContext.createOneTimeToken(userToken);
+							params.put("j_token", token);
+						}
+						
 						params.put(Device.FORCE_DEVICE_PARAMETER_NAME, "pdf");
 						params.put(ContentContext.FORCE_ABSOLUTE_URL, "true");
 						params.put(ContentContext.NO_DMZ_PARAM_NAME, "true");
@@ -712,6 +727,8 @@ public class AccessServlet extends HttpServlet implements IVersion {
 						params.put("clean-html", "true");
 
 						String url = URLHelper.createURL(viewCtx, params);
+						
+						// LocalLogger.log(url);
 
 						/*
 						 * if (staticConfig.getApplicationLogin() != null) { url

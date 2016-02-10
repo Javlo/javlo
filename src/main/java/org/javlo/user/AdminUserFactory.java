@@ -202,11 +202,7 @@ public class AdminUserFactory extends UserFactory {
 			try {
 				masterUserFactory = AdminUserFactory.createUserFactory(GlobalContext.getMasterContext(request.getSession()), request.getSession());
 				outUser = masterUserFactory.login(request, token);
-				UserFactory.createUserFactory(GlobalContext.getInstance(request), request.getSession()); // reset
-																											// the
-																											// "real"
-																											// user
-																											// factory
+				UserFactory.createUserFactory(GlobalContext.getInstance(request), request.getSession());
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

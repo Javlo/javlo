@@ -259,14 +259,14 @@ public class UserFactory implements IUserFactory, Serializable {
 		}
 
 		GlobalContext globalContext = GlobalContext.getInstance(request);
-		String realToken = globalContext.convertOneTimeToken(token);
+		String realToken = globalContext.convertOneTimeToken(token);		
 		if (realToken != null) {
 			token = realToken;
 		}
 
 		User outUser = null;
 		List<IUserInfo> users = getUserInfoList();
-		for (IUserInfo user : users) {
+		for (IUserInfo user : users) {			
 			if (user.getToken() != null && user.getToken().equals(token)) {
 				outUser = new User(user);
 			}
@@ -691,6 +691,17 @@ public class UserFactory implements IUserFactory, Serializable {
 			}
 		}
 		return roleWrapper;
+	}
+	
+	@Override
+	public String getTokenCreateIfNotExist(User user) throws IOException {
+		String token = user.getUserInfo().getToken();
+		if (StringHelper.isEmpty(token)) {
+			token = StringHelper.getRandomIdBase64();
+			user.getUserInfo().setToken(token);
+			store();
+		}
+		return token;
 	}
 
 }
