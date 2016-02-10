@@ -4921,5 +4921,22 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 	public void setSeoWeight(int searchEngineWeight) {		
 		this.seoWeight = searchEngineWeight;
 	}
+	
+	/**
+	 * check if page need a specific template.
+	 * @param templateId
+	 * @return
+	 * @throws Exception 
+	 */
+	public boolean needTemplate(ContentContext ctx, String templateId) throws Exception {
+		Template template = TemplateFactory.getTemplate(ctx, this);
+		while (template != null) {
+			if (template.getId().equals(templateId)) {
+				return true;
+			}
+			template = template.getParent();
+		}
+		return false;
+	}
 
 }

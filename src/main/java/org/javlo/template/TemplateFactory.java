@@ -28,6 +28,7 @@ import org.javlo.helper.URLHelper;
 import org.javlo.navigation.DefaultTemplate;
 import org.javlo.navigation.MenuElement;
 import org.javlo.navigation.NavigationWithContent;
+import org.javlo.service.ContentService;
 import org.javlo.user.AdminUserSecurity;
 import org.javlo.user.User;
 
@@ -415,6 +416,20 @@ public class TemplateFactory {
 				}
 			}
 		}
+	}
+	
+	public static Collection<NavigationWithContent> searchPageNeedTemplate(ContentContext ctx, String templateId) throws Exception {
+		Collection<NavigationWithContent> outPages = new LinkedList<NavigationWithContent>();		
+		MenuElement page = ContentService.getInstance(ctx.getGlobalContext()).getNavigation(ctx);
+		if (page.needTemplate(ctx, templateId)) {
+			outPages.add(new NavigationWithContent(ctx.getGlobalContext(), page));
+		}
+		for (MenuElement child : page.getAllChildren()) {
+			if (child.needTemplate(ctx, templateId)) {
+				outPages.add(new NavigationWithContent(ctx.getGlobalContext(), child));
+			}
+		}
+		return outPages;
 	}
 	
 	

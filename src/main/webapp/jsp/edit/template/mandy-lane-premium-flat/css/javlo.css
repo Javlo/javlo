@@ -1381,6 +1381,10 @@ body.previewEdit {
 	text-align: center;
 }
 
+.form-list .download img {
+	min-width: 90%;
+}
+
 .small .download {
 	width: 180px;
 	height: 220px;
