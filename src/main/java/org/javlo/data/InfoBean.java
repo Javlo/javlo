@@ -232,7 +232,54 @@ public class InfoBean {
 
 	public String getDate() {
 		try {
-			return StringHelper.renderDate(currentPage.getContentDateNeverNull(ctx), globalContext.getShortDateFormat());
+			return StringHelper.renderDate(new Locale(ctx.getRequestContentLanguage()), currentPage.getContentDateNeverNull(ctx), globalContext.getShortDateFormat());
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	public String getMediumDate() {
+		try {
+			return StringHelper.renderDate(new Locale(ctx.getRequestContentLanguage()),currentPage.getContentDateNeverNull(ctx), globalContext.getMediumDateFormat());
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+
+	public String getFullDate() {
+		try {
+			return StringHelper.renderDate(new Locale(ctx.getRequestContentLanguage()), currentPage.getContentDateNeverNull(ctx), globalContext.getFullDateFormat());
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	public String getNowDate() {
+		try {
+			return StringHelper.renderDate(new Locale(ctx.getRequestContentLanguage()), new Date(), globalContext.getShortDateFormat());
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	public String getNowMediumDate() {
+		try {
+			return StringHelper.renderDate(new Locale(ctx.getRequestContentLanguage()),new Date(), globalContext.getMediumDateFormat());
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+
+	public String getNowFullDate() {
+		try {
+			return StringHelper.renderDate(new Locale(ctx.getRequestContentLanguage()), new Date(), globalContext.getFullDateFormat());
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;

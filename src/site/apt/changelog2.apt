@@ -617,3 +617,5 @@ change log
  * fancybox correction + border size of table can be just number
  
 * 2.1.0.3.6 05/02/2016
+
+ * autologin on pdf generation

@@ -237,7 +237,7 @@ public class UserSearch extends AbstractVisualComponent implements IAction {
 				String avatarURL = URLHelper.createAvatarUrl(ctx, user);
 				String avatar = "&nbsp;";
 				if (avatarURL != null) {
-					avatar = "<img src=\"" + avatarURL + "\" alt=\"" + user.getFirstName() + ' ' + user.getLastName() + "\" />";
+					avatar = "<img width=\"80\" src=\"" + avatarURL + "\" alt=\"" + user.getFirstName() + ' ' + user.getLastName() + "\" />";
 				}
 				out.println(avatar);
 				out.println("</div><div class=\"col-sm-5\">");
