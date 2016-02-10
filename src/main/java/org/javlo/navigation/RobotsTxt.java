@@ -16,7 +16,7 @@ public class RobotsTxt {
 		ContentService content = ContentService.getInstance(ctx.getRequest());
 		out.println("User-agent: *");
 		for (MenuElement page : content.getNavigation(ctx).getAllChildren()) {
-			System.out.println("***** RobotsTxt.renderRobotTxt : page = "+page.getName()+"  final seo height = "+page.getFinalSeoWeight()); //TODO: remove debug trace
+			
 			if (page.getFinalSeoWeight() == MenuElement.SEO_HEIGHT_NULL) {
 				ctx.setFormat("html");
 				out.println("Disallow: "+URLHelper.createURL(ctx, page));
