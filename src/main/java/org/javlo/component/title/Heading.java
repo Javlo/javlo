@@ -315,6 +315,41 @@ public class Heading extends AbstractPropertiesComponent implements ISubTitle {
 		String xhtml = super.getXHTMLConfig(ctx);
 		return xhtml;
 	}
+	
+	public String getSpecialPreviewCssId(ContentContext ctx) {
+		if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE) {
+			return " id=\"cp_" + getForcedId(ctx) + "\"";
+		} else {
+			return " id=\"" + getXHTMLId(ctx) + "\"";
+		}
+	}
+	
+	protected String getForcedPrefixViewXHTMLCode(ContentContext ctx) {
+		if (getConfig(ctx).getProperty("prefix", null) != null) {
+			return getConfig(ctx).getProperty("prefix", null);
+		}
+		String style = getStyle(ctx);
+		if (style != null) {
+			style = style + ' ';
+		} else {
+			style = "";
+		}
+		if (isBackgroundColored()) {
+			style = style + " colored-wrapper";
+		}
+		if (getPreviousComponent() == null || !getPreviousComponent().getType().equals(getType())) {
+			style = style + " first ";
+		}
+		if (getPreviousComponent() == null) {
+			style = style + " first-component ";
+		}
+		if (getNextComponent() == null || !getNextComponent().getType().equals(getType())) {
+			style = style + " last ";
+		}
+		
+		return "<" + getTag(ctx) + " " + getSpecialPreviewCssClass(ctx, style + getType()) + getSpecialPreviewCssId(ctx) + " " + getInlineStyle(ctx) + ">";
+		
+	}
 
 	@Override
 	public String getSuffixViewXHTMLCode(ContentContext ctx) {
