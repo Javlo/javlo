@@ -110,7 +110,7 @@ public class PaypalOrderComponent extends AbstractOrderComponent implements IAct
 		int index = 1;
 		for (Product product : basket.getProducts()) {
 			out.println("<input type=\"hidden\" name=\"item_name_" + index + "\" id=\"" + index + "\" value=\"" + product.getName() + "\" />");
-			out.println("<input type=\"hidden\" name=\"amount_" + index + "\" id=\"amount_" + index + "\" value=\"" + PaypalConnector.formatDouble(product.getPrice()) + "\" type=\"number\" />");
+			out.println("<input type=\"hidden\" name=\"amount_" + index + "\" id=\"amount_" + index + "\" value=\"" + PaypalConnector.formatDouble(product.getReductionPrice()*(1 - basket.getUserReduction())) + "\" type=\"number\" />");			
 			out.println("<input type=\"hidden\" name=\"quantity_" + index + "\" id=\"quantity" + index + "\" value=\"" + product.getQuantity() + "\" />");
 			index++;
 		}

@@ -10,6 +10,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.text.ParseException;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -126,7 +127,7 @@ public class Mailing {
 	private Date date = null;
 
 	private String templateId = null;
-	
+
 	private String smtpHost;
 	private String smtpPort;
 	private String smtpUser;
@@ -271,12 +272,12 @@ public class Mailing {
 			roles = StringHelper.stringToCollection(config.getString("roles", ""));
 			templateId = config.getString("template", null);
 			adminEmail = config.getString("admin.email", null);
-			
+
 			setSmtpHost(config.getString("smtp.host", null));
 			setSmtpPort(config.getString("smtp.port", null));
 			setSmtpUser(config.getString("smtp.user", null));
 			setSmtpPassword(config.getString("smtp.password", null));
-			
+
 			try {
 				date = StringHelper.parseTime(config.getString("date"));
 			} catch (ParseException e) {
@@ -380,10 +381,10 @@ public class Mailing {
 			config.setProperty("date", StringHelper.renderTime(new Date()));
 			config.setProperty("test", TEST);
 			config.setProperty("context-key", contextKey);
-			
+
 			if (!StringHelper.isEmpty(getSmtpHost())) {
 				config.setProperty("smtp.host", getSmtpHost());
-			}			
+			}
 			if (!StringHelper.isEmpty(getSmtpPort())) {
 				config.setProperty("smtp.port", getSmtpPort());
 			}
@@ -393,7 +394,7 @@ public class Mailing {
 			if (!StringHelper.isEmpty(getSmtpPassword())) {
 				config.setProperty("smtp.password", getSmtpPassword());
 			}
-			
+
 			if (sendDate != null) {
 				config.setProperty("send-date", StringHelper.renderTime(sendDate));
 			}
@@ -559,24 +560,24 @@ public class Mailing {
 
 	public void addFeedBack(FeedBackMailingBean bean) throws IOException {
 		synchronized (FEEDBACK_FILE) {
-			if (!oldDir.exists()) {
-				oldDir.mkdirs();
-			}
-			File file = new File(oldDir.getAbsolutePath() + '/' + FEEDBACK_FILE);
-			if (!file.exists()) {
-				file.createNewFile();
-			}
-			FileOutputStream out = new FileOutputStream(file, true);
-			BufferedWriter outBuf = new BufferedWriter(new OutputStreamWriter(out));
-			String[] line = bean.toArray();
-			for (int i = 0; i < line.length; i++) {
-				outBuf.append(line[i]);
-				if (i < line.length) {
-					outBuf.append(',');
+			FileOutputStream out = null;
+			BufferedWriter outBuf = null;
+			try {
+				if (!oldDir.exists()) {
+					oldDir.mkdirs();
 				}
+				File file = new File(oldDir.getAbsolutePath() + '/' + FEEDBACK_FILE);
+				if (!file.exists()) {
+					file.createNewFile();
+				}
+				out = new FileOutputStream(file, true);
+				outBuf = new BufferedWriter(new OutputStreamWriter(out));				
+				outBuf.append(CSVFactory.exportLine(Arrays.asList(bean.toArray()), ","));				
+				outBuf.newLine();
+			} finally {
+				ResourceHelper.closeResource(outBuf);
+				ResourceHelper.closeResource(out);				
 			}
-			outBuf.newLine();
-			outBuf.close();
 		}
 	}
 
@@ -608,16 +609,32 @@ public class Mailing {
 		return c;
 	}
 
+	public int getCountUnsubscribe() throws IOException {
+		int c = 0;
+		Set<String> allReadyCounted = new HashSet<String>();
+		for (FeedBackMailingBean feedBack : getFeedBack()) {
+			if (!allReadyCounted.contains(feedBack.getEmail())) {
+				if (feedBack.getWebaction() != null && feedBack.getWebaction().endsWith("unsubscribe")) {
+					c++;
+					allReadyCounted.add(feedBack.getEmail());
+				}
+			}
+		}
+		return c;
+	}
+
 	public int getCountForward() throws IOException {
 		Map<String, List<String>> mailAgents = new HashMap<String, List<String>>();
 		for (FeedBackMailingBean feedBack : getFeedBack()) {
-			List<String> agents = mailAgents.get(feedBack.getEmail());
-			if (agents == null) {
-				agents = new LinkedList<String>();
-				mailAgents.put(feedBack.getEmail(), agents);
-			}
-			if (!agents.contains(feedBack.getAgent())) {
-				agents.add(feedBack.getAgent());
+			if (feedBack.getWebaction() == null) {
+				List<String> agents = mailAgents.get(feedBack.getEmail());
+				if (agents == null) {
+					agents = new LinkedList<String>();
+					mailAgents.put(feedBack.getEmail(), agents);
+				}
+				if (!agents.contains(feedBack.getAgent())) {
+					agents.add(feedBack.getAgent());
+				}
 			}
 		}
 		int c = 0;

@@ -269,9 +269,9 @@ public class InternalLink extends ComplexPropertiesLink implements IInternalLink
 				viewCtx.setRenderMode(ContentContext.VIEW_MODE);
 				url = URLHelper.createURL(viewCtx, link);
 				if (getParam().trim().length() == 0) {
-					res.append(StringHelper.toXMLAttribute(url) + "?" + MailingAction.MAILING_FEEDBACK_PARAM_NAME + "=##data##");
+					res.append(StringHelper.toXMLAttribute(url) + "?" + MailingAction.MAILING_FEEDBACK_PARAM_NAME + "=" + MailingAction.MAILING_FEEDBACK_VALUE_NAME);
 				} else {
-					res.append(StringHelper.toXMLAttribute(url) + getParam() + "&" + MailingAction.MAILING_FEEDBACK_PARAM_NAME + "=##data##");
+					res.append(StringHelper.toXMLAttribute(url) + getParam() + "&" + MailingAction.MAILING_FEEDBACK_PARAM_NAME + "=" + MailingAction.MAILING_FEEDBACK_VALUE_NAME);
 				}
 			}
 			res.append("\"" + title + ">");
@@ -290,9 +290,9 @@ public class InternalLink extends ComplexPropertiesLink implements IInternalLink
 					viewCtx.setRenderMode(ContentContext.VIEW_MODE);
 					url = URLHelper.createURL(viewCtx, link);
 					if (getParam().trim().length() == 0) {
-						res.append(url + "?" + MailingAction.MAILING_FEEDBACK_PARAM_NAME + "=##data##");
+						res.append(url + "?" + MailingAction.MAILING_FEEDBACK_PARAM_NAME + "=" + MailingAction.MAILING_FEEDBACK_VALUE_NAME);
 					} else {
-						res.append(url + getParam() + "&" + MailingAction.MAILING_FEEDBACK_PARAM_NAME + "=##data##");
+						res.append(url + getParam() + "&" + MailingAction.MAILING_FEEDBACK_PARAM_NAME + "=" + MailingAction.MAILING_FEEDBACK_VALUE_NAME);
 					}
 				}
 				res.append("\">");

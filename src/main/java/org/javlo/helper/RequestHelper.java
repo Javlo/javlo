@@ -72,6 +72,7 @@ public class RequestHelper {
 						bean.setAgent(userAgent);
 						bean.setDate(new Date());
 						bean.setUrl(ctx.getRequest().getPathInfo());
+						bean.setWebaction(ctx.getRequest().getParameter("webaction"));
 						bean.setIp(ip);	
 						mailing.addFeedBack(bean);
 					}

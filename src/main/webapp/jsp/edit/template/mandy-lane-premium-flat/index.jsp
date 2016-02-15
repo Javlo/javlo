@@ -42,6 +42,17 @@
 <link rel="stylesheet" media="screen" href="${info.editTemplateURL}/css/style.css?ts=${info.ts}" />
 <link rel="stylesheet" media="screen" href="${info.editTemplateURL}/css/javlo.css?ts=${info.ts}" />
 <link rel="stylesheet" media="screen" href="${info.editTemplateURL}/css/plugins/colorbox.css" />
+
+<style type="text/css">
+@font-face {
+    font-family: "javloFont";
+    src: url('${info.editTemplateURL}/fonts/Javlo-Italic.ttf') format("truetype");
+}
+p.customfont { 
+    font-family: "My Custom Font", Verdana, Tahoma;
+}
+</style>
+
 <c:if test="${not empty globalContext.editTemplateMode}"><link rel="stylesheet" media="screen" href="${info.editTemplateURL}/css/edit_${globalContext.editTemplateMode}.css" /></c:if>
 <c:if test="${not empty specificCSS}">
 <link rel="stylesheet" media="screen" href="${specificCSS}" />
@@ -142,9 +153,7 @@
     </div><!-- topheader -->
     
     <!-- logo -->
-    <div class="logo">
-	<img width="120" src="${info.logoURL}?color=D31996" alt="Javlo" />	
-	</div>
+    <div class="logo">Javlo</div>
     
     <div class="tabmenu">
     	<ul>

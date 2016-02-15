@@ -245,7 +245,7 @@ public class ArrayFileComponent extends GenericFile {
 														// encoding not found
 		try {
 			if (getEncoding().equals(DEFAULT_ENCODING)) {
-				charset = Charset.forName(GlobalContext.getInstance(ctx.getRequest()).getDefaultEncoding());
+				charset = Charset.forName(ctx.getGlobalContext().getDefaultEncoding());
 			} else {
 				charset = Charset.forName(getEncoding());
 			}
@@ -291,7 +291,7 @@ public class ArrayFileComponent extends GenericFile {
 			}
 			String fullName = URLHelper.mergePath(getDirSelected(), getFileName());
 			fullName = URLHelper.mergePath(staticConfig.getCSVFolder(), fullName);
-			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+			GlobalContext globalContext = ctx.getGlobalContext();
 			fullName = URLHelper.mergePath(globalContext.getDataFolder(), fullName);
 			res.append("&nbsp;" + XHTMLHelper.getFileIcone(ctx, getFileName()) + " (" + StringHelper.getFileSize(fullName) + ")</a>");
 		} else {

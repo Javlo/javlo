@@ -21,6 +21,7 @@ import org.javlo.config.StaticConfig;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.XHTMLHelper;
+import org.javlo.module.mailing.MailingAction;
 import org.javlo.service.DataToIDService;
 
 public class MailingThread extends Thread {
@@ -109,7 +110,7 @@ public class MailingThread extends Thread {
 		String content = mailing.getContent();
 		Collection<Map.Entry<String, String>> datas = mailing.getAllData();
 		for (Map.Entry<String, String> entry : datas) {
-			content = content.replaceAll("##" + entry.getKey() + "##", entry.getValue());
+			content = content.replaceAll(MailingAction.DATA_MAIL_PREFIX + entry.getKey() + MailingAction.DATA_MAIL_SUFFIX, entry.getValue());
 		}
 		return content;
 	}

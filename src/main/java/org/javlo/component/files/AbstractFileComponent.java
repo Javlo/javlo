@@ -112,7 +112,7 @@ public abstract class AbstractFileComponent extends AbstractVisualComponent impl
 		uri = ElementaryURLHelper.mergePath(getFileDirectory(ctx), uri);
 
 		StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
-		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+		GlobalContext globalContext = ctx.getGlobalContext();
 		uri = ResourceHelper.extractResourceDir(staticConfig, globalContext, uri);
 
 		/* clean path */
@@ -358,7 +358,7 @@ public abstract class AbstractFileComponent extends AbstractVisualComponent impl
 
 		if (needEncoding()) {
 			finalCode.append("<div class=\"form-group\">");
-			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+			GlobalContext globalContext = ctx.getGlobalContext();
 			finalCode.append("<label for=\"" + getEncodingXHTMLInputName() + "\">" + i18nAccess.getText("content.file.encoding") + " : </label>");
 			String[] encodings = new String[globalContext.getEncodings().size() + 1];
 			encodings[0] = "default";
@@ -709,7 +709,7 @@ public abstract class AbstractFileComponent extends AbstractVisualComponent impl
 			properties.setProperty(REVERSE_LINK_KEY, reverseLink);
 			setModify();
 
-			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+			GlobalContext globalContext = ctx.getGlobalContext();
 			ReverseLinkService reverlinkService = ReverseLinkService.getInstance(globalContext);
 			reverlinkService.clearCache();
 		}

@@ -3,7 +3,7 @@
 %>
 <div class="box preview">
 <h3><span>${i18n.edit['mailing.title.history']}</span></h3>
-
+	<div class="content">
 	<form id="form-mailing-history" action="${info.currentURL}" method="post">
 		<div>
 			<input type="hidden" name="webaction" value="selectHistory" />
@@ -17,7 +17,8 @@
 					<th class="head1">${i18n.edit['mailing.title.countReceivers']}</th>
 					<th class="head0">${i18n.edit['mailing.title.countReader']}</th>	
 					<th class="head1">${i18n.edit['mailing.title.countForward']}</th>
-					<th width="120" class="head0">${i18n.edit['mailing.title.sendDate']}</th>				
+					<th class="head0">${i18n.edit['mailing.title.countUnsubscribe']}</th>
+					<th width="120" class="head1">${i18n.edit['mailing.title.sendDate']}</th>				
 				</tr>
 			</thead>
 			<colgroup>
@@ -28,6 +29,7 @@
 				<col class="con0" />
 				<col class="con1" />
 				<col class="con0" />
+				<col class="con1" />
 			</colgroup>
 			<tbody>
 				
@@ -39,7 +41,8 @@
 					<td class="con1">${mailing.receiversSize}</td>
 					<td class="con0">${mailing.countReaders}</td>
 					<td class="con1">${mailing.countForward}</td>
-					<td class="con0">${mailing.dateString}</td>
+					<td class="con0">${mailing.countUnsubscribe}</td>
+					<td class="con1">${mailing.dateString}</td>
 				</tr>					
 				</c:forEach>
 				
@@ -52,12 +55,13 @@
 					<th class="head1">${i18n.edit['mailing.title.countReceivers']}</th>
 					<th class="head0">${i18n.edit['mailing.title.countReader']}</th>	
 					<th class="head1">${i18n.edit['mailing.title.countForward']}</th>
-					<th width="120" class="head0">${i18n.edit['mailing.title.sendDate']}</th>				
+					<th class="head0">${i18n.edit['mailing.title.countUnsubscribe']}</th>
+					<th width="120" class="head1">${i18n.edit['mailing.title.sendDate']}</th>				
 				</tr>
 			</tfoot>
 		</table>
 	</form>
-
+	</div>
 	<script type="text/javascript">
 	jQuery(document).ready(function() {
 		jQuery('#history-table').dataTable( {

@@ -62,10 +62,14 @@ body.js #form-select-role input[type=submit] {
 }
 
 .logo {
+	padding-top: 10px;
 	overflow: hidden;
 	text-align: center;
 	width: 200px;
-	height: 54px;
+	height: 44px;
+	color: #D31996;
+	font-size: 55px;
+	font-family: javloFont;
 }
 
 .logo img {	

@@ -1112,6 +1112,10 @@ public class StaticConfig extends Observable {
 	public boolean isMailingWidthUserInfo() {
 		return properties.getBoolean("mailing.users", true);
 	}
+	
+	public boolean isMailingUserTracking() {
+		return properties.getBoolean("mailing.tracking", true);
+	}
 
 	public boolean isMailingThread() {
 		return StringHelper.isTrue(properties.getString("mailing.thread", "true"));
@@ -1455,5 +1459,6 @@ public class StaticConfig extends Observable {
 	public Integer getUndoDepth() {
 		return properties.getInteger("content.undo-depth", null);
 	}
-
+	
+	
 }

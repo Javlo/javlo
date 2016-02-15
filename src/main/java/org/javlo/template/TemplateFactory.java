@@ -377,7 +377,7 @@ public class TemplateFactory {
 		if (elem == null) {
 			return null;
 		}
-		String key = "_template_" + elem.getId() + '_' + ctx.getRenderMode();
+		String key = "_template_" + elem.getId() + '_' + ctx.getRenderMode() + '_' + ctx.getGlobalContext().getContextKey();
 		if (ctx.getRequest().getAttribute(key) != null) {
 			return (Template) ctx.getRequest().getAttribute(key);
 		}
@@ -392,7 +392,7 @@ public class TemplateFactory {
 		}
 	
 		if (template == null) {
-			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+			GlobalContext globalContext = ctx.getGlobalContext();
 			template = TemplateFactory.getTemplates(ctx.getRequest().getSession().getServletContext()).get(globalContext.getDefaultTemplate());
 		} else {
 			ctx.getRequest().setAttribute(key, template);

@@ -66,8 +66,14 @@
                 	<a href="${template.downloadURL}">${i18n.edit['admin.download-template']}</a>                	
                 </p></c:if>  
                  <c:if test="${empty selectUrl}">              
-                <p class="menu">                	
-                    <a href="${template.viewUrl}" class="view" title="${template.name}"></a>
+                <p class="menu">   
+                
+                	<c:url value="${info.currentModuleURL}/jsp/page_list.jsp" var="pageListURL" context="/">
+						<c:param name="name" value="${template.name}" />
+						<c:param name="webaction" value="pageTemplate" />						
+					</c:url>
+                             	
+                    <c:if test="${globalContext.master}"><a href="${pageListURL}" class="view popup" title="${template.name}"></a></c:if>
                     
                     <c:url value="${info.currentURL}" var="editURL" context="/">
                     	<c:param name="webaction" value="template.goEditTemplate" />

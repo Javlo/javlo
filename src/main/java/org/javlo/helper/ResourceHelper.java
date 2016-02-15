@@ -126,10 +126,10 @@ public class ResourceHelper {
 	public static void closeResource(Closeable... resources) {
 		for (Closeable resource : resources) {
 			if (resource != null) {
-				try {
+				try {					
 					resource.close();
 				} catch (Throwable t) {
-					t.printStackTrace();
+					logger.warning(t.getMessage());
 				}
 			}
 		}

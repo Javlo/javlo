@@ -14,6 +14,7 @@ import java.io.Writer;
 import java.net.URL;
 import java.text.ParseException;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -26,13 +27,13 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.fileupload.FileItem;
 import org.javlo.actions.AbstractModuleAction;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
+import org.javlo.context.GlobalContextFactory;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
@@ -41,6 +42,8 @@ import org.javlo.i18n.I18nAccess;
 import org.javlo.image.ImageConfig;
 import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
+import org.javlo.module.admin.AdminAction;
+import org.javlo.module.admin.AdminAction.GlobalContextBean;
 import org.javlo.module.content.Edit;
 import org.javlo.module.core.Module;
 import org.javlo.module.core.ModulesContext;
@@ -49,6 +52,7 @@ import org.javlo.module.mailing.MailingModuleContext;
 import org.javlo.module.template.remote.IRemoteResourcesFactory;
 import org.javlo.module.template.remote.RemoteTemplateFactoryManager;
 import org.javlo.navigation.MenuElement;
+import org.javlo.navigation.NavigationWithContent;
 import org.javlo.remote.IRemoteResource;
 import org.javlo.service.PersistenceService;
 import org.javlo.service.RequestService;
@@ -682,5 +686,31 @@ public class TemplateAction extends AbstractModuleAction {
 		}
 
 		return null;
+	}
+
+	public static Collection<PageTemplateRef> searchPageTemplate(ContentContext ctx, String templateName) throws Exception {
+		if (ctx.getGlobalContext().isMaster()) {
+			Collection<PageTemplateRef> outPages = new LinkedList<PageTemplateRef>();
+			Collection<GlobalContext> allContext = GlobalContextFactory.getAllGlobalContext(ctx.getRequest().getSession().getServletContext());
+			ContentContext externalCtx = new ContentContext(ctx);
+			for (GlobalContext context : allContext) {
+				externalCtx.setForceGlobalContext(context);				
+				externalCtx.setRenderMode(ContentContext.PREVIEW_MODE);
+				externalCtx.setForcePathPrefix(context.getContextKey());
+				for (NavigationWithContent nav : TemplateFactory.searchPageNeedTemplate(externalCtx, templateName)) {
+					String ref = "direct";
+					Template template = TemplateFactory.getTemplate(externalCtx, nav.getPage());
+					if (template != null) {
+						if (!template.getName().equals(templateName)) {
+							ref = "inherited";
+						}
+						outPages.add(new PageTemplateRef(nav.getPage().getName(), context.getContextKey(), URLHelper.createURL(externalCtx, "/"), ref));
+					}
+				}
+			}
+			return outPages;
+		} else {
+			return Collections.EMPTY_LIST;
+		}
 	}
 }

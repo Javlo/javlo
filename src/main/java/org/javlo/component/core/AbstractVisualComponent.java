@@ -269,7 +269,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	}
 
 	protected String getBaseHelpURL(ContentContext ctx) {
-		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+		GlobalContext globalContext = ctx.getGlobalContext();
 		String helpURL = globalContext.getHelpURL();
 		if(helpURL.contains("${language}")) {
 			helpURL = helpURL.replace("${language}", globalContext.getEditLanguage(ctx.getRequest().getSession()));
@@ -317,7 +317,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 
 	@Override
 	public String getComponentLabel(ContentContext ctx, String lg) {
-		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+		GlobalContext globalContext = ctx.getGlobalContext();
 		I18nAccess i18nAccess = null;
 		try {
 			i18nAccess = I18nAccess.getInstance(globalContext, ctx.getRequest().getSession());
@@ -369,7 +369,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	}
 
 	public String getContentTimeCache(ContentContext ctx) {
-		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+		GlobalContext globalContext = ctx.getGlobalContext();
 		ICache cache = globalContext.getCache(TIME_CACHE_NAME);
 
 		String contentKey = getContentCacheKey(ctx);
@@ -429,7 +429,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	}
 
 	public String getContentCache(ContentContext ctx) {
-		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+		GlobalContext globalContext = ctx.getGlobalContext();
 		ICache cache = globalContext.getCache(CACHE_NAME);
 		String contentKey = getContentCacheKey(ctx);
 		return (String) cache.get(contentKey);
@@ -794,7 +794,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 
 	protected String getEmptyCode(ContentContext ctx) throws Exception {
 		if ((ctx.getRenderMode() == ContentContext.PREVIEW_MODE)) {
-			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+			GlobalContext globalContext = ctx.getGlobalContext();
 			EditContext editCtx = EditContext.getInstance(globalContext, ctx.getRequest().getSession());
 			if (editCtx.isEditPreview()) {
 				MenuElement currentPage = ctx.getCurrentPage();
@@ -954,7 +954,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		sufixPreffix = new SuffixPrefix("<strong>", "</strong>", i18nAccess.getText("component.marker.strong"));
 		out.add(sufixPreffix);
 
-		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+		GlobalContext globalContext = ctx.getGlobalContext();
 		Collection<String> lgs = globalContext.getContentLanguages();
 		for (String lg : lgs) {
 			Locale locale = new Locale(lg);
@@ -1114,7 +1114,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		SuffixPrefix sufixPreffix = new SuffixPrefix("<q>", "</q>", i18nAccess.getText("component.marker.quotation"));
 		out.add(sufixPreffix);
 
-		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+		GlobalContext globalContext = ctx.getGlobalContext();
 		Collection<String> lgs = globalContext.getContentLanguages();
 		for (String lg : lgs) {
 			Locale locale = new Locale(lg);
@@ -1199,7 +1199,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(outStream);
 
-		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+		GlobalContext globalContext = ctx.getGlobalContext();
 		I18nAccess i18nAccess = I18nAccess.getInstance(globalContext, ctx.getRequest().getSession());
 
 		if (getRenderes(ctx).size() > 1) {
@@ -1286,7 +1286,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			specificClass = specificClass + "scroll-to-me ";
 		}
 		if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE) {
-			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+			GlobalContext globalContext = ctx.getGlobalContext();
 			EditContext editCtx = EditContext.getInstance(globalContext, ctx.getRequest().getSession());
 			try {
 				String classPrefix = "not-";
@@ -1532,7 +1532,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	}
 
 	private File getViewDataFile(ContentContext ctx, boolean createFile) throws IOException {
-		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+		GlobalContext globalContext = ctx.getGlobalContext();
 		String folder = URLHelper.mergePath(globalContext.getDataFolder(), "components_view_data");
 		File viewDataFile = new File(URLHelper.mergePath(folder, getId() + ".properties"));
 		if (!viewDataFile.exists() && createFile) {
@@ -1598,7 +1598,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 
 	protected String renderViewXHTMLCode(ContentContext ctx) throws Exception {
 		if (HIDDEN.equals(getStyle())) {
-			if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE && EditContext.getInstance(GlobalContext.getInstance(ctx.getRequest()), ctx.getRequest().getSession()).isEditPreview()) {
+			if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE && EditContext.getInstance(ctx.getGlobalContext(), ctx.getRequest().getSession()).isEditPreview()) {
 				String prefix = "";
 				String suffix = "";
 				if (!isWrapped(ctx)) {
@@ -1655,7 +1655,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 				processView(ctx);
 			}
 
-			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+			GlobalContext globalContext = ctx.getGlobalContext();
 
 			if ((ctx.getRenderMode() == ContentContext.PREVIEW_MODE)) {
 				EditContext editCtx = EditContext.getInstance(globalContext, ctx.getRequest().getSession());
@@ -2084,7 +2084,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	}
 
 	public void resetContentCache(ContentContext ctx) {
-		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+		GlobalContext globalContext = ctx.getGlobalContext();
 		globalContext.getCache(CACHE_NAME).removeAll();
 	}
 
@@ -2112,7 +2112,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			logger.fine("couldn't put content with jsession id in cache on : " + getPage().getPath() + " - comp:" + getType());
 			return;
 		}
-		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+		GlobalContext globalContext = ctx.getGlobalContext();
 		ICache cache = globalContext.getCache(CACHE_NAME);
 
 		String contentKey = getContentCacheKey(ctx);
@@ -2129,7 +2129,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			logger.fine("couldn't put content with jsession id in cache on : " + getPage().getPath() + " - comp:" + getType());
 			return;
 		}
-		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+		GlobalContext globalContext = ctx.getGlobalContext();
 		ICache cache = globalContext.getCache(TIME_CACHE_NAME);
 		String contentKey = getContentCacheKey(ctx);
 		String timeKey = TIME_KEY_PREFIX + contentKey;

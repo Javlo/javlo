@@ -545,7 +545,7 @@ public class ContentService implements IPrintInfo {
 	 */
 	public MenuElement getNavigation(ContentContext ctx) throws Exception {
 		MenuElement res = null;
-		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+		GlobalContext globalContext = ctx.getGlobalContext();
 
 		if (ctx.getRenderMode() == ContentContext.TIME_MODE && globalContext.getTimeTravelerContext().getTravelTime() != null) {
 			if (timeTravelerNav == null) {

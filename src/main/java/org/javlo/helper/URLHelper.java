@@ -75,7 +75,7 @@ public class URLHelper extends ElementaryURLHelper {
 	}
 
 	public static String createAjaxURL(ContentContext ctx) {
-		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+		GlobalContext globalContext = ctx.getGlobalContext();
 		return createURL(ctx, globalContext, ctx.getPath(), true, true, true, true);
 	}
 
@@ -84,7 +84,7 @@ public class URLHelper extends ElementaryURLHelper {
 	}
 
 	public static String createAjaxURL(ContentContext ctx, String path) {
-		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+		GlobalContext globalContext = ctx.getGlobalContext();
 		return createURL(ctx, globalContext, path, true, true, true, true);
 	}
 
@@ -146,7 +146,7 @@ public class URLHelper extends ElementaryURLHelper {
 		}
 
 		if (StringHelper.isURLFile(url)) {
-			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+			GlobalContext globalContext = ctx.getGlobalContext();
 			String fullFileName = URLHelper.mergePath(globalContext.getDataFolder(), url);
 			try {
 				return FileUtils.readFileToString(new File(fullFileName));
@@ -231,14 +231,14 @@ public class URLHelper extends ElementaryURLHelper {
 	}
 
 	public static String createResourceURL(ContentContext ctx, File file) {
-		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+		GlobalContext globalContext = ctx.getGlobalContext();
 		String url = file.getAbsolutePath();
 		url = StringUtils.removeStart(url, globalContext.getDataFolder());
 		return createResourceURL(ctx, url);
 	}
 
 	public static String createLocalURI(ContentContext ctx, File file) {
-		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+		GlobalContext globalContext = ctx.getGlobalContext();
 		String url = file.getAbsolutePath();
 		return StringUtils.removeStart(url, globalContext.getDataFolder());
 	}
@@ -342,7 +342,7 @@ public class URLHelper extends ElementaryURLHelper {
 
 	protected static String createStaticTemplateURL(ContentContext ctx, String url, String templateVersion, boolean widthPath) throws Exception {
 		Template template = null;
-		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+		GlobalContext globalContext = ctx.getGlobalContext();
 		if (ctx.getRenderMode() == ContentContext.PAGE_MODE) {
 			MailingModuleContext mailingCtx = MailingModuleContext.getInstance(ctx.getRequest());
 			RequestService requestService = RequestService.getInstance(ctx.getRequest());
@@ -399,7 +399,7 @@ public class URLHelper extends ElementaryURLHelper {
 			return url;
 		}
 
-		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+		GlobalContext globalContext = ctx.getGlobalContext();
 
 		String templateFolder;
 
@@ -421,7 +421,7 @@ public class URLHelper extends ElementaryURLHelper {
 	}
 
 	public static String createStaticTemplateURL(ContentContext ctx, Template template, String url) throws Exception {
-		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+		GlobalContext globalContext = ctx.getGlobalContext();
 		if (template == null) {
 			MenuElement elem = ctx.getCurrentPage();
 			template = TemplateFactory.getTemplates(ctx.getRequest().getSession().getServletContext()).get(elem.getTemplateId());
@@ -443,7 +443,7 @@ public class URLHelper extends ElementaryURLHelper {
 		if (url == null || template == null) {
 			return null;
 		}
-		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+		GlobalContext globalContext = ctx.getGlobalContext();
 		if (template == null) {
 			MenuElement elem = ctx.getCurrentPage();
 			template = TemplateFactory.getTemplates(ctx.getRequest().getSession().getServletContext()).get(elem.getTemplateId());
@@ -479,7 +479,7 @@ public class URLHelper extends ElementaryURLHelper {
 		}
 
 		if (StringHelper.isURLFile(url)) {
-			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+			GlobalContext globalContext = ctx.getGlobalContext();
 			String fullFileName = URLHelper.mergePath(globalContext.getDataFolder(), url);
 			try {
 				return FileUtils.readFileToString(new File(fullFileName));
@@ -497,7 +497,7 @@ public class URLHelper extends ElementaryURLHelper {
 	}
 
 	public static String createTransformStaticTemplateURL(ContentContext ctx, Template template, String filter, String url) throws Exception {
-		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+		GlobalContext globalContext = ctx.getGlobalContext();
 		if (template == null) {
 			MenuElement elem = ctx.getCurrentPage();
 			template = TemplateFactory.getTemplates(ctx.getRequest().getSession().getServletContext()).get(elem.getTemplateId());
@@ -596,7 +596,7 @@ public class URLHelper extends ElementaryURLHelper {
 	 * @return a URL
 	 */
 	public static String createURL(ContentContext ctx, String uri) {
-		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+		GlobalContext globalContext = ctx.getGlobalContext();
 		return createURL(ctx, globalContext, uri, false, false, true, true);
 	}
 
@@ -616,12 +616,12 @@ public class URLHelper extends ElementaryURLHelper {
 	}
 
 	public static String createURLWithtoutEncodeURL(ContentContext ctx, String uri) {
-		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+		GlobalContext globalContext = ctx.getGlobalContext();
 		return createURL(ctx, globalContext, uri, false, false, true, false);
 	}
 
 	public static String createURLWithtoutContext(ContentContext ctx, String uri) {
-		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+		GlobalContext globalContext = ctx.getGlobalContext();
 		return createURL(ctx, globalContext, uri, false, false, false, false);
 	}
 
@@ -715,8 +715,7 @@ public class URLHelper extends ElementaryURLHelper {
 	 * @return
 	 */
 	public static String createURLCheckLg(ContentContext ctx, String uri) {
-
-		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+		GlobalContext globalContext = ctx.getGlobalContext();
 		Set<String> viewLg = globalContext.getLanguages();
 		String lgFound = null;
 		for (String lg : viewLg) {
@@ -730,7 +729,7 @@ public class URLHelper extends ElementaryURLHelper {
 	}
 
 	public static String createURLFromPageName(ContentContext ctx, String pageName) throws Exception {
-		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+		GlobalContext globalContext = ctx.getGlobalContext();
 		NavigationService navService = NavigationService.getInstance(globalContext);
 		MenuElement page = navService.getPage(ctx, pageName);
 		if (page != null) {
@@ -741,7 +740,7 @@ public class URLHelper extends ElementaryURLHelper {
 	}
 
 	public static String createURLNoForceTemplate(ContentContext ctx) {
-		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+		GlobalContext globalContext = ctx.getGlobalContext();
 		return createURL(ctx, globalContext, ctx.getPath(), false, false, true, true);
 	}
 
@@ -755,8 +754,7 @@ public class URLHelper extends ElementaryURLHelper {
 	 * @return a URL
 	 */
 	public static String createURLNoPathPrefix(ContentContext ctx, String uri) {
-		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-		return createURL(ctx, globalContext, uri, false, false, false, true);
+		return createURL(ctx, ctx.getGlobalContext(), uri, false, false, false, true);
 	}
 
 	/**
@@ -796,7 +794,7 @@ public class URLHelper extends ElementaryURLHelper {
 
 	public static String createVisualTemplateURL(ContentContext ctx, Template template, String filter) throws Exception {
 		MenuElement elem = ctx.getCurrentPage();
-		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+		GlobalContext globalContext = ctx.getGlobalContext();
 		if (template == null) {
 			template = TemplateFactory.getTemplates(ctx.getRequest().getSession().getServletContext()).get(elem.getTemplateId());
 		}
@@ -997,9 +995,8 @@ public class URLHelper extends ElementaryURLHelper {
 	 * @return
 	 * @throws Exception
 	 */
-	public static String createInterModuleURL(ContentContext ctx, String url, String moduleName, Map<String, String> inParams) throws Exception {
-		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-		ModulesContext moduleContext = ModulesContext.getInstance(ctx.getRequest().getSession(), globalContext);
+	public static String createInterModuleURL(ContentContext ctx, String url, String moduleName, Map<String, String> inParams) throws Exception {		
+		ModulesContext moduleContext = ModulesContext.getInstance(ctx.getRequest().getSession(), ctx.getGlobalContext());
 		return createInterModuleURL(ctx, url, moduleName, moduleContext.getCurrentModule().getName(), inParams);
 	}
 
@@ -1147,7 +1144,7 @@ public class URLHelper extends ElementaryURLHelper {
 
 	public static String replaceFolderVariable(ContentContext ctx, String url) {
 		String outURL = url;
-		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+		GlobalContext globalContext = ctx.getGlobalContext();
 		outURL = globalContext.getStaticConfig().replaceFolderVariable(outURL);
 		outURL = outURL.replace("$DATA", globalContext.getDataFolder());
 		return outURL;
@@ -1188,7 +1185,7 @@ public class URLHelper extends ElementaryURLHelper {
 
 	public static String addMailingFeedback(ContentContext ctx, String url) {
 		if (ctx.getRenderMode() == ContentContext.PAGE_MODE && url != null) {
-			return addParam(url, MailingAction.MAILING_FEEDBACK_PARAM_NAME, "##data##");
+			return addParam(url, MailingAction.MAILING_FEEDBACK_PARAM_NAME, MailingAction.MAILING_FEEDBACK_VALUE_NAME);
 		} else {
 			return url;
 		}

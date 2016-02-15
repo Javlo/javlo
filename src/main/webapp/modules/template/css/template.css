@@ -103,6 +103,15 @@ input[readonly] {
 	overflow: hidden;
 }
 
+.pages-container {
+	overflow: auto;
+	max-height: 450px;
+}
+
+.pages-container td {
+	text-align: left;
+}
+
 /** edit images **/
 
 

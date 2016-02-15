@@ -182,7 +182,7 @@ public class GlobalImage extends Image implements IImageFilter {
 	}
 
 	@Override
-	public String getImageHash(Device device) {
+	public String getImageHash(Device device) {		
 		String hash = ""+getFileName().hashCode();
 		if (getWidth(device) < 0) {			
 			return hash;

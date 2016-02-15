@@ -97,7 +97,7 @@ public class ImageTransformServlet extends HttpServlet {
 
 	public static final String COMPONENT_ID_URL_DIR_PREFIX = "/comp-";
 
-	public static final String HASH_PREFIX = "/hash-";
+	public static final String HASH_PREFIX = "/h";
 
 	private static final class ImageTransformThread implements Callable<Void> {
 

@@ -161,7 +161,7 @@ public class ContentContext {
 			throw e;
 		}
 
-		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+		GlobalContext globalContext = ctx.getGlobalContext();
 		EditContext editContext = EditContext.getInstance(globalContext, ctx.getRequest().getSession());
 
 		if (globalContext.getForcedHost().length() > 0) {
@@ -273,7 +273,7 @@ public class ContentContext {
 
 			// TODO : optimise this with option in global context
 
-			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+			GlobalContext globalContext = ctx.getGlobalContext();
 
 			if (contentLg == null) {
 				contentLg = lg;

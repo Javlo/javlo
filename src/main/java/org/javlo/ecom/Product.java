@@ -213,6 +213,14 @@ public class Product {
 			return comp.getPrice();
 		}
 	}
+	
+	public double getReductionPrice() {
+		if (comp == null) {
+			return -1;
+		} else {
+			return getPrice() * (1 - getReduction());
+		}
+	}
 
 	public double getTotal() {
 		double outTotal = getPrice() * getQuantity() * (1 - getReduction());

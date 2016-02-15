@@ -423,7 +423,6 @@ public class XMLManipulationHelper {
 							boolean renderForm = !tags[i].getName().equalsIgnoreCase("form");
 							remplacement.addReplacement(tags[i].getOpenEnd() + 1, tags[i].getCloseStart(), "<%=XHTMLHelper.renderSelectLanguage(ctx, " + languageJS + ", \"" + selectID + "\",  \"" + selectInputID + "\", " + renderForm + ")%>");
 							remplacement.addReplacement(tags[i].getCloseEnd() + 1, tags[i].getCloseEnd() + 1, "<%}%>");
-
 						}
 					}
 				}
@@ -526,13 +525,7 @@ public class XMLManipulationHelper {
 					String openBodyCode = "<c:if test=\"${not contentContext.pageAssociation}\">" + renderBodyAsBody + "</c:if><c:if test=\"${contentContext.pageAssociation}\">" + renderBodyAsDiv + "</c:if>";
 					String closeBodyCode = "<%}%><c:if test=\"${not contentContext.pageAssociation}\">" + getGoogleAnalyticsCode() + "</body></c:if><c:if test=\"${contentContext.pageAssociation}\"></div></c:if>";
 					remplacement.addReplacement(tags[i].getOpenStart(), tags[i].getOpenEnd() + 1, "</c:if>" + openBodyCode + openPageCode);
-					remplacement.addReplacement(tags[i].getCloseStart(), tags[i].getCloseEnd() + 1, closeBodyCode + closePageCode); // close
-																																	// the
-																																	// remove
-																																	// header
-																																	// for
-																																	// children
-																																	// agregator
+					remplacement.addReplacement(tags[i].getCloseStart(), tags[i].getCloseEnd() + 1, closeBodyCode + closePageCode); 
 
 					String previewCode = "<c:if test=\"${not contentContext.pageAssociation}\">" + getPreviewCode(globalContext.getServletContext()) + "</c:if>";
 					// remplacement.addReplacement(tags[i].getOpenEnd() + 1,
@@ -540,7 +533,10 @@ public class XMLManipulationHelper {
 					// getEscapeMenu(contentZone) + getResetTemplate() +
 					// getAfterBodyCode());
 					remplacement.addReplacement(tags[i].getOpenEnd() + 1, tags[i].getOpenEnd() + 1, getEscapeMenu(contentZone) + getResetTemplate() + getAfterBodyCode());
-					remplacement.addReplacement(tags[i].getCloseStart() - 1, tags[i].getCloseStart() - 1, previewCode);
+					if (isMail && globalContext.getStaticConfig().isMailingUserTracking()) {						
+						previewCode = previewCode + "<%Map mParams = new HashMap();mParams.put(MailingAction.MAILING_FEEDBACK_PARAM_NAME, MailingAction.MAILING_FEEDBACK_VALUE_NAME);%><img class=\"empty_image\" style=\"height: 0; width: 0; margin:0; padding: 0;\" width=\"0\" height=\"0\" src=\"<%=URLHelper.createStaticURL(ctx, \"/mfb.png\", mParams)%>\" /> ";
+					}
+					remplacement.addReplacement(tags[i].getCloseStart() - 1, tags[i].getCloseStart() - 1, previewCode);					
 				}
 
 				/* link - StyleSheet */

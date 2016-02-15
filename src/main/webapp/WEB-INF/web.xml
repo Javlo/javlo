@@ -30,7 +30,7 @@
 		<filter-name>cssCompilation</filter-name>
 		<url-pattern>*.css</url-pattern>
 	</filter-mapping>
-
+	
 	<filter>
 		<filter-name>CatchAll</filter-name>
 		<filter-class>org.javlo.filter.CatchAllFilter</filter-class>
@@ -84,6 +84,16 @@
 	<servlet-mapping>
 		<servlet-name>ProxyServlet</servlet-name>
 		<url-pattern>/proxy/*</url-pattern>
+	</servlet-mapping>
+	
+	<servlet>
+		<servlet-name>mfb</servlet-name>
+		<servlet-class>org.javlo.servlet.MailingFeedback</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>mfb</servlet-name>
+		<url-pattern>/mfb.png</url-pattern>
 	</servlet-mapping>
 
 	<servlet>

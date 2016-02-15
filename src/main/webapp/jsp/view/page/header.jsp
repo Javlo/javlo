@@ -1,5 +1,7 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"
         import="java.util.Date,
+        		java.util.Map,
+        		java.util.HashMap,
                 org.javlo.helper.URLHelper,
                 org.javlo.context.ContentContext,
                 org.javlo.service.ContentService,
@@ -13,7 +15,8 @@
                 org.javlo.user.AdminUserSecurity,
                 org.javlo.navigation.MenuElement,
                 org.javlo.helper.XHTMLNavigationHelper,
-                org.javlo.context.GlobalContext"
+                org.javlo.context.GlobalContext,
+                org.javlo.module.mailing.MailingAction"
 %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%><%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%><%@ taglib uri="/WEB-INF/javlo.tld" prefix="jv" %>
 <%

@@ -19,6 +19,8 @@ public class FeedBackMailingBean {
 	private String action;
 	
 	private String ip;
+	
+	private String webaction;
 
 	public String getAgent() {
 		return agent;
@@ -53,12 +55,13 @@ public class FeedBackMailingBean {
 	}
 
 	public String[] toArray() {
-		String[] outArray = new String[5];
+		String[] outArray = new String[6];
 		outArray[0] = getEmail();
 		outArray[1] = StringHelper.renderTime(getDate());
 		outArray[2] = getUrl();
 		outArray[3] = getAgent();
 		outArray[4] = getIp();
+		outArray[5] = getWebaction();
 		return outArray;
 	}
 	
@@ -73,6 +76,9 @@ public class FeedBackMailingBean {
 		setAgent(array[3]);
 		if (array.length>4) {
 			setIp(array[4]);
+		}
+		if (array.length>5) {
+			setWebaction(array[5]);
 		}
 	}
 
@@ -90,5 +96,13 @@ public class FeedBackMailingBean {
 
 	public void setIp(String ip) {
 		this.ip = ip;
+	}
+
+	public String getWebaction() {
+		return webaction;
+	}
+
+	public void setWebaction(String webaction) {
+		this.webaction = webaction;
 	}
 }

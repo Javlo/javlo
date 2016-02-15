@@ -454,7 +454,7 @@ public abstract class ElementaryURLHelper {
 		String fileURL = url;
 		url = ElementaryURLHelper.mergePath(baseUrl, url);
 
-		if (ctx.isLikeViewRenderMode() && ctx.getGlobalContext().getStaticConfig().isImageShortURL()) {
+		if (ctx.getRenderMode() == ContentContext.VIEW_MODE && ctx.getGlobalContext().getStaticConfig().isImageShortURL()) {
 			File file = new File(URLHelper.mergePath(ctx.getGlobalContext().getDataFolder(), fileURL));
 			StaticInfo staticInfo = StaticInfo.getInstance(ctx, file);
 			String fileName = null;

@@ -50,6 +50,12 @@ import org.javlo.user.UserFactory;
 public class MailingAction extends AbstractModuleAction {
 
 	public static final String MAILING_FEEDBACK_PARAM_NAME = "_mfb";
+	
+	public static final String DATA_MAIL_PREFIX = "_ml_";
+	
+	public static final String DATA_MAIL_SUFFIX = "__";
+	
+	public static final String MAILING_FEEDBACK_VALUE_NAME = DATA_MAIL_PREFIX+"data"+DATA_MAIL_SUFFIX;
 
 	private static Logger logger = Logger.getLogger(MailingAction.class.getName());
 
