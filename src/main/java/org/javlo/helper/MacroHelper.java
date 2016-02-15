@@ -29,11 +29,13 @@ import org.apache.commons.lang.math.NumberUtils;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.component.core.ContentElementList;
 import org.javlo.component.core.IContentVisualComponent;
+import org.javlo.component.files.AbstractFileComponent;
 import org.javlo.component.image.GlobalImage;
 import org.javlo.component.meta.DateComponent;
 import org.javlo.component.meta.EventDefinitionComponent;
 import org.javlo.component.meta.Tags;
 import org.javlo.component.meta.TimeRangeComponent;
+import org.javlo.component.multimedia.Multimedia;
 import org.javlo.component.text.Description;
 import org.javlo.component.text.Paragraph;
 import org.javlo.component.title.SubTitle;
@@ -723,22 +725,19 @@ public class MacroHelper {
 				year = null;
 			}
 			if (year != null && mount != null) {
-				Collection<MenuElement> children = monthPage.getChildMenuElements();
-
-				int maxNumber = 0;
-				for (MenuElement child : children) {
-					splittedName = child.getName().split("-");
-
-					try {
-						int currentNumber = Integer.parseInt(splittedName[splittedName.length - 1]);
-						if (currentNumber > maxNumber) {
-							maxNumber = currentNumber;
-						}
-					} catch (NumberFormatException e) {
-					}
-				}
-				maxNumber = maxNumber + 1;
-				MenuElement newPage = MacroHelper.addPageIfNotExist(ctx, monthPage.getName(), groupPage.getName() + "-" + year + "-" + mount + "-" + maxNumber, true);
+				
+				ContentService content = ContentService.getInstance(ctx.getRequest());
+				
+				int maxNumber = 1;
+				
+				MenuElement root = content.getNavigation(ctx);
+				String pageName = groupPage.getName() + "-" + year + "-" + mount + "-" + maxNumber;
+				while (root.searchChildFromName(pageName) != null) {
+					maxNumber++;
+					pageName = groupPage.getName() + "-" + year + "-" + mount + "-" + maxNumber;
+				}					
+				
+				MenuElement newPage = MacroHelper.addPageIfNotExist(ctx, monthPage.getName(), pageName, true);
 				newPage.setVisible(true);
 
 				return newPage;
@@ -806,13 +805,19 @@ public class MacroHelper {
 			keys.addAll(keysSet);
 			Collections.sort(keys);			
 			for (String compName : keys) {
-				if (compName.contains(".") && !compName.endsWith(".style") && !compName.endsWith(".list") && !compName.endsWith(".area") && !compName.endsWith(".init-content")) {
+				if (compName.contains(".") && !compName.endsWith(".style") && !compName.endsWith(".list") && !compName.endsWith(".area") && !compName.endsWith(".init-content") && !compName.endsWith(".folder")) {
 					String style = (String) componentsType.get(compName + ".style");
 					boolean asList = StringHelper.isTrue(componentsType.get(compName + ".list"));
 					String area = (String) componentsType.get(compName + ".area");
 					boolean initContent= StringHelper.isTrue(componentsType.get(compName + ".init-content"));
 
 					String type = StringHelper.split(compName, ".")[1];
+					
+					String folder = (String) componentsType.get(compName + ".folder");
+					if (folder != null) {
+						folder = folder.replace("${page.technicalTitle}", page.getTechnicalTitle(ctx));
+						folder = folder.replace("${page.name}", page.getName());
+					}					
 
 					String value = (String) componentsType.get(compName);
 					if (fakeContent) {
@@ -834,6 +839,15 @@ public class MacroHelper {
 					if (initContent) {
 						IContentVisualComponent comp = content.getComponent(ctx, parentId);
 						comp.initContent(ctx);
+					}
+					if (folder != null) {
+						IContentVisualComponent comp = content.getComponent(ctx, parentId);
+						if (comp instanceof AbstractFileComponent) {
+							((AbstractFileComponent)comp).setDirSelected(folder);
+						}
+						if (comp instanceof Multimedia) {
+							((Multimedia)comp).setCurrentRootFolder(ctx, folder);
+						}
 					}
 				}
 			}

@@ -1468,7 +1468,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		}
 	}
 
-	private String getForcedSuffixViewXHTMLCode(ContentContext ctx) {
+	protected String getForcedSuffixViewXHTMLCode(ContentContext ctx) {
 		if (getConfig(ctx).getProperty("suffix", null) != null) {
 			return getConfig(ctx).getProperty("suffix", null);
 		}

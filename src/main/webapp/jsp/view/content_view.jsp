@@ -164,7 +164,6 @@ if (globalContext.isCollaborativeMode() && ctx.getRenderMode() == ContentContext
 	request.setAttribute("date", StringHelper.renderTime(elem.getModificationDate()));%><jsp:include page="display_user.jsp"></jsp:include><%
 }
 String xhtmlCode = elem.getXHTMLCode(ctx);
-
 %><c:if test="${editPreview}"><%
 if (xhtmlCode != null && StringHelper.removeTag(xhtmlCode).trim().length() == 0 && !xhtmlCode.toLowerCase().contains("<img") && elem.isDispayEmptyXHTMLCode(ctx)) {
 	I18nAccess i18nAccess = I18nAccess.getInstance(ctx);

@@ -24,6 +24,7 @@ import org.javlo.component.image.IImageTitle;
 import org.javlo.component.meta.TimeRangeComponent;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
+import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.exception.ResourceNotFoundException;
 import org.javlo.helper.ElementaryURLHelper;
@@ -41,6 +42,7 @@ import org.javlo.module.file.FileAction;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
 import org.javlo.service.RequestService;
+import org.javlo.user.AdminUserSecurity;
 import org.javlo.ztatic.StaticInfo;
 
 /**
@@ -265,7 +267,7 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 				IVideo video = (IVideo) comp;
 				if (video.isShared(lgCtx) || !contentVideoOnlyShared(lgCtx)) {
 					MultimediaResource resource = createResource(ctx, video);
-					outResources.add(resource);
+					outResources.add(resource);	
 				}
 			}
 		}
@@ -387,6 +389,21 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 			return "/";
 		}
 	}
+	
+	public void setCurrentRootFolder(ContentContext ctx, String folder) {
+		String[] values = getValue().split(VALUE_SEPARATOR);
+		if (values.length >= 4) {
+			values[3] = folder;
+		} else {
+			values = new String[] { "", "", "", folder };
+		}
+		setValue(StringHelper.arrayToString(values, VALUE_SEPARATOR));		
+		File targetFolder = new File(getFilesDirectory(ctx));
+		if (!targetFolder.exists()) {
+			targetFolder.mkdirs();
+			logger.info("create folder  : "+targetFolder);
+		}
+	}
 
 	@Override
 	protected String getDisplayAsInputName() {
@@ -400,7 +417,7 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 		Collection<String> folderSelection = new LinkedList<String>();
 		folderSelection.add("/");
 		for (File file : files) {
-			if (file.isDirectory() && file.list().length > 0) {
+			if (file.isDirectory()/* && file.list().length > 0 */) {
 				folderSelection.add(file.getAbsolutePath().replace('\\', '/').replaceFirst(baseDir, ""));
 			}
 		}
@@ -1170,6 +1187,22 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 			return 4;
 		} else {
 			return Integer.parseInt(getConfig(ctx).getProperty("image.priority", null));
+		}
+	}
+	
+	@Override
+	public String getEmptyXHTMLCode(ContentContext ctx) throws Exception {
+		if (isHiddenInMode(ctx.getRenderMode()) || !AdminUserSecurity.getInstance().canModifyConponent(ctx, getId())) {
+			return "";
+		} else {
+			I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
+			String prefix = "";
+			String suffix = "";
+			if (!isWrapped(ctx)) {
+				prefix = getForcedPrefixViewXHTMLCode(ctx);
+				suffix = getForcedSuffixViewXHTMLCode(ctx);
+			}
+			return prefix + "<div class=\"empty\">[" + i18nAccess.getText("preview.upload-here", "upload here") + "]</div>" + suffix;
 		}
 	}
 
