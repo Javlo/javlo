@@ -71,6 +71,7 @@ import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.helper.XHTMLHelper;
 import org.javlo.helper.XMLManipulationHelper;
+import org.javlo.i18n.I18nAccess;
 import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
 import org.javlo.module.content.Edit;
@@ -2640,6 +2641,10 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 	}
 
 	public String getLabel(ContentContext ctx) throws Exception {
+		if (isTrash()) {
+			I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
+			return i18nAccess.getText("preview.label.trash");
+		}
 		String res = getFullLabel(ctx);
 		if (res != null) {
 			if ((res.trim().length() == 0) && (name != null)) {
@@ -3119,7 +3124,11 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 	}
 
 	public int getPriority() {
-		return priority;
+		if (isTrash()) {
+			return Integer.MAX_VALUE;
+		} else {
+			return priority;
+		}
 	}
 
 	public Date getRealModificationDate() {
@@ -3362,6 +3371,9 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 	}
 
 	public String getTitle(ContentContext ctx) throws Exception {
+		if (isTrash()) {
+			return getLabel(ctx);
+		}
 		ContentContext newCtx = new ContentContext(ctx);
 		newCtx.setArea(null); // warning : check if the method is needed.
 
@@ -3871,7 +3883,11 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 	}
 
 	public boolean isActive() {
-		return active;
+		if (isInTrash() || isTrash()) {
+			return false;
+		} else {
+			return active;
+		}
 	}
 
 	public void setActive(boolean active) {
@@ -4406,7 +4422,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 		desc.notInSearch = false;
 		ContentContext noAreaCtx = new ContentContext(ctx);
 		noAreaCtx.setArea(null);
-		if (getContentByType(noAreaCtx, NotSearchPage.TYPE).size() > 0) {
+		if (getContentByType(noAreaCtx, NotSearchPage.TYPE).size() > 0 || !isActive(ctx)) {
 			desc.notInSearch = true;
 		}
 
@@ -4896,6 +4912,17 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 
 	public boolean isTrash() {
 		return ContentService.TRASH_PAGE_NAME.equals(getName());
+	}
+	
+	public boolean isInTrash() {
+		MenuElement parent = getParent();
+		while (parent != null) {
+			if (parent.isTrash()) {
+				return true;
+			}
+			parent = parent.getParent();
+		}
+		return false;
 	}
 	
 	public int getFinalSeoWeight() {

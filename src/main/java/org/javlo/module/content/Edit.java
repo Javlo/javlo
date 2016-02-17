@@ -1585,6 +1585,9 @@ public class Edit extends AbstractModuleAction {
 		String id = ctx.getRequest().getParameter("page");
 		MenuElement menuElement;
 		menuElement = content.getNavigation(ctx).searchChildFromId(id);
+		if (menuElement.isTrash() || menuElement.isInTrash()) {
+			return performDeletePage(ctx.getGlobalContext(), content, ctx, i18nAccess);
+		}
 		String newPath = menuElement.getParent().getPath();
 		if (menuElement.isChildrenOfAssociation()) {
 			newPath = menuElement.getRootOfChildrenAssociation().getFirstChild().getPath();
@@ -1595,7 +1598,6 @@ public class Edit extends AbstractModuleAction {
 		}
 		if (menuElement.getParent() == null) {
 			return i18nAccess.getText("action.remove.can-not-delete");
-
 		}
 		menuElement.setSavedParent(menuElement.getParent().getId());
 		NavigationHelper.movePage(ctx, content.getTrashPage(ctx), null, menuElement);

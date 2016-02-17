@@ -20,6 +20,7 @@ import org.javlo.navigation.MenuElement;
 import org.javlo.navigation.PageBean;
 import org.javlo.service.ContentService;
 import org.javlo.service.NavigationService;
+import org.javlo.service.PersistenceService;
 import org.javlo.service.RequestService;
 
 public class UndeletePage extends AbstractInteractiveMacro implements IAction {
@@ -110,7 +111,7 @@ public class UndeletePage extends AbstractInteractiveMacro implements IAction {
 						}
 						ctx.setParentURL(URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.PREVIEW_MODE)));
 						ctx.setClosePopup(true);
-						
+						PersistenceService.getInstance(ctx.getGlobalContext()).setAskStore(true);
 					}
 				} else {
 					return "no access.";
@@ -125,7 +126,8 @@ public class UndeletePage extends AbstractInteractiveMacro implements IAction {
 						String path = pageToDelete.getPath();
 						NavigationService service = NavigationService.getInstance(ctx.getGlobalContext());
 						service.removeNavigation(ctx, pageToDelete);
-						MessageRepository.getInstance(ctx).setGlobalMessage(new GenericMessage(i18nAccess.getText("action.remove.deleted", new String[][] { { "path", path } }), GenericMessage.INFO));						
+						MessageRepository.getInstance(ctx).setGlobalMessage(new GenericMessage(i18nAccess.getText("action.remove.deleted", new String[][] { { "path", path } }), GenericMessage.INFO));			
+						PersistenceService.getInstance(ctx.getGlobalContext()).setAskStore(true);
 					} else {
 						return "no access.";
 					}

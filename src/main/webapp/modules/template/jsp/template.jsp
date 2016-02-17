@@ -70,7 +70,7 @@
                 
                 	<c:url value="${info.currentModuleURL}/jsp/page_list.jsp" var="pageListURL" context="/">
 						<c:param name="name" value="${template.name}" />
-						<c:param name="webaction" value="pageTemplate" />						
+						<c:param name="webaction" value="template.pageTemplate" />						
 					</c:url>
                              	
                     <c:if test="${globalContext.master}"><a href="${pageListURL}" class="view popup" title="${template.name}"></a></c:if>
@@ -92,7 +92,7 @@
                     <a href="${selectUrl}&template=${template.name}" class="select" title="select"></a>
                     </c:if>
                     
-                    <a href="${info.currentURL}?webaction=commitChildren&templateid=${template.name}" class="push" title="commit"></a>
+                    <a href="${info.currentURL}?webaction=template.commitChildren&templateid=${template.name}" class="push" title="commit"></a>
                     
                     <c:if test="${not template.valid}">
                     <c:url value="${info.currentURL}" var="validURL" context="/">

@@ -1,8 +1,8 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"
 %><%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-<c:if test="${empty templateFactory && empty param.templateid && empty param.previewEdit}"><a class="action-button valid-all" href="${info.currentURL}?webaction=validate"><span>${i18n.edit['command.admin.template.all']}</span></a></c:if>
+<c:if test="${empty templateFactory && empty param.templateid && empty param.previewEdit}"><a class="action-button valid-all" href="${info.currentURL}?webaction=template.validate"><span>${i18n.edit['command.admin.template.all']}</span></a></c:if>
 <c:url var="inheritedURL" value="${info.currentURL}" context="/">
-	<c:param name="webaction" value="selectTemplate"></c:param>
+	<c:param name="webaction" value="template.selectTemplate"></c:param>
 	<c:if test="${not empty param.previewEdit}">
 		<c:param name="previewEdit" value="${param.previewEdit}"></c:param>
 	</c:if>
@@ -13,22 +13,22 @@
    <a class="action-button more" href="${fileURL}&templateid=${currentTemplate.name}"><span>${i18n.edit['template.action.browse']}...</span></a>
    <a class="action-button more" href="${info.currentURL}?filter=&templateid=${currentTemplate.name}"><span>${i18n.edit['template.action.filter-image']}</span></a>
    <c:if test="${fn:length(currentTemplate.CSS)>0}">
-       <a class="action-button more" href="${info.currentURL}?css=${currentTemplate.CSS[0]}&templateid=${currentTemplate.name}&webaction=editCSS"><span>${i18n.edit['template.action.css']}</span></a>	
+       <a class="action-button more" href="${info.currentURL}?css=${currentTemplate.CSS[0]}&templateid=${currentTemplate.name}&webaction=template.editCSS"><span>${i18n.edit['template.action.css']}</span></a>	
    </c:if>
    <c:if test="${fn:length(currentTemplate.htmls)>0}">
-   	<a class="action-button more" href="${info.currentURL}?html=${currentTemplate.htmls[0]}&templateid=${currentTemplate.name}&webaction=editHTML"><span>${i18n.edit['template.action.html']}</span></a>
+   	<a class="action-button more" href="${info.currentURL}?html=${currentTemplate.htmls[0]}&templateid=${currentTemplate.name}&webaction=template.editHTML"><span>${i18n.edit['template.action.html']}</span></a>
    </c:if>    
    
    <c:url var="commit" value="${info.currentURL}" context="/">	
-       <c:param name="webaction" value="commit"></c:param>
+       <c:param name="webaction" value="template.commit"></c:param>
        <c:param name="templateid" value="${currentTemplate.name}"></c:param>       
        <c:if test="${not empty param.css}">
            <c:param name="css" value="${param.css}"></c:param>       	
-           <c:param name="webaction" value="editCSS"></c:param>
+           <c:param name="webaction" value="template.editCSS"></c:param>
        </c:if>
        <c:if test="${not empty param.html}">
        		<c:param name="html" value="${param.html}"></c:param>
-       		<c:param name="webaction" value="editHTML"></c:param>
+       		<c:param name="webaction" value="template.editHTML"></c:param>
        </c:if>
        <c:if test="${not empty param.file}">
        		<c:param name="file" value="${param.file}"></c:param>
@@ -41,15 +41,15 @@
    <a class="action-button" href="${commit}"><span>${i18n.edit['template.action.commit']}</span></a>
    
    <c:url var="commitChildren" value="${info.currentURL}" context="/">	
-       <c:param name="webaction" value="commitChildren"></c:param>
+       <c:param name="webaction" value="template.commitChildren"></c:param>
        <c:param name="templateid" value="${currentTemplate.name}"></c:param>       
        <c:if test="${not empty param.css}">
            <c:param name="css" value="${param.css}"></c:param>       	
-           <c:param name="webaction" value="editCSS"></c:param>
+           <c:param name="webaction" value="template.editCSS"></c:param>
        </c:if>
        <c:if test="${not empty param.html}">
        		<c:param name="html" value="${param.html}"></c:param>
-       		<c:param name="webaction" value="editHTML"></c:param>
+       		<c:param name="webaction" value="template.editHTML"></c:param>
        </c:if>
        <c:if test="${not empty param.file}">
        		<c:param name="file" value="${param.file}"></c:param>
