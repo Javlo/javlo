@@ -60,10 +60,10 @@ public class UserSearch extends AbstractVisualComponent implements IAction {
 			out.println("<input type=\"hidden\" name=\"webaction\" value=\"user-search.search\" />");
 			out.println("<fieldset>");
 			out.println("<legend>search users</legend><div class=\"row\"><div class=\"col-xs-6\">");
-			out.println("<div class=\"line\"><label id=\"user\">text</label>");
+			out.println("<div class=\"line text\"><label id=\"user\">text</label>");
 			out.println("<input type=\"text\" id=\"user\" name=\"text\" value=\"" + rs.getParameter("text", "") + "\" />");
 			out.println("</div>");
-			out.println("<div class=\"line\"><label id=\"country\">country</label>");
+			out.println("<div class=\"line country\"><label id=\"country\">country</label>");
 			if (countries == null) {
 				out.println("<input type=\"text\" id=\"country\" name=\"country\" value=\"" + rs.getParameter("domain", "") + "\" />");
 			} else {
@@ -98,7 +98,7 @@ public class UserSearch extends AbstractVisualComponent implements IAction {
 
 			GlobalContext globalContext = ctx.getGlobalContext();
 			if (globalContext.getAdminUserRoles() != null && globalContext.getAdminUserRoles().size() > 0) {
-				out.println("<div class=\"line\"><label id=\"role\">group</label>");
+				out.println("<div class=\"line roles\"><label id=\"role\">group</label>");
 				out.println("<select id=\"role\" name=\"role\">");
 				out.println("<option></option>");
 				for (String role : globalContext.getAdminUserRoles()) {
