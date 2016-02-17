@@ -14,6 +14,9 @@ request.setAttribute("pages", pages);
 	padding: 15px;
 	width: 600px;
 }
+.body {
+    margin: 0 15px;
+}
 </style>
 <div class="body">
 <h2>Usage of ${param.name}</h2>

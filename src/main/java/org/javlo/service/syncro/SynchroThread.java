@@ -160,7 +160,7 @@ public class SynchroThread extends AbstractThread {
 			}
 			synchronized (PersistenceThread.SYNCRO_LOCK) {
 				if (getDataCtxFolder() != null) {
-					ServerSynchroService synchroService = ServerSynchroService.getInstance(getLocalName(), getServerURL(), getProxyHost(), getProxyPort(), getSynchroCode(), getDataCtxFolder());
+					ServerSynchroService synchroService = ServerSynchroService.getInstance(getLocalName(), getServerURL(), getProxyHost(), getProxyPort(), getSynchroCode(), getDataCtxFolder());					
 					if (!synchroService.synchronize()) {
 						return;
 					}

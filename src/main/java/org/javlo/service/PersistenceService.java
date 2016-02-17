@@ -271,7 +271,7 @@ public class PersistenceService {
 		return versionExist(getVersion() - 1);
 	}
 
-	protected void cleanFile() {
+	public void cleanFile() {
 
 		/** clean backup view file **/
 		Map<File, Date> backups = getBackupFiles();
@@ -1274,7 +1274,7 @@ public class PersistenceService {
 	 * 
 	 * @param askStore
 	 */
-	public synchronized void setAskStore(boolean askStore) {
+	public synchronized void setAskStore(boolean askStore) {		
 		this.askStore = askStore;
 	}
 

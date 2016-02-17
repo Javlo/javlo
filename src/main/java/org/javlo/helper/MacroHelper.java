@@ -805,7 +805,7 @@ public class MacroHelper {
 			keys.addAll(keysSet);
 			Collections.sort(keys);			
 			for (String compName : keys) {
-				if (compName.contains(".") && !compName.endsWith(".style") && !compName.endsWith(".list") && !compName.endsWith(".area") && !compName.endsWith(".init-content") && !compName.endsWith(".folder")) {
+				if (compName.contains(".") && !compName.endsWith(".style") && !compName.endsWith(".list") && !compName.endsWith(".area") && !compName.endsWith(".init-content") && !compName.endsWith(".folder") && !compName.endsWith(".renderer")) {
 					String style = (String) componentsType.get(compName + ".style");
 					boolean asList = StringHelper.isTrue(componentsType.get(compName + ".list"));
 					String area = (String) componentsType.get(compName + ".area");
@@ -817,8 +817,8 @@ public class MacroHelper {
 					if (folder != null) {
 						folder = folder.replace("${page.technicalTitle}", page.getTechnicalTitle(ctx));
 						folder = folder.replace("${page.name}", page.getName());
-					}					
-
+					}
+					
 					String value = (String) componentsType.get(compName);
 					if (fakeContent) {
 						if (type.equals(Title.TYPE) || type.equals(SubTitle.TYPE)) {
@@ -827,6 +827,7 @@ public class MacroHelper {
 							value = LoremIpsumGenerator.getParagraph(50, false, true);
 						}
 					}
+					
 					if (type.equalsIgnoreCase(EventDefinitionComponent.TYPE) || type.equalsIgnoreCase(TimeRangeComponent.TYPE)) {
 						String dateStr = StringHelper.renderTime(date);
 						value = dateStr+TimeRangeComponent.VALUE_SEPARATOR+dateStr;
@@ -835,11 +836,19 @@ public class MacroHelper {
 					} else if (type.equals(Tags.TYPE) && tags != null) {
 						value = StringHelper.collectionToString(tags, ";");
 					}
+					
 					parentId = MacroHelper.addContent(lg, page, parentId, type, style, area, value, asList, ctx.getCurrentEditUser());
 					if (initContent) {
 						IContentVisualComponent comp = content.getComponent(ctx, parentId);
 						comp.initContent(ctx);
 					}
+					
+					String renderer = (String) componentsType.get(compName+".renderer");
+					if (renderer != null) {						
+						IContentVisualComponent comp = content.getComponent(ctx, parentId);
+						comp.setRenderer(ctx, renderer);
+					}
+					
 					if (folder != null) {
 						IContentVisualComponent comp = content.getComponent(ctx, parentId);
 						if (comp instanceof AbstractFileComponent) {

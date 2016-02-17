@@ -66,9 +66,10 @@
 	jQuery(document).ready(function() {
 		jQuery('#history-table').dataTable( {
 			"sPaginationType": "full_numbers",
-			 "aaSorting": [[ 6, "desc" ]],
+			 "aaSorting": [[ 7, "desc" ]],
 			 "aoColumns": [
 						  { "asSorting": [ "" ] },
+			               null,
 			               null,
 			               null,
 			               null,
