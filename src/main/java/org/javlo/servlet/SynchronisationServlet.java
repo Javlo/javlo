@@ -241,11 +241,13 @@ public class SynchronisationServlet extends HttpServlet {
 						ResourceHelper.deleteFileAndParentDir(new File(fileName));
 					} else if (request.getParameter("refresh") != null) {
 						ContentContext ctx = ContentContext.getContentContext(request, response);
+						PersistenceService.getInstance(globalContext).cleanFile();
 						ContentService.clearCache(ctx, globalContext);
 						ContentService.getInstance(globalContext).getNavigation(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE));
 						ContentService.getInstance(globalContext).getNavigation(ctx.getContextWithOtherRenderMode(ContentContext.PREVIEW_MODE));
 					} else if (request.getParameter("refresh-all") != null) {
 						ContentContext ctx = ContentContext.getContentContext(request, response);
+						PersistenceService.getInstance(globalContext).cleanFile();
 						ContentService.getInstance(globalContext).getNavigation(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE));
 						ContentService.getInstance(globalContext).getNavigation(ctx.getContextWithOtherRenderMode(ContentContext.PREVIEW_MODE));
 						ContentService.clearAllCache(ctx, globalContext);

@@ -628,3 +628,4 @@ change log
  
  * list of template usage in master mode
  
+ * delete old xml file on internet instance after synchronization 
