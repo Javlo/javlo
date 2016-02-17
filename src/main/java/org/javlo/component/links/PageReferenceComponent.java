@@ -59,7 +59,8 @@ import org.javlo.template.Template;
 import org.javlo.template.TemplateFactory;
 
 /**
- * list of links to a subset of pages. <h4>exposed variable :</h4>
+ * list of links to a subset of pages.
+ * <h4>exposed variable :</h4>
  * <ul>
  * <li>inherited from {@link AbstractVisualComponent}</li>
  * <li>{@link PageStatus} pagesStatus : root page of menu. See
@@ -76,24 +77,27 @@ import org.javlo.template.TemplateFactory;
 public class PageReferenceComponent extends ComplexPropertiesLink implements IAction {
 
 	public static final String MOUNT_FORMAT = "MMMM yyyy";
-	
+
 	public static class PageEvent {
 		private Date start = null;
 		private Date end = null;
-		
+
 		public Date getStart() {
 			return start;
 		}
+
 		public void setStart(Date startDate) {
 			this.start = startDate;
 		}
+
 		public Date getEnd() {
 			return end;
 		}
+
 		public void setEnd(Date endDate) {
 			this.end = endDate;
 		}
-		
+
 	}
 
 	public static class PageBean {
@@ -254,19 +258,19 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 			bean.priority = page.getPriority();
 			bean.event = new PageEvent();
 			bean.editable = page.isEditabled(realContentCtx);
-			
+
 			/** check right **/
 			Set<String> roles = page.getEditorRoles();
 			if (roles.size() == 0 && ctx.getCurrentUser() != null) {
 				bean.setCurrentUserAsRight(true);
 			} else {
-				if( ctx.getCurrentUser() != null && !Collections.disjoint(roles, ctx.getCurrentUser().getRoles())) {
+				if (ctx.getCurrentUser() != null && !Collections.disjoint(roles, ctx.getCurrentUser().getRoles())) {
 					bean.setCurrentUserAsRight(true);
 				} else {
 					bean.setCurrentUserAsRight(false);
 				}
 			}
-			
+
 			bean.setLinkLabel(page.getLinkLabel(lgCtx));
 			Event event = page.getEvent(realContentCtx);
 			if (event != null) {
@@ -313,8 +317,8 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 				bean.imagePath = image.getResourceURL(lgCtx);
 				bean.imageURL = URLHelper.createTransformURL(lgCtx, page, image.getResourceURL(lgCtx), filter);
 				bean.viewImageURL = URLHelper.createTransformURL(lgCtx, page, image.getResourceURL(lgCtx), "thumb-view");
-				bean.imageDescription = XHTMLHelper.stringToAttribute(image.getImageDescription(lgCtx));			
-				PageBean.Image imageBean = new PageBean.Image(bean.imageURL, bean.viewImageURL, "", "", bean.imageDescription, bean.imagePath);				
+				bean.imageDescription = XHTMLHelper.stringToAttribute(image.getImageDescription(lgCtx));
+				PageBean.Image imageBean = new PageBean.Image(bean.imageURL, bean.viewImageURL, "", "", bean.imageDescription, bean.imagePath);
 				bean.setImage(imageBean);
 			}
 			Collection<IImageTitle> images = page.getImages(lgCtx);
@@ -454,8 +458,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		}
 
 		/**
-		 * return one image.
-		 * list is empty.
+		 * return one image. list is empty.
 		 * 
 		 * @return
 		 */
@@ -733,7 +736,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 			}
 			return children;
 		}
-		
+
 		public String getTechnicalTitle() {
 			ContentContext defaultLangCtx = ctx.getContextForDefaultLanguage();
 			String title;
@@ -789,7 +792,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		public void setCreationTime(String creationTime) {
 			this.creationTime = creationTime;
 		}
-		
+
 		public PageBean getParent() {
 			try {
 				return PageBean.getInstance(ctx, lgCtx, page.getParent(), comp);
@@ -850,7 +853,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		public void setTotalSize(int totalSize) {
 			this.totalSize = totalSize;
 		}
-	
+
 	}
 
 	public static final String TYPE = "page-reference";
@@ -910,7 +913,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 	private static final String WIDTH_EMPTY_PAGE_PROP_KEY = "width_empty";
 
 	private static final String ONLY_PAGE_WITHOUT_CHILDREN = "only_without_children";
-	
+
 	private static final String ONLY_EVENT = "only_event";
 
 	private static final String INTRANET_MODE_KEY = "intranet_mode";
@@ -922,6 +925,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 	}
 
 	/************/
+
 	/** ACTION **/
 	/************/
 
@@ -1027,11 +1031,11 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 	 * @throws Exception
 	 */
 	protected boolean filterPage(ContentContext ctx, MenuElement page, String filter) throws Exception {
-		
+
 		if (!page.isActive()) {
 			return false;
 		}
-		
+
 		Collection<String> commands = extractCommandFromFilter(filter);
 
 		if (commands.contains("all")) {
@@ -1217,7 +1221,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		out.println("<div class=\"line\">");
 		out.println(XHTMLHelper.getCheckbox(getOnlyWithoutChildrenInputName(), isOnlyPageWithoutChildren()));
 		out.println("<label for=\"" + getOnlyWithoutChildrenInputName() + "\">" + i18nAccess.getText("content.page-teaser.only-without-children") + "</label></div>");
-		
+
 		out.println("<div class=\"line\">");
 		out.println(XHTMLHelper.getCheckbox(getEventInputName(), isOnlyEvent()));
 		out.println("<label for=\"" + getEventInputName() + "\">" + i18nAccess.getText("content.page-teaser.event") + "</label></div>");
@@ -1229,11 +1233,11 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		}
 
 		/* parent node */
-		out.println("<div class=\"line\"><div class=\"row\"><div class=\"col-xs-10\">");		
+		out.println("<div class=\"line\"><div class=\"row\"><div class=\"col-xs-10\">");
 		out.println("<label for=\"" + getParentNodeInputName() + "\">" + i18nAccess.getText("content.page-teaser.parent-node") + " : </label>");
 		out.println(XHTMLNavigationHelper.renderComboNavigation(ctx, menu, getParentNodeInputName(), getParentNode(), true));
 		out.println("</div><div class=\"col-xs-2\">");
-		out.println("<input type=\"button\" class=\"btn btn-default btn-xs\" onclick=\"jQuery('#"+getParentNodeInputName()+"').val('"+ctx.getCurrentPage().getPath()+"');\" value=\""+i18nAccess.getText("global.current-page")+"\" >");
+		out.println("<input type=\"button\" class=\"btn btn-default btn-xs\" onclick=\"jQuery('#" + getParentNodeInputName() + "').val('" + ctx.getCurrentPage().getPath() + "');\" value=\"" + i18nAccess.getText("global.current-page") + "\" >");
 		out.println("</div></div></div>");
 
 		out.println("<div class=\"line\">");
@@ -1269,7 +1273,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		}
 
 		out.println("</fieldset>");
-		
+
 		out.println("</div><div class=\"col-sm-4\">");
 
 		out.println("<fieldset class=\"order\">");
@@ -1436,7 +1440,9 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		} else if (style.equals(STAY_72N)) {
 			return 72;
 		}
-		return 99999; /* infinity news if no limit defined (all news included) */
+		return 99999; /*
+						 * infinity news if no limit defined (all news included)
+						 */
 	}
 
 	protected String getOrder() {
@@ -1472,9 +1478,11 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 				parentNode = children[0].getRoot().searchChild(ctx, getParentNode());
 			}
 			for (int i = 0; i < children.length; i++) {
-				if (!out.contains(children[i].getId())) {
-					if (parentNode == null || children[i].isChildOf(parentNode)) {
-						selectedPage.add(children[i].getId());
+				if (children[i].isActive(ctx)) {
+					if (!out.contains(children[i].getId())) {
+						if (parentNode == null || children[i].isChildOf(parentNode)) {
+							selectedPage.add(children[i].getId());
+						}
 					}
 				}
 			}
@@ -1622,7 +1630,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 	protected String getOnlyWithoutChildrenInputName() {
 		return "only-without-children-" + getId();
 	}
-	
+
 	protected String getEventInputName() {
 		return getInputName("event");
 	}
@@ -1725,7 +1733,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 	private boolean isOnlyPageWithoutChildren() {
 		return StringHelper.isTrue(properties.getProperty(ONLY_PAGE_WITHOUT_CHILDREN, "false"));
 	}
-	
+
 	private boolean isOnlyEvent() {
 		return StringHelper.isTrue(properties.getProperty(ONLY_EVENT, "false"));
 	}
@@ -1797,7 +1805,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		if (isReverseOrder(ctx)) {
 			ascending = !ascending;
 		}
-		
+
 		if (!isNoOrder(ctx)) {
 			if (isReactionOrder(ctx)) {
 				Collections.sort(pages, new ReactionMenuElementComparator(ctx, ascending));
@@ -1818,7 +1826,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 					popularitySorting(ctx, pages, getMaxNews(ctx));
 				}
 			}
-		} else {			
+		} else {
 			Collections.sort(pages, new MenuElementPriorityComparator(!ascending));
 		}
 
@@ -1936,8 +1944,8 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 	public static void main(String[] args) {
 		Date date = new Date();
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-		System.out.println("date : "+format.format(date));
-		
+		System.out.println("date : " + format.format(date));
+
 	}
 
 	private void popularitySorting(ContentContext ctx, List<MenuElement> pages, int pertinentPageToBeSort) throws Exception {
@@ -2024,13 +2032,13 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 				setReverseOrder(newReserveOrder);
 				setModify();
 			}
-			
+
 			String eventOnly = requestService.getParameter(getEventInputName(), "false");
-			boolean newEventOnly = StringHelper.isTrue(eventOnly);			
+			boolean newEventOnly = StringHelper.isTrue(eventOnly);
 			if (isOnlyEvent() != newEventOnly) {
 				setEventOnly(newEventOnly);
 				setModify();
-			}			
+			}
 
 			String firstPageNumber = requestService.getParameter(getFirstPageNumberInputName(), "1");
 			if (!firstPageNumber.equals("" + getFirstPageNumber())) {
@@ -2145,7 +2153,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 	protected void setReverseOrder(boolean reverseOrder) {
 		properties.setProperty(CHANGE_ORDER_KEY, "" + reverseOrder);
 	}
-	
+
 	protected void setEventOnly(boolean onlyEvent) {
 		properties.setProperty(ONLY_EVENT, "" + onlyEvent);
 	}
