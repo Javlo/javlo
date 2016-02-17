@@ -26,7 +26,8 @@ import org.javlo.service.DynamicComponentService;
 import org.javlo.service.RequestService;
 
 /**
- * Display a search for in view mode. <h4>exposed variables :</h4>
+ * Display a search for in view mode.
+ * <h4>exposed variables :</h4>
  * <ul>
  * <li>{@link Field} fields : list of search field.</li>
  * </ul>
@@ -36,7 +37,7 @@ import org.javlo.service.RequestService;
 public class DynamicComponentFilter extends AbstractPropertiesComponent implements IAction {
 
 	public static final String TYPE = "dynamic-component-filter";
-	
+
 	private static final String STYLE_ALL = "default_all";
 
 	private Boolean realContent = null;
@@ -45,10 +46,10 @@ public class DynamicComponentFilter extends AbstractPropertiesComponent implemen
 	public String getType() {
 		return TYPE;
 	}
-	
+
 	@Override
-	public String[] getStyleList(ContentContext ctx) {	
-		return new String[] {"default_none", STYLE_ALL};
+	public String[] getStyleList(ContentContext ctx) {
+		return new String[] { "default_none", STYLE_ALL };
 	}
 
 	@Override
@@ -60,7 +61,7 @@ public class DynamicComponentFilter extends AbstractPropertiesComponent implemen
 	@Override
 	protected String getEditXHTMLCode(ContentContext ctx) throws Exception {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-		DynamicComponentService service = DynamicComponentService.getInstance(globalContext);		
+		DynamicComponentService service = DynamicComponentService.getInstance(globalContext);
 
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(outStream);
@@ -69,7 +70,7 @@ public class DynamicComponentFilter extends AbstractPropertiesComponent implemen
 		List<String> container = service.getAllType(ctx, content.getNavigation(ctx));
 
 		out.println(XHTMLHelper.getInputOneSelect(createKeyWithField("type"), container, getSelectedType()));
-		
+
 		out.close();
 		return new String(outStream.toByteArray());
 	}
@@ -119,29 +120,31 @@ public class DynamicComponentFilter extends AbstractPropertiesComponent implemen
 			out.println("<ul class=\"filter-list\">");
 			ctx.getRequest().setAttribute("inList", true);
 			for (IFieldContainer container : containers) {
-				boolean display = true;
-				List<Field> fields = container.getFields(ctx);
-				for (Field field : fields) {
-					Field searchField = fieldsSearch.get(field.getName());					
-					if (searchField != null && searchField.getValue() != null && searchField.getValue().trim().length() > 0) {
-						if (!field.search(ctx,searchField.getValue().trim())) {
-							display = false;
+				if (container.isRealContent(ctx)) {
+					boolean display = true;
+					List<Field> fields = container.getFields(ctx);
+					for (Field field : fields) {
+						Field searchField = fieldsSearch.get(field.getName());
+						if (searchField != null && searchField.getValue() != null && searchField.getValue().trim().length() > 0) {
+							if (!field.search(ctx, searchField.getValue().trim())) {
+								display = false;
+							}
 						}
 					}
-				}
-				if (display) {
-					realContent = true;
-					out.println("<li class=\"dynamic-component\">");
-					out.println(container.getPrefixViewXHTMLCode(ctx));
-					out.println(container.getViewListXHTMLCode(ctx));
-					out.println(container.getSuffixViewXHTMLCode(ctx));
-					out.println("</li>");
+					if (display) {
+						realContent = true;
+						out.println("<li class=\"dynamic-component\">");
+						out.println(container.getPrefixViewXHTMLCode(ctx));
+						out.println(container.getViewListXHTMLCode(ctx));
+						out.println(container.getSuffixViewXHTMLCode(ctx));
+						out.println("</li>");
+					}
 				}
 			}
 			ctx.getRequest().removeAttribute("inList");
 			out.println("</ul>");
 			if (!realContent) {
-				out.println("<div class=\"alert alert-warning\" role=\"alert\">"+i18nAccess.getViewText("global.no-result")+"</div>");
+				out.println("<div class=\"alert alert-warning\" role=\"alert\">" + i18nAccess.getViewText("global.no-result") + "</div>");
 			}
 		}
 		out.close();
@@ -152,7 +155,7 @@ public class DynamicComponentFilter extends AbstractPropertiesComponent implemen
 	private String getSelectedType() {
 		return properties.getProperty("type");
 	}
-	
+
 	IFieldContainer getFieldContainer(ContentContext ctx) throws Exception {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		DynamicComponentService service = DynamicComponentService.getInstance(globalContext);
@@ -228,7 +231,7 @@ public class DynamicComponentFilter extends AbstractPropertiesComponent implemen
 		DynamicComponentFilter comp = (DynamicComponentFilter) ComponentHelper.getComponentFromRequest(ctx);
 		for (Field field : comp.getSearchField(ctx)) {
 			List<String> values = rs.getParameterListValues(field.getInputName(), null);
-			if(values != null && values.size() > 0) {
+			if (values != null && values.size() > 0) {
 				field.setValues(values);
 			} else {
 				field.setValue(rs.getParameter(field.getInputName(), ""));
