@@ -37,6 +37,7 @@ import org.javlo.mailing.MailService;
 import org.javlo.mailing.MailingBuilder;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.resource.Resource;
+import org.javlo.service.resource.VisualResource;
 import org.javlo.template.Template;
 import org.javlo.user.IUserFactory;
 import org.javlo.utils.MapCollectionWrapper;
@@ -78,7 +79,7 @@ public class NetHelper {
 		return readPage(url, false, false, null, null, null, null, false);
 	}
 
-	public static String readPageGet(URLConnection conn) throws Exception {		
+	public static String readPageGet(URLConnection conn) throws Exception {
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		InputStream in = null;
 		try {
@@ -131,12 +132,12 @@ public class NetHelper {
 			HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 			connection.setRequestMethod("POST");
 			connection.setRequestProperty("Content-Type", "application/json");
-			
+
 			byte[] bytes = json.getBytes(ContentContext.CHARSET_DEFAULT);
 
 			connection.setRequestProperty("Content-Length", "" + Integer.toString(bytes.length));
 			connection.setRequestProperty("Accept-Charset", ContentContext.CHARACTER_ENCODING);
-			
+
 			for (Map.Entry<String, String> entry : header.entrySet()) {
 				connection.setRequestProperty(entry.getKey(), entry.getValue());
 			}
@@ -422,8 +423,8 @@ public class NetHelper {
 		return userAgent.contains("robo");
 	}
 
-	public static List<Resource> extractImage(URL inURL, String content) {
-		List<Resource> urlList = new LinkedList<Resource>();
+	public static List<VisualResource> extractImage(URL inURL, String content, boolean needSize) {
+		List<VisualResource> urlList = new LinkedList<VisualResource>();
 
 		int srcIndex = content.toLowerCase().indexOf("src=\"") + "src=\"".length();
 		while (srcIndex >= "src=\"".length()) {
@@ -431,15 +432,12 @@ public class NetHelper {
 			int closeTag = content.indexOf(">", srcIndex + 1);
 			if (closeLink >= 0) {
 				String url = content.substring(srcIndex, closeLink);
-
 				int altIndex = content.toLowerCase().indexOf("alt=\"", srcIndex) + "alt=\"".length();
 				String description = "";
 				if (altIndex >= "alt=\"".length() && altIndex < closeTag) {
 					description = content.substring(altIndex, content.indexOf("\"", altIndex + 1));
 				}
-
 				if (StringHelper.isImage(url)) {
-
 					if (!URLHelper.isAbsoluteURL(url)) {
 						if (!url.trim().startsWith("/")) {
 							url = URLHelper.mergePath(URLHelper.extractPath(inURL.toString()), url);
@@ -447,13 +445,31 @@ public class NetHelper {
 							url = "http://" + URLHelper.mergePath(URLHelper.extractHost(inURL.toString()), url);
 						}
 					}
-
-					Resource res = new Resource();
+					VisualResource res = new VisualResource();
 					res.setId(url);
 					res.setUri(url);
 					res.setName(StringHelper.getFileNameFromPath(url));
 					res.setDescription(StringHelper.removeTag(description));
-					urlList.add(res);
+					if (needSize) {
+						ByteArrayOutputStream out = null;
+						InputStream in = null;
+						try {
+							out = new ByteArrayOutputStream();
+							in = new URL(url).openStream();
+							ResourceHelper.writeStreamToStream(in, out);							
+							res.setSize(out.toByteArray().length);
+							ByteArrayInputStream localIn = new ByteArrayInputStream(out.toByteArray());
+							BufferedImage image = ImageIO.read(localIn);
+							localIn.close();
+							res.setWidth(image.getWidth());
+							res.setHeight(image.getHeight());
+							urlList.add(res);
+						} catch (Exception e) {
+							e.printStackTrace();
+						} finally {
+							ResourceHelper.closeResource(in, out);
+						}
+					}
 				}
 			}
 			srcIndex = content.toLowerCase().indexOf("src=\"", srcIndex) + "src=\"".length();

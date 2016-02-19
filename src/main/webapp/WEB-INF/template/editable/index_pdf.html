@@ -14,6 +14,12 @@
     -fs-pdf-font-embed: embed;
     -fs-pdf-font-encoding: Identity-H;
 }
+@font-face {
+    font-family: Arial;
+    src: url("${info.absoluteTemplateFolder}/css/fonts/arial.ttf");
+    -fs-pdf-font-embed: embed;
+    -fs-pdf-font-encoding: Identity-H;
+}
 
 <c:set var="template" value="${info.template.style}" scope="request" />
 body .wrapper {

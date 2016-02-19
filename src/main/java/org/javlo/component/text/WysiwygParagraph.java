@@ -137,9 +137,4 @@ public class WysiwygParagraph extends AbstractVisualComponent {
 		return null;
 	}
 	
-	@Override
-	protected String getDefaultHelpURI(ContentContext ctx) {
-		return null;
-	}
-
 }

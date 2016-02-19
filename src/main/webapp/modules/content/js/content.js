@@ -160,7 +160,8 @@ function clipboardCopy(text) {
 function smartLinkAction(item) {
 	var parent = jQuery(item).parent();		
 	while (parent != null && !jQuery(parent).is("form")) {
-		parent = jQuery(parent).parent();		
+		parent = jQuery(parent).parent();	
+		parent.find(".waiting").css('display', 'block');
 	}
 	var urlPrefix = jQuery(parent).attr("action");
 	
@@ -180,7 +181,7 @@ function smartLinkAction(item) {
 				var url = urlPrefix+"&webaction=smartlink.loadlink&url="+jQuery(item).val()+"&comp_id="+compId;
 			}
 		}
-		ajaxRequest(url, null);
+		ajaxRequest(url, null, function() {jQuery(".waiting").css('display', 'none');});
 	}
 }
 
@@ -232,14 +233,18 @@ function displayFigureSize(figure) {
 function imageChoice(compId) {
 	var firstElement = true;
 	var index = 1;
+	url = jQuery("#"+compId+" .image-field").val();
 	jQuery("#"+compId+" .choice-images li").each(function() {
-		if (firstElement) {
+		if (firstElement && url.length == 0) {
 			jQuery(this).addClass("active");
 			firstElement = false;			
 			displayFigureSize(jQuery(this).find("figure"));
 		}		
-		
 		var item = jQuery(this);
+		if (item.find("img").attr('src') == url) {
+			jQuery(this).addClass("active");			
+			displayFigureSize(jQuery(this).find("figure"));
+		}
 		item.addClass("item-"+index);		
 		var js = 'selectNextItem("'+compId+'",'+index+')';
 		js = js.replace(/"/g, "'");		

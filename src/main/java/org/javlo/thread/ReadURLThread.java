@@ -9,6 +9,7 @@ import org.javlo.helper.NetHelper;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.service.resource.Resource;
+import org.javlo.service.resource.VisualResource;
 
 public class ReadURLThread extends AbstractThread {
 
@@ -38,7 +39,7 @@ public class ReadURLThread extends AbstractThread {
 			log = "read : " + url;
 			String content = NetHelper.readPage(url);
 			if (StringHelper.isTrue(getField(READ_IMAGE))) {
-				List<Resource> images = NetHelper.extractImage(url, content);
+				List<VisualResource> images = NetHelper.extractImage(url, content, false);
 				for (Resource image : images) {
 					URL imageUrl = new URL(image.getUri());
 					ByteArrayOutputStream out = new ByteArrayOutputStream();

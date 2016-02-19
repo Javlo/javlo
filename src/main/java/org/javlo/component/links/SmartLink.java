@@ -4,6 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.net.URL;
 import java.text.ParseException;
+import java.util.Collection;
 import java.util.Date;
 
 import javax.servlet.ServletContext;
@@ -13,6 +14,7 @@ import org.javlo.component.core.ComplexPropertiesLink;
 import org.javlo.component.core.ILink;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
+import org.javlo.data.InfoBean;
 import org.javlo.helper.NetHelper;
 import org.javlo.helper.ServletHelper;
 import org.javlo.helper.StringHelper;
@@ -22,6 +24,7 @@ import org.javlo.module.core.Module;
 import org.javlo.module.core.ModulesContext;
 import org.javlo.service.ContentService;
 import org.javlo.service.RequestService;
+import org.javlo.service.resource.VisualResource;
 
 public class SmartLink extends ComplexPropertiesLink implements ILink, IAction {
 
@@ -48,7 +51,7 @@ public class SmartLink extends ComplexPropertiesLink implements ILink, IAction {
 	public String getTitleInputName() {
 		return "title_" + getId();
 	}
-	
+
 	public String getDateInputName() {
 		return "date_" + getId();
 	}
@@ -113,10 +116,10 @@ public class SmartLink extends ComplexPropertiesLink implements ILink, IAction {
 	public void setImageURL(String url) {
 		properties.setProperty("image", url);
 	}
-	
+
 	@Override
 	public String getTextForSearch(ContentContext ctx) {
-		return getValue(ctx)+' '+getDescription()+' '+getTitle()+' '+getURL()+' '+getImageURL();
+		return getValue(ctx) + ' ' + getDescription() + ' ' + getTitle() + ' ' + getURL() + ' ' + getImageURL();
 	}
 
 	@Override
@@ -124,16 +127,20 @@ public class SmartLink extends ComplexPropertiesLink implements ILink, IAction {
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(outStream);
 		if (getDate().trim().length() > 0) {
-			out.println("<span class=\"date\">" + StringHelper.renderDate(getTime()) + "<span>" + StringHelper.renderTimeOnly(getTime()) + "</span></span>");
+			String time = "";
+			if (!StringHelper.renderTimeOnly(getTime()).equals("00:00:00")) {
+				time = "<span class=\"time\"> " + StringHelper.renderTimeOnly(getTime()) + "</span>";
+			}
+			out.println("<span class=\"date\">" + StringHelper.renderDate(getTime()) + time + "</span>");
 		}
 		out.println("<a class=\"" + getType() + "\" href=\"" + getURL() + "\">");
 		out.println("<h4>" + getTitle() + "</h4>");
-		out.println("</a>");		
+		out.println("</a>");
 
 		out.println("<div class=\"row\"><div class=\"col-sm-3\">");
-		
+
 		out.println("<figure><img class=\"img-responsive\" src=\"" + getImageURL() + "\" /></figure></div><div class=\"col-sm-9\">");
-		
+
 		out.println("<p>" + getDescription() + "</p>");
 		out.println("</div></div>");
 		out.close();
@@ -163,6 +170,14 @@ public class SmartLink extends ComplexPropertiesLink implements ILink, IAction {
 				ctx.getRequest().setAttribute("date", getDate());
 				String xhtml = ServletHelper.executeJSP(ctx, renderer);
 				out.println(xhtml);
+			} else {
+				out.println("<div class=\"waiting\" style=\"display: none;\">");
+				out.println("<div class=\"row\">");
+				out.println("<div class=\"col-sm-5\">&nbsp;</div>");
+				out.println("<div class=\"col-sm-2\"><img src=\""+InfoBean.getCurrentInfoBean(ctx).getAjaxLoaderURL()+"\" alt=\"waiting...\" /></div>");
+				out.println("<div class=\"col-sm-5\">&nbsp;</div>");
+				out.println("</div>");
+				out.println("</div>");
 			}
 			out.println("</div>");
 			out.println("</div>");
@@ -188,7 +203,19 @@ public class SmartLink extends ComplexPropertiesLink implements ILink, IAction {
 				String remoteXHTML = NetHelper.readPageWithGet(sourceURL);
 				ctx.getRequest().setAttribute("title", NetHelper.getPageTitle(remoteXHTML));
 				ctx.getRequest().setAttribute("description", NetHelper.getPageDescription(remoteXHTML));
-				ctx.getRequest().setAttribute("images", NetHelper.extractImage(sourceURL, remoteXHTML));
+				Collection<VisualResource> images = NetHelper.extractImage(sourceURL, remoteXHTML, true);
+				int biggerImageSize = 0;
+				VisualResource biggerImage = null;
+				for (VisualResource resource : images) {
+					if (biggerImageSize < resource.getWidth()*resource.getHeight()) {
+						biggerImageSize = resource.getWidth()*resource.getHeight();
+						biggerImage = resource;
+					}
+				}
+				if (biggerImage != null) {
+					comp.setImageURL(biggerImage.getUri());
+				}
+				ctx.getRequest().setAttribute("images", images);
 				ctx.getRequest().setAttribute("comp", comp);
 				ctx.getRequest().setAttribute("image", comp.getImageURL());
 				ctx.getRequest().setAttribute("date", StringHelper.renderTime(new Date(NetHelper.readDate(sourceURL))));
@@ -209,6 +236,7 @@ public class SmartLink extends ComplexPropertiesLink implements ILink, IAction {
 
 	@Override
 	public String performEdit(ContentContext ctx) throws Exception {
+		String oldValue = getValue();
 		RequestService rs = RequestService.getInstance(ctx.getRequest());
 		setURL(rs.getParameter(getURLInputName(), ""));
 		setImageURL(rs.getParameter(getImageInputName(), ""));
@@ -216,6 +244,9 @@ public class SmartLink extends ComplexPropertiesLink implements ILink, IAction {
 		setTitle((rs.getParameter(getTitleInputName(), "")));
 		setDate((rs.getParameter(getDateInputName(), "")));
 		storeProperties();
+		if (oldValue.equals(getValue())) {
+			setModify();
+		}
 		return null;
 	}
 
