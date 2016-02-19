@@ -940,6 +940,10 @@ public class XMLManipulationHelper {
 
 		StringWriter outString = new StringWriter();
 		BufferedWriter out = new BufferedWriter(outString);
+		
+		out.append("<%if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE) {%>");
+		out.append("<style type=\"text/css\">@font-face {font-family: \"javloFont\"; src: url('${info.staticRootURL}fonts/Javlo-Italic.ttf') format(\"truetype\");}</style>");
+		out.append("<%}%>");
 
 		out.append("<%if (ctx.getRenderMode() != ContentContext.PAGE_MODE) {%>");
 		out.newLine();
