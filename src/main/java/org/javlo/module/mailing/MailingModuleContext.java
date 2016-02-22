@@ -283,6 +283,8 @@ public class MailingModuleContext extends AbstractModuleContext {
 		m.setSmtpUser(ctx.getGlobalContext().getSMTPUser());		
 		m.setSmtpPassword(ctx.getGlobalContext().getSMTPPassword());
 		
+		m.setTest(isTestMailing());
+		
 		StaticConfig sc = ctx.getGlobalContext().getStaticConfig();
 		String content;
 		if (sc.getApplicationLogin() != null) {			

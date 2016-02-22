@@ -34,6 +34,7 @@
 			<tbody>
 				
 				<c:forEach var="mailing" items="${allMailing}">
+				<c:if test="${!mailing.test}">
 				<tr>
 					<td class="con0"></td>
 					<td class="con1">${mailing.from}</td>
@@ -43,7 +44,8 @@
 					<td class="con1">${mailing.countForward}</td>
 					<td class="con0">${mailing.countUnsubscribe}</td>
 					<td class="con1">${mailing.dateString}</td>
-				</tr>					
+				</tr>			
+				</c:if>		
 				</c:forEach>
 				
 			</tbody>

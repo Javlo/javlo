@@ -629,3 +629,9 @@ change log
  * list of template usage in master mode
  
  * delete old xml file on internet instance after synchronization 
+ 
+ * check url extension
+ 
+ * large separation
+ 
+ * test mailing boolean stored
