@@ -30,6 +30,7 @@ import org.javlo.message.MessageRepository;
 import org.javlo.navigation.MenuElement;
 import org.javlo.search.SearchResult.SearchElement.Component;
 import org.javlo.service.ContentService;
+import org.owasp.encoder.Encode;
 
 /**
  * @author pvandermaesen
@@ -519,7 +520,7 @@ public class SearchResult {
 
 	public String getQuery() {
 		if (query != null) {
-			return StringHelper.removeTag(query);
+			return Encode.forHtmlAttribute(query);
 		} else {
 			return null;
 		}

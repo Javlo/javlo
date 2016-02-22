@@ -3,7 +3,7 @@
 %>
 <div class="smart-link-body choice-images">
 <div class="row"><div class="col-sm-3">
-<input class="image-field" type="hidden" name="${comp.imageInputName}" value="${comp.imageURL}" />
+<input class="image-field" type="hidden" name="" value="${comp.imageURL}" />
 <c:if test="${fn:length(images)>0}">	
 	
 	<ul>

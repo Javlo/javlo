@@ -13,6 +13,7 @@ import java.net.NoRouteToHostException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.UnknownHostException;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -355,11 +356,17 @@ public class NetHelper {
 	 * @return code returned by the http request on the URL.
 	 * @throws IOException
 	 */
-	public static String readPageWithGet(URL url) throws Exception {
+	public static String readPageWithGet(URL url) {
+		if (url == null) {
+			return "";
+		}
 		InputStream in = null;
 		try {
 			in = url.openConnection().getInputStream();
 			return ResourceHelper.writeStreamToString(in, ContentContext.CHARACTER_ENCODING);
+		} catch (Exception e) {
+			logger.warning(e.getMessage());
+			return null;
 		} finally {
 			ResourceHelper.closeResource(in);
 		}
@@ -383,6 +390,10 @@ public class NetHelper {
 	 * @return the title of the page.
 	 */
 	public static String getPageTitle(String content) {
+		
+		if (content == null) {
+			return "";
+		}
 
 		String contentLowerCase = content.toLowerCase();
 		int indexTitleStart = contentLowerCase.indexOf("<title>");
@@ -402,6 +413,9 @@ public class NetHelper {
 	 * @return the title of the page.
 	 */
 	public static String getPageDescription(String content) {
+		if (content == null) {
+			return "";
+		}
 		String contentLowerCase = content.toLowerCase();
 		int indexDescriptionStart = contentLowerCase.indexOf("name=\"description\"");
 		if (indexDescriptionStart < 0) {
@@ -424,6 +438,9 @@ public class NetHelper {
 	}
 
 	public static List<VisualResource> extractImage(URL inURL, String content, boolean needSize) {
+		if (content == null) {
+			return Collections.EMPTY_LIST;
+		}
 		List<VisualResource> urlList = new LinkedList<VisualResource>();
 
 		int srcIndex = content.toLowerCase().indexOf("src=\"") + "src=\"".length();

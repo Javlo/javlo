@@ -13,6 +13,7 @@ import org.javlo.i18n.I18nAccess;
  */
 public class ContentSeparation extends AbstractVisualComponent {
 	
+	private static final String HIDDEN_SEPARATION = "hidden-separation";
 	public static final String TYPE = "separation";
 
 	@Override
@@ -27,7 +28,7 @@ public class ContentSeparation extends AbstractVisualComponent {
 	
 	@Override
 	public void prepareView(ContentContext ctx) throws Exception {
-		ctx.getRequest().setAttribute("hidden", getStyle().equals("hidden-separation"));
+		ctx.getRequest().setAttribute("hidden", getStyle().equals(HIDDEN_SEPARATION));
 	}
 
 	/**
@@ -54,21 +55,23 @@ public class ContentSeparation extends AbstractVisualComponent {
 	
 	@Override
 	public String[] getStyleList(ContentContext ctx) {
-		return new String[] { "hidden-separation", "visible-separation"  };
+		return new String[] { HIDDEN_SEPARATION, "visible-separation", "visible-large"  };
 	}
 	
 	@Override
 	public String[] getStyleLabelList(ContentContext ctx) {
 		String visible = "visible";
 		String hidden = "hidden";		
+		String large = "large";
 		try {
 			I18nAccess i18n = I18nAccess.getInstance(ctx.getRequest());
 			visible = i18n.getText("global.visible");
 			hidden = i18n.getText("global.hidden");
+			large = i18n.getText("global.visible-large", large);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return new String[] { hidden, visible };
+		return new String[] { hidden, visible, large };
 	}
 	
 	public String getCSSClassName(ContentContext ctx) {
@@ -92,7 +95,7 @@ public class ContentSeparation extends AbstractVisualComponent {
 	
 	@Override
 	public String getEmptyXHTMLCode(ContentContext ctx) throws Exception {
-		if (getStyle().equals("hidden-separation")) {
+		if (getStyle().equals(HIDDEN_SEPARATION)) {
 			return super.getEmptyXHTMLCode(ctx);
 		} else {
 			return renderViewXHTMLCode(ctx);

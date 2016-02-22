@@ -252,6 +252,12 @@ public class AccessServlet extends HttpServlet implements IVersion {
 			Thread.currentThread().setName("AccessServlet-" + globalContext.getContextKey());
 
 			ContentContext ctx = ContentContext.getContentContext(request, response);
+			
+			if (!staticConfig.isContentExtensionValid(ctx.getFormat())) {
+				ctx.setFormat(staticConfig.getDefaultContentExtension());
+				ctx.setContentFound(false);				
+			}
+			
 			if (ctx.getCurrentEditUser() != null) {
 				// edit edit info bean
 				EditInfoBean.getCurrentInfoBean(ctx);
@@ -286,7 +292,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 			}
 
 			/** get info from system to browser **/
-			if (ctx.getCurrentEditUser() != null && request != null && request.getPathInfo() != null && request.getPathInfo().endsWith("info.txt")) {
+			if (ctx.getCurrentEditUser() != null && request.getPathInfo() != null && request.getPathInfo().endsWith("info.txt")) {
 				response.setContentType("text/plain");
 				PrintStream out = new PrintStream(response.getOutputStream());
 				writeInfo(out);

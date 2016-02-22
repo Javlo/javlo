@@ -526,7 +526,7 @@ public class URLHelper extends ElementaryURLHelper {
 			return null;
 		}
 		url = url.replace('\\', '/');
-		url = URLHelper.mergePath(TRANSFORM, filter, template + ImageTransformServlet.LOCAL_TEMPLATE_SUFFIX, ctx.getGlobalContext().getContextKey(), url);
+		url = URLHelper.mergePath(TRANSFORM, filter, template + ImageTransformServlet.LOCAL_TEMPLATE_SUFFIX, ctx.getGlobalContext().getContextKey(), url);		
 		return createStaticURL(ctx, url);
 	}
 

@@ -137,10 +137,14 @@ public class SmartLink extends ComplexPropertiesLink implements ILink, IAction {
 		out.println("<h4>" + getTitle() + "</h4>");
 		out.println("</a>");
 
-		out.println("<div class=\"row\"><div class=\"col-sm-3\">");
-
-		out.println("<figure><img class=\"img-responsive\" src=\"" + getImageURL() + "\" /></figure></div><div class=\"col-sm-9\">");
-
+		String url = getImageURL();
+		out.println("<div class=\"row\">");
+		int colSize = 12;
+		if (!StringHelper.isEmpty(url)) {
+			colSize=9;
+			out.println("<div class=\"col-sm-3\"><figure><img class=\"img-responsive\" src=\"" + getImageURL() + "\" /></figure></div>");	
+		}		
+		out.println("<div class=\"col-sm-"+colSize+"\">");
 		out.println("<p>" + getDescription() + "</p>");
 		out.println("</div></div>");
 		out.close();
@@ -200,7 +204,7 @@ public class SmartLink extends ComplexPropertiesLink implements ILink, IAction {
 			SmartLink comp = (SmartLink) content.getComponent(ctx, rs.getParameter("comp_id", null));
 			if (comp != null) {
 				URL sourceURL = new URL(url);
-				String remoteXHTML = NetHelper.readPageWithGet(sourceURL);
+				String remoteXHTML = NetHelper.readPageWithGet(sourceURL);				
 				ctx.getRequest().setAttribute("title", NetHelper.getPageTitle(remoteXHTML));
 				ctx.getRequest().setAttribute("description", NetHelper.getPageDescription(remoteXHTML));
 				Collection<VisualResource> images = NetHelper.extractImage(sourceURL, remoteXHTML, true);
@@ -238,11 +242,13 @@ public class SmartLink extends ComplexPropertiesLink implements ILink, IAction {
 	public String performEdit(ContentContext ctx) throws Exception {
 		String oldValue = getValue();
 		RequestService rs = RequestService.getInstance(ctx.getRequest());
-		setURL(rs.getParameter(getURLInputName(), ""));
+		
+		System.out.println("***** SmartLink.performEdit : rs.getParameter(getImageInputName(), '') = "+rs.getParameter(getImageInputName(), "")); //TODO: remove debug trace
 		setImageURL(rs.getParameter(getImageInputName(), ""));
 		setDescription((rs.getParameter(getDescriptionInputName(), "")));
 		setTitle((rs.getParameter(getTitleInputName(), "")));
 		setDate((rs.getParameter(getDateInputName(), "")));
+		setURL(rs.getParameter(getURLInputName(), ""));
 		storeProperties();
 		if (oldValue.equals(getValue())) {
 			setModify();

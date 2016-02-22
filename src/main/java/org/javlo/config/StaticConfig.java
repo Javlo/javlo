@@ -9,6 +9,7 @@ import java.net.Proxy;
 import java.net.ProxySelector;
 import java.net.URI;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -49,7 +50,7 @@ public class StaticConfig extends Observable {
 
 	public static String WEB_PLATFORM = "web";
 	public static String MAILING_PLATFORM = "mailing";
-	private static final List<String> PLATFORMS = new LinkedList<String>(Arrays.asList(new String[] {WEB_PLATFORM, MAILING_PLATFORM}));
+	private static final List<String> PLATFORMS = new LinkedList<String>(Arrays.asList(new String[] { WEB_PLATFORM, MAILING_PLATFORM }));
 
 	protected static Logger logger = Logger.getLogger(StaticConfig.class.getName());
 
@@ -77,6 +78,8 @@ public class StaticConfig extends Observable {
 	private static final String HOME = System.getProperty("user.home");
 
 	private Set<String> excludeContextDomain = null;
+
+	private Set<String> contentExtension = null;
 
 	/**
 	 * @Deprecated use getInstance (ServletContext application)
@@ -533,7 +536,6 @@ public class StaticConfig extends Observable {
 		return properties.getBoolean("image.short-url", false);
 	}
 
-
 	public boolean testInstance() {
 		return getEnv().equals("dev") || getEnv().equals("local");
 	}
@@ -857,17 +859,12 @@ public class StaticConfig extends Observable {
 		return properties.getString("security.secret-key", "fju43l7m");
 	}
 
-	/*public String getShareDataFolder() {
-		String folder = getLocalShareDataFolder();
-		if (isDataFolderRelative()) {
-			folder = application.getRealPath(folder);
-		}
-		File file = new File(folder);
-		if (!file.exists()) {
-			file.mkdirs();
-		}
-		return folder;
-	}*/
+	/*
+	 * public String getShareDataFolder() { String folder =
+	 * getLocalShareDataFolder(); if (isDataFolderRelative()) { folder =
+	 * application.getRealPath(folder); } File file = new File(folder); if
+	 * (!file.exists()) { file.mkdirs(); } return folder; }
+	 */
 
 	public String getShareDataFolderKey() {
 		return properties.getString("share-folder-key", "___share-files___");
@@ -1112,7 +1109,7 @@ public class StaticConfig extends Observable {
 	public boolean isMailingWidthUserInfo() {
 		return properties.getBoolean("mailing.users", true);
 	}
-	
+
 	public boolean isMailingUserTracking() {
 		return properties.getBoolean("mailing.tracking", true);
 	}
@@ -1182,6 +1179,7 @@ public class StaticConfig extends Observable {
 			devices = null;
 			excludeContextDomain = null;
 			encryptedFirstPassword = null;
+			contentExtension = null;
 		}
 	}
 
@@ -1252,7 +1250,6 @@ public class StaticConfig extends Observable {
 		return properties.getString("manual-error.email", getSiteEmail());
 	}
 
-
 	public String getHelpURL() {
 		return properties.getString("site.help-url", "http://help.javlo.org/");
 	}
@@ -1316,6 +1313,7 @@ public class StaticConfig extends Observable {
 
 	/**
 	 * if page not found, search a page with the same name and redirect to it.
+	 * 
 	 * @return
 	 */
 	public boolean isRedirectWidthName() {
@@ -1327,8 +1325,10 @@ public class StaticConfig extends Observable {
 	}
 
 	/**
-	 * default mode of the edit template (mode is defined in GlobalContext), can be used in template renderer for include special css or js.
-	 * preview css is : edit_preview_[mode].css
+	 * default mode of the edit template (mode is defined in GlobalContext), can
+	 * be used in template renderer for include special css or js. preview css
+	 * is : edit_preview_[mode].css
+	 * 
 	 * @return
 	 */
 	public String getEditTemplateMode() {
@@ -1340,8 +1340,9 @@ public class StaticConfig extends Observable {
 	}
 
 	/**
-	 * return time between 2 modification check in second.
-	 * default : 5 minutes (300 sec.)
+	 * return time between 2 modification check in second. default : 5 minutes
+	 * (300 sec.)
+	 * 
 	 * @return
 	 */
 	public int getTimeBetweenChangeNotification() {
@@ -1362,6 +1363,7 @@ public class StaticConfig extends Observable {
 
 	/**
 	 * all image uploaded was resize under this max-size
+	 * 
 	 * @return
 	 */
 	public int getImageMaxWidth() {
@@ -1420,6 +1422,30 @@ public class StaticConfig extends Observable {
 		return properties.getString("resources.cache-time", "240");
 	}
 
+	public boolean isContentExtensionValid(String ext) {
+		if (ext == null) {
+			return false;
+		} else {
+			if (contentExtension == null) {
+				String rawExtension = properties.getString("content.extension", "html,pdf,png,jpg");
+				if (rawExtension.trim().length() == 0 || rawExtension.trim().equals("*")) {
+					contentExtension = Collections.EMPTY_SET;
+				} else {
+					contentExtension = new HashSet<String>(StringHelper.stringToCollection(rawExtension, ","));
+				}
+			}
+			if (contentExtension.size() == 0) {
+				return true;
+			} else {
+				return contentExtension.contains(ext.toLowerCase());
+			}
+		}
+	}
+	
+	public String getDefaultContentExtension() {
+		return properties.getString("content.default-extension", "html");
+	}
+
 	public String getJSLibPreview() {
 		return properties.getString("preview.lib.js", null);
 	}
@@ -1443,11 +1469,11 @@ public class StaticConfig extends Observable {
 	public boolean isEditOnCreate() {
 		return StringHelper.isTrue(properties.getString("content.edit-on-create", null), false);
 	}
-	
+
 	public boolean isRestServlet() {
 		return StringHelper.isTrue(properties.getString("security.rest-servlet", null), true);
 	}
-	
+
 	public boolean isHighSecure() {
 		return StringHelper.isTrue(properties.getString("security.high", null), false);
 	}
@@ -1455,10 +1481,9 @@ public class StaticConfig extends Observable {
 	public String getSpecialLogFile() {
 		return properties.getString("debug.special-file", "/tmp/javlo.log");
 	}
-	
+
 	public Integer getUndoDepth() {
 		return properties.getInteger("content.undo-depth", null);
 	}
-	
-	
+
 }
