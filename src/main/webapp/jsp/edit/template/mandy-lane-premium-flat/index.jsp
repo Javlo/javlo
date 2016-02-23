@@ -48,9 +48,6 @@
     font-family: "javloFont";
     src: url('${info.staticRootURL}/fonts/Javlo-Italic.ttf') format("truetype");
 }
-p.customfont { 
-    font-family: "My Custom Font", Verdana, Tahoma;
-}
 </style>
 
 <c:if test="${not empty globalContext.editTemplateMode}"><link rel="stylesheet" media="screen" href="${info.editTemplateURL}/css/edit_${globalContext.editTemplateMode}.css" /></c:if>

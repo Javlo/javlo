@@ -23,12 +23,16 @@ import org.javlo.service.RequestService;
 public class OpenMultiList extends Field {
 
 	public String getListName() {
-		return properties.getProperty("field." + getUnicName() + ".list");
+		return properties.getProperty("field." + getUnicName() + ".list", getUnicName());
 	}
 
 	@Override
 	public String getDisplayValue(ContentContext ctx, Locale locale) throws Exception {
-		return "<span class=\"" + StringHelper.createFileName(getValue()) + "\">" + StringHelper.neverNull(getList(ctx, getListName(), locale).get(getValue()), "&nbsp;") + "</span>";
+		if (getValue() == null) {
+			return "";
+		} else {
+			return "<span class=\"" + StringHelper.createFileName(getValue()) + "\">" + StringHelper.collectionToString(getValues(), ", ") + "</span>";
+		}
 	}
 
 	public Map<String, String> getList(ContentContext ctx) throws Exception {
@@ -41,7 +45,10 @@ public class OpenMultiList extends Field {
 					Collection<String> val = dynComp.getField(ctx, getName()).getValues();
 					if (val != null) {
 						for (String v : val) {
-							outList.put(v, v);
+							v = v.trim();
+							if (!outList.containsKey(v)) {
+								outList.put(v, v);
+							}
 						}
 					}
 				}
@@ -70,14 +77,14 @@ public class OpenMultiList extends Field {
 	public String getEditXHTMLCode(ContentContext ctx) throws Exception {
 		StringWriter writer = new StringWriter();
 		PrintWriter out = new PrintWriter(writer);
-		Map<String,String> valuesMap = getList(ctx);
+		Map<String, String> valuesMap = getList(ctx);
 		if (ctx.isVisualMode()) {
 			valuesMap.put("", "");
 		}
 
 		List<Map.Entry<String, String>> values = new LinkedList(valuesMap.entrySet());
 		Collections.sort(values, new JavaHelper.MapEntriesSortOnValue());
-		out.println("<div class=\"form-group\">");
+		out.println("<div class=\"form-group field-"+getName()+"\">");
 		out.println(getEditLabelCode());
 		out.println("<div class=\"row\"><div class=\"col-sm-3\"><label for=\"" + getInputName() + "\">" + getLabel(new Locale(ctx.getContextRequestLanguage())) + " : </label></div>");
 		if (!ctx.isVisualMode()) {
@@ -85,14 +92,14 @@ public class OpenMultiList extends Field {
 			for (Map.Entry<String, String> value : values) {
 				String selected = "";
 				if (getValue() != null) {
-					if (getValue().equals(value.getKey())) {
+					if (getValues().contains(value.getKey())) {
 						selected = " checked=\"checked\"";
 					}
 				}
 				if (value.getKey() != null) {
-					out.println("<label class=\"checkbox-inline\"><input type=\"checkbox\" value=\"" + value.getKey() + "\"" + selected + " />" + value.getValue() + "</label>");
+					out.println("<label class=\"checkbox-inline\"><input type=\"checkbox\" name=\"" + getInputName() + "\" value=\"" + value.getKey() + "\"" + selected + " />" + value.getValue() + "</label>");
 				} else {
-					out.println("<label class=\"checkbox-inline\"><input type=\"checkbox\" value=\"" + value.getValue() + "\"" + selected + " />" + value.getValue() + "</label>");
+					out.println("<label class=\"checkbox-inline\"><input type=\"checkbox\" name=\"" + getInputName() + "\" value=\"" + value.getValue() + "\"" + selected + " />" + value.getValue() + "</label>");
 				}
 			}
 			out.println("	</select>");
@@ -102,7 +109,7 @@ public class OpenMultiList extends Field {
 			out.println("</div>");
 		} else {
 			out.println("<div class=\"col-sm-9\"><select class=\"form-control\" id=\"" + getInputName() + "\" name=\"" + getInputName() + "\" value=\"" + StringHelper.neverNull(getValue()) + "\">");
-			 
+
 			for (Map.Entry<String, String> value : values) {
 				String selected = "";
 				if (getValue() != null) {
@@ -124,8 +131,8 @@ public class OpenMultiList extends Field {
 			out.println("</div>");
 		}
 
-		if (!ctx.isVisualMode()) {			
-			out.println("<div class=\"col-sm-2\"><input class=\"form-control\" id=\"" + getInputNewName() + "\" name=\"" + getInputNewName() + "\" type=\"text\" placeholder=\""+i18nAccess.getText("global.create")+"...\" /></div>");
+		if (!ctx.isVisualMode()) {
+			out.println("<div class=\"col-sm-2\"><input class=\"form-control\" id=\"" + getInputNewName() + "\" name=\"" + getInputNewName() + "\" type=\"text\" placeholder=\"" + i18nAccess.getText("global.create") + "...\" /></div>");
 		}
 		out.println("</div></div>");
 
@@ -154,7 +161,11 @@ public class OpenMultiList extends Field {
 		String value = requestService.getParameter(getInputNewName(), "");
 		if (value.trim().length() > 0) {
 			modify = true;
-			setValue(value);
+			if (getValue().trim().length() == 0) {
+				setValue(value);			
+			} else {
+				setValue(getValue()+", "+value);
+			}
 			setNeedRefresh(true);
 		}
 

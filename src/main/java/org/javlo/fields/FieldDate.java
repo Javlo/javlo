@@ -84,7 +84,7 @@ public class FieldDate extends Field implements IDate {
 				cal.set(Calendar.MONTH, i);
 				values.put(""+i, format.format(cal.getTime()));
 			}
-			return renderSelect(ctx, getSearchLabel(new Locale(ctx.getContextRequestLanguage())), "", values, false);
+			return renderSelect(ctx, getSearchLabel(new Locale(ctx.getContextRequestLanguage())), "", values, false, "field-"+getName());
 		} else {
 			return"bad search type : "+getSearchType();
 		}

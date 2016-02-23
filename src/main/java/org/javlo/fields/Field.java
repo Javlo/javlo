@@ -386,7 +386,7 @@ public class Field implements Cloneable, IRestItem {
 		StringWriter writer = new StringWriter();
 		PrintWriter out = new PrintWriter(writer);
 
-		out.println("<div class=\"row form-group\"><div class=\"col-sm-3\">");
+		out.println("<div class=\"row form-group field-"+getName()+"\"><div class=\"col-sm-3\">");
 		out.println(getEditLabelCode());		
 		
 		out.println("	<label for=\"" + getInputName() + "\">" + getLabel(new Locale(ctx.getContextRequestLanguage())) + " : </label>");
@@ -558,7 +558,7 @@ public class Field implements Cloneable, IRestItem {
 	}
 	
 	public Collection<String> getValues() {
-		return StringHelper.stringToCollection(getValue(), ",");
+		return StringHelper.stringToCollection(getValue(), ",", true);
 	}
 	
 	protected void setValue(Collection<String> values) {
@@ -727,7 +727,7 @@ public class Field implements Cloneable, IRestItem {
 	 */
 	public boolean process(HttpServletRequest request) {
 		RequestService requestService = RequestService.getInstance(request);
-		String value = requestService.getParameter(getInputName(), null);
+		List<String> values = requestService.getParameterListValues(getInputName(), null);
 		String label = requestService.getParameter(getInputLabelName(), null);
 
 		boolean modify = false;
@@ -737,7 +737,8 @@ public class Field implements Cloneable, IRestItem {
 				setLabelValue(label);
 			}
 		}
-		if (value != null) {
+		if (values != null) {
+			String value = StringHelper.collectionToString(values, ", ");
 			if (!value.equals(getValue())) {
 				setValue(value);
 				if (!validate()) {
@@ -923,7 +924,7 @@ public class Field implements Cloneable, IRestItem {
 		}		
 	}
 	
-	public String renderSelect(ContentContext ctx, String label, String inValue, Map<String,String> inValues, boolean sort) throws Exception {
+	public String renderSelect(ContentContext ctx, String label, String inValue, Map<String,String> inValues, boolean sort, String cssClass) throws Exception {
 		StringWriter writer = new StringWriter();
 		PrintWriter out = new PrintWriter(writer);
 		Map<String,String> valuesMap = inValues;				
@@ -935,7 +936,7 @@ public class Field implements Cloneable, IRestItem {
 			label = getLabel(new Locale(ctx.getContextRequestLanguage()));
 		}
 
-		out.println("<div class=\"form-group\">");
+		out.println("<div class=\"form-group "+StringHelper.neverNull(cssClass)+"\">");
 		out.println(getEditLabelCode());
 		out.println("<div class=\"row\"><div class=\"col-sm-3\"><label for=\"" + getInputName() + "\">" + label + " : </label></div>");
 		out.println("<div class=\"col-sm-9\"><select class=\"form-control\" id=\"" + getInputName() + "\" name=\"" + getInputName() + "\" value=\"" + StringHelper.neverNull(getValue()) + "\">");

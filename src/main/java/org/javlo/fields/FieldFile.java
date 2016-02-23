@@ -180,7 +180,7 @@ public class FieldFile extends Field implements IStaticContainer {
 		StringWriter writer = new StringWriter();
 		PrintWriter out = new PrintWriter(writer);
 
-		out.println("<div class=\"form-group\">");
+		out.println("<div class=\"form-group field-"+getName()+"\">");
 		out.println("<fieldset>");
 		out.println("<legend>" + getLabel(new Locale(globalContext.getEditLanguage(ctx.getRequest().getSession()))) + "</legend>");
 		out.println("<div class=\"commands\">");

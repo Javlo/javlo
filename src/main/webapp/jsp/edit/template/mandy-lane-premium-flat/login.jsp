@@ -28,6 +28,12 @@ case GenericMessage.SUCCESS:
         <title>Javlo (Login)</title>
         <link rel="shortcut icon" href="img/assets/favicon.ico" />
         <link href="${info.editTemplateURL}/css/login.css" rel="stylesheet" type="text/css" />
+        <style type="text/css">
+		@font-face {
+    		font-family: "javloFont";
+    		src: url('${info.staticRootURL}/fonts/Javlo-Italic.ttf') format("truetype");
+		}
+		</style>
     </head>
     
     <body class="login-page bg${info.random10+1}">    	
@@ -35,7 +41,7 @@ case GenericMessage.SUCCESS:
            <c:if test="${not empty messages.globalMessage && messages.globalMessage.type > 0 && not empty messages.globalMessage.message}">
 				<div class="alert-wrapper slow-hide"><div class="alert alert-<%=bootstrapType%>">${messages.globalMessage.message}</div></div>
 			</c:if>
-            <h1><img src="${info.logoURL}?color=D31996" height="40px" alt="Javlo" /><span class="version">(<%=IVersion.VERSION%>)</span></h1>
+            <h1>Javlo<span class="version"><%=IVersion.VERSION%></span></h1>
             <form action="${empty param.backPreview?info.currentEditURL:info.currentPreviewURL}" method="post" role="form">
             	<c:if test="${not empty param.previewEdit}">
 					<input type="hidden" name="previewEdit" value="${param.previewEdit}" />

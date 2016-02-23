@@ -2507,14 +2507,18 @@ public class StringHelper {
 
 	public static List<String> stringToCollectionTrim(String str, String token) {
 		List<String> listTrim = new LinkedList<String>();
-		for (String item : splitAsList(str, token, DEFAULT_ESCAPE)) {
+		for (String item : splitAsList(str, token, DEFAULT_ESCAPE, false)) {
 			listTrim.add(item.trim());
 		}
 		return listTrim;
 	}
 
 	public static List<String> stringToCollection(String str, String token) {
-		return splitAsList(str, token, DEFAULT_ESCAPE);
+		return splitAsList(str, token, DEFAULT_ESCAPE, false);
+	}
+	
+	public static List<String> stringToCollection(String str, String token, boolean trim) {
+		return splitAsList(str, token, DEFAULT_ESCAPE, trim);
 	}
 
 	public static String stringToFileName(String inStr) {
@@ -3216,7 +3220,7 @@ public class StringHelper {
 		}
 	}
 
-	private static List<String> splitAsList(String in, String delimiter, char escape) {
+	private static List<String> splitAsList(String in, String delimiter, char escape, boolean trim) {
 		List<String> out = new LinkedList<String>();
 		if (in != null && in.length() > 0) {
 			int pos = 0, last = 0, len = in.length();
@@ -3231,6 +3235,9 @@ public class StringHelper {
 					String s = in.substring(last, pos);
 					s = StringUtils.replace(s, "" + escape + delimiter, "" + delimiter);
 					s = StringUtils.replace(s, "" + escape + escape, "" + escape);
+					if (trim) {
+						s = s.trim();
+					}
 					out.add(s);
 					last = pos + delimiter.length(); // length of delimiter
 				}

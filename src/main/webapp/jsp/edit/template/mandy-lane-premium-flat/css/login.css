@@ -22,6 +22,9 @@ body {
 .main h1 {
 	text-align: center;
 	color: #D31996;
+    font-size: 80px;
+    margin-top: 0;
+    font-family: javloFont, Verdana;
 }
 
 .main h1 .version {
@@ -30,6 +33,7 @@ body {
 	display: block;
 	margin: 3px 0;
 	vertical-align: bottom;
+	font-size: 12px;
 }
 
 .alert {
