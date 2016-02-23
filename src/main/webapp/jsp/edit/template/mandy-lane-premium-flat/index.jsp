@@ -46,7 +46,7 @@
 <style type="text/css">
 @font-face {
     font-family: "javloFont";
-    src: url('${info.staticRootURL}/fonts/Javlo-Italic.ttf') format("truetype");
+    src: url('${info.staticRootURL}fonts/Javlo-Italic.ttf') format("truetype");
 }
 </style>
 
