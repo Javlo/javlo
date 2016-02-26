@@ -79,8 +79,13 @@ public class FieldImage extends FieldFile {
 
 		if (getCurrentFile() != null && getCurrentFile().trim().length() > 0) {
 			if (getCurrentLink() != null && getCurrentLink().trim().length() > 0) {
-				out.println("<a href=\"" + getCurrentLink() + "\">");
+				String target="";
+				if (ctx.getGlobalContext().isOpenExternalLinkAsPopup(getCurrentLink())) {
+					target = " target=\"_blank\"";
+				}
+				out.println("<a href=\"" + getCurrentLink() + "\"" + target+'>');
 			}
+			
 			out.println("<img src=\"" + getPreviewURL(ctx) + "\" alt=\"" + getCurrentLabel() + "\"/>");
 			if (isDisplayLabel()) {
 				out.println("<span class=\"label\">" + getCurrentLabel() + "</span>");

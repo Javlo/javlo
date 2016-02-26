@@ -33,6 +33,7 @@ public class FieldWysiwyg extends Field {
 
 		StringWriter writer = new StringWriter();
 		PrintWriter out = new PrintWriter(writer);
+		out.println("<div class=\"form-group " + getType() + "\">");
 		out.print("<textarea class=\"tinymce-light wysiwyg\" id=\"" + getInputName() + "\" name=\"" + getInputName() + "\"");
 		out.print(" rows=\"" + 10 + "\">");
 
@@ -42,7 +43,7 @@ public class FieldWysiwyg extends Field {
 
 			out.print(StringHelper.neverNull(getValue()).replace("${info.hostURLPrefix}", hostPrefix));
 			out.println("</textarea>");
-
+			out.println("</div>");
 			Map<String, String> filesParams = new HashMap<String, String>();
 			String path = FileAction.getPathPrefix(ctx);
 			filesParams.put("path", path);
