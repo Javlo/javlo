@@ -57,7 +57,7 @@ public class ImportedFileSharedContentProvider extends LocalFileSharedContentPro
 	public void upload(ContentContext ctx, String fileName, InputStream in, String category) throws IOException {		
 		File fileFolder = getRootFolder(ctx);
 		try {
-			fileFolder = new File(URLHelper.mergePath(fileFolder.getAbsolutePath(), URLHelper.mergePath(ContentHelper.IMPORT_FOLDER,DataAction.createImportFolder(ctx))));			
+			fileFolder = new File(URLHelper.mergePath(fileFolder.getAbsolutePath(), URLHelper.mergePath(ctx.getGlobalContext().getStaticConfig().getImportFolder(),DataAction.createImportFolder(ctx))));			
 		} catch (Exception e) {
 			throw new IOException(e);
 		}

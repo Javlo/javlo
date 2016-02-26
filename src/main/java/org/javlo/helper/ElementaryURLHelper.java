@@ -463,6 +463,13 @@ public abstract class ElementaryURLHelper {
 			}
 			url = URLHelper.mergePath(IMG_SERVLET_PATH, ctx.getGlobalContext().setTransformShortURL(url.replace(TRANSFORM + '/', ""), fileName));
 		}
+		if (ctx.getRenderMode() != ContentContext.VIEW_MODE) {
+			File file = new File(URLHelper.mergePath(ctx.getGlobalContext().getDataFolder(), fileURL));
+			StaticInfo staticInfo = StaticInfo.getInstance(ctx, file);			
+			if (staticInfo != null) {				
+				url = URLHelper.addParam(url, "hash", staticInfo.getVersionHash(ctx));
+			}			
+		}
 		url = createStaticURL(ctx, referencePage, url, true);
 		if (ctx.getRequest().getParameter("lowdef") != null) {
 			url = URLHelper.addParam(url, "lowdef", ctx.getRequest().getParameter("lowdef"));

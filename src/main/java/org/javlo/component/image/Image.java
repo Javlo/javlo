@@ -416,7 +416,12 @@ public class Image extends AbstractFileComponent implements IImageTitle, IPrevie
 
 	@Override
 	public File getFile(ContentContext ctx) {
-		return new File(URLHelper.mergePath(getFileDirectory(ctx), getDirSelected(), getFileName()));
+		try {
+			return new File(URLHelper.mergePath(getFileDirectory(ctx.getContextOnPage(getPage())), getDirSelected(), getFileName()));
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 
 	@Override

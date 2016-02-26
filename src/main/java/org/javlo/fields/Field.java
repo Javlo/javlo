@@ -746,6 +746,8 @@ public class Field implements Cloneable, IRestItem {
 				}
 				modify = true;
 			}
+		} else {
+			setValue("");
 		}
 		return modify;
 	}

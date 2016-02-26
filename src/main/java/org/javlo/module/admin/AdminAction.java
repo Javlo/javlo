@@ -1433,7 +1433,7 @@ public class AdminAction extends AbstractModuleAction {
 		UserFactory.createUserFactory(globalContext, session).reload(globalContext, session);
 
 		TemplateFactory.copyDefaultTemplate(session.getServletContext());
-		SharedContentService.getInstance(ctx).clearCache();
+		SharedContentService.getInstance(ctx).clearCache(ctx);
 		System.gc();
 		return null;
 	}

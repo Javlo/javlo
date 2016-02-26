@@ -554,7 +554,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			out.println("</div>");
 		}
 		
-		if (isNoLinkable()) {
+		if (isNoLinkable() && ctx.getGlobalContext().isReversedLink()) {
 			out.println("<div class=\"line\">");
 			if (showRepeat) {
 				out.println("<label for=\"nolink-" + getId() + "\">" + i18nAccess.getText("content.nolink") + "</label>");

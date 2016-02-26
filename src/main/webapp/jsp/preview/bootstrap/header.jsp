@@ -185,18 +185,18 @@
 						<div class="pc_line">
 							<input type="hidden" name="webaction" value="edit.previewedit" />
 							<c:if test='${!editPreview}'>
-								<button class="btn btn-default btn-sm btn-mode" type="submit">
+								<button class="btn btn-default btn-sm btn-mode btn-wait-loading" type="submit">
 									<span class="glyphicon glyphicon-edit" aria-hidden="true"></span><span class="text">${i18n.edit['preview.label.edit-page']}</span></button>
 							</c:if>
 							<c:if test='${editPreview}'>
-								<button class="btn btn-default btn-sm btn-mode" type="submit">
+								<button class="btn btn-default btn-sm btn-mode btn-wait-loading" type="submit">
 									<span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span><span class="text">${i18n.edit['preview.label.not-edit-page']}</span></button>
 							</c:if>
 						</div>
 					</form>
 				</c:if> <c:if test="${!globalContext.previewMode}">
 					<div class="link-wrapper">
-						<a class="btn btn-default btn-sm btn-mode" href="${info.currentViewURL}"
+						<a class="btn btn-default btn-sm btn-mode btn-wait-loading" href="${info.currentViewURL}"
 							target="_blank"><span class="glyphicon glyphicon-eye-open"
 							aria-hidden="true"></span>${i18n.edit['preview.label.not-edit-page']}</a>
 					</div>
@@ -217,7 +217,7 @@
 						<c:if test="${i18n.edit['command.mailing.tooltip'] != 'command.mailing.tooltip'}">
 							<c:set var="tooltip" value='data-toggle="tooltip" data-placement="left" title="${i18n.edit[\'command.mailing.tooltip\']}"' />
 						</c:if>
-						<button ${tooltip} class="btn btn-default btn-sm btn-send btn-color"
+						<button ${tooltip} class="btn btn-default btn-sm btn-send btn-color btn-wait-loading"
 							type="<%=accessType%>"
 							value="${i18n.edit['preview.label.mailing']}"
 							onclick="editPreview.openModal('${i18n.edit['preview.label.mailing']}','${url}'); return false;">
@@ -236,7 +236,7 @@
 					<c:if test="${i18n.edit['command.export.tooltip'] != 'command.export.tooltip'}">
 							<c:set var="tooltip" value='data-toggle="tooltip" data-placement="left" title="${i18n.edit[\'command.export.tooltip\']}"' />
 					</c:if>
-						<button ${tooltip} class="btn btn-default btn-sm btn-export btn-color"
+						<button ${tooltip} class="btn btn-default btn-sm btn-export btn-color btn-wait-loading"
 							type="<%=accessType%>"
 							value="${i18n.edit['preview.label.export-mailing']}"
 							onclick="editPreview.openModal('${i18n.edit['preview.label.export-mailing']}','${url}'); return false;">
@@ -249,7 +249,7 @@
 				<li>
 				<li><form id="export_pdf_page_form"
 						action="${info.currentPDFURL}" method="post" target="_blanck">
-						<button class="btn btn-default btn-sm btn-pdf btn-color"
+						<button class="btn btn-default btn-sm btn-pdf btn-color btn-wait-loading"
 							id="export_pdf_button" type="submit"
 							value="${i18n.edit['preview.label.pdf']}"><span class="glyphicon glyphicon-open-file" aria-hidden="true"></span><span class="text">${i18n.edit['preview.label.pdf']}</span></button>
 					</form></li>

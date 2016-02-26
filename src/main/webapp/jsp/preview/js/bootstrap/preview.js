@@ -891,6 +891,11 @@ editPreview.stopAjax = function() {
 
 pjq(document).ready(function() {
 	editPreview.onReadyFunction();
+	pjq('.btn-wait-loading').attr("disabled", "disabled");
+});
+
+pjq(window).load(function() {
+	pjq('.btn-wait-loading').removeAttr("disabled");
 });
 
 

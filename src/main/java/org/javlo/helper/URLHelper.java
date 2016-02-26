@@ -1075,6 +1075,19 @@ public class URLHelper extends ElementaryURLHelper {
 		}
 
 	}
+	
+	/**
+	 * remove first / on a path if exist
+	 * @param path
+	 * @return the same string if not start width / and the string without first / (all first /)
+	 */
+	public static String removeFirstSlash(String path) {		
+		if (path == null || !path.startsWith("/")) {
+			return path;
+		} else {
+			return removeFirstSlash(path.substring(1));
+		}
+	}
 
 	public static final String _changeMode(String inURL, String mode) throws MalformedURLException {
 		URL url = new URL(inURL);

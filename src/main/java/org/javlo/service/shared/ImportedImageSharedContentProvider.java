@@ -59,7 +59,7 @@ public class ImportedImageSharedContentProvider extends LocalImageSharedContentP
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		File imageFolder = new File(URLHelper.mergePath(globalContext.getDataFolder(), globalContext.getStaticConfig().getImageFolder()));
 		try {
-			imageFolder = new File(URLHelper.mergePath(imageFolder.getAbsolutePath(), URLHelper.mergePath(ContentHelper.IMPORT_FOLDER,DataAction.createImportFolder(ctx))));			
+			imageFolder = new File(URLHelper.mergePath(imageFolder.getAbsolutePath(), URLHelper.mergePath(ctx.getGlobalContext().getStaticConfig().getImportFolder(),DataAction.createImportFolder(ctx))));			
 		} catch (Exception e) {
 			throw new IOException(e);
 		}

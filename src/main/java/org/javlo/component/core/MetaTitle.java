@@ -19,6 +19,7 @@ public class MetaTitle extends AbstractVisualComponent {
     public MetaTitle(String inValue) {
         super();
         setValue(inValue);
+        getComponentBean().setModify(false); // reset modif
     }
 
     @Override

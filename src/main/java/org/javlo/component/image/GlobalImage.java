@@ -5,6 +5,7 @@ package org.javlo.component.image;
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintStream;
@@ -21,6 +22,8 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 import org.apache.commons.fileupload.FileItem;
+import org.javlo.actions.DataAction;
+import org.javlo.component.core.ComponentBean;
 import org.javlo.component.core.ComponentContext;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.core.IImageFilter;
@@ -33,6 +36,7 @@ import org.javlo.exception.ResourceNotFoundException;
 import org.javlo.helper.ComponentHelper;
 import org.javlo.helper.ElementaryURLHelper;
 import org.javlo.helper.NetHelper;
+import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.helper.XHTMLHelper;
@@ -46,7 +50,10 @@ import org.javlo.module.file.FileAction;
 import org.javlo.navigation.MenuElement;
 import org.javlo.rendering.Device;
 import org.javlo.service.ContentService;
+import org.javlo.service.PersistenceService;
 import org.javlo.service.RequestService;
+import org.javlo.service.shared.SharedContent;
+import org.javlo.service.shared.SharedContentService;
 import org.javlo.template.Template;
 import org.javlo.template.TemplateFactory;
 import org.javlo.user.AdminUserFactory;
@@ -182,9 +189,9 @@ public class GlobalImage extends Image implements IImageFilter {
 	}
 
 	@Override
-	public String getImageHash(Device device) {		
-		String hash = ""+getFileName().hashCode();
-		if (getWidth(device) < 0) {			
+	public String getImageHash(Device device) {
+		String hash = "" + getFileName().hashCode();
+		if (getWidth(device) < 0) {
 			return hash;
 		} else {
 			return hash + '_' + getWidth(device);
@@ -207,7 +214,7 @@ public class GlobalImage extends Image implements IImageFilter {
 		// ctx.setCurrentTemplate(null); // reset template
 		super.prepareView(ctx);
 		String link = getLink();
-		if (link.startsWith('/'+ctx.getGlobalContext().getStaticConfig().getStaticFolder())) {
+		if (link.startsWith('/' + ctx.getGlobalContext().getStaticConfig().getStaticFolder())) {
 			link = URLHelper.createResourceURL(ctx, link);
 		}
 		ctx.getRequest().setAttribute("link", link);
@@ -224,7 +231,7 @@ public class GlobalImage extends Image implements IImageFilter {
 		}
 		ctx.getRequest().setAttribute("media", this);
 		ctx.getRequest().setAttribute("shortDate", StringHelper.renderShortDate(ctx, getDate()));
-		if (isMeta()) {			
+		if (isMeta()) {
 			ctx.getRequest().setAttribute("label", cleanValue(ctx, getTitle()));
 			ctx.getRequest().setAttribute("cleanLabel", getTitle());
 		}
@@ -233,16 +240,16 @@ public class GlobalImage extends Image implements IImageFilter {
 		if (width >= 0) {
 			ctx.getRequest().setAttribute("imageWidth", width);
 		}
-		
+
 	}
-	
+
 	protected String getNewLinkParamName() {
-		return "_new-link-"+getId();
+		return "_new-link-" + getId();
 	}
-	
+
 	@Override
 	protected String getEditXHTMLCode(ContentContext ctx) throws Exception {
-		
+
 		if (ctx.getRequest().getParameter("path") != null) {
 			String newFolder = URLHelper.removeStaticFolderPrefix(ctx, ctx.getRequest().getParameter("path"));
 			newFolder = newFolder.replaceFirst("/" + ctx.getGlobalContext().getStaticConfig().getImageFolderName() + '/', "");
@@ -251,7 +258,7 @@ public class GlobalImage extends Image implements IImageFilter {
 				setFileName("");
 			}
 		}
-		
+
 		StringBuffer finalCode = new StringBuffer();
 		finalCode.append(getSpecialInputTag());
 
@@ -312,25 +319,25 @@ public class GlobalImage extends Image implements IImageFilter {
 			backURL = URLHelper.addParam(backURL, "webaction", "editPreview");
 		}
 		backURL = URLHelper.addParam(backURL, "previewEdit", ctx.getRequest().getParameter("previewEdit"));
-		filesParams.put(ElementaryURLHelper.BACK_PARAM_NAME, backURL+'&'+getNewLinkParamName()+"=/"+ctx.getGlobalContext().getStaticConfig().getStaticFolder()+'/');
+		filesParams.put(ElementaryURLHelper.BACK_PARAM_NAME, backURL + '&' + getNewLinkParamName() + "=/" + ctx.getGlobalContext().getStaticConfig().getStaticFolder() + '/');
 
 		String staticLinkURL = URLHelper.createModuleURL(ctx, ctx.getPath(), "file", filesParams);
 		filesParams.remove(ElementaryURLHelper.BACK_PARAM_NAME);
 		filesParams.put(ElementaryURLHelper.BACK_PARAM_NAME, backURL);
 		if (isLink()) {
 			finalCode.append("<div class=\"row form-group\"><div class=\"col-sm-3\"><label for=\"img_link_" + getId() + "\">");
-			finalCode.append(getImageLinkTitle(ctx)+" : </label></div>");
-			String linkToResources ="";
+			finalCode.append(getImageLinkTitle(ctx) + " : </label></div>");
+			String linkToResources = "";
 			if (!ctx.getGlobalContext().isMailingPlatform()) {
-				linkToResources = "<div class=\"col-sm-2\"><a class=\"browse-link btn btn-default btn-xs\" href=\""+URLHelper.addParam(staticLinkURL, "select", "back")+"\">"+i18nAccess.getText("content.goto-static")+"</a></div>";
+				linkToResources = "<div class=\"col-sm-2\"><a class=\"browse-link btn btn-default btn-xs\" href=\"" + URLHelper.addParam(staticLinkURL, "select", "back") + "\">" + i18nAccess.getText("content.goto-static") + "</a></div>";
 			}
 			String link = getLink();
 			if (ctx.getRequest().getParameter(getNewLinkParamName()) != null) {
-				if (!ctx.getRequest().getParameter(getNewLinkParamName()).equals('/'+ctx.getGlobalContext().getStaticConfig().getStaticFolder()+'/')) {
+				if (!ctx.getRequest().getParameter(getNewLinkParamName()).equals('/' + ctx.getGlobalContext().getStaticConfig().getStaticFolder() + '/')) {
 					link = ctx.getRequest().getParameter(getNewLinkParamName());
 				}
-			}			
-			finalCode.append("<div class=\"col-sm-"+(linkToResources.length()==0?9:7)+"\"><input class=\"form-control\" id=\"img_link_" + getId() + "\" name=\"" + getLinkXHTMLInputName() + "\" type=\"text\" value=\"" + link + "\"/></div>"+linkToResources+"</div>");
+			}
+			finalCode.append("<div class=\"col-sm-" + (linkToResources.length() == 0 ? 9 : 7) + "\"><input class=\"form-control\" id=\"img_link_" + getId() + "\" name=\"" + getLinkXHTMLInputName() + "\" type=\"text\" value=\"" + link + "\"/></div>" + linkToResources + "</div>");
 		}
 
 		finalCode.append("<div class=\"row form-group\"><div class=\"col-sm-3\"><label for=\"new_dir_" + getId() + "\">");
@@ -339,7 +346,7 @@ public class GlobalImage extends Image implements IImageFilter {
 		finalCode.append("<div class=\"row form-group\"><div class=\"col-sm-3\"><label for=\"" + getDirInputName() + "\">");
 		finalCode.append(getDirLabelTitle(ctx));
 		finalCode.append(" : </label></div>");
-		
+
 		if ((getDirList(ctx, getFileDirectory(ctx)) != null) && (getDirList(ctx, getFileDirectory(ctx)).length > 0)) {
 			List<String> dirsCol = new LinkedList<String>();
 			dirsCol.add("");
@@ -774,6 +781,32 @@ public class GlobalImage extends Image implements IImageFilter {
 		}
 	}
 
+	@Override
+	public void init(ComponentBean bean, ContentContext ctx) throws Exception {
+		super.init(bean, ctx);
+		boolean isImported = getDirSelected().startsWith(URLHelper.removeFirstSlash(ctx.getGlobalContext().getStaticConfig().getImportFolder()));
+		if (isImported) {
+			ContentContext pageCtx = ctx.getContextOnPage(getPage());
+			if (pageCtx.getCurrentPage() != null) {
+				String localImportFolder = URLHelper.removeFirstSlash(URLHelper.mergePath(ctx.getGlobalContext().getStaticConfig().getImportFolder(), DataAction.createImportFolder(pageCtx)));
+				if (!localImportFolder.equals(getDirSelected())) {
+					File imageSrc = getFile(ctx);
+					if (!imageSrc.exists()) {
+						logger.warning("file not found : " + imageSrc);
+					} else {						
+						setDirSelected(localImportFolder);
+						File imageTarget = getFile(ctx);
+						ResourceHelper.writeFileToFile(imageSrc, imageTarget);
+						storeProperties();
+						setModify();
+						SharedContentService.getInstance(ctx).clearCache(ctx);
+						PersistenceService.getInstance(ctx.getGlobalContext()).setAskStore(true);
+					}
+				}
+			}
+		}
+	}
+
 	/*
 	 * @Override public void init(ComponentBean bean, ContentContext newContext)
 	 * throws Exception { super.init(bean, newContext);
@@ -922,7 +955,7 @@ public class GlobalImage extends Image implements IImageFilter {
 				msg = I18nAccess.getInstance(ctx).getText("content.image.width-noext", "Image 'width' need unity like px or %.");
 			}
 		}
-		
+
 		return msg;
 
 	}
@@ -1026,7 +1059,7 @@ public class GlobalImage extends Image implements IImageFilter {
 
 	private String getWidthKey(Device device) {
 		if (device == null) {
-			return "width-"+Device.DEFAULT;
+			return "width-" + Device.DEFAULT;
 		} else {
 			return "width-" + device.getCode();
 		}

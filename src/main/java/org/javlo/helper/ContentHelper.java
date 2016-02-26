@@ -47,7 +47,7 @@ import org.javlo.xml.XMLFactory;
 
 public class ContentHelper {
 
-	public static final String IMPORT_FOLDER = "/import/";
+	//public static final String IMPORT_FOLDER = "/import/";
 	private static java.util.logging.Logger logger = java.util.logging.Logger.getLogger(ContentHelper.class.getName());
 
 	/**
@@ -212,7 +212,7 @@ public class ContentHelper {
 		List<ComponentBean> outBeans = new LinkedList<ComponentBean>();
 		ZipInputStream zipIn = new ZipInputStream(in);
 		ZipEntry entry = zipIn.getNextEntry();
-		String baseStaticFolder = IMPORT_FOLDER + name;
+		String baseStaticFolder = URLHelper.mergePath(gc.getStaticConfig().getImportFolder(),name);
 
 		while (entry != null) {
 			if (gc != null && StringHelper.isImage(entry.getName())) {
@@ -339,7 +339,7 @@ public class ContentHelper {
 		
 		ZipInputStream zipIn = new ZipInputStream(new ByteArrayInputStream(out.toByteArray()));
 		ZipEntry entry = zipIn.getNextEntry();
-		String baseStaticFolder = IMPORT_FOLDER + name;
+		String baseStaticFolder = URLHelper.mergePath(gc.getStaticConfig().getImportFolder(),name);;
 
 		// import static images
 		while (entry != null) {
@@ -364,7 +364,7 @@ public static List<ComponentBean> createContentFromArray(GlobalContext gc, Input
 		
 		ZipInputStream zipIn = new ZipInputStream(new ByteArrayInputStream(out.toByteArray()));
 		ZipEntry entry = zipIn.getNextEntry();
-		String baseStaticFolder = IMPORT_FOLDER + name;
+		String baseStaticFolder = URLHelper.mergePath(gc.getStaticConfig().getImportFolder(),name);;
 		
 		// import content
 		List<ComponentBean> beans = DocxUtils.extractContent(gc, new ByteArrayInputStream(out.toByteArray()), baseStaticFolder);

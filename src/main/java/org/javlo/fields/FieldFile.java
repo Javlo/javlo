@@ -9,9 +9,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -28,6 +30,7 @@ import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.helper.XHTMLHelper;
 import org.javlo.helper.Comparator.FileComparator;
+import org.javlo.module.file.FileAction;
 import org.javlo.service.RequestService;
 import org.javlo.service.resource.Resource;
 import org.javlo.ztatic.IStaticContainer;
@@ -190,12 +193,32 @@ public class FieldFile extends Field implements IStaticContainer {
 		out.println("</div><div class=\"col-sm-8\"><input class=\"form-control\" type=\"text\" id=\"" + getInputCreateFolderName() + "\" name=\"" + getInputCreateFolderName() + "\" /></div>");
 		out.println("<div class=\"col-sm-1\"><input type=\"submit\" class=\"ajax_update_click btn btn-default btn-xs pull-right\" name=\"create\" value=\">>\" />");
 		out.println("</div></div>");
+		
+		String linkToResources = "";
+		if (!ctx.getGlobalContext().isMailingPlatform()) {			
+			Map<String, String> filesParams = new HashMap<String, String>();
+			String path = URLHelper.mergePath(FileAction.getPathPrefix(ctx), StaticConfig.getInstance(ctx.getRequest().getSession()).getImageFolderName(), getCurrentFolder());
+			filesParams.put("path", path);
+			filesParams.put("webaction", "changeRenderer");
+			filesParams.put("page", "meta");
+			String backURL = URLHelper.createModuleURL(ctx, ctx.getPath(), "content");
+			if (ctx.isEditPreview()) {
+				backURL = URLHelper.addParam(backURL, "comp_id", "cp_" + getId());
+				backURL = URLHelper.addParam(backURL, "webaction", "editPreview");
+			}
+			backURL = URLHelper.addParam(backURL, "previewEdit", ctx.getRequest().getParameter("previewEdit"));
+			filesParams.put(ElementaryURLHelper.BACK_PARAM_NAME, backURL + "=/" + ctx.getGlobalContext().getStaticConfig().getStaticFolder() + '/');
+
+			String staticLinkURL = URLHelper.createModuleURL(ctx, ctx.getPath(), "file", filesParams);
+			
+			linkToResources = "<div class=\"col-sm-3\"><a class=\"browse-link btn btn-default btn-xs\" href=\"" + URLHelper.addParam(staticLinkURL, "select", "back") + "\">" + i18nAccess.getText("content.goto-static") + "</a></div>";
+		}
 
 		out.println("<div class=\"row form-group\"><div class=\"col-sm-3\">");
-		out.println("<label for=\"" + getInputFolderName() + "\">" + getFolderLabel() + " : </label></div><div class=\"col-sm-9\">");
+		out.println("<label for=\"" + getInputFolderName() + "\">" + getFolderLabel() + " : </label></div><div class=\"col-sm-6\">");
 		out.println(XHTMLHelper.getInputOneSelect(getInputFolderName(), getFolderListForSelection(), getCurrentFolder(), "form-control", "jQuery(this.form).trigger('submit');", true));
-		out.println("</div></div>");
-
+		out.println("</div>"+linkToResources+"</div>");
+		
 		out.println("<div class=\"row form-group\"><div class=\"col-sm-3\">");
 		out.println("<label for=\"" + getInputFileName() + "\">" + getFileLabel() + " : </label></div><div class=\"col-sm-9\">");
 		out.println(XHTMLHelper.getInputOneSelect(getInputFileName(), getFileList(), getCurrentFile(), "form-control", "jQuery(this.form).trigger('submit');", true));
@@ -208,8 +231,9 @@ public class FieldFile extends Field implements IStaticContainer {
 
 		out.println("<div class=\"row form-group\"><div class=\"col-sm-3\">");
 		out.println("<label for=\"" + getInputAddFileName() + "\">" + getAddFileLabel() + " : </label>");
-		out.println("</div><div class=\"col-sm-9\"><input type=\"file\" id=\"" + getInputAddFileName() + "\" name=\"" + getInputAddFileName() + "\" />");
-		out.println("</div></div>");
+		out.println("</div><div class=\"col-sm-3\"><input type=\"file\" id=\"" + getInputAddFileName() + "\" name=\"" + getInputAddFileName() + "\" /></div>");
+		out.println("</div>");
+		
 
 		if (isWithLink()) {
 			out.println("<div class=\"row form-group\"><div class=\"col-sm-3\">");

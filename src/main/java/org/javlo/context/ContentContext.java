@@ -635,7 +635,7 @@ public class ContentContext {
 	}
 
 	public ContentContext getContextOnPage(MenuElement page) throws Exception {
-		if (getPath().equals(page.getPath())) {
+		if (page == null || getPath().equals(page.getPath())) {
 			return new ContentContext(this);
 		} else {
 			ContentContext outCtx = new ContentContext(this);

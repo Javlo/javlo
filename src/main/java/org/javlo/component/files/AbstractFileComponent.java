@@ -268,7 +268,7 @@ public abstract class AbstractFileComponent extends AbstractVisualComponent impl
 		File folder = new File(inFolder);
 		Collection<File> sourceChildren = ResourceHelper.getAllDirList(folder);
 		Collection<String> children = new LinkedList<String>();
-		String importFolder = ctx.getCurrentTemplate().getImportFolder();
+		String importFolder = ctx.getGlobalContext().getStaticConfig().getImportFolder();
 		if (importFolder.length() > 1 && importFolder.startsWith("/")) {
 			importFolder = importFolder.substring(1);
 		}

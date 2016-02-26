@@ -1485,5 +1485,21 @@ public class StaticConfig extends Observable {
 	public Integer getUndoDepth() {
 		return properties.getInteger("content.undo-depth", null);
 	}
+	
+	public String getImportFolder() {
+		return properties.getString("import", "/import");
+	}
+
+	public String getImportImageFolder() {
+		return properties.getString("import.image", "/images"+getImportFolder());
+	}
+
+	public String getImportGalleryFolder() {
+		return properties.getString("import.gallery", "/gallery"+getImportFolder());
+	}
+
+	public String getImportResourceFolder() {
+		return properties.getString("import.resource", "/files"+getImportFolder());
+	}
 
 }

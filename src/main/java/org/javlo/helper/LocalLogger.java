@@ -100,7 +100,11 @@ public class LocalLogger {
 
 	public static void forceStepCount(String key, String message) {
 		Long oldTime = (Long) times.get(key);
-		log(DEBUG, '(' + key + ") " + message + " [" + (System.currentTimeMillis() - oldTime.longValue()) + " ms ]");
+		if (oldTime == null) {
+			System.out.println("key not found : "+key);
+		} else {
+			log(DEBUG, '(' + key + ") " + message + " [" + (System.currentTimeMillis() - oldTime.longValue()) + " ms ]");
+		}
 	}
 
 	public static void stepCount(String key, String message) {
@@ -116,8 +120,12 @@ public class LocalLogger {
 			return;
 		}
 		Long oldTime = (Long) times.get(key);
-		times.remove(key);
-		log(DEBUG, message + " [" + (System.currentTimeMillis() - oldTime.longValue()) + " ms ]");
+		if (oldTime == null) {
+			System.out.println("key not found : "+key);
+		} else {
+			times.remove(key);
+			log(DEBUG, message + " [" + (System.currentTimeMillis() - oldTime.longValue()) + " ms ]");
+		}
 	}
 
 	public static void close() throws IOException {

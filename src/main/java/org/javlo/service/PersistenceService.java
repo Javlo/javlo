@@ -299,7 +299,7 @@ public class PersistenceService {
 		}
 
 		if (!canRedo()) {
-			int workVersion = getVersion() + 1;
+		int workVersion = getVersion() + 1;
 			File file = new File(getDirectory() + "/content_" + ContentContext.PREVIEW_MODE + '_' + workVersion + ".xml");
 			while (file.exists()) {
 				workVersion++;

@@ -133,8 +133,8 @@ public class ImportExternalPage implements IInteractiveMacro, IAction {
 		String folder = "";
 		String image = null;
 		for (String imageURL : images) {
-			String imageRelativeFolder = URLHelper.mergePath(ctx.getGlobalContext().getStaticConfig().getStaticFolder(), ctx.getCurrentTemplate().getImportImageFolder(), ctx.getCurrentPage().getName());
-			folder = URLHelper.mergePath(ctx.getCurrentTemplate().getImportImageFolder(), ctx.getCurrentPage().getName());
+			String imageRelativeFolder = URLHelper.mergePath(ctx.getGlobalContext().getStaticConfig().getStaticFolder(), ctx.getGlobalContext().getStaticConfig().getImportImageFolder(), ctx.getCurrentPage().getName());
+			folder = URLHelper.mergePath(ctx.getGlobalContext().getStaticConfig().getImportImageFolder(), ctx.getCurrentPage().getName());
 			File targetFile = new File(URLHelper.mergePath(ctx.getGlobalContext().getDataFolder(), imageRelativeFolder, StringHelper.createFileName(StringHelper.getFileNameFromPath(imageURL))));
 			StaticInfo si = StaticInfo.getInstance(ctx, targetFile);
 			si.setTitle(ctx, title);

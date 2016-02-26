@@ -113,7 +113,7 @@ public class LocalImageSharedContentProvider extends AbstractSharedContentProvid
 		if (!category.startsWith("/")) {
 			category = '/'+category;
 		}
-		if (!category.startsWith(template.getImportFolder()) && !category.startsWith(template.getImportImageFolder()) && !category.startsWith(template.getImportGalleryFolder()) && !category.startsWith(template.getImportResourceFolder())) {
+		if (!category.startsWith(ctx.getGlobalContext().getStaticConfig().getImportFolder()) && !category.startsWith(ctx.getGlobalContext().getStaticConfig().getImportImageFolder()) && !category.startsWith(ctx.getGlobalContext().getStaticConfig().getImportGalleryFolder()) && !category.startsWith(ctx.getGlobalContext().getStaticConfig().getImportResourceFolder())) {
 			return true;
 		} else {
 			return false;

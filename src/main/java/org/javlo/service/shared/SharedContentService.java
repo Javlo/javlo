@@ -113,9 +113,13 @@ public class SharedContentService {
 		return latestReturnedContent;
 	}
 	
-	public void clearCache() {
+	public void clearCache(ContentContext ctx) {
+		for (ISharedContentProvider provider : getAllActiveProvider(ctx)) {
+			provider.refresh(ctx);
+			provider.getContent(ctx);
+		}
 		getContext().setSearchQuery(null);
-		latestReturnedContent = null;
+		latestReturnedContent = null;		
 	}
 
 	public SharedContentContext getContext() {

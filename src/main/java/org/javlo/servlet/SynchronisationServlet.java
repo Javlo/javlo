@@ -240,17 +240,17 @@ public class SynchronisationServlet extends HttpServlet {
 					if (request.getParameter("delete") != null) {
 						ResourceHelper.deleteFileAndParentDir(new File(fileName));
 					} else if (request.getParameter("refresh") != null) {
-						ContentContext ctx = ContentContext.getContentContext(request, response);
-						PersistenceService.getInstance(globalContext).cleanFile();
+						ContentContext ctx = ContentContext.getContentContext(request, response);						
 						ContentService.clearCache(ctx, globalContext);
 						ContentService.getInstance(globalContext).getNavigation(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE));
 						ContentService.getInstance(globalContext).getNavigation(ctx.getContextWithOtherRenderMode(ContentContext.PREVIEW_MODE));
-					} else if (request.getParameter("refresh-all") != null) {
-						ContentContext ctx = ContentContext.getContentContext(request, response);
 						PersistenceService.getInstance(globalContext).cleanFile();
+					} else if (request.getParameter("refresh-all") != null) {
+						ContentContext ctx = ContentContext.getContentContext(request, response);						
 						ContentService.getInstance(globalContext).getNavigation(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE));
 						ContentService.getInstance(globalContext).getNavigation(ctx.getContextWithOtherRenderMode(ContentContext.PREVIEW_MODE));
 						ContentService.clearAllCache(ctx, globalContext);
+						PersistenceService.getInstance(globalContext).cleanFile();
 					} else if (request.getParameter("context") != null) {
 						// System.out.println("****************************");
 						// System.out.println(request.getParameter("context"));

@@ -64,5 +64,12 @@ public class URLHelperTest extends TestCase {
 		assertEquals(text, URLHelper.decodePathForAttribute(URLHelper.encodePathForAttribute(text)));
 	}
 	
+	public void testRemoveFirstSlash() throws Exception {
+		assertEquals(null, URLHelper.removeFirstSlash(null));
+		assertEquals("test/folder", URLHelper.removeFirstSlash("/test/folder"));
+		assertEquals("test/folder", URLHelper.removeFirstSlash("//test/folder"));
+		assertEquals("test/folder", URLHelper.removeFirstSlash("test/folder"));
+	}
+	
 
 }

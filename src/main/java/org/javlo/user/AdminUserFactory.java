@@ -168,7 +168,7 @@ public class AdminUserFactory extends UserFactory {
 
 	public User getCurrentUser(HttpSession session) {
 		User user = (User) session.getAttribute(SESSION_KEY);
-		if (user != null && user.isEditor()) {
+		if (user != null && user.isEditor()) {			
 			return user;
 		} else {
 			return null;

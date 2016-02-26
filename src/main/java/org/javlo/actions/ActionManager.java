@@ -27,6 +27,7 @@ import org.javlo.message.MessageRepository;
 import org.javlo.module.core.Module;
 import org.javlo.module.core.ModuleException;
 import org.javlo.module.core.ModulesContext;
+import org.javlo.service.RequestService;
 import org.javlo.user.AdminUserFactory;
 import org.javlo.user.AdminUserSecurity;
 import org.javlo.user.User;
@@ -182,7 +183,17 @@ public class ActionManager {
 			} else {
 				action = getAction(request, group);
 			}			
-			User currentUser = AdminUserFactory.createAdminUserFactory(globalContext, request.getSession()).getCurrentUser(request.getSession());			
+			AdminUserFactory adminUserFactory = AdminUserFactory.createUserFactory(globalContext, request.getSession());
+			User currentUser = adminUserFactory.getCurrentUser(request.getSession());
+			
+			if (currentUser != null && !currentUser.getContext().equals(globalContext.getContextKey())) {
+				GlobalContext userContext = GlobalContext.getInstance(request.getSession(), currentUser.getContext());
+				if (!userContext.isMaster()) {
+					adminUserFactory.logout(request.getSession());
+					return "security error : user logged on other site.";
+				}
+			}
+			
 			if (action != null) {
 				/** security **/				
 				if (action instanceof IModuleAction) { // if module action					
@@ -230,6 +241,11 @@ public class ActionManager {
 		MessageRepository msgRepo = MessageRepository.getInstance(ctx);
 		if (message != null) {
 			msgRepo.setGlobalMessageAndNotification(ctx, new GenericMessage(message, GenericMessage.ERROR), true);
+		}
+		
+		String newModule = RequestService.getInstance(request).getParameter("module", null);
+		if (newModule != null) {
+			ModulesContext.getInstance(request.getSession(), GlobalContext.getInstance(request)).setCurrentModule(newModule);
 		}
 
 		return message;

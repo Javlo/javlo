@@ -206,15 +206,25 @@
 	<textarea class="form-control" id="uri-alias" name="uri-alias">${currentContext.URIAlias}</textarea>	
 </div>
 
+<div class="row">
+<div class="col-sm-8">
 <div class="form-group">		
 	<label for="dmz-inter">${i18n.edit['admin.title.dmz-inter']}</label>
 	<input class="form-control" type="text" id="dmz-inter" name="dmz-inter" value="${currentContext.DMZServerInter}" />	
 </div>
-
-<div class="form-group">		
+<div class="form-group">
 	<label for="dmz-intra">${i18n.edit['admin.title.dmz-intra']}</label>
 	<input class="form-control" type="text" id="dmz-intra" name="dmz-intra" value="${currentContext.DMZServerIntra}" />	
-</div>
+</div></div>
+<div class="col-sm-4">
+	<c:if test="${not empty currentContext.DMZServerInter}">
+	<c:url var="refreshAdmin" value="${info.currentURL}" context="/">
+		<c:param name="webaction" value="file.synchro" />
+		<c:param name="module" value="admin" />
+	</c:url>
+	<div class="form-group"><label>&nbsp;</label><a href="${refreshAdmin}" class="btn btn-default form-control">Synchronize</a></div>
+	</c:if>
+</div></div>
 
 <div class="form-group">		
 	<label for="proxy-prefix">${i18n.edit['admin.url.proxy-prefix']}</label>

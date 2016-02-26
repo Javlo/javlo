@@ -2532,22 +2532,6 @@ public class Template implements Comparable<Template> {
 		return properties.getString("rss.image-url", null);
 	}
 
-	public String getImportFolder() {
-		return properties.getString("import", "/import");
-	}
-
-	public String getImportImageFolder() {
-		return properties.getString("import.image", "/images/import");
-	}
-
-	public String getImportGalleryFolder() {
-		return properties.getString("import.gallery", "/gallery/import");
-	}
-
-	public String getImportResourceFolder() {
-		return properties.getString("import.resource", "/files/import");
-	}
-
 	public String getConfigItem(String key, String defaultValue) {
 		return StringHelper.neverNull(properties.getString(key), defaultValue);
 	}

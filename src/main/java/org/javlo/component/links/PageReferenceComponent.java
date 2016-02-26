@@ -34,6 +34,7 @@ import org.javlo.component.image.IImageTitle;
 import org.javlo.component.meta.Tags;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
+import org.javlo.helper.LocalLogger;
 import org.javlo.helper.MacroHelper;
 import org.javlo.helper.PaginationContext;
 import org.javlo.helper.StringHelper;
@@ -794,11 +795,15 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		}
 
 		public PageBean getParent() {
-			try {
-				return PageBean.getInstance(ctx, lgCtx, page.getParent(), comp);
-			} catch (Exception e) {
-				e.printStackTrace();
+			if (page.getParent() == null) {
 				return null;
+			} else {
+				try {
+					return PageBean.getInstance(ctx, lgCtx, page.getParent(), comp);
+				} catch (Exception e) {
+					e.printStackTrace();
+					return null;
+				}
 			}
 		}
 
@@ -1753,7 +1758,13 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 
 	@Override
 	public void prepareView(ContentContext ctx) throws Exception {
+
+		LocalLogger.startCount("pageref");
+
 		super.prepareView(ctx);
+
+		LocalLogger.stepCount("pageref", "step 1");
+
 		Calendar backDate = getBackDate(ctx);
 
 		SimpleDateFormat format = new SimpleDateFormat(MOUNT_FORMAT, new Locale(ctx.getRequestContentLanguage()));
@@ -1761,6 +1772,8 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		ContentService content = ContentService.getInstance(ctx.getRequest());
 		MenuElement menu = content.getNavigation(ctx);
 		MenuElement[] allChildren = menu.getAllChildren();
+
+		LocalLogger.stepCount("pageref", "step 2");
 
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		new PrintStream(outStream);
@@ -1771,6 +1784,8 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 
 		Set<String> selectedPage = getPagesId(ctx, allChildren);
 
+		LocalLogger.stepCount("pageref", "step 3");
+
 		List<MenuElement> pages = new LinkedList<MenuElement>();
 		List<PageBean> pageBeans = new LinkedList<PageBean>();
 
@@ -1778,6 +1793,9 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		int lastPageNumber = getLastPageNumber();
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		NavigationService navigationService = NavigationService.getInstance(globalContext);
+
+		LocalLogger.stepCount("pageref", "step 4");
+
 		for (String pageId : selectedPage) {
 			MenuElement page = navigationService.getPage(ctx, pageId);
 			if (page != null) {
@@ -1801,6 +1819,8 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 				logger.warning("page not found : " + pageId);
 			}
 		}
+
+		LocalLogger.stepCount("pageref", "step 5");
 
 		if (isReverseOrder(ctx)) {
 			ascending = !ascending;
@@ -1829,6 +1849,8 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		} else {
 			Collections.sort(pages, new MenuElementPriorityComparator(!ascending));
 		}
+
+		LocalLogger.stepCount("pageref", "step 6");
 
 		int countPage = 0;
 		int realContentSize = 0;
@@ -1882,15 +1904,19 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 			}
 			if (filterPage(lgCtx, page, null)) {
 				if (countPage < getMaxNews(lgCtx)) {
-					if ((page.isRealContentAnyLanguage(lgCtx) || isWidthEmptyPage()) && (page.getChildMenuElements().size() == 0 || page.isChildrenAssociation() || !isOnlyPageWithoutChildren()) && page.getContentDateNeverNull(lgCtx).after(backDate.getTime())) {
+					if ((isWidthEmptyPage() || page.isRealContentAnyLanguage(lgCtx)) && (page.getChildMenuElements().size() == 0 || page.isChildrenAssociation() || !isOnlyPageWithoutChildren()) && page.getContentDateNeverNull(lgCtx).after(backDate.getTime())) {
 						if (firstPage == null) {
 							firstPage = page;
 						}
-						if (page.isRealContent(lgCtx)) {
+						boolean realContent = true;
+						if (!isWidthEmptyPage()) {
+							realContent = page.isRealContent(lgCtx);
+						}
+						if (realContent) {
 							realContentSize++;
 						}
 						if (!isIntranetMode() || page.getEditorRoles().size() == 0 || (ctx.getCurrentEditUser() != null && ctx.getCurrentEditUser().validForRoles(page.getEditorRoles()))) {
-							if (page.isRealContent(lgCtx) || isWidthEmptyPage()) {
+							if (realContent) {
 								if (tagFilter == null || tagFilter.trim().length() == 0 || page.getTags(lgCtx).contains(tagFilter)) {
 									if (catFilter == null || catFilter.trim().length() == 0 || page.getCategory(lgCtx).equals(catFilter)) {
 										Calendar cal = Calendar.getInstance();
@@ -1916,6 +1942,8 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 			}
 		}
 
+		LocalLogger.stepCount("pageref", "step 7");
+
 		if (isDisplayFirstPage() && firstPage != null && ctx.getRequest().getParameter("_wcms_content_path") == null) {
 			String path = firstPage.getPath();
 			String pageRendered = executeJSP(ctx, Edit.CONTENT_RENDERER + "?_wcms_content_path=" + path);
@@ -1931,6 +1959,8 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		for (Calendar calendar : allMonths) {
 			months.add(format.format(calendar.getTime()));
 		}
+
+		LocalLogger.stepCount("pageref", "step 8");
 
 		ctx.getRequest().setAttribute("pagination", pagination);
 		ctx.getRequest().setAttribute("pagesStatus", pagesStatus);

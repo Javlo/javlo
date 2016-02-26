@@ -635,3 +635,9 @@ change log
  * large separation
  
  * test mailing boolean stored
+ 
+ * set hashcode as image transfourm url param in preview mode
+ 
+ * field file and image browser boutton
+ 
+* 2.1.0.3.7 26/02/2016

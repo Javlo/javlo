@@ -354,24 +354,28 @@ public class Edit extends AbstractModuleAction {
 	 * @throws Exception
 	 */
 	public static boolean checkPageSecurity(ContentContext ctx, MenuElement page) throws Exception {
-		AdminUserSecurity adminUserSecurity = AdminUserSecurity.getInstance();
-		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-		IUserFactory adminUserFactory = AdminUserFactory.createUserFactory(globalContext, ctx.getRequest().getSession());
-		if (adminUserFactory.getCurrentUser(ctx.getRequest().getSession()) == null) {
+		if (page == null) {
 			return false;
-		}
-		ContentService.getInstance(globalContext);
-		if (page.getEditorRoles().size() > 0) {
-			if (!adminUserSecurity.haveRight(adminUserFactory.getCurrentUser(ctx.getRequest().getSession()), AdminUserSecurity.FULL_CONTROL_ROLE)) {
-				if (!adminUserFactory.getCurrentUser(ctx.getRequest().getSession()).validForRoles(page.getEditorRoles())) {
-					MessageRepository messageRepository = MessageRepository.getInstance(ctx);
-					I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
-					messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("action.security.noright-onpage"), GenericMessage.ERROR), false);
-					return false;
+		} else {
+			AdminUserSecurity adminUserSecurity = AdminUserSecurity.getInstance();
+			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+			IUserFactory adminUserFactory = AdminUserFactory.createUserFactory(globalContext, ctx.getRequest().getSession());
+			if (adminUserFactory.getCurrentUser(ctx.getRequest().getSession()) == null) {
+				return false;
+			}
+			ContentService.getInstance(globalContext);
+			if (page.getEditorRoles().size() > 0) {
+				if (!adminUserSecurity.haveRight(adminUserFactory.getCurrentUser(ctx.getRequest().getSession()), AdminUserSecurity.FULL_CONTROL_ROLE)) {
+					if (!adminUserFactory.getCurrentUser(ctx.getRequest().getSession()).validForRoles(page.getEditorRoles())) {
+						MessageRepository messageRepository = MessageRepository.getInstance(ctx);
+						I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
+						messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("action.security.noright-onpage"), GenericMessage.ERROR), false);
+						return false;
+					}
 				}
 			}
+			return true;
 		}
-		return true;
 	}
 
 	/**
@@ -536,13 +540,13 @@ public class Edit extends AbstractModuleAction {
 			List<String> roles = new LinkedList<String>();
 			List<String> adminOtherRole = new LinkedList<String>();
 			Set<String> roleSet = new HashSet<String>();
-			
+
 			if (ctx.getCurrentEditUser() != null) {
 				for (String role : globalContext.getAdminUserRoles()) {
 					roleSet.clear();
 					roleSet.add(role);
 					if (ctx.getCurrentEditUser().validForRoles(roleSet)) {
-						roles.add(role);			
+						roles.add(role);
 					} else {
 						adminOtherRole.add(role);
 					}
@@ -709,7 +713,7 @@ public class Edit extends AbstractModuleAction {
 	}
 
 	public static final String performInsert(HttpServletRequest request, HttpServletResponse response, RequestService rs, ContentService contentService, GlobalContext globalContext, HttpSession session, EditContext editContext, ContentContext ctx, ContentService content, Module currentModule, I18nAccess i18nAccess, MessageRepository messageRepository) throws Exception {
-		
+
 		if (!canModifyCurrentPage(ctx) || !checkPageSecurity(ctx)) {
 			messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("action.block"), GenericMessage.ERROR), false);
 			return i18nAccess.getText("action.block");
@@ -1055,8 +1059,9 @@ public class Edit extends AbstractModuleAction {
 					if (ctx.isEditPreview()) {
 						componentContext.addNewComponent(elem);
 					}
-					String rawValue = requestService.getParameter("raw_value_" + elem.getId(), null);					
-					if (rawValue != null) { // if elem not modified check modification via rawvalue						
+					String rawValue = requestService.getParameter("raw_value_" + elem.getId(), null);
+					if (rawValue != null) { // if elem not modified check
+											// modification via rawvalue
 						if (!rawValue.equals(elem.getValue(ctx))) {
 							logger.info("raw value modification for " + elem.getType());
 							elem.setValue(rawValue);
@@ -1213,13 +1218,12 @@ public class Edit extends AbstractModuleAction {
 				if (pageType != null) {
 					page.setType(pageType);
 				}
-				
+
 				/** seo weight **/
 				String seoWeight = requestService.getParameter("seo_weight", null);
 				if (seoWeight != null) {
 					page.setSeoWeight(Integer.parseInt(seoWeight));
 				}
-
 
 				/** shared **/
 				String pageShared = requestService.getParameter("share", null);
@@ -1255,7 +1259,7 @@ public class Edit extends AbstractModuleAction {
 					mailingCtx.setCurrentTemplate(null);
 					if (templateName.length() > 1) {
 						Template template = TemplateFactory.getTemplates(application).get(templateName);
-						if (template != null && ctx.getCurrentTemplates().contains(template)) { 
+						if (template != null && ctx.getCurrentTemplates().contains(template)) {
 							page.setTemplateId(template.getName());
 							modify = true;
 						} else {
@@ -1303,7 +1307,7 @@ public class Edit extends AbstractModuleAction {
 			ctx.setRequestContentLanguage(lg);
 			messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("edit.message.new-language") + ' ' + lg, GenericMessage.INFO));
 			String newURL = URLHelper.createURL(ctx);
-	
+
 			if (requestService.getParameter(ElementaryURLHelper.BACK_PARAM_NAME, null) != null) {
 				newURL = URLHelper.addRawParam(newURL, ElementaryURLHelper.BACK_PARAM_NAME, requestService.getParameter(ElementaryURLHelper.BACK_PARAM_NAME, null));
 			}
@@ -1425,6 +1429,13 @@ public class Edit extends AbstractModuleAction {
 	}
 
 	public static String performPublish(ServletContext application, HttpServletRequest request, StaticConfig staticConfig, GlobalContext globalContext, ContentService content, ContentContext ctx, I18nAccess i18nAccess) throws Exception {
+		
+		if (!canModifyCurrentPage(ctx) || !checkPageSecurity(ctx)) {
+			MessageRepository messageRepository = MessageRepository.getInstance(ctx);
+			messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("action.block"), GenericMessage.ERROR));
+			return null;
+		}
+		
 		synchronized (content.getNavigation(ctx).getLock()) {
 
 			DebugHelper.writeInfo(System.out);
@@ -1453,7 +1464,7 @@ public class Edit extends AbstractModuleAction {
 				content.releaseViewNav(ctx, globalContext);
 
 				String msg = i18nAccess.getText("content.published");
-				MessageRepository.getInstance(ctx).setGlobalMessageAndNotificationToAll(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE), new GenericMessage(msg, GenericMessage.INFO), false);
+				MessageRepository.getInstance(ctx).setGlobalMessageAndNotification(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE), new GenericMessage(msg, GenericMessage.INFO), false);
 				// MessageRepository.getInstance(ctx).setGlobalMessage(new
 				// GenericMessage(msg, GenericMessage.INFO));
 
@@ -1515,7 +1526,7 @@ public class Edit extends AbstractModuleAction {
 			}
 
 			ReverseLinkService.getInstance(globalContext).clearCache();
-			
+
 			globalContext.resetURLFactory();
 
 			return message;
@@ -2025,9 +2036,9 @@ public class Edit extends AbstractModuleAction {
 			if (pageToBeMoved.getId().equals(ctx.getCurrentPage().getId())) {
 				return "you can't paste a page a page on him self.";
 			}
-			
+
 			pageToBeMoved.moveToParent(ctx.getCurrentPage());
-			pageToBeMoved.setPriority(1);			
+			pageToBeMoved.setPriority(1);
 			persistenceService.setAskStore(true);
 			editContext.setPathForCopy(null);
 			String[][] balises = { { "path", path }, { "new-path", pageToBeMoved.getPath() } };
@@ -2140,7 +2151,7 @@ public class Edit extends AbstractModuleAction {
 	}
 
 	public static String performRefresh(ContentContext ctx) throws Exception {
-		//SynchroHelper.performSynchro(ctx);		
+		// SynchroHelper.performSynchro(ctx);
 		return null;
 	}
 }

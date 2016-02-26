@@ -321,7 +321,7 @@ public class DataAction implements IAction {
 	 */
 	protected static File createImage(ContentContext ctx, String importFolder, FileItem imageItem, ImportConfigBean config, boolean content, String previousId) throws Exception {
 		GlobalContext gc = ctx.getGlobalContext();
-		String imageRelativeFolder = URLHelper.mergePath(gc.getStaticConfig().getStaticFolder(), ctx.getCurrentTemplate().getImportImageFolder(), importFolder);
+		String imageRelativeFolder = URLHelper.mergePath(gc.getStaticConfig().getStaticFolder(), ctx.getGlobalContext().getStaticConfig().getImportImageFolder(), importFolder);
 		File targetFolder = new File(URLHelper.mergePath(gc.getDataFolder(), imageRelativeFolder));
 		if (!targetFolder.exists()) {
 			targetFolder.mkdirs();
@@ -377,9 +377,9 @@ public class DataAction implements IAction {
 		ContentService cs = ContentService.getInstance(globalContext);
 		String galleryRelativeFolder = null;
 
-		String baseGalleryFolder = tpl.getImportGalleryFolder();
+		String baseGalleryFolder = ctx.getGlobalContext().getStaticConfig().getImportGalleryFolder();
 		if (!config.isCreateContentOnImportImage() && !content) {
-			baseGalleryFolder = tpl.getImportImageFolder();
+			baseGalleryFolder = ctx.getGlobalContext().getStaticConfig().getImportImageFolder();
 		}
 
 		Multimedia compGalleryFound = null;
@@ -475,8 +475,7 @@ public class DataAction implements IAction {
 
 		if (!Edit.checkPageSecurity(ctx)) {
 			return "no suffisant right.";
-		}
-		Template tpl = ctx.getCurrentTemplate();
+		}		
 		String importFolder = createImportFolder(ctx);
 		int countImages = 0;
 		FileItem imageItem = null;
@@ -515,7 +514,7 @@ public class DataAction implements IAction {
 							page = NavigationHelper.createChildPageAutoName(pageAssociation.getArticleRoot().getPage(), ctx);
 							SharedContentContext sharedContentContext = SharedContentContext.getInstance(ctx.getRequest().getSession());
 							sharedContentContext.setProvider(CloserJavloSharedContentProvider.NAME);
-							SharedContentService.getInstance(ctx).clearCache();
+							SharedContentService.getInstance(ctx).clearCache(ctx);
 							contentCtx.setArea(ComponentBean.DEFAULT_AREA);
 						}
 						cs.createContent(contentCtx, page, beans, previousId, true);
@@ -532,7 +531,7 @@ public class DataAction implements IAction {
 						ctx.setNeedRefresh(true);
 					} else {
 						boolean isArray = StringHelper.getFileExtension(item.getName()).equalsIgnoreCase("xls") || StringHelper.getFileExtension(item.getName()).equalsIgnoreCase("xlsx") || StringHelper.getFileExtension(item.getName()).equalsIgnoreCase("ods") || StringHelper.getFileExtension(item.getName()).equalsIgnoreCase("csv");
-						String resourceRelativeFolder = URLHelper.mergePath(gc.getStaticConfig().getStaticFolder(), tpl.getImportResourceFolder(), importFolder);
+						String resourceRelativeFolder = URLHelper.mergePath(gc.getStaticConfig().getStaticFolder(), ctx.getGlobalContext().getStaticConfig().getImportResourceFolder(), importFolder);
 						File targetFolder = new File(URLHelper.mergePath(gc.getDataFolder(), resourceRelativeFolder));
 						if (!targetFolder.exists()) {
 							targetFolder.mkdirs();
@@ -556,11 +555,7 @@ public class DataAction implements IAction {
 							SharedContentService sharedContentService = SharedContentService.getInstance(ctx);
 							if (sharedContentService.getActiveProviderNames(ctx).contains(ImportedFileSharedContentProvider.NAME)) {
 								sharedContentContext.setProvider(ImportedFileSharedContentProvider.NAME);
-								sharedContentService.clearCache();
-								ISharedContentProvider provider = SharedContentService.getInstance(ctx).getProvider(ctx, sharedContentContext.getProvider());
-								provider.refresh(ctx);
-								provider.getContent(ctx); // refresh categories
-															// list
+								sharedContentService.clearCache(ctx);
 							} else {
 								ComponentBean bean = new ComponentBean(beanType, new String(outStream.toByteArray()), ctx.getRequestContentLanguage());
 								if (!content) {
@@ -600,7 +595,7 @@ public class DataAction implements IAction {
 					ctx.setNeedRefresh(true);
 					SharedContentContext sharedContentContext = SharedContentContext.getInstance(ctx.getRequest().getSession());
 					sharedContentContext.setProvider(ImportedImageSharedContentProvider.NAME);
-					SharedContentService.getInstance(ctx).clearCache();
+					SharedContentService.getInstance(ctx).clearCache(ctx);
 					ISharedContentProvider provider = SharedContentService.getInstance(ctx).getProvider(ctx, sharedContentContext.getProvider());
 					provider.refresh(ctx);
 					provider.getContent(ctx); // refresh categories list
@@ -617,7 +612,7 @@ public class DataAction implements IAction {
 					}
 					SharedContentContext sharedContentContext = SharedContentContext.getInstance(ctx.getRequest().getSession());
 					sharedContentContext.setProvider(ImportedImageSharedContentProvider.NAME);
-					SharedContentService.getInstance(ctx).clearCache();
+					SharedContentService.getInstance(ctx).clearCache(ctx);
 					ISharedContentProvider provider = SharedContentService.getInstance(ctx).getProvider(ctx, sharedContentContext.getProvider());
 					provider.refresh(ctx);
 					provider.getContent(ctx); // refresh categories list
@@ -625,7 +620,7 @@ public class DataAction implements IAction {
 				if (!config.isCreateContentOnImportImage() && !content && countImages > 0) {
 					SharedContentContext sharedContentContext = SharedContentContext.getInstance(ctx.getRequest().getSession());
 					sharedContentContext.setProvider(ImportedImageSharedContentProvider.NAME);
-					SharedContentService.getInstance(ctx).clearCache();
+					SharedContentService.getInstance(ctx).clearCache(ctx);
 					ISharedContentProvider provider = SharedContentService.getInstance(ctx).getProvider(ctx, sharedContentContext.getProvider());
 					provider.refresh(ctx);
 					provider.getContent(ctx); // refresh categories list
