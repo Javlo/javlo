@@ -46,6 +46,7 @@ import org.javlo.helper.Comparator.FileComparator;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
+import org.javlo.module.file.FileAction;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.RequestService;
 import org.javlo.service.ReverseLinkService;
@@ -162,7 +163,7 @@ public abstract class AbstractFileComponent extends AbstractVisualComponent impl
 		ctx.getRequest().setAttribute("linkToImage", StringHelper.isImage(url));
 		ctx.getRequest().setAttribute("blank", ctx.getGlobalContext().isOpenExternalLinkAsPopup(url));
 		ctx.getRequest().setAttribute("descritpion", getDescription());
-		ctx.getRequest().setAttribute("cleanDescription", Encode.forHtmlContent(getDescription()));
+		ctx.getRequest().setAttribute("cleanDescription", Encode.forHtml(getDescription()));
 		StaticInfo staticInfo = getStaticInfo(ctx);
 		String cleanLabel=null;
 		if (staticInfo != null) {
@@ -299,6 +300,10 @@ public abstract class AbstractFileComponent extends AbstractVisualComponent impl
 		}
 		return dir;
 	}
+	
+	protected String getEditorComplexity(ContentContext ctx) throws Exception {
+		return properties.getProperty("editor-complexity", "light");
+	}
 
 	@Override
 	protected String getEditXHTMLCode(ContentContext ctx) throws Exception {
@@ -410,10 +415,19 @@ public abstract class AbstractFileComponent extends AbstractVisualComponent impl
 			finalCode.append("<div class=\"description form-group\">");
 			finalCode.append("<label for=\"" + getEmbedCode() + "\">");
 			finalCode.append(descriptionTitle);
-			finalCode.append("</label>");
-			finalCode.append("<textarea class=\"form-control\" id=\"" + getDescriptionName() + "\" name=\"" + getDescriptionName() + "\">");
+			finalCode.append("</label>");			
+			finalCode.append("<textarea class=\"form-control tinymce-light wysiwyg\" id=\"" + getDescriptionName() + "\" name=\"" + getDescriptionName() + "\">");
 			finalCode.append(getDescription());
 			finalCode.append("</textarea></div>");
+			Map<String, String> filesParams = new HashMap<String, String>();
+			String path = FileAction.getPathPrefix(ctx);
+			filesParams.put("path", path);
+			filesParams.put("webaction", "changeRenderer");
+			filesParams.put("page", "meta");
+			filesParams.put("select", "_TYPE_");
+			filesParams.put(ContentContext.PREVIEW_EDIT_PARAM, "true");
+			String chooseImageURL = URLHelper.createModuleURL(ctx, ctx.getPath(), "file", filesParams);
+			finalCode.append("<script type=\"text/javascript\">jQuery(document).ready(loadWysiwyg('#" + getDescriptionName() + "','" + getEditorComplexity(ctx) + "','" + chooseImageURL + "'));</script>");
 		}
 
 		finalCode.append("</div></div>");

@@ -61,7 +61,6 @@ public class FieldWysiwyg extends Field {
 			filesParams.put("page", "meta");
 			filesParams.put("select", "_TYPE_");
 			filesParams.put(ContentContext.PREVIEW_EDIT_PARAM, "true");
-
 			String chooseImageURL = URLHelper.createModuleURL(ctx, ctx.getPath(), "file", filesParams);
 			out.println("<script type=\"text/javascript\">jQuery(document).ready(loadWysiwyg('#" + getInputName() + "','" + getEditorComplexity(ctx) + "','" + chooseImageURL + "'));</script>");
 			out.flush();
