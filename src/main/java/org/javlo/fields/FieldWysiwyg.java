@@ -18,7 +18,17 @@ public class FieldWysiwyg extends Field {
 	protected String getEditorComplexity(ContentContext ctx) throws Exception {
 		return properties.getProperty("editor-complexity", "light");
 	}
-
+	
+	@Override
+	public String getValue() {	
+		String value = super.getValue();
+		while (value.contains("\\,")) {
+			value = value.replace("\\,", ",");
+		}
+		setValue(value);
+		return value;
+	}
+	
 	@Override
 	public String getEditXHTMLCode(ContentContext ctx) {
 
