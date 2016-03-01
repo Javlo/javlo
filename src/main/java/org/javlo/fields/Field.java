@@ -738,7 +738,12 @@ public class Field implements Cloneable, IRestItem {
 			}
 		}
 		if (values != null) {
-			String value = StringHelper.collectionToString(values, ", ");
+			String value;
+			if (values.size()>1) {
+				value = StringHelper.collectionToString(values, ", ");
+			} else {
+				value = requestService.getParameter(getInputName(), "");
+			}
 			if (!value.equals(getValue())) {
 				setValue(value);
 				if (!validate()) {

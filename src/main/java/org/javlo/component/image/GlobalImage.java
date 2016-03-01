@@ -1155,6 +1155,7 @@ public class GlobalImage extends Image implements IImageFilter {
 			}
 			if (image.isModify()) {
 				image.storeProperties();
+				PersistenceService.getInstance(globalContext).setAskStore(true);
 				Edit.performSave(ctx, editContext, globalContext, content, componentContext, rs, i18nAccess, messageRepository, currentModule, adminUserFactory);
 			}
 			ctx.getAjaxData().put("previewURL", image.getPreviewURL(ctx, image.getFilter(ctx)));

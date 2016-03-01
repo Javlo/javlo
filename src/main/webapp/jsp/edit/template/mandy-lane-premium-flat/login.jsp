@@ -36,7 +36,7 @@ case GenericMessage.SUCCESS:
 		</style>
     </head>
     
-    <body class="login-page bg${info.random10+1}">    	
+    <body class="login-page bg${info.random10+1} ${not empty messages.globalMessage && messages.globalMessage.type > 0 && not empty messages.globalMessage.message?'wmsg':'nomsg'}">    	
         <div class="main">
            <c:if test="${not empty messages.globalMessage && messages.globalMessage.type > 0 && not empty messages.globalMessage.message}">
 				<div class="alert-wrapper slow-hide"><div class="alert alert-<%=bootstrapType%>">${messages.globalMessage.message}</div></div>

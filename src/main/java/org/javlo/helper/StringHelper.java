@@ -81,6 +81,8 @@ public class StringHelper {
 	public static final String REQUEST_KEY_FORM_VALID = "__form_request_valid__";
 
 	public static final String ALPHABET = "abcdefghijklmnopqrstuvwxyz";
+	
+	public static final String ALPHABET_UPPER_CASE = ALPHABET.toUpperCase();
 
 	public static final String NUMERIC = "0123456789";
 

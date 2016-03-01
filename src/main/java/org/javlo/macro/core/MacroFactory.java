@@ -38,6 +38,7 @@ import org.javlo.macro.DeleteDynamicComponent;
 import org.javlo.macro.DeletePageFromSpecificUser;
 import org.javlo.macro.DeleteSameComponent;
 import org.javlo.macro.DeleteSmartExternalLinkMacro;
+import org.javlo.macro.DetectAllComponentsType;
 import org.javlo.macro.DownDateMacro;
 import org.javlo.macro.DuplicateChildren;
 import org.javlo.macro.DuplicatePage;
@@ -112,6 +113,7 @@ public class MacroFactory {
 		macros.add(new CreateChildrenStructureMacro());
 		macros.add(new DeletePageFromSpecificUser());
 		macros.add(new MergeDynamicComponent());
+		macros.add(new DetectAllComponentsType());
 		macros.add(new ReduceSubtitleLevelMacro());
 		macros.add(new IncreaseSubtitleLevelMacro());
 		macros.add(new CleanResourceImageMacro());

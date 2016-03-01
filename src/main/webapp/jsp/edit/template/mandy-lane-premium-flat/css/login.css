@@ -27,6 +27,10 @@ body {
     font-family: javloFont, Verdana;
 }
 
+.wmsg h1 {
+	font-size: 32px;
+}
+
 .main h1 .version {
 	color: #708D91;
 	font-size: 0.4em;

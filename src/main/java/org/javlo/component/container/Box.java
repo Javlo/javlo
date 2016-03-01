@@ -3,10 +3,12 @@ package org.javlo.component.container;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.Arrays;
+import java.util.Stack;
 
 import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.context.ContentContext;
+import org.javlo.context.EditContext;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.XHTMLHelper;
 import org.javlo.service.RequestService;
@@ -22,7 +24,7 @@ public class Box extends AbstractVisualComponent implements IContainer {
 	protected String getTitleBoxInputName() {
 		return "title_" + getId();
 	}
-	
+
 	protected String getFooterBoxInputName() {
 		return "footer_" + getId();
 	}
@@ -43,15 +45,14 @@ public class Box extends AbstractVisualComponent implements IContainer {
 			return new String[0];
 		}
 	}
-	
+
 	@Override
-	public void prepareView(ContentContext ctx) throws Exception {	
+	public void prepareView(ContentContext ctx) throws Exception {
 		super.prepareView(ctx);
 		ctx.getRequest().setAttribute("closeBox", isCloseBox());
 		ctx.getRequest().setAttribute("titleBox", getTitle());
 		ctx.getRequest().setAttribute("footerBox", getFooter());
 	}
-	
 
 	@Override
 	protected String getEditXHTMLCode(ContentContext ctx) throws Exception {
@@ -96,11 +97,11 @@ public class Box extends AbstractVisualComponent implements IContainer {
 				setModify();
 			}
 			out.println("<label for=\"" + getTitleBoxInputName() + "\">Title</label>");
-			out.println("<input class=\"form-control\" type=\"text\" name=\"" + getTitleBoxInputName() + "\" value=\""+XHTMLHelper.stringToAttribute(getTitle())+"\" />");
+			out.println("<input class=\"form-control\" type=\"text\" name=\"" + getTitleBoxInputName() + "\" value=\"" + XHTMLHelper.stringToAttribute(getTitle()) + "\" />");
 			out.println("</div>");
 			out.println("<div class=\"form-group\">");
 			out.println("<label for=\"" + getFooterBoxInputName() + "\">Footer</label>");
-			out.println("<input class=\"form-control\" type=\"text\" name=\"" + getFooterBoxInputName() + "\" value=\""+XHTMLHelper.stringToAttribute(getFooter())+"\" />");
+			out.println("<input class=\"form-control\" type=\"text\" name=\"" + getFooterBoxInputName() + "\" value=\"" + XHTMLHelper.stringToAttribute(getFooter()) + "\" />");
 			out.println("</div>");
 		}
 
@@ -134,13 +135,41 @@ public class Box extends AbstractVisualComponent implements IContainer {
 	protected String getInternalSuffix(ContentContext ctx) {
 		return getConfig(ctx).getProperty("html.internal-suffix", "");
 	}
+	
+	protected Stack<Character> getBoxStack(ContentContext ctx) {
+		final String BOX_KEY = "_box_stack";
+		Stack<Character> boxStack = (Stack<Character>)ctx.getRequest().getAttribute(BOX_KEY);
+		if (boxStack == null) {
+			boxStack = new Stack<Character>();
+			ctx.getRequest().setAttribute(BOX_KEY, boxStack);
+		}
+		return boxStack;
+	}
 
 	@Override
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
-		if (!isCloseBox()) {
-			return getOpenCode(ctx) + getInternalPrefix(ctx);
+		final String BOX_KEY = "_box_counter";
+		if (!isCloseBox()) {			
+			String suffix = "";
+			if (EditContext.getInstance(ctx.getGlobalContext(), ctx.getRequest().getSession()).isEditPreview()) {				
+				Integer boxCounter = (Integer)ctx.getRequest().getAttribute(BOX_KEY);
+				if (boxCounter == null) {
+					boxCounter = 0;
+					ctx.getRequest().setAttribute(BOX_KEY, boxCounter);
+				} else {
+					boxCounter++;
+					ctx.getRequest().setAttribute(BOX_KEY, boxCounter);
+				}
+				getBoxStack(ctx).push(StringHelper.ALPHABET_UPPER_CASE.charAt(boxCounter%26));
+				suffix = "<div " + getPreviewAttributes(ctx) + ">[Open box - "+StringHelper.ALPHABET_UPPER_CASE.charAt(boxCounter%26)+"]</div>";
+			}			
+			return  getOpenCode(ctx) + suffix + getInternalPrefix(ctx);
 		} else {
-			return getInternalSuffix(ctx) + getCloseCode(ctx);
+			String prefix = "";			
+			if (EditContext.getInstance(ctx.getGlobalContext(), ctx.getRequest().getSession()).isEditPreview()) {
+				prefix = "<div " + getPreviewAttributes(ctx) + ">[Close box - "+getBoxStack(ctx).pop()+"]</div>";
+			}
+			return prefix + getInternalSuffix(ctx) + getCloseCode(ctx);
 		}
 	}
 
@@ -151,21 +180,21 @@ public class Box extends AbstractVisualComponent implements IContainer {
 			return StringHelper.isTrue(getValue());
 		}
 	}
-	
+
 	protected String getTitle() {
-		if (getValue().contains(";")) {			
+		if (getValue().contains(";")) {
 			return StringHelper.stringToCollection(getValue(), ";").get(1);
 		} else {
 			return "";
-		}		
+		}
 	}
-	
+
 	protected String getFooter() {
-		if (getValue().contains(";")) {			
+		if (getValue().contains(";")) {
 			return StringHelper.stringToCollection(getValue(), ";").get(2);
 		} else {
 			return "";
-		}		
+		}
 	}
 
 	@Override
@@ -173,12 +202,12 @@ public class Box extends AbstractVisualComponent implements IContainer {
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
 		boolean closeBox = requestService.getParameter(getCloseBoxInputName(), null) != null;
 		String title = requestService.getParameter(getTitleBoxInputName(), "");
-		String footer = requestService.getParameter(getFooterBoxInputName(), "");		
+		String footer = requestService.getParameter(getFooterBoxInputName(), "");
 		if (closeBox) {
 			title = getTitle();
 			footer = getFooter();
-		}		 
-		String newValue = StringHelper.collectionToString(Arrays.asList(new String[] {""+closeBox, title, footer }), ";");
+		}
+		String newValue = StringHelper.collectionToString(Arrays.asList(new String[] { "" + closeBox, title, footer }), ";");
 		if (!newValue.equals(getValue())) {
 			setValue(newValue);
 			setModify();
@@ -186,10 +215,10 @@ public class Box extends AbstractVisualComponent implements IContainer {
 		}
 		return null;
 	}
-	
+
 	@Override
 	public void setOpen(ContentContext ctx, boolean open) {
-		String newValue = StringHelper.collectionToString(Arrays.asList(new String[] {""+open, getTitle(), getFooter()}), ";");
+		String newValue = StringHelper.collectionToString(Arrays.asList(new String[] { "" + open, getTitle(), getFooter() }), ";");
 		setValue(newValue);
 	}
 
@@ -222,16 +251,15 @@ public class Box extends AbstractVisualComponent implements IContainer {
 	public boolean isContentCachable(ContentContext ctx) {
 		return true;
 	}
-	
+
 	@Override
 	public boolean isEmpty(ContentContext ctx) {
 		return false;
 	}
-	
+
 	@Override
 	public boolean isDispayEmptyXHTMLCode(ContentContext ctx) throws Exception {
 		return false;
 	}
-
 
 }

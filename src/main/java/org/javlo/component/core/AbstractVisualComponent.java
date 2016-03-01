@@ -1746,6 +1746,10 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	protected Object getLock(ContentContext ctx) {
 		return this;
 	}
+	
+	protected String getPreviewAttributes(ContentContext ctx) {
+		return getSpecialPreviewCssClass(ctx, getStyle(ctx)) + getSpecialPreviewCssId(ctx);
+	}
 
 	/**
 	 * prepare the rendering of a component. default attributes put in request :
@@ -1765,7 +1769,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		ctx.getRequest().setAttribute("type", getType());
 		ctx.getRequest().setAttribute("compid", getForcedId(ctx));
 		ctx.getRequest().setAttribute("renderer", getCurrentRenderer(ctx));
-		ctx.getRequest().setAttribute("previewAttributes", getSpecialPreviewCssClass(ctx, getStyle(ctx)) + getSpecialPreviewCssId(ctx));	
+		ctx.getRequest().setAttribute("previewAttributes",getPreviewAttributes(ctx));	
 		if (isAskWidth(ctx) && getWidth() != null) {
 			String width = getWidth().trim();
 			if (width.endsWith("%")) {			
