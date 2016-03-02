@@ -29,7 +29,7 @@ public class JVEnc64 extends TagSupport {
 	@Override
 	public int doStartTag() throws JspException {
 		try {						
-			pageContext.getRequest().setAttribute(getVar(), Base64.encodeBase64(value.getBytes()));
+			pageContext.getRequest().setAttribute(getVar(), Base64.encodeBase64String(value.getBytes()));
 		} catch (Exception ioe) {
 			throw new JspException("Error: " + ioe.getMessage());
 		}
