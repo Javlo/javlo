@@ -906,19 +906,19 @@ public class XHTMLHelper {
 		return getInputOneSelect(name, contentArray, value, null, true);
 	}
 
-	public static String getInputOneSelect(String name, Collection<String> content, String value, boolean sorting) {
+	public static String getInputOneSelect(String name, Collection<? extends Object> content, String value, boolean sorting) {
 		String[] contentArray = new String[content.size()];
 		content.toArray(contentArray);
 		return getInputOneSelect(name, contentArray, value, null, sorting);
 	}
 
-	public static String getInputOneSelect(String name, Collection<String> content, String value, String cssClass) {
-		String[] contentArray = new String[content.size()];
+	public static String getInputOneSelect(String name, Collection<? extends Object> content, String value, String cssClass) {
+		Object[] contentArray = new Object[content.size()];
 		content.toArray(contentArray);
 		String[][] newContent = new String[contentArray.length][2];
 		for (int i = 0; i < contentArray.length; i++) {
-			newContent[i][0] = contentArray[i];
-			newContent[i][1] = contentArray[i];
+			newContent[i][0] = contentArray[i].toString();
+			newContent[i][1] = contentArray[i].toString();
 		}
 		return getInputOneSelectInternal(name, name, newContent, value, cssClass, null, null, true);
 	}

@@ -2,6 +2,7 @@ package org.javlo.component.container;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -16,7 +17,9 @@ import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.fields.Field;
 import org.javlo.fields.IFieldContainer;
+import org.javlo.fields.SortContainer;
 import org.javlo.helper.ComponentHelper;
+import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.helper.XHTMLHelper;
 import org.javlo.i18n.I18nAccess;
@@ -68,8 +71,21 @@ public class DynamicComponentFilter extends AbstractPropertiesComponent implemen
 
 		ContentService content = ContentService.getInstance(ctx.getRequest());
 		List<String> container = service.getAllType(ctx, content.getNavigation(ctx));
-
-		out.println(XHTMLHelper.getInputOneSelect(createKeyWithField("type"), container, getSelectedType()));
+		out.println("<div class=\"input-group\">");
+		out.println(XHTMLHelper.getInputOneSelect(createKeyWithField("type"), container, getSelectedType(), "form-control"));
+		out.println("</div>");
+		IFieldContainer fieldContainer = getFieldContainer(ctx);
+		if (fieldContainer != null) {
+			out.println("<div class=\"input-group\">");
+			out.println("<label>Sort on : </label>");
+			List<String> values = new LinkedList<String>();
+			values.add("");
+			for (Field field : fieldContainer.getFields(ctx)) {
+				values.add(field.getName());
+			}
+			out.println(XHTMLHelper.getInputOneSelect(createKeyWithField("field"),values , getSelectedField(), "form-control"));
+			out.println("</div>");
+		}
 
 		out.close();
 		return new String(outStream.toByteArray());
@@ -104,6 +120,10 @@ public class DynamicComponentFilter extends AbstractPropertiesComponent implemen
 		DynamicComponentService service = DynamicComponentService.getInstance(globalContext);
 
 		List<IFieldContainer> containers = service.getFieldContainers(ctx, content.getNavigation(ctx), getSelectedType());
+		if (!StringHelper.isEmpty(getSelectedField())) {
+			Collections.sort(containers, new SortContainer(ctx, getSelectedField()));
+		}
+		
 
 		Map<String, Field> fieldsSearch = new HashMap<String, Field>();
 
@@ -154,6 +174,10 @@ public class DynamicComponentFilter extends AbstractPropertiesComponent implemen
 
 	private String getSelectedType() {
 		return properties.getProperty("type");
+	}
+	
+	private String getSelectedField() {
+		return properties.getProperty("field");
 	}
 
 	IFieldContainer getFieldContainer(ContentContext ctx) throws Exception {
@@ -219,6 +243,7 @@ public class DynamicComponentFilter extends AbstractPropertiesComponent implemen
 	public List<String> getFields(ContentContext ctx) throws Exception {
 		List<String> outList = new LinkedList<String>();
 		outList.add("type");
+		outList.add("field");
 		return outList;
 	}
 

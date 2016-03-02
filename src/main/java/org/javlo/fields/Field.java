@@ -995,4 +995,9 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 	public int compareTo(Field o) {
 		return getValue().compareTo(o.getValue());
 	}
+	
+	@Override
+	public String toString() {
+		return getName();
+	}
 }
