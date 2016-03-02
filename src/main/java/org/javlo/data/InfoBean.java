@@ -613,7 +613,9 @@ public class InfoBean {
 
 	public String getAbsoluteRootTemplateURL() {
 		try {
-			return URLHelper.createStaticURL(ctx.getContextForAbsoluteURL(), URLHelper.mergePath(ctx.getCurrentTemplate().getLocalWorkTemplateFolder(), getTemplateFolder()));
+			String url = URLHelper.createStaticURL(ctx.getContextForAbsoluteURL(), URLHelper.mergePath(ctx.getCurrentTemplate().getLocalWorkTemplateFolder(), getTemplateFolder()));
+			System.out.println("***** InfoBean.getAbsoluteTemplateFolder : url = "+url); //TODO: remove debug trace
+			return url;
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;

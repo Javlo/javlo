@@ -59,14 +59,14 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 	protected static Logger logger = Logger.getLogger(DynamicComponent.class.getName());
 	
 	@Override
-	public void prepareView(ContentContext ctx) throws Exception {
-		super.prepareView(ctx);
+	public void prepareView(ContentContext ctx) throws Exception {		
 		if (getNextComponent() == null) {
 			setNextComponent(ComponentHelper.getNextComponent(this, ctx));
 		}
 		if (getPreviousComponent() == null) {
 			setPreviousComponent(ComponentHelper.getPreviousComponent(this, ctx));
 		}
+		super.prepareView(ctx);
 	}
 
 	@Override

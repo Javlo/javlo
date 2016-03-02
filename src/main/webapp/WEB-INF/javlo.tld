@@ -101,4 +101,22 @@
         <tag-class>org.javlo.tag.JVAutoLinkTag</tag-class>        
         <info>This Tag transform link in text in html link (sample: www.javlo.org -> <a href="http://www.javlo.org">www.javlo.org</a>).</info>       
     </tag>
+     <tag>
+        <name>enc64</name>
+        <bodycontent>JSP</bodycontent>
+        <tag-class>org.javlo.tag.JVEnc64</tag-class>        
+        <info>This encode string as base 64.</info>
+        <attribute>
+            <name>var</name>
+            <required>true</required>
+            <description>create a attribute in scope request for url.</description>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>value</name>
+            <required>true</required>
+            <description>the text need encoding</description>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>       
+    </tag>
 </taglib>
