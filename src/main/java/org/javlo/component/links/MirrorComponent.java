@@ -171,8 +171,10 @@ public class MirrorComponent extends AbstractVisualComponent implements IFieldCo
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
 		AbstractVisualComponent comp = (AbstractVisualComponent) getMirrorComponent(ctx);
 		if (comp != null) {
-			AbstractVisualComponent.setForcedId(ctx, getId());
-			comp.prepareView(ctx);
+			AbstractVisualComponent.setForcedId(ctx, getId());		
+			AbstractVisualComponent.setMirrorWrapped(ctx, comp);
+			//comp.prepareView(ctx);
+			ctx.getRequest().setAttribute("nextSame",isNextSame(ctx));
 			String xhtml = comp.getXHTMLCode(ctx);
 			AbstractVisualComponent.setForcedId(ctx, null);
 			return xhtml;

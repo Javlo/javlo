@@ -44,6 +44,7 @@ import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.javlo.cache.ICache;
 import org.javlo.component.config.ComponentConfig;
+import org.javlo.component.links.MirrorComponent;
 import org.javlo.context.ContentContext;
 import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
@@ -1094,10 +1095,28 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	 * @return
 	 */
 	public boolean isNextSame() {
-		if (getNextComponent() ==  null) {
+		IContentVisualComponent nextComp = getNextComponent();
+		if (nextComp ==  null) {
 			return false;
 		} else {
-			return getNextComponent().getType().equals(getType());
+			return nextComp.getType().equals(getType());
+		}
+	}
+	
+	public boolean isNextSame(ContentContext ctx) {
+		IContentVisualComponent nextComp = getNextComponent();
+		if (nextComp ==  null) {
+			return false;
+		} else {			
+			if (nextComp instanceof MirrorComponent) {
+				try {
+					return ((MirrorComponent)nextComp).getMirrorComponent(ctx).getType().equals(getType());
+				} catch (Exception e) {
+					e.printStackTrace();
+					return false;
+				}
+			}
+			return nextComp.getType().equals(getType());
 		}
 	}
 
@@ -1769,7 +1788,10 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		ctx.getRequest().setAttribute("type", getType());
 		ctx.getRequest().setAttribute("compid", getForcedId(ctx));
 		ctx.getRequest().setAttribute("renderer", getCurrentRenderer(ctx));
-		ctx.getRequest().setAttribute("previewAttributes",getPreviewAttributes(ctx));	
+		ctx.getRequest().setAttribute("previewAttributes",getPreviewAttributes(ctx));
+		if (!AbstractVisualComponent.isMirrorWrapped(ctx, this)) {
+			ctx.getRequest().setAttribute("nextSame",isNextSame(ctx));
+		}
 		if (isAskWidth(ctx) && getWidth() != null) {
 			String width = getWidth().trim();
 			if (width.endsWith("%")) {			
@@ -2472,6 +2494,14 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		map.putAll(BeanHelper.bean2Map(getComponentBean()));
 		map.put("path", getPage().getPath());
 		return map;
+	}
+
+	public static void setMirrorWrapped(ContentContext ctx, AbstractVisualComponent comp) {
+		ctx.getRequest().setAttribute("_mirror_wrapped_"+comp.getId(), true);
+	}
+	
+	public static boolean isMirrorWrapped(ContentContext ctx, AbstractVisualComponent comp) {
+		return ctx.getRequest().getAttribute("_mirror_wrapped_"+comp.getId()) != null;
 	}
 
 }

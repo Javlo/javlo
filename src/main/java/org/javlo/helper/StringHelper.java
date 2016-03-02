@@ -2079,7 +2079,7 @@ public class StringHelper {
 		DateFormat dateFormat;
 		String manualDateFormat = globalContext.getFullDateFormat();
 		if (manualDateFormat != null && manualDateFormat.trim().length() > 0) {
-			dateFormat = new SimpleDateFormat(manualDateFormat);
+			dateFormat = new SimpleDateFormat(manualDateFormat, new Locale(ctx.getContextRequestLanguage()));
 		} else {
 			dateFormat = DateFormat.getDateInstance(DateFormat.FULL, new Locale(ctx.getContextRequestLanguage()));
 		}
