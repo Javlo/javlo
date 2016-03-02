@@ -732,10 +732,14 @@ editPreview.initPreview = function() {
 	
 	editPreview.floatZone = function(source, zone1, zone2, image){
 		var zone1 = pjq(zone1);	
-		var zone2 = jQuery(zone2);	
+		var zone2 = pjq(zone2);	
 		var image = pjq(image);
 		
+		
+		
 		var html = pjq(source).html();
+		console.log("pjq(source) = ",pjq(source));
+		console.log("html = ",html);
 		var sep = html.length;		
 		zone1.html(html);
 		zone2.html('');

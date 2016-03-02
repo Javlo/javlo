@@ -36,7 +36,7 @@ import org.javlo.service.ListService.Item;
 import org.javlo.service.RequestService;
 import org.javlo.service.ReverseLinkService;
 
-public class Field implements Cloneable, IRestItem {
+public class Field implements Cloneable, IRestItem, Comparable<Field> {
 	
 	protected static final String DEFAULT_SEARCH_TYPE = "default";
 
@@ -989,5 +989,10 @@ public class Field implements Cloneable, IRestItem {
 		} else {
 			return getValue().toLowerCase().contains(query.toLowerCase().trim());
 		}
+	}
+
+	@Override
+	public int compareTo(Field o) {
+		return getValue().compareTo(o.getValue());
 	}
 }

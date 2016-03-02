@@ -62,6 +62,10 @@ public class FieldDate extends Field implements IDate {
 
 	@Override
 	public Date getDate(ContentContext ctx) {
+		return getDate();
+	}
+	
+	protected Date getDate() {
 		try {
 			if (getValue() != null && getValue().trim().length() > 0) {
 				return StringHelper.parseDate(getValue());
@@ -150,6 +154,15 @@ public class FieldDate extends Field implements IDate {
 				}
 			}
 		}
+	}
+	
+	@Override
+	public int compareTo(Field o) {
+		if (!(o instanceof FieldDate)) {
+			return super.compareTo(o);
+		} else {
+			return getDate().compareTo(((FieldDate)o).getDate());
+		}		
 	}
 
 }

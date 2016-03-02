@@ -46,7 +46,7 @@ public class DynamicComponentFilter extends AbstractPropertiesComponent implemen
 	public String getType() {
 		return TYPE;
 	}
-
+	
 	@Override
 	public String[] getStyleList(ContentContext ctx) {
 		return new String[] { "default_none", STYLE_ALL };

@@ -2212,8 +2212,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		boolean styleModify = false;
 		if ((getStyle() != null) && (!getStyle().equals(inStyle))) {
 			styleModify = true;
-		}
-		if (getStyle(ctx) == null && inStyle != null) {
+		} else if (getStyle() == null && inStyle != null) {
 			styleModify = true;
 		}
 		if (styleModify) {

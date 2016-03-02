@@ -38,5 +38,22 @@ public class DateOfPublication extends MetaField {
 		publishDate.setTime(date);
 		return publishDate.before(currentTime);
 	}
+	
+	@Override
+	public int compareTo(Field o) {
+		if (!(o instanceof DateOfPublication)) {
+			return super.compareTo(o);
+		} else {			
+			try {
+				Date date1 = StringHelper.parseDateOrTime(getValue());
+				Date date2 = StringHelper.parseDateOrTime(o.getValue());
+				return date1.compareTo(date2);
+			} catch (ParseException e) {
+				e.printStackTrace();
+				return 0;
+			}
+		}		
+	}
+
 
 }

@@ -3,6 +3,7 @@ package org.javlo.component.container;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -13,6 +14,7 @@ import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.fields.Field;
 import org.javlo.fields.IFieldContainer;
+import org.javlo.fields.SortContainer;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.XHTMLHelper;
 import org.javlo.i18n.I18nAccess;
@@ -42,7 +44,36 @@ public class DynamicComponentList extends AbstractPropertiesComponent {
 	@Override
 	public String getType() {
 		return TYPE;
-	}	
+	}
+	
+	@Override
+	public String getStyleTitle(ContentContext ctx) {
+		return "sort on";
+	}
+	
+	@Override
+	public String[] getStyleList(ContentContext ctx) {		
+		IFieldContainer fieldContainer;
+		try {
+			fieldContainer = getFieldContainer(ctx);
+			if (fieldContainer != null) {
+				List<Field> fields = fieldContainer.getFields(ctx);
+				String[] outFields = new String[fields.size()+1];
+				outFields[0] = "";				
+				int i=1;
+				for (Field field : fields) {	
+					outFields[i] = field.getName();
+					i++;
+				}
+				return outFields;
+			} else {
+				return super.getStyleList(ctx);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}		
+	}
 
 	@Override
 	protected String getEditXHTMLCode(ContentContext ctx) throws Exception {
@@ -140,8 +171,7 @@ public class DynamicComponentList extends AbstractPropertiesComponent {
 			rootPage = ctx.getCurrentPage();
 		}
 		List<IFieldContainer> containers = service.getFieldContainers(ctx, rootPage, getSelectedType());
-		List<IFieldContainer> visibleContainers = new LinkedList<IFieldContainer>();
-
+		List<IFieldContainer> visibleContainers = new LinkedList<IFieldContainer>();		
 		for (IFieldContainer container : containers) {
 			if (container.isRealContent(ctx)) {
 				boolean display = true;
@@ -161,6 +191,11 @@ public class DynamicComponentList extends AbstractPropertiesComponent {
 		ctx.getRequest().setAttribute("componentSize", visibleContainers.size());
 		ctx.getRequest().setAttribute("first", true);
 		ctx.getRequest().setAttribute("last", false);
+		
+		if(!StringHelper.isEmpty(getStyle())) {
+			Collections.sort(visibleContainers, new SortContainer(ctx, getStyle()));
+		}
+		
 		for (IFieldContainer container : visibleContainers) {
 			index++;
 			ctx.getRequest().setAttribute("componentIndex", index);
