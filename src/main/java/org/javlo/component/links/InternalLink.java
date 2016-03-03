@@ -424,5 +424,10 @@ public class InternalLink extends ComplexPropertiesLink implements IInternalLink
 	public String getListGroup() {
 		return "link";
 	}
+	
+	@Override
+	public boolean isMirroredByDefault() {	
+		return true;
+	}
 
 }

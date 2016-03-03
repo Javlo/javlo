@@ -1205,5 +1205,10 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 			return prefix + "<div class=\"empty\">[" + i18nAccess.getText("preview.upload-here", "upload here") + "]</div>" + suffix;
 		}
 	}
+	
+	@Override
+	public boolean isMirroredByDefault() {	
+		return true;
+	}
 
 }

@@ -927,5 +927,10 @@ public abstract class AbstractFileComponent extends AbstractVisualComponent impl
 	public void performUpload(ContentContext ctx) throws Exception {
 		uploadFiles(ctx, RequestService.getInstance(ctx.getRequest()));
 	}
+	
+	@Override
+	public boolean isMirroredByDefault() {	
+		return true;
+	}
 
 }

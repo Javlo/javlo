@@ -336,4 +336,5 @@ public class ExternalLink extends ComplexPropertiesLink implements IReverseLinkC
 	public String getListGroup() {
 		return "link";
 	}
+	
 }

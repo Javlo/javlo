@@ -764,11 +764,11 @@ public class Edit extends AbstractModuleAction {
 				return "error no item in clipBoard";
 			} else {
 				ComponentBean bean = (ComponentBean) copied;
+				IContentVisualComponent sourceComp = contentService.getComponent(ctx, bean.getId());
 				if (!bean.getType().equals(TableBreak.TYPE)) {
-					if (globalContext.isMailingPlatform()) {
+					if (globalContext.isMailingPlatform() || !sourceComp.isMirroredByDefault() && !(sourceComp instanceof IContainer)) {
 						newId = content.createContent(ctx, targetPage, areaKey, previousId, bean, true);
-					} else {
-						IContentVisualComponent sourceComp = contentService.getComponent(ctx, bean.getId());
+					} else {						
 						if (!(sourceComp instanceof IContainer)) {
 							ComponentBean mirrorComponentBean = new ComponentBean(MirrorComponent.TYPE, bean.getId(), ctx.getRequestContentLanguage());
 							newId = content.createContent(ctx, targetPage, areaKey, previousId, mirrorComponentBean, true);
@@ -1767,7 +1767,47 @@ public class Edit extends AbstractModuleAction {
 			latestArea = bean.getArea();
 			bean.setLanguage(ctx.getRequestContentLanguage());
 			// parentId = content.createContent(ctx, bean, parentId, true);
-			parentId = content.createContent(ctx, ctx.getCurrentPage(), bean, parentId, true);
+			
+			
+			if (globalContext.isMailingPlatform() || !comp.isMirroredByDefault()) {
+				parentId = content.createContent(ctx, ctx.getCurrentPage(), bean, parentId, true);
+			} else {						
+				if (!(comp instanceof IContainer)) {
+					IContentVisualComponent targetComp = content.getComponent(ctx, bean.getId());
+					if (targetComp != null) {
+						ComponentBean mirrorComponentBean = new ComponentBean(MirrorComponent.TYPE, bean.getId(), ctx.getRequestContentLanguage());
+						parentId = content.createContent(ctx, ctx.getCurrentPage(), targetComp.getArea() , parentId, mirrorComponentBean, true);
+					}
+				} else {
+					IContentVisualComponent nextComp = comp;
+					parentId = content.createContent(ctx, ctx.getCurrentPage(), nextComp.getComponentBean(), parentId, true);
+					boolean closeFound = false;
+					int depth = 0;
+					while (!closeFound) {
+						nextComp = ComponentHelper.getNextComponent(nextComp, ctx);
+						if (nextComp != null) {
+							parentId = content.createContent(ctx, ctx.getCurrentPage(), nextComp.getComponentBean(), parentId, true);
+							if (nextComp.getType().equals(comp.getType())) {
+								if (((IContainer) nextComp).isOpen(ctx)) {
+									depth++;
+								} else {
+									if (depth == 0) {
+										closeFound = true;
+									} else {
+										depth--;
+									}
+								}
+							}
+						} else {
+							closeFound = true;
+						}
+					}
+				}
+			}
+			
+			
+			
+			//parentId = content.createContent(ctx, ctx.getCurrentPage(), bean, parentId, true);
 			c++;
 		}
 

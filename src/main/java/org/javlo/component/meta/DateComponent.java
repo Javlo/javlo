@@ -204,6 +204,11 @@ public class DateComponent extends AbstractVisualComponent implements IDate {
 	public boolean isContentCachable(ContentContext ctx) {	
 		return true;
 	}
+	
+	@Override
+	public boolean isMirroredByDefault() {	
+		return true;
+	}
 
 
 }

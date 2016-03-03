@@ -21,7 +21,14 @@ editPreview.layerOver = function(item, title, drop) {
 		layer.data("sharedContent", null);
 		layer.attr("title", " ");		
 	} else {		
-		var comp = pjq(item);		
+		var comp = pjq(item);
+		if (comp.hasClass("mirror-wrapped")) {
+			layer.find(".mirror").show();
+			layer.find(".not-mirror").hide();
+		} else {
+			layer.find(".mirror").hide();
+			layer.find(".not-mirror").show();			
+		}
 		var parent = comp.parent();
 		var area = "";
 		c = 1;
@@ -205,7 +212,7 @@ editPreview.initPreview = function() {
 	/**********************/
 	
 	if (pjq("#preview-layer").length == 0) {
-		pjq("body").append('<div id="preview-layer"><div class="commands btn-group btn-group-sm area-actions" role="group"><span class=\"btn area-name\"><span class="glyphicon glyphicon-th-large" aria-hidden="true"></span><span id=\"area-name\"></span></span>'+
+		pjq("body").append('<div id="preview-layer"><div class="commands btn-group btn-group-sm area-actions" role="group"><span class=\"btn area-name\"><span class="mirror glyphicon glyphicon-paste" aria-hidden="true"></span><span class="not-mirror glyphicon glyphicon-th-large" aria-hidden="true"></span><span id=\"area-name\"></span></span>'+
 				'<button class="btn-edit btn btn-primary"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span><span class="text">edit</span></button>'+
 				'<button class="btn-copy btn btn-primary"><span class="glyphicon glyphicon-copy" aria-hidden="true"></span><span class="text">copy</span></button>'+
 				'<button class="btn-delete btn btn-primary"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span><span class="text">delete</span></button>'+

@@ -2281,5 +2281,10 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		}
 		return true;
 	}
+	
+	@Override
+	public boolean isMirroredByDefault() {	
+		return true;
+	}
 
 }

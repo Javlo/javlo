@@ -98,6 +98,8 @@ import org.owasp.encoder.Encode;
  */
 public abstract class AbstractVisualComponent implements IContentVisualComponent {
 
+	private static final String MIRROR_WRAPPED = "mirrorWrapped";
+
 	public static final String SCROLL_TO_COMP_ID_ATTRIBUTE_NAME = "_new_id";
 
 	public static final String NOT_EDIT_PREVIEW_PARAM_NAME = "_not_edit_preview";
@@ -272,14 +274,14 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	protected String getBaseHelpURL(ContentContext ctx) {
 		GlobalContext globalContext = ctx.getGlobalContext();
 		String helpURL = globalContext.getHelpURL();
-		if(helpURL.contains("${language}")) {
+		if (helpURL.contains("${language}")) {
 			helpURL = helpURL.replace("${language}", globalContext.getEditLanguage(ctx.getRequest().getSession()));
 		} else {
-			helpURL = URLHelper.mergePath(helpURL +'v'+IVersion.VERSION.substring(0,3).replace('.', '_'), globalContext.getEditLanguage(ctx.getRequest().getSession()));
+			helpURL = URLHelper.mergePath(helpURL + 'v' + IVersion.VERSION.substring(0, 3).replace('.', '_'), globalContext.getEditLanguage(ctx.getRequest().getSession()));
 		}
 		return helpURL;
 	}
-	
+
 	@Override
 	public boolean isHelpURL(ContentContext ctx) {
 		return !StringHelper.isEmpty(ctx.getGlobalContext().getHelpURL()) && !StringHelper.isEmpty(getHelpURI(ctx));
@@ -554,7 +556,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			out.println(XHTMLHelper.getCheckbox("repeat-" + getId(), isRepeat()));
 			out.println("</div>");
 		}
-		
+
 		if (isNoLinkable() && ctx.getGlobalContext().isReversedLink()) {
 			out.println("<div class=\"line\">");
 			if (showRepeat) {
@@ -685,7 +687,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			setModify();
 			setNeedRefresh(true);
 		}
-		
+
 		boolean isNolink = requestService.getParameter("nolink-" + getId(), null) != null;
 		if (isNolink != isNolink()) {
 			setNolink(isNolink);
@@ -893,17 +895,17 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		return url;
 
 	}
-	
+
 	protected String getHelpType() {
 		return getType();
 	}
-	
+
 	protected String getDefaultHelpURI(ContentContext ctx) {
 		return "/components/" + getHelpType() + ".html";
 	}
 
 	protected String getHelpURI(ContentContext ctx) {
-		return getConfig(ctx).getProperty("help.uri", getDefaultHelpURI(ctx));		
+		return getConfig(ctx).getProperty("help.uri", getDefaultHelpURI(ctx));
 	}
 
 	@Override
@@ -1077,40 +1079,45 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	public IContentVisualComponent getPreviousComponent() {
 		return previousComponent;
 	}
-	
+
 	/**
 	 * return true if the previous component have the same type.
+	 * 
 	 * @return
 	 */
 	public boolean isPreviousSame() {
-		if (getPreviousComponent() ==  null) {
+		if (getPreviousComponent() == null) {
 			return false;
 		} else {
 			return getPreviousComponent().getType().equals(getType());
 		}
 	}
-	
+
 	/**
 	 * return true if the next component have the same type.
+	 * 
 	 * @return
 	 */
 	public boolean isNextSame() {
 		IContentVisualComponent nextComp = getNextComponent();
-		if (nextComp ==  null) {
+		if (nextComp == null) {
 			return false;
 		} else {
 			return nextComp.getType().equals(getType());
 		}
 	}
-	
+
 	public boolean isNextSame(ContentContext ctx) {
 		IContentVisualComponent nextComp = getNextComponent();
-		if (nextComp ==  null) {
+		if (nextComp == null) {
 			return false;
-		} else {			
+		} else {
 			if (nextComp instanceof MirrorComponent) {
 				try {
-					return ((MirrorComponent)nextComp).getMirrorComponent(ctx).getType().equals(getType());
+					if (((MirrorComponent) nextComp).getMirrorComponent(ctx) == null) {
+						return false;
+					}
+					return ((MirrorComponent) nextComp).getMirrorComponent(ctx).getType().equals(getType());
 				} catch (Exception e) {
 					e.printStackTrace();
 					return false;
@@ -1119,15 +1126,18 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			return nextComp.getType().equals(getType());
 		}
 	}
-	
+
 	public boolean isPreviousSame(ContentContext ctx) {
 		IContentVisualComponent previousComp = getPreviousComponent();
-		if (previousComp ==  null) {
+		if (previousComp == null) {
 			return false;
-		} else {			
+		} else {
 			if (previousComp instanceof MirrorComponent) {
 				try {
-					return ((MirrorComponent)previousComp).getMirrorComponent(ctx).getType().equals(getType());
+					if (((MirrorComponent) previousComp).getMirrorComponent(ctx) == null) {
+						return false;
+					}
+					return ((MirrorComponent) previousComp).getMirrorComponent(ctx).getType().equals(getType());
 				} catch (Exception e) {
 					e.printStackTrace();
 					return false;
@@ -1257,7 +1267,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			}
 
 			if (justDisplay) {
-				out.println("<p>"+getCurrentRenderer(ctx)+"</p>");
+				out.println("<p>" + getCurrentRenderer(ctx) + "</p>");
 			} else {
 				out.println("<div class=\"line\">");
 				/* display as slide show */
@@ -1307,7 +1317,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	public String getSpecificClass(ContentContext ctx) {
 		return null;
 	}
-	
+
 	public String getSpecialPreviewCssClass(ContentContext ctx, String currentClass) {
 		if (currentClass == null) {
 			currentClass = "";
@@ -1341,10 +1351,14 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 						if (isNew(ctx)) {
 							newClass = " new-component";
 							if (isEditOnCreate(ctx)) {
-								newClass = newClass+" edit-component";
+								newClass = newClass + " edit-component";
 							}
 						}
-						return " class=\"" + specificClass + classPrefix + "editable-component" + currentClass + newClass + "\" data-hint=\"" + hint + "\" data-name=\"" + i18nAccess.getText("content." + getType(), getType()) + "\"";
+						String mirror = "not-mirror-wrapped";
+						if (AbstractVisualComponent.isMirrorWrapped(ctx, this)) {
+							mirror = "mirror-wrapped";
+						}
+						return " class=\"" + specificClass + classPrefix + "editable-component " + mirror + currentClass + newClass + "\" data-hint=\"" + hint + "\" data-name=\"" + i18nAccess.getText("content." + getType(), getType()) + "\"";
 					}
 				}
 			} catch (Exception e) {
@@ -1613,7 +1627,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	protected String executeCurrentRenderer(ContentContext ctx) throws ServletException, IOException {
 		return executeRenderer(ctx, getRenderer(ctx));
 	}
-	
+
 	protected String executeRenderer(ContentContext ctx, String url) throws ServletException, IOException {
 		if (url != null) {
 			ctx.getRequest().setAttribute(COMPONENT_KEY, this);
@@ -1657,8 +1671,8 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			return getViewXHTMLCode(ctx);
 		}
 	}
-	
-	protected String cleanValue (ContentContext ctx, String value) {		
+
+	protected String cleanValue(ContentContext ctx, String value) {
 		if (ctx.getGlobalContext().getStaticConfig().isHighSecure()) {
 			return Encode.forHtmlContent(value);
 		} else {
@@ -1782,7 +1796,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	protected Object getLock(ContentContext ctx) {
 		return this;
 	}
-	
+
 	protected String getPreviewAttributes(ContentContext ctx) {
 		return getSpecialPreviewCssClass(ctx, getStyle(ctx)) + getSpecialPreviewCssId(ctx);
 	}
@@ -1805,17 +1819,20 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		ctx.getRequest().setAttribute("type", getType());
 		ctx.getRequest().setAttribute("compid", getForcedId(ctx));
 		ctx.getRequest().setAttribute("renderer", getCurrentRenderer(ctx));
-		ctx.getRequest().setAttribute("previewAttributes",getPreviewAttributes(ctx));
+		ctx.getRequest().setAttribute("previewAttributes", getPreviewAttributes(ctx));
 		if (!AbstractVisualComponent.isMirrorWrapped(ctx, this)) {
-			ctx.getRequest().setAttribute("nextSame",isNextSame(ctx));
-			ctx.getRequest().setAttribute("previousSame",isPreviousSame(ctx));
+			ctx.getRequest().setAttribute(MIRROR_WRAPPED, false);
+			ctx.getRequest().setAttribute("nextSame", isNextSame(ctx));
+			ctx.getRequest().setAttribute("previousSame", isPreviousSame(ctx));
+		} else {
+			ctx.getRequest().setAttribute(MIRROR_WRAPPED, true);
 		}
 		if (isAskWidth(ctx) && getWidth() != null) {
 			String width = getWidth().trim();
-			if (width.endsWith("%")) {			
-				Float withInt = Float.parseFloat(width.substring(0,width.length()-1));		
+			if (width.endsWith("%")) {
+				Float withInt = Float.parseFloat(width.substring(0, width.length() - 1));
 				NumberFormat df = DecimalFormat.getInstance(Locale.ENGLISH);
-				ctx.getRequest().setAttribute("componentOpositeWidth", df.format((100-withInt))+"%");
+				ctx.getRequest().setAttribute("componentOpositeWidth", df.format((100 - withInt)) + "%");
 			}
 			ctx.getRequest().setAttribute("componentWidth", width);
 		} else {
@@ -2005,7 +2022,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	public boolean isRepeat() {
 		return componentBean.isRepeat();
 	}
-	
+
 	public boolean isNolink() {
 		return componentBean.isNolink();
 	}
@@ -2014,7 +2031,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	public boolean isRepeatable() {
 		return true;
 	}
-	
+
 	public boolean isNoLinkable() {
 		return false;
 	}
@@ -2236,7 +2253,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			setNeedRefresh(true);
 		}
 	}
-	
+
 	public void setNolink(boolean noLink) {
 		if (noLink == componentBean.isNolink()) {
 			return;
@@ -2470,56 +2487,70 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	public GenericMessage getConfigMessage(ContentContext ctx) {
 		return null;
 	}
-	
+
 	/**
 	 * mark component as new in the current request
+	 * 
 	 * @param ctx
 	 * @return
 	 */
 	public void markAsNew(ContentContext ctx) {
 		ctx.getRequest().setAttribute("new-component", getId());
 	}
-	
+
 	/**
 	 * check if this component has maked has new in the current request
+	 * 
 	 * @param ctx
 	 * @return
 	 */
 	public boolean isNew(ContentContext ctx) {
-		return ctx.getRequest().getAttribute("new-component") != null && ctx.getRequest().getAttribute("new-component").equals(getId()); 
+		return ctx.getRequest().getAttribute("new-component") != null && ctx.getRequest().getAttribute("new-component").equals(getId());
 	}
-	
+
 	/**
 	 * return true if the component is directly edited when it is insered.
+	 * 
 	 * @param ctx
 	 * @return
 	 */
 	public boolean isEditOnCreate(ContentContext ctx) {
 		return ctx.getGlobalContext().getStaticConfig().isEditOnCreate();
 	}
-	
+
 	public static void main(String[] args) {
 		String width = "12%";
-		Float withInt = Float.parseFloat(width.substring(0,width.length()-1));
+		Float withInt = Float.parseFloat(width.substring(0, width.length() - 1));
 		System.out.println(withInt);
 		NumberFormat df = DecimalFormat.getInstance(Locale.ENGLISH);
-		System.out.println(df.format((100-withInt))+"%");
+		System.out.println(df.format((100 - withInt)) + "%");
 	}
-	
+
 	@Override
 	public Map<String, Object> getContentAsMap(ContentContext ctx) throws Exception {
-		Map<String, Object> map = new HashMap<String, Object>();		
+		Map<String, Object> map = new HashMap<String, Object>();
 		map.putAll(BeanHelper.bean2Map(getComponentBean()));
 		map.put("path", getPage().getPath());
 		return map;
 	}
 
-	public static void setMirrorWrapped(ContentContext ctx, AbstractVisualComponent comp) {
-		ctx.getRequest().setAttribute("_mirror_wrapped_"+comp.getId(), true);
+	public static void setMirrorWrapped(ContentContext ctx, IContentVisualComponent comp) {
+		if (comp != null) {
+			ctx.getRequest().setAttribute("_mirror_wrapped_" + comp.getId(), true);
+		}
 	}
-	
-	public static boolean isMirrorWrapped(ContentContext ctx, AbstractVisualComponent comp) {
-		return ctx.getRequest().getAttribute("_mirror_wrapped_"+comp.getId()) != null;
+
+	public static boolean isMirrorWrapped(ContentContext ctx, IContentVisualComponent comp) {
+		if (comp != null) {
+			return ctx.getRequest().getAttribute("_mirror_wrapped_" + comp.getId()) != null;
+		} else {
+			return false;
+		}
+	}
+
+	@Override
+	public boolean isMirroredByDefault() {
+		return false;
 	}
 
 }

@@ -144,20 +144,31 @@ public class ContentService implements IPrintInfo {
 
 		/** search on current language **/
 		ContentElementList content = page.getAllContent(noAreaCtx);
-		while (content.hasNext(noAreaCtx)) {
+		/*while (content.hasNext(noAreaCtx)) {
 			IContentVisualComponent elem = content.next(noAreaCtx);
 			if (elem.getId().equals(id)) {
 				return elem;
 			}
-		}
+		}*/
 
 		if (noRealContentType) {
-			for (String lg : ctx.getGlobalContext().getContentLanguages()) {
-				ContentContext ctxLg = noAreaCtx.getContextWidthOtherRequestLanguage(lg);
+			ContentContext ctxLg = new ContentContext(noAreaCtx);
+			for (String lg : ctx.getGlobalContext().getContentLanguages()) {				
+				ctxLg.setAllLanguage(lg);
+				content = page.getAllContent(ctxLg);
 				while (content.hasNext(ctxLg)) {
 					IContentVisualComponent elem = content.next(ctxLg);
 					if (elem.getId().equals(id)) {
 						return elem;
+					}
+				}
+				for (MenuElement child : page.getAllChildren()) {
+					content = child.getAllContent(ctxLg);
+					while (content.hasNext(ctxLg)) {
+						IContentVisualComponent elem = content.next(ctxLg);
+						if (elem.getId().equals(id)) {
+							return elem;
+						}
 					}
 				}
 			}
@@ -174,9 +185,7 @@ public class ContentService implements IPrintInfo {
 					return elem;
 				}
 			}
-
-			MenuElement[] children = page.getAllChildren();
-			for (MenuElement menuElement : children) {
+			for (MenuElement menuElement : page.getAllChildren()) {
 				ctxWithContent = noAreaCtx.getContextWithContent(menuElement);
 				if (ctxWithContent == null) {
 					ctxWithContent = noAreaCtx;

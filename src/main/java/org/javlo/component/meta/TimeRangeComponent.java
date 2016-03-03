@@ -195,5 +195,10 @@ public class TimeRangeComponent extends DateComponent {
 		}
 		return null;
 	}
+	
+	@Override
+	public boolean isMirroredByDefault() {	
+		return true;
+	}
 
 }
