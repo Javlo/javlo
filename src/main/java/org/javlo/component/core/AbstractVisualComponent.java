@@ -1119,6 +1119,23 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			return nextComp.getType().equals(getType());
 		}
 	}
+	
+	public boolean isPreviousSame(ContentContext ctx) {
+		IContentVisualComponent previousComp = getPreviousComponent();
+		if (previousComp ==  null) {
+			return false;
+		} else {			
+			if (previousComp instanceof MirrorComponent) {
+				try {
+					return ((MirrorComponent)previousComp).getMirrorComponent(ctx).getType().equals(getType());
+				} catch (Exception e) {
+					e.printStackTrace();
+					return false;
+				}
+			}
+			return previousComp.getType().equals(getType());
+		}
+	}
 
 	public List<SuffixPrefix> getQuotationLanguageMarkerList(ContentContext ctx) {
 		List<SuffixPrefix> out = new LinkedList<SuffixPrefix>();
@@ -1791,6 +1808,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		ctx.getRequest().setAttribute("previewAttributes",getPreviewAttributes(ctx));
 		if (!AbstractVisualComponent.isMirrorWrapped(ctx, this)) {
 			ctx.getRequest().setAttribute("nextSame",isNextSame(ctx));
+			ctx.getRequest().setAttribute("previousSame",isPreviousSame(ctx));
 		}
 		if (isAskWidth(ctx) && getWidth() != null) {
 			String width = getWidth().trim();

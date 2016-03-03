@@ -175,6 +175,7 @@ public class MirrorComponent extends AbstractVisualComponent implements IFieldCo
 			AbstractVisualComponent.setMirrorWrapped(ctx, comp);
 			//comp.prepareView(ctx);
 			ctx.getRequest().setAttribute("nextSame",isNextSame(ctx));
+			ctx.getRequest().setAttribute("previousSame",isPreviousSame(ctx));
 			String xhtml = comp.getXHTMLCode(ctx);
 			AbstractVisualComponent.setForcedId(ctx, null);
 			return xhtml;
