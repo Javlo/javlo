@@ -140,7 +140,7 @@ public class TemplateFactory {
 		Collections.sort(outList, Template.TemplateDateComparator.instance);
 		return outList;
 	}
-	
+
 	public static List<Template> getAllTemplatesFromContext(GlobalContext context) throws Exception {
 		List<Template> outTemplates = new LinkedList<Template>();
 		Set<String> templatesName = new HashSet<String>(context.getTemplatesNames());
@@ -297,7 +297,7 @@ public class TemplateFactory {
 		StaticConfig staticConfig = StaticConfig.getInstance(application);
 		File templateFolder = new File(URLHelper.mergePath(staticConfig.getTemplateFolder(), StringHelper.createFileName(name)));
 		if (templateFolder.exists()) {
-			logger.warning("Folder exist : "+templateFolder);
+			logger.warning("Folder exist : " + templateFolder);
 			return null;
 		}
 		File defaultTemplate = new File(staticConfig.getDefaultTemplateFolder());
@@ -311,13 +311,17 @@ public class TemplateFactory {
 		TemplateFactory.clearTemplate(application);
 		return getDiskTemplates(application).get(name);
 	}
-	
+
 	/**
 	 * create new template.
 	 * 
 	 * @param application
-	 * @param name name of the new template, if all ready exist return null.
-	 * @param source name of the source template, all files must be copied inside new template (!with config.properties) null = no source template.
+	 * @param name
+	 *            name of the new template, if all ready exist return null.
+	 * @param source
+	 *            name of the source template, all files must be copied inside
+	 *            new template (!with config.properties) null = no source
+	 *            template.
 	 * @return
 	 * @throws IOException
 	 */
@@ -326,12 +330,12 @@ public class TemplateFactory {
 		name = StringHelper.createFileName(name);
 		File templateFolder = new File(URLHelper.mergePath(staticConfig.getTemplateFolder(), name));
 		if (templateFolder.exists()) {
-			logger.warning("Folder exist : "+templateFolder);
+			logger.warning("Folder exist : " + templateFolder);
 			return null;
 		}
 		File sourceFolder = null;
 		if (source != null) {
-			 sourceFolder = new File(URLHelper.mergePath(staticConfig.getTemplateFolder(), source));
+			sourceFolder = new File(URLHelper.mergePath(staticConfig.getTemplateFolder(), source));
 		}
 		if (sourceFolder != null && sourceFolder.exists()) {
 			FileUtils.copyDirectory(sourceFolder, templateFolder);
@@ -345,7 +349,8 @@ public class TemplateFactory {
 	}
 
 	/**
-	 * get templates from template list cache or from disk if the cache does'nt exist.
+	 * get templates from template list cache or from disk if the cache does'nt
+	 * exist.
 	 * 
 	 * @param application
 	 * @return
@@ -353,11 +358,14 @@ public class TemplateFactory {
 	 */
 	public static Map<String, Template> getTemplates(ServletContext application) throws Exception {
 		Map<String, Template> outTemplate = null;
-		synchronized (TEMPLATE_KEY) {
-			outTemplate = (Map<String, Template>) application.getAttribute(TEMPLATE_KEY);
-			if (outTemplate == null) {
-				outTemplate = Collections.unmodifiableMap(getDiskTemplates(application));
-				application.setAttribute(TEMPLATE_KEY, outTemplate);
+		outTemplate = (Map<String, Template>) application.getAttribute(TEMPLATE_KEY);
+		if (outTemplate == null) {
+			synchronized (TEMPLATE_KEY) {
+				outTemplate = (Map<String, Template>) application.getAttribute(TEMPLATE_KEY);
+				if (outTemplate == null) {
+					outTemplate = Collections.unmodifiableMap(getDiskTemplates(application));
+					application.setAttribute(TEMPLATE_KEY, outTemplate);
+				}
 			}
 		}
 		return outTemplate;
@@ -382,15 +390,15 @@ public class TemplateFactory {
 			return (Template) ctx.getRequest().getAttribute(key);
 		}
 		Template template = null;
-		
+
 		template = getTemplates(ctx.getRequest().getSession().getServletContext()).get(elem.getTemplateId());
 		if (template == null || !template.exist()) {
-			while (elem.getParent() != null && ((template == null) || (!template.exist()) || (template.getRendererFullName(ctx) == null))) {
+			while (elem.getParent() != null && ((template == null) || (!template.exist()) /*|| (template.getRendererFullName(ctx) == null)*/)) {
 				elem = elem.getParent();
 				template = TemplateFactory.getTemplates(ctx.getRequest().getSession().getServletContext()).get(elem.getTemplateId());
 			}
 		}
-	
+
 		if (template == null) {
 			GlobalContext globalContext = ctx.getGlobalContext();
 			template = TemplateFactory.getTemplates(ctx.getRequest().getSession().getServletContext()).get(globalContext.getDefaultTemplate());
@@ -399,7 +407,7 @@ public class TemplateFactory {
 		}
 		return template;
 	}
-	
+
 	public static void copyDefaultTemplate(ServletContext application) {
 		File defaultTemplateFolder = new File(application.getRealPath("/WEB-INF/template/"));
 		for (File template : defaultTemplateFolder.listFiles()) {
@@ -417,9 +425,9 @@ public class TemplateFactory {
 			}
 		}
 	}
-	
+
 	public static Collection<NavigationWithContent> searchPageNeedTemplate(ContentContext ctx, String templateId) throws Exception {
-		Collection<NavigationWithContent> outPages = new LinkedList<NavigationWithContent>();		
+		Collection<NavigationWithContent> outPages = new LinkedList<NavigationWithContent>();
 		MenuElement page = ContentService.getInstance(ctx.getGlobalContext()).getNavigation(ctx);
 		if (page.needTemplate(ctx, templateId)) {
 			outPages.add(new NavigationWithContent(ctx.getGlobalContext(), page));
@@ -431,6 +439,5 @@ public class TemplateFactory {
 		}
 		return outPages;
 	}
-	
-	
+
 }

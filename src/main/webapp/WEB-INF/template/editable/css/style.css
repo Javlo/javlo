@@ -192,7 +192,7 @@ table.float-image, table.float-image  td, table.float-image  th {
 }
 
 .global-image .center img, .global-image .center figure {
-	display: block;	
+	display: inline;	
 	margin: 0 auto;
 	
 }

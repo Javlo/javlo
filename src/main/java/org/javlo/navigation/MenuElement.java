@@ -156,7 +156,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 		String sharedName = null;
 		Event event = null;
 		String slogan;
-		String linkLabel = null;
+		String linkLabel = null; 
 
 		public ImageTitleBean imageLink;
 
@@ -1185,9 +1185,9 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 		}
 	}
 
-	public void addChildMenuElementOnTop(MenuElement menuElement) {
-		NavigationHelper.changeStepPriority(getChildMenuElements(), 10);
+	public void addChildMenuElementOnTop(MenuElement menuElement) {		
 		synchronized (getLock()) {
+			NavigationHelper.changeStepPriority(getChildMenuElements(), 10);
 			menuElement.setParent(this);
 			if (childMenuElements == Collections.EMPTY_LIST) {
 				childMenuElements = new LinkedList<MenuElement>();

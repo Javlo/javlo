@@ -32,6 +32,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.Properties;
 import java.util.Set;
 import java.util.logging.Logger;
@@ -70,6 +71,8 @@ import org.xml.sax.SAXParseException;
 import com.sun.org.apache.xerces.internal.util.XMLChar;
 
 public class PersistenceService {
+	
+	private AtomicInteger countStore = new AtomicInteger(0);
 
 	public static final class MetaPersistenceBean {
 		private int version;
@@ -1294,8 +1297,15 @@ public class PersistenceService {
 		store(ctx, renderMode, true);
 	}
 
-	public synchronized void store(ContentContext ctx, int renderMode, boolean async) throws Exception {		
-		setAskStore(false);
+	public void store(ContentContext ctx, int renderMode, boolean async) throws Exception {		
+		setAskStore(false);		
+		if (async) {
+			if (countStore.incrementAndGet() > 1) {
+				logger.info("cancel storage before waiting thread found. ("+ctx.getGlobalContext().getContextKey()+')');
+				countStore.decrementAndGet();
+				return;
+			}
+		}
 		synchronized (ctx.getGlobalContext().getLockLoadContent()) {
 			logger.info("store in " + renderMode + " mode.");
 			PersistenceThread persThread = new PersistenceThread();
@@ -1305,12 +1315,14 @@ public class PersistenceService {
 			if (!globalContext.getLanguages().contains(defaultLg)) {
 				defaultLg = null;
 			}
+			
 			persThread.setMenuElement(menuElement);
 			persThread.setMode(renderMode);
 			persThread.setPersistenceService(this);
 			persThread.setDefaultLg(defaultLg);
 			persThread.setGlobalContentMap(content.getGlobalMap(ctx));
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+			persThread.setContextKey(globalContext.getContextKey());
 			persThread.setDataFolder(globalContext.getDataFolder());
 			StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession().getServletContext());
 			if (StaticInfo._STATIC_INFO_DIR != null) {
@@ -1319,6 +1331,9 @@ public class PersistenceService {
 			}
 			persThread.addFolderToSave(new File(URLHelper.mergePath(globalContext.getDataFolder(), staticConfig.getUserInfoFile())));
 			persThread.start(async);
+			if (async) {
+				countStore.decrementAndGet();
+			}
 		}
 	}
 

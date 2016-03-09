@@ -270,7 +270,7 @@ public abstract class ElementaryURLHelper {
 			}
 		}
 
-		if (!ctx.isAbsoluteURL() && widthEncodeURL && ctx.getDevice().isHuman()) {
+		if (!ctx.isAbsoluteURL() && widthEncodeURL && ctx.getDevice() != null && ctx.getDevice().isHuman()) {
 			newUri = ctx.getResponse().encodeURL(newUri);
 		}
 
@@ -420,7 +420,7 @@ public abstract class ElementaryURLHelper {
 			url = createStaticURL(ctx, referencePage, url, true);
 		}
 		url = URLHelper.addMailingFeedback(ctx, url);
-		if (ctx.getDevice().isForced()) {
+		if (ctx.getDevice() != null && ctx.getDevice().isForced()) {
 			url = addParam(url, Device.FORCE_DEVICE_PARAMETER_NAME, ctx.getDevice().getCode());
 		}
 		return url;

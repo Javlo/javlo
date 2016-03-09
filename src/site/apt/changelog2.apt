@@ -645,3 +645,9 @@ change log
  * Field container sorting
  
  * remove loader on image
+
+ * pdf cache in file
+ 
+ * page-reference optimisation
+ 
+* 2.1.0.3.8 09/03/2016

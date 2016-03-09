@@ -1528,6 +1528,8 @@ public class Edit extends AbstractModuleAction {
 			ReverseLinkService.getInstance(globalContext).clearCache();
 
 			globalContext.resetURLFactory();
+			
+			FileCache.getInstance(application).clearPDF(ctx);
 
 			return message;
 		}

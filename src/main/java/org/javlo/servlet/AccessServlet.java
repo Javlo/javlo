@@ -2,6 +2,7 @@ package org.javlo.servlet;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -75,8 +76,12 @@ import org.javlo.template.Template;
 import org.javlo.template.TemplateFactory;
 import org.javlo.thread.ThreadManager;
 import org.javlo.tracking.Tracker;
+import org.javlo.user.AdminUserFactory;
+import org.javlo.user.User;
 import org.javlo.user.UserFactory;
 import org.javlo.utils.DebugListening;
+import org.javlo.utils.DoubleOutputStream;
+import org.javlo.ztatic.FileCache;
 import org.xhtmlrenderer.swing.Java2DRenderer;
 import org.xhtmlrenderer.util.FSImageWriter;
 
@@ -225,7 +230,6 @@ public class AccessServlet extends HttpServlet implements IVersion {
 	public void process(HttpServletRequest request, HttpServletResponse response, boolean post) throws ServletException {
 
 		try {
-
 			COUNT_ACCESS++;
 
 			logger.fine("uri : " + request.getRequestURI()); // TODO: remove
@@ -252,12 +256,12 @@ public class AccessServlet extends HttpServlet implements IVersion {
 			Thread.currentThread().setName("AccessServlet-" + globalContext.getContextKey());
 
 			ContentContext ctx = ContentContext.getContentContext(request, response);
-			
+
 			if (!staticConfig.isContentExtensionValid(ctx.getFormat())) {
 				ctx.setFormat(staticConfig.getDefaultContentExtension());
-				ctx.setContentFound(false);				
+				ctx.setContentFound(false);
 			}
-			
+
 			if (ctx.getCurrentEditUser() != null) {
 				// edit edit info bean
 				EditInfoBean.getCurrentInfoBean(ctx);
@@ -694,57 +698,77 @@ public class AccessServlet extends HttpServlet implements IVersion {
 					} else if (ctx.getFormat().equalsIgnoreCase("pdf")) {
 						response.setContentType("application/pdf;");
 						OutputStream out = response.getOutputStream();
-						ContentContext viewCtx = ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE);
-						viewCtx.setAbsoluteURL(true);
-						viewCtx.setFormat("html");
-						viewCtx.resetDMZServerInter();
 
-						Map<String, String> params = new HashMap<String, String>();
-						
-						for (Object key : ctx.getRequest().getParameterMap().keySet()) {
-
-							if (!key.equals("__check_context")) {
-								params.put(key.toString(), ctx.getRequest().getParameter(key.toString()));
+						FileCache fileCache = FileCache.getInstance(getServletContext());
+						File pdfFileCache = fileCache.getPDFPage(ctx, ctx.getCurrentPage());
+						if (pdfFileCache.exists()) {
+							synchronized (FileCache.PDF_LOCK) {
+								logger.info("pdf file found in cache : "+pdfFileCache);
+								if (pdfFileCache.exists()) {
+									ResourceHelper.writeFileToStream(pdfFileCache, out);
+								}
 							}
-						}
-						
-						if (ctx.getCurrentUser() != null) {							
-							String userToken = UserFactory.createUserFactory(ctx.getGlobalContext(), request.getSession()).getTokenCreateIfNotExist(ctx.getCurrentUser());
-							String token = globalContext.createOneTimeToken(userToken);
-							params.put("j_token", token);
-						}
-						
-						params.put(Device.FORCE_DEVICE_PARAMETER_NAME, "pdf");
-						params.put(ContentContext.FORCE_ABSOLUTE_URL, "true");
-						params.put(ContentContext.NO_DMZ_PARAM_NAME, "true");
-						params.put(ContentContext.CLEAR_SESSION_PARAM, "true");
-						if (!globalContext.isView() && globalContext.getBlockPassword() != null) {
-							params.put("block-password", globalContext.getBlockPassword());
-						}
+						} else {
 
-						if (request.getParameter(Template.FORCE_TEMPLATE_PARAM_NAME) != null) {
-							params.put(Template.FORCE_TEMPLATE_PARAM_NAME, request.getParameter(Template.FORCE_TEMPLATE_PARAM_NAME));
+							ContentContext viewCtx = ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE);
+							viewCtx.setAbsoluteURL(true);
+							viewCtx.setFormat("html");
+							viewCtx.resetDMZServerInter();
+
+							Map<String, String> params = new HashMap<String, String>();
+
+							for (Object key : ctx.getRequest().getParameterMap().keySet()) {
+
+								if (!key.equals("__check_context")) {
+									params.put(key.toString(), ctx.getRequest().getParameter(key.toString()));
+								}
+							}
+
+							if (ctx.getCurrentUser() != null) {
+								String userToken = UserFactory.createUserFactory(ctx.getGlobalContext(), request.getSession()).getTokenCreateIfNotExist(ctx.getCurrentUser());
+								String token = globalContext.createOneTimeToken(userToken);
+								params.put("j_token", token);
+							}
+
+							params.put(Device.FORCE_DEVICE_PARAMETER_NAME, "pdf");
+							params.put(ContentContext.FORCE_ABSOLUTE_URL, "true");
+							params.put(ContentContext.NO_DMZ_PARAM_NAME, "true");
+							params.put(ContentContext.CLEAR_SESSION_PARAM, "true");
+							if (!globalContext.isView() && globalContext.getBlockPassword() != null) {
+								params.put("block-password", globalContext.getBlockPassword());
+							}
+
+							if (request.getParameter(Template.FORCE_TEMPLATE_PARAM_NAME) != null) {
+								params.put(Template.FORCE_TEMPLATE_PARAM_NAME, request.getParameter(Template.FORCE_TEMPLATE_PARAM_NAME));
+							}
+
+							if (request.getParameter("lowdef") != null) {
+								params.put("lowdef", request.getParameter("lowdef"));
+							}
+
+							params.put("clean-html", "true");
+
+							String url = URLHelper.createURL(viewCtx, params);
+
+							// LocalLogger.log(url);
+
+							/*
+							 * if (staticConfig.getApplicationLogin() != null) {
+							 * url = URLHelper.addCredential(url,
+							 * staticConfig.getApplicationLogin(),
+							 * staticConfig.getApplicationPassword()); }
+							 * PDFConvertion.getInstance().convertXHTMLToPDF(
+							 * url, out);
+							 */
+							FileOutputStream outFile = new FileOutputStream(pdfFileCache);
+							try {								
+								DoubleOutputStream outDbl = new DoubleOutputStream(out, outFile);
+								PDFConvertion.getInstance().convertXHTMLToPDF(new URL(url), staticConfig.getApplicationLogin(), staticConfig.getApplicationPassword(), outDbl);
+							} finally {
+								ResourceHelper.closeResource(outFile);
+							}
+							
 						}
-
-						if (request.getParameter("lowdef") != null) {
-							params.put("lowdef", request.getParameter("lowdef"));
-						}
-
-						params.put("clean-html", "true");
-
-						String url = URLHelper.createURL(viewCtx, params);
-						
-						// LocalLogger.log(url);
-
-						/*
-						 * if (staticConfig.getApplicationLogin() != null) { url
-						 * = URLHelper.addCredential(url,
-						 * staticConfig.getApplicationLogin(),
-						 * staticConfig.getApplicationPassword()); }
-						 * PDFConvertion.getInstance().convertXHTMLToPDF(url,
-						 * out);
-						 */
-						PDFConvertion.getInstance().convertXHTMLToPDF(new URL(url), staticConfig.getApplicationLogin(), staticConfig.getApplicationPassword(), out);
 
 					} else if (ctx.getFormat().equalsIgnoreCase("ics") || ctx.getFormat().equalsIgnoreCase("ical") || ctx.getFormat().equalsIgnoreCase("icalendar")) {
 						OutputStream out = response.getOutputStream();
@@ -879,8 +903,8 @@ public class AccessServlet extends HttpServlet implements IVersion {
 								ctx.getResponse().setStatus(HttpServletResponse.SC_NOT_FOUND, "page not found : " + ctx.getPath());
 								if (ctx.isAsViewMode()) {
 									MenuElement page404 = content.getNavigation(ctx).searchChildFromName(staticConfig.get404PageName());
-									if (page404 != null) {										
-										ctx.setCurrentPageCached(page404);										
+									if (page404 != null) {
+										ctx.setCurrentPageCached(page404);
 										template = TemplateFactory.getTemplate(ctx, page404);
 										ctx.setCurrentTemplate(template);
 									} else {

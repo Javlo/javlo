@@ -79,7 +79,7 @@ public class Title extends AbstractVisualComponent {
 	 */
 	@Override
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
-		if (getStyle().equals(HIDDEN)) {
+		if (getStyle() != null && getStyle().equals(HIDDEN)) {
 			return "";
 		}
 		StringBuffer res = new StringBuffer();

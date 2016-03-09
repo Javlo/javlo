@@ -22,10 +22,14 @@ import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.io.TransactionFile;
+import org.javlo.navigation.MenuElement;
+import org.javlo.service.PersistenceService;
+import org.javlo.service.exception.ServiceException;
 import org.javlo.service.syncro.SynchroHelper;
 
 /**
- * this class is used for cache transformation of a file. The transformation is is identified from a key.
+ * this class is used for cache transformation of a file. The transformation is
+ * is identified from a key.
  * 
  * @author pvandermaesen
  * 
@@ -36,17 +40,19 @@ public class FileCache {
 
 	private static final String KEY = FileCache.class.getName();
 	public static final String BASE_DIR = "/tmp";
-	
+
+	public static final Object PDF_LOCK = new Object();
+
 	private final String baseDirName;
 
 	ServletContext application = null;
-	
+
 	File baseDir = null;
 
 	private FileCache(ServletContext inApplication) {
 		application = inApplication;
 		application.setAttribute(KEY, this);
-	
+
 		StaticConfig staticConfig = StaticConfig.getInstance(application);
 		baseDirName = staticConfig.getImageCacheFolder();
 		String realCacheFolder;
@@ -56,16 +62,16 @@ public class FileCache {
 			realCacheFolder = baseDirName;
 		}
 		if (realCacheFolder == null) {
-			throw new RuntimeException(baseDirName+" can't be converted to absolute path.");
+			throw new RuntimeException(baseDirName + " can't be converted to absolute path.");
 		}
 		try {
 			baseDir = new File(realCacheFolder).getCanonicalFile();
 			baseDir.mkdirs();
 		} catch (IOException e) {
-			logger.severe("problem create baseDir width : "+baseDirName);
+			logger.severe("problem create baseDir width : " + baseDirName);
 			e.printStackTrace();
 		}
-		
+
 		File dir = getCacheDir();
 		if (!dir.exists()) {
 			logger.info("create dir : " + dir);
@@ -100,7 +106,7 @@ public class FileCache {
 		return cacheFileName;
 	}
 
-	public File getFileName(String key, String fileName) {		
+	public File getFileName(String key, String fileName) {
 		fileName = fileName.replace('\\', '/');
 		String cacheFileName = baseDir.getAbsolutePath() + '/' + key;
 		if (fileName.startsWith("/")) {
@@ -195,7 +201,7 @@ public class FileCache {
 				file.getParentFile().mkdirs();
 				file.createNewFile();
 			} catch (Exception e) {
-				logger.warning("error on create file : "+file);
+				logger.warning("error on create file : " + file);
 				throw new IOException(e);
 			}
 		}
@@ -238,7 +244,7 @@ public class FileCache {
 			return new FileInputStream(file);
 		}
 	}
-	
+
 	public File getFile(String key, String fileName, long latestModificationDate) throws IOException {
 		File file = getFileName(key, fileName);
 		if (latestModificationDate > file.lastModified()) {
@@ -264,13 +270,13 @@ public class FileCache {
 	public long getLastModified(String key, String fileName) throws FileNotFoundException {
 		File file = getFileName(key, fileName);
 		if (!file.exists()) {
-			logger.warning("file not found : "+file);
+			logger.warning("file not found : " + file);
 		}
 		return file.lastModified();
 	}
-	
+
 	protected File getCacheDir() {
-		if(baseDir == null) {
+		if (baseDir == null) {
 			baseDir = new File(application.getRealPath(BASE_DIR));
 		}
 		return baseDir;
@@ -286,11 +292,11 @@ public class FileCache {
 		if (fileName == null) {
 			return;
 		}
-		
+
 		if (ctx != null && ctx.getGlobalContext().getDMZServerIntra() != null) {
 			SynchroHelper.deletedRemoteCacheFile(ctx, fileName);
 		}
-		
+
 		File cacheDir = getCacheDir();
 		// File[] keys = cacheDir.listFiles(new DirectoryFilter());
 
@@ -387,7 +393,30 @@ public class FileCache {
 			decorder.close();
 		}
 	}
-	
-	
 
+	public void clearPDF(ContentContext ctx) throws IOException {
+		synchronized (PDF_LOCK) {
+			File pdfCache = new File(URLHelper.mergePath(getCacheDir().getAbsolutePath(), ctx.getGlobalContext().getContextKey(), "pdf"));
+			FileUtils.deleteDirectory(pdfCache);
+		}
+	}
+
+	public File getPDFPage(ContentContext ctx, MenuElement page) throws ServiceException {
+		PersistenceService persistenceService = PersistenceService.getInstance(ctx.getGlobalContext());
+		String fileName = "" + persistenceService.getVersion();
+		if (ctx.isAsViewMode() && ctx.getGlobalContext().isPreviewMode()) {
+			fileName = "page";
+		}
+		File cacheFile = new File(URLHelper.mergePath(getCacheDir().getAbsolutePath(), ctx.getGlobalContext().getContextKey(), "pdf", ctx.getRenderModeKey(ctx.getRenderMode()), fileName + ".pdf"));
+		File dir = cacheFile.getParentFile();
+		if (!cacheFile.exists()) {
+			dir.mkdirs();
+			synchronized (PDF_LOCK) {
+				for (File f : dir.listFiles()) {
+					f.delete();
+				}
+			}
+		}
+		return cacheFile;
+	}
 }

@@ -12,8 +12,7 @@ if (typeof(pjq) !== 'undefined') {
 function loadImage${imageId}() {
 	var img = localJQ("#${imageId}");	
 	if (img.src != "${info.ajaxLoaderURL}" && !img.hasClass("refreshing") && !img.hasClass("refreshed") && img.attr("src").indexOf("/transform/")>=0) {		
-		img.addClass("refreshing");
-		console.log("back image info - img.width() = "+ img.width());
+		img.addClass("refreshing");		
 		localJQ.post( "${info.currentAjaxURL}", { webaction: "global-image.dataFeedBack", compid: "${compid}", height: img.height(), width: img.width()}, {dataType: "json"}).done(function(data) {
 			img.addClass("refreshed");
 			img.removeClass("refreshing");

@@ -26,7 +26,7 @@ public class PersistenceThread implements Runnable {
 
 	public static boolean ONE_INSTANCE_RUN = false;
 
-	private static AtomicInteger COUNT_THREAD = new AtomicInteger(0);
+	private AtomicInteger COUNT_THREAD = new AtomicInteger(0);
 
 	private static Logger logger = Logger.getLogger(PersistenceThread.class.getName());
 
@@ -43,6 +43,8 @@ public class PersistenceThread implements Runnable {
 	private boolean running = true;
 
 	private String defaultLg = null;
+
+	private String contextKey = null;
 
 	private PersistenceService persistenceService;
 
@@ -85,17 +87,13 @@ public class PersistenceThread implements Runnable {
 		}
 	}
 
-	public static boolean oneThreadRun() {
-		return COUNT_THREAD.get() > 0;
-	}
-
 	@Override
-	public void run() {		
-		synchronized (SYNCRO_LOCK) {			
-			COUNT_THREAD.incrementAndGet();
+	public void run() {
+		COUNT_THREAD.incrementAndGet();
+		synchronized (SYNCRO_LOCK) {
 			File file = null;
 			try {
-				logger.info("before start persitence thread (#THREAD:" + COUNT_THREAD + ')');
+				logger.info("before start persitence thread (#THREAD:" + COUNT_THREAD + ") - " + getContextKey());
 				synchronized (menuElement.getLock()) {
 					logger.info("start persitence thread (#THREAD:" + COUNT_THREAD + ')');
 					long startTime = System.currentTimeMillis();
@@ -221,6 +219,14 @@ public class PersistenceThread implements Runnable {
 		out.close();
 
 		file.delete();
+	}
+
+	public String getContextKey() {
+		return contextKey;
+	}
+
+	public void setContextKey(String contextKey) {
+		this.contextKey = contextKey;
 	}
 
 }

@@ -56,7 +56,7 @@ public class InitInterest {
 
 	}
 
-	private static class Gray8DetectHaarMultiScale extends PipelineStage {
+	public static class Gray8DetectHaarMultiScale extends PipelineStage {
 		private final HaarClassifierCascade hcc;
 		// maximum scale is the largest factor the image is divided by
 		private int nMaxScale = 10;

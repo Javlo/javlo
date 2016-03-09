@@ -1847,7 +1847,8 @@ public class Template implements Comparable<Template> {
 			e.printStackTrace();
 		}
 		if (renderer == null) {
-			throw new ServiceException("renderer not found on template : " + getName() + " (parent:" + getParent() + ")");
+			logger.warning("renderer not found on template : " + getName() + " (parent:" + getParent() + ")");
+			return null;
 		}
 		String params = "";
 		String templateParams = getHTMLFileParams(ctx.getDevice());

@@ -992,8 +992,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		return outFilter.toString().trim();
 	}
 
-	private boolean validPageForCommand(ContentContext ctx, MenuElement page, Collection<String> commands) throws Exception {
-		Set<String> currentSelection = getPagesId(ctx, page.getRoot().getAllChildren());
+	private boolean validPageForCommand(ContentContext ctx, MenuElement page, Set<String> currentSelection, Collection<String> commands) throws Exception {		
 		for (String command : commands) {
 			if (command.equals("checked")) {
 				if (!currentSelection.contains(page.getId())) {
@@ -1035,21 +1034,21 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 	 * @return true if page is accepted
 	 * @throws Exception
 	 */
-	protected boolean filterPage(ContentContext ctx, MenuElement page, String filter) throws Exception {
+	protected boolean filterPage(ContentContext ctx, MenuElement page, Set<String> currentSelection, Collection<String> commands, String filter) throws Exception {
 
 		if (!page.isActive()) {
 			return false;
 		}
 
-		Collection<String> commands = extractCommandFromFilter(filter);
+		//Collection<String> commands = extractCommandFromFilter(filter);
 
 		if (commands.contains("all")) {
 			return true;
 		}
-		if (!validPageForCommand(ctx, page, commands)) {
+		if (!validPageForCommand(ctx, page, currentSelection, commands)) {
 			return false;
 		}
-		filter = removeCommandFromFilter(filter);
+		//filter = removeCommandFromFilter(filter);
 
 		if (filter != null && !(page.getTitle(ctx) + ' ' + page.getName()).contains(filter)) {
 			return false;
@@ -1061,9 +1060,6 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 			return false;
 		}
 
-		ContentContext lgDefaultCtx = new ContentContext(ctx);
-		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-		Iterator<String> contentLg = globalContext.getContentLanguages().iterator();
 		if (getTimeSelection() != null) {
 			Date today = new Date();
 			boolean timeAccept = false;
@@ -1086,14 +1082,17 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 				return false;
 			}
 		}
+		if (getSelectedTag(ctx).length() == 0) {
+			return true;
+		}
+		ContentContext lgDefaultCtx = new ContentContext(ctx);
+		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+		Iterator<String> contentLg = globalContext.getContentLanguages().iterator();
 		while (page.getContentByType(lgDefaultCtx, Tags.TYPE).size() == 0 && contentLg.hasNext()) {
 			String lg = contentLg.next();
 			lgDefaultCtx.setContentLanguage(lg);
 			lgDefaultCtx.setRequestContentLanguage(lg);
-		}
-		if (getSelectedTag(ctx).length() == 0) {
-			return true;
-		}
+		}		
 		if (page.getTags(lgDefaultCtx).contains(getSelectedTag(ctx))) {
 			return true;
 		}
@@ -1359,6 +1358,10 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 			ByteArrayOutputStream outStreamTemp = new ByteArrayOutputStream();
 			PrintStream outTemp = new PrintStream(outStreamTemp);
 			int countPage = 0;
+			
+		    Collection<String> commands = extractCommandFromFilter(filter);
+			filter = removeCommandFromFilter(filter);
+			//Set<String> currentSelection = getPagesId(ctx, page.getRoot().getAllChildren());
 			for (int i = 0; i < numberOfPage; i++) {
 				ContentContext newCtx = new ContentContext(ctx);
 				newCtx.setArea(null);
@@ -1366,12 +1369,12 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 				if (GlobalContext.getInstance(ctx.getRequest()).isAutoSwitchToDefaultLanguage()) {
 					lgCtx = allChildren[i].getContentContextWithContent(ctx);
 				}
-				if (filterPage(lgCtx, allChildren[i], filter) && (allChildren[i].getContentDateNeverNull(ctx).after(backDate.getTime()))) {
+				if (filterPage(lgCtx, allChildren[i], currentSelection, commands, filter) && (allChildren[i].getContentDateNeverNull(ctx).after(backDate.getTime()))) {
 					renderPageSelectLine(lgCtx, outTemp, currentSelection, allChildren[i]);
 					countPage++;
 				}
 			}
-			if (countPage < MAX_PAGES || extractCommandFromFilter(filter).contains("all")) {
+			if (countPage < MAX_PAGES || commands.contains("all")) {
 				out.print(new String(outStreamTemp.toByteArray()));
 			} else {
 				out.println("<td colspan=\"5\" class=\"error\"><div class=\"notification msgalert\">" + i18nAccess.getText("content.page-reference.too-many-pages", "Too many pages found, please use the filter above to limit results.") + " (#" + numberOfPage + ")</div></td>");
@@ -1795,7 +1798,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		NavigationService navigationService = NavigationService.getInstance(globalContext);
 
 		LocalLogger.stepCount("pageref", "step 4");
-
+		Set<String> currentSelection = getPagesId(ctx, allChildren);
 		for (String pageId : selectedPage) {
 			MenuElement page = navigationService.getPage(ctx, pageId);
 			if (page != null) {
@@ -1813,8 +1816,8 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 				pageCal.setTime(pageDate);
 				if (todayCal.after(pageCal)) {
 					ascending = true;
-				}
-				pages.add(page);
+				}			
+				pages.add(page);				
 			} else {
 				logger.warning("page not found : " + pageId);
 			}
@@ -1882,15 +1885,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		}
 
 		Collection<Calendar> allMonths = new LinkedList<Calendar>();
-		Collection<String> allMonthsKeys = new HashSet<String>();
-
-		/*
-		 * Collection<String> roles = new LinkedList<String>(); if
-		 * (ctx.getCurrentUser() != null) { roles =
-		 * ctx.getCurrentUser().getRoles(); } else { roles =
-		 * Collections.EMPTY_LIST; }
-		 */
-
+		Collection<String> allMonthsKeys = new HashSet<String>();		
 		for (MenuElement page : pages) {
 			ContentContext lgCtx = ctx;
 			if (GlobalContext.getInstance(ctx.getRequest()).isAutoSwitchToDefaultLanguage()) {
@@ -1902,7 +1897,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 					testCtx.setAllLanguage(dflg);
 				}
 			}
-			if (filterPage(lgCtx, page, null)) {
+			if (filterPage(lgCtx, page, currentSelection, Collections.EMPTY_LIST, "")) {
 				if (countPage < getMaxNews(lgCtx)) {
 					if ((isWidthEmptyPage() || page.isRealContentAnyLanguage(lgCtx)) && (page.getChildMenuElements().size() == 0 || page.isChildrenAssociation() || !isOnlyPageWithoutChildren()) && page.getContentDateNeverNull(lgCtx).after(backDate.getTime())) {
 						if (firstPage == null) {
@@ -2010,11 +2005,11 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 			List<String> currentPageSelected = getPageSelected();
 			List<String> pagesSelected = new LinkedList<String>();
 			List<String> pagesNotSelected = new LinkedList<String>();
-
+			Set<String> currentSelection = getPagesId(ctx, allChildren);
 			for (MenuElement element : allChildren) {
 				String selectedPage = requestService.getParameter(getPageId(element), null);
 				if (requestService.getParameter(getPageDisplayedId(element), null) != null) {
-					if (isDefaultSelected() ^ (selectedPage != null) && filterPage(ctx, element, null)) {
+					if (isDefaultSelected() ^ (selectedPage != null) && filterPage(ctx, element, currentSelection, Collections.EMPTY_LIST, null)) {
 						pagesSelected.add(element.getId());
 					} else {
 						pagesNotSelected.add(element.getId());

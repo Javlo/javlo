@@ -38,6 +38,7 @@ import org.javlo.macro.DeleteDynamicComponent;
 import org.javlo.macro.DeletePageFromSpecificUser;
 import org.javlo.macro.DeleteSameComponent;
 import org.javlo.macro.DeleteSmartExternalLinkMacro;
+import org.javlo.macro.DeleteTestPage;
 import org.javlo.macro.DetectAllComponentsType;
 import org.javlo.macro.DownDateMacro;
 import org.javlo.macro.DuplicateChildren;
@@ -147,6 +148,7 @@ public class MacroFactory {
 		macros.add(new CreateBusinessComponent());
 		macros.add(new ImportExternalPage());
 		macros.add(new UndeletePage());
+		macros.add(new DeleteTestPage());
 	}
 
 	public IMacro getMacro(String name) {

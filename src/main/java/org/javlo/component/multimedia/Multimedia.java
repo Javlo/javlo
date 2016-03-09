@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.io.FilenameUtils;
+import org.apache.lucene.index.CheckIndex.Status.SegmentInfoStatus;
 import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.component.core.ContentElementList;
 import org.javlo.component.core.IContentVisualComponent;
@@ -1005,7 +1006,7 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 	@Override
 	protected void init() throws ResourceNotFoundException {
 		initDate = false;
-		super.init();
+		super.init();		
 	}
 
 	@Override
@@ -1209,6 +1210,13 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 	@Override
 	public boolean isMirroredByDefault() {	
 		return true;
+	}
+	
+	@Override
+	public boolean initContent(ContentContext ctx) throws Exception {	
+		boolean out = super.initContent(ctx);
+		setStyle(ctx, IMAGE);
+		return out;
 	}
 
 }

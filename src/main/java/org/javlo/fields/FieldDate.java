@@ -158,6 +158,9 @@ public class FieldDate extends Field implements IDate {
 	
 	@Override
 	public int compareTo(Field o) {
+		if (getDate() == null || o == null) {
+			return 0;
+		}
 		if (!(o instanceof FieldDate)) {
 			return super.compareTo(o);
 		} else {

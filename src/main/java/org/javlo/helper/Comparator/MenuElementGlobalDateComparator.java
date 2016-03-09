@@ -44,17 +44,19 @@ public class MenuElementGlobalDateComparator implements Comparator<MenuElement> 
 		ContentContext ctxPage1 = ctx;
 		ContentContext ctxPage2 = ctx;
 		if (autoSwitchToDefaultLanguage) {
-			try {
-				ctxPage1 = ctx.getContextWithContentNeverNull(elem1);
-				ctxPage2 = ctx.getContextWithContentNeverNull(elem2);
+			try {				
+				if (!elem1.isRealContent(ctx)) {
+					ctxPage1 = ctx.getContextWithContentNeverNull(elem1);
+				}				
+				if (!elem2.isRealContent(ctx)) {
+					ctxPage2 = ctx.getContextWithContentNeverNull(elem2);
+				}
 			} catch (Exception e1) {
 				e1.printStackTrace();
 				return 0;
 			}
 		}
-
 		try {
-
 			if (elem1.getContentDate(ctxPage1) == null) {
 				cal1.setTime(elem1.getModificationDate());
 			} else {
