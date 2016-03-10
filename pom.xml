@@ -249,7 +249,7 @@
 			<version>9.0.8</version>
 		</dependency>
 
-		<dependency>
+		<!-- <dependency>
 			<groupId>jjil</groupId>
 			<artifactId>jjil.core</artifactId>
 			<version>0.1</version>
@@ -259,7 +259,7 @@
 			<groupId>jjil</groupId>
 			<artifactId>jjil.algorithm</artifactId>
 			<version>0.1</version>
-		</dependency>
+		</dependency>   -->
 
 		<dependency>
 			<groupId>junit</groupId>
