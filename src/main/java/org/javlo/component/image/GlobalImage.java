@@ -799,7 +799,7 @@ public class GlobalImage extends Image implements IImageFilter {
 						ResourceHelper.writeFileToFile(imageSrc, imageTarget);
 						storeProperties();
 						setModify();
-						SharedContentService.getInstance(ctx).clearCache(ctx);
+						//SharedContentService.getInstance(ctx).clearCache(ctx);
 						PersistenceService.getInstance(ctx.getGlobalContext()).setAskStore(true);
 					}
 				}
