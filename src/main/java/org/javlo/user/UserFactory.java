@@ -414,7 +414,7 @@ public class UserFactory implements IUserFactory, Serializable {
 		if (user == null) {
 			user = getUserByEmail(login);
 		}
-
+		
 		boolean passwordEqual = false;
 		StaticConfig staticConfig = StaticConfig.getInstance(request.getSession());
 
@@ -446,7 +446,7 @@ public class UserFactory implements IUserFactory, Serializable {
 				}
 			}
 		}
-
+		
 		if (user == null || (!logged && user.getPassword() != null && !passwordEqual)) {
 			if (globalCtx.getAdministrator().equals(login) && (logged || globalCtx.administratorLogin(login, password))) {
 				logger.fine("log user with password : " + login + " obtain full control role.");
@@ -460,12 +460,14 @@ public class UserFactory implements IUserFactory, Serializable {
 				user = null;
 			}
 		}
-		if (user != null && globalCtx.getAdministrator().equals(user.getLogin())) {
+		/*if (user != null && globalCtx.getAdministrator().equals(user.getLogin())) {
+			System.out.println("**** A ****");
 			user.getUserInfo().addRoles((new HashSet(Arrays.asList(new String[] { AdminUserSecurity.FULL_CONTROL_ROLE }))));
 		}
 		if (user != null && editCtx.getEditUser(user.getLogin()) != null) {
+			System.out.println("**** Bs ****");
 			user.getUserInfo().addRoles((new HashSet(Arrays.asList(new String[] { AdminUserSecurity.GENERAL_ADMIN, AdminUserSecurity.FULL_CONTROL_ROLE }))));
-		}
+		}*/
 
 		if (user != null) {
 			user.setContext(globalContext.getContextKey());

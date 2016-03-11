@@ -844,8 +844,8 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 	protected String createKey(String suffix) {
 		return "field." + getUnicName() + '.' + suffix;
 	}
-
-	public String getMetaData(String inKey) {
+	
+	public String getMetaData(String inKey, String defaultValue) {
 		String key = createKey(inKey);
 		String localKey = null;
 		if (getCurrentLocale() != null) {
@@ -854,7 +854,15 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 		if (localKey != null && properties.get(localKey) != null) {
 			return properties.getProperty(localKey);
 		}
-		return properties.getProperty(key);
+		String outData = properties.getProperty(key);
+		if (outData == null) {
+			outData = defaultValue;
+		}
+		return outData;
+	}
+
+	public String getMetaData(String inKey) {
+		return getMetaData(inKey, null);
 	}
 
 	public final List<Locale> getTranslation() {

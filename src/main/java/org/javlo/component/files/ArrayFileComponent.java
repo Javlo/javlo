@@ -66,7 +66,6 @@ public class ArrayFileComponent extends GenericFile {
 					row = 99;
 				}
 			}
-			System.out.println("titleRaw = "+dataRaw);
 		}
 
 		@Override

@@ -358,13 +358,13 @@ public class EditContext implements Serializable {
 		User outUser = getEditUser(inUser);
 		if ((outUser != null && globalContext != null)) {
 			boolean found = false;
-			for (Principal principal : globalContext.getAllPrincipals()) {
+			/*for (Principal principal : globalContext.getAllPrincipals()) {
 				if (principal != null && principal.getName() != null) {
 					if (principal.getName().equals(inUser)) {
 						found = true;
 					}
 				}
-			}
+			}*/
 			if (!found && pwd != null) {
 				if (!pwd.equals(outUser.getPassword())) {
 					outUser = null;

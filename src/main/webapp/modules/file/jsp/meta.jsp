@@ -1,5 +1,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"
 %><%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<h2>${param.select}</h2>
 <c:url var="uploadURL" value="${info.currentURL}" context="/">
 	<c:if test="${not empty param.select}">
 		<c:param name="select" value="${param.select}"></c:param>
@@ -81,7 +82,7 @@
 			<c:if test="${not empty param.select && !file.directory}">
 				<c:set var="dataURL" value='data-url="${file.freeURL}"' />
 			</c:if>				
-			<img src="${file.thumbURL}" />			
+			<a ${!file.directory && not empty param.select?'class="select-item"':''} href="${fileSelectURL}" ${dataURL}><img src="${file.thumbURL}" /></a>
 			<c:if test="${file.image}">
 			<div class="focus-point">x</div>			
 			<input class="posx" type="hidden" name="posx-${file.id}" value="${file.focusZoneX}" />
@@ -93,8 +94,7 @@
 				</a>
 			</div>
 			</div>
-		</div>
-		
+		</div>		
 		
 		<c:if test="${empty param.select}">
 		<div class="line">

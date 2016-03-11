@@ -15,8 +15,8 @@ import org.javlo.module.file.FileAction;
 
 public class FieldWysiwyg extends Field {
 
-	protected String getEditorComplexity(ContentContext ctx) throws Exception {
-		return properties.getProperty("editor-complexity", "light");
+	protected String getEditorComplexity(ContentContext ctx) throws Exception {	
+		return getMetaData("editor-complexity", "light");
 	}
 
 	@Override
@@ -54,7 +54,6 @@ public class FieldWysiwyg extends Field {
 		String hostPrefix;
 		try {
 			hostPrefix = InfoBean.getCurrentInfoBean(ctx).getAbsoluteURLPrefix();
-
 			out.print(StringHelper.neverNull(getValue()).replace("${info.hostURLPrefix}", hostPrefix));
 			out.println("</textarea>");
 			out.println("</div>");
@@ -69,7 +68,6 @@ public class FieldWysiwyg extends Field {
 			out.println("<script type=\"text/javascript\">jQuery(document).ready(loadWysiwyg('#" + getInputName() + "','" + getEditorComplexity(ctx) + "','" + chooseImageURL + "'));</script>");
 			out.flush();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return writer.toString();

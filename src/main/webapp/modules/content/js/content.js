@@ -8,48 +8,6 @@ jQuery(document).ready(function(){
 });
 
 function loadWysiwyg(cssQuery, complexity, chooseFileURL) {
-	
-	
-	/*tinymce.PluginManager.add('textlang', function(editor, url) {
-	    // Add a button that opens a window
-	    editor.addButton('textlang', {	    	
-	        text: 'text lang',
-	        icon: false,
-	        onclick: function() {
-	            // Open window
-	            editor.windowManager.open({
-	                title: 'textlang plugin',
-	                body: [
-	                    {type: 'textbox', name: 'title', label: 'Title'}
-	                ],
-	                onsubmit: function(e) {
-	                    // Insert content when the window form is submitted
-	                    editor.insertContent('Title: ' + e.data.title);
-	                }
-	            });
-	        }
-	    });
-
-	    // Adds a menu item to the tools menu
-	    editor.addMenuItem('textlang', {
-	        text: 'Example plugin',
-	        context: 'tools',
-	        onclick: function() {
-	            // Open window with a specific url
-	            editor.windowManager.open({
-	                title: 'TinyMCE site',
-	                url: 'http://www.tinymce.com',
-	                width: 800,
-	                height: 600,
-	                buttons: [{
-	                    text: 'Close',
-	                    onclick: 'close'
-	                }]
-	            });
-	        }
-	    });
-	});*/
-	
 	var wysiwygCss = null;
 	if (typeof parent.wysiwygCss === 'undefined') {
 	    
@@ -91,7 +49,7 @@ function loadWysiwyg(cssQuery, complexity, chooseFileURL) {
 		        "insertdatetime media nonbreaking save table directionality",
 		        "emoticons template paste textcolor colorpicker nonbreaking"
 		    ],
-		    toolbar1: "bold italic underline strikethrough fontsizeselect | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | forecolor backcolor | table charmap nonbreaking code",		    
+		    toolbar1: "styleselect bold italic underline strikethrough fontsizeselect | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | forecolor backcolor | table charmap nonbreaking code",		    
 		    image_advtab: true,
 		    fontsize_formats: "10px 11px 12px 13px 14px 16px 18px 20px",
 		    //paste_word_valid_elements: "b,strong,i,em,h1,h2,h3,h4,h5,h6,table,tr,th,td,ul,ol,li,p,a,div",
