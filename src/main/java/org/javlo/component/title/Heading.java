@@ -367,5 +367,10 @@ public class Heading extends AbstractPropertiesComponent implements ISubTitle {
 	public boolean isNoLinkable() {
 		return true;
 	}	
+	
+	@Override
+	public boolean isContentCachable(ContentContext ctx) {
+		return true;
+	}
 
 }

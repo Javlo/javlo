@@ -4446,7 +4446,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 		ContentElementList content = getContent(noAreaCtx);
 		while (content.hasNext(noAreaCtx)) {
 			IContentVisualComponent comp = content.next(noAreaCtx);
-			if (!comp.isContentCachable(noAreaCtx)) {
+			if (!comp.isContentCachable(noAreaCtx)) {				
 				desc.cacheable = false;
 				return false;
 			}
