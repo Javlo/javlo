@@ -85,7 +85,7 @@ public class FieldWysiwyg extends Field {
 		if (refCode != null) {
 			return refCode;
 		}
-		return XHTMLHelper.textToXHTML(super.getDisplayValue(ctx, locale));
+		return super.getDisplayValue(ctx, locale);
 	}
 
 	@Override
