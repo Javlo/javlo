@@ -3019,7 +3019,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 			desc.forcedPageTitle = "";
 		}
 
-		return desc.pageTitle;
+		return desc.forcedPageTitle;
 	}
 
 	public String getPageTitle(ContentContext ctx) throws Exception {
@@ -3036,7 +3036,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 
 		desc.pageTitle = getForcedPageTitle(newCtx);
 
-		if (desc.pageTitle == null || desc.pageTitle.trim().length() == 0) {
+		if (desc.pageTitle == null || desc.pageTitle.length() == 0) {
 			desc.pageTitle = getLabel(newCtx);
 		}
 		return desc.pageTitle;

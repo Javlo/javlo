@@ -392,8 +392,17 @@ public class InfoBean {
 	public String getPageHumanName() {
 		return currentPage.getHumanName();
 	}
-
+	
 	public String getPageTitle() {
+		try {
+			return currentPage.getPageTitle(ctx);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	public String getTitle() {
 		try {
 			return currentPage.getTitle(ctx);
 		} catch (Exception e) {
