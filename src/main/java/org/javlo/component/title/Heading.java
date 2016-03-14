@@ -370,7 +370,7 @@ public class Heading extends AbstractPropertiesComponent implements ISubTitle {
 	
 	@Override
 	public boolean isContentCachable(ContentContext ctx) {
-		return true;
+		return true;	
 	}
 
 }
