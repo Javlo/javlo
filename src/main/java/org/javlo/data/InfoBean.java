@@ -139,6 +139,12 @@ public class InfoBean {
 		}
 	}
 	
+	public String getCurrentCanonicalURL() {
+		ContentContext robotCtx = new ContentContext(ctx);
+		robotCtx.setDevice(Device.getFakeDevice("robot"));
+		return URLHelper.createURL(robotCtx);
+	}
+	
 	public Map<String,String> getLanguageURLs() {
 		Map<String,String> urls = new HashMap<String, String>();
 		for (String lg : ctx.getGlobalContext().getContentLanguages()) {

@@ -44,6 +44,13 @@ public class Device implements Serializable {
 		}
 		return currentDevice;
 	}
+	
+	public static final Device getFakeDevice(String userAgent) {
+		Device device = new Device();
+		device.setUserAgent(userAgent);
+		device.setLabel("fakeDevice");
+		return device; 
+	}
 
 	private String userAgent = null;
 
