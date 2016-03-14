@@ -42,9 +42,13 @@ public class JVImageChangeFilter extends TagSupport {
 						ctx.getRequest().setAttribute(getVar(), url);
 						return SKIP_BODY;
 					}
+					ContentContext localCtx = ctx;
+					if (url.startsWith("http")) {
+						localCtx = ctx.getContextForAbsoluteURL();
+					}
 					newURL = newURL.replaceFirst(filter + '/', newFilter + '/');
 					newURL = ctx.getGlobalContext().setTransformShortURL(newURL, null);
-					newURL = URLHelper.createStaticURL(ctx, URLHelper.mergePath("img", newURL));					
+					newURL = URLHelper.createStaticURL(localCtx, URLHelper.mergePath("img", newURL));					
 				} else {
 					newURL = url;
 				}
