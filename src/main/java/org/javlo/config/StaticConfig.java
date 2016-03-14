@@ -850,6 +850,10 @@ public class StaticConfig extends Observable {
 	public int getCaptchaSize() {
 		return properties.getInt("security.captcha.size", 4);
 	}
+	
+	public boolean isXSSHeader() {
+		return properties.getBoolean("security.header.xss", true);
+	}
 
 	public String getRealPath(String path) {
 		return application.getRealPath(path);

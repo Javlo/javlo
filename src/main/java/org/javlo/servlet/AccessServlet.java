@@ -261,6 +261,9 @@ public class AccessServlet extends HttpServlet implements IVersion {
 				ctx.setFormat(staticConfig.getDefaultContentExtension());
 				ctx.setContentFound(false);
 			}
+			if (staticConfig.isXSSHeader()) {
+				response.setHeader("X-XSS-Protection", "1");
+			}
 
 			if (ctx.getCurrentEditUser() != null) {
 				// edit edit info bean
