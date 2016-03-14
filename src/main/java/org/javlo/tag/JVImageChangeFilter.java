@@ -28,7 +28,8 @@ public class JVImageChangeFilter extends TagSupport {
 	public int doStartTag() throws JspException {
 		try {
 			ContentContext ctx = ContentContext.getContentContext((HttpServletRequest) pageContext.getRequest(), (HttpServletResponse) pageContext.getResponse());
-			String newURL;			
+			String newURL;
+			boolean abs = url.startsWith("http");
 			if (url.contains('/' + filter + '/')) {
 				newURL = url.replace('/' + filter + '/', '/' + newFilter + '/');
 			} else {
@@ -43,7 +44,7 @@ public class JVImageChangeFilter extends TagSupport {
 						return SKIP_BODY;
 					}
 					ContentContext localCtx = ctx;
-					if (url.startsWith("http")) {
+					if (abs) {
 						localCtx = ctx.getContextForAbsoluteURL();
 					}
 					newURL = newURL.replaceFirst(filter + '/', newFilter + '/');
