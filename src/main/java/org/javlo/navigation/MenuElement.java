@@ -580,8 +580,8 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 			Collection<ImageBean> outImages = new LinkedList<ImageBean>();
 			for (IImageTitle image : getImages()) {
 				try {
-					ContentContext ctx = this.ctx.getContextForAbsoluteURL();
-					outImages.add(new ImageBean(URLHelper.createResourceURL(ctx, image.getResourceURL(ctx)), URLHelper.createTransformURL(ctx, image.getResourceURL(ctx), "preview"), image.getImageDescription(ctx), image.getImageLinkURL(ctx)));
+					ContentContext absCtx = this.ctx.getContextForAbsoluteURL();
+					outImages.add(new ImageBean(URLHelper.createResourceURL(absCtx, image.getResourceURL(absCtx)), URLHelper.createTransformURL(absCtx, image.getResourceURL(absCtx), "preview"), image.getImageDescription(absCtx), image.getImageLinkURL(absCtx)));
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -591,8 +591,8 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 		
 		public ImageBean getImageBean() throws Exception {
 			IImageTitle image = page.getImage(ctx);
-			ContentContext ctx = this.ctx.getContextForAbsoluteURL();
-			return new ImageBean(URLHelper.createResourceURL(ctx, image.getResourceURL(ctx)), URLHelper.createTransformURL(ctx, image.getResourceURL(ctx), "preview"), image.getImageDescription(ctx), image.getImageLinkURL(ctx));
+			ContentContext absCtx = this.ctx.getContextForAbsoluteURL();
+			return new ImageBean(URLHelper.createResourceURL(ctx, image.getResourceURL(absCtx)), URLHelper.createTransformURL(absCtx, image.getResourceURL(absCtx), "preview"), image.getImageDescription(absCtx), image.getImageLinkURL(absCtx));
 		}
 
 		@Override
