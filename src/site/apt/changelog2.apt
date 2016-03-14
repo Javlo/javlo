@@ -653,3 +653,6 @@ change log
 * 2.1.0.3.8 09/03/2016
 
  * remove face detection lib (jjil)
+ 
+ * optimisation robots.txt remove edition url and add sitemap.xml
+ 
