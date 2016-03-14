@@ -32,7 +32,7 @@ public class Device implements Serializable {
 			currentDevice.setUserAgent(userAgent);
 			request.getSession().setAttribute(Device.class.getCanonicalName(), currentDevice);
 			logger.fine("Create new device : '" + currentDevice.getCode() + "' userAgent : " + userAgent);
-		}		
+		}
 
 		String forcedCode = request.getParameter(FORCE_DEVICE_PARAMETER_NAME);
 		if (forcedCode != null) {
@@ -44,12 +44,12 @@ public class Device implements Serializable {
 		}
 		return currentDevice;
 	}
-	
+
 	public static final Device getFakeDevice(String userAgent) {
 		Device device = new Device();
 		device.setUserAgent(userAgent);
 		device.setLabel("fakeDevice");
-		return device; 
+		return device;
 	}
 
 	private String userAgent = null;
@@ -131,23 +131,22 @@ public class Device implements Serializable {
 
 	protected void setUserAgent(String userAgent) {
 		this.userAgent = userAgent;
-		Collection<Map.Entry<String, String>> entries = devices.entrySet();
-		for (Map.Entry<String, String> entry : entries) {
-			if (entry.getKey().endsWith(".in")) { // if "." also this not a
-													// device but config of
-													// device.
-				Pattern pattern = Pattern.compile(entry.getValue());
-				if (userAgent != null && pattern.matcher(userAgent).matches()) {
-					String localCode = entry.getKey().split("\\.")[0];
-					String exclude = devices.get(localCode + ".out");
-					if (exclude != null) { // if "." also this not a device but
-											// config of device.
-						pattern = Pattern.compile(exclude);
-						if (!pattern.matcher(userAgent).matches()) {
+		if (devices != null) {
+			Collection<Map.Entry<String, String>> entries = devices.entrySet();
+			for (Map.Entry<String, String> entry : entries) {
+				if (entry.getKey().endsWith(".in")) {
+					Pattern pattern = Pattern.compile(entry.getValue());
+					if (userAgent != null && pattern.matcher(userAgent).matches()) {
+						String localCode = entry.getKey().split("\\.")[0];
+						String exclude = devices.get(localCode + ".out");
+						if (exclude != null) {
+							pattern = Pattern.compile(exclude);
+							if (!pattern.matcher(userAgent).matches()) {
+								code = localCode;
+							}
+						} else {
 							code = localCode;
 						}
-					} else {
-						code = localCode;
 					}
 				}
 			}
