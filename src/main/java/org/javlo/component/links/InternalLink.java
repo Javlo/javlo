@@ -426,7 +426,7 @@ public class InternalLink extends ComplexPropertiesLink implements IInternalLink
 	}
 	
 	@Override
-	public boolean isMirroredByDefault() {	
+	public boolean isMirroredByDefault(ContentContext ctx) {	
 		return true;
 	}
 

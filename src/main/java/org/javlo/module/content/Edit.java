@@ -766,7 +766,7 @@ public class Edit extends AbstractModuleAction {
 				ComponentBean bean = (ComponentBean) copied;
 				IContentVisualComponent sourceComp = contentService.getComponent(ctx, bean.getId());
 				if (!bean.getType().equals(TableBreak.TYPE)) {
-					if (globalContext.isMailingPlatform() || !sourceComp.isMirroredByDefault() && !(sourceComp instanceof IContainer)) {
+					if (globalContext.isMailingPlatform() || !sourceComp.isMirroredByDefault(ctx) && !(sourceComp instanceof IContainer)) {
 						newId = content.createContent(ctx, targetPage, areaKey, previousId, bean, true);
 					} else {						
 						if (!(sourceComp instanceof IContainer)) {
@@ -1771,7 +1771,7 @@ public class Edit extends AbstractModuleAction {
 			// parentId = content.createContent(ctx, bean, parentId, true);
 			
 			
-			if (globalContext.isMailingPlatform() || !comp.isMirroredByDefault()) {
+			if (globalContext.isMailingPlatform() || !comp.isMirroredByDefault(ctx)) {
 				parentId = content.createContent(ctx, ctx.getCurrentPage(), bean, parentId, true);
 			} else {						
 				if (!(comp instanceof IContainer)) {

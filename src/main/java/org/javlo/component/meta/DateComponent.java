@@ -206,7 +206,7 @@ public class DateComponent extends AbstractVisualComponent implements IDate {
 	}
 	
 	@Override
-	public boolean isMirroredByDefault() {	
+	public boolean isMirroredByDefault(ContentContext ctx) {	
 		return true;
 	}
 

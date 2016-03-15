@@ -1192,6 +1192,11 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 
 		out.println("<fieldset class=\"config\">");
 		out.println("<legend>" + i18nAccess.getText("global.config") + "</legend>");
+		
+		out.println("<div class=\"line\">");
+		out.println("<label for=\"" + getInputNameTitle() + "\">" + i18nAccess.getText("global.title") + " : </label>");
+		out.println("<input type=\"text\" id=\"" + getInputNameTitle() + "\" name=\"" + getInputNameTitle() + "\" value=\"" + getContentTitle() + "\"  />");
+		out.println("</div>");
 
 		/* by default selected */
 		out.println("<div class=\"line\">");
@@ -1243,11 +1248,6 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		out.println("</div><div class=\"col-xs-2\">");
 		out.println("<input type=\"button\" class=\"btn btn-default btn-xs\" onclick=\"jQuery('#" + getParentNodeInputName() + "').val('" + ctx.getCurrentPage().getPath() + "');\" value=\"" + i18nAccess.getText("global.current-page") + "\" >");
 		out.println("</div></div></div>");
-
-		out.println("<div class=\"line\">");
-		out.println("<label for=\"" + getInputNameTitle() + "\">" + i18nAccess.getText("global.title") + " : </label>");
-		out.println("<input type=\"text\" id=\"" + getInputNameTitle() + "\" name=\"" + getInputNameTitle() + "\" value=\"" + getContentTitle() + "\"  />");
-		out.println("</div>");
 
 		/* sequence of pages */
 		out.println("<div class=\"line-inline first\">");
@@ -2278,7 +2278,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 	}
 	
 	@Override
-	public boolean isMirroredByDefault() {	
+	public boolean isMirroredByDefault(ContentContext ctx) {	
 		return true;
 	}
 

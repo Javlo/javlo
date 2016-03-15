@@ -2549,8 +2549,8 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	}
 
 	@Override
-	public boolean isMirroredByDefault() {
-		return false;
+	public boolean isMirroredByDefault(ContentContext ctx) {
+		return ctx.getRequestContentLanguage().equals(getComponentBean().getLanguage());
 	}
 
 }

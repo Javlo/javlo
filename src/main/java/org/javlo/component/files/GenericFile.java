@@ -301,17 +301,17 @@ public class GenericFile extends AbstractFileComponent implements IReverseLinkCo
 	
 	@Override
 	public String getFirstPrefix(ContentContext ctx) {		
-		if (!isList(ctx)) {
-			return getConfig(ctx).getProperty("prefix.first", "");
-		} else {
+		if (!isList(ctx)) {			
+			return getConfig(ctx).getProperty("prefix.first", "");			
+		} else {			
 			String cssClass = "";
 			if (getStyle(ctx) != null && getStyle(ctx).trim().length() > 0) {
 				cssClass = ' ' + getStyle(ctx);
 			}
 			if (getListClass(ctx) != null) {
 				cssClass = cssClass + ' ' + getListClass(ctx);
-			}
-			return "<" + getListTag(ctx) + " class=\"" + getType() + cssClass + "\">";
+			}			
+			return "<" + getListTag(ctx) + " class=\"" + getType() + cssClass + ' ' + getCurrentRenderer(ctx)+"\">";
 		}
 	}
 

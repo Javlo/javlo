@@ -1208,7 +1208,7 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 	}
 	
 	@Override
-	public boolean isMirroredByDefault() {	
+	public boolean isMirroredByDefault(ContentContext ctx) {	
 		return true;
 	}
 	

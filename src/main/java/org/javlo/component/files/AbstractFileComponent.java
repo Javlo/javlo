@@ -929,7 +929,7 @@ public abstract class AbstractFileComponent extends AbstractVisualComponent impl
 	}
 	
 	@Override
-	public boolean isMirroredByDefault() {	
+	public boolean isMirroredByDefault(ContentContext ctx) {	
 		return true;
 	}
 

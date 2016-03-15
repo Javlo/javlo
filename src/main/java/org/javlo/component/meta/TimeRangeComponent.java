@@ -197,7 +197,7 @@ public class TimeRangeComponent extends DateComponent {
 	}
 	
 	@Override
-	public boolean isMirroredByDefault() {	
+	public boolean isMirroredByDefault(ContentContext ctx) {	
 		return true;
 	}
 

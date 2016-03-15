@@ -813,11 +813,12 @@ public interface IContentVisualComponent extends Comparable<IContentVisualCompon
 	
 	public boolean isNolink();
 	
+	
 	/**
 	 * if this component is duplicated, by default it is mirrored.
 	 * @return
 	 */
-	public boolean isMirroredByDefault();
+	public boolean isMirroredByDefault(ContentContext ctx);
 	
 
 }

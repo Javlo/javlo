@@ -137,7 +137,7 @@ public class WysiwygParagraph extends AbstractVisualComponent {
 		return null;
 	}
 	@Override
-	public boolean isMirroredByDefault() {	
+	public boolean isMirroredByDefault(ContentContext ctx) {	
 		return true;
 	}
 	
