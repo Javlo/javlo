@@ -10,11 +10,10 @@
 		transform="rotate(-90,100,100)"></circle>
 	<text class="timer" text-anchor="middle" x="100" y="110"
 		style="font-size: 22px;" fill="#aaa">${param.value}%</text>
-	<c:if test="${not empty param.label}">
+	<c:if test="${not empty param.label}">	
 		<g stroke="#ccc">
-		<line x1="133" y1="50" x2="140" y2="40" stroke-width="2"></line></g>
-		<g stroke="#ccc">
-		<line x1="140" y1="40" x2="200" y2="40" stroke-width="2"></line></g>
-		<text class="timer" text-anchor="middle" x="175" y="35"
-		style="font-size: 22px; undefined;" fill="#aaa">${param.label}</text></c:if>
+		<text class="timer" text-anchor="middle" x="175" y="35" style="font-size: 14px;" fill="#ccc">${param.label}</text>
+		<g stroke="#ccc">		
+		<polyline fill="none" stroke="black" style="fill:none;stroke:#ccc;stroke-width:1" points="133,50 140, 40 200,40" />		
+	</c:if>	
 </svg>

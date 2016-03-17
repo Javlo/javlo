@@ -25,3 +25,7 @@ span.label {
 td.forme, td.priority {
 	text-align: center;
 }
+
+.circle {
+	margin: 0 15%;
+}

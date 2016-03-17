@@ -10,11 +10,15 @@
 		  <br class="all" /><br class="all" />		  
     	  <div class="one_half">
     	  <h2 class="title">Pages structure</h2>
+    	  <div class="circle">
     	  <jsp:include page="circle.jsp?value=${report.globalComponentScore}&color=#FF7200&label=Total" />
+    	  </div>
     	  </div>
     	  <div class="one_half last">
     	  <h2 class="title">Check list</h2>
+    	  <div class="circle">
     	  <jsp:include page="circle.jsp?value=${report.globalCriteriaScore}&color=#39870A&label=Total" />
+    	  </div>
     	  </div>
           <br class="all" /><br class="all" />
 		  <div class="one_half">
