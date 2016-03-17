@@ -23,6 +23,8 @@ import org.javlo.service.integrity.IIntegrityChecker;
 
 public class ReportFactory {
 
+	private static final int MAX_EXTERNAL_CHECK = 9;
+
 	private ReportFactory() {
 	}
 
@@ -30,20 +32,20 @@ public class ReportFactory {
 		ReportBean report = new ReportBean();
 		ContentService contentService = ContentService.getInstance(ctx.getRequest());
 		MenuElement root = contentService.getNavigation(ctx);
-		Map<String,String> moduleAction = new HashMap<String, String>();
+		Map<String, String> moduleAction = new HashMap<String, String>();
 		moduleAction.put("module", "content");
 		for (MenuElement page : root.getAllChildren()) {
 			/* description */
 			if (page.isRealContent(ctx)) {
 				report.pageWithContent++;
 				CheckTitle checkTitle = new CheckTitle();
-				checkTitle.checkPage(ctx, page);				
+				checkTitle.checkPage(ctx, page);
 				if (checkTitle.getErrorCount(ctx) > 0 && checkTitle.getLevel(ctx) > IIntegrityChecker.WARNING_LEVEL) {
 					report.pageTitleBad++;
 				} else {
 					report.pageTitleRight++;
 				}
-				
+
 				CheckDescription checkDescrition = new CheckDescription();
 				checkDescrition.checkPage(ctx, page);
 				if (checkDescrition.getErrorCount(ctx) > 0 && checkDescrition.getLevel(ctx) > IIntegrityChecker.WARNING_LEVEL) {
@@ -81,12 +83,14 @@ public class ReportFactory {
 			while (content.hasNext(allAreaContext)) {
 				IContentVisualComponent comp = content.next(allAreaContext);
 				if (comp instanceof IInternalLink) {
-					String pageId = ((IInternalLink)comp).getLinkId();
-					if (root.searchChildFromId(pageId) == null) {
-						report.badInternalLink++;						
-						report.badInternalLinkPages.add(new Link(URLHelper.createURL(ctx, page, moduleAction), page.getTitle(ctx)));
-					} else {
-						report.rightInternalLink++;
+					String pageId = ((IInternalLink) comp).getLinkId();
+					if (report.badExternalLink < MAX_EXTERNAL_CHECK) {
+						if (root.searchChildFromId(pageId) == null) {
+							report.badInternalLink++;
+							report.badInternalLinkPages.add(new Link(URLHelper.createURL(ctx, page, moduleAction), page.getTitle(ctx)));
+						} else {
+							report.rightInternalLink++;
+						}
 					}
 				} else if (comp instanceof ILink) {
 					String url = ((ILink) comp).getURL(ctx);
