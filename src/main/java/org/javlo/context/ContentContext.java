@@ -1070,7 +1070,7 @@ public class ContentContext {
 		if (availableContentLanguages.contains(lg)) {
 			contentLanguage = lg;
 		} else {
-			logger.warning("content language not available : " + lg);
+			logger.fine("content language not available : " + lg);
 			contentLanguage = getLanguage();
 		}
 		resetCache();
@@ -1149,7 +1149,7 @@ public class ContentContext {
 		if (availableLanguages.contains(lg)) {
 			language = lg;
 		} else {
-			logger.warning("language not available : " + lg);
+			logger.fine("language not available : " + lg);
 			language = GlobalContext.getInstance(request).getDefaultLanguage();
 		}
 		resetCache();

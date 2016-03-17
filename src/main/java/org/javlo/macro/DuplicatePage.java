@@ -3,6 +3,7 @@ package org.javlo.macro;
 import java.util.Map;
 
 import org.javlo.component.core.ContentElementList;
+import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.context.ContentContext;
 import org.javlo.helper.MacroHelper;
 import org.javlo.i18n.I18nAccess;
@@ -61,8 +62,10 @@ public class DuplicatePage extends AbstractMacro {
 		
 		String parentId = "0";
 		while (comps.hasNext(noAreaCtx)) {
-			parentId = content.createContent(ctx, newPage, comps.next(noAreaCtx).getComponentBean(), parentId, false);
+			IContentVisualComponent next = comps.next(noAreaCtx);
+			parentId = content.createContentMirrorIfNeeded(noAreaCtx.getContextWidthOtherRequestLanguage(next.getComponentBean().getLanguage()), newPage, next, parentId, false);
 		}
+		
 		return null;
 	}
 

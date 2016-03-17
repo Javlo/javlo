@@ -8,12 +8,7 @@ jQuery(document).ready(function(){
 });
 
 function loadWysiwyg(cssQuery, complexity, chooseFileURL) {
-	var wysiwygCss = null;
-	if (typeof parent.wysiwygCss === 'undefined') {
-	    
-	} else {
-		wysiwygCss = parent.wysiwygCss;
-	}
+	var wysiwygCss = staticRootURL+"modules/content/css/tinymce.css";
 	
 	tinymce.init({
 	    paste_as_text: true
@@ -21,6 +16,7 @@ function loadWysiwyg(cssQuery, complexity, chooseFileURL) {
 	
 	if (complexity == "middle") {
 		tinymce.init({
+			textlang_langs : contentLanguage,			
 		    selector: cssQuery,
 		    convert_urls: false,
 		    menubar : false,
@@ -29,13 +25,14 @@ function loadWysiwyg(cssQuery, complexity, chooseFileURL) {
 		    plugins: [
 		        "advlist autolink lists link image charmap print preview anchor",
 		        "searchreplace visualblocks code fullscreen",
-		        "insertdatetime media table paste textcolor colorpicker nonbreaking"
+		        "insertdatetime media table paste textcolor colorpicker nonbreaking textlang"
 		    ],
 		    fontsize_formats: "10px 11px 12px 13px 14px 16px 18px 20px",
-		    toolbar: "undo redo searchreplace | bold italic underline fontsizeselect forecolor backcolor | charmap nonbreaking | alignleft aligncenter alignright alignjustify | link | bullist numlist outdent indent"
+		    toolbar: "textlang | undo redo searchreplace | bold italic underline fontsizeselect forecolor backcolor | charmap nonbreaking | alignleft aligncenter alignright alignjustify | link | bullist numlist outdent indent"
 		});
 	} else if (complexity == "high") {		
 		tinymce.init({
+			textlang_langs : contentLanguage,
 		    selector: cssQuery,		
 		    convert_urls: false,
 		    menubar : false,
@@ -47,9 +44,9 @@ function loadWysiwyg(cssQuery, complexity, chooseFileURL) {
 		        "advlist autolink lists link image charmap print preview hr anchor pagebreak",
 		        "searchreplace wordcount visualblocks visualchars code fullscreen",
 		        "insertdatetime media nonbreaking save table directionality",
-		        "emoticons template paste textcolor colorpicker nonbreaking"
+		        "emoticons template paste textcolor colorpicker nonbreaking textlang"
 		    ],
-		    toolbar1: "styleselect bold italic underline strikethrough fontsizeselect | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | forecolor backcolor | table charmap nonbreaking code",		    
+		    toolbar1: "textlang | styleselect bold italic underline strikethrough fontsizeselect | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | forecolor backcolor | table charmap nonbreaking code",		    
 		    image_advtab: true,
 		    fontsize_formats: "10px 11px 12px 13px 14px 16px 18px 20px",
 		    //paste_word_valid_elements: "b,strong,i,em,h1,h2,h3,h4,h5,h6,table,tr,th,td,ul,ol,li,p,a,div",
@@ -94,6 +91,8 @@ function loadWysiwyg(cssQuery, complexity, chooseFileURL) {
 		});	 
 	} else {
 		tinyMCE.init({
+		content_css : 'tinymce.css',
+		textlang_langs : contentLanguage,
 		mode : "specific_textareas",
 		theme : "modern",
 		convert_urls: false,
@@ -101,11 +100,11 @@ function loadWysiwyg(cssQuery, complexity, chooseFileURL) {
 		add_form_submit_trigger: true,	
 		menubar : false,
 		selector: cssQuery,
-		plugins: "paste link nonbreaking",
+		plugins: "paste link nonbreaking textlang",
 		fontsize_formats: "10px 11px 12px 13px 14px 16px 18px 20px",
 	    nonbreaking_force_tab: true,
 		//paste_word_valid_elements: "b,strong,i,em,h1,h2,h3,h4,h5,h6,table,tr,th,td,ul,ol,li,p,a,div",
-		toolbar: "undo redo | bold italic underline fontsizeselect | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link pastetext nonbreaking"
+		toolbar: "textlang | undo redo | bold italic underline fontsizeselect | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link pastetext nonbreaking"
 		});	 
 	}
 }

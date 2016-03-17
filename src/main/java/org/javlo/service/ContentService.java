@@ -24,6 +24,7 @@ import org.javlo.component.core.ComponentBean;
 import org.javlo.component.core.ComponentFactory;
 import org.javlo.component.core.ContentElementList;
 import org.javlo.component.core.IContentVisualComponent;
+import org.javlo.component.links.MirrorComponent;
 import org.javlo.context.ContentContext;
 import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
@@ -234,6 +235,16 @@ public class ContentService implements IPrintInfo {
 		}
 		return ctx.contentExistForContext;
 	}
+	
+	public String createContentMirrorIfNeeded(ContentContext ctx, MenuElement newPage, IContentVisualComponent comp, String parentId, boolean b) throws Exception {
+		if (comp.isMirroredByDefault(ctx) && !ctx.getGlobalContext().isMailingPlatform()) {
+			ComponentBean mirrorComponentBean = new ComponentBean(MirrorComponent.TYPE, comp.getId(), ctx.getRequestContentLanguage());
+			return createContent(ctx, newPage, mirrorComponentBean, parentId, b);
+		} else {
+			return createContent(ctx, newPage, comp.getComponentBean(), parentId, b);
+		}
+	}
+
 
 	public String createContent(ContentContext ctx, MenuElement page, ComponentBean inBean, String parentId, boolean releaseCache) throws Exception {
 		String id = StringHelper.getRandomId();
@@ -890,4 +901,5 @@ public class ContentService implements IPrintInfo {
 		}
 		out.println("****");
 	}
+
 }

@@ -11,6 +11,7 @@ StaticConfig staticConfig = StaticConfig.getInstance(request.getSession());
 %>
 
 var currentURL = "${info.currentURL}";
+var staticRootURL = "${info.staticRootURL}";
 var dateFormat = "<%=staticConfig.getDefaultJSDateFormat()%>";
 var editLanguage = "${info.editLanguage}";
 <c:set var="sep" value="" />

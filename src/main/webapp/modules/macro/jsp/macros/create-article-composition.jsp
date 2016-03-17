@@ -41,7 +41,7 @@
 	</label>
 </div>
 
-<div><input type="hidden" id="date" name="date" value="${info.date}"/></div>
+<div><input type="hidden" id="date" name="date" value="${info.currentDate}"/></div>
 
 <c:if test="${not empty info.page.rootOfChildrenAssociation}">
 <div class="checkbox">
