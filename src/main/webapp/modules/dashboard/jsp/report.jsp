@@ -9,20 +9,20 @@
 		  <h2 class="title">Report : ${info.globalTitle}</h2>
 		  <br class="all" /><br class="all" />		  
     	  <div class="one_half">
-    	  <h2 class="title">Pages structure</h2>
+    	  <h3 class="title">Pages structure</h3>
     	  <div class="circle">
     	  <jsp:include page="circle.jsp?value=${report.globalComponentScore}&color=#FF7200&label=Total" />
     	  </div>
     	  </div>
     	  <div class="one_half last">
-    	  <h2 class="title">Check list</h2>
+    	  <h3 class="title">Check list</h2>
     	  <div class="circle">
     	  <jsp:include page="circle.jsp?value=${report.globalCriteriaScore}&color=#39870A&label=Total" />
     	  </div>
     	  </div>
           <br class="all" /><br class="all" />
 		  <div class="one_half">
-		  <h2 class="title">Details</h2>
+		  <h3 class="title">Details</h2>
 		  <div class="progress">
           	  Page with title
               <div class="bar2"><div class="value" style="background-color: #4DA74D; width: ${report.pageTitle}%;"><small>${report.pageTitle}%</small></div></div>
@@ -44,7 +44,7 @@
           
           </div>
           <div class="one_half last">
-          <h2 class="title">Content status</h2>
+          <h3 class="title">Content status</h3>
           <table cellpadding="0" cellspacing="0" class="invoicetable" width="100%">
                 	<thead>
                     	<tr>

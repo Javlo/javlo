@@ -33,3 +33,9 @@ td.forme, td.priority {
 .invoice ul {
 	margin-left: 15px;
 }
+
+.invoice h3 {
+	text-align: left;
+	width: 100%;
+	margin-bottom: 15px;
+}
