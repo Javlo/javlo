@@ -82,23 +82,23 @@ public class ReportFactory {
 				IContentVisualComponent comp = content.next(allAreaContext);
 				if (comp instanceof IInternalLink) {
 					String pageId = ((IInternalLink) comp).getLinkId();
-					if (report.badExternalLink < ReportBean.MAX_EXTERNAL_CHECK) {
-						if (root.searchChildFromId(pageId) == null) {
-							report.badInternalLink++;
-							report.badInternalLinkPages.add(new Link(URLHelper.createURL(ctx, page, moduleAction), page.getTitle(ctx)));
-						} else {
-							report.rightInternalLink++;
-						}
+					if (root.searchChildFromId(pageId) == null) {
+						report.badInternalLink++;
+						report.badInternalLinkPages.add(new Link(URLHelper.createURL(ctx, page, moduleAction), page.getTitle(ctx)));
+					} else {
+						report.rightInternalLink++;
 					}
 				} else if (comp instanceof ILink) {
 					String url = ((ILink) comp).getURL(ctx);
 					if (url != null && URLHelper.isAbsoluteURL(url)) {
 						try {
-							if (!NetHelper.isURLValid(new URL(url))) {
-								report.badExternalLink++;
-								report.badExternalLinkPages.add(new Link(URLHelper.createURL(ctx, page, moduleAction), page.getTitle(ctx)));
-							} else {
-								report.rightExternalLink++;
+							if (report.badExternalLink < ReportBean.MAX_EXTERNAL_CHECK) {
+								if (!NetHelper.isURLValid(new URL(url))) {
+									report.badExternalLink++;
+									report.badExternalLinkPages.add(new Link(URLHelper.createURL(ctx, page, moduleAction), page.getTitle(ctx)));
+								} else {
+									report.rightExternalLink++;
+								}
 							}
 						} catch (MalformedURLException e) {
 							report.badExternalLink++;
@@ -110,7 +110,7 @@ public class ReportFactory {
 		}
 		return report;
 	}
-	
+
 	public static int getMaxExternalCheck() {
 		return ReportBean.MAX_EXTERNAL_CHECK;
 	}
