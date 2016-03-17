@@ -7,6 +7,8 @@ import org.javlo.bean.Link;
 
 public class ReportBean {
 	
+	public static final int MAX_EXTERNAL_CHECK = 5;
+	
 	public int pageDescriptionRight = 0;
 	public int pageDescriptionBad = 0;
 	public int pageTitleRight = 0;
@@ -92,6 +94,10 @@ public class ReportBean {
 	
 	public List<Link> getBadExternalLinkPages() {
 		return badExternalLinkPages;
+	}
+	
+	public int getMaxExternalCheck() {
+		return MAX_EXTERNAL_CHECK;
 	}
 	
 }

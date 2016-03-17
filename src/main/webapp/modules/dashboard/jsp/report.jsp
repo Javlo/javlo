@@ -60,7 +60,7 @@
                             <td align="right">${report.pageWithContent}</td>
                         </tr>
                         <tr>
-                        	<td>Bad external link
+                        	<td>Bad external link (max:${report.maxExternalCheck})
                         	<c:if test="${report.badExternalLink > 0}">
                            		<ul>
                            			<c:forEach var="link" items="${report.badExternalLinkPages}">
