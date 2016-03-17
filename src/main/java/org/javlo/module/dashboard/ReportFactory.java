@@ -3,6 +3,7 @@ package org.javlo.module.dashboard;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import org.javlo.bean.Link;
 import org.javlo.component.core.ContentElementList;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.core.IInternalLink;
@@ -78,7 +79,8 @@ public class ReportFactory {
 				if (comp instanceof IInternalLink) {
 					String pageId = ((IInternalLink)comp).getLinkId();
 					if (root.searchChildFromId(pageId) == null) {
-						report.badInternalLink++;
+						report.badInternalLink++;						
+						report.badInternalLinkPages.add(new Link(URLHelper.createURL(ctx, page), page.getTitle(ctx)));
 					} else {
 						report.rightInternalLink++;
 					}
@@ -88,6 +90,7 @@ public class ReportFactory {
 						try {
 							if (!NetHelper.isURLValid(new URL(url))) {
 								report.badExternalLink++;
+								report.badExternalLinkPages.add(new Link(URLHelper.createURL(ctx, page), page.getTitle(ctx)));
 							} else {
 								report.rightExternalLink++;
 							}

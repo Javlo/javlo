@@ -60,12 +60,28 @@
                             <td align="right">${report.pageWithContent}</td>
                         </tr>
                         <tr>
-                        	<td>Bad external link</td>                            
+                        	<td>Bad external link
+                        	<c:if test="${report.badExternalLink > 0}">
+                           		<ul>
+                           			<c:forEach var="link" items="${report.badExternalLinkPages}">
+                           				<li><a href="${link.url}">${link.label}</a>
+                           			</c:forEach>
+                           		</ul>
+                           	</c:if>
+                        	</td>
                             <td align="right">${report.badExternalLink}</td>
                             <td align="right">${report.badExternalLink+report.rightExternalLink}</td>
                         </tr>
                         <tr>
-                        	<td>Bad internal link</td>                            
+                        	<td>Bad internal link
+                        	<c:if test="${report.badInternalLink > 0}">
+                           		<ul>
+                           			<c:forEach var="link" items="${report.badInternalLinkPages}">
+                           				<li><a href="${link.url}">${link.label}</a>
+                           			</c:forEach>
+                           		</ul>
+                           	</c:if>
+                           	</td>                            
                             <td align="right">${report.badInternalLink}</td>
                             <td align="right">${report.badInternalLink+report.rightInternalLink}</td>
                         </tr>

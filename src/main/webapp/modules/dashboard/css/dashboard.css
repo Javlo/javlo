@@ -29,3 +29,7 @@ td.forme, td.priority {
 .circle {
 	margin: 0 15%;
 }
+
+.invoice ul {
+	margin-left: 15px;
+}

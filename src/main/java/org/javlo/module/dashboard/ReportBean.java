@@ -1,5 +1,10 @@
 package org.javlo.module.dashboard;
 
+import java.util.LinkedList;
+import java.util.List;
+
+import org.javlo.bean.Link;
+
 public class ReportBean {
 	
 	public int pageDescriptionRight = 0;
@@ -16,6 +21,10 @@ public class ReportBean {
 	public int rightExternalLink = 0;
 	public int badInternalLink = 0;
 	public int rightInternalLink = 0;
+	
+	public List<Link> badInternalLinkPages = new LinkedList<Link>();
+	public List<Link> badExternalLinkPages = new LinkedList<Link>();
+	public List<Link> emptyLinkPages = new LinkedList<Link>();	
 	
 	public int getGlobalComponentScore() {
 		return (getPageTitle()+getPageDescription()+getPageTitleStructure()+getPageImageAlt())/4;
@@ -75,6 +84,14 @@ public class ReportBean {
 	
 	public int getInternalLinkTotal() {
 		return Math.round((rightInternalLink*100)/(badInternalLink+rightInternalLink));
+	}
+	
+	public List<Link> getBadInternalLinkPages() {
+		return badInternalLinkPages;
+	}
+	
+	public List<Link> getBadExternalLinkPages() {
+		return badExternalLinkPages;
 	}
 	
 }
