@@ -18,7 +18,7 @@ public class ReportBean {
 	public int rightInternalLink = 0;
 	
 	public int getGlobalComponentScore() {
-		return (getRightInternalLink()+getPageTitle()+getPageDescription()+getPageTitleStructure()+getPageImageAlt())/4;
+		return (getPageTitle()+getPageDescription()+getPageTitleStructure()+getPageImageAlt())/4;
 	}
 	
 	public int getGlobalCriteriaScore() {
