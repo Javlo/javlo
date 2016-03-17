@@ -551,6 +551,10 @@ public class URLHelper extends ElementaryURLHelper {
 	public static String createURL(ContentContext ctx, Map params) {
 		return createURL(ctx, ctx.getPath(), params);
 	}
+	
+	public static String createURL(ContentContext ctx, MenuElement page, Map params) {
+		return createURL(ctx, page.getPath(), params);
+	}
 
 	public static String createURL(ContentContext ctx, MenuElement page) {
 		if (page.isHttps() && (!ctx.getURLProtocolPrefix().equalsIgnoreCase("https"))) {

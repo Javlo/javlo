@@ -2,6 +2,8 @@ package org.javlo.module.dashboard;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.javlo.bean.Link;
 import org.javlo.component.core.ContentElementList;
@@ -28,6 +30,8 @@ public class ReportFactory {
 		ReportBean report = new ReportBean();
 		ContentService contentService = ContentService.getInstance(ctx.getRequest());
 		MenuElement root = contentService.getNavigation(ctx);
+		Map<String,String> moduleAction = new HashMap<String, String>();
+		moduleAction.put("module", "content");
 		for (MenuElement page : root.getAllChildren()) {
 			/* description */
 			if (page.isRealContent(ctx)) {
@@ -80,7 +84,7 @@ public class ReportFactory {
 					String pageId = ((IInternalLink)comp).getLinkId();
 					if (root.searchChildFromId(pageId) == null) {
 						report.badInternalLink++;						
-						report.badInternalLinkPages.add(new Link(URLHelper.createURL(ctx, page), page.getTitle(ctx)));
+						report.badInternalLinkPages.add(new Link(URLHelper.createURL(ctx, page, moduleAction), page.getTitle(ctx)));
 					} else {
 						report.rightInternalLink++;
 					}
@@ -90,7 +94,7 @@ public class ReportFactory {
 						try {
 							if (!NetHelper.isURLValid(new URL(url))) {
 								report.badExternalLink++;
-								report.badExternalLinkPages.add(new Link(URLHelper.createURL(ctx, page), page.getTitle(ctx)));
+								report.badExternalLinkPages.add(new Link(URLHelper.createURL(ctx, page, moduleAction), page.getTitle(ctx)));
 							} else {
 								report.rightExternalLink++;
 							}

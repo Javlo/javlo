@@ -37,7 +37,6 @@ import org.javlo.mailing.MailConfig;
 import org.javlo.mailing.MailService;
 import org.javlo.mailing.MailingBuilder;
 import org.javlo.navigation.MenuElement;
-import org.javlo.service.resource.Resource;
 import org.javlo.service.resource.VisualResource;
 import org.javlo.template.Template;
 import org.javlo.user.IUserFactory;
