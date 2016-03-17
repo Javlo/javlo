@@ -1490,6 +1490,10 @@ body.previewEdit {
 	width: 46%;
 }
 
+.invoice .one_half {
+	width: 48%;
+}
+
 .download.pdf a {
 	background-position: center -450px;
 }

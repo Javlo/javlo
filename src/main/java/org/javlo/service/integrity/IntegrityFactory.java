@@ -50,9 +50,10 @@ public class IntegrityFactory {
 
 	protected List<IIntegrityChecker> getAllChecker(ContentContext ctx) {
 		List<IIntegrityChecker> checkers = new LinkedList<IIntegrityChecker>();
+		checkers.add(new CheckTitle());
 		checkers.add(new CheckDescription());
 		checkers.add(new CheckTitleHierarchy());
-		checkers.add(new CheckImageLabel());
+		checkers.add(new CheckImageLabel());		
 		return checkers;
 	}
 

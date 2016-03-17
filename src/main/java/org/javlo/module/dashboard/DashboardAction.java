@@ -31,6 +31,7 @@ import org.javlo.helper.TimeHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.message.MessageRepository;
+import org.javlo.module.core.Module.Box;
 import org.javlo.module.core.ModulesContext;
 import org.javlo.navigation.PageBean;
 import org.javlo.service.ContentService;
@@ -150,10 +151,25 @@ public class DashboardAction extends AbstractModuleAction {
 		ctx.getRequest().setAttribute("notification", notificationService.getNotifications(9999));
 
 		ModulesContext dashboardContext = ModulesContext.getInstance(ctx.getRequest().getSession(), ctx.getGlobalContext());
+		boolean report = false;
+		/*for (Box box : dashboardContext.getCurrentModule().getMainBoxes()) {
+			if (box.getName().equals("report")) {
+				report = true;
+				ctx.getRequest().setAttribute("report", ReportFactory.getReport(ctx));
+			}
+		}*/
+		if (dashboardContext.getCurrentModule().getRenderer() != null && dashboardContext.getCurrentModule().getRenderer().contains("report")) {
+			report = true;
+			ctx.getRequest().setAttribute("report", ReportFactory.getReport(ctx));
+		}
 		if (dashboardContext.getCurrentModule().getBoxes().size() > 1) {
 			ctx.getRequest().setAttribute("page", "main");
 		} else {
-			ctx.getRequest().setAttribute("page", "tracker");
+			if (!report) {
+				ctx.getRequest().setAttribute("page", "tracker");
+			} else {
+				ctx.getRequest().setAttribute("page", "report");
+			}
 		}
 
 		String trackerDate = ctx.getRequest().getParameter("date");		
@@ -361,8 +377,18 @@ public class DashboardAction extends AbstractModuleAction {
 
 	public static String performTrackerPage(RequestService rs, ContentContext ctx, HttpSession session, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
 		ModulesContext dashboardContext = ModulesContext.getInstance(session, ctx.getGlobalContext());
+		dashboardContext.getCurrentModule().setRenderer(null);
 		dashboardContext.getCurrentModule().clearAllBoxes();
 		dashboardContext.getCurrentModule().addMainBox("tracker", "tracker", "/jsp/tracker.jsp", false);
+		return null;
+
+	}
+	
+	public static String performReportPage(RequestService rs, ContentContext ctx, HttpSession session, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
+		ModulesContext dashboardContext = ModulesContext.getInstance(session, ctx.getGlobalContext());
+		dashboardContext.getCurrentModule().clearAllBoxes();
+		dashboardContext.getCurrentModule().setRenderer("/jsp/report.jsp");
+		//dashboardContext.getCurrentModule().addMainBox("report", "report", "/jsp/report.jsp", false);
 		return null;
 
 	}

@@ -242,8 +242,6 @@ public class SmartLink extends ComplexPropertiesLink implements ILink, IAction {
 	public String performEdit(ContentContext ctx) throws Exception {
 		String oldValue = getValue();
 		RequestService rs = RequestService.getInstance(ctx.getRequest());
-		
-		System.out.println("***** SmartLink.performEdit : rs.getParameter(getImageInputName(), '') = "+rs.getParameter(getImageInputName(), "")); //TODO: remove debug trace
 		setImageURL(rs.getParameter(getImageInputName(), ""));
 		setDescription((rs.getParameter(getDescriptionInputName(), "")));
 		setTitle((rs.getParameter(getTitleInputName(), "")));

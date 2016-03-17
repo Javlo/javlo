@@ -26,5 +26,9 @@ public class IntegrityBean {
 	public int getDescriptionMaxSize() {
 		return Integer.parseInt(data.getProperty("description.max-size", "300"));
 	}
-
+	
+	public int getTitleMaxSize() {
+		return Integer.parseInt(data.getProperty("title.max-size", "60"));
+	}
+	
 }

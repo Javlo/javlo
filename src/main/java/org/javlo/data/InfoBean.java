@@ -1400,6 +1400,10 @@ public class InfoBean {
 		}
 		return out;
 	}
+	
+	public String getLibUrl() {
+		return URLHelper.createStaticURL(ctx, "/lib/");
+	}
 
 	
 }
