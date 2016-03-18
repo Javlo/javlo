@@ -11,13 +11,13 @@
     	  <div class="one_half">
     	  <h3 class="title">Pages structure</h3>
     	  <div class="circle">
-    	  <jsp:include page="circle.jsp?value=${report.globalComponentScore}&color=#FF7200&label=Total" />
+    	  <jsp:include page="circle.jsp?value=${report.globalComponentScore}&label=Total" />
     	  </div>
     	  </div>
     	  <div class="one_half last">
     	  <h3 class="title">Check list</h2>
     	  <div class="circle">
-    	  <jsp:include page="circle.jsp?value=${report.globalCriteriaScore}&color=#39870A&label=Total" />
+    	  <jsp:include page="circle.jsp?value=${report.globalCriteriaScore}&label=Total" />
     	  </div>
     	  </div>
           <br class="all" /><br class="all" />
@@ -39,9 +39,6 @@
           	  Page with label on all images
               <div class="bar2"><div class="value redbar" style="width: ${report.pageImageAlt}%;"><small>${report.pageImageAlt}%</small></div></div>
           </div>
-          
-          
-          
           </div>
           <div class="one_half last">
           <h3 class="title">Content status</h3>
