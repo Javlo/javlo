@@ -13,6 +13,10 @@ import java.net.NoRouteToHostException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.UnknownHostException;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.Certificate;
+import java.security.cert.CertificateException;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -23,6 +27,14 @@ import java.util.zip.CRC32;
 import javax.imageio.ImageIO;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLPeerUnverifiedException;
+import javax.net.ssl.SSLSession;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
+import javax.security.cert.X509Certificate;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -799,9 +811,40 @@ public class NetHelper {
 
 	public static boolean isURLValid(URL url) {
 		try {
-			URLConnection urlConnection = url.openConnection();
+			URLConnection urlConnection = url.openConnection();			
 			if (urlConnection instanceof HttpURLConnection) {
-				HttpURLConnection conn =  ((HttpURLConnection) urlConnection);
+				HttpURLConnection conn =  ((HttpURLConnection) urlConnection);				
+				if (conn instanceof HttpsURLConnection) {										
+					logger.info("init https context");
+					try {						 
+				        TrustManager[] trustAllCerts = new TrustManager[] { new X509TrustManager() {							
+							@Override
+							public java.security.cert.X509Certificate[] getAcceptedIssuers() {						
+								return null;
+							}							
+							@Override
+							public void checkServerTrusted(java.security.cert.X509Certificate[] chain, String authType) throws CertificateException {
+							}							
+							@Override
+							public void checkClientTrusted(java.security.cert.X509Certificate[] chain, String authType) throws CertificateException {
+							}
+						}};	
+				        SSLContext sc = SSLContext.getInstance("SSL");
+				        sc.init(null, trustAllCerts, new java.security.SecureRandom());
+				        HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
+				        HostnameVerifier allHostsValid = new HostnameVerifier() {
+				            public boolean verify(String hostname, SSLSession session) {
+				            	return true;
+				            }
+				        };
+				        ((HttpsURLConnection)conn).setHostnameVerifier(allHostsValid);
+					} catch (NoSuchAlgorithmException e) {
+						e.printStackTrace();
+					} catch (KeyManagementException e) {
+						e.printStackTrace();
+					}
+				}
+		        
 				conn.setConnectTimeout(10 * 1000);
 				conn.setRequestMethod("GET");
 				conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows; U; Windows NT 6.0; en-US; rv:1.9.1.2) Gecko/20090729 Firefox/3.5.2 (.NET CLR 3.5.30729)");
@@ -1063,9 +1106,64 @@ public class NetHelper {
 		mb.prepare(ctx);
 		mb.sendMailing(ctx);
 	}
+	
+	 private static void testIt(){
+
+	      String https_url = "https://www.fidh.org/fr/regions/europe-asie-centrale/belgique/Accueil-des-personnes-handicapees";
+	      URL url;
+	      try {
+
+		     url = new URL(https_url);
+		     HttpsURLConnection con = (HttpsURLConnection)url.openConnection();
+				
+		     //dumpl all cert info
+		     print_https_cert(con);
+				
+		     //dump all the content
+		    // print_content(con);
+				
+	      } catch (MalformedURLException e) {
+		     e.printStackTrace();
+	      } catch (IOException e) {
+		     e.printStackTrace();
+	      }
+
+	   }
+	 
+	 private static void print_https_cert(HttpsURLConnection con){
+	     
+		    if(con!=null){
+					
+		      try {
+						
+			System.out.println("Response Code : " + con.getResponseCode());
+			System.out.println("Cipher Suite : " + con.getCipherSuite());
+			System.out.println("\n");
+						
+			Certificate[] certs = con.getServerCertificates();
+			for(Certificate cert : certs){
+			   System.out.println("Cert Type : " + cert.getType());
+			   System.out.println("Cert Hash Code : " + cert.hashCode());
+			   System.out.println("Cert Public Key Algorithm : " 
+		                                    + cert.getPublicKey().getAlgorithm());
+			   System.out.println("Cert Public Key Format : " 
+		                                    + cert.getPublicKey().getFormat());
+			   System.out.println("\n");
+			}
+						
+			} catch (SSLPeerUnverifiedException e) {
+				e.printStackTrace();
+			} catch (IOException e){
+				e.printStackTrace();
+			}
+
+		     }
+			
+		   }
 
 	public static void main(String[] args) throws Exception {
-		URL url = new URL("http://www.dpb.be/KRMB/Forum.php");		
+		URL url = new URL("https://www.fidh.org/fr/regions/europe-asie-centrale/belgique/Accueil-des-personnes-handicapees");		
 		System.out.println("valid?:" + isURLValid(url));
+		//testIt();
 	}
 }
