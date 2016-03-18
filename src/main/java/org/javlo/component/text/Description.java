@@ -45,6 +45,11 @@ public class Description extends AbstractVisualComponent {
 			return "span";
 		}
 	}
+	
+	@Override
+	protected String getEditorComplexity(ContentContext ctx) {
+		return getConfig(ctx).getProperty("editor-complexity", "soft");
+	}
 
 	@Override
 	public String[] getStyleLabelList(ContentContext ctx) {

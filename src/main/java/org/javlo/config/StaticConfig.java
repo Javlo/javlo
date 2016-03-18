@@ -5,9 +5,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.net.MalformedURLException;
 import java.net.Proxy;
 import java.net.ProxySelector;
 import java.net.URI;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -35,6 +37,7 @@ import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.data.source.TestDataSource;
 import org.javlo.helper.ElementaryURLHelper;
+import org.javlo.helper.NetHelper;
 import org.javlo.helper.PatternHelper;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
@@ -126,6 +129,8 @@ public class StaticConfig extends Observable {
 	private String encryptedFirstPassword = null;
 
 	public static final List<String> BASIC_MODULES = Arrays.asList(new String[] { "admin", "content", "file" });
+	
+	public Boolean internetAccess = null;
 
 	private StaticConfig(ServletContext application) {
 		this.application = application;
@@ -1030,6 +1035,21 @@ public class StaticConfig extends Observable {
 		String url = properties.getString("default-welcome-popup", "");
 		url = StringUtils.replace(url, "#lang#", lg);
 		return url;
+	}
+	
+	public String getDefaultTestURL() {
+		return properties.getString("url.test", "http://www.wikipedia.org/");
+	}
+	
+	public boolean isInternetAccess() {
+		if (internetAccess == null) {
+			try {
+				internetAccess = NetHelper.isURLValid(new URL(getDefaultTestURL()));
+			} catch (MalformedURLException e) {
+				logger.severe("bad url format : "+getDefaultTestURL());
+			}
+		}
+		return internetAccess;
 	}
 
 	/**

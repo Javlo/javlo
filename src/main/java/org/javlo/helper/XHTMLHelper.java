@@ -1778,6 +1778,9 @@ public class XHTMLHelper {
 	}
 
 	public static String removeTag(String html, String tag) throws BadXMLException {
+		if (html == null || tag == null) {
+			return html;
+		}
 		TagDescription[] tags = XMLManipulationHelper.searchAllTag(html, false);
 		StringRemplacementHelper remplacement = new StringRemplacementHelper();
 		for (TagDescription tag2 : tags) {

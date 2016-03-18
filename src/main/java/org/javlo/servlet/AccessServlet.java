@@ -992,6 +992,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 		out.println("**** VERSION           :  " + VERSION);
 		out.println("**** Platform type     :  " + staticConfig.getPlatformType());
 		out.println("**** ENV               :  " + staticConfig.getEnv());
+		out.println("**** Internet Access   :  " + staticConfig.isInternetAccess());
 		out.println("**** STATIC CONFIG DIR :  " + staticConfig.getStaticConfigLocalisation());
 		out.println("**** PROXY HOST        :  " + staticConfig.getProxyHost());
 		out.println("**** PROXY PORT        :  " + staticConfig.getProxyPort());

@@ -2145,7 +2145,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 				res = res + elem.getPageDescription(ctx);
 			}
 		}
-		desc.description = StringUtils.replace(res, "\"", "&quot;");
+		desc.description = StringHelper.removeTag(StringUtils.replace(res, "\"", "&quot;"));
 		return desc.description;
 	}
 

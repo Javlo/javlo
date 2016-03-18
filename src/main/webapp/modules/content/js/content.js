@@ -8,7 +8,7 @@ jQuery(document).ready(function(){
 });
 
 function loadWysiwyg(cssQuery, complexity, chooseFileURL) {
-	var wysiwygCss = staticRootURL+"modules/content/css/tinymce.css";
+	var wysiwygCss = staticRootURL+"modules/content/js/tinymce.css";
 	
 	tinymce.init({
 	    paste_as_text: true
@@ -78,16 +78,17 @@ function loadWysiwyg(cssQuery, complexity, chooseFileURL) {
 		});	
 	} else if (complexity == "soft") {
 		tinyMCE.init({
+		textlang_langs : contentLanguage,
 		mode : "specific_textareas",
+		paste_as_text: true,
+		plugins: "textlang paste",
 		theme : "modern",
 		content_css: wysiwygCss,
 		add_form_submit_trigger: true,	
 		menubar : false,
 		convert_urls: false,
-		selector: cssQuery,
-    	plugins: "paste",
-        //paste_word_valid_elements: "b,strong,i,em,h1,h2,h3,h4,h5,h6,table,tr,th,td,ul,ol,li,p,a,div",
-		toolbar: "undo redo | bold italic | pastetext"
+		selector: cssQuery,    	
+		toolbar: "textlang | undo redo | bold italic | pastetext"
 		});	 
 	} else {
 		tinyMCE.init({

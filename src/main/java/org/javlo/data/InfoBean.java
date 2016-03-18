@@ -1404,6 +1404,10 @@ public class InfoBean {
 	public String getLibUrl() {
 		return URLHelper.createStaticURL(ctx, "/lib/");
 	}
+	
+	public boolean isInternetAccess() {
+		return ctx.getGlobalContext().getStaticConfig().isInternetAccess();
+	}
 
 	
 }

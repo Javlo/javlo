@@ -60,6 +60,7 @@ import org.javlo.helper.XHTMLHelper;
 import org.javlo.helper.Comparator.StringSizeComparator;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.message.GenericMessage;
+import org.javlo.module.file.FileAction;
 import org.javlo.navigation.MenuElement;
 import org.javlo.navigation.PageBean;
 import org.javlo.rendering.Device;
@@ -492,6 +493,15 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	// public void setServletContext(ServletContext context) {
 	// servletContext = context;
 	// }
+	
+	
+	/**
+	 * return the wysiwyg editor complexity
+	 * @return null if no wysywig editor
+	 */
+	protected String getEditorComplexity(ContentContext ctx) {
+		return getConfig(ctx).getProperty("editor-complexity", null);
+	}
 
 	@Override
 	public String getEditText(ContentContext ctx, String key) {
@@ -517,6 +527,18 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		finalCode.append(" rows=\"" + (countLine() + 1) + "\">");
 		finalCode.append(getValue());
 		finalCode.append("</textarea>");
+		if (getEditorComplexity(ctx) != null) {
+			Map<String, String> filesParams = new HashMap<String, String>();
+			String path = FileAction.getPathPrefix(ctx);
+			filesParams.put("path", path);
+			filesParams.put("webaction", "changeRenderer");
+			filesParams.put("page", "meta");
+			filesParams.put("select", "_TYPE_");
+			filesParams.put(ContentContext.PREVIEW_EDIT_PARAM, "true");
+					
+			String chooseImageURL = URLHelper.createModuleURL(ctx, ctx.getPath(), "file", filesParams);
+			finalCode.append("<script type=\"text/javascript\">jQuery(document).ready(loadWysiwyg('#" + getContentName() + "','"+getEditorComplexity(ctx)+"','"+chooseImageURL+"'));</script>");
+		}
 		return finalCode.toString();
 	}
 
@@ -2118,6 +2140,9 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	public String performEdit(ContentContext ctx) throws Exception {
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
 		String newContent = requestService.getParameter(getContentName(), null);
+		if (getEditorComplexity(ctx) != null && getEditorComplexity(ctx).equals("soft")) {
+			newContent = XHTMLHelper.removeTag(newContent, "p");
+		}
 		if (newContent != null) {
 			if (!componentBean.getValue().equals(newContent)) {
 				componentBean.setValue(newContent);

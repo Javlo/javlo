@@ -53,36 +53,43 @@ public class Heading extends AbstractPropertiesComponent implements ISubTitle {
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(outStream);
 		I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
-		out.println("<div class=\"form-group\"><label>" + i18nAccess.getText("content.heading.depth", "depth") + "</label>");
+		
+		String depthHTML = "";
+		
+		depthHTML = depthHTML+"<div class=\"form-group\"><label>" + i18nAccess.getText("content.heading.depth", "depth") + "</label><div>";
 		int depth = getDepth(ctx);
 		for (int i = 1; i < 7; i++) {
-			out.println("<label class=\"radio-inline\">");
-			out.println("<input type=\"radio\" value=\"" + i + "\" name=\"" + getInputName(DEPTH) + "\"" + (depth == i ? " checked=\"checked\"" : "") + "/>" + i + "</label>");
+			depthHTML = depthHTML+"<label class=\"radio-inline\">";
+			depthHTML = depthHTML+"<input type=\"radio\" value=\"" + i + "\" name=\"" + getInputName(DEPTH) + "\"" + (depth == i ? " checked=\"checked\"" : "") + "/>" + i + "</label>";
 		}
-		out.println("</select></div>");
-		
+		depthHTML = depthHTML+"</select></div></div>";
 		
 		if (!ctx.getGlobalContext().isMailingPlatform()) {
 			out.println("<div class=\"row\"><div class=\"col-sm-8\">");
+		} else {
+			out.println(depthHTML);
 		}
 		out.println("<div class=\"form-group\">");
 		out.println("<label for=\"" + getInputName(TEXT) + "\">" + i18nAccess.getText("content.header.text", "text") + "</label>");
-		out.println("<input class=\"form-control\" type=\"text\" id=\"" + getInputName(TEXT) + "\" name=\"" + getInputName(TEXT) + "\" value=\"" + getFieldValue(TEXT) + "\" >");
+		if (ctx.getGlobalContext().isMailingPlatform()) {
+			out.println("<input class=\"form-control\" type=\"text\" id=\"" + getInputName(TEXT) + "\" name=\"" + getInputName(TEXT) + "\" value=\"" + getFieldValue(TEXT) + "\" >");
+		} else {
+			out.println("<textarea rows=\"1\" class=\"form-control\" id=\"" + getInputName(TEXT) + "\" name=\"" + getInputName(TEXT) + "\">"+getFieldValue(TEXT)+"</textarea>");
+			out.println("<script type=\"text/javascript\">jQuery(document).ready(loadWysiwyg('#" + getInputName(TEXT) + "','soft',''));</script>");
+		}
 		out.println("</div>");
 
 		if (!ctx.getGlobalContext().isMailingPlatform()) {
 			out.println("</div><div class=\"col-sm-4\"><div class=\"form-group\">");
+			out.println(depthHTML);
 			out.println("<label for=\"" + getInputName(SMALL_TEXT) + "\">" + i18nAccess.getText("content.header.smtext", "small text") + "</label>");
 			out.println("<input class=\"form-control\" type=\"text\" id=\"" + getInputName(SMALL_TEXT) + "\" name=\"" + getInputName(SMALL_TEXT) + "\" value=\"" + getFieldValue(SMALL_TEXT) + "\" >");
-			out.println("</div></div></div>");
+			out.println("</div>");
 		}
-
-		if (!ctx.getGlobalContext().isMailingPlatform()) {
-			out.println("<div class=\"row\"><div class=\"col-sm-8\">");
-		}
+		
 		out.println("<div class=\"form-group\">");
 		out.println("<label for=\"" + getInputName(LINK) + "\">" + i18nAccess.getText("content.header.link", "link") + "</label>");
-		out.println("<input class=\"form-control\" type=\"text\" id=\"" + getInputName(LINK) + "\" name=\"" + getInputName(LINK) + "\" value=\"" + getFieldValue(LINK) + "\" >");
+		out.println("<input class=\"form-control\" type=\"text\" id=\"" + getInputName(LINK) + "\" name=\"" + getInputName(LINK) + "\" value=\"" + getFieldValue(LINK) + "\" >");		
 		out.println("</div>");
 		if (!ctx.getGlobalContext().isMailingPlatform()) {
 			out.println("</div></div>");
@@ -134,7 +141,7 @@ public class Heading extends AbstractPropertiesComponent implements ISubTitle {
 	public String getTextTitle(ContentContext ctx) {
 		String smText = getFieldValue(SMALL_TEXT);
 		if (StringHelper.isEmpty(smText)) {
-			return getFieldValue(TEXT);
+			return StringHelper.removeTag(getFieldValue(TEXT));
 		} else {
 			return smText;
 		}
@@ -371,6 +378,16 @@ public class Heading extends AbstractPropertiesComponent implements ISubTitle {
 	@Override
 	public boolean isContentCachable(ContentContext ctx) {
 		return true;	
+	}
+	
+	@Override
+	public String performEdit(ContentContext ctx) throws Exception {	
+		String outPerform = super.performEdit(ctx);
+		if (!ctx.getGlobalContext().isMailingPlatform()) {
+			setFieldValue(TEXT, XHTMLHelper.removeTag(getFieldValue(TEXT, "" ),"p"));
+		}
+		return outPerform;
+		
 	}
 
 }
