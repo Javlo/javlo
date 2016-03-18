@@ -10,7 +10,7 @@
 	<c:if test="${param.value < 25}">
 		<c:set var="color" value="#CC0000" />
 	</c:if>
-	<c:if test="${param.value > 75}">
+	<c:if test="${param.value >= 75}">
 		<c:set var="color" value="#39870A" />
 	</c:if>
 </c:if>
