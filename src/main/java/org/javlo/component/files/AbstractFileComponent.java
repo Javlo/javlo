@@ -301,7 +301,8 @@ public abstract class AbstractFileComponent extends AbstractVisualComponent impl
 		return dir;
 	}
 	
-	protected String getEditorComplexity(ContentContext ctx) throws Exception {
+	@Override
+	protected String getEditorComplexity(ContentContext ctx) {
 		return properties.getProperty("editor-complexity", "light");
 	}
 
