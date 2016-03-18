@@ -39,3 +39,11 @@ td.forme, td.priority {
 	width: 100%;
 	margin-bottom: 15px;
 }
+
+.lang {
+	display: inline-block;
+	text-transform: uppercase;
+	padding: 3px 8px;
+	color: #ffffff;
+	background-color: #000000;
+}

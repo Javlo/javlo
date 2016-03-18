@@ -37,18 +37,30 @@ public class ReportBean {
 	}
 	
 	public int getPageTitle() {
+		if (pageTitleBad+pageTitleRight == 0) {
+			return 100;
+		}
 		return Math.round((pageTitleRight*100)/(pageTitleBad+pageTitleRight));
 	}
 	
 	public int getPageDescription() {
+		if (pageDescriptionBad+pageDescriptionRight == 0) {
+			return 100;
+		}
 		return Math.round((pageDescriptionRight*100)/(pageDescriptionBad+pageDescriptionRight));
 	}
 
 	public int getPageTitleStructure() {
+		if (pageTitleStructureBad+pageTitleStructureRight == 0) {
+			return 100;
+		}
 		return Math.round((pageTitleStructureRight*100)/(pageTitleStructureBad+pageTitleStructureRight));
 	}
 	
 	public int getPageImageAlt() {
+		if (pageImageAltBad+pageImageAltRight == 0) {
+			return 100;
+		}
 		return Math.round((pageImageAltRight*100)/(pageImageAltBad+pageImageAltRight));
 	}
 	
@@ -61,6 +73,9 @@ public class ReportBean {
 	}
 	
 	public int getPageContentTotal() {
+		if (pageWithoutContent+pageWithContent == 0) {
+			return 100;
+		}
 		return Math.round((pageWithContent*100)/(pageWithoutContent+pageWithContent));
 	}
 	
@@ -73,6 +88,9 @@ public class ReportBean {
 	}
 	
 	public int getExternalLinkTotal() {
+		if (badExternalLink+rightExternalLink == 0) {
+			return 100;
+		}
 		return Math.round((rightExternalLink*100)/(badExternalLink+rightExternalLink));
 	}
 	
@@ -85,6 +103,9 @@ public class ReportBean {
 	}
 	
 	public int getInternalLinkTotal() {
+		if (rightInternalLink+badInternalLink == 0) {
+			return 100;
+		}
 		return Math.round((rightInternalLink*100)/(badInternalLink+rightInternalLink));
 	}
 	

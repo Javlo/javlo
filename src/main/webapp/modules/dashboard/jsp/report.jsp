@@ -6,6 +6,7 @@
 <div class="invoice three_fourth">
 	
 	<div class="invoice_inner">
+		  <span class="lang">${info.language}</span>
 		  <h2 class="title">Report : ${info.globalTitle}</h2>
 		  <br class="all" /><br class="all" />		  
     	  <div class="one_half">
