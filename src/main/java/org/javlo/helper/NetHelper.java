@@ -801,6 +801,10 @@ public class NetHelper {
 		try {
 			URLConnection urlConnection = url.openConnection();
 			if (urlConnection instanceof HttpURLConnection) {
+				HttpURLConnection conn =  ((HttpURLConnection) urlConnection);
+				conn.setConnectTimeout(10 * 1000);
+				conn.setRequestMethod("GET");
+				conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows; U; Windows NT 6.0; en-US; rv:1.9.1.2) Gecko/20090729 Firefox/3.5.2 (.NET CLR 3.5.30729)");
 				int respondeCode = ((HttpURLConnection) urlConnection).getResponseCode();
 				return (respondeCode >= 200) && (respondeCode < 300);
 			}
@@ -1061,8 +1065,7 @@ public class NetHelper {
 	}
 
 	public static void main(String[] args) throws Exception {
-		URL url = new URL("http://www.nsgalleries.com/hosted2/ab/pics/113011/hr02/index.php?nats=MTMwMjgzLjEuODUuODguMC4yMzI4LjAuMC4w");
-		String content = NetHelper.readPage(url);
-		System.out.println("description:" + getPageDescription(content));
+		URL url = new URL("http://www.dpb.be/KRMB/Forum.php");		
+		System.out.println("valid?:" + isURLValid(url));
 	}
 }
