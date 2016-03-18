@@ -10,6 +10,7 @@ public class CheckDescription extends AbstractIntegrityChecker {
 	
 	@Override
 	public boolean checkPage(ContentContext ctx, MenuElement page) throws Exception {
+		ctx = ctx.getContextWithArea(null);
 		I18nAccess i18nAccess = I18nAccess.getInstance(ctx);
 		String description = StringHelper.neverNull(page.getDescription(ctx));
 		if (description.length()==0) {

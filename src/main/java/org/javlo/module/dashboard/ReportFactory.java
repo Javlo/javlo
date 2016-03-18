@@ -43,7 +43,6 @@ public class ReportFactory {
 				} else {
 					report.pageTitleRight++;
 				}
-
 				CheckDescription checkDescrition = new CheckDescription();
 				checkDescrition.checkPage(ctx, page);
 				if (checkDescrition.getErrorCount(ctx) > 0 && checkDescrition.getLevel(ctx) > IIntegrityChecker.WARNING_LEVEL) {

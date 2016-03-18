@@ -10,6 +10,7 @@ public class CheckTitle extends AbstractIntegrityChecker {
 	
 	@Override
 	public boolean checkPage(ContentContext ctx, MenuElement page) throws Exception {
+		ctx = ctx.getContextWithArea(null);
 		I18nAccess i18nAccess = I18nAccess.getInstance(ctx);
 		String title = StringHelper.neverNull(page.getContentTitle(ctx));
 		if (title.length()==0) {
