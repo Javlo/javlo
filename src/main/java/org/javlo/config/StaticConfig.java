@@ -1204,7 +1204,12 @@ public class StaticConfig extends Observable {
 			excludeContextDomain = null;
 			encryptedFirstPassword = null;
 			contentExtension = null;
+			clearCache();
 		}
+	}
+	
+	public void clearCache() {
+		internetAccess = null;
 	}
 
 	public String replaceFolderVariable(String folder) {

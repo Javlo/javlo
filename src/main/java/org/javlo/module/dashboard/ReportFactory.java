@@ -87,7 +87,7 @@ public class ReportFactory {
 							report.rightInternalLink++;
 						}
 					}
-				} else if (comp instanceof ILink) {
+				} else if (ctx.getGlobalContext().getStaticConfig().isInternetAccess() && comp instanceof ILink) {
 					String url = ((ILink) comp).getURL(ctx);
 					if (url != null && URLHelper.isAbsoluteURL(url)) {
 						try {

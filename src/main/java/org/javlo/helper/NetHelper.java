@@ -845,15 +845,15 @@ public class NetHelper {
 					}
 				}
 		        
-				conn.setConnectTimeout(10 * 1000);
+				conn.setConnectTimeout(10 * 1000);				
 				conn.setRequestMethod("GET");
 				conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows; U; Windows NT 6.0; en-US; rv:1.9.1.2) Gecko/20090729 Firefox/3.5.2 (.NET CLR 3.5.30729)");
-				int respondeCode = ((HttpURLConnection) urlConnection).getResponseCode();
-				return (respondeCode >= 200) && (respondeCode < 300);
+				int respondeCode = ((HttpURLConnection) urlConnection).getResponseCode();				
+				return (respondeCode >= 200) && (respondeCode < 399);
 			}
 			return true;
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.fine(e.getMessage());			
 			return false;
 		}
 
@@ -1162,7 +1162,7 @@ public class NetHelper {
 		   }
 
 	public static void main(String[] args) throws Exception {
-		URL url = new URL("https://www.fidh.org/fr/regions/europe-asie-centrale/belgique/Accueil-des-personnes-handicapees");		
+		URL url = new URL("http://www.wikipedia.org/");		
 		System.out.println("valid?:" + isURLValid(url));
 		//testIt();
 	}

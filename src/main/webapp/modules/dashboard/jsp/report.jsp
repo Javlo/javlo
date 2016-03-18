@@ -44,48 +44,54 @@
           <div class="one_half last">
           <h3 class="title">Content status</h3>
           <table cellpadding="0" cellspacing="0" class="invoicetable" width="100%">
-                	<thead>
-                    	<tr>
-                        	<td width="60%">Criteria</td>
-                            <td width="20%" align="right">result</td>                            
-                            <td width="20%" align="right">#total</td>
-                        </tr>
-                    </thead>
-                    <tbody>                    	
-                        <tr>
-                        	<td>Empty page</td>                            
-                            <td align="right">${report.pageWithoutContent}</td>
-                            <td align="right">${report.pageWithContent}</td>
-                        </tr>
-                        <tr>
-                        	<td>Bad external link (max:${report.maxLinkCheck})
-                        	<c:if test="${report.badExternalLink > 0}">
-                           		<ul>
-                           			<c:forEach var="link" items="${report.badExternalLinkPages}">
-                           				<li><a href="${link.url}">${link.label}</a>
-                           			</c:forEach>
-                           		</ul>
-                           	</c:if>
-                        	</td>
-                            <td align="right">${report.badExternalLink}</td>
-                            <td align="right">${report.badExternalLink+report.rightExternalLink}</td>
-                        </tr>
-                        <tr>
-                        	<td>Bad internal link (max:${report.maxLinkCheck})
-                        	<c:if test="${report.badInternalLink > 0}">
-                           		<ul>
-                           			<c:forEach var="link" items="${report.badInternalLinkPages}">
-                           				<li><a href="${link.url}">${link.label}</a>
-                           			</c:forEach>
-                           		</ul>
-                           	</c:if>
-                           	</td>                            
-                            <td align="right">${report.badInternalLink}</td>
-                            <td align="right">${report.badInternalLink+report.rightInternalLink}</td>
-                        </tr>
-                        
-                    </tbody>
-                </table>
+           	<thead>
+               	<tr>
+                   	<td width="60%">Criteria</td>
+                       <td width="20%" align="right">result</td>                            
+                       <td width="20%" align="right">#total</td>
+                   </tr>
+               </thead>
+               <tbody>                    	
+                   <tr>
+                   	<td>Empty page</td>                            
+                       <td align="right">${report.pageWithoutContent}</td>
+                       <td align="right">${report.pageWithContent}</td>
+                   </tr>
+                   <tr>
+                   	<td>Bad external link (max:${report.maxLinkCheck})
+                   	<c:if test="${report.badExternalLink > 0}">
+                      		<ul>
+                      			<c:forEach var="link" items="${report.badExternalLinkPages}">
+                      				<li><a href="${link.url}">${link.label}</a>
+                      			</c:forEach>
+                      		</ul>
+                      	</c:if>
+                   	</td>
+                   	<c:if test="${info.internetAccess}">
+                       <td align="right">${report.badExternalLink}</td>
+                       <td align="right">${report.badExternalLink+report.rightExternalLink}</td>
+                       </c:if>
+                       <c:if test="${!info.internetAccess}">
+                       <td align="right">?</td>
+                       <td align="right">?</td>                            
+                       </c:if>
+                   </tr>
+                   <tr>
+                   	<td>Bad internal link (max:${report.maxLinkCheck})
+                   	<c:if test="${report.badInternalLink > 0}">
+                      		<ul>
+                      			<c:forEach var="link" items="${report.badInternalLinkPages}">
+                      				<li><a href="${link.url}">${link.label}</a>
+                      			</c:forEach>
+                      		</ul>
+                      	</c:if>
+                      	</td>                            
+                       <td align="right">${report.badInternalLink}</td>
+                       <td align="right">${report.badInternalLink+report.rightInternalLink}</td>
+                   </tr>
+                   
+               </tbody>
+             </table>
           </div>
      </div>
 </div>
