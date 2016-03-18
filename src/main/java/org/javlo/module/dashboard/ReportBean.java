@@ -7,7 +7,7 @@ import org.javlo.bean.Link;
 
 public class ReportBean {
 	
-	public static final int MAX_EXTERNAL_CHECK = 5;
+	public static final int MAX_LINK_CHECK = 5;
 	
 	public int pageDescriptionRight = 0;
 	public int pageDescriptionBad = 0;
@@ -96,8 +96,8 @@ public class ReportBean {
 		return badExternalLinkPages;
 	}
 	
-	public int getMaxExternalCheck() {
-		return MAX_EXTERNAL_CHECK;
+	public int getMaxLinkCheck() {
+		return MAX_LINK_CHECK;
 	}
 	
 }
