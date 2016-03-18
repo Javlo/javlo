@@ -51,7 +51,6 @@ public class ReportFactory {
 				} else {
 					report.pageDescriptionRight++;
 				}
-
 				/* title */
 				CheckTitleHierarchy checkTitleHierachy = new CheckTitleHierarchy();
 				checkTitleHierachy.checkPage(ctx, page);
@@ -60,7 +59,6 @@ public class ReportFactory {
 				} else {
 					report.pageTitleStructureRight++;
 				}
-
 				/* image */
 				CheckImageLabel checkImage = new CheckImageLabel();
 				checkImage.checkPage(ctx, page);

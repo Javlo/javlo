@@ -39,9 +39,10 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>Javlo : ${currentModule.title}</title>
 <link rel="stylesheet" media="screen" href="${info.editTemplateURL}/css/bootstrap/bootstrap.css?ts=${info.ts}" />
-<link rel="stylesheet" media="screen" href="${info.editTemplateURL}/css/style.css?ts=${info.ts}" />
+<link rel="stylesheet" href="${info.editTemplateURL}/css/style.css?ts=${info.ts}" /><link rel="stylesheet" media="screen" href="${info.editTemplateURL}/css/style.css?ts=${info.ts}" />
 <link rel="stylesheet" media="screen" href="${info.editTemplateURL}/css/javlo.css?ts=${info.ts}" />
 <link rel="stylesheet" media="screen" href="${info.editTemplateURL}/css/plugins/colorbox.css" />
+<link rel="stylesheet" media="print" href="${info.editTemplateURL}/css/print.css" />
 
 <!-- LIB -->
 <script src="${info.libUrl}js/circliful.js"></script>

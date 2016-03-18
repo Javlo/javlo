@@ -1,0 +1,18 @@
+.sidebar, .header, #footer {
+	display: none;
+}
+
+.invoice {
+	width: 100%;
+	border: 0 none;
+	box-shadow: 0 0 0 transparent;
+}
+
+.maincontent {
+	margin: 0;
+}
+
+.bar1, .bar2 {
+    -webkit-print-color-adjust: exact;
+}
+
