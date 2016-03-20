@@ -23,6 +23,9 @@ public class ReportBean {
 	public int rightExternalLink = 0;
 	public int badInternalLink = 0;
 	public int rightInternalLink = 0;
+	public boolean allTitleDifferent = false;
+	public Link sameTitlePage1 = null;
+	public Link sameTitlePage2 = null;
 	
 	public List<Link> badInternalLinkPages = new LinkedList<Link>();
 	public List<Link> badExternalLinkPages = new LinkedList<Link>();
@@ -33,7 +36,11 @@ public class ReportBean {
 	}
 	
 	public int getGlobalCriteriaScore() {
-		return (getExternalLinkTotal()+getPageContentTotal())/2;
+		int dec = 0;
+		if (!allTitleDifferent) {
+			dec++;
+		}
+		return (getExternalLinkTotal()+getPageContentTotal())/2-dec;
 	}
 	
 	public int getPageTitle() {
@@ -119,6 +126,18 @@ public class ReportBean {
 	
 	public int getMaxLinkCheck() {
 		return MAX_LINK_CHECK;
+	}
+	
+	public boolean isAllTitleDifferent() {
+		return allTitleDifferent;
+	}
+	
+	public Link getSameTitlePage1() {
+		return sameTitlePage1;
+	}
+	
+	public Link getSameTitlePage2() {
+		return sameTitlePage2;
 	}
 	
 }

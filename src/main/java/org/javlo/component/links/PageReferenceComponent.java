@@ -830,6 +830,10 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		public void setEditable(boolean editable) {
 			this.editable = editable;
 		}
+		
+		public boolean isActive() {
+			return page.isActive(ctx);					
+		}
 
 	}
 
@@ -930,7 +934,6 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 	}
 
 	/************/
-
 	/** ACTION **/
 	/************/
 

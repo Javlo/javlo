@@ -89,6 +89,16 @@
                        <td align="right">${report.badInternalLink}</td>
                        <td align="right">${report.badInternalLink+report.rightInternalLink}</td>
                    </tr>
+                   <tr>
+                   	<td colspan="3">
+                   		<br class="all" />
+                   		<c:if test="${report.allTitleDifferent}">
+                   			<div class="notification msgsuccess"><p>All titles is different.</p></div>
+                   		</c:if><c:if test="${!report.allTitleDifferent}">
+                   			<div class="notification msgerror"><p>At least two pages have the same title. <a href="${report.sameTitlePage1.url}">[1]</a> <a href="${report.sameTitlePage2.url}">[2]</a></p></div>
+                   		</c:if>
+					</td>
+                   </tr>
                    
                </tbody>
              </table>

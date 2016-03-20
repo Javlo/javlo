@@ -3,7 +3,9 @@ package org.javlo.module.dashboard;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.javlo.bean.Link;
 import org.javlo.component.core.ContentElementList;
@@ -32,7 +34,17 @@ public class ReportFactory {
 		MenuElement root = contentService.getNavigation(ctx);
 		Map<String, String> moduleAction = new HashMap<String, String>();
 		moduleAction.put("module", "content");
+		Map<String, MenuElement> title = new HashMap<String, MenuElement>();
+		report.allTitleDifferent = true;
 		for (MenuElement page : root.getAllChildren()) {
+			if (report.allTitleDifferent) {
+				if (title.keySet().contains(page.getTitle(ctx))) {	
+					report.sameTitlePage1 = new Link(URLHelper.createURL(ctx, title.get(page.getTitle(ctx)), moduleAction), "1");
+					report.sameTitlePage2 = new Link(URLHelper.createURL(ctx, page, moduleAction), "2");
+					report.allTitleDifferent = false;
+				}
+				title.put(page.getTitle(ctx), page);
+			}
 			/* description */
 			if (page.isRealContent(ctx)) {
 				report.pageWithContent++;
