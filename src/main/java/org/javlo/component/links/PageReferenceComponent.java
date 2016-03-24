@@ -11,11 +11,13 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.logging.Logger;
@@ -1037,9 +1039,9 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 	 * @return true if page is accepted
 	 * @throws Exception
 	 */
-	protected boolean filterPage(ContentContext ctx, MenuElement page, Set<String> currentSelection, Collection<String> commands, String filter) throws Exception {
+	protected boolean filterPage(ContentContext ctx, MenuElement page, Set<String> currentSelection, Collection<String> commands, String filter, boolean widthUnactive) throws Exception {
 
-		if (!page.isActive()) {
+		if (!page.isActive(ctx) && !widthUnactive) {
 			return false;
 		}
 
@@ -1085,7 +1087,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 				return false;
 			}
 		}
-		if (getSelectedTag(ctx).length() == 0) {
+		if (getSelectedTag(ctx).size() == 0) {
 			return true;
 		}
 		ContentContext lgDefaultCtx = new ContentContext(ctx);
@@ -1096,7 +1098,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 			lgDefaultCtx.setContentLanguage(lg);
 			lgDefaultCtx.setRequestContentLanguage(lg);
 		}		
-		if (page.getTags(lgDefaultCtx).contains(getSelectedTag(ctx))) {
+		if (!Collections.disjoint(page.getTags(lgDefaultCtx), getSelectedTag(ctx))) {
 			return true;
 		}
 		return false;
@@ -1220,9 +1222,19 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		/* tag filter */
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		if (globalContext.isTags() && globalContext.getTags().size() > 0) {
-			out.println("<div class=\"line\">");
-			out.println("<label for=\"" + getTagsInputName() + "\">" + i18nAccess.getText("content.page-teaser.tag") + " : </label>");
-			out.println(XHTMLHelper.getInputOneSelectFirstEnpty(getTagsInputName(), globalContext.getTags(), getSelectedTag(ctx)));
+			out.println("<div class=\"line-inline\">");
+			out.println("<label class=\"main\" for=\"" + getTagsInputName() + "\">" + i18nAccess.getText("content.page-teaser.tag") + " : </label>");
+			for (String tag : globalContext.getTags()) {
+				String id = tag+getId();
+				String checked="";
+				if (getSelectedTag(ctx).contains(tag)) {
+					checked = " checked=\"checked\"";
+				}
+				out.println("<input type=\"checkbox\" id=\""+id+"\" name=\""+getTagsInputName()+"\""+checked+" value=\""+tag+"\"/>");
+				out.println("<label for=\""+id+"\">"+tag+"</label>");
+				
+			}
+			//out.println(XHTMLHelper.getInputOneSelectFirstEnpty(getTagsInputName(), globalContext.getTags(), getSelectedTag(ctx)));
 			out.println("</div>");
 		}
 
@@ -1372,7 +1384,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 				if (GlobalContext.getInstance(ctx.getRequest()).isAutoSwitchToDefaultLanguage()) {
 					lgCtx = allChildren[i].getContentContextWithContent(ctx);
 				}
-				if (filterPage(lgCtx, allChildren[i], currentSelection, commands, filter) && (allChildren[i].getContentDateNeverNull(ctx).after(backDate.getTime()))) {
+				if (filterPage(lgCtx, allChildren[i], currentSelection, commands, filter, true) && (allChildren[i].getContentDateNeverNull(ctx).after(backDate.getTime()))) {
 					renderPageSelectLine(lgCtx, outTemp, currentSelection, allChildren[i]);
 					countPage++;
 				}
@@ -1393,8 +1405,14 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		return new String(outStream.toByteArray());
 	}
 
-	private void renderPageSelectLine(ContentContext ctx, PrintStream out, Collection<String> currentSelection, MenuElement page) throws Exception {
+	private void renderPageSelectLine(ContentContext ctx, PrintStream out, Collection<String> currentSelection, MenuElement page) throws Exception {		
 		String editPageURL = URLHelper.createEditURL(page.getPath(), ctx);
+		if (ctx.isEditPreview()) {
+			Map<String,String> params = new HashMap<String, String>();
+			params.put("closePopup", "true");
+			params.put("parentURL", URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.PREVIEW_MODE), page.getPath()));
+			editPageURL = URLHelper.createURL(ctx, page.getPath(), params);
+		}
 		out.print("<tr class=\"filtered\"><td><a href=\"" + editPageURL + "\">" + page.getFullLabel(ctx) + "</a></td>");
 		out.print("<td>" + StringHelper.neverNull(StringHelper.renderLightDate(page.getContentDate(ctx))) + "</td>");
 		out.println("<td>" + StringHelper.renderLightDate(page.getModificationDate()) + "</td><td>" + ctx.getRequestContentLanguage() + "</td>");
@@ -1586,11 +1604,11 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		return "</div>";
 	}
 
-	protected String getSelectedTag(ContentContext ctx) {
+	protected Collection<String> getSelectedTag(ContentContext ctx) {
 		if (isDynamicOrder(ctx) && ctx.getRequest().getParameter("tag") != null) {
-			return ctx.getRequest().getParameter("tag");
+			return StringHelper.stringToCollection(ctx.getRequest().getParameter("tag"),",");
 		} else {
-			return properties.getProperty(TAG_KEY, "");
+			return StringHelper.stringToCollection(properties.getProperty(TAG_KEY, ""),",");
 		}
 	}
 
@@ -1793,7 +1811,6 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		LocalLogger.stepCount("pageref", "step 3");
 
 		List<MenuElement> pages = new LinkedList<MenuElement>();
-		List<PageBean> pageBeans = new LinkedList<PageBean>();
 
 		int firstPageNumber = getFirstPageNumber();
 		int lastPageNumber = getLastPageNumber();
@@ -1819,7 +1836,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 				pageCal.setTime(pageDate);
 				if (todayCal.after(pageCal)) {
 					ascending = true;
-				}			
+				}				
 				pages.add(page);				
 			} else {
 				logger.warning("page not found : " + pageId);
@@ -1887,6 +1904,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 			}
 		}
 
+		List<PageBean> pageBeans = new LinkedList<PageBean>();
 		Collection<Calendar> allMonths = new LinkedList<Calendar>();
 		Collection<String> allMonthsKeys = new HashSet<String>();		
 		for (MenuElement page : pages) {
@@ -1900,7 +1918,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 					testCtx.setAllLanguage(dflg);
 				}
 			}
-			if (filterPage(lgCtx, page, currentSelection, Collections.EMPTY_LIST, "")) {
+			if (filterPage(lgCtx, page, currentSelection, Collections.EMPTY_LIST, "", false)) {
 				if (countPage < getMaxNews(lgCtx)) {
 					if ((isWidthEmptyPage() || page.isRealContentAnyLanguage(lgCtx)) && (page.getChildMenuElements().size() == 0 || page.isChildrenAssociation() || !isOnlyPageWithoutChildren()) && page.getContentDateNeverNull(lgCtx).after(backDate.getTime())) {
 						if (firstPage == null) {
@@ -2012,7 +2030,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 			for (MenuElement element : allChildren) {
 				String selectedPage = requestService.getParameter(getPageId(element), null);
 				if (requestService.getParameter(getPageDisplayedId(element), null) != null) {
-					if (isDefaultSelected() ^ (selectedPage != null) && filterPage(ctx, element, currentSelection, Collections.EMPTY_LIST, null)) {
+					if (isDefaultSelected() ^ (selectedPage != null) && filterPage(ctx, element, currentSelection, Collections.EMPTY_LIST, null, true)) {
 						pagesSelected.add(element.getId());
 					} else {
 						pagesNotSelected.add(element.getId());
@@ -2040,9 +2058,10 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 				setModify();
 			}
 
-			String tag = requestService.getParameter(getTagsInputName(), "");
-			if (!getSelectedTag(ctx).equals(tag)) {
-				setTag(tag);
+			List<String> tags = requestService.getParameterListValues(getTagsInputName(), null);
+			String tagRaw = StringHelper.collectionToString(tags, ",");
+			if (!properties.getProperty(TAG_KEY, "").equals(tagRaw)) {
+				setTag(tagRaw);
 				setModify();
 				setNeedRefresh(true);
 			}

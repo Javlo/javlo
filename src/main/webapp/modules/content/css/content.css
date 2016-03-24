@@ -116,7 +116,7 @@ ul.menu {
 }
 
 .line-inline {
-	padding: 0 15px;
+	padding: 0 15px 0 0;
 	display: inline-block;
 	line-height: 18px;
 	overflow: hidden;
@@ -139,6 +139,9 @@ ul.menu {
 .line-inline label {
 	display: inline-block;
 	width: auto;
+}
+.line-inline label.main {
+	width: 152px;
 }
 
 .line-full input {

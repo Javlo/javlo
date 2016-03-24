@@ -450,6 +450,15 @@ public class PageBean implements Serializable {
 	public boolean isTrash() {
 		return ContentService.TRASH_PAGE_NAME.equals(getName());
 	}
+	
+	public String getLink() throws Exception {
+		String linkOn = page.getLinkOn(ctx);
+		if (linkOn != null && linkOn.trim().length() > 0) {
+			return linkOn;
+		} else {
+			return getUrl();
+		}
+	}
 
 }
 

@@ -1160,7 +1160,7 @@ public class Edit extends AbstractModuleAction {
 				UserInterfaceContext userInterface = UserInterfaceContext.getInstance(session, globalContext);
 				if (!userInterface.isLight()) {
 					boolean isActive = StringHelper.isTrue(requestService.getParameter("active", null));
-					if (page.isActive() != isActive) {
+					if (page.isActive(ctx) != isActive) {
 						page.setActive(isActive);
 						modify = true;
 					}

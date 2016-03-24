@@ -2701,7 +2701,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 				IContentVisualComponent elem = contentList.next(newCtx);
 				if (elem instanceof ILink && !elem.isRepeat()) {
 					res = ((ILink) elem).getURL(newCtx);
-					if (res != null && res.equals("#")) {
+					if (res != null && (res.equals("#") || StringHelper.isImage(res))) {
 						res = "";
 					}
 				}
@@ -3889,6 +3889,9 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 	}
 
 	public boolean isActive() {
+		if (!isInsideTimeRange()) {
+			return false;
+		}
 		if (isInTrash() || isTrash()) {
 			return false;
 		} else {

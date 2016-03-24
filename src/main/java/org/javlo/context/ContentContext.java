@@ -262,6 +262,13 @@ public class ContentContext {
 					ctx.renderMode = TIME_MODE;
 				}
 			}
+			if (StringHelper.isTrue(requestService.getParameter("closePopup", null))) {
+				ctx.setClosePopup(true);
+			}
+			if (requestService.getParameter("parentURL", null) != null) {
+				ctx.setParentURL(requestService.getParameter("parentURL", null));
+			}
+			
 			ctx.ajax = ContentManager.isAjax(request);
 			ctx.setRequest(request);
 			ctx.setResponse(response);
@@ -300,7 +307,7 @@ public class ContentContext {
 							while (page != null && !page.isRealContent(ctx) && page.getChildMenuElements().size() > 0) {
 								Iterator<MenuElement> children = page.getChildMenuElements().iterator();
 								page = children.next();
-								while (page != null && !page.isActive()) {
+								while (page != null && !page.isActive(ctx)) {
 									page = children.next();
 								}
 							}
@@ -725,7 +732,7 @@ public class ContentContext {
 				}
 			}
 		}
-		if (isAsViewMode() && outPage != null && !outPage.isActive()) {
+		if (isAsViewMode() && outPage != null && !outPage.isActive(this)) {
 			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
 			return null;
 		} else {

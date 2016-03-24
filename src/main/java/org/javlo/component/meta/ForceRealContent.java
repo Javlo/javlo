@@ -82,5 +82,10 @@ public class ForceRealContent extends AbstractVisualComponent {
 	public boolean isEditOnCreate(ContentContext ctx) {
 		return false;
 	}
+	
+	@Override
+	public boolean isContentCachable(ContentContext ctx) {
+		return true;
+	}
 
 }
