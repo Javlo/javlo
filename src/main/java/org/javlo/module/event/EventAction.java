@@ -10,7 +10,8 @@ import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.module.core.ModulesContext;
 import org.javlo.service.event.Event;
-import org.javlo.service.event.EventService;
+import org.javlo.service.event.EventFactory;
+import org.javlo.service.event.IEventsProvider;
 import org.javlo.user.User;
 
 public class EventAction extends AbstractModuleAction {
@@ -74,7 +75,7 @@ public class EventAction extends AbstractModuleAction {
 	@Override
 	public String prepare(ContentContext ctx, ModulesContext modulesContext) throws Exception {	
 		String msg = super.prepare(ctx, modulesContext);
-		EventService eventService = EventService.getInstance(ctx);
+		IEventsProvider eventService = EventFactory.getEventProvider(ctx);
 		ctx.getRequest().setAttribute("events", eventService.getEvents(ctx));
 		if (ctx.getRequest().getParameter("event") != null) {
 			ctx.getRequest().setAttribute("event", new EventBean(ctx, eventService.getEvent(ctx, ctx.getRequest().getParameter("event"))));

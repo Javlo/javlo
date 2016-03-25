@@ -3,7 +3,6 @@ package org.javlo.service.event;
 import java.io.Serializable;
 import java.net.URL;
 import java.util.Date;
-import java.util.LinkedList;
 import java.util.List;
 
 import org.javlo.component.image.IImageTitle;

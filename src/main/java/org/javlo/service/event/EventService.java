@@ -7,21 +7,13 @@ import org.javlo.context.ContentContext;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
 
-public class EventService {
+public class EventService implements IEventsProvider {
 
 	public EventService() {
 		// TODO Auto-generated constructor stub
 	}
-
-	public static EventService getInstance(ContentContext ctx) {
-		EventService eventService = (EventService)ctx.getGlobalContext().getAttribute("events");
-		if (eventService == null) {
-			eventService = new EventService();
-			ctx.getGlobalContext().setAttribute("events", eventService);
-		}
-		return eventService;
-	}
 	
+	@Override
 	public List<Event> getEvents(ContentContext ctx) throws Exception {
 		ContentService content = ContentService.getInstance(ctx.getRequest());
 		List<Event> outList = new LinkedList<Event>();
@@ -34,6 +26,7 @@ public class EventService {
 		return outList;
 	}
 	
+	@Override
 	public Event getEvent(ContentContext ctx, String id) throws Exception {
 		for (Event event : getEvents(ctx)) {
 			if (event.getId().equals(id)) {

@@ -58,5 +58,14 @@ public class Slogan extends AbstractVisualComponent {
 	protected boolean isWrapped(ContentContext ctx) {	
 		return ctx.isEditPreview();
 	}
+	
+	@Override
+	public String getEmptyXHTMLCode(ContentContext ctx) throws Exception {
+		if (getPage().getId().equals(ctx.getCurrentPage().getId())) {
+			return super.getEmptyXHTMLCode(ctx);
+		} else {
+			return "";
+		}
+	}
 
 }
