@@ -198,7 +198,7 @@ public class ArrayFileComponent extends GenericFile {
 			} else {
 				type = "text";
 			}
-			if (getValue().trim().length() == 1) {
+			if (getValue() != null && getValue().trim().length() == 1) {
 				type = type+" char";
 			}
 			return type;

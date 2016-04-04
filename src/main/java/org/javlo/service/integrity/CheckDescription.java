@@ -23,13 +23,16 @@ public class CheckDescription extends AbstractIntegrityChecker {
 			if (description.length() < integrity.getDescriptionMinSize()) {
 				setErrorMessage(i18nAccess.getText("integrity.error.description_too_short", "You description is too short ("+description.length()+" min: "+integrity.getDescriptionMinSize()+')'));
 				setErrorCount(1);
+				setLevel(WARNING_LEVEL);
 				return false;
 			} else if (description.length() > integrity.getDescriptionMaxSize()) {				
 				setErrorMessage(i18nAccess.getText("integrity.error.description_too_large", "You description is too large ("+description.length()+" max: "+integrity.getDescriptionMaxSize()+')'));
 				setErrorCount(1);
+				setLevel(WARNING_LEVEL);
 				return false;
 			}
 		}
+		setLevel(SUCCESS_LEVEL);
 		return true;
 	}
 	

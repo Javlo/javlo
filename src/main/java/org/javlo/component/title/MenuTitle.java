@@ -32,7 +32,7 @@ public class MenuTitle extends AbstractVisualComponent {
 	}
 	
 	@Override
-	public String getTextLabel() {
+	public String getTextLabel(ContentContext ctx) {
 		return getValue();
 	}
 	

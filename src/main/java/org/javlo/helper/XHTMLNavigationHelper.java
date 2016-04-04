@@ -504,7 +504,7 @@ public class XHTMLNavigationHelper {
 				}
 				out.println(closeLi);
 				closeLi = "</li>";
-				out.print("<li><a href=\"#cp_" + comp.getId() + "\">" + comp.getTextLabel() + "</a>");
+				out.print("<li><a href=\"#cp_" + comp.getId() + "\">" + comp.getTextLabel(ctx) + "</a>");
 			}
 		}
 		while (currentLevel > 0) {

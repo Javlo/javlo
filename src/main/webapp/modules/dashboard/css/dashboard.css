@@ -47,3 +47,17 @@ td.forme, td.priority {
 	color: #ffffff;
 	background-color: #000000;
 }
+
+.progress .bar2 {
+	overflow: hidden;
+}
+
+.progress .bar2 .value {
+	float: left;
+	border-radius: 0;
+}
+
+.subbar {
+	overflow: hidden;
+	clear: both;
+}

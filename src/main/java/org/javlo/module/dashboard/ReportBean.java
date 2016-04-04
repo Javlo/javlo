@@ -11,6 +11,10 @@ public class ReportBean {
 	
 	public int pageDescriptionRight = 0;
 	public int pageDescriptionBad = 0;
+	public int pageDescriptionBadSize = 0;
+	public int pageDescriptionRightSize = 0;
+	public int pageTitleBadSize = 0;
+	public int pageTitleRightSize = 0;
 	public int pageTitleRight = 0;
 	public int pageTitleBad = 0;
 	public int pageTitleStructureRight = 0;
@@ -32,7 +36,7 @@ public class ReportBean {
 	public List<Link> emptyLinkPages = new LinkedList<Link>();	
 	
 	public int getGlobalComponentScore() {
-		return (getPageTitle()+getPageDescription()+getPageTitleStructure()+getPageImageAlt())/4;
+		return ((getPageTitle()+getPageDescription()+getPageTitleStructure()+getPageImageAlt())*2+getPageDescriptionOkSize()+getPageTitleOkSize())/10;
 	}
 	
 	public int getGlobalCriteriaScore() {
@@ -44,17 +48,39 @@ public class ReportBean {
 	}
 	
 	public int getPageTitle() {
-		if (pageTitleBad+pageTitleRight == 0) {
-			return 100;
-		}
-		return Math.round((pageTitleRight*100)/(pageTitleBad+pageTitleRight));
+		return getPageTitleOkSize()+getPageTitleBadSize();
 	}
 	
-	public int getPageDescription() {
-		if (pageDescriptionBad+pageDescriptionRight == 0) {
+	public int getPageDescription() {		
+		return getPageDescriptionOkSize()+getPageDescriptionBadSize();
+	}
+	
+	public int getPageDescriptionOkSize() {
+		if (pageDescriptionRight+pageDescriptionBad == 0) {
 			return 100;
 		}
-		return Math.round((pageDescriptionRight*100)/(pageDescriptionBad+pageDescriptionRight));
+		return Math.round((pageDescriptionRightSize*100)/(pageDescriptionRight+pageDescriptionBad));
+	}
+	
+	public int getPageTitleOkSize() {
+		if (pageTitleRight+pageTitleBad == 0) {
+			return 100;
+		}
+		return Math.round((pageTitleRightSize*100)/(pageTitleRight+pageTitleBad));
+	}
+	
+	public int getPageTitleBadSize() {
+		if (pageTitleRight+pageTitleBad == 0) {
+			return 100;
+		}
+		return Math.round((pageTitleBadSize*100)/(pageTitleRight+pageTitleBad));
+	}
+	
+	public int getPageDescriptionBadSize() {
+		if (pageDescriptionRight+pageDescriptionBad+pageDescriptionBadSize == 0) {
+			return 100;
+		}
+		return Math.round((pageDescriptionBadSize*100)/(pageDescriptionRight+pageDescriptionBad));
 	}
 
 	public int getPageTitleStructure() {

@@ -3035,15 +3035,15 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 		newCtx.setFree(true);
 
 		PageDescription desc = getPageDescriptionCached(ctx, newCtx.getRequestContentLanguage());
-
+		
 		if (desc.pageTitle != null) {
 			return desc.pageTitle;
 		}
 
 		desc.pageTitle = getForcedPageTitle(newCtx);
-
+		
 		if (desc.pageTitle == null || desc.pageTitle.length() == 0) {
-			desc.pageTitle = getLabel(newCtx);
+			desc.pageTitle = getTitle(newCtx);
 		}
 		return desc.pageTitle;
 	}

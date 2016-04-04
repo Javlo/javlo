@@ -272,7 +272,7 @@ public interface IContentVisualComponent extends Comparable<IContentVisualCompon
 	 * 
 	 * @author pvandermaesen
 	 */
-	public String getTextLabel();
+	public String getTextLabel(ContentContext ctx);
 
 	/**
 	 * return a string representation of the component with complete title

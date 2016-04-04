@@ -139,13 +139,18 @@ public class Heading extends AbstractPropertiesComponent implements ISubTitle {
 
 	@Override
 	public String getTextTitle(ContentContext ctx) {
+		return StringHelper.removeTag(getFieldValue(TEXT));
+	}
+	
+	@Override
+	public String getTextLabel(ContentContext ctx) {
 		String smText = getFieldValue(SMALL_TEXT);
 		if (StringHelper.isEmpty(smText)) {
 			return StringHelper.removeTag(getFieldValue(TEXT));
 		} else {
 			return smText;
 		}
-	}
+	}	
 
 	@Override
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {

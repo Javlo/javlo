@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -330,7 +331,7 @@ public abstract class ELFinder {
 				// (String) mime type. Required.
 				prop("mime", getMimeType(file.getFile())),
 				// (Number) file modification time in unix timestamp. Required.
-				prop("ts", file.getFile().lastModified()),
+				prop("ts", Math.round(file.getFile().lastModified()/1000)),
 				// (Number) file size in bytes
 				prop("size", file.getFile().length()),
 				// (Number) is readable

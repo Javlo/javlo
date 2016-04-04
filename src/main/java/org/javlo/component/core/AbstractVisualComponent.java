@@ -1557,7 +1557,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	}
 
 	@Override
-	public String getTextLabel() {
+	public String getTextLabel(ContentContext ctx) {
 		return getValue();
 	}
 

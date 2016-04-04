@@ -37,16 +37,16 @@ public class ReportFactory {
 		Map<String, MenuElement> title = new HashMap<String, MenuElement>();
 		report.allTitleDifferent = true;
 		for (MenuElement page : root.getAllChildren()) {
-			if (report.allTitleDifferent) {
-				if (title.keySet().contains(page.getTitle(ctx))) {	
-					report.sameTitlePage1 = new Link(URLHelper.createURL(ctx, title.get(page.getTitle(ctx)), moduleAction), "1");
-					report.sameTitlePage2 = new Link(URLHelper.createURL(ctx, page, moduleAction), "2");
-					report.allTitleDifferent = false;
-				}
-				title.put(page.getTitle(ctx), page);
-			}
-			/* description */
 			if (page.isRealContent(ctx)) {
+				if (report.allTitleDifferent) {
+					if (title.keySet().contains(page.getTitle(ctx))) {	
+						report.sameTitlePage1 = new Link(URLHelper.createURL(ctx, title.get(page.getTitle(ctx)), moduleAction), "1");
+						report.sameTitlePage2 = new Link(URLHelper.createURL(ctx, page, moduleAction), "2");
+						report.allTitleDifferent = false;
+					}
+					title.put(page.getTitle(ctx), page);
+				}
+			
 				report.pageWithContent++;
 				CheckTitle checkTitle = new CheckTitle();
 				checkTitle.checkPage(ctx, page);
@@ -54,13 +54,24 @@ public class ReportFactory {
 					report.pageTitleBad++;
 				} else {
 					report.pageTitleRight++;
+					if (checkTitle.getLevel(ctx) == IIntegrityChecker.WARNING_LEVEL) {
+						report.pageTitleBadSize++;
+					} else {
+						report.pageTitleRightSize++;
+					}
 				}
+				/* description */
 				CheckDescription checkDescrition = new CheckDescription();
-				checkDescrition.checkPage(ctx, page);
+				checkDescrition.checkPage(ctx, page);				
 				if (checkDescrition.getErrorCount(ctx) > 0 && checkDescrition.getLevel(ctx) > IIntegrityChecker.WARNING_LEVEL) {
-					report.pageDescriptionBad++;
+					report.pageDescriptionBad++;					
 				} else {
-					report.pageDescriptionRight++;
+					report.pageDescriptionRight++;					
+					if (checkDescrition.getLevel(ctx) == IIntegrityChecker.WARNING_LEVEL) {
+						report.pageDescriptionBadSize++;
+					} else {
+						report.pageDescriptionRightSize++;
+					}
 				}
 				/* title */
 				CheckTitleHierarchy checkTitleHierachy = new CheckTitleHierarchy();
@@ -68,7 +79,7 @@ public class ReportFactory {
 				if (checkTitleHierachy.getErrorCount(ctx) > 0) {
 					report.pageTitleStructureBad++;
 				} else {
-					report.pageTitleStructureRight++;
+					report.pageTitleStructureRight++;					
 				}
 				/* image */
 				CheckImageLabel checkImage = new CheckImageLabel();

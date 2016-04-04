@@ -220,7 +220,7 @@ public class ContentElementList implements IContentComponentsList {
 		while (elems.hasNext()) {
 			IContentVisualComponent comp = (IContentVisualComponent) elems.next();
 			if (comp.getLabelLevel(ctx)>currentLabelLevel && !comp.isRepeat()) {
-				res = comp.getTextTitle(ctx);
+				res = comp.getTextLabel(ctx);
 				if (res == null) {
 					res = "";
 				} else {
@@ -228,10 +228,10 @@ public class ContentElementList implements IContentComponentsList {
 				}
 			}
 			if (comp instanceof MenuTitle && !comp.isRepeat()) {
-				return comp.getTextLabel();
+				return comp.getTextLabel(ctx);
 			}
 			if (firstSubtitle == null && comp instanceof SubTitle) {
-				firstSubtitle = comp.getTextLabel();
+				firstSubtitle = comp.getTextLabel(ctx);
 			}
 		}		
 		if (res.length() == 0) { // if no element not repeat search with repeat element
@@ -240,7 +240,7 @@ public class ContentElementList implements IContentComponentsList {
 			while (elems.hasNext()) {
 				IContentVisualComponent comp = (IContentVisualComponent) elems.next();
 				if (comp.getLabelLevel(ctx)>currentLabelLevel) {
-					res = comp.getTextTitle(ctx);
+					res = comp.getTextLabel(ctx);
 					if (res == null) {
 						res = "";
 					} else {
@@ -248,7 +248,7 @@ public class ContentElementList implements IContentComponentsList {
 					}
 				}
 				if (comp instanceof MenuTitle) {
-					return comp.getTextLabel();
+					return comp.getTextLabel(ctx);
 				}
 			}
 		}
