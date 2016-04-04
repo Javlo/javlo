@@ -793,14 +793,18 @@ public class GlobalImage extends Image implements IImageFilter {
 					File imageSrc = getFile(ctx);
 					if (!imageSrc.exists()) {
 						logger.warning("file not found : " + imageSrc);
-					} else {						
-						setDirSelected(localImportFolder);
-						File imageTarget = getFile(ctx);
-						ResourceHelper.writeFileToFile(imageSrc, imageTarget);
-						storeProperties();
-						setModify();
-						//SharedContentService.getInstance(ctx).clearCache(ctx);
-						PersistenceService.getInstance(ctx.getGlobalContext()).setAskStore(true);
+					} else {
+						try {
+							setDirSelected(localImportFolder);
+							File imageTarget = getFile(ctx);
+							ResourceHelper.writeFileToFile(imageSrc, imageTarget);
+							storeProperties();
+							setModify();
+							// SharedContentService.getInstance(ctx).clearCache(ctx);
+							PersistenceService.getInstance(ctx.getGlobalContext()).setAskStore(true);
+						} catch (Throwable t) {
+							t.printStackTrace();
+						}
 					}
 				}
 			}
