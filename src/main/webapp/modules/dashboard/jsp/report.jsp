@@ -46,11 +46,11 @@
           </div>          
           <div class="progress">
           	  Page with right title structure
-              <div class="bar2"><div class="value orangebar" style="width: ${report.pageTitleStructure}%;"><small>${report.pageTitleStructure}%</small></div></div>
+              <div class="bar2"><div class="value" style="background-color: #4DA74D; width: ${report.pageTitleStructure}%;"><small>${report.pageTitleStructure}%</small></div></div>
           </div>          
           <div class="progress">
           	  Page with label on all images
-              <div class="bar2"><div class="value redbar" style="width: ${report.pageImageAlt}%;"><small>${report.pageImageAlt}%</small></div></div>
+              <div class="bar2"><div class="value" style="background-color: #4DA74D;  width: ${report.pageImageAlt}%;"><small>${report.pageImageAlt}%</small></div></div>
           </div>
           </div>
           <div class="one_half last">
