@@ -803,6 +803,7 @@ public class GlobalImage extends Image implements IImageFilter {
 							// SharedContentService.getInstance(ctx).clearCache(ctx);
 							PersistenceService.getInstance(ctx.getGlobalContext()).setAskStore(true);
 						} catch (Throwable t) {
+							logger.severe("error on copy image : "+imageSrc);
 							t.printStackTrace();
 						}
 					}
