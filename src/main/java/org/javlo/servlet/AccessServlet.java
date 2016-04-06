@@ -777,6 +777,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 						OutputStream out = response.getOutputStream();
 						Event event = ctx.getCurrentPage().getEvent(ctx);
 						if (event == null) {
+							logger.warning("event not found on page : "+ctx.getPath()+"  context:"+ctx.getGlobalContext().getContextKey());
 							response.setStatus(HttpServletResponse.SC_NOT_FOUND);
 							return;
 						} else {

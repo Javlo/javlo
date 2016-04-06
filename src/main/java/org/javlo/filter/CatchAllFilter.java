@@ -150,6 +150,7 @@ public class CatchAllFilter implements Filter {
 		}
 
 		if (globalContext == null) {
+			logger.warning("context not found : "+httpRequest.getRequestURI());
 			((HttpServletResponse) response).setStatus(HttpServletResponse.SC_NOT_FOUND, "context not found.");
 			return;
 		}

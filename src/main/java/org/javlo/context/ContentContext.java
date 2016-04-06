@@ -733,6 +733,7 @@ public class ContentContext {
 			}
 		}
 		if (isAsViewMode() && outPage != null && !outPage.isActive(this)) {
+			logger.info("page not found.");
 			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
 			return null;
 		} else {
