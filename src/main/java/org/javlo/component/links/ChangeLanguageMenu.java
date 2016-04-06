@@ -144,7 +144,7 @@ public class ChangeLanguageMenu extends AbstractVisualComponent {
 	}
 
 	public boolean isContentLanguages(ContentContext ctx) {
-		return CONTENT_LANGUAGES_STYLE.equals(getStyle(ctx));
+		return CONTENT_LANGUAGES_STYLE.equals(getStyle());
 	}
 
 	@Override
