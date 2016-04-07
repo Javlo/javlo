@@ -878,6 +878,11 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 		}
 		return null;
 	}
+	
+	@Override
+	public String getTextLabel(ContentContext ctx) {
+		return getTextTitle(ctx);
+	}
 
 	@Override
 	public String getSpecificClass(ContentContext ctx) {
