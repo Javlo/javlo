@@ -26,11 +26,20 @@ import com.beust.jcommander.ParameterException;
  * 
  */
 public class PageBean implements Serializable {
-	
+
 	private static final long serialVersionUID = 1L;
 
 	/*
-	 * private PageDescription info; private String url; private String path; private boolean selected = false; private boolean lastSelected = false; private final List<PageBean> children = new LinkedList<PageBean>(); private final List<PageBean> realChildren = new LinkedList<PageBean>(); private String name = null; private String id = null; private String latestEditor; private String creationDate; private String modificationDate; private String templateId = null; private boolean realContent = false; private Map<String, String> roles = new HashMap<String, String>(); private Map<String, String> adminRoles = new HashMap<String, String>();
+	 * private PageDescription info; private String url; private String path;
+	 * private boolean selected = false; private boolean lastSelected = false;
+	 * private final List<PageBean> children = new LinkedList<PageBean>();
+	 * private final List<PageBean> realChildren = new LinkedList<PageBean>();
+	 * private String name = null; private String id = null; private String
+	 * latestEditor; private String creationDate; private String
+	 * modificationDate; private String templateId = null; private boolean
+	 * realContent = false; private Map<String, String> roles = new
+	 * HashMap<String, String>(); private Map<String, String> adminRoles = new
+	 * HashMap<String, String>();
 	 */
 
 	public PageBean(ContentContext ctx, MenuElement page) {
@@ -52,21 +61,21 @@ public class PageBean implements Serializable {
 			return null;
 		}
 	}
-	
+
 	public PageBean getParent() {
 		MenuElement parent = page.getParent();
 		if (parent == null) {
 			return null;
 		} else {
-			return new PageBean(ctx,parent);
+			return new PageBean(ctx, parent);
 		}
 	}
-	
+
 	public List<PageBean> getParents() {
 		List<PageBean> outParents = new LinkedList<PageBean>();
 		MenuElement parent = page.getParent();
 		while (parent != null) {
-			outParents.add(0,new PageBean(ctx, parent));
+			outParents.add(0, new PageBean(ctx, parent));
 			parent = parent.getParent();
 		}
 		return outParents;
@@ -75,32 +84,32 @@ public class PageBean implements Serializable {
 	public String getUrl() {
 		return URLHelper.createURL(ctx, page);
 	}
-	
+
 	public String getPdfUrl() {
 		ContentContext pdfCtx = ctx.getFreeContentContext();
 		pdfCtx.setFormat("pdf");
-		return URLHelper.createURL(pdfCtx);		
+		return URLHelper.createURL(pdfCtx);
 	}
-	
+
 	public String getPdfAbsoluteUrl() {
 		ContentContext pdfCtx = ctx.getFreeContentContext();
 		pdfCtx.setFormat("pdf");
 		pdfCtx.setAbsoluteURL(true);
-		return URLHelper.createURL(pdfCtx,page.getPath());		
+		return URLHelper.createURL(pdfCtx, page.getPath());
 	}
-	
+
 	public String getAbsoluteUrl() {
 		return URLHelper.createURL(ctx.getContextForAbsoluteURL(), page.getPath());
 	}
-	
+
 	public String getAbsolutePreviewUrl() {
 		return URLHelper.createAbsoluteURL(ctx.getContextWithOtherRenderMode(ContentContext.PREVIEW_MODE), page.getPath());
 	}
-	
+
 	public String getEditUrl() {
 		return URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.EDIT_MODE), page);
 	}
-	
+
 	public String getCreator() {
 		return page.getCreator();
 	}
@@ -152,10 +161,10 @@ public class PageBean implements Serializable {
 		return childrenBean;
 	}
 
-	public String getName() {		
+	public String getName() {
 		return page.getName();
 	}
-	
+
 	public String getHumanName() {
 		return page.getHumanName();
 	}
@@ -189,7 +198,7 @@ public class PageBean implements Serializable {
 	public String getTemplateId() {
 		return page.getTemplateId();
 	}
-	
+
 	public Template getTemplate() throws Exception {
 		return TemplateFactory.getTemplate(ctx, getPage());
 	}
@@ -218,31 +227,31 @@ public class PageBean implements Serializable {
 	public Map<String, String> getAdminRoles() {
 		return new CollectionAsMap<String>(page.getEditorRoles());
 	}
-	
+
 	public Map<String, String> getAdminRolesAndParent() {
 		return new CollectionAsMap<String>(page.getEditorRolesAndParent());
 	}
-	
+
 	public String getFirstRoles() {
-		Map<String,String> roles = getRoles();
+		Map<String, String> roles = getRoles();
 		if (roles != null && roles.size() > 0) {
 			return roles.keySet().iterator().next();
 		} else {
 			return null;
 		}
 	}
-	
+
 	public String getFirstAdminRole() {
-		Map<String,String> roles = getAdminRoles();
+		Map<String, String> roles = getAdminRoles();
 		if (roles != null && roles.size() > 0) {
 			return roles.keySet().iterator().next();
 		} else {
 			return null;
 		}
 	}
-	
+
 	public String getFirstAdminRoleAndParent() {
-		Map<String,String> roles = getAdminRolesAndParent();
+		Map<String, String> roles = getAdminRolesAndParent();
 		if (roles != null && roles.size() > 0) {
 			return roles.keySet().iterator().next();
 		} else {
@@ -258,7 +267,7 @@ public class PageBean implements Serializable {
 			return null;
 		}
 	}
-	
+
 	public String getShortLanguageURL() {
 		try {
 			return page.getShortLanguageURL(ctx);
@@ -293,18 +302,18 @@ public class PageBean implements Serializable {
 			return null;
 		}
 	}
-	
+
 	public String getTechnicalTitle() {
 		return page.getTechnicalTitle(ctx);
 	}
-	
+
 	public String getTitleOrSubtitle() {
 		try {
 			String title = page.getContentTitle(ctx);
-			
-			if (title == null || title.trim().length() == 0) {				
+
+			if (title == null || title.trim().length() == 0) {
 				title = page.getSubTitle(ctx);
-				if (title == null || title.trim().length() == 0) {					
+				if (title == null || title.trim().length() == 0) {
 					title = page.getName();
 				}
 			}
@@ -314,7 +323,7 @@ public class PageBean implements Serializable {
 			return null;
 		}
 	}
-	
+
 	public String getSlogan() {
 		try {
 			return page.getSlogan(ctx);
@@ -324,7 +333,6 @@ public class PageBean implements Serializable {
 		}
 	}
 
-
 	public int getLastAccess() {
 		try {
 			return page.getLastAccess(ctx);
@@ -333,7 +341,7 @@ public class PageBean implements Serializable {
 			return -1;
 		}
 	}
-	
+
 	public double getPageRank() {
 		try {
 			return page.getPageRank(ctx);
@@ -362,7 +370,7 @@ public class PageBean implements Serializable {
 			return false;
 		}
 	}
-	
+
 	public boolean isVisibleForContext() {
 		try {
 			return page.isVisible(ctx);
@@ -374,7 +382,7 @@ public class PageBean implements Serializable {
 	public boolean isChildrenAssociation() {
 		return page.isChildrenAssociation();
 	}
-	
+
 	public boolean isVisibleChildren() throws Exception {
 		for (MenuElement child : page.getChildMenuElements()) {
 			if (child.isVisible() && child.isRealContent(ctx)) {
@@ -383,7 +391,7 @@ public class PageBean implements Serializable {
 		}
 		return false;
 	}
-	
+
 	public boolean isRealContentChildren() throws Exception {
 		for (MenuElement child : page.getChildMenuElements()) {
 			if (child.isRealContent(ctx)) {
@@ -392,7 +400,7 @@ public class PageBean implements Serializable {
 		}
 		return false;
 	}
-	
+
 	public PageAssociationBean getRootOfChildrenAssociation() throws Exception {
 		if (page.getRootOfChildrenAssociation() != null) {
 			return new PageAssociationBean(ctx, page.getRootOfChildrenAssociation());
@@ -400,36 +408,37 @@ public class PageBean implements Serializable {
 			return null;
 		}
 	}
-	
+
 	public MenuElement getPage() {
 		return page;
 	}
-	
+
 	public int getDepth() {
 		return page.getDepth();
 	}
-	
+
 	public boolean isRoot() {
 		return page.isRoot();
 	}
-	
+
 	/**
 	 * is page editable by current User ?
+	 * 
 	 * @return
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	public boolean isEditable() throws Exception {
 		if (ctx.getCurrentEditUser() == null) {
 			return false;
 		} else {
-			return Edit.checkPageSecurity(ctx,getPage());
+			return Edit.checkPageSecurity(ctx, getPage());
 		}
 	}
-	
+
 	public boolean isCacheable() throws Exception {
 		return page.isCacheable(ctx);
 	}
-	
+
 	public String getNotCacheableComponent() throws Exception {
 		IContentVisualComponent comp = page.getNotCacheableComponent(ctx);
 		if (comp != null) {
@@ -438,27 +447,30 @@ public class PageBean implements Serializable {
 			return "";
 		}
 	}
-	
+
 	public boolean isPageEmpty() throws Exception {
-		return page.isEmpty(ctx,null);
+		return page.isEmpty(ctx, null);
 	}
-	
+
 	public boolean isPageLocalEmpty() throws Exception {
-		return page.isLocalEmpty(ctx,null);
+		return page.isLocalEmpty(ctx, null);
 	}
-	
+
 	public boolean isTrash() {
 		return ContentService.TRASH_PAGE_NAME.equals(getName());
 	}
-	
+
 	public String getLink() throws Exception {
-		String linkOn = page.getLinkOn(ctx);
-		if (linkOn != null && linkOn.trim().length() > 0) {
-			return linkOn;
-		} else {
+		if (page.isRealContent(ctx)) {
 			return getUrl();
+		} else {
+			String linkOn = page.getLinkOn(ctx);
+			if (linkOn != null && linkOn.trim().length() > 0) {
+				return linkOn;
+			} else {
+				return getUrl();
+			}
 		}
 	}
 
 }
-
