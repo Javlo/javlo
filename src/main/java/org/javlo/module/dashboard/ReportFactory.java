@@ -3,9 +3,7 @@ package org.javlo.module.dashboard;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 import org.javlo.bean.Link;
 import org.javlo.component.core.ContentElementList;
@@ -37,7 +35,7 @@ public class ReportFactory {
 		Map<String, MenuElement> title = new HashMap<String, MenuElement>();
 		report.allTitleDifferent = true;
 		for (MenuElement page : root.getAllChildren()) {
-			if (page.isRealContent(ctx)) {
+			if (page.isRealContent(ctx) && !page.isInTrash()) {
 				if (report.allTitleDifferent) {
 					if (title.keySet().contains(page.getTitle(ctx))) {	
 						report.sameTitlePage1 = new Link(URLHelper.createURL(ctx, title.get(page.getTitle(ctx)), moduleAction), "1");
