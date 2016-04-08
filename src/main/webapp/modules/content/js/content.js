@@ -44,9 +44,9 @@ function loadWysiwyg(cssQuery, complexity, chooseFileURL) {
 		        "advlist autolink lists link image charmap print preview hr anchor pagebreak",
 		        "searchreplace wordcount visualblocks visualchars code fullscreen",
 		        "insertdatetime media nonbreaking save table directionality",
-		        "emoticons template paste textcolor colorpicker nonbreaking textlang"
+		        "emoticons template paste colorpicker nonbreaking textlang"
 		    ],
-		    toolbar1: "textlang | styleselect bold italic underline strikethrough fontsizeselect | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | forecolor backcolor | table charmap nonbreaking code",		    
+		    toolbar1: "textlang | styleselect bold italic underline strikethrough fontsizeselect | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | table charmap nonbreaking code",		    
 		    image_advtab: true,
 		    fontsize_formats: "10px 11px 12px 13px 14px 16px 18px 20px",
 		    //paste_word_valid_elements: "b,strong,i,em,h1,h2,h3,h4,h5,h6,table,tr,th,td,ul,ol,li,p,a,div",
