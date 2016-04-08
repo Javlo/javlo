@@ -55,7 +55,6 @@ import org.javlo.macro.ImportGalleryMacro;
 import org.javlo.macro.ImportHTMLPageMacro;
 import org.javlo.macro.ImportJCRPageMacro;
 import org.javlo.macro.IncreaseSubtitleLevelMacro;
-import org.javlo.macro.JekaConvert;
 import org.javlo.macro.MacroRendererCorrection;
 import org.javlo.macro.MergeDynamicComponent;
 import org.javlo.macro.NoClickableImageMacro;
