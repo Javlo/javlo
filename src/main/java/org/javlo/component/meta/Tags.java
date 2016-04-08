@@ -179,5 +179,10 @@ public class Tags extends ComplexPropertiesLink {
 		}
 		return null;
 	}
+	
+	@Override
+	public boolean isRealContent(ContentContext ctx) {
+		return false;
+	}
 
 }

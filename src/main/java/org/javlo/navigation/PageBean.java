@@ -472,5 +472,9 @@ public class PageBean implements Serializable {
 			}
 		}
 	}
+	
+	public int getSeoWeight() {
+		return page.getFinalSeoWeight();
+	}
 
 }

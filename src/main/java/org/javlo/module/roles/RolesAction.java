@@ -39,32 +39,34 @@ public class RolesAction extends AbstractModuleAction {
 		RolesContext rolesContext = RolesContext.getInstance(ctx.getRequest());
 		RolesFactory rolesFactory = RolesFactory.getInstance(ctx.getGlobalContext());
 		Role role = rolesFactory.getInstance(ctx.getGlobalContext()).getRole(ctx.getGlobalContext(), rolesContext.getRole());
-		ctx.getRequest().setAttribute("role", role);
-
-		AdminUserFactory adminUserFactory = AdminUserFactory.createUserFactory(ctx.getGlobalContext(), ctx.getRequest().getSession());
 		if (role != null) {
-			ctx.getRequest().setAttribute("users", adminUserFactory.getUserInfoForRoles(new String[] { role.getName() }));
-		}
+			ctx.getRequest().setAttribute("role", role);
 
-		List<String> templateIncluded = StringHelper.stringToCollection(role.getLocalTemplateIncluded(),",");		
-		List<String> templateExcluded = StringHelper.stringToCollection(role.getLocalTemplateExcluded(),",");		
-		Set<String> allTemplates = new HashSet(TemplateFactory.getTemplates(ctx.getRequest().getSession().getServletContext()).keySet());		
-		allTemplates.removeAll(templateIncluded);
-		allTemplates.removeAll(templateExcluded);
-		Collections.sort(templateIncluded);
-		Collections.sort(templateExcluded);
-		List<String> allTemplatesList = new LinkedList<String>(allTemplates);
-		Collections.sort(allTemplatesList);
-		ctx.getRequest().setAttribute("templateExcluded", templateExcluded);
-		ctx.getRequest().setAttribute("templateIncluded", templateIncluded);
-		ctx.getRequest().setAttribute("templateInherited", allTemplatesList);
-		
-		if (role.getParentRole() != null) {
-			if (role.getParentRole().getTemplateIncluded().length() > 0) {
-				ctx.getRequest().setAttribute("templateIncludedInheritedSize", role.getParentRole().getTemplateIncluded().split(",").length);
+			AdminUserFactory adminUserFactory = AdminUserFactory.createUserFactory(ctx.getGlobalContext(), ctx.getRequest().getSession());
+			if (role != null) {
+				ctx.getRequest().setAttribute("users", adminUserFactory.getUserInfoForRoles(new String[] { role.getName() }));
 			}
-			if (role.getParentRole().getTemplateExcluded().length() > 0) {
-				ctx.getRequest().setAttribute("templateExcludedInheritedSize", role.getParentRole().getTemplateExcluded().split(",").length);
+
+			List<String> templateIncluded = StringHelper.stringToCollection(role.getLocalTemplateIncluded(), ",");
+			List<String> templateExcluded = StringHelper.stringToCollection(role.getLocalTemplateExcluded(), ",");
+			Set<String> allTemplates = new HashSet(TemplateFactory.getTemplates(ctx.getRequest().getSession().getServletContext()).keySet());
+			allTemplates.removeAll(templateIncluded);
+			allTemplates.removeAll(templateExcluded);
+			Collections.sort(templateIncluded);
+			Collections.sort(templateExcluded);
+			List<String> allTemplatesList = new LinkedList<String>(allTemplates);
+			Collections.sort(allTemplatesList);
+			ctx.getRequest().setAttribute("templateExcluded", templateExcluded);
+			ctx.getRequest().setAttribute("templateIncluded", templateIncluded);
+			ctx.getRequest().setAttribute("templateInherited", allTemplatesList);
+
+			if (role.getParentRole() != null) {
+				if (role.getParentRole().getTemplateIncluded().length() > 0) {
+					ctx.getRequest().setAttribute("templateIncludedInheritedSize", role.getParentRole().getTemplateIncluded().split(",").length);
+				}
+				if (role.getParentRole().getTemplateExcluded().length() > 0) {
+					ctx.getRequest().setAttribute("templateExcludedInheritedSize", role.getParentRole().getTemplateExcluded().split(",").length);
+				}
 			}
 		}
 
@@ -80,12 +82,12 @@ public class RolesAction extends AbstractModuleAction {
 	public static String performUpdate(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws IOException {
 		RolesFactory rolesFactory = RolesFactory.getInstance(ctx.getGlobalContext());
 		Role role = rolesFactory.getInstance(ctx.getGlobalContext()).getRole(ctx.getGlobalContext(), rs.getParameter("role", null));
-		role.setMailingSenders(rs.getParameter("mailingSenders", null));		
+		role.setMailingSenders(rs.getParameter("mailingSenders", null));
 		role.setParent(rs.getParameter("parent", ""));
 		List<String> templateSelected = rs.getParameterListValues("templateSelected", Collections.EMPTY_LIST);
 		if (templateSelected.size() > 0) {
-			Collection<String> templateIncluded = new HashSet<String>(StringHelper.stringToCollection(role.getLocalTemplateIncluded(),","));
-			Collection<String> templateExcluded = new HashSet<String>(StringHelper.stringToCollection(role.getLocalTemplateExcluded(),","));
+			Collection<String> templateIncluded = new HashSet<String>(StringHelper.stringToCollection(role.getLocalTemplateIncluded(), ","));
+			Collection<String> templateExcluded = new HashSet<String>(StringHelper.stringToCollection(role.getLocalTemplateExcluded(), ","));
 			if (rs.getParameter("templateAction", "").equals("inherited")) {
 				templateIncluded.removeAll(templateSelected);
 				templateExcluded.removeAll(templateSelected);
@@ -95,9 +97,9 @@ public class RolesAction extends AbstractModuleAction {
 			} else if (rs.getParameter("templateAction", "").equals("excluded")) {
 				templateIncluded.removeAll(templateSelected);
 				templateExcluded.addAll(templateSelected);
-			}			
-			role.setTemplateIncluded(StringHelper.collectionToString(templateIncluded,","));
-			role.setTemplateExcluded(StringHelper.collectionToString(templateExcluded,","));			
+			}
+			role.setTemplateIncluded(StringHelper.collectionToString(templateIncluded, ","));
+			role.setTemplateExcluded(StringHelper.collectionToString(templateExcluded, ","));
 		}
 		rolesFactory.clear();
 

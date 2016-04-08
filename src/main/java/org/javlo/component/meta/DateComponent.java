@@ -210,5 +210,8 @@ public class DateComponent extends AbstractVisualComponent implements IDate {
 		return true;
 	}
 
-
+	@Override
+	public boolean isRealContent(ContentContext ctx) {
+		return false;
+	}
 }

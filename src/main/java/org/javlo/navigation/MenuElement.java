@@ -102,7 +102,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 	public static final double VOTES_MULTIPLY = 100000;
 
 	private static final long serialVersionUID = 1L;
-	
+
 	public static final int SEO_HEIGHT_INHERITED = -1;
 	public static final int SEO_HEIGHT_NULL = 0;
 	public static final int SEO_HEIGHT_LOW = 1;
@@ -156,7 +156,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 		String sharedName = null;
 		Event event = null;
 		String slogan;
-		String linkLabel = null; 
+		String linkLabel = null;
 
 		public ImageTitleBean imageLink;
 
@@ -588,7 +588,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 			}
 			return outImages;
 		}
-		
+
 		public ImageBean getImageBean() throws Exception {
 			IImageTitle image = page.getImage(ctx);
 			ContentContext absCtx = this.ctx.getContextForAbsoluteURL();
@@ -871,7 +871,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 				return true;
 			}
 		}
-		
+
 		public int getSeoWeight() {
 			return page.getSeoWeight();
 		}
@@ -1020,7 +1020,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 	boolean visible = true;
 
 	boolean active = true;
-	
+
 	private int seoWeight = SEO_HEIGHT_INHERITED;
 
 	List<MenuElement> virtualParent = new LinkedList<MenuElement>();
@@ -1191,7 +1191,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 		}
 	}
 
-	public void addChildMenuElementOnTop(MenuElement menuElement) {		
+	public void addChildMenuElementOnTop(MenuElement menuElement) {
 		synchronized (getLock()) {
 			NavigationHelper.changeStepPriority(getChildMenuElements(), 10);
 			menuElement.setParent(this);
@@ -1269,7 +1269,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 		}
 	}
 
-	public void addEditorRole(String group) {		
+	public void addEditorRole(String group) {
 		if (isChildrenOfAssociation()) {
 			getRootOfChildrenAssociation().addEditorRole(group);
 		} else {
@@ -1402,12 +1402,12 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 		}
 	}
 
-	public void clearEditorGroups() {		
+	public void clearEditorGroups() {
 		if (isChildrenOfAssociation()) {
 			getRootOfChildrenAssociation().clearEditorGroups();
 		} else {
 			editGroups.clear();
-		}		
+		}
 	}
 
 	public Map<String, ContentElementList> getContentElementListMap() {
@@ -1819,14 +1819,14 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 	public List<MenuElement> getChildMenuElements() {
 		return childMenuElements;
 	}
-	
+
 	public int getChildPosition(MenuElement child) {
 		int pos = childMenuElements.indexOf(child);
-		if (pos<0) {
+		if (pos < 0) {
 			return -1;
 		} else {
-			return pos+1;			
-		}		
+			return pos + 1;
+		}
 	}
 
 	public List<MenuElement> getChildMenuElements(ContentContext ctx, boolean visible) throws Exception {
@@ -1881,7 +1881,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 	public ComponentBean[] getContent() {
 		return componentBean;
 	}
-	
+
 	public List<ComponentBean> getContentAsList() {
 		return Arrays.asList(componentBean);
 	}
@@ -2063,17 +2063,15 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 				}
 			}
 		} else {
-			ContentElementList contentList = getAllContent(localContext); // search
-																			// date
-																			// in
-																			// all
-																			// area
+			ContentElementList contentList = getAllContent(localContext);
 			while (contentList.hasNext(ctx)) {
 				IContentVisualComponent comp = contentList.next(ctx);
 				if (comp.getType() == DateComponent.TYPE) {
 					return ((DateComponent) comp).getDate();
 				} else if (comp.getType() == TimeRangeComponent.TYPE) {
 					return ((TimeRangeComponent) comp).getStartDate();
+				} else if (comp.getType() == EventDefinitionComponent.TYPE) {
+					return ((EventDefinitionComponent) comp).getStartDate();
 				}
 			}
 
@@ -3035,13 +3033,13 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 		newCtx.setFree(true);
 
 		PageDescription desc = getPageDescriptionCached(ctx, newCtx.getRequestContentLanguage());
-		
+
 		if (desc.pageTitle != null) {
 			return desc.pageTitle;
 		}
 
 		desc.pageTitle = getForcedPageTitle(newCtx);
-		
+
 		if (desc.pageTitle == null || desc.pageTitle.length() == 0) {
 			desc.pageTitle = getTitle(newCtx);
 		}
@@ -3196,13 +3194,13 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 		try {
 			double pageRank = getPageRank(ctx);
 			if (pageRank == 0) {
-				switch (getSeoWeight()) {				
+				switch (getSeoWeight()) {
 				case SEO_HEIGHT_NULL:
-					return 0;					
+					return 0;
 				case SEO_HEIGHT_LOW:
-					return 1/4;
+					return 1 / 4;
 				case SEO_HEIGHT_NORMAL:
-					return 1/2;
+					return 1 / 2;
 				case SEO_HEIGHT_HIGHT:
 					return 1;
 				default:
@@ -3339,6 +3337,18 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 		return templateId;
 	}
 
+	private TimeRangeComponent getTimeRangeComponent(ContentContext ctx) throws Exception {
+		ContentContext localCtx = ctx.getContextWithArea(null);
+		ContentElementList contentList = getAllContent(localCtx);
+		while (contentList.hasNext(localCtx)) {
+			IContentVisualComponent comp = contentList.next(localCtx);
+			if (comp.getType() == TimeRangeComponent.TYPE || comp.getType() == EventDefinitionComponent.TYPE) {
+				return (TimeRangeComponent) comp;
+			}
+		}
+		return null;
+	}
+
 	/**
 	 * get the time range found in the content.
 	 * 
@@ -3353,9 +3363,8 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 			return desc.timeRange;
 		}
 
-		List<IContentVisualComponent> content = getContentByType(ctx, TimeRangeComponent.TYPE);
-		if (content.size() > 0) {
-			TimeRangeComponent comp = (TimeRangeComponent) content.iterator().next();
+		TimeRangeComponent comp = getTimeRangeComponent(ctx);
+		if (comp != null) {
 			desc.timeRange = new TimeRange(comp.getStartDate(), comp.getEndDate());
 		} else {
 			Date contentDate = getContentDateNeverNull(ctx);
@@ -4455,7 +4464,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 		ContentElementList content = getContent(noAreaCtx);
 		while (content.hasNext(noAreaCtx)) {
 			IContentVisualComponent comp = content.next(noAreaCtx);
-			if (!comp.isContentCachable(noAreaCtx)) {				
+			if (!comp.isContentCachable(noAreaCtx)) {
 				desc.cacheable = false;
 				return false;
 			}
@@ -4922,7 +4931,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 	public boolean isTrash() {
 		return ContentService.TRASH_PAGE_NAME.equals(getName());
 	}
-	
+
 	public boolean isInTrash() {
 		MenuElement parent = getParent();
 		while (parent != null) {
@@ -4933,7 +4942,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 		}
 		return false;
 	}
-	
+
 	public int getFinalSeoWeight() {
 		if (getSeoWeight() == MenuElement.SEO_HEIGHT_INHERITED) {
 			if (getParent() == null) {
@@ -4945,7 +4954,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 			return getSeoWeight();
 		}
 	}
-	
+
 	public boolean isNoIndex() {
 		return getFinalSeoWeight() == SEO_HEIGHT_NULL;
 	}
@@ -4954,15 +4963,16 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 		return seoWeight;
 	}
 
-	public void setSeoWeight(int searchEngineWeight) {		
+	public void setSeoWeight(int searchEngineWeight) {
 		this.seoWeight = searchEngineWeight;
 	}
-	
+
 	/**
 	 * check if page need a specific template.
+	 * 
 	 * @param templateId
 	 * @return
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	public boolean needTemplate(ContentContext ctx, String templateId) throws Exception {
 		Template template = TemplateFactory.getTemplate(ctx, this);

@@ -56,5 +56,9 @@ public class LocationComponent extends AbstractVisualComponent {
 		return true;
 	}
 
+	@Override
+	public boolean isRealContent(ContentContext ctx) {
+		return false;
+	}
 	
 }

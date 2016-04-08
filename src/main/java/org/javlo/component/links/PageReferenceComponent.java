@@ -261,6 +261,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 			bean.priority = page.getPriority();
 			bean.event = new PageEvent();
 			bean.editable = page.isEditabled(realContentCtx);
+			bean.seoWeight = page.getSeoWeight();
 
 			/** check right **/
 			Set<String> roles = page.getEditorRoles();
@@ -420,6 +421,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		private List<PageBean> children = null;
 		private PageEvent event = null;
 		private boolean editable;
+		private int seoWeight;
 
 		private Collection<String> tags = new LinkedList<String>();
 		private final Collection<String> tagsLabel = new LinkedList<String>();
@@ -835,6 +837,14 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		
 		public boolean isActive() {
 			return page.isActive(ctx);					
+		}
+
+		public int getSeoWeight() {
+			return seoWeight;
+		}
+
+		public void setSeoWeight(int seoWeight) {
+			this.seoWeight = seoWeight;
 		}
 
 	}
