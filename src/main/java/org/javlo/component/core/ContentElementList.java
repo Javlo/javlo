@@ -330,17 +330,15 @@ public class ContentElementList implements IContentComponentsList {
 		return bestSubTitle;
 	}
 	
-	public String getLinkLabel(ContentContext ctx) {
-		String res = "";
+	public String getLinkLabel(ContentContext ctx) {		
 		Iterator elems = contentElements.iterator();		
-		String bestSubTitle = "";
 		while (elems.hasNext()) {
 			IContentVisualComponent comp = (IContentVisualComponent) elems.next();			
 			if (comp instanceof LinkLabel) {				
 				return comp.getValue(ctx);
 			}
 		}
-		return bestSubTitle;
+		return "";
 	}
 	
 	public int getSubTitleLevel(ContentContext ctx) {

@@ -216,6 +216,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 				bean.title = page.getChildMenuElements().iterator().next().getTitle(lgCtx);
 			}
 			bean.subTitle = page.getSubTitle(lgCtx);
+			bean.label = page.getLabel(lgCtx);
 			bean.realContent = page.isRealContent(lgCtx);
 			bean.attTitle = XHTMLHelper.stringToAttribute(page.getTitle(lgCtx));
 			bean.description = page.getDescription(lgCtx);
@@ -373,6 +374,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		private boolean contentDate = false;
 		private String title = null;
 		private String subTitle = null;
+		private String label = null;
 		private String attTitle = null;
 		private String description = null;
 		private String location = null;
@@ -845,6 +847,14 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 
 		public void setSeoWeight(int seoWeight) {
 			this.seoWeight = seoWeight;
+		}
+
+		public String getLabel() {
+			return label;
+		}
+
+		public void setLabel(String label) {
+			this.label = label;
 		}
 
 	}
