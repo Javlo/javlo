@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.codehaus.plexus.util.StringUtils;
 import org.javlo.actions.AbstractModuleAction;
 import org.javlo.component.column.TableBreak;
 import org.javlo.component.container.IContainer;
@@ -768,7 +769,7 @@ public class Edit extends AbstractModuleAction {
 				if (!bean.getType().equals(TableBreak.TYPE)) {
 					if (globalContext.isMailingPlatform() || !sourceComp.isMirroredByDefault(ctx) && !(sourceComp instanceof IContainer)) {
 						newId = content.createContent(ctx, targetPage, areaKey, previousId, bean, true);
-					} else {						
+					} else {
 						if (!(sourceComp instanceof IContainer)) {
 							ComponentBean mirrorComponentBean = new ComponentBean(MirrorComponent.TYPE, bean.getId(), ctx.getRequestContentLanguage());
 							newId = content.createContent(ctx, targetPage, areaKey, previousId, mirrorComponentBean, true);
@@ -1141,12 +1142,15 @@ public class Edit extends AbstractModuleAction {
 				String errorMessage = null;
 				boolean modify = false;
 				if (!pageName.equals(StringHelper.createFileName(newName))) {
-
 					if (nameExist(ctx, newName)) {
 						errorMessage = i18nAccess.getText("action.validation.name-allready-exist", new String[][] { { "name", pageName } });
 					}
-
 					if (errorMessage == null) {
+						if (page.isRootChildrenAssociation()) {
+							for (MenuElement child : page.getAllChildren()) {
+								child.setName(StringUtils.replaceOnce(child.getName(), pageName, newName));
+							}
+						}
 						page.setName(newName);
 						modify = true;
 					}
@@ -1429,13 +1433,13 @@ public class Edit extends AbstractModuleAction {
 	}
 
 	public static String performPublish(ServletContext application, HttpServletRequest request, StaticConfig staticConfig, GlobalContext globalContext, ContentService content, ContentContext ctx, I18nAccess i18nAccess) throws Exception {
-		
+
 		if (!canModifyCurrentPage(ctx) || !checkPageSecurity(ctx)) {
 			MessageRepository messageRepository = MessageRepository.getInstance(ctx);
 			messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("action.block"), GenericMessage.ERROR));
 			return null;
 		}
-		
+
 		synchronized (content.getNavigation(ctx).getLock()) {
 
 			DebugHelper.writeInfo(System.out);
@@ -1528,7 +1532,7 @@ public class Edit extends AbstractModuleAction {
 			ReverseLinkService.getInstance(globalContext).clearCache();
 
 			globalContext.resetURLFactory();
-			
+
 			FileCache.getInstance(application).clearPDF(ctx);
 
 			return message;
@@ -1769,16 +1773,15 @@ public class Edit extends AbstractModuleAction {
 			latestArea = bean.getArea();
 			bean.setLanguage(ctx.getRequestContentLanguage());
 			// parentId = content.createContent(ctx, bean, parentId, true);
-			
-			
+
 			if (globalContext.isMailingPlatform() || !comp.isMirroredByDefault(ctx)) {
 				parentId = content.createContent(ctx, ctx.getCurrentPage(), bean, parentId, true);
-			} else {						
+			} else {
 				if (!(comp instanceof IContainer)) {
 					IContentVisualComponent targetComp = content.getComponent(ctx, bean.getId());
 					if (targetComp != null) {
 						ComponentBean mirrorComponentBean = new ComponentBean(MirrorComponent.TYPE, bean.getId(), ctx.getRequestContentLanguage());
-						parentId = content.createContent(ctx, ctx.getCurrentPage(), targetComp.getArea() , parentId, mirrorComponentBean, true);
+						parentId = content.createContent(ctx, ctx.getCurrentPage(), targetComp.getArea(), parentId, mirrorComponentBean, true);
 					}
 				} else {
 					IContentVisualComponent nextComp = comp;
@@ -1806,10 +1809,9 @@ public class Edit extends AbstractModuleAction {
 					}
 				}
 			}
-			
-			
-			
-			//parentId = content.createContent(ctx, ctx.getCurrentPage(), bean, parentId, true);
+
+			// parentId = content.createContent(ctx, ctx.getCurrentPage(), bean,
+			// parentId, true);
 			c++;
 		}
 

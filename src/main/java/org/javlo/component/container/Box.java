@@ -167,7 +167,9 @@ public class Box extends AbstractVisualComponent implements IContainer {
 		} else {
 			String prefix = "";			
 			if (ctx.isAsPreviewMode() && EditContext.getInstance(ctx.getGlobalContext(), ctx.getRequest().getSession()).isEditPreview()) {
-				prefix = "<div " + getPreviewAttributes(ctx) + ">[Close box - "+getBoxStack(ctx).pop()+"]</div>";
+				if (!getBoxStack(ctx).isEmpty()) {
+					prefix = "<div " + getPreviewAttributes(ctx) + ">[Close box - "+getBoxStack(ctx).pop()+"]</div>";
+				}
 			}
 			return prefix + getInternalSuffix(ctx) + getCloseCode(ctx);
 		}

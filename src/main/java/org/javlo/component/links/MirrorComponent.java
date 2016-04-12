@@ -173,11 +173,11 @@ public class MirrorComponent extends AbstractVisualComponent implements IFieldCo
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
 		AbstractVisualComponent comp = (AbstractVisualComponent) getMirrorComponent(ctx);
 		if (comp != null) {
-			AbstractVisualComponent.setForcedId(ctx, getId());		
+			AbstractVisualComponent.setForcedId(ctx, getId());
 			AbstractVisualComponent.setMirrorWrapped(ctx, comp);
-			//comp.prepareView(ctx);
-			ctx.getRequest().setAttribute("nextSame",isNextSame(ctx));
-			ctx.getRequest().setAttribute("previousSame",isPreviousSame(ctx));
+			// comp.prepareView(ctx);
+			ctx.getRequest().setAttribute("nextSame", isNextSame(ctx));
+			ctx.getRequest().setAttribute("previousSame", isPreviousSame(ctx));
 			String xhtml = comp.getXHTMLCode(ctx);
 			AbstractVisualComponent.setForcedId(ctx, null);
 			return xhtml;
@@ -235,22 +235,26 @@ public class MirrorComponent extends AbstractVisualComponent implements IFieldCo
 		return super.isList(ctx);
 	}
 
+	public void unlink(ContentContext ctx) throws Exception {
+		IContentVisualComponent comp = getMirrorComponent(ctx);
+		if (comp != null) {
+			ContentService content = ContentService.getInstance(ctx.getGlobalContext());
+			ComponentBean bean = new ComponentBean(comp.getComponentBean());
+			bean.setArea(getArea());
+			content.createContent(ctx, bean, getId(), isBackgroundColored());
+			deleteMySelf(ctx);
+			ctx.setClosePopup(true);
+			setModify();
+			setNeedRefresh(true);
+		}
+	}
+
 	@Override
 	public String performEdit(ContentContext ctx) throws Exception {
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
 		String newLink = requestService.getParameter(getCurrentInputName(), getMirrorComponentId());
 		if (requestService.getParameter(getUnlinkInputName(), null) != null) {
-			IContentVisualComponent comp = getMirrorComponent(ctx);
-			if (comp != null) {
-				ContentService content = ContentService.getInstance(ctx.getGlobalContext());
-				ComponentBean bean = new ComponentBean(comp.getComponentBean());
-				bean.setArea(getArea());
-				content.createContent(ctx, bean, getId(), isBackgroundColored());
-				deleteMySelf(ctx);
-				ctx.setClosePopup(true);
-				setModify();
-				setNeedRefresh(true);
-			}
+			unlink(ctx);
 		} else if (newLink != null) {
 			if (!newLink.equals(getMirrorComponentId())) {
 				setMirrorComponentId(newLink);
@@ -500,12 +504,12 @@ public class MirrorComponent extends AbstractVisualComponent implements IFieldCo
 	}
 
 	@Override
-	public boolean isRealContent(ContentContext ctx) {		
+	public boolean isRealContent(ContentContext ctx) {
 		IContentVisualComponent comp;
 		try {
 			comp = getMirrorComponent(ctx);
 			if (comp != null) {
-				boolean realContent = comp.isRealContent(ctx);				
+				boolean realContent = comp.isRealContent(ctx);
 				return realContent;
 			}
 		} catch (Exception e) {
@@ -520,19 +524,20 @@ public class MirrorComponent extends AbstractVisualComponent implements IFieldCo
 		try {
 			comp = getMirrorComponent(ctx);
 			if (comp != null) {
-				/* If we find the component on the page, we take this one --> -1 */
-				return comp.getLabelLevel(ctx)-1;  
+				/*
+				 * If we find the component on the page, we take this one --> -1
+				 */
+				return comp.getLabelLevel(ctx) - 1;
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return 0;
 	}
-	
+
 	@Override
 	public String getXHTMLId(ContentContext ctx) {
-		return getType()+'-'+getId();
+		return getType() + '-' + getId();
 	}
-	
 
 }

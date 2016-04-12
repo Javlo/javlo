@@ -297,7 +297,7 @@ public class ComponentHelper {
 	}
 
 	public static IContentVisualComponent getNextComponent(IContentVisualComponent inComp, ContentContext ctx) throws Exception {
-		if (inComp.getPage() == null) {
+		if (inComp == null || inComp.getPage() == null) {
 			return null;
 		}
 		ContentContext ctxCompArea = ctx.getContextWithArea(inComp.getArea());

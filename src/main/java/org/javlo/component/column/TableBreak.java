@@ -19,7 +19,7 @@ import org.javlo.helper.StringHelper;
 
 public class TableBreak extends TableComponent {
 
-	private static final List<String> tableFields = Arrays.asList(new String[] { "padding", "width", "valign", "align", "border", "grid", "spacing", "col", "row", "backgroundcolor", "bordersize", "bordercolor" });
+	private static final List<String> tableFields = Arrays.asList(new String[] { "padding", "width", "valign", "align", "grid", "spacing", "col", "row", "backgroundcolor", "bordersize", "bordercolor", "tablebordersize", "tablebordercolor"  });
 
 	protected static final Set<String> FIELD_NUMBER_ONLY = new HashSet<String>(Arrays.asList(new String[] { "width", "colspan", "col", "row" }));
 
@@ -73,8 +73,13 @@ public class TableBreak extends TableComponent {
 
 	public String getOpenTableStyle(ContentContext ctx) {
 		StringBuffer style = new StringBuffer();
-		if (isBorder(ctx)) {
-			style.append(" border: 1px #333333 solid;");
+		if (!StringHelper.isEmpty(getFieldValue("tablebordersize"))) {
+			String borderSize = getFieldValue("tablebordersize");
+			if (StringHelper.isDigit(borderSize)) {
+				borderSize = borderSize + "px";
+			}
+			String borderColor = getFieldValue("tablebordercolor", "#000000");
+			style.append(" border: "+borderSize+" "+borderColor+" solid;");
 		}
 		if (getSpacing(ctx) != null && getSpacing(ctx).trim().length() > 0) {
 			String spacing = getSpacing(ctx);
@@ -113,23 +118,46 @@ public class TableBreak extends TableComponent {
 			setFieldValue("row", "" + countRow);
 		}
 	}
+	
+	protected String getTableBorderColorInputName() {
+		return createKeyWithField("tablebordercolor");
+	}
+
+	protected String getTableBorderSizeInputName() {
+		return createKeyWithField("tablebordersize");
+	}
 
 	@Override
 	protected String getEditXHTMLCode(ContentContext ctx) throws Exception {
 		countSize(ctx);
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(outStream);
-		out.println("<div class=\"line\">");
+		/*out.println("<div class=\"line\">");
 		out.println("<label for=\"" + getBorderInputString() + "\">border: </label>");
 		String checked = "";
-		if (isBorder(ctx)) {
-			checked = " checked=\"checked\"";
-		}
+		
 		out.println("<input type=\"checkbox\" name=\"" + getBorderInputString() + "\" " + checked + " />");
+		out.println("</div>");*/
+		
+		/** previous version compatibility **/
+		if (isBorder(ctx)) {
+			setFieldValue("tablebordercolor", "#333333");
+			setFieldValue("tablebordersize", "1px");
+			setFieldValue("border","false");
+		}
+		
+		out.println("<div class=\"line\">");
+		out.println("<label for=\"" + getTableBorderColorInputName() + "\">border color : </label>");
+		out.println("<input class=\"color form-control\" name=\"" + getTableBorderColorInputName() + "\" value=\"" + getFieldValue("tablebordercolor") + "\" />");
 		out.println("</div>");
 		out.println("<div class=\"line\">");
+		out.println("<label for=\"" + getTableBorderSizeInputName() + "\">border size : </label>");
+		out.println("<input name=\"" + getTableBorderSizeInputName() + "\" value=\"" + getFieldValue("tablebordersize") + "\" />");
+		out.println("</div>");		
+		
+		out.println("<div class=\"line\">");
 		out.println("<label for=\"" + getGridInputString() + "\">grid: </label>");
-		checked = "";
+		String checked = "";
 		if (isGrid(ctx)) {
 			checked = " checked=\"checked\"";
 		}
@@ -162,7 +190,7 @@ public class TableBreak extends TableComponent {
 	public boolean isBorder(ContentContext ctx) {
 		return StringHelper.isTrue(getFieldValue("border"));
 	}
-
+	
 	public boolean isGrid(ContentContext ctx) {
 		return StringHelper.isTrue(getFieldValue("grid"));
 	}

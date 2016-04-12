@@ -50,12 +50,12 @@ import org.javlo.user.UserFactory;
 public class MailingAction extends AbstractModuleAction {
 
 	public static final String MAILING_FEEDBACK_PARAM_NAME = "_mfb";
-	
+
 	public static final String DATA_MAIL_PREFIX = "_ml_";
-	
+
 	public static final String DATA_MAIL_SUFFIX = "__";
-	
-	public static final String MAILING_FEEDBACK_VALUE_NAME = DATA_MAIL_PREFIX+"data"+DATA_MAIL_SUFFIX;
+
+	public static final String MAILING_FEEDBACK_VALUE_NAME = DATA_MAIL_PREFIX + "data" + DATA_MAIL_SUFFIX;
 
 	private static Logger logger = Logger.getLogger(MailingAction.class.getName());
 
@@ -74,6 +74,7 @@ public class MailingAction extends AbstractModuleAction {
 	}
 
 	/***************/
+
 	/** WEBACTION **/
 	/***************/
 
@@ -123,9 +124,9 @@ public class MailingAction extends AbstractModuleAction {
 				String threadId = SynchroHelper.performSynchro(ctx);
 				request.setAttribute("threadId", threadId);
 				if (threadId != null) {
-					request.setAttribute("checkThreadURL", URLHelper.createStaticURL(ctx, "/rest/thread/"+threadId));
+					request.setAttribute("checkThreadURL", URLHelper.createStaticURL(ctx, "/rest/thread/" + threadId));
 				}
-			}			
+			}
 		}
 		if (ctx.isEditPreview()) {
 			if (mailingContext.getWizardStep(SEND_WIZARD_BOX) == 1) {
@@ -186,8 +187,8 @@ public class MailingAction extends AbstractModuleAction {
 			List<String> adminGroups = new LinkedList(globalContext.getAdminUserRoles());
 			Collections.sort(adminGroups);
 			request.setAttribute("adminGroups", adminGroups);
-			
-			String senders  = adminUserFactory.getRoleWrapper(ctx, adminUserFactory.getCurrentUser(session)).getMailingSenders();
+
+			String senders = adminUserFactory.getRoleWrapper(ctx, adminUserFactory.getCurrentUser(session)).getMailingSenders();
 			if (senders == null || senders.trim().length() == 0) {
 				senders = globalContext.getMailingSenders().trim();
 			} else {
@@ -195,7 +196,7 @@ public class MailingAction extends AbstractModuleAction {
 			}
 			if (senders.trim().length() > 0) {
 				/* hash for remove same entry */
-				request.setAttribute("senders", new HashSet(StringHelper.stringToCollection(senders, ","))); 
+				request.setAttribute("senders", new HashSet(StringHelper.stringToCollection(senders, ",")));
 			} else {
 				if (ctx.getCurrentTemplate().getSenders() != null) {
 					request.setAttribute("senders", ctx.getCurrentTemplate().getSenders());
@@ -241,20 +242,26 @@ public class MailingAction extends AbstractModuleAction {
 				}
 				break;
 			case 2:
-				mailingContext.setSender(rs.getParameter("sender", null));
-				mailingContext.setSubject(rs.getParameter("subject", null));
-				mailingContext.setReportTo(rs.getParameter("report-to", null));
-				mailingContext.setGroups(rs.getParameterListValues("groups", new LinkedList<String>()));
-				mailingContext.setAdminGroups(rs.getParameterListValues("admin-groups", new LinkedList<String>()));
-				mailingContext.setRecipients(rs.getParameter("recipients", null));
-				mailingContext.setStructuredRecipients(rs.getParameter("structuredRecipients", null));
-				mailingContext.setTestMailing(rs.getParameter("test-mailing", null) != null);
-				boolean isValid = mailingContext.validate(ctx);
-				if (ctx.isAjax()) {
-					currentModule.getBox(SEND_WIZARD_BOX).update(ctx);
-				}
-				if (!isValid) {
-					return null;
+				String sender = rs.getParameter("sender", null);
+				if (globalContext.getMailingSenders().contains(sender)) {
+					mailingContext.setSender(sender);
+					mailingContext.setSubject(rs.getParameter("subject", null));
+					mailingContext.setReportTo(rs.getParameter("report-to", null));
+					mailingContext.setGroups(rs.getParameterListValues("groups", new LinkedList<String>()));
+					mailingContext.setAdminGroups(rs.getParameterListValues("admin-groups", new LinkedList<String>()));
+					mailingContext.setRecipients(rs.getParameter("recipients", null));
+					mailingContext.setStructuredRecipients(rs.getParameter("structuredRecipients", null));
+					mailingContext.setTestMailing(rs.getParameter("test-mailing", null) != null);
+					boolean isValid = mailingContext.validate(ctx);
+					if (ctx.isAjax()) {
+						currentModule.getBox(SEND_WIZARD_BOX).update(ctx);
+					}
+					if (!isValid) {
+						return null;
+					}
+				} else {
+					logger.warning("Security error : bad mail sender. (" + globalContext.getContextKey() + " - " + ctx.getCurrentUserId() + ")");
+					return "Security error : bad mail sender.";
 				}
 				break;
 			case 3:

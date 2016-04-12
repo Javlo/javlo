@@ -1970,6 +1970,11 @@ public class StringHelper {
 
 	}
 
+	/**
+	 * ISO 8601 date format
+	 * @param date
+	 * @return
+	 */
 	public static String renderSortableDate(Date date) {
 		if (date == null) {
 			return null;
