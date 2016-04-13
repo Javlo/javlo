@@ -278,6 +278,20 @@ public class MirrorComponent extends AbstractVisualComponent implements IFieldCo
 		}
 		return null;
 	}
+	
+	@Override
+	public String getTextLabel(ContentContext ctx) {
+		IContentVisualComponent comp;
+		try {
+			comp = getMirrorComponent(ctx);
+			if (comp != null) {
+				return comp.getTextLabel(ctx);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
 
 	@Override
 	public List<String> getFieldsNames(ContentContext ctx) throws Exception {
