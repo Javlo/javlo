@@ -1031,6 +1031,19 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	public MenuElement getPage() {
 		return page;
 	}
+	
+	/**
+	 * get the page of the container if component is mirrored else get the page of the component.
+	 * @param ctx
+	 * @return
+	 */
+	public MenuElement getContainerPage(ContentContext ctx) {
+		if (ctx.getRequest().getAttribute("page-"+getId()) != null) {
+			return (MenuElement)ctx.getRequest().getAttribute("page-"+getId());
+		} else {
+			return getPage();
+		}
+	}
 
 	protected String getTag(ContentContext ctx) {
 		return getConfig(ctx).getProperty("tag", "div");

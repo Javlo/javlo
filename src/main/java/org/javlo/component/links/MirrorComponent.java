@@ -10,12 +10,14 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Properties;
 import java.util.logging.Logger;
 
 import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.core.ISubTitle;
+import org.javlo.component.dynamic.DynamicComponent;
 import org.javlo.component.image.IImageTitle;
 import org.javlo.context.ContentContext;
 import org.javlo.fields.Field;
@@ -23,6 +25,8 @@ import org.javlo.fields.IFieldContainer;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.i18n.I18nAccess;
+import org.javlo.navigation.MenuElement;
+import org.javlo.navigation.PageBean;
 import org.javlo.service.ClipBoard;
 import org.javlo.service.ContentService;
 import org.javlo.service.RequestService;
@@ -126,6 +130,16 @@ public class MirrorComponent extends AbstractVisualComponent implements IFieldCo
 		String compId = getMirrorComponentId();
 		ContentService content = ContentService.getInstance(ctx.getRequest());
 		IContentVisualComponent comp = content.getComponentNoRealContentType(ctx, compId);
+		if (comp instanceof DynamicComponent) {
+			DynamicComponent dComp = (DynamicComponent)comp;			
+			if (dComp.getProperties() == null || dComp.getProperties().isEmpty()) {
+				System.out.println("***** MirrorComponent.getPrefixViewXHTMLCode : properties null"); //TODO: remove debug trace
+				Properties prop = new Properties();
+				prop.putAll(dComp.getConfigProperties());
+				dComp.setProperties(prop);
+				dComp.reloadProperties();
+			}
+		}
 		return comp;
 	}
 
@@ -177,7 +191,8 @@ public class MirrorComponent extends AbstractVisualComponent implements IFieldCo
 			AbstractVisualComponent.setMirrorWrapped(ctx, comp);
 			// comp.prepareView(ctx);
 			ctx.getRequest().setAttribute("nextSame", isNextSame(ctx));
-			ctx.getRequest().setAttribute("previousSame", isPreviousSame(ctx));
+			ctx.getRequest().setAttribute("previousSame", isPreviousSame(ctx));			
+			ctx.getRequest().setAttribute("page-"+getMirrorComponentId(), getPage());
 			String xhtml = comp.getXHTMLCode(ctx);
 			AbstractVisualComponent.setForcedId(ctx, null);
 			return xhtml;
@@ -395,8 +410,9 @@ public class MirrorComponent extends AbstractVisualComponent implements IFieldCo
 	public String getViewListXHTMLCode(ContentContext ctx) throws Exception {
 		IContentVisualComponent comp = null;
 		try {
-			comp = getMirrorComponent(ctx);
+			comp = getMirrorComponent(ctx);			
 			if (comp instanceof IFieldContainer) {
+				ctx.getRequest().setAttribute("page-"+getMirrorComponentId(), getPage());
 				return ((IFieldContainer) comp).getViewListXHTMLCode(ctx);
 			}
 		} catch (Exception e) {

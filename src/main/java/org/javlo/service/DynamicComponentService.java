@@ -7,6 +7,7 @@ import java.util.List;
 import org.javlo.component.core.ContentElementList;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.dynamic.DynamicComponent;
+import org.javlo.component.links.MirrorComponent;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.fields.IFieldContainer;
@@ -33,9 +34,14 @@ public class DynamicComponentService {
 		return outService;
 	}
 
-	private ContentContext getContentContextWithContent(ContentContext ctx, MenuElement page) throws Exception {
+	private ContentContext getContentContextWithDynamicComponent(ContentContext ctx, MenuElement page) throws Exception {
 		if (page.getContentByImplementation(ctx, DynamicComponent.class).size() > 0) {
 			return ctx;
+		}
+		for (IContentVisualComponent comp : page.getContentByImplementation(ctx, MirrorComponent.class)) {
+			if (((MirrorComponent)comp).getMirrorComponent(ctx) instanceof DynamicComponent) {
+				return ctx;
+			}
 		}
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		ContentContext lgCtx = new ContentContext(ctx);
@@ -46,6 +52,11 @@ public class DynamicComponentService {
 			if (page.getContentByImplementation(lgCtx, DynamicComponent.class).size() > 0) {
 				return lgCtx;
 			}
+			for (IContentVisualComponent comp : page.getContentByImplementation(lgCtx, MirrorComponent.class)) {
+				if (((MirrorComponent)comp).getMirrorComponent(lgCtx) instanceof DynamicComponent) {
+					return lgCtx;
+				}
+			}
 		}
 		return null;
 	}
@@ -53,11 +64,10 @@ public class DynamicComponentService {
 	public List<IFieldContainer> getFieldContainers(ContentContext ctx, MenuElement page, String fieldType) throws Exception {
 		String REQUEST_KEY = page.getPath() + "__TYPE__" + fieldType;
 		List<IFieldContainer> outContainer = (List<IFieldContainer>) ctx.getRequest().getAttribute(REQUEST_KEY);
-		if (outContainer == null) {
-			MenuElement[] children = page.getAllChildren();
+		if (outContainer == null) {			
 			outContainer = new LinkedList<IFieldContainer>();
-			for (MenuElement child : children) {
-				ContentContext ctxWithContent = getContentContextWithContent(ctx, child);
+			for (MenuElement child : page.getAllChildren()) {
+				ContentContext ctxWithContent = getContentContextWithDynamicComponent(ctx, child);
 				if (ctxWithContent != null) {
 					List<IContentVisualComponent> content = child.getContentByImplementation(ctxWithContent, IFieldContainer.class);
 					for (IContentVisualComponent item : content) {						
