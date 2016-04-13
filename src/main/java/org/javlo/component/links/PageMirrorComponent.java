@@ -14,11 +14,13 @@ import java.util.logging.Logger;
 import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.component.core.ContentElementList;
+import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.core.ISubTitle;
 import org.javlo.component.image.IImageTitle;
 import org.javlo.context.ContentContext;
 import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
+import org.javlo.fields.IFieldContainer;
 import org.javlo.helper.ComponentHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
@@ -268,6 +270,22 @@ public class PageMirrorComponent extends AbstractVisualComponent implements IIma
 	}
 	
 	@Override
+	public String getTextLabel(ContentContext ctx) {
+		MenuElement page;
+		try {
+			page = getMirrorPage(ctx);
+			if (page != null) {
+				return StringHelper.removeTag(page.getLabel(ctx));
+			} else {
+				return "[error bad page mirror]";
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return e.getMessage();
+		}
+	}
+	
+	@Override
 	public boolean isRealContent(ContentContext ctx) {
 		MenuElement page;
 		try {
@@ -399,5 +417,4 @@ public class PageMirrorComponent extends AbstractVisualComponent implements IIma
 	public String getXHTMLId(ContentContext ctx) {
 		return getType()+'-'+getId();
 	}
-
 }

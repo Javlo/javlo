@@ -175,10 +175,16 @@ public class MailService {
 
 	public static final Transport getMailTransport(final MailConfig mailConfig) throws MessagingException {
 		Session mailSession = getMailSession(mailConfig);		
-		Transport transport = mailSession.getTransport("smtp");
 		logger.info("get transport [host:" + mailConfig.getSMTPHost() + " port:" + mailConfig.getSMTPPortInt() + " login:" + mailConfig.getLogin() + " pwd:" + !StringHelper.isEmpty(mailConfig.getPassword()) + ']');
-		transport.connect(mailConfig.getSMTPHost(), mailConfig.getSMTPPortInt(), mailConfig.getLogin(), mailConfig.getPassword());
-		return transport;
+		if (mailConfig.getSMTPPortInt() == 0) {
+			logger.severe("could not send email to port 0.");
+			return null;
+		} else {
+			Transport transport = mailSession.getTransport("smtp");
+			transport.connect(mailConfig.getSMTPHost(), mailConfig.getSMTPPortInt(), mailConfig.getLogin(), mailConfig.getPassword());
+			return transport;
+		}
+		
 	}
 
 	/**
@@ -287,10 +293,12 @@ public class MailService {
 
 			if (transport == null || !transport.isConnected()) {
 				transport = getMailTransport(mailConfig);
-				try {					
-					transport.sendMessage(msg, msg.getAllRecipients());
-				} finally {
-					transport.close();
+				if (transport != null) {
+					try {					
+						transport.sendMessage(msg, msg.getAllRecipients());
+					} finally {
+						transport.close();
+					}
 				}
 			} else {
 				transport.sendMessage(msg, msg.getAllRecipients());

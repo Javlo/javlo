@@ -63,7 +63,7 @@ import org.javlo.macro.ReduceSubtitleLevelMacro;
 import org.javlo.macro.SmartImport;
 import org.javlo.macro.SortChildren;
 import org.javlo.macro.UndeletePage;
-import org.javlo.macro.UnlinkAllMirrorComponent;
+import org.javlo.macro.UnlinkMirrorComponent;
 import org.javlo.macro.UpDateMacro;
 import org.javlo.macro.UploadGallery;
 import org.javlo.macro.deleteComponentInBadArea;
@@ -150,7 +150,7 @@ public class MacroFactory {
 		macros.add(new ImportExternalPage());
 		macros.add(new UndeletePage());
 		macros.add(new DeleteTestPage());
-		macros.add(new UnlinkAllMirrorComponent());
+		macros.add(new UnlinkMirrorComponent());
 	}
 
 	public IMacro getMacro(String name) {
