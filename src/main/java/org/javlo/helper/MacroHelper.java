@@ -31,6 +31,7 @@ import org.javlo.component.core.ContentElementList;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.files.AbstractFileComponent;
 import org.javlo.component.image.GlobalImage;
+import org.javlo.component.links.MirrorComponent;
 import org.javlo.component.meta.DateComponent;
 import org.javlo.component.meta.EventDefinitionComponent;
 import org.javlo.component.meta.Tags;
@@ -1011,7 +1012,7 @@ public class MacroHelper {
 		return new String(outStream.toByteArray());
 	}
 	
-	public static MenuElement duplicatePage(ContentContext ctx, MenuElement page, String newname) throws SecurityException, IllegalArgumentException, IllegalAccessException, InvocationTargetException {
+	public static MenuElement duplicatePage(ContentContext ctx, MenuElement page, String newname, boolean mirror) throws SecurityException, IllegalArgumentException, IllegalAccessException, InvocationTargetException {
 		if (page.getName().equals(newname)) {
 			return null;
 		}
@@ -1021,9 +1022,24 @@ public class MacroHelper {
 		ComponentBean[] sourceData = page.getContent();
 		ComponentBean[] targetData = new ComponentBean[sourceData.length];
 		int i=0;
-		for (ComponentBean bean : sourceData) {			
-			targetData[i] = new ComponentBean(bean);
-			targetData[i].setId(StringHelper.getRandomId());
+		for (ComponentBean bean : sourceData) {
+			if (mirror) {
+				targetData[i] = new ComponentBean(bean);
+				if (bean.getType().equals(MirrorComponent.TYPE)) {
+					targetData[i].setValue(bean.getValue());
+				} else {
+					targetData[i].setValue(bean.getId());
+				}
+				targetData[i].setStyle("");
+				targetData[i].setRenderer(null);
+				targetData[i].setList(false);
+				targetData[i].setBackgroundColor(null);
+				targetData[i].setType(MirrorComponent.TYPE);
+				targetData[i].setId(StringHelper.getRandomId());
+			} else {
+				targetData[i] = new ComponentBean(bean);
+				targetData[i].setId(StringHelper.getRandomId());
+			}
 			i++;
 		}
 		outPage.setContent(targetData);
@@ -1034,7 +1050,7 @@ public class MacroHelper {
 		String errorPage = "";
 		String sep = "";
 		for (MenuElement child : source.getChildMenuElements())	{
-			MenuElement newChild = duplicatePage(ctx, child, child.getName().replace(sourcePattern, targetPattern));
+			MenuElement newChild = duplicatePage(ctx, child, child.getName().replace(sourcePattern, targetPattern),true);
 			if (newChild != null) {
 				target.addChildMenuElement(newChild);
 				errorPage = errorPage+copyChildren(ctx, child, newChild, sourcePattern, targetPattern);

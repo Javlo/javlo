@@ -666,4 +666,5 @@ change log
 
  * expose label in page reference
  
+ * don't send mailing if smtp port is 0 + unlink mirror only on current page 
  

@@ -136,10 +136,6 @@ public class WysiwygParagraph extends AbstractVisualComponent {
 			}
 		}
 		return null;
-	}
-	@Override
-	public boolean isMirroredByDefault(ContentContext ctx) {	
-		return true;
-	}
+	}	
 	
 }
