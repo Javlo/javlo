@@ -318,6 +318,11 @@ public class ExternalLink extends ComplexPropertiesLink implements IReverseLinkC
 	public String getURL(ContentContext ctx) {
 		return XHTMLHelper.escapeXHTML(properties.getProperty(LINK_KEY, ""));
 	}
+	
+	@Override
+	public boolean isLinkValid(ContentContext ctx) throws Exception {
+		return !StringHelper.isEmpty(getURL(ctx));
+	}
 
 	@Override
 	public boolean initContent(ContentContext ctx) throws Exception {

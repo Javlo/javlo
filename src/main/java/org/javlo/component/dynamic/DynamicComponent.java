@@ -801,6 +801,11 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 		}
 		return null;
 	}
+	
+	@Override
+	public boolean isLinkValid(ContentContext ctx) throws Exception {
+		return StringHelper.isEmpty(getURL(ctx));
+	}
 
 	protected FieldImage getImageField(ContentContext ctx) {
 		try {

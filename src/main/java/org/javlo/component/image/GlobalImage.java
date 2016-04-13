@@ -1310,5 +1310,11 @@ public class GlobalImage extends Image implements IImageFilter {
 		}
 		return null;
 	}
+	
+	@Override
+	public boolean isLinkValid(ContentContext ctx) {
+		String url = getURL(ctx);
+		return StringHelper.isEmpty(url) && !StringHelper.isImage(url);
+	}
 
 }

@@ -273,7 +273,7 @@ public class GenericFile extends AbstractFileComponent implements IReverseLinkCo
 
 	@Override
 	public boolean isRealContent(ContentContext ctx) {
-		return getValue().trim().length() > 0;
+		return false;
 	}
 
 	@Override

@@ -218,6 +218,11 @@ public class FieldExternalLink extends MetaField implements ILink {
 	public String getURL(ContentContext ctx) throws Exception {
 		return getCurrentLink();
 	}
+	
+	@Override
+	public boolean isLinkValid(ContentContext ctx) throws Exception {
+		return !StringHelper.isEmpty(getURL(ctx));
+	}
 
 	@Override
 	protected FieldBean newFieldBean(ContentContext ctx) {

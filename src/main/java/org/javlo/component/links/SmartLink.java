@@ -34,6 +34,11 @@ public class SmartLink extends ComplexPropertiesLink implements ILink, IAction {
 	public String getURL(ContentContext ctx) throws Exception {
 		return getURL();
 	}
+	
+	@Override
+	public boolean isLinkValid(ContentContext ctx) throws Exception {
+		return !StringHelper.isEmpty(getURL(ctx));
+	}
 
 	@Override
 	public String getType() {

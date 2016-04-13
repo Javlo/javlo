@@ -151,6 +151,11 @@ public abstract class AbstractFileComponent extends AbstractVisualComponent impl
 		String fileLink = URLHelper.mergePath(getDirSelected(), getFileName());
 		return URLHelper.createResourceURL(ctx, getPage(), staticConfig.getImageFolder() + '/' + fileLink).replace('\\', '/');
 	}
+	
+	@Override
+	public boolean isLinkValid(ContentContext ctx) {
+		return !StringHelper.isEmpty(getURL(ctx));
+	}
 
 	@Override
 	public void prepareView(ContentContext ctx) throws Exception {

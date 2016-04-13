@@ -414,6 +414,11 @@ public class InternalLink extends ComplexPropertiesLink implements IInternalLink
 			return null;
 		}
 	}
+	
+	@Override
+	public boolean isLinkValid(ContentContext ctx) throws Exception {
+		return !StringHelper.isEmpty(getURL(ctx));
+	}
 
 	@Override
 	protected Object getLock(ContentContext ctx) {

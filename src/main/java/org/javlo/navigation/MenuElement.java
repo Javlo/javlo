@@ -2687,9 +2687,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 	 * @throws Exception
 	 */
 	public String getLinkOn(ContentContext ctx) throws Exception {
-
 		PageDescription desc = getPageDescriptionCached(ctx, ctx.getRequestContentLanguage());
-
 		if (desc.linkOn == null) {
 			String res = "";
 			ContentContext newCtx = new ContentContext(ctx);
@@ -2699,14 +2697,13 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 				IContentVisualComponent elem = contentList.next(newCtx);
 				if (elem instanceof ILink && !elem.isRepeat()) {
 					res = ((ILink) elem).getURL(newCtx);
-					if (res != null && (res.equals("#") || StringHelper.isImage(res))) {
+					if (!((ILink) elem).isLinkValid(newCtx)) {
 						res = "";
 					}
 				}
 			}
 			desc.linkOn = res;
 		}
-
 		return desc.linkOn;
 	}
 
