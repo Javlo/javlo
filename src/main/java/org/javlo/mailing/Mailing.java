@@ -435,6 +435,15 @@ public class Mailing {
 		FileUtils.deleteDirectory(sourceDir);
 		loadedDir = targetDir;
 	}
+	
+	public void delete(ServletContext application) throws IOException {
+		StaticConfig staticConfig = StaticConfig.getInstance(application);
+		File sourceDir = new File(staticConfig.getMailingFolder() + '/' + id + '/');
+		File targetDir = new File(staticConfig.getMailingTrashFolder() + '/' + id + '/');
+		FileUtils.copyDirectory(sourceDir, targetDir);
+		FileUtils.deleteDirectory(sourceDir);
+		loadedDir = targetDir;
+	}
 
 	@Override
 	public String toString() {

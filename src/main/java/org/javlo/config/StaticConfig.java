@@ -692,6 +692,12 @@ public class StaticConfig extends Observable {
 		outMailingFolder = replaceFolderVariable(outMailingFolder);
 		return outMailingFolder;
 	}
+	
+	public String getLocalMailingTrashFolder() {
+		String outMailingFolder = properties.getString("mailing-trash.folder", "/mailing/trash");
+		outMailingFolder = replaceFolderVariable(outMailingFolder);
+		return outMailingFolder;
+	}	
 
 	public String getLocalMailingTemplateFolder() {
 		String path = properties.getString("mailing-template-folder", "/mailing-template");
@@ -760,6 +766,14 @@ public class StaticConfig extends Observable {
 
 	public String getMailingHistoryFolder() {
 		String outMailingFolder = getLocalMailingHistoryFolder();
+		if (isDataFolderRelative()) {
+			outMailingFolder = application.getRealPath(outMailingFolder);
+		}
+		return outMailingFolder;
+	}
+	
+	public String getMailingTrashFolder() {
+		String outMailingFolder = getLocalMailingTrashFolder();
 		if (isDataFolderRelative()) {
 			outMailingFolder = application.getRealPath(outMailingFolder);
 		}

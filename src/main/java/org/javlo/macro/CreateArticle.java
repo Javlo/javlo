@@ -20,6 +20,7 @@ import org.javlo.context.ContentContext;
 import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.MacroHelper;
+import org.javlo.helper.MapHelper;
 import org.javlo.helper.NetHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
@@ -76,6 +77,7 @@ public class CreateArticle implements IInteractiveMacro, IAction {
 			e.printStackTrace();
 			return e.getMessage();
 		}
+		rootPages = MapHelper.sortByValue(rootPages);
 		ctx.getRequest().setAttribute("pages", rootPages);
 		
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());

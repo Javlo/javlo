@@ -1,6 +1,7 @@
 package org.javlo.module.mailing;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.PrintStream;
 import java.net.URL;
 import java.util.Collection;
@@ -19,6 +20,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.configuration.ConfigurationException;
 import org.javlo.actions.AbstractModuleAction;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
@@ -27,6 +29,7 @@ import org.javlo.helper.NetHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.i18n.I18nAccess;
+import org.javlo.mailing.Mailing;
 import org.javlo.mailing.MailingFactory;
 import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
@@ -74,7 +77,6 @@ public class MailingAction extends AbstractModuleAction {
 	}
 
 	/***************/
-
 	/** WEBACTION **/
 	/***************/
 
@@ -147,10 +149,18 @@ public class MailingAction extends AbstractModuleAction {
 				currentModule.setSidebar(false);
 				currentModule.setBreadcrumb(false);
 				MailingFactory mailingFactory = MailingFactory.getInstance(session.getServletContext());
+				if (currentModule.getRenderer().contains("history")) {
 				if (!globalContext.isMaster()) {
 					request.setAttribute("allMailing", mailingFactory.getOldMailingListByContext(globalContext.getContextKey()));
 				} else {
 					request.setAttribute("allMailing", mailingFactory.getOldMailingList());
+				}
+				} else {
+					if (!globalContext.isMaster()) {
+						request.setAttribute("allMailing", mailingFactory.getMailingListByContext(globalContext.getContextKey()));
+					} else {
+						request.setAttribute("allMailing", mailingFactory.getMailingList());
+					}	
 				}
 			}
 		}
@@ -344,6 +354,21 @@ public class MailingAction extends AbstractModuleAction {
 	@Override
 	public Boolean haveRight(HttpSession session, User user) throws ModuleException {
 		return Boolean.TRUE;
+	}
+	
+	public static String performDeletemailing(RequestService rs, ServletContext application, ContentContext ctx, HttpSession session, MessageRepository messageRepository, I18nAccess i18nAccess) throws ConfigurationException, IOException {
+		String id = rs.getParameter("id", null);
+		if (id == null) {
+			return "need 'id' as parameter.";
+		}
+		MailingFactory mailingFactory = MailingFactory.getInstance(session.getServletContext());
+		Mailing mailing = mailingFactory.getLiveMailing(id);
+		if (mailing == null) {
+			return "mailing "+id+" not found.";
+		} else {
+			mailing.delete(application);
+			return null;
+		}
 	}
 
 }

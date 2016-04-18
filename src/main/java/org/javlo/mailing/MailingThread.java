@@ -181,26 +181,35 @@ public class MailingThread extends Thread {
 						List<Mailing> mailing = getMailingList();
 						if (mailing.size() > 0) {
 							for (Mailing currentMailing : mailing) {
-								boolean itsTime = true;
-								if (currentMailing.getSendDate() != null) {
-									Date currentDate = new Date();
-									if (currentDate.getTime() < currentMailing.getSendDate().getTime()) {
-										itsTime = false;
-									}
-								}
-								if (itsTime) {
-									if (!currentMailing.isSend() && currentMailing.isValid()) {
-										if (!currentMailing.isExistInHistory(application, currentMailing.getId())) {
-											sendMailing(currentMailing);
-											currentMailing.store(application);
-											sendReport(currentMailing);
-										} else {
-											logger.severe("MailingThread have try to send a mailing founded in the history : " + currentMailing);
+								try {
+									boolean itsTime = true;
+									if (currentMailing.getSendDate() != null) {
+										Date currentDate = new Date();
+										if (currentDate.getTime() < currentMailing.getSendDate().getTime()) {
+											itsTime = false;
 										}
-									} else {
-										logger.info("mailing not send : " + currentMailing);
 									}
-									currentMailing.close(application);
+									if (itsTime) {
+										if (!currentMailing.isSend() && currentMailing.isValid()) {
+											if (!currentMailing.isExistInHistory(application, currentMailing.getId())) {
+												sendMailing(currentMailing);
+												currentMailing.store(application);
+												sendReport(currentMailing);
+											} else {
+												logger.severe("MailingThread have try to send a mailing founded in the history : " + currentMailing);
+											}
+										} else {
+											logger.info("mailing not send : " + currentMailing);
+										}
+										currentMailing.close(application);
+									}
+								} catch (Throwable t) {
+									t.printStackTrace();
+									try {
+										Thread.sleep(500);
+									} catch (InterruptedException e) {
+										e.printStackTrace();
+									}
 								}
 							}
 						}

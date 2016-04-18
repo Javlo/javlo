@@ -4,7 +4,13 @@
 <div class="special${empty componentsList?' last':''}">
 <form id="form-languages" action="${info.currentURL}" method="get" class="js-submit">
 <div class="select-languages form_default">
-	<input type="hidden" name="webaction" value="file.changeLanguage" />	
+	<input type="hidden" name="webaction" value="file.changeLanguage" />
+	<c:if test="${info.admin && globalContext.master}">
+	<c:url var="createStructureFile" value="${info.currentURL}" context="/">
+		<c:param name="webaction" value="createfilestructure" />
+	</c:url>
+	<a class="action-button" title="create file structure" href="${createStructureFile}">file struc.</a>
+	</c:if>	
 	<c:if test="${not empty param[BACK_PARAM_NAME]}"><input type="hidden" name="${BACK_PARAM_NAME}" value="${param[BACK_PARAM_NAME]}" /></c:if>
 	<c:if test="${not empty param['select']}"><input type="hidden" name="select" value="true" /></c:if>
 	<select name="language">

@@ -1503,7 +1503,10 @@ public class AdminAction extends AbstractModuleAction {
 		return msg;
 	}
 
-	public static String performCreateSite(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess, Module currentModule) throws ConfigurationException, IOException, JavloSecurityException, NoSuchMethodException, ClassNotFoundException, IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException {
+	public static String performCreateSite(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess, Module currentModule, User user) throws ConfigurationException, IOException, JavloSecurityException, NoSuchMethodException, ClassNotFoundException, IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException {
+		if (!AdminUserSecurity.getInstance().isAdmin(user)) {
+			return "security error !";
+		}
 		String siteName = rs.getParameter("context", null);
 		if (siteName == null) {
 			return "bad request structure, need 'context' param.";

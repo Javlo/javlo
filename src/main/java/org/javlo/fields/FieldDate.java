@@ -164,7 +164,11 @@ public class FieldDate extends Field implements IDate {
 		if (!(o instanceof FieldDate)) {
 			return super.compareTo(o);
 		} else {
-			return getDate().compareTo(((FieldDate)o).getDate());
+			if (((FieldDate)o).getDate() == null)  {
+				return 0;
+			} else {
+				return getDate().compareTo(((FieldDate)o).getDate());
+			}
 		}		
 	}
 

@@ -75,7 +75,11 @@ public class FileModuleContext extends AbstractModuleContext {
 	}
 
 	public void setPath(String path) {
-		this.path = path;
+		if (path.contains("..")) {
+			return;
+		} else {
+			this.path = path;
+		}
 	}
 
 	@Override

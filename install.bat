@@ -1,2 +1,2 @@
-call mvn -P install compile war:war install
-call mvn-core -P install compile war:war install
+call mvn -P javlo compile war:war install
+call mvn-core -P javlo compile war:war install

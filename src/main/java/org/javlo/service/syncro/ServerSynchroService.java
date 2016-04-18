@@ -1,7 +1,9 @@
 package org.javlo.service.syncro;
 
 import java.io.File;
+import java.io.IOException;
 
+import org.apache.commons.io.FileUtils;
 import org.javlo.helper.URLHelper;
 import org.javlo.service.syncro.AbstractSynchroContext.SynchroAction;
 import org.javlo.service.syncro.AbstractSynchroContext.SynchroSide;
@@ -169,11 +171,26 @@ public class ServerSynchroService extends BaseSynchroService {
 		// Disabled
 	}
 
-	@Override
+	/*@Override
 	protected boolean deleteLocalFile(BaseSynchroContext context, FileInfo localInfo) {
-		// Disabled for safety
+		File file = buildLocalFile(localInfo.getPath());
+		System.out.println("***** ServerSynchroService.deleteLocalFile : delete : "+file.getAbsolutePath()); //TODO: remove debug trace
+		System.out.println("***** ServerSynchroService.deleteLocalFile : exist ? "+file.exists()); //TODO: remove debug trace
+		if (!file.exists()) {
+			logger.fine("could not delete file : "+file+" (file not found).");
+		} else {
+			if (file.isDirectory()) {
+				try {
+					FileUtils.deleteDirectory(file);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			} else {
+				file.delete();
+			}
+		}
 		return false;
-	}
+	}*/
 
 	@Override
 	protected void deleteLocalDirectories(BaseSynchroContext context) {

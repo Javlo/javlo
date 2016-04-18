@@ -1438,10 +1438,10 @@ public class ResourceHelper {
 	}
 
 	public static void main(String[] args) throws IOException {
-		File dir1 = new File("c:/trans/javlo.log");
-		File dir2 = new File("c:/trans/javlo_target.log");
-		// dir2.mkdirs();
-		copyFile(dir1, dir2, true);
+		File target = new File("c:/trans/struct.html");
+		File source = new File("c:/trans");
+		
+		ResourceHelper.writeStringToFile(target, fileStructureToHtml(source));
 	}
 
 	/**
@@ -1498,7 +1498,33 @@ public class ResourceHelper {
 			writeStreamToStream(in, out);
 		} finally {
 			safeClose(in, out);
+		}		
+	}
+	
+	public static String fileStructureToHtml(File file) {
+		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+		PrintStream out = new PrintStream(outStream);
+		out.println("<ul class=\"file-structure\">");
+		fileStructureToHtml(out,file);
+		out.println("</ul>");
+		out.close();
+		return new String(outStream.toByteArray());
+	}
+	
+	private static long fileStructureToHtml(PrintStream out, File file) {
+		long size = 0;
+		if (file.isFile()) {
+			out.println("<li class=\"file\">"+file.getName()+ "["+StringHelper.renderSize(file.length())+"]</li>");
+			return file.length();
+		} else {
+			out.println("<li class=\"folder\">"+file.getName());
+			out.println("<ul>");
+			for (File child : file.listFiles()) {
+				size = size + fileStructureToHtml(out, child);
+			}
+			out.println("</ul></li>");
 		}
+		return size;
 	}
 
 }

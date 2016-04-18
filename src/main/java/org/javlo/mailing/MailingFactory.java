@@ -115,9 +115,32 @@ public class MailingFactory {
 		}
 		return outList;
 	}
+	
+	public List<Mailing> getMailingListByContext(String contextKey) throws ConfigurationException, IOException {
+		List<Mailing> outList = new LinkedList<Mailing>();
+		for (Mailing mailing : getMailingList()) {
+			if (mailing.getContextKey() != null) {
+				if (mailing.getContextKey().equals(contextKey)) {
+					outList.add(mailing);
+				}
+			} else {
+				logger.warning("mailing without context : " + mailing.getSubject());
+			}
+		}
+		return outList;
+	}
 
 	public Mailing getMailing(String id) throws ConfigurationException, IOException {
 		for (Mailing mailing : getOldMailingList()) {
+			if (mailing.getId().equals(id)) {
+				return mailing;
+			}
+		}
+		return null;
+	}
+	
+	public Mailing getLiveMailing(String id) throws ConfigurationException, IOException {
+		for (Mailing mailing : getMailingList()) {
 			if (mailing.getId().equals(id)) {
 				return mailing;
 			}

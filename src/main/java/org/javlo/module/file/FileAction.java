@@ -9,6 +9,7 @@ import java.net.URL;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -503,6 +504,15 @@ public class FileAction extends AbstractModuleAction {
 		request.setAttribute("files", Arrays.asList(new FileBean[] { fileBean }));
 		InfoBean.getCurrentInfoBean(ctx).setFakeCurrentURL(request.getParameter("currentURL"));
 		ctx.getRequest().setAttribute("specialEditRenderer", "/modules/file/jsp/meta.jsp?one=true");
+		return null;
+	}
+	
+	public static String performCreatefilestructure(RequestService rs, ContentContext ctx, GlobalContext globalContext, MessageRepository messageRepository, I18nAccess i18nAccess) throws IOException {
+		File file = new File(URLHelper.mergePath(globalContext.getStaticFolder(), "file-structure", StringHelper.createFileName("structure-"+StringHelper.renderSortableTime(new Date())+".html")));
+		file.getParentFile().mkdirs();
+		System.out.println("***** FileAction.performCreatefilestructure : file = "+file); //TODO: remove debug trace
+		file.createNewFile();		
+		ResourceHelper.writeStringToFile(file, ResourceHelper.fileStructureToHtml(new File(globalContext.getStaticConfig().getAllDataFolder())));
 		return null;
 	}
 
