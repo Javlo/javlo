@@ -51,7 +51,7 @@ public class PageBean implements Serializable {
 	}
 
 	private final MenuElement page;
-	private final ContentContext ctx;
+	private ContentContext ctx;
 
 	public PageDescription getInfo() {
 		try {
@@ -471,10 +471,12 @@ public class PageBean implements Serializable {
 				return getUrl();
 			}
 		}
-	}
-	
+	}	
 	public int getSeoWeight() {
 		return page.getFinalSeoWeight();
 	}
-
+	
+	public void setContentContext(ContentContext ctx) {
+		this.ctx = ctx;
+	}
 }

@@ -58,6 +58,8 @@ import org.javlo.message.MessageRepository;
 import org.javlo.message.PopupMessage;
 import org.javlo.module.core.ModulesContext;
 import org.javlo.navigation.MenuElement;
+import org.javlo.navigation.PageAssociationBean;
+import org.javlo.navigation.PageBean;
 import org.javlo.portlet.filter.MultiReadRequestWrapper;
 import org.javlo.rendering.Device;
 import org.javlo.service.ContentService;
@@ -76,9 +78,8 @@ import org.javlo.template.Template;
 import org.javlo.template.TemplateFactory;
 import org.javlo.thread.ThreadManager;
 import org.javlo.tracking.Tracker;
-import org.javlo.user.AdminUserFactory;
-import org.javlo.user.User;
 import org.javlo.user.UserFactory;
+import org.javlo.user.VisitorContext;
 import org.javlo.utils.DebugListening;
 import org.javlo.utils.DoubleOutputStream;
 import org.javlo.ztatic.FileCache;
@@ -319,7 +320,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 			}
 
 			/** CACHE **/			
-			if (ctx.isAsViewMode() && ctx.getCurrentPage().isCacheable(ctx) && globalContext.isPreviewMode() && globalContext.getPublishDate() != null && request.getMethod().equalsIgnoreCase("get") && request.getParameter("webaction") == null) {
+			if (ctx.isAsViewMode() && ctx.getCurrentPage() != null && ctx.getCurrentPage().isCacheable(ctx) && globalContext.isPreviewMode() && globalContext.getPublishDate() != null && request.getMethod().equalsIgnoreCase("get") && request.getParameter("webaction") == null) {
 				long lastModified = globalContext.getPublishDate().getTime();
 				response.setDateHeader(NetHelper.HEADER_LAST_MODIFIED, lastModified);
 				response.setHeader("Cache-Control", "max-age=60,must-revalidate");
@@ -927,9 +928,10 @@ public class AccessServlet extends HttpServlet implements IVersion {
 							String area = requestService.getParameter("only-area", null);
 							if (area != null) {
 								getServletContext().getRequestDispatcher("/jsp/view/content_view.jsp?area=" + area).include(request, response);
-							} else {
+							} else {								
 								String jspPath = template.getRendererFullName(ctx);
 								getServletContext().getRequestDispatcher(jspPath).include(request, response);
+								VisitorContext.getInstance(request.getSession()).setPreviousPage(ctx.getCurrentPage().getPageBean(ctx));
 							}
 						}
 					}
