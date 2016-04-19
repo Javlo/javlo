@@ -253,6 +253,11 @@
 	<label for="mailing-subject">${i18n.edit['admin.mailing.subject']}</label>
 	<input class="form-control" type="text" id="mailing-subject" name="mailing-subject" value="${currentContext.mailingSubject}" />	
 </div>
+<div class="form-group">		
+	<label for="mailing-unsubscribe">${i18n.edit['admin.mailing.unsubscribe']}</label>
+	<input class="form-control" type="text" id="mailing-unsubscribe" name="mailing-unsubscribe" value="${currentContext.unsubscribeLink}" />	
+</div>
+
 </div>
 </div>
 <div class="row">

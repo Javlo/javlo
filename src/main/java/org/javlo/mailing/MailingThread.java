@@ -97,8 +97,8 @@ public class MailingThread extends Thread {
 				e.printStackTrace();
 			}
 		}
-		try {
-			mailService.sendMail(null, mailing.getFrom(), mailing.getNotif(), null, bcc, "report mailing : " + mailing.getSubject(), content, false);
+		try {			
+			mailService.sendMail(null, mailing.getFrom(), mailing.getNotif(), null, bcc, "report mailing : " + mailing.getSubject(), content, false, null);
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
@@ -145,7 +145,11 @@ public class MailingThread extends Thread {
 				}
 
 				try {
-					mailingManager.sendMail(transport, mailing.getFrom(), to, mailing.getSubject(), content, true);
+					String unsubsribeLink = mailing.getManualUnsubscribeLink();
+					if (!StringHelper.isEmpty(unsubsribeLink)) {
+						unsubsribeLink = unsubsribeLink.replace("${email}", to.getAddress());
+					}					
+					mailingManager.sendMail(transport, mailing.getFrom(), to, mailing.getSubject(), content, true, mailing.getManualUnsubscribeLink());
 				} catch (Exception ex) {
 					ex.printStackTrace();
 				}

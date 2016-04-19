@@ -13,6 +13,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
@@ -216,9 +218,9 @@ public class MailingModuleContext extends AbstractModuleContext {
 				}
 			}
 			if (adminGroups != null) {
-				for (String group : adminGroups) {					
+				for (String group : adminGroups) {
 					List<IUserInfo> users = adminUserFactory.getUserInfoForRoles(new String[] { group });
-					for (IUserInfo user : users) {						
+					for (IUserInfo user : users) {
 						if (!StringHelper.isEmpty(user.getEmail())) {
 							InternetAddress email = new InternetAddress(user.getEmail(), StringHelper.neverNull(user.getFirstName()) + " " + StringHelper.neverNull(user.getLastName()));
 							if (!allRecipients.contains(email)) {
@@ -280,21 +282,27 @@ public class MailingModuleContext extends AbstractModuleContext {
 		m.setContextKey(ctx.getGlobalContext().getContextKey());
 
 		m.setSmtpHost(ctx.getGlobalContext().getSMTPHost());
-		m.setSmtpPort(ctx.getGlobalContext().getSMTPPort());		
-		m.setSmtpUser(ctx.getGlobalContext().getSMTPUser());		
+		m.setSmtpPort(ctx.getGlobalContext().getSMTPPort());
+		m.setSmtpUser(ctx.getGlobalContext().getSMTPUser());
 		m.setSmtpPassword(ctx.getGlobalContext().getSMTPPassword());
-		
+		if (!StringHelper.isEmpty(ctx.getGlobalContext().getUnsubscribeLink())) {
+			String link = ctx.getGlobalContext().getUnsubscribeLink();
+			if (link.contains("page:")) {
+				link = URLHelper.replacePageReference(ctx.getContextForAbsoluteURL().getContextWithOtherRenderMode(ContentContext.VIEW_MODE), link);
+			}
+			m.setManualUnsubscribeLink(link);
+		}
 		m.setTest(isTestMailing());
-		
+
 		StaticConfig sc = ctx.getGlobalContext().getStaticConfig();
 		String content;
-		if (sc.getApplicationLogin() != null) {			
+		if (sc.getApplicationLogin() != null) {
 			content = NetHelper.readPageForMailing(url, sc.getApplicationLogin(), sc.getApplicationPassword());
 		} else {
 			User user = AdminUserFactory.createUserFactory(globalContext, ctx.getRequest().getSession()).getUser(ctx.getCurrentEditUser().getLogin());
 			String token = null;
 			if (user != null) {
-				if (user.getUserInfo().getToken() == null || user.getUserInfo().getToken().trim().length() == 0) {				
+				if (user.getUserInfo().getToken() == null || user.getUserInfo().getToken().trim().length() == 0) {
 					user.getUserInfo().setToken(StringHelper.getRandomIdBase64());
 				}
 				token = user.getUserInfo().getToken();
@@ -308,7 +316,7 @@ public class MailingModuleContext extends AbstractModuleContext {
 		m.setHtml(true);
 		m.setRoles(groups);
 		m.setSendDate(new Date());
-		
+
 		Map<InternetAddress, IUserInfo> users = new HashMap<InternetAddress, IUserInfo>();
 		if (globalContext.getStaticConfig().isMailingWidthUserInfo()) {
 			for (IUserInfo userInfo : UserFactory.createUserFactory(globalContext, ctx.getRequest().getSession()).getUserInfoList()) {
@@ -318,7 +326,7 @@ public class MailingModuleContext extends AbstractModuleContext {
 			}
 			m.setUsers(users);
 		}
-		
+
 		m.store(ctx.getRequest().getSession().getServletContext());
 	}
 
@@ -338,4 +346,5 @@ public class MailingModuleContext extends AbstractModuleContext {
 		this.adminGroups = adminGroups;
 	}
 
+	
 }

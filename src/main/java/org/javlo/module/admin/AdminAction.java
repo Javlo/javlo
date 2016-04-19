@@ -122,7 +122,7 @@ public class AdminAction extends AbstractModuleAction {
 		private String forcedHost = "";
 		private String editTemplateMode = null;
 		private String DMZServerInter = "";
-		private String DMZServerIntra = "";
+		private String DMZServerIntra = "";		
 		private String platformType = StaticConfig.WEB_PLATFORM;
 
 		private String shortDateFormat;
@@ -143,6 +143,7 @@ public class AdminAction extends AbstractModuleAction {
 		private String mailingSenders = "";
 		private String mailingSubject = "";
 		private String mailingReport = "";
+		private String unsubscribeLink = "";
 		
 		private String smtphost;
 		private String smtpport;
@@ -216,6 +217,7 @@ public class AdminAction extends AbstractModuleAction {
 			setMailingSenders(globalContext.getMailingSenders());
 			setMailingSubject(globalContext.getMailingSubject());
 			setMailingReport(globalContext.getMailingReport());
+			setUnsubscribeLink(globalContext.getUnsubscribeLink());
 			
 			setSmtphost(globalContext.getSMTPHost());
 			setSmtpport(globalContext.getSMTPPort());
@@ -739,6 +741,14 @@ public class AdminAction extends AbstractModuleAction {
 			this.smtppassword = smtppassword;
 		}
 
+		public String getUnsubscribeLink() {
+			return unsubscribeLink;
+		}
+
+		public void setUnsubscribeLink(String unsubscribeLink) {
+			this.unsubscribeLink = unsubscribeLink;
+		}
+
 	}
 
 	public static class ComponentBean {
@@ -1136,6 +1146,7 @@ public class AdminAction extends AbstractModuleAction {
 					currentGlobalContext.setMailingSenders(requestService.getParameter("mailing-senders", ""));
 					currentGlobalContext.setMailingSubject(requestService.getParameter("mailing-subject", ""));
 					currentGlobalContext.setMailingReport(requestService.getParameter("mailing-report", ""));
+					currentGlobalContext.setUnsubscribeLink(requestService.getParameter("mailing-unsubscribe", ""));
 					
 					/** SMTP **/
 					currentGlobalContext.setSMTPHost(requestService.getParameter("mailing-smtphost",null));

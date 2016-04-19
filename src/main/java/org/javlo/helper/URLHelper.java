@@ -13,6 +13,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
@@ -1298,6 +1300,25 @@ public class URLHelper extends ElementaryURLHelper {
 				return createStaticURL(ctx, "/mimetype/"+fileType+".svg");
 			}
 		}
+	}
+	
+	/**
+	 * replace page:pagename with the correct link to the page.
+	 * @param text
+	 * @return
+	 * @throws Exception 
+	 */
+	public static String replacePageReference(ContentContext ctx, String text) throws Exception {
+		Pattern pattern = Pattern.compile("(page:)(.+?)(>| |,|;|:|\\?)");
+		Matcher matcher = pattern.matcher(text);		
+		String outText = text;
+		while (matcher.find()) {
+			String group = matcher.group();
+			group = group.substring(0, group.length()-1);	
+			group = group.replaceFirst("page:", "");
+			outText = outText.replaceAll(group, URLHelper.createURLFromPageName(ctx, group));
+		}
+		return outText;
 	}
 
 }

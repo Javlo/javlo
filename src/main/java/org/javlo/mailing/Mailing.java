@@ -112,6 +112,8 @@ public class Mailing {
 
 	private String unsubscribeURL = null;
 
+	private String manualUnsubscribeLink = null;
+
 	boolean html;
 
 	private boolean TEST = false;
@@ -277,6 +279,7 @@ public class Mailing {
 			setSmtpPort(config.getString("smtp.port", null));
 			setSmtpUser(config.getString("smtp.user", null));
 			setSmtpPassword(config.getString("smtp.password", null));
+			setManualUnsubscribeLink(config.getString("manual-unsubscribe-link", null));
 
 			try {
 				date = StringHelper.parseTime(config.getString("date"));
@@ -394,6 +397,9 @@ public class Mailing {
 			if (!StringHelper.isEmpty(getSmtpPassword())) {
 				config.setProperty("smtp.password", getSmtpPassword());
 			}
+			if (!StringHelper.isEmpty(getManualUnsubscribeLink())) {
+				config.setProperty("manual-unsubscribe-link", getManualUnsubscribeLink());
+			}
 
 			if (sendDate != null) {
 				config.setProperty("send-date", StringHelper.renderTime(sendDate));
@@ -435,7 +441,7 @@ public class Mailing {
 		FileUtils.deleteDirectory(sourceDir);
 		loadedDir = targetDir;
 	}
-	
+
 	public void delete(ServletContext application) throws IOException {
 		StaticConfig staticConfig = StaticConfig.getInstance(application);
 		File sourceDir = new File(staticConfig.getMailingFolder() + '/' + id + '/');
@@ -580,12 +586,12 @@ public class Mailing {
 					file.createNewFile();
 				}
 				out = new FileOutputStream(file, true);
-				outBuf = new BufferedWriter(new OutputStreamWriter(out));				
-				outBuf.append(CSVFactory.exportLine(Arrays.asList(bean.toArray()), ","));				
+				outBuf = new BufferedWriter(new OutputStreamWriter(out));
+				outBuf.append(CSVFactory.exportLine(Arrays.asList(bean.toArray()), ","));
 				outBuf.newLine();
 			} finally {
 				ResourceHelper.closeResource(outBuf);
-				ResourceHelper.closeResource(out);				
+				ResourceHelper.closeResource(out);
 			}
 		}
 	}
@@ -761,6 +767,14 @@ public class Mailing {
 
 	public void setSmtpPassword(String smtpPassword) {
 		this.smtpPassword = smtpPassword;
+	}
+
+	public String getManualUnsubscribeLink() {
+		return manualUnsubscribeLink;
+	}
+
+	public void setManualUnsubscribeLink(String manualUnsubcribeLink) {
+		this.manualUnsubscribeLink = manualUnsubcribeLink;
 	}
 
 }

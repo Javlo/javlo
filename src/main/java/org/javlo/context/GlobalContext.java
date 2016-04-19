@@ -3327,6 +3327,14 @@ public class GlobalContext implements Serializable, IPrintInfo {
 			return shortURL;
 		}
 	}
+	
+	public String getUnsubscribeLink() {
+		return properties.getString("unsubscribeLink", null);
+	}
+
+	public void setUnsubscribeLink(String link) {
+		properties.setProperty("unsubscribeLink", link);
+	}
 
 	public String getSMTPHost() {
 		return properties.getString(StaticConfig.SMTP_HOST_PARAM, null);
