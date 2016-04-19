@@ -149,7 +149,7 @@ public class MailingThread extends Thread {
 					if (!StringHelper.isEmpty(unsubsribeLink)) {
 						unsubsribeLink = unsubsribeLink.replace("${email}", to.getAddress());
 					}					
-					mailingManager.sendMail(transport, mailing.getFrom(), to, mailing.getSubject(), content, true, mailing.getManualUnsubscribeLink());
+					mailingManager.sendMail(transport, mailing.getFrom(), to, mailing.getSubject(), content, true, unsubsribeLink);
 				} catch (Exception ex) {
 					ex.printStackTrace();
 				}

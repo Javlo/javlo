@@ -212,7 +212,7 @@ public class MailService {
 	 * @throws IllegalArgumentException
 	 *             if no recipient provided or no sender
 	 */
-	public void sendMail(Transport transport, InternetAddress sender, List<InternetAddress> recipients, List<InternetAddress> ccRecipients, List<InternetAddress> bccRecipients, String subject, String content, String txtContent, boolean isHTML, Collection<Attachment> attachments, String unsubribeLink) throws MessagingException {
+	public void sendMail(Transport transport, InternetAddress sender, List<InternetAddress> recipients, List<InternetAddress> ccRecipients, List<InternetAddress> bccRecipients, String subject, String content, String txtContent, boolean isHTML, Collection<Attachment> attachments, String unsubscribeLink) throws MessagingException {
 
 		String recipientsStr = new LinkedList<InternetAddress>(recipients).toString();
 
@@ -231,8 +231,8 @@ public class MailService {
 			Session mailSession = getMailSession(mailConfig);
 			
 			MimeMessage msg = new MimeMessage(mailSession);
-			if (!StringHelper.isEmpty(unsubribeLink)) {
-				msg.setHeader("List-Unsubscribe", unsubribeLink);
+			if (!StringHelper.isEmpty(unsubscribeLink)) {				
+				msg.setHeader("List-Unsubscribe", unsubscribeLink);
 			}
 			msg.setSentDate(sendDate);
 			msg.setFrom(sender);
@@ -445,7 +445,7 @@ public class MailService {
 	 *             if no recipient provided or no sender
 	 */
 	public void sendMail(Transport transport, InternetAddress sender, InternetAddress recipient, String subject, String content, boolean isHTML, String unsubribeLink) throws MessagingException {
-		sendMail(transport, sender, recipient, (List<InternetAddress>) null, (List<InternetAddress>) null, subject, content, isHTML, null);
+		sendMail(transport, sender, recipient, (List<InternetAddress>) null, (List<InternetAddress>) null, subject, content, isHTML, unsubribeLink);
 	}
 
 	public void sendMail(InternetAddress sender, InternetAddress recipient, String subject, String content, boolean isHTML) throws MessagingException {
