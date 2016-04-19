@@ -545,7 +545,7 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 						bccList = Arrays.asList(bccEmail);
 					}
 
-					mailService.sendMail(null, fromEmail, adminEmail, ccList, bccList, subject, mailContent, comp.isHTMLMail());
+					mailService.sendMail(null, fromEmail, adminEmail, ccList, bccList, subject, mailContent, comp.isHTMLMail(), null);
 					// remove
 					// debug
 					// trace
