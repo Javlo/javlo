@@ -279,7 +279,7 @@ public abstract class ElementaryURLHelper {
 			newUri = URLHelper.addParam(newUri, ContentContext.FORCE_MODE_PARAMETER_NAME, "" + ctx.getRenderMode());
 		}
 
-		if (ctx.isEditPreview()) {
+		if (ctx.isEditPreview() && ctx.isAsPreviewMode()) {
 			newUri = URLHelper.addParam(newUri, "editPreview", "true");
 		}
 		if (!ctx.isInternalURL() && ctx.getGlobalContext().getProxyPathPrefix().length() > 0) {
