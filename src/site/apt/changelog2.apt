@@ -666,5 +666,7 @@ change log
 
  * expose label in page reference
  
- * don't send mailing if smtp port is 0 + unlink mirror only on current page 
+ * don't send mailing if smtp port is 0 + unlink mirror only on current page
+ 
+* 2.1.0.3.10 20/04/2016  
  
