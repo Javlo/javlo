@@ -228,7 +228,7 @@ public abstract class TableComponent extends AbstractPropertiesComponent {
 			}
 		}
 		if (getFieldNumberOnly().contains(fieldName)) {
-			if (fieldValue.length()>0 && !StringHelper.isDigit(fieldValue)) {
+			if (fieldValue != null && fieldValue.length()>0 && !StringHelper.isDigit(fieldValue)) {
 				out = fieldName + ' ' + I18nAccess.getInstance(ctx).getText("content.field.only-number", "must be a number.");
 			}
 		}

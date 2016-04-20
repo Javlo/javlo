@@ -7,6 +7,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -84,7 +85,12 @@ public class MirrorComponent extends AbstractVisualComponent implements IFieldCo
 		}
 		out.println("</div></div>");
 		if (currentComp != null) {
-			out.println("<div class=\"col-sm-4\">" + i18nAccess.getText("content.mirror.type") + currentComp.getType() + " (<a href=\"" + URLHelper.createURL(ctx, currentComp.getPage()) + "\">" + currentComp.getPage().getPath() + "</a>)</div>");
+			Map<String,String> params = new HashMap<String, String>();
+			params.put("module", "content");
+			params.put("webaction", "edit.editPreview");
+			params.put("comp_id", currentComp.getId());
+			params.put("previewEdit", "true");
+			out.println("<div class=\"col-sm-4\"><a class=\"btn btn-default\" href=\"" + URLHelper.createURL(ctx, currentComp.getPage(), params) + "\">edit source : " + currentComp.getType() + "</a></div>");
 		}
 		if (getValue().trim().length() > 0) {
 			out.println("<div class=\"col-sm-4\">");

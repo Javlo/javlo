@@ -242,5 +242,11 @@ public class MailingThread extends Thread {
 			stop.notifyAll();
 		}
 	}
+	
+	public static void main(String[] args) throws AddressException, MessagingException {
+		MailConfig mailConfig = new MailConfig("relay.javlo.org", 25, null, null);
+		MailService mailingManager = MailService.getInstance(mailConfig);
+		mailingManager.sendMail(null, new InternetAddress("p@noctis.be"), new InternetAddress("pvandermaesen@noctis.be"), "test smtp : "+StringHelper.renderTimeInSecond(new Date().getTime()), "test smtp", false, null);
+	}
 
 }

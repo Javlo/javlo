@@ -115,6 +115,12 @@ figure {
 	height: 0;
 }
 
+.edit-preview .separation {
+	font-size: 12px;
+	line-height: normal;
+	height: auto;
+}
+
 .separation .visible-separation {
 	margin-top: 10px;
 	margin-bottom: 10px;
