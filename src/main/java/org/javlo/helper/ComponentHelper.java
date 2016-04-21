@@ -19,6 +19,7 @@ import org.javlo.component.core.ComponentBean;
 import org.javlo.component.core.ContentElementList;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.dynamic.DynamicComponent;
+import org.javlo.component.links.MirrorComponent;
 import org.javlo.component.text.DynamicParagraph;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
@@ -446,6 +447,14 @@ public class ComponentHelper {
 			i++;
 		}
 		return cells;
+	}
+	
+	public static final String getFinalType(ContentContext ctx, IContentVisualComponent comp) throws Exception {
+		if (comp instanceof MirrorComponent) {
+			return ((MirrorComponent)comp).getMirrorComponent(ctx).getType();
+		} else {
+			return comp.getType();
+		}
 	}
 
 }

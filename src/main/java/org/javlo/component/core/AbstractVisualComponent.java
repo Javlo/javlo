@@ -51,6 +51,7 @@ import org.javlo.context.GlobalContext;
 import org.javlo.context.UserInterfaceContext;
 import org.javlo.exception.ResourceNotFoundException;
 import org.javlo.helper.BeanHelper;
+import org.javlo.helper.ComponentHelper;
 import org.javlo.helper.ConfigHelper;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.ServletHelper;
@@ -1146,19 +1147,13 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		IContentVisualComponent nextComp = getNextComponent();
 		if (nextComp == null) {
 			return false;
-		} else {
-			if (nextComp instanceof MirrorComponent) {
-				try {
-					if (((MirrorComponent) nextComp).getMirrorComponent(ctx) == null) {
-						return false;
-					}
-					return ((MirrorComponent) nextComp).getMirrorComponent(ctx).getType().equals(getType());
-				} catch (Exception e) {
-					e.printStackTrace();
-					return false;
-				}
+		} else {			
+			try {
+				return ComponentHelper.getFinalType(ctx, this).equals(ComponentHelper.getFinalType(ctx, nextComp));
+			} catch (Exception e) { 
+				e.printStackTrace();
+				return false;
 			}
-			return nextComp.getType().equals(getType());
 		}
 	}
 
@@ -1167,18 +1162,12 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		if (previousComp == null) {
 			return false;
 		} else {
-			if (previousComp instanceof MirrorComponent) {
-				try {
-					if (((MirrorComponent) previousComp).getMirrorComponent(ctx) == null) {
-						return false;
-					}
-					return ((MirrorComponent) previousComp).getMirrorComponent(ctx).getType().equals(getType());
-				} catch (Exception e) {
-					e.printStackTrace();
-					return false;
-				}
-			}
-			return previousComp.getType().equals(getType());
+			try {
+				return ComponentHelper.getFinalType(ctx, this).equals(ComponentHelper.getFinalType(ctx, previousComp));	
+			} catch (Exception e) { 
+				e.printStackTrace();
+				return false;
+			}			
 		}
 	}
 
