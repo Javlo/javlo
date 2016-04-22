@@ -24,8 +24,16 @@ public class TransactionFile {
 	private File targetFile = null;
 	private File tempFile = null;
 	private FileOutputStream out = null;
-
+	
 	public TransactionFile(File targetFile) throws IOException {
+		init(targetFile, false);
+	}
+	
+	public TransactionFile(File targetFile, boolean copySourceInInternalFile) throws IOException {
+		init(targetFile, copySourceInInternalFile);
+	}
+
+	public void init(File targetFile, boolean copySourceInInternalFile) throws IOException {
 		this.targetFile = targetFile;
 		tempFile = new File(targetFile.getAbsolutePath() + "_" + StringHelper.getRandomId() + ".tmp");
 		if (tempFile.exists()) {
@@ -33,7 +41,10 @@ public class TransactionFile {
 		} else {
 			logger.fine("create temp file : "+tempFile);
 			tempFile.getParentFile().mkdirs();
-			tempFile.createNewFile();			
+			tempFile.createNewFile();	
+			if (copySourceInInternalFile && targetFile.exists()) {
+				ResourceHelper.writeFileToFile(targetFile, tempFile);
+			}
 		}
 		out = new FileOutputStream(tempFile);
 	}

@@ -24,7 +24,6 @@ import javax.mail.MessagingException;
 import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.mail.Transport;
-import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
@@ -32,6 +31,10 @@ import javax.mail.internet.MimeMultipart;
 import javax.mail.util.ByteArrayDataSource;
 
 import org.javlo.context.ContentContext;
+import org.javlo.external.agitos.dkim.Canonicalization;
+import org.javlo.external.agitos.dkim.DKIMSigner;
+import org.javlo.external.agitos.dkim.SMTPDKIMMessage;
+import org.javlo.external.agitos.dkim.SigningAlgorithm;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 
@@ -212,7 +215,7 @@ public class MailService {
 	 * @throws IllegalArgumentException
 	 *             if no recipient provided or no sender
 	 */
-	public void sendMail(Transport transport, InternetAddress sender, List<InternetAddress> recipients, List<InternetAddress> ccRecipients, List<InternetAddress> bccRecipients, String subject, String content, String txtContent, boolean isHTML, Collection<Attachment> attachments, String unsubscribeLink) throws MessagingException {
+	public void sendMail(Transport transport, InternetAddress sender, List<InternetAddress> recipients, List<InternetAddress> ccRecipients, List<InternetAddress> bccRecipients, String subject, String content, String txtContent, boolean isHTML, Collection<Attachment> attachments, String unsubscribeLink, DKINBean dkin) throws MessagingException {
 
 		String recipientsStr = new LinkedList<InternetAddress>(recipients).toString();
 
@@ -230,7 +233,28 @@ public class MailService {
 			//Session mailSession = Session.getDefaultInstance(props);
 			Session mailSession = getMailSession(mailConfig);
 			
-			MimeMessage msg = new MimeMessage(mailSession);
+			MimeMessage msg = null;
+			if (dkin != null) {
+				  //Create DKIM Signer
+			    DKIMSigner dkimSigner = null;
+			    try {
+			        dkimSigner = new DKIMSigner(dkin.getSigningdomain(), dkin.getSelector(), dkin.getPrivatekey());
+			        dkimSigner.setIdentity(dkin.getMailUser() + "@" + dkin.getSigningdomain());
+			        dkimSigner.setHeaderCanonicalization(Canonicalization.SIMPLE);
+			        dkimSigner.setBodyCanonicalization(Canonicalization.RELAXED);
+			        dkimSigner.setLengthParam(true);
+			        dkimSigner.setSigningAlgorithm(SigningAlgorithm.SHA1withRSA);
+			        dkimSigner.setZParam(true);
+			    } catch (Exception e) {
+			    e.printStackTrace();
+			        }
+			    if(dkimSigner != null) {			        
+			    	msg = new SMTPDKIMMessage(mailSession, dkimSigner);			           
+			    }       
+			}
+			if (msg == null) {				
+				msg = new MimeMessage(mailSession);
+			}
 			if (!StringHelper.isEmpty(unsubscribeLink)) {				
 				msg.setHeader("List-Unsubscribe", unsubscribeLink);
 			}
@@ -389,7 +413,7 @@ public class MailService {
 		if (recipient != null) {
 			recipients = Arrays.asList(recipient);
 		}
-		sendMail(transport, sender, recipients, ccRecipients, bccRecipients, subject, content, null, isHTML, null, unsubribeLink);
+		sendMail(transport, sender, recipients, ccRecipients, bccRecipients, subject, content, null, isHTML, null, unsubribeLink, null);
 	}
 
 	public void sendMail(Transport transport, InternetAddress sender, InternetAddress recipient, InternetAddress ccRecipient, InternetAddress bccRecipient, String subject, String content, boolean isHTML) throws MessagingException {
@@ -415,7 +439,7 @@ public class MailService {
 		}
 		List<InternetAddress> recipientsList = new LinkedList<InternetAddress>();
 		recipientsList.add(recipient);
-		sendMail(transport, sender, recipientsList, ccRecipientsList, bccRecipientsList, subject, content, contentTxt, isHTML, null, null);
+		sendMail(transport, sender, recipientsList, ccRecipientsList, bccRecipientsList, subject, content, contentTxt, isHTML, null, null, null);
 	}
 
 	public MailConfig getMailConfig() {

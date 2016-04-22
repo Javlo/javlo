@@ -24,6 +24,7 @@ import org.apache.commons.imaging.formats.tiff.write.TiffOutputDirectory;
 import org.apache.commons.imaging.formats.tiff.write.TiffOutputSet;
 import org.apache.commons.imaging.util.IoUtils;
 import org.apache.commons.io.FileUtils;
+import org.javlo.io.TransactionFile;
 import org.javlo.ztatic.StaticInfo.Position;
 
 public class ExifHelper {
@@ -173,27 +174,36 @@ public class ExifHelper {
 			logger.warning("file not found : " + file);
 			return;
 		}
-		OutputStream os = null;
-		boolean canThrow = false;
-		byte[] data = FileUtils.readFileToByteArray(file);
-		try {
-			final JpegImageMetadata jpegMetadata = (JpegImageMetadata) metadata;
-			TiffOutputSet outputSet = null;
-			if (null != jpegMetadata) {
-				final TiffImageMetadata exif = jpegMetadata.getExif();
-				if (null != exif) {
-					outputSet = exif.getOutputSet();
+		TransactionFile tFile = null;
+		if (!StringHelper.isJpeg(file.getName())) {
+			return;
+		} else {
+			OutputStream os = null;
+			byte[] data = FileUtils.readFileToByteArray(file);
+			try {
+				final JpegImageMetadata jpegMetadata = (JpegImageMetadata) metadata;
+				TiffOutputSet outputSet = null;
+				if (null != jpegMetadata) {
+					final TiffImageMetadata exif = jpegMetadata.getExif();
+					if (null != exif) {
+						outputSet = exif.getOutputSet();
+					}
 				}
+				if (null == outputSet) {
+					outputSet = new TiffOutputSet();
+				}
+				tFile = new TransactionFile(file, true);
+				os = new BufferedOutputStream(tFile.getOutputStream());
+				new ExifRewriter().updateExifMetadataLossless(data, os, outputSet);
+				tFile.commit();
+			} catch (Exception e) {
+				e.printStackTrace();
+				if (tFile != null) {
+					tFile.rollback();
+				}
+			} finally {				
+				ResourceHelper.closeResource(os);
 			}
-			if (null == outputSet) {
-				outputSet = new TiffOutputSet();
-			}
-			os = new FileOutputStream(file);
-			os = new BufferedOutputStream(os);
-			new ExifRewriter().updateExifMetadataLossless(data, os, outputSet);
-			canThrow = false;
-		} finally {
-			IoUtils.closeQuietly(canThrow, os);
 		}
 	}
 }

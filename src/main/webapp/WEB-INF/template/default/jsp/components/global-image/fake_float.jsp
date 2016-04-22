@@ -4,8 +4,7 @@
 <c:set var="loadEvent" value="" />
 <c:set var="styleWidth" value="" /><c:set var="styleWidthWidthoutStyle" value="" /><c:if test="${not empty componentWidth && !param['clean-html']}"><c:set var="styleWidthWidthoutStyle" value='width: ${componentWidth};' /><c:set var="styleWidth" value=' style="width: ${componentWidth};"' /></c:if>
 <c:set var="styleOppositeWidth" value="" /><c:if test="${not empty componentOpositeWidth && !param['clean-html']}"><c:set var="styleOppositeWidth" value='width: ${componentOpositeWidth};' /></c:if>
-<div id="comp-${compid}"><table class="${empty componentWidth?'float-image':'float-image-width'} ${not empty param.right?'right':'left'}">
-
+<div id="comp-${compid}"><table class="${empty componentWidth?'float-image':'float-image-width'} ${param.right?'right':'left'}">
 <c:if test="${contentContext.asPreviewMode}">
 <div class="source" style="display: none;"><span class="container">${label}</span></div>
 <script type="text/javascript">
@@ -41,7 +40,7 @@ function loadImage${compid}() {
 </c:if>
 
 <c:if test="${info.device.code != 'pdf'}">
-<c:if test="${empty param.right}">
+<c:if test="${!param.right}">
 <tr><td class="image-wrapper"${styleWidth}>
 <c:if test="${link != '#'}">
 <c:set var="rel" value="${fn:startsWith(url,'http://')?'external':'shadowbox'}" />
@@ -50,7 +49,7 @@ function loadImage${compid}() {
 <img src="${previewURL}"${loadEvent} />
 <c:if test="${link != '#'}"></a></c:if>
 </td><td class="sep" style="width: 10px; font-size: 0;">&nbsp;</td><td class="zone1" style="text-align: left; ${not empty styleOppositeWidth?styleOppositeWidth:''}"><span class="container">${comp.firstText}</span></td></tr>
-</c:if><c:if test="${not empty param.right}">
+</c:if><c:if test="${param.right}">
 <tr><td class="zone1" style="text-align: left; ${not empty styleOppositeWidth?styleOppositeWidth:''}"><span class="container">${comp.firstText}</span></td>
 <td class="sep" style="width: 10px; font-size: 0;">&nbsp;</td>
 <td class="image-wrapper"${styleWidth}>
@@ -68,7 +67,7 @@ function loadImage${compid}() {
 <tr><td>
 <c:set var="imageWidthTag" value='width="${imageWidth}" ' />
 <c:set var="imageWidthStyle" value='width:${imageWidth}px' />
-<div class="image-wrapper" style="float: ${not empty param.right?'right':'left'};${styleWidthWidthoutStyle}${param['clean-html']?imageWidthStyle:''}">
+<div class="image-wrapper" style="float: ${param.right?'right':'left'};${styleWidthWidthoutStyle}${param['clean-html']?imageWidthStyle:''}">
 <c:if test="${link != '#'}">
 <c:set var="rel" value="${fn:startsWith(url,'http://')?'external':'shadowbox'}" />
 <c:set var="rel" value="${fn:endsWith(url,'.pdf')?'pdf':rel}" />

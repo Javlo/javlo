@@ -568,7 +568,8 @@ public class ImageTransformServlet extends HttpServlet {
 		try {
 			metadata = ResourceHelper.getImageMetadata(imageFile);
 		} catch (Exception e) {
-			e.printStackTrace();
+			//e.printStackTrace();
+			logger.warning("error on reading méta data : "+imageFile);
 			logger.warning(e.getMessage());
 		}
 
@@ -1108,9 +1109,10 @@ public class ImageTransformServlet extends HttpServlet {
 										ImageMetadata md = ExifHelper.readMetadata(imageFile);
 										image = ImageEngine.resizeWidth(image, maxWidth, true);
 										ImageIO.write(image, StringHelper.getFileExtension(imageFile.getName().toLowerCase()), imageFile);
+										image.flush();
 										ExifHelper.writeMetadata(md, imageFile);
 									}
-									image.flush();
+									
 								} else {
 									logger.warning("Could'nt read image : " + imageFile);
 								}
