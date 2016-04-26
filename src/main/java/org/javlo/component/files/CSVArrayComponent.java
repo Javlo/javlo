@@ -285,7 +285,7 @@ public class CSVArrayComponent extends AbstractFileComponent {
 	}
 
 	@Override
-	protected boolean isFileNameValid(String fileName) {
+	protected boolean isFileNameValid(ContentContext ctx, String fileName) {
 
 		return true;
 

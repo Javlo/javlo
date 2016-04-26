@@ -814,7 +814,7 @@ public class ArrayFileComponent extends GenericFile {
 	}
 
 	@Override
-	protected boolean isFileNameValid(String fileName) {
+	protected boolean isFileNameValid(ContentContext ctx, String fileName) {
 		return true;
 	}
 
@@ -907,7 +907,7 @@ public class ArrayFileComponent extends GenericFile {
 		}
 
 		// validation
-		if (!isFileNameValid(getFileName())) {
+		if (!isFileNameValid(ctx, getFileName())) {
 			setMessage(new GenericMessage(i18nAccess.getText("component.error.file"), GenericMessage.ERROR));
 		}
 
