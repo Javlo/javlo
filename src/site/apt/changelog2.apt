@@ -668,5 +668,7 @@ change log
  
  * don't send mailing if smtp port is 0 + unlink mirror only on current page
  
-* 2.1.0.3.10 20/04/2016  
+* 2.1.0.3.10 20/04/2016
+
+ * shared import folder better filtered + page reference filter on label too  
  
