@@ -482,7 +482,7 @@ public class GlobalImage extends Image implements IImageFilter {
 		// validation
 		if ((getFileName().trim().length() > 0) && (getLabel().trim().length() == 0)) {
 			setMessage(new GenericMessage(i18nAccess.getText("component.message.image_no_label"), GenericMessage.ALERT));
-		} else if (!isFileNameValid(getFileName())) {
+		} else if (!isFileNameValid(ctx, getFileName())) {
 			setMessage(new GenericMessage(i18nAccess.getText("component.error.file"), GenericMessage.ERROR));
 		}
 
@@ -1315,6 +1315,16 @@ public class GlobalImage extends Image implements IImageFilter {
 	public boolean isLinkValid(ContentContext ctx) {
 		String url = getURL(ctx);
 		return StringHelper.isEmpty(url) && !StringHelper.isImage(url);
+	}
+	
+	@Override
+	protected boolean isFileNameValid(ContentContext ctx, String fileName) {
+		if (StringHelper.isEmpty(fileName)) {
+			return true;
+		} else {
+			String extension = ','+ctx.getGlobalContext().getStaticConfig().getImageFormat()+',';
+			return extension.contains(','+StringHelper.getFileExtension(fileName)+',');
+		}
 	}
 
 }

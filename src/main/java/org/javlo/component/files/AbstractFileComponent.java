@@ -439,7 +439,7 @@ public abstract class AbstractFileComponent extends AbstractVisualComponent impl
 		finalCode.append("</div></div>");
 
 		// validation
-		if (!isFileNameValid(getFileName())) {
+		if (!isFileNameValid(ctx, getFileName())) {
 			setMessage(new GenericMessage(i18nAccess.getText("component.error.file"), GenericMessage.ERROR));
 		}
 
@@ -645,7 +645,7 @@ public abstract class AbstractFileComponent extends AbstractVisualComponent impl
 		return getFileName().trim().length() == 0;
 	}
 
-	protected boolean isFileNameValid(String fileName) {
+	protected boolean isFileNameValid(ContentContext ctx, String fileName) {
 		return true;
 	}
 
@@ -759,13 +759,15 @@ public abstract class AbstractFileComponent extends AbstractVisualComponent impl
 		properties.setProperty(DESCRIPTION_KEY, description);
 
 		// if (canUpload(ctx)) {
-		if (isFileNameValid(fileName)) {
+		if (isFileNameValid(ctx, fileName)) {
 			try {
 				uploadFiles(ctx, requestService);
 			} catch (IOException e) {
 				MessageRepository messageRepository = MessageRepository.getInstance(ctx);
 				messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("content.file.exist"), GenericMessage.ERROR));
 			}
+		} else {
+			return i18nAccess.getText("component.file.badformat", "bad file format.");
 		}
 		// }
 

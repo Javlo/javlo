@@ -847,19 +847,23 @@ public class Edit extends AbstractModuleAction {
 				ctx.setNeedRefresh(true);
 				return "component type not found : " + type;
 			}
-			newId = content.createContent(ctx, targetPage, areaKey, previousId, type, "", true);
-			IContentVisualComponent newComp = contentService.getComponent(ctx, newId);
-			if (newComp instanceof IContainer) {
-				IContentVisualComponent nextComp = ComponentHelper.getNextComponent(newComp, ctx);
-				if (nextComp == null) {
-					nextComp = newComp;
+			IContentVisualComponent previousComp = contentService.getComponent(ctx, previousId);
+			String openPreviousId = "0";			
+			if (previousComp != null && previousComp.getPreviousComponent() != null) {
+				openPreviousId = previousComp.getPreviousComponent().getId();
+			}
+			newId = content.createContent(ctx, targetPage, areaKey, openPreviousId, type, "", true);
+			IContentVisualComponent openBox = contentService.getComponent(ctx, newId);
+			
+			if (openBox instanceof IContainer) {				
+				String closePreviousid = previousId;				
+				if (previousComp == null) {
+					closePreviousid = newId;
 				}
-				newId = content.createContent(ctx, targetPage, areaKey, nextComp.getId(), type, "", true);
-				IContentVisualComponent closeComp = contentService.getComponent(ctx, newId);
-				IContentVisualComponent containerBody = contentService.getComponent(ctx, previousId);
-				((IContainer) newComp).setOpen(ctx, false);
-				((IContainer) closeComp).setOpen(ctx, true);
-				ComponentHelper.moveComponent(ctx, containerBody, newComp, targetPage, area);
+				newId = content.createContent(ctx, targetPage, areaKey, closePreviousid, type, "", true);
+				IContentVisualComponent closeBox = contentService.getComponent(ctx, newId);				
+				((IContainer) openBox).setOpen(ctx, true);
+				((IContainer) closeBox).setOpen(ctx, false);				
 			}
 		}
 
@@ -949,7 +953,7 @@ public class Edit extends AbstractModuleAction {
 			if (comp.getPreviousComponent() != null) {
 				ctx.getRequest().setAttribute(AbstractVisualComponent.SCROLL_TO_COMP_ID_ATTRIBUTE_NAME, comp.getPreviousComponent().getId());
 			}
-			if (comp instanceof IContainer) {
+			if (comp instanceof IContainer && ((IContainer)comp).isOpen(ctx)) {
 				List<String> compToRemove = new LinkedList<String>();
 				compToRemove.add(comp.getId());
 				boolean closeFound = false;
@@ -957,9 +961,6 @@ public class Edit extends AbstractModuleAction {
 				while (!closeFound) {
 					if (nextComp != null) {
 						compToRemove.add(nextComp.getId());
-					}
-					nextComp = ComponentHelper.getNextComponent(nextComp, ctx);
-					if (nextComp != null) {
 						if (nextComp.getType().equals(comp.getType()) && !((IContainer) nextComp).isOpen(ctx)) {
 							compToRemove.add(nextComp.getId());
 							closeFound = true;
@@ -967,6 +968,7 @@ public class Edit extends AbstractModuleAction {
 					} else {
 						closeFound = true;
 					}
+					nextComp = ComponentHelper.getNextComponent(nextComp, ctx);
 				}
 				for (String idToRemove : compToRemove) {
 					targetPage.removeContent(ctx, idToRemove);

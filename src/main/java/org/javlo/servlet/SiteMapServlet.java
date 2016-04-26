@@ -2,6 +2,9 @@ package org.javlo.servlet;
 
 import java.io.PrintStream;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.LinkedList;
+import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -10,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
+import org.javlo.helper.MacroHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.helper.XMLHelper;
@@ -18,8 +22,6 @@ import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
 
 public class SiteMapServlet extends HttpServlet {
-
-	public static final long LIMIT_SITEMAP_SIZE_LINE_BYTE = 1024 * 1024 * 25;
 
 	private static final long serialVersionUID = 1L;
 
@@ -60,11 +62,25 @@ public class SiteMapServlet extends HttpServlet {
 
 			ContentContext ctx = ContentContext.getContentContext(request, response);
 			ContentService content = ContentService.getInstance(request);
-			MenuElement root = content.getNavigation(ctx);
 			
+			if (number == 0)  {
+				siteMapFile = request.getServletPath();
+			}
+			
+			List<MenuElement> root;
+			Calendar lastestDate = null;
+			if (siteMapFile.startsWith("news-")) {
+				root = MacroHelper.searchArticleRoot(ctx);
+				lastestDate.roll(number, false);
+			} else if (siteMapFile.startsWith("press-")) {
+				root = MacroHelper.searchArticleRoot(ctx);
+			} else {
+				root = new LinkedList<MenuElement>();
+				root.add(content.getNavigation(ctx));						
+			}
 
 			if (number > 0) {
-				SiteMapBloc sitemap = XMLHelper.getSiteMapBloc(ctx, root, number);
+				SiteMapBloc sitemap = XMLHelper.getSiteMapBloc(ctx, root, number, lastestDate);
 				if (StringHelper.isEmpty(sitemap.getText())) {
 					response.setStatus(HttpServletResponse.SC_NOT_FOUND);
 				} else {
@@ -83,7 +99,7 @@ public class SiteMapServlet extends HttpServlet {
 				out.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
 				out.println("<sitemapindex xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">");
 				int i=1;
-				SiteMapBloc sitemap = XMLHelper.getSiteMapBloc(ctx, root, i);
+				SiteMapBloc sitemap = XMLHelper.getSiteMapBloc(ctx, root, i, lastestDate);
 				SimpleDateFormat dataFormat = new SimpleDateFormat("yyyy-MM-dd");
 				while (!StringHelper.isEmpty(sitemap.getText())) {
 					out.println("<sitemap>");
@@ -91,7 +107,7 @@ public class SiteMapServlet extends HttpServlet {
 					out.println("<lastmod>"+dataFormat.format(sitemap.getLastmod())+"</lastmod>");
 					out.println("</sitemap>");
 					i++;
-					sitemap = XMLHelper.getSiteMapBloc(ctx, root, i);
+					sitemap = XMLHelper.getSiteMapBloc(ctx, root, i, lastestDate);
 				}
 				out.println("</sitemapindex>");
 				

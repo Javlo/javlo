@@ -1544,5 +1544,17 @@ public class StaticConfig extends Observable {
 	public String getImportResourceFolder() {
 		return properties.getString("import.resource", "/files"+getImportFolder());
 	}
+	
+	public long getSiteMapSizeLimit() {
+		return properties.getLong("sitemap.maxsite", 1024*1024*25);
+	}
+	
+	public long getSiteMapNewsLimit() {
+		return properties.getLong("sitemap.news-days", 2);
+	}
+	
+	public String getImageFormat() {
+		return properties.getString("content.image-format", "png,pdf,jpg,jpeg,gif");
+	}
 
 }

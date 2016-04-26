@@ -8,6 +8,7 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
@@ -24,30 +25,32 @@ import org.javlo.service.ContentService;
 import org.javlo.service.PersistenceService;
 import org.javlo.service.resource.Resource;
 import org.javlo.servlet.AccessServlet;
-import org.javlo.servlet.SiteMapServlet;
 
 /**
  * @author pvandermaesen
  */
 public class XMLHelper {
-	
+
 	public static final class SiteMapBloc {
 		private String text;
-		private Date lastmod;		
+		private Date lastmod;
+
 		public SiteMapBloc(String text, Date lastmod) {
 			super();
 			this.text = text;
 			this.lastmod = lastmod;
 		}
+
 		public String getText() {
 			return text;
 		}
+
 		public Date getLastmod() {
 			return lastmod;
 		}
-		
+
 	}
-	
+
 	public static String getPageXML(ContentContext ctx, MenuElement page) throws Exception {
 		StringWriter writer = new StringWriter();
 		PrintWriter out = new PrintWriter(writer);
@@ -78,7 +81,7 @@ public class XMLHelper {
 		out.close();
 		return writer.toString();
 	}
-	
+
 	/**
 	 * create sitemap protocol 0.9 for structured ranking in google
 	 * 
@@ -87,64 +90,65 @@ public class XMLHelper {
 	 * @return a valid xml sitemap
 	 * @throws Exception
 	 */
-	public static SiteMapBloc getSiteMapBloc(ContentContext ctx, MenuElement root, int i) throws Exception {
+	public static SiteMapBloc getSiteMapBloc(ContentContext ctx, Collection<MenuElement> pages, int i, Calendar latestDate) throws Exception {
 		StringWriter writer = new StringWriter();
 		PrintWriter out = new PrintWriter(writer);
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		Collection<String> lgs = globalContext.getContentLanguages();
-
-		MenuElement[] children = root.getAllChildren();
+		long sitemapMaxsize = ctx.getGlobalContext().getStaticConfig().getSiteMapSizeLimit();
 		Date lastmod = new Date(0);
-		long size = 0;
-		for (MenuElement element : children) {
-			for (String lg : lgs) {
-				
-				StringBuffer line = new StringBuffer();
-				ContentContext lgCtx = new ContentContext(ctx);
-				lgCtx.setLanguage(lg);
-				lgCtx.setContentLanguage(lg);
-				lgCtx.setRequestContentLanguage(lg);
-				lgCtx.setFormat("html");
-				lgCtx.setPath(element.getPath());
-				lgCtx.setAbsoluteURL(true);
-				if (!element.notInSearch(lgCtx) && element.isRealContent(lgCtx)) {
-					line.append("<url>");
-					line.append("<loc>" + URLHelper.createURL(lgCtx) + "</loc>");
-					SimpleDateFormat dataFormat = new SimpleDateFormat("yyyy-MM-dd");
-					line.append("<lastmod>" + dataFormat.format(element.getModificationDate()) + "</lastmod>");
-					String changefreq = "weekly";
-					if (element.getDepth() > 1 && element.getSeoWeight() == MenuElement.SEO_HEIGHT_LOW) {
-						changefreq = "monthly";
-					}
-					if (element.isReference(lgCtx) || element.getSeoWeight() == MenuElement.SEO_HEIGHT_HIGHT) {
-						changefreq = "daily";
-					}
-					line.append("<changefreq>" + changefreq + "</changefreq>");
-					line.append("<priority>" + element.getSiteMapPriority(lgCtx) + "</priority>");
-					
-					for (String locLg : lgs) {
-						ContentContext locLgCtx = new ContentContext(lgCtx);
-						locLgCtx.setLanguage(locLg);
-						locLgCtx.setContentLanguage(locLg);
-						locLgCtx.setRequestContentLanguage(locLg);
-						locLgCtx.setFormat("html");
-						locLgCtx.setAbsoluteURL(true);
-						if (element.isRealContent(locLgCtx)) {
-							line.append("<link rel=\"alternate\" hreflang=\""+locLg+"\" href=\""+URLHelper.createURL(locLgCtx)+"\" />");
+		for (MenuElement root : pages) {
+			MenuElement[] children = root.getAllChildren();			
+			long size = 0;
+			for (MenuElement element : children) {
+				for (String lg : lgs) {
+					StringBuffer line = new StringBuffer();
+					ContentContext lgCtx = new ContentContext(ctx);
+					lgCtx.setLanguage(lg);
+					lgCtx.setContentLanguage(lg);
+					lgCtx.setRequestContentLanguage(lg);
+					lgCtx.setFormat("html");
+					lgCtx.setPath(element.getPath());
+					lgCtx.setAbsoluteURL(true);
+					if (!element.notInSearch(lgCtx) && element.isRealContent(lgCtx)) {
+						line.append("<url>");
+						line.append("<loc>" + URLHelper.createURL(lgCtx) + "</loc>");
+						SimpleDateFormat dataFormat = new SimpleDateFormat("yyyy-MM-dd");
+						line.append("<lastmod>" + dataFormat.format(element.getModificationDate()) + "</lastmod>");
+						String changefreq = "weekly";
+						if (element.getDepth() > 1 && element.getSeoWeight() == MenuElement.SEO_HEIGHT_LOW) {
+							changefreq = "monthly";
 						}
-					}					
-					line.append("</url>");
-					size = size+line.toString().getBytes().length;
-					if (size >= (i-1)*SiteMapServlet.LIMIT_SITEMAP_SIZE_LINE_BYTE && size < i*SiteMapServlet.LIMIT_SITEMAP_SIZE_LINE_BYTE) {
-						out.println(line);
-						if (element.getModificationDate().getTime()>lastmod.getTime()) {
-							lastmod = element.getModificationDate(); 
+						if (element.isReference(lgCtx) || element.getSeoWeight() == MenuElement.SEO_HEIGHT_HIGHT) {
+							changefreq = "daily";
+						}
+						line.append("<changefreq>" + changefreq + "</changefreq>");
+						line.append("<priority>" + element.getSiteMapPriority(lgCtx) + "</priority>");
+
+						for (String locLg : lgs) {
+							ContentContext locLgCtx = new ContentContext(lgCtx);
+							locLgCtx.setLanguage(locLg);
+							locLgCtx.setContentLanguage(locLg);
+							locLgCtx.setRequestContentLanguage(locLg);
+							locLgCtx.setFormat("html");
+							locLgCtx.setAbsoluteURL(true);
+							if (element.isRealContent(locLgCtx)) {
+								line.append("<link rel=\"alternate\" hreflang=\"" + locLg + "\" href=\"" + URLHelper.createURL(locLgCtx) + "\" />");
+							}
+						}
+						line.append("</url>");
+						size = size + line.toString().getBytes().length;
+						if (size >= (i - 1) * sitemapMaxsize && size < i * sitemapMaxsize) {
+							out.println(line);
+							if (element.getModificationDate().getTime() > lastmod.getTime()) {
+								lastmod = element.getModificationDate();
+							}
 						}
 					}
 				}
 			}
 		}
-		
+
 		out.close();
 
 		return new SiteMapBloc(writer.toString(), lastmod);
@@ -190,7 +194,7 @@ public class XMLHelper {
 					}
 					out.println("<changefreq>" + changefreq + "</changefreq>");
 					out.println("<priority>" + element.getSiteMapPriority(lgCtx) + "</priority>");
-					
+
 					for (String locLg : lgs) {
 						ContentContext locLgCtx = new ContentContext(lgCtx);
 						locLgCtx.setLanguage(locLg);
@@ -199,11 +203,10 @@ public class XMLHelper {
 						locLgCtx.setFormat("html");
 						locLgCtx.setAbsoluteURL(true);
 						if (element.isRealContent(locLgCtx)) {
-							out.println("<link rel=\"alternate\" hreflang=\""+locLg+"\" href=\""+URLHelper.createURL(locLgCtx)+"\" />");
+							out.println("<link rel=\"alternate\" hreflang=\"" + locLg + "\" href=\"" + URLHelper.createURL(locLgCtx) + "\" />");
 						}
 					}
-					
-					
+
 					out.println("</url>");
 				}
 			}
@@ -274,8 +277,8 @@ public class XMLHelper {
 				String language = beans[j].getLanguage();
 				String value = beans[j].getValue();
 				/*
-				 * if (value.startsWith("test renomage")) {
-				 * System.out.println("***** value = "+value); }
+				 * if (value.startsWith("test renomage")) { System.out.println(
+				 * "***** value = "+value); }
 				 */
 				String repeat = "" + beans[j].isRepeat();
 				boolean nolink = beans[j].isNolink();
@@ -419,7 +422,7 @@ public class XMLHelper {
 			if (!page.isActive()) {
 				out.print("\" active=\"");
 				out.print(page.isActive());
-			}			
+			}
 			if (!page.getType().equals(MenuElement.PAGE_TYPE_DEFAULT)) {
 				out.print("\" type=\"");
 				out.print(page.getType());
@@ -446,7 +449,7 @@ public class XMLHelper {
 			}
 			if (page.getSeoWeight() != MenuElement.SEO_HEIGHT_INHERITED) {
 				out.print("\" seoWeight=\"");
-				out.print(page.getSeoWeight());				
+				out.print(page.getSeoWeight());
 			}
 			if (page.isHttps())
 				if (validationDate != null && validationDate.trim().length() > 0) {

@@ -158,6 +158,7 @@
 		<servlet-name>SiteMapServlet</servlet-name>
 		<url-pattern>/sitemap.xml</url-pattern>
 		<url-pattern>/press-sitemap.xml</url-pattern>
+		<url-pattern>/news-sitemap.xml</url-pattern>
 		<url-pattern>/sitemap/*</url-pattern>
 	</servlet-mapping>
 

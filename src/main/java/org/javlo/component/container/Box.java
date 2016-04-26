@@ -220,7 +220,7 @@ public class Box extends AbstractVisualComponent implements IContainer {
 
 	@Override
 	public void setOpen(ContentContext ctx, boolean open) {
-		String newValue = StringHelper.collectionToString(Arrays.asList(new String[] { "" + open, getTitle(), getFooter() }), ";");
+		String newValue = StringHelper.collectionToString(Arrays.asList(new String[] { "" + !open, getTitle(), getFooter() }), ";");
 		setValue(newValue);
 	}
 
