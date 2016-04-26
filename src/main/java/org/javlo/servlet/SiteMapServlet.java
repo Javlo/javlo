@@ -45,25 +45,22 @@ public class SiteMapServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException {
 		process(request, response);
 	}
-	
+
 	private void process(HttpServletRequest request, HttpServletResponse response) throws ServletException {
 		try {
-			
-			GlobalContext globalContext = GlobalContext.getInstance(request);
-			long lastModified = globalContext.getPublishDate().getTime();
-			response.setDateHeader(NetHelper.HEADER_LAST_MODIFIED, lastModified);
-			response.setHeader("Cache-Control", "max-age=60,must-revalidate");
-			long lastModifiedInBrowser = request.getDateHeader(NetHelper.HEADER_IF_MODIFIED_SINCE);
-			if (lastModified > 0 && lastModified / 1000 <= lastModifiedInBrowser / 1000) {				
-				response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
-				return;
-			}
 
-			String host = request.getServerName();
-			if (!GlobalContext.isExist(request, host) && request.getParameter("yes") == null) {
-				getServletContext().getRequestDispatcher("/jsp/error/creation.jsp").include(request, response);
-				return;
+			GlobalContext globalContext = GlobalContext.getInstance(request);
+			if (globalContext.isPreviewMode()) {
+				long lastModified = globalContext.getPublishDate().getTime();
+				response.setDateHeader(NetHelper.HEADER_LAST_MODIFIED, lastModified);
+				response.setHeader("Cache-Control", "max-age=60,must-revalidate");
+				long lastModifiedInBrowser = request.getDateHeader(NetHelper.HEADER_IF_MODIFIED_SINCE);
+				if (lastModified > 0 && lastModified / 1000 <= lastModifiedInBrowser / 1000) {
+					response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
+					return;
+				}
 			}
+			
 			String siteMapFile = request.getRequestURI();
 
 			int number = 0;
@@ -74,21 +71,22 @@ public class SiteMapServlet extends HttpServlet {
 			ContentContext ctx = ContentContext.getContentContext(request, response);
 			ctx.setFree(true);
 			ContentService content = ContentService.getInstance(request);
-			
-			if (number == 0)  {
+
+			if (number == 0) {
 				siteMapFile = request.getServletPath();
 			}
-			
+
 			List<MenuElement> root;
 			Calendar lastestDate = null;
 			if (siteMapFile.startsWith("news-")) {
 				root = MacroHelper.searchArticleRoot(ctx);
+				lastestDate = Calendar.getInstance();
 				lastestDate.roll(number, false);
 			} else if (siteMapFile.startsWith("press-")) {
 				root = MacroHelper.searchArticleRoot(ctx);
 			} else {
 				root = new LinkedList<MenuElement>();
-				root.add(content.getNavigation(ctx));						
+				root.add(content.getNavigation(ctx));
 			}
 
 			if (number > 0) {
@@ -104,27 +102,27 @@ public class SiteMapServlet extends HttpServlet {
 					out.println("</urlset>");
 					out.flush();
 				}
-			} else {				
+			} else {
 				PrintStream out = new PrintStream(response.getOutputStream());
 				response.setContentType("text/xml");
-				
+
 				out.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
 				out.println("<sitemapindex xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">");
-				int i=1;
+				int i = 1;
 				SiteMapBloc sitemap = XMLHelper.getSiteMapBloc(ctx, root, i, lastestDate);
 				SimpleDateFormat dataFormat = new SimpleDateFormat("yyyy-MM-dd");
 				while (!StringHelper.isEmpty(sitemap.getText())) {
 					out.println("<sitemap>");
-					out.println("<loc>"+URLHelper.createStaticURL(ctx.getContextForAbsoluteURL(), "/sitemap/sitemap-"+i+".xml")+"</loc>");
-					out.println("<lastmod>"+dataFormat.format(sitemap.getLastmod())+"</lastmod>");
+					out.println("<loc>" + URLHelper.createStaticURL(ctx.getContextForAbsoluteURL(), "/sitemap/sitemap-" + i + ".xml") + "</loc>");
+					out.println("<lastmod>" + dataFormat.format(sitemap.getLastmod()) + "</lastmod>");
 					out.println("</sitemap>");
 					i++;
 					sitemap = XMLHelper.getSiteMapBloc(ctx, root, i, lastestDate);
 				}
 				out.println("</sitemapindex>");
-				
+
 				out.flush();
-			
+
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
