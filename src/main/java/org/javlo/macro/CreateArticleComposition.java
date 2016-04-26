@@ -128,7 +128,6 @@ public class CreateArticleComposition extends AbstractInteractiveMacro implement
 		if (config == null) {
 			config = new Properties();
 		}
-
 		String rootPageName = rs.getParameter("root", null);
 		String newgroup = rs.getParameter("newgroup", "");
 		String date = rs.getParameter("date", null);
@@ -136,7 +135,6 @@ public class CreateArticleComposition extends AbstractInteractiveMacro implement
 		String pageId = rs.getParameter("page", null);
 		String pageName = rs.getParameter("title", null);
 		boolean visible = StringHelper.isTrue(rs.getParameter("visible", null), false);
-
 		if (newgroup.trim().length() > 0) {
 			MenuElement firstArticleGroup = MacroHelper.searchArticleRoot(ctx).iterator().next();
 			if (firstArticleGroup.getParent() == null) {
@@ -157,7 +155,7 @@ public class CreateArticleComposition extends AbstractInteractiveMacro implement
 				return null;
 			}
 		}
-
+		
 		MenuElement sourcePage = null;
 		if (pageId != null) {
 			sourcePage = ContentService.getInstance(ctx.getRequest()).getNavigation(ctx).searchChildFromId(pageId);

@@ -1075,7 +1075,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		}
 		//filter = removeCommandFromFilter(filter);
 
-		if (filter != null && !(page.getTitle(ctx) + ' ' + page.getName()).contains(filter)) {
+		if (filter != null && !(page.getTitle(ctx) + ' ' + page.getName()+' '+page.getLabel(ctx)).contains(filter)) {
 			return false;
 		}
 		if (!page.isChildOf(getParentNode())) {

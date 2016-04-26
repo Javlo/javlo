@@ -10,7 +10,6 @@ import java.util.logging.Logger;
 import org.javlo.actions.DataAction;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
-import org.javlo.helper.ContentHelper;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.navigation.MenuElement;
@@ -44,8 +43,12 @@ public class ImportedImageSharedContentProvider extends LocalImageSharedContentP
 			if (page == null) {
 				page = ctx.getCurrentPage();
 			}
-			String importFolder = DataAction.createImportFolder(ctx);						
-			if (category.endsWith(importFolder)) {				
+			String importFolder = DataAction.createImportFolder(ctx);
+			String importPrefix = ctx.getGlobalContext().getStaticConfig().getImportFolder();
+			if (importPrefix.startsWith("/")) {
+				importPrefix = importPrefix.substring(1);
+			}
+			if (category.endsWith(importFolder) && (category.startsWith(importPrefix) || category.startsWith(ctx.getGlobalContext().getStaticConfig().getImportFolder()))) {	
 				return true;
 			}
 		} catch (Exception e) {

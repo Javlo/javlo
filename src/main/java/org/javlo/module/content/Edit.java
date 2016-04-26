@@ -847,15 +847,20 @@ public class Edit extends AbstractModuleAction {
 				ctx.setNeedRefresh(true);
 				return "component type not found : " + type;
 			}
-			IContentVisualComponent previousComp = contentService.getComponent(ctx, previousId);
+			IContentVisualComponent previousComp = contentService.getComponent(ctx, previousId);			
+			newId = content.createContent(ctx, targetPage, areaKey, previousId, type, "", true);
+			IContentVisualComponent openBox = contentService.getComponent(ctx, newId);
 			String openPreviousId = "0";			
 			if (previousComp != null && previousComp.getPreviousComponent() != null) {
 				openPreviousId = previousComp.getPreviousComponent().getId();
 			}
-			newId = content.createContent(ctx, targetPage, areaKey, openPreviousId, type, "", true);
-			IContentVisualComponent openBox = contentService.getComponent(ctx, newId);
 			
-			if (openBox instanceof IContainer) {				
+			if (openBox instanceof IContainer) {	
+				
+				IContentVisualComponent containerPrevious = contentService.getComponent(ctx, openPreviousId);
+				if (containerPrevious != null) {
+					ComponentHelper.moveComponent(ctx, openBox, containerPrevious, targetPage, area);	
+				}
 				String closePreviousid = previousId;				
 				if (previousComp == null) {
 					closePreviousid = newId;
@@ -1165,8 +1170,8 @@ public class Edit extends AbstractModuleAction {
 
 				UserInterfaceContext userInterface = UserInterfaceContext.getInstance(session, globalContext);
 				if (!userInterface.isLight()) {
-					boolean isActive = StringHelper.isTrue(requestService.getParameter("active", null));
-					if (page.isActive(ctx) != isActive) {
+					boolean isActive = StringHelper.isTrue(requestService.getParameter("active", null));					
+					if (page.isActive(ctx) != isActive) {						
 						page.setActive(isActive);
 						modify = true;
 					}

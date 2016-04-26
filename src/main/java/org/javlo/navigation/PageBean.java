@@ -144,7 +144,7 @@ public class PageBean implements Serializable {
 	}
 
 	/**
-	 * get the list of children with isRealContent() and isVisible() is true.
+	 * get the list of children with isActive() true if no edition.
 	 * 
 	 * @return
 	 */
@@ -153,7 +153,9 @@ public class PageBean implements Serializable {
 		List<MenuElement> children = page.getChildMenuElementsList();
 		for (MenuElement child : children) {
 			try {
-				childrenBean.add(child.getPageBean(ctx));
+				if (child.isActive() || ctx.isEdition()) {
+					childrenBean.add(child.getPageBean(ctx));
+				}
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

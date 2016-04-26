@@ -71,7 +71,7 @@ import org.xml.sax.SAXParseException;
 import com.sun.org.apache.xerces.internal.util.XMLChar;
 
 public class PersistenceService {
-	
+
 	private AtomicInteger countStore = new AtomicInteger(0);
 
 	public static final class MetaPersistenceBean {
@@ -198,9 +198,9 @@ public class PersistenceService {
 	public static final String GLOBAL_MAP_NAME = "global";
 
 	public static int UNDO_DEPTH = 255;
-	
+
 	private BufferedWriter trackWriter = null;
-	
+
 	private String trackWriterFileName = null;
 
 	public static final Date parseDate(String date) throws ParseException {
@@ -302,7 +302,7 @@ public class PersistenceService {
 		}
 
 		if (!canRedo()) {
-		int workVersion = getVersion() + 1;
+			int workVersion = getVersion() + 1;
 			File file = new File(getDirectory() + "/content_" + ContentContext.PREVIEW_MODE + '_' + workVersion + ".xml");
 			while (file.exists()) {
 				workVersion++;
@@ -310,7 +310,7 @@ public class PersistenceService {
 				file = new File(getDirectory() + "/content_" + ContentContext.PREVIEW_MODE + '_' + workVersion + ".xml");
 			}
 		}
-		
+
 		int workVersion = getVersion() - UNDO_DEPTH;
 		File file = new File(getDirectory() + "/content_" + ContentContext.PREVIEW_MODE + '_' + workVersion + ".xml");
 		while (workVersion > 0) {
@@ -354,15 +354,16 @@ public class PersistenceService {
 		File[] backupPreview = new File(getDirectory()).listFiles(BackupPreviewFileFilter.instance);
 		if (backupPreview != null) {
 			for (File file : backupPreview) {
-				String version = file.getName().replaceAll("content_" + ContentContext.PREVIEW_MODE + ".", "").replaceAll(".xml", "").replaceAll(".zip", "");
-				int versionInteger = -1;
-				try {
-					versionInteger = Integer.parseInt(version);
-				} catch (NumberFormatException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+				if (!file.getName().endsWith(".error")) {
+					String version = file.getName().replaceAll("content_" + ContentContext.PREVIEW_MODE + ".", "").replaceAll(".xml", "").replaceAll(".zip", "");
+					int versionInteger = -1;
+					try {
+						versionInteger = Integer.parseInt(version);
+						outList.add(new MetaPersistenceBean(versionInteger, StringHelper.renderSortableTime(new Date(file.lastModified())), "preview"));
+					} catch (NumberFormatException e) {
+						logger.warning("bad file name format : " + file.getName());
+					}
 				}
-				outList.add(new MetaPersistenceBean(versionInteger, StringHelper.renderSortableTime(new Date(file.lastModified())), "preview"));
 			}
 		}
 
@@ -465,28 +466,28 @@ public class PersistenceService {
 		int year = cal.get(Calendar.YEAR);
 		int mount = cal.get(Calendar.MONTH);
 		int day = cal.get(Calendar.DAY_OF_MONTH);
-		
+
 		File dir = new File(getTrackingDirectory() + '/' + year + '/' + mount);
 		File file = new File(getTrackingDirectory() + '/' + year + '/' + mount + "/tracks-" + day + ".csv");
-		
+
 		if (file.getName().equals(trackWriterFileName)) {
 			return trackWriter;
 		} else {
 			ResourceHelper.closeResource(trackWriter);
 		}
-		
+
 		if (!dir.exists()) {
 			dir.mkdirs();
 		}
-		
+
 		if (!file.exists()) {
 			file.createNewFile();
-		}		
+		}
 		trackWriterFileName = file.getName();
-		trackWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file),ContentContext.CHARACTER_ENCODING));
+		trackWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), ContentContext.CHARACTER_ENCODING));
 		return trackWriter;
 	}
-	
+
 	@Override
 	protected void finalize() throws Throwable {
 		super.finalize();
@@ -630,8 +631,8 @@ public class PersistenceService {
 		DebugHelper.checkStructure(visible == null, "no visible defined in a page node.");
 		String roles = pageXML.getAttributeValue("userRoles", "");
 		String layout = pageXML.getAttributeValue("layout", null);
-		String freeData = pageXML.getAttributeValue("savedParent", null); 
-		
+		String freeData = pageXML.getAttributeValue("savedParent", null);
+
 		/* modification management */
 		String creator = pageXML.getAttributeValue("creator", "");
 		String latestEditor = pageXML.getAttributeValue("latestEditor", "");
@@ -680,14 +681,14 @@ public class PersistenceService {
 		page.setName(name);
 		page.setPriority(Integer.parseInt(priority));
 		page.setVisible(StringHelper.isTrue(visible));
-		page.setActive(StringHelper.isTrue(pageXML.getAttributeValue("active",null),true));
+		page.setActive(StringHelper.isTrue(pageXML.getAttributeValue("active", null), true));
 		page.setHttps(StringHelper.isTrue(https));
 
 		page.setTemplateId(layout);
 		page.setSavedParent(freeData);
-		
+
 		page.setUserRoles(new HashSet<String>(StringHelper.stringToCollection(roles, ";")));
-		
+
 		page.setValid(StringHelper.isTrue(pageXML.getAttributeValue("valid", "false")));
 		page.setValidater(pageXML.getAttributeValue("validater", ""));
 		page.setValidationDate(validationDate);
@@ -786,9 +787,9 @@ public class PersistenceService {
 				root.setId(page.getAttributeValue("id"));
 				root.setName(page.getAttributeValue("name"));
 				root.setPriority(Integer.parseInt(page.getAttributeValue("priority")));
-				root.setVisible(StringHelper.isTrue(page.getAttributeValue("visible", "false")));				
-				root.setActive(StringHelper.isTrue(page.getAttributeValue("active", "true")));				
-				root.setSeoWeight(StringHelper.parseInt(page.getAttributeValue("seoWeight", null),MenuElement.SEO_HEIGHT_INHERITED));
+				root.setVisible(StringHelper.isTrue(page.getAttributeValue("visible", "false")));
+				root.setActive(StringHelper.isTrue(page.getAttributeValue("active", "true")));
+				root.setSeoWeight(StringHelper.parseInt(page.getAttributeValue("seoWeight", null), MenuElement.SEO_HEIGHT_INHERITED));
 				root.setHttps(StringHelper.isTrue(page.getAttributeValue("https", "false")));
 				root.setCreator(page.getAttributeValue("creator", ""));
 
@@ -996,8 +997,8 @@ public class PersistenceService {
 					root.setId("0");
 					/*
 					 * file.createNewFile(); BufferedWriter out = new
-					 * BufferedWriter(new FileWriter(file));
-					 * out.write("<content version=\"" + version +
+					 * BufferedWriter(new FileWriter(file)); out.write(
+					 * "<content version=\"" + version +
 					 * "\"><page id=\"0\" name=\"root\" priority=\"1\" visible=\"true\" userRoles=\"\" /></content>"
 					 * ); out.close();
 					 */
@@ -1032,7 +1033,7 @@ public class PersistenceService {
 				ResourceHelper.closeResource(in);
 				ResourceHelper.closeResource(zip);
 			}
-			
+
 			return root;
 		}
 	}
@@ -1277,7 +1278,7 @@ public class PersistenceService {
 	 * 
 	 * @param askStore
 	 */
-	public synchronized void setAskStore(boolean askStore) {		
+	public synchronized void setAskStore(boolean askStore) {
 		this.askStore = askStore;
 	}
 
@@ -1297,11 +1298,11 @@ public class PersistenceService {
 		store(ctx, renderMode, true);
 	}
 
-	public void store(ContentContext ctx, int renderMode, boolean async) throws Exception {		
-		setAskStore(false);		
+	public void store(ContentContext ctx, int renderMode, boolean async) throws Exception {
+		setAskStore(false);
 		if (async) {
 			if (countStore.incrementAndGet() > 1) {
-				logger.info("cancel storage before waiting thread found. ("+ctx.getGlobalContext().getContextKey()+')');
+				logger.info("cancel storage before waiting thread found. (" + ctx.getGlobalContext().getContextKey() + ')');
 				countStore.decrementAndGet();
 				return;
 			}
@@ -1315,7 +1316,7 @@ public class PersistenceService {
 			if (!globalContext.getLanguages().contains(defaultLg)) {
 				defaultLg = null;
 			}
-			
+
 			persThread.setMenuElement(menuElement);
 			persThread.setMode(renderMode);
 			persThread.setPersistenceService(this);
@@ -1337,30 +1338,31 @@ public class PersistenceService {
 		}
 	}
 
-//	public void store(InputStream in) throws Exception {
-//		// synchronized (MenuElement.LOCK_ACCESS) {
-//		setVersion(getVersion() + 1);
-//		saveVersion();
-//		File file = new File(getDirectory() + "/content_" + ContentContext.PREVIEW_MODE + '_' + getVersion() + ".xml");
-//		if (!file.exists()) {
-//			file.createNewFile();
-//		}
-//		FileOutputStream out = new FileOutputStream(file);
-//		int read = in.read();
-//		while (read >= 0) {
-//			out.write(read);
-//			read = in.read();
-//		}
-//		out.close();
-//		// }
-//	}
+	// public void store(InputStream in) throws Exception {
+	// // synchronized (MenuElement.LOCK_ACCESS) {
+	// setVersion(getVersion() + 1);
+	// saveVersion();
+	// File file = new File(getDirectory() + "/content_" +
+	// ContentContext.PREVIEW_MODE + '_' + getVersion() + ".xml");
+	// if (!file.exists()) {
+	// file.createNewFile();
+	// }
+	// FileOutputStream out = new FileOutputStream(file);
+	// int read = in.read();
+	// while (read >= 0) {
+	// out.write(read);
+	// read = in.read();
+	// }
+	// out.close();
+	// // }
+	// }
 
 	public void store(Track track) throws Exception {
 		Calendar cal = GregorianCalendar.getInstance();
 		cal.setTimeInMillis(track.getTime());
 		BufferedWriter writer = getTrackWriter(cal);
 		writer.write(trackToString(track));
-		writer.newLine();		
+		writer.newLine();
 	}
 
 	void storeCurrentView(ContentContext ctx) throws IOException, ParseException {

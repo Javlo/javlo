@@ -1661,6 +1661,10 @@ public class ContentContext {
 			this.closePopup = closePopup;
 		}
 	}
+	
+	public boolean isEdition() {
+		return EditContext.getInstance(getGlobalContext(), getRequest().getSession()).isEditPreview() || isAsEditMode();
+	}
 
 	public boolean isEditPreview() {
 		if (editPreview == null) {

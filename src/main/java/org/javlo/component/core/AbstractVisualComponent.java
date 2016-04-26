@@ -904,6 +904,9 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	@Override
 	public final String getHelpURL(ContentContext ctx) {
 		User user = AdminUserFactory.createUserFactory(ctx.getGlobalContext(), ctx.getRequest().getSession()).getCurrentUser(ctx.getRequest().getSession());
+		if (user == null) {
+			return null;
+		}
 		String lang = "en";
 		if (user.getUserInfo().getPreferredLanguage().length > 0) {
 			lang = user.getUserInfo().getPreferredLanguage()[0];

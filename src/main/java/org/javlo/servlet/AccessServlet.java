@@ -319,7 +319,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 				return;
 			}
 
-			/** CACHE **/			
+			/** CACHE **/
 			if (ctx.isAsViewMode() && ctx.getCurrentPage() != null && ctx.getCurrentPage().isCacheable(ctx) && globalContext.isPreviewMode() && globalContext.getPublishDate() != null && request.getMethod().equalsIgnoreCase("get") && request.getParameter("webaction") == null) {
 				long lastModified = globalContext.getPublishDate().getTime();
 				response.setDateHeader(NetHelper.HEADER_LAST_MODIFIED, lastModified);
@@ -707,7 +707,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 						File pdfFileCache = fileCache.getPDFPage(ctx, ctx.getCurrentPage());
 						if (pdfFileCache.exists()) {
 							synchronized (FileCache.PDF_LOCK) {
-								logger.info("pdf file found in cache : "+pdfFileCache);
+								logger.info("pdf file found in cache : " + pdfFileCache);
 								if (pdfFileCache.exists()) {
 									ResourceHelper.writeFileToStream(pdfFileCache, out);
 								}
@@ -765,20 +765,20 @@ public class AccessServlet extends HttpServlet implements IVersion {
 							 * url, out);
 							 */
 							FileOutputStream outFile = new FileOutputStream(pdfFileCache);
-							try {								
+							try {
 								DoubleOutputStream outDbl = new DoubleOutputStream(out, outFile);
 								PDFConvertion.getInstance().convertXHTMLToPDF(new URL(url), staticConfig.getApplicationLogin(), staticConfig.getApplicationPassword(), outDbl);
 							} finally {
 								ResourceHelper.closeResource(outFile);
 							}
-							
+
 						}
 
 					} else if (ctx.getFormat().equalsIgnoreCase("ics") || ctx.getFormat().equalsIgnoreCase("ical") || ctx.getFormat().equalsIgnoreCase("icalendar")) {
 						OutputStream out = response.getOutputStream();
 						Event event = ctx.getCurrentPage().getEvent(ctx);
 						if (event == null) {
-							logger.warning("event not found on page : "+ctx.getPath()+"  context:"+ctx.getGlobalContext().getContextKey());
+							logger.warning("event not found on page : " + ctx.getPath() + "  context:" + ctx.getGlobalContext().getContextKey());
 							response.setStatus(HttpServletResponse.SC_NOT_FOUND);
 							return;
 						} else {
@@ -846,7 +846,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 								}
 							}
 
-							if (ctx.getCurrentPage().getUserRoles().size() > 0) {
+							if (ctx.getCurrentPage() != null && ctx.getCurrentPage().getUserRoles().size() > 0) {
 								if (ctx.getCurrentUser() == null) {
 									ctx.setSpecialContentRenderer("/jsp/view/login.jsp");
 								} else {
@@ -893,7 +893,6 @@ public class AccessServlet extends HttpServlet implements IVersion {
 
 							/** check content **/
 							if (!ctx.isContentFound()) {
-
 								if (staticConfig.isRedirectWidthName()) {
 									String pageName = StringHelper.getFileNameWithoutExtension(StringHelper.getFileNameFromPath(request.getRequestURI()));
 									MenuElement newPage = content.getNavigation(ctx).searchChildFromName(pageName);
@@ -928,10 +927,14 @@ public class AccessServlet extends HttpServlet implements IVersion {
 							String area = requestService.getParameter("only-area", null);
 							if (area != null) {
 								getServletContext().getRequestDispatcher("/jsp/view/content_view.jsp?area=" + area).include(request, response);
-							} else {								
-								String jspPath = template.getRendererFullName(ctx);
-								getServletContext().getRequestDispatcher(jspPath).include(request, response);
-								VisitorContext.getInstance(request.getSession()).setPreviousPage(ctx.getCurrentPage().getPageBean(ctx));
+							} else {
+								if (ctx.getCurrentPage() != null) {
+									String jspPath = template.getRendererFullName(ctx);
+									getServletContext().getRequestDispatcher(jspPath).include(request, response);
+									VisitorContext.getInstance(request.getSession()).setPreviousPage(ctx.getCurrentPage().getPageBean(ctx));
+								} else {
+									response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+								}
 							}
 						}
 					}
