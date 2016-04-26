@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.MacroHelper;
+import org.javlo.helper.NetHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.helper.XMLHelper;
@@ -44,9 +45,19 @@ public class SiteMapServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException {
 		process(request, response);
 	}
-
+	
 	private void process(HttpServletRequest request, HttpServletResponse response) throws ServletException {
 		try {
+			
+			GlobalContext globalContext = GlobalContext.getInstance(request);
+			long lastModified = globalContext.getPublishDate().getTime();
+			response.setDateHeader(NetHelper.HEADER_LAST_MODIFIED, lastModified);
+			response.setHeader("Cache-Control", "max-age=60,must-revalidate");
+			long lastModifiedInBrowser = request.getDateHeader(NetHelper.HEADER_IF_MODIFIED_SINCE);
+			if (lastModified > 0 && lastModified / 1000 <= lastModifiedInBrowser / 1000) {				
+				response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
+				return;
+			}
 
 			String host = request.getServerName();
 			if (!GlobalContext.isExist(request, host) && request.getParameter("yes") == null) {
@@ -61,6 +72,7 @@ public class SiteMapServlet extends HttpServlet {
 			}
 
 			ContentContext ctx = ContentContext.getContentContext(request, response);
+			ctx.setFree(true);
 			ContentService content = ContentService.getInstance(request);
 			
 			if (number == 0)  {

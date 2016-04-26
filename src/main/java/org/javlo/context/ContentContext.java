@@ -732,9 +732,11 @@ public class ContentContext {
 				}
 			}
 		}
-		if (isAsViewMode() && outPage != null && !outPage.isActive(this)) {
-			logger.info("page not found.");
-			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+		if (isAsViewMode() && outPage != null && !outPage.isActive(this)) {			
+			logger.info("page not found : "+getPath());
+			if (!isFree()) {
+				response.setStatus(HttpServletResponse.SC_NOT_FOUND);	
+			}			
 			return null;
 		} else {
 			return outPage;
