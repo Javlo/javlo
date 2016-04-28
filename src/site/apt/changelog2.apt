@@ -672,5 +672,7 @@ change log
 
  * shared import folder better filtered + page reference filter on label too
  
- * 304 on site map  
+ * 304 on site map
+ 
+ * DKIM mail signature  
  
