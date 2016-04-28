@@ -135,8 +135,13 @@ public class MailingThread extends Thread {
 
 			MailConfig mailConfig = new MailConfig(null, StaticConfig.getInstance(application), mailing);
 			MailService mailingManager = MailService.getInstance(mailConfig);
+			
+			DKIMBean dkimBean = null;
+			if (!StringHelper.isOneEmpty(mailing.getDkimDomain(), mailing.getDkimSelector())) {
+				dkimBean = new DKIMBean(mailing.getDkimDomain(), mailing.getDkimSelector(), mailing.getDkimPrivateKeyFile().getAbsolutePath(), null);
+			}
 
-			logger.info("send mailling '" + mailing.getSubject() + "' config:" + mailConfig);
+			logger.info("send mailling '" + mailing.getSubject() + "' config:" + mailConfig + " DKIM ? "+(dkimBean != null));
 
 			while (to != null) {
 				DataToIDService dataToID = DataToIDService.getInstance(application);
@@ -159,10 +164,7 @@ public class MailingThread extends Thread {
 					if (!StringHelper.isEmpty(unsubsribeLink)) {
 						unsubsribeLink = unsubsribeLink.replace("${email}", to.getAddress());
 					}					
-					DKIMBean dkimBean = null;
-					if (!StringHelper.isOneEmpty(mailing.getDkimDomain(), mailing.getDkimSelector())) {
-						dkimBean = new DKIMBean(mailing.getDkimDomain(), mailing.getDkimSelector(), mailing.getDkimPrivateKeyFile().getAbsolutePath(), null);
-					}
+					
 					mailingManager.sendMail(transport, mailing.getFrom(), to, mailing.getSubject(), content, true, unsubsribeLink, dkimBean);
 				} catch (Exception ex) {
 					ex.printStackTrace();
@@ -255,29 +257,6 @@ public class MailingThread extends Thread {
 		synchronized (stop) {
 			stop.notifyAll();
 		}
-	}
-	
-	public static void main(String[] args) throws AddressException, MessagingException, FileNotFoundException, IOException, NoSuchAlgorithmException {
-		MailConfig mailConfig = new MailConfig("relay.csnph-nhrph.be", 25, null, null);
-		MailService mailingManager = MailService.getInstance(mailConfig);		
-		
-		File privateKeyFile = new File("c:/trans/security/privatekey.bin");
-		File publicKeyFile = new File("c:/trans/security/publickey.txt");
-		
-		if (!privateKeyFile.exists()) {
-			KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
-			keyPairGenerator.initialize(1024);
-			KeyPair keyPair = keyPairGenerator.genKeyPair();		
-			
-			ResourceHelper.writeBytesToFile(privateKeyFile, keyPair.getPrivate().getEncoded());
-			ResourceHelper.writeBytesToFile(publicKeyFile, Base64.encode(keyPair.getPublic().getEncoded()));
-		}
-		
-		DKIMBean dkin = new DKIMBean("csnph-nhrph.be", "dkim", privateKeyFile.getAbsolutePath(), null);
-		
-		List<InternetAddress> to = new LinkedList<InternetAddress>();
-		to.add(new InternetAddress("pvandermaesen@noctis.be"));
-		mailingManager.sendMail(null, new InternetAddress("test@csnph-nhrph.be"), to, null, null, "test dkim : "+StringHelper.renderTimeInSecond(new Date().getTime()), "test dkim 2 : "+StringHelper.renderTimeInSecond(new Date().getTime()), "test smtp", false, null, null, dkin);
-	}
+	}	
 
 }
