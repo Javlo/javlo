@@ -820,7 +820,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 
 					comp.countCache = null;
 
-					mailService.sendMail(null, fromEmail, toEmail, ccList, bccList, subject, mailContent, comp.isHTMLMail(), null);
+					mailService.sendMail(null, fromEmail, toEmail, ccList, bccList, subject, mailContent, comp.isHTMLMail(), null, null);
 
 					String mailPath;
 					String mailSubject;
