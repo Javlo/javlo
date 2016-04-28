@@ -58,6 +58,8 @@ public class Mailing {
 	private static final String FEEDBACK_FILE = "feedback.csv";
 
 	private static final String RECEIVERS_FILE = "receivers.properties";
+	
+	private static final String PRIVATE_KEY_FILE = "privatekey.bin";
 
 	private static final String CONFIG_FILE = "mailing.properties";
 
@@ -134,6 +136,8 @@ public class Mailing {
 	private String smtpPort;
 	private String smtpUser;
 	private String smtpPassword;
+	private String dkimDomain;
+	private String dkimSelector;
 
 	private Map<InternetAddress, IUserInfo> users = null;
 
@@ -280,6 +284,8 @@ public class Mailing {
 			setSmtpUser(config.getString("smtp.user", null));
 			setSmtpPassword(config.getString("smtp.password", null));
 			setManualUnsubscribeLink(config.getString("manual-unsubscribe-link", null));
+			setDkimDomain(config.getString("smtp.dkim.domain", null));
+			setDkimSelector(config.getString("smtp.dkim.selector", null));			
 
 			try {
 				date = StringHelper.parseTime(config.getString("date"));
@@ -400,6 +406,12 @@ public class Mailing {
 			if (!StringHelper.isEmpty(getManualUnsubscribeLink())) {
 				config.setProperty("manual-unsubscribe-link", getManualUnsubscribeLink());
 			}
+			if (!StringHelper.isEmpty(getDkimDomain())) {
+				config.setProperty("smtp.dkim.domain", getDkimDomain());
+			}
+			if (!StringHelper.isEmpty(getDkimSelector())) {
+				config.setProperty("smtp.dkim.selector", getDkimSelector());
+			}			
 
 			if (sendDate != null) {
 				config.setProperty("send-date", StringHelper.renderTime(sendDate));
@@ -775,6 +787,35 @@ public class Mailing {
 
 	public void setManualUnsubscribeLink(String manualUnsubcribeLink) {
 		this.manualUnsubscribeLink = manualUnsubcribeLink;
+	}
+
+	public String getDkimDomain() {
+		return dkimDomain;
+	}
+
+	public void setDkimDomain(String dkimDomain) {
+		this.dkimDomain = dkimDomain;
+	}
+
+	public String getDkimSelector() {
+		return dkimSelector;
+	}
+
+	public void setDkimSelector(String dkimSelector) {
+		this.dkimSelector = dkimSelector;
+	}
+
+	public void storePrivateKeyFile(File privateKey) {
+		File localePrivateKeyFile = getDkimPrivateKeyFile();
+		try {
+			ResourceHelper.writeFileToFile(privateKey, localePrivateKeyFile);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}		
+	}
+
+	public File getDkimPrivateKeyFile() {
+		return new File(dir.getAbsolutePath() + '/' + PRIVATE_KEY_FILE);
 	}
 
 }

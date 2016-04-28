@@ -189,7 +189,7 @@ public class MailService {
 		}
 		
 	}
-
+	
 	/**
 	 * Send <strong><em>one</em></strong> mail to multiple recipients and
 	 * multiple BCC recipients <em>(in one mail)</em>.
@@ -215,7 +215,7 @@ public class MailService {
 	 * @throws IllegalArgumentException
 	 *             if no recipient provided or no sender
 	 */
-	public void sendMail(Transport transport, InternetAddress sender, List<InternetAddress> recipients, List<InternetAddress> ccRecipients, List<InternetAddress> bccRecipients, String subject, String content, String txtContent, boolean isHTML, Collection<Attachment> attachments, String unsubscribeLink, DKINBean dkin) throws MessagingException {
+	public void sendMail(Transport transport, InternetAddress sender, List<InternetAddress> recipients, List<InternetAddress> ccRecipients, List<InternetAddress> bccRecipients, String subject, String content, String txtContent, boolean isHTML, Collection<Attachment> attachments, String unsubscribeLink, DKIMBean dkim) throws MessagingException {
 
 		String recipientsStr = new LinkedList<InternetAddress>(recipients).toString();
 
@@ -234,12 +234,12 @@ public class MailService {
 			Session mailSession = getMailSession(mailConfig);
 			
 			MimeMessage msg = null;
-			if (dkin != null) {
+			if (dkim != null) {
 				  //Create DKIM Signer
 			    DKIMSigner dkimSigner = null;
 			    try {
-			        dkimSigner = new DKIMSigner(dkin.getSigningdomain(), dkin.getSelector(), dkin.getPrivatekey());
-			        dkimSigner.setIdentity(dkin.getMailUser() + "@" + dkin.getSigningdomain());
+			        dkimSigner = new DKIMSigner(dkim.getSigningdomain(), dkim.getSelector(), dkim.getPrivatekey());
+			        dkimSigner.setIdentity(dkim.getMailUser() + "@" + dkim.getSigningdomain());
 			        dkimSigner.setHeaderCanonicalization(Canonicalization.SIMPLE);
 			        dkimSigner.setBodyCanonicalization(Canonicalization.RELAXED);
 			        dkimSigner.setLengthParam(true);
@@ -408,12 +408,12 @@ public class MailService {
 	 * @throws IllegalArgumentException
 	 *             if no recipient provided or no sender
 	 */
-	public void sendMail(Transport transport, InternetAddress sender, InternetAddress recipient, List<InternetAddress> ccRecipients, List<InternetAddress> bccRecipients, String subject, String content, boolean isHTML, String unsubribeLink) throws MessagingException {
+	public void sendMail(Transport transport, InternetAddress sender, InternetAddress recipient, List<InternetAddress> ccRecipients, List<InternetAddress> bccRecipients, String subject, String content, boolean isHTML, String unsubribeLink, DKIMBean dkinBean) throws MessagingException {
 		List<InternetAddress> recipients = null;
 		if (recipient != null) {
 			recipients = Arrays.asList(recipient);
 		}
-		sendMail(transport, sender, recipients, ccRecipients, bccRecipients, subject, content, null, isHTML, null, unsubribeLink, null);
+		sendMail(transport, sender, recipients, ccRecipients, bccRecipients, subject, content, null, isHTML, null, unsubribeLink, dkinBean);
 	}
 
 	public void sendMail(Transport transport, InternetAddress sender, InternetAddress recipient, InternetAddress ccRecipient, InternetAddress bccRecipient, String subject, String content, boolean isHTML) throws MessagingException {
@@ -425,7 +425,7 @@ public class MailService {
 		if (bccRecipient != null) {
 			bccRecipientsList.add(bccRecipient);
 		}
-		sendMail(transport, sender, recipient, ccRecipientsList, bccRecipientsList, subject, content, isHTML,  null);
+		sendMail(transport, sender, recipient, ccRecipientsList, bccRecipientsList, subject, content, isHTML,  null, null);
 	}
 
 	public void sendMail(Transport transport, InternetAddress sender, InternetAddress recipient, InternetAddress ccRecipient, InternetAddress bccRecipient, String subject, String content, String contentTxt, boolean isHTML) throws MessagingException {
@@ -469,11 +469,15 @@ public class MailService {
 	 *             if no recipient provided or no sender
 	 */
 	public void sendMail(Transport transport, InternetAddress sender, InternetAddress recipient, String subject, String content, boolean isHTML, String unsubribeLink) throws MessagingException {
-		sendMail(transport, sender, recipient, (List<InternetAddress>) null, (List<InternetAddress>) null, subject, content, isHTML, unsubribeLink);
+		sendMail(transport, sender, recipient, (List<InternetAddress>) null, (List<InternetAddress>) null, subject, content, isHTML, unsubribeLink, null);
+	}
+	
+	public void sendMail(Transport transport, InternetAddress sender, InternetAddress recipient, String subject, String content, boolean isHTML, String unsubribeLink, DKIMBean dkinBean) throws MessagingException {
+		sendMail(transport, sender, recipient, (List<InternetAddress>) null, (List<InternetAddress>) null, subject, content, isHTML, unsubribeLink, null);
 	}
 
 	public void sendMail(InternetAddress sender, InternetAddress recipient, String subject, String content, boolean isHTML) throws MessagingException {
-		sendMail(null, sender, recipient, (List<InternetAddress>) null, (List<InternetAddress>) null, subject, content, isHTML, null);
+		sendMail(null, sender, recipient, (List<InternetAddress>) null, (List<InternetAddress>) null, subject, content, isHTML, null, null);
 	}
 
 	public static void resetInstance() {

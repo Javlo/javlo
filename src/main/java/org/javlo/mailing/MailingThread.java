@@ -1,8 +1,13 @@
 package org.javlo.mailing;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.NoSuchAlgorithmException;
 import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedList;
@@ -17,6 +22,7 @@ import javax.mail.internet.InternetAddress;
 import javax.servlet.ServletContext;
 
 import org.apache.commons.configuration.ConfigurationException;
+import org.apache.xmlbeans.impl.util.Base64;
 import org.javlo.config.StaticConfig;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
@@ -97,8 +103,12 @@ public class MailingThread extends Thread {
 				e.printStackTrace();
 			}
 		}
-		try {			
-			mailService.sendMail(null, mailing.getFrom(), mailing.getNotif(), null, bcc, "report mailing : " + mailing.getSubject(), content, false, null);
+		try {	
+			DKIMBean dkimBean = null;
+			if (!StringHelper.isOneEmpty(mailing.getDkimDomain(), mailing.getDkimSelector())) {
+				dkimBean = new DKIMBean(mailing.getDkimDomain(), mailing.getDkimSelector(), mailing.getDkimPrivateKeyFile().getAbsolutePath(), null);
+			}
+			mailService.sendMail(null, mailing.getFrom(), mailing.getNotif(), null, bcc, "report mailing : " + mailing.getSubject(), content, false, null, dkimBean);
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
@@ -149,7 +159,11 @@ public class MailingThread extends Thread {
 					if (!StringHelper.isEmpty(unsubsribeLink)) {
 						unsubsribeLink = unsubsribeLink.replace("${email}", to.getAddress());
 					}					
-					mailingManager.sendMail(transport, mailing.getFrom(), to, mailing.getSubject(), content, true, unsubsribeLink);
+					DKIMBean dkimBean = null;
+					if (!StringHelper.isOneEmpty(mailing.getDkimDomain(), mailing.getDkimSelector())) {
+						dkimBean = new DKIMBean(mailing.getDkimDomain(), mailing.getDkimSelector(), mailing.getDkimPrivateKeyFile().getAbsolutePath(), null);
+					}
+					mailingManager.sendMail(transport, mailing.getFrom(), to, mailing.getSubject(), content, true, unsubsribeLink, dkimBean);
 				} catch (Exception ex) {
 					ex.printStackTrace();
 				}
@@ -243,10 +257,27 @@ public class MailingThread extends Thread {
 		}
 	}
 	
-	public static void main(String[] args) throws AddressException, MessagingException {
-		MailConfig mailConfig = new MailConfig("relay.javlo.org", 25, null, null);
-		MailService mailingManager = MailService.getInstance(mailConfig);
-		mailingManager.sendMail(null, new InternetAddress("p@noctis.be"), new InternetAddress("pvandermaesen@noctis.be"), "test smtp : "+StringHelper.renderTimeInSecond(new Date().getTime()), "test smtp", false, null);
+	public static void main(String[] args) throws AddressException, MessagingException, FileNotFoundException, IOException, NoSuchAlgorithmException {
+		MailConfig mailConfig = new MailConfig("relay.csnph-nhrph.be", 25, null, null);
+		MailService mailingManager = MailService.getInstance(mailConfig);		
+		
+		File privateKeyFile = new File("c:/trans/security/privatekey.bin");
+		File publicKeyFile = new File("c:/trans/security/publickey.txt");
+		
+		if (!privateKeyFile.exists()) {
+			KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
+			keyPairGenerator.initialize(1024);
+			KeyPair keyPair = keyPairGenerator.genKeyPair();		
+			
+			ResourceHelper.writeBytesToFile(privateKeyFile, keyPair.getPrivate().getEncoded());
+			ResourceHelper.writeBytesToFile(publicKeyFile, Base64.encode(keyPair.getPublic().getEncoded()));
+		}
+		
+		DKIMBean dkin = new DKIMBean("csnph-nhrph.be", "dkim", privateKeyFile.getAbsolutePath(), null);
+		
+		List<InternetAddress> to = new LinkedList<InternetAddress>();
+		to.add(new InternetAddress("pvandermaesen@noctis.be"));
+		mailingManager.sendMail(null, new InternetAddress("test@csnph-nhrph.be"), to, null, null, "test dkim : "+StringHelper.renderTimeInSecond(new Date().getTime()), "test dkim 2 : "+StringHelper.renderTimeInSecond(new Date().getTime()), "test smtp", false, null, null, dkin);
 	}
 
 }

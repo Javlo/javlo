@@ -38,7 +38,7 @@ import org.javlo.ztatic.StaticInfo;
  * 
  */
 public class ResourceServlet extends HttpServlet {
-
+	
 	private static final long serialVersionUID = 1L;
 
 	private static final String FILE_INFO = "file_structure.properties";
@@ -213,7 +213,12 @@ public class ResourceServlet extends HttpServlet {
 					String fileTreeProperties = FileStructureFactory.getInstance(new File(dataFolder)).fileTreeToProperties();
 					out.write(fileTreeProperties.getBytes());
 				} else {
-
+					
+					if (resourceURI.startsWith(ResourceHelper.PRIVATE_DIR)) {
+						response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+						return;
+					}
+					
 					String finalName = URLHelper.mergePath(dataFolder, resourceURI);
 
 					File file = new File(finalName);

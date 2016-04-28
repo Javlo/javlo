@@ -1,13 +1,13 @@
 package org.javlo.mailing;
 
-public class DKINBean {
+public class DKIMBean {
 
 	private String signingdomain;
 	private String selector;
 	private String privatekey;
 	private String mailUser; 
 
-	public DKINBean(String signingdomain, String selector, String privatekey, String mailUser) {
+	public DKIMBean(String signingdomain, String selector, String privatekey, String mailUser) {
 		this.signingdomain = signingdomain;
 		this.selector = selector;
 		this.privatekey = privatekey;

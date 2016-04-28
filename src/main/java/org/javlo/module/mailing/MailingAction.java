@@ -277,8 +277,8 @@ public class MailingAction extends AbstractModuleAction {
 						return null;
 					}
 				} else {
-					logger.warning("Security error : bad mail sender. (" + globalContext.getContextKey() + " - " + ctx.getCurrentUserId() + ") (valid:"+senders+")");
-					return "Security error : bad mail sender (valid:"+senders+")";
+					logger.warning("Security error : bad mail sender. (" + globalContext.getContextKey() + " - " + ctx.getCurrentUserId() + ") (valid : "+senders+")");
+					return "Security error : bad mail sender.";
 				}
 				break;
 			case 3:

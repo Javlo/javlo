@@ -98,6 +98,11 @@ public class ResourceHelper {
 	public static Object SYNCHRO_RESOURCE = new Object();
 
 	static final String CONFIG_DIR = "/WEB-INF/config";
+	
+	/**
+	 * file in private dir could not be downloaded
+	 */
+	public static final String PRIVATE_DIR = "_private";
 
 	static final String STATIC_COMPONENT_DIR = "/static/components";
 

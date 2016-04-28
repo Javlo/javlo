@@ -3367,4 +3367,22 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	public void setSMTPUser(String user) {
 		properties.setProperty(StaticConfig.SMTP_USER_PARAM, user);
 	}
+	
+	public String getDKIMDomain() {
+		return properties.getString("mail.dkim.domain", "");
+	}
+	
+	public void setDKIMDomain(String domain) {
+		properties.setProperty("mail.dkim.domain", domain);
+		save();
+	}
+	
+	public String getDKIMSelector() {
+		return properties.getString("mail.dkim.selector", "");
+	}
+	
+	public void setDKIMSelector(String selector) {
+		properties.setProperty("mail.dkim.selector", selector);
+		save();
+	}
 }

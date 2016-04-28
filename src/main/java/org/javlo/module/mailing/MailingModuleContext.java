@@ -30,6 +30,7 @@ import org.javlo.helper.NetHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.i18n.I18nAccess;
+import org.javlo.mailing.DKIMFactory;
 import org.javlo.mailing.Mailing;
 import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
@@ -285,6 +286,7 @@ public class MailingModuleContext extends AbstractModuleContext {
 		m.setSmtpPort(ctx.getGlobalContext().getSMTPPort());
 		m.setSmtpUser(ctx.getGlobalContext().getSMTPUser());
 		m.setSmtpPassword(ctx.getGlobalContext().getSMTPPassword());
+		
 		if (!StringHelper.isEmpty(ctx.getGlobalContext().getUnsubscribeLink())) {
 			String link = ctx.getGlobalContext().getUnsubscribeLink();
 			if (link.contains("page:")) {
@@ -327,7 +329,16 @@ public class MailingModuleContext extends AbstractModuleContext {
 			m.setUsers(users);
 		}
 
-		m.store(ctx.getRequest().getSession().getServletContext());
+		if (DKIMFactory.isDkimDefined(globalContext)) {
+			m.setDkimDomain(globalContext.getDKIMDomain());
+			m.setDkimSelector(globalContext.getDKIMSelector());
+			m.store(ctx.getRequest().getSession().getServletContext());
+			m.storePrivateKeyFile(DKIMFactory.getDKIMPrivateKeyFile(globalContext));
+		} else {
+			m.store(ctx.getRequest().getSession().getServletContext());	
+		}
+		
+		
 	}
 
 	public String getStructuredRecipients() {

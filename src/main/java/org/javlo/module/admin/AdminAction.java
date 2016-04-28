@@ -40,7 +40,6 @@ import org.javlo.context.GlobalContext;
 import org.javlo.context.GlobalContextFactory;
 import org.javlo.helper.DebugHelper;
 import org.javlo.helper.LangHelper;
-import org.javlo.helper.NetHelper;
 import org.javlo.helper.PatternHelper;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
@@ -48,6 +47,7 @@ import org.javlo.helper.URLHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.macro.core.IMacro;
 import org.javlo.macro.core.MacroFactory;
+import org.javlo.mailing.DKIMFactory;
 import org.javlo.mailing.MailConfig;
 import org.javlo.mailing.MailService;
 import org.javlo.message.GenericMessage;
@@ -149,6 +149,9 @@ public class AdminAction extends AbstractModuleAction {
 		private String smtpport;
 		private String smtpuser;
 		private String smtppassword;
+		private String dkimDomain;
+		private String dkimSelector;
+		
 		
 		private boolean reversedlink;
 
@@ -218,6 +221,8 @@ public class AdminAction extends AbstractModuleAction {
 			setMailingSubject(globalContext.getMailingSubject());
 			setMailingReport(globalContext.getMailingReport());
 			setUnsubscribeLink(globalContext.getUnsubscribeLink());
+			setDkimDomain(globalContext.getDKIMDomain());
+			setDkimSelector(globalContext.getDKIMSelector());
 			
 			setSmtphost(globalContext.getSMTPHost());
 			setSmtpport(globalContext.getSMTPPort());
@@ -749,6 +754,22 @@ public class AdminAction extends AbstractModuleAction {
 			this.unsubscribeLink = unsubscribeLink;
 		}
 
+		public String getDkimDomain() {
+			return dkimDomain;
+		}
+
+		public void setDkimDomain(String dkimDomain) {
+			this.dkimDomain = dkimDomain;
+		}
+
+		public String getDkimSelector() {
+			return dkimSelector;
+		}
+
+		public void setDkimSelector(String dkimSelector) {
+			this.dkimSelector = dkimSelector;
+		}
+
 	}
 
 	public static class ComponentBean {
@@ -864,6 +885,8 @@ public class AdminAction extends AbstractModuleAction {
 			Collections.sort(sortedContext, new GlobalContextBean.SortOnKey());
 			request.setAttribute("contextList", sortedContext);
 		}
+		
+		request.setAttribute("dkimpublickey", DKIMFactory.getDKIMPublicKey(globalContext));
 
 		String currentContextValue = null;
 		if (globalContext.isMaster()) {
@@ -1147,6 +1170,13 @@ public class AdminAction extends AbstractModuleAction {
 					currentGlobalContext.setMailingSubject(requestService.getParameter("mailing-subject", ""));
 					currentGlobalContext.setMailingReport(requestService.getParameter("mailing-report", ""));
 					currentGlobalContext.setUnsubscribeLink(requestService.getParameter("mailing-unsubscribe", ""));
+					
+					currentGlobalContext.setDKIMDomain(requestService.getParameter("mailing-dkimdomain", ""));
+					currentGlobalContext.setDKIMSelector(requestService.getParameter("mailing-dkimselector", ""));
+					
+					if (requestService.getParameter("resetdkim", null) != null) {
+						DKIMFactory.resetKeys(currentGlobalContext);
+					}					
 					
 					/** SMTP **/
 					currentGlobalContext.setSMTPHost(requestService.getParameter("mailing-smtphost",null));

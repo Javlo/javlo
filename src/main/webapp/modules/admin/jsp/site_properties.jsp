@@ -286,6 +286,37 @@
 </div>
 </div>
 </div>
+<div class="row">
+<div class="col-sm-6">
+<div class="form-group">		
+	<label for="mailing-dkimdomain">DKIM domain</label>
+	<input class="form-control" type="text" id="mailing-dkimdomain" name="mailing-dkimdomain" value="${currentContext.dkimDomain}" />	
+</div>
+</div>
+<div class="col-sm-6"><div class="form-group">		
+	<label for="mailing-dkimselector">DKIM selector</label>
+	<input class="form-control" type="text" id="mailing-dkimselector" name="mailing-dkimselector" value="${currentContext.dkimSelector}" />	
+</div>
+</div>
+</div>
+<c:if test="${not empty dkimpublickey}">
+<div class="row">
+<div class="col-sm-12"><div class="form-group">		
+	<label for="mailing-dkimkey">DKIM public key</label>
+	<div class="row">
+		<div class="col-sm-11">
+			<input class="form-control" type="text" id="mailing-dkimkey" value="${dkimpublickey}" />
+		</div><div class="col-sm-1">
+			<input class="btn btn-xs btn-default pull-right" type="submit" value="reset" name="resetdkim" />
+		</div>
+	</div>
+	<label for="mailing-dkimkey">DKIM DNS entry</label>
+	<input class="form-control" type="text" id="mailing-dkimkey" value='${currentContext.dkimSelector}._domainkey           IN TXT    ( "k=rsa; t=s; p=${dkimpublickey}" )' />
+	</div>
+</div>
+</div>
+</div>
+</c:if>
 </fieldset>
 
 <fieldset>
