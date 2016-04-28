@@ -1546,7 +1546,7 @@ public class StaticConfig extends Observable {
 	}
 	
 	public long getSiteMapSizeLimit() {
-		return properties.getLong("sitemap.maxsite", 1024*1024*25);
+		return properties.getLong("sitemap.maxsite", 1024*1024*10);
 	}
 	
 	public long getSiteMapNewsLimit() {
