@@ -254,13 +254,13 @@ public class MailingAction extends AbstractModuleAction {
 			case 2:
 				String sender = rs.getParameter("sender", null);
 				AdminUserFactory adminUserFactory = AdminUserFactory.createAdminUserFactory(globalContext, ctx.getRequest().getSession());
-				String senders = adminUserFactory.getRoleWrapper(ctx, adminUserFactory.getCurrentUser(ctx.getRequest().getSession())).getMailingSenders();
+				String senders = adminUserFactory.getRoleWrapper(ctx, adminUserFactory.getCurrentUser(ctx.getRequest().getSession())).getMailingSenders();				
 				if (senders == null || senders.trim().length() == 0) {
-					senders = globalContext.getMailingSenders().trim();
+					senders = globalContext.getMailingSenders().trim()+','+StringHelper.neverNull(ctx.getCurrentTemplate().getSenders());
 				} else {
-					senders = (senders + ',' + globalContext.getMailingSenders()).trim();
+					senders = (senders + ',' + globalContext.getMailingSenders()).trim()+','+StringHelper.neverNull(ctx.getCurrentTemplate().getSenders());
 				}
-				if (senders.contains(sender)) {
+				if (StringHelper.neverNull(senders).trim().length() == 0 || senders.contains(sender)) {
 					mailingContext.setSender(sender);
 					mailingContext.setSubject(rs.getParameter("subject", null));
 					mailingContext.setReportTo(rs.getParameter("report-to", null));
