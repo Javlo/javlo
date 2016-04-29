@@ -20,7 +20,6 @@ import org.javlo.helper.URLHelper;
 import org.javlo.helper.XHTMLHelper;
 import org.javlo.helper.XHTMLNavigationHelper;
 import org.javlo.i18n.I18nAccess;
-import org.javlo.message.GenericMessage;
 import org.javlo.module.mailing.MailingAction;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;

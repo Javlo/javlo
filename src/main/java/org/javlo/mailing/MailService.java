@@ -4,13 +4,16 @@
  */
 package org.javlo.mailing;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
@@ -19,8 +22,10 @@ import java.util.logging.Logger;
 
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
+import javax.mail.Header;
 import javax.mail.Message;
 import javax.mail.MessagingException;
+import javax.mail.Part;
 import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.mail.Transport;
@@ -28,6 +33,7 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
+import javax.mail.internet.MimePart;
 import javax.mail.util.ByteArrayDataSource;
 
 import org.javlo.context.ContentContext;
@@ -161,7 +167,7 @@ public class MailService {
 		return finalProps;
 
 	}
-	
+
 	public static final Session getMailSession(final MailConfig mailConfig) throws MessagingException {
 		Session mailSession;
 		if (mailConfig == null || !mailConfig.isAuthentification()) {
@@ -177,7 +183,7 @@ public class MailService {
 	}
 
 	public static final Transport getMailTransport(final MailConfig mailConfig) throws MessagingException {
-		Session mailSession = getMailSession(mailConfig);		
+		Session mailSession = getMailSession(mailConfig);
 		logger.info("get transport [host:" + mailConfig.getSMTPHost() + " port:" + mailConfig.getSMTPPortInt() + " login:" + mailConfig.getLogin() + " pwd:" + !StringHelper.isEmpty(mailConfig.getPassword()) + ']');
 		if (mailConfig.getSMTPPortInt() == 0) {
 			logger.severe("could not send email to port 0.");
@@ -187,9 +193,11 @@ public class MailService {
 			transport.connect(mailConfig.getSMTPHost(), mailConfig.getSMTPPortInt(), mailConfig.getLogin(), mailConfig.getPassword());
 			return transport;
 		}
-		
+
 	}
 	
+	
+
 	/**
 	 * Send <strong><em>one</em></strong> mail to multiple recipients and
 	 * multiple BCC recipients <em>(in one mail)</em>.
@@ -230,32 +238,30 @@ public class MailService {
 		Date sendDate = new Date();
 
 		if (!DEBUG) {
-			//Session mailSession = Session.getDefaultInstance(props);
+			// Session mailSession = Session.getDefaultInstance(props);
 			Session mailSession = getMailSession(mailConfig);
-			
+
 			MimeMessage msg = null;
 			if (dkim != null) {
-				  //Create DKIM Signer
-			    DKIMSigner dkimSigner = null;
-			    try {
-			        dkimSigner = new DKIMSigner(dkim.getSigningdomain(), dkim.getSelector(), dkim.getPrivatekey());
-			        dkimSigner.setIdentity(dkim.getMailUser() + "@" + dkim.getSigningdomain());
-			        dkimSigner.setHeaderCanonicalization(Canonicalization.SIMPLE);
-			        dkimSigner.setBodyCanonicalization(Canonicalization.RELAXED);
-			        dkimSigner.setLengthParam(true);
-			        dkimSigner.setSigningAlgorithm(SigningAlgorithm.SHA1withRSA);
-			        dkimSigner.setZParam(true);
-			    } catch (Exception e) {
-			    e.printStackTrace();
-			        }
-			    if(dkimSigner != null) {			        
-			    	msg = new SMTPDKIMMessage(mailSession, dkimSigner);			           
-			    }       
+				// Create DKIM Signer
+				DKIMSigner dkimSigner = null;
+				try {
+					dkimSigner = new DKIMSigner(dkim.getSigningdomain(), dkim.getSelector(), dkim.getPrivatekey());
+					dkimSigner.setIdentity(sender.getAddress());
+					dkimSigner.setHeaderCanonicalization(Canonicalization.SIMPLE);
+					dkimSigner.setBodyCanonicalization(Canonicalization.RELAXED);
+					dkimSigner.setLengthParam(true);
+					dkimSigner.setSigningAlgorithm(SigningAlgorithm.SHA1withRSA);					
+					dkimSigner.setZParam(true);
+					msg = new SMTPDKIMMessage(mailSession, dkimSigner);					
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 			}
-			if (msg == null) {				
+			if (msg == null) {
 				msg = new MimeMessage(mailSession);
 			}
-			if (!StringHelper.isEmpty(unsubscribeLink)) {				
+			if (!StringHelper.isEmpty(unsubscribeLink)) {
 				msg.setHeader("List-Unsubscribe", unsubscribeLink);
 			}
 			msg.setSentDate(sendDate);
@@ -317,11 +323,11 @@ public class MailService {
 			 */
 
 			msg.saveChanges();
-
+			
 			if (transport == null || !transport.isConnected()) {
 				transport = getMailTransport(mailConfig);
 				if (transport != null) {
-					try {					
+					try {
 						transport.sendMessage(msg, msg.getAllRecipients());
 					} finally {
 						transport.close();
@@ -330,6 +336,32 @@ public class MailService {
 			} else {
 				transport.sendMessage(msg, msg.getAllRecipients());
 			}
+			
+			/*System.out.println("Mail Header : ");
+			System.out.println("-------------");
+			System.out.println("");
+			Enumeration headers = msg.getAllHeaders();
+			while (headers.hasMoreElements()) {
+				javax.mail.Header header = (javax.mail.Header)headers.nextElement();
+				System.out.println("  "+header.getName()+" = "+header.getValue());
+			}			
+			System.out.println("");
+			System.out.println("");
+			System.out.println("Mail content : ");
+			System.out.println("-------------");
+			System.out.println("");
+			try {
+				if (msg.getContent() instanceof MimeMultipart) {
+					System.out.println(messageToDKIMBody((MimeMultipart)msg.getContent(), null));	
+				} else {
+					System.out.println(msg.getContent());
+				}
+				
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			System.out.println("");*/
 
 		} else {
 			FileOutputStream out = null;
@@ -425,7 +457,7 @@ public class MailService {
 		if (bccRecipient != null) {
 			bccRecipientsList.add(bccRecipient);
 		}
-		sendMail(transport, sender, recipient, ccRecipientsList, bccRecipientsList, subject, content, isHTML,  null, null);
+		sendMail(transport, sender, recipient, ccRecipientsList, bccRecipientsList, subject, content, isHTML, null, null);
 	}
 
 	public void sendMail(Transport transport, InternetAddress sender, InternetAddress recipient, InternetAddress ccRecipient, InternetAddress bccRecipient, String subject, String content, String contentTxt, boolean isHTML) throws MessagingException {
@@ -471,7 +503,7 @@ public class MailService {
 	public void sendMail(Transport transport, InternetAddress sender, InternetAddress recipient, String subject, String content, boolean isHTML, String unsubribeLink) throws MessagingException {
 		sendMail(transport, sender, recipient, (List<InternetAddress>) null, (List<InternetAddress>) null, subject, content, isHTML, unsubribeLink, null);
 	}
-	
+
 	public void sendMail(Transport transport, InternetAddress sender, InternetAddress recipient, String subject, String content, boolean isHTML, String unsubribeLink, DKIMBean dkinBean) throws MessagingException {
 		sendMail(transport, sender, recipient, (List<InternetAddress>) null, (List<InternetAddress>) null, subject, content, isHTML, unsubribeLink, null);
 	}
@@ -483,5 +515,114 @@ public class MailService {
 	public static void resetInstance() {
 		instance = null;
 	}
+	
+	public static String messageToText(MimeMultipart part) throws IOException, MessagingException {		
+		StringBuffer outStr = new StringBuffer();		
+		final String CRLF = "\r\n";		
+		
+		for (int i = 0; i < part.getCount(); i++) {			
+			if (part.getBodyPart(i).getContent() instanceof MimeMultipart) {
+				
+				MimeMultipart insideMultipartContent = (MimeMultipart) part.getBodyPart(i).getContent();				
+				
+				outStr.append("Content-Type: "+part.getContentType()+CRLF+CRLF+CRLF);
+				
+				String contentType = part.getContentType();				
+				if (contentType.contains("\"")) {
+					outStr.append("--"+contentType.split("\"")[1]+CRLF);
+				}
+				Enumeration headers = part.getBodyPart(i).getAllHeaders();
+				while (headers.hasMoreElements()) {					
+					Header header = (Header)headers.nextElement();
+					outStr.append(header.getName()+": "+header.getValue()+CRLF);
+				}
+				contentType = part.getBodyPart(i).getContentType();				
+				if (contentType.contains("\"")) {
+					outStr.append(CRLF+"--"+contentType.split("\"")[1]+CRLF);
+				}
+				outStr.append(messageToText(insideMultipartContent)+CRLF);
+				contentType = part.getContentType();				
+				if (contentType.contains("\"")) {
+					outStr.append("--"+contentType.split("\"")[1]+"--"+CRLF);
+				}
+				
+			} else {
+				Enumeration headers = part.getBodyPart(i).getAllHeaders();
+				while (headers.hasMoreElements()) {					
+					Header header = (Header)headers.nextElement();					
+					outStr.append(header.getName()+": "+header.getValue()+CRLF);
+				}
+				outStr.append(CRLF+part.getBodyPart(i).getContent());
+				
+				String suffix = "";
+				if (i==part.getCount()-1) {
+					suffix="--";
+				}
+				
+				String contentType = part.getContentType();				
+				if (contentType.contains("\"")) {
+					outStr.append(CRLF+"--"+contentType.split("\"")[1]+suffix+CRLF);
+				}
+				
+				
+			}
+		}
+		return outStr.toString();
+	}
+	
+	
+	
+	public static String messageToDKIMBody(MimeMultipart msg, OutputStream out) throws IOException, MessagingException {
+        try {
+        	if (out == null) {
+        		out = new ByteArrayOutputStream();
+        	}        	
+        	CRLFOutputStream outCRLF = new CRLFOutputStream(out);        	
+        	msg.writeTo(outCRLF);        	
+        	if (out instanceof ByteArrayOutputStream) {
+        		out.close();
+        		return new String(((ByteArrayOutputStream)out).toByteArray());
+        	} else {
+        		return null;
+        	}
+        } catch (IOException e) {
+            throw new MessagingException("Exception calculating bodyhash: "
+                    + e.getMessage(), e);
+        }
+	}
+	
+	public static String _messageToDKIMBody(MimeMultipart part) throws IOException, MessagingException {		
+		StringBuffer outStr = new StringBuffer();		
+		final String CRLF = "\r\n";
+		final String SEP = "--boundary";
+		
+		for (int i = 0; i < part.getCount(); i++) {
+			
+			if (part.getBodyPart(i).getContent() instanceof MimeMultipart) {				
+				MimeMultipart insideMultipartContent = (MimeMultipart) part.getBodyPart(i).getContent();								
+				Enumeration headers = part.getBodyPart(i).getAllHeaders();
+				/*while (headers.hasMoreElements()) {					
+					Header header = (Header)headers.nextElement();
+					outStr.append(header.getName()+": "+header.getValue()+CRLF);
+				}*/				
+				outStr.append(_messageToDKIMBody(insideMultipartContent)+CRLF);								
+			} else {
+				outStr.append(SEP+CRLF);				
+				Enumeration headers = part.getBodyPart(i).getAllHeaders();
+				while (headers.hasMoreElements()) {					
+					Header header = (Header)headers.nextElement();					
+					outStr.append(header.getName()+": "+header.getValue()+CRLF);
+				}
+				outStr.append(CRLF+part.getBodyPart(i).getContent()+CRLF);
+				
+				if (i==part.getCount()-1) {
+					outStr.append(SEP+"--"+CRLF);
+				}			
+				
+			}
+		}
+		return outStr.toString();
+	}
+	
 
 }

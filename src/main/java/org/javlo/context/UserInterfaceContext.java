@@ -5,11 +5,9 @@ import java.util.logging.Logger;
 
 import javax.servlet.http.HttpSession;
 
-import org.javlo.helper.LocalLogger;
 import org.javlo.helper.StringHelper;
 import org.javlo.mailing.MailConfig;
 import org.javlo.module.core.IMainModuleName;
-import org.javlo.module.mailing.MailingModuleContext;
 import org.javlo.user.AdminUserFactory;
 import org.javlo.user.AdminUserSecurity;
 import org.javlo.user.IUserInfo;

@@ -1450,9 +1450,9 @@ public class StringHelper {
 	}
 
 	public static void main(String[] args) {
-		StringBuilder outCleanData = new StringBuilder();
-		outCleanData.append("patrick");
-		System.out.println("outCleanData=" + outCleanData);
+		Pattern p = Pattern.compile(".*\\\"(.*)\\\".*");
+		Matcher m = p.matcher("your \"string\" here");
+		System.out.println(m.group(1));
 	}
 
 	/**

@@ -31,7 +31,6 @@ import org.javlo.helper.TimeHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.message.MessageRepository;
-import org.javlo.module.core.Module.Box;
 import org.javlo.module.core.ModulesContext;
 import org.javlo.navigation.PageBean;
 import org.javlo.service.ContentService;

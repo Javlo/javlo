@@ -44,7 +44,6 @@ import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.javlo.cache.ICache;
 import org.javlo.component.config.ComponentConfig;
-import org.javlo.component.links.MirrorComponent;
 import org.javlo.context.ContentContext;
 import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;

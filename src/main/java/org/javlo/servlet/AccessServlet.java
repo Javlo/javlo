@@ -58,8 +58,6 @@ import org.javlo.message.MessageRepository;
 import org.javlo.message.PopupMessage;
 import org.javlo.module.core.ModulesContext;
 import org.javlo.navigation.MenuElement;
-import org.javlo.navigation.PageAssociationBean;
-import org.javlo.navigation.PageBean;
 import org.javlo.portlet.filter.MultiReadRequestWrapper;
 import org.javlo.rendering.Device;
 import org.javlo.service.ContentService;

@@ -1,7 +1,6 @@
 package org.javlo.utils;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Collection;
 import java.util.LinkedList;
 

@@ -3,10 +3,10 @@ package org.javlo.helper;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 
-import junit.framework.TestCase;
-
 import org.javlo.helper.XMLManipulationHelper.BadXMLException;
 import org.javlo.helper.XMLManipulationHelper.TagDescription;
+
+import junit.framework.TestCase;
 
 public class XMLManipulationHelperTest extends TestCase {
 

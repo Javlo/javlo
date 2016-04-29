@@ -3,11 +3,11 @@ package org.javlo.helper;
 import java.util.HashSet;
 import java.util.Set;
 
-import junit.framework.TestCase;
-
 import org.javlo.user.AdminUserInfo;
 import org.javlo.user.AdminUserSecurity;
 import org.javlo.user.User;
+
+import junit.framework.TestCase;
 
 public class SecurityTest extends TestCase {
 	

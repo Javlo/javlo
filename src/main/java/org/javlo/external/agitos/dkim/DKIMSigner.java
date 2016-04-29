@@ -39,8 +39,8 @@ import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.mail.MessagingException;
 
@@ -338,7 +338,8 @@ public class DKIMSigner {
 
 			// add optional z= header list, DKIM-Quoted-Printable
 			if (this.zParam) {
-				zParamString.append(headerParts[0]).append(":").append(DKIMUtil.QuotedPrintable(headerParts[1].trim()).replace("|", "=7C")).append("|");
+				String zParam = DKIMUtil.QuotedPrintable(headerParts[1].trim()).replace("|", "=7C").replaceAll("[\n\r]", "");
+				zParamString.append(headerParts[0]).append(":").append(zParam).append("|");
 			}
 		}
 

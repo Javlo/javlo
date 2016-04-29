@@ -52,8 +52,6 @@ import org.javlo.rendering.Device;
 import org.javlo.service.ContentService;
 import org.javlo.service.PersistenceService;
 import org.javlo.service.RequestService;
-import org.javlo.service.shared.SharedContent;
-import org.javlo.service.shared.SharedContentService;
 import org.javlo.template.Template;
 import org.javlo.template.TemplateFactory;
 import org.javlo.user.AdminUserFactory;

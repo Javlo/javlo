@@ -135,14 +135,11 @@ public class MailingThread extends Thread {
 
 			MailConfig mailConfig = new MailConfig(null, StaticConfig.getInstance(application), mailing);
 			MailService mailingManager = MailService.getInstance(mailConfig);
-			
 			DKIMBean dkimBean = null;
 			if (!StringHelper.isOneEmpty(mailing.getDkimDomain(), mailing.getDkimSelector())) {
 				dkimBean = new DKIMBean(mailing.getDkimDomain(), mailing.getDkimSelector(), mailing.getDkimPrivateKeyFile().getAbsolutePath(), null);
 			}
-
-			logger.info("send mailling '" + mailing.getSubject() + "' config:" + mailConfig + " DKIM ? "+(dkimBean != null));
-
+			logger.info("send mailling '" + mailing.getSubject() + "' config:" + mailConfig+ " DKIM ? "+(dkimBean != null));
 			while (to != null) {
 				DataToIDService dataToID = DataToIDService.getInstance(application);
 				String data = "mailing=" + mailing.getId() + "&to=" + to;
@@ -163,7 +160,7 @@ public class MailingThread extends Thread {
 					String unsubsribeLink = mailing.getManualUnsubscribeLink();
 					if (!StringHelper.isEmpty(unsubsribeLink)) {
 						unsubsribeLink = unsubsribeLink.replace("${email}", to.getAddress());
-					}					
+					}				
 					
 					mailingManager.sendMail(transport, mailing.getFrom(), to, mailing.getSubject(), content, true, unsubsribeLink, dkimBean);
 				} catch (Exception ex) {
@@ -257,6 +254,45 @@ public class MailingThread extends Thread {
 		synchronized (stop) {
 			stop.notifyAll();
 		}
-	}	
+	}
+	
+	public static void main(String[] args) throws AddressException, MessagingException, FileNotFoundException, IOException, NoSuchAlgorithmException {
+		MailConfig mailConfig = new MailConfig("relay.vandermaesen.name", 25, null, null);
+//		MailConfig mailConfig = new MailConfig("localhost", 25, null, null);
+		MailService mailingManager = MailService.getInstance(mailConfig);		
+		
+		File privateKeyFile = new File("c:/trans/security/privatekey.bin");
+		File publicKeyFile = new File("c:/trans/security/publickey.txt");
+		
+		if (!privateKeyFile.exists()) {
+			KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
+			keyPairGenerator.initialize(1024);
+			KeyPair keyPair = keyPairGenerator.genKeyPair();		
+			
+			ResourceHelper.writeBytesToFile(privateKeyFile, keyPair.getPrivate().getEncoded());
+			ResourceHelper.writeBytesToFile(publicKeyFile, Base64.encode(keyPair.getPublic().getEncoded()));
+		}
+		
+		DKIMBean dkin = new DKIMBean("vandermaesen.name", "dkim", privateKeyFile.getAbsolutePath(), null);	
+		
+		
+		List<InternetAddress> to = new LinkedList<InternetAddress>();
+		to.add(new InternetAddress("lSeimh4YRj9Gb5@dkimvalidator.com"));
+//		to.add(new InternetAddress("patrick.vandermaesen@outlook.com"));
+//		to.add(new InternetAddress("pvandermaesen@noctis.be"));
+		
+		
+//		 System.out.println("");
+//		 System.out.println("***** TEXT *****");
+//		 System.out.println("");
+//		
+//		 mailingManager.sendMail(null, new InternetAddress("patrick@vandermaesen.name"), to, null, null, "dkim:"+(dkin != null)+" TEXT : "+StringHelper.renderTime(new Date()), "<p><b>HTML</b>test TEXT : "+StringHelper.renderTime(new Date())+"</p>", "test TEXT dkim", false, null, null, dkin);
+		 System.out.println("");
+		 System.out.println("***** HTML *****");
+		 System.out.println("");
+		
+		 mailingManager.sendMail(null, new InternetAddress("patrick@vandermaesen.name"), to, null, null, "dkim:"+(dkin != null)+" HTML : "+StringHelper.renderTime(new Date()), "<p><b>HTML</b>test dkim : "+StringHelper.renderTime(new Date())+"</p>", "test HTML dkim", true, null, null, dkin);
+		 System.out.println("done.");
+	}
 
 }

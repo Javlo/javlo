@@ -8,9 +8,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import junit.framework.TestCase;
-
 import org.apache.commons.lang3.tuple.Pair;
+
+import junit.framework.TestCase;
 
 public class StringHelperTest extends TestCase {
 	

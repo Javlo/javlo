@@ -9,7 +9,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.javlo.helper.StringHelper;
-import org.javlo.helper.XHTMLHelper;
 import org.owasp.encoder.Encode;
 
 /**

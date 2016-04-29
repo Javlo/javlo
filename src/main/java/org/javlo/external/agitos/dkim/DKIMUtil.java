@@ -36,9 +36,9 @@ import javax.naming.NamingException;
 import javax.naming.directory.DirContext;
 import javax.naming.directory.InitialDirContext;
 
-import sun.misc.BASE64Encoder;
-
 import com.sun.mail.util.QPEncoderStream;
+
+import sun.misc.BASE64Encoder;
 
 /*
  * @author Florian Sager, http://www.agitos.de, 22.11.2008

@@ -6,7 +6,6 @@ import java.util.logging.Logger;
 
 import org.apache.commons.httpclient.HttpHost;
 import org.apache.commons.httpclient.HttpStatus;
-import org.apache.commons.httpclient.params.HttpParams;
 import org.apache.commons.httpclient.protocol.Protocol;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;

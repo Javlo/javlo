@@ -3,7 +3,6 @@ package org.javlo.macro;
 import java.util.Map;
 import java.util.logging.Logger;
 
-import org.apache.commons.fileupload.FileItem;
 import org.javlo.actions.DataAction;
 import org.javlo.actions.IAction;
 import org.javlo.component.core.ComponentBean;

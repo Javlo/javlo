@@ -5,7 +5,6 @@ import java.io.StringWriter;
 import java.util.Collection;
 import java.util.List;
 
-import org.apache.xalan.templates.ElemSort;
 import org.javlo.component.core.ContentElementList;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.links.RSSLink;

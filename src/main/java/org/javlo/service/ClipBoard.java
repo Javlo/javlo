@@ -3,9 +3,6 @@
  */
 package org.javlo.service;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-
 import javax.servlet.http.HttpServletRequest;
 
 import org.javlo.component.core.ComponentBean;

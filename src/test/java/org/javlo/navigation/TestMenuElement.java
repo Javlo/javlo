@@ -1,11 +1,11 @@
 package org.javlo.navigation;
 
-import junit.framework.TestCase;
-
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.test.servlet.FakeHttpContext;
 import org.javlo.test.servlet.TestRequest;
+
+import junit.framework.TestCase;
 
 public class TestMenuElement extends TestCase {
 	

@@ -4,11 +4,11 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import junit.framework.TestCase;
-
 import org.javlo.context.ContentContext;
 import org.javlo.test.servlet.FakeHttpContext;
 import org.javlo.test.servlet.TestRequest;
+
+import junit.framework.TestCase;
 
 public class ResourceHelperTest extends TestCase {
 	

@@ -10,7 +10,6 @@ import org.javlo.context.ContentContext;
 import org.javlo.data.InfoBean;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
-import org.javlo.helper.XHTMLHelper;
 import org.javlo.module.file.FileAction;
 
 public class FieldWysiwyg extends Field {

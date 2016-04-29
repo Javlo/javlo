@@ -2,12 +2,12 @@ package org.javlo.helper;
 
 import javax.servlet.http.HttpServletRequest;
 
-import junit.framework.TestCase;
-
 import org.javlo.component.core.ContentElementList;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.context.ContentContext;
 import org.javlo.test.servlet.FakeHttpContext;
+
+import junit.framework.TestCase;
 
 public class ComponentHelperTest extends TestCase {
 	

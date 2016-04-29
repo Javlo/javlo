@@ -1,7 +1,6 @@
 package org.javlo.component.form;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 

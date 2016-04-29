@@ -1,10 +1,5 @@
 package org.javlo.ecom;
 
-import java.util.LinkedList;
-import java.util.List;
-
-import org.javlo.ecom.Product.ProductBean;
-
 import junit.framework.TestCase;
 
 public class BasketTest extends TestCase {

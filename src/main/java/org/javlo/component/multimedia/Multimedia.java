@@ -16,7 +16,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.io.FilenameUtils;
-import org.apache.lucene.index.CheckIndex.Status.SegmentInfoStatus;
 import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.component.core.ContentElementList;
 import org.javlo.component.core.IContentVisualComponent;
@@ -25,7 +24,6 @@ import org.javlo.component.image.IImageTitle;
 import org.javlo.component.meta.TimeRangeComponent;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
-import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.exception.ResourceNotFoundException;
 import org.javlo.helper.ElementaryURLHelper;

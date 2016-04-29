@@ -12,15 +12,15 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import net.glxn.qrgen.QRCode;
-import net.glxn.qrgen.image.ImageType;
-
 import org.codehaus.plexus.util.StringUtils;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.core.ILink;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.service.ContentService;
+
+import net.glxn.qrgen.QRCode;
+import net.glxn.qrgen.image.ImageType;
 
 public class QRCodeServlet extends HttpServlet {
 

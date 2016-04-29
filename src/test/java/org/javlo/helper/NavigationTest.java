@@ -2,11 +2,11 @@ package org.javlo.helper;
 
 import javax.servlet.http.HttpServletRequest;
 
-import junit.framework.TestCase;
-
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.test.servlet.FakeHttpContext;
+
+import junit.framework.TestCase;
 
 public class NavigationTest extends TestCase {
 	

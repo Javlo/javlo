@@ -6,7 +6,6 @@ import java.util.Collection;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.navigation.PageURL;
 import org.javlo.context.ContentContext;
-import org.javlo.helper.ElementaryURLHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 

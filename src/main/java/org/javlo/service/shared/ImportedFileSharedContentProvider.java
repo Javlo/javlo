@@ -9,7 +9,6 @@ import java.util.logging.Logger;
 
 import org.javlo.actions.DataAction;
 import org.javlo.context.ContentContext;
-import org.javlo.helper.ContentHelper;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.navigation.MenuElement;

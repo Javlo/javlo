@@ -42,8 +42,6 @@ import org.javlo.i18n.I18nAccess;
 import org.javlo.image.ImageConfig;
 import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
-import org.javlo.module.admin.AdminAction;
-import org.javlo.module.admin.AdminAction.GlobalContextBean;
 import org.javlo.module.content.Edit;
 import org.javlo.module.core.Module;
 import org.javlo.module.core.ModulesContext;

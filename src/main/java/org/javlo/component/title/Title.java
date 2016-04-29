@@ -10,7 +10,6 @@ import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.exception.ResourceNotFoundException;
 import org.javlo.helper.LoremIpsumGenerator;
-import org.javlo.service.ReverseLinkService;
 
 /**
  * @author pvandermaesen

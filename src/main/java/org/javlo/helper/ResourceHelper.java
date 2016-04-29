@@ -1,5 +1,5 @@
 /*
- * Created on 27-dec.-2003
+ * Created on 27-dec.-2003O
  */
 package org.javlo.helper;
 
@@ -1137,6 +1137,11 @@ public class ResourceHelper {
 
 	public static final void writeStringToStream(String content, OutputStream out, String encoding) throws IOException {
 		byte[] contentByte = content.getBytes(encoding);
+		out.write(contentByte);
+	}
+	
+	public static final void writeStringToStream(String content, OutputStream out) throws IOException {
+		byte[] contentByte = content.getBytes();
 		out.write(contentByte);
 	}
 

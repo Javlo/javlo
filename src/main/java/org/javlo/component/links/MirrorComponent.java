@@ -26,8 +26,6 @@ import org.javlo.fields.IFieldContainer;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.i18n.I18nAccess;
-import org.javlo.navigation.MenuElement;
-import org.javlo.navigation.PageBean;
 import org.javlo.service.ClipBoard;
 import org.javlo.service.ContentService;
 import org.javlo.service.RequestService;
