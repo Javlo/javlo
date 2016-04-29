@@ -18,32 +18,16 @@ public class DKIMBean {
 		return signingdomain;
 	}
 
-	public void setSigningdomain(String signingdomain) {
-		this.signingdomain = signingdomain;
-	}
-
 	public String getSelector() {
 		return selector;
-	}
-
-	public void setSelector(String selector) {
-		this.selector = selector;
 	}
 
 	public String getPrivatekey() {
 		return privatekey;
 	}
 
-	public void setPrivatekey(String privatekey) {
-		this.privatekey = privatekey;
-	}
-
 	public String getMailUser() {
 		return mailUser;
 	}
-
-	public void setMailUser(String mailUser) {
-		this.mailUser = mailUser;
-	}	
 
 }

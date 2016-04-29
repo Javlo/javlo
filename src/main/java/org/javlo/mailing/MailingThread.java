@@ -129,16 +129,17 @@ public class MailingThread extends Thread {
 		StaticConfig staticConfig = StaticConfig.getInstance(application);
 		Transport transport = null;
 		try {
+			DKIMBean dkimBean = null;
+			if (!StringHelper.isOneEmpty(mailing.getDkimDomain(), mailing.getDkimSelector())) {
+				dkimBean = new DKIMBean(mailing.getDkimDomain(), mailing.getDkimSelector(), mailing.getDkimPrivateKeyFile().getAbsolutePath(), null);
+			}
 			transport = MailService.getMailTransport(new MailConfig(null, staticConfig, mailing));
 			mailing.onStartMailing();
 			InternetAddress to = mailing.getNextReceiver();
 
 			MailConfig mailConfig = new MailConfig(null, StaticConfig.getInstance(application), mailing);
 			MailService mailingManager = MailService.getInstance(mailConfig);
-			DKIMBean dkimBean = null;
-			if (!StringHelper.isOneEmpty(mailing.getDkimDomain(), mailing.getDkimSelector())) {
-				dkimBean = new DKIMBean(mailing.getDkimDomain(), mailing.getDkimSelector(), mailing.getDkimPrivateKeyFile().getAbsolutePath(), null);
-			}
+			
 			logger.info("send mailling '" + mailing.getSubject() + "' config:" + mailConfig+ " DKIM ? "+(dkimBean != null));
 			while (to != null) {
 				DataToIDService dataToID = DataToIDService.getInstance(application);
@@ -153,6 +154,13 @@ public class MailingThread extends Thread {
 						content = XHTMLHelper.replaceJSTLUserInfo(content, mailing.getUsers().get(to));
 					} catch (Exception e) {
 						e.printStackTrace();
+						mailing.setErrorMessage(e.getMessage()+" [replaceJSTLUserInfo]");
+						try {
+							mailing.store(application);
+						} catch (ConfigurationException e1) {
+							e1.printStackTrace();
+							mailing.setWarningMessage(e.getMessage());
+						}
 					}
 				}
 
@@ -162,9 +170,10 @@ public class MailingThread extends Thread {
 						unsubsribeLink = unsubsribeLink.replace("${email}", to.getAddress());
 					}				
 					
-					mailingManager.sendMail(transport, mailing.getFrom(), to, mailing.getSubject(), content, true, unsubsribeLink, dkimBean);
+					mailing.setWarningMessage(mailingManager.sendMail(transport, mailing.getFrom(), to, mailing.getSubject(), content, true, unsubsribeLink, dkimBean));
 				} catch (Exception ex) {
 					ex.printStackTrace();
+					mailing.setErrorMessage(ex.getMessage()+" [to="+to+"]");
 				}
 				mailing.onMailSent(to);
 				Thread.sleep(20);
@@ -222,6 +231,8 @@ public class MailingThread extends Thread {
 									}
 								} catch (Throwable t) {
 									t.printStackTrace();
+									currentMailing.setErrorMessage(t.getMessage());
+									currentMailing.store(application);
 									try {
 										Thread.sleep(500);
 									} catch (InterruptedException e) {

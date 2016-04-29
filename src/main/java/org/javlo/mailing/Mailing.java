@@ -97,6 +97,10 @@ public class Mailing {
 	private String content;
 
 	private String language;
+	
+	private String errorMessage;
+	
+	private String warningMessage;
 
 	private String adminEmail = null;
 
@@ -236,8 +240,8 @@ public class Mailing {
 	public boolean isExistInHistory(ServletContext application, String inID) throws IOException, ConfigurationException {
 		StaticConfig staticConfig = StaticConfig.getInstance(application);
 
-		dir = new File(staticConfig.getMailingHistoryFolder() + '/' + inID + '/');
-		if (!dir.exists()) {
+		File historyDir = new File(staticConfig.getMailingHistoryFolder() + '/' + inID + '/');
+		if (!historyDir.exists()) {
 			return false;
 		}
 
@@ -285,8 +289,11 @@ public class Mailing {
 			setSmtpPassword(config.getString("smtp.password", null));
 			setManualUnsubscribeLink(config.getString("manual-unsubscribe-link", null));
 			setDkimDomain(config.getString("smtp.dkim.domain", null));
-			setDkimSelector(config.getString("smtp.dkim.selector", null));			
-
+			setDkimSelector(config.getString("smtp.dkim.selector", null));	
+			
+			errorMessage = config.getString("message.error");
+			warningMessage = config.getString("message.warning");
+			
 			try {
 				date = StringHelper.parseTime(config.getString("date"));
 			} catch (ParseException e) {
@@ -390,7 +397,10 @@ public class Mailing {
 			config.setProperty("date", StringHelper.renderTime(new Date()));
 			config.setProperty("test", TEST);
 			config.setProperty("context-key", contextKey);
-
+			
+			config.setProperty("message.warning", warningMessage);			
+			config.setProperty("message.error", errorMessage);
+			
 			if (!StringHelper.isEmpty(getSmtpHost())) {
 				config.setProperty("smtp.host", getSmtpHost());
 			}
@@ -411,8 +421,7 @@ public class Mailing {
 			}
 			if (!StringHelper.isEmpty(getDkimSelector())) {
 				config.setProperty("smtp.dkim.selector", getDkimSelector());
-			}			
-
+			}
 			if (sendDate != null) {
 				config.setProperty("send-date", StringHelper.renderTime(sendDate));
 			}
@@ -452,6 +461,15 @@ public class Mailing {
 		FileUtils.copyDirectory(sourceDir, targetDir);
 		FileUtils.deleteDirectory(sourceDir);
 		loadedDir = targetDir;
+		if (!StringHelper.isEmpty(getErrorMessage())) {
+			setErrorMessage(null);
+			try {
+				store(application);
+			} catch (ConfigurationException e) {
+				e.printStackTrace();
+				setWarningMessage(e.getMessage());
+			}
+		}		
 	}
 
 	public void delete(ServletContext application) throws IOException {
@@ -581,7 +599,7 @@ public class Mailing {
 				dir = new File(staticConfig.getMailingFolder() + '/' + id + '/');
 				dir.mkdirs();
 			}
-		}
+		}		
 		oldDir = new File(staticConfig.getMailingHistoryFolder() + '/' + id + '/');
 	}
 
@@ -816,6 +834,30 @@ public class Mailing {
 
 	public File getDkimPrivateKeyFile() {
 		return new File(dir.getAbsolutePath() + '/' + PRIVATE_KEY_FILE);
+	}
+
+	public String getErrorMessage() {
+		return errorMessage;
+	}
+
+	public void setErrorMessage(String errorMessage) {		
+		this.errorMessage = errorMessage;		
+	}
+
+	public String getWarningMessage() {
+		return warningMessage;
+	}
+
+	public void setWarningMessage(String warningMessage) {
+		this.warningMessage = warningMessage;
+	}
+	
+	public String getMessage() {
+		if (!StringHelper.isEmpty(getErrorMessage())) {
+			return getErrorMessage();
+		} else {
+			return getWarningMessage();
+		}
 	}
 
 }

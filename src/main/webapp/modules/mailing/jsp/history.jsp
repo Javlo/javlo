@@ -18,7 +18,8 @@
 					<th class="head0">${i18n.edit['mailing.title.countReader']}</th>	
 					<th class="head1">${i18n.edit['mailing.title.countForward']}</th>
 					<th class="head0">${i18n.edit['mailing.title.countUnsubscribe']}</th>
-					<th width="120" class="head1">${i18n.edit['mailing.title.sendDate']}</th>				
+					<th width="120" class="head1">${i18n.edit['mailing.title.sendDate']}</th>
+					<th class="head0">${i18n.edit['global.message']}</th>				
 				</tr>
 			</thead>
 			<colgroup>
@@ -30,6 +31,7 @@
 				<col class="con1" />
 				<col class="con0" />
 				<col class="con1" />
+				<col class="con0" />
 			</colgroup>
 			<tbody>
 				
@@ -44,6 +46,7 @@
 					<td class="con1">${mailing.countForward}</td>
 					<td class="con0">${mailing.countUnsubscribe}</td>
 					<td class="con1">${mailing.dateString}</td>
+					<td class="con1">${mailing.message}</td>
 				</tr>			
 				</c:if>		
 				</c:forEach>
@@ -58,7 +61,8 @@
 					<th class="head0">${i18n.edit['mailing.title.countReader']}</th>	
 					<th class="head1">${i18n.edit['mailing.title.countForward']}</th>
 					<th class="head0">${i18n.edit['mailing.title.countUnsubscribe']}</th>
-					<th width="120" class="head1">${i18n.edit['mailing.title.sendDate']}</th>				
+					<th width="120" class="head1">${i18n.edit['mailing.title.sendDate']}</th>
+					<th class="head0">${i18n.edit['global.message']}</th>		
 				</tr>
 			</tfoot>
 		</table>
@@ -71,6 +75,7 @@
 			 "aaSorting": [[ 7, "desc" ]],
 			 "aoColumns": [
 						  { "asSorting": [ "" ] },
+			               null,
 			               null,
 			               null,
 			               null,

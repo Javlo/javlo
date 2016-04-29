@@ -15,15 +15,17 @@
 					<th class="head1">${i18n.edit['mailing.form.sender']}</th>
 					<th class="head0">${i18n.edit['mailing.form.subject']}</th>
 					<th class="head1">${i18n.edit['mailing.title.countReceivers']}</th>
-					<th width="120" class="head1">${i18n.edit['mailing.title.sendDate']}</th>				
+					<th width="120" class="head0">${i18n.edit['mailing.title.sendDate']}</th>
+					<th class="head1">${i18n.edit['global.message']}</th>				
 				</tr>
 			</thead>
 			<colgroup>
 				<col class="con0" />
 				<col class="con1" />
 				<col class="con0" />
-				<col class="con1" />
+				<col class="con1" />				
 				<col class="con0" />
+				<col class="con1" />
 			</colgroup>
 			<tbody>
 				
@@ -39,6 +41,7 @@
 					<td class="con0">${mailing.subject}</td>
 					<td class="con1">${mailing.receiversSize}</td>
 					<td class="con0">${mailing.dateString}</td>
+					<td class="con1">${mailing.message}</td>
 				</tr>			
 				</c:if>		
 				</c:forEach>
@@ -50,7 +53,8 @@
 					<th class="head1">${i18n.edit['mailing.form.sender']}</th>
 					<th class="head0">${i18n.edit['mailing.form.subject']}</th>
 					<th class="head1">${i18n.edit['mailing.title.countReceivers']}</th>
-					<th width="120" class="head1">${i18n.edit['mailing.title.sendDate']}</th>				
+					<th width="120" class="head0">${i18n.edit['mailing.title.sendDate']}</th>	
+					<th class="head1">${i18n.edit['global.message']}</th>			
 				</tr>
 			</tfoot>
 		</table>
@@ -63,6 +67,7 @@
 			 "aaSorting": [[ 4, "desc" ]],
 			 "aoColumns": [
 						  { "asSorting": [ "" ] },
+			               null,
 			               null,
 			               null,
 			               null,
