@@ -231,10 +231,6 @@ public class MailService {
 			throw new IllegalArgumentException("Sender null (sender: " + sender + ") or no recipient: " + recipients);
 		}
 
-		if (props != null) {
-			logger.info("Sending mail with subject: " + subject + " to: " + recipients.size() + " recipients: " + recipientsStr);
-		}
-
 		Date sendDate = new Date();
 
 		if (!DEBUG) {
@@ -257,6 +253,9 @@ public class MailService {
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
+			}
+			if (props != null) {
+				logger.info("Sending mail with subject: " + subject + " to: " + recipients.size() + " recipients: " + recipientsStr+" DKIM?="+(dkim!=null));
 			}
 			if (msg == null) {
 				msg = new MimeMessage(mailSession);
