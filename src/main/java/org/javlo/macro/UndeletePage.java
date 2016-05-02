@@ -1,6 +1,7 @@
 package org.javlo.macro;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -17,6 +18,7 @@ import org.javlo.i18n.I18nAccess;
 import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
 import org.javlo.navigation.MenuElement;
+import org.javlo.navigation.ModificationDateComparator;
 import org.javlo.navigation.PageBean;
 import org.javlo.service.ContentService;
 import org.javlo.service.NavigationService;
@@ -65,6 +67,7 @@ public class UndeletePage extends AbstractInteractiveMacro implements IAction {
 					pages.add(new PageBean(ctx, child));
 				}
 			}
+			Collections.sort(pages, new ModificationDateComparator(false));
 			ctx.getRequest().setAttribute("pages", pages);
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -170,6 +170,7 @@ public class DynamicComponentList extends AbstractPropertiesComponent {
 		if (isOnlyChildren()) {
 			rootPage = ctx.getCurrentPage();
 		}
+		
 		List<IFieldContainer> containers = service.getFieldContainers(ctx, rootPage, getSelectedType());
 		List<IFieldContainer> visibleContainers = new LinkedList<IFieldContainer>();
 		
@@ -219,9 +220,14 @@ public class DynamicComponentList extends AbstractPropertiesComponent {
 	IFieldContainer getFieldContainer(ContentContext ctx) throws Exception {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		DynamicComponentService service = DynamicComponentService.getInstance(globalContext);
-
+		
 		ContentService content = ContentService.getInstance(ctx.getRequest());
-		List<IFieldContainer> containers = service.getFieldContainers(ctx, content.getNavigation(ctx), getSelectedType());
+		MenuElement rootPage = content.getNavigation(ctx);
+		if (isOnlyChildren()) {
+			rootPage = ctx.getCurrentPage();
+		}
+		
+		List<IFieldContainer> containers = service.getFieldContainers(ctx, rootPage, getSelectedType());
 		if (containers.size() > 0) {
 			return containers.iterator().next();
 		} else {

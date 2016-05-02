@@ -83,6 +83,8 @@ public class StaticConfig extends Observable {
 	private Set<String> excludeContextDomain = null;
 
 	private Set<String> contentExtension = null;
+	
+	private Boolean redirectSecondaryURL = null;
 
 	/**
 	 * @Deprecated use getInstance (ServletContext application)
@@ -1211,6 +1213,7 @@ public class StaticConfig extends Observable {
 			} catch (ConfigurationException e) {
 				e.printStackTrace();
 			}
+			redirectSecondaryURL = null;
 			adminUserFactoryClass = null;
 			admimUserFactory = null;
 			adminUserFactoryClassName = "";
@@ -1555,6 +1558,13 @@ public class StaticConfig extends Observable {
 	
 	public String getImageFormat() {
 		return properties.getString("content.image-format", "png,pdf,jpg,jpeg,gif");
+	}
+	
+	public boolean isRedirectSecondaryURL() {
+		if (redirectSecondaryURL == null) {
+			redirectSecondaryURL = properties.getBoolean("url.redirect-secondary-url", true);
+		}
+		return redirectSecondaryURL;
 	}
 
 }

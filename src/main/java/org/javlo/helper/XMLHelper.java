@@ -110,7 +110,8 @@ public class XMLHelper {
 					lgCtx.setFormat("html");
 					lgCtx.setPath(element.getPath());
 					lgCtx.setAbsoluteURL(true);
-					if (!element.notInSearch(lgCtx) && element.isRealContent(lgCtx)) {
+					if (!element.notInSearch(lgCtx) && element.isRealContent(lgCtx) && (latestDate == null || element.getModificationDate().after(latestDate.getTime()) || element.getContentDateNeverNull(lgCtx).after(latestDate.getTime()))) {
+						System.out.println("***** XMLHelper.getSiteMapBloc : select : "+element.getName()); //TODO: remove debug trace
 						line.append("<url>");
 						line.append("<loc>" + URLHelper.createURL(lgCtx) + "</loc>");
 						SimpleDateFormat dataFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -140,6 +141,7 @@ public class XMLHelper {
 						size = size + line.toString().getBytes().length;
 						if (size >= (i - 1) * sitemapMaxsize && size < i * sitemapMaxsize) {
 							out.println(line);
+							System.out.println("***** XMLHelper.getSiteMapBloc :WRITE"); //TODO: remove debug trace
 							if (element.getModificationDate().getTime() > lastmod.getTime()) {
 								lastmod = element.getModificationDate();
 							}

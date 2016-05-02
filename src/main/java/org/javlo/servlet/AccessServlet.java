@@ -256,12 +256,13 @@ public class AccessServlet extends HttpServlet implements IVersion {
 			Thread.currentThread().setName("AccessServlet-" + globalContext.getContextKey());
 
 			ContentContext ctx = ContentContext.getContentContext(request, response);
-			
-			
+
 			String pageUrl = URLHelper.createURL(ctx, ctx.getCurrentPage());
-			
-			if (request.getAttribute(CatchAllFilter.MAIN_URI_KEY) != null && !request.getAttribute(CatchAllFilter.MAIN_URI_KEY).toString().endsWith(pageUrl)) {
-				response.sendRedirect(pageUrl);
+
+			if (ctx.isAsViewMode() && staticConfig.isRedirectSecondaryURL()) {
+				if (request.getAttribute(CatchAllFilter.MAIN_URI_KEY) != null && !request.getAttribute(CatchAllFilter.MAIN_URI_KEY).toString().endsWith(pageUrl)) {
+					response.sendRedirect(pageUrl);
+				}
 			}
 
 			if (!staticConfig.isContentExtensionValid(ctx.getFormat())) {
@@ -961,7 +962,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 				if (StringHelper.isTrue(request.getSession().getAttribute(InfoBean.NEW_SESSION_PARAM))) {
 					request.getSession().removeAttribute(InfoBean.NEW_SESSION_PARAM);
 				}
-				
+
 				i18nAccess.resetRequestMap();
 
 			} catch (Throwable t) {

@@ -62,7 +62,7 @@ public class DynamicComponentService {
 	}
 
 	public List<IFieldContainer> getFieldContainers(ContentContext ctx, MenuElement page, String fieldType) throws Exception {
-		String REQUEST_KEY = page.getPath() + "__TYPE__" + fieldType;
+		String REQUEST_KEY = page.getId() + "__TYPE__" + fieldType;
 		List<IFieldContainer> outContainer = (List<IFieldContainer>) ctx.getRequest().getAttribute(REQUEST_KEY);
 		if (outContainer == null) {			
 			outContainer = new LinkedList<IFieldContainer>();
