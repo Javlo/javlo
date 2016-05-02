@@ -674,5 +674,9 @@ change log
  
  * 304 on site map
  
- * DKIM mail signature  
+ * DKIM mail signature
+ 
+ * forward on bad url + i18n component
+ 
+* 2.1.0.3.11 02/05/2016
  
