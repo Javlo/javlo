@@ -133,7 +133,7 @@ public class XMLHelper {
 							locLgCtx.setFormat("html");
 							locLgCtx.setAbsoluteURL(true);
 							if (element.isRealContent(locLgCtx)) {
-								line.append("<link rel=\"alternate\" hreflang=\"" + locLg + "\" href=\"" + URLHelper.createURL(locLgCtx) + "\" />");
+								line.append("<xhtml:link rel=\"alternate\" hreflang=\"" + locLg + "\" href=\"" + URLHelper.createURL(locLgCtx) + "\" />");
 							}
 						}
 						line.append("</url>");

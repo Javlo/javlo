@@ -40,6 +40,7 @@ import org.javlo.context.GlobalContext;
 import org.javlo.context.GlobalContextFactory;
 import org.javlo.data.EditInfoBean;
 import org.javlo.data.InfoBean;
+import org.javlo.filter.CatchAllFilter;
 import org.javlo.helper.DebugHelper;
 import org.javlo.helper.ElementaryURLHelper;
 import org.javlo.helper.LocalLogger;
@@ -255,6 +256,13 @@ public class AccessServlet extends HttpServlet implements IVersion {
 			Thread.currentThread().setName("AccessServlet-" + globalContext.getContextKey());
 
 			ContentContext ctx = ContentContext.getContentContext(request, response);
+			
+			
+			String pageUrl = URLHelper.createURL(ctx, ctx.getCurrentPage());
+			
+			if (request.getAttribute(CatchAllFilter.MAIN_URI_KEY) != null && !request.getAttribute(CatchAllFilter.MAIN_URI_KEY).toString().endsWith(pageUrl)) {
+				response.sendRedirect(pageUrl);
+			}
 
 			if (!staticConfig.isContentExtensionValid(ctx.getFormat())) {
 				ctx.setFormat(staticConfig.getDefaultContentExtension());
@@ -341,6 +349,9 @@ public class AccessServlet extends HttpServlet implements IVersion {
 			}
 
 			I18nAccess i18nAccess = I18nAccess.getInstance(ctx);
+			if (ctx.getCurrentPage() != null) {
+				i18nAccess.setRequestMap(ctx.getCurrentPage().getI18n(ctx));
+			}
 
 			i18nAccess.requestInit(ctx);
 			ctx.getRequest().setAttribute("list", ListService.getInstance(ctx).getAllList(ctx));
@@ -950,6 +961,8 @@ public class AccessServlet extends HttpServlet implements IVersion {
 				if (StringHelper.isTrue(request.getSession().getAttribute(InfoBean.NEW_SESSION_PARAM))) {
 					request.getSession().removeAttribute(InfoBean.NEW_SESSION_PARAM);
 				}
+				
+				i18nAccess.resetRequestMap();
 
 			} catch (Throwable t) {
 

@@ -171,6 +171,8 @@ public class I18nAccess implements Serializable {
 	private String contextKey;
 	
 	private Object lock = null;
+	
+	private Map<String,String> requestMap = Collections.EMPTY_MAP;
 
 	public synchronized void setCurrentModule(GlobalContext globalContext, HttpSession session, Module currentModule) throws IOException {
 		if (this.currentModule == null || !currentModule.getName().equals(this.currentModule.getName())) {
@@ -483,8 +485,15 @@ public class I18nAccess implements Serializable {
 			propViewMap.addMap(templateView);
 			templateViewImported = true;
 		}
+		
+		ReadOnlyMultiMap outMap = propViewMap;
+		if (getRequestMap().size() > 0) {
+			outMap = new ReadOnlyMultiMap(); 
+			outMap.addMap(propViewMap);
+			outMap.addMap(getRequestMap());
+		}
 
-		return propViewMap;
+		return outMap;
 	}
 
 	public String getViewText(String key) {
@@ -621,6 +630,10 @@ public class I18nAccess implements Serializable {
 		changeViewLanguage(ctx);
 	}
 	
+	public boolean isDisplayKey() {
+		return displayKey;
+	}
+	
 	private void updateTemplate(ContentContext ctx) throws ConfigurationException, IOException, ServiceException, Exception {
 		updateTemplate(ctx, ContentContext.EDIT_MODE);
 		updateTemplate(ctx, ContentContext.VIEW_MODE);
@@ -709,6 +722,18 @@ public class I18nAccess implements Serializable {
 
 	public String getAllText(String key, String defautlValue) {
 		return getViewText(key,getText(key, defautlValue));
+	}
+
+	public Map<String,String> getRequestMap() {
+		return requestMap;
+	}
+
+	public void setRequestMap(Map<String,String> requestMap) {
+		this.requestMap = requestMap;
+	}
+	
+	public void resetRequestMap() {
+		requestMap = Collections.EMPTY_MAP;
 	}
 
 }

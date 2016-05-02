@@ -555,10 +555,19 @@ public class URLHelper extends ElementaryURLHelper {
 	}
 	
 	public static String createURL(ContentContext ctx, MenuElement page, Map params) {
-		return createURL(ctx, page.getPath(), params);
+		if (page == null) {
+			return null;
+		}
+		String path = page.getPath();
+		try {			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}		
+		return createURL(ctx, path, params);
 	}
 
 	public static String createURL(ContentContext ctx, MenuElement page) {
+		String path = page.getPath();		
 		if (page.isHttps() && (!ctx.getURLProtocolPrefix().equalsIgnoreCase("https"))) {
 			ContentContext httpsCtx = new ContentContext(ctx);
 			httpsCtx.setAbsoluteURL(true);
@@ -568,9 +577,9 @@ public class URLHelper extends ElementaryURLHelper {
 			ContentContext httpCtx = new ContentContext(ctx);
 			httpCtx.setAbsoluteURL(true);
 			httpCtx.setURLProtocolPrefix("http");
-			return createURL(httpCtx, page.getPath());
+			return createURL(httpCtx, path);
 		} else {
-			return createURL(ctx, page.getPath());
+			return createURL(ctx, path);
 		}
 	}
 

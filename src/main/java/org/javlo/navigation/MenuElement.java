@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.Serializable;
+import java.io.StringReader;
 import java.io.StringWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
@@ -20,8 +21,10 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 
+import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang.StringUtils;
 import org.javlo.bean.Link;
 import org.javlo.cache.ICache;
@@ -49,6 +52,7 @@ import org.javlo.component.meta.Category;
 import org.javlo.component.meta.DateComponent;
 import org.javlo.component.meta.EventDefinitionComponent;
 import org.javlo.component.meta.ForceRealContent;
+import org.javlo.component.meta.I18nComponent;
 import org.javlo.component.meta.Keywords;
 import org.javlo.component.meta.LocationComponent;
 import org.javlo.component.meta.MetaDescription;
@@ -150,6 +154,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 		public boolean visible = false;
 		String referenceLanguage = null;
 		boolean breakRepeat;
+		Boolean likeRoot = null;
 		Boolean cacheable = null;
 		int priority;
 		String type = PAGE_TYPE_DEFAULT;
@@ -157,6 +162,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 		Event event = null;
 		String slogan;
 		String linkLabel = null;
+		Map<String, String> i18n = null;
 
 		public ImageTitleBean imageLink;
 
@@ -448,6 +454,22 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 
 		public void setLinkLabel(String linkLabel) {
 			this.linkLabel = linkLabel;
+		}
+
+		public Map<String, String> getI18n() {
+			return i18n;
+		}
+
+		public void setI18n(Map<String, String> i18n) {
+			this.i18n = i18n;
+		}
+
+		public Boolean getLikeRoot() {
+			return likeRoot;
+		}
+
+		public void setLikeRoot(Boolean likeRoot) {
+			this.likeRoot = likeRoot;
 		}
 
 	}
@@ -3053,6 +3075,23 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 	public boolean isRoot() {
 		return getParent() == null;
 	}
+	
+	public boolean isLikeRoot(ContentContext ctx) throws Exception {
+		PageDescription desc = getPageDescriptionCached(ctx, ctx.getRequestContentLanguage());
+		if (desc.likeRoot != null) {
+			return desc.likeRoot;
+		}		
+		if (isRoot()) {
+			desc.likeRoot = true;
+			return desc.likeRoot;
+		}		
+		MenuElement parent = getParent();
+		while (parent != null && parent.getFirstChild() != null && parent.getFirstChild().getId().equals(getId()) && !parent.isRealContent(ctx)) {
+			parent = parent.getParent();			
+		}
+		desc.likeRoot = (parent == null);
+		return desc.likeRoot;
+	}
 
 	/**
 	 * check if the current page is a child of a page with id or name give in
@@ -3169,7 +3208,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 			root = rootNode;
 		}
 		return root;
-	}
+	}	
 
 	/**
 	 * return the depth of the selection. sample: if the first selected element
@@ -4442,6 +4481,32 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 		}
 
 		return desc.notInSearch;
+	}
+
+	/**
+	 * get local i18n data
+	 * 
+	 * @param ctx
+	 * @return
+	 * @throws Exception
+	 */
+	public Map<String, String> getI18n(ContentContext ctx) throws Exception {
+		PageDescription desc = getPageDescriptionCached(ctx, ctx.getRequestContentLanguage());
+		if (desc.i18n == null) {
+			ContentContext noAreaCtx = new ContentContext(ctx);
+			noAreaCtx.setArea(null);
+			List<IContentVisualComponent> content = getContentByType(noAreaCtx, I18nComponent.TYPE);
+			for (IContentVisualComponent i18nComp : content) {
+				Properties prop = new Properties();
+				prop.load(new StringReader(i18nComp.getValue(noAreaCtx)));
+				desc.i18n = new HashedMap(prop);
+			}
+			if (desc.i18n == null) {
+				desc.i18n = Collections.EMPTY_MAP;
+			}
+		}
+
+		return desc.i18n;
 	}
 
 	/**

@@ -712,8 +712,8 @@ public class ContentContext {
 				if (getPath().trim().length() > 0) {
 					MenuElement elem = globalContext.getPageIfExist(this, getPath(), urlFacotry);
 					if (elem != null) {
-						globalContext.storeUrl(this, getPath(), elem.getId());
 						setCurrentPageCached(elem);
+						globalContext.storeUrl(this, getPath(), elem.getId());						
 					} else {
 						elem = globalContext.convertOldURL(this, getPath());
 						if (elem != null) {
@@ -1474,7 +1474,7 @@ public class ContentContext {
 		if (format == null) {
 			GlobalContext globalContext = GlobalContext.getInstance(getRequest());
 			if (isLikeViewRenderMode() && globalContext.getURLFactory(this) != null) {
-				format = globalContext.getURLFactory(this).getFormat(request.getRequestURI());
+				format = globalContext.getURLFactory(this).getFormat(this, request.getRequestURI());
 			} else {
 				format = StringHelper.getFileExtension(request.getRequestURI());
 			}

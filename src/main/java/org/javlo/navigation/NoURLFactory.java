@@ -18,7 +18,7 @@ public class NoURLFactory implements IURLFactory {
 	}
 
 	@Override
-	public String getFormat(String url) {
+	public String getFormat(ContentContext ctx, String url) {
 		return null;
 	}
 

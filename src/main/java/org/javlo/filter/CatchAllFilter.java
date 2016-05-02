@@ -62,6 +62,8 @@ public class CatchAllFilter implements Filter {
 
 	public static final String CHECK_CONTEXT_PARAM = "__check_context";
 	private static final String JAVLO_LOGIN_ID = "javlo_login_id";
+
+	public static final String MAIN_URI_KEY = "_mainURI";
 	/**
 	 * create a static logger.
 	 */
@@ -371,7 +373,8 @@ public class CatchAllFilter implements Filter {
 						if (httpRequest.getSession().isNew()) {
 							httpRequest.getSession().setAttribute(InfoBean.NEW_SESSION_PARAM, true);
 						}						
-						httpRequest.getRequestDispatcher(newPath).forward(httpRequest, response);
+						httpRequest.setAttribute(MAIN_URI_KEY, httpRequest.getRequestURI());
+						httpRequest.getRequestDispatcher(newPath).forward(httpRequest, response);						
 						return;
 					}
 				}

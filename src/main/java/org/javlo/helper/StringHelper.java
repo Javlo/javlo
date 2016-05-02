@@ -1923,13 +1923,17 @@ public class StringHelper {
 		Locale locale;
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		if (ctx.getRenderMode() == ContentContext.EDIT_MODE) {
-			dateFormatString = i18nAccess.getText("date.short", (String) null);
+			if (!i18nAccess.isDisplayKey()) {
+				dateFormatString = i18nAccess.getText("date.short", (String) null);
+			}
 			if (dateFormatString == null && globalContext.getShortDateFormat().trim().length() > 0) {
 				dateFormatString = globalContext.getShortDateFormat();
 			}
 			locale = new Locale(globalContext.getEditLanguage(ctx.getRequest().getSession()));
 		} else {
-			dateFormatString = i18nAccess.getContentViewText("date.short", (String) null);
+			if (!i18nAccess.isDisplayKey()) {
+				dateFormatString = i18nAccess.getContentViewText("date.short", (String) null);
+			}
 			if (dateFormatString == null && globalContext.getShortDateFormat().trim().length() > 0) {
 				dateFormatString = globalContext.getShortDateFormat();
 			}

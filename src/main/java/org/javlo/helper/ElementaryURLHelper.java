@@ -195,7 +195,10 @@ public abstract class ElementaryURLHelper {
 			IURLFactory urlCreator = ctx.getURLFactory();
 			if (urlCreator != null) {
 				try {
-					uri = uri.substring(0, uri.lastIndexOf("."));
+					int lastIndex = uri.lastIndexOf(".");
+					if (lastIndex >= 0) {
+						uri = uri.substring(0, lastIndex);
+					}
 					MenuElement page = globalContext.getPageIfExist(ctx, uri, false);
 					if (page == null) {
 						uri = "/404";
@@ -270,7 +273,7 @@ public abstract class ElementaryURLHelper {
 			}
 		}
 
-		if (!ctx.isAbsoluteURL() && widthEncodeURL && ctx.getDevice() != null && ctx.getDevice().isHuman()) {			
+		if (!ctx.isAbsoluteURL() && widthEncodeURL && ctx.getDevice() != null && ctx.getDevice().isHuman()) {
 			newUri = ctx.getResponse().encodeURL(newUri);
 		}
 
@@ -465,10 +468,10 @@ public abstract class ElementaryURLHelper {
 		}
 		if (ctx.getRenderMode() != ContentContext.VIEW_MODE) {
 			File file = new File(URLHelper.mergePath(ctx.getGlobalContext().getDataFolder(), fileURL));
-			StaticInfo staticInfo = StaticInfo.getInstance(ctx, file);			
-			if (staticInfo != null) {				
+			StaticInfo staticInfo = StaticInfo.getInstance(ctx, file);
+			if (staticInfo != null) {
 				url = URLHelper.addParam(url, "hash", staticInfo.getVersionHash(ctx));
-			}			
+			}
 		}
 		url = createStaticURL(ctx, referencePage, url, true);
 		if (ctx.getRequest().getParameter("lowdef") != null) {
@@ -492,7 +495,7 @@ public abstract class ElementaryURLHelper {
 		if (uri == null) {
 			return "";
 		}
-
+		
 		if (uri.length() < 1) {
 			uri = "/";
 		} else if (uri.charAt(0) != '/') {
@@ -506,7 +509,7 @@ public abstract class ElementaryURLHelper {
 
 		String urlSuffix = '.' + ctx.getFormat();
 
-		if (!uri.endsWith(urlSuffix)) {
+		if (!uri.endsWith(urlSuffix) && !uri.equals("/")) {
 			if (uri.endsWith("/")) {
 				try {
 					uri = uri + ContentService.getInstance(globalContext).getNavigation(ctx).getName() + urlSuffix;
@@ -516,9 +519,8 @@ public abstract class ElementaryURLHelper {
 			} else {
 				uri = uri + urlSuffix;
 			}
-		}
-		String url = createNoProtocolURL(ctx, globalContext, uri, ajax, withPathPrefix, widthEncodeURL);
-
+		}		
+		String url = createNoProtocolURL(ctx, globalContext, uri, ajax, withPathPrefix, widthEncodeURL);		
 		if (ctx.isAbsoluteURL()) {
 			url = addHost(ctx, url);
 		}
@@ -664,14 +666,14 @@ public abstract class ElementaryURLHelper {
 		}
 	}
 
-	public static final String removeSite(ContentContext ctx, String url) {		
-		if (ctx.getRequest().getContextPath().length()>1 && url.startsWith(ctx.getRequest().getContextPath())) {
+	public static final String removeSite(ContentContext ctx, String url) {
+		if (ctx.getRequest().getContextPath().length() > 1 && url.startsWith(ctx.getRequest().getContextPath())) {
 			url = url.substring(ctx.getRequest().getContextPath().length());
-		}		
+		}
 		if (url.startsWith("/" + ctx.getGlobalContext().getContextKey())) {
 			url = url.substring(("/" + ctx.getGlobalContext().getContextKey()).length());
-		}		
-		return url;		
+		}
+		return url;
 	}
 
 	public static final String getParamsAsString(String url) {

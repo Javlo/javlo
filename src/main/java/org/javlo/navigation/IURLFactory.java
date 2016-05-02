@@ -31,6 +31,6 @@ public interface IURLFactory {
 	 *            a url
 	 * @return a content format (html, png, pdf...)
 	 */
-	public String getFormat(String url);
+	public String getFormat(ContentContext ctx, String url);
 
 }

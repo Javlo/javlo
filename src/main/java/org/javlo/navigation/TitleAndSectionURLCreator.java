@@ -74,7 +74,11 @@ public class TitleAndSectionURLCreator extends AbstractURLFactory {
 	}
 
 	@Override
-	public String createURL(ContentContext ctx, MenuElement currentPage) throws Exception {
+	public String createURL(ContentContext ctx, MenuElement currentPage) throws Exception {		
+		if (currentPage.isLikeRoot(ctx)) {
+			return "/";
+		}
+		
 		return createURLWithoutExt(ctx, currentPage) + '.' + ctx.getFormat();
 	}
 

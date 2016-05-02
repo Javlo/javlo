@@ -1470,7 +1470,7 @@ public class StaticConfig extends Observable {
 			return false;
 		} else {
 			if (contentExtension == null) {
-				String rawExtension = properties.getString("content.extension", "html,pdf,png,jpg,xml");
+				String rawExtension = properties.getString("content.extension", "html,pdf,png,jpg,xml,cxml");
 				if (rawExtension.trim().length() == 0 || rawExtension.trim().equals("*")) {
 					contentExtension = Collections.EMPTY_SET;
 				} else {

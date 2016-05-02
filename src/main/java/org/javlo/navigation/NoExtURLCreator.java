@@ -23,6 +23,11 @@ public class NoExtURLCreator implements IURLFactory {
 
 	@Override
 	public String createURL(ContentContext ctx, MenuElement currentPage) throws Exception {
+		
+		if (currentPage.isLikeRoot(ctx)) {
+			return "/";
+		}
+		
 		/*
 		 * Collection<IContentVisualComponent> comps = currentPage.getContentByType(ctx, PageURL.TYPE); if (comps.size() > 0) { return ((PageURL) comps.iterator().next()).getValue(); }
 		 */
@@ -43,13 +48,13 @@ public class NoExtURLCreator implements IURLFactory {
 	}
 
 	@Override
-	public String getFormat(String url) {
+	public String getFormat(ContentContext ctx, String url) {
 		String[] pathItems = StringUtils.split(url, "/");
 		String format = "html";
 		if (pathItems.length >= 4) {
 			format = pathItems[pathItems.length - 2];
 		}
-		if (format.length() > 4 || (!format.equals("html") && !format.equals("pdf") && !format.equals("png") && !format.equals("jpg") && !format.equals("cxml"))) {
+		if (!ctx.getGlobalContext().getStaticConfig().isContentExtensionValid(format)) {
 			format = "html";
 		}
 		return format;

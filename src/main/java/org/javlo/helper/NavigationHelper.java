@@ -7,6 +7,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -474,5 +475,16 @@ public class NavigationHelper {
 		} else {
 			return root.searchChildFromId(id);
 		}
+	}
+	
+	public static MenuElement getChildWithContent(ContentContext ctx, MenuElement page) throws Exception {
+		while (page != null && !page.isRealContent(ctx) && page.getChildMenuElements().size() > 0) {
+			Iterator<MenuElement> children = page.getChildMenuElements().iterator();
+			page = children.next();
+			while (page != null && !page.isActive(ctx)) {
+				page = children.next();
+			}			
+		}
+		return page;
 	}
 }

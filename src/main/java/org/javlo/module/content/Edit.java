@@ -2203,6 +2203,9 @@ public class Edit extends AbstractModuleAction {
 
 	public static String performRefresh(ContentContext ctx) throws Exception {
 		// SynchroHelper.performSynchro(ctx);
+		if (ctx.getCurrentPage() != null) {
+			ctx.getCurrentPage().releaseCache();
+		}
 		return null;
 	}
 }

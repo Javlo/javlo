@@ -3,6 +3,7 @@ package org.javlo.navigation;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.javlo.context.ContentContext;
 import org.javlo.helper.StringHelper;
 
 public abstract class AbstractURLFactory implements IURLFactory {
@@ -10,10 +11,10 @@ public abstract class AbstractURLFactory implements IURLFactory {
 	private Map<String, String> urls = null;
 
 	@Override
-	public String getFormat(String url) {
+	public String getFormat(ContentContext ctx, String url) {
 		String ext = StringHelper.getFileExtension(url);
 		ext = StringHelper.onlyAlphaNumeric(ext, true);
-		if (ext.trim().length() == 0) {
+		if (!ctx.getGlobalContext().getStaticConfig().isContentExtensionValid(ext)) {
 			return ext = "html";
 		}
 		return ext;

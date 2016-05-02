@@ -55,13 +55,13 @@ public class NoExtURLPathTitleCreatorOneLevel extends NoExtURLCreator {
 	}
 
 	@Override
-	public String getFormat(String url) {
+	public String getFormat(ContentContext ctx, String url) {
 		String[] pathItems = StringUtils.split(url, "/");
 		String format = "html";
 		if (pathItems.length >= 4) {
 			format = pathItems[pathItems.length - 2];
 		}
-		if (format.length() > 4 || (!format.equals("html") && !format.equals("pdf") && !format.equals("png") && !format.equals("jpg") && !format.equals("cxml"))) {
+		if (!ctx.getGlobalContext().getStaticConfig().isContentExtensionValid(format)) {
 			format = "html";
 		}
 		return format;
