@@ -18,7 +18,7 @@ public class ActiveAllChildren extends AbstractMacro {
 	public String perform(ContentContext ctx, Map<String, Object> params) throws Exception {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		
-		for (MenuElement menuElement : ctx.getCurrentPage().getChildMenuElements()) {
+		for (MenuElement menuElement : ctx.getCurrentPage().getAllChildren()) {
 			menuElement.setActive(true);
 		}		
 
@@ -30,6 +30,11 @@ public class ActiveAllChildren extends AbstractMacro {
 
 	@Override
 	public boolean isPreview() {
+		return true;
+	}
+	
+	@Override
+	public boolean isAdmin() {
 		return true;
 	}
 
