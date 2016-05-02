@@ -4,6 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.javlo.config.StaticConfig;
+import org.javlo.macro.ActiveAllChildren;
 import org.javlo.macro.AddChildMacro;
 import org.javlo.macro.CleanResourceNameMacro;
 import org.javlo.macro.CopyLanguageStructureHereMacro;
@@ -153,6 +154,7 @@ public class MacroFactory {
 		macros.add(new DeleteTestPage());
 		macros.add(new UnlinkMirrorComponent());
 		macros.add(new RenameChildren());
+		macros.add(new ActiveAllChildren());
 	}
 
 	public IMacro getMacro(String name) {
