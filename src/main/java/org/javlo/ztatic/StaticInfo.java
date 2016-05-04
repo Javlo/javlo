@@ -1351,7 +1351,7 @@ public class StaticInfo {
 		try {
 			return ExifHelper.readDate(getFile());
 		} catch (ImageReadException e) {
-			e.printStackTrace();
+			logger.warning(e.getMessage());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
