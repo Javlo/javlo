@@ -58,9 +58,9 @@ public class MergeDynamicComponent extends AbstractMacro {
 						// ComponentBean(dynComp.getComponentBean()), ctxLg);
 						if (newComp != null) {
 							Properties compProp = dynComp.getProperties();
-							Properties newProp = newComp.getProperties();
-							Enumeration<Object> keys = newProp.keys();
-							if (compProp != null) {
+							Properties newProp = newComp.getProperties();							
+							if (compProp != null && newProp != null) {
+								Enumeration<Object> keys = newProp.keys();
 								while (keys.hasMoreElements()) {
 									String key = (String) keys.nextElement();
 									if (compProp.get(key) != null) {

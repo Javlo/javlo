@@ -2002,6 +2002,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 				if (pageMirror.getArea().equals(ctx.getArea())) {
 					List<IContentVisualComponent> mirrorContent = pageMirror.getMirrorPage(ctx).getContentByImplementation(ctx, clazz);
 					for (IContentVisualComponent mComp : mirrorContent) {
+						mComp.setContainerPage(ctx, pageMirror.getPage());
 						outComp.add(mComp);
 					}
 				}
@@ -3136,7 +3137,6 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 				}
 			}
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return null;

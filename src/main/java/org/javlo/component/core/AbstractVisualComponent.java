@@ -1035,14 +1035,19 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		return page;
 	}
 	
+	public void setContainerPage(ContentContext ctx, MenuElement page) {
+		ctx.getRequest().setAttribute("page-"+getId(), page); 
+	}
+	
 	/**
 	 * get the page of the container if component is mirrored else get the page of the component.
 	 * @param ctx
 	 * @return
 	 */
 	public MenuElement getContainerPage(ContentContext ctx) {
-		if (ctx.getRequest().getAttribute("page-"+getId()) != null) {
-			return (MenuElement)ctx.getRequest().getAttribute("page-"+getId());
+		String key = "page-"+getId();
+		if (ctx.getRequest().getAttribute(key) != null) {
+			return (MenuElement)ctx.getRequest().getAttribute(key);
 		} else {
 			return getPage();
 		}
@@ -1400,9 +1405,6 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	protected String getForcedId(ContentContext ctx) {
 		/* user for mirror mecanism */
 		String compID = (String) ctx.getRequest().getAttribute(FORCE_COMPONENT_ID);
-		// System.out.println("***** AbstractVisualComponent.getForcedId :
-		// area="+getArea()+" type="+getType()+" compID = "+compID);
-		// //TODO: remove debug trace
 		if (compID == null) {
 			compID = getId();
 		}

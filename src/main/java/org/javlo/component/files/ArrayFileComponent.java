@@ -9,13 +9,11 @@ import java.io.StringWriter;
 import java.nio.charset.Charset;
 import java.util.AbstractMap;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.collections.keyvalue.AbstractMapEntry;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFDataFormatter;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -46,13 +44,27 @@ public class ArrayFileComponent extends GenericFile {
 	
 	public static final String TYPE = "array-file";
 	
-	public static class ArrayMap extends AbstractMap<String, Cell> {
+	public static class ArrayMap extends AbstractMap<String, String> {
+		
+		private Map<String, String> internalMap = new HashMap<String, String>();
 		
 		private Cell[][] data;
 		private int titleRaw = 0;
 		private int dataRaw = 0;
-
-		public ArrayMap(Cell[][] inData) {			
+		
+		public ArrayMap(Cell[][] inData) {
+			System.out.println("length = "+inData.length);
+			System.out.println("length row = "+inData[0].length);
+			System.out.println("");			
+			for (int x=0; x<inData.length; x++) {
+				for (int y=0; y<inData[x].length; y++) {
+					System.out.print(inData[x][y]+" - ");
+				}
+				System.out.println("");
+			}
+			System.out.println("");
+			
+			
 			this.data = inData;
 			for (int row = 0; row < Math.min(inData.length, 99); row++) {
 				if (!StringHelper.isEmpty(data[row][0]) && !StringHelper.isEmpty(data[row][1])) {
@@ -60,35 +72,37 @@ public class ArrayFileComponent extends GenericFile {
 					row = 99;
 				}
 			}
+			dataRaw=titleRaw+1;
 			for (int row = titleRaw+1; row < Math.min(inData.length, 99); row++) {
 				if (!StringHelper.isEmpty(data[row][0]) && !StringHelper.isEmpty(data[row][1])) {
 					dataRaw = row;								
 					row = 99;
 				}
 			}
-		}
-
-		@Override
-		public Set<java.util.Map.Entry<String, Cell>> entrySet() {
-			Set<java.util.Map.Entry<String, Cell>> outEntries = new HashSet<Map.Entry<String,Cell>>();
+			
 			String key = data[titleRaw][0].toString();
 			Cell value = data[dataRaw][0];
 			int i=0;
 			while ((!StringHelper.isEmpty(key) || !StringHelper.isEmpty(value)) && (i<data[titleRaw].length)) {
-				Map.Entry<String, Cell> entry = new AbstractMapEntry(key,value) {};
-				outEntries.add(entry);
 				String colName = StringHelper.getColName(i);
-				entry = new AbstractMapEntry(""+i,value) {};
-				outEntries.add(entry);
-				entry = new AbstractMapEntry(colName,value) {};
-				outEntries.add(entry);				
-				entry = new AbstractMapEntry(colName+"_title",key) {};
-				outEntries.add(entry);
+				internalMap.put(""+i,value.getValue());
+				internalMap.put(colName,value.getValue());				
+				internalMap.put(key,value.getValue());
+				internalMap.put(colName+"_title",key);
 				value = data[dataRaw][i];
 				key = data[titleRaw][i].toString();
 				i++;
 			}
-			return outEntries;
+		}
+		
+		@Override
+		public String get(Object key) {
+			return internalMap.get(key);
+		}
+
+		@Override
+		public Set<java.util.Map.Entry<String, String>> entrySet() {
+			return internalMap.entrySet();
 		}
 
 	}
@@ -413,7 +427,11 @@ public class ArrayFileComponent extends GenericFile {
 	}
 
 	private static String readExcelCell(ContentContext ctx, XSSFCell cell) {
-		HSSFDataFormatter formatter = new HSSFDataFormatter(new Locale(ctx.getRequestContentLanguage()));
+		String lg = "en";
+		if (ctx != null) {
+			lg = ctx.getRequestContentLanguage();
+		}
+		HSSFDataFormatter formatter = new HSSFDataFormatter(new Locale(lg));
 		String outCell;
 		if (cell.getCellType() == HSSFCell.CELL_TYPE_FORMULA) {
 			switch (cell.getCachedFormulaResultType()) {
@@ -421,7 +439,7 @@ public class ArrayFileComponent extends GenericFile {
 				outCell = cell.getStringCellValue();
 				break;
 			case HSSFCell.CELL_TYPE_NUMERIC:
-				outCell = StringHelper.renderDouble(cell.getNumericCellValue(), new Locale(ctx.getRequestContentLanguage()));
+				outCell = StringHelper.renderDouble(cell.getNumericCellValue(), new Locale(lg));
 				break;
 			case HSSFCell.CELL_TYPE_BOOLEAN:
 				outCell = "" + cell.getBooleanCellValue();
@@ -436,7 +454,7 @@ public class ArrayFileComponent extends GenericFile {
 		if (cell.getHyperlink() != null) {
 			String target = "";
 			String url = cell.getHyperlink().getAddress();
-			if (ctx.getGlobalContext().isOpenExternalLinkAsPopup(url)) {
+			if (ctx != null && ctx.getGlobalContext().isOpenExternalLinkAsPopup(url)) {
 				target = " target=\"_blank\"";
 			}
 			outCell = "<a class=\"cell-link\" href=\"" + url + "\"" + target + ">" + outCell + "</a>";
@@ -476,7 +494,7 @@ public class ArrayFileComponent extends GenericFile {
 		return outCell;
 	}
 
-	protected Cell[][] getXLSXArray(ContentContext ctx, File xslxFile) throws Exception {
+	protected  Cell[][] getXLSXArray(ContentContext ctx, File xslxFile) throws Exception {
 		InputStream in = new FileInputStream(xslxFile);
 		try {
 			XSSFWorkbook workbook = new XSSFWorkbook(in);
@@ -505,6 +523,57 @@ public class ArrayFileComponent extends GenericFile {
 
 			for (int i = 0; i < sheet.getNumMergedRegions(); i++) {
 				CellRangeAddress cellRange = sheet.getMergedRegion(i);
+				for (int x = cellRange.getFirstColumn(); x <= cellRange.getLastColumn(); x++) {
+					for (int y = cellRange.getFirstRow(); y <= cellRange.getLastRow(); y++) {
+						if (x > cellRange.getFirstColumn()) {
+							outArray[cellRange.getFirstRow()][cellRange.getFirstColumn()].setColSpan(outArray[cellRange.getFirstRow()][cellRange.getFirstColumn()].getColSpan() + 1);
+							outArray[y][x] = null;
+						}
+						if (y > cellRange.getFirstRow()) {
+							outArray[cellRange.getFirstRow()][cellRange.getFirstColumn()].setRowSpan(outArray[cellRange.getFirstRow()][cellRange.getFirstColumn()].getRowSpan() + 1);
+							outArray[y][x] = null;
+						}
+					}
+				}
+			}
+
+			return outArray;
+		} finally {
+			ResourceHelper.closeResource(in);
+		}
+	}
+	
+	protected  static Cell[][] getStaticXLSXArray(ContentContext ctx, File xslxFile) throws Exception {
+		InputStream in = new FileInputStream(xslxFile);
+		try {
+			XSSFWorkbook workbook = new XSSFWorkbook(in);
+			XSSFSheet sheet = workbook.getSheetAt(0);
+			Iterator<Row> rowIterator = sheet.iterator();
+			int w = 0;
+			int h = 0;
+			while (rowIterator.hasNext()) {
+				h++;
+				Row row = rowIterator.next();
+				if (row.getLastCellNum() > w) {
+					w = row.getLastCellNum();
+				}
+			}
+
+			Cell[][] outArray = new Cell[h][];
+			for (int y = 0; y < h; y++) {
+				outArray[y] = new Cell[w];
+				for (int x = 0; x < w; x++) {
+					outArray[y][x] = new Cell(null, outArray, x, y);
+					if (sheet.getRow(y) != null && sheet.getRow(y).getCell(x) != null) {
+						outArray[y][x].setValue(readExcelCell(ctx, sheet.getRow(y).getCell(x)));
+					}
+				}
+			}
+			
+			
+
+			for (int i = 0; i < sheet.getNumMergedRegions(); i++) {
+				CellRangeAddress cellRange = sheet.getMergedRegion(i);				
 				for (int x = cellRange.getFirstColumn(); x <= cellRange.getLastColumn(); x++) {
 					for (int y = cellRange.getFirstRow(); y <= cellRange.getLastRow(); y++) {
 						if (x > cellRange.getFirstColumn()) {
@@ -592,11 +661,6 @@ public class ArrayFileComponent extends GenericFile {
 				}
 			}
 
-			System.out.println("***** ArrayFileComponent.TESTgetXLSArray : w = " + w); // TODO:
-																						// remove
-																						// debug
-																						// trace
-
 			Cell[][] outArray = new Cell[h][];
 			for (int y = 0; y < h; y++) {
 				outArray[y] = new Cell[w];
@@ -604,11 +668,6 @@ public class ArrayFileComponent extends GenericFile {
 					outArray[y][x] = new Cell(null, outArray, x, y);
 					if (sheet.getRow(x) != null && sheet.getRow(y).getCell(x) != null) {
 						outArray[y][x].setValue(sheet.getRow(y).getCell(x).toString());
-					} else {
-						System.out.println("***** ArrayFileComponent.TESTgetXLSArray : null on x:" + x + " y:" + y); // TODO:
-																														// remove
-																														// debug
-																														// trace
 					}
 				}
 			}
@@ -660,66 +719,72 @@ public class ArrayFileComponent extends GenericFile {
 			stringWriter.append("<table class=\"" + getStyle(ctx) + "\">");
 		}
 
-		Cell[][] array = getArray(ctx);
-
-		if (array == null || array.length == 0) {
-			return "<b>WARNING: no data found in file. (col)</b>";
-		} else if (array[0].length == 0) {
-			return "<b>WARNING: no cell found in file. (row)</b>";
-		}
-
-		for (int i = 0; i < array.length; i++) {
-			if (i % 2 == 1) {
-				stringWriter.append("<tr class=\"row-" + i + " odd\">");
-			} else {
-				stringWriter.append("<tr class=\"row-" + i + "\" >");
+		Cell[][] array;
+		try {
+			array = getArray(ctx);
+			if (array == null || array.length == 0) {
+				return "<b>WARNING: no data found in file. (col)</b>";
+			} else if (array[0].length == 0) {
+				return "<b>WARNING: no cell found in file. (row)</b>";
 			}
-			for (int j = 0; j < array[i].length; j++) {
-				String tag = "td";
 
-				Cell cell = array[i][j];
-
-				if (cell != null && (j == 0 || cell.getValue().length() > 0)) {
-					if (i == 0) {
-						tag = colTH;
-					} else if (j == 0) {
-						tag = rowTH;
-					}
-					String cssClass = "";
-					String content = cell.getValue();
-					if (content == null || content.trim().length() == 0) {
-						cssClass = " empty";
-						content = "";
-					} else if (cell.getValue().trim().length() == 1) {
-						cssClass = " char";
-					} else if (StringHelper.isLikeNumber(cell.getValue())) {
-						cssClass = " number";
-					} else {
-						cssClass = " text";
-					}
-					
-					String spanHTML = "";
-					if (cell.getColSpan() > 1) {
-						spanHTML = " colspan=\"" + cell.getColSpan() + "\"";
-					}
-					if (cell.getRowSpan() > 1) {
-						spanHTML = spanHTML + " rowspan=\"" + cell.getRowSpan() + "\"";
-					}
-
-					if (j % 2 == 1) {
-						stringWriter.append('<' + tag + " class=\"odd" + cssClass + "\"" + spanHTML + ">");
-					} else {
-						stringWriter.append('<' + tag + " class=\"even" + cssClass + "\"" + spanHTML + '>');
-					}
-
-					content = renderCell(content);
-
-					stringWriter.append(content);
-					stringWriter.append("</" + tag + '>');
+			for (int i = 0; i < array.length; i++) {
+				if (i % 2 == 1) {
+					stringWriter.append("<tr class=\"row-" + i + " odd\">");
+				} else {
+					stringWriter.append("<tr class=\"row-" + i + "\" >");
 				}
+				for (int j = 0; j < array[i].length; j++) {
+					String tag = "td";
+
+					Cell cell = array[i][j];
+
+					if (cell != null && (j == 0 || cell.getValue().length() > 0)) {
+						if (i == 0) {
+							tag = colTH;
+						} else if (j == 0) {
+							tag = rowTH;
+						}
+						String cssClass = "";
+						String content = cell.getValue();
+						if (content == null || content.trim().length() == 0) {
+							cssClass = " empty";
+							content = "";
+						} else if (cell.getValue().trim().length() == 1) {
+							cssClass = " char";
+						} else if (StringHelper.isLikeNumber(cell.getValue())) {
+							cssClass = " number";
+						} else {
+							cssClass = " text";
+						}
+						
+						String spanHTML = "";
+						if (cell.getColSpan() > 1) {
+							spanHTML = " colspan=\"" + cell.getColSpan() + "\"";
+						}
+						if (cell.getRowSpan() > 1) {
+							spanHTML = spanHTML + " rowspan=\"" + cell.getRowSpan() + "\"";
+						}
+
+						if (j % 2 == 1) {
+							stringWriter.append('<' + tag + " class=\"odd" + cssClass + "\"" + spanHTML + ">");
+						} else {
+							stringWriter.append('<' + tag + " class=\"even" + cssClass + "\"" + spanHTML + '>');
+						}
+
+						content = renderCell(content);
+
+						stringWriter.append(content);
+						stringWriter.append("</" + tag + '>');
+					}
+				}
+				stringWriter.append("</tr>");
 			}
-			stringWriter.append("</tr>");
+		} catch (Throwable t) {
+			t.printStackTrace();
 		}
+
+		
 
 		stringWriter.append("</table></div>");
 
@@ -917,6 +982,25 @@ public class ArrayFileComponent extends GenericFile {
 	@Override
 	public boolean isRealContent(ContentContext ctx) {
 		return getValue().trim().length() > 0;
+	}
+	
+	public static void main(String[] args) {
+		File xlsFile = new File("c:/trans/test.xlsx");
+		Cell[][] inData;
+		try {
+			inData = getStaticXLSXArray(null, xlsFile);
+			for (int x=0; x<inData.length; x++) {
+				for (int y=0; y<inData[x].length; y++) {
+					System.out.print(inData[x][y]+" - ");
+				}
+				System.out.println("");
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
 	}
 
 }

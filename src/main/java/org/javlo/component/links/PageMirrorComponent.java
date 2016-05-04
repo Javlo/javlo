@@ -185,6 +185,7 @@ public class PageMirrorComponent extends AbstractVisualComponent implements IIma
 
 	@Override
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
+		setContainerPage(ctx, getPage());
 		prepareView(ctx);
 		return (String) ctx.getRequest().getAttribute("xhtml");
 	}

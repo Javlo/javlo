@@ -820,5 +820,12 @@ public interface IContentVisualComponent extends Comparable<IContentVisualCompon
 	 */
 	public boolean isMirroredByDefault(ContentContext ctx);
 	
+	/**
+	 * set the page of a container (page mirror, component mirror).
+	 * @param ctx
+	 * @param page
+	 */
+	public void setContainerPage(ContentContext ctx, MenuElement page);
+	
 
 }

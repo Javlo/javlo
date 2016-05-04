@@ -171,7 +171,7 @@ public class DynamicComponentList extends AbstractPropertiesComponent {
 			rootPage = ctx.getCurrentPage();
 		}
 		
-		List<IFieldContainer> containers = service.getFieldContainers(ctx, rootPage, getSelectedType());
+		List<IFieldContainer> containers = service.getFieldContainers(ctx, rootPage, getSelectedType());		
 		List<IFieldContainer> visibleContainers = new LinkedList<IFieldContainer>();
 		
 		for (IFieldContainer container : containers) {
