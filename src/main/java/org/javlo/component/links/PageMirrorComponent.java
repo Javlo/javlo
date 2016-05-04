@@ -132,7 +132,13 @@ public class PageMirrorComponent extends AbstractVisualComponent implements IIma
 	public MenuElement getMirrorPage(ContentContext ctx) throws Exception {
 		String pageId = getValue();
 		ContentService content = ContentService.getInstance(ctx.getRequest());
-		return content.getNavigation(ctx).searchChildFromId(pageId);
+		MenuElement mirrorPage = content.getNavigation(ctx).searchChildFromId(pageId);
+		if (mirrorPage.getId().equals(getId())) {
+			logger.warning("page mirroring on him self : "+getPage().getPath());
+			return null;
+		} else {
+			return mirrorPage;
+		}		
 	}
 
 	@Override
