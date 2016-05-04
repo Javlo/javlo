@@ -44,9 +44,6 @@
 <link rel="stylesheet" media="screen" href="${info.editTemplateURL}/css/plugins/colorbox.css" />
 <link rel="stylesheet" media="print" href="${info.editTemplateURL}/css/print.css" />
 
-<!-- LIB -->
-<script src="${info.libUrl}js/circliful.js"></script>
-
 <style type="text/css">
 @font-face {
     font-family: "javloFont";
