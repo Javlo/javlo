@@ -940,7 +940,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 	private static final String CHANGE_ORDER_KEY = "reverse-order";
 
 	private static final String DYNAMIC_ORDER_KEY = "dynamic-order";
-
+	
 	private static final String WIDTH_EMPTY_PAGE_PROP_KEY = "width_empty";
 
 	private static final String ONLY_PAGE_WITHOUT_CHILDREN = "only_without_children";
@@ -1342,6 +1342,9 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 			out.println("<div class=\"line\">");
 			out.println(XHTMLHelper.getRadio(getOrderInputName(), "popularity", getOrder()));
 			out.println("<label for=\"popularity\">" + i18nAccess.getText("content.page-teaser.order-popularity") + "</label></div>");
+			out.println("<div class=\"line\">");
+			out.println(XHTMLHelper.getRadio(getOrderInputName(), "content", getOrder()));
+			out.println("<label for=\"popularity\">" + i18nAccess.getText("content.page-teaser.order-content", "like content structure") + "</label></div>");
 		}
 		out.println("</fieldset>");
 		out.println("</div></div>"); // row
@@ -1762,6 +1765,11 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 	private boolean isPopularityOrder(ContentContext ctx) {
 		return checkOrder(ctx, "popularity");
 	}
+	
+	private boolean isContentOrder(ContentContext ctx) {
+		return checkOrder(ctx, "content");
+	}
+
 
 	protected boolean isReverseOrder(ContentContext ctx) {
 		if (isDynamicOrder(ctx) && StringHelper.isTrue(ctx.getRequest().getParameter("reverse_order"))) {
@@ -1802,6 +1810,8 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 
 	@Override
 	public void prepareView(ContentContext ctx) throws Exception {
+		
+		LocalLogger.PRINT_TIME = true;
 
 		LocalLogger.startCount("pageref");
 
@@ -1888,9 +1898,11 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 				} else {
 					popularitySorting(ctx, pages, getMaxNews(ctx));
 				}
+			} else if (isContentOrder(ctx)) {
+				Collections.sort(pages, new MenuElementPriorityComparator(!ascending));				
 			}
 		} else {
-			Collections.sort(pages, new MenuElementPriorityComparator(!ascending));
+			//Collections.sort(pages, new MenuElementPriorityComparator(!ascending));
 		}
 
 		LocalLogger.stepCount("pageref", "step 6");
@@ -2092,7 +2104,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 				setDynamicOrder(newDynamicOrder);
 				setModify();
 			}
-
+			
 			String reverseOrder = requestService.getParameter(getReverseOrderInput(), "false");
 			boolean newReserveOrder = StringHelper.isTrue(reverseOrder);
 			if (isReverseOrder(ctx) != newReserveOrder) {
@@ -2228,7 +2240,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 	protected void setDynamicOrder(boolean dynamicOrder) {
 		properties.setProperty(DYNAMIC_ORDER_KEY, "" + dynamicOrder);
 	}
-
+	
 	protected void setTag(String tag) {
 		properties.setProperty(TAG_KEY, tag);
 	}

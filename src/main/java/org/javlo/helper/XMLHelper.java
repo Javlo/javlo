@@ -344,6 +344,7 @@ public class XMLHelper {
 					out.print("\" hiddenModes=\"");
 					out.print(StringHelper.collectionToString(beans[j].getHiddenModes(), ","));
 				}
+				beans[j].setModify(false);
 				out.print("\" >");
 				out.print("<![CDATA[");
 				out.print(value);

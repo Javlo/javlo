@@ -1127,6 +1127,7 @@ public class GlobalImage extends Image implements IImageFilter {
 		 * (GlobalImage)((MirrorComponent) comp).getMirrorComponent(ctx); }
 		 */
 		if (image != null && image.getConfig(ctx).isDataFeedBack() && currentUser != null && currentUser.validForRoles(AdminUserSecurity.CONTENT_ROLE)) {
+			
 			logger.info("exec data feed back (template:" + ctx.getCurrentTemplate().getName() + ").");
 			String firstText = rs.getParameter("firsttext", null);
 			String secondText = rs.getParameter("secondtext", null);
