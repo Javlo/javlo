@@ -133,7 +133,7 @@ public class PageMirrorComponent extends AbstractVisualComponent implements IIma
 		String pageId = getValue();
 		ContentService content = ContentService.getInstance(ctx.getRequest());
 		MenuElement mirrorPage = content.getNavigation(ctx).searchChildFromId(pageId);
-		if (mirrorPage.getId().equals(getId())) {
+		if (mirrorPage != null && mirrorPage.getId().equals(getId())) {
 			logger.warning("page mirroring on him self : "+getPage().getPath());
 			return null;
 		} else {

@@ -380,6 +380,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 	@Override
 	public void prepareView(ContentContext ctx) throws Exception {
 		super.prepareView(ctx);
+		CaptchaService.getInstance(ctx.getRequest().getSession());
 		Properties localConfig = getLocalConfig(false);
 		ctx.getRequest().setAttribute("ci18n", localConfig);
 		String code = StringHelper.getRandomId();
@@ -628,7 +629,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 					request.setAttribute("error_captcha", "true");
 					return null;
 				} else {
-					CaptchaService.getInstance(request.getSession()).setCurrentCaptchaCode("");
+					CaptchaService.getInstance(request.getSession()).reset();
 				}
 			} else {
 				Map<String, String> params = new HashMap<String, String>();

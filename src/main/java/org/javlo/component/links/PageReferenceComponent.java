@@ -28,6 +28,7 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
 import org.javlo.actions.IAction;
+import org.javlo.bean.DateBean;
 import org.javlo.bean.Link;
 import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.component.core.ComplexPropertiesLink;
@@ -285,21 +286,35 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 				bean.event.setStart(page.getContentDate(realContentCtx));
 			}
 			if (page.getContentDate(lgCtx) != null) {
-				bean.date = StringHelper.renderShortDate(lgCtx, page.getContentDate(lgCtx));
+				bean.date = new DateBean(lgCtx, page.getContentDate(lgCtx));
 				bean.sortableDate = StringHelper.renderSortableDate(page.getContentDate(lgCtx));
 				bean.contentDate = true;
 			} else {
-				bean.date = StringHelper.renderShortDate(lgCtx, page.getModificationDate());
+				bean.date = new DateBean(lgCtx, page.getModificationDate());
 				bean.sortableDate = StringHelper.renderSortableDate(page.getModificationDate());
 				bean.contentDate = false;
 			}
 			if (page.getTimeRange(lgCtx) != null) {
-				bean.startDate = StringHelper.renderShortDate(lgCtx, page.getTimeRange(lgCtx).getStartDate());
-				bean.endDate = StringHelper.renderShortDate(lgCtx, page.getTimeRange(lgCtx).getEndDate());
+				bean.startDate = new DateBean(lgCtx, page.getTimeRange(lgCtx).getStartDate());
+				bean.endDate = new DateBean(lgCtx, page.getTimeRange(lgCtx).getEndDate());
 			} else {
 				bean.startDate = bean.date;
 				bean.endDate = bean.date;
 			}
+			
+			bean.dates = new LinkedList<DateBean>();
+			Calendar startDate = Calendar.getInstance();
+			startDate.setTime(bean.startDate.getDate());
+			Calendar endDate = Calendar.getInstance();
+			endDate.setTime(bean.endDate.getDate());
+			
+			bean.dates.add(new DateBean(ctx, startDate.getTime()));
+			while(startDate.before(endDate)) {
+				startDate.roll(Calendar.DAY_OF_YEAR, true);
+				bean.dates.add(new DateBean(ctx, startDate.getTime()));
+			}
+			
+			
 
 			/**
 			 * for association link to association page and not root.
@@ -384,7 +399,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		private String imageURL = null;
 		private String imagePath = null;
 		private String imageDescription = null;
-		private String date = null;
+		private DateBean date = null;
 		private String sortableDate = null;
 		private String creationDate = null;
 		private String creationTime = null;
@@ -394,8 +409,9 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		private String sortableModificationTime = null;
 		private String sortableCreationDate = null;
 		private String sortableCreationTime = null;
-		private String startDate = null;
-		private String endDate = null;
+		private DateBean startDate = null;
+		private DateBean endDate = null;
+		private List<DateBean> dates = null;
 		private String url = null;
 		private String language;
 		private String viewImageURL = null;
@@ -436,7 +452,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 			return category;
 		}
 
-		public String getDate() {
+		public DateBean getDate() {
 			return date;
 		}
 
@@ -444,7 +460,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 			return description;
 		}
 
-		public String getEndDate() {
+		public DateBean getEndDate() {
 			return endDate;
 		}
 
@@ -509,8 +525,12 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 			return rawTags;
 		}
 
-		public String getStartDate() {
+		public DateBean getStartDate() {
 			return startDate;
+		}
+		
+		public List<DateBean> getDates() {
+			return dates;
 		}
 
 		public String getSubTitle() {
@@ -545,10 +565,6 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 			return selected;
 		}
 
-		public void setEndDate(String endDate) {
-			this.endDate = endDate;
-		}
-
 		public void setId(String id) {
 			this.id = id;
 		}
@@ -559,10 +575,6 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 
 		public void setRawTags(String rawTags) {
 			this.rawTags = rawTags;
-		}
-
-		public void setStartDate(String startDate) {
-			this.startDate = startDate;
 		}
 
 		public void setSubTitle(String subTitle) {
@@ -1811,8 +1823,6 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 	@Override
 	public void prepareView(ContentContext ctx) throws Exception {
 		
-		LocalLogger.PRINT_TIME = true;
-
 		LocalLogger.startCount("pageref");
 
 		super.prepareView(ctx);

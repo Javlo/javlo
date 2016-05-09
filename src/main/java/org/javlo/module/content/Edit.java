@@ -1669,6 +1669,7 @@ public class Edit extends AbstractModuleAction {
 					editContext.setCurrentArea(comp.getArea());
 				}
 				componentContext.addNewComponent(comp);
+				modifPage(ctx, ctx.getCurrentPage());
 			}
 		}
 		return null;
@@ -1722,6 +1723,8 @@ public class Edit extends AbstractModuleAction {
 		} else {
 			NavigationHelper.movePage(ctx, pagePrevious.getParent(), pagePrevious, page);
 		}
+		modifPage(ctx, page);
+		modifPage(ctx, pagePrevious);
 
 		PersistenceService persistenceService = PersistenceService.getInstance(globalContext);
 		persistenceService.setAskStore(true);
@@ -2095,6 +2098,7 @@ public class Edit extends AbstractModuleAction {
 			String[][] balises = { { "path", path }, { "new-path", pageToBeMoved.getPath() } };
 			String msg = i18nAccess.getText("navigation.move", balises);
 			MessageRepository.getInstance(ctx).setGlobalMessage(new GenericMessage(msg, GenericMessage.INFO));
+			modifPage(ctx, ctx.getCurrentPage());
 		}
 		return null;
 	}

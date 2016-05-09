@@ -325,7 +325,7 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 				request.setAttribute("error_captcha", "true");
 				return null;
 			} else {
-				CaptchaService.getInstance(request.getSession()).setCurrentCaptchaCode("");
+				CaptchaService.getInstance(request.getSession()).reset();
 			}
 		}
 

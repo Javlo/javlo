@@ -119,7 +119,6 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 				properties.load(stringToStream(getValue()));
 			}
 		} catch (IOException e) {
-			// not possible -> load from string
 			e.printStackTrace();
 		}
 	}
@@ -781,6 +780,7 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 				outInit = true;
 			}
 		}
+		storeProperties();
 		return outInit;
 	}
 

@@ -24,6 +24,8 @@ import org.javlo.message.MessageRepository;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
 import org.javlo.service.RequestService;
+import org.javlo.template.Template;
+import org.javlo.user.AdminUserSecurity;
 
 public class DeleteComponent implements IInteractiveMacro, IAction {
 
@@ -59,7 +61,15 @@ public class DeleteComponent implements IInteractiveMacro, IAction {
 	@Override
 	public String prepare(ContentContext ctx) {
 		try {			
-			ctx.getRequest().setAttribute("components", ComponentFactory.getComponents(ctx.getGlobalContext()));
+			if (AdminUserSecurity.getInstance().isGod(ctx.getCurrentEditUser())) {
+				ctx.getRequest().setAttribute("components", ComponentFactory.getComponents(ctx.getGlobalContext()));
+			} else {
+				if (AdminUserSecurity.getInstance().isGod(ctx.getCurrentEditUser())) {
+					ctx.getRequest().setAttribute("components", ComponentFactory.getGlobalContextComponent(ctx, IContentVisualComponent.COMPLEXITY_ADMIN));
+				} else { 
+					ctx.getRequest().setAttribute("components", ComponentFactory.getGlobalContextComponent(ctx, IContentVisualComponent.COMPLEXITY_STANDARD, ctx.getCurrentTemplate()));
+				}
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}		
@@ -82,23 +92,23 @@ public class DeleteComponent implements IInteractiveMacro, IAction {
 		boolean justHidden = StringHelper.isTrue(rs.getParameter("hidden", null));
 		for (MenuElement page : pages) {
 			List<String> deleteId = new LinkedList<String>();
-			ContentElementList list = page.getContent(ctx);
-			while (list.hasNext(ctx)) {
-				IContentVisualComponent comp = list.next(ctx);				
+			ContentContext allAreaContent = ctx.getContextWithArea(null);
+			ContentElementList list = page.getContent(allAreaContent);
+			while (list.hasNext(allAreaContent)) {
+				IContentVisualComponent comp = list.next(allAreaContent);				
 				if (types.contains(comp.getType())) {
-					if (comp.getTextForSearch(ctx).contains(contentContains) || contentContains.length() == 0) {
+					if (comp.getTextForSearch(allAreaContent).contains(contentContains) || contentContains.length() == 0) {
 						countDelete++;
 						if (!justHidden) {
 							deleteId.add(comp.getId());
 						} else {
-							comp.setStyle(ctx, AbstractVisualComponent.HIDDEN);
+							comp.setStyle(allAreaContent, AbstractVisualComponent.HIDDEN);
 						}
 					}
 				}
 			}
 			for (String id : deleteId) {
-				page.removeContent(ctx, id);
-				
+				page.removeContent(ctx, id);				
 			}
 		}		
 		ctx.getCurrentPage().releaseCache();

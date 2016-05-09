@@ -461,8 +461,12 @@ public class ComponentFactory {
 		}
 		return outComp;
 	}
-
+	
 	public static List<IContentVisualComponent> getGlobalContextComponent(ContentContext ctx, int complexityLevel) throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException {
+		return getGlobalContextComponent(ctx, complexityLevel, null);
+	}
+
+	public static List<IContentVisualComponent> getGlobalContextComponent(ContentContext ctx, int complexityLevel, Template template) throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException {
 		List<String> currentComponents = null;
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		currentComponents = globalContext.getComponents();
@@ -473,6 +477,19 @@ public class ComponentFactory {
 				if (componentsType[i].getComplexityLevel(ctx) <= complexityLevel) {
 					components.add(componentsType[i]);
 				}
+			}
+		}
+		if (template != null) {
+			System.out.println("***** ComponentFactory.getGlobalContextComponent : TEMPLATE"); //TODO: remove debug trace
+			List<Properties> propertiesClasses = template.getDynamicComponentsProperties(globalContext);			
+			for (Properties properties : propertiesClasses) {				
+				DynamicComponent comp = new DynamicComponent();
+				Properties newProp = new StructuredProperties();
+				newProp.putAll(properties);
+				comp.setProperties(newProp);
+				comp.setConfigProperties(properties);
+				components.add(comp);
+				comp.setValid(true);
 			}
 		}
 		return components;

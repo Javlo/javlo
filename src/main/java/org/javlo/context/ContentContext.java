@@ -307,7 +307,7 @@ public class ContentContext {
 							while (page != null && !page.isRealContent(ctx) && page.getChildMenuElements().size() > 0) {
 								Iterator<MenuElement> children = page.getChildMenuElements().iterator();
 								page = children.next();
-								while (page != null && !page.isActive(ctx)) {
+								while (page != null && !page.isActive(ctx) && children.hasNext()) {
 									page = children.next();
 								}
 							}
