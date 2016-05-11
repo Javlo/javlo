@@ -336,8 +336,11 @@ public class ImageTransformServlet extends HttpServlet {
 				int mb = config.getMarginBottom(ctx.getDevice(), filter, area);
 
 				image = ImageEngine.resize(image, thumbWidth, thumbHeight, config.isCropResize(ctx.getDevice(), filter, area), config.isAddBorder(ctx.getDevice(), filter, area), mt, ml, mr, mb, config.getBGColor(ctx.getDevice(), filter, area), info.getFocusZoneX(ctx), info.getFocusZoneY(ctx), true, config.isHighQuality(ctx.getDevice(), filter, area));
-				ImageEngine.insertImage(image, img, x * thumbWidth, y * thumbHeight);
-				image.flush();
+				try {
+					ImageEngine.insertImage(image, img, x * thumbWidth, y * thumbHeight);
+				} finally {
+					image.flush();
+				}
 			}
 		}
 
@@ -1106,11 +1109,14 @@ public class ImageTransformServlet extends HttpServlet {
 								BufferedImage image = ImageIO.read(imageFile);
 								if (image != null) {
 									if (image.getWidth() > maxWidth) {
-										ImageMetadata md = ExifHelper.readMetadata(imageFile);
-										image = ImageEngine.resizeWidth(image, maxWidth, true);
-										ImageIO.write(image, StringHelper.getFileExtension(imageFile.getName().toLowerCase()), imageFile);
-										image.flush();
-										ExifHelper.writeMetadata(md, imageFile);
+										try {
+											ImageMetadata md = ExifHelper.readMetadata(imageFile);
+											image = ImageEngine.resizeWidth(image, maxWidth, true);
+											ImageIO.write(image, StringHelper.getFileExtension(imageFile.getName().toLowerCase()), imageFile);
+											ExifHelper.writeMetadata(md, imageFile);
+										} finally {
+											image.flush();
+										}										
 									}
 									
 								} else {
