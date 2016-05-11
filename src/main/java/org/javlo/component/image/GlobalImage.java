@@ -57,6 +57,7 @@ import org.javlo.template.TemplateFactory;
 import org.javlo.user.AdminUserFactory;
 import org.javlo.user.AdminUserSecurity;
 import org.javlo.user.User;
+import org.javlo.ztatic.StaticInfo;
 
 /**
  * standard image component.
@@ -845,6 +846,10 @@ public class GlobalImage extends Image implements IImageFilter {
 		String label = requestService.getParameter(getLabelXHTMLInputName(), null);
 		String textLabel = requestService.getParameter(getLabelTextInputName(), null);
 		if (label != null && !label.equals(getLabel())) {
+			StaticInfo staticInfo = getStaticInfo(ctx);
+			if (staticInfo != null && StringHelper.isEmpty(staticInfo.getTitle(ctx))) {
+				staticInfo.setTitle(ctx, label);				
+			}
 			setFirstText(null);
 			setSecondText(null);
 		} else if (textLabel != null && !textLabel.equals(getLabel()) && isTextAuto()) {
@@ -859,7 +864,7 @@ public class GlobalImage extends Image implements IImageFilter {
 			requestService.setParameter(getLabelXHTMLInputName(), getLabel());
 		}
 
-		if (title != null) {
+		if (title != null) {			
 			if (!title.equals(getTitle())) {
 				setTitle(title);
 				storeProperties();
