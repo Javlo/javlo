@@ -257,11 +257,12 @@ public class AccessServlet extends HttpServlet implements IVersion {
 
 			ContentContext ctx = ContentContext.getContentContext(request, response);
 
-			String pageUrl = URLHelper.createURL(ctx, ctx.getCurrentPage());
-
-			if (ctx.isAsViewMode() && staticConfig.isRedirectSecondaryURL()) {
-				if (request.getAttribute(CatchAllFilter.MAIN_URI_KEY) != null && !request.getAttribute(CatchAllFilter.MAIN_URI_KEY).toString().endsWith(pageUrl)) {
-					response.sendRedirect(pageUrl);
+			if (ctx.getCurrentPage() != null) {
+				String pageUrl = URLHelper.createURL(ctx, ctx.getCurrentPage());
+				if (ctx.isAsViewMode() && staticConfig.isRedirectSecondaryURL()) {
+					if (request.getAttribute(CatchAllFilter.MAIN_URI_KEY) != null && !request.getAttribute(CatchAllFilter.MAIN_URI_KEY).toString().endsWith(pageUrl)) {
+						response.sendRedirect(pageUrl);
+					}
 				}
 			}
 
