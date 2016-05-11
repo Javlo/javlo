@@ -13,7 +13,7 @@ import org.javlo.user.User;
 
 public class Event implements Serializable {
 	
-	public static final Event NO_EVENT = new Event(null,null,null,"no event",null, null);
+	public static final Event NO_EVENT = new Event(null, null,null,null,"no event",null, null);
 
 	private static final long serialVersionUID = 1L;
 
@@ -31,7 +31,7 @@ public class Event implements Serializable {
 	private String user;
 	private String participantsFileURL = null;
 
-	public Event(String id, Date start, Date end, String summary, String description, IImageTitle image) {		
+	public Event(ContentContext ctx, String id, Date start, Date end, String summary, String description, IImageTitle image) {		
 		this.id = id;
 		this.start = start;
 		this.end = end;

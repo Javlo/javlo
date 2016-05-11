@@ -714,7 +714,7 @@ public class Edit extends AbstractModuleAction {
 	}
 
 	public static final String performInsert(HttpServletRequest request, HttpServletResponse response, RequestService rs, ContentService contentService, GlobalContext globalContext, HttpSession session, EditContext editContext, ContentContext ctx, ContentService content, Module currentModule, I18nAccess i18nAccess, MessageRepository messageRepository) throws Exception {
-
+		
 		if (!canModifyCurrentPage(ctx) || !checkPageSecurity(ctx)) {
 			messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("action.block"), GenericMessage.ERROR), false);
 			return i18nAccess.getText("action.block");
@@ -807,8 +807,7 @@ public class Edit extends AbstractModuleAction {
 					} else {
 						ContentContext compAreaContext = ctx.getContextWithArea(currentComp.getArea());
 						ContentElementList tableContent = currentComp.getPage().getContent(compAreaContext);
-						boolean inTable = false;
-						newId = null;
+						boolean inTable = false;						
 						while (tableContent.hasNext(compAreaContext)) {
 							IContentVisualComponent nextComp = tableContent.next(compAreaContext);
 							if (nextComp.getId().equals(openTable.getId())) {
@@ -850,16 +849,9 @@ public class Edit extends AbstractModuleAction {
 			IContentVisualComponent previousComp = contentService.getComponent(ctx, previousId);			
 			newId = content.createContent(ctx, targetPage, areaKey, previousId, type, "", true);
 			IContentVisualComponent openBox = contentService.getComponent(ctx, newId);
-			String openPreviousId = "0";			
-			if (previousComp != null && previousComp.getPreviousComponent() != null) {
-				openPreviousId = previousComp.getPreviousComponent().getId();
-			}
-			
-			if (openBox instanceof IContainer) {	
-				
-				IContentVisualComponent containerPrevious = contentService.getComponent(ctx, openPreviousId);
-				if (containerPrevious != null) {
-					ComponentHelper.moveComponent(ctx, openBox, containerPrevious, targetPage, area);	
+			if (openBox instanceof IContainer && ctx.isEditPreview()) {					
+				if (previousComp != null) {
+					ComponentHelper.moveComponent(ctx, previousComp, openBox, targetPage, area);	
 				}
 				String closePreviousid = previousId;				
 				if (previousComp == null) {
@@ -958,7 +950,7 @@ public class Edit extends AbstractModuleAction {
 			if (comp.getPreviousComponent() != null) {
 				ctx.getRequest().setAttribute(AbstractVisualComponent.SCROLL_TO_COMP_ID_ATTRIBUTE_NAME, comp.getPreviousComponent().getId());
 			}
-			if (comp instanceof IContainer && ((IContainer)comp).isOpen(ctx)) {
+			if (comp instanceof IContainer && ((IContainer)comp).isOpen(ctx) && ctx.isEditPreview()) {
 				List<String> compToRemove = new LinkedList<String>();
 				compToRemove.add(comp.getId());
 				boolean closeFound = false;

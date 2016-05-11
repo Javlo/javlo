@@ -160,6 +160,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 		String type = PAGE_TYPE_DEFAULT;
 		String sharedName = null;
 		Event event = null;
+		List<Event> events = null;
 		String slogan;
 		String linkLabel = null;
 		Map<String, String> i18n = null;
@@ -4875,7 +4876,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 				IContentVisualComponent comp = content.next(noAreaCtx);
 				if (comp instanceof EventDefinitionComponent) {
 					EventDefinitionComponent eventComp = (EventDefinitionComponent) comp;
-					Event event = new Event(eventComp.getId(), eventComp.getStartDate(), eventComp.getEndDate(), getTitle(ctx), getDescription(ctx), getImage(noAreaCtx));
+					Event event = new Event(ctx, eventComp.getId(), eventComp.getStartDate(), eventComp.getEndDate(), getTitle(ctx), getDescription(ctx), getImage(noAreaCtx));
 					event.setCategory(getCategory(ctx));
 					event.setLocation(getLocation(ctx));
 					event.setUrl(new URL(URLHelper.createURL(ctx.getContextForAbsoluteURL(), this)));
@@ -4886,6 +4887,46 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 			}
 		}
 		desc.event = Event.NO_EVENT;
+		return null;
+	}
+	
+	/**
+	 * get event if menu element contains event info.
+	 * 
+	 * @param ctx
+	 * @return a event, null if this page does'nt contains event information
+	 * @throws Exception
+	 */
+	public List<Event> getEvents(ContentContext ctx) throws Exception {
+		PageDescription desc = getPageDescriptionCached(ctx, ctx.getRequestContentLanguage());
+		if (desc.events != null) {
+			if (desc.events == Collections.EMPTY_LIST) {
+				return null;
+			} else {
+				return desc.events;
+			}
+		} else {
+			ContentContext noAreaCtx = ctx.getContextWithArea(null);
+			ContentElementList content = getContent(noAreaCtx);
+			List<Event> events = new LinkedList<Event>();
+			while (content.hasNext(noAreaCtx)) {
+				IContentVisualComponent comp = content.next(noAreaCtx);
+				if (comp instanceof EventDefinitionComponent) {
+					EventDefinitionComponent eventComp = (EventDefinitionComponent) comp;
+					Event event = new Event(ctx, eventComp.getId(), eventComp.getStartDate(), eventComp.getEndDate(), getTitle(ctx), getDescription(ctx), getImage(noAreaCtx));
+					event.setCategory(getCategory(ctx));
+					event.setLocation(getLocation(ctx));
+					event.setUrl(new URL(URLHelper.createURL(ctx.getContextForAbsoluteURL(), this)));
+					event.setUser(getCreator());
+					events.add(event);										
+				}
+			}
+			if (events.size()>0) {
+				return events;
+			}
+		}
+		
+		desc.events = Collections.EMPTY_LIST;
 		return null;
 	}
 

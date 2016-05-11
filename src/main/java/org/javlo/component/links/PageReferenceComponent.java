@@ -262,6 +262,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 			bean.sortableCreationTime = StringHelper.renderSortableTime(page.getCreationDate());
 			bean.priority = page.getPriority();
 			bean.event = new PageEvent();
+			bean.events = page.getEvents(realContentCtx);
 			bean.editable = page.isEditabled(realContentCtx);
 			bean.seoWeight = page.getSeoWeight();
 
@@ -302,19 +303,32 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 				bean.endDate = bean.date;
 			}
 			
-			bean.dates = new LinkedList<DateBean>();
-			Calendar startDate = Calendar.getInstance();
-			startDate.setTime(bean.startDate.getDate());
-			Calendar endDate = Calendar.getInstance();
-			endDate.setTime(bean.endDate.getDate());
-			
-			bean.dates.add(new DateBean(ctx, startDate.getTime()));
-			while(startDate.before(endDate)) {
-				startDate.roll(Calendar.DAY_OF_YEAR, true);
+			if (page.getEvents(realContentCtx) != null) {
+				bean.dates = new LinkedList<DateBean>();
+				for (Event pageEvent : page.getEvents(realContentCtx)) {
+					Calendar startDate = Calendar.getInstance();
+					startDate.setTime(pageEvent.getStart());
+					Calendar endDate = Calendar.getInstance();
+					endDate.setTime(pageEvent.getEnd());					
+					bean.dates.add(new DateBean(ctx, startDate.getTime()));
+					while(startDate.before(endDate)) {
+						startDate.roll(Calendar.DAY_OF_YEAR, true);
+						bean.dates.add(new DateBean(ctx, startDate.getTime()));
+					}
+				}
+			} else {			
+				bean.dates = new LinkedList<DateBean>();
+				Calendar startDate = Calendar.getInstance();
+				startDate.setTime(bean.startDate.getDate());
+				Calendar endDate = Calendar.getInstance();
+				endDate.setTime(bean.endDate.getDate());
+				
 				bean.dates.add(new DateBean(ctx, startDate.getTime()));
+				while(startDate.before(endDate)) {
+					startDate.roll(Calendar.DAY_OF_YEAR, true);
+					bean.dates.add(new DateBean(ctx, startDate.getTime()));
+				}
 			}
-			
-			
 
 			/**
 			 * for association link to association page and not root.
@@ -438,6 +452,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		private PageReferenceComponent comp;
 		private List<PageBean> children = null;
 		private PageEvent event = null;
+		private List<Event> events = null;
 		private boolean editable;
 		private int seoWeight;
 
@@ -867,6 +882,10 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 
 		public void setLabel(String label) {
 			this.label = label;
+		}
+
+		public List<Event> getEvents() {
+			return events;
 		}
 
 	}

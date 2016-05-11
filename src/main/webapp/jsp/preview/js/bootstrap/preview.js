@@ -232,7 +232,7 @@ editPreview.initPreview = function() {
 			editPreview.layerOver(null);
 			var subComp = pjq(this).parent().parent().data("comp");
 			var compId = subComp.attr("id").substring(3);
-			var ajaxURL = editPreview.addParam(currentURL,"webaction=edit.delete&id=" + compId);
+			var ajaxURL = editPreview.addParam(currentURL,"webaction=edit.delete&previewEdit=true&id=" + compId);
 			if (editPreview.searchPageId(subComp) != null) {					
 				ajaxURL = ajaxURL +'&pageCompID='+ editPreview.searchPageId(subComp);
 			}				
@@ -391,7 +391,7 @@ editPreview.initPreview = function() {
 					pjq(this).removeClass("drop-selected");
 					var previewId = subComp.attr("id").substring(3);		
 					var area = editPreview.searchArea(subComp);		
-					var url = "webaction=edit.insert&type=" + compType + "&previous=" + previewId + "&area=" + area+ "&render-mode=3&init=true";
+					var url = "webaction=edit.insert&previewEdit=true&type=" + compType + "&previous=" + previewId + "&area=" + area+ "&render-mode=3&init=true";
 					if (editPreview.searchPageId(subComp) != null) {
 						url = url +'&pageContainerID='+ editPreview.searchPageId(subComp);
 					}		

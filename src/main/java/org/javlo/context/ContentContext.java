@@ -1668,12 +1668,24 @@ public class ContentContext {
 		return EditContext.getInstance(getGlobalContext(), getRequest().getSession()).isEditPreview() || isAsEditMode();
 	}
 
-	public boolean isEditPreview() {
+	/**
+	 * edit from a preview page
+	 * @return
+	 */
+	public boolean isEditPreview() {		
 		if (editPreview == null) {
 			return isEditPreview(request);
 		} else {
 			return editPreview;
 		}
+	}
+	
+	/**
+	 * preview in edit mode (component clickable)
+	 * @return
+	 */
+	public boolean isPreviewEdit() {
+		return EditContext.getInstance(getGlobalContext(), getRequest().getSession()).isEditPreview() && isAsPreviewMode();
 	}
 
 	public void setEditPreview(boolean editPreview) {
