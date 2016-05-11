@@ -2364,5 +2364,10 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 	public boolean isMirroredByDefault(ContentContext ctx) {	
 		return true;
 	}
+	
+	@Override
+	public String getContentAsText(ContentContext ctx) {
+		return getContentTitle();
+	}
 
 }

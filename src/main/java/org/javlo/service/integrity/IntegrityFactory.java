@@ -52,9 +52,19 @@ public class IntegrityFactory {
 		List<IIntegrityChecker> checkers = new LinkedList<IIntegrityChecker>();
 		checkers.add(new CheckTitle());
 		checkers.add(new CheckDescription());
+		checkers.add(new CheckContent());
 		checkers.add(new CheckTitleHierarchy());
 		checkers.add(new CheckImageLabel());		
 		return checkers;
+	}
+	
+	public boolean isError() {
+		for (IntegrityBean bean : beans) {
+			if (bean.getLevel() >= IIntegrityChecker.DANGER_LEVEL) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public static IntegrityFactory getInstance(ContentContext ctx) {
@@ -65,7 +75,7 @@ public class IntegrityFactory {
 				int maxErrorLevel = 0;
 				for (IIntegrityChecker checker : outFactory.getAllChecker(ctx)) {
 					try {
-						if (!checker.checkPage(ctx, ctx.getCurrentPage())) {
+						if (ctx.getCurrentPage().isRealContent(ctx) && !checker.checkPage(ctx, ctx.getCurrentPage())) {
 							if (checker.getLevel(ctx) > maxErrorLevel) {
 								maxErrorLevel = checker.getLevel(ctx);
 							}

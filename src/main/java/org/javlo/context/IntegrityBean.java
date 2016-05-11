@@ -31,4 +31,8 @@ public class IntegrityBean {
 		return Integer.parseInt(data.getProperty("title.max-size", "60"));
 	}
 	
+	public int getContentMinSize() {
+		return Integer.parseInt(data.getProperty("content.min-size", "300"));
+	}
+	
 }

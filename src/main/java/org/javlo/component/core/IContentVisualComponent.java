@@ -827,5 +827,12 @@ public interface IContentVisualComponent extends Comparable<IContentVisualCompon
 	 */
 	public void setContainerPage(ContentContext ctx, MenuElement page);
 	
+	/**
+	 * get the text of the component
+	 * @return
+	 */
+	public String getContentAsText(ContentContext ctx);
+	
+	
 
 }

@@ -28,8 +28,8 @@ public class CheckTitle extends AbstractIntegrityChecker {
 			return false;
 		} else {
 			IntegrityBean integrity = ctx.getGlobalContext().getIntegrityDefinition();
-			if (title.length() < integrity.getTitleMaxSize()) {
-				setErrorMessage(i18nAccess.getText("integrity.error.description_too_short", "You title is too short ("+title.length()+" min: "+integrity.getTitleMaxSize()+')'));
+			if (title.length() > integrity.getTitleMaxSize()) {
+				setErrorMessage(i18nAccess.getText("integrity.error.description_too_long", "You title is too long ("+title.length()+" max: "+integrity.getTitleMaxSize()+')'));
 				setErrorCount(1);
 				setLevel(WARNING_LEVEL);
 				return false;

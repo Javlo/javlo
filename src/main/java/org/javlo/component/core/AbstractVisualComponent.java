@@ -2583,5 +2583,10 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	public boolean isMirroredByDefault(ContentContext ctx) {
 		return ctx.getRequestContentLanguage().equals(getComponentBean().getLanguage());
 	}
+	
+	@Override
+	public String getContentAsText(ContentContext ctx) {	
+		return StringHelper.removeTag(getValue(ctx));
+	}
 
 }

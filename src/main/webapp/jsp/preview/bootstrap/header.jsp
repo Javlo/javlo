@@ -309,13 +309,13 @@
 							<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
 							<c:if test="${fn:length(integrities.checker)>0}"><div class="badge unread-count">${fn:length(integrities.checker)}</div></c:if>
 						</a>
-						<div class="integrity-message collapse" id="integrity-list">
+						<div class="integrity-message collapse${integrities.error?' in':''}" id="integrity-list">
 							<ul class="list-group"><c:forEach var="checker" items="${integrities.checker}"><c:if test="${checker.errorCount>0}">								
   								<li class="list-group-item list-group-item-${checker.levelLabel}">
     								<span class="badge">${checker.errorCount}</span>${checker.errorMessage}    									
   								</li></c:if></c:forEach>
 							</ul>
-						</div>
+						</div>						
 						</c:if>
 						<c:if test="${fn:length(integrities.checker)==0}">						
 						<a class="btn btn-default btn-sm btn-tickets btn-color alert-success btn-notext" data-toggle="collapse" data-target="#integrity-list" href="#integrity-list"  aria-expanded="false" aria-controls="integrity-list">

@@ -940,5 +940,10 @@ public abstract class AbstractFileComponent extends AbstractVisualComponent impl
 	public boolean isMirroredByDefault(ContentContext ctx) {	
 		return true;
 	}
+	
+	@Override
+	public String getContentAsText(ContentContext ctx) {	
+		return getLabel();
+	}
 
 }

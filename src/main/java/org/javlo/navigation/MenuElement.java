@@ -1,6 +1,7 @@
 package org.javlo.navigation;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.io.PrintWriter;
@@ -1903,6 +1904,17 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 
 	public ComponentBean[] getContent() {
 		return componentBean;
+	}
+	
+	public String getContentAsText(ContentContext ctx) throws Exception {
+		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+		PrintStream out = new PrintStream(outStream);
+		ContentElementList content = getContent(ctx);
+		while (content.hasNext(ctx)) {
+			out.println(content.next(ctx).getContentAsText(ctx));
+		}
+		out.close();
+		return new String(outStream.toByteArray());
 	}
 
 	public List<ComponentBean> getContentAsList() {

@@ -2,6 +2,7 @@ package org.javlo.component.properties;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Collection;
@@ -264,6 +265,17 @@ public abstract class AbstractPropertiesComponent extends AbstractVisualComponen
 		Map<String, Object> content = super.getContentAsMap(ctx);		
 		content.put("value", properties);
 		return content;
+	}
+	
+	@Override
+	public String getContentAsText(ContentContext ctx) {
+		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+		PrintStream out = new PrintStream(outStream);
+		for (Object value : properties.values()) {
+			out.println(value);
+		}
+		out.close();
+		return new String(outStream.toByteArray());
 	}
 
 }
