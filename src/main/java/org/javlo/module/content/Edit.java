@@ -714,7 +714,7 @@ public class Edit extends AbstractModuleAction {
 	}
 
 	public static final String performInsert(HttpServletRequest request, HttpServletResponse response, RequestService rs, ContentService contentService, GlobalContext globalContext, HttpSession session, EditContext editContext, ContentContext ctx, ContentService content, Module currentModule, I18nAccess i18nAccess, MessageRepository messageRepository) throws Exception {
-		
+
 		if (!canModifyCurrentPage(ctx) || !checkPageSecurity(ctx)) {
 			messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("action.block"), GenericMessage.ERROR), false);
 			return i18nAccess.getText("action.block");
@@ -807,7 +807,7 @@ public class Edit extends AbstractModuleAction {
 					} else {
 						ContentContext compAreaContext = ctx.getContextWithArea(currentComp.getArea());
 						ContentElementList tableContent = currentComp.getPage().getContent(compAreaContext);
-						boolean inTable = false;						
+						boolean inTable = false;
 						while (tableContent.hasNext(compAreaContext)) {
 							IContentVisualComponent nextComp = tableContent.next(compAreaContext);
 							if (nextComp.getId().equals(openTable.getId())) {
@@ -846,21 +846,21 @@ public class Edit extends AbstractModuleAction {
 				ctx.setNeedRefresh(true);
 				return "component type not found : " + type;
 			}
-			IContentVisualComponent previousComp = contentService.getComponent(ctx, previousId);			
+			IContentVisualComponent previousComp = contentService.getComponent(ctx, previousId);
 			newId = content.createContent(ctx, targetPage, areaKey, previousId, type, "", true);
 			IContentVisualComponent openBox = contentService.getComponent(ctx, newId);
-			if (openBox instanceof IContainer && ctx.isEditPreview()) {					
+			if (openBox instanceof IContainer && ctx.isEditPreview()) {
 				if (previousComp != null) {
-					ComponentHelper.moveComponent(ctx, previousComp, openBox, targetPage, area);	
+					ComponentHelper.moveComponent(ctx, previousComp, openBox, targetPage, area);
 				}
-				String closePreviousid = previousId;				
+				String closePreviousid = previousId;
 				if (previousComp == null) {
 					closePreviousid = newId;
 				}
 				newId = content.createContent(ctx, targetPage, areaKey, closePreviousid, type, "", true);
-				IContentVisualComponent closeBox = contentService.getComponent(ctx, newId);				
+				IContentVisualComponent closeBox = contentService.getComponent(ctx, newId);
 				((IContainer) openBox).setOpen(ctx, true);
-				((IContainer) closeBox).setOpen(ctx, false);				
+				((IContainer) closeBox).setOpen(ctx, false);
 			}
 		}
 
@@ -950,7 +950,7 @@ public class Edit extends AbstractModuleAction {
 			if (comp.getPreviousComponent() != null) {
 				ctx.getRequest().setAttribute(AbstractVisualComponent.SCROLL_TO_COMP_ID_ATTRIBUTE_NAME, comp.getPreviousComponent().getId());
 			}
-			if (comp instanceof IContainer && ((IContainer)comp).isOpen(ctx) && ctx.isEditPreview()) {
+			if (comp instanceof IContainer && ((IContainer) comp).isOpen(ctx) && ctx.isEditPreview()) {
 				List<String> compToRemove = new LinkedList<String>();
 				compToRemove.add(comp.getId());
 				boolean closeFound = false;
@@ -1162,8 +1162,8 @@ public class Edit extends AbstractModuleAction {
 
 				UserInterfaceContext userInterface = UserInterfaceContext.getInstance(session, globalContext);
 				if (!userInterface.isLight()) {
-					boolean isActive = StringHelper.isTrue(requestService.getParameter("active", null));					
-					if (page.isActive(ctx) != isActive) {						
+					boolean isActive = StringHelper.isTrue(requestService.getParameter("active", null));
+					if (page.isActive(ctx) != isActive) {
 						page.setActive(isActive);
 						modify = true;
 					}
@@ -1495,20 +1495,23 @@ public class Edit extends AbstractModuleAction {
 					lgCtx.setRequestContentLanguage(lg);
 					MenuElement[] children = ContentService.getInstance(globalContext).getNavigation(lgCtx).getAllChildren();
 					for (MenuElement menuElement : children) {
-						String url = lgCtx.getRequestContentLanguage() + urlFactory.createURL(lgCtx, menuElement);
-						if (pages.keySet().contains(url)) {
-							if (!errorPageNames.contains(menuElement.getName())) {
-								errorPageNames.add(menuElement.getName());
+						if (menuElement.isRealContent(lgCtx)) {
+							String url = lgCtx.getRequestContentLanguage() + urlFactory.createURL(lgCtx, menuElement);
+							String otherPageName = pages.get(url);
+							if (otherPageName != null && !otherPageName.equals(menuElement.getName())) {
+								if (!errorPageNames.contains(menuElement.getName())) {
+									errorPageNames.add(menuElement.getName());
+								}
+								if (!errorPageNames.contains(pages.get(url))) {
+									errorPageNames.add(pages.get(url));
+								}
+								if (menuElement.isRealContent(lgCtx)) {
+									dblURL = url;
+								}
+								logger.warning("page : " + menuElement.getName() + " is refered by a url already used : " + url + " (page : " + otherPageName + ")");
+							} else {
+								pages.put(url, menuElement.getName());
 							}
-							logger.warning("page : " + menuElement.getName() + " is refered by a url already user : " + url);
-							if (!errorPageNames.contains(pages.get(url))) {
-								errorPageNames.add(pages.get(url));
-							}
-							if (menuElement.isRealContent(lgCtx)) {
-								dblURL = url;
-							}
-						} else {
-							pages.put(url, menuElement.getName());
 						}
 					}
 				}
