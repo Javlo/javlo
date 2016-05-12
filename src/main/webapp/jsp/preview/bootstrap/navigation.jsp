@@ -26,13 +26,13 @@
 	</c:if>
 	
 	<c:forEach var="brother" items="${page.info.previousBrothers}"><li ${brother.trash?'class="trash"':''}>
-		<span><a id="page-${brother.name}" class="draggable ${!brother.trash?'editor':'trash'}" title="${brother.path}" href="${brother.url}">${brother.info.label}</a></span>
+		<span><a id="page-${brother.name}" class="draggable ${!brother.trash?'editor':'trash'} ${brother.active?'active':'unactive'}" title="${brother.path}" href="${brother.url}">${brother.info.label}</a></span>
 		</li>
 	</c:forEach>
 	
 	<li class="${page.trash?'trash ':''}${page.url eq info.currentURL?'current ':''}${!asTitle?' title':''}${page.selected?' selected':''}">
 		<c:if test="${not empty info.contextForCopy && (page.url eq info.currentURL)}"><a title="${i18n.edit['navigation.insert-page']}" class="paste-page" href="${pasteURL}"><span class="glyphicon glyphicon-collapse-down" aria-hidden="true"></span></a></c:if>
-		<span><a class="editor draggable" id="page-${page.name}" title="${page.path}" href="${page.url}">${page.info.label}</a></span>		
+		<span><a class="editor draggable ${page.active?'active':'unactive'}" id="page-${page.name}" title="${page.path}" href="${page.url}">${page.info.label}</a></span>		
 	</li>
 	<c:if test="${asTitle}">
 	<li><ul class="children sortable">
@@ -40,7 +40,7 @@
 	<c:forEach var="child" items="${page.children}">		
 	<li id="page-${child.name}" class="${child.trash?'trash ':''}${child.url eq info.currentURL?'current ':''}${child.info.realContent?'real-content':''} ${fn:length(child.children) > 0?'have-children ':''}">
 	<c:if test="${not empty info.contextForCopy && (child.url eq info.currentURL)}"><a title="${i18n.edit['navigation.insert-page']}" class="paste-page" href="${pasteURL}"><span class="glyphicon glyphicon-collapse-down" aria-hidden="true"></span></a></c:if>
-	<span><a href="${child.url}" id="page-${child.name}" class="draggable" title="${child.path}">${child.info.label} </a></span>
+	<span><a href="${child.url}" id="page-${child.name}" class="draggable ${child.active?'active':'unactive'}" title="${child.path}">${child.info.label} </a></span>
 	</li></c:forEach>	
 	<c:if test="${asTitle}">
 	</ul></li>

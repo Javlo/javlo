@@ -1493,4 +1493,5 @@ public class StaticInfo {
 		this.staticFolder = staticFolder;
 	}
 	
+	
 	}

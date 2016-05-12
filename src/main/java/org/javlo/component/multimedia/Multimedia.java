@@ -1008,19 +1008,15 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 	}
 
 	@Override
-	public boolean isContentCachable(ContentContext ctx) {
-		if (ctx.getCurrentUser() != null) {
-			return false;
-		} else {
-			String contentCache = getConfig(ctx).getProperty("cache.content", null);
-			if (contentCache != null) {
-				return StringHelper.isTrue(contentCache);
-			}
-			if (isOrderRandom(ctx)) {
-				return false;
-			}
-			return !isOrderByAccess(ctx);
+	public boolean isContentCachable(ContentContext ctx) {		
+		String contentCache = getConfig(ctx).getProperty("cache.content", null);
+		if (contentCache != null) {
+			return StringHelper.isTrue(contentCache);
 		}
+		if (isOrderRandom(ctx)) {
+			return false;
+		}
+		return !isOrderByAccess(ctx);		
 	}
 
 	@Override

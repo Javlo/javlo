@@ -113,6 +113,7 @@ public class ContentContext {
 		ContentContext ctx = new ContentContext();
 		ctx.setFree(free);
 		init(ctx, request, response);
+		ctx.setUser();
 		return ctx;
 	}
 
@@ -148,8 +149,7 @@ public class ContentContext {
 		ContentContext ctx = (ContentContext) request.getAttribute(CONTEXT_REQUEST_KEY);
 		try {
 			if (ctx == null) {
-				ctx = createContentContext(request, response, true);
-				ctx.setUser();
+				ctx = createContentContext(request, response, true);				
 				ctx.setFree(false);
 				ctx.correctPath = false;
 			} else {
@@ -180,7 +180,7 @@ public class ContentContext {
 							if ((menu != null) && (menu.getChildMenuElements().size() > 0)) {
 								ctx.setPath(menu.getChildMenuElements().iterator().next().getPath());
 								if (!content.contentExistForContext(ctx)) {
-									if ((menu != null) && (menu.getChildMenuElements().iterator().next().getChildMenuElements().size() > 0)) {
+									if (menu.getChildMenuElements().iterator().next().getChildMenuElements().size() > 0) {
 										ctx.setPath(menu.getChildMenuElements().iterator().next().getChildMenuElements().iterator().next().getPath());
 									}
 								}
@@ -192,6 +192,15 @@ public class ContentContext {
 		}
 
 		return ctx;
+	}
+	
+	/**
+	 * check if there are a contentcontext in the request
+	 * @param request
+	 * @return
+	 */
+	public static boolean isContentContext(HttpServletRequest request) {
+		return (ContentContext) request.getAttribute(CONTEXT_REQUEST_KEY) != null;
 	}
 
 	public static String getRenderModeKey(int mode) {

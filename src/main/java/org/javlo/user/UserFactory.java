@@ -272,11 +272,11 @@ public class UserFactory implements IUserFactory, Serializable {
 			}
 		}
 
-		if (outUser != null) {
+		if (outUser != null) {			
 			outUser.setContext(globalContext.getContextKey());
 			request.getSession().setAttribute(SESSION_KEY, outUser);
 		}
-
+		
 		return outUser;
 	}
 

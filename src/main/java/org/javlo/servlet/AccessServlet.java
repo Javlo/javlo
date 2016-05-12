@@ -257,16 +257,15 @@ public class AccessServlet extends HttpServlet implements IVersion {
 
 			ContentContext ctx = ContentContext.getContentContext(request, response);
 
-			if (ctx.getCurrentPage() != null) {
+			if (ctx.isAsViewMode() && ctx.getCurrentPage() != null && staticConfig.isRedirectSecondaryURL() && !ctx.isPostRequest() && StringHelper.isEmpty(request.getQueryString())) {
 				String pageUrl = URLHelper.createURL(ctx, ctx.getCurrentPage());
-				if (ctx.isAsViewMode() && staticConfig.isRedirectSecondaryURL()) {
-					if (request.getAttribute(CatchAllFilter.MAIN_URI_KEY) != null && !request.getAttribute(CatchAllFilter.MAIN_URI_KEY).toString().endsWith(pageUrl)) {
-						logger.info("redirect : "+request.getAttribute(CatchAllFilter.MAIN_URI_KEY).toString()+" --> "+pageUrl);
-						//response.sendRedirect(pageUrl);
-						NetHelper.sendRedirectPermanently(response, pageUrl);
-						return;
-					}
+				if (request.getAttribute(CatchAllFilter.MAIN_URI_KEY) != null && !request.getAttribute(CatchAllFilter.MAIN_URI_KEY).toString().endsWith(pageUrl)) {
+					logger.info("redirect : " + request.getAttribute(CatchAllFilter.MAIN_URI_KEY).toString() + " --> " + pageUrl);
+					// response.sendRedirect(pageUrl);
+					NetHelper.sendRedirectPermanently(response, URLHelper.createURL(ctx, ctx.getCurrentPage()));
+					return;
 				}
+
 			}
 
 			if (!staticConfig.isContentExtensionValid(ctx.getFormat())) {
@@ -714,6 +713,22 @@ public class AccessServlet extends HttpServlet implements IVersion {
 						imageWriter.write(img, out);
 
 					} else if (ctx.getFormat().equalsIgnoreCase("pdf")) {
+						
+						if (ctx.getGlobalContext().isCollaborativeMode()) {
+							Set<String> pageRoles = ctx.getCurrentPage().getEditorRolesAndParent();
+							if ((pageRoles.size() > 0 || ctx.getCurrentEditUser() == null)) {
+								if (ctx.getCurrentEditUser() == null || !ctx.getCurrentEditUser().validForRoles(pageRoles)) {
+									MenuElement parent = ctx.getCurrentPage().getParent();
+									while (parent != null) {
+										parent = parent.getParent();
+									}
+
+									response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+									return;
+								}
+							}
+						}
+						
 						response.setContentType("application/pdf;");
 						OutputStream out = response.getOutputStream();
 
@@ -745,7 +760,6 @@ public class AccessServlet extends HttpServlet implements IVersion {
 							if (ctx.getCurrentUser() != null) {
 								String userToken = UserFactory.createUserFactory(ctx.getGlobalContext(), request.getSession()).getTokenCreateIfNotExist(ctx.getCurrentUser());
 								String token = globalContext.createOneTimeToken(userToken);
-								System.out.println("***** AccessServlet.process : token = "+token); //TODO: remove debug trace
 								params.put("j_token", token);
 							}
 
@@ -882,7 +896,6 @@ public class AccessServlet extends HttpServlet implements IVersion {
 																																							// to
 																																							// registration
 																																							// page.
-									System.out.println("***** AccessServlet.process : ctx.getCurrentEditUser() = "+ctx.getCurrentEditUser()); //TODO: remove debug trace
 									if (ctx.getCurrentEditUser() == null || !ctx.getCurrentEditUser().validForRoles(pageRoles)) {
 										MenuElement parent = ctx.getCurrentPage().getParent();
 										while (parent != null) {

@@ -372,6 +372,14 @@ public class PageBean implements Serializable {
 			return false;
 		}
 	}
+	
+	public boolean isActive() {
+		try {
+			return page.isActive();
+		} catch (Exception e) {
+			return false;
+		}
+	}
 
 	public boolean isVisibleForContext() {
 		try {

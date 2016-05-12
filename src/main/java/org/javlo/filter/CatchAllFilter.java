@@ -75,6 +75,7 @@ public class CatchAllFilter implements Filter {
 
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain next) throws IOException, ServletException {
+		
 		logger.fine("start catch all servelt.");
 
 		HttpServletRequest httpRequest = (HttpServletRequest) request;
@@ -547,9 +548,9 @@ public class CatchAllFilter implements Filter {
 					logger.fine(login + " is logged roles : [" + StringHelper.collectionToString(editUser.getRoles(), ",") + ']');
 
 				} else {
-					String token = request.getParameter("j_token");
+					String token = request.getParameter("j_token");					
 					if (token != null) {
-						user = adminFactory.login(httpRequest, token);
+						user = adminFactory.login(httpRequest, token);						
 					} else {
 						logger.info(login + " fail to login.");
 					}
