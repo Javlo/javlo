@@ -1560,11 +1560,21 @@ public class StaticConfig extends Observable {
 		return properties.getString("content.image-format", "png,pdf,jpg,jpeg,gif");
 	}
 	
+	/**
+	 * return true if javlo must be forward to the canonical URL.
+	 * WARNING : always false if isJsessionID return false
+	 * @return
+	 */
 	public boolean isRedirectSecondaryURL() {
 		if (redirectSecondaryURL == null) {
 			redirectSecondaryURL = properties.getBoolean("url.redirect-secondary-url", true);
 		}
-		return redirectSecondaryURL;
+		return redirectSecondaryURL && !isJsessionID();
 	}
+	
+	public boolean isJsessionID() {
+		return properties.getBoolean("url.jsessionid", false);
+	}
+
 
 }

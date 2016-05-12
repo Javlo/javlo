@@ -273,7 +273,7 @@ public abstract class ElementaryURLHelper {
 			}
 		}
 
-		if (!ctx.isAbsoluteURL() && widthEncodeURL && ctx.getDevice() != null && ctx.getDevice().isHuman()) {
+		if (!ctx.isAbsoluteURL() && widthEncodeURL && ctx.getDevice() != null && ctx.getDevice().isHuman() && ctx.getGlobalContext().getStaticConfig().isJsessionID()) {
 			newUri = ctx.getResponse().encodeURL(newUri);
 		}
 
