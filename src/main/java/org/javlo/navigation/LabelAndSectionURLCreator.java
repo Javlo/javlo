@@ -24,7 +24,7 @@ public class LabelAndSectionURLCreator extends AbstractURLFactory {
 	 * @return
 	 * @throws Exception
 	 */
-	private MenuElement getSectionPage(MenuElement page) {		
+	protected MenuElement getSectionPage(MenuElement page) {		
 		if (page == null) {
 			return null;
 		}
