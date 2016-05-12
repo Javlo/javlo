@@ -922,15 +922,16 @@ public class StaticInfo {
 		if (content.getAttribute(editCtx, getKey("focus-zone-x"), null) == null) {
 			if (StringHelper.isImage(getFile().getName())) {
 				try {
-					if (getFile().exists()) {
-						BufferedImage img = ImageIO.read(getFile());
+					if (getFile().exists()) {						
 						Point point = null;
+						BufferedImage img = null;
 						try {
+							img = ImageIO.read(getFile());
 							point = InitInterest.getPointOfInterest(img);
 						} catch (Throwable t) {
-							t.printStackTrace();
+							logger.warning(t.getMessage());
 						}
-						if (point != null) {
+						if (point != null && img != null) {
 							int focusX = (point.getX() * 1000) / img.getWidth();
 							int focusY = (point.getY() * 1000) / img.getHeight();
 

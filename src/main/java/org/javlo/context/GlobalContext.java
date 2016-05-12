@@ -3270,7 +3270,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		return i18nLock;
 	}
 
-	public void clearTransformShortURL() {
+	public void clearTransformShortURL() {		
 		for (Object keyIt : new LinkedList<Object>(getDataKeys())) {
 			String key = (String) keyIt;
 			if (key.startsWith(TRANSFORM_LONG_KEY_PREFIX)) {

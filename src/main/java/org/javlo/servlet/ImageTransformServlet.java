@@ -890,6 +890,7 @@ public class ImageTransformServlet extends HttpServlet {
 		pathInfo = pathInfo.replace('\\', '/'); // for windows server
 		String realURL = globalContext.getTransformShortURL(pathInfo);
 		if (realURL != null) {
+			realURL = URLHelper.cleanPath(realURL, false);
 			pathInfo = realURL;			
 		}
 
@@ -1035,7 +1036,7 @@ public class ImageTransformServlet extends HttpServlet {
 				if (filter.startsWith("template") || localFile) {
 					baseFolder = getServletContext().getRealPath("/");
 				}
-
+				
 				File imageFile = new File(URLHelper.mergePath(baseFolder, imageName));
 				String baseExtension = StringHelper.getFileExtension(imageFile.getName());
 				if (!imageFile.exists()) {
