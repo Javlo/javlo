@@ -2305,13 +2305,13 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 		ContentContext newCtx = new ContentContext(ctx);
 		newCtx.setArea(null); // warning : check if the method is needed.
 
-		PageDescription desc = getPageDescriptionCached(ctx, newCtx.getLanguage());
+		PageDescription desc = getPageDescriptionCached(ctx, newCtx.getRequestContentLanguage());
 
 		if (desc.label != null) {
 			return desc.label;
 		}
 
-		newCtx.setRequestContentLanguage(ctx.getLanguage()); // label is from
+		newCtx.setRequestContentLanguage(ctx.getRequestContentLanguage()); // label is from
 		// navigation
 		// language
 		desc.label = getLocalContent(newCtx).getLabel(ctx);

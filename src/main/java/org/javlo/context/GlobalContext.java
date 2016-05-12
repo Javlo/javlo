@@ -199,7 +199,10 @@ public class GlobalContext implements Serializable, IPrintInfo {
 
 	private IURLFactory urlFactory = null;
 
-	private Map<String, MenuElement> viewPages = null;
+	/**
+	 * public for urls.jsp
+	 */
+	public Map<String, MenuElement> viewPages = null;
 
 	private boolean urlFromFactoryImported = false;
 

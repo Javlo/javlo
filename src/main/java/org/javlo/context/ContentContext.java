@@ -727,9 +727,10 @@ public class ContentContext {
 						elem = globalContext.convertOldURL(this, getPath());
 						if (elem != null) {
 							String newURL = URLHelper.createURL(this, elem);
+							logger.info("redirect in ("+getGlobalContext().getContextKey()+") newURL = "+newURL);
 							response.sendRedirect(newURL);
 							setCurrentPageCached(elem);
-						} else {							
+						} else {
 							setContentFound(false);
 							elem = root;
 							setPath(root.getPath());

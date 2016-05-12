@@ -259,7 +259,8 @@ public class AccessServlet extends HttpServlet implements IVersion {
 
 			if (ctx.isAsViewMode() && ctx.getCurrentPage() != null && staticConfig.isRedirectSecondaryURL() && !ctx.isPostRequest() && StringHelper.isEmpty(request.getQueryString())) {
 				String pageUrl = URLHelper.createURL(ctx, ctx.getCurrentPage());
-				if (request.getAttribute(CatchAllFilter.MAIN_URI_KEY) != null && !request.getAttribute(CatchAllFilter.MAIN_URI_KEY).toString().endsWith(pageUrl)) {
+				String mainURL = (String)request.getAttribute(CatchAllFilter.MAIN_URI_KEY);
+				if (mainURL != null && !mainURL.endsWith(pageUrl)) {
 					logger.info("redirect : " + request.getAttribute(CatchAllFilter.MAIN_URI_KEY).toString() + " --> " + pageUrl);
 					// response.sendRedirect(pageUrl);
 					NetHelper.sendRedirectPermanently(response, URLHelper.createURL(ctx, ctx.getCurrentPage()));
