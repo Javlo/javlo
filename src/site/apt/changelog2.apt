@@ -680,4 +680,6 @@ change log
  
 * 2.1.0.3.11 02/05/2016
 
- * math captcha DateBean 
+ * math captcha DateBean
+ 
+ * remove jsessionid by default 
