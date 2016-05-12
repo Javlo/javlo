@@ -262,7 +262,9 @@ public class AccessServlet extends HttpServlet implements IVersion {
 				if (ctx.isAsViewMode() && staticConfig.isRedirectSecondaryURL()) {
 					if (request.getAttribute(CatchAllFilter.MAIN_URI_KEY) != null && !request.getAttribute(CatchAllFilter.MAIN_URI_KEY).toString().endsWith(pageUrl)) {
 						logger.info("redirect : "+request.getAttribute(CatchAllFilter.MAIN_URI_KEY).toString()+" --> "+pageUrl);
-						response.sendRedirect(pageUrl);
+						//response.sendRedirect(pageUrl);
+						NetHelper.sendRedirectPermanently(response, pageUrl);
+						return;
 					}
 				}
 			}
