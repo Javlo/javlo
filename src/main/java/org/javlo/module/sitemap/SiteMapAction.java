@@ -104,6 +104,15 @@ public class SiteMapAction extends AbstractModuleAction {
 		public boolean isRoot() {
 			return menuElement.getParent() == null;
 		}
+		
+		public Boolean isLikeRoot() {
+			try {
+				return menuElement.isLikeRoot(ctx);
+			} catch (Exception e) {
+				e.printStackTrace();
+				return null;
+			}
+		}
 
 	}
 
@@ -122,7 +131,7 @@ public class SiteMapAction extends AbstractModuleAction {
 		out.println("<td class=\"action check\"><input type=\"checkbox\" name=\"selection\" value=\"" + item.getId() + "\" /></td>");
 		out.println("<td class=\"action button" + "\">" + pasteAction + "</td>");
 		out.println("<td class=\"link\"><a href=\"" + item.getUrl() + "\">" + item.getName() + "</a></td>");
-		out.println("<td>" + item.getTitle() + "</td>");
+		out.println("<td>" + item.getTitle() + " -  "+item.isLikeRoot() +"</td>");
 		out.println("<td>" + item.getCountAllChildren() + "</td>");
 		out.println("<td>" + item.getCreator() + "</td>");
 		out.close();

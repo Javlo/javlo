@@ -181,12 +181,17 @@ public class NavigationService {
 				MenuElement[] children = ContentService.getInstance(ctx.getGlobalContext()).getNavigation(lgCtx).getAllChildren();
 				for (MenuElement menuElement : children) {
 					String url = lgCtx.getRequestContentLanguage() + urlFactory.createURL(lgCtx, menuElement);
-					if (pages.keySet().contains(url)) {
+					int i=0;
+					while (pages.keySet().contains(url) && i <1000) {
 						menuElement.setUrlNumber(menuElement.getUrlNumber() + 1);
-						logger.info("page:"+menuElement.getPath()+" as new URL number : "+menuElement.getUrlNumber());
-					} else {
-						pages.put(url, menuElement.getName());
+						url = lgCtx.getRequestContentLanguage() + urlFactory.createURL(lgCtx, menuElement);
+						i++;
 					}
+					if (i==1000) {
+						logger.severe("impossible to create different url for all pages width : "+urlFactory.getClass().getName());
+					}
+					logger.info("page:"+menuElement.getPath()+" as new URL number : "+menuElement.getUrlNumber());					
+					pages.put(url, menuElement.getName());					
 				}
 			}
 		}

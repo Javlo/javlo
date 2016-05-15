@@ -685,7 +685,10 @@ editPreview.initPreview = function() {
 							}
 						}
 						editPreview.stopAjax();
-					});
+					}).error(function() {
+				    	editPreview.stopAjax();
+				    	alert("Unvalid file type.");
+				    });;
 			    });
 		}
 		editPreview.updatePDFPosition();
@@ -742,11 +745,7 @@ editPreview.initPreview = function() {
 		var zone2 = pjq(zone2);	
 		var image = pjq(image);
 		
-		
-		
 		var html = pjq(source).html();
-		console.log("pjq(source) = ",pjq(source));
-		console.log("html = ",html);
 		var sep = html.length;		
 		zone1.html(html);
 		zone2.html('');

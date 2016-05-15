@@ -71,7 +71,7 @@ import org.xml.sax.SAXParseException;
 import com.sun.org.apache.xerces.internal.util.XMLChar;
 
 public class PersistenceService {
-
+	
 	private AtomicInteger countStore = new AtomicInteger(0);
 
 	public static final class MetaPersistenceBean {
@@ -1299,14 +1299,14 @@ public class PersistenceService {
 	}
 
 	public void store(ContentContext ctx, int renderMode, boolean async) throws Exception {
-		setAskStore(false);
+		setAskStore(false);		
 		if (async) {
 			if (countStore.incrementAndGet() > 1) {
 				logger.info("cancel storage before waiting thread found. (" + ctx.getGlobalContext().getContextKey() + ')');
 				countStore.decrementAndGet();
 				return;
 			}
-		}
+		}		
 		synchronized (ctx.getGlobalContext().getLockLoadContent()) {
 			logger.info("store in " + renderMode + " mode.");
 			PersistenceThread persThread = new PersistenceThread();

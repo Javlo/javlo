@@ -3100,7 +3100,9 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 			return desc.likeRoot;
 		}		
 		MenuElement parent = getParent();
-		while (parent != null && parent.getFirstChild() != null && parent.getFirstChild().getId().equals(getId()) && !parent.isRealContent(ctx)) {
+		MenuElement child = this;
+		while (parent != null && parent.getFirstChild() != null && parent.getFirstChild().getId().equals(child.getId()) && !parent.isRealContent(ctx)) {
+			child = parent;
 			parent = parent.getParent();			
 		}
 		desc.likeRoot = (parent == null);

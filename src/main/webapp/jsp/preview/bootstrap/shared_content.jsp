@@ -48,7 +48,7 @@
 		<div class="form-group">
 		<select name="category" class="form-control">			
 			<c:forEach var="category" items="${sharedContentCategories}">
-				<option ${currentCategory eq category.key?'selected="selected"':''} value="${category.key}">${category.value}</option>
+				<option ${currentCategory eq category.key?'selected="selected"':''} value="${category.key}">${empty category.value?'&nbsp;':category.value}</option>
 			</c:forEach>
 		</select>		
 		</div>

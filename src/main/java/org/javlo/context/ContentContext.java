@@ -581,6 +581,7 @@ public class ContentContext {
 	public ContentContext getContextWithInternalURL() {
 		ContentContext outContext = new ContentContext(this);
 		outContext.setInternalURL(true);
+		outContext.setAbsoluteURL(false);
 		return outContext;
 	}
 
@@ -742,7 +743,7 @@ public class ContentContext {
 				}
 			}
 		}
-		if (isAsViewMode() && outPage != null && !outPage.isActive(this)) {			
+		if (isAsViewMode() && outPage != null && !outPage.isActive(this)) {		
 			logger.info("page not found : "+getPath());
 			if (!isFree()) {
 				response.setStatus(HttpServletResponse.SC_NOT_FOUND);	

@@ -491,6 +491,11 @@ public class DataAction implements IAction {
 				ctx = ctx.getContextWithArea(rs.getParameter("area", ctx.getArea()));
 				for (FileItem item : rs.getAllFileItem()) {
 					logger.info("try to import (" + ctx.getCurrentUserId() + ") : " + item.getName());
+					
+					if (!ResourceHelper.isDocument(ctx, item.getName())) {
+						logger.warning("try to import bad file format : "+item.getName());
+						return "bad file format : "+item.getName();
+					}
 
 					if (StringHelper.isImage(item.getName())) {
 						countImages++;

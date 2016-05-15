@@ -260,6 +260,8 @@ public class AccessServlet extends HttpServlet implements IVersion {
 			if (ctx.isAsViewMode() && ctx.getCurrentPage() != null && staticConfig.isRedirectSecondaryURL() && !ctx.isPostRequest() && StringHelper.isEmpty(request.getQueryString())) {
 				String pageUrl = URLHelper.createURL(ctx, ctx.getCurrentPage());
 				String mainURL = (String)request.getAttribute(CatchAllFilter.MAIN_URI_KEY);
+				System.out.println("***** pageUrl = "+pageUrl);
+				System.out.println("***** mainURL = "+mainURL);
 				if (mainURL != null && !mainURL.endsWith(pageUrl)) {
 					logger.info("redirect : " + request.getAttribute(CatchAllFilter.MAIN_URI_KEY).toString() + " --> " + pageUrl);
 					// response.sendRedirect(pageUrl);

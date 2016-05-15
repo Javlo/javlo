@@ -775,6 +775,26 @@ public class ResourceHelper {
 		file = StringHelper.getFileNameFromPath(file);
 		return file.startsWith("content_" + ContentContext.PREVIEW_MODE);
 	}
+	
+	/**
+	 * check if this file is a document (list of extenion define in static-config.properties
+	 * @param ctx
+	 * @param filename
+	 * @return
+	 */
+	public static boolean isDocument(ContentContext ctx, String filename) {
+		if (filename == null) {
+			return false;
+		} else {
+			String ext = StringHelper.getFileExtension(filename);
+			if (StringHelper.isEmpty(ext)) {
+				return false;
+			} else {
+				ext = ext.trim();
+				return ctx.getGlobalContext().getStaticConfig().getDocumentExtension().contains(ext);
+			}
+		}
+	}
 
 	public static boolean isResourceURL(ContentContext ctx, String url) {
 		String startURL = URLHelper.createResourceURL(ctx, "/");
