@@ -303,7 +303,7 @@
 							<c:if test="${unreadTicketsize>0}"><div class="badge unread-count">${unreadTicketsize}</div></c:if>					
 						</button>
 						
-						<c:if test="${not empty integrities}">
+						<c:if test="${not empty integrities && !globalContext.collaborativeMode}">
 						<c:if test="${fn:length(integrities.checker)>0}">
 						<a class="btn btn-default btn-sm btn-tickets btn-color alert-${integrities.levelLabel} btn-notext badged" data-toggle="collapse" data-target="#integrity-list" href="#integrity-list"  aria-expanded="false" aria-controls="integrity-list">
 							<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
