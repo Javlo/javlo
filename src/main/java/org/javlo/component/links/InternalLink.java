@@ -219,6 +219,33 @@ public class InternalLink extends ComplexPropertiesLink implements IInternalLink
 	public String getType() {
 		return TYPE;
 	}
+	
+	@Override
+	public void prepareView(ContentContext ctx) throws Exception {
+		super.prepareView(ctx);
+		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+		NavigationService navigationService = NavigationService.getInstance(globalContext);
+		String linkId = properties.getProperty(LINK_KEY, "/");
+		MenuElement linkedPage = navigationService.getPage(ctx, linkId);
+		if (linkedPage != null) {
+			ctx.getRequest().setAttribute("linkedPage", linkedPage.getPageBean(ctx));		
+			String link = "#";
+			link = linkedPage.getPath();
+			String label = properties.getProperty(LABEL_KEY, "");
+			if (label.trim().length() == 0) {
+				label = linkedPage.getLabel(ctx);
+			}
+			ctx.getRequest().setAttribute("label", label);
+			
+			String url = URLHelper.createURL(ctx, linkedPage);
+			if (ctx.getRenderMode() == ContentContext.PAGE_MODE) {
+				ContentContext viewCtx = new ContentContext(ctx);
+				viewCtx.setRenderMode(ContentContext.VIEW_MODE);
+				url = URLHelper.createURL(viewCtx, link);
+			}
+			ctx.getRequest().setAttribute("url", url);				
+		}
+	}
 
 	/**
 	 * @see org.javlo.itf.IContentVisualComponent#getXHTMLCode()
