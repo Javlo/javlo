@@ -403,11 +403,11 @@ public class FileCache {
 
 	public File getPDFPage(ContentContext ctx, MenuElement page) throws ServiceException {
 		PersistenceService persistenceService = PersistenceService.getInstance(ctx.getGlobalContext());
-		String fileName = "" + persistenceService.getVersion()+'_'+page.getName();
+		String fileName = "" + persistenceService.getVersion();
 		if (ctx.isAsViewMode() && ctx.getGlobalContext().isPreviewMode()) {
-			fileName = "page_"+page.getName();
+			fileName = "page";
 		}
-		File cacheFile = new File(URLHelper.mergePath(getCacheDir().getAbsolutePath(), ctx.getGlobalContext().getContextKey(), "pdf", ctx.getRenderModeKey(ctx.getRenderMode()), fileName + ".pdf"));
+		File cacheFile = new File(URLHelper.mergePath(getCacheDir().getAbsolutePath(), ctx.getGlobalContext().getContextKey(), "pdf", ctx.getRenderModeKey(ctx.getRenderMode()), page.getName(), fileName + ".pdf"));
 		File dir = cacheFile.getParentFile();
 		if (!cacheFile.exists()) {
 			dir.mkdirs();
