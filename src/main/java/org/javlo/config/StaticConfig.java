@@ -542,6 +542,11 @@ public class StaticConfig extends Observable {
 	public boolean isImageShortURL() {
 		return properties.getBoolean("image.short-url", false);
 	}
+	
+	public boolean isResourceShortURL() {
+		return properties.getBoolean("resource.short-url", false);
+	}
+
 
 	public boolean testInstance() {
 		return getEnv().equals("dev") || getEnv().equals("local");

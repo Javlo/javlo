@@ -15,5 +15,11 @@ public class XHTMLHelperTest extends TestCase {
 		assertEquals(XHTMLHelper.autoLink("no link."),"no link.");
 		assertEquals(XHTMLHelper.autoLink("this is a link : <a href=\"#\">www.javlo.org.</a>"),"this is a link : <a href=\"#\">www.javlo.org.</a>");
 	}
+	
+	public void testRemoveComment() throws Exception {
+		assertEquals(XHTMLHelper.removeComment("border: 2px; /* cmt */"), "border: 2px; ");
+		assertEquals(XHTMLHelper.removeComment("/* cmt */border: 2px; "), "border: 2px; ");
+		assertEquals(XHTMLHelper.removeComment("border: 2px;"), "border: 2px;");
+	}
 
 }

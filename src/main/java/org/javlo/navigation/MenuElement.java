@@ -1905,7 +1905,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 	public ComponentBean[] getContent() {
 		return componentBean;
 	}
-	
+
 	public String getContentAsText(ContentContext ctx) throws Exception {
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(outStream);
@@ -2311,7 +2311,9 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 			return desc.label;
 		}
 
-		newCtx.setRequestContentLanguage(ctx.getRequestContentLanguage()); // label is from
+		newCtx.setRequestContentLanguage(ctx.getRequestContentLanguage()); // label
+																			// is
+																			// from
 		// navigation
 		// language
 		desc.label = getLocalContent(newCtx).getLabel(ctx);
@@ -2653,27 +2655,37 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 		String res = "";
 		replacement.clear();
 		IContentComponentsList contentList = getAllContent(ctx);
+		Set<String> keywordsSet = new HashSet<String>();
 		while (contentList.hasNext(ctx)) {
 			IContentVisualComponent elem = contentList.next(ctx);
 			if (elem.getType().equals(Keywords.TYPE)) {
 				if (res.length() > 0) {
 					res = res + ',';
 				}
-				res = res + elem.getValue(ctx);
+				if (!keywordsSet.contains(elem.getValue(ctx))) {
+					res = res + elem.getValue(ctx);
+					keywordsSet.add(elem.getValue(ctx));
+				}
 				Keywords keywords = (Keywords) elem;
 				if (keywords.getStyle(ctx).equals(Keywords.BOLD_IN_CONTENT)) {
 					String[] keys = keywords.getValue().split(",");
 					for (String key : keys) {
-						replacement.put(key.trim(), "<strong>" + key.trim() + "</strong>");
+						if (!keywordsSet.contains(key)) {
+							replacement.put(key.trim(), "<strong>" + key.trim() + "</strong>");
+							keywordsSet.add(key);
+						}
 					}
 				}
 			}
-			List<String> tags = getTags(ctx);
-			for (String tag : tags) {
-				if (res.length() > 0) {
-					res = res + ',';
-				}
+		}
+		List<String> tags = getTags(ctx);
+		for (String tag : tags) {
+			if (res.length() > 0) {
+				res = res + ',';
+			}
+			if (!keywordsSet.contains(tag)) {
 				res = res + tag;
+				keywordsSet.add(res);
 			}
 		}
 		desc.keywords = res;
@@ -3089,21 +3101,21 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 	public boolean isRoot() {
 		return getParent() == null;
 	}
-	
+
 	public boolean isLikeRoot(ContentContext ctx) throws Exception {
 		PageDescription desc = getPageDescriptionCached(ctx, ctx.getRequestContentLanguage());
 		if (desc.likeRoot != null) {
 			return desc.likeRoot;
-		}		
+		}
 		if (isRoot()) {
 			desc.likeRoot = true;
 			return desc.likeRoot;
-		}		
+		}
 		MenuElement parent = getParent();
 		MenuElement child = this;
 		while (parent != null && parent.getFirstChild() != null && parent.getFirstChild().getId().equals(child.getId()) && !parent.isRealContent(ctx)) {
 			child = parent;
-			parent = parent.getParent();			
+			parent = parent.getParent();
 		}
 		desc.likeRoot = (parent == null);
 		return desc.likeRoot;
@@ -3223,7 +3235,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 			root = rootNode;
 		}
 		return root;
-	}	
+	}
 
 	/**
 	 * return the depth of the selection. sample: if the first selected element
@@ -4903,7 +4915,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 		desc.event = Event.NO_EVENT;
 		return null;
 	}
-	
+
 	/**
 	 * get event if menu element contains event info.
 	 * 
@@ -4932,14 +4944,14 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 					event.setLocation(getLocation(ctx));
 					event.setUrl(new URL(URLHelper.createURL(ctx.getContextForAbsoluteURL(), this)));
 					event.setUser(getCreator());
-					events.add(event);										
+					events.add(event);
 				}
 			}
-			if (events.size()>0) {
+			if (events.size() > 0) {
 				return events;
 			}
 		}
-		
+
 		desc.events = Collections.EMPTY_LIST;
 		return null;
 	}

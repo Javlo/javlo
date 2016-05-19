@@ -103,10 +103,18 @@ public class CreateArticle implements IInteractiveMacro, IAction {
 	public static String performCreate(RequestService rs, EditContext editCtx, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) {
 		String pageName = rs.getParameter("root", null);
 		String date = rs.getParameter("date", null);
+		
 		boolean create = rs.getParameter("create", null) != null;
 		String message = null;
 		String newURL = null;
 		String newEditURL = null;
+		
+		String lang = rs.getParameter("lang", null);
+		if (lang != null) {
+			ctx = new ContentContext(ctx);
+			ctx.setContentLanguage(lang);
+		}
+		
 		if (pageName == null) {
 			return "page or date not found.";
 		}

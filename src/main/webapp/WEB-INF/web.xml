@@ -155,6 +155,7 @@
 	<servlet-mapping>
 		<servlet-name>SiteMapServlet</servlet-name>
 		<url-pattern>/sitemap.xml</url-pattern>		
+		<url-pattern>/images-sitemap.xml</url-pattern>
 		<url-pattern>/news-sitemap.xml</url-pattern>
 		<url-pattern>/sitemap/*</url-pattern>
 	</servlet-mapping>
@@ -232,6 +233,10 @@
 	<servlet-mapping>
 		<servlet-name>resource</servlet-name>
 		<url-pattern>/resource/*</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>resource</servlet-name>
+		<url-pattern>/file/*</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>resource</servlet-name>

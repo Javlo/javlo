@@ -2498,9 +2498,10 @@ public class XHTMLHelper {
 		String newContent;
 		FileInputStream in = null;
 		StringWriter out = null;
+		InputStreamReader reader = null;
 		try {
 			in = new FileInputStream(targetFile);
-			InputStreamReader reader = new InputStreamReader(in, ContentContext.CHARACTER_ENCODING);
+			reader = new InputStreamReader(in, ContentContext.CHARACTER_ENCODING);
 			out = new StringWriter();
 			CSSFastMin.minimize(reader, out);
 			newContent = out.toString();
@@ -2510,7 +2511,19 @@ public class XHTMLHelper {
 		} finally {
 			ResourceHelper.closeResource(in);
 			ResourceHelper.closeResource(out);
+			ResourceHelper.closeResource(reader);
 		}
+		ResourceHelper.writeStringToFile(targetFile, newContent, ContentContext.CHARACTER_ENCODING);
+	}
+	
+	public static String removeComment(String text) {
+		return text.replaceAll("/\\*([^*]|[\\r\\n]|(\\*+([^*/]|[\\r\\n])))*\\*+/", "");	
+	}
+	
+	public static void removeComment(File targetFile) throws IOException {
+		String newContent;					
+		newContent = ResourceHelper.loadStringFromFile(targetFile);
+		newContent = removeComment(newContent);
 		ResourceHelper.writeStringToFile(targetFile, newContent, ContentContext.CHARACTER_ENCODING);
 	}
 
@@ -2557,6 +2570,7 @@ public class XHTMLHelper {
 //			ResourceHelper.closeResource(out);
 //		}
 //		ResourceHelper.writeStringToFile(targetFile, newContent, ContentContext.CHARACTER_ENCODING);
+		XHTMLHelper.removeComment(targetFile);
 	}
 
 	private static int listDepth(TagDescription[] tags, TagDescription tag) {
@@ -2607,10 +2621,8 @@ public class XHTMLHelper {
 		return remplacement.start(xhtml);
 	}
 
-	public static void main(String[] args) {
-		String xhtml = "<body><b>test</b>pvdm@noctis.be <a href=\"mailto:pvdm@noctis.be\">pvdm@noctis.be</a></body>";
-		System.out.println(autoLink(xhtml));
-
+	public static void main(String[] args) throws IOException {
+		removeComment(new File("c:/trans/reset.scss"));
 	}
 
 }

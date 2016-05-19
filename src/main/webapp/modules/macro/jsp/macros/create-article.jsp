@@ -13,6 +13,16 @@
 </c:forEach>
 </select>
 </div>
+<c:if test="${fn:length(info.languages)>1}">
+<div class="line">
+<label for="lang">Language</label>
+<select id="lang" name="lang">
+<c:forEach var="lg" items="${info.contentLanguages}">
+<option value="${lg}" ${info.contentLanguage == lg?'selected="selected"':''}>${lg}</option>
+</c:forEach>
+</select>
+</div>
+</c:if>
 <div class="line">
 	<label for="date">date</label>
 	<input type="text" class="datepicker" id="date" name="date" />

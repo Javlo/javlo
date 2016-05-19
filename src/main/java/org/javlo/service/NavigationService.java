@@ -190,7 +190,7 @@ public class NavigationService {
 					if (i==1000) {
 						logger.severe("impossible to create different url for all pages width : "+urlFactory.getClass().getName());
 					}
-					logger.info("page:"+menuElement.getPath()+" as new URL number : "+menuElement.getUrlNumber());					
+					logger.fine("page:"+menuElement.getPath()+" as new URL number : "+menuElement.getUrlNumber());					
 					pages.put(url, menuElement.getName());					
 				}
 			}

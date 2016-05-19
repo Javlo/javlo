@@ -235,10 +235,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 			bean.rootOfChildrenAssociation = page.getRootOfChildrenAssociation();
 			bean.setCategoryKey("category." + StringHelper.neverNull(page.getCategory(lgCtx)).toLowerCase().replaceAll(" ", ""));
 
-			I18nAccess i18nAccess = I18nAccess.getInstance(lgCtx.getRequest());
-			ContentContext realContentCtx = new ContentContext(lgCtx);
-			realContentCtx.setLanguage(realContentCtx.getRequestContentLanguage());
-			i18nAccess.changeViewLanguage(realContentCtx);
+			I18nAccess i18nAccess = I18nAccess.getInstance(lgCtx.getRequest());			
 			bean.categoryLabel = i18nAccess.getViewText(bean.getCategoryKey());
 
 			for (String tag : page.getTags(tagCtx)) {
@@ -247,6 +244,8 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 
 			// i18nAccess.changeViewLanguage(ctx);
 
+			ContentContext realContentCtx = new ContentContext(lgCtx);
+			realContentCtx.setLanguage(realContentCtx.getRequestContentLanguage());
 			bean.id = page.getId();
 			bean.name = page.getName();
 			bean.humanName = page.getHumanName();

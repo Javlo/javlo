@@ -92,6 +92,8 @@ public class SiteMapServlet extends HttpServlet {
 				siteMapFile = request.getServletPath();
 			}
 			
+			response.setContentType("text/xml");
+			
 			List<MenuElement> root;
 			Calendar lastestDate = null;
 			if (pageName != null) {				
@@ -109,20 +111,26 @@ public class SiteMapServlet extends HttpServlet {
 				for (int j=0; j<globalContext.getStaticConfig().getSiteMapNewsLimit(); j++) {
 					lastestDate.roll(Calendar.DAY_OF_YEAR, false);					
 				}				
-				SiteMapBloc sitemap = XMLHelper.getSiteMapBloc(ctx, root, 1, lastestDate);
+				SiteMapBloc sitemap = XMLHelper.getSiteMapNewsBloc(ctx, root, 1, lastestDate);
 				PrintStream out = new PrintStream(response.getOutputStream());					
 				out.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-				out.println("<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\"  xmlns:xhtml=\"http://www.w3.org/1999/xhtml\">");
+				out.println("<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\" xmlns:news=\"http://www.google.com/schemas/sitemap-news/0.9\" xmlns:image=\"http://www.google.com/schemas/sitemap-image/1.1\" >");
 				out.println(sitemap.getText());
+				out.println("</urlset>");
+				out.flush();
+				return;
+			}  else if (ctx.getRequest().getServletPath().equalsIgnoreCase("/images-sitemap.xml")) {
+				PrintStream out = new PrintStream(response.getOutputStream());					
+				out.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+				out.println("<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\"  xmlns:xhtml=\"http://www.w3.org/1999/xhtml\" xmlns:image=\"http://www.google.com/schemas/sitemap-image/1.1\">");
+				out.println();
 				out.println("</urlset>");
 				out.flush();
 				return;
 			} else {
 				root = new LinkedList<MenuElement>();
 				root.add(content.getNavigation(ctx));
-			}
-
-			response.setContentType("application/xml");
+			}			
 			if (number > 0) {
 				SiteMapBloc sitemap = XMLHelper.getSiteMapBloc(ctx, root, number, lastestDate);
 				if (StringHelper.isEmpty(sitemap.getText())) {
@@ -130,7 +138,7 @@ public class SiteMapServlet extends HttpServlet {
 				} else {
 					PrintStream out = new PrintStream(response.getOutputStream());					
 					out.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-					out.println("<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\"  xmlns:xhtml=\"http://www.w3.org/1999/xhtml\">");
+					out.println("<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\"  xmlns:xhtml=\"http://www.w3.org/1999/xhtml\" xmlns:image=\"http://www.google.com/schemas/sitemap-image/1.1\">");
 					out.println(sitemap.getText());
 					out.println("</urlset>");
 					out.flush();

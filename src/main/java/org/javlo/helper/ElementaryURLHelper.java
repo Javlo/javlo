@@ -88,6 +88,8 @@ public abstract class ElementaryURLHelper {
 	public static final String BACK_PARAM_NAME = "__back";
 
 	public static final String IMG_SERVLET_PATH = "img";
+	
+	public static final String RESOURCE_SERVLET_PATH = "file";
 
 	public static String addParam(String url, String name, String value) {
 		return addParam(url, name, value, true);

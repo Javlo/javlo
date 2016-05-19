@@ -3273,15 +3273,19 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		return i18nLock;
 	}
 
-	public void clearTransformShortURL() {		
+	public void clearTransformShortURL() {
+		int countRemoveURL = 0;
 		for (Object keyIt : new LinkedList<Object>(getDataKeys())) {
 			String key = (String) keyIt;
 			if (key.startsWith(TRANSFORM_LONG_KEY_PREFIX)) {
 				removeData(key);
+				countRemoveURL++;
 			} else if (key.startsWith(TRANSFORM_SHORT_KEY_PREFIX)) {
 				removeData(key);
-			}
+				countRemoveURL++;
+			}			
 		}
+		logger.info("short url removed : "+countRemoveURL);
 	}
 
 	/**

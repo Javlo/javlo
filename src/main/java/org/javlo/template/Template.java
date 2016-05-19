@@ -2205,25 +2205,28 @@ public class Template implements Comparable<Template> {
 		}
 		if (globalContext != null) {
 			if (compressResource && isCompressResources() && globalContext.getStaticConfig().isProd()) {
-				Iterator<File> targetFiles = FileUtils.iterateFiles(templateTarget, new String[] { "js", "css", "less" }, true);
+				Iterator<File> targetFiles = FileUtils.iterateFiles(templateTarget, new String[] { "js", "css", "less", "scss" }, true);
 				while (targetFiles.hasNext()) {
 					File targetFile = targetFiles.next();
 					String targetFileNameLowerCase = targetFile.getName().toLowerCase();
 					boolean isCss = targetFileNameLowerCase.endsWith(".css");
-					boolean isJs = targetFileNameLowerCase.endsWith(".js");
+					boolean isJs = targetFileNameLowerCase.endsWith(".js");					
 					if (isCss) {
 						XHTMLHelper.expandCSSImports(targetFile);
 						XHTMLHelper.compressCSS(targetFile);
 					}
 					if (isJs) {
-						XHTMLHelper.compressJS(targetFile);
-					}
-					/*if (isCss || isJs) {
-						File gzTargetFile = new File(targetFile.getAbsoluteFile().getAbsolutePath() + "." + GZ_FILE_EXT);
-						ZipManagement.gzipFile(gzTargetFile, targetFile);
-					}*/
+						XHTMLHelper.compressJS(targetFile);						
+					}					
 				}
 			}
+		}
+		
+		/** clean file **/
+		Iterator<File> targetFiles = FileUtils.iterateFiles(templateTarget, new String[] { "scss" }, true);
+		while (targetFiles.hasNext()) {
+			File targetFile = targetFiles.next();
+			XHTMLHelper.removeComment(targetFile);
 		}
 
 		deployId = StringHelper.getRandomId();

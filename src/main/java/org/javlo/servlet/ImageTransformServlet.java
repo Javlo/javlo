@@ -956,6 +956,7 @@ public class ImageTransformServlet extends HttpServlet {
 					}
 					imageName = pathInfo;
 				} catch (NumberFormatException e1) {
+					logger.warning("parsing path error on : "+request.getRequestURI());
 					e1.printStackTrace();
 				}
 			}

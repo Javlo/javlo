@@ -38,7 +38,7 @@ import org.javlo.ztatic.StaticInfo;
  * 
  */
 public class ResourceServlet extends HttpServlet {
-	
+
 	private static final long serialVersionUID = 1L;
 
 	private static final String FILE_INFO = "file_structure.properties";
@@ -76,7 +76,8 @@ public class ResourceServlet extends HttpServlet {
 			response.setHeader("Cache-Control", "max-age=600,must-revalidate");
 			GlobalContext globalContext = GlobalContext.getSessionContext(request.getSession());
 			if (globalContext != null) {
-				String filePath = URLHelper.mergePath(globalContext.getStaticConfig().getStaticFolder(), request.getServletPath());
+				String filePath = URLHelper.mergePath(globalContext.getStaticConfig().getStaticFolder(), request.getServletPath());		
+
 				String finalName = URLHelper.mergePath(globalContext.getDataFolder(), filePath);
 				InputStream fileStream = null;
 				try {
@@ -87,7 +88,7 @@ public class ResourceServlet extends HttpServlet {
 							ResourceHelper.writeStreamToStream(fileStream, response.getOutputStream());
 						}
 					} else {
-						if (request.getServletPath().equals("/robots.txt")) {							
+						if (request.getServletPath().equals("/robots.txt")) {
 							RobotsTxt.renderRobotTxt(ContentContext.getContentContext(request, response), response.getOutputStream());
 						} else {
 							response.setStatus(404, "not found : " + filePath);
@@ -156,6 +157,12 @@ public class ResourceServlet extends HttpServlet {
 			String dataFolder = globalContext.getDataFolder();
 
 			pathInfo = request.getPathInfo().substring(1);
+			if (request.getPathInfo() != null && request.getPathInfo().length() > 1) {				
+				String newPath = globalContext.getTransformShortURL(pathInfo);
+				if (newPath != null) {
+					pathInfo = URLHelper.cleanPath(newPath, false);
+				}
+			}
 
 			if (pathInfo.startsWith(staticConfig.getShareDataFolderKey())) {
 				pathInfo = pathInfo.substring(staticConfig.getShareDataFolderKey().length() + 1);
@@ -183,7 +190,7 @@ public class ResourceServlet extends HttpServlet {
 					}
 				}
 
-				if (file.exists()) {					
+				if (file.exists()) {
 					StaticInfo.getInstance(ctx, file).addAccess(ctx);
 				} else {
 					if (StringHelper.isExcelFile(file.getName())) {
@@ -213,21 +220,21 @@ public class ResourceServlet extends HttpServlet {
 					String fileTreeProperties = FileStructureFactory.getInstance(new File(dataFolder)).fileTreeToProperties();
 					out.write(fileTreeProperties.getBytes());
 				} else {
-					
+
 					if (resourceURI.startsWith(ResourceHelper.PRIVATE_DIR)) {
 						response.setStatus(HttpServletResponse.SC_FORBIDDEN);
 						return;
 					}
-					
+
 					String finalName = URLHelper.mergePath(dataFolder, resourceURI);
 
 					File file = new File(finalName);
 					response.setContentType(ResourceHelper.getFileExtensionToMineType(StringHelper.getFileExtension(file.getName())));
-					response.setHeader("Cache-Control", "no-cache");					
-					response.setDateHeader(NetHelper.HEADER_LAST_MODIFIED, file.lastModified());					
+					response.setHeader("Cache-Control", "no-cache");
+					response.setDateHeader(NetHelper.HEADER_LAST_MODIFIED, file.lastModified());
 					long lastModifiedInBrowser = request.getDateHeader(NetHelper.HEADER_IF_MODIFIED_SINCE);
 					if (file.lastModified() > 0 && file.lastModified() / 1000 <= lastModifiedInBrowser / 1000) {
-						response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);						
+						response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
 					} else {
 						response.setHeader("Accept-Ranges", "bytes");
 						response.setContentLength((int) file.length());

@@ -1860,7 +1860,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			if (width.endsWith("%")) {
 				Float withInt = Float.parseFloat(width.substring(0, width.length() - 1));
 				NumberFormat df = DecimalFormat.getInstance(Locale.ENGLISH);
-				ctx.getRequest().setAttribute("componentOpositeWidth", df.format((100 - withInt)) + "%");
+				ctx.getRequest().setAttribute("componentOpositeWidth", df.format((99 - withInt)) + "%");				
 			}
 			ctx.getRequest().setAttribute("componentWidth", width);
 		} else {

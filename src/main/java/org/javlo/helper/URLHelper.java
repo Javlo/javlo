@@ -35,6 +35,7 @@ import org.javlo.template.Template;
 import org.javlo.template.TemplateFactory;
 import org.javlo.user.AdminUserInfo;
 import org.javlo.user.IUserInfo;
+import org.javlo.ztatic.StaticInfo;
 
 /**
  * @author pvanderm
@@ -146,10 +147,11 @@ public class URLHelper extends ElementaryURLHelper {
 		if (url == null) {
 			return null;
 		}
+		
+		GlobalContext globalContext = ctx.getGlobalContext();
+		String fullFileName = URLHelper.mergePath(globalContext.getDataFolder(), url);
 
-		if (StringHelper.isURLFile(url)) {
-			GlobalContext globalContext = ctx.getGlobalContext();
-			String fullFileName = URLHelper.mergePath(globalContext.getDataFolder(), url);
+		if (StringHelper.isURLFile(url)) {						
 			try {
 				return FileUtils.readFileToString(new File(fullFileName));
 			} catch (IOException e) {
@@ -158,11 +160,37 @@ public class URLHelper extends ElementaryURLHelper {
 		}
 
 		url = url.replace('\\', '/');
-		if (url.charAt(0) == '/') {
-			return createStaticURL(ctx, currentPage, RESOURCE + url);
+		
+		
+		if (ctx.getRenderMode() == ContentContext.VIEW_MODE && ctx.getGlobalContext().getStaticConfig().isResourceShortURL()) {
+			File file = new File(fullFileName);
+			StaticInfo staticInfo;
+			try {
+				staticInfo = StaticInfo.getInstance(ctx, file);
+				String fileName = null;
+				if (staticInfo != null && !StringHelper.isEmpty(staticInfo.getTitle(ctx))) {
+					fileName = staticInfo.getTitle(ctx);
+					url = URLHelper.mergePath(RESOURCE_SERVLET_PATH, ctx.getGlobalContext().setTransformShortURL(url, fileName));
+					url = createStaticURL(ctx,url);
+				} else {
+					if (url.charAt(0) == '/') {
+						url = createStaticURL(ctx, currentPage, RESOURCE + url);
+					} else {
+						url = createStaticURL(ctx, currentPage, RESOURCE + '/' + url);
+					}
+				}				
+			} catch (Exception e) { 
+				e.printStackTrace();
+			}
 		} else {
-			return createStaticURL(ctx, currentPage, RESOURCE + '/' + url);
+			if (url.charAt(0) == '/') {
+				url = createStaticURL(ctx, currentPage, RESOURCE + url);
+			} else {
+				url = createStaticURL(ctx, currentPage, RESOURCE + '/' + url);
+			}
 		}
+		
+		return url;
 	}
 
 	public static String createAvatarUrl(ContentContext ctx, IUserInfo userInfo) {

@@ -745,6 +745,7 @@ editPreview.initPreview = function() {
 		var zone2 = pjq(zone2);	
 		var image = pjq(image);
 		
+		zone1.css("display", "block");
 		var html = pjq(source).html();
 		var sep = html.length;		
 		zone1.html(html);
@@ -754,10 +755,10 @@ editPreview.initPreview = function() {
 			while (sep > 0 && html[sep] != ' ') {
 				sep = sep - 1;			
 			}			
-			var outText = editPreview.splitHtml(html, sep);			
+			var outText = editPreview.splitHtml(html, sep);	
 			zone1.html(outText[0]);
 			zone2.html(outText[1]);
-		}	
+		}		
 		return sep;
 	};
 	
