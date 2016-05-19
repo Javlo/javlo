@@ -141,12 +141,8 @@ public class XMLHelper {
 							if (image.isImageValid(lgCtx)) {
 								line.append("<image:image>");
 								String imageURL = image.getResourceURL(lgCtx);
-								System.out.println("***** XMLHelper.getSiteMapBloc : 1.imageURL = "+imageURL); //TODO: remove debug trace
-								System.out.println("***** XMLHelper.getSiteMapBloc : StringHelper.isURL(imageURL) = "+StringHelper.isURL(imageURL)); //TODO: remove debug trace
-								System.out.println("***** XMLHelper.getSiteMapBloc : abs : "+lgCtx.isAbsoluteURL()); //TODO: remove debug trace
 								if (!StringHelper.isURL(imageURL)) {
 									imageURL = URLHelper.createResourceURL(lgCtx, imageURL);
-									System.out.println("***** XMLHelper.getSiteMapBloc : 2.imageURL = "+imageURL); //TODO: remove debug trace
 								}
 								
 								line.append("<image:loc>" + imageURL + "</image:loc>");
