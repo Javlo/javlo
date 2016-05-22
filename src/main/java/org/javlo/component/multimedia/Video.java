@@ -663,13 +663,10 @@ public class Video extends GlobalImage implements IAction, IVideo {
 			}
 		}
 		if (isModify()) {
-			System.out.println("***** Video.performEdit : getLink() = "+getLink()); //TODO: remove debug trace
 			if (StringHelper.isURL(getLink())) {
-				System.out.println("***** Video.performEdit : 1.title = "+getTitle()); //TODO: remove debug trace
 				if (StringHelper.isEmpty(getTitle())) {
 					try {
-						setTitle(NetHelper.getPageTitle(new URL(getLink())));
-						System.out.println("***** Video.performEdit : 2.title = "+getTitle()); //TODO: remove debug trace
+						setTitle(NetHelper.getPageTitle(new URL(getLink())));s
 					} catch (Exception e) {
 						logger.warning(e.getMessage());
 					}
