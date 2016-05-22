@@ -2,6 +2,15 @@
 	max-width: none; /* hack ie 9 */
 }
 
+figure {
+	text-align: center;
+}
+
+figcaption {
+	padding: 3px;
+	text-align: center;
+}
+
 i.mce-ico {
 	padding-top: 2px;
 	height: 18px;

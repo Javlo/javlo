@@ -390,7 +390,7 @@ public class NetHelper {
 	 * @throws Exception
 	 */
 	public static String getPageTitle(URL url) throws Exception {
-		return getPageTitle(readPage(url));
+		return getPageTitle(readPageGet(url));
 	}
 
 	/**

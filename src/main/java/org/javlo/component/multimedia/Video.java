@@ -183,7 +183,7 @@ public class Video extends GlobalImage implements IAction, IVideo {
 
 	@Override
 	public String getCurrentRenderer(ContentContext ctx) {
-		if (getStyle().equals(LINK) && !StringHelper.isTrue(ctx.getRequest().getParameter(FORCE_EMBED_PARAM))) {
+		if (getStyle() != null && getStyle().equals(LINK) && !StringHelper.isTrue(ctx.getRequest().getParameter(FORCE_EMBED_PARAM))) {
 			return super.getCurrentRenderer(ctx);
 		} else {
 			if (getEmbedCode().trim().length() == 0) {
@@ -201,7 +201,7 @@ public class Video extends GlobalImage implements IAction, IVideo {
 
 	@Override
 	public String getRenderer(ContentContext ctx) {
-		if (getStyle().equals(LINK) && !StringHelper.isTrue(ctx.getRequest().getParameter(FORCE_EMBED_PARAM)) || getEmbedCode().trim().length() == 0) {
+		if (getStyle() != null && getStyle().equals(LINK) && !StringHelper.isTrue(ctx.getRequest().getParameter(FORCE_EMBED_PARAM)) || getEmbedCode().trim().length() == 0) {
 			return super.getRenderer(ctx);
 		} else {
 			return null;
@@ -662,8 +662,19 @@ public class Video extends GlobalImage implements IAction, IVideo {
 				setRenderer(ctx, "youtube");
 			}
 		}
-		
 		if (isModify()) {
+			System.out.println("***** Video.performEdit : getLink() = "+getLink()); //TODO: remove debug trace
+			if (StringHelper.isURL(getLink())) {
+				System.out.println("***** Video.performEdit : 1.title = "+getTitle()); //TODO: remove debug trace
+				if (StringHelper.isEmpty(getTitle())) {
+					try {
+						setTitle(NetHelper.getPageTitle(new URL(getLink())));
+						System.out.println("***** Video.performEdit : 2.title = "+getTitle()); //TODO: remove debug trace
+					} catch (Exception e) {
+						logger.warning(e.getMessage());
+					}
+				}
+			}
 			if (isLink()) {
 				setRenderer(ctx, "link");
 			} else if (isYouTube()) {
@@ -674,7 +685,6 @@ public class Video extends GlobalImage implements IAction, IVideo {
 				setRenderer(ctx, "local");
 			}
 		}
-		
 		return msg;
 	}
 }

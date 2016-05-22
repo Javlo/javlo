@@ -230,10 +230,12 @@ public class GlobalImage extends Image implements IImageFilter {
 		}
 		ctx.getRequest().setAttribute("media", this);
 		ctx.getRequest().setAttribute("shortDate", StringHelper.renderShortDate(ctx, getDate()));
-		if (isMeta()) {
-			ctx.getRequest().setAttribute("label", cleanValue(ctx, getTitle()));
-			ctx.getRequest().setAttribute("cleanLabel", getTitle());
+		if (isMeta() && !isLabel()) {
+			ctx.getRequest().setAttribute("cleanLabel", cleanValue(ctx, getTitle()));
+			ctx.getRequest().setAttribute("label", getTitle());
 		}
+		
+		ctx.getRequest().setAttribute("location", getLocation(ctx));
 		ctx.getRequest().setAttribute("filter", getFilter(ctx));
 		int width = getWidth(ctx.getDevice());
 		if (width >= 0) {
@@ -244,6 +246,10 @@ public class GlobalImage extends Image implements IImageFilter {
 
 	protected String getNewLinkParamName() {
 		return "_new-link-" + getId();
+	}
+	
+	protected boolean isLabel() {
+		return !isMeta();
 	}
 
 	@Override
@@ -272,9 +278,9 @@ public class GlobalImage extends Image implements IImageFilter {
 			finalCode.append(XHTMLHelper.getCheckbox(getReverseLinkInputName(), isReverseLink()));
 			finalCode.append("<label for=\"" + getReverseLinkInputName() + "\">" + getReverseLinkeLabelTitle(ctx) + "</label>");
 			finalCode.append("</div>");
-		}
+		}		
 
-		if (!isMeta() && !ctx.getGlobalContext().isMailingPlatform()) {
+		if (isLabel() && !ctx.getGlobalContext().isMailingPlatform()) {
 			finalCode.append("<div class=\"row form-group\"><div class=\"col-sm-3\">");
 			finalCode.append("<label for=\"" + getLabelXHTMLInputName() + "\">" + getImageLabelTitle(ctx) + " : </label></div><div class=\"col-sm-9\">");
 			final String[][] params = { { "rows", "3" }, { "cols", "40" }, { "class", "form-control" } };
@@ -538,7 +544,7 @@ public class GlobalImage extends Image implements IImageFilter {
 		}
 	}
 
-	private void setTitle(String title) {
+	protected void setTitle(String title) {
 		if (title != null) {
 			properties.setProperty(TITLE, title);
 		}
