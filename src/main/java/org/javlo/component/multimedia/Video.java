@@ -666,7 +666,7 @@ public class Video extends GlobalImage implements IAction, IVideo {
 			if (StringHelper.isURL(getLink())) {
 				if (StringHelper.isEmpty(getTitle())) {
 					try {
-						setTitle(NetHelper.getPageTitle(new URL(getLink())));s
+						setTitle(NetHelper.getPageTitle(new URL(getLink())));
 					} catch (Exception e) {
 						logger.warning(e.getMessage());
 					}
