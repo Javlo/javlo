@@ -897,7 +897,7 @@ public class ImageEngine {
 	 */
 	public static BufferedImage resize(BufferedImage source, int inWidth, int inHeight, boolean cropResize, boolean addBorder, int mt, int ml, int mr, int mb, Color bgColor, int interestX, int interestY, boolean focusZone, boolean hq) {
 
-		logger.fine("resize with:" + inWidth + " height:" + inHeight + " bgColor:" + bgColor);
+		logger.fine("resize with:" + inWidth + " height:" + inHeight + " cropResize : "+cropResize + " addBorder : "+addBorder + " mt : "+mt + " ml : "+ml + " mr : "+mr + " mb : "+mb+ " bgColor:" + bgColor+ " interestX="+interestX+" interestY="+interestY+" focusZone="+focusZone+" hq="+hq);
 
 		if (inWidth < 0) {
 			inWidth = Math.abs(source.getWidth() * inHeight / source.getHeight());
@@ -928,7 +928,7 @@ public class ImageEngine {
 
 			for (int x = 0; x < source.getWidth(); x++) {
 				for (int y = 0; y < source.getHeight(); y++) {
-					int color = source.getRGB(x, y);
+					int color = source.getRGB(x, y);					
 					outImage.setRGB(x + borderWidth, y + borderHeight, color);
 				}
 			}			
@@ -969,6 +969,9 @@ public class ImageEngine {
 			deltaY = 0;
 		} else if (deltaY + inHeight > workImage.getHeight()) {
 			deltaY = workImage.getHeight() - inHeight;
+			if (deltaY < 0) {
+				deltaY = 0;
+			}
 		}
 
 		BufferedImage outImage = new BufferedImage(inWidth, inHeight, source.getType());
@@ -980,19 +983,19 @@ public class ImageEngine {
 				if (bgColor != null) {
 					imageColor = bgColor.getRGB();
 				}
-				if ((targetX >= ml) && (targetX < workWith + ml) && (targetY >= mt) && (targetY < workHeight + mt)) {					
+				if ((targetX >= ml) && (targetX < workWith + ml) && (targetY >= mt) && (targetY < workHeight + mt)) {
 					imageColor =  getColor(workImage, x+ml, y+mt, bgColor);
-				}
+				}				
 				Integer mixedColor = imageColor;
-				if (bgColor != null) {
+				if (bgColor != null && imageColor != null) {
 					mixedColor = replaceAlpha(new Color(imageColor), bgColor).getRGB();
-				}
+				}				
 				if (mixedColor != null) {
 					outImage.setRGB(targetX, targetY, mixedColor);
 				}
 			}
-		}
-		
+		}	
+		workImage.flush();		
 		return outImage;
 	}
 	
@@ -1343,10 +1346,12 @@ public class ImageEngine {
 
 	
 	public static void main(String[] args) throws Exception {
-		File source = new File("C:/trans/test.jpg");
+		File source = new File("c:/trans/test.jpg");
 		File target = new File("c:/trans/out.png");
+		
+		System.out.println("read : "+source+ " - exist:"+source.exists());
 
-	    BufferedImage src = luminosity(ImageIO.read(source));
+	    BufferedImage src = resize(ImageIO.read(source), 80, 80, true, false, 0, 0, 0,0, null,768,565,false,false);
 	    ImageIO.write(src, "png", target);
 	}
 
