@@ -634,15 +634,13 @@ public class ContentService implements IPrintInfo {
 	 * check if navigation was allready loaded for a specific render mode.
 	 */
 	public boolean isNavigationLoaded(ContentContext ctx) {
-		synchronized (GlobalContext.getInstance(ctx.getRequest()).getLockLoadContent()) {
-			if (ctx.getRenderMode() == ContentContext.TIME_MODE) {
-				return timeTravelerNav != null;
-			} else if (!ctx.isAsViewMode()) {
-				return previewNav != null;
-			} else {
-				return getViewNav() != null;
-			}
-		}
+		if (ctx.getRenderMode() == ContentContext.TIME_MODE) {
+			return timeTravelerNav != null;
+		} else if (!ctx.isAsViewMode()) {
+			return previewNav != null;
+		} else {
+			return getViewNav() != null;
+		}		
 	}
 
 	public MenuElement getTimeTravelerNav() {

@@ -613,9 +613,9 @@ public class ContentContext {
 		} else {
 			ContentContext lgCtx = new ContentContext(this);
 			GlobalContext globalContext = GlobalContext.getInstance(getRequest());
-			Collection<String> lgs = globalContext.getLanguages();
+			Collection<String> lgs = globalContext.getDefaultLanguages();
 			for (String lg : lgs) {
-				lgCtx.setAllLanguage(lg);
+				lgCtx.setContentLanguage(lg);
 				if (page.isRealContent(lgCtx)) {
 					return lgCtx.getContextOnPage(page);
 				}

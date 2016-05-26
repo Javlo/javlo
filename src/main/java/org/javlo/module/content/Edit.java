@@ -516,7 +516,10 @@ public class Edit extends AbstractModuleAction {
 					publish = "&button_publish=true";
 				}
 
-				request.setAttribute("previewURL", URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.PREVIEW_MODE)));
+				Map<String,String> params = new HashMap<String, String>();
+				params.put("webaction", "edit.previewedit");
+				params.put("preview", "false");
+				request.setAttribute("previewURL", URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.PREVIEW_MODE), params));
 
 				switch (modCtx.getMode()) {
 				case ContentModuleContext.PREVIEW_MODE:

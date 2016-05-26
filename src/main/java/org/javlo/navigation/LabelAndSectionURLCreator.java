@@ -45,12 +45,32 @@ public class LabelAndSectionURLCreator extends AbstractURLFactory {
 		}
 
 		ContentContext freeCtx = ctx.getFreeContentContext();
-
+		ContentContext realContentContext = freeCtx.getContextWithContent(currentPage);
+		if (realContentContext != null) {
+			freeCtx = realContentContext;
+		}
+		
 		Collection<IContentVisualComponent> comps = currentPage.getContentByType(freeCtx, PageURL.TYPE);
 		if (comps.size() > 0) {
 			return ((PageURL) comps.iterator().next()).getValue();
 		}
-		String label = currentPage.getLabel(freeCtx);
+		
+		String label;
+		String pageTitle = currentPage.getForcedPageTitle(freeCtx);
+		
+		if (!StringHelper.isEmpty(pageTitle)) {
+			label = pageTitle;
+		} else {
+			label = currentPage.getLabel(freeCtx);
+		}
+		
+		if (label.startsWith("Agenda Week")) {
+			label = label.substring("Agenda Week".length()).trim();
+			if (label.contains(" ") && label.length() == 7) {				
+				label = label.substring(3, 7)+"-W"+label.substring(0, 2);				
+			}
+		}
+		
 		if (currentPage.getUrlNumber() > 0) {
 			label = label + '-' +currentPage.getUrlNumber();
 		}
