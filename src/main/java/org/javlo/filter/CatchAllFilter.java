@@ -337,14 +337,15 @@ public class CatchAllFilter implements Filter {
 					String pattern2 = entry.getValue();
 					if (!pattern1.contains("*")) {
 						if (cmsURI.equals(pattern1)) {
-							pattern2 = URLHelper.mergePath("/", ContentContext.getPathPrefix((HttpServletRequest) request), pattern2);
+							logger.info("manual redirect : "+pattern1+" --> "+pattern2);
 							NetHelper.sendRedirectPermanently((HttpServletResponse) response, pattern2);
 							return;
 						}
 					} else {
 						String newURL = StringHelper.convertString(pattern1, pattern2, cmsURI);
-						if (!newURL.equals(cmsURI)) {
-							newURL = URLHelper.mergePath("/", ContentContext.getPathPrefix((HttpServletRequest) request), newURL);
+						if (!newURL.equals(cmsURI)) {							
+							//newURL = URLHelper.mergePath("/", ContentContext.getPathPrefix((HttpServletRequest) request), newURL);
+							logger.info("manual redirect : "+pattern1+" --> "+newURL);
 							NetHelper.sendRedirectPermanently((HttpServletResponse) response, newURL);
 							return;
 						}
