@@ -1333,7 +1333,7 @@ public class GlobalImage extends Image implements IImageFilter {
 			return true;
 		} else {
 			String extension = ','+ctx.getGlobalContext().getStaticConfig().getImageFormat()+',';
-			return extension.contains(','+StringHelper.getFileExtension(fileName)+',');
+			return extension.contains(','+StringHelper.getFileExtension(fileName).toLowerCase()+',');
 		}
 	}
 	

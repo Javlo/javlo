@@ -791,7 +791,7 @@ public class ResourceHelper {
 				return false;
 			} else {
 				ext = ext.trim();
-				return ctx.getGlobalContext().getStaticConfig().getDocumentExtension().contains(ext);
+				return ctx.getGlobalContext().getStaticConfig().getDocumentExtension().contains(ext.toLowerCase());
 			}
 		}
 	}
