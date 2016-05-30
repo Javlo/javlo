@@ -42,6 +42,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
+import org.javlo.actions.DataAction;
 import org.javlo.cache.ICache;
 import org.javlo.component.config.ComponentConfig;
 import org.javlo.context.ContentContext;
@@ -2587,6 +2588,14 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	@Override
 	public String getContentAsText(ContentContext ctx) {	
 		return StringHelper.removeTag(getValue(ctx));
+	}
+	
+	public static String getImportFolderPath(ContentContext ctx) throws Exception {
+		String importFolder = ctx.getGlobalContext().getStaticConfig().getImportFolder();
+		if (importFolder.length() > 1 && importFolder.startsWith("/")) {
+			importFolder = importFolder.substring(1);
+		}
+		return importFolder+'/'+DataAction.createImportFolder(ctx);
 	}
 
 }

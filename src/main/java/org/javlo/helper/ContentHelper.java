@@ -7,7 +7,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
-import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -23,7 +22,10 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipInputStream;
 
+import org.javlo.actions.DataAction;
+import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.component.core.ComponentBean;
+import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.image.GlobalImage;
 import org.javlo.component.image.Image;
 import org.javlo.component.links.ExternalLink;
@@ -44,10 +46,11 @@ import org.javlo.utils.DocxUtils;
 import org.javlo.utils.UnclosableInputStream;
 import org.javlo.xml.NodeXML;
 import org.javlo.xml.XMLFactory;
+import org.javlo.ztatic.IStaticContainer;
 
 public class ContentHelper {
 
-	//public static final String IMPORT_FOLDER = "/import/";
+	// public static final String IMPORT_FOLDER = "/import/";
 	private static java.util.logging.Logger logger = java.util.logging.Logger.getLogger(ContentHelper.class.getName());
 
 	/**
@@ -179,17 +182,17 @@ public class ContentHelper {
 		}
 
 	}
-	
+
 	private static String getContentODTNode(NodeXML node, Collection<NodeXML> nodeDone) {
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(outStream);
 		if (node.getContentPrefix() != null) {
-			out.print(node.getContentPrefix());	
-		}		
+			out.print(node.getContentPrefix());
+		}
 		boolean firstPara = true;
-		for (NodeXML child : node.getAllChildren()) {			
+		for (NodeXML child : node.getAllChildren()) {
 			if (child.getName().endsWith(":span")) {
-				out.print(StringHelper.neverNull(child.getContent())+' ');
+				out.print(StringHelper.neverNull(child.getContent()) + ' ');
 				nodeDone.add(child);
 			} else if (child.getName().endsWith(":p")) {
 				if (firstPara) {
@@ -200,11 +203,11 @@ public class ContentHelper {
 				firstPara = false;
 				nodeDone.add(child);
 			}
-		}		
+		}
 		if (node.getContentSuffix() != null && !node.getContentSuffix().equals(node.getContentPrefix())) {
-			out.print(node.getContentSuffix());	
-		}	
-		out.close();		
+			out.print(node.getContentSuffix());
+		}
+		out.close();
 		return new String(outStream.toByteArray());
 	}
 
@@ -212,7 +215,7 @@ public class ContentHelper {
 		List<ComponentBean> outBeans = new LinkedList<ComponentBean>();
 		ZipInputStream zipIn = new ZipInputStream(in);
 		ZipEntry entry = zipIn.getNextEntry();
-		String baseStaticFolder = URLHelper.mergePath(gc.getStaticConfig().getImportFolder(),name);
+		String baseStaticFolder = URLHelper.mergePath(gc.getStaticConfig().getImportFolder(), name);
 
 		while (entry != null) {
 			if (gc != null && StringHelper.isImage(entry.getName())) {
@@ -250,22 +253,22 @@ public class ContentHelper {
 						if (value.length() > 0 || node.getName().endsWith(":image") || node.getName().endsWith(":list")) {
 							if (node.getName().endsWith(":h") || "title".equalsIgnoreCase(stylesTree.get(node.getAttributeValue("text:style-name")))) {
 								if (node.getAttributeValue("text:outline-level", "1").equals("1") || "title".equalsIgnoreCase(stylesTree.get(node.getAttributeValue("text:style-name")))) {
-									bean = new ComponentBean(Title.TYPE,  getContentODTNode(node, nodeDone), lang);
+									bean = new ComponentBean(Title.TYPE, getContentODTNode(node, nodeDone), lang);
 									title = value;
 								} else {
-									bean = new ComponentBean(SubTitle.TYPE,  getContentODTNode(node, nodeDone), lang);
+									bean = new ComponentBean(SubTitle.TYPE, getContentODTNode(node, nodeDone), lang);
 									bean.setStyle(node.getAttributeValue("text:outline-level", "2"));
 								}
 								nodeDone.add(node);
 							}
 
 							if (node.getParent() != null && node.getParent().getAttributeValue("text:style-name", "").equalsIgnoreCase("subtitle")) {
-								bean = new ComponentBean(SubTitle.TYPE,  getContentODTNode(node, nodeDone), lang);
+								bean = new ComponentBean(SubTitle.TYPE, getContentODTNode(node, nodeDone), lang);
 								bean.setStyle(node.getAttributeValue("text:outline-level", "2"));
 								nodeDone.add(node);
 							}
 
-							if (bean == null && node.getName().endsWith(":p") && !node.getParent().getName().endsWith(":list-item")) {								
+							if (bean == null && node.getName().endsWith(":p") && !node.getParent().getName().endsWith(":list-item")) {
 								bean = new ComponentBean(Paragraph.TYPE, getContentODTNode(node, nodeDone), lang);
 								nodeDone.add(node);
 							} else if (node.getName().endsWith(":list")) {
@@ -279,7 +282,7 @@ public class ContentHelper {
 								}
 								if (!subList) {
 									ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-									PrintStream out = new PrintStream(outStream);									
+									PrintStream out = new PrintStream(outStream);
 									for (NodeXML child : node.getAllChildren()) {
 										if (child.getName().endsWith(":list-item")) {
 											int parentDistance = child.getParentDistance(node);
@@ -289,7 +292,7 @@ public class ContentHelper {
 													prefix = prefix + '-';
 												}
 											}
-											out.println(prefix +  getContentODTNode(child, nodeDone));
+											out.println(prefix + getContentODTNode(child, nodeDone));
 											nodeDone.add(child);
 										}
 									}
@@ -331,15 +334,16 @@ public class ContentHelper {
 
 		return outBeans;
 	}
-	
+
 	public static List<ComponentBean> createContentFromDocx(GlobalContext gc, InputStream in, String name, String lang) throws Exception {
-		
+
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		ResourceHelper.writeStreamToStream(in, out);
-		
+
 		ZipInputStream zipIn = new ZipInputStream(new ByteArrayInputStream(out.toByteArray()));
 		ZipEntry entry = zipIn.getNextEntry();
-		String baseStaticFolder = URLHelper.mergePath(gc.getStaticConfig().getImportFolder(),name);;
+		String baseStaticFolder = URLHelper.mergePath(gc.getStaticConfig().getImportFolder(), name);
+		;
 
 		// import static images
 		while (entry != null) {
@@ -348,7 +352,7 @@ public class ContentHelper {
 			}
 			entry = zipIn.getNextEntry();
 		}
-		
+
 		// import content
 		List<ComponentBean> beans = DocxUtils.extractContent(gc, new ByteArrayInputStream(out.toByteArray()), baseStaticFolder);
 		for (ComponentBean bean : beans) {
@@ -356,16 +360,17 @@ public class ContentHelper {
 		}
 		return beans;
 	}
-	
-public static List<ComponentBean> createContentFromArray(GlobalContext gc, InputStream in, String name, String lang) throws Exception {
-		
+
+	public static List<ComponentBean> createContentFromArray(GlobalContext gc, InputStream in, String name, String lang) throws Exception {
+
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		ResourceHelper.writeStreamToStream(in, out);
-		
+
 		ZipInputStream zipIn = new ZipInputStream(new ByteArrayInputStream(out.toByteArray()));
 		ZipEntry entry = zipIn.getNextEntry();
-		String baseStaticFolder = URLHelper.mergePath(gc.getStaticConfig().getImportFolder(),name);;
-		
+		String baseStaticFolder = URLHelper.mergePath(gc.getStaticConfig().getImportFolder(), name);
+		;
+
 		// import content
 		List<ComponentBean> beans = DocxUtils.extractContent(gc, new ByteArrayInputStream(out.toByteArray()), baseStaticFolder);
 		for (ComponentBean bean : beans) {
@@ -460,23 +465,44 @@ public static List<ComponentBean> createContentFromArray(GlobalContext gc, Input
 		}
 		return null;
 	}
-	
-	public static void copyPage(MenuElement source, MenuElement target) throws SecurityException, IllegalArgumentException, IllegalAccessException, InvocationTargetException {
+
+	public static void copyPage(ContentContext ctx, MenuElement source, MenuElement target) throws Exception {
+
+		String sourceImportFolder = AbstractVisualComponent.getImportFolderPath(ctx.getContextOnPage(source));
+		String targetImportFolder = AbstractVisualComponent.getImportFolderPath(ctx.getContextOnPage(target));
+
 		ComponentBean[] beans = source.getContent();
-		ComponentBean[] newBeans = new ComponentBean[beans.length];		
-		for (int i=0; i<beans.length; i++) {
+		ComponentBean[] newBeans = new ComponentBean[beans.length];
+		for (int i = 0; i < beans.length; i++) {
 			newBeans[i] = new ComponentBean(beans[i]);
 			newBeans[i].setId(StringHelper.getRandomId());
 		}
 		target.setContent(newBeans);
 		target.setTemplateId(source.getTemplateId());
+
+		for (IContentVisualComponent comp : target.getContent(ctx).getContentElements()) {			
+			if (comp instanceof IStaticContainer) {
+				IStaticContainer image = (IStaticContainer) comp;
+				if (image.getDirSelected().equals(sourceImportFolder)) {
+					for (File sourceFile : image.getFiles(ctx)) {
+						File targetFile = new File(StringHelper.cleanPath(sourceFile.getAbsolutePath()).replace(sourceImportFolder, targetImportFolder));
+						if (!targetFile.exists()) {
+							ResourceHelper.copyFile(sourceFile, targetFile, false);
+						}
+						image.setDirSelected(targetImportFolder);
+					}
+				}
+			}
+		}
+
 	}
-	
+
 	/**
 	 * get all component in a page and children of the page.
+	 * 
 	 * @param page
 	 * @return
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	public static List<ComponentBean> getAllComponentsOfChildren(MenuElement page) throws Exception {
 		List<ComponentBean> comps = new LinkedList<ComponentBean>();
@@ -486,5 +512,5 @@ public static List<ComponentBean> createContentFromArray(GlobalContext gc, Input
 		}
 		return comps;
 	}
-	
+
 }

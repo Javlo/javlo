@@ -685,3 +685,9 @@ change log
  * remove jsessionid by default 
  
  * LabelAndSectionURLCreator
+ 
+ * create article bug correction
+ 
+ * LabelAndSectionURLCreatorNoExt remove section if like root
+ 
+* 2.1.0.3.11 26/05/2016

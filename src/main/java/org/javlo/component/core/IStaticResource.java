@@ -35,5 +35,14 @@ public interface IStaticResource {
 	public File getFile(ContentContext ctx);
 
 	public boolean isShared(ContentContext ctx);
+	
+	/**
+	 * return true if resource is local to the page, false if resource is global to the site.
+	 * exemple : imported image is local to the page.
+	 * @param ctx
+	 * @return
+	 */
+	public boolean isLocal(ContentContext ctx);
+	
 
 }

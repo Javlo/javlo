@@ -8,6 +8,7 @@ import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -520,6 +521,21 @@ public class FieldFile extends Field implements IStaticContainer {
 		} catch (Exception e) {
 		}
 		return 0;
+	}
+	
+	@Override
+	public List<File> getFiles(ContentContext ctx) {
+		// TODO Need implementation if necesary
+		return Collections.EMPTY_LIST;
+	}
+	
+	@Override
+	public String getDirSelected() {
+		return null;
+	}
+	
+	@Override
+	public void setDirSelected(String dir) {
 	}
 
 }

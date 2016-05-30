@@ -235,7 +235,7 @@ public class FileFinder extends AbstractPropertiesComponent implements IUploadRe
 	
 
 	@Override
-	public void performUpload (ContentContext ctx) throws Exception {
+	public String performUpload (ContentContext ctx) throws Exception {
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
 		Collection<FileItem> items = requestService.getAllFileItem();		
 		for (FileItem item : items) {
@@ -251,6 +251,7 @@ public class FileFinder extends AbstractPropertiesComponent implements IUploadRe
 				ResourceHelper.closeResource(in);
 			}
 		}
+		return null;
 	}
 	
 	@Override
@@ -258,7 +259,4 @@ public class FileFinder extends AbstractPropertiesComponent implements IUploadRe
 		return true;
 	}
 	
-	
-
-
 }

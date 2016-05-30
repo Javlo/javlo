@@ -30,6 +30,27 @@
 	
 </c:if>
 
+<script type="text/javascript">
+function AXOrNull(progId) {
+	  try {
+	    return new ActiveXObject(progId);
+	  }
+	  catch (ex) {
+	    return null;
+	  }
+	}
+
+function openOutlook(p_recipient, p_subject, p_body) {
+	var objO = new ActiveXObject('Outlook.Application');     
+	var objNS = objO.GetNameSpace('MAPI');     
+	var mItm = objO.CreateItem(0);     
+	mItm.Display();     
+	mItm.To = p_recipient;
+	mItm.Subject = p_subject;
+	mItm.HTMLBody = p_body;     
+	mItm.GetInspector.WindowState = 2;
+}</script>
+
 <div id="form-zone" class="${contentContext.editPreview?'preview ':'edit '}content wizard${not empty threadId?' hidden':''}">
 	<div class="form-group">
 	<textarea class="form-control" rows="20" cols="20">${content}</textarea>
@@ -49,6 +70,11 @@
 			<c:param name="download" value="true" />
 		</c:url>
 		<a target="_blank" class="btn btn-primary btn-color" href="${downloadURL}">Save as HTML</a>
+		<script type="text/javascript">
+		if (AXOrNull('Outlook.Application') != null) {
+			document.write("<a href=\"#\" class=\"btn btn-defaut\" onclick=\"openOutlook('', '', '${outlookContent}'); return false;\">Open in outlook</a>");
+		}	
+		</script>
 		
 	</form>
 </div>

@@ -591,4 +591,8 @@ public class ContentElementList implements IContentComponentsList {
 		return new ContentElementListIterable(ctx,this);
 	}
 
+	public LinkedList<IContentVisualComponent> getContentElements() {
+		return contentElements;
+	}	
+
 }

@@ -28,6 +28,7 @@ import org.javlo.context.GlobalContext;
 import org.javlo.helper.NetHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
+import org.javlo.helper.XHTMLHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.mailing.Mailing;
 import org.javlo.mailing.MailingFactory;
@@ -119,7 +120,8 @@ public class MailingAction extends AbstractModuleAction {
 				logger.severe("error on read : " + url);
 				content = "error on read : " + url;
 			}
-			request.setAttribute("content", content);
+			request.setAttribute("content", content);			
+			request.setAttribute("outlookContent", XHTMLHelper.escapeXHTML(StringHelper.removeCR(content)));
 			url = new URL(URLHelper.addParam(URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.PAGE_MODE).getContextForAbsoluteURL()), "mailing", "true"));
 			request.setAttribute("exportURL", url);
 			if (request.getParameter("wizardStep") != null && request.getParameter("wizardStep").equals("4")) {

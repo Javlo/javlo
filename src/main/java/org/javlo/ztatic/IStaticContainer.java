@@ -2,6 +2,7 @@ package org.javlo.ztatic;
 
 import java.io.File;
 import java.util.Collection;
+import java.util.List;
 
 import org.javlo.bean.Link;
 import org.javlo.context.ContentContext;
@@ -48,5 +49,19 @@ public interface IStaticContainer {
 	 * @return
 	 */
 	public int getPopularity(ContentContext ctx);
+	
+	/**
+	 * set folder with resources
+	 * @param dir
+	 */
+	public void setDirSelected(String dir);
+	
+	/**
+	 * get folder with ressources
+	 * @return
+	 */	
+	public String getDirSelected();
+	
+	public List<File> getFiles(ContentContext ctx);
 
 }

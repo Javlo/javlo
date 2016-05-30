@@ -8,6 +8,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.javlo.component.core.IReverseLinkComponent;
 import org.javlo.config.StaticConfig;
@@ -134,6 +136,16 @@ public class GenericFile extends AbstractFileComponent implements IReverseLinkCo
 		fullName = ElementaryURLHelper.mergePath(staticConfig.getFileFolder(), fullName);
 		fullName = ElementaryURLHelper.mergePath(globalContext.getDataFolder(), fullName);
 		return new File(fullName);
+	}
+	
+	@Override
+	public List<File> getFiles(ContentContext ctx) {
+		List<File> files = new LinkedList<File>();
+		File file = getFile(ctx);
+		if (file != null) {
+			files.add(file);
+		}
+		return files;
 	}
 
 	@Override

@@ -5,6 +5,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -423,6 +424,16 @@ public class Image extends AbstractFileComponent implements IImageTitle, IPrevie
 			return null;
 		}
 	}
+	
+	@Override
+	public List<File> getFiles(ContentContext ctx) {
+		List<File> files = new LinkedList<File>();
+		File file = getFile(ctx);
+		if (file != null) {
+			files.add(file);
+		}
+		return files;
+	}
 
 	@Override
 	public boolean isShared(ContentContext ctx) {
@@ -527,6 +538,11 @@ public class Image extends AbstractFileComponent implements IImageTitle, IPrevie
 	
 	@Override
 	public boolean isUploadOnDrop() {
+		return false;
+	}
+	
+	@Override
+	public boolean isLocal(ContentContext ctx) {	
 		return false;
 	}
 }

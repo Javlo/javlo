@@ -118,7 +118,7 @@ public abstract class AbstractSharedContentProvider implements ISharedContentPro
 
 	@Override
 	public boolean isEmpty(ContentContext ctx) {
-		return getContent(ctx) == null || getContent(ctx).size() == 0;
+		return false;
 	}
 
 	@Override

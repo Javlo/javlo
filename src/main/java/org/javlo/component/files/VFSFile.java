@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
 import java.util.LinkedList;
+import java.util.List;
 
 import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.FileSystemManager;
@@ -91,16 +92,27 @@ public class VFSFile extends AbstractFileComponent implements IReverseLinkCompon
 		String prefixLink = URLHelper.mergePath(getRelativeFileDirectory(ctx), fullRelativeFileName);
 		return XMLManipulationHelper.changeLink(body, URLHelper.createVFSURL(ctx, prefixLink, ""));
 	}
+	
+	protected File getFile(ContentContext ctx) {
+		String dirFile = URLHelper.mergePath(getFileDirectory(ctx), getDirSelected());
+		String fileName = StringHelper.createFileName(getFileName());
+		return new File(URLHelper.mergePath(dirFile, fileName));
+	}
+	
+	@Override
+	public List<File> getFiles(ContentContext ctx) {
+		List<File> files = new LinkedList<File>();
+		File file = getFile(ctx);
+		if (file != null) {
+			files.add(file);
+		}
+		return files;
+	}
 
 	@Override
 	public String getHeaderContent(ContentContext ctx) {
-
-		String dirFile = URLHelper.mergePath(getFileDirectory(ctx), getDirSelected());
-
-		String fileName = StringHelper.createFileName(getFileName());
-		String fullRelativeFileName = URLHelper.mergePath(getDirSelected(), fileName);
-
-		File zipFile = new File(URLHelper.mergePath(dirFile, fileName));
+		File zipFile = getFile(ctx);
+		String fullRelativeFileName = URLHelper.mergePath(getDirSelected(), zipFile.getName());
 		String outStr = null;
 		try {
 			FileSystemManager fsManager = VFS.getManager();

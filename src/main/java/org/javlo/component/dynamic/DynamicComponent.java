@@ -983,4 +983,19 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 		return content;
 	}
 	
+	@Override
+	public List<File> getFiles(ContentContext ctx) {
+		// TODO need real impplementation
+		return Collections.EMPTY_LIST;
+	}
+	
+	@Override
+	public String getDirSelected() {	
+		return null;
+	}
+	
+	@Override
+	public void setDirSelected(String dir) {		
+	}
+	
 }

@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
 import java.nio.charset.Charset;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
@@ -178,16 +180,30 @@ public class CSVArrayComponent extends AbstractFileComponent {
 	public String getType() {
 		return "csv-array";
 	}
+	
+	protected File getFile(ContentContext ctx) {
+		String basePath = URLHelper.mergePath(getFileDirectory(ctx), getDirSelected());
+		return new File(URLHelper.mergePath(basePath, getFileName()));
+	}
+	
+	@Override
+	public List<File> getFiles(ContentContext ctx) {
+		List<File> files = new LinkedList<File>();
+		File file = getFile(ctx);
+		if (file != null) {
+			files.add(file);
+		}
+		return files;
+	}
 
 	@Override
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
 
-		String basePath = URLHelper.mergePath(getFileDirectory(ctx), getDirSelected());
-		basePath = URLHelper.mergePath(basePath, getFileName());
+		
 
 		CSVFactory csvFactory;
 
-		File csvFile = new File(basePath);
+		File csvFile = getFile(ctx);
 
 		String colTH = "th";
 		String rowTH = "th";

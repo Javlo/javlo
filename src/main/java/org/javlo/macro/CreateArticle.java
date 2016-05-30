@@ -110,9 +110,10 @@ public class CreateArticle implements IInteractiveMacro, IAction {
 		String newEditURL = null;
 		
 		String lang = rs.getParameter("lang", null);
+		ContentContext ctxLg = ctx;
 		if (lang != null) {
-			ctx = new ContentContext(ctx);
-			ctx.setContentLanguage(lang);
+			ctxLg = new ContentContext(ctx);
+			ctxLg.setContentLanguage(lang);
 		}
 		
 		if (pageName == null) {
@@ -133,7 +134,7 @@ public class CreateArticle implements IInteractiveMacro, IAction {
 			}
 			Calendar cal = Calendar.getInstance();
 			cal.setTime(articleDate);
-			MenuElement rootPage = ContentService.getInstance(ctx.getRequest()).getNavigation(ctx).searchChildFromName(pageName);
+			MenuElement rootPage = ContentService.getInstance(ctx.getRequest()).getNavigation(ctxLg).searchChildFromName(pageName);
 			MenuElement newPage = null;
 			if (rootPage != null) {				
 				List<String> roles = new LinkedList<String>();
@@ -146,10 +147,10 @@ public class CreateArticle implements IInteractiveMacro, IAction {
 					}
 				}
 				String yearPageName = rootPage.getName() + "-" + cal.get(Calendar.YEAR);
-				MenuElement yearPage = MacroHelper.addPageIfNotExist(ctx, rootPage.getName(), yearPageName, true);
-				MacroHelper.createMonthStructure(ctx, yearPage);
-				String mountPageName = MacroHelper.getMonthPageName(ctx, yearPage.getName(), articleDate);
-				MenuElement mountPage = ContentService.getInstance(ctx.getRequest()).getNavigation(ctx).searchChildFromName(mountPageName);
+				MenuElement yearPage = MacroHelper.addPageIfNotExist(ctxLg, rootPage.getName(), yearPageName, true);
+				MacroHelper.createMonthStructure(ctxLg, yearPage);
+				String mountPageName = MacroHelper.getMonthPageName(ctxLg, yearPage.getName(), articleDate);
+				MenuElement mountPage = ContentService.getInstance(ctx.getRequest()).getNavigation(ctxLg).searchChildFromName(mountPageName);
 				if (mountPage != null) {
 					newPage = MacroHelper.createArticlePageName(ctx, mountPage);
 					if (newPage != null) {
@@ -164,10 +165,10 @@ public class CreateArticle implements IInteractiveMacro, IAction {
 									}
 								}
 							}
-							MacroHelper.addContentInPage(ctx, newPage, rootPage.getName().toLowerCase(), articleDate, tags);
+							MacroHelper.addContentInPage(ctxLg, newPage, rootPage.getName().toLowerCase(), articleDate, tags);
 						}
-						newURL = URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.PREVIEW_MODE), newPage);
-						newEditURL = URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.EDIT_MODE), newPage);
+						newURL = URLHelper.createURL(ctxLg.getContextWithOtherRenderMode(ContentContext.PREVIEW_MODE), newPage);
+						newEditURL = URLHelper.createURL(ctxLg.getContextWithOtherRenderMode(ContentContext.EDIT_MODE), newPage);
 						
 						List<String> selectedRole = new LinkedList<String>();
 						for (String role :roles) {
@@ -197,11 +198,11 @@ public class CreateArticle implements IInteractiveMacro, IAction {
 								}
 							}
 							
-							Mail mail = ctx.getCurrentTemplate().getMail(ctx, "create-article", ctx.getRequestContentLanguage());
+							Mail mail = ctxLg.getCurrentTemplate().getMail(ctxLg, "create-article", ctxLg.getRequestContentLanguage());
 							if (mail == null) {
-								mail = new Mail("new page created.", "a new page was create on : "+URLHelper.createURL(ctx.getContextForAbsoluteURL().getContextWithOtherRenderMode(ContentContext.VIEW_MODE)));
+								mail = new Mail("new page created.", "a new page was create on : "+URLHelper.createURL(ctxLg.getContextForAbsoluteURL().getContextWithOtherRenderMode(ContentContext.VIEW_MODE)));
 							} else {
-								ContentContext mailContext = ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE);
+								ContentContext mailContext = ctxLg.getContextWithOtherRenderMode(ContentContext.VIEW_MODE);
 								mailContext.setPath(newPage.getPath());
 								mail.setContent(XHTMLHelper.replaceJSTLData(mailContext, mail.getContent()));
 								mail.setSubject(XHTMLHelper.replaceJSTLData(mailContext, mail.getSubject()));

@@ -612,10 +612,11 @@ public class ContentContext {
 			return getContextOnPage(page);
 		} else {
 			ContentContext lgCtx = new ContentContext(this);
+			lgCtx.setRequestContentLanguage(null);
 			GlobalContext globalContext = GlobalContext.getInstance(getRequest());
 			Collection<String> lgs = globalContext.getDefaultLanguages();
 			for (String lg : lgs) {
-				lgCtx.setContentLanguage(lg);
+				lgCtx.setAllLanguage(lg);
 				if (page.isRealContent(lgCtx)) {
 					return lgCtx.getContextOnPage(page);
 				}
@@ -623,6 +624,37 @@ public class ContentContext {
 		}
 		return null;
 	}
+	
+	/**
+	 * return a context with language (if exist), it can be change the language
+	 * (and only this) of the current context). this method use only the default
+	 * language list.
+	 * 
+	 * @return null if no content found.
+	 * @throws Exception
+	 */
+	public ContentContext getContextWithContentDEBUG(MenuElement page) throws Exception {
+		System.out.println("***** ContentContext.getContextWithContentDEBUG : START : "+page.getPath()); //TODO: remove debug trace
+		if (page.isRealContent(this)) {
+			return getContextOnPage(page);
+		} else {
+			ContentContext lgCtx = new ContentContext(this);			
+			lgCtx.setArea(ComponentBean.DEFAULT_AREA);
+			GlobalContext globalContext = GlobalContext.getInstance(getRequest());
+			Collection<String> lgs = globalContext.getDefaultLanguages();
+			for (String lg : lgs) {				
+				lgCtx.setAllLanguage(lg);
+				System.out.println("** lg : "+lg + " " + page.isRealContent(lgCtx));
+				if (page.isRealContent(lgCtx)) {
+					System.out.println("** FOUND : "+lg);
+					return lgCtx.getContextOnPage(page);
+				}
+			}
+		}
+		System.out.println("NOT FOUND.");
+		return null;
+	}
+
 
 	/**
 	 * return a context with language (if exist), it can be change the language

@@ -479,12 +479,13 @@ public class DataAction implements IAction {
 		String importFolder = createImportFolder(ctx);
 		int countImages = 0;
 		FileItem imageItem = null;
+		String msg = null;
 		try {
 			String previousId = rs.getParameter("previous", "0");
 
 			IContentVisualComponent comp = cs.getCachedComponent(ctx, previousId);
 			if (comp != null && comp instanceof IUploadResource && ((IUploadResource) comp).isUploadOnDrop()) {
-				((IUploadResource) comp).performUpload(ctx);
+				msg = ((IUploadResource) comp).performUpload(ctx);
 				ctx.setNeedRefresh(true);
 			} else {
 				boolean content = StringHelper.isTrue(rs.getParameter("content", null));
@@ -644,7 +645,7 @@ public class DataAction implements IAction {
 		} catch (FileExistsException e) {
 			messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("data.file-allready-exist", "file already exists."), GenericMessage.ERROR));
 		}
-		return null;
+		return msg;
 	}
 
 	public static String performSessionId(ContentContext ctx, HttpSession session, User user) {

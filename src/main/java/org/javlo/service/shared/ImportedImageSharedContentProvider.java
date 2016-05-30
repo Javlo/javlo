@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.logging.Logger;
 
 import org.javlo.actions.DataAction;
+import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.ResourceHelper;
@@ -62,7 +63,7 @@ public class ImportedImageSharedContentProvider extends LocalImageSharedContentP
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		File imageFolder = new File(URLHelper.mergePath(globalContext.getDataFolder(), globalContext.getStaticConfig().getImageFolder()));
 		try {
-			imageFolder = new File(URLHelper.mergePath(imageFolder.getAbsolutePath(), URLHelper.mergePath(ctx.getGlobalContext().getStaticConfig().getImportFolder(),DataAction.createImportFolder(ctx))));			
+			imageFolder = new File(URLHelper.mergePath(imageFolder.getAbsolutePath(), AbstractVisualComponent.getImportFolderPath(ctx)));			
 		} catch (Exception e) {
 			throw new IOException(e);
 		}

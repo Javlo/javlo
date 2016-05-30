@@ -358,20 +358,20 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 
 			for (IImageTitle imageItem : images) {
 				String imagePath = imageItem.getResourceURL(lgCtx);
-				String imageURL = URLHelper.createTransformURL(lgCtx, page, imageItem.getResourceURL(lgCtx), filter);
-				String viewImageURL = URLHelper.createTransformURL(lgCtx, page, imageItem.getResourceURL(lgCtx), "thumb-view");
+				String imageURL = URLHelper.createTransformURL(lgCtx, page, imageItem.getResourceURL(lgCtx), filter);				
+				String viewImageURL = URLHelper.createTransformURL(lgCtx, page, imageItem.getResourceURL(lgCtx), "thumb-view");				
 				String imageDescription = XHTMLHelper.stringToAttribute(imageItem.getImageDescription(lgCtx));
 				String cssClass = "";
 				String linkURL = imageItem.getImageLinkURL(lgCtx);
 				if (linkURL != null) {
 					if (linkURL.equals(IImageTitle.NO_LINK)) {
-						cssClass = "no-link";
-						viewImageURL = null;
+						cssClass = "no-link";						
 						linkURL = null;
 					} else {
 						cssClass = "link " + StringHelper.getPathType(linkURL, "");
 					}
 				}
+				
 				PageBean.Image imageBean = new PageBean.Image(imageURL, viewImageURL, linkURL, cssClass, imageDescription, imagePath);
 				bean.getImages().add(imageBean);
 			}

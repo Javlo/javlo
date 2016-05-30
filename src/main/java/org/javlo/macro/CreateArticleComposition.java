@@ -236,7 +236,7 @@ public class CreateArticleComposition extends AbstractInteractiveMacro implement
 						if (assBean != null) {
 							newPage.setTemplateId(assBean.getPage().getTemplateId());
 							ContentService content = ContentService.getInstance(ctx.getRequest());
-							ContentHelper.copyPage(assBean.getAssociationPage().getPage(), layoutPage);
+							ContentHelper.copyPage(ctx, assBean.getAssociationPage().getPage(), layoutPage);
 							layoutPage.setChildrenAssociation(true);
 							for (MenuElement page : assBean.getAssociationPage().getPage().getChildMenuElements()) {
 								String newPageName = layoutPage.getName() + "-1";
@@ -246,7 +246,7 @@ public class CreateArticleComposition extends AbstractInteractiveMacro implement
 									index++;
 								}
 								MenuElement newChild = MacroHelper.addPageIfNotExist(ctx, layoutPage.getName(), newPageName, false);
-								ContentHelper.copyPage(page, newChild);
+								ContentHelper.copyPage(ctx, page, newChild);
 
 								/* copy article */
 								MenuElement articlePage = MacroHelper.addPageIfNotExist(ctx, newPage.getName(), newPage.getName() + "-article", false);
@@ -265,7 +265,7 @@ public class CreateArticleComposition extends AbstractInteractiveMacro implement
 												index++;
 											}
 											MenuElement newArticle = MacroHelper.addPageIfNotExist(ctx, articlePage.getName(), newPageName, false);
-											ContentHelper.copyPage(article, newArticle);
+											ContentHelper.copyPage(ctx, article, newArticle);
 											bean.setValue(newArticle.getId());
 										}
 									}

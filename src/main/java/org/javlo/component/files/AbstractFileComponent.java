@@ -269,6 +269,8 @@ public abstract class AbstractFileComponent extends AbstractVisualComponent impl
 		I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
 		return i18nAccess.getText("action.add-image.dir");
 	}
+	
+	
 
 	protected String[] getDirList(ContentContext ctx, String inFolder) throws Exception {
 		File folder = new File(inFolder);
@@ -278,7 +280,7 @@ public abstract class AbstractFileComponent extends AbstractVisualComponent impl
 		if (importFolder.length() > 1 && importFolder.startsWith("/")) {
 			importFolder = importFolder.substring(1);
 		}
-		String currentImportFolder = importFolder+'/'+DataAction.createImportFolder(ctx);
+		String currentImportFolder = getImportFolderPath(ctx);
 		for (File dir : sourceChildren) {
 			String child = StringUtils.replace(dir.getAbsolutePath(), folder.getAbsolutePath(), "").replace('\\', '/');
 			if (child.length() > 1 && child.startsWith("/")) {
@@ -882,6 +884,7 @@ public abstract class AbstractFileComponent extends AbstractVisualComponent impl
 
 	public void setDirSelected(String dir) {
 		properties.setProperty(DIR_KEY, dir);
+		storeProperties();
 	}
 
 	public void setFileName(String name) {
@@ -932,8 +935,21 @@ public abstract class AbstractFileComponent extends AbstractVisualComponent impl
 	}
 
 	@Override
-	public void performUpload(ContentContext ctx) throws Exception {
-		uploadFiles(ctx, RequestService.getInstance(ctx.getRequest()));
+	public String performUpload(ContentContext ctx) throws Exception {
+		RequestService requestService = RequestService.getInstance(ctx.getRequest());
+		String fileName = requestService.getParameter(getFileXHTMLInputName(), "");
+		I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
+		if (isFileNameValid(ctx, fileName)) {
+			try {
+				uploadFiles(ctx, requestService);
+				return null;
+			} catch (IOException e) {				
+				return i18nAccess.getText("content.file.exist");
+			}
+		} else {
+			return i18nAccess.getText("component.file.badformat", "bad file format.");
+		}
+		
 	}
 	
 	@Override
