@@ -305,14 +305,23 @@ public class StringHelperTest extends TestCase {
 		assertEquals("a2a", StringHelper.onlyAlphaNumeric("a2a", true));
 		assertEquals("aaabc", StringHelper.onlyAlphaNumeric("aaa bc", false));
 		assertEquals("aaabc", StringHelper.onlyAlphaNumeric("aaa (bc){?./}", false));
-		assertEquals("AANzZ", StringHelper.onlyAlphaNumeric("AANzZ (bc){?./}", true));
-		
+		assertEquals("AANzZ", StringHelper.onlyAlphaNumeric("AANzZ (bc){?./}", true));		
 	}
 	
-	public static void main(String[] args) {
-		for (char i=16; i<255; i++) {
-			System.out.println((int)i+" = " +i);
-		}
+	public void testIsEmail() {		
+		assertTrue(StringHelper.isMail("info@javlo.org"));		
+		assertTrue(StringHelper.isMail("first last <info@javlo.org>"));
+		assertTrue(StringHelper.isMail("info&contact@javlo.org"));
+		assertTrue(StringHelper.isMail("info@23.23.23.23"));
+		assertFalse(StringHelper.isMail("info@.javlo.org"));
+		assertFalse(StringHelper.isMail("info"));
+	}
+
+	
+	public void testToLatin() {		
+		assertEquals("a", StringHelper.toLatin("α"));
+		assertEquals("aaa", StringHelper.toLatin("aαa"));
+		assertEquals("aaab", StringHelper.toLatin("aαaβ"));
 	}
  
 }

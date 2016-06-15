@@ -221,6 +221,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 			bean.realContent = page.isRealContent(lgCtx);
 			bean.attTitle = XHTMLHelper.stringToAttribute(page.getTitle(lgCtx));
 			bean.description = page.getDescription(lgCtx);
+			bean.xhtmlDescription = page.getXHTMLDescription(lgCtx);
 			bean.location = page.getLocation(lgCtx);
 			bean.category = page.getCategory(lgCtx);
 			bean.visible = page.isVisible();
@@ -310,9 +311,15 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 					Calendar endDate = Calendar.getInstance();
 					endDate.setTime(pageEvent.getEnd());					
 					bean.dates.add(new DateBean(ctx, startDate.getTime()));
-					while(startDate.before(endDate)) {
+					final int MAX_DAYS_OF_EVENTS = 400;
+					int i=0;
+					while(startDate.before(endDate) && i<MAX_DAYS_OF_EVENTS) {
+						i++;
 						startDate.roll(Calendar.DAY_OF_YEAR, true);
 						bean.dates.add(new DateBean(ctx, startDate.getTime()));
+					}
+					if (i==MAX_DAYS_OF_EVENTS) {
+						logger.warning("to much days in event (max:"+MAX_DAYS_OF_EVENTS+") : "+page.getPath()+" ["+globalContext.getContextKey()+']');
 					}
 				}
 			} else {			
@@ -405,6 +412,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		private String label = null;
 		private String attTitle = null;
 		private String description = null;
+		private String xhtmlDescription = null;
 		private String location = null;
 		private String category = null;
 		private String categoryLabel = null;
@@ -472,6 +480,10 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 
 		public String getDescription() {
 			return description;
+		}
+		
+		public String getXhtmlDescription() {
+			return xhtmlDescription;
 		}
 
 		public DateBean getEndDate() {

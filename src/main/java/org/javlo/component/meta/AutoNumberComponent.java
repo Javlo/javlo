@@ -24,11 +24,9 @@ public class AutoNumberComponent extends AbstractVisualComponent {
 		ContentService content = ContentService.getInstance(ctx.getRequest());
 		int maxNumber = 1;
 		for (IContentVisualComponent comp : content.getAllContent(ctx.getContextWithArea(null))) {
-			if (comp.getType().equals(TYPE)) {
-				System.out.println("***** AutoNumberComponent.createNewNumber : comp id = "+comp.getId()); //TODO: remove debug trace
+			if (comp.getType().equals(TYPE)) {				
 				if (((AutoNumberComponent)comp).isNumber(ctx)) {
-				int compNumber = ((AutoNumberComponent)comp).getNumber(ctx)+1;
-				System.out.println("***** AutoNumberComponent.createNewNumber : compNumber = "+compNumber); //TODO: remove debug trace
+				int compNumber = ((AutoNumberComponent)comp).getNumber(ctx)+1;				
 				if (compNumber > maxNumber) {
 					maxNumber = compNumber;
 				}

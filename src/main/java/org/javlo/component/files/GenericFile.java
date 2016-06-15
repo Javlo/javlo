@@ -6,8 +6,6 @@ package org.javlo.component.files;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -91,23 +89,6 @@ public class GenericFile extends AbstractFileComponent implements IReverseLinkCo
 	}
 
 	@Override
-	protected String getPreviewCode(ContentContext ctx) throws Exception {
-		StringWriter res = new StringWriter();
-		PrintWriter out = new PrintWriter(res);
-		if ((getValue() != null) && (getValue().length() > 0)) {
-			prepareView(ctx);			
-			Object imagePreviewAttribute = ctx.getRequest().getAttribute("imagePreview");
-			if (imagePreviewAttribute != null) {
-				out.print("<img src='" + imagePreviewAttribute + "' /><br/>");
-			}
-			out.print(getViewXHTMLCode(ctx));
-		} else {
-			out.println("&nbsp;");
-		}
-		return res.toString();
-	}
-
-	@Override
 	protected String getRelativeFileDirectory(ContentContext ctx) {
 		StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
 		return staticConfig.getFileFolder();
@@ -129,15 +110,6 @@ public class GenericFile extends AbstractFileComponent implements IReverseLinkCo
 		}
 	}
 
-	public File getFile(ContentContext ctx) {
-		StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
-		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-		String fullName = ElementaryURLHelper.mergePath(getDirSelected(), getFileName());
-		fullName = ElementaryURLHelper.mergePath(staticConfig.getFileFolder(), fullName);
-		fullName = ElementaryURLHelper.mergePath(globalContext.getDataFolder(), fullName);
-		return new File(fullName);
-	}
-	
 	@Override
 	public List<File> getFiles(ContentContext ctx) {
 		List<File> files = new LinkedList<File>();
@@ -149,7 +121,7 @@ public class GenericFile extends AbstractFileComponent implements IReverseLinkCo
 	}
 
 	@Override
-	public String[] getStyleList(ContentContext ctx) {		
+	public String[] getStyleList(ContentContext ctx) {
 		if (super.getStyleList(ctx).length > 0) {
 			return super.getStyleList(ctx);
 		} else {
@@ -169,7 +141,7 @@ public class GenericFile extends AbstractFileComponent implements IReverseLinkCo
 	public String getType() {
 		return TYPE;
 	}
-	
+
 	@Override
 	public String getURL(ContentContext ctx) {
 		StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
@@ -188,7 +160,7 @@ public class GenericFile extends AbstractFileComponent implements IReverseLinkCo
 		ctx.getRequest().setAttribute("ext", StringHelper.getFileExtension(getFileName()));
 		ctx.getRequest().setAttribute("size", StringHelper.getFileSize(fullName));
 		if (getLabel().trim().length() == 0) {
-			ctx.getRequest().setAttribute("label", getFileName());			
+			ctx.getRequest().setAttribute("label", getFileName());
 		} else {
 			ctx.getRequest().setAttribute("label", textToXHTML(getLabel()));
 		}
@@ -199,7 +171,7 @@ public class GenericFile extends AbstractFileComponent implements IReverseLinkCo
 	 */
 	@Override
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
-		
+
 		prepareView(ctx);
 
 		if (getStyle(ctx).equals(HIDDEN)) {
@@ -244,7 +216,7 @@ public class GenericFile extends AbstractFileComponent implements IReverseLinkCo
 
 			fullName = ElementaryURLHelper.mergePath(globalContext.getDataFolder(), fullName);
 			res.append(" <span class=\"info\">(<span class=\"format\">" + StringHelper.getFileExtension(getFileName()) + "</span> <span class=\"size\">" + ctx.getRequest().getAttribute("size") + "</span>)</span></a>");
-			if ((getDescription().trim().length() > 0) && (ctx.getRenderMode() != ContentContext.EDIT_MODE)) { 
+			if ((getDescription().trim().length() > 0) && (ctx.getRenderMode() != ContentContext.EDIT_MODE)) {
 				res.append("<span class=\"description\">" + getDescription() + "</span>");
 			}
 		} else {
@@ -300,31 +272,37 @@ public class GenericFile extends AbstractFileComponent implements IReverseLinkCo
 		}
 		return 0;
 	}
-	
+
 	@Override
 	public String getListGroup() {
 		return "link";
 	}
-	
+
 	@Override
 	public boolean isUploadOnDrop() {
 		return false;
 	}
-	
+
 	@Override
-	public String getFirstPrefix(ContentContext ctx) {		
-		if (!isList(ctx)) {			
-			return getConfig(ctx).getProperty("prefix.first", "");			
-		} else {			
+	public String getFirstPrefix(ContentContext ctx) {
+		if (!isList(ctx)) {
+			return getConfig(ctx).getProperty("prefix.first", "");
+		} else {
 			String cssClass = "";
 			if (getStyle(ctx) != null && getStyle(ctx).trim().length() > 0) {
 				cssClass = ' ' + getStyle(ctx);
 			}
 			if (getListClass(ctx) != null) {
 				cssClass = cssClass + ' ' + getListClass(ctx);
-			}			
-			return "<" + getListTag(ctx) + " class=\"" + getType() + cssClass + ' ' + getCurrentRenderer(ctx)+"\">";
+			}
+			return "<" + getListTag(ctx) + " class=\"" + getType() + cssClass + ' ' + getCurrentRenderer(ctx) + "\">";
 		}
+	}
+	
+	@Override
+	protected String getMainFolder(ContentContext ctx) {
+		StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
+		return staticConfig.getFileFolderName();
 	}
 
 }

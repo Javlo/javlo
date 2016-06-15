@@ -47,75 +47,6 @@ body .component-wrapper {
 	overflow: hidden;	
 }
 
-.image-list {
-	margin-right: 15px;
-	margin-top: 15px;
-	border-top: 1px #cccccc solid;
-	padding-top: 15px;
-}
-
-.image .selected-zone {
-	height: 265px;
-	overflow: auto;
-	text-align: center;
-}
-
-.image label {	
-	float: left;
-	width: 160px;
-	height: 16px;	
-}
-
-.image .action {
-	margin-top: 15px;
-}
-
-.component .list-container .image-selected .name {
-	font-size: 11px;
-}
-
-.component .list-container .image-selected .focus-zone {
-	display: inline-block;
-	overflow: hidden;
-	line-height: 155px;
-}
-
-.component .list-container .image-selected img {
-	display: inline;
-	vertical-align: middle;	
-}
-
-.component .preview-image figure {
-	display: block;
-	text-align: center;
-	vertical-align: middle;		
-	overflow: hidden;	
-}
-
-.component .preview-image a {
-	display: block;	
-}
-
-.component .preview-image img {
-	display: block;
-}
-
-.component .preview-image figcaption a {
-	display: inline-block;	
-	height: auto;
-	width: auto;
-	overflow: hidden;
-}
-
-.component .preview-image a img {
-	vertical-align: middle;
-}
-
-.component .preview-image.selected {
-	font-weight: bold;
-	border: 1px #aa0000 solid;
-}
-
 .page-list-container {
 	max-height: 300px;
 	overflow: auto;
@@ -200,9 +131,90 @@ body .component-wrapper {
 
 /*** images ***/
 
+.image-list {
+	margin-right: 15px;
+	margin-top: 15px;
+	border-top: 1px #cccccc solid;
+	padding-top: 15px;	
+}
+
+.preview-image-wrapper {
+	overflow: auto;
+	text-align: center;	
+}
+
+.preview-image-wrapper.list {
+	height: 516px;
+}
+
+.image label {	
+	float: left;
+	width: 160px;
+	height: 16px;	
+}
+
+.image .action {
+	margin-top: 15px;
+}
+
+.component .list-container .image-selected .name {
+	font-size: 11px;
+}
+
+.component .list-container .image-selected .focus-zone {
+	display: inline-block;
+	overflow: hidden;
+	line-height: 155px;
+}
+
+.component .list-container .image-selected img {
+	display: inline;
+	vertical-align: middle;	
+}
+
+.component .preview-image figure {
+	display: block;
+	text-align: center;
+	vertical-align: middle;		
+	overflow: hidden;	
+}
+
+.component .preview-image a {
+	display: block;	
+}
+
 .component .preview-image {
-	margin: 2px;
-	float: left;	
+	padding: 2px;
+	float: left;
+	width: 33%;	
+	box-sizing: border-box;
+}
+
+.preview-image figcaption {
+	width: 100%;
+	height: 42px;
+	text-align: center;
+	overflow: hidden;
+}
+
+.component .preview-image img {
+	display: block;
+	vertical-align: middle;
+	width: 100%;
+}
+
+.component .preview-image figcaption a {
+	display: inline-block;	
+	height: auto;
+	width: 100%;
+	overflow: hidden;
+	text-align: center;
+	
+}
+
+.component .preview-image.selected {
+	font-weight: bold;
+	border: 1px #aa0000 solid;
 }
 
 .dynamic-component-list select, .dynamic-component-list input {

@@ -36,6 +36,7 @@ import org.javlo.service.RequestService;
 import org.javlo.template.Template;
 import org.javlo.template.TemplateFactory;
 import org.javlo.user.AdminUserFactory;
+import org.javlo.user.AdminUserSecurity;
 import org.javlo.user.IUserFactory;
 import org.javlo.user.User;
 import org.javlo.user.UserFactory;
@@ -50,6 +51,8 @@ public class ContentContext {
 	private static final String HOST_DEFINED_SITE = "____host-defined-site";
 
 	private static final String FORCE_PATH_PREFIX = "____force-path-prefix";
+	
+	private static final String FORCE_SPECIAL_RENDERER = "forced-renderer";
 
 	public static final int EDIT_MODE = 1;
 
@@ -111,7 +114,7 @@ public class ContentContext {
 
 	private static ContentContext createContentContext(HttpServletRequest request, HttpServletResponse response, boolean free) {
 		ContentContext ctx = new ContentContext();
-		ctx.setFree(free);
+		ctx.setFree(free);		
 		init(ctx, request, response);
 		ctx.setUser();
 		return ctx;
@@ -353,6 +356,12 @@ public class ContentContext {
 			if (StringHelper.isTrue(requestService.getParameter(CLEAR_SESSION_PARAM, null))) {
 				ctx.clearSession = true;
 			}
+			if (request.getParameter(FORCE_SPECIAL_RENDERER) != null) {			
+				IUserFactory fact = UserFactory.createUserFactory(globalContext, ctx.getRequest().getSession());				
+				if (AdminUserSecurity.getInstance().isAdmin(fact.getCurrentUser(request.getSession()))) {
+					ctx.setSpecialContentRenderer(request.getParameter(FORCE_SPECIAL_RENDERER));
+				}
+			}			
 		} catch (RuntimeException e) {
 			e.printStackTrace();
 		}
@@ -750,14 +759,25 @@ public class ContentContext {
 			MenuElement root = ContentService.getInstance(globalContext).getNavigation(this);
 			if (getPath().equals("/")) {
 				outPage = root;
-			} else {
-				if (getPath().trim().length() > 0) {
+			} else {				
+				if (getPath().trim().length() > 0) {					
 					MenuElement elem = globalContext.getPageIfExist(this, getPath(), urlFacotry);
+					/*LocalLogger.log("");
+					LocalLogger.log("path="+getPath());
+					LocalLogger.log("elem="+elem);*/
+
 					if (elem != null) {
 						setCurrentPageCached(elem);
 						globalContext.storeUrl(this, getPath(), elem.getId());						
 					} else {
+						
+						
+						
+						
 						elem = globalContext.convertOldURL(this, getPath());
+						
+						
+						
 						if (elem != null) {
 							String newURL = URLHelper.createURL(this, elem);
 							logger.info("redirect in ("+getGlobalContext().getContextKey()+") newURL = "+newURL);
@@ -766,7 +786,7 @@ public class ContentContext {
 						} else {
 							setContentFound(false);
 							elem = root;
-							setPath(root.getPath());
+							setPath(root.getPath());							
 						}
 					}
 					outPage = elem;
@@ -775,8 +795,10 @@ public class ContentContext {
 				}
 			}
 		}
-		if (isAsViewMode() && outPage != null && !outPage.isActive(this)) {		
-			logger.info("page not found : "+getPath());
+		if (isAsViewMode() && outPage != null && !outPage.isActive(this)) {
+			if (outPage.isActive()) {
+				logger.info("page not found : "+getPath());
+			}
 			if (!isFree()) {
 				response.setStatus(HttpServletResponse.SC_NOT_FOUND);	
 			}			
@@ -784,7 +806,7 @@ public class ContentContext {
 		} else {
 			return outPage;
 		}
-	};
+	}
 
 	public MenuElement getCurrentPage() throws Exception {
 		MenuElement outPage = getCurrentPage(false);

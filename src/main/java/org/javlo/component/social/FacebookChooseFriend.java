@@ -38,8 +38,6 @@ public class FacebookChooseFriend extends AbstractVisualComponent {
 
 		logger.info("read info from DB : " + url);
 		
-		LocalLogger.log(""+url);
-		
 
 		String jsonStr = NetHelper.readPage(url);
 		

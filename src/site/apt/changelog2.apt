@@ -691,3 +691,16 @@ change log
  * LabelAndSectionURLCreatorNoExt remove section if like root
  
 * 2.1.0.3.11 26/05/2016
+
+ * merge file and image same preview
+ 
+ * commit template from file explorer 
+ 
+ * force special renderer
+ 
+ * heading color wrapped correction
+ 
+ * recursive mirror protection
+ 
+ * mail pattern correction
+ 

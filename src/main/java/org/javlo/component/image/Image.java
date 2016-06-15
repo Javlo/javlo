@@ -14,6 +14,7 @@ import org.javlo.component.core.ComponentBean;
 import org.javlo.component.core.IPreviewable;
 import org.javlo.component.core.IStaticResource;
 import org.javlo.component.files.AbstractFileComponent;
+import org.javlo.component.files.GenericFile;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
@@ -34,7 +35,7 @@ import org.javlo.ztatic.StaticInfo;
  * @author Patrick Vandermaesen
  * 
  */
-public class Image extends AbstractFileComponent implements IImageTitle, IPreviewable, IStaticResource, IAction {
+public class Image extends AbstractFileComponent implements IImageTitle, IPreviewable, IStaticResource {
 
 	public static final String STYLE_CENTER = "image-center";
 
@@ -94,10 +95,6 @@ public class Image extends AbstractFileComponent implements IImageTitle, IPrevie
 		config = ImageConfig.getInstance(globalContext, ctx.getRequest().getSession(), ctx.getCurrentTemplate());
 	}
 
-	public String getImageImgName() {
-		return "img_images_" + getId();
-	}
-
 	/**
 	 * @see org.javlo.itf.IContentVisualComponent#getXHTMLCode()
 	 */
@@ -142,137 +139,19 @@ public class Image extends AbstractFileComponent implements IImageTitle, IPrevie
 		return "image";
 	}
 
-	@Override
-	protected String getPreviewCode(ContentContext ctx) throws Exception {
-		StringWriter res = new StringWriter();
-		PrintWriter out = new PrintWriter(res);
-
-		out.println("<div id=\"" + getPreviewZoneId() + "\" class=\"selected-zone\">");
-		out.println(getPreviewCode(ctx, getMaxPreviewImages()));
-		out.println("</div>");
-
-		out.close();
-		return res.toString();
-	}
-
-	protected String getPreviewZoneId() {
-		return "picture-zone-" + getId();
-	}
-
-	@Override
-	public String getPreviewCode(ContentContext ctx, int maxDisplayedImage) throws Exception {
-		return getPreviewCode(ctx, maxDisplayedImage, false);
-	}
-	
 	protected String[] getFileList(String directory) {
 		return getFileList(directory, new ImageFileFilter());
-	}
-
-	public String getPreviewCode(ContentContext ctx, int maxDisplayedImage, boolean imageList) throws Exception {
-		StringWriter res = new StringWriter();
-		PrintWriter out = new PrintWriter(res);
-
-		String[] images = getFileList(getFileDirectory(ctx));
-		String currentFileLink = URLHelper.mergePath(getDirSelected(), getFileName());
-		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-
-		FileBean file = new FileBean(ctx, getFile(ctx));
-		Map<String, String> params = new HashMap<String, String>();
-		params.put("webaction", "edit.save");
-		params.put("components", getId());
-		params.put("id-" + getId(), "true");
-		params.put(getFileXHTMLInputName(), "file.png"); // fake file name
-		params.put(getDirInputName(), getDirSelected()); // fake file name
-		String uploadURL = URLHelper.createURL(ctx, params);
-		out.println("<div class=\"image-selected\" data-fieldname=\"" + getFileXHTMLInputName() + "\" data-url=\"" + uploadURL + "\">");
-
-		out.println("<div class=\"focus-zone\">");
-
-		out.println("<div id=\"" + getPreviewZoneId() + "\" class=\"list-container\">");
-
-		String url;
-		if (getFileName().trim().length() > 0) {
-			url = URLHelper.createTransformURL(ctx, getPage(), getResourceURL(ctx, getFileName()), "list");
-			url = URLHelper.addParam(url, "hash", getStaticInfo(ctx).getVersionHash(ctx));
-			out.println("<img src=\"" + url + "\" />&nbsp;");
-			if (!isFromShared(ctx)) {
-				out.println("<div class=\"focus-point\">x</div>");
-				out.println("<input class=\"posx\" type=\"hidden\" name=\"posx-" + file.getId() + "\" value=\"" + file.getFocusZoneX() + "\" />");
-				out.println("<input class=\"posy\" type=\"hidden\" name=\"posy-" + file.getId() + "\" value=\"" + file.getFocusZoneY() + "\" />");
-				out.println("<input class=\"path\" type=\"hidden\" name=\"image_path-" + file.getId() + "\" value=\"" + URLHelper.mergePath(getRelativeFileDirectory(ctx), getDirSelected()) + "\" />");				
-			} 
-		} else {
-			imageList = true;
-		}
-		out.println("</div></div>");
-		if (!isFromShared(ctx)) {
-			out.println("<script type=\"text/javascript\">initFocusPoint();</script>");
-		}
-		if (imageList) {
-			out.println("<div class=\"name\">" + getFileName() + "</div>");
-			out.println("<div class=\"image-list\">");
-			for (String image : images) {
-				if ((image != null) && (image.trim().length() > 0)) {
-					StaticInfo staticInfo = StaticInfo.getInstance(ctx, getFileURL(ctx, image));
-					String fileLink = URLHelper.mergePath(getDirSelected(), image);
-					String selected = "class=\"preview-image\"";
-					if (fileLink.equals(currentFileLink)) {
-						selected = " class=\"preview-image selected\"";
-					}
-					String realURL = URLHelper.createResourceURL(ctx, getPage(), '/' + getResourceURL(ctx, image));
-					realURL = URLHelper.addParam(realURL, "CRC32", "" + staticInfo.getCRC32());
-					String previewURL = URLHelper.createTransformURL(ctx, getPage(), getResourceURL(ctx, image), "preview");
-					previewURL = URLHelper.addParam(previewURL, "CRC32", "" + staticInfo.getCRC32());
-					url = URLHelper.createTransformURL(ctx, getPage(), getResourceURL(ctx, image), "list");
-					url = URLHelper.addParam(url, "hash", staticInfo.getVersionHash(ctx));
-					String id = "image_name_select__" + getId();
-					// if (i < maxDisplayedImage || isSelectedImage) {
-					out.print("<div " + selected + ">");
-					String onMouseOver = "";
-					if (globalContext.isImagePreview()) {
-						onMouseOver = " onMouseOver=\"previewImage('" + previewURL + "')\" onMouseOut=\"previewClear()\"";
-					}
-					out.print("<figure><a class=\"image\" href=\"#\" onclick=\"jQuery('#" + id + "').val('" + image + "');jQuery('#" + id + "').trigger('change');" + getJSOnChange(ctx) + "\">");
-					out.print("<img name=\"" + getImageImgName() + "\"" + onMouseOver + " src=\"");
-					out.print(url);
-					out.print("\" alt=\"\">&nbsp;</a>");
-					out.print("<figcaption><a href=\"" + realURL + "\">" + image + "</a></figcaption></figure>");
-					out.print("</div>");
-					// }
-				}
-			}
-			out.println("</div>");
-		} else {
-			params = new HashMap<String, String>();
-			params.put("webaction", "image.loadImages");
-			params.put("comp_id", getId());
-			String ajaxURL = URLHelper.createAjaxURL(ctx, params);
-			if (ctx.isEditPreview()) {
-				ajaxURL = URLHelper.addParam(ajaxURL, ContentContext.PREVIEW_EDIT_PARAM, "true");
-			}
-			out.println("<div class=\"action\">");
-			I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
-			out.println("<a class=\"action-button ajax\" href=\"" + ajaxURL + "\">" + i18nAccess.getText("content.image.load") + "</a>");
-			out.println("</div>");
-		}
-		out.println("</div>");
-		// TODO : create this javascrit method with a other mecanism
-		/*
-		 * out.println("<script language=\"javascript\">");
-		 * out.println("autoScroll.delay(250);"); out.println("</script>");
-		 */
-		out.close();
-		return res.toString();
-	}
-
-	protected int getMaxPreviewImages() {
-		return Integer.MAX_VALUE;
 	}
 
 	@Override
 	protected String getRelativeFileDirectory(ContentContext ctx) {
 		StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
 		return staticConfig.getImageFolder();
+	}
+
+	@Override
+	protected String getDisplayAllLabel(I18nAccess i18nAccess) {
+		return i18nAccess.getText("content.image.load");
 	}
 
 	@Override
@@ -300,20 +179,6 @@ public class Image extends AbstractFileComponent implements IImageTitle, IPrevie
 	@Override
 	public String getHexColor() {
 		return GRAPHIC_COLOR;
-	}
-
-	@Override
-	public String getResourceURL(ContentContext ctx) {
-		return getResourceURL(ctx, getFileName());
-	}
-
-	public String getResourceURL(ContentContext ctx, String fileLink) {
-		StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
-		if (isFromShared(ctx)) {
-			return URLHelper.mergePath(staticConfig.getShareDataFolderKey(), staticConfig.getImageFolderName(), getDirSelected(), fileLink.replaceFirst(staticConfig.getShareDataFolderKey(), ""));
-		} else {
-			return URLHelper.mergePath(staticConfig.getImageFolder(), URLHelper.mergePath(getDirSelected(), fileLink));
-		}
 	}
 
 	@Override
@@ -424,7 +289,7 @@ public class Image extends AbstractFileComponent implements IImageTitle, IPrevie
 			return null;
 		}
 	}
-	
+
 	@Override
 	public List<File> getFiles(ContentContext ctx) {
 		List<File> files = new LinkedList<File>();
@@ -489,18 +354,6 @@ public class Image extends AbstractFileComponent implements IImageTitle, IPrevie
 		return "image";
 	}
 
-	public static String performLoadImages(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
-		String compId = rs.getParameter("comp_id", null);
-		if (compId != null) {
-			Image comp = (Image) ContentService.getInstance(ctx.getRequest()).getComponent(ctx, compId);
-			String previewCode = comp.getPreviewCode(ctx, comp.getMaxPreviewImages(), true);
-			ctx.addAjaxInsideZone(comp.getPreviewZoneId(), previewCode);
-			return null;
-		}
-		return "error on request structure.";
-
-	}
-
 	@Override
 	public boolean initContent(ContentContext ctx) throws Exception {
 		super.initContent(ctx);
@@ -535,14 +388,20 @@ public class Image extends AbstractFileComponent implements IImageTitle, IPrevie
 	protected boolean isAllowRAW(ContentContext ctx) {
 		return StringHelper.isTrue(getConfig(ctx).getProperty("filter.allow-raw", null), true);
 	}
-	
+
 	@Override
 	public boolean isUploadOnDrop() {
 		return false;
 	}
-	
+
 	@Override
-	public boolean isLocal(ContentContext ctx) {	
+	public boolean isLocal(ContentContext ctx) {
 		return false;
+	}
+
+	@Override
+	protected String getMainFolder(ContentContext ctx) {
+		StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
+		return staticConfig.getImageFolderName();
 	}
 }

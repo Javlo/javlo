@@ -349,7 +349,7 @@ public class Heading extends AbstractPropertiesComponent implements ISubTitle {
 			style = "";
 		}
 		if (isBackgroundColored()) {
-			style = style + " colored-wrapper";
+			style = style + " colored-wrapper ";
 		}
 		if (getPreviousComponent() == null || !getPreviousComponent().getType().equals(getType())) {
 			style = style + " first ";

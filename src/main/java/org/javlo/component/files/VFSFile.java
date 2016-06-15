@@ -93,7 +93,7 @@ public class VFSFile extends AbstractFileComponent implements IReverseLinkCompon
 		return XMLManipulationHelper.changeLink(body, URLHelper.createVFSURL(ctx, prefixLink, ""));
 	}
 	
-	protected File getFile(ContentContext ctx) {
+	public File getFile(ContentContext ctx) {
 		String dirFile = URLHelper.mergePath(getFileDirectory(ctx), getDirSelected());
 		String fileName = StringHelper.createFileName(getFileName());
 		return new File(URLHelper.mergePath(dirFile, fileName));

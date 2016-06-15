@@ -37,6 +37,10 @@ public class LabelAndSectionURLCreator extends AbstractURLFactory {
 		}
 		return page;
 	}
+	
+	protected boolean isWithId() {
+		return false;
+	}
 
 	protected String createURLWithoutExt(ContentContext ctx, MenuElement currentPage) throws Exception {
 
@@ -46,9 +50,7 @@ public class LabelAndSectionURLCreator extends AbstractURLFactory {
 
 		ContentContext freeCtx = ctx.getFreeContentContext();		
 		ContentContext realContentContext = freeCtx.getContextWithContent(currentPage);
-		if (currentPage.getName().equals("press_release-2016-march-3")) {
-			realContentContext = freeCtx.getContextWithContentDEBUG(currentPage);
-		}
+		
 		if (realContentContext != null) {
 			freeCtx = realContentContext;
 		}
@@ -66,10 +68,6 @@ public class LabelAndSectionURLCreator extends AbstractURLFactory {
 		} else {
 			label = currentPage.getLabel(freeCtx);
 		}
-		if (currentPage.getName().equals("press_release-2016-march-3")) {
-			System.out.println("***** LabelAndSectionURLCreator.createURLWithoutExt : freeCtx lang = "+freeCtx.getContentLanguage()); //TODO: remove debug trace
-			System.out.println("***** LabelAndSectionURLCreator.createURLWithoutExt : label = "+label); //TODO: remove debug trace
-		}
 		
 		if (label.startsWith("Agenda Week")) {
 			label = label.substring("Agenda Week".length()).trim();
@@ -81,7 +79,8 @@ public class LabelAndSectionURLCreator extends AbstractURLFactory {
 		if (currentPage.getUrlNumber() > 0) {
 			label = label + '-' +currentPage.getUrlNumber();
 		}
-		String path = URLEncoder.encode(StringHelper.createI18NURL(label), ContentContext.CHARACTER_ENCODING);
+		//String path = URLEncoder.encode(StringHelper.createI18NURL(label), ContentContext.CHARACTER_ENCODING);
+		String path = StringHelper.createI18NURL(label);
 
 		String url = path;
 		MenuElement sectionPage = getSectionPage(currentPage);
@@ -95,6 +94,10 @@ public class LabelAndSectionURLCreator extends AbstractURLFactory {
 		while (this.addAndCheckExistURL(currentPage, url)) {
 			url = baseURL+'_'+i;
 			i++;
+		}
+		
+		if (isWithId()) {
+			url = URLHelper.mergePath(url, currentPage.getId());
 		}
 
 		return url;

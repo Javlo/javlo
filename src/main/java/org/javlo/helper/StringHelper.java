@@ -81,7 +81,7 @@ public class StringHelper {
 	public static final String REQUEST_KEY_FORM_VALID = "__form_request_valid__";
 
 	public static final String ALPHABET = "abcdefghijklmnopqrstuvwxyz";
-	
+
 	public static final String ALPHABET_UPPER_CASE = ALPHABET.toUpperCase();
 
 	public static final String NUMERIC = "0123456789";
@@ -453,7 +453,7 @@ public class StringHelper {
 	public static String createI18NURL(String value) {
 		value = value.trim();
 		value = value.replace("&nbsp;", "-");
-		value = createCleanName(value, EU_ACCEPTABLE_CHAR_NO_POINT, '-');		
+		value = createCleanName(value, EU_ACCEPTABLE_CHAR_NO_POINT, '-');
 		return trim(value, '-').toLowerCase();
 	}
 
@@ -1533,11 +1533,14 @@ public class StringHelper {
 	public static Date parseDate(String inDate) throws ParseException {
 		return parseDate(inDate, "dd/MM/yyyy");
 	}
-	
+
 	/**
 	 * null save parse int.
-	 * @param value a string with a int inside
-	 * @param defaultValue the value if string value is null
+	 * 
+	 * @param value
+	 *            a string with a int inside
+	 * @param defaultValue
+	 *            the value if string value is null
 	 * @return
 	 */
 	public static int parseInt(String value, int defaultValue) {
@@ -1977,6 +1980,7 @@ public class StringHelper {
 
 	/**
 	 * ISO 8601 date format
+	 * 
 	 * @param date
 	 * @return
 	 */
@@ -2528,7 +2532,7 @@ public class StringHelper {
 	public static List<String> stringToCollection(String str, String token) {
 		return splitAsList(str, token, DEFAULT_ESCAPE, false);
 	}
-	
+
 	public static List<String> stringToCollection(String str, String token, boolean trim) {
 		return splitAsList(str, token, DEFAULT_ESCAPE, trim);
 	}
@@ -3528,6 +3532,34 @@ public class StringHelper {
 		}
 
 		return outCleanData.toString();
+	}
+
+	/**
+	 * convert to latin alphabet
+	 * 
+	 * @param text
+	 * @return
+	 */
+	public static String toLatin(String text) {
+		StringBuffer outText = new StringBuffer();
+		int i = 0;
+		String lowerText = text.toLowerCase();
+		while (i < text.length()) {
+			char c = lowerText.charAt(i);
+			switch (c) {
+			case 'α':
+				outText.append('a');
+				break;
+			case 'β':
+				outText.append('b');
+				break;
+			default:
+				outText.append(text.charAt(i));
+				break;
+			}
+			i++;
+		}
+		return outText.toString();
 	}
 
 }

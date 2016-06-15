@@ -28,6 +28,7 @@ import javax.mail.MessagingException;
 import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.mail.Transport;
+import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
@@ -624,6 +625,17 @@ public class MailService {
 			}
 		}
 		return outStr.toString();
+	}
+	
+	public static void main(String[] args) {
+		try {
+			InternetAddress mail = new InternetAddress("p&p@noctis.be");
+			System.out.println("***** MailService.main : ismail ? "+StringHelper.isMail("p&p@noctis.be")); //TODO: remove debug trace
+			System.out.println("***** MailService.main : mail = "+mail); //TODO: remove debug trace
+		} catch (AddressException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 

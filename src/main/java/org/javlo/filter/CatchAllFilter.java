@@ -28,6 +28,7 @@ import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.context.UserInterfaceContext;
 import org.javlo.data.InfoBean;
+import org.javlo.helper.LocalLogger;
 import org.javlo.helper.NetHelper;
 import org.javlo.helper.RequestHelper;
 import org.javlo.helper.ResourceHelper;
@@ -75,12 +76,9 @@ public class CatchAllFilter implements Filter {
 
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain next) throws IOException, ServletException {
-		
-		logger.fine("start catch all servelt.");
-
+		logger.fine("start catch all filter.");
 		HttpServletRequest httpRequest = (HttpServletRequest) request;
 		ServletContext servletContext = httpRequest.getSession().getServletContext();
-		
 		CountService.getInstance(servletContext).touch();
 
 		if (request.getParameter(ContentContext.FORWARD_PATH_REQUEST_KEY) != null) {

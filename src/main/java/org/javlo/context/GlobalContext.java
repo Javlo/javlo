@@ -54,6 +54,7 @@ import org.javlo.cache.MapCache;
 import org.javlo.config.StaticConfig;
 import org.javlo.helper.ContentHelper;
 import org.javlo.helper.ElementaryURLHelper;
+import org.javlo.helper.LocalLogger;
 import org.javlo.helper.ElementaryURLHelper.Code;
 import org.javlo.helper.NavigationHelper;
 import org.javlo.helper.ResourceHelper;
@@ -1495,8 +1496,8 @@ public class GlobalContext implements Serializable, IPrintInfo {
 						for (String lg : lgs) {
 							lgCtx.setRequestContentLanguage(lg);
 							MenuElement[] children = ContentService.getInstance(ctx.getRequest()).getNavigation(lgCtx).getAllChildren();
-							for (MenuElement menuElement : children) {
-								String pageURL = urlCreator.createURL(lgCtx, menuElement);
+							for (MenuElement menuElement : children) {								
+								String pageURL = urlCreator.createURL(lgCtx, menuElement);								
 								String pageKeyURL = urlCreator.createURLKey(pageURL);
 								localViewPages.put(pageKeyURL, menuElement);
 							}

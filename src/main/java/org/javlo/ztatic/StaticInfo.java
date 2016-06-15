@@ -1172,66 +1172,6 @@ public class StaticInfo {
 		return accessFromSomeDays;
 	}
 
-	/*
-	 * public static void main(String[] args) { //File jpegFile = new
-	 * File("c:/trans/test3.jpg"); File jpegFile = new File(
-	 * "C:/Users/pvandermaesen/data/javlo/data-ctx/data-sexy/static/galleries/alone/test3.jpg"
-	 * );
-	 * 
-	 * Metadata metadata; try { metadata =
-	 * ImageMetadataReader.readMetadata(jpegFile); for (Directory directory :
-	 * metadata.getDirectories()) { for (Tag tag : directory.getTags()) {
-	 * System.out.println(tag); } }
-	 * 
-	 * 
-	 * Metadata md = metadata; if (md != null &&
-	 * md.getDirectoriesOfType(GpsDirectory.class) != null) {
-	 * Iterator<GpsDirectory> directories =
-	 * md.getDirectoriesOfType(GpsDirectory.class).iterator(); if
-	 * (directories.hasNext()) { GpsDirectory gpsDirectory = (GpsDirectory)
-	 * directories.next(); GeoLocation geoLocation =
-	 * gpsDirectory.getGeoLocation(); if (geoLocation != null) {
-	 * System.out.println("geoLocation.getLatitude() = " +
-	 * geoLocation.getLatitude());
-	 * System.out.println("geoLocation.getLongitude() = " +
-	 * geoLocation.getLongitude()); System.out.println("localisation : " +
-	 * LocationService.getLocation(geoLocation.getLatitude(),
-	 * geoLocation.getLongitude(), "fr").getFullLocality()); } } }
-	 * 
-	 * ExifSubIFDDirectory directory =
-	 * metadata.getFirstDirectoryOfType(ExifSubIFDDirectory.class); // query the
-	 * tag's value if (directory != null) { System.out.println("date : " +
-	 * directory.getDate(ExifSubIFDDirectory.TAG_DATETIME_ORIGINAL)); } } catch
-	 * (ImageProcessingException e) { // TODO Auto-generated catch block
-	 * e.printStackTrace(); } catch (IOException e) { // TODO Auto-generated
-	 * catch block e.printStackTrace(); }
-	 * 
-	 * }
-	 */
-
-	public static void main(String[] args) throws Exception {
-
-		File jpegFile = new File("c:/trans/test_local.jpg");
-		File target = new File("c:/trans/test_local_2.jpg");
-		// File jpegFile = new
-		// File("C:/Users/pvandermaesen/data/javlo/data-ctx/data-sexy/static/galleries/alone/test3.jpg");
-
-		final ImageMetadata metadata = Imaging.getMetadata(jpegFile);
-		if (metadata instanceof JpegImageMetadata) {
-			System.out.println("pos  = " + ExifHelper.readPosition(jpegFile));
-			System.out.println("date = " + ExifHelper.readDate(jpegFile));
-		}
-
-		BufferedImage bi = ImageIO.read(jpegFile);
-		bi = ImageEngine.resizeWidth(bi, 1024, false);
-		ImageIO.write(bi, "jpg", target);
-
-		// ExifHelper.setExifGPSTag(jpegFile, target);
-
-		ImageMetadata md = ExifHelper.readMetadata(jpegFile);
-		ExifHelper.writeMetadata(md, target);
-	}
-
 	private static String getAccessKey(Date date) {
 		return "access-" + StringHelper.renderDate(date, "yyyy-MM-dd");
 	}

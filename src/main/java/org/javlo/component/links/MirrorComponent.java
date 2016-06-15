@@ -183,12 +183,28 @@ public class MirrorComponent extends AbstractVisualComponent implements IFieldCo
 	public String getType() {
 		return TYPE;
 	}
+	
+	public int changeAndGetMirrorinDepth(ContentContext ctx) {
+		final String KEY = "mirrorDepth-"+getId();
+		Integer mirrorDepth = (Integer)ctx.getRequest().getAttribute(KEY); 
+		if (mirrorDepth == null) {
+			mirrorDepth = 1;
+		} else {
+			mirrorDepth++;
+		}
+		ctx.getRequest().setAttribute(KEY, mirrorDepth);
+		return mirrorDepth;
+	}
+	
 
 	/**
 	 * @see org.javlo.itf.IContentVisualComponent#getXHTMLCode()
 	 */
 	@Override
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
+		if (changeAndGetMirrorinDepth(ctx) > 20) {
+			return "<p class=\"error\">to many mirror depth.</p>";
+		}
 		AbstractVisualComponent comp = (AbstractVisualComponent) getMirrorComponent(ctx);
 		if (comp != null) {
 			AbstractVisualComponent.setForcedId(ctx, getId());

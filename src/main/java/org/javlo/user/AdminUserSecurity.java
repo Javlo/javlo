@@ -237,6 +237,9 @@ public class AdminUserSecurity implements Serializable {
 		}
 
 		AdminUserSecurity adminUserSecurity = AdminUserSecurity.getInstance();
+		if (adminUserFactory.getCurrentUser(ctx.getRequest().getSession()) == null) {
+			return false;
+		}
 		ContentService.getInstance(globalContext);
 		if (page.getEditorRoles().size() > 0) {
 			if (!adminUserSecurity.haveRight(adminUserFactory.getCurrentUser(ctx.getRequest().getSession()), AdminUserSecurity.FULL_CONTROL_ROLE)) {

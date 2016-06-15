@@ -134,6 +134,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 		List<IImageTitle> images = null;
 		Collection<Link> staticResources = null;
 		String description = null;
+		String xhtmlDescription = null;
 		String metaDescription = null;
 		String keywords = null;
 		String globalTitle = null;
@@ -2182,6 +2183,38 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 		desc.description = StringHelper.removeTag(StringUtils.replace(res, "\"", "&quot;"));
 		return desc.description;
 	}
+	
+	/**
+	 * get description of the page (description component)
+	 * 
+	 * @param ctx
+	 * @return
+	 * @throws Exception
+	 */
+	public String getXHTMLDescription(ContentContext ctx) throws Exception {
+		PageDescription desc = getPageDescriptionCached(ctx, ctx.getRequestContentLanguage());
+
+		if (desc.xhtmlDescription != null) {
+			return desc.xhtmlDescription;
+		}
+		String res = "";
+		ContentContext newCtx = new ContentContext(ctx);
+		newCtx.setArea(null);
+
+		if (newCtx.getRenderMode() == ContentContext.EDIT_MODE) {
+			newCtx.setRenderMode(ContentContext.PREVIEW_MODE);
+		}
+
+		IContentComponentsList contentList = getAllContent(newCtx);
+		while (contentList.hasNext(newCtx)) {
+			IContentVisualComponent elem = contentList.next(newCtx);
+			if (elem.getPageDescription(ctx) != null) {
+				res = res + elem.getPageDescription(ctx);
+			}
+		}
+		desc.xhtmlDescription = res;
+		return desc.xhtmlDescription;
+	}
 
 	/**
 	 * get number of reactions of the page (description component)
@@ -3928,11 +3961,14 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 	 */
 
 	public boolean isRemote() {
-		if (getParent() != null && getParent().isRemote()) {
-			return true;
-		} else {
-			return remote;
+		if (getParent() != null) {
+			if (getParent().getId().equals(getId())) {
+				logger.severe("page '"+getName()+"' ("+getPath()+") as him self like parent.");
+			} else if (getParent().isRemote()) {
+				return true;
+			}
 		}
+		return remote;
 	}
 
 	public boolean isSelected(ContentContext ctx) throws Exception {

@@ -1039,7 +1039,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	public void setContainerPage(ContentContext ctx, MenuElement page) {
 		ctx.getRequest().setAttribute("page-"+getId(), page); 
 	}
-	
+		
 	/**
 	 * get the page of the container if component is mirrored else get the page of the component.
 	 * @param ctx

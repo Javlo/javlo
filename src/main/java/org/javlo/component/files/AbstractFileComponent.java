@@ -10,20 +10,24 @@ import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.lang.NotImplementedException;
 import org.apache.commons.lang.StringUtils;
-import org.javlo.actions.DataAction;
+import org.javlo.actions.IAction;
 import org.javlo.bean.Link;
 import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.component.core.ComponentBean;
@@ -47,7 +51,9 @@ import org.javlo.i18n.I18nAccess;
 import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
 import org.javlo.module.file.FileAction;
+import org.javlo.module.file.FileBean;
 import org.javlo.navigation.MenuElement;
+import org.javlo.service.ContentService;
 import org.javlo.service.RequestService;
 import org.javlo.service.ReverseLinkService;
 import org.javlo.service.resource.LocalResource;
@@ -72,7 +78,7 @@ import org.owasp.encoder.Encode;
  * 
  * @author pvandermaesen
  */
-public abstract class AbstractFileComponent extends AbstractVisualComponent implements IStaticContainer, ILink, IUploadResource {
+public class AbstractFileComponent extends AbstractVisualComponent implements IStaticContainer, ILink, IUploadResource, IAction {
 
 	static final String HEADER_V1_0 = "file storage V.1.1";
 
@@ -91,6 +97,8 @@ public abstract class AbstractFileComponent extends AbstractVisualComponent impl
 	protected static final String ENCODING_KEY = "encoding";
 
 	protected static final String DEFAULT_ENCODING = "default";
+
+	public static final String TYPE = "abstractfile";
 
 	protected Properties properties = new Properties();
 
@@ -123,7 +131,9 @@ public abstract class AbstractFileComponent extends AbstractVisualComponent impl
 		return uri.equals(inURI);
 	}
 
-	public abstract String createFileURL(ContentContext ctx, String url);
+	public String createFileURL(ContentContext ctx, String url) {
+		throw new NotImplementedException();
+	}
 
 	@Override
 	public boolean equals(Object obj) {
@@ -456,7 +466,9 @@ public abstract class AbstractFileComponent extends AbstractVisualComponent impl
 		return "encoding" + ID_SEPARATOR + getId();
 	}
 
-	public abstract String getFileDirectory(ContentContext ctx);
+	public String getFileDirectory(ContentContext ctx) {
+		throw new NotImplementedException();
+	}
 
 	protected String[] getFileList(String directory) {
 		return getFileList(directory, null);
@@ -583,11 +595,167 @@ public abstract class AbstractFileComponent extends AbstractVisualComponent impl
 		return i18nAccess.getText("action.add-image.new-dir");
 	}
 
-	protected String getPreviewCode(ContentContext ctx) throws Exception {
-		return "?PreviewCode not defined?";
+	public String getImageImgName() {
+		return "img_images_" + getId();
+	}
+	
+	public String getResourceURL(ContentContext ctx) {
+		return getResourceURL(ctx, getFileName());
+	}
+	
+	protected String getMainFolder(ContentContext ctx) {
+		throw new NotImplementedException();
 	}
 
-	protected abstract String getRelativeFileDirectory(ContentContext ctx);
+	public String getResourceURL(ContentContext ctx, String fileLink) {
+		StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
+		if (isFromShared(ctx)) {
+			return URLHelper.mergePath(staticConfig.getShareDataFolderKey(), getMainFolder(ctx), getDirSelected(), fileLink.replaceFirst(staticConfig.getShareDataFolderKey(), ""));
+		} else {
+			return URLHelper.mergePath(staticConfig.getStaticFolder(), getMainFolder(ctx), URLHelper.mergePath(getDirSelected(), fileLink));
+		}
+	}
+	
+	protected int getMaxPreviewImages() {
+		return Integer.MAX_VALUE;
+	}
+	
+	protected String getPreviewZoneId() {
+		return "picture-zone-" + getId();
+	}
+
+	protected String getPreviewCode(ContentContext ctx) throws Exception {
+		StringWriter res = new StringWriter();
+		PrintWriter out = new PrintWriter(res);
+
+		out.println("<div id=\"" + getPreviewZoneId() + "\" class=\"selected-zone\">");
+		out.println(getPreviewCode(ctx, getMaxPreviewImages()));
+		out.println("</div>");
+
+		out.close();
+		return res.toString();
+	}
+
+	public File getFile(ContentContext ctx) {
+		StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
+		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+		String fullName = ElementaryURLHelper.mergePath(getDirSelected(), getFileName());
+		fullName = ElementaryURLHelper.mergePath(staticConfig.getFileFolder(), fullName);
+		fullName = ElementaryURLHelper.mergePath(globalContext.getDataFolder(), fullName);
+		return new File(fullName);
+	}
+	
+	public String getPreviewCode(ContentContext ctx, int maxDisplayedImage) throws Exception {
+		return getPreviewCode(ctx, maxDisplayedImage, false);
+	}
+
+	public String getPreviewCode(ContentContext ctx, int maxDisplayedImage, boolean imageList) throws Exception {
+		StringWriter res = new StringWriter();
+		PrintWriter out = new PrintWriter(res);
+
+		String[] images = getFileList(getFileDirectory(ctx));
+		String currentFileLink = URLHelper.mergePath(getDirSelected(), getFileName());
+		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+		
+		out.println("<div class=\"preview-image-wrapper "+(imageList?"list":"no-list")+"\">");
+
+		FileBean file = new FileBean(ctx, getFile(ctx));
+		Map<String, String> params = new HashMap<String, String>();
+		params.put("webaction", "edit.save");
+		params.put("components", getId());
+		params.put("id-" + getId(), "true");
+		params.put(getFileXHTMLInputName(), "file.png"); // fake file name
+		params.put(getDirInputName(), getDirSelected()); // fake file name
+		String uploadURL = URLHelper.createURL(ctx, params);
+		out.println("<div class=\"image-selected\" data-fieldname=\"" + getFileXHTMLInputName() + "\" data-url=\"" + uploadURL + "\">");
+
+		out.println("<div class=\"focus-zone\">");
+
+		out.println("<div id=\"" + getPreviewZoneId() + "\" class=\"list-container\">");
+
+		String url;
+		if (getFileName().trim().length() > 0) {			
+			url = URLHelper.createTransformURL(ctx, getPage(), getResourceURL(ctx, getFileName()), "list");			
+			url = URLHelper.addParam(url, "hash", getStaticInfo(ctx).getVersionHash(ctx));
+			out.println("<img src=\"" + url + "\" />&nbsp;");
+			if (!isFromShared(ctx)) {
+				out.println("<div class=\"focus-point\">x</div>");
+				out.println("<input class=\"posx\" type=\"hidden\" name=\"posx-" + file.getId() + "\" value=\"" + file.getFocusZoneX() + "\" />");
+				out.println("<input class=\"posy\" type=\"hidden\" name=\"posy-" + file.getId() + "\" value=\"" + file.getFocusZoneY() + "\" />");
+				out.println("<input class=\"path\" type=\"hidden\" name=\"image_path-" + file.getId() + "\" value=\"" + URLHelper.mergePath(getRelativeFileDirectory(ctx), getDirSelected()) + "\" />");				
+			} 
+		} else {
+			imageList = true;
+		}
+		out.println("</div></div>");
+		if (!isFromShared(ctx)) {
+			out.println("<script type=\"text/javascript\">initFocusPoint();</script>");
+		}
+		if (imageList) {
+			out.println("<div class=\"name\">" + getFileName() + "</div>");
+			out.println("<div class=\"image-list\">");
+			for (String image : images) {
+				if ((image != null) && (image.trim().length() > 0)) {
+					StaticInfo staticInfo = StaticInfo.getInstance(ctx, getFileURL(ctx, image));
+					String fileLink = URLHelper.mergePath(getDirSelected(), image);
+					String selected = "class=\"preview-image\"";
+					if (fileLink.equals(currentFileLink)) {
+						selected = " class=\"preview-image selected\"";
+					}
+					String realURL = URLHelper.createResourceURL(ctx, getPage(), '/' + getResourceURL(ctx, image));
+					realURL = URLHelper.addParam(realURL, "CRC32", "" + staticInfo.getCRC32());
+					String previewURL = URLHelper.createTransformURL(ctx, getPage(), getResourceURL(ctx, image), "preview");
+					previewURL = URLHelper.addParam(previewURL, "CRC32", "" + staticInfo.getCRC32());
+					url = URLHelper.createTransformURL(ctx, getPage(), getResourceURL(ctx, image), "list");
+					url = URLHelper.addParam(url, "hash", staticInfo.getVersionHash(ctx));
+					String id = "image_name_select__" + getId();
+					// if (i < maxDisplayedImage || isSelectedImage) {
+					out.print("<div " + selected + ">");
+					String onMouseOver = "";
+					if (globalContext.isImagePreview()) {
+						onMouseOver = " onMouseOver=\"previewImage('" + previewURL + "')\" onMouseOut=\"previewClear()\"";
+					}
+					out.print("<figure><a class=\"image\" href=\"#\" onclick=\"jQuery('#" + id + "').val('" + image + "');jQuery('#" + id + "').trigger('change');" + getJSOnChange(ctx) + "\">");
+					out.print("<img name=\"" + getImageImgName() + "\"" + onMouseOver + " src=\"");
+					out.print(url);
+					out.print("\" alt=\"\">&nbsp;</a>");
+					out.print("<figcaption><a title=\""+image+"\" href=\"" + realURL + "\">" + image + "</a></figcaption></figure>");
+					out.print("</div>");
+					// }
+				}
+			}
+			out.println("</div>");
+		} else {
+			params = new HashMap<String, String>();
+			params.put("webaction", "abstractfile.loadImages");
+			params.put("comp_id", getId());
+			String ajaxURL = URLHelper.createAjaxURL(ctx, params);
+			if (ctx.isEditPreview()) {
+				ajaxURL = URLHelper.addParam(ajaxURL, ContentContext.PREVIEW_EDIT_PARAM, "true");
+			}
+			out.println("<div class=\"action\">");
+			I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
+			out.println("<a class=\"action-button ajax\" href=\"" + ajaxURL + "\">" + getDisplayAllLabel(i18nAccess) + "</a>");
+			out.println("</div>");
+		}
+		out.println("</div>");
+		out.println("</div>");
+		// TODO : create this javascrit method with a other mecanism
+		/*
+		 * out.println("<script language=\"javascript\">");
+		 * out.println("autoScroll.delay(250);"); out.println("</script>");
+		 */
+		out.close();
+		return res.toString();
+	}
+
+	protected String getDisplayAllLabel(I18nAccess i18nAccess) {	
+		return i18nAccess.getText("content.files.load", "Display all files");
+	}
+
+	protected String getRelativeFileDirectory(ContentContext ctx) {
+		throw new NotImplementedException();
+	}
 
 	protected String getReverseLinkeLabelTitle(ContentContext ctx) throws FileNotFoundException, IOException {
 		I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
@@ -960,6 +1128,43 @@ public abstract class AbstractFileComponent extends AbstractVisualComponent impl
 	@Override
 	public String getContentAsText(ContentContext ctx) {	
 		return getLabel();
+	}
+	
+	public static String performLoadImages(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
+		String compId = rs.getParameter("comp_id", null);
+		if (compId != null) {
+			AbstractFileComponent comp = (AbstractFileComponent) ContentService.getInstance(ctx.getRequest()).getComponent(ctx, compId);
+			String previewCode = comp.getPreviewCode(ctx, comp.getMaxPreviewImages(), true);
+			ctx.addAjaxInsideZone(comp.getPreviewZoneId(), previewCode);
+			return null;
+		}
+		return "error on request structure.";
+
+	}
+
+	@Override
+	public String getType() {
+		return TYPE;
+	}
+
+	@Override
+	public String getActionGroupName() {
+		return TYPE;
+	}
+
+	@Override
+	public boolean isUploadOnDrop() { 
+		return false;
+	}
+
+	@Override
+	public int getPopularity(ContentContext ctx) {
+		return 0;
+	}
+
+	@Override
+	public List<File> getFiles(ContentContext ctx) {
+		return null;
 	}
 
 }

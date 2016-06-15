@@ -28,7 +28,7 @@ import org.javlo.io.TransactionFile;
 import org.javlo.ztatic.StaticInfo.Position;
 
 public class ExifHelper {
-
+	
 	private static Logger logger = Logger.getLogger(ExifHelper.class.getName());
 
 	public ExifHelper() {
@@ -170,6 +170,9 @@ public class ExifHelper {
 	}
 
 	public static void writeMetadata(ImageMetadata metadata, final File file) throws ImageWriteException, ImageReadException, IOException {
+		if (metadata == null) {
+			return;
+		}
 		if (!file.exists()) {
 			logger.warning("file not found : " + file);
 			return;

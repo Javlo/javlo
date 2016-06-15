@@ -627,6 +627,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 					GenericMessage msg = new GenericMessage(comp.getLocalConfig(false).getProperty("error.captcha", "bad captcha."), GenericMessage.ERROR);
 					request.setAttribute("msg", msg);
 					request.setAttribute("error_captcha", "true");
+					CaptchaService.getInstance(request.getSession()).reset();
 					return null;
 				} else {
 					CaptchaService.getInstance(request.getSession()).reset();

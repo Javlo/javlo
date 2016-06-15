@@ -181,7 +181,7 @@ public class CSVArrayComponent extends AbstractFileComponent {
 		return "csv-array";
 	}
 	
-	protected File getFile(ContentContext ctx) {
+	public File getFile(ContentContext ctx) {
 		String basePath = URLHelper.mergePath(getFileDirectory(ctx), getDirSelected());
 		return new File(URLHelper.mergePath(basePath, getFileName()));
 	}

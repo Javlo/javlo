@@ -39,8 +39,8 @@
 </c:url>
 <a href="${uploadJSPURL}" class="popup cboxElement action-button"><span>${i18n.edit['action.add-files']}</span></a>
 <c:if test="${not empty param.templateid}">
-<a class="action-button ajax" href="${info.currentURL}?webaction=template.commit&webaction=browse&templateid=${param.templateid}&from-module=template"><span>${i18n.edit['template.action.commit']}</span></a>
-<a class="action-button ajax" href="${info.currentURL}?webaction=template.commitChildren&webaction=browse&templateid=${param.templateid}&from-module=template"><span>${i18n.edit['template.action.commit-children']}</span></a>
+<a class="action-button ajax" href="${info.currentURL}?webaction=template.commit&webaction=file.browse&templateid=${param.templateid}&from-module=template"><span>${i18n.edit['template.action.commit']}</span></a>
+<a class="action-button ajax" href="${info.currentURL}?webaction=template.commitChildren&webaction=file.browse&templateid=${param.templateid}&from-module=template"><span>${i18n.edit['template.action.commit-children']}</span></a>
 </c:if>
 
 <form id="form-sorted" action="${info.currentURL}" method="get" class="js-submit">
