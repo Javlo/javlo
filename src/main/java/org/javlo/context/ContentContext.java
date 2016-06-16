@@ -355,7 +355,7 @@ public class ContentContext {
 			}
 			if (StringHelper.isTrue(requestService.getParameter(CLEAR_SESSION_PARAM, null))) {
 				ctx.clearSession = true;
-			}
+			}			
 			if (request.getParameter(FORCE_SPECIAL_RENDERER) != null) {			
 				IUserFactory fact = UserFactory.createUserFactory(globalContext, ctx.getRequest().getSession());				
 				if (AdminUserSecurity.getInstance().isAdmin(fact.getCurrentUser(request.getSession()))) {
@@ -770,14 +770,7 @@ public class ContentContext {
 						setCurrentPageCached(elem);
 						globalContext.storeUrl(this, getPath(), elem.getId());						
 					} else {
-						
-						
-						
-						
 						elem = globalContext.convertOldURL(this, getPath());
-						
-						
-						
 						if (elem != null) {
 							String newURL = URLHelper.createURL(this, elem);
 							logger.info("redirect in ("+getGlobalContext().getContextKey()+") newURL = "+newURL);
@@ -795,6 +788,11 @@ public class ContentContext {
 				}
 			}
 		}
+		
+		if (outPage == null) {
+			logger.warning("page not found : "+getPath());
+		}
+		
 		if (isAsViewMode() && outPage != null && !outPage.isActive(this)) {
 			if (outPage.isActive()) {
 				logger.info("page not found : "+getPath());

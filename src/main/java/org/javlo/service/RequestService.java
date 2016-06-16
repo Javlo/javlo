@@ -1,6 +1,7 @@
 package org.javlo.service;
 
 import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -227,7 +228,13 @@ public class RequestService {
 
 	public static String getURI(HttpServletRequest request) {
 		String contextPath = request.getContextPath();
-		String uri = request.getRequestURI();
+		String uri;
+		try {
+			uri = URLDecoder.decode(request.getRequestURI(), ContentContext.CHARACTER_ENCODING);
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+			uri = URLDecoder.decode(request.getRequestURI());
+		}
 		if (contextPath.length() > 0) {
 			uri = uri.substring(contextPath.length());
 		}

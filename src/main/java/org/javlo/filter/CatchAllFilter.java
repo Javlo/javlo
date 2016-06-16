@@ -115,8 +115,7 @@ public class CatchAllFilter implements Filter {
 					if (GlobalContext.isExist(httpRequest, contextURI)) {
 						globalContext = GlobalContext.getInstance(httpRequest.getSession(), contextURI);
 						globalContext.setPathPrefix(contextURI);
-						String newURI = httpRequest.getServletPath();
-						httpRequest.getRequestURI();
+						String newURI = httpRequest.getServletPath();						
 						newURI = newURI.replaceFirst('/' + contextURI, "");
 						if (httpRequest.getQueryString() != null) {
 							newURI = newURI + '?' + httpRequest.getQueryString();

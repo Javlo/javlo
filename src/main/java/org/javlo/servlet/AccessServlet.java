@@ -266,7 +266,6 @@ public class AccessServlet extends HttpServlet implements IVersion {
 					NetHelper.sendRedirectPermanently(response, URLHelper.createURL(ctx, ctx.getCurrentPage()));
 					return;
 				}
-
 			}
 
 			if (!staticConfig.isContentExtensionValid(ctx.getFormat())) {
@@ -1055,6 +1054,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 		out.println("**** BACKUP EXCL. PAT. :  " + staticConfig.getBackupExcludePatterns());
 		out.println("**** BACKUP INCL. PAT. :  " + staticConfig.getBackupIncludePatterns());
 		out.println("**** HIGH SECURE      	:  " + staticConfig.isHighSecure());
+		out.println("**** REDIRECT URL      :  " + staticConfig.isRedirectSecondaryURL());
 		out.println("**** HARD USERS        :  " + StringHelper.collectionToString(staticConfig.getEditUsers().keySet(), ","));
 		out.println("**** USE EHCACHE       :  " + staticConfig.useEhCache());
 		out.println("**** TOTAL MEMORY      :  " + runtime.totalMemory() + " (" + runtime.totalMemory() / 1024 + " KB)" + " (" + runtime.totalMemory() / 1024 / 1024 + " MB)");

@@ -3216,7 +3216,8 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	}
 
 	private static String encodeURLAsKey(String url) {
-		return StringHelper.createFileName(url);
+		return url;
+		//return StringHelper.createFileName(url);
 	}
 
 	public MenuElement convertOldURL(ContentContext ctx, String url) throws Exception {

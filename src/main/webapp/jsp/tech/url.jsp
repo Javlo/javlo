@@ -16,7 +16,7 @@ if (ctx.getCurrentEditUser() == null) {
 <br />
 <h1>URL Analysis</h1>
 <ul>
-	<li>request URI : <%=request.getRequestURI()%></li>µ
+	<li>request URI : <%=request.getRequestURI()%></li>
 	<li>request encoding : <%=request.getCharacterEncoding()%></li>
 	<li>ctx Path : <%=ctx.getPath()%></li>
 	<li>Current Page : <%=ctx.getCurrentPage()%></li>
