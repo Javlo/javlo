@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
 
+import org.javlo.config.StaticConfig;
 import org.javlo.helper.StringHelper;
 
 public class TimeTracker {
@@ -90,7 +91,8 @@ public class TimeTracker {
 		}
 	}
 	
-	public static void reset() {
+	public static void reset(StaticConfig staticConfig) {
+		ACTIVE = staticConfig.isTimeTracker();
 		GENERAL_START = new Date().getTime();
 		events.clear();
 	}

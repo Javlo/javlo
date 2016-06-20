@@ -140,11 +140,8 @@ body .component-wrapper {
 
 .preview-image-wrapper {
 	overflow: auto;
-	text-align: center;	
-}
-
-.preview-image-wrapper.list {
-	height: 516px;
+	text-align: center;
+	height: 516px;	
 }
 
 .image label {	

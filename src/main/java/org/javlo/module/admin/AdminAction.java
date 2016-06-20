@@ -1476,8 +1476,9 @@ public class AdminAction extends AbstractModuleAction {
 
 		TemplateFactory.copyDefaultTemplate(session.getServletContext());
 		SharedContentService.getInstance(ctx).clearCache(ctx);
-		GlobalContext.getInstance(request).getStaticConfig().clearCache();
-		TimeTracker.reset();
+		StaticConfig staticConfig = globalContext.getStaticConfig(); 
+		staticConfig.clearCache();
+		TimeTracker.reset(staticConfig);
 		System.gc();
 		return null;
 	}

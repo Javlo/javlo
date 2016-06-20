@@ -240,6 +240,10 @@ public class StaticConfig extends Observable {
 			return Level.INFO;
 		}
 	}
+	
+	public boolean isTimeTracker() {
+		return properties.getBoolean("log.time-tracker", false);
+	}
 
 	public Level getAccessLogLevel() {
 		try {
