@@ -66,6 +66,7 @@ import org.javlo.user.IUserFactory;
 import org.javlo.user.User;
 import org.javlo.user.UserFactory;
 import org.javlo.utils.NamedThreadFactory;
+import org.javlo.utils.TimeTracker;
 import org.javlo.ztatic.FileCache;
 import org.javlo.ztatic.StaticInfo;
 
@@ -853,6 +854,9 @@ public class ImageTransformServlet extends HttpServlet {
 		servletRun++;
 
 		COUNT_ACCESS++;
+		
+		GlobalContext globalContext = GlobalContext.getInstance(request);
+		TimeTracker.start(globalContext.getContextKey(), ImageTransformServlet.class.getName());
 
 		StaticConfig staticConfig = StaticConfig.getInstance(request.getSession());
 		ContentContext ctx = ContentContext.getFreeContentContext(request, response);
@@ -863,7 +867,7 @@ public class ImageTransformServlet extends HttpServlet {
 		OutputStream out = null;
 
 		/* TRACKING */
-		GlobalContext globalContext = GlobalContext.getInstance(request);
+		
 
 		Thread.currentThread().setName("ImageTransformServlet-" + globalContext.getContextKey());
 
@@ -1227,6 +1231,7 @@ public class ImageTransformServlet extends HttpServlet {
 				e.printStackTrace();
 				logger.warning(e.getMessage());
 			}
+			TimeTracker.end(globalContext.getContextKey(), ImageTransformServlet.class.getName());
 		}
 		servletRun--;
 

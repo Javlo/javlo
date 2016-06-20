@@ -123,6 +123,8 @@ public class FileAction extends AbstractModuleAction {
 				File folder = getFolder(ctx);
 				if (folder.exists()) {
 					List<FileBean> allFileInfo = new LinkedList<FileBean>();
+					System.out.println("***** FileAction.prepare : folder = "+folder); //TODO: remove debug trace
+					System.out.println("***** FileAction.prepare : list = "+folder.listFiles(new DirectoryFilter())); //TODO: remove debug trace
 					for (File file : folder.listFiles(new DirectoryFilter())) {
 						allFileInfo.add(new FileBean(ctx, StaticInfo.getInstance(ctx, file)));
 					}

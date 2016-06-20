@@ -70,6 +70,7 @@ import org.javlo.user.AdminUserSecurity;
 import org.javlo.user.User;
 import org.javlo.user.UserFactory;
 import org.javlo.user.exception.JavloSecurityException;
+import org.javlo.utils.TimeTracker;
 import org.javlo.ztatic.FileCache;
 
 public class AdminAction extends AbstractModuleAction {
@@ -1476,6 +1477,7 @@ public class AdminAction extends AbstractModuleAction {
 		TemplateFactory.copyDefaultTemplate(session.getServletContext());
 		SharedContentService.getInstance(ctx).clearCache(ctx);
 		GlobalContext.getInstance(request).getStaticConfig().clearCache();
+		TimeTracker.reset();
 		System.gc();
 		return null;
 	}

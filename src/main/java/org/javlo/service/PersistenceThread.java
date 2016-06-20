@@ -21,6 +21,7 @@ import org.javlo.helper.StringHelper;
 import org.javlo.helper.XMLHelper;
 import org.javlo.navigation.MenuElement;
 import org.javlo.servlet.zip.ZipManagement;
+import org.javlo.utils.TimeTracker;
 
 public class PersistenceThread implements Runnable {
 
@@ -89,6 +90,7 @@ public class PersistenceThread implements Runnable {
 
 	@Override
 	public void run() {
+		TimeTracker.start(contextKey, PersistenceThread.class.getName());
 		COUNT_THREAD.incrementAndGet();
 		synchronized (SYNCRO_LOCK) {
 			File file = null;
@@ -114,6 +116,7 @@ public class PersistenceThread implements Runnable {
 				COUNT_THREAD.decrementAndGet();
 			}
 		}
+		TimeTracker.end(contextKey, PersistenceThread.class.getName());
 	}
 
 	public boolean isRunning() {

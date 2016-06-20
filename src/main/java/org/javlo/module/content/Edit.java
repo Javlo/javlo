@@ -84,6 +84,7 @@ import org.javlo.template.TemplateFactory;
 import org.javlo.user.AdminUserFactory;
 import org.javlo.user.AdminUserSecurity;
 import org.javlo.user.IUserFactory;
+import org.javlo.utils.TimeTracker;
 import org.javlo.ztatic.FileCache;
 
 public class Edit extends AbstractModuleAction {
@@ -1435,6 +1436,8 @@ public class Edit extends AbstractModuleAction {
 	}
 
 	public static String performPublish(ServletContext application, HttpServletRequest request, StaticConfig staticConfig, GlobalContext globalContext, ContentService content, ContentContext ctx, I18nAccess i18nAccess) throws Exception {
+		
+		TimeTracker.start(globalContext.getContextKey(), "publish");
 
 		if (!canModifyCurrentPage(ctx) || !checkPageSecurity(ctx)) {
 			MessageRepository messageRepository = MessageRepository.getInstance(ctx);
@@ -1539,6 +1542,8 @@ public class Edit extends AbstractModuleAction {
 			globalContext.resetURLFactory();
 
 			FileCache.getInstance(application).clearPDF(ctx);
+			
+			TimeTracker.end(globalContext.getContextKey(), "publish");
 
 			return message;
 		}

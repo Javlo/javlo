@@ -63,6 +63,7 @@ import org.javlo.navigation.MenuElement;
 import org.javlo.service.exception.ServiceException;
 import org.javlo.servlet.zip.ZipManagement;
 import org.javlo.tracking.Track;
+import org.javlo.utils.TimeTracker;
 import org.javlo.xml.NodeXML;
 import org.javlo.xml.XMLFactory;
 import org.javlo.ztatic.StaticInfo;
@@ -934,6 +935,7 @@ public class PersistenceService {
 	}
 
 	protected MenuElement load(ContentContext ctx, int renderMode, Map<String, String> contentAttributeMap, Date timeTravelDate, boolean correctXML, Integer previewVersion) throws Exception {
+		TimeTracker.start(ctx.getGlobalContext().getContextKey(), "load");
 		if (contentAttributeMap == null) {
 			contentAttributeMap = new HashMap(); // fake map
 		}
@@ -1032,6 +1034,7 @@ public class PersistenceService {
 			} finally {
 				ResourceHelper.closeResource(in);
 				ResourceHelper.closeResource(zip);
+				TimeTracker.end(ctx.getGlobalContext().getContextKey(), "load");
 			}
 
 			return root;
