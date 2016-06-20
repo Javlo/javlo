@@ -1,5 +1,7 @@
 package org.javlo.navigation;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,10 +26,14 @@ public abstract class AbstractURLFactory implements IURLFactory {
 	public String createURLKey(String url) {
 		int pointIndex = url.lastIndexOf('.');
 		if (pointIndex >= 0) {
-			return url.substring(0, pointIndex);
-		} else {
-			return url;
+			url = url.substring(0, pointIndex);
 		}
+		try {
+			url = URLDecoder.decode(url.substring(0, pointIndex), ContentContext.CHARACTER_ENCODING);
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+		return url;
 	}
 	
 	/**

@@ -706,3 +706,5 @@ change log
  
  * 4/ file select css correction + TimeTracker congigurable
  
+ * 5/ encode and decode url by default
+ 

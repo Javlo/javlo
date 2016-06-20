@@ -454,7 +454,12 @@ public class StringHelper {
 		value = value.trim();
 		value = value.replace("&nbsp;", "-");
 		value = createCleanName(value, EU_ACCEPTABLE_CHAR_NO_POINT, '-');
-		return trim(value, '-').toLowerCase();
+		try {
+			return URLEncoder.encode(trim(value, '-').toLowerCase(), ContentContext.CHARACTER_ENCODING);
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+			return trim(value, '-').toLowerCase();
+		}
 	}
 
 	/**

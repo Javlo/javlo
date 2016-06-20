@@ -81,6 +81,7 @@ import org.javlo.user.UserFactory;
 import org.javlo.user.VisitorContext;
 import org.javlo.utils.DebugListening;
 import org.javlo.utils.DoubleOutputStream;
+import org.javlo.utils.TimeTracker;
 import org.javlo.ztatic.FileCache;
 import org.xhtmlrenderer.swing.Java2DRenderer;
 import org.xhtmlrenderer.util.FSImageWriter;
@@ -191,6 +192,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 		if (undoDepth != null) {
 			PersistenceService.UNDO_DEPTH = undoDepth;
 		}
+		TimeTracker.reset(staticConfig);
 
 		LocalLogger.SPECIAL_LOG_FILE = new File(staticConfig.getSpecialLogFile());
 
@@ -261,7 +263,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 				String pageUrl = URLHelper.createURL(ctx, ctx.getCurrentPage());
 				String mainURL = (String)request.getAttribute(CatchAllFilter.MAIN_URI_KEY);
 				if (mainURL != null && !mainURL.endsWith(pageUrl)) {
-					logger.info("redirect : " + request.getAttribute(CatchAllFilter.MAIN_URI_KEY).toString() + " --> " + pageUrl);
+					logger.info("redirect : " + request.getAttribute(CatchAllFilter.MAIN_URI_KEY).toString() + " --> " + pageUrl+ " (name : "+ctx.getCurrentPage().getName()+')');
 					// response.sendRedirect(pageUrl);
 					NetHelper.sendRedirectPermanently(response, URLHelper.createURL(ctx, ctx.getCurrentPage()));
 					return;

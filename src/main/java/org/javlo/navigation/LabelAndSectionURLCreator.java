@@ -1,6 +1,7 @@
 package org.javlo.navigation;
 
-import java.net.URLEncoder;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.Collection;
 
 import org.javlo.component.core.IContentVisualComponent;
@@ -79,8 +80,8 @@ public class LabelAndSectionURLCreator extends AbstractURLFactory {
 		if (currentPage.getUrlNumber() > 0) {
 			label = label + '-' +currentPage.getUrlNumber();
 		}
-		//String path = URLEncoder.encode(StringHelper.createI18NURL(label), ContentContext.CHARACTER_ENCODING);
 		String path = StringHelper.createI18NURL(label);
+		//String path = StringHelper.createI18NURL(label);
 
 		String url = path;
 		MenuElement sectionPage = getSectionPage(currentPage);
@@ -109,6 +110,16 @@ public class LabelAndSectionURLCreator extends AbstractURLFactory {
 			return "/";
 		}		
 		return createURLWithoutExt(ctx, currentPage) + '.' + ctx.getFormat();
+	}
+	
+	@Override
+	public String createURLKey(String url) {	
+		try {
+			return URLDecoder.decode(url, ContentContext.CHARACTER_ENCODING);
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+			return url;
+		}
 	}
 
 }

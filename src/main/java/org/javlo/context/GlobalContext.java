@@ -3190,7 +3190,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		redirectURLList = null;
 		ResourceHelper.closeResource(localWriter);		
 	}
-
+	
 	private Properties getRedirectUrlMap() {
 		if (redirectURLMap == null) {
 			synchronized (lockUrlFile) {
@@ -3213,6 +3213,12 @@ public class GlobalContext implements Serializable, IPrintInfo {
 			}
 		}
 		return redirectURLMap;
+	}
+	
+	public void resetRedirectUrlMap() {
+		synchronized (lockUrlFile) {
+			redirectURLMap = null;
+		}
 	}
 
 	private static String encodeURLAsKey(String url) {

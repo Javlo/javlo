@@ -1456,6 +1456,7 @@ public class AdminAction extends AbstractModuleAction {
 		globalContext.clearTransformShortURL();
 		globalContext.resetURLFactory();
 		globalContext.storeRedirectUrlList();
+		globalContext.resetRedirectUrlMap();
 		String currentContextKey = request.getParameter("context");
 		if (currentContextKey == null) { // param context is used only for check
 											// the type of call, but you can
