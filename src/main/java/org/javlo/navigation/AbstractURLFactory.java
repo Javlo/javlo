@@ -29,7 +29,7 @@ public abstract class AbstractURLFactory implements IURLFactory {
 			url = url.substring(0, pointIndex);
 		}
 		try {
-			url = URLDecoder.decode(url.substring(0, pointIndex), ContentContext.CHARACTER_ENCODING);
+			url = URLDecoder.decode(url, ContentContext.CHARACTER_ENCODING);
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}
