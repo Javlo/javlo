@@ -121,6 +121,39 @@ public class UserFactory implements IUserFactory, Serializable {
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.javlo.user.IUserFactory#addUserInfo(org.javlo.user.UserInfos)
+	 */
+	@Override
+	public void addOrModifyUserInfo(IUserInfo userInfo) throws UserAllreadyExistException {
+		synchronized (lock) {
+			userInfo.setModificationDate(new Date());
+			if (getUserInfos(userInfo.getLogin()) != null) {
+				IUserInfo currentUserInfo = getUserInfos(userInfo.getLogin());
+				if (StringHelper.isEmpty(userInfo.getFirstName())) {
+					currentUserInfo.setFirstName(userInfo.getFirstName());
+				}
+				if (StringHelper.isEmpty(userInfo.getLastName())) {
+					currentUserInfo.setFirstName(userInfo.getLastName());
+				}
+				if (StringHelper.isEmpty(userInfo.getEmail())) {
+					currentUserInfo.setFirstName(userInfo.getEmail());
+				}
+				if (userInfo.getRoles().size() > 0) {
+					currentUserInfo.addRoles(userInfo.getRoles());
+				}
+			} else {
+				userInfoList = getUserInfoList();
+				if (userInfoList == null) {
+					clearUserInfoList();
+				}
+				userInfoList.add(userInfo);
+			}
+		}
+	}
+
 	@Override
 	public User autoLogin(HttpServletRequest request, String login) {
 		GlobalContext globalContext = GlobalContext.getInstance(request);
@@ -259,24 +292,24 @@ public class UserFactory implements IUserFactory, Serializable {
 		}
 
 		GlobalContext globalContext = GlobalContext.getInstance(request);
-		String realToken = globalContext.convertOneTimeToken(token);		
+		String realToken = globalContext.convertOneTimeToken(token);
 		if (realToken != null) {
 			token = realToken;
 		}
 
 		User outUser = null;
 		List<IUserInfo> users = getUserInfoList();
-		for (IUserInfo user : users) {			
+		for (IUserInfo user : users) {
 			if (user.getToken() != null && user.getToken().equals(token)) {
 				outUser = new User(user);
 			}
 		}
 
-		if (outUser != null) {			
+		if (outUser != null) {
 			outUser.setContext(globalContext.getContextKey());
 			request.getSession().setAttribute(SESSION_KEY, outUser);
 		}
-		
+
 		return outUser;
 	}
 
@@ -414,7 +447,7 @@ public class UserFactory implements IUserFactory, Serializable {
 		if (user == null) {
 			user = getUserByEmail(login);
 		}
-		
+
 		boolean passwordEqual = false;
 		StaticConfig staticConfig = StaticConfig.getInstance(request.getSession());
 
@@ -446,7 +479,7 @@ public class UserFactory implements IUserFactory, Serializable {
 				}
 			}
 		}
-		
+
 		if (user == null || (!logged && user.getPassword() != null && !passwordEqual)) {
 			if (globalCtx.getAdministrator().equals(login) && (logged || globalCtx.administratorLogin(login, password))) {
 				logger.fine("log user with password : " + login + " obtain full control role.");
@@ -460,14 +493,17 @@ public class UserFactory implements IUserFactory, Serializable {
 				user = null;
 			}
 		}
-		/*if (user != null && globalCtx.getAdministrator().equals(user.getLogin())) {
-			System.out.println("**** A ****");
-			user.getUserInfo().addRoles((new HashSet(Arrays.asList(new String[] { AdminUserSecurity.FULL_CONTROL_ROLE }))));
-		}
-		if (user != null && editCtx.getEditUser(user.getLogin()) != null) {
-			System.out.println("**** Bs ****");
-			user.getUserInfo().addRoles((new HashSet(Arrays.asList(new String[] { AdminUserSecurity.GENERAL_ADMIN, AdminUserSecurity.FULL_CONTROL_ROLE }))));
-		}*/
+		/*
+		 * if (user != null &&
+		 * globalCtx.getAdministrator().equals(user.getLogin())) {
+		 * System.out.println("**** A ****"); user.getUserInfo().addRoles((new
+		 * HashSet(Arrays.asList(new String[] {
+		 * AdminUserSecurity.FULL_CONTROL_ROLE })))); } if (user != null &&
+		 * editCtx.getEditUser(user.getLogin()) != null) { System.out.println(
+		 * "**** Bs ****"); user.getUserInfo().addRoles((new
+		 * HashSet(Arrays.asList(new String[] { AdminUserSecurity.GENERAL_ADMIN,
+		 * AdminUserSecurity.FULL_CONTROL_ROLE })))); }
+		 */
 
 		if (user != null) {
 			user.setContext(globalContext.getContextKey());
@@ -550,7 +586,7 @@ public class UserFactory implements IUserFactory, Serializable {
 				newUser.setContext(globalContext.getContextKey());
 				session.setAttribute(SESSION_KEY, newUser);
 			} else {
-				//TODO: check validy of this line
+				// TODO: check validy of this line
 				session.setAttribute(SESSION_KEY, null);
 			}
 		}
@@ -594,9 +630,9 @@ public class UserFactory implements IUserFactory, Serializable {
 		OutputStream out = null;
 		TransactionFile transactionFile = new TransactionFile(userInfoFile);
 		try {
-			CSVFactory fact = new CSVFactory(csvArray);			
+			CSVFactory fact = new CSVFactory(csvArray);
 			out = transactionFile.getOutputStream();
-			//out = new FileOutputStream(userInfoFile);
+			// out = new FileOutputStream(userInfoFile);
 			fact.exportCSV(out);
 			transactionFile.commit();
 			releaseUserInfoList();
@@ -680,11 +716,11 @@ public class UserFactory implements IUserFactory, Serializable {
 		changePasswordReference.put(passwordCode, user);
 		return passwordCode;
 	}
-	
+
 	protected Set<String> getRoleList(ContentContext ctx) {
 		return ctx.getGlobalContext().getUserRoles();
 	}
-	
+
 	public RoleWrapper getRoleWrapper(ContentContext ctx, User user) {
 		RoleWrapper roleWrapper = new RoleWrapper();
 		for (String role : user.getRoles()) {
@@ -694,7 +730,7 @@ public class UserFactory implements IUserFactory, Serializable {
 		}
 		return roleWrapper;
 	}
-	
+
 	@Override
 	public String getTokenCreateIfNotExist(User user) throws IOException {
 		String token = user.getUserInfo().getToken();

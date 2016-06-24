@@ -63,7 +63,9 @@ public class ContentOnlyServlet extends HttpServlet {
 			ctx = ContentContext.getContentContext(request, response);
 			response.setContentType("text/html");			
 			
-			InfoBean.updateInfoBean(ctx);
+			I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
+			i18nAccess.requestInit(ctx);
+			InfoBean.updateInfoBean(ctx);			
 
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 
@@ -139,9 +141,7 @@ public class ContentOnlyServlet extends HttpServlet {
 
 			if (templateID != null) {				
 				template = TemplateFactory.getTemplates(request.getSession().getServletContext()).get(templateID);
-				ctx.setCurrentTemplate(template);
-				I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
-				i18nAccess.requestInit(ctx);
+				ctx.setCurrentTemplate(template);				
 			}	
 			
 			if (ctx.getGlobalContext().isCollaborativeMode()) {

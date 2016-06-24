@@ -28,7 +28,6 @@ import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.context.UserInterfaceContext;
 import org.javlo.data.InfoBean;
-import org.javlo.helper.LocalLogger;
 import org.javlo.helper.NetHelper;
 import org.javlo.helper.RequestHelper;
 import org.javlo.helper.ResourceHelper;

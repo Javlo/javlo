@@ -36,6 +36,13 @@ public interface IUserFactory {
 	public abstract List<IUserInfo> getUserInfoList();
 
 	public abstract void addUserInfo(IUserInfo userInfo) throws UserAllreadyExistException;
+	
+	/**
+	 * if user info found, update data
+	 * @param userInfo
+	 * @throws UserAllreadyExistException
+	 */
+	public abstract void addOrModifyUserInfo(IUserInfo userInfo) throws UserAllreadyExistException;
 
 	public abstract void mergeUserInfo(IUserInfo userInfo) throws IOException;
 

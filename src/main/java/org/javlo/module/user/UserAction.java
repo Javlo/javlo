@@ -560,7 +560,7 @@ public class UserAction extends AbstractModuleAction {
 					userInfo.setRoles(new HashSet(Arrays.asList(new String[] { role })));
 				}
 				try {
-					userFact.addUserInfo(userInfo);
+					userFact.addOrModifyUserInfo(userInfo);
 					countUserInsered++;
 				} catch (UserAllreadyExistException e) {
 				}
