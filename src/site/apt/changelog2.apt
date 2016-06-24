@@ -708,3 +708,5 @@ change log
  
  * 5/ encode and decode url by default
  
+ * 6/ dynamic component configurable cache + header cannonical + cannonical with absolute URL
+ 

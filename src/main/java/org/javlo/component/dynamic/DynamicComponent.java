@@ -630,6 +630,9 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 
 	@Override
 	public boolean isContentCachable(ContentContext ctx) {
+		if (!StringHelper.isTrue(properties.getProperty("component.cachable"))) {
+			return false;
+		}
 		try {
 			java.util.List<Field> fieldsName = getFields(ctx);
 			for (Field field : fieldsName) {

@@ -53,6 +53,8 @@ import org.javlo.service.exception.ServiceException;
 import org.javlo.service.visitors.VisitorsMessageService;
 import org.javlo.servlet.AccessServlet;
 import org.javlo.template.Template;
+import org.javlo.template.Template.TemplateBean;
+import org.javlo.template.TemplateFactory;
 import org.javlo.user.AdminUserFactory;
 import org.javlo.user.AdminUserSecurity;
 import org.javlo.user.IUserFactory;
@@ -142,6 +144,7 @@ public class InfoBean {
 	public String getCurrentCanonicalURL() {
 		ContentContext robotCtx = new ContentContext(ctx);
 		robotCtx.setDevice(Device.getFakeDevice("robot"));
+		robotCtx.setAbsoluteURL(true);
 		return URLHelper.createURL(robotCtx);
 	}
 	
@@ -932,6 +935,19 @@ public class InfoBean {
 			return null;
 		}
 	}
+	
+	public List<TemplateBean> getTemplates() {
+		try {
+			List<TemplateBean> templates = new LinkedList<Template.TemplateBean>();
+			for (Template template : TemplateFactory.getAllTemplatesFromContext(globalContext)) {
+				templates.add(new TemplateBean(ctx,template));
+			}
+			return templates;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
 
 	public String getTemplateName() {
 		try {
@@ -1135,6 +1151,10 @@ public class InfoBean {
 
 	public String getRootURL() {
 		return URLHelper.createURL(ctx, "/");
+	}
+	
+	public String getRootURLPageMode() {
+		return URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.PAGE_MODE), "/");
 	}
 
 	public String getRSSAllURL() {

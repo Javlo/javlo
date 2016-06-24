@@ -263,7 +263,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 				String pageUrl = URLHelper.createURL(ctx, ctx.getCurrentPage());
 				String mainURL = (String)request.getAttribute(CatchAllFilter.MAIN_URI_KEY);
 				if (mainURL != null && !mainURL.endsWith(pageUrl)) {
-					logger.info("redirect : " + request.getAttribute(CatchAllFilter.MAIN_URI_KEY).toString() + " --> " + pageUrl+ " (name : "+ctx.getCurrentPage().getName()+')');
+					logger.info("redirect : " + mainURL + " --> " + pageUrl+ " (name : "+ctx.getCurrentPage().getName()+')');
 					// response.sendRedirect(pageUrl);
 					NetHelper.sendRedirectPermanently(response, URLHelper.createURL(ctx, ctx.getCurrentPage()));
 					return;
@@ -664,6 +664,11 @@ public class AccessServlet extends HttpServlet implements IVersion {
 					localLogger.endCount("edit", "include edit");
 				} else { // view
 
+					ContentContext robotCtx = new ContentContext(ctx);
+					robotCtx.setDevice(Device.getFakeDevice("robot"));
+					robotCtx.setAbsoluteURL(true);
+					response.setHeader("link", "<"+URLHelper.createURL(robotCtx)+">; rel=\"canonical\"");
+					
 					request.setAttribute("social", SocialService.getInstance(ctx));
 
 					localLogger.startCount("content");
