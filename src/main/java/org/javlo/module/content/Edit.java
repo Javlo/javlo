@@ -1437,7 +1437,7 @@ public class Edit extends AbstractModuleAction {
 
 	public static String performPublish(ServletContext application, HttpServletRequest request, StaticConfig staticConfig, GlobalContext globalContext, ContentService content, ContentContext ctx, I18nAccess i18nAccess) throws Exception {
 		
-		TimeTracker.start(globalContext.getContextKey(), "publish");
+		int trackerNumber = TimeTracker.start(globalContext.getContextKey(), "publish");
 
 		if (!canModifyCurrentPage(ctx) || !checkPageSecurity(ctx)) {
 			MessageRepository messageRepository = MessageRepository.getInstance(ctx);
@@ -1543,7 +1543,7 @@ public class Edit extends AbstractModuleAction {
 
 			FileCache.getInstance(application).clearPDF(ctx);
 			
-			TimeTracker.end(globalContext.getContextKey(), "publish");
+			TimeTracker.end(globalContext.getContextKey(), "publish", trackerNumber);
 
 			return message;
 		}

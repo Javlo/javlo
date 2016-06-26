@@ -90,7 +90,7 @@ public class PersistenceThread implements Runnable {
 
 	@Override
 	public void run() {
-		TimeTracker.start(contextKey, PersistenceThread.class.getName());
+		int timeTrackerNumber = TimeTracker.start(contextKey, PersistenceThread.class.getName());
 		COUNT_THREAD.incrementAndGet();
 		synchronized (SYNCRO_LOCK) {
 			File file = null;
@@ -116,7 +116,7 @@ public class PersistenceThread implements Runnable {
 				COUNT_THREAD.decrementAndGet();
 			}
 		}
-		TimeTracker.end(contextKey, PersistenceThread.class.getName());
+		TimeTracker.end(contextKey, PersistenceThread.class.getName(), timeTrackerNumber);
 	}
 
 	public boolean isRunning() {

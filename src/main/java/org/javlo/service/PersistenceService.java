@@ -935,7 +935,7 @@ public class PersistenceService {
 	}
 
 	protected MenuElement load(ContentContext ctx, int renderMode, Map<String, String> contentAttributeMap, Date timeTravelDate, boolean correctXML, Integer previewVersion) throws Exception {
-		TimeTracker.start(ctx.getGlobalContext().getContextKey(), "load");
+		int timeTrackerNumber = TimeTracker.start(ctx.getGlobalContext().getContextKey(), "load");
 		if (contentAttributeMap == null) {
 			contentAttributeMap = new HashMap(); // fake map
 		}
@@ -1034,7 +1034,7 @@ public class PersistenceService {
 			} finally {
 				ResourceHelper.closeResource(in);
 				ResourceHelper.closeResource(zip);
-				TimeTracker.end(ctx.getGlobalContext().getContextKey(), "load");
+				TimeTracker.end(ctx.getGlobalContext().getContextKey(), "load", timeTrackerNumber);
 			}
 
 			return root;

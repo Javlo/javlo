@@ -856,7 +856,7 @@ public class ImageTransformServlet extends HttpServlet {
 		COUNT_ACCESS++;
 		
 		GlobalContext globalContext = GlobalContext.getInstance(request);
-		TimeTracker.start(globalContext.getContextKey(), ImageTransformServlet.class.getName());
+		int trackerNumber = TimeTracker.start(globalContext.getContextKey(), ImageTransformServlet.class.getName());
 
 		StaticConfig staticConfig = StaticConfig.getInstance(request.getSession());
 		ContentContext ctx = ContentContext.getFreeContentContext(request, response);
@@ -1003,6 +1003,7 @@ public class ImageTransformServlet extends HttpServlet {
 				if (AdminUserFactory.createUserFactory(ctx.getGlobalContext(), request.getSession()).getCurrentUser(request.getSession()) == null) {
 					if (!staticInfo.canRead(ctx, UserFactory.createUserFactory(globalContext, request.getSession()).getCurrentUser(request.getSession()), request.getParameter(RESOURCE_TOKEN_KEY))) {
 						response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+						TimeTracker.end(globalContext.getContextKey(), ImageTransformServlet.class.getName(), trackerNumber);
 						return;
 					}
 				}
@@ -1055,6 +1056,7 @@ public class ImageTransformServlet extends HttpServlet {
 					if (!dirFile.exists()) {
 						logger.warning("file not found : " + imageFile);
 						response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+						TimeTracker.end(globalContext.getContextKey(), ImageTransformServlet.class.getName(), trackerNumber);
 						return;
 					} else {
 						imageFile = dirFile;
@@ -1068,6 +1070,7 @@ public class ImageTransformServlet extends HttpServlet {
 					ctx.setRequestContentLanguage(filter);
 					String html = "<html lang=\"" + ctx.getRequestContentLanguage() + "\"><head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=" + ContentContext.CHARACTER_ENCODING + "\" /><title>" + info.getTitle(ctx) + "</title></head><body>" + info.getDescription(ctx) + "</body></html>";
 					ResourceHelper.writeStringToStream(html, response.getOutputStream(), ContentContext.CHARACTER_ENCODING);
+					TimeTracker.end(globalContext.getContextKey(), ImageTransformServlet.class.getName(), trackerNumber);
 					return;
 				}
 
@@ -1086,6 +1089,7 @@ public class ImageTransformServlet extends HttpServlet {
 				if (lastModified > 0 && lastModified / 1000 <= lastModifiedInBrowser / 1000) {
 					COUNT_304++;
 					response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
+					TimeTracker.end(globalContext.getContextKey(), ImageTransformServlet.class.getName(), trackerNumber);
 					return;
 				}
 
@@ -1162,6 +1166,7 @@ public class ImageTransformServlet extends HttpServlet {
 						if (imageTransforming.size() > staticConfig.getTransformingSize()) {
 							logger.severe("too much images in transformation eject image transform : " + imageKey);
 							response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+							TimeTracker.end(globalContext.getContextKey(), ImageTransformServlet.class.getName(), trackerNumber);
 							return;
 						}
 						imageTransforming.put(imageKey, new ImageTransforming(ctx, imageFile));
@@ -1231,7 +1236,7 @@ public class ImageTransformServlet extends HttpServlet {
 				e.printStackTrace();
 				logger.warning(e.getMessage());
 			}
-			TimeTracker.end(globalContext.getContextKey(), ImageTransformServlet.class.getName());
+			TimeTracker.end(globalContext.getContextKey(), ImageTransformServlet.class.getName(), trackerNumber);
 		}
 		servletRun--;
 

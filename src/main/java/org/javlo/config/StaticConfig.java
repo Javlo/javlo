@@ -242,7 +242,7 @@ public class StaticConfig extends Observable {
 	}
 	
 	public boolean isTimeTracker() {
-		return properties.getBoolean("log.time-tracker", false);
+		return properties.getBoolean("time-tracker", false);
 	}
 
 	public Level getAccessLogLevel() {
@@ -1589,6 +1589,5 @@ public class StaticConfig extends Observable {
 		return StringHelper.stringToCollection(properties.getString("content.document-format", getImageFormat()+"doc,docx,svg,odf,xls,pdf,xml,zip,ppt,pptx,pub,eml,osd,odt,vcard,ppsx,sdw,mp4,mp3,avi,wpt,odm,mov,url,ept,stw,sdd,sds,odc,fax,vdx,wpa,ppv,sgf,wp5,xtd,psd,rar"), ",");
 	}
 
-
-
+	
 }
