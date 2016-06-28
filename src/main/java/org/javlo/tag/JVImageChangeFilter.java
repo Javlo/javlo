@@ -37,7 +37,7 @@ public class JVImageChangeFilter extends TagSupport {
 				int imgPos = url.indexOf(img);				
 				if (imgPos >= 0) {					
 					url = url.substring(url.indexOf(img)+img.length());					
-					newURL = ctx.getGlobalContext().getTransformShortURL(url);					
+					newURL = ctx.getGlobalContext().getTransformShortURL(url);
 					if (newURL == null) {
 						logger.severe("url not found");
 						ctx.getRequest().setAttribute(getVar(), url);
@@ -49,7 +49,7 @@ public class JVImageChangeFilter extends TagSupport {
 					}
 					newURL = newURL.replaceFirst(filter + '/', newFilter + '/');
 					newURL = ctx.getGlobalContext().setTransformShortURL(newURL, null);
-					newURL = URLHelper.createStaticURL(localCtx, URLHelper.mergePath("img", newURL));					
+					newURL = URLHelper.createStaticURL(localCtx, URLHelper.mergePath("img", newURL));
 				} else {
 					newURL = url;
 				}

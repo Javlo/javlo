@@ -54,7 +54,6 @@ import org.javlo.cache.MapCache;
 import org.javlo.config.StaticConfig;
 import org.javlo.helper.ContentHelper;
 import org.javlo.helper.ElementaryURLHelper;
-import org.javlo.helper.LocalLogger;
 import org.javlo.helper.ElementaryURLHelper.Code;
 import org.javlo.helper.NavigationHelper;
 import org.javlo.helper.ResourceHelper;
@@ -3303,6 +3302,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	 * @return
 	 */
 	public String getTransformShortURL(String shortURL) {
+		shortURL = URLHelper.removeParam(shortURL);
 		return getData(TRANSFORM_LONG_KEY_PREFIX + shortURL);
 	}
 

@@ -916,7 +916,10 @@ public class ImageTransformServlet extends HttpServlet {
 					filter = pathInfo.substring(0, slachIndex);
 					pathInfo = pathInfo.substring(slachIndex + 1);
 					slachIndex = pathInfo.indexOf('/');
-					String templateId = pathInfo.substring(0, slachIndex);
+					String templateId = "";
+					if (slachIndex >= 0) {
+						templateId = pathInfo.substring(0, slachIndex);
+					}
 
 					/** AREA **/
 					if (!filter.startsWith("template")) {

@@ -78,12 +78,13 @@ public class DynamicComponentFilter extends AbstractPropertiesComponent implemen
 		if (fieldContainer != null) {
 			out.println("<div class=\"input-group\">");
 			out.println("<label>Sort on : </label>");
-			List<String> values = new LinkedList<String>();
+			/*List<String> values = new LinkedList<String>();
 			values.add("");
 			for (Field field : fieldContainer.getFields(ctx)) {
 				values.add(field.getName());
 			}
-			out.println(XHTMLHelper.getInputOneSelect(createKeyWithField("field"),values , getSelectedField(), "form-control"));
+			out.println(XHTMLHelper.getInputOneSelect(createKeyWithField("field"),values , getSelectedField(), "form-control"));*/
+			out.println("<input type=\"text\" class=\"form-control\" name=\""+createKeyWithField("field")+"\" value=\""+getSelectedField()+"\" />");
 			out.println("</div>");
 		}
 
