@@ -1004,6 +1004,9 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 		if (o == null) {
 			return -1;
 		}
+		if (getValue() == null) {
+			return 1;
+		}
 		return getValue().compareTo(o.getValue());
 	}
 	
