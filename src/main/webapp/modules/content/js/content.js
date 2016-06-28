@@ -48,7 +48,7 @@ function loadWysiwyg(cssQuery, complexity, chooseFileURL) {
 		    ],
 		    toolbar1: "textlang | styleselect bold italic underline strikethrough fontsizeselect | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | table charmap nonbreaking code",		    
 		    image_advtab: true,
-		    fontsize_formats: "10px 11px 12px 13px 14px 16px 18px 20px",
+		    fontsize_formats: "10px 11px 12px 13px 14px 16px 18px 20px 22px 24px 26px 28px 30px 32px 34px 36px 38px 40px 42px",
 		    //paste_word_valid_elements: "b,strong,i,em,h1,h2,h3,h4,h5,h6,table,tr,th,td,ul,ol,li,p,a,div",
 		    file_browser_callback: function(field_name, url, type, win) {
 		    	
