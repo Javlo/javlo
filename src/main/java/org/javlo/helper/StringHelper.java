@@ -1334,7 +1334,7 @@ public class StringHelper {
 
 	// TODO: create a better method
 	public static boolean isMailURL(String url) {
-		return url.trim().toLowerCase().startsWith("mailto");
+		return url.trim().toLowerCase().startsWith("mailto:");
 	}
 
 	public static final boolean isPasswordMath(String pwdData, String userInput, boolean crypted) {

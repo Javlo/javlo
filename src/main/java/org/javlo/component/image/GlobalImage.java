@@ -916,6 +916,8 @@ public class GlobalImage extends Image implements IImageFilter {
 				link = link.trim();
 				if (StringHelper.isURL(link)) {
 					// Complete url
+				} else if (StringHelper.isMailURL(link)) {
+					// email
 				} else if (link.equals("#")) {
 					// Dummy url
 				} else if (link.startsWith("/")) {
