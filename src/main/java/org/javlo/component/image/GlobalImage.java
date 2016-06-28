@@ -638,6 +638,9 @@ public class GlobalImage extends Image implements IImageFilter {
 
 	@Override
 	public String getURL(ContentContext ctx) {
+		if(StringHelper.isMailURL(getLink())) {
+			return getLink();
+		}
 		if (getLink() != null && getLink().trim().length() > 0 && !getLink().equals("#")) {
 			if (!StringHelper.isURL(getLink())) {
 				ContentService content = ContentService.getInstance(ctx.getRequest());
