@@ -144,10 +144,10 @@ public class NavigationService {
 	public void removeNavigation(ContentContext ctx, MenuElement elem) throws Exception {
 		Set<String> pageDeleted = new HashSet<String>();
 		removeNavigationRec(pageDeleted, elem);
-		persistenceService.setAskStore(true);		
+		persistenceService.setAskStore(true);
 		for (IContentVisualComponent comp : ComponentFactory.getAllComponentsFromContext(ctx)) {
 			if (comp instanceof PageMirrorComponent) {
-				PageMirrorComponent pageMirror = (PageMirrorComponent)comp;
+				PageMirrorComponent pageMirror = (PageMirrorComponent) comp;
 				if (pageMirror.isDeleteIfNoSource() && !pageDeleted.contains(pageMirror.getPage().getId())) {
 					removeNavigationRec(pageDeleted, comp.getPage());
 				}
@@ -181,17 +181,19 @@ public class NavigationService {
 				MenuElement[] children = ContentService.getInstance(ctx.getGlobalContext()).getNavigation(lgCtx).getAllChildren();
 				for (MenuElement menuElement : children) {
 					String url = lgCtx.getRequestContentLanguage() + urlFactory.createURL(lgCtx, menuElement);
-					int i=0;
-					while (pages.keySet().contains(url) && i <1000) {
-						menuElement.setUrlNumber(menuElement.getUrlNumber() + 1);
-						url = lgCtx.getRequestContentLanguage() + urlFactory.createURL(lgCtx, menuElement);
-						i++;
+					int i = 0;
+					if (!menuElement.isLikeRoot(lgCtx)) {
+						while (pages.keySet().contains(url) && i < 1000) {
+							menuElement.setUrlNumber(menuElement.getUrlNumber() + 1);
+							url = lgCtx.getRequestContentLanguage() + urlFactory.createURL(lgCtx, menuElement);
+							i++;
+						}
 					}
-					if (i==1000) {
-						logger.severe("impossible to create different url for all pages width : "+urlFactory.getClass().getName());
+					if (i == 1000) {
+						logger.severe("impossible to create different url for all pages width : " + urlFactory.getClass().getName());
 					}
-					logger.fine("page:"+menuElement.getPath()+" as new URL number : "+menuElement.getUrlNumber());					
-					pages.put(url, menuElement.getName());					
+					logger.fine("page:" + menuElement.getPath() + " as new URL number : " + menuElement.getUrlNumber());
+					pages.put(url, menuElement.getName());
 				}
 			}
 		}

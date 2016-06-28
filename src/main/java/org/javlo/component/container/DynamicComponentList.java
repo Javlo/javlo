@@ -289,6 +289,11 @@ public class DynamicComponentList extends AbstractPropertiesComponent {
 		}
 		return true;
 	}
+	
+	@Override
+	protected boolean isFreeInputLayout() {
+		return true;
+	}
 
 	@Override
 	public String getHexColor() {

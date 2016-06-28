@@ -553,6 +553,10 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 
 	public void setWidth(String width) {
 	}
+	
+	protected boolean isFreeInputLayout() {
+		return false;
+	}
 
 	@Override
 	public String getXHTMLConfig(ContentContext ctx) throws Exception {
@@ -627,7 +631,6 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			out.println(XHTMLHelper.getRadio(id, name, "right", layout.isRight()));
 			out.println(i18nAccess.getText("component.layout.right"));
 			out.println("</label>");
-
 			if (getConfig(ctx).isFontStyle()) {
 				id = "layout-bold-" + getId();
 				out.println("<label for=\"" + id + "\">");
@@ -659,7 +662,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		}
 
 		String[] styles = getStyleList(ctx);
-		if (styles.length > 1) {
+		if (!isFreeInputLayout() && styles.length > 1) {
 			String[] stylesLabel = getStyleLabelList(ctx);
 			if (styles.length != stylesLabel.length) {
 				throw new ComponentException("size of styles is'nt the same than size of styles label.");
@@ -667,6 +670,16 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			out.println("<div class=\"line\">");
 			out.println("<label for=\"style-" + getId() + "\">" + getStyleTitle(ctx) + "</label>");
 			out.println(XHTMLHelper.getInputOneSelect("style-" + getId(), styles, stylesLabel, getStyle(), "form-control", null, false));
+			out.println("</div>");
+		}
+		if (isFreeInputLayout()) {
+			String[] stylesLabel = getStyleLabelList(ctx);
+			if (styles.length != stylesLabel.length) {
+				throw new ComponentException("size of styles is'nt the same than size of styles label.");
+			}
+			out.println("<div class=\"line\">");
+			out.println("<label for=\"style-" + getId() + "\">" + getStyleTitle(ctx) + "</label>");			
+			out.println("<input id=\"" + "style-" + getId() + "\" name=\"" + "style-" + getId() + "\" class=\"form-control\" type=\"text\" value=\"" + getStyle() + "\" />");
 			out.println("</div>");
 		}
 

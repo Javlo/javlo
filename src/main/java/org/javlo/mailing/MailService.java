@@ -194,8 +194,10 @@ public class MailService {
 		}
 
 	}
-	
-	
+
+	public String sendMail(Transport transport, EMail email) throws MessagingException {
+		return sendMail(transport, email.getSender(), email.getRecipients(), email.getCcRecipients(), email.getBccRecipients(), email.getSubject(), email.getContent(), email.getTxtContent(), email.isHtml(), email.getAttachments(), email.getUnsubscribeLink(), email.getDkim());
+	}
 
 	/**
 	 * Send <strong><em>one</em></strong> mail to multiple recipients and
@@ -248,17 +250,17 @@ public class MailService {
 					dkimSigner.setHeaderCanonicalization(Canonicalization.SIMPLE);
 					dkimSigner.setBodyCanonicalization(Canonicalization.RELAXED);
 					dkimSigner.setLengthParam(true);
-					dkimSigner.setSigningAlgorithm(SigningAlgorithm.SHA1withRSA);					
+					dkimSigner.setSigningAlgorithm(SigningAlgorithm.SHA1withRSA);
 					dkimSigner.setZParam(true);
-					msg = new SMTPDKIMMessage(mailSession, dkimSigner);					
+					msg = new SMTPDKIMMessage(mailSession, dkimSigner);
 				} catch (Exception e) {
 					e.printStackTrace();
-					warningMessage=e.getMessage();
-					
+					warningMessage = e.getMessage();
+
 				}
 			}
 			if (props != null) {
-				logger.info("Sending mail with subject: " + subject + " to: " + recipients.size() + " recipients: " + recipientsStr+" DKIM?="+(dkim!=null));
+				logger.info("Sending mail with subject: " + subject + " to: " + recipients.size() + " recipients: " + recipientsStr + " DKIM?=" + (dkim != null));
 			}
 			if (msg == null) {
 				msg = new MimeMessage(mailSession);
@@ -276,6 +278,15 @@ public class MailService {
 				msg.setRecipients(Message.RecipientType.BCC, bccRecipients.toArray(new InternetAddress[bccRecipients.size()]));
 			}
 			msg.setSubject(subject, ContentContext.CHARACTER_ENCODING);
+
+			System.out.println("***** MailService.sendMail : isHTML = " + isHTML); // TODO:
+																					// remove
+																					// debug
+																					// trace
+			System.out.println("***** MailService.sendMail : attachments = " + attachments.size()); // TODO:
+																									// remove
+																									// debug
+																									// trace
 
 			if (isHTML) {
 				MimeBodyPart wrap = new MimeBodyPart();
@@ -314,8 +325,33 @@ public class MailService {
 				msg.setSentDate(new Date());
 
 			} else {
-				assert attachments == null : "no attachements in text format.";
 				msg.setText(content);
+				if (attachments != null) {
+					MimeMultipart contentMail = new MimeMultipart("related");
+					boolean realAttach = false;
+					for (Attachment attach : attachments) {
+						if (attach.getData() != null && attach.getData().length > 0) {
+							String id = UUID.randomUUID().toString();
+							MimeBodyPart attachment = new MimeBodyPart();
+							DataSource fds = new ByteArrayDataSource(attach.getData(), ResourceHelper.getFileExtensionToMineType(StringHelper.getFileExtension(attach.getName())));
+							attachment.setDataHandler(new DataHandler(fds));
+							attachment.setHeader("Content-ID", "<" + id + ">");
+							attachment.setFileName(attach.getName());
+							contentMail.addBodyPart(attachment);
+							realAttach = true;
+						}
+					}
+					if (realAttach) {
+						MimeBodyPart wrap = new MimeBodyPart();
+						MimeBodyPart bp = new MimeBodyPart();
+						bp.setText(content, ContentContext.CHARACTER_ENCODING);
+						MimeMultipart cover = new MimeMultipart("alternative");
+						cover.addBodyPart(bp);
+						wrap.setContent(cover);
+						contentMail.addBodyPart(wrap);
+						msg.setContent(contentMail);
+					}
+				}
 			}
 
 			/*
@@ -325,7 +361,7 @@ public class MailService {
 			 */
 
 			msg.saveChanges();
-			
+
 			if (transport == null || !transport.isConnected()) {
 				transport = getMailTransport(mailConfig);
 				if (transport != null) {
@@ -338,32 +374,25 @@ public class MailService {
 			} else {
 				transport.sendMessage(msg, msg.getAllRecipients());
 			}
-			
-			/*System.out.println("Mail Header : ");
-			System.out.println("-------------");
-			System.out.println("");
-			Enumeration headers = msg.getAllHeaders();
-			while (headers.hasMoreElements()) {
-				javax.mail.Header header = (javax.mail.Header)headers.nextElement();
-				System.out.println("  "+header.getName()+" = "+header.getValue());
-			}			
-			System.out.println("");
-			System.out.println("");
-			System.out.println("Mail content : ");
-			System.out.println("-------------");
-			System.out.println("");
-			try {
-				if (msg.getContent() instanceof MimeMultipart) {
-					System.out.println(messageToDKIMBody((MimeMultipart)msg.getContent(), null));	
-				} else {
-					System.out.println(msg.getContent());
-				}
-				
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			System.out.println("");*/
+
+			/*
+			 * System.out.println("Mail Header : ");
+			 * System.out.println("-------------"); System.out.println("");
+			 * Enumeration headers = msg.getAllHeaders(); while
+			 * (headers.hasMoreElements()) { javax.mail.Header header =
+			 * (javax.mail.Header)headers.nextElement(); System.out.println("  "
+			 * +header.getName()+" = "+header.getValue()); }
+			 * System.out.println(""); System.out.println("");
+			 * System.out.println("Mail content : ");
+			 * System.out.println("-------------"); System.out.println(""); try
+			 * { if (msg.getContent() instanceof MimeMultipart) {
+			 * System.out.println(messageToDKIMBody((MimeMultipart)msg.
+			 * getContent(), null)); } else {
+			 * System.out.println(msg.getContent()); }
+			 * 
+			 * } catch (IOException e) { // TODO Auto-generated catch block
+			 * e.printStackTrace(); } System.out.println("");
+			 */
 
 		} else {
 			FileOutputStream out = null;
@@ -518,125 +547,128 @@ public class MailService {
 	public static void resetInstance() {
 		instance = null;
 	}
-	
-	public static String messageToText(MimeMultipart part) throws IOException, MessagingException {		
-		StringBuffer outStr = new StringBuffer();		
-		final String CRLF = "\r\n";		
-		
-		for (int i = 0; i < part.getCount(); i++) {			
+
+	public static String messageToText(MimeMultipart part) throws IOException, MessagingException {
+		StringBuffer outStr = new StringBuffer();
+		final String CRLF = "\r\n";
+
+		for (int i = 0; i < part.getCount(); i++) {
 			if (part.getBodyPart(i).getContent() instanceof MimeMultipart) {
-				
-				MimeMultipart insideMultipartContent = (MimeMultipart) part.getBodyPart(i).getContent();				
-				
-				outStr.append("Content-Type: "+part.getContentType()+CRLF+CRLF+CRLF);
-				
-				String contentType = part.getContentType();				
+
+				MimeMultipart insideMultipartContent = (MimeMultipart) part.getBodyPart(i).getContent();
+
+				outStr.append("Content-Type: " + part.getContentType() + CRLF + CRLF + CRLF);
+
+				String contentType = part.getContentType();
 				if (contentType.contains("\"")) {
-					outStr.append("--"+contentType.split("\"")[1]+CRLF);
+					outStr.append("--" + contentType.split("\"")[1] + CRLF);
 				}
 				Enumeration headers = part.getBodyPart(i).getAllHeaders();
-				while (headers.hasMoreElements()) {					
-					Header header = (Header)headers.nextElement();
-					outStr.append(header.getName()+": "+header.getValue()+CRLF);
+				while (headers.hasMoreElements()) {
+					Header header = (Header) headers.nextElement();
+					outStr.append(header.getName() + ": " + header.getValue() + CRLF);
 				}
-				contentType = part.getBodyPart(i).getContentType();				
+				contentType = part.getBodyPart(i).getContentType();
 				if (contentType.contains("\"")) {
-					outStr.append(CRLF+"--"+contentType.split("\"")[1]+CRLF);
+					outStr.append(CRLF + "--" + contentType.split("\"")[1] + CRLF);
 				}
-				outStr.append(messageToText(insideMultipartContent)+CRLF);
-				contentType = part.getContentType();				
+				outStr.append(messageToText(insideMultipartContent) + CRLF);
+				contentType = part.getContentType();
 				if (contentType.contains("\"")) {
-					outStr.append("--"+contentType.split("\"")[1]+"--"+CRLF);
+					outStr.append("--" + contentType.split("\"")[1] + "--" + CRLF);
 				}
-				
+
 			} else {
 				Enumeration headers = part.getBodyPart(i).getAllHeaders();
-				while (headers.hasMoreElements()) {					
-					Header header = (Header)headers.nextElement();					
-					outStr.append(header.getName()+": "+header.getValue()+CRLF);
+				while (headers.hasMoreElements()) {
+					Header header = (Header) headers.nextElement();
+					outStr.append(header.getName() + ": " + header.getValue() + CRLF);
 				}
-				outStr.append(CRLF+part.getBodyPart(i).getContent());
-				
+				outStr.append(CRLF + part.getBodyPart(i).getContent());
+
 				String suffix = "";
-				if (i==part.getCount()-1) {
-					suffix="--";
+				if (i == part.getCount() - 1) {
+					suffix = "--";
 				}
-				
-				String contentType = part.getContentType();				
+
+				String contentType = part.getContentType();
 				if (contentType.contains("\"")) {
-					outStr.append(CRLF+"--"+contentType.split("\"")[1]+suffix+CRLF);
+					outStr.append(CRLF + "--" + contentType.split("\"")[1] + suffix + CRLF);
 				}
-				
-				
+
 			}
 		}
 		return outStr.toString();
 	}
-	
-	
-	
+
 	public static String messageToDKIMBody(MimeMultipart msg, OutputStream out) throws IOException, MessagingException {
-        try {
-        	if (out == null) {
-        		out = new ByteArrayOutputStream();
-        	}        	
-        	CRLFOutputStream outCRLF = new CRLFOutputStream(out);        	
-        	msg.writeTo(outCRLF);        	
-        	if (out instanceof ByteArrayOutputStream) {
-        		out.close();
-        		return new String(((ByteArrayOutputStream)out).toByteArray());
-        	} else {
-        		return null;
-        	}
-        } catch (IOException e) {
-            throw new MessagingException("Exception calculating bodyhash: "
-                    + e.getMessage(), e);
-        }
+		try {
+			if (out == null) {
+				out = new ByteArrayOutputStream();
+			}
+			CRLFOutputStream outCRLF = new CRLFOutputStream(out);
+			msg.writeTo(outCRLF);
+			if (out instanceof ByteArrayOutputStream) {
+				out.close();
+				return new String(((ByteArrayOutputStream) out).toByteArray());
+			} else {
+				return null;
+			}
+		} catch (IOException e) {
+			throw new MessagingException("Exception calculating bodyhash: " + e.getMessage(), e);
+		}
 	}
-	
-	public static String _messageToDKIMBody(MimeMultipart part) throws IOException, MessagingException {		
-		StringBuffer outStr = new StringBuffer();		
+
+	public static String _messageToDKIMBody(MimeMultipart part) throws IOException, MessagingException {
+		StringBuffer outStr = new StringBuffer();
 		final String CRLF = "\r\n";
 		final String SEP = "--boundary";
-		
+
 		for (int i = 0; i < part.getCount(); i++) {
-			
-			if (part.getBodyPart(i).getContent() instanceof MimeMultipart) {				
-				MimeMultipart insideMultipartContent = (MimeMultipart) part.getBodyPart(i).getContent();								
+
+			if (part.getBodyPart(i).getContent() instanceof MimeMultipart) {
+				MimeMultipart insideMultipartContent = (MimeMultipart) part.getBodyPart(i).getContent();
 				Enumeration headers = part.getBodyPart(i).getAllHeaders();
-				/*while (headers.hasMoreElements()) {					
-					Header header = (Header)headers.nextElement();
-					outStr.append(header.getName()+": "+header.getValue()+CRLF);
-				}*/				
-				outStr.append(_messageToDKIMBody(insideMultipartContent)+CRLF);								
+				/*
+				 * while (headers.hasMoreElements()) { Header header =
+				 * (Header)headers.nextElement();
+				 * outStr.append(header.getName()+": "+header.getValue()+CRLF);
+				 * }
+				 */
+				outStr.append(_messageToDKIMBody(insideMultipartContent) + CRLF);
 			} else {
-				outStr.append(SEP+CRLF);				
+				outStr.append(SEP + CRLF);
 				Enumeration headers = part.getBodyPart(i).getAllHeaders();
-				while (headers.hasMoreElements()) {					
-					Header header = (Header)headers.nextElement();					
-					outStr.append(header.getName()+": "+header.getValue()+CRLF);
+				while (headers.hasMoreElements()) {
+					Header header = (Header) headers.nextElement();
+					outStr.append(header.getName() + ": " + header.getValue() + CRLF);
 				}
-				outStr.append(CRLF+part.getBodyPart(i).getContent()+CRLF);
-				
-				if (i==part.getCount()-1) {
-					outStr.append(SEP+"--"+CRLF);
-				}			
-				
+				outStr.append(CRLF + part.getBodyPart(i).getContent() + CRLF);
+
+				if (i == part.getCount() - 1) {
+					outStr.append(SEP + "--" + CRLF);
+				}
+
 			}
 		}
 		return outStr.toString();
 	}
-	
+
 	public static void main(String[] args) {
 		try {
 			InternetAddress mail = new InternetAddress("p&p@noctis.be");
-			System.out.println("***** MailService.main : ismail ? "+StringHelper.isMail("p&p@noctis.be")); //TODO: remove debug trace
-			System.out.println("***** MailService.main : mail = "+mail); //TODO: remove debug trace
+			System.out.println("***** MailService.main : ismail ? " + StringHelper.isMail("p&p@noctis.be")); // TODO:
+																												// remove
+																												// debug
+																												// trace
+			System.out.println("***** MailService.main : mail = " + mail); // TODO:
+																			// remove
+																			// debug
+																			// trace
 		} catch (AddressException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
-	
 
 }

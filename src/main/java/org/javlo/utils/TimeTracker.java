@@ -156,6 +156,10 @@ public class TimeTracker {
 			Map<Integer, TimeEvent> eventMap = events.get(key);
 			TimeEvent timeEvent = getEvent(group, action, number);
 			eventMap.remove(number);
+			if (timeEvent == null) {
+				logger.warning("time event not found "+key+" n:"+number);
+				return;
+			}
 			if (!timeEvent.isInProgress()) {
 				logger.warning("time not started : group=" + group + "  action=" + action);
 			} else {

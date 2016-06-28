@@ -43,6 +43,7 @@ import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.helper.XHTMLHelper;
 import org.javlo.helper.Comparator.StringComparator;
+import org.javlo.mailing.EMail;
 import org.javlo.mailing.MailConfig;
 import org.javlo.mailing.MailService;
 import org.javlo.message.GenericMessage;
@@ -92,7 +93,7 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 
 	private static Logger logger = Logger.getLogger(GenericForm.class.getName());
 
-	private Properties bundle;	
+	private Properties bundle;
 
 	protected static final Object LOCK = new Object();
 
@@ -160,20 +161,20 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 		super.prepareView(ctx);
 		Properties prop = getLocalConfig(false);
 		ctx.getRequest().setAttribute("ci18n", prop);
-		
+
 		ListService listService = ListService.getInstance(ctx);
 		for (Object key : prop.keySet()) {
-			if (((String)key).startsWith("list.")) {
-				listService.addList(((String)key).replaceFirst("list.", ""), StringHelper.stringToCollection(prop.getProperty(((String)key)), ";"));				
+			if (((String) key).startsWith("list.")) {
+				listService.addList(((String) key).replaceFirst("list.", ""), StringHelper.stringToCollection(prop.getProperty(((String) key)), ";"));
 			}
-		}		
+		}
 		RequestService rs = RequestService.getInstance(ctx.getRequest());
 		IUserFactory userFactory = UserFactory.createUserFactory(ctx.getRequest());
 		if (userFactory.getCurrentUser(ctx.getRequest().getSession()) != null) {
-			Map<String,String> userInfo = BeanHelper.bean2Map(userFactory.getCurrentUser(ctx.getRequest().getSession()).getUserInfo());
+			Map<String, String> userInfo = BeanHelper.bean2Map(userFactory.getCurrentUser(ctx.getRequest().getSession()).getUserInfo());
 			for (String key : userInfo.keySet()) {
 				if (!StringHelper.isEmpty(userInfo.get(key)) && StringHelper.isEmpty(rs.getParameter(key, null))) {
-					rs.setParameter(key, userInfo.get(key));					
+					rs.setParameter(key, userInfo.get(key));
 				}
 			}
 		}
@@ -210,7 +211,7 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 		}
 		return bundle;
 	}
-	
+
 	protected File getFile(ContentContext ctx) throws IOException {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		String fileName = "df-" + getId() + ".csv";
@@ -276,7 +277,7 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 	}
 
 	protected boolean isStorage() {
-		return true;
+		return StringHelper.isTrue(getLocalConfig(false).getProperty("mail.store", null), true);
 	}
 
 	protected String getMailHeader(ContentContext ctx) {
@@ -331,15 +332,16 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 
+		EMail email = new EMail();
 		String subject = "GenericForm submit : '" + globalContext.getGlobalTitle() + "' ";
 
 		String subjectField = comp.getLocalConfig(false).getProperty("mail.subject.field", null);
 		if (subjectField != null && requestService.getParameter(subjectField, null) != null) {
 			subject = comp.getLocalConfig(false).getProperty("mail.subject", "") + requestService.getParameter(subjectField, null);
-		} else {
+		} else {			
 			subject = comp.getLocalConfig(false).getProperty("mail.subject", subject);
 		}
-
+		
 		Map<String, Object> params = requestService.getParameterMap();
 		Map<String, String> result = new HashMap<String, String>();
 		List<String> errorFields = new LinkedList<String>();
@@ -352,6 +354,7 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 
 		String fakeField = comp.getLocalConfig(false).getProperty("field.fake", "fake");
 		boolean withXHTML = StringHelper.isTrue(comp.getLocalConfig(false).getProperty("field.xhtml", null));
+		boolean withAttachment = StringHelper.isTrue(comp.getLocalConfig(false).getProperty("mail.attachment", null), true);		
 		boolean fakeFilled = false;
 
 		List<String> keys = new LinkedList<String>(params.keySet());
@@ -379,18 +382,22 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 			InputStream in = file.getInputStream();
 			if (in != null) {
 				try {
-					if (file.getName().trim().length() > 0) {
-						String fileName = URLHelper.mergePath(comp.getAttachFolder(ctx).getAbsolutePath(), StringHelper.createFileName(file.getName()));
-						File freeFile = ResourceHelper.getFreeFileName(new File(fileName));
-						if (ResourceHelper.writeStreamToFile(in, freeFile, maxFileSize) < 0) {
-							GenericMessage msg = new GenericMessage(comp.getLocalConfig(false).getProperty("message.tobig-file", "file to big."), GenericMessage.ERROR);
-							request.setAttribute("msg", msg);
-							return null;
+					if (!withAttachment) {
+						if (file.getName().trim().length() > 0) {
+							String fileName = URLHelper.mergePath(comp.getAttachFolder(ctx).getAbsolutePath(), StringHelper.createFileName(file.getName()));
+							File freeFile = ResourceHelper.getFreeFileName(new File(fileName));
+							if (ResourceHelper.writeStreamToFile(in, freeFile, maxFileSize) < 0) {
+								GenericMessage msg = new GenericMessage(comp.getLocalConfig(false).getProperty("message.tobig-file", "file to big."), GenericMessage.ERROR);
+								request.setAttribute("msg", msg);
+								return null;
+							}
+							StaticInfo staticInfo = StaticInfo.getInstance(ctx, freeFile);
+							String fileURL = URLHelper.createResourceURL(ctx.getContextForAbsoluteURL(), URLHelper.mergePath(globalContext.getStaticConfig().getStaticFolder(), staticInfo.getStaticURL()));
+							result.put(file.getFieldName(), fileURL);
+							specialValues.put(file.getFieldName(), fileURL);
 						}
-						StaticInfo staticInfo = StaticInfo.getInstance(ctx, freeFile);
-						String fileURL = URLHelper.createResourceURL(ctx.getContextForAbsoluteURL(), URLHelper.mergePath(globalContext.getStaticConfig().getStaticFolder(), staticInfo.getStaticURL()));
-						result.put(file.getFieldName(), fileURL);
-						specialValues.put(file.getFieldName(), fileURL);
+					} else {
+						email.addAttachement(file.getName(), in);						
 					}
 				} finally {
 					ResourceHelper.closeResource(in);
@@ -414,8 +421,8 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 					finalValue = specialValues.get(key);
 				}
 
-				/* validation */				
-				if (finalValue != null && finalValue.length() > comp.getMaxSize(ctx, key)) {					
+				/* validation */
+				if (finalValue != null && finalValue.length() > comp.getMaxSize(ctx, key)) {
 					errorFields.add(key);
 					GenericMessage msg = new GenericMessage(comp.getConfigMessage(ctx, key, "max-size"), GenericMessage.ERROR);
 					request.setAttribute("msg", msg);
@@ -426,18 +433,18 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 				} else if (!withXHTML && (finalValue.toLowerCase().contains("</a>") || finalValue.toLowerCase().contains("</div>"))) {
 					fakeFilled = true;
 				}
-				if (finalValue.trim().length() == 0 && StringHelper.containsUppercase(key)) { // needed					
+				if (finalValue.trim().length() == 0 && StringHelper.containsUppercase(key)) { // needed
 					if (!attachField.contains(key)) {
 						errorFields.add(key);
 						GenericMessage msg = new GenericMessage(comp.getLocalConfig(false).getProperty("error.required", "please could you fill all required fields."), GenericMessage.ERROR);
 						request.setAttribute("msg", msg);
-					} else  {
+					} else {
 						if (!noAttach) {
 							errorFields.add(key);
 							GenericMessage msg = new GenericMessage(comp.getLocalConfig(false).getProperty("error.required", "please could you fill all required fields."), GenericMessage.ERROR);
 							request.setAttribute("msg", msg);
-						}						
-					}					
+						}
+					}
 				}
 				if (finalValue.trim().length() > 0 && key.toLowerCase().trim().endsWith("email")) {
 					if (!PatternHelper.MAIL_PATTERN.matcher(finalValue).matches()) {
@@ -521,9 +528,9 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 
 				try {
 					MailService mailService = MailService.getInstance(new MailConfig(globalContext, StaticConfig.getInstance(request.getSession()), null));
-					
+
 					String adminEmailTo = comp.getLocalConfig(false).getProperty("mail.admin.to", globalContext.getAdministratorEmail());
-					
+
 					InternetAddress fromEmail = new InternetAddress(emailFrom);
 					InternetAddress toEmail = new InternetAddress(emailTo);
 					InternetAddress adminEmail = new InternetAddress(adminEmailTo);
@@ -544,8 +551,16 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 					if (bccEmail != null) {
 						bccList = Arrays.asList(bccEmail);
 					}
-
-					mailService.sendMail(null, fromEmail, adminEmail, ccList, bccList, subject, mailContent, comp.isHTMLMail(), null, null);
+					
+					email.setSubject(subject);
+					email.setSender(fromEmail);
+					email.addRecipients(adminEmail);
+					email.setCcRecipients(ccList);
+					email.setBccRecipients(bccList);
+					email.setContent(mailContent);
+					email.setHtml(comp.isHTMLMail());					
+					mailService.sendMail(null, email);
+					//mailService.sendMail(null, fromEmail, adminEmail, ccList, bccList, subject, mailContent, comp.isHTMLMail(), null, null);
 					// remove
 					// debug
 					// trace
@@ -553,7 +568,7 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 					if (pageConfirmation != null) {
 						logger.info("send mailing from:" + emailFrom + " to:" + emailTo);
 						NetHelper.sendPageByMailing(ctx, pageConfirmation, emailFrom, emailTo, params);
-					} 
+					}
 
 					if (formEmail != null) {
 						toEmail = new InternetAddress(formEmail);
@@ -584,7 +599,7 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 		return AbstractVisualComponent.COMPLEXITY_STANDARD;
 	}
 
-	protected void sendConfirmationEmail(ContentContext ctx, GenericForm comp,  Map<String, Object> params, InternetAddress to) throws Exception {
+	protected void sendConfirmationEmail(ContentContext ctx, GenericForm comp, Map<String, Object> params, InternetAddress to) throws Exception {
 		if (to == null) {
 			return;
 		}
