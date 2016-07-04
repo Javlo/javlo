@@ -3122,6 +3122,9 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 
 		if (desc.pageTitle == null || desc.pageTitle.length() == 0) {
 			desc.pageTitle = getTitle(newCtx);
+			if (desc.pageTitle != null && desc.pageTitle.equals(getName())) {
+				desc.pageTitle = getLabel(newCtx);
+			}
 		}
 		return desc.pageTitle;
 	}
