@@ -719,3 +719,5 @@ change log
  * 10/ time traveler bootstrap
  
 * 2.1.0.3.12 04/07/2016
+
+ * 1/ get label as title if no title found
