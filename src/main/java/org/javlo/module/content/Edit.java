@@ -1172,6 +1172,13 @@ public class Edit extends AbstractModuleAction {
 						modify = true;
 					}
 				}
+				if (!userInterface.isLight()) {
+					boolean isModel = StringHelper.isTrue(requestService.getParameter("model", null));
+					if (page.isModel() != isModel) {
+						page.setModel(isModel);
+						modify = true;
+					}
+				}
 
 				if (requestService.getParameter("shorturl", null) != null) {
 					if (!page.isShortURL()) {

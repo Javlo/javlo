@@ -1329,6 +1329,9 @@ public class StringHelper {
 		if (email == null || email.length() == 0) {
 			return false;
 		}
+		if (!email.contains("@")) {
+			return false;
+		}
 		return PatternHelper.MAIL_PATTERN.matcher(email).matches();
 	}
 

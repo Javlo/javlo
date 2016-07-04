@@ -449,6 +449,10 @@ public class XMLHelper {
 				out.print("\" active=\"");
 				out.print(page.isActive());
 			}
+			if (page.isModel()) {
+				out.print("\" model=\"");
+				out.print(page.isModel());
+			}
 			if (!page.getType().equals(MenuElement.PAGE_TYPE_DEFAULT)) {
 				out.print("\" type=\"");
 				out.print(page.getType());

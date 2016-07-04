@@ -264,6 +264,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 			bean.event = new PageEvent();
 			bean.events = page.getEvents(realContentCtx);
 			bean.editable = page.isEditabled(realContentCtx);
+			bean.model = page.isModel();
 			bean.seoWeight = page.getSeoWeight();
 
 			/** check right **/
@@ -461,6 +462,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		private PageEvent event = null;
 		private List<Event> events = null;
 		private boolean editable;
+		private boolean model;
 		private int seoWeight;
 
 		private Collection<String> tags = new LinkedList<String>();
@@ -897,6 +899,14 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 
 		public List<Event> getEvents() {
 			return events;
+		}
+
+		public boolean isModel() {
+			return model;
+		}
+
+		public void setModel(boolean model) {
+			this.model = model;
 		}
 
 	}

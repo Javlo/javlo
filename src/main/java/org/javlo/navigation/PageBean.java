@@ -380,6 +380,15 @@ public class PageBean implements Serializable {
 			return false;
 		}
 	}
+	
+	public boolean isModel() {
+		try {
+			return page.isModel();
+		} catch (Exception e) {
+			return false;
+		}
+	}
+
 
 	public boolean isVisibleForContext() {
 		try {

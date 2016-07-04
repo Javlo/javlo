@@ -1039,6 +1039,8 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 	Set<String> userRoles = new HashSet<String>();
 
 	private String templateId;
+	
+	private boolean model;
 
 	private String savedParent;
 
@@ -5148,6 +5150,14 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 			template = template.getParent();
 		}
 		return false;
+	}
+
+	public boolean isModel() {
+		return model;
+	}
+
+	public void setModel(boolean model) {
+		this.model = model;
 	}
 
 }

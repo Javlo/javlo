@@ -686,6 +686,7 @@ public class PersistenceService {
 		page.setHttps(StringHelper.isTrue(https));
 
 		page.setTemplateId(layout);
+		page.setModel(StringHelper.isTrue(pageXML.getAttributeValue("model", null), false));
 		page.setSavedParent(freeData);
 
 		page.setUserRoles(new HashSet<String>(StringHelper.stringToCollection(roles, ";")));

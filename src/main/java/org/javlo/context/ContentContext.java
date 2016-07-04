@@ -769,11 +769,11 @@ public class ContentContext {
 					if (elem != null) {
 						setCurrentPageCached(elem);
 						globalContext.storeUrl(this, getPath(), elem.getId());						
-					} else {
+					} else {						
 						elem = globalContext.convertOldURL(this, getPath());
 						if (elem != null) {
 							String newURL = URLHelper.createURL(this, elem);
-							logger.info("redirect in ("+getGlobalContext().getContextKey()+") newURL = "+newURL);
+							logger.info("redirect old url ("+getGlobalContext().getContextKey()+" - "+getPath()+") --> = "+newURL +"   url renderer:"+globalContext.getURLFactoryClass());
 							response.sendRedirect(newURL);
 							setCurrentPageCached(elem);
 						} else {

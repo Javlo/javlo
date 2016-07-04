@@ -1284,14 +1284,24 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	private Class<IUserFactory> getAdminUserFactoryClass() throws ClassNotFoundException {
 		if (adminUserFactoryClass == null) {
 			adminUserFactoryClassName = getAdminUserFactoryClassName();
-			adminUserFactoryClass = (Class<IUserFactory>) Class.forName(adminUserFactoryClassName);
+			try {
+				adminUserFactoryClass = (Class<IUserFactory>) Class.forName(adminUserFactoryClassName);
+			} catch (Exception e) {
+				logger.severe(e.getMessage());
+				e.printStackTrace();
+				adminUserFactoryClass = (Class<IUserFactory>) Class.forName(getDefaultAdminUserFactoryClassName());
+			}
 		}
 		return adminUserFactoryClass;
 	}
 
 	public String getAdminUserFactoryClassName() {
-		String userFactoryClass = properties.getString("adminuserfactory.class", "org.javlo.user.AdminUserFactory").trim();
+		String userFactoryClass = properties.getString("adminuserfactory.class", getDefaultAdminUserFactoryClassName() ).trim();
 		return userFactoryClass;
+	}
+	
+	private String getDefaultAdminUserFactoryClassName() {
+		return "org.javlo.user.AdminUserFactory";		
 	}
 
 	public Set<String> getEncodings() {

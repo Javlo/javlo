@@ -278,16 +278,6 @@ public class MailService {
 				msg.setRecipients(Message.RecipientType.BCC, bccRecipients.toArray(new InternetAddress[bccRecipients.size()]));
 			}
 			msg.setSubject(subject, ContentContext.CHARACTER_ENCODING);
-
-			System.out.println("***** MailService.sendMail : isHTML = " + isHTML); // TODO:
-																					// remove
-																					// debug
-																					// trace
-			System.out.println("***** MailService.sendMail : attachments = " + attachments.size()); // TODO:
-																									// remove
-																									// debug
-																									// trace
-
 			if (isHTML) {
 				MimeBodyPart wrap = new MimeBodyPart();
 				MimeMultipart cover = new MimeMultipart("alternative");

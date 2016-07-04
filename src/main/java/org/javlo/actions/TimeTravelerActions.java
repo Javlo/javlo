@@ -145,7 +145,7 @@ public class TimeTravelerActions implements IAction {
 		return null;
 	}
 
-	public static String performReplaceCurrentPage(HttpServletRequest request, HttpServletResponse response) throws Exception {
+	public static String performReplacecurrentpage(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		ContentContext ctx = ContentContext.getContentContext(request, response);
 		ContentContext timeCtx = ctx.getContextWithOtherRenderMode(ContentContext.TIME_MODE);
 		ContentContext editCtx = ctx.getContextWithOtherRenderMode(ContentContext.EDIT_MODE);
@@ -153,10 +153,13 @@ public class TimeTravelerActions implements IAction {
 
 		MenuElement timeCurrentPage = timeCtx.getCurrentPage();
 		MenuElement editCurrentPage = MacroHelper.addPageIfNotExistWithoutMessage(editCtx, content.getNavigation(editCtx), timeCurrentPage, false, false);
-
+		
+		editCtx.setArea(null);
+		timeCtx.setArea(null);
+		
 		MacroHelper.deleteLocalContent(editCurrentPage, editCtx);
-
 		MacroHelper.copyLocalContent(timeCurrentPage, timeCtx, editCurrentPage, editCtx);
+		editCurrentPage.releaseCache();
 
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		PersistenceService persistenceService = PersistenceService.getInstance(globalContext);
