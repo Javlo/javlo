@@ -262,7 +262,7 @@ public class Video extends GlobalImage implements IAction, IVideo {
 				youTubeImageInfo.setShared(ctx, false);
 				youTubeImageInfo.save(ctx);
 			}
-			return URLHelper.createTransformURL(ctx, URLHelper.mergePath(staticConfig.getImageFolder(), "youtube", fileName), getConfig(ctx).getProperty("image.filter", "preview"));
+			return URLHelper.createTransformURL(ctx, URLHelper.mergePath(staticConfig.getImageFolder(), "youtube", fileName), getConfig(ctx).getProperty("image.filter", "video"));
 		}
 		return null;
 	}

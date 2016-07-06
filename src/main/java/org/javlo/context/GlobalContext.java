@@ -1504,6 +1504,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 						Collection<String> lgs = getContentLanguages();
 						for (String lg : lgs) {
 							lgCtx.setRequestContentLanguage(lg);
+							lgCtx.setFormat("html");
 							MenuElement[] children = ContentService.getInstance(ctx.getRequest()).getNavigation(lgCtx).getAllChildren();
 							for (MenuElement menuElement : children) {								
 								String pageURL = urlCreator.createURL(lgCtx, menuElement);								
@@ -1511,6 +1512,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 								localViewPages.put(pageKeyURL, menuElement);
 							}
 						}
+						logger.info("url cache initialized with '"+urlCreator.getClass().getName()+"' url created : "+localViewPages.size()+" [lgs="+lgs+"]");						
 						viewPages = localViewPages;
 						urlFromFactoryImported = true;
 					} else {
@@ -1520,6 +1522,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 			}
 		} else {
 			if (localViewPages == null) {
+				logger.warning("create empty url cache.");
 				localViewPages = new Hashtable<String, MenuElement>();
 				viewPages = localViewPages;
 			}
@@ -1533,7 +1536,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 			MenuElement page = localViewPages.get(keyURL);
 			if (page != null) {
 				return page;
-			}
+			} 
 		}
 		MenuElement root = ContentService.getInstance(ctx.getRequest()).getNavigation(ctx);
 		if (url.equals("/")) {

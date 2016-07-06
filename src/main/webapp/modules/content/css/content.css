@@ -459,3 +459,7 @@ li.line {
 .other-roles {
 	display: none;
 }
+
+.message.error {
+	color: #cc0000;
+}
