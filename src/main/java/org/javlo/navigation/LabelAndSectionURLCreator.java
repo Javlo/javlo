@@ -103,13 +103,17 @@ public class LabelAndSectionURLCreator extends AbstractURLFactory {
 
 		return url;
 	}
+	
+	protected String getExtension(ContentContext ctx) {
+		return '.' + ctx.getFormat();
+	}
 
 	@Override
 	public String createURL(ContentContext ctx, MenuElement currentPage) throws Exception {		
 		if (currentPage.isLikeRoot(ctx)) {
 			return "/";
 		}		
-		return createURLWithoutExt(ctx, currentPage) + '.' + ctx.getFormat();
+		return createURLWithoutExt(ctx, currentPage) +getExtension(ctx) ;
 	}
 	
 	@Override
