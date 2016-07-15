@@ -753,7 +753,7 @@ public class ContentContext {
 	}
 
 	private MenuElement getCurrentPage(boolean urlFacotry) throws Exception {
-		MenuElement outPage = getCurrentPageCached();
+		MenuElement outPage = getCurrentPageCached();		
 		if (outPage == null) {
 			GlobalContext globalContext = GlobalContext.getInstance(request);
 			MenuElement root = ContentService.getInstance(globalContext).getNavigation(this);
@@ -761,7 +761,7 @@ public class ContentContext {
 				outPage = root;
 			} else {				
 				if (getPath().trim().length() > 0) {					
-					MenuElement elem = globalContext.getPageIfExist(this, getPath(), urlFacotry);
+					MenuElement elem = globalContext.getPageIfExist(this, getPath(), urlFacotry);					
 					/*LocalLogger.log("");
 					LocalLogger.log("path="+getPath());
 					LocalLogger.log("elem="+elem);*/
@@ -792,12 +792,12 @@ public class ContentContext {
 		if (outPage == null) {
 			logger.warning("page not found : "+getPath());
 		}
-		
+	
 		if (isAsViewMode() && outPage != null && !outPage.isActive(this)) {
 			if (outPage.isActive()) {
 				logger.info("page not found : "+getPath());
 			}
-			if (!isFree()) {
+			if (!isFree()) {				
 				response.setStatus(HttpServletResponse.SC_NOT_FOUND);	
 			}			
 			return null;
