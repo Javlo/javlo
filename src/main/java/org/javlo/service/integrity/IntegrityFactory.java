@@ -55,6 +55,7 @@ public class IntegrityFactory {
 		checkers.add(new CheckContent());
 		checkers.add(new CheckTitleHierarchy());
 		checkers.add(new CheckImageLabel());		
+		checkers.add(new CheckResource());
 		return checkers;
 	}
 	

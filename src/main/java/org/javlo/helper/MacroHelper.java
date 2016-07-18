@@ -140,7 +140,7 @@ public class MacroHelper {
 		page.addContent(parentCompId, comp);
 		return comp.getId();
 	}
-	
+
 	/**
 	 * add content to a page
 	 * 
@@ -155,7 +155,7 @@ public class MacroHelper {
 	 * @param style
 	 *            the style of the component
 	 * @param renderer
-	 * 	          the renderer selection of the component
+	 *            the renderer selection of the component
 	 * @param area
 	 *            the area of the component
 	 * @param value
@@ -550,7 +550,7 @@ public class MacroHelper {
 			currentPage.removeContent(ctx, component.getId());
 		}
 	}
-	
+
 	public static boolean removeContent(ContentContext ctx, String id) throws Exception {
 		ContentService content = ContentService.getInstance(ctx.getRequest());
 		IContentVisualComponent comp = content.getComponent(ctx, id);
@@ -561,7 +561,7 @@ public class MacroHelper {
 			return false;
 		}
 	}
-	
+
 	public static Date getCurrentMacroDate(HttpSession session) {
 		Date date = (Date) session.getAttribute(MACRO_DATE_KEY);
 		if (date == null) {
@@ -671,13 +671,13 @@ public class MacroHelper {
 				macroFound = true;
 				out.println("<div class=\"macro\">");
 				if (macro instanceof IInteractiveMacro) {
-					String url = URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.EDIT_MODE)) + "?module=macro&"+ContentContext.PREVIEW_EDIT_PARAM+"=true&webaction=macro.executeInteractiveMacro&macro-" + name + '=' + name + "&macro=" + name;
+					String url = URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.EDIT_MODE)) + "?module=macro&" + ContentContext.PREVIEW_EDIT_PARAM + "=true&webaction=macro.executeInteractiveMacro&macro-" + name + '=' + name + "&macro=" + name;
 					String js = "jQuery.colorbox({href : '" + url + "',opacity : 0.6,iframe : true,width : '95%',	height : '95%'});";
 					out.println("<a class=\"action-button\" href=\"#\" onclick=\"" + js + " return false;\">" + i18nAccess.getText("macro.name." + name, name) + "</a>");
 				} else {
 					out.println("<form method=\"post\" action=\"" + URLHelper.createURL(ctx) + "\">");
 					out.println("<input type=\"hidden\" name=\"module\" value=\"macro\" />");
-					out.println("<input type=\"hidden\" name=\""+ContentContext.PREVIEW_EDIT_PARAM+"\" value=\"true\" />");
+					out.println("<input type=\"hidden\" name=\"" + ContentContext.PREVIEW_EDIT_PARAM + "\" value=\"true\" />");
 					out.println("<input type=\"hidden\" name=\"webaction\" value=\"macro.executeMacro\" />");
 					out.println("<input type=\"hidden\" name=\"macro-" + name + "\" value=\"" + name + "\" />");
 					out.println("<input type=\"hidden\" name=\"macro\" value=\"" + name + "\" />");
@@ -726,18 +726,18 @@ public class MacroHelper {
 				year = null;
 			}
 			if (year != null && mount != null) {
-				
+
 				ContentService content = ContentService.getInstance(ctx.getRequest());
-				
+
 				int maxNumber = 1;
-				
+
 				MenuElement root = content.getNavigation(ctx);
 				String pageName = groupPage.getName() + "-" + year + "-" + mount + "-" + maxNumber;
 				while (root.searchChildFromName(pageName) != null) {
 					maxNumber++;
 					pageName = groupPage.getName() + "-" + year + "-" + mount + "-" + maxNumber;
-				}					
-				
+				}
+
 				MenuElement newPage = MacroHelper.addPageIfNotExist(ctx, monthPage.getName(), pageName, true);
 				newPage.setVisible(true);
 
@@ -768,20 +768,22 @@ public class MacroHelper {
 		List<MenuElement> outPages = new LinkedList<MenuElement>();
 		MenuElement root = ContentService.getInstance(ctx.getRequest()).getNavigation(ctx);
 		for (MenuElement page : root.getAllChildren()) {
-			if (page.getChildMenuElements().size() > 0) {
-				boolean isArticleRoot = false;
-				for (MenuElement child : page.getChildMenuElements()) {
-					int index = child.getName().lastIndexOf('-');
-					String year = child.getName();
-					if (index > 0) {
-						year = child.getName().substring(index + 1, child.getName().length());
+			if (page.isActive() && !page.isTrash() && !page.isInTrash()) {
+				if (page.getChildMenuElements().size() > 0) {
+					boolean isArticleRoot = false;
+					for (MenuElement child : page.getChildMenuElements()) {
+						int index = child.getName().lastIndexOf('-');
+						String year = child.getName();
+						if (index > 0) {
+							year = child.getName().substring(index + 1, child.getName().length());
+						}
+						if (year.length() == 4 && NumberUtils.isNumber(year)) {
+							isArticleRoot = true;
+						}
 					}
-					if (year.length() == 4 && NumberUtils.isNumber(year)) {
-						isArticleRoot = true;
+					if (isArticleRoot && (page.getDepth() < 4)) {
+						outPages.add(page);
 					}
-				}
-				if (isArticleRoot && (page.getDepth() < 4)) {
-					outPages.add(page);
 				}
 			}
 		}
@@ -804,22 +806,22 @@ public class MacroHelper {
 			Set<String> keysSet = componentsType.keySet();
 			List<String> keys = new LinkedList<String>();
 			keys.addAll(keysSet);
-			Collections.sort(keys);			
+			Collections.sort(keys);
 			for (String compName : keys) {
 				if (compName.contains(".") && !compName.endsWith(".style") && !compName.endsWith(".list") && !compName.endsWith(".area") && !compName.endsWith(".init-content") && !compName.endsWith(".folder") && !compName.endsWith(".renderer")) {
 					String style = (String) componentsType.get(compName + ".style");
 					boolean asList = StringHelper.isTrue(componentsType.get(compName + ".list"));
 					String area = (String) componentsType.get(compName + ".area");
-					boolean initContent= StringHelper.isTrue(componentsType.get(compName + ".init-content"));
+					boolean initContent = StringHelper.isTrue(componentsType.get(compName + ".init-content"));
 
 					String type = StringHelper.split(compName, ".")[1];
-					
+
 					String folder = (String) componentsType.get(compName + ".folder");
 					if (folder != null) {
 						folder = folder.replace("${page.technicalTitle}", page.getTechnicalTitle(ctx));
 						folder = folder.replace("${page.name}", page.getName());
 					}
-					
+
 					String value = (String) componentsType.get(compName);
 					if (fakeContent) {
 						if (type.equals(Title.TYPE) || type.equals(SubTitle.TYPE)) {
@@ -828,35 +830,35 @@ public class MacroHelper {
 							value = LoremIpsumGenerator.getParagraph(50, false, true);
 						}
 					}
-					
+
 					if (type.equalsIgnoreCase(EventDefinitionComponent.TYPE) || type.equalsIgnoreCase(TimeRangeComponent.TYPE)) {
 						String dateStr = StringHelper.renderTime(date);
-						value = dateStr+TimeRangeComponent.VALUE_SEPARATOR+dateStr;
+						value = dateStr + TimeRangeComponent.VALUE_SEPARATOR + dateStr;
 					} else if (type.equals(DateComponent.TYPE) && date != null) {
 						value = StringHelper.renderTime(date);
 					} else if (type.equals(Tags.TYPE) && tags != null) {
 						value = StringHelper.collectionToString(tags, ";");
 					}
-					
+
 					parentId = MacroHelper.addContent(lg, page, parentId, type, style, area, value, asList, ctx.getCurrentEditUser());
 					if (initContent) {
 						IContentVisualComponent comp = content.getComponent(ctx, parentId);
 						comp.initContent(ctx);
 					}
-					
-					String renderer = (String) componentsType.get(compName+".renderer");
-					if (renderer != null) {						
+
+					String renderer = (String) componentsType.get(compName + ".renderer");
+					if (renderer != null) {
 						IContentVisualComponent comp = content.getComponent(ctx, parentId);
 						comp.setRenderer(ctx, renderer);
 					}
-					
+
 					if (folder != null) {
 						IContentVisualComponent comp = content.getComponent(ctx, parentId);
 						if (comp instanceof AbstractFileComponent) {
-							((AbstractFileComponent)comp).setDirSelected(folder);
+							((AbstractFileComponent) comp).setDirSelected(folder);
 						}
 						if (comp instanceof Multimedia) {
-							((Multimedia)comp).setCurrentRootFolder(ctx, folder);
+							((Multimedia) comp).setCurrentRootFolder(ctx, folder);
 						}
 					}
 				}
@@ -972,13 +974,13 @@ public class MacroHelper {
 		}
 		PersistenceService.getInstance(ctx.getGlobalContext()).setAskStore(true);
 	}
-	
+
 	public static void deleteContentByLanguage(ContentContext ctx, MenuElement page, String lg) {
 		for (ComponentBean bean : page.getContent()) {
 			if (bean.getLanguage().equals(lg)) {
 				page.removeContent(ctx, bean.getId(), false);
 			}
-		}		
+		}
 	}
 
 	public static String getLaunchMacroXHTML(ContentContext ctx, String macro, String label) {
@@ -995,13 +997,13 @@ public class MacroHelper {
 			String url = URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.EDIT_MODE), params);
 			String actionURL = "try{jQuery.colorbox({href : '" + url + "',opacity : 0.6,iframe : true,width : '95%',	height : '95%'});} catch(err) {}; return false;";
 			out.println("<div class=\"macro\">");
-			out.println("<a class=\"as-modal\" href=\""+url+"\" onclick=\"" + actionURL + "\">" + label + "</a>");
+			out.println("<a class=\"as-modal\" href=\"" + url + "\" onclick=\"" + actionURL + "\">" + label + "</a>");
 			out.println("</div>");
 		} else {
 			out.println("<div class=\"macro\">");
 			out.println("<form action=\"" + URLHelper.createURL(ctx) + "\" method=\"post\">");
 			out.println("<input type=\"hidden\" value=\"macro\" name=\"module\">");
-			out.println("<input type=\"hidden\" value=\"true\" name=\""+ContentContext.PREVIEW_EDIT_PARAM+"\">");
+			out.println("<input type=\"hidden\" value=\"true\" name=\"" + ContentContext.PREVIEW_EDIT_PARAM + "\">");
 			out.println("<input type=\"hidden\" value=\"macro.executeMacro\" name=\"webaction\">");
 			out.println("<input type=\"hidden\" value=\"" + macro + "\" name=\"macro\">");
 			out.println("<input class=\"action-button\" type=\"submit\" value=\"" + label + "\">");
@@ -1011,17 +1013,17 @@ public class MacroHelper {
 		out.close();
 		return new String(outStream.toByteArray());
 	}
-	
+
 	public static MenuElement duplicatePage(ContentContext ctx, MenuElement page, String newname, boolean mirror) throws SecurityException, IllegalArgumentException, IllegalAccessException, InvocationTargetException {
 		if (page.getName().equals(newname)) {
 			return null;
 		}
 		MenuElement outPage = MenuElement.getInstance(ctx.getGlobalContext());
-		outPage.setId(StringHelper.getRandomId()) ;
+		outPage.setId(StringHelper.getRandomId());
 		outPage.setName(newname);
 		ComponentBean[] sourceData = page.getContent();
 		ComponentBean[] targetData = new ComponentBean[sourceData.length];
-		int i=0;
+		int i = 0;
 		for (ComponentBean bean : sourceData) {
 			if (mirror) {
 				targetData[i] = new ComponentBean(bean);
@@ -1045,17 +1047,17 @@ public class MacroHelper {
 		outPage.setContent(targetData);
 		return outPage;
 	}
-	
-	public static String copyChildren (ContentContext ctx, MenuElement source, MenuElement target, String sourcePattern, String targetPattern) throws SecurityException, IllegalArgumentException, IllegalAccessException, InvocationTargetException {
+
+	public static String copyChildren(ContentContext ctx, MenuElement source, MenuElement target, String sourcePattern, String targetPattern) throws SecurityException, IllegalArgumentException, IllegalAccessException, InvocationTargetException {
 		String errorPage = "";
 		String sep = "";
-		for (MenuElement child : source.getChildMenuElements())	{
-			MenuElement newChild = duplicatePage(ctx, child, child.getName().replace(sourcePattern, targetPattern),true);
+		for (MenuElement child : source.getChildMenuElements()) {
+			MenuElement newChild = duplicatePage(ctx, child, child.getName().replace(sourcePattern, targetPattern), true);
 			if (newChild != null) {
 				target.addChildMenuElement(newChild);
-				errorPage = errorPage+copyChildren(ctx, child, newChild, sourcePattern, targetPattern);
+				errorPage = errorPage + copyChildren(ctx, child, newChild, sourcePattern, targetPattern);
 			} else {
-				errorPage = errorPage+sep+child.getName();
+				errorPage = errorPage + sep + child.getName();
 				sep = ",";
 			}
 		}

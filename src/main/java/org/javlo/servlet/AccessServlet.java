@@ -232,6 +232,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 	public void process(HttpServletRequest request, HttpServletResponse response, boolean post) throws ServletException {
 
 		try {
+			
 			COUNT_ACCESS++;
 
 			logger.fine("uri : " + request.getRequestURI()); // TODO: remove
@@ -258,7 +259,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 			Thread.currentThread().setName("AccessServlet-" + globalContext.getContextKey());
 
 			ContentContext ctx = ContentContext.getContentContext(request, response);
-
+			
 			if (ctx.isAsViewMode() && ctx.getCurrentPage() != null && staticConfig.isRedirectSecondaryURL() && !ctx.isPostRequest() && StringHelper.isEmpty(request.getQueryString())) {
 				String pageUrl = URLHelper.createURL(ctx, ctx.getCurrentPage());
 				String mainURL = (String)request.getAttribute(CatchAllFilter.MAIN_URI_KEY);
