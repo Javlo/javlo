@@ -723,3 +723,6 @@ change log
  * 1/ get label as title if no title found
 
  * 2/ force html as format on url construction list
+ 
+ * 3/ check if resource as title + don't list trashed page on group list when create article
+ 
