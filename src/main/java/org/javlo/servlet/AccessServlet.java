@@ -730,7 +730,6 @@ public class AccessServlet extends HttpServlet implements IVersion {
 									while (parent != null) {
 										parent = parent.getParent();
 									}
-
 									response.setStatus(HttpServletResponse.SC_FORBIDDEN);
 									return;
 								}
@@ -750,7 +749,6 @@ public class AccessServlet extends HttpServlet implements IVersion {
 								}
 							}
 						} else {
-
 							ContentContext viewCtx = ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE);
 							viewCtx.setAbsoluteURL(true);
 							viewCtx.setFormat("html");

@@ -726,3 +726,5 @@ change log
  
  * 3/ check if resource as title + don't list trashed page on group list when create article
  
+ * 4/ correct PDF justification / remove some check on mailing template 
+ 

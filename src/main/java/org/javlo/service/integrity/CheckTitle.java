@@ -40,4 +40,9 @@ public class CheckTitle extends AbstractIntegrityChecker {
 		return true;
 	}
 	
+	@Override
+	public boolean isApplicableForMailing(ContentContext ctx) {
+		return false;
+	}
+	
 }

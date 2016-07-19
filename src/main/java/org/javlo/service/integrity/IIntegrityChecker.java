@@ -40,4 +40,6 @@ public interface IIntegrityChecker {
 	public String getLevelLabel(ContentContext ctx);
 	
 	public int getLevel(ContentContext ctx);
+	
+	public boolean isApplicableForMailing(ContentContext ctx);
 }

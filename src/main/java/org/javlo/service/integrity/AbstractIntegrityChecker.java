@@ -51,5 +51,10 @@ public abstract class AbstractIntegrityChecker implements IIntegrityChecker {
 	public void setLevel(int level) {
 		this.level = level;
 	}
+	
+	@Override
+	public boolean isApplicableForMailing(ContentContext ctx) {
+		return true;
+	}
 
 }

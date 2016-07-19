@@ -37,7 +37,7 @@ public class CheckResource extends AbstractIntegrityChecker {
 		}
 		if (error>0) {
 			I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
-			setErrorMessage(i18nAccess.getText("integrity.error.resource_without_title", "Resources without title (exemple:"+errorFile.iterator().next().getName()+')'));
+			setErrorMessage(i18nAccess.getText("integrity.error.resource_without_title", "Resources without title ("+errorFile.iterator().next().getName()+')'));
 			setErrorCount(error);
 			setLevel(WARNING_LEVEL);
 			return false;

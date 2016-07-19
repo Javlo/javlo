@@ -36,4 +36,9 @@ public class CheckDescription extends AbstractIntegrityChecker {
 		return true;
 	}
 	
+	@Override
+	public boolean isApplicableForMailing(ContentContext ctx) {
+		return false;
+	}
+	
 }

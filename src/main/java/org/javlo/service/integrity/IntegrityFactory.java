@@ -6,8 +6,9 @@ import java.util.List;
 import org.javlo.context.ContentContext;
 
 /**
- * factory for the content integrity tester.
- * content integrity could check site of component like description or title.
+ * factory for the content integrity tester. content integrity could check site
+ * of component like description or title.
+ * 
  * @author pvandermaesen
  *
  */
@@ -54,11 +55,11 @@ public class IntegrityFactory {
 		checkers.add(new CheckDescription());
 		checkers.add(new CheckContent());
 		checkers.add(new CheckTitleHierarchy());
-		checkers.add(new CheckImageLabel());		
+		checkers.add(new CheckImageLabel());
 		checkers.add(new CheckResource());
 		return checkers;
 	}
-	
+
 	public boolean isError() {
 		for (IntegrityBean bean : beans) {
 			if (bean.getLevel() >= IIntegrityChecker.DANGER_LEVEL) {
@@ -76,11 +77,14 @@ public class IntegrityFactory {
 				int maxErrorLevel = 0;
 				for (IIntegrityChecker checker : outFactory.getAllChecker(ctx)) {
 					try {
-						if (ctx.getCurrentPage().isRealContent(ctx) && !checker.checkPage(ctx, ctx.getCurrentPage())) {
-							if (checker.getLevel(ctx) > maxErrorLevel) {
-								maxErrorLevel = checker.getLevel(ctx);
+						if (!ctx.getCurrentTemplate().isMailing() || checker.isApplicableForMailing(ctx)) {
+							if (ctx.getCurrentPage().isRealContent(ctx)
+									&& !checker.checkPage(ctx, ctx.getCurrentPage())) {
+								if (checker.getLevel(ctx) > maxErrorLevel) {
+									maxErrorLevel = checker.getLevel(ctx);
+								}
+								outFactory.beans.add(new IntegrityBean(ctx, checker));
 							}
-							outFactory.beans.add(new IntegrityBean(ctx, checker));
 						}
 					} catch (Exception e) {
 						e.printStackTrace();

@@ -4,8 +4,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.net.URL;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.logging.Logger;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -15,6 +13,8 @@ import org.javlo.helper.StringHelper;
 import org.w3c.dom.Document;
 import org.xhtmlrenderer.layout.LayoutContext;
 import org.xhtmlrenderer.render.BlockBox;
+import org.xhtmlrenderer.render.InlineText;
+import org.xhtmlrenderer.render.JustificationInfo;
 import org.xhtmlrenderer.render.LineBox;
 import org.xhtmlrenderer.resource.FSEntityResolver;
 
@@ -37,10 +37,11 @@ public class PDFConvertion {
 	}
 
 	public void convertXHTMLToPDF(URL url, final String userName, final String password, OutputStream out) {
-		
-		logger.info("create PDF from : "+url+"  user:"+userName+"  password found:"+(StringHelper.neverNull(password).length()>1));
 
-		if (null != userName && userName.trim().length() != 0 && null != password && password.trim().length() != 0)	{
+		logger.info("create PDF from : " + url + "  user:" + userName + "  password found:"
+				+ (StringHelper.neverNull(password).length() > 1));
+
+		if (null != userName && userName.trim().length() != 0 && null != password && password.trim().length() != 0) {
 
 			java.net.Authenticator.setDefault(new java.net.Authenticator() {
 
@@ -55,54 +56,87 @@ public class PDFConvertion {
 		}
 
 		try {
-			java.net.HttpURLConnection con = (java.net.HttpURLConnection) url.openConnection();			
+			java.net.HttpURLConnection con = (java.net.HttpURLConnection) url.openConnection();
 			DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder builder = documentBuilderFactory.newDocumentBuilder();
 			builder.setEntityResolver(FSEntityResolver.instance());
-			Document doc = builder.parse(con.getInputStream());			
-			org.xhtmlrenderer.pdf.ITextRenderer pdfRenderer = new org.xhtmlrenderer.pdf.ITextRenderer();			
-			pdfRenderer.setDocument(doc,null);
+			Document doc = builder.parse(con.getInputStream());
+			org.xhtmlrenderer.pdf.ITextRenderer pdfRenderer = new org.xhtmlrenderer.pdf.ITextRenderer();
+			pdfRenderer.setDocument(doc, null);
 			pdfRenderer.layout();
+			LayoutContext layoutContext = pdfRenderer.getSharedContext().newLayoutContextInstance();
+			BlockBox rootBox = pdfRenderer.getRootBox();
+			correctAllLines(layoutContext, rootBox);
 			pdfRenderer.createPDF(out);
 		} catch (Exception e1) {
 			e1.printStackTrace();
 
 		}
-		
 
 	}
-	
-	private static void recBox (List<Object> children, Object box) {
-		if (box instanceof BlockBox)  {
-			for (Object child : ((BlockBox)box).getChildren()) {
-				recBox(children, child);
+
+	private static void correctAllLines(LayoutContext layout, Object box) {
+		if (box != null) {
+			if (box instanceof BlockBox) {
+				for (Object child : ((BlockBox) box).getChildren()) {
+					correctAllLines(layout, child);
+				}
+			} else if (box instanceof LineBox) {
+				((LineBox) box).trimTrailingSpace(layout);
+				InlineText text = ((LineBox) box).findTrailingText();
+				if (text != null && text.getParent() != null && text.getParent().getLineBox() != null) {
+				JustificationInfo info = text.getParent().getLineBox().getJustificationInfo();
+				if (info != null) {
+					System.out.println(info.getSpaceAdjust());
+					text.getParent().getLineBox().align(true);
+				}
+
+				System.out.println("2-" + ((LineBox) box).findTrailingText());
+				
+				}
 			}
-		} else  {
-			children.add(box);
 		}
 	}
-	
+
 	public static void main(String[] args) throws Exception {
-		URL url = new URL("http://localhost/javlo/mailing/en/data/anna/anna-16/anna-16-june/test-implementation-of-model/test-implementation-of-model-composition.html?nodmz=true&j_token=y7kvR6c5V0g-&force-device-code=pdf&_clear_session=true&clean-html=true&_absolute-url=true");
-		java.net.HttpURLConnection con = (java.net.HttpURLConnection) url.openConnection();			
+		URL url = new URL(
+				"http://localhost/javlo/mailing/en/data/anna/anna-16/anna-16-june/test-implementation-of-model/test-implementation-of-model-composition.html?nodmz=true&j_token=y7kvR6c5V0g-&force-device-code=pdf&_clear_session=true&clean-html=true&_absolute-url=true");
+		java.net.HttpURLConnection con = (java.net.HttpURLConnection) url.openConnection();
 		DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder builder = documentBuilderFactory.newDocumentBuilder();
 		builder.setEntityResolver(FSEntityResolver.instance());
-		Document doc = builder.parse(con.getInputStream());			
-		org.xhtmlrenderer.pdf.ITextRenderer pdfRenderer = new org.xhtmlrenderer.pdf.ITextRenderer();			
-		pdfRenderer.setDocument(doc,null);
+		Document doc = builder.parse(con.getInputStream());
+		org.xhtmlrenderer.pdf.ITextRenderer pdfRenderer = new org.xhtmlrenderer.pdf.ITextRenderer();
+
+		pdfRenderer.setDocument(doc, null);
+		System.out.println("* START *");
+
 		pdfRenderer.layout();
-		List<Object> boxes = new LinkedList<Object>();
-		recBox(boxes, pdfRenderer.getRootBox());
-		//pdfRenderer.getRootBox().getLayer().getMaster().getContainingLayer().getL 
 		LayoutContext layoutContext = pdfRenderer.getSharedContext().newLayoutContextInstance();
-		for (Object child : boxes) {
-			if (child instanceof LineBox) {
-				((LineBox)child).trimTrailingSpace(layoutContext);
-			}
-			System.out.println(child.getClass());
-		}
+		BlockBox rootBox = pdfRenderer.getRootBox();
+		correctAllLines(layoutContext, rootBox);
+
 		pdfRenderer.createPDF(new FileOutputStream(new File("c:/trans/test.pdf")));
+
 	}
+
+	/*
+	 * public static void main(String[] args) throws Exception { URL url = new
+	 * URL(
+	 * "http://localhost/javlo/mailing/en/data/anna/anna-16/anna-16-june/test-implementation-of-model/test-implementation-of-model-composition.html?nodmz=true&j_token=y7kvR6c5V0g-&force-device-code=pdf&_clear_session=true&clean-html=true&_absolute-url=true"
+	 * ); com.itextpdf.text.Document doc = new
+	 * com.itextpdf.text.Document(PageSize.A4); PdfWriter.getInstance(doc, new
+	 * FileOutputStream(new File("c:/trans/test_itext.pdf"))); doc.open();
+	 * HTMLWorker hw = new HTMLWorker(doc); String k =
+	 * "<html><body> This is my Project </body></html>"; hw.parse(new
+	 * StringReader(NetHelper.readPage(url))); doc.close();
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * }
+	 */
 
 }
