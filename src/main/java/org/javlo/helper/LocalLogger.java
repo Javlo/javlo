@@ -26,6 +26,9 @@ public class LocalLogger {
 	public static boolean ERROR_ON_INIT = false;
 
 	private static AppendableTextFile specialLogFile = null;
+	
+	private static long crono = System.currentTimeMillis();
+	private static long latestStep = System.currentTimeMillis();
 
 	// 0 no trace
 	// 1 minimum information
@@ -164,5 +167,17 @@ public class LocalLogger {
 			e.printStackTrace();
 			ERROR_ON_INIT = true;
 		}
+	}
+	
+	public static final void cronoStart() {
+		log("");
+		crono = System.currentTimeMillis();
+		latestStep = crono;
+	}
+	
+	public static final void cronoStep(String name) {
+		long currentStep = System.currentTimeMillis();
+		log("CRONO : "+name+" - "+StringHelper.renderTimeInSecond(currentStep-latestStep)+" (total:"+StringHelper.renderTimeInSecond(currentStep-crono)+")");
+		latestStep = currentStep;
 	}
 }

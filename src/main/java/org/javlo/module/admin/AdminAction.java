@@ -153,6 +153,8 @@ public class AdminAction extends AbstractModuleAction {
 		private String dkimDomain;
 		private String dkimSelector;
 		
+		private String specialConfig = "";
+		
 		
 		private boolean reversedlink;
 
@@ -229,7 +231,13 @@ public class AdminAction extends AbstractModuleAction {
 			setSmtpport(globalContext.getSMTPPort());
 			setSmtpuser(globalContext.getSMTPUser());
 			setSmtppassword(globalContext.getSMTPPassword());
-
+			
+			try {
+				setSpecialConfig(ResourceHelper.loadStringFromFile(globalContext.getSpecialConfigFile()));
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
+			
 			Properties properties = new Properties();
 			properties.putAll(globalContext.getURIAlias());
 			ByteArrayOutputStream outStream = new ByteArrayOutputStream();
@@ -771,6 +779,14 @@ public class AdminAction extends AbstractModuleAction {
 			this.dkimSelector = dkimSelector;
 		}
 
+		public String getSpecialConfig() {
+			return specialConfig;
+		}
+
+		public void setSpecialConfig(String specialConfig) {
+			this.specialConfig = specialConfig;
+		}
+
 	}
 
 	public static class ComponentBean {
@@ -1177,7 +1193,13 @@ public class AdminAction extends AbstractModuleAction {
 					
 					if (requestService.getParameter("resetdkim", null) != null) {
 						DKIMFactory.resetKeys(currentGlobalContext);
-					}					
+					}		
+					
+					/** special config **/
+					String specialConfig = requestService.getParameter("specialconfig", "");
+					if (!StringHelper.isEmpty(specialConfig)) {
+						ResourceHelper.writeStringToFile(currentGlobalContext.getSpecialConfigFile(), specialConfig);
+					}
 					
 					/** SMTP **/
 					currentGlobalContext.setSMTPHost(requestService.getParameter("mailing-smtphost",null));
@@ -1697,4 +1719,6 @@ public class AdminAction extends AbstractModuleAction {
 		}
 		return null;
 	}
+	
+	
 }

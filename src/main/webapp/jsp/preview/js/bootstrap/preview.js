@@ -542,6 +542,7 @@ editPreview.initPreview = function() {
 	/*************************/	
 	/** drag and drop page * */
 	/*************************/
+	
 	var drop = document.querySelectorAll('#preview_command ul.navigation a.draggable'), el = null;
 	for (var i = 0; i < drop.length; i++) {
 		el = drop[i];
@@ -559,10 +560,43 @@ editPreview.initPreview = function() {
 		    el.addEventListener('dragstart', function (event) {
 		    	var targetPageName = pjq(this).attr("id");		    	
 		    	event.dataTransfer.setData('text', "page:"+targetPageName);
+		    	var dragParent = pjq(this).parent();		    	
+		    	while (dragParent != null && dragParent.prop("tagName") != "UL") {		    		
+		    		dragParent = dragParent.parent();		    		
+		    	}		    	
+		    	setTimeout(function(){
+		    		if (dragParent.children().first().hasClass("title")) {
+		    			dragParent.children().first().after('<li><a id="_ep_new-component-fakefirst"></a></li>');		    			
+		    		} else {
+		    			dragParent.prepend('<li><a id="_ep_new-component-fakefirst"></a></li>');
+		    		}
+		    		fakefirst = document.querySelectorAll('#preview_command #_ep_new-component-fakefirst')[0];		    		
+		    		fakefirst.setAttribute('draggable', 'true'); 
+		    		fakefirst.addEventListener('dragover', function (event) {
+				    	event.preventDefault();
+				    	pjq("._ep_new-component-zone").remove();
+				    	pjq(this).after('<div class="_ep_new-component-zone"></div>');
+				    });
+		    		fakefirst.addEventListener('drop', function (event) {
+		    			event.preventDefault();		    	
+				    	pjq("._ep_new-component-zone").remove();		    	
+				    	var item = pjq(this);
+				    	var pageName = event.dataTransfer.getData('text');				    	
+				    	if (pageName.indexOf("page:") == 0) {
+				    		pageName = pageName.substring(5);		    		
+				    		var ajaxURL = editPreview.addParam(currentURL,"previewEdit=true&webaction=edit.movePage&page=" + pageName + "&previous=0&render-mode=3&init=true&as-child=false");
+							editPreview.ajaxPreviewRequest(ajaxURL, null, null);
+				    	}
+						return false;
+		    		});
+		    	}, 50);	
+		    });		    
+		    el.addEventListener('dragend', function (event) {
+		    	pjq("#_ep_new-component-fakefirst").parent().remove();
 		    });
 		    el.addEventListener('drop', function (event) {
 		    	event.preventDefault();		    	
-		    	pjq("._ep_new-component-zone").remove();
+		    	pjq("._ep_new-component-zone").remove();		    	
 		    	var item = pjq(this);
 		    	var targetPageName = item.attr("id");
 		    	var insertAsChild = false;

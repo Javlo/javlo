@@ -3,6 +3,8 @@ package org.javlo.context;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -127,11 +129,11 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		private String contextKey;
 
 		private File dataFile;
-		
+
 		private File lastBakup;
 
 		private BooleanBean needStoreData = null;
-		
+
 		private Calendar lastBakcup = Calendar.getInstance();
 
 		public StorePropertyThread(GlobalContext globalContext) {
@@ -154,20 +156,20 @@ public class GlobalContext implements Serializable, IPrintInfo {
 			logger.info("start store property thread : " + this.getName());
 			while (!stopStoreThread) {
 				if (needStoreData.isValue()) {
-					needStoreData.setValue(false);					
+					needStoreData.setValue(false);
 					saveData(dataProperties, lockDataFile, contextKey, dataFile);
 					Calendar today = Calendar.getInstance();
 					if (today.get(Calendar.DAY_OF_YEAR) != lastBakcup.get(Calendar.DAY_OF_YEAR)) {
-						synchronized(this) {
+						synchronized (this) {
 							if (today.get(Calendar.DAY_OF_YEAR) != lastBakcup.get(Calendar.DAY_OF_YEAR)) {
 								lastBakcup = today;
 								try {
-									logger.warning("store backup data : "+lastBakup);
+									logger.warning("store backup data : " + lastBakup);
 									ResourceHelper.writeFileToFile(dataFile, lastBakup);
 								} catch (IOException e) {
 									e.printStackTrace();
 								}
-							}					
+							}
 						}
 					}
 				}
@@ -197,6 +199,8 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	private final Map<String, ICache> cacheMaps = new Hashtable<String, ICache>();
 
 	private final Map<String, ICache> eternalCacheMaps = new Hashtable<String, ICache>();
+
+	private SpecialConfigBean config = null;
 
 	private IURLFactory urlFactory = null;
 
@@ -611,11 +615,11 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	}
 
 	public static boolean isExist(HttpServletRequest request, String contextKey) throws IOException, ConfigurationException {
-		
-		if (request.getSession().getServletContext().getAttribute(contextKey) != null) {		
+
+		if (request.getSession().getServletContext().getAttribute(contextKey) != null) {
 			return true;
 		}
-		
+
 		contextKey = StringHelper.stringToFileName(contextKey);
 		String fileName = contextKey + ".properties";
 
@@ -1121,7 +1125,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		}
 		return file;
 	}
-	
+
 	private File getDataBackupFile() throws IOException {
 		File file = new File(ElementaryURLHelper.mergePath(getDataFolder(), "context_data_backup.properties"));
 		if (!file.exists()) {
@@ -1297,12 +1301,12 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	}
 
 	public String getAdminUserFactoryClassName() {
-		String userFactoryClass = properties.getString("adminuserfactory.class", getDefaultAdminUserFactoryClassName() ).trim();
+		String userFactoryClass = properties.getString("adminuserfactory.class", getDefaultAdminUserFactoryClassName()).trim();
 		return userFactoryClass;
 	}
-	
+
 	private String getDefaultAdminUserFactoryClassName() {
-		return "org.javlo.user.AdminUserFactory";		
+		return "org.javlo.user.AdminUserFactory";
 	}
 
 	public Set<String> getEncodings() {
@@ -1506,18 +1510,17 @@ public class GlobalContext implements Serializable, IPrintInfo {
 						for (String lg : lgs) {
 							lgCtx.setRequestContentLanguage(lg);
 							lgCtx.setFormat(null);
-							MenuElement[] children = ContentService.getInstance(ctx.getRequest()).getNavigation(lgCtx).getAllChildren();
-							LocalLogger.log("urlCreator = "+urlCreator.getClass().getName());
-							for (MenuElement menuElement : children) {								
-								String pageURL = urlCreator.createURL(lgCtx, menuElement);								
+							MenuElement[] children = ContentService.getInstance(ctx.getRequest()).getNavigation(lgCtx).getAllChildren();							
+							for (MenuElement menuElement : children) {
+								String pageURL = urlCreator.createURL(lgCtx, menuElement);
 								String pageKeyURL = urlCreator.createURLKey(pageURL);
 								if (pageKeyURL.contains(".")) {
 									pageKeyURL = pageKeyURL.substring(0, pageKeyURL.lastIndexOf("."));
-								}																
+								}
 								localViewPages.put(pageKeyURL, menuElement);
 							}
 						}
-						logger.info("url cache initialized with '"+urlCreator.getClass().getName()+"' url created : "+localViewPages.size()+" [lgs="+lgs+"]");						
+						logger.info("url cache initialized with '" + urlCreator.getClass().getName() + "' url created : " + localViewPages.size() + " [lgs=" + lgs + "]");
 						viewPages = localViewPages;
 						urlFromFactoryImported = true;
 					} else {
@@ -1541,7 +1544,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 			MenuElement page = localViewPages.get(keyURL);
 			if (page != null) {
 				return page;
-			} 
+			}
 		}
 		MenuElement root = ContentService.getInstance(ctx.getRequest()).getNavigation(ctx);
 		if (url.equals("/")) {
@@ -2046,6 +2049,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 			synchronized (LOCK_GLOBAL_CONTEXT_LOAD) {
 				properties.clear();
 				properties.load(contextFile);
+				config = null;
 			}
 		} catch (ConfigurationException e) {
 			e.printStackTrace();
@@ -2267,13 +2271,11 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		needStoreData.setValue(true);
 	}
 
-	/*private void saveData() {
-		try {
-			saveData(dataProperties, lockDataFile, getContextKey(), getDataFile());
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}*/
+	/*
+	 * private void saveData() { try { saveData(dataProperties, lockDataFile,
+	 * getContextKey(), getDataFile()); } catch (IOException e) {
+	 * e.printStackTrace(); } }
+	 */
 
 	private static void saveData(Properties dataProperties, Object lockDataFile, String contextKey, File dataFile) {
 		if (dataProperties != null) {
@@ -3205,9 +3207,9 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	public void storeRedirectUrlList() {
 		PrintWriter localWriter = redirectURLList;
 		redirectURLList = null;
-		ResourceHelper.closeResource(localWriter);		
+		ResourceHelper.closeResource(localWriter);
 	}
-	
+
 	private Properties getRedirectUrlMap() {
 		if (redirectURLMap == null) {
 			synchronized (lockUrlFile) {
@@ -3231,7 +3233,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		}
 		return redirectURLMap;
 	}
-	
+
 	public void resetRedirectUrlMap() {
 		synchronized (lockUrlFile) {
 			redirectURLMap = null;
@@ -3240,7 +3242,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 
 	private static String encodeURLAsKey(String url) {
 		return url;
-		//return StringHelper.createFileName(url);
+		// return StringHelper.createFileName(url);
 	}
 
 	public MenuElement convertOldURL(ContentContext ctx, String url) throws Exception {
@@ -3308,9 +3310,9 @@ public class GlobalContext implements Serializable, IPrintInfo {
 			} else if (key.startsWith(TRANSFORM_SHORT_KEY_PREFIX)) {
 				removeData(key);
 				countRemoveURL++;
-			}			
+			}
 		}
-		logger.info("short url removed : "+countRemoveURL);
+		logger.info("short url removed : " + countRemoveURL);
 	}
 
 	/**
@@ -3360,7 +3362,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 			return shortURL;
 		}
 	}
-	
+
 	public String getUnsubscribeLink() {
 		return properties.getString("unsubscribeLink", null);
 	}
@@ -3400,22 +3402,46 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	public void setSMTPUser(String user) {
 		properties.setProperty(StaticConfig.SMTP_USER_PARAM, user);
 	}
-	
+
 	public String getDKIMDomain() {
 		return properties.getString("mail.dkim.domain", "");
 	}
-	
+
 	public void setDKIMDomain(String domain) {
 		properties.setProperty("mail.dkim.domain", domain);
 		save();
 	}
-	
+
 	public String getDKIMSelector() {
 		return properties.getString("mail.dkim.selector", "");
 	}
-	
+
 	public void setDKIMSelector(String selector) {
 		properties.setProperty("mail.dkim.selector", selector);
 		save();
+	}
+
+	public File getSpecialConfigFile() {
+		return new File(URLHelper.mergePath(staticConfig.getContextFolder(), getContextKey() + "_special.properties"));
+	}
+	
+	public SpecialConfigBean getSpecialConfig() throws IOException {
+		if (config == null) {
+			File configFile = getSpecialConfigFile();
+			if (!configFile.exists()) {
+			config = new SpecialConfigBean(Collections.EMPTY_MAP);
+			} else {
+				Properties p = new Properties();
+				Reader fileReader = null;
+				try {
+					fileReader = new FileReader(configFile);
+					p.load(fileReader);
+				} finally {
+					ResourceHelper.closeResource(fileReader);
+				}
+				config = new SpecialConfigBean(p);
+			}
+		}
+		return config;
 	}
 }

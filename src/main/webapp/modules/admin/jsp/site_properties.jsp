@@ -318,6 +318,10 @@
 </div>
 </c:if>
 </fieldset>
+<fieldset>
+<legend>${i18n.edit['admin.title.special-config']}</legend>
+<textarea class="form-control" id="specialconfig" rows="10" cols="10" name="specialconfig">${currentContext.specialConfig}</textarea>
+</fieldset>
 
 <fieldset>
 <legend>${i18n.edit['global.security']}</legend>

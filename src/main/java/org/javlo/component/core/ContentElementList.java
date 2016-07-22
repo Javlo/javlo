@@ -15,6 +15,7 @@ import org.javlo.component.title.MenuTitle;
 import org.javlo.component.title.PageTitle;
 import org.javlo.component.title.SubTitle;
 import org.javlo.context.ContentContext;
+import org.javlo.helper.LocalLogger;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
 
@@ -538,7 +539,6 @@ public class ContentElementList implements IContentComponentsList {
 
 	IContentVisualComponent nextElem(ContentContext ctx) {
 		IContentVisualComponent comp = getElement(pos);
-
 		int i = 1;
 		while ((comp != null) && (!isVisible(ctx, comp))) {
 			comp = getElement(pos + i);

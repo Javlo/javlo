@@ -842,6 +842,9 @@ public class ResourceHelper {
 	}
 
 	public static final String loadStringFromFile(File file) throws IOException {
+		if (!file.exists()) {
+			return "";
+		}
 		InputStream in = new FileInputStream(file);
 		String content = loadStringFromStream(in, ContentContext.CHARSET_DEFAULT);
 		closeResource(in);

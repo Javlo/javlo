@@ -8,6 +8,8 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -408,6 +410,17 @@ public class BeanHelper {
 		System.out.println("[BeanHelper.java]-[test]-bean2.getPassword()="
 				+ bean2.getPassword()); /* TODO: REMOVE TRACE */
 
+	}
+	
+	private static Map<Class, Map<String,String>> beanDescribeCache = Collections.synchronizedMap(new HashMap<Class, Map<String,String>>());
+	
+	public static Map<String,String> cachedDescribe(Object bean) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+			Map<String,String> beanDescription = beanDescribeCache.get(bean.getClass());
+			if (beanDescription == null) {
+				beanDescription = BeanUtils.describe(bean);
+				beanDescribeCache.put(bean.getClass(), beanDescription);
+			}
+			return beanDescription;
 	}
 
 }

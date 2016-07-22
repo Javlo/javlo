@@ -1,6 +1,7 @@
 package org.javlo.data;
 
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
 import java.text.DateFormatSymbols;
 import java.util.Calendar;
 import java.util.Collection;
@@ -14,6 +15,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.beanutils.BeanUtils;
 import org.javlo.component.core.ContentElementList;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.core.ISubTitle;
@@ -73,7 +75,7 @@ public class InfoBean {
 	private String fakeCurrentURL = null;
 
 	private ImageBean imageHeader = null;
-
+	
 	private static final Map<String, String> staticData = Collections.unmodifiableMap(new HashMap<String, String>() {
 		{
 			put("compId", IContentVisualComponent.COMP_ID_REQUEST_PARAM);
@@ -93,7 +95,8 @@ public class InfoBean {
 		}
 		return ib;
 	}
-
+	
+	
 	/**
 	 * create info bean in request (key=info) for jstp call in template.
 	 * 

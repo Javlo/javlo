@@ -21,12 +21,14 @@
 		org.javlo.component.column.ColContext,
 		org.javlo.component.column.OpenCol,
 		org.javlo.context.GlobalContext,
+		org.javlo.context.GlobalContext,
 		org.javlo.user.User,
 		org.javlo.user.UserFactory,
 		org.javlo.user.IUserFactory,
 		org.javlo.user.AdminUserSecurity,
 		org.javlo.component.core.ComponentBean,				
-		org.javlo.helper.URLHelper"
+		org.javlo.helper.URLHelper,
+		org.javlo.helper.LocalLogger"
 %><%
 ContentContext ctx = ContentContext.getContentContext ( request, response );
 GlobalContext globalContext = GlobalContext.getInstance(request);
@@ -119,7 +121,7 @@ IContentVisualComponent previousElem = null;
 	}
 	
 	if (!displayZone) {
-	while (specificComp != null || (elems != null && elems.hasNext(ctx))) {
+	while (specificComp != null || elems.hasNext(ctx)) {
 		pageEmpty = false;
 		if (specificComp == null) {
 			elem = elems.next(ctx);
@@ -127,6 +129,7 @@ IContentVisualComponent previousElem = null;
 			elem = specificComp;
 			specificComp = null;
 		}
+		
 		if (!(removeRepeat && elem.isRepeat() && !elem.getPage().equals(currentPage))) {
 			elem.clearReplacement();
 			elem.replaceAllInContent(replacement);
@@ -148,11 +151,8 @@ IContentVisualComponent previousElem = null;
 						containers.pop();
 					}
 				}
-			}
-			
-			%><%if (elems != null) {%><%=elems.getPrefixXHTMLCode(ctx)
-%><%}
-%><%
+			}			
+			%><%=elems.getPrefixXHTMLCode(ctx)%><%
 if (globalContext.isCollaborativeMode() && ctx.getRenderMode() == ContentContext.PREVIEW_MODE) {
 	request.setAttribute("elem", elem);	
 	if (previousElem != null && previousElem.getAuthors().equals(elem.getAuthors())) {
@@ -171,7 +171,7 @@ if (xhtmlCode != null && StringHelper.removeTag(xhtmlCode).trim().length() == 0 
 }%></c:if><%=elem.getPrefixViewXHTMLCode(ctx)%><%=xhtmlCode%><%=elem.getSuffixViewXHTMLCode(ctx)%><%
 previousElem = elem;
 if (elems != null) {%><%=elems.getSufixXHTMLCode(ctx)
-%><%}%><%		
+%><%}%><%
 		}	
 	}
 }

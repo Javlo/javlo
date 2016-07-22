@@ -2115,14 +2115,14 @@ public class XHTMLHelper {
 		if (infoBean == null) {
 			return xhtml;
 		}
-		Map<String, Object> properties = BeanUtils.describe(infoBean);
+		Map<String, String> properties = BeanHelper.cachedDescribe(infoBean);
 		for (String key : properties.keySet()) {
 			String jstlStr = "${" + InfoBean.REQUEST_KEY + '.' + key + '}';
 			if (properties.get(key) != null) {
 				xhtml = xhtml.replace(jstlStr, properties.get(key).toString());
 			}
 		}
-		properties = BeanUtils.describe(infoBean.getPage());
+		properties = BeanHelper.cachedDescribe(infoBean.getPage());
 		for (String key : properties.keySet()) {
 			String jstlStr = "${" + InfoBean.REQUEST_KEY + ".page." + key + '}';
 			if (properties.get(key) != null) {
@@ -2130,7 +2130,7 @@ public class XHTMLHelper {
 			}
 		}
 		if (Basket.isInstance(ctx)) {
-			properties = BeanUtils.describe(Basket.getInstance(ctx));
+			properties = BeanHelper.cachedDescribe(Basket.getInstance(ctx));
 			for (String key : properties.keySet()) {
 				String jstlStr = "${" + Basket.KEY + '.' + key + '}';
 				if (properties.get(key) != null) {
@@ -2142,7 +2142,7 @@ public class XHTMLHelper {
 	}
 
 	public static String replaceJSTLUserInfo(String xhtml, IUserInfo userInfo) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, UnsupportedEncodingException {
-		Map<String, Object> properties = BeanUtils.describe(userInfo);
+		Map<String, String> properties = BeanHelper.cachedDescribe(userInfo);
 		for (String key : properties.keySet()) {
 			String jstlStr = "${user." + key + '}';
 			if (properties.get(key) != null) {

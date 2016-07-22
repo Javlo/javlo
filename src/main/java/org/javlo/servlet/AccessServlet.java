@@ -232,7 +232,6 @@ public class AccessServlet extends HttpServlet implements IVersion {
 	public void process(HttpServletRequest request, HttpServletResponse response, boolean post) throws ServletException {
 
 		try {
-			
 			COUNT_ACCESS++;
 
 			logger.fine("uri : " + request.getRequestURI()); // TODO: remove
@@ -270,7 +269,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 					return;
 				}
 			}
-
+			
 			if (!staticConfig.isContentExtensionValid(ctx.getFormat())) {
 				ctx.setFormat(staticConfig.getDefaultContentExtension());
 				ctx.setContentFound(false);
@@ -416,7 +415,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 			if (logger.isLoggable(Level.FINE)) {
 				logger.fine(requestLabel + " : i18nAccess.requestInit(ctx) " + df.format((double) (System.currentTimeMillis() - startTime) / (double) 1000) + " sec.");
 			}
-
+			
 			/* ********************** */
 			/* CHECK SYSTEM INTEGRITY */
 			/* ********************** */
@@ -606,7 +605,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 				if (logger.isLoggable(Level.FINE)) {
 					logger.fine(requestLabel + " : InfoBean " + df.format((double) (System.currentTimeMillis() - startTime) / (double) 1000) + " sec.");
 				}
-
+				
 				/* **** */
 				/* EDIT */
 				/* **** */
@@ -870,7 +869,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 								}
 							}
 
-							/** check page securised **/
+							/** check page security **/
 
 							if (globalContext.getActivationKey() != null) {
 								String activationKey = requestService.getParameter("activation-key", null);
@@ -925,7 +924,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 								SharedContentService.prepare(ctx);
 
 							}
-
+							
 							/** check content **/
 							if (!ctx.isContentFound()) {
 								if (staticConfig.isRedirectWidthName()) {
@@ -961,7 +960,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 
 							String area = requestService.getParameter("only-area", null);
 							if (area != null) {
-								getServletContext().getRequestDispatcher("/jsp/view/content_view.jsp?area=" + area).include(request, response);
+								getServletContext().getRequestDispatcher("/jsp/view/content_view.jsp?area=" + area).include(request, response);								
 							} else {
 								if (ctx.getCurrentPage() != null) {
 									String jspPath = template.getRendererFullName(ctx);

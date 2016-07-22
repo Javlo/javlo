@@ -771,7 +771,7 @@ public class Edit extends AbstractModuleAction {
 				ComponentBean bean = (ComponentBean) copied;
 				IContentVisualComponent sourceComp = contentService.getComponent(ctx, bean.getId());
 				if (!bean.getType().equals(TableBreak.TYPE)) {
-					if (globalContext.isMailingPlatform() || !sourceComp.isMirroredByDefault(ctx) && !(sourceComp instanceof IContainer)) {
+					if (!globalContext.getSpecialConfig().isPasteAsMirror() || globalContext.isMailingPlatform() || !sourceComp.isMirroredByDefault(ctx) && !(sourceComp instanceof IContainer)) {
 						newId = content.createContent(ctx, targetPage, areaKey, previousId, bean, true);
 					} else {
 						if (!(sourceComp instanceof IContainer)) {
@@ -1696,24 +1696,22 @@ public class Edit extends AbstractModuleAction {
 	}
 
 	public static String performMovePage(RequestService rs, ContentContext ctx, GlobalContext globalContext, ContentService content, I18nAccess i18nAccess, MessageRepository messageRepository) throws Exception {
-
 		if (!canModifyCurrentPage(ctx) || !checkPageSecurity(ctx)) {
 			messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("action.block"), GenericMessage.ERROR));
 			return null;
 		}
-
 		String pageName = rs.getParameter("page", null);
 		String pagePreviousName = rs.getParameter("previous", null);
 		if (pageName == null || pagePreviousName == null) {
 			return "bad request structure : need 'page' and 'previous' parameters";
-		}
+		}		
 		pageName = pageName.replaceFirst("page-", "");
 		MenuElement pagePrevious = null;
 		if (pagePreviousName.startsWith("page-")) {
 			pagePreviousName = pagePreviousName.replaceFirst("page-", "");
 			pagePrevious = content.getNavigation(ctx).searchChildFromName(pagePreviousName);
 		}
-		if (pagePrevious == null) {
+		if (pagePrevious == null && !pagePreviousName.equals("0")) {
 			return "previous page not found : " + pagePreviousName;
 		}
 		MenuElement page = content.getNavigation(ctx).searchChildFromName(pageName);
@@ -1721,21 +1719,20 @@ public class Edit extends AbstractModuleAction {
 			return "page not found : " + pageName;
 		}
 		if (!canModifyCurrentPage(ctx, page) || !checkPageSecurity(ctx, page)) {
-			messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("action.block"), GenericMessage.ERROR), false);
+			messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("action.block"), GenericMessage.ERROR), false);			
 			return null;
-		}
-
-		if (page == null) {
-			return "page not found : " + pageName;
-		}
-		if (StringHelper.isTrue(rs.getParameter("as-child", null))) {
+		}		
+		if (pagePrevious == null) {
+			NavigationHelper.movePage(ctx, page.getParent(), null, page);
+		} else if (StringHelper.isTrue(rs.getParameter("as-child", null))) {
 			NavigationHelper.movePage(ctx, pagePrevious, null, page);
 		} else {
 			NavigationHelper.movePage(ctx, pagePrevious.getParent(), pagePrevious, page);
 		}
 		modifPage(ctx, page);
-		modifPage(ctx, pagePrevious);
-
+		if (pagePrevious !=  null) {
+			modifPage(ctx, pagePrevious);
+		}
 		PersistenceService persistenceService = PersistenceService.getInstance(globalContext);
 		persistenceService.setAskStore(true);
 		autoPublish(ctx.getRequest(), ctx.getResponse());
@@ -1794,7 +1791,7 @@ public class Edit extends AbstractModuleAction {
 			bean.setLanguage(ctx.getRequestContentLanguage());
 			// parentId = content.createContent(ctx, bean, parentId, true);
 
-			if (globalContext.isMailingPlatform() || !comp.isMirroredByDefault(ctx)) {
+			if (globalContext.isMailingPlatform() || !comp.isMirroredByDefault(ctx) || !globalContext.getSpecialConfig().isPasteAsMirror()) {
 				parentId = content.createContent(ctx, ctx.getCurrentPage(), bean, parentId, true);
 			} else {
 				if (!(comp instanceof IContainer)) {
