@@ -453,7 +453,11 @@ public class StringHelper {
 	public static String createI18NURL(String value) {
 		value = value.trim();
 		value = value.replace("&nbsp;", "-");
-		value = createCleanName(value, EU_ACCEPTABLE_CHAR_NO_POINT, '-');
+		value = value.replaceAll("[\\(\\)\\#\\]\\[\\@\\*\\+\\=\\;\\,\\!\\$\\\\\\:\\&\\?\\/\\'\\\" ]", "-");
+		while (value.contains("--")) {
+			value = value.replace("--","-");
+		}
+		//value = createCleanName(value, EU_ACCEPTABLE_CHAR_NO_POINT, '-');
 		try {
 			return URLEncoder.encode(trim(value, '-').toLowerCase(), ContentContext.CHARACTER_ENCODING);
 		} catch (UnsupportedEncodingException e) {
@@ -1459,9 +1463,11 @@ public class StringHelper {
 	}
 
 	public static void main(String[] args) {
-		Pattern p = Pattern.compile(".*\\\"(.*)\\\".*");
-		Matcher m = p.matcher("your \"string\" here");
-		System.out.println(m.group(1));
+		long startTime = System.currentTimeMillis();
+		for (int i=0; i<1000000; i++) {
+			StringHelper.createI18NURL("$été+lorem/#;,[lorem]");
+		}
+		System.out.println("time : "+StringHelper.renderTimeInSecond(System.currentTimeMillis()-startTime));
 	}
 
 	/**

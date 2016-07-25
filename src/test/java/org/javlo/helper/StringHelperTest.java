@@ -323,5 +323,13 @@ public class StringHelperTest extends TestCase {
 		assertEquals("aaa", StringHelper.toLatin("aαa"));
 		assertEquals("aaab", StringHelper.toLatin("aαaβ"));
 	}
+	
+	public void testCreateI18NURL() {
+		assertEquals("lorem", StringHelper.createI18NURL("lorem"));
+		assertEquals("lorem", StringHelper.createI18NURL("lorem/-* $ "));
+		assertEquals("lorem-lorem", StringHelper.createI18NURL("lorem/lorem"));
+		System.out.println(StringHelper.createI18NURL("$été+lorem/#;,'\"[lorem]"));
+		assertEquals("%C3%A9t%C3%A9-lorem-lorem", StringHelper.createI18NURL("$été+lorem/#;,'\"[lorem]"));
+	}
  
 }

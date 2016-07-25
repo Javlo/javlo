@@ -3485,6 +3485,10 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 	public String getContentTitle(ContentContext ctx) throws Exception {
 		return getContent(ctx).getTitle(ctx);
 	}
+	
+	public boolean isTitle(ContentContext ctx) throws Exception {
+		return !name.equals(getTitle(ctx));
+	}
 
 	public String getTitle(ContentContext ctx) throws Exception {
 		if (isTrash()) {
@@ -3808,7 +3812,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 		return isEmpty(ctx, area, false);
 	}
 
-	private boolean isEmpty(ContentContext ctx, String area, boolean withRepeat) throws Exception {
+	public boolean isEmpty(ContentContext ctx, String area, boolean withRepeat) throws Exception {
 		PageDescription desc = getPageDescriptionCached(ctx, ctx.getRequestContentLanguage());
 
 		if (ctx.getRequestContentLanguage() == null) {

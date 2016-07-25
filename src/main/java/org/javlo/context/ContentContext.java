@@ -25,6 +25,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.config.StaticConfig;
 import org.javlo.helper.AjaxHelper.ScheduledRender;
+import org.javlo.helper.LocalLogger;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.navigation.IURLFactory;
@@ -51,7 +52,7 @@ public class ContentContext {
 	private static final String HOST_DEFINED_SITE = "____host-defined-site";
 
 	private static final String FORCE_PATH_PREFIX = "____force-path-prefix";
-	
+
 	private static final String FORCE_SPECIAL_RENDERER = "forced-renderer";
 
 	public static final int EDIT_MODE = 1;
@@ -109,12 +110,13 @@ public class ContentContext {
 	private boolean postRequest = false;
 
 	private int titleDepth = 1;
-	
+
 	private boolean clearSession = false;
 
-	private static ContentContext createContentContext(HttpServletRequest request, HttpServletResponse response, boolean free) {
+	private static ContentContext createContentContext(HttpServletRequest request, HttpServletResponse response,
+			boolean free) {
 		ContentContext ctx = new ContentContext();
-		ctx.setFree(free);		
+		ctx.setFree(free);
 		init(ctx, request, response);
 		ctx.setUser();
 		return ctx;
@@ -129,12 +131,14 @@ public class ContentContext {
 	 * @return
 	 * @throws Exception
 	 */
-	public static ContentContext getFreeContentContext(HttpServletRequest request, HttpServletResponse response) throws Exception {
+	public static ContentContext getFreeContentContext(HttpServletRequest request, HttpServletResponse response)
+			throws Exception {
 		ContentContext freeCtx = createContentContext(request, response, true);
 		return freeCtx;
 	}
 
-	public static ContentContext getContentContext(HttpServletRequest request, HttpServletResponse response) throws Exception {
+	public static ContentContext getContentContext(HttpServletRequest request, HttpServletResponse response)
+			throws Exception {
 		return getContentContext(request, response, true);
 	}
 
@@ -148,11 +152,12 @@ public class ContentContext {
 	 * @return
 	 * @throws Exception
 	 */
-	public static ContentContext getContentContext(HttpServletRequest request, HttpServletResponse response, boolean correctPath) throws Exception {
+	public static ContentContext getContentContext(HttpServletRequest request, HttpServletResponse response,
+			boolean correctPath) throws Exception {
 		ContentContext ctx = (ContentContext) request.getAttribute(CONTEXT_REQUEST_KEY);
 		try {
 			if (ctx == null) {
-				ctx = createContentContext(request, response, true);				
+				ctx = createContentContext(request, response, true);
 				ctx.setFree(false);
 				ctx.correctPath = false;
 			} else {
@@ -171,7 +176,8 @@ public class ContentContext {
 			ctx.setHostName(globalContext.getForcedHost());
 		}
 
-		if (ctx.getRenderMode() != ContentContext.EDIT_MODE && !editContext.isEditPreview() && !ctx.correctPath && correctPath || ctx.getRenderMode() == ContentContext.VIEW_MODE) {
+		if (ctx.getRenderMode() != ContentContext.EDIT_MODE && !editContext.isEditPreview() && !ctx.correctPath
+				&& correctPath || ctx.getRenderMode() == ContentContext.VIEW_MODE) {
 			if (!ctx.isAjax()) {
 				ctx.correctPath = correctPath;
 				ContentService content = ContentService.getInstance(GlobalContext.getInstance(request));
@@ -183,8 +189,10 @@ public class ContentContext {
 							if ((menu != null) && (menu.getChildMenuElements().size() > 0)) {
 								ctx.setPath(menu.getChildMenuElements().iterator().next().getPath());
 								if (!content.contentExistForContext(ctx)) {
-									if (menu.getChildMenuElements().iterator().next().getChildMenuElements().size() > 0) {
-										ctx.setPath(menu.getChildMenuElements().iterator().next().getChildMenuElements().iterator().next().getPath());
+									if (menu.getChildMenuElements().iterator().next().getChildMenuElements()
+											.size() > 0) {
+										ctx.setPath(menu.getChildMenuElements().iterator().next().getChildMenuElements()
+												.iterator().next().getPath());
 									}
 								}
 							}
@@ -196,9 +204,10 @@ public class ContentContext {
 
 		return ctx;
 	}
-	
+
 	/**
 	 * check if there are a contentcontext in the request
+	 * 
 	 * @param request
 	 * @return
 	 */
@@ -245,7 +254,8 @@ public class ContentContext {
 	 * @return
 	 * @throws Exception
 	 */
-	public static ContentContext getEmptyContentContext(HttpServletRequest request, HttpServletResponse response) throws Exception {
+	public static ContentContext getEmptyContentContext(HttpServletRequest request, HttpServletResponse response)
+			throws Exception {
 		ContentContext ctx = new ContentContext();
 		ctx.setRequest(request);
 		ctx.setResponse(response);
@@ -280,7 +290,7 @@ public class ContentContext {
 			if (requestService.getParameter("parentURL", null) != null) {
 				ctx.setParentURL(requestService.getParameter("parentURL", null));
 			}
-			
+
 			ctx.ajax = ContentManager.isAjax(request);
 			ctx.setRequest(request);
 			ctx.setResponse(response);
@@ -355,13 +365,13 @@ public class ContentContext {
 			}
 			if (StringHelper.isTrue(requestService.getParameter(CLEAR_SESSION_PARAM, null))) {
 				ctx.clearSession = true;
-			}			
-			if (request.getParameter(FORCE_SPECIAL_RENDERER) != null) {			
-				IUserFactory fact = UserFactory.createUserFactory(globalContext, ctx.getRequest().getSession());				
+			}
+			if (request.getParameter(FORCE_SPECIAL_RENDERER) != null) {
+				IUserFactory fact = UserFactory.createUserFactory(globalContext, ctx.getRequest().getSession());
 				if (AdminUserSecurity.getInstance().isAdmin(fact.getCurrentUser(request.getSession()))) {
 					ctx.setSpecialContentRenderer(request.getParameter(FORCE_SPECIAL_RENDERER));
 				}
-			}			
+			}
 		} catch (RuntimeException e) {
 			e.printStackTrace();
 		}
@@ -529,7 +539,8 @@ public class ContentContext {
 	@Deprecated
 	public String getContentLanguage() {
 		try {
-			if (isCheckContentArea() && getCurrentTemplate() != null && getCurrentTemplate().isNavigationArea(getArea())) {
+			if (isCheckContentArea() && getCurrentTemplate() != null
+					&& getCurrentTemplate().isNavigationArea(getArea())) {
 				return getLanguage();
 			}
 		} catch (Exception e) {
@@ -609,31 +620,100 @@ public class ContentContext {
 	}
 
 	/**
-	 * return a context with language (if exist), it can be change the language
-	 * (and only this) of the current context). this method use only the default
+	 * return a context with real content (if exist), it can be change the language
+	 * (and only this) of the current context. this method use only the default
 	 * language list.
 	 * 
 	 * @return null if no content found.
 	 * @throws Exception
 	 */
-	public ContentContext getContextWithContent(MenuElement page) throws Exception {
+	public ContentContext getContextWithContent(MenuElement page) throws Exception {		
 		if (page.isRealContent(this)) {
 			return getContextOnPage(page);
 		} else {
 			ContentContext lgCtx = new ContentContext(this);
+			lgCtx.setContentLanguage(getLanguage());
 			lgCtx.setRequestContentLanguage(null);
-			GlobalContext globalContext = GlobalContext.getInstance(getRequest());
-			Collection<String> lgs = globalContext.getDefaultLanguages();
-			for (String lg : lgs) {
-				lgCtx.setAllLanguage(lg);
-				if (page.isRealContent(lgCtx)) {
-					return lgCtx.getContextOnPage(page);
+			/* is content in current content language ? */
+			if (page.isRealContent(lgCtx)) {				
+				return lgCtx;
+			} else {
+				GlobalContext globalContext = GlobalContext.getInstance(getRequest());
+				Collection<String> lgs = globalContext.getDefaultLanguages();
+				for (String lg : lgs) {
+					lgCtx.setAllLanguage(lg);
+					if (page.isRealContent(lgCtx)) {
+						return lgCtx.getContextOnPage(page);
+					}
 				}
 			}
 		}
 		return null;
 	}
 	
+	/**
+	 * return a context with at least one element (if exist), it can be change the language
+	 * (and only this) of the current context. this method use only the default
+	 * language list.
+	 * 
+	 * @return null if no content found.
+	 * @throws Exception
+	 */
+	public ContentContext getContextNotEmpty(MenuElement page) throws Exception {		
+		if (!page.isEmpty(this, ComponentBean.DEFAULT_AREA, false)) {
+			return getContextOnPage(page);
+		} else {
+			ContentContext lgCtx = new ContentContext(this);
+			lgCtx.setContentLanguage(getLanguage());
+			lgCtx.setRequestContentLanguage(null);
+			/* is content in current content language ? */
+			if (!page.isEmpty(lgCtx, ComponentBean.DEFAULT_AREA, false)) {
+				return lgCtx;
+			} else {
+				GlobalContext globalContext = GlobalContext.getInstance(getRequest());
+				Collection<String> lgs = globalContext.getDefaultLanguages();
+				for (String lg : lgs) {
+					lgCtx.setAllLanguage(lg);
+					if (!page.isEmpty(lgCtx, ComponentBean.DEFAULT_AREA, false)) {
+						return lgCtx.getContextOnPage(page);
+					}
+				}
+			}
+		}
+		return null;
+	}
+	
+	/**
+	 * return a context with at least one title (if exist), it can be change the language
+	 * (and only this) of the current context. this method use only the default
+	 * language list.
+	 * 
+	 * @return null if no content found.
+	 * @throws Exception
+	 */
+	public ContentContext getContextWidthTitle(MenuElement page) throws Exception {		
+		if (page.isTitle(this)) {
+			return getContextOnPage(page);
+		} else {
+			ContentContext lgCtx = new ContentContext(this);
+			lgCtx.setAllLanguage(getLanguage());
+			/* is content in current content language ? */
+			if (page.isTitle(lgCtx)) {
+				return lgCtx;
+			} else {
+				GlobalContext globalContext = GlobalContext.getInstance(getRequest());
+				Collection<String> lgs = globalContext.getDefaultLanguages();
+				for (String lg : lgs) {
+					lgCtx.setAllLanguage(lg);
+					if (page.isTitle(lgCtx)) {
+						return lgCtx.getContextOnPage(page);
+					}
+				}
+			}
+		}
+		return null;
+	}
+
 	/**
 	 * return a context with language (if exist), it can be change the language
 	 * (and only this) of the current context). this method use only the default
@@ -643,19 +723,19 @@ public class ContentContext {
 	 * @throws Exception
 	 */
 	public ContentContext getContextWithContentDEBUG(MenuElement page) throws Exception {
-		System.out.println("***** ContentContext.getContextWithContentDEBUG : START : "+page.getPath()); //TODO: remove debug trace
+		System.out.println("***** ContentContext.getContextWithContentDEBUG : START : " + page.getPath()); 
 		if (page.isRealContent(this)) {
 			return getContextOnPage(page);
 		} else {
-			ContentContext lgCtx = new ContentContext(this);			
+			ContentContext lgCtx = new ContentContext(this);
 			lgCtx.setArea(ComponentBean.DEFAULT_AREA);
 			GlobalContext globalContext = GlobalContext.getInstance(getRequest());
 			Collection<String> lgs = globalContext.getDefaultLanguages();
-			for (String lg : lgs) {				
+			for (String lg : lgs) {
 				lgCtx.setAllLanguage(lg);
-				System.out.println("** lg : "+lg + " " + page.isRealContent(lgCtx));
+				System.out.println("** lg : " + lg + " " + page.isRealContent(lgCtx));
 				if (page.isRealContent(lgCtx)) {
-					System.out.println("** FOUND : "+lg);
+					System.out.println("** FOUND : " + lg);
 					return lgCtx.getContextOnPage(page);
 				}
 			}
@@ -663,7 +743,6 @@ public class ContentContext {
 		System.out.println("NOT FOUND.");
 		return null;
 	}
-
 
 	/**
 	 * return a context with language (if exist), it can be change the language
@@ -753,33 +832,35 @@ public class ContentContext {
 	}
 
 	private MenuElement getCurrentPage(boolean urlFacotry) throws Exception {
-		MenuElement outPage = getCurrentPageCached();		
+		MenuElement outPage = getCurrentPageCached();
 		if (outPage == null) {
 			GlobalContext globalContext = GlobalContext.getInstance(request);
 			MenuElement root = ContentService.getInstance(globalContext).getNavigation(this);
 			if (getPath().equals("/")) {
 				outPage = root;
-			} else {				
-				if (getPath().trim().length() > 0) {					
-					MenuElement elem = globalContext.getPageIfExist(this, getPath(), urlFacotry);					
-					/*LocalLogger.log("");
-					LocalLogger.log("path="+getPath());
-					LocalLogger.log("elem="+elem);*/
+			} else {
+				if (getPath().trim().length() > 0) {
+					MenuElement elem = globalContext.getPageIfExist(this, getPath(), urlFacotry);
+					/*
+					 * LocalLogger.log(""); LocalLogger.log("path="+getPath());
+					 * LocalLogger.log("elem="+elem);
+					 */
 
 					if (elem != null) {
 						setCurrentPageCached(elem);
-						globalContext.storeUrl(this, getPath(), elem.getId());						
-					} else {						
+						globalContext.storeUrl(this, getPath(), elem.getId());
+					} else {
 						elem = globalContext.convertOldURL(this, getPath());
 						if (elem != null) {
 							String newURL = URLHelper.createURL(this, elem);
-							logger.info("redirect old url ("+getGlobalContext().getContextKey()+" - "+getPath()+") --> = "+newURL +"   url renderer:"+globalContext.getURLFactoryClass());
+							logger.info("redirect old url (" + getGlobalContext().getContextKey() + " - " + getPath()
+									+ ") --> = " + newURL + "   url renderer:" + globalContext.getURLFactoryClass());
 							response.sendRedirect(newURL);
 							setCurrentPageCached(elem);
 						} else {
 							setContentFound(false);
 							elem = root;
-							setPath(root.getPath());							
+							setPath(root.getPath());
 						}
 					}
 					outPage = elem;
@@ -788,18 +869,18 @@ public class ContentContext {
 				}
 			}
 		}
-		
+
 		if (outPage == null) {
-			logger.warning("page not found : "+getPath());
+			logger.warning("page not found : " + getPath());
 		}
-	
+
 		if (isAsViewMode() && outPage != null && !outPage.isActive(this)) {
 			if (outPage.isActive()) {
-				logger.info("page not found : "+getPath());
+				logger.info("page not found : " + getPath());
 			}
-			if (!isFree()) {				
-				response.setStatus(HttpServletResponse.SC_NOT_FOUND);	
-			}			
+			if (!isFree()) {
+				response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+			}
 			return null;
 		} else {
 			return outPage;
@@ -830,7 +911,8 @@ public class ContentContext {
 			GlobalContext globalContext = GlobalContext.getInstance(getRequest());
 			if (forceTemplate != null) {
 				logger.fine("force template : " + forceTemplate);
-				template = Template.getApplicationInstance(getRequest().getSession().getServletContext(), this, forceTemplate);
+				template = Template.getApplicationInstance(getRequest().getSession().getServletContext(), this,
+						forceTemplate);
 			}
 			if (template == null) {
 				if (getVirtualCurrentPage() == null) {
@@ -842,12 +924,14 @@ public class ContentContext {
 
 			if ((template == null) || !template.exist()) {
 				if (globalContext.getDefaultTemplate() != null) {
-					template = Template.getApplicationInstance(getRequest().getSession().getServletContext(), this, globalContext.getDefaultTemplate());
+					template = Template.getApplicationInstance(getRequest().getSession().getServletContext(), this,
+							globalContext.getDefaultTemplate());
 				}
 			}
 			if (template != null && getSpecialContentRenderer() != null) {
 				if (template.getSpecialRendererTemplate() != null) {
-					Template newTemplate = TemplateFactory.getTemplates(getRequest().getSession().getServletContext()).get(template.getSpecialRendererTemplate());
+					Template newTemplate = TemplateFactory.getTemplates(getRequest().getSession().getServletContext())
+							.get(template.getSpecialRendererTemplate());
 					if (newTemplate != null) {
 						template = newTemplate;
 					}
@@ -945,7 +1029,8 @@ public class ContentContext {
 			return getContentLanguage();
 		} else {
 			try {
-				if (isCheckContentArea() && getCurrentTemplate() != null && getCurrentTemplate().isNavigationArea(getArea())) {
+				if (isCheckContentArea() && getCurrentTemplate() != null
+						&& getCurrentTemplate().isNavigationArea(getArea())) {
 					return getLanguage();
 				}
 			} catch (Exception e) {
@@ -1172,7 +1257,7 @@ public class ContentContext {
 	}
 
 	public void setCurrentPageCached(MenuElement currentPageCached) throws Exception {
-		this.currentPageCached = currentPageCached;		
+		this.currentPageCached = currentPageCached;
 	}
 
 	public void resetCurrentPageCached() {
@@ -1566,7 +1651,7 @@ public class ContentContext {
 	 * @param templateId
 	 * @return false if template not found else true
 	 */
-	public boolean setCurrentTemplateId(String templateId) {		
+	public boolean setCurrentTemplateId(String templateId) {
 		Template template;
 		try {
 			template = TemplateFactory.getDiskTemplates(request.getSession().getServletContext()).get(templateId);
@@ -1726,29 +1811,32 @@ public class ContentContext {
 			this.closePopup = closePopup;
 		}
 	}
-	
+
 	public boolean isEdition() {
 		return EditContext.getInstance(getGlobalContext(), getRequest().getSession()).isEditPreview() || isAsEditMode();
 	}
 
 	/**
 	 * edit from a preview page
+	 * 
 	 * @return
 	 */
-	public boolean isEditPreview() {		
+	public boolean isEditPreview() {
 		if (editPreview == null) {
 			return isEditPreview(request);
 		} else {
 			return editPreview;
 		}
 	}
-	
+
 	/**
 	 * preview in edit mode (component clickable)
+	 * 
 	 * @return
 	 */
 	public boolean isPreviewEdit() {
-		return EditContext.getInstance(getGlobalContext(), getRequest().getSession()).isEditPreview() && isAsPreviewMode();
+		return EditContext.getInstance(getGlobalContext(), getRequest().getSession()).isEditPreview()
+				&& isAsPreviewMode();
 	}
 
 	public void setEditPreview(boolean editPreview) {
@@ -1886,14 +1974,17 @@ public class ContentContext {
 		if (getCurrentPage().getParent() == null) {
 			return false;
 		} else {
-			if (!getGlobalContext().getStaticConfig().isUndo() || getGlobalContext().getFirstLoadVersion() == null || getGlobalContext().isStopUndo()) {
+			if (!getGlobalContext().getStaticConfig().isUndo() || getGlobalContext().getFirstLoadVersion() == null
+					|| getGlobalContext().isStopUndo()) {
 				return false;
 			}
 			PersistenceService persistenceService = PersistenceService.getInstance(getGlobalContext());
 			if (persistenceService.isAskStore()) {
 				return true;
 			} else {
-				return persistenceService.getVersion() > getGlobalContext().getFirstLoadVersion() && (getGlobalContext().getLatestUndoVersion() == null || persistenceService.getVersion() - 1 != getGlobalContext().getLatestUndoVersion());
+				return persistenceService.getVersion() > getGlobalContext().getFirstLoadVersion()
+						&& (getGlobalContext().getLatestUndoVersion() == null
+								|| persistenceService.getVersion() - 1 != getGlobalContext().getLatestUndoVersion());
 			}
 		}
 	}

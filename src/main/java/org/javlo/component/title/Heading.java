@@ -394,5 +394,10 @@ public class Heading extends AbstractPropertiesComponent implements ISubTitle {
 		return outPerform;
 		
 	}
+	
+	@Override
+	public boolean isEmpty(ContentContext ctx) {
+		return true; /* page with only a title is never pertinent */
+	}
 
 }

@@ -7,6 +7,7 @@ import java.util.Collection;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.navigation.PageURL;
 import org.javlo.context.ContentContext;
+import org.javlo.helper.LocalLogger;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 
@@ -44,16 +45,16 @@ public class LabelAndSectionURLCreator extends AbstractURLFactory {
 	}
 
 	protected String createURLWithoutExt(ContentContext ctx, MenuElement currentPage) throws Exception {
-
+		
 		if (currentPage == null) {
 			return "/";
 		}
 
 		ContentContext freeCtx = ctx.getFreeContentContext();		
-		ContentContext realContentContext = freeCtx.getContextWithContent(currentPage);
+		ContentContext contextWidthTitle = freeCtx.getContextWidthTitle(currentPage);		
 		
-		if (realContentContext != null) {
-			freeCtx = realContentContext;
+		if (contextWidthTitle != null) {
+			freeCtx = contextWidthTitle;			
 		}
 		
 		Collection<IContentVisualComponent> comps = currentPage.getContentByType(freeCtx, PageURL.TYPE);
@@ -84,8 +85,13 @@ public class LabelAndSectionURLCreator extends AbstractURLFactory {
 		//String path = StringHelper.createI18NURL(label);
 
 		String url = path;
-		MenuElement sectionPage = getSectionPage(currentPage);
+		MenuElement sectionPage = getSectionPage(currentPage);		
+		
 		if (sectionPage != null && !sectionPage.isLikeRoot(freeCtx)) {
+			contextWidthTitle = freeCtx.getContextWidthTitle(sectionPage);
+			if (contextWidthTitle != null) {
+				freeCtx = contextWidthTitle;			
+			}		
 			url = URLHelper.mergePath(StringHelper.createI18NURL(sectionPage.getLabel(freeCtx)), url);
 		}
 		url = '/' + url;
