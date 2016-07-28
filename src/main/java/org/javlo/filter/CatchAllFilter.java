@@ -2,6 +2,7 @@ package org.javlo.filter;
 
 import java.io.IOException;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.security.Principal;
 import java.util.Arrays;
 import java.util.Collection;
@@ -371,7 +372,7 @@ public class CatchAllFilter implements Filter {
 						if (httpRequest.getSession().isNew()) {
 							httpRequest.getSession().setAttribute(InfoBean.NEW_SESSION_PARAM, true);
 						}						
-						httpRequest.setAttribute(MAIN_URI_KEY, httpRequest.getRequestURI());
+						httpRequest.setAttribute(MAIN_URI_KEY, URLDecoder.decode(httpRequest.getRequestURI(), ContentContext.CHARACTER_ENCODING));
 						httpRequest.getRequestDispatcher(newPath).forward(httpRequest, response);						
 						return;
 					}

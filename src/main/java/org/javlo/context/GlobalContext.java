@@ -1521,14 +1521,14 @@ public class GlobalContext implements Serializable, IPrintInfo {
 						localViewPages = new Hashtable<String, MenuElement>();
 						ContentContext lgCtx = new ContentContext(ctx);
 						Collection<String> mainLgs = getLanguages();
-						Collection<String> lgs = getContentLanguages();
+						Collection<String> contentLanguages = getContentLanguages();
 						for (String mainLg : mainLgs) {
-							for (String lg : lgs) {
-								lgCtx.setContentLanguage(mainLg);
-								lgCtx.setRequestContentLanguage(lg);
+							for (String contentLg : contentLanguages) {
+								lgCtx.setLanguage(mainLg);
+								lgCtx.setContentLanguage(contentLg);
+								lgCtx.setRequestContentLanguage(contentLg);
 								lgCtx.setFormat(null);
-								MenuElement[] children = ContentService.getInstance(ctx.getRequest())
-										.getNavigation(lgCtx).getAllChildren();
+								MenuElement[] children = ContentService.getInstance(ctx.getRequest()).getNavigation(lgCtx).getAllChildren();
 								for (MenuElement menuElement : children) {
 									String pageURL = urlCreator.createURL(lgCtx, menuElement);
 									String pageKeyURL = urlCreator.createURLKey(pageURL);
@@ -1540,7 +1540,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 							}
 						}
 						logger.info("url cache initialized with '" + urlCreator.getClass().getName()
-								+ "' url created : " + localViewPages.size() + " [lgs=" + lgs + "]");
+								+ "' url created : " + localViewPages.size() + " [lgs=" + contentLanguages + "]");
 						viewPages = localViewPages;
 						urlFromFactoryImported = true;
 					} else {

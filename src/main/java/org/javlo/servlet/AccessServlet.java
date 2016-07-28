@@ -12,6 +12,7 @@ import java.io.Writer;
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadMXBean;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -260,12 +261,15 @@ public class AccessServlet extends HttpServlet implements IVersion {
 			ContentContext ctx = ContentContext.getContentContext(request, response);
 			
 			if (ctx.isAsViewMode() && ctx.getCurrentPage() != null && staticConfig.isRedirectSecondaryURL() && !ctx.isPostRequest() && StringHelper.isEmpty(request.getQueryString())) {
-				String pageUrl = URLHelper.createURL(ctx, ctx.getCurrentPage());
-				String mainURL = (String)request.getAttribute(CatchAllFilter.MAIN_URI_KEY);
-				if (mainURL != null && !mainURL.endsWith(pageUrl)) {
-					logger.info("redirect : " + mainURL + " --> " + pageUrl+ " (name : "+ctx.getCurrentPage().getName()+')');
+				ContentContext lgCtx = new ContentContext(ctx);
+				lgCtx.setContentLanguage(ctx.getRequestContentLanguage());
+				String pageUrl = URLHelper.createURL(lgCtx, lgCtx.getCurrentPage());
+				pageUrl = URLDecoder.decode(pageUrl, ContentContext.CHARACTER_ENCODING);
+				String mainURL = (String)request.getAttribute(CatchAllFilter.MAIN_URI_KEY);				
+				
+				if (mainURL != null && !mainURL.endsWith(pageUrl)) {		
 					// response.sendRedirect(pageUrl);
-					NetHelper.sendRedirectPermanently(response, URLHelper.createURL(ctx, ctx.getCurrentPage()));
+					NetHelper.sendRedirectPermanently(response, URLHelper.createURL(lgCtx, lgCtx.getCurrentPage()));
 					return;
 				}
 			}

@@ -709,6 +709,18 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 				return null;
 			}
 		}
+		
+		public String getMainContentLabel() {
+			try {
+				ContentContext mainContextLg = new ContentContext(ctx);
+				mainContextLg.setRequestContentLanguage(ctx.getLanguage());
+				mainContextLg.setContentLanguage(ctx.getLanguage());
+				return page.getLabel(mainContextLg);
+			} catch (Exception e) {
+				logger.warning(e.getMessage());
+				return null;
+			}
+		}
 
 		@Override
 		public String getLocation() {

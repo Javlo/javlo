@@ -704,7 +704,7 @@ change log
  
  * 3/ mail pattern correction
  
- * 4/ file select css correction + TimeTracker congigurable
+ * 4/ file select css correction + TimeTracker configurable
  
  * 5/ encode and decode url by default
  
@@ -734,5 +734,8 @@ change log
  
  * 1/ createI18NURL insert more unauthorized chars and replace with regular expression
 
- * 2/ reverse logic, remove unauthorised chars from url in place of list of authaurised chars 
+ * 2/ reverse logic, remove unauthorised chars from url in place of list of authaurised chars
+ 
+ * 3/ AccessServlet : decode url before comparaison
+  
  
