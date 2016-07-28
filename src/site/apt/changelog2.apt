@@ -737,5 +737,9 @@ change log
  * 2/ reverse logic, remove unauthorised chars from url in place of list of authaurised chars
  
  * 3/ AccessServlet : decode url before comparaison
+ 
+ * 4/ search module
+ 
+ * 2.1.0.3.15 28/07/2016
   
  
