@@ -396,6 +396,11 @@ public class Heading extends AbstractPropertiesComponent implements ISubTitle {
 	}
 	
 	@Override
+	public boolean isDefaultValue(ContentContext ctx) {
+		return getValue().trim().length() == 0;
+	}
+	
+	@Override
 	public boolean isEmpty(ContentContext ctx) {
 		return true; /* page with only a title is never pertinent */
 	}

@@ -28,6 +28,7 @@ public class DashOnImageMacro extends AbstractMacro {
 					String url  = ((GlobalImage)comp).getLink();
 					if (url.trim().length() == 0) {
 						((GlobalImage)comp).setLink("#");
+						((GlobalImage) comp).setModify();
 					}
 				}
 			}

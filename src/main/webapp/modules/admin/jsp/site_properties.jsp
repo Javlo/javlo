@@ -315,7 +315,6 @@
 	</div>
 </div>
 </div>
-</div>
 </c:if>
 </fieldset>
 <fieldset>
