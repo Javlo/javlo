@@ -1,6 +1,7 @@
 package org.javlo.module.search;
 
 import java.io.File;
+import java.net.URLEncoder;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -14,6 +15,7 @@ import org.javlo.component.title.Heading;
 import org.javlo.component.title.Title;
 import org.javlo.context.ContentContext;
 import org.javlo.helper.ResourceHelper;
+import org.javlo.helper.SecurityHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.i18n.I18nAccess;
@@ -31,19 +33,27 @@ public class SearchModuleAction extends AbstractModuleAction {
 	}
 
 	private static boolean isMatching(ComponentBean comp, SearchFilter filter) {
+		if (StringHelper.isEmpty(filter.getTitle()) && StringHelper.isEmpty(filter.getGlobal())) {
+			return false;
+		}
+		boolean outFilter = true;
 		if (!StringHelper.isEmpty(filter.getTitle())) {
 			if ((comp.getType().equals(Title.TYPE) || comp.getType().equals(Heading.TYPE)) && comp.getValue().toLowerCase().contains(filter.getTitle().toLowerCase())) {
-				return true;
+				outFilter = true;
+			} else {
+				outFilter = false;
 			}
 		}
-		if (!StringHelper.isEmpty(filter.getGlobal()) && StringHelper.isEmpty(filter.getTitle())) {
+		if (outFilter && !StringHelper.isEmpty(filter.getGlobal())) {
 			if (comp.getValue().toLowerCase().contains(filter.getGlobal().toLowerCase())) {
-				return true;
+				outFilter = true;
+			} else {
+				outFilter = false;
 			}
 		}
-		return false;
+		return outFilter;
 	}
-	
+
 	private static boolean isMatching(ContentContext ctx, StaticInfo info, SearchFilter filter) {
 		if (!StringHelper.isEmpty(filter.getTitle())) {
 			if ((StringHelper.neverNull(info.getTitle(ctx)).toLowerCase().contains(filter.getTitle().toLowerCase()))) {
@@ -51,7 +61,7 @@ public class SearchModuleAction extends AbstractModuleAction {
 			}
 		}
 		if (!StringHelper.isEmpty(filter.getGlobal()) && StringHelper.isEmpty(filter.getTitle())) {
-			String text = (info.getTitle(ctx)+info.getDescription(ctx)+info.getFile().getName()).toLowerCase();
+			String text = (info.getTitle(ctx) + info.getDescription(ctx) + info.getFile().getName()).toLowerCase();
 			if (text.contains(filter.getGlobal().toLowerCase())) {
 				return true;
 			}
@@ -62,22 +72,30 @@ public class SearchModuleAction extends AbstractModuleAction {
 	public static Collection<SearchResultBean> searchInPage(ContentContext ctx, SearchFilter filter) throws Exception {
 		Map<MenuElement, SearchResultBean> outResult = new HashMap<MenuElement, SearchResultBean>();
 		for (MenuElement page : ctx.getCurrentPage().getRoot().getAllChildren()) {
-			for (ComponentBean comp : page.getContent()) {
-				if (isMatching(comp, filter)) {
-					if (outResult.get(page) == null) {
-						outResult.put(page, new SearchResultBean("page", page.getTitle(ctx), comp.getLanguage(), URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.PREVIEW_MODE), page), comp.getAuthors(), StringHelper.renderSortableDate(page.getModificationDate()), 1));
-					} else {
-						outResult.get(page).setMatching(outResult.get(page).getMatching() + 1);
+			if (SecurityHelper.userAccessPage(ctx, ctx.getCurrentEditUser(), page)) {
+				for (ComponentBean comp : page.getContent()) {
+					if (isMatching(comp, filter)) {
+						if (outResult.get(page) == null) {
+							String url = URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.PREVIEW_MODE), page);
+							if (ctx.isEditPreview()) {
+								Map<String, String> params = new HashMap<String, String>();
+								params.put("webaction", "edit.closepopup");
+								params.put("url", url);
+								url = URLHelper.createURL(ctx, params);
+							}
+							outResult.put(page, new SearchResultBean("page", page.getTitle(ctx), comp.getLanguage(), url, comp.getAuthors(), StringHelper.renderSortableDate(page.getModificationDate()), 1));
+						} else {
+							outResult.get(page).setMatching(outResult.get(page).getMatching() + 1);
+						}
 					}
-					break;
 				}
 			}
 		}
 		return outResult.values();
 	}
-	
+
 	public static Collection<SearchResultBean> searchInResource(ContentContext ctx, SearchFilter filter) throws Exception {
-		Map<Object, SearchResultBean> outResult = new HashMap<Object, SearchResultBean>();		
+		Map<Object, SearchResultBean> outResult = new HashMap<Object, SearchResultBean>();
 		File staticFolder = new File(ctx.getGlobalContext().getStaticFolder());
 		if (staticFolder.exists()) {
 			for (File file : ResourceHelper.getAllFilesList(staticFolder)) {
@@ -88,7 +106,28 @@ public class SearchModuleAction extends AbstractModuleAction {
 						if (StringHelper.isEmpty(title)) {
 							title = staticInfo.getFile().getName();
 						}
-						outResult.put(staticInfo, new SearchResultBean("file", title, ctx.getContentLanguage(), staticInfo.getURL(ctx), staticInfo.getAuthors(ctx), StringHelper.renderSortableDate(staticInfo.getCreationDate(ctx)), 1));
+
+						// String url = staticInfo.getURL(ctx);
+						String url;
+						if (!ctx.isEditPreview()) {
+							url = URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.EDIT_MODE));
+							url = URLHelper.addParam(url, "webaction", "changeRenderer");
+							url = URLHelper.addParam(url, "module", "file");
+							url = URLHelper.addParam(url, "page", "meta");							
+							url = URLHelper.addParam(url, "file", URLHelper.encodePathForAttribute(file.getPath()));
+							String folderFile = file.getParentFile().getAbsolutePath();
+							folderFile = folderFile.replace(ctx.getGlobalContext().getDataFolder(), "");
+							url = URLHelper.addParam(url, "path", folderFile);
+						} else {
+							url = URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.EDIT_MODE));
+							url = URLHelper.addParam(url, "webaction", "file.previewEdit");
+							url = URLHelper.addParam(url, "module", "file");
+							url = URLHelper.addParam(url, "nobreadcrumbs", "true");
+							url = URLHelper.addParam(url, "file", URLHelper.encodePathForAttribute(file.getPath()));
+							url = URLHelper.addParam(url, "previewEdit", "true");
+						}
+
+						outResult.put(staticInfo, new SearchResultBean("file", title, ctx.getContentLanguage(), url, staticInfo.getAuthors(ctx), StringHelper.renderSortableDate(staticInfo.getCreationDate(ctx)), 1));
 					} else {
 						outResult.get(staticInfo).setMatching(outResult.get(staticInfo).getMatching() + 1);
 					}
@@ -97,12 +136,17 @@ public class SearchModuleAction extends AbstractModuleAction {
 		}
 		return outResult.values();
 	}
-	
+
 	@Override
 	public String prepare(ContentContext ctx, ModulesContext modulesContext) throws Exception {
 		Collection<SearchResultBean> items = new LinkedList<SearchResultBean>();
-		items.addAll(searchInPage(ctx, SearchFilter.getInstance(ctx.getRequest())));
-		items.addAll(searchInResource(ctx, SearchFilter.getInstance(ctx.getRequest())));
+		SearchFilter searchFilter = SearchFilter.getInstance(ctx.getRequest());
+		if (StringHelper.isEmpty(searchFilter.getType()) || searchFilter.getType().equals("page")) {
+			items.addAll(searchInPage(ctx, searchFilter));
+		}
+		if (StringHelper.isEmpty(searchFilter.getType()) || searchFilter.getType().equals("file")) {
+			items.addAll(searchInResource(ctx, searchFilter));
+		}
 		ctx.getRequest().setAttribute("items", items);
 		return null;
 	}

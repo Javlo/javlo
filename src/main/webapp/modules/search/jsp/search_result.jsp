@@ -13,10 +13,10 @@
 		<div>
 			<input type="hidden" name="webaction" value="deleteUser" />
 		</div>
-		<table cellpadding="0" cellspacing="0" border="0" class="dyntable"
-			id="sitelist">
+		<table cellpadding="0" cellspacing="0" border="0" class="dyntable" id="sitelist">
 			<thead>
 				<tr>
+					<th class="head1">Q</th>
 					<th class="head0">${i18n.edit['search.type']}</th>
 					<th class="head1">${i18n.edit['search.title']}</th>
 					<th class="head0">${i18n.edit['search.authors']}</th>	
@@ -24,6 +24,7 @@
 				</tr>
 			</thead>
 			<colgroup>
+				<col class="con1" />
 				<col class="con0" />
 				<col class="con1" />
 				<col class="con0" />
@@ -33,6 +34,7 @@
 			
 			<c:forEach var="item" items="${items}">
 				<tr>
+					<td class="head1">${item.matching}</td>
 				    <td class="head0">${item.type}</td>
 					<td class="head1"><a href="${item.url}">${item.title}</a></td>
 					<td class="head0">${item.authors}</td>	
@@ -43,6 +45,7 @@
 			</tbody>
 			<tfoot>
 				<tr>
+					<th class="head1">Q</th>
 					<th class="head0">${i18n.edit['search.type']}</th>
 					<th class="head1">${i18n.edit['search.title']}</th>
 					<th class="head0">${i18n.edit['search.authors']}</th>	
@@ -63,8 +66,8 @@
 									.dataTable(
 											{
 												"sPaginationType" : "full_numbers",
-												"aaSorting" : [ [ 1, "asc" ] ],
-												"aoColumns" : [  null,	null, null, null ],
+												"aaSorting" : [ [ 0, "desc" ] ],
+												"aoColumns" : [  null, null,	null, null, null ],
 												"oLanguage" : {
 													"sUrl" : "${info.editTemplateURL}/js/plugins/i18n/datatable_${info.editLanguage}.txt"
 												},

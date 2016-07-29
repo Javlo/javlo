@@ -82,8 +82,4 @@ public class SearchResultBean {
 	public void setLanguage(String language) {
 		this.language = language;
 	}
-	
-	
-
-
 }

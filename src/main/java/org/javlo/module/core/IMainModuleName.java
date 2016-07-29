@@ -7,5 +7,7 @@ public interface IMainModuleName {
 	public static final String SHARED_CONTENT = "shared-content";
 	
 	public static final String TICKET = "ticket";
+	
+	public static final String SEARCH = "search";
 
 }

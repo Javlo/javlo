@@ -8,6 +8,7 @@ public class SearchFilter {
 
 	private String global;
 	private String title;
+	private String type;
 
 	public static final SearchFilter getInstance(HttpServletRequest request) {
 		final String KEY = "searchFilter";
@@ -23,12 +24,16 @@ public class SearchFilter {
 		if (!StringHelper.isEmpty(request.getParameter("reset"))) {
 			global = "";
 			title = "";
+			type = "";
 		} else {
-			if (!StringHelper.isEmpty(request.getParameter("query"))) {
+			if (request.getParameter("query") != null) {
 				setGlobal(request.getParameter("query"));
 			}
-			if (!StringHelper.isEmpty(request.getParameter("title"))) {
+			if (request.getParameter("title") != null) {
 				setTitle(request.getParameter("title"));
+			}
+			if (request.getParameter("type") != null) {
+				setType(request.getParameter("type"));
 			}
 		}
 	}
@@ -47,6 +52,14 @@ public class SearchFilter {
 
 	public void setTitle(String title) {
 		this.title = title;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
 	}
 
 }

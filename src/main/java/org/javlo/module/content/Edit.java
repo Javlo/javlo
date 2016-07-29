@@ -2211,6 +2211,12 @@ public class Edit extends AbstractModuleAction {
 
 		return null;
 	}
+	
+	public static String performClosepopup(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) {
+		ctx.setParentURL(rs.getParameter("url", null));
+		ctx.setClosePopup(true);
+		return null;
+	}
 
 	public static String performRefresh(ContentContext ctx) throws Exception {
 		// SynchroHelper.performSynchro(ctx);

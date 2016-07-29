@@ -32,6 +32,8 @@ public class UserInterfaceContext {
 	private boolean sendMailing = true;
 	
 	private boolean ticket = false;
+	
+	private boolean search = false;
 
 	private String currentModule = null;
 
@@ -63,6 +65,11 @@ public class UserInterfaceContext {
 				instance.setTicket(true);
 			} else {
 				instance.setTicket(false);
+			}
+			if (globalContext.getModules().contains(IMainModuleName.SEARCH)) {
+				instance.setSearch(true);
+			} else {
+				instance.setSearch(false);
 			}
 			instance.fromString(user.getUserInfo().getInfo());
 			session.setAttribute(KEY, instance);
@@ -161,6 +168,14 @@ public class UserInterfaceContext {
 
 	public void setSendMailing(boolean sendMailing) {
 		this.sendMailing = sendMailing;
+	}
+
+	public boolean isSearch() {
+		return search;
+	}
+
+	public void setSearch(boolean search) {
+		this.search = search;
 	}
 	
 }
