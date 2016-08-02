@@ -412,7 +412,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		}
 
 		if (isContentCachableByQuery(ctx)) {
-			keySuffix = keySuffix + '_' + ctx.getRequest().getQueryString();
+			keySuffix = keySuffix + '_' + ctx.getRequest().getQueryString()+'_'+StringHelper.neverNull(ctx.getCurrentUserId());
 		}
 
 		if (ctx.getDevice() == null) { // TODO: check why this method can return
