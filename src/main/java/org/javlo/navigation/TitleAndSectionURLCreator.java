@@ -54,7 +54,7 @@ public class TitleAndSectionURLCreator extends AbstractURLFactory {
 		if (currentPage.getUrlNumber() > 0) {
 			title = title + '-' +currentPage.getUrlNumber();
 		}
-		String path = URLEncoder.encode(StringHelper.createI18NURL(title), ContentContext.CHARACTER_ENCODING);
+		String path = StringHelper.createI18NURL(title);
 
 		String url = path;
 		MenuElement sectionPage = getSectionPage(currentPage);
