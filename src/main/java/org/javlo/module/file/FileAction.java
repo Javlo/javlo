@@ -121,10 +121,8 @@ public class FileAction extends AbstractModuleAction {
 				modulesContext.getCurrentModule().setToolsRenderer("/jsp/actions.jsp");
 				modulesContext.getCurrentModule().clearAllBoxes();
 				File folder = getFolder(ctx);
-				if (folder.exists()) {
+				if (folder.exists() && folder.listFiles(new DirectoryFilter()) != null) {
 					List<FileBean> allFileInfo = new LinkedList<FileBean>();
-					System.out.println("***** FileAction.prepare : folder = "+folder); //TODO: remove debug trace
-					System.out.println("***** FileAction.prepare : list = "+folder.listFiles(new DirectoryFilter())); //TODO: remove debug trace
 					for (File file : folder.listFiles(new DirectoryFilter())) {
 						allFileInfo.add(new FileBean(ctx, StaticInfo.getInstance(ctx, file)));
 					}
@@ -292,7 +290,7 @@ public class FileAction extends AbstractModuleAction {
 					staticInfo.setCopyright(ctx, copyright);
 				}
 				if (!globalContext.isMailingPlatform()) {
-					boolean shared = rs.getParameter("shared-" + fileBean.getId(), null) != null;				
+					boolean shared = rs.getParameter("shared-" + fileBean.getId(), null) != null;
 					if (title != null) {
 						staticInfo.setShared(ctx, shared);
 					}
@@ -487,8 +485,8 @@ public class FileAction extends AbstractModuleAction {
 		SynchroHelper.performSynchro(ctx);
 		return null;
 	}
-	
-	public static final String performChangeLanguage(RequestService requestService, ContentContext ctx, GlobalContext globalContext, I18nAccess i18nAccess, MessageRepository messageRepository) throws IOException {		
+
+	public static final String performChangeLanguage(RequestService requestService, ContentContext ctx, GlobalContext globalContext, I18nAccess i18nAccess, MessageRepository messageRepository) throws IOException {
 		return Edit.performChangeLanguage(requestService, ctx, globalContext, i18nAccess, messageRepository);
 	}
 
@@ -508,12 +506,15 @@ public class FileAction extends AbstractModuleAction {
 		ctx.getRequest().setAttribute("specialEditRenderer", "/modules/file/jsp/meta.jsp?one=true");
 		return null;
 	}
-	
+
 	public static String performCreatefilestructure(RequestService rs, ContentContext ctx, GlobalContext globalContext, MessageRepository messageRepository, I18nAccess i18nAccess) throws IOException {
-		File file = new File(URLHelper.mergePath(globalContext.getStaticFolder(), "file-structure", StringHelper.createFileName("structure-"+StringHelper.renderSortableTime(new Date())+".html")));
+		File file = new File(URLHelper.mergePath(globalContext.getStaticFolder(), "file-structure", StringHelper.createFileName("structure-" + StringHelper.renderSortableTime(new Date()) + ".html")));
 		file.getParentFile().mkdirs();
-		System.out.println("***** FileAction.performCreatefilestructure : file = "+file); //TODO: remove debug trace
-		file.createNewFile();		
+		System.out.println("***** FileAction.performCreatefilestructure : file = " + file); // TODO:
+																							// remove
+																							// debug
+																							// trace
+		file.createNewFile();
 		ResourceHelper.writeStringToFile(file, ResourceHelper.fileStructureToHtml(new File(globalContext.getStaticConfig().getAllDataFolder())));
 		return null;
 	}

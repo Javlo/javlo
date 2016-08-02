@@ -110,7 +110,7 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 		properties.setProperty(ENCODING_KEY, DEFAULT_ENCODING);
 		properties.setProperty(REVERSE_LINK_KEY, ReverseLinkService.NONE);
 	}
-
+	
 	protected boolean canUpload(ContentContext ctx) {
 		return true;
 	}
@@ -803,6 +803,19 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 		} else {
 			properties.load(stringToStream(getValue()));
 		}
+		if (isImported(ctx) && ctx.getCurrentPage() != null) {
+			String importFolder = getImportFolderPath(ctx);
+			if (!getDirSelected().startsWith(importFolder)) {
+				File oldFile = getFile(ctx);
+				setDirSelected(importFolder);
+				File newFile = getFile(ctx);
+				ResourceHelper.writeFileToFile(oldFile, newFile);
+			}
+		}
+	}
+	
+	protected boolean isImported(ContentContext ctx) {
+		return getDirSelected().startsWith(URLHelper.removeFirstSlash(ctx.getGlobalContext().getStaticConfig().getImportFolder()));				
 	}
 
 	@Override

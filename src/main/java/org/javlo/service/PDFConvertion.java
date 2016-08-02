@@ -13,6 +13,7 @@ import org.javlo.helper.StringHelper;
 import org.w3c.dom.Document;
 import org.xhtmlrenderer.layout.LayoutContext;
 import org.xhtmlrenderer.render.BlockBox;
+import org.xhtmlrenderer.render.InlineLayoutBox;
 import org.xhtmlrenderer.render.InlineText;
 import org.xhtmlrenderer.render.JustificationInfo;
 import org.xhtmlrenderer.render.LineBox;
@@ -38,8 +39,7 @@ public class PDFConvertion {
 
 	public void convertXHTMLToPDF(URL url, final String userName, final String password, OutputStream out) {
 
-		logger.info("create PDF from : " + url + "  user:" + userName + "  password found:"
-				+ (StringHelper.neverNull(password).length() > 1));
+		logger.info("create PDF from : " + url + "  user:" + userName + "  password found:" + (StringHelper.neverNull(password).length() > 1));
 
 		if (null != userName && userName.trim().length() != 0 && null != password && password.trim().length() != 0) {
 
@@ -84,23 +84,22 @@ public class PDFConvertion {
 			} else if (box instanceof LineBox) {
 				((LineBox) box).trimTrailingSpace(layout);
 				InlineText text = ((LineBox) box).findTrailingText();
-				if (text != null && text.getParent() != null && text.getParent().getLineBox() != null) {
-				JustificationInfo info = text.getParent().getLineBox().getJustificationInfo();
-				if (info != null) {
-					System.out.println(info.getSpaceAdjust());
-					text.getParent().getLineBox().align(true);
-				}
-
-				System.out.println("2-" + ((LineBox) box).findTrailingText());
-				
+				/*
+				 * text.getParent().isStartsHere() : for correct unalignement
+				 * with link
+				 */
+				if (text != null && text.getParent() != null && text.getParent().getLineBox() != null && !text.getParent().isStartsHere()) {
+					JustificationInfo info = text.getParent().getLineBox().getJustificationInfo();
+					if (info != null) {
+						text.getParent().getLineBox().align(true);
+					}
 				}
 			}
 		}
 	}
 
 	public static void main(String[] args) throws Exception {
-		URL url = new URL(
-				"http://localhost/javlo/mailing/en/data/anna/anna-16/anna-16-june/test-implementation-of-model/test-implementation-of-model-composition.html?nodmz=true&j_token=y7kvR6c5V0g-&force-device-code=pdf&_clear_session=true&clean-html=true&_absolute-url=true");
+		URL url = new URL("http://localhost/javlo/mailing/en/data/test/test-16/test-16-august/3col_test/3col_test-composition.html?nodmz=true&j_token=y7kvR6c5V0g-&force-device-code=pdf&_clear_session=true&clean-html=true&_absolute-url=true");
 		java.net.HttpURLConnection con = (java.net.HttpURLConnection) url.openConnection();
 		DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder builder = documentBuilderFactory.newDocumentBuilder();
@@ -116,7 +115,7 @@ public class PDFConvertion {
 		BlockBox rootBox = pdfRenderer.getRootBox();
 		correctAllLines(layoutContext, rootBox);
 
-		pdfRenderer.createPDF(new FileOutputStream(new File("c:/trans/test.pdf")));
+		pdfRenderer.createPDF(new FileOutputStream(new File("c:/trans/test3.pdf")));
 
 	}
 

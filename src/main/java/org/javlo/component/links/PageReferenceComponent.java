@@ -61,6 +61,7 @@ import org.javlo.service.RequestService;
 import org.javlo.service.event.Event;
 import org.javlo.template.Template;
 import org.javlo.template.TemplateFactory;
+import org.javlo.user.AdminUserSecurity;
 
 /**
  * list of links to a subset of pages.
@@ -272,9 +273,11 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 			if (roles.size() == 0 && ctx.getCurrentUser() != null) {
 				bean.setCurrentUserAsRight(true);
 			} else {
-				if (ctx.getCurrentUser() != null && !Collections.disjoint(roles, ctx.getCurrentUser().getRoles())) {
+				if (AdminUserSecurity.getInstance().isAdmin(ctx.getCurrentEditUser())) {
 					bean.setCurrentUserAsRight(true);
-				} else {
+				} else if (ctx.getCurrentUser() != null && !Collections.disjoint(roles, ctx.getCurrentUser().getRoles())) {
+					bean.setCurrentUserAsRight(true);
+				} else {					
 					bean.setCurrentUserAsRight(false);
 				}
 			}

@@ -88,9 +88,9 @@
 			<input class="posy" type="hidden" name="posy-${file.id}" value="${file.focusZoneY}" />				
 			</c:if>
 			<div class="label">
-				<a href="${fileSelectURL}" ${dataURL}>
+				<%--<a href="${fileSelectURL}" ${dataURL}>--%>
 				<span>${file.name}</span>
-				</a>
+				<%--</a>--%>
 			</div>
 			</div>
 		</div>		

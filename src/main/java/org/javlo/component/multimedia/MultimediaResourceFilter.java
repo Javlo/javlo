@@ -15,6 +15,8 @@ import org.javlo.utils.CollectionAsMap;
 
 public class MultimediaResourceFilter {
 
+	private static final String KEY = "multimediaFilter";
+	
 	private boolean active = false;
 	private String query = "";
 	private Set<String> tags = new HashSet<String>();
@@ -23,14 +25,14 @@ public class MultimediaResourceFilter {
 
 	public static MultimediaResourceFilter getInstance(ContentContext ctx) throws ParseException {
 		RequestService rs = RequestService.getInstance(ctx.getRequest());
-		MultimediaResourceFilter outFilter = (MultimediaResourceFilter) ctx.getRequest().getSession().getAttribute("multimediaFilter");
+		MultimediaResourceFilter outFilter = (MultimediaResourceFilter) ctx.getRequest().getSession().getAttribute(KEY);
 		if (outFilter == null) {
 			outFilter = new MultimediaResourceFilter();
-			ctx.getRequest().getSession().setAttribute("multimediaFilter", outFilter);
+			ctx.getRequest().getSession().setAttribute(KEY, outFilter);
 		}
 		if (rs.getParameter("clear", null) != null) {
 			outFilter = new MultimediaResourceFilter();
-			ctx.getRequest().getSession().setAttribute("multimediaFilter", outFilter);
+			ctx.getRequest().getSession().setAttribute(KEY, outFilter);
 		} else if (rs.getParameter("filter", null) != null) {
 			outFilter.setQuery(rs.getParameter("mqr", null));
 			String startDate = rs.getParameter("msd", null);
@@ -189,6 +191,23 @@ public class MultimediaResourceFilter {
 			this.endDate = Calendar.getInstance();
 		}
 		this.endDate.setTime(endDate);
+	}
+	
+	public String getHashCode() {
+		int hashCode = 0;
+		if (query != null) {
+			hashCode += query.hashCode();
+		}
+		if (tags != null) {
+			hashCode += tags.hashCode();
+		}
+		if (startDate != null) {
+			hashCode += startDate.hashCode();
+		}
+		if (endDate != null) {
+			hashCode += endDate.hashCode();
+		}
+		return ""+hashCode;
 	}
 
 }

@@ -260,14 +260,14 @@ public class AccessServlet extends HttpServlet implements IVersion {
 
 			ContentContext ctx = ContentContext.getContentContext(request, response);
 			
-			if (ctx.isAsViewMode() && ctx.getCurrentPage() != null && staticConfig.isRedirectSecondaryURL() && !ctx.isPostRequest() && StringHelper.isEmpty(request.getQueryString())) {
+			if (ctx.isAsViewMode() && ctx.isContentFound() && ctx.getCurrentPage() != null && staticConfig.isRedirectSecondaryURL() && !ctx.isPostRequest() && StringHelper.isEmpty(request.getQueryString())) {
 				ContentContext lgCtx = new ContentContext(ctx);
 				lgCtx.setContentLanguage(ctx.getRequestContentLanguage());
 				String pageUrl = URLHelper.createURL(lgCtx, lgCtx.getCurrentPage());
 				pageUrl = URLDecoder.decode(pageUrl, ContentContext.CHARACTER_ENCODING);
 				String mainURL = (String)request.getAttribute(CatchAllFilter.MAIN_URI_KEY);				
 				
-				if (mainURL != null && !mainURL.endsWith(pageUrl)) {		
+				if (mainURL != null && !mainURL.endsWith(pageUrl)) {
 					// response.sendRedirect(pageUrl);
 					NetHelper.sendRedirectPermanently(response, URLHelper.createURL(lgCtx, lgCtx.getCurrentPage()));
 					return;
@@ -723,8 +723,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 						FSImageWriter imageWriter = new FSImageWriter();
 						imageWriter.write(img, out);
 
-					} else if (ctx.getFormat().equalsIgnoreCase("pdf")) {
-						
+					} else if (ctx.getFormat().equalsIgnoreCase("pdf")) {						
 						if (ctx.getGlobalContext().isCollaborativeMode()) {
 							Set<String> pageRoles = ctx.getCurrentPage().getEditorRolesAndParent();
 							if ((pageRoles.size() > 0 || ctx.getCurrentEditUser() == null)) {

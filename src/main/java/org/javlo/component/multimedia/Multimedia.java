@@ -3,6 +3,7 @@ package org.javlo.component.multimedia;
 import java.io.File;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
@@ -1025,7 +1026,7 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 	}
 
 	@Override
-	public boolean isContentCachableByQuery(ContentContext ctx) {
+	public boolean isContentCachableByQuery(ContentContext ctx) {		
 		return !isRepeat();
 	}
 
