@@ -314,21 +314,25 @@ public class XHTMLNavigationHelper {
 	}
 
 	private static String renderMenu(ContentContext ctx, MenuElement menu, int fromDepth, int toDepth, boolean onlyVisible, int depth, boolean extended, boolean image, boolean withVirtual, boolean selecteableItem, Boolean selectableBetween, List<MenuElement> values, MenuElement value) throws Exception {
+		
+		ContentContext mainLgCtx = new ContentContext(ctx);
+		mainLgCtx.setRequestContentLanguage(mainLgCtx.getLanguage());
+		mainLgCtx.setContentLanguage(mainLgCtx.getLanguage());
 
-		if (ctx.getCurrentTemplate() != null && ctx.getCurrentTemplate().getMenuRenderer(ctx.getDevice()) != null && !ctx.isAsEditMode()) {
-			ctx.getRequest().setAttribute("fromDepth", fromDepth);
-			ctx.getRequest().setAttribute("toDepth", toDepth);
-			ctx.getRequest().setAttribute("onlyVisible", onlyVisible);
-			ctx.getRequest().setAttribute("depth", depth);
-			ctx.getRequest().setAttribute("extended", extended);
-			ctx.getRequest().setAttribute("image", image);		
+		if (mainLgCtx.getCurrentTemplate() != null && mainLgCtx.getCurrentTemplate().getMenuRenderer(mainLgCtx.getDevice()) != null && !mainLgCtx.isAsEditMode()) {
+			mainLgCtx.getRequest().setAttribute("fromDepth", fromDepth);
+			mainLgCtx.getRequest().setAttribute("toDepth", toDepth);
+			mainLgCtx.getRequest().setAttribute("onlyVisible", onlyVisible);
+			mainLgCtx.getRequest().setAttribute("depth", depth);
+			mainLgCtx.getRequest().setAttribute("extended", extended);
+			mainLgCtx.getRequest().setAttribute("image", image);		
 			
-			String jspURL = URLHelper.createStaticTemplateURLWithoutContext(ctx, ctx.getCurrentTemplate(), ctx.getCurrentTemplate().getMenuRenderer(ctx.getDevice()));
+			String jspURL = URLHelper.createStaticTemplateURLWithoutContext(mainLgCtx, mainLgCtx.getCurrentTemplate(), mainLgCtx.getCurrentTemplate().getMenuRenderer(mainLgCtx.getDevice()));
 			
-			return ServletHelper.executeJSP(ctx, jspURL);			
+			return ServletHelper.executeJSP(mainLgCtx, jspURL);			
 		} else {
 
-			I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
+			I18nAccess i18nAccess = I18nAccess.getInstance(mainLgCtx.getRequest());
 
 			StringWriter res = new StringWriter();
 			PrintWriter out = new PrintWriter(res);
@@ -338,9 +342,9 @@ public class XHTMLNavigationHelper {
 			} else {
 				Collection<MenuElement> elems;
 				if (withVirtual) {
-					elems = menu.getChildMenuElementsWithVirtual(ctx, onlyVisible, false);
+					elems = menu.getChildMenuElementsWithVirtual(mainLgCtx, onlyVisible, false);
 				} else {
-					elems = menu.getChildMenuElements(ctx, onlyVisible);
+					elems = menu.getChildMenuElements(mainLgCtx, onlyVisible);
 				}
 
 				if (elems.size() == 0 && !selectableBetween) {
@@ -353,20 +357,20 @@ public class XHTMLNavigationHelper {
 					out.println("<ul>");
 				}
 
-				MenuElement currentPage = ctx.getCurrentPage();
-				Template currentTemplate = ctx.getCurrentTemplate();
+				MenuElement currentPage = mainLgCtx.getCurrentPage();
+				Template currentTemplate = mainLgCtx.getCurrentTemplate();
 
 				if (print && selectableBetween) {
-					out.print("<li id=\"page_" + menu.getName() + "\"><div class=\"selection\"><input type=\"submit\" value=\"" + i18nAccess.getText("global.move-here", new String[][] { { "item", currentPage.getLabel(ctx) } }) + "\" name=\"P_" + menu.getId() + "\"/></div></li>");
+					out.print("<li id=\"page_" + menu.getName() + "\"><div class=\"selection\"><input type=\"submit\" value=\"" + i18nAccess.getText("global.move-here", new String[][] { { "item", currentPage.getLabel(mainLgCtx) } }) + "\" name=\"P_" + menu.getId() + "\"/></div></li>");
 				}
 
 				int i = 0;
 				for (MenuElement page : elems) {
 					String selected = "";
 					String cssClass = page.getName().toLowerCase();
-					if (page.isSelected(ctx)) {
+					if (page.isSelected(mainLgCtx)) {
 						String cssClassSelected = currentTemplate.getSelectedClass();
-						if (page.isLastSelected(ctx)) {
+						if (page.isLastSelected(mainLgCtx)) {
 							cssClassSelected = (cssClassSelected + " " + currentTemplate.getLastSelectedClass()).trim();
 						}
 						selected = "class=\"" + cssClassSelected + "\"";
@@ -380,14 +384,14 @@ public class XHTMLNavigationHelper {
 					}
 					String att = "";
 					if (print) {
-						String visualCode = page.getLabel(ctx);
-						if (image && (page.getImage(ctx) != null)) {
-							String imageURL = URLHelper.createTransformURL(ctx, page.getImage(ctx).getResourceURL(ctx), "menu");
-							String imageDescription = page.getImage(ctx).getImageDescription(ctx);
-							String imageUnselectedURL = URLHelper.createTransformURL(ctx, page.getImage(ctx).getResourceURL(ctx), currentTemplate.getUnSelectedClass());
+						String visualCode = page.getLabel(mainLgCtx);
+						if (image && (page.getImage(mainLgCtx) != null)) {
+							String imageURL = URLHelper.createTransformURL(mainLgCtx, page.getImage(mainLgCtx).getResourceURL(mainLgCtx), "menu");
+							String imageDescription = page.getImage(mainLgCtx).getImageDescription(mainLgCtx);
+							String imageUnselectedURL = URLHelper.createTransformURL(mainLgCtx, page.getImage(mainLgCtx).getResourceURL(mainLgCtx), currentTemplate.getUnSelectedClass());
 
 							String url = imageUnselectedURL;
-							if (page.isSelected(ctx)) {
+							if (page.isSelected(mainLgCtx)) {
 								url = imageURL;
 							}
 
@@ -396,7 +400,7 @@ public class XHTMLNavigationHelper {
 
 							att = "onMouseover=\"" + startJS + "'" + imageURL + "'\" onMouseout=\"" + startJS + "'" + url + "'\"";
 
-							visualCode = "<img src=\"" + url + "\" alt=\"" + imageDescription + "\" name=\"" + imgName + "\" class=\"autoMouseOver\" /><span class=\"text\">" + page.getLabel(ctx) + "</span>";
+							visualCode = "<img src=\"" + url + "\" alt=\"" + imageDescription + "\" name=\"" + imgName + "\" class=\"autoMouseOver\" /><span class=\"text\">" + page.getLabel(mainLgCtx) + "</span>";
 						}
 						String selectedStrIn = "";
 						String selectedStrBetween = "";
@@ -434,22 +438,22 @@ public class XHTMLNavigationHelper {
 							if (page.equals(currentPage)) {
 								disabled = " disabled=\"disabled\"";
 							}
-							selectedStrBetween = "<input" + disabled + " type=\"submit\" name=\"N_" + page.getId() + "\"" + checked + inputDisabled + " value=\"" + i18nAccess.getText("global.move-here", new String[][] { { "item", currentPage.getLabel(ctx) } }) + "\"/>";
+							selectedStrBetween = "<input" + disabled + " type=\"submit\" name=\"N_" + page.getId() + "\"" + checked + inputDisabled + " value=\"" + i18nAccess.getText("global.move-here", new String[][] { { "item", currentPage.getLabel(mainLgCtx) } }) + "\"/>";
 						}
 
-						if (page.getChildMenuElements(ctx, true).size() > 0) {
+						if (page.getChildMenuElements(mainLgCtx, true).size() > 0) {
 							cssClass = cssClass + " have-children";
 						}
 
 						out.println("<li class=\"" + cssClass + "\">");
 
-						String title = page.getTitle(ctx);
+						String title = page.getTitle(mainLgCtx);
 						String fullTitleHTML = "";
 						if (!title.equals(visualCode) && !title.equals(page.getName())) {
 							title = StringHelper.removeTag(title).replace("\"", "&quot;");
 							fullTitleHTML = " title=\"" + title + "\"";
 						}
-						out.print(selectedStrIn + "<a " + selected + " href=\"" + URLHelper.createURL(ctx, page) + "\" " + fullTitleHTML + " " + att + "><span><span>" + visualCode + "</span></span></a>");
+						out.print(selectedStrIn + "<a " + selected + " href=\"" + URLHelper.createURL(mainLgCtx, page) + "\" " + fullTitleHTML + " " + att + "><span><span>" + visualCode + "</span></span></a>");
 						if (selectableBetween) {
 							out.print("<div class=\"selection\">" + selectedStrBetween + "</div>");
 						}
@@ -461,8 +465,8 @@ public class XHTMLNavigationHelper {
 							/*
 							 * if (print) { out.println("<li>"); }
 							 */
-							if (page.isSelected(ctx) || (extended && print)) {
-								out.print(renderMenu(ctx, page, fromDepth, toDepth, onlyVisible, depth + 1, extended, image, withVirtual, selecteableItem, selectableBetween, values, value));
+							if (page.isSelected(mainLgCtx) || (extended && print)) {
+								out.print(renderMenu(mainLgCtx, page, fromDepth, toDepth, onlyVisible, depth + 1, extended, image, withVirtual, selecteableItem, selectableBetween, values, value));
 							}
 							/*
 							 * if (print) { out.println("</li>"); }

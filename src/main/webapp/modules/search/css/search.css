@@ -1,0 +1,18 @@
+.search-result table td {
+	vertical-align: middle;
+}
+
+.search-result table td.image {
+	vertical-align: middle;
+	align: center;
+	width: 100px; 
+}
+
+.search-result table img {
+	width: 100%;	
+}
+
+.search-result .matching {
+	width: 20px;
+	text-align: center;
+}

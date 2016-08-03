@@ -712,10 +712,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 		
 		public String getMainContentLabel() {
 			try {
-				ContentContext mainContextLg = new ContentContext(ctx);
-				mainContextLg.setRequestContentLanguage(ctx.getLanguage());
-				mainContextLg.setContentLanguage(ctx.getLanguage());
-				return page.getLabel(mainContextLg);
+				return page.getMainContentLabel(ctx);
 			} catch (Exception e) {
 				logger.warning(e.getMessage());
 				return null;
@@ -956,6 +953,18 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 		return pageDescription;
 	}
 
+	public String getMainContentLabel(ContentContext ctx) {
+		try {
+			ContentContext mainContextLg = new ContentContext(ctx);
+			mainContextLg.setRequestContentLanguage(ctx.getLanguage());
+			mainContextLg.setContentLanguage(ctx.getLanguage());
+			return getLabel(mainContextLg);
+		} catch (Exception e) {
+			logger.warning(e.getMessage());
+			return null;
+		}
+	}
+	
 	public boolean isActive(ContentContext ctx) {
 		return isActive();
 	}

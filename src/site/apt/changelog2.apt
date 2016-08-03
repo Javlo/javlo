@@ -745,3 +745,5 @@ change log
  * 1/ google anaytics define in a external file 
  
  * 2/ pdf justification with link correction / no redirection on not found page / no short image link on mailing platform / duplicated imported content on copy 
+ 
+ * 3/ image in search result in search module / NotificationService remove weak reference if object not found / Menu displayed with main language in place of content language / DashImage marco persit

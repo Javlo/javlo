@@ -83,7 +83,11 @@ public class SearchModuleAction extends AbstractModuleAction {
 								params.put("url", url);
 								url = URLHelper.createURL(ctx, params);
 							}
-							outResult.put(page, new SearchResultBean("page", page.getTitle(ctx), comp.getLanguage(), url, comp.getAuthors(), StringHelper.renderSortableDate(page.getModificationDate()), 1));
+							String previewURL = null;
+							if (page.getImage(ctx) != null) {
+								previewURL = URLHelper.createTransformURL(ctx, page.getImage(ctx).getResourceURL(ctx), "list");
+							}
+							outResult.put(page, new SearchResultBean("page", page.getTitle(ctx), comp.getLanguage(), url, comp.getAuthors(), StringHelper.renderSortableDate(page.getModificationDate()), previewURL, 1));
 						} else {
 							outResult.get(page).setMatching(outResult.get(page).getMatching() + 1);
 						}
@@ -126,8 +130,8 @@ public class SearchModuleAction extends AbstractModuleAction {
 							url = URLHelper.addParam(url, "file", URLHelper.encodePathForAttribute(file.getPath()));
 							url = URLHelper.addParam(url, "previewEdit", "true");
 						}
-
-						outResult.put(staticInfo, new SearchResultBean("file", title, ctx.getContentLanguage(), url, staticInfo.getAuthors(ctx), StringHelper.renderSortableDate(staticInfo.getCreationDate(ctx)), 1));
+						String previewURL = URLHelper.createTransformURL(ctx, staticInfo, "list");						
+						outResult.put(staticInfo, new SearchResultBean("file", title, ctx.getContentLanguage(), url, staticInfo.getAuthors(ctx), StringHelper.renderSortableDate(staticInfo.getCreationDate(ctx)), previewURL, 1));
 					} else {
 						outResult.get(staticInfo).setMatching(outResult.get(staticInfo).getMatching() + 1);
 					}

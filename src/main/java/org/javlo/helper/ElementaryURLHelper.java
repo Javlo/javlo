@@ -1,10 +1,8 @@
 package org.javlo.helper;
 
 import java.io.File;
-import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -486,6 +484,11 @@ public abstract class ElementaryURLHelper {
 
 	public static String createTransformURL(ContentContext ctx, String url, String filter) throws Exception {
 		return createTransformURL(ctx, null, url, filter);
+	}
+
+	
+	public static String createTransformURL(ContentContext ctx, StaticInfo info, String filter) throws Exception {
+		return createTransformURL(ctx, null, URLHelper.mergePath(ctx.getGlobalContext().getStaticConfig().getStaticFolder(),info.getStaticURL()), filter);
 	}
 
 	public static String createTransformURLWithoutCountAccess(ContentContext ctx, String url, String filter) throws Exception {

@@ -8,6 +8,7 @@ import org.javlo.component.image.GlobalImage;
 import org.javlo.context.ContentContext;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
+import org.javlo.service.PersistenceService;
 
 public class DashOnImageMacro extends AbstractMacro {
 
@@ -28,7 +29,9 @@ public class DashOnImageMacro extends AbstractMacro {
 					String url  = ((GlobalImage)comp).getLink();
 					if (url.trim().length() == 0) {
 						((GlobalImage)comp).setLink("#");
-						((GlobalImage) comp).setModify();
+						((GlobalImage)comp).storeProperties();
+						((GlobalImage)comp).setModify();						
+						PersistenceService.getInstance(ctx.getGlobalContext()).setAskStore(true);
 					}
 				}
 			}

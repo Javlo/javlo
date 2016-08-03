@@ -1301,7 +1301,7 @@ public class PersistenceService {
 	public void store(ContentContext ctx, int renderMode) throws Exception {
 		store(ctx, renderMode, true);
 	}
-
+	
 	public void store(ContentContext ctx, int renderMode, boolean async) throws Exception {
 		setAskStore(false);		
 		if (async) {

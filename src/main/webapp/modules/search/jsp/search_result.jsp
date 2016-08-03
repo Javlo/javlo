@@ -6,7 +6,7 @@
 				<c:set var="selectInlineClass" value="" />
 			</c:if>
 </c:forEach>
-<div class="content">
+<div class="content search-result">
     <c:if test="${empty items}">${i18n.edit['search.no-result']}</c:if>
 	<c:if test="${not empty items}">
 		<form id="form-select-user" action="${info.currentURL}" method="post">
@@ -16,6 +16,7 @@
 		<table cellpadding="0" cellspacing="0" border="0" class="dyntable" id="sitelist">
 			<thead>
 				<tr>
+					<th class="head0"></th>
 					<th class="head1">Q</th>
 					<th class="head0">${i18n.edit['search.type']}</th>
 					<th class="head1">${i18n.edit['search.title']}</th>
@@ -24,6 +25,7 @@
 				</tr>
 			</thead>
 			<colgroup>
+				<col class="con0" />
 				<col class="con1" />
 				<col class="con0" />
 				<col class="con1" />
@@ -34,7 +36,8 @@
 			
 			<c:forEach var="item" items="${items}">
 				<tr>
-					<td class="head1">${item.matching}</td>
+					<td class="head0 image"><c:if test="${not empty item.previewURL}"><img class="responsive-img" src="${item.previewURL}"/></c:if></td>
+					<td class="head1 matching">${item.matching}</td>
 				    <td class="head0">${item.type}</td>
 					<td class="head1"><a href="${item.url}">${item.title}</a></td>
 					<td class="head0">${item.authors}</td>	
@@ -45,6 +48,7 @@
 			</tbody>
 			<tfoot>
 				<tr>
+					<th class="head0"></th>
 					<th class="head1">Q</th>
 					<th class="head0">${i18n.edit['search.type']}</th>
 					<th class="head1">${i18n.edit['search.title']}</th>
@@ -66,8 +70,8 @@
 									.dataTable(
 											{
 												"sPaginationType" : "full_numbers",
-												"aaSorting" : [ [ 0, "desc" ] ],
-												"aoColumns" : [  null, null,	null, null, null ],
+												"aaSorting" : [ [ 1, "desc" ] ],
+												"aoColumns" : [   { "asSorting": [ "" ] }, null, null,	null, null, null ],
 												"oLanguage" : {
 													"sUrl" : "${info.editTemplateURL}/js/plugins/i18n/datatable_${info.editLanguage}.txt"
 												},

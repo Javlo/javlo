@@ -14,9 +14,11 @@ public class SearchResultBean {
 	
 	private String language;
 	
+	private String previewURL; 
+	
 	private int matching = 0;
 	
-	public SearchResultBean(String type, String title, String lang, String url, String authors, String date, int matching) {
+	public SearchResultBean(String type, String title, String lang, String url, String authors, String date, String previewURL, int matching) {
 		super();
 		this.type = type;
 		this.title = title;
@@ -25,6 +27,7 @@ public class SearchResultBean {
 		this.date = date;
 		this.matching = matching;
 		this.language = lang;
+		this.previewURL = previewURL;
 	}
 
 	public String getType() {
@@ -81,5 +84,13 @@ public class SearchResultBean {
 
 	public void setLanguage(String language) {
 		this.language = language;
+	}
+
+	public String getPreviewURL() {
+		return previewURL;
+	}
+
+	public void setPreviewURL(String previewURL) {
+		this.previewURL = previewURL;
 	}
 }

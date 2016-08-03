@@ -213,10 +213,12 @@ public class ActionManager {
 				message = invokeAction(request, response, action, actionName);
 				logger.fine("executed action : '" + actionName + "' return : " + message);
 			} else {
-				message = "actions class not found : " + actionName + " - group:"+group;
+				ContentContext ctx = ContentContext.getContentContext(request, response);				
+				message = "actions class not found : " + actionName + " - group:"+group+"  (user:"+ctx.getCurrentEditUser()+")";
+				
 				logger.severe(message);
 				
-				ContentContext ctx = ContentContext.getContentContext(request, response);
+				
 				if (!ctx.isAsViewMode() && currentUser == null && actionName != null) {					
 					ctx.setNeedRefresh(true);
 				}

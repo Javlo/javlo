@@ -148,9 +148,8 @@ public class PersistenceThread implements Runnable {
 	public void setPersistenceService(PersistenceService persistenceService) {
 		this.persistenceService = persistenceService;
 	}
-
-	private File store(MenuElement menuElement, int renderMode, String defaultLg) throws Exception {
-
+	
+	private File store(MenuElement menuElement, int renderMode, String defaultLg) throws Exception {		
 		if (menuElement == null) {
 			logger.warning("no navigation found.");
 			return null;

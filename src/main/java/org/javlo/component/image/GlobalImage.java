@@ -1159,7 +1159,7 @@ public class GlobalImage extends Image implements IImageFilter {
 			}
 			if (height != null && height.trim().length() > 0) {
 				int intHeight = Integer.parseInt(height);
-				if (intHeight != image.getHeight()) {
+				if (intHeight != image.getHeight()) {					
 					image.setModify();
 					image.setHeight(intHeight);
 				}

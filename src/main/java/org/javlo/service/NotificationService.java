@@ -191,7 +191,7 @@ public class NotificationService {
 			for (Notification notif : notifications) {
 				if (notif != null) {
 					if (currentTime - notif.getCreationDate().getTime() > NOTIFICATION_MAX_AGE) {
-						mustBeRemoved.remove(notif);
+						mustBeRemoved.remove(notif);					
 					}
 				}
 			}
@@ -206,7 +206,7 @@ public class NotificationService {
 		for (WeakReference<Notification> weakReference : markAsRead) {
 			Notification notif = weakReference.get();
 			if (notif == null) {
-				markAsRead.remove(notif);
+				markAsRead.remove(weakReference);
 			} else {
 				if (notif.equals(inNotif)) {
 					return true;
@@ -341,6 +341,7 @@ public class NotificationService {
 		synchronized (notifications) {
 			notifications.add(0, notif);
 		}
+		cleanList();
 	}
 
 }
