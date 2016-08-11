@@ -867,7 +867,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 						System.out.println("SMTP host  = "+mailService.getMailConfig().getSMTPHost());
 						System.out.println("SMTP port  = "+mailService.getMailConfig().getSMTPPort());
 						System.out.println("SMTP login = "+mailService.getMailConfig().getLogin());
-						System.out.println("SMTP pwd?  = "+StringHelper.isEmpty(mailService.getMailConfig().getPassword()));
+						System.out.println("SMTP pwd?  = "+!StringHelper.isEmpty(mailService.getMailConfig().getPassword()));
 					}
 					
 					e.printStackTrace();

@@ -183,12 +183,6 @@ public class MailService {
 
 	public static final Transport getMailTransport(final MailConfig mailConfig) throws MessagingException {
 		Session mailSession = getMailSession(mailConfig);
-		if (mailConfig.getPassword() != null) {
-			System.out.println("**** password not null : "+mailConfig.getPassword());
-		} else {
-			System.out.println("**** password null.");
-		}
-		System.out.println("StringHelper.isEmpty(mailConfig.getPassword()) = "+StringHelper.isEmpty(mailConfig.getPassword()));
 		logger.info("get transport [host:" + mailConfig.getSMTPHost() + " port:" + mailConfig.getSMTPPortInt() + " login:" + mailConfig.getLogin() + " pwd:" + !StringHelper.isEmpty(mailConfig.getPassword()) + ']');
 		if (mailConfig.getSMTPPortInt() == 0) {
 			logger.severe("could not send email to port 0.");
