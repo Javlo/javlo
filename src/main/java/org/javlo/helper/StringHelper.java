@@ -453,7 +453,7 @@ public class StringHelper {
 	public static String createI18NURL(String value) {
 		value = value.trim();
 		value = value.replace("&nbsp;", "-");
-		value = value.replaceAll("[\\(\\)\\#\\]\\[\\@\\*\\+\\=\\;\\,\\!\\$\\\\\\:\\&\\?\\/\\'\\\" ]", "-");
+		value = value.replaceAll("[\\.\\(\\)\\#\\]\\[\\@\\*\\+\\=\\;\\,\\!\\$\\\\\\:\\&\\?\\/\\'\\\" ]", "-");
 		while (value.contains("--")) {
 			value = value.replace("--","-");
 		}
