@@ -748,4 +748,4 @@ change log
  
  * 3/ image in search result in search module / NotificationService remove weak reference if object not found / Menu displayed with main language in place of content language / DashImage marco persit
  
- * 4/ encode xml site map content
+ * 4/ encode xml site map content / integrity checker activated by default
