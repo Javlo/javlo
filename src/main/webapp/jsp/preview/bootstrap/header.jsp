@@ -320,36 +320,38 @@
 							<c:set var="unreadTicketsize" value="${fn:length(info.unreadTickets)}" />
 							<c:if test="${unreadTicketsize>0}"><div class="badge unread-count">${unreadTicketsize}</div></c:if>					
 						</button>
-						
-						<c:if test="${not empty integrities && !globalContext.collaborativeMode && !globalContext.mailingPlatform}">
-						<c:if test="${fn:length(integrities.checker)>0}">
-						<a class="btn btn-default btn-sm btn-tickets btn-color alert-${integrities.levelLabel} btn-notext badged" data-toggle="collapse" data-target="#integrity-list" href="#integrity-list"  aria-expanded="false" aria-controls="integrity-list">
-							<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-							<c:if test="${fn:length(integrities.checker)>0}"><div class="badge unread-count">${fn:length(integrities.checker)}</div></c:if>
-						</a>
-						<div class="integrity-message collapse${integrities.error?' in':''}" id="integrity-list">
-							<ul class="list-group"><c:forEach var="checker" items="${integrities.checker}"><c:if test="${checker.errorCount>0}">								
-  								<li class="list-group-item list-group-item-${checker.levelLabel}">
-    								<span class="badge">${checker.errorCount}</span>${checker.errorMessage}    									
-  								</li></c:if></c:forEach>
-							</ul>
-						</div>						
-						</c:if>
-						<c:if test="${fn:length(integrities.checker)==0}">						
-						<a class="btn btn-default btn-sm btn-tickets btn-color alert-success btn-notext" data-toggle="collapse" data-target="#integrity-list" href="#integrity-list"  aria-expanded="false" aria-controls="integrity-list">
-							<span class="glyphicon glyphicon-check" aria-hidden="true"></span>
-						</a>
-						<div class="integrity-message collapse" id="integrity-list">
-							<ul class="list-group">								
-  								<li class="list-group-item list-group-item-success">
-    								${i18n.edit['integrity.no_error']}   									
-  								</li>
-							</ul>
-						</div>
-						</c:if></c:if>
-						
-					</form></li>
+				</form></li>
 			</c:if>
+						
+			<c:if test="${not empty integrities && !globalContext.collaborativeMode && !globalContext.mailingPlatform}">
+			<c:if test="${fn:length(integrities.checker)>0}"><li>
+			<a class="btn btn-default btn-sm btn-integrity btn-color alert-${integrities.levelLabel} btn-notext badged" data-toggle="collapse" data-target="#integrity-list" href="#integrity-list"  aria-expanded="false" aria-controls="integrity-list">
+				<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+				<c:if test="${fn:length(integrities.checker)>0}"><div class="badge unread-count">${fn:length(integrities.checker)}</div></c:if>
+			</a>
+			<div class="integrity-message collapse${integrities.error?' in':''}" id="integrity-list">
+				<ul class="list-group"><c:forEach var="checker" items="${integrities.checker}"><c:if test="${checker.errorCount>0}">								
+							<li class="list-group-item list-group-item-${checker.levelLabel}">
+ 								<span class="badge">${checker.errorCount}</span>${checker.errorMessage}    									
+							</li></c:if></c:forEach>
+				</ul>
+			</div>	
+			</li>					
+			</c:if>
+			<c:if test="${fn:length(integrities.checker)==0}"><li>						
+			<a class="btn btn-default btn-sm btn-integrity btn-color alert-success btn-notext" data-toggle="collapse" data-target="#integrity-list" href="#integrity-list"  aria-expanded="false" aria-controls="integrity-list">
+				<span class="glyphicon glyphicon-check" aria-hidden="true"></span>
+			</a>
+			<div class="integrity-message collapse" id="integrity-list">
+				<ul class="list-group">								
+							<li class="list-group-item list-group-item-success">
+ 								${i18n.edit['integrity.no_error']}   									
+							</li>
+				</ul>
+			</div></li>
+			</c:if></c:if>
+						
+					
 			</ul></div><div class="users">
 			<c:if test="${not empty editUser}">
 				<c:url var="logoutURL" value="<%=URLHelper.createURL(ctx)%>" context="/">
