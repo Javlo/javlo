@@ -1518,7 +1518,7 @@ public class StaticConfig extends Observable {
 	}
 
 	public boolean isIntegrityCheck() {
-		return StringHelper.isTrue(properties.getString("content.integrity-checker", null), false);
+		return StringHelper.isTrue(properties.getString("content.integrity-checker", null), true);
 	}
 
 	public boolean isEditOnCreate() {
