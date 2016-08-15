@@ -1066,6 +1066,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 		out.println("**** BACKUP INCL. PAT. :  " + staticConfig.getBackupIncludePatterns());
 		out.println("**** HIGH SECURE      	:  " + staticConfig.isHighSecure());
 		out.println("**** REDIRECT URL      :  " + staticConfig.isRedirectSecondaryURL());
+		out.println("**** INTEGRITY CHECKER :  " + staticConfig.isIntegrityCheck());
 		out.println("**** HARD USERS        :  " + StringHelper.collectionToString(staticConfig.getEditUsers().keySet(), ","));
 		out.println("**** USE EHCACHE       :  " + staticConfig.useEhCache());
 		out.println("**** TOTAL MEMORY      :  " + runtime.totalMemory() + " (" + runtime.totalMemory() / 1024 + " KB)" + " (" + runtime.totalMemory() / 1024 / 1024 + " MB)");
