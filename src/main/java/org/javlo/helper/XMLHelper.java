@@ -26,6 +26,7 @@ import org.javlo.service.ContentService;
 import org.javlo.service.PersistenceService;
 import org.javlo.service.resource.Resource;
 import org.javlo.servlet.AccessServlet;
+import org.owasp.encoder.Encode;
 
 /**
  * @author pvandermaesen
@@ -147,7 +148,7 @@ public class XMLHelper {
 								
 								line.append("<image:loc>" + imageURL + "</image:loc>");
 								if (!StringHelper.isEmpty(image.getImageDescription(lgCtx))) {
-									line.append("<image:title>" + image.getImageDescription(lgCtx) + "</image:title>");
+									line.append("<image:title>" + Encode.forXmlContent(image.getImageDescription(lgCtx)) + "</image:title>");
 								}
 								line.append("</image:image>");
 							}
@@ -206,12 +207,12 @@ public class XMLHelper {
 						line.append("</news:publication>");
 						SimpleDateFormat dataFormat = new SimpleDateFormat("yyyy-MM-dd");
 						line.append("<news:publication_date>" + dataFormat.format(element.getModificationDate()) + "</news:publication_date>");
-						line.append("<news:title>" + element.getTitle(lgCtx) + "</news:title>");
+						line.append("<news:title>" + Encode.forXmlContent(element.getTitle(lgCtx)) + "</news:title>");
 						if (!StringHelper.isEmpty(element.getKeywords(lgCtx))) {
-							line.append("<news:keywords>" + element.getKeywords(lgCtx) + "</news:keywords>");
+							line.append("<news:keywords>" + Encode.forXmlContent(element.getKeywords(lgCtx)) + "</news:keywords>");
 						}
 						if (!StringHelper.isEmpty(element.getCategory(lgCtx))) {
-							line.append("<news:genres>" + element.getCategory(lgCtx) + "</news:genres>");
+							line.append("<news:genres>" + Encode.forXmlContent(element.getCategory(lgCtx)) + "</news:genres>");
 						}
 						for (IImageTitle image : element.getImages(lgCtx)) {
 							if (image.isImageValid(lgCtx)) {
@@ -221,7 +222,7 @@ public class XMLHelper {
 									imageURL = URLHelper.createResourceURL(lgCtx, imageURL);
 								}
 								line.append("<image:loc>" + imageURL + "</image:loc>");
-								line.append("<image:title>" + image.getImageDescription(lgCtx) + "</image:title>");
+								line.append("<image:title>" + Encode.forXmlContent(image.getImageDescription(lgCtx)) + "</image:title>");
 								line.append(" </image:image>");
 							}
 						}
