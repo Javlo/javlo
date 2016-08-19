@@ -35,6 +35,9 @@ public class ReportBean {
 	public List<Link> badExternalLinkPages = new LinkedList<Link>();
 	public List<Link> emptyLinkPages = new LinkedList<Link>();	
 	
+	public List<Link> noDescriptionPages = new LinkedList<Link>();
+	public List<Link> noTitlePages = new LinkedList<Link>();	
+	
 	public int getGlobalComponentScore() {
 		return ((getPageTitle()+getPageDescription()+getPageTitleStructure()+getPageImageAlt())*2+getPageDescriptionOkSize()+getPageTitleOkSize())/10;
 	}
@@ -165,5 +168,20 @@ public class ReportBean {
 	public Link getSameTitlePage2() {
 		return sameTitlePage2;
 	}
-	
+
+	public List<Link> getNoDescriptionPages() {
+		return noDescriptionPages;
+	}
+
+	public void setNoDescriptionPages(List<Link> noDescriptionPages) {
+		this.noDescriptionPages = noDescriptionPages;
+	}
+
+	public List<Link> getNoTitlePages() {
+		return noTitlePages;
+	}
+
+	public void setNoTitlePages(List<Link> noTitlePages) {
+		this.noTitlePages = noTitlePages;
+	}
 }

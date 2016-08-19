@@ -40,6 +40,13 @@ td.forme, td.priority {
 	margin-bottom: 15px;
 }
 
+.line {
+	display: block;
+	margin: 15px 0;
+	border-bottom: 1px #dddddd solid;		
+	clear: both;
+}
+
 .lang {
 	display: inline-block;
 	text-transform: uppercase;

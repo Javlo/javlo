@@ -155,7 +155,7 @@ public class FieldFile extends Field implements IStaticContainer {
 		String img;
 		String cssClass = "";
 		if (StringHelper.isImage(getCurrentFile())) {
-			img = URLHelper.createTransformURL(ctx, '/' + fileURL, "icone");
+			img = URLHelper.createTransformURL(ctx, '/' + fileURL, "icon");
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 			if (globalContext.isImagePreview()) {
 				cssClass = " class=\"ajax_image_preview\"";

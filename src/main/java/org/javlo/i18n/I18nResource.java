@@ -93,7 +93,7 @@ public class I18nResource {
 						}
 					}
 				} else {
-					logger.severe("i18n file not found : " + viewFile);
+					logger.fine("i18n file not found : " + viewFile);
 				}
 
 				File specificViewFile;

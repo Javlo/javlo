@@ -95,6 +95,10 @@ ul.menu {
 	box-shadow: 3px 3px 3px #999999;
 }
 
+.push .component {
+	border: 1px #dd0000 solid;
+}
+
 .ui-tabs-nav {
 	position: inherit;
 }

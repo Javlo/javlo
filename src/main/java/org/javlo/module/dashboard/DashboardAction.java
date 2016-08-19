@@ -161,13 +161,20 @@ public class DashboardAction extends AbstractModuleAction {
 			report = true;
 			ctx.getRequest().setAttribute("report", ReportFactory.getReport(ctx));
 		}
+		boolean pagelist = false;
+		if (dashboardContext.getCurrentModule().getRenderer() != null && dashboardContext.getCurrentModule().getRenderer().contains("pagelist")) {
+			pagelist = true;
+			ctx.getRequest().setAttribute("report", ReportFactory.getReport(ctx));
+		}
 		if (dashboardContext.getCurrentModule().getBoxes().size() > 1) {
 			ctx.getRequest().setAttribute("page", "main");
 		} else {
-			if (!report) {
+			if (!report && !pagelist) {
 				ctx.getRequest().setAttribute("page", "tracker");
-			} else {
+			} else if (!pagelist) {
 				ctx.getRequest().setAttribute("page", "report");
+			} else {
+				ctx.getRequest().setAttribute("page", "list");
 			}
 		}
 
@@ -389,6 +396,13 @@ public class DashboardAction extends AbstractModuleAction {
 		dashboardContext.getCurrentModule().setRenderer("/jsp/report.jsp");
 		//dashboardContext.getCurrentModule().addMainBox("report", "report", "/jsp/report.jsp", false);
 		return null;
-
+	}
+	
+	public static String performListpage(RequestService rs, ContentContext ctx, HttpSession session, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
+		ModulesContext dashboardContext = ModulesContext.getInstance(session, ctx.getGlobalContext());
+		dashboardContext.getCurrentModule().clearAllBoxes();
+		dashboardContext.getCurrentModule().setRenderer("/jsp/pagelist.jsp");
+		//dashboardContext.getCurrentModule().addMainBox("report", "report", "/jsp/report.jsp", false);
+		return null;
 	}
 }

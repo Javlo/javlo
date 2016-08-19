@@ -26,6 +26,7 @@ import org.javlo.macro.CreateMonthStructureMacro;
 import org.javlo.macro.CreatePressReleaseHereMacro;
 import org.javlo.macro.CreatePressReleaseTodayHereMacro;
 import org.javlo.macro.CreatePressReleaseTodayMacro;
+import org.javlo.macro.CreateRedirectionForAllLanguages;
 import org.javlo.macro.CreateRolesFromUserList;
 import org.javlo.macro.CreateWeekHereMacro;
 import org.javlo.macro.CurrentLgExpandMacro;
@@ -155,6 +156,7 @@ public class MacroFactory {
 		macros.add(new UnlinkMirrorComponent());
 		macros.add(new RenameChildren());
 		macros.add(new ActiveAllChildren());
+		macros.add(new CreateRedirectionForAllLanguages());
 	}
 
 	public IMacro getMacro(String name) {

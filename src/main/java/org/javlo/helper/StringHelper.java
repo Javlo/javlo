@@ -263,7 +263,6 @@ public class StringHelper {
 			text = StringUtils.removeEnd(text, sufix);
 			return text + outSufix;
 		} else {
-			System.out.println("not match pattern 1.");
 			return text;
 		}
 	}

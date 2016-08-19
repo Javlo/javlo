@@ -44,11 +44,11 @@ public class ReportFactory {
 					}
 					title.put(page.getTitle(ctx), page);
 				}
-			
 				report.pageWithContent++;
 				CheckTitle checkTitle = new CheckTitle();
 				checkTitle.checkPage(ctx, page);
 				if (checkTitle.getErrorCount(ctx) > 0 && checkTitle.getLevel(ctx) > IIntegrityChecker.WARNING_LEVEL) {
+					report.getNoTitlePages().add(new Link(URLHelper.createURL(ctx, page, moduleAction), page.getTitle(ctx)));
 					report.pageTitleBad++;
 				} else {
 					report.pageTitleRight++;
@@ -62,6 +62,7 @@ public class ReportFactory {
 				CheckDescription checkDescrition = new CheckDescription();
 				checkDescrition.checkPage(ctx, page);				
 				if (checkDescrition.getErrorCount(ctx) > 0 && checkDescrition.getLevel(ctx) > IIntegrityChecker.WARNING_LEVEL) {
+					report.getNoDescriptionPages().add(new Link(URLHelper.createURL(ctx, page, moduleAction), page.getTitle(ctx)));
 					report.pageDescriptionBad++;					
 				} else {
 					report.pageDescriptionRight++;					
@@ -103,7 +104,10 @@ public class ReportFactory {
 						String pageId = ((IInternalLink) comp).getLinkId();
 						if (root.searchChildFromId(pageId) == null) {
 							report.badInternalLink++;
-							report.badInternalLinkPages.add(new Link(URLHelper.createURL(ctx, page, moduleAction), page.getTitle(ctx)));
+							Map<String,String> params = new HashMap<String, String>();
+							params.putAll(moduleAction);
+							params.put("push-comp", comp.getId());
+							report.badInternalLinkPages.add(new Link(URLHelper.createURL(ctx, page, params), page.getTitle(ctx)));
 						} else {
 							report.rightInternalLink++;
 						}
@@ -115,7 +119,10 @@ public class ReportFactory {
 							if (report.badExternalLink < ReportBean.MAX_LINK_CHECK) {
 								if (!NetHelper.isURLValid(new URL(url))) {
 									report.badExternalLink++;
-									report.badExternalLinkPages.add(new Link(URLHelper.createURL(ctx, page, moduleAction), page.getTitle(ctx)));
+									Map<String,String> params = new HashMap<String, String>();
+									params.putAll(moduleAction);
+									params.put("push-comp", comp.getId());
+									report.badExternalLinkPages.add(new Link(URLHelper.createURL(ctx, page, params), page.getTitle(ctx)));
 								} else {
 									report.rightExternalLink++;
 								}
@@ -126,7 +133,6 @@ public class ReportFactory {
 					}
 				}
 			}
-
 		}
 		return report;
 	}

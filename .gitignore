@@ -6,3 +6,7 @@
 /.project
 /tools/visual-testing/workdir
 /tools/visual-testing/output
+/.idea/
+*.bat
+/snapshot/
+/dump/

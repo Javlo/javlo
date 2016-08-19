@@ -38,3 +38,13 @@ textarea.form-control {
 .macro-interface {
 	overflow: hidden;
 }
+
+.redirection textarea {
+	text-align: left;
+}
+
+#source, #target {
+	width: 80%;
+	text-align: left;
+}
+

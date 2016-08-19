@@ -749,3 +749,5 @@ change log
  * 3/ image in search result in search module / NotificationService remove weak reference if object not found / Menu displayed with main language in place of content language / DashImage marco persit
  
  * 4/ encode xml site map content / integrity checker activated by default
+ 
+ * 5/ user same image filter in explorer and meta-data view in file module / create redirection macro / pagelist remote

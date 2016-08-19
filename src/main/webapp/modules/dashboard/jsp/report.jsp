@@ -8,7 +8,7 @@
 	<div class="invoice_inner">
 		  <span class="lang">${info.language}</span>
 		  <h2 class="title">Report : ${info.globalTitle}</h2>
-		  <br class="all" /><br class="all" />		  
+		  <br clear="all" /><br />	  		  
     	  <div class="one_half">
     	  <h3 class="title">Pages structure</h3>
     	  <div class="circle">
@@ -52,8 +52,7 @@
           	  Page with label on all images
               <div class="bar2"><div class="value" style="background-color: #4DA74D;  width: ${report.pageImageAlt}%;"><small>${report.pageImageAlt}%</small></div></div>
           </div>
-          </div>
-          <div class="one_half last">
+          </div><div class="one_half last">
           <h3 class="title">Content status</h3>
           <table cellpadding="0" cellspacing="0" class="invoicetable" width="100%">
            	<thead>

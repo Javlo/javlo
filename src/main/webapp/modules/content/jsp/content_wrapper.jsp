@@ -9,7 +9,7 @@
 	<input type="hidden" name="webaction" value="edit.save" />
 	<input type="hidden" name="render-mode" value="1" /><c:if test="${requestService.parameterMap.lightEdit}"><input type="hidden" name="lightEdit" value="true" /></c:if>
 	
-	<jsp:include page="content.jsp${not empty requestService.parameterMap.	previewEdit?'?firstLine=true':''}" />
+	<jsp:include page="content.jsp${not empty requestService.parameterMap.previewEdit?'?firstLine=true':''}" />
 	
 	<div class="insert-line action">
 		<c:set var="saveItem" value="${i18n.edit['global.save']}" />
