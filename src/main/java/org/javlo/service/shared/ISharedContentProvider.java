@@ -64,6 +64,6 @@ public interface ISharedContentProvider {
 	
 	public boolean isUploadable();
 	
-	public void upload(ContentContext ctx, String fileName, InputStream in, String category) throws IOException; 
+	public void upload(ContentContext ctx, String fileName, InputStream in, String category, boolean rename) throws IOException;
 
 }

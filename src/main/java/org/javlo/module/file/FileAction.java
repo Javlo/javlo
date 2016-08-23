@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
@@ -266,13 +267,25 @@ public class FileAction extends AbstractModuleAction {
 		}
 	}
 
-	public String performUpdateMeta(RequestService rs, ContentContext ctx, EditContext editContext, GlobalContext globalContext, FileModuleContext fileModuleContext, I18nAccess i18nAccess, MessageRepository messageRepository) throws Exception {
+	public String performUpdateMeta(RequestService rs, ServletContext application, ContentContext ctx, EditContext editContext, GlobalContext globalContext, FileModuleContext fileModuleContext, I18nAccess i18nAccess, MessageRepository messageRepository) throws Exception {
 		File folder = getFolder(ctx);
 		if (folder.exists()) {
 			for (File file : folder.listFiles()) {
 				StaticInfo staticInfo = StaticInfo.getInstance(ctx, file);
-				FileBean fileBean = new FileBean(ctx, staticInfo);
-
+				FileBean fileBean = new FileBean(ctx, staticInfo);				
+				String fileName = rs.getParameter("rename-"+fileBean.getId(), null);				
+				if (fileName != null && !fileName.equals(file.getName())) {
+					File targetFile = new File(URLHelper.mergePath(staticInfo.getFile().getParentFile().getAbsolutePath(), fileName));
+					ResourceHelper.renameResource(ctx,staticInfo.getFile(),targetFile);
+					staticInfo.getFile().renameTo(targetFile);
+					staticInfo.renameFile(ctx, targetFile);					
+					PersistenceService.getInstance(globalContext).setAskStore(true);
+					if (staticInfo.getFile().isDirectory()) {
+						FileCache.getInstance(application).clear(globalContext.getContextKey());
+					} else {
+						FileCache.getInstance(application).deleteAllFile(globalContext.getContextKey(), staticInfo.getFile().getName());
+					}
+				}				
 				String title = rs.getParameter("title-" + fileBean.getId(), null);
 				if (title != null) {
 					staticInfo.setTitle(ctx, title);

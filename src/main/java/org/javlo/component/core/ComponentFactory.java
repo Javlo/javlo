@@ -480,7 +480,6 @@ public class ComponentFactory {
 			}
 		}
 		if (template != null) {
-			System.out.println("***** ComponentFactory.getGlobalContextComponent : TEMPLATE"); //TODO: remove debug trace
 			List<Properties> propertiesClasses = template.getDynamicComponentsProperties(globalContext);			
 			for (Properties properties : propertiesClasses) {				
 				DynamicComponent comp = new DynamicComponent();

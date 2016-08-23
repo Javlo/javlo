@@ -136,5 +136,29 @@ request.setAttribute("editPreview", EditContext.getInstance(globalContext, sessi
       </div>
 	  </div>
 	</div>
+	<div class="modal fade fancybox-wrapper" id="preview-modal-question" tabindex="-1" role="dialog" aria-labelledby="previewModalTitle" aria-hidden="true">
+		<div class="modal-dialog modal-sm fancybox-skin">
+			<div class="fancybox-outer">
+				<div class="modal-content fancybox-inner">
+					<div class="for-fancy">
+						<div class="modal-header page-title">
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+							<h4 class="modal-title">[title]</h4>
+						</div>
+						<div class="box">
+							<div class="modal-body tabs-edit-fancy">
+								<p class="preview-modal-question">[question]</p>
+							</div>
+							<div class="modal-footer">
+								<button type="submit" class="btn btn-default btn-no">[no]</button>
+								<button type="submit" class="btn btn-primary btn-yes">[yes]</button>
+							</div>
+						</div>
+
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 	
 </div>	 

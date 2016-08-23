@@ -151,7 +151,7 @@ public abstract class AbstractSharedContentProvider implements ISharedContentPro
 	}
 
 	@Override
-	public void upload(ContentContext ctx, String fileName, InputStream in, String category) throws IOException {
+	public void upload(ContentContext ctx, String fileName, InputStream in, String category, boolean rename) throws IOException {
 	}
 
 }

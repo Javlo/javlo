@@ -53,7 +53,7 @@ public class ImportedFileSharedContentProvider extends LocalFileSharedContentPro
 	}
 	
 	@Override
-	public void upload(ContentContext ctx, String fileName, InputStream in, String category) throws IOException {		
+	public void upload(ContentContext ctx, String fileName, InputStream in, String category, boolean rename) throws IOException {
 		File fileFolder = getRootFolder(ctx);
 		try {
 			fileFolder = new File(URLHelper.mergePath(fileFolder.getAbsolutePath(), URLHelper.mergePath(ctx.getGlobalContext().getStaticConfig().getImportFolder(),DataAction.createImportFolder(ctx))));			
@@ -61,7 +61,9 @@ public class ImportedFileSharedContentProvider extends LocalFileSharedContentPro
 			throw new IOException(e);
 		}
 		File newFile = new File(URLHelper.mergePath(fileFolder.getAbsolutePath(), fileName));
-		newFile = ResourceHelper.getFreeFileName(newFile);		
+		if (rename) {
+			newFile = ResourceHelper.getFreeFileName(newFile);
+		}
 		ResourceHelper.writeStreamToFile(in, newFile);
 		logger.info("imported file : "+newFile);
 	}

@@ -210,6 +210,7 @@ public class GlobalImage extends Image implements IImageFilter {
 	@Override
 	public void prepareView(ContentContext ctx) throws Exception {
 		// ctx.setCurrentTemplate(null); // reset template
+		
 		super.prepareView(ctx);
 		String link = getLink();
 		if (link.startsWith('/' + ctx.getGlobalContext().getStaticConfig().getStaticFolder())) {
@@ -227,6 +228,7 @@ public class GlobalImage extends Image implements IImageFilter {
 		} else {
 			ctx.getRequest().setAttribute("previewURL", getPreviewURL(ctx, getFilter(ctx)));
 		}
+		ctx.getRequest().setAttribute("largeURL", getPreviewURL(ctx, getLargeFilter(ctx)));
 		ctx.getRequest().setAttribute("media", this);
 		ctx.getRequest().setAttribute("shortDate", StringHelper.renderShortDate(ctx, getDate()));
 		if (isMeta() && !isLabel()) {
@@ -668,19 +670,11 @@ public class GlobalImage extends Image implements IImageFilter {
 		}
 		return null;
 	}
-
-	public String getPreviewURL(ContentContext ctx) throws Exception {
-		if (getLink() != null) {
-			return getLink();
-		} else if (getFileName() != null) {
-			String fileLink = getResourceURL(ctx, getFileName());
-			String url = URLHelper.createTransformURL(ctx, getPage(), fileLink, "thumb-view").replace('\\', '/');
-			url = URLHelper.addParam(url, "hash", getStaticInfo(ctx).getVersionHash(ctx));
-			return url;
-		}
-		return null;
+	
+	protected String getLargeFilter(ContentContext ctx) {
+		return getConfig(ctx).getProperty("image.large-filter", "large");
 	}
-
+	
 	protected String getLinkXHTMLInputName() {
 		return "_link_name_" + getId();
 	}

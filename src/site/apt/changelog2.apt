@@ -750,4 +750,4 @@ change log
  
  * 4/ encode xml site map content / integrity checker activated by default
  
- * 5/ user same image filter in explorer and meta-data view in file module / create redirection macro / pagelist remote
+ * 5/ user same image filter in explorer and meta-data view in file module / create redirection macro / pagelist remote / ask overwrite or rename / large image filter for popup

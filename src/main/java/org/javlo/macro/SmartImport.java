@@ -72,7 +72,7 @@ public class SmartImport implements IInteractiveMacro, IAction {
 			config.setBeforeContent(false);
 		}
 		
-		DataAction.uploadContent(rs, ctx, gc, cs, user, messageRepository, i18nAccess, config);
+		DataAction.uploadContent(rs, ctx, gc, cs, user, messageRepository, i18nAccess, config, true);
 		
 		MacroModuleContext.getInstance(ctx.getRequest()).setActiveMacro(null);
 		if (ctx.isEditPreview()) {

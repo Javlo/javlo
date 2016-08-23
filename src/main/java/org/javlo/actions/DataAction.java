@@ -78,7 +78,8 @@ import org.javlo.user.AdminUserSecurity;
 import org.javlo.user.User;
 import org.javlo.ztatic.StaticInfo;
 
-public class DataAction implements IAction {
+public class
+DataAction implements IAction {
 
 	private static Logger logger = Logger.getLogger(DataAction.class.getName());
 
@@ -291,17 +292,25 @@ public class DataAction implements IAction {
 	}
 
 	public static String performUpload(RequestService rs, ContentContext ctx, GlobalContext gc, ContentService cs, User user, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
-		return uploadContent(rs, ctx, gc, cs, user, messageRepository, i18nAccess, new ImportConfigBean(ctx));
+		boolean rename = StringHelper.isTrue(rs.getParameter("rename", null), true);
+		if (!rename) {
+			ctx.setNeedRefresh(true);
+		}
+		return uploadContent(rs, ctx, gc, cs, user, messageRepository, i18nAccess, new ImportConfigBean(ctx), rename);
 	}
 
 	public static String performUploadShared(RequestService rs, ContentContext ctx, GlobalContext gc, ContentService cs, User user, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
 		SharedContentService sharedContentService = SharedContentService.getInstance(ctx);
 		SharedContentContext sharedContentContext = SharedContentContext.getInstance(ctx.getRequest().getSession());
-		ISharedContentProvider provider = sharedContentService.getProvider(ctx, sharedContentContext.getProvider());
+		ISharedContentProvider provider = sharedContentService.getProvider(ctx, sharedContentContext.getProvider());	
+		boolean rename = StringHelper.isTrue(rs.getParameter("rename", null), true);
+		if (!rename) {
+			ctx.setNeedRefresh(true);
+		}
 		if (provider != null) {
 			for (FileItem item : rs.getAllFileItem()) {
-				InputStream in = item.getInputStream();
-				provider.upload(ctx, item.getName(), in, sharedContentContext.getCategory());
+				InputStream in = item.getInputStream();				
+				provider.upload(ctx, item.getName(), in, sharedContentContext.getCategory(), rename);
 				ResourceHelper.closeResource(in);
 			}
 		}
@@ -319,14 +328,14 @@ public class DataAction implements IAction {
 	 * @return
 	 * @throws Exception
 	 */
-	protected static File createImage(ContentContext ctx, String importFolder, FileItem imageItem, ImportConfigBean config, boolean content, String previousId) throws Exception {
+	protected static File createImage(ContentContext ctx, String importFolder, FileItem imageItem, ImportConfigBean config, boolean content, String previousId, boolean rename) throws Exception {
 		GlobalContext gc = ctx.getGlobalContext();
 		String imageRelativeFolder = URLHelper.mergePath(gc.getStaticConfig().getStaticFolder(), ctx.getGlobalContext().getStaticConfig().getImportImageFolder(), importFolder);
 		File targetFolder = new File(URLHelper.mergePath(gc.getDataFolder(), imageRelativeFolder));
 		if (!targetFolder.exists()) {
 			targetFolder.mkdirs();
 		}
-		File newFile = ResourceHelper.writeFileItemToFolder(imageItem, targetFolder, false, true);
+		File newFile = ResourceHelper.writeFileItemToFolder(imageItem, targetFolder, false, rename);
 		if (newFile != null && newFile.exists()) {
 			ContentService cs = ContentService.getInstance(gc);
 			String dir = imageRelativeFolder.replaceFirst(gc.getStaticConfig().getImageFolder(), "");
@@ -468,7 +477,7 @@ public class DataAction implements IAction {
 		return importFolder;
 	}
 
-	public static String uploadContent(RequestService rs, ContentContext ctx, GlobalContext gc, ContentService cs, User user, MessageRepository messageRepository, I18nAccess i18nAccess, ImportConfigBean config) throws Exception {
+	public static String uploadContent(RequestService rs, ContentContext ctx, GlobalContext gc, ContentService cs, User user, MessageRepository messageRepository, I18nAccess i18nAccess, ImportConfigBean config, boolean rename) throws Exception {
 		if (user == null) {
 			return "Please, login before upload files.";
 		}
@@ -591,7 +600,7 @@ public class DataAction implements IAction {
 				}
 				if (countImages == 1) {
 					if (!config.isImagesAsGallery()) {
-						folderSelection = createImage(ctx, importFolder, imageItem, config, content, previousId);
+						folderSelection = createImage(ctx, importFolder, imageItem, config, content, previousId, rename);
 						if (folderSelection != null) {
 							folderSelection = folderSelection.getParentFile();
 						}
@@ -610,7 +619,7 @@ public class DataAction implements IAction {
 						folderSelection = createOrUpdateGallery(ctx, targetFolder, importFolder, rs.getAllFileItem(), config, content, previousId);
 					} else {
 						for (FileItem file : rs.getAllFileItem()) {
-							folderSelection = createImage(ctx, importFolder, file, config, content, previousId);
+							folderSelection = createImage(ctx, importFolder, file, config, content, previousId, rename);
 							if (folderSelection != null) {
 								folderSelection = folderSelection.getParentFile();
 							}

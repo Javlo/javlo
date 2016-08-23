@@ -150,11 +150,14 @@ public class LocalImageSharedContentProvider extends AbstractSharedContentProvid
 	}
 
 	@Override
-	public void upload(ContentContext ctx, String fileName, InputStream in, String category) throws IOException {		
+	public void upload(ContentContext ctx, String fileName, InputStream in, String category, boolean rename) throws IOException {
 		File imageFolder = getRootFolder(ctx);
 		imageFolder = new File(URLHelper.mergePath(imageFolder.getAbsolutePath(), category));
 		File newFile = new File(URLHelper.mergePath(imageFolder.getAbsolutePath(), fileName));
-		newFile = ResourceHelper.getFreeFileName(newFile);
+		System.out.println("rename = "+rename);
+		if (rename) {
+			newFile = ResourceHelper.getFreeFileName(newFile);
+		}
 		ResourceHelper.writeStreamToFile(in, newFile);
 		logger.info("imported file : " + newFile);
 	}

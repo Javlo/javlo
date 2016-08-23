@@ -247,12 +247,17 @@
 			</c:if>			
 			<c:if test="${pdf}">
 				<li>
-				<li><form id="export_pdf_page_form"
+				<li><c:url var="lowPDFURL" value="${info.currentPDFURL}" context="/">
+						<c:param name="lowdef" value="true" />
+					</c:url><form id="export_pdf_page_form"
 						action="${info.currentPDFURL}" method="post" target="_blanck">
-						<button class="btn btn-default btn-sm btn-pdf btn-color btn-wait-loading"
+						<div class="btn-group" role="group"><button class="btn btn-default btn-sm btn-pdf btn-color btn-wait-loading"
 							id="export_pdf_button" type="submit"
 							value="${i18n.edit['preview.label.pdf']}"><span class="glyphicon glyphicon-open-file" aria-hidden="true"></span><span class="text">${i18n.edit['preview.label.pdf']}</span></button>
-					</form></li>
+							<a href="${lowPDFURL}" class="btn btn-default btn-sm btn-pdf btn-color btn-wait-loading"
+							id="export_pdf_button" type="submit" target="_blank"><span class="glyphicon glyphicon-leaf" aria-hidden="true"></span><span class="text">${i18n.edit['preview.label.pdf.low']}</span></a></div>
+					</form>					
+					</li>
 			</c:if>
 			<li class="undo${contentContext.canUndo?'':' no-access'}"><form
 								class="${!info.page.pageLocalEmpty?'no-access':''}"

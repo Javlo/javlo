@@ -96,6 +96,11 @@
 		</div>		
 		
 		<c:if test="${empty param.select}">
+		
+		<div class="line">
+			<label for="rename-${file.id}">${i18n.edit["field.rename"]}</label>			
+			<input class="file-rename" type="text" id="rename-${file.id}" name="rename-${file.id}" value="${file.name}" />			
+		</div>
 		<div class="line">
 			<label for="title-${file.id}">${i18n.edit["field.title"]}</label>			
 			<input class="file-title" type="text" id="title-${file.id}" name="title-${file.id}" value="<c:out value="${file.title}" escapeXml="true" />" />

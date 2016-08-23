@@ -98,7 +98,7 @@ public class ResourceHelper {
 	public static Object SYNCHRO_RESOURCE = new Object();
 
 	static final String CONFIG_DIR = "/WEB-INF/config";
-	
+
 	/**
 	 * file in private dir could not be downloaded
 	 */
@@ -131,7 +131,7 @@ public class ResourceHelper {
 	public static void closeResource(Closeable... resources) {
 		for (Closeable resource : resources) {
 			if (resource != null) {
-				try {					
+				try {
 					resource.close();
 				} catch (Throwable t) {
 					logger.warning(t.getMessage());
@@ -290,11 +290,17 @@ public class ResourceHelper {
 
 	/**
 	 * transactional copy a file other file
-	 * @param source the source file, must exist
-	 * @param destination the target file, could not exist
-	 * @param overwrite if true and file desctination exist, this method done nothing
+	 * 
+	 * @param source
+	 *            the source file, must exist
+	 * @param destination
+	 *            the target file, could not exist
+	 * @param overwrite
+	 *            if true and file desctination exist, this method done nothing
 	 * @return true if file is copied, false otherwise
-	 * @throws IOException error width IO, file destination is'nt modified if there are error
+	 * @throws IOException
+	 *             error width IO, file destination is'nt modified if there are
+	 *             error
 	 */
 	public static boolean copyFile(File source, File destination, boolean overwrite) throws IOException {
 		if (!overwrite && destination.exists()) {
@@ -347,7 +353,8 @@ public class ResourceHelper {
 	 * Standart method to format the checksum into a {@link String}. <br/>
 	 * This method is private because, only the following functions can call it:
 	 * {@link #getChecksumInputStream(InputStream)},
-	 * {@link #getChecksumResult(InputStream)}, {@link #computeChecksum(File)} <br/>
+	 * {@link #getChecksumResult(InputStream)}, {@link #computeChecksum(File)}
+	 * <br/>
 	 * and because the implementation of the format can be changed in future.
 	 * 
 	 * @param crc32
@@ -468,7 +475,8 @@ public class ResourceHelper {
 	/**
 	 * Add a checksum computing layer to the given {@link InputStream}. <br/>
 	 * Give the returned {@link InputStream} to
-	 * {@link #getChecksumResult(InputStream)} to retrieve the checksum result. <br/>
+	 * {@link #getChecksumResult(InputStream)} to retrieve the checksum result.
+	 * <br/>
 	 * The following functions are complementary:
 	 * {@link #getChecksumResult(InputStream)}, {@link #computeChecksum(File)},
 	 * {@link #formatChecksum(long)}
@@ -775,9 +783,11 @@ public class ResourceHelper {
 		file = StringHelper.getFileNameFromPath(file);
 		return file.startsWith("content_" + ContentContext.PREVIEW_MODE);
 	}
-	
+
 	/**
-	 * check if this file is a document (list of extenion define in static-config.properties
+	 * check if this file is a document (list of extenion define in
+	 * static-config.properties
+	 * 
 	 * @param ctx
 	 * @param filename
 	 * @return
@@ -957,28 +967,29 @@ public class ResourceHelper {
 	 * @throws Exception
 	 */
 	public static void renameResource(ContentContext ctx, File file, File newFile) throws Exception {
-		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-		ContentContext lgCtx = new ContentContext(ctx);
-		lgCtx.setRenderMode(ContentContext.EDIT_MODE);
-		Collection<String> lgs = globalContext.getContentLanguages();
-		for (String lg : lgs) {
-			lgCtx.setRequestContentLanguage(lg);
-			List<IContentVisualComponent> comps = ComponentFactory.getAllComponentsFromContext(lgCtx);
-			for (IContentVisualComponent comp : comps) {
-				if (comp instanceof IStaticContainer) {
-					((IStaticContainer) comp).renameResource(ctx, file, newFile);
+		synchronized (ctx.getGlobalContext().getLockLoadContent()) {
+			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+			ContentContext lgCtx = new ContentContext(ctx);
+			lgCtx.setRenderMode(ContentContext.EDIT_MODE);
+			Collection<String> lgs = globalContext.getContentLanguages();
+			for (String lg : lgs) {
+				lgCtx.setRequestContentLanguage(lg);
+				List<IContentVisualComponent> comps = ComponentFactory.getAllComponentsFromContext(lgCtx);
+				for (IContentVisualComponent comp : comps) {
+					if (comp instanceof IStaticContainer) {
+						((IStaticContainer) comp).renameResource(ctx, file, newFile);
+					}
 				}
 			}
+			StaticInfo staticInfo = StaticInfo.getInstance(ctx, file);
+			staticInfo.renameFile(ctx, newFile);
+
+			// delete old ref in cache
+			String fromDataFolder = file.getAbsolutePath().replace(globalContext.getDataFolder(), "");
+			FileCache.getInstance(ctx.getRequest().getSession().getServletContext()).delete(ctx, fromDataFolder);
+
+			PersistenceService.getInstance(globalContext).setAskStore(true);			
 		}
-		StaticInfo staticInfo = StaticInfo.getInstance(ctx, file);
-		staticInfo.renameFile(ctx, newFile);
-
-		// delete old ref in cache
-		String fromDataFolder = file.getAbsolutePath().replace(globalContext.getDataFolder(), "");
-		FileCache.getInstance(ctx.getRequest().getSession().getServletContext()).delete(ctx, fromDataFolder);
-
-		PersistenceService.getInstance(globalContext).setAskStore(true);
-		ContentService.clearCache(ctx, globalContext);
 	}
 
 	/**
@@ -1162,7 +1173,7 @@ public class ResourceHelper {
 		byte[] contentByte = content.getBytes(encoding);
 		out.write(contentByte);
 	}
-	
+
 	public static final void writeStringToStream(String content, OutputStream out) throws IOException {
 		byte[] contentByte = content.getBytes();
 		out.write(contentByte);
@@ -1473,7 +1484,7 @@ public class ResourceHelper {
 	public static void main(String[] args) throws IOException {
 		File target = new File("c:/trans/struct.html");
 		File source = new File("c:/trans");
-		
+
 		ResourceHelper.writeStringToFile(target, fileStructureToHtml(source));
 	}
 
@@ -1531,26 +1542,26 @@ public class ResourceHelper {
 			writeStreamToStream(in, out);
 		} finally {
 			safeClose(in, out);
-		}		
+		}
 	}
-	
+
 	public static String fileStructureToHtml(File file) {
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(outStream);
 		out.println("<ul class=\"file-structure\">");
-		fileStructureToHtml(out,file);
+		fileStructureToHtml(out, file);
 		out.println("</ul>");
 		out.close();
 		return new String(outStream.toByteArray());
 	}
-	
+
 	private static long fileStructureToHtml(PrintStream out, File file) {
 		long size = 0;
 		if (file.isFile()) {
-			out.println("<li class=\"file\">"+file.getName()+ "["+StringHelper.renderSize(file.length())+"]</li>");
+			out.println("<li class=\"file\">" + file.getName() + "[" + StringHelper.renderSize(file.length()) + "]</li>");
 			return file.length();
 		} else {
-			out.println("<li class=\"folder\">"+file.getName());
+			out.println("<li class=\"folder\">" + file.getName());
 			out.println("<ul>");
 			for (File child : file.listFiles()) {
 				size = size + fileStructureToHtml(out, child);

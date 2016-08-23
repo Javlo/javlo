@@ -740,9 +740,16 @@ public class AccessServlet extends HttpServlet implements IVersion {
 						
 						response.setContentType("application/pdf;");
 						OutputStream out = response.getOutputStream();
+						
+						Map<String, String> params = new HashMap<String, String>();
+						boolean lowDef = false;
+						if (request.getParameter("lowdef") != null) {
+							params.put("lowdef", request.getParameter("lowdef"));
+							lowDef = true;
+						}
 
 						FileCache fileCache = FileCache.getInstance(getServletContext());
-						File pdfFileCache = fileCache.getPDFPage(ctx, ctx.getCurrentPage());
+						File pdfFileCache = fileCache.getPDFPage(ctx, ctx.getCurrentPage(), lowDef);
 						if (pdfFileCache.exists()) {
 							synchronized (FileCache.PDF_LOCK) {
 								logger.info("pdf file found in cache : " + pdfFileCache);
@@ -756,10 +763,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 							viewCtx.setFormat("html");
 							viewCtx.resetDMZServerInter();
 
-							Map<String, String> params = new HashMap<String, String>();
-
 							for (Object key : ctx.getRequest().getParameterMap().keySet()) {
-
 								if (!key.equals("__check_context")) {
 									params.put(key.toString(), ctx.getRequest().getParameter(key.toString()));
 								}
@@ -781,10 +785,6 @@ public class AccessServlet extends HttpServlet implements IVersion {
 
 							if (request.getParameter(Template.FORCE_TEMPLATE_PARAM_NAME) != null) {
 								params.put(Template.FORCE_TEMPLATE_PARAM_NAME, request.getParameter(Template.FORCE_TEMPLATE_PARAM_NAME));
-							}
-
-							if (request.getParameter("lowdef") != null) {
-								params.put("lowdef", request.getParameter("lowdef"));
 							}
 
 							params.put("clean-html", "true");

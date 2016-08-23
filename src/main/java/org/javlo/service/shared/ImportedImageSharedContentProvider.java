@@ -59,7 +59,7 @@ public class ImportedImageSharedContentProvider extends LocalImageSharedContentP
 	}
 	
 	@Override
-	public void upload(ContentContext ctx, String fileName, InputStream in, String category) throws IOException {
+	public void upload(ContentContext ctx, String fileName, InputStream in, String category, boolean rename) throws IOException {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		File imageFolder = new File(URLHelper.mergePath(globalContext.getDataFolder(), globalContext.getStaticConfig().getImageFolder()));
 		try {
@@ -68,7 +68,9 @@ public class ImportedImageSharedContentProvider extends LocalImageSharedContentP
 			throw new IOException(e);
 		}
 		File newFile = new File(URLHelper.mergePath(imageFolder.getAbsolutePath(), fileName));
-		newFile = ResourceHelper.getFreeFileName(newFile);		
+		if (rename) {
+			newFile = ResourceHelper.getFreeFileName(newFile);
+		}
 		ResourceHelper.writeStreamToFile(in, newFile);
 		logger.info("imported file : "+newFile);
 	}

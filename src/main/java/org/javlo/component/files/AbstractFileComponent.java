@@ -980,17 +980,17 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 
 	@Override
 	public boolean renameResource(ContentContext ctx, File oldName, File newName) {
-
+		
 		if (oldName.equals(newName)) {
 			return false;
 		}
 		String currentFile = URLHelper.mergePath(getFileDirectory(ctx), getDirSelected(), getFileName());
 
 		File file = new File(currentFile);
+		
 		if (file.getAbsolutePath().replace('\\', '/').equals(oldName.getAbsolutePath().replace('\\', '/'))) {
 			String relativeNewFileDir = newName.getParentFile().getAbsolutePath().replace('\\', '/').replace(getFileDirectory(ctx).replace('\\', '/'), "");
 			setFileName(newName.getName());
-
 			setDirSelected(relativeNewFileDir);
 			setModify();
 			storeProperties();
