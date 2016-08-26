@@ -1,7 +1,6 @@
 package org.javlo.data;
 
 import java.io.File;
-import java.lang.reflect.InvocationTargetException;
 import java.text.DateFormatSymbols;
 import java.util.Calendar;
 import java.util.Collection;
@@ -15,7 +14,6 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.beanutils.BeanUtils;
 import org.javlo.component.core.ContentElementList;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.core.ISubTitle;
@@ -491,9 +489,38 @@ public class InfoBean {
 			String cssLink = URLHelper.mergePath(globalContext.getStaticConfig().getEditTemplateFolder(), "css", "edit_" + globalContext.getEditTemplateMode() + ".css");
 			return URLHelper.createStaticURL(ctx, cssLink);
 		} else {
-			return null;
+			try {
+				if (ctx.getCurrentTemplate() != null && !StringHelper.isEmpty(ctx.getCurrentTemplate().getEditTemplateMode())) {
+					String cssLink = URLHelper.mergePath(globalContext.getStaticConfig().getEditTemplateFolder(), "css", "edit_" + ctx.getCurrentTemplate().getEditTemplateMode() + ".css");
+					return URLHelper.createStaticURL(ctx, cssLink);
+				} else {
+					return null;
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+				return null;
+			}
 		}
 	}
+	
+	public String getPreviewTemplateModeURL() {
+		if (globalContext.getEditTemplateMode() != null && globalContext.getEditTemplateMode().trim().length() > 0) {
+			return URLHelper.mergePath(URLHelper.createStaticURL(ctx, "/"), globalContext.getStaticConfig().getEditTemplateFolder(), "/preview/"+globalContext.getEditTemplateMode()+"/css/edit_preview.css");
+		} else {
+			try {
+				if (ctx.getCurrentTemplate() != null && !StringHelper.isEmpty(ctx.getCurrentTemplate().getEditTemplateMode())) {
+					return URLHelper.mergePath(URLHelper.createStaticURL(ctx, "/"), globalContext.getStaticConfig().getEditTemplateFolder(), "/preview/"+ctx.getCurrentTemplate().getEditTemplateMode()+"/css/edit_preview.css");
+				} else {
+					return null;
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+				return null;
+			}
+		}
+	}
+	
+	
 
 	public String getStaticRootURL() {
 		return URLHelper.createStaticURL(ctx, "/");

@@ -143,7 +143,7 @@ public class VideoContentMultimedia extends Multimedia {
 
 		resource.setURL(video.getURL(ctx));
 		resource.setLanguage(video.getComponentBean().getLanguage());
-		resource.setPreviewURL(video.getPreviewURL(ctx));
+		resource.setPreviewURL(video.getPreviewURL(ctx, getPreviewFilter(null)));
 		return resource;
 	}
 

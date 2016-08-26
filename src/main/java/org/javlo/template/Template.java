@@ -1910,6 +1910,16 @@ public class Template implements Comparable<Template> {
 	public String getSource() {
 		return properties.getString("source", getParent().getSource());
 	}
+	
+	/**
+	 * mode of the edit template, can be used in template renderer for include
+	 * special css or js. preview css is : edit_preview_[mode].css
+	 * 
+	 * @return
+	 */
+	public String getEditTemplateMode() {
+		return properties.getString("edit-template.mode", "dark");
+	}
 
 	public File getSourceFolder() {
 		return dir;

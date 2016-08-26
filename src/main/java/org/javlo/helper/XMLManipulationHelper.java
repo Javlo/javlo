@@ -1051,8 +1051,8 @@ public class XMLManipulationHelper {
 		String previewCSS = staticConfig.getCssPreview();
 		out.append("<%=(ctx.isInteractiveMode() ? \"<link rel=\\\"stylesheet\\\" type=\\\"text/css\\\" href=\\\"\"+URLHelper.createStaticURL(ctx,\"" + previewCSS + "\")+\"?ts=\"+infoBean.getTs()+\"\\\" />\" : \"\")  %>");
 		out.newLine();
-		out.append("<%String cssPreviewURL = URLHelper.mergePath(URLHelper.createStaticURL(ctx,\"/\"), globalContext.getStaticConfig().getEditTemplateFolder(), \"/preview/\"+globalContext.getEditTemplateMode()+\"/css/edit_preview.css\");%>");
-		out.append("<%=(ctx.isInteractiveMode() ? \"<link rel=\\\"stylesheet\\\" type=\\\"text/css\\\" href=\\\"\"+cssPreviewURL+\"?ts=\"+infoBean.getTs()+\"\\\" />\" : \"\")  %>");
+		//out.append("<%String cssPreviewURL = URLHelper.mergePath(URLHelper.createStaticURL(ctx,\"/\"), globalContext.getStaticConfig().getEditTemplateFolder(), \"/preview/\"+globalContext.getEditTemplateMode()+\"/css/edit_preview.css\");%>");
+		out.append("<%=(ctx.isInteractiveMode() && !StringHelper.isEmpty(infoBean.getPreviewTemplateModeURL()) ? \"<link rel=\\\"stylesheet\\\" type=\\\"text/css\\\" href=\\\"\"+infoBean.getPreviewTemplateModeURL()+\"?ts=\"+infoBean.getTs()+\"\\\" />\" : \"\")  %>");
 		out.newLine();
 		String previewJS = staticConfig.getJSPreview();
 		out.append("<%=(ctx.isInteractiveMode() ? \"<script type=\\\"text/javascript\\\" src=\\\"\"+URLHelper.createStaticURL(ctx,\"" + previewJS + "\")+\"\\\"></script>\" : \"\")  %>");

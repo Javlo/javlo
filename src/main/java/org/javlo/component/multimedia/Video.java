@@ -295,23 +295,6 @@ public class Video extends GlobalImage implements IAction, IVideo {
 	}
 
 	@Override
-	public String getPreviewURL(ContentContext ctx) throws Exception {
-		if (getDecorationImage() != null && getDecorationImage().trim().length() > 1) {
-			String imageLink = getResourceURL(ctx, getDecorationImage());
-			return URLHelper.createTransformURL(ctx, imageLink, getConfig(ctx).getProperty("image.filter", "preview"));
-		} else if (isYouTube()) {
-			try {
-				String previewYouTube = getYoutubePreview(ctx, null);
-				return previewYouTube;
-			} catch (Exception e) {
-				logger.warning(e.getMessage());
-				e.printStackTrace();
-			}
-		}
-		return null;
-	}
-
-	@Override
 	protected Map<String, String> getTranslatableResources(ContentContext ctx) throws Exception {
 		Collection<Video> videos = getAllVideoOnPage(ctx);
 		Map<String, String> outResourceList = new HashMap<String, String>();
