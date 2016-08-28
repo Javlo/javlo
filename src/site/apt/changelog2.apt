@@ -753,3 +753,7 @@ change log
  * 5/ user same image filter in explorer and meta-data view in file module / create redirection macro / pagelist remote / ask overwrite or rename / large image filter for popup
  
  * 6/ template can define the theme in preview mode
+ 
+ * 7/ face detection
+ 
+ * 2.1.0.3.16 28/08/2016

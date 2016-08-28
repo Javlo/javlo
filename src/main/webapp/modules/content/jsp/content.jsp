@@ -109,7 +109,8 @@ components = allComponents;
 
 if (components.size() > 60 && request.getParameter("display-all") == null) {
 	  %><div class="insert-line">
-		<a class="btn btn-default btn-xs warning" href="${info.currentURL}?${info.editPreview?'previewEdit=true&':''}display-all=true">${i18n.edit["edit.message.display-all-components"]}</a>
+	  	<c:set var="pushParam" value="&pushcomp=${param.pushcomp}" />
+		<a class="btn btn-default btn-xs warning" href="${info.currentURL}?${info.editPreview?'previewEdit=true&':''}display-all=true${!empty param.pushcomp?pushParam:''}">${i18n.edit["edit.message.display-all-components"]}</a>
 	  </div><%	
 } else {
 
@@ -127,7 +128,7 @@ for (IContentVisualComponent comp : components) {
 		authors = " <span class=\"authors\"> - "+comp.getAuthors()+"</span>";
 	}
 	%>
- <div id="comp-<%=comp.getId()%>" class="<%=readOnlyClass%><%=comp.getType()%><%if (components.size()==1) {%> new<%}%><%if (comp.getId().equals(request.getParameter("push-comp"))) {%> push<%}%> component-wrapper">
+ <div id="comp-<%=comp.getId()%>" class="<%=readOnlyClass%><%=comp.getType()%><%if (components.size()==1) {%> new<%}%><%if (comp.getId().equals(request.getParameter("pushcomp"))) {%> push<%}%> component-wrapper">
  <input type="hidden" name="components" value="<%=comp.getId()%>" />
  <div class="component-title"><a style="color: #<%=comp.getHexColor()%>" href="#" onclick="scrollToFirstQuarter(jQuery('#content-edit'),this); return false;"><%=comp.getComponentLabel(ctx, globalContext.getEditLanguage(request.getSession()))+authors%></a></div>
  <div class="tabs component"> 	    	  

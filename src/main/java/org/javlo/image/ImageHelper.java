@@ -7,17 +7,26 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
+import java.awt.image.DataBuffer;
+import java.awt.image.DataBufferByte;
+import java.awt.image.DataBufferInt;
 import java.awt.image.WritableRaster;
 import java.io.BufferedInputStream;
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
 
 import javax.imageio.ImageIO;
+import javax.imageio.ImageWriteParam;
+import javax.imageio.ImageWriter;
+import javax.imageio.stream.ImageOutputStream;
 import javax.servlet.ServletContext;
 
 import org.apache.commons.lang.StringUtils;
@@ -28,6 +37,12 @@ import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.rendering.Device;
 import org.javlo.template.Template;
+import org.javlo.ztatic.InitInterest.Point;
+import org.openimaj.image.ImageUtilities;
+import org.openimaj.image.MBFImage;
+import org.openimaj.image.processing.face.detection.DetectedFace;
+import org.openimaj.image.processing.face.detection.HaarCascadeDetector;
+import org.openimaj.image.processing.face.util.SimpleDetectedFaceRenderer;
 
 /**
  * @author pvanderm
@@ -68,13 +83,13 @@ public class ImageHelper {
 		context = StringHelper.createFileName(context);
 		String pageIndice = "";
 		if (param.getPage() > 1) {
-			pageIndice = "page_"+param.getPage()+"/";
+			pageIndice = "page_" + param.getPage() + "/";
 		}
 		String out = context + '/' + filter + '/' + deviceCode + '/' + area + '/' + pageIndice;
 		if (param.isLowDef()) {
-			out = URLHelper.mergePath(out, "low")+"/";
+			out = URLHelper.mergePath(out, "low") + "/";
 		}
-		
+
 		if (template == null) {
 			out += Template.EDIT_TEMPLATE_CODE;
 		} else {
@@ -88,8 +103,8 @@ public class ImageHelper {
 			out += "/none";
 		} else {
 			out += "/" + StringHelper.createFileName(compFilterKey);
-		}	
-		
+		}
+
 		return out;
 	}
 
@@ -98,7 +113,8 @@ public class ImageHelper {
 	}
 
 	/**
-	 * transform a path in a string to a key. this key can be a directory name ( sp. replace / and \ with _ ).
+	 * transform a path in a string to a key. this key can be a directory name (
+	 * sp. replace / and \ with _ ).
 	 * 
 	 * @param path
 	 *            a path to a file
@@ -223,10 +239,53 @@ public class ImageHelper {
 		return res;
 	}
 
-	public static void main(String[] args) {
-		String path = "c:\\p\\photos";
-		System.out.println("path=" + path);
-		System.out.println("key=" + pathToKey(path));
+	public static void main(String[] args) throws Exception {
+		File path = new File("c:\\trans\\faces");
+		File outPath = new File("c:\\trans\\faces\\out");
+		//File outPath2 = new File("c:\\trans\\faces\\out2");
+		outPath.mkdirs();
+		//outPath2.mkdirs();
+		for (File image : path.listFiles()) {
+			if (StringHelper.isImage(image.getName())) {
+				try {
+					BufferedImage bufImage = ImageIO.read(image);
+					if (bufImage.getType() != BufferedImage.TYPE_INT_ARGB) {
+						BufferedImage tmp = new BufferedImage(bufImage.getWidth(), bufImage.getHeight(), BufferedImage.TYPE_INT_ARGB);
+						tmp.getGraphics().drawImage(bufImage, 0, 0, null);
+						bufImage = tmp;
+					}
+					int[] srcPixels = ((DataBufferInt) bufImage.getRaster().getDataBuffer()).getData();
+					MBFImage img = new MBFImage(srcPixels, bufImage.getWidth(), bufImage.getHeight());
+					
+					// A simple Haar-Cascade face detector
+					HaarCascadeDetector det1 = new HaarCascadeDetector();
+					//DetectedFace face1 = det1.detectFaces(img.flatten()).get(0);
+					System.out.println(image.getName());
+					for (DetectedFace face : det1.detectFaces(img.flatten())) {
+						if (face.getConfidence() > 0) {
+							new SimpleDetectedFaceRenderer().drawDetectedFace(img, 10, face);
+						}
+						Point point = new Point((int)Math.round(face.getShape().minX()+face.getShape().getWidth()/2), (int)Math.round(face.getShape().minY()+face.getShape().getHeight()/2));						
+					}
+					
+					ImageUtilities.write(img, new File(outPath.getAbsolutePath() + '/' + image.getName()));
+					
+					/*bufImage = ImageEngine.removeAlpha(bufImage);
+					OutputStream out = new FileOutputStream(new File(outPath.getAbsolutePath() + '/' + image.getName()));
+					ImageOutputStream ios = ImageIO.createImageOutputStream(out);
+					ImageWriter writer = ImageIO.getImageWritersByFormatName("jpeg").next();
+					ImageWriteParam param = writer.getDefaultWriteParam();
+					param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
+					param.setCompressionQuality(0.99F);
+					writer.setOutput(ios);
+					writer.write(bufImage);
+					ios.close();
+					out.close();*/
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}
 	}
 
 	public static final String getImageFormat(String fileName) {

@@ -1561,6 +1561,10 @@ public class StaticConfig extends Observable {
 		return properties.getLong("sitemap.maxsite", 1024*1024*10);
 	}
 	
+	public boolean isAutoFocus() {
+		return StringHelper.isTrue(properties.getProperty("image.auto-focus"), false);
+	}
+	
 	public long getSiteMapNewsLimit() {
 		return properties.getLong("sitemap.news-days", 2);
 	}

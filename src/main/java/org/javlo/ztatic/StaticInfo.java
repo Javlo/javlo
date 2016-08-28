@@ -923,7 +923,9 @@ public class StaticInfo {
 						BufferedImage img = null;
 						try {
 							img = ImageIO.read(getFile());
-							point = InitInterest.getPointOfInterest(img);
+							if (ctx.getGlobalContext().getStaticConfig().isAutoFocus()) {
+								point = InitInterest.getPointOfInterest(img);
+							}
 						} catch (Throwable t) {
 							logger.warning(t.getMessage());
 						}

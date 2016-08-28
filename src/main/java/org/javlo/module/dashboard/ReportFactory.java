@@ -106,7 +106,7 @@ public class ReportFactory {
 							report.badInternalLink++;
 							Map<String,String> params = new HashMap<String, String>();
 							params.putAll(moduleAction);
-							params.put("push-comp", comp.getId());
+							params.put("pushcomp", comp.getId());
 							report.badInternalLinkPages.add(new Link(URLHelper.createURL(ctx, page, params), page.getTitle(ctx)));
 						} else {
 							report.rightInternalLink++;
@@ -121,7 +121,7 @@ public class ReportFactory {
 									report.badExternalLink++;
 									Map<String,String> params = new HashMap<String, String>();
 									params.putAll(moduleAction);
-									params.put("push-comp", comp.getId());
+									params.put("pushcomp", comp.getId());
 									report.badExternalLinkPages.add(new Link(URLHelper.createURL(ctx, page, params), page.getTitle(ctx)));
 								} else {
 									report.rightExternalLink++;
