@@ -1156,7 +1156,7 @@ public class StaticInfo {
 	}
 
 	private static String getAccessKey(Date date) {
-		return "access-" + StringHelper.renderDate(date, "yyyy-MM-dd");
+		return "access-" + StringHelper.renderDate(date, GlobalContext.ACCESS_DATE_FORMAT);
 	}
 
 	public int getAccess(ContentContext ctx, Date date) {

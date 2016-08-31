@@ -3,7 +3,6 @@ package org.javlo.context;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -20,6 +19,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.Principal;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -56,7 +56,6 @@ import org.javlo.cache.MapCache;
 import org.javlo.config.StaticConfig;
 import org.javlo.helper.ContentHelper;
 import org.javlo.helper.ElementaryURLHelper;
-import org.javlo.helper.LocalLogger;
 import org.javlo.helper.ElementaryURLHelper.Code;
 import org.javlo.helper.NavigationHelper;
 import org.javlo.helper.ResourceHelper;
@@ -64,6 +63,7 @@ import org.javlo.helper.ServletHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.io.TransactionFile;
+import org.javlo.macro.ClearDataAccessCount;
 import org.javlo.mailing.MailConfig;
 import org.javlo.mailing.MailService;
 import org.javlo.module.core.IPrintInfo;
@@ -508,7 +508,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 							}
 						}
 					}
-				}
+				}				
 			} else {
 				synchronized (newInstance.properties) {
 					newInstance.properties.load(newInstance.contextFile);
@@ -523,6 +523,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 				newInstance.properties.setProperty("access-date", StringHelper.renderTime(new Date()));
 			}
 			newInstance.writeInfo(session, System.out);
+			newInstance.cleanDataAccess();
 
 			// TODO : init resource Id
 
@@ -678,6 +679,8 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	public static final String LICENCE_FREE = "free";
 
 	public static final String LICENCE_FREE_PLUS = "free+";
+
+	public static final String ACCESS_DATE_FORMAT = "yyyy-MM-dd";
 
 	private final transient Map<String, WeakReference<User>> allUsers = new WeakHashMap<String, WeakReference<User>>();
 
@@ -1054,6 +1057,17 @@ public class GlobalContext implements Serializable, IPrintInfo {
 			}
 		}
 	}
+	
+	public void removeData(Collection<Object> keys) {
+		synchronized (lockDataFile) {
+			for (Object key : keys) {
+				dataProperties.remove(key);
+			}
+			if (dataProperties.size()>0) {
+				askStoreData();
+			}
+		}
+	}
 
 	/**
 	 * get data with specified prefix
@@ -1077,6 +1091,32 @@ public class GlobalContext implements Serializable, IPrintInfo {
 			prop = initDataFile();
 		}
 		return prop.keySet();
+	}
+	
+	public void cleanDataAccess() {
+		if (dataProperties == null) {
+			initDataFile();
+		}
+		synchronized (lockDataFile) {
+			List<Object> toDeleted = new LinkedList<Object>();
+			SimpleDateFormat dateFormat = new SimpleDateFormat(ACCESS_DATE_FORMAT);
+			Calendar refCal = Calendar.getInstance();
+			refCal.roll(Calendar.YEAR, false);
+			Calendar keyCal = Calendar.getInstance();
+			for (Object key : dataProperties.keySet()) {
+				String strKey = key.toString();
+				String dateStr = strKey.substring(strKey.length()-ACCESS_DATE_FORMAT.length());				
+				try {					
+					Date date = dateFormat.parse(dateStr);
+					keyCal.setTime(date);
+					if (keyCal.before(refCal)) {
+						toDeleted.add(key);						
+					}					
+				} catch (ParseException e) {
+				}				
+			}
+			removeData(toDeleted);
+		}		
 	}
 
 	/**
@@ -2048,6 +2088,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	}
 
 	public void releaseAllCache() {
+		cleanDataAccess();
 		synchronized (RELEASE_CACHE) {
 			for (String name : getAllCacheName()) {
 				getCache(name).removeAll();

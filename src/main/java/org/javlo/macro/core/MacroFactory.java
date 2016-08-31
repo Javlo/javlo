@@ -7,6 +7,7 @@ import org.javlo.config.StaticConfig;
 import org.javlo.macro.ActiveAllChildren;
 import org.javlo.macro.AddChildMacro;
 import org.javlo.macro.CleanResourceNameMacro;
+import org.javlo.macro.ClearDataAccessCount;
 import org.javlo.macro.CopyLanguageStructureHereMacro;
 import org.javlo.macro.CopyLanguageStructureMacro;
 import org.javlo.macro.CreateAllContentSample;
@@ -157,6 +158,7 @@ public class MacroFactory {
 		macros.add(new RenameChildren());
 		macros.add(new ActiveAllChildren());
 		macros.add(new CreateRedirectionForAllLanguages());
+		macros.add(new ClearDataAccessCount());
 	}
 
 	public IMacro getMacro(String name) {

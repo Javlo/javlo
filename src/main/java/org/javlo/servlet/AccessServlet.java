@@ -229,7 +229,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 		TemplateFactory.copyDefaultTemplate(getServletContext());
 
 	}
-
+	
 	public void process(HttpServletRequest request, HttpServletResponse response, boolean post) throws ServletException {
 
 		try {

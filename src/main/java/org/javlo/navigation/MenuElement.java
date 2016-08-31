@@ -1592,7 +1592,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 	}
 
 	private String getAccessKey(Date date) {
-		return "clk__" + getPath() + "__" + StringHelper.renderDate(date, "yyyy-MM-dd");
+		return "clk__" + getPath() + "__" + StringHelper.renderDate(date, GlobalContext.ACCESS_DATE_FORMAT);
 	}
 
 	public MenuElement[] getAllChildren() throws Exception {
