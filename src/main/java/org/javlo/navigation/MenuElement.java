@@ -173,7 +173,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 
 		public Collection<String> needdedResources = null;
 
-		private final Map<String, Boolean> emptyArea = new HashMap<String, Boolean>();
+		private Map<String, Boolean> emptyArea = Collections.EMPTY_MAP;
 
 		public boolean isVisible() {
 			return visible;
@@ -292,6 +292,9 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 		}
 
 		public void setEmpty(String area, boolean empty) {
+			if (emptyArea == Collections.EMPTY_MAP) {
+				emptyArea = new HashMap<String, Boolean>();
+			}
 			emptyArea.put(area, empty);
 		}
 
@@ -1143,15 +1146,11 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 	// Object>(60 * (int) Math.round(((Math.random() + 1) * 60))); // cache
 	// between 1u and 2u, all cache can not be updated at the same time
 
-	private final Map<String, String> replacement = new HashMap<String, String>();
+	private Map<String, String> replacement = Collections.EMPTY_MAP;
 
 	private final Collection<String> compToBeDeleted = new LinkedList<String>();
 
-	private final Map<String, ComponentBean> contentToBeAdded = new HashMap<String, ComponentBean>(); // key
-																										// is
-																										// parent
-																										// component
-																										// id
+	private Map<String, ComponentBean> contentToBeAdded = Collections.EMPTY_MAP;
 
 	private final Set<String> editGroups = new HashSet<String>();
 
@@ -2709,7 +2708,6 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 			return desc.keywords;
 		}
 		String res = "";
-		replacement.clear();
 		IContentComponentsList contentList = getAllContent(ctx);
 		Set<String> keywordsSet = new HashSet<String>();
 		while (contentList.hasNext(ctx)) {
@@ -2726,8 +2724,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 				if (keywords.getStyle(ctx).equals(Keywords.BOLD_IN_CONTENT)) {
 					String[] keys = keywords.getValue().split(",");
 					for (String key : keys) {
-						if (!keywordsSet.contains(key)) {
-							replacement.put(key.trim(), "<strong>" + key.trim() + "</strong>");
+						if (!keywordsSet.contains(key)) {							
 							keywordsSet.add(key);
 						}
 					}
@@ -3264,6 +3261,13 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 	public Map<String, String> getReplacement() {
 		return replacement;
 	}
+	
+	public Map<String,String> getReplacementEditable()  {
+		if (replacement == Collections.EMPTY_MAP) {
+			replacement = new HashMap<String, String>();
+		}
+		return replacement;
+	}
 
 	public Collection<StaticInfo> getResources(ContentContext ctx) throws Exception {
 		Collection<StaticInfo> pageResources = new LinkedList<StaticInfo>();
@@ -3271,7 +3275,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 		Collection<StaticInfo> resources = globalContext.getResources(ctx);
 		for (StaticInfo staticInfo : resources) {
 			if (staticInfo.getLinkedPage(ctx) != null) {
-				if (this.getPath().equals(staticInfo.getLinkedPage(ctx).getPath())) {
+				if (this.getId().equals(staticInfo.getLinkedPageId(ctx))) {
 					pageResources.add(staticInfo);
 				}
 			}
@@ -4122,7 +4126,10 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 		if (contentToBeAdded.keySet().contains(parentCompId)) {
 			logger.warning("parent id : '" + parentCompId + "' all ready found is parent id list.");
 		} else {
-			contentToBeAdded.put(parentCompId, comp);
+			if (contentToBeAdded == Collections.EMPTY_MAP) {
+				contentToBeAdded = new HashMap<String, ComponentBean>();
+			}
+			contentToBeAdded.put(parentCompId, comp);			
 		}
 		return comp.getId();
 	}

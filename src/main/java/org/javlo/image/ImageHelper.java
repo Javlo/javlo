@@ -7,26 +7,19 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
-import java.awt.image.DataBuffer;
-import java.awt.image.DataBufferByte;
 import java.awt.image.DataBufferInt;
 import java.awt.image.WritableRaster;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
 
 import javax.imageio.ImageIO;
-import javax.imageio.ImageWriteParam;
-import javax.imageio.ImageWriter;
-import javax.imageio.stream.ImageOutputStream;
 import javax.servlet.ServletContext;
 
 import org.apache.commons.lang.StringUtils;
@@ -265,7 +258,9 @@ public class ImageHelper {
 						if (face.getConfidence() > 0) {
 							new SimpleDetectedFaceRenderer().drawDetectedFace(img, 10, face);
 						}
-						Point point = new Point((int)Math.round(face.getShape().minX()+face.getShape().getWidth()/2), (int)Math.round(face.getShape().minY()+face.getShape().getHeight()/2));						
+						Point point = new Point((int)Math.round(face.getShape().minX()+(face.getShape().getWidth()/2)), (int)Math.round(face.getShape().minY()+(face.getShape().getHeight()/2)));
+						System.out.println("x="+point.getX());
+						System.out.println("y="+point.getY());
 					}
 					
 					ImageUtilities.write(img, new File(outPath.getAbsolutePath() + '/' + image.getName()));

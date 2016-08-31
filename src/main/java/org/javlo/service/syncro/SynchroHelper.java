@@ -327,6 +327,8 @@ public class SynchroHelper {
 			synchro.initSynchronisationThread(staticConfig, globalContext, application);
 			synchro.store();
 			return synchro.getId();
+		} else  {
+			logger.warning("no synchro server found.");
 		}
 		return null;
 	}

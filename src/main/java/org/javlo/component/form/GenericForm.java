@@ -490,7 +490,7 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 
 			if (comp.isSendEmail() && !fakeFilled) {
 
-				String emailFrom = comp.getLocalConfig(false).getProperty("mail.from", StaticConfig.getInstance(request.getSession()).getSiteEmail());
+				String emailFrom = comp.getLocalConfig(false).getProperty("mail.from", StringHelper.neverEmpty(globalContext.getAdministratorEmail(), StaticConfig.getInstance(request.getSession()).getSiteEmail()));				
 				String emailFromField = comp.getLocalConfig(false).getProperty("mail.from.field", null);
 				if (emailFromField != null && requestService.getParameter(emailFromField, "") != null) {
 					String tmpEmail = requestService.getParameter(emailFromField, "");

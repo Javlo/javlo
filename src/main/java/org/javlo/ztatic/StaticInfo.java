@@ -7,7 +7,6 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.text.ParseException;
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -465,8 +464,6 @@ public class StaticInfo {
 
 	private long size = -1;
 
-	private Collection<MenuElement> containers = null;
-
 	private File file;
 
 	private Long crc32 = null;
@@ -892,14 +889,6 @@ public class StaticInfo {
 		return StringUtils.chomp(ResourceHelper.getPath(getStaticURL()), "/");
 	}
 
-	public Collection<MenuElement> getContainers() {
-		return containers;
-	}
-
-	public void setContainers(Collection<MenuElement> containers) {
-		this.containers = containers;
-	}
-
 	/**
 	 * return the focus point of a image. Return always the focus point of edit
 	 * mode (problem with image cache).
@@ -1007,10 +996,6 @@ public class StaticInfo {
 		} else {
 			content.setAttribute(ctx, getKey("focus-zone-y"), "" + focusZoneY);
 		}		
-	}
-
-	public void setLinkedPage(MenuElement linkedPage) {
-		this.linkedPage = linkedPage;
 	}
 
 	public MenuElement getLinkedPage(ContentContext ctx) {

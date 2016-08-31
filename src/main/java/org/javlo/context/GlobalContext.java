@@ -3006,7 +3006,11 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		out.println("**** Alias of           :  " + getAliasOf());
 		out.println("**** User Factory       :  " + getUserFactoryClassName());
 		out.println("**** Admin User Factory :  " + getAdminUserFactoryClassName());
+		out.println("**** Data size          :  " + getDataKeys().size());
 		out.println("**** Data folder        :  " + getDataFolder());
+		if (viewPages != null) {
+			out.println("**** # viewPages        :  " + viewPages.size());
+		}
 		if (session != null) {
 			try {
 				out.println("**** Modules            :  " + StringHelper

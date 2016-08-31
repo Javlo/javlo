@@ -415,12 +415,15 @@ public class BeanHelper {
 	private static Map<Class, Map<String,String>> beanDescribeCache = Collections.synchronizedMap(new HashMap<Class, Map<String,String>>());
 	
 	public static Map<String,String> cachedDescribe(Object bean) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-			Map<String,String> beanDescription = beanDescribeCache.get(bean.getClass());
-			if (beanDescription == null) {
-				beanDescription = BeanUtils.describe(bean);
-				beanDescribeCache.put(bean.getClass(), beanDescription);
-			}
-			return beanDescription;
+		if (bean == null) {
+			return null;
+		}
+		Map<String,String> beanDescription = beanDescribeCache.get(bean.getClass());
+		if (beanDescription == null) {
+			beanDescription = BeanUtils.describe(bean);
+			beanDescribeCache.put(bean.getClass(), beanDescription);
+		}
+		return beanDescription;
 	}
 
 }

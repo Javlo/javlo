@@ -27,25 +27,6 @@ public class Keywords extends AbstractVisualComponent {
 	}
 
 	@Override
-	public String[] getStyleList(ContentContext ctx) {
-		return new String[] { NOT_VISIBLE, BOLD_IN_CONTENT };
-	}
-
-	@Override
-	public String[] getStyleLabelList(ContentContext ctx) {
-		try {
-			I18nAccess i18n = I18nAccess.getInstance(ctx.getRequest());
-			return new String[] { i18n.getText("content.keywords.not-visible"), i18n.getText("content.keywords.bold-in-content") };
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-		return getStyleList(ctx);
-	}
-
-	@Override
 	public String getStyleTitle(ContentContext ctx) {
 		return "";
 	}
@@ -61,7 +42,6 @@ public class Keywords extends AbstractVisualComponent {
 	@Override
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
 		return "";
-		// return "<meta name=\"keywords\" content=\"" + getValue() + "\" />";
 	}
 
 	@Override
@@ -88,6 +68,10 @@ public class Keywords extends AbstractVisualComponent {
 	public boolean isContentCachable(ContentContext ctx) {
 		return true;
 	}
-
+	
+	@Override
+	public boolean isRealContent(ContentContext ctx) {
+		return false;
+	}
 
 }

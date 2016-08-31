@@ -100,8 +100,6 @@ Stack<IContainer> containers = new Stack<IContainer>();
 
 if ( (ctx.getSpecialContentRenderer() == null || !area.equals(ComponentBean.DEFAULT_AREA) ) || template.getAreasForceDisplay().contains(area)) { // display only if page contains only repeat content (supose it is teaser)
 
-Map<String, String> replacement = currentPage.getReplacement();
-
 IContentComponentsList elems = null;
 if (specificComp == null) {
 	elems = currentPage.getContent(ctx);
@@ -131,8 +129,8 @@ IContentVisualComponent previousElem = null;
 		}
 		
 		if (!(removeRepeat && elem.isRepeat() && !elem.getPage().equals(currentPage))) {
-			elem.clearReplacement();
-			elem.replaceAllInContent(replacement);
+			elem.clearReplacement();			
+			elem.replaceAllInContent(currentPage.getReplacement());
 		
 			out.flush(); /* needed for jsp include */
 			

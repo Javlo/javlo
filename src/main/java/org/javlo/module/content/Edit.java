@@ -2147,7 +2147,7 @@ public class Edit extends AbstractModuleAction {
 		} else {
 			// sharedContentService.clearCache();
 			SharedContent sharedContent = sharedContentService.getSharedContent(ctx, sharedData);
-			if (sharedContent == null) {
+			if (sharedContent == null) {				
 				String msg = "error : shared content not found : " + sharedData + " container:" + sharedContentService.getClass().getName();
 				logger.warning(msg);
 				return msg;

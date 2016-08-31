@@ -126,7 +126,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 
 	public static final String FORCE_COMPONENT_ID = "___FORCE_COMPONENT_ID";
 
-	private final Map<String, Properties> i18nView = new HashMap<String, Properties>();
+	private Map<String, Properties> i18nView = Collections.EMPTY_MAP;
 
 	private ComponentBean componentBean = new ComponentBean();
 
@@ -142,7 +142,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 
 	private boolean hidden = false;
 
-	private final Map<String, String> replacement = new HashMap<String, String>();
+	private Map<String, String> replacement = Collections.EMPTY_MAP;
 
 	private Properties viewData = null;
 
@@ -190,7 +190,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 
 	@Override
 	public void clearReplacement() {
-		replacement.clear();
+		getRemplacement().clear();
 	}
 
 	/**
@@ -1215,7 +1215,14 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		return out;
 	}
 
-	protected Map<String, String> getRemplacement() {
+	public Map<String, String> getRemplacement() {
+		return replacement;
+	}	
+
+	private Map<String, String> getRemplacementEditable() {
+		if (replacement == Collections.EMPTY_MAP) {
+			replacement = new HashMap<>();
+		}
 		return replacement;
 	}
 
@@ -1636,7 +1643,6 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 
 	@Override
 	public String getViewText(ContentContext ctx, String key) throws ResourceNotFoundException {
-
 		Properties i18n = i18nView.get(ctx.getRequestContentLanguage());
 		if (i18n == null) {
 			i18n = new Properties();
@@ -1651,8 +1657,11 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 				logger.severe(e.getMessage());
 			}
 			if (in != null) {
-				try {
+				try {					
 					i18n.load(in);
+					if (i18nView == Collections.EMPTY_MAP) {
+						i18nView = new HashMap<String, Properties>();
+					}
 					i18nView.put(ctx.getRequestContentLanguage(), i18n);
 				} catch (Exception e) {
 					throw new ResourceNotFoundException("can not load the resource : " + fileName);
@@ -2180,13 +2189,13 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	@Override
 	public void replaceAllInContent(Map<String, String> replacement) {
 		if (replacement != null) {
-			this.replacement.putAll(replacement);
+			getRemplacementEditable().putAll(replacement);
 		}
 	}
 
 	@Override
 	public void replaceInContent(String source, String target) {
-		getRemplacement().put(source, target);
+		getRemplacementEditable().put(source, target);
 	}
 
 	public void resetContentCache(ContentContext ctx) {
@@ -2564,11 +2573,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	}
 
 	public static void main(String[] args) {
-		String width = "12%";
-		Float withInt = Float.parseFloat(width.substring(0, width.length() - 1));
-		System.out.println(withInt);
-		NumberFormat df = DecimalFormat.getInstance(Locale.ENGLISH);
-		System.out.println(df.format((100 - withInt)) + "%");
+		Collections.EMPTY_MAP.clear();
 	}
 
 	@Override

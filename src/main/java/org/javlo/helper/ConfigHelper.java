@@ -83,7 +83,6 @@ public class ConfigHelper {
 	}
 
 	public static final InputStream getComponentConfigResourceAsStream(ServletContext servletContext, String type, String fileName) throws ResourceNotFoundException {
-
 		String resourceName = CONFIG_COMPONENT_DIR + "/" + type + fileName;
 		InputStream in = servletContext.getResourceAsStream(resourceName);
 		if (in == null) {
