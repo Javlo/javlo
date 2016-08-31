@@ -37,7 +37,7 @@ import org.javlo.macro.DeleteChildren;
 import org.javlo.macro.DeleteChildrenAndContent;
 import org.javlo.macro.DeleteChildrenContent;
 import org.javlo.macro.DeleteComponent;
-import org.javlo.macro.DeleteComponentInBadArea;
+import org.javlo.macro.DeleteComponentBadArea;
 import org.javlo.macro.DeleteComponentWithBadResourceReference;
 import org.javlo.macro.DeleteDynamicComponent;
 import org.javlo.macro.DeletePageFromSpecificUser;
@@ -149,7 +149,7 @@ public class MacroFactory {
 		macros.add(new DashOnImageMacro());
 		macros.add(new DeleteChildrenAndContent());
 		macros.add(new DeleteSameComponent());
-		macros.add(new DeleteComponentInBadArea());
+		macros.add(new DeleteComponentBadArea());
 		macros.add(new UploadGallery());
 		macros.add(new CreateBusinessComponent());
 		macros.add(new ImportExternalPage());
