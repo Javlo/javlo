@@ -37,6 +37,8 @@ import org.javlo.macro.DeleteChildren;
 import org.javlo.macro.DeleteChildrenAndContent;
 import org.javlo.macro.DeleteChildrenContent;
 import org.javlo.macro.DeleteComponent;
+import org.javlo.macro.DeleteComponentInBadArea;
+import org.javlo.macro.DeleteComponentWithBadResourceReference;
 import org.javlo.macro.DeleteDynamicComponent;
 import org.javlo.macro.DeletePageFromSpecificUser;
 import org.javlo.macro.DeleteSameComponent;
@@ -70,7 +72,6 @@ import org.javlo.macro.UndeletePage;
 import org.javlo.macro.UnlinkMirrorComponent;
 import org.javlo.macro.UpDateMacro;
 import org.javlo.macro.UploadGallery;
-import org.javlo.macro.deleteComponentInBadArea;
 
 import CleanResourceNameMacro.CleanResourceImageMacro;
 
@@ -148,7 +149,7 @@ public class MacroFactory {
 		macros.add(new DashOnImageMacro());
 		macros.add(new DeleteChildrenAndContent());
 		macros.add(new DeleteSameComponent());
-		macros.add(new deleteComponentInBadArea());
+		macros.add(new DeleteComponentInBadArea());
 		macros.add(new UploadGallery());
 		macros.add(new CreateBusinessComponent());
 		macros.add(new ImportExternalPage());
@@ -159,6 +160,7 @@ public class MacroFactory {
 		macros.add(new ActiveAllChildren());
 		macros.add(new CreateRedirectionForAllLanguages());
 		macros.add(new ClearDataAccessCount());
+		macros.add(new DeleteComponentWithBadResourceReference());
 	}
 
 	public IMacro getMacro(String name) {

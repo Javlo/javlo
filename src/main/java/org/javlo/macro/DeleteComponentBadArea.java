@@ -10,7 +10,7 @@ import org.javlo.service.ContentService;
 import org.javlo.template.Template;
 import org.javlo.template.TemplateFactory;
 
-public class deleteComponentInBadArea extends AbstractMacro {
+public class DeleteComponentInBadArea extends AbstractMacro {
 
 	@Override
 	public String getName() {

@@ -3,13 +3,16 @@ package org.javlo.module.dashboard;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.javlo.bean.Link;
 import org.javlo.component.core.ContentElementList;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.core.IInternalLink;
 import org.javlo.component.core.ILink;
+import org.javlo.component.files.AbstractFileComponent;
 import org.javlo.context.ContentContext;
 import org.javlo.helper.NetHelper;
 import org.javlo.helper.URLHelper;
@@ -34,6 +37,7 @@ public class ReportFactory {
 		moduleAction.put("module", "content");
 		Map<String, MenuElement> title = new HashMap<String, MenuElement>();
 		report.allTitleDifferent = true;
+		Set<String> pageDone = new HashSet<String>();
 		for (MenuElement page : root.getAllChildren()) {
 			if (page.isRealContent(ctx) && !page.isInTrash()) {
 				if (report.allTitleDifferent) {
@@ -99,17 +103,16 @@ public class ReportFactory {
 			ContentElementList content = page.getContent(allAreaContext);
 			while (content.hasNext(allAreaContext)) {
 				IContentVisualComponent comp = content.next(allAreaContext);
-				if (comp instanceof IInternalLink) {
-					if (report.badInternalLink < ReportBean.MAX_LINK_CHECK) {
-						String pageId = ((IInternalLink) comp).getLinkId();
-						if (root.searchChildFromId(pageId) == null) {
-							report.badInternalLink++;
+				if (comp instanceof AbstractFileComponent) {
+					AbstractFileComponent fileComp = (AbstractFileComponent)comp;
+					if (!fileComp.getFile(ctx).exists()) {
+						if (!pageDone.contains(comp.getPage().getId())) {
+							report.badResourceRef++;
 							Map<String,String> params = new HashMap<String, String>();
 							params.putAll(moduleAction);
 							params.put("pushcomp", comp.getId());
-							report.badInternalLinkPages.add(new Link(URLHelper.createURL(ctx, page, params), page.getTitle(ctx)));
-						} else {
-							report.rightInternalLink++;
+							report.badExternalLinkPages.add(new Link(URLHelper.createURL(ctx, comp.getPage(), params), page.getTitle(ctx)));
+							pageDone.add(comp.getPage().getId());
 						}
 					}
 				} else if (ctx.getGlobalContext().getStaticConfig().isInternetAccess() && comp instanceof ILink) {
@@ -129,6 +132,19 @@ public class ReportFactory {
 							}
 						} catch (MalformedURLException e) {
 							report.badExternalLink++;
+						}
+					}
+				} else if (comp instanceof IInternalLink) {
+					if (report.badInternalLink < ReportBean.MAX_LINK_CHECK) {
+						String pageId = ((IInternalLink) comp).getLinkId();
+						if (root.searchChildFromId(pageId) == null) {
+							report.badInternalLink++;
+							Map<String,String> params = new HashMap<String, String>();
+							params.putAll(moduleAction);
+							params.put("pushcomp", comp.getId());
+							report.badInternalLinkPages.add(new Link(URLHelper.createURL(ctx, page, params), page.getTitle(ctx)));
+						} else {
+							report.rightInternalLink++;
 						}
 					}
 				}

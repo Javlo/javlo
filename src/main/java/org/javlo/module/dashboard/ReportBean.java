@@ -24,6 +24,7 @@ public class ReportBean {
 	public int pageWithoutContent = 0;
 	public int pageWithContent = 0;
 	public int badExternalLink = 0;
+	public int badResourceRef = 0;
 	public int rightExternalLink = 0;
 	public int badInternalLink = 0;
 	public int rightInternalLink = 0;
@@ -34,6 +35,7 @@ public class ReportBean {
 	public List<Link> badInternalLinkPages = new LinkedList<Link>();
 	public List<Link> badExternalLinkPages = new LinkedList<Link>();
 	public List<Link> emptyLinkPages = new LinkedList<Link>();	
+	public List<Link> badResourceLinkPages = new LinkedList<Link>();
 	
 	public List<Link> noDescriptionPages = new LinkedList<Link>();
 	public List<Link> noTitlePages = new LinkedList<Link>();	
@@ -183,5 +185,9 @@ public class ReportBean {
 
 	public void setNoTitlePages(List<Link> noTitlePages) {
 		this.noTitlePages = noTitlePages;
+	}
+	
+	public List<Link> getBadResourceLinkPages() {
+		return badResourceLinkPages;
 	}
 }

@@ -63,7 +63,6 @@ import org.javlo.helper.ServletHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.io.TransactionFile;
-import org.javlo.macro.ClearDataAccessCount;
 import org.javlo.mailing.MailConfig;
 import org.javlo.mailing.MailService;
 import org.javlo.module.core.IPrintInfo;

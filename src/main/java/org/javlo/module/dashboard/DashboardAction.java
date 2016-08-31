@@ -198,7 +198,6 @@ public class DashboardAction extends AbstractModuleAction {
 			}
 			ctx.getRequest().setAttribute("debugNotes", debugNoteList);
 		}
-
 		return msg;
 	}
 
