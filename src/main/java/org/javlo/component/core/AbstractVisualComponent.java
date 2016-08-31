@@ -1221,7 +1221,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 
 	private Map<String, String> getRemplacementEditable() {
 		if (replacement == Collections.EMPTY_MAP) {
-			replacement = new HashMap<>();
+			replacement = new HashMap();
 		}
 		return replacement;
 	}
