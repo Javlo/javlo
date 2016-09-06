@@ -75,6 +75,7 @@ import org.javlo.navigation.MenuElement;
 import org.javlo.navigation.NoURLFactory;
 import org.javlo.navigation.URLTriggerThread;
 import org.javlo.service.ContentService;
+import org.javlo.service.NotificationService;
 import org.javlo.service.PersistenceService;
 import org.javlo.service.RequestService;
 import org.javlo.service.ReverseLinkService;
@@ -3355,6 +3356,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		out.println("**** #cacheMaps        : " + cacheMaps.size());
 		out.println("**** #eternalCacheMaps : " + eternalCacheMaps.size());
 		out.println("**** #viewPages        : " + viewPages.size());
+		out.println("**** #notification     : " + NotificationService.getInstance(this).size());
 		out.println("****");
 
 	}

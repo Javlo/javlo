@@ -360,7 +360,7 @@ public class ImageHelper {
 	}
 
 	public static void main(String[] args) throws IOException {
-		File src = new File("c:/trans/green/Lindi.jpg");
+		File src = new File("c:/trans/green/12.jpg");
 
 		int DISTANCE_MAX = ImageEngine.getColorDistance(Color.BLACK, Color.WHITE);
 		System.out.println("max distance : " + ImageEngine.getColorDistance(Color.BLACK, Color.WHITE));
@@ -378,7 +378,7 @@ public class ImageHelper {
 			for (int x = 0; x < img.getWidth(); x++) {
 				for (int y = 0; y < img.getHeight(); y++) {
 					ExtendedColor col = new ExtendedColor(img.getRGB(x, y), true);
-					float minGreenProp = (float)0.4;
+					float minGreenProp = (float)0.40;
 					if (col.getGreenProportion() > minGreenProp) {						
 						if (col.getGreenProportion() > minGreenProp+0.1) {
 							col = new ExtendedColor(0, 0, 0, 0);
@@ -398,9 +398,15 @@ public class ImageHelper {
 								if (new ExtendedColor(ImageEngine.getColor(img, x, y + dec, Color.green)).getGreenProportion() < minGreenProp) {
 									green = new ExtendedColor(ImageEngine.getColor(img, x, y + dec, Color.green)).getGreen();
 								}
+								if (green != 0) {
+									col = new ExtendedColor(col.getRed(), green, col.getBlue(), Math.round(255-(1-col.getGreenProportion())*255));
+									if (col.getGreenProportion() > minGreenProp) {
+										green = 0;
+									}
+								}
 								dec++;
 							}
-							col = new ExtendedColor(col.getRed(), green, col.getBlue(), Math.round(255-(1-col.getGreenProportion())*255));
+							col = new ExtendedColor(col.getRed(), green, col.getBlue(), 255-col.getGreen());
 						}
 						c++;
 					}

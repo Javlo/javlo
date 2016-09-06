@@ -300,3 +300,11 @@ table.component-table .cell-wrapper {
 .float-image .container {
 	display: block;
 }
+
+#preview_command #page-404 {
+	display: none;
+}
+
+body.right-admin #preview_command #page-404 {
+	display: block;
+}

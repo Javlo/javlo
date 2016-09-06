@@ -43,6 +43,14 @@ ul.menu {
 	overflow: hidden;
 }
 
+#page-404 {
+	display: none;
+}
+
+body.right-admin #page-404 {
+	display: block;
+}
+
 .navigation li a.editor {
 	background-image: url("images/page.png");
 	background-position: 7px center;

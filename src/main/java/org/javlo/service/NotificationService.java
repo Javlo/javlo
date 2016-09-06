@@ -255,6 +255,13 @@ public class NotificationService {
 		}
 		return outNotif;
 	}
+	
+	public int size() {
+		if (notifications ==  null) {
+			return -1;
+		}
+		return notifications.size();
+	}
 
 	public int getUnreadNotificationSize(String userId, boolean admin, int maxSize) {
 		List<NotificationContainer> notifs = getNotifications(userId, admin, maxSize, false);

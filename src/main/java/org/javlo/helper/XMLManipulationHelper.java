@@ -506,6 +506,7 @@ public class XMLManipulationHelper {
 					cssClass = cssClass + ' ' + "<%if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE) { if(EditContext.getInstance(globalContext, request.getSession()).isEditPreview() ) {%>edit-preview<%} else {%>preview-only<%} }%>";
 					cssClass = cssClass + ' ' + "<%if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE) { if(ctx.getCurrentEditUser() == null) {%>preview-notlogged<%} else {%>preview-logged<%} }%>";
 					cssClass = cssClass + ' ' + "${info.preview && !info.page.editable?'not-editable':''}";
+					cssClass = cssClass + ' ' + "${info.admin?'right-admin':''}";
 					tags[i].getAttributes().put("class", cssClass.trim());
 
 					if (template.isPDFRenderer()) {
