@@ -761,3 +761,5 @@ change log
  * 1/ remove empty maps
  
  * 2/ clean access data
+ 
+ * 3/ 404 servlet 3.0 redirection content separation color, error list links
