@@ -18,6 +18,15 @@ public class SpecialConfigBean {
 
 	public boolean isPasteAsMirror() {
 			return StringHelper.isTrue(config.get("content.pasteasmirror"));
-	};
+	}
+	
+	/**
+	 * track access to resource and page.  Use for display the most readed picture or page.
+	 * false by default
+	 * @return
+	 */
+	public boolean isTrackingAccess() {
+		return StringHelper.isTrue(config.get("tracking.access"));
+	}
 	
 }

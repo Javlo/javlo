@@ -256,7 +256,6 @@ jQuery(document).ready(function() {
 	
 	var scrollTarget = jQuery(".scroll-to-me");
 	if (scrollTarget.length > 0) {
-		console.log("scrollTarget.top=",scrollTarget.position().top);
 		window.scrollTo(0,scrollTarget.position().top);
 	}
 	

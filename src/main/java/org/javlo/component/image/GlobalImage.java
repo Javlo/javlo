@@ -1172,7 +1172,7 @@ public class GlobalImage extends Image implements IImageFilter {
 			}
 			ctx.getAjaxData().put("previewURL", image.getPreviewURL(ctx, image.getFilter(ctx)));
 		} else {
-			logger.info("stop data feed back (template:" + ctx.getCurrentTemplate().getName() + ").");
+			logger.fine("stop data feed back (template:" + ctx.getCurrentTemplate().getName() + ").");
 		}
 		return null;
 	}

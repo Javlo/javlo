@@ -64,12 +64,14 @@ public class SiteMapServlet extends HttpServlet {
 					return;
 				}
 			}
-			
 			String siteMapFile = request.getRequestURI();
+			if (siteMapFile.contains(request.getServletPath())) {
+				siteMapFile = siteMapFile.substring(siteMapFile.indexOf(request.getServletPath()));
+			}
 			int number = 0;
 			String pageName = null;
 			ContentContext ctx = ContentContext.getContentContext(request, response);
-			if (ctx.getRequest().getServletPath().equals("/sitemap") && siteMapFile.contains("-")) {
+			if (request.getServletPath().equals("/sitemap") && siteMapFile.contains("-")) {
 				String[] splitedMapFile = siteMapFile.split("-");
 				if (splitedMapFile.length == 2) {
 					String lastItem = splitedMapFile[1].substring(0, splitedMapFile[1].lastIndexOf("."));
@@ -100,7 +102,7 @@ public class SiteMapServlet extends HttpServlet {
 				MenuElement mainPage = content.getNavigation(ctx).searchChildFromName(pageName);				
 				if (mainPage == null) {
 					root = Collections.EMPTY_LIST;					
-					logger.severe("page not found : '"+pageName+"'");
+					logger.severe("page not found > '"+pageName+"'");
 				} else {
 					root = new LinkedList<MenuElement>();
 					root.add(mainPage);

@@ -507,7 +507,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 							}
 						}
 					}
-				}				
+				}
 			} else {
 				synchronized (newInstance.properties) {
 					newInstance.properties.load(newInstance.contextFile);
@@ -1056,13 +1056,13 @@ public class GlobalContext implements Serializable, IPrintInfo {
 			}
 		}
 	}
-	
+
 	public void removeData(Collection<Object> keys) {
 		synchronized (lockDataFile) {
 			for (Object key : keys) {
 				dataProperties.remove(key);
 			}
-			if (dataProperties.size()>0) {
+			if (dataProperties.size() > 0) {
 				askStoreData();
 			}
 		}
@@ -1091,7 +1091,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		}
 		return prop.keySet();
 	}
-	
+
 	public void cleanDataAccess() {
 		if (dataProperties == null) {
 			initDataFile();
@@ -1104,18 +1104,20 @@ public class GlobalContext implements Serializable, IPrintInfo {
 			Calendar keyCal = Calendar.getInstance();
 			for (Object key : dataProperties.keySet()) {
 				String strKey = key.toString();
-				String dateStr = strKey.substring(strKey.length()-ACCESS_DATE_FORMAT.length());				
-				try {					
-					Date date = dateFormat.parse(dateStr);
-					keyCal.setTime(date);
-					if (keyCal.before(refCal)) {
-						toDeleted.add(key);						
-					}					
-				} catch (ParseException e) {
-				}				
+				if (strKey.length() > ACCESS_DATE_FORMAT.length() + 4) {
+					String dateStr = strKey.substring(strKey.length() - ACCESS_DATE_FORMAT.length());
+					try {
+						Date date = dateFormat.parse(dateStr);
+						keyCal.setTime(date);
+						if (keyCal.before(refCal)) {
+							toDeleted.add(key);
+						}
+					} catch (ParseException e) {
+					}
+				}
 			}
 			removeData(toDeleted);
-		}		
+		}
 	}
 
 	/**
@@ -1567,7 +1569,8 @@ public class GlobalContext implements Serializable, IPrintInfo {
 								lgCtx.setContentLanguage(contentLg);
 								lgCtx.setRequestContentLanguage(contentLg);
 								lgCtx.setFormat(null);
-								MenuElement[] children = ContentService.getInstance(ctx.getRequest()).getNavigation(lgCtx).getAllChildren();
+								MenuElement[] children = ContentService.getInstance(ctx.getRequest())
+										.getNavigation(lgCtx).getAllChildren();
 								for (MenuElement menuElement : children) {
 									String pageURL = urlCreator.createURL(lgCtx, menuElement);
 									String pageKeyURL = urlCreator.createURLKey(pageURL);
@@ -3501,7 +3504,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		return new File(URLHelper.mergePath(staticConfig.getContextFolder(), getContextKey() + "_special.properties"));
 	}
 
-	public SpecialConfigBean getSpecialConfig() throws IOException {
+	public SpecialConfigBean getSpecialConfig() {
 		if (config == null) {
 			File configFile = getSpecialConfigFile();
 			if (!configFile.exists()) {
@@ -3512,6 +3515,8 @@ public class GlobalContext implements Serializable, IPrintInfo {
 				try {
 					fileReader = new FileReader(configFile);
 					p.load(fileReader);
+				} catch (IOException e) {
+					e.printStackTrace();
 				} finally {
 					ResourceHelper.closeResource(fileReader);
 				}

@@ -54,6 +54,7 @@ import org.javlo.helper.TimeHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.helper.XMLHelper;
 import org.javlo.i18n.I18nAccess;
+import org.javlo.macro.ClearDataAccessCount;
 import org.javlo.mailing.MailingThread;
 import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
@@ -298,6 +299,9 @@ public class AccessServlet extends HttpServlet implements IVersion {
 						try {
 							GlobalContext.getDefaultContext(request.getSession());
 							GlobalContext.getMasterContext(request.getSession());
+							if (!globalContext.getSpecialConfig().isTrackingAccess()) {
+								ClearDataAccessCount.clearDataAccess(ctx);
+							}
 							/*
 							 * if (globalContext.getDMZServerIntra() != null) {
 							 * SynchroThread synchro = (SynchroThread)

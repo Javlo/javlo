@@ -13,7 +13,7 @@
                 <c:if test="${report.badExternalLink > 0}">
                     <ul>
                         <c:forEach var="link" items="${report.badExternalLinkPages}">
-                        <li><a href="${link.url}">${link.label}</a>
+                        <li><a target="_blank" href="${link.url}">${link.label}</a>
                             </c:forEach>
                     </ul>
                 </c:if>
@@ -24,7 +24,7 @@
                 <c:if test="${report.badInternalLink > 0}">
                     <ul>
                         <c:forEach var="link" items="${report.badInternalLinkPages}">
-                        <li><a href="${link.url}">${link.label}</a>
+                        <li><a target="_blank" href="${link.url}">${link.label}</a>
                             </c:forEach>
                     </ul>
                 </c:if>
@@ -36,7 +36,7 @@
                 <c:if test="${fn:length(report.noTitlePages) > 0}">
                     <ul>
                         <c:forEach var="link" items="${report.noTitlePages}">
-                        <li><a href="${link.url}">${link.label}</a>
+                        <li><a target="_blank" href="${link.url}">${link.label}</a>
                             </c:forEach>
                     </ul>
                 </c:if>
@@ -45,7 +45,7 @@
                 <c:if test="${fn:length(report.badExternalLinkPages) > 0}">
                     <ul>
                         <c:forEach var="link" items="${report.badExternalLinkPages}">
-                        <li><a href="${link.url}">${link.label}</a>
+                        <li><a target="_blank" href="${link.url}">${link.label}</a>
                             </c:forEach>
                     </ul>
                 </c:if>
@@ -56,7 +56,7 @@
                 <c:if test="${fn:length(report.noDescriptionPages) > 0}">
                     <ul>
                         <c:forEach var="link" items="${report.noDescriptionPages}">
-                        <li><a href="${link.url}">${link.label}</a>
+                        <li><a target="_blank" href="${link.url}">${link.label}</a>
                             </c:forEach>
                     </ul>
                 </c:if>

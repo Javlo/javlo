@@ -22,6 +22,21 @@ public class ContentSeparation extends AbstractVisualComponent {
 		return "";
 	}
 	
+	protected String getInlineStyle(ContentContext ctx) {
+		String inlineStyle = "";
+		if (getBackgroundColor() != null && getBackgroundColor().length() > 2) {
+			inlineStyle = " overflow: hidden; border-color: " + getBackgroundColor() + ';';
+		}
+		if (getTextColor() != null && getTextColor().length() > 2) {
+			inlineStyle = inlineStyle + " color: " + getTextColor() + ';';
+		}
+
+		if (inlineStyle.length() > 0) {
+			inlineStyle = " style=\"" + inlineStyle + "\"";
+		}
+		return inlineStyle;
+	}
+	
 	public String getRadioName() {
 		return getContentName();
 	}
@@ -50,7 +65,11 @@ public class ContentSeparation extends AbstractVisualComponent {
 	 */
 	@Override
 	public String getEditXHTMLCode(ContentContext ctx) {		
-		return "<div style=\"border-bottom: 6px #aaaaaa solid;\"><span></span></div>";
+		String color = "#aaaaaa";
+		if (getBackgroundColor() != null && getBackgroundColor().length() > 2) {
+			color = getBackgroundColor();
+		}
+		return "<div style=\"border-bottom: 6px "+color+" solid;\"><span></span></div>";
 	}
 	
 	@Override

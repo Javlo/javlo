@@ -111,6 +111,8 @@ public class ReportFactory {
 							Map<String,String> params = new HashMap<String, String>();
 							params.putAll(moduleAction);
 							params.put("pushcomp", comp.getId());
+							params.put("webaction", "edit.changearea");
+							params.put("area", comp.getArea());
 							report.badExternalLinkPages.add(new Link(URLHelper.createURL(ctx, comp.getPage(), params), page.getTitle(ctx)));
 							pageDone.add(comp.getPage().getId());
 						}
@@ -125,6 +127,8 @@ public class ReportFactory {
 									Map<String,String> params = new HashMap<String, String>();
 									params.putAll(moduleAction);
 									params.put("pushcomp", comp.getId());
+									params.put("webaction", "edit.changearea");
+									params.put("area", comp.getArea());
 									report.badExternalLinkPages.add(new Link(URLHelper.createURL(ctx, page, params), page.getTitle(ctx)));
 								} else {
 									report.rightExternalLink++;
@@ -142,6 +146,8 @@ public class ReportFactory {
 							Map<String,String> params = new HashMap<String, String>();
 							params.putAll(moduleAction);
 							params.put("pushcomp", comp.getId());
+							params.put("webaction", "edit.changearea");
+							params.put("area", comp.getArea());
 							report.badInternalLinkPages.add(new Link(URLHelper.createURL(ctx, page, params), page.getTitle(ctx)));
 						} else {
 							report.rightInternalLink++;

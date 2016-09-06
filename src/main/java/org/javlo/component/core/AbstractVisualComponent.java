@@ -1724,8 +1724,8 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	}
 
 	protected String cleanValue(ContentContext ctx, String value) {
-		if (ctx.getGlobalContext().getStaticConfig().isHighSecure()) {
-			return Encode.forHtmlContent(value);
+		if (ctx.getGlobalContext().getStaticConfig().isHighSecure()) {			
+			return Encode.forHtmlUnquotedAttribute(value);
 		} else {
 			return value;
 		}

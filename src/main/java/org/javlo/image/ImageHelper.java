@@ -7,7 +7,6 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
-import java.awt.image.DataBufferInt;
 import java.awt.image.WritableRaster;
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -30,12 +29,6 @@ import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.rendering.Device;
 import org.javlo.template.Template;
-import org.javlo.ztatic.InitInterest.Point;
-import org.openimaj.image.ImageUtilities;
-import org.openimaj.image.MBFImage;
-import org.openimaj.image.processing.face.detection.DetectedFace;
-import org.openimaj.image.processing.face.detection.HaarCascadeDetector;
-import org.openimaj.image.processing.face.util.SimpleDetectedFaceRenderer;
 
 /**
  * @author pvanderm
@@ -232,56 +225,48 @@ public class ImageHelper {
 		return res;
 	}
 
-	public static void main(String[] args) throws Exception {
-		File path = new File("c:\\trans\\faces");
-		File outPath = new File("c:\\trans\\faces\\out");
-		//File outPath2 = new File("c:\\trans\\faces\\out2");
-		outPath.mkdirs();
-		//outPath2.mkdirs();
-		for (File image : path.listFiles()) {
-			if (StringHelper.isImage(image.getName())) {
-				try {
-					BufferedImage bufImage = ImageIO.read(image);
-					if (bufImage.getType() != BufferedImage.TYPE_INT_ARGB) {
-						BufferedImage tmp = new BufferedImage(bufImage.getWidth(), bufImage.getHeight(), BufferedImage.TYPE_INT_ARGB);
-						tmp.getGraphics().drawImage(bufImage, 0, 0, null);
-						bufImage = tmp;
-					}
-					int[] srcPixels = ((DataBufferInt) bufImage.getRaster().getDataBuffer()).getData();
-					MBFImage img = new MBFImage(srcPixels, bufImage.getWidth(), bufImage.getHeight());
-					
-					// A simple Haar-Cascade face detector
-					HaarCascadeDetector det1 = new HaarCascadeDetector();
-					//DetectedFace face1 = det1.detectFaces(img.flatten()).get(0);
-					System.out.println(image.getName());
-					for (DetectedFace face : det1.detectFaces(img.flatten())) {
-						if (face.getConfidence() > 0) {
-							new SimpleDetectedFaceRenderer().drawDetectedFace(img, 10, face);
-						}
-						Point point = new Point((int)Math.round(face.getShape().minX()+(face.getShape().getWidth()/2)), (int)Math.round(face.getShape().minY()+(face.getShape().getHeight()/2)));
-						System.out.println("x="+point.getX());
-						System.out.println("y="+point.getY());
-					}
-					
-					ImageUtilities.write(img, new File(outPath.getAbsolutePath() + '/' + image.getName()));
-					
-					/*bufImage = ImageEngine.removeAlpha(bufImage);
-					OutputStream out = new FileOutputStream(new File(outPath.getAbsolutePath() + '/' + image.getName()));
-					ImageOutputStream ios = ImageIO.createImageOutputStream(out);
-					ImageWriter writer = ImageIO.getImageWritersByFormatName("jpeg").next();
-					ImageWriteParam param = writer.getDefaultWriteParam();
-					param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
-					param.setCompressionQuality(0.99F);
-					writer.setOutput(ios);
-					writer.write(bufImage);
-					ios.close();
-					out.close();*/
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		}
-	}
+	/*
+	 * public static void main(String[] args) throws Exception { File path = new
+	 * File("c:\\trans\\faces"); File outPath = new
+	 * File("c:\\trans\\faces\\out"); //File outPath2 = new
+	 * File("c:\\trans\\faces\\out2"); outPath.mkdirs(); //outPath2.mkdirs();
+	 * for (File image : path.listFiles()) { if
+	 * (StringHelper.isImage(image.getName())) { try { BufferedImage bufImage =
+	 * ImageIO.read(image); if (bufImage.getType() !=
+	 * BufferedImage.TYPE_INT_ARGB) { BufferedImage tmp = new
+	 * BufferedImage(bufImage.getWidth(), bufImage.getHeight(),
+	 * BufferedImage.TYPE_INT_ARGB); tmp.getGraphics().drawImage(bufImage, 0, 0,
+	 * null); bufImage = tmp; } int[] srcPixels = ((DataBufferInt)
+	 * bufImage.getRaster().getDataBuffer()).getData(); MBFImage img = new
+	 * MBFImage(srcPixels, bufImage.getWidth(), bufImage.getHeight());
+	 * 
+	 * // A simple Haar-Cascade face detector HaarCascadeDetector det1 = new
+	 * HaarCascadeDetector(); //DetectedFace face1 =
+	 * det1.detectFaces(img.flatten()).get(0);
+	 * System.out.println(image.getName()); for (DetectedFace face :
+	 * det1.detectFaces(img.flatten())) { if (face.getConfidence() > 0) { new
+	 * SimpleDetectedFaceRenderer().drawDetectedFace(img, 10, face); } Point
+	 * point = new
+	 * Point((int)Math.round(face.getShape().minX()+(face.getShape().getWidth()/
+	 * 2)),
+	 * (int)Math.round(face.getShape().minY()+(face.getShape().getHeight()/2)));
+	 * System.out.println("x="+point.getX());
+	 * System.out.println("y="+point.getY()); }
+	 * 
+	 * ImageUtilities.write(img, new File(outPath.getAbsolutePath() + '/' +
+	 * image.getName()));
+	 * 
+	 * bufImage = ImageEngine.removeAlpha(bufImage); OutputStream out = new
+	 * FileOutputStream(new File(outPath.getAbsolutePath() + '/' +
+	 * image.getName())); ImageOutputStream ios =
+	 * ImageIO.createImageOutputStream(out); ImageWriter writer =
+	 * ImageIO.getImageWritersByFormatName("jpeg").next(); ImageWriteParam param
+	 * = writer.getDefaultWriteParam();
+	 * param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
+	 * param.setCompressionQuality(0.99F); writer.setOutput(ios);
+	 * writer.write(bufImage); ios.close(); out.close(); } catch (Exception e) {
+	 * e.printStackTrace(); } } } }
+	 */
 
 	public static final String getImageFormat(String fileName) {
 		String ext = StringHelper.getFileExtension(fileName);
@@ -372,5 +357,58 @@ public class ImageHelper {
 			exifIndex = rawData.indexOf("exif:", index);
 		}
 		return outData;
+	}
+
+	public static void main(String[] args) throws IOException {
+		File src = new File("c:/trans/green/Lindi.jpg");
+
+		int DISTANCE_MAX = ImageEngine.getColorDistance(Color.BLACK, Color.WHITE);
+		System.out.println("max distance : " + ImageEngine.getColorDistance(Color.BLACK, Color.WHITE));
+
+		ExtendedColor bgColor = new ExtendedColor(100, 100, 100);
+		System.out.println(bgColor.getGreenProportion());
+		
+
+		if (!src.exists()) {
+			System.out.println("*** file not found : " + src);
+		} else {
+			BufferedImage img = ImageIO.read(src);
+			BufferedImage targetImg = new BufferedImage(img.getWidth(), img.getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
+			int c = 0;
+			for (int x = 0; x < img.getWidth(); x++) {
+				for (int y = 0; y < img.getHeight(); y++) {
+					ExtendedColor col = new ExtendedColor(img.getRGB(x, y), true);
+					float minGreenProp = (float)0.4;
+					if (col.getGreenProportion() > minGreenProp) {						
+						if (col.getGreenProportion() > minGreenProp+0.1) {
+							col = new ExtendedColor(0, 0, 0, 0);
+						} else {
+							int green = 0;
+							int dec = 10;
+							while (green == 0 && dec < Math.max(img.getWidth(), img.getHeight()) / 2) {
+								if (new ExtendedColor(ImageEngine.getColor(img, x - dec, y, Color.green)).getGreenProportion() < minGreenProp) {
+									green = new ExtendedColor(ImageEngine.getColor(img, x - dec, y, Color.green)).getGreen();
+								}
+								if (new ExtendedColor(ImageEngine.getColor(img, x + dec, y, Color.green)).getGreenProportion() < minGreenProp) {
+									green = new ExtendedColor(ImageEngine.getColor(img, x + dec, y, Color.green)).getGreen();
+								}
+								if (new ExtendedColor(ImageEngine.getColor(img, x, y - dec, Color.green)).getGreenProportion() < minGreenProp) {
+									green = new ExtendedColor(ImageEngine.getColor(img, x, y - dec, Color.green)).getGreen();
+								}
+								if (new ExtendedColor(ImageEngine.getColor(img, x, y + dec, Color.green)).getGreenProportion() < minGreenProp) {
+									green = new ExtendedColor(ImageEngine.getColor(img, x, y + dec, Color.green)).getGreen();
+								}
+								dec++;
+							}
+							col = new ExtendedColor(col.getRed(), green, col.getBlue(), Math.round(255-(1-col.getGreenProportion())*255));
+						}
+						c++;
+					}
+					targetImg.setRGB(x, y, col.getRGB());
+				}
+			}
+			System.out.println("c=" + c);
+			ImageIO.write(targetImg, "png", new File("c:/trans/green/out.png"));
+		}
 	}
 }

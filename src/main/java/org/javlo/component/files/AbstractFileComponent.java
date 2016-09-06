@@ -178,7 +178,7 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 		ctx.getRequest().setAttribute("linkToImage", StringHelper.isImage(url));
 		ctx.getRequest().setAttribute("blank", ctx.getGlobalContext().isOpenExternalLinkAsPopup(url));
 		ctx.getRequest().setAttribute("descritpion", getDescription());
-		ctx.getRequest().setAttribute("cleanDescription", Encode.forHtml(getDescription()));
+		ctx.getRequest().setAttribute("cleanDescription", Encode.forHtmlAttribute(getDescription()));
 		StaticInfo staticInfo = getStaticInfo(ctx);
 		String cleanLabel=null;
 		if (staticInfo != null) {

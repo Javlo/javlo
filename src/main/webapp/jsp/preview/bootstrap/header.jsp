@@ -40,6 +40,11 @@
 		<a href="<%=URLHelper.createURL(ctx, "/")%>">Javlo</a> <img class="ajax-loading"
 			src="${info.ajaxLoaderURL}" alt="loading..." lang="en" />
 	</div>
+	<%--  <div class="pulse">
+	<div id='c'>
+  	<div class='s'></div>  
+  	</div>
+	</div>  --%>
 
 	<div class="menu">
 		<li ${info.page.root?'class="active home"':'class="home"'}><a

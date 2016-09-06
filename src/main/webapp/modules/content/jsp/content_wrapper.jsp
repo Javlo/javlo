@@ -29,3 +29,10 @@
 </c:if>
 	 
 </div>
+<%if (request.getParameter("pushcomp") != null) {%>
+<script type="text/javascript">
+	jQuery( window ).load(function() {
+	scrollToFirstQuarter(jQuery('#content-edit'),jQuery('#comp-<%=request.getParameter("pushcomp")%> .component-title a'));
+	});
+</script>
+<%}%>

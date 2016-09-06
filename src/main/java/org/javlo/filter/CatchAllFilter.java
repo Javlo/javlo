@@ -401,7 +401,16 @@ public class CatchAllFilter implements Filter {
 			}
 			httpRequest.getRequestDispatcher(forwardURI).forward(httpRequest, response);
 		} else {
+			//JavloServletResponse javloResponse = new JavloServletResponse((HttpServletResponse)response);
 			next.doFilter(httpRequest, response);
+			/*if (javloResponse.isError()) {
+				String viewURI = uri;				
+				String newPath = "/"+globalContext.getDefaultLanguage() + viewURI;
+				if (httpRequest.getSession().isNew()) {
+					httpRequest.getSession().setAttribute(InfoBean.NEW_SESSION_PARAM, true);
+				}
+				NetHelper.sendRedirectTemporarily((HttpServletResponse) response, newPath);
+			}*/
 		}
 	}
 

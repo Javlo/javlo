@@ -97,7 +97,8 @@ public class StaticInfo {
 			this.ctx = ctx;
 			this.staticInfo = staticInfo;
 			if (staticInfo.getFile().isFile()) {
-				this.folder = new StaticInfoBean(ctx, StaticInfo.getInstance(ctx, staticInfo.getFile().getParentFile()));
+				this.folder = new StaticInfoBean(ctx,
+						StaticInfo.getInstance(ctx, staticInfo.getFile().getParentFile()));
 			} else {
 				this.folder = null;
 			}
@@ -187,7 +188,7 @@ public class StaticInfo {
 		public String getName() {
 			return staticInfo.getFile().getName();
 		}
-		
+
 		public String getURL() {
 			return URLHelper.createResourceURL(ctx, staticInfo.getFile());
 		}
@@ -471,7 +472,7 @@ public class StaticInfo {
 	private Date date;
 
 	private String id = null;
-	
+
 	private boolean staticFolder = true;
 
 	/**
@@ -504,7 +505,7 @@ public class StaticInfo {
 		return KEY + inStaticURL + '-' + key;
 	}
 
-	public static StaticInfo getInstance(ContentContext ctx,  File file) throws Exception {
+	public static StaticInfo getInstance(ContentContext ctx, File file) throws Exception {
 		StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
 		GlobalContext globalContext = ctx.getGlobalContext();
 		String fullURL = URLHelper.cleanPath(file.getPath(), false);
@@ -512,11 +513,12 @@ public class StaticInfo {
 		String fullStaticFolder = URLHelper.mergePath(globalContext.getDataFolder(), staticConfig.getStaticFolder());
 		if (ResourceHelper.isTemplateFile(globalContext, file)) {
 			fullStaticFolder = staticConfig.getTemplateFolder();
-		} else if (!file.getAbsolutePath().contains('/'+staticConfig.getStaticFolder()+'/')) { // before /static
+		} else if (!file.getAbsolutePath().contains('/' + staticConfig.getStaticFolder() + '/')) { // before
+																									// /static
 			fullStaticFolder = globalContext.getDataFolder();
-			//staticFolder = false;
-		}		
-		fullStaticFolder=URLHelper.cleanPath(fullStaticFolder, false);		
+			// staticFolder = false;
+		}
+		fullStaticFolder = URLHelper.cleanPath(fullStaticFolder, false);
 		String relURL = "/";
 		if (fullURL.length() > fullStaticFolder.length()) {
 			relURL = StringUtils.replace(fullURL, fullStaticFolder, "");
@@ -622,7 +624,8 @@ public class StaticInfo {
 
 		out.print(sufix);
 
-		if ((getDescription(pertientContext) != null && getDescription(pertientContext).trim().length() > 0) || (getTitle(pertientContext) != null && getTitle(pertientContext).trim().length() > 0)) {
+		if ((getDescription(pertientContext) != null && getDescription(pertientContext).trim().length() > 0)
+				|| (getTitle(pertientContext) != null && getTitle(pertientContext).trim().length() > 0)) {
 			out.print('.');
 		}
 
@@ -691,8 +694,8 @@ public class StaticInfo {
 		}
 
 		/*
-		 * System.out.println("***** StaticInfo.getPosition : name = "+file.getName
-		 * ()); //TODO: remove debug trace
+		 * System.out.println("***** StaticInfo.getPosition : name = "+file.
+		 * getName ()); //TODO: remove debug trace
 		 * 
 		 * Metadata md = getImageMetadata(); if (md != null &&
 		 * md.getDirectoriesOfType(GpsDirectory.class) != null) {
@@ -719,7 +722,8 @@ public class StaticInfo {
 	public String getGeoLocation(ContentContext ctx) throws IOException {
 		Position pos = getPosition(ctx);
 		if (pos != null) {
-			return LocationService.getLocation(pos.getLatitude(), pos.getLongitude(), ctx.getLanguage()).getFullLocality();
+			return LocationService.getLocation(pos.getLatitude(), pos.getLongitude(), ctx.getLanguage())
+					.getFullLocality();
 		} else {
 			return null;
 		}
@@ -737,7 +741,7 @@ public class StaticInfo {
 		return "";
 	}
 
-	public String getManualTitle(ContentContext ctx) {		
+	public String getManualTitle(ContentContext ctx) {
 		ContentService content = ContentService.getInstance(ctx.getGlobalContext());
 		String key = getKey("title-" + ctx.getRequestContentLanguage());
 		String title = content.getAttribute(ctx, key, "");
@@ -907,7 +911,7 @@ public class StaticInfo {
 		if (content.getAttribute(editCtx, getKey("focus-zone-x"), null) == null) {
 			if (StringHelper.isImage(getFile().getName())) {
 				try {
-					if (getFile().exists()) {						
+					if (getFile().exists()) {
 						Point point = null;
 						BufferedImage img = null;
 						try {
@@ -980,7 +984,7 @@ public class StaticInfo {
 			content.removeAttribute(ctx, getKey("focus-zone-x"));
 		} else {
 			content.setAttribute(ctx, getKey("focus-zone-x"), "" + focusZoneX);
-		}		
+		}
 	}
 
 	/**
@@ -995,7 +999,7 @@ public class StaticInfo {
 			content.removeAttribute(ctx, getKey("focus-zone-y"));
 		} else {
 			content.setAttribute(ctx, getKey("focus-zone-y"), "" + focusZoneY);
-		}		
+		}
 	}
 
 	public MenuElement getLinkedPage(ContentContext ctx) {
@@ -1097,7 +1101,8 @@ public class StaticInfo {
 	}
 
 	public boolean isPertinent(ContentContext ctx) {
-		boolean outPertinent = getManualTitle(ctx).length() > 0 || getManualDescription(ctx).length() > 0 || getManualLocation(ctx).length() > 0;
+		boolean outPertinent = getManualTitle(ctx).length() > 0 || getManualDescription(ctx).length() > 0
+				|| getManualLocation(ctx).length() > 0;
 		return outPertinent;
 
 	}
@@ -1170,13 +1175,15 @@ public class StaticInfo {
 
 	public void addAccess(ContentContext ctx) {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-		String key = getKey(getAccessKey(new Date()));
-		int todayAccess = 0;
-		if (globalContext.getData(key) != null) {
-			todayAccess = Integer.parseInt(globalContext.getData(key));
+		if (globalContext.getSpecialConfig().isTrackingAccess()) {
+			String key = getKey(getAccessKey(new Date()));
+			int todayAccess = 0;
+			if (globalContext.getData(key) != null) {
+				todayAccess = Integer.parseInt(globalContext.getData(key));
+			}
+			todayAccess++;
+			globalContext.setData(key, "" + todayAccess);
 		}
-		todayAccess++;
-		globalContext.setData(key, "" + todayAccess);
 	}
 
 	private void storeTags(ContentContext ctx) {
@@ -1268,7 +1275,7 @@ public class StaticInfo {
 	}
 
 	public String getVersionHash(ContentContext ctx) {
-		return StringHelper.asBase64(getFocusZoneX(ctx)*getFocusZoneY(ctx)) + StringHelper.asBase64(getCRC32());
+		return StringHelper.asBase64(getFocusZoneX(ctx) * getFocusZoneY(ctx)) + StringHelper.asBase64(getCRC32());
 	}
 
 	public Date getExifDate() {
@@ -1395,15 +1402,15 @@ public class StaticInfo {
 	}
 
 	public String getAccessToken(ContentContext ctx) {
-		String key = getKey("accesstoken");		
-		String token = (String) ctx.getGlobalContext().getTimeAttribute(key);		
-		if (token == null) {			
+		String key = getKey("accesstoken");
+		String token = (String) ctx.getGlobalContext().getTimeAttribute(key);
+		if (token == null) {
 			token = StringHelper.getRandomString(32, StringHelper.ALPHANUM);
 			setAccessToken(ctx, token);
 		}
 		return token;
 	}
-	
+
 	public String getURL(ContentContext ctx) {
 		return URLHelper.createResourceURL(ctx, getFile());
 	}
@@ -1415,6 +1422,5 @@ public class StaticInfo {
 	public void setStaticFolder(boolean staticFolder) {
 		this.staticFolder = staticFolder;
 	}
-	
-	
-	}
+
+}
