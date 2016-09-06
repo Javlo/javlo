@@ -762,4 +762,4 @@ change log
  
  * 2/ clean access data
  
- * 3/ 404 servlet 3.0 redirection content separation color, error list links
+ * 3/ 404 servlet 3.0 redirection content separation color, error list links, hidden 404 page if not admin
