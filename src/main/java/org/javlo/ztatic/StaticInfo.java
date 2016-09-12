@@ -40,6 +40,7 @@ import org.javlo.service.exception.ServiceException;
 import org.javlo.service.location.LocationService;
 import org.javlo.user.User;
 import org.javlo.ztatic.InitInterest.Point;
+import org.owasp.encoder.Encode;
 
 public class StaticInfo {
 
@@ -111,17 +112,33 @@ public class StaticInfo {
 		public String getTitle() {
 			return staticInfo.getManualTitle(ctx);
 		}
+		
+		public String getHtmlTitle() {
+			return Encode.forHtmlAttribute(staticInfo.getManualTitle(ctx));
+		}
 
 		public String getDescription() {
 			return staticInfo.getManualDescription(ctx);
+		}
+		
+		public String getHtmlDescription() {
+			return Encode.forHtmlAttribute(staticInfo.getManualDescription(ctx));
 		}
 
 		public String getCopyright() {
 			return staticInfo.getCopyright(ctx);
 		}
+		
+		public String getHtmlCopyright() {
+			return Encode.forHtmlAttribute(staticInfo.getCopyright(ctx));
+		}
 
 		public String getLocation() {
 			return staticInfo.getManualLocation(ctx);
+		}
+		
+		public String getHtmlLocation() {
+			return Encode.forHtmlAttribute(staticInfo.getManualLocation(ctx));
 		}
 
 		public String getAccessToken() {
@@ -131,6 +148,15 @@ public class StaticInfo {
 		public String getFullTitle() {
 			try {
 				return staticInfo.getFullTitle(ctx);
+			} catch (Exception e) {
+				e.printStackTrace();
+				return null;
+			}
+		}
+		
+		public String getHtmlFullTitle() {
+			try {
+				return Encode.forHtmlAttribute(staticInfo.getFullTitle(ctx));
 			} catch (Exception e) {
 				e.printStackTrace();
 				return null;

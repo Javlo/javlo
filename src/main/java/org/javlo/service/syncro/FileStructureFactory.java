@@ -23,6 +23,7 @@ import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.logging.Logger;
 
+import org.javlo.helper.LangHelper;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
@@ -46,6 +47,7 @@ public class FileStructureFactory {
 			instance = new FileStructureFactory(baseFolder);
 			ref = new WeakReference<FileStructureFactory>(instance);
 			instances.put(baseFolder, ref);
+			LangHelper.clearWeekReferenceMap(instances);
 		}
 		return instance;
 	}

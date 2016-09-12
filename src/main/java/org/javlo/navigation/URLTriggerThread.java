@@ -37,7 +37,6 @@ public class URLTriggerThread extends Thread {
 				} catch (Throwable t) {
 					//t.printStackTrace();
 				}
-
 				sleepLatch.await(secBetweenTrigger, TimeUnit.SECONDS);
 			}
 		} catch (InterruptedException e) {

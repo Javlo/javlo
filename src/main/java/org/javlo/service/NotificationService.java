@@ -11,6 +11,7 @@ import java.util.Map;
 
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
+import org.javlo.helper.LangHelper;
 import org.javlo.helper.NetHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
@@ -235,6 +236,9 @@ public class NotificationService {
 				if (size == maxSize) {
 					break;
 				}
+			}
+			for (List<WeakReference<Notification>> list : allReadyReaded.getMap().values()) {
+				LangHelper.clearWeekReferenceCollection(list);
 			}
 		}
 		return outNotif;

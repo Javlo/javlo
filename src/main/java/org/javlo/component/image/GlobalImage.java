@@ -480,9 +480,10 @@ public class GlobalImage extends Image implements IImageFilter {
 			finalCode.append("<div class=\"col-sm-9\"><textarea class=\"form-control\" id=\"" + getEmbedCodeName() + "\" name=\"" + getEmbedCodeName() + "\">");
 			finalCode.append(getEmbedCode());
 			finalCode.append("</textarea></div></div>");
-
 		}
-
+		
+		finalCode.append(getMetaCode(ctx));		
+		
 		finalCode.append("</div></div>");
 
 		// validation

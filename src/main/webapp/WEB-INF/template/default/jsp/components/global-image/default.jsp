@@ -1,6 +1,15 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"
 %><%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"
 %>
+<c:set var="imageAlt" value="${not empty label?cleanLabel:cleanDescription}" />
+<c:if test="${not empty file && not empty file.title || not empty file.description}">
+    <c:if test="${not empty file.title && not empty file.description}">
+		<c:set var="imageAlt" value="${file.title} : ${file.description}" />
+	</c:if>
+	<c:if test="${not empty file.title || not empty file.description}">
+		<c:set var="imageAlt" value="${file.title}${file.description}" />
+	</c:if>
+</c:if>
 <c:set var="imageId" value="i${compid}" />
 <c:if test="${contentContext.asPreviewMode && filter != 'raw'}">
 <script type="text/javascript">
@@ -24,13 +33,12 @@ function loadImage${imageId}() {
 }
 </script>
 </c:if>
-
 <c:set var="styleWidth" value="" /><c:if test="${not empty componentWidth && !param['clean-html']}"><c:set var="styleWidth" value=' style="width: ${componentWidth};"' /></c:if>
 <c:choose>
 <c:when test="${link eq '#'}">
 <figure>
 <span class="nolink">
-<img src="${previewURL}" alt="${not empty label?cleanLabel:cleanDescription}"${styleWidth} />
+<img src="${previewURL}" alt="${imageAlt}"${styleWidth} />
 <c:if test="${empty param.nolabel}"><figcaption>${not empty label?label:description}</figcaption></c:if>
 </span>
 </figure>
@@ -43,7 +51,7 @@ function loadImage${imageId}() {
 	<c:set var="imageWidthTag" value='width="${imageWidth}" ' />
 	<c:set var="loadEvent" value="" />
 	<c:if test="${contentContext.asPreviewMode && filter != 'raw'}"><c:set var="loadEvent" value=' id="${imageId}" onLoad="loadImage${imageId}();"' /></c:if>
-	<img ${not empty imageWidth && filter!='raw'?imageWidthTag:''}src="${previewURL}" alt="${not empty description?cleanDescription:cleanLabel}"${styleWidth}${loadEvent}/>	
+	<img ${not empty imageWidth && filter!='raw'?imageWidthTag:''}src="${previewURL}" alt="${imageAlt}"${styleWidth}${loadEvent}/>	
 </a>
 <c:set var="copyrightHTML" value="" />
 <c:if test="${not empty copyright}"><c:set var="copyrightHTML" value='<span class="copyright">${copyright}</span>' /></c:if>

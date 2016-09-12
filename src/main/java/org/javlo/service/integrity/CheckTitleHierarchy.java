@@ -32,10 +32,14 @@ public class CheckTitleHierarchy extends AbstractIntegrityChecker {
 					String value = null;
 					if (comp instanceof ISubTitle) {
 						value = comp.getTextTitle(areaCtx);
-						if (lastLevel > 0 && Math.abs(((ISubTitle) comp).getSubTitleLevel(areaCtx) - lastLevel) > 1) {
-							error++;
+						int level = ((ISubTitle) comp).getSubTitleLevel(areaCtx);
+						if (level > 0) {
+							if (lastLevel > 0 && Math.abs(level - lastLevel) > 1) {
+								error++;
+							}
+							lastLevel = level;
 						}
-						lastLevel = ((ISubTitle) comp).getSubTitleLevel(areaCtx);
+						
 					} else if (comp instanceof Title) {
 						value = comp.getValue(areaCtx);
 						if (lastLevel > 2) {

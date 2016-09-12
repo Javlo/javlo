@@ -30,6 +30,7 @@ import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.context.GlobalContextFactory;
 import org.javlo.data.InfoBean;
+import org.javlo.helper.LangHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.i18n.I18nResource;
 import org.javlo.module.core.IPrintInfo;
@@ -489,6 +490,7 @@ public class ContentService implements IPrintInfo {
 			component = searchComponent(ctx, getNavigation(ctx), id, false);
 			if (component != null) {
 				components.put(getComponentKey(ctx, id), new WeakReference<IContentVisualComponent>(component));
+				LangHelper.clearWeekReferenceMap(components);
 			}
 		}
 		if (component == null) {

@@ -10,6 +10,7 @@ import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
@@ -322,6 +323,61 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 	protected String getEditorComplexity(ContentContext ctx) {
 		return properties.getProperty("editor-complexity", "light");
 	}
+	
+	protected String getMetaCode(ContentContext ctx) {
+		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+		PrintStream out = new PrintStream(outStream);		
+		if (isDisplayMeta(ctx)) {			
+			StaticInfo staticInfo = getStaticInfo(ctx);
+			String url = URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.EDIT_MODE));			
+			if (!ctx.isEditPreview()) {
+				String formAction = URLHelper.addParam(url, "module", "content");
+				url = URLHelper.addParam(url, "formAction", formAction);
+			} else {
+				String formAction = URLHelper.addParam(url, "module", "content");				
+				formAction = URLHelper.addParam(formAction, "previewEdit", "true");
+				formAction = URLHelper.addParam(formAction, "webaction", "edit.editPreview");
+				formAction = URLHelper.addParam(formAction, "comp_id", getId());
+				url = URLHelper.addParam(url, "formAction", formAction);
+			}
+			url = URLHelper.addParam(url, "nobreadcrumbs", "true");
+			url = URLHelper.addParam(url, "webaction", "file.previewEdit");
+			url = URLHelper.addParam(url, "module", "file");			
+			url = URLHelper.addParam(url, "file", URLHelper.encodePathForAttribute(staticInfo.getFile().getPath()));	
+			
+			I18nAccess i18nAccess;
+			try {
+				i18nAccess = I18nAccess.getInstance(ctx.getRequest());
+				out.println("<div class=\"panel panel-default\"><div class=\"panel-heading\">Meta-data<a href=\""+url+"\" class=\"btn btn-default btn-xs pull-right\">"+i18nAccess.getText("global.change")+"</a></h3></div><div class=\"panel-body\">");			
+				out.println("<div class=\"row form-group\"><div class=\"col-sm-3\">"+i18nAccess.getText("field.title")+"</div>");
+				out.println("<div class=\"col-sm-9\">"+staticInfo.getTitle(ctx)+"</div>");
+				out.println("</div>");
+				out.println("<div class=\"row form-group\"><div class=\"col-sm-3\">"+i18nAccess.getText("field.description")+"</div>");
+				out.println("<div class=\"col-sm-9\">"+staticInfo.getDescription(ctx)+"</div>");
+				out.println("</div>");
+				out.println("<div class=\"row form-group\"><div class=\"col-sm-3\">"+i18nAccess.getText("field.location")+"</div>");
+				out.println("<div class=\"col-sm-9\">"+staticInfo.getLocation(ctx)+"</div>");
+				out.println("</div>");
+				out.println("<div class=\"row form-group\"><div class=\"col-sm-3\">"+i18nAccess.getText("field.copyright")+"</div>");
+				out.println("<div class=\"col-sm-9\">"+staticInfo.getCopyright(ctx)+"</div>");
+				out.println("</div>");
+				out.println("<div class=\"row form-group\"><div class=\"col-sm-3\">"+i18nAccess.getText("field.date")+"</div>");
+				out.println("<div class=\"col-sm-9\">"+StringHelper.renderDate(staticInfo.getDate(ctx))+"</div>");
+			} catch (FileNotFoundException e) {			
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			
+			out.println("</div></div></div>");		    
+		}
+		out.close();
+		return new String(outStream.toByteArray());
+	}
+	
+	protected boolean isDisplayMeta(ContentContext ctx) {
+		return ctx.getGlobalContext().getStaticConfig().isImageMetaEdition();
+	}
 
 	@Override
 	protected String getEditXHTMLCode(ContentContext ctx) throws Exception {
@@ -365,12 +421,6 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 		finalCode.append(XHTMLHelper.getTextArea(getLabelXHTMLInputName(), getLabel(), params));
 		finalCode.append("</div>");
 
-		if (canUpload(ctx)) {
-			finalCode.append("<div class=\"form-group\"><label for=\"new_dir_" + getId() + "\">");
-			finalCode.append(getNewDirLabelTitle(ctx));
-			finalCode.append(" : </label><input class=\"form-control\" id=\"new_dir_" + getId() + "\" name=\"" + getNewDirInputName() + "\" type=\"text\"/></div>");
-		}
-
 		if ((getDirList(ctx,getFileDirectory(ctx)) != null) && (getDirList(ctx,getFileDirectory(ctx)).length > 0)) {
 			finalCode.append("<div class=\"form-group\"><label for=\"" + getDirInputName() + "\">");
 			finalCode.append(getDirLabelTitle(ctx));
@@ -395,9 +445,15 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 		}
 
 		if (canUpload(ctx)) {
+			finalCode.append("<div class=\"row\"><div class=\"col-md-6\">");
+			finalCode.append("<div class=\"form-group\"><label for=\"new_dir_" + getId() + "\">");
+			finalCode.append(getNewDirLabelTitle(ctx));
+			finalCode.append(" : </label><input class=\"form-control\" id=\"new_dir_" + getId() + "\" name=\"" + getNewDirInputName() + "\" type=\"text\"/></div>");
+			finalCode.append("</div><div class=\"col-md-6\">");
 			finalCode.append("<div class=\"form-group\">");
 			finalCode.append("<label for=\"" + getFileXHTMLInputName() + "\">" + getImageUploadTitle(ctx) + "</label>");
 			finalCode.append("<input class=\"form-control\" name=\"" + getFileXHTMLInputName() + "\" id=\"" + getFileXHTMLInputName() + "\" type=\"file\"/></div>");
+			finalCode.append("</div></div>");
 		}
 
 		String[] fileList = getFileList(getFileDirectory(ctx), getFileFilter());
@@ -447,6 +503,8 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 			String chooseImageURL = URLHelper.createModuleURL(ctx, ctx.getPath(), "file", filesParams);
 			finalCode.append("<script type=\"text/javascript\">jQuery(document).ready(loadWysiwyg('#" + getDescriptionName() + "','" + getEditorComplexity(ctx) + "','" + chooseImageURL + "'));</script>");
 		}
+		
+		finalCode.append(getMetaCode(ctx));
 
 		finalCode.append("</div></div>");
 
@@ -809,7 +867,11 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 				File oldFile = getFile(ctx);
 				setDirSelected(importFolder);
 				File newFile = getFile(ctx);
-				ResourceHelper.writeFileToFile(oldFile, newFile);
+				try {
+					ResourceHelper.writeFileToFile(oldFile, newFile);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 			}
 		}
 	}

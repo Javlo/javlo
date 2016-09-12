@@ -1,8 +1,10 @@
 package org.javlo.helper;
 
+import java.lang.ref.WeakReference;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -314,6 +316,24 @@ public class LangHelper {
 																		// remove
 																		// debug
 																		// trace
+		}
+	}
+	
+	public static <T> void clearWeekReferenceCollection(Collection<WeakReference<T>> col) {
+		Iterator<WeakReference<T>> it = col.iterator();
+		while (it.hasNext()) {
+			if (it.next().get() == null) {
+				it.remove();
+			}
+		}
+	}
+	
+	public static <K,T> void clearWeekReferenceMap(Map<K, WeakReference<T>> map) {
+		Iterator<Map.Entry<K, WeakReference<T>>> it = map.entrySet().iterator();
+		while (it.hasNext()) {
+			if (it.next().getValue().get() == null) {
+				it.remove();
+			}
 		}
 	}
 	

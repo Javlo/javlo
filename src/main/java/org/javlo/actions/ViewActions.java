@@ -149,7 +149,7 @@ public class ViewActions implements IAction {
 		Date now = new Date();
 		Date timeA = (Date) globalContext.getAttribute(CHANGES_NOTIFICATION_TIME_A);
 		Date timeB = (Date) globalContext.getAttribute(CHANGES_NOTIFICATION_TIME_B);
-		if (timeA == null || timeB == null) {
+		if (timeA == null || timeB == null) {			
 			Calendar cal = Calendar.getInstance();
 			cal.setTime(now);
 			int interval = globalContext.getStaticConfig().getTimeBetweenChangeNotification();

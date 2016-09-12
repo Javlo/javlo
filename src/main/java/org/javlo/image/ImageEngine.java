@@ -1256,6 +1256,20 @@ public class ImageEngine {
 	}
 	
 	/**
+	 * the "mathematical" distance between two color.
+	 * 1 : balck and white, 0 : same color
+	 * @param c1
+	 * @param c2
+	 * @return
+	 */
+	public static float getColorDistanceFactor(Color c1, Color c2) {
+		if (c1 == null || c2 == null) {
+			return 1;
+		}
+		return ((float)Math.abs(c1.getRed()-c2.getRed())+(float)Math.abs(c1.getGreen()-c2.getGreen())+(float)Math.abs(c1.getBlue()-c2.getBlue()))/(float)(255*3);
+	}
+	
+	/**
 	 * search a color inside a image.
 	 * @param image
 	 * @param color
@@ -1346,13 +1360,9 @@ public class ImageEngine {
 
 	
 	public static void main(String[] args) throws Exception {
-		File source = new File("c:/trans/test.jpg");
-		File target = new File("c:/trans/out.png");
-		
-		System.out.println("read : "+source+ " - exist:"+source.exists());
-
-	    BufferedImage src = resize(ImageIO.read(source), 80, 80, true, false, 0, 0, 0,0, null,768,565,false,false);
-	    ImageIO.write(src, "png", target);
+		System.out.println("BLK WHT : "+getColorDistanceFactor(Color.BLACK, Color.WHITE));
+		System.out.println("WHT WHT : "+getColorDistanceFactor(Color.BLACK, Color.BLACK));
+		System.out.println("BLK BLK : "+getColorDistanceFactor(Color.WHITE, Color.WHITE));
 	}
 
 	public static BufferedImage convertRGBAToIndexed(BufferedImage src) {

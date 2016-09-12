@@ -65,7 +65,8 @@ public class ImageHelper {
 		return createSpecialDirectory(width, 0);
 	}
 
-	public static String createSpecialDirectory(Device device, String context, String filter, String area, String deviceCode, Template template, IImageFilter comp, ImageConfig.ImageParameters param) {
+	public static String createSpecialDirectory(Device device, String context, String filter, String area,
+			String deviceCode, Template template, IImageFilter comp, ImageConfig.ImageParameters param) {
 		context = StringHelper.createFileName(context);
 		String pageIndice = "";
 		if (param.getPage() > 1) {
@@ -113,7 +114,8 @@ public class ImageHelper {
 		return res;
 	}
 
-	public static BufferedImage createAbsoluteLittleImage(ServletContext servletContext, String name, int width) throws IOException {
+	public static BufferedImage createAbsoluteLittleImage(ServletContext servletContext, String name, int width)
+			throws IOException {
 		BufferedImage image = null;
 		InputStream in = new FileInputStream(name);
 		try {
@@ -146,7 +148,8 @@ public class ImageHelper {
 		return image;
 	}
 
-	public static BufferedImage createLittleImage(ServletContext servletContext, String name, int width) throws IOException {
+	public static BufferedImage createLittleImage(ServletContext servletContext, String name, int width)
+			throws IOException {
 		BufferedImage image = loadImage(servletContext, name);
 		if (image != null) {
 			image = resize(image, width);
@@ -306,7 +309,8 @@ public class ImageHelper {
 		Map<String, String> exifData = getExifData(in);
 		ImageSize imageSize = null;
 		try {
-			imageSize = new ImageSize(Integer.parseInt(exifData.get("PixelXDimension")), Integer.parseInt(exifData.get("PixelYDimension")));
+			imageSize = new ImageSize(Integer.parseInt(exifData.get("PixelXDimension")),
+					Integer.parseInt(exifData.get("PixelYDimension")));
 		} catch (Throwable t) {
 		}
 		return imageSize;
@@ -327,8 +331,10 @@ public class ImageHelper {
 							j++;
 						}
 						if (j < 5) {
-							int height = LangHelper.unsigned(buffer[i + j + 1]) * 255 + LangHelper.unsigned(buffer[i + j + 2]);
-							int width = LangHelper.unsigned(buffer[i + j + 3]) * 255 + LangHelper.unsigned(buffer[i + j + 4]);
+							int height = LangHelper.unsigned(buffer[i + j + 1]) * 255
+									+ LangHelper.unsigned(buffer[i + j + 2]);
+							int width = LangHelper.unsigned(buffer[i + j + 3]) * 255
+									+ LangHelper.unsigned(buffer[i + j + 4]);
 							imageSize = new ImageSize(width, height);
 						}
 					}
@@ -360,53 +366,57 @@ public class ImageHelper {
 	}
 
 	public static void main(String[] args) throws IOException {
-		File src = new File("c:/trans/green/12.jpg");
+		File src = new File("c:/trans/green5.jpg");
 
 		int DISTANCE_MAX = ImageEngine.getColorDistance(Color.BLACK, Color.WHITE);
 		System.out.println("max distance : " + ImageEngine.getColorDistance(Color.BLACK, Color.WHITE));
 
-		ExtendedColor bgColor = new ExtendedColor(100, 100, 100);
+		ExtendedColor bgColor = new ExtendedColor(146, 196, 83);
 		System.out.println(bgColor.getGreenProportion());
-		
 
 		if (!src.exists()) {
 			System.out.println("*** file not found : " + src);
 		} else {
 			BufferedImage img = ImageIO.read(src);
 			BufferedImage targetImg = new BufferedImage(img.getWidth(), img.getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
+			Color refColor = new Color(0, 174, 11);
 			int c = 0;
 			for (int x = 0; x < img.getWidth(); x++) {
 				for (int y = 0; y < img.getHeight(); y++) {
 					ExtendedColor col = new ExtendedColor(img.getRGB(x, y), true);
-					float minGreenProp = (float)0.40;
-					if (col.getGreenProportion() > minGreenProp) {						
-						if (col.getGreenProportion() > minGreenProp+0.1) {
+					float maxColorDistance = (float) 0.20;
+					//System.out.println(ImageEngine.getColorDistanceFactor(refColor, col));
+					if (ImageEngine.getColorDistanceFactor(refColor, col) < maxColorDistance) {
+						if (ImageEngine.getColorDistanceFactor(refColor, col) < maxColorDistance - 0.1) {
 							col = new ExtendedColor(0, 0, 0, 0);
 						} else {
-							int green = 0;
-							int dec = 10;
-							while (green == 0 && dec < Math.max(img.getWidth(), img.getHeight()) / 2) {
-								if (new ExtendedColor(ImageEngine.getColor(img, x - dec, y, Color.green)).getGreenProportion() < minGreenProp) {
-									green = new ExtendedColor(ImageEngine.getColor(img, x - dec, y, Color.green)).getGreen();
+							
+							ExtendedColor newColor = null;
+							int dec = 1;
+							while (newColor == null && dec < Math.max(img.getWidth(), img.getHeight()) / 2) {
+								if (ImageEngine.getColorDistanceFactor(refColor,
+										new ExtendedColor(ImageEngine.getColor(img, x - dec, y, null))) > maxColorDistance + 0.1) {
+									newColor = new ExtendedColor(ImageEngine.getColor(img, x - dec, y, null));
 								}
-								if (new ExtendedColor(ImageEngine.getColor(img, x + dec, y, Color.green)).getGreenProportion() < minGreenProp) {
-									green = new ExtendedColor(ImageEngine.getColor(img, x + dec, y, Color.green)).getGreen();
+								if (ImageEngine.getColorDistanceFactor(refColor,
+										new ExtendedColor(ImageEngine.getColor(img, x + dec, y, null))) > maxColorDistance  + 0.1) {
+									newColor = new ExtendedColor(ImageEngine.getColor(img, x + dec, y, null));
 								}
-								if (new ExtendedColor(ImageEngine.getColor(img, x, y - dec, Color.green)).getGreenProportion() < minGreenProp) {
-									green = new ExtendedColor(ImageEngine.getColor(img, x, y - dec, Color.green)).getGreen();
+								if (ImageEngine.getColorDistanceFactor(refColor,
+										new ExtendedColor(ImageEngine.getColor(img, x, y - dec, null))) > maxColorDistance  + 0.1) {
+									newColor = new ExtendedColor(ImageEngine.getColor(img, x, y - dec, null));
 								}
-								if (new ExtendedColor(ImageEngine.getColor(img, x, y + dec, Color.green)).getGreenProportion() < minGreenProp) {
-									green = new ExtendedColor(ImageEngine.getColor(img, x, y + dec, Color.green)).getGreen();
-								}
-								if (green != 0) {
-									col = new ExtendedColor(col.getRed(), green, col.getBlue(), Math.round(255-(1-col.getGreenProportion())*255));
-									if (col.getGreenProportion() > minGreenProp) {
-										green = 0;
-									}
+								if (ImageEngine.getColorDistanceFactor(refColor,
+										new ExtendedColor(ImageEngine.getColor(img, x, y + dec, null))) > maxColorDistance  + 0.1) {
+									newColor = new ExtendedColor(ImageEngine.getColor(img, x, y + dec, null));
 								}
 								dec++;
 							}
-							col = new ExtendedColor(col.getRed(), green, col.getBlue(), 255-col.getGreen());
+							//System.out.println("***** "+);
+							if (newColor != null) {
+								col = new ExtendedColor(newColor.getRed(), newColor.getGreen(), newColor.getBlue(), Math.round(255*(ImageEngine.getColorDistanceFactor(refColor, col))));
+								//col = new ExtendedColor(255, 0, 0);
+							}
 						}
 						c++;
 					}
@@ -414,7 +424,7 @@ public class ImageHelper {
 				}
 			}
 			System.out.println("c=" + c);
-			ImageIO.write(targetImg, "png", new File("c:/trans/green/out.png"));
+			ImageIO.write(targetImg, "png", new File("c:/trans/out.png"));
 		}
 	}
 }

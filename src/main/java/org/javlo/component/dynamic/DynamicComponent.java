@@ -927,18 +927,19 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 
 	@Override
 	public int getSubTitleLevel(ContentContext ctx) {
-		try {
+		int outHierarchy = 0;
+		try {			
 			for (int i = 2; i < 6; i++) {
 				for (Field field : getFields(ctx)) {
 					if (field.getType().equals("h" + i)) {
-						return i;
+						outHierarchy = i;
 					}
 				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return 0;
+		return outHierarchy;
 	}
 
 	@Override

@@ -12,14 +12,14 @@
 <div class="upload-zone" data-url="${uploadURL}">
 <div id="meta-edit" class="form-list" >
 
-<form id="form-meta" action="${info.currentURL}" method="post">
+<form id="form-meta" action="${empty param.formAction?info.currentURL:param.formAction}" method="post">
 
 <input type="hidden" name="webaction" value="file.updateMeta" />
 
 <c:if test="${not empty param.select}">
 	<input type="hidden" name="select" value="${param.select}" />	
 </c:if>
-<c:if test="${not empty param.close || not empty param.one}">
+<c:if test="${not empty param.close || not empty param.one && empty param.formAction}">
 	<input type="hidden" name="close" value="${empty param.one?param.close:'true'}" />
 </c:if>
 <c:if test="${not empty param[BACK_PARAM_NAME]}"><input type="hidden" name="${BACK_PARAM_NAME}" value="${param[BACK_PARAM_NAME]}" /></c:if>
