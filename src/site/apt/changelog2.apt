@@ -765,3 +765,6 @@ change log
  * 3/ 404 servlet 3.0 redirection content separation color, error list links, hidden 404 page if not admin
  
  * 4/ change meta directly form content / correction bad check title hierachy with dynamic component. 
+ 
+ * 5/ default filter define in template / don't diplay prefix and suffix when component is'nt displayable 
+ 
