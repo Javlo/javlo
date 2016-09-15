@@ -1,7 +1,6 @@
 package org.javlo.module.search;
 
 import java.io.File;
-import java.net.URLEncoder;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -115,7 +114,7 @@ public class SearchModuleAction extends AbstractModuleAction {
 						String url;
 						if (!ctx.isEditPreview()) {
 							url = URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.EDIT_MODE));
-							url = URLHelper.addParam(url, "webaction", "changeRenderer");
+							url = URLHelper.addParam(url, "webaction", "search-module.search");
 							url = URLHelper.addParam(url, "module", "file");
 							url = URLHelper.addParam(url, "page", "meta");							
 							url = URLHelper.addParam(url, "file", URLHelper.encodePathForAttribute(file.getPath()));
@@ -123,9 +122,20 @@ public class SearchModuleAction extends AbstractModuleAction {
 							folderFile = folderFile.replace(ctx.getGlobalContext().getDataFolder(), "");
 							url = URLHelper.addParam(url, "path", folderFile);
 						} else {
+							
+							String formAction = URLHelper.createURL(ctx);							
+							formAction = URLHelper.addParam(formAction, "webaction", "search-module.search");
+							formAction = URLHelper.addParam(formAction, "title", filter.getTitle());
+							formAction = URLHelper.addParam(formAction, "type", filter.getType());
+							formAction = URLHelper.addParam(formAction, "global", filter.getGlobal());
+							formAction = URLHelper.addParam(formAction, "module", "search");
+							formAction = URLHelper.addParam(formAction, "previewEdit", "true");
+							formAction = URLHelper.addParam(formAction, "webaction", "edit.editPreview");
+							
 							url = URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.EDIT_MODE));
 							url = URLHelper.addParam(url, "webaction", "file.previewEdit");
 							url = URLHelper.addParam(url, "module", "file");
+							url = URLHelper.addParam(url, "formAction", formAction);
 							url = URLHelper.addParam(url, "nobreadcrumbs", "true");
 							url = URLHelper.addParam(url, "file", URLHelper.encodePathForAttribute(file.getPath()));
 							url = URLHelper.addParam(url, "previewEdit", "true");
@@ -161,3 +171,4 @@ public class SearchModuleAction extends AbstractModuleAction {
 	}
 
 }
+

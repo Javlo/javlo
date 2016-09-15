@@ -833,6 +833,13 @@ public interface IContentVisualComponent extends Comparable<IContentVisualCompon
 	 */
 	public String getContentAsText(ContentContext ctx);
 	
+	/**
+	 * component can be hidded in some mode, like view or preview.
+	 * @param mode
+	 * @return
+	 */
+	public boolean isHiddenInMode(int mode);
+	
 	
 
 }

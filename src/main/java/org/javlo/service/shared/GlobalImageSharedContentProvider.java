@@ -68,7 +68,7 @@ public class GlobalImageSharedContentProvider extends LocalImageSharedContentPro
 					StaticInfo staticInfo = StaticInfo.getInstance(masterContext, imageFile);
 					String desc = staticInfo.getTitle(masterContext) + ' ' + staticInfo.getDescription(masterContext) + ' ' + StringHelper.collectionToString(staticInfo.getTags(masterContext));
 					out.println("meta=" + desc);
-					out.println(GlobalImage.IMAGE_FILTER + "=full");
+					out.println(GlobalImage.IMAGE_FILTER + "="+ctx.getCurrentTemplate().getDefaultImageFilter());
 					out.close();
 					String value = new String(outStream.toByteArray());
 					ComponentBean imageBean = new ComponentBean(GlobalImage.TYPE, value, ctx.getRequestContentLanguage());

@@ -1517,6 +1517,15 @@ public class Template implements Comparable<Template> {
 	public String getImageFiltersRAW() {
 		return properties.getString("images-filter", getParent().getImageFiltersRAW());
 	}
+	
+	public String getDefaultImageFilter() {
+		List<String> filters = getImageFilters();
+		String defaultFilter = "full";
+		if (filters.size() > 0 && !filters.contains("full")) {
+			defaultFilter = filters.iterator().next();
+		}
+		return properties.getString("images-default-filter", defaultFilter);
+	}
 
 	public List<String> getPageTypes() {
 		String typesRaw = getPageTypesRAW();

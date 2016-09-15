@@ -53,7 +53,7 @@ public class FotogrphSharedContent extends SharedContent {
 				PrintStream out = new PrintStream(outStream);
 				out.println("dir=" + baseStaticFolder);
 				out.println("file-name=" + imageFile.getName());
-				out.println(GlobalImage.IMAGE_FILTER + "=full");
+				out.println(GlobalImage.IMAGE_FILTER + "="+ctx.getCurrentTemplate().getDefaultImageFilter());
 				if (getTitle() != null) {
 					out.println("label=" + getTitle());
 				}

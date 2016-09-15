@@ -166,7 +166,7 @@ String xhtmlCode = elem.getXHTMLCode(ctx);
 if (xhtmlCode != null && StringHelper.removeTag(xhtmlCode).trim().length() == 0 && !xhtmlCode.toLowerCase().contains("<img") && elem.isDispayEmptyXHTMLCode(ctx)) {
 	I18nAccess i18nAccess = I18nAccess.getInstance(ctx);
 	xhtmlCode = elem.getEmptyXHTMLCode(ctx);	
-}%></c:if><%=elem.getPrefixViewXHTMLCode(ctx)%><%=xhtmlCode%><%=elem.getSuffixViewXHTMLCode(ctx)%><%
+}%></c:if><%if (!elem.isHiddenInMode(ctx.getRenderMode())) {%><%=elem.getPrefixViewXHTMLCode(ctx)%><%=xhtmlCode%><%=elem.getSuffixViewXHTMLCode(ctx)%><%}
 previousElem = elem;
 if (elems != null) {%><%=elems.getSufixXHTMLCode(ctx)
 %><%}%><%

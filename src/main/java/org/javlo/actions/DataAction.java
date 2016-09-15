@@ -343,7 +343,7 @@ DataAction implements IAction {
 			PrintStream out = new PrintStream(outStream);
 			out.println("dir=" + dir);
 			out.println("file-name=" + StringHelper.getFileNameFromPath(newFile.getName()));
-			out.println(GlobalImage.IMAGE_FILTER + "=full");
+			out.println(GlobalImage.IMAGE_FILTER + "="+ctx.getCurrentTemplate().getDefaultImageFilter());
 			out.close();
 			if (config.isCreateContentOnImportImage() || content) {
 				ComponentBean image = new ComponentBean(GlobalImage.TYPE, new String(outStream.toByteArray()), ctx.getRequestContentLanguage());
