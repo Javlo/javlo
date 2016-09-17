@@ -19,6 +19,8 @@ public class XHTML extends AbstractVisualComponent {
 
 	public static final String XHTML_RESOURCE_FOLDER = "_xhtml_resources";
 
+	private Boolean cachable = null;
+
 	@Override
 	public int getComplexityLevel(ContentContext ctx) {
 		return COMPLEXITY_EASY;
@@ -44,15 +46,19 @@ public class XHTML extends AbstractVisualComponent {
 		return GRAPHIC_COLOR;
 	}
 
-	/*@Override
-	public String getPrefixViewXHTMLCode(ContentContext ctx) {
-		return "";
+	@Override
+	public String performEdit(ContentContext ctx) throws Exception {
+		cachable = null;
+		return super.performEdit(ctx);
 	}
 
-	@Override
-	public String getSuffixViewXHTMLCode(ContentContext ctx) {
-		return "";
-	}*/
+	/*
+	 * @Override public String getPrefixViewXHTMLCode(ContentContext ctx) {
+	 * return ""; }
+	 * 
+	 * @Override public String getSuffixViewXHTMLCode(ContentContext ctx) {
+	 * return ""; }
+	 */
 
 	@Override
 	public String getType() {
@@ -66,7 +72,14 @@ public class XHTML extends AbstractVisualComponent {
 
 	@Override
 	public boolean isContentCachable(ContentContext ctx) {
-		return !isRepeat();
+		if (!isRepeat()) {
+			return false;
+		} else {
+			if (cachable == null) {
+				cachable = !getValue().contains("${");				
+			}
+			return cachable;
+		}
 	}
 
 }
