@@ -176,7 +176,7 @@ public class ConfigurationProperties {
 		}
 	}
 
-	public float getFloat(String key, float defaultValue) {
+	public Float getFloat(String key, float defaultValue) {
 		String val = prop.getProperty(key);
 		if (val == null) {
 			return defaultValue;
@@ -185,7 +185,7 @@ public class ConfigurationProperties {
 		}
 	}
 
-	public int getInteger(String key, Integer defaultValue) {
+	public Integer getInteger(String key, Integer defaultValue) {
 		String val = prop.getProperty(key);
 		if (val == null) {
 			return defaultValue;
