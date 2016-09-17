@@ -72,4 +72,9 @@ public class Space extends AbstractVisualComponent {
 
 		return title;
 	}
+	
+	@Override
+	public boolean isContentCachable(ContentContext ctx) {
+		return true;
+	}
 }
