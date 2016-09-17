@@ -73,7 +73,7 @@ public class XHTML extends AbstractVisualComponent {
 	@Override
 	public boolean isContentCachable(ContentContext ctx) {
 		if (!isRepeat()) {
-			return false;
+			return true;
 		} else {
 			if (cachable == null) {
 				cachable = !getValue().contains("${");				
