@@ -11,21 +11,20 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Logger;
 
-import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.configuration.PropertiesConfiguration;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.URLHelper;
+import org.javlo.utils.ConfigurationProperties;
 
 public class I18nResource {
 
 	private static Logger logger = Logger.getLogger(I18nResource.class.getName());
 
-	private Map<String, PropertiesConfiguration> viewFiles = new HashMap<String, PropertiesConfiguration>();
+	private Map<String, ConfigurationProperties> viewFiles = new HashMap<String, ConfigurationProperties>();
 
-	private Map<String, PropertiesConfiguration> editFiles = new HashMap<String, PropertiesConfiguration>();
+	private Map<String, ConfigurationProperties> editFiles = new HashMap<String, ConfigurationProperties>();
 
 	private Map<String, Properties> contextFiles = new HashMap<String, Properties>();
 
@@ -46,13 +45,13 @@ public class I18nResource {
 
 	private StaticConfig staticConfig = null;
 
-	public PropertiesConfiguration getEditFile(String lg, boolean reload) throws IOException, ConfigurationException {
+	public ConfigurationProperties getEditFile(String lg, boolean reload) throws IOException {
 		return getI18nFile(ContentContext.EDIT_MODE, lg, reload);
 	}
 
-	private PropertiesConfiguration getI18nFile(int mode, String lg, boolean reload) throws IOException, ConfigurationException {
+	private ConfigurationProperties getI18nFile(int mode, String lg, boolean reload) throws IOException {
 
-		PropertiesConfiguration i18nProp = viewFiles.get(lg);
+		ConfigurationProperties i18nProp = viewFiles.get(lg);
 		if (mode == ContentContext.EDIT_MODE) {
 			i18nProp = editFiles.get(lg);
 		} else {
@@ -62,7 +61,7 @@ public class I18nResource {
 		if (i18nProp == null || reload) {
 
 			if (i18nProp == null) {
-				i18nProp = new PropertiesConfiguration();
+				i18nProp = new ConfigurationProperties();
 			}
 
 			synchronized (this) {
@@ -70,8 +69,6 @@ public class I18nResource {
 				logger.fine("init view language : " + lg);
 
 				i18nProp.clear();
-
-				i18nProp.setListDelimiter(Character.MAX_VALUE);
 
 				File viewFile;
 				if (mode == ContentContext.EDIT_MODE) {
@@ -81,17 +78,7 @@ public class I18nResource {
 				}
 
 				if (viewFile.exists()) {
-					InputStream stream = new FileInputStream(viewFile);
-					if (stream != null) {
-						Reader reader = null;
-						try {
-							reader = new InputStreamReader(stream, ContentContext.CHARACTER_ENCODING);
-							i18nProp.load(reader);
-						} finally {
-							ResourceHelper.closeResource(reader);
-							ResourceHelper.closeResource(stream);
-						}
-					}
+					i18nProp.load(viewFile);
 				} else {
 					logger.fine("i18n file not found : " + viewFile);
 				}
@@ -135,7 +122,7 @@ public class I18nResource {
 		return i18nProp;
 	}
 
-	public Properties getContextI18nFile(int mode, String lg, boolean reload) throws IOException, ConfigurationException {
+	public Properties getContextI18nFile(int mode, String lg, boolean reload) throws IOException {
 		if (!contextI18nFolder.exists()) {
 			return null;
 		} else {
@@ -162,7 +149,7 @@ public class I18nResource {
 		}
 	}
 
-	public PropertiesConfiguration getViewFile(String lg, boolean reload) throws IOException, ConfigurationException {
+	public ConfigurationProperties getViewFile(String lg, boolean reload) throws IOException {
 		return getI18nFile(ContentContext.VIEW_MODE, lg, reload);
 	}
 

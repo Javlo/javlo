@@ -19,10 +19,10 @@ import javax.mail.MessagingException;
 import javax.mail.Transport;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
+import javax.naming.ConfigurationException;
 import javax.servlet.ServletContext;
 
-import org.apache.commons.configuration.ConfigurationException;
-import org.apache.xmlbeans.impl.util.Base64;
+import org.apache.commons.codec.binary.Base64;
 import org.javlo.config.StaticConfig;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
@@ -54,7 +54,7 @@ public class MailingThread extends Thread {
 	 * @throws IOException
 	 * @throws ConfigurationException
 	 */
-	public List<Mailing> getMailingList() throws ConfigurationException, IOException {
+	public List<Mailing> getMailingList() throws IOException {
 		return MailingFactory.getInstance(application).getMailingList();
 	}
 
@@ -157,7 +157,7 @@ public class MailingThread extends Thread {
 						mailing.setErrorMessage(e.getMessage()+" [replaceJSTLUserInfo]");
 						try {
 							mailing.store(application);
-						} catch (ConfigurationException e1) {
+						} catch (IOException e1) {
 							e1.printStackTrace();
 							mailing.setWarningMessage(e.getMessage());
 						}
@@ -254,13 +254,10 @@ public class MailingThread extends Thread {
 			for (Mailing element : getMailingList()) {
 				element.store(application);
 			}
-		} catch (ConfigurationException e) {
-			logger.severe(e.getMessage());
-			e.printStackTrace();
 		} catch (IOException e) {
 			logger.severe(e.getMessage());
 			e.printStackTrace();
-		}
+		} 
 		logger.info("STOP MAILING");
 		synchronized (stop) {
 			stop.notifyAll();
@@ -280,8 +277,8 @@ public class MailingThread extends Thread {
 			keyPairGenerator.initialize(1024);
 			KeyPair keyPair = keyPairGenerator.genKeyPair();		
 			
-			ResourceHelper.writeBytesToFile(privateKeyFile, keyPair.getPrivate().getEncoded());
-			ResourceHelper.writeBytesToFile(publicKeyFile, Base64.encode(keyPair.getPublic().getEncoded()));
+			ResourceHelper.writeBytesToFile(privateKeyFile, keyPair.getPrivate().getEncoded());			
+			ResourceHelper.writeBytesToFile(publicKeyFile, Base64.encodeBase64(keyPair.getPublic().getEncoded()));
 		}
 		
 		DKIMBean dkin = new DKIMBean("vandermaesen.name", "dkim", privateKeyFile.getAbsolutePath(), null);	

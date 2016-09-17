@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.lang.NotImplementedException;
+import org.apache.commons.lang3.NotImplementedException;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -109,7 +109,7 @@ public class JSONMap implements Map<String, Object> {
 
 	@Override
 	public boolean containsValue(Object value) {
-		throw new NotImplementedException();
+		throw new NotImplementedException("containsValue");
 	}
 
 	@Override

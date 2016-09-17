@@ -8,7 +8,6 @@ import java.io.IOException;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.configuration.ConfigurationException;
 import org.javlo.message.GenericMessage;
 
 
@@ -21,7 +20,7 @@ public class I18nMessage {
     I18nAccess i18nAccess = null;
     GenericMessage message;
     
-    public I18nMessage ( GenericMessage newMessage, HttpServletRequest request) throws FileNotFoundException, IOException, ConfigurationException {
+    public I18nMessage ( GenericMessage newMessage, HttpServletRequest request) throws FileNotFoundException, IOException {
         i18nAccess = I18nAccess.getInstance(request);
         message = newMessage;
     }

@@ -8,22 +8,21 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.configuration.PropertiesConfiguration;
-import org.apache.commons.lang.NotImplementedException;
+import org.apache.commons.lang3.NotImplementedException;
 
 public class ReadOnlyPropertiesConfigurationMap implements Map<String, String> {
 
-	private final PropertiesConfiguration prop;
+	private final ConfigurationProperties prop;
 	private boolean displayKey = false;
 
-	public ReadOnlyPropertiesConfigurationMap(PropertiesConfiguration inProp, boolean displayKey) {
+	public ReadOnlyPropertiesConfigurationMap(ConfigurationProperties inProp, boolean displayKey) {
 		this.prop = inProp;
 		this.displayKey = displayKey;
 	}
 
 	@Override
 	public void clear() {
-		throw new NotImplementedException();
+		throw new NotImplementedException("clear");
 	}
 
 	@Override
@@ -79,17 +78,17 @@ public class ReadOnlyPropertiesConfigurationMap implements Map<String, String> {
 
 	@Override
 	public String put(String key, String value) {
-		throw new NotImplementedException();
+		throw new NotImplementedException("put");
 	}
 
 	@Override
 	public void putAll(Map<? extends String, ? extends String> m) {
-		throw new NotImplementedException();
+		throw new NotImplementedException("putAll");
 	}
 
 	@Override
 	public String remove(Object key) {
-		throw new NotImplementedException();
+		throw new NotImplementedException("remove");
 	}
 
 	@Override

@@ -21,7 +21,7 @@ import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.servlet.ServletContext;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.javlo.component.core.IImageFilter;
 import org.javlo.helper.LangHelper;
 import org.javlo.helper.ResourceHelper;

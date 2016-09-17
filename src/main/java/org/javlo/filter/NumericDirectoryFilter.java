@@ -1,12 +1,12 @@
 /*
- * Created on 27-d�c.-2003
+ * Created on 27-dec.-2003
  */
 package org.javlo.filter;
 
 import java.io.File;
 import java.io.FilenameFilter;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * filter for receive only direcotry composed only by number. (sample: a34 ->

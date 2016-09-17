@@ -9,7 +9,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.component.core.IImageFilter;
 import org.javlo.config.StaticConfig;

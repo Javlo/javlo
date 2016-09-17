@@ -59,13 +59,11 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.io.FileExistsException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
 import org.apache.poi.hwpf.extractor.WordExtractor;
@@ -81,9 +79,9 @@ import org.javlo.io.TransactionFile;
 import org.javlo.module.core.Module;
 import org.javlo.module.core.ModuleException;
 import org.javlo.module.core.ModulesContext;
-import org.javlo.service.ContentService;
 import org.javlo.service.PersistenceService;
 import org.javlo.service.resource.Resource;
+import org.javlo.utils.ConfigurationProperties;
 import org.javlo.ztatic.FileCache;
 import org.javlo.ztatic.IStaticContainer;
 import org.javlo.ztatic.StaticInfo;
@@ -1019,12 +1017,12 @@ public class ResourceHelper {
 		out.close();
 	}
 
-	public static final void writePropertiesToFile(PropertiesConfiguration properties, File file) throws ConfigurationException, IOException {
+	public static final void writePropertiesToFile(ConfigurationProperties properties, File file) throws IOException {
 		if (!file.exists()) {
 			file.createNewFile();
 		}
 		OutputStream out = new FileOutputStream(file);
-		properties.save(out, ContentContext.CHARACTER_ENCODING);
+		properties.save(out);
 		out.close();
 	}
 

@@ -33,14 +33,13 @@ import java.util.regex.Pattern;
 
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
+import javax.naming.ConfigurationException;
 import javax.servlet.ServletContext;
 
-import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.filefilter.FileFilterUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.xmlbeans.impl.piccolo.util.RecursionException;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.config.StaticConfig;
@@ -63,6 +62,7 @@ import org.javlo.remote.IRemoteResource;
 import org.javlo.rendering.Device;
 import org.javlo.service.ListService;
 import org.javlo.service.exception.ServiceException;
+import org.javlo.utils.ConfigurationProperties;
 import org.javlo.utils.ReadOnlyPropertiesConfigurationMap;
 
 public class Template implements Comparable<Template> {
@@ -666,11 +666,11 @@ public class Template implements Comparable<Template> {
 
 	public static final String GZ_FILE_EXT = "httpgz";
 
-	private final PropertiesConfiguration properties = new PropertiesConfiguration();
+	private final ConfigurationProperties properties = new ConfigurationProperties();
 	
 	private final ReadOnlyPropertiesConfigurationMap configMap = new ReadOnlyPropertiesConfigurationMap(properties, false);
 
-	private final PropertiesConfiguration privateProperties = new PropertiesConfiguration();
+	private final ConfigurationProperties privateProperties = new ConfigurationProperties();
 
 	private File dir = null;
 
@@ -758,14 +758,12 @@ public class Template implements Comparable<Template> {
 				configFile.createNewFile();
 			}
 
-			template.properties.setFile(configFile);
-			template.properties.load();
+			template.properties.setFile(configFile);			
 
 			if (!privateConfigFile.exists()) {
 				privateConfigFile.createNewFile();
 			}
-			template.privateProperties.setFile(privateConfigFile);
-			template.privateProperties.load();
+			template.privateProperties.setFile(privateConfigFile);		
 
 			template.jsp = config.isTemplateJSP();
 
@@ -1006,7 +1004,7 @@ public class Template implements Comparable<Template> {
 	private void storeProperties() {
 		try {
 			properties.save();
-		} catch (ConfigurationException e) {
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
@@ -1014,7 +1012,7 @@ public class Template implements Comparable<Template> {
 	private void storePrivateProperties() {
 		try {
 			privateProperties.save();
-		} catch (ConfigurationException e) {
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
@@ -1466,14 +1464,14 @@ public class Template implements Comparable<Template> {
 		return templateImageConfigFile;
 	}
 
-	public PropertiesConfiguration getImageConfig() {
+	public ConfigurationProperties getImageConfig() {
 		File templateImageConfigFile = getImageConfigFile();
 		if (templateImageConfigFile.exists()) {
 			try {
-				PropertiesConfiguration templateProperties = new PropertiesConfiguration();
+				ConfigurationProperties templateProperties = new ConfigurationProperties();
 				templateProperties.load(templateImageConfigFile);
 				if (isParent()) {
-					PropertiesConfiguration templatePropertiesParent = getParent().getImageConfig();
+					ConfigurationProperties templatePropertiesParent = getParent().getImageConfig();
 					if (templatePropertiesParent != null) {
 						Iterator keys = templatePropertiesParent.getKeys();
 						while (keys.hasNext()) {
@@ -2398,7 +2396,7 @@ public class Template implements Comparable<Template> {
 			try {
 				properties.load();
 				privateProperties.load();
-			} catch (ConfigurationException e) {
+			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}

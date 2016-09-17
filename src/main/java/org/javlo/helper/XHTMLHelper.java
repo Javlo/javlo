@@ -40,10 +40,8 @@ import java.util.regex.Pattern;
 
 import javax.servlet.ServletContext;
 
-import org.apache.commons.beanutils.BeanUtils;
-import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.javlo.component.core.ComponentFactory;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.form.FormComponent;
@@ -259,14 +257,14 @@ public class XHTMLHelper {
 		if (xhtml == null) {
 			return "";
 		}
-		return StringEscapeUtils.escapeHtml(xhtml);
+		return StringEscapeUtils.escapeHtml4(xhtml);
 	}
 
 	public static String escapeXML(String xhtml) {
 		if (xhtml == null) {
 			return "";
 		}
-		return StringEscapeUtils.escapeXml(xhtml);
+		return StringEscapeUtils.escapeXml11(xhtml);
 	}
 
 	public static String extractTitle(String xhtml) {
@@ -342,7 +340,7 @@ public class XHTMLHelper {
 		return outXHTML.toString();
 	}
 
-	public static String getComponentSelectBox(ContentContext ctx, String inputName, int complexityLevel) throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException, ConfigurationException {
+	public static String getComponentSelectBox(ContentContext ctx, String inputName, int complexityLevel) throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException {
 		StringWriter writer = new StringWriter();
 		PrintWriter out = new PrintWriter(writer);
 		List<IContentVisualComponent> comps = ComponentFactory.getGlobalContextComponent(ctx, complexityLevel);

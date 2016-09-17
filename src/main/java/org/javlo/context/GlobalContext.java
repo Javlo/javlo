@@ -46,11 +46,10 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.configuration.PropertiesConfiguration;
+import org.javlo.utils.ConfigurationProperties;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.javlo.cache.ICache;
 import org.javlo.cache.MapCache;
 import org.javlo.config.StaticConfig;
@@ -255,7 +254,6 @@ public class GlobalContext implements Serializable, IPrintInfo {
 
 	public GlobalContext(String contextKey) {
 		this.contextKey = contextKey;
-		properties.setDelimiterParsingDisabled(true);
 		COUNT_INSTANCE++;
 		logger.info("create globalContext : " + contextKey + " [total globalContext : " + COUNT_INSTANCE + ']');
 	}
@@ -278,11 +276,11 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		}
 	}
 
-	public static GlobalContext getDefaultContext(HttpSession session) throws IOException, ConfigurationException {
+	public static GlobalContext getDefaultContext(HttpSession session) throws IOException {
 		return getRealInstance(session, StaticConfig.getInstance(session).getDefaultContext(), false);
 	}
 
-	public static GlobalContext getMasterContext(HttpSession session) throws IOException, ConfigurationException {
+	public static GlobalContext getMasterContext(HttpSession session) throws IOException {
 		return getRealInstance(session, StaticConfig.getInstance(session).getMasterContext(), true);
 	}
 
@@ -339,8 +337,6 @@ public class GlobalContext implements Serializable, IPrintInfo {
 			request.setAttribute(KEY, globalContext);
 
 			return globalContext;
-		} catch (ConfigurationException e) {
-			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -355,7 +351,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		return (String) session.getAttribute(KEY);
 	}
 
-	public static GlobalContext getInstance(HttpSession session, String contextKey) throws IOException, ConfigurationException {
+	public static GlobalContext getInstance(HttpSession session, String contextKey) throws IOException {
 		if (contextKey == null) {
 			return null;
 		}
@@ -373,7 +369,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		return newInstance;
 	}
 
-	public static GlobalContext getInstance(ServletContext application, StaticConfig staticConfig, File configFile) throws IOException, ConfigurationException {
+	public static GlobalContext getInstance(ServletContext application, StaticConfig staticConfig, File configFile) throws IOException {
 		String contextKey = FilenameUtils.getBaseName(configFile.getName());
 		GlobalContext newInstance = (GlobalContext) application.getAttribute(contextKey);
 		if (newInstance == null) {
@@ -402,7 +398,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		return newInstance;
 	}
 
-	public static GlobalContext getRealInstance(HttpSession session, String contextKey) throws IOException, ConfigurationException {
+	public static GlobalContext getRealInstance(HttpSession session, String contextKey) throws IOException {
 		return getRealInstance(session, contextKey, true);
 	}
 
@@ -410,7 +406,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		return new File(URLHelper.mergePath(getDataFolder(), REDIRECT_URL_LIST));
 	}
 
-	private static GlobalContext getRealInstance(HttpSession session, String contextKey, boolean copyDefaultContext) throws IOException, ConfigurationException {
+	private static GlobalContext getRealInstance(HttpSession session, String contextKey, boolean copyDefaultContext) throws IOException {
 		contextKey = StringHelper.stringToFileName(contextKey);
 
 		StaticConfig staticConfig = StaticConfig.getInstance(session.getServletContext());
@@ -616,7 +612,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		}
 	}
 
-	public static boolean isExist(HttpServletRequest request, String contextKey) throws IOException, ConfigurationException {
+	public static boolean isExist(HttpServletRequest request, String contextKey) throws IOException {
 
 		if (request.getSession().getServletContext().getAttribute(contextKey) != null) {
 			return true;
@@ -632,7 +628,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		return contextFile.exists();
 	}
 
-	private final PropertiesConfiguration properties = new PropertiesConfiguration();
+	private final ConfigurationProperties properties = new ConfigurationProperties();
 
 	private String contextKey = null;
 
@@ -1197,7 +1193,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		return dataFolder;
 	}
 
-	public String getSharedDataFolder(HttpSession session) throws ConfigurationException, IOException {
+	public String getSharedDataFolder(HttpSession session) throws IOException {
 		if (sharedDataFolder == null) {
 			sharedDataFolder = staticConfig.getLocalShareDataFolder();
 			if (getFolder() != null) {
@@ -2101,7 +2097,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 				properties.load(contextFile);
 				config = null;
 			}
-		} catch (ConfigurationException e) {
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
@@ -2137,30 +2133,28 @@ public class GlobalContext implements Serializable, IPrintInfo {
 
 	public void save() {
 		TransactionFile tf = null;
-		try {
-			synchronized (properties) {
-				if (getFolder() != null && getFolder().trim().length() > 0) {
-					try {
-						tf = new TransactionFile(contextFile);
-						properties.save(tf.getOutputStream());
-						tf.commit();
-					} catch (IOException e) {
-						e.printStackTrace();
-						try {
-							tf.rollback();
-						} catch (IOException e1) {
-							e1.printStackTrace();
-						}
-					}
 
-				} else {
-					logger.severe("no folder found for : " + getContextKey() + " context not stored, try to reload.");
-					reload();
+		synchronized (properties) {
+			if (getFolder() != null && getFolder().trim().length() > 0) {
+				try {
+					tf = new TransactionFile(contextFile);
+					properties.save(tf.getOutputStream());
+					tf.commit();
+				} catch (IOException e) {
+					e.printStackTrace();
+					try {
+						tf.rollback();
+					} catch (IOException e1) {
+						e1.printStackTrace();
+					}
 				}
+
+			} else {
+				logger.severe("no folder found for : " + getContextKey() + " context not stored, try to reload.");
+				reload();
 			}
-		} catch (ConfigurationException e) {
-			e.printStackTrace();
 		}
+
 	}
 
 	public void sendMailToAdministrator(String subjet, String body) throws MessagingException {
@@ -2343,7 +2337,9 @@ public class GlobalContext implements Serializable, IPrintInfo {
 					logger.fine("store data for : " + contextKey + " size:" + dataProperties.size() + " time:" + StringHelper.renderTimeInSecond(System.currentTimeMillis() - startTime));
 				} catch (Exception e) {
 					try {
-						tf.rollback();
+						if (tf != null) {
+							tf.rollback();
+						}
 					} catch (IOException e1) {
 						e1.printStackTrace();
 					}

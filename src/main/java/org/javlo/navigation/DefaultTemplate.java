@@ -13,8 +13,6 @@ import java.util.logging.Logger;
 
 import javax.mail.internet.InternetAddress;
 
-import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.configuration.PropertiesConfiguration;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
@@ -24,6 +22,7 @@ import org.javlo.helper.XMLManipulationHelper.BadXMLException;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.rendering.Device;
 import org.javlo.template.Template;
+import org.javlo.utils.ConfigurationProperties;
 
 public class DefaultTemplate extends Template {
 
@@ -322,7 +321,7 @@ public class DefaultTemplate extends Template {
 		return null;
 	}
 
-	private Template getParent(StaticConfig config) throws IOException, ConfigurationException {
+	private Template getParent(StaticConfig config) throws IOException {
 		return null;
 	}
 
@@ -337,7 +336,7 @@ public class DefaultTemplate extends Template {
 	}
 
 	@Override
-	public PropertiesConfiguration getImageConfig() {
+	public ConfigurationProperties getImageConfig() {
 		return null;
 	}
 

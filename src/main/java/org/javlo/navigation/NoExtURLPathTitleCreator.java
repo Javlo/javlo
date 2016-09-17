@@ -2,7 +2,7 @@ package org.javlo.navigation;
 
 import java.net.URLEncoder;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.StringHelper;

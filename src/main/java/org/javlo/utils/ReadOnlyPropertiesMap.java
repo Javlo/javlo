@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
-import org.apache.commons.lang.NotImplementedException;
+import org.apache.commons.lang3.NotImplementedException;
 
 public class ReadOnlyPropertiesMap implements Map<String, String> {
 
@@ -21,7 +21,7 @@ public class ReadOnlyPropertiesMap implements Map<String, String> {
 
 	@Override
 	public void clear() {
-		throw new NotImplementedException();
+		throw new NotImplementedException("clear");
 	}
 
 	@Override
@@ -73,17 +73,17 @@ public class ReadOnlyPropertiesMap implements Map<String, String> {
 
 	@Override
 	public String put(String key, String value) {
-		throw new NotImplementedException();
+		throw new NotImplementedException("put");
 	}
 
 	@Override
 	public void putAll(Map<? extends String, ? extends String> m) {
-		throw new NotImplementedException();
+		throw new NotImplementedException("putAll");
 	}
 
 	@Override
 	public String remove(Object key) {
-		throw new NotImplementedException();
+		throw new NotImplementedException("remove");
 	}
 
 	@Override

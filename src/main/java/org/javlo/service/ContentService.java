@@ -19,7 +19,7 @@ import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.component.core.ComponentFactory;
 import org.javlo.component.core.ContentElementList;

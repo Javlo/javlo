@@ -16,7 +16,6 @@ import java.util.logging.Logger;
 
 import javax.servlet.ServletContext;
 
-import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.io.FileUtils;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
@@ -279,7 +278,7 @@ public class TemplateFactory {
 				Template template = Template.getInstance(staticConfig, null, element.getName());
 				outTemplates.put(template.getId(), template);
 				logger.fine("load template : " + template.getId());
-			} catch (ConfigurationException e) {
+			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}

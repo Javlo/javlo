@@ -7,7 +7,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang.CharUtils;
+import org.apache.commons.lang3.CharUtils;
 import org.javlo.component.core.ContentElementList;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.core.IReverseLinkComponent;

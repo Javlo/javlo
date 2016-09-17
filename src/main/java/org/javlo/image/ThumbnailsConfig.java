@@ -7,8 +7,8 @@ import java.util.logging.Logger;
 
 import javax.servlet.ServletContext;
 
-import org.apache.commons.configuration.PropertiesConfiguration;
 import org.javlo.helper.ResourceHelper;
+import org.javlo.utils.ConfigurationProperties;
 
 public class ThumbnailsConfig {
     
@@ -17,7 +17,7 @@ public class ThumbnailsConfig {
      */
     protected static Logger logger = Logger.getLogger(ThumbnailsConfig.class.getName());
     
-    PropertiesConfiguration properties = new PropertiesConfiguration();
+    ConfigurationProperties properties = new ConfigurationProperties();
     
     private static final String FILE = "/WEB-INF/config/thumbnails-config.properties";
     private static final String KEY = ThumbnailsConfig.class.getName();

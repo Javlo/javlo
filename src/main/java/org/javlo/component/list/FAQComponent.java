@@ -1,15 +1,15 @@
 package org.javlo.component.list;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.PrintStream;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.configuration.PropertiesConfiguration;
 import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.context.ContentContext;
+import org.javlo.utils.ConfigurationProperties;
 
 /**
  * @author bdumont
@@ -93,10 +93,10 @@ public class FAQComponent extends AbstractVisualComponent {
 	@Override
 	protected String getEditXHTMLCode(ContentContext ctx) throws Exception {
 		if (getValue().contains("faq.")) { // Old style: remove this alternative if no more needed
-			PropertiesConfiguration properties = new PropertiesConfiguration();
+			ConfigurationProperties properties = new ConfigurationProperties();
 			try {
 				properties.load(stringToStream(getValue()));
-			} catch (ConfigurationException e) {
+			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
@@ -170,7 +170,7 @@ public class FAQComponent extends AbstractVisualComponent {
 		List<FAQItem> items = new LinkedList<FAQItem>();
 		Title firstTitle = null;
 		if (getValue().contains("faq.")) { // Old style: remove this alternative if no more needed
-			PropertiesConfiguration properties = new PropertiesConfiguration();
+			ConfigurationProperties properties = new ConfigurationProperties();
 			properties.load(stringToStream(getValue()));
 			properties.setEncoding(ContentContext.CHARACTER_ENCODING);
 			String title = properties.getString("faq.title");

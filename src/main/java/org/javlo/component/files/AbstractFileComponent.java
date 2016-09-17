@@ -26,8 +26,8 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.lang.NotImplementedException;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.NotImplementedException;
+import org.apache.commons.lang3.StringUtils;
 import org.javlo.actions.IAction;
 import org.javlo.bean.Link;
 import org.javlo.component.core.AbstractVisualComponent;
@@ -133,7 +133,7 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 	}
 
 	public String createFileURL(ContentContext ctx, String url) {
-		throw new NotImplementedException();
+		throw new NotImplementedException("createFileURL");
 	}
 
 	@Override
@@ -525,7 +525,7 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 	}
 
 	public String getFileDirectory(ContentContext ctx) {
-		throw new NotImplementedException();
+		throw new NotImplementedException("getFileDirectory");
 	}
 
 	protected String[] getFileList(String directory) {
@@ -662,7 +662,7 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 	}
 	
 	protected String getMainFolder(ContentContext ctx) {
-		throw new NotImplementedException();
+		throw new NotImplementedException("getMainFolder");
 	}
 
 	public String getResourceURL(ContentContext ctx, String fileLink) {
@@ -812,7 +812,7 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 	}
 
 	protected String getRelativeFileDirectory(ContentContext ctx) {
-		throw new NotImplementedException();
+		throw new NotImplementedException("getRelativeFileDirectory");
 	}
 
 	protected String getReverseLinkeLabelTitle(ContentContext ctx) throws FileNotFoundException, IOException {

@@ -16,7 +16,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Logger;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.javlo.component.core.ContentElementList;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.context.ContentContext;

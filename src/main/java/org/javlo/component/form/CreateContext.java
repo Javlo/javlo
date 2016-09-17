@@ -2,7 +2,6 @@ package org.javlo.component.form;
 
 import java.io.IOException;
 
-import org.apache.commons.configuration.ConfigurationException;
 import org.javlo.actions.IAction;
 import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.context.ContentContext;
@@ -26,7 +25,7 @@ public class CreateContext extends AbstractVisualComponent implements IAction {
 		return "createContext";
 	}
 	
-	public static String performCreate(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws ConfigurationException, IOException {
+	public static String performCreate(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws IOException {
 		
 		String name = rs.getParameter("name", null);
 		if (GlobalContext.isExist(ctx.getRequest(), name)) {

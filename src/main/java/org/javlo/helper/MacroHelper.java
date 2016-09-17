@@ -24,8 +24,8 @@ import java.util.Set;
 
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.math.NumberUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.component.core.ContentElementList;
 import org.javlo.component.core.IContentVisualComponent;

@@ -8,8 +8,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.javlo.actions.AbstractModuleAction;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
@@ -107,7 +106,7 @@ public class CommunicationAction extends AbstractModuleAction {
 		comm.addSite(site);
 	}
 
-	public static String performSendIM(RequestService rs, ContentContext ctx, HttpServletRequest request, Module currentModule, CommunicationModuleContext communicationModuleContext) throws ConfigurationException, IOException {
+	public static String performSendIM(RequestService rs, ContentContext ctx, HttpServletRequest request, Module currentModule, CommunicationModuleContext communicationModuleContext) throws IOException {
 		String message = StringHelper.trimAndNullify(request.getParameter("message"));
 		String receiver = StringHelper.trimAndNullify(request.getParameter("receiver"));
 		if (message != null && receiver != null) {

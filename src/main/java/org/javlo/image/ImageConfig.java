@@ -2,6 +2,7 @@ package org.javlo.image;
 
 import java.awt.Color;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Collections;
@@ -13,14 +14,13 @@ import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.configuration.PropertiesConfiguration;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.rendering.Device;
 import org.javlo.template.Template;
+import org.javlo.utils.ConfigurationProperties;
 
 public class ImageConfig {
 	
@@ -56,7 +56,7 @@ public class ImageConfig {
 	 */
 	protected static Logger logger = Logger.getLogger(ImageConfig.class.getName());
 
-	PropertiesConfiguration properties = new PropertiesConfiguration();
+	ConfigurationProperties properties = new ConfigurationProperties();
 
 	private static final String FILE = "/WEB-INF/config/image-config.properties";
 	private static final String FILE_BASE = "/WEB-INF/config/image-config-base.properties";
@@ -68,7 +68,7 @@ public class ImageConfig {
 	private ImageConfig(File file) {
 		try {
 			properties.load(file);
-		} catch (ConfigurationException e) {
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
@@ -104,7 +104,7 @@ public class ImageConfig {
 		}
 
 		if (template != null) {
-			PropertiesConfiguration templateProperties = template.getImageConfig();
+			ConfigurationProperties templateProperties = template.getImageConfig();
 			if (templateProperties != null) {
 				// override with new properties
 				Iterator<String> keys = templateProperties.getKeys();
@@ -336,7 +336,7 @@ public class ImageConfig {
 				return deviceZoom;
 			}
 		}
-		return properties.getDouble(filter + ".zoom", 1);
+		return properties.getDouble(filter + ".zoom", (double)1);
 	}
 
 
@@ -575,7 +575,7 @@ public class ImageConfig {
 		return filters;
 	}
 
-	public PropertiesConfiguration getProperties() {
+	public ConfigurationProperties getProperties() {
 		return properties;
 	}
 	

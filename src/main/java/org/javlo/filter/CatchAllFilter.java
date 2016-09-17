@@ -21,7 +21,6 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.configuration.ConfigurationException;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.ContentManager;
@@ -58,8 +57,8 @@ import org.javlo.user.UserPrincipal;
 import org.javlo.utils.DebugListening;
 
 public class CatchAllFilter implements Filter {
-	
-	private static final Set<String> COMPRESS_EXT = new HashSet<String> (Arrays.asList(new String[] { "js", "jpg", "jpeg", "png", "css", "font", "woff", "gif" }));
+
+	private static final Set<String> COMPRESS_EXT = new HashSet<String>(Arrays.asList(new String[] { "js", "jpg", "jpeg", "png", "css", "font", "woff", "gif" }));
 
 	public static final String CHECK_CONTEXT_PARAM = "__check_context";
 	private static final String JAVLO_LOGIN_ID = "javlo_login_id";
@@ -107,38 +106,35 @@ public class CatchAllFilter implements Filter {
 		String forwardURI = null;
 		boolean hostDefineSite = staticConfig.isHostDefineSite();
 		RequestService requestService = RequestService.getInstance(httpRequest);
-		try {
-			String hostName = ServletHelper.getSiteKey(httpRequest);
-			if (!hostDefineSite && !staticConfig.isExcludeContextDomain(hostName)) {
-				if (StringHelper.isTrue(requestService.getParameter(CHECK_CONTEXT_PARAM, "true"))) {
-					String contextURI = ContentManager.getContextName(httpRequest);
-					if (GlobalContext.isExist(httpRequest, contextURI)) {
-						globalContext = GlobalContext.getInstance(httpRequest.getSession(), contextURI);
-						globalContext.setPathPrefix(contextURI);
-						String newURI = httpRequest.getServletPath();						
-						newURI = newURI.replaceFirst('/' + contextURI, "");
-						if (httpRequest.getQueryString() != null) {
-							newURI = newURI + '?' + httpRequest.getQueryString();
-						}
-						newURI = URLHelper.addParam(newURI, CHECK_CONTEXT_PARAM, "false");
-						forwardURI = newURI;
+
+		String hostName = ServletHelper.getSiteKey(httpRequest);
+		if (!hostDefineSite && !staticConfig.isExcludeContextDomain(hostName)) {
+			if (StringHelper.isTrue(requestService.getParameter(CHECK_CONTEXT_PARAM, "true"))) {
+				String contextURI = ContentManager.getContextName(httpRequest);
+				if (GlobalContext.isExist(httpRequest, contextURI)) {
+					globalContext = GlobalContext.getInstance(httpRequest.getSession(), contextURI);
+					globalContext.setPathPrefix(contextURI);
+					String newURI = httpRequest.getServletPath();
+					newURI = newURI.replaceFirst('/' + contextURI, "");
+					if (httpRequest.getQueryString() != null) {
+						newURI = newURI + '?' + httpRequest.getQueryString();
 					}
-				} else {
-					globalContext = GlobalContext.getInstance(httpRequest);
+					newURI = URLHelper.addParam(newURI, CHECK_CONTEXT_PARAM, "false");
+					forwardURI = newURI;
 				}
+			} else {
+				globalContext = GlobalContext.getInstance(httpRequest);
 			}
-			if (globalContext == null) { // if no context found search a host
-											// context.
-				if (StringHelper.isTrue(requestService.getParameter(CHECK_CONTEXT_PARAM, "false"))) {
-					globalContext = GlobalContext.getInstance(httpRequest);
-				}
-				if (globalContext == null) {
-					globalContext = GlobalContext.getInstance(httpRequest.getSession(), host);
-					hostDefineSite = true;
-				}
+		}
+		if (globalContext == null) { // if no context found search a host
+										// context.
+			if (StringHelper.isTrue(requestService.getParameter(CHECK_CONTEXT_PARAM, "false"))) {
+				globalContext = GlobalContext.getInstance(httpRequest);
 			}
-		} catch (ConfigurationException e1) {
-			e1.printStackTrace();
+			if (globalContext == null) {
+				globalContext = GlobalContext.getInstance(httpRequest.getSession(), host);
+				hostDefineSite = true;
+			}
 		}
 
 		if (staticConfig.isRequestWrapper()) {
@@ -150,7 +146,7 @@ public class CatchAllFilter implements Filter {
 		}
 
 		if (globalContext == null) {
-			logger.warning("context not found : "+httpRequest.getRequestURI());
+			logger.warning("context not found : " + httpRequest.getRequestURI());
 			((HttpServletResponse) response).setStatus(HttpServletResponse.SC_NOT_FOUND, "context not found.");
 			return;
 		}
@@ -159,7 +155,7 @@ public class CatchAllFilter implements Filter {
 			try {
 				ContentContext ctx = ContentContext.getContentContext(httpRequest, (HttpServletResponse) response);
 				String url = URLHelper.createAjaxURL(ctx);
-				String forwardURL = URLHelper.removeSite(ctx, url);				
+				String forwardURL = URLHelper.removeSite(ctx, url);
 				((HttpServletRequest) request).getRequestDispatcher(forwardURL).forward(httpRequest, response);
 				return;
 			} catch (Exception e) {
@@ -334,15 +330,17 @@ public class CatchAllFilter implements Filter {
 					String pattern2 = entry.getValue();
 					if (!pattern1.contains("*")) {
 						if (cmsURI.equals(pattern1)) {
-							logger.info("manual redirect : "+pattern1+" --> "+pattern2);
+							logger.info("manual redirect : " + pattern1 + " --> " + pattern2);
 							NetHelper.sendRedirectPermanently((HttpServletResponse) response, pattern2);
 							return;
 						}
 					} else {
 						String newURL = StringHelper.convertString(pattern1, pattern2, cmsURI);
-						if (!newURL.equals(cmsURI)) {							
-							//newURL = URLHelper.mergePath("/", ContentContext.getPathPrefix((HttpServletRequest) request), newURL);
-							logger.info("manual redirect : "+pattern1+" --> "+newURL);
+						if (!newURL.equals(cmsURI)) {
+							// newURL = URLHelper.mergePath("/",
+							// ContentContext.getPathPrefix((HttpServletRequest)
+							// request), newURL);
+							logger.info("manual redirect : " + pattern1 + " --> " + newURL);
 							NetHelper.sendRedirectPermanently((HttpServletResponse) response, newURL);
 							return;
 						}
@@ -371,9 +369,9 @@ public class CatchAllFilter implements Filter {
 						String newPath = "/view" + viewURI;
 						if (httpRequest.getSession().isNew()) {
 							httpRequest.getSession().setAttribute(InfoBean.NEW_SESSION_PARAM, true);
-						}						
+						}
 						httpRequest.setAttribute(MAIN_URI_KEY, URLDecoder.decode(httpRequest.getRequestURI(), ContentContext.CHARACTER_ENCODING));
-						httpRequest.getRequestDispatcher(newPath).forward(httpRequest, response);						
+						httpRequest.getRequestDispatcher(newPath).forward(httpRequest, response);
 						return;
 					}
 				}
@@ -401,16 +399,17 @@ public class CatchAllFilter implements Filter {
 			}
 			httpRequest.getRequestDispatcher(forwardURI).forward(httpRequest, response);
 		} else {
-			//JavloServletResponse javloResponse = new JavloServletResponse((HttpServletResponse)response);
+			// JavloServletResponse javloResponse = new
+			// JavloServletResponse((HttpServletResponse)response);
 			next.doFilter(httpRequest, response);
-			/*if (javloResponse.isError()) {
-				String viewURI = uri;				
-				String newPath = "/"+globalContext.getDefaultLanguage() + viewURI;
-				if (httpRequest.getSession().isNew()) {
-					httpRequest.getSession().setAttribute(InfoBean.NEW_SESSION_PARAM, true);
-				}
-				NetHelper.sendRedirectTemporarily((HttpServletResponse) response, newPath);
-			}*/
+			/*
+			 * if (javloResponse.isError()) { String viewURI = uri; String
+			 * newPath = "/"+globalContext.getDefaultLanguage() + viewURI; if
+			 * (httpRequest.getSession().isNew()) {
+			 * httpRequest.getSession().setAttribute(InfoBean.NEW_SESSION_PARAM,
+			 * true); } NetHelper.sendRedirectTemporarily((HttpServletResponse)
+			 * response, newPath); }
+			 */
 		}
 	}
 
@@ -423,7 +422,7 @@ public class CatchAllFilter implements Filter {
 			HttpServletRequest httpRequest = (HttpServletRequest) request;
 			HttpServletResponse httpResponse = (HttpServletResponse) response;
 
-			GlobalContext globalContext = GlobalContext.getInstance(httpRequest);			
+			GlobalContext globalContext = GlobalContext.getInstance(httpRequest);
 
 			RequestService requestService = RequestService.getInstance(httpRequest);
 
@@ -447,12 +446,12 @@ public class CatchAllFilter implements Filter {
 			/** STANDARD LOGIN **/
 			IUserFactory fact = UserFactory.createUserFactory(globalContext, httpRequest.getSession());
 			User user = fact.getCurrentUser(((HttpServletRequest) request).getSession());
-			
-			if (user != null) {		
+
+			if (user != null) {
 				EditContext editContext = EditContext.getInstance(GlobalContext.getInstance(((HttpServletRequest) request).getSession(), globalContext.getContextKey()), ((HttpServletRequest) request).getSession());
 				if (!user.getContext().equals(globalContext.getContextKey())) {
 					if (!AdminUserSecurity.getInstance().isGod(user) && !AdminUserSecurity.getInstance().isMaster(user)) {
-						try {							
+						try {
 							editContext.setEditUser(null);
 							logger.info("remove user '" + user.getLogin() + "' context does'nt match.");
 							user = null;
@@ -555,9 +554,9 @@ public class CatchAllFilter implements Filter {
 					logger.fine(login + " is logged roles : [" + StringHelper.collectionToString(editUser.getRoles(), ",") + ']');
 
 				} else {
-					String token = request.getParameter("j_token");					
+					String token = request.getParameter("j_token");
 					if (token != null) {
-						user = adminFactory.login(httpRequest, token);						
+						user = adminFactory.login(httpRequest, token);
 					} else {
 						logger.info(login + " fail to login.");
 					}

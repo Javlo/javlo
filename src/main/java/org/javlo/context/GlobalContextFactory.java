@@ -7,7 +7,6 @@ import java.util.LinkedList;
 
 import javax.servlet.ServletContext;
 
-import org.apache.commons.configuration.ConfigurationException;
 import org.javlo.config.StaticConfig;
 import org.javlo.filter.PropertiesFilter;
 
@@ -15,7 +14,7 @@ public class GlobalContextFactory {
 	
 	private static final String MASTER_CONTEXT_KEY = "masterContext";
 
-	public static final Collection<GlobalContext> getAllGlobalContext(ServletContext application) throws ConfigurationException, IOException {
+	public static final Collection<GlobalContext> getAllGlobalContext(ServletContext application) throws IOException {
 		StaticConfig staticConfig = StaticConfig.getInstance(application);
 		Collection<GlobalContext> result = new LinkedList<GlobalContext>();
 		File contextDir = new File(staticConfig.getContextFolder());
@@ -29,7 +28,7 @@ public class GlobalContextFactory {
 		return result;
 	}
 	
-	public static GlobalContext getMasterGlobalContext(ServletContext application) throws ConfigurationException, IOException {
+	public static GlobalContext getMasterGlobalContext(ServletContext application) throws IOException {
 		GlobalContext masterContext = (GlobalContext) application.getAttribute(MASTER_CONTEXT_KEY);
 		StaticConfig staticConfig = StaticConfig.getInstance(application);
 		if (masterContext == null || !masterContext.getContextKey().equals(staticConfig.getMasterContext())) {

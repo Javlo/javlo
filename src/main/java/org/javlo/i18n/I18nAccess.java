@@ -27,8 +27,6 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.configuration.PropertiesConfiguration;
 import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
@@ -40,10 +38,10 @@ import org.javlo.module.core.ModulesContext;
 import org.javlo.service.RequestService;
 import org.javlo.service.exception.ServiceException;
 import org.javlo.template.Template;
+import org.javlo.utils.ConfigurationProperties;
 import org.javlo.utils.KeyMap;
 import org.javlo.utils.MapDisplayKeyIfNotFound;
 import org.javlo.utils.ReadOnlyMultiMap;
-import org.javlo.utils.ReadOnlyPropertiesConfigurationMap;
 
 /**
  * @author pvanderm
@@ -106,21 +104,17 @@ public class I18nAccess implements Serializable {
 		I18nAccess i18nAccess = (I18nAccess) session.getAttribute(SESSION_KEY);
 		if (i18nAccess == null || !i18nAccess.getContextKey().equals(globalContext.getContextKey())) { 
 			i18nAccess = new I18nAccess(globalContext);
-			try {
-				i18nAccess.initEdit(globalContext, session);
-			} catch (ConfigurationException e) {
-				e.printStackTrace();
-			}
+			i18nAccess.initEdit(globalContext, session);
 			session.setAttribute(SESSION_KEY, i18nAccess);
 		}
 		return i18nAccess;
 	}
 
-	private PropertiesConfiguration propEdit = new PropertiesConfiguration();
+	private ConfigurationProperties propEdit = new ConfigurationProperties();
 
-	private PropertiesConfiguration propView = null;
+	private ConfigurationProperties propView = null;
 
-	private PropertiesConfiguration propContentView = null;
+	private ConfigurationProperties propContentView = null;
 
 	private String latestViewTemplateId = "";
 	
@@ -189,8 +183,7 @@ public class I18nAccess implements Serializable {
 
 	private I18nAccess(GlobalContext globalContext) {
 		lock = globalContext.getI18nLock();
-		servletContext = globalContext.getServletContext();
-		PropertiesConfiguration.setDelimiter((char) 0);
+		servletContext = globalContext.getServletContext();		
 		i18nResource = I18nResource.getInstance(globalContext);
 		contextKey = globalContext.getContextKey();
 	};
@@ -331,7 +324,7 @@ public class I18nAccess implements Serializable {
 	}
 	
 	public static void main(String[] args) {
-		PropertiesConfiguration propEditMap = new PropertiesConfiguration();
+		ConfigurationProperties propEditMap = new ConfigurationProperties();
 		
 		propEditMap.addProperty("test", "patrick");
 		propEditMap.clearProperty("test");
@@ -351,10 +344,10 @@ public class I18nAccess implements Serializable {
 	}
 
 	public Map<String, String> getHelpTranslation() {
-		PropertiesConfiguration editText = getPropEdit();
+		ConfigurationProperties editText = getPropEdit();
 		if (helpMap == null) {
 			helpMap = new HashMap<String, String>();
-			Iterator<?> keys = editText.getKeys("");
+			Iterator<?> keys = editText.getKeys();
 			while (keys.hasNext()) {
 				String key = (String) keys.next();
 				if (key.startsWith("help.")) {
@@ -365,7 +358,7 @@ public class I18nAccess implements Serializable {
 		return helpMap;
 	}
 
-	private PropertiesConfiguration getPropEdit() {
+	private ConfigurationProperties getPropEdit() {
 		return propEdit;
 	}
 
@@ -474,9 +467,10 @@ public class I18nAccess implements Serializable {
 			if (propViewMap == null) {
 				propViewMap = new ReadOnlyMultiMap<String, String>();
 				createPropViewMap = true;
-				PropertiesConfiguration localPropView = propView;
+				ConfigurationProperties localPropView = propView;
 				if (localPropView != null) {
-					propViewMap.addMap(new ReadOnlyPropertiesConfigurationMap(localPropView, displayKey));
+					//propViewMap.addMap(new ReadOnlyPropertiesConfigurationMap(localPropView, displayKey));
+					propViewMap.addMap(localPropView.getProperties());
 				}
 			}
 		}
@@ -587,7 +581,7 @@ public class I18nAccess implements Serializable {
 		// propEditMap = null;
 	}
 
-	private void initEdit(GlobalContext globalContext, HttpSession session) throws IOException, ConfigurationException {
+	private void initEdit(GlobalContext globalContext, HttpSession session) throws IOException {
 		String newEditLg = globalContext.getEditLanguage(session);
 
 		if (!newEditLg.equals(editLg)) {
@@ -604,7 +598,7 @@ public class I18nAccess implements Serializable {
 		
 	}
 
-	private void initView(String newViewLg) throws IOException, ConfigurationException {
+	private void initView(String newViewLg) throws IOException {
 
 		logger.finest("init view language : " + newViewLg);
 
@@ -634,12 +628,12 @@ public class I18nAccess implements Serializable {
 		return displayKey;
 	}
 	
-	private void updateTemplate(ContentContext ctx) throws ConfigurationException, IOException, ServiceException, Exception {
+	private void updateTemplate(ContentContext ctx) throws IOException, ServiceException, Exception {
 		updateTemplate(ctx, ContentContext.EDIT_MODE);
 		updateTemplate(ctx, ContentContext.VIEW_MODE);
 	}
 
-	private void updateTemplate(ContentContext ctx, int mode) throws ConfigurationException, IOException, ServiceException, Exception {
+	private void updateTemplate(ContentContext ctx, int mode) throws IOException, ServiceException, Exception {
 		String latestTemplateId = latestViewTemplateId;
 		String latestTemplateLang = latestViewTemplateLang;
 		if (mode == ContentContext.EDIT_MODE) {

@@ -27,7 +27,6 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.fileupload.FileItem;
 import org.javlo.actions.AbstractModuleAction;
 import org.javlo.component.core.ComponentFactory;
@@ -1572,7 +1571,7 @@ public class AdminAction extends AbstractModuleAction {
 		return msg;
 	}
 
-	public static String performCreateSite(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess, Module currentModule, User user) throws ConfigurationException, IOException, JavloSecurityException, NoSuchMethodException, ClassNotFoundException, IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException {
+	public static String performCreateSite(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess, Module currentModule, User user) throws  IOException, JavloSecurityException, NoSuchMethodException, ClassNotFoundException, IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException {
 		if (!AdminUserSecurity.getInstance().isAdmin(user)) {
 			return "security error !";
 		}
@@ -1599,7 +1598,7 @@ public class AdminAction extends AbstractModuleAction {
 		return null;
 	}
 
-	public static String performRemoveSite(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws ConfigurationException, IOException {
+	public static String performRemoveSite(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws  IOException {
 		String siteName = rs.getParameter("removed-context", null);
 		if (siteName == null) {
 			return "bad request structure, need 'context' param.";
@@ -1612,7 +1611,7 @@ public class AdminAction extends AbstractModuleAction {
 		return null;
 	}
 
-	public static String performBlockView(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws ConfigurationException, IOException {
+	public static String performBlockView(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws  IOException {
 		String siteName = rs.getParameter("context", null);
 		if (siteName == null) {
 			return "bad request structure, need 'context' param.";
@@ -1626,7 +1625,7 @@ public class AdminAction extends AbstractModuleAction {
 		return null;
 	}
 
-	public static String performBlockEdit(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws ConfigurationException, IOException {
+	public static String performBlockEdit(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws  IOException {
 		String siteName = rs.getParameter("context", null);
 		if (siteName == null) {
 			return "bad request structure, need 'context' param.";
@@ -1669,7 +1668,7 @@ public class AdminAction extends AbstractModuleAction {
 		return msg;
 	}
 
-	public static String performComponentsDefault(RequestService rs, ContentContext ctx, HttpSession session, MessageRepository messageRepository, I18nAccess i18nAccess) throws ConfigurationException, IOException {
+	public static String performComponentsDefault(RequestService rs, ContentContext ctx, HttpSession session, MessageRepository messageRepository, I18nAccess i18nAccess) throws  IOException {
 		GlobalContext defaultSite = GlobalContext.getDefaultContext(session);
 		if (defaultSite != null) {
 			GlobalContext currentContext = GlobalContext.getInstance(session, rs.getParameter("context", null));
@@ -1684,7 +1683,7 @@ public class AdminAction extends AbstractModuleAction {
 		return null;
 	}
 
-	public static String performComponentsForAll(RequestService rs, HttpSession session, AdminUserSecurity adminUserSecurity, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws ConfigurationException, IOException, NoSuchMethodException, ClassNotFoundException, IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException {
+	public static String performComponentsForAll(RequestService rs, HttpSession session, AdminUserSecurity adminUserSecurity, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws  IOException, NoSuchMethodException, ClassNotFoundException, IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException {
 		GlobalContext currentContext = GlobalContext.getInstance(session, rs.getParameter("context", null));
 		Collection<GlobalContext> allContext = GlobalContextFactory.getAllGlobalContext(session.getServletContext());
 		for (GlobalContext context : allContext) {
@@ -1699,7 +1698,7 @@ public class AdminAction extends AbstractModuleAction {
 		return null;
 	}
 
-	public static String performUpload(RequestService rs, HttpSession session, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws IOException, ConfigurationException {
+	public static String performUpload(RequestService rs, HttpSession session, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws IOException {
 		GlobalContext currentContext = GlobalContext.getInstance(session, rs.getParameter("context", null));
 		InputStream in = null;
 		try {

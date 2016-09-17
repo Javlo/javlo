@@ -10,7 +10,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.logging.Logger;
 
-import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.htmlparser.util.ParserException;
 import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.context.ContentContext;
@@ -43,7 +43,7 @@ public class TwitterReader extends AbstractVisualComponent {
 		}
 
 		public void setAuthors(String authors) {
-			this.authors = StringEscapeUtils.escapeHtml(authors);
+			this.authors = StringEscapeUtils.escapeHtml4(authors);
 			if (displayName == null && authors != null && authors.length() > 1) {
 				displayName = authors.substring(1);
 			}
@@ -55,7 +55,7 @@ public class TwitterReader extends AbstractVisualComponent {
 		}
 
 		public void setMessage(String message) {
-			this.message = StringEscapeUtils.escapeHtml(message);
+			this.message = StringEscapeUtils.escapeHtml4(message);
 		}
 
 		public Date getDate() {
@@ -71,7 +71,7 @@ public class TwitterReader extends AbstractVisualComponent {
 		}
 
 		public void setFullName(String fullName) {
-			this.fullName = StringEscapeUtils.escapeHtml(fullName);
+			this.fullName = StringEscapeUtils.escapeHtml4(fullName);
 		}
 
 		public String getId() {

@@ -16,8 +16,6 @@ import java.util.logging.Logger;
 
 import javax.servlet.ServletContext;
 
-import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.io.FileUtils;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
@@ -26,6 +24,7 @@ import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
+import org.javlo.utils.ConfigurationProperties;
 import org.javlo.utils.TimeMap;
 
 public class StaticInfoFile {
@@ -231,13 +230,12 @@ public class StaticInfoFile {
 
 	private Collection<MenuElement> containers = null;
 
-	PropertiesConfiguration properties;
+	ConfigurationProperties properties;
 
 	private File file;
 
 	private StaticInfoFile() {
-		properties = new PropertiesConfiguration();
-		properties.setAutoSave(false);
+		properties = new ConfigurationProperties();		
 	}
 
 	protected static File getPropertiesFileNameFromResourceFile(ContentContext ctx, File file) {
@@ -341,7 +339,7 @@ public class StaticInfoFile {
 		return staticInfo;
 	}
 
-	private void loadProperties(ServletContext application, String inStaticURL) throws IOException, ConfigurationException {
+	private void loadProperties(ServletContext application, String inStaticURL) throws IOException {
 
 		String path = URLHelper.mergePath(dataFolder, _STATIC_INFO_DIR);
 
@@ -437,7 +435,7 @@ public class StaticInfoFile {
 			synchronized (properties) {
 				properties.save();
 			}
-		} catch (ConfigurationException e) {
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
@@ -731,14 +729,14 @@ public class StaticInfoFile {
 		if (this.properties.getProperty(key) == null) {
 			return 0;
 		}
-		return this.properties.getInt(key);
+		return this.properties.getInteger(key);
 	}
 
 	public void addAccess() {
 		String key = getAccessKey(new Date());
 		int todayAccess = 0;
 		if (this.properties.getProperty(key) != null) {
-			todayAccess = this.properties.getInt(key);
+			todayAccess = this.properties.getInteger(key);
 		}
 		todayAccess++;
 		this.properties.setProperty(key, todayAccess);

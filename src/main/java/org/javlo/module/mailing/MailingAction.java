@@ -20,7 +20,6 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.configuration.ConfigurationException;
 import org.javlo.actions.AbstractModuleAction;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
@@ -364,8 +363,7 @@ public class MailingAction extends AbstractModuleAction {
 	public Boolean haveRight(HttpSession session, User user) throws ModuleException {
 		return Boolean.TRUE;
 	}
-	
-	public static String performDeletemailing(RequestService rs, ServletContext application, ContentContext ctx, HttpSession session, MessageRepository messageRepository, I18nAccess i18nAccess) throws ConfigurationException, IOException {
+		public static String performDeletemailing(RequestService rs, ServletContext application, ContentContext ctx, HttpSession session, MessageRepository messageRepository, I18nAccess i18nAccess) throws IOException {
 		String id = rs.getParameter("id", null);
 		if (id == null) {
 			return "need 'id' as parameter.";

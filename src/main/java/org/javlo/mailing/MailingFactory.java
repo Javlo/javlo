@@ -8,7 +8,6 @@ import java.util.logging.Logger;
 
 import javax.servlet.ServletContext;
 
-import org.apache.commons.configuration.ConfigurationException;
 import org.javlo.config.StaticConfig;
 import org.javlo.filter.NumericDirectoryFilter;
 
@@ -46,7 +45,7 @@ public class MailingFactory {
 	 * @throws IOException
 	 * @throws ConfigurationException
 	 */
-	public List<Mailing> getMailingList() throws ConfigurationException, IOException {
+	public List<Mailing> getMailingList() throws IOException {
 		List<Mailing> outMailing = new LinkedList<Mailing>();
 		File mailingDir = new File(mailingFolder + '/');
 		if (mailingDir.exists()) {
@@ -72,7 +71,7 @@ public class MailingFactory {
 	 * @throws IOException
 	 * @throws ConfigurationException
 	 */
-	public List<Mailing> getOldMailingList() throws ConfigurationException, IOException {
+	public List<Mailing> getOldMailingList() throws IOException {
 		List<Mailing> outMailing = new LinkedList<Mailing>();
 		File mailingDir = new File(mailingHistoryFolder + '/');
 		if (mailingDir.exists()) {
@@ -92,7 +91,7 @@ public class MailingFactory {
 		return outMailing;
 	}
 
-	public List<Mailing> getOldMailingList(String sender) throws ConfigurationException, IOException {
+	public List<Mailing> getOldMailingList(String sender) throws IOException {
 		List<Mailing> outList = new LinkedList<Mailing>();
 		for (Mailing mailing : getOldMailingList()) {
 			if (mailing.getFrom().getAddress().equals(sender)) {
@@ -102,7 +101,7 @@ public class MailingFactory {
 		return outList;
 	}
 
-	public List<Mailing> getOldMailingListByContext(String contextKey) throws ConfigurationException, IOException {
+	public List<Mailing> getOldMailingListByContext(String contextKey) throws IOException {
 		List<Mailing> outList = new LinkedList<Mailing>();
 		for (Mailing mailing : getOldMailingList()) {
 			if (mailing.getContextKey() != null) {
@@ -116,7 +115,7 @@ public class MailingFactory {
 		return outList;
 	}
 	
-	public List<Mailing> getMailingListByContext(String contextKey) throws ConfigurationException, IOException {
+	public List<Mailing> getMailingListByContext(String contextKey) throws IOException {
 		List<Mailing> outList = new LinkedList<Mailing>();
 		for (Mailing mailing : getMailingList()) {
 			if (mailing.getContextKey() != null) {
@@ -130,7 +129,7 @@ public class MailingFactory {
 		return outList;
 	}
 
-	public Mailing getMailing(String id) throws ConfigurationException, IOException {
+	public Mailing getMailing(String id) throws IOException {
 		for (Mailing mailing : getOldMailingList()) {
 			if (mailing.getId().equals(id)) {
 				return mailing;
@@ -139,7 +138,7 @@ public class MailingFactory {
 		return null;
 	}
 	
-	public Mailing getLiveMailing(String id) throws ConfigurationException, IOException {
+	public Mailing getLiveMailing(String id) throws IOException {
 		for (Mailing mailing : getMailingList()) {
 			if (mailing.getId().equals(id)) {
 				return mailing;

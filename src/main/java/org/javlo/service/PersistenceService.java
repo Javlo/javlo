@@ -43,8 +43,8 @@ import java.util.zip.ZipOutputStream;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 
-import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.io.FileUtils;
+import org.apache.xml.utils.XMLChar;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.component.core.ComponentLayout;
 import org.javlo.config.StaticConfig;
@@ -68,8 +68,6 @@ import org.javlo.xml.NodeXML;
 import org.javlo.xml.XMLFactory;
 import org.javlo.ztatic.StaticInfo;
 import org.xml.sax.SAXParseException;
-
-import com.sun.org.apache.xerces.internal.util.XMLChar;
 
 public class PersistenceService {
 	
@@ -480,7 +478,7 @@ public class PersistenceService {
 		if (!dir.exists()) {
 			dir.mkdirs();
 		}
-
+		
 		if (!file.exists()) {
 			file.createNewFile();
 		}
@@ -617,7 +615,7 @@ public class PersistenceService {
 
 	}
 
-	public MenuElement insertPage(GlobalContext globalContext, NodeXML pageXML, MenuElement parent, Map<MenuElement, String[]> vparentPreparation, String defaultLg) throws StructureException, ConfigurationException, IOException {
+	public MenuElement insertPage(GlobalContext globalContext, NodeXML pageXML, MenuElement parent, Map<MenuElement, String[]> vparentPreparation, String defaultLg) throws StructureException, IOException {
 
 		MenuElement page = MenuElement.getInstance(globalContext);
 

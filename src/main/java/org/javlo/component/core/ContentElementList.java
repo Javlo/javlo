@@ -8,14 +8,13 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Set;
 
-import org.apache.commons.lang.NotImplementedException;
+import org.apache.commons.lang3.NotImplementedException;
 import org.javlo.component.container.RepeatContainer;
 import org.javlo.component.title.LinkLabel;
 import org.javlo.component.title.MenuTitle;
 import org.javlo.component.title.PageTitle;
 import org.javlo.component.title.SubTitle;
 import org.javlo.context.ContentContext;
-import org.javlo.helper.LocalLogger;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
 
@@ -48,7 +47,7 @@ public class ContentElementList implements IContentComponentsList {
 
 		@Override
 		public void remove() {
-			throw new NotImplementedException();
+			throw new NotImplementedException("remove");
 		}
 		
 	}

@@ -18,12 +18,12 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 import javax.imageio.ImageIO;
+import javax.naming.ConfigurationException;
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.imaging.ImageReadException;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.javlo.cache.ICache;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;

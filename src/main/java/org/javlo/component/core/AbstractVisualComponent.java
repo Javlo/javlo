@@ -40,8 +40,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.javlo.actions.DataAction;
 import org.javlo.cache.ICache;
 import org.javlo.component.config.ComponentConfig;
@@ -1580,7 +1580,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 
 	@Override
 	public String getTextForSearch(ContentContext ctx) {
-		return StringEscapeUtils.unescapeHtml(getValue());
+		return StringEscapeUtils.unescapeHtml4(getValue());
 	}
 
 	@Override

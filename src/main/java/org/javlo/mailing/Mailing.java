@@ -30,8 +30,6 @@ import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.servlet.ServletContext;
 
-import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.io.FileUtils;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
@@ -41,6 +39,7 @@ import org.javlo.helper.StringHelper;
 import org.javlo.user.IUserInfo;
 import org.javlo.user.UserFactory;
 import org.javlo.utils.CSVFactory;
+import org.javlo.utils.ConfigurationProperties;
 
 public class Mailing {
 
@@ -223,7 +222,7 @@ public class Mailing {
 		roles = inRoles;
 	}
 
-	public boolean isExist(ServletContext application, String inID) throws IOException, ConfigurationException {
+	public boolean isExist(ServletContext application, String inID) throws IOException {
 
 		StaticConfig staticConfig = StaticConfig.getInstance(application);
 
@@ -237,7 +236,7 @@ public class Mailing {
 		return true;
 	}
 
-	public boolean isExistInHistory(ServletContext application, String inID) throws IOException, ConfigurationException {
+	public boolean isExistInHistory(ServletContext application, String inID) throws IOException {
 		StaticConfig staticConfig = StaticConfig.getInstance(application);
 
 		File historyDir = new File(staticConfig.getMailingHistoryFolder() + '/' + inID + '/');
@@ -248,7 +247,7 @@ public class Mailing {
 		return true;
 	}
 
-	public void load(ServletContext application, String inID) throws IOException, ConfigurationException {
+	public void load(ServletContext application, String inID) throws IOException {
 		setId(application, inID);
 		loadedDir = new File(dir.getAbsolutePath());
 		File contentFile = new File(dir.getAbsolutePath() + '/' + CONTENT_FILE);
@@ -264,11 +263,11 @@ public class Mailing {
 				ex.printStackTrace();
 			}
 		}
-		PropertiesConfiguration config = new PropertiesConfiguration();
+		ConfigurationProperties config = new ConfigurationProperties();
 		File configFile = new File(dir.getAbsolutePath() + '/' + CONFIG_FILE);
 		InputStream in = new FileInputStream(configFile);
 		try {
-			config.load(in, ContentContext.CHARACTER_ENCODING);
+			config.load(in);
 		} finally {
 			ResourceHelper.closeResource(in);
 		}
@@ -361,7 +360,7 @@ public class Mailing {
 		return out;
 	}
 
-	public void store(ServletContext application) throws IOException, ConfigurationException {
+	public void store(ServletContext application) throws IOException {
 
 		synchronized (SYNCRO_LOCK) {
 			setId(application, getId());
@@ -383,7 +382,7 @@ public class Mailing {
 			}
 			FileUtils.writeLines(receiversFile, lines);
 
-			PropertiesConfiguration config = new PropertiesConfiguration();
+			ConfigurationProperties config = new ConfigurationProperties();
 			File configFile = new File(dir.getAbsolutePath() + '/' + CONFIG_FILE);
 			config.setProperty("subject", subject);
 			config.setProperty("language", language);
@@ -465,7 +464,7 @@ public class Mailing {
 			setErrorMessage(null);
 			try {
 				store(application);
-			} catch (ConfigurationException e) {
+			} catch (IOException e) {
 				e.printStackTrace();
 				setWarningMessage(e.getMessage());
 			}

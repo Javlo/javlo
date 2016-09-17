@@ -10,7 +10,6 @@ import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.configuration.ConfigurationException;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.StringHelper;
@@ -114,7 +113,7 @@ public class MessageRepository {
 		return outMsg;
 	}
 
-	public I18nMessage getI18nMessage(String key) throws FileNotFoundException, IOException, ConfigurationException {
+	public I18nMessage getI18nMessage(String key) throws FileNotFoundException, IOException {
 		return new I18nMessage(getMessage(key), request);
 	}
 

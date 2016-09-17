@@ -1,6 +1,7 @@
 package org.javlo.component.config;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -9,12 +10,11 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Logger;
 
-import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.configuration.PropertiesConfiguration;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.StringHelper;
 import org.javlo.template.Template;
+import org.javlo.utils.ConfigurationProperties;
 
 public class ComponentConfig {
 	
@@ -63,22 +63,19 @@ public class ComponentConfig {
 		return outCfg;
 	}
 
-	PropertiesConfiguration properties = null;
+	ConfigurationProperties properties = null;
 
 	private static final String KEY = "_comp_config";
 
 	private ComponentConfig() {
 	}
 
-	public String getRAWConfig(ContentContext ctx, Template currentTemplate, String type) {
+	public String getRAWConfig(ContentContext ctx, Template currentTemplate, String type) throws IOException {
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		try {
+
 			if (properties != null) {
 				properties.save(out);
 			}
-		} catch (ConfigurationException e) {
-			e.printStackTrace();
-		}
 		return new String(out.toByteArray());
 	}
 
@@ -91,7 +88,7 @@ public class ComponentConfig {
 				if (templateProp != null) {
 					Enumeration<Object> keys = templateProp.keys();
 					if (properties == null) {
-						properties = new PropertiesConfiguration();
+						properties = new ConfigurationProperties();
 					}
 					while (keys.hasMoreElements()) {
 						String key = "" + keys.nextElement();

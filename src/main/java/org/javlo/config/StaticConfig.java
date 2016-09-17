@@ -26,13 +26,12 @@ import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.naming.ConfigurationException;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.data.source.TestDataSource;
@@ -47,6 +46,7 @@ import org.javlo.servlet.AccessServlet;
 import org.javlo.user.AdminUserFactory;
 import org.javlo.user.IUserFactory;
 import org.javlo.user.User;
+import org.javlo.utils.ConfigurationProperties;
 import org.javlo.ztatic.FileCache;
 
 public class StaticConfig extends Observable {
@@ -57,7 +57,7 @@ public class StaticConfig extends Observable {
 
 	protected static Logger logger = Logger.getLogger(StaticConfig.class.getName());
 
-	PropertiesConfiguration properties = new PropertiesConfiguration();
+	ConfigurationProperties properties = new ConfigurationProperties();
 	Map<String, User> editUsers = new HashMap<String, User>();
 
 	public static final String WEBAPP_CONFIG_FILE = "/WEB-INF/config/webapp_config.properties";
@@ -195,10 +195,8 @@ public class StaticConfig extends Observable {
 							file.getParentFile().mkdirs();
 						}
 						file.createNewFile();
-					}
-					properties.setDelimiterParsingDisabled(true);
-					properties.setFile(file);
-					properties.load();
+					}					
+					properties.setFile(file);					
 				}
 
 				{ // Load product version
@@ -1223,7 +1221,7 @@ public class StaticConfig extends Observable {
 			properties.clear();
 			try {
 				properties.load();
-			} catch (ConfigurationException e) {
+			} catch (IOException e) {
 				e.printStackTrace();
 			}
 			redirectSecondaryURL = null;
@@ -1256,7 +1254,7 @@ public class StaticConfig extends Observable {
 			properties.clear();
 			try {
 				properties.load();
-			} catch (ConfigurationException e) {
+			} catch (IOException e) {
 				e.printStackTrace();
 			}
 
@@ -1542,7 +1540,7 @@ public class StaticConfig extends Observable {
 	}
 
 	public Integer getUndoDepth() {
-		return properties.getInteger("content.undo-depth", null);
+		return properties.getInteger("content.undo-depth");
 	}
 	
 	public String getImportFolder() {

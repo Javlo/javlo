@@ -8,11 +8,11 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 
+import javax.naming.ConfigurationException;
 import javax.servlet.ServletContext;
 
-import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.configuration.PropertiesConfiguration;
 import org.javlo.helper.StringHelper;
+import org.javlo.utils.ConfigurationProperties;
 
 public class DataToIDService {
 
@@ -24,7 +24,7 @@ public class DataToIDService {
 
 	private File dataFile;
 
-	private PropertiesConfiguration properties = null;
+	private ConfigurationProperties properties = null;
 
 	public static DataToIDService getInstance(ServletContext application) {
 		DataToIDService instance = (DataToIDService) application.getAttribute(KEY);
@@ -60,15 +60,14 @@ public class DataToIDService {
 		return instance;
 	}
 
-	public PropertiesConfiguration getProperties() {
+	public ConfigurationProperties getProperties() {
 		if (properties == null) {
-			properties = new PropertiesConfiguration();
-			properties.setFile(dataFile);
+			properties = new ConfigurationProperties();
 			try {
-				properties.load();
-			} catch (ConfigurationException e) {
+				properties.setFile(dataFile);
+			} catch (IOException e) {
 				e.printStackTrace();
-			}
+			}					
 		}
 		return properties;
 	}
@@ -116,7 +115,7 @@ public class DataToIDService {
 	private void saveProperties() {
 		try {
 			getProperties().save();
-		} catch (ConfigurationException e) {
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
@@ -166,7 +165,7 @@ public class DataToIDService {
 	 */
 	public void clearData(String data) {
 		synchronized (DATA_FILE) {
-			PropertiesConfiguration p = getProperties();
+			ConfigurationProperties p = getProperties();
 			Iterator<String> keys = p.getKeys();
 			Collection<String> toBeRemoved = new LinkedList<String>();
 			while (keys.hasNext()) {

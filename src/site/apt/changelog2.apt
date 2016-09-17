@@ -766,5 +766,9 @@ change log
  
  * 4/ change meta directly form content / correction bad check title hierachy with dynamic component. 
  
- * 5/ default filter define in template / don't diplay prefix and suffix when component is'nt displayable 
+ * 5/ default filter define in template / don't diplay prefix and suffix when component is'nt displayable / cache optimisation 
+ 
+ * 6/ update common lang + remove common configuration
+ 
+* 2.1.0.3.17 18/09/2016
  
