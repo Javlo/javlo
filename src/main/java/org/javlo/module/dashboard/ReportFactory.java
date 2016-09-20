@@ -113,7 +113,7 @@ public class ReportFactory {
 							params.put("pushcomp", comp.getId());
 							params.put("webaction", "edit.changearea");
 							params.put("area", comp.getArea());
-							report.badExternalLinkPages.add(new Link(URLHelper.createURL(ctx, comp.getPage(), params), page.getTitle(ctx)));
+							report.badResourceLinkPages.add(new Link(URLHelper.createURL(ctx, comp.getPage(), params), page.getTitle(ctx)));
 							pageDone.add(comp.getPage().getId());
 						}
 					}

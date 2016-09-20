@@ -42,14 +42,14 @@
                 </c:if>
                 <c:if test="${fn:length(report.noTitlePages) == 0}">no error</c:if>
                 <h2>Composants with bad resources references</h2>
-                <c:if test="${fn:length(report.badExternalLinkPages) > 0}">
+                <c:if test="${fn:length(report.badResourceLinkPages) > 0}">
                     <ul>
-                        <c:forEach var="link" items="${report.badExternalLinkPages}">
+                        <c:forEach var="link" items="${report.badResourceLinkPages}">
                         <li><a target="_blank" href="${link.url}">${link.label}</a>
                             </c:forEach>
                     </ul>
                 </c:if>
-                <c:if test="${fn:length(report.badExternalLinkPages) == 0}">no error</c:if>
+                <c:if test="${fn:length(report.badResourceLinkPages) == 0}">no error</c:if>
             </div>
             <div class="one_half last">
                 <h2>Page without description</h2>

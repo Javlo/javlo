@@ -91,7 +91,9 @@
 				<%--<a href="${fileSelectURL}" ${dataURL}>--%>
 				<span>${file.name}</span>
 				<%--</a>--%>
-			</div>
+			</div><c:if test="${file.editable}">
+			<a class="btn btn-default btn-edit" href="${info.currentURL}?editFile=${file.name}" title="${i18n.edit['global.modify']}"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></a>
+			</c:if>
 			</div>
 		</div>		
 		

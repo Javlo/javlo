@@ -68,7 +68,7 @@ public class FileAction extends AbstractModuleAction {
 		return FileModuleContext.getInstance(session, GlobalContext.getSessionInstance(session), module, FileModuleContext.class);
 	}
 
-	public File getFolder(ContentContext ctx) throws FileNotFoundException, InstantiationException, IllegalAccessException, IOException, ModuleException {
+	public static File getFolder(ContentContext ctx) throws FileNotFoundException, InstantiationException, IllegalAccessException, IOException, ModuleException {
 		String sourceFolder = getContextROOTFolder(ctx);
 		FileModuleContext fileModuleContext = FileModuleContext.getInstance(ctx.getRequest());
 		File folder = new File(sourceFolder, fileModuleContext.getPath());
@@ -89,61 +89,78 @@ public class FileAction extends AbstractModuleAction {
 		ctx.getRequest().setAttribute("pathPrefix", getROOTPath(ctx));
 		ctx.getRequest().setAttribute("sort", fileModuleContext.getSort());
 
-		if (ctx.getRequest().getParameter("path") != null) {
-			fileModuleContext.setPath(ctx.getRequest().getParameter("path"));
-			performUpdateBreadCrumb(RequestService.getInstance(ctx.getRequest()), ctx, EditContext.getInstance(globalContext, ctx.getRequest().getSession()), modulesContext, modulesContext.getCurrentModule(), fileModuleContext);
-		}
-
-		if (modulesContext.getFromModule() == null && ctx.getRequest().getParameter("changeRoot") == null) {
-			Box box = modulesContext.getCurrentModule().getBox("filemanager");
-			if (box != null) {
-				box.restoreTitle();
+		String editFileName = ctx.getRequest().getParameter("editFile");
+		if (editFileName != null) {			
+			modulesContext.getCurrentModule().setToolsRenderer(null);
+			File editFile = new File(URLHelper.mergePath(getFolder(ctx).getAbsolutePath(), editFileName));
+			ctx.getRequest().setAttribute("editFile", editFileName);			
+			if (editFile.exists()) {
+				ctx.getRequest().setAttribute("fileFound", true);
+				ctx.getRequest().setAttribute("fileExt", StringHelper.getFileExtension(editFile.getName()));
+				String content = ResourceHelper.loadStringFromFile(editFile);				
+				ctx.getRequest().setAttribute("content", content);
+			} else {
+				ctx.getRequest().setAttribute("fileFound", false);
+				logger.warning("file not found : " + editFile);
 			}
-			fileModuleContext.loadNavigation();
+			modulesContext.getCurrentModule().setRenderer("/jsp/editor.jsp");
 		} else {
-			if (fileModuleContext.getTitle() != null) {
-				modulesContext.getCurrentModule().restoreAll();
-				fileModuleContext.getNavigation().clear();
-				LinkToRenderer lnk = fileModuleContext.getHomeLink();
-				fileModuleContext.getNavigation().add(lnk);
-				fileModuleContext.setCurrentLink(lnk.getName());
-				/*
-				 * if (ctx.getRequest().getParameter("name") == null) {
-				 * modulesContext.getCurrentModule().setToolsRenderer(null); }
-				 * else {
-				 */
-				modulesContext.getCurrentModule().setToolsRenderer("/jsp/actions.jsp");
-				/* } */
+			if (ctx.getRequest().getParameter("path") != null) {
+				fileModuleContext.setPath(ctx.getRequest().getParameter("path"));
+				performUpdateBreadCrumb(RequestService.getInstance(ctx.getRequest()), ctx, EditContext.getInstance(globalContext, ctx.getRequest().getSession()), modulesContext, modulesContext.getCurrentModule(), fileModuleContext);
 			}
-		}
 
-		if (fileModuleContext.getCurrentLink().equals(FileModuleContext.PAGE_META)) {
-			if (ctx.getRequest().getAttribute("files") == null) {
-				modulesContext.getCurrentModule().setToolsRenderer("/jsp/actions.jsp");
-				modulesContext.getCurrentModule().clearAllBoxes();
-				File folder = getFolder(ctx);
-				if (folder.exists() && folder.listFiles(new DirectoryFilter()) != null) {
-					List<FileBean> allFileInfo = new LinkedList<FileBean>();
-					for (File file : folder.listFiles(new DirectoryFilter())) {
-						allFileInfo.add(new FileBean(ctx, StaticInfo.getInstance(ctx, file)));
+			if (modulesContext.getFromModule() == null && ctx.getRequest().getParameter("changeRoot") == null) {
+				Box box = modulesContext.getCurrentModule().getBox("filemanager");
+				if (box != null) {
+					box.restoreTitle();
+				}
+				fileModuleContext.loadNavigation();
+			} else {
+				if (fileModuleContext.getTitle() != null) {
+					modulesContext.getCurrentModule().restoreAll();
+					fileModuleContext.getNavigation().clear();
+					LinkToRenderer lnk = fileModuleContext.getHomeLink();
+					fileModuleContext.getNavigation().add(lnk);
+					fileModuleContext.setCurrentLink(lnk.getName());
+					/*
+					 * if (ctx.getRequest().getParameter("name") == null) {
+					 * modulesContext.getCurrentModule().setToolsRenderer(null);
+					 * } else {
+					 */
+					modulesContext.getCurrentModule().setToolsRenderer("/jsp/actions.jsp");
+					/* } */
+				}
+			}
+
+			if (fileModuleContext.getCurrentLink().equals(FileModuleContext.PAGE_META)) {
+				if (ctx.getRequest().getAttribute("files") == null) {
+					modulesContext.getCurrentModule().setToolsRenderer("/jsp/actions.jsp");
+					modulesContext.getCurrentModule().clearAllBoxes();
+					File folder = getFolder(ctx);
+					if (folder.exists() && folder.listFiles(new DirectoryFilter()) != null) {
+						List<FileBean> allFileInfo = new LinkedList<FileBean>();
+						for (File file : folder.listFiles(new DirectoryFilter())) {
+							allFileInfo.add(new FileBean(ctx, StaticInfo.getInstance(ctx, file)));
+						}
+						List<FileBean> fileList = new LinkedList<FileBean>();
+						for (File file : folder.listFiles((FileFilter) FileFileFilter.FILE)) {
+							fileList.add(new FileBean(ctx, StaticInfo.getInstance(ctx, file)));
+						}
+						Collections.sort(fileList, new FileBean.FileBeanComparator(ctx, fileModuleContext.getSort()));
+						Collections.sort(allFileInfo, new FileBean.FileBeanComparator(ctx, fileModuleContext.getSort()));
+						allFileInfo.addAll(fileList);
+						ctx.getRequest().setAttribute("files", allFileInfo);
+					} else {
+						logger.warning("folder not found : " + folder);
 					}
-					List<FileBean> fileList = new LinkedList<FileBean>();
-					for (File file : folder.listFiles((FileFilter) FileFileFilter.FILE)) {
-						fileList.add(new FileBean(ctx, StaticInfo.getInstance(ctx, file)));
-					}
-					Collections.sort(fileList, new FileBean.FileBeanComparator(ctx, fileModuleContext.getSort()));
-					Collections.sort(allFileInfo, new FileBean.FileBeanComparator(ctx, fileModuleContext.getSort()));
-					allFileInfo.addAll(fileList);
-					ctx.getRequest().setAttribute("files", allFileInfo);
 				} else {
-					logger.warning("folder not found : " + folder);
+					modulesContext.getCurrentModule().setToolsRenderer(null);
 				}
 			} else {
-				modulesContext.getCurrentModule().setToolsRenderer(null);
-			}
-		} else {
-			if (modulesContext.getCurrentModule().getToolsRenderer() != null && modulesContext.getFromModule() == null) {
-				modulesContext.getCurrentModule().restoreAll();
+				if (modulesContext.getCurrentModule().getToolsRenderer() != null && modulesContext.getFromModule() == null) {
+					modulesContext.getCurrentModule().restoreAll();
+				}
 			}
 		}
 
@@ -272,20 +289,20 @@ public class FileAction extends AbstractModuleAction {
 		if (folder.exists()) {
 			for (File file : folder.listFiles()) {
 				StaticInfo staticInfo = StaticInfo.getInstance(ctx, file);
-				FileBean fileBean = new FileBean(ctx, staticInfo);				
-				String fileName = rs.getParameter("rename-"+fileBean.getId(), null);				
+				FileBean fileBean = new FileBean(ctx, staticInfo);
+				String fileName = rs.getParameter("rename-" + fileBean.getId(), null);
 				if (fileName != null && !fileName.equals(file.getName())) {
 					File targetFile = new File(URLHelper.mergePath(staticInfo.getFile().getParentFile().getAbsolutePath(), fileName));
-					ResourceHelper.renameResource(ctx,staticInfo.getFile(),targetFile);
+					ResourceHelper.renameResource(ctx, staticInfo.getFile(), targetFile);
 					staticInfo.getFile().renameTo(targetFile);
-					staticInfo.renameFile(ctx, targetFile);					
+					staticInfo.renameFile(ctx, targetFile);
 					PersistenceService.getInstance(globalContext).setAskStore(true);
 					if (staticInfo.getFile().isDirectory()) {
 						FileCache.getInstance(application).clear(globalContext.getContextKey());
 					} else {
 						FileCache.getInstance(application).deleteAllFile(globalContext.getContextKey(), staticInfo.getFile().getName());
 					}
-				}				
+				}
 				String title = rs.getParameter("title-" + fileBean.getId(), null);
 				if (title != null) {
 					staticInfo.setTitle(ctx, title);
@@ -523,12 +540,22 @@ public class FileAction extends AbstractModuleAction {
 	public static String performCreatefilestructure(RequestService rs, ContentContext ctx, GlobalContext globalContext, MessageRepository messageRepository, I18nAccess i18nAccess) throws IOException {
 		File file = new File(URLHelper.mergePath(globalContext.getStaticFolder(), "file-structure", StringHelper.createFileName("structure-" + StringHelper.renderSortableTime(new Date()) + ".html")));
 		file.getParentFile().mkdirs();
-		System.out.println("***** FileAction.performCreatefilestructure : file = " + file); // TODO:
-																							// remove
-																							// debug
-																							// trace
 		file.createNewFile();
 		ResourceHelper.writeStringToFile(file, ResourceHelper.fileStructureToHtml(new File(globalContext.getStaticConfig().getAllDataFolder())));
+		return null;
+	}
+	
+	public static String performModify(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws FileNotFoundException, InstantiationException, IllegalAccessException, IOException, ModuleException {
+		File file = new File(URLHelper.mergePath(getFolder(ctx).getAbsolutePath(), rs.getParameter("file", "-- param file undefined --")));
+		String content = rs.getParameter("content", null);
+		if (content == null) {
+			return "File content not found.";
+		}
+		if (!file.exists()) {
+			return "File not found : "+file;
+		} else {
+			ResourceHelper.writeStringToFile(file, content);
+		}
 		return null;
 	}
 

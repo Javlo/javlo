@@ -31,6 +31,7 @@ import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
@@ -107,6 +108,8 @@ public class StringHelper {
 	private static final String ISO_ACCEPTABLE_CHAR = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_.";
 
 	private static final String KEY_ACCEPTABLE_CHAR = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+	
+	private static final Collection<String> EDITABLE_EXTENSION = Arrays.asList(new String[] {"css","less","scss", "txt", "html", "jsp", "properties"});
 
 	public static final String DEFAULT_LIST_SEPARATOR = "?";
 
@@ -1217,6 +1220,26 @@ public class StringHelper {
 		String ext = getFileExtension(fileName);
 		return isImageExtension(ext);
 	}
+	
+	/**
+	 * return true if the filename in a image for wcms (sp. : tif or psd in not
+	 * a image).
+	 * 
+	 * @param fileName
+	 *            file name with extension
+	 * @return true if file name is a image
+	 */
+	public static final boolean isEditable(String fileName) {
+		if (fileName == null) {
+			return false;
+		}
+		if (fileName.contains("?")) {
+			fileName = fileName.substring(0, fileName.indexOf('?'));
+		}
+		String ext = getFileExtension(fileName);
+		return isEditableExtension(ext);
+	}
+
 
 	/**
 	 * return true if the filename in a image for wcms (sp. : tif or psd in not
@@ -1272,6 +1295,13 @@ public class StringHelper {
 		res = res || fileExtension.equalsIgnoreCase("png");
 		return res;
 	}
+	
+	public static final boolean isEditableExtension(String fileExtension) {
+		if (fileExtension == null) {
+			return false;
+		}
+		return EDITABLE_EXTENSION.contains(fileExtension.toLowerCase());
+	}	
 
 	/**
 	 * return true if the file extension is an image for wcms (sp. : tif or psd

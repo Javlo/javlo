@@ -28,7 +28,7 @@ function openEditor(textarea) {
 	editor.setTheme("ace/theme/github");
 	if (titleBar.indexOf(".html")>0) {
 		editor.getSession().setMode("ace/mode/html");
-	} else if (titleBar.indexOf(".css")>0 || titleBar.indexOf(".less")>0) {
+	} else if (titleBar.indexOf(".css")>0) {
 		editor.getSession().setMode("ace/mode/css");
 	} else if (titleBar.indexOf(".js")>0&&titleBar.indexOf(".jsp")<0) {
 		editor.getSession().setMode("ace/mode/javacript");

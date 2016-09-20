@@ -99,7 +99,13 @@
                       	</td>                            
                        <td align="right">${report.badInternalLink}</td>
                        <td align="right">${report.badInternalLink+report.rightInternalLink}</td>
-                   </tr>
+                   </tr>                    
+                   <tr>
+                   <tr>
+                   	<td>Bad ressouce link</td>                            
+                       <td align="right">${fn:length(report.badResourceLinkPages)}</td>
+                       <td align="right">&nbsp;</td>
+                   </tr>                    
                    <tr>
                    	<td colspan="3">
                    		<br class="all" />

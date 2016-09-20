@@ -107,6 +107,10 @@ public class FileBean {
 		return StringHelper.isImage(getName());
 	}
 	
+	public boolean isEditable() {
+		return StringHelper.isEditable(getName());
+	}
+	
 	public boolean isVideo() {
 		return StringHelper.isVideo(getName());
 	}

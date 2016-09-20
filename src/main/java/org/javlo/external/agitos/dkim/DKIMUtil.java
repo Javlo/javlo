@@ -36,9 +36,10 @@ import javax.naming.NamingException;
 import javax.naming.directory.DirContext;
 import javax.naming.directory.InitialDirContext;
 
-import com.sun.mail.util.QPEncoderStream;
+import org.apache.commons.codec.binary.Base64;
+import org.bouncycastle.util.encoders.Base64Encoder;
 
-import sun.misc.BASE64Encoder;
+import com.sun.mail.util.QPEncoderStream;
 
 /*
  * @author Florian Sager, http://www.agitos.de, 22.11.2008
@@ -90,8 +91,7 @@ public class DKIMUtil {
 	}
 
 	protected static String base64Encode(byte[] b) {
-		BASE64Encoder base64Enc = new BASE64Encoder();
-		String encoded = base64Enc.encode(b);
+		String encoded = Base64.encodeBase64String(b);
 		// remove unnecessary linefeeds after 76 characters
 		encoded = encoded.replace("\n", ""); // Linux+Win
 		return encoded.replace("\r", ""); // Win --> FSTODO: select Encoder without line termination 

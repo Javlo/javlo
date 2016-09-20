@@ -86,3 +86,24 @@
 	display: block;
 	float: none;
 }
+
+#main-renderer .btn-edit {
+	display: inline-block;
+	width: auto;
+	margin-top: 30px;
+	line-height: normal;
+}
+
+/** reset jquery ui **/
+
+.ui-state-hover, .ui-widget-content .ui-state-hover, .ui-widget-header .ui-state-hover, .ui-state-focus, .ui-widget-content .ui-state-focus, .ui-widget-header .ui-state-focus {
+	background-image: none;
+}
+
+body .el-finder {
+	width:100%; 
+	min-width:400px;
+	background-color:#eee;
+	font-size: 10px;
+	font-family: inherit;
+}

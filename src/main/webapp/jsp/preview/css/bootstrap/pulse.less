@@ -1,0 +1,100 @@
+#preview_command {
+	
+.pulse {
+	float: left;
+	with: 120px;
+}
+	
+#c {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin-left: -0.5px;
+}
+
+.s {
+  width: 1px;
+  height: 1px;
+  border-radius: 50%;
+  cursor: pointer;
+  float: left;
+  -webkit-transition: all 0.2s;
+  -moz-transition: all 0.2s;
+  transition: all 0.2s;
+}
+.s:nth-child(n+2) {
+  margin-left: 4px;
+}
+
+.s:nth-child(1) {
+  background: #09ff1b;
+  -webkit-animation: r0 4s 0s ease-out infinite;
+  -moz-animation: r0 4s 0s ease-out infinite;
+  animation: r0 4s 0s ease-out infinite;
+}
+.s:nth-child(1):hover {
+  background: #ff3333;
+  -webkit-animation: r20 0.2s 0.4s ease-out infinite;
+  -moz-animation: r20 0.2s 0.4s ease-out infinite;
+  animation: r20 0.2s 0.4s ease-out infinite;
+}
+
+@-webkit-keyframes r0 {
+  0% {
+    box-shadow: 0 0 8px 6px rgba(0, 238, 18, 0), 0 0 0px 0px transparent, 0 0 0px 0px rgba(0, 238, 18, 0);
+  }
+  10% {
+    box-shadow: 0 0 8px 6px #00ee12, 0 0 12px 10px transparent, 0 0 12px 14px #00ee12;
+  }
+  100% {
+    box-shadow: 0 0 8px 6px rgba(0, 238, 18, 0), 0 0 0px 5px transparent, 0 0 0px 5px rgba(0, 238, 18, 0);
+  }
+}
+@-moz-keyframes r0 {
+  0% {
+    box-shadow: 0 0 8px 6px rgba(0, 238, 18, 0), 0 0 0px 0px transparent, 0 0 0px 0px rgba(0, 238, 18, 0);
+  }
+  10% {
+    box-shadow: 0 0 8px 6px #00ee12, 0 0 12px 10px transparent, 0 0 12px 14px #00ee12;
+  }
+  100% {
+    box-shadow: 0 0 8px 6px rgba(0, 238, 18, 0), 0 0 0px 5px transparent, 0 0 0px 5px rgba(0, 238, 18, 0);
+  }
+}
+@keyframes r0 {
+  0% {
+    box-shadow: 0 0 8px 6px rgba(0, 238, 18, 0), 0 0 0px 0px transparent, 0 0 0px 0px rgba(0, 238, 18, 0);
+  }
+  10% {
+    box-shadow: 0 0 8px 6px #00ee12, 0 0 12px 10px transparent, 0 0 12px 14px #00ee12;
+  }
+  100% {
+    box-shadow: 0 0 8px 6px rgba(0, 238, 18, 0), 0 0 0px 5px transparent, 0 0 0px 5px rgba(0, 238, 18, 0);
+  }
+}
+@-webkit-keyframes r20 {
+  from {
+    box-shadow: 0 0 8px 6px #ff1a1a, 0 0 12px 10px transparent, 0 0 12px 14px #ff1a1a;
+  }
+  to {
+    box-shadow: 0 0 8px 6px rgba(255, 26, 26, 0), 0 0 4px 5px transparent, 0 0 4px 6px rgba(255, 26, 26, 0);
+  }
+}
+@-moz-keyframes r20 {
+  from {
+    box-shadow: 0 0 8px 6px #ff1a1a, 0 0 12px 10px transparent, 0 0 12px 14px #ff1a1a;
+  }
+  to {
+    box-shadow: 0 0 8px 6px rgba(255, 26, 26, 0), 0 0 4px 5px transparent, 0 0 4px 6px rgba(255, 26, 26, 0);
+  }
+}
+@keyframes r20 {
+  from {
+    box-shadow: 0 0 8px 6px #ff1a1a, 0 0 12px 10px transparent, 0 0 12px 14px #ff1a1a;
+  }
+  to {
+    box-shadow: 0 0 8px 6px rgba(255, 26, 26, 0), 0 0 4px 5px transparent, 0 0 4px 6px rgba(255, 26, 26, 0);
+  }
+}
+
+}

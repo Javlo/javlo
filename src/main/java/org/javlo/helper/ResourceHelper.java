@@ -854,8 +854,12 @@ public class ResourceHelper {
 			return "";
 		}
 		InputStream in = new FileInputStream(file);
-		String content = loadStringFromStream(in, ContentContext.CHARSET_DEFAULT);
-		closeResource(in);
+		String content;
+		try {
+			content = loadStringFromStream(in, ContentContext.CHARSET_DEFAULT);
+		} finally {
+			closeResource(in);	
+		}		
 		return content;
 	}
 
@@ -1399,14 +1403,31 @@ public class ResourceHelper {
 	}
 
 	public static boolean writeImageMetadata(IIOMetadata imageMetadata, File target) throws IOException {
+		if (imageMetadata == null) {
+			return false;
+		}
 		Iterator writers = ImageIO.getImageWritersBySuffix(StringHelper.getFileExtension(target.getName()));
 		if (!writers.hasNext()) {
 			return false;
 		} else {
 			ImageWriter writer = (ImageWriter) writers.next();
-			writer.setOutput(new FileImageOutputStream(target));
-			BufferedImage image = ImageIO.read(target);
-			writer.write(null, new IIOImage(image, null, imageMetadata), null);
+			TransactionFile transFile = new TransactionFile(target);
+			FileImageOutputStream out = null;
+			try {
+				out = new FileImageOutputStream(transFile.getTempFile());
+				writer.setOutput(out);			
+				BufferedImage image = ImageIO.read(target);
+				IIOImage ioimage = new IIOImage(image, null, imageMetadata);
+				writer.write(null, ioimage, null);
+				out.close();
+				transFile.commit();
+			} catch (Exception e) {				
+				e.printStackTrace();				
+				if (out != null) {
+					out.close();
+				}
+				transFile.rollback();
+			}
 			return true;
 		}
 	}
@@ -1480,10 +1501,14 @@ public class ResourceHelper {
 	}
 
 	public static void main(String[] args) throws IOException {
-		File target = new File("c:/trans/struct.html");
-		File source = new File("c:/trans");
-
-		ResourceHelper.writeStringToFile(target, fileStructureToHtml(source));
+		File source = new File("c:/trans/test_blonde.jpg");
+		File target = new File("c:/trans/test2.jpg");				
+		ResourceHelper.writeFileToFile(source, target);
+		IIOMetadata metadata = ResourceHelper.getImageMetadata(target);
+		//BufferedImage img = ImageEngine.loadImage(target);
+		//img = ImageEngine.cropImage(img, 100, 100, 50, 50);
+		//ImageEngine.storeImage(img, target);
+		ResourceHelper.writeImageMetadata(metadata, target);
 	}
 
 	/**
