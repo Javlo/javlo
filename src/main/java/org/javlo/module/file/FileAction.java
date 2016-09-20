@@ -105,6 +105,13 @@ public class FileAction extends AbstractModuleAction {
 			}
 			modulesContext.getCurrentModule().setRenderer("/jsp/editor.jsp");
 		} else {
+			if (modulesContext.getCurrentModule().getRenderer().endsWith("/jsp/editor.jsp")) {
+				getModuleContext(ctx.getRequest().getSession(), modulesContext.getCurrentModule()).setCurrentLink(null);
+				getModuleContext(ctx.getRequest().getSession(), modulesContext.getCurrentModule()).setRenderer(null);
+				modulesContext.getCurrentModule().setRenderer(null);
+				modulesContext.getCurrentModule().restoreToolsRenderer();
+				modulesContext.getCurrentModule().restoreAll();
+			}
 			if (ctx.getRequest().getParameter("path") != null) {
 				fileModuleContext.setPath(ctx.getRequest().getParameter("path"));
 				performUpdateBreadCrumb(RequestService.getInstance(ctx.getRequest()), ctx, EditContext.getInstance(globalContext, ctx.getRequest().getSession()), modulesContext, modulesContext.getCurrentModule(), fileModuleContext);
