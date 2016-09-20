@@ -107,3 +107,7 @@ body .el-finder {
 	font-size: 10px;
 	font-family: inherit;
 }
+
+.ui-widget-content .ui-state-hover {
+	background-color: #eeeeee;
+}
