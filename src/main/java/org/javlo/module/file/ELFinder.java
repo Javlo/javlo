@@ -21,6 +21,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.fileupload.FileItem;
 import org.javlo.context.ContentContext;
+import org.javlo.helper.NetHelper;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
@@ -45,7 +46,24 @@ public abstract class ELFinder {
 		try {
 			RequestService rs = RequestService.getInstance(request);
 			String command = rs.getParameter("cmd", null);
-			if ("open".equals(command)) {
+			if ("file".equals(command)) {
+				ELFile file = getFile(request, "target");
+				if (file != null) {
+					ContentContext ctx = ContentContext.getContentContext(request, response);
+					response.addHeader("Content-Descriptionn", "File Transfer");
+					response.addHeader("Content-Type", ResourceHelper.getFileExtensionToMineType(StringHelper.getFileExtension(file.getFile().getName())));
+					response.addHeader("Content-Disposition", "attachment; filename="+ file.getFile().getName()); 
+					response.addHeader("Content-Transfer-Encoding", "binary");
+					response.addHeader("Connection","Keep-Alive");
+					response.addHeader("Expires","0");
+					response.addHeader("Cache-Control", "must-revalidate, post-check=0, pre-check=0");
+					response.addHeader("Pragma","public");
+					response.addHeader("Content-Length",""+file.getFile().length());
+					ResourceHelper.writeFileToStream(file.getFile(), response.getOutputStream());
+				} else {
+					response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+				}
+			} else if ("open".equals(command)) {
 				open(getBoolean(request, "init", false), getFile(request, "target"), getBoolean(request, "tree", false), apiResponse);
 			} else if ("parents".equals(command)) {
 				parents(getFile(request, "target"), apiResponse);
@@ -108,7 +126,10 @@ public abstract class ELFinder {
 		ELFile currentFile = null;
 		if (folders.length > 1) {
 			/*
-			 * String volName = folders[1]; ELFile currentFile = null; for (ELFile volume : getVolumeFiles()) { if (volume.getFile().getName().equals(volName)) { currentFile = volume; } }
+			 * String volName = folders[1]; ELFile currentFile = null; for
+			 * (ELFile volume : getVolumeFiles()) { if
+			 * (volume.getFile().getName().equals(volName)) { currentFile =
+			 * volume; } }
 			 */
 			currentFile = getVolumeFiles().iterator().next();
 			if (currentFile != null) {
@@ -127,7 +148,20 @@ public abstract class ELFinder {
 	protected abstract void pasteFiles(String srcHashFolder, String dstHashFolder, String[] files, boolean cut, Map<String, Object> apiResponse) throws IOException;
 
 	/*
-	 * ELFile dstFolder = hashToFile(dstHashFolder); List<ELFile> addedFiles = new LinkedList<ELFile>(); List<ELFile> removeFiles = new LinkedList<ELFile>(); for (String file : files) { ELFile oldFile = hashToFile(file); File newFile = new File(URLHelper.mergePath(dstFolder.getFile().getAbsolutePath(), oldFile.getFile().getName())); if (!newFile.exists()) { if (oldFile.getFile().isFile()) { ELFile newELFile = createELFile(dstFolder, newFile); ResourceHelper.writeFileToFile(oldFile.getFile(), newFile); addedFiles.add(newELFile); if (cut) { oldFile.getFile().delete(); removeFiles.add(oldFile); } } else { FileUtils.moveDirectory(oldFile.getFile(), newFile); ELFile newELFile = createELFile(dstFolder, newFile); addedFiles.add(newELFile); } } } apiResponse.put("added", printFiles(addedFiles)); apiResponse.put("removed", printFiles(removeFiles)); }
+	 * ELFile dstFolder = hashToFile(dstHashFolder); List<ELFile> addedFiles =
+	 * new LinkedList<ELFile>(); List<ELFile> removeFiles = new
+	 * LinkedList<ELFile>(); for (String file : files) { ELFile oldFile =
+	 * hashToFile(file); File newFile = new
+	 * File(URLHelper.mergePath(dstFolder.getFile().getAbsolutePath(),
+	 * oldFile.getFile().getName())); if (!newFile.exists()) { if
+	 * (oldFile.getFile().isFile()) { ELFile newELFile = createELFile(dstFolder,
+	 * newFile); ResourceHelper.writeFileToFile(oldFile.getFile(), newFile);
+	 * addedFiles.add(newELFile); if (cut) { oldFile.getFile().delete();
+	 * removeFiles.add(oldFile); } } else {
+	 * FileUtils.moveDirectory(oldFile.getFile(), newFile); ELFile newELFile =
+	 * createELFile(dstFolder, newFile); addedFiles.add(newELFile); } } }
+	 * apiResponse.put("added", printFiles(addedFiles));
+	 * apiResponse.put("removed", printFiles(removeFiles)); }
 	 */
 
 	protected abstract ELFile createELFile(ELFile parent, File file);
@@ -159,7 +193,7 @@ public abstract class ELFinder {
 				ResourceHelper.writeImageMetadata(metadata, file.getFile());
 				apiResponse.put("changed", printFiles(Arrays.asList(new ELFile[] { file })));
 			} else if ("rotate".equals(mode)) {
-				BufferedImage img = ImageEngine.loadImage(file.getFile());				
+				BufferedImage img = ImageEngine.loadImage(file.getFile());
 				img = ImageEngine.rotate(img, degree, null);
 				ImageEngine.storeImage(img, file.getFile());
 				ResourceHelper.writeImageMetadata(metadata, file.getFile());
@@ -323,36 +357,45 @@ public abstract class ELFinder {
 
 	protected Map<String, Object> printFile(ELFile file) {
 		Map<String, Object> out = obj(
-		// (String) name of file/dir. Required
+				// (String) name of file/dir. Required
 				prop("name", file.getFile().getName()),
-				// (String) hash of current file/dir path, first symbol must be letter, symbols before _underline_ - volume id, Required.
+				// (String) hash of current file/dir path, first symbol must be
+				// letter, symbols before _underline_ - volume id, Required.
 				prop("hash", fileToHash(file)),
 				// (String) mime type. Required.
 				prop("mime", getMimeType(file.getFile())),
 				// (Number) file modification time in unix timestamp. Required.
-				prop("ts", Math.round(file.getFile().lastModified()/1000)),
+				prop("ts", Math.round(file.getFile().lastModified() / 1000)),
 				// (Number) file size in bytes
 				prop("size", file.getFile().length()),
 				// (Number) is readable
 				prop("read", toInt(true)),
 				// (Number) is writable
 				prop("write", toInt(true)),
-				// (Number) is file locked. If locked that object cannot be deleted and renamed
+				// (Number) is file locked. If locked that object cannot be
+				// deleted and renamed
 				prop("locked", toInt(false)), prop("tmb", file.getThumbnailURL()));
 
-		// (Number) Only for directories. Marks if directory has child directories inside it. 0 (or not set) - no, 1 - yes. Do not need to calculate amount.
+		// (Number) Only for directories. Marks if directory has child
+		// directories inside it. 0 (or not set) - no, 1 - yes. Do not need to
+		// calculate amount.
 		if (file.isDirectory()) {
 			List<ELFile> children = file.getChildren();
 			extend(out, prop("childs", toInt(children.size() > 0)));
 			List<ELFile> childDirectories = filterDirectories(children);
 			extend(out, prop("dirs", toInt(childDirectories.size() > 0)));
-		} else if (StringHelper.isImage(file.getFile().getName())) {
-			try {
-				/*
-				 * BufferedImage img = ImageIO.read(file.getFile()); extend(out, prop("dim", "" + img.getWidth() + 'x' + img.getHeight()));
-				 */
-			} catch (Throwable e) {
-				logger.warning(e.getMessage());
+		} else {
+			
+			if (StringHelper.isImage(file.getFile().getName())) {
+				try {
+					/*
+					 * BufferedImage img = ImageIO.read(file.getFile());
+					 * extend(out, prop("dim", "" + img.getWidth() + 'x' +
+					 * img.getHeight()));
+					 */
+				} catch (Throwable e) {
+					logger.warning(e.getMessage());
+				}
 			}
 		}
 		if (file.isRoot()) {
@@ -372,10 +415,18 @@ public abstract class ELFinder {
 			path = file.getParentFile().getPath();
 			url = file.getVolume().getRoot().getURL();
 		}
-		return obj(prop("path", path),// (String) Current folder path
-				prop("url", url),// (String) Current folder URL
-				prop("tmbURL", file.getThumbnailURL()),// (String) Thumbnails folder URL
-				prop("separator", "/"), prop("disabled", array()), // (Array) List of commands not allowed (disabled) on this volume
+		return obj(prop("path", path), // (String) Current folder path
+				prop("url", url), // (String) Current folder URL
+				prop("tmbURL", file.getThumbnailURL()), // (String) Thumbnails
+														// folder URL
+				prop("separator", "/"), prop("disabled", array()), // (Array)
+																	// List of
+																	// commands
+																	// not
+																	// allowed
+																	// (disabled)
+																	// on this
+																	// volume
 				prop("copyOverwrite", 1), propObj("archivers", prop("create", array()), prop("extract", array())));
 	}
 

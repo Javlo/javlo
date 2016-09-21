@@ -109,7 +109,7 @@ public class StringHelper {
 
 	private static final String KEY_ACCEPTABLE_CHAR = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 	
-	private static final Collection<String> EDITABLE_EXTENSION = Arrays.asList(new String[] {"css","less","scss", "txt", "html", "jsp", "properties"});
+	private static final Collection<String> EDITABLE_EXTENSION = Arrays.asList(new String[] {"css","less","scss", "txt", "html", "xhtml", "jsp", "properties", "csv"});
 
 	public static final String DEFAULT_LIST_SEPARATOR = "?";
 

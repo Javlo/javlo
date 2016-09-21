@@ -70,7 +70,7 @@ jQuery(document).ready(function() {
 		    edit : {
 		      editors : [
 		        {
-		          mimes : ['text/html','text/properties','text/plain','text/jsp','text/css'],  // add here other mimes if required
+		          mimes : ['text/html','text/properties','text/plain','text/jsp','text/css','text/scss','text/less'],  // add here other mimes if required
 		          load : function(textarea) {
 		            openEditor(textarea);
 		          },

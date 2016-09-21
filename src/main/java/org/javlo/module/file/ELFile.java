@@ -29,6 +29,8 @@ public abstract class ELFile {
 	}
 
 	public abstract String getURL();
+	
+	public abstract String  getAbsoluteURL();
 
 	public abstract String getThumbnailURL();
 

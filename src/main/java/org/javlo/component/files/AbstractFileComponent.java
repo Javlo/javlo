@@ -777,7 +777,7 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 					out.print("<img name=\"" + getImageImgName() + "\"" + onMouseOver + " src=\"");
 					out.print(url);
 					out.print("\" alt=\"\">&nbsp;</a>");
-					out.print("<figcaption><a title=\""+image+"\" href=\"" + realURL + "\">" + image + "</a></figcaption></figure>");
+					out.print("<figcaption><a target=\"_blank\" title=\""+image+"\" href=\"" + realURL + "\">" + image + "</a></figcaption></figure>");
 					out.print("</div>");
 					// }
 				}
