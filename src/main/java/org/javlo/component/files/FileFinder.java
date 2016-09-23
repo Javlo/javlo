@@ -38,8 +38,13 @@ public class FileFinder extends AbstractPropertiesComponent implements IUploadRe
 	private static String SORT_TITLE = "sort_title";
 	private static String SORT_DATE = "sort_creation_date";
 	private static String SORT_MODIFDATE = "sort_date";
+	private static String SORT_NAME_DESC = "sort_name_desc";
+	private static String SORT_TITLE_DESC = "sort_title_desc";
+	private static String SORT_DATE_DESC = "sort_creation_date_desc";
+	private static String SORT_MODIFDATE_DESC = "sort_date_desc";
+
 	
-	private static String[] styleList = new String[] {SORT_NAME, SORT_TITLE, SORT_DATE, SORT_MODIFDATE};
+	private static String[] styleList = new String[] {SORT_NAME, SORT_TITLE, SORT_DATE, SORT_MODIFDATE, SORT_NAME_DESC, SORT_TITLE_DESC, SORT_DATE_DESC, SORT_MODIFDATE_DESC};
 
 	private static class FileFilter {
 		private ContentContext ctx = null;
@@ -134,13 +139,21 @@ public class FileFinder extends AbstractPropertiesComponent implements IUploadRe
 				outFileList.add(new FileBean(ctx, info));
 			}
 			if (getStyle().contentEquals(SORT_NAME)) {
-				Collections.sort(outFileList, new FileBean.FileBeanComparator(ctx, 2));
+				Collections.sort(outFileList, new FileBean.FileBeanComparator(ctx, 2, false));
 			} else if (getStyle().contentEquals(SORT_DATE)) {
-				Collections.sort(outFileList, new FileBean.FileBeanComparator(ctx, 4));
+				Collections.sort(outFileList, new FileBean.FileBeanComparator(ctx, 4, false));
 			} else if (getStyle().contentEquals(SORT_MODIFDATE)) {
-				Collections.sort(outFileList, new FileBean.FileBeanComparator(ctx, -1));
+				Collections.sort(outFileList, new FileBean.FileBeanComparator(ctx, -1, false));
 			} else if (getStyle().contentEquals(SORT_TITLE)) {
-				Collections.sort(outFileList, new FileBean.FileBeanComparator(ctx, 3));
+				Collections.sort(outFileList, new FileBean.FileBeanComparator(ctx, 3, false));
+			} else if (getStyle().contentEquals(SORT_NAME_DESC)) {
+				Collections.sort(outFileList, new FileBean.FileBeanComparator(ctx, 2, true));
+			} else if (getStyle().contentEquals(SORT_DATE_DESC)) {
+				Collections.sort(outFileList, new FileBean.FileBeanComparator(ctx, 4, true));
+			} else if (getStyle().contentEquals(SORT_MODIFDATE_DESC)) {
+				Collections.sort(outFileList, new FileBean.FileBeanComparator(ctx, -1, true));
+			} else if (getStyle().contentEquals(SORT_TITLE_DESC)) {
+				Collections.sort(outFileList, new FileBean.FileBeanComparator(ctx, 3, true));
 			}
 		}
 		

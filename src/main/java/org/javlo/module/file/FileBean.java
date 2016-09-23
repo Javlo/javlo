@@ -21,22 +21,30 @@ public class FileBean {
 
 		private final ContentContext ctx;
 		private final int sort;
-
+		private int order = 1;
+		
 		public FileBeanComparator(ContentContext inCtx, int inSort) {
+			this(inCtx, inSort, false);
+		}
+
+		public FileBeanComparator(ContentContext inCtx, int inSort, boolean desc) {
 			ctx = inCtx;
 			sort = inSort;
+			if (desc) {
+				order = -1;
+			}
 		}
 
 		@Override
 		public int compare(FileBean file1, FileBean file2) {
 			if (sort == 2) {
-				return file1.getStaticInfo().getFile().getName().compareTo(file2.getStaticInfo().getFile().getName());
+				return file1.getStaticInfo().getFile().getName().compareTo(file2.getStaticInfo().getFile().getName())*order;
 			} else if (sort == 3) {
-				return file1.getStaticInfo().getTitle(ctx).compareTo(file2.getStaticInfo().getTitle(ctx));
+				return file1.getStaticInfo().getTitle(ctx).compareTo(file2.getStaticInfo().getTitle(ctx))*order;
 			} else if (sort == 4) {
-				return -file1.getStaticInfo().getCreationDate(ctx).compareTo(file2.getStaticInfo().getCreationDate(ctx));
+				return -file1.getStaticInfo().getCreationDate(ctx).compareTo(file2.getStaticInfo().getCreationDate(ctx))*order;
 			} else {
-				return -file1.getStaticInfo().getDate(ctx).compareTo(file2.getStaticInfo().getDate(ctx));
+				return -file1.getStaticInfo().getDate(ctx).compareTo(file2.getStaticInfo().getDate(ctx))*order;
 			}
 		}
 
