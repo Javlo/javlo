@@ -123,12 +123,11 @@ table th {
 }
 
 h1 {
-	font-size: 16px;
-	max-width: 460px;
-	overflow: hidden;
-	float: right;	
-	margin-right: 330px;
+	font-size: 16px;	
+	overflow: hidden;	
 	color: #cccccc;
+	position: absolute;
+	left: 460px;
 }
 
 #popup_title {

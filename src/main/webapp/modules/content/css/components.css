@@ -180,11 +180,16 @@ body .component-wrapper {
 	display: block;	
 }
 
+.component .image-list {
+	display: flex;
+	flex-wrap: wrap;
+}
+
 .component .preview-image {
 	padding: 2px;
-	float: left;
-	width: 33%;	
 	box-sizing: border-box;
+	width: 33%;
+	
 }
 
 .preview-image figcaption {
