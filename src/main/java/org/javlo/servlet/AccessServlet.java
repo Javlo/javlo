@@ -526,15 +526,15 @@ public class AccessServlet extends HttpServlet implements IVersion {
 				}
 				Template template = ctx.getCurrentTemplate();
 
+				if (!ctx.isAsViewMode()) {
+					IntegrityFactory.getInstance(ctx);
+				}
 				if (ctx.getRenderMode() != ContentContext.EDIT_MODE) {
 					/*** CHECK CONTENT AVAIBILITY ***/
 					boolean checkContentAviability = true;
 					if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE) {
 						EditContext editCtx = EditContext.getInstance(globalContext, request.getSession());
 						checkContentAviability = !editCtx.isEditPreview();
-
-						IntegrityFactory.getInstance(ctx);
-
 					}
 					ContentContext newCtx = new ContentContext(ctx);
 					if (checkContentAviability) {

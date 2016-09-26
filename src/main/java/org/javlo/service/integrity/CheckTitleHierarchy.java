@@ -35,6 +35,9 @@ public class CheckTitleHierarchy extends AbstractIntegrityChecker {
 						int level = ((ISubTitle) comp).getSubTitleLevel(areaCtx);
 						if (level > 0) {
 							if (lastLevel > 0 && Math.abs(level - lastLevel) > 1) {
+								if (getComponentId(ctx) == null) {
+									setComponentId(comp.getId());
+								}
 								error++;
 							}
 							lastLevel = level;
@@ -50,6 +53,9 @@ public class CheckTitleHierarchy extends AbstractIntegrityChecker {
 					if (value != null && titleFound.contains(value)) {
 						I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
 						setErrorMessage(i18nAccess.getText("integrity.error.same_title", "All titles must be different."));
+						if (getComponentId(ctx) == null) {
+							setComponentId(comp.getId());
+						}
 						error++;
 					} else {
 						if (value != null) {

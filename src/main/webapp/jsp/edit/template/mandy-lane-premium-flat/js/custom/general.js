@@ -23,7 +23,7 @@ jQuery(document).ready(function(){
 	/**
 	 * Message Notify Drop Down
 	**/
-	jQuery('.messagenotify, .alertnotify').click(function(){
+	jQuery('.messagenotify, .alertnotify, .alertintegrity').click(function(){
 		var t = jQuery(this);
 		var url = t.attr('href');
 		if(t.hasClass('showmsg')) {

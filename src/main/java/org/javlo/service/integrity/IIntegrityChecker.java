@@ -35,6 +35,8 @@ public interface IIntegrityChecker {
 	 */
 	public String getComponentId(ContentContext ctx);
 	
+	public String getArea(ContentContext ctx);
+	
 	public int getErrorCount(ContentContext ctx);
 	
 	public String getLevelLabel(ContentContext ctx);

@@ -1,6 +1,8 @@
 package org.javlo.service.integrity;
 
+import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.context.ContentContext;
+import org.javlo.service.ContentService;
 
 public abstract class AbstractIntegrityChecker implements IIntegrityChecker {
 	
@@ -40,7 +42,7 @@ public abstract class AbstractIntegrityChecker implements IIntegrityChecker {
 		this.message = message;
 	}
 	
-	public void setCompId(String compId) {
+	public void setComponentId(String compId) {
 		this.compId = compId;
 	}
 	
@@ -55,6 +57,22 @@ public abstract class AbstractIntegrityChecker implements IIntegrityChecker {
 	@Override
 	public boolean isApplicableForMailing(ContentContext ctx) {
 		return true;
+	}
+	
+	@Override
+	public String getArea(ContentContext ctx) {
+		String compId = getComponentId(ctx);
+		if (compId != null) {
+			try {
+				IContentVisualComponent comp = ContentService.getInstance(ctx.getGlobalContext()).getComponent(ctx, compId);
+				if (comp != null) {
+					return comp.getArea();
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			};
+		}
+		return null;
 	}
 
 }

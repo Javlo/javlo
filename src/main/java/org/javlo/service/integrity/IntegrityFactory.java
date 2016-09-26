@@ -42,6 +42,14 @@ public class IntegrityFactory {
 		public String getLevelLabel() {
 			return checker.getLevelLabel(ctx);
 		}
+		
+		public String getComponentId() {
+			return checker.getComponentId(ctx);
+		}
+		
+		public String getArea() {
+			return checker.getArea(ctx);
+		}
 	}
 
 	private static String KEY = "integrities";
@@ -67,6 +75,16 @@ public class IntegrityFactory {
 			}
 		}
 		return false;
+	}
+	
+	public int getErrorCount() {
+		int error = 0;
+		for (IntegrityBean bean : beans) {
+			if (bean.getLevel() >= IIntegrityChecker.DANGER_LEVEL) {
+				error++;
+			}
+		}
+		return error;
 	}
 
 	public static IntegrityFactory getInstance(ContentContext ctx) {

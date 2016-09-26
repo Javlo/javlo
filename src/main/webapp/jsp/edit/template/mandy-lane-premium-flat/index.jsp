@@ -130,8 +130,8 @@
             <li class="note">
             	<a href="${info.editTemplateURL}/notifications.jsp" class="alertnotify">
                 	<span class="wrap">
-                    	<span class="thicon infoicon"></span>
-                        <span id="notification-count" class="count">${notificationSize}</span>
+                    	<span class="thicon commenticon"></span>
+                        <c:if test="${not empty notificationSize}"><span id="notification-count" class="count">${notificationSize}</span></c:if>
                     </span>
                 </a>
             </li>
@@ -145,6 +145,14 @@
                 </a>
             </li>
             </c:if>
+            <c:if test="${not empty integrities}"><li class="note">
+            	<a href="${info.editTemplateURL}/integrity.jsp?path=${info.path}" class="alertintegrity">
+                	<span class="wrap">
+                    	<span class="thicon infoicon"></span>
+                        <span id="integrity-count" class="count ${integrities.errorCount == 0?'clear':'not-clear'}">${integrities.errorCount}</span>
+                    </span>
+                </a>
+            </li></c:if>
         </ul>
         <a href="${info.currentViewURL}"><h1>${info.globalTitle}</h1></a>
     </div><!-- topheader -->
