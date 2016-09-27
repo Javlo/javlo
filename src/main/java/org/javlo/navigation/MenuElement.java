@@ -2813,16 +2813,15 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 			ContentContext newCtx = new ContentContext(ctx);
 			newCtx.setArea(null);
 			IContentComponentsList contentList = getAllContent(newCtx);
-			while (contentList.hasNext(newCtx)) {
+			while (contentList.hasNext(newCtx) && desc.linkOn == null) {
 				IContentVisualComponent elem = contentList.next(newCtx);
 				if (elem instanceof ILink && !elem.isRepeat()) {
 					res = ((ILink) elem).getURL(newCtx);
-					if (!((ILink) elem).isLinkValid(newCtx)) {
-						res = "";
+					if (((ILink) elem).isLinkValid(newCtx)) {
+						desc.linkOn = res;
 					}
 				}
-			}
-			desc.linkOn = res;
+			}			
 		}
 		return desc.linkOn;
 	}

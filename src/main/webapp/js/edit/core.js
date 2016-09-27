@@ -169,6 +169,7 @@ var openSelect = function(selector){
 
 jQuery(document).ready(function() {
 	
+	
 	jQuery( window ).mousemove(function( event ) {
 		mouseX = event.pageX;
 		mouseY = event.pageY;
@@ -359,6 +360,11 @@ jQuery(document).ready(function() {
 			    });
 		}
 	}
+	/* tooltips */
+	jQuery("[data-tooltip]").hover(function() {
+		var item = jQuery(this);
+		item.append("<div class=\"tool-tip\">"+item.data("tooltip")+"</div>");
+	});
 });
 
 jQuery.fn.extend({

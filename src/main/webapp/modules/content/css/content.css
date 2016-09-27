@@ -11,6 +11,10 @@ figcaption {
 	text-align: center;
 }
 
+h1 {
+	left: 460px;
+}
+
 i.mce-ico {
 	padding-top: 2px;
 	height: 18px;

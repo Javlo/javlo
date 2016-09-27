@@ -384,8 +384,7 @@ public abstract class ELFinder {
 			extend(out, prop("childs", toInt(children.size() > 0)));
 			List<ELFile> childDirectories = filterDirectories(children);
 			extend(out, prop("dirs", toInt(childDirectories.size() > 0)));
-		} else {
-			
+		} else {			
 			if (StringHelper.isImage(file.getFile().getName())) {
 				try {
 					/*

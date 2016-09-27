@@ -39,6 +39,7 @@ import org.javlo.component.meta.TimeRangeComponent;
 import org.javlo.component.multimedia.Multimedia;
 import org.javlo.component.text.Description;
 import org.javlo.component.text.Paragraph;
+import org.javlo.component.text.WysiwygParagraph;
 import org.javlo.component.title.SubTitle;
 import org.javlo.component.title.Title;
 import org.javlo.config.StaticConfig;
@@ -895,7 +896,7 @@ public class MacroHelper {
 				parentId = MacroHelper.addContent(lg, newPage, parentId, Title.TYPE, "", ctx.getCurrentEditUser());
 				parentId = MacroHelper.addContent(lg, newPage, parentId, Description.TYPE, "", ctx.getCurrentEditUser());
 				parentId = MacroHelper.addContent(lg, newPage, parentId, GlobalImage.TYPE, "", ctx.getCurrentEditUser());
-				parentId = MacroHelper.addContent(lg, newPage, parentId, Paragraph.TYPE, "", ctx.getCurrentEditUser());
+				parentId = MacroHelper.addContent(lg, newPage, parentId, WysiwygParagraph.TYPE, "", ctx.getCurrentEditUser());
 			}
 		} else {
 			MacroHelper.createPageStructure(ctx, newPage, pressReleaseStructure, StringHelper.isTrue(pressReleaseStructure.get("fake-content")), date, tags);

@@ -265,9 +265,9 @@ public class ImageEngine {
 	
 	public static BufferedImage scale(BufferedImage img, Integer inTargetWidth, Integer inTargetHeight, boolean hq) {
 		if (hq) {		
-			return Scalr.resize(img, Scalr.Method.ULTRA_QUALITY, Scalr.Mode.FIT_TO_WIDTH,inTargetWidth, inTargetHeight);
+			return Scalr.resize(img, Scalr.Method.ULTRA_QUALITY, Scalr.Mode.FIT_EXACT,inTargetWidth, inTargetHeight);
 		} else {
-			return Scalr.resize(img, Scalr.Method.AUTOMATIC, Scalr.Mode.FIT_TO_WIDTH,inTargetWidth, inTargetHeight);
+			return Scalr.resize(img, Scalr.Method.AUTOMATIC, Scalr.Mode.FIT_EXACT,inTargetWidth, inTargetHeight);
 		}		
 	}
 	
@@ -976,21 +976,24 @@ public class ImageEngine {
 
 		BufferedImage outImage = new BufferedImage(inWidth, inHeight, source.getType());
 		for (int x = deltaX; x < inWidth + deltaX; x++) {
+			int targetX = x - deltaX;			
 			for (int y = deltaY; y < inHeight + deltaY; y++) {
-				int targetY = y - deltaY;
-				int targetX = x - deltaX;
+				int targetY = y - deltaY;				
 				Integer imageColor = null;
 				if (bgColor != null) {
 					imageColor = bgColor.getRGB();
 				}
+				
 				if ((targetX >= ml) && (targetX < workWith + ml) && (targetY >= mt) && (targetY < workHeight + mt)) {
 					imageColor =  getColor(workImage, x+ml, y+mt, bgColor);
 				}				
-				Integer mixedColor = imageColor;
+				Integer mixedColor = imageColor;				
+				
 				if (bgColor != null && imageColor != null) {
 					mixedColor = replaceAlpha(new Color(imageColor), bgColor).getRGB();
 				}				
 				if (mixedColor != null) {
+					
 					outImage.setRGB(targetX, targetY, mixedColor);
 				}
 			}
@@ -1360,9 +1363,15 @@ public class ImageEngine {
 
 	
 	public static void main(String[] args) throws Exception {
-		System.out.println("BLK WHT : "+getColorDistanceFactor(Color.BLACK, Color.WHITE));
-		System.out.println("WHT WHT : "+getColorDistanceFactor(Color.BLACK, Color.BLACK));
-		System.out.println("BLK BLK : "+getColorDistanceFactor(Color.WHITE, Color.WHITE));
+		System.out.println("***** ImageEngine.main : START"); //TODO: remove debug trace
+		File imageSource = new File("c:/trans/square.jpg");
+		File imageTarget = new File("c:/trans/sqr_target.jpg");
+		
+		BufferedImage img = ImageIO.read(imageSource);
+		img = resize(img, 80,80,true,false,0,0,0,0,null,500,500,true,true);
+		//img = resize(img, 119, 80, false);
+		ImageIO.write(img, "jpg", imageTarget);
+		System.out.println("***** ImageEngine.main : END"); //TODO: remove debug trace
 	}
 
 	public static BufferedImage convertRGBAToIndexed(BufferedImage src) {

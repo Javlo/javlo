@@ -72,7 +72,8 @@ public class JavloELFile extends ELFile {
 				GlobalContext globalContext = GlobalContext.getSessionInstance(getContentContext().getRequest().getSession());
 				if (!ResourceHelper.isTemplateFile(globalContext, file)) {
 					String pathPrefix = FileAction.getURLPathPrefix(getContentContext());
-					String url = URLHelper.createResourceURL(getContentContext(), URLHelper.mergePath(pathPrefix, globalContext.getStaticConfig().getStaticFolder(), info.getStaticURL()));
+					//String url = URLHelper.createResourceURL(getContentContext(), URLHelper.mergePath(pathPrefix, globalContext.getStaticConfig().getStaticFolder(), info.getStaticURL()));	
+					String url = URLHelper.createResourceURL(getContentContext(), URLHelper.mergePath(pathPrefix,info.getStaticURL()));
 					return url;
 				} else {
 					String url = URLHelper.createTemplateResourceURL(getContentContext(), '/' + (info.isStaticFolder()?globalContext.getStaticConfig().getStaticFolder():"") + info.getStaticURL());
@@ -93,10 +94,10 @@ public class JavloELFile extends ELFile {
 				GlobalContext globalContext = GlobalContext.getSessionInstance(getContentContext().getRequest().getSession());
 				if (!ResourceHelper.isTemplateFile(globalContext, file)) {
 					String pathPrefix = FileAction.getURLPathPrefix(getContentContext());
-					String url = URLHelper.createResourceURL(getContentContext().getContextForAbsoluteURL(), URLHelper.mergePath(pathPrefix, globalContext.getStaticConfig().getStaticFolder(), info.getStaticURL()));
+					String url = URLHelper.createResourceURL(getContentContext().getContextForAbsoluteURL(), URLHelper.mergePath(pathPrefix, globalContext.getStaticConfig().getStaticFolder(), info.getStaticURL()));					
 					return url;
 				} else {
-					String url = URLHelper.createTemplateResourceURL(getContentContext().getContextForAbsoluteURL(), '/' + (info.isStaticFolder()?globalContext.getStaticConfig().getStaticFolder():"") + info.getStaticURL());
+					String url = URLHelper.createTemplateResourceURL(getContentContext().getContextForAbsoluteURL(), '/' + (info.isStaticFolder()?globalContext.getStaticConfig().getStaticFolder():"") + info.getStaticURL());					
 					return url;
 				}
 			} catch (Exception e) {

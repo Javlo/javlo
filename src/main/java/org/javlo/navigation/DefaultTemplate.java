@@ -86,7 +86,7 @@ public class DefaultTemplate extends Template {
 
 	@Override
 	public String getLocalWorkTemplateFolder() {
-		return "/work_template";
+		return "/wktp";
 	}
 
 	@Override

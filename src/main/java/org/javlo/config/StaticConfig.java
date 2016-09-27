@@ -26,7 +26,6 @@ import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.naming.ConfigurationException;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 

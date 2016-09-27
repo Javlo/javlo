@@ -1572,7 +1572,7 @@ public class Template implements Comparable<Template> {
 	}
 
 	public String getLocalWorkTemplateFolder() {
-		return properties.getString("work-folder", "/work_template");
+		return properties.getString("work-folder", "/wktp");
 	}
 
 	public final File getMacroFile(GlobalContext globalContext, String fileName) throws IOException {

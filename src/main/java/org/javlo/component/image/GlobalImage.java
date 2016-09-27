@@ -5,7 +5,6 @@ package org.javlo.component.image;
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintStream;
@@ -22,7 +21,6 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 import org.apache.commons.fileupload.FileItem;
-import org.javlo.component.core.ComponentBean;
 import org.javlo.component.core.ComponentContext;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.core.IImageFilter;
@@ -35,7 +33,6 @@ import org.javlo.exception.ResourceNotFoundException;
 import org.javlo.helper.ComponentHelper;
 import org.javlo.helper.ElementaryURLHelper;
 import org.javlo.helper.NetHelper;
-import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.helper.XHTMLHelper;
@@ -975,8 +972,10 @@ public class GlobalImage extends Image implements IImageFilter {
 				}
 
 				try {
-					if (getTitle().trim().length() == 0 && URLHelper.isAbsoluteURL(link)) {
-						setTitle(NetHelper.getPageTitle(NetHelper.readPage(new URL(link))));
+					if (isMeta() && getTitle().trim().length() == 0 && URLHelper.isAbsoluteURL(link)) {
+						if (ctx.getGlobalContext().getStaticConfig().isInternetAccess()) {							
+							setTitle(NetHelper.getPageTitle(NetHelper.readPage(new URL(link))));
+						}
 					}
 				} catch (Exception e) {
 					e.printStackTrace();
