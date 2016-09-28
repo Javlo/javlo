@@ -8,8 +8,10 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -213,8 +215,36 @@ public class DashboardAction extends AbstractModuleAction {
 		statCtx.setTo(new Date(now.getTime().getTime()));
 		now.add(Calendar.DAY_OF_YEAR, -30);
 		statCtx.setFrom(new Date(now.getTime().getTime()));
-
-		if (type.equals("languages")) {
+		
+		if (type.equals("year")) {
+			//Map<String, Integer> ajaxMap = new LinkedHashMap<String, Integer>();
+			String year = rs.getParameter("y", ""+now.get(Calendar.YEAR));
+			Calendar cal = Calendar.getInstance();
+			cal.set(Calendar.YEAR, Integer.parseInt(year));			
+			cal.set(Calendar.MONTH, 11);
+			cal.set(Calendar.DAY_OF_MONTH, 31);
+			cal.set(Calendar.HOUR, 23);
+			cal.set(Calendar.MINUTE, 59);
+			cal.set(Calendar.SECOND, 59);
+			statCtx.setTo(cal.getTime());
+			cal.set(Calendar.YEAR, Integer.parseInt(year));
+			cal.set(Calendar.MONTH, 0);
+			cal.set(Calendar.DAY_OF_MONTH, 1);
+			cal.set(Calendar.HOUR, 0);
+			cal.set(Calendar.MINUTE, 0);
+			cal.set(Calendar.SECOND, 0);
+			statCtx.setFrom(cal.getTime());
+			Map<Integer, Integer> map = tracker.getSessionByMonth(statCtx);
+			ObjectBuilder ajaxMap = LangHelper.object();
+			ListBuilder datas = ajaxMap.list("datas");
+			for (Map.Entry<Integer, Integer> input : map.entrySet()) {
+				cal.set(Calendar.MONTH, input.getKey());
+				String month = cal.getDisplayName(Calendar.MONTH, Calendar.LONG, new Locale(ctx.getGlobalContext().getEditLanguage(session)));
+				datas.addList().add(month).add(input.getValue());				
+			}
+			ctx.setAjaxMap(ajaxMap.getMap());
+			
+		} else if (type.equals("languages")) {
 			ObjectBuilder ajaxMap = LangHelper.object();
 			List<Entry<String, Integer>> languages = new LinkedList<Map.Entry<String, Integer>>(tracker.getLanguage(statCtx).entrySet());
 			Collections.sort(languages, new Comparator<Entry<String, Integer>>() {

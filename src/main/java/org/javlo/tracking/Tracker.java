@@ -488,6 +488,18 @@ public class Tracker {
 	public Map<Integer, Integer> getSessionByDay(StatContext statCtx) {
 		return getSessionByMoment(statCtx, Calendar.DAY_OF_WEEK);
 	}
+	
+	/**
+	 * return click by month
+	 * 
+	 * @param statCtx
+	 *            statistic context
+	 * @return a map month (Calendar) is the key count of click is the value
+	 * @throws DAOException
+	 */
+	public Map<Integer, Integer> getSessionByMonth(StatContext statCtx) {
+		return getSessionByMoment(statCtx, Calendar.MONTH);
+	}
 
 	/**
 	 * return session open by a moment define by constant in Calendar object
