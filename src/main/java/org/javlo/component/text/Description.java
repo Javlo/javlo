@@ -105,10 +105,8 @@ public class Description extends AbstractVisualComponent {
 	 * @see org.javlo.itf.IContentVisualComponent#getXHTMLCode()
 	 */
 	@Override
-	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
-		if (ctx.getRequest().getAttribute("xhtml") == null) {
-			prepareView(ctx);
-		}
+	public String getViewXHTMLCode(ContentContext ctx) throws Exception {		
+		prepareView(ctx);		
 		return ""+ctx.getRequest().getAttribute("xhtml");
 	}
 
