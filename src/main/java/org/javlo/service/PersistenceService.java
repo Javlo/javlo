@@ -9,12 +9,15 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintStream;
+import java.io.PrintWriter;
 import java.io.Reader;
+import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
@@ -198,7 +201,7 @@ public class PersistenceService {
 
 	public static int UNDO_DEPTH = 255;
 
-	private BufferedWriter trackWriter = null;
+	private PrintWriter trackWriter = null;
 
 	private String trackWriterFileName = null;
 
@@ -461,7 +464,7 @@ public class PersistenceService {
 		return outReader;
 	}
 
-	private BufferedWriter getTrackWriter(Calendar cal) throws IOException {
+	private PrintWriter getTrackWriter(Calendar cal) throws IOException {
 		int year = cal.get(Calendar.YEAR);
 		int mount = cal.get(Calendar.MONTH);
 		int day = cal.get(Calendar.DAY_OF_MONTH);
@@ -483,7 +486,9 @@ public class PersistenceService {
 			file.createNewFile();
 		}
 		trackWriterFileName = file.getName();
-		trackWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), ContentContext.CHARACTER_ENCODING));
+		FileWriter fw = new FileWriter(file, true);
+	    BufferedWriter bw = new BufferedWriter(fw);	    
+	    trackWriter = new PrintWriter(bw); 
 		return trackWriter;
 	}
 
@@ -1122,26 +1127,31 @@ public class PersistenceService {
 						countLine++;
 						try {
 							String[] trackInfo = line.split(",");
+							String userAgent = null;
+							if (trackInfo.length > 7) {
+								userAgent = trackInfo[7];
+							}
 							if (trackInfo.length > 5) {
-								track = new Track();
-								try {
-									track.setTime(Long.parseLong(trackInfo[0]));
-								} catch (NumberFormatException e) {
-									track.setTime(0);
-									logger.warning(e.getMessage());
-								}
-								track.setPath(trackInfo[1]);
-								track.setSessionId(trackInfo[2]);
-								track.setIP(trackInfo[3]);
-								track.setUserName(trackInfo[4]);
-								track.setAction(trackInfo[5]);
-								if (trackInfo.length > 6) {
-									track.setRefered(trackInfo[6]);
-								}
-								if (trackInfo.length > 7) {
-									track.setUserAgent(trackInfo[7]);
-								}
-								if (!NetHelper.isRobot(track.getUserAgent())) {
+								if (!NetHelper.isRobot(userAgent)) {
+									track = new Track();
+									try {
+										track.setTime(Long.parseLong(trackInfo[0]));
+									} catch (NumberFormatException e) {
+										track.setTime(0);
+										logger.warning(e.getMessage());
+									}
+									track.setPath(trackInfo[1]);
+									track.setSessionId(trackInfo[2]);
+									track.setIP(trackInfo[3]);
+									track.setUserName(trackInfo[4]);
+									track.setAction(trackInfo[5]);
+									if (trackInfo.length > 6) {
+										track.setRefered(trackInfo[6]);
+									}
+									if (userAgent != null) {
+										track.setUserAgent(userAgent);
+									}
+									
 									if (onlyResource) {
 										if (!track.getPath().startsWith("/view/") && !track.getPath().startsWith("/preview/") && !track.getPath().startsWith("/edit/") && !track.getPath().startsWith("/ajax/")) {
 											track.setPath(URLHelper.removeTemplateFromResourceURL(track.getPath()));
@@ -1358,9 +1368,8 @@ public class PersistenceService {
 	public void store(Track track) throws Exception {
 		Calendar cal = GregorianCalendar.getInstance();
 		cal.setTimeInMillis(track.getTime());
-		BufferedWriter writer = getTrackWriter(cal);
-		writer.write(trackToString(track));
-		writer.newLine();
+		PrintWriter writer = getTrackWriter(cal);
+		writer.println(trackToString(track));		
 	}
 
 	public void flush() {
@@ -1480,6 +1489,16 @@ public class PersistenceService {
 		} else {
 			NetHelper.sendMailToAdministrator(globalContext, "Javlo persistence Error on : " + globalContext.getContextKey(), content);
 		}
+	}
+	
+	public static void main(String[] args) throws Exception {
+		File file = new File("c:/trans/test.csv");
+		FileWriter fw = new FileWriter("c:/trans/test.csv", true);
+	    BufferedWriter bw = new BufferedWriter(fw);
+	    PrintWriter out = new PrintWriter(bw);
+		out.println("APPEND");
+		out.close();
+		
 	}
 
 }

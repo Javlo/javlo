@@ -488,7 +488,7 @@ public class Tracker {
 	public Map<Integer, Integer> getSessionByDay(StatContext statCtx) {
 		return getSessionByMoment(statCtx, Calendar.DAY_OF_WEEK);
 	}
-	
+
 	/**
 	 * return session by month
 	 * 
@@ -500,12 +500,10 @@ public class Tracker {
 	public Map<Integer, Integer> getSessionByMonth(StatContext statCtx) {
 		return getSessionByMoment(statCtx, Calendar.MONTH);
 	}
-	
+
 	public Map<Integer, Integer> getSession2ClickByMonth(StatContext statCtx) {
 		return getSession2ClickByMoment(statCtx, Calendar.MONTH);
 	}
-	
-	
 
 	/**
 	 * return session open by a moment define by constant in Calendar object
@@ -539,7 +537,7 @@ public class Tracker {
 		}
 		return res;
 	}
-	
+
 	/**
 	 * return session open by a moment define by constant in Calendar object
 	 * (sp. Calendar.DAY_OF_WEEK ).
@@ -553,24 +551,35 @@ public class Tracker {
 	 * @throws DAOException
 	 */
 	private Map<Integer, Integer> getSession2ClickByMoment(StatContext statCtx, int moment) {
-		Track[] tracks = getViewClickTracks(statCtx.getFrom(), statCtx.getTo(), statCtx.getParentPath());		
+		/* get all tracks because a "real" session is a session with get html AND ressources */
+		Track[] tracks = getClickTracks(statCtx.getFrom(), statCtx.getTo());		
 		Map<Integer, Integer> res = new HashMap<Integer, Integer>();
 		GregorianCalendar cal = new GregorianCalendar();
 		Set<String> sessionIdFound = new HashSet<String>();
 		Set<String> secondSessionIdFound = new HashSet<String>();
+		Set<String> viewSessionFound = new HashSet<String>();
+		
+		String DEBUGPath = "";
+		
 		for (int i = 1; i < tracks.length - 1; i++) {
-			if (!sessionIdFound.contains(tracks[i].getSessionId())) {
-				sessionIdFound.add(tracks[i].getSessionId());
-			} else if (!secondSessionIdFound.contains(tracks[i].getSessionId())) {
-				cal.setTimeInMillis(tracks[i].getTime());
+			Track track = tracks[i];
+			if (track.getPath().contains("/view")) {
+				DEBUGPath = track.getPath();
+				viewSessionFound.add(track.getSessionId());
+			}
+			if (!sessionIdFound.contains(track.getSessionId())) {
+				sessionIdFound.add(track.getSessionId());
+			} else if (!secondSessionIdFound.contains(track.getSessionId()) && viewSessionFound.contains(track.getSessionId())) {
+				cal.setTimeInMillis(track.getTime());
 				Integer key = new Integer(cal.get(moment));
 				Integer clicks = res.get(key);
 				if (clicks == null) {
 					clicks = new Integer(0);
 				}
 				clicks = new Integer(clicks.intValue() + 1);
-				res.put(key, clicks);
+				res.put(key, clicks);				
 				secondSessionIdFound.add(tracks[i].getSessionId());
+				System.out.println("***** Tracker.getSession2ClickByMoment : DEBUGPath = "+DEBUGPath); //TODO: remove debug trace
 			}
 		}
 		return res;
@@ -639,16 +648,12 @@ public class Tracker {
 	}
 
 	public Track[] getViewClickTracks(Date from, Date to) {
+		Track[] trackers = persistenceService.loadTracks(from, to, true, false);
+		return trackers;
+	}
 
-		String key = "getViewClickTracks_" + StringHelper.renderDate(from) + "_" + StringHelper.renderDate(to);
-		Track[] trackers = null;
-		// synchronized (cache) {
-		// trackers = (Track[]) cache.get(key);
-		if (trackers == null) {
-			trackers = persistenceService.loadTracks(from, to, true, false);
-			// cache.put(key, trackers);
-		}
-		// }
+	public Track[] getClickTracks(Date from, Date to) {
+		Track[] trackers = persistenceService.loadTracks(from, to, false, false);
 		return trackers;
 	}
 
