@@ -579,7 +579,6 @@ public class Tracker {
 				clicks = new Integer(clicks.intValue() + 1);
 				res.put(key, clicks);				
 				secondSessionIdFound.add(tracks[i].getSessionId());
-				System.out.println("***** Tracker.getSession2ClickByMoment : DEBUGPath = "+DEBUGPath); //TODO: remove debug trace
 			}
 		}
 		return res;
