@@ -70,7 +70,7 @@ import org.javlo.ztatic.StaticInfo;
 import org.xml.sax.SAXParseException;
 
 public class PersistenceService {
-	
+
 	private AtomicInteger countStore = new AtomicInteger(0);
 
 	public static final class MetaPersistenceBean {
@@ -478,7 +478,7 @@ public class PersistenceService {
 		if (!dir.exists()) {
 			dir.mkdirs();
 		}
-		
+
 		if (!file.exists()) {
 			file.createNewFile();
 		}
@@ -1141,9 +1141,9 @@ public class PersistenceService {
 								if (trackInfo.length > 7) {
 									track.setUserAgent(trackInfo[7]);
 								}
-								if (onlyResource) {
-									if (!track.getPath().startsWith("/view/") && !track.getPath().startsWith("/preview/") && !track.getPath().startsWith("/edit/") && !track.getPath().startsWith("/ajax/")) {
-										if (track.getUserAgent() == null || !track.getUserAgent().toLowerCase().contains("bot")) {
+								if (!NetHelper.isRobot(track.getUserAgent())) {
+									if (onlyResource) {
+										if (!track.getPath().startsWith("/view/") && !track.getPath().startsWith("/preview/") && !track.getPath().startsWith("/edit/") && !track.getPath().startsWith("/ajax/")) {
 											track.setPath(URLHelper.removeTemplateFromResourceURL(track.getPath()));
 											Calendar trackCal = Calendar.getInstance();
 											trackCal.setTimeInMillis(track.getTime());
@@ -1152,20 +1152,16 @@ public class PersistenceService {
 												countTrack++;
 											}
 										}
-									}
-								} else if (!onlyViewClick) {
-									if (track.getUserAgent() == null || !track.getUserAgent().toLowerCase().contains("bot")) {
+									} else if (!onlyViewClick) {
 										Calendar trackCal = Calendar.getInstance();
 										trackCal.setTimeInMillis(track.getTime());
 										if (calFrom.before(trackCal) && calTo.after(trackCal)) {
 											outCol.add(track);
 											countTrack++;
 										}
-									}
-								} else {
-									if ((track.getAction() == null) || (track.getAction().equals(Track.UNDEFINED_ACTION))) {
-										if (track.getPath() != null && track.getPath().contains("/view")) {
-											if (track.getUserAgent() == null || !track.getUserAgent().toLowerCase().contains("bot")) {
+									} else {
+										if ((track.getAction() == null) || (track.getAction().equals(Track.UNDEFINED_ACTION))) {
+											if (track.getPath() != null && track.getPath().contains("/view")) {
 												track.setPath(StringHelper.getFileNameWithoutExtension(track.getPath()));
 												Calendar trackCal = Calendar.getInstance();
 												trackCal.setTimeInMillis(track.getTime());
@@ -1299,16 +1295,16 @@ public class PersistenceService {
 	public void store(ContentContext ctx, int renderMode) throws Exception {
 		store(ctx, renderMode, true);
 	}
-	
+
 	public void store(ContentContext ctx, int renderMode, boolean async) throws Exception {
-		setAskStore(false);		
+		setAskStore(false);
 		if (async) {
 			if (countStore.incrementAndGet() > 1) {
 				logger.info("cancel storage before waiting thread found. (" + ctx.getGlobalContext().getContextKey() + ')');
 				countStore.decrementAndGet();
 				return;
 			}
-		}		
+		}
 		synchronized (ctx.getGlobalContext().getLockLoadContent()) {
 			logger.info("store in " + renderMode + " mode.");
 			PersistenceThread persThread = new PersistenceThread();
@@ -1365,6 +1361,15 @@ public class PersistenceService {
 		BufferedWriter writer = getTrackWriter(cal);
 		writer.write(trackToString(track));
 		writer.newLine();
+	}
+
+	public void flush() {
+		Calendar cal = GregorianCalendar.getInstance();
+		try {
+			getTrackWriter(cal).flush();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	void storeCurrentView(ContentContext ctx) throws IOException, ParseException {

@@ -57,6 +57,7 @@ import org.javlo.module.core.ModulesContext;
 import org.javlo.service.ContentService;
 import org.javlo.service.LogService;
 import org.javlo.service.NotificationService;
+import org.javlo.service.PersistenceService;
 import org.javlo.service.RequestService;
 import org.javlo.service.shared.SharedContentService;
 import org.javlo.template.Template;
@@ -1503,6 +1504,7 @@ public class AdminAction extends AbstractModuleAction {
 		staticConfig.clearCache();
 		TimeTracker.reset(staticConfig);
 		NotificationService.getInstance(globalContext).clearList();
+		PersistenceService.getInstance(globalContext).flush();
 		System.gc();
 		return null;
 	}

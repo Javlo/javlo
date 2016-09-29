@@ -234,7 +234,7 @@ public class DashboardAction extends AbstractModuleAction {
 			cal.set(Calendar.MINUTE, 0);
 			cal.set(Calendar.SECOND, 0);
 			statCtx.setFrom(cal.getTime());
-			Map<Integer, Integer> map = tracker.getSessionByMonth(statCtx);
+			Map<Integer, Integer> map = tracker.getSession2ClickByMonth(statCtx);
 			ObjectBuilder ajaxMap = LangHelper.object();
 			ListBuilder datas = ajaxMap.list("datas");
 			for (Map.Entry<Integer, Integer> input : map.entrySet()) {

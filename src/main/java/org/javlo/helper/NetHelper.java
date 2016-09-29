@@ -1076,6 +1076,15 @@ public class NetHelper {
 		}
 		return null;
 	}
+	
+	public static boolean isRobot(String userAgent) {
+		if (userAgent == null) {
+			return false;
+		} else {
+			userAgent = userAgent.toLowerCase();
+			return userAgent.contains("bot") || userAgent.contains("robot");
+		}
+	}
 
 	/**
 	 * remove params of a url
@@ -1161,8 +1170,6 @@ public class NetHelper {
 		   }
 
 	public static void main(String[] args) throws Exception {
-		URL url = new URL("http://www.wikipedia.org/");		
-		System.out.println("valid?:" + isURLValid(url));
-		//testIt();
+		System.out.println("bot ? "+isRobot("BOT=Mozilla/5.0 (compatible; bingbot/2.0; +http://www.bing.com/bingbot.htm)"));
 	}
 }

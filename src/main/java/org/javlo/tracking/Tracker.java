@@ -490,7 +490,7 @@ public class Tracker {
 	}
 	
 	/**
-	 * return click by month
+	 * return session by month
 	 * 
 	 * @param statCtx
 	 *            statistic context
@@ -500,6 +500,12 @@ public class Tracker {
 	public Map<Integer, Integer> getSessionByMonth(StatContext statCtx) {
 		return getSessionByMoment(statCtx, Calendar.MONTH);
 	}
+	
+	public Map<Integer, Integer> getSession2ClickByMonth(StatContext statCtx) {
+		return getSession2ClickByMoment(statCtx, Calendar.MONTH);
+	}
+	
+	
 
 	/**
 	 * return session open by a moment define by constant in Calendar object
@@ -529,6 +535,42 @@ public class Tracker {
 				clicks = new Integer(clicks.intValue() + 1);
 				res.put(key, clicks);
 				sessionIdFound.add(tracks[i].getSessionId());
+			}
+		}
+		return res;
+	}
+	
+	/**
+	 * return session open by a moment define by constant in Calendar object
+	 * (sp. Calendar.DAY_OF_WEEK ).
+	 * 
+	 * @param statCtx
+	 *            statistic context
+	 * @param moment
+	 *            a moment define by constant in Calendar object (sp.
+	 *            Calendar.DAY_OF_WEEK ).
+	 * @return a map day (Calendar) is the key count of click is the value
+	 * @throws DAOException
+	 */
+	private Map<Integer, Integer> getSession2ClickByMoment(StatContext statCtx, int moment) {
+		Track[] tracks = getViewClickTracks(statCtx.getFrom(), statCtx.getTo(), statCtx.getParentPath());		
+		Map<Integer, Integer> res = new HashMap<Integer, Integer>();
+		GregorianCalendar cal = new GregorianCalendar();
+		Set<String> sessionIdFound = new HashSet<String>();
+		Set<String> secondSessionIdFound = new HashSet<String>();
+		for (int i = 1; i < tracks.length - 1; i++) {
+			if (!sessionIdFound.contains(tracks[i].getSessionId())) {
+				sessionIdFound.add(tracks[i].getSessionId());
+			} else if (!secondSessionIdFound.contains(tracks[i].getSessionId())) {
+				cal.setTimeInMillis(tracks[i].getTime());
+				Integer key = new Integer(cal.get(moment));
+				Integer clicks = res.get(key);
+				if (clicks == null) {
+					clicks = new Integer(0);
+				}
+				clicks = new Integer(clicks.intValue() + 1);
+				res.put(key, clicks);
+				secondSessionIdFound.add(tracks[i].getSessionId());
 			}
 		}
 		return res;
