@@ -43,6 +43,42 @@ public class StringRemplacementHelper {
 		}		
 	}
 	
+	/**
+	 * add replacement only if there are no other replacement
+	 * @param sourceStart
+	 * @param sourceEnd
+	 * @param content
+	 * @throws InvalidParameterException
+	 * @return true if replacement done.
+	 */
+	public boolean addReplacementIfPossible (int sourceStart, int sourceEnd, String content) throws InvalidParameterException {
+		if (sourceStart < 0) {
+			throw new InvalidParameterException("bad start index (<0)");
+		}
+		if (sourceStart > sourceEnd) {
+			return false;
+		}
+		for (StringReplacement oldRemp : actions) { // search if remplacement in a other remplacement
+			if ((sourceStart > oldRemp.getSourceStart())&&(sourceStart < oldRemp.getSourceEnd())) {
+				return false;
+			}
+		}
+		for (StringReplacement rep : actions) {
+			if (rep.getSourceStart() >= sourceStart && rep.getSourceStart() <= sourceEnd) {
+				return false;
+			}
+			if (rep.getSourceEnd() >= sourceStart && rep.getSourceEnd() <= sourceEnd) {
+				return false;
+			}
+		}
+		StringReplacement remp = new StringReplacement();	
+		remp.setSourceStart(sourceStart);
+		remp.setSourceEnd(sourceEnd);
+		remp.setContent(content);
+		actions.add(remp);
+		return true;
+	}
+	
 	public void addReplacement (int sourceStart, int sourceEnd, String content) throws InvalidParameterException {
 		if (sourceStart < 0) {
 			throw new InvalidParameterException("bad start index (<0)");
