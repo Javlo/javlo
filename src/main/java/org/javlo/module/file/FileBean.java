@@ -146,7 +146,11 @@ public class FileBean {
 
 	public String getFreeURL() throws Exception {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-		return URLHelper.createTransformURL(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE), null, (staticInfo.isStaticFolder()?globalContext.getStaticConfig().getStaticFolder():"") + staticInfo.getStaticURL(), "free", "${info.templateName}");
+		if (StringHelper.isImage(staticInfo.getFile().getName())) {
+			return URLHelper.createTransformURL(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE), null, (staticInfo.isStaticFolder()?globalContext.getStaticConfig().getStaticFolder():"") + staticInfo.getStaticURL(), "free", "${info.templateName}");
+		} else {
+			return URLHelper.createStaticURL(ctx, staticInfo.getURL(ctx));
+		}
 	}
 
 	public StaticInfo getStaticInfo() {

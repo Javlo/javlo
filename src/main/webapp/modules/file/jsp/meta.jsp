@@ -77,7 +77,7 @@
 			<c:if test="${param.select == 'back' && !file.directory}">
 				<c:set var="fileSelectURL" value="${param[BACK_PARAM_NAME]}${file.path}" />
 			</c:if>
-			<c:set var="dataURL" value="" />
+			<c:set var="dataURL" value="" />			
 			<c:if test="${not empty param.select && !file.directory}">
 				<c:set var="dataURL" value='data-url="${file.freeURL}"' />
 			</c:if>				
@@ -91,7 +91,7 @@
 				<%--<a href="${fileSelectURL}" ${dataURL}>--%>
 				<span>${file.name}</span>
 				<%--</a>--%>
-			</div><c:if test="${file.editable}">
+			</div><c:if test="${file.editable && empty param.select}">
 			<a class="btn btn-default btn-edit" href="${info.currentURL}?editFile=${file.name}" title="${i18n.edit['global.modify']}"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></a>
 			</c:if>
 			</div>
