@@ -12,7 +12,7 @@
 <div class="upload-zone" data-url="${uploadURL}">
 <div id="meta-edit" class="form-list" >
 
-<form id="form-meta" action="${empty param.formAction?info.currentURL:param.formAction}" method="post">
+<form id="form-meta" action="${empty param.formAction?info.currentURL:param.formAction}" method="post" class="${not empty param.select?'select-form':'edit-form'}">
 
 <input type="hidden" name="webaction" value="file.updateMeta" />
 

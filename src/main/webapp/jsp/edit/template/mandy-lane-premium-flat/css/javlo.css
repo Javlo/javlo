@@ -1384,10 +1384,6 @@ body.previewEdit {
 	text-align: center;
 }
 
-.form-list .download img {
-	min-width: 90%;
-}
-
 .small .download {
 	width: 180px;
 	height: 220px;
@@ -1421,7 +1417,14 @@ body.previewEdit {
 .form-list .download a img {
 	vertical-align: middle;
 	display: inline;
-	width: 90%;
+	width: auto;
+	min-width: 75%;
+	max-width: 90%;
+	max-height: 320px;
+}
+
+.select-form .download a img {
+	max-height: 170px;
 }
 
 .form-list .picture a {
