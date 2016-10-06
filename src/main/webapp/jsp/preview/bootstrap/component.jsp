@@ -53,7 +53,7 @@ function displayComplexity(l) {
   </div></c:if>
 </div>
 </c:if>
-<div class="component-list height-to-bottom">
+<div class="component-list height-to-bottom ${globalContext.staticConfig.componentsFiltered?'display-1':''}">
 <c:set var="cat" value="" />
 <c:forEach var="comp" items="${components}">
 <c:if test="${comp.metaTitle}">
