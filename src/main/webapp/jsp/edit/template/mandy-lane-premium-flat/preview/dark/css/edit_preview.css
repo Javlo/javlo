@@ -81,3 +81,7 @@
     color: #007ce7 !important;;
     font-weight: 700;
 }
+
+#preview_command .active, #preview_command .component-list .component .active { 
+	color: #999b98 !important;;
+}
