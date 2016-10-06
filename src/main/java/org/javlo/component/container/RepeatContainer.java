@@ -56,5 +56,10 @@ public class RepeatContainer extends AbstractVisualComponent {
 			return false;
 		}
 	}
+	
+	@Override
+	public int getComplexityLevel(ContentContext ctx) {
+		return getConfig(ctx).getComplexity(COMPLEXITY_STANDARD);
+	}
 
 }

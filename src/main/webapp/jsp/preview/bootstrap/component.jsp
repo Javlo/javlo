@@ -37,6 +37,7 @@ function displayComplexity(l) {
 	pjq('#preview_command .component-list').removeClass("display-1");
 	pjq('#preview_command .component-list').removeClass("display-2");
 	pjq('#preview_command .component-list').removeClass("display-3");
+	pjq('#preview_command .component-list').removeClass("display-b");
 	pjq('#preview_command .component-list').addClass("display-"+l);
 }
 //-->
@@ -48,6 +49,8 @@ function displayComplexity(l) {
   <button type="button" class="btn btn-default btn-xs active btn-1" role="group" onclick="displayComplexity(1);">${i18n.edit['preview.component-group.basic']}</button>
   </div><div class="btn-group btn-group-sm" role="group">
   <button type="button" class="btn btn-default btn-xs btn-2" role="group" onclick="displayComplexity(2);">${i18n.edit['preview.component-group.extended']}</button>
+  </div><div class="btn-group btn-group-sm" role="group">
+  <button type="button" class="btn btn-default btn-xs btn-b" role="group" onclick="displayComplexity('b');">${i18n.edit['preview.component-group.business']}</button>
   </div><c:if test="${info.admin}"><div class="btn-group" role="group">
   <button type="button" class="btn btn-default btn-xs btn-3" role="group" onclick="displayComplexity(3);">${i18n.edit['preview.component-group.admin']}</button>
   </div></c:if>
@@ -60,7 +63,7 @@ function displayComplexity(l) {
 <c:set var="cat" value="${i18n.edit[comp.value]}" />
 </c:if><c:if test="${!comp.metaTitle}"
 ><c:set var="toolTipKey" value="content.${comp.type}.description" /><c:set var="toolTip" value="data-toggle=\"tooltip\" data-placement=\"right\" title=\"${i18n.edit[toolTipKey]}\"" />
-<div ${i18n.edit[toolTipKey] != toolTipKey?toolTip:''} class="component${comp.selected?' selected':''} component-${comp.type} complexity-${comp.complexityLevel}" data-type="${comp.type}">
+<div ${i18n.edit[toolTipKey] != toolTipKey?toolTip:''} class="component${comp.selected?' selected':''} component-${comp.type} complexity-${comp.complexityLevel} business-${comp.dynamicComponent}" data-type="${comp.type}">
 <div class="wrapper-in">
 <div class="figure"></div>
 <div class="text">
