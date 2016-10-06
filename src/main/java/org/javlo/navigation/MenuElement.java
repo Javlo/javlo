@@ -4044,6 +4044,10 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 		if (isInTrash() || isTrash()) {
 			return false;
 		} else {
+			MenuElement parent = getParent();
+			if (parent != null && !parent.isActive()) {
+				return false;
+			}
 			return active;
 		}
 	}
