@@ -977,6 +977,17 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 	}
 	
 	@Override
+	public int getComplexityLevel(ContentContext ctx) {
+		String level = properties.getProperty("complexity");
+		if (level == null) {
+			return COMPLEXITY_STANDARD;
+		} else {
+			return Integer.parseInt(level);	
+		}
+		 
+	}
+	
+	@Override
 	public Map<String, Object> getContentAsMap(ContentContext ctx) throws Exception {
 		Map<String, Object> content = super.getContentAsMap(ctx);
 		List<Map<String, Object>> contentArray = new LinkedList<Map<String, Object>>();

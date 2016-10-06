@@ -67,5 +67,10 @@ public class Slogan extends AbstractVisualComponent {
 			return "";
 		}
 	}
+	
+	@Override
+	public int getComplexityLevel(ContentContext ctx) {
+		return getConfig(ctx).getComplexity(COMPLEXITY_STANDARD);
+	}
 
 }

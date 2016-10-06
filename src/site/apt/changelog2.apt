@@ -777,5 +777,7 @@ change log
  * 2/ display integrity in edit mode / default template folder : wktp / correct image editor / correct image resize on height/ link on correction / GlobalImage link correction
  
  * 3/ display access by mount on one year / reverse link with same string bug correction
+ 
+ * 4/ replaceJSTLData optimisation + replaceJSTLData in page reference
 
  

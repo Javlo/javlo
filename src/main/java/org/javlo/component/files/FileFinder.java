@@ -272,4 +272,10 @@ public class FileFinder extends AbstractPropertiesComponent implements IUploadRe
 		return true;
 	}
 	
+	@Override
+	public int getComplexityLevel(ContentContext ctx) {
+		return getConfig(ctx).getComplexity(COMPLEXITY_STANDARD);
+	}
+
+	
 }

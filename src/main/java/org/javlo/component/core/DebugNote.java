@@ -216,7 +216,7 @@ public class DebugNote extends AbstractPropertiesComponent {
 
 	@Override
 	public int getComplexityLevel(ContentContext ctx) {
-		return getConfig(ctx).getComplexity(COMPLEXITY_EASY);
+		return getConfig(ctx).getComplexity(COMPLEXITY_STANDARD);
 	}
 
 	@Override
@@ -234,5 +234,7 @@ public class DebugNote extends AbstractPropertiesComponent {
 		}
 		return msg;
 	}
+	
+	
 
 }

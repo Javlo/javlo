@@ -100,6 +100,11 @@ public class UserLogin extends AbstractVisualComponent implements IAction {
 	public boolean isRealContent(ContentContext ctx) {
 		return true;
 	}
+	
+	@Override
+	public int getComplexityLevel(ContentContext ctx) {
+		return getConfig(ctx).getComplexity(COMPLEXITY_ADMIN);
+	}
 
 	
 }

@@ -40,8 +40,10 @@ import java.util.regex.Pattern;
 
 import javax.servlet.ServletContext;
 
+import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.text.WordUtils;
 import org.javlo.component.core.ComponentFactory;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.form.FormComponent;
@@ -2103,44 +2105,66 @@ public class XHTMLHelper {
 		return writer.toString();
 	}
 
-	public static String replaceJSTLData(ContentContext ctx, String xhtml) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, UnsupportedEncodingException {
+	public static String replaceJSTLData(ContentContext ctx, String xhtml) throws Exception {
+		if (!xhtml.contains("${")) {
+			return xhtml;
+		}
 		Collection<String> params = StringHelper.extractItem(xhtml, "${param.", "}");
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
 		for (String param : params) {
 			xhtml = xhtml.replace("${param." + param + "}", URLDecoder.decode(requestService.getParameter(param, ""), ContentContext.CHARACTER_ENCODING));
 		}
-		InfoBean infoBean = InfoBean.getCurrentInfoBean(ctx.getRequest());
+		
+		InfoBean infoBean = InfoBean.getCurrentInfoBean(ctx.getRequest());		
 		if (infoBean == null) {
 			return xhtml;
-		}
-		Map<String, String> properties = BeanHelper.cachedDescribe(infoBean);
-		for (String key : properties.keySet()) {
-			String jstlStr = "${" + InfoBean.REQUEST_KEY + '.' + key + '}';
-			if (properties.get(key) != null) {
-				xhtml = xhtml.replace(jstlStr, properties.get(key).toString());
+		}		
+		infoBean = InfoBean.createInfoBean(ctx);		
+		//Map<String, String> properties = BeanHelper.cachedDescribe(infoBean);
+		//Map<String, String> properties = BeanUtils.describe(infoBean);
+		params = StringHelper.extractItem(xhtml, "${"+InfoBean.REQUEST_KEY+".", "}");
+		for (String param : params) {			
+			String val = (String)BeanHelper.getProperty(infoBean, param);
+			if (val != null) {
+				xhtml = xhtml.replace("${"+InfoBean.REQUEST_KEY+"." + param + "}", val);
 			}
 		}
-		properties = BeanHelper.cachedDescribe(infoBean.getPage());
+		/*for (String key : properties.keySet()) {
+			String jstlStr = "${" + InfoBean.REQUEST_KEY + '.' + key + '}';
+			if (properties.get(key) != null && xhtml.contains(jstlStr)) {
+				xhtml = xhtml.replace(jstlStr, properties.get(key).toString());
+			}
+		}*/
+		if (!xhtml.contains("${")) {		
+			return xhtml;
+		}
+		//properties = BeanHelper.cachedDescribe(infoBean.getPage());
+		Map<String, String> properties = BeanUtils.describe(infoBean.getPage());
 		for (String key : properties.keySet()) {
 			String jstlStr = "${" + InfoBean.REQUEST_KEY + ".page." + key + '}';
-			if (properties.get(key) != null) {
+			if (properties.get(key) != null && xhtml.contains(jstlStr)) {
 				xhtml = xhtml.replace(jstlStr, properties.get(key).toString());
 			}
 		}
+		if (!xhtml.contains("${")) {
+			return xhtml;
+		}
 		if (Basket.isInstance(ctx)) {
-			properties = BeanHelper.cachedDescribe(Basket.getInstance(ctx));
+			//properties = BeanHelper.cachedDescribe(Basket.getInstance(ctx));
+			properties = BeanUtils.describe(Basket.getInstance(ctx));
 			for (String key : properties.keySet()) {
 				String jstlStr = "${" + Basket.KEY + '.' + key + '}';
-				if (properties.get(key) != null) {
+				if (properties.get(key) != null && xhtml.contains(jstlStr)) {
 					xhtml = xhtml.replace(jstlStr, properties.get(key).toString());
 				}
 			}
-		}
+		}		
 		return xhtml;
 	}
 
 	public static String replaceJSTLUserInfo(String xhtml, IUserInfo userInfo) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, UnsupportedEncodingException {
-		Map<String, String> properties = BeanHelper.cachedDescribe(userInfo);
+		//Map<String, String> properties = BeanHelper.cachedDescribe(userInfo);
+		Map<String, String> properties = BeanUtils.describe(userInfo);
 		for (String key : properties.keySet()) {
 			String jstlStr = "${user." + key + '}';
 			if (properties.get(key) != null) {

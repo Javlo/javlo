@@ -119,5 +119,10 @@ public class Map extends AbstractVisualComponent {
 	public String getHexColor() {
 		return WEB2_COLOR;
 	}
+	
+	@Override
+	public int getComplexityLevel(ContentContext ctx) {
+		return getConfig(ctx).getComplexity(COMPLEXITY_ADMIN);
+	}
 
 }

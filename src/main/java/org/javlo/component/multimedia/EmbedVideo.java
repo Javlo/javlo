@@ -43,5 +43,11 @@ public class EmbedVideo extends Video implements IAction {
 		String url = "/expcomp/" + getId() + ".html";
 		return URLHelper.createStaticURL(ctx, url);
 	}
+	
+	@Override
+	public int getComplexityLevel(ContentContext ctx) {
+		return getConfig(ctx).getComplexity(COMPLEXITY_STANDARD);
+	}
+
 
 }

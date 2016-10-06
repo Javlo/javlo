@@ -608,5 +608,10 @@ public class MirrorComponent extends AbstractVisualComponent implements IFieldCo
 	public boolean isMirroredByDefault(ContentContext ctx) {	
 		return false;
 	}
+	
+	@Override
+	public int getComplexityLevel(ContentContext ctx) {
+		return getConfig(ctx).getComplexity(COMPLEXITY_STANDARD);
+	}
 
 }

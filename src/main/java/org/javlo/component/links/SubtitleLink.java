@@ -94,5 +94,11 @@ public class SubtitleLink extends AbstractVisualComponent {
 	public String getHexColor() {
 		return IContentVisualComponent.LINK_COLOR;
 	}
+	
+	@Override
+	public int getComplexityLevel(ContentContext ctx) {
+		return getConfig(ctx).getComplexity(COMPLEXITY_STANDARD);
+	}
+
 
 }

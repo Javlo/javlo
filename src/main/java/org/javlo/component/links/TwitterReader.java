@@ -207,5 +207,10 @@ public class TwitterReader extends AbstractVisualComponent {
 		JSONMap.JSON.toJson(maps, strWriter);
 		ctx.getRequest().setAttribute("json", strWriter.toString());
 	}
+	
+	@Override
+	public int getComplexityLevel(ContentContext ctx) {
+		return getConfig(ctx).getComplexity(COMPLEXITY_ADMIN);
+	}
 
 }

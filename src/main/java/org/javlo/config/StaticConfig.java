@@ -1571,7 +1571,7 @@ public class StaticConfig extends Observable {
 	}
 	
 	public String getImageFormat() {
-		return properties.getString("content.image-format", "png,pdf,jpg,jpeg,gif");
+		return properties.getString("content.image-format", "png,jpg,jpeg,gif");
 	}
 	
 	/**
@@ -1588,6 +1588,10 @@ public class StaticConfig extends Observable {
 	
 	public boolean isJsessionID() {
 		return properties.getBoolean("url.jsessionid", false);
+	}
+	
+	public boolean isComponentsFiltered() {
+		return properties.getBoolean("components.filtered", true);
 	}
 	
 	public List<String> getDocumentExtension() {

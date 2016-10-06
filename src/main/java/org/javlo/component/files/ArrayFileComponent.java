@@ -245,9 +245,9 @@ public class ArrayFileComponent extends GenericFile {
 
 	@Override
 	public int getComplexityLevel(ContentContext ctx) {
-		return COMPLEXITY_EASY;
+		return getConfig(ctx).getComplexity(COMPLEXITY_STANDARD);
 	}
-
+	
 	@Override
 	public String getHexColor() {
 		return TEXT_COLOR;
@@ -1002,5 +1002,7 @@ public class ArrayFileComponent extends GenericFile {
 		
 		
 	}
+	
+	
 
 }

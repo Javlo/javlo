@@ -66,5 +66,10 @@ public class PDFLink extends AbstractVisualComponent {
 		setValue("pdf");
 		return true;
 	}
+	
+	@Override
+	public int getComplexityLevel(ContentContext ctx) {
+		return getConfig(ctx).getComplexity(COMPLEXITY_STANDARD);
+	}
 
 }

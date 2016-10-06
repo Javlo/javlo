@@ -94,6 +94,21 @@ public class InfoBean {
 		return ib;
 	}
 	
+	/**
+	 * create info bean but don't put in request.
+	 * 
+	 * @param ctx
+	 * @throws Exception
+	 */
+	public static InfoBean createInfoBean(ContentContext ctx) throws Exception {
+		InfoBean info = new InfoBean();
+
+		info.currentPage = ctx.getCurrentPage();
+		info.ctx = ctx;
+		info.globalContext = GlobalContext.getInstance(ctx.getRequest());
+		return info;
+	}
+	
 	
 	/**
 	 * create info bean in request (key=info) for jstp call in template.
@@ -102,14 +117,8 @@ public class InfoBean {
 	 * @throws Exception
 	 */
 	public static InfoBean updateInfoBean(ContentContext ctx) throws Exception {
-		InfoBean info = new InfoBean();
-
-		info.currentPage = ctx.getCurrentPage();
-		info.ctx = ctx;
-		info.globalContext = GlobalContext.getInstance(ctx.getRequest());
-
+		InfoBean info = createInfoBean(ctx);
 		ctx.getRequest().setAttribute(REQUEST_KEY, info);
-
 		return info;
 	}
 
@@ -123,7 +132,11 @@ public class InfoBean {
 		StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
 		return staticConfig.getCmsName();
 	}
-
+	
+	public ContentContext getContentContext() {
+		return ctx;
+	}
+	
 	public String getCurrentAbsoluteURL() {
 		return URLHelper.createURL(ctx.getContextForAbsoluteURL());
 	}

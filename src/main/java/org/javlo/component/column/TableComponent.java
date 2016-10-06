@@ -312,7 +312,7 @@ public abstract class TableComponent extends AbstractPropertiesComponent {
 		String borderSize = getFieldValue("bordersize");
 		if (borderSize.length()>0 && StringHelper.isDigit(borderSize)) {
 			setFieldValue("bordersize", borderSize+"px");
-		}
+		}	
 		return msg;
 	}
 
@@ -323,6 +323,11 @@ public abstract class TableComponent extends AbstractPropertiesComponent {
 	 */
 	public boolean isRowBreak() {
 		return false;
-	}	
+	}
+	
+	@Override
+	public int getComplexityLevel(ContentContext ctx) {
+		return getConfig(ctx).getComplexity(COMPLEXITY_STANDARD);
+	}
 
 }

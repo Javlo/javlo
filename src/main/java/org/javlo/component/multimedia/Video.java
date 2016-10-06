@@ -667,4 +667,10 @@ public class Video extends GlobalImage implements IAction, IVideo {
 		}
 		return msg;
 	}
+	
+	@Override
+	public int getComplexityLevel(ContentContext ctx) {
+		return getConfig(ctx).getComplexity(COMPLEXITY_STANDARD);
+	}
+
 }

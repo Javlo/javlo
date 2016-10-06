@@ -261,5 +261,10 @@ public class EventRegistration extends AbstractPropertiesComponent implements IA
 		Collections.sort(outUsers, new SortUserOnLabel());
 		return outUsers;
 	}
+	
+	@Override
+	public int getComplexityLevel(ContentContext ctx) {
+		return getConfig(ctx).getComplexity(COMPLEXITY_STANDARD);
+	}
 
 }

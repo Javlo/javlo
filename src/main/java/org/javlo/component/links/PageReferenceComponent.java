@@ -219,10 +219,11 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 			}
 			bean.subTitle = page.getSubTitle(lgCtx);
 			bean.label = page.getLabel(lgCtx);
-			bean.realContent = page.isRealContent(lgCtx);
-			bean.attTitle = XHTMLHelper.stringToAttribute(page.getTitle(lgCtx));
-			bean.description = page.getDescription(lgCtx);
-			bean.xhtmlDescription = page.getXHTMLDescription(lgCtx);
+			//bean.realContent = page.isRealContent(lgCtx);
+			bean.attTitle = XHTMLHelper.stringToAttribute(page.getTitle(lgCtx));			
+			/*tagCtx.setCurrentPageCached(page);
+			bean.description = XHTMLHelper.replaceJSTLData(tagCtx, page.getDescription(lgCtx));			
+			bean.xhtmlDescription = XHTMLHelper.replaceJSTLData(tagCtx, page.getXHTMLDescription(lgCtx));*/
 			bean.location = page.getLocation(lgCtx);
 			bean.category = page.getCategory(lgCtx);
 			bean.visible = page.isVisible();
@@ -415,8 +416,8 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		private String subTitle = null;
 		private String label = null;
 		private String attTitle = null;
-		private String description = null;
-		private String xhtmlDescription = null;
+		/*private String description = null;
+		private String xhtmlDescription = null;*/
 		private String location = null;
 		private String category = null;
 		private String categoryLabel = null;
@@ -450,7 +451,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		private boolean childrenOfAssociation = false;
 		private boolean childrenAssociation = false;
 		private boolean mailing = false;
-		private boolean realContent = false;
+		//private boolean realContent = false;
 		private boolean visible = false;
 		private boolean currentUserAsRight = false;
 		private Collection<Link> links = new LinkedList<Link>();
@@ -483,12 +484,26 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 			return date;
 		}
 
-		public String getDescription() {
-			return description;
+		public String getDescription() {			
+			try {
+				ContentContext newPageCtx = new ContentContext(ctx);
+				newPageCtx.setCurrentPageCached(page);
+				return XHTMLHelper.replaceJSTLData(newPageCtx, page.getDescription(lgCtx));
+			} catch (Exception e) {
+				e.printStackTrace();
+				return null;
+			}
 		}
 
 		public String getXhtmlDescription() {
-			return xhtmlDescription;
+			try {
+				ContentContext newPageCtx = new ContentContext(ctx);
+				newPageCtx.setCurrentPageCached(page);
+				return XHTMLHelper.replaceJSTLData(newPageCtx, page.getXHTMLDescription(lgCtx));
+			} catch (Exception e) {
+				e.printStackTrace();
+				return null;
+			}
 		}
 
 		public DateBean getEndDate() {
@@ -589,7 +604,13 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		}
 
 		public boolean isRealContent() {
-			return realContent;
+			//return realContent;
+			try {
+				return page.isRealContent(ctx);
+			} catch (Exception e) {			
+				e.printStackTrace();
+				return false;
+			}			
 		}
 
 		public boolean isSelected() {
@@ -1215,7 +1236,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 
 	@Override
 	public int getComplexityLevel(ContentContext ctx) {
-		return COMPLEXITY_EASY;
+		return getConfig(ctx).getComplexity(COMPLEXITY_STANDARD);
 	}
 
 	private String getContentTitle() {
@@ -2408,5 +2429,5 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 	public String getContentAsText(ContentContext ctx) {
 		return getContentTitle();
 	}
-
+	
 }

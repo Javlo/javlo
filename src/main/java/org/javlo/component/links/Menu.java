@@ -146,5 +146,10 @@ public class Menu extends AbstractPropertiesComponent {
 			return false;
 		}
 	}
+	
+	@Override
+	public int getComplexityLevel(ContentContext ctx) {
+		return getConfig(ctx).getComplexity(COMPLEXITY_ADMIN);
+	}
 
 }

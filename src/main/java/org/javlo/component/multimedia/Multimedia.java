@@ -1213,5 +1213,11 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 		setStyle(ctx, IMAGE);
 		return out;
 	}
+	
+	@Override
+	public int getComplexityLevel(ContentContext ctx) {
+		return getConfig(ctx).getComplexity(COMPLEXITY_STANDARD);
+	}
+
 
 }

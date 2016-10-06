@@ -236,5 +236,10 @@ public class FreeTextList extends AbstractVisualComponent {
 	public boolean isRealContent(ContentContext ctx) {
 		return getValue() != null && getValue().length() > 0;
 	}
+	
+	@Override
+	public int getComplexityLevel(ContentContext ctx) {
+		return getConfig(ctx).getComplexity(COMPLEXITY_STANDARD);
+	}
 
 }

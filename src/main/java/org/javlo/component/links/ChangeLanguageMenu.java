@@ -159,7 +159,8 @@ public class ChangeLanguageMenu extends AbstractVisualComponent {
 
 	@Override
 	public int getComplexityLevel(ContentContext ctx) {
-		return AbstractVisualComponent.COMPLEXITY_STANDARD;
+		return getConfig(ctx).getComplexity(COMPLEXITY_STANDARD);
 	}
+
 
 }

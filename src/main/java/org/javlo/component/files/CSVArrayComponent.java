@@ -57,7 +57,7 @@ public class CSVArrayComponent extends AbstractFileComponent {
 
 	@Override
 	public int getComplexityLevel(ContentContext ctx) {
-		return COMPLEXITY_EASY;
+		return getConfig(ctx).getComplexity(COMPLEXITY_STANDARD);
 	}
 
 	@Override
@@ -331,5 +331,5 @@ public class CSVArrayComponent extends AbstractFileComponent {
 	public boolean isUploadOnDrop() {
 		return false;
 	}
-
+	
 }

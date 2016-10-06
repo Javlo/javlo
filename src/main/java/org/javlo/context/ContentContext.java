@@ -1256,8 +1256,8 @@ public class ContentContext {
 		response.addCookie(cookie);
 	}
 
-	public void setCurrentPageCached(MenuElement currentPageCached) throws Exception {
-		this.currentPageCached = currentPageCached;
+	public void setCurrentPageCached(MenuElement currentPageCached) throws Exception {		
+		this.currentPageCached = currentPageCached;		
 	}
 
 	public void resetCurrentPageCached() {

@@ -34,5 +34,10 @@ public class Code extends AbstractVisualComponent {
 	protected String getTag(ContentContext ctx) {
 		return "code";
 	}
+	
+	@Override
+	public int getComplexityLevel(ContentContext ctx) {
+		return getConfig(ctx).getComplexity(COMPLEXITY_STANDARD);
+	}
 
 }

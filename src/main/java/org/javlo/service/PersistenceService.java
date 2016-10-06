@@ -17,7 +17,6 @@ import java.io.OutputStreamWriter;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.Reader;
-import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
@@ -205,6 +204,8 @@ public class PersistenceService {
 
 	private String trackWriterFileName = null;
 
+	private Properties trackCache = null;
+
 	public static final Date parseDate(String date) throws ParseException {
 		synchronized (PERSISTENCE_DATE_FORMAT) {
 			try {
@@ -305,11 +306,13 @@ public class PersistenceService {
 
 		if (!canRedo()) {
 			int workVersion = getVersion() + 1;
-			File file = new File(getDirectory() + "/content_" + ContentContext.PREVIEW_MODE + '_' + workVersion + ".xml");
+			File file = new File(
+					getDirectory() + "/content_" + ContentContext.PREVIEW_MODE + '_' + workVersion + ".xml");
 			while (file.exists()) {
 				workVersion++;
 				file.delete();
-				file = new File(getDirectory() + "/content_" + ContentContext.PREVIEW_MODE + '_' + workVersion + ".xml");
+				file = new File(
+						getDirectory() + "/content_" + ContentContext.PREVIEW_MODE + '_' + workVersion + ".xml");
 			}
 		}
 
@@ -326,7 +329,8 @@ public class PersistenceService {
 
 	public void correctAllFiles() {
 		// synchronized (MenuElement.LOCK_ACCESS) {
-		File currentPreview = new File(getDirectory() + "/content_" + ContentContext.PREVIEW_MODE + '_' + getVersion() + ".xml");
+		File currentPreview = new File(
+				getDirectory() + "/content_" + ContentContext.PREVIEW_MODE + '_' + getVersion() + ".xml");
 		File currentView = new File(getDirectory() + "/content_" + ContentContext.VIEW_MODE + ".xml");
 
 		correctFile(currentPreview);
@@ -342,7 +346,8 @@ public class PersistenceService {
 		File[] backupView = new File(getBackupDirectory()).listFiles(BackupViewFileFilter.instance);
 		if (backupView != null) {
 			for (File zip : backupView) {
-				String timeCode = zip.getName().replaceAll("content_" + ContentContext.VIEW_MODE + ".", "").replaceAll(".xml", "").replaceAll(".zip", "");
+				String timeCode = zip.getName().replaceAll("content_" + ContentContext.VIEW_MODE + ".", "")
+						.replaceAll(".xml", "").replaceAll(".zip", "");
 				try {
 					Date publishTime = StringHelper.parseSecondFileTime(timeCode);
 					outList.add(new MetaPersistenceBean(0, StringHelper.renderSortableTime(publishTime), "published"));
@@ -357,11 +362,13 @@ public class PersistenceService {
 		if (backupPreview != null) {
 			for (File file : backupPreview) {
 				if (!file.getName().endsWith(".error")) {
-					String version = file.getName().replaceAll("content_" + ContentContext.PREVIEW_MODE + ".", "").replaceAll(".xml", "").replaceAll(".zip", "");
+					String version = file.getName().replaceAll("content_" + ContentContext.PREVIEW_MODE + ".", "")
+							.replaceAll(".xml", "").replaceAll(".zip", "");
 					int versionInteger = -1;
 					try {
 						versionInteger = Integer.parseInt(version);
-						outList.add(new MetaPersistenceBean(versionInteger, StringHelper.renderSortableTime(new Date(file.lastModified())), "preview"));
+						outList.add(new MetaPersistenceBean(versionInteger,
+								StringHelper.renderSortableTime(new Date(file.lastModified())), "preview"));
 					} catch (NumberFormatException e) {
 						logger.warning("bad file name format : " + file.getName());
 					}
@@ -418,7 +425,8 @@ public class PersistenceService {
 		File[] backupView = new File(getBackupDirectory()).listFiles(BackupViewFileFilter.instance);
 		if (backupView != null) {
 			for (File zip : backupView) {
-				String timeCode = zip.getName().replaceAll("content_" + ContentContext.VIEW_MODE + ".", "").replaceAll(".xml", "").replaceAll(".zip", "");
+				String timeCode = zip.getName().replaceAll("content_" + ContentContext.VIEW_MODE + ".", "")
+						.replaceAll(".xml", "").replaceAll(".zip", "");
 				try {
 					Date publishTime = StringHelper.parseSecondFileTime(timeCode);
 					out.put(zip, publishTime);
@@ -464,6 +472,39 @@ public class PersistenceService {
 		return outReader;
 	}
 
+	public synchronized Properties getTrackCache() {
+		if (trackCache == null) {
+			trackCache = new Properties();
+			File file = new File(getTrackingDirectory() + "/cache.properties");
+			FileInputStream in = null;
+			try {
+				in = new FileInputStream(file);
+				trackCache.load(in);
+			} catch (IOException e) {
+				e.printStackTrace();
+			} finally {
+				ResourceHelper.closeResource(in);
+			}
+		}
+		return trackCache;
+	}
+
+	public synchronized void storeTrackCache() {
+		if (trackCache == null) {
+			return;
+		}
+		File file = new File(getTrackingDirectory() + "/cache.properties");
+		FileOutputStream out = null;
+		try {
+			out = new FileOutputStream(file);
+			trackCache.store(out, "");
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			ResourceHelper.closeResource(out);
+		}
+	}
+
 	private PrintWriter getTrackWriter(Calendar cal) throws IOException {
 		int year = cal.get(Calendar.YEAR);
 		int mount = cal.get(Calendar.MONTH);
@@ -487,8 +528,8 @@ public class PersistenceService {
 		}
 		trackWriterFileName = file.getName();
 		FileWriter fw = new FileWriter(file, true);
-	    BufferedWriter bw = new BufferedWriter(fw);	    
-	    trackWriter = new PrintWriter(bw); 
+		BufferedWriter bw = new BufferedWriter(fw);
+		trackWriter = new PrintWriter(bw);
 		return trackWriter;
 	}
 
@@ -596,7 +637,8 @@ public class PersistenceService {
 			bean.setHiddenModes(hiddenModes);
 			bean.setAuthors(authors);
 			try {
-				bean.setModificationDate(parseDate(contentNode.getAttributeValue("modificationDate", "01/01/1970 00:00:00")));
+				bean.setModificationDate(
+						parseDate(contentNode.getAttributeValue("modificationDate", "01/01/1970 00:00:00")));
 			} catch (ParseException e) {
 				e.printStackTrace();
 			}
@@ -620,7 +662,8 @@ public class PersistenceService {
 
 	}
 
-	public MenuElement insertPage(GlobalContext globalContext, NodeXML pageXML, MenuElement parent, Map<MenuElement, String[]> vparentPreparation, String defaultLg) throws StructureException, IOException {
+	public MenuElement insertPage(GlobalContext globalContext, NodeXML pageXML, MenuElement parent,
+			Map<MenuElement, String[]> vparentPreparation, String defaultLg) throws StructureException, IOException {
 
 		MenuElement page = MenuElement.getInstance(globalContext);
 
@@ -699,7 +742,8 @@ public class PersistenceService {
 		page.setValidationDate(validationDate);
 		page.setBlocked(StringHelper.isTrue(pageXML.getAttributeValue("blocked", "false")));
 		page.setBlocker(pageXML.getAttributeValue("blocker", ""));
-		page.setSeoWeight(StringHelper.parseInt(pageXML.getAttributeValue("seoWeight", null), MenuElement.SEO_HEIGHT_INHERITED));
+		page.setSeoWeight(
+				StringHelper.parseInt(pageXML.getAttributeValue("seoWeight", null), MenuElement.SEO_HEIGHT_INHERITED));
 
 		page.setChildrenAssociation(StringHelper.isTrue(pageXML.getAttributeValue("childrenAssociation", null)));
 		page.setChangeNotification(StringHelper.isTrue(pageXML.getAttributeValue("changeNotification", "false")));
@@ -761,7 +805,8 @@ public class PersistenceService {
 	 * @throws ServiceException
 	 * @throws InterruptedException
 	 */
-	protected LoadingBean load(ContentContext ctx, Object in, Map<String, String> contentAttributeMap, int renderMode) throws ServiceException, InterruptedException {
+	protected LoadingBean load(ContentContext ctx, Object in, Map<String, String> contentAttributeMap, int renderMode)
+			throws ServiceException, InterruptedException {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		MenuElement root = MenuElement.getInstance(globalContext);
 
@@ -794,13 +839,16 @@ public class PersistenceService {
 				root.setPriority(Integer.parseInt(page.getAttributeValue("priority")));
 				root.setVisible(StringHelper.isTrue(page.getAttributeValue("visible", "false")));
 				root.setActive(StringHelper.isTrue(page.getAttributeValue("active", "true")));
-				root.setSeoWeight(StringHelper.parseInt(page.getAttributeValue("seoWeight", null), MenuElement.SEO_HEIGHT_INHERITED));
+				root.setSeoWeight(StringHelper.parseInt(page.getAttributeValue("seoWeight", null),
+						MenuElement.SEO_HEIGHT_INHERITED));
 				root.setHttps(StringHelper.isTrue(page.getAttributeValue("https", "false")));
 				root.setCreator(page.getAttributeValue("creator", ""));
 
 				try {
-					root.setCreationDate(StringHelper.parseDate(page.getAttributeValue("creationDate", StringHelper.renderTime(new Date()))));
-					root.setModificationDate(StringHelper.parseDate(page.getAttributeValue("modificationDate", StringHelper.renderTime(new Date()))));
+					root.setCreationDate(StringHelper
+							.parseDate(page.getAttributeValue("creationDate", StringHelper.renderTime(new Date()))));
+					root.setModificationDate(StringHelper.parseDate(
+							page.getAttributeValue("modificationDate", StringHelper.renderTime(new Date()))));
 				} catch (ParseException e) {
 					e.printStackTrace();
 				}
@@ -889,7 +937,9 @@ public class PersistenceService {
 
 		} catch (SAXParseException e) {
 			// e.printStackTrace();
-			MessageRepository.getInstance(ctx).setGlobalMessageAndNotification(ctx, new GenericMessage("error XML parsing (line:" + e.getLineNumber() + " col:" + e.getColumnNumber() + "): " + e.getMessage(), GenericMessage.ERROR, ""));
+			MessageRepository.getInstance(ctx).setGlobalMessageAndNotification(ctx,
+					new GenericMessage("error XML parsing (line:" + e.getLineNumber() + " col:" + e.getColumnNumber()
+							+ "): " + e.getMessage(), GenericMessage.ERROR, ""));
 			root.setId("0");
 			root.setName("root");
 			root.setPriority(10);
@@ -897,7 +947,8 @@ public class PersistenceService {
 			outBean.setError(true);
 		} catch (Exception e) {
 			// e.printStackTrace();
-			MessageRepository.getInstance(ctx).setGlobalMessageAndNotification(ctx, new GenericMessage("error XML loading : " + e.getMessage(), GenericMessage.ERROR, ""));
+			MessageRepository.getInstance(ctx).setGlobalMessageAndNotification(ctx,
+					new GenericMessage("error XML loading : " + e.getMessage(), GenericMessage.ERROR, ""));
 			root.setId("0");
 			root.setName("root");
 			root.setPriority(10);
@@ -911,7 +962,8 @@ public class PersistenceService {
 
 	}
 
-	public MenuElement load(ContentContext ctx, int renderMode, Map<String, String> contentAttributeMap, Date timeTravelDate) throws Exception {
+	public MenuElement load(ContentContext ctx, int renderMode, Map<String, String> contentAttributeMap,
+			Date timeTravelDate) throws Exception {
 		return load(ctx, renderMode, contentAttributeMap, timeTravelDate, true, null);
 	}
 
@@ -938,7 +990,8 @@ public class PersistenceService {
 		return load(ctx, ContentContext.PREVIEW_MODE, null, null, true, version);
 	}
 
-	protected MenuElement load(ContentContext ctx, int renderMode, Map<String, String> contentAttributeMap, Date timeTravelDate, boolean correctXML, Integer previewVersion) throws Exception {
+	protected MenuElement load(ContentContext ctx, int renderMode, Map<String, String> contentAttributeMap,
+			Date timeTravelDate, boolean correctXML, Integer previewVersion) throws Exception {
 		int timeTrackerNumber = TimeTracker.start(ctx.getGlobalContext().getContextKey(), "load");
 		if (contentAttributeMap == null) {
 			contentAttributeMap = new HashMap(); // fake map
@@ -975,7 +1028,8 @@ public class PersistenceService {
 						zip = new ZipInputStream(new FileInputStream(minBackup.getKey()));
 						ZipEntry entry = zip.getNextEntry();
 						while (entry != null) {
-							if (ResourceHelper.getFile(entry.getName()).equals("content_" + ContentContext.VIEW_MODE + ".xml")) {
+							if (ResourceHelper.getFile(entry.getName())
+									.equals("content_" + ContentContext.VIEW_MODE + ".xml")) {
 								in = zip;
 								break;
 							}
@@ -1052,7 +1106,8 @@ public class PersistenceService {
 			ResourceHelper.copyFile(file, new File(file.getAbsolutePath() + ".error"), true);
 			BufferedWriter writer = null;
 			try {
-				writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), ContentContext.CHARACTER_ENCODING));
+				writer = new BufferedWriter(
+						new OutputStreamWriter(new FileOutputStream(file), ContentContext.CHARACTER_ENCODING));
 				for (char c : content.toCharArray()) {
 					if (XMLChar.isValid(c)) {
 						writer.write(c);
@@ -1108,14 +1163,16 @@ public class PersistenceService {
 
 		int countTrack = 0;
 
-		logger.fine("load track from:" + StringHelper.renderTime(from) + " to:" + StringHelper.renderTime(to) + " only view:" + onlyViewClick + " only resource:" + onlyResource);
+		logger.fine("load track from:" + StringHelper.renderTime(from) + " to:" + StringHelper.renderTime(to)
+				+ " only view:" + onlyViewClick + " only resource:" + onlyResource);
 
 		tmpCal.setTime(calFrom.getTime());
 
 		int countBcl = 0;
 		int countLine = 0;
 
-		while (countBcl < 1000 && calFrom.before(calTo) || ((calFrom.get(Calendar.DAY_OF_MONTH) == calTo.get(Calendar.DAY_OF_MONTH)))) {
+		while (countBcl < 1000 && calFrom.before(calTo)
+				|| ((calFrom.get(Calendar.DAY_OF_MONTH) == calTo.get(Calendar.DAY_OF_MONTH)))) {
 			countBcl++;
 			try {
 				Reader reader = getTrackReader(calFrom);
@@ -1151,9 +1208,12 @@ public class PersistenceService {
 									if (userAgent != null) {
 										track.setUserAgent(userAgent);
 									}
-									
+
 									if (onlyResource) {
-										if (!track.getPath().startsWith("/view/") && !track.getPath().startsWith("/preview/") && !track.getPath().startsWith("/edit/") && !track.getPath().startsWith("/ajax/")) {
+										if (!track.getPath().startsWith("/view/")
+												&& !track.getPath().startsWith("/preview/")
+												&& !track.getPath().startsWith("/edit/")
+												&& !track.getPath().startsWith("/ajax/")) {
 											track.setPath(URLHelper.removeTemplateFromResourceURL(track.getPath()));
 											Calendar trackCal = Calendar.getInstance();
 											trackCal.setTimeInMillis(track.getTime());
@@ -1170,9 +1230,11 @@ public class PersistenceService {
 											countTrack++;
 										}
 									} else {
-										if ((track.getAction() == null) || (track.getAction().equals(Track.UNDEFINED_ACTION))) {
+										if ((track.getAction() == null)
+												|| (track.getAction().equals(Track.UNDEFINED_ACTION))) {
 											if (track.getPath() != null && track.getPath().contains("/view")) {
-												track.setPath(StringHelper.getFileNameWithoutExtension(track.getPath()));
+												track.setPath(
+														StringHelper.getFileNameWithoutExtension(track.getPath()));
 												Calendar trackCal = Calendar.getInstance();
 												trackCal.setTimeInMillis(track.getTime());
 												if (calFrom.before(trackCal) && calTo.after(trackCal)) {
@@ -1220,7 +1282,8 @@ public class PersistenceService {
 
 	public void publishPreviewFile(ContentContext ctx) throws IOException, ParseException {
 		storeCurrentView(ctx);
-		File previewFile = new File(getDirectory() + "/content_" + ContentContext.PREVIEW_MODE + '_' + getVersion() + ".xml");
+		File previewFile = new File(
+				getDirectory() + "/content_" + ContentContext.PREVIEW_MODE + '_' + getVersion() + ".xml");
 		File file = new File(getDirectory() + "/content_" + ContentContext.VIEW_MODE + ".xml");
 		if (file.exists()) {
 			file.delete();
@@ -1310,7 +1373,8 @@ public class PersistenceService {
 		setAskStore(false);
 		if (async) {
 			if (countStore.incrementAndGet() > 1) {
-				logger.info("cancel storage before waiting thread found. (" + ctx.getGlobalContext().getContextKey() + ')');
+				logger.info(
+						"cancel storage before waiting thread found. (" + ctx.getGlobalContext().getContextKey() + ')');
 				countStore.decrementAndGet();
 				return;
 			}
@@ -1338,7 +1402,8 @@ public class PersistenceService {
 				String staticInfo = URLHelper.mergePath(globalContext.getDataFolder(), StaticInfo._STATIC_INFO_DIR);
 				persThread.addFolderToSave(new File(staticInfo));
 			}
-			persThread.addFolderToSave(new File(URLHelper.mergePath(globalContext.getDataFolder(), staticConfig.getUserInfoFile())));
+			persThread.addFolderToSave(
+					new File(URLHelper.mergePath(globalContext.getDataFolder(), staticConfig.getUserInfoFile())));
 			persThread.start(async);
 			if (async) {
 				countStore.decrementAndGet();
@@ -1369,7 +1434,7 @@ public class PersistenceService {
 		Calendar cal = GregorianCalendar.getInstance();
 		cal.setTimeInMillis(track.getTime());
 		PrintWriter writer = getTrackWriter(cal);
-		writer.println(trackToString(track));		
+		writer.println(trackToString(track));
 	}
 
 	public void flush() {
@@ -1390,7 +1455,8 @@ public class PersistenceService {
 
 			Date date = globalContext.getPublishDate();
 			if (date != null) {
-				File zipFile = new File(getBackupDirectory() + "/content_" + ContentContext.VIEW_MODE + "." + StringHelper.renderSecondFileTime(date) + ".xml.zip");
+				File zipFile = new File(getBackupDirectory() + "/content_" + ContentContext.VIEW_MODE + "."
+						+ StringHelper.renderSecondFileTime(date) + ".xml.zip");
 
 				zipFile.getParentFile().mkdirs();
 
@@ -1407,7 +1473,8 @@ public class PersistenceService {
 					Set<String> excludes = new HashSet<String>();
 					excludes.addAll(staticConfig.getBackupExcludePatterns());
 
-					ZipManagement.zipDirectory(outZip, null, globalContext.getDataFolder(), ctx.getRequest(), excludes, includes);
+					ZipManagement.zipDirectory(outZip, null, globalContext.getDataFolder(), ctx.getRequest(), excludes,
+							includes);
 
 					outZip.close();
 				} finally {
@@ -1485,20 +1552,23 @@ public class PersistenceService {
 		out.close();
 		String content = new String(outStream.toByteArray());
 		if (globalContext.getStaticConfig().getErrorMailReport() != null) {
-			NetHelper.sendMailToAdministrator(globalContext, new InternetAddress(globalContext.getStaticConfig().getErrorMailReport()), "Javlo persistence Error on : " + globalContext.getContextKey(), content);
+			NetHelper.sendMailToAdministrator(globalContext,
+					new InternetAddress(globalContext.getStaticConfig().getErrorMailReport()),
+					"Javlo persistence Error on : " + globalContext.getContextKey(), content);
 		} else {
-			NetHelper.sendMailToAdministrator(globalContext, "Javlo persistence Error on : " + globalContext.getContextKey(), content);
+			NetHelper.sendMailToAdministrator(globalContext,
+					"Javlo persistence Error on : " + globalContext.getContextKey(), content);
 		}
 	}
-	
+
 	public static void main(String[] args) throws Exception {
 		File file = new File("c:/trans/test.csv");
 		FileWriter fw = new FileWriter("c:/trans/test.csv", true);
-	    BufferedWriter bw = new BufferedWriter(fw);
-	    PrintWriter out = new PrintWriter(bw);
+		BufferedWriter bw = new BufferedWriter(fw);
+		PrintWriter out = new PrintWriter(bw);
 		out.println("APPEND");
 		out.close();
-		
+
 	}
 
 }

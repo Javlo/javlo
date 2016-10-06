@@ -74,5 +74,10 @@ public class LoginLogoutLink extends AbstractVisualComponent {
 		out.close();
 		return new String(outStream.toByteArray());
 	}
+	
+	@Override
+	public int getComplexityLevel(ContentContext ctx) {
+		return getConfig(ctx).getComplexity(COMPLEXITY_ADMIN);
+	}
 
 }

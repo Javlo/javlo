@@ -980,5 +980,10 @@ public class FolderedMultimedia extends TimeRangeComponent implements IImageTitl
 			return Integer.parseInt(getConfig(ctx).getProperty("image.priority", null));
 		}
 	}
+	
+	@Override
+	public int getComplexityLevel(ContentContext ctx) {
+		return getConfig(ctx).getComplexity(COMPLEXITY_STANDARD);
+	}
 
 }

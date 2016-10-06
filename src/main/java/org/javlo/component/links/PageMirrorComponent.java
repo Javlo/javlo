@@ -422,4 +422,9 @@ public class PageMirrorComponent extends AbstractVisualComponent implements IIma
 	public String getXHTMLId(ContentContext ctx) {
 		return getType()+'-'+getId();
 	}
+	
+	@Override
+	public int getComplexityLevel(ContentContext ctx) {
+		return getConfig(ctx).getComplexity(COMPLEXITY_STANDARD);
+	}
 }

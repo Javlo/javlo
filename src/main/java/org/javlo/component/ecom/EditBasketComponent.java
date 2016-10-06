@@ -194,5 +194,11 @@ public class EditBasketComponent extends AbstractPropertiesComponent implements 
 	public List<String> getFields(ContentContext ctx) throws Exception {
 		return FIELDS;
 	}
+	
+	@Override
+	public int getComplexityLevel(ContentContext ctx) {
+		return getConfig(ctx).getComplexity(COMPLEXITY_STANDARD);
+	}
+
 
 }

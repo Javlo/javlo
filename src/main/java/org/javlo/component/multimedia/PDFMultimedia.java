@@ -91,5 +91,10 @@ public class PDFMultimedia extends Multimedia {
 		pages = -1;
 		return super.performEdit(ctx);
 	}
+	
+	@Override
+	public int getComplexityLevel(ContentContext ctx) {
+		return getConfig(ctx).getComplexity(COMPLEXITY_STANDARD);
+	}
 
 }

@@ -163,11 +163,6 @@ public class RSSReader extends ComplexPropertiesLink {
 		return backDate;
 	}
 
-	@Override
-	public int getComplexityLevel(ContentContext ctx) {
-		return COMPLEXITY_EASY;
-	}
-
 	public String getRuleParamName() {
 		return "rule" + ID_SEPARATOR + getId();
 	}
@@ -455,5 +450,10 @@ public class RSSReader extends ComplexPropertiesLink {
 			}
 		}
 		return msg;
+	}
+	
+	@Override
+	public int getComplexityLevel(ContentContext ctx) {
+		return getConfig(ctx).getComplexity(COMPLEXITY_STANDARD);
 	}
 }

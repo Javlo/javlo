@@ -33,5 +33,10 @@ public class MultimediaFilter extends AbstractVisualComponent {
 	public String getHexColor() {
 		return GRAPHIC_COLOR;
 	}
+	
+	@Override
+	public int getComplexityLevel(ContentContext ctx) {
+		return getConfig(ctx).getComplexity(COMPLEXITY_ADMIN);
+	}
 
 }

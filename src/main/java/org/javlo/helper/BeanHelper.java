@@ -8,8 +8,6 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -17,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.lang3.text.WordUtils;
 import org.javlo.utils.CSVFactory;
 
 /**
@@ -412,7 +411,16 @@ public class BeanHelper {
 
 	}
 	
-	private static Map<Class, Map<String,String>> beanDescribeCache = Collections.synchronizedMap(new HashMap<Class, Map<String,String>>());
+	
+	public static Object getProperty (Object bean, String property) {
+		try {
+			return (String)bean.getClass().getMethod("get"+WordUtils.capitalize(property), null).invoke(bean, null);
+		} catch (Exception e) {		
+			return null;
+		}
+	}
+	
+	/*private static Map<Class, Map<String,String>> beanDescribeCache = Collections.synchronizedMap(new HashMap<Class, Map<String,String>>());
 	
 	public static Map<String,String> cachedDescribe(Object bean) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		if (bean == null) {
@@ -424,6 +432,6 @@ public class BeanHelper {
 			beanDescribeCache.put(bean.getClass(), beanDescription);
 		}
 		return beanDescription;
-	}
+	}*/
 
 }

@@ -594,11 +594,6 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 		return null;
 	}
 
-	@Override
-	public int getComplexityLevel(ContentContext ctx) {
-		return AbstractVisualComponent.COMPLEXITY_STANDARD;
-	}
-
 	protected void sendConfirmationEmail(ContentContext ctx, GenericForm comp, Map<String, Object> params, InternetAddress to) throws Exception {
 		if (to == null) {
 			return;
@@ -646,6 +641,11 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 			NetHelper.sendMail(ctx.getGlobalContext(), from, to, null, bcc, subject, email, getConfig(ctx).getProperty("mail.confirmation.body", null), true);
 		}
 
+	}
+	
+	@Override
+	public int getComplexityLevel(ContentContext ctx) {
+		return getConfig(ctx).getComplexity(COMPLEXITY_STANDARD);
 	}
 
 }

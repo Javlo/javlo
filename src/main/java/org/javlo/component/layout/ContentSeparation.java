@@ -134,5 +134,10 @@ public class ContentSeparation extends AbstractVisualComponent {
 	public boolean isEditOnCreate(ContentContext ctx) {	
 		return false;
 	}
+	
+	@Override
+	public int getComplexityLevel(ContentContext ctx) {
+		return getConfig(ctx).getComplexity(COMPLEXITY_STANDARD);
+	}
 
 }

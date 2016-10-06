@@ -874,5 +874,10 @@ public class SmartExternalLink extends ComplexPropertiesLink implements IReverse
 		}
 	}
 	
+	@Override
+	public int getComplexityLevel(ContentContext ctx) {
+		return getConfig(ctx).getComplexity(COMPLEXITY_STANDARD);
+	}
+	
 
 }

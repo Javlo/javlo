@@ -609,9 +609,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 			for (IImageTitle image : getImages()) {
 				try {
 					ContentContext absCtx = this.ctx.getContextForAbsoluteURL();
-					outImages.add(new ImageBean(URLHelper.createResourceURL(absCtx, image.getResourceURL(absCtx)),
-							URLHelper.createTransformURL(absCtx, image.getResourceURL(absCtx), "preview"),
-							image.getImageDescription(absCtx), image.getImageLinkURL(absCtx)));
+					outImages.add(new ImageBean(URLHelper.createResourceURL(absCtx, image.getResourceURL(absCtx)), URLHelper.createTransformURL(absCtx, image.getResourceURL(absCtx), "preview"), image.getImageDescription(absCtx), image.getImageLinkURL(absCtx)));
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -622,9 +620,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 		public ImageBean getImageBean() throws Exception {
 			IImageTitle image = page.getImage(ctx);
 			ContentContext absCtx = this.ctx.getContextForAbsoluteURL();
-			return new ImageBean(URLHelper.createResourceURL(absCtx, image.getResourceURL(absCtx)),
-					URLHelper.createTransformURL(absCtx, image.getResourceURL(absCtx), "preview"),
-					image.getImageDescription(absCtx), image.getImageLinkURL(absCtx));
+			return new ImageBean(URLHelper.createResourceURL(absCtx, image.getResourceURL(absCtx)), URLHelper.createTransformURL(absCtx, image.getResourceURL(absCtx), "preview"), image.getImageDescription(absCtx), image.getImageLinkURL(absCtx));
 		}
 
 		@Override
@@ -987,8 +983,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 		return outMenuElement;
 	}
 
-	public static MenuElement searchChild(MenuElement elem, ContentContext ctx, String path,
-			Collection<MenuElement> pastNode) throws Exception {
+	public static MenuElement searchChild(MenuElement elem, ContentContext ctx, String path, Collection<MenuElement> pastNode) throws Exception {
 		if (elem == null) {
 			return null;
 		}
@@ -1030,8 +1025,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 		return res;
 	}
 
-	static MenuElement searchRealChild(MenuElement elem, ContentContext ctx, String path,
-			Collection<MenuElement> pastNode) throws Exception {
+	static MenuElement searchRealChild(MenuElement elem, ContentContext ctx, String path, Collection<MenuElement> pastNode) throws Exception {
 		if (pastNode.contains(elem)) {
 			return null;
 		} else {
@@ -1536,8 +1530,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 						if (!compToBeDeleted.contains(componentBean[i].getId())) {
 							outList.add(componentBean[i]);
 						} else {
-							IContentVisualComponent comp = ComponentFactory.getComponentWithType(ctx,
-									componentBean[i].getType());
+							IContentVisualComponent comp = ComponentFactory.getComponentWithType(ctx, componentBean[i].getType());
 							if (comp != null) {
 								((AbstractVisualComponent) comp).setPage(this);
 								comp.delete(ctx);
@@ -1639,8 +1632,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 	 * @throws Exception
 	 */
 	private ContentElementList getAllLocalContent(ContentContext ctx) throws Exception {
-		ContentElementList localContentElementList = getLocalContentElementListMap()
-				.get(ctx.getRequestContentLanguage());
+		ContentElementList localContentElementList = getLocalContentElementListMap().get(ctx.getRequestContentLanguage());
 		if (localContentElementList == null) {
 			logger.fine("update all local content on (ctx:" + ctx + ")");
 			localContentElementList = new ContentElementList(componentBean, ctx, this, true);
@@ -1813,8 +1805,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 		return desc.slogan;
 	}
 
-	ArrayList<MenuElement> getChildElementRecursive(ContentContext ctx, MenuElement elem, String type, int deph)
-			throws Exception {
+	ArrayList<MenuElement> getChildElementRecursive(ContentContext ctx, MenuElement elem, String type, int deph) throws Exception {
 		ArrayList<MenuElement> result = new ArrayList<MenuElement>();
 		if (type == null) {
 			return result;
@@ -1912,8 +1903,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 		}
 	}
 
-	public List<MenuElement> getChildMenuElementsWithVirtual(ContentContext ctx, boolean onlyVisible,
-			boolean virtualBefore) throws Exception {
+	public List<MenuElement> getChildMenuElementsWithVirtual(ContentContext ctx, boolean onlyVisible, boolean virtualBefore) throws Exception {
 		List<MenuElement> allChild = new LinkedList<MenuElement>();
 		if (virtualBefore) {
 			allChild.addAll(getVirtualChild(ctx, onlyVisible));
@@ -1925,8 +1915,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 		return allChild;
 	}
 
-	public List<MenuElement> getChildMenuElementsWithVirtualList(ContentContext ctx, boolean visible,
-			boolean virtualBefore) throws Exception {
+	public List<MenuElement> getChildMenuElementsWithVirtualList(ContentContext ctx, boolean visible, boolean virtualBefore) throws Exception {
 		List<MenuElement> allChild = new LinkedList<MenuElement>();
 		if (virtualBefore) {
 			allChild.addAll(getChildMenuElementsList(ctx, visible));
@@ -2049,8 +2038,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 			} else if (comp instanceof PageMirrorComponent) {
 				PageMirrorComponent pageMirror = (PageMirrorComponent) comp;
 				if (pageMirror.getArea().equals(ctx.getArea())) {
-					List<IContentVisualComponent> mirrorContent = pageMirror.getMirrorPage(ctx)
-							.getContentByImplementation(ctx, clazz);
+					List<IContentVisualComponent> mirrorContent = pageMirror.getMirrorPage(ctx).getContentByImplementation(ctx, clazz);
 					for (IContentVisualComponent mComp : mirrorContent) {
 						mComp.setContainerPage(ctx, pageMirror.getPage());
 						outComp.add(mComp);
@@ -2212,8 +2200,14 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 		IContentComponentsList contentList = getAllContent(newCtx);
 		while (contentList.hasNext(newCtx)) {
 			IContentVisualComponent elem = contentList.next(newCtx);
-			if (elem.getPageDescription(ctx) != null) {
-				res = res + elem.getPageDescription(ctx);
+			String description = elem.getPageDescription(ctx);
+			if (!StringHelper.isEmpty(description)) {
+				if (!elem.isRepeat()) {
+					desc.description = StringHelper.removeTag(StringUtils.replace(description, "\"", "&quot;"));
+					return desc.description;
+				} else {
+					res = description;
+				}
 			}
 		}
 		desc.description = StringHelper.removeTag(StringUtils.replace(res, "\"", "&quot;"));
@@ -2326,8 +2320,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 	 * @return
 	 * @throws Exception
 	 */
-	public String getFieldValue(ContentContext ctx, String componentType, String fieldName, String defaultValue)
-			throws Exception {
+	public String getFieldValue(ContentContext ctx, String componentType, String fieldName, String defaultValue) throws Exception {
 		ContentElementList content = getAllContent(ctx);
 		while (content.hasNext(ctx)) {
 			IContentVisualComponent comp = content.next(ctx);
@@ -2611,8 +2604,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 		int bestPriority = Integer.MIN_VALUE;
 		while (contentList.hasNext(ctx)) {
 			IContentVisualComponent elem = contentList.next(specialCtx);
-			if ((elem instanceof IImageTitle) && !(elem instanceof ImageHeader) && (!elem.isEmpty(specialCtx))
-					&& (!elem.isRepeat())) {
+			if ((elem instanceof IImageTitle) && !(elem instanceof ImageHeader) && (!elem.isEmpty(specialCtx)) && (!elem.isRepeat())) {
 				IImageTitle imageComp = (IImageTitle) elem;
 				if (imageComp.isImageValid(specialCtx)) {
 					int priority = imageComp.getPriority(specialCtx);
@@ -2671,8 +2663,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 			if ((elem instanceof IImageTitle) && (!elem.isEmpty(ctx)) && (!elem.isRepeat())) {
 				IImageTitle imageComp = (IImageTitle) elem;
 				if (imageComp.isImageValid(ctx)) {
-					res.add(new ImageTitleBean(imageComp.getImageDescription(ctx), imageComp.getResourceURL(ctx),
-							imageComp.getImageLinkURL(ctx), elem.getArea().equals(ComponentBean.DEFAULT_AREA) ? 6 : 4));
+					res.add(new ImageTitleBean(imageComp.getImageDescription(ctx), imageComp.getResourceURL(ctx), imageComp.getImageLinkURL(ctx), elem.getArea().equals(ComponentBean.DEFAULT_AREA) ? 6 : 4));
 				}
 			}
 		}
@@ -2684,8 +2675,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 					if ((elem instanceof IImageTitle) && (!elem.isEmpty(ctx)) && (!elem.isRepeat())) {
 						IImageTitle imageComp = (IImageTitle) elem;
 						if (imageComp.isImageValid(ctx)) {
-							res.add(new ImageTitleBean(imageComp.getImageDescription(ctx),
-									imageComp.getResourceURL(ctx), imageComp.getImageLinkURL(ctx)));
+							res.add(new ImageTitleBean(imageComp.getImageDescription(ctx), imageComp.getResourceURL(ctx), imageComp.getImageLinkURL(ctx)));
 						}
 					}
 				}
@@ -2709,8 +2699,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 		IContentComponentsList contentList = getAllContent(ctx);
 		while (contentList.hasNext(ctx)) {
 			IContentVisualComponent elem = contentList.next(ctx);
-			if (!(elem instanceof IImageTitle) && (elem instanceof IStaticContainer) && (!elem.isEmpty(ctx))
-					&& (!elem.isRepeat())) {
+			if (!(elem instanceof IImageTitle) && (elem instanceof IStaticContainer) && (!elem.isEmpty(ctx)) && (!elem.isRepeat())) {
 				IStaticContainer resourcesContainer = (IStaticContainer) elem;
 				res.addAll(resourcesContainer.getAllResourcesLinks(ctx));
 			}
@@ -2821,7 +2810,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 						desc.linkOn = res;
 					}
 				}
-			}			
+			}
 		}
 		return desc.linkOn;
 	}
@@ -2846,8 +2835,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 				getContentElementListMap().put(ctx.getRequestContentLanguage(), localContentElementList);
 			}
 
-			logger.fine("update local content  - # component : " + localContentElementList.size(ctx) + " (ctx:" + ctx
-					+ ")");
+			logger.fine("update local content  - # component : " + localContentElementList.size(ctx) + " (ctx:" + ctx + ")");
 		}
 		localContentElementList = new ContentElementList(localContentElementList);
 		localContentElementList.initialize(ctx);
@@ -3188,8 +3176,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 		}
 		MenuElement parent = getParent();
 		MenuElement child = this;
-		while (parent != null && parent.getFirstChild() != null && parent.getFirstChild().getId().equals(child.getId())
-				&& !parent.isRealContent(ctx)) {
+		while (parent != null && parent.getFirstChild() != null && parent.getFirstChild().getId().equals(child.getId()) && !parent.isRealContent(ctx)) {
 			child = parent;
 			parent = parent.getParent();
 		}
@@ -3617,8 +3604,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 			}
 			Set<String> roles = new HashSet<String>(user.getRoles());
 			roles.retainAll(getUserRoles());
-			if (roles.size() == 0 && !(ctx.getCurrentUser().isEditor() && AdminUserSecurity.getInstance()
-					.haveRight(ctx.getCurrentUser(), AdminUserSecurity.CONTENT_ROLE))) {
+			if (roles.size() == 0 && !(ctx.getCurrentUser().isEditor() && AdminUserSecurity.getInstance().haveRight(ctx.getCurrentUser(), AdminUserSecurity.CONTENT_ROLE))) {
 				return false;
 			}
 		}
@@ -3872,10 +3858,8 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 		while ((contentList.hasNext(ctxForceArea))) {
 			IContentVisualComponent component = contentList.next(ctxForceArea);
 			if (component != null) {
-				if (ctx.getCurrentTemplate() == null
-						|| ctx.getCurrentTemplate().getAreas().contains(component.getArea())) {
-					if (!component.isEmpty(ctxForceArea)
-							|| (ctx.getCurrentTemplate() != null && ctx.getCurrentTemplate().isMailing())) {
+				if (ctx.getCurrentTemplate() == null || ctx.getCurrentTemplate().getAreas().contains(component.getArea())) {
+					if (!component.isEmpty(ctxForceArea) || (ctx.getCurrentTemplate() != null && ctx.getCurrentTemplate().isMailing())) {
 						if (!component.isRepeat() || withRepeat) {
 							empty = false;
 						}
@@ -3935,8 +3919,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 		if (elem == null) {
 			return false;
 		}
-		return getName().equals(elem.getName()) && visible == elem.visible && userRoles.equals(elem.userRoles)
-				&& priority == elem.priority;
+		return getName().equals(elem.getName()) && visible == elem.visible && userRoles.equals(elem.userRoles) && priority == elem.priority;
 	}
 
 	public boolean isRealContent(ContentContext ctx) throws Exception {
@@ -4142,8 +4125,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 	 * @return the if of the new component
 	 * @throws Exception
 	 */
-	public final String prepareAddContent(String lg, String parentCompId, String contentType, String style,
-			String value, User authors) throws Exception {
+	public final String prepareAddContent(String lg, String parentCompId, String contentType, String style, String value, User authors) throws Exception {
 		ComponentBean comp = new ComponentBean(StringHelper.getRandomId(), contentType, value, lg, false, authors);
 		if (style != null) {
 			comp.setStyle(style);
@@ -4195,8 +4177,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 			boolean delete = false;
 			for (int i = 0; i < componentBean.length; i++) {
 				if (componentBean[i].getId().equals(id)) {
-					IContentVisualComponent comp = ComponentFactory.getComponentWithType(ctx,
-							componentBean[i].getType());
+					IContentVisualComponent comp = ComponentFactory.getComponentWithType(ctx, componentBean[i].getType());
 					if (comp != null) {
 						((AbstractVisualComponent) comp).setComponentBean(componentBean[i]);
 						((AbstractVisualComponent) comp).setPage(this);
@@ -4501,12 +4482,10 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 	@Override
 	public String toString() {
 		try {
-			return getName() + " [priority : " + getPriority() + ", #children : " + getChildMenuElementsList().size()
-					+ ",visible=" + isVisible() + "] " + super.toString();
+			return getName() + " [priority : " + getPriority() + ", #children : " + getChildMenuElementsList().size() + ",visible=" + isVisible() + "] " + super.toString();
 		} catch (Exception e) {
 			e.printStackTrace();
-			return getName() + " [priority : " + getPriority() + ", #children : " + getChildMenuElementsList().size()
-					+ ",visible=" + e.getMessage() + "] " + super.toString();
+			return getName() + " [priority : " + getPriority() + ", #children : " + getChildMenuElementsList().size() + ",visible=" + e.getMessage() + "] " + super.toString();
 		}
 	}
 
@@ -4553,13 +4532,11 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 							clearPage();
 							GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 							PersistenceService persistenceService = PersistenceService.getInstance(globalContext);
-							NavigationHelper.importPage(ctx, persistenceService, pageNode, this, ctx.getLanguage(),
-									true);
+							NavigationHelper.importPage(ctx, persistenceService, pageNode, this, ctx.getLanguage(), true);
 						}
 
 					} else {
-						logger.severe("bad external link (xml don't start with '<?xml') : " + XMLURL + "   page:"
-								+ getPath());
+						logger.severe("bad external link (xml don't start with '<?xml') : " + XMLURL + "   page:" + getPath());
 					}
 
 				} catch (Exception e) {
@@ -4903,12 +4880,10 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 			if (isBlocked() != page.isBlocked()) {
 				return false;
 			}
-			if (getStartPublishDate() != page.getStartPublishDate()
-					|| (getStartPublishDate() != null && !getStartPublishDate().equals(page.getStartPublishDate()))) {
+			if (getStartPublishDate() != page.getStartPublishDate() || (getStartPublishDate() != null && !getStartPublishDate().equals(page.getStartPublishDate()))) {
 				return false;
 			}
-			if (getEndPublishDate() != page.getEndPublishDate()
-					|| (getEndPublishDate() != null && !getEndPublishDate().equals(page.getEndPublishDate()))) {
+			if (getEndPublishDate() != page.getEndPublishDate() || (getEndPublishDate() != null && !getEndPublishDate().equals(page.getEndPublishDate()))) {
 				return false;
 			}
 			ContentContext noAreaCtx = ctx.getContextWithArea(null);
@@ -5007,8 +4982,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 				IContentVisualComponent comp = content.next(noAreaCtx);
 				if (comp instanceof EventDefinitionComponent) {
 					EventDefinitionComponent eventComp = (EventDefinitionComponent) comp;
-					Event event = new Event(ctx, eventComp.getId(), eventComp.getStartDate(), eventComp.getEndDate(),
-							getTitle(ctx), getDescription(ctx), getImage(noAreaCtx));
+					Event event = new Event(ctx, eventComp.getId(), eventComp.getStartDate(), eventComp.getEndDate(), getTitle(ctx), getDescription(ctx), getImage(noAreaCtx));
 					event.setCategory(getCategory(ctx));
 					event.setLocation(getLocation(ctx));
 					event.setUrl(new URL(URLHelper.createURL(ctx.getContextForAbsoluteURL(), this)));
@@ -5045,8 +5019,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 				IContentVisualComponent comp = content.next(noAreaCtx);
 				if (comp instanceof EventDefinitionComponent) {
 					EventDefinitionComponent eventComp = (EventDefinitionComponent) comp;
-					Event event = new Event(ctx, eventComp.getId(), eventComp.getStartDate(), eventComp.getEndDate(),
-							getTitle(ctx), getDescription(ctx), getImage(noAreaCtx));
+					Event event = new Event(ctx, eventComp.getId(), eventComp.getStartDate(), eventComp.getEndDate(), getTitle(ctx), getDescription(ctx), getImage(noAreaCtx));
 					event.setCategory(getCategory(ctx));
 					event.setLocation(getLocation(ctx));
 					event.setUrl(new URL(URLHelper.createURL(ctx.getContextForAbsoluteURL(), this)));
@@ -5087,8 +5060,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 	}
 
 	@Override
-	public Map<String, Object> getContentAsMap(ContentContext ctx)
-			throws IllegalArgumentException, IllegalAccessException, InvocationTargetException, Exception {
+	public Map<String, Object> getContentAsMap(ContentContext ctx) throws IllegalArgumentException, IllegalAccessException, InvocationTargetException, Exception {
 
 		if (!isReadAccess(ctx, ctx.getCurrentUser())) {
 			Map<String, Object> map = new HashMap<String, Object>();

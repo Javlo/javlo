@@ -182,11 +182,6 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 	}
 
 	@Override
-	public int getComplexityLevel(ContentContext ctx) {
-		return getConfig(ctx).getComplexity(COMPLEXITY_EASY);
-	}
-
-	@Override
 	protected String getRendererTitle() {
 		String[] values = getValue().split("" + DATA_SEPARATOR);		
 		if (values.length >= 1) {
@@ -610,5 +605,10 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 		} else {
 			return Integer.parseInt(getConfig(ctx).getProperty("image.priority", null));
 		}
+	}
+	
+	@Override
+	public int getComplexityLevel(ContentContext ctx) {
+		return getConfig(ctx).getComplexity(COMPLEXITY_STANDARD);
 	}
 }

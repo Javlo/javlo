@@ -3,12 +3,8 @@
  */
 package org.javlo.component.meta;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-
 import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.context.ContentContext;
-import org.javlo.i18n.I18nAccess;
 
 /**
  * @author pvandermaesen
@@ -72,6 +68,11 @@ public class Keywords extends AbstractVisualComponent {
 	@Override
 	public boolean isRealContent(ContentContext ctx) {
 		return false;
+	}
+	
+	@Override
+	public int getComplexityLevel(ContentContext ctx) {
+		return getConfig(ctx).getComplexity(COMPLEXITY_ADMIN);
 	}
 
 }

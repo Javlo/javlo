@@ -612,12 +612,10 @@ public class Tracker {
 	 * @throws DAOException
 	 */
 	public Map<String, double[]> getTimeTracking(StatContext statCtx) {
-
 		Track[] tracks = getViewClickTracks(statCtx.getFrom(), statCtx.getTo());
 		Arrays.sort(tracks);
 		Map<String, double[]> res = new HashMap<String, double[]>();
 		for (int i = 1; i < tracks.length - 1; i++) {
-
 			if (tracks[i - 1].getSessionId().equals(tracks[i].getSessionId())) {
 				String path = tracks[i - 1].getPath();
 				String[] splitPath = ContentManager.splitPath(path);
@@ -646,12 +644,13 @@ public class Tracker {
 		return getTracks(from, to);
 	}
 
-	public Track[] getViewClickTracks(Date from, Date to) {
+	public Track[] getViewClickTracks(Date from, Date to) {		
 		Track[] trackers = persistenceService.loadTracks(from, to, true, false);
 		return trackers;
 	}
 
 	public Track[] getClickTracks(Date from, Date to) {
+		System.out.println("*** DEBUG Tracker.java from:"+StringHelper.renderTime(from));
 		Track[] trackers = persistenceService.loadTracks(from, to, false, false);
 		return trackers;
 	}
