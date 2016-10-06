@@ -11,6 +11,7 @@ import java.io.PrintWriter;
 import java.io.Writer;
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadMXBean;
+import java.net.SocketException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.text.DateFormat;
@@ -1011,7 +1012,9 @@ public class AccessServlet extends HttpServlet implements IVersion {
 				out.write("<p style=\"padding: 10px 10px 10px 10px; margin-bottom: 10px; color: #000000; border: 1px solid #ff0000; background-color: #ffeaea;\">" + t.getMessage() + "</p>");
 				out.write("</div>");
 
-				DebugListening.getInstance().sendError(request, t, "path=" + request.getRequestURI());
+				if (!(t instanceof SocketException)) {
+					DebugListening.getInstance().sendError(request, t, "path=" + request.getRequestURI());
+				}
 			} finally {
 				PersistenceService persistenceService = PersistenceService.getInstance(globalContext);
 				String persistenceParam = requestService.getParameter(PERSISTENCE_PARAM, null);

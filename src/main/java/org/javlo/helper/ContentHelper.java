@@ -483,7 +483,7 @@ public class ContentHelper {
 		for (IContentVisualComponent comp : target.getContent(ctx).getContentElements()) {			
 			if (comp instanceof IStaticContainer) {
 				IStaticContainer image = (IStaticContainer) comp;
-				if (image.getDirSelected().equals(sourceImportFolder)) {
+				if (image.getDirSelected() != null && image.getDirSelected().equals(sourceImportFolder)) {
 					for (File sourceFile : image.getFiles(ctx)) {
 						File targetFile = new File(StringHelper.cleanPath(sourceFile.getAbsolutePath()).replace(sourceImportFolder, targetImportFolder));
 						if (!targetFile.exists()) {
