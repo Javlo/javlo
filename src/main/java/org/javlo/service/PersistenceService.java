@@ -476,6 +476,14 @@ public class PersistenceService {
 		if (trackCache == null) {
 			trackCache = new Properties();
 			File file = new File(getTrackingDirectory() + "/cache.properties");
+			if (!file.exists()) {
+				file.getParentFile().mkdirs();
+				try {
+					file.createNewFile();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}		
 			FileInputStream in = null;
 			try {
 				in = new FileInputStream(file);

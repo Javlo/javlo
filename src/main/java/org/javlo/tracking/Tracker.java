@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.logging.Logger;
@@ -500,9 +501,63 @@ public class Tracker {
 	public Map<Integer, Integer> getSessionByMonth(StatContext statCtx) {
 		return getSessionByMoment(statCtx, Calendar.MONTH);
 	}
-
-	public Map<Integer, Integer> getSession2ClickByMonth(StatContext statCtx) {
+	
+	public Map<Integer, Integer> _getSession2ClickByMonth(StatContext statCtx, GlobalContext globalContext) {
 		return getSession2ClickByMoment(statCtx, Calendar.MONTH);
+	}
+
+	public Map<Integer, Integer> getSession2ClickByMonth(StatContext statCtx, GlobalContext globalContext) {
+		Properties cache = null;
+		if (globalContext != null) {
+			try {
+				cache = PersistenceService.getInstance(globalContext).getTrackCache();
+			} catch (ServiceException e) {
+				e.printStackTrace();
+			}
+		}
+		final String CACHE_KEY_PREFIX = "sess2clk_";
+		Map<Integer, Integer> outStat = new HashMap<Integer, Integer>();
+		Calendar from = Calendar.getInstance();
+		from.setTime(statCtx.getFrom());
+		from = TimeHelper.convertRemoveAfterMonth(from);
+		Calendar to = Calendar.getInstance();
+		to.setTime(statCtx.getTo());
+		to = TimeHelper.convertRemoveAfterMonth(to);
+		
+		Calendar now = Calendar.getInstance();
+		while (from.before(to)) {
+			Calendar localTo = Calendar.getInstance();
+			localTo.setTime(from.getTime());
+			localTo.add(Calendar.MONTH, 1);
+			String key = CACHE_KEY_PREFIX + from.get(Calendar.YEAR) + '-' + from.get(Calendar.MONTH);
+			String val = null;
+			if (cache != null) {
+				val = cache.getProperty(key);
+			}
+			if (val != null) {
+				outStat.put(from.get(Calendar.MONTH), Integer.parseInt(val));
+			} else {				
+				statCtx.setFrom(from.getTime());
+				statCtx.setTo(localTo.getTime());
+				Map<Integer, Integer> data = getSession2ClickByMoment(statCtx, Calendar.MONTH);
+				if (data.size() == 1) {				
+					int click = data.entrySet().iterator().next().getValue();
+					if (cache != null && localTo.before(now)) {
+						cache.setProperty(key, ""+click);
+					}
+					outStat.put(from.get(Calendar.MONTH), click);
+					try {
+						PersistenceService.getInstance(globalContext).storeTrackCache();
+					} catch (ServiceException e) {
+						e.printStackTrace();
+					}					
+				} if (data.size()>1) {
+					logger.warning("bad size returned : "+data.size());
+				}
+			}
+			from = localTo;
+		}
+		return outStat;
 	}
 
 	/**
@@ -551,16 +606,19 @@ public class Tracker {
 	 * @throws DAOException
 	 */
 	private Map<Integer, Integer> getSession2ClickByMoment(StatContext statCtx, int moment) {
-		/* get all tracks because a "real" session is a session with get html AND ressources */
-		Track[] tracks = getClickTracks(statCtx.getFrom(), statCtx.getTo());		
+		/*
+		 * get all tracks because a "real" session is a session with get html
+		 * AND ressources
+		 */
+		Track[] tracks = getClickTracks(statCtx.getFrom(), statCtx.getTo());
 		Map<Integer, Integer> res = new HashMap<Integer, Integer>();
 		GregorianCalendar cal = new GregorianCalendar();
 		Set<String> sessionIdFound = new HashSet<String>();
 		Set<String> secondSessionIdFound = new HashSet<String>();
 		Set<String> viewSessionFound = new HashSet<String>();
-		
+
 		String DEBUGPath = "";
-		
+
 		for (int i = 1; i < tracks.length - 1; i++) {
 			Track track = tracks[i];
 			if (track.getPath().contains("/view")) {
@@ -577,7 +635,7 @@ public class Tracker {
 					clicks = new Integer(0);
 				}
 				clicks = new Integer(clicks.intValue() + 1);
-				res.put(key, clicks);				
+				res.put(key, clicks);
 				secondSessionIdFound.add(tracks[i].getSessionId());
 			}
 		}
@@ -644,13 +702,12 @@ public class Tracker {
 		return getTracks(from, to);
 	}
 
-	public Track[] getViewClickTracks(Date from, Date to) {		
+	public Track[] getViewClickTracks(Date from, Date to) {
 		Track[] trackers = persistenceService.loadTracks(from, to, true, false);
 		return trackers;
 	}
 
-	public Track[] getClickTracks(Date from, Date to) {
-		System.out.println("*** DEBUG Tracker.java from:"+StringHelper.renderTime(from));
+	public Track[] getClickTracks(Date from, Date to) {		
 		Track[] trackers = persistenceService.loadTracks(from, to, false, false);
 		return trackers;
 	}
