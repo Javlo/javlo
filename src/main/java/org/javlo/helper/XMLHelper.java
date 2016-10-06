@@ -446,7 +446,7 @@ public class XMLHelper {
 				out.print("\" visible=\"");
 				out.print(visible);
 			}
-			if (!page.isActive()) {
+			if (!page.isPageActive()) {
 				out.print("\" active=\"");
 				out.print(page.isActive());
 			}

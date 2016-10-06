@@ -133,7 +133,7 @@
 
 <c:if test="${!userInterface.light}">
 <div class="form-group">
-	<input type="checkbox" id="page_active" name="active" ${page.info.active?'checked="checked"':''} value="true" />
+	<input type="checkbox" id="page_active" name="active" ${page.info.pageActive?'checked="checked"':''} value="true" />
 	<label class="suffix" for="page_active">${i18n.edit['item.active']}</label>
 </div>
 <c:if test="${!info.page.root}">

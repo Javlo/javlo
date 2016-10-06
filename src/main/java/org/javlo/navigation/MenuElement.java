@@ -508,6 +508,15 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 				return true;
 			}
 		}
+		
+		public boolean isPageActive() {
+			try {
+				return page.isPageActive();
+			} catch (Exception e) {
+				logger.warning(e.getMessage());
+				return true;
+			}
+		}
 
 		@Override
 		public Map<String, Boolean> getEmptyArea() {
@@ -4050,6 +4059,10 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 			}
 			return active;
 		}
+	}
+	
+	public boolean isPageActive() {
+		return this.active;
 	}
 
 	public void setActive(boolean active) {
