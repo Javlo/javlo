@@ -1450,7 +1450,7 @@ public class Edit extends AbstractModuleAction {
 			return null;
 		}
 
-		synchronized (content.getNavigation(ctx).getLock()) {
+		synchronized (globalContext.getLockLoadContent()) {
 
 			DebugHelper.writeInfo(System.out);
 

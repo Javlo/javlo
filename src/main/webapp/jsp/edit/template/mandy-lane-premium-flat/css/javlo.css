@@ -130,6 +130,13 @@ h1 {
 	left: 218px;
 }
 
+#popup_container h1 {
+	position: relative;
+	left: auto;
+	font-size: 14px;
+	text-align: center;	
+}
+
 #popup_title {
 	float: none;
 }

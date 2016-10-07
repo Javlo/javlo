@@ -40,6 +40,7 @@ import org.javlo.helper.ComponentHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.i18n.I18nAccess;
+import org.javlo.navigation.MenuElement;
 import org.javlo.navigation.PageBean;
 import org.javlo.service.resource.Resource;
 import org.javlo.ztatic.IStaticContainer;
@@ -611,9 +612,13 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 		return false;
 	}
 
-	@Override
+	@Override	
 	public boolean isRealContent(ContentContext ctx) {
-		if (!getPage().isActive(ctx)) {
+		MenuElement page = getPage();
+		if (getMirrorWrapper(ctx, this) != null) {
+			page = getMirrorWrapper(ctx, this).getPage();
+		}
+		if (!page.isActive(ctx)) {
 			return false;
 		}
 		try {

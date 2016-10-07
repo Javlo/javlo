@@ -997,6 +997,50 @@ public class PersistenceService {
 	public MenuElement loadPreview(ContentContext ctx, Integer version) throws Exception {
 		return load(ctx, ContentContext.PREVIEW_MODE, null, null, true, version);
 	}
+	
+	private boolean checkComponentIntegrity(ContentContext ctx, HashSet<String> componentsId, PrintStream out, ComponentBean[] comps) {
+		boolean error = false;
+		for (ComponentBean comp : comps) {
+			if (componentsId.contains(comp.getId())) {
+				out.println("2 comp with same id found (type:"+comp.getType()+" id:"+comp.getId());
+				error = true;
+			} else {
+				componentsId.add(comp.getId());
+			}
+		}
+		return error;
+	}
+	
+	public boolean checkStructureIntegrity(ContentContext ctx, PrintStream out, MenuElement root) {
+		out.println("");
+		out.println("Test content structure : "+ctx.getGlobalContext().getContextKey());
+		out.println("--");
+		HashSet<String> componentsId = new HashSet<String>();
+		HashSet<String> pageId = new HashSet<String>();
+		pageId.add(root.getId());
+		boolean error = checkComponentIntegrity(ctx, componentsId, out, root.getContent());
+		try {
+			for (MenuElement page : root.getAllChildren()) {				
+				boolean pageContentError = checkComponentIntegrity(ctx, componentsId, out, page.getContent());
+				error = error && pageContentError;
+				if (pageContentError) {
+					out.println("   Error in content found : "+page.getPath());
+				}
+				if (pageId.contains(page.getId())) {
+					error = true;
+					out.println("2 pages with same id found (path:"+page.getPath()+" id:"+page.getId()+" [content:"+pageContentError+"]");
+				}				
+			}
+		} catch (Exception e) {
+			out.println("EXCEPTION : "+e.getMessage());
+			e.printStackTrace();
+		}
+		if (!error) {
+			out.print("no error found.");
+		}
+		out.println("--");
+		return error;
+	}
 
 	protected MenuElement load(ContentContext ctx, int renderMode, Map<String, String> contentAttributeMap,
 			Date timeTravelDate, boolean correctXML, Integer previewVersion) throws Exception {
@@ -1096,6 +1140,8 @@ public class PersistenceService {
 					 * children) { page.updateLinkedData(ctx); }
 					 */
 				}
+				
+				checkStructureIntegrity(ctx, System.out, root);
 
 			} finally {
 				ResourceHelper.closeResource(in);
@@ -1389,7 +1435,7 @@ public class PersistenceService {
 		}
 		synchronized (ctx.getGlobalContext().getLockLoadContent()) {
 			logger.info("store in " + renderMode + " mode.");
-			PersistenceThread persThread = new PersistenceThread();
+			PersistenceThread persThread = new PersistenceThread(globalContext.getLockLoadContent());
 			ContentService content = ContentService.getInstance(globalContext);
 			MenuElement menuElement = content.getNavigation(ctx);
 			String defaultLg = globalContext.getDefaultLanguages().iterator().next();

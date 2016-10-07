@@ -52,7 +52,7 @@ public class MirrorComponent extends AbstractVisualComponent implements IFieldCo
 
 	@Override
 	public void prepareView(ContentContext ctx) throws Exception {
-		AbstractVisualComponent.setMirrorWrapped(ctx, getMirrorComponent(ctx));
+		AbstractVisualComponent.setMirrorWrapped(ctx, getMirrorComponent(ctx), this);
 		super.prepareView(ctx);
 	}
 
@@ -208,7 +208,7 @@ public class MirrorComponent extends AbstractVisualComponent implements IFieldCo
 		AbstractVisualComponent comp = (AbstractVisualComponent) getMirrorComponent(ctx);
 		if (comp != null) {
 			AbstractVisualComponent.setForcedId(ctx, getId());
-			AbstractVisualComponent.setMirrorWrapped(ctx, comp);
+			AbstractVisualComponent.setMirrorWrapped(ctx, comp, this);
 			// comp.prepareView(ctx);
 			ctx.getRequest().setAttribute("nextSame", isNextSame(ctx));
 			ctx.getRequest().setAttribute("previousSame", isPreviousSame(ctx));
@@ -447,6 +447,7 @@ public class MirrorComponent extends AbstractVisualComponent implements IFieldCo
 		try {
 			comp = getMirrorComponent(ctx);
 			if (comp instanceof IFieldContainer) {
+				setMirrorWrapped(ctx, comp, this);
 				return ((IFieldContainer) comp).isFieldContainer(ctx);
 			}
 		} catch (Exception e) {

@@ -2889,7 +2889,9 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 	 * 
 	 * @return
 	 */
-	public Object getLock() {
+	private Object getLock() {
+		//Exception e = new Exception();
+		//System.out.println("***** MenuElement.getLock : caller : "+e.getStackTrace()[1]); //TODO: remove debug trace
 		return lock;
 	}
 

@@ -135,5 +135,18 @@ public class DebugHelper {
 		UserFactory.logger.setLevel(staticConfig.getLoginLogLevel());
 		AdminUserFactory.logger.setLevel(staticConfig.getLoginLogLevel());		
 	}
+	
+	/**
+	 * return the caller of the current method
+	 * @return
+	 */
+	public String getCaller() {
+		Exception e = new Exception();
+		if (e.getStackTrace().length>1) {
+			return e.getStackTrace()[2].toString();
+		} else { 
+			return "unknow";
+		}
+	}
 
 }

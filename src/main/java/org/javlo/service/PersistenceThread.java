@@ -32,6 +32,8 @@ public class PersistenceThread implements Runnable {
 	private static Logger logger = Logger.getLogger(PersistenceThread.class.getName());
 
 	private MenuElement menuElement;
+	
+	public Object lockReference = null;
 
 	private Map<String, String> globalContentMap;
 
@@ -96,7 +98,7 @@ public class PersistenceThread implements Runnable {
 			File file = null;
 			try {
 				logger.info("before start persitence thread (#THREAD:" + COUNT_THREAD + ") - " + getContextKey());
-				synchronized (menuElement.getLock()) {
+				synchronized (lockReference) {
 					logger.info("start persitence thread (#THREAD:" + COUNT_THREAD + ')');
 					long startTime = System.currentTimeMillis();
 
@@ -229,6 +231,10 @@ public class PersistenceThread implements Runnable {
 
 	public void setContextKey(String contextKey) {
 		this.contextKey = contextKey;
+	}
+	
+	public PersistenceThread(Object lockReference) {
+		this.lockReference = lockReference;
 	}
 
 }

@@ -124,8 +124,7 @@ public class DynamicComponentFilter extends AbstractPropertiesComponent implemen
 		
 		if (!StringHelper.isEmpty(getSelectedField())) {
 			Collections.sort(containers, new SortContainer(ctx, getSelectedField()));
-		}
-		
+		}		
 
 		Map<String, Field> fieldsSearch = new HashMap<String, Field>();
 

@@ -3087,6 +3087,8 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	}
 
 	public Object getLockLoadContent() {
+		//Exception e = new Exception();
+		//System.out.println("***** GlobalContext.getLockLoadContent : caller : "+e.getStackTrace()[1]); //TODO: remove debug trace
 		return lockLoadContent;
 	}
 

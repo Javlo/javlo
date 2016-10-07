@@ -45,6 +45,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.javlo.actions.DataAction;
 import org.javlo.cache.ICache;
 import org.javlo.component.config.ComponentConfig;
+import org.javlo.component.links.MirrorComponent;
 import org.javlo.context.ContentContext;
 import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
@@ -2584,17 +2585,26 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		return map;
 	}
 
-	public static void setMirrorWrapped(ContentContext ctx, IContentVisualComponent comp) {
+	public static void setMirrorWrapped(ContentContext ctx, IContentVisualComponent comp, MirrorComponent mirror) {
 		if (comp != null) {
 			ctx.getRequest().setAttribute("_mirror_wrapped_" + comp.getId(), true);
+			ctx.getRequest().setAttribute("_mirror_comp_" + comp.getId(), mirror);
 		}
 	}
 
 	public static boolean isMirrorWrapped(ContentContext ctx, IContentVisualComponent comp) {
-		if (comp != null) {
+		if (comp != null) {			
 			return ctx.getRequest().getAttribute("_mirror_wrapped_" + comp.getId()) != null;
 		} else {
 			return false;
+		}
+	}
+	
+	public static MirrorComponent getMirrorWrapper(ContentContext ctx, IContentVisualComponent comp) {
+		if (comp != null) {
+			return (MirrorComponent)ctx.getRequest().getAttribute("_mirror_comp_" + comp.getId());
+		} else {
+			return null;
 		}
 	}
 
