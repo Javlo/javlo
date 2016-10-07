@@ -1501,6 +1501,10 @@ public class StaticConfig extends Observable {
 	public String getDefaultContentExtension() {
 		return properties.getString("content.default-extension", "html");
 	}
+	
+	public boolean isCheckContentIntegrity() {
+		return properties.getBoolean("content.check-integrity", false);
+	}
 
 	public String getJSLibPreview() {
 		return properties.getString("preview.lib.js", null);

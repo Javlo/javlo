@@ -140,7 +140,7 @@ public class DebugHelper {
 	 * return the caller of the current method
 	 * @return
 	 */
-	public String getCaller() {
+	public static String getCaller() {
 		Exception e = new Exception();
 		if (e.getStackTrace().length>1) {
 			return e.getStackTrace()[2].toString();

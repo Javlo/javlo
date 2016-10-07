@@ -54,6 +54,7 @@ import org.javlo.cache.ICache;
 import org.javlo.cache.MapCache;
 import org.javlo.config.StaticConfig;
 import org.javlo.helper.ContentHelper;
+import org.javlo.helper.DebugHelper;
 import org.javlo.helper.ElementaryURLHelper;
 import org.javlo.helper.ElementaryURLHelper.Code;
 import org.javlo.helper.LangHelper;
@@ -3087,8 +3088,6 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	}
 
 	public Object getLockLoadContent() {
-		//Exception e = new Exception();
-		//System.out.println("***** GlobalContext.getLockLoadContent : caller : "+e.getStackTrace()[1]); //TODO: remove debug trace
 		return lockLoadContent;
 	}
 

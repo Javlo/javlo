@@ -2890,8 +2890,6 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 	 * @return
 	 */
 	private Object getLock() {
-		//Exception e = new Exception();
-		//System.out.println("***** MenuElement.getLock : caller : "+e.getStackTrace()[1]); //TODO: remove debug trace
 		return lock;
 	}
 
@@ -4366,9 +4364,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 	}
 
 	public void setLatestEditor(String latestEditor) {
-		synchronized (getLock()) {
-			this.latestEditor = latestEditor;
-		}
+		this.latestEditor = latestEditor;		
 	}
 
 	public void setLinkedURL(String linkedURL) {
@@ -4463,9 +4459,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 	}
 
 	public void setValid(boolean valid) {
-		synchronized (getLock()) {
-			this.valid = valid;
-		}
+		this.valid = valid;		
 	}
 
 	public void setValidater(String validater) {
