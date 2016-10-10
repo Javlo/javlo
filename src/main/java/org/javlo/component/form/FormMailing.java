@@ -5,6 +5,8 @@ package org.javlo.component.form;
 
 import javax.servlet.http.HttpSession;
 
+import org.javlo.context.ContentContext;
+
 /**
  * @author pvandermaesen
  */
@@ -42,5 +44,7 @@ public class FormMailing extends Form {
 	public String[][] getFieldPattern() {
 		return fieldsPattern;
 	}
+	
+
 
 }

@@ -388,4 +388,9 @@ public class FormMailingComponent extends AbstractVisualComponent implements IAc
 	public String getActionGroupName() {
 		return "mailing-registration";
 	}
+	
+	@Override
+	public int getComplexityLevel(ContentContext ctx) {
+		return getConfig(ctx).getComplexity(COMPLEXITY_STANDARD);
+	}
 }

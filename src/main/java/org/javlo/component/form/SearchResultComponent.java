@@ -36,7 +36,7 @@ public class SearchResultComponent extends AbstractVisualComponent {
 
 	@Override
 	public int getComplexityLevel(ContentContext ctx) {
-		return COMPLEXITY_ADMIN;
+		return getConfig(ctx).getComplexity(COMPLEXITY_ADMIN);
 	}
 
 	@Override
@@ -73,5 +73,7 @@ public class SearchResultComponent extends AbstractVisualComponent {
 	public boolean isContentCachable(ContentContext ctx) {
 		return false;
 	}
+	
+	
 
 }

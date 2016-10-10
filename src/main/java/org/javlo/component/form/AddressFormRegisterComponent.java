@@ -188,4 +188,9 @@ public class AddressFormRegisterComponent extends FormComponent {
 		}
 		return null;
 	}
+	
+	@Override
+	public int getComplexityLevel(ContentContext ctx) {
+		return getConfig(ctx).getComplexity(COMPLEXITY_STANDARD);
+	}
 }
