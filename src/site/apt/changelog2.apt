@@ -780,7 +780,7 @@ change log
  
  * 4/ replaceJSTLData optimisation + replaceJSTLData in page reference
  
- * 5/ date type configurable / add user role upload-resource / box title and footer managed by default
+ * 5/ date type configurable / add user role upload-resource / box title and footer managed by default / tab by component complexity
  
 * 2.1.0.3.18 10/10/2016
 
