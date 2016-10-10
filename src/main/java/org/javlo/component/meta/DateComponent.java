@@ -53,9 +53,20 @@ public class DateComponent extends AbstractVisualComponent implements IDate {
 
 	@Override
 	public String[] getStyleLabelList(ContentContext ctx) {
-		try {
+		try {			
 			I18nAccess i18n = I18nAccess.getInstance(ctx.getRequest());
-			return new String[] { i18n.getText("content.date.userfriendly-date"), i18n.getText("content.date.medium-date"), i18n.getText("content.date.short-date"), i18n.getText("content.date.short-date-width-day"), i18n.getText("content.date.visible-date"), i18n.getText("content.date.visible-time"), i18n.getText("global.hidden") };
+			String[] styleList = getConfig(ctx).getStyleList();
+			if (styleList == null || styleList.length == 0) {
+				return new String[] { i18n.getText("content.date.userfriendly-date"), i18n.getText("content.date.medium-date"), i18n.getText("content.date.short-date"), i18n.getText("content.date.short-date-width-day"), i18n.getText("content.date.visible-date"), i18n.getText("content.date.visible-time"), i18n.getText("global.hidden") };
+			} else {
+				String[] outStyleLabel = new String[styleList.length];
+				int i=0;
+				for (String key : styleList) {
+					outStyleLabel[i] = i18n.getText("content.date."+key);
+					i++;
+				}
+				return outStyleLabel;
+			}
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
