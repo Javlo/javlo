@@ -1000,7 +1000,7 @@ public class PersistenceService {
 			out.println("Test content structure : " + ctx.getGlobalContext().getContextKey() + " (mode:" + ctx.getRenderMode() + ')');
 			out.println("--");
 			HashSet<String> componentsId = new HashSet<String>();
-			HashSet<String> pageId = new HashSet<String>();
+			HashSet<String> pageId = new HashSet<String>();	
 			try {
 				for (MenuElement page : root.getAllChildren()) {
 					boolean pageContentError = checkComponentIntegrity(ctx, componentsId, out, page.getContent());

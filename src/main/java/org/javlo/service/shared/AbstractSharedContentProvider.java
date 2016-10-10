@@ -146,7 +146,7 @@ public abstract class AbstractSharedContentProvider implements ISharedContentPro
 	}
 
 	@Override
-	public boolean isUploadable() {
+	public boolean isUploadable(ContentContext ctx) {
 		return false;
 	}
 

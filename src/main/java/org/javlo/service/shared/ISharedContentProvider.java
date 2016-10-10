@@ -9,8 +9,8 @@ import java.util.Map;
 
 import org.javlo.context.ContentContext;
 
-public interface ISharedContentProvider {
-	
+public interface ISharedContentProvider {	
+
 	public static final String TYPE_DEFAULT = "default";
 	
 	public static final String TYPE_TEXT = "text";
@@ -62,7 +62,7 @@ public interface ISharedContentProvider {
 	
 	public int getContentSize(ContentContext ctx);
 	
-	public boolean isUploadable();
+	public boolean isUploadable(ContentContext ctx);
 	
 	public void upload(ContentContext ctx, String fileName, InputStream in, String category, boolean rename) throws IOException;
 

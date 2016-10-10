@@ -43,8 +43,12 @@ public class DateComponent extends AbstractVisualComponent implements IDate {
 	}
 
 	@Override
-	public String[] getStyleList(ContentContext ctx) {
-		return new String[] { USER_FRIENDLY_DATE_TYPE, MEDIUM_DATE_TYPE, SHORT_DATE_TYPE, SHORT_DATE_WIDTH_DAY, VISIBLE_DATE_TYPE, VISIBLE_TIME_TYPE, NOT_VISIBLE_TYPE };
+	public String[] getStyleList(ContentContext ctx) {		
+		if (getConfig(ctx).getStyleList() == null || getConfig(ctx).getStyleList().length == 0) {
+			return new String[] { USER_FRIENDLY_DATE_TYPE, MEDIUM_DATE_TYPE, SHORT_DATE_TYPE, SHORT_DATE_WIDTH_DAY, VISIBLE_DATE_TYPE, VISIBLE_TIME_TYPE, NOT_VISIBLE_TYPE };
+		} else {
+			return getConfig(ctx).getStyleList();
+		}
 	}
 
 	@Override

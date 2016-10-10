@@ -88,7 +88,7 @@ public class FileAction extends AbstractModuleAction {
 		ctx.getRequest().setAttribute("readRoles", globalContext.getUserRoles());
 		ctx.getRequest().setAttribute("pathPrefix", getROOTPath(ctx));
 		ctx.getRequest().setAttribute("sort", fileModuleContext.getSort());
-
+		
 		String editFileName = ctx.getRequest().getParameter("editFile");
 		if (editFileName != null) {			
 			modulesContext.getCurrentModule().setToolsRenderer(null);
@@ -139,12 +139,11 @@ public class FileAction extends AbstractModuleAction {
 					/* } */
 				}
 			}
-
 			if (fileModuleContext.getCurrentLink().equals(FileModuleContext.PAGE_META)) {
 				if (ctx.getRequest().getAttribute("files") == null) {
 					modulesContext.getCurrentModule().setToolsRenderer("/jsp/actions.jsp");
 					modulesContext.getCurrentModule().clearAllBoxes();
-					File folder = getFolder(ctx);
+					File folder = getFolder(ctx);					
 					if (folder.exists() && folder.listFiles(new DirectoryFilter()) != null) {
 						List<FileBean> allFileInfo = new LinkedList<FileBean>();
 						for (File file : folder.listFiles(new DirectoryFilter())) {
@@ -168,9 +167,9 @@ public class FileAction extends AbstractModuleAction {
 				if (modulesContext.getCurrentModule().getToolsRenderer() != null && modulesContext.getFromModule() == null) {
 					modulesContext.getCurrentModule().restoreAll();
 				}
-			}
+			}			
 		}
-
+		ctx.getRequest().setAttribute("metaReadOnly", !ResourceHelper.canModifFolder(ctx, getFolder(ctx).getAbsolutePath()));
 		return msg;
 	}
 
@@ -293,6 +292,9 @@ public class FileAction extends AbstractModuleAction {
 
 	public String performUpdateMeta(RequestService rs, ServletContext application, ContentContext ctx, EditContext editContext, GlobalContext globalContext, FileModuleContext fileModuleContext, I18nAccess i18nAccess, MessageRepository messageRepository) throws Exception {
 		File folder = getFolder(ctx);
+		if (!ResourceHelper.canModifFolder(ctx, getFolder(ctx).getAbsolutePath())) {
+			return "security error : you have not suffisant right to modify this file.";
+		}
 		if (folder.exists()) {
 			for (File file : folder.listFiles()) {
 				StaticInfo staticInfo = StaticInfo.getInstance(ctx, file);
@@ -389,6 +391,13 @@ public class FileAction extends AbstractModuleAction {
 			return "/";
 		}
 
+	}
+	
+	public static String performClose(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) {
+		if (StringHelper.isTrue(rs.getParameter("close", null))) {
+			ctx.setClosePopup(true);
+		}
+		return null;
 	}
 
 	/**
@@ -541,6 +550,7 @@ public class FileAction extends AbstractModuleAction {
 		request.setAttribute("files", Arrays.asList(new FileBean[] { fileBean }));
 		InfoBean.getCurrentInfoBean(ctx).setFakeCurrentURL(request.getParameter("currentURL"));
 		ctx.getRequest().setAttribute("specialEditRenderer", "/modules/file/jsp/meta.jsp?one=true");
+		ctx.getRequest().setAttribute("metaReadOnly", !ResourceHelper.canModifFolder(ctx, file.getParentFile().getAbsolutePath()));
 		return null;
 	}
 

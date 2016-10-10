@@ -12,6 +12,7 @@ import org.javlo.helper.StringHelper;
 import org.javlo.module.core.IMainModuleName;
 import org.javlo.module.core.ModuleException;
 import org.javlo.module.core.ModulesContext;
+import org.javlo.user.AdminUserSecurity;
 
 public class SharedContentService {
 	
@@ -131,7 +132,8 @@ public class SharedContentService {
 	}
 	
 	public static void prepare(ContentContext ctx) throws ModuleException {
-		ModulesContext modulesContext = ModulesContext.getInstance(ctx.getRequest().getSession(), ctx.getGlobalContext());		
+		ModulesContext modulesContext = ModulesContext.getInstance(ctx.getRequest().getSession(), ctx.getGlobalContext());
+		ctx.getRequest().setAttribute("userCanUpload", AdminUserSecurity.isCurrentUserCanUpload(ctx));
 		if (modulesContext.searchModule(IMainModuleName.SHARED_CONTENT) != null) {
 			SharedContentService sharedContentService = SharedContentService.getInstance(ctx);
 			SharedContentContext sharedContentContext = SharedContentContext.getInstance(ctx.getRequest().getSession());
@@ -147,8 +149,7 @@ public class SharedContentService {
 				if ((sharedContentContext.getCategory() == null || !provider.getCategories(ctx).containsKey(sharedContentContext.getCategory())) && provider.getCategories(ctx).size() > 0) {
 					sharedContentContext.setCategories(new LinkedList<String>(Arrays.asList(provider.getCategories(ctx).keySet().iterator().next())));
 				}
-				ctx.getRequest().setAttribute("provider", provider);
-				ctx.setContentContextIfNeeded(provider);
+				ctx.getRequest().setAttribute("provider", new SharedContentProviderBean(ctx, provider));				
 				if (ctx.getRequest().getAttribute("sharedContent") == null) { // no search
 					if (sharedContentContext.getSearchQuery() == null) {
 						ctx.getRequest().setAttribute("sharedContent", provider.getContent(ctx, sharedContentContext.getCategories()));

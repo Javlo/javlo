@@ -21,6 +21,7 @@ import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.navigation.MenuElement;
 import org.javlo.template.Template;
+import org.javlo.user.AdminUserSecurity;
 import org.javlo.ztatic.StaticInfo;
 
 public class LocalImageSharedContentProvider extends AbstractSharedContentProvider {
@@ -145,8 +146,8 @@ public class LocalImageSharedContentProvider extends AbstractSharedContentProvid
 	}
 
 	@Override
-	public boolean isUploadable() {
-		return true;
+	public boolean isUploadable(ContentContext ctx) {
+		return AdminUserSecurity.isCurrentUserCanUpload(ctx);
 	}
 
 	@Override

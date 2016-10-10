@@ -61,6 +61,7 @@ import org.javlo.service.resource.LocalResource;
 import org.javlo.service.resource.Resource;
 import org.javlo.service.resource.ResourceStatus;
 import org.javlo.servlet.AccessServlet;
+import org.javlo.user.AdminUserSecurity;
 import org.javlo.ztatic.IStaticContainer;
 import org.javlo.ztatic.StaticInfo;
 import org.owasp.encoder.Encode;
@@ -112,8 +113,8 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 		properties.setProperty(REVERSE_LINK_KEY, ReverseLinkService.NONE);
 	}
 	
-	protected boolean canUpload(ContentContext ctx) {
-		return true;
+	protected boolean canUpload(ContentContext ctx) {		
+		return AdminUserSecurity.isCurrentUserCanUpload(ctx);
 	}
 
 	@Override
@@ -348,7 +349,11 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 			I18nAccess i18nAccess;
 			try {
 				i18nAccess = I18nAccess.getInstance(ctx.getRequest());
-				out.println("<div class=\"panel panel-default\"><div class=\"panel-heading\">Meta-data<a href=\""+url+"\" class=\"btn btn-default btn-xs pull-right\">"+i18nAccess.getText("global.change")+"</a></h3></div><div class=\"panel-body\">");			
+				String button = "";				
+				if (canUpload(ctx)) {					
+					button = "<a href=\""+url+"\" class=\"btn btn-default btn-xs pull-right\">"+i18nAccess.getText("global.change")+"</a>";
+				}				
+				out.println("<div class=\"panel panel-default\"><div class=\"panel-heading\">Meta-data"+button+"</h3></div><div class=\"panel-body\">");			
 				out.println("<div class=\"row form-group\"><div class=\"col-sm-3\">"+i18nAccess.getText("field.title")+"</div>");
 				out.println("<div class=\"col-sm-9\">"+staticInfo.getTitle(ctx)+"</div>");
 				out.println("</div>");
@@ -444,12 +449,21 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 			finalCode.append("</div>");
 		}
 
+		boolean canUploadInImport = false;
+		
+		canUploadInImport = getDirSelected().equals(getImportFolderPath(ctx));			
 		if (canUpload(ctx)) {
 			finalCode.append("<div class=\"row\"><div class=\"col-md-6\">");
 			finalCode.append("<div class=\"form-group\"><label for=\"new_dir_" + getId() + "\">");
 			finalCode.append(getNewDirLabelTitle(ctx));
 			finalCode.append(" : </label><input class=\"form-control\" id=\"new_dir_" + getId() + "\" name=\"" + getNewDirInputName() + "\" type=\"text\"/></div>");
-			finalCode.append("</div><div class=\"col-md-6\">");
+			finalCode.append("</div>");
+		}
+		if (canUpload(ctx) || canUploadInImport) {
+			if (!canUpload(ctx)) {
+				finalCode.append("<div class=\"row\">");	
+			}
+			finalCode.append("<div class=\"col-md-6\">");
 			finalCode.append("<div class=\"form-group\">");
 			finalCode.append("<label for=\"" + getFileXHTMLInputName() + "\">" + getImageUploadTitle(ctx) + "</label>");
 			finalCode.append("<input class=\"form-control\" name=\"" + getFileXHTMLInputName() + "\" id=\"" + getFileXHTMLInputName() + "\" type=\"file\"/></div>");
@@ -469,9 +483,8 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 
 			finalCode.append(XHTMLHelper.getInputOneSelect(getSelectXHTMLInputName(), fileListBlanck, getFileName(), "form-control", getJSOnChange(ctx), true));
 
-			if (ctx.getRenderMode() == ContentContext.EDIT_MODE && !ctx.isEditPreview()) {
+			if (ctx.getRenderMode() == ContentContext.EDIT_MODE && !ctx.isEditPreview() && canUpload(ctx)) {
 				if (isLinkToStatic()) {
-
 					Map<String, String> filesParams = new HashMap<String, String>();
 					filesParams.put("path", URLHelper.mergePath("/", getRelativeFileDirectory(ctx), getDirSelected()));
 					String staticURL = URLHelper.createModuleURL(ctx, ctx.getPath(), "file", filesParams);
@@ -847,13 +860,17 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 		}
 		return 0;
 	}
-
+	
 	@Override
 	public void init(ComponentBean bean, ContentContext ctx) throws Exception {
 		super.init(bean, ctx);
 		/* check if the content of db is correct version */
 		if (getValue().trim().length() == 0) {
-			setDirSelected("");
+			if (!AdminUserSecurity.isCurrentUserCanUpload(ctx)) {
+				setDirSelected(getImportFolderPath(ctx));
+			} else {
+				setDirSelected("");
+			}
 			setFileName("");
 			properties.setProperty(LABEL_KEY, "");
 			properties.setProperty(DESCRIPTION_KEY, "");
@@ -874,6 +891,7 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 				}
 			}
 		}
+		
 	}
 	
 	protected boolean isImported(ContentContext ctx) {

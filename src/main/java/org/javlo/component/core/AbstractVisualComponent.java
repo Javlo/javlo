@@ -1390,7 +1390,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			try {
 				String classPrefix = "not-";
 				if (!globalContext.isOnlyCreatorModify() || (ctx.getCurrentEditUser() != null && (AdminUserSecurity.getInstance().isAdmin(ctx.getCurrentEditUser()) || getAuthors().equals(ctx.getCurrentEditUser().getLogin())))) {
-					if (!AdminUserSecurity.getInstance().haveRole(ctx.getCurrentEditUser(), AdminUserSecurity.LIGHT_INTERFACE_ROLE) || getComplexityLevel(ctx) == IContentVisualComponent.COMPLEXITY_EASY) {
+					if (!AdminUserSecurity.getInstance().haveRole(ctx.getCurrentEditUser(), AdminUserSecurity.LIGHT_INTERFACE_ROLE) || getComplexityLevel(ctx) == IContentVisualComponent.COMPLEXITY_EASY || getComplexityLevel(ctx) == IContentVisualComponent.COMPLEXITY_STANDARD) {
 						classPrefix = "";
 					}
 				}

@@ -67,6 +67,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
 import org.apache.poi.hwpf.extractor.WordExtractor;
+import org.javlo.actions.DataAction;
 import org.javlo.component.core.ComponentFactory;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.config.StaticConfig;
@@ -81,6 +82,7 @@ import org.javlo.module.core.ModuleException;
 import org.javlo.module.core.ModulesContext;
 import org.javlo.service.PersistenceService;
 import org.javlo.service.resource.Resource;
+import org.javlo.user.AdminUserSecurity;
 import org.javlo.utils.ConfigurationProperties;
 import org.javlo.ztatic.FileCache;
 import org.javlo.ztatic.IStaticContainer;
@@ -1592,6 +1594,22 @@ public class ResourceHelper {
 			out.println("</ul></li>");
 		}
 		return size;
+	}
+	
+	public static boolean canModifFolder(ContentContext ctx, String folder) {
+		boolean canModif = AdminUserSecurity.isCurrentUserCanUpload(ctx);
+		if (!canModif) {
+			try {
+				String importFolder = URLHelper.mergePath(ctx.getGlobalContext().getStaticConfig().getImportFolder(), DataAction.createImportFolder(ctx))	;				
+				importFolder = URLHelper.cleanPath(importFolder, false);
+				if (URLHelper.cleanPath(folder, false).contains(importFolder)) {
+					canModif = true;
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}			
+		}
+		return canModif;
 	}
 
 }

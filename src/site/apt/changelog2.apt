@@ -779,5 +779,9 @@ change log
  * 3/ display access by mount on one year / reverse link with same string bug correction
  
  * 4/ replaceJSTLData optimisation + replaceJSTLData in page reference
+ 
+ * 5/ date type configurable / add user role upload-resource / box title and footer managed by default
+ 
+* 2.1.0.3.18 10/10/2016
 
  

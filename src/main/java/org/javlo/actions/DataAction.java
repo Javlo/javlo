@@ -304,6 +304,9 @@ DataAction implements IAction {
 		SharedContentContext sharedContentContext = SharedContentContext.getInstance(ctx.getRequest().getSession());
 		ISharedContentProvider provider = sharedContentService.getProvider(ctx, sharedContentContext.getProvider());	
 		boolean rename = StringHelper.isTrue(rs.getParameter("rename", null), true);
+		if (!AdminUserSecurity.isCurrentUserCanUpload(ctx) && !sharedContentContext.getProvider().equals(ImportedImageSharedContentProvider.NAME)) {
+			return "you have no right to upload file here.";
+		}
 		if (!rename) {
 			ctx.setNeedRefresh(true);
 		}
@@ -486,6 +489,7 @@ DataAction implements IAction {
 			return "no suffisant right.";
 		}		
 		String importFolder = createImportFolder(ctx);
+		
 		int countImages = 0;
 		FileItem imageItem = null;
 		String msg = null;
@@ -548,9 +552,12 @@ DataAction implements IAction {
 						boolean isArray = StringHelper.getFileExtension(item.getName()).equalsIgnoreCase("xls") || StringHelper.getFileExtension(item.getName()).equalsIgnoreCase("xlsx") || StringHelper.getFileExtension(item.getName()).equalsIgnoreCase("ods") || StringHelper.getFileExtension(item.getName()).equalsIgnoreCase("csv");
 						String resourceRelativeFolder = URLHelper.mergePath(gc.getStaticConfig().getStaticFolder(), ctx.getGlobalContext().getStaticConfig().getImportResourceFolder(), importFolder);
 						File targetFolder = new File(URLHelper.mergePath(gc.getDataFolder(), resourceRelativeFolder));
+						
 						if (!targetFolder.exists()) {
 							targetFolder.mkdirs();
 						}
+						
+						
 						File newFile = ResourceHelper.writeFileItemToFolder(item, targetFolder, false, true);
 						if (newFile != null && newFile.exists()) {
 							ByteArrayOutputStream outStream = new ByteArrayOutputStream();

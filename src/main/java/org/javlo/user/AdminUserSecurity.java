@@ -54,6 +54,8 @@ public class AdminUserSecurity implements Serializable {
 	public static String SYNCHRO_ADMIN = "sync-admin";
 
 	public static String SYNCHRO_SERVER = "sync-server";
+	
+	public static String UPLOAD_RESOURCE = "upload-resource";
 
 	public static String MASTER = "master";
 
@@ -218,6 +220,20 @@ public class AdminUserSecurity implements Serializable {
 		}
 		return false;
 	}
+	
+	public static boolean isCurrentUserCanUpload(ContentContext ctx) {
+		AdminUserSecurity adminUserSecurity = AdminUserSecurity.getInstance();
+		User user = ctx.getCurrentEditUser();
+		if (user != null) {
+			if (adminUserSecurity.isAdmin(user)) {
+				return true;
+			} else if (adminUserSecurity.haveRole(user, AdminUserSecurity.UPLOAD_RESOURCE)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
 
 	/**
 	 * check if the currentPage is editable by current user.

@@ -99,6 +99,7 @@ public class Box extends AbstractVisualComponent implements IContainer {
 			out.println("<label for=\"" + getTitleBoxInputName() + "\">Title</label>");
 			out.println("<input class=\"form-control\" type=\"text\" name=\"" + getTitleBoxInputName() + "\" value=\"" + XHTMLHelper.stringToAttribute(getTitle()) + "\" />");
 			out.println("</div>");
+		} else {
 			out.println("<div class=\"form-group\">");
 			out.println("<label for=\"" + getFooterBoxInputName() + "\">Footer</label>");
 			out.println("<input class=\"form-control\" type=\"text\" name=\"" + getFooterBoxInputName() + "\" value=\"" + XHTMLHelper.stringToAttribute(getFooter()) + "\" />");
@@ -129,11 +130,19 @@ public class Box extends AbstractVisualComponent implements IContainer {
 	}
 
 	protected String getInternalPrefix(ContentContext ctx) {
-		return getConfig(ctx).getProperty("html.internal-prefix", "");
+		String parent = "";
+		if (!StringHelper.isEmpty(getTitle())) {			
+			parent = "<h"+(ctx.getTitleDepth()+1)+" class=\"title\">"+getTitle()+"</h"+(ctx.getTitleDepth()+1)+">";
+		}
+		return getConfig(ctx).getProperty("html.internal-prefix", "")+parent;
 	}
 
 	protected String getInternalSuffix(ContentContext ctx) {
-		return getConfig(ctx).getProperty("html.internal-suffix", "");
+		String parent = "";
+		if (!StringHelper.isEmpty(getFooter())) {			
+			parent = "<div class=\"footer\">"+getFooter()+"</div>";
+		}
+		return parent+getConfig(ctx).getProperty("html.internal-suffix", "");
 	}
 	
 	protected Stack<Character> getBoxStack(ContentContext ctx) {
@@ -206,7 +215,8 @@ public class Box extends AbstractVisualComponent implements IContainer {
 		String title = requestService.getParameter(getTitleBoxInputName(), "");
 		String footer = requestService.getParameter(getFooterBoxInputName(), "");
 		if (closeBox) {
-			title = getTitle();
+			title = getTitle();			
+		} else {
 			footer = getFooter();
 		}
 		String newValue = StringHelper.collectionToString(Arrays.asList(new String[] { "" + closeBox, title, footer }), ";");

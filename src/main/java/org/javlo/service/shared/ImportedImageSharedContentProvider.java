@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.logging.Logger;
 
 import org.javlo.actions.DataAction;
@@ -27,14 +26,8 @@ public class ImportedImageSharedContentProvider extends LocalImageSharedContentP
 	}
 	
 	@Override
-	public Collection<SharedContent> getContent(ContentContext ctx, Collection<String> categories) {
-		if (getCategories(ctx).size() == 0) {
-			getContent(ctx);
-			if (getCategories(ctx).size() == 0) {			
-				return Collections.EMPTY_LIST;
-			}
-		}
-		return super.getContent(ctx, categories);		
+	public Collection<SharedContent> getContent(ContentContext ctx, Collection<String> categories) {		
+		return getContent(ctx);	
 	}
 
 	@Override
@@ -84,6 +77,9 @@ public class ImportedImageSharedContentProvider extends LocalImageSharedContentP
 	public boolean isEmpty(ContentContext ctx) {
 		return false;
 	}
-
-
+	
+	@Override
+	public boolean isUploadable(ContentContext ctx) {	
+		return true;
+	}
 }

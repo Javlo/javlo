@@ -566,13 +566,13 @@ public class ComponentFactory {
 				title = comp;
 			} else {
 				if (title != null) {
-					if (comp.getComplexityLevel() == 1 || !uiContext.isLight()) {
+					if (comp.getComplexityLevel() <= IContentVisualComponent.COMPLEXITY_STANDARD || !uiContext.isLight()) {
 						listWithoutEmptyTitle.add(title);
 					}
 					title = null;
 
 				}
-				if (comp.getComplexityLevel() == 1 || !uiContext.isLight()) {
+				if (comp.getComplexityLevel() <= IContentVisualComponent.COMPLEXITY_STANDARD || !uiContext.isLight()) {
 					listWithoutEmptyTitle.add(comp);
 				}
 			}
