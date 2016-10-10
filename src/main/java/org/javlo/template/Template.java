@@ -1384,14 +1384,14 @@ public class Template implements Comparable<Template> {
 		if (propI18n == null) {
 			synchronized (globalContext.getLockImportTemplate()) {
 				if (config != null) {
-					File i18nFile = new File(URLHelper.mergePath(URLHelper.mergePath(getFolder().getAbsolutePath(), filePrefix + locale.getLanguage() + ".properties")));
-					if (i18nFile.exists()) {
+					File i18nFile = new File(URLHelper.mergePath(URLHelper.mergePath(getWorkTemplateRealPath(globalContext), filePrefix + locale.getLanguage() + ".properties")));
+					if (i18nFile.exists()) {					
 						propI18n = new Properties();
 						Reader reader = new FileReader(i18nFile);
 						((Properties) propI18n).load(reader);
 						reader.close();
 					} else {
-						i18nFile = new File(URLHelper.mergePath(URLHelper.mergePath(getFolder().getAbsolutePath(), "i18n", filePrefix + locale.getLanguage() + ".properties")));
+						i18nFile = new File(URLHelper.mergePath(URLHelper.mergePath(getWorkTemplateRealPath(globalContext), "i18n", filePrefix + locale.getLanguage() + ".properties")));
 						if (i18nFile.exists()) {
 							propI18n = new Properties();
 							Reader reader = new FileReader(i18nFile);
