@@ -8,7 +8,6 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Hashtable;
-import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -40,8 +39,43 @@ import org.javlo.service.NotificationService;
 import org.javlo.service.RequestService;
 import org.javlo.tracking.Track;
 import org.javlo.tracking.Tracker;
+import org.javlo.user.AdminUserSecurity;
 
 public class DashboardAction extends AbstractModuleAction {
+	
+	public static class MemoryBean {
+		
+		private Runtime runtime = null;
+		
+		public MemoryBean() {
+			this.runtime = Runtime.getRuntime();
+		}
+		
+		public long getFreeMemory() {
+			return runtime.freeMemory();
+		}
+		
+		public long getTotalMemory() {
+			return runtime.totalMemory();
+		}
+		
+		public String getFreeMemoryLabel() {
+			return StringHelper.renderSize(getFreeMemory());
+		}
+		
+		public String getTotalMemoryLabel() {
+			return StringHelper.renderSize(getTotalMemory());
+		}
+		
+		public String getUsedMemoryLabel() {
+			return StringHelper.renderSize(getTotalMemory()-getFreeMemory());
+		}
+		
+		public int getUsedMemoryPercent() {
+			return Math.round(((float)(getTotalMemory()-getFreeMemory())/(float)getTotalMemory())*100);
+		}
+		
+	}
 
 	public static class DebugNoteBean {
 		private String message;
@@ -161,7 +195,7 @@ public class DashboardAction extends AbstractModuleAction {
 		}*/
 		if (dashboardContext.getCurrentModule().getRenderer() != null && dashboardContext.getCurrentModule().getRenderer().contains("report")) {
 			report = true;
-			ctx.getRequest().setAttribute("report", ReportFactory.getReport(ctx));
+			ctx.getRequest().setAttribute("report", ReportFactory.getReport(ctx));			
 		}
 		boolean pagelist = false;
 		if (dashboardContext.getCurrentModule().getRenderer() != null && dashboardContext.getCurrentModule().getRenderer().contains("pagelist")) {
@@ -170,6 +204,7 @@ public class DashboardAction extends AbstractModuleAction {
 		}
 		if (dashboardContext.getCurrentModule().getBoxes().size() > 1) {
 			ctx.getRequest().setAttribute("page", "main");
+			ctx.getRequest().setAttribute("memory", new MemoryBean());
 		} else {
 			if (!report && !pagelist) {
 				ctx.getRequest().setAttribute("page", "tracker");
@@ -434,4 +469,15 @@ public class DashboardAction extends AbstractModuleAction {
 		//dashboardContext.getCurrentModule().addMainBox("report", "report", "/jsp/report.jsp", false);
 		return null;
 	}
+	
+	public static String performGarbage (ContentContext ctx) throws Exception {
+		if (!AdminUserSecurity.getInstance().isAdmin(ctx.getCurrentEditUser())) {
+			return "ERROR: you have not suffisant right to do this action.";
+		} else {
+			System.gc();
+			return null;
+		}
+	}
+	
+	
 }

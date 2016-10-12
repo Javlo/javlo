@@ -104,14 +104,14 @@ public class PersistenceThread implements Runnable {
 
 					file = store(menuElement, mode, getDefaultLg());
 
-					logger.info("end persitence thread (" + StringHelper.renderTimeInSecond(System.currentTimeMillis() - startTime) + " sec.).");
+					logger.info("end persitence thread (" + StringHelper.renderTimeInSecond(System.currentTimeMillis() - startTime) + " sec.). #file="+StringHelper.renderSize(file.length()));
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
 				try {
 					persistenceService.sendPersistenceErrorToAdministrator("Error in PersistanceThread.", file, e);
 				} catch (AddressException e1) {
-					logger.warning(e1.getMessage());
+					e1.printStackTrace();
 				}
 			} finally {
 				running = false;

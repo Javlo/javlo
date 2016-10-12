@@ -9,11 +9,15 @@
 	<c:if test="${empty lightInterface}"><li><span class="label">Admin User Factory</span>${globalContext.adminUserFactoryClassName}</li></c:if>
 	<c:if test="${empty lightInterface && globalContext.staticConfig.accountSize}"><li><span class="label">Size</span>${globalContext.accountSizeLabel}</li></c:if>
 	<li><span class="label">Admin</span><a href="mailto:${globalContext.administratorEmail}">${globalContext.administratorEmail}</a></li>
-	<li><span class="label">Publish date : </span>${globalContext.publishDateLabel}</li>
-	<li><span class="label">Latest publisher : </span>${globalContext.latestPublisher}</li>
+	<li><span class="label">Publish date</span>${globalContext.publishDateLabel}</li>
+	<li><span class="label">Latest publisher</span>${globalContext.latestPublisher}</li>
 	<c:if test="${not empty threadManager && threadManager.countThread>0}">
 	<li><span class="label">#Thread : </span>${threadManager.countThread}</li>
-	<li><span class="label">Current Thread : </span>${threadManager.currentThreadName}</li>
+	<li><span class="label">Current Thread</span>${threadManager.currentThreadName}</li>
+	</c:if><c:if test="${empty lightInterface}">
+	<li><span class="label">Memory</span>${memory.totalMemoryLabel}<c:if test="${info.admin}"><a class="btn btn-default btn-xs pull-right" href="${info.currentURL}?webaction=dashboard.garbage">garbage</a></c:if>
+	<div class="progress"><div class="bar2"><div class="value redbar" style="width: ${memory.usedMemoryPercent}%;"><small>${memory.usedMemoryLabel}</small></div></div></div>
+	</li>	
 	</c:if>
 </ul>
 </fieldset>

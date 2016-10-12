@@ -261,6 +261,13 @@ public class AccessServlet extends HttpServlet implements IVersion {
 			Thread.currentThread().setName("AccessServlet-" + globalContext.getContextKey());
 
 			ContentContext ctx = ContentContext.getContentContext(request, response);
+			if (ctx.isAsEditMode() || ctx.isAsPreviewMode()) {
+				if (!staticConfig.acceptIP(request.getRemoteAddr())) {
+					logger.warning("refuse access for ip : "+request.getRemoteAddr());
+					response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+					return;
+				}
+			}
 			
 			if (ctx.isAsViewMode() && ctx.isContentFound() && ctx.getCurrentPage() != null && staticConfig.isRedirectSecondaryURL() && !ctx.isPostRequest() && StringHelper.isEmpty(request.getQueryString())) {
 				ContentContext lgCtx = new ContentContext(ctx);
