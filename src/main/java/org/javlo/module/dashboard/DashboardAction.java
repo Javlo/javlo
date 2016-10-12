@@ -40,43 +40,10 @@ import org.javlo.service.RequestService;
 import org.javlo.tracking.Track;
 import org.javlo.tracking.Tracker;
 import org.javlo.user.AdminUserSecurity;
+import org.javlo.utils.MemoryBean;
 
 public class DashboardAction extends AbstractModuleAction {
 	
-	public static class MemoryBean {
-		
-		private Runtime runtime = null;
-		
-		public MemoryBean() {
-			this.runtime = Runtime.getRuntime();
-		}
-		
-		public long getFreeMemory() {
-			return runtime.freeMemory();
-		}
-		
-		public long getTotalMemory() {
-			return runtime.totalMemory();
-		}
-		
-		public String getFreeMemoryLabel() {
-			return StringHelper.renderSize(getFreeMemory());
-		}
-		
-		public String getTotalMemoryLabel() {
-			return StringHelper.renderSize(getTotalMemory());
-		}
-		
-		public String getUsedMemoryLabel() {
-			return StringHelper.renderSize(getTotalMemory()-getFreeMemory());
-		}
-		
-		public int getUsedMemoryPercent() {
-			return Math.round(((float)(getTotalMemory()-getFreeMemory())/(float)getTotalMemory())*100);
-		}
-		
-	}
-
 	public static class DebugNoteBean {
 		private String message;
 		private String authors;
@@ -236,7 +203,7 @@ public class DashboardAction extends AbstractModuleAction {
 			ctx.getRequest().setAttribute("debugNotes", debugNoteList);
 		}
 		return msg;
-	}
+	}	
 
 	public static String performReadTracker(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess, GlobalContext globalContext, HttpSession session, HttpServletRequest request) throws Exception {
 		String type = rs.getParameter("type", null);

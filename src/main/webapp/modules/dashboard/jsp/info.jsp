@@ -16,7 +16,24 @@
 	<li><span class="label">Current Thread</span>${threadManager.currentThreadName}</li>
 	</c:if><c:if test="${empty lightInterface}">
 	<li><span class="label">Memory</span>${memory.totalMemoryLabel}<c:if test="${info.admin}"><a class="btn btn-default btn-xs pull-right" href="${info.currentURL}?webaction=dashboard.garbage">garbage</a></c:if>
-	<div class="progress"><div class="bar2"><div class="value redbar" style="width: ${memory.usedMemoryPercent}%;"><small>${memory.usedMemoryLabel}</small></div></div></div>
+	<div class="progress"><div class="bar2"><div id="memory-bar" class="value redbar" style="width: ${memory.usedMemoryPercent}%;"><small>${memory.usedMemoryLabel}</small></div></div></div>
+	<script>
+		<c:url var="ajaxURL" value="${info.currentAjaxURL}" context="/">
+			<c:param name="webaction" value="data.memory" />
+		</c:url>
+		function updateMemory() {
+		    jQuery.ajax({
+		    	dataType: "json",
+		    	url: '${ajaxURL}'
+		    }).done(function(jsonObj) {
+		    	  console.log(jsonObj);
+		    	  console.log(jsonObj.data.usedMemoryPercent);
+		    	  jQuery('#memory-bar').attr("style", "width:"+jsonObj.data.usedMemoryPercent+"%");
+		    	  jQuery('#memory-bar').html("<html><small>"+jsonObj.data.usedMemoryLabel+"</small></html>")
+		    });		
+		}
+		setInterval(updateMemory, 2000);
+	</script>
 	</li>	
 	</c:if>
 </ul>

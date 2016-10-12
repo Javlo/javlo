@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
+import java.lang.reflect.InvocationTargetException;
 import java.security.Principal;
 import java.text.ParseException;
 import java.util.Arrays;
@@ -22,6 +23,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.io.FileExistsException;
 import org.codehaus.plexus.util.StringUtils;
@@ -76,6 +78,7 @@ import org.javlo.servlet.IVersion;
 import org.javlo.template.Template;
 import org.javlo.user.AdminUserSecurity;
 import org.javlo.user.User;
+import org.javlo.utils.MemoryBean;
 import org.javlo.ztatic.StaticInfo;
 
 public class
@@ -671,6 +674,13 @@ DataAction implements IAction {
 
 	public static String performTab(RequestService rs, HttpSession session) {
 		session.setAttribute("tab", rs.getParameter("tab", null));
+		return null;
+	}
+	
+	public static String performMemory(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws NumberFormatException, IOException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+		Map memory = BeanUtils.describe(new MemoryBean());
+		memory.remove("class");
+		ctx.getAjaxData().putAll(memory);
 		return null;
 	}
 
