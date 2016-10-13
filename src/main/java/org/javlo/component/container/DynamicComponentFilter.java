@@ -71,7 +71,9 @@ public class DynamicComponentFilter extends AbstractPropertiesComponent implemen
 	}
 	
 	protected void setDefaultValue(Field field, String value) {
-		properties.setProperty("default-"+field.getName(), value);
+		if (field != null && value != null) {
+			properties.setProperty("default-"+field.getName(), value);
+		}
 	}
 
 	@Override
