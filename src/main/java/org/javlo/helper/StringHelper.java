@@ -3604,5 +3604,22 @@ public class StringHelper {
 		}
 		return outText.toString();
 	}
+	
+	/**
+	 * remote " on the start and the end of text, if quote was found.
+	 * @param text
+	 * @return
+	 */
+	public static String removeQuote(String text) {
+		if (text == null) {
+			return text;
+		}
+		text = text.trim();		
+		if (text.startsWith("\"") && text.endsWith("\"")) {
+			return text.substring(1,  text.length()-1);
+		} else {
+			return text;
+		}
+	}
 
 }

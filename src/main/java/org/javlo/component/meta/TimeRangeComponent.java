@@ -12,6 +12,7 @@ import java.util.logging.Logger;
 import org.javlo.context.ContentContext;
 import org.javlo.exception.ResourceNotFoundException;
 import org.javlo.helper.StringHelper;
+import org.javlo.helper.TimeHelper;
 import org.javlo.service.RequestService;
 
 /**
@@ -181,6 +182,12 @@ public class TimeRangeComponent extends DateComponent {
 				endDate = StringHelper.parseDateOrTime(newEndDate);
 				if (endDate.getTime() < startDate.getTime()) {
 					endDate = startDate;
+				}
+				Calendar cal = Calendar.getInstance();
+				cal.setTime(endDate);
+				if (cal.get(Calendar.HOUR) == 0 && cal.get(Calendar.MINUTE) == 0 && cal.get(Calendar.SECOND) == 0) {
+					cal = TimeHelper.convertEndOfDay(cal);
+					endDate = cal.getTime();
 				}
 			} catch (ParseException p) {
 				p.printStackTrace();

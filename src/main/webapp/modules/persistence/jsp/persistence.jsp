@@ -22,7 +22,7 @@
 <form action="${info.currentURL}" method="post">
 <div class="line">
 	<label for="static-url">${i18n.edit['persistence.title.static-import']}</label>
-	<input type="hidden" name="webaction" value="importPage" />
+	<input type="hidden" name="webaction" value="persistence.importPage" />
 	<input id="static-url" type="text" name="import-url" />
 	<input type="submit" value="${i18n.edit['global.ok']}" />
 </div>

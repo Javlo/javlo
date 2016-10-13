@@ -178,7 +178,7 @@ public class Persistence extends AbstractModuleAction {
 				NodeXML pageNode = node.getChild("page");
 				GlobalContext globalContext = GlobalContext.getInstance(request);
 				PersistenceService persistenceService = PersistenceService.getInstance(globalContext);
-				NavigationHelper.importPage(ctx, persistenceService, pageNode, currentPage, ctx.getLanguage(), false);
+				NavigationHelper.importPage(ctx, persistenceService, pageNode, currentPage, ctx.getLanguage(), true);
 				NodeXML resourcesNode = node.getChild("resources");
 				if (resourcesNode != null) {
 					String baseURL = resourcesNode.getAttributeValue("url");
@@ -193,7 +193,7 @@ public class Persistence extends AbstractModuleAction {
 							resource.setId(resourceNode.getAttributeValue("id"));
 							resource.setUri(resourceNode.getAttributeValue("uri"));
 							resources.add(resource);
-							ResourceHelper.downloadResource(globalContext.getDataFolder(), baseURL, resources);
+							ResourceHelper.downloadResource(ctx, globalContext.getDataFolder(), baseURL, resources);
 							countResources++;
 						}
 						resourceNode = resourceNode.getNext("resource");
@@ -208,7 +208,6 @@ public class Persistence extends AbstractModuleAction {
 			} finally {
 				ResourceHelper.closeResource(in);
 			}
-
 		} else {
 			return "bad parameters : need 'import-url'.";
 		}

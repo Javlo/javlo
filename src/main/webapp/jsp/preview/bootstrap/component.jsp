@@ -42,9 +42,11 @@ function displayComplexity(l) {
 }
 //-->
 </script>
+</c:if>
 <c:if test="${info.admin}"><button onclick="editPreview.openModal('Components', '${info.currentEditURL}?module=admin&context=${info.contextKey}&webaction=admin.previewEditComponent&previewEdit=true'); return false;" class="btn btn-default btn-xs pull-right"><span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span></button></c:if>
  <h2><span class="glyphicon glyphicon-briefcase" aria-hidden="true"></span>Content</h2>
- <div class="btn-group btn-group-justified components-group" role="group">
+<c:if test="${globalContext.staticConfig.componentsFiltered}">
+<div class="btn-group btn-group-justified components-group" role="group">
   <div class="btn-group" role="group"> 	
   <button type="button" class="btn btn-default btn-xs active btn-1" role="group" onclick="displayComplexity(1);">${i18n.edit['preview.component-group.basic']}</button>
   </div><div class="btn-group btn-group-sm" role="group">

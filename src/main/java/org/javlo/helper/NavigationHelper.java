@@ -235,7 +235,7 @@ public class NavigationHelper {
 		}
 		String version = parent.getAttributeValue("version", "1.0");
 
-		persistenceService.insertContent(pageNode, currentPage, lang);
+		persistenceService.insertContent(pageNode, currentPage, lang, true);
 		for (ComponentBean data : currentPage.getAllLocalContentBean()) {
 			ConvertToCurrentVersion.convert(ctx, data, version);
 		}
@@ -245,7 +245,7 @@ public class NavigationHelper {
 
 		while (child != null) {
 			String pageName = child.getAttributeValue("name");
-			if (pageName != null) {
+			if (pageName != null) {				
 				GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 				MenuElement newPage = persistenceService.insertPage(globalContext, child, currentPage, new HashMap<MenuElement, String[]>(), lang);
 				try {
@@ -261,18 +261,19 @@ public class NavigationHelper {
 			}
 			child = child.getNext("page");
 		}
-		NodeXML properties = pageNode.getParent().getChild("properties");
+		/*NodeXML properties = pageNode.getParent().getChild("properties");
 		if (properties != null && properties.getAttributeValue("name", "").equals("global")) {
 			NodeXML property = properties.getChild("property");
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 			ContentService content = ContentService.getInstance(globalContext);
 			while (property != null) {
-				if (content.getAttribute(ctx, property.getAttributeValue("key")) == null) { // if this key doesn't exist in local -> set in global map
+				if (content.getAttribute(ctx, property.getAttributeValue("key")) == null) { // if this key doesn't exist locally -> set in global map
 					content.setAttribute(ctx, property.getAttributeValue("key"), property.getContent());
 				}
 				property = property.getNext("property");
 			}
-		}
+		}*/
+		PersistenceService.getInstance(ctx.getGlobalContext()).setAskStore(true);
 	}
 
 	public static void publishNavigation(ContentContext ctx, MenuElement srcRoot, MenuElement targetRoot) throws Exception {

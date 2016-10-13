@@ -42,7 +42,7 @@ public class ImportedFileSharedContentProvider extends LocalFileSharedContentPro
 			if (page == null) {
 				page = ctx.getCurrentPage();
 			}
-			String importFolder = DataAction.createImportFolder(ctx);						
+			String importFolder = DataAction.createImportFolder( page);						
 			if (category.endsWith(importFolder)) {				
 				return true;
 			}
@@ -56,7 +56,7 @@ public class ImportedFileSharedContentProvider extends LocalFileSharedContentPro
 	public void upload(ContentContext ctx, String fileName, InputStream in, String category, boolean rename) throws IOException {
 		File fileFolder = getRootFolder(ctx);
 		try {
-			fileFolder = new File(URLHelper.mergePath(fileFolder.getAbsolutePath(), URLHelper.mergePath(ctx.getGlobalContext().getStaticConfig().getImportFolder(),DataAction.createImportFolder(ctx))));			
+			fileFolder = new File(URLHelper.mergePath(fileFolder.getAbsolutePath(), URLHelper.mergePath(ctx.getGlobalContext().getStaticConfig().getImportFolder(),DataAction.createImportFolder(ctx.getCurrentPage()))));			
 		} catch (Exception e) {
 			throw new IOException(e);
 		}

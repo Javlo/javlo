@@ -570,19 +570,14 @@ public class PersistenceService {
 		__version = -1;
 	}
 
-	public void insertContent(NodeXML pageXML, MenuElement elem, String defaultLg) throws StructureException {
-
-		String pageId = pageXML.getAttributeValue("id", "0");
-		DebugHelper.checkStructure(pageId == null, "no id defined in a page node.");
-
+	public void insertContent(NodeXML pageXML, MenuElement elem, String defaultLg, boolean releaseID) throws StructureException {
 		NodeXML contentNode = pageXML.getChild("component");
-
-		Map<String, String> parentMap = new HashMap<String, String>();
-
 		List<ComponentBean> contentList = new LinkedList<ComponentBean>();
-
 		while (contentNode != null) {
 			String id = contentNode.getAttributeValue("id");
+			if (releaseID) {
+				id=StringHelper.getRandomId();
+			}
 			DebugHelper.checkStructure(id == null, "no id defined in a component.");
 			String type = contentNode.getAttributeValue("type");
 			DebugHelper.checkStructure(type == null, "no type defined in a component.");
@@ -607,11 +602,6 @@ public class PersistenceService {
 				for (String modeStr : StringHelper.stringToCollection(hiddenModesStr, ",")) {
 					hiddenModes.add(Integer.parseInt(modeStr.trim()));
 				}
-			}
-
-			String parent = parentMap.get(lg);
-			if (parent == null) {
-				parent = "0";
 			}
 
 			String style = contentNode.getAttributeValue("style");
@@ -643,32 +633,33 @@ public class PersistenceService {
 				e.printStackTrace();
 			}
 			contentList.add(bean);
-
-			/*
-			 * st.setString(1, pageId); st.setString(2, parent); st.setString(3,
-			 * type); st.setString(4, content); st.setString(5, id);
-			 * st.setString(6, lg); if (isRepeat) { st.setInt(7, 1); } else {
-			 * st.setInt(7, 0); } st.setString(8, style);
-			 */
-
-			parentMap.put(lg, id);
-
 			contentNode = contentNode.getNext("component");
 		}
 
 		ComponentBean[] elemContent = new ComponentBean[contentList.size()];
 		contentList.toArray(elemContent);
 		elem.setContent(elemContent);
-
 	}
 
 	public MenuElement insertPage(GlobalContext globalContext, NodeXML pageXML, MenuElement parent, Map<MenuElement, String[]> vparentPreparation, String defaultLg) throws StructureException, IOException {
-
 		MenuElement page = MenuElement.getInstance(globalContext);
 
-		String id = pageXML.getAttributeValue("id");
+		String id = pageXML.getAttributeValue("id");		
+		while (parent.getRoot().searchChildFromId(id) != null) {
+			id = StringHelper.getRandomId();
+		}
 		DebugHelper.checkStructure(id == null, "no id defined in a page node.");
 		String name = pageXML.getAttributeValue("name");
+		String finalPageName = name;
+		int i=1;
+		while (parent.getRoot().searchChildFromName(finalPageName) != null && i<10000) {
+			finalPageName = name+"_"+i;
+			i++;
+		}
+		if (i==10000) {
+			logger.severe("problem on loading page check page : "+name+"  (context:"+globalContext.getContextKey()+")");
+		}
+		name = finalPageName;
 		DebugHelper.checkStructure(name == null, "no path defined in a page node.");
 		String priority = pageXML.getAttributeValue("priority", "10");
 		DebugHelper.checkStructure(priority == null, "no priority defined in a page node.");
@@ -778,7 +769,7 @@ public class PersistenceService {
 
 		page.setLinkedURL(pageXML.getAttributeValue("linked-url"));
 
-		insertContent(pageXML, page, defaultLg);
+		insertContent(pageXML, page, defaultLg, false);
 
 		parent.addChildMenuElement(page);
 
@@ -894,7 +885,7 @@ public class PersistenceService {
 					root.setValidationDate(parseDate(validationDate));
 				}
 
-				insertContent(page, root, defaultLg);
+				insertContent(page, root, defaultLg, false);
 				page = page.getChild("page");
 
 				Map<MenuElement, String[]> vparentPreparation = new HashMap<MenuElement, String[]>();

@@ -41,7 +41,10 @@ import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.filter.ZIPFilter;
 import org.javlo.helper.ArrayHelper;
+import org.javlo.helper.DebugHelper;
 import org.javlo.helper.ElementaryURLHelper;
+import org.javlo.helper.LangHelper;
+import org.javlo.helper.LocalLogger;
 import org.javlo.helper.PatternHelper;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
@@ -282,8 +285,6 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 		return i18nAccess.getText("action.add-image.dir");
 	}
 	
-	
-
 	protected String[] getDirList(ContentContext ctx, String inFolder) throws Exception {
 		File folder = new File(inFolder);
 		Collection<File> sourceChildren = ResourceHelper.getAllDirList(folder);
@@ -293,6 +294,11 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 			importFolder = importFolder.substring(1);
 		}
 		String currentImportFolder = getImportFolderPath(ctx);
+		
+		LocalLogger.log("***** AbstractFileComponent.getDirList : ctx page            = "+ctx.getCurrentPage().getName()); //TODO: remove debug trace
+		LocalLogger.log("***** AbstractFileComponent.getDirList : getPage()           = "+getPage().getName()); //TODO: remove debug trace
+		LocalLogger.log("***** AbstractFileComponent.getDirList : currentImportFolder = "+currentImportFolder); //TODO: remove debug trace
+		
 		for (File dir : sourceChildren) {
 			String child = StringUtils.replace(dir.getAbsolutePath(), folder.getAbsolutePath(), "").replace('\\', '/');
 			if (child.length() > 1 && child.startsWith("/")) {
@@ -864,7 +870,7 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 	@Override
 	public void init(ComponentBean bean, ContentContext ctx) throws Exception {
 		super.init(bean, ctx);
-		/* check if the content of db is correct version */
+		/* check if the content of db is correct version */		
 		if (getValue().trim().length() == 0) {
 			if (!AdminUserSecurity.isCurrentUserCanUpload(ctx)) {
 				setDirSelected(getImportFolderPath(ctx));
@@ -878,17 +884,20 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 		} else {
 			properties.load(stringToStream(getValue()));
 		}
-		if (isImported(ctx) && ctx.getCurrentPage() != null) {
+		
+		if (isImported(ctx) && getPage() != null) {
 			String importFolder = getImportFolderPath(ctx);
-			if (!getDirSelected().startsWith(importFolder)) {
+			if (!getDirSelected().equals(importFolder)) {
 				File oldFile = getFile(ctx);
-				setDirSelected(importFolder);
+				setDirSelected(importFolder);				
 				File newFile = getFile(ctx);
 				try {
 					ResourceHelper.writeFileToFile(oldFile, newFile);
+					ResourceHelper.copyResourceData(ctx, oldFile, newFile);
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
+				ResourceHelper.cleanImportResource(ctx, oldFile);				
 			}
 		}
 		
@@ -1143,7 +1152,7 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 		}
 	}
 
-	public void setDirSelected(String dir) {
+	public void setDirSelected(String dir) {		
 		properties.setProperty(DIR_KEY, dir);
 		storeProperties();
 	}

@@ -1610,6 +1610,4 @@ public class StaticConfig extends Observable {
 			return true;
 		}
 	}
-
-	
 }

@@ -165,14 +165,22 @@ public class JavloELFinder extends ELFinder {
 		for (String fileHash : filesHash) {
 			JavloELFile file = (JavloELFile) hashToFile(fileHash);
 			if (file.getFile().exists()) {
-				GlobalContext globalContext = GlobalContext.getInstance(request);
+				ContentContext ctx;
+				try {
+					ctx = ContentContext.getContentContext(request, null);
+					ResourceHelper.deleteResource(ctx, file.getFile());
+				} catch (Exception e) {					
+					throw new IOException(e);
+				}
+				
+				/*GlobalContext globalContext = GlobalContext.getInstance(request);
 				if (file.isDirectory()) {
 					FileUtils.deleteDirectory(file.getFile());
 					FileCache.getInstance(request.getSession().getServletContext()).clear(globalContext.getContextKey());
 				} else {
 					file.getFile().delete();
 					FileCache.getInstance(request.getSession().getServletContext()).deleteAllFile(globalContext.getContextKey(), file.getFile().getName());
-				}
+				}*/
 				deletedFiles.add(file);
 			}
 		}

@@ -487,13 +487,14 @@ public class FileAction extends AbstractModuleAction {
 		return null;
 	}
 
-	public static String performDelete(GlobalContext globalContext, RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws IOException {
+	public static String performDelete(GlobalContext globalContext, RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
 		String filePath = rs.getParameter("file", null);
 		if (filePath == null) {
 			return "bad request structure : need file parameter.";
 		} else {
 			File file = new File(URLHelper.mergePath(globalContext.getStaticFolder(), filePath));
-			if (file.isFile()) {
+			ResourceHelper.deleteResource(ctx, file);
+			/*if (file.isFile()) {				
 				file.delete();
 				if (StringHelper.isImage(file.getName())) {
 					FileCache.getInstance(ctx.getRequest().getSession().getServletContext()).deleteAllFile(globalContext.getContextKey(), file.getName());
@@ -505,7 +506,7 @@ public class FileAction extends AbstractModuleAction {
 					}
 				}
 				FileUtils.deleteDirectory(file);
-			}
+			}*/
 		}
 		if (StringHelper.isTrue(rs.getParameter("close", null))) {
 			ctx.setClosePopup(true);

@@ -271,7 +271,7 @@ public class GlobalImage extends Image implements IImageFilter {
 
 		StringBuffer finalCode = new StringBuffer();
 		finalCode.append(getSpecialInputTag());
-
+		
 		finalCode.append("<div class=\"js-change-submit image row form-group\"><div class=\"col-sm-5\">");
 
 		finalCode.append(getPreviewCode(ctx));

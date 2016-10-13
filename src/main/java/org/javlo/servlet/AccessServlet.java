@@ -231,7 +231,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 		TemplateFactory.copyDefaultTemplate(getServletContext());
 
 	}
-	
+
 	public void process(HttpServletRequest request, HttpServletResponse response, boolean post) throws ServletException {
 
 		try {
@@ -263,7 +263,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 			ContentContext ctx = ContentContext.getContentContext(request, response);
 			if (ctx.isAsEditMode() || ctx.isAsPreviewMode()) {
 				if (!staticConfig.acceptIP(request.getRemoteAddr())) {
-					logger.warning("refuse access for ip : "+request.getRemoteAddr());
+					logger.warning("refuse access for ip : " + request.getRemoteAddr());
 					response.setStatus(HttpServletResponse.SC_FORBIDDEN);
 					return;
 				}
@@ -274,15 +274,15 @@ public class AccessServlet extends HttpServlet implements IVersion {
 				lgCtx.setContentLanguage(ctx.getRequestContentLanguage());
 				String pageUrl = URLHelper.createURL(lgCtx, lgCtx.getCurrentPage());
 				pageUrl = URLDecoder.decode(pageUrl, ContentContext.CHARACTER_ENCODING);
-				String mainURL = (String)request.getAttribute(CatchAllFilter.MAIN_URI_KEY);				
-				
+				String mainURL = (String) request.getAttribute(CatchAllFilter.MAIN_URI_KEY);
+
 				if (mainURL != null && !mainURL.endsWith(pageUrl)) {
 					// response.sendRedirect(pageUrl);
 					NetHelper.sendRedirectPermanently(response, URLHelper.createURL(lgCtx, lgCtx.getCurrentPage()));
 					return;
 				}
 			}
-			
+
 			if (!staticConfig.isContentExtensionValid(ctx.getFormat())) {
 				ctx.setFormat(staticConfig.getDefaultContentExtension());
 				ctx.setContentFound(false);
@@ -431,7 +431,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 			if (logger.isLoggable(Level.FINE)) {
 				logger.fine(requestLabel + " : i18nAccess.requestInit(ctx) " + df.format((double) (System.currentTimeMillis() - startTime) / (double) 1000) + " sec.");
 			}
-			
+
 			/* ********************** */
 			/* CHECK SYSTEM INTEGRITY */
 			/* ********************** */
@@ -621,7 +621,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 				if (logger.isLoggable(Level.FINE)) {
 					logger.fine(requestLabel + " : InfoBean " + df.format((double) (System.currentTimeMillis() - startTime) / (double) 1000) + " sec.");
 				}
-				
+
 				/* **** */
 				/* EDIT */
 				/* **** */
@@ -683,8 +683,8 @@ public class AccessServlet extends HttpServlet implements IVersion {
 					ContentContext robotCtx = new ContentContext(ctx);
 					robotCtx.setDevice(Device.getFakeDevice("robot"));
 					robotCtx.setAbsoluteURL(true);
-					response.setHeader("link", "<"+URLHelper.createURL(robotCtx)+">; rel=\"canonical\"");
-					
+					response.setHeader("link", "<" + URLHelper.createURL(robotCtx) + ">; rel=\"canonical\"");
+
 					request.setAttribute("social", SocialService.getInstance(ctx));
 
 					localLogger.startCount("content");
@@ -735,7 +735,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 						FSImageWriter imageWriter = new FSImageWriter();
 						imageWriter.write(img, out);
 
-					} else if (ctx.getFormat().equalsIgnoreCase("pdf")) {						
+					} else if (ctx.getFormat().equalsIgnoreCase("pdf")) {
 						if (ctx.getGlobalContext().isCollaborativeMode()) {
 							Set<String> pageRoles = ctx.getCurrentPage().getEditorRolesAndParent();
 							if ((pageRoles.size() > 0 || ctx.getCurrentEditUser() == null)) {
@@ -749,10 +749,10 @@ public class AccessServlet extends HttpServlet implements IVersion {
 								}
 							}
 						}
-						
+
 						response.setContentType("application/pdf;");
 						OutputStream out = response.getOutputStream();
-						
+
 						Map<String, String> params = new HashMap<String, String>();
 						boolean lowDef = false;
 						if (request.getParameter("lowdef") != null) {
@@ -939,7 +939,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 								SharedContentService.prepare(ctx);
 
 							}
-							
+
 							/** check content **/
 							if (!ctx.isContentFound()) {
 								if (staticConfig.isRedirectWidthName()) {
@@ -962,12 +962,14 @@ public class AccessServlet extends HttpServlet implements IVersion {
 										ctx.setCurrentTemplate(template);
 									} else {
 										Template defaultTemplate = TemplateFactory.getDiskTemplates(getServletContext()).get(globalContext.getDefaultTemplate());
-										defaultTemplate.importTemplateInWebapp(staticConfig, ctx);
-										File file404 = new File(URLHelper.mergePath(defaultTemplate.getWorkTemplateRealPath(globalContext), defaultTemplate.get404File()));
-										if (file404.exists()) {
-											response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-											ResourceHelper.writeFileToStream(file404, response.getOutputStream());
-											return;
+										if (defaultTemplate != null) {
+											defaultTemplate.importTemplateInWebapp(staticConfig, ctx);
+											File file404 = new File(URLHelper.mergePath(defaultTemplate.getWorkTemplateRealPath(globalContext), defaultTemplate.get404File()));
+											if (file404.exists()) {
+												response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+												ResourceHelper.writeFileToStream(file404, response.getOutputStream());
+												return;
+											}
 										}
 									}
 								}
@@ -975,7 +977,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 
 							String area = requestService.getParameter("only-area", null);
 							if (area != null) {
-								getServletContext().getRequestDispatcher("/jsp/view/content_view.jsp?area=" + area).include(request, response);								
+								getServletContext().getRequestDispatcher("/jsp/view/content_view.jsp?area=" + area).include(request, response);
 							} else {
 								if (ctx.getCurrentPage() != null) {
 									String jspPath = template.getRendererFullName(ctx);
@@ -1048,7 +1050,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 		out.println("**** Current Time      :  " + StringHelper.renderTime(new Date()));
 		out.println("**** Server info       :  " + getServletContext().getServerInfo());
 		out.println("**** JAVA_HOME         :  " + System.getenv("JAVA_HOME"));
-		out.println("**** System encoding   :  " + System.getProperty("file.encoding"));		
+		out.println("**** System encoding   :  " + System.getProperty("file.encoding"));
 		out.println("**** CMS encoding      :  " + ContentContext.CHARACTER_ENCODING);
 		out.println("**** VERSION           :  " + VERSION);
 		out.println("**** Platform type     :  " + staticConfig.getPlatformType());
@@ -1068,7 +1070,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 		out.println("**** THREAD DIR        :  " + staticConfig.getThreadFolder());
 		out.println("**** TEMP DIR          :  " + staticConfig.getTempDir());
 		out.println("**** IMAGE TEMP DIR    :  " + staticConfig.getImageCacheFolder());
-		out.println("**** IMAGE AUTO FOCUS  :  " + staticConfig.isAutoFocus());		
+		out.println("**** IMAGE AUTO FOCUS  :  " + staticConfig.isAutoFocus());
 		out.println("**** EHCACHE FILE      :  " + staticConfig.getEHCacheConfigFile());
 		out.println("**** MAIL THREAD       :  " + staticConfig.isMailingThread());
 		out.println("**** ALL LOG LVL       :  " + staticConfig.getAllLogLevel());

@@ -24,6 +24,15 @@ public class SortContainer implements Comparator<IFieldContainer> {
 	}
 	
 	private int compareTo(int number, Comparable obj1, Comparable obj2) {
+		if (obj1==null && obj2==null) {
+			return 0;
+		}
+		if (obj1==null) {
+			return 1;
+		}
+		if (obj2==null) {
+			return -1;
+		}
 		if (obj1.compareTo(obj2) > 0) {
 			return number;
 		} else if (obj1.compareTo(obj2) < 0) {
@@ -35,6 +44,15 @@ public class SortContainer implements Comparator<IFieldContainer> {
 
 	@Override
 	public int compare(IFieldContainer f1, IFieldContainer f2) {
+		if (f1==null && f2==null) {
+			return 0;
+		}
+		if (f1==null) {
+			return 1;
+		}
+		if (f2==null) {
+			return -1;
+		}
 		try {
 			Iterator<String> ite = fields.iterator();
 			String field = ite.next();			
@@ -44,7 +62,7 @@ public class SortContainer implements Comparator<IFieldContainer> {
 				multi = -1;
 				field = field.substring(1);
 			}
-			while (f1.getField(ctx, field).compareTo(f2.getField(ctx, field)) == 0 && ite.hasNext()) {
+			while (f1.getField(ctx, field) != null && f1.getField(ctx, field).compareTo(f2.getField(ctx, field)) == 0 && ite.hasNext()) {
 				field = ite.next();				
 				multi = 1;
 				if (field.startsWith("!")) {

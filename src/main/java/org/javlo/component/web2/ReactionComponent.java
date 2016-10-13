@@ -1076,11 +1076,12 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 	}
 
 	@Override
-	public IContentVisualComponent newInstance(ComponentBean bean, ContentContext newCtx) throws Exception {
+	public IContentVisualComponent newInstance(ComponentBean bean, ContentContext newCtx, MenuElement page) throws Exception {
 
 		ReactionComponent res = (ReactionComponent) this.clone();
 		res.setProperties(getProperties()); // transfert meta-data of
 		// dynamiccomponent
+		res.setPage(page);
 		res.init(bean, newCtx);
 
 		return res;

@@ -575,14 +575,14 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 	}
 
 	@Override
-	public IContentVisualComponent newInstance(ComponentBean bean, ContentContext newCtx) throws Exception {
+	public IContentVisualComponent newInstance(ComponentBean bean, ContentContext newCtx, MenuElement page) throws Exception {
 		DynamicComponent res = (DynamicComponent) this.clone();
 		Properties newProp = new Properties();
 		newProp.putAll(getConfigProperties());
 		res.setProperties(newProp); // transfert meta-data of
 		// dynamiccomponent
+		res.setPage(page);
 		res.init(bean, newCtx);
-
 		return res;
 	}
 

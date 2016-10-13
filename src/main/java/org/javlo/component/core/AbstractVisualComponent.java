@@ -2133,8 +2133,9 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	}
 
 	@Override
-	public IContentVisualComponent newInstance(ComponentBean bean, ContentContext newCtx) throws Exception {
+	public IContentVisualComponent newInstance(ComponentBean bean, ContentContext newCtx, MenuElement page) throws Exception {
 		AbstractVisualComponent res = (AbstractVisualComponent) this.clone();
+		res.setPage(page);
 		res.init(bean, newCtx);
 		return res;
 	}
@@ -2618,12 +2619,16 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		return StringHelper.removeTag(getValue(ctx));
 	}
 	
-	public static String getImportFolderPath(ContentContext ctx) throws Exception {
+	public static String getImportFolderPath(ContentContext ctx, MenuElement page) throws Exception {
 		String importFolder = ctx.getGlobalContext().getStaticConfig().getImportFolder();
 		if (importFolder.length() > 1 && importFolder.startsWith("/")) {
 			importFolder = importFolder.substring(1);
 		}
-		return importFolder+'/'+DataAction.createImportFolder(ctx);
+		return importFolder+'/'+DataAction.createImportFolder(page);
+	}
+	
+	public String getImportFolderPath(ContentContext ctx) throws Exception {
+		return getImportFolderPath(ctx, getPage());
 	}
 
 }

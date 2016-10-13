@@ -471,16 +471,20 @@ DataAction implements IAction {
 
 		return targetFolder;
 	}
-
-	public static final String createImportFolder(ContentContext ctx) throws Exception {
-		MenuElement page = ctx.getCurrentPage().getRootOfChildrenAssociation();
-		if (page == null) {
-			page = ctx.getCurrentPage();
-		}
-		String importFolder = StringHelper.createFileName(page.getName());
+	
+	public static final String createImportFolder(String pageName) throws Exception {
+		String importFolder = StringHelper.createFileName(pageName);
 		importFolder = StringHelper.trimOn(importFolder.trim(), "_");
 		importFolder = importFolder.replace('-', '_');
 		return importFolder;
+	}
+
+	public static final String createImportFolder(MenuElement inPage) throws Exception {
+		MenuElement page = inPage.getRootOfChildrenAssociation();
+		if (page == null) {
+			page = inPage;
+		}		
+		return createImportFolder(page.getName());
 	}
 
 	public static String uploadContent(RequestService rs, ContentContext ctx, GlobalContext gc, ContentService cs, User user, MessageRepository messageRepository, I18nAccess i18nAccess, ImportConfigBean config, boolean rename) throws Exception {
@@ -491,7 +495,7 @@ DataAction implements IAction {
 		if (!Edit.checkPageSecurity(ctx)) {
 			return "no suffisant right.";
 		}		
-		String importFolder = createImportFolder(ctx);
+		String importFolder = createImportFolder(ctx.getCurrentPage());
 		
 		int countImages = 0;
 		FileItem imageItem = null;

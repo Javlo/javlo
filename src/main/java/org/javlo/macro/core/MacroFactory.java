@@ -6,6 +6,8 @@ import java.util.List;
 import org.javlo.config.StaticConfig;
 import org.javlo.macro.ActiveAllChildren;
 import org.javlo.macro.AddChildMacro;
+import org.javlo.macro.CleanDuplicatedId;
+import org.javlo.macro.CleanImportFolder;
 import org.javlo.macro.CleanResourceNameMacro;
 import org.javlo.macro.ClearDataAccessCount;
 import org.javlo.macro.CopyLanguageStructureHereMacro;
@@ -161,6 +163,8 @@ public class MacroFactory {
 		macros.add(new CreateRedirectionForAllLanguages());
 		macros.add(new ClearDataAccessCount());
 		macros.add(new DeleteComponentWithBadResourceReference());
+		macros.add(new CleanImportFolder());
+		macros.add(new CleanDuplicatedId());
 	}
 
 	public IMacro getMacro(String name) {

@@ -162,6 +162,10 @@ public class StaticInfo {
 				return null;
 			}
 		}
+		
+		public String getSortableDate() {
+			return StringHelper.renderSortableTime(staticInfo.getDate(ctx));
+		}
 
 		public String getShortDate() {
 			try {
@@ -217,6 +221,14 @@ public class StaticInfo {
 
 		public String getURL() {
 			return URLHelper.createResourceURL(ctx, staticInfo.getFile());
+		}		
+		
+		public int getFocusZoneX() {
+			return staticInfo.getFocusZoneX(ctx);
+		}
+		
+		public int getFocusZoneY() {
+			return staticInfo.getFocusZoneY(ctx);
 		}
 
 	}
@@ -769,7 +781,7 @@ public class StaticInfo {
 
 	public String getManualTitle(ContentContext ctx) {
 		ContentService content = ContentService.getInstance(ctx.getGlobalContext());
-		String key = getKey("title-" + ctx.getRequestContentLanguage());
+		String key = getKey("title-" + ctx.getRequestContentLanguage());		
 		String title = content.getAttribute(ctx, key, "");
 		return title;
 	}
@@ -777,7 +789,7 @@ public class StaticInfo {
 	public String getId(ContentContext ctx) {
 		if (id == null) {
 			ContentService content = ContentService.getInstance(ctx.getGlobalContext());
-			String key = getKey("id-" + ctx.getRequestContentLanguage());
+			String key = getKey("id-" + ctx.getRequestContentLanguage());			
 			id = content.getAttribute(ctx, key, "");
 			if (id.trim().length() == 0) {
 				id = StringHelper.getRandomId();
@@ -1168,6 +1180,17 @@ public class StaticInfo {
 		ContentService content = ContentService.getInstance(ctx.getGlobalContext());
 		StaticInfo newStaticInfo = StaticInfo.getInstance(ctx, newFile);
 		content.renameKeys(getKey(""), newStaticInfo.getKey(""));
+	}
+	
+	public void deleteFile(ContentContext ctx) throws Exception {
+		ContentService content = ContentService.getInstance(ctx.getGlobalContext());
+		content.deleteKeys(getKey(""));
+	}
+	
+	public void duplicateFile(ContentContext ctx, File newFile) throws Exception {
+		ContentService content = ContentService.getInstance(ctx.getGlobalContext());
+		StaticInfo newStaticInfo = StaticInfo.getInstance(ctx, newFile);
+		content.duplicateKeys(getKey(""), newStaticInfo.getKey(""));
 	}
 
 	public int getAccessFromSomeDays(ContentContext ctx) throws Exception {

@@ -136,6 +136,22 @@ public class TimeHelper {
 		outCal.set(Calendar.MONTH, cal.get(Calendar.MONTH));
 		outCal.set(Calendar.DAY_OF_MONTH, cal.get(Calendar.DAY_OF_MONTH));
 		outCal.set(Calendar.HOUR, 0);
+		outCal.set(Calendar.MINUTE, 0);
+		outCal.set(Calendar.SECOND, 0);
+		outCal.set(Calendar.MILLISECOND, 0);
+		return outCal;
+	}
+	
+	public static Calendar convertEndOfDay(Calendar cal) {
+		Calendar outCal = Calendar.getInstance();
+		outCal.setTimeInMillis(0);
+		outCal.set(Calendar.YEAR, cal.get(Calendar.YEAR));
+		outCal.set(Calendar.MONTH, cal.get(Calendar.MONTH));
+		outCal.set(Calendar.DAY_OF_MONTH, cal.get(Calendar.DAY_OF_MONTH));
+		outCal.set(Calendar.HOUR, 23);
+		outCal.set(Calendar.MINUTE, 59);
+		outCal.set(Calendar.SECOND, 59);
+		outCal.set(Calendar.MILLISECOND, 999);
 		return outCal;
 	}
 
@@ -240,8 +256,8 @@ public class TimeHelper {
 
 	public static void main(String[] args) {
 		Calendar outCal = Calendar.getInstance();
-		outCal.set(Calendar.DAY_OF_MONTH, 1);
-		System.out.println("***** TimeHelper.main : " + StringHelper.renderDate(outCal.getTime())); // TODO: remove debug trace
+		outCal = convertEndOfDay(outCal);
+		System.out.println("***** outCal : " + StringHelper.renderTime(outCal.getTime())); // TODO: remove debug trace
 
 	}
 }

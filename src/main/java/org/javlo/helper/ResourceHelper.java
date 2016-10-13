@@ -39,10 +39,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.TreeSet;
 import java.util.zip.CRC32;
@@ -61,6 +63,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.io.FileExistsException;
+import org.apache.commons.io.FileSystemUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -80,6 +83,8 @@ import org.javlo.io.TransactionFile;
 import org.javlo.module.core.Module;
 import org.javlo.module.core.ModuleException;
 import org.javlo.module.core.ModulesContext;
+import org.javlo.navigation.MenuElement;
+import org.javlo.service.ContentService;
 import org.javlo.service.PersistenceService;
 import org.javlo.service.resource.Resource;
 import org.javlo.user.AdminUserSecurity;
@@ -87,6 +92,8 @@ import org.javlo.utils.ConfigurationProperties;
 import org.javlo.ztatic.FileCache;
 import org.javlo.ztatic.IStaticContainer;
 import org.javlo.ztatic.StaticInfo;
+
+import com.google.gson.JsonElement;
 
 public class ResourceHelper {
 
@@ -164,7 +171,7 @@ public class ResourceHelper {
 		return returnDelete;
 	}
 
-	public static void downloadResource(String localDir, String baseURL, Collection<Resource> resources) throws IOException {
+	public static void downloadResource(ContentContext ctx, String localDir, String baseURL, Collection<Resource> resources) throws Exception {
 		for (Resource resource : resources) {
 			URL url = new URL(URLHelper.mergePath(baseURL, resource.getUri()));
 			File localFile = new File(URLHelper.mergePath(localDir, resource.getUri()));
@@ -173,6 +180,29 @@ public class ResourceHelper {
 				try {
 					in = url.openStream();
 					ResourceHelper.writeStreamToFile(in, localFile);
+					try {
+						/** load static info **/
+						StaticInfo staticInfo = StaticInfo.getInstance(ctx, localFile);
+						ContentContext lgCtx = new ContentContext(ctx);
+						for (String lg : ctx.getGlobalContext().getContentLanguages()) {
+							lgCtx.setAllLanguage(lg);
+							String jsonURL = url.toString() + ".json?lg=" + lg;
+							JsonElement jsonElement = NetHelper.readJson(new URL(jsonURL));
+							Map<String, String> jsonMap = new HashMap<String, String>();
+							for (Entry entry : jsonElement.getAsJsonObject().entrySet()) {
+								jsonMap.put((String) entry.getKey(), "" + entry.getValue());
+							}
+							staticInfo.setTitle(lgCtx, StringHelper.removeQuote(jsonMap.get("title")));
+							staticInfo.setDescription(lgCtx, StringHelper.removeQuote(jsonMap.get("description")));
+							staticInfo.setLocation(lgCtx, StringHelper.removeQuote(jsonMap.get("location")));
+							staticInfo.setCopyright(lgCtx, StringHelper.removeQuote(jsonMap.get("copyright")));
+							staticInfo.setDate(lgCtx, StringHelper.parseSortableTime(StringHelper.removeQuote(jsonMap.get("sortableDate"))));
+							staticInfo.setFocusZoneX(lgCtx, Integer.parseInt(StringHelper.removeQuote(jsonMap.get("focusZoneX"))));
+							staticInfo.setFocusZoneY(lgCtx, Integer.parseInt(StringHelper.removeQuote(jsonMap.get("focusZoneY"))));
+						}
+					} catch (Throwable t) {
+						t.printStackTrace();
+					}
 					logger.info("download resource : " + url + " in " + localFile);
 				} finally {
 					if (in != null) {
@@ -180,7 +210,7 @@ public class ResourceHelper {
 					}
 				}
 			} else {
-				logger.warning("download url error : file already exists in local : " + localFile);
+				logger.warning("download url error : file already exists locally : " + localFile);
 			}
 
 		}
@@ -860,8 +890,8 @@ public class ResourceHelper {
 		try {
 			content = loadStringFromStream(in, ContentContext.CHARSET_DEFAULT);
 		} finally {
-			closeResource(in);	
-		}		
+			closeResource(in);
+		}
 		return content;
 	}
 
@@ -992,7 +1022,55 @@ public class ResourceHelper {
 			String fromDataFolder = file.getAbsolutePath().replace(globalContext.getDataFolder(), "");
 			FileCache.getInstance(ctx.getRequest().getSession().getServletContext()).delete(ctx, fromDataFolder);
 
-			PersistenceService.getInstance(globalContext).setAskStore(true);			
+			PersistenceService.getInstance(globalContext).setAskStore(true);
+		}
+	}
+
+	/**
+	 * duplicate static info of a resource to a new file
+	 * 
+	 * @param ctx
+	 * @param oldName
+	 * @param newName
+	 * @throws Exception
+	 */
+	public static void copyResourceData(ContentContext ctx, File file, File newFile) throws Exception {
+		synchronized (ctx.getGlobalContext().getLockLoadContent()) {
+			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+
+			StaticInfo staticInfo = StaticInfo.getInstance(ctx, file);
+			staticInfo.renameFile(ctx, newFile);
+
+			// delete old ref in cache
+			String fromDataFolder = file.getAbsolutePath().replace(globalContext.getDataFolder(), "");
+			FileCache.getInstance(ctx.getRequest().getSession().getServletContext()).delete(ctx, fromDataFolder);
+
+			PersistenceService.getInstance(globalContext).setAskStore(true);
+		}
+	}
+
+	public static boolean deleteResource(ContentContext ctx, File file) throws Exception {
+		if (file.isDirectory()) {
+			boolean deletedOk = true;
+			for (File child : file.listFiles()) {
+				deleteResourceData(ctx, file);
+				deletedOk = deletedOk && deleteResource(ctx, child);
+			}
+			FileUtils.deleteDirectory(file);
+			return deletedOk;
+		} else {
+			FileCache.getInstance(ctx.getRequest().getSession().getServletContext()).deleteAllFile(ctx.getGlobalContext().getContextKey(), file.getName());
+			deleteResourceData(ctx, file);
+			return file.delete();
+		}
+	}
+
+	public static void deleteResourceData(ContentContext ctx, File file) throws Exception {
+		synchronized (ctx.getGlobalContext().getLockLoadContent()) {
+			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+			StaticInfo staticInfo = StaticInfo.getInstance(ctx, file);
+			staticInfo.deleteFile(ctx);
+			PersistenceService.getInstance(globalContext).setAskStore(true);
 		}
 	}
 
@@ -1417,14 +1495,14 @@ public class ResourceHelper {
 			FileImageOutputStream out = null;
 			try {
 				out = new FileImageOutputStream(transFile.getTempFile());
-				writer.setOutput(out);			
+				writer.setOutput(out);
 				BufferedImage image = ImageIO.read(target);
 				IIOImage ioimage = new IIOImage(image, null, imageMetadata);
 				writer.write(null, ioimage, null);
 				out.close();
 				transFile.commit();
-			} catch (Exception e) {				
-				e.printStackTrace();				
+			} catch (Exception e) {
+				e.printStackTrace();
 				if (out != null) {
 					out.close();
 				}
@@ -1502,15 +1580,12 @@ public class ResourceHelper {
 		}
 	}
 
-	public static void main(String[] args) throws IOException {
-		File source = new File("c:/trans/test_blonde.jpg");
-		File target = new File("c:/trans/test2.jpg");				
-		ResourceHelper.writeFileToFile(source, target);
-		IIOMetadata metadata = ResourceHelper.getImageMetadata(target);
-		//BufferedImage img = ImageEngine.loadImage(target);
-		//img = ImageEngine.cropImage(img, 100, 100, 50, 50);
-		//ImageEngine.storeImage(img, target);
-		ResourceHelper.writeImageMetadata(metadata, target);
+	public static void main(String[] args) throws Exception {
+		JsonElement jsonElement = NetHelper.readJson(new URL("http://localhost/javlo/mailing/resource/static/images/import/test_pages_moving/0560bg.jpg.json"));
+		for (Entry entry : jsonElement.getAsJsonObject().entrySet()) {
+			System.out.println("item:" + entry.getKey() + "  value:" + entry.getValue());
+		}
+
 	}
 
 	/**
@@ -1595,21 +1670,97 @@ public class ResourceHelper {
 		}
 		return size;
 	}
-	
+
 	public static boolean canModifFolder(ContentContext ctx, String folder) {
 		boolean canModif = AdminUserSecurity.isCurrentUserCanUpload(ctx);
 		if (!canModif) {
 			try {
-				String importFolder = URLHelper.mergePath(ctx.getGlobalContext().getStaticConfig().getImportFolder(), DataAction.createImportFolder(ctx))	;				
+				String importFolder = URLHelper.mergePath(ctx.getGlobalContext().getStaticConfig().getImportFolder(), DataAction.createImportFolder(ctx.getCurrentPage()));
 				importFolder = URLHelper.cleanPath(importFolder, false);
 				if (URLHelper.cleanPath(folder, false).contains(importFolder)) {
 					canModif = true;
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
-			}			
+			}
 		}
 		return canModif;
+	}
+
+	/**
+	 * delete import without reference to a existing page.
+	 * 
+	 * @param ctx
+	 * @return nomber of deleted import folder.
+	 * @throws Exception
+	 */
+	public static int cleanImportResources(ContentContext ctx) throws Exception {
+		File importImageFolder = new File(URLHelper.mergePath(ctx.getGlobalContext().getDataFolder(), ctx.getGlobalContext().getStaticConfig().getImageFolder(), ctx.getGlobalContext().getStaticConfig().getImportFolder()));
+		File importFileFolder = new File(URLHelper.mergePath(ctx.getGlobalContext().getDataFolder(), ctx.getGlobalContext().getStaticConfig().getFileFolder(), ctx.getGlobalContext().getStaticConfig().getImportFolder()));
+		File importGallryFolder = new File(URLHelper.mergePath(ctx.getGlobalContext().getDataFolder(), ctx.getGlobalContext().getStaticConfig().getGalleryFolder(), ctx.getGlobalContext().getStaticConfig().getImportFolder()));
+		int deleted = 0;
+		deleted = cleanImportResources(ctx, importImageFolder);
+		deleted += cleanImportResources(ctx, importFileFolder);
+		deleted += cleanImportResources(ctx, importGallryFolder);
+		return deleted;
+	}
+	
+	public static boolean isImportPageExist(ContentContext ctx, File childImport) throws Exception {
+		ContentService content = ContentService.getInstance(ctx.getRequest());
+		MenuElement root = content.getNavigation(ctx);
+		for (MenuElement navChild : root.getAllChildren()) {
+			String folderName = DataAction.createImportFolder(navChild.getName());
+			if (childImport.getName().equals(folderName)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+
+	public static int cleanImportResource(ContentContext ctx, File childImport) throws Exception {
+		ContentService content = ContentService.getInstance(ctx.getRequest());
+		MenuElement root = content.getNavigation(ctx);
+		int deleted = 0;
+		if (childImport.isDirectory() && !childImport.getName().equals(root.getName())) {
+			boolean deleteFile = !isImportPageExist(ctx, childImport);			
+			if (deleteFile) {
+				logger.info("delete folder (user:" + ctx.getCurrentEditUser() + " context:" + ctx.getGlobalContext().getContextKey() + ") : " + childImport);
+				try {
+					deleteResource(ctx, childImport);
+					deleted++;
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		} else if (childImport.isFile()) {
+			if (!isImportPageExist(ctx, childImport.getParentFile())) {
+				deleteResource(ctx, childImport);
+				deleted++;
+				if (childImport.getParentFile().listFiles().length == 0) {
+					deleteResource(ctx, childImport.getParentFile());
+				}
+			}
+		}
+		return deleted;
+	}
+
+	private static int cleanImportResources(ContentContext ctx, File importFolder) throws Exception {
+		if (!importFolder.exists()) {
+			logger.warning("folder not found : " + importFolder);
+			return 0;
+		} else {
+			int deleted = 0;
+			ContentService content = ContentService.getInstance(ctx.getRequest());
+			MenuElement root = content.getNavigation(ctx);
+			if (root.getChildList().length == 0) {
+				throw new Exception("you need at least one page for clean import file.");
+			}
+			for (File child : importFolder.listFiles()) {
+				cleanImportResource(ctx, child);
+			}
+			return deleted;
+		}
 	}
 
 }

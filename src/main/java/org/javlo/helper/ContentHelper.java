@@ -468,8 +468,8 @@ public class ContentHelper {
 
 	public static void copyPage(ContentContext ctx, MenuElement source, MenuElement target) throws Exception {
 
-		String sourceImportFolder = AbstractVisualComponent.getImportFolderPath(ctx.getContextOnPage(source));
-		String targetImportFolder = AbstractVisualComponent.getImportFolderPath(ctx.getContextOnPage(target));
+		String sourceImportFolder = AbstractVisualComponent.getImportFolderPath(ctx.getContextOnPage(source), source);
+		String targetImportFolder = AbstractVisualComponent.getImportFolderPath(ctx.getContextOnPage(target), target);
 
 		ComponentBean[] beans = source.getContent();
 		ComponentBean[] newBeans = new ComponentBean[beans.length];

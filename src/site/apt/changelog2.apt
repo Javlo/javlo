@@ -786,3 +786,5 @@ change log
  
  * 1/ secure access with ip / display memory status
  
+ * 2/ import with meta data / time range default end of day for the end date / DynamicComponentFilter default value / marcro clean content / clean import folder
+ 

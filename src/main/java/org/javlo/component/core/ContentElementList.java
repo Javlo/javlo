@@ -70,13 +70,13 @@ public class ContentElementList implements IContentComponentsList {
 		
 	}
 
-	private final Set<String> addedElementId = new HashSet<String>();
+	private Set<String> addedElementId = null;
 
-	private final Set<String> repeatAddedElementId = new HashSet<String>();
+	private Set<String> repeatAddedElementId = null;
 
 	private LinkedList<IContentVisualComponent> contentElements = new LinkedList<IContentVisualComponent>();
 
-	private final LinkedList<IContentVisualComponent> repeatContentElements = new LinkedList<IContentVisualComponent>();
+	private LinkedList<IContentVisualComponent> repeatContentElements = null;
 
 	private int pos = 0;
 
@@ -128,6 +128,9 @@ public class ContentElementList implements IContentComponentsList {
 
 	protected void addElement(IContentVisualComponent elem) {
 		/* need this test for repeat element */
+		if (addedElementId == null) {
+			addedElementId = new HashSet<String>();
+		}
 		if (!addedElementId.contains(elem.getId())) {
 			contentElements.add(elem);
 			addedElementId.add(elem.getId());
@@ -136,6 +139,9 @@ public class ContentElementList implements IContentComponentsList {
 
 	protected void addElementAsFirst(IContentVisualComponent elem) {
 		/* need this test for repeat element */
+		if (addedElementId == null) {
+			addedElementId = new HashSet<String>();
+		}
 		if (!addedElementId.contains(elem.getId())) {
 			contentElements.addFirst(elem);
 			addedElementId.add(elem.getId());
@@ -144,7 +150,13 @@ public class ContentElementList implements IContentComponentsList {
 
 	public void addRepeatElement(IContentVisualComponent elem) {
 		/* need this test for repeat element */
+		if (repeatAddedElementId == null) {
+			repeatAddedElementId = new HashSet<String>();
+		}
 		if (!repeatAddedElementId.contains(elem.getId())) {
+			if (repeatContentElements == null) {
+				repeatContentElements = new LinkedList<IContentVisualComponent>();
+			}
 			repeatContentElements.add(elem);
 			repeatAddedElementId.add(elem.getId());
 		}
@@ -466,7 +478,7 @@ public class ContentElementList implements IContentComponentsList {
 	@Override
 	public void initialize(ContentContext ctx) {
 
-		if (repeatContentElements.size() > 0) {
+		if (repeatContentElements != null && repeatContentElements.size() > 0) {
 
 			LinkedList<IContentVisualComponent> newContentElements = new LinkedList<IContentVisualComponent>();
 

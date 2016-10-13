@@ -187,7 +187,7 @@ public interface IContentVisualComponent extends Comparable<IContentVisualCompon
 	 * @param newCtx
 	 *            the context of the content manager.
 	 */
-	public IContentVisualComponent newInstance(ComponentBean bean, ContentContext newCtx) throws Exception;
+	public IContentVisualComponent newInstance(ComponentBean bean, ContentContext newCtx, MenuElement page) throws Exception;
 
 	/**
 	 * @return true if the composant was modified.

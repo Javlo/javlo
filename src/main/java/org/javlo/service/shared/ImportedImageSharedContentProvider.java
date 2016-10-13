@@ -37,7 +37,7 @@ public class ImportedImageSharedContentProvider extends LocalImageSharedContentP
 			if (page == null) {
 				page = ctx.getCurrentPage();
 			}
-			String importFolder = DataAction.createImportFolder(ctx);
+			String importFolder = DataAction.createImportFolder(ctx.getCurrentPage());
 			String importPrefix = ctx.getGlobalContext().getStaticConfig().getImportFolder();
 			if (importPrefix.startsWith("/")) {
 				importPrefix = importPrefix.substring(1);
@@ -56,7 +56,7 @@ public class ImportedImageSharedContentProvider extends LocalImageSharedContentP
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		File imageFolder = new File(URLHelper.mergePath(globalContext.getDataFolder(), globalContext.getStaticConfig().getImageFolder()));
 		try {
-			imageFolder = new File(URLHelper.mergePath(imageFolder.getAbsolutePath(), AbstractVisualComponent.getImportFolderPath(ctx)));			
+			imageFolder = new File(URLHelper.mergePath(imageFolder.getAbsolutePath(), AbstractVisualComponent.getImportFolderPath(ctx, ctx.getCurrentPage())));			
 		} catch (Exception e) {
 			throw new IOException(e);
 		}

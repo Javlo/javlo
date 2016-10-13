@@ -331,5 +331,15 @@ public class StringHelperTest extends TestCase {
 		System.out.println(StringHelper.createI18NURL("$été+lorem/#;,'\"[lorem]"));
 		assertEquals("%C3%A9t%C3%A9-lorem-lorem", StringHelper.createI18NURL("$été+lorem/#;,'\"[lorem]"));
 	}
+	
+	public void testRemoveQuote() {
+		assertEquals(null, StringHelper.removeQuote(null));
+		assertEquals("lorem", StringHelper.removeQuote("lorem"));
+		assertEquals("\"lorem", StringHelper.removeQuote("\"lorem"));
+		assertEquals("lorem", StringHelper.removeQuote("\"lorem\""));
+		assertEquals("lorem", StringHelper.removeQuote("  \"lorem\""));
+		assertEquals("lorem", StringHelper.removeQuote("\"lorem\"  "));
+		assertEquals("lorem", StringHelper.removeQuote("  \"lorem\"  "));
+	}
  
 }

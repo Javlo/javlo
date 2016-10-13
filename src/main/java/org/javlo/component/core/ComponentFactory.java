@@ -398,9 +398,8 @@ public class ComponentFactory {
 		for (IContentVisualComponent component2 : components) {
 			if (component2 != null && bean != null && component2.getType() != null) {
 				if (component2.getType().equals(bean.getType())) {
-					IContentVisualComponent newComp = component2.newInstance(bean, ctx);
-					component = (AbstractVisualComponent) newComp;
-					component.setPage(inPage);
+					IContentVisualComponent newComp = component2.newInstance(bean, ctx, inPage);
+					component = (AbstractVisualComponent) newComp;					
 					if (selectedComponents.contains(component.getClass().getName())) {
 						break;
 					}

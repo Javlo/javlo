@@ -58,7 +58,20 @@ public class DynamicComponentFilter extends AbstractPropertiesComponent implemen
 	@Override
 	public void prepareView(ContentContext ctx) throws Exception {
 		super.prepareView(ctx);
+		for (Field field : getSearchField(ctx)) {
+			if (StringHelper.isEmpty(field.getValue()) && !StringHelper.isEmpty(getDefaultValue(field))) {
+				field.setValue(getDefaultValue(field));
+			}
+		}	
 		ctx.getRequest().setAttribute("fields", getSearchField(ctx));
+	}
+	
+	protected String getDefaultValue(Field field) {
+		return properties.getProperty("default-"+field.getName());
+	}
+	
+	protected void setDefaultValue(Field field, String value) {
+		properties.setProperty("default-"+field.getName(), value);
 	}
 
 	@Override
@@ -84,8 +97,13 @@ public class DynamicComponentFilter extends AbstractPropertiesComponent implemen
 				values.add(field.getName());
 			}
 			out.println(XHTMLHelper.getInputOneSelect(createKeyWithField("field"),values , getSelectedField(), "form-control"));*/
-			out.println("<input type=\"text\" class=\"form-control\" name=\""+createKeyWithField("field")+"\" value=\""+getSelectedField()+"\" />");
-			out.println("</div>");
+			out.println("<input type=\"text\" class=\"form-control\" name=\""+createKeyWithField("field")+"\" value=\""+StringHelper.neverNull(getSelectedField())+"\" /></div>");
+			out.println("<fieldset><legend>default value</legend>");
+			for (Field field : (List<Field>) getSearchField(ctx)) {
+				field.setValue(getDefaultValue(field));
+				out.println(field.getSearchEditXHTMLCode(ctx));
+			}
+			out.println("</fieldset>");
 		}
 
 		out.close();
@@ -264,6 +282,17 @@ public class DynamicComponentFilter extends AbstractPropertiesComponent implemen
 			}
 		}
 		return null;
+	}
+	
+	@Override
+	public String performEdit(ContentContext ctx) throws Exception {
+		RequestService requestService = RequestService.getInstance(ctx.getRequest());
+		String msg = super.performEdit(ctx);
+		for (Field field : getSearchField(ctx)) {
+			setDefaultValue(field, requestService.getParameter(field.getInputName(), null));			
+		}
+		storeProperties();
+		return msg;
 	}
 	
 }
