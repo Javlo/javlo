@@ -920,7 +920,6 @@ public class ImageTransformServlet extends HttpServlet {
 					if (slachIndex >= 0) {
 						templateId = pathInfo.substring(0, slachIndex);
 					}
-
 					/** AREA **/
 					if (!filter.startsWith("template")) {
 						pathInfo = pathInfo.substring(slachIndex + 1);
@@ -943,12 +942,10 @@ public class ImageTransformServlet extends HttpServlet {
 							comp = (IImageFilter) c;
 						}
 					}
-
 					if (pathInfo.startsWith(HASH_PREFIX)) {					
 						slachIndex = pathInfo.indexOf('/', 1);
 						pathInfo = pathInfo.substring(slachIndex);
 					}
-
 					try {
 						/** image is in template folder **/
 						if (templateId.endsWith(LOCAL_TEMPLATE_SUFFIX)) {
@@ -970,9 +967,6 @@ public class ImageTransformServlet extends HttpServlet {
 
 			boolean localFile = false;
 			StaticInfo staticInfo = null;
-			
-			
-
 			if (imageFromTemplateFolder && template != null) {
 				localFile = true;
 				imageName = URLHelper.mergePath(template.getLocalWorkTemplateFolder(), template.getId(), globalContext.getContextKey(), imageName);				
@@ -988,7 +982,7 @@ public class ImageTransformServlet extends HttpServlet {
 				staticInfo = StaticInfo.getInstance(ctx, new File(getServletContext().getRealPath(imageName)));
 			} else {
 				staticInfo = StaticInfo.getInstance(ctx, imageName);
-			}
+			}			
 			
 			ImageConfig config = ImageConfig.getInstance(globalContext, request.getSession(), template);
 			
@@ -1227,6 +1221,7 @@ public class ImageTransformServlet extends HttpServlet {
 			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 		} catch (Exception e) {
 			e.printStackTrace();
+			logger.warning("image problem on url : " + request.getRequestURI());
 			logger.warning(e.getMessage());
 			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 		} finally {

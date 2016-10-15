@@ -1473,6 +1473,10 @@ public class StaticConfig extends Observable {
 	public String getJSPreview() {
 		return properties.getString("preview.js", "/js/preview/edit_preview.js");
 	}
+	
+	public String getJSBootStrap() {
+		return properties.getString("preview.bootstrap.js", "/jsp/preview/js/bootstrap/bootstrap.min.js");
+	}
 
 	public String getStaticResourceCacheTime() {
 		return properties.getString("resources.cache-time", "240");

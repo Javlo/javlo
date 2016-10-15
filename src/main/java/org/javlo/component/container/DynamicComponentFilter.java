@@ -43,36 +43,40 @@ public class DynamicComponentFilter extends AbstractPropertiesComponent implemen
 
 	private static final String STYLE_ALL = "default_all";
 
+	private static final String HIDE_FORM = "hide_form";
+
 	private Boolean realContent = null;
 
 	@Override
 	public String getType() {
 		return TYPE;
 	}
-	
+
 	@Override
 	public String[] getStyleList(ContentContext ctx) {
-		return new String[] { "default_none", STYLE_ALL };
+		return new String[] { "default_none", STYLE_ALL, HIDE_FORM };
 	}
 
 	@Override
 	public void prepareView(ContentContext ctx) throws Exception {
 		super.prepareView(ctx);
-		for (Field field : getSearchField(ctx)) {
-			if (StringHelper.isEmpty(field.getValue()) && !StringHelper.isEmpty(getDefaultValue(field))) {
-				field.setValue(getDefaultValue(field));
+		if (!"POST".equals(ctx.getRequest().getMethod())) {
+			for (Field field : getSearchField(ctx)) {
+				if (!StringHelper.isEmpty(getDefaultValue(field))) {
+					field.setValue(getDefaultValue(field));
+				}
 			}
-		}	
+		}
 		ctx.getRequest().setAttribute("fields", getSearchField(ctx));
 	}
-	
+
 	protected String getDefaultValue(Field field) {
-		return properties.getProperty("default-"+field.getName());
+		return properties.getProperty("default-" + field.getName());
 	}
-	
+
 	protected void setDefaultValue(Field field, String value) {
 		if (field != null && value != null) {
-			properties.setProperty("default-"+field.getName(), value);
+			properties.setProperty("default-" + field.getName(), value);
 		}
 	}
 
@@ -93,13 +97,14 @@ public class DynamicComponentFilter extends AbstractPropertiesComponent implemen
 		if (fieldContainer != null) {
 			out.println("<div class=\"input-group\">");
 			out.println("<label>Sort on : </label>");
-			/*List<String> values = new LinkedList<String>();
-			values.add("");
-			for (Field field : fieldContainer.getFields(ctx)) {
-				values.add(field.getName());
-			}
-			out.println(XHTMLHelper.getInputOneSelect(createKeyWithField("field"),values , getSelectedField(), "form-control"));*/
-			out.println("<input type=\"text\" class=\"form-control\" name=\""+createKeyWithField("field")+"\" value=\""+StringHelper.neverNull(getSelectedField())+"\" /></div>");
+			/*
+			 * List<String> values = new LinkedList<String>(); values.add("");
+			 * for (Field field : fieldContainer.getFields(ctx)) {
+			 * values.add(field.getName()); }
+			 * out.println(XHTMLHelper.getInputOneSelect(createKeyWithField(
+			 * "field"),values , getSelectedField(), "form-control"));
+			 */
+			out.println("<input type=\"text\" class=\"form-control\" name=\"" + createKeyWithField("field") + "\" value=\"" + StringHelper.neverNull(getSelectedField()) + "\" /></div>");
 			out.println("<fieldset><legend>default value</legend>");
 			for (Field field : (List<Field>) getSearchField(ctx)) {
 				field.setValue(getDefaultValue(field));
@@ -126,29 +131,33 @@ public class DynamicComponentFilter extends AbstractPropertiesComponent implemen
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(outStream);
 
-		out.println("<form role=\"form\" class=\"generic-form panel panel-default\" id=\"form-filter-" + getId() + "\" name=\"form-filter-" + getId() + "\" action=\"" + URLHelper.createURL(ctx) + "\" method=\"post\">");
-		out.println("<div class=\"fields panel-body\"><input type=\"hidden\" name=\"webaction\" value=\"" + getActionGroupName() + ".filter\" />");
-		out.println("<input type=\"hidden\" name=\"" + IContentVisualComponent.COMP_ID_REQUEST_PARAM + "\" value=\"" + getId() + "\">");
-		for (Field field : (List<Field>) ctx.getRequest().getAttribute("fields")) {
-			out.println(field.getSearchEditXHTMLCode(ctx));
-		}
 		I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
-		out.println("<div class=\"action\"><input type=\"submit\" class=\"btn btn-default\" name=\"filter\" value=\"" + i18nAccess.getViewText("global.ok") + "\" /></div>");
-		out.println("</div></form>");
+		if (!getStyle().equals(HIDE_FORM)) {
+			out.println("<form role=\"form\" class=\"generic-form panel panel-default\" id=\"form-filter-" + getId() + "\" name=\"form-filter-" + getId() + "\" action=\"" + URLHelper.createURL(ctx) + "\" method=\"post\">");
+			out.println("<div class=\"fields panel-body\"><input type=\"hidden\" name=\"webaction\" value=\"" + getActionGroupName() + ".filter\" />");
+			out.println("<input type=\"hidden\" name=\"" + IContentVisualComponent.COMP_ID_REQUEST_PARAM + "\" value=\"" + getId() + "\">");
+			for (Field field : (List<Field>) ctx.getRequest().getAttribute("fields")) {
+				out.println(field.getSearchEditXHTMLCode(ctx));
+			}
+			out.println("<div class=\"action\"><input type=\"submit\" class=\"btn btn-default\" name=\"filter\" value=\"" + i18nAccess.getViewText("global.ok") + "\" /></div>");
+			out.println("</div></form>");
+		} else if (ctx.isPreviewEdit()) {
+			out.println("[no - form]");
+		}
 
 		ContentService content = ContentService.getInstance(ctx.getRequest());
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		DynamicComponentService service = DynamicComponentService.getInstance(globalContext);
 
-		List<IFieldContainer> containers = service.getFieldContainers(ctx, content.getNavigation(ctx), getSelectedType());		
-		
+		List<IFieldContainer> containers = service.getFieldContainers(ctx, content.getNavigation(ctx), getSelectedType());
+
 		if (!StringHelper.isEmpty(getSelectedField())) {
 			Collections.sort(containers, new SortContainer(ctx, getSelectedField()));
-		}		
+		}
 
 		Map<String, Field> fieldsSearch = new HashMap<String, Field>();
 
-		boolean isFilter = getStyle().equals(STYLE_ALL);
+		boolean isFilter = getStyle().equals(STYLE_ALL) || getStyle().equals(HIDE_FORM);
 
 		for (Field field : getSearchField(ctx)) {
 			fieldsSearch.put(field.getName(), field);
@@ -196,7 +205,7 @@ public class DynamicComponentFilter extends AbstractPropertiesComponent implemen
 	private String getSelectedType() {
 		return properties.getProperty("type");
 	}
-	
+
 	private String getSelectedField() {
 		return properties.getProperty("field");
 	}
@@ -260,7 +269,7 @@ public class DynamicComponentFilter extends AbstractPropertiesComponent implemen
 	public int getComplexityLevel(ContentContext ctx) {
 		return getConfig(ctx).getComplexity(COMPLEXITY_STANDARD);
 	}
-	
+
 	public List<String> getFields(ContentContext ctx) throws Exception {
 		List<String> outList = new LinkedList<String>();
 		outList.add("type");
@@ -285,16 +294,16 @@ public class DynamicComponentFilter extends AbstractPropertiesComponent implemen
 		}
 		return null;
 	}
-	
+
 	@Override
 	public String performEdit(ContentContext ctx) throws Exception {
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
 		String msg = super.performEdit(ctx);
 		for (Field field : getSearchField(ctx)) {
-			setDefaultValue(field, requestService.getParameter(field.getInputName(), null));			
+			setDefaultValue(field, requestService.getParameter(field.getInputName(), null));
 		}
 		storeProperties();
 		return msg;
 	}
-	
+
 }

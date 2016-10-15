@@ -320,7 +320,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 					int i = 0;
 					while (startDate.before(endDate) && i < MAX_DAYS_OF_EVENTS) {
 						i++;
-						startDate.roll(Calendar.DAY_OF_YEAR, true);
+						startDate.add(Calendar.DAY_OF_YEAR, 1);
 						bean.dates.add(new DateBean(ctx, startDate.getTime()));
 					}
 					if (i == MAX_DAYS_OF_EVENTS) {

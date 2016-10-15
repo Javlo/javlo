@@ -70,8 +70,8 @@ import org.javlo.ztatic.StaticInfo;
 import org.owasp.encoder.Encode;
 
 /**
- * Abstract component for access to a file (file,image...) <h4>exposed variable
- * :</h4>
+ * Abstract component for access to a file (file,image...)
+ * <h4>exposed variable :</h4>
  * <ul>
  * <li>inherited from {@link AbstractVisualComponent}</li>
  * <li>{@link String} url : url to resource.</li>
@@ -83,7 +83,8 @@ import org.owasp.encoder.Encode;
  * 
  * @author pvandermaesen
  */
-public class AbstractFileComponent extends AbstractVisualComponent implements IStaticContainer, ILink, IUploadResource, IAction {
+public class AbstractFileComponent extends AbstractVisualComponent
+		implements IStaticContainer, ILink, IUploadResource, IAction {
 
 	static final String HEADER_V1_0 = "file storage V.1.1";
 
@@ -115,8 +116,8 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 		properties.setProperty(ENCODING_KEY, DEFAULT_ENCODING);
 		properties.setProperty(REVERSE_LINK_KEY, ReverseLinkService.NONE);
 	}
-	
-	protected boolean canUpload(ContentContext ctx) {		
+
+	protected boolean canUpload(ContentContext ctx) {
 		return AdminUserSecurity.isCurrentUserCanUpload(ctx);
 	}
 
@@ -164,9 +165,10 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 	public String getURL(ContentContext ctx) {
 		StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
 		String fileLink = URLHelper.mergePath(getDirSelected(), getFileName());
-		return URLHelper.createResourceURL(ctx, getPage(), staticConfig.getImageFolder() + '/' + fileLink).replace('\\', '/');
+		return URLHelper.createResourceURL(ctx, getPage(), staticConfig.getImageFolder() + '/' + fileLink).replace('\\',
+				'/');
 	}
-	
+
 	@Override
 	public boolean isLinkValid(ContentContext ctx) {
 		return !StringHelper.isEmpty(getURL(ctx));
@@ -176,7 +178,7 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 	public void prepareView(ContentContext ctx) throws Exception {
 		super.prepareView(ctx);
 		String url = getURL(ctx);
-		if (url != null && url.startsWith('/'+ctx.getGlobalContext().getStaticConfig().getStaticFolder())) {
+		if (url != null && url.startsWith('/' + ctx.getGlobalContext().getStaticConfig().getStaticFolder())) {
 			url = URLHelper.createResourceURL(ctx, url);
 		}
 		ctx.getRequest().setAttribute("url", url);
@@ -185,7 +187,7 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 		ctx.getRequest().setAttribute("descritpion", getDescription());
 		ctx.getRequest().setAttribute("cleanDescription", Encode.forHtmlAttribute(getDescription()));
 		StaticInfo staticInfo = getStaticInfo(ctx);
-		String cleanLabel=null;
+		String cleanLabel = null;
 		if (staticInfo != null) {
 			cleanLabel = StringHelper.toHTMLAttribute(StringHelper.removeTag(staticInfo.getTitle(ctx)));
 			if (!StringHelper.isEmpty(staticInfo.getCopyright(ctx))) {
@@ -196,15 +198,16 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 		}
 		if (getLabel() != null && getLabel().length() > 0) {
 			ctx.getRequest().setAttribute("label", getLabel());
-			ctx.getRequest().setAttribute("cleanLabel", StringHelper.toXMLAttribute(StringHelper.removeTag(getLabel())));
+			ctx.getRequest().setAttribute("cleanLabel",
+					StringHelper.toXMLAttribute(StringHelper.removeTag(getLabel())));
 			ctx.getRequest().setAttribute("htmlLabel", XHTMLHelper.textToXHTML(XHTMLHelper.autoLink(getLabel())));
 		} else if (staticInfo != null) {
-			ctx.getRequest().setAttribute("label", staticInfo.getTitle(ctx));			
+			ctx.getRequest().setAttribute("label", staticInfo.getTitle(ctx));
 			ctx.getRequest().setAttribute("cleanLabel", cleanLabel);
 			ctx.getRequest().setAttribute("htmlLabel", XHTMLHelper.textToXHTML(XHTMLHelper.autoLink(getLabel())));
 			ctx.getRequest().setAttribute("resource", staticInfo);
-		}		
-		
+		}
+
 		ctx.getRequest().setAttribute("resource", staticInfo);
 
 	}
@@ -284,7 +287,7 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 		I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
 		return i18nAccess.getText("action.add-image.dir");
 	}
-	
+
 	protected String[] getDirList(ContentContext ctx, String inFolder) throws Exception {
 		File folder = new File(inFolder);
 		Collection<File> sourceChildren = ResourceHelper.getAllDirList(folder);
@@ -294,11 +297,21 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 			importFolder = importFolder.substring(1);
 		}
 		String currentImportFolder = getImportFolderPath(ctx);
-		
-		LocalLogger.log("***** AbstractFileComponent.getDirList : ctx page            = "+ctx.getCurrentPage().getName()); //TODO: remove debug trace
-		LocalLogger.log("***** AbstractFileComponent.getDirList : getPage()           = "+getPage().getName()); //TODO: remove debug trace
-		LocalLogger.log("***** AbstractFileComponent.getDirList : currentImportFolder = "+currentImportFolder); //TODO: remove debug trace
-		
+
+		LocalLogger.log(
+				"***** AbstractFileComponent.getDirList : ctx page            = " + ctx.getCurrentPage().getName()); // TODO:
+																														// remove
+																														// debug
+																														// trace
+		LocalLogger.log("***** AbstractFileComponent.getDirList : getPage()           = " + getPage().getName()); // TODO:
+																													// remove
+																													// debug
+																													// trace
+		LocalLogger.log("***** AbstractFileComponent.getDirList : currentImportFolder = " + currentImportFolder); // TODO:
+																													// remove
+																													// debug
+																													// trace
+
 		for (File dir : sourceChildren) {
 			String child = StringUtils.replace(dir.getAbsolutePath(), folder.getAbsolutePath(), "").replace('\\', '/');
 			if (child.length() > 1 && child.startsWith("/")) {
@@ -325,23 +338,23 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 		}
 		return dir;
 	}
-	
+
 	@Override
 	protected String getEditorComplexity(ContentContext ctx) {
 		return properties.getProperty("editor-complexity", "light");
 	}
-	
+
 	protected String getMetaCode(ContentContext ctx) {
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-		PrintStream out = new PrintStream(outStream);		
-		if (isDisplayMeta(ctx)) {			
+		PrintStream out = new PrintStream(outStream);
+		if (isDisplayMeta(ctx)) {
 			StaticInfo staticInfo = getStaticInfo(ctx);
-			String url = URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.EDIT_MODE));			
+			String url = URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.EDIT_MODE));
 			if (!ctx.isEditPreview()) {
 				String formAction = URLHelper.addParam(url, "module", "content");
 				url = URLHelper.addParam(url, "formAction", formAction);
 			} else {
-				String formAction = URLHelper.addParam(url, "module", "content");				
+				String formAction = URLHelper.addParam(url, "module", "content");
 				formAction = URLHelper.addParam(formAction, "previewEdit", "true");
 				formAction = URLHelper.addParam(formAction, "webaction", "edit.editPreview");
 				formAction = URLHelper.addParam(formAction, "comp_id", getId());
@@ -349,43 +362,50 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 			}
 			url = URLHelper.addParam(url, "nobreadcrumbs", "true");
 			url = URLHelper.addParam(url, "webaction", "file.previewEdit");
-			url = URLHelper.addParam(url, "module", "file");			
-			url = URLHelper.addParam(url, "file", URLHelper.encodePathForAttribute(staticInfo.getFile().getPath()));	
-			
+			url = URLHelper.addParam(url, "module", "file");
+			url = URLHelper.addParam(url, "file", URLHelper.encodePathForAttribute(staticInfo.getFile().getPath()));
+
 			I18nAccess i18nAccess;
 			try {
 				i18nAccess = I18nAccess.getInstance(ctx.getRequest());
-				String button = "";				
-				if (canUpload(ctx)) {					
-					button = "<a href=\""+url+"\" class=\"btn btn-default btn-xs pull-right\">"+i18nAccess.getText("global.change")+"</a>";
-				}				
-				out.println("<div class=\"panel panel-default\"><div class=\"panel-heading\">Meta-data"+button+"</h3></div><div class=\"panel-body\">");			
-				out.println("<div class=\"row form-group\"><div class=\"col-sm-3\">"+i18nAccess.getText("field.title")+"</div>");
-				out.println("<div class=\"col-sm-9\">"+staticInfo.getTitle(ctx)+"</div>");
+				String button = "";
+				if (canUpload(ctx)) {
+					button = "<a href=\"" + url + "\" class=\"btn btn-default btn-xs pull-right\">"
+							+ i18nAccess.getText("global.change") + "</a>";
+				}
+				out.println("<div class=\"panel panel-default\"><div class=\"panel-heading\">Meta-data" + button
+						+ "</h3></div><div class=\"panel-body\">");
+				out.println("<div class=\"row form-group\"><div class=\"col-sm-3\">" + i18nAccess.getText("field.title")
+						+ "</div>");
+				out.println("<div class=\"col-sm-9\">" + staticInfo.getTitle(ctx) + "</div>");
 				out.println("</div>");
-				out.println("<div class=\"row form-group\"><div class=\"col-sm-3\">"+i18nAccess.getText("field.description")+"</div>");
-				out.println("<div class=\"col-sm-9\">"+staticInfo.getDescription(ctx)+"</div>");
+				out.println("<div class=\"row form-group\"><div class=\"col-sm-3\">"
+						+ i18nAccess.getText("field.description") + "</div>");
+				out.println("<div class=\"col-sm-9\">" + staticInfo.getDescription(ctx) + "</div>");
 				out.println("</div>");
-				out.println("<div class=\"row form-group\"><div class=\"col-sm-3\">"+i18nAccess.getText("field.location")+"</div>");
-				out.println("<div class=\"col-sm-9\">"+staticInfo.getLocation(ctx)+"</div>");
+				out.println("<div class=\"row form-group\"><div class=\"col-sm-3\">"
+						+ i18nAccess.getText("field.location") + "</div>");
+				out.println("<div class=\"col-sm-9\">" + staticInfo.getLocation(ctx) + "</div>");
 				out.println("</div>");
-				out.println("<div class=\"row form-group\"><div class=\"col-sm-3\">"+i18nAccess.getText("field.copyright")+"</div>");
-				out.println("<div class=\"col-sm-9\">"+staticInfo.getCopyright(ctx)+"</div>");
+				out.println("<div class=\"row form-group\"><div class=\"col-sm-3\">"
+						+ i18nAccess.getText("field.copyright") + "</div>");
+				out.println("<div class=\"col-sm-9\">" + staticInfo.getCopyright(ctx) + "</div>");
 				out.println("</div>");
-				out.println("<div class=\"row form-group\"><div class=\"col-sm-3\">"+i18nAccess.getText("field.date")+"</div>");
-				out.println("<div class=\"col-sm-9\">"+StringHelper.renderDate(staticInfo.getDate(ctx))+"</div>");
-			} catch (FileNotFoundException e) {			
+				out.println("<div class=\"row form-group\"><div class=\"col-sm-3\">" + i18nAccess.getText("field.date")
+						+ "</div>");
+				out.println("<div class=\"col-sm-9\">" + StringHelper.renderDate(staticInfo.getDate(ctx)) + "</div>");
+			} catch (FileNotFoundException e) {
 				e.printStackTrace();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			
-			out.println("</div></div></div>");		    
+
+			out.println("</div></div></div>");
 		}
 		out.close();
 		return new String(outStream.toByteArray());
 	}
-	
+
 	protected boolean isDisplayMeta(ContentContext ctx) {
 		return ctx.getGlobalContext().getStaticConfig().isImageMetaEdition();
 	}
@@ -422,7 +442,8 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 			if (StringHelper.isTrue(reverseLink)) {
 				reverseLink = ReverseLinkService.ALL;
 			}
-			finalCode.append("<label for=\"" + getReverseLinkInputName() + "\">" + getReverseLinkeLabelTitle(ctx) + " : </label>");
+			finalCode.append("<label for=\"" + getReverseLinkInputName() + "\">" + getReverseLinkeLabelTitle(ctx)
+					+ " : </label>");
 			finalCode.append(XHTMLHelper.getReverlinkSelectType(ctx, getReverseLinkInputName(), reverseLink));
 			finalCode.append("</div>");
 		}
@@ -432,18 +453,21 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 		finalCode.append(XHTMLHelper.getTextArea(getLabelXHTMLInputName(), getLabel(), params));
 		finalCode.append("</div>");
 
-		if ((getDirList(ctx,getFileDirectory(ctx)) != null) && (getDirList(ctx,getFileDirectory(ctx)).length > 0)) {
+		if ((getDirList(ctx, getFileDirectory(ctx)) != null) && (getDirList(ctx, getFileDirectory(ctx)).length > 0)) {
 			finalCode.append("<div class=\"form-group\"><label for=\"" + getDirInputName() + "\">");
 			finalCode.append(getDirLabelTitle(ctx));
 			finalCode.append(" : </label>");
-			finalCode.append(XHTMLHelper.getInputOneSelect(getDirInputName(), ArrayHelper.addFirstElem(getDirList(ctx,getFileDirectory(ctx)), ""), getDirSelected(), "form-control", getJSOnChange(ctx), true));
+			finalCode.append(XHTMLHelper.getInputOneSelect(getDirInputName(),
+					ArrayHelper.addFirstElem(getDirList(ctx, getFileDirectory(ctx)), ""), getDirSelected(),
+					"form-control", getJSOnChange(ctx), true));
 			finalCode.append("</div>");
 		}
 
 		if (needEncoding()) {
 			finalCode.append("<div class=\"form-group\">");
 			GlobalContext globalContext = ctx.getGlobalContext();
-			finalCode.append("<label for=\"" + getEncodingXHTMLInputName() + "\">" + i18nAccess.getText("content.file.encoding") + " : </label>");
+			finalCode.append("<label for=\"" + getEncodingXHTMLInputName() + "\">"
+					+ i18nAccess.getText("content.file.encoding") + " : </label>");
 			String[] encodings = new String[globalContext.getEncodings().size() + 1];
 			encodings[0] = "default";
 			int i = 1;
@@ -451,28 +475,31 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 				encodings[i] = encoding;
 				i++;
 			}
-			finalCode.append(XHTMLHelper.getInputOneSelect(getEncodingXHTMLInputName(), encodings, getEncoding(), "form-control", null, false));
+			finalCode.append(XHTMLHelper.getInputOneSelect(getEncodingXHTMLInputName(), encodings, getEncoding(),
+					"form-control", null, false));
 			finalCode.append("</div>");
 		}
 
 		boolean canUploadInImport = false;
-		
-		canUploadInImport = getDirSelected().equals(getImportFolderPath(ctx));			
+
+		canUploadInImport = getDirSelected().equals(getImportFolderPath(ctx));
 		if (canUpload(ctx)) {
 			finalCode.append("<div class=\"row\"><div class=\"col-md-6\">");
 			finalCode.append("<div class=\"form-group\"><label for=\"new_dir_" + getId() + "\">");
 			finalCode.append(getNewDirLabelTitle(ctx));
-			finalCode.append(" : </label><input class=\"form-control\" id=\"new_dir_" + getId() + "\" name=\"" + getNewDirInputName() + "\" type=\"text\"/></div>");
+			finalCode.append(" : </label><input class=\"form-control\" id=\"new_dir_" + getId() + "\" name=\""
+					+ getNewDirInputName() + "\" type=\"text\"/></div>");
 			finalCode.append("</div>");
 		}
 		if (canUpload(ctx) || canUploadInImport) {
 			if (!canUpload(ctx)) {
-				finalCode.append("<div class=\"row\">");	
+				finalCode.append("<div class=\"row\">");
 			}
 			finalCode.append("<div class=\"col-md-6\">");
 			finalCode.append("<div class=\"form-group\">");
 			finalCode.append("<label for=\"" + getFileXHTMLInputName() + "\">" + getImageUploadTitle(ctx) + "</label>");
-			finalCode.append("<input class=\"form-control\" name=\"" + getFileXHTMLInputName() + "\" id=\"" + getFileXHTMLInputName() + "\" type=\"file\"/></div>");
+			finalCode.append("<input class=\"form-control\" name=\"" + getFileXHTMLInputName() + "\" id=\""
+					+ getFileXHTMLInputName() + "\" type=\"file\"/></div>");
 			finalCode.append("</div></div>");
 		}
 
@@ -487,7 +514,8 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 			fileListBlanck[0] = "";
 			System.arraycopy(fileList, 0, fileListBlanck, 1, fileList.length);
 
-			finalCode.append(XHTMLHelper.getInputOneSelect(getSelectXHTMLInputName(), fileListBlanck, getFileName(), "form-control", getJSOnChange(ctx), true));
+			finalCode.append(XHTMLHelper.getInputOneSelect(getSelectXHTMLInputName(), fileListBlanck, getFileName(),
+					"form-control", getJSOnChange(ctx), true));
 
 			if (ctx.getRenderMode() == ContentContext.EDIT_MODE && !ctx.isEditPreview() && canUpload(ctx)) {
 				if (isLinkToStatic()) {
@@ -495,7 +523,8 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 					filesParams.put("path", URLHelper.mergePath("/", getRelativeFileDirectory(ctx), getDirSelected()));
 					String staticURL = URLHelper.createModuleURL(ctx, ctx.getPath(), "file", filesParams);
 
-					finalCode.append("<a class=\"" + IContentVisualComponent.EDIT_ACTION_CSS_CLASS + "\" href=\"" + staticURL + "\" >");
+					finalCode.append("<a class=\"" + IContentVisualComponent.EDIT_ACTION_CSS_CLASS + "\" href=\""
+							+ staticURL + "\" >");
 					finalCode.append(i18nAccess.getText("content.goto-static"));
 					finalCode.append("</a>");
 				}
@@ -508,8 +537,9 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 			finalCode.append("<div class=\"description form-group\">");
 			finalCode.append("<label for=\"" + getEmbedCode() + "\">");
 			finalCode.append(descriptionTitle);
-			finalCode.append("</label>");			
-			finalCode.append("<textarea class=\"form-control tinymce-light wysiwyg\" id=\"" + getDescriptionName() + "\" name=\"" + getDescriptionName() + "\">");
+			finalCode.append("</label>");
+			finalCode.append("<textarea class=\"form-control tinymce-light wysiwyg\" id=\"" + getDescriptionName()
+					+ "\" name=\"" + getDescriptionName() + "\">");
 			finalCode.append(getDescription());
 			finalCode.append("</textarea></div>");
 			Map<String, String> filesParams = new HashMap<String, String>();
@@ -520,9 +550,11 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 			filesParams.put("select", "_TYPE_");
 			filesParams.put(ContentContext.PREVIEW_EDIT_PARAM, "true");
 			String chooseImageURL = URLHelper.createModuleURL(ctx, ctx.getPath(), "file", filesParams);
-			finalCode.append("<script type=\"text/javascript\">jQuery(document).ready(loadWysiwyg('#" + getDescriptionName() + "','" + getEditorComplexity(ctx) + "','" + chooseImageURL + "'));</script>");
+			finalCode.append(
+					"<script type=\"text/javascript\">jQuery(document).ready(loadWysiwyg('#" + getDescriptionName()
+							+ "','" + getEditorComplexity(ctx) + "','" + chooseImageURL + "'));</script>");
 		}
-		
+
 		finalCode.append(getMetaCode(ctx));
 
 		finalCode.append("</div></div>");
@@ -590,7 +622,8 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 	}
 
 	protected String getFileURL(ContentContext ctx, String fileLink) {
-		return URLHelper.mergePath("/", getRelativeFileDirectory(ctx), ElementaryURLHelper.mergePath(getDirSelected(), fileLink));
+		return URLHelper.mergePath("/", getRelativeFileDirectory(ctx),
+				ElementaryURLHelper.mergePath(getDirSelected(), fileLink));
 	}
 
 	protected String getFileXHTMLInputName() {
@@ -638,7 +671,8 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 	public String getJSOnChange(ContentContext ctx) {
 		String js = "";
 		if (ctx.isEditPreview()) {
-			js = "jQuery(this.form).append('<input type=&quot;hidden&quot; name=&quot;" + AccessServlet.PERSISTENCE_PARAM + "&quot; value=&quot;false&quot; />');";
+			js = "jQuery(this.form).append('<input type=&quot;hidden&quot; name=&quot;"
+					+ AccessServlet.PERSISTENCE_PARAM + "&quot; value=&quot;false&quot; />');";
 		}
 		return js + "jQuery(this.form).trigger('submit')";
 	}
@@ -675,11 +709,11 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 	public String getImageImgName() {
 		return "img_images_" + getId();
 	}
-	
+
 	public String getResourceURL(ContentContext ctx) {
 		return getResourceURL(ctx, getFileName());
 	}
-	
+
 	protected String getMainFolder(ContentContext ctx) {
 		throw new NotImplementedException("getMainFolder");
 	}
@@ -687,16 +721,18 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 	public String getResourceURL(ContentContext ctx, String fileLink) {
 		StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
 		if (isFromShared(ctx)) {
-			return URLHelper.mergePath(staticConfig.getShareDataFolderKey(), getMainFolder(ctx), getDirSelected(), fileLink.replaceFirst(staticConfig.getShareDataFolderKey(), ""));
+			return URLHelper.mergePath(staticConfig.getShareDataFolderKey(), getMainFolder(ctx), getDirSelected(),
+					fileLink.replaceFirst(staticConfig.getShareDataFolderKey(), ""));
 		} else {
-			return URLHelper.mergePath(staticConfig.getStaticFolder(), getMainFolder(ctx), URLHelper.mergePath(getDirSelected(), fileLink));
+			return URLHelper.mergePath(staticConfig.getStaticFolder(), getMainFolder(ctx),
+					URLHelper.mergePath(getDirSelected(), fileLink));
 		}
 	}
-	
+
 	protected int getMaxPreviewImages() {
 		return Integer.MAX_VALUE;
 	}
-	
+
 	protected String getPreviewZoneId() {
 		return "picture-zone-" + getId();
 	}
@@ -721,7 +757,7 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 		fullName = ElementaryURLHelper.mergePath(globalContext.getDataFolder(), fullName);
 		return new File(fullName);
 	}
-	
+
 	public String getPreviewCode(ContentContext ctx, int maxDisplayedImage) throws Exception {
 		return getPreviewCode(ctx, maxDisplayedImage, false);
 	}
@@ -733,8 +769,8 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 		String[] images = getFileList(getFileDirectory(ctx));
 		String currentFileLink = URLHelper.mergePath(getDirSelected(), getFileName());
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-		
-		out.println("<div class=\"preview-image-wrapper "+(imageList?"list":"no-list")+"\">");
+
+		out.println("<div class=\"preview-image-wrapper " + (imageList ? "list" : "no-list") + "\">");
 
 		FileBean file = new FileBean(ctx, getFile(ctx));
 		Map<String, String> params = new HashMap<String, String>();
@@ -744,23 +780,27 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 		params.put(getFileXHTMLInputName(), "file.png"); // fake file name
 		params.put(getDirInputName(), getDirSelected()); // fake file name
 		String uploadURL = URLHelper.createURL(ctx, params);
-		out.println("<div class=\"image-selected\" data-fieldname=\"" + getFileXHTMLInputName() + "\" data-url=\"" + uploadURL + "\">");
+		out.println("<div class=\"image-selected\" data-fieldname=\"" + getFileXHTMLInputName() + "\" data-url=\""
+				+ uploadURL + "\">");
 
 		out.println("<div class=\"focus-zone\">");
 
 		out.println("<div id=\"" + getPreviewZoneId() + "\" class=\"list-container\">");
 
 		String url;
-		if (getFileName().trim().length() > 0) {			
-			url = URLHelper.createTransformURL(ctx, getPage(), getResourceURL(ctx, getFileName()), "list");			
+		if (getFileName().trim().length() > 0) {
+			url = URLHelper.createTransformURL(ctx, getPage(), getResourceURL(ctx, getFileName()), "list");
 			url = URLHelper.addParam(url, "hash", getStaticInfo(ctx).getVersionHash(ctx));
 			out.println("<img src=\"" + url + "\" />&nbsp;");
 			if (!isFromShared(ctx)) {
 				out.println("<div class=\"focus-point\">x</div>");
-				out.println("<input class=\"posx\" type=\"hidden\" name=\"posx-" + file.getId() + "\" value=\"" + file.getFocusZoneX() + "\" />");
-				out.println("<input class=\"posy\" type=\"hidden\" name=\"posy-" + file.getId() + "\" value=\"" + file.getFocusZoneY() + "\" />");
-				out.println("<input class=\"path\" type=\"hidden\" name=\"image_path-" + file.getId() + "\" value=\"" + URLHelper.mergePath(getRelativeFileDirectory(ctx), getDirSelected()) + "\" />");				
-			} 
+				out.println("<input class=\"posx\" type=\"hidden\" name=\"posx-" + file.getId() + "\" value=\""
+						+ file.getFocusZoneX() + "\" />");
+				out.println("<input class=\"posy\" type=\"hidden\" name=\"posy-" + file.getId() + "\" value=\""
+						+ file.getFocusZoneY() + "\" />");
+				out.println("<input class=\"path\" type=\"hidden\" name=\"image_path-" + file.getId() + "\" value=\""
+						+ URLHelper.mergePath(getRelativeFileDirectory(ctx), getDirSelected()) + "\" />");
+			}
 		} else {
 			imageList = true;
 		}
@@ -781,7 +821,8 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 					}
 					String realURL = URLHelper.createResourceURL(ctx, getPage(), '/' + getResourceURL(ctx, image));
 					realURL = URLHelper.addParam(realURL, "CRC32", "" + staticInfo.getCRC32());
-					String previewURL = URLHelper.createTransformURL(ctx, getPage(), getResourceURL(ctx, image), "preview");
+					String previewURL = URLHelper.createTransformURL(ctx, getPage(), getResourceURL(ctx, image),
+							"preview");
 					previewURL = URLHelper.addParam(previewURL, "CRC32", "" + staticInfo.getCRC32());
 					url = URLHelper.createTransformURL(ctx, getPage(), getResourceURL(ctx, image), "list");
 					url = URLHelper.addParam(url, "hash", staticInfo.getVersionHash(ctx));
@@ -790,13 +831,16 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 					out.print("<div " + selected + ">");
 					String onMouseOver = "";
 					if (globalContext.isImagePreview()) {
-						onMouseOver = " onMouseOver=\"previewImage('" + previewURL + "')\" onMouseOut=\"previewClear()\"";
+						onMouseOver = " onMouseOver=\"previewImage('" + previewURL
+								+ "')\" onMouseOut=\"previewClear()\"";
 					}
-					out.print("<figure><a class=\"image\" href=\"#\" onclick=\"jQuery('#" + id + "').val('" + image + "');jQuery('#" + id + "').trigger('change');" + getJSOnChange(ctx) + "\">");
+					out.print("<figure><a class=\"image\" href=\"#\" onclick=\"jQuery('#" + id + "').val('" + image
+							+ "');jQuery('#" + id + "').trigger('change');" + getJSOnChange(ctx) + "\">");
 					out.print("<img name=\"" + getImageImgName() + "\"" + onMouseOver + " src=\"");
 					out.print(url);
 					out.print("\" alt=\"\">&nbsp;</a>");
-					out.print("<figcaption><a target=\"_blank\" title=\""+image+"\" href=\"" + realURL + "\">" + image + "</a></figcaption></figure>");
+					out.print("<figcaption><a target=\"_blank\" title=\"" + image + "\" href=\"" + realURL + "\">"
+							+ image + "</a></figcaption></figure>");
 					out.print("</div>");
 					// }
 				}
@@ -812,7 +856,8 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 			}
 			out.println("<div class=\"action\">");
 			I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
-			out.println("<a class=\"action-button ajax\" href=\"" + ajaxURL + "\">" + getDisplayAllLabel(i18nAccess) + "</a>");
+			out.println("<a class=\"action-button ajax\" href=\"" + ajaxURL + "\">" + getDisplayAllLabel(i18nAccess)
+					+ "</a>");
 			out.println("</div>");
 		}
 		out.println("</div>");
@@ -826,7 +871,7 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 		return res.toString();
 	}
 
-	protected String getDisplayAllLabel(I18nAccess i18nAccess) {	
+	protected String getDisplayAllLabel(I18nAccess i18nAccess) {
 		return i18nAccess.getText("content.files.load", "Display all files");
 	}
 
@@ -866,11 +911,11 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 		}
 		return 0;
 	}
-	
+
 	@Override
 	public void init(ComponentBean bean, ContentContext ctx) throws Exception {
 		super.init(bean, ctx);
-		/* check if the content of db is correct version */		
+		/* check if the content of db is correct version */
 		if (getValue().trim().length() == 0) {
 			if (!AdminUserSecurity.isCurrentUserCanUpload(ctx)) {
 				setDirSelected(getImportFolderPath(ctx));
@@ -884,27 +929,30 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 		} else {
 			properties.load(stringToStream(getValue()));
 		}
-		
+
 		if (isImported(ctx) && getPage() != null) {
 			String importFolder = getImportFolderPath(ctx);
 			if (!getDirSelected().equals(importFolder)) {
 				File oldFile = getFile(ctx);
-				setDirSelected(importFolder);				
+				setDirSelected(importFolder);
 				File newFile = getFile(ctx);
 				try {
-					ResourceHelper.writeFileToFile(oldFile, newFile);
-					ResourceHelper.copyResourceData(ctx, oldFile, newFile);
+					if (oldFile.exists()) {
+						ResourceHelper.writeFileToFile(oldFile, newFile);
+						ResourceHelper.copyResourceData(ctx, oldFile, newFile);
+					}
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
-				ResourceHelper.cleanImportResource(ctx, oldFile);				
+				ResourceHelper.cleanImportResource(ctx, oldFile);
 			}
 		}
-		
+
 	}
-	
+
 	protected boolean isImported(ContentContext ctx) {
-		return getDirSelected().startsWith(URLHelper.removeFirstSlash(ctx.getGlobalContext().getStaticConfig().getImportFolder()));				
+		return getDirSelected()
+				.startsWith(URLHelper.removeFirstSlash(ctx.getGlobalContext().getStaticConfig().getImportFolder()));
 	}
 
 	@Override
@@ -954,6 +1002,8 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 
 	@Override
 	public String performEdit(ContentContext ctx) throws Exception {
+		
+		
 
 		boolean fromShared = isFromShared(ctx);
 
@@ -961,11 +1011,13 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 		I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
 
 		String label = requestService.getParameter(getLabelXHTMLInputName(), "");
-		String fileName = requestService.getParameter(getFileXHTMLInputName(), "");		
+		String fileName = requestService.getParameter(getFileXHTMLInputName(), "");
 		String newDir = requestService.getParameter(getNewDirInputName(), "");
 		String selectedDir = requestService.getParameter(getDirInputName(), "");
 		String description = requestService.getParameter(getDescriptionName(), "");
 		String reverseLink = requestService.getParameter(getReverseLinkInputName(), ReverseLinkService.NONE);
+		
+		String initialFileName = fileName;
 
 		if (newDir.trim().length() > 0) {
 			String repositoryDir = getFileDirectory(ctx);
@@ -974,14 +1026,17 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 				File file = new File(repositoryDir + '/' + newDir);
 				if (file.mkdirs()) {
 					MessageRepository messageRepository = MessageRepository.getInstance(ctx);
-					messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("content.file.info.create-dir", new String[][] { { "group", newDir } }), GenericMessage.INFO));
+					messageRepository.setGlobalMessage(new GenericMessage(
+							i18nAccess.getText("content.file.info.create-dir", new String[][] { { "group", newDir } }),
+							GenericMessage.INFO));
 					selectedDir = newDir;
 					setModify();
 					setNeedRefresh(true);
 				}
 			} else {
 				MessageRepository messageRepository = MessageRepository.getInstance(ctx);
-				messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("content.file.error.bad-rep-name"), GenericMessage.ERROR));
+				messageRepository.setGlobalMessage(new GenericMessage(
+						i18nAccess.getText("content.file.error.bad-rep-name"), GenericMessage.ERROR));
 			}
 		}
 
@@ -989,7 +1044,7 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 			fileName = requestService.getParameter(getSelectXHTMLInputName(), "");
 			fileName = StringHelper.getFileNameFromPath(fileName);
 		}
-		
+
 		if (fromShared && fileName != null) {
 			fileName = URLHelper.mergePath(ctx.getGlobalContext().getStaticConfig().getShareDataFolderKey(), fileName);
 		}
@@ -1012,7 +1067,9 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 				fileName = ctx.getGlobalContext().getStaticConfig().getShareDataFolderKey();
 			}
 			MessageRepository messageRepository = MessageRepository.getInstance(ctx);
-			messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("content.file.info.select-dir", new String[][] { { "group", selectedDir } }), GenericMessage.INFO));
+			messageRepository.setGlobalMessage(new GenericMessage(
+					i18nAccess.getText("content.file.info.select-dir", new String[][] { { "group", selectedDir } }),
+					GenericMessage.INFO));
 			setModify();
 			setNeedRefresh(true);
 		}
@@ -1024,21 +1081,24 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 				setModify();
 			}
 		}
-		
+
 		setDirSelected(selectedDir);
 		setFileName(fileName);
 		setLabel(label);
 		properties.setProperty(DESCRIPTION_KEY, description);
 
 		// if (canUpload(ctx)) {
-		if (isFileNameValid(ctx, fileName)) {
+		
+		if (isFileNameValid(ctx, initialFileName)) {
 			try {
 				uploadFiles(ctx, requestService);
 			} catch (IOException e) {
 				MessageRepository messageRepository = MessageRepository.getInstance(ctx);
-				messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("content.file.exist"), GenericMessage.ERROR));
+				messageRepository.setGlobalMessage(
+						new GenericMessage(i18nAccess.getText("content.file.exist"), GenericMessage.ERROR));
 			}
 		} else {
+			setFileName("");
 			return i18nAccess.getText("component.file.badformat", "bad file format.");
 		}
 		// }
@@ -1048,7 +1108,7 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 		}
 
 		storeProperties();
-		
+
 		return null;
 	}
 
@@ -1069,16 +1129,17 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 
 	@Override
 	public boolean renameResource(ContentContext ctx, File oldName, File newName) {
-		
+
 		if (oldName.equals(newName)) {
 			return false;
 		}
 		String currentFile = URLHelper.mergePath(getFileDirectory(ctx), getDirSelected(), getFileName());
 
 		File file = new File(currentFile);
-		
+
 		if (file.getAbsolutePath().replace('\\', '/').equals(oldName.getAbsolutePath().replace('\\', '/'))) {
-			String relativeNewFileDir = newName.getParentFile().getAbsolutePath().replace('\\', '/').replace(getFileDirectory(ctx).replace('\\', '/'), "");
+			String relativeNewFileDir = newName.getParentFile().getAbsolutePath().replace('\\', '/')
+					.replace(getFileDirectory(ctx).replace('\\', '/'), "");
 			setFileName(newName.getName());
 			setDirSelected(relativeNewFileDir);
 			setModify();
@@ -1112,7 +1173,8 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 			File f = new File(realName);
 			if (f.exists()) {
 				// create temp file
-				File tempFile = new File(StringHelper.getFileNameWithoutExtension(f.getAbsolutePath()) + "__TEMP" + '.' + StringHelper.getFileExtension(f.getName()));
+				File tempFile = new File(StringHelper.getFileNameWithoutExtension(f.getAbsolutePath()) + "__TEMP" + '.'
+						+ StringHelper.getFileExtension(f.getName()));
 				ResourceHelper.writeStreamToFile(in, tempFile);
 				ResourceStatus resouceStatus = ResourceStatus.getInstance(ctx.getRequest().getSession());
 				resouceStatus.addSource(new LocalResource(ctx, tempFile));
@@ -1152,7 +1214,7 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 		}
 	}
 
-	public void setDirSelected(String dir) {		
+	public void setDirSelected(String dir) {
 		properties.setProperty(DIR_KEY, dir);
 		storeProperties();
 	}
@@ -1209,33 +1271,36 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
 		String fileName = requestService.getParameter(getFileXHTMLInputName(), "");
 		I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
+		
 		if (isFileNameValid(ctx, fileName)) {
 			try {
 				uploadFiles(ctx, requestService);
 				return null;
-			} catch (IOException e) {				
+			} catch (IOException e) {
 				return i18nAccess.getText("content.file.exist");
 			}
 		} else {
 			return i18nAccess.getText("component.file.badformat", "bad file format.");
 		}
-		
+
 	}
-	
+
 	@Override
-	public boolean isMirroredByDefault(ContentContext ctx) {	
+	public boolean isMirroredByDefault(ContentContext ctx) {
 		return true;
 	}
-	
+
 	@Override
-	public String getContentAsText(ContentContext ctx) {	
+	public String getContentAsText(ContentContext ctx) {
 		return getLabel();
 	}
-	
-	public static String performLoadImages(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
+
+	public static String performLoadImages(RequestService rs, ContentContext ctx, MessageRepository messageRepository,
+			I18nAccess i18nAccess) throws Exception {
 		String compId = rs.getParameter("comp_id", null);
 		if (compId != null) {
-			AbstractFileComponent comp = (AbstractFileComponent) ContentService.getInstance(ctx.getRequest()).getComponent(ctx, compId);
+			AbstractFileComponent comp = (AbstractFileComponent) ContentService.getInstance(ctx.getRequest())
+					.getComponent(ctx, compId);
 			String previewCode = comp.getPreviewCode(ctx, comp.getMaxPreviewImages(), true);
 			ctx.addAjaxInsideZone(comp.getPreviewZoneId(), previewCode);
 			return null;
@@ -1255,7 +1320,7 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 	}
 
 	@Override
-	public boolean isUploadOnDrop() { 
+	public boolean isUploadOnDrop() {
 		return false;
 	}
 

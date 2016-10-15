@@ -397,6 +397,9 @@ public class ContentService implements IPrintInfo {
 	}
 
 	public String getAttribute(ContentContext ctx, String key) {
+		if (key != null) {
+			key = key.replace("&", "_and_");
+		}
 		if (ctx.getRenderMode() == ContentContext.VIEW_MODE && ctx.getGlobalContext().isPreviewMode()) {
 			if (viewGlobalMap == null) {
 				try {
@@ -819,6 +822,9 @@ public class ContentService implements IPrintInfo {
 	}
 
 	public void setAttribute(ContentContext ctx, String key, String value) {
+		if (key != null) {
+			key = key.replace("&", "_and_");
+		}
 		if (ctx.getRenderMode() == ContentContext.VIEW_MODE) {
 			if (viewGlobalMap == null) {
 				viewGlobalMap = new HashMap<String, String>();

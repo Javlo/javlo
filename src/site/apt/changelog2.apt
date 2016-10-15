@@ -788,3 +788,5 @@ change log
  
  * 2/ import with meta data / time range default end of day for the end date / DynamicComponentFilter default value / marcro clean content / clean import folder
  
+ * 3/ add js bootstrap on preview
+ 

@@ -971,12 +971,12 @@ public class PersistenceService {
 		return load(ctx, ContentContext.PREVIEW_MODE, null, null, true, version);
 	}
 
-	private boolean checkComponentIntegrity(ContentContext ctx, HashSet<String> componentsId, PrintStream out, ComponentBean[] comps) {
-		boolean error = false;
+	private int checkComponentIntegrity(ContentContext ctx, HashSet<String> componentsId, PrintStream out, ComponentBean[] comps) {
+		int error = 0;
 		for (ComponentBean comp : comps) {
 			if (componentsId.contains(comp.getId())) {
 				out.println("2 comp with same id found (type:" + comp.getType() + " id:" + comp.getId());
-				error = true;
+				error++;
 			} else {
 				componentsId.add(comp.getId());
 			}
@@ -984,31 +984,38 @@ public class PersistenceService {
 		return error;
 	}
 
-	public boolean checkStructureIntegrity(ContentContext ctx, PrintStream out, MenuElement root) {
-		boolean error = false;
+	public int checkStructureIntegrity(ContentContext ctx, PrintStream out, MenuElement root) {
+		int error = 0;
 		if (ctx.getGlobalContext().getStaticConfig().isCheckContentIntegrity()) {
 			out.println("");
 			out.println("Test content structure : " + ctx.getGlobalContext().getContextKey() + " (mode:" + ctx.getRenderMode() + ')');
 			out.println("--");
 			HashSet<String> componentsId = new HashSet<String>();
 			HashSet<String> pageId = new HashSet<String>();	
+			HashSet<String> pageName = new HashSet<String>();
 			try {
 				for (MenuElement page : root.getAllChildren()) {
-					boolean pageContentError = checkComponentIntegrity(ctx, componentsId, out, page.getContent());
-					error = error && pageContentError;
-					if (pageContentError) {
-						out.println("   Error in content found : " + page.getPath() + " (id=" + page.getId() + ")");
+					int pageContentError = checkComponentIntegrity(ctx, componentsId, out, page.getContent());
+					error = error + pageContentError;
+					if (pageContentError>0) {
+						out.println("   Error in content found : " + page.getPath() + " (id=" + page.getId() + " #error:"+pageContentError+")");
 					}
 					if (pageId.contains(page.getId())) {
-						error = true;
+						error++;
 						out.println("2 pages with same id found (path:" + page.getPath() + " id:" + page.getId() + " [content:" + pageContentError + "]");
 					}
+					if (pageName.contains(page.getName())) {
+						error++;
+						out.println("2 pages with same name found (path:" + page.getPath() + " name:" + page.getName() + " [content:" + pageContentError + "]");
+					}
+					pageId.add(page.getId());
+					pageName.add(page.getName());
 				}
 			} catch (Exception e) {
 				out.println("EXCEPTION : " + e.getMessage());
 				e.printStackTrace();
 			}
-			if (!error) {
+			if (error == 0) {
 				out.println("no error found.");
 			}
 			out.println("--");
