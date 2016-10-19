@@ -275,7 +275,7 @@ public class FileBean {
 	
 	public List<Link> getComponentWithReference() {
 		try {
-			List<Link> links = new LinkedList<>();
+			List<Link> links = new LinkedList<Link>();
 			ContentContext lgCtx = new ContentContext(ctx);
 			for (IContentVisualComponent comp : ResourceHelper.getComponentsUseResource(ctx, staticInfo.getStaticURL())) {
 				lgCtx.setAllLanguage(comp.getComponentBean().getLanguage());
