@@ -212,7 +212,7 @@ public class XHTMLNavigationHelper {
 		}
 		out.println("<select class=\"form-control max-width\" name=\"" + id + "\" id=\"" + id + "\">");
 		MenuElement elem = rootPage;		
-		for (MenuElement page : elem.getAllChildren()) {
+		for (MenuElement page : elem.getAllChildrenList()) {
 			if ((currentValue != null) && (currentValue.equals(page.getPath()))) {
 				out.println("<option title=\""+StringHelper.toXMLAttribute(page.getTitle(ctx))+"\" value=\"" + page.getPath() + "\" selected=\"true\">");
 			} else {

@@ -105,7 +105,7 @@ public class SmartExternalLinkImportation extends AbstractVisualComponent {
 		ThreadManager threadManager = ThreadManager.getInstance(ctx.getRequest().getSession().getServletContext());
 		if (threadManager.getCountThread() == 0) {
 			Calendar cal = Calendar.getInstance();
-			cal.roll(Calendar.DAY_OF_YEAR, -7);
+			cal.add(Calendar.DAY_OF_YEAR, -7);
 			Calendar pageModification = Calendar.getInstance();
 			pageModification.setTime(getPage().getModificationDate());
 			if (pageModification.before(cal)) {

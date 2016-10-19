@@ -200,7 +200,7 @@ public class SiteMapAction extends AbstractModuleAction {
 		} else if (rs.getParameter("paste-child-0", null) != null) {
 			targetPage = content.getNavigation(ctx);
 		}
-		for (MenuElement page : content.getNavigation(ctx).getAllChildren()) {
+		for (MenuElement page : content.getNavigation(ctx).getAllChildrenList()) {
 			if (selection.contains(page.getId())) {
 				pageToMove.add(page);
 			}

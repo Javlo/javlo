@@ -50,7 +50,7 @@ public class ReportFactory {
 		report.allTitleDifferent = true;
 		Set<String> pageDone = new HashSet<String>();
 		ReportFilter filter = ReportFilter.getInstance(ctx.getRequest().getSession());
-		for (MenuElement page : root.getAllChildren()) {
+		for (MenuElement page : root.getAllChildrenList()) {
 			if (isPageValid(ctx, filter, page)) {
 				report.totalPageAnnalysed++;
 				if (page.isRealContent(ctx) && !page.isInTrash()) {
@@ -107,7 +107,7 @@ public class ReportFactory {
 						report.pageImageAltRight++;
 					}
 				} else {
-					if (page.getAllChildren().length == 0) {
+					if (page.getAllChildrenList().size() == 0) {
 						report.pageWithoutContent++;
 					} else {
 						report.pageWithContent++;

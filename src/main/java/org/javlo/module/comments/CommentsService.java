@@ -29,7 +29,7 @@ public class CommentsService {
 		MenuElement page = content.getNavigation(ctx);
 		List<IContentVisualComponent> comps = page.getContentByType(ctx, ReactionComponent.TYPE);
 		reactions.addAll(comps);
-		for (MenuElement child : page.getAllChildren()) {
+		for (MenuElement child : page.getAllChildrenList()) {
 			reactions.addAll(child.getContentByType(ctx, ReactionComponent.TYPE));
 		}
 		return reactions;

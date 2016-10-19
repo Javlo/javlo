@@ -18,7 +18,7 @@ public class ActiveAllChildren extends AbstractMacro {
 	public String perform(ContentContext ctx, Map<String, Object> params) throws Exception {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		
-		for (MenuElement menuElement : ctx.getCurrentPage().getAllChildren()) {
+		for (MenuElement menuElement : ctx.getCurrentPage().getAllChildrenList()) {
 			menuElement.setActive(true);
 		}		
 

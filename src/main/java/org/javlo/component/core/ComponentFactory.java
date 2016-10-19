@@ -160,13 +160,13 @@ public class ComponentFactory {
 		ContentService content = ContentService.getInstance(ctx.getGlobalContext());
 		MenuElement root = content.getNavigation(noAreaCtx);
 		ContentElementList pageContent = root.getContent(noAreaCtx);
-		while (pageContent.hasNext(noAreaCtx)) {
+		/*while (pageContent.hasNext(noAreaCtx)) {
 			IContentVisualComponent comp = pageContent.next(noAreaCtx);
 			if (comp instanceof DynamicComponent) {
 				outComps.add((DynamicComponent)comp);
 			}
-		}
-		for (MenuElement page : root.getAllChildren()) {
+		}*/
+		for (MenuElement page : root.getAllChildrenList()) {
 			pageContent = page.getContent(noAreaCtx);
 			while (pageContent.hasNext(noAreaCtx)) {
 				IContentVisualComponent comp = pageContent.next(noAreaCtx);
@@ -433,9 +433,8 @@ public class ComponentFactory {
 	public static List<ComponentBean> getContentByType(ContentContext ctx, String type) throws Exception {
 		ContentService content = ContentService.getInstance(ctx.getRequest());
 		MenuElement rootPage = content.getNavigation(ctx);
-		List<ComponentBean> outComp = new LinkedList<ComponentBean>();
-		MenuElement[] pages = rootPage.getAllChildren();
-		for (MenuElement page : pages) {
+		List<ComponentBean> outComp = new LinkedList<ComponentBean>();		
+		for (MenuElement page : rootPage.getAllChildrenList()) {
 			ComponentBean[] comps = page.getContent();
 			for (ComponentBean comp : comps) {
 				if (comp.getType().endsWith(type)) {
@@ -450,8 +449,7 @@ public class ComponentFactory {
 		ContentService content = ContentService.getInstance(ctx.getRequest());
 		MenuElement rootPage = content.getNavigation(ctx);
 		List<IContentVisualComponent> outComp = new LinkedList<IContentVisualComponent>();
-		MenuElement[] pages = rootPage.getAllChildren();
-		for (MenuElement page : pages) {
+		for (MenuElement page : rootPage.getAllChildrenList()) {
 			ContentElementList comps = page.getAllContent(ctx);
 			while (comps.hasNext(ctx)) {
 				IContentVisualComponent comp = comps.next(ctx);

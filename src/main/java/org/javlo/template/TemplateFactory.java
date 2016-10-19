@@ -431,7 +431,7 @@ public class TemplateFactory {
 		if (page.needTemplate(ctx, templateId)) {
 			outPages.add(new NavigationWithContent(ctx.getGlobalContext(), page));
 		}
-		for (MenuElement child : page.getAllChildren()) {
+		for (MenuElement child : page.getAllChildrenList()) {
 			if (child.needTemplate(ctx, templateId)) {
 				outPages.add(new NavigationWithContent(ctx.getGlobalContext(), child));
 			}

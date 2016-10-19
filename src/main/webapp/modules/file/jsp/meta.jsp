@@ -69,8 +69,14 @@
 			<c:set var="refList" value="${file.componentWithReference}" />
 			<c:set var="alertType" value="danger" />
 			<c:set var="alertMessage" value="${i18n.edit['file.no-reference']}" />
-			<c:if test="${fn:length(refList) > 0}"><c:set var="alertType" value="success" /><c:set var="alertMessage" value="${i18n.edit['file.referenced']} ${fn:length(refList)}" /></c:if>
-			<div class="alert alert-${alertType}" role="alert">${alertMessage}</div>
+			<c:if test="${fn:length(refList) > 0}"><c:set var="alertType" value="success" /><c:set var="alertMessage" value="${i18n.edit['file.referenced']} :" /></c:if>
+			<div class="alert alert-${alertType}" role="alert">${alertMessage}
+			<c:if test="${fn:length(refList) > 0}">
+				<ul class="link-list"><c:forEach var="link" items="${refList}">
+				<li><a href="${link.url}">${link.label}</a></li>
+				</c:forEach></ul>
+			</c:if>			
+			</div>
 		</c:if>		
 		<div class="body">		
 		<div class="download ${file.image && param.select != 'back'?'picture':''}">

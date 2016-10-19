@@ -132,9 +132,8 @@ public class ContactText extends AbstractVisualComponent {
 			if (contactCache == null) {
 				contactCache = new Hashtable<String, String>();
 				ContentService content = ContentService.getInstance(ctx.getRequest());
-				MenuElement rootPage = content.getNavigation(ctx);
-				MenuElement[] children = rootPage.getAllChildren();
-				for (MenuElement page : children) {
+				MenuElement rootPage = content.getNavigation(ctx);				
+				for (MenuElement page : rootPage.getAllChildrenList()) {
 					List<IContentVisualComponent> comps = page.getContentByType(ctx, getType());
 					for (IContentVisualComponent comp : comps) {
 						ContactText contactComp = (ContactText) comp;
@@ -159,9 +158,8 @@ public class ContactText extends AbstractVisualComponent {
 		synchronized (LOCK_UPDATE_CACHE) {
 			Map<String, String> contactCache = getContactCache(ctx);
 			ContentService content = ContentService.getInstance(ctx.getRequest());
-			MenuElement rootPage = content.getNavigation(ctx);
-			MenuElement[] children = rootPage.getAllChildren();
-			for (MenuElement page : children) {
+			MenuElement rootPage = content.getNavigation(ctx);			
+			for (MenuElement page : rootPage.getAllChildrenList()) {
 				List<IContentVisualComponent> comps = page.getContentByType(ctx, getType());
 				for (IContentVisualComponent comp : comps) {
 					ContactText contactComp = (ContactText) comp;

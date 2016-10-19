@@ -117,15 +117,10 @@ public class ConvertToCurrentVersion {
 	public static void convert(ContentContext ctx, LoadingBean lBean) {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		NotificationService notificationService = NotificationService.getInstance(globalContext);
-
-		MenuElement root = lBean.getRoot();
-		MenuElement[] children;
+		MenuElement root = lBean.getRoot();		
 		try {
-			children = root.getAllChildren();
-
 			int convertion = 0;
-
-			for (MenuElement child : children) {
+			for (MenuElement child : root.getAllChildrenList()) {
 				ComponentBean[] beans = child.getContent();
 				for (ComponentBean bean : beans) {
 					convertion += convert(ctx, bean, lBean.getCmsVersion());

@@ -90,7 +90,19 @@
 .item .alert {
 	margin: 5px;
 	padding: 5px;
-	text-align: center;
+}
+
+.item .link-list {
+	margin: 0;
+	padding: 0;
+}
+
+.item .link-list li {
+	margin: 0 0 0 15px;
+	border: 0 none;
+	background: none;
+	border-radius: 0;
+	box-shadow: none;
 }
 
 #main-renderer .btn-edit {

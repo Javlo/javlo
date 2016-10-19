@@ -53,7 +53,7 @@ public class RenameChildren implements IInteractiveMacro, IAction {
 		MenuElement root = ctx.getCurrentPage().getRoot();
 		int countBadRename = 0;
 		int countOkRename = 0;
-		for (MenuElement child : ctx.getCurrentPage().getAllChildren()) {
+		for (MenuElement child : ctx.getCurrentPage().getAllChildrenList()) {
 			if (child.getName().contains(text)) {
 				String newName = child.getName().replace(text, newText);
 				if (root.searchChildFromName(newName) == null) {

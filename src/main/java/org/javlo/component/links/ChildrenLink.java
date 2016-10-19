@@ -347,9 +347,9 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 			showAll = getStyle().equalsIgnoreCase("all") || getStyle().equalsIgnoreCase(RECURSIVE);
 			showOnlyNotVisible = getStyle().equalsIgnoreCase("not-visible");
 		}
-		Collection<MenuElement> children;		
+		List<MenuElement> children;		
 		if (getStyle().equals(RECURSIVE)) {			
-			children = Arrays.asList(parentPage.getAllChildren());
+			children = parentPage.getAllChildrenList();
 		} else {
 			children = parentPage.getChildMenuElementsWithVirtual(ctx, false, false);
 		}		

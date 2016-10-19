@@ -768,7 +768,7 @@ public class MacroHelper {
 	public static List<MenuElement> searchArticleRoot(ContentContext ctx) throws Exception {
 		List<MenuElement> outPages = new LinkedList<MenuElement>();
 		MenuElement root = ContentService.getInstance(ctx.getRequest()).getNavigation(ctx);
-		for (MenuElement page : root.getAllChildren()) {
+		for (MenuElement page : root.getAllChildrenList()) {
 			if (page.isActive() && !page.isTrash() && !page.isInTrash()) {
 				if (page.getChildMenuElements().size() > 0) {
 					boolean isArticleRoot = false;

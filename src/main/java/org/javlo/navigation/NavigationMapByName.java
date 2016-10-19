@@ -89,7 +89,7 @@ public class NavigationMapByName implements Map<String, PageBean> {
 	@Override
 	public int size() {
 		try {
-			return root.getAllChildren().length + 1;
+			return root.getAllChildrenList().size();
 		} catch (Exception e) {
 			return 0;
 		}

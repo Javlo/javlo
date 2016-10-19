@@ -43,7 +43,7 @@ public class CleanDuplicatedId extends AbstractMacro {
 		try {
 			int compError = 0;
 			int pageError = 0;
-			for (MenuElement page : content.getNavigation(ctx).getAllChildren()) {
+			for (MenuElement page : content.getNavigation(ctx).getAllChildrenList()) {
 				compError += clearComponentIntegrity(componentsId, page.getContent());
 				if (pageId.contains(page.getId())) {
 					pageError++;

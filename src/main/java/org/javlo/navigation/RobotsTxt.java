@@ -19,7 +19,7 @@ public class RobotsTxt {
 		out.println("Disallow: "+URLHelper.createStaticURL(ctx, "/edit/"));
 		out.println("Disallow: "+URLHelper.createStaticURL(ctx, "/preview/"));
 		out.println("Disallow: "+URLHelper.createStaticURL(ctx, "/page/"));
-		for (MenuElement page : content.getNavigation(ctx).getAllChildren()) {			
+		for (MenuElement page : content.getNavigation(ctx).getAllChildrenList()) {			
 			if (page.getFinalSeoWeight() == MenuElement.SEO_HEIGHT_NULL) {
 				ctx.setFormat("html");
 				out.println("Disallow: "+URLHelper.createURL(ctx, page));

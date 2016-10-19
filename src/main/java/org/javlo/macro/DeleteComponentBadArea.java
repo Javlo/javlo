@@ -44,7 +44,7 @@ public class DeleteComponentBadArea extends AbstractMacro {
 		MenuElement root = content.getNavigation(ctx);
 		deleteComponentInBadArea(ctx, root);
 		int countDeleted = 0;
-		for (MenuElement child : root.getAllChildren()) {
+		for (MenuElement child : root.getAllChildrenList()) {
 			countDeleted = countDeleted + deleteComponentInBadArea(ctx, child);
 		}
 		return "components deleted : " + countDeleted;

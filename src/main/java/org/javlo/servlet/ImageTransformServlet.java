@@ -1079,7 +1079,7 @@ public class ImageTransformServlet extends HttpServlet {
 				// response.setHeader("Accept-Ranges", "bytes");
 				// response.setHeader("Transfer-Encoding", null);
 				Calendar cal = Calendar.getInstance();
-				cal.roll(Calendar.MINUTE, 10);
+				cal.add(Calendar.MINUTE, 10);
 				response.setDateHeader("Expires", cal.getTimeInMillis());
 				if (lastModified > 0) {
 					response.setDateHeader(NetHelper.HEADER_LAST_MODIFIED, lastModified);

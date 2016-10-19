@@ -70,7 +70,7 @@ public class SearchModuleAction extends AbstractModuleAction {
 
 	public static Collection<SearchResultBean> searchInPage(ContentContext ctx, SearchFilter filter) throws Exception {
 		Map<MenuElement, SearchResultBean> outResult = new HashMap<MenuElement, SearchResultBean>();
-		for (MenuElement page : ctx.getCurrentPage().getRoot().getAllChildren()) {
+		for (MenuElement page : ctx.getCurrentPage().getRoot().getAllChildrenList()) {
 			if (SecurityHelper.userAccessPage(ctx, ctx.getCurrentEditUser(), page)) {
 				for (ComponentBean comp : page.getContent()) {
 					if (isMatching(comp, filter)) {

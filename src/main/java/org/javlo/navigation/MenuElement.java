@@ -1607,11 +1607,15 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 		return "clk__" + getPath() + "__" + StringHelper.renderDate(date, GlobalContext.ACCESS_DATE_FORMAT);
 	}
 
-	public MenuElement[] getAllChildren() throws Exception {
-		ArrayList<MenuElement> list = getChildElementRecursive(this, 0);
+	public MenuElement[] _getAllChildren() throws Exception {
+		ArrayList<MenuElement> list = getChildElementRecursive(this, 0, new ArrayList<MenuElement>());
 		MenuElement[] res = new MenuElement[list.size()];
 		list.toArray(res);
 		return res;
+	}
+	
+	public List<MenuElement> getAllChildrenList() throws Exception {
+		return getChildElementRecursive(this, 0, new ArrayList<MenuElement>());
 	}
 
 	public List<MenuElement> getAllChildrenWithComponentType(ContentContext ctx, String type) throws Exception {
@@ -1830,12 +1834,11 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 		return result;
 	}
 
-	ArrayList<MenuElement> getChildElementRecursive(MenuElement elem, int deph) throws Exception {
-		ArrayList<MenuElement> result = new ArrayList<MenuElement>();
-		result.add(elem);
+	ArrayList<MenuElement> getChildElementRecursive(MenuElement elem, int deph, ArrayList<MenuElement> result) throws Exception {		
+		result.add(elem);				
 		Collection<MenuElement> children = elem.getChildMenuElements();
 		for (MenuElement child : children) {
-			result.addAll(getChildElementRecursive(child, deph + 1));
+			getChildElementRecursive(child, deph + 1, result);
 		}
 		return result;
 	}
@@ -2485,9 +2488,8 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 		}
 
 		List<String> categories = new LinkedList<String>();
-
-		MenuElement[] children = getAllChildren();
-		for (MenuElement child : children) {
+		
+		for (MenuElement child : getAllChildrenList()) {
 			String cat = child.getCategory(ctx);
 			if (cat != null && cat.trim().length() > 0 && !categories.contains(cat)) {
 				categories.add(cat);
@@ -2678,7 +2680,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 			}
 		}
 		if (res.size() == 0 && isChildrenAssociation()) {
-			for (MenuElement child : getAllChildren()) {
+			for (MenuElement child : getAllChildrenList()) {
 				contentList = child.getAllContent(ctx);
 				while (contentList.hasNext(ctx)) {
 					IContentVisualComponent elem = contentList.next(ctx);
@@ -4097,9 +4099,8 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 					return isInsideTimeRange();
 				}
 			}
-
-			MenuElement[] children = this.getAllChildren();
-			for (MenuElement child : children) {
+			
+			for (MenuElement child : getAllChildrenList()) {
 				content = child.getContent(ctx);
 				while (content.hasNext(contentAreaCtx)) {
 					if (!content.next(contentAreaCtx).isEmpty(
@@ -4274,7 +4275,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 			return null;
 		} else {
 			try {
-				for (MenuElement child : getAllChildren()) {
+				for (MenuElement child : getAllChildrenList()) {
 					if (child.getId().equals(id)) {
 						return child;
 					}
@@ -4572,24 +4573,6 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 		}
 	}
 
-	/**
-	 * valid all children
-	 * 
-	 * @return the number of valided element
-	 * @throws Exception
-	 */
-	public int validAllChildren() throws Exception {
-		MenuElement[] children = getAllChildren();
-		int outValided = 0;
-		for (int i = 0; i < children.length; i++) {
-			if (!children[i].isValid()) {
-				children[i].setValid(true);
-				outValided++;
-			}
-		}
-		return outValided;
-	}
-
 	public boolean notInSearch(ContentContext ctx) throws Exception {
 		PageDescription desc = getPageDescriptionCached(ctx, ctx.getRequestContentLanguage());
 
@@ -4703,9 +4686,8 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 			MenuElement root = getRoot();
 			if (root.isShortURL()) {
 				shortURLs.add(root.getShortURL(ctx));
-			}
-			MenuElement[] children = root.getAllChildren();
-			for (MenuElement child : children) {
+			}			
+			for (MenuElement child : root.getAllChildrenList()) {
 				if (child.isShortURL()) {
 					shortURLs.add(child.getShortURL(ctx).substring(1));
 				}

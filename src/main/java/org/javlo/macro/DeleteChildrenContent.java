@@ -18,7 +18,7 @@ public class DeleteChildrenContent extends AbstractMacro {
 	@Override
 	public String perform(ContentContext ctx, Map<String, Object> params) throws Exception {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());		
-		for (MenuElement menuElement : ctx.getCurrentPage().getAllChildren()) {
+		for (MenuElement menuElement : ctx.getCurrentPage().getAllChildrenList()) {
 			MacroHelper.deleteContentByLanguage(ctx, menuElement, ctx.getRequestContentLanguage());
 		}
 		ctx.getCurrentPage().releaseCache();

@@ -36,8 +36,7 @@ public class DefaultLgExpandMacro extends AbstractMacro {
 
 	@Override
 	public String perform(ContentContext ctx, Map<String, Object> params) throws Exception {
-		MenuElement root = ContentService.getInstance(ctx.getRequest()).getNavigation(ctx);
-		MenuElement[] children = root.getAllChildren();
+		MenuElement root = ContentService.getInstance(ctx.getRequest()).getNavigation(ctx);		
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 
 		ContentContext defaultLgContext = new ContentContext(ctx);
@@ -45,7 +44,7 @@ public class DefaultLgExpandMacro extends AbstractMacro {
 		defaultLgContext.setRequestContentLanguage(globalContext.getDefaultLanguage());
 		ContentContext lgCtx = new ContentContext(ctx);
 		int modif = 0;
-		for (MenuElement child : children) {
+		for (MenuElement child : root.getAllChildrenList()) {
 			ContentElementList defaultLgContent = child.getContent(defaultLgContext);
 			Collection<String> lgs = globalContext.getContentLanguages();
 			for (String lg : lgs) {

@@ -1708,7 +1708,7 @@ public class ResourceHelper {
 	public static boolean isImportPageExist(ContentContext ctx, File childImport) throws Exception {
 		ContentService content = ContentService.getInstance(ctx.getRequest());
 		MenuElement root = content.getNavigation(ctx);
-		for (MenuElement navChild : root.getAllChildren()) {
+		for (MenuElement navChild : root.getAllChildrenList()) {
 			String folderName = DataAction.createImportFolder(navChild.getName());
 			if (childImport.getName().equals(folderName)) {
 				return true;
@@ -1763,12 +1763,17 @@ public class ResourceHelper {
 	}
 
 	public static List<IContentVisualComponent> getComponentsUseResource(ContentContext ctx, String uri) throws Exception {		
+		System.out.println("***** ResourceHelper.getComponentsUseResource : START"); //TODO: remove debug trace
 		ContentService content = ContentService.getInstance(ctx.getRequest());
 		List<IContentVisualComponent> outList = new LinkedList<IContentVisualComponent>();
 		ContentContext lgCtx = new ContentContext(ctx);		
 		for (String lg : ctx.getGlobalContext().getContentLanguages()) {
 			lgCtx.setAllLanguage(lg);
 			for (IContentVisualComponent comp : content.getAllContent(lgCtx)) {
+				if (comp.getId().equals("147551884124890725710") && uri.contains("/61.jpg")) {
+					System.out.println("***** ResourceHelper.getComponentsUseResource : lg = "+lg); //TODO: remove debug trace
+					System.out.println("***** ResourceHelper.getComponentsUseResource : comp = "+comp); //TODO: remove debug trace
+				}
 				if (comp instanceof IStaticContainer) {
 					IStaticContainer container = (IStaticContainer) comp;
 					if (container.contains(lgCtx, uri)) {

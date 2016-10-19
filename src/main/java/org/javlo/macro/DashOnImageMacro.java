@@ -21,7 +21,7 @@ public class DashOnImageMacro extends AbstractMacro {
 	public String perform(ContentContext ctx, Map<String, Object> params) throws Exception {
 		ContentService content = ContentService.getInstance(ctx.getRequest());
 		ContentContext areaNoArea = ctx.getContextWithArea(null);
-		for (MenuElement page : content.getNavigation(ctx).getAllChildren()) {
+		for (MenuElement page : content.getNavigation(ctx).getAllChildrenList()) {
 			ContentElementList compList = page.getContent(areaNoArea);
 			while (compList.hasNext(areaNoArea)) {
 				IContentVisualComponent comp = compList.next(areaNoArea);

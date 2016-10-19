@@ -334,7 +334,7 @@ public class Tracker {
 	public int getPathCountAccess(int dayFromHere, String path) {
 		Calendar to = TimeHelper.convertRemoveAfterMinutes(Calendar.getInstance());
 		Calendar from = TimeHelper.convertRemoveAfterMinutes(Calendar.getInstance());
-		from.roll(Calendar.DAY_OF_YEAR, dayFromHere * -1);
+		from.add(Calendar.DAY_OF_YEAR, dayFromHere * -1);
 		return getPathCountAccess(from.getTime(), to.getTime(), path);
 	}
 
@@ -429,7 +429,7 @@ public class Tracker {
 
 		Calendar to = Calendar.getInstance();
 		Calendar from = Calendar.getInstance();
-		from.roll(Calendar.DAY_OF_YEAR, dayFromHere * -1);
+		from.add(Calendar.DAY_OF_YEAR, dayFromHere * -1);
 
 		to = TimeHelper.convertRemoveAfterHour(to);
 		from = TimeHelper.convertRemoveAfterHour(from);

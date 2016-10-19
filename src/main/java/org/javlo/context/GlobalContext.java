@@ -1557,8 +1557,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 								lgCtx.setContentLanguage(contentLg);
 								lgCtx.setRequestContentLanguage(contentLg);
 								lgCtx.setFormat(null);
-								MenuElement[] children = ContentService.getInstance(ctx.getRequest()).getNavigation(lgCtx).getAllChildren();
-								for (MenuElement menuElement : children) {
+								for (MenuElement menuElement : ContentService.getInstance(ctx.getRequest()).getNavigation(lgCtx).getAllChildrenList()) {
 									String pageURL = urlCreator.createURL(lgCtx, menuElement);
 									String pageKeyURL = urlCreator.createURLKey(pageURL);
 									if (pageKeyURL.contains(".")) {
@@ -3005,12 +3004,12 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		ContentContext localContext = new ContentContext(ctx);
 		localContext.setRenderMode(ContentContext.VIEW_MODE);
 		MenuElement root = content.getNavigation(ctx);
-		out.println("**** #MenuElement View    :  " + (root.getAllChildren().length + 1));
+		out.println("**** #MenuElement View    :  " + (root.getAllChildrenList().size()));
 		out.println("**** #Comp bean View      :  " + (ContentHelper.getAllComponentsOfChildren(root).size()));
 		out.println("**** #Comp icv View       :  " + content.getAllContent(localContext).size());
 		localContext.setRenderMode(ContentContext.PREVIEW_MODE);
 		root = content.getNavigation(ctx);
-		out.println("**** #MenuElement Preview :  " + (root.getAllChildren().length + 1));
+		out.println("**** #MenuElement Preview :  " + (root.getAllChildrenList().size()));
 		out.println("**** #Comp bean Preview   :  " + (ContentHelper.getAllComponentsOfChildren(root).size()));
 		out.println("**** #Comp icv Preview    :  " + content.getAllContent(localContext).size());
 		out.println("****");

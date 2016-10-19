@@ -178,9 +178,8 @@ public class NavigationHelper {
 	}
 
 	public static List<String> getAllRSSChannels(ContentContext ctx, MenuElement page) throws Exception {
-		List<String> pageChannel = getRSSChannels(ctx, page);
-		MenuElement[] children = page.getAllChildren();
-		for (MenuElement menuElement : children) {
+		List<String> pageChannel = getRSSChannels(ctx, page);		
+		for (MenuElement menuElement : page.getAllChildrenList()) {
 			List<String> allChildrenChannels = getRSSChannels(ctx, menuElement);
 			for (String channel : allChildrenChannels) {
 				if (!pageChannel.contains(channel)) {
@@ -433,7 +432,7 @@ public class NavigationHelper {
 		if (!page.isChildrenAssociation()) {
 			getPageLocalBookmark(out, ctx, page, false);
 		} else {
-			for (MenuElement child : page.getAllChildren()) {
+			for (MenuElement child : page.getAllChildrenList()) {
 				getPageLocalBookmark(out, ctx, child, true);
 			}
 		}

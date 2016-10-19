@@ -192,8 +192,8 @@ public class AgendaImport extends AbstractVisualComponent {
 		if (getRenderer(ctx) != null) {
 			ContentService content = ContentService.getInstance(ctx.getRequest());
 			MenuElement agendaPage = content.getNavigation(ctx).searchChildFromName(getAgendaPageName());
-			MenuElement[] children = agendaPage.getAllChildren();
-			if (children.length > 0) {
+			List<MenuElement> children = agendaPage.getAllChildrenList();
+			if (children.size() > 0) {
 
 				Map<Date, List<IContentVisualComponent>> contentByDate = new HashMap<Date, List<IContentVisualComponent>>();
 				for (MenuElement element : children) {
@@ -235,8 +235,8 @@ public class AgendaImport extends AbstractVisualComponent {
 		MenuElement agendaPage = content.getNavigation(ctx).searchChildFromName(getAgendaPageName());
 		StringWriter writer = new StringWriter();
 		PrintWriter out = new PrintWriter(writer);
-		MenuElement[] children = agendaPage.getAllChildren();
-		if (children.length > 0) {
+		List<MenuElement> children = agendaPage.getAllChildrenList();
+		if (children.size() > 0) {
 			out.println("<div class=\"" + getType() + "\">");
 			out.println("<ul>");
 
@@ -276,11 +276,10 @@ public class AgendaImport extends AbstractVisualComponent {
 			ContentService content = ContentService.getInstance(ctx.getRequest());
 			MenuElement agendaPage = content.getNavigation(ctx).searchChildFromName(getAgendaPageName());
 			StringWriter writer = new StringWriter();
-			PrintWriter out = new PrintWriter(writer);
-			MenuElement[] children = agendaPage.getAllChildren();
+			PrintWriter out = new PrintWriter(writer);			
 			out.println("<div class=\"" + getType() + "\">");
 			out.println("<ul>");
-			for (MenuElement element : children) {
+			for (MenuElement element : agendaPage.getAllChildrenList()) {
 				Map<Date, List<IContentVisualComponent>> contentByDate = element.getContentByDate(ctx);
 				Iterator<Date> dates = contentByDate.keySet().iterator();
 				while (dates.hasNext()) {

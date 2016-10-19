@@ -214,11 +214,10 @@ public class TimeHelper {
 
 	public static String exportAgenda(ContentContext ctx, MenuElement agendaPage, Date startDate, Date endDate) throws Exception {
 		StringWriter writer = new StringWriter();
-		PrintWriter out = new PrintWriter(writer);
-		MenuElement[] children = agendaPage.getAllChildren();
+		PrintWriter out = new PrintWriter(writer);		
 		out.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
 		out.println("<agenda lang=\"" + ctx.getRequestContentLanguage() + "\" start-date=\"" + StringHelper.renderSortableDate(startDate) + "\" end-date=\"" + StringHelper.renderSortableDate(endDate) + "\">");
-		for (MenuElement element : children) {
+		for (MenuElement element : agendaPage.getAllChildrenList()) {
 			Map<Date, List<IContentVisualComponent>> contentByDate = element.getContentByDate(ctx);
 			Iterator<Date> dates = contentByDate.keySet().iterator();
 			while (dates.hasNext()) {
@@ -226,7 +225,6 @@ public class TimeHelper {
 				if (betweenInDay(key, startDate, endDate)) {
 					out.println("<event date=\"" + StringHelper.renderSortableDate(key) + "\" >");
 					out.println("<url>" + URLHelper.createURL(ctx.getContextForAbsoluteURL(), element) + "</url>");
-
 					List<IContentVisualComponent> contentForDate = contentByDate.get(key);
 					StringBuffer content = new StringBuffer();
 					for (IContentVisualComponent contentVisualComponent : contentForDate) {

@@ -26,11 +26,10 @@ public abstract class AbstractMacro implements IMacro {
 
 	public List<IContentVisualComponent> getAllComponent(ContentContext ctx) throws Exception {
 		List<IContentVisualComponent> outList = new LinkedList<IContentVisualComponent>();
-		MenuElement root = ContentService.getInstance(ctx.getRequest()).getNavigation(ctx);
-		MenuElement[] children = root.getAllChildren();
+		MenuElement root = ContentService.getInstance(ctx.getRequest()).getNavigation(ctx);		
 		ContentContext noAreaCtx = new ContentContext(ctx);
 		noAreaCtx.setArea(null);
-		for (MenuElement child : children) {
+		for (MenuElement child : root.getAllChildrenList()) {
 			Collection<ContentContext> lgCtxs = noAreaCtx.getContextForAllLanguage();
 			for (ContentContext lgCtx : lgCtxs) {
 				ContentElementList content = child.getContent(lgCtx);

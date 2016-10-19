@@ -21,7 +21,7 @@ public class DeleteComponentWithBadResourceReference extends AbstractMacro {
 	public String perform(ContentContext ctx, Map<String, Object> params) throws Exception {
 		ContentService contentService = ContentService.getInstance(ctx.getRequest());
 		MenuElement root = contentService.getNavigation(ctx);
-		for (MenuElement page : root.getAllChildren()) {
+		for (MenuElement page : root.getAllChildrenList()) {
 			ContentContext allAreaContext = ctx.getContextWithArea(null);
 			ContentElementList content = page.getContent(allAreaContext);
 			while (content.hasNext(allAreaContext)) {
@@ -30,10 +30,6 @@ public class DeleteComponentWithBadResourceReference extends AbstractMacro {
 					AbstractFileComponent fileComp = (AbstractFileComponent) comp;
 					if (!fileComp.getFile(ctx).exists()) {
 						page.removeContent(ctx, comp.getId());
-						System.out.println("***** DeleteComponentWithBadResourceReference.perform : delete comp : " + fileComp.getType()); // TODO:
-																																			// remove
-																																			// debug
-																																			// trace
 					}
 				}
 			}

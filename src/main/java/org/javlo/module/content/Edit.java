@@ -1143,7 +1143,7 @@ public class Edit extends AbstractModuleAction {
 					}
 					if (errorMessage == null) {
 						if (page.isRootChildrenAssociation()) {
-							for (MenuElement child : page.getAllChildren()) {
+							for (MenuElement child : page.getAllChildrenList()) {
 								child.setName(StringUtils.replaceOnce(child.getName(), pageName, newName));
 							}
 						}
@@ -1498,9 +1498,8 @@ public class Edit extends AbstractModuleAction {
 				// correct identical URL.
 				NavigationService.checkSameUrl(ctx);
 				for (String lg : lgs) {
-					lgCtx.setRequestContentLanguage(lg);
-					MenuElement[] children = ContentService.getInstance(globalContext).getNavigation(lgCtx).getAllChildren();
-					for (MenuElement menuElement : children) {
+					lgCtx.setRequestContentLanguage(lg);					
+					for (MenuElement menuElement : ContentService.getInstance(globalContext).getNavigation(lgCtx).getAllChildrenList()) {
 						if (menuElement.isRealContent(lgCtx)) {
 							String url = lgCtx.getRequestContentLanguage() + urlFactory.createURL(lgCtx, menuElement);
 							String otherPageName = pages.get(url);

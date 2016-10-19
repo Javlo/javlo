@@ -994,7 +994,7 @@ public class PersistenceService {
 			HashSet<String> pageId = new HashSet<String>();	
 			HashSet<String> pageName = new HashSet<String>();
 			try {
-				for (MenuElement page : root.getAllChildren()) {
+				for (MenuElement page : root.getAllChildrenList()) {
 					int pageContentError = checkComponentIntegrity(ctx, componentsId, out, page.getContent());
 					error = error + pageContentError;
 					if (pageContentError>0) {

@@ -207,7 +207,7 @@ public class VideoContentMultimedia extends Multimedia {
 
 	List<Video> getAllVideoComponent(ContentContext ctx) throws Exception {
 		List<Video> comps = new LinkedList<Video>();
-		MenuElement[] children = getRootPage(ctx).getAllChildren();
+		List<MenuElement> children = getRootPage(ctx).getAllChildrenList();
 		ContentContext noAreaCtx = new ContentContext(ctx);
 		noAreaCtx.setArea(null);
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());

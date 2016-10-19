@@ -45,9 +45,8 @@ public class DetectAllComponentsType extends AbstractMacro {
 			ctxLg.setLanguage(lg);
 			ctxLg.setContentLanguage(lg);
 			ctxLg.setRequestContentLanguage(lg);
-			ctxLg.setArea(null);
-			MenuElement[] pages = content.getNavigation(ctxLg).getAllChildren();
-			for (MenuElement page : pages) {
+			ctxLg.setArea(null);			
+			for (MenuElement page : content.getNavigation(ctxLg).getAllChildrenList()) {
 				ContentElementList comps = page.getContent(ctxLg);
 				while (comps.hasNext(ctxLg)) {
 					IContentVisualComponent comp = comps.next(ctxLg);

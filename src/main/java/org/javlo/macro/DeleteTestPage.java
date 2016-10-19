@@ -29,9 +29,8 @@ public class DeleteTestPage extends AbstractMacro {
 		ContentService content = ContentService.getInstance(ctx.getRequest());
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		NavigationService service = NavigationService.getInstance(globalContext);
-
-		MenuElement[] pages = content.getNavigation(ctx).getAllChildren();
-		for (MenuElement page : pages) {			
+		
+		for (MenuElement page : content.getNavigation(ctx).getAllChildrenList()) {			
 			if (page.getName().contains(token)) {
 				logger.info("delete page : "+page.getName());
 				service.removeNavigationNoStore(ctx, page);				

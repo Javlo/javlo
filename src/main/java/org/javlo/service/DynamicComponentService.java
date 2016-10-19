@@ -67,7 +67,7 @@ public class DynamicComponentService {
 		List<IFieldContainer> outContainer = (List<IFieldContainer>) ctx.getRequest().getAttribute(REQUEST_KEY);
 		if (outContainer == null) {
 			outContainer = new LinkedList<IFieldContainer>();
-			for (MenuElement child : page.getAllChildren()) {				
+			for (MenuElement child : page.getAllChildrenList()) {				
 				ContentContext ctxWithContent = getContentContextWithDynamicComponent(ctx, child);
 				if (ctxWithContent != null) {
 					List<IContentVisualComponent> content = child.getContentByImplementation(ctxWithContent, IFieldContainer.class);
@@ -94,8 +94,7 @@ public class DynamicComponentService {
 		return outContainer;
 	}
 
-	public List<String> getAllType(ContentContext ctx, MenuElement page) throws Exception {
-		MenuElement[] children = page.getAllChildren();
+	public List<String> getAllType(ContentContext ctx, MenuElement page) throws Exception {		
 		List<String> outContainer = new LinkedList<String>();
 
 		ContentContext noAreaCtx = ctx.getContextWithoutArea();
@@ -109,7 +108,7 @@ public class DynamicComponentService {
 			}
 		}
 
-		for (MenuElement child : children) {
+		for (MenuElement child : page.getAllChildrenList()) {
 			ContentContext contextWithContent = noAreaCtx.getContextWithContent(child);
 			if (contextWithContent != null) { // if content exist in any
 												// language

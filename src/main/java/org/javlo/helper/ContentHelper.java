@@ -507,7 +507,7 @@ public class ContentHelper {
 	public static List<ComponentBean> getAllComponentsOfChildren(MenuElement page) throws Exception {
 		List<ComponentBean> comps = new LinkedList<ComponentBean>();
 		comps.addAll(Arrays.asList(page.getContent()));
-		for (MenuElement subPage : page.getAllChildren()) {
+		for (MenuElement subPage : page.getAllChildrenList()) {
 			comps.addAll(Arrays.asList(subPage.getContent()));
 		}
 		return comps;

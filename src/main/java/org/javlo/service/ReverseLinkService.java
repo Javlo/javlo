@@ -113,9 +113,8 @@ public class ReverseLinkService {
 		if (reversedLinkCache == null) {
 			synchronized (lock) {
 				if (reversedLinkCache == null) {
-					reversedLinkCache = new HashMap<String, MenuElement>();
-					MenuElement[] children = elem.getAllChildren();
-					for (MenuElement element : children) {
+					reversedLinkCache = new HashMap<String, MenuElement>();					
+					for (MenuElement element : elem.getAllChildrenList()) {
 						String[] linkNames = StringHelper.readLines(element.getReversedLink());
 						for (String linkName : linkNames) {
 							if (linkName.trim().length() > 0) {
@@ -136,9 +135,8 @@ public class ReverseLinkService {
 				if ((reversedLinkComponentCache == null) || (!reversedLinkComponentCacheLang.equals(ctx.getRequestContentLanguage()))) {
 					ContentContext noAreaCtx = ctx.getContextWithArea(null);
 					reversedLinkComponentCacheLang = ctx.getRequestContentLanguage();
-					reversedLinkComponentCache = new HashMap<String, ComponentPage>();
-					MenuElement[] children = elem.getAllChildren();
-					for (MenuElement element : children) {
+					reversedLinkComponentCache = new HashMap<String, ComponentPage>();					
+					for (MenuElement element : elem.getAllChildrenList()) {
 						ContentElementList content = element.getLocalContentCopy(noAreaCtx);
 
 						int count = 0; // DEBUG

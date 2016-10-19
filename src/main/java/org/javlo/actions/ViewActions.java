@@ -159,7 +159,7 @@ public class ViewActions implements IAction {
 			timeB = cal.getTime();
 		}
 		try {
-			for (MenuElement page : content.getNavigation(ctx).getAllChildren()) {				
+			for (MenuElement page : content.getNavigation(ctx).getAllChildrenList()) {				
 				if (page.isChangeNotification()) {
 					Date mod = page.getModificationDate();
 					if (mod != null && mod.after(timeB) && !mod.after(timeA)) {

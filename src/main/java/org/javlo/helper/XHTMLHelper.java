@@ -566,7 +566,7 @@ public class XHTMLHelper {
 			for (int i = 0; i < depth; i++) {
 				currentLine.append("&nbsp;&nbsp;");
 			}
-			if (elem.getAllChildren().length == 0) {
+			if (elem.getAllChildrenList().size() == 0) {
 				currentLine.append(elem.getName());
 			} else {
 				currentLine.append(elem.getName());

@@ -322,7 +322,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 						i++;
 						startDate.add(Calendar.DAY_OF_YEAR, 1);
 						bean.dates.add(new DateBean(ctx, startDate.getTime()));
-					}
+					}					
 					if (i == MAX_DAYS_OF_EVENTS) {
 						logger.warning("to much days in event (max:" + MAX_DAYS_OF_EVENTS + ") : " + page.getPath() + " [" + globalContext.getContextKey() + ']');
 					}
@@ -1233,7 +1233,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 			backDate.roll(Calendar.YEAR, false);
 			backDay = backDay + 365;
 		}
-		backDate.roll(Calendar.DAY_OF_YEAR, -backDay);
+		backDate.add(Calendar.DAY_OF_YEAR, -backDay);
 		return backDate;
 	}
 
@@ -1455,8 +1455,8 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 			menu = basePage;
 		}
 
-		MenuElement[] allChildren = menu.getAllChildren();
-		Arrays.sort(allChildren, new MenuElementModificationDateComparator(true));
+		List<MenuElement> allChildren = menu.getAllChildrenList();
+		Collections.sort(allChildren, new MenuElementModificationDateComparator(true));
 		Set<String> currentSelection = getPagesId(ctx, allChildren);
 
 		out.print("<div class=\"page-list-container\"><table class=\"");
@@ -1465,8 +1465,8 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		out.println("\"><thead><tr><th>" + i18nAccess.getText("global.label") + "</th><th>" + i18nAccess.getText("global.date") + "</th><th>" + i18nAccess.getText("global.modification") + "</th><th>" + i18nAccess.getText("content.page-teaser.language") + "</th><th title=\"" + i18nAccess.getText("content.page-reference.content.help") + "\">" + i18nAccess.getText("content.page-reference.content") + "</th><th>" + i18nAccess.getText("global.select") + " <a href=\"#\" onclick=\"" + onlyCheckedScript + "\">(" + currentSelection.size() + ")</a></th></tr></thead><tbody>");
 
 		int numberOfPage = 16384;
-		if (allChildren.length < numberOfPage) {
-			numberOfPage = allChildren.length;
+		if (allChildren.size() < numberOfPage) {
+			numberOfPage = allChildren.size();
 		}
 
 		if (ctx.isExport()) { // if export mode render only the list of page.
@@ -1489,11 +1489,12 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 				ContentContext newCtx = new ContentContext(ctx);
 				newCtx.setArea(null);
 				ContentContext lgCtx = ctx;
+				MenuElement page = allChildren.get(i);
 				if (GlobalContext.getInstance(ctx.getRequest()).isAutoSwitchToDefaultLanguage()) {
-					lgCtx = allChildren[i].getContentContextWithContent(ctx);
+					lgCtx = page.getContentContextWithContent(ctx);
 				}
-				if (filterPage(lgCtx, allChildren[i], currentSelection, commands, filter, true) && (allChildren[i].getContentDateNeverNull(ctx).after(backDate.getTime()))) {
-					renderPageSelectLine(lgCtx, outTemp, currentSelection, allChildren[i]);
+				if (filterPage(lgCtx, allChildren.get(i), currentSelection, commands, filter, true) && (page.getContentDateNeverNull(ctx).after(backDate.getTime()))) {
+					renderPageSelectLine(lgCtx, outTemp, currentSelection, page);
 					countPage++;
 				}
 			}
@@ -1617,7 +1618,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		return "pd_" + getId() + "_" + page.getId();
 	}
 
-	protected Set<String> getPagesId(ContentContext ctx, MenuElement[] children) throws Exception {
+	protected Set<String> getPagesId(ContentContext ctx, List<MenuElement> children) throws Exception {
 		String value = properties.getProperty(PAGE_REF_PROP_KEY, "");
 		Set<String> out = new TreeSet<String>();
 		if (value.trim().length() == 0 && !isDefaultSelected()) {
@@ -1630,14 +1631,15 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		if (isDefaultSelected()) {
 			Set<String> selectedPage = new TreeSet<String>();
 			MenuElement parentNode = null;
-			if (children.length > 0) {
-				parentNode = children[0].getRoot().searchChild(ctx, getParentNode());
+			if (children.size() > 0) {
+				parentNode = children.get(0).getRoot().searchChild(ctx, getParentNode());
 			}
-			for (int i = 0; i < children.length; i++) {
-				if (children[i].isActive(ctx)) {
-					if (!out.contains(children[i].getId())) {
-						if (parentNode == null || children[i].isChildOf(parentNode)) {
-							selectedPage.add(children[i].getId());
+			//for (int i = 0; i < children.length; i++) {
+			for (MenuElement page : children) {
+				if (page.isActive(ctx)) {
+					if (!out.contains(page.getId())) {
+						if (parentNode == null || page.isChildOf(parentNode)) {
+							selectedPage.add(page.getId());
 						}
 					}
 				}
@@ -1926,7 +1928,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 
 		ContentService content = ContentService.getInstance(ctx.getRequest());
 		MenuElement menu = content.getNavigation(ctx);
-		MenuElement[] allChildren = menu.getAllChildren();
+		List<MenuElement> allChildren = menu.getAllChildrenList();
 
 		LocalLogger.stepCount("pageref", "step 2");
 
@@ -2150,7 +2152,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		if (requestService.getParameter(getCompInputName(), null) != null) {
 			ContentService content = ContentService.getInstance(ctx.getRequest());
 			MenuElement menu = content.getNavigation(ctx);
-			MenuElement[] allChildren = menu.getAllChildren();
+			List<MenuElement> allChildren = menu.getAllChildrenList();
 			List<String> currentPageSelected = getPageSelected();
 			List<String> pagesSelected = new LinkedList<String>();
 			List<String> pagesNotSelected = new LinkedList<String>();
@@ -2382,9 +2384,8 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 	public boolean isRealContent(ContentContext ctx) {
 		ContentService content = ContentService.getInstance(ctx.getRequest());
 		try {
-			MenuElement menu = content.getNavigation(ctx);
-			MenuElement[] allChildren = menu.getAllChildren();
-			return getPagesId(ctx, allChildren).size() > 0;
+			MenuElement menu = content.getNavigation(ctx);			
+			return getPagesId(ctx, menu.getAllChildrenList()).size() > 0;
 		} catch (Exception e) {
 			e.printStackTrace();
 			return false;

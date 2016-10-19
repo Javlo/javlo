@@ -164,7 +164,7 @@ public class ContentService implements IPrintInfo {
 						return elem;
 					}
 				}
-				for (MenuElement child : page.getAllChildren()) {
+				for (MenuElement child : page.getAllChildrenList()) {
 					content = child.getAllContent(ctxLg);
 					while (content.hasNext(ctxLg)) {
 						IContentVisualComponent elem = content.next(ctxLg);
@@ -187,7 +187,7 @@ public class ContentService implements IPrintInfo {
 					return elem;
 				}
 			}
-			for (MenuElement menuElement : page.getAllChildren()) {
+			for (MenuElement menuElement : page.getAllChildrenList()) {
 				ctxWithContent = noAreaCtx.getContextWithContent(menuElement);
 				if (ctxWithContent == null) {
 					ctxWithContent = noAreaCtx;
@@ -499,7 +499,7 @@ public class ContentService implements IPrintInfo {
 		List<IContentVisualComponent> outContent = new LinkedList<IContentVisualComponent>();
 		MenuElement root = getNavigation(ctx);
 		outContent.addAll(root.getContentByType(ctx, type));
-		for (MenuElement child : root.getAllChildren()) {
+		for (MenuElement child : root.getAllChildrenList()) {
 			outContent.addAll(child.getContentByType(ctx, type));
 		}
 		return outContent;
@@ -644,10 +644,9 @@ public class ContentService implements IPrintInfo {
 	public int getWordCount(ContentContext ctx) throws Exception {
 		String KEY = "__word_count_" + ctx.getRequestContentLanguage();
 		HttpSession session = ctx.getRequest().getSession();
-		if (session.getAttribute(KEY) == null) {
-			MenuElement[] allPages = getNavigation(ctx).getAllChildren();
+		if (session.getAttribute(KEY) == null) {			
 			int wordCount = 0;
-			for (MenuElement child : allPages) {
+			for (MenuElement child : getNavigation(ctx).getAllChildrenList()) {
 				ContentElementList content = child.getContent(ctx);
 				while (content.hasNext(ctx)) {
 					wordCount = wordCount + content.next(ctx).getWordCount(ctx);
@@ -841,22 +840,25 @@ public class ContentService implements IPrintInfo {
 		List<IContentVisualComponent> outList = (List<IContentVisualComponent>) ctx.getRequest().getAttribute(KEY);
 		if (outList == null) {
 			outList = new LinkedList<IContentVisualComponent>();
-
 			ContentContext freeCtx = ctx.getContextWithArea(null);
 			freeCtx.setFree(true);
 			MenuElement page = getNavigation(freeCtx);
-			ContentElementList content = page.getAllContent(freeCtx);
-			while (content.hasNext(freeCtx)) {
-				outList.add(content.next(freeCtx));
+			ContentElementList content = page.getAllContent(freeCtx);			
+			/*while (content.hasNext(freeCtx)) {
+				IContentVisualComponent comp = content.next(freeCtx);
+				if (comp.getId().equals("147551884124890725710")) {
+					System.out.println("***** ContentService.getAllContent : 1.comp = "+comp+" page:"+comp.getPage().getName()); //TODO: remove debug trace
+				}
+				outList.add(comp);				
 			}
-			MenuElement[] children = page.getAllChildren();
-			for (MenuElement child : children) {
+			MenuElement[] children = page.getAllChildrenLi();*/
+			for (MenuElement child : page.getAllChildrenList()) {				
 				content = child.getAllContent(freeCtx);
 				while (content.hasNext(freeCtx)) {
-					outList.add(content.next(freeCtx));
+					IContentVisualComponent comp = content.next(freeCtx);
+					outList.add(comp);
 				}
 			}
-
 			outList = Collections.unmodifiableList(outList);
 			ctx.getRequest().setAttribute(KEY, outList);
 		}
@@ -887,7 +889,7 @@ public class ContentService implements IPrintInfo {
 				if (root.isShortURL()) {
 					shortURLMap.put(root.getShortURL(ctx), root);
 				}
-				for (MenuElement child : root.getAllChildren()) {
+				for (MenuElement child : root.getAllChildrenList()) {
 					if (child.isShortURL()) {
 						shortURLMap.put(child.getShortURL(ctx), child);
 					}

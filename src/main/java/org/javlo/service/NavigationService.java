@@ -105,9 +105,8 @@ public class NavigationService {
 				MenuElement root = content.getNavigation(ctx);
 				cache.put(root.getName(), root);
 				cache.put(root.getId(), root);
-				cache.put(root.getPath(), root);
-				MenuElement[] pageChildren = root.getAllChildren();
-				for (MenuElement childpage : pageChildren) {
+				cache.put(root.getPath(), root);				
+				for (MenuElement childpage : root.getAllChildrenList()) {
 					cache.put(childpage.getName(), childpage);
 					cache.put(childpage.getId(), childpage);
 					cache.put(childpage.getPath(), childpage);
@@ -122,9 +121,8 @@ public class NavigationService {
 				return menuElement;
 			} else {
 				ContentService content = ContentService.getInstance(ctx.getRequest());
-				MenuElement root = content.getNavigation(ctx);
-				MenuElement[] pageChildren = root.getAllChildren();
-				for (MenuElement childpage : pageChildren) {
+				MenuElement root = content.getNavigation(ctx);				
+				for (MenuElement childpage : root.getAllChildrenList()) {
 					if (childpage.getName().equals(pageKey) || childpage.getId().equals(pageKey) || childpage.getPath().equals(pageKey)) {
 						cache.put(childpage.getName(), childpage);
 						cache.put(childpage.getId(), childpage);
@@ -177,9 +175,8 @@ public class NavigationService {
 			Collection<String> lgs = ctx.getGlobalContext().getContentLanguages();
 			Map<String, String> pages = new HashMap<String, String>();
 			for (String lg : lgs) {
-				lgCtx.setRequestContentLanguage(lg);
-				MenuElement[] children = ContentService.getInstance(ctx.getGlobalContext()).getNavigation(lgCtx).getAllChildren();
-				for (MenuElement menuElement : children) {
+				lgCtx.setRequestContentLanguage(lg);				
+				for (MenuElement menuElement : ContentService.getInstance(ctx.getGlobalContext()).getNavigation(lgCtx).getAllChildrenList()) {
 					String url = lgCtx.getRequestContentLanguage() + urlFactory.createURL(lgCtx, menuElement);
 					int i = 0;
 					if (!menuElement.isLikeRoot(lgCtx)) {

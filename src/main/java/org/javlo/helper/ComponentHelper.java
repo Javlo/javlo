@@ -108,10 +108,9 @@ public class ComponentHelper {
 			out.println("<table class=\"edit\"><tr><td style=\"text-align: center;\" width=\"50%\">");
 			out.println(linkTitle + " : ");
 			out.println("<select name=\"" + linkName + "\">");
-			MenuElement elem = content.getNavigation(ctx);
-			MenuElement[] values = elem.getAllChildren();
+			MenuElement elem = content.getNavigation(ctx);			
 			String currentLink = null;
-			for (MenuElement value : values) {
+			for (MenuElement value : elem.getAllChildrenList()) {
 				if (linkIdStr.equals(value.getId())) {
 					currentLink = value.getName();
 					out.println("<option selected=\"true\" value=\"" + value.getId() + "\">");

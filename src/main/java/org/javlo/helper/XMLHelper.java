@@ -99,10 +99,9 @@ public class XMLHelper {
 		Collection<String> lgs = globalContext.getContentLanguages();
 		long sitemapMaxsize = ctx.getGlobalContext().getStaticConfig().getSiteMapSizeLimit();
 		Date lastmod = new Date(0);
-		for (MenuElement root : pages) {
-			MenuElement[] children = root.getAllChildren();
+		for (MenuElement root : pages) {		
 			long size = 0;
-			for (MenuElement element : children) {
+			for (MenuElement element : root.getAllChildrenList()) {
 				for (String lg : lgs) {
 					StringBuffer line = new StringBuffer();
 					ContentContext lgCtx = new ContentContext(ctx);
@@ -184,10 +183,9 @@ public class XMLHelper {
 		Collection<String> lgs = globalContext.getContentLanguages();
 		long sitemapMaxsize = ctx.getGlobalContext().getStaticConfig().getSiteMapSizeLimit();
 		Date lastmod = new Date(0);
-		for (MenuElement root : pages) {
-			MenuElement[] children = root.getAllChildren();
+		for (MenuElement root : pages) {			
 			long size = 0;
-			for (MenuElement element : children) {
+			for (MenuElement element : root.getAllChildrenList()) {
 				for (String lg : lgs) {
 					StringBuffer line = new StringBuffer();
 					ContentContext lgCtx = new ContentContext(ctx);

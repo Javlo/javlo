@@ -159,7 +159,7 @@ public class RSSReader extends ComplexPropertiesLink {
 			backDate.roll(Calendar.YEAR, false);
 			backDay = backDay + 365;
 		}
-		backDate.roll(Calendar.DAY_OF_YEAR, -backDay);
+		backDate.add(Calendar.DAY_OF_YEAR, -backDay);
 		return backDate;
 	}
 

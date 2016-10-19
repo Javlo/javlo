@@ -22,7 +22,7 @@ public class UpDateMacro extends AbstractMacro {
 	@Override
 	public String perform(ContentContext ctx, Map<String, Object> params) throws Exception {
 		int i = 0;
-		for (MenuElement page : ctx.getCurrentPage().getAllChildren()) {
+		for (MenuElement page : ctx.getCurrentPage().getAllChildrenList()) {
 			List<IContentVisualComponent> dates = page.getContentByType(ctx, DateComponent.TYPE);
 			for (IContentVisualComponent date : dates) {
 				if (date.getPreviousComponent() != null) {

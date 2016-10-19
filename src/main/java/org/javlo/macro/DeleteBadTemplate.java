@@ -22,7 +22,7 @@ public class DeleteBadTemplate extends AbstractMacro {
 		ContentService content = ContentService.getInstance(globalContext);
 		Map<String, Template> templates = TemplateFactory.getDiskTemplates(ctx.getRequest().getSession().getServletContext());
 		int modif = 0;
-		for (MenuElement page : content.getNavigation(ctx).getAllChildren()) {
+		for (MenuElement page : content.getNavigation(ctx).getAllChildrenList()) {
 			if (templates.get(page.getTemplateId()) == null) {
 				page.setTemplateId(null);
 				modif++;

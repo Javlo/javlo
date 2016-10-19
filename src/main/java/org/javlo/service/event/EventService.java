@@ -17,7 +17,7 @@ public class EventService implements IEventsProvider {
 	public List<Event> getEvents(ContentContext ctx) throws Exception {
 		ContentService content = ContentService.getInstance(ctx.getRequest());
 		List<Event> outList = new LinkedList<Event>();
-		for (MenuElement page : content.getNavigation(ctx).getAllChildren()) {
+		for (MenuElement page : content.getNavigation(ctx).getAllChildrenList()) {
 			Event event = page.getEvent(ctx);
 			if (event != null) {
 				outList.add(event);

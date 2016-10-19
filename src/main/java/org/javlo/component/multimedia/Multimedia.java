@@ -273,9 +273,8 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle, IStat
 					outResources.add(resource);	
 				}
 			}
-		}
-		MenuElement[] children = page.getAllChildren();
-		for (MenuElement child : children) {
+		}		
+		for (MenuElement child : page.getAllChildrenList()) {
 			lgCtx = freeCtx.getContextWithContent(child);
 			if (lgCtx == null) {
 				lgCtx = freeCtx;

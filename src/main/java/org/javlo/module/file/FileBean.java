@@ -4,9 +4,11 @@ import java.io.File;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.javlo.bean.Link;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
@@ -271,13 +273,24 @@ public class FileBean {
 		}
 	}
 	
-	public List<IContentVisualComponent> getComponentWithReference() {
+	public List<Link> getComponentWithReference() {
 		try {
-			return ResourceHelper.getComponentsUseResource(ctx, staticInfo.getStaticURL());
+			List<Link> links = new LinkedList<>();
+			ContentContext lgCtx = new ContentContext(ctx);
+			for (IContentVisualComponent comp : ResourceHelper.getComponentsUseResource(ctx, staticInfo.getStaticURL())) {
+				lgCtx.setAllLanguage(comp.getComponentBean().getLanguage());
+				String url = URLHelper.createURL(lgCtx, comp.getPage());
+				url = URLHelper.addParam(url, "pushcomp", comp.getId());
+				url = URLHelper.addParam(url, "area", comp.getArea());
+				url = URLHelper.addParam(url, "webaction", "changeArea");				
+				url = URLHelper.addParam(url, "module", "content");				
+				links.add(new Link(url, comp.getPage().getPath(), comp.getPage().getTitle(ctx)));
+			}
+			return links;
 		} catch (Exception e) {
-			e.printStackTrace();
-			return Collections.EMPTY_LIST;
+			e.printStackTrace();			
 		}
+		return Collections.EMPTY_LIST;
 	}
 
 }

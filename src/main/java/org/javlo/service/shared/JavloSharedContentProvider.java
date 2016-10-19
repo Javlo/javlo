@@ -25,7 +25,7 @@ public class JavloSharedContentProvider extends AbstractSharedContentProvider {
 		ContentService content = ContentService.getInstance(ctx.getRequest());
 		try {
 			getCategories(ctx).clear();
-			for (MenuElement page : content.getNavigation(ctx).getAllChildren()) {
+			for (MenuElement page : content.getNavigation(ctx).getAllChildrenList()) {
 				if (page.getSharedName() != null && page.getSharedName().length() > 0 && page.isRealContent(ctx)) {
 					List<ComponentBean> beans = Arrays.asList(page.getContent());
 					SharedContent sharedContent = new SharedContent(page.getSharedName(), beans);

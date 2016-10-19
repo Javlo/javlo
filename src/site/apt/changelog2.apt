@@ -792,3 +792,7 @@ hange log
  
  * 4/ check external link only on 404 error / filter report by creation date / bug insert file link / search reference to resource in the content
  
+ * 5/ remove getAllChildren / replace all roll by add in calendar API
+ 
+* 2.1.0.19 19/10/2015
+ 

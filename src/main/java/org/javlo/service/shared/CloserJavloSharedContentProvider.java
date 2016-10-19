@@ -70,7 +70,7 @@ public class CloserJavloSharedContentProvider extends AbstractSharedContentProvi
 		try {
 			getCategories(ctx).clear();
 			int i = 0;
-			for (MenuElement page : rootPage.getAllChildren()) {
+			for (MenuElement page : rootPage.getAllChildrenList()) {
 				i++;
 				if (getSharedName(page, i) != null && page.isRealContent(ctx)) {
 					List<ComponentBean> beans = Arrays.asList(page.getContent());

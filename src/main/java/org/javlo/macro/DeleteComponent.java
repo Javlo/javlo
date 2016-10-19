@@ -82,7 +82,7 @@ public class DeleteComponent implements IInteractiveMacro, IAction {
 		String contentContains = rs.getParameter("content", "").trim();
 		if (StringHelper.isTrue(rs.getParameter("allpages", null))) {
 			ContentService pageContent = ContentService.getInstance(ctx.getRequest());
-			for (MenuElement page : pageContent.getNavigation(ctx).getAllChildren()) {
+			for (MenuElement page : pageContent.getNavigation(ctx).getAllChildrenList()) {
 				pages.add(page);
 			}
 		} else {
