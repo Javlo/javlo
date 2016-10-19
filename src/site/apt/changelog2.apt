@@ -790,5 +790,5 @@ hange log
  
  * 3/ add js bootstrap on preview
  
- * 4/ check external link only on 404 error / filter report by creation date / bug insert file link
+ * 4/ check external link only on 404 error / filter report by creation date / bug insert file link / search reference to resource in the content
  

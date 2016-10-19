@@ -87,6 +87,12 @@
 	float: none;
 }
 
+.item .alert {
+	margin: 5px;
+	padding: 5px;
+	text-align: center;
+}
+
 #main-renderer .btn-edit {
 	display: inline-block;
 	width: auto;

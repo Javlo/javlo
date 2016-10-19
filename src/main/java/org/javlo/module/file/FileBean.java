@@ -1,10 +1,13 @@
 package org.javlo.module.file;
 
 import java.io.File;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.data.InfoBean;
@@ -257,6 +260,24 @@ public class FileBean {
 
 	public String getPath() {
 		return staticInfo.getStaticURL();
+	}
+	
+	public boolean isFoundInContent() {
+		try {
+			return ResourceHelper.isComponentsUseResource(ctx, getURL());
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+	
+	public List<IContentVisualComponent> getComponentWithReference() {
+		try {
+			return ResourceHelper.getComponentsUseResource(ctx, staticInfo.getStaticURL());
+		} catch (Exception e) {
+			e.printStackTrace();
+			return Collections.EMPTY_LIST;
+		}
 	}
 
 }

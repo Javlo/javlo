@@ -1704,7 +1704,7 @@ public class ResourceHelper {
 		deleted += cleanImportResources(ctx, importGallryFolder);
 		return deleted;
 	}
-	
+
 	public static boolean isImportPageExist(ContentContext ctx, File childImport) throws Exception {
 		ContentService content = ContentService.getInstance(ctx.getRequest());
 		MenuElement root = content.getNavigation(ctx);
@@ -1716,14 +1716,13 @@ public class ResourceHelper {
 		}
 		return false;
 	}
-	
 
 	public static int cleanImportResource(ContentContext ctx, File childImport) throws Exception {
 		ContentService content = ContentService.getInstance(ctx.getRequest());
 		MenuElement root = content.getNavigation(ctx);
 		int deleted = 0;
 		if (childImport.isDirectory() && !childImport.getName().equals(root.getName())) {
-			boolean deleteFile = !isImportPageExist(ctx, childImport);			
+			boolean deleteFile = !isImportPageExist(ctx, childImport);
 			if (deleteFile) {
 				logger.info("delete folder (user:" + ctx.getCurrentEditUser() + " context:" + ctx.getGlobalContext().getContextKey() + ") : " + childImport);
 				try {
@@ -1762,30 +1761,34 @@ public class ResourceHelper {
 			return deleted;
 		}
 	}
-	
-	public static List<IContentVisualComponent> getComponentsUseResource(ContentContext ctx, String uri) throws Exception {
+
+	public static List<IContentVisualComponent> getComponentsUseResource(ContentContext ctx, String uri) throws Exception {		
 		ContentService content = ContentService.getInstance(ctx.getRequest());
 		List<IContentVisualComponent> outList = new LinkedList<IContentVisualComponent>();
-		for (IContentVisualComponent comp : content.getAllContent(ctx)) {
-			 if (comp instanceof IStaticContainer) {
-				 IStaticContainer container = (IStaticContainer)comp;
-				 if (container.contains(ctx, uri)) {
-					 outList.add(comp);
-				 }
-			 }
+		ContentContext lgCtx = new ContentContext(ctx);		
+		for (String lg : ctx.getGlobalContext().getContentLanguages()) {
+			lgCtx.setAllLanguage(lg);
+			for (IContentVisualComponent comp : content.getAllContent(lgCtx)) {
+				if (comp instanceof IStaticContainer) {
+					IStaticContainer container = (IStaticContainer) comp;
+					if (container.contains(lgCtx, uri)) {
+						outList.add(comp);
+					}
+				}
+			}
 		}
 		return outList;
 	}
-	
+
 	public static boolean isComponentsUseResource(ContentContext ctx, String uri) throws Exception {
-		ContentService content = ContentService.getInstance(ctx.getRequest());		
+		ContentService content = ContentService.getInstance(ctx.getRequest());
 		for (IContentVisualComponent comp : content.getAllContent(ctx)) {
-			 if (comp instanceof IStaticContainer) {
-				 IStaticContainer container = (IStaticContainer)comp;
-				 if (container.contains(ctx, uri)) {
-					 return true;
-				 }
-			 }
+			if (comp instanceof IStaticContainer) {
+				IStaticContainer container = (IStaticContainer) comp;
+				if (container.contains(ctx, uri)) {
+					return true;
+				}
+			}
 		}
 		return false;
 	}

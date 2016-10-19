@@ -66,6 +66,7 @@
 
 <c:if test="${not empty param.button_publish and empty param.previewEdit}"><a class="action-button publish ajax" href="${info.currentURL}?webaction=publish&render-mode=1"><span>${i18n.edit['command.publish']}</span></a></c:if>
 <c:if test="${not empty param.button_preview and empty param.previewEdit}"><a class="action-button preview" href="${previewURL}"><span>${i18n.edit['command.preview']}</span></a></c:if>
+
 <c:if test="${not empty param.button_save}"><a class="action-button save" href="#save" onclick="jQuery('#button-content-submit').click(); return false;"><span>${i18n.edit['action.update']}</span></a></c:if>
 
 <c:if test="${not empty param.button_delete_page and empty param.previewEdit}"><a class="action-button delete-page needconfirm" href="${info.currentURL}?webaction=deletePage&page=${info.pageID}"><span>${i18n.edit['edit.action.delete-page']}</span></a></c:if>

@@ -64,10 +64,15 @@
 			</c:if><c:if test="${metaReadOnly}"><span class="delete"><span class="glyphicon glyphicon-lock last"></span></span></c:if>
 			<span class="size">${file.size} <span class="popularity">${info.admin?popularity:''}</span></span>
 			<span class="last">${file.manType}</span>
-		</div>
+		</div></c:if>	
+		<c:if test="${param.use && !file.directory}">
+			<c:set var="refList" value="${file.componentWithReference}" />
+			<c:set var="alertType" value="danger" />
+			<c:set var="alertMessage" value="${i18n.edit['file.no-reference']}" />
+			<c:if test="${fn:length(refList) > 0}"><c:set var="alertType" value="success" /><c:set var="alertMessage" value="${i18n.edit['file.referenced']} ${fn:length(refList)}" /></c:if>
+			<div class="alert alert-${alertType}" role="alert">${alertMessage}</div>
 		</c:if>		
-		<div class="body">
-		
+		<div class="body">		
 		<div class="download ${file.image && param.select != 'back'?'picture':''}">
 			<div ${file.image?'class="focus-zone"':'no-focus'} >			
 			<c:url var="fileSelectURL" value="${file.URL}" context="/">

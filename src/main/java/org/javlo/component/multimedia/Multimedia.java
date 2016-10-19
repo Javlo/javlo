@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.io.FilenameUtils;
+import org.javlo.bean.Link;
 import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.component.core.ContentElementList;
 import org.javlo.component.core.IContentVisualComponent;
@@ -42,7 +43,9 @@ import org.javlo.module.file.FileAction;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
 import org.javlo.service.RequestService;
+import org.javlo.service.resource.Resource;
 import org.javlo.user.AdminUserSecurity;
+import org.javlo.ztatic.IStaticContainer;
 import org.javlo.ztatic.StaticInfo;
 
 /**
@@ -58,7 +61,7 @@ import org.javlo.ztatic.StaticInfo;
  * 
  * @author pvandermaesen
  */
-public class Multimedia extends TimeRangeComponent implements IImageTitle {
+public class Multimedia extends TimeRangeComponent implements IImageTitle, IStaticContainer {
 
 	public static final String TYPE = "multimedia";
 	protected static final String STATIC_VIDEO_FOLDER = "videos";
@@ -1217,6 +1220,46 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 	@Override
 	public int getComplexityLevel(ContentContext ctx) {
 		return getConfig(ctx).getComplexity(COMPLEXITY_STANDARD);
+	}
+
+	@Override
+	public boolean contains(ContentContext ctx, String uri) {
+		return uri.startsWith(getCurrentRootFolder());		
+	}
+
+	@Override
+	public Collection<Resource> getAllResources(ContentContext ctx) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean renameResource(ContentContext ctx, File oldName, File newName) {
+		return false;
+	}
+
+	@Override
+	public Collection<Link> getAllResourcesLinks(ContentContext ctx) {
+		return null;
+	}
+
+	@Override
+	public int getPopularity(ContentContext ctx) { 
+		return 0;
+	}
+
+	@Override
+	public void setDirSelected(String dir) {
+	}
+
+	@Override
+	public String getDirSelected() {
+		return getCurrentRootFolder();
+	}
+
+	@Override
+	public List<File> getFiles(ContentContext ctx) {
+		return null;
 	}
 
 

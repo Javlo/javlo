@@ -11,6 +11,7 @@
 	</c:url>
 	<a class="action-button" title="create file structure" href="${createStructureFile}">file struc.</a>
 	</c:if>	
+	<a class="action-button notuse" href="${info.currentURL}?use=true" onclick=""><span>${i18n.edit['action.notuse']}</span></a>
 	<c:if test="${not empty param[BACK_PARAM_NAME]}"><input type="hidden" name="${BACK_PARAM_NAME}" value="${param[BACK_PARAM_NAME]}" /></c:if>
 	<c:if test="${not empty param['select']}"><input type="hidden" name="select" value="true" /></c:if>
 	<select name="language">
