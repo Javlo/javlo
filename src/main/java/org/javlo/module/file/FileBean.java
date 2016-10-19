@@ -149,7 +149,11 @@ public class FileBean {
 		if (StringHelper.isImage(staticInfo.getFile().getName())) {
 			return URLHelper.createTransformURL(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE), null, (staticInfo.isStaticFolder()?globalContext.getStaticConfig().getStaticFolder():"") + staticInfo.getStaticURL(), "free", "${info.templateName}");
 		} else {
-			return URLHelper.createStaticURL(ctx, staticInfo.getURL(ctx));
+			return staticInfo.getURL(ctx);
+			/*System.out.println("***** FileBean.getFreeURL : file = "+staticInfo.getFile()); //TODO: remove debug trace
+			System.out.println("***** FileBean.getFreeURL : staticInfo.getURL(ctx) = "+staticInfo.getURL(ctx)); //TODO: remove debug trace
+			System.out.println("***** FileBean.getFreeURL : URLHelper.createStaticURL(ctx, staticInfo.getURL(ctx)) = "+URLHelper.createStaticURL(ctx, staticInfo.getURL(ctx))); //TODO: remove debug trace
+			return URLHelper.createStaticURL(ctx, staticInfo.getURL(ctx));*/
 		}
 	}
 

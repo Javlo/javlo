@@ -187,7 +187,7 @@
 				var fieldName = parent.jQuery("body").data("fieldName");
 				var url = jQuery(this).data("url");
 				parent.jQuery("#"+fieldName).val(url);
-				parent.tinyMCE.activeEditor.windowManager.close(window);
+				parent.tinyMCE.activeEditor.windowManager.close(window);				
 			}
 		});
 	</script>	

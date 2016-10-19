@@ -1,4 +1,4 @@
-change log
+hange log
 
 * 2.0 [15/06/2012]
 
@@ -790,5 +790,5 @@ change log
  
  * 3/ add js bootstrap on preview
  
- * 4/ check external link only on 404 error / filter report by creation date
+ * 4/ check external link only on 404 error / filter report by creation date / bug insert file link
  
