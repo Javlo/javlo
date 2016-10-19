@@ -3,10 +3,12 @@
 
 <br class="all" />
 
-<div class="invoice three_fourth">
+<div class="invoice">
 	
 	<div class="invoice_inner">
 		  <span class="lang">${info.language}</span>
+		  <span class="total">#pages : ${report.totalPageAnnalysed}</span>
+		  <c:if test="${not empty reportFilter.startDateLabel}"><span class="date">from : ${reportFilter.startDateLabel}</span></c:if>
 		  <h2 class="title">Report : ${info.globalTitle}</h2>
 		  <br clear="all" /><br />	  		  
     	  <div class="one_half">

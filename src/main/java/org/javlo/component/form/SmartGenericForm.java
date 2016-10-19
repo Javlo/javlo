@@ -822,7 +822,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 
 					comp.countCache = null;
 
-					mailService.sendMail(null, fromEmail, toEmail, ccList, bccList, subject, mailContent, comp.isHTMLMail(), null, null);
+					mailService.sendMail(null, fromEmail, toEmail, ccList, bccList, subject, mailContent, comp.isHTMLMail(), null, globalContext.getDKIMBean());
 
 					String mailPath;
 					String mailSubject;

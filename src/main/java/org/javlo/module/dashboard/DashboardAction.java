@@ -1,5 +1,6 @@
 package org.javlo.module.dashboard;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Collection;
@@ -130,13 +131,6 @@ public class DashboardAction extends AbstractModuleAction {
 			this.date = date;
 		}
 
-	}
-
-	public static void main(String[] args) {
-		System.out.println("***** DashboardAction.main : time = " + StringHelper.renderTime(new Date(Long.parseLong("1345208695440")))); // TODO:
-																																			// remove
-																																			// debug
-																																			// trace
 	}
 
 	@Override
@@ -425,6 +419,7 @@ public class DashboardAction extends AbstractModuleAction {
 		ModulesContext dashboardContext = ModulesContext.getInstance(session, ctx.getGlobalContext());
 		dashboardContext.getCurrentModule().clearAllBoxes();
 		dashboardContext.getCurrentModule().setRenderer("/jsp/report.jsp");
+		dashboardContext.getCurrentModule().createSideBox("report-filter", "Report actions", "/jsp/report-filter.jsp", true);
 		//dashboardContext.getCurrentModule().addMainBox("report", "report", "/jsp/report.jsp", false);
 		return null;
 	}
@@ -433,7 +428,15 @@ public class DashboardAction extends AbstractModuleAction {
 		ModulesContext dashboardContext = ModulesContext.getInstance(session, ctx.getGlobalContext());
 		dashboardContext.getCurrentModule().clearAllBoxes();
 		dashboardContext.getCurrentModule().setRenderer("/jsp/pagelist.jsp");
-		//dashboardContext.getCurrentModule().addMainBox("report", "report", "/jsp/report.jsp", false);
+		return null;
+	}
+	
+	public static String performFilter(RequestService rs, ContentContext ctx, HttpSession session, MessageRepository messageRepository, I18nAccess i18nAccess) throws ParseException {
+		ReportFilter reportFilter = ReportFilter.getInstance(session);
+		String startDate = rs.getParameter("start-date", null);
+		if (startDate != null) {
+			reportFilter.setStartDate(StringHelper.parseDateOrTime(startDate));
+		}
 		return null;
 	}
 	

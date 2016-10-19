@@ -24,6 +24,7 @@ import org.javlo.component.core.ComponentBean;
 import org.javlo.component.core.ComponentFactory;
 import org.javlo.component.core.ContentElementList;
 import org.javlo.component.core.IContentVisualComponent;
+import org.javlo.component.core.Unknown;
 import org.javlo.component.links.MirrorComponent;
 import org.javlo.context.ContentContext;
 import org.javlo.context.EditContext;
@@ -91,14 +92,14 @@ public class ContentService implements IPrintInfo {
 	private MenuElement viewNav = null;
 
 	private Map<String, MenuElement> shortURLMap = null;
-	
+
 	private MenuElement previewNav = null;
 
 	private MenuElement timeTravelerNav = null;
 
 	static final String CONTENT_KEY = "__dc_content__";
 
-	private final Map<String, WeakReference<IContentVisualComponent>> components = new Hashtable<String, WeakReference<IContentVisualComponent>>();
+	private final Map<String, IContentVisualComponent> components = new Hashtable<String, IContentVisualComponent>();
 
 	private Map<String, String> viewGlobalMap;
 
@@ -146,16 +147,15 @@ public class ContentService implements IPrintInfo {
 
 		/** search on current language **/
 		ContentElementList content = page.getAllContent(noAreaCtx);
-		/*while (content.hasNext(noAreaCtx)) {
-			IContentVisualComponent elem = content.next(noAreaCtx);
-			if (elem.getId().equals(id)) {
-				return elem;
-			}
-		}*/
+		/*
+		 * while (content.hasNext(noAreaCtx)) { IContentVisualComponent elem =
+		 * content.next(noAreaCtx); if (elem.getId().equals(id)) { return elem;
+		 * } }
+		 */
 
 		if (noRealContentType) {
 			ContentContext ctxLg = new ContentContext(noAreaCtx);
-			for (String lg : ctx.getGlobalContext().getContentLanguages()) {				
+			for (String lg : ctx.getGlobalContext().getContentLanguages()) {
 				ctxLg.setAllLanguage(lg);
 				content = page.getAllContent(ctxLg);
 				while (content.hasNext(ctxLg)) {
@@ -236,7 +236,7 @@ public class ContentService implements IPrintInfo {
 		}
 		return ctx.contentExistForContext;
 	}
-	
+
 	public String createContentMirrorIfNeeded(ContentContext ctx, MenuElement newPage, IContentVisualComponent comp, String parentId, boolean b) throws Exception {
 		if (comp.isMirroredByDefault(ctx) && !ctx.getGlobalContext().isMailingPlatform()) {
 			ComponentBean mirrorComponentBean = new ComponentBean(MirrorComponent.TYPE, comp.getId(), ctx.getRequestContentLanguage());
@@ -245,7 +245,6 @@ public class ContentService implements IPrintInfo {
 			return createContent(ctx, newPage, comp.getComponentBean(), parentId, b);
 		}
 	}
-
 
 	public String createContent(ContentContext ctx, MenuElement page, ComponentBean inBean, String parentId, boolean releaseCache) throws Exception {
 		String id = StringHelper.getRandomId();
@@ -278,7 +277,7 @@ public class ContentService implements IPrintInfo {
 			} else {
 				bean.setArea(ctx.getArea());
 			}
-		}		
+		}
 		bean.setRepeat(inBean.isRepeat());
 		bean.setRenderer(inBean.getRenderer());
 		bean.setModify(true);
@@ -448,30 +447,46 @@ public class ContentService implements IPrintInfo {
 		if (id == null || !ctx.isComponentCache()) {
 			return null;
 		}
-		WeakReference<IContentVisualComponent> ref = components.get(getComponentKey(ctx, id));
-		IContentVisualComponent component = null;
-		if (ref != null) {
-			component = ref.get();
-			if (component == null) {
-				components.remove(getComponentKey(ctx, id));
-			}
+		IContentVisualComponent component = components.get(getComponentKey(ctx, id));
+		if (component == null) {
+			components.remove(getComponentKey(ctx, id));
 		}
 		return component;
 	}
-	
+
 	public IContentVisualComponent getComponentNoRealContentType(ContentContext ctx, String id) throws Exception {
 		if (id == null) {
 			return null;
 		}
-		WeakReference<IContentVisualComponent> ref = components.get(getComponentKey(ctx, id));
-		IContentVisualComponent component = null;
-		if (ref != null) {
-			component = ref.get();
-		}
+		IContentVisualComponent component = components.get(getComponentKey(ctx, id));
+		String compKey = getComponentKey(ctx, id);
 		if (component == null) {
 			component = searchComponent(ctx, getNavigation(ctx), id, true);
 			if (component != null) {
-				components.put(getComponentKey(ctx, id), new WeakReference<IContentVisualComponent>(component));
+				components.put(compKey, component);
+			} else {
+				components.put(compKey, Unknown.INSTANCE);
+			}
+		}
+		if (component == null) {
+			components.remove(compKey);
+		}
+		if (component == Unknown.INSTANCE) {
+			return null;
+		} else {
+			return component;
+		}
+	}
+
+	public IContentVisualComponent getComponent(ContentContext ctx, String id) throws Exception {
+		if (id == null) {
+			return null;
+		}
+		IContentVisualComponent component = components.get(getComponentKey(ctx, id));
+		if (component == null) {
+			component = searchComponent(ctx, getNavigation(ctx), id, false);
+			if (component != null) {
+				components.put(getComponentKey(ctx, id), component);
 			}
 		}
 		if (component == null) {
@@ -480,28 +495,6 @@ public class ContentService implements IPrintInfo {
 		return component;
 	}
 
-	public IContentVisualComponent getComponent(ContentContext ctx, String id) throws Exception {
-		if (id == null) {
-			return null;
-		}
-		WeakReference<IContentVisualComponent> ref = components.get(getComponentKey(ctx, id));
-		IContentVisualComponent component = null;
-		if (ref != null) {
-			component = ref.get();
-		}
-		if (component == null) {
-			component = searchComponent(ctx, getNavigation(ctx), id, false);
-			if (component != null) {
-				components.put(getComponentKey(ctx, id), new WeakReference<IContentVisualComponent>(component));
-				LangHelper.clearWeekReferenceMap(components);
-			}
-		}
-		if (component == null) {
-			components.remove(getComponentKey(ctx, id));
-		}
-		return component;
-	}
-	
 	public List<IContentVisualComponent> getComponentByType(ContentContext ctx, String type) throws Exception {
 		List<IContentVisualComponent> outContent = new LinkedList<IContentVisualComponent>();
 		MenuElement root = getNavigation(ctx);
@@ -516,11 +509,7 @@ public class ContentService implements IPrintInfo {
 		if (id == null) {
 			return null;
 		}
-		WeakReference<IContentVisualComponent> ref = components.get(getComponentKey(ctx, id));
-		IContentVisualComponent component = null;
-		if (ref != null) {
-			component = ref.get();
-		}
+		IContentVisualComponent component = components.get(getComponentKey(ctx, id));
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		Iterator<String> languages = globalContext.getContentLanguages().iterator();
 
@@ -529,7 +518,7 @@ public class ContentService implements IPrintInfo {
 			localContext.setRequestContentLanguage(languages.next());
 			component = searchComponent(localContext, getNavigation(localContext), id, true);
 			if (component != null) {
-				components.put(getComponentKey(ctx, id), new WeakReference<IContentVisualComponent>(component));
+				components.put(getComponentKey(ctx, id), component);
 			}
 		}
 		if (component == null) {
@@ -603,7 +592,7 @@ public class ContentService implements IPrintInfo {
 		} else {
 			if (getViewNav() == null) {
 				synchronized (ctx.getGlobalContext().getLockLoadContent()) {
-					if (getViewNav() == null) {						
+					if (getViewNav() == null) {
 						long startTime = System.currentTimeMillis();
 						PersistenceService persistenceService = PersistenceService.getInstance(globalContext);
 						Map<String, String> contentAttributeMap = new HashMap<String, String>();
@@ -620,7 +609,7 @@ public class ContentService implements IPrintInfo {
 
 		return res;
 	}
-	
+
 	public MenuElement getTrashPage(ContentContext ctx) throws Exception {
 		MenuElement root = getNavigation(ctx);
 		MenuElement trashPage = getNavigation(ctx).searchChildFromName(TRASH_PAGE_NAME);
@@ -645,7 +634,7 @@ public class ContentService implements IPrintInfo {
 			return previewNav != null;
 		} else {
 			return getViewNav() != null;
-		}		
+		}
 	}
 
 	public MenuElement getTimeTravelerNav() {
@@ -802,7 +791,7 @@ public class ContentService implements IPrintInfo {
 		}
 		return c;
 	}
-	
+
 	public synchronized int duplicateKeys(String oldKeyPrefix, String newKeyPrefix) {
 		Collection<String> keys = previewGlobalMap.keySet();
 		Collection<String> toBeModified = new LinkedList<String>();
@@ -815,7 +804,7 @@ public class ContentService implements IPrintInfo {
 		}
 		for (String key : toBeModified) {
 			String newKey = StringUtils.replaceOnce(key, oldKeyPrefix, newKeyPrefix);
-			previewGlobalMap.put(newKey, previewGlobalMap.get(key));			
+			previewGlobalMap.put(newKey, previewGlobalMap.get(key));
 			c++;
 		}
 		return c;
@@ -844,7 +833,7 @@ public class ContentService implements IPrintInfo {
 	}
 
 	public void setCachedComponent(ContentContext ctx, IContentVisualComponent comp) throws Exception {
-		components.put(getComponentKey(ctx, comp.getId()), new WeakReference<IContentVisualComponent>(comp));
+		components.put(getComponentKey(ctx, comp.getId()), comp);
 	}
 
 	public List<IContentVisualComponent> getAllContent(ContentContext ctx) throws Exception {

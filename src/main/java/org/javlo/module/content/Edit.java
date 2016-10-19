@@ -945,11 +945,6 @@ public class Edit extends AbstractModuleAction {
 				return "security error";
 			}
 
-			ClipBoard clipBoard = ClipBoard.getInstance(request);
-			if (id.equals(clipBoard.getCopied())) {
-				clipBoard.clear();
-			}
-
 			if (comp.getPreviousComponent() != null) {
 				ctx.getRequest().setAttribute(AbstractVisualComponent.SCROLL_TO_COMP_ID_ATTRIBUTE_NAME, comp.getPreviousComponent().getId());
 			}

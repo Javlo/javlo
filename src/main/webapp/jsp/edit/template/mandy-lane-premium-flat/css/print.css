@@ -16,3 +16,11 @@
     -webkit-print-color-adjust: exact;
 }
 
+.sidebox  {
+	display: none;
+}
+
+.maincontent_inner {
+	margin: 0 3%;
+	width: 94%;
+}

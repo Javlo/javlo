@@ -47,12 +47,13 @@ td.forme, td.priority {
 	clear: both;
 }
 
-.lang {
+.lang, .date, .total {
 	display: inline-block;
 	text-transform: uppercase;
 	padding: 3px 8px;
 	color: #ffffff;
 	background-color: #000000;
+	-webkit-print-color-adjust: exact;
 }
 
 .progress .bar2 {

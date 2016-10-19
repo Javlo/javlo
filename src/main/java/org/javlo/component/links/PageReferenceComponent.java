@@ -254,7 +254,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 			bean.humanName = page.getHumanName();
 			bean.selected = page.isSelected(lgCtx);
 			bean.linkOn = page.getLinkOn(lgCtx);
-			bean.creationDate = StringHelper.renderShortDate(lgCtx, page.getCreationDate());
+			bean.creationDate = StringHelper.renderShortDate(lgCtx, page.getCreationDate());			
 			bean.setCreationTime(StringHelper.renderShortTime(lgCtx, page.getCreationDate()));
 			bean.modificationDate = StringHelper.renderShortDate(lgCtx, page.getModificationDate());
 			bean.modificationTime = StringHelper.renderShortTime(lgCtx, page.getModificationDate());
@@ -335,9 +335,16 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 				endDate.setTime(bean.endDate.getDate());
 
 				bean.dates.add(new DateBean(ctx, startDate.getTime()));
-				while (startDate.before(endDate)) {
-					startDate.roll(Calendar.DAY_OF_YEAR, true);
+				
+				final int MAX_DAYS_OF_EVENTS = 1000;
+				int i=0;
+				while (startDate.before(endDate) && i<MAX_DAYS_OF_EVENTS) {
+					startDate.add(Calendar.DAY_OF_YEAR, 1);
 					bean.dates.add(new DateBean(ctx, startDate.getTime()));
+					i++;
+				}
+				if (i == MAX_DAYS_OF_EVENTS) {
+					logger.warning("to much days in page (max:" + MAX_DAYS_OF_EVENTS + ") : " + page.getPath() + " [" + globalContext.getContextKey() + ']');
 				}
 			}
 

@@ -190,6 +190,11 @@ public class MailingBuilder {
 			m.setReceivers(Collections.singleton(receiver.getKey()));
 			m.setSubject(subject);
 			m.setAdminEmail(globalContext.getAdministratorEmail());
+			DKIMBean bean = globalContext.getDKIMBean();
+			if (bean != null) {
+				m.setDkimDomain(bean.getSigningdomain());
+				m.setDkimSelector(bean.getSelector());
+			}
 			if (reportTo != null) {
 				m.setNotif(new InternetAddress(reportTo));
 			}

@@ -4,7 +4,7 @@
 
 <form method="post" action="${info.currentURL}" class="standard-form">
 <fieldset>
-<legend>Create newsletter ${canCreate}</legend>
+<legend>Create newsletter</legend>
 <input type="hidden" name="webaction" value="macro-create-article-composition.create" />
 <input type="hidden" name="module" value="macro" />
 <c:if test="${fn:length(pages)>1 || canCreate}">

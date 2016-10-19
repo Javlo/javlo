@@ -64,6 +64,8 @@ import org.javlo.helper.ServletHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.io.TransactionFile;
+import org.javlo.mailing.DKIMBean;
+import org.javlo.mailing.DKIMFactory;
 import org.javlo.mailing.MailConfig;
 import org.javlo.mailing.MailService;
 import org.javlo.module.core.IPrintInfo;
@@ -3457,6 +3459,14 @@ public class GlobalContext implements Serializable, IPrintInfo {
 
 	public String getDKIMDomain() {
 		return properties.getString("mail.dkim.domain", "");
+	}
+	
+	public DKIMBean getDKIMBean() {
+		if (!StringHelper.isEmpty(getDKIMDomain())) { 
+			return new DKIMBean(getDKIMDomain(), getDKIMSelector(), DKIMFactory.getDKIMPrivateKeyFile(this).getAbsolutePath(), null);
+		} else {
+			return null;
+		}
 	}
 
 	public void setDKIMDomain(String domain) {

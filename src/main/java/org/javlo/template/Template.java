@@ -2707,7 +2707,8 @@ public class Template implements Comparable<Template> {
 		while (keys.hasNext()) {
 			String key = (String) keys.next();
 			if (key.startsWith("row.") || key.startsWith("area.")) {
-				properties.clearProperty(key);
+				keys.remove();
+				//properties.clearProperty(key);
 			}
 		}
 		for (Row row : rows) {

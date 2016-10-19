@@ -75,6 +75,7 @@ public class CatchAllFilter implements Filter {
 
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain next) throws IOException, ServletException {
+
 		logger.fine("start catch all filter.");
 		HttpServletRequest httpRequest = (HttpServletRequest) request;
 		ServletContext servletContext = httpRequest.getSession().getServletContext();

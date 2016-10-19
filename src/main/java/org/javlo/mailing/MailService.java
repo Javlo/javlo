@@ -482,7 +482,7 @@ public class MailService {
 		sendMail(transport, sender, recipient, ccRecipientsList, bccRecipientsList, subject, content, isHTML, null, null);
 	}
 
-	public void sendMail(Transport transport, InternetAddress sender, InternetAddress recipient, InternetAddress ccRecipient, InternetAddress bccRecipient, String subject, String content, String contentTxt, boolean isHTML) throws MessagingException {
+	public void sendMail(Transport transport, InternetAddress sender, InternetAddress recipient, InternetAddress ccRecipient, InternetAddress bccRecipient, String subject, String content, String contentTxt, boolean isHTML, DKIMBean dkimBean) throws MessagingException {
 		List<InternetAddress> ccRecipientsList = new LinkedList<InternetAddress>();
 		if (ccRecipient != null) {
 			ccRecipientsList.add(ccRecipient);
@@ -493,7 +493,7 @@ public class MailService {
 		}
 		List<InternetAddress> recipientsList = new LinkedList<InternetAddress>();
 		recipientsList.add(recipient);
-		sendMail(transport, sender, recipientsList, ccRecipientsList, bccRecipientsList, subject, content, contentTxt, isHTML, null, null, null);
+		sendMail(transport, sender, recipientsList, ccRecipientsList, bccRecipientsList, subject, content, contentTxt, isHTML, null, null, dkimBean);
 	}
 
 	public MailConfig getMailConfig() {

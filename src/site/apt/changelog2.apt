@@ -790,3 +790,5 @@ change log
  
  * 3/ add js bootstrap on preview
  
+ * 4/ check external link only on 404 error / filter report by creation date
+ 

@@ -558,7 +558,8 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 					email.setCcRecipients(ccList);
 					email.setBccRecipients(bccList);
 					email.setContent(mailContent);
-					email.setHtml(comp.isHTMLMail());					
+					email.setHtml(comp.isHTMLMail());	
+					email.setDkim(globalContext.getDKIMBean());
 					mailService.sendMail(null, email);
 					//mailService.sendMail(null, fromEmail, adminEmail, ccList, bccList, subject, mailContent, comp.isHTMLMail(), null, null);
 					// remove

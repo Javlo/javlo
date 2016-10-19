@@ -1762,5 +1762,32 @@ public class ResourceHelper {
 			return deleted;
 		}
 	}
+	
+	public static List<IContentVisualComponent> getComponentsUseResource(ContentContext ctx, String uri) throws Exception {
+		ContentService content = ContentService.getInstance(ctx.getRequest());
+		List<IContentVisualComponent> outList = new LinkedList<IContentVisualComponent>();
+		for (IContentVisualComponent comp : content.getAllContent(ctx)) {
+			 if (comp instanceof IStaticContainer) {
+				 IStaticContainer container = (IStaticContainer)comp;
+				 if (container.contains(ctx, uri)) {
+					 outList.add(comp);
+				 }
+			 }
+		}
+		return outList;
+	}
+	
+	public static boolean isComponentsUseResource(ContentContext ctx, String uri) throws Exception {
+		ContentService content = ContentService.getInstance(ctx.getRequest());		
+		for (IContentVisualComponent comp : content.getAllContent(ctx)) {
+			 if (comp instanceof IStaticContainer) {
+				 IStaticContainer container = (IStaticContainer)comp;
+				 if (container.contains(ctx, uri)) {
+					 return true;
+				 }
+			 }
+		}
+		return false;
+	}
 
 }

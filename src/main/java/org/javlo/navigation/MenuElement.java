@@ -81,6 +81,7 @@ import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
 import org.javlo.module.content.Edit;
 import org.javlo.module.core.IPrintInfo;
+import org.javlo.service.ClipBoard;
 import org.javlo.service.ContentService;
 import org.javlo.service.PersistenceService;
 import org.javlo.service.RequestService;
@@ -4176,6 +4177,10 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 	 * @return the type of the component, null if not found
 	 */
 	public String removeContent(ContentContext ctx, String id) {
+		ClipBoard clipBoard = ClipBoard.getInstance(ctx.getRequest());
+		if (id.equals(clipBoard.getCopied())) {
+			clipBoard.clear();
+		}
 		return removeContent(ctx, id, true);
 	}
 
@@ -4216,9 +4221,8 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 			outList.toArray(componentBean);
 		}
 		if (releaseCache) {
-			releaseCache();
+			releaseCache();			
 		}
-
 		return type;
 	}
 

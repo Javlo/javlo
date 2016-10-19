@@ -18,6 +18,8 @@ jQuery(document).bind("ajaxUpdate",function () {
 	jQuery.datepicker.setDefaults( jQuery.datepicker.regional[ editLanguage ] );
 	//jQuery( ".datepicker" ).datepicker({maxDate: "+0D", dateFormat: dateFormat});	
 	jQuery( ".datepicker" ).datepicker({ dateFormat: "dd/mm/yy", constrainInput: false });
+	jQuery( ".datepicker-futur" ).datepicker({ dateFormat: "dd/mm/yy", constrainInput: false, minDate: 0 });
+	jQuery( ".datepicker-past" ).datepicker({ dateFormat: "dd/mm/yy", constrainInput: false, maxDate: 0 });
 	fullHeight();
 	
 	/////////// SORTABLE /////////////

@@ -285,7 +285,7 @@
 	<div class="footerinner">
     	<a href="http://javlo.org">javlo.org</a>
     	<c:if test="${!userInterface.light}">
-    		2014 - v ${info.version} - 
+    		${info.currentYear} - v ${info.version} - 
     		<span id="preview-version">${info.previewVersion}</span> - 
     		<span id="server-time">${info.serverTime}</span>
     		<c:if test="${info.localModule}">

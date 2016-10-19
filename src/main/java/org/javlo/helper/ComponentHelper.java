@@ -34,7 +34,7 @@ import org.javlo.utils.Cell;
  * @author pvandermaesen some method for help create component.
  */
 public class ComponentHelper {
-	
+
 	private static Logger logger = Logger.getLogger(ComponentHelper.class.getName());
 
 	/**
@@ -171,7 +171,11 @@ public class ComponentHelper {
 		comp.getPage().removeContent(ctx, comp.getId());
 		comp.getComponentBean().setArea(area);
 		ComponentBean newComp = comp.getComponentBean();
-		newComp.setLanguage(ctx.getRequestContentLanguage()); // component could be move between two different browser
+		newComp.setLanguage(ctx.getRequestContentLanguage()); // component could
+																// be move
+																// between two
+																// different
+																// browser
 		if (newPrevious != null) {
 			newPrevious.getPage().addContent(newPrevious.getId(), newComp);
 			comp.setPage(newPrevious.getPage());
@@ -201,7 +205,8 @@ public class ComponentHelper {
 				boolean closeFound = nextComp == null;
 				int depth = 0;
 				while (!closeFound) {
-					if (newPrevious != null && nextComp.getId().equals(newPrevious.getId())) { /* if target inside the container */
+					if (newPrevious != null && nextComp.getId().equals(newPrevious
+							.getId())) { /* if target inside the container */
 						moveComponent(ctx, comp, newPrevious, targetPage, area);
 						return;
 					}
@@ -209,15 +214,15 @@ public class ComponentHelper {
 					nextComp = ComponentHelper.getNextComponent(nextComp, ctx);
 					if (nextComp != null) {
 						if (nextComp.getType().equals(openType)) {
-						if (((IContainer) nextComp).isOpen(ctx)) {
-							depth++;
-						} else {
-							if (depth == 0) {
-								closeFound = true;
+							if (((IContainer) nextComp).isOpen(ctx)) {
+								depth++;
 							} else {
-								depth--;
+								if (depth == 0) {
+									closeFound = true;
+								} else {
+									depth--;
+								}
 							}
-						}
 						}
 					} else {
 						closeFound = true;
@@ -234,7 +239,7 @@ public class ComponentHelper {
 		} else if (comp instanceof TableBreak) {
 			IContentVisualComponent openTable = ((TableBreak) comp).getOpenTableComponent(ctx);
 			if (openTable == null) {
-				logger.warning("table not open : "+comp.getId());
+				logger.warning("table not open : " + comp.getId());
 				return;
 			} else {
 				ContentContext compCtx = ctx.getContextWithArea(comp.getArea());
@@ -448,13 +453,16 @@ public class ComponentHelper {
 		}
 		return cells;
 	}
-	
+
 	public static final String getFinalType(ContentContext ctx, IContentVisualComponent comp) throws Exception {
 		if (comp instanceof MirrorComponent) {
-			return ((MirrorComponent)comp).getMirrorComponent(ctx).getType();
-		} else {
-			return comp.getType();
+			IContentVisualComponent mirroredComp = ((MirrorComponent) comp).getMirrorComponent(ctx);
+			if (mirroredComp != null) {
+				return mirroredComp.getType();
+			}
 		}
+		return comp.getType();
+
 	}
 
 }

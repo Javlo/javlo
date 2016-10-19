@@ -134,10 +134,13 @@ public class MirrorComponent extends AbstractVisualComponent implements IFieldCo
 		String compId = getMirrorComponentId();
 		ContentService content = ContentService.getInstance(ctx.getRequest());
 		IContentVisualComponent comp = content.getComponentNoRealContentType(ctx, compId);
+		if (comp == null && !StringHelper.isEmpty(compId)) {
+			logger.info("delete mirrorComponent with bad reference ("+compId+") : "+getId()+" (context:"+ctx.getGlobalContext().getContextKey()+" - page:"+getPage().getPath()+")");
+			deleteMySelf(ctx);
+		}
 		if (comp instanceof DynamicComponent) {
 			DynamicComponent dComp = (DynamicComponent)comp;			
 			if (dComp.getProperties() == null || dComp.getProperties().isEmpty()) {
-				System.out.println("***** MirrorComponent.getPrefixViewXHTMLCode : properties null"); //TODO: remove debug trace
 				Properties prop = new Properties();
 				prop.putAll(dComp.getConfigProperties());
 				dComp.setProperties(prop);

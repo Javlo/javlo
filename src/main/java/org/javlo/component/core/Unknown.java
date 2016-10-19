@@ -9,6 +9,8 @@ import org.javlo.context.ContentContext;
  * @author pvandermaesen
  */
 public class Unknown extends AbstractVisualComponent {
+	
+	public static final IContentVisualComponent INSTANCE = new Unknown();
 
 	String type = "unknow";
 

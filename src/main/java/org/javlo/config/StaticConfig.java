@@ -1614,4 +1614,8 @@ public class StaticConfig extends Observable {
 			return true;
 		}
 	}
+	
+	public boolean isConvertHTMLToImage() {
+		return StringHelper.isTrue(properties.getString("content.image-from-html"), false);
+	}
 }

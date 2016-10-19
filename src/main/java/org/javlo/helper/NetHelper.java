@@ -90,13 +90,13 @@ public class NetHelper {
 		return readPage(url, false, false, null, null, null, null, false);
 	}
 
-	public static String readPageGet(URLConnection conn) throws Exception {
+	public static String readPageGet(URLConnection conn, boolean checkReturnCode) throws Exception {
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		InputStream in = null;
 		try {
 			if (conn instanceof HttpURLConnection) {
 				HttpURLConnection httpConn = (HttpURLConnection) conn;
-				if (httpConn.getResponseCode() != HttpURLConnection.HTTP_OK) {
+				if (checkReturnCode && httpConn.getResponseCode() != HttpURLConnection.HTTP_OK) {
 					throw new NetException("Response code: " + httpConn.getResponseCode());
 				}
 			}
@@ -110,7 +110,13 @@ public class NetHelper {
 
 	public static String readPageGet(URL url) throws Exception {
 		URLConnection conn = url.openConnection();
-		String content = readPageGet(conn);
+		String content = readPageGet(conn, true);
+		return content;
+	}
+	
+	public static String readPageGet(URL url, boolean checkReturnCode) throws Exception {
+		URLConnection conn = url.openConnection();
+		String content = readPageGet(conn, checkReturnCode);
 		return content;
 	}
 
@@ -807,8 +813,12 @@ public class NetHelper {
 			return null;
 		}
 	}
-
+	
 	public static boolean isURLValid(URL url) {
+		return isURLValid(url, false);
+	}
+
+	public static boolean isURLValid(URL url, boolean only404) {
 		try {
 			URLConnection urlConnection = url.openConnection();			
 			if (urlConnection instanceof HttpURLConnection) {
@@ -847,8 +857,12 @@ public class NetHelper {
 				conn.setConnectTimeout(10 * 1000);				
 				conn.setRequestMethod("GET");
 				conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows; U; Windows NT 6.0; en-US; rv:1.9.1.2) Gecko/20090729 Firefox/3.5.2 (.NET CLR 3.5.30729)");
-				int respondeCode = ((HttpURLConnection) urlConnection).getResponseCode();				
-				return (respondeCode >= 200) && (respondeCode < 399);
+				int responseCode = ((HttpURLConnection) urlConnection).getResponseCode();
+				if (only404) {
+					return responseCode != 404;
+				} else {
+					return (responseCode >= 200) && (responseCode < 399);
+				}
 			}
 			return true;
 		} catch (IOException e) {
@@ -1048,7 +1062,7 @@ public class NetHelper {
 	public static void sendMail(GlobalContext globalContext, InternetAddress from, InternetAddress to, InternetAddress cc, InternetAddress bcc, String subject, String content, String contentTxt, boolean isHTML) {
 		MailService mailService = MailService.getInstance(new MailConfig(globalContext, globalContext.getStaticConfig(), null));
 		try {
-			mailService.sendMail(null, from, to, cc, bcc, subject, content, contentTxt, isHTML);
+			mailService.sendMail(null, from, to, cc, bcc, subject, content, contentTxt, isHTML, globalContext.getDKIMBean());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -1170,6 +1184,6 @@ public class NetHelper {
 		   }
 
 	public static void main(String[] args) throws Exception {
-		System.out.println("bot ? "+isRobot("BOT=Mozilla/5.0 (compatible; bingbot/2.0; +http://www.bing.com/bingbot.htm)"));
+		System.out.println("***** NetHelper.main : valid ? "+isURLValid(new URL("http://www.centresculturels.cfwb.be/index.php?eID=tx_nawsecuredl&u=0&g=0&hash=6bd96306d17694601bef71f3c2c267692665a853&file=fileadmin/sites/cecu/upload/cecu_super_editor/cecu_editor/documents/Legislation/D_2013-11-21_Gallilex.pdf")));
 	}
 }

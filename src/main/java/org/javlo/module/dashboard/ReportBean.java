@@ -28,6 +28,7 @@ public class ReportBean {
 	public int rightExternalLink = 0;
 	public int badInternalLink = 0;
 	public int rightInternalLink = 0;
+	public int totalPageAnnalysed = 0;
 	public boolean allTitleDifferent = false;
 	public Link sameTitlePage1 = null;
 	public Link sameTitlePage2 = null;
@@ -189,5 +190,9 @@ public class ReportBean {
 	
 	public List<Link> getBadResourceLinkPages() {
 		return badResourceLinkPages;
+	}
+	
+	public int getTotalPageAnnalysed() {
+		return totalPageAnnalysed;
 	}
 }

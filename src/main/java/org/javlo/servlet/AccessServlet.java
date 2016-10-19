@@ -708,33 +708,38 @@ public class AccessServlet extends HttpServlet implements IVersion {
 						out.write(XMLHelper.getPageXML(ctx, elem));
 
 					} else if (ctx.getFormat().equalsIgnoreCase("png") || ctx.getFormat().equalsIgnoreCase("jpg")) {
-
-						String fileFormat = ctx.getFormat().toLowerCase();
-						response.setContentType("image/" + fileFormat + ";");
-						OutputStream out = response.getOutputStream();
-						ContentContext viewCtx = ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE);
-						viewCtx.setAbsoluteURL(true);
-						viewCtx.setFormat("html");
-						String url;
-						Map<String, String> params = new HashMap<String, String>();
-						params.put(Device.FORCE_DEVICE_PARAMETER_NAME, "image");
-						if (request.getParameter(Template.FORCE_TEMPLATE_PARAM_NAME) != null) {
-							params.put(Template.FORCE_TEMPLATE_PARAM_NAME, request.getParameter(Template.FORCE_TEMPLATE_PARAM_NAME));
+						if (ctx.getGlobalContext().getStaticConfig().isConvertHTMLToImage()) {
+							logger.warning("convert image convertion : "+request.getRequestURI());
+							String fileFormat = ctx.getFormat().toLowerCase();
+							response.setContentType("image/" + fileFormat + ";");
+							OutputStream out = response.getOutputStream();
+							ContentContext viewCtx = ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE);
+							viewCtx.setAbsoluteURL(true);
+							viewCtx.setFormat("html");
+							String url;
+							Map<String, String> params = new HashMap<String, String>();
+							params.put(Device.FORCE_DEVICE_PARAMETER_NAME, "image");
+							if (request.getParameter(Template.FORCE_TEMPLATE_PARAM_NAME) != null) {
+								params.put(Template.FORCE_TEMPLATE_PARAM_NAME, request.getParameter(Template.FORCE_TEMPLATE_PARAM_NAME));
+							}
+							params.put("clean-html", "true");
+							url = URLHelper.createURL(viewCtx, params);
+	
+							int width = 1280;
+							String widthParam = request.getParameter("width");
+							if (widthParam != null) {
+								width = Integer.parseInt(widthParam);
+							}
+	
+							Java2DRenderer renderer = new Java2DRenderer(url, width);
+							BufferedImage img = renderer.getImage();
+							FSImageWriter imageWriter = new FSImageWriter();
+							imageWriter.write(img, out);
+						} else {
+							response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+							logger.warning("rejected content image convertion : "+request.getRequestURI());
+							return;
 						}
-						params.put("clean-html", "true");
-						url = URLHelper.createURL(viewCtx, params);
-
-						int width = 1280;
-						String widthParam = request.getParameter("width");
-						if (widthParam != null) {
-							width = Integer.parseInt(widthParam);
-						}
-
-						Java2DRenderer renderer = new Java2DRenderer(url, width);
-						BufferedImage img = renderer.getImage();
-						FSImageWriter imageWriter = new FSImageWriter();
-						imageWriter.write(img, out);
-
 					} else if (ctx.getFormat().equalsIgnoreCase("pdf")) {
 						if (ctx.getGlobalContext().isCollaborativeMode()) {
 							Set<String> pageRoles = ctx.getCurrentPage().getEditorRolesAndParent();

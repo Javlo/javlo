@@ -137,7 +137,7 @@ public class SmartExternalLink extends ComplexPropertiesLink implements IReverse
 						// run more time
 						logInfo = "read : " + url;
 						URLConnection conn = url.openConnection();						
-						String pageContent = NetHelper.readPageGet(conn);
+						String pageContent = NetHelper.readPageGet(conn, true);
 						url = conn.getURL();						
 						if (pageContent == null) {
 							setLinkValid(false);
