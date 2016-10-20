@@ -3,6 +3,7 @@ package org.javlo.service.integrity;
 import java.io.File;
 import java.util.Collection;
 import java.util.LinkedList;
+import java.util.List;
 
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.context.ContentContext;
@@ -25,19 +26,22 @@ public class CheckResource extends AbstractIntegrityChecker {
 		Collection<File> errorFile = new LinkedList<File>();
 		for (IContentVisualComponent comp : page.getContent(noAreaCtx).asIterable(noAreaCtx)) {
 			if (comp instanceof IStaticContainer) {
-				IStaticContainer staticContainer = (IStaticContainer)comp;
-				for(File file : staticContainer.getFiles(noAreaCtx)) {
-					StaticInfo info = StaticInfo.getInstance(noAreaCtx, file);
-					if (StringHelper.isEmpty(info.getTitle(noAreaCtx))) {
-						error++;
-						errorFile.add(file);
+				IStaticContainer staticContainer = (IStaticContainer) comp;
+				List<File> files = staticContainer.getFiles(noAreaCtx);
+				if (files != null) {
+					for (File file : files) {
+						StaticInfo info = StaticInfo.getInstance(noAreaCtx, file);
+						if (StringHelper.isEmpty(info.getTitle(noAreaCtx))) {
+							error++;
+							errorFile.add(file);
+						}
 					}
 				}
 			}
 		}
-		if (error>0) {
+		if (error > 0) {
 			I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
-			setErrorMessage(i18nAccess.getText("integrity.error.resource_without_title", "Resources without title ("+errorFile.iterator().next().getName()+')'));
+			setErrorMessage(i18nAccess.getText("integrity.error.resource_without_title", "Resources without title (" + errorFile.iterator().next().getName() + ')'));
 			setErrorCount(error);
 			setLevel(WARNING_LEVEL);
 			return false;

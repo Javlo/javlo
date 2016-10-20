@@ -335,7 +335,7 @@
 						
 			<c:if test="${not empty integrities && !globalContext.collaborativeMode && !globalContext.mailingPlatform && logged}">
 			<c:if test="${fn:length(integrities.checker)>0}"><li>
-			<a class="btn btn-default btn-sm btn-integrity btn-color alert-${integrities.levelLabel} btn-notext badged" data-toggle="collapse" data-target="#integrity-list" href="#integrity-list"  aria-expanded="false" aria-controls="integrity-list">
+			<a class="btn btn-default btn-sm btn-integrity btn-color alert-${integrities.levelLabel} btn-notext badged" data-toggle="_eprv_collapse" data-target="#integrity-list" href="#integrity-list"  aria-expanded="false" aria-controls="integrity-list">
 				<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
 				<c:if test="${fn:length(integrities.checker)>0}"><div class="badge unread-count">${fn:length(integrities.checker)}</div></c:if>
 			</a>

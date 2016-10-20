@@ -26,7 +26,7 @@ public class SpecialConfigBean {
 	 * @return
 	 */
 	public boolean isTrackingAccess() {
-		return StringHelper.isTrue(config.get("tracking.access"));
+		return StringHelper.isTrue(config.get("tracking.access"));  
 	}
 	
 }
