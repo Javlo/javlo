@@ -409,8 +409,8 @@ public class FileCache {
 		}
 		if (low) {
 			fileName = fileName+"_low";
-		}
-		File cacheFile = new File(URLHelper.mergePath(getCacheDir().getAbsolutePath(), ctx.getGlobalContext().getContextKey(), "pdf", ctx.getRenderModeKey(ctx.getRenderMode()), page.getName(), fileName + ".pdf"));
+		}		
+		File cacheFile = new File(URLHelper.mergePath(getCacheDir().getAbsolutePath(), ctx.getGlobalContext().getContextKey(), "pdf", ctx.getRenderModeKey(ctx.getRenderMode()), page.getName(), ctx.getRequestContentLanguage(), fileName + ".pdf"));
 		File dir = cacheFile.getParentFile();
 		if (!cacheFile.exists()) {
 			dir.mkdirs();

@@ -9,6 +9,7 @@ import org.javlo.component.core.ComponentBean;
 import org.javlo.component.files.GenericFile;
 import org.javlo.context.ContentContext;
 import org.javlo.filter.NotDirectoryFilter;
+import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.URLHelper;
 
 public class LocalFileSharedContentProvider extends LocalImageSharedContentProvider {
@@ -45,6 +46,10 @@ public class LocalFileSharedContentProvider extends LocalImageSharedContentProvi
 		GenericFile file = new GenericFile();
 		file.init(compBean, ctx);
 		return URLHelper.getFileTypeURL(ctx, file.getFile(ctx));
+	}
+	
+	protected boolean acceptedDocument(ContentContext ctx, String fileName) {
+		return ResourceHelper.isAcceptedDocument(ctx, fileName);
 	}
 
 }

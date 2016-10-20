@@ -19,6 +19,9 @@ import org.javlo.filter.ImageFileFilter;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
+import org.javlo.i18n.I18nAccess;
+import org.javlo.message.GenericMessage;
+import org.javlo.message.MessageRepository;
 import org.javlo.navigation.MenuElement;
 import org.javlo.template.Template;
 import org.javlo.user.AdminUserSecurity;
@@ -149,9 +152,19 @@ public class LocalImageSharedContentProvider extends AbstractSharedContentProvid
 	public boolean isUploadable(ContentContext ctx) {
 		return AdminUserSecurity.isCurrentUserCanUpload(ctx);
 	}
+	
+	protected boolean acceptedDocument(ContentContext ctx, String fileName) {
+		return ResourceHelper.isAcceptedImage(ctx, fileName);
+	}
 
 	@Override
 	public void upload(ContentContext ctx, String fileName, InputStream in, String category, boolean rename) throws IOException {
+		if (!acceptedDocument(ctx, fileName)) {
+			I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
+			MessageRepository messageRepository = MessageRepository.getInstance(ctx);
+			messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("global.message.file-format-error"), GenericMessage.ERROR));
+			return;
+		}
 		File imageFolder = getRootFolder(ctx);
 		imageFolder = new File(URLHelper.mergePath(imageFolder.getAbsolutePath(), category));
 		File newFile = new File(URLHelper.mergePath(imageFolder.getAbsolutePath(), fileName));

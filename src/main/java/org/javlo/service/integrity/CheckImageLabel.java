@@ -26,7 +26,7 @@ public class CheckImageLabel extends AbstractIntegrityChecker {
 						if (getComponentId(ctx) == null) {
 							setComponentId(comp.getId());
 						}
-						if (((GlobalImage) comp).getLabel().trim().length() == 0) {
+						if (((GlobalImage) comp).getAlt(ctx).trim().length() == 0) {
 							error++;
 						}
 					}

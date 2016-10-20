@@ -1762,17 +1762,26 @@ public class ResourceHelper {
 		}
 	}
 
-	public static List<IContentVisualComponent> getComponentsUseResource(ContentContext ctx, String uri) throws Exception {		
-		System.out.println("***** ResourceHelper.getComponentsUseResource : START"); //TODO: remove debug trace
+	public static List<IContentVisualComponent> getComponentsUseResource(ContentContext ctx, String uri) throws Exception {
+		System.out.println("***** ResourceHelper.getComponentsUseResource : START"); // TODO:
+																						// remove
+																						// debug
+																						// trace
 		ContentService content = ContentService.getInstance(ctx.getRequest());
 		List<IContentVisualComponent> outList = new LinkedList<IContentVisualComponent>();
-		ContentContext lgCtx = new ContentContext(ctx);		
+		ContentContext lgCtx = new ContentContext(ctx);
 		for (String lg : ctx.getGlobalContext().getContentLanguages()) {
 			lgCtx.setAllLanguage(lg);
 			for (IContentVisualComponent comp : content.getAllContent(lgCtx)) {
 				if (comp.getId().equals("147551884124890725710") && uri.contains("/61.jpg")) {
-					System.out.println("***** ResourceHelper.getComponentsUseResource : lg = "+lg); //TODO: remove debug trace
-					System.out.println("***** ResourceHelper.getComponentsUseResource : comp = "+comp); //TODO: remove debug trace
+					System.out.println("***** ResourceHelper.getComponentsUseResource : lg = " + lg); // TODO:
+																										// remove
+																										// debug
+																										// trace
+					System.out.println("***** ResourceHelper.getComponentsUseResource : comp = " + comp); // TODO:
+																											// remove
+																											// debug
+																											// trace
 				}
 				if (comp instanceof IStaticContainer) {
 					IStaticContainer container = (IStaticContainer) comp;
@@ -1796,6 +1805,23 @@ public class ResourceHelper {
 			}
 		}
 		return false;
+	}
+
+	public static boolean isAcceptedImage(ContentContext ctx, String fileName) {
+		if (StringHelper.isEmpty(fileName)) {
+			return true;
+		} else {
+			String extension = ',' + ctx.getGlobalContext().getStaticConfig().getImageFormat() + ',';
+			return extension.contains(',' + StringHelper.getFileExtension(fileName).toLowerCase() + ',');
+		}
+	}
+	
+	public static boolean isAcceptedDocument(ContentContext ctx, String fileName) {
+		if (StringHelper.isEmpty(fileName)) {
+			return true;
+		} else {
+			return ctx.getGlobalContext().getStaticConfig().getDocumentExtension().contains(StringHelper.getFileExtension(fileName).toLowerCase());			
+		}
 	}
 
 }

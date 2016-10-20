@@ -33,6 +33,7 @@ import org.javlo.exception.ResourceNotFoundException;
 import org.javlo.helper.ComponentHelper;
 import org.javlo.helper.ElementaryURLHelper;
 import org.javlo.helper.NetHelper;
+import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.helper.XHTMLHelper;
@@ -173,6 +174,21 @@ public class GlobalImage extends Image implements IImageFilter {
 	protected String getDefaultFilter() {
 		return "standard";
 	}
+	
+	public String getAlt(ContentContext ctx) {
+		String alt = getLabel();
+		if (StringHelper.isEmpty(alt)) {
+			StaticInfo staticInfo = getStaticInfo(ctx);
+			String title = staticInfo.getTitle(ctx);
+			String description = staticInfo.getDescription(ctx);
+			String sep = " - ";
+			if (StringHelper.isEmpty(title) || StringHelper.isEmpty(description)) {
+				sep="";
+			}
+			alt = title+sep+description;
+		}
+		return alt;
+	}
 
 	@Override
 	public String getPreviewURL(ContentContext ctx, String filter) {
@@ -221,6 +237,7 @@ public class GlobalImage extends Image implements IImageFilter {
 			link = URLHelper.createResourceURL(ctx, link);
 		}
 		ctx.getRequest().setAttribute("link", link);
+		ctx.getRequest().setAttribute("alt", getAlt(ctx));
 		String imageURL = getImageURL(ctx);
 		if (imageURL != null) {
 			ctx.getRequest().setAttribute("image", imageURL);
@@ -1312,12 +1329,7 @@ public class GlobalImage extends Image implements IImageFilter {
 
 	@Override
 	protected boolean isFileNameValid(ContentContext ctx, String fileName) {
-		if (StringHelper.isEmpty(fileName)) {
-			return true;
-		} else {
-			String extension = ',' + ctx.getGlobalContext().getStaticConfig().getImageFormat() + ',';
-			return extension.contains(',' + StringHelper.getFileExtension(fileName).toLowerCase() + ',');
-		}
+		return ResourceHelper.isAcceptedImage(ctx, fileName);
 	}
 
 	@Override

@@ -345,8 +345,8 @@ public class AbstractFileComponent extends AbstractVisualComponent
 	protected String getMetaCode(ContentContext ctx) {
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(outStream);
-		if (isDisplayMeta(ctx)) {
-			StaticInfo staticInfo = getStaticInfo(ctx);
+		StaticInfo staticInfo = getStaticInfo(ctx);
+		if (isDisplayMeta(ctx) && staticInfo != null && staticInfo.getFile().exists() && staticInfo.getFile().isFile()) {
 			String url = URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.EDIT_MODE));
 			if (!ctx.isEditPreview()) {
 				String formAction = URLHelper.addParam(url, "module", "content");

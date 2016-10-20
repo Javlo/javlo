@@ -514,7 +514,8 @@ DataAction implements IAction {
 					logger.info("try to import (" + ctx.getCurrentUserId() + ") : " + item.getName());
 					
 					if (!ResourceHelper.isDocument(ctx, item.getName())) {
-						logger.warning("try to import bad file format : "+item.getName());
+						logger.warning("try to import bad file format : "+item.getName());						
+						messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("global.message.file-format-error"), GenericMessage.ERROR));
 						return "bad file format : "+item.getName();
 					}
 

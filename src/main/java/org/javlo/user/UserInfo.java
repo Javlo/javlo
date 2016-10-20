@@ -427,6 +427,10 @@ public class UserInfo implements Comparable<IUserInfo>, IUserInfo, Serializable 
 	public Date getCreationDate() {
 		return creationDate;
 	}
+	
+	public String getCreationDateLabel() {
+		return StringHelper.renderTime(creationDate);
+	}
 
 	public void setModificationDate(String dateStr) {
 		try {
