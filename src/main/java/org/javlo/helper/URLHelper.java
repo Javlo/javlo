@@ -596,12 +596,12 @@ public class URLHelper extends ElementaryURLHelper {
 
 	public static String createURL(ContentContext ctx, MenuElement page) {
 		String path = page.getPath();		
-		if (page.isHttps() && (!ctx.getURLProtocolPrefix().equalsIgnoreCase("https"))) {
+		if (!ctx.getGlobalContext().isForcedHttps() && page.isHttps() && (!ctx.getURLProtocolPrefix().equalsIgnoreCase("https"))) {
 			ContentContext httpsCtx = new ContentContext(ctx);
 			httpsCtx.setAbsoluteURL(true);
 			httpsCtx.setURLProtocolPrefix("https");
 			return createURL(httpsCtx, page.getPath());
-		} else if (!page.isHttps() && (ctx.getURLProtocolPrefix().equals("https"))) {
+		} else if (!ctx.getGlobalContext().isForcedHttps() &&  !page.isHttps() && (ctx.getURLProtocolPrefix().equals("https"))) {
 			ContentContext httpCtx = new ContentContext(ctx);
 			httpCtx.setAbsoluteURL(true);
 			httpCtx.setURLProtocolPrefix("http");
