@@ -278,6 +278,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 
 				if (mainURL != null && !mainURL.endsWith(pageUrl)) {
 					// response.sendRedirect(pageUrl);
+					logger.info("redirect : "+mainURL+" >> "+URLHelper.createURL(lgCtx, lgCtx.getCurrentPage()));
 					NetHelper.sendRedirectPermanently(response, URLHelper.createURL(lgCtx, lgCtx.getCurrentPage()));
 					return;
 				}
