@@ -1069,6 +1069,10 @@ public class ContentContext {
 		if (protocol != null) {
 			return protocol;
 		} else {
+			if (getGlobalContext().isForcedHttps()) {
+				protocol = "https";
+				return protocol;
+			}
 			String requestProtocol = request.getProtocol().toLowerCase();
 			if (requestProtocol.startsWith("http")) {
 				if (request.isSecure()) {

@@ -2135,7 +2135,6 @@ public class GlobalContext implements Serializable, IPrintInfo {
 
 	public void save() {
 		TransactionFile tf = null;
-
 		synchronized (properties) {
 			if (getFolder() != null && getFolder().trim().length() > 0) {
 				try {
@@ -3485,6 +3484,15 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	public File getSpecialConfigFile() {
 		return new File(URLHelper.mergePath(staticConfig.getContextFolder(), getContextKey() + "_special.properties"));
 	}
+	
+	public boolean isForcedHttps() {
+		return properties.getBoolean("security.forced-https", false);
+	}
+	
+	public void setForcedHttps(boolean https) {
+		properties.setProperty("security.forced-https", https);
+		save();		
+	}
 
 	public SpecialConfigBean getSpecialConfig() {
 		if (config == null) {
@@ -3507,4 +3515,5 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		}
 		return config;
 	}
+	
 }

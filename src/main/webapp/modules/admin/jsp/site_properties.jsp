@@ -363,6 +363,11 @@
 	${i18n.edit['admin.form.collaborative-mode']}</label>
 </div>
 
+<div class="checkbox">	
+	<label><input type="checkbox" id="security-forced-https" name="security-forced-https" ${currentContext.forcedHttps?'checked="checked"':""}" />
+	${i18n.edit['admin.form.security-forced-https']}</label>
+</div>
+
 <div class="form-group">		
 	<label for="users-access">${i18n.edit['admin.form.users-access']}</label>
 	<textarea class="form-control" id="users-access" name="users-access">${currentContext.usersAccess}</textarea>	

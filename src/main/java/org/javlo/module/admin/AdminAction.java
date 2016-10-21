@@ -154,6 +154,8 @@ public class AdminAction extends AbstractModuleAction {
 		private String dkimDomain;
 		private String dkimSelector;
 		
+		private boolean forcedHttps = false;
+		
 		private String specialConfig = "";
 		
 		
@@ -232,6 +234,8 @@ public class AdminAction extends AbstractModuleAction {
 			setSmtpport(globalContext.getSMTPPort());
 			setSmtpuser(globalContext.getSMTPUser());
 			setSmtppassword(globalContext.getSMTPPassword());
+			
+			setForcedHttps(globalContext.isForcedHttps());
 			
 			try {
 				setSpecialConfig(ResourceHelper.loadStringFromFile(globalContext.getSpecialConfigFile()));
@@ -788,6 +792,14 @@ public class AdminAction extends AbstractModuleAction {
 			this.specialConfig = specialConfig;
 		}
 
+		public boolean isForcedHttps() {
+			return forcedHttps;
+		}
+
+		public void setForcedHttps(boolean forcedHttps) {
+			this.forcedHttps = forcedHttps;
+		}
+
 	}
 
 	public static class ComponentBean {
@@ -1191,6 +1203,8 @@ public class AdminAction extends AbstractModuleAction {
 					
 					currentGlobalContext.setDKIMDomain(requestService.getParameter("mailing-dkimdomain", ""));
 					currentGlobalContext.setDKIMSelector(requestService.getParameter("mailing-dkimselector", ""));
+					
+					currentGlobalContext.setForcedHttps(StringHelper.isTrue(requestService.getParameter("security-forced-https", null), false));
 					
 					if (requestService.getParameter("resetdkim", null) != null) {
 						DKIMFactory.resetKeys(currentGlobalContext);

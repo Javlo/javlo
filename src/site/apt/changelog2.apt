@@ -796,5 +796,5 @@ hange log
  
 * 2.1.0.19 19/10/2015
 
- * 1/ check file extension on import / add creation date on default user list / update bootrapmin.js for preview edit
+ * 1/ check file extension on import / add creation date on default user list / update bootrapmin.js for preview edit / forced https
  
