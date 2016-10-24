@@ -1,5 +1,6 @@
 package org.javlo.module.file;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileNotFoundException;
@@ -16,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
+import javax.imageio.ImageIO;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -35,6 +37,8 @@ import org.javlo.helper.ServletHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.i18n.I18nAccess;
+import org.javlo.image.ImageEngine;
+import org.javlo.io.TransactionFile;
 import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
 import org.javlo.module.content.Edit;
@@ -88,34 +92,53 @@ public class FileAction extends AbstractModuleAction {
 		ctx.getRequest().setAttribute("pathPrefix", getROOTPath(ctx));
 		ctx.getRequest().setAttribute("sort", fileModuleContext.getSort());
 		
+		/*File importFolder = new  File(URLHelper.mergePath(globalContext.getStaticFolder(), ctx.getGlobalContext().getStaticConfig().getImportResourceFolder(), DataAction.createImportFolder(ctx.getCurrentPage())));
+		if (importFolder.exists()) {
+			ctx.getRequest().setAttribute("importFolder", URLHelper.mergePath(globalContext.getStaticConfig().getStaticFolder(), ctx.getGlobalContext().getStaticConfig().getImportResourceFolder(), DataAction.createImportFolder(ctx.getCurrentPage())));
+		}*/		
+		
 		String editFileName = ctx.getRequest().getParameter("editFile");
-		if (editFileName != null) {			
-			modulesContext.getCurrentModule().setToolsRenderer(null);
-			File editFile = new File(URLHelper.mergePath(getFolder(ctx).getAbsolutePath(), editFileName));
-			ctx.getRequest().setAttribute("editFile", editFileName);			
-			if (editFile.exists()) {
-				ctx.getRequest().setAttribute("fileFound", true);
-				ctx.getRequest().setAttribute("fileExt", StringHelper.getFileExtension(editFile.getName()));
-				String content = ResourceHelper.loadStringFromFile(editFile);				
-				ctx.getRequest().setAttribute("content", content);
+		if (ctx.getRequest().getParameter("path") != null) {
+			fileModuleContext.setPath(ctx.getRequest().getParameter("path"));
+			performUpdateBreadCrumb(RequestService.getInstance(ctx.getRequest()), ctx, EditContext.getInstance(globalContext, ctx.getRequest().getSession()), modulesContext, modulesContext.getCurrentModule(), fileModuleContext);
+		}
+		if (editFileName != null) {	
+			if (StringHelper.isImage(editFileName)) {
+				modulesContext.getCurrentModule().setToolsRenderer(null);
+				File editFile = new File(URLHelper.mergePath(getFolder(ctx).getAbsolutePath(), editFileName));
+				ctx.getRequest().setAttribute("editFile", editFileName);
+				if (editFile.exists()) {
+					ctx.getRequest().setAttribute("fileFound", true);
+					StaticInfo staticInfo = StaticInfo.getInstance(ctx, editFile);
+					ctx.getRequest().setAttribute("imageURL", staticInfo.getURL(ctx));
+				} else {
+					logger.warning("file not found : "+editFile);
+					ctx.getRequest().setAttribute("fileFound", false);
+				}
+				modulesContext.getCurrentModule().setRenderer("/jsp/image_editor.jsp");
 			} else {
-				ctx.getRequest().setAttribute("fileFound", false);
-				logger.warning("file not found : " + editFile);
+				modulesContext.getCurrentModule().setToolsRenderer(null);
+				File editFile = new File(URLHelper.mergePath(getFolder(ctx).getAbsolutePath(), editFileName));
+				ctx.getRequest().setAttribute("editFile", editFileName);			
+				if (editFile.exists()) {
+					ctx.getRequest().setAttribute("fileFound", true);
+					ctx.getRequest().setAttribute("fileExt", StringHelper.getFileExtension(editFile.getName()));
+					String content = ResourceHelper.loadStringFromFile(editFile);				
+					ctx.getRequest().setAttribute("content", content);
+				} else {
+					ctx.getRequest().setAttribute("fileFound", false);
+					logger.warning("file not found : " + editFile);
+				}
+				modulesContext.getCurrentModule().setRenderer("/jsp/editor.jsp");
 			}
-			modulesContext.getCurrentModule().setRenderer("/jsp/editor.jsp");
 		} else {
-			if (modulesContext.getCurrentModule().getRenderer().endsWith("/jsp/editor.jsp")) {
+			if (modulesContext.getCurrentModule().getRenderer().endsWith("editor.jsp")) {
 				getModuleContext(ctx.getRequest().getSession(), modulesContext.getCurrentModule()).setCurrentLink(null);
 				getModuleContext(ctx.getRequest().getSession(), modulesContext.getCurrentModule()).setRenderer(null);
 				modulesContext.getCurrentModule().setRenderer(null);
 				modulesContext.getCurrentModule().restoreToolsRenderer();
 				modulesContext.getCurrentModule().restoreAll();
 			}
-			if (ctx.getRequest().getParameter("path") != null) {
-				fileModuleContext.setPath(ctx.getRequest().getParameter("path"));
-				performUpdateBreadCrumb(RequestService.getInstance(ctx.getRequest()), ctx, EditContext.getInstance(globalContext, ctx.getRequest().getSession()), modulesContext, modulesContext.getCurrentModule(), fileModuleContext);
-			}
-
 			if (modulesContext.getFromModule() == null && ctx.getRequest().getParameter("changeRoot") == null) {
 				Box box = modulesContext.getCurrentModule().getBox("filemanager");
 				if (box != null) {
@@ -575,5 +598,52 @@ public class FileAction extends AbstractModuleAction {
 		}
 		return null;
 	}
+	
+	public static String performEditimage(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
+		if (rs.getParameter("cancel", null) != null) {
+			return null;
+		}
+		File file = new File(URLHelper.mergePath(getFolder(ctx).getAbsolutePath(), rs.getParameter("file", "-- param file undefined --")));
+		if (!file.exists() || !file.isFile()) {			
+			return "file not found : " + file;
+		}		
+		BufferedImage image = ImageIO.read(file);
+		boolean transform = false;
+		if (StringHelper.isTrue(rs.getParameter("flip", null))) {
+			image = ImageEngine.flip(image, false);
+			StaticInfo staticInfo = StaticInfo.getInstance(ctx, file);
+			if (staticInfo.getFocusZoneX(ctx) != StaticInfo.DEFAULT_FOCUS_X) {				
+				staticInfo.setFocusZoneX(ctx, 2*StaticInfo.DEFAULT_FOCUS_X-staticInfo.getFocusZoneX(ctx));
+			}
+			transform = true;
+		}
+		int cropTop = Integer.parseInt(rs.getParameter("crop-top", null));
+		int cropLeft = Integer.parseInt(rs.getParameter("crop-left", null));
+		int cropWidth = Integer.parseInt(rs.getParameter("crop-width", null));
+		int cropHeight = Integer.parseInt(rs.getParameter("crop-height", null));
+		final int REFERENCE_SIZE = 10000;
+		if (cropTop>0 || cropLeft>0 || cropWidth<REFERENCE_SIZE || cropHeight <REFERENCE_SIZE) {
+			transform = true;
+			int width = Math.round(cropWidth*image.getWidth()/REFERENCE_SIZE);
+			int height =  Math.round(cropHeight*image.getHeight()/REFERENCE_SIZE);
+			int x = Math.round(cropLeft*image.getWidth()/REFERENCE_SIZE);
+			int y = Math.round(cropTop*image.getHeight()/REFERENCE_SIZE);			
+			image = ImageEngine.cropImage(image,width,height, x, y);
+		}
+		if (transform) {
+			logger.info("transform : "+file);
+			FileCache.getInstance(ctx.getRequest().getSession().getServletContext()).deleteAllFile(ctx.getGlobalContext().getContextKey(), file.getName());
+			TransactionFile transactionFile = new TransactionFile(file);
+			try {
+				ImageIO.write(image, StringHelper.getFileExtension(file.getName().toLowerCase()), transactionFile.getTempFile());
+				transactionFile.commit();
+			} catch (Exception e) {
+				transactionFile.rollback();
+				throw e;
+			}
+		}
+		return null;
+	}
 
 }
+

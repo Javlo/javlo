@@ -1401,9 +1401,10 @@ body.previewEdit {
 }
 
 .form-list .download a {
-	display: block;
+	display: inline-block;
 	line-height: 220px;	
 	vertical-align: middle;
+	width: 100%;
 }
 
 .small .download a {
@@ -1425,9 +1426,8 @@ body.previewEdit {
 	vertical-align: middle;
 	display: inline;
 	width: auto;
-	min-width: 75%;
-	max-width: 90%;
-	max-height: 320px;
+	max-width: 100%;	
+	max-height: 270px;
 }
 
 .select-form .download a img {
@@ -1466,17 +1466,28 @@ body.previewEdit {
 	width: 120px;
 }
 
-.focus-zone {
+.focus-image-wrapper {
+	display: inline-block;
 	position: relative;
+}
+
+.focus-zone {
+	display: inline-block;	
+	vertical-align: middle;
+	width: 90%;
+	position: relative;
+	cursor: pointer;
 }
 
 .focus-point {
 	font-size: 0;	
-	border: 4px #cc0000 solid;
+	border: 6px #cc0000 solid;
 	border-radius: 6px 6px 6px 6px;
 	height: 7px;
 	width: 7px;
 	position: absolute;
+	box-sizing: border-box;
+	box-shadow: 0 0 15px #ffffff;
 }
 
 .focus-point.drag {

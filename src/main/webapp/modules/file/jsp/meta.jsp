@@ -79,7 +79,7 @@
 			</div>
 		</c:if>		
 		<div class="body">		
-		<div class="download ${file.image && param.select != 'back'?'picture':''}">
+		<div class="download">
 			<div ${file.image?'class="focus-zone"':'no-focus'} >			
 			<c:url var="fileSelectURL" value="${file.URL}" context="/">
 				<c:if test="${not empty param.select}"><c:param name="select" value="${param.select}" /></c:if>
@@ -106,7 +106,13 @@
 				<span>${file.name}</span>
 				<%--</a>--%>
 			</div><c:if test="${file.editable && empty param.select}">
-			<a class="btn btn-default btn-edit" href="${info.currentURL}?editFile=${file.name}" title="${i18n.edit['global.modify']}"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></a>
+			<c:url var="editFileURL" value="${info.currentURL}" context="/">
+				<c:if test="${not empty param[BACK_PARAM_NAME]}">
+					<c:param name="${BACK_PARAM_NAME}" value="${param[BACK_PARAM_NAME]}" />
+				</c:if>
+				<c:param name="editFile" value="${file.name}" />
+			</c:url>
+			<a class="btn btn-default btn-edit" href="${editFileURL}" title="${i18n.edit['global.modify']}"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></a>
 			</c:if>
 			</div>
 		</div>		
@@ -191,7 +197,7 @@
 </div>
 </div>
 
-<c:if test="${not empty param.select && param.select != 'back'}">
+<%--<c:if test="${not empty param.select && param.select != 'back'}">
 	<script type="text/javascript">
 		jQuery(".select-item").click(function() {
 			if (parent.tinyMCE !== undefined) {
@@ -202,4 +208,4 @@
 			}
 		});
 	</script>	
-</c:if>
+</c:if> --%>

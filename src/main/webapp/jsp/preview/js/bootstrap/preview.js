@@ -8,18 +8,16 @@ var editPreview = editPreview||{};
 		this.style.opacity = '0.4';  // this / e.target is the source node.
 	}
 
-	editPreview.layerOver = function(item, title, drop) {
+	editPreview.layerOver = function(item, title, drop) {		
 		var layer = pjq("#preview-layer");
 		pjq("._ep_new-component-zone").remove();
-
-
 		var insideLayer = pjq("#preview-layer span");
 		if (item == null) {
-			layer.css("z-index", -1);
+			layer.css("z-index", -1);			
 			layer.hide();
 			layer.data("compType", null);
 			layer.data("sharedContent", null);
-			layer.attr("title", " ");
+			layer.attr("title", " ");			
 		} else {
 			var comp = pjq(item);
 			if (comp.hasClass("mirror-wrapped")) {
@@ -102,6 +100,40 @@ var editPreview = editPreview||{};
 		pjq('#preview-modal').on('hidden.bs.modal', function (e) {
 			pjq('#preview-modal-question .preview-modal-question').html('');
 		});
+	}
+	
+	editPreview.createFileName = function(filename) {
+		var fileTransformURL = editPreview.addParam(ajaxURL,"webaction=data.createfilename&filename=" + filename);
+		var newFileName = filename;		
+		$.ajax({
+			  url: fileTransformURL,	
+			  cache : true,			  
+			  type : "get",
+			  dataType : "json",
+			  async: false,
+			  processData: false,
+		      contentType: false
+			}).done(function(data) {			
+				newFileName = data['data']['fileName'];
+			});
+		return newFileName;
+	}
+	
+	editPreview.isFileExist = function(filename) {
+		var fileTransformURL = editPreview.addParam(ajaxURL,"webaction=data.fileExist&filename=" + filename);
+		var fileExist = false;		
+		$.ajax({
+			  url: fileTransformURL,	
+			  cache : true,			  
+			  type : "get",
+			  dataType : "json",
+			  async: false,
+			  processData: false,
+		      contentType: false
+			}).done(function(data) {			
+				fileExist = data['data']['exist'];
+			});
+		return fileExist;
 	}
 
 	editPreview.updatePDFPosition = function() {
@@ -362,6 +394,9 @@ var editPreview = editPreview||{};
 				pjq(".free-edit-zone").addClass("open");
 			});
 			el.addEventListener('drop', function (event) {
+				if (PREVIEWLOG) {
+					console.log("*** DROP LAYER ***");
+				}
 				event.preventDefault();
 				return false;
 			});
@@ -388,6 +423,9 @@ var editPreview = editPreview||{};
 				pjq(".free-edit-zone").removeClass("open");
 			});
 			el.addEventListener('drop', function (event) {
+				if (PREVIEWLOG) {
+					console.log("*** DROP COMPONENT 1 ***");
+				}
 				event.preventDefault();
 			})
 		}
@@ -408,11 +446,15 @@ var editPreview = editPreview||{};
 				pjq(".free-edit-zone").removeClass("open");
 			});
 			el.addEventListener('drop', function (event) {
+				if (PREVIEWLOG) {
+					console.log("*** DROP shared-content-item ***");
+				}
 				event.preventDefault();
 			});
 		}
 		var drop = document.querySelectorAll('.editable-component'), el = null;
 		var countDrop = 0;
+		var dragovercomp = false;
 		for (var i = 0; i < drop.length; i++) {
 			el = drop[i];
 			if (!el.eventsAdded) {
@@ -424,23 +466,27 @@ var editPreview = editPreview||{};
 						return;
 					}
 					event.preventDefault();
-					editPreview.layerOver(this, null, true);
+					editPreview.layerOver(this, null, true);					
+					dragovercomp = true;
 					return false;
 				});
 				el.addEventListener('dragleave', function (event) {
 					event.preventDefault();
 					editPreview.layerOver(null, null, true);
+					dragovercomp = false;
 					return false;
 				});
 				el.addEventListener('mouseover', function (event) {
-					if (!event.ctrlKey) {
+					if (!event.ctrlKey && !dragovercomp) {
 						editPreview.layerOver(this, null, false);
 					}
 				});
 				el.addEventListener('drop', function (event) {
-
+					
+					dragovercomp = false;
+					
 					if (PREVIEWLOG) {
-						console.log("*** DROP COMPONENT ***");
+						console.log("*** DROP COMPONENT 2 ***");
 					}
 
 					event.preventDefault();
@@ -462,13 +508,15 @@ var editPreview = editPreview||{};
 
 					countDrop++;
 					if (PREVIEWLOG) {
-						console.log("compId    = ",compId);
-						console.log("compType  = ",compType);
-						console.log("area      = ",area);
-						console.log("sharedId  = ",sharedId);
-						console.log("countDrop = ",countDrop);
+						console.log("compId                          = ",compId);
+						console.log("compType                        = ",compType);
+						console.log("area                            = ",area);
+						console.log("sharedId                        = ",sharedId);
+						console.log("countDrop                       = ",countDrop);
+						console.log("event.dataTransfer.files.length = "+event.dataTransfer.files.length)
 					}
-					if (countDrop>1) {
+
+					if (countDrop>1 && event.dataTransfer.files.length==0) {
 						countDrop=0;
 						return false;
 					}
@@ -510,7 +558,7 @@ var editPreview = editPreview||{};
 							ajaxURL = ajaxURL +'&pageContainerID='+ editPreview.searchPageId(subComp);
 						}
 						editPreview.ajaxPreviewRequest(ajaxURL, null, null);
-					} else if (event.dataTransfer.files.length > 0) {
+					} else if (event.dataTransfer.files.length > 0) {						
 						var previewId = subComp.attr("id").substring(3);
 						var ajaxURL = editPreview.addParam(currentURL,"webaction=data.upload&content=true&previous=" + previewId);
 						if (editPreview.searchPageId(subComp) != null) {
@@ -522,6 +570,7 @@ var editPreview = editPreview||{};
 							fieldName = "files";
 						}
 						var i = 0;
+						var sameName = false;
 						jQuery.each( event.dataTransfer.files, function(index, file) {
 							if (i==0) {
 								fd.append(fieldName,file);
@@ -529,8 +578,35 @@ var editPreview = editPreview||{};
 								fd.append(fieldName+"_"+i,file);
 							}
 							i++;
+						});						
+						pjq(event.dataTransfer.files).each(function() {							
+							var fileName = this.name;
+							sameName = editPreview.isFileExist(fileName);
+						});						
+						
+						if (sameName) {
+							editPreview.openModalQuestion("Upload file", "File allready exist !", "overwrite", "rename", function () {
+								ajaxURL = editPreview.addParam(ajaxURL, "rename=false");								
+								editPreview.ajaxPreviewRequest(ajaxURL, null, fd);
+								pjq("#preview-modal-question").modal("hide");
+							}, function () {
+								ajaxURL = editPreview.addParam(ajaxURL, "rename=true");
+								editPreview.ajaxPreviewRequest(ajaxURL, null, fd);
+								pjq("#preview-modal-question").modal("hide");
+							});
+						} else {
+							//editPreview.uploadFile(dataTransfer, ajaxURL, true);
+							editPreview.ajaxPreviewRequest(ajaxURL, null, fd);
+						}	
+						/*jQuery.each( event.dataTransfer.files, function(index, file) {
+							if (i==0) {
+								fd.append(fieldName,file);
+							} else {
+								fd.append(fieldName+"_"+i,file);
+							}
+							i++;
 						});
-						editPreview.ajaxPreviewRequest(ajaxURL, null, fd);
+						editPreview.ajaxPreviewRequest(ajaxURL, null, fd);*/
 					}
 					return false;
 				})
@@ -555,6 +631,7 @@ var editPreview = editPreview||{};
 					return false;
 				});
 				el.addEventListener('drop', function (event) {
+					
 					if (PREVIEWLOG) {
 						console.log("*** DROP AREA ***");
 					}
@@ -619,7 +696,33 @@ var editPreview = editPreview||{};
 						if (fieldName == null) {
 							filedName = "files";
 						}
-						var i = 0;
+						var sameName = false;
+						jQuery.each( event.dataTransfer.files, function(index, file) {
+							if (i==0) {
+								fd.append(fieldName,file);
+							} else {
+								fd.append(fieldName+"_"+i,file);
+							}
+							i++;
+						});						
+						pjq(event.dataTransfer.files).each(function() {							
+							var fileName = this.name;
+							sameName = editPreview.isFileExist(fileName);
+						});						
+						if (sameName) {
+							editPreview.openModalQuestion("Upload file", "File allready exist !", "overwrite", "rename", function () {
+								ajaxURL = editPreview.addParam(ajaxURL, "rename=false");								
+								editPreview.ajaxPreviewRequest(ajaxURL, null, fd);
+								pjq("#preview-modal-question").modal("hide");
+							}, function () {
+								ajaxURL = editPreview.addParam(ajaxURL, "rename=true");
+								editPreview.ajaxPreviewRequest(ajaxURL, null, fd);
+								pjq("#preview-modal-question").modal("hide");
+							});
+						} else {
+							editPreview.ajaxPreviewRequest(ajaxURL, null, fd);
+						}	
+						/*var i = 0;
 						jQuery.each( event.dataTransfer.files, function(index, file) {
 							if (i==0) {
 								fd.append(fieldName,file);
@@ -628,7 +731,7 @@ var editPreview = editPreview||{};
 							}
 							i++;
 						});
-						editPreview.ajaxPreviewRequest(ajaxURL, null, fd);
+						editPreview.ajaxPreviewRequest(ajaxURL, null, fd);*/
 					}
 					return false;
 				});
@@ -674,6 +777,9 @@ var editPreview = editPreview||{};
 							pjq(this).after('<div class="_ep_new-component-zone"></div>');
 						});
 						fakefirst.addEventListener('drop', function (event) {
+							if (PREVIEWLOG) {
+								console.log("*** DROP fakefirst ***");
+							}
 							event.preventDefault();
 							pjq("._ep_new-component-zone").remove();
 							var item = pjq(this);
@@ -691,6 +797,9 @@ var editPreview = editPreview||{};
 					pjq("#_ep_new-component-fakefirst").parent().remove();
 				});
 				el.addEventListener('drop', function (event) {
+					if (PREVIEWLOG) {
+						console.log("*** DROP _ep_new-component-fakefirst ***");
+					}
 					event.preventDefault();
 					pjq("._ep_new-component-zone").remove();
 					var item = pjq(this);
@@ -741,6 +850,9 @@ var editPreview = editPreview||{};
 					return false;
 				});
 				el.addEventListener('drop', function(e) {
+					if (PREVIEWLOG) {
+						console.log("*** DROP upload-zone ***");
+					}
 					e.preventDefault();
 					pjq(this).removeClass("dragover");
 					var url  = pjq(this).data("url");
@@ -749,11 +861,7 @@ var editPreview = editPreview||{};
 					var sameName = false;
 					pjq(dataTransfer.files).each(function() {
 						var fileName = this.name;
-						pjq('#shared-content-result .caption').each(function() {
-							if (pjq(this).text() == fileName) {
-								sameName = true;
-							};
-						});
+						sameName = editPreview.isFileExist(fileName);
 					});
 					if (sameName) {
 						editPreview.openModalQuestion("Upload file", "File allready exist !", "overwrite", "rename", function () {

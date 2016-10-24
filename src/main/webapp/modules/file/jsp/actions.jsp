@@ -85,11 +85,15 @@
 </c:forEach>
 </select>
 </c:if>
-
-
 </form>
 </c:if>
 </c:if>
 
+<%--<c:if test="${not empty importFolder}">
+	<c:url var="currentPageFolder" value="${info.currentURL}" context="/">
+		<c:param name="path" value="/${importFolder}" />
+	</c:url>
+	<a href="${currentPageFolder}">page folder</a>
+</c:if> --%>
 <div class="clear">&nbsp;</div>
 

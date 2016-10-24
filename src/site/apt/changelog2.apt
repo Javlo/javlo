@@ -798,3 +798,5 @@ hange log
 
  * 1/ check file extension on import / add creation date on default user list / update bootrapmin.js for preview edit / forced https
  
+ * 2/ independent bootstrap js for preview edition + image edition (crop+flip)
+ 

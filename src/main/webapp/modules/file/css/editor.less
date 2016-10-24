@@ -1,0 +1,84 @@
+.jeditor {
+	margin-top: 30px;
+   -moz-user-select: -moz-none;
+   -khtml-user-select: none;
+   -webkit-user-select: none;
+   -ms-user-select: none;   
+   user-select: none;   
+   text-align: center;    
+
+	.input-group {
+		text-align: center;
+	}
+	
+	.image-wrapper {
+		display: inline-block;
+		position: relative;	
+	} 
+	
+	img {
+		max-height: 600px;
+	}
+	
+	img.flipped {
+	        -moz-transform: scaleX(-1);
+	        -o-transform: scaleX(-1);
+	        -webkit-transform: scaleX(-1);
+	        transform: scaleX(-1);
+	        filter: FlipH;
+	        -ms-filter: "FlipH";
+	}
+	
+	.crop-shadow {
+		position: absolute; 
+		background-color: rgba(0, 0, 0, 0.5);
+	}
+	
+	.crop-shadow-1 {
+		top: 0; 
+		left: 0;
+		height: 100%;
+	}
+	
+	.crop-shadow-2 {
+		top: 0;
+	}
+	
+	.crop-shadow-3 {	
+		bottom: 0;
+	}
+	
+	.crop-shadow-4 {
+		top: 0; 
+		right: 0;
+		height: 100%;
+	}
+	
+	.crop-zone {
+		box-sizing: border-box;		
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		
+	}
+	
+	.corner-wrapper {			
+		height: 100%;
+	}
+	
+	form {
+		margin-top: 15px;
+	}
+	
+	.corner-wrapper .corner {
+		box-sizing: border-box;
+		position: absolute;
+		border: 1px #00aa00 solid;
+		background-color: #007700;
+		width: 10px;
+		height: 10px;
+		z-index: 10;
+	}
+}

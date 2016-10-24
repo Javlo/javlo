@@ -226,6 +226,10 @@ public class GlobalImage extends Image implements IImageFilter {
 			return null;
 		}
 	}
+	
+	protected boolean isEditImage(ContentContext ctx) {
+		return StringHelper.isTrue(getConfig(ctx).getProperty("image.edit", null), true);
+	}
 
 	@Override
 	public void prepareView(ContentContext ctx) throws Exception {
@@ -442,9 +446,15 @@ public class GlobalImage extends Image implements IImageFilter {
 				fileName = fileName.replaceFirst(ctx.getGlobalContext().getStaticConfig().getShareDataFolderKey() + '/', "");
 
 			}
-			finalCode.append("<div class=\"col-sm-9\">");
+			finalCode.append("<div class=\"col-sm-7\">");
 			finalCode.append(XHTMLHelper.getInputOneSelect(getSelectXHTMLInputName(), fileListBlanck, fileName, "form-control", getJSOnChange(ctx), true));
-			finalCode.append("</div></div>");
+			finalCode.append("</div>");
+			if (isEditImage(ctx)) {
+				staticLinkURL = URLHelper.addParam(staticLinkURL, "editFile", fileName);
+				staticLinkURL = URLHelper.addParam(staticLinkURL, "backDirect", "true");
+				finalCode.append("<div class=\"col-sm-2\"><a name=\"upload\" type=\"submit\" class=\"btn btn-default btn-xs\" href=\""+staticLinkURL+"\">" + i18nAccess.getText("global.edit", "edit") + "</a></div>");
+			}
+			finalCode.append("</div>");
 		}
 
 		if (canUpload(ctx)) {

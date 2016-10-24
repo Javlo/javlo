@@ -1175,6 +1175,7 @@ public class ResourceHelper {
 			file.createNewFile();
 		} else {
 			if (!overwrite && !rename) {
+				logger.warning("file allready exisit : "+file);
 				throw new FileExistsException("File already exists.");
 			}
 			if (rename) {
@@ -1189,6 +1190,7 @@ public class ResourceHelper {
 		} catch (IOException e) {
 			ResourceHelper.closeResource(in);
 			file.delete();
+			logger.warning(e.getMessage());
 			throw e;
 		} finally {
 			ResourceHelper.closeResource(in);

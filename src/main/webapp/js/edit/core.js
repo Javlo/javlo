@@ -5,12 +5,11 @@ initFocusPoint = function() {
 	/** * focus point ** */
 	jQuery(".focus-point").each(
 			function() {
-				var point = jQuery(this);
-				
-				point.parent().find("a.image").click(function() {
-					var img = jQuery(this).find("img");
-					var posx = Math.round(mouseX-img.offset().left);
-					var posy = Math.round(mouseY-img.offset().top);
+				var point = jQuery(this);				
+				point.parent().find("img").click(function() {				
+					var img = jQuery(this);					
+					var posx = Math.round(mouseX-img.offset().left-point.outerWidth()/2);
+					var posy = Math.round(mouseY-img.offset().top-point.outerHeight()/2);
 					point.css("position", "absolute");
 					point.css("display", "block");
 					point.css("left", posx);
@@ -18,7 +17,6 @@ initFocusPoint = function() {
 					sendFocus(point);
 					return false;
 				});
-				
 				point.css("display", "none");		
 				var image = point.parent().find("img");
 				image.mouseenter(function() {					
@@ -173,6 +171,15 @@ jQuery(document).ready(function() {
 	jQuery( window ).mousemove(function( event ) {
 		mouseX = event.pageX;
 		mouseY = event.pageY;
+		
+		/*focus = jQuery("body .test-mouse");
+		if (focus.length == 0) {
+			jQuery('body').append('<div class="test-mouse" style="border: 1px red solid; position: fixed;">C</div>');
+			focus = jQuery("body .test-mouse");
+		}
+		focus.css("top",mouseY);
+		focus.css("left",mouseX);*/
+		
 	});	
 	
 	updateColorInput();

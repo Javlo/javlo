@@ -13,5 +13,9 @@ ctx.setFormat("html");
 ctx.setViewPrefix(true);
 ctx.setAbsoluteURL(true);
 String url = URLHelper.createURL(ctx, "404");
-String content404Page = NetHelper.readPageGet(new URL(url), false);
+String content404Page = "<p>404 page not found.</p>";
+try {
+	content404Page = NetHelper.readPageGet(new URL(url), false);
+} catch (Exception e) {	
+}
 %><%=content404Page%>

@@ -81,8 +81,7 @@ import org.owasp.encoder.Encode;
  * 
  * @author pvandermaesen
  */
-public class AbstractFileComponent extends AbstractVisualComponent
-		implements IStaticContainer, ILink, IUploadResource, IAction {
+public class AbstractFileComponent extends AbstractVisualComponent implements IStaticContainer, ILink, IUploadResource, IAction {
 
 	static final String HEADER_V1_0 = "file storage V.1.1";
 
@@ -163,8 +162,7 @@ public class AbstractFileComponent extends AbstractVisualComponent
 	public String getURL(ContentContext ctx) {
 		StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
 		String fileLink = URLHelper.mergePath(getDirSelected(), getFileName());
-		return URLHelper.createResourceURL(ctx, getPage(), staticConfig.getImageFolder() + '/' + fileLink).replace('\\',
-				'/');
+		return URLHelper.createResourceURL(ctx, getPage(), staticConfig.getImageFolder() + '/' + fileLink).replace('\\', '/');
 	}
 
 	@Override
@@ -196,8 +194,7 @@ public class AbstractFileComponent extends AbstractVisualComponent
 		}
 		if (getLabel() != null && getLabel().length() > 0) {
 			ctx.getRequest().setAttribute("label", getLabel());
-			ctx.getRequest().setAttribute("cleanLabel",
-					StringHelper.toXMLAttribute(StringHelper.removeTag(getLabel())));
+			ctx.getRequest().setAttribute("cleanLabel", StringHelper.toXMLAttribute(StringHelper.removeTag(getLabel())));
 			ctx.getRequest().setAttribute("htmlLabel", XHTMLHelper.textToXHTML(XHTMLHelper.autoLink(getLabel())));
 		} else if (staticInfo != null) {
 			ctx.getRequest().setAttribute("label", staticInfo.getTitle(ctx));
@@ -296,11 +293,10 @@ public class AbstractFileComponent extends AbstractVisualComponent
 		}
 		String currentImportFolder = getImportFolderPath(ctx);
 
-		LocalLogger.log(
-				"***** AbstractFileComponent.getDirList : ctx page            = " + ctx.getCurrentPage().getName()); // TODO:
-																														// remove
-																														// debug
-																														// trace
+		LocalLogger.log("***** AbstractFileComponent.getDirList : ctx page            = " + ctx.getCurrentPage().getName()); // TODO:
+																																// remove
+																																// debug
+																																// trace
 		LocalLogger.log("***** AbstractFileComponent.getDirList : getPage()           = " + getPage().getName()); // TODO:
 																													// remove
 																													// debug
@@ -368,29 +364,22 @@ public class AbstractFileComponent extends AbstractVisualComponent
 				i18nAccess = I18nAccess.getInstance(ctx.getRequest());
 				String button = "";
 				if (canUpload(ctx)) {
-					button = "<a href=\"" + url + "\" class=\"btn btn-default btn-xs pull-right\">"
-							+ i18nAccess.getText("global.change") + "</a>";
+					button = "<a href=\"" + url + "\" class=\"btn btn-default btn-xs pull-right\">" + i18nAccess.getText("global.change") + "</a>";
 				}
-				out.println("<div class=\"panel panel-default\"><div class=\"panel-heading\">Meta-data" + button
-						+ "</h3></div><div class=\"panel-body\">");
-				out.println("<div class=\"row form-group\"><div class=\"col-sm-3\">" + i18nAccess.getText("field.title")
-						+ "</div>");
+				out.println("<div class=\"panel panel-default\"><div class=\"panel-heading\">Meta-data" + button + "</h3></div><div class=\"panel-body\">");
+				out.println("<div class=\"row form-group\"><div class=\"col-sm-3\">" + i18nAccess.getText("field.title") + "</div>");
 				out.println("<div class=\"col-sm-9\">" + staticInfo.getTitle(ctx) + "</div>");
 				out.println("</div>");
-				out.println("<div class=\"row form-group\"><div class=\"col-sm-3\">"
-						+ i18nAccess.getText("field.description") + "</div>");
+				out.println("<div class=\"row form-group\"><div class=\"col-sm-3\">" + i18nAccess.getText("field.description") + "</div>");
 				out.println("<div class=\"col-sm-9\">" + staticInfo.getDescription(ctx) + "</div>");
 				out.println("</div>");
-				out.println("<div class=\"row form-group\"><div class=\"col-sm-3\">"
-						+ i18nAccess.getText("field.location") + "</div>");
+				out.println("<div class=\"row form-group\"><div class=\"col-sm-3\">" + i18nAccess.getText("field.location") + "</div>");
 				out.println("<div class=\"col-sm-9\">" + staticInfo.getLocation(ctx) + "</div>");
 				out.println("</div>");
-				out.println("<div class=\"row form-group\"><div class=\"col-sm-3\">"
-						+ i18nAccess.getText("field.copyright") + "</div>");
+				out.println("<div class=\"row form-group\"><div class=\"col-sm-3\">" + i18nAccess.getText("field.copyright") + "</div>");
 				out.println("<div class=\"col-sm-9\">" + staticInfo.getCopyright(ctx) + "</div>");
 				out.println("</div>");
-				out.println("<div class=\"row form-group\"><div class=\"col-sm-3\">" + i18nAccess.getText("field.date")
-						+ "</div>");
+				out.println("<div class=\"row form-group\"><div class=\"col-sm-3\">" + i18nAccess.getText("field.date") + "</div>");
 				out.println("<div class=\"col-sm-9\">" + StringHelper.renderDate(staticInfo.getDate(ctx)) + "</div>");
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
@@ -440,8 +429,7 @@ public class AbstractFileComponent extends AbstractVisualComponent
 			if (StringHelper.isTrue(reverseLink)) {
 				reverseLink = ReverseLinkService.ALL;
 			}
-			finalCode.append("<label for=\"" + getReverseLinkInputName() + "\">" + getReverseLinkeLabelTitle(ctx)
-					+ " : </label>");
+			finalCode.append("<label for=\"" + getReverseLinkInputName() + "\">" + getReverseLinkeLabelTitle(ctx) + " : </label>");
 			finalCode.append(XHTMLHelper.getReverlinkSelectType(ctx, getReverseLinkInputName(), reverseLink));
 			finalCode.append("</div>");
 		}
@@ -455,17 +443,14 @@ public class AbstractFileComponent extends AbstractVisualComponent
 			finalCode.append("<div class=\"form-group\"><label for=\"" + getDirInputName() + "\">");
 			finalCode.append(getDirLabelTitle(ctx));
 			finalCode.append(" : </label>");
-			finalCode.append(XHTMLHelper.getInputOneSelect(getDirInputName(),
-					ArrayHelper.addFirstElem(getDirList(ctx, getFileDirectory(ctx)), ""), getDirSelected(),
-					"form-control", getJSOnChange(ctx), true));
+			finalCode.append(XHTMLHelper.getInputOneSelect(getDirInputName(), ArrayHelper.addFirstElem(getDirList(ctx, getFileDirectory(ctx)), ""), getDirSelected(), "form-control", getJSOnChange(ctx), true));
 			finalCode.append("</div>");
 		}
 
 		if (needEncoding()) {
 			finalCode.append("<div class=\"form-group\">");
 			GlobalContext globalContext = ctx.getGlobalContext();
-			finalCode.append("<label for=\"" + getEncodingXHTMLInputName() + "\">"
-					+ i18nAccess.getText("content.file.encoding") + " : </label>");
+			finalCode.append("<label for=\"" + getEncodingXHTMLInputName() + "\">" + i18nAccess.getText("content.file.encoding") + " : </label>");
 			String[] encodings = new String[globalContext.getEncodings().size() + 1];
 			encodings[0] = "default";
 			int i = 1;
@@ -473,8 +458,7 @@ public class AbstractFileComponent extends AbstractVisualComponent
 				encodings[i] = encoding;
 				i++;
 			}
-			finalCode.append(XHTMLHelper.getInputOneSelect(getEncodingXHTMLInputName(), encodings, getEncoding(),
-					"form-control", null, false));
+			finalCode.append(XHTMLHelper.getInputOneSelect(getEncodingXHTMLInputName(), encodings, getEncoding(), "form-control", null, false));
 			finalCode.append("</div>");
 		}
 
@@ -485,8 +469,7 @@ public class AbstractFileComponent extends AbstractVisualComponent
 			finalCode.append("<div class=\"row\"><div class=\"col-md-6\">");
 			finalCode.append("<div class=\"form-group\"><label for=\"new_dir_" + getId() + "\">");
 			finalCode.append(getNewDirLabelTitle(ctx));
-			finalCode.append(" : </label><input class=\"form-control\" id=\"new_dir_" + getId() + "\" name=\""
-					+ getNewDirInputName() + "\" type=\"text\"/></div>");
+			finalCode.append(" : </label><input class=\"form-control\" id=\"new_dir_" + getId() + "\" name=\"" + getNewDirInputName() + "\" type=\"text\"/></div>");
 			finalCode.append("</div>");
 		}
 		if (canUpload(ctx) || canUploadInImport) {
@@ -496,8 +479,7 @@ public class AbstractFileComponent extends AbstractVisualComponent
 			finalCode.append("<div class=\"col-md-6\">");
 			finalCode.append("<div class=\"form-group\">");
 			finalCode.append("<label for=\"" + getFileXHTMLInputName() + "\">" + getImageUploadTitle(ctx) + "</label>");
-			finalCode.append("<input class=\"form-control\" name=\"" + getFileXHTMLInputName() + "\" id=\""
-					+ getFileXHTMLInputName() + "\" type=\"file\"/></div>");
+			finalCode.append("<input class=\"form-control\" name=\"" + getFileXHTMLInputName() + "\" id=\"" + getFileXHTMLInputName() + "\" type=\"file\"/></div>");
 			finalCode.append("</div></div>");
 		}
 
@@ -512,8 +494,7 @@ public class AbstractFileComponent extends AbstractVisualComponent
 			fileListBlanck[0] = "";
 			System.arraycopy(fileList, 0, fileListBlanck, 1, fileList.length);
 
-			finalCode.append(XHTMLHelper.getInputOneSelect(getSelectXHTMLInputName(), fileListBlanck, getFileName(),
-					"form-control", getJSOnChange(ctx), true));
+			finalCode.append(XHTMLHelper.getInputOneSelect(getSelectXHTMLInputName(), fileListBlanck, getFileName(), "form-control", getJSOnChange(ctx), true));
 
 			if (ctx.getRenderMode() == ContentContext.EDIT_MODE && !ctx.isEditPreview() && canUpload(ctx)) {
 				if (isLinkToStatic()) {
@@ -521,8 +502,7 @@ public class AbstractFileComponent extends AbstractVisualComponent
 					filesParams.put("path", URLHelper.mergePath("/", getRelativeFileDirectory(ctx), getDirSelected()));
 					String staticURL = URLHelper.createModuleURL(ctx, ctx.getPath(), "file", filesParams);
 
-					finalCode.append("<a class=\"" + IContentVisualComponent.EDIT_ACTION_CSS_CLASS + "\" href=\""
-							+ staticURL + "\" >");
+					finalCode.append("<a class=\"" + IContentVisualComponent.EDIT_ACTION_CSS_CLASS + "\" href=\"" + staticURL + "\" >");
 					finalCode.append(i18nAccess.getText("content.goto-static"));
 					finalCode.append("</a>");
 				}
@@ -536,8 +516,7 @@ public class AbstractFileComponent extends AbstractVisualComponent
 			finalCode.append("<label for=\"" + getEmbedCode() + "\">");
 			finalCode.append(descriptionTitle);
 			finalCode.append("</label>");
-			finalCode.append("<textarea class=\"form-control tinymce-light wysiwyg\" id=\"" + getDescriptionName()
-					+ "\" name=\"" + getDescriptionName() + "\">");
+			finalCode.append("<textarea class=\"form-control tinymce-light wysiwyg\" id=\"" + getDescriptionName() + "\" name=\"" + getDescriptionName() + "\">");
 			finalCode.append(getDescription());
 			finalCode.append("</textarea></div>");
 			Map<String, String> filesParams = new HashMap<String, String>();
@@ -548,9 +527,7 @@ public class AbstractFileComponent extends AbstractVisualComponent
 			filesParams.put("select", "_TYPE_");
 			filesParams.put(ContentContext.PREVIEW_EDIT_PARAM, "true");
 			String chooseImageURL = URLHelper.createModuleURL(ctx, ctx.getPath(), "file", filesParams);
-			finalCode.append(
-					"<script type=\"text/javascript\">jQuery(document).ready(loadWysiwyg('#" + getDescriptionName()
-							+ "','" + getEditorComplexity(ctx) + "','" + chooseImageURL + "'));</script>");
+			finalCode.append("<script type=\"text/javascript\">jQuery(document).ready(loadWysiwyg('#" + getDescriptionName() + "','" + getEditorComplexity(ctx) + "','" + chooseImageURL + "'));</script>");
 		}
 
 		finalCode.append(getMetaCode(ctx));
@@ -620,8 +597,7 @@ public class AbstractFileComponent extends AbstractVisualComponent
 	}
 
 	protected String getFileURL(ContentContext ctx, String fileLink) {
-		return URLHelper.mergePath("/", getRelativeFileDirectory(ctx),
-				ElementaryURLHelper.mergePath(getDirSelected(), fileLink));
+		return URLHelper.mergePath("/", getRelativeFileDirectory(ctx), ElementaryURLHelper.mergePath(getDirSelected(), fileLink));
 	}
 
 	protected String getFileXHTMLInputName() {
@@ -669,8 +645,7 @@ public class AbstractFileComponent extends AbstractVisualComponent
 	public String getJSOnChange(ContentContext ctx) {
 		String js = "";
 		if (ctx.isEditPreview()) {
-			js = "jQuery(this.form).append('<input type=&quot;hidden&quot; name=&quot;"
-					+ AccessServlet.PERSISTENCE_PARAM + "&quot; value=&quot;false&quot; />');";
+			js = "jQuery(this.form).append('<input type=&quot;hidden&quot; name=&quot;" + AccessServlet.PERSISTENCE_PARAM + "&quot; value=&quot;false&quot; />');";
 		}
 		return js + "jQuery(this.form).trigger('submit')";
 	}
@@ -719,11 +694,9 @@ public class AbstractFileComponent extends AbstractVisualComponent
 	public String getResourceURL(ContentContext ctx, String fileLink) {
 		StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
 		if (isFromShared(ctx)) {
-			return URLHelper.mergePath(staticConfig.getShareDataFolderKey(), getMainFolder(ctx), getDirSelected(),
-					fileLink.replaceFirst(staticConfig.getShareDataFolderKey(), ""));
+			return URLHelper.mergePath(staticConfig.getShareDataFolderKey(), getMainFolder(ctx), getDirSelected(), fileLink.replaceFirst(staticConfig.getShareDataFolderKey(), ""));
 		} else {
-			return URLHelper.mergePath(staticConfig.getStaticFolder(), getMainFolder(ctx),
-					URLHelper.mergePath(getDirSelected(), fileLink));
+			return URLHelper.mergePath(staticConfig.getStaticFolder(), getMainFolder(ctx), URLHelper.mergePath(getDirSelected(), fileLink));
 		}
 	}
 
@@ -778,8 +751,7 @@ public class AbstractFileComponent extends AbstractVisualComponent
 		params.put(getFileXHTMLInputName(), "file.png"); // fake file name
 		params.put(getDirInputName(), getDirSelected()); // fake file name
 		String uploadURL = URLHelper.createURL(ctx, params);
-		out.println("<div class=\"image-selected\" data-fieldname=\"" + getFileXHTMLInputName() + "\" data-url=\""
-				+ uploadURL + "\">");
+		out.println("<div class=\"image-selected\" data-fieldname=\"" + getFileXHTMLInputName() + "\" data-url=\"" + uploadURL + "\">");
 
 		out.println("<div class=\"focus-zone\">");
 
@@ -789,15 +761,14 @@ public class AbstractFileComponent extends AbstractVisualComponent
 		if (getFileName().trim().length() > 0) {
 			url = URLHelper.createTransformURL(ctx, getPage(), getResourceURL(ctx, getFileName()), "list");
 			url = URLHelper.addParam(url, "hash", getStaticInfo(ctx).getVersionHash(ctx));
-			out.println("<img src=\"" + url + "\" />&nbsp;");
-			if (!isFromShared(ctx)) {
+			if (isFromShared(ctx)) {
+				out.println("<img src=\"" + url + "\" />&nbsp;");
+			} else if (!isFromShared(ctx)) {
+				out.println("<div class=\"focus-image-wrapper\"><img src=\"" + url + "\" />");
 				out.println("<div class=\"focus-point\">x</div>");
-				out.println("<input class=\"posx\" type=\"hidden\" name=\"posx-" + file.getId() + "\" value=\""
-						+ file.getFocusZoneX() + "\" />");
-				out.println("<input class=\"posy\" type=\"hidden\" name=\"posy-" + file.getId() + "\" value=\""
-						+ file.getFocusZoneY() + "\" />");
-				out.println("<input class=\"path\" type=\"hidden\" name=\"image_path-" + file.getId() + "\" value=\""
-						+ URLHelper.mergePath(getRelativeFileDirectory(ctx), getDirSelected()) + "\" />");
+				out.println("<input class=\"posx\" type=\"hidden\" name=\"posx-" + file.getId() + "\" value=\"" + file.getFocusZoneX() + "\" />");
+				out.println("<input class=\"posy\" type=\"hidden\" name=\"posy-" + file.getId() + "\" value=\"" + file.getFocusZoneY() + "\" />");
+				out.println("<input class=\"path\" type=\"hidden\" name=\"image_path-" + file.getId() + "\" value=\"" + URLHelper.mergePath(getRelativeFileDirectory(ctx), getDirSelected()) + "\" /></div>&nbsp;");
 			}
 		} else {
 			imageList = true;
@@ -819,8 +790,7 @@ public class AbstractFileComponent extends AbstractVisualComponent
 					}
 					String realURL = URLHelper.createResourceURL(ctx, getPage(), '/' + getResourceURL(ctx, image));
 					realURL = URLHelper.addParam(realURL, "CRC32", "" + staticInfo.getCRC32());
-					String previewURL = URLHelper.createTransformURL(ctx, getPage(), getResourceURL(ctx, image),
-							"preview");
+					String previewURL = URLHelper.createTransformURL(ctx, getPage(), getResourceURL(ctx, image), "preview");
 					previewURL = URLHelper.addParam(previewURL, "CRC32", "" + staticInfo.getCRC32());
 					url = URLHelper.createTransformURL(ctx, getPage(), getResourceURL(ctx, image), "list");
 					url = URLHelper.addParam(url, "hash", staticInfo.getVersionHash(ctx));
@@ -829,16 +799,13 @@ public class AbstractFileComponent extends AbstractVisualComponent
 					out.print("<div " + selected + ">");
 					String onMouseOver = "";
 					if (globalContext.isImagePreview()) {
-						onMouseOver = " onMouseOver=\"previewImage('" + previewURL
-								+ "')\" onMouseOut=\"previewClear()\"";
+						onMouseOver = " onMouseOver=\"previewImage('" + previewURL + "')\" onMouseOut=\"previewClear()\"";
 					}
-					out.print("<figure><a class=\"image\" href=\"#\" onclick=\"jQuery('#" + id + "').val('" + image
-							+ "');jQuery('#" + id + "').trigger('change');" + getJSOnChange(ctx) + "\">");
+					out.print("<figure><a class=\"image\" href=\"#\" onclick=\"jQuery('#" + id + "').val('" + image + "');jQuery('#" + id + "').trigger('change');" + getJSOnChange(ctx) + "\">");
 					out.print("<img name=\"" + getImageImgName() + "\"" + onMouseOver + " src=\"");
 					out.print(url);
 					out.print("\" alt=\"\">&nbsp;</a>");
-					out.print("<figcaption><a target=\"_blank\" title=\"" + image + "\" href=\"" + realURL + "\">"
-							+ image + "</a></figcaption></figure>");
+					out.print("<figcaption><a target=\"_blank\" title=\"" + image + "\" href=\"" + realURL + "\">" + image + "</a></figcaption></figure>");
 					out.print("</div>");
 					// }
 				}
@@ -854,8 +821,7 @@ public class AbstractFileComponent extends AbstractVisualComponent
 			}
 			out.println("<div class=\"action\">");
 			I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
-			out.println("<a class=\"action-button ajax\" href=\"" + ajaxURL + "\">" + getDisplayAllLabel(i18nAccess)
-					+ "</a>");
+			out.println("<a class=\"action-button ajax\" href=\"" + ajaxURL + "\">" + getDisplayAllLabel(i18nAccess) + "</a>");
 			out.println("</div>");
 		}
 		out.println("</div>");
@@ -949,8 +915,7 @@ public class AbstractFileComponent extends AbstractVisualComponent
 	}
 
 	protected boolean isImported(ContentContext ctx) {
-		return getDirSelected()
-				.startsWith(URLHelper.removeFirstSlash(ctx.getGlobalContext().getStaticConfig().getImportFolder()));
+		return getDirSelected().startsWith(URLHelper.removeFirstSlash(ctx.getGlobalContext().getStaticConfig().getImportFolder()));
 	}
 
 	@Override
@@ -1000,8 +965,6 @@ public class AbstractFileComponent extends AbstractVisualComponent
 
 	@Override
 	public String performEdit(ContentContext ctx) throws Exception {
-		
-		
 
 		boolean fromShared = isFromShared(ctx);
 
@@ -1014,7 +977,7 @@ public class AbstractFileComponent extends AbstractVisualComponent
 		String selectedDir = requestService.getParameter(getDirInputName(), "");
 		String description = requestService.getParameter(getDescriptionName(), "");
 		String reverseLink = requestService.getParameter(getReverseLinkInputName(), ReverseLinkService.NONE);
-		
+
 		String initialFileName = fileName;
 
 		if (newDir.trim().length() > 0) {
@@ -1024,17 +987,14 @@ public class AbstractFileComponent extends AbstractVisualComponent
 				File file = new File(repositoryDir + '/' + newDir);
 				if (file.mkdirs()) {
 					MessageRepository messageRepository = MessageRepository.getInstance(ctx);
-					messageRepository.setGlobalMessage(new GenericMessage(
-							i18nAccess.getText("content.file.info.create-dir", new String[][] { { "group", newDir } }),
-							GenericMessage.INFO));
+					messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("content.file.info.create-dir", new String[][] { { "group", newDir } }), GenericMessage.INFO));
 					selectedDir = newDir;
 					setModify();
 					setNeedRefresh(true);
 				}
 			} else {
 				MessageRepository messageRepository = MessageRepository.getInstance(ctx);
-				messageRepository.setGlobalMessage(new GenericMessage(
-						i18nAccess.getText("content.file.error.bad-rep-name"), GenericMessage.ERROR));
+				messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("content.file.error.bad-rep-name"), GenericMessage.ERROR));
 			}
 		}
 
@@ -1065,9 +1025,7 @@ public class AbstractFileComponent extends AbstractVisualComponent
 				fileName = ctx.getGlobalContext().getStaticConfig().getShareDataFolderKey();
 			}
 			MessageRepository messageRepository = MessageRepository.getInstance(ctx);
-			messageRepository.setGlobalMessage(new GenericMessage(
-					i18nAccess.getText("content.file.info.select-dir", new String[][] { { "group", selectedDir } }),
-					GenericMessage.INFO));
+			messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("content.file.info.select-dir", new String[][] { { "group", selectedDir } }), GenericMessage.INFO));
 			setModify();
 			setNeedRefresh(true);
 		}
@@ -1086,14 +1044,13 @@ public class AbstractFileComponent extends AbstractVisualComponent
 		properties.setProperty(DESCRIPTION_KEY, description);
 
 		// if (canUpload(ctx)) {
-		
+
 		if (isFileNameValid(ctx, initialFileName)) {
 			try {
 				uploadFiles(ctx, requestService);
 			} catch (IOException e) {
 				MessageRepository messageRepository = MessageRepository.getInstance(ctx);
-				messageRepository.setGlobalMessage(
-						new GenericMessage(i18nAccess.getText("content.file.exist"), GenericMessage.ERROR));
+				messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("content.file.exist"), GenericMessage.ERROR));
 			}
 		} else {
 			setFileName("");
@@ -1136,8 +1093,7 @@ public class AbstractFileComponent extends AbstractVisualComponent
 		File file = new File(currentFile);
 
 		if (file.getAbsolutePath().replace('\\', '/').equals(oldName.getAbsolutePath().replace('\\', '/'))) {
-			String relativeNewFileDir = newName.getParentFile().getAbsolutePath().replace('\\', '/')
-					.replace(getFileDirectory(ctx).replace('\\', '/'), "");
+			String relativeNewFileDir = newName.getParentFile().getAbsolutePath().replace('\\', '/').replace(getFileDirectory(ctx).replace('\\', '/'), "");
 			setFileName(newName.getName());
 			setDirSelected(relativeNewFileDir);
 			setModify();
@@ -1171,8 +1127,7 @@ public class AbstractFileComponent extends AbstractVisualComponent
 			File f = new File(realName);
 			if (f.exists()) {
 				// create temp file
-				File tempFile = new File(StringHelper.getFileNameWithoutExtension(f.getAbsolutePath()) + "__TEMP" + '.'
-						+ StringHelper.getFileExtension(f.getName()));
+				File tempFile = new File(StringHelper.getFileNameWithoutExtension(f.getAbsolutePath()) + "__TEMP" + '.' + StringHelper.getFileExtension(f.getName()));
 				ResourceHelper.writeStreamToFile(in, tempFile);
 				ResourceStatus resouceStatus = ResourceStatus.getInstance(ctx.getRequest().getSession());
 				resouceStatus.addSource(new LocalResource(ctx, tempFile));
@@ -1269,7 +1224,7 @@ public class AbstractFileComponent extends AbstractVisualComponent
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
 		String fileName = requestService.getParameter(getFileXHTMLInputName(), "");
 		I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
-		
+
 		if (isFileNameValid(ctx, fileName)) {
 			try {
 				uploadFiles(ctx, requestService);
@@ -1293,12 +1248,10 @@ public class AbstractFileComponent extends AbstractVisualComponent
 		return getLabel();
 	}
 
-	public static String performLoadImages(RequestService rs, ContentContext ctx, MessageRepository messageRepository,
-			I18nAccess i18nAccess) throws Exception {
+	public static String performLoadImages(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
 		String compId = rs.getParameter("comp_id", null);
 		if (compId != null) {
-			AbstractFileComponent comp = (AbstractFileComponent) ContentService.getInstance(ctx.getRequest())
-					.getComponent(ctx, compId);
+			AbstractFileComponent comp = (AbstractFileComponent) ContentService.getInstance(ctx.getRequest()).getComponent(ctx, compId);
 			String previewCode = comp.getPreviewCode(ctx, comp.getMaxPreviewImages(), true);
 			ctx.addAjaxInsideZone(comp.getPreviewZoneId(), previewCode);
 			return null;

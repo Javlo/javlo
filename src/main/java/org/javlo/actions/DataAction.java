@@ -81,8 +81,7 @@ import org.javlo.user.User;
 import org.javlo.utils.MemoryBean;
 import org.javlo.ztatic.StaticInfo;
 
-public class
-DataAction implements IAction {
+public class DataAction implements IAction {
 
 	private static Logger logger = Logger.getLogger(DataAction.class.getName());
 
@@ -334,14 +333,14 @@ DataAction implements IAction {
 	 * @return
 	 * @throws Exception
 	 */
-	protected static File createImage(ContentContext ctx, String importFolder, FileItem imageItem, ImportConfigBean config, boolean content, String previousId, boolean rename) throws Exception {
+	protected static File createImage(ContentContext ctx, String importFolder, FileItem imageItem, ImportConfigBean config, boolean content, String previousId, boolean rename) throws Exception {		
 		GlobalContext gc = ctx.getGlobalContext();
 		String imageRelativeFolder = URLHelper.mergePath(gc.getStaticConfig().getStaticFolder(), ctx.getGlobalContext().getStaticConfig().getImportImageFolder(), importFolder);
 		File targetFolder = new File(URLHelper.mergePath(gc.getDataFolder(), imageRelativeFolder));
 		if (!targetFolder.exists()) {
 			targetFolder.mkdirs();
-		}
-		File newFile = ResourceHelper.writeFileItemToFolder(imageItem, targetFolder, false, rename);
+		}				
+		File newFile = ResourceHelper.writeFileItemToFolder(imageItem, targetFolder, true, rename);		
 		if (newFile != null && newFile.exists()) {
 			ContentService cs = ContentService.getInstance(gc);
 			String dir = imageRelativeFolder.replaceFirst(gc.getStaticConfig().getImageFolder(), "");
@@ -503,12 +502,12 @@ DataAction implements IAction {
 		try {
 			String previousId = rs.getParameter("previous", "0");
 
-			IContentVisualComponent comp = cs.getCachedComponent(ctx, previousId);
+			IContentVisualComponent comp = cs.getCachedComponent(ctx, previousId);			
 			if (comp != null && comp instanceof IUploadResource && ((IUploadResource) comp).isUploadOnDrop()) {
 				msg = ((IUploadResource) comp).performUpload(ctx);
 				ctx.setNeedRefresh(true);
 			} else {
-				boolean content = StringHelper.isTrue(rs.getParameter("content", null));
+				boolean content = StringHelper.isTrue(rs.getParameter("content", null));				
 				ctx = ctx.getContextWithArea(rs.getParameter("area", ctx.getArea()));
 				for (FileItem item : rs.getAllFileItem()) {
 					logger.info("try to import (" + ctx.getCurrentUserId() + ") : " + item.getName());
@@ -564,9 +563,7 @@ DataAction implements IAction {
 						if (!targetFolder.exists()) {
 							targetFolder.mkdirs();
 						}
-						
-						
-						File newFile = ResourceHelper.writeFileItemToFolder(item, targetFolder, false, true);
+						File newFile = ResourceHelper.writeFileItemToFolder(item, targetFolder, true, true);
 						if (newFile != null && newFile.exists()) {
 							ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 							PrintStream out = new PrintStream(outStream);
@@ -614,7 +611,7 @@ DataAction implements IAction {
 					countImages = 2;
 				}
 				if (countImages == 1) {
-					if (!config.isImagesAsGallery()) {
+					if (!config.isImagesAsGallery()) {						
 						folderSelection = createImage(ctx, importFolder, imageItem, config, content, previousId, rename);
 						if (folderSelection != null) {
 							folderSelection = folderSelection.getParentFile();
@@ -701,5 +698,31 @@ DataAction implements IAction {
 		} else {
 			return null;
 		}
+	}
+	
+	public static String performCreateFileName(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) {
+		String fileName = rs.getParameter("filename", null);
+		if (fileName == null) {
+			return "filename param not found.";
+		} else {
+			ctx.getAjaxData().put("fileName", StringHelper.createFileName(fileName));
+		}
+		return null;
+	}
+	
+	public static String performFileExist(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
+		String fileName = rs.getParameter("filename", null);
+		boolean exist = false;
+		if (ResourceHelper.isAcceptedImage(ctx, fileName)) {
+			String imageRelativeFolder = URLHelper.mergePath(ctx.getGlobalContext().getStaticFolder(), ctx.getGlobalContext().getStaticConfig().getImportImageFolder(), createImportFolder(ctx.getCurrentPage()));
+			File image = new File(URLHelper.mergePath(imageRelativeFolder, StringHelper.createFileName(fileName)));
+			exist = image.exists();
+		} else {
+			String imageRelativeFolder = URLHelper.mergePath(ctx.getGlobalContext().getStaticFolder(), ctx.getGlobalContext().getStaticConfig().getImportResourceFolder(), createImportFolder(ctx.getCurrentPage()));
+			File file = new File(URLHelper.mergePath(imageRelativeFolder, StringHelper.createFileName(fileName)));
+			exist = file.exists();			
+		}
+		ctx.getAjaxData().put("exist", exist);		
+		return null;
 	}
 }

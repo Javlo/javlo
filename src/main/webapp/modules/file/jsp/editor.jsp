@@ -2,7 +2,12 @@
 %><%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"
 %><div class="content editor">
 <c:if test="${fileFound}">
-<form action="${info.currentURL}" method="post">
+<c:url var="backURL" value="${info.currentURL}" context="/">
+<c:if test="${not empty param[BACK_PARAM_NAME]}">
+<c:param name="${BACK_PARAM_NAME}" value="${param[BACK_PARAM_NAME]}" />
+</c:if>				
+</c:url>
+<form action="${backURL}" method="post">
 	<input type="hidden" name="webaction" value="file.modify" />
 	<input type="hidden" name="webaction" value="file.changeRenderer" />
 	<input type="hidden" name="page" value="meta" />

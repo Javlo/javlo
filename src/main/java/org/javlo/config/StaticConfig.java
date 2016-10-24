@@ -1475,7 +1475,7 @@ public class StaticConfig extends Observable {
 	}
 	
 	public String getJSBootStrap() {
-		return properties.getString("preview.bootstrap.js", "/jsp/preview/js/bootstrap/bootstrap.min.js");
+		return properties.getString("preview.bootstrap.js", "/jsp/preview/js/bootstrap/bootstrap.all.js");
 	}
 
 	public String getStaticResourceCacheTime() {
