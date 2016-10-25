@@ -1427,11 +1427,12 @@ body.previewEdit {
 	display: inline;
 	width: auto;
 	max-width: 100%;	
-	max-height: 270px;
+	max-height: 170px;
 }
 
-.select-form .download a img {
-	max-height: 170px;
+.form-list .download a img[src$='.svg'] {
+	width: 180px;
+	max-height: 280px;
 }
 
 .form-list .picture a {

@@ -4,12 +4,14 @@ var cornerMoved = null;
 var deltaX = 0;
 var deltaY = 0;
 var REFERENCE_SIZE = 10000;
+var activeCrop = true;
 
 jQuery(window).load(function() {	
 	jQuery( window ).mousemove(function( event ) {
 		editorMouseX = event.pageX;
-		editorMouseY = event.pageY;		
-		if (cornerMoved != null) {
+		editorMouseY = event.pageY;	
+		console.log("activeCrop = "+activeCrop)
+		if (cornerMoved != null && activeCrop) {
 			if (cornerMoved.hasClass('crop-zone')) {
 				jQuery('.jeditor .corner').hide();
 				wrapper = cornerMoved.parent();				
@@ -54,6 +56,9 @@ jQuery(window).load(function() {
 });
 
 function moveCorner() {	
+	if (!activeCrop || cornerMoved == null) {
+		return;
+	}
 	jQuery('.jeditor .corner').hide();
 	cornerMoved.show();
 	rect = jQuery('.jeditor .crop-zone');
@@ -110,6 +115,9 @@ function absoluteHeight(h) {
 }
 
 function resetCorner() {
+	if (!activeCrop) {
+		return;
+	}
 	rect = jQuery('.jeditor .crop-zone');
 	wrapper = rect.parent();
 	dec = jQuery('.jeditor .corner.topleft').outerHeight()/2
@@ -128,7 +136,7 @@ function resetCorner() {
 	jQuery('[name=crop-height]').val(absoluteHeight(rect.outerHeight()));
 }
 
-function editor(inEditor) {	
+function editor() {	
 	jQuery('document, body, .jeditor .corner, .jeditor .crop-zone, .jeditor .image-wrapper, .jeditor .image-wrapper canvas').mouseup(function () {
 		resetCorner();
 		cornerMoved = null;
@@ -147,11 +155,34 @@ function editor(inEditor) {
 		if (image.hasClass('flipped')) {
 			jQuery('#flip').val('false');
 			image.removeClass('flipped');
+			jQuery('.btn-rotate').attr("disabled", null);
 		} else {
 			jQuery('#flip').val('true');
 			image.addClass('flipped');
+			jQuery('.btn-rotate').attr("disabled", "disabled");
 		}
 		return false;
     });	
+	jQuery('.jeditor .btn-rotate').click(function (){		 
+		image = jQuery('.jeditor img');
+		rotation = parseInt(jQuery('#rotate').val());		
+		image.removeClass('rotate-'+rotation);
+		rotation+=90;
+		if (rotation==90*4) {
+			rotation=0;
+		}
+		jQuery('#rotate').val(rotation);		
+		image.addClass('rotate-'+rotation);
+		if (rotation == 0) {
+			activeCrop = true;
+			jQuery('.corner-item').show();
+			jQuery('.btn-flip').attr("disabled", null);
+		} else {
+			activeCrop = false;
+			jQuery('.corner-item').hide();
+			jQuery('.btn-flip').attr("disabled", "disabled");
+		}
+		return false;
+    });
 	resetCorner();
 }

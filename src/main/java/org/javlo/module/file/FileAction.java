@@ -616,6 +616,12 @@ public class FileAction extends AbstractModuleAction {
 				staticInfo.setFocusZoneX(ctx, 2*StaticInfo.DEFAULT_FOCUS_X-staticInfo.getFocusZoneX(ctx));
 			}
 			transform = true;
+		} else {
+			int rotate = Integer.parseInt(rs.getParameter("rotate", null));
+			if (rotate>0) {
+				transform = true;
+				image = ImageEngine.rotate(image, rotate, null);
+			}
 		}
 		int cropTop = Integer.parseInt(rs.getParameter("crop-top", null));
 		int cropLeft = Integer.parseInt(rs.getParameter("crop-left", null));

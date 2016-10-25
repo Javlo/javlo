@@ -576,7 +576,7 @@ public class PersistenceService {
 		while (contentNode != null) {
 			String id = contentNode.getAttributeValue("id");
 			if (releaseID) {
-				id=StringHelper.getRandomId();
+				id = StringHelper.getRandomId();
 			}
 			DebugHelper.checkStructure(id == null, "no id defined in a component.");
 			String type = contentNode.getAttributeValue("type");
@@ -644,20 +644,20 @@ public class PersistenceService {
 	public MenuElement insertPage(GlobalContext globalContext, NodeXML pageXML, MenuElement parent, Map<MenuElement, String[]> vparentPreparation, String defaultLg) throws StructureException, IOException {
 		MenuElement page = MenuElement.getInstance(globalContext);
 
-		String id = pageXML.getAttributeValue("id");		
+		String id = pageXML.getAttributeValue("id");
 		while (parent.getRoot().searchChildFromId(id) != null) {
 			id = StringHelper.getRandomId();
 		}
 		DebugHelper.checkStructure(id == null, "no id defined in a page node.");
 		String name = pageXML.getAttributeValue("name");
 		String finalPageName = name;
-		int i=1;
-		while (parent.getRoot().searchChildFromName(finalPageName) != null && i<10000) {
-			finalPageName = name+"_"+i;
+		int i = 1;
+		while (parent.getRoot().searchChildFromName(finalPageName) != null && i < 10000) {
+			finalPageName = name + "_" + i;
 			i++;
 		}
-		if (i==10000) {
-			logger.severe("problem on loading page check page : "+name+"  (context:"+globalContext.getContextKey()+")");
+		if (i == 10000) {
+			logger.severe("problem on loading page check page : " + name + "  (context:" + globalContext.getContextKey() + ")");
 		}
 		name = finalPageName;
 		DebugHelper.checkStructure(name == null, "no path defined in a page node.");
@@ -991,14 +991,14 @@ public class PersistenceService {
 			out.println("Test content structure : " + ctx.getGlobalContext().getContextKey() + " (mode:" + ctx.getRenderMode() + ')');
 			out.println("--");
 			HashSet<String> componentsId = new HashSet<String>();
-			HashSet<String> pageId = new HashSet<String>();	
+			HashSet<String> pageId = new HashSet<String>();
 			HashSet<String> pageName = new HashSet<String>();
 			try {
 				for (MenuElement page : root.getAllChildrenList()) {
 					int pageContentError = checkComponentIntegrity(ctx, componentsId, out, page.getContent());
 					error = error + pageContentError;
-					if (pageContentError>0) {
-						out.println("   Error in content found : " + page.getPath() + " (id=" + page.getId() + " #error:"+pageContentError+")");
+					if (pageContentError > 0) {
+						out.println("   Error in content found : " + page.getPath() + " (id=" + page.getId() + " #error:" + pageContentError + ")");
 					}
 					if (pageId.contains(page.getId())) {
 						error++;
@@ -1404,32 +1404,38 @@ public class PersistenceService {
 			}
 		}
 		synchronized (ctx.getGlobalContext().getLockLoadContent()) {
-			logger.info("store in " + renderMode + " mode.");
-			PersistenceThread persThread = new PersistenceThread(globalContext.getLockLoadContent());
-			ContentService content = ContentService.getInstance(globalContext);
-			MenuElement menuElement = content.getNavigation(ctx);
-			String defaultLg = globalContext.getDefaultLanguages().iterator().next();
-			if (!globalContext.getLanguages().contains(defaultLg)) {
-				defaultLg = null;
-			}
+			try {
+				logger.info("store in " + renderMode + " mode.");
+				PersistenceThread persThread = new PersistenceThread(globalContext.getLockLoadContent());
+				ContentService content = ContentService.getInstance(globalContext);
+				MenuElement menuElement = content.getNavigation(ctx);
+				String defaultLg = globalContext.getDefaultLanguages().iterator().next();
+				if (!globalContext.getLanguages().contains(defaultLg)) {
+					defaultLg = null;
+				}
 
-			persThread.setMenuElement(menuElement);
-			persThread.setMode(renderMode);
-			persThread.setPersistenceService(this);
-			persThread.setDefaultLg(defaultLg);
-			persThread.setGlobalContentMap(content.getGlobalMap(ctx));
-			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-			persThread.setContextKey(globalContext.getContextKey());
-			persThread.setDataFolder(globalContext.getDataFolder());
-			StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession().getServletContext());
-			if (StaticInfo._STATIC_INFO_DIR != null) {
-				String staticInfo = URLHelper.mergePath(globalContext.getDataFolder(), StaticInfo._STATIC_INFO_DIR);
-				persThread.addFolderToSave(new File(staticInfo));
-			}
-			persThread.addFolderToSave(new File(URLHelper.mergePath(globalContext.getDataFolder(), staticConfig.getUserInfoFile())));
-			persThread.start(async);
-			if (async) {
-				countStore.decrementAndGet();
+				persThread.setMenuElement(menuElement);
+				persThread.setMode(renderMode);
+				persThread.setPersistenceService(this);
+				persThread.setDefaultLg(defaultLg);
+				persThread.setGlobalContentMap(content.getGlobalMap(ctx));
+				GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+				persThread.setContextKey(globalContext.getContextKey());
+				persThread.setDataFolder(globalContext.getDataFolder());
+				StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession().getServletContext());
+				if (StaticInfo._STATIC_INFO_DIR != null) {
+					String staticInfo = URLHelper.mergePath(globalContext.getDataFolder(), StaticInfo._STATIC_INFO_DIR);
+					persThread.addFolderToSave(new File(staticInfo));
+				}
+				persThread.addFolderToSave(new File(URLHelper.mergePath(globalContext.getDataFolder(), staticConfig.getUserInfoFile())));
+				persThread.start(async);
+			} finally {
+				if (async) {
+					countStore.decrementAndGet();
+					if (countStore.get()<0) {
+						countStore.set(0);
+					}
+				}
 			}
 		}
 	}
@@ -1464,6 +1470,7 @@ public class PersistenceService {
 		Calendar cal = GregorianCalendar.getInstance();
 		try {
 			getTrackWriter(cal).flush();
+			countStore.set(0);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

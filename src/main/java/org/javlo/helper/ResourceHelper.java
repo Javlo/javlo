@@ -633,6 +633,8 @@ public class ResourceHelper {
 			return "video/mpeg";
 		} else if (ext.equals("svg")) {
 			return "image/svg+xml";
+		} else if (ext.equals("mp3")) {
+			return "audio/mpeg";
 		} else if (ext.equals("mp4")) {
 			return "video/mp4";
 		} else if (ext.equals("avi") || ext.equals("wmv")) {
@@ -1175,7 +1177,7 @@ public class ResourceHelper {
 			file.createNewFile();
 		} else {
 			if (!overwrite && !rename) {
-				logger.warning("file allready exisit : "+file);
+				logger.warning("file allready exisit : " + file);
 				throw new FileExistsException("File already exists.");
 			}
 			if (rename) {
@@ -1817,12 +1819,12 @@ public class ResourceHelper {
 			return extension.contains(',' + StringHelper.getFileExtension(fileName).toLowerCase() + ',');
 		}
 	}
-	
+
 	public static boolean isAcceptedDocument(ContentContext ctx, String fileName) {
 		if (StringHelper.isEmpty(fileName)) {
 			return true;
 		} else {
-			return ctx.getGlobalContext().getStaticConfig().getDocumentExtension().contains(StringHelper.getFileExtension(fileName).toLowerCase());			
+			return ctx.getGlobalContext().getStaticConfig().getDocumentExtension().contains(StringHelper.getFileExtension(fileName).toLowerCase());
 		}
 	}
 

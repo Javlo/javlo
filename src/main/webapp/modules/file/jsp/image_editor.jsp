@@ -1,19 +1,33 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%><%@ taglib
 	prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%><div
 	class="content jeditor">
-	<div class="image-wrapper">
-		<img src="${imageURL}" class="img-responsive" />
-		<div class="corner-wrapper">
-			<div class="corner topleft"></div>
-			<div class="corner topright"></div>
-			<div class="corner bottomleft"></div>
-			<div class="corner bottomright"></div>
+	<div class="form-group">
+	<button class="btn btn-default btn-flip">
+		<span class="glyphicon glyphicon-resize-horizontal"
+			aria-hidden="true"></span><span class="hidden" lang="en">flip</span>
+	</button>
+	<button class="btn btn-default btn-rotate">
+		<span class="glyphicon glyphicon-repeat"
+			aria-hidden="true"></span><span class="hidden" lang="en">rotate</span>
+	</button>
+	</div>
+	<div class="image-container-wrapper">
+		<div class="image-container">
+			<div class="image-wrapper">
+				<img src="${imageURL}" class="img-responsive" />
+				<div class="corner-item corner-wrapper">
+					<div class="corner-item corner topleft"></div>
+					<div class="corner-item corner topright"></div>
+					<div class="corner-item corner bottomleft"></div>
+					<div class="corner-item corner bottomright"></div>
+				</div>
+				<div class="corner-item crop-zone"></div>
+				<div class="corner-item crop-shadow crop-shadow-1"></div>
+				<div class="corner-item crop-shadow crop-shadow-2"></div>
+				<div class="corner-item crop-shadow crop-shadow-3"></div>
+				<div class="corner-item crop-shadow crop-shadow-4"></div>
+			</div>
 		</div>
-		<div class="crop-zone"></div>
-		<div class="crop-shadow crop-shadow-1"></div>
-		<div class="crop-shadow crop-shadow-2"></div>
-		<div class="crop-shadow crop-shadow-3"></div>
-		<div class="crop-shadow crop-shadow-4"></div>
 	</div>
 	<div class="command">
 		<c:url var="backURL" value="${info.currentURL}" context="/">
@@ -32,13 +46,10 @@
 				<input type="hidden" name="crop-left" value="" /> <input				
 				type="hidden" name="crop-top" value="" /> <input type="hidden"
 				name="crop-width" value="" /> <input type="hidden"
-				name="crop-height" value="" /> <input type="hidden" id="flip"
-				name="flip" value="false" />
-			<div class="form-group">
-				<button class="btn btn-default btn-flip">
-					<span class="glyphicon glyphicon-resize-horizontal"
-						aria-hidden="true"></span><span class="hidden" lang="en">flip</span>
-				</button>
+				name="crop-height" value="" />
+				<input type="hidden" id="flip" name="flip" value="false" />
+				<input type="hidden" id="rotate" name="rotate" value="0" />
+			<div class="form-group">				
 				<input type="submit" name="cancel" class="btn btn-default" value="${i18n.edit['global.cancel']}" /> <input
 					type="submit" class="btn btn-primary" value="${i18n.edit['global.save']}" />
 			</div>

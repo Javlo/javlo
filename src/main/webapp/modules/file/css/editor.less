@@ -4,20 +4,35 @@
    -khtml-user-select: none;
    -webkit-user-select: none;
    -ms-user-select: none;   
-   user-select: none;   
+   user-select: none;
    text-align: center;    
 
 	.input-group {
 		text-align: center;
 	}
 	
-	.image-wrapper {
+	.image-container-wrapper {
+		width: 600px;
+		margin: 0 auto;
+	}
+	
+	.image-container {
+		width: 600px;
+		height: 600px;		
+		display: table-cell;
+  		vertical-align: middle;
+	}
+	
+	.image-wrapper {	    
 		display: inline-block;
-		position: relative;	
+		position: relative;		
 	} 
 	
 	img {
-		max-height: 600px;
+		max-height: 600px;		
+		max-width: 600px;
+		-webkit-transition: transform 0.5s; /* Safari */
+    	transition: transform 0.5s;
 	}
 	
 	img.flipped {
@@ -27,6 +42,24 @@
 	        transform: scaleX(-1);
 	        filter: FlipH;
 	        -ms-filter: "FlipH";
+	}
+	
+	.rotate-90 {
+		-ms-transform: rotate(90deg); /* IE 9 */
+    	-webkit-transform: rotate(90deg); /* Chrome, Safari, Opera */
+    	transform: rotate(90deg);
+	}
+	
+	.rotate-180 {
+		-ms-transform: rotate(180deg); /* IE 9 */
+    	-webkit-transform: rotate(180deg); /* Chrome, Safari, Opera */
+    	transform: rotate(180deg);
+	}
+	
+	.rotate-270 {
+		-ms-transform: rotate(270deg); /* IE 9 */
+    	-webkit-transform: rotate(270deg); /* Chrome, Safari, Opera */
+    	transform: rotate(270deg);
 	}
 	
 	.crop-shadow {
@@ -80,5 +113,10 @@
 		width: 10px;
 		height: 10px;
 		z-index: 10;
+	}
+	
+	button[disabled=disabled] {
+		cursor: no-drop;
+		opacity: 0.25;
 	}
 }
