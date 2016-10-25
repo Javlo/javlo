@@ -73,8 +73,6 @@ import org.xml.sax.SAXParseException;
 
 public class PersistenceService {
 
-	private AtomicInteger countStore = new AtomicInteger(0);
-
 	public static final class MetaPersistenceBean {
 		private int version;
 		private String date;
@@ -1396,15 +1394,8 @@ public class PersistenceService {
 
 	public void store(ContentContext ctx, int renderMode, boolean async) throws Exception {
 		setAskStore(false);
-		if (async) {
-			if (countStore.incrementAndGet() > 1) {
-				logger.info("cancel storage before waiting thread found. (" + ctx.getGlobalContext().getContextKey() + ')');
-				countStore.decrementAndGet();
-				return;
-			}
-		}
-		synchronized (ctx.getGlobalContext().getLockLoadContent()) {
-			try {
+		
+		synchronized (ctx.getGlobalContext().getLockLoadContent()) {			
 				logger.info("store in " + renderMode + " mode.");
 				PersistenceThread persThread = new PersistenceThread(globalContext.getLockLoadContent());
 				ContentService content = ContentService.getInstance(globalContext);
@@ -1428,15 +1419,7 @@ public class PersistenceService {
 					persThread.addFolderToSave(new File(staticInfo));
 				}
 				persThread.addFolderToSave(new File(URLHelper.mergePath(globalContext.getDataFolder(), staticConfig.getUserInfoFile())));
-				persThread.start(async);
-			} finally {
-				if (async) {
-					countStore.decrementAndGet();
-					if (countStore.get()<0) {
-						countStore.set(0);
-					}
-				}
-			}
+				persThread.start(async);			
 		}
 	}
 
@@ -1469,8 +1452,7 @@ public class PersistenceService {
 	public void flush() {
 		Calendar cal = GregorianCalendar.getInstance();
 		try {
-			getTrackWriter(cal).flush();
-			countStore.set(0);
+			getTrackWriter(cal).flush();			
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
