@@ -55,6 +55,7 @@ import org.javlo.i18n.I18nAccess;
 import org.javlo.module.content.Edit;
 import org.javlo.navigation.MenuElement;
 import org.javlo.navigation.ReactionMenuElementComparator;
+import org.javlo.navigation.data.PageContentMap;
 import org.javlo.service.ContentService;
 import org.javlo.service.NavigationService;
 import org.javlo.service.RequestService;
@@ -218,6 +219,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 				bean.title = page.getChildMenuElements().iterator().next().getTitle(lgCtx);
 			}
 			bean.subTitle = page.getSubTitle(lgCtx);
+			bean.subTitles = page.getSubTitles(lgCtx, 2);
 			bean.label = page.getLabel(lgCtx);
 			//bean.realContent = page.isRealContent(lgCtx);
 			bean.attTitle = XHTMLHelper.stringToAttribute(page.getTitle(lgCtx));			
@@ -268,6 +270,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 			bean.editable = page.isEditabled(realContentCtx);
 			bean.model = page.isModel();
 			bean.seoWeight = page.getSeoWeight();
+			bean.data = new PageContentMap(ctx, page);
 
 			/** check right **/
 			Set<String> roles = page.getEditorRoles();
@@ -421,6 +424,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		private boolean contentDate = false;
 		private String title = null;
 		private String subTitle = null;
+		private List<String> subTitles = null;
 		private String label = null;
 		private String attTitle = null;
 		/*private String description = null;
@@ -475,6 +479,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		private boolean editable;
 		private boolean model;
 		private int seoWeight;
+		private PageContentMap data;
 
 		private Collection<String> tags = new LinkedList<String>();
 		private final Collection<String> tagsLabel = new LinkedList<String>();
@@ -588,6 +593,10 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 
 		public String getSubTitle() {
 			return subTitle;
+		}
+		
+		public List<String> getSubTitles() {
+			return subTitles;
 		}
 
 		public Collection<String> getTags() {
@@ -938,6 +947,10 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 
 		public void setModel(boolean model) {
 			this.model = model;
+		}
+		
+		public PageContentMap getData() {
+			return data;
 		}
 
 	}

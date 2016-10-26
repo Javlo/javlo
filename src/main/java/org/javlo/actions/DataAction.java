@@ -514,7 +514,7 @@ public class DataAction implements IAction {
 					
 					if (!ResourceHelper.isDocument(ctx, item.getName())) {
 						logger.warning("try to import bad file format : "+item.getName());						
-						messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("global.message.file-format-error"), GenericMessage.ERROR));
+						messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("global.message.file-format-error")+" : "+StringHelper.getFileExtension(item.getName()), GenericMessage.ERROR));
 						return "bad file format : "+item.getName();
 					}
 
@@ -580,17 +580,16 @@ public class DataAction implements IAction {
 
 							SharedContentContext sharedContentContext = SharedContentContext.getInstance(ctx.getRequest().getSession());
 							SharedContentService sharedContentService = SharedContentService.getInstance(ctx);
+							ComponentBean bean = new ComponentBean(beanType, new String(outStream.toByteArray()), ctx.getRequestContentLanguage());
 							if (sharedContentService.getActiveProviderNames(ctx).contains(ImportedFileSharedContentProvider.NAME)) {
 								sharedContentContext.setProvider(ImportedFileSharedContentProvider.NAME);
-								sharedContentService.clearCache(ctx);
-							} else {
-								ComponentBean bean = new ComponentBean(beanType, new String(outStream.toByteArray()), ctx.getRequestContentLanguage());
-								if (!content) {
-									cs.createContentAtEnd(ctx, bean, true);
-								} else {
-									bean.setArea(ctx.getArea());
-									cs.createContent(ctx, bean, previousId, true);
-								}
+								sharedContentService.clearCache(ctx);								
+							} else if (!content) {
+								cs.createContentAtEnd(ctx, bean, true);
+							}
+							if (content) {
+								bean.setArea(ctx.getArea());
+								cs.createContent(ctx, bean, previousId, true);
 							}
 							staticInfo.setShared(ctx, false);
 							ctx.setNeedRefresh(true);

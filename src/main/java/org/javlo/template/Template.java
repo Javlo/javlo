@@ -958,6 +958,15 @@ public class Template implements Comparable<Template> {
 			return false;
 		}
 	}
+	
+	public Set<String> getComponentsExclude() {		
+		String typeRAW = properties.getString("components.exclude");
+		if (typeRAW == null) {
+			return Collections.EMPTY_SET;
+		} else {
+			return new HashSet(StringHelper.stringToCollection(typeRAW, ";"));
+		}
+	}
 
 	public Set<String> getComponentsIncludeForArea(String area) {
 		String key = XMLManipulationHelper.AREA_PREFIX + area + ".components.include";

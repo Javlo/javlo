@@ -130,7 +130,22 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 		public String getViewXHTMLCode() throws Exception {
 			return Field.this.getViewXHTMLCode(ctx);
 		}
+		
+		public String getAllXHTML() throws Exception {
+			String cssClass = "";
+			if (getCSSClass() != null && getCSSClass().trim().length() > 0) {
+				cssClass = ' ' + getCSSClass();
+			}
+			String prefix = "";
+			String suffix = "";
+			if (isWrapped()) {
+				prefix = "<div class=\"field " + getName() + cssClass + "\">";
+				suffix = "</div>";
+			}				
+			return prefix+Field.this.getFieldPrefix(ctx)+Field.this.getViewXHTMLCode(ctx)+Field.this.getFieldSuffix(ctx)+suffix;
+		}
 
+		
 		public boolean isLabelDisplayed() {
 			return Field.this.isLabelDisplayed();
 		}
@@ -412,7 +427,7 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 		Locale locale = new Locale(ctx.getRequestContentLanguage());
 		String prefix = properties.getProperty("field." + getUnicName() + ".prefix", "");
 		if (isLabelDisplayed()) {
-			return prefix + "<div class=\"label\">" + StringHelper.neverNull(getUserLabel(locale)) + "</div>";
+			return prefix + "<div class=\"label "+getUnicName()+"\">" + StringHelper.neverNull(getUserLabel(locale)) + "</div>";
 		} else {
 			return prefix;
 		}
@@ -1013,5 +1028,9 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 	@Override
 	public String toString() {
 		return getName();
+	}
+	
+	public FieldBean getBean(ContentContext ctx) {
+		return new FieldBean(ctx);
 	}
 }

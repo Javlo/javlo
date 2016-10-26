@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.javlo.component.core.MessageContainer;
 import org.javlo.context.ContentContext;
 import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
@@ -19,6 +20,7 @@ import org.javlo.data.InfoBean;
 import org.javlo.helper.AjaxHelper;
 import org.javlo.helper.ServletHelper;
 import org.javlo.helper.StringHelper;
+import org.javlo.message.MessageRepository;
 import org.javlo.module.core.ModulesContext;
 import org.javlo.service.NotificationService;
 import org.javlo.service.PersistenceService;
@@ -94,7 +96,8 @@ public class AjaxServlet extends HttpServlet {
 					if (ctx.getAjaxMap() == null) {						
 						String msgXhtml = ServletHelper.executeJSP(ctx, editCtx.getMessageTemplate());
 						ctx.addAjaxInsideZone("message-container", msgXhtml);
-						outMap.put("messageText", StringHelper.removeTag(msgXhtml));
+						outMap.put("messageText", MessageRepository.getInstance(ctx).getGlobalMessage().getMessage());
+						outMap.put("messageType", MessageRepository.getInstance(ctx).getGlobalMessage().getBootstrapType());
 						if (editCtx.getUserPrincipal() != null) {
 							AdminUserSecurity userSecurity = AdminUserSecurity.getInstance();
 							int unreadNotification = NotificationService.getInstance(globalContext).getUnreadNotificationSize(editCtx.getUserPrincipal().getName(),userSecurity.isAdmin(editCtx.getEditUser()), 99);

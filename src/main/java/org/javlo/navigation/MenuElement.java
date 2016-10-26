@@ -128,6 +128,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 		String title = null;
 		String localTitle = null;
 		String subTitle = null;
+		List<String> subTitles = null;
 		int subTitleLevel = -1;
 		String pageTitle = null;
 		String forcedPageTitle = null;
@@ -3378,6 +3379,20 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 		}
 
 		return desc.subTitle;
+	}
+	
+	public List<String> getSubTitles(ContentContext ctx, int level) throws Exception {
+		ContentContext newCtx = new ContentContext(ctx);
+		PageDescription desc = getPageDescriptionCached(ctx, newCtx.getRequestContentLanguage());
+		if (desc.subTitles != null) {
+			return desc.subTitles;
+		}
+		newCtx.setArea(null);
+		desc.subTitles = getLocalContent(newCtx).getSubTitles(newCtx, level);
+		if (desc.subTitles == null) {
+			desc.subTitles = getContent(newCtx).getSubTitles(newCtx, level);
+		}
+		return desc.subTitles;
 	}
 
 	/**

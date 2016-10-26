@@ -644,7 +644,7 @@ public class ContentService implements IPrintInfo {
 	public int getWordCount(ContentContext ctx) throws Exception {
 		String KEY = "__word_count_" + ctx.getRequestContentLanguage();
 		HttpSession session = ctx.getRequest().getSession();
-		if (session.getAttribute(KEY) == null) {			
+		if (session.getAttribute(KEY) == null) {
 			int wordCount = 0;
 			for (MenuElement child : getNavigation(ctx).getAllChildrenList()) {
 				ContentElementList content = child.getContent(ctx);
@@ -753,7 +753,27 @@ public class ContentService implements IPrintInfo {
 		}
 	}
 
+	public void removeAttributeRAWKey(ContentContext ctx, String key) {
+		if (ctx.getRenderMode() == ContentContext.VIEW_MODE) {
+			if (viewGlobalMap == null) {
+				viewGlobalMap = new Hashtable<String, String>();
+			}
+			viewGlobalMap.remove(key);
+		} else if (ctx.getRenderMode() == ContentContext.TIME_MODE) {
+			if (timeTravelerGlobalMap == null) {
+				timeTravelerGlobalMap = new Hashtable<String, String>();
+			}
+			timeTravelerGlobalMap.remove(key);
+		} else {
+			if (previewGlobalMap == null) {
+				previewGlobalMap = new Hashtable<String, String>();
+			}
+			previewGlobalMap.remove(key);
+		}
+	}
+
 	public void removeAttribute(ContentContext ctx, String key) {
+		key = cleanKey(key);
 		if (ctx.getRenderMode() == ContentContext.VIEW_MODE) {
 			if (viewGlobalMap == null) {
 				viewGlobalMap = new Hashtable<String, String>();
@@ -809,25 +829,32 @@ public class ContentService implements IPrintInfo {
 		return c;
 	}
 
-	public void setAttribute(ContentContext ctx, String key, String value) {
+	public String cleanKey(String key) {
 		if (key != null) {
 			key = key.replace("&", "_and_");
 		}
-		if (ctx.getRenderMode() == ContentContext.VIEW_MODE) {
-			if (viewGlobalMap == null) {
-				viewGlobalMap = new HashMap<String, String>();
+		return key;
+	}
+
+	public void setAttribute(ContentContext ctx, String key, String value) {
+		if (value != null) {
+			key = cleanKey(key);
+			if (ctx.getRenderMode() == ContentContext.VIEW_MODE) {
+				if (viewGlobalMap == null) {
+					viewGlobalMap = new HashMap<String, String>();
+				}
+				viewGlobalMap.put(key, value);
+			} else if (ctx.getRenderMode() == ContentContext.TIME_MODE) {
+				if (timeTravelerGlobalMap == null) {
+					timeTravelerGlobalMap = new HashMap<String, String>();
+				}
+				timeTravelerGlobalMap.put(key, value);
+			} else {
+				if (previewGlobalMap == null) {
+					previewGlobalMap = new HashMap<String, String>();
+				}
+				previewGlobalMap.put(key, value);
 			}
-			viewGlobalMap.put(key, value);
-		} else if (ctx.getRenderMode() == ContentContext.TIME_MODE) {
-			if (timeTravelerGlobalMap == null) {
-				timeTravelerGlobalMap = new HashMap<String, String>();
-			}
-			timeTravelerGlobalMap.put(key, value);
-		} else {
-			if (previewGlobalMap == null) {
-				previewGlobalMap = new HashMap<String, String>();
-			}
-			previewGlobalMap.put(key, value);
 		}
 	}
 
@@ -843,16 +870,17 @@ public class ContentService implements IPrintInfo {
 			ContentContext freeCtx = ctx.getContextWithArea(null);
 			freeCtx.setFree(true);
 			MenuElement page = getNavigation(freeCtx);
-			ContentElementList content = page.getAllContent(freeCtx);			
-			/*while (content.hasNext(freeCtx)) {
-				IContentVisualComponent comp = content.next(freeCtx);
-				if (comp.getId().equals("147551884124890725710")) {
-					System.out.println("***** ContentService.getAllContent : 1.comp = "+comp+" page:"+comp.getPage().getName()); //TODO: remove debug trace
-				}
-				outList.add(comp);				
-			}
-			MenuElement[] children = page.getAllChildrenLi();*/
-			for (MenuElement child : page.getAllChildrenList()) {				
+			ContentElementList content = page.getAllContent(freeCtx);
+			/*
+			 * while (content.hasNext(freeCtx)) { IContentVisualComponent comp =
+			 * content.next(freeCtx); if
+			 * (comp.getId().equals("147551884124890725710")) { System.out.
+			 * println("***** ContentService.getAllContent : 1.comp = "
+			 * +comp+" page:"+comp.getPage().getName()); //TODO: remove debug
+			 * trace } outList.add(comp); } MenuElement[] children =
+			 * page.getAllChildrenLi();
+			 */
+			for (MenuElement child : page.getAllChildrenList()) {
 				content = child.getAllContent(freeCtx);
 				while (content.hasNext(freeCtx)) {
 					IContentVisualComponent comp = content.next(freeCtx);

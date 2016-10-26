@@ -1603,7 +1603,7 @@ public class StaticConfig extends Observable {
 	}
 	
 	public List<String> getDocumentExtension() {
-		return StringHelper.stringToCollection(properties.getString("content.document-format", getImageFormat()+"doc,docx,svg,odf,xls,pdf,xml,zip,ppt,pptx,pub,eml,osd,odt,vcard,ppsx,sdw,mp4,mp3,avi,wpt,odm,mov,url,ept,stw,sdd,sds,odc,fax,vdx,wpa,ppv,sgf,wp5,xtd,psd,rar"), ",");
+		return StringHelper.stringToCollection(properties.getString("content.document-format", getImageFormat()+",doc,docx,svg,odf,xls,xlsx,pdf,xml,zip,ppt,pptx,pub,eml,osd,odt,vcard,ppsx,sdw,mp4,mp3,avi,wpt,odm,mov,url,ept,stw,sdd,sds,odc,fax,vdx,wpa,ppv,sgf,wp5,xtd,psd,rar"), ",");
 	}
 	
 	public boolean acceptIP(String ip) {

@@ -205,7 +205,17 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 					ctx.setAbsoluteURL(false);
 				}
 				String linkToJSP = URLHelper.createStaticTemplateURLWithoutContext(ctx, ctx.getCurrentTemplate(), "" + getDynamicRenderer(ctx));
-				return executeJSP(ctx, linkToJSP);
+				String prefix = "";
+				String suffix = "";
+				if (isWrapped()) {
+					String cssClass = "";
+					if (getCSSClass().trim().length() > 0) {
+						cssClass = ' ' + getCSSClass();
+					}
+					prefix = "<div class=\"" + cssClass + "\">";
+					suffix = "</div>";
+				}
+				return prefix+executeJSP(ctx, linkToJSP)+suffix;
 			}
 		}
 

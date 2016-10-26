@@ -505,6 +505,14 @@ public class ComponentFactory {
 			if (ctx.isAsEditMode()) {
 				inludeComponents = ctx.getCurrentTemplate().getComponentsIncludeForArea(editCtx.getCurrentArea());
 				excludeComponents = ctx.getCurrentTemplate().getComponentsExcludeForArea(editCtx.getCurrentArea());
+				Set<String> excludeTemplateComp = ctx.getCurrentTemplate().getComponentsExclude();
+				if (excludeTemplateComp.size() > 0) {
+					if (excludeComponents == null) {
+						excludeComponents = excludeTemplateComp;
+					} else {
+						excludeComponents.addAll(excludeTemplateComp);
+					}
+				}				
 			}
 
 			for (int i = 0; i < components.size() - 1; i++) { // remove title

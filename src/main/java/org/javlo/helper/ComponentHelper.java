@@ -204,13 +204,11 @@ public class ComponentHelper {
 				boolean closeFound = nextComp == null;
 				int depth = 0;
 				while (!closeFound) {
-					if (newPrevious != null && nextComp.getId().equals(newPrevious
-							.getId())) { /* if target inside the container */
+					if (newPrevious != null && nextComp.getId().equals(newPrevious.getId())) { /* if target inside the container */
 						moveComponent(ctx, comp, newPrevious, targetPage, area);
 						return;
 					}
-					componentToMove.add(nextComp);
-					nextComp = ComponentHelper.getNextComponent(nextComp, ctx);
+					componentToMove.add(nextComp);					
 					if (nextComp != null) {
 						if (nextComp.getType().equals(openType)) {
 							if (((IContainer) nextComp).isOpen(ctx)) {
@@ -226,10 +224,8 @@ public class ComponentHelper {
 					} else {
 						closeFound = true;
 					}
-				}
-				if (nextComp != null) {
-					componentToMove.add(nextComp);
-				}
+					nextComp = ComponentHelper.getNextComponent(nextComp, ctx);
+				}				
 				for (IContentVisualComponent moveComp : componentToMove) {
 					moveComponent(ctx, moveComp, newPrevious, targetPage, area);
 					newPrevious = moveComp;

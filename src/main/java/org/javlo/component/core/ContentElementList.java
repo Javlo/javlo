@@ -6,6 +6,7 @@ package org.javlo.component.core;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang3.NotImplementedException;
@@ -340,6 +341,23 @@ public class ContentElementList implements IContentComponentsList {
 			}
 		}
 		return bestSubTitle;
+	}
+	
+	public List<String> getSubTitles(ContentContext ctx, int inLevel) {
+		Iterator elems = contentElements.iterator();		
+		List<String> outTitles = new LinkedList<String>();		
+		while (elems.hasNext()) {
+			IContentVisualComponent comp = (IContentVisualComponent) elems.next();			
+			if (comp instanceof ISubTitle) {				
+				String res = ((ISubTitle)comp).getSubTitle(ctx);				
+				if (res != null) {
+					if (((ISubTitle)comp).getSubTitleLevel(ctx) == inLevel) {
+						outTitles.add(res);
+					}
+				}
+			}
+		}
+		return outTitles;
 	}
 	
 	public String getLinkLabel(ContentContext ctx) {		

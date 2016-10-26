@@ -9,8 +9,7 @@ var activeCrop = true;
 jQuery(window).load(function() {	
 	jQuery( window ).mousemove(function( event ) {
 		editorMouseX = event.pageX;
-		editorMouseY = event.pageY;	
-		console.log("activeCrop = "+activeCrop)
+		editorMouseY = event.pageY;		
 		if (cornerMoved != null && activeCrop) {
 			if (cornerMoved.hasClass('crop-zone')) {
 				jQuery('.jeditor .corner').hide();
