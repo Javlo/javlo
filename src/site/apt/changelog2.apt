@@ -798,5 +798,9 @@ hange log
 
  * 1/ check file extension on import / add creation date on default user list / update bootrapmin.js for preview edit / forced https
  
- * 2/ independent bootstrap js for preview edition + image edition (crop+flip) / Persistence blocage correction / expose dynamiccomponet for jstl
+ * 2/ independent bootstrap js for preview edition + image edition (crop+flip) / Persistence blocage correction / expose dynamiccomponet for jstl / ip security
+ 
+ * 2.1.0.3.20 27/10/2015
+ 
+  * 1/ bug dynamiccomponent i18n field
  

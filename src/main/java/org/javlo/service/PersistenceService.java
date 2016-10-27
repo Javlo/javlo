@@ -736,6 +736,8 @@ public class PersistenceService {
 		page.setChangeNotification(StringHelper.isTrue(pageXML.getAttributeValue("changeNotification", "false")));
 
 		page.setSharedName(pageXML.getAttributeValue("sharedName", null));
+		
+		page.setIpSecurityErrorPageName(pageXML.getAttributeValue("ipsecpagename"));
 
 		String type = pageXML.getAttributeValue("type", null);
 		if (type != null) {
@@ -825,6 +827,7 @@ public class PersistenceService {
 				root.setPriority(Integer.parseInt(page.getAttributeValue("priority")));
 				root.setVisible(StringHelper.isTrue(page.getAttributeValue("visible", "false")));
 				root.setActive(StringHelper.isTrue(page.getAttributeValue("active", "true")));
+				root.setIpSecurityErrorPageName(page.getAttributeValue("ipsecpagename"));
 				root.setSeoWeight(StringHelper.parseInt(page.getAttributeValue("seoWeight", null), MenuElement.SEO_HEIGHT_INHERITED));
 				root.setHttps(StringHelper.isTrue(page.getAttributeValue("https", "false")));
 				root.setCreator(page.getAttributeValue("creator", ""));

@@ -210,6 +210,12 @@
 	<input type="text" class="form-control" id="shared_name" name="share" ${page.info.visible?'checked="checked"':''} value="${page.info.sharedName}" />
 </div>
 </c:if>
+<c:if test="${ipsecurity}">
+<div class="form-group">
+	<label for="shared_name">${i18n.edit['item.ipsecurity']}</label>
+	<input type="text" class="form-control" id="ipsecurity" name="ipsecurity" value="${page.page.ipSecurityErrorPageName}" />
+</div>
+</c:if>
 
 </div>
 </div>

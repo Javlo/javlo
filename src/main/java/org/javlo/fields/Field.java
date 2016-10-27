@@ -179,7 +179,7 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 		}
 
 		public boolean isPertinent() {
-			return Field.this.isPertinent();
+			return Field.this.isPertinent(ctx);
 		}
 
 		public FieldBean getReference() throws Exception {
@@ -387,6 +387,19 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 		return null;
 	}
 	
+	protected String getReferenceValue(ContentContext ctx) throws Exception {
+		String value = getValue();
+		if (!StringHelper.isEmpty(value)) {
+			return value;
+		} else if (!isI18n()) {
+			DynamicComponent refComp = getReferenceComponent(ctx);
+			if (refComp != null) {
+				return refComp.getField(ctx, getName()).getValue();
+			}
+		}
+		return null;
+	}
+	
 	public String getSpecialClass() {
 		return "";
 	}
@@ -438,17 +451,14 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 	}
 
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
-
-		String refCode = referenceViewCode(ctx);
+		String refCode = referenceViewCode(ctx);		
 		if (refCode != null) {
 			return refCode;
 		}
-
 		StringWriter writer = new StringWriter();
 		PrintWriter out = new PrintWriter(writer);
-
 		String displayStr = StringHelper.neverNull(getDisplayValue(ctx, new Locale(ctx.getContextLanguage())));
-		if (!isPertinent() || displayStr.trim().length() == 0 || !isViewDisplayed()) {
+		if (!isPertinent(ctx) || displayStr.trim().length() == 0 || !isViewDisplayed()) {
 			return "";
 		}
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
@@ -463,7 +473,6 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 		} else {
 			out.println(displayStr);
 		}
-
 		out.close();
 		return writer.toString();
 	}
@@ -643,21 +652,26 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 		return StringHelper.isTrue(properties.getProperty("field." + getUnicName() + ".displayed", "true"));
 	}
 
-	public boolean isPertinent() {
-		String value = getValue();
-		if (getTranslation() != null) {
-			if (getCurrentLocale() != null) {
-				Locale currentLocale = getCurrentLocale();
-				Iterator<String> langs = getDefaultLanguages().iterator();
-				while ((getValue() == null || getValue().trim().length() == 0) && langs.hasNext()) {
-					setCurrentLocale(new Locale(langs.next()));
+	public boolean isPertinent(ContentContext ctx) {
+		String value;
+		try {
+			value = getReferenceValue(ctx);
+			if (getTranslation() != null) {
+				if (getCurrentLocale() != null) {
+					Locale currentLocale = getCurrentLocale();
+					Iterator<String> langs = getDefaultLanguages().iterator();
+					while ((getValue() == null || getValue().trim().length() == 0) && langs.hasNext()) {
+						setCurrentLocale(new Locale(langs.next()));
+					}
+					value = getValue();
+					setCurrentLocale(currentLocale);
 				}
-				value = getValue();
-				setCurrentLocale(currentLocale);
 			}
+			return value != null && value.length() > 0;
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
-
-		return value != null && value.length() > 0;
+		return false;
 	}
 
 	public String getId() {

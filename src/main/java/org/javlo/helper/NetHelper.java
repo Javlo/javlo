@@ -8,6 +8,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
+import java.net.Inet4Address;
+import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.NoRouteToHostException;
 import java.net.URL;
@@ -113,7 +115,7 @@ public class NetHelper {
 		String content = readPageGet(conn, true);
 		return content;
 	}
-	
+
 	public static String readPageGet(URL url, boolean checkReturnCode) throws Exception {
 		URLConnection conn = url.openConnection();
 		String content = readPageGet(conn, checkReturnCode);
@@ -406,7 +408,7 @@ public class NetHelper {
 	 * @return the title of the page.
 	 */
 	public static String getPageTitle(String content) {
-		
+
 		if (content == null) {
 			return "";
 		}
@@ -489,7 +491,7 @@ public class NetHelper {
 						try {
 							out = new ByteArrayOutputStream();
 							in = new URL(url).openStream();
-							ResourceHelper.writeStreamToStream(in, out);							
+							ResourceHelper.writeStreamToStream(in, out);
 							res.setSize(out.toByteArray().length);
 							ByteArrayInputStream localIn = new ByteArrayInputStream(out.toByteArray());
 							BufferedImage image = ImageIO.read(localIn);
@@ -813,48 +815,50 @@ public class NetHelper {
 			return null;
 		}
 	}
-	
+
 	public static boolean isURLValid(URL url) {
 		return isURLValid(url, false);
 	}
 
 	public static boolean isURLValid(URL url, boolean only404) {
 		try {
-			URLConnection urlConnection = url.openConnection();			
+			URLConnection urlConnection = url.openConnection();
 			if (urlConnection instanceof HttpURLConnection) {
-				HttpURLConnection conn =  ((HttpURLConnection) urlConnection);				
-				if (conn instanceof HttpsURLConnection) {										
+				HttpURLConnection conn = ((HttpURLConnection) urlConnection);
+				if (conn instanceof HttpsURLConnection) {
 					logger.info("init https context");
-					try {						 
-				        TrustManager[] trustAllCerts = new TrustManager[] { new X509TrustManager() {							
+					try {
+						TrustManager[] trustAllCerts = new TrustManager[] { new X509TrustManager() {
 							@Override
-							public java.security.cert.X509Certificate[] getAcceptedIssuers() {						
+							public java.security.cert.X509Certificate[] getAcceptedIssuers() {
 								return null;
-							}							
+							}
+
 							@Override
 							public void checkServerTrusted(java.security.cert.X509Certificate[] chain, String authType) throws CertificateException {
-							}							
+							}
+
 							@Override
 							public void checkClientTrusted(java.security.cert.X509Certificate[] chain, String authType) throws CertificateException {
 							}
-						}};	
-				        SSLContext sc = SSLContext.getInstance("SSL");
-				        sc.init(null, trustAllCerts, new java.security.SecureRandom());
-				        HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
-				        HostnameVerifier allHostsValid = new HostnameVerifier() {
-				            public boolean verify(String hostname, SSLSession session) {
-				            	return true;
-				            }
-				        };
-				        ((HttpsURLConnection)conn).setHostnameVerifier(allHostsValid);
+						} };
+						SSLContext sc = SSLContext.getInstance("SSL");
+						sc.init(null, trustAllCerts, new java.security.SecureRandom());
+						HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
+						HostnameVerifier allHostsValid = new HostnameVerifier() {
+							public boolean verify(String hostname, SSLSession session) {
+								return true;
+							}
+						};
+						((HttpsURLConnection) conn).setHostnameVerifier(allHostsValid);
 					} catch (NoSuchAlgorithmException e) {
 						e.printStackTrace();
 					} catch (KeyManagementException e) {
 						e.printStackTrace();
 					}
 				}
-		        
-				conn.setConnectTimeout(10 * 1000);				
+
+				conn.setConnectTimeout(10 * 1000);
 				conn.setRequestMethod("GET");
 				conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows; U; Windows NT 6.0; en-US; rv:1.9.1.2) Gecko/20090729 Firefox/3.5.2 (.NET CLR 3.5.30729)");
 				int responseCode = ((HttpURLConnection) urlConnection).getResponseCode();
@@ -866,7 +870,7 @@ public class NetHelper {
 			}
 			return true;
 		} catch (IOException e) {
-			logger.fine(e.getMessage());			
+			logger.fine(e.getMessage());
 			return false;
 		}
 
@@ -1090,7 +1094,7 @@ public class NetHelper {
 		}
 		return null;
 	}
-	
+
 	public static boolean isRobot(String userAgent) {
 		if (userAgent == null) {
 			return false;
@@ -1128,62 +1132,116 @@ public class NetHelper {
 		mb.prepare(ctx);
 		mb.sendMailing(ctx);
 	}
-	
-	 private static void testIt(){
 
-	      String https_url = "https://www.fidh.org/fr/regions/europe-asie-centrale/belgique/Accueil-des-personnes-handicapees";
-	      URL url;
-	      try {
+	private static void testIt() {
 
-		     url = new URL(https_url);
-		     HttpsURLConnection con = (HttpsURLConnection)url.openConnection();
-				
-		     //dumpl all cert info
-		     print_https_cert(con);
-				
-		     //dump all the content
-		    // print_content(con);
-				
-	      } catch (MalformedURLException e) {
-		     e.printStackTrace();
-	      } catch (IOException e) {
-		     e.printStackTrace();
-	      }
+		String https_url = "https://www.fidh.org/fr/regions/europe-asie-centrale/belgique/Accueil-des-personnes-handicapees";
+		URL url;
+		try {
 
-	   }
-	 
-	 private static void print_https_cert(HttpsURLConnection con){
-	     
-		    if(con!=null){
-					
-		      try {
-						
-			System.out.println("Response Code : " + con.getResponseCode());
-			System.out.println("Cipher Suite : " + con.getCipherSuite());
-			System.out.println("\n");
-						
-			Certificate[] certs = con.getServerCertificates();
-			for(Certificate cert : certs){
-			   System.out.println("Cert Type : " + cert.getType());
-			   System.out.println("Cert Hash Code : " + cert.hashCode());
-			   System.out.println("Cert Public Key Algorithm : " 
-		                                    + cert.getPublicKey().getAlgorithm());
-			   System.out.println("Cert Public Key Format : " 
-		                                    + cert.getPublicKey().getFormat());
-			   System.out.println("\n");
+			url = new URL(https_url);
+			HttpsURLConnection con = (HttpsURLConnection) url.openConnection();
+
+			// dumpl all cert info
+			print_https_cert(con);
+
+			// dump all the content
+			// print_content(con);
+
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+	}
+
+	/**
+	 * convert a ip in string (192.168.0.1) to a integer value.
+	 * 
+	 * @param ip
+	 * @return
+	 */
+	public static int getIpAsInt(String ip) {
+		Inet4Address a;
+		try {
+			a = (Inet4Address) InetAddress.getByName(ip);
+		} catch (UnknownHostException e) {
+			e.printStackTrace();
+			return 0;
+		}
+		byte[] b = a.getAddress();
+		int i = ((b[0] & 0xFF) << 24) | ((b[1] & 0xFF) << 16) | ((b[2] & 0xFF) << 8) | ((b[3] & 0xFF) << 0);
+		return i;
+	}
+
+	/**
+	 * check if a ip is in a specific range
+	 * 
+	 * @param ip
+	 * @param range
+	 * @return
+	 */
+	public static boolean ipInRange(String ip, String range) {
+		int index = range.indexOf('/');
+		if (index<0) {
+			return ip.equals(range);
+		} else {
+			int subnet = getIpAsInt(range.substring(0, index));
+			int bits = Integer.parseInt(range.substring(index + 1));
+
+			int ipVal = getIpAsInt(ip);
+			int mask = -1 << (32 - bits);
+
+			if ((subnet & mask) == (ipVal & mask)) {
+				return true;
 			}
-						
+		}
+		return false;
+
+	}
+
+	private static void print_https_cert(HttpsURLConnection con) {
+
+		if (con != null) {
+
+			try {
+
+				System.out.println("Response Code : " + con.getResponseCode());
+				System.out.println("Cipher Suite : " + con.getCipherSuite());
+				System.out.println("\n");
+
+				Certificate[] certs = con.getServerCertificates();
+				for (Certificate cert : certs) {
+					System.out.println("Cert Type : " + cert.getType());
+					System.out.println("Cert Hash Code : " + cert.hashCode());
+					System.out.println("Cert Public Key Algorithm : " + cert.getPublicKey().getAlgorithm());
+					System.out.println("Cert Public Key Format : " + cert.getPublicKey().getFormat());
+					System.out.println("\n");
+				}
+
 			} catch (SSLPeerUnverifiedException e) {
 				e.printStackTrace();
-			} catch (IOException e){
+			} catch (IOException e) {
 				e.printStackTrace();
 			}
 
-		     }
-			
-		   }
+		}
 
-	public static void main(String[] args) throws Exception {
-		System.out.println("***** NetHelper.main : valid ? "+isURLValid(new URL("http://www.centresculturels.cfwb.be/index.php?eID=tx_nawsecuredl&u=0&g=0&hash=6bd96306d17694601bef71f3c2c267692665a853&file=fileadmin/sites/cecu/upload/cecu_super_editor/cecu_editor/documents/Legislation/D_2013-11-21_Gallilex.pdf")));
+	}
+
+	public static boolean isIPAccepted(ContentContext ctx) {
+		List<String> acceptedIPS = ctx.getGlobalContext().getStaticConfig().getIPMasks();
+		if (acceptedIPS.isEmpty()) {
+			return true;
+		} else {
+			String ip = ctx.getRemoteIp();
+			for (String mask : acceptedIPS) {
+				if (ipInRange(ip, mask)) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 }

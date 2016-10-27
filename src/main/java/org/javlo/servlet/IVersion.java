@@ -1,5 +1,5 @@
 package org.javlo.servlet;
 
 public interface IVersion {
-	public static final String VERSION = "2.1.0.3.19/2";
+	public static final String VERSION = "2.1.0.3.20/1";
 }

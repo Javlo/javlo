@@ -82,8 +82,10 @@ public class StaticConfig extends Observable {
 	private Set<String> excludeContextDomain = null;
 
 	private Set<String> contentExtension = null;
-	
+
 	private Boolean redirectSecondaryURL = null;
+
+	private List<String> ipMaskList = null;
 
 	/**
 	 * @Deprecated use getInstance (ServletContext application)
@@ -130,7 +132,7 @@ public class StaticConfig extends Observable {
 	private String encryptedFirstPassword = null;
 
 	public static final List<String> BASIC_MODULES = Arrays.asList(new String[] { "admin", "content", "file" });
-	
+
 	public Boolean internetAccess = null;
 
 	private StaticConfig(ServletContext application) {
@@ -194,8 +196,8 @@ public class StaticConfig extends Observable {
 							file.getParentFile().mkdirs();
 						}
 						file.createNewFile();
-					}					
-					properties.setFile(file);					
+					}
+					properties.setFile(file);
 				}
 
 				{ // Load product version
@@ -237,7 +239,7 @@ public class StaticConfig extends Observable {
 			return Level.INFO;
 		}
 	}
-	
+
 	public boolean isTimeTracker() {
 		return properties.getBoolean("time-tracker", false);
 	}
@@ -543,15 +545,14 @@ public class StaticConfig extends Observable {
 	public boolean isImageShortURL() {
 		return properties.getBoolean("image.short-url", false);
 	}
-	
+
 	public boolean isImageMetaEdition() {
 		return properties.getBoolean("image.meta", true);
 	}
-	
+
 	public boolean isResourceShortURL() {
 		return properties.getBoolean("resource.short-url", false);
 	}
-
 
 	public boolean testInstance() {
 		return getEnv().equals("dev") || getEnv().equals("local");
@@ -704,12 +705,12 @@ public class StaticConfig extends Observable {
 		outMailingFolder = replaceFolderVariable(outMailingFolder);
 		return outMailingFolder;
 	}
-	
+
 	public String getLocalMailingTrashFolder() {
 		String outMailingFolder = properties.getString("mailing-trash.folder", "/mailing/trash");
 		outMailingFolder = replaceFolderVariable(outMailingFolder);
 		return outMailingFolder;
-	}	
+	}
 
 	public String getLocalMailingTemplateFolder() {
 		String path = properties.getString("mailing-template-folder", "/mailing-template");
@@ -783,7 +784,7 @@ public class StaticConfig extends Observable {
 		}
 		return outMailingFolder;
 	}
-	
+
 	public String getMailingTrashFolder() {
 		String outMailingFolder = getLocalMailingTrashFolder();
 		if (isDataFolderRelative()) {
@@ -881,7 +882,7 @@ public class StaticConfig extends Observable {
 	public int getCaptchaSize() {
 		return properties.getInt("security.captcha.size", 4);
 	}
-	
+
 	public boolean isXSSHeader() {
 		return properties.getBoolean("security.header.xss", true);
 	}
@@ -1062,17 +1063,17 @@ public class StaticConfig extends Observable {
 		url = StringUtils.replace(url, "#lang#", lg);
 		return url;
 	}
-	
+
 	public String getDefaultTestURL() {
 		return properties.getString("url.test", "http://www.wikipedia.org/");
 	}
-	
+
 	public boolean isInternetAccess() {
 		if (internetAccess == null) {
 			try {
 				internetAccess = NetHelper.isURLValid(new URL(getDefaultTestURL()));
 			} catch (MalformedURLException e) {
-				logger.severe("bad url format : "+getDefaultTestURL());
+				logger.severe("bad url format : " + getDefaultTestURL());
 			}
 		}
 		return internetAccess;
@@ -1231,10 +1232,11 @@ public class StaticConfig extends Observable {
 			excludeContextDomain = null;
 			encryptedFirstPassword = null;
 			contentExtension = null;
+			ipMaskList = null;
 			clearCache();
 		}
 	}
-	
+
 	public void clearCache() {
 		internetAccess = null;
 	}
@@ -1473,7 +1475,7 @@ public class StaticConfig extends Observable {
 	public String getJSPreview() {
 		return properties.getString("preview.js", "/js/preview/edit_preview.js");
 	}
-	
+
 	public String getJSBootStrap() {
 		return properties.getString("preview.bootstrap.js", "/jsp/preview/js/bootstrap/bootstrap.all.js");
 	}
@@ -1501,11 +1503,11 @@ public class StaticConfig extends Observable {
 			}
 		}
 	}
-	
+
 	public String getDefaultContentExtension() {
 		return properties.getString("content.default-extension", "html");
 	}
-	
+
 	public boolean isCheckContentIntegrity() {
 		return properties.getBoolean("content.check-integrity", false);
 	}
@@ -1549,42 +1551,43 @@ public class StaticConfig extends Observable {
 	public Integer getUndoDepth() {
 		return properties.getInteger("content.undo-depth");
 	}
-	
+
 	public String getImportFolder() {
 		return properties.getString("import", "/import");
 	}
 
 	public String getImportImageFolder() {
-		return properties.getString("import.image", "/images"+getImportFolder());
+		return properties.getString("import.image", "/images" + getImportFolder());
 	}
 
 	public String getImportGalleryFolder() {
-		return properties.getString("import.gallery", "/gallery"+getImportFolder());
+		return properties.getString("import.gallery", "/gallery" + getImportFolder());
 	}
 
 	public String getImportResourceFolder() {
-		return properties.getString("import.resource", "/files"+getImportFolder());
+		return properties.getString("import.resource", "/files" + getImportFolder());
 	}
-	
+
 	public long getSiteMapSizeLimit() {
-		return properties.getLong("sitemap.maxsite", 1024*1024*10);
+		return properties.getLong("sitemap.maxsite", 1024 * 1024 * 10);
 	}
-	
+
 	public boolean isAutoFocus() {
 		return StringHelper.isTrue(properties.getProperty("image.auto-focus"), false);
 	}
-	
+
 	public long getSiteMapNewsLimit() {
 		return properties.getLong("sitemap.news-days", 2);
 	}
-	
+
 	public String getImageFormat() {
 		return properties.getString("content.image-format", "png,jpg,jpeg,gif");
 	}
-	
+
 	/**
-	 * return true if javlo must be forward to the canonical URL.
-	 * WARNING : always false if isJsessionID return false
+	 * return true if javlo must be forward to the canonical URL. WARNING :
+	 * always false if isJsessionID return false
+	 * 
 	 * @return
 	 */
 	public boolean isRedirectSecondaryURL() {
@@ -1593,28 +1596,35 @@ public class StaticConfig extends Observable {
 		}
 		return redirectSecondaryURL && !isJsessionID();
 	}
-	
+
 	public boolean isJsessionID() {
 		return properties.getBoolean("url.jsessionid", false);
 	}
-	
+
 	public boolean isComponentsFiltered() {
 		return properties.getBoolean("components.filtered", true);
 	}
-	
+
 	public List<String> getDocumentExtension() {
-		return StringHelper.stringToCollection(properties.getString("content.document-format", getImageFormat()+",doc,docx,svg,odf,xls,xlsx,pdf,xml,zip,ppt,pptx,pub,eml,osd,odt,vcard,ppsx,sdw,mp4,mp3,avi,wpt,odm,mov,url,ept,stw,sdd,sds,odc,fax,vdx,wpa,ppv,sgf,wp5,xtd,psd,rar"), ",");
+		return StringHelper.stringToCollection(properties.getString("content.document-format", getImageFormat() + ",doc,docx,svg,odf,xls,xlsx,pdf,xml,zip,ppt,pptx,pub,eml,osd,odt,vcard,ppsx,sdw,mp4,mp3,avi,wpt,odm,mov,url,ept,stw,sdd,sds,odc,fax,vdx,wpa,ppv,sgf,wp5,xtd,psd,rar"), ",");
 	}
 	
-	public boolean acceptIP(String ip) {
-		String accepIP = properties.getString("security.ips");
-		if (!StringHelper.isEmpty(accepIP)) {
-			return accepIP.contains(ip);
-		} else {
-			return true;
+	public boolean isEditIpSecurity() {
+		return StringHelper.isTrue(properties.getString("security.ip.edit"), false);
+	}
+
+	public List<String> getIPMasks() {
+		if (ipMaskList == null) {
+			String accepIP = properties.getString("security.ip.ranges");
+			if (!StringHelper.isEmpty(accepIP)) {
+				ipMaskList = StringHelper.stringToCollection(accepIP, ";");
+			} else {
+				ipMaskList = Collections.EMPTY_LIST;
+			}
 		}
+		return ipMaskList;
 	}
-	
+
 	public boolean isConvertHTMLToImage() {
 		return StringHelper.isTrue(properties.getString("content.image-from-html"), false);
 	}

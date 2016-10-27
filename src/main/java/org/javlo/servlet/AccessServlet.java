@@ -262,10 +262,12 @@ public class AccessServlet extends HttpServlet implements IVersion {
 
 			ContentContext ctx = ContentContext.getContentContext(request, response);
 			if (ctx.isAsEditMode() || ctx.isAsPreviewMode()) {
-				if (!staticConfig.acceptIP(request.getRemoteAddr())) {
-					logger.warning("refuse access for ip : " + request.getRemoteAddr());
-					response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-					return;
+				if (staticConfig.isEditIpSecurity()) {
+					if (!NetHelper.isIPAccepted(ctx)) {
+						logger.warning("refuse access for ip : " + ctx.getRemoteIp());
+						response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+						return;
+					}
 				}
 			}
 
@@ -278,7 +280,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 
 				if (mainURL != null && !mainURL.endsWith(pageUrl)) {
 					// response.sendRedirect(pageUrl);
-					logger.info("redirect : "+mainURL+" >> "+URLHelper.createURL(lgCtx, lgCtx.getCurrentPage()));
+					logger.info("redirect : " + mainURL + " >> " + URLHelper.createURL(lgCtx, lgCtx.getCurrentPage()));
 					NetHelper.sendRedirectPermanently(response, URLHelper.createURL(lgCtx, lgCtx.getCurrentPage()));
 					return;
 				}
@@ -710,7 +712,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 
 					} else if (ctx.getFormat().equalsIgnoreCase("png") || ctx.getFormat().equalsIgnoreCase("jpg")) {
 						if (ctx.getGlobalContext().getStaticConfig().isConvertHTMLToImage()) {
-							logger.warning("convert image convertion : "+request.getRequestURI());
+							logger.warning("convert image convertion : " + request.getRequestURI());
 							String fileFormat = ctx.getFormat().toLowerCase();
 							response.setContentType("image/" + fileFormat + ";");
 							OutputStream out = response.getOutputStream();
@@ -725,20 +727,20 @@ public class AccessServlet extends HttpServlet implements IVersion {
 							}
 							params.put("clean-html", "true");
 							url = URLHelper.createURL(viewCtx, params);
-	
+
 							int width = 1280;
 							String widthParam = request.getParameter("width");
 							if (widthParam != null) {
 								width = Integer.parseInt(widthParam);
 							}
-	
+
 							Java2DRenderer renderer = new Java2DRenderer(url, width);
 							BufferedImage img = renderer.getImage();
 							FSImageWriter imageWriter = new FSImageWriter();
 							imageWriter.write(img, out);
 						} else {
 							response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-							logger.warning("rejected content image convertion : "+request.getRequestURI());
+							logger.warning("rejected content image convertion : " + request.getRequestURI());
 							return;
 						}
 					} else if (ctx.getFormat().equalsIgnoreCase("pdf")) {
@@ -1016,8 +1018,6 @@ public class AccessServlet extends HttpServlet implements IVersion {
 
 			} catch (Throwable t) {
 
-				t.printStackTrace();
-
 				if (!response.isCommitted()) {
 					response.setStatus(503);
 					Writer out = response.getWriter();
@@ -1029,7 +1029,10 @@ public class AccessServlet extends HttpServlet implements IVersion {
 				}
 
 				if (!(t instanceof SocketException)) {
+					t.printStackTrace();
 					DebugListening.getInstance().sendError(request, t, "path=" + request.getRequestURI());
+				} else {
+					logger.warning(t.getMessage());
 				}
 			} finally {
 				PersistenceService persistenceService = PersistenceService.getInstance(globalContext);

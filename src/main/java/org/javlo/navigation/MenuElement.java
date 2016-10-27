@@ -1140,6 +1140,8 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 	private int urlNumber = 0;
 
 	private boolean restWidthChildren = false;
+	
+	private String ipSecurityErrorPageName = null;
 
 	/**
 	 * protect page localy if there are linked with other website.
@@ -3688,7 +3690,6 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 				GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 				logger.severe("recursive vpath in :" + getPath() + "  context : " + globalContext.getContextKey());
 			} else {
-
 				MenuElement realParent = parent;
 				if (realParent != null) {
 					return realParent.getVirtualPathRec(ctx, c + 1) + '/' + getName();
@@ -5214,6 +5215,14 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 
 	public void setModel(boolean model) {
 		this.model = model;
+	}
+
+	public String getIpSecurityErrorPageName() {
+		return ipSecurityErrorPageName;
+	}
+
+	public void setIpSecurityErrorPageName(String ipSecurity) {
+		this.ipSecurityErrorPageName = ipSecurity;
 	}
 
 }

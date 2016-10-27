@@ -168,9 +168,7 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 				return "";
 			}
 		}
-
 		Collection<Field> fields = getFields(ctx);
-
 		for (Field field : fields) {
 			if (field instanceof MetaField) {
 				MetaField mField = (MetaField) field;
@@ -218,7 +216,6 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 				return prefix+executeJSP(ctx, linkToJSP)+suffix;
 			}
 		}
-
 		StringWriter writer = new StringWriter();
 		PrintWriter out = new PrintWriter(writer);
 		boolean allValid = true;
@@ -227,14 +224,11 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 				allValid = false;
 			}
 		}
-
 		String cssClass = "";
 		if (getCSSClass().trim().length() > 0) {
 			cssClass = ' ' + getCSSClass();
 		}
-
 		out.println(getPrefix());
-
 		if (isWrapped()) {
 			if (allValid) {
 				out.println("<div class=\"valid" + cssClass + "\">");
@@ -245,13 +239,11 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 		String firstFiledClass = " first-field";
 		for (Field field : fields) {
 			if (field != null) {
-
 				if (field.getTranslation() != null) {
 					field.setCurrentLocale(new Locale(ctx.getRequestContentLanguage()));
 				}
-
 				if (field.isDiplayedInList(ctx) || !asList) {
-					if (field.isViewDisplayed() && field.isPertinent()) {
+					if (field.isViewDisplayed() && field.isPertinent(ctx)) {
 						cssClass = "";
 						if (field.getCSSClass() != null && field.getCSSClass().trim().length() > 0) {
 							cssClass = ' ' + field.getCSSClass();

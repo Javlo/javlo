@@ -477,6 +477,10 @@ public class Edit extends AbstractModuleAction {
 		if (modulesContext.searchModule(IMainModuleName.TICKET) != null) {
 			ctx.getRequest().setAttribute("sharedContent", "true");
 		}
+		
+		if (globalContext.getStaticConfig().getIPMasks().size() > 0) {
+			ctx.getRequest().setAttribute("ipsecurity", "true");
+		}
 
 		if (ResourceStatus.isResource(ctx.getRequest().getSession())) {
 			ResourceStatus resourceStatus = ResourceStatus.getInstance(ctx.getRequest().getSession());
@@ -1241,6 +1245,18 @@ public class Edit extends AbstractModuleAction {
 						provider.refresh(ctx);
 					}
 				}
+				
+				/** ipsecurity **/
+				String ipsecurity = requestService.getParameter("ipsecurity", null);
+				if (StringHelper.isEmpty(ipsecurity.trim())) {
+					ipsecurity = null;
+				}				
+				if (ipsecurity != null && ContentService.getInstance(globalContext).getNavigation(ctx).searchChildFromName(ipsecurity) == null) {
+					messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage("page not found  : "+ipsecurity, GenericMessage.ERROR), false);
+				} else {
+					page.setIpSecurityErrorPageName(ipsecurity);
+				}
+				
 
 				/** publish time range **/
 				if (requestService.getParameter("start_publish", null) != null) {

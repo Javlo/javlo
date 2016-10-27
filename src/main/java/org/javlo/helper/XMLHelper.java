@@ -460,6 +460,10 @@ public class XMLHelper {
 				out.print("\" breakrepeat=\"");
 				out.print(page.isBreakRepeat());
 			}
+			if (page.getIpSecurityErrorPageName() != null) {
+				out.print("\" ipsecpagename=\"");
+				out.print(page.getIpSecurityErrorPageName());
+			}
 			if (!StringHelper.isEmpty(page.getSavedParent())) {
 				out.print("\" savedParent=\"");
 				out.print(StringHelper.toXMLAttribute(page.getSavedParent()));
