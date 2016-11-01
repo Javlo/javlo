@@ -2,6 +2,8 @@ package org.javlo.macro;
 
 import java.util.Collection;
 import java.util.Enumeration;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Logger;
@@ -24,7 +26,9 @@ import org.javlo.service.PersistenceService;
  * 
  */
 public class MergeDynamicComponent extends AbstractMacro {
-	
+
+	private static boolean DELETE_FIELD = true;
+
 	private static Logger logger = Logger.getLogger(MergeDynamicComponent.class.getName());
 
 	@Override
@@ -45,7 +49,8 @@ public class MergeDynamicComponent extends AbstractMacro {
 			ctxLg.setLanguage(lg);
 			ctxLg.setContentLanguage(lg);
 			ctxLg.setRequestContentLanguage(lg);
-			ctxLg.setArea(null);			
+			ctxLg.setArea(null);
+
 			for (MenuElement page : content.getNavigation(ctxLg).getAllChildrenList()) {
 				ContentElementList comps = page.getContent(ctxLg);
 				while (comps.hasNext(ctxLg)) {
@@ -57,7 +62,7 @@ public class MergeDynamicComponent extends AbstractMacro {
 						// ComponentBean(dynComp.getComponentBean()), ctxLg);
 						if (newComp != null) {
 							Properties compProp = dynComp.getProperties();
-							Properties newProp = newComp.getProperties();							
+							Properties newProp = newComp.getProperties();
 							if (compProp != null && newProp != null) {
 								Enumeration<Object> keys = newProp.keys();
 								while (keys.hasMoreElements()) {
@@ -71,10 +76,26 @@ public class MergeDynamicComponent extends AbstractMacro {
 									}
 								}
 							}
+							if (DELETE_FIELD) {
+								List<String> fields = dynComp.getFieldsNames(ctxLg);
+								fields.removeAll(newComp.getFieldsNames(ctxLg));
+								Iterator<Object> keys = compProp.keySet().iterator();
+								while (keys.hasNext()) {
+									String key = keys.next().toString();
+									if (key.startsWith("field.")) {
+										key = key.substring("field.".length());
+										if (key.contains(".")) {
+											if (fields.contains(key.substring(0, key.indexOf(".")))) {
+												keys.remove();
+											}
+										}
+									}
+								}
+							}
 							dynComp.storeProperties();
 							dynComp.reload(ctx);
 						} else {
-							logger.warning("bad dynamic component : "+dynComp.getType()+ " ("+dynComp.getPage().getPath()+')');
+							logger.warning("bad dynamic component : " + dynComp.getType() + " (" + dynComp.getPage().getPath() + ')');
 						}
 					}
 				}

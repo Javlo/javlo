@@ -15,6 +15,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 
 import org.javlo.component.core.ComponentBean;
@@ -27,6 +28,7 @@ import org.javlo.service.PersistenceService;
 import org.javlo.service.resource.Resource;
 import org.javlo.servlet.AccessServlet;
 import org.owasp.encoder.Encode;
+import org.xhtmlrenderer.util.GenerateBigFile;
 
 /**
  * @author pvandermaesen
@@ -291,7 +293,7 @@ public class XMLHelper {
 			out.println("</properties>");
 		}
 	}
-
+	
 	static void insertXMLContent(PrintWriter out, MenuElement page, String defaultLg) throws Exception {
 		ComponentBean[] beans = page.getAllLocalContentBean();
 		for (int j = 0; j < beans.length; j++) {
@@ -563,11 +565,12 @@ public class XMLHelper {
 	 */
 	public static void storeXMLContent(Writer inOut, MenuElement menu, int renderMode, int version, String defaultLg, Map<String, String> contentMap) throws Exception {
 		PrintWriter out = new PrintWriter(inOut, true);
-
 		out.println("<?xml version=\"1.0\" encoding=\"" + ContentContext.CHARACTER_ENCODING + "\"?>");
-		out.println("<content cmsversion=\"" + AccessServlet.VERSION + "\" version=\"" + version + "\" date=\"" + PersistenceService.renderDate(new Date()) + "\">");
+		out.println("<content cmsversion=\"" + AccessServlet.VERSION + "\" version=\"" + version + "\" date=\"" + PersistenceService.renderDate(new Date()) + "\">");		
 		insertXMLPage(out, Arrays.asList(new MenuElement[] { menu }), defaultLg);
-		insertMap(out, contentMap, PersistenceService.GLOBAL_MAP_NAME);
+		if (!PersistenceService.STORE_DATA_PROPERTIES) {
+			insertMap(out, contentMap, PersistenceService.GLOBAL_MAP_NAME);
+		}
 		out.println("</content>");
 		out.close();
 	}

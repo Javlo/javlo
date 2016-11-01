@@ -1248,7 +1248,7 @@ public class Edit extends AbstractModuleAction {
 				
 				/** ipsecurity **/
 				String ipsecurity = requestService.getParameter("ipsecurity", null);
-				if (StringHelper.isEmpty(ipsecurity.trim())) {
+				if (StringHelper.isEmpty(ipsecurity)) {
 					ipsecurity = null;
 				}				
 				if (ipsecurity != null && ContentService.getInstance(globalContext).getNavigation(ctx).searchChildFromName(ipsecurity) == null) {

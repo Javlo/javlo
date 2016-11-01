@@ -35,6 +35,7 @@ import org.javlo.service.ListService;
 import org.javlo.service.ListService.Item;
 import org.javlo.service.RequestService;
 import org.javlo.service.ReverseLinkService;
+import org.owasp.encoder.Encode;
 
 public class Field implements Cloneable, IRestItem, Comparable<Field> {
 	
@@ -422,7 +423,8 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 		if (isReadOnly()) {
 			readOnlyHTML = " readonly=\"readonly\"";
 		}
-		out.println("</div><div class=\"col-sm-9\"><input" + readOnlyHTML + " id=\"" + getInputName() + "\" class=\"form-control"+getSpecialClass()+"\" name=\"" + getInputName() + "\" value=\"" + StringHelper.neverNull(getValue()) + "\"/>");
+		String value = Encode.forHtmlAttribute(StringHelper.neverNull(getValue()));
+		out.println("</div><div class=\"col-sm-9\"><input" + readOnlyHTML + " id=\"" + getInputName() + "\" class=\"form-control"+getSpecialClass()+"\" name=\"" + getInputName() + "\" value=\"" + value + "\"/>");
 		if (getMessage() != null && getMessage().trim().length() > 0) {
 			out.println("	<div class=\"message " + getMessageTypeCSSClass() + "\">" + getMessage() + "</div>");
 		}
@@ -1045,6 +1047,6 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 	}
 	
 	public FieldBean getBean(ContentContext ctx) {
-		return new FieldBean(ctx);
+		return newFieldBean(ctx);
 	}
 }

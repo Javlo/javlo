@@ -280,7 +280,7 @@ public class FieldFile extends Field implements IStaticContainer {
 	}
 
 	@Override
-	public boolean isPertinent() {
+	public boolean isPertinent(ContentContext ctx) {
 		return getCurrentFile() != null && getCurrentFile().length() > 0;
 	}
 

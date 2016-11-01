@@ -26,6 +26,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.io.FileExistsException;
+import org.apache.poi.hslf.record.SoundCollection;
 import org.codehaus.plexus.util.StringUtils;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.component.core.IContentVisualComponent;
@@ -33,6 +34,7 @@ import org.javlo.component.core.IUploadResource;
 import org.javlo.component.files.ArrayFileComponent;
 import org.javlo.component.files.FileFinder;
 import org.javlo.component.files.GenericFile;
+import org.javlo.component.files.Sound;
 import org.javlo.component.image.GlobalImage;
 import org.javlo.component.image.Image;
 import org.javlo.component.multimedia.Multimedia;
@@ -563,7 +565,7 @@ public class DataAction implements IAction {
 						if (!targetFolder.exists()) {
 							targetFolder.mkdirs();
 						}
-						File newFile = ResourceHelper.writeFileItemToFolder(item, targetFolder, true, true);
+						File newFile = ResourceHelper.writeFileItemToFolder(item, targetFolder, true, rename);
 						if (newFile != null && newFile.exists()) {
 							ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 							PrintStream out = new PrintStream(outStream);
@@ -575,9 +577,11 @@ public class DataAction implements IAction {
 							if (isArray && ctx.getGlobalContext().hasComponent(ArrayFileComponent.class.getCanonicalName())) {
 								beanType = ArrayFileComponent.TYPE;
 							}
-
+							if (ResourceHelper.isSound(ctx, newFile.getName()) && ctx.getGlobalContext().hasComponent(Sound.class.getCanonicalName())) {
+								beanType = Sound.TYPE;
+							}
+							
 							StaticInfo staticInfo = StaticInfo.getInstance(ctx, newFile);
-
 							SharedContentContext sharedContentContext = SharedContentContext.getInstance(ctx.getRequest().getSession());
 							SharedContentService sharedContentService = SharedContentService.getInstance(ctx);
 							ComponentBean bean = new ComponentBean(beanType, new String(outStream.toByteArray()), ctx.getRequestContentLanguage());

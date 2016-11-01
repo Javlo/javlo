@@ -37,7 +37,24 @@ public class FieldDate extends Field implements IDate {
 		
 		public String getFullDate() throws FileNotFoundException, IOException {
 			return StringHelper.renderFullDate(ctx, FieldDate.this.getDate(ctx));
-		}		
+		}	
+		
+		public String getFormatedDate() throws FileNotFoundException, IOException {
+			String format = getMetaData("format");
+			if (format == null) {
+				return getShortDate();
+			} else {
+				SimpleDateFormat dateFormat = new SimpleDateFormat(format, new Locale(ctx.getRequestContentLanguage()));
+				return dateFormat.format(FieldDate.this.getDate(ctx));				
+			}
+		}
+		
+		public boolean isPast() {
+			Calendar now = Calendar.getInstance();
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(getDate());
+			return cal.before(now);
+		}
 	}
 
 	@Override

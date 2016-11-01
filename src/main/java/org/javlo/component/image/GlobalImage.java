@@ -331,7 +331,7 @@ public class GlobalImage extends Image implements IImageFilter {
 			finalCode.append("</div>");
 			if (getTranslatableResources(ctx).size() > 0) {
 				finalCode.append("<div class=\"row form-group\"><div class=\"col-sm-3\">");
-				finalCode.append("<	label for=\"" + getInputNameTranslation() + "\">" + i18nAccess.getText("content.resource.translationof") + " : </label></div><div class=\"col-sm-9\">");
+				finalCode.append("<label for=\"" + getInputNameTranslation() + "\">" + i18nAccess.getText("content.resource.translationof") + " : </label></div><div class=\"col-sm-9\">");
 				finalCode.append(XHTMLHelper.getDropDownFromMap(getInputNameTranslation(), getTranslatableResources(ctx), getTranslatedID(), "", true, "form-control"));
 				finalCode.append("</div></div>");
 			}

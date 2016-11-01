@@ -12,6 +12,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintStream;
@@ -36,7 +37,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -72,6 +72,8 @@ import org.javlo.ztatic.StaticInfo;
 import org.xml.sax.SAXParseException;
 
 public class PersistenceService {
+	
+	public static boolean STORE_DATA_PROPERTIES = false;
 
 	public static final class MetaPersistenceBean {
 		private int version;
@@ -196,6 +198,8 @@ public class PersistenceService {
 
 	public static final String GLOBAL_MAP_NAME = "global";
 
+	private static final String STORE_FILE_PREFIX = "/content_";
+
 	public static int UNDO_DEPTH = 255;
 
 	private PrintWriter trackWriter = null;
@@ -301,32 +305,40 @@ public class PersistenceService {
 				}
 			}
 		}
-
 		if (!canRedo()) {
 			int workVersion = getVersion() + 1;
-			File file = new File(getDirectory() + "/content_" + ContentContext.PREVIEW_MODE + '_' + workVersion + ".xml");
+			File file = new File(getPersistenceFilePrefix(ContentContext.PREVIEW_MODE) + '_' + workVersion + ".xml");
+			File propFile = new File(getPersistenceFilePrefix(ContentContext.PREVIEW_MODE) + '_' + workVersion + ".properties");
 			while (file.exists()) {
 				workVersion++;
 				file.delete();
-				file = new File(getDirectory() + "/content_" + ContentContext.PREVIEW_MODE + '_' + workVersion + ".xml");
+				if (propFile.exists()) {
+					propFile.delete();
+				}
+				file = new File(getPersistenceFilePrefix(ContentContext.PREVIEW_MODE) + '_' + workVersion + ".xml");
+				propFile = new File(getPersistenceFilePrefix(ContentContext.PREVIEW_MODE) + '_' + workVersion + ".properties");
 			}
 		}
-
 		int workVersion = getVersion() - UNDO_DEPTH;
-		File file = new File(getDirectory() + "/content_" + ContentContext.PREVIEW_MODE + '_' + workVersion + ".xml");
+		File file = new File(getPersistenceFilePrefix(ContentContext.PREVIEW_MODE) + '_' + workVersion + ".xml");
+		File propFile = new File(getPersistenceFilePrefix(ContentContext.PREVIEW_MODE) + '_' + workVersion + ".properties");
 		while (workVersion > 0) {
 			workVersion--;
 			if (file.exists()) {
 				file.delete();
 			}
-			file = new File(getDirectory() + "/content_" + ContentContext.PREVIEW_MODE + '_' + workVersion + ".xml");
+			if (propFile.exists()) {
+				propFile.delete();
+			}
+			file = new File(getPersistenceFilePrefix(ContentContext.PREVIEW_MODE) + '_' + workVersion + ".xml");
+			propFile = new File(getPersistenceFilePrefix(ContentContext.PREVIEW_MODE) + '_' + workVersion + ".properties");
 		}
 	}
 
 	public void correctAllFiles() {
 		// synchronized (MenuElement.LOCK_ACCESS) {
-		File currentPreview = new File(getDirectory() + "/content_" + ContentContext.PREVIEW_MODE + '_' + getVersion() + ".xml");
-		File currentView = new File(getDirectory() + "/content_" + ContentContext.VIEW_MODE + ".xml");
+		File currentPreview = new File(getPersistenceFilePrefix(ContentContext.PREVIEW_MODE) + '_' + getVersion() + ".xml");
+		File currentView = new File(getPersistenceFilePrefix(ContentContext.VIEW_MODE) + ".xml");
 
 		correctFile(currentPreview);
 		correctFile(currentView);
@@ -341,7 +353,7 @@ public class PersistenceService {
 		File[] backupView = new File(getBackupDirectory()).listFiles(BackupViewFileFilter.instance);
 		if (backupView != null) {
 			for (File zip : backupView) {
-				String timeCode = zip.getName().replaceAll("content_" + ContentContext.VIEW_MODE + ".", "").replaceAll(".xml", "").replaceAll(".zip", "");
+				String timeCode = zip.getName().replaceAll(STORE_FILE_PREFIX + ContentContext.VIEW_MODE + ".", "").replaceAll(".xml", "").replaceAll(".zip", "");
 				try {
 					Date publishTime = StringHelper.parseSecondFileTime(timeCode);
 					outList.add(new MetaPersistenceBean(0, StringHelper.renderSortableTime(publishTime), "published"));
@@ -356,7 +368,7 @@ public class PersistenceService {
 		if (backupPreview != null) {
 			for (File file : backupPreview) {
 				if (!file.getName().endsWith(".error")) {
-					String version = file.getName().replaceAll("content_" + ContentContext.PREVIEW_MODE + ".", "").replaceAll(".xml", "").replaceAll(".zip", "");
+					String version = file.getName().replaceAll(STORE_FILE_PREFIX + ContentContext.PREVIEW_MODE + ".", "").replaceAll(".xml", "").replaceAll(".zip", "");
 					int versionInteger = -1;
 					try {
 						versionInteger = Integer.parseInt(version);
@@ -736,7 +748,7 @@ public class PersistenceService {
 		page.setChangeNotification(StringHelper.isTrue(pageXML.getAttributeValue("changeNotification", "false")));
 
 		page.setSharedName(pageXML.getAttributeValue("sharedName", null));
-		
+
 		page.setIpSecurityErrorPageName(pageXML.getAttributeValue("ipsecpagename"));
 
 		String type = pageXML.getAttributeValue("type", null);
@@ -794,7 +806,7 @@ public class PersistenceService {
 	 * @throws ServiceException
 	 * @throws InterruptedException
 	 */
-	protected LoadingBean load(ContentContext ctx, Object in, Map<String, String> contentAttributeMap, int renderMode) throws ServiceException, InterruptedException {
+	protected LoadingBean load(ContentContext ctx, Object in, File propFile, Map<String, String> contentAttributeMap, int renderMode) throws ServiceException, InterruptedException {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		MenuElement root = MenuElement.getInstance(globalContext);
 
@@ -910,17 +922,28 @@ public class PersistenceService {
 				root.setPriority(10);
 				root.setVisible(true);
 			}
-
-			NodeXML properties = firstNode.getChild("properties");
-			if (properties != null && properties.getAttributeValue("name", "").equals("global")) {
-				NodeXML property = properties.getChild("property");
-				// Content content = Content.createContent(ctx.getRequest());
-				while (property != null) {
-					contentAttributeMap.put(property.getAttributeValue("key"), property.getContent());
-					property = property.getNext("property");
+			if (propFile != null && !propFile.exists()) {
+				NodeXML properties = firstNode.getChild("properties");
+				if (properties != null && properties.getAttributeValue("name", "").equals("global")) {
+					NodeXML property = properties.getChild("property");
+					while (property != null) {
+						contentAttributeMap.put(property.getAttributeValue("key"), property.getContent());
+						property = property.getNext("property");
+					}
+				}
+			} else {
+				logger.info("load data : " + propFile);
+				Reader reader = new InputStreamReader(new FileInputStream(propFile), ContentContext.CHARACTER_ENCODING);
+				Properties prop = new Properties();
+				try {
+					prop.load(reader);
+				} finally {
+					ResourceHelper.closeResource(reader);
+				}
+				for (Map.Entry<Object, Object> entry : prop.entrySet()) {
+					contentAttributeMap.put(entry.getKey().toString(), entry.getValue().toString());
 				}
 			}
-
 		} catch (SAXParseException e) {
 			// e.printStackTrace();
 			MessageRepository.getInstance(ctx).setGlobalMessageAndNotification(ctx, new GenericMessage("error XML parsing (line:" + e.getLineNumber() + " col:" + e.getColumnNumber() + "): " + e.getMessage(), GenericMessage.ERROR, ""));
@@ -1025,6 +1048,10 @@ public class PersistenceService {
 		return error;
 	}
 
+	public String getPersistenceFilePrefix(int mode) {
+		return getDirectory() + STORE_FILE_PREFIX + mode;
+	}
+
 	protected MenuElement load(ContentContext ctx, int renderMode, Map<String, String> contentAttributeMap, Date timeTravelDate, boolean correctXML, Integer previewVersion) throws Exception {
 		int timeTrackerNumber = TimeTracker.start(ctx.getGlobalContext().getContextKey(), "load");
 		if (contentAttributeMap == null) {
@@ -1062,7 +1089,7 @@ public class PersistenceService {
 						zip = new ZipInputStream(new FileInputStream(minBackup.getKey()));
 						ZipEntry entry = zip.getNextEntry();
 						while (entry != null) {
-							if (ResourceHelper.getFile(entry.getName()).equals("content_" + ContentContext.VIEW_MODE + ".xml")) {
+							if (ResourceHelper.getFile(entry.getName()).equals(STORE_FILE_PREFIX + ContentContext.VIEW_MODE + ".xml")) {
 								in = zip;
 								break;
 							}
@@ -1070,18 +1097,20 @@ public class PersistenceService {
 						}
 					}
 				}
-				File file = null;
+				File xmlFile = null;
+				File propFile = null;
 				if (in == null) {
 					if (renderMode == ContentContext.PREVIEW_MODE) {
-						file = new File(getDirectory() + "/content_" + renderMode + '_' + version + ".xml");
+						xmlFile = new File(getPersistenceFilePrefix(renderMode) + '_' + version + ".xml");
+						propFile = new File(getPersistenceFilePrefix(renderMode) + '_' + version + ".properties");
 					} else {
-						file = new File(getDirectory() + "/content_" + renderMode + ".xml");
+						xmlFile = new File(getPersistenceFilePrefix(renderMode) + ".xml");
+						propFile = new File(getPersistenceFilePrefix(renderMode) + ".properties");
 					}
-					if (file.exists()) {
-						in = new FileInputStream(file);
+					if (xmlFile.exists()) {
+						in = new FileInputStream(xmlFile);
 					}
 				}
-
 				if (in == null) {
 					root = MenuElement.getInstance(globalContext);
 					root.setName("root");
@@ -1096,12 +1125,13 @@ public class PersistenceService {
 					 * ); out.close();
 					 */
 				} else {
-					LoadingBean loadBean = load(ctx, in, contentAttributeMap, renderMode);
-					if (loadBean.isError() && correctXML && file != null) {
-						correctCharacterEncoding(file);
+					LoadingBean loadBean = load(ctx, in, propFile, contentAttributeMap, renderMode);
+					logger.info("load : " + xmlFile);
+					if (loadBean.isError() && correctXML && xmlFile != null) {
+						correctCharacterEncoding(xmlFile);
 						in.close();
-						in = new FileInputStream(file);
-						loadBean = load(ctx, in, contentAttributeMap, renderMode);
+						in = new FileInputStream(xmlFile);
+						loadBean = load(ctx, in, propFile, contentAttributeMap, renderMode);
 					}
 					root = loadBean.getRoot();
 					try {
@@ -1109,7 +1139,7 @@ public class PersistenceService {
 					} catch (Exception e) {
 						e.printStackTrace();
 						if (correctXML) {
-							correctCharacterEncoding(file);
+							correctCharacterEncoding(xmlFile);
 						}
 						return load(ctx, renderMode, contentAttributeMap, timeTravelDate, false, null);
 					}
@@ -1397,32 +1427,30 @@ public class PersistenceService {
 
 	public void store(ContentContext ctx, int renderMode, boolean async) throws Exception {
 		setAskStore(false);
-		
-		synchronized (ctx.getGlobalContext().getLockLoadContent()) {			
-				logger.info("store in " + renderMode + " mode.");
-				PersistenceThread persThread = new PersistenceThread(globalContext.getLockLoadContent());
-				ContentService content = ContentService.getInstance(globalContext);
-				MenuElement menuElement = content.getNavigation(ctx);
-				String defaultLg = globalContext.getDefaultLanguages().iterator().next();
-				if (!globalContext.getLanguages().contains(defaultLg)) {
-					defaultLg = null;
-				}
-
-				persThread.setMenuElement(menuElement);
-				persThread.setMode(renderMode);
-				persThread.setPersistenceService(this);
-				persThread.setDefaultLg(defaultLg);
-				persThread.setGlobalContentMap(content.getGlobalMap(ctx));
-				GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-				persThread.setContextKey(globalContext.getContextKey());
-				persThread.setDataFolder(globalContext.getDataFolder());
-				StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession().getServletContext());
-				if (StaticInfo._STATIC_INFO_DIR != null) {
-					String staticInfo = URLHelper.mergePath(globalContext.getDataFolder(), StaticInfo._STATIC_INFO_DIR);
-					persThread.addFolderToSave(new File(staticInfo));
-				}
-				persThread.addFolderToSave(new File(URLHelper.mergePath(globalContext.getDataFolder(), staticConfig.getUserInfoFile())));
-				persThread.start(async);			
+		synchronized (ctx.getGlobalContext().getLockLoadContent()) {
+			logger.info("store in " + renderMode + " mode.");
+			PersistenceThread persThread = new PersistenceThread(globalContext.getLockLoadContent());
+			ContentService content = ContentService.getInstance(globalContext);
+			MenuElement menuElement = content.getNavigation(ctx);
+			String defaultLg = globalContext.getDefaultLanguages().iterator().next();
+			if (!globalContext.getLanguages().contains(defaultLg)) {
+				defaultLg = null;
+			}
+			persThread.setMenuElement(menuElement);
+			persThread.setMode(renderMode);
+			persThread.setPersistenceService(this);
+			persThread.setDefaultLg(defaultLg);
+			persThread.setGlobalContentMap(content.getGlobalMap(ctx));
+			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+			persThread.setContextKey(globalContext.getContextKey());
+			persThread.setDataFolder(globalContext.getDataFolder());
+			StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession().getServletContext());
+			if (StaticInfo._STATIC_INFO_DIR != null) {
+				String staticInfo = URLHelper.mergePath(globalContext.getDataFolder(), StaticInfo._STATIC_INFO_DIR);
+				persThread.addFolderToSave(new File(staticInfo));
+			}
+			persThread.addFolderToSave(new File(URLHelper.mergePath(globalContext.getDataFolder(), staticConfig.getUserInfoFile())));
+			persThread.start(async);
 		}
 	}
 
@@ -1455,7 +1483,7 @@ public class PersistenceService {
 	public void flush() {
 		Calendar cal = GregorianCalendar.getInstance();
 		try {
-			getTrackWriter(cal).flush();			
+			getTrackWriter(cal).flush();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

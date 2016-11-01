@@ -9,7 +9,6 @@ import java.util.Set;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.dynamic.DynamicComponent;
 import org.javlo.context.ContentContext;
-import org.javlo.fields.Field.FieldBean;
 
 public class ComponentMap implements Map<String, Object> {
 

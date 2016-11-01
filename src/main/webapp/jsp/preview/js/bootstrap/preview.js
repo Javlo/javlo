@@ -233,93 +233,16 @@ var editPreview = editPreview||{};
 			return null;
 		}
 	}
-
-	editPreview.uploadFile = function(dataTransfer,url,rename) {		
-		if (!rename) {
-			url = editPreview.addParam(url, "rename=false");
-		}
-		if (url.indexOf("/edit-")>=0) {
-			url = url.replace("/edit-", "/ajax-");
-		} else {
-			url = url.replace("/edit/", "/ajax/");
-			if (url.indexOf("/preview-")>=0) {
-				url = url.replace("/preview-", "/ajax-");
-			} else {
-				url = url.replace("/preview/", "/ajax/");
-			}
-		}
-		var fieldName = pjq(this).data("fieldname");
-		if (fieldName == null) {
-			filedName = "files";
-		}
-		var i = 0;
+	
+	editPreview.createFormData = function(dataTransfer) {
 		var fd=new FormData();
 		jQuery.each( dataTransfer.files, function(index, file) {
-
-			if (i==0) {
-				fd.append(fieldName,file);
-			} else {
-				fd.append(fieldName+"_"+i,file);
-			}
-			i++;
+			fd.append(this.name,file);			
 		});
-		editPreview.startAjax();
-		pjq.ajax({
-			url : url,
-			cache : false,
-			data: fd,
-			type : "post",
-			dataType : "json",
-			processData: false,
-			contentType: false
-		}).done(function(jsonObj) {
-			if (jsonObj.data != null) {
-				pjq.each(jsonObj.data, function(key, value) {
-					if (key == "need-refresh" && value) {
-						window.location.href=window.location.href;
-					}
-				});
-			}
-			jQuery.each(jsonObj.zone, function(xhtmlId, xhtml) {
-				var item = jQuery("#" + xhtmlId);
-				if (item != null) {
-					pjq("#" + xhtmlId).replaceWith(xhtml);
-				} else {
-					if (console) {
-						console.log("warning : component "+xhtmlId+" not found for zone.");
-					}
-				}
-			});
-			pjq.each(jsonObj.insideZone, function(xhtmlId, xhtml) {
-				var item = jQuery("#" + xhtmlId);
-				if (item != null) {
-					item.html(xhtml);
-				} else {
-					if (console) {
-						console.log("warning : component "+xhtmlId+" not found for insideZone.");
-					}
-				}
-
-			});
-			pjq(document).trigger("ajaxUpdate");
-			try {
-				editPreview.initPreview();
-			} catch (ex) {
-				if (console) {
-					console.log(ex);
-				}
-			}
-			editPreview.stopAjax();
-		}).error(function() {
-			editPreview.stopAjax();
-			alert("Unvalid file type.");
-		});
+		return fd;
 	}
 
 	editPreview.initPreview = function() {
-
-		//pjq('#preview_command a').attr('draggable', 'false');
-
 		pjq('a.as-modal').on('click', function() {
 			var text = $(this).attr("title");
 			if (text == null || text.length == 0) {
@@ -587,7 +510,7 @@ var editPreview = editPreview||{};
 						});						
 						
 						if (sameName) {
-							editPreview.openModalQuestion("Upload file", "File allready exist !", "overwrite", "rename", function () {
+							editPreview.openModalQuestion("Upload file", "File already exists !", "overwrite", "rename", function () {
 								ajaxURL = editPreview.addParam(ajaxURL, "rename=false");								
 								editPreview.ajaxPreviewRequest(ajaxURL, null, fd);
 								pjq("#preview-modal-question").modal("hide");
@@ -597,18 +520,8 @@ var editPreview = editPreview||{};
 								pjq("#preview-modal-question").modal("hide");
 							});
 						} else {
-							//editPreview.uploadFile(dataTransfer, ajaxURL, true);
 							editPreview.ajaxPreviewRequest(ajaxURL, null, fd);
 						}	
-						/*jQuery.each( event.dataTransfer.files, function(index, file) {
-							if (i==0) {
-								fd.append(fieldName,file);
-							} else {
-								fd.append(fieldName+"_"+i,file);
-							}
-							i++;
-						});
-						editPreview.ajaxPreviewRequest(ajaxURL, null, fd);*/
 					}
 					return false;
 				})
@@ -712,7 +625,7 @@ var editPreview = editPreview||{};
 							sameName = editPreview.isFileExist(fileName);
 						});						
 						if (sameName) {
-							editPreview.openModalQuestion("Upload file", "File allready exist !", "overwrite", "rename", function () {
+							editPreview.openModalQuestion("Upload file", "File already exists !", "overwrite", "rename", function () {
 								ajaxURL = editPreview.addParam(ajaxURL, "rename=false");								
 								editPreview.ajaxPreviewRequest(ajaxURL, null, fd);
 								pjq("#preview-modal-question").modal("hide");
@@ -852,30 +765,40 @@ var editPreview = editPreview||{};
 					return false;
 				});
 				el.addEventListener('drop', function(e) {
-					if (PREVIEWLOG) {
-						console.log("*** DROP upload-zone ***");
+					var ajaxURL = editPreview.addParam(currentURL,"webaction=data.upload");
+					var fd=new FormData();
+					var fieldName = pjq(this).data("fieldname");
+					if (fieldName == null) {
+						filedName = "files";
 					}
-					e.preventDefault();
-					pjq(this).removeClass("dragover");
-					var url  = pjq(this).data("url");
-					var dataTransfer  = e.dataTransfer;
-					var modalOpen = true;
 					var sameName = false;
-					pjq(dataTransfer.files).each(function() {
+					jQuery.each( event.dataTransfer.files, function(index, file) {
+						if (i==0) {
+							fd.append(fieldName,file);
+						} else {
+							fd.append(fieldName+"_"+i,file);
+						}
+						i++;
+					});						
+					pjq(event.dataTransfer.files).each(function() {							
 						var fileName = this.name;
 						sameName = editPreview.isFileExist(fileName);
-					});
+					});						
 					if (sameName) {
-						editPreview.openModalQuestion("Upload file", "File allready exist !", "overwrite", "rename", function () {
-							editPreview.uploadFile(dataTransfer, url, false);
+						editPreview.openModalQuestion("Upload file", "File already exists !", "overwrite", "rename", function () {
+							ajaxURL = editPreview.addParam(ajaxURL, "rename=false");								
+							editPreview.ajaxPreviewRequest(ajaxURL, null, fd);
 							pjq("#preview-modal-question").modal("hide");
 						}, function () {
-							editPreview.uploadFile(dataTransfer, url, true);
+							ajaxURL = editPreview.addParam(ajaxURL, "rename=true");
+							editPreview.ajaxPreviewRequest(ajaxURL, null, fd);
 							pjq("#preview-modal-question").modal("hide");
 						});
 					} else {
-						editPreview.uploadFile(dataTransfer, url, true);
+						editPreview.ajaxPreviewRequest(ajaxURL, null, fd);
 					}
+					event.preventDefault();
+					return false;
 				});
 			}
 			editPreview.updatePDFPosition();
@@ -966,6 +889,7 @@ var editPreview = editPreview||{};
 		}
 
 		editPreview.ajaxPreviewRequest = function(url, doneFunction, data) {
+			
 			editPreview.startAjax();
 			if (url.indexOf("/edit-")>=0) {
 				url = url.replace("/edit-", "/ajax-");
@@ -999,7 +923,7 @@ var editPreview = editPreview||{};
 					editPreview.addAlert(jsonObj.messageText, jsonObj.messageType);
 				}				
 				jQuery.each(jsonObj.zone, function(xhtmlId, xhtml) {
-					/* if allready select don't add '#' */
+					/* if already select don't add '#' */
 					if (xhtmlId.indexOf("#") < 0 && xhtmlId.indexOf("#") < 0 && xhtmlId.indexOf(" ") < 0 ) {
 						xhtmlId = "#"+xhtmlId;
 					}
@@ -1015,7 +939,7 @@ var editPreview = editPreview||{};
 					}
 				});
 				jQuery.each(jsonObj.insideZone, function(xhtmlId, xhtml) {
-					/* if allready select don't add '#' */
+					/* if already select don't add '#' */
 					if (xhtmlId.indexOf("#") < 0 && xhtmlId.indexOf(".") < 0 && xhtmlId.indexOf(" ") < 0 ) {
 						xhtmlId = "#"+xhtmlId;
 					}

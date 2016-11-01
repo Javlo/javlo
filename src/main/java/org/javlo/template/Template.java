@@ -1410,10 +1410,18 @@ public class Template implements Comparable<Template> {
 							propI18n = Collections.EMPTY_MAP;
 						}
 					}
+					/*Map parentI18n = getParent().getI18nProperties(globalContext, locale, mode);
+					if (parentI18n != null) {
+						if (propI18n != null) {
+							propI18n.putAll(parentI18n);
+						} else {
+							propI18n = parentI18n;
+						}
+					}*/
 					i18n.put(locale.getLanguage() + mode, propI18n);
 				}
-			}
-		}
+			}			
+		}		
 		return propI18n;
 	}
 

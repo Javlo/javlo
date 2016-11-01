@@ -40,6 +40,8 @@ import org.javlo.helper.ComponentHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.i18n.I18nAccess;
+import org.javlo.message.GenericMessage;
+import org.javlo.message.MessageRepository;
 import org.javlo.navigation.MenuElement;
 import org.javlo.navigation.PageBean;
 import org.javlo.service.resource.Resource;
@@ -433,26 +435,26 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 	protected String getEditXHTMLCode(ContentContext ctx) throws Exception {
 		StringWriter writer = new StringWriter();
 		PrintWriter out = new PrintWriter(writer);
-
 		Collection<Field> fields = getFields(ctx);
 		boolean allValid = true;
 		for (Field field : fields) {
+			if (field.getName().equalsIgnoreCase("info")) {
+				MessageRepository messageRepository = MessageRepository.getInstance(ctx);
+				messageRepository.setGlobalMessage(new GenericMessage("field could not call info.", GenericMessage.ERROR));
+			}
 			if (!field.validate()) {
 				allValid = false;
 			}
 		}
-
 		if (allValid) {
 			out.println("<div class=\"dynamic-component valid cols\">");
 		} else {
 			out.println("<div class=\"dynamic-component not-valid cols\">");
 		}
-		int colSize = 0;
-		
+		int colSize = 0;		
 		String firstItem = "first ";
 		for (Field field : fields) {
-			if (field != null) {
-				
+			if (field != null) {				
 				colSize = colSize + field.getColsWidth(ctx);
 				String last = "";
 				if (colSize >= 12) {
@@ -463,12 +465,13 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 				if (firstItem.length() == 0) {
 					out.println("<hr />");
 				}
-
 				if (field.getTranslation() != null) {
 					I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
 					out.println("<fieldset><legend>" + i18nAccess.getText("field.translated") + "</legend>");
 				}
-
+				if (field.getName().equalsIgnoreCase("info")) {				
+					out.println("<div class=\"alert alert-danger\" role=\"alert\">field could not call 'info'.</div>");
+				}
 				Collection<Locale> translatedField = new LinkedList<Locale>();
 				if (field.getTranslation() == null) {
 					translatedField = new LinkedList<Locale>();
@@ -476,7 +479,6 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 				} else {
 					translatedField = field.getTranslation();
 				}
-
 				for (Locale locale : translatedField) {
 					if (locale != null) {
 						out.println("<fieldset><legend>" + locale.getDisplayLanguage(new Locale(GlobalContext.getInstance(ctx.getRequest()).getEditLanguage(ctx.getRequest().getSession()))) + "</legend>");

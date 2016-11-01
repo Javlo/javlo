@@ -1,5 +1,6 @@
 package org.javlo.test.javlo;
 
+import java.io.File;
 import java.io.Reader;
 import java.io.StringReader;
 import java.util.Date;
@@ -16,7 +17,7 @@ public class TestPersistenceService extends PersistenceService {
 	@Override
 	protected MenuElement load(ContentContext ctx, int renderMode, Map<String, String> contentAttributeMap, Date timeTravelDate, boolean correctXML, Integer version) throws Exception {
 		Reader in = new StringReader(data);
-		LoadingBean bean = load(ctx,in,contentAttributeMap, renderMode);
+		LoadingBean bean = load(ctx,in,(File)null,contentAttributeMap, renderMode);
 		in.close();
 		return bean.getRoot();
 	}

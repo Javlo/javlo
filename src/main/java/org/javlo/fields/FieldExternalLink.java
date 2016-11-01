@@ -133,8 +133,8 @@ public class FieldExternalLink extends MetaField implements ILink {
 		}
 
 		String newLink = requestService.getParameter(getInputLinkName(), "");
-		if (!newLink.equals(getCurrentLink())) {
-			if (!newLink.trim().startsWith("/") && !PatternHelper.EXTERNAL_LINK_PATTERN.matcher(newLink).matches()) {
+		if (!newLink.equals(getCurrentLink())) { 			
+			if (!StringHelper.isEmpty(newLink) && !newLink.trim().startsWith("/") && !PatternHelper.EXTERNAL_LINK_PATTERN.matcher(newLink).matches()) {
 				if (getCurrentLinkErrorMessage().trim().length() == 0) {
 					setNeedRefresh(true);
 				}
@@ -185,7 +185,7 @@ public class FieldExternalLink extends MetaField implements ILink {
 	}
 
 	@Override
-	public boolean isPertinent() {
+	public boolean isPertinent(ContentContext ctx) {
 		return getCurrentLink() != null && getCurrentLink().trim().length() > 0;
 	}
 

@@ -292,20 +292,6 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 			importFolder = importFolder.substring(1);
 		}
 		String currentImportFolder = getImportFolderPath(ctx);
-
-		LocalLogger.log("***** AbstractFileComponent.getDirList : ctx page            = " + ctx.getCurrentPage().getName()); // TODO:
-																																// remove
-																																// debug
-																																// trace
-		LocalLogger.log("***** AbstractFileComponent.getDirList : getPage()           = " + getPage().getName()); // TODO:
-																													// remove
-																													// debug
-																													// trace
-		LocalLogger.log("***** AbstractFileComponent.getDirList : currentImportFolder = " + currentImportFolder); // TODO:
-																													// remove
-																													// debug
-																													// trace
-
 		for (File dir : sourceChildren) {
 			String child = StringUtils.replace(dir.getAbsolutePath(), folder.getAbsolutePath(), "").replace('\\', '/');
 			if (child.length() > 1 && child.startsWith("/")) {

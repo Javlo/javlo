@@ -214,10 +214,12 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 			bean.comp = comp;
 			bean.language = lgCtx.getRequestContentLanguage();
 			lgCtx.setRequestContentLanguage(bean.language);
-			bean.title = page.getContentTitle(lgCtx);
+			
+			bean.contentTitle = page.getContentTitle(lgCtx);			
+			bean.title = page.getTitle(lgCtx);
 			if (page.isChildrenAssociation() && page.getChildMenuElements().size() > 0) {
 				bean.title = page.getChildMenuElements().iterator().next().getTitle(lgCtx);
-			}
+			}			
 			bean.subTitle = page.getSubTitle(lgCtx);
 			bean.subTitles = page.getSubTitles(lgCtx, 2);
 			bean.label = page.getLabel(lgCtx);
@@ -423,6 +425,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		private boolean selected = false;
 		private boolean contentDate = false;
 		private String title = null;
+		private String contentTitle = null;		
 		private String subTitle = null;
 		private List<String> subTitles = null;
 		private String label = null;
@@ -610,7 +613,11 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		public String getTitle() {
 			return title;
 		}
-
+		
+		public String getContentTitle() {
+			return contentTitle;
+		}
+		
 		public String getUrl() {
 			return url;
 		}

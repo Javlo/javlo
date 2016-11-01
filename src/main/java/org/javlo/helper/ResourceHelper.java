@@ -837,6 +837,28 @@ public class ResourceHelper {
 			}
 		}
 	}
+	
+	/**
+	 * check if this file is a document (list of extenion define in
+	 * static-config.properties
+	 * 
+	 * @param ctx
+	 * @param filename
+	 * @return
+	 */
+	public static boolean isSound(ContentContext ctx, String filename) {
+		if (filename == null) {
+			return false;
+		} else {
+			String ext = StringHelper.getFileExtension(filename);
+			if (StringHelper.isEmpty(ext)) {
+				return false;
+			} else {
+				ext = ext.trim();
+				return ctx.getGlobalContext().getStaticConfig().getSoundExtension().contains(ext.toLowerCase());
+			}
+		}
+	}
 
 	public static boolean isResourceURL(ContentContext ctx, String url) {
 		String startURL = URLHelper.createResourceURL(ctx, "/");
