@@ -27,7 +27,12 @@ public class Title extends AbstractVisualComponent {
 
 	@Override
 	public String[] getStyleList(ContentContext ctx) {
-		return STYLES;
+		String[] styles = super.getStyleList(ctx);
+		if (styles != null && styles.length > 0) {
+			return styles;
+		} else {
+			return STYLES;
+		}
 	}
 	
 	@Override
