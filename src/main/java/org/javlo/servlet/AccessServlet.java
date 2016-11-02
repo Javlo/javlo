@@ -828,6 +828,9 @@ public class AccessServlet extends HttpServlet implements IVersion {
 							} finally {
 								ResourceHelper.closeResource(outFile);
 							}
+							if (pdfFileCache.length()==0) {
+								pdfFileCache.delete();
+							}
 
 						}
 
