@@ -770,7 +770,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 
 						FileCache fileCache = FileCache.getInstance(getServletContext());
 						File pdfFileCache = fileCache.getPDFPage(ctx, ctx.getCurrentPage(), lowDef);
-						if (pdfFileCache.exists()) {
+						if (pdfFileCache.exists() && pdfFileCache.length() > 0) {
 							synchronized (FileCache.PDF_LOCK) {
 								logger.info("pdf file found in cache : " + pdfFileCache);
 								if (pdfFileCache.exists()) {
