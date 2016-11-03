@@ -657,6 +657,7 @@ public class I18nAccess implements Serializable {
 					lg = globalContext.getEditLanguage(ctx.getRequest().getSession());
 				}
 				LocalLogger.log("lg : "+lg);
+				LocalLogger.log("template : "+template);
 				if (template != null && template.getId() != null && (!latestTemplateId.equals(template.getId()) || !latestTemplateLang.equals(lg))) {
 					LocalLogger.log("template : "+template.getName());
 					propViewMap = null;
