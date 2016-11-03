@@ -194,6 +194,8 @@ public class MailingBuilder {
 			if (bean != null) {
 				m.setDkimDomain(bean.getSigningdomain());
 				m.setDkimSelector(bean.getSelector());
+				m.store(ctx.getRequest().getSession().getServletContext());
+				m.storePrivateKeyFile(DKIMFactory.getDKIMPrivateKeyFile(globalContext));
 			}
 			if (reportTo != null) {
 				m.setNotif(new InternetAddress(reportTo));
