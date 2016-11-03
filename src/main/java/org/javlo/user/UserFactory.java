@@ -624,8 +624,7 @@ public class UserFactory implements IUserFactory, Serializable {
 		String userInfoPath = getFileName();
 		File userInfoFile = new File(userInfoPath);
 		if (!userInfoFile.exists()) {
-			userInfoFile.getParentFile().mkdirs();
-			LocalLogger.log(LocalLogger.WARNING, userInfoFile.getPath() + " not found.");
+			userInfoFile.getParentFile().mkdirs();		
 		}
 		OutputStream out = null;
 		TransactionFile transactionFile = new TransactionFile(userInfoFile);
@@ -656,8 +655,7 @@ public class UserFactory implements IUserFactory, Serializable {
 		}
 
 		if (!userInfoFile.exists()) {
-			userInfoFile.getParentFile().mkdirs();
-			LocalLogger.log(LocalLogger.WARNING, userInfoFile.getPath() + " not found.");
+			userInfoFile.getParentFile().mkdirs();			
 		}
 		FileOutputStream out = null;
 		try {

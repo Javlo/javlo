@@ -635,10 +635,6 @@ public class I18nAccess implements Serializable {
 	}
 
 	private synchronized void updateTemplate(ContentContext ctx, int mode) throws IOException, ServiceException, Exception {
-		
-		
-		LocalLogger.log("update template : "+ctx.getGlobalContext().getContextKey()+"  mode="+mode);
-		
 		String latestTemplateId = latestViewTemplateId;
 		String latestTemplateLang = latestViewTemplateLang;
 		if (mode == ContentContext.EDIT_MODE) {
@@ -651,15 +647,11 @@ public class I18nAccess implements Serializable {
 			if (!ctx.isFree()) {
 				Template template = ctx.getCurrentTemplate();
 				
-				String lg = ctx.getLanguage();
-				LocalLogger.log("lg : "+lg);
+				String lg = ctx.getLanguage();				
 				if (mode == ContentContext.EDIT_MODE) {
 					lg = globalContext.getEditLanguage(ctx.getRequest().getSession());
 				}
-				LocalLogger.log("lg : "+lg);
-				LocalLogger.log("template : "+template);
 				if (template != null && template.getId() != null && (!latestTemplateId.equals(template.getId()) || !latestTemplateLang.equals(lg))) {
-					LocalLogger.log("template : "+template.getName());
 					propViewMap = null;
 					latestTemplateId = template.getId();
 					latestTemplateLang = lg;
@@ -670,8 +662,7 @@ public class I18nAccess implements Serializable {
 					Stack<Map> stack = new Stack<Map>();					
 					stack.push(template.getI18nProperties(globalContext, new Locale(lg),mode));
 					Template parent = template.getParent();
-					while (parent != null) {
-						LocalLogger.log("parent : "+parent.getName());
+					while (parent != null) {						
 						Map i18n = parent.getI18nProperties(globalContext, new Locale(lg),mode);
 						if (i18n != null) {
 							stack.push(i18n);
