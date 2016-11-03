@@ -193,8 +193,7 @@ public class MailingBuilder {
 			DKIMBean bean = globalContext.getDKIMBean();
 			if (bean != null) {
 				m.setDkimDomain(bean.getSigningdomain());
-				m.setDkimSelector(bean.getSelector());
-				m.store(ctx.getRequest().getSession().getServletContext());
+				m.setDkimSelector(bean.getSelector());			
 				m.storePrivateKeyFile(DKIMFactory.getDKIMPrivateKeyFile(globalContext));
 			}
 			if (reportTo != null) {
