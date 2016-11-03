@@ -869,6 +869,12 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 		if (getValue().trim().length() == 0) {
 			if (!AdminUserSecurity.isCurrentUserCanUpload(ctx)) {
 				setDirSelected(getImportFolderPath(ctx));
+				File dir = new File(ElementaryURLHelper.mergePath(getFileDirectory(ctx), getDirSelected()));
+				System.out.println("***** AbstractFileComponent.init : directory = "+dir); //TODO: remove debug trace
+				if (!dir.exists()) {
+					logger.info("create import folder : "+dir);
+					dir.mkdirs();
+				}
 			} else {
 				setDirSelected("");
 			}

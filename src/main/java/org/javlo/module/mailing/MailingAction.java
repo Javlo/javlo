@@ -261,7 +261,7 @@ public class MailingAction extends AbstractModuleAction {
 				} else {
 					senders = (senders + ',' + globalContext.getMailingSenders()).trim()+','+StringHelper.neverNull(ctx.getCurrentTemplate().getSenders());
 				}
-				if (StringHelper.neverNull(senders).trim().length() == 0 || senders.contains(sender)) {
+				if (StringHelper.neverNull(senders).trim().length() <= 1 || senders.contains(sender)) {
 					mailingContext.setSender(sender);
 					mailingContext.setSubject(rs.getParameter("subject", null));
 					mailingContext.setReportTo(rs.getParameter("report-to", null));
