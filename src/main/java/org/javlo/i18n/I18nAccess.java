@@ -629,8 +629,9 @@ public class I18nAccess implements Serializable {
 	}
 	
 	private void updateTemplate(ContentContext ctx) throws IOException, ServiceException, Exception {
-		updateTemplate(ctx, ContentContext.EDIT_MODE);
-		updateTemplate(ctx, ContentContext.VIEW_MODE);
+		//updateTemplate(ctx, ContentContext.EDIT_MODE);
+		//updateTemplate(ctx, ContentContext.VIEW_MODE);
+		updateTemplate(ctx, ctx.getRenderMode());
 	}
 
 	private synchronized void updateTemplate(ContentContext ctx, int mode) throws IOException, ServiceException, Exception {
