@@ -209,7 +209,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 
 			PageBean bean = new PageBean();
 			bean.ctx = ctx;
-			bean.lgCtx = ctx;
+			bean.lgCtx = lgCtx;
 			bean.page = page;
 			bean.comp = comp;
 			bean.language = lgCtx.getRequestContentLanguage();

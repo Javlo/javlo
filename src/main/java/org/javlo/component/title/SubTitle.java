@@ -1,6 +1,7 @@
 package org.javlo.component.title;
 
 import org.javlo.component.core.AbstractVisualComponent;
+import org.javlo.component.core.ComponentBean;
 import org.javlo.component.core.ComponentLayout;
 import org.javlo.component.core.ISubTitle;
 import org.javlo.context.ContentContext;
@@ -33,7 +34,7 @@ public class SubTitle extends AbstractVisualComponent implements ISubTitle {
 		super.init();
 		if (getLayout() == null) {
 			getComponentBean().setLayout(new ComponentLayout(""));
-		}
+		}		
 	}
 	
 	public String getXHTMLId(ContentContext ctx) {
@@ -51,6 +52,17 @@ public class SubTitle extends AbstractVisualComponent implements ISubTitle {
 		ctx.getRequest().setAttribute("__subtitle__" + htmlID, "");
 		ctx.getRequest().setAttribute("__subtitle__" + getId(), htmlID);
 		return htmlID;
+	}
+	
+	@Override
+	protected void init(ComponentBean bean, ContentContext ctx) throws Exception {	
+		super.init(bean, ctx);
+		if (StringHelper.isDigit(getStyle())) {
+			int level = Integer.parseInt(getStyle());
+			if (level > getMaxLevel(ctx)) {
+				setStyle(ctx, ""+getMaxLevel(ctx));
+			}
+		}
 	}
 
 	/**

@@ -473,11 +473,10 @@ public class I18nAccess implements Serializable {
 					propViewMap.addMap(localPropView.getProperties());
 				}
 			}
-		}
-
-		if (templateView != null && !templateViewImported || createPropViewMap) {
-			propViewMap.addMap(templateView);
-			templateViewImported = true;
+			if (templateView != null && !templateViewImported || createPropViewMap) {
+				propViewMap.addMap(templateView);
+				templateViewImported = true;
+			}
 		}
 		
 		ReadOnlyMultiMap outMap = propViewMap;
@@ -633,7 +632,7 @@ public class I18nAccess implements Serializable {
 		updateTemplate(ctx, ContentContext.VIEW_MODE);
 	}
 
-	private void updateTemplate(ContentContext ctx, int mode) throws IOException, ServiceException, Exception {
+	private synchronized void updateTemplate(ContentContext ctx, int mode) throws IOException, ServiceException, Exception {
 		String latestTemplateId = latestViewTemplateId;
 		String latestTemplateLang = latestViewTemplateLang;
 		if (mode == ContentContext.EDIT_MODE) {

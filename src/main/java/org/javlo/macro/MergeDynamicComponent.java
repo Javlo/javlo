@@ -27,7 +27,7 @@ import org.javlo.service.PersistenceService;
  */
 public class MergeDynamicComponent extends AbstractMacro {
 
-	private static boolean DELETE_FIELD = true;
+	private static boolean DELETE_FIELD = false;
 
 	private static Logger logger = Logger.getLogger(MergeDynamicComponent.class.getName());
 
