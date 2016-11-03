@@ -223,9 +223,7 @@ public class Mailing {
 	}
 
 	public boolean isExist(ServletContext application, String inID) throws IOException {
-
 		StaticConfig staticConfig = StaticConfig.getInstance(application);
-
 		dir = new File(staticConfig.getMailingFolder() + '/' + inID + '/');
 		if (!dir.exists()) {
 			dir = new File(staticConfig.getMailingHistoryFolder() + '/' + inID + '/');
@@ -830,8 +828,12 @@ public class Mailing {
 			e.printStackTrace();
 		}		
 	}
+	
+	public void setDirectory(StaticConfig staticConfig) {
+		dir = new File(staticConfig.getMailingFolder() + '/' + id + '/');
+	}
 
-	public File getDkimPrivateKeyFile() {
+	public File getDkimPrivateKeyFile() {		
 		return new File(dir.getAbsolutePath() + '/' + PRIVATE_KEY_FILE);
 	}
 
