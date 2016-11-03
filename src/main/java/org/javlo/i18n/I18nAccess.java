@@ -474,7 +474,7 @@ public class I18nAccess implements Serializable {
 					propViewMap.addMap(localPropView.getProperties());
 				}
 			}
-			if (templateView != null && !templateViewImported || createPropViewMap) {
+			if (templateView != null && (!templateViewImported || createPropViewMap)) {
 				propViewMap.addMap(templateView);
 				templateViewImported = true;
 			}
