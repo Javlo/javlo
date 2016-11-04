@@ -20,6 +20,7 @@ import javax.mail.internet.AddressException;
 
 import org.apache.commons.io.output.FileWriterWithEncoding;
 import org.javlo.context.ContentContext;
+import org.javlo.helper.LocalLogger;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.XMLHelper;
 import org.javlo.navigation.MenuElement;
@@ -199,7 +200,7 @@ public class PersistenceThread implements Runnable {
 					wrt.close();
 				}
 			}
-			persistenceService.setVersion(persistenceService.getVersion() + 1);
+			persistenceService.setVersion(persistenceService.getVersion() + 1);			
 			persistenceService.cleanFile();
 		} else {
 			file = getXMLPersistenceFile(renderMode);

@@ -28,7 +28,7 @@ function loadWysiwyg(cssQuery, complexity, chooseFileURL) {
 		        "insertdatetime media table paste textcolor colorpicker nonbreaking textlang"
 		    ],
 		    fontsize_formats: "10px 11px 12px 13px 14px 16px 18px 20px 22px 24px 26px 28px 30px 32px 34px 36px 38px 40px 42px",
-		    toolbar: "textlang | undo redo searchreplace | bold italic underline fontsizeselect forecolor backcolor | charmap nonbreaking | alignleft aligncenter alignright alignjustify | link | bullist numlist outdent indent"
+		    toolbar: "textlang | undo redo searchreplace | bold italic underline fontsizeselect forecolor backcolor removeformat | charmap nonbreaking | alignleft aligncenter alignright alignjustify | link | bullist numlist outdent indent"
 		});
 	} else if (complexity == "high") {		
 		tinymce.init({
@@ -46,7 +46,7 @@ function loadWysiwyg(cssQuery, complexity, chooseFileURL) {
 		        "insertdatetime media nonbreaking save table directionality",
 		        "emoticons template paste colorpicker nonbreaking textlang"
 		    ],
-		    toolbar1: "textlang | styleselect bold italic underline strikethrough fontsizeselect | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | table charmap nonbreaking code",		    
+		    toolbar1: "textlang | styleselect bold italic underline strikethrough fontsizeselect removeformat | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | table charmap nonbreaking code",		    
 		    image_advtab: true,
 		    fontsize_formats: "10px 11px 12px 13px 14px 16px 18px 20px 22px 24px 26px 28px 30px 32px 34px 36px 38px 40px 42px",
 		    //paste_word_valid_elements: "b,strong,i,em,h1,h2,h3,h4,h5,h6,table,tr,th,td,ul,ol,li,p,a,div",
@@ -105,7 +105,7 @@ function loadWysiwyg(cssQuery, complexity, chooseFileURL) {
 		fontsize_formats: "10px 11px 12px 13px 14px 16px 18px 20px 22px 24px 26px 28px 30px 32px 34px 36px 38px 40px 42px",
 	    nonbreaking_force_tab: true,
 		//paste_word_valid_elements: "b,strong,i,em,h1,h2,h3,h4,h5,h6,table,tr,th,td,ul,ol,li,p,a,div",
-		toolbar: "textlang | undo redo | bold italic underline fontsizeselect | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link pastetext nonbreaking"
+		toolbar: "textlang | undo redo | bold italic underline fontsizeselect removeformat | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link pastetext nonbreaking"
 		});	 
 	}
 }

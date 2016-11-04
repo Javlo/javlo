@@ -804,5 +804,7 @@ hange log
  
   * 1/ bug dynamiccomponent i18n field / ipsecurity null pointer
   
-  * 2/ drop sound on page / dynamiccomponent : delete field on merge / Filed value with " / field date isPast method and getFormatedDate / Field : isPertient with contentcontext / persistence with date in properties file (desactivate by default) / update pdfbox / update file message correction / 
+  * 2/ drop sound on page / dynamiccomponent : delete field on merge / Filed value with " / field date isPast method and getFormatedDate / Field : isPertient with contentcontext / persistence with date in properties file (desactivate by default) / update pdfbox / update file message correction /
+  
+  * 3/ clean history, clean only previous version for optimisation / update tinymce to 4.4.3
  

@@ -721,7 +721,6 @@ public class Edit extends AbstractModuleAction {
 	}
 
 	public static final String performInsert(HttpServletRequest request, HttpServletResponse response, RequestService rs, ContentService contentService, GlobalContext globalContext, HttpSession session, EditContext editContext, ContentContext ctx, ContentService content, Module currentModule, I18nAccess i18nAccess, MessageRepository messageRepository) throws Exception {
-
 		if (!canModifyCurrentPage(ctx) || !checkPageSecurity(ctx)) {
 			messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("action.block"), GenericMessage.ERROR), false);
 			return i18nAccess.getText("action.block");
@@ -759,7 +758,7 @@ public class Edit extends AbstractModuleAction {
 			// ctx = ctx.getContextWithArea(areaKey);
 			editContext.setCurrentArea(areaKey);
 		}
-
+		
 		if (areaKey == null) {
 			areaKey = EditContext.getInstance(globalContext, session).getCurrentArea();
 		}
@@ -852,8 +851,8 @@ public class Edit extends AbstractModuleAction {
 			if (!foundType) {
 				ctx.setNeedRefresh(true);
 				return "component type not found : " + type;
-			}
-			IContentVisualComponent previousComp = contentService.getComponent(ctx, previousId);
+			}			
+			IContentVisualComponent previousComp = contentService.getComponent(ctx, previousId);			
 			newId = content.createContent(ctx, targetPage, areaKey, previousId, type, "", true);
 			IContentVisualComponent openBox = contentService.getComponent(ctx, newId);
 			if (openBox instanceof IContainer && ctx.isEditPreview()) {
@@ -863,14 +862,13 @@ public class Edit extends AbstractModuleAction {
 				String closePreviousid = previousId;
 				if (previousComp == null) {
 					closePreviousid = newId;
-				}
-				newId = content.createContent(ctx, targetPage, areaKey, closePreviousid, type, "", true);
+				}				
+				newId = content.createContent(ctx, targetPage, areaKey, closePreviousid, type, "", true);				
 				IContentVisualComponent closeBox = contentService.getComponent(ctx, newId);
 				((IContainer) openBox).setOpen(ctx, true);
 				((IContainer) closeBox).setOpen(ctx, false);
 			}
-		}
-
+		}		
 		if (newId == null) {
 			return "error no component create.";
 		}

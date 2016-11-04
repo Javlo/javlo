@@ -424,7 +424,7 @@ public class XMLHelper {
 			out.print(StringHelper.toXMLAttribute(name));
 			out.print("\" creationDate=\"");
 			out.print(creationDate);
-			if (creator != null && creator.trim().length() > 0) {
+			if (creator.trim().length() > 0) {
 				out.print("\" creator=\"");
 				out.print(creator);
 			}
@@ -432,7 +432,7 @@ public class XMLHelper {
 				out.print("\" modificationDate=\"");
 				out.print(modificationDate);
 			}
-			if (latestEditor != null && latestEditor.trim().length() > 0) {
+			if (latestEditor.trim().length() > 0) {
 				out.print("\" latestEditor=\"");
 				out.print(latestEditor);
 			}
@@ -566,7 +566,7 @@ public class XMLHelper {
 	public static void storeXMLContent(Writer inOut, MenuElement menu, int renderMode, int version, String defaultLg, Map<String, String> contentMap) throws Exception {
 		PrintWriter out = new PrintWriter(inOut, true);
 		out.println("<?xml version=\"1.0\" encoding=\"" + ContentContext.CHARACTER_ENCODING + "\"?>");
-		out.println("<content cmsversion=\"" + AccessServlet.VERSION + "\" version=\"" + version + "\" date=\"" + PersistenceService.renderDate(new Date()) + "\">");		
+		out.println("<content cmsversion=\"" + AccessServlet.VERSION + "\" version=\"" + version + "\" date=\"" + PersistenceService.renderDate(new Date()) + "\">");
 		insertXMLPage(out, Arrays.asList(new MenuElement[] { menu }), defaultLg);
 		if (!PersistenceService.STORE_DATA_PROPERTIES) {
 			insertMap(out, contentMap, PersistenceService.GLOBAL_MAP_NAME);

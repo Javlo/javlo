@@ -54,6 +54,7 @@ import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.DebugHelper;
 import org.javlo.helper.DebugHelper.StructureException;
+import org.javlo.helper.LocalLogger;
 import org.javlo.helper.NetHelper;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
@@ -280,7 +281,6 @@ public class PersistenceService {
 	}
 
 	public void cleanFile() {
-
 		/** clean backup view file **/
 		Map<File, Date> backups = getBackupFiles();
 		Collection<String> monthFound = new LinkedList<String>();
@@ -304,7 +304,7 @@ public class PersistenceService {
 					monthFound.add(key);
 				}
 			}
-		}
+		}		
 		if (!canRedo()) {
 			int workVersion = getVersion() + 1;
 			File file = new File(getPersistenceFilePrefix(ContentContext.PREVIEW_MODE) + '_' + workVersion + ".xml");
@@ -318,21 +318,30 @@ public class PersistenceService {
 				file = new File(getPersistenceFilePrefix(ContentContext.PREVIEW_MODE) + '_' + workVersion + ".xml");
 				propFile = new File(getPersistenceFilePrefix(ContentContext.PREVIEW_MODE) + '_' + workVersion + ".properties");
 			}
-		}
+		}		
 		int workVersion = getVersion() - UNDO_DEPTH;
 		File file = new File(getPersistenceFilePrefix(ContentContext.PREVIEW_MODE) + '_' + workVersion + ".xml");
 		File propFile = new File(getPersistenceFilePrefix(ContentContext.PREVIEW_MODE) + '_' + workVersion + ".properties");
-		while (workVersion > 0) {
+		if (file.exists()) {
+			file.delete();
+			workVersion=0;
+		}
+		if (propFile.exists()) {
+			propFile.delete();
+		}
+		/*while (workVersion > 0) {
 			workVersion--;
 			if (file.exists()) {
 				file.delete();
+				workVersion=0;
 			}
 			if (propFile.exists()) {
 				propFile.delete();
 			}
 			file = new File(getPersistenceFilePrefix(ContentContext.PREVIEW_MODE) + '_' + workVersion + ".xml");
 			propFile = new File(getPersistenceFilePrefix(ContentContext.PREVIEW_MODE) + '_' + workVersion + ".properties");
-		}
+		}*/
+		LocalLogger.stepCount("store", "workVersion");
 	}
 
 	public void correctAllFiles() {
