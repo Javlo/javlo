@@ -689,6 +689,7 @@ public class I18nAccess implements Serializable {
 					} else {
 						templateView.clear();
 						while (!stack.empty()) {
+							logger.info("LDTPL pop");
 							templateView.putAll(stack.pop());
 						}						
 					}
