@@ -1389,7 +1389,8 @@ public class Template implements Comparable<Template> {
 		if (locale == null) {
 			return null;
 		}
-		Map propI18n = i18n.get(locale.getLanguage() + mode);
+		final String KEY = locale.getLanguage() + mode;
+		Map propI18n = i18n.get(KEY);
 		if (propI18n == null) {
 			synchronized (globalContext.getLockImportTemplate()) {
 				if (config != null) {
@@ -1418,7 +1419,7 @@ public class Template implements Comparable<Template> {
 							propI18n = parentI18n;
 						}
 					}*/
-					i18n.put(locale.getLanguage() + mode, propI18n);
+					i18n.put(KEY, propI18n);
 				}
 			}			
 		}		

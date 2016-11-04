@@ -654,12 +654,6 @@ public class I18nAccess implements Serializable {
 				}
 				
 				if (template != null && template.getId() != null && (!latestTemplateId.equals(template.getId()) || !latestTemplateLang.equals(lg))) {
-					
-					logger.info("LDTPL template i18n : "+globalContext.getContextKey());
-					logger.info("LDTPL lg : "+lg);
-					logger.info("LDTPL mode : "+mode);
-					logger.info("LDTPL template : "+template.getName());
-					
 					propViewMap = null;
 					latestTemplateId = template.getId();
 					latestTemplateLang = lg;
@@ -671,13 +665,12 @@ public class I18nAccess implements Serializable {
 					stack.push(template.getI18nProperties(globalContext, new Locale(lg),mode));
 					Template parent = template.getParent();
 					while (parent != null) {
-						logger.info("LDTPL parent : "+parent.getName());
+						if (!parent.isTemplateInWebapp(ctx)) {
+							parent.importTemplateInWebapp(globalContext.getStaticConfig(), ctx);
+						}
 						Map i18n = parent.getI18nProperties(globalContext, new Locale(lg),mode);						
-						if (i18n != null) {
-							logger.info("LDTPL #i18n : "+i18n.size());
+						if (i18n != null) {							
 							stack.push(i18n);
-						} else {
-							logger.info("LDTPL i18n NULL");
 						}
 						parent = parent.getParent();
 					}
@@ -693,8 +686,7 @@ public class I18nAccess implements Serializable {
 							templateView.putAll(stack.pop());
 						}						
 					}
-					templateViewImported = false;
-					logger.info("LDTPL END "+globalContext.getContextKey());
+					templateViewImported = false;					
 				}
 			}
 			
