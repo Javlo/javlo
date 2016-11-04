@@ -23,6 +23,7 @@ import java.util.Set;
 import java.util.Stack;
 import java.util.logging.Logger;
 
+import javax.naming.ConfigurationException;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -31,7 +32,6 @@ import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.ConfigHelper;
-import org.javlo.helper.LocalLogger;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.module.core.Module;
@@ -635,6 +635,7 @@ public class I18nAccess implements Serializable {
 	}
 
 	private synchronized void updateTemplate(ContentContext ctx, int mode) throws IOException, ServiceException, Exception {
+		
 		String latestTemplateId = latestViewTemplateId;
 		String latestTemplateLang = latestViewTemplateLang;
 		if (mode == ContentContext.EDIT_MODE) {
@@ -651,7 +652,14 @@ public class I18nAccess implements Serializable {
 				if (mode == ContentContext.EDIT_MODE) {
 					lg = globalContext.getEditLanguage(ctx.getRequest().getSession());
 				}
+				
 				if (template != null && template.getId() != null && (!latestTemplateId.equals(template.getId()) || !latestTemplateLang.equals(lg))) {
+					
+					logger.info("LDTPL template i18n : "+globalContext.getContextKey());
+					logger.info("LDTPL lg : "+lg);
+					logger.info("LDTPL mode : "+mode);
+					logger.info("LDTPL template : "+template.getName());
+					
 					propViewMap = null;
 					latestTemplateId = template.getId();
 					latestTemplateLang = lg;
@@ -662,10 +670,14 @@ public class I18nAccess implements Serializable {
 					Stack<Map> stack = new Stack<Map>();					
 					stack.push(template.getI18nProperties(globalContext, new Locale(lg),mode));
 					Template parent = template.getParent();
-					while (parent != null) {						
-						Map i18n = parent.getI18nProperties(globalContext, new Locale(lg),mode);
+					while (parent != null) {
+						logger.info("LDTPL parent : "+parent.getName());
+						Map i18n = parent.getI18nProperties(globalContext, new Locale(lg),mode);						
 						if (i18n != null) {
+							logger.info("LDTPL #i18n : "+i18n.size());
 							stack.push(i18n);
+						} else {
+							logger.info("LDTPL i18n NULL");
 						}
 						parent = parent.getParent();
 					}
@@ -681,8 +693,10 @@ public class I18nAccess implements Serializable {
 						}						
 					}
 					templateViewImported = false;
+					logger.info("LDTPL END "+globalContext.getContextKey());
 				}
 			}
+			
 		}
 		
 		if (mode == ContentContext.EDIT_MODE) {
