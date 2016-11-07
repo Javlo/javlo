@@ -44,6 +44,8 @@ import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.javlo.actions.DataAction;
 import org.javlo.cache.ICache;
+import org.javlo.component.column.TableBreak;
+import org.javlo.component.column.TableComponent;
 import org.javlo.component.config.ComponentConfig;
 import org.javlo.component.links.MirrorComponent;
 import org.javlo.context.ContentContext;
@@ -1088,10 +1090,19 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			return "";
 		}
 	}
-
-	protected String getForcedPrefixViewXHTMLCode(ContentContext ctx) {
-		if (getConfig(ctx).getProperty("prefix", null) != null) {
-			return getConfig(ctx).getProperty("prefix", null);
+	
+	protected String contructViewStyle(ContentContext ctx) {		
+		IContentVisualComponent previousComp = null;
+		try {
+			previousComp = ComponentHelper.getPreviousComponent(this, ctx);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		IContentVisualComponent nextComp = null;
+		try {
+			nextComp = ComponentHelper.getNextComponent(this, ctx);
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 		String style = getStyle(ctx);
 		if (style != null) {
@@ -1102,15 +1113,27 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		if (isBackgroundColored()) {
 			style = style + " colored-wrapper";
 		}
-		if (getPreviousComponent() == null || !getPreviousComponent().getType().equals(getType())) {
+		if (previousComp == null || !previousComp.getType().equals(getType())) {
 			style = style + " first ";
 		}
-		if (getPreviousComponent() == null) {
+		if (previousComp != null && previousComp instanceof TableComponent && !(previousComp instanceof TableBreak)) {
+			style = style + " first-in-cell ";
+			
+		}		
+		if (previousComp == null) {
 			style = style + " first-component ";
 		}
-		if (getNextComponent() == null || !getNextComponent().getType().equals(getType())) {
+		if (nextComp == null || !nextComp.getType().equals(getType())) {
 			style = style + " last ";
 		}
+		return style;
+	}
+
+	protected String getForcedPrefixViewXHTMLCode(ContentContext ctx) {
+		if (getConfig(ctx).getProperty("prefix", null) != null) {
+			return getConfig(ctx).getProperty("prefix", null);
+		}		
+		String style = contructViewStyle(ctx);
 		if (!componentBean.isList()) {
 			return "<" + getTag(ctx) + " " + getSpecialPreviewCssClass(ctx, style + getType()) + getSpecialPreviewCssId(ctx) + " " + getInlineStyle(ctx) + ">";
 		} else {

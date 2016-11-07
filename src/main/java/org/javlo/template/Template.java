@@ -20,6 +20,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -64,6 +65,7 @@ import org.javlo.service.ListService;
 import org.javlo.service.exception.ServiceException;
 import org.javlo.utils.ConfigurationProperties;
 import org.javlo.utils.ReadOnlyPropertiesConfigurationMap;
+import org.javlo.utils.StructuredConfigurationProperties;
 
 public class Template implements Comparable<Template> {
 
@@ -146,11 +148,11 @@ public class Template implements Comparable<Template> {
 						setLogo(data[i]);
 					}
 					i++;
-					if (data.length>i && data[i].length() > 0) {
+					if (data.length > i && data[i].length() > 0) {
 						setBackgroundActive(Color.decode('#' + data[i]));
 					}
 					i++;
-					if (data.length>i && data[i].length() > 0) {
+					if (data.length > i && data[i].length() > 0) {
 						setFont(data[i]);
 					}
 				}
@@ -167,7 +169,7 @@ public class Template implements Comparable<Template> {
 		public Color getBackgroundMenu() {
 			return backgroundMenu;
 		}
-		
+
 		public Color getBackgroundActive() {
 			return backgroundActive;
 		}
@@ -207,11 +209,11 @@ public class Template implements Comparable<Template> {
 		public void setBackgroundMenu(Color backgroundMenu) {
 			this.backgroundMenu = CssColor.getInstance(backgroundMenu);
 		}
-		
+
 		public void setBackgroundActive(Color backgroundActive) {
 			this.backgroundActive = CssColor.getInstance(backgroundActive);
 		}
-		
+
 		public void setBorder(Color border) {
 			this.border = CssColor.getInstance(border);
 		}
@@ -326,7 +328,7 @@ public class Template implements Comparable<Template> {
 		List<String> ids;
 		List<String> css;
 		Map<String, String> areaMap;
-		List<String> areas;		
+		List<String> areas;
 		boolean valid;
 		String imageURL;
 		String url;
@@ -345,6 +347,7 @@ public class Template implements Comparable<Template> {
 		List<String> htmls;
 		List<String> renderers;
 		private Map<String, String> s = null;
+		private Map<String, List<String>> cssByFolder;
 
 		public TemplateBean() {
 		};
@@ -390,6 +393,7 @@ public class Template implements Comparable<Template> {
 			category = staticConfig.getMarketServerName();
 			imageFilter = template.getImageFiltersRAW();
 			css = template.getCSS();
+			cssByFolder = template.getCSSByFolder();
 			htmls = new LinkedList<String>();
 			htmls.add(template.getHTMLFile(ctx.getDevice()));
 			renderers = template.getRenderers();
@@ -433,7 +437,7 @@ public class Template implements Comparable<Template> {
 		public Map<String, String> getAreasMap() {
 			return areaMap;
 		}
-		
+
 		public List<String> getRenderers() {
 			return renderers;
 		}
@@ -580,6 +584,10 @@ public class Template implements Comparable<Template> {
 		public List<String> getCSS() {
 			return css;
 		}
+		
+		public Map<String, List<String>> getCSSByFolder() {
+			return cssByFolder;
+		}
 
 		public List<String> getHtmls() {
 			return htmls;
@@ -666,11 +674,11 @@ public class Template implements Comparable<Template> {
 
 	public static final String GZ_FILE_EXT = "httpgz";
 
-	private final ConfigurationProperties properties = new ConfigurationProperties();
-	
+	private final ConfigurationProperties properties = new StructuredConfigurationProperties();
+
 	private final ReadOnlyPropertiesConfigurationMap configMap = new ReadOnlyPropertiesConfigurationMap(properties, false);
 
-	private final ConfigurationProperties privateProperties = new ConfigurationProperties();
+	private final ConfigurationProperties privateProperties = new StructuredConfigurationProperties();
 
 	private File dir = null;
 
@@ -758,12 +766,12 @@ public class Template implements Comparable<Template> {
 				configFile.createNewFile();
 			}
 
-			template.properties.setFile(configFile);			
+			template.properties.setFile(configFile);
 
 			if (!privateConfigFile.exists()) {
 				privateConfigFile.createNewFile();
 			}
-			template.privateProperties.setFile(privateConfigFile);		
+			template.privateProperties.setFile(privateConfigFile);
 
 			template.jsp = config.isTemplateJSP();
 
@@ -958,8 +966,8 @@ public class Template implements Comparable<Template> {
 			return false;
 		}
 	}
-	
-	public Set<String> getComponentsExclude() {		
+
+	public Set<String> getComponentsExclude() {
 		String typeRAW = properties.getString("components.exclude");
 		if (typeRAW == null) {
 			return Collections.EMPTY_SET;
@@ -1134,24 +1142,54 @@ public class Template implements Comparable<Template> {
 		}
 	}
 
+	protected Map<String, List<String>> getCSSByFolder() throws IOException {
+		if (dir == null) {
+			return Collections.EMPTY_MAP;
+		}
+		Map<String, List<String>> outCSS = new LinkedHashMap<String, List<String>>();
+		config.getTemplateFolder();
+		Collection<File> file = ResourceHelper.getAllFiles(dir, null);
+		for (File cssFile : file) {
+			String ext = StringHelper.neverNull(StringHelper.getFileExtension(cssFile.getName())).toLowerCase();
+			if (ext.equals("css") || ext.equals("less") || ext.equals("scss")) {
+				String cssFileName = cssFile.getAbsolutePath().replace(cssFile.getParentFile().getAbsolutePath(), "");
+				String cssFolder = cssFile.getParentFile().getAbsolutePath().replace(dir.getAbsolutePath(), "");
+				List<String> css = outCSS.get(cssFolder);
+				if (css == null) {
+					css = new LinkedList<String>();
+					outCSS.put(cssFolder, css);
+				}
+				cssFileName = cssFileName.replace("\\", "/");
+				if (cssFileName.startsWith("/")) {
+					cssFileName = cssFileName.substring(1);
+				}
+				css.add(cssFileName);
+			}
+		}
+		for (List<String> files : outCSS.values()) {
+			Collections.sort(files);
+		}
+		return outCSS;
+	}
+
 	protected List<String> getCSS() throws IOException {
 		if (dir == null) {
 			return Collections.EMPTY_LIST;
 		}
-
 		config.getTemplateFolder();
-
-		Collection<File> file = ResourceHelper.getAllFiles(dir, FileFilterUtils.suffixFileFilter(".css"));
+		Collection<File> file = ResourceHelper.getAllFiles(dir, null);
 		List<String> css = new LinkedList<String>();
 		for (File cssFile : file) {
-			String cssFileName = cssFile.getAbsolutePath().replace(dir.getAbsolutePath(), "");
-			cssFileName = cssFileName.replace("\\", "/");
-			if (cssFileName.startsWith("/")) {
-				cssFileName = cssFileName.substring(1);
+			String ext = StringHelper.neverNull(StringHelper.getFileExtension(cssFile.getName())).toLowerCase();
+			if (ext.equals("css") || ext.equals("less") || ext.equals("scss")) {
+				String cssFileName = cssFile.getAbsolutePath().replace(dir.getAbsolutePath(), "");
+				cssFileName = cssFileName.replace("\\", "/");
+				if (cssFileName.startsWith("/")) {
+					cssFileName = cssFileName.substring(1);
+				}
+				css.add(cssFileName);
 			}
-			css.add(cssFileName);
 		}
-
 		Collections.sort(css);
 		return css;
 	}
@@ -1376,7 +1414,7 @@ public class Template implements Comparable<Template> {
 	public String getHTMLHomeFile() {
 		return properties.getString("home", getParent().getHTMLHomeFile());
 	}
-	
+
 	public String get404File() {
 		return properties.getString("404", getParent().get404File());
 	}
@@ -1395,7 +1433,7 @@ public class Template implements Comparable<Template> {
 			synchronized (globalContext.getLockImportTemplate()) {
 				if (config != null) {
 					File i18nFile = new File(URLHelper.mergePath(URLHelper.mergePath(getWorkTemplateRealPath(globalContext), filePrefix + locale.getLanguage() + ".properties")));
-					if (i18nFile.exists()) {					
+					if (i18nFile.exists()) {
 						propI18n = new Properties();
 						Reader reader = new FileReader(i18nFile);
 						((Properties) propI18n).load(reader);
@@ -1411,18 +1449,17 @@ public class Template implements Comparable<Template> {
 							propI18n = Collections.EMPTY_MAP;
 						}
 					}
-					/*Map parentI18n = getParent().getI18nProperties(globalContext, locale, mode);
-					if (parentI18n != null) {
-						if (propI18n != null) {
-							propI18n.putAll(parentI18n);
-						} else {
-							propI18n = parentI18n;
-						}
-					}*/
+					/*
+					 * Map parentI18n =
+					 * getParent().getI18nProperties(globalContext, locale,
+					 * mode); if (parentI18n != null) { if (propI18n != null) {
+					 * propI18n.putAll(parentI18n); } else { propI18n =
+					 * parentI18n; } }
+					 */
 					i18n.put(KEY, propI18n);
 				}
-			}			
-		}		
+			}
+		}
 		return propI18n;
 	}
 
@@ -1453,13 +1490,10 @@ public class Template implements Comparable<Template> {
 
 						String listKey = StringHelper.getFileNameWithoutExtension(list.getName());
 						if (lg != null) {
-							listKey = listKey.substring(0, listKey.length() - 3); /*
-																				 * remove
-																				 * language
-																				 * from
-																				 * file
-																				 * name
-																				 */
+							listKey = listKey.substring(0, listKey.length()
+									- 3); /*
+											 * remove language from file name
+											 */
 						}
 						linkedMap.put(listKey, serviceList);
 					}
@@ -1533,7 +1567,7 @@ public class Template implements Comparable<Template> {
 	public String getImageFiltersRAW() {
 		return properties.getString("images-filter", getParent().getImageFiltersRAW());
 	}
-	
+
 	public String getDefaultImageFilter() {
 		List<String> filters = getImageFilters();
 		String defaultFilter = "full";
@@ -1714,22 +1748,23 @@ public class Template implements Comparable<Template> {
 		}
 		Template parent = null;
 		String parentId = getParentName();
-		
+
 		if (parents.contains(parentId)) {
-			throw new RecursionException("template "+getName()+" create cylce with parent:"+parentId);
-		}		
+			throw new RecursionException("template " + getName() + " create cylce with parent:" + parentId);
+		}
 		parents.add(parentId);
-		
+
 		if (parentId != null && !parentId.equals(getName())) {
-			
+
 			if (ctx == null) {
 				parent = Template.getInstance(config, ctx, parentId, false, parents);
 			} else {
 				parent = TemplateFactory.getTemplates(ctx.getRequest().getSession().getServletContext()).get(parentId);
 			}
-			/*if (parent == null) {
-				throw new ConfigurationException("parent not found : " + parent);
-			}*/
+			/*
+			 * if (parent == null) { throw new
+			 * ConfigurationException("parent not found : " + parent); }
+			 */
 		}
 		return parent;
 	}
@@ -1845,7 +1880,7 @@ public class Template implements Comparable<Template> {
 					if (properties.getString(key).equals("-1")) {
 						unvalidatedRenderer = true;
 					} else {
-						outRenderes.add(renderer);	
+						outRenderes.add(renderer);
 					}
 				}
 			}
@@ -1935,7 +1970,7 @@ public class Template implements Comparable<Template> {
 	public String getSource() {
 		return properties.getString("source", getParent().getSource());
 	}
-	
+
 	/**
 	 * mode of the edit template, can be used in template renderer for include
 	 * special css or js. preview css is : edit_preview_[mode].css
@@ -2090,10 +2125,10 @@ public class Template implements Comparable<Template> {
 		if (templateData.getToolsServer() != null) {
 			templateDataMap.put(templateData.getToolsServer(), templateDataUser.getToolsServer());
 		}
-		
+
 		if (templateData.getFont() != null) {
 			templateDataMap.put(templateData.getFont(), templateDataUser.getFont());
-		}		
+		}
 		return templateDataMap;
 	}
 
@@ -2176,12 +2211,13 @@ public class Template implements Comparable<Template> {
 	}
 
 	protected void importTemplateInWebapp(StaticConfig config, ContentContext ctx, GlobalContext globalContext, File templateTarget, Map<String, String> childrenData, boolean compressResource, boolean parent) throws IOException {
-		
+
 		String templateFolder = config.getTemplateFolder();
 		File templateSrc = new File(URLHelper.mergePath(templateFolder, getSourceFolderName()));
 		if (templateSrc.exists()) {
 			logger.info("copy parent template from '" + templateSrc + "' to '" + templateTarget + "'");
-			//FileUtils.copyDirectory(templateSrc, templateTarget, new WEBFileFilter(this, false, jsp, true), false);
+			// FileUtils.copyDirectory(templateSrc, templateTarget, new
+			// WEBFileFilter(this, false, jsp, true), false);
 			ResourceHelper.copyDir(templateSrc, templateTarget, false, new WEBFileFilter(this, false, jsp, true));
 			/** filter html and css **/
 			Iterator<File> files = FileUtils.iterateFiles(templateSrc, new String[] { "html", "htm", "jsp", "js", "css", "less" }, true);
@@ -2245,18 +2281,18 @@ public class Template implements Comparable<Template> {
 					File targetFile = targetFiles.next();
 					String targetFileNameLowerCase = targetFile.getName().toLowerCase();
 					boolean isCss = targetFileNameLowerCase.endsWith(".css");
-					boolean isJs = targetFileNameLowerCase.endsWith(".js");					
+					boolean isJs = targetFileNameLowerCase.endsWith(".js");
 					if (isCss) {
 						XHTMLHelper.expandCSSImports(targetFile);
 						XHTMLHelper.compressCSS(targetFile);
 					}
 					if (isJs) {
-						XHTMLHelper.compressJS(targetFile);						
-					}					
+						XHTMLHelper.compressJS(targetFile);
+					}
 				}
 			}
 		}
-		
+
 		/** clean file **/
 		Iterator<File> targetFiles = FileUtils.iterateFiles(templateTarget, new String[] { "scss" }, true);
 		while (targetFiles.hasNext()) {
@@ -2317,11 +2353,11 @@ public class Template implements Comparable<Template> {
 	protected boolean isParent() {
 		return getParent() != null && !getParent().getName().equals(DefaultTemplate.NAME);
 	}
-	
+
 	public boolean isChildOf(String templateId) {
 		Set<String> parents = new HashSet<String>();
 		Template parent = getParent();
-		while(parent != null && !parents.contains(parent.getName())) {
+		while (parent != null && !parents.contains(parent.getName())) {
 			if (parent.getName().equals(templateId)) {
 				return true;
 			} else {
@@ -2726,7 +2762,7 @@ public class Template implements Comparable<Template> {
 			String key = (String) keys.next();
 			if (key.startsWith("row.") || key.startsWith("area.")) {
 				keys.remove();
-				//properties.clearProperty(key);
+				// properties.clearProperty(key);
 			}
 		}
 		for (Row row : rows) {
@@ -2866,12 +2902,12 @@ public class Template implements Comparable<Template> {
 	public boolean isLanguageLinkKeepGetParams() {
 		return StringHelper.isTrue(properties.getString("language.keepParams"));
 	}
-	
+
 	public boolean isEndAreaTag() {
-		return StringHelper.isTrue(properties.getString("area.end-tag"),true);
+		return StringHelper.isTrue(properties.getString("area.end-tag"), true);
 	}
-	
-	public Map<String,String> getConfig() {
+
+	public Map<String, String> getConfig() {
 		return configMap;
 	}
 

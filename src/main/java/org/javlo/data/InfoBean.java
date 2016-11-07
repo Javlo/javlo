@@ -1471,6 +1471,18 @@ public class InfoBean {
 	public boolean isInternetAccess() {
 		return ctx.getGlobalContext().getStaticConfig().isInternetAccess();
 	}
+	
+	public Map<String,String> getTranslateLanguageMap() {
+		LanguageMap langMap = new LanguageMap();
+		langMap.setLang(ctx.getLanguage());
+		return langMap;
+	}
+	
+	public Map<String,String> getLanguageMap() {
+		LanguageMap langMap = new LanguageMap();
+		langMap.setLang(null);
+		return langMap;
+	}
 
 	
 }

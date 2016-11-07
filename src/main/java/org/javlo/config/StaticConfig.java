@@ -1224,20 +1224,20 @@ public class StaticConfig extends Observable {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			redirectSecondaryURL = null;
-			adminUserFactoryClass = null;
-			admimUserFactory = null;
-			adminUserFactoryClassName = "";
-			devices = null;
-			excludeContextDomain = null;
-			encryptedFirstPassword = null;
-			contentExtension = null;
-			ipMaskList = null;
 			clearCache();
 		}
 	}
 
 	public void clearCache() {
+		redirectSecondaryURL = null;
+		adminUserFactoryClass = null;
+		admimUserFactory = null;
+		adminUserFactoryClassName = "";
+		devices = null;
+		excludeContextDomain = null;
+		encryptedFirstPassword = null;
+		contentExtension = null;
+		ipMaskList = null;
 		internetAccess = null;
 	}
 

@@ -16,8 +16,10 @@ public class NetHelperTest extends TestCase {
 		assertTrue(NetHelper.ipInRange("192.168.254.65", "192.168.254.64/27"));
 		assertTrue(NetHelper.ipInRange("192.168.254.72", "192.168.254.64/27"));
 		assertTrue(NetHelper.ipInRange("192.168.254.94", "192.168.254.64/27"));
+		assertTrue(NetHelper.ipInRange("136.173.60.47", "136.173.0.0/16"));
+		assertTrue(NetHelper.ipInRange("10.22.247.121", "10.0.0.0/8"));
 
-		assertFalse(NetHelper.ipInRange("192.168.254.63", "192.168.254.64/27"));
+		assertFalse(NetHelper.ipInRange("192.168.254.63", "192.168.254.64/27"));		
 		//assertFalse(NetHelper.ipInRange("192.168.254.95", "192.168.254.64/27"));		
 		assertFalse(NetHelper.ipInRange("192.168.1.1", "192.168.0.0/24"));
 		assertFalse(NetHelper.ipInRange("193.168.1.1", "192.168.0.0/8"));

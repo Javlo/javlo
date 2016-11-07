@@ -15,7 +15,7 @@ import org.javlo.helper.StringHelper;
 
 public class ConfigurationProperties {
 	
-	private Properties prop;
+	protected Properties prop;
 	private File file;
 	
 	public ConfigurationProperties() {

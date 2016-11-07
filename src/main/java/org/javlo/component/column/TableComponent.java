@@ -19,9 +19,9 @@ public abstract class TableComponent extends AbstractPropertiesComponent {
 
 	private static final List<String> fields = Arrays.asList(new String[] { "padding", "width", "valign", "align", "colspan", "backgroundcolor", "bordersize", "bordercolor" });
 	
-	protected static final Set<String> FIELD_NEED_PX = new HashSet<String>(Arrays.asList(new String[] { "bordersize", "width", "tablebordersize" }));
+	protected static final Set<String> FIELD_NEED_PX = new HashSet<String>(Arrays.asList(new String[] { "bordersize", "width", "tablebordersize", "padding" }));
 
-	protected static final Set<String> FIELD_NEED_UNITY = new HashSet<String>(Arrays.asList(new String[] { "padding", "margin" }));
+	protected static final Set<String> FIELD_NEED_UNITY = new HashSet<String>(Arrays.asList(new String[] { "margin" }));
 	
 	protected static final Set<String> FIELD_NUMBER_ONLY = new HashSet<String>(Arrays.asList(new String[] { "colspan" }));
 

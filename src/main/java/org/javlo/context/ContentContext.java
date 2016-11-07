@@ -26,6 +26,7 @@ import org.javlo.component.core.ComponentBean;
 import org.javlo.config.StaticConfig;
 import org.javlo.helper.AjaxHelper.ScheduledRender;
 import org.javlo.helper.LocalLogger;
+import org.javlo.helper.NetHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.navigation.IURLFactory;
@@ -833,8 +834,8 @@ public class ContentContext {
 				if (getPath().trim().length() > 0) {
 					MenuElement elem = globalContext.getPageIfExist(this, getPath(), urlFacotry);
 
-					if (elem != null && !globalContext.getStaticConfig().getIPMasks().isEmpty()) {
-						if (getRenderMode() != EDIT_MODE) {
+					if (elem != null) {
+						if (getRenderMode() != EDIT_MODE && !NetHelper.isIPAccepted(this)) {
 							if (!StringHelper.isEmpty(elem.getIpSecurityErrorPageName())) {
 								response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 								String pageName = elem.getIpSecurityErrorPageName();

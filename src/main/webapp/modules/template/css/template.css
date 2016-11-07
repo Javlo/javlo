@@ -112,6 +112,16 @@ input[readonly] {
 	text-align: left;
 }
 
+.files {
+	display: flex;
+	flex-flow: row wrap;
+}
+
+.btn {
+	margin-bottom: 5px;
+	margin-left: 5px;
+}
+
 /** edit images **/
 
 

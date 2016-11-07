@@ -1,7 +1,5 @@
 package org.javlo.navigation;
 
-import java.net.URLEncoder;
-
 import org.apache.commons.lang3.StringUtils;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
@@ -50,7 +48,7 @@ public class NoExtURLPathTitleCreatorOneLevel extends NoExtURLCreator {
 		if (currentPage.getUrlNumber() > 0) {
 			label = label + '-' + currentPage.getUrlNumber();
 		}
-		String path = URLEncoder.encode(StringHelper.createI18NURL(label), ContentContext.CHARACTER_ENCODING);
+		String path = StringHelper.createI18NURL(label);
 		return '/'+URLHelper.mergePath(getParentPath(ctx, currentPage.getParent()),ctx.getFormat(),path);
 	}
 
