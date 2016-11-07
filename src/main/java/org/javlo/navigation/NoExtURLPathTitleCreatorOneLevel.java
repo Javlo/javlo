@@ -1,5 +1,8 @@
 package org.javlo.navigation;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+
 import org.apache.commons.lang3.StringUtils;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
@@ -67,7 +70,12 @@ public class NoExtURLPathTitleCreatorOneLevel extends NoExtURLCreator {
 
 	@Override
 	public String createURLKey(String url) {
-		return url;
+		try {
+			return URLDecoder.decode(url, ContentContext.CHARACTER_ENCODING);
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 
 }

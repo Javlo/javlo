@@ -1,6 +1,7 @@
 package org.javlo.navigation;
 
-import java.net.URLEncoder;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 
 import org.apache.commons.lang3.StringUtils;
 import org.javlo.context.ContentContext;
@@ -23,13 +24,15 @@ public class NoExtURLCreator implements IURLFactory {
 
 	@Override
 	public String createURL(ContentContext ctx, MenuElement currentPage) throws Exception {
-		
+
 		if (currentPage.isLikeRoot(ctx)) {
 			return "/";
 		}
-		
+
 		/*
-		 * Collection<IContentVisualComponent> comps = currentPage.getContentByType(ctx, PageURL.TYPE); if (comps.size() > 0) { return ((PageURL) comps.iterator().next()).getValue(); }
+		 * Collection<IContentVisualComponent> comps =
+		 * currentPage.getContentByType(ctx, PageURL.TYPE); if (comps.size() >
+		 * 0) { return ((PageURL) comps.iterator().next()).getValue(); }
 		 */
 		ContentContext lgCtx = ctx;
 		if (fromDefaultLanguage()) {
@@ -40,9 +43,9 @@ public class NoExtURLCreator implements IURLFactory {
 		}
 		String label = currentPage.getLocalTitle(lgCtx);
 		if (currentPage.getUrlNumber() > 0) {
-			label = label + '-' +currentPage.getUrlNumber();
+			label = label + '-' + currentPage.getUrlNumber();
 		}
-		String path = URLEncoder.encode(StringHelper.createI18NURL(label), ContentContext.CHARACTER_ENCODING);
+		String path = StringHelper.createI18NURL(label);
 
 		return getParentPath(currentPage.getParent()) + '/' + ctx.getFormat() + '/' + path;
 	}
@@ -67,15 +70,20 @@ public class NoExtURLCreator implements IURLFactory {
 		}
 		String workURL = url.substring(0, url.length() - 1); // remove last char
 		int afterExtPos = workURL.lastIndexOf('/');
-		if (afterExtPos > 0) {
-			int beofreExtPos = workURL.substring(0, afterExtPos - 1).lastIndexOf('/');
-			if (afterExtPos < 0 || beofreExtPos < 0) {
-				return url;
+		try {
+			if (afterExtPos > 0) {
+				int beofreExtPos = workURL.substring(0, afterExtPos - 1).lastIndexOf('/');
+				if (afterExtPos < 0 || beofreExtPos < 0) {
+					return URLDecoder.decode(url, ContentContext.CHARACTER_ENCODING);
+				} else {
+					return URLDecoder.decode(url.substring(0, beofreExtPos) + url.substring(afterExtPos, url.length()), ContentContext.CHARACTER_ENCODING);
+				}
 			} else {
-				return url.substring(0, beofreExtPos) + url.substring(afterExtPos, url.length());
+				return URLDecoder.decode(url, ContentContext.CHARACTER_ENCODING);
 			}
-		} else {
-			return url;
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+			return null;
 		}
 	}
 
