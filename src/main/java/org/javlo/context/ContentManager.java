@@ -94,7 +94,6 @@ public class ContentManager {
 	}
 
 	public static String getLanguage(HttpServletRequest request, int index) {
-
 		String lg = "";
 
 		String realPath = RequestService.getURI(request);

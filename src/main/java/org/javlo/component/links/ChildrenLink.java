@@ -167,6 +167,10 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 			}
 			return outChildren;	
 		}
+		
+		public String getContentLanguage() {
+			return ctx.getContextRequestLanguage();
+		}
 
 	}
 
@@ -356,9 +360,13 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 		String renderer = getRenderer(ctx);
 		if (renderer != null) {
 			List<ChildLinkBean> childrenList = new LinkedList<ChildLinkBean>();
-			for (MenuElement element : children) {				
-				if ((element.isVisible(ctx) ^ showOnlyNotVisible) || showAll) {
-					ChildLinkBean bean = new ChildLinkBean(ctx, element, currentPage);
+			for (MenuElement element : children) {
+				ContentContext lgCtx = ctx;
+				if (ctx.getGlobalContext().isAutoSwitchToDefaultLanguage()) {
+					lgCtx = ctx.getContextWithContent(element);
+				}
+				if ((element.isVisible(lgCtx) ^ showOnlyNotVisible) || showAll) {
+					ChildLinkBean bean = new ChildLinkBean(lgCtx, element, currentPage);
 					childrenList.add(bean);
 				}
 			}
