@@ -809,4 +809,6 @@ hange log
   * 3/ clean history, clean only previous version for optimisation / update tinymce to 4.4.3 / add first-in-cell class on component if needed / LanguageMap / TableComponent padding as px
   
   * 4/ save template as structured properties / template css edition in accordeon / correct slide.jsp in default template / correction encoding for NoExtURLPathTitleCreatorOneLevel and NoExtURLCreator / PersistenceService bug analyse version correction
+  
+  * 5/ sort area / clouds link 
  
