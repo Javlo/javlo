@@ -199,7 +199,7 @@ public class PersistenceService {
 
 	public static final String GLOBAL_MAP_NAME = "global";
 
-	private static final String STORE_FILE_PREFIX = "/content_";
+	private static final String STORE_FILE_PREFIX = "content_";
 
 	public static int UNDO_DEPTH = 255;
 
@@ -376,8 +376,10 @@ public class PersistenceService {
 		File[] backupPreview = new File(getDirectory()).listFiles(BackupPreviewFileFilter.instance);
 		if (backupPreview != null) {
 			for (File file : backupPreview) {
+				System.out.println("***** PersistenceService.getPersistences : file = "+file); //TODO: remove debug trace
 				if (!file.getName().endsWith(".error")) {
 					String version = file.getName().replaceAll(STORE_FILE_PREFIX + ContentContext.PREVIEW_MODE + ".", "").replaceAll(".xml", "").replaceAll(".zip", "");
+					System.out.println("***** PersistenceService.getPersistences : version = "+version); //TODO: remove debug trace
 					int versionInteger = -1;
 					try {
 						versionInteger = Integer.parseInt(version);
@@ -1058,7 +1060,7 @@ public class PersistenceService {
 	}
 
 	public String getPersistenceFilePrefix(int mode) {
-		return getDirectory() + STORE_FILE_PREFIX + mode;
+		return URLHelper.mergePath(getDirectory(), STORE_FILE_PREFIX + mode);
 	}
 
 	protected MenuElement load(ContentContext ctx, int renderMode, Map<String, String> contentAttributeMap, Date timeTravelDate, boolean correctXML, Integer previewVersion) throws Exception {

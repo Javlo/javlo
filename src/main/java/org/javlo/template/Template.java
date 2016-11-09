@@ -626,7 +626,7 @@ public class Template implements Comparable<Template> {
 				return false;
 			}
 			String ext = FilenameUtils.getExtension(file.getName());
-			if ((ext.equalsIgnoreCase("html") && jsp) || ext.equalsIgnoreCase("html") || ext.equalsIgnoreCase("css") || ext.equalsIgnoreCase("htm") || ext.equalsIgnoreCase("js") || ext.equalsIgnoreCase("less")) {
+			if ((ext.equalsIgnoreCase("html") && jsp) || ext.equalsIgnoreCase("html") || ext.equalsIgnoreCase("css") || ext.equalsIgnoreCase("scss") || ext.equalsIgnoreCase("htm") || ext.equalsIgnoreCase("js") || ext.equalsIgnoreCase("less")) {
 				return accept;
 			} else {
 				return !accept;
@@ -2220,7 +2220,7 @@ public class Template implements Comparable<Template> {
 			// WEBFileFilter(this, false, jsp, true), false);
 			ResourceHelper.copyDir(templateSrc, templateTarget, false, new WEBFileFilter(this, false, jsp, true));
 			/** filter html and css **/
-			Iterator<File> files = FileUtils.iterateFiles(templateSrc, new String[] { "html", "htm", "jsp", "js", "css", "less" }, true);
+			Iterator<File> files = FileUtils.iterateFiles(templateSrc, new String[] { "html", "htm", "jsp", "js", "css", "scss", "less" }, true);
 
 			/** plugins **/
 			if (globalContext != null && !parent) {

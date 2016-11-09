@@ -5,7 +5,7 @@
 	#preview_command li, #preview_command ul, #preview_command label,
 	#preview_command img, #preview_command div, #preview_command a,
 	#preview_command span, #preview_command input, #preview_command fieldset,
-	#preview_command legend, #preview_command form, #preview_command select, #preview_command .badge, 
+	#preview_command legend, #preview_command form, #preview_command select, #preview_command .badge, #preview_command .badge:before, #preview_command .badge:after,
 	#preview_command option, #preview_command .navigation, #preview_command .commands, #preview_command button {
 	margin: 0;
 	border: 0 none;

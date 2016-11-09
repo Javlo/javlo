@@ -581,17 +581,17 @@ var editPreview = editPreview||{};
 							ajaxURL = ajaxURL +'&pageContainerID='+ editPreview.searchPageId(this);
 						}
 						editPreview.ajaxPreviewRequest(ajaxURL, null, null);
-					} else if (compType != null && compType.length > 0) {
+					} else if (compType != null && compType.length > 0) {						
 						pjq(this).removeClass("drop-selected");
 						var url = "previewEdit=true&webaction=edit.insert&type=" + compType + "&previous=0&area=" + area+ "&render-mode=3&init=true";
 						if (editPreview.searchPageId(this) != null) {
 							url = url +'&pageContainerID='+ editPreview.searchPageId(this);
 						}
 						var ajaxURL = editPreview.addParam(currentURL,url);
-						editPreview.ajaxPreviewRequest(ajaxURL, function() {
+						editPreview.ajaxPreviewRequest(ajaxURL, function() {                           
 							if (pjq(".edit-component").length > 0) {
 								var compId = pjq(".edit-component").attr("id").substring(3);
-								var editURL = editPreviewURL + "&comp_id=" + compId;
+								var editURL = editPreviewURL + "&comp_id=" + compId;								
 								editPreview.openModal(i18n_preview_edit, editURL);
 							}
 						}, null);
@@ -914,10 +914,7 @@ var editPreview = editPreview||{};
 					if (jsonObj.data["need-refresh"]) {
 						editPreview.reloadPreviewPage();
 					}
-				}
-				if (doneFunction != null) {
-					doneFunction();
-				}
+				}				
 				editPreview.stopAjax();
 				if (jsonObj.messageText != null) {
 					editPreview.addAlert(jsonObj.messageText, jsonObj.messageType);
@@ -961,6 +958,9 @@ var editPreview = editPreview||{};
 					}
 				}
 				editPreview.stopAjax();
+				if (doneFunction != null) {
+					doneFunction();
+				}
 			});
 		}
 		function scrollToMe() {

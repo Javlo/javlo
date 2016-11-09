@@ -1494,11 +1494,7 @@ public class StringHelper {
 	}
 
 	public static void main(String[] args) {
-		long startTime = System.currentTimeMillis();
-		for (int i=0; i<1000000; i++) {
-			StringHelper.createI18NURL("$été+lorem/#;,[lorem]");
-		}
-		System.out.println("time : "+StringHelper.renderTimeInSecond(System.currentTimeMillis()-startTime));
+		System.out.println("red = "+colorToHexString(Color.RED));
 	}
 
 	/**
