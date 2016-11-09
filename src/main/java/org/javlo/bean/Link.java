@@ -13,6 +13,7 @@ public class Link implements Serializable {
 	protected String url;
 	protected String title;
 	protected String label;
+	protected String style;
 
 	public Link(String url, String title, String label) {
 		super();
@@ -50,6 +51,14 @@ public class Link implements Serializable {
 
 	public void setLabel(String label) {
 		this.label = label;
+	}
+	
+	public String getStyle() {
+		return style;
+	}
+	
+	public void setStyle(String style) {
+		this.style = style;
 	}
 
 }

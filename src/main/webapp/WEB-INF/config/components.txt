@@ -44,6 +44,7 @@ org.javlo.component.text.Code
 org.javlo.component.links.ExternalLink
 org.javlo.component.links.InternalLink
 org.javlo.component.links.SimpleInternalLink
+org.javlo.component.links.CloudTag
 org.javlo.component.links.PDFLink
 org.javlo.component.links.PageReferenceComponent
 org.javlo.component.links.ChildrenLink

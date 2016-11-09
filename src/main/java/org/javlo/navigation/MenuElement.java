@@ -2754,7 +2754,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 				}
 			}
 		}
-		List<String> tags = getTags(ctx);
+		/*List<String> tags = getTags(ctx);
 		for (String tag : tags) {
 			if (res.length() > 0) {
 				res = res + ',';
@@ -2763,7 +2763,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 				res = res + tag;
 				keywordsSet.add(res);
 			}
-		}
+		}*/
 		desc.keywords = res;
 		return desc.keywords;
 	}

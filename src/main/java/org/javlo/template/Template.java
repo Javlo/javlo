@@ -42,6 +42,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.filefilter.FileFilterUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.xmlbeans.impl.piccolo.util.RecursionException;
+import org.javlo.bean.SortBean;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
@@ -584,7 +585,7 @@ public class Template implements Comparable<Template> {
 		public List<String> getCSS() {
 			return css;
 		}
-		
+
 		public Map<String, List<String>> getCSSByFolder() {
 			return cssByFolder;
 		}
@@ -703,6 +704,10 @@ public class Template implements Comparable<Template> {
 	private Map<String, Row> rows = null;
 
 	private TemplateStyle style = null;
+
+	private List<String> areas = null;
+
+	private List<String> notAdminAreas = null;
 
 	public static Template getApplicationInstance(ServletContext application, ContentContext ctx, String templateDir) throws Exception {
 
@@ -919,43 +924,71 @@ public class Template implements Comparable<Template> {
 
 	@SuppressWarnings("unchecked")
 	public List<String> getAreas() {
-		List<String> areas = new LinkedList<String>();
-		Iterator<String> keys = properties.getKeys();
-		while (keys.hasNext()) {
-			String key = keys.next();
-			if (key.startsWith(XMLManipulationHelper.AREA_PREFIX) && StringUtils.countMatches(key, ".") < 2) {
-				areas.add(key.substring(XMLManipulationHelper.AREA_PREFIX.length()));
+		if (areas == null) {
+			Iterator<String> keys = properties.getKeys();
+			String html = "";
+			if (dir != null) {
+				File indexFile = new File(URLHelper.mergePath(dir.getAbsolutePath(), getHTMLFile(null)));
+				Template parent = getParent();
+				while (!indexFile.exists() && parent != null) {
+					indexFile = new File(URLHelper.mergePath(parent.dir.getAbsolutePath(), parent.getHTMLFile(null)));
+					parent = parent.getParent();
+				}
+				if (indexFile.exists()) {
+					try {
+						html = ResourceHelper.loadStringFromFile(indexFile);
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
 			}
-		}
-		if (areas.size() == 0) {
-			if (getParent() == null) {
-				areas.add(ComponentBean.DEFAULT_AREA);
-			} else {
-				return getParent().getAreas();
+			List<SortBean<String>> workAreas = new LinkedList<SortBean<String>>();
+			while (keys.hasNext()) {
+				String key = keys.next();
+				if (key.startsWith(XMLManipulationHelper.AREA_PREFIX) && StringUtils.countMatches(key, ".") < 2) {
+					String area = key.substring(XMLManipulationHelper.AREA_PREFIX.length());
+					int index = html.indexOf("id=\"" + area + "\"");
+					//if (index>=0) { 
+						workAreas.add(new SortBean<String>(area, index));
+//					} else {
+//						logger.warning("area not found in template '"+getName()+"' : "+area );
+//					}
+				}
 			}
+			if (workAreas.size() == 0) {
+				if (getParent() == null) {
+					workAreas.add(new SortBean<String>(ComponentBean.DEFAULT_AREA, html.indexOf("id=\"" + ComponentBean.DEFAULT_AREA + "\"")));
+				} else {
+					return getParent().getAreas();
+				}
+			}
+			Collections.sort(workAreas);
+			areas = SortBean.transformList(workAreas);
 		}
 		return areas;
 	}
 
 	public List<String> getAreas(boolean admin) {
-		List<String> areas = new LinkedList<String>();
-		Iterator<String> keys = properties.getKeys();
-		while (keys.hasNext()) {
-			String key = keys.next();
-			if (key.startsWith(XMLManipulationHelper.AREA_PREFIX) && StringUtils.countMatches(key, ".") < 2) {
-				String area = key.substring(XMLManipulationHelper.AREA_PREFIX.length());
-				if (admin || !isAdminArea(area))
-					areas.add(area);
+		if (admin) {
+			return getAreas();
+		} else {
+			if (notAdminAreas == null) {
+				notAdminAreas = new LinkedList<String>();
+				for (String area : getAreas()) {
+					if (!isAdminArea(area)) {
+						notAdminAreas.add(area);
+					}
+				}
+				if (notAdminAreas.size() == 0) {
+					if (getParent() == null) {
+						notAdminAreas.add(ComponentBean.DEFAULT_AREA);
+					} else {
+						return getParent().getAreas(admin);
+					}
+				}
 			}
+			return notAdminAreas;
 		}
-		if (areas.size() == 0) {
-			if (getParent() == null) {
-				areas.add(ComponentBean.DEFAULT_AREA);
-			} else {
-				return getParent().getAreas(admin);
-			}
-		}
-		return areas;
 	}
 
 	public boolean isAdminArea(String area) {

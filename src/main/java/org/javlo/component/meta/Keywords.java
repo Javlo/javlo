@@ -72,7 +72,7 @@ public class Keywords extends AbstractVisualComponent {
 	
 	@Override
 	public int getComplexityLevel(ContentContext ctx) {
-		return getConfig(ctx).getComplexity(COMPLEXITY_ADMIN);
+		return getConfig(ctx).getComplexity(COMPLEXITY_STANDARD);
 	}
 
 }
