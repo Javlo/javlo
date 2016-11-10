@@ -2044,14 +2044,16 @@ public class ContentContext {
 		return request.getRemoteAddr();
 	}
 
+	private static final String[] HEADERS_TO_TRY = { "X-Forwarded-For", "Proxy-Client-IP", "WL-Proxy-Client-IP", "HTTP_X_FORWARDED_FOR", "HTTP_X_FORWARDED", "HTTP_X_CLUSTER_CLIENT_IP", "HTTP_CLIENT_IP", "HTTP_FORWARDED_FOR", "HTTP_FORWARDED", "HTTP_VIA", "REMOTE_ADDR" };
+
 	public String getRealRemoteIp() {
-		String ip = request.getHeader("x-real-ip");
-		if (ip == null) {
-			ip = request.getHeader("x-forwarded-for");
-			if (ip == null) {
-				ip = request.getRemoteAddr();
+		for (String header : HEADERS_TO_TRY) {
+			String ip = request.getHeader(header);
+			if (ip != null && ip.length() != 0 && !"unknown".equalsIgnoreCase(ip)) {
+				return ip;
 			}
 		}
-		return ip;
+		return request.getRemoteAddr();
 	}
+
 }

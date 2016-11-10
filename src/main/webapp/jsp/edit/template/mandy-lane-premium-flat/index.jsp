@@ -288,7 +288,7 @@
     		${info.currentYear} - v ${info.version} - 
     		<span id="preview-version">${info.previewVersion}</span> - 
     		<span id="server-time">${info.serverTime}</span> -   		
-    		<span id="server-time">IP:${contentContext.remoteIp}</span>
+    		<span id="server-time">IP:${contentContext.realRemoteIp}</span>
     		<c:if test="${info.localModule}">
     			<span class="localmodule"><a href="${info.staticRootURL}webstart/localmodule.jnlp.jsp">Local Module</a></span>
     		</c:if>

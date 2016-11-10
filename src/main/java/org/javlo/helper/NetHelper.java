@@ -1235,7 +1235,7 @@ public class NetHelper {
 		if (acceptedIPS.isEmpty()) {
 			return true;
 		} else {
-			String ip = ctx.getRemoteIp();
+			String ip = ctx.getRealRemoteIp();
 			for (String mask : acceptedIPS) {
 				if (ipInRange(ip, mask)) {
 					return true;

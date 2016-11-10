@@ -87,9 +87,9 @@
 				<div class="btn-group">
 					<ul>
 						<li>
-							<c:set var="tooltip" value='' />
+							<c:set var="tooltip" value="" />
 							<c:if test="${i18n.edit['command.copy-page.tooltip'] != 'command.copy-page.tooltip'}">
-								<c:set var="tooltip" value='data-toggle="tooltip" data-placement="left" title="${i18n.edit[\'command.copy-page.tooltip\']}"' />
+								<c:set var="tooltip" value="data-toggle=\"tooltip\" data-placement=\"left\" title=\"${i18n.edit['command.copy-page.tooltip']}\"" />
 							</c:if>
 						
 							<form class="${info.page.pageLocalEmpty || info.page.childrenAssociation?'no-access':''}"
@@ -106,15 +106,15 @@
 						<li>
 						<c:set var="tooltip" value='' />
 						<c:if test="${i18n.edit['command.paste-page.tooltip'] != 'command.paste-page.tooltip'}">
-							<c:set var="tooltip" value='data-toggle="tooltip" data-placement="left" title="${i18n.edit[\'command.paste-page.tooltip\']}"' />
+							<c:set var="tooltip" value="data-toggle=\"tooltip\" data-placement=\"left\" title=\"${i18n.edit['command.paste-page.tooltip']}\"" />
 						</c:if>						
 						<form
 								class="${empty info.contextForCopy || !info.page.pageLocalEmpty || info.page.childrenAssociation?'no-access':''}"
 								id="paste_page" action="${info.currentURL}" method="post">
 								<input type="hidden" name="webaction" value="edit.pastePage" />
-								<c:set var="tooltip" value='' />
+								<c:set var="tooltip" value="" />
 								<c:if test="${i18n.edit['action.paste-page-preview'] != 'action.paste-page-preview'}">
-									<c:set var="tooltip" value='data-toggle="tooltip" data-placement="left" title="${i18n.edit[\'action.paste-page-preview\']}"' />
+									<c:set var="tooltip" value="data-toggle=\"tooltip\" data-placement=\"left\" title=\"${i18n.edit['action.paste-page-preview']}\"" />
 								</c:if>
 								<button ${tooltip} class="btn btn-default btn-sm" id="pc_paste_page"
 									type="submit"
@@ -129,7 +129,7 @@
 								<div class="hidden"><input type="hidden" name="webaction" value="edit.refresh" /></div>
 								<c:set var="tooltip" value='' />
 								<c:if test="${i18n.edit['global.refresh'] != 'global.refresh'}">
-									<c:set var="tooltip" value='data-toggle="tooltip" data-placement="left" title="${i18n.edit[\'global.refresh\']}"' />
+									<c:set var="tooltip" value="data-toggle=\"tooltip\" data-placement=\"left\" title=\"${i18n.edit['global.refresh']}\"" />
 								</c:if>
 								<button ${tooltip} class="btn btn-default btn-sm btn-refresh"
 									id="pc_paste_page" type="submit">
