@@ -930,7 +930,7 @@ public class Template implements Comparable<Template> {
 			if (dir != null) {
 				File indexFile = new File(URLHelper.mergePath(dir.getAbsolutePath(), getHTMLFile(null)));
 				Template parent = getParent();
-				while (!indexFile.exists() && parent != null) {
+				while (!indexFile.exists() && parent != null && parent.dir != null) {
 					indexFile = new File(URLHelper.mergePath(parent.dir.getAbsolutePath(), parent.getHTMLFile(null)));
 					parent = parent.getParent();
 				}
