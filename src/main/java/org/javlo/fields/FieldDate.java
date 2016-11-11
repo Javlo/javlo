@@ -50,6 +50,9 @@ public class FieldDate extends Field implements IDate {
 		}
 		
 		public boolean isPast() {
+			if (getDate() == null) {
+				return false;
+			}
 			Calendar now = Calendar.getInstance();
 			Calendar cal = Calendar.getInstance();
 			cal.setTime(getDate());
