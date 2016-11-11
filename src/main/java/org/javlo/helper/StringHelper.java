@@ -53,6 +53,7 @@ import java.util.zip.CRC32;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 
+import org.apache.commons.codec.binary.Base32;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -158,6 +159,24 @@ public class StringHelper {
 	 */
 	public static String asBase64(byte[] bytes) {
 		return Base64.encodeBase64URLSafeString(bytes);
+	}
+
+	/**
+	 * generate a base 32 string with a int
+	 * 
+	 * @return a unique id.
+	 */
+	public static String asBase32(int value) {
+		return asBase32(JavaHelper.intToByteArray(value));
+	}
+	
+	/**
+	 * generate a base 32 string.
+	 * 
+	 * @return a unique id.
+	 */
+	public static String asBase32(byte[] bytes) {
+		return (new Base32()).encodeAsString(bytes);
 	}
 
 	/**
@@ -1494,7 +1513,15 @@ public class StringHelper {
 	}
 
 	public static void main(String[] args) {
-		System.out.println("red = "+colorToHexString(Color.RED));
+		
+		for (int i=0; i<50; i++) {
+			long base = Math.round(Math.random()*2000000);
+			String extension = StringHelper.asBase32((int)Math.round(Math.random()*32));
+			String code = base+"-"+extension;
+			System.out.println(code);
+		}
+
+		System.out.println("9999999 : "+StringHelper.asBase32(9999999));
 	}
 
 	/**

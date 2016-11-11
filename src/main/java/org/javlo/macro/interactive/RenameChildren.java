@@ -1,4 +1,4 @@
-package org.javlo.macro;
+package org.javlo.macro.interactive;
 
 import java.util.Map;
 import java.util.logging.Logger;

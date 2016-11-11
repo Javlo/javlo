@@ -1,4 +1,4 @@
-package org.javlo.macro;
+package org.javlo.macro.interactive;
 
 import java.net.MalformedURLException;
 import java.util.Collection;

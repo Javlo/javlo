@@ -53,7 +53,7 @@ import org.javlo.helper.URLHelper;
 import org.javlo.helper.importation.ImportConfigBean;
 import org.javlo.helper.importation.TanukiImportTools;
 import org.javlo.i18n.I18nAccess;
-import org.javlo.macro.ImportJCRPageMacro;
+import org.javlo.macro.interactive.ImportJCRPageMacro;
 import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
 import org.javlo.module.content.Edit;

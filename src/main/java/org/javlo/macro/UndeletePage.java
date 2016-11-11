@@ -15,6 +15,7 @@ import org.javlo.context.ContentContext;
 import org.javlo.context.EditContext;
 import org.javlo.helper.URLHelper;
 import org.javlo.i18n.I18nAccess;
+import org.javlo.macro.core.AbstractInteractiveMacro;
 import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
 import org.javlo.navigation.MenuElement;

@@ -149,7 +149,7 @@
             	<a href="${info.editTemplateURL}/integrity.jsp?path=${info.path}" class="alertintegrity">
                 	<span class="wrap">
                     	<span class="thicon infoicon"></span>
-                        <span id="integrity-count" class="count ${integrities.errorCount == 0?'clear':'not-clear'}">${integrities.errorCount}</span>
+                        <span id="integrity-count" class="count ${integrities.errorCount == 0?'clear':'not-clear'}">${fn:length(integrities.checker)}</span>
                     </span>
                 </a>
             </li></c:if>

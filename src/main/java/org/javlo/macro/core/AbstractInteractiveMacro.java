@@ -1,6 +1,4 @@
-package org.javlo.macro;
-
-import org.javlo.macro.core.IInteractiveMacro;
+package org.javlo.macro.core;
 
 public abstract class AbstractInteractiveMacro implements IInteractiveMacro {
 

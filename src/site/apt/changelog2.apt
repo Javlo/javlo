@@ -811,4 +811,6 @@ hange log
   * 4/ save template as structured properties / template css edition in accordeon / correct slide.jsp in default template / correction encoding for NoExtURLPathTitleCreatorOneLevel and NoExtURLCreator / PersistenceService bug analyse version correction
   
   * 5/ sort area / clouds link 
+  
+  * 6/ macro : update-user-info / clean macro package / unactive old macro
  

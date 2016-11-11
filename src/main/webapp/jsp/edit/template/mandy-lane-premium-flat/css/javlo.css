@@ -387,12 +387,12 @@ a.popup span {
 
 .standard-form .action input,.array-form .action input {
 	width: auto;
-	background: url("../images/buttonbg5.png") repeat-x scroll left top
-		#EEEEEE;
+	background: url("../images/buttonbg5.png") repeat-x scroll left top	#EEEEEE;
 	border: 1px solid #CCCCCC;
 	border-radius: 3px 3px 3px 3px;
 	cursor: pointer;
 	display: inline-block;
+	color: #333333;
 }
 
 .standard-form .action input {
@@ -1427,7 +1427,7 @@ body.previewEdit {
 	display: inline;
 	width: auto;
 	max-width: 100%;	
-	max-height: 170px;
+	max-height: 270px;
 }
 
 .form-list .download a img[src$='.svg'] {

@@ -28,6 +28,7 @@ import org.javlo.helper.MapHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.i18n.I18nAccess;
+import org.javlo.macro.core.AbstractInteractiveMacro;
 import org.javlo.message.MessageRepository;
 import org.javlo.module.macro.MacroModuleContext;
 import org.javlo.navigation.MenuElement;

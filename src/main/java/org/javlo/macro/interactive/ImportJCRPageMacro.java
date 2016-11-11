@@ -1,4 +1,4 @@
-package org.javlo.macro;
+package org.javlo.macro.interactive;
 
 import java.io.File;
 import java.io.FileFilter;

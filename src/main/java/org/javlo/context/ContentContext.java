@@ -1738,9 +1738,9 @@ public class ContentContext {
 	}
 
 	public static void main(String[] args) {
-		String newPath = "http://www.noctis.be/test/view.html;jsessionid=sdlfqjmdlsfj";
-		newPath = newPath.substring(0, newPath.indexOf(";jsessionid="));
-		System.out.println(newPath);
+		String ip="123.34.54.12 ,34.23.12.34";
+		ip = ip.substring(0, ip.indexOf(","));
+		System.out.println("ip="+ip);
 	}
 
 	public String getPathPrefix() {
@@ -2050,7 +2050,10 @@ public class ContentContext {
 		for (String header : HEADERS_TO_TRY) {
 			String ip = request.getHeader(header);
 			if (ip != null && ip.length() != 0 && !"unknown".equalsIgnoreCase(ip)) {
-				return ip;
+				if (ip.contains(",")) {
+					ip = ip.substring(0, ip.indexOf(","));
+				}
+				return ip.trim();
 			}
 		}
 		return request.getRemoteAddr();
