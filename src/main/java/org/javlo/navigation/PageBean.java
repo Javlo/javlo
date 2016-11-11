@@ -419,6 +419,10 @@ public class PageBean implements Serializable {
 		}
 		return false;
 	}
+	
+	public boolean isHaveChildren() throws Exception {
+		return page.getChildMenuElements().size() > 0;
+	}
 
 	public PageAssociationBean getRootOfChildrenAssociation() throws Exception {
 		if (page.getRootOfChildrenAssociation() != null) {

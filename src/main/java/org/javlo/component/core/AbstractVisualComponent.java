@@ -2653,5 +2653,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	public String getImportFolderPath(ContentContext ctx) throws Exception {
 		return getImportFolderPath(ctx, getPage());
 	}
+	
+	
 
 }
