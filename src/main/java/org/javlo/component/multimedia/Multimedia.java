@@ -3,7 +3,6 @@ package org.javlo.component.multimedia;
 import java.io.File;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
@@ -1200,7 +1199,11 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle, IStat
 				prefix = getForcedPrefixViewXHTMLCode(ctx);
 				suffix = getForcedSuffixViewXHTMLCode(ctx);
 			}
-			return prefix + "<div class=\"empty\">[" + i18nAccess.getText("preview.upload-here", "upload here") + "]</div>" + suffix;
+			if (getCurrentRootFolder() != null && getCurrentRootFolder().length()>2) {
+				return prefix + "<div class=\"empty\">[" + i18nAccess.getText("preview.upload-here", "upload here") + "]</div>" + suffix;
+			} else {
+				return prefix + "<div class=\"empty\" ondrop=\"return false;\">[" + i18nAccess.getText("preview.choose-folder", "choose a folder to upload") + "]</div>" + suffix;
+			}
 		}
 	}
 	

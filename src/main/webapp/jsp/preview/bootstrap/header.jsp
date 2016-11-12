@@ -339,7 +339,7 @@
 				<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
 				<c:if test="${fn:length(integrities.checker)>0}"><div class="badge unread-count">${fn:length(integrities.checker)}</div></c:if>
 			</a>
-			<div class="integrity-message collapse${integrities.error?' in':''}" id="integrity-list">
+			<div class="integrity-message collapse${integrities.error && contentContext.previewEdit?' in':''}" id="integrity-list">
 				<ul class="list-group"><c:forEach var="checker" items="${integrities.checker}"><c:if test="${checker.errorCount>0}">								
 							<li class="list-group-item list-group-item-${checker.levelLabel}">
  								<span class="badge">${checker.errorCount}</span>${checker.errorMessage}    									
@@ -352,15 +352,14 @@
 			<a class="btn btn-default btn-sm btn-integrity btn-color alert-success btn-notext" data-toggle="collapse" data-target="#integrity-list" href="#integrity-list"  aria-expanded="false" aria-controls="integrity-list">
 				<span class="glyphicon glyphicon-check" aria-hidden="true"></span>
 			</a>
-			<div class="integrity-message collapse" id="integrity-list">
+			<div class="integrity-message " id="integrity-list">
 				<ul class="list-group">								
 							<li class="list-group-item list-group-item-success">
  								${i18n.edit['integrity.no_error']}   									
 							</li>
 				</ul>
 			</div></li>
-			</c:if></c:if>
-						
+			</c:if></c:if>					
 					
 			</ul></div><div class="users">
 			<c:if test="${not empty editUser}">
@@ -382,7 +381,5 @@
 				<a class="btn btn-default btn-sm" title="${i18n.edit['global.logout']}" href="${logoutURL}"><span class="glyphicon glyphicon-log-out"></span><span class="text">${i18n.edit["global.logout"]}</span></a>				
 				</li>
 			</c:if>
-			</div>
-		
-	
+			</div>	
 </div>

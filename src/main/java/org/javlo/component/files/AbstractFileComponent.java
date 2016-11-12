@@ -357,7 +357,7 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 				out.println("<div class=\"col-sm-9\">" + staticInfo.getTitle(ctx) + "</div>");
 				out.println("</div>");
 				out.println("<div class=\"row form-group\"><div class=\"col-sm-3\">" + i18nAccess.getText("field.description") + "</div>");
-				out.println("<div class=\"col-sm-9\">" + staticInfo.getDescription(ctx) + "</div>");
+				out.println("<div class=\"col-sm-9\">" + staticInfo.getManualDescription(ctx) + "</div>");
 				out.println("</div>");
 				out.println("<div class=\"row form-group\"><div class=\"col-sm-3\">" + i18nAccess.getText("field.location") + "</div>");
 				out.println("<div class=\"col-sm-9\">" + staticInfo.getLocation(ctx) + "</div>");

@@ -118,7 +118,7 @@ public class StaticInfo {
 
 		public String getDescription() {
 			return staticInfo.getManualDescription(ctx);
-		}
+		}					
 
 		public String getHtmlDescription() {
 			return Encode.forHtmlAttribute(staticInfo.getManualDescription(ctx));

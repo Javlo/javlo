@@ -171,7 +171,7 @@ public class FileBean {
 	}
 
 	public String getDescription() {
-		return staticInfo.getDescription(ctx);
+		return staticInfo.getManualDescription(ctx);
 	}
 
 	public String getLocation() {
