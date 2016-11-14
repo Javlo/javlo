@@ -948,11 +948,12 @@ public class Template implements Comparable<Template> {
 				if (key.startsWith(XMLManipulationHelper.AREA_PREFIX) && StringUtils.countMatches(key, ".") < 2) {
 					String area = key.substring(XMLManipulationHelper.AREA_PREFIX.length());
 					int index = html.indexOf("id=\"" + area + "\"");
-					//if (index>=0) { 
-						workAreas.add(new SortBean<String>(area, index));
-//					} else {
-//						logger.warning("area not found in template '"+getName()+"' : "+area );
-//					}
+					// if (index>=0) {
+					workAreas.add(new SortBean<String>(area, index));
+					// } else {
+					// logger.warning("area not found in template
+					// '"+getName()+"' : "+area );
+					// }
 				}
 			}
 			if (workAreas.size() == 0) {
@@ -2214,6 +2215,14 @@ public class Template implements Comparable<Template> {
 		return config.getRealPath(getLocalWorkTemplateFolder());
 	}
 
+	private Object getLockImport(GlobalContext globalContext) {
+		Object lockImport = this;
+		if (globalContext != null) {
+			lockImport = globalContext.getLockImportTemplate();
+		}
+		return lockImport;
+	}
+
 	public void importTemplateInWebapp(StaticConfig config, ContentContext ctx) throws IOException {
 		if (templateImportationError) {
 			return;
@@ -2222,11 +2231,7 @@ public class Template implements Comparable<Template> {
 		if (ctx != null) {
 			globalContext = GlobalContext.getInstance(ctx.getRequest());
 		}
-		Object lockImport = this;
-		if (globalContext != null) {
-			lockImport = globalContext.getLockImportTemplate();
-		}
-		synchronized (lockImport) {
+		synchronized (getLockImport(globalContext)) {
 			if (!isTemplateFolderInWebapp(ctx)) {
 				String templateFolder = config.getTemplateFolder();
 				File templateSrc = new File(URLHelper.mergePath(templateFolder, getSourceFolderName()));
@@ -2443,32 +2448,36 @@ public class Template implements Comparable<Template> {
 	}
 
 	public boolean isTemplateInWebapp(ContentContext ctx) throws IOException {
-		GlobalContext globalContext = null;
-		if (ctx != null) {
-			globalContext = GlobalContext.getInstance(ctx.getRequest());
-			if (contextWithTemplateImported.contains(globalContext.getContextKey())) {
-				return true;
+		synchronized (getLockImport(ctx.getGlobalContext())) {
+			GlobalContext globalContext = null;
+			if (ctx != null) {
+				globalContext = GlobalContext.getInstance(ctx.getRequest());
+				if (contextWithTemplateImported.contains(globalContext.getContextKey())) {
+					return true;
+				}
 			}
+			File templateTgt = new File(URLHelper.mergePath(getWorkTemplateFolder(), getFolder(globalContext)));
+			if (templateTgt.exists() && globalContext != null) {
+				contextWithTemplateImported.add(globalContext.getContextKey());
+			}
+			boolean outExist = templateTgt.exists();
+			return outExist;
 		}
-		File templateTgt = new File(URLHelper.mergePath(getWorkTemplateFolder(), getFolder(globalContext)));
-		if (templateTgt.exists() && globalContext != null) {
-			contextWithTemplateImported.add(globalContext.getContextKey());
-		}
-		boolean outExist = templateTgt.exists();
-		return outExist;
 	}
 
 	private boolean isTemplateFolderInWebapp(ContentContext ctx) {
-		GlobalContext globalContext = null;
-		if (ctx != null) {
-			globalContext = ctx.getGlobalContext();
+		synchronized (getLockImport(ctx.getGlobalContext())) {
+			GlobalContext globalContext = null;
+			if (ctx != null) {
+				globalContext = ctx.getGlobalContext();
+			}
+			File templateTgt = new File(URLHelper.mergePath(getWorkTemplateFolder(), getFolder(globalContext)));
+			if (templateTgt.exists() && globalContext != null) {
+				contextWithTemplateImported.add(globalContext.getContextKey());
+			}
+			boolean outExist = templateTgt.exists();
+			return outExist;
 		}
-		File templateTgt = new File(URLHelper.mergePath(getWorkTemplateFolder(), getFolder(globalContext)));
-		if (templateTgt.exists() && globalContext != null) {
-			contextWithTemplateImported.add(globalContext.getContextKey());
-		}
-		boolean outExist = templateTgt.exists();
-		return outExist;
 	}
 
 	public boolean isValid() {

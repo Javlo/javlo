@@ -45,4 +45,9 @@ public class ImageHeader extends GlobalImage {
 		return "";
 	}
 	
+	@Override
+	public int getComplexityLevel(ContentContext ctx) {
+		return getConfig(ctx).getComplexity(COMPLEXITY_STANDARD);
+	}
+	
 }

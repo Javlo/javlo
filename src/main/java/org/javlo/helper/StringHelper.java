@@ -1476,7 +1476,7 @@ public class StringHelper {
 		if (url == null) {
 			return false;
 		}
-		return url.contains("://");
+		return url.contains("://") || url.startsWith("//");
 	}
 
 	/**

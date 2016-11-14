@@ -1087,7 +1087,7 @@ public class URLHelper extends ElementaryURLHelper {
 
 	public static boolean isAbsoluteURL(String url) {
 		String urlLC = url.toLowerCase().trim();
-		return urlLC.startsWith("http://") || urlLC.startsWith("https://") || urlLC.startsWith("ftp://") || urlLC.startsWith("file://");
+		return urlLC.startsWith("http://") || urlLC.startsWith("https://") || urlLC.startsWith("ftp://") || urlLC.startsWith("file://") || urlLC.startsWith("//");
 	}
 
 	public static String mergePath(String... paths) {

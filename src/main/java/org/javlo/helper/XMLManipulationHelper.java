@@ -605,7 +605,7 @@ public class XMLManipulationHelper {
 								hrefValue = "<%=URLHelper.createRSSURL(ctx, \"" + channel + "\")%>";
 								attributes.put("href", hrefValue);
 								remplacement.addReplacement(tags[i].getOpenStart(), tags[i].getOpenEnd() + 1, tags[i].toString());
-							} else if ((hrefValue != null) && (!StringHelper.isURL(hrefValue)) && (!StringHelper.isMailURL(hrefValue))) {
+							} else if (!StringHelper.isURL(hrefValue) && !StringHelper.isMailURL(hrefValue)) {
 								if (hrefValue.startsWith("/")) {
 									attributes.put("href", "<%=URLHelper.createURLCheckLg(ctx,\"" + hrefValue + "\")%>");
 								} else {
@@ -652,7 +652,7 @@ public class XMLManipulationHelper {
 								String resource = null;
 								if (tag.getAttributes().get("src") != null) {
 									resource = new File(tag.getAttributes().get("src")).getName();
-									if (!tag.getAttributes().get("src").toLowerCase().startsWith("http://")) {
+									if (!tag.getAttributes().get("src").toLowerCase().startsWith("http://") && !tag.getAttributes().get("src").toLowerCase().startsWith("//") && !tag.getAttributes().get("src").toLowerCase().startsWith("https://")) {
 										tag.getAttributes().put("src", "<%=URLHelper.createStaticTemplatePluginURL(ctx, \"" + tag.getAttributes().get("src") + "\", \"" + plugin.getFolder() + "\")%>");
 									}
 								}
