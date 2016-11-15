@@ -375,11 +375,9 @@ public class PersistenceService {
 		/** search preview elements **/
 		File[] backupPreview = new File(getDirectory()).listFiles(BackupPreviewFileFilter.instance);
 		if (backupPreview != null) {
-			for (File file : backupPreview) {
-				System.out.println("***** PersistenceService.getPersistences : file = "+file); //TODO: remove debug trace
+			for (File file : backupPreview) {				
 				if (!file.getName().endsWith(".error")) {
-					String version = file.getName().replaceAll(STORE_FILE_PREFIX + ContentContext.PREVIEW_MODE + ".", "").replaceAll(".xml", "").replaceAll(".zip", "");
-					System.out.println("***** PersistenceService.getPersistences : version = "+version); //TODO: remove debug trace
+					String version = file.getName().replaceAll(STORE_FILE_PREFIX + ContentContext.PREVIEW_MODE + ".", "").replaceAll(".xml", "").replaceAll(".zip", "");					
 					int versionInteger = -1;
 					try {
 						versionInteger = Integer.parseInt(version);
@@ -468,7 +466,6 @@ public class PersistenceService {
 	}
 
 	private Reader getTrackReader(Calendar cal) throws IOException {
-
 		int year = cal.get(Calendar.YEAR);
 		int mount = cal.get(Calendar.MONTH);
 		int day = cal.get(Calendar.DAY_OF_MONTH);
@@ -1010,7 +1007,7 @@ public class PersistenceService {
 		int error = 0;
 		for (ComponentBean comp : comps) {
 			if (componentsId.contains(comp.getId())) {
-				out.println("2 comp with same id found (type:" + comp.getType() + " id:" + comp.getId());
+				out.println("2 comp with same id found (type:" + comp.getType() + " id:" + comp.getId()+" context:"+ctx.getGlobalContext().getContextKey());
 				error++;
 			} else {
 				componentsId.add(comp.getId());

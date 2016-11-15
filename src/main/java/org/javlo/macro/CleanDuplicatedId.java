@@ -24,7 +24,6 @@ public class CleanDuplicatedId extends AbstractMacro {
 
 	private int clearComponentIntegrity(HashSet<String> componentsId, ComponentBean[] comps) {
 		int errorCount = 0;
-
 		for (ComponentBean comp : comps) {
 			if (componentsId.contains(comp.getId())) {
 				comp.setId(StringHelper.getRandomId());

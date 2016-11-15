@@ -153,17 +153,13 @@ public class Sound extends AbstractFileComponent implements IReverseLinkComponen
 	@Override
 	public void prepareView(ContentContext ctx) throws Exception {
 		super.prepareView(ctx);
-		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-		String fullName = ElementaryURLHelper.mergePath(getDirSelected(), getFileName());
-		fullName = ElementaryURLHelper.mergePath(globalContext.getStaticConfig().getFileFolder(), fullName);
-		ctx.getRequest().setAttribute("imagePreview", URLHelper.createTransformURL(ctx, fullName, "list"));
-		fullName = ElementaryURLHelper.mergePath(globalContext.getDataFolder(), fullName);
-		ctx.getRequest().setAttribute("ext", StringHelper.getFileExtension(getFileName()));
-		ctx.getRequest().setAttribute("size", StringHelper.getFileSize(fullName));
-		if (getLabel().trim().length() == 0) {
-			ctx.getRequest().setAttribute("label", getFileName());
-		} else {
-			ctx.getRequest().setAttribute("label", textToXHTML(getLabel()));
+		StringBuffer res = new StringBuffer();
+		if ((getValue() != null) && (getValue().trim().length() > 0)) {
+			StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
+			String url = ElementaryURLHelper.mergePath(getDirSelected(), getFileName());
+			url = URLHelper.createResourceURL(ctx, getPage(), staticConfig.getFileFolder() + '/' + url);
+			ctx.getRequest().setAttribute("url", url);
+			ctx.getRequest().setAttribute("mineType", ResourceHelper.getFileExtensionToMineType(StringHelper.getFileExtension(url)));			
 		}
 	}
 

@@ -41,7 +41,18 @@ public class JavaHelper {
 	}
 
 	public static final int byteArrayToInt(byte[] b) {
-		return (b[0] << 24) + ((b[1] & 0xFF) << 16) + ((b[2] & 0xFF) << 8) + (b[3] & 0xFF);
+		byte[] ar = b;
+		if (ar.length < 4) {
+			ar = new byte[4];
+			for (int i = 0; i < ar.length; i++) {
+				ar[i]=0;
+			}
+			for (int i=0; i<b.length; i++) {
+				ar[i]=b[i];
+			}
+		}
+		
+		return (ar[0] << 24) + ((ar[1] & 0xFF) << 16) + ((ar[2] & 0xFF) << 8) + (ar[3] & 0xFF);
 	}
 
 	public static final <K, V> Map<K, V> createMap(K[] keys, V[] values) {

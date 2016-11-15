@@ -8,7 +8,7 @@ figure {
 
 figcaption {
 	padding: 3px;
-	text-align: center;
+	text-align: center;					
 }
 
 h1 {
@@ -392,6 +392,10 @@ li.line {
 
 .text img {
 	float: left;
+}
+
+.component img {
+	max-width: 100%;
 }
 
 .reactions ul {

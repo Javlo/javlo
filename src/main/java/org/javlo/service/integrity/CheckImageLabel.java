@@ -22,11 +22,11 @@ public class CheckImageLabel extends AbstractIntegrityChecker {
 				ContentElementList content = page.getContent(areaCtx);
 				IContentVisualComponent comp = content.next(areaCtx);
 				while (comp != null) {
-					if (comp instanceof GlobalImage) {
-						if (getComponentId(ctx) == null) {
-							setComponentId(comp.getId());
-						}
-						if (((GlobalImage) comp).getAlt(ctx).trim().length() == 0) {
+					if (comp instanceof GlobalImage) {						
+						if (((GlobalImage) comp).getAlt(ctx).trim().length() == 0) {							
+							if (getComponentId(ctx) == null) {							
+								setComponentId(comp.getId());
+							}
 							error++;
 						}
 					}

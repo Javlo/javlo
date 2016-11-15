@@ -8,7 +8,9 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
@@ -168,6 +170,15 @@ public class StringHelper {
 	 */
 	public static String asBase32(int value) {
 		return asBase32(JavaHelper.intToByteArray(value));
+	}
+	
+	/**
+	 * generate a base 32 string with a int
+	 * 
+	 * @return a unique id.
+	 */
+	public static String asBase32(byte value) {
+		return asBase32(new byte[] {value});
 	}
 	
 	/**
@@ -1511,17 +1522,57 @@ public class StringHelper {
 		res = res || ext.equalsIgnoreCase("flv");
 		return res;
 	}
-
-	public static void main(String[] args) {
-		
-		for (int i=0; i<50; i++) {
-			long base = Math.round(Math.random()*2000000);
-			String extension = StringHelper.asBase32((int)Math.round(Math.random()*32));
-			String code = base+"-"+extension;
-			System.out.println(code);
+	
+	public static Collection<String> createListNumber(int size, long length) {
+		if (length < 4) {
+			throw new NumberFormatException("length is to small min 5.");
 		}
+		if (Math.pow (length-4, 10) < size) {
+			throw new NumberFormatException("length is to small for this list size.");
+		}
+		Set<String> outList = new HashSet<String>();
+		while (outList.size()<size) {
+			long base = Math.round(Math.random()*Math.pow (length-4, 10));
+			int mod=(int)base%127;
+			String modBase32 = StringHelper.asBase32((byte)mod);
+			String renderNumber = String.format("%0"+(length-2)+"d", base);			
+			String finalNumber = renderNumber+modBase32.replace("=", "");
+			if (!outList.contains(finalNumber) && finalNumber.length() == length) {
+				outList.add(finalNumber);
+			}
+		}
+		return outList;
+	}
+	
+	public static boolean checkNumberValidity(String number) {
+		if (number == null || number.length()<5) {
+			return false;			
+		}
+		try {
+			long base = Long.parseLong(number.substring(0, number.length()-2));
+			String mod32Text = number.substring(number.length()-2);			
+			Base32 base32 = new Base32();
+			int mod32Value = base32.decode(mod32Text)[0];			
+			return base%127 == mod32Value;
+		} catch (Throwable t) {
+			logger.warning(t.getMessage());
+			return false;
+		}
+	}
 
-		System.out.println("9999999 : "+StringHelper.asBase32(9999999));
+	public static void main(String[] args) throws Exception {
+		final int SIZE = 8;
+		Collection<String> numberList = createListNumber(1000000, SIZE);		
+		PrintStream out = new PrintStream(new FileOutputStream(new File("c:/trans/codes.txt")));		
+		for (Iterator iterator = numberList.iterator(); iterator.hasNext();) {
+			String val = (String) iterator.next();			
+			System.out.println(val+" - "+checkNumberValidity(val));
+			if (!checkNumberValidity(val) || val.length() != SIZE) {
+				throw new Exception("error unvalid char generated : "+val);
+			}
+			out.println(val);
+		}
+		out.close();
 	}
 
 	/**

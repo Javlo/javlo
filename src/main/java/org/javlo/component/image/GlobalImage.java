@@ -187,6 +187,9 @@ public class GlobalImage extends Image implements IImageFilter {
 			}
 			alt = title+sep+description;
 		}
+		if (StringHelper.isEmpty(alt)) {
+			alt = StringHelper.neverNull(getTitle());
+		}
 		return alt;
 	}
 

@@ -2,6 +2,7 @@ package org.javlo.service.integrity;
 
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.context.ContentContext;
+import org.javlo.helper.DebugHelper;
 import org.javlo.service.ContentService;
 
 public abstract class AbstractIntegrityChecker implements IIntegrityChecker {
