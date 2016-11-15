@@ -3,15 +3,20 @@ package org.javlo.context;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.Reader;
 import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
+import java.io.Writer;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -46,7 +51,6 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.javlo.utils.ConfigurationProperties;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -54,7 +58,6 @@ import org.javlo.cache.ICache;
 import org.javlo.cache.MapCache;
 import org.javlo.config.StaticConfig;
 import org.javlo.helper.ContentHelper;
-import org.javlo.helper.DebugHelper;
 import org.javlo.helper.ElementaryURLHelper;
 import org.javlo.helper.ElementaryURLHelper.Code;
 import org.javlo.helper.LangHelper;
@@ -92,6 +95,7 @@ import org.javlo.user.IUserFactory;
 import org.javlo.user.IUserInfo;
 import org.javlo.user.User;
 import org.javlo.utils.BooleanBean;
+import org.javlo.utils.ConfigurationProperties;
 import org.javlo.utils.SmartMap;
 import org.javlo.utils.StructuredProperties;
 import org.javlo.utils.TimeMap;
@@ -116,6 +120,8 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	private PrintWriter redirectURLList = null;
 
 	private Properties redirectURLMap = null;
+
+	private Properties url404Map = null;
 
 	private static final IURLFactory NO_URL_FACTORY = new NoURLFactory();
 
@@ -242,6 +248,8 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	protected static Logger logger = Logger.getLogger(GlobalContext.class.getName());
 
 	private static final String REDIRECT_URL_LIST = "redirect_url_list.properties";
+
+	private static final String URL_404_LIST = "404_url_list.properties";
 
 	private static final String KEY = "globalContext";
 
@@ -407,6 +415,17 @@ public class GlobalContext implements Serializable, IPrintInfo {
 
 	private File getRedirectURLListFile() {
 		return new File(URLHelper.mergePath(getDataFolder(), REDIRECT_URL_LIST));
+	}
+
+	private File get404URLListFile() {
+		return new File(URLHelper.mergePath(getDataFolder(), URL_404_LIST));
+	}
+	
+	public void reset404File() {
+		synchronized (lockUrlFile) {
+			get404URLListFile().delete();
+			url404Map = null;
+		}
 	}
 
 	private static GlobalContext getRealInstance(HttpSession session, String contextKey, boolean copyDefaultContext) throws IOException {
@@ -3261,7 +3280,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		ResourceHelper.closeResource(localWriter);
 	}
 
-	private Properties getRedirectUrlMap() {
+	public Properties getRedirectUrlMap() {
 		if (redirectURLMap == null) {
 			synchronized (lockUrlFile) {
 				if (redirectURLMap == null) {
@@ -3285,9 +3304,108 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		return redirectURLMap;
 	}
 
+	public Properties get404UrlMap() {
+		if (url404Map == null) {
+			synchronized (lockUrlFile) {
+				if (url404Map == null) {
+					Properties prop = new Properties();
+					Reader reader = null;
+					try {
+						File redirectURLListFile = get404URLListFile();
+						if (redirectURLListFile.exists()) {
+							reader = new InputStreamReader(new FileInputStream(redirectURLListFile), ContentContext.CHARACTER_ENCODING);
+							prop.load(reader);
+						}
+					} catch (Exception e) {
+						e.printStackTrace();
+					} finally {
+						ResourceHelper.closeResource(reader);
+					}
+					url404Map = prop;
+				}
+			}
+		}
+		return url404Map;
+	}
+
+	private void store404UrlMap() {
+		synchronized (lockUrlFile) {
+			if (url404Map != null) {
+				Writer writer = null;
+				try {
+					File redirectURLListFile = get404URLListFile();
+					if (redirectURLListFile.exists()) {
+						redirectURLListFile.createNewFile();
+					}
+					writer = new OutputStreamWriter(new FileOutputStream(redirectURLListFile), ContentContext.CHARACTER_ENCODING);
+					url404Map.store(writer, getContextKey());
+				} catch (Exception e) {
+					e.printStackTrace();
+				} finally {
+					ResourceHelper.closeResource(writer);
+				}
+			}
+		}
+	}
+
 	public void resetRedirectUrlMap() {
 		synchronized (lockUrlFile) {
 			redirectURLMap = null;
+		}
+	}
+
+	public void reset404UrlMap() {
+		synchronized (lockUrlFile) {
+			url404Map = null;
+		}
+	}
+
+	public void add404Url(ContentContext ctx, String url) {
+		Properties prop = get404UrlMap();
+		if (!prop.containsKey(url)) {
+			prop.put(url, StringHelper.neverNull(ctx.getRequest().getHeader("Referer"), "no-referer"));
+			store404UrlMap();
+		}
+	}
+	
+	public void hide404Url(ContentContext ctx, String url) {
+		Properties prop = get404UrlMap();
+		if (prop.containsKey(url)) {
+			prop.put(url, "");
+			store404UrlMap();
+		}
+	}
+	
+	public void delete404Url(ContentContext ctx, String url) {
+		Properties prop = get404UrlMap();
+		if (prop.containsKey(url)) {
+			prop.remove(url);
+			store404UrlMap();
+		}
+	}
+	
+	public void delRedirectUrl(ContentContext ctx, String url) {
+		synchronized (lockUrlFile) {						
+			Properties prop = getRedirectUrlMap();
+			redirectURLMap = null;			
+			if (prop.containsKey(url)) {				
+				prop.remove(url);				
+			} else {
+				logger.warning("url not found : "+url);
+			}
+			File redirectURLListFile = getRedirectURLListFile();
+			Writer writer = null;
+			if (redirectURLListFile.exists()) {
+				try {
+					writer = new OutputStreamWriter(new FileOutputStream(redirectURLListFile), ContentContext.CHARACTER_ENCODING);
+					prop.store(writer, ctx.getGlobalContext().getContextKey());
+					redirectURLMap = null;
+				} catch (Exception e) { 
+					e.printStackTrace();
+				} finally {
+					ResourceHelper.closeResource(writer);
+				}				
+			}
 		}
 	}
 
@@ -3458,9 +3576,9 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	public String getDKIMDomain() {
 		return properties.getString("mail.dkim.domain", "");
 	}
-	
+
 	public DKIMBean getDKIMBean() {
-		if (!StringHelper.isEmpty(getDKIMDomain())) { 
+		if (!StringHelper.isEmpty(getDKIMDomain())) {
 			return new DKIMBean(getDKIMDomain(), getDKIMSelector(), DKIMFactory.getDKIMPrivateKeyFile(this).getAbsolutePath(), null);
 		} else {
 			return null;
@@ -3484,14 +3602,14 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	public File getSpecialConfigFile() {
 		return new File(URLHelper.mergePath(staticConfig.getContextFolder(), getContextKey() + "_special.properties"));
 	}
-	
+
 	public boolean isForcedHttps() {
 		return properties.getBoolean("security.forced-https", false);
 	}
-	
+
 	public void setForcedHttps(boolean https) {
 		properties.setProperty("security.forced-https", https);
-		save();		
+		save();
 	}
 
 	public SpecialConfigBean getSpecialConfig() {
@@ -3515,5 +3633,5 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		}
 		return config;
 	}
-	
+
 }

@@ -812,5 +812,7 @@ hange log
   
   * 5/ sort area / clouds link 
   
-  * 6/ Manual Description display as meta data / synchronize isTemplateImported / absolute url can start with '//' / 
+  * 6/ Manual Description display as meta data / synchronize isTemplateImported / absolute url can start with '//' / globalImage integrity correctionglobalImage integrity correction
+  
+  * 7/ error module for manage 404 url
  

@@ -855,11 +855,12 @@ public class ContentContext {
 						elem = globalContext.convertOldURL(this, getPath());
 						if (elem != null) {
 							String newURL = URLHelper.createURL(this, elem);
-							logger.info("redirect old url (" + getGlobalContext().getContextKey() + " - " + getPath() + ") --> = " + newURL + "   url renderer:" + globalContext.getURLFactoryClass());
+							logger.info("redirect old url (" + getGlobalContext().getContextKey() + " - " + getPath() + ") --> = " + newURL + " - url renderer:" + globalContext.getURLFactoryClass());
 							response.sendRedirect(newURL);
 							setCurrentPageCached(elem);
 						} else {
 							setContentFound(false);
+							globalContext.add404Url(this, getPath());
 							elem = root;
 							setPath(root.getPath());
 						}
