@@ -20,7 +20,7 @@
 				<tr>
 					<td><a class="btn btn-default btn-sm" href="${info.currentURL}?webaction=error.delete&url=${item.key}">X</a></td>
 					<td>${item.key}</td>
-					<td class="referer"><a href="${item.value}" target="_blanck">open<a></td>
+					<td class="referer"><c:if test="${item.value != 'no-referer'}"><a href="${item.value}" target="_blanck">open<a></c:if></td>
 					<td class="action">
 						<form action="${info.currentURL}" method="post">
 							<input type="text" class="form-input" name="page" placeholder="forward to page." />
