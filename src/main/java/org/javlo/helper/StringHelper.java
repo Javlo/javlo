@@ -1562,7 +1562,7 @@ public class StringHelper {
 
 	public static void main(String[] args) throws Exception {
 		final int SIZE = 8;
-		Collection<String> numberList = createListNumber(1000000, SIZE);		
+		Collection<String> numberList = createListNumber(500000, SIZE);		
 		PrintStream out = new PrintStream(new FileOutputStream(new File("c:/trans/codes.txt")));		
 		for (Iterator iterator = numberList.iterator(); iterator.hasNext();) {
 			String val = (String) iterator.next();			

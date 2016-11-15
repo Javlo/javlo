@@ -837,7 +837,7 @@ public class ContentContext {
 					if (elem != null) {
 						if (getRenderMode() != EDIT_MODE && !NetHelper.isIPAccepted(this)) {
 							if (!StringHelper.isEmpty(elem.getIpSecurityErrorPageName())) {
-								response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+								response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);								
 								String pageName = elem.getIpSecurityErrorPageName();
 								elem = ContentService.getInstance(globalContext).getNavigation(this).searchChildFromName(pageName);
 								if (elem == null) {
@@ -859,8 +859,7 @@ public class ContentContext {
 							response.sendRedirect(newURL);
 							setCurrentPageCached(elem);
 						} else {
-							setContentFound(false);
-							globalContext.add404Url(this, getPath());
+							setContentFound(false);							
 							elem = root;
 							setPath(root.getPath());
 						}

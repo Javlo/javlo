@@ -953,6 +953,8 @@ public class AccessServlet extends HttpServlet implements IVersion {
 
 							/** check content **/
 							if (!ctx.isContentFound()) {
+								globalContext.add404Url(ctx, ContentManager.getPath(request));
+								
 								if (staticConfig.isRedirectWidthName()) {
 									String pageName = StringHelper.getFileNameWithoutExtension(StringHelper.getFileNameFromPath(request.getRequestURI()));
 									MenuElement newPage = content.getNavigation(ctx).searchChildFromName(pageName);

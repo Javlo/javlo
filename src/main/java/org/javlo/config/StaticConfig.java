@@ -1375,7 +1375,7 @@ public class StaticConfig extends Observable {
 	 * @return
 	 */
 	public boolean isRedirectWidthName() {
-		return properties.getBoolean("url.redirect-width-name", true);
+		return properties.getBoolean("url.redirect-width-name", false);
 	}
 
 	public String getEditTemplateFolder() {
