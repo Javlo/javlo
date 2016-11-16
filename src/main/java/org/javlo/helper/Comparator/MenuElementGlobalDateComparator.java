@@ -38,6 +38,14 @@ public class MenuElementGlobalDateComparator implements Comparator<MenuElement> 
 	 */
 	@Override
 	public int compare(MenuElement elem1, MenuElement elem2) {
+		
+		try {
+			if (elem1.getToTheTopLevel(ctx) != elem2.getToTheTopLevel(ctx)) {				
+				return elem2.getToTheTopLevel(ctx)-elem1.getToTheTopLevel(ctx);
+			}
+		} catch (Exception e1) {
+			e1.printStackTrace();
+		}
 
 		Calendar cal1 = GregorianCalendar.getInstance();
 		Calendar cal2 = GregorianCalendar.getInstance();
@@ -92,3 +100,4 @@ public class MenuElementGlobalDateComparator implements Comparator<MenuElement> 
 		return 0;
 	}
 }
+

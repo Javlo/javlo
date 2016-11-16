@@ -17,6 +17,13 @@ public class ReactionMenuElementComparator implements Comparator<MenuElement> {
 	@Override
 	public int compare(MenuElement o1, MenuElement o2) {
 		try {
+			if (o1.getToTheTopLevel(ctx) != o2.getToTheTopLevel(ctx)) {
+				return o2.getToTheTopLevel(ctx)-o1.getToTheTopLevel(ctx);
+			}
+		} catch (Exception e1) {
+			e1.printStackTrace();
+		}
+		try {
 			if (!reverse) {
 				return o1.getReactionSize(ctx) - o2.getReactionSize(ctx);
 			} else {

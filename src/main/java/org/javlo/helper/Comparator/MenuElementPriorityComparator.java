@@ -24,6 +24,7 @@ public class MenuElementPriorityComparator implements Comparator<MenuElement> {
 	}
 	
 	public int compare(MenuElement elem1, MenuElement elem2) {
+		
 		try {
 			return (int)Math.round((elem1.getPriority()-elem2.getPriority())*100)*multiply;
 		} catch (Exception e) { 

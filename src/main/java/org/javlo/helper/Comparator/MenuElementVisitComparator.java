@@ -26,6 +26,15 @@ public class MenuElementVisitComparator implements Comparator<MenuElement> {
 	}
 
 	public static int compareVisit(ContentContext ctx, int multiply, MenuElement elem1, MenuElement elem2) {
+		
+		try {
+			if (elem1.getToTheTopLevel(ctx) != elem2.getToTheTopLevel(ctx)) {				
+				return elem2.getToTheTopLevel(ctx)-elem1.getToTheTopLevel(ctx);
+			}
+		} catch (Exception e1) {
+			e1.printStackTrace();
+		}
+		
 		try {
 			/*
 			 * if (elem1.isRealContent(ctx) && !elem2.isRealContent(ctx)) { return multiply; } else if (!elem1.isRealContent(ctx) && elem2.isRealContent(ctx)) { return -multiply; }

@@ -61,6 +61,7 @@ import org.javlo.component.meta.NotSearchPage;
 import org.javlo.component.meta.Slogan;
 import org.javlo.component.meta.Tags;
 import org.javlo.component.meta.TimeRangeComponent;
+import org.javlo.component.meta.ToTheTopComponent;
 import org.javlo.component.title.GroupTitle;
 import org.javlo.component.title.WebSiteTitle;
 import org.javlo.component.web2.ReactionComponent;
@@ -141,6 +142,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 		String keywords = null;
 		String globalTitle = null;
 		Date contentDate = null;
+		Integer toTheTop = null;
 		Boolean empty = null;
 		Boolean realContent = null;
 		String label = null;
@@ -510,7 +512,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 				return true;
 			}
 		}
-		
+
 		public boolean isPageActive() {
 			try {
 				return page.isPageActive();
@@ -1140,7 +1142,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 	private int urlNumber = 0;
 
 	private boolean restWidthChildren = false;
-	
+
 	private String ipSecurityErrorPageName = null;
 
 	/**
@@ -1616,7 +1618,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 		list.toArray(res);
 		return res;
 	}
-	
+
 	public List<MenuElement> getAllChildrenList() throws Exception {
 		return getChildElementRecursive(this, 0, new ArrayList<MenuElement>());
 	}
@@ -1837,8 +1839,8 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 		return result;
 	}
 
-	ArrayList<MenuElement> getChildElementRecursive(MenuElement elem, int deph, ArrayList<MenuElement> result) throws Exception {		
-		result.add(elem);				
+	ArrayList<MenuElement> getChildElementRecursive(MenuElement elem, int deph, ArrayList<MenuElement> result) throws Exception {
+		result.add(elem);
 		Collection<MenuElement> children = elem.getChildMenuElements();
 		for (MenuElement child : children) {
 			getChildElementRecursive(child, deph + 1, result);
@@ -2125,6 +2127,31 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 		return desc.contentDate;
 	}
 
+	public int getToTheTopLevel(ContentContext ctx) throws Exception {
+		PageDescription desc = getPageDescriptionCached(ctx, ctx.getRequestContentLanguage());
+		// no cache to read toTheTop defined
+		if (desc.toTheTop != null && desc.toTheTop == 0) {
+			return desc.toTheTop;
+		}
+		ContentContext newCtx = new ContentContext(ctx);
+		newCtx.setArea(null);
+
+		if (newCtx.getRenderMode() == ContentContext.EDIT_MODE) {
+			newCtx.setRenderMode(ContentContext.PREVIEW_MODE);
+		}
+		IContentComponentsList contentList = getAllContent(newCtx);
+		desc.toTheTop = 0;
+		while (contentList.hasNext(newCtx)) {
+			IContentVisualComponent elem = contentList.next(newCtx);
+			if (elem instanceof ToTheTopComponent) {
+				desc.toTheTop = ((ToTheTopComponent) elem).getPower();
+				return desc.toTheTop;
+			}
+
+		}
+		return desc.toTheTop;
+	}
+
 	public Date getContentDateComponent(ContentContext ctx) throws Exception {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		Iterator<String> defaultLgs = globalContext.getDefaultLanguages().iterator();
@@ -2143,7 +2170,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 			ContentElementList contentList = getAllContent(localContext);
 			while (contentList.hasNext(ctx)) {
 				IContentVisualComponent comp = contentList.next(ctx);
-				if (comp instanceof IDate && ((IDate)comp).isValidDate(ctx)) {
+				if (comp instanceof IDate && ((IDate) comp).isValidDate(ctx)) {
 					return ((IDate) comp).getDate(ctx);
 				}
 			}
@@ -2487,7 +2514,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 		}
 
 		List<String> categories = new LinkedList<String>();
-		
+
 		for (MenuElement child : getAllChildrenList()) {
 			String cat = child.getCategory(ctx);
 			if (cat != null && cat.trim().length() > 0 && !categories.contains(cat)) {
@@ -2750,16 +2777,12 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 				}
 			}
 		}
-		/*List<String> tags = getTags(ctx);
-		for (String tag : tags) {
-			if (res.length() > 0) {
-				res = res + ',';
-			}
-			if (!keywordsSet.contains(tag)) {
-				res = res + tag;
-				keywordsSet.add(res);
-			}
-		}*/
+		/*
+		 * List<String> tags = getTags(ctx); for (String tag : tags) { if
+		 * (res.length() > 0) { res = res + ','; } if
+		 * (!keywordsSet.contains(tag)) { res = res + tag; keywordsSet.add(res);
+		 * } }
+		 */
 		desc.keywords = res;
 		return desc.keywords;
 	}
@@ -3378,7 +3401,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 
 		return desc.subTitle;
 	}
-	
+
 	public List<String> getSubTitles(ContentContext ctx, int level) throws Exception {
 		ContentContext newCtx = new ContentContext(ctx);
 		PageDescription desc = getPageDescriptionCached(ctx, newCtx.getRequestContentLanguage());
@@ -4075,7 +4098,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 			return active;
 		}
 	}
-	
+
 	public boolean isPageActive() {
 		return this.active;
 	}
@@ -4111,7 +4134,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 					return isInsideTimeRange();
 				}
 			}
-			
+
 			for (MenuElement child : getAllChildrenList()) {
 				content = child.getContent(ctx);
 				while (content.hasNext(contentAreaCtx)) {
@@ -4234,7 +4257,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 			outList.toArray(componentBean);
 		}
 		if (releaseCache) {
-			releaseCache();			
+			releaseCache();
 		}
 		return type;
 	}
@@ -4381,7 +4404,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 	}
 
 	public void setLatestEditor(String latestEditor) {
-		this.latestEditor = latestEditor;		
+		this.latestEditor = latestEditor;
 	}
 
 	public void setLinkedURL(String linkedURL) {
@@ -4476,7 +4499,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 	}
 
 	public void setValid(boolean valid) {
-		this.valid = valid;		
+		this.valid = valid;
 	}
 
 	public void setValidater(String validater) {
@@ -4698,7 +4721,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 			MenuElement root = getRoot();
 			if (root.isShortURL()) {
 				shortURLs.add(root.getShortURL(ctx));
-			}			
+			}
 			for (MenuElement child : root.getAllChildrenList()) {
 				if (child.isShortURL()) {
 					shortURLs.add(child.getShortURL(ctx).substring(1));

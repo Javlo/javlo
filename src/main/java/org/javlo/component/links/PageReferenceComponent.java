@@ -114,7 +114,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 			private String linkURL;
 			private String description;
 			private String path;
-			private String cssClass;
+			private String cssClass;			
 
 			public Image(String url, String viewURL, String linkURL, String cssClass, String description, String path) {
 				super();
@@ -172,8 +172,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 
 			public void setViewURL(String viewURL) {
 				this.viewURL = viewURL;
-			}
-
+			}			
 		}
 
 		private MenuElement rootOfChildrenAssociation;
@@ -296,6 +295,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 			} else {
 				bean.event.setStart(page.getContentDate(realContentCtx));
 			}
+			bean.setToTheTopLevel(page.getToTheTopLevel(realContentCtx));
 			if (page.getContentDate(lgCtx) != null) {
 				bean.date = new DateBean(lgCtx, page.getContentDate(lgCtx));
 				bean.sortableDate = StringHelper.renderSortableDate(page.getContentDate(lgCtx));
@@ -483,6 +483,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		private boolean model;
 		private int seoWeight;
 		private PageContentMap data;
+		private int toTheTopLevel;
 
 		private Collection<String> tags = new LinkedList<String>();
 		private final Collection<String> tagsLabel = new LinkedList<String>();
@@ -958,6 +959,14 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		
 		public PageContentMap getData() {
 			return data;
+		}
+
+		public int getToTheTopLevel() {
+			return toTheTopLevel;
+		}
+
+		public void setToTheTopLevel(int toTheTopLevel) {
+			this.toTheTopLevel = toTheTopLevel;
 		}
 
 	}

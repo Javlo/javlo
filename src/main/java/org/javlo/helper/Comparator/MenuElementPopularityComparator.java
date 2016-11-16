@@ -29,6 +29,13 @@ public class MenuElementPopularityComparator implements Comparator<MenuElement> 
 	
 	public int compare(MenuElement elem1, MenuElement elem2) {
 		try {
+			if (elem1.getToTheTopLevel(ctx) != elem2.getToTheTopLevel(ctx)) {				
+				return elem2.getToTheTopLevel(ctx)-elem1.getToTheTopLevel(ctx);
+			}
+		} catch (Exception e1) {
+			e1.printStackTrace();
+		}
+		try {
 			return (int)Math.round((elem1.getPageRank(ctx)-elem2.getPageRank(ctx))*MenuElement.VOTES_MULTIPLY)*multiply;			
 		} catch (Exception e) { 
 			e.printStackTrace();
