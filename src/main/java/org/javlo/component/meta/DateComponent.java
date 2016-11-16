@@ -226,4 +226,9 @@ public class DateComponent extends AbstractVisualComponent implements IDate {
 	public boolean isRealContent(ContentContext ctx) {
 		return false;
 	}
+
+	@Override
+	public boolean isValidDate(ContentContext ctx) {
+		return !StringHelper.isEmpty(getValue());
+	}
 }

@@ -85,6 +85,11 @@ public class FieldDate extends Field implements IDate {
 		return getDate();
 	}
 	
+	@Override
+	public boolean isValidDate(ContentContext ctx) { 
+		return getValue() != null && getValue().trim().length() > 0;
+	}
+	
 	protected Date getDate() {
 		try {
 			if (getValue() != null && getValue().trim().length() > 0) {

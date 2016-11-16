@@ -745,6 +745,22 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 		}
 		return null;
 	}
+	
+	@Override
+	public boolean isValidDate(ContentContext ctx) {
+		try {
+			for (Field field : getFields(ctx)) {
+				if (field instanceof IDate) {
+					if(((IDate) field).isValidDate(ctx)) {
+						return true;
+					}
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
 
 	@Override
 	public int getPopularity(ContentContext ctx) {

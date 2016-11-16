@@ -2143,12 +2143,8 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 			ContentElementList contentList = getAllContent(localContext);
 			while (contentList.hasNext(ctx)) {
 				IContentVisualComponent comp = contentList.next(ctx);
-				if (comp.getType() == DateComponent.TYPE) {
-					return ((DateComponent) comp).getDate();
-				} else if (comp.getType() == TimeRangeComponent.TYPE) {
-					return ((TimeRangeComponent) comp).getStartDate();
-				} else if (comp.getType() == EventDefinitionComponent.TYPE) {
-					return ((EventDefinitionComponent) comp).getStartDate();
+				if (comp instanceof IDate && ((IDate)comp).isValidDate(ctx)) {
+					return ((IDate) comp).getDate(ctx);
 				}
 			}
 
