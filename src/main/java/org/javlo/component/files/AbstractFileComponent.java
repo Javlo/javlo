@@ -42,7 +42,6 @@ import org.javlo.context.GlobalContext;
 import org.javlo.filter.ZIPFilter;
 import org.javlo.helper.ArrayHelper;
 import org.javlo.helper.ElementaryURLHelper;
-import org.javlo.helper.LocalLogger;
 import org.javlo.helper.PatternHelper;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
@@ -65,6 +64,7 @@ import org.javlo.servlet.AccessServlet;
 import org.javlo.user.AdminUserSecurity;
 import org.javlo.ztatic.IStaticContainer;
 import org.javlo.ztatic.StaticInfo;
+import org.javlo.ztatic.StaticInfo.StaticInfoBean;
 import org.owasp.encoder.Encode;
 
 /**
@@ -180,8 +180,9 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 		ctx.getRequest().setAttribute("url", url);
 		ctx.getRequest().setAttribute("linkToImage", StringHelper.isImage(url));
 		ctx.getRequest().setAttribute("blank", ctx.getGlobalContext().isOpenExternalLinkAsPopup(url));
-		ctx.getRequest().setAttribute("descritpion", getDescription());
+		ctx.getRequest().setAttribute("description", getDescription());
 		ctx.getRequest().setAttribute("cleanDescription", Encode.forHtmlAttribute(StringHelper.removeTag(getDescription())));
+		ctx.getRequest().setAttribute("mineType", ResourceHelper.getFileExtensionToMineType(StringHelper.getFileExtension(url)));
 		StaticInfo staticInfo = getStaticInfo(ctx);
 		String cleanLabel = null;
 		if (staticInfo != null) {
@@ -204,6 +205,7 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 		}
 
 		ctx.getRequest().setAttribute("resource", staticInfo);
+		ctx.getRequest().setAttribute("staticInfo", new StaticInfoBean(ctx, staticInfo));
 
 	}
 

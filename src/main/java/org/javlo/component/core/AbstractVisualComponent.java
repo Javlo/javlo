@@ -1894,7 +1894,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		ctx.getRequest().setAttribute("type", getType());
 		ctx.getRequest().setAttribute("compid", getForcedId(ctx));
 		ctx.getRequest().setAttribute("renderer", getCurrentRenderer(ctx));
-		ctx.getRequest().setAttribute("previewAttributes", getPreviewAttributes(ctx));
+		ctx.getRequest().setAttribute("previewAttributes", getPreviewAttributes(ctx));	
 		if (!AbstractVisualComponent.isMirrorWrapped(ctx, this)) {
 			ctx.getRequest().setAttribute(MIRROR_WRAPPED, false);
 			ctx.getRequest().setAttribute("nextSame", isNextSame(ctx));
