@@ -196,7 +196,10 @@ public class UserAction extends AbstractModuleAction {
 	public String performUpdateCurrent(ContentContext ctx, GlobalContext globalContext, EditContext editContext, RequestService requestService, StaticConfig staticConfig, AdminUserSecurity adminUserSecurity, AdminUserFactory adminUserFactory, HttpSession session, Module currentModule, I18nAccess i18nAccess, MessageRepository messageRepository) {
 		if (requestService.getParameter("ok", null) != null || requestService.getParameter("token", null) != null || requestService.getParameter("notoken", null) != null) {
 			UserModuleContext userContext = UserModuleContext.getInstance(ctx.getRequest());
-			IUserFactory userFactory = userContext.getUserFactory(ctx);
+			IUserFactory userFactory = userContext.getUserFactory(ctx);			
+			if (requestService.getParameter("type", "").equals("visitors")) {			
+				userFactory = UserFactory.createUserFactory(ctx.getRequest());
+			} 
 			User user = userFactory.getUser(requestService.getParameter("user", null));
 			if (user == null) {
 				return "user not found : " + requestService.getParameter("user", null);
@@ -323,19 +326,48 @@ public class UserAction extends AbstractModuleAction {
 		return null;
 	}
 
-	public String performCreateUser(ContentContext ctx, RequestService requestService, I18nAccess i18nAccess, MessageRepository messageRepository) {
-		String newUser = requestService.getParameter("user", null);
-		if (newUser == null) {
-			return "bad request structure : need 'user' as parameter for create a new user.";
+	public String performCreateUser(ContentContext ctx, StaticConfig staticConfig, RequestService requestService, I18nAccess i18nAccess, MessageRepository messageRepository) {
+		String newUser = requestService.getParameter("user", null);		
+		if (StringHelper.isEmpty(newUser)) {			
+			newUser = requestService.getParameter("login", null);			
+			if (newUser == null) {
+				return "bad request structure : need 'user' as parameter for create a new user.";
+			}
 		}
 		UserModuleContext userContext = UserModuleContext.getInstance(ctx.getRequest());
-		IUserFactory userFactory = userContext.getUserFactory(ctx);
+		String pwd1 = requestService.getParameter("password", null);
+		String pwd2 = requestService.getParameter("password2", null);
+		if (pwd1 != null) {
+			if (!pwd1.equals(pwd2)) {
+				return i18nAccess.getViewText("create-context.msg.error.pwd-same");
+			} else if (pwd1.length()<4) {
+				return i18nAccess.getViewText("create-context.msg.error.pwd-size");
+			}
+		}
+		IUserFactory userFactory = userContext.getUserFactory(ctx);		
+		if (requestService.getParameter("type", "").equals("visitors")) {			
+			userFactory = UserFactory.createUserFactory(ctx.getRequest());
+		} else if (requestService.getParameter("type", "").equals("edit")) {
+			userFactory = AdminUserFactory.createUserFactory(ctx.getRequest());
+		}
 		IUserInfo newUserInfo = userFactory.createUserInfos();
 		newUserInfo.setId(newUser);
 		newUserInfo.setLogin(newUser);
 		if (StringHelper.isMail(newUser)) {
 			newUserInfo.setEmail(newUser);
+		}		
+		
+		for (String label : newUserInfo.getAllLabels()) {
+			String val = requestService.getParameter(label, null);
+			if (val != null) {
+				BeanHelper.setProperty(newUserInfo, label, val);
+			}
 		}
+		
+		if (pwd1 != null) {
+			newUserInfo.setPassword(staticConfig.isPasswordEncryt(), pwd1);
+		}
+		
 		if (userContext.getCurrentRole() != null) {
 			newUserInfo.setRoles(new HashSet<String>(Arrays.asList(new String[] { userContext.getCurrentRole() })));
 		}
@@ -348,10 +380,12 @@ public class UserAction extends AbstractModuleAction {
 				return e.getMessage();
 			}
 		} catch (UserAllreadyExistException e) {
-			messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("user.message.user-exist"), GenericMessage.ERROR));
+			messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getViewText("user.error.allready-exist"), GenericMessage.ERROR));
+			return null;
 		}
 
-		messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("user.message.create", new String[][] { { "user", newUser } }), GenericMessage.INFO));
+		messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getViewText("registration.message.registred"), GenericMessage.INFO));
+		ctx.getRequest().setAttribute("hideForm", true);
 
 		return null;
 	}
@@ -387,7 +421,7 @@ public class UserAction extends AbstractModuleAction {
 
 	public static String performChangePassword(RequestService rs, ContentContext ctx, EditContext editContext, GlobalContext globalContext, HttpSession session, StaticConfig staticConfig, MessageRepository messageRepository, I18nAccess i18nAccess) {
 		String pwd = rs.getParameter("password", null);
-		String newPwd = rs.getParameter("newpassword", null);		
+		String newPwd = rs.getParameter("newpassword", null);
 
 		UserModuleContext userContext = UserModuleContext.getInstance(ctx.getRequest());
 		IUserFactory userFactory = userContext.getUserFactory(ctx);
@@ -401,11 +435,8 @@ public class UserAction extends AbstractModuleAction {
 			if (newPwd == null || newPwd.length() < 4) {
 				messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("user.message.password-to-short"), GenericMessage.ERROR));
 			} else {
-				IUserInfo ui = user.getUserInfo();
-				if (staticConfig.isPasswordEncryt()) {
-					newPwd = StringHelper.encryptPassword(newPwd);
-				}
-				ui.setPassword(newPwd);
+				IUserInfo ui = user.getUserInfo();				
+				ui.setPassword(staticConfig.isPasswordEncryt(), newPwd);
 				try {
 					userFactory.updateUserInfo(ui);
 					userFactory.store();
@@ -427,19 +458,19 @@ public class UserAction extends AbstractModuleAction {
 
 		return null;
 	}
-	
+
 	public static String performChangePassword2Check(RequestService rs, HttpSession session, ContentContext ctx, StaticConfig staticConfig, MessageRepository messageRepository, I18nAccess i18nAccess) throws IOException {
 		String newPwd = rs.getParameter("newpassword", "");
-		String newPwd2 = rs.getParameter("newpassword2", null);		
-		
-		Pattern validPassword = Pattern.compile(staticConfig.getPasswordRegularExpression());		
-		
+		String newPwd2 = rs.getParameter("newpassword2", null);
+
+		Pattern validPassword = Pattern.compile(staticConfig.getPasswordRegularExpression());
+
 		if (!validPassword.matcher(newPwd).matches()) {
 			return i18nAccess.getViewText("login.password.error");
 		} else {
 			if (!newPwd.equals(newPwd2)) {
 				return i18nAccess.getViewText("login.message.password-not-same");
-			} else {			
+			} else {
 				IUserFactory userFactory = UserFactory.createUserFactory(ctx.getGlobalContext(), session);
 				User user = userFactory.getCurrentUser(session);
 				IUserInfo ui = user.getUserInfo();
@@ -577,9 +608,9 @@ public class UserAction extends AbstractModuleAction {
 
 	public static String performSelectRole(HttpServletRequest request, ContentContext ctx, GlobalContext globalContext, HttpSession session, MessageRepository messageRepository, I18nAccess i18nAccess) throws IOException {
 		String role = request.getParameter("role");
-		
+
 		boolean admin = StringHelper.isTrue(request.getParameter("admin"));
-		
+
 		IUserFactory userFact;
 		if (admin) {
 			userFact = AdminUserFactory.createUserFactory(globalContext, session);
@@ -590,13 +621,13 @@ public class UserAction extends AbstractModuleAction {
 		Set<String> roleSet = new HashSet<String>();
 		roleSet.add(role);
 		if (!StringHelper.isEmpty(request.getParameter("remove"))) {
-			for(IUserInfo user : userFact.getUserInfoList()) {
+			for (IUserInfo user : userFact.getUserInfoList()) {
 				user.removeRoles(roleSet);
 				userFact.updateUserInfo(user);
 				messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("user.message.ok-remove-role", "Role removed from all users : ") + ' ' + role, GenericMessage.INFO));
 			}
 		} else if (!StringHelper.isEmpty(request.getParameter("add"))) {
-			for(IUserInfo user : userFact.getUserInfoList()) {
+			for (IUserInfo user : userFact.getUserInfoList()) {
 				user.addRoles(roleSet);
 				userFact.updateUserInfo(user);
 				messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("user.message.ok-add-role", "Role added to all users : ") + ' ' + role, GenericMessage.INFO));

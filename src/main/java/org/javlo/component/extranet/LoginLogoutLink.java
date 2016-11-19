@@ -51,8 +51,7 @@ public class LoginLogoutLink extends AbstractVisualComponent {
 				out.println("<form class=\"hidden-print\" id=\"loginform\" action=\""+URLHelper.createURL(ctx)+"\" method=\"post\">");
 			} else {
 				out.println("<form class=\"hidden-print\" id=\"loginform\" action=\""+URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.PREVIEW_MODE))+"\" method=\"post\">");
-			}
-			out.println("<div class=\"line\">");
+			}			
 			if (!getStyle().equals(VISITOR)) {
 				out.println("<input type=\"hidden\" value=\"adminlogin\" name=\"login-type\" />");
 				out.println("<input type=\"hidden\" value=\"edit-login\" name=\"edit-login\" />");
@@ -65,7 +64,7 @@ public class LoginLogoutLink extends AbstractVisualComponent {
 			out.println("<input class=\"password form-control\" id=\"j_password\" type=\"password\" name=\"j_password\"  placeholder=\""+i18nAccess.getAllText("form.password", "login")+"\" />");
 			out.println("</div></div><div class=\"checkbox\"><label>");
 			out.println("<input type=\"checkbox\" name=\"autologin\" /> "+i18nAccess.getAllText("login.auto", "Remember me on this computer"));
-			out.println("</label><button name=\"submit\" class=\"submit btn btn-primary btn-xs\" >Login</button>");
+			out.println("</label><button name=\"submit\" class=\"submit btn btn-primary btn-xs\" >"+i18nAccess.getViewText("user.login")+"</button>");
 			out.println("</div>");
 			out.println("</form>");
 		} else {

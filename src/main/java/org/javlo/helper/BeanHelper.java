@@ -420,6 +420,19 @@ public class BeanHelper {
 		}
 	}
 	
+	public static Object setProperty (Object bean, String property, Object value) {
+		try {
+			Class cl = String.class;	
+			if (value != null) {
+				cl = value.getClass();
+			}
+			return (String)bean.getClass().getMethod("set"+WordUtils.capitalize(property), cl).invoke(bean, value);
+		} catch (Exception e) {	
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
 	/*private static Map<Class, Map<String,String>> beanDescribeCache = Collections.synchronizedMap(new HashMap<Class, Map<String,String>>());
 	
 	public static Map<String,String> cachedDescribe(Object bean) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {

@@ -5,6 +5,8 @@ import java.util.Set;
 
 import javax.mail.internet.InternetAddress;
 
+import org.javlo.context.GlobalContext;
+
 public interface IUserInfo {
 
 	public static final char ROLES_SEPARATOR = ';';
@@ -56,6 +58,13 @@ public interface IUserInfo {
 	public void setFirstName(String firstName);
 
 	public void setLastName(String lastName);
+	
+	/**
+	 * set password and encrypt if needed&²
+	 * @param globalContext
+	 * @param password
+	 */
+	public void setPassword(boolean encrypt, String password);
 
 	public void setPassword(String password);
 

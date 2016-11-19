@@ -1,5 +1,5 @@
 /*
- * Created on 22-f�vr.-2004
+ * Created on 22-fevr.-2004
  */
 package org.javlo.message;
 

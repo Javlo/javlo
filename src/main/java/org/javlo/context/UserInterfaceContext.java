@@ -27,6 +27,8 @@ public class UserInterfaceContext {
 
 	private boolean contributor = true;
 	
+	private boolean navigation = true;
+	
 	private boolean mailing = false;
 	
 	private boolean sendMailing = true;
@@ -60,6 +62,11 @@ public class UserInterfaceContext {
 				instance.mailing = true;
 			} else {
 				instance.mailing = false;
+			}
+			if (AdminUserSecurity.getInstance().canRole(user, AdminUserSecurity.NAVIGATION_ROLE)) {
+				instance.navigation = true;
+			} else {
+				instance.navigation = false;
 			}
 			if (globalContext.getModules().contains(IMainModuleName.TICKET)) {
 				instance.setTicket(true);
@@ -176,6 +183,14 @@ public class UserInterfaceContext {
 
 	public void setSearch(boolean search) {
 		this.search = search;
+	}
+
+	public boolean isNavigation() {
+		return navigation;
+	}
+
+	public void setNavigation(boolean navigation) {
+		this.navigation = navigation;
 	}
 	
 }

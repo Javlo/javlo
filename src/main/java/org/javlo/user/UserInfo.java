@@ -15,6 +15,7 @@ import java.util.Set;
 
 import javax.mail.internet.InternetAddress;
 
+import org.javlo.context.GlobalContext;
 import org.javlo.helper.LocalLogger;
 import org.javlo.helper.StringHelper;
 
@@ -150,6 +151,14 @@ public class UserInfo implements Comparable<IUserInfo>, IUserInfo, Serializable 
 	@Override
 	public void setLogin(String string) {
 		login = string;
+	}
+	
+	@Override
+	public void setPassword(boolean encrypt, String password) {
+		if (encrypt) {
+			password = StringHelper.encryptPassword(password);
+		}
+		setPassword(password);		
 	}
 
 	/**

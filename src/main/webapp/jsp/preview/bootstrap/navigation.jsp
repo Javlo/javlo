@@ -52,7 +52,7 @@
 		
 	</c:forEach>
 	</ul>
-	<c:if test="${!userInterface.contributor}">		
+	<c:if test="${!userInterface.navigation}">		
 		<form class="preview-form" id="_pe_form-add-page" action="${info.currentURL}" method="post">
 			<div class="row"><div class="col-xs-9">
 			<div class="form-group">
