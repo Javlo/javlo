@@ -63,7 +63,7 @@ public class UserInterfaceContext {
 			} else {
 				instance.mailing = false;
 			}
-			if (AdminUserSecurity.getInstance().canRole(user, AdminUserSecurity.NAVIGATION_ROLE)) {
+			if (AdminUserSecurity.getInstance().canRole(user, AdminUserSecurity.NAVIGATION_ROLE) && AdminUserSecurity.getInstance().isAdmin(user)) {
 				instance.navigation = true;
 			} else {
 				instance.navigation = false;
