@@ -246,5 +246,10 @@ public class VFSFile extends AbstractFileComponent implements IReverseLinkCompon
 	public boolean isUploadOnDrop() {
 		return false;
 	}
+	
+	@Override
+	public int getComplexityLevel(ContentContext ctx) {
+		return getConfig(ctx).getComplexity(COMPLEXITY_STANDARD);
+	}
 
 }
