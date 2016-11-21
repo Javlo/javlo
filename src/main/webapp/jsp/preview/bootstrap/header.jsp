@@ -37,7 +37,7 @@
 	prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%><div
 	class="header">
 	<div class="logo">
-		<a href="<%=URLHelper.createURL(ctx, "/")%>">Javlo</a> <img class="ajax-loading"
+		<a target="_blank" href="<%=URLHelper.createViewURL(ctx.getPath(), ctx)%>">Javlo</a> <img class="ajax-loading"
 			src="${info.ajaxLoaderURL}" alt="loading..." lang="en" />
 	</div>
 	<%--  <div class="pulse">
