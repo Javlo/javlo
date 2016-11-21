@@ -31,6 +31,11 @@ if ( user == null ) {
 			</div>
 		</div>		
 	</form>
+	<c:if test="${not empty info.accountPageUrl}">
+		<div class="account">
+			<a class="btn btn-default pull-right" href="${info.accountPageUrl}"><%=i18nAccess.getViewText("form.create-account") %></a>
+		</div>
+	</c:if>
 </div>
 <%} else {%>
 <div class="login">

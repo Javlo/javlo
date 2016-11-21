@@ -1483,6 +1483,16 @@ public class InfoBean {
 		langMap.setLang(null);
 		return langMap;
 	}
+	
+	public String getAccountPageUrl() throws Exception {
+		ContentService content = ContentService.getInstance(ctx.getRequest());
+		MenuElement elem = content.getNavigation(ctx).searchChildFromName("account");
+		if (elem != null) {
+			return URLHelper.createURL(ctx, elem);
+		} else {
+			return null;
+		}
+	}
 
 	
 }
