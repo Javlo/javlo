@@ -321,9 +321,9 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 					Calendar endDate = Calendar.getInstance();
 					endDate.setTime(pageEvent.getEnd());
 					bean.dates.add(new DateBean(ctx, startDate.getTime()));
-					final int MAX_DAYS_OF_EVENTS = 400;
+					final int MAX_DAYS_OF_EVENTS = 400;					
 					int i = 0;
-					while (startDate.before(endDate) && i < MAX_DAYS_OF_EVENTS) {
+					while (TimeHelper.isBeforeForDay(startDate.getTime(), endDate.getTime()) && i < MAX_DAYS_OF_EVENTS) {
 						i++;
 						startDate.add(Calendar.DAY_OF_YEAR, 1);
 						bean.dates.add(new DateBean(ctx, startDate.getTime()));
@@ -343,7 +343,9 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 				
 				final int MAX_DAYS_OF_EVENTS = 1000;
 				int i=0;
-				while (startDate.before(endDate) && i<MAX_DAYS_OF_EVENTS) {
+				
+				///while (startDate.before(endDate) && i<MAX_DAYS_OF_EVENTS) {
+				while (TimeHelper.isBeforeForDay(startDate.getTime(), endDate.getTime()) && i<MAX_DAYS_OF_EVENTS) {
 					startDate.add(Calendar.DAY_OF_YEAR, 1);
 					bean.dates.add(new DateBean(ctx, startDate.getTime()));
 					i++;

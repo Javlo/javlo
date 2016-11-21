@@ -1573,7 +1573,7 @@ public class StaticConfig extends Observable {
 	}
 
 	public boolean isAutoFocus() {
-		return StringHelper.isTrue(properties.getProperty("image.auto-focus"), false);
+		return StringHelper.isTrue(properties.getProperty("image.auto-focus"), true);
 	}
 
 	public long getSiteMapNewsLimit() {
