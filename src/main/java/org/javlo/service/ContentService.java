@@ -31,6 +31,7 @@ import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.context.GlobalContextFactory;
 import org.javlo.data.InfoBean;
+import org.javlo.helper.DebugHelper;
 import org.javlo.helper.LangHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.i18n.I18nResource;
@@ -228,8 +229,9 @@ public class ContentService implements IPrintInfo {
 	 */
 	public boolean contentExistForContext(ContentContext ctx) throws Exception {
 		if (ctx.contentExistForContext == null) {
-			if (ctx.getCurrentPage() != null) {
-				ctx.contentExistForContext = !ctx.getCurrentPage().isLocalEmpty(ctx, ComponentBean.DEFAULT_AREA);
+			MenuElement page = ctx.getCurrentPage();			
+			if (page != null) {				
+				ctx.contentExistForContext = !page.isLocalEmpty(ctx, ComponentBean.DEFAULT_AREA);
 			} else {
 				ctx.contentExistForContext = false;
 			}
