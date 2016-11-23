@@ -269,6 +269,7 @@ public class ContentService implements IPrintInfo {
 		String id = StringHelper.getRandomId();
 		ComponentBean bean = new ComponentBean(id, inBean.getType(), inBean.getValue(), ctx.getRequestContentLanguage(), false, ctx.getCurrentEditUser());
 		bean.setList(inBean.isList());
+		bean.setHidden(inBean.isHidden());
 		bean.setStyle(inBean.getStyle());
 		IContentVisualComponent previousComp = ContentService.getInstance(ctx.getRequest()).getComponent(ctx, parentId);
 		if (previousComp != null) {
@@ -295,6 +296,7 @@ public class ContentService implements IPrintInfo {
 		String id = StringHelper.getRandomId();
 		ComponentBean bean = new ComponentBean(id, inBean.getType(), inBean.getValue(), ctx.getRequestContentLanguage(), false, ctx.getCurrentEditUser());
 		bean.setList(inBean.isList());
+		bean.setHidden(inBean.isHidden());
 		bean.setStyle(inBean.getStyle());
 		bean.setArea(inBean.getArea());
 		bean.setRepeat(inBean.isRepeat());

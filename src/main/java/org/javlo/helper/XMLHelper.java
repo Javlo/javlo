@@ -319,6 +319,11 @@ public class XMLHelper {
 					out.print("\" inlist=\"");
 					out.print(inlist);
 				}
+				String hidden = ""+beans[j].isHidden();
+				if (StringHelper.isTrue(hidden)) {
+					out.print("\" hidden=\"");
+					out.print(hidden);
+				}
 				if (!ComponentBean.DEFAULT_AREA.equals(beans[j].getArea())) {
 					out.print("\" area=\"");
 					out.print(beans[j].getArea());

@@ -602,6 +602,13 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			out.println(XHTMLHelper.getCheckbox("inlist-" + getId(), isList(ctx)));
 			out.println("</div>");
 		}
+		if (isHiddable()) {
+			out.println("<div class=\"line\">");
+			out.println("<label for=\"hidden-" + getId() + "\">" + i18nAccess.getText("global.hidden") + "</label>");
+			out.println(XHTMLHelper.getCheckbox("hidden-" + getId(), isDisplayHidden()));
+			out.println("</div>");
+		}
+		
 		if (isAskWidth(ctx)) {
 			out.println("<div class=\"line\">");
 			String inputName = getInputName("width");
@@ -707,6 +714,10 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		return new String(outStream.toByteArray());
 	}
 
+	protected boolean isHiddable() {
+		return false;
+	}
+
 	public boolean isConfig(ContentContext ctx) {
 		try {
 			return StringHelper.removeTag(getXHTMLConfig(ctx)).trim().length() > 0;
@@ -741,6 +752,13 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		boolean isList = requestService.getParameter("inlist-" + getId(), null) != null;
 		if (isListable() && isList != isList(ctx)) {
 			setList(isList);
+			setModify();
+			setNeedRefresh(true);
+		}
+		
+		boolean hidden = requestService.getParameter("hidden-" + getId(), null) != null;
+		if (isHiddable() && hidden != isDisplayHidden()) {
+			setDisplayHidden(hidden);
 			setModify();
 			setNeedRefresh(true);
 		}
@@ -1722,7 +1740,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	}
 
 	protected String renderViewXHTMLCode(ContentContext ctx) throws Exception {
-		if (HIDDEN.equals(getStyle())) {
+		if (HIDDEN.equals(getStyle()) || isDisplayHidden()) {
 			if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE && EditContext.getInstance(ctx.getGlobalContext(), ctx.getRequest().getSession()).isEditPreview()) {
 				String prefix = "";
 				String suffix = "";
@@ -2284,6 +2302,16 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	@Override
 	public void setList(boolean inList) {
 		componentBean.setList(inList);
+	}
+	
+	@Override
+	public void setDisplayHidden(boolean hidden) {
+		componentBean.setHidden(hidden);
+	}
+	
+	@Override
+	public boolean isDisplayHidden() {
+		return componentBean.isHidden();
 	}
 
 	public void setBackgroundColor(String bgcol) {

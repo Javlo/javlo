@@ -635,6 +635,7 @@ public class PersistenceService {
 			bean.setNolink(isNolink);
 			bean.setStyle(style);
 			bean.setList(StringHelper.isTrue(inlist));
+			bean.setHidden(StringHelper.isTrue(contentNode.getAttributeValue("hidden")));
 			bean.setArea(contentNode.getAttributeValue("area", ComponentBean.DEFAULT_AREA));
 			bean.setBackgroundColor(contentNode.getAttributeValue("bgcol", null));
 			bean.setTextColor(contentNode.getAttributeValue("txtcol", null));

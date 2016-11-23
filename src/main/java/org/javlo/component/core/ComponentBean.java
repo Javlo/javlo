@@ -29,6 +29,7 @@ public class ComponentBean implements Serializable, Comparable<ComponentBean> {
 	private String value;	
 	private String style;
 	private boolean list = false;
+	private boolean hidden = false;
 	private String language;
 	private String renderer;
 	private String authors = "";
@@ -254,6 +255,14 @@ public class ComponentBean implements Serializable, Comparable<ComponentBean> {
 
 	public void setNolink(boolean autolink) {
 		this.nolink = autolink;
+	}
+
+	public boolean isHidden() {
+		return hidden;
+	}
+
+	public void setHidden(boolean hidden) {
+		this.hidden = hidden;
 	}
 
 }

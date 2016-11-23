@@ -839,6 +839,18 @@ public interface IContentVisualComponent extends Comparable<IContentVisualCompon
 	 * @return
 	 */
 	public boolean isHiddenInMode(int mode);
+
+	/**
+	 * hide component in display mode
+	 * @param hidden
+	 */
+	public void setDisplayHidden(boolean hidden);
+
+	/**
+	 * is component displayed for visitor 
+	 * @return
+	 */
+	public boolean isDisplayHidden();
 	
 	
 

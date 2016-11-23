@@ -338,6 +338,11 @@ public class Heading extends AbstractPropertiesComponent implements ISubTitle {
 		}
 	}
 	
+	@Override
+	protected boolean isHiddable() {
+		return true;
+	}
+	
 	protected String getForcedPrefixViewXHTMLCode(ContentContext ctx) {
 		if (getConfig(ctx).getProperty("prefix", null) != null) {
 			return getConfig(ctx).getProperty("prefix", null);
