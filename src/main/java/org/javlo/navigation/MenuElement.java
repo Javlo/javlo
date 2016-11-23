@@ -2156,6 +2156,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		Iterator<String> defaultLgs = globalContext.getDefaultLanguages().iterator();
 		ContentContext localContext = new ContentContext(ctx);
+		localContext.setArea(null);
 		while (isEmpty(localContext) && defaultLgs.hasNext()) {
 			localContext.setRequestContentLanguage(defaultLgs.next());
 		}
@@ -2169,8 +2170,8 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 		} else {
 			ContentElementList contentList = getAllContent(localContext);
 			while (contentList.hasNext(ctx)) {
-				IContentVisualComponent comp = contentList.next(ctx);
-				if (comp instanceof IDate && ((IDate) comp).isValidDate(ctx)) {
+				IContentVisualComponent comp = contentList.next(ctx);				
+				if (comp instanceof IDate && ((IDate) comp).isValidDate(ctx)) {					
 					return ((IDate) comp).getDate(ctx);
 				}
 			}

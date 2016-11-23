@@ -260,6 +260,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 			bean.creationDate = StringHelper.renderShortDate(lgCtx, page.getCreationDate());			
 			bean.setCreationTime(StringHelper.renderShortTime(lgCtx, page.getCreationDate()));
 			bean.modificationDate = StringHelper.renderShortDate(lgCtx, page.getModificationDate());
+			bean.contentDateValue = StringHelper.renderShortDate(lgCtx, page.getContentDate(lgCtx));			
 			bean.modificationTime = StringHelper.renderShortTime(lgCtx, page.getModificationDate());
 			bean.sortableModificationDate = StringHelper.renderShortDate(lgCtx, page.getModificationDate());
 			bean.sortableModificationTime = StringHelper.renderShortTime(lgCtx, page.getModificationDate());
@@ -444,8 +445,9 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		private DateBean date = null;
 		private String sortableDate = null;
 		private String creationDate = null;
-		private String creationTime = null;
+		private String creationTime = null;		
 		private String modificationDate = null;
+		private String contentDateValue = null;		
 		private String modificationTime = null;
 		private String sortableModificationDate = null;
 		private String sortableModificationTime = null;
@@ -808,11 +810,15 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		public String getModificationDate() {
 			return modificationDate;
 		}
+		
+		public String getContentDateValue() {
+			return contentDateValue;
+		}
 
 		public void setModificationDate(String modificationDate) {
 			this.modificationDate = modificationDate;
 		}
-
+	
 		public String getSortableModificationDate() {
 			return sortableModificationDate;
 		}

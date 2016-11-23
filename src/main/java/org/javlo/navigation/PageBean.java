@@ -187,6 +187,16 @@ public class PageBean implements Serializable {
 			return null;
 		}
 	}
+	
+	public String getContentDateValue() {
+		try {
+			return StringHelper.renderShortDate(ctx, page.getContentDate(ctx));
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
 
 	public String getCreationDate() {
 		try {

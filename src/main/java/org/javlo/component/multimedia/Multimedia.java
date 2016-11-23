@@ -1263,6 +1263,11 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle, IStat
 	public List<File> getFiles(ContentContext ctx) {
 		return null;
 	}
+	
+	@Override
+	public boolean isValidDate(ContentContext ctx) {
+		return false;
+	}
 
 
 }

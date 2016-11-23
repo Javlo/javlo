@@ -819,6 +819,11 @@ public class NetHelper {
 	public static boolean isURLValid(URL url) {
 		return isURLValid(url, false);
 	}
+	
+	public static void main(String[] args) throws MalformedURLException {
+		boolean valid = isURLValid(new URL("http://www.europarl.europa.eu/sides/getDoc.do?type=TA&reference=P8-TA-2015-0462&language=DE&ring=B8-2015-1424"), true);
+		System.out.println("***** NetHelper.main : valid = "+valid); //TODO: remove debug trace
+	}
 
 	public static boolean isURLValid(URL url, boolean only404) {
 		try {
@@ -874,7 +879,8 @@ public class NetHelper {
 			return false;
 		}
 
-	}
+	}	
+	
 
 	public static List<URL> getLinks(String content, String inURL) {
 		List<URL> urlList = new LinkedList<URL>();
@@ -1244,4 +1250,6 @@ public class NetHelper {
 		}
 		return false;
 	}
+	
+	
 }

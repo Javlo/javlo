@@ -1559,20 +1559,32 @@ public class StringHelper {
 			return false;
 		}
 	}
-
-	public static void main(String[] args) throws Exception {
-		final int SIZE = 8;
-		Collection<String> numberList = createListNumber(500000, SIZE);		
-		PrintStream out = new PrintStream(new FileOutputStream(new File("c:/trans/codes.txt")));		
-		for (Iterator iterator = numberList.iterator(); iterator.hasNext();) {
-			String val = (String) iterator.next();			
+	
+	private static final int SIZE = 8;
+	
+	public static void createFile(File file, int size, Iterator it) throws Exception {
+		PrintStream out = new PrintStream(new FileOutputStream(file));
+		for (int i=0; i<size; i++) {
+			String val = (String) it.next();			
 			System.out.println(val+" - "+checkNumberValidity(val));
 			if (!checkNumberValidity(val) || val.length() != SIZE) {
+				out.close();
 				throw new Exception("error unvalid char generated : "+val);
 			}
 			out.println(val);
 		}
 		out.close();
+	}
+
+	public static void main(String[] args) throws Exception {
+		final int SIZE = 8;
+		Collection<String> numberList = createListNumber(600000, SIZE);		
+		Iterator it = numberList.iterator();
+		createFile(new File("c:/trans/rectangle_050_1e.txt"), 231000, it);
+		createFile(new File("c:/trans/050_vertical.txt"), 159500, it);
+		createFile(new File("c:/trans/1e_long_horizontal.txt"), 1100, it);
+		createFile(new File("c:/trans/2e_long_horizontal.txt"), 143000, it);
+		System.out.println("done.");
 	}
 
 	/**

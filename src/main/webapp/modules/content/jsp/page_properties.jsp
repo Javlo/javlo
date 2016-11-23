@@ -86,15 +86,24 @@
 	<span>${page.creator}</span>
 </div>
 
-
+<div class="row">
+<div class="col-sm-4">
 <div class="line">
 	<label>${i18n.edit['item.creation-date']}</label>
 	<span>${page.creationDate}</span>
 </div>
-
+</div><div class="col-sm-4">
 <div class="line">
 	<label>${i18n.edit['item.modification-date']}</label>
 	<span>${page.modificationDate}</span>
+</div>
+</div><div class="col-sm-4">
+<div class="line">
+	<label>${i18n.edit['item.content-date']}</label>
+	<span>${page.contentDateValue}</span>
+</div>
+
+</div>
 </div>
 
 <div class="line">
