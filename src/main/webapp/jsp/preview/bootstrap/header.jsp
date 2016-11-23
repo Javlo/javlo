@@ -352,10 +352,10 @@
 			<a class="btn btn-default btn-sm btn-integrity btn-color alert-success btn-notext" data-toggle="collapse" data-target="#integrity-list" href="#integrity-list"  aria-expanded="false" aria-controls="integrity-list">
 				<span class="glyphicon glyphicon-check" aria-hidden="true"></span>
 			</a>
-			<div class="integrity-message " id="integrity-list">
+			<div class="integrity-message collapse${integrities.error && contentContext.previewEdit?' in':''}" id="integrity-list">
 				<ul class="list-group">								
 							<li class="list-group-item list-group-item-success">
- 								${i18n.edit['integrity.no_error']}   									
+ 								${i18n.edit['integrity.no_error']}							
 							</li>
 				</ul>
 			</div></li>
