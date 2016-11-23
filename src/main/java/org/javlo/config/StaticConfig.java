@@ -571,6 +571,11 @@ public class StaticConfig extends Observable {
 	public String getFileFolderName() {
 		return properties.getString("file-folder", "files");
 	}
+	
+	public String getVFSFolderName() {
+		return properties.getString("file-folder", "VFS");
+	}
+
 
 	public String getImageCacheFolder() {
 		return replaceFolderVariable(properties.getString("image-cache-folder", FileCache.BASE_DIR));

@@ -251,5 +251,11 @@ public class VFSFile extends AbstractFileComponent implements IReverseLinkCompon
 	public int getComplexityLevel(ContentContext ctx) {
 		return getConfig(ctx).getComplexity(COMPLEXITY_STANDARD);
 	}
+	
+	@Override
+	protected String getMainFolder(ContentContext ctx) {
+		StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
+		return staticConfig.getVFSFolderName();
+	}
 
 }
