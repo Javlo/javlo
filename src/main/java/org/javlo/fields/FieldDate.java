@@ -46,7 +46,12 @@ public class FieldDate extends Field implements IDate {
 				return getShortDate();
 			} else {
 				SimpleDateFormat dateFormat = new SimpleDateFormat(format, new Locale(ctx.getRequestContentLanguage()));
-				return dateFormat.format(FieldDate.this.getDate(ctx));				
+				Date date = FieldDate.this.getDate(ctx);
+				if (date == null) {
+					return null;
+				} else {
+					return dateFormat.format(date);
+				}
 			}
 		}
 		
