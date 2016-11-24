@@ -15,7 +15,7 @@ import org.javlo.module.file.FileAction;
 public class FieldWysiwyg extends Field {
 
 	protected String getEditorComplexity(ContentContext ctx) throws Exception {	
-		return getMetaData("editor-complexity", "light");
+		return getMetaData("editor-complexity", "soft");
 	}
 
 	@Override
@@ -47,6 +47,7 @@ public class FieldWysiwyg extends Field {
 		StringWriter writer = new StringWriter();
 		PrintWriter out = new PrintWriter(writer);
 		out.println("<div class=\"form-group " + getType() + "\">");
+		out.println("<label for=\""+getInputName()+"\">"+getLabel(new Locale(ctx.getGlobalContext().getEditLanguage(ctx.getRequest().getSession())))+"</label>");
 		out.print("<textarea class=\"tinymce-light wysiwyg\" id=\"" + getInputName() + "\" name=\"" + getInputName() + "\"");
 		out.print(" rows=\"" + 10 + "\">");
 
