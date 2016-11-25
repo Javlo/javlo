@@ -364,7 +364,7 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 				if (ctx.getGlobalContext().isAutoSwitchToDefaultLanguage()) {
 					lgCtx = ctx.getContextWithContent(element);
 				}
-				if ((element.isVisible(lgCtx) ^ showOnlyNotVisible) || showAll) {
+				if (lgCtx != null && (element.isVisible(lgCtx) ^ showOnlyNotVisible) || showAll) {
 					ChildLinkBean bean = new ChildLinkBean(lgCtx, element, currentPage);
 					childrenList.add(bean);
 				}
