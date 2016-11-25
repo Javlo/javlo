@@ -27,7 +27,11 @@ jQuery(document).bind("ajaxUpdate",function () {
 		   placeholder: "sortable-target"
 		   ,stop: function(event, ui) {
 			   var url = jQuery("#form-add-page").attr("action");
-			   url=url+"?webaction=edit.movePage&page="+jQuery(ui.item).attr("id")+"&previous="+jQuery(ui.item).prev().attr("id");
+			   previous = jQuery(ui.item).prev().attr("id");			   
+			   if (previous == null || previous.length == 0) {
+				   previous = 0;
+			   }
+			   url=url+"?webaction=edit.movePage&page="+jQuery(ui.item).attr("id")+"&previous="+previous;
 			   ajaxRequest(url);
 		   }
 	});

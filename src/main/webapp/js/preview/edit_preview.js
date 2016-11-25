@@ -197,7 +197,7 @@ function onreadyPreview() {
 	jQuery(".sortable").sortable({
 		   placeholder: "sortable-target"
 		   ,stop: function(event, ui) {
-			   var url = jQuery("#children_list").attr("action");
+			   var url = jQuery("#children_list").attr("action");			   
 			   url=addParam(url,"webaction=edit.movePage&page="+jQuery(ui.item).attr("id")+"&previous="+jQuery(ui.item).prev().attr("id"));
 			   ajaxRequest(url);
 		   }
@@ -505,8 +505,7 @@ initPreview = function() {
 									while (parent !== undefined && !parent.hasClass("_area")) {
 										parent = jQuery(parent).parent();
 									}
-									area = jQuery(parent).attr("id");
-									
+									area = jQuery(parent).attr("id");									
 									var ajaxURL = addParam(currentURL,"webaction=edit.moveComponent&comp-id="
 											+ compId + "&previous=" + previewId
 											+ "&area=" + area + "&render-mode=3" + pageIdParam);
