@@ -33,9 +33,9 @@ import org.javlo.user.User;
 public class ChildrenLink extends AbstractVisualComponent implements IImageTitle {
 
 	protected static final char DATA_SEPARATOR = ',';
-	
+
 	private static String RECURSIVE = "recursive";
-	
+
 	public static final String TYPE = "children-link";
 
 	public class ChildLinkBean {
@@ -48,7 +48,7 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 			this.child = child;
 			this.currentPage = currentPage;
 		}
-		
+
 		public boolean isSelected() {
 			try {
 				return child.isSelected(ctx);
@@ -94,39 +94,39 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 		public boolean isRealContent() throws Exception {
 			return child.isRealContent(ctx);
 		}
-		
+
 		public int getReactionSize() throws Exception {
 			return child.getReactionSize(ctx);
 		}
-		
+
 		public String getCreationDateString() throws FileNotFoundException, IOException {
 			return StringHelper.renderFullDate(ctx, child.getCreationDate());
 		}
-		
+
 		public String getCreationTimeString() throws FileNotFoundException, IOException {
 			return StringHelper.renderTimeOnly(child.getCreationDate());
 		}
-		
+
 		public String getModificationDateString() throws FileNotFoundException, IOException {
 			return StringHelper.renderFullDate(ctx, child.getModificationDate());
 		}
-		
+
 		public String getModificationTimeString() throws FileNotFoundException, IOException {
 			return StringHelper.renderTimeOnly(child.getModificationDate());
 		}
-		
+
 		public String getContentDateString() throws Exception {
 			return StringHelper.renderFullDate(ctx, child.getContentDate(ctx));
 		}
-		
+
 		public boolean isCurrentPageRealContent() throws Exception {
 			return currentPage.isRealContent(ctx);
 		}
-		
-		public String getCreator() {			
+
+		public String getCreator() {
 			return child.getCreator();
 		}
-		
+
 		public String getCreatorAvatarURL() {
 			AdminUserFactory userFactory = AdminUserFactory.createAdminUserFactory(ctx.getGlobalContext(), ctx.getRequest().getSession());
 			User user = userFactory.getUser(getCreator());
@@ -136,10 +136,11 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 				return null;
 			}
 		}
-		
+
 		public MenuElement getPage() {
 			return child;
-		}		
+		}
+
 		public boolean isVisible() {
 			try {
 				return currentPage.isVisible(ctx);
@@ -158,15 +159,15 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 				return null;
 			}
 		}
-		
+
 		public List<ChildLinkBean> getChildren() {
 			List<ChildLinkBean> outChildren = new LinkedList<ChildLinkBean>();
 			for (MenuElement subchild : child.getChildMenuElements()) {
 				outChildren.add(new ChildLinkBean(ctx, subchild, child));
 			}
-			return outChildren;	
+			return outChildren;
 		}
-		
+
 		public String getContentLanguage() {
 			return ctx.getContextRequestLanguage();
 		}
@@ -186,7 +187,7 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 
 	@Override
 	protected String getRendererTitle() {
-		String[] values = getValue().split("" + DATA_SEPARATOR);		
+		String[] values = getValue().split("" + DATA_SEPARATOR);
 		if (values.length >= 1) {
 			return values[0];
 		} else {
@@ -340,7 +341,7 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 
 		boolean showAll = false;
 		boolean showOnlyNotVisible = false;
-		
+
 		if (ctx.getGlobalContext().isCollaborativeMode()) {
 			I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
 			ctx.getRequest().setAttribute("createChildButton", MacroHelper.getLaunchMacroXHTML(ctx, "create-content-children", i18nAccess.getViewText("macro.add-child.label", "Create new message.")));
@@ -350,12 +351,12 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 			showAll = getStyle().equalsIgnoreCase("all") || getStyle().equalsIgnoreCase(RECURSIVE);
 			showOnlyNotVisible = getStyle().equalsIgnoreCase("not-visible");
 		}
-		List<MenuElement> children;		
-		if (getStyle().equals(RECURSIVE)) {			
+		List<MenuElement> children;
+		if (getStyle().equals(RECURSIVE)) {
 			children = parentPage.getAllChildrenList();
 		} else {
 			children = parentPage.getChildMenuElementsWithVirtual(ctx, false, false);
-		}		
+		}
 		String renderer = getRenderer(ctx);
 		if (renderer != null) {
 			List<ChildLinkBean> childrenList = new LinkedList<ChildLinkBean>();
@@ -364,9 +365,11 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 				if (ctx.getGlobalContext().isAutoSwitchToDefaultLanguage()) {
 					lgCtx = ctx.getContextWithContent(element);
 				}
-				if (lgCtx != null && (element.isVisible(lgCtx) ^ showOnlyNotVisible) || showAll) {
-					ChildLinkBean bean = new ChildLinkBean(lgCtx, element, currentPage);
-					childrenList.add(bean);
+				if (lgCtx != null) {
+					if ((element.isVisible(lgCtx) ^ showOnlyNotVisible) || showAll) {
+						ChildLinkBean bean = new ChildLinkBean(lgCtx, element, currentPage);
+						childrenList.add(bean);
+					}
 				}
 			}
 			ctx.getRequest().setAttribute("title", getRendererTitle());
@@ -408,12 +411,12 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 		}
 
 		if (displayChildren) {
-			
-			String title = I18nAccess.getInstance(ctx).getViewText("global.gotopage","");
+
+			String title = I18nAccess.getInstance(ctx).getViewText("global.gotopage", "");
 			if (title.trim().length() > 0) {
-				title = " title=\""+StringHelper.toXMLAttribute(title)+"\"";
+				title = " title=\"" + StringHelper.toXMLAttribute(title) + "\"";
 			}
-			
+
 			String select = "";
 			if (isCombo()) {
 				select = " select";
@@ -457,7 +460,7 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 						if (page.getContentDate(ctx) != null) {
 							out.print("<span class=\"date\">" + StringHelper.renderUserFriendlyDate(ctx, page.getContentDate(ctx)) + "</span>");
 						}
-						out.print("<a"+title+" href=\"" + URLHelper.createURL(ctx, page.getVirtualPath(ctx)) + "\">");
+						out.print("<a" + title + " href=\"" + URLHelper.createURL(ctx, page.getVirtualPath(ctx)) + "\">");
 						if (isLabelListed()) {
 							String sep = "";
 							if (isDescription() && page.getDescription(ctx).trim().length() > 0) {
@@ -500,7 +503,7 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 	@Override
 	protected void init() throws ResourceNotFoundException {
 		if (getValue() == null) {
-			setValue(DATA_SEPARATOR+LABEL);
+			setValue(DATA_SEPARATOR + LABEL);
 		}
 		super.init();
 	}
@@ -565,14 +568,14 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 			newValue = newValue + DATA_SEPARATOR + LOCK_PARENT_PAGE;
 		}
 		String rendererTitle = requestService.getParameter(getInputNameRendererTitle(), "");
-		
+
 		newValue = rendererTitle + DATA_SEPARATOR + newValue;
 
 		if (!newValue.equals(getValue())) {
 			setValue(newValue);
 			setModify();
 		}
-		
+
 		return null;
 	}
 
@@ -593,10 +596,10 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 	@Override
 	public boolean isRealContent(ContentContext ctx) {
 		try {
-			/*MenuElement parentPage = ctx.getCurrentPage();
-			if (isLockParentPage()) {
-				parentPage = getPage();
-			}*/			
+			/*
+			 * MenuElement parentPage = ctx.getCurrentPage(); if
+			 * (isLockParentPage()) { parentPage = getPage(); }
+			 */
 			boolean realContent = getPage().getChildMenuElementsWithVirtual(ctx, false, false).size() > 0;
 			return realContent;
 		} catch (Exception e) {
@@ -604,7 +607,7 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 			return false;
 		}
 	}
-	
+
 	@Override
 	public int getPriority(ContentContext ctx) {
 		if (getConfig(ctx).getProperty("image.priority", null) == null) {
@@ -613,7 +616,7 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 			return Integer.parseInt(getConfig(ctx).getProperty("image.priority", null));
 		}
 	}
-	
+
 	@Override
 	public int getComplexityLevel(ContentContext ctx) {
 		return getConfig(ctx).getComplexity(COMPLEXITY_STANDARD);
