@@ -3976,7 +3976,6 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 			return false;
 		}
 
-		System.out.println("***** MenuElement.isRealContent : ctx = "+ctx); //TODO: remove debug trace
 		Template template = TemplateFactory.getTemplate(ctx, this);
 
 		String lang = ctx.getRequestContentLanguage();
