@@ -2428,13 +2428,13 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 					ContentContext defaultLgCtx = newCtx.getContextWithContent(this);
 					if (defaultLgCtx != null) {
 						desc.label = getContent(defaultLgCtx).getLabel(ctx);
-					}
-					if ((desc.label.trim().length() == 0) && (name != null)) {
-						desc.label = getSubTitle(defaultLgCtx);
-						if (StringHelper.isEmpty(desc.label)) {
-							desc.label = name;	
-						}						
-					}
+						if ((desc.label.trim().length() == 0) && (name != null)) {
+							desc.label = getSubTitle(defaultLgCtx);
+							if (StringHelper.isEmpty(desc.label)) {
+								desc.label = name;	
+							}						
+						}
+					}					
 				} else {
 					desc.label = name;
 				}
