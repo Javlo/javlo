@@ -2430,7 +2430,10 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 						desc.label = getContent(defaultLgCtx).getLabel(ctx);
 					}
 					if ((desc.label.trim().length() == 0) && (name != null)) {
-						desc.label = name;
+						desc.label = getSubTitle(defaultLgCtx);
+						if (StringHelper.isEmpty(desc.label)) {
+							desc.label = name;	
+						}						
 					}
 				} else {
 					desc.label = name;
