@@ -52,6 +52,7 @@ public class MergeImagesInGallery extends AbstractMacro {
 			String newId = content.createContent(ctx, currentPage, ComponentBean.DEFAULT_AREA, "0", bean, true);
 			gal = (Multimedia) content.getComponent(ctx, newId);
 			gal.setCurrentRootFolder(ctx, '/'+URLHelper.mergePath(ctx.getGlobalContext().getStaticConfig().getGalleryFolderName(), gal.getImportFolderPath(ctx)));
+			gal.setStyle(ctx,  Multimedia.IMAGE);
 		}
 
 		int countImage = 0;
