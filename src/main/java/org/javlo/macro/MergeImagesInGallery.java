@@ -58,7 +58,7 @@ public class MergeImagesInGallery extends AbstractMacro {
 		comps = currentPage.getAllContent(ctx);
 		while (comps.hasNext(ctx)) {
 			IContentVisualComponent comp = comps.next(ctx);
-			if (comp instanceof Image) {
+			if (comp instanceof Image && !comp.isRepeat() && comp.getArea().equals(gal.getArea())) {
 				transformImageToGallery(ctx, (Image) comp, gal);
 				countImage++;
 				comp.getPage().removeContent(ctx, comp.getId());

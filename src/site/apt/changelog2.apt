@@ -814,7 +814,7 @@ hange log
   
   * 6/ Manual Description display as meta data / synchronize isTemplateImported / absolute url can start with '//' / globalImage integrity correctionglobalImage integrity correction
   
-  * 7/ error module for manage 404 url / isRedirectWidthName return false by default / getcontentdate from IDate components / toTheTopComponent / mineType in AbstractFileComponent / active face detection / aiff and m4a sound file format / merge image in gallery marco
+  * 7/ error module for manage 404 url / isRedirectWidthName return false by default / getcontentdate from IDate components / toTheTopComponent / mineType in AbstractFileComponent / active face detection / 	
   
  * 2.1.0.3.21 28/11/2015
  
