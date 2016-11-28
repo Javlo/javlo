@@ -2647,29 +2647,33 @@ public class XHTMLHelper {
 		removeComment(new File("c:/trans/reset.scss"));
 	}
 	
-	public static String renderStaticInfo(ContentContext ctx, StaticInfo info) throws FileNotFoundException, IOException {
+	public static String renderStaticInfo(ContentContext ctx, StaticInfo info) throws FileNotFoundException, IOException {		
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(outStream);
 		ContentContext lgCtx = info.getContextWithContent(ctx);
-		out.println("<div class=\"resource-data\">");
+		
 		if (!StringHelper.isEmpty(info.getTitle(lgCtx))) {
-			out.println("<span class=\"title\">"+info.getTitle(lgCtx)+"</div>");
+			out.println("<span class=\"title\">"+info.getTitle(lgCtx)+"</span>");
 		}
 		if (!StringHelper.isEmpty(info.getManualDate(lgCtx))) {
-			out.println("<span class=\"date\">"+StringHelper.renderShortDate(lgCtx, info.getManualDate(lgCtx))+"</div>");
+			out.println("<span class=\"date\">"+StringHelper.renderShortDate(lgCtx, info.getManualDate(lgCtx))+"</span>");
 		}
 		if (!StringHelper.isEmpty(info.getDescription(lgCtx))) {
-			out.println("<span class=\"descritpion\">"+info.getDescription(lgCtx)+"</div>");
+			out.println("<span class=\"descritpion\">"+info.getDescription(lgCtx)+"</span>");
 		}
 		if (!StringHelper.isEmpty(info.getLocation(lgCtx))) {
-			out.println("<span class=\"location\">"+info.getLocation(lgCtx)+"</div>");
+			out.println("<span class=\"location\">"+info.getLocation(lgCtx)+"</span>");
 		}
 		if (!StringHelper.isEmpty(info.getCopyright(lgCtx))) {
-			out.println("<span class=\"copyright\">"+info.getCopyright(lgCtx)+"</div>");
+			out.println("<span class=\"copyright\">"+info.getCopyright(lgCtx)+"</span>");
 		}
 		out.println("</div>");
 		out.close();
-		return new String(outStream.toByteArray());
+		String html = new String(outStream.toByteArray());
+		if (html.trim().length()>0) {
+			html = "<div class=\"resource-data\">"+html+"</div>"; 
+		}
+		return html;
 	}
 
 }

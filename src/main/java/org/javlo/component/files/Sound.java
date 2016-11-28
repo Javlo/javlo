@@ -158,7 +158,8 @@ public class Sound extends AbstractFileComponent implements IReverseLinkComponen
 			StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
 			String url = ElementaryURLHelper.mergePath(getDirSelected(), getFileName());
 			url = URLHelper.createResourceURL(ctx, getPage(), staticConfig.getFileFolder() + '/' + url);
-			ctx.getRequest().setAttribute("url", url);						
+			ctx.getRequest().setAttribute("url", url);
+			ctx.getRequest().setAttribute("infoHTML", XHTMLHelper.renderStaticInfo(ctx, getStaticInfo(ctx)));
 		}
 	}
 
