@@ -2667,7 +2667,6 @@ public class XHTMLHelper {
 		if (!StringHelper.isEmpty(info.getCopyright(lgCtx))) {
 			out.println("<span class=\"copyright\">"+info.getCopyright(lgCtx)+"</span>");
 		}
-		out.println("</div>");
 		out.close();
 		String html = new String(outStream.toByteArray());
 		if (html.trim().length()>0) {
