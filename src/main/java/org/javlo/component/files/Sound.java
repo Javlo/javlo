@@ -17,6 +17,7 @@ import org.javlo.helper.ElementaryURLHelper;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
+import org.javlo.helper.XHTMLHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.service.ReverseLinkService;
 import org.javlo.ztatic.StaticInfo;
@@ -175,6 +176,8 @@ public class Sound extends AbstractFileComponent implements IReverseLinkComponen
 			StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
 			String url = ElementaryURLHelper.mergePath(getDirSelected(), getFileName());
 			url = URLHelper.createResourceURL(ctx, getPage(), staticConfig.getFileFolder() + '/' + url);
+			StaticInfo info = getStaticInfo(ctx);
+			res.append(XHTMLHelper.renderStaticInfo(ctx, info));
 			res.append("<audio controls><source src=\""+url+"\" preload=\"auto\" type=\""+ResourceHelper.getFileExtensionToMineType(StringHelper.getFileExtension(url))+"\" />Your browser does not support the audio element.</audio>");
 		} else {
 			res.append("&nbsp; <!--FILE NOT DEFINED--> ");

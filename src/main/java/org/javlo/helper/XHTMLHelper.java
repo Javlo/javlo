@@ -2646,5 +2646,30 @@ public class XHTMLHelper {
 	public static void main(String[] args) throws IOException {
 		removeComment(new File("c:/trans/reset.scss"));
 	}
+	
+	public static String renderStaticInfo(ContentContext ctx, StaticInfo info) throws FileNotFoundException, IOException {
+		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+		PrintStream out = new PrintStream(outStream);
+		ContentContext lgCtx = info.getContextWithContent(ctx);
+		out.println("<div class=\"resource-data\">");
+		if (!StringHelper.isEmpty(info.getTitle(lgCtx))) {
+			out.println("<span class=\"title\">"+info.getTitle(lgCtx)+"</div>");
+		}
+		if (!StringHelper.isEmpty(info.getManualDate(lgCtx))) {
+			out.println("<span class=\"date\">"+StringHelper.renderShortDate(lgCtx, info.getManualDate(lgCtx))+"</div>");
+		}
+		if (!StringHelper.isEmpty(info.getDescription(lgCtx))) {
+			out.println("<span class=\"descritpion\">"+info.getDescription(lgCtx)+"</div>");
+		}
+		if (!StringHelper.isEmpty(info.getLocation(lgCtx))) {
+			out.println("<span class=\"location\">"+info.getLocation(lgCtx)+"</div>");
+		}
+		if (!StringHelper.isEmpty(info.getCopyright(lgCtx))) {
+			out.println("<span class=\"copyright\">"+info.getCopyright(lgCtx)+"</div>");
+		}
+		out.println("</div>");
+		out.close();
+		return new String(outStream.toByteArray());
+	}
 
 }

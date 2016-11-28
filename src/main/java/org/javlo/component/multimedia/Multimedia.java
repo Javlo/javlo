@@ -910,6 +910,7 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle, IStat
 				resource.setLanguage(lgCtx.getRequestContentLanguage());
 				resource.setIndex(info.getAccessFromSomeDays(lgCtx));
 				resource.setPath(info.getFile().getAbsolutePath());
+				resource.setStaticInfo(new StaticInfo.StaticInfoBean(info.getContextWithContent(absCtx), info));
 				if (info.getPosition(lgCtx) != null) {
 					resource.setGpsPosition(info.getPosition(lgCtx).toString());
 				}

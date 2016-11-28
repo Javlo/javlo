@@ -127,11 +127,7 @@ public class Image extends AbstractFileComponent implements IImageTitle, IPrevie
 
 	@Override
 	public void prepareView(ContentContext ctx) throws Exception {
-		super.prepareView(ctx);
-		StaticInfo staticInfo = getStaticInfo(ctx);
-		if (staticInfo != null) {
-			ctx.getRequest().setAttribute("file", new StaticInfo.StaticInfoBean(ctx, staticInfo));
-		}
+		super.prepareView(ctx);		
 	}
 
 	@Override

@@ -680,7 +680,8 @@ public class FolderedMultimedia extends TimeRangeComponent implements IImageTitl
 		List<StaticInfo.StaticInfoBean> folders = new LinkedList<StaticInfo.StaticInfoBean>();
 		File baseDir = new File(URLHelper.mergePath(getBaseStaticDir(ctx), getCurrentRootFolder()));
 		for (File dir : getAllMultimediaFolder(ctx)) {
-			StaticInfo.StaticInfoBean bean = new StaticInfo.StaticInfoBean(ctx, StaticInfo.getInstance(ctx, dir));
+			StaticInfo info = StaticInfo.getInstance(ctx, dir);
+			StaticInfo.StaticInfoBean bean = new StaticInfo.StaticInfoBean(info.getContextWithContent(ctx), info);
 			bean.setKey(dir.getAbsolutePath().replace(baseDir.getAbsolutePath(), ""));
 			folders.add(bean);
 		}

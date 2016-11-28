@@ -229,7 +229,38 @@ public class StaticInfo {
 		public int getFocusZoneY() {
 			return staticInfo.getFocusZoneY(ctx);
 		}
-
+		public boolean isEmptyInfo() {
+			if (!StringHelper.isEmpty(getTitle())) {
+				return false;
+			}
+			if (!StringHelper.isEmpty(getDescription())) {
+				return false;
+			}
+			if (!StringHelper.isEmpty(getCopyright())) {
+				return false;
+			}
+			if (!StringHelper.isEmpty(getLocation())) {
+				return false;
+			}
+			return true;
+		}
+	}
+	
+	public ContentContext getContextWithContent(ContentContext ctx) {
+		String content = (getTitle(ctx)+getDescription(ctx)+getCopyright(ctx)).trim();
+		if (content.length()>0) {
+			return ctx;
+		} else {
+			ContentContext lgCtx = new ContentContext(ctx);
+			for (String lg : ctx.getGlobalContext().getDefaultLanguages()) {
+				lgCtx.setAllLanguage(lg);
+				content = (getTitle(lgCtx)+getDescription(lgCtx)+getCopyright(lgCtx)).trim();
+				if (content.length() > 0) {
+					return lgCtx;
+				}
+			}			
+		}
+		return ctx;
 	}
 
 	public static class StaticSort implements Comparator<String> {

@@ -10,6 +10,7 @@ import org.javlo.context.ContentContext;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.servlet.ImageTransformServlet;
+import org.javlo.ztatic.StaticInfo.StaticInfoBean;
 
 public class MultimediaResource {
 
@@ -114,6 +115,7 @@ public class MultimediaResource {
 	private boolean freeAccess = true;
 	private final List<MultimediaResource> translation = new LinkedList<MultimediaResource>();
 	private List<String> tags;
+	private StaticInfoBean staticInfo;
 
 	public void addTranslation(MultimediaResource resource) {
 		this.translation.add(resource);
@@ -434,5 +436,13 @@ public class MultimediaResource {
 
 	public void setFreeAccess(boolean publik) {
 		this.freeAccess = publik;
+	}
+	
+	public StaticInfoBean getStaticInfo() {
+		return staticInfo;
+	}
+	
+	public void setStaticInfo(StaticInfoBean staticInfo) {
+		this.staticInfo = staticInfo;
 	}
 }

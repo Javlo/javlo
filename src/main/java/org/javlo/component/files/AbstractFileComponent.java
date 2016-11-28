@@ -184,13 +184,14 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 		ctx.getRequest().setAttribute("cleanDescription", Encode.forHtmlAttribute(StringHelper.removeTag(getDescription())));
 		ctx.getRequest().setAttribute("mineType", ResourceHelper.getFileExtensionToMineType(StringHelper.getFileExtension(url)));
 		StaticInfo staticInfo = getStaticInfo(ctx);
+		ContentContext infoCtx = staticInfo.getContextWithContent(ctx);
 		String cleanLabel = null;
 		if (staticInfo != null) {
-			cleanLabel = StringHelper.toHTMLAttribute(StringHelper.removeTag(staticInfo.getTitle(ctx)));
+			cleanLabel = StringHelper.toHTMLAttribute(StringHelper.removeTag(staticInfo.getTitle(infoCtx)));
 			if (!StringHelper.isEmpty(staticInfo.getCopyright(ctx))) {
-				ctx.getRequest().setAttribute("copyright", staticInfo.getCopyright(ctx));
+				ctx.getRequest().setAttribute("copyright", staticInfo.getCopyright(infoCtx));
 			}
-			ctx.getRequest().setAttribute("resourceLabel", staticInfo.getTitle(ctx));
+			ctx.getRequest().setAttribute("resourceLabel", staticInfo.getTitle(infoCtx));
 			ctx.getRequest().setAttribute("resourceCleanLabel", cleanLabel);
 		}
 		if (getLabel() != null && getLabel().length() > 0) {
@@ -198,14 +199,16 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 			ctx.getRequest().setAttribute("cleanLabel", StringHelper.toXMLAttribute(StringHelper.removeTag(getLabel())));
 			ctx.getRequest().setAttribute("htmlLabel", XHTMLHelper.textToXHTML(XHTMLHelper.autoLink(getLabel())));
 		} else if (staticInfo != null) {
-			ctx.getRequest().setAttribute("label", staticInfo.getTitle(ctx));
+			ctx.getRequest().setAttribute("label", staticInfo.getTitle(infoCtx));
 			ctx.getRequest().setAttribute("cleanLabel", cleanLabel);
 			ctx.getRequest().setAttribute("htmlLabel", XHTMLHelper.textToXHTML(XHTMLHelper.autoLink(getLabel())));
 			ctx.getRequest().setAttribute("resource", staticInfo);
 		}
 
-		ctx.getRequest().setAttribute("resource", staticInfo);
-		ctx.getRequest().setAttribute("staticInfo", new StaticInfoBean(ctx, staticInfo));
+		if (staticInfo != null) {			
+			ctx.getRequest().setAttribute("file", new StaticInfo.StaticInfoBean(staticInfo.getContextWithContent(ctx), staticInfo));
+			ctx.getRequest().setAttribute("staticInfoHTML", XHTMLHelper.renderStaticInfo(infoCtx, staticInfo));
+		}
 
 	}
 
@@ -847,7 +850,7 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 	public StaticInfo getStaticInfo(ContentContext ctx) {
 		StaticInfo staticInfo;
 		try {
-			staticInfo = StaticInfo.getInstance(ctx, getFileURL(ctx, getFileName()));
+			staticInfo = StaticInfo.getInstance(ctx, getFileURL(ctx, getFileName()));			
 			return staticInfo;
 		} catch (Exception e) {
 			e.printStackTrace();
