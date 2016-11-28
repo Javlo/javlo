@@ -594,7 +594,11 @@ public class StaticConfig extends Observable {
 	}
 
 	public String getGalleryFolder() {
-		return ElementaryURLHelper.mergePath(getStaticFolder(), properties.getString("gallery-folder", "galleries"));
+		return ElementaryURLHelper.mergePath(getStaticFolder(), getGalleryFolderName());
+	}
+	
+	public String getGalleryFolderName() {
+		return properties.getString("gallery-folder", "galleries");
 	}
 
 	public String getHeaderMessage(String lang) {
@@ -1611,11 +1615,11 @@ public class StaticConfig extends Observable {
 	}
 
 	public List<String> getDocumentExtension() {
-		return StringHelper.stringToCollection(properties.getString("content.document-format", getImageFormat() + ",doc,docx,svg,odf,xls,xlsx,pdf,xml,zip,ppt,pptx,pub,eml,osd,odt,vcard,ppsx,sdw,mp4,mp3,avi,wpt,odm,mov,url,ept,stw,sdd,sds,odc,fax,vdx,wpa,ppv,sgf,wp5,xtd,psd,rar"), ",");
+		return StringHelper.stringToCollection(properties.getString("content.document-format", getImageFormat() +','+properties.getString("content.document-format", "mp3,wav,m4a,aif,aiff,aifc")+ ",doc,docx,svg,odf,xls,xlsx,pdf,xml,zip,ppt,pptx,pub,eml,osd,odt,vcard,ppsx,sdw,mp4,mp3,avi,wpt,odm,mov,url,ept,stw,sdd,sds,odc,fax,vdx,wpa,ppv,sgf,wp5,xtd,psd,rar"), ",");
 	}
 	
 	public List<String> getSoundExtension() {
-		return StringHelper.stringToCollection(properties.getString("content.document-format", "mp3,wav"), ",");
+		return StringHelper.stringToCollection(properties.getString("content.document-format", "mp3,wav,m4a,aif,aiff,aifc"), ",");
 	}
 	
 	public boolean isEditIpSecurity() {

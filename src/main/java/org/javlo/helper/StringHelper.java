@@ -1435,6 +1435,10 @@ public class StringHelper {
 		res = res || ext.equalsIgnoreCase("ogg");
 		res = res || ext.equalsIgnoreCase("midi");
 		res = res || ext.equalsIgnoreCase("flac");
+		res = res || ext.equalsIgnoreCase("aifc");
+		res = res || ext.equalsIgnoreCase("aiff");
+		res = res || ext.equalsIgnoreCase("aif");
+		res = res || ext.equalsIgnoreCase("m4a");		
 		return res;
 	}
 
@@ -1581,9 +1585,9 @@ public class StringHelper {
 		Collection<String> numberList = createListNumber(600000, SIZE);		
 		Iterator it = numberList.iterator();
 		createFile(new File("c:/trans/rectangle_050_1e.txt"), 231000, it);
-		createFile(new File("c:/trans/050_vertical.txt"), 159500, it);
-		createFile(new File("c:/trans/1e_long_horizontal.txt"), 1100, it);
-		createFile(new File("c:/trans/2e_long_horizontal.txt"), 143000, it);
+		createFile(new File("c:/trans/050_vertical.txt"), 165000, it);
+		createFile(new File("c:/trans/1e_long_horizontal.txt"), 15000, it);
+		createFile(new File("c:/trans/2e_long_horizontal.txt"), 150000, it);
 		System.out.println("done.");
 	}
 

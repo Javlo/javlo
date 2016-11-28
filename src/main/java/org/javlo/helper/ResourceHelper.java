@@ -637,12 +637,16 @@ public class ResourceHelper {
 			return "audio/mpeg";
 		} else if (ext.equals("mp4")) {
 			return "video/mp4";
-		} else if (ext.equals("avi") || ext.equals("wmv")) {
+		} else if (ext.equals("m4a")) {
+			return "audio/mp4";
+		}else if (ext.equals("avi") || ext.equals("wmv")) {
 			return "video/msvideo";
 		} else if (ext.equals("qt") || ext.equals("mov")) {
 			return "video/quicktime";
 		} else if (ext.equals("ogg") || ext.equals("ogv")) {
 			return "video/ogg";
+		} else if (ext.equals("aif") || ext.equals("aiff") || ext.equals("aifc")) {
+			return "audio/x-aiff";
 		} else if (ext.equals("webm")) {
 			return "video/webm";
 		} else if (ext.equals("qt") || ext.equals("mov")) {
@@ -832,7 +836,7 @@ public class ResourceHelper {
 			if (StringHelper.isEmpty(ext)) {
 				return false;
 			} else {
-				ext = ext.trim();
+				ext = ext.trim();				
 				return ctx.getGlobalContext().getStaticConfig().getDocumentExtension().contains(ext.toLowerCase());
 			}
 		}

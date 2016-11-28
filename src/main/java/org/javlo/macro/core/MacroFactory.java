@@ -45,6 +45,7 @@ import org.javlo.macro.ImportDefaultLanguageMacro;
 import org.javlo.macro.IncreaseSubtitleLevelMacro;
 import org.javlo.macro.MacroRendererCorrection;
 import org.javlo.macro.MergeDynamicComponent;
+import org.javlo.macro.MergeImagesInGallery;
 import org.javlo.macro.NoClickableImageMacro;
 import org.javlo.macro.PasteCopiedElementInAllLanguageMacro;
 import org.javlo.macro.ReduceSubtitleLevelMacro;
@@ -123,7 +124,7 @@ public class MacroFactory {
 		macros.add(new CopyLanguageStructureMacro());
 		macros.add(new CopyLanguageStructureHereMacro());
 		macros.add(new ImportDefaultLanguageMacro());
-		macros.add(new DeleteSmartExternalLinkMacro());
+		macros.add(new DeleteSmartExternalLinkMacro());		
 		macros.add(new ImageAfterDescriptionMacro());
 		macros.add(new MacroRendererCorrection());
 		macros.add(new ImageAfterDescriptionChildrenMacro());
@@ -160,6 +161,7 @@ public class MacroFactory {
 		macros.add(new CleanDuplicatedId());
 		macros.add(new ClearContext());
 		macros.add(new UpdateUserRole());
+		macros.add(new MergeImagesInGallery());
 	}
 
 	public IMacro getMacro(String name) {

@@ -152,8 +152,7 @@ public class Sound extends AbstractFileComponent implements IReverseLinkComponen
 
 	@Override
 	public void prepareView(ContentContext ctx) throws Exception {
-		super.prepareView(ctx);
-		StringBuffer res = new StringBuffer();
+		super.prepareView(ctx);		
 		if ((getValue() != null) && (getValue().trim().length() > 0)) {
 			StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
 			String url = ElementaryURLHelper.mergePath(getDirSelected(), getFileName());

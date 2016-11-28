@@ -111,11 +111,16 @@ public class XLSTools {
 				outCell = "?";
 				break;
 			}
+			
 		} else {
 			try {
 				outCell = formatter.formatCellValue(cell);
 			} catch (RuntimeException r) {
-				r.printStackTrace();
+				System.out.println("exception : "+r.getMessage());
+				System.out.print("cell value :"+cell.getRawValue());
+				System.out.print(" / cell type :"+cell.getCellType());
+				System.out.print(" / cell col :"+cell.getColumnIndex());
+				System.out.println(" / cell row :"+cell.getRowIndex());
 				outCell = "ERR:" + r.getMessage();
 			}
 		}
