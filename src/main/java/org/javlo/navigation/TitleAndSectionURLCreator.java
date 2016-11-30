@@ -50,6 +50,12 @@ public class TitleAndSectionURLCreator extends AbstractURLFactory {
 			return ((PageURL) comps.iterator().next()).getValue();
 		}
 		String title = currentPage.getLocalTitle(freeCtx);
+		if (title.equals(currentPage.getName())) {
+			Collection<String> subtitles = currentPage.getSubTitles(freeCtx,2);
+			if (subtitles.size()>0) {
+				title = StringHelper.collectionToString(currentPage.getSubTitles(freeCtx,2), " / ");
+			}
+		}
 		if (currentPage.getUrlNumber() > 0) {
 			title = title + '-' +currentPage.getUrlNumber();
 		}
