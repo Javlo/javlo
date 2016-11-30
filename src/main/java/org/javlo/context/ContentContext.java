@@ -25,7 +25,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.config.StaticConfig;
 import org.javlo.helper.AjaxHelper.ScheduledRender;
-import org.javlo.helper.LocalLogger;
 import org.javlo.helper.NetHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
@@ -102,7 +101,7 @@ public class ContentContext {
 
 	public static String CONTEXT_REQUEST_KEY = "contentContext";
 
-	private MenuElement currentPageCached = null;
+	public MenuElement currentPageCached = null;
 
 	private MenuElement virtualCurrentPage = null;
 
@@ -113,6 +112,8 @@ public class ContentContext {
 	private int titleDepth = 1;
 
 	private boolean clearSession = false;
+	
+	private boolean forceCorrectPath = false;
 
 	private static ContentContext createContentContext(HttpServletRequest request, HttpServletResponse response, boolean free) {
 		ContentContext ctx = new ContentContext();
@@ -139,7 +140,7 @@ public class ContentContext {
 	public static ContentContext getContentContext(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		return getContentContext(request, response, true);
 	}
-
+	
 	/**
 	 * 
 	 * @param request
@@ -172,6 +173,10 @@ public class ContentContext {
 		if (globalContext.getForcedHost().length() > 0) {
 			ctx.setHostName(globalContext.getForcedHost());
 		}
+		
+		if (!ctx.isForceCorrectPath()) {
+			correctPath = false;
+		}
 
 		if (ctx.getRenderMode() != ContentContext.EDIT_MODE && !editContext.isEditPreview() && !ctx.correctPath && correctPath || ctx.getRenderMode() == ContentContext.VIEW_MODE) {
 			if (!ctx.isAjax()) {
@@ -198,7 +203,7 @@ public class ContentContext {
 
 		return ctx;
 	}
-
+	
 	/**
 	 * check if there are a contentcontext in the request
 	 * 
@@ -2057,6 +2062,14 @@ public class ContentContext {
 			}
 		}
 		return request.getRemoteAddr();
+	}
+
+	public boolean isForceCorrectPath() {
+		return forceCorrectPath;
+	}
+
+	public void setForceCorrectPath(boolean forceCorrectPath) {
+		this.forceCorrectPath = forceCorrectPath;
 	}
 
 }

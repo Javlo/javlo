@@ -6,7 +6,8 @@
 %><%@page import="org.javlo.config.StaticConfig"
 %><%@page import="org.javlo.navigation.MenuElement"
 %><%
-ContentContext ctx = ContentContext.getContentContext(request, response);
+ContentContext ctx = ContentContext.getContentContext(request, response, false);
+ctx.setForceCorrectPath(false);
 StaticConfig staticConfig = ctx.getGlobalContext().getStaticConfig();
 if (ctx.isInteractiveMode() && ctx.getRenderMode() == ContentContext.PREVIEW_MODE) {%>
 <jsp:include page="<%=staticConfig.getPreviewCommandFilePath()%>" /><%

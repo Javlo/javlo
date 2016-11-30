@@ -48,7 +48,7 @@ public class JVImageChangeFilter extends TagSupport {
 						localCtx = ctx.getContextForAbsoluteURL();
 					}
 					newURL = newURL.replaceFirst(filter + '/', newFilter + '/');
-					newURL = ctx.getGlobalContext().setTransformShortURL(newURL, null);
+					newURL = ctx.getGlobalContext().setTransformShortURL(newURL,filter, null);
 					newURL = URLHelper.createStaticURL(localCtx, URLHelper.mergePath("img", newURL));
 				} else {
 					newURL = url;

@@ -420,7 +420,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	private File get404URLListFile() {
 		return new File(URLHelper.mergePath(getDataFolder(), URL_404_LIST));
 	}
-	
+
 	public void reset404File() {
 		synchronized (lockUrlFile) {
 			get404URLListFile().delete();
@@ -3367,7 +3367,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 			store404UrlMap();
 		}
 	}
-	
+
 	public void hide404Url(ContentContext ctx, String url) {
 		Properties prop = get404UrlMap();
 		if (prop.containsKey(url)) {
@@ -3375,7 +3375,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 			store404UrlMap();
 		}
 	}
-	
+
 	public void delete404Url(ContentContext ctx, String url) {
 		Properties prop = get404UrlMap();
 		if (prop.containsKey(url)) {
@@ -3383,15 +3383,15 @@ public class GlobalContext implements Serializable, IPrintInfo {
 			store404UrlMap();
 		}
 	}
-	
+
 	public void delRedirectUrl(ContentContext ctx, String url) {
-		synchronized (lockUrlFile) {						
+		synchronized (lockUrlFile) {
 			Properties prop = getRedirectUrlMap();
-			redirectURLMap = null;			
-			if (prop.containsKey(url)) {				
-				prop.remove(url);				
+			redirectURLMap = null;
+			if (prop.containsKey(url)) {
+				prop.remove(url);
 			} else {
-				logger.warning("url not found : "+url);
+				logger.warning("url not found : " + url);
 			}
 			File redirectURLListFile = getRedirectURLListFile();
 			Writer writer = null;
@@ -3400,11 +3400,11 @@ public class GlobalContext implements Serializable, IPrintInfo {
 					writer = new OutputStreamWriter(new FileOutputStream(redirectURLListFile), ContentContext.CHARACTER_ENCODING);
 					prop.store(writer, ctx.getGlobalContext().getContextKey());
 					redirectURLMap = null;
-				} catch (Exception e) { 
+				} catch (Exception e) {
 					e.printStackTrace();
 				} finally {
 					ResourceHelper.closeResource(writer);
-				}				
+				}
 			}
 		}
 	}
@@ -3504,7 +3504,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	 *            propose a new name for the file
 	 * @return
 	 */
-	public String setTransformShortURL(String longURL, String newName) {
+	public String setTransformShortURL(String longURL, String filter, String newName) {
 		String shortURL = getData(TRANSFORM_SHORT_KEY_PREFIX + longURL);
 		if (shortURL != null) {
 			return shortURL;
@@ -3519,12 +3519,12 @@ public class GlobalContext implements Serializable, IPrintInfo {
 				}
 				fileName = newName;
 			}
-			shortURL = fileName;
+			shortURL = URLHelper.mergePath(filter, fileName);
 			int i = 1;
 			String fileOnly = StringHelper.getFileNameWithoutExtension(fileName);
 			String ext = StringHelper.getFileExtension(fileName);
 			while (getData(TRANSFORM_LONG_KEY_PREFIX + shortURL) != null) {
-				shortURL = fileOnly + '_' + i + '.' + ext;
+				shortURL = URLHelper.mergePath(filter, fileOnly + '_' + i + '.' + ext);
 				i++;
 			}
 			setData(TRANSFORM_SHORT_KEY_PREFIX + longURL, shortURL);

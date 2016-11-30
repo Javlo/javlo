@@ -90,7 +90,7 @@ Template template = ctx.getCurrentTemplate();
 Stack<IContainer> containers = new Stack<IContainer>();
 
 %><%-- <!-- DEBUG INFO -->
-<ul style="padding: 10px; margin: 10px; border: 2px dashed red;">
+<ul style="padding: 10px; margin: 10px; border: 2px dashed red; list-style: none;">
 <li>area = <%=area %></li>
 <li>path = <%=ctx.getPath()%></li>
 <li>currentPage = <%=currentPage.getName()%></li>

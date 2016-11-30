@@ -1,5 +1,6 @@
 package org.javlo.navigation;
 
+import java.awt.Color;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
@@ -50,6 +51,7 @@ import org.javlo.component.links.ChildrenLink;
 import org.javlo.component.links.PageMirrorComponent;
 import org.javlo.component.links.PageReferenceComponent;
 import org.javlo.component.meta.Category;
+import org.javlo.component.meta.ColorComponent;
 import org.javlo.component.meta.DateComponent;
 import org.javlo.component.meta.EventDefinitionComponent;
 import org.javlo.component.meta.ForceRealContent;
@@ -78,6 +80,8 @@ import org.javlo.helper.URLHelper;
 import org.javlo.helper.XHTMLHelper;
 import org.javlo.helper.XMLManipulationHelper;
 import org.javlo.i18n.I18nAccess;
+import org.javlo.image.EmptyColor;
+import org.javlo.image.ExtendedColor;
 import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
 import org.javlo.module.content.Edit;
@@ -168,6 +172,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 		Event event = null;
 		List<Event> events = null;
 		String slogan;
+		ExtendedColor color;
 		String linkLabel = null;
 		Map<String, String> i18n = null;
 
@@ -1822,6 +1827,42 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 		desc.slogan = StringUtils.replace(res, "\"", "&quot;");
 
 		return desc.slogan;
+	}
+	
+	/**
+	 * get the slogan of the page (slogan component)
+	 * 
+	 * @param ctx
+	 * @return
+	 * @throws Exception
+	 */
+	public ExtendedColor getColor(ContentContext ctx) throws Exception {
+
+		PageDescription desc = getPageDescriptionCached(ctx, ctx.getRequestContentLanguage());
+
+		if (desc.color != null) {
+			return desc.color;
+		}
+		ExtendedColor res = EmptyColor.instance;
+		ContentContext noAreaCtx = ctx.getContextWithoutArea();
+
+		if (noAreaCtx.getRenderMode() == ContentContext.EDIT_MODE) {
+			noAreaCtx.setRenderMode(ContentContext.PREVIEW_MODE);
+		}
+
+		IContentComponentsList contentList = getContent(noAreaCtx);
+		while (contentList.hasNext(noAreaCtx)) {
+			IContentVisualComponent elem = contentList.next(noAreaCtx);
+			if (elem.getType().equals(ColorComponent.TYPE) && !StringHelper.isEmpty(elem.getValue(noAreaCtx))) {
+				try {
+					res = new ExtendedColor(Color.decode(elem.getValue(noAreaCtx)));
+				} catch (Exception e) {
+					res = EmptyColor.instance;
+				}
+			}
+		}
+		desc.color=res;
+		return desc.color;
 	}
 
 	ArrayList<MenuElement> getChildElementRecursive(ContentContext ctx, MenuElement elem, String type, int deph) throws Exception {

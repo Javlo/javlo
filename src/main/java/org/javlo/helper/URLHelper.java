@@ -170,7 +170,7 @@ public class URLHelper extends ElementaryURLHelper {
 				String fileName = null;
 				if (staticInfo != null && !StringHelper.isEmpty(staticInfo.getTitle(ctx))) {
 					fileName = staticInfo.getTitle(ctx);
-					url = URLHelper.mergePath(RESOURCE_SERVLET_PATH, ctx.getGlobalContext().setTransformShortURL(url, fileName));
+					url = URLHelper.mergePath(RESOURCE_SERVLET_PATH, ctx.getGlobalContext().setTransformShortURL(url, "", fileName));
 					url = createStaticURL(ctx,url);
 				} else {
 					if (url.charAt(0) == '/') {

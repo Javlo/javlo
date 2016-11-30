@@ -466,7 +466,7 @@ public abstract class ElementaryURLHelper {
 			if (staticInfo != null && !StringHelper.isEmpty(staticInfo.getTitle(ctx))) {
 				fileName = staticInfo.getTitle(ctx);
 			}
-			url = URLHelper.mergePath(IMG_SERVLET_PATH, ctx.getGlobalContext().setTransformShortURL(url.replace(TRANSFORM + '/', ""), fileName));
+			url = URLHelper.mergePath(IMG_SERVLET_PATH, ctx.getGlobalContext().setTransformShortURL(url.replace(TRANSFORM + '/', ""),filter, fileName));
 		}
 		if (ctx.getRenderMode() != ContentContext.VIEW_MODE) {
 			File file = new File(URLHelper.mergePath(ctx.getGlobalContext().getDataFolder(), fileURL));

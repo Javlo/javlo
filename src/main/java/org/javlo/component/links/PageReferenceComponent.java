@@ -52,6 +52,7 @@ import org.javlo.helper.Comparator.MenuElementPopularityComparator;
 import org.javlo.helper.Comparator.MenuElementPriorityComparator;
 import org.javlo.helper.Comparator.MenuElementVisitComparator;
 import org.javlo.i18n.I18nAccess;
+import org.javlo.image.ExtendedColor;
 import org.javlo.module.content.Edit;
 import org.javlo.navigation.MenuElement;
 import org.javlo.navigation.ReactionMenuElementComparator;
@@ -273,6 +274,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 			bean.model = page.isModel();
 			bean.seoWeight = page.getSeoWeight();
 			bean.data = new PageContentMap(ctx, page);
+			bean.color = page.getColor(realContentCtx);
 
 			/** check right **/
 			Set<String> roles = page.getEditorRoles();
@@ -488,6 +490,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		private int seoWeight;
 		private PageContentMap data;
 		private int toTheTopLevel;
+		private ExtendedColor color;
 
 		private Collection<String> tags = new LinkedList<String>();
 		private final Collection<String> tagsLabel = new LinkedList<String>();
@@ -975,6 +978,14 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 
 		public void setToTheTopLevel(int toTheTopLevel) {
 			this.toTheTopLevel = toTheTopLevel;
+		}
+
+		public ExtendedColor getColor() {
+			return color;
+		}
+
+		public void setColor(ExtendedColor color) {
+			this.color = color;
 		}
 
 	}

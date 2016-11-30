@@ -4,6 +4,9 @@ import java.awt.Color;
 import java.awt.color.ColorSpace;
 
 public class ExtendedColor extends Color {
+	
+	public static final ExtendedColor WHITE = new ExtendedColor(Color.WHITE);
+	public static final ExtendedColor BLACK = new ExtendedColor(Color.BLACK);
 
 	public ExtendedColor(int rgb) {
 		super(rgb);
@@ -49,5 +52,24 @@ public class ExtendedColor extends Color {
 		return (float)getRed()/(float)(getGreen()+getRed()+getBlue());
 	}
 	
+	public String getHTMLCode() {
+		return String.format("#%02x%02x%02x", getRed(), getGreen(), getBlue());
+	}
+	
+	public boolean isDark() {
+		return ImageEngine.getColorDistance(this, Color.BLACK)<0.5;
+	}
+	
+	public ExtendedColor getText() {
+		if (isDark()) {
+			return WHITE;
+		} else {
+			return BLACK;
+		}
+	}
+	
+	public boolean isFilled() {
+		return true;
+	}
 
 }

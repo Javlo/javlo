@@ -11,6 +11,7 @@ import org.javlo.macro.CleanImportFolder;
 import org.javlo.macro.CleanResourceNameMacro;
 import org.javlo.macro.ClearContext;
 import org.javlo.macro.ClearDataAccessCount;
+import org.javlo.macro.ClearTransformURLCache;
 import org.javlo.macro.CopyLanguageStructureHereMacro;
 import org.javlo.macro.CopyLanguageStructureMacro;
 import org.javlo.macro.CreateAllContentSample;
@@ -162,6 +163,7 @@ public class MacroFactory {
 		macros.add(new ClearContext());
 		macros.add(new UpdateUserRole());
 		macros.add(new MergeImagesInGallery());
+		macros.add(new ClearTransformURLCache());
 	}
 
 	public IMacro getMacro(String name) {

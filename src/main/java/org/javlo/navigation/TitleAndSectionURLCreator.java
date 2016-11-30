@@ -1,6 +1,5 @@
 package org.javlo.navigation;
 
-import java.net.URLEncoder;
 import java.util.Collection;
 
 import org.javlo.component.core.IContentVisualComponent;

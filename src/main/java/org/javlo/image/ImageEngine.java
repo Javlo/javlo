@@ -1273,6 +1273,19 @@ public class ImageEngine {
 	}
 	
 	/**
+	 * return white on dark background and black otherwise
+	 * @param backgroundColor
+	 * @return
+	 */
+	public static Color getTextColorOnBackground(Color backgroundColor) {
+		if (getColorDistance(backgroundColor, Color.BLACK)>0.5) {
+			return Color.WHITE;
+		} else  {	
+			return Color.BLACK;
+		}		
+	}
+	
+	/**
 	 * search a color inside a image.
 	 * @param image
 	 * @param color

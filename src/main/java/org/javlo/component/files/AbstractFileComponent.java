@@ -115,6 +115,15 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 	}
 
 	protected boolean canUpload(ContentContext ctx) {
+		String importFolder;
+		try {
+			importFolder = getImportFolderPath(ctx);
+			if (getDirSelected().equals(importFolder)) {		
+				return true;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		return AdminUserSecurity.isCurrentUserCanUpload(ctx);
 	}
 
@@ -910,7 +919,7 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 
 	}
 
-	protected boolean isImported(ContentContext ctx) {
+	protected boolean isImported(ContentContext ctx) {		
 		return getDirSelected().startsWith(URLHelper.removeFirstSlash(ctx.getGlobalContext().getStaticConfig().getImportFolder()));
 	}
 
