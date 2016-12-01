@@ -60,6 +60,8 @@ public class ChangeImageFilter implements IInteractiveMacro, IAction {
 				if (comp instanceof GlobalImage && ! comp.isRepeat()) {
 					c++;
 					((GlobalImage)comp).setFilter(filter);
+					((GlobalImage)comp).storeProperties();
+					((GlobalImage)comp).setModify();					
 				}
 			}
 		}
