@@ -847,7 +847,7 @@ public class ImageTransformServlet extends HttpServlet {
 	 * @throws Exception
 	 */
 	protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
-
+		
 		// org.javlo.helper.Logger.startCount("transform");
 		// org.javlo.helper.Logger.stepCount("transform", "start");
 
@@ -913,7 +913,7 @@ public class ImageTransformServlet extends HttpServlet {
 			boolean imageFromTemplateFolder = false;
 			if (slachIndex > 0) {
 				try {
-					filter = pathInfo.substring(0, slachIndex);
+					filter = pathInfo.substring(0, slachIndex);					
 					pathInfo = pathInfo.substring(slachIndex + 1);
 					slachIndex = pathInfo.indexOf('/');
 					String templateId = "";
@@ -921,7 +921,7 @@ public class ImageTransformServlet extends HttpServlet {
 						templateId = pathInfo.substring(0, slachIndex);
 					}
 					/** AREA **/
-					if (!filter.startsWith("template")) {
+					if (!filter.startsWith("template")) {						
 						pathInfo = pathInfo.substring(slachIndex + 1);
 						slachIndex = pathInfo.indexOf('/');
 						area = pathInfo.substring(0, slachIndex);

@@ -2,6 +2,7 @@ package org.javlo.navigation;
 
 import java.util.Collection;
 
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.navigation.PageURL;
 import org.javlo.context.ContentContext;
@@ -59,6 +60,7 @@ public class TitleAndSectionURLCreator extends AbstractURLFactory {
 		if (currentPage.getUrlNumber() > 0) {
 			title = title + '-' +currentPage.getUrlNumber();
 		}
+		title = cleanString(title);
 		String path = StringHelper.createI18NURL(title);
 
 		String url = path;

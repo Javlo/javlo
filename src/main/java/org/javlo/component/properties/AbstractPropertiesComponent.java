@@ -171,8 +171,8 @@ public abstract class AbstractPropertiesComponent extends AbstractVisualComponen
 
 	@Override
 	public void init(ComponentBean bean, ContentContext newContext) throws Exception {
-		super.init(bean, newContext);
-		properties.load(stringToStream(getValue()));
+		super.init(bean, newContext);		
+		properties.load(stringToStream(getValue()));		
 	}
 
 	protected String getListSeparator() {
@@ -203,7 +203,7 @@ public abstract class AbstractPropertiesComponent extends AbstractVisualComponen
 			}
 
 			if (fieldValue != null) {
-				if (!fieldValue.equals(getFieldValue(field))) {
+				if (!fieldValue.equals(getFieldValue(field))) {					
 					setModify();
 					properties.put(field, fieldValue);
 				}

@@ -30,13 +30,13 @@ public class JVImageChangeFilter extends TagSupport {
 			ContentContext ctx = ContentContext.getContentContext((HttpServletRequest) pageContext.getRequest(), (HttpServletResponse) pageContext.getResponse());
 			String newURL;
 			boolean abs = url.startsWith("http");
-			if (url.contains('/' + filter + '/')) {
-				newURL = url.replace('/' + filter + '/', '/' + newFilter + '/');
+			if (url.contains('/' + filter + '/') && !url.contains("/img/"+filter+'/')) {				
+				newURL = url.replace('/' + filter + '/', '/' + newFilter + '/');				
 			} else {
 				String img = "/img/";
-				int imgPos = url.indexOf(img);				
-				if (imgPos >= 0) {					
-					url = url.substring(url.indexOf(img)+img.length());					
+				int imgPos = url.indexOf(img);
+				if (imgPos >= 0) {
+					url = url.substring(url.indexOf(img) + img.length());
 					newURL = ctx.getGlobalContext().getTransformShortURL(url);
 					if (newURL == null) {
 						logger.severe("url not found");
@@ -47,8 +47,8 @@ public class JVImageChangeFilter extends TagSupport {
 					if (abs) {
 						localCtx = ctx.getContextForAbsoluteURL();
 					}
-					newURL = newURL.replaceFirst(filter + '/', newFilter + '/');
-					newURL = ctx.getGlobalContext().setTransformShortURL(newURL,filter, null);
+					newURL = newURL.replaceFirst(filter + '/', newFilter + '/');					
+					newURL = ctx.getGlobalContext().setTransformShortURL(newURL, filter, null);
 					newURL = URLHelper.createStaticURL(localCtx, URLHelper.mergePath("img", newURL));
 				} else {
 					newURL = url;
@@ -95,3 +95,4 @@ public class JVImageChangeFilter extends TagSupport {
 	}
 
 }
+

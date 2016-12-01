@@ -106,5 +106,10 @@ public abstract class ComplexPropertiesLink extends AbstractVisualComponent {
 	public boolean isContentCachable(ContentContext ctx) {
 		return true;
 	}
+	
+	@Override
+	public boolean isRealContent(ContentContext ctx) {	
+		return properties.size() > 0;
+	}
 
 }

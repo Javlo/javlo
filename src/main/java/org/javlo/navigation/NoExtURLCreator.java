@@ -21,6 +21,10 @@ public class NoExtURLCreator implements IURLFactory {
 	protected boolean fromDefaultLanguage() {
 		return false;
 	}
+	
+	protected String cleanString(String text) {
+		return AbstractURLFactory.staticCleanString(text);
+	}
 
 	@Override
 	public String createURL(ContentContext ctx, MenuElement currentPage) throws Exception {

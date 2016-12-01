@@ -143,7 +143,7 @@ public class Heading extends AbstractPropertiesComponent implements ISubTitle {
 
 	@Override
 	public String getTextTitle(ContentContext ctx) {
-		return StringEscapeUtils.unescapeHtml4(StringHelper.removeTag(getFieldValue(TEXT)));
+		return StringHelper.removeTag(getFieldValue(TEXT));
 	}
 	
 	@Override
@@ -297,7 +297,7 @@ public class Heading extends AbstractPropertiesComponent implements ISubTitle {
 		if (ctx.getRequest().getAttribute(suffix + getId()) != null) {
 			return (String) ctx.getRequest().getAttribute(suffix + getId());
 		}
-		String htmlID = StringHelper.createFileName(getTextTitle(ctx)).replace('-', '_');
+		String htmlID = StringHelper.createFileName(getTextTitle(ctx)).replace('-', '_').replace('.', '_');
 		if (htmlID.trim().length() == 0) {
 			htmlID = "empty";
 		}

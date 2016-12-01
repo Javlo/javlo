@@ -5,6 +5,7 @@ import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.javlo.context.ContentContext;
 import org.javlo.helper.StringHelper;
 
@@ -34,6 +35,14 @@ public abstract class AbstractURLFactory implements IURLFactory {
 			e.printStackTrace();
 		}
 		return url;
+	}
+	
+	protected static String staticCleanString(String text) {
+		return StringEscapeUtils.unescapeHtml4(text);
+	}
+	
+	protected String cleanString(String text) {
+		return AbstractURLFactory.staticCleanString(text);
 	}
 	
 	/**

@@ -51,6 +51,7 @@ public class NoExtURLPathTitleCreatorOneLevel extends NoExtURLCreator {
 		if (currentPage.getUrlNumber() > 0) {
 			label = label + '-' + currentPage.getUrlNumber();
 		}
+		label = cleanString(label);
 		String path = StringHelper.createI18NURL(label);
 		return '/'+URLHelper.mergePath(getParentPath(ctx, currentPage.getParent()),ctx.getFormat(),path);
 	}
