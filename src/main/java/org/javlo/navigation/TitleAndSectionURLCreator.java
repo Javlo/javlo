@@ -6,6 +6,7 @@ import org.apache.commons.lang3.StringEscapeUtils;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.navigation.PageURL;
 import org.javlo.context.ContentContext;
+import org.javlo.helper.LocalLogger;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 
@@ -59,6 +60,9 @@ public class TitleAndSectionURLCreator extends AbstractURLFactory {
 		}
 		if (currentPage.getUrlNumber() > 0) {
 			title = title + '-' +currentPage.getUrlNumber();
+		}
+		if (StringHelper.isEmpty(title)) {
+			title = currentPage.getName();
 		}
 		title = cleanString(title);
 		String path = StringHelper.createI18NURL(title);
