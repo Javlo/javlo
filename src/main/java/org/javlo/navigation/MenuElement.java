@@ -4015,7 +4015,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 	}
 
 	public boolean isRealContent(ContentContext ctx) throws Exception {
-
+		
 		if (!isInsideTimeRange()) {
 			return false;
 		}
@@ -4067,7 +4067,6 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 		desc.realContent = false;
 
 		return false;
-
 	}
 
 	public boolean isRealContentAnyLanguage(ContentContext ctx) throws Exception {
@@ -4733,6 +4732,32 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 			}
 		}
 		return null;
+	}
+	
+	public IContentVisualComponent getRealContentComponent(ContentContext ctx) throws Exception {
+			Template template = TemplateFactory.getTemplate(ctx, this);
+
+			ContentContext contentAreaCtx = new ContentContext(ctx);
+			if (template == null || !template.isRealContentFromAnyArea()) {
+				contentAreaCtx.setArea(ComponentBean.DEFAULT_AREA);
+			} else {
+				contentAreaCtx.setArea(null);
+			}
+
+			ContentElementList comps = getContent(contentAreaCtx);
+			while (comps.hasNext(contentAreaCtx)) {
+				IContentVisualComponent comp = comps.next(contentAreaCtx);
+				if (comp instanceof ForceRealContent) {
+					if (StringHelper.isTrue(comp.getValue(contentAreaCtx))) {
+						return comp;
+					};					
+				}
+				if (comp.isRealContent(contentAreaCtx) && !comp.isRepeat()) {					
+					return comp;
+				}
+			}
+
+			return null;	
 	}
 
 	public String getReferenceLanguage() {

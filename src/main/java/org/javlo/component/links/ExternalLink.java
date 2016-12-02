@@ -150,7 +150,6 @@ public class ExternalLink extends ComplexPropertiesLink implements IReverseLinkC
 			String linkTitle = i18nAccess.getText("component.link.link");
 			String labelTitle = i18nAccess.getText("component.link.label");
 			String reverseLinkLabel = i18nAccess.getText("component.link.reverse");
-
 			
 			String reverseLink = properties.getProperty(REVERSE_LINK_KEY, ReverseLinkService.NONE);
 

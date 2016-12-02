@@ -480,6 +480,15 @@ public class PageBean implements Serializable {
 			return "";
 		}
 	}
+	
+	public String getRealContentComponent() throws Exception {
+		IContentVisualComponent comp = page.getRealContentComponent(ctx);
+		if (comp != null) {
+			return comp.getType();
+		} else {
+			return "";
+		}
+	}
 
 	public boolean isPageEmpty() throws Exception {
 		return page.isEmpty(ctx, null);

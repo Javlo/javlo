@@ -139,12 +139,7 @@ public class Menu extends AbstractPropertiesComponent {
 	
 	@Override
 	public boolean isRealContent(ContentContext ctx) {
-		try {
-			return getPage(ctx).isHaveChild();
-		} catch (Exception e) {
-			e.printStackTrace();
-			return false;
-		}
+		return false;
 	}
 	
 	@Override

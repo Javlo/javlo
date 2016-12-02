@@ -128,7 +128,7 @@
 
 <div class="line">
 	<label>Real Content?</label>
-	<span>${page.realContent}</span>
+	<span>${page.realContent} <c:if test="${page.realContent}">(${page.notCacheableComponent})</c:if></span>
 </div>
 
 
