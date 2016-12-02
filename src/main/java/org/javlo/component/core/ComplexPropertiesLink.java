@@ -109,7 +109,7 @@ public abstract class ComplexPropertiesLink extends AbstractVisualComponent {
 	
 	@Override
 	public boolean isRealContent(ContentContext ctx) {	
-		return properties.size() > 0;
+		return false;
 	}
 
 }
