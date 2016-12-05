@@ -46,6 +46,16 @@ function loadWysiwyg(cssQuery, complexity, chooseFileURL) {
 		        "insertdatetime media nonbreaking save table directionality",
 		        "emoticons template paste colorpicker nonbreaking textlang"
 		    ],
+		    style_formats: [		    	
+		    	{ title: 'h1', block: 'h1', classes: 'heading' },
+		    	{ title: 'h2', block: 'h2', classes: 'heading' },
+		    	{ title: 'h3', block: 'h3', classes: 'heading' },
+		    	{ title: 'h4', block: 'h4', classes: 'heading' },
+		    	{ title: 'h5', block: 'h5', classes: 'heading' },
+		    	{ title: 'h6', block: 'h6', classes: 'heading' },
+		        { title: 'highlight', inline: 'span', classes: 'text-highlight' },
+		        { title: 'whisper', inline: 'span', classes: 'text-whisper' }
+		      ],
 		    toolbar1: "textlang | styleselect bold italic underline strikethrough fontsizeselect removeformat | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | table charmap nonbreaking code",		    
 		    image_advtab: true,
 		    fontsize_formats: "10px 11px 12px 13px 14px 16px 18px 20px 22px 24px 26px 28px 30px 32px 34px 36px 38px 40px 42px",
