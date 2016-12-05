@@ -1396,7 +1396,7 @@ public class StaticInfo {
 	}
 
 	public void setCopyright(ContentContext ctx, String copyright) {
-		if (!StringHelper.isEmpty(copyright)) {
+		if (copyright != null) {
 			ContentService content = ContentService.getInstance(ctx.getGlobalContext());
 			content.setAttribute(ctx, getKey("copyright"), copyright);
 		}
