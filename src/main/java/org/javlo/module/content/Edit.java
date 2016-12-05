@@ -289,7 +289,7 @@ public class Edit extends AbstractModuleAction {
 
 		public IContentVisualComponent getComponent() {
 			return comp;
-		}		
+		}
 	}
 
 	@Override
@@ -477,7 +477,7 @@ public class Edit extends AbstractModuleAction {
 		if (modulesContext.searchModule(IMainModuleName.TICKET) != null) {
 			ctx.getRequest().setAttribute("sharedContent", "true");
 		}
-		
+
 		if (globalContext.getStaticConfig().getIPMasks().size() > 0) {
 			ctx.getRequest().setAttribute("ipsecurity", "true");
 		}
@@ -520,7 +520,7 @@ public class Edit extends AbstractModuleAction {
 					publish = "&button_publish=true";
 				}
 
-				Map<String,String> params = new HashMap<String, String>();
+				Map<String, String> params = new HashMap<String, String>();
 				params.put("webaction", "edit.previewedit");
 				params.put("preview", "false");
 				request.setAttribute("previewURL", URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.PREVIEW_MODE), params));
@@ -758,7 +758,7 @@ public class Edit extends AbstractModuleAction {
 			// ctx = ctx.getContextWithArea(areaKey);
 			editContext.setCurrentArea(areaKey);
 		}
-		
+
 		if (areaKey == null) {
 			areaKey = EditContext.getInstance(globalContext, session).getCurrentArea();
 		}
@@ -851,8 +851,8 @@ public class Edit extends AbstractModuleAction {
 			if (!foundType) {
 				ctx.setNeedRefresh(true);
 				return "component type not found : " + type;
-			}			
-			IContentVisualComponent previousComp = contentService.getComponent(ctx, previousId);			
+			}
+			IContentVisualComponent previousComp = contentService.getComponent(ctx, previousId);
 			newId = content.createContent(ctx, targetPage, areaKey, previousId, type, "", true);
 			IContentVisualComponent openBox = contentService.getComponent(ctx, newId);
 			if (openBox instanceof IContainer && ctx.isEditPreview()) {
@@ -862,23 +862,25 @@ public class Edit extends AbstractModuleAction {
 				String closePreviousid = previousId;
 				if (previousComp == null) {
 					closePreviousid = newId;
-				}				
-				newId = content.createContent(ctx, targetPage, areaKey, closePreviousid, type, "", true);				
+				}
+				newId = content.createContent(ctx, targetPage, areaKey, closePreviousid, type, "", true);
 				IContentVisualComponent closeBox = contentService.getComponent(ctx, newId);
 				((IContainer) openBox).setOpen(ctx, true);
 				((IContainer) closeBox).setOpen(ctx, false);
 			}
-		}		
+		}
 		if (newId == null) {
 			return "error no component create.";
 		}
 
 		IContentVisualComponent comp = content.getComponent(ctx, newId);
-		comp.markAsNew(ctx);
-		comp.setPreviousComponent(ComponentHelper.getPreviousComponent(comp, ctx));
-		comp.setNextComponent(ComponentHelper.getNextComponent(comp, ctx));
-		if (!type.equals("clipboard") && StringHelper.isTrue(rs.getParameter("init", null))) {
-			comp.initContent(ctx);
+		if (comp != null) {
+			comp.markAsNew(ctx);
+			comp.setPreviousComponent(ComponentHelper.getPreviousComponent(comp, ctx));
+			comp.setNextComponent(ComponentHelper.getNextComponent(comp, ctx));
+			if (!type.equals("clipboard") && StringHelper.isTrue(rs.getParameter("init", null))) {
+				comp.initContent(ctx);
+			}
 		}
 
 		if (ctx.isAjax()) {
@@ -1243,18 +1245,17 @@ public class Edit extends AbstractModuleAction {
 						provider.refresh(ctx);
 					}
 				}
-				
+
 				/** ipsecurity **/
 				String ipsecurity = requestService.getParameter("ipsecurity", null);
 				if (StringHelper.isEmpty(ipsecurity)) {
 					ipsecurity = null;
-				}				
+				}
 				if (ipsecurity != null && ContentService.getInstance(globalContext).getNavigation(ctx).searchChildFromName(ipsecurity) == null) {
-					messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage("page not found  : "+ipsecurity, GenericMessage.ERROR), false);
+					messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage("page not found  : " + ipsecurity, GenericMessage.ERROR), false);
 				} else {
 					page.setIpSecurityErrorPageName(ipsecurity);
 				}
-				
 
 				/** publish time range **/
 				if (requestService.getParameter("start_publish", null) != null) {
@@ -1450,7 +1451,7 @@ public class Edit extends AbstractModuleAction {
 	}
 
 	public static String performPublish(ServletContext application, HttpServletRequest request, StaticConfig staticConfig, GlobalContext globalContext, ContentService content, ContentContext ctx, I18nAccess i18nAccess) throws Exception {
-		
+
 		int trackerNumber = TimeTracker.start(globalContext.getContextKey(), "publish");
 
 		if (!canModifyCurrentPage(ctx) || !checkPageSecurity(ctx)) {
@@ -1512,7 +1513,7 @@ public class Edit extends AbstractModuleAction {
 				// correct identical URL.
 				NavigationService.checkSameUrl(ctx);
 				for (String lg : lgs) {
-					lgCtx.setRequestContentLanguage(lg);					
+					lgCtx.setRequestContentLanguage(lg);
 					for (MenuElement menuElement : ContentService.getInstance(globalContext).getNavigation(lgCtx).getAllChildrenList()) {
 						if (menuElement.isRealContent(lgCtx)) {
 							String url = lgCtx.getRequestContentLanguage() + urlFactory.createURL(lgCtx, menuElement);
@@ -1555,7 +1556,7 @@ public class Edit extends AbstractModuleAction {
 			globalContext.resetURLFactory();
 
 			FileCache.getInstance(application).clearPDF(ctx);
-			
+
 			TimeTracker.end(globalContext.getContextKey(), "publish", trackerNumber);
 
 			return message;
@@ -1710,7 +1711,7 @@ public class Edit extends AbstractModuleAction {
 		String pagePreviousName = rs.getParameter("previous", null);
 		if (pageName == null || pagePreviousName == null) {
 			return "bad request structure : need 'page' and 'previous' parameters";
-		}		
+		}
 		pageName = pageName.replaceFirst("page-", "");
 		MenuElement pagePrevious = null;
 		if (pagePreviousName.startsWith("page-")) {
@@ -1725,9 +1726,9 @@ public class Edit extends AbstractModuleAction {
 			return "page not found : " + pageName;
 		}
 		if (!canModifyCurrentPage(ctx, page) || !checkPageSecurity(ctx, page)) {
-			messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("action.block"), GenericMessage.ERROR), false);			
+			messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("action.block"), GenericMessage.ERROR), false);
 			return null;
-		}		
+		}
 		if (pagePrevious == null) {
 			NavigationHelper.movePage(ctx, page.getParent(), null, page);
 		} else if (StringHelper.isTrue(rs.getParameter("as-child", null))) {
@@ -1736,7 +1737,7 @@ public class Edit extends AbstractModuleAction {
 			NavigationHelper.movePage(ctx, pagePrevious.getParent(), pagePrevious, page);
 		}
 		modifPage(ctx, page);
-		if (pagePrevious !=  null) {
+		if (pagePrevious != null) {
 			modifPage(ctx, pagePrevious);
 		}
 		PersistenceService persistenceService = PersistenceService.getInstance(globalContext);
@@ -2154,7 +2155,7 @@ public class Edit extends AbstractModuleAction {
 		} else {
 			// sharedContentService.clearCache();
 			SharedContent sharedContent = sharedContentService.getSharedContent(ctx, sharedData);
-			if (sharedContent == null) {		
+			if (sharedContent == null) {
 				String activeProvider = StringHelper.collectionToString(sharedContentService.getAllActiveProvider(ctx));
 				String msg = "error : shared content not found : " + sharedData + " activeProvider : " + activeProvider;
 				logger.warning(msg);
@@ -2218,7 +2219,7 @@ public class Edit extends AbstractModuleAction {
 
 		return null;
 	}
-	
+
 	public static String performClosepopup(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) {
 		ctx.setParentURL(rs.getParameter("url", null));
 		ctx.setClosePopup(true);

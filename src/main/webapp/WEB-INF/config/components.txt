@@ -57,6 +57,7 @@ org.javlo.component.links.SiteMap
 org.javlo.component.links.Breadcrumb
 org.javlo.component.files.GenericFile
 org.javlo.component.files.Sound
+org.javlo.component.files.SimpleVideo
 org.javlo.component.files.GenericFileList
 org.javlo.component.links.RSSRegistration
 org.javlo.component.links.RSSLink

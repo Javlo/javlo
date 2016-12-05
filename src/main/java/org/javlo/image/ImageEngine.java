@@ -133,7 +133,8 @@ public class ImageEngine {
 	 
 	    int alpha, red, green, blue;
 	    int newPixel;
-	 
+	    
+	    System.out.println("***** ImageEngine.avg : original.getType() = "+original.getType()); //TODO: remove debug trace
 	    BufferedImage avg_gray = new BufferedImage(original.getWidth(), original.getHeight(), original.getType());
 	    int[] avgLUT = new int[766];
 	    for(int i=0; i<avgLUT.length; i++) avgLUT[i] = (int) (i / 3);
