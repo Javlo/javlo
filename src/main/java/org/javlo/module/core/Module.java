@@ -433,10 +433,13 @@ public class Module {
 			Arrays.sort(cssFiles, new FileComparator(FileComparator.NAME, true));
 			for (File file : cssFiles) {
 				String ext = StringHelper.getFileExtension(file.getName());
-				if (file.isFile() && (ext.equalsIgnoreCase("css") || ext.equalsIgnoreCase("less"))) {
+				if (file.isFile() && (ext.equalsIgnoreCase("css") || ext.equalsIgnoreCase("less") || ext.equalsIgnoreCase("scss"))) {
 					String fileName = file.getName();
 					if (ext.equalsIgnoreCase("less")) {
 						fileName = fileName.substring(0, fileName.length() - ".less".length()) + ".css";
+					}
+					if (ext.equalsIgnoreCase("scss")) {
+						fileName = fileName.substring(0, fileName.length() - ".scss".length()) + ".css";
 					}
 					String url = URLHelper.mergePath("/", getModuleFolder() + '/' + getName() + '/' + CSS_FOLDER + '/' + fileName);
 					cssURI.add(url);

@@ -539,8 +539,11 @@ public class Tracker {
 			} else {				
 				statCtx.setFrom(from.getTime());
 				statCtx.setTo(localTo.getTime());
+				System.out.println("***** Tracker.getSession2ClickByMonth : READ : "+StringHelper.renderDate(statCtx.getFrom())); //TODO: remove debug trace
 				Map<Integer, Integer> data = getSession2ClickByMoment(statCtx, Calendar.MONTH);
+				System.out.println("***** Tracker.getSession2ClickByMonth : #data : "+data.size()); //TODO: remove debug trace
 				if (data.size() == 1) {				
+					
 					int click = data.entrySet().iterator().next().getValue();
 					if (cache != null && localTo.before(now)) {
 						cache.setProperty(key, ""+click);

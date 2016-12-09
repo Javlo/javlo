@@ -1,7 +1,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"
 %><%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"
 %><li class="${template.valid?'valid':'unvalid'}${info.page.templateId == template.name?' active':''}">
-		<c:if test="${not empty selectUrl}"><a href="${selectUrl}&template=${template.name}" title="select ${template.name}"></c:if>
+		<c:if test="${not empty selectUrl}"><a href="${selectUrl}&template=${template.name}" title="select ${template.name}" class="select-template"></c:if>
         <div class="thumb">
         	<c:if test="${empty param.previewEdit}">
             	<img src="${template.previewUrl}" alt="${template.name}" />
@@ -13,7 +13,7 @@
                     	<c:param name="templateid" value="${template.name}" />
                 </c:url>  
             
-            	<a href="${selectURL}">
+            	<a href="${selectURL}" class="select-template">
             	<img src="${template.previewUrl}" alt="${template.name}" />
            		<div class="info">
 				   <p>
@@ -106,6 +106,8 @@
                 </c:if>           
             </div><!--info-->          
             </c:if>
+        <span title="${template.valid?'valid':'not valid'}" class="valid-info glyphicon glyphicon-${template.valid?'ok-sign':'exclamation-sign'}"></span>
         </div><!--thumb-->
         <c:if test="${not empty selectUrl}"></a></c:if>
+        
  	</li>

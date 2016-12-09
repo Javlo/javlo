@@ -1,7 +1,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"
 %><%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <div id="gallery" class="gallery main-template full-height">
-<div id="gridview" class="thumbview">
+<div id="gridview" class="thumbview display-list">
 <c:set var="mailingFound" value="${false}" />
 <c:set var="webFound" value="${false}" />
 <c:forEach var="tpl" items="${templates}">

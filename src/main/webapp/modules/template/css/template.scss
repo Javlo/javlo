@@ -130,3 +130,69 @@ input[readonly] {
     vertical-align: text-top;
     width: 80px;
 }
+
+.valid-info {
+	position: absolute;
+	top: 10px;
+	right: 10px;
+}
+
+.gallery .display-list {
+    ul li {
+        float: left;
+   		width: 33%;
+   		margin: 0 0 15px 0;
+   		.thumb {
+   			overflow: hidden;
+   			margin: 5px 15px 5px 5px;
+   			width: auto;
+   			border: 0 none;
+			background-color: rgba(0,0,0,0.02);
+			opacity: 1;
+   			img {
+   				float: left;
+   				margin: 5px;
+   			}
+   			.info {
+   			    position: relative;
+   				float: left;
+   				width: auto;
+   				top: auto;
+   				left: auto;
+   				display: block !important;
+   				background-color: transparent;
+   				background-image: none;
+   				opacity: 1 !important;
+   				label {
+   					font-weight: bold;
+   				}
+   				span {
+   					color: #333333;
+   				}
+   			}
+   		}  
+   		.thumb:hover {
+   			background-color: rgba(0,0,0,0.04);
+   		}
+   				
+   	}
+   	.active .thumb {
+   			border: 0 none;
+   			background-color: rgba(0,255,0,0.04);
+   		} 
+	.menu {
+		display: block;
+		float: left;
+	}
+	.select-template {
+		display: block;
+		width: 100%;
+		overflow: hidden;
+	}
+}
+
+@media screen and (max-width: 1700px) {
+	.gallery .display-list ul li {
+		width: 50%;
+	}
+}

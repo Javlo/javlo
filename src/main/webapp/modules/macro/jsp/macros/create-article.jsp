@@ -5,6 +5,7 @@
 <legend>Create article</legend>
 <input type="hidden" name="webaction" value="macro-create-article.create" />
 <input type="hidden" name="module" value="content" />
+<input type="hidden" name="page" value="${info.pageName}" />
 <div class="line">
 <label for="root">group</label>
 <select id="root" name="root">
@@ -42,7 +43,11 @@
 </c:if>
 <div class="line">
 	<label for="create">create structure</label>
-	<input type="checkbox" id="create" name="create" checked="checked" />
+	<input type="checkbox" id="create" name="create" checked="checked" onclick="if (jQuery('#create')[0].checked) {jQuery('#duplicate')[0].checked = false}" />
+</div>
+<div class="line">
+	<label for="duplicate">duplicate current page</label>
+	<input type="checkbox" id="duplicate" name="duplicate" onclick="if (jQuery('#duplicate')[0].checked) {jQuery('#create')[0].checked = false}" />
 </div>
 
 <c:if test="${globalContext.collaborativeMode}">

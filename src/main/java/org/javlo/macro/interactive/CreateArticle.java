@@ -16,6 +16,8 @@ import javax.mail.internet.InternetAddress;
 
 import org.javlo.actions.IAction;
 import org.javlo.component.core.ComponentBean;
+import org.javlo.component.core.ContentElementList;
+import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.context.ContentContext;
 import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
@@ -105,6 +107,7 @@ public class CreateArticle implements IInteractiveMacro, IAction {
 		String date = rs.getParameter("date", null);
 		
 		boolean create = rs.getParameter("create", null) != null;
+		boolean duplicate = rs.getParameter("duplicate", null) != null;
 		String message = null;
 		String newURL = null;
 		String newEditURL = null;
@@ -154,7 +157,22 @@ public class CreateArticle implements IInteractiveMacro, IAction {
 				if (mountPage != null) {
 					newPage = MacroHelper.createArticlePageName(ctx, mountPage);
 					if (newPage != null) {
-						if (create) {							
+						if (duplicate) {						
+							ContentService content = ContentService.getInstance(ctx.getRequest());
+							MenuElement page = content.getNavigation(ctx).searchChildFromName(ctx.getRequest().getParameter("page"));
+							ContentContext noAreaCtx = ctx.getContextWithArea(null);
+							ContentElementList contentList = page.getContent(noAreaCtx);
+							String parent="0";
+							while (contentList.hasNext(noAreaCtx)) {
+								IContentVisualComponent comp = contentList.next(noAreaCtx);
+								if (!comp.isRepeat()) {
+									ComponentBean bean = new ComponentBean(comp.getComponentBean());
+									bean.setId(StringHelper.getRandomId());									
+									parent = content.createContent(ctx, bean, parent, false);
+								}
+							}
+							ctx.getCurrentPage().releaseCache();
+						} else if (create) {							
 							GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 							Collection<String> tags = null;
 							if (globalContext.getTags().size()>0) {
