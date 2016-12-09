@@ -29,7 +29,7 @@ public class MailConfig {
 		if (staticConfig != null) {
 			tempDir = staticConfig.getTempDir();
 		}
-		if (mailing != null && !StringHelper.isEmpty(mailing.getSmtpHost())) {
+		if (mailing != null && !StringHelper.isEmpty(mailing.getSmtpHost())) {			
 			SMTPHost =  mailing.getSmtpHost();
 			SMTPPort = mailing.getSmtpPort();
 			login = mailing.getSmtpUser();
@@ -43,7 +43,8 @@ public class MailConfig {
 			SMTPHost =  staticConfig.getSMTPHost();
 			SMTPPort = staticConfig.getSMTPPort();
 			login = staticConfig.getSMTPUser();
-			password = staticConfig.getSMTPPasswordParam();			
+			password = staticConfig.getSMTPPasswordParam();		
+			
 		}
 	}
 

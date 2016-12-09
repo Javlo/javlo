@@ -193,16 +193,18 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 
 		/** EVENT **/
 		if (isEvent()) {
-			out.println("<fieldset><legend>Event</legend><div class=\"col-group\"><div class=\"one_half\">");
+			out.println("<fieldset><legend>Event</legend><div class=\"row\"><div class=\"col-sm-6\"><div class=\"row\"><div class=\"col-xs-6\">");
 			out.println(XHTMLHelper.renderLine("subscribe limit :", getInputName("event-limit"), getLocalConfig(false).getProperty("event.limit", "")));
-			out.println("</div><div class=\"one_half\">");
+			out.println("</div><div class=\"col-xs-6\">");
+			out.println(XHTMLHelper.renderLine("subscribe alert :", getInputName("event.alert-limit"), getLocalConfig(false).getProperty("event.alert-limit", "")));
+			out.println("</div></div></div><div class=\"col-sm-6\">");
 			out.println(XHTMLHelper.renderLine("current subscription :", "" + getCountSubscription(ctx)));
-			out.println("</div></div><div class=\"col-group\"><div class=\"one_half\">");
+			out.println("</div></div><div class=\"row\"><div class=\"col-xs-6\">");
 			out.println(XHTMLHelper.renderLine("confirm subject :", getInputName("mail-confirm-subject"), getLocalConfig(false).getProperty("mail.confirm.subject", "")));
 			out.println("<div class=\"line validation-email\"><label>Confirm Email page : </label>");
 			out.println(XHTMLNavigationHelper.renderComboNavigation(ctx, getPage().getRoot(), getInputName("mail-confirm-link"), getLocalConfig(false).getProperty("mail.confirm.link", ""), true) + "</div>");
 			out.println(XHTMLHelper.renderLine("open message :", getInputName("event-open-message"), getLocalConfig(false).getProperty("event.open.message", "")));
-			out.println("</div><div class=\"one_half\">");
+			out.println("</div><div class=\"col-xs-6\">");
 			out.println(XHTMLHelper.renderLine("closed subject :", getInputName("mail-closed-subject"), getLocalConfig(false).getProperty("mail.closed.subject", "")));
 			out.println("<div class=\"line validation-email\"><label>Closed Email page : </label>");
 			out.println(XHTMLNavigationHelper.renderComboNavigation(ctx, getPage().getRoot(), getInputName("mail-closed-link"), getLocalConfig(false).getProperty("mail.closed.link", ""), true) + "</div>");
@@ -447,6 +449,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		getLocalConfig(false).setProperty("message.reset", rs.getParameter(getInputName("message-reset"), ""));
 
 		getLocalConfig(false).setProperty("event.limit", rs.getParameter(getInputName("event-limit"), ""));
+		getLocalConfig(false).setProperty("event.alert-limit", rs.getParameter(getInputName("event.alert-limit"), ""));		
 		getLocalConfig(false).setProperty("mail.confirm.subject", rs.getParameter(getInputName("mail-confirm-subject"), ""));
 		getLocalConfig(false).setProperty("mail.confirm.link", rs.getParameter(getInputName("mail-confirm-link"), ""));
 		getLocalConfig(false).setProperty("mail.closed.subject", rs.getParameter(getInputName("mail-closed-subject"), ""));

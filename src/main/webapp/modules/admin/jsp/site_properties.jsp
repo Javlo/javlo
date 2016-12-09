@@ -282,7 +282,16 @@
 </div>
 <div class="col-sm-6"><div class="form-group">		
 	<label for="mailing-smtppassword">${i18n.edit['admin.mailing.smtppassword']}</label>
-	<input class="form-control" type="text" id="mailing-smtppassword" name="mailing-smtppassword" value="" />	
+	<div class="row">
+		<div class="col-sm-10">
+			<input class="form-control" type="text" id="mailing-smtppassword" name="mailing-smtppassword" value="" />
+		</div><div class="col-sm-2">
+			<c:if test="${not empty currentContext.smtppassword}">	
+			<input type="checkbox" id="mailing-resetpassword" name="mailing-resetpassword" />
+			<label for="mailing-resetpassword">reset</label>
+			</c:if>
+		</div>
+	</div>	
 </div>
 </div>
 </div>

@@ -1224,7 +1224,9 @@ public class AdminAction extends AbstractModuleAction {
 					if (pwd.length() > 0) {					
 						currentGlobalContext.setSMTPPassword(pwd);
 					}
-					if (!StringHelper.isEmpty(currentGlobalContext.getSMTPHost())) {
+					if (StringHelper.isTrue(requestService.getParameter("mailing-resetpassword", null))) {
+						currentGlobalContext.setSMTPPassword("");
+					} else if (!StringHelper.isEmpty(currentGlobalContext.getSMTPHost())) {
 						Transport t = null;
 						try {
 							t = MailService.getMailTransport(new MailConfig(currentGlobalContext, null, null));
