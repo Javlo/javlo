@@ -820,5 +820,5 @@ hange log
  
   * 1/ retreive meta data of picture from language with content / add filter in image url
   
-  * 2/ meta color component / page association work with empty page / unescape text title of heading (for url factory)
+  * 2/ meta color component / page association work with empty page / unescape text title of heading (for url factory) / duplicate article + template display info
  
