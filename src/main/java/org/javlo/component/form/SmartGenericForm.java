@@ -421,6 +421,17 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 	protected String getNewFieldKey() {
 		return "_new_field_" + getId();
 	}
+	
+	protected boolean isWarningEventSite(ContentContext ctx) throws IOException {
+		Properties localConfig = getLocalConfig(false);
+		String eventLimistStr = localConfig.getProperty("event.alert-limit");
+		int countSubscription = getCountSubscription(ctx);
+		if (StringHelper.isDigit(eventLimistStr)) {
+			return Integer.parseInt(eventLimistStr) <= countSubscription;
+		} else {
+			return false;
+		}
+	}
 
 	@Override
 	public String performEdit(ContentContext ctx) throws Exception {
@@ -539,7 +550,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 	protected boolean isStorage() {
 		return true;
 	}
-
+	
 	protected File getFile(ContentContext ctx) throws IOException {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		String fileName = "df-" + getId() + ".csv";
@@ -826,6 +837,20 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 					comp.countCache = null;
 
 					mailService.sendMail(null, fromEmail, toEmail, ccList, bccList, subject, mailContent, comp.isHTMLMail(), null, globalContext.getDKIMBean());
+					if (comp.isWarningEventSite(ctx)) {
+						subject = globalContext.getContextKey()+" - WARNING Event almost full : "+ctx.getCurrentPage().getTitle(ctx);
+						Map data = new HashMap();
+						String eventLimistStr = comp.getLocalConfig(false).getProperty("event.alert-limit");
+						int countSubscription = comp.getCountSubscription(ctx);
+						data.put("event", ctx.getCurrentPage().getTitle(ctx));
+						data.put("subscription", countSubscription);						
+						data.put("limit", comp.getLocalConfig(false).getProperty("event.limit", ""));
+						data.put("alert limit", eventLimistStr);
+						ContentContext absCtx = ctx.getContextForAbsoluteURL();
+						absCtx.setRenderMode(ContentContext.PREVIEW_MODE);
+						String adminMailContent = XHTMLHelper.createAdminMail(ctx.getCurrentPage().getTitle(ctx), "Please check you event, it will be automaticly closed soon.", data, URLHelper.createURL(absCtx), "go on page >>");
+						mailService.sendMail(null, new InternetAddress(globalContext.getAdministratorEmail()), toEmail, ccList, bccList, subject, adminMailContent, true, null, globalContext.getDKIMBean());
+					}
 
 					String mailPath;
 					String mailSubject;

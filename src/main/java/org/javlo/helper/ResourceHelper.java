@@ -1272,6 +1272,9 @@ public class ResourceHelper {
 	}
 
 	public static final void writeStringToFile(File file, String content, String encoding) throws IOException {
+		if (encoding==null) {
+			encoding = ContentContext.CHARACTER_ENCODING;
+		}
 		if (!file.exists()) {
 			file.createNewFile();
 		}
