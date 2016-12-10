@@ -136,10 +136,7 @@ public class CatchAllFilter implements Filter {
 				globalContext = GlobalContext.getInstance(httpRequest.getSession(), host);
 				hostDefineSite = true;
 			} 
-		} else {
-			globalContext.touch();
 		}
-
 		if (staticConfig.isRequestWrapper()) {
 			if (httpRequest.getMethod().trim().equalsIgnoreCase("post")) {
 				logger.finest("create request wrapper.");
@@ -152,7 +149,10 @@ public class CatchAllFilter implements Filter {
 			logger.warning("context not found : " + httpRequest.getRequestURI());
 			((HttpServletResponse) response).setStatus(HttpServletResponse.SC_NOT_FOUND, "context not found.");
 			return;
+		} else {
+			globalContext.touch();
 		}
+
 
 		if (StringHelper.isTrue(request.getParameter(ContentContext.FORWARD_AJAX))) {
 			try {
