@@ -303,13 +303,13 @@ public class RemoteBean implements Serializable {
 	}
 	public int getSiteCharge() {
 		if (getServerInfo() != null && getServerInfo().get("siteCharge") != null) {
-			return (int)Math.round((double) getServerInfo().get("siteCharge"))-1;
+			return (int)Math.round((Double) getServerInfo().get("siteCharge"))-1;
 		}
 		return -1;
 	}
 	public int getServerCharge() {
 		if (getServerInfo() != null && getServerInfo().get("serverCharge") != null) {
-			return (int)Math.round((double)  getServerInfo().get("serverCharge"))-1;
+			return (int)Math.round((Double)  getServerInfo().get("serverCharge"))-1;
 		}
 		return -1;
 	}
