@@ -200,6 +200,11 @@ public class DataAction implements IAction {
 			CountService countService = CountService.getInstance(ctx.getRequest().getSession().getServletContext());
 			serverInfo.put("countServiceCount", "" + countService.getCount());
 			serverInfo.put("countServiceAverage", "" + countService.getAverage());
+			
+			serverInfo.put("systemUser", System.getProperty("user.name"));
+			
+			serverInfo.put("serverCharge", CountService.getInstance(request.getSession().getServletContext()).getCount());
+			serverInfo.put("siteCharge", globalContext.getCount());
 
 			List<String> connectedUsers = new LinkedList<String>();
 			List<Principal> list = globalContext.getAllPrincipals();

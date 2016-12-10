@@ -102,6 +102,12 @@ import org.javlo.utils.TimeMap;
 import org.javlo.ztatic.StaticInfo;
 
 public class GlobalContext implements Serializable, IPrintInfo {
+	
+	private final Integer[] countArrayMinute = new Integer[60];
+	
+	private long latestTime;
+	
+	private long allTouch = 0;
 
 	private static int COUNT_INSTANCE = 0;
 
@@ -3633,5 +3639,47 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		}
 		return config;
 	}
+	
+	private int getIndexArrayMinute(long infinityIndex) {
+		if (infinityIndex < 0) {
+			return countArrayMinute.length - (int) (infinityIndex % countArrayMinute.length);
+		} else {
+			return (int) infinityIndex % countArrayMinute.length;
+		}
+	}
+	
+	public synchronized void touch() {
+		touch(true);
+	}
+
+	private synchronized void touch(boolean increment) {
+		long time = Calendar.getInstance().getTimeInMillis() / 1000;
+		if (time - countArrayMinute.length > latestTime) {
+			Arrays.fill(countArrayMinute, 0);
+			latestTime = time;
+		}
+		for (long i = time - 1; i > latestTime; i--) {
+			countArrayMinute[getIndexArrayMinute(i)] = 0;
+		}
+		if (increment) {
+		allTouch++;
+		if (time == latestTime) {
+			countArrayMinute[getIndexArrayMinute(time)]++;
+		} else {
+			countArrayMinute[getIndexArrayMinute(time)] = 1;
+		}	
+		latestTime = time;
+		}
+	}
+	
+	public int getCount() {
+		touch(false);
+		int c = 0;
+		for (Integer element : countArrayMinute) {
+			c = c + element;
+		}
+		return c;
+	}
+
 
 }

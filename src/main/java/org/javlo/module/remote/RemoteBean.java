@@ -45,6 +45,8 @@ public class RemoteBean implements Serializable {
 	private Date creationDate = new Date();
 	private int errorCount = 0;
 	private int validCount = 0;
+	private int serverCharge = 0;
+	private int siteCharge = 0;
 
 	transient long latestHashStore = -1;
 

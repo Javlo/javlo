@@ -135,7 +135,9 @@ public class CatchAllFilter implements Filter {
 			if (globalContext == null) {
 				globalContext = GlobalContext.getInstance(httpRequest.getSession(), host);
 				hostDefineSite = true;
-			}
+			} 
+		} else {
+			globalContext.touch();
 		}
 
 		if (staticConfig.isRequestWrapper()) {

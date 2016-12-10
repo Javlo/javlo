@@ -43,7 +43,8 @@
 <ul class="server">
 <li><span class="label">Revision : </span>${globalContext.staticConfig.sourceRevision}</li>
 <li><span class="label">Build : </span>${globalContext.staticConfig.buildTime}</li>
-<li><span class="label">Request/minute : </span>${globalCount.count} (${globalCount.average})</li>
+<li><span class="label">Request/minute (server) : </span>${globalCount.count} (${globalCount.average})</li>
+<li><span class="label">Request/minute (site) : </span>${globalContext.count}</li>
 </ul>
 </fieldset>
 </div>

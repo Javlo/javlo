@@ -2,8 +2,12 @@ package org.javlo.service;
 
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.ServletContext;
+
+import org.javlo.context.GlobalContext;
 
 public class CountService {
 
@@ -16,6 +20,9 @@ public class CountService {
 	private static CountService instance = null;
 
 	private static final String SERVLETCONTEXT_KEY = "globalCount";
+
+	private Map<String, Integer> chargeBySite = new HashMap<String, Integer>();
+	private Map<String, Integer[]> countArrayMinuteArray = new HashMap<String, Integer[]>();
 
 	public static CountService getInstance(ServletContext application) {
 		CountService res = (CountService) application.getAttribute(SERVLETCONTEXT_KEY);
@@ -70,6 +77,34 @@ public class CountService {
 			}
 		}
 		latestTime = time;
+	}
+
+	private synchronized void touch(GlobalContext globalContext) {
+		if (globalContext != null) {
+			String contextKey = globalContext.getContextKey();
+			Integer[] minuteTouch = countArrayMinuteArray.get(contextKey);
+			if (minuteTouch == null) {
+				minuteTouch = new Integer[60];
+				countArrayMinuteArray.put(contextKey, minuteTouch);
+			}
+			long time = Calendar.getInstance().getTimeInMillis() / 1000;
+			if (time - minuteTouch.length > latestTime) {
+				Arrays.fill(countArrayMinute, 0);
+				latestTime = time;
+			}
+			for (long i = time - 1; i > latestTime; i--) {
+				minuteTouch[getIndex(i)] = 0;
+			}
+
+			allTouch++;
+			if (time == latestTime) {
+				countArrayMinute[getIndex(time)]++;
+			} else {
+				countArrayMinute[getIndex(time)] = 1;
+			}
+
+			latestTime = time;
+		}
 	}
 
 	public int getCount() {
