@@ -10,6 +10,8 @@ public class RemoteInstance {
 	private String systemUser;
 
 	private String version;
+	
+	private int charge;
 
 	private List<RemoteBean> sites = new LinkedList<RemoteBean>();
 
@@ -39,6 +41,16 @@ public class RemoteInstance {
 	}
 	public void setSites(List<RemoteBean> sites) {
 		this.sites = sites;
+	}
+	public int getCharge() {
+		if (charge>0) {
+			return Math.max(charge-sites.size(), 0);
+		} else {
+			return charge;
+		}
+	}
+	public void setCharge(int charge) {
+		this.charge = charge;
 	}
 
 }

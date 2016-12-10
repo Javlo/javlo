@@ -6,7 +6,7 @@ import java.util.List;
 public class RemoteServer {
 
 	private String address;
-	private String hostname;
+	private String hostname;	
 	private List<RemoteInstance> instances = new LinkedList<RemoteInstance>();
 
 	public String getAddress() {
@@ -29,5 +29,4 @@ public class RemoteServer {
 	public void setInstances(List<RemoteInstance> instances) {
 		this.instances = instances;
 	}
-
 }

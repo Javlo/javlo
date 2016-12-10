@@ -45,8 +45,6 @@ public class RemoteBean implements Serializable {
 	private Date creationDate = new Date();
 	private int errorCount = 0;
 	private int validCount = 0;
-	private int serverCharge = 0;
-	private int siteCharge = 0;
 
 	transient long latestHashStore = -1;
 
@@ -303,5 +301,18 @@ public class RemoteBean implements Serializable {
 			       append(latestEditor).
 			       toHashCode();			   
 	}
+	public int getSiteCharge() {
+		if (getServerInfo() != null && getServerInfo().get("siteCharge") != null) {
+			return (int)Math.round((double) getServerInfo().get("siteCharge"))-1;
+		}
+		return -1;
+	}
+	public int getServerCharge() {
+		if (getServerInfo() != null && getServerInfo().get("serverCharge") != null) {
+			return (int)Math.round((double)  getServerInfo().get("serverCharge"))-1;
+		}
+		return -1;
+	}
+	
 
 }

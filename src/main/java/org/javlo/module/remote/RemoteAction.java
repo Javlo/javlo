@@ -43,7 +43,7 @@ public class RemoteAction extends AbstractModuleAction {
 		Map<String, RemoteServer> serversByAddress = new HashMap<String, RemoteServer>();
 		Map<String, RemoteInstance> instancesByAddressPort = new HashMap<String, RemoteInstance>();
 
-		if (RENDER_MODE_TREE.equals(currentRenderMode)) {
+		if (RENDER_MODE_TREE.equals(currentRenderMode) || "charge".equals(currentRenderMode)) {
 
 			for (RemoteBean remote : remotes) {
 				String address = UNKNOWN_SERVER;
@@ -73,6 +73,7 @@ public class RemoteAction extends AbstractModuleAction {
 					instance.setPort(port);
 					instance.setSystemUser(systemUser);
 					instance.setVersion(version);
+					instance.setCharge(remote.getServerCharge());
 					server.getInstances().add(instance);
 					instancesByAddressPort.put(addressPort, instance);
 				}
@@ -145,6 +146,9 @@ public class RemoteAction extends AbstractModuleAction {
 		String renderer;
 		if (RENDER_MODE_TREE.equals(newRenderMode)) {
 			renderer = "jsp/tree.jsp";
+		} else if ("charge".equals(newRenderMode)) {
+			newRenderMode = "charge";
+			renderer = "jsp/charge.jsp";
 		} else {
 			newRenderMode = RENDER_MODE_LIST;
 			renderer = "jsp/list.jsp";
