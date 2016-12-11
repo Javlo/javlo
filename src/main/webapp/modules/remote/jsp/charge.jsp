@@ -10,6 +10,7 @@
 			<span class="server-title">${server.hostname} (${server.address})</span>
 			<ul>
 				<c:forEach var="instance" items="${server.instances}">
+					<c:if test="${instance.charge>=0}">
 					<li class="instance">
 						<strong>${instance.systemUser}</strong> - port: ${instance.port} - v ${instance.version} - #req/min : ${instance.charge}
 						<ul>
@@ -23,7 +24,7 @@
 								</li>
 							</c:forEach>
 						</ul>
-					</li>
+					</li></c:if><c:if test="${instance.charge<0}"><li><strong>${instance.systemUser}</strong> - no charge info</li></c:if>
 				</c:forEach>
 			</ul>
 		</li>
