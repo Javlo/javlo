@@ -313,6 +313,12 @@ public class RemoteBean implements Serializable {
 		}
 		return -1;
 	}
-	
-
+	public int getSiteChargeProportion() {
+		int siteCharge = getSiteCharge();
+		if (siteCharge>0) {
+			return (int)Math.round(siteCharge*100/getServerCharge());
+		} else {
+			return 0;
+		}
+	}
 }

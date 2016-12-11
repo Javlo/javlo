@@ -15,8 +15,11 @@
 						<ul>
 							<c:forEach var="remote" items="${instance.sites}">
 								<li class="site">
-									<a href="${remote.url}" target="_blank">${remote.url}</a>
-									[#req/min : ${remote.siteCharge}]
+									<div class="progress">
+                        				<a href="${remote.url}" target="_blank">${remote.url}</a> [#req/min : ${remote.siteCharge}]
+                        				<c:set var="prop" value="" />
+                        				<div class="bar"><div class="value ${remote.siteChargeProportion<25?'bluebar':remote.siteChargeProportion<75?'orangebar':'redbar'}" style="width: ${remote.siteChargeProportion}%;"></div></div>
+                    				</div>									
 								</li>
 							</c:forEach>
 						</ul>

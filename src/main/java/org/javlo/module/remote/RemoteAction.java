@@ -1,6 +1,7 @@
 package org.javlo.module.remote;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -33,16 +34,16 @@ public class RemoteAction extends AbstractModuleAction {
 	public String prepare(ContentContext ctx, ModulesContext modulesContext) throws Exception {
 		String msg = super.prepare(ctx, modulesContext);		
 		RemoteService remoteService = RemoteService.getInstance(ctx);
-		Collection<RemoteBean> remotes = remoteService.getRemotes();
+		List<RemoteBean> remotes = new LinkedList(remoteService.getRemotes());		
 		ctx.getRequest().setAttribute("remotes", remotes);
-
 		String currentRenderMode = getCurrentRenderMode(modulesContext.getCurrentModule());
 		ctx.getRequest().setAttribute("currentRemoteRenderMode", currentRenderMode);
-
 		List<RemoteServer> remoteServers = new LinkedList<RemoteServer>();
 		Map<String, RemoteServer> serversByAddress = new HashMap<String, RemoteServer>();
 		Map<String, RemoteInstance> instancesByAddressPort = new HashMap<String, RemoteInstance>();
-
+		if ("charge".equals(currentRenderMode)) {
+			Collections.sort(remotes, new RemoteBeanComparator());
+		}
 		if (RENDER_MODE_TREE.equals(currentRenderMode) || "charge".equals(currentRenderMode)) {
 
 			for (RemoteBean remote : remotes) {
