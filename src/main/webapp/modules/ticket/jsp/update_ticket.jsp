@@ -2,18 +2,19 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <div class="content">
 <form class="standard-form" id="create-ticket" method="post" action="${info.currentURL}">
-<c:if test="${not empty newTicket}">
 <div class="row">
 	<div class="col-md-12">
-		<div class="form-group">
-			<input type="text" name="title" placeholder="title" />
-		</div>
+		<c:if test="${not empty newTicket}">
+			<div class="form-group"><input type="text" name="title" placeholder="title" /></div>
+		</c:if><c:if test="${empty newTicket}">
+			<h2>${ticket.title}</h2>
+		</c:if>		
 		<div class="form-group">
 			<textarea class="form-control" rows="4" cols="20" name="message" placeholder="message"></textarea>
 		</div>
 	</div>
 </div>
-</c:if>
+
 <div class="col-container">
 <div class="one_half">
 		<input type="hidden" name="webaction" value="ticket.update" />
@@ -75,10 +76,7 @@
 		<div class="line">
 			<label>last update date :</label>${ticket.lastUpdateDateLabel}
 		</div>
-		<c:if test="${not info.editContext.lightInterface}">
-			<div class="line">
-				<label>title :</label>${ticket.title}
-			</div>
+		<c:if test="${not info.editContext.lightInterface}">			
 			<div class="line">
 				<label>category : </label>${ticket.category}			
 			</div>

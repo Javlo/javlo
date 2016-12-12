@@ -20,6 +20,7 @@ import org.javlo.context.GlobalContext;
 import org.javlo.helper.NetHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
+import org.javlo.helper.XHTMLHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
@@ -112,7 +113,7 @@ public class TicketAction extends AbstractModuleAction {
 				newTicket.setUrl(URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.PREVIEW_MODE)));
 				ticketService.updateTicket(ctx, newTicket);
 				rs.setParameter("id", newTicket.getId());
-				ctx.getRequest().setAttribute("newTicket", "true");
+				ctx.getRequest().setAttribute("newTicket", true);
 				ticket = new TicketUserWrapper(newTicket, ctx);
 			} else {
 				ticket = myTickets.get(ticketId);
@@ -149,13 +150,15 @@ public class TicketAction extends AbstractModuleAction {
 
 		TicketService ticketService = TicketService.getInstance(globalContext);
 		String id = rs.getParameter("id", "");
+		String title = rs.getParameter("title", null);
+		
 		TicketBean ticket;
 		if (id.trim().length() > 0) { // update
 			if ("new".equals(id)) {
 				ticket = new TicketBean();
 			} else {
 				TicketUserWrapper existing = getMyTicket(ctx).get(id);
-				if (existing == null) {
+				if (existing == null) {					
 					return "ticket not found : " + id;
 				}
 				ticket = new TicketBean(existing);
@@ -163,12 +166,17 @@ public class TicketAction extends AbstractModuleAction {
 				ticket.setLatestEditor(user.getLogin());
 			}
 		} else { // create
-			if (rs.getParameter("title", "").trim().length() == 0) {
+			if (rs.getParameter("title", "").trim().length() == 0) {				
 				return "please enter a title.";
 			}
 			ticket = new TicketBean();
 			ticket.setAuthors(user.getLogin());
 			ticket.setContext(globalContext.getContextKey());
+		}
+		
+		if (StringHelper.isAllEmpty(title, ticket.getTitle())) {
+			ctx.getRequest().setAttribute("newTicket", true);
+			return i18nAccess.getText("ticket.message.no-title");
 		}
 
 		if (rs.getParameter("delete", null) != null) {
@@ -181,7 +189,9 @@ public class TicketAction extends AbstractModuleAction {
 			ticket.setStatus(rs.getParameter("status", ticket.getStatus()));
 			ticket.setShare(rs.getParameter("share", ticket.getShare()));
 			ticket.setUrl(rs.getParameter("url", ticket.getUrl()));
-			ticket.setTitle(rs.getParameter("title", ticket.getTitle()));
+			if (!StringHelper.isEmpty(title)) {
+				ticket.setTitle(title);
+			}
 			ticket.setMessage(rs.getParameter("message", ticket.getMessage()));
 			ticket.setUsers(rs.getParameterListValues("users", Collections.<String> emptyList()));
 			if (ticket.getUsers() == null || ticket.getUsers().isEmpty()) {
@@ -287,26 +297,19 @@ public class TicketAction extends AbstractModuleAction {
 		if (userInfo != null) {
 			String email = StringHelper.trimAndNullify(userInfo.getEmail());
 			if (email != null) {
-				String siteTitle = ctx.getGlobalContext().getGlobalTitle();
-				StringBuilder content = new StringBuilder();
+				String siteTitle = ctx.getGlobalContext().getGlobalTitle();				
 				String baseUrl = URLHelper.createInterModuleURL(ctx.getContextForAbsoluteURL().getContextWithOtherRenderMode(ContentContext.EDIT_MODE), "/", "ticket");
-
-				content.append("<p>On site: ");
-				content.append("<a href=\"");
-				content.append(baseUrl);
-				content.append("\">");
-				content.append(siteTitle);
-				content.append("</a>");
-				content.append("</p>");
-
-				content.append("<ul>");
-				for (TicketBean ticket : tickets) {
-					content.append("<li>");
-					content.append(ticket.getTitle());
-					content.append("</li>");
-				}
-				content.append("</ul>");
+				Map ticketsMap = new HashMap();
+				for (TicketBean ticket : tickets) {	
+					if (ticket.getComments().size() == 0) {
+						ticketsMap.put("["+ticket.getAuthors()+"] - "+ticket.getTitle(), XHTMLHelper.collectionToList(ticket.getComments()));
+					} else {
+						ticketsMap.put("["+ticket.getAuthors()+"] - "+ticket.getTitle(), XHTMLHelper.collectionToList(ticket.getComments()));
+					}
+				}				
+				String content = XHTMLHelper.createAdminMail("Ticket updates on " + siteTitle, ticketsMap.size()+" tickets updated.", ticketsMap, baseUrl, "go on site");				
 				NetHelper.sendXHTMLMail(ctx, new InternetAddress(globalContext.getAdministratorEmail()), new InternetAddress(email), null, null, "Ticket updates on " + siteTitle, content.toString(), null);
+				
 			}
 		}
 	}

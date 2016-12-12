@@ -72,10 +72,12 @@ public class TicketService {
 
 	private void storeTicket(ContentContext ctx, TicketBean bean) throws Exception {
 		if (!bean.isDebugNote()) {
-			File ticketFile = new File(URLHelper.mergePath(folder.getAbsolutePath(), bean.getId() + ".xml"));
-			ticketFile.getParentFile().mkdirs();
-			String xml = ResourceHelper.storeBeanFromXML(bean);
-			ResourceHelper.writeStringToFile(ticketFile, xml, ContentContext.CHARACTER_ENCODING);
+			if (!StringHelper.isEmpty(bean.getTitle())) {
+				File ticketFile = new File(URLHelper.mergePath(folder.getAbsolutePath(), bean.getId() + ".xml"));
+				ticketFile.getParentFile().mkdirs();
+				String xml = ResourceHelper.storeBeanFromXML(bean);
+				ResourceHelper.writeStringToFile(ticketFile, xml, ContentContext.CHARACTER_ENCODING);
+			}
 		} else {
 			IContentVisualComponent component = ContentService.getInstance(ctx.getGlobalContext()).getComponent(ctx, bean.getId());
 			DebugNote d = (DebugNote) component;
@@ -110,8 +112,7 @@ public class TicketService {
 			TicketService ticketService = TicketService.getInstance(gc);
 			allTickets.addAll(ticketService.getTickets());
 		}
-
-		//Retrieve Debug notes from content
+		// Retrieve Debug notes from content
 		ContentService content = ContentService.getInstance(ctx.getRequest());
 		List<IContentVisualComponent> components = content.getAllContent(ctx);
 		for (IContentVisualComponent comp : components) {

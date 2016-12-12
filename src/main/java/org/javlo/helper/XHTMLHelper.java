@@ -2676,6 +2676,19 @@ public class XHTMLHelper {
 		}
 		return html;
 	}
+	
+	public static String collectionToList(Collection<? extends Object> col) {
+		if (col == null || col.size()==0) {
+			return "";
+		} else {
+			String outHTML = "<ul>";
+			for (Iterator iterator = col.iterator(); iterator.hasNext();) {
+				Object object = (Object) iterator.next();
+				outHTML = outHTML+"<li>"+object+"</li>";
+			}
+			return outHTML+"</ul>";
+		}
+	}
 
 	public static String createAdminMail(String title, String content, Map data, String link, String linkLabel) {		
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
@@ -2690,7 +2703,7 @@ public class XHTMLHelper {
 		if (data != null && data.size()>0) {
 			out.println("<table style='border-collapse: collapse;' border='1'>");
 			for (Object key : data.keySet()) {
-				out.println("<tr><td style='font-weight: bold; padding: 10px; font-family:Helvetica, sans-serif;'>"+key+" : </td><td style='padding: 10px; font-family:Helvetica, sans-serif;'>"+data.get(key)+"</td></tr>");
+				out.println("<tr><td style='font-weight: bold; padding: 10px; font-family:Helvetica, sans-serif; vertical-align: top; font-size: 12px;'>"+key+" : </td><td style='padding: 10px; font-family:Helvetica, sans-serif;  vertical-align: top; font-size: 12px;'>"+data.get(key)+"</td></tr>");
 			}
 			out.println("</table>");
 		}

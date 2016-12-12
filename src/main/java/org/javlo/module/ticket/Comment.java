@@ -2,6 +2,8 @@ package org.javlo.module.ticket;
 
 import java.io.Serializable;
 
+import org.javlo.helper.StringHelper;
+
 public class Comment implements Serializable {
 
 	private static final long serialVersionUID = 1L;
@@ -30,5 +32,10 @@ public class Comment implements Serializable {
 
 	public void setMessage(String message) {
 		this.message = message;
+	}
+	
+	@Override
+	public String toString() {
+		return '['+StringHelper.neverNull(authors)+"] - "+StringHelper.neverNull(message);
 	}
 }

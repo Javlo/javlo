@@ -39,6 +39,7 @@
 </colgroup>
 <tbody> 
  <c:forEach var="ticket" items="${tickets}">
+ <c:if test="${not empty ticket.title}">
  <tr class="gradeX${ticket.deleted?' deleted':''}">
  	 <td class="con1">${ticket.authors}</td>
  	 <c:url var="ticketURL" value="${info.currentURL}" context="/">
@@ -57,7 +58,8 @@
      <td class="con1">${ticket.context}</td>
      <td class="con0"><a class="share ${ticket.share}" href="${ticketURL}"><c:if test="${empty ticket.share}">none</c:if>${ticket.share}</a></td>
      </c:if>
- </tr>     
+ </tr>  
+ </c:if>   
 </c:forEach>
 </tbody>
 <tfoot>

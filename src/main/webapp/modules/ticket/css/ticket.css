@@ -45,3 +45,6 @@ a.unread {
 	background-color: #FEA00D;
 }
 
+#create-ticket h2 {
+	margin-bottom: 5px;
+}
