@@ -9,7 +9,7 @@ public class RemoteBeanComparator implements Comparator<RemoteBean> {
 
 	@Override
 	public int compare(RemoteBean o1, RemoteBean o2) {		
-		return o1.getSiteCharge()-o2.getSiteCharge();
+		return o2.getSiteCharge()-o1.getSiteCharge();
 	}
 
 }
