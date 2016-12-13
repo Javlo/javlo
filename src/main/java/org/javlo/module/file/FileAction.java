@@ -639,6 +639,7 @@ public class FileAction extends AbstractModuleAction {
 		if (transform) {
 			logger.info("transform : "+file);
 			FileCache.getInstance(ctx.getRequest().getSession().getServletContext()).deleteAllFile(ctx.getGlobalContext().getContextKey(), file.getName());
+			
 			TransactionFile transactionFile = new TransactionFile(file);
 			try {
 				ImageIO.write(image, StringHelper.getFileExtension(file.getName().toLowerCase()), transactionFile.getTempFile());
