@@ -34,7 +34,7 @@ public class FieldExternalLink extends MetaField implements ILink {
 		}
 
 		public String getTitle() {
-			return getLinkLabel();
+			return getCurrentLabel();
 		}
 
 	}
@@ -55,6 +55,11 @@ public class FieldExternalLink extends MetaField implements ILink {
 	public String getInputLabelName() {
 		return getName() + "-label-" + getId();
 	}
+	
+	@Override
+	public boolean isWrapped() {	
+		return true;
+	}
 
 	@Override
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
@@ -62,7 +67,7 @@ public class FieldExternalLink extends MetaField implements ILink {
 		PrintWriter out = new PrintWriter(writer);
 
 		String displayStr = StringHelper.neverNull(getCurrentLink());
-		if (displayStr.trim().length() == 0 || !isViewDisplayed()) {
+		if (displayStr.trim().length() == 0 || !isViewDisplayed()) {			
 			return "";
 		}
 
