@@ -11,6 +11,8 @@ import org.javlo.helper.XHTMLHelper;
 public class FieldImage extends FieldFile {
 	
 	public class ImageBean extends FieldBean {
+		
+		private String filter = getFilter();
 
 		public ImageBean(ContentContext ctx) {
 			super(ctx);
@@ -23,7 +25,7 @@ public class FieldImage extends FieldFile {
 			String relativePath = URLHelper.mergePath(FieldImage.this.getFileTypeFolder(), FieldImage.this.getCurrentFolder());
 			String fileURL = URLHelper.mergePath(relativePath, FieldImage.this.getCurrentFile());
 			try {
-				return URLHelper.createTransformURL(ctx, '/' + fileURL, getFilter());
+				return URLHelper.createTransformURL(ctx, '/' + fileURL, getImageFilter());
 			} catch (Exception e) {			
 				e.printStackTrace();
 				return null;
@@ -36,6 +38,18 @@ public class FieldImage extends FieldFile {
 		
 		public String getAlt() {
 			return FieldImage.this.getCurrentLabel();
+		}
+
+		public String getImageFilter() {
+			return filter;
+		}
+
+		public void setImageFilter(String filter) {
+			this.filter = filter;
+		}
+		
+		public String getViewXHTMLCode() throws Exception {
+			return FieldImage.this.getViewXHTMLCode(ctx, getImageFilter());
 		}
 		
 	}
@@ -59,7 +73,11 @@ public class FieldImage extends FieldFile {
 	}
 
 	@Override
-	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
+	public String getViewXHTMLCode(ContentContext ctx) throws Exception {		
+		return getViewXHTMLCode(ctx, getFilter());
+	}
+	
+	protected String getViewXHTMLCode(ContentContext ctx, String filter) throws Exception {
 		
 		String refCode = referenceViewCode(ctx);
 		if (refCode != null) {
@@ -86,7 +104,7 @@ public class FieldImage extends FieldFile {
 				out.println("<a href=\"" + getCurrentLink() + "\"" + target+'>');
 			}
 			
-			out.println("<img src=\"" + getPreviewURL(ctx) + "\" alt=\"" + getCurrentLabel() + "\"/>");
+			out.println("<img src=\"" + getPreviewURL(ctx, filter) + "\" alt=\"" + getCurrentLabel() + "\"/>");
 			if (isDisplayLabel()) {
 				out.println("<span class=\"label\">" + getCurrentLabel() + "</span>");
 			}
@@ -99,10 +117,10 @@ public class FieldImage extends FieldFile {
 		return writer.toString();
 	}
 	
-	public String getPreviewURL(ContentContext ctx) throws Exception {
+	public String getPreviewURL(ContentContext ctx, String filter) throws Exception {
 		String fileURL = getFileURL(ctx);
 		if (StringHelper.isImage(getCurrentFile())) {
-			return URLHelper.createTransformURL(ctx, '/' + fileURL, getFilter());
+			return URLHelper.createTransformURL(ctx, '/' + fileURL, filter);
 		} else {
 			return XHTMLHelper.getFileBigIcone(ctx, fileURL);
 		}		
