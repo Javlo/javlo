@@ -141,6 +141,16 @@ public class ContentContext {
 		return getContentContext(request, response, true);
 	}
 	
+	public ContentContext getContentContextForInternalLink() throws Exception {
+		if (getRenderMode() != ContentContext.PAGE_MODE) {
+			return this;
+		} else {
+			ContentContext viewContext = new ContentContext(this);
+			viewContext.setRenderMode(ContentContext.VIEW_MODE);
+			return viewContext;
+		}
+	}
+	
 	/**
 	 * 
 	 * @param request

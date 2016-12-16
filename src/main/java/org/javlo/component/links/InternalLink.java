@@ -169,7 +169,7 @@ public class InternalLink extends ComplexPropertiesLink implements IInternalLink
 			if (child != null) {
 				String link = "#";
 				link = child.getPath();
-				return URLHelper.createURL(ctx, link);
+				return URLHelper.createURL(ctx.getContentContextForInternalLink(), link);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -228,21 +228,14 @@ public class InternalLink extends ComplexPropertiesLink implements IInternalLink
 		String linkId = properties.getProperty(LINK_KEY, "/");
 		MenuElement linkedPage = navigationService.getPage(ctx, linkId);
 		if (linkedPage != null) {
-			ctx.getRequest().setAttribute("linkedPage", linkedPage.getPageBean(ctx));		
-			String link = "#";
-			link = linkedPage.getPath();
+			ctx.getRequest().setAttribute("linkedPage", linkedPage.getPageBean(ctx));			
 			String label = properties.getProperty(LABEL_KEY, "");
 			if (label.trim().length() == 0) {
 				label = linkedPage.getLabel(ctx);
 			}
 			ctx.getRequest().setAttribute("label", label);
 			
-			String url = URLHelper.createURL(ctx, linkedPage);
-			if (ctx.getRenderMode() == ContentContext.PAGE_MODE) {
-				ContentContext viewCtx = new ContentContext(ctx);
-				viewCtx.setRenderMode(ContentContext.VIEW_MODE);
-				url = URLHelper.createURL(viewCtx, link);
-			}
+			String url = URLHelper.createURL(ctx.getContentContextForInternalLink(), linkedPage);			
 			ctx.getRequest().setAttribute("url", url);				
 		}
 	}

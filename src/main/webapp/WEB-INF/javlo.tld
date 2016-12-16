@@ -40,6 +40,30 @@
             <description>params list sample ("tag=news").</description>
             <rtexprvalue>true</rtexprvalue>
         </attribute>
+    </tag> 
+    <tag>
+        <name>tablebox</name>
+        <tag-class>org.javlo.tag.TableBox</tag-class>
+        <body-content>JSP</body-content>
+        <info>This Tag create a box with simulation of padding, margin and block with table tr and td in place of css.</info>
+        <attribute>
+            <name>padding</name>
+            <required>false</required>
+            <description>padding of box.</description>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>margin</name>
+            <required>false</required>
+            <description>margin of box.</description>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>style</name>
+            <required>false</required>
+            <description>css style.</description>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
     </tag>  
     <tag>
         <name>changeFilter</name>

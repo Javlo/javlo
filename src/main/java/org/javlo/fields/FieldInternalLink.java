@@ -45,7 +45,7 @@ public class FieldInternalLink extends Field {
 	protected FieldBean newFieldBean(ContentContext ctx) {
 		InternalLinkBean bean = new InternalLinkBean(ctx);		
 		if (!StringHelper.isEmpty(getCurrentLink())) {
-			bean.setLink(URLHelper.createURL(ctx, getCurrentLink()));			
+			bean.setLink(URLHelper.createURL(ctx.getContentContextForInternalLink(), getCurrentLink()));			
 		}
 		bean.setLinkLabel(getCurrentLabel());
 		return bean;
@@ -131,7 +131,7 @@ public class FieldInternalLink extends Field {
 
 		if (label.trim().length() > 0) {
 			out.println("<span class=\"" + getType() + "\">");
-			out.println("<a href=\"" + URLHelper.createURL(ctx, getCurrentLink()) + "\">" + label + "</a>");
+			out.println("<a href=\"" + URLHelper.createURL(ctx.getContentContextForInternalLink(), getCurrentLink()) + "\">" + label + "</a>");
 			out.println("</span>");
 		}
 
