@@ -141,7 +141,7 @@ public class ContentContext {
 		return getContentContext(request, response, true);
 	}
 	
-	public ContentContext getContentContextForInternalLink() throws Exception {
+	public ContentContext getContentContextForInternalLink() {
 		if (getRenderMode() != ContentContext.PAGE_MODE) {
 			return this;
 		} else {
