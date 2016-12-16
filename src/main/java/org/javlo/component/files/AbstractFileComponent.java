@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -104,6 +105,8 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 	public static final String TYPE = "abstractfile";
 
 	protected Properties properties = new Properties();
+	
+	private Date latestValidDate = null;
 
 	public AbstractFileComponent() {
 		super();
@@ -1288,6 +1291,16 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 	@Override
 	public List<File> getFiles(ContentContext ctx) {
 		return null;
+	}
+	
+	@Override
+	public void setLatestValidDate(Date date) {
+		latestValidDate = date;
+	}
+
+	@Override
+	public Date getLatestValidDate() {
+		return latestValidDate;
 	}
 
 }

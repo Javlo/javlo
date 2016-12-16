@@ -6,6 +6,7 @@ package org.javlo.component.links;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.URL;
+import java.util.Date;
 
 import org.javlo.component.core.ComplexPropertiesLink;
 import org.javlo.component.core.ComponentBean;
@@ -30,6 +31,8 @@ public class ExternalLink extends ComplexPropertiesLink implements IReverseLinkC
 	private static final String REVERSE_LINK_KEY = "reverse-link";
 	
 	public static final String TYPE = "external-link";
+	
+	private Date latestValidDate = null;
 
 	@Override
 	public void init(ComponentBean bean, ContentContext newContext) throws Exception {
@@ -339,6 +342,16 @@ public class ExternalLink extends ComplexPropertiesLink implements IReverseLinkC
 	@Override
 	public String getListGroup() {
 		return "link";
+	}
+
+	@Override
+	public void setLatestValidDate(Date date) {
+		latestValidDate = date;
+	}
+
+	@Override
+	public Date getLatestValidDate() {
+		return latestValidDate;
 	}
 	
 }

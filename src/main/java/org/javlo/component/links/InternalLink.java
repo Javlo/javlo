@@ -5,6 +5,7 @@ package org.javlo.component.links;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.Date;
 import java.util.logging.Logger;
 
 import org.javlo.component.core.ComplexPropertiesLink;
@@ -54,6 +55,8 @@ public class InternalLink extends ComplexPropertiesLink implements IInternalLink
 	private static final String REVERSE_LINK_KEY = "reverse-link";
 
 	public static final String TYPE = "internal-link";
+
+	private Date latestValidDate;
 
 	@Override
 	protected String getEditXHTMLCode(ContentContext ctx) throws Exception {
@@ -452,6 +455,17 @@ public class InternalLink extends ComplexPropertiesLink implements IInternalLink
 	@Override
 	public boolean isMirroredByDefault(ContentContext ctx) {	
 		return true;
+	}
+	
+	
+	@Override
+	public void setLatestValidDate(Date date) {
+		latestValidDate = date;
+	}
+
+	@Override
+	public Date getLatestValidDate() {
+		return latestValidDate;
 	}
 
 }

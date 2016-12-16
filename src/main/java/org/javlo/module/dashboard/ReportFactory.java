@@ -2,6 +2,8 @@ package org.javlo.module.dashboard;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -115,6 +117,9 @@ public class ReportFactory {
 				}
 				ContentContext allAreaContext = ctx.getContextWithArea(null);
 				ContentElementList content = page.getContent(allAreaContext);
+				Calendar refreshDate = Calendar.getInstance();
+				refreshDate.add(Calendar.MONTH, 2); // check all 2 months
+				Calendar day = Calendar.getInstance();
 				while (content.hasNext(allAreaContext)) {
 					IContentVisualComponent comp = content.next(allAreaContext);
 					if (comp instanceof AbstractFileComponent) {
@@ -136,16 +141,23 @@ public class ReportFactory {
 						if (url != null && URLHelper.isAbsoluteURL(url)) {
 							try {
 								if (report.badExternalLink < ReportBean.MAX_LINK_CHECK) {
-									if (!NetHelper.isURLValid(new URL(url), true)) {
-										report.badExternalLink++;
-										Map<String, String> params = new HashMap<String, String>();
-										params.putAll(moduleAction);
-										params.put("pushcomp", comp.getId());
-										params.put("webaction", "edit.changearea");
-										params.put("area", comp.getArea());
-										report.badExternalLinkPages.add(new Link(URLHelper.createURL(ctx, page, params), page.getTitle(ctx)));
-									} else {
-										report.rightExternalLink++;
+									Date latestDate = ((ILink) comp).getLatestValidDate();
+									if (latestDate != null) {
+										day.setTime(latestDate);
+									}
+									if (latestDate == null || refreshDate.after(latestDate)) {
+										if (!NetHelper.isURLValid(new URL(url), true)) {
+											report.badExternalLink++;
+											Map<String, String> params = new HashMap<String, String>();
+											params.putAll(moduleAction);
+											params.put("pushcomp", comp.getId());
+											params.put("webaction", "edit.changearea");
+											params.put("area", comp.getArea());
+											report.badExternalLinkPages.add(new Link(URLHelper.createURL(ctx, page, params), page.getTitle(ctx)));
+										} else {
+											report.rightExternalLink++;
+											((ILink) comp).setLatestValidDate(new Date());
+										}
 									}
 								}
 							} catch (MalformedURLException e) {

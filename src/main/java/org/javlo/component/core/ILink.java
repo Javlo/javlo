@@ -1,5 +1,7 @@
 package org.javlo.component.core;
 
+import java.util.Date;
+
 import org.javlo.context.ContentContext;
 
 public interface ILink {
@@ -17,5 +19,9 @@ public interface ILink {
 	 * @return
 	 */
 	public String getURL(ContentContext ctx) throws Exception;
+	
+	public void setLatestValidDate(Date date);
+	
+	public Date getLatestValidDate();
 
 }

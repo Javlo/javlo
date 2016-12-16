@@ -55,6 +55,8 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 	public static final String HIDDEN = "hidden";
 	
 	private static final String DYNAMIC_ID_KEY = "_dynamic_id";
+	
+	private Date latestValidDate = null;
 
 	/**
 	 * create a static logger.
@@ -1036,6 +1038,17 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 	
 	@Override
 	public void setDirSelected(String dir) {		
+	}
+	
+	
+	@Override
+	public void setLatestValidDate(Date date) {
+		latestValidDate = date;
+	}
+
+	@Override
+	public Date getLatestValidDate() {
+		return latestValidDate;
 	}
 	
 }

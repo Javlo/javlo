@@ -29,6 +29,7 @@ import org.javlo.service.resource.VisualResource;
 public class SmartLink extends ComplexPropertiesLink implements ILink, IAction {
 
 	public static final String TYPE = "smart-link";
+	private Date latestValidDate;
 
 	@Override
 	public String getURL(ContentContext ctx) throws Exception {
@@ -262,5 +263,16 @@ public class SmartLink extends ComplexPropertiesLink implements ILink, IAction {
 	@Override
 	public boolean isListable() {
 		return true;
+	}
+	
+	
+	@Override
+	public void setLatestValidDate(Date date) {
+		latestValidDate = date;
+	}
+
+	@Override
+	public Date getLatestValidDate() {
+		return latestValidDate;
 	}
 }

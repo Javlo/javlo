@@ -2,6 +2,7 @@ package org.javlo.fields;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.Date;
 import java.util.Locale;
 import java.util.logging.Logger;
 
@@ -38,6 +39,8 @@ public class FieldExternalLink extends MetaField implements ILink {
 		}
 
 	}
+
+	private Date latestValidDate = null;
 
 	protected String getLabelLabel() {
 		return getI18nAccess().getText("global.label");
@@ -232,6 +235,17 @@ public class FieldExternalLink extends MetaField implements ILink {
 	@Override
 	protected FieldBean newFieldBean(ContentContext ctx) {
 		return new ExternalLinkBean(ctx);
+	}
+	
+	
+	@Override
+	public void setLatestValidDate(Date date) {
+		latestValidDate  = date;
+	}
+
+	@Override
+	public Date getLatestValidDate() {
+		return latestValidDate;
 	}
 
 }
