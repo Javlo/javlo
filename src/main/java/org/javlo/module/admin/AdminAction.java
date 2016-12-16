@@ -1691,7 +1691,7 @@ public class AdminAction extends AbstractModuleAction {
 		GlobalContext defaultSite = GlobalContext.getDefaultContext(session);
 		if (defaultSite != null) {
 			GlobalContext currentContext = GlobalContext.getInstance(session, rs.getParameter("context", null));
-			if (currentContext == null) {
+			if (currentContext == null) {			
 				return "context not found.";
 			} else {
 				currentContext.setComponents(new LinkedList<String>(defaultSite.getComponents()));

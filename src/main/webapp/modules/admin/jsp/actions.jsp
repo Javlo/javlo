@@ -1,4 +1,4 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %><%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <c:if test="${info.god && empty context}">
 <a class="action-button more edit-static-config" href="${info.currentURL}?webaction=EditStaticConfig"><span>${i18n.edit['admin.edit-static-config']}</span></a>
 </c:if>
@@ -21,6 +21,7 @@
 <c:set var="paramContext" value="&context=${context}" />
 <a class="action-button clear-cache" href="${info.currentURL}?webaction=clearcache${not empty context?paramContext:''}"><span>${i18n.edit['admin.clear-cache']}</span></a>
 <a class="action-button clear-cache" href="${info.currentURL}?webaction=clearimagecache${not empty context?paramContext:''}"><span>${i18n.edit['admin.clear-image-cache']}</span></a>
+<c:if test="${fn:endsWith(currentModule.renderer, 'components.jsp')}"><jsp:include page="components_actions.jsp" /></c:if>
 </c:if>
 <div class="clear">&nbsp;</div>
 
