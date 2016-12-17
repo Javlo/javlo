@@ -3422,10 +3422,14 @@ public class GlobalContext implements Serializable, IPrintInfo {
 
 	public MenuElement convertOldURL(ContentContext ctx, String url) throws Exception {		
 		if (ctx.isAsViewMode()) {			
-			String pageId = getRedirectUrlMap().getProperty(encodeURLAsKey(url));			
-			if (pageId != null) {
+			String pageId = getRedirectUrlMap().getProperty(encodeURLAsKey(url));
+			System.out.println("***** GlobalContext.convertOldURL : url = "+url); //TODO: remove debug trace
+			System.out.println("***** GlobalContext.convertOldURL : pageId = "+pageId); //TODO: remove debug trace
+			if (pageId != null) {				
+				System.out.println("***** GlobalContext.convertOldURL : FOUND URL="+NavigationHelper.getPageById(ctx, pageId)); //TODO: remove debug trace				
 				return NavigationHelper.getPageById(ctx, pageId);
 			} else {
+				System.out.println("***** GlobalContext.convertOldURL : NOT FOUND"); //TODO: remove debug trace
 				return null;
 			}
 		} else {
