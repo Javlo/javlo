@@ -3420,9 +3420,9 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		// return StringHelper.createFileName(url);
 	}
 
-	public MenuElement convertOldURL(ContentContext ctx, String url) throws Exception {
-		if (ctx.isAsViewMode()) {
-			String pageId = getRedirectUrlMap().getProperty(encodeURLAsKey(url));
+	public MenuElement convertOldURL(ContentContext ctx, String url) throws Exception {		
+		if (ctx.isAsViewMode()) {			
+			String pageId = getRedirectUrlMap().getProperty(encodeURLAsKey(url));			
 			if (pageId != null) {
 				return NavigationHelper.getPageById(ctx, pageId);
 			} else {
@@ -3434,11 +3434,12 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	}
 
 	public void storeUrl(ContentContext ctx, String url, String pageId) throws Exception {
-		if (ctx.isAsViewMode()) {
+		if (ctx.isAsViewMode()) {			
 			String key = encodeURLAsKey(url);
 			if (getRedirectUrlMap().getProperty(key) == null) {
 				getRedirectUrlList().println(key + '=' + pageId);
 				getRedirectUrlMap().setProperty(key, pageId);
+				getRedirectUrlList().flush();
 			}
 		}
 	}

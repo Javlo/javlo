@@ -128,7 +128,7 @@ public class ErrorAction extends AbstractModuleAction {
 		}
 		if (page == null) {
 			return "page not found : "+pageRef;
-		} else {			
+		} else {
 			ctx.getGlobalContext().storeUrl(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE), url, page.getId());
 			ctx.getGlobalContext().delete404Url(ctx, url);
 		}

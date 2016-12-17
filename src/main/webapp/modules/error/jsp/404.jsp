@@ -25,7 +25,7 @@
 						<form action="${info.currentURL}" method="post">
 							<input type="text" class="form-input" name="page" placeholder="forward to page." />
 							<input type="hidden" name="url" value="${item.key}" />
-							<input type="hidden" name="webaction" value="forward" />
+							<input type="hidden" name="webaction" value="error.forward" />
 							<input type="submit" class="btn btn-default btn-sm" name="forward" value="ok" />
 						</form>
 					</td>
