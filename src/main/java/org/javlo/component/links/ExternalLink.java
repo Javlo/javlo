@@ -78,6 +78,9 @@ public class ExternalLink extends ComplexPropertiesLink implements IReverseLinkC
 		super.prepareView(ctx);
 		ctx.getRequest().setAttribute("link", getLink());
 		ctx.getRequest().setAttribute("label", getLabel());
+		if (StringHelper.isAllEmpty(getLink(), getLabel()) && ctx.isPreviewEdit()) {
+			ctx.getRequest().setAttribute("label", "no link");
+		}
 	}
 
 	/**
@@ -108,7 +111,7 @@ public class ExternalLink extends ComplexPropertiesLink implements IReverseLinkC
 			res.append("<a" + getSpecialPreviewCssClass(ctx, insertCssClass) + getSpecialPreviewCssId(ctx) + " " + target + "href=\"");
 			res.append(link);
 			res.append("\">");
-			res.append(getLabel().trim().length()>0?getLabel():link);
+			res.append(getLabel().trim().length()>0?getLabel():StringHelper.neverNull(link, "no link"));
 			if (getConfig(ctx).getProperty("wai.mark-external-link", null) != null && StringHelper.isTrue(getConfig(ctx).getProperty("wai.mark-external-link", "false"))) {
 				res.append("<span class=\"wai\">" + I18nAccess.getInstance(ctx.getRequest()).getViewText("wai.external-link") + "</span>");
 			}
@@ -167,9 +170,14 @@ public class ExternalLink extends ComplexPropertiesLink implements IReverseLinkC
 			}
 			out.println("<div class=\"row form-group\"><div class=\"col-sm-3\">");
 			out.println("<label for=\"" + getLinkName() + "\">" + linkTitle + "</label></div>");
-			out.print("<div class=\"col-sm-9\"><input class=\"form-control\" id=\"" + getLinkName() + "\" name=\"" + getLinkName() + "\" value=\"");
+			out.print("<div class=\"col-sm-"+(StringHelper.isEmpty(link)?'9':'7')+"\"><input class=\"form-control\" id=\"" + getLinkName() + "\" name=\"" + getLinkName() + "\" value=\"");
 			out.print(link);
-			out.println("\"/></div></div>");
+			out.println("\"/></div>");
+			if (!StringHelper.isEmpty(link)) {
+				out.println("<div class=\"col-sm-2\"><a  target=\"_blank\" href=\""+link+"\" class=\"btn btn-default btn-xs pull-right\">"+i18nAccess.getText("global.open")+"</a></div>");				
+			}
+			out.println("</div>");
+			
 			out.println("<div class=\"row form-group\"><div class=\"col-sm-3\">");
 			out.print("<label for=\"" + getLinkLabelName() + "\">" + labelTitle + "</label></div>");
 			out.print("<div class=\"col-sm-7\">");			
