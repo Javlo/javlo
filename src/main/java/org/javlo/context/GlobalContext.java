@@ -58,6 +58,7 @@ import org.javlo.cache.ICache;
 import org.javlo.cache.MapCache;
 import org.javlo.config.StaticConfig;
 import org.javlo.helper.ContentHelper;
+import org.javlo.helper.DebugHelper;
 import org.javlo.helper.ElementaryURLHelper;
 import org.javlo.helper.ElementaryURLHelper.Code;
 import org.javlo.helper.LangHelper;
@@ -66,6 +67,7 @@ import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.ServletHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
+import org.javlo.io.AppendableTextFile;
 import org.javlo.io.TransactionFile;
 import org.javlo.mailing.DKIMBean;
 import org.javlo.mailing.DKIMFactory;
@@ -727,6 +729,8 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	private String dataFolder = null;
 
 	private String sharedDataFolder = null;
+	
+	private static AppendableTextFile specialLogFile = null;
 
 	private final Map<String, String> oneTimeTokens = Collections.synchronizedMap(new TimeMap<String, String>(60 * 60)); // one
 																															// time
@@ -1621,10 +1625,9 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		MenuElement root = ContentService.getInstance(ctx.getRequest()).getNavigation(ctx);
 		if (url.equals("/")) {
 			return root;
-		} else {
+		} else {			
 			Collection<MenuElement> pastNode = new LinkedList<MenuElement>();
-			MenuElement page = MenuElement.searchChild(root, ctx, url, pastNode);
-
+			MenuElement page = MenuElement.searchChild(root, ctx, url, pastNode);			
 			if (page != null && ctx.getRenderMode() == ContentContext.VIEW_MODE) {
 				localViewPages.put(url, page);
 			}
@@ -2098,7 +2101,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 
 	public void releaseAllCache() {
 		cleanDataAccess();
-		synchronized (RELEASE_CACHE) {
+		synchronized (RELEASE_CACHE) {			
 			for (String name : getAllCacheName()) {
 				getCache(name).removeAll();
 			}
@@ -2112,8 +2115,16 @@ public class GlobalContext implements Serializable, IPrintInfo {
 			} catch (ServiceException e) {
 				e.printStackTrace();
 			}
-
 			dataFolder = null;
+			AppendableTextFile log = specialLogFile;			
+			specialLogFile = null;
+			if (log != null) {
+				try {
+					log.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 	}
 
@@ -3423,13 +3434,9 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	public MenuElement convertOldURL(ContentContext ctx, String url) throws Exception {		
 		if (ctx.isAsViewMode()) {			
 			String pageId = getRedirectUrlMap().getProperty(encodeURLAsKey(url));
-			System.out.println("***** GlobalContext.convertOldURL : url = "+url); //TODO: remove debug trace
-			System.out.println("***** GlobalContext.convertOldURL : pageId = "+pageId); //TODO: remove debug trace
 			if (pageId != null) {				
-				System.out.println("***** GlobalContext.convertOldURL : FOUND URL="+NavigationHelper.getPageById(ctx, pageId)); //TODO: remove debug trace				
 				return NavigationHelper.getPageById(ctx, pageId);
 			} else {
-				System.out.println("***** GlobalContext.convertOldURL : NOT FOUND"); //TODO: remove debug trace
 				return null;
 			}
 		} else {
@@ -3684,6 +3691,23 @@ public class GlobalContext implements Serializable, IPrintInfo {
 			c = c + element;
 		}
 		return c;
+	}
+	
+	public final void log(String group, String text) {
+		if (!getStaticConfig().isSiteLog()) {
+			return;
+		}
+		try {
+			if (specialLogFile == null) {
+				File logFile = new File(URLHelper.mergePath(getStaticFolder(), "site.log"));
+				logFile.getParentFile().mkdirs();
+				specialLogFile = new AppendableTextFile(logFile);
+				specialLogFile.setAutoFlush(true);
+			}
+			specialLogFile.println(DebugHelper.getCaller()+" - "+group+" : "+text);
+		} catch (IOException e) {
+			e.printStackTrace();			
+		}
 	}
 
 

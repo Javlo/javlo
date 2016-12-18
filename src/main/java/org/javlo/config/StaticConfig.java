@@ -1641,4 +1641,14 @@ public class StaticConfig extends Observable {
 	public boolean isConvertHTMLToImage() {
 		return StringHelper.isTrue(properties.getString("content.image-from-html"), false);
 	}
+	
+	public boolean isSiteLog() {
+		return StringHelper.isTrue(properties.getString("site.log.active"), false);
+	}
+	
+	public String getSiteLogGroup() {
+		return properties.getString("site.log.group");
+	}
+	
+	
 }
