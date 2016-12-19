@@ -5,7 +5,9 @@ package org.javlo.component.links;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Calendar;
 import java.util.Date;
 
 import org.javlo.component.core.ComplexPropertiesLink;
@@ -29,9 +31,9 @@ import org.javlo.service.ReverseLinkService;
 public class ExternalLink extends ComplexPropertiesLink implements IReverseLinkComponent, ILink {
 
 	private static final String REVERSE_LINK_KEY = "reverse-link";
-	
+
 	public static final String TYPE = "external-link";
-	
+
 	private Date latestValidDate = null;
 
 	@Override
@@ -49,9 +51,10 @@ public class ExternalLink extends ComplexPropertiesLink implements IReverseLinkC
 	}
 
 	public String getLabel() {
-		String label = properties.getProperty(LABEL_KEY, "");		 
+		String label = properties.getProperty(LABEL_KEY, "");
 		if (label.trim().length() == 0) {
-			label = properties.getProperty(LINK_KEY, "");;
+			label = properties.getProperty(LINK_KEY, "");
+			;
 		}
 		label = label.replace("/", "/<wbr />");
 		return label;
@@ -111,7 +114,7 @@ public class ExternalLink extends ComplexPropertiesLink implements IReverseLinkC
 			res.append("<a" + getSpecialPreviewCssClass(ctx, insertCssClass) + getSpecialPreviewCssId(ctx) + " " + target + "href=\"");
 			res.append(link);
 			res.append("\">");
-			res.append(getLabel().trim().length()>0?getLabel():StringHelper.neverNull(link, "no link"));
+			res.append(getLabel().trim().length() > 0 ? getLabel() : StringHelper.neverNull(link, "no link"));
 			if (getConfig(ctx).getProperty("wai.mark-external-link", null) != null && StringHelper.isTrue(getConfig(ctx).getProperty("wai.mark-external-link", "false"))) {
 				res.append("<span class=\"wai\">" + I18nAccess.getInstance(ctx.getRequest()).getViewText("wai.external-link") + "</span>");
 			}
@@ -121,9 +124,9 @@ public class ExternalLink extends ComplexPropertiesLink implements IReverseLinkC
 			return "";
 		}
 	}
-	
+
 	@Override
-	protected boolean isWrapped(ContentContext ctx) {	
+	protected boolean isWrapped(ContentContext ctx) {
 		return isList(ctx);
 	}
 
@@ -152,11 +155,40 @@ public class ExternalLink extends ComplexPropertiesLink implements IReverseLinkC
 		out.println(getSpecialInputTag());
 
 		try {
+			// validation
 			I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
+			if (link.trim().length() > 0) {
+				setMessage(null);
+				if (!PatternHelper.EXTERNAL_LINK_PATTERN.matcher(link).matches()) {
+					setMessage(new GenericMessage(i18nAccess.getText("component.error.external-link"), GenericMessage.ERROR));
+				} else if (latestValidDate == null) {
+					try {
+						System.out.println("***** ExternalLink.getEditXHTMLCode : link = " + link); // TODO:
+																									// remove
+																									// debug
+																									// trace
+						System.out.println("***** ExternalLink.getEditXHTMLCode : valud? " + NetHelper.isURLValid(new URL(link), true)); // TODO:
+																																			// remove
+																																			// debug
+																																			// trace
+						if (NetHelper.isURLValid(new URL(link), true)) {
+							latestValidDate = new Date();
+						} else {
+							setMessage(new GenericMessage(i18nAccess.getText("component.error.external-link.404"), GenericMessage.ERROR));
+						}
+					} catch (Exception e) {
+						setMessage(new GenericMessage(i18nAccess.getText("component.error.external-link"), GenericMessage.ERROR));
+						e.printStackTrace();
+					}
+				}
+			} else {
+				setMessage(new GenericMessage(i18nAccess.getText("component.message.help.external_link"), GenericMessage.HELP));
+			}
+			out.println(getDisplayMessage());
 			String linkTitle = i18nAccess.getText("component.link.link");
 			String labelTitle = i18nAccess.getText("component.link.label");
 			String reverseLinkLabel = i18nAccess.getText("component.link.reverse");
-			
+
 			String reverseLink = properties.getProperty(REVERSE_LINK_KEY, ReverseLinkService.NONE);
 
 			if (isReversedLink(ctx)) {
@@ -170,36 +202,23 @@ public class ExternalLink extends ComplexPropertiesLink implements IReverseLinkC
 			}
 			out.println("<div class=\"row form-group\"><div class=\"col-sm-3\">");
 			out.println("<label for=\"" + getLinkName() + "\">" + linkTitle + "</label></div>");
-			out.print("<div class=\"col-sm-"+(StringHelper.isEmpty(link)?'9':'7')+"\"><input class=\"form-control\" id=\"" + getLinkName() + "\" name=\"" + getLinkName() + "\" value=\"");
+			out.print("<div class=\"col-sm-" + (StringHelper.isEmpty(link) ? '9' : '7') + "\"><input class=\"form-control\" id=\"" + getLinkName() + "\" name=\"" + getLinkName() + "\" value=\"");
 			out.print(link);
 			out.println("\"/></div>");
 			if (!StringHelper.isEmpty(link)) {
-				out.println("<div class=\"col-sm-2\"><a  target=\"_blank\" href=\""+link+"\" class=\"btn btn-default btn-xs pull-right\">"+i18nAccess.getText("global.open")+"</a></div>");				
+				out.println("<div class=\"col-sm-2\"><a  target=\"_blank\" href=\"" + link + "\" class=\"btn btn-default btn-xs pull-right\">" + i18nAccess.getText("global.open") + "</a></div>");
 			}
 			out.println("</div>");
-			
+
 			out.println("<div class=\"row form-group\"><div class=\"col-sm-3\">");
 			out.print("<label for=\"" + getLinkLabelName() + "\">" + labelTitle + "</label></div>");
-			out.print("<div class=\"col-sm-7\">");			
+			out.print("<div class=\"col-sm-7\">");
 			out.print("<input class=\"form-control\" id=\"" + getLinkLabelName() + "\" name=\"" + getLinkLabelName() + "\" value=\"" + label + "\" /></div><div class=\"col-sm-2\">");
 			out.println("<input class=\"btn btn-default btn-xs pull-right\" type=\"submit\" name=\"" + getDownloadTitleInputName() + "\" value=\"" + i18nAccess.getText("action.read-title") + "\" />");
 			out.println("</div></div>");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
-		I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
-
-		// validation
-
-		if (link.trim().length() > 0) {
-			if (!PatternHelper.EXTERNAL_LINK_PATTERN.matcher(link).matches()) {
-				setMessage(new GenericMessage(i18nAccess.getText("component.error.external-link"), GenericMessage.ERROR));
-			}
-		} else {
-			setMessage(new GenericMessage(i18nAccess.getText("component.message.help.external_link"), GenericMessage.HELP));
-		}
-
 		return writer.toString();
 	}
 
@@ -240,7 +259,7 @@ public class ExternalLink extends ComplexPropertiesLink implements IReverseLinkC
 					// Dummy url
 				} else if (link.contains("@")) {
 					// email
-				}else if (link.startsWith("/")) {
+				} else if (link.startsWith("/")) {
 					// Absolute site URL
 				} else if (!link.contains(".") && !link.contains("/")) {
 					// Page name
@@ -263,15 +282,25 @@ public class ExternalLink extends ComplexPropertiesLink implements IReverseLinkC
 			}
 			storeProperties();
 		}
+
+		if (isModify()) {
+			latestValidDate = null;
+		}
+
 		return null;
 	}
 
 	public static void main(String[] args) {
-		String link = "http//www.google.com";
-		if (PatternHelper.EXTERNAL_LINK_PATTERN.matcher(link).matches()) {
-			System.out.println("[ExternalLink.java]-[main]-MATCH"); /* TRACE */
-		} else {
-			System.out.println("[ExternalLink.java]-[main]-NOT MATCH"); /* TRACE */
+		String link = "http://www.europarl.europa.eu/sides/getDoc.do?type=TA&reference=P8-TA-2015-0462&language=DE&ring=B8-2015-1424";
+		try {
+			if (NetHelper.isURLValid(new URL(link), false)) {
+				System.out.println("[ExternalLink.java]-[main]-MATCH"); /* TRACE */
+			} else {
+				System.out.println("[ExternalLink.java]-[main]-NOT MATCH"); /* TRACE */
+			}
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 
@@ -328,7 +357,7 @@ public class ExternalLink extends ComplexPropertiesLink implements IReverseLinkC
 	public String getURL(ContentContext ctx) {
 		return XHTMLHelper.escapeXHTML(properties.getProperty(LINK_KEY, ""));
 	}
-	
+
 	@Override
 	public boolean isLinkValid(ContentContext ctx) throws Exception {
 		return !StringHelper.isEmpty(getURL(ctx));
@@ -346,7 +375,7 @@ public class ExternalLink extends ComplexPropertiesLink implements IReverseLinkC
 		setModify();
 		return true;
 	}
-	
+
 	@Override
 	public String getListGroup() {
 		return "link";
@@ -361,5 +390,5 @@ public class ExternalLink extends ComplexPropertiesLink implements IReverseLinkC
 	public Date getLatestValidDate() {
 		return latestValidDate;
 	}
-	
+
 }

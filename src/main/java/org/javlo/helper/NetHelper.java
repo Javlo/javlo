@@ -7,6 +7,9 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.CookieHandler;
+import java.net.CookieManager;
+import java.net.CookiePolicy;
 import java.net.HttpURLConnection;
 import java.net.Inet4Address;
 import java.net.InetAddress;
@@ -821,14 +824,17 @@ public class NetHelper {
 	}
 	
 	public static void main(String[] args) throws MalformedURLException {
-		boolean valid = isURLValid(new URL("http://www.europarl.europa.eu/sides/getDoc.do?type=TA&reference=P8-TA-2015-0462&language=DE&ring=B8-2015-1424"), true);
+		boolean valid = isURLValid(new URL("http://www.lesoir.be/"), true);
 		System.out.println("***** NetHelper.main : valid = "+valid); //TODO: remove debug trace
 	}
 
 	public static boolean isURLValid(URL url, boolean only404) {
 		try {
+			if (CookieHandler.getDefault() == null) {
+				CookieHandler.setDefault(new CookieManager(null, CookiePolicy.ACCEPT_ALL));
+			}
 			URLConnection urlConnection = url.openConnection();
-			if (urlConnection instanceof HttpURLConnection) {
+			if (urlConnection instanceof HttpURLConnection) {					
 				HttpURLConnection conn = ((HttpURLConnection) urlConnection);
 				if (conn instanceof HttpsURLConnection) {
 					logger.info("init https context");
@@ -862,7 +868,6 @@ public class NetHelper {
 						e.printStackTrace();
 					}
 				}
-
 				conn.setConnectTimeout(10 * 1000);
 				conn.setRequestMethod("GET");
 				conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows; U; Windows NT 6.0; en-US; rv:1.9.1.2) Gecko/20090729 Firefox/3.5.2 (.NET CLR 3.5.30729)");
@@ -875,6 +880,7 @@ public class NetHelper {
 			}
 			return true;
 		} catch (IOException e) {
+			e.printStackTrace();
 			logger.fine(e.getMessage());
 			return false;
 		}

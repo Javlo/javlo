@@ -818,7 +818,9 @@ hange log
   
  * 2.1.0.3.21 28/11/2015
  
-  * 1/ retreive meta data of picture from language with content / add filter in image url
+  * 1/ retrieve meta data of picture from language with content / add filter in image url
   
   * 2/ meta color component / page association work with empty page / unescape text title of heading (for url factory) / duplicate article + template display info / no ticket without title and better email notification. / image internal links
+  
+  * 3/ create cookie manager before check url
  

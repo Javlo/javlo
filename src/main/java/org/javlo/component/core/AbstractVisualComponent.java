@@ -415,7 +415,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		}
 
 		if (isContentCachableByQuery(ctx)) {
-			keySuffix = keySuffix + '_' + ctx.getRequest().getQueryString()+'_'+StringHelper.neverNull(ctx.getCurrentUserId());
+			keySuffix = keySuffix + '_' + ctx.getRequest().getQueryString() + '_' + StringHelper.neverNull(ctx.getCurrentUserId());
 		}
 
 		if (ctx.getDevice() == null) { // TODO: check why this method can return
@@ -497,10 +497,10 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	// public void setServletContext(ServletContext context) {
 	// servletContext = context;
 	// }
-	
-	
+
 	/**
 	 * return the wysiwyg editor complexity
+	 * 
 	 * @return null if no wysywig editor
 	 */
 	protected String getEditorComplexity(ContentContext ctx) {
@@ -539,9 +539,9 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			filesParams.put("page", "meta");
 			filesParams.put("select", "_TYPE_");
 			filesParams.put(ContentContext.PREVIEW_EDIT_PARAM, "true");
-					
+
 			String chooseImageURL = URLHelper.createModuleURL(ctx, ctx.getPath(), "file", filesParams);
-			finalCode.append("<script type=\"text/javascript\">jQuery(document).ready(loadWysiwyg('#" + getContentName() + "','"+getEditorComplexity(ctx)+"','"+chooseImageURL+"'));</script>");
+			finalCode.append("<script type=\"text/javascript\">jQuery(document).ready(loadWysiwyg('#" + getContentName() + "','" + getEditorComplexity(ctx) + "','" + chooseImageURL + "'));</script>");
 		}
 		return finalCode.toString();
 	}
@@ -556,7 +556,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 
 	public void setWidth(String width) {
 	}
-	
+
 	protected boolean isFreeInputLayout() {
 		return false;
 	}
@@ -608,7 +608,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			out.println(XHTMLHelper.getCheckbox("hidden-" + getId(), isDisplayHidden()));
 			out.println("</div>");
 		}
-		
+
 		if (isAskWidth(ctx)) {
 			out.println("<div class=\"line\">");
 			String inputName = getInputName("width");
@@ -688,7 +688,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 				throw new ComponentException("size of styles is'nt the same than size of styles label.");
 			}
 			out.println("<div class=\"line\">");
-			out.println("<label for=\"style-" + getId() + "\">" + getStyleTitle(ctx) + "</label>");			
+			out.println("<label for=\"style-" + getId() + "\">" + getStyleTitle(ctx) + "</label>");
 			out.println("<input id=\"" + "style-" + getId() + "\" name=\"" + "style-" + getId() + "\" class=\"form-control\" type=\"text\" value=\"" + getStyle() + "\" />");
 			out.println("</div>");
 		}
@@ -755,7 +755,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			setModify();
 			setNeedRefresh(true);
 		}
-		
+
 		boolean hidden = requestService.getParameter("hidden-" + getId(), null) != null;
 		if (isHiddable() && hidden != isDisplayHidden()) {
 			setDisplayHidden(hidden);
@@ -1060,6 +1060,21 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		return msg;
 	}
 
+	public String getDisplayMessage() {
+		GenericMessage message = getMessage();
+		if (message != null) {
+			ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+			PrintStream out = new PrintStream(outStream);
+			out.print("<div class=\"alert alert-" + message.getBootstrapType() + "\" role=\"alert\">");
+			out.print(message.getMessage());
+			out.println("</div>");
+			out.close();
+			return new String(outStream.toByteArray());
+		} else {
+			return "";
+		}
+	}
+
 	@Override
 	public IContentVisualComponent getNextComponent() {
 		return nextComponent;
@@ -1069,20 +1084,22 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	public MenuElement getPage() {
 		return page;
 	}
-	
+
 	public void setContainerPage(ContentContext ctx, MenuElement page) {
-		ctx.getRequest().setAttribute("page-"+getId(), page); 
+		ctx.getRequest().setAttribute("page-" + getId(), page);
 	}
-		
+
 	/**
-	 * get the page of the container if component is mirrored else get the page of the component.
+	 * get the page of the container if component is mirrored else get the page
+	 * of the component.
+	 * 
 	 * @param ctx
 	 * @return
 	 */
 	public MenuElement getContainerPage(ContentContext ctx) {
-		String key = "page-"+getId();
+		String key = "page-" + getId();
 		if (ctx.getRequest().getAttribute(key) != null) {
-			return (MenuElement)ctx.getRequest().getAttribute(key);
+			return (MenuElement) ctx.getRequest().getAttribute(key);
 		} else {
 			return getPage();
 		}
@@ -1108,8 +1125,8 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			return "";
 		}
 	}
-	
-	protected String contructViewStyle(ContentContext ctx) {		
+
+	protected String contructViewStyle(ContentContext ctx) {
 		IContentVisualComponent previousComp = null;
 		try {
 			previousComp = ComponentHelper.getPreviousComponent(this, ctx);
@@ -1136,8 +1153,8 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		}
 		if (previousComp != null && previousComp instanceof TableComponent && !(previousComp instanceof TableBreak)) {
 			style = style + " first-in-cell ";
-			
-		}		
+
+		}
 		if (previousComp == null) {
 			style = style + " first-component ";
 		}
@@ -1150,7 +1167,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	protected String getForcedPrefixViewXHTMLCode(ContentContext ctx) {
 		if (getConfig(ctx).getProperty("prefix", null) != null) {
 			return getConfig(ctx).getProperty("prefix", null);
-		}		
+		}
 		String style = contructViewStyle(ctx);
 		if (!componentBean.isList()) {
 			return "<" + getTag(ctx) + " " + getSpecialPreviewCssClass(ctx, style + getType()) + getSpecialPreviewCssId(ctx) + " " + getInlineStyle(ctx) + ">";
@@ -1210,10 +1227,10 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		IContentVisualComponent nextComp = getNextComponent();
 		if (nextComp == null) {
 			return false;
-		} else {			
+		} else {
 			try {
 				return ComponentHelper.getFinalType(ctx, this).equals(ComponentHelper.getFinalType(ctx, nextComp));
-			} catch (Exception e) { 
+			} catch (Exception e) {
 				e.printStackTrace();
 				return false;
 			}
@@ -1226,11 +1243,11 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			return false;
 		} else {
 			try {
-				return ComponentHelper.getFinalType(ctx, this).equals(ComponentHelper.getFinalType(ctx, previousComp));	
-			} catch (Exception e) { 
+				return ComponentHelper.getFinalType(ctx, this).equals(ComponentHelper.getFinalType(ctx, previousComp));
+			} catch (Exception e) {
 				e.printStackTrace();
 				return false;
-			}			
+			}
 		}
 	}
 
@@ -1259,7 +1276,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 
 	public Map<String, String> getRemplacement() {
 		return replacement;
-	}	
+	}
 
 	private Map<String, String> getRemplacementEditable() {
 		if (replacement == Collections.EMPTY_MAP) {
@@ -1699,7 +1716,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 				logger.severe(e.getMessage());
 			}
 			if (in != null) {
-				try {					
+				try {
 					i18n.load(in);
 					if (i18nView == Collections.EMPTY_MAP) {
 						i18nView = new HashMap<String, Properties>();
@@ -1766,7 +1783,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	}
 
 	protected String cleanValue(ContentContext ctx, String value) {
-		if (ctx.getGlobalContext().getStaticConfig().isHighSecure()) {			
+		if (ctx.getGlobalContext().getStaticConfig().isHighSecure()) {
 			return Encode.forHtmlUnquotedAttribute(value);
 		} else {
 			return value;
@@ -1912,7 +1929,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		ctx.getRequest().setAttribute("type", getType());
 		ctx.getRequest().setAttribute("compid", getForcedId(ctx));
 		ctx.getRequest().setAttribute("renderer", getCurrentRenderer(ctx));
-		ctx.getRequest().setAttribute("previewAttributes", getPreviewAttributes(ctx));	
+		ctx.getRequest().setAttribute("previewAttributes", getPreviewAttributes(ctx));
 		if (!AbstractVisualComponent.isMirrorWrapped(ctx, this)) {
 			ctx.getRequest().setAttribute(MIRROR_WRAPPED, false);
 			ctx.getRequest().setAttribute("nextSame", isNextSame(ctx));
@@ -1925,7 +1942,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			if (width.endsWith("%")) {
 				Float withInt = Float.parseFloat(width.substring(0, width.length() - 1));
 				NumberFormat df = DecimalFormat.getInstance(Locale.ENGLISH);
-				ctx.getRequest().setAttribute("componentOpositeWidth", df.format((99 - withInt)) + "%");				
+				ctx.getRequest().setAttribute("componentOpositeWidth", df.format((99 - withInt)) + "%");
 			}
 			ctx.getRequest().setAttribute("componentWidth", width);
 		} else {
@@ -2303,12 +2320,12 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	public void setList(boolean inList) {
 		componentBean.setList(inList);
 	}
-	
+
 	@Override
 	public void setDisplayHidden(boolean hidden) {
 		componentBean.setHidden(hidden);
 	}
-	
+
 	@Override
 	public boolean isDisplayHidden() {
 		return componentBean.isHidden();
@@ -2645,16 +2662,16 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	}
 
 	public static boolean isMirrorWrapped(ContentContext ctx, IContentVisualComponent comp) {
-		if (comp != null) {			
+		if (comp != null) {
 			return ctx.getRequest().getAttribute("_mirror_wrapped_" + comp.getId()) != null;
 		} else {
 			return false;
 		}
 	}
-	
+
 	public static MirrorComponent getMirrorWrapper(ContentContext ctx, IContentVisualComponent comp) {
 		if (comp != null) {
-			return (MirrorComponent)ctx.getRequest().getAttribute("_mirror_comp_" + comp.getId());
+			return (MirrorComponent) ctx.getRequest().getAttribute("_mirror_comp_" + comp.getId());
 		} else {
 			return null;
 		}
@@ -2664,24 +2681,22 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	public boolean isMirroredByDefault(ContentContext ctx) {
 		return ctx.getRequestContentLanguage().equals(getComponentBean().getLanguage());
 	}
-	
+
 	@Override
-	public String getContentAsText(ContentContext ctx) {	
+	public String getContentAsText(ContentContext ctx) {
 		return StringHelper.removeTag(getValue(ctx));
 	}
-	
+
 	public static String getImportFolderPath(ContentContext ctx, MenuElement page) throws Exception {
 		String importFolder = ctx.getGlobalContext().getStaticConfig().getImportFolder();
 		if (importFolder.length() > 1 && importFolder.startsWith("/")) {
 			importFolder = importFolder.substring(1);
 		}
-		return importFolder+'/'+DataAction.createImportFolder(page);
+		return importFolder + '/' + DataAction.createImportFolder(page);
 	}
-	
+
 	public String getImportFolderPath(ContentContext ctx) throws Exception {
 		return getImportFolderPath(ctx, getPage());
 	}
-	
-	
 
 }
