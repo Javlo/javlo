@@ -839,9 +839,10 @@ public class ContentContext {
 	}
 
 	private MenuElement getCurrentPage(boolean urlFacotry) throws Exception {
-		MenuElement outPage = getCurrentPageCached();
+		MenuElement outPage = getCurrentPageCached();		
 		if (outPage == null) {
 			GlobalContext globalContext = GlobalContext.getInstance(request);
+			globalContext.log("url", "current page : "+getPath());
 			MenuElement root = ContentService.getInstance(globalContext).getNavigation(this);
 			if (getPath().equals("/")) {
 				outPage = root;
