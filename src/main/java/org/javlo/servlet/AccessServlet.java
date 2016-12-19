@@ -261,6 +261,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 			Thread.currentThread().setName("AccessServlet-" + globalContext.getContextKey());
 
 			ContentContext ctx = ContentContext.getContentContext(request, response);
+			ctx.setPageRequest(true);
 			if (ctx.isAsEditMode() || ctx.isAsPreviewMode()) {
 				if (staticConfig.isEditIpSecurity()) {
 					if (!NetHelper.isIPAccepted(ctx)) {
@@ -277,9 +278,11 @@ public class AccessServlet extends HttpServlet implements IVersion {
 				String pageUrl = URLHelper.createURL(lgCtx, lgCtx.getCurrentPage());
 				pageUrl = URLDecoder.decode(pageUrl, ContentContext.CHARACTER_ENCODING);
 				String mainURL = (String) request.getAttribute(CatchAllFilter.MAIN_URI_KEY);
-
 				if (mainURL != null && !mainURL.endsWith(pageUrl)) {
 					// response.sendRedirect(pageUrl);
+					if (ctx.isPageRequest()) {
+						globalContext.log("url", "redirect : " + mainURL + " >> " + URLHelper.createURL(lgCtx, lgCtx.getCurrentPage()));
+					}
 					logger.info("redirect : " + mainURL + " >> " + URLHelper.createURL(lgCtx, lgCtx.getCurrentPage()));
 					NetHelper.sendRedirectPermanently(response, URLHelper.createURL(lgCtx, lgCtx.getCurrentPage()));
 					return;

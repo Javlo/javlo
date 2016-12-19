@@ -14,6 +14,7 @@ import org.javlo.component.core.ComplexPropertiesLink;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.component.core.ILink;
 import org.javlo.component.core.IReverseLinkComponent;
+import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.NetHelper;
@@ -161,16 +162,8 @@ public class ExternalLink extends ComplexPropertiesLink implements IReverseLinkC
 				setMessage(null);
 				if (!PatternHelper.EXTERNAL_LINK_PATTERN.matcher(link).matches()) {
 					setMessage(new GenericMessage(i18nAccess.getText("component.error.external-link"), GenericMessage.ERROR));
-				} else if (latestValidDate == null) {
-					try {
-						System.out.println("***** ExternalLink.getEditXHTMLCode : link = " + link); // TODO:
-																									// remove
-																									// debug
-																									// trace
-						System.out.println("***** ExternalLink.getEditXHTMLCode : valud? " + NetHelper.isURLValid(new URL(link), true)); // TODO:
-																																			// remove
-																																			// debug
-																																			// trace
+				} else if (latestValidDate == null && StaticConfig.getInstance(ctx.getRequest().getSession()).isInternetAccess()) {
+					try {						
 						if (NetHelper.isURLValid(new URL(link), true)) {
 							latestValidDate = new Date();
 						} else {

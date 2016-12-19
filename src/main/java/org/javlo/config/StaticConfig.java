@@ -1646,6 +1646,10 @@ public class StaticConfig extends Observable {
 		return StringHelper.isTrue(properties.getString("site.log.active"), false);
 	}
 	
+	public boolean isSiteLogCaller() {
+		return StringHelper.isTrue(properties.getString("site.log.caller"), false);
+	}
+	
 	public String getSiteLogGroup() {
 		return properties.getString("site.log.group");
 	}

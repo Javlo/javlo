@@ -88,7 +88,6 @@ public class CatchAllFilter implements Filter {
 		}
 
 		String uri = RequestService.getURI(httpRequest);
-
 		if (uri.endsWith(Template.GZ_FILE_EXT)) {
 			String realFile = uri.substring(0, uri.length() - ('.' + Template.GZ_FILE_EXT).length());
 			((HttpServletResponse) response).setHeader("Content-Encoding", "gzip");
@@ -159,6 +158,7 @@ public class CatchAllFilter implements Filter {
 				ContentContext ctx = ContentContext.getContentContext(httpRequest, (HttpServletResponse) response);
 				String url = URLHelper.createAjaxURL(ctx);
 				String forwardURL = URLHelper.removeSite(ctx, url);
+				globalContext.log("url", "forward ajax : "+httpRequest.getRequestURI()+" >> "+forwardURL);
 				((HttpServletRequest) request).getRequestDispatcher(forwardURL).forward(httpRequest, response);
 				return;
 			} catch (Exception e) {
@@ -374,6 +374,7 @@ public class CatchAllFilter implements Filter {
 							httpRequest.getSession().setAttribute(InfoBean.NEW_SESSION_PARAM, true);
 						}
 						httpRequest.setAttribute(MAIN_URI_KEY, URLDecoder.decode(httpRequest.getRequestURI(), ContentContext.CHARACTER_ENCODING));
+						globalContext.log("url", "forward add view : "+httpRequest.getRequestURI()+" >> "+newPath);
 						httpRequest.getRequestDispatcher(newPath).forward(httpRequest, response);
 						return;
 					}
@@ -400,6 +401,7 @@ public class CatchAllFilter implements Filter {
 			if (httpRequest.getSession().isNew()) {
 				httpRequest.getSession().setAttribute(InfoBean.NEW_SESSION_PARAM, true);
 			}
+			globalContext.log("url", "forward : " + httpRequest.getRequestURI() + " >> " + forwardURI);
 			httpRequest.getRequestDispatcher(forwardURI).forward(httpRequest, response);
 		} else {
 			// JavloServletResponse javloResponse = new

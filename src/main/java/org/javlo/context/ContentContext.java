@@ -85,7 +85,7 @@ public class ContentContext {
 
 	public static String PRODUCT_NAME = "Javlo 2";
 
-	public static String FORCED_CONTENT_PREFIX = "forced_content_";
+	public static String FORCED_CONTENT_PREFIX = "forced_content_";  
 
 	/**
 	 * param for render content with link to local server and not DMZ server.
@@ -114,7 +114,7 @@ public class ContentContext {
 	private boolean clearSession = false;
 	
 	private boolean forceCorrectPath = false;
-
+	
 	private static ContentContext createContentContext(HttpServletRequest request, HttpServletResponse response, boolean free) {
 		ContentContext ctx = new ContentContext();
 		ctx.setFree(free);
@@ -870,12 +870,13 @@ public class ContentContext {
 						globalContext.log("url", "url not found : "+getPath());
 						elem = globalContext.convertOldURL(this, getPath());
 						if (elem != null) {
-							String newURL = URLHelper.createURL(this, elem);
-							globalContext.log("url", "newURL from odl url: "+getPath());
+							String newURL = URLHelper.createURL(this, elem);							
+							globalContext.log("url", "old redirect : "+getPath()+" >> "+newURL);							
 							logger.info("redirect old url (" + getGlobalContext().getContextKey() + " - " + getPath() + ") --> = " + newURL + " - url renderer:" + globalContext.getURLFactoryClass());
 							response.sendRedirect(newURL);
 							setCurrentPageCached(elem);
 						} else {
+							globalContext.log("url", "redirect old url not found : "+getPath());
 							setContentFound(false);							
 							elem = root;
 							setPath(root.getPath());

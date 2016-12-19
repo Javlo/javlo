@@ -824,8 +824,7 @@ public class NetHelper {
 	}
 	
 	public static void main(String[] args) throws MalformedURLException {
-		boolean valid = isURLValid(new URL("http://www.lesoir.be/"), true);
-		System.out.println("***** NetHelper.main : valid = "+valid); //TODO: remove debug trace
+		boolean valid = isURLValid(new URL("http://www.lesoir.be/"), true);		
 	}
 
 	public static boolean isURLValid(URL url, boolean only404) {

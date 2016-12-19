@@ -3697,6 +3697,9 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		if (!getStaticConfig().isSiteLog()) {
 			return;
 		}
+		if (getStaticConfig().getSiteLogGroup() != null && !getStaticConfig().getSiteLogGroup().equals(group)) {
+			return;
+		}
 		try {
 			if (specialLogFile == null) {
 				File logFile = new File(URLHelper.mergePath(getStaticFolder(), "site.log"));
@@ -3704,7 +3707,11 @@ public class GlobalContext implements Serializable, IPrintInfo {
 				specialLogFile = new AppendableTextFile(logFile);
 				specialLogFile.setAutoFlush(true);
 			}
-			specialLogFile.println(DebugHelper.getCaller()+" - "+group+" : "+text);
+			String caller = "";
+			if (getStaticConfig().isSiteLogCaller()) {
+				caller = DebugHelper.getCaller()+" - ";
+			}
+			specialLogFile.println(StringHelper.renderTime(new Date())+" - "+caller+group+" : "+text);
 		} catch (IOException e) {
 			e.printStackTrace();			
 		}
