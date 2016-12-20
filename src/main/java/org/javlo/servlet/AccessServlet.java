@@ -956,6 +956,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 
 							/** check content **/
 							if (!ctx.isContentFound()) {
+								globalContext.log("url", "page not found : "+ctx.getPath());
 								globalContext.add404Url(ctx, ContentManager.getPath(request));
 								
 								if (staticConfig.isRedirectWidthName()) {
