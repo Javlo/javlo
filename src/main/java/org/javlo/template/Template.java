@@ -1235,8 +1235,8 @@ public class Template implements Comparable<Template> {
 
 	public Properties getConfigComponentFile(GlobalContext globalContext, String type) throws IOException {
 		String templateFolder = getWorkTemplateFolder();
-		String path = URLHelper.mergePath(URLHelper.mergePath(templateFolder, getFolder(globalContext)), CONFIG_COMPONENTS_PROPERTIES_FOLDER, type + ".properties");
-		File configFile = new File(path);
+		String path = URLHelper.mergePath(URLHelper.mergePath(templateFolder, getFolder(globalContext)), CONFIG_COMPONENTS_PROPERTIES_FOLDER, type + ".properties");	
+		File configFile = new File(path);		
 		if (configFile.exists()) {
 			return ResourceHelper.loadProperties(configFile);
 		}
@@ -2232,7 +2232,7 @@ public class Template implements Comparable<Template> {
 			globalContext = GlobalContext.getInstance(ctx.getRequest());
 		}
 		synchronized (getLockImport(globalContext)) {
-			if (!isTemplateFolderInWebapp(ctx)) {
+			if (!isTemplateInWebapp(ctx)) {
 				String templateFolder = config.getTemplateFolder();
 				File templateSrc = new File(URLHelper.mergePath(templateFolder, getSourceFolderName()));
 				if (templateSrc.exists()) {
@@ -2304,10 +2304,14 @@ public class Template implements Comparable<Template> {
 				File file = files.next();
 				File targetFile = new File(file.getAbsolutePath().replace(templateSrc.getAbsolutePath(), templateTarget.getAbsolutePath()));
 				if (ctx != null) {
-					if (FilenameUtils.getExtension(file.getName()).equalsIgnoreCase("jsp")) {
-						ResourceHelper.filteredFileCopyEscapeScriplet(file, targetFile, map);
-					} else {
-						ResourceHelper.filteredFileCopy(file, targetFile, map);
+					try {
+						if (FilenameUtils.getExtension(file.getName()).equalsIgnoreCase("jsp")) {
+							ResourceHelper.filteredFileCopyEscapeScriplet(file, targetFile, map);
+						} else {
+							ResourceHelper.filteredFileCopy(file, targetFile, map);
+						}
+					} catch (Exception e) {
+						logger.warning("error on copy file : " + file + " err:" + e.getMessage());
 					}
 				}
 			}
@@ -2320,12 +2324,16 @@ public class Template implements Comparable<Template> {
 					String targetFileNameLowerCase = targetFile.getName().toLowerCase();
 					boolean isCss = targetFileNameLowerCase.endsWith(".css");
 					boolean isJs = targetFileNameLowerCase.endsWith(".js");
-					if (isCss) {
-						XHTMLHelper.expandCSSImports(targetFile);
-						XHTMLHelper.compressCSS(targetFile);
-					}
-					if (isJs) {
-						XHTMLHelper.compressJS(targetFile);
+					try {
+						if (isCss) {
+							XHTMLHelper.expandCSSImports(targetFile);
+							XHTMLHelper.compressCSS(targetFile);
+						}
+						if (isJs) {
+							XHTMLHelper.compressJS(targetFile);
+						}
+					} catch (Exception e) {
+						logger.warning("error on copy file : " + targetFile + " err:" + e.getMessage());
 					}
 				}
 			}
@@ -2335,7 +2343,11 @@ public class Template implements Comparable<Template> {
 		Iterator<File> targetFiles = FileUtils.iterateFiles(templateTarget, new String[] { "scss" }, true);
 		while (targetFiles.hasNext()) {
 			File targetFile = targetFiles.next();
-			XHTMLHelper.removeComment(targetFile);
+			try {
+				XHTMLHelper.removeComment(targetFile);
+			} catch (Exception e) {
+				logger.warning("error on copy file : " + targetFile + " err:" + e.getMessage());
+			}
 		}
 
 		deployId = StringHelper.getRandomId();
@@ -2450,30 +2462,30 @@ public class Template implements Comparable<Template> {
 	public boolean isTemplateInWebapp(ContentContext ctx) throws IOException {
 		synchronized (getLockImport(ctx.getGlobalContext())) {
 			GlobalContext globalContext = null;
-			if (ctx != null) {
-				globalContext = GlobalContext.getInstance(ctx.getRequest());
-				if (contextWithTemplateImported.contains(globalContext.getContextKey())) {
-					return true;
+			globalContext = GlobalContext.getInstance(ctx.getRequest());
+			if (contextWithTemplateImported.contains(globalContext.getContextKey())) {
+				return true;
+			}
+			File templateTgt = new File(URLHelper.mergePath(getWorkTemplateFolder(), getFolder(globalContext)));
+			if (templateTgt.exists()) {
+				File indexFile = new File(URLHelper.mergePath(templateTgt.getAbsolutePath(), getHTMLFile(null)));
+				if (!indexFile.exists()) {
+					logger.info("index not found wait... ("+indexFile+") site:" + ctx.getGlobalContext().getContextKey() + " - tpl:" + getName()); // TODO:
+																																	// remove
+																																	// debug
+																																	// trace
+					try {
+						Thread.sleep(1000 * 10);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					} // wait 10 sec
 				}
-			}
-			File templateTgt = new File(URLHelper.mergePath(getWorkTemplateFolder(), getFolder(globalContext)));
-			if (templateTgt.exists() && globalContext != null) {
+				if (!indexFile.exists()) {
+					logger.warning("template not found. site:" + ctx.getGlobalContext().getContextKey() + " - tpl:" + getName());
+					return false;
+				}
 				contextWithTemplateImported.add(globalContext.getContextKey());
-			}
-			boolean outExist = templateTgt.exists();
-			return outExist;
-		}
-	}
 
-	private boolean isTemplateFolderInWebapp(ContentContext ctx) {
-		synchronized (getLockImport(ctx.getGlobalContext())) {
-			GlobalContext globalContext = null;
-			if (ctx != null) {
-				globalContext = ctx.getGlobalContext();
-			}
-			File templateTgt = new File(URLHelper.mergePath(getWorkTemplateFolder(), getFolder(globalContext)));
-			if (templateTgt.exists() && globalContext != null) {
-				contextWithTemplateImported.add(globalContext.getContextKey());
 			}
 			boolean outExist = templateTgt.exists();
 			return outExist;

@@ -68,7 +68,7 @@ public class LabelAndSectionURLCreator extends AbstractURLFactory {
 			label = pageTitle;
 		} else {
 			label = currentPage.getLabel(freeCtx);
-		}
+		}		
 		
 		if (label.startsWith("Agenda Week")) {
 			label = label.substring("Agenda Week".length()).trim();
@@ -82,7 +82,7 @@ public class LabelAndSectionURLCreator extends AbstractURLFactory {
 		}
 		String path = StringHelper.createI18NURL(label);
 		//String path = StringHelper.createI18NURL(label);
-
+		
 		String url = path;
 		MenuElement sectionPage = getSectionPage(currentPage);		
 		
@@ -94,7 +94,7 @@ public class LabelAndSectionURLCreator extends AbstractURLFactory {
 			url = URLHelper.mergePath(StringHelper.createI18NURL(sectionPage.getLabel(freeCtx)), url);
 		}
 		url = '/' + url;
-				
+		
 		String baseURL = url;
 		int i=1;
 		while (this.addAndCheckExistURL(currentPage, url)) {
@@ -105,7 +105,7 @@ public class LabelAndSectionURLCreator extends AbstractURLFactory {
 		if (isWithId()) {
 			url = URLHelper.mergePath(url, currentPage.getId());
 		}
-
+		
 		return url;
 	}
 	

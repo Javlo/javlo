@@ -65,7 +65,6 @@ import org.javlo.servlet.AccessServlet;
 import org.javlo.user.AdminUserSecurity;
 import org.javlo.ztatic.IStaticContainer;
 import org.javlo.ztatic.StaticInfo;
-import org.javlo.ztatic.StaticInfo.StaticInfoBean;
 import org.owasp.encoder.Encode;
 
 /**

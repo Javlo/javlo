@@ -273,7 +273,7 @@ public class ZipManagement {
 		if (!foundIndex && foundConfig) {
 			msgRepo.setGlobalMessage(new GenericMessage(i18nAccess
 					.getText("command.admin.template.html-not-found"),
-					GenericMessage.ERROR));
+					GenericMessage.ALERT));
 		}
 		if (!foundConfig) {
 			msgRepo.setGlobalMessage(new GenericMessage(i18nAccess

@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -273,11 +274,25 @@ public class TimeHelper {
 		out.close();
 		return writer.toString();
 	}
+	
+	/**
+	 * get the distance between 2 dates in day
+	 * @param date1
+	 * @param date2
+	 * @return
+	 */
+	public static int getDaysDistance(Date date1, Date date2) {
+		double reduce = 1000*60*60*24;
+		long distMili = Math.abs(Math.round(Math.floor(date1.getTime()/reduce)-Math.floor(date2.getTime()/reduce)));		
+		return (int)Math.round(distMili);
+	}
 
-	public static void main(String[] args) {
-		Calendar outCal = Calendar.getInstance();
-		outCal = convertEndOfDay(outCal);
-		System.out.println("***** outCal : " + StringHelper.renderTime(outCal.getTime())); // TODO: remove debug trace
-
+	public static void main(String[] args) throws ParseException {
+		
+		 System.out.println("Math = "+Math.floor(1.6));
+		
+		  Date date1 = StringHelper.parseTime("01/01/1975 23:10:00");
+		  Date date2 = StringHelper.parseTime("10/01/1975 10:10:10");
+		  System.out.println("***** TimeHelperTest.testGetDaysDistance : TimeHelper.getDaysDistance(date1, date2) = "+TimeHelper.getDaysDistance(date1, date2)); //TODO: remove debug trace
 	}
 }

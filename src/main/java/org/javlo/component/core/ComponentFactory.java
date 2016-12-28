@@ -153,25 +153,24 @@ public class ComponentFactory {
 			}
 		}
 	}
-	
-	public static List<DynamicComponent> getAllDynamicComponents(ContentContext ctx) throws Exception {	
+
+	public static List<DynamicComponent> getAllDynamicComponents(ContentContext ctx) throws Exception {
 		ContentContext noAreaCtx = ctx.getContextWithArea(null);
 		List<DynamicComponent> outComps = new LinkedList<DynamicComponent>();
 		ContentService content = ContentService.getInstance(ctx.getGlobalContext());
 		MenuElement root = content.getNavigation(noAreaCtx);
 		ContentElementList pageContent = root.getContent(noAreaCtx);
-		/*while (pageContent.hasNext(noAreaCtx)) {
-			IContentVisualComponent comp = pageContent.next(noAreaCtx);
-			if (comp instanceof DynamicComponent) {
-				outComps.add((DynamicComponent)comp);
-			}
-		}*/
+		/*
+		 * while (pageContent.hasNext(noAreaCtx)) { IContentVisualComponent comp
+		 * = pageContent.next(noAreaCtx); if (comp instanceof DynamicComponent)
+		 * { outComps.add((DynamicComponent)comp); } }
+		 */
 		for (MenuElement page : root.getAllChildrenList()) {
 			pageContent = page.getContent(noAreaCtx);
 			while (pageContent.hasNext(noAreaCtx)) {
 				IContentVisualComponent comp = pageContent.next(noAreaCtx);
 				if (comp instanceof DynamicComponent) {
-					outComps.add((DynamicComponent)comp);
+					outComps.add((DynamicComponent) comp);
 				}
 			}
 		}
@@ -248,47 +247,50 @@ public class ComponentFactory {
 			}
 
 			// Load external components
-			FileSystemManager vfsManager = VFS.getManager();
-			List<String> jarClasses = new LinkedList<String>();
-			List<FileObject> jarFiles = new LinkedList<FileObject>();
-			File externalComponentFolder = new File(globalContext.getStaticConfig().getExternalComponentFolder());
+			try {
+				FileSystemManager vfsManager = VFS.getManager();
+				List<String> jarClasses = new LinkedList<String>();
+				List<FileObject> jarFiles = new LinkedList<FileObject>();
+				File externalComponentFolder = new File(globalContext.getStaticConfig().getExternalComponentFolder());
 
-			if (externalComponentFolder.exists() && externalComponentFolder.isDirectory()) {
-				FileObject rootFolder = vfsManager.resolveFile(externalComponentFolder.getAbsolutePath());
-				for (FileObject fo : rootFolder.getChildren()) {
-					if (vfsManager.canCreateFileSystem(fo)) {
-						FileObject jarRoot = vfsManager.createFileSystem(fo);
-						FileObject[] classFiles = jarRoot.findFiles(new FileSelector() {
-							@Override
-							public boolean traverseDescendents(FileSelectInfo fileInfo) throws Exception {
-								return true;
-							}
+				if (externalComponentFolder.exists() && externalComponentFolder.isDirectory()) {
+					FileObject rootFolder = vfsManager.resolveFile(externalComponentFolder.getAbsolutePath());
+					for (FileObject fo : rootFolder.getChildren()) {
+						if (vfsManager.canCreateFileSystem(fo)) {
+							FileObject jarRoot = vfsManager.createFileSystem(fo);
+							FileObject[] classFiles = jarRoot.findFiles(new FileSelector() {
+								@Override
+								public boolean traverseDescendents(FileSelectInfo fileInfo) throws Exception {
+									return true;
+								}
 
-							@Override
-							public boolean includeFile(FileSelectInfo fileInfo) throws Exception {
-								return fileInfo.getFile().getType() == FileType.FILE && "class".equalsIgnoreCase(fileInfo.getFile().getName().getExtension());
-							}
-						});
-						if (classFiles != null && classFiles.length > 0) {
-							jarFiles.add(fo);
-							for (FileObject classFile : classFiles) {
-								String name = classFile.getName().getPathDecoded();
-								name = name.replaceFirst("^/", "").replaceFirst("\\.class$", "").replace('/', '.');
-								jarClasses.add(name);
+								@Override
+								public boolean includeFile(FileSelectInfo fileInfo) throws Exception {
+									return fileInfo.getFile().getType() == FileType.FILE && "class".equalsIgnoreCase(fileInfo.getFile().getName().getExtension());
+								}
+							});
+							if (classFiles != null && classFiles.length > 0) {
+								jarFiles.add(fo);
+								for (FileObject classFile : classFiles) {
+									String name = classFile.getName().getPathDecoded();
+									name = name.replaceFirst("^/", "").replaceFirst("\\.class$", "").replace('/', '.');
+									jarClasses.add(name);
+								}
 							}
 						}
 					}
 				}
-			}
-
-			if (!jarFiles.isEmpty()) {
-				VFSClassLoader componentsClassLoader = new VFSClassLoader(jarFiles.toArray(new FileObject[jarFiles.size()]), vfsManager, AbstractVisualComponent.class.getClassLoader());
-				for (String jarClass : jarClasses) {
-					Class<?> cl = componentsClassLoader.loadClass(jarClass);
-					if (AbstractVisualComponent.class.isAssignableFrom(cl)) {
-						array.add((AbstractVisualComponent) cl.newInstance());
+				if (!jarFiles.isEmpty()) {
+					VFSClassLoader componentsClassLoader = new VFSClassLoader(jarFiles.toArray(new FileObject[jarFiles.size()]), vfsManager, AbstractVisualComponent.class.getClassLoader());
+					for (String jarClass : jarClasses) {
+						Class<?> cl = componentsClassLoader.loadClass(jarClass);
+						if (AbstractVisualComponent.class.isAssignableFrom(cl)) {
+							array.add((AbstractVisualComponent) cl.newInstance());
+						}
 					}
 				}
+			} catch (Throwable e) {
+				logger.warning(e.getMessage());
 			}
 
 			components = new IContentVisualComponent[array.size()];
@@ -373,11 +375,11 @@ public class ComponentFactory {
 
 		return outComponent;
 	}
-	
+
 	public static IContentVisualComponent getComponentWithType(ContentContext ctx, String type) {
 		try {
 			return getComponentWithType(ctx, ctx.getCurrentPage(), type);
-		} catch (Exception e) {		
+		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
 		}
@@ -399,7 +401,7 @@ public class ComponentFactory {
 			if (component2 != null && bean != null && component2.getType() != null) {
 				if (component2.getType().equals(bean.getType())) {
 					IContentVisualComponent newComp = component2.newInstance(bean, ctx, inPage);
-					component = (AbstractVisualComponent) newComp;					
+					component = (AbstractVisualComponent) newComp;
 					if (selectedComponents.contains(component.getClass().getName())) {
 						break;
 					}
@@ -433,7 +435,7 @@ public class ComponentFactory {
 	public static List<ComponentBean> getContentByType(ContentContext ctx, String type) throws Exception {
 		ContentService content = ContentService.getInstance(ctx.getRequest());
 		MenuElement rootPage = content.getNavigation(ctx);
-		List<ComponentBean> outComp = new LinkedList<ComponentBean>();		
+		List<ComponentBean> outComp = new LinkedList<ComponentBean>();
 		for (MenuElement page : rootPage.getAllChildrenList()) {
 			ComponentBean[] comps = page.getContent();
 			for (ComponentBean comp : comps) {
@@ -458,7 +460,7 @@ public class ComponentFactory {
 		}
 		return outComp;
 	}
-	
+
 	public static List<IContentVisualComponent> getGlobalContextComponent(ContentContext ctx, int complexityLevel) throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException {
 		return getGlobalContextComponent(ctx, complexityLevel, null);
 	}
@@ -477,8 +479,8 @@ public class ComponentFactory {
 			}
 		}
 		if (template != null) {
-			List<Properties> propertiesClasses = template.getDynamicComponentsProperties(globalContext);			
-			for (Properties properties : propertiesClasses) {				
+			List<Properties> propertiesClasses = template.getDynamicComponentsProperties(globalContext);
+			for (Properties properties : propertiesClasses) {
 				DynamicComponent comp = new DynamicComponent();
 				Properties newProp = new StructuredProperties();
 				newProp.putAll(properties);
@@ -512,13 +514,13 @@ public class ComponentFactory {
 					} else {
 						excludeComponents.addAll(excludeTemplateComp);
 					}
-				}				
+				}
 			}
 
 			for (int i = 0; i < components.size() - 1; i++) { // remove title
 																// without
 																// component
-				if (!components.get(i).isMetaTitle() || !components.get(i + 1).isMetaTitle()) { 
+				if (!components.get(i).isMetaTitle() || !components.get(i + 1).isMetaTitle()) {
 					IContentVisualComponent comp = components.get(i);
 					if (comp.isMetaTitle() || ctx.getGlobalContext().getComponents().contains(comp.getClass().getName()) || comp.getClass().equals(DynamicComponent.class)) {
 						ComponentWrapper compWrapper = new ComponentWrapper(ctx, comp);

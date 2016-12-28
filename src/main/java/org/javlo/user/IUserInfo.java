@@ -5,8 +5,6 @@ import java.util.Set;
 
 import javax.mail.internet.InternetAddress;
 
-import org.javlo.context.GlobalContext;
-
 public interface IUserInfo {
 
 	public static final char ROLES_SEPARATOR = ';';

@@ -1897,7 +1897,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			}
 
 		} catch (Exception e) {
-			DebugListening.getInstance().sendError(ctx.getRequest(), e, "error in component : " + getType());
+			DebugListening.getInstance().sendError(ctx, e, "error in component : " + getType());
 			e.printStackTrace();
 			return "";
 		}

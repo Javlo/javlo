@@ -84,7 +84,7 @@ public class UserFactory implements IUserFactory, Serializable {
 		if (res == null) {
 			res = new UserFactory();
 		}
-		res.init(globalContext, session);
+		//res.init(globalContext, session);
 		return res;
 	}
 
@@ -437,8 +437,7 @@ public class UserFactory implements IUserFactory, Serializable {
 	public User login(HttpServletRequest request, String login, String password) {
 
 		logger.fine("try to log : " + login);
-
-		GlobalContext globalCtx = GlobalContext.getInstance(request);
+		
 		GlobalContext globalContext = GlobalContext.getInstance(request);
 		EditContext editCtx = EditContext.getInstance(globalContext, request.getSession());
 
@@ -481,7 +480,7 @@ public class UserFactory implements IUserFactory, Serializable {
 		}
 
 		if (user == null || (!logged && user.getPassword() != null && !passwordEqual)) {
-			if (globalCtx.getAdministrator().equals(login) && (logged || globalCtx.administratorLogin(login, password))) {
+			if (globalContext.getAdministrator().equals(login) && (logged || globalContext.administratorLogin(login, password))) {
 				logger.fine("log user with password : " + login + " obtain full control role.");
 				user = createUser(login, (new HashSet(Arrays.asList(new String[] { AdminUserSecurity.FULL_CONTROL_ROLE }))));
 			} else if (editCtx.getEditUser(login) != null && (logged || editCtx.hardLogin(login, password))) {

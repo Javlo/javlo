@@ -86,6 +86,7 @@ org.javlo.component.multimedia.MultimediaFilter
 org.javlo.component.multimedia.Gallery
 org.javlo.component.multimedia.FolderedMultimedia
 org.javlo.component.multimedia.Video
+org.javlo.component.multimedia.OnlineVideo
 org.javlo.component.multimedia.EmbedVideo
 org.javlo.component.multimedia.AllImagesGallery
 org.javlo.component.text.XHTML
@@ -130,6 +131,7 @@ org.javlo.component.web2.PageRank
 org.javlo.component.web2.SimplePoll
 org.javlo.component.web2.Survey
 org.javlo.component.web2.EventRegistration
+org.javlo.component.web2.MessagingComponent
 org.javlo.component.social.FacebookChooseFriend
 
 --content.title.special
@@ -152,3 +154,4 @@ org.javlo.component.ecom.MoneybookersPayement
 org.javlo.component.core.RendererReferenceComponent
 org.javlo.component.extranet.LaunchMacro
 org.javlo.component.extranet.LoginLogoutLink
+

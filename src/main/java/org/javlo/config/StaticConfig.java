@@ -201,15 +201,19 @@ public class StaticConfig extends Observable {
 				}
 
 				{ // Load product version
-					String productVersion = webappProps.getProperty("product.version");
-					Pattern parser = Pattern.compile("Rev=(.*) BuildTime=(.*)");
-					Matcher m = parser.matcher(productVersion);
-					if (m.find()) {
-						sourceRevision = m.group(1);
-						buildTime = m.group(2);
+					String productVersion = webappProps.getProperty("product.version");					
+					if (productVersion != null) {
+						Pattern parser = Pattern.compile("Rev=(.*) BuildTime=(.*)");
+						Matcher m = parser.matcher(productVersion);
+						if (m.find()) {
+							sourceRevision = m.group(1);
+							buildTime = m.group(2);
+						} else {
+							sourceRevision = productVersion;
+							buildTime = null;
+						}
 					} else {
-						sourceRevision = productVersion;
-						buildTime = null;
+						productVersion = "? not found  ?";
 					}
 				}
 
@@ -218,6 +222,7 @@ public class StaticConfig extends Observable {
 				application.setAttribute(KEY, this);
 			}
 		} catch (Exception e) {
+			e.printStackTrace();
 			logger.log(Level.WARNING, "static config file location not found (" + staticConfigLocalisation + "), using default location inside webapp", e);
 		}
 

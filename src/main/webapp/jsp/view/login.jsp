@@ -39,7 +39,7 @@ if ( user == null ) {
 </div>
 <%} else {%>
 <div class="login">
-	<form name="logout"  method="post">
+	<form name="logout" method="post">
 		<input type="hidden" name="edit-logout" value="logout" />
 		<input class="btn btn-default pull-right" type="submit" name="__logout" value="<%=i18nAccess.getViewText ( "form.logout" )%>"/>
 	</form>

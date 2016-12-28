@@ -449,7 +449,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 					MessageRepository messageRepository = MessageRepository.getInstance(ctx);
 					messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage("WARNING : Space left on device becoming to low.  Please log off and contact the administrator.", GenericMessage.ERROR));
 					String msg = "no enough free space on data device : " + new File(staticConfig.getAllDataFolder()).getFreeSpace() + " bytes free.";
-					DebugListening.getInstance().sendError(request, msg);
+					DebugListening.getInstance().sendError(ctx, msg);
 					RemoteMessageService remoteMessageService = RemoteMessageService.getInstance(globalContext);
 					remoteMessageService.addMessage(RemoteMessage.ADMIN_LEVEL, RemoteMessage.WARNING, msg);
 				}
@@ -1039,7 +1039,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 
 				if (!(t instanceof SocketException)) {
 					t.printStackTrace();
-					DebugListening.getInstance().sendError(request, t, "path=" + request.getRequestURI());
+					DebugListening.getInstance().sendError(ctx, t, "path=" + request.getRequestURI());
 				} else {
 					logger.warning(t.getMessage());
 				}

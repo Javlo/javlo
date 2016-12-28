@@ -11,8 +11,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.javlo.config.StaticConfig;
+import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.StringHelper;
+import org.javlo.helper.URLHelper;
 import org.javlo.mailing.MailConfig;
 import org.javlo.mailing.MailService;
 import org.javlo.user.AdminUserFactory;
@@ -44,7 +46,8 @@ public class DebugListening {
 
 	private ServletContext application;
 
-	public void sendError(HttpServletRequest request, StaticConfig staticConfig, Throwable t, String info) {
+	public void sendError(ContentContext ctx, StaticConfig staticConfig, Throwable t, String info) {
+		HttpServletRequest request = ctx.getRequest();
 		HttpSession session = request.getSession(true);
 		if (System.currentTimeMillis() - DELTA_SEND > latestSend) {
 			latestSend = System.currentTimeMillis();
@@ -65,8 +68,9 @@ public class DebugListening {
 				out.println("");
 				out.println("local addr           : " + request.getLocalAddr());
 				out.println("local host           : " + request.getLocalName());
-				out.println("request method        : " + request.getMethod());
-				out.println("request path info     : " + request.getPathInfo());
+				out.println("request method       : " + request.getMethod());
+				out.println("request path info    : " + request.getPathInfo());
+				out.println("direct link          : " + URLHelper.createAbsoluteURL(ctx, ctx.getPath()));
 				if (session != null) {
 					out.println("session creation time : " + StringHelper.renderTime(new Date(session.getCreationTime())));
 					out.println("session last acces    : " + StringHelper.renderTime(new Date(session.getLastAccessedTime())));
@@ -112,19 +116,19 @@ public class DebugListening {
 		}
 	}
 
-	public void sendError(HttpServletRequest request, String info) {
-		sendError(request, null, info);
+	public void sendError(ContentContext ctx, String info) {
+		sendError(ctx, null, info);
 	}
 
-	public void sendError(HttpServletRequest request, Throwable t) {
-		sendError(request, t, "");
+	public void sendError(ContentContext ctx, Throwable t) {
+		sendError(ctx, t, "");
 	}
 
-	public void sendError(HttpServletRequest request, Throwable t, String info) {
+	public void sendError(ContentContext ctx, Throwable t, String info) {
 		if (staticConfig == null) {
-			staticConfig = StaticConfig.getInstance(request.getSession(true).getServletContext());
+			staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession(true).getServletContext());
 		}
-		sendError(request, staticConfig, t, info);
+		sendError(ctx, staticConfig, t, info);
 	}
 
 	public void sendError(ServletContext application, String message) {

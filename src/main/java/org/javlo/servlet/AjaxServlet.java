@@ -11,7 +11,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.javlo.component.core.MessageContainer;
 import org.javlo.context.ContentContext;
 import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
@@ -133,7 +132,7 @@ public class AjaxServlet extends HttpServlet {
 			} catch (Throwable t) {
 				t.printStackTrace();
 				response.setStatus(503);
-				DebugListening.getInstance().sendError(request, t, "path=" + request.getRequestURI());
+				DebugListening.getInstance().sendError(ctx, t, "path=" + request.getRequestURI());
 			} finally {
 				PersistenceService persistenceService = PersistenceService.getInstance(globalContext);
 				String persistenceParam = rs.getParameter(AccessServlet.PERSISTENCE_PARAM, null);				

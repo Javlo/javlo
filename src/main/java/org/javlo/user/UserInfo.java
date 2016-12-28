@@ -15,7 +15,6 @@ import java.util.Set;
 
 import javax.mail.internet.InternetAddress;
 
-import org.javlo.context.GlobalContext;
 import org.javlo.helper.LocalLogger;
 import org.javlo.helper.StringHelper;
 
