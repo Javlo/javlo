@@ -2482,7 +2482,7 @@ public class Template implements Comparable<Template> {
 				}
 				if (!indexFile.exists()) {
 					logger.warning("template not found. site:" + ctx.getGlobalContext().getContextKey() + " - tpl:" + getName());
-					return false;
+					//return false;
 				}
 				contextWithTemplateImported.add(globalContext.getContextKey());
 
