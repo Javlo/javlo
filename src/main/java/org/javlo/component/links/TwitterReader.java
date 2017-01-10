@@ -4,9 +4,11 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.logging.Logger;
 
@@ -14,6 +16,7 @@ import org.apache.commons.lang3.StringEscapeUtils;
 import org.htmlparser.util.ParserException;
 import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.context.ContentContext;
+import org.javlo.helper.StringHelper;
 import org.javlo.helper.XHTMLHelper;
 import org.javlo.service.social.SocialService;
 import org.javlo.utils.JSONMap;
@@ -95,6 +98,16 @@ public class TwitterReader extends AbstractVisualComponent {
 			this.displayName = displayName;
 		}
 
+	}
+	
+	@Override
+	public String[] getStyleList(ContentContext ctx) {
+		return new String[] {"all", "1", "2", "3", "4", "5", "6", "7", "8", "9"};
+	}
+	
+	@Override
+	public String getStyleLabel(ContentContext ctx) {	
+		return "#";
 	}
 
 	private static class ReadTweetThread extends Thread {
@@ -208,9 +221,24 @@ public class TwitterReader extends AbstractVisualComponent {
 
 	@Override
 	public void prepareView(ContentContext ctx) throws Exception {
+		
+		int max=0;
+		if (StringHelper.isDigit(getStyle())) {
+			max = Integer.parseInt(getStyle());
+		}
+		
 		super.prepareView(ctx);
 		Map<String, TwitterBean> maps = getTweet(getURL(ctx));
-		ctx.getRequest().setAttribute("tweets", maps.values());
+		Collection<TwitterBean> tweets = maps.values();
+		if (max>0 && tweets.size()>max) {
+			Collection<TwitterBean> newTweets = new LinkedList<TwitterBean>();
+			Iterator<TwitterBean> it = tweets.iterator();			
+			for (int i=0; i<max; i++) {
+				newTweets.add(it.next());
+			}
+			tweets = newTweets;
+		}
+		ctx.getRequest().setAttribute("tweets", tweets);
 		StringWriter strWriter = new StringWriter();
 		JSONMap.JSON.toJson(maps, strWriter);
 		ctx.getRequest().setAttribute("json", strWriter.toString());
