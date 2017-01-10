@@ -102,7 +102,7 @@ public class TwitterReader extends AbstractVisualComponent {
 	
 	@Override
 	public String[] getStyleList(ContentContext ctx) {
-		return new String[] {"all", "1", "2", "3", "4", "5", "6", "7", "8", "9"};
+		return new String[] {"all", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"};
 	}
 	
 	@Override
