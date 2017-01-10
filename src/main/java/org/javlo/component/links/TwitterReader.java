@@ -37,9 +37,11 @@ public class TwitterReader extends AbstractVisualComponent {
 	public static class TwitterBean {
 		private String authors;
 		private String message;
+		private String htmlMessage;
 		private String fullName;
 		private String displayName;
 		private String id;
+		private String sourceURL;
 		private Date date;
 
 		public String getAuthors() {
@@ -85,6 +87,10 @@ public class TwitterReader extends AbstractVisualComponent {
 		public String getId() {
 			return id;
 		}
+		
+		public String getURL()  {
+			return sourceURL+"/status/"+id;
+		}
 
 		public void setId(String id) {
 			this.id = id;
@@ -96,6 +102,22 @@ public class TwitterReader extends AbstractVisualComponent {
 
 		public void setDisplayName(String displayName) {
 			this.displayName = displayName;
+		}
+		
+		public void setSourceURL(String sourceURL) {
+			this.sourceURL = sourceURL;
+		}
+		
+		public String getSourceURL() {
+			return sourceURL;
+		}
+
+		public String getHtmlMessage() {
+			return htmlMessage;
+		}
+
+		public void setHtmlMessage(String htmlMessage) {
+			this.htmlMessage = htmlMessage;
 		}
 
 	}
@@ -159,11 +181,13 @@ public class TwitterReader extends AbstractVisualComponent {
 
 	public static void main(String[] args) {
 		try {
-			Map<String, TwitterBean> tweets = readTweet(new URL("https://twitter.com/bryci"));
+			Map<String, TwitterBean> tweets = readTweet(new URL("https://twitter.com/Sonsdhiver"));
 			for (TwitterBean bean : tweets.values()) {
 				System.out.println("");
+				System.out.println("link    : " + bean.getURL());
 				System.out.println("authors : " + bean.getAuthors());
 				System.out.println("message : " + bean.getMessage());
+				System.out.println("msgHTML : " + bean.getHtmlMessage());
 				System.out.println("date : " + bean.getDate());
 			}
 		} catch (ParserException e) {
@@ -189,13 +213,21 @@ public class TwitterReader extends AbstractVisualComponent {
 			Element item = allItems.next();
 			if (item != null) {
 				TwitterBean bean = new TwitterBean();
+				bean.setSourceURL(url.toString());
 				Element tweet = item.select(".tweet").first();
 				if (tweet != null) {
 					bean.setId(tweet.attr("data-tweet-id"));
 					bean.setAuthors(tweet.attr("data-screen-name"));
 					Elements textItem = item.select(".tweet-text");
 					if (textItem != null) {
+						for (Element link : textItem.select("a")) {
+							if (link.attr("href") != null && link.attr("href").startsWith("/")) {
+								link.attr("href", "https://twitter.com"+link.attr("href"));
+							}
+							link.attr("target", "_blank");
+						}
 						bean.setMessage(textItem.text());
+						bean.setHtmlMessage(textItem.html());
 						Elements dateItem = item.select(".js-short-timestamp ");
 						if (dateItem != null && dateItem.first() != null && dateItem.first().attr("data-time") != null) {
 							Long time = Long.parseLong(dateItem.first().attr("data-time"));

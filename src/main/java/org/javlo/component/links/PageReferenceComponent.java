@@ -577,6 +577,10 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 				return getUrl();
 			}
 		}
+		
+		public boolean isLink() {
+			return isRealContent() || !StringHelper.isEmpty(linkOn);
+		}
 
 		public Collection<Link> getLinks() {
 			return links;
