@@ -1991,10 +1991,7 @@ public class Edit extends AbstractModuleAction {
 			fromPage = comp.getPage();
 		}
 
-		String fromArea = comp.getArea();
-		if (comp == null) {
-			return "component not found.";
-		}
+		String fromArea = comp.getArea();		
 
 		String area = null;
 		for (Map.Entry<String, String> templateArea : ctx.getCurrentTemplate().getAreasMap().entrySet()) {

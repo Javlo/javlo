@@ -241,6 +241,8 @@ public class ImageTransformServlet extends HttpServlet {
 
 	public static final String LOCAL_TEMPLATE_SUFFIX = "-local";
 
+	public static final String NO_IMAGE_FILE = "/images/noimage.png";
+
 	private ExecutorService executor;
 
 	@Override
@@ -1045,7 +1047,7 @@ public class ImageTransformServlet extends HttpServlet {
 				File imageFile = new File(URLHelper.mergePath(baseFolder, imageName));
 				String baseExtension = StringHelper.getFileExtension(imageFile.getName());
 				if (!imageFile.exists()) {
-					imageName = "/images/noimage.png";
+					imageName = NO_IMAGE_FILE;
 					imageFile = new File(ctx.getRequest().getSession().getServletContext().getRealPath(imageName));
 				}
 
@@ -1193,10 +1195,7 @@ public class ImageTransformServlet extends HttpServlet {
 					} else {
 						synchronized (imageTransforming.get(imageKey)) {
 							file = loadFileFromDisk(ctx, imageName, filter, area, ctx.getDevice(), template, comp, imageFile.lastModified(), imageParam);
-							fileStream = new FileInputStream(file);
-							if (fileStream == null) {
-								logger.severe("problem on loading from cache : " + imageFile);
-							}
+							fileStream = new FileInputStream(file);							
 						}
 					}
 

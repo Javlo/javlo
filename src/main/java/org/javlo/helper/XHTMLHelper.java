@@ -177,6 +177,7 @@ public class XHTMLHelper {
 		if (content == null) {
 			return "";
 		}
+		content = content.replace("&nbsp;", " ");
 		StringWriter out = new StringWriter();
 		BufferedWriter writer = new BufferedWriter(out);
 		BufferedReader reader = new BufferedReader(new StringReader(content));
@@ -219,7 +220,7 @@ public class XHTMLHelper {
 		return out.toString();
 	}
 
-	private static String createHTMLLink(String url, boolean notFollow, GlobalContext globalContext) {
+	private static String createHTMLLink(String url, boolean notFollow, GlobalContext globalContext) {		
 		String suffix = "";
 		if (url.endsWith(".")) {
 			url = url.substring(0, url.length() - 1);
@@ -247,9 +248,11 @@ public class XHTMLHelper {
 				outXHTML = "<a class=\"" + cssClass + "\" href=\"mailto:" + url.trim() + "\">" + url + "</a>";
 			}
 		} else if (url.startsWith("http://") || url.startsWith("https://") || url.startsWith("ftp://")) {
-			outXHTML = "<a class=\"" + cssClass + "\" href=\"" + url.trim() + "\"" + target + "" + notFollowAttr + ">" + url + "</a>";
+			url = url.replace("&nbsp;", " ").trim();
+			outXHTML = "<a class=\"" + cssClass + "\" href=\"" + url + "\"" + target + "" + notFollowAttr + ">" + url + "</a>";
 		} else if (url.startsWith("www.")) {
-			outXHTML = "<a class=\"" + cssClass + "\" href=\"http://" + url.trim() + "\"" + target + "" + notFollowAttr + ">" + url + "</a>";
+			url = url.replace("&nbsp;", " ").trim();
+			outXHTML = "<a class=\"" + cssClass + "\" href=\"http://" + url + "\"" + target + "" + notFollowAttr + ">" + url + "</a>";
 		}
 		return outXHTML + suffix;
 	}

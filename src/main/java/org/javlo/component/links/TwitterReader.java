@@ -14,6 +14,7 @@ import org.apache.commons.lang3.StringEscapeUtils;
 import org.htmlparser.util.ParserException;
 import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.context.ContentContext;
+import org.javlo.helper.XHTMLHelper;
 import org.javlo.service.social.SocialService;
 import org.javlo.utils.JSONMap;
 import org.jsoup.Jsoup;
@@ -48,6 +49,10 @@ public class TwitterReader extends AbstractVisualComponent {
 				displayName = authors.substring(1);
 			}
 
+		}
+		
+		public String getAutoLinkMessage() {
+			return XHTMLHelper.autoLink(message);
 		}
 
 		public String getMessage() {
@@ -91,31 +96,31 @@ public class TwitterReader extends AbstractVisualComponent {
 		}
 
 	}
-	
+
 	private static class ReadTweetThread extends Thread {
-		
+
 		private TwitterReader comp;
 		private URL url;
-		
+
 		ReadTweetThread(TwitterReader comp, URL url) {
 			this.comp = comp;
 			this.url = url;
 		}
-		
+
 		@Override
-		public void run() {			
-			try {				
+		public void run() {
+			try {
 				if (url != null) {
-					Map<String, TwitterBean> newTweets  = TwitterReader.readTweet(url);
+					Map<String, TwitterBean> newTweets = TwitterReader.readTweet(url);
 					comp.tweets = newTweets;
 				}
-			} catch (Exception e) { 
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
-		
+
 	}
-	
+
 	private URL getURL(ContentContext ctx) throws MalformedURLException {
 		if (getValue().trim().length() > 0) {
 			return new URL(getValue());
@@ -138,15 +143,15 @@ public class TwitterReader extends AbstractVisualComponent {
 		}
 		return tweets;
 	}
-	
+
 	public static void main(String[] args) {
 		try {
-			Map<String,TwitterBean> tweets = readTweet(new URL("https://twitter.com/ep_president"));
+			Map<String, TwitterBean> tweets = readTweet(new URL("https://twitter.com/bryci"));
 			for (TwitterBean bean : tweets.values()) {
 				System.out.println("");
-				System.out.println("authors : "+bean.getAuthors());
-				System.out.println("message : "+bean.getMessage());
-				System.out.println("date : "+bean.getDate());
+				System.out.println("authors : " + bean.getAuthors());
+				System.out.println("message : " + bean.getMessage());
+				System.out.println("date : " + bean.getDate());
 			}
 		} catch (ParserException e) {
 			// TODO Auto-generated catch block
@@ -161,29 +166,32 @@ public class TwitterReader extends AbstractVisualComponent {
 	}
 
 	private static Map<String, TwitterBean> readTweet(URL url) throws ParserException, IOException {
-		Map<String, TwitterBean> tweets = new HashMap<String, TwitterReader.TwitterBean>();		
+		Map<String, TwitterBean> tweets = new HashMap<String, TwitterReader.TwitterBean>();
 		Map<String, TwitterBean> newList = new HashMap<String, TwitterBean>();
 		Document doc = Jsoup.connect(url.toString()).get();
-		Elements newsHeadlines = doc.select(".GridTimeline-items .ProfileTweet");
-		logger.info("load tweets on : " + url + " items found:"+newsHeadlines.size());		
+		Elements newsHeadlines = doc.select(".stream-items li");
+		logger.info("load tweets on : " + url + " items found:" + newsHeadlines.size());
 		Iterator<Element> allItems = newsHeadlines.iterator();
 		while (allItems.hasNext()) {
-			Element item = allItems.next();			
+			Element item = allItems.next();
 			if (item != null) {
 				TwitterBean bean = new TwitterBean();
-				bean.setId(item.attr("data-item-id"));
-				bean.setAuthors(item.attr("data-name"));
-				Elements textItem = item.select(".ProfileTweet-text");
-				if (textItem != null) {
-					bean.setMessage(textItem.text());
-					Elements dateItem = item.select(".js-short-timestamp ");
-					if (dateItem != null && dateItem.first() != null && dateItem.first().attr("data-time") != null) {
-						Long time = Long.parseLong(dateItem.first().attr("data-time"));
-						bean.setDate(new Date(time * 1000));
-						Elements fullName = item.select(".fullname");
-						if (fullName != null) {
-							bean.setFullName(fullName.text());
-							newList.put(bean.getId(), bean);
+				Element tweet = item.select(".tweet").first();
+				if (tweet != null) {
+					bean.setId(tweet.attr("data-tweet-id"));
+					bean.setAuthors(tweet.attr("data-screen-name"));
+					Elements textItem = item.select(".tweet-text");
+					if (textItem != null) {
+						bean.setMessage(textItem.text());
+						Elements dateItem = item.select(".js-short-timestamp ");
+						if (dateItem != null && dateItem.first() != null && dateItem.first().attr("data-time") != null) {
+							Long time = Long.parseLong(dateItem.first().attr("data-time"));
+							bean.setDate(new Date(time * 1000));
+							Elements fullName = item.select(".fullname");
+							if (fullName != null) {
+								bean.setFullName(fullName.text());
+								newList.put(bean.getId(), bean);
+							}
 						}
 					}
 				}
@@ -200,14 +208,14 @@ public class TwitterReader extends AbstractVisualComponent {
 
 	@Override
 	public void prepareView(ContentContext ctx) throws Exception {
-		super.prepareView(ctx);		
+		super.prepareView(ctx);
 		Map<String, TwitterBean> maps = getTweet(getURL(ctx));
 		ctx.getRequest().setAttribute("tweets", maps.values());
 		StringWriter strWriter = new StringWriter();
 		JSONMap.JSON.toJson(maps, strWriter);
 		ctx.getRequest().setAttribute("json", strWriter.toString());
 	}
-	
+
 	@Override
 	public int getComplexityLevel(ContentContext ctx) {
 		return getConfig(ctx).getComplexity(COMPLEXITY_ADMIN);

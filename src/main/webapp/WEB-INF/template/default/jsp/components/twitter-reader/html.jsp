@@ -5,7 +5,7 @@
 <c:forEach var="tweet" items="${tweets}" varStatus="status">
 <li>
 <span class="tweet.authors">${tweet.authors}</span>
-<span class="tweet.message">${tweet.message}</span>
+<span class="tweet.message">${tweet.autoLinkMessage}</span>
 </li>
 
 </c:forEach>

@@ -298,11 +298,6 @@ public class ComponentFactory {
 			globalContext.getServletContext().setAttribute(key, components);
 
 		}
-
-		if (components == null) {
-			components = new IContentVisualComponent[0];
-		}
-
 		return components;
 
 	}

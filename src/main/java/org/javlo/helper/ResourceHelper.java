@@ -593,16 +593,15 @@ public class ResourceHelper {
 	}
 
 	public static String getFileContent(File file) throws FileNotFoundException, IOException {
+		if (file == null) {
+			return null;
+		}
 		String ext = FilenameUtils.getExtension(file.getName());
 		String outContent = "";
 		try {
 			if (ext.toLowerCase().equals("doc")) {
-				if (file != null) {
-					WordExtractor we = new WordExtractor(new FileInputStream(file));
-					outContent = we.getText();
-				} else {
-					logger.warning("file not found : " + file);
-				}
+				WordExtractor we = new WordExtractor(new FileInputStream(file));
+				outContent = we.getText();				 
 			} else if (ext.toLowerCase().equals("pdf")) {
 				PDDocument doc = PDDocument.load(file);
 

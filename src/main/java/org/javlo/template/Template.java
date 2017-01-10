@@ -694,6 +694,8 @@ public class Template implements Comparable<Template> {
 	private String deployId = StringHelper.getRandomId();
 
 	private List<Properties> dynamicsComponents = null;
+	
+	private boolean indexFileWaited = false;
 
 	private final Set<String> contextWithTemplateImported = new HashSet<String>();
 
@@ -2469,23 +2471,23 @@ public class Template implements Comparable<Template> {
 			File templateTgt = new File(URLHelper.mergePath(getWorkTemplateFolder(), getFolder(globalContext)));
 			if (templateTgt.exists()) {
 				File indexFile = new File(URLHelper.mergePath(templateTgt.getAbsolutePath(), getHTMLFile(null)));
-				if (!indexFile.exists()) {
+				if (!indexFile.exists() && !indexFileWaited) {
 					logger.info("index not found wait... ("+indexFile+") site:" + ctx.getGlobalContext().getContextKey() + " - tpl:" + getName()); // TODO:
 																																	// remove
 																																	// debug
 																																	// trace
 					try {
 						Thread.sleep(1000 * 10);
+						indexFileWaited = true;
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					} // wait 10 sec
 				}
 				if (!indexFile.exists()) {
 					logger.warning("template not found. site:" + ctx.getGlobalContext().getContextKey() + " - tpl:" + getName());
-					//return false;
+					return false;
 				}
 				contextWithTemplateImported.add(globalContext.getContextKey());
-
 			}
 			boolean outExist = templateTgt.exists();
 			return outExist;
