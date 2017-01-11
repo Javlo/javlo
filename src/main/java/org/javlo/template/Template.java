@@ -2484,7 +2484,7 @@ public class Template implements Comparable<Template> {
 					} // wait 10 sec
 				}
 				if (!indexFile.exists()) {
-					logger.warning("template not found. site:" + ctx.getGlobalContext().getContextKey() + " - tpl:" + getName());
+					logger.warning("template not found. site:" + ctx.getGlobalContext().getContextKey() + " - tpl:" + getName()+" - folder:"+templateTgt+ "index:"+indexFile);					
 					return false;
 				}
 				contextWithTemplateImported.add(globalContext.getContextKey());
