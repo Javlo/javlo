@@ -245,13 +245,14 @@ public class ContentElementList implements IContentComponentsList {
 						currentLabelLevel = comp.getLabelLevel(ctx);
 					}
 				}
-				if (comp instanceof MenuTitle && !comp.isRepeat()) {
-					return comp.getTextLabel(ctx);
-				}
-				if (firstSubtitle == null && comp instanceof SubTitle) {
-					firstSubtitle = comp.getTextLabel(ctx);
-				}
 			}
+			if (comp instanceof MenuTitle && !comp.isRepeat()) {
+				return comp.getTextLabel(ctx);
+			}
+			if (firstSubtitle == null && comp instanceof SubTitle) {
+				firstSubtitle = comp.getTextLabel(ctx);
+			}
+		
 		}
 		if (res.length() == 0) { // if no element not repeat search with repeat
 									// element

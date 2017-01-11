@@ -84,7 +84,7 @@ public class ComponentConfig {
 			if (currentTemplate != null) {
 				templateBuildId = currentTemplate.getBuildId();
 				Properties templateProp = currentTemplate.getConfigComponentFile(GlobalContext.getInstance(ctx.getRequest()), type);
-				logger.info("create component template config : " + currentTemplate.getName());
+				logger.fine("create component template config : " + currentTemplate.getName());
 				if (templateProp != null) {
 					Enumeration<Object> keys = templateProp.keys();
 					if (properties == null) {
