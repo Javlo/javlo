@@ -19,17 +19,18 @@ import org.javlo.context.ContentContext;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
 
+import ch.qos.logback.core.net.SyslogOutputStream;
 
 /**
  * @author pvanderm
  */
 public class ContentElementList implements IContentComponentsList {
-	
+
 	private class ContentElementListIterator implements Iterator<IContentVisualComponent> {
-		
+
 		private ContentContext ctx;
 		private ContentElementList contentElementList;
-		
+
 		public ContentElementListIterator(ContentContext ctx, ContentElementList contentElementList) {
 			super();
 			this.ctx = new ContentContext(ctx);
@@ -50,11 +51,11 @@ public class ContentElementList implements IContentComponentsList {
 		public void remove() {
 			throw new NotImplementedException("remove");
 		}
-		
+
 	}
-	
+
 	private class ContentElementListIterable implements Iterable<IContentVisualComponent> {
-		
+
 		private ContentContext ctx;
 		private ContentElementList contentElementList;
 
@@ -65,10 +66,10 @@ public class ContentElementList implements IContentComponentsList {
 		}
 
 		@Override
-		public Iterator iterator() { 
-			return new ContentElementListIterator(ctx,contentElementList);
+		public Iterator iterator() {
+			return new ContentElementListIterator(ctx, contentElementList);
 		}
-		
+
 	}
 
 	private Set<String> addedElementId = null;
@@ -83,7 +84,8 @@ public class ContentElementList implements IContentComponentsList {
 
 	// private String area;
 
-	private boolean allArea = false; // browse only the content of the current area.
+	private boolean allArea = false; // browse only the content of the current
+										// area.
 
 	private MenuElement page;
 
@@ -105,10 +107,11 @@ public class ContentElementList implements IContentComponentsList {
 		for (ComponentBean bean : beans) {
 			if (bean != null && bean.getLanguage() != null && bean.getLanguage().equals(language)) {
 				IContentVisualComponent comp = content.getCachedComponent(ctx, bean.getId());
-				//IContentVisualComponent comp = content.getComponent(ctx, bean.getId());
+				// IContentVisualComponent comp = content.getComponent(ctx,
+				// bean.getId());
 				if (comp == null) {
 					comp = ComponentFactory.createComponent(ctx, bean, inPage, previousComponent, null);
-					content.setCachedComponent(ctx,comp);
+					content.setCachedComponent(ctx, comp);
 				}
 				previousComponent = comp;
 				contentElements.add(comp);
@@ -164,8 +167,11 @@ public class ContentElementList implements IContentComponentsList {
 	}
 
 	/**
-	 * Return an iterable instance of this {@link ContentElementList} calling {@link #hasNext(ContentContext)} and {@link #next(ContentContext)} with the <code>ctx</code> parameter. <br/>
-	 * WARNING: {@link #initialize()} is called when {@link Iterable#iterator()} is called.
+	 * Return an iterable instance of this {@link ContentElementList} calling
+	 * {@link #hasNext(ContentContext)} and {@link #next(ContentContext)} with
+	 * the <code>ctx</code> parameter. <br/>
+	 * WARNING: {@link #initialize()} is called when {@link Iterable#iterator()}
+	 * is called.
 	 * 
 	 * @param ctx
 	 * @return
@@ -226,38 +232,41 @@ public class ContentElementList implements IContentComponentsList {
 	public String getLabel(ContentContext ctx) {
 		String res = "";
 		Iterator elems = contentElements.iterator();
-		
+
 		String firstSubtitle = null;
-		
+
 		int currentLabelLevel = 0;
 		while (elems.hasNext()) {
 			IContentVisualComponent comp = (IContentVisualComponent) elems.next();
-			if (comp.getLabelLevel(ctx)>currentLabelLevel && !comp.isRepeat()) {
-				res = comp.getTextLabel(ctx);
-				if (res == null) {
-					res = "";
-				} else {
-					currentLabelLevel = comp.getLabelLevel(ctx); 
-				}
-			}
-			if (comp instanceof MenuTitle && !comp.isRepeat()) {
-				return comp.getTextLabel(ctx);
-			}
-			if (firstSubtitle == null && comp instanceof SubTitle) {
-				firstSubtitle = comp.getTextLabel(ctx);
-			}
-		}		
-		if (res.length() == 0) { // if no element not repeat search with repeat element
-			currentLabelLevel = 0;
-			elems = contentElements.iterator();
-			while (elems.hasNext()) {
-				IContentVisualComponent comp = (IContentVisualComponent) elems.next();
-				if (comp.getLabelLevel(ctx)>currentLabelLevel) {
+			if (comp.getLabelLevel(ctx) >= currentLabelLevel && !comp.isRepeat()) {
+				if (comp.getLabelLevel(ctx) > currentLabelLevel || comp.getArea().equals(ComponentBean.DEFAULT_AREA)) {
 					res = comp.getTextLabel(ctx);
 					if (res == null) {
 						res = "";
 					} else {
-						currentLabelLevel = comp.getLabelLevel(ctx); 
+						currentLabelLevel = comp.getLabelLevel(ctx);
+					}
+				}
+				if (comp instanceof MenuTitle && !comp.isRepeat()) {
+					return comp.getTextLabel(ctx);
+				}
+				if (firstSubtitle == null && comp instanceof SubTitle) {
+					firstSubtitle = comp.getTextLabel(ctx);
+				}
+			}
+		}
+		if (res.length() == 0) { // if no element not repeat search with repeat
+									// element
+			currentLabelLevel = 0;
+			elems = contentElements.iterator();
+			while (elems.hasNext()) {
+				IContentVisualComponent comp = (IContentVisualComponent) elems.next();
+				if (comp.getLabelLevel(ctx) > currentLabelLevel) {
+					res = comp.getTextLabel(ctx);
+					if (res == null) {
+						res = "";
+					} else {
+						currentLabelLevel = comp.getLabelLevel(ctx);
 					}
 				}
 				if (comp instanceof MenuTitle) {
@@ -265,7 +274,7 @@ public class ContentElementList implements IContentComponentsList {
 				}
 			}
 		}
-		if (res.length() == 0 && firstSubtitle != null) {			
+		if (res.length() == 0 && firstSubtitle != null) {
 			return firstSubtitle;
 		}
 		return res;
@@ -319,21 +328,22 @@ public class ContentElementList implements IContentComponentsList {
 
 		return prefix.toString();
 	}
-	
+
 	public String getSubTitle(ContentContext ctx) {
 		String res = "";
-		Iterator elems = contentElements.iterator();	
+		Iterator elems = contentElements.iterator();
 		int bestLevel = Integer.MAX_VALUE;
 		String bestSubTitle = "";
 		while (elems.hasNext()) {
-			IContentVisualComponent comp = (IContentVisualComponent) elems.next();			
-			if (comp instanceof ISubTitle) {				
-				res = ((ISubTitle)comp).getSubTitle(ctx);
-				int level = ((ISubTitle)comp).getSubTitleLevel(ctx);
+			IContentVisualComponent comp = (IContentVisualComponent) elems.next();
+			if (comp instanceof ISubTitle) {
+				res = ((ISubTitle) comp).getSubTitle(ctx);
+				int level = ((ISubTitle) comp).getSubTitleLevel(ctx);
 				if (res != null) {
 					if (level == 2) {
 						return res;
-					} if (level < bestLevel && level > 1) {
+					}
+					if (level < bestLevel && level > 1) {
 						bestLevel = level;
 						bestSubTitle = res;
 					}
@@ -342,16 +352,16 @@ public class ContentElementList implements IContentComponentsList {
 		}
 		return bestSubTitle;
 	}
-	
+
 	public List<String> getSubTitles(ContentContext ctx, int inLevel) {
-		Iterator elems = contentElements.iterator();		
-		List<String> outTitles = new LinkedList<String>();		
+		Iterator elems = contentElements.iterator();
+		List<String> outTitles = new LinkedList<String>();
 		while (elems.hasNext()) {
-			IContentVisualComponent comp = (IContentVisualComponent) elems.next();			
-			if (comp instanceof ISubTitle) {				
-				String res = ((ISubTitle)comp).getSubTitle(ctx);				
+			IContentVisualComponent comp = (IContentVisualComponent) elems.next();
+			if (comp instanceof ISubTitle) {
+				String res = ((ISubTitle) comp).getSubTitle(ctx);
 				if (res != null) {
-					if (((ISubTitle)comp).getSubTitleLevel(ctx) == inLevel) {
+					if (((ISubTitle) comp).getSubTitleLevel(ctx) == inLevel) {
 						outTitles.add(res);
 					}
 				}
@@ -359,31 +369,32 @@ public class ContentElementList implements IContentComponentsList {
 		}
 		return outTitles;
 	}
-	
-	public String getLinkLabel(ContentContext ctx) {		
-		Iterator elems = contentElements.iterator();		
+
+	public String getLinkLabel(ContentContext ctx) {
+		Iterator elems = contentElements.iterator();
 		while (elems.hasNext()) {
-			IContentVisualComponent comp = (IContentVisualComponent) elems.next();			
-			if (comp instanceof LinkLabel) {				
+			IContentVisualComponent comp = (IContentVisualComponent) elems.next();
+			if (comp instanceof LinkLabel) {
 				return comp.getValue(ctx);
 			}
 		}
 		return "";
 	}
-	
+
 	public int getSubTitleLevel(ContentContext ctx) {
-		Iterator elems = contentElements.iterator();	
-		int bestLevel = Integer.MAX_VALUE;		
+		Iterator elems = contentElements.iterator();
+		int bestLevel = Integer.MAX_VALUE;
 		while (elems.hasNext()) {
-			IContentVisualComponent comp = (IContentVisualComponent) elems.next();			
-			if (comp instanceof ISubTitle) {				
-				int level = ((ISubTitle)comp).getSubTitleLevel(ctx);			
+			IContentVisualComponent comp = (IContentVisualComponent) elems.next();
+			if (comp instanceof ISubTitle) {
+				int level = ((ISubTitle) comp).getSubTitleLevel(ctx);
 				if (level == 2) {
 					return level;
-				} if (level < bestLevel && level > 1) {
-					bestLevel = level;					
 				}
-				
+				if (level < bestLevel && level > 1) {
+					bestLevel = level;
+				}
+
 			}
 		}
 		if (bestLevel == Integer.MAX_VALUE) {
@@ -399,7 +410,7 @@ public class ContentElementList implements IContentComponentsList {
 		if (ctx.getRenderMode() != ContentContext.EDIT_MODE) {
 			if (contentElements.size() != 0) {
 				if (isNext(ctx)) {
-					if (!nextElem(ctx).getListGroup().equals(currentElem(ctx).getListGroup())) {					
+					if (!nextElem(ctx).getListGroup().equals(currentElem(ctx).getListGroup())) {
 						sufix.append(currentElem(ctx).getLastSufix(ctx));
 					}
 				} else {
@@ -411,11 +422,11 @@ public class ContentElementList implements IContentComponentsList {
 	}
 
 	public String getTitle(ContentContext ctx) {
-		return getTitle(ctx,true);
+		return getTitle(ctx, true);
 	}
 
 	public String getLocalTitle(ContentContext ctx) {
-		return getTitle(ctx,false);
+		return getTitle(ctx, false);
 	}
 
 	private String getTitle(ContentContext ctx, boolean repeat) {
@@ -424,23 +435,26 @@ public class ContentElementList implements IContentComponentsList {
 		Iterator elems = contentElements.iterator();
 		int maxLabelLevel = 0;
 		while (elems.hasNext() && maxLabelLevel < IContentVisualComponent.HIGH_LABEL_LEVEL) {
-			IContentVisualComponent comp = (IContentVisualComponent) elems.next();			
-			if (comp.getLabelLevel(ctx)>maxLabelLevel && !comp.isRepeat()) {				
-				res = comp.getTextTitle(ctx);
-				if (res == null) {
-					res = "";
-				} else {
-					maxLabelLevel = comp.getLabelLevel(ctx);
+			IContentVisualComponent comp = (IContentVisualComponent) elems.next();
+			if (comp.getLabelLevel(ctx) >= maxLabelLevel && !comp.isRepeat()) {
+				if (comp.getLabelLevel(ctx) > maxLabelLevel || comp.getArea().equals(ComponentBean.DEFAULT_AREA)) {
+					res = comp.getTextTitle(ctx);
+					if (res == null) {
+						res = "";
+					} else {
+						maxLabelLevel = comp.getLabelLevel(ctx);
+					}
 				}
 			}
-		}		
+		}
 		if (repeat) {
-			if (res.length() == 0) { // if no element not repeat search with repeat element
+			if (res.length() == 0) { // if no element not repeat search with
+										// repeat element
 				elems = contentElements.iterator();
 				maxLabelLevel = 0;
 				while (elems.hasNext() && maxLabelLevel < IContentVisualComponent.HIGH_LABEL_LEVEL) {
 					IContentVisualComponent comp = (IContentVisualComponent) elems.next();
-					if (comp.getLabelLevel(ctx)>maxLabelLevel) {
+					if (comp.getLabelLevel(ctx) > maxLabelLevel) {
 						res = comp.getTextTitle(ctx);
 						if (res == null) {
 							res = "";
@@ -460,7 +474,7 @@ public class ContentElementList implements IContentComponentsList {
 						res = comp.getTextTitle(ctx);
 						if (res == null) {
 							res = "";
-						} 
+						}
 						return res;
 					}
 				}
@@ -469,14 +483,14 @@ public class ContentElementList implements IContentComponentsList {
 		}
 		return res;
 	}
-	
+
 	public String getXHTMLTitle(ContentContext ctx) throws Exception {
 		String res = "";
 		Iterator elems = contentElements.iterator();
 		int maxLabelLevel = 0;
 		while (elems.hasNext()) {
 			IContentVisualComponent comp = (IContentVisualComponent) elems.next();
-			if (comp.getLabelLevel(ctx)>maxLabelLevel) {
+			if (comp.getLabelLevel(ctx) > maxLabelLevel) {
 				res = comp.getXHTMLCode(ctx);
 				maxLabelLevel = comp.getLabelLevel(ctx);
 			}
@@ -550,7 +564,7 @@ public class ContentElementList implements IContentComponentsList {
 		}
 		if (!(allArea || ctx.getArea() == null)) {
 			outVisibility = outVisibility && comp.getArea().equals(ctx.getArea());
-		}		
+		}
 		return outVisibility;
 
 	}
@@ -615,13 +629,13 @@ public class ContentElementList implements IContentComponentsList {
 
 		return outSize;
 	}
-	
+
 	public Iterable<IContentVisualComponent> getIterable(ContentContext ctx) {
-		return new ContentElementListIterable(ctx,this);
+		return new ContentElementListIterable(ctx, this);
 	}
 
 	public LinkedList<IContentVisualComponent> getContentElements() {
 		return contentElements;
-	}	
+	}
 
 }

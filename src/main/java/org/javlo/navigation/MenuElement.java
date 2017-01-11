@@ -131,6 +131,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 		private static final long serialVersionUID = 1L;
 
 		String title = null;
+		String contentTitle = null;
 		String localTitle = null;
 		String subTitle = null;
 		List<String> subTitles = null;
@@ -3608,9 +3609,21 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 	 * @throws Exception
 	 */
 	public String getContentTitle(ContentContext ctx) throws Exception {
-		return getContent(ctx).getTitle(ctx);
-	}
+		if (isTrash()) {
+			return getLabel(ctx);
+		}
+		PageDescription desc = getPageDescriptionCached(ctx, ctx.getRequestContentLanguage());
 
+		if (desc.contentTitle != null) {
+			return desc.contentTitle;
+		}
+		
+		ContentContext newCtx = new ContentContext(ctx);		
+		newCtx.setArea(null);
+		desc.contentTitle = getContent(newCtx).getTitle(ctx);
+		
+		return desc.contentTitle;
+	}
 	public boolean isTitle(ContentContext ctx) throws Exception {
 		return !name.equals(getTitle(ctx));
 	}
@@ -3619,15 +3632,15 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 		if (isTrash()) {
 			return getLabel(ctx);
 		}
-		ContentContext newCtx = new ContentContext(ctx);
-		newCtx.setArea(null); // warning : check if the method is needed.
-
-		PageDescription desc = getPageDescriptionCached(ctx, newCtx.getRequestContentLanguage());
+		PageDescription desc = getPageDescriptionCached(ctx, ctx.getRequestContentLanguage());
 
 		if (desc.title != null) {
 			return desc.title;
 		}
-
+		
+		ContentContext newCtx = new ContentContext(ctx);
+		
+		newCtx.setArea(null);
 		desc.title = getContent(newCtx).getTitle(ctx);
 
 		if (desc.title != null) {

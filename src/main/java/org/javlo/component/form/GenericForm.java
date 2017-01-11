@@ -356,6 +356,7 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 		boolean withXHTML = StringHelper.isTrue(comp.getLocalConfig(false).getProperty("field.xhtml", null));
 		boolean withAttachment = StringHelper.isTrue(comp.getLocalConfig(false).getProperty("mail.attachment", null), true);		
 		boolean fakeFilled = false;
+		String readRole = comp.getLocalConfig(false).getProperty("mail.read-role", null);
 
 		List<String> keys = new LinkedList<String>(params.keySet());
 		Collections.sort(keys, new StringComparator());
@@ -392,6 +393,9 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 								return null;
 							}
 							StaticInfo staticInfo = StaticInfo.getInstance(ctx, freeFile);
+							if (readRole != null) {
+								staticInfo.addReadRole(ctx, readRole);
+							}
 							String fileURL = URLHelper.createResourceURL(ctx.getContextForAbsoluteURL(), URLHelper.mergePath(globalContext.getStaticConfig().getStaticFolder(), staticInfo.getStaticURL()));
 							result.put(file.getFieldName(), fileURL);
 							specialValues.put(file.getFieldName(), fileURL);

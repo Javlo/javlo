@@ -1831,7 +1831,13 @@ public class Template implements Comparable<Template> {
 					logger.warning(HTMLFile + " not found.");
 				}
 				List<String> resources = new LinkedList<String>();
-				List<String> ids = new LinkedList<String>();
+				List<String> ids = new LinkedList<String>();				
+				if (!HTMLFile.exists()) {
+					templateImportationError=false;
+					contextWithTemplateImported.remove(ctx.getGlobalContext().getContextKey());
+					FileUtils.deleteDirectory(HTMLFile.getParentFile());					
+					importTemplateInWebapp(config, ctx);
+				}
 				int depth = XMLManipulationHelper.convertHTMLtoTemplate(globalContext, this, HTMLFile, jspFile, getMap(), getAreas(), resources, getTemplatePugin(globalContext), ids, isMailing());
 				setHTMLIDS(ids);
 				setDepth(depth);
