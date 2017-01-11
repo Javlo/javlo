@@ -189,7 +189,7 @@ public class ResourceServlet extends HttpServlet {
 				resourceURI = resourceURI.substring(0, resourceURI.lastIndexOf("."));
 			} else {
 				response.setContentType(ResourceHelper.getFileExtensionToMineType(fileExt));
-			}			
+			}
 			if (!pathInfo.equals(FILE_INFO)) {
 				File file = new File(URLHelper.mergePath(dataFolder, resourceURI));
 				StaticInfo info = StaticInfo.getInstance(ctx, file);
@@ -224,7 +224,6 @@ public class ResourceServlet extends HttpServlet {
 					}
 				}
 			}
-			
 
 			if (resourceURI != null) {
 				if (pathInfo.equals(FILE_INFO)) {
@@ -243,21 +242,23 @@ public class ResourceServlet extends HttpServlet {
 						response.setHeader("Cache-Control", "no-cache");
 						response.setDateHeader(NetHelper.HEADER_LAST_MODIFIED, file.lastModified());
 						long lastModifiedInBrowser = request.getDateHeader(NetHelper.HEADER_IF_MODIFIED_SINCE);
-						if (file.lastModified() > 0 && file.lastModified() / 1000 <= lastModifiedInBrowser / 1000) {
-							response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
-						} else {
-							response.setHeader("Accept-Ranges", "bytes");
-							response.setContentLength((int) file.length());
-							fileStream = new FileInputStream(file);
-							out = response.getOutputStream();
-							ResourceHelper.writeStreamToStream(fileStream, out);
+						if (file.isFile()) {
+							if (file.lastModified() > 0 && file.lastModified() / 1000 <= lastModifiedInBrowser / 1000) {
+								response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
+							} else {
+								response.setHeader("Accept-Ranges", "bytes");
+								response.setContentLength((int) file.length());
+								fileStream = new FileInputStream(file);
+								out = response.getOutputStream();
+								ResourceHelper.writeStreamToStream(fileStream, out);
+							}
 						}
 					} else {
 						Map<String, Object> outMap = new HashMap<String, Object>();
 						response.setContentType("application/json");
 						response.setHeader("Cache-Control", "no-cache");
 						if (request.getAttribute("lg") != null) {
-							ctx.setAllLanguage((String)request.getAttribute("lg"));
+							ctx.setAllLanguage((String) request.getAttribute("lg"));
 						}
 						StaticInfoBean bean = new StaticInfoBean(ctx, StaticInfo.getInstance(ctx, file));
 						outMap.putAll(BeanUtils.describe(bean));
@@ -279,4 +280,3 @@ public class ResourceServlet extends HttpServlet {
 	}
 
 }
-
