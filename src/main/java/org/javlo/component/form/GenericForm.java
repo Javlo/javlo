@@ -580,9 +580,11 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 					}
 					comp.sendConfirmationEmail(ctx, comp, params, toEmail);
 
-				} catch (Exception e) {
+				} catch (Exception e) {					
+					String errorID = "E"+StringHelper.getRandomId();
+					logger.severe("error id:"+errorID+" = "+e.getMessage());
 					e.printStackTrace();
-					GenericMessage msg = new GenericMessage(comp.getLocalConfig(false).getProperty("message.error", "technical error."), GenericMessage.ERROR);
+					GenericMessage msg = new GenericMessage(comp.getLocalConfig(false).getProperty("message.error", "technical error.")+ " ("+errorID+")", GenericMessage.ERROR);
 					request.setAttribute("msg", msg);
 					request.setAttribute("valid", "false");
 					return null;

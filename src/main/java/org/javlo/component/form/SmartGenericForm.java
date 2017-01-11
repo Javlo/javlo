@@ -897,9 +897,10 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 						System.out.println("SMTP login = "+mailService.getMailConfig().getLogin());
 						System.out.println("SMTP pwd?  = "+!StringHelper.isEmpty(mailService.getMailConfig().getPassword()));
 					}
-					
+					String errorID = "E"+StringHelper.getRandomId();
+					logger.severe("error id:"+errorID+" = "+e.getMessage());					
 					e.printStackTrace();
-					GenericMessage msg = new GenericMessage(comp.getLocalConfig(false).getProperty("message.error", "technical error."), GenericMessage.ERROR);
+					GenericMessage msg = new GenericMessage(comp.getLocalConfig(false).getProperty("message.error", "technical error.")+ " ("+errorID+')', GenericMessage.ERROR);
 					request.setAttribute("msg", msg);
 					request.setAttribute("valid", "false");
 					return null;

@@ -238,7 +238,7 @@ public class ContentElementList implements IContentComponentsList {
 		int currentLabelLevel = 0;
 		while (elems.hasNext()) {
 			IContentVisualComponent comp = (IContentVisualComponent) elems.next();
-			if (comp.getLabelLevel(ctx) >= currentLabelLevel && !comp.isRepeat()) {
+			if (comp.getLabelLevel(ctx) > 0 && comp.getLabelLevel(ctx) >= currentLabelLevel && !comp.isRepeat()) {
 				if (comp.getLabelLevel(ctx) > currentLabelLevel || comp.getArea().equals(ComponentBean.DEFAULT_AREA)) {
 					res = comp.getTextLabel(ctx);
 					if (res == null) {
@@ -436,7 +436,7 @@ public class ContentElementList implements IContentComponentsList {
 		int maxLabelLevel = 0;
 		while (elems.hasNext() && maxLabelLevel < IContentVisualComponent.HIGH_LABEL_LEVEL) {
 			IContentVisualComponent comp = (IContentVisualComponent) elems.next();
-			if (comp.getLabelLevel(ctx) >= maxLabelLevel && !comp.isRepeat()) {
+			if (comp.getLabelLevel(ctx) > 0 && comp.getLabelLevel(ctx) >= maxLabelLevel && !comp.isRepeat()) {
 				if (comp.getLabelLevel(ctx) > maxLabelLevel || comp.getArea().equals(ComponentBean.DEFAULT_AREA)) {
 					res = comp.getTextTitle(ctx);
 					if (res == null) {
