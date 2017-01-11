@@ -2470,7 +2470,7 @@ public class Template implements Comparable<Template> {
 			}
 			File templateTgt = new File(URLHelper.mergePath(getWorkTemplateFolder(), getFolder(globalContext)));
 			if (templateTgt.exists()) {
-				File indexFile = new File(URLHelper.mergePath(templateTgt.getAbsolutePath(), getHTMLFile(null)));
+				/*File indexFile = new File(URLHelper.mergePath(templateTgt.getAbsolutePath(), getHTMLFile(null)));
 				if (!indexFile.exists() && !indexFileWaited) {
 					logger.info("index not found wait... ("+indexFile+") site:" + ctx.getGlobalContext().getContextKey() + " - tpl:" + getName()); // TODO:
 																																	// remove
@@ -2484,9 +2484,9 @@ public class Template implements Comparable<Template> {
 					} // wait 10 sec
 				}
 				if (!indexFile.exists()) {
-					logger.warning("template not found. site:" + ctx.getGlobalContext().getContextKey() + " - tpl:" + getName()+" - folder:"+templateTgt+ "index:"+indexFile);					
+					logger.warning("template not found. site:" + ctx.getGlobalContext().getContextKey() + " - tpl:" + getName()+" - folder:"+templateTgt+ " - index:"+indexFile);					
 					return false;
-				}
+				}*/
 				contextWithTemplateImported.add(globalContext.getContextKey());
 			}
 			boolean outExist = templateTgt.exists();
