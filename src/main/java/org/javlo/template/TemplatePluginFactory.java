@@ -31,7 +31,7 @@ public class TemplatePluginFactory {
 			fact.dir = new File(StaticConfig.getInstance(application).getTemplatePluginFolder());
 			fact.localDir = new File(application.getRealPath(PLUGIN_LOCAL_FOLDER));
 			if (!fact.dir.isDirectory()) {
-				logger.warning("template plugin folder not found : " + fact.dir);
+				logger.fine("template plugin folder not found : " + fact.dir);
 			}
 		}
 		return fact;
