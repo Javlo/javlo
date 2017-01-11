@@ -19,8 +19,6 @@ import org.javlo.context.ContentContext;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
 
-import ch.qos.logback.core.net.SyslogOutputStream;
-
 /**
  * @author pvanderm
  */
