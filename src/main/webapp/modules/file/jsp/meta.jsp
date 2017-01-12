@@ -112,7 +112,7 @@
 				</c:if>
 				<c:param name="editFile" value="${file.name}" />
 			</c:url>
-			<a class="btn btn-default btn-edit" href="${editFileURL}" title="${i18n.edit['global.modify']}"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></a>
+			<c:if test="${!metaReadOnly}"><a class="btn btn-default btn-edit" href="${editFileURL}" title="${i18n.edit['global.modify']}"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></a></c:if>
 			</c:if>
 			</div>
 		</div>		

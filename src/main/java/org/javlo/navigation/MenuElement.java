@@ -4040,18 +4040,18 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 			lang = ctx.getLanguage();
 		}
 
+		PageDescription desc = getPageDescriptionCached(ctx, lang);
+
+		if (!desc.isRealContentNull()) {
+			return desc.isRealContent();
+		}
+		
 		ContentContext contentAreaCtx = new ContentContext(ctx);
 
 		if (template == null || !template.isRealContentFromAnyArea()) {
 			contentAreaCtx.setArea(ComponentBean.DEFAULT_AREA);
 		} else {
 			contentAreaCtx.setArea(null);
-		}
-
-		PageDescription desc = getPageDescriptionCached(ctx, lang);
-
-		if (!desc.isRealContentNull()) {
-			return desc.isRealContent();
 		}
 
 		if (template == null || !template.isRealContentFromAnyArea()) {
@@ -4074,6 +4074,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 		}
 
 		if (isChildrenAssociation()) {
+			desc.realContent = true; // added: 12/01/2017
 			return true;
 		}
 
@@ -4097,6 +4098,23 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 			}
 		}
 		return false;
+	}
+	
+	public String getRealContentLanguage(ContentContext ctx) throws Exception {
+		if (isRealContent(ctx)) {
+			return ctx.getRequestContentLanguage();
+		}
+		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+		Collection<String> lgs = globalContext.getContentLanguages();
+		ContentContext lgContext = new ContentContext(ctx);
+		lgContext.setArea(null); // remove the area
+		for (String lg : lgs) {
+			lgContext.setRequestContentLanguage(lg);
+			if (isRealContent(lgContext)) {
+				return lg;
+			}
+		}
+		return null;
 	}
 
 	/*

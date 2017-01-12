@@ -27,6 +27,8 @@ public class UserInterfaceContext {
 
 	private boolean contributor = true;
 	
+	private boolean model = false;	
+	
 	private boolean navigation = true;
 	
 	private boolean mailing = false;
@@ -84,6 +86,7 @@ public class UserInterfaceContext {
 
 		instance.lightInterface = AdminUserSecurity.getInstance().haveRole(user, AdminUserSecurity.LIGHT_INTERFACE_ROLE);
 		instance.contributor = AdminUserSecurity.getInstance().haveRole(user, AdminUserSecurity.CONTRIBUTOR_ROLE);
+		instance.setModel(AdminUserSecurity.getInstance().haveRight(user, AdminUserSecurity.MODEL_ROLE)); 
 
 		return instance;
 	}
@@ -191,6 +194,14 @@ public class UserInterfaceContext {
 
 	public void setNavigation(boolean navigation) {
 		this.navigation = navigation;
+	}
+
+	public boolean isModel() {
+		return model;
+	}
+
+	public void setModel(boolean model) {
+		this.model = model;
 	}
 	
 }

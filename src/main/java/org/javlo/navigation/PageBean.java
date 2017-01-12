@@ -231,6 +231,24 @@ public class PageBean implements Serializable {
 			return false;
 		}
 	}
+	
+	public boolean isRealContentAnyLanguage() {
+		try {
+			return page.isRealContentAnyLanguage(ctx);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+	
+	public String getRealContentLanguage() {
+		try {
+			return page.getRealContentLanguage(ctx);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
 
 	public Map<String, String> getRoles() {
 		return new CollectionAsMap<String>(page.getUserRoles());

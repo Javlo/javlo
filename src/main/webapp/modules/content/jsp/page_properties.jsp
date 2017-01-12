@@ -128,7 +128,7 @@
 
 <div class="line">
 	<label>Real Content?</label>
-	<span>${page.realContent} <c:if test="${page.realContent}">(${page.notCacheableComponent})</c:if></span>
+	<span>${page.realContent} <c:if test="${page.realContent}">(${page.realContentComponent})</c:if><c:if test="${!page.realContent && not empty page.realContentLanguage}"> [content found : ${page.realContentLanguage}]</c:if></span>
 </div>
 
 
@@ -145,12 +145,12 @@
 	<input type="checkbox" id="page_active" name="active" ${page.info.pageActive?'checked="checked"':''} value="true" />
 	<label class="suffix" for="page_active">${i18n.edit['item.active']}</label>
 </div>
-<c:if test="${!info.page.root}">
+</c:if>
+<c:if test="${userInterface.model && !info.page.root}">
 <div class="form-group">
 	<input type="checkbox" id="page_model" name="model" ${page.model?'checked="checked"':''} value="true" />
 	<label class="suffix" for="page_model">Model</label>
 </div></c:if>
-</c:if>
 
 <c:if test="${not globalContext.mailingPlatform}">
 <div class="form-group">

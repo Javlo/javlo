@@ -333,8 +333,8 @@ public class ContentContext {
 				if (!ctx.isPreview() || !editContext.isEditPreview()) {
 					try {
 						MenuElement page = ctx.getCurrentPage(true);
-						if (page != null) {
-							while (page != null && !page.isRealContent(ctx) && page.getChildMenuElements().size() > 0) {							 	
+						if (page != null) {	
+							while (page != null && !page.isRealContentAnyLanguage(ctx) && page.getChildMenuElements().size() > 0) {
 								Iterator<MenuElement> children = page.getChildMenuElements().iterator();
 								page = children.next();
 								while (page != null && !page.isActive(ctx) && children.hasNext()) {
@@ -342,10 +342,10 @@ public class ContentContext {
 								}
 							}
 							if (page != null) {
-								if (page.isRealContent(ctx)) {
+								if (page.isRealContentAnyLanguage(ctx)) {
 									ctx.setCurrentPageCached(page);
 									ctx.setPath(page.getPath());
-								}
+								} 
 							} else {
 								page = ctx.getCurrentPage(true);
 							}

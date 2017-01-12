@@ -26,6 +26,8 @@ public class AdminUserSecurity implements Serializable {
 	public static String FULL_CONTROL_ROLE = "admin";
 
 	public static String CONTENT_ROLE = "content";
+	
+	public static String MODEL_ROLE = "model";
 
 	public static String CONTRIBUTOR_ROLE = "contributor";
 

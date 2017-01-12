@@ -231,7 +231,7 @@ public class GlobalImage extends Image implements IImageFilter {
 	}
 	
 	protected boolean isEditImage(ContentContext ctx) {
-		return StringHelper.isTrue(getConfig(ctx).getProperty("image.edit", null), true);
+		return StringHelper.isTrue(getConfig(ctx).getProperty("image.edit", null), true) && canUpload(ctx);
 	}
 
 	@Override
@@ -372,7 +372,7 @@ public class GlobalImage extends Image implements IImageFilter {
 			finalCode.append("<div class=\"row form-group\"><div class=\"col-sm-3\"><label for=\"img_link_" + getId() + "\">");
 			finalCode.append(getImageLinkTitle(ctx) + " : </label></div>");
 			String linkToResources = "";
-			if (!ctx.getGlobalContext().isMailingPlatform()) {
+			if (!ctx.getGlobalContext().isMailingPlatform() && canUpload(ctx)) {
 				linkToResources = "<div class=\"col-sm-2\"><a class=\"browse-link btn btn-default btn-xs\" href=\"" + URLHelper.addParam(staticLinkURL, "select", "back") + "\">" + i18nAccess.getText("content.goto-static") + "</a></div>";
 			}
 			String link = getLink();

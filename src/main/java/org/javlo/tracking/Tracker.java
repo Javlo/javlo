@@ -523,7 +523,6 @@ public class Tracker {
 		Calendar to = Calendar.getInstance();
 		to.setTime(statCtx.getTo());
 		to = TimeHelper.convertRemoveAfterMonth(to);
-		
 		Calendar now = Calendar.getInstance();
 		while (from.before(to)) {
 			Calendar localTo = Calendar.getInstance();
@@ -539,11 +538,8 @@ public class Tracker {
 			} else {				
 				statCtx.setFrom(from.getTime());
 				statCtx.setTo(localTo.getTime());
-				System.out.println("***** Tracker.getSession2ClickByMonth : READ : "+StringHelper.renderDate(statCtx.getFrom())); //TODO: remove debug trace
 				Map<Integer, Integer> data = getSession2ClickByMoment(statCtx, Calendar.MONTH);
-				System.out.println("***** Tracker.getSession2ClickByMonth : #data : "+data.size()); //TODO: remove debug trace
-				if (data.size() == 1) {				
-					
+				if (data.size() == 1) {
 					int click = data.entrySet().iterator().next().getValue();
 					if (cache != null && localTo.before(now)) {
 						cache.setProperty(key, ""+click);
@@ -619,13 +615,9 @@ public class Tracker {
 		Set<String> sessionIdFound = new HashSet<String>();
 		Set<String> secondSessionIdFound = new HashSet<String>();
 		Set<String> viewSessionFound = new HashSet<String>();
-
-		String DEBUGPath = "";
-
 		for (int i = 1; i < tracks.length - 1; i++) {
 			Track track = tracks[i];
 			if (track.getPath().contains("/view")) {
-				DEBUGPath = track.getPath();
 				viewSessionFound.add(track.getSessionId());
 			}
 			if (!sessionIdFound.contains(track.getSessionId())) {

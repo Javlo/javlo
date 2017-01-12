@@ -635,7 +635,7 @@ public class Edit extends AbstractModuleAction {
 			if (componentBean != null) {
 				Collection<String> areas = ctx.getCurrentTemplate().getAreas();
 				if (!areas.contains(componentBean.getArea())) {
-					if (badArea != null && componentBean.getArea() != null && !badArea.contains(componentBean.getArea())) {
+					if (componentBean.getArea() != null && !badArea.contains(componentBean.getArea())) {
 						badArea = badArea + sep + componentBean.getArea();
 						sep = ",";
 					}

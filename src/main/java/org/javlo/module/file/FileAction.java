@@ -91,6 +91,8 @@ public class FileAction extends AbstractModuleAction {
 		ctx.getRequest().setAttribute("readRoles", globalContext.getUserRoles());
 		ctx.getRequest().setAttribute("pathPrefix", getROOTPath(ctx));
 		ctx.getRequest().setAttribute("sort", fileModuleContext.getSort());
+		ctx.getRequest().setAttribute("canUpload", AdminUserSecurity.isCurrentUserCanUpload(ctx));
+		
 		
 		/*File importFolder = new  File(URLHelper.mergePath(globalContext.getStaticFolder(), ctx.getGlobalContext().getStaticConfig().getImportResourceFolder(), DataAction.createImportFolder(ctx.getCurrentPage())));
 		if (importFolder.exists()) {
@@ -279,6 +281,9 @@ public class FileAction extends AbstractModuleAction {
 		if (rs.getParameter("image_path", null) != null) {
 			folder = new File(globalContext.getDataFolder(), rs.getParameter("image_path", null));
 		}
+		if (!canModifyFile(ctx, folder))  {
+			return "securtiy error.";
+		}
 		boolean found = false;
 		if (folder.exists()) {
 			for (File file : folder.listFiles((FileFilter) FileFileFilter.FILE)) {
@@ -316,6 +321,9 @@ public class FileAction extends AbstractModuleAction {
 		File folder = getFolder(ctx);
 		if (!ResourceHelper.canModifFolder(ctx, getFolder(ctx).getAbsolutePath())) {
 			return "security error : you have not suffisant right to modify this file.";
+		}
+		if (!canModifyFile(ctx, folder))  {
+			return "securtiy error.";
 		}
 		if (folder.exists()) {
 			for (File file : folder.listFiles()) {
@@ -467,6 +475,10 @@ public class FileAction extends AbstractModuleAction {
 
 	public static String performUpload(ContentContext ctx, RequestService rs) throws FileNotFoundException, InstantiationException, IllegalAccessException, IOException, ModuleException {
 		String sourceFolder = getContextROOTFolder(ctx);
+		
+		if (!canModifyFile(ctx, null))  {
+			return "securtiy error.";
+		}
 
 		FileModuleContext fileModuleContext = FileModuleContext.getInstance(ctx.getRequest());
 		String folderName = StringHelper.createFileName(rs.getParameter("folder", "").trim());
@@ -515,6 +527,9 @@ public class FileAction extends AbstractModuleAction {
 			return "bad request structure : need file parameter.";
 		} else {
 			File file = new File(URLHelper.mergePath(globalContext.getStaticFolder(), filePath));
+			if (!canModifyFile(ctx, file))  {
+				return "securtiy error.";
+			}
 			ResourceHelper.deleteResource(ctx, file);
 			/*if (file.isFile()) {				
 				file.delete();
@@ -550,7 +565,7 @@ public class FileAction extends AbstractModuleAction {
 		return null;
 	}
 
-	public static String performSynchro(ContentContext ctx) throws Exception {
+	public static String performSynchro(ContentContext ctx) throws Exception {		
 		SynchroHelper.performSynchro(ctx);
 		return null;
 	}
@@ -579,14 +594,20 @@ public class FileAction extends AbstractModuleAction {
 
 	public static String performCreatefilestructure(RequestService rs, ContentContext ctx, GlobalContext globalContext, MessageRepository messageRepository, I18nAccess i18nAccess) throws IOException {
 		File file = new File(URLHelper.mergePath(globalContext.getStaticFolder(), "file-structure", StringHelper.createFileName("structure-" + StringHelper.renderSortableTime(new Date()) + ".html")));
+		if (!canModifyFile(ctx, file))  {
+			return "securtiy error.";
+		}
 		file.getParentFile().mkdirs();
 		file.createNewFile();
 		ResourceHelper.writeStringToFile(file, ResourceHelper.fileStructureToHtml(new File(globalContext.getStaticConfig().getAllDataFolder())));
 		return null;
 	}
 	
-	public static String performModify(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws FileNotFoundException, InstantiationException, IllegalAccessException, IOException, ModuleException {
+	public static String performModify(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws FileNotFoundException, InstantiationException, IllegalAccessException, IOException, ModuleException {		
 		File file = new File(URLHelper.mergePath(getFolder(ctx).getAbsolutePath(), rs.getParameter("file", "-- param file undefined --")));
+		if (!canModifyFile(ctx, file))  {
+			return "securtiy error.";
+		}
 		String content = rs.getParameter("content", null);
 		if (content == null) {
 			return "File content not found.";
@@ -599,11 +620,19 @@ public class FileAction extends AbstractModuleAction {
 		return null;
 	}
 	
+	private static boolean canModifyFile(ContentContext ctx, File file) {
+		return AdminUserSecurity.getInstance().haveRight(ctx.getCurrentEditUser(), AdminUserSecurity.CONTENT_ROLE);
+	}
+	
 	public static String performEditimage(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
 		if (rs.getParameter("cancel", null) != null) {
 			return null;
 		}
+		
 		File file = new File(URLHelper.mergePath(getFolder(ctx).getAbsolutePath(), rs.getParameter("file", "-- param file undefined --")));
+		if (!canModifyFile(ctx, file))  {
+			return "securtiy error.";
+		}
 		if (!file.exists() || !file.isFile()) {			
 			return "file not found : " + file;
 		}		
