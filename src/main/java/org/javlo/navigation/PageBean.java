@@ -429,6 +429,10 @@ public class PageBean implements Serializable {
 	public boolean isChildrenAssociation() {
 		return page.isChildrenAssociation();
 	}
+	
+	public boolean isChildrenOfAssociation() {
+		return page.isChildrenOfAssociation();
+	}
 
 	public boolean isVisibleChildren() throws Exception {
 		for (MenuElement child : page.getChildMenuElements()) {

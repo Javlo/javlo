@@ -146,7 +146,7 @@
 	<label class="suffix" for="page_active">${i18n.edit['item.active']}</label>
 </div>
 </c:if>
-<c:if test="${userInterface.model && !info.page.root}">
+<c:if test="${userInterface.model && !info.page.root && !page.childrenOfAssociation}">
 <div class="form-group">
 	<input type="checkbox" id="page_model" name="model" ${page.model?'checked="checked"':''} value="true" />
 	<label class="suffix" for="page_model">Model</label>
