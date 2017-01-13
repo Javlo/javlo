@@ -28,6 +28,7 @@ import java.util.Set;
 
 import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang3.StringUtils;
+import org.javlo.actions.IEventRegistration;
 import org.javlo.bean.Link;
 import org.javlo.cache.ICache;
 import org.javlo.cache.MapCache;
@@ -5094,6 +5095,19 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 	public void setUrlNumber(int urlNumber) {
 		this.urlNumber = urlNumber;
 	}
+	
+	private IEventRegistration getEventRegistration(ContentContext ctx) throws Exception {
+		ContentContext noAreaCtx = ctx.getContextWithArea(null);
+		ContentElementList content = getContent(noAreaCtx);
+		while (content.hasNext(noAreaCtx)) {
+			IContentVisualComponent comp = content.next(noAreaCtx);
+			if (comp instanceof IEventRegistration) {
+				return (IEventRegistration)comp;
+			}
+		}
+		return null;
+	}
+	
 
 	/**
 	 * get event if menu element contains event info.
@@ -5113,15 +5127,17 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 		} else {
 			ContentContext noAreaCtx = ctx.getContextWithArea(null);
 			ContentElementList content = getContent(noAreaCtx);
+			IEventRegistration eventRegistration = getEventRegistration(noAreaCtx);
 			while (content.hasNext(noAreaCtx)) {
 				IContentVisualComponent comp = content.next(noAreaCtx);
 				if (comp instanceof EventDefinitionComponent) {
 					EventDefinitionComponent eventComp = (EventDefinitionComponent) comp;
-					Event event = new Event(ctx, eventComp.getId(), eventComp.getStartDate(), eventComp.getEndDate(), getTitle(ctx), getDescription(ctx), getImage(noAreaCtx));
+					Event event = new Event(ctx, getName(), eventComp.getId(), eventComp.getStartDate(), eventComp.getEndDate(), getTitle(ctx), getDescription(ctx), getImage(noAreaCtx));
 					event.setCategory(getCategory(ctx));
 					event.setLocation(getLocation(ctx));
 					event.setUrl(new URL(URLHelper.createURL(ctx.getContextForAbsoluteURL(), this)));
 					event.setUser(getCreator());
+					event.setEventRegistration(eventRegistration);
 					desc.event = event;
 					return desc.event;
 				}
@@ -5150,15 +5166,17 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 			ContentContext noAreaCtx = ctx.getContextWithArea(null);
 			ContentElementList content = getContent(noAreaCtx);
 			List<Event> events = new LinkedList<Event>();
+			IEventRegistration eventRegistration = getEventRegistration(noAreaCtx);
 			while (content.hasNext(noAreaCtx)) {
 				IContentVisualComponent comp = content.next(noAreaCtx);
 				if (comp instanceof EventDefinitionComponent) {
 					EventDefinitionComponent eventComp = (EventDefinitionComponent) comp;
-					Event event = new Event(ctx, eventComp.getId(), eventComp.getStartDate(), eventComp.getEndDate(), getTitle(ctx), getDescription(ctx), getImage(noAreaCtx));
+					Event event = new Event(ctx, getName(), eventComp.getId(), eventComp.getStartDate(), eventComp.getEndDate(), getTitle(ctx), getDescription(ctx), getImage(noAreaCtx));
 					event.setCategory(getCategory(ctx));
 					event.setLocation(getLocation(ctx));
 					event.setUrl(new URL(URLHelper.createURL(ctx.getContextForAbsoluteURL(), this)));
 					event.setUser(getCreator());
+					event.setEventRegistration(eventRegistration);
 					events.add(event);
 				}
 			}

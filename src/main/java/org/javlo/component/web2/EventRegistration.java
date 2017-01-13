@@ -11,6 +11,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.javlo.actions.IAction;
+import org.javlo.actions.IEventRegistration;
 import org.javlo.component.properties.AbstractPropertiesComponent;
 import org.javlo.context.ContentContext;
 import org.javlo.helper.ComponentHelper;

@@ -2,18 +2,18 @@ package org.javlo.service.event;
 
 import java.io.Serializable;
 import java.net.URL;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+import org.javlo.actions.IEventRegistration;
 import org.javlo.component.image.IImageTitle;
-import org.javlo.component.web2.EventRegistration;
 import org.javlo.context.ContentContext;
-import org.javlo.service.ContentService;
-import org.javlo.user.User;
+import org.javlo.user.IUserInfo;
 
 public class Event implements Serializable {
-	
-	public static final Event NO_EVENT = new Event(null, null,null,null,"no event",null, null);
+
+	public static final Event NO_EVENT = new Event(null, null, null, null, null, "no event", null, null);
 
 	private static final long serialVersionUID = 1L;
 
@@ -30,14 +30,17 @@ public class Event implements Serializable {
 	private int sequence;
 	private String user;
 	private String participantsFileURL = null;
+	private IEventRegistration eventRegistration;
+	private String pageName;
 
-	public Event(ContentContext ctx, String id, Date start, Date end, String summary, String description, IImageTitle image) {		
+	public Event(ContentContext ctx, String pageName, String id, Date start, Date end, String summary, String description, IImageTitle image) {
 		this.id = id;
 		this.start = start;
 		this.end = end;
 		this.summary = summary;
-		this.description = description;		
+		this.description = description;
 		this.image = image;
+		this.pageName = pageName;
 	}
 
 	public Date getStart() {
@@ -103,7 +106,7 @@ public class Event implements Serializable {
 	public void setSequence(int sequence) {
 		this.sequence = sequence;
 	}
-	
+
 	public String getProdID() {
 		return "-//ImmanenceSPRL//NONSGML Javlo//EN";
 	}
@@ -131,10 +134,12 @@ public class Event implements Serializable {
 	public void setUser(String user) {
 		this.user = user;
 	}
-	
-	public List<User> getParticipants(ContentContext ctx) throws Exception {		
-		ContentService content = ContentService.getInstance(ctx.getRequest());
-		EventRegistration comp = (EventRegistration)content.getComponent(ctx, getId());
+
+	public List<IUserInfo> getParticipants(ContentContext ctx) throws Exception {
+		IEventRegistration comp = getEventRegistration();
+		if (comp == null) {
+			return Collections.EMPTY_LIST;
+		}
 		participantsFileURL = comp.getUserLink(ctx);
 		return comp.getParticipants(ctx);
 	}
@@ -153,6 +158,22 @@ public class Event implements Serializable {
 
 	public void setParticipantsFileURL(String participantsFileURL) {
 		this.participantsFileURL = participantsFileURL;
+	}
+
+	public IEventRegistration getEventRegistration() {
+		return eventRegistration;
+	}
+
+	public void setEventRegistration(IEventRegistration eventRegistration) {
+		this.eventRegistration = eventRegistration;
+	}
+
+	public String getPageName() {
+		return pageName;
+	}
+
+	public void setPageName(String pageName) {
+		this.pageName = pageName;
 	}
 
 }

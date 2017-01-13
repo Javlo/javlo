@@ -12,7 +12,7 @@ import org.javlo.module.core.ModulesContext;
 import org.javlo.service.event.Event;
 import org.javlo.service.event.EventFactory;
 import org.javlo.service.event.IEventsProvider;
-import org.javlo.user.User;
+import org.javlo.user.IUserInfo;
 
 public class EventAction extends AbstractModuleAction {
 	
@@ -38,7 +38,7 @@ public class EventAction extends AbstractModuleAction {
 		public String getEnd() throws FileNotFoundException, IOException {
 			return StringHelper.renderShortDate(ctx, event.getEnd());
 		}
-		public List<User> getParticipants() throws Exception {
+		public List<IUserInfo> getParticipants() throws Exception {
 			return event.getParticipants(ctx);
 		}
 		public String getParticipantsFileURL() {
@@ -60,7 +60,7 @@ public class EventAction extends AbstractModuleAction {
 		}
 		public String getUrl() {
 			return URLHelper.addParam(event.getUrl().toString(), "module", "content");
-		}
+		}		
 	}
 
 	public EventAction() {

@@ -29,10 +29,12 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.lang3.StringUtils;
 import org.javlo.actions.IAction;
+import org.javlo.actions.IEventRegistration;
 import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
+import org.javlo.helper.BeanHelper;
 import org.javlo.helper.LangHelper;
 import org.javlo.helper.NetHelper;
 import org.javlo.helper.ResourceHelper;
@@ -49,13 +51,16 @@ import org.javlo.service.CaptchaService;
 import org.javlo.service.ContentService;
 import org.javlo.service.RequestService;
 import org.javlo.service.event.Event;
+import org.javlo.user.IUserFactory;
+import org.javlo.user.IUserInfo;
+import org.javlo.user.UserFactory;
 import org.javlo.utils.CSVFactory;
 import org.javlo.utils.CollectionAsMap;
 import org.javlo.utils.JSONMap;
 import org.javlo.utils.TimeMap;
 import org.javlo.ztatic.StaticInfo;
 
-public class SmartGenericForm extends AbstractVisualComponent implements IAction {
+public class SmartGenericForm extends AbstractVisualComponent implements IAction, IEventRegistration {
 
 	private static final String RECAPTCHASECRETKEY = "recaptchasecretkey";
 
@@ -65,7 +70,9 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 
 	private Integer countCache = null;
 
-	private Map<String, String> cacheFrom = new TimeMap<String, String>(60 * 60); // 1 hours validity
+	private Map<String, String> cacheFrom = new TimeMap<String, String>(60 * 60); // 1
+																					// hours
+																					// validity
 
 	private static Logger logger = Logger.getLogger(SmartGenericForm.class.getName());
 
@@ -135,9 +142,18 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		}
 		return countCache;
 	}
-	
+
+	public List<Map<String, String>> getData(ContentContext ctx) throws IOException {
+		File file = getFile(ctx);
+		if (!file.exists()) {
+			return Collections.EMPTY_LIST;
+		} else {			
+			return CSVFactory.loadContentAsMap(file);
+		}
+	}
+
 	@Override
-	public void setValue(String inContent) {	
+	public void setValue(String inContent) {
 		super.setValue(inContent);
 		bundle = null;
 	}
@@ -421,7 +437,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 	protected String getNewFieldKey() {
 		return "_new_field_" + getId();
 	}
-	
+
 	protected boolean isWarningEventSite(ContentContext ctx) throws IOException {
 		Properties localConfig = getLocalConfig(false);
 		String eventLimistStr = localConfig.getProperty("event.alert-limit");
@@ -460,7 +476,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		getLocalConfig(false).setProperty("message.reset", rs.getParameter(getInputName("message-reset"), ""));
 
 		getLocalConfig(false).setProperty("event.limit", rs.getParameter(getInputName("event-limit"), ""));
-		getLocalConfig(false).setProperty("event.alert-limit", rs.getParameter(getInputName("event.alert-limit"), ""));		
+		getLocalConfig(false).setProperty("event.alert-limit", rs.getParameter(getInputName("event.alert-limit"), ""));
 		getLocalConfig(false).setProperty("mail.confirm.subject", rs.getParameter(getInputName("mail-confirm-subject"), ""));
 		getLocalConfig(false).setProperty("mail.confirm.link", rs.getParameter(getInputName("mail-confirm-link"), ""));
 		getLocalConfig(false).setProperty("mail.closed.subject", rs.getParameter(getInputName("mail-closed-subject"), ""));
@@ -550,7 +566,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 	protected boolean isStorage() {
 		return true;
 	}
-	
+
 	protected File getFile(ContentContext ctx) throws IOException {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		String fileName = "df-" + getId() + ".csv";
@@ -566,7 +582,6 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 	}
 
 	protected void storeResult(ContentContext ctx, Map<String, String> data) throws IOException {
-
 		synchronized (LOCK) {
 			File file = getFile(ctx);
 			Collection<String> titles = CSVFactory.loadTitle(file);
@@ -751,12 +766,12 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 			} else if (!withXHTML && (finalValue.toLowerCase().contains("</a>") || finalValue.toLowerCase().contains("</div>"))) {
 				fakeFilled = true;
 			}
-			
+
 			if (!field.isFilledWidth(finalValue) && StringHelper.containsUppercase(key.substring(0, 1))) {
 				errorFields.add(key);
-				errorFieldList = errorFieldList+errorFieldSep+field.getLabel();
-				errorFieldSep=",";
-				GenericMessage msg = new GenericMessage(comp.getLocalConfig(false).getProperty("error.required", "please could you fill all required fields.")+errorFieldList+')', GenericMessage.ERROR);
+				errorFieldList = errorFieldList + errorFieldSep + field.getLabel();
+				errorFieldSep = ",";
+				GenericMessage msg = new GenericMessage(comp.getLocalConfig(false).getProperty("error.required", "please could you fill all required fields.") + errorFieldList + ')', GenericMessage.ERROR);
 				request.setAttribute("msg", msg);
 			}
 
@@ -808,7 +823,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 				String emailTo = comp.getLocalConfig(false).getProperty("mail.to", globalContext.getAdministratorEmail());
 				String emailCC = comp.getLocalConfig(false).getProperty("mail.cc", null);
 				String emailBCC = comp.getLocalConfig(false).getProperty("mail.bcc", null);
-				
+
 				MailService mailService = null;
 
 				try {
@@ -838,12 +853,12 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 
 					mailService.sendMail(null, fromEmail, toEmail, ccList, bccList, subject, mailContent, comp.isHTMLMail(), null, globalContext.getDKIMBean());
 					if (comp.isWarningEventSite(ctx)) {
-						subject = globalContext.getContextKey()+" - WARNING Event almost full : "+ctx.getCurrentPage().getTitle(ctx);
+						subject = globalContext.getContextKey() + " - WARNING Event almost full : " + ctx.getCurrentPage().getTitle(ctx);
 						Map data = new HashMap();
 						String eventLimistStr = comp.getLocalConfig(false).getProperty("event.alert-limit");
 						int countSubscription = comp.getCountSubscription(ctx);
 						data.put("event", ctx.getCurrentPage().getTitle(ctx));
-						data.put("subscription", countSubscription);						
+						data.put("subscription", countSubscription);
 						data.put("limit", comp.getLocalConfig(false).getProperty("event.limit", ""));
 						data.put("alert limit", eventLimistStr);
 						ContentContext absCtx = ctx.getContextForAbsoluteURL();
@@ -890,17 +905,17 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 							}
 						}
 					}
-				} catch (Exception e) {					
+				} catch (Exception e) {
 					if (mailService != null && mailService.getMailConfig() != null) {
-						System.out.println("SMTP host  = "+mailService.getMailConfig().getSMTPHost());
-						System.out.println("SMTP port  = "+mailService.getMailConfig().getSMTPPort());
-						System.out.println("SMTP login = "+mailService.getMailConfig().getLogin());
-						System.out.println("SMTP pwd?  = "+!StringHelper.isEmpty(mailService.getMailConfig().getPassword()));
+						System.out.println("SMTP host  = " + mailService.getMailConfig().getSMTPHost());
+						System.out.println("SMTP port  = " + mailService.getMailConfig().getSMTPPort());
+						System.out.println("SMTP login = " + mailService.getMailConfig().getLogin());
+						System.out.println("SMTP pwd?  = " + !StringHelper.isEmpty(mailService.getMailConfig().getPassword()));
 					}
-					String errorID = "E"+StringHelper.getRandomId();
-					logger.severe("error id:"+errorID+" = "+e.getMessage());					
+					String errorID = "E" + StringHelper.getRandomId();
+					logger.severe("error id:" + errorID + " = " + e.getMessage());
 					e.printStackTrace();
-					GenericMessage msg = new GenericMessage(comp.getLocalConfig(false).getProperty("message.error", "technical error.")+ " ("+errorID+')', GenericMessage.ERROR);
+					GenericMessage msg = new GenericMessage(comp.getLocalConfig(false).getProperty("message.error", "technical error.") + " (" + errorID + ')', GenericMessage.ERROR);
 					request.setAttribute("msg", msg);
 					request.setAttribute("valid", "false");
 					return null;
@@ -937,7 +952,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 	public boolean isEmpty(ContentContext ctx) {
 		return false;
 	}
-	
+
 	@Override
 	public boolean isContentCachable(ContentContext ctx) {
 		return false;
@@ -947,17 +962,53 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 	public boolean isContentCachableByQuery(ContentContext ctx) {
 		return false;
 	}
-	
+
 	@Override
-	public boolean initContent(ContentContext ctx) throws Exception {		
+	public boolean initContent(ContentContext ctx) throws Exception {
 		boolean outB = super.initContent(ctx);
 		getLocalConfig(false).setProperty("title", getType());
 		store(ctx);
 		return outB;
 	}
-	
+
 	@Override
 	public int getComplexityLevel(ContentContext ctx) {
 		return getConfig(ctx).getComplexity(COMPLEXITY_STANDARD);
+	}
+
+	@Override
+	public List<IUserInfo> getParticipants(ContentContext ctx) throws Exception {
+		List<Map<String,String>> data = getData(ctx);
+		if (data.size()==0) {
+			return Collections.EMPTY_LIST;
+		} else {
+			IUserFactory userFactory = UserFactory.createUserFactory(ctx.getGlobalContext(),ctx.getRequest().getSession());			
+			List<IUserInfo> users = new LinkedList<IUserInfo>();
+			for (Map<String,String> line : data) {
+				IUserInfo userInfo = userFactory.createUserInfos();
+				for (Object key : BeanHelper.beanSetList(userInfo)) {					 
+					String value = line.get(key.toString());
+					if (value == null) {
+						value = line.get(StringUtils.capitalize(key.toString()));
+					}
+					if (value != null) {
+						BeanHelper.setProperty(userInfo, key.toString(), value);
+					}
+				}
+				if (StringHelper.isEmpty(userInfo.getLogin())) {
+					userInfo.setLogin(userInfo.getEmail());
+					if (StringHelper.isEmpty(userInfo.getLogin())) {
+						userInfo.setLogin("???");
+					}
+				}
+				users.add(userInfo);			
+			}
+			return users;
+		}		
+	}
+	
+	@Override
+	public String getUserLink(ContentContext ctx) throws Exception {	
+		return null;
 	}
 }

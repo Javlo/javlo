@@ -129,6 +129,23 @@ public class BeanHelper {
 		}
 		return res;
 	}
+	
+	public static List<String> beanSetList(Object bean) throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
+		List<String> outKeys = new LinkedList<String>();		
+		Method[] methods = bean.getClass().getMethods();
+		for (Method method : methods) {
+			if (method.getName().startsWith("set")) {
+				if (method.getParameterTypes().length > 0) {					
+					if (method.getParameterTypes().length == 1 && method.getParameterTypes()[0].equals(String.class)) {
+						String name = method.getName().substring(3);						
+						name = StringHelper.firstLetterLower(name);					
+						outKeys.add(name);
+					}
+				}
+			}
+		}
+		return outKeys;
+	}
 
 	public static String beanToString(Object bean) {
 		StringBuffer outStr = new StringBuffer();
