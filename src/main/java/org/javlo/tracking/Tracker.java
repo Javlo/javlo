@@ -250,13 +250,6 @@ public class Tracker {
 	 * @throws DAOException
 	 */
 	private synchronized String[][] getPagesTracking(Date from, Date to, String parentPath) {
-
-		String key = "" + from.getTime() + " " + to.getTime();
-		// String[][] content = (String[][]) cache.get(key);
-		String[][] content = null;
-		if (content != null) {
-			return content;
-		}
 		Track[] tracks = getTracks(from, to);
 		Map<String, Integer> pages = new TreeMap<String, Integer>();
 		for (int i = 0; i < tracks.length; i++) {
@@ -384,12 +377,7 @@ public class Tracker {
 		Collection<Track> collection;
 		// synchronized (cache) {
 		String key = "resource_" + from.getTime() + " " + to.getTime();
-		logger.finest("create Tracker info : " + key);
-		Collection<Track> content = null;
-		// Collection<Track> content = (Collection<Track>) cache.get(key);
-		if (content != null) {
-			return content;
-		}
+		logger.finest("create Tracker info : " + key);		
 		collection = new LinkedList<Track>();
 		Track[] tracks = getResourceTracks(from, to);
 		for (Track track : tracks) {

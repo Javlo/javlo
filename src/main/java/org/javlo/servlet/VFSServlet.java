@@ -57,33 +57,31 @@ public class VFSServlet extends HttpServlet {
 			if (pathInfoTab.length == 2) {
 				String zipFileName = pathInfoTab[0] + ".zip";
 				pathInfo = pathInfoTab[1];
-				if (zipFileName == null) {
-					response.sendError(HttpServletResponse.SC_NOT_FOUND, "no file defined param : " + PARAM_NAME);
-				} else {
-					ContentContext ctx = ContentContext.getContentContext(request, response);
-					GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-					StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession().getServletContext());
-					String dataFolder = globalContext.getDataFolder();
-					File zipFile = new File(URLHelper.mergePath(dataFolder, zipFileName));
-					if (!zipFile.exists()) {
-						response.sendError(HttpServletResponse.SC_NOT_FOUND, "file not found : " + zipFileName);
-					} else {
-						if (pathInfo.startsWith(staticConfig.getShareDataFolderKey())) {
-							pathInfo = pathInfo.substring(staticConfig.getShareDataFolderKey().length() + 1);
-							dataFolder = globalContext.getSharedDataFolder(request.getSession());
-						}
-						String resourceURI = pathInfo;
-						resourceURI = resourceURI.replace('\\', '/');
-						logger.info("read : " + resourceURI + " in : " + zipFileName);
-						FileSystemManager fsManager = VFS.getManager();
-						FileObject file = fsManager.resolveFile(StringHelper.getFileExtension(zipFileName) + ":" + zipFile.getAbsolutePath());
-						file = file.resolveFile('/' + resourceURI);
-						in = file.getContent().getInputStream();
-						out = response.getOutputStream();
 
-						response.setContentType(ResourceHelper.getFileExtensionToMineType(StringHelper.getFileExtension(resourceURI)));
-						ResourceHelper.writeStreamToStream(in, out);
+				ContentContext ctx = ContentContext.getContentContext(request, response);
+				GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+				StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession().getServletContext());
+				String dataFolder = globalContext.getDataFolder();
+				File zipFile = new File(URLHelper.mergePath(dataFolder, zipFileName));
+				if (!zipFile.exists()) {
+					response.sendError(HttpServletResponse.SC_NOT_FOUND, "file not found : " + zipFileName);
+				} else {
+					if (pathInfo.startsWith(staticConfig.getShareDataFolderKey())) {
+						pathInfo = pathInfo.substring(staticConfig.getShareDataFolderKey().length() + 1);
+						dataFolder = globalContext.getSharedDataFolder(request.getSession());
 					}
+					String resourceURI = pathInfo;
+					resourceURI = resourceURI.replace('\\', '/');
+					logger.info("read : " + resourceURI + " in : " + zipFileName);
+					FileSystemManager fsManager = VFS.getManager();
+					FileObject file = fsManager.resolveFile(StringHelper.getFileExtension(zipFileName) + ":" + zipFile.getAbsolutePath());
+					file = file.resolveFile('/' + resourceURI);
+					in = file.getContent().getInputStream();
+					out = response.getOutputStream();
+
+					response.setContentType(ResourceHelper.getFileExtensionToMineType(StringHelper.getFileExtension(resourceURI)));
+					ResourceHelper.writeStreamToStream(in, out);
+
 				}
 			} else {
 				response.sendError(HttpServletResponse.SC_NOT_FOUND, "no or more than 1 '.zip' found in path : " + pathInfo);

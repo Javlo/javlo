@@ -2391,6 +2391,10 @@ public class Template implements Comparable<Template> {
 	public boolean isMailing() {
 		return properties.getBoolean("mailing", getParent().isMailing());
 	}
+	
+	public boolean isForStatic() {
+		return properties.getBoolean("static", false);
+	}
 
 	public boolean isNavigationArea(String area) {
 		if (area == null) {

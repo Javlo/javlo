@@ -560,7 +560,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 									String lg = defaultLgs.next();
 									newCtx.setRequestContentLanguage(lg);
 								}
-							}
+							}						
 							if (!content.contentExistForContext(newCtx)) {
 								logger.fine("content not found in " + ctx.getPath() + " lg:" + ctx.getRequestContentLanguage());
 								// ctx.setSpecialContentRenderer("/jsp/view/content_not_found.jsp");
@@ -570,7 +570,8 @@ public class AccessServlet extends HttpServlet implements IVersion {
 							}
 						}
 					}
-				}
+					}
+				
 
 				if (logger.isLoggable(Level.FINE)) {
 					logger.fine(requestLabel + " : content integrity " + df.format((double) (System.currentTimeMillis() - startTime) / (double) 1000) + " sec.");

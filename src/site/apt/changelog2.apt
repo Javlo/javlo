@@ -822,5 +822,7 @@ hange log
   
   * 2/ meta color component / page association work with empty page / unescape text title of heading (for url factory) / duplicate article + template display info / no ticket without title and better email notification. / image internal links
   
-  * 3/ create cookie manager before check url / title in default aria have proiority / auto redeploy template if index.html not found / correction real content any language detection
+  * 3/ create cookie manager before check url / title in default aria have proiority / auto redeploy template if index.html not found / correction real content any language detection / static parameter in template for create static site
+  
+  * 4/
  1

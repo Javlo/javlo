@@ -319,22 +319,19 @@ public class TemplateAction extends AbstractModuleAction {
 			return "bad request structure : need 'list' as parameter.";
 		}
 		TemplateContext.getInstance(session, globalContext, currentModule).setCurrentLink(list);
-		if (list != null) {
-			IRemoteResourcesFactory tempFact = RemoteTemplateFactoryManager.getInstance(session.getServletContext()).getRemoteTemplateFactory(globalContext, list);
-			session.setAttribute("templateFactory", tempFact);
-			if (tempFact != null) {
-				try {
-					tempFact.refresh();
-				} catch (Throwable e) {
-					e.printStackTrace();
-					currentModule.restoreAll();
-					return e.getMessage();
-				}
-				currentModule.setRenderer("/jsp/remote_templates.jsp");
-				currentModule.createSideBox("sponsors", i18nAccess.getText("global.sponsors"), "/jsp/sponsors.jsp", false);
-			} else {
+
+		IRemoteResourcesFactory tempFact = RemoteTemplateFactoryManager.getInstance(session.getServletContext()).getRemoteTemplateFactory(globalContext, list);
+		session.setAttribute("templateFactory", tempFact);
+		if (tempFact != null) {
+			try {
+				tempFact.refresh();
+			} catch (Throwable e) {
+				e.printStackTrace();
 				currentModule.restoreAll();
+				return e.getMessage();
 			}
+			currentModule.setRenderer("/jsp/remote_templates.jsp");
+			currentModule.createSideBox("sponsors", i18nAccess.getText("global.sponsors"), "/jsp/sponsors.jsp", false);
 		} else {
 			currentModule.restoreAll();
 		}
@@ -692,7 +689,7 @@ public class TemplateAction extends AbstractModuleAction {
 			Collection<GlobalContext> allContext = GlobalContextFactory.getAllGlobalContext(ctx.getRequest().getSession().getServletContext());
 			ContentContext externalCtx = new ContentContext(ctx);
 			for (GlobalContext context : allContext) {
-				externalCtx.setForceGlobalContext(context);				
+				externalCtx.setForceGlobalContext(context);
 				externalCtx.setRenderMode(ContentContext.PREVIEW_MODE);
 				externalCtx.setForcePathPrefix(context.getContextKey());
 				for (NavigationWithContent nav : TemplateFactory.searchPageNeedTemplate(externalCtx, templateName)) {

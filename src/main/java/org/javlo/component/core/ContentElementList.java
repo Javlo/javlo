@@ -11,6 +11,7 @@ import java.util.Set;
 
 import org.apache.commons.lang3.NotImplementedException;
 import org.javlo.component.container.RepeatContainer;
+import org.javlo.component.links.MirrorComponent;
 import org.javlo.component.title.LinkLabel;
 import org.javlo.component.title.MenuTitle;
 import org.javlo.component.title.PageTitle;
@@ -236,7 +237,7 @@ public class ContentElementList implements IContentComponentsList {
 		int currentLabelLevel = 0;
 		while (elems.hasNext()) {
 			IContentVisualComponent comp = (IContentVisualComponent) elems.next();
-			if (comp.getLabelLevel(ctx) > 0 && comp.getLabelLevel(ctx) >= currentLabelLevel && !comp.isRepeat()) {
+			if (comp.getLabelLevel(ctx) > 0 && comp.getLabelLevel(ctx) >= currentLabelLevel) {
 				if (comp.getLabelLevel(ctx) > currentLabelLevel || comp.getArea().equals(ComponentBean.DEFAULT_AREA)) {
 					res = comp.getTextLabel(ctx);
 					if (res == null) {
@@ -436,12 +437,14 @@ public class ContentElementList implements IContentComponentsList {
 		while (elems.hasNext() && maxLabelLevel < IContentVisualComponent.HIGH_LABEL_LEVEL) {
 			IContentVisualComponent comp = (IContentVisualComponent) elems.next();
 			if (comp.getLabelLevel(ctx) > 0 && comp.getLabelLevel(ctx) >= maxLabelLevel && !comp.isRepeat()) {
-				if (comp.getLabelLevel(ctx) > maxLabelLevel || comp.getArea().equals(ComponentBean.DEFAULT_AREA)) {
-					res = comp.getTextTitle(ctx);
-					if (res == null) {
-						res = "";
-					} else {
-						maxLabelLevel = comp.getLabelLevel(ctx);
+				if (!(comp instanceof MirrorComponent)) {
+					if (comp.getLabelLevel(ctx) > maxLabelLevel || comp.getArea().equals(ComponentBean.DEFAULT_AREA)) {
+						res = comp.getTextTitle(ctx);
+						if (res == null) {
+							res = "";
+						} else {
+							maxLabelLevel = comp.getLabelLevel(ctx);
+						}
 					}
 				}
 			}
@@ -453,12 +456,29 @@ public class ContentElementList implements IContentComponentsList {
 				maxLabelLevel = 0;
 				while (elems.hasNext() && maxLabelLevel < IContentVisualComponent.HIGH_LABEL_LEVEL) {
 					IContentVisualComponent comp = (IContentVisualComponent) elems.next();
-					if (comp.getLabelLevel(ctx) > maxLabelLevel) {
+					if (comp.getLabelLevel(ctx) > maxLabelLevel && !(comp instanceof MirrorComponent)) {
 						res = comp.getTextTitle(ctx);
 						if (res == null) {
 							res = "";
 						} else {
 							maxLabelLevel = comp.getLabelLevel(ctx);
+						}
+					}
+				}
+			}
+		}
+		if (res.length() == 0) {
+			while (elems.hasNext() && maxLabelLevel < IContentVisualComponent.HIGH_LABEL_LEVEL) {
+				IContentVisualComponent comp = (IContentVisualComponent) elems.next();
+				if (comp.getLabelLevel(ctx) > 0 && comp.getLabelLevel(ctx) >= maxLabelLevel && !comp.isRepeat()) {
+					if (comp instanceof MirrorComponent) {
+						if (comp.getLabelLevel(ctx) > maxLabelLevel) {
+							res = comp.getTextTitle(ctx);
+							if (res == null) {
+								res = "";
+							} else {
+								maxLabelLevel = comp.getLabelLevel(ctx);
+							}
 						}
 					}
 				}

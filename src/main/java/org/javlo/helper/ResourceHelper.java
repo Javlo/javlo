@@ -1568,10 +1568,6 @@ public class ResourceHelper {
 			sep = "&";
 		}
 
-		if (urlParameters == null) {
-			urlParameters = "";
-		}
-
 		try {
 			// Create connection
 			url = new URL(targetURL);

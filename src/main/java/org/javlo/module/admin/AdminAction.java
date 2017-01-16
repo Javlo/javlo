@@ -844,7 +844,6 @@ public class AdminAction extends AbstractModuleAction {
 
 	@Override
 	public String prepare(ContentContext ctx, ModulesContext moduleContext) throws Exception {
-		
 		if (ctx.getCurrentEditUser() == null) {
 			return null;
 		}
@@ -895,6 +894,7 @@ public class AdminAction extends AbstractModuleAction {
 			Collection<GlobalContext> allContext = GlobalContextFactory.getAllGlobalContext(request.getSession().getServletContext());
 			Map<String, GlobalContextBean> masterCtx = new HashMap<String, AdminAction.GlobalContextBean>();
 			for (GlobalContext context : allContext) {
+				logger.fine("load context : "+context.getContextKey());
 				if (ctx.getCurrentEditUser() != null) {
 					if (adminUserSecurity.isAdmin(ctx.getCurrentEditUser()) || context.getUsersAccess().contains(ctx.getCurrentEditUser().getLogin())) {
 						GlobalContextBean contextBean = new GlobalContextBean(context, ctx.getRequest().getSession());

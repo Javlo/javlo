@@ -621,7 +621,7 @@ public class FileAction extends AbstractModuleAction {
 	}
 	
 	private static boolean canModifyFile(ContentContext ctx, File file) {
-		return AdminUserSecurity.getInstance().haveRight(ctx.getCurrentEditUser(), AdminUserSecurity.CONTENT_ROLE);
+		return AdminUserSecurity.getInstance().canRole(ctx.getCurrentEditUser(), AdminUserSecurity.CONTENT_ROLE);
 	}
 	
 	public static String performEditimage(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {

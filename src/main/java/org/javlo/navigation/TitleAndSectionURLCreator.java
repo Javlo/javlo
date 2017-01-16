@@ -51,7 +51,7 @@ public class TitleAndSectionURLCreator extends AbstractURLFactory {
 		if (comps.size() > 0) {
 			return ((PageURL) comps.iterator().next()).getValue();
 		}
-		String title = currentPage.getLocalTitle(freeCtx);
+		String title = currentPage.getTitle(freeCtx);
 		if (title.equals(currentPage.getName())) {
 			Collection<String> subtitles = currentPage.getSubTitles(freeCtx,2);
 			if (subtitles.size()>0) {
@@ -64,6 +64,23 @@ public class TitleAndSectionURLCreator extends AbstractURLFactory {
 		if (StringHelper.isEmpty(title)) {
 			title = currentPage.getName();
 		}
+
+		String label;
+		String pageTitle = currentPage.getForcedPageTitle(freeCtx);
+		
+		if (!StringHelper.isEmpty(pageTitle)) {
+			label = pageTitle;
+		} else {
+			label = currentPage.getLabel(freeCtx);
+		}		
+		
+		if (label.startsWith("Agenda Week")) {
+			label = label.substring("Agenda Week".length()).trim();
+			if (label.contains(" ") && label.length() == 7) {				
+				title = label.substring(3, 7)+"-W"+label.substring(0, 2);				
+			}
+		}
+		
 		title = cleanString(title);
 		String path = StringHelper.createI18NURL(title);
 

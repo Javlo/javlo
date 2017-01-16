@@ -167,7 +167,6 @@ public class TimeRangeComponent extends DateComponent {
 		String newStartDate = requestService.getParameter(getInputStartDateName(), null);
 		String newEndDate = requestService.getParameter(getInputEndDateName(), null);
 		if (newStartDate != null && newEndDate != null) {
-
 			Date startDate = new Date();
 			try {
 				startDate = StringHelper.parseDateOrTime(newStartDate);

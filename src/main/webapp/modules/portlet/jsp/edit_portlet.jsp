@@ -18,7 +18,7 @@
 			<input type="text" name="url" id="url" value="${network.URL}" />
 		</div>	
 		<div class="action">			
-			<input type="submit" name="ok" value="${i18n.view["global.ok"]}" />
+			<input type="submit" name="ok" value="${i18n.view['global.ok']}" />
 		</div>			
 	</fieldset>
 </form>

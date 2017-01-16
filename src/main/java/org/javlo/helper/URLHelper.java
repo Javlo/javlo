@@ -359,7 +359,7 @@ public class URLHelper extends ElementaryURLHelper {
 	}
 
 	public static String createStaticTemplateURL(ContentContext ctx, String url) throws Exception {
-		return createStaticTemplateURL(ctx, url, null);
+		return createStaticTemplateURL(ctx, url, null, true);
 	}
 
 	public static String createStaticTemplatePath(ContentContext ctx, String url, String templateVersion) throws Exception {
@@ -496,9 +496,6 @@ public class URLHelper extends ElementaryURLHelper {
 																															// before
 																															// globalContext
 
-		if (url == null) {
-			return null;
-		}
 		url = url.replace('\\', '/');
 		return createStaticURL(ctx.getContextWithInternalURL(), null, URLHelper.mergePath(templateFullPath, url), false);
 	}

@@ -559,7 +559,11 @@ public class XMLManipulationHelper {
 																																								// library
 						String newLinkGeneratorIf = "<%if (!XHTMLHelper.alreadyInserted(ctx, \"" + hrefValue + "\")) {%>";
 						resources.add(hrefValue);
-						attributes.put("href", "<%=URLHelper.createStaticTemplateURL(ctx,\"/" + hrefValue + "\", \"" + templateVersion + "\")%>");
+						String templateVersionCode = "null";
+						if (!template.isForStatic()) {
+							templateVersionCode = "\"" + templateVersion + "\"";
+						}
+						attributes.put("href", "<%=URLHelper.createStaticTemplateURL(ctx,\"/" + hrefValue + "\", "+templateVersionCode+")%>");
 						remplacement.addReplacement(tags[i].getOpenStart(), tags[i].getOpenEnd() + 1, newLinkGeneratorIf + tags[i].toString() + "<%}%>");
 					}
 				}

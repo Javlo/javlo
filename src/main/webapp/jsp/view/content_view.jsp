@@ -43,7 +43,6 @@ if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE && specificComp == null &
 }
 
 String area = (String)request.getAttribute(ContentContext.CHANGE_AREA_ATTRIBUTE_NAME);
-
 if (area==null) {
 	area = request.getParameter("area");
 } else {
@@ -83,7 +82,6 @@ if ( ctx.getSpecialContentRenderer() != null && area.equals(ComponentBean.DEFAUL
 } else if ( ctx.getSpecialContentRenderer() != null && !ctx.getCurrentTemplate().isNosecureArea(area)) {
 	%><!-- this area is empty because special renderer is defined. --><%
 } else {
-	
 MenuElement currentPage = ctx.getCurrentPage();
 
 Template template = ctx.getCurrentTemplate();

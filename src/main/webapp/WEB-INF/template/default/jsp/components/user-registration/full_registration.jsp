@@ -51,7 +51,7 @@
 <div class="one_half">
 	<div class="line">
 		<label for="login">login</label>
-		<input type="text" id="login" name="login" value="${userInfoMap["login"]}" /> 
+		<input type="text" id="login" name="login" value="${userInfoMap['login']}" /> 
 	</div>
 	<c:if test="${not empty webaction}">
 		<div class="line">
@@ -65,80 +65,80 @@
 	</c:if>
 	<div class="line">
 		<label for="firstName">firstName</label>
-		<input type="text" id="firstName" name="firstName" value="${userInfoMap["firstName"]}" /> 
+		<input type="text" id="firstName" name="firstName" value="${userInfoMap['firstName']}" /> 
 	</div>
 	<div class="line">
 		<label for="lastName">lastName</label>
-		<input type="text" id="lastName" name="lastName" value="${userInfoMap["lastName"]}" /> 
+		<input type="text" id="lastName" name="lastName" value="${userInfoMap['lastName']}" /> 
 	</div>
 	<div class="line">
 		<label for="email">email</label>
-		<input type="text" id="email" name="email" value="${userInfoMap["email"]}" /> 
+		<input type="text" id="email" name="email" value="${userInfoMap['email']}" /> 
 	</div>
 	<div class="line">
 		<label for="organization">organization</label>
 		<c:if test="${empty list.organization}">
-		<input type="text" id="organization" name="organization" value="${userInfoMap["organization"]}" />
+		<input type="text" id="organization" name="organization" value="${userInfoMap['organization']}" />
 		</c:if> 
 		<c:if test="${not empty list.organization}">
 		 	<select id="organization" name="organization">
 		 		<option></option>
 		 		<c:forEach var="organization" items="${list.organization}">
-		 			<option value="${organization.key}"${userInfoMap["organization"] == organization.key?' selected="selected"':''}>${organization.value}</option>
+		 			<option value="${organization.key}"${userInfoMap['organization'] == organization.key?' selected="selected"':''}>${organization.value}</option>
 		 		</c:forEach>		 		
 		 	</select>
 		 </c:if> 
 	</div>
 	<div class="line">
 		<label for="phone">phone</label>
-		<input type="text" id="phone" name="phone" value="${userInfoMap["phone"]}" /> 
+		<input type="text" id="phone" name="phone" value="${userInfoMap['phone']}" /> 
 	</div>
 	<div class="line">
 		<label for="mobile">mobile</label>
-		<input type="text" id="mobile" name="mobile" value="${userInfoMap["mobile"]}" /> 
+		<input type="text" id="mobile" name="mobile" value="${userInfoMap['mobile']}" /> 
 	</div>
 </div>
 <div class="one_half">
 	<div class="line">
 		<label for="address">address</label>
-		<input type="text" id="address" name="address" value="${userInfoMap["address"]}" /> 
+		<input type="text" id="address" name="address" value="${userInfoMap['address']}" /> 
 	</div>
 	<div class="line">
 		<label for="postCode">postCode</label>
-		<input type="text" id="postCode" name="postCode" value="${userInfoMap["postCode"]}" /> 
+		<input type="text" id="postCode" name="postCode" value="${userInfoMap['postCode']}" /> 
 	</div>
 	<div class="line">
 		<label for="city">city</label>
-		<input type="text" id="city" name="city" value="${userInfoMap["city"]}" /> 
+		<input type="text" id="city" name="city" value="${userInfoMap['city']}" /> 
 	</div>
 	<div class="line">
 		<label for="country">country</label>
 		<c:if test="${empty list.countries}">
-			<input type="text" id="country" name="country" value="${userInfoMap["country"]}" />
+			<input type="text" id="country" name="country" value="${userInfoMap['country']}" />
 		</c:if>
 		 <c:if test="${not empty list.countries}">
 		 	<select id="country" name="country">
 		 		<option></option>
 		 		<c:forEach var="country" items="${list.countries}">
-		 			<option value="${country.key}"${userInfoMap["country"] == country.key?' selected="selected"':''}>${country.value}</option>
+		 			<option value="${country.key}"${userInfoMap['country'] == country.key?' selected="selected"':''}>${country.value}</option>
 		 		</c:forEach>		 		
 		 	</select>
 		 </c:if>
 	</div>
 	<div class="line">
 		<label for="preferredLanguageRaw">preferred Language</label>
-		<input type="text" id="preferredLanguageRaw" name="preferredLanguageRaw" value="${userInfoMap["preferredLanguageRaw"]}" /> 
+		<input type="text" id="preferredLanguageRaw" name="preferredLanguageRaw" value="${userInfoMap['preferredLanguageRaw']}" /> 
 	</div>	
 	<div class="line">
 		<label for="info">info</label>
-		<textarea id="info" name="info">${userInfoMap["info"]}</textarea>
+		<textarea id="info" name="info">${userInfoMap['info']}</textarea>
 	</div>
 </div>
 </div>
 <div class="line">
 		<label for="function">area of specialisation</label>
 		<c:if test="${empty list.functions}">
-		<input type="text" id="function" name="function" value="${userInfoMap["function"]}" />
+		<input type="text" id="function" name="function" value="${userInfoMap['function']}" />
 		</c:if>
 		 <c:if test="${not empty list.functions}">		 	
 	 		<c:forEach var="function" items="${list.functions}" varStatus="status">

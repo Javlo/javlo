@@ -25,6 +25,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.config.StaticConfig;
 import org.javlo.helper.AjaxHelper.ScheduledRender;
+import org.javlo.helper.DebugHelper;
 import org.javlo.helper.NetHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
@@ -41,6 +42,7 @@ import org.javlo.user.AdminUserSecurity;
 import org.javlo.user.IUserFactory;
 import org.javlo.user.User;
 import org.javlo.user.UserFactory;
+import org.mozilla.javascript.EcmaError;
 
 /**
  * @author pvanderm
@@ -168,7 +170,7 @@ public class ContentContext {
 				ctx = createContentContext(request, response, true);
 				ctx.setFree(false);
 				ctx.correctPath = false;
-			} else {
+			} else {				
 				ctx.setRequest(request);
 				ctx.setResponse(response);
 			}
@@ -271,9 +273,7 @@ public class ContentContext {
 	}
 
 	private static void init(ContentContext ctx, HttpServletRequest request, HttpServletResponse response) {
-
 		try {
-
 			RequestService requestService = RequestService.getInstance(request);
 			String forcedMode = requestService.getParameter(FORCE_MODE_PARAMETER_NAME, null);
 			if (forcedMode != null) {
@@ -1055,6 +1055,10 @@ public class ContentContext {
 			return requestContentLanguage;
 		}
 	}
+	
+	public String getRequestContentLanguageRAW() {
+		return requestContentLanguage;
+	}
 
 	/**
 	 * @return
@@ -1378,7 +1382,7 @@ public class ContentContext {
 		this.request = request;
 	}
 
-	public void setRequestContentLanguage(String lg) {
+	public void setRequestContentLanguage(String lg) {		
 		if (requestContentLanguage != null && requestContentLanguage.equals(lg)) {
 			return;
 		}
@@ -2084,6 +2088,14 @@ public class ContentContext {
 
 	public void setForceCorrectPath(boolean forceCorrectPath) {
 		this.forceCorrectPath = forceCorrectPath;
+	}
+	
+	public ContentContext getNewContentContext() {
+		return new ContentContext(this);
+	}
+	
+	public void setContentContent(ContentContext ctx) {
+		ctx.storeInRequest(request);
 	}
 
 }

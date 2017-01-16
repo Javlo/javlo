@@ -3643,6 +3643,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 		
 		newCtx.setArea(null);
 		desc.title = getContent(newCtx).getTitle(ctx);
+		
 
 		if (desc.title != null) {
 			if ((desc.title.trim().length() == 0) && (name != null)) {
@@ -3951,11 +3952,10 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 	}
 
 	public boolean isEmpty(ContentContext ctx, String area, boolean withRepeat) throws Exception {
-		PageDescription desc = getPageDescriptionCached(ctx, ctx.getRequestContentLanguage());
-
 		if (ctx.getRequestContentLanguage() == null) {
 			return true;
 		}
+		PageDescription desc = getPageDescriptionCached(ctx, ctx.getRequestContentLanguage());
 		ContentContext ctxForceArea = new ContentContext(ctx);
 		ctxForceArea.setArea(area);
 
