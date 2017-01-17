@@ -2462,15 +2462,15 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 																			// from
 		// navigation
 		// language
-		desc.label = getLocalContent(newCtx).getLabel(ctx);
-
+		desc.label = getLocalContent(newCtx).getLabel(newCtx);
+		
 		if (desc.label != null) {
 			if ((desc.label.trim().length() == 0) && (name != null)) {
 				GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 				if (globalContext.isAutoSwitchToDefaultLanguage()) {
 					ContentContext defaultLgCtx = newCtx.getContextWithContent(this);
-					if (defaultLgCtx != null) {
-						desc.label = getContent(defaultLgCtx).getLabel(ctx);
+					if (defaultLgCtx != null) {						
+						desc.label = getContent(defaultLgCtx).getLabel(ctx);						
 						if ((desc.label.trim().length() == 0) && (name != null)) {
 							desc.label = getSubTitle(defaultLgCtx);
 							if (StringHelper.isEmpty(desc.label)) {
@@ -2484,7 +2484,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 
 			}
 		}
-		desc.label = StringHelper.removeTag(desc.label);
+		desc.label = StringHelper.removeTag(desc.label);		
 		return desc.label;
 	}
 
@@ -3213,7 +3213,6 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 	}
 
 	public String getPageTitle(ContentContext ctx) throws Exception {
-
 		ContentContext newCtx = new ContentContext(ctx);
 		newCtx.setArea(null); // warning : check if the method is needed.
 		newCtx.setFree(true);
@@ -3221,17 +3220,17 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 		PageDescription desc = getPageDescriptionCached(ctx, newCtx.getRequestContentLanguage());
 
 		if (desc.pageTitle != null) {
-			return desc.pageTitle;
+			//return desc.pageTitle;
 		}
 
 		desc.pageTitle = getForcedPageTitle(newCtx);
-
+		
 		if (desc.pageTitle == null || desc.pageTitle.length() == 0) {
 			desc.pageTitle = getTitle(newCtx);
 			if (desc.pageTitle != null && desc.pageTitle.equals(getName())) {
 				desc.pageTitle = getLabel(newCtx);
 			}
-		}
+		}		
 		return desc.pageTitle;
 	}
 
@@ -3642,7 +3641,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 		ContentContext newCtx = new ContentContext(ctx);
 		
 		newCtx.setArea(null);
-		desc.title = getContent(newCtx).getTitle(ctx);
+		desc.title = getContent(newCtx).getTitle(newCtx);
 		
 
 		if (desc.title != null) {

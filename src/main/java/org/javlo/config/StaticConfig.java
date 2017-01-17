@@ -818,6 +818,10 @@ public class StaticConfig extends Observable {
 	public int getMaxMenuTitleSize() {
 		return properties.getInt("menu.title-size", 30);
 	}
+	
+	public int getMaxURLSize() {
+		return properties.getInt("navigation.url.max-size", 150);
+	}
 
 	public String getMenuEditHelpURI(String lang) {
 		String uri = properties.getString("help.uri.menu-edit", null);

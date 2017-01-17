@@ -66,8 +66,7 @@ public class TitleAndSectionURLCreator extends AbstractURLFactory {
 		}
 
 		String label;
-		String pageTitle = currentPage.getForcedPageTitle(freeCtx);
-		
+		String pageTitle = currentPage.getForcedPageTitle(freeCtx);		
 		if (!StringHelper.isEmpty(pageTitle)) {
 			label = pageTitle;
 		} else {
@@ -79,6 +78,11 @@ public class TitleAndSectionURLCreator extends AbstractURLFactory {
 			if (label.contains(" ") && label.length() == 7) {				
 				title = label.substring(3, 7)+"-W"+label.substring(0, 2);				
 			}
+		}
+		
+		int maxSize = ctx.getGlobalContext().getStaticConfig().getMaxURLSize()+2; // +2 = indice of the page (sp. _1)
+		if  (maxSize > 2 && title.length() >  maxSize ) {
+			title = title.substring(0, maxSize);			
 		}
 		
 		title = cleanString(title);

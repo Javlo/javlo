@@ -434,11 +434,12 @@ public class ContentElementList implements IContentComponentsList {
 		String res = "";
 		Iterator elems = contentElements.iterator();
 		int maxLabelLevel = 0;
+		
 		while (elems.hasNext() && maxLabelLevel < IContentVisualComponent.HIGH_LABEL_LEVEL) {
 			IContentVisualComponent comp = (IContentVisualComponent) elems.next();
 			if (comp.getLabelLevel(ctx) > 0 && comp.getLabelLevel(ctx) >= maxLabelLevel && !comp.isRepeat()) {
 				if (!(comp instanceof MirrorComponent)) {
-					if (comp.getLabelLevel(ctx) > maxLabelLevel || comp.getArea().equals(ComponentBean.DEFAULT_AREA)) {
+					if (comp.getLabelLevel(ctx) > maxLabelLevel && comp.getArea().equals(ComponentBean.DEFAULT_AREA)) {
 						res = comp.getTextTitle(ctx);
 						if (res == null) {
 							res = "";
@@ -449,6 +450,7 @@ public class ContentElementList implements IContentComponentsList {
 				}
 			}
 		}
+		
 		if (repeat) {
 			if (res.length() == 0) { // if no element not repeat search with
 										// repeat element
