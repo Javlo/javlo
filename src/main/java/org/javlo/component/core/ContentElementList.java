@@ -238,7 +238,7 @@ public class ContentElementList implements IContentComponentsList {
 		while (elems.hasNext()) {
 			IContentVisualComponent comp = (IContentVisualComponent) elems.next();
 			if (comp.getLabelLevel(ctx) > 0 && comp.getLabelLevel(ctx) >= currentLabelLevel) {
-				if (comp.getLabelLevel(ctx) > currentLabelLevel || comp.getArea().equals(ComponentBean.DEFAULT_AREA)) {
+				if (comp.getLabelLevel(ctx) > currentLabelLevel && comp.getArea().equals(ComponentBean.DEFAULT_AREA)) {
 					res = comp.getTextLabel(ctx);
 					if (res == null) {
 						res = "";
