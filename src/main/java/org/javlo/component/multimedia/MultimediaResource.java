@@ -1,5 +1,7 @@
 package org.javlo.component.multimedia;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -444,5 +446,20 @@ public class MultimediaResource {
 	
 	public void setStaticInfo(StaticInfoBean staticInfo) {
 		this.staticInfo = staticInfo;
+	}
+	
+	public String getAllInfoHtml() {
+		if (staticInfo != null) {
+			return staticInfo.getAllInfoHtml();
+		} else {
+			return null;
+		}
+	}
+	public String getAllInfoText() {
+		if (staticInfo != null) {
+			return staticInfo.getAllInfoText();
+		} else {
+			return null;
+		}
 	}
 }

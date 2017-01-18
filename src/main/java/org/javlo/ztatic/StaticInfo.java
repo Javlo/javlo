@@ -1,8 +1,10 @@
 package org.javlo.ztatic;
 
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.text.ParseException;
@@ -243,6 +245,69 @@ public class StaticInfo {
 				return false;
 			}
 			return true;
+		}
+		private String getAllInfo(boolean html) {
+			ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+			PrintStream out = new PrintStream(outStream);
+			String sep = "";
+			String baseSep = "<span class=\"sep\">-</span>";
+			if (!html) {
+				baseSep = " - ";
+			}
+			String title = getTitle();				
+			if (!StringHelper.isEmpty(title)) {
+				if (html) {
+					out.print("<span class=\"title\">"+title+"</span>");
+				} else {
+					out.print(title);
+				}
+				sep = baseSep;
+			}
+			Date date = staticInfo.getManualDate(ctx);				
+			if (date != null) {
+				if (html) {
+					out.print(sep+"<span class=\"date\">"+getShortDate()+"</span>");
+				} else {
+					out.print(sep+getShortDate());
+				}
+				sep = baseSep;
+			}
+			String description = getDescription();				
+			if (!StringHelper.isEmpty(description)) {
+				if (html) {
+					out.print(sep+"<span class=\"description\">"+description+"</span>");
+				} else {
+					out.print(sep+description);
+				}
+				sep = baseSep;
+			}
+			String location = getLocation();				
+			if (!StringHelper.isEmpty(location)) {
+				if (html) {
+					out.print(sep+"<span class=\"location\">"+location+"</span>");
+				} else {
+					out.print(sep+location);
+				}
+				sep = baseSep;
+			}
+			String copyright = getCopyright();				
+			if (!StringHelper.isEmpty(copyright)) {
+				if (html) {
+					out.print(sep+"<span class=\"copyright\">"+copyright+"</span>");
+				} else {
+					out.print(sep+copyright);
+				}
+				sep = baseSep;
+			}
+			out.println();
+			out.close();
+			return new String(outStream.toByteArray());
+		}
+		public String getAllInfoHtml() {
+			return getAllInfo(true);
+		}
+		public String getAllInfoText() {
+			return getAllInfo(false);
 		}
 	}
 	
