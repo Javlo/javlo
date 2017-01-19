@@ -257,7 +257,7 @@ public class StaticInfo {
 			String title = getTitle();				
 			if (!StringHelper.isEmpty(title)) {
 				if (html) {
-					out.print("<span class=\"title\">"+title+"</span>");
+					out.print("<span class=\"title\">"+Encode.forHtml(title)+"</span>");
 				} else {
 					out.print(title);
 				}
@@ -275,7 +275,7 @@ public class StaticInfo {
 			String description = getDescription();				
 			if (!StringHelper.isEmpty(description)) {
 				if (html) {
-					out.print(sep+"<span class=\"description\">"+description+"</span>");
+					out.print(sep+"<span class=\"description\">"+Encode.forHtml(description)+"</span>");
 				} else {
 					out.print(sep+description);
 				}
@@ -284,7 +284,7 @@ public class StaticInfo {
 			String location = getLocation();				
 			if (!StringHelper.isEmpty(location)) {
 				if (html) {
-					out.print(sep+"<span class=\"location\">"+location+"</span>");
+					out.print(sep+"<span class=\"location\">"+Encode.forHtml(location)+"</span>");
 				} else {
 					out.print(sep+location);
 				}
@@ -293,7 +293,7 @@ public class StaticInfo {
 			String copyright = getCopyright();				
 			if (!StringHelper.isEmpty(copyright)) {
 				if (html) {
-					out.print(sep+"<span class=\"copyright\">"+copyright+"</span>");
+					out.print(sep+"<span class=\"copyright\">"+Encode.forHtml(copyright)+"</span>");
 				} else {
 					out.print(sep+copyright);
 				}
@@ -301,7 +301,11 @@ public class StaticInfo {
 			}
 			out.println();
 			out.close();
-			return new String(outStream.toByteArray());
+			String outStr = new String(outStream.toByteArray());
+			if (!html) {
+				outStr = Encode.forHtmlAttribute(outStr);
+			}
+			return outStr;
 		}
 		public String getAllInfoHtml() {
 			return getAllInfo(true);
