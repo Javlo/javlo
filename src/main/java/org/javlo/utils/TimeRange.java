@@ -4,8 +4,10 @@ import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
 
+import org.javlo.helper.TimeHelper;
+
 public class TimeRange implements Serializable {
-	
+
 	private Calendar startDateCal = Calendar.getInstance();
 
 	private Calendar endDateCal = Calendar.getInstance();
@@ -34,25 +36,33 @@ public class TimeRange implements Serializable {
 	public void setStartDate(Date startDate) {
 		this.startDateCal.setTime(startDate);
 	}
-	
+
 	public boolean isBefore(Date date) {
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(date);
 		return cal.before(startDateCal);
 	}
-	
+
 	public boolean isInside(Date date) {
 		Calendar cal = Calendar.getInstance();
-		cal.setTime(date);
+		cal.setTime(date);		
+		if (startDateCal.equals(endDateCal)) {
+			if (TimeHelper.isAfterOrEqualForDay(startDateCal.getTime(), date)) {
+				return true;
+			} else {
+				return false;
+			}
+		} else {
 		return cal.after(startDateCal) && cal.before(endDateCal);
+		}
 	}
-	
+
 	public boolean isAfter(Date date) {
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(date);
 		return cal.after(endDateCal);
 	}
-	
+
 	public boolean isNull() {
 		return startDateCal == null && endDateCal == null;
 	}

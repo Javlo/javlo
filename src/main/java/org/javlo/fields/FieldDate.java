@@ -60,7 +60,7 @@ public class FieldDate extends Field implements IDate {
 				return false;
 			}
 			Calendar now = Calendar.getInstance();
-			now = TimeHelper.convertEndOfDay(now);
+			now = TimeHelper.convertRemoveAfterDay(now);
 			Calendar cal = Calendar.getInstance();
 			cal.setTime(getDate());
 			return cal.before(now);

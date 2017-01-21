@@ -824,5 +824,5 @@ hange log
   
   * 3/ create cookie manager before check url / title in default aria have proiority / auto redeploy template if index.html not found / correction real content any language detection / static parameter in template for create static site
   
-  * 4/
+  * 4/ compare event to the end of the current day / remove special char method
  1
