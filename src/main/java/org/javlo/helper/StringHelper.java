@@ -9,9 +9,11 @@ import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.io.StringReader;
@@ -46,6 +48,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Properties;
 import java.util.Set;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -109,12 +112,14 @@ public class StringHelper {
 	private static final String EU_ACCEPTABLE_CHAR_NO_POINT = EU_ACCEPTABLE_CHAR.replace(".", "");
 
 	private static final String ISO_ACCEPTABLE_CHAR = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_.";
+	
+	private static Set<Character> ISO_ACCEPTABLE_CHAR_SET = null;
 
 	private static final String KEY_ACCEPTABLE_CHAR = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-	
-	private static final Collection<String> IMAGE_EXTENSION = Arrays.asList(new String[] {"jpg","jpeg","gif", "png"});
-	
-	private static final Collection<String> EDITABLE_EXTENSION = Arrays.asList(new String[] {"css","less","scss", "txt", "html", "xhtml", "jsp", "properties", "csv", "jpg","jpeg","gif", "png"});
+
+	private static final Collection<String> IMAGE_EXTENSION = Arrays.asList(new String[] { "jpg", "jpeg", "gif", "png" });
+
+	private static final Collection<String> EDITABLE_EXTENSION = Arrays.asList(new String[] { "css", "less", "scss", "txt", "html", "xhtml", "jsp", "properties", "csv", "jpg", "jpeg", "gif", "png" });
 
 	public static final String DEFAULT_LIST_SEPARATOR = "?";
 
@@ -123,6 +128,8 @@ public class StringHelper {
 	private static long previousShortRandomId = 0;
 
 	private static String previousDateId = "";
+	
+	private static Map<String,String> transliteration = null;
 
 	public static final String[] EMPTY_STRING_ARRAY = new String[0];
 
@@ -171,16 +178,16 @@ public class StringHelper {
 	public static String asBase32(int value) {
 		return asBase32(JavaHelper.intToByteArray(value));
 	}
-	
+
 	/**
 	 * generate a base 32 string with a int
 	 * 
 	 * @return a unique id.
 	 */
 	public static String asBase32(byte value) {
-		return asBase32(new byte[] {value});
+		return asBase32(new byte[] { value });
 	}
-	
+
 	/**
 	 * generate a base 32 string.
 	 * 
@@ -347,6 +354,66 @@ public class StringHelper {
 	public static String createASCIIString(String text) {
 		return createCleanName(text, "azertyuiopqsdfghjklmwxcvbnAZERTYUIOPQSDFGHJKLMWXCVBN0123456789,._- ", '_');
 	}
+	
+	private static Map<String,String> getTransliteration() {
+		if (transliteration == null) {
+			Properties prop = new Properties();
+			InputStream in = StringHelper.class.getClassLoader().getResourceAsStream("/data/transliteration.properties");			
+			try {
+				prop.load(in);
+			} catch (IOException e) {
+				e.printStackTrace();
+			} finally {
+				ResourceHelper.closeResource(in);
+			}
+			Map<String,String> encodedData = new HashMap<String,String>();
+			for (Object key : prop.keySet()) {				
+				encodedData.put(""+key, prop.getProperty(""+key));				
+			}
+			transliteration = encodedData;
+		}	
+		return transliteration;
+	}
+	
+	private static Set<Character> getISOAcceptableChars() {
+		if (ISO_ACCEPTABLE_CHAR_SET == null) {
+			HashSet<Character> localSet = new HashSet<Character>();
+			for (char c : ISO_ACCEPTABLE_CHAR.toCharArray()) {
+				localSet.add(c);
+			}
+			ISO_ACCEPTABLE_CHAR_SET = localSet;
+		}
+		return ISO_ACCEPTABLE_CHAR_SET;
+	}
+	
+	public static String removeSpecialChars(char c) {
+		String key = Encode.forXmlAttribute(""+c);
+		Object outStr = getTransliteration().get(key);
+		if (outStr == null) {
+			return null;
+		} else {
+			return outStr.toString();
+		}
+	}
+	
+	public static String removeSpecialChars(String text) {		
+		Set<Character> okChar = getISOAcceptableChars();		
+		Map<Character,String> replacement = new HashMap<Character,String>();
+		for (char c : text.toCharArray()) {
+			if (!okChar.contains(c) && replacement.get(c) == null) {
+				String newStr = removeSpecialChars(c);
+				if (newStr != null) {
+					replacement.put(c, newStr);
+				} else {
+					replacement.put(c, "_");
+				}
+			}
+		}		
+		for (Character c : replacement.keySet()) {
+			text = StringUtils.replace(text, ""+c, replacement.get(c));
+		}
+		return text;
+	}
 
 	private static String createCleanName(String fileName, String acceptableCharacters, char defaultReplaceChar) {
 		fileName = fileName.trim();
@@ -489,9 +556,9 @@ public class StringHelper {
 		value = value.replace("&nbsp;", "-");
 		value = value.replaceAll("[\\.\\(\\)\\#\\]\\[\\@\\*\\+\\=\\;\\,\\!\\$\\\\\\:\\&\\?\\/\\'\\\" ]", "-");
 		while (value.contains("--")) {
-			value = value.replace("--","-");
+			value = value.replace("--", "-");
 		}
-		//value = createCleanName(value, EU_ACCEPTABLE_CHAR_NO_POINT, '-');
+		// value = createCleanName(value, EU_ACCEPTABLE_CHAR_NO_POINT, '-');
 		try {
 			return URLEncoder.encode(trim(value, '-').toLowerCase(), ContentContext.CHARACTER_ENCODING);
 		} catch (UnsupportedEncodingException e) {
@@ -1252,7 +1319,7 @@ public class StringHelper {
 		String ext = getFileExtension(fileName);
 		return isImageExtension(ext);
 	}
-	
+
 	/**
 	 * return true if the filename in a image for wcms (sp. : tif or psd in not
 	 * a image).
@@ -1271,7 +1338,6 @@ public class StringHelper {
 		String ext = getFileExtension(fileName);
 		return isEditableExtension(ext);
 	}
-
 
 	/**
 	 * return true if the filename in a image for wcms (sp. : tif or psd in not
@@ -1327,13 +1393,13 @@ public class StringHelper {
 		res = res || fileExtension.equalsIgnoreCase("png");
 		return res;
 	}
-	
+
 	public static final boolean isEditableExtension(String fileExtension) {
 		if (fileExtension == null) {
 			return false;
 		}
 		return EDITABLE_EXTENSION.contains(fileExtension.toLowerCase());
-	}	
+	}
 
 	/**
 	 * return true if the file extension is an image for wcms (sp. : tif or psd
@@ -1438,7 +1504,7 @@ public class StringHelper {
 		res = res || ext.equalsIgnoreCase("aifc");
 		res = res || ext.equalsIgnoreCase("aiff");
 		res = res || ext.equalsIgnoreCase("aif");
-		res = res || ext.equalsIgnoreCase("m4a");		
+		res = res || ext.equalsIgnoreCase("m4a");
 		return res;
 	}
 
@@ -1526,54 +1592,54 @@ public class StringHelper {
 		res = res || ext.equalsIgnoreCase("flv");
 		return res;
 	}
-	
+
 	public static Collection<String> createListNumber(int size, long length) {
 		if (length < 4) {
 			throw new NumberFormatException("length is to small min 5.");
 		}
-		if (Math.pow (length-4, 10) < size) {
+		if (Math.pow(length - 4, 10) < size) {
 			throw new NumberFormatException("length is to small for this list size.");
 		}
 		Set<String> outList = new HashSet<String>();
-		while (outList.size()<size) {
-			long base = Math.round(Math.random()*Math.pow (length-4, 10));
-			int mod=(int)base%127;
-			String modBase32 = StringHelper.asBase32((byte)mod);
-			String renderNumber = String.format("%0"+(length-2)+"d", base);			
-			String finalNumber = renderNumber+modBase32.replace("=", "");
+		while (outList.size() < size) {
+			long base = Math.round(Math.random() * Math.pow(length - 4, 10));
+			int mod = (int) base % 127;
+			String modBase32 = StringHelper.asBase32((byte) mod);
+			String renderNumber = String.format("%0" + (length - 2) + "d", base);
+			String finalNumber = renderNumber + modBase32.replace("=", "");
 			if (!outList.contains(finalNumber) && finalNumber.length() == length) {
 				outList.add(finalNumber);
 			}
 		}
 		return outList;
 	}
-	
+
 	public static boolean checkNumberValidity(String number) {
-		if (number == null || number.length()<5) {
-			return false;			
+		if (number == null || number.length() < 5) {
+			return false;
 		}
 		try {
-			long base = Long.parseLong(number.substring(0, number.length()-2));
-			String mod32Text = number.substring(number.length()-2);			
+			long base = Long.parseLong(number.substring(0, number.length() - 2));
+			String mod32Text = number.substring(number.length() - 2);
 			Base32 base32 = new Base32();
-			int mod32Value = base32.decode(mod32Text)[0];			
-			return base%127 == mod32Value;
+			int mod32Value = base32.decode(mod32Text)[0];
+			return base % 127 == mod32Value;
 		} catch (Throwable t) {
 			logger.warning(t.getMessage());
 			return false;
 		}
 	}
-	
+
 	private static final int SIZE = 8;
-	
+
 	public static void createFile(File file, int size, Iterator it) throws Exception {
 		PrintStream out = new PrintStream(new FileOutputStream(file));
-		for (int i=0; i<size; i++) {
-			String val = (String) it.next();			
-			System.out.println(val+" - "+checkNumberValidity(val));
+		for (int i = 0; i < size; i++) {
+			String val = (String) it.next();
+			System.out.println(val + " - " + checkNumberValidity(val));
 			if (!checkNumberValidity(val) || val.length() != SIZE) {
 				out.close();
-				throw new Exception("error unvalid char generated : "+val);
+				throw new Exception("error unvalid char generated : " + val);
 			}
 			out.println(val);
 		}
@@ -1581,14 +1647,7 @@ public class StringHelper {
 	}
 
 	public static void main(String[] args) throws Exception {
-		final int SIZE = 8;
-		Collection<String> numberList = createListNumber(600000, SIZE);		
-		Iterator it = numberList.iterator();
-		createFile(new File("c:/trans/rectangle_050_1e.txt"), 231000, it);
-		createFile(new File("c:/trans/050_vertical.txt"), 165000, it);
-		createFile(new File("c:/trans/1e_long_horizontal.txt"), 15000, it);
-		createFile(new File("c:/trans/2e_long_horizontal.txt"), 150000, it);
-		System.out.println("done.");
+		getTransliteration();
 	}
 
 	/**
@@ -1683,7 +1742,7 @@ public class StringHelper {
 			return defaultValue;
 		} else {
 			return Integer.parseInt(value);
-		}
+		} 
 	}
 
 	public static Date[] parseRangeDate(String date) throws ParseException {
@@ -1710,6 +1769,7 @@ public class StringHelper {
 			try {
 				outDate = StringHelper.parseDate(inDate, "dd" + sep + "MM" + sep + "yy");
 			} catch (ParseException e1) {
+				outDate = StringHelper.parseDate(inDate, "yyyy" + sep + "MM" + sep + "dd");
 			}
 		}
 		return outDate;
@@ -1980,8 +2040,8 @@ public class StringHelper {
 	}
 
 	/**
-	 * remove sequence from a string. sample : removeSequence
-	 * ("slkqfj #dlskj# sdljf", "#", "#") -> slkqfj sdljf.
+	 * remove sequence from a string. sample : removeSequence ("slkqfj #dlskj#
+	 * sdljf", "#", "#") -> slkqfj sdljf.
 	 * 
 	 * @param text
 	 *            a simple text
@@ -3696,9 +3756,10 @@ public class StringHelper {
 		}
 		return outText.toString();
 	}
-	
+
 	/**
 	 * remote " on the start and the end of text, if quote was found.
+	 * 
 	 * @param text
 	 * @return
 	 */
@@ -3706,14 +3767,12 @@ public class StringHelper {
 		if (text == null) {
 			return text;
 		}
-		text = text.trim();		
+		text = text.trim();
 		if (text.startsWith("\"") && text.endsWith("\"")) {
-			return text.substring(1,  text.length()-1);
+			return text.substring(1, text.length() - 1);
 		} else {
 			return text;
 		}
 	}
-	
-	
 
 }

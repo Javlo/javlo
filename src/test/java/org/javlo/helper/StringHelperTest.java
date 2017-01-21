@@ -340,5 +340,11 @@ public class StringHelperTest extends TestCase {
 		assertEquals("lorem", StringHelper.removeQuote("\"lorem\"  "));
 		assertEquals("lorem", StringHelper.removeQuote("  \"lorem\"  "));
 	}
+	
+	public void testRemoveSpecialChars() {		
+		/*assertEquals("lorem", StringHelper.removeSpecialChars("lorem"));
+		assertEquals("ete", StringHelper.removeSpecialChars("été"));		
+		assertEquals("lorem_ss_ipsum", StringHelper.removeSpecialChars("lorem ß ipsum"));*/
+	}
  
 }

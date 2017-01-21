@@ -2,11 +2,9 @@ package org.javlo.navigation;
 
 import java.util.Collection;
 
-import org.apache.commons.lang3.StringEscapeUtils;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.navigation.PageURL;
 import org.javlo.context.ContentContext;
-import org.javlo.helper.LocalLogger;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 
@@ -37,6 +35,10 @@ public class TitleAndSectionURLCreator extends AbstractURLFactory {
 			}
 		}
 		return page;
+	}
+	
+	protected boolean isTransliteration() {
+		return false;
 	}
 
 	protected String createURLWithoutExt(ContentContext ctx, MenuElement currentPage) throws Exception {
@@ -85,6 +87,9 @@ public class TitleAndSectionURLCreator extends AbstractURLFactory {
 			title = title.substring(0, maxSize);			
 		}
 		
+		if (isTransliteration()) {
+			title = StringHelper.removeSpecialChars(title);
+		}
 		title = cleanString(title);
 		String path = StringHelper.createI18NURL(title);
 

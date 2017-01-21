@@ -15,6 +15,7 @@ import java.util.Map;
 import org.javlo.component.core.IDate;
 import org.javlo.context.ContentContext;
 import org.javlo.helper.StringHelper;
+import org.javlo.helper.TimeHelper;
 import org.javlo.helper.XHTMLHelper;
 
 public class FieldDate extends Field implements IDate {
@@ -59,6 +60,7 @@ public class FieldDate extends Field implements IDate {
 				return false;
 			}
 			Calendar now = Calendar.getInstance();
+			now = TimeHelper.convertEndOfDay(now);
 			Calendar cal = Calendar.getInstance();
 			cal.setTime(getDate());
 			return cal.before(now);

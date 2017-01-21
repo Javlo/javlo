@@ -1221,7 +1221,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		}
 
 		if (getTimeSelection() != null) {
-			Date today = new Date();
+			Date today = TimeHelper.convertEndOfDay(Calendar.getInstance()).getTime();
 			boolean timeAccept = false;
 			if (getTimeSelection().contains(TIME_SELECTION_OPTIONS.get(0))) {
 				if (page.getTimeRange(ctx).isAfter(today)) {
