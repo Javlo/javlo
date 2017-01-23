@@ -83,9 +83,10 @@ public class VFSFile extends AbstractFileComponent implements IReverseLinkCompon
 		try {
 			ResourceHelper.writeStreamToStream(in, out);
 			content = new String(out.toByteArray(), getEncoding());
-		} finally {
+		} finally {			
 			ResourceHelper.closeResource(in);
 			ResourceHelper.closeResource(out);
+			file.close();
 		}
 
 		String body = XMLManipulationHelper.getHTMLBody(content.toString());
@@ -256,6 +257,11 @@ public class VFSFile extends AbstractFileComponent implements IReverseLinkCompon
 	protected String getMainFolder(ContentContext ctx) {
 		StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
 		return staticConfig.getVFSFolderName();
+	}
+	
+	@Override
+	public boolean isContentCachable(ContentContext ctx) {
+		return true;
 	}
 
 }
