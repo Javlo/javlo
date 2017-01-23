@@ -20,6 +20,7 @@ import org.javlo.context.GlobalContext;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
+import org.javlo.helper.VFSHelper;
 
 public class VFSServlet extends HttpServlet {
 
@@ -49,6 +50,8 @@ public class VFSServlet extends HttpServlet {
 	private void process(HttpServletRequest request, HttpServletResponse response) throws ServletException {
 		InputStream in = null;
 		OutputStream out = null;
+		FileSystemManager fsManager = null;
+		FileObject file = null;
 		try {
 			String PARAM_NAME = "file";
 			String pathInfo = request.getPathInfo().substring(1);
@@ -73,8 +76,8 @@ public class VFSServlet extends HttpServlet {
 					String resourceURI = pathInfo;
 					resourceURI = resourceURI.replace('\\', '/');
 					logger.info("read : " + resourceURI + " in : " + zipFileName);
-					FileSystemManager fsManager = VFS.getManager();
-					FileObject file = fsManager.resolveFile(StringHelper.getFileExtension(zipFileName) + ":" + zipFile.getAbsolutePath());
+					fsManager = VFS.getManager();
+					file = fsManager.resolveFile(StringHelper.getFileExtension(zipFileName) + ":" + zipFile.getAbsolutePath());
 					file = file.resolveFile('/' + resourceURI);
 					in = file.getContent().getInputStream();
 					out = response.getOutputStream();
@@ -91,6 +94,8 @@ public class VFSServlet extends HttpServlet {
 		} finally {
 			ResourceHelper.closeResource(in);
 			ResourceHelper.closeResource(out);
+			VFSHelper.closeFileSystem(file);
+			VFSHelper.closeManager(fsManager);
 		}
 	}
 

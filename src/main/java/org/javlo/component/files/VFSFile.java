@@ -23,6 +23,7 @@ import org.javlo.context.GlobalContext;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
+import org.javlo.helper.VFSHelper;
 import org.javlo.helper.XMLManipulationHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.service.ReverseLinkService;
@@ -86,7 +87,8 @@ public class VFSFile extends AbstractFileComponent implements IReverseLinkCompon
 		} finally {			
 			ResourceHelper.closeResource(in);
 			ResourceHelper.closeResource(out);
-			file.close();
+			VFSHelper.closeFileSystem(file);
+			VFSHelper.closeManager(fsManager);
 		}
 
 		String body = XMLManipulationHelper.getHTMLBody(content.toString());
@@ -130,6 +132,8 @@ public class VFSFile extends AbstractFileComponent implements IReverseLinkCompon
 			} finally {
 				ResourceHelper.closeResource(in);
 				ResourceHelper.closeResource(out);
+				VFSHelper.closeFileSystem(file);
+				VFSHelper.closeManager(fsManager);
 			}
 
 			String header = XMLManipulationHelper.getHTMLCleanedHead(content);
