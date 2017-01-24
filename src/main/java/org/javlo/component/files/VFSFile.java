@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
@@ -74,7 +75,8 @@ public class VFSFile extends AbstractFileComponent implements IReverseLinkCompon
 		File zipFile = new File(URLHelper.mergePath(dirFile, fileName));
 
 		FileSystemManager fsManager = VFS.getManager();
-		FileObject file = fsManager.resolveFile(StringHelper.getFileExtension(zipFile.getName()) + ":" + zipFile.getAbsolutePath());
+		URL cleanPath = zipFile.toURI().toURL();
+		FileObject file = fsManager.resolveFile(StringHelper.getFileExtension(zipFile.getName()) + ":" + cleanPath );
 		file = file.resolveFile("/index.html");
 
 		InputStream in = file.getContent().getInputStream();
@@ -88,7 +90,7 @@ public class VFSFile extends AbstractFileComponent implements IReverseLinkCompon
 			ResourceHelper.closeResource(in);
 			ResourceHelper.closeResource(out);
 			VFSHelper.closeFileSystem(file);
-			VFSHelper.closeManager(fsManager);
+			//VFSHelper.closeManager(fsManager);
 		}
 
 		String body = XMLManipulationHelper.getHTMLBody(content.toString());
@@ -119,7 +121,8 @@ public class VFSFile extends AbstractFileComponent implements IReverseLinkCompon
 		String outStr = null;
 		try {
 			FileSystemManager fsManager = VFS.getManager();
-			FileObject file = fsManager.resolveFile(StringHelper.getFileExtension(zipFile.getName()) + ":" + zipFile.getAbsolutePath());
+			URL cleanPath = zipFile.toURI().toURL();
+			FileObject file = fsManager.resolveFile(StringHelper.getFileExtension(zipFile.getName()) + ":" + cleanPath);
 
 			file = file.resolveFile("/index.html");
 
@@ -133,7 +136,7 @@ public class VFSFile extends AbstractFileComponent implements IReverseLinkCompon
 				ResourceHelper.closeResource(in);
 				ResourceHelper.closeResource(out);
 				VFSHelper.closeFileSystem(file);
-				VFSHelper.closeManager(fsManager);
+				//VFSHelper.closeManager(fsManager);
 			}
 
 			String header = XMLManipulationHelper.getHTMLCleanedHead(content);
@@ -266,6 +269,29 @@ public class VFSFile extends AbstractFileComponent implements IReverseLinkCompon
 	@Override
 	public boolean isContentCachable(ContentContext ctx) {
 		return true;
+	}
+	
+	public static void main(String[] args) {
+		File file = new File("C:/Users/pvand/data/javlo/data-ctx/data-sonsdhiver/static/vfs/banner-2017-resp8.zip");
+		if (!file.exists()) {
+			System.out.println("file not found : "+file);
+		} else {
+			
+			URL cleanPath;
+			try {
+				FileSystemManager fsManager = VFS.getManager();
+				cleanPath = file.toURI().toURL();
+				System.out.println("***** cleanPath = "+cleanPath);
+				FileObject fileObject = fsManager.resolveFile(StringHelper.getFileExtension(file.getName()) + ":" + cleanPath);
+				for (FileObject child : fileObject.getChildren()) {
+					System.out.println(child.getName());
+				}
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+		}
 	}
 
 }

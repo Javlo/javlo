@@ -32,6 +32,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.vfs2.FileSystemException;
+import org.apache.commons.vfs2.VFS;
+import org.apache.commons.vfs2.impl.DefaultFileSystemManager;
+import org.apache.commons.vfs2.provider.zip.ZipFileProvider;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.component.core.ComponentFactory;
 import org.javlo.config.StaticConfig;
@@ -229,6 +233,8 @@ public class AccessServlet extends HttpServlet implements IVersion {
 
 		MultiReadRequestWrapper.clearTempDir(getServletContext());
 		TemplateFactory.copyDefaultTemplate(getServletContext());
+
+		
 
 	}
 
@@ -560,7 +566,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 									String lg = defaultLgs.next();
 									newCtx.setRequestContentLanguage(lg);
 								}
-							}						
+							}
 							if (!content.contentExistForContext(newCtx)) {
 								logger.fine("content not found in " + ctx.getPath() + " lg:" + ctx.getRequestContentLanguage());
 								// ctx.setSpecialContentRenderer("/jsp/view/content_not_found.jsp");
@@ -570,8 +576,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 							}
 						}
 					}
-					}
-				
+				}
 
 				if (logger.isLoggable(Level.FINE)) {
 					logger.fine(requestLabel + " : content integrity " + df.format((double) (System.currentTimeMillis() - startTime) / (double) 1000) + " sec.");
@@ -832,7 +837,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 							} finally {
 								ResourceHelper.closeResource(outFile);
 							}
-							if (pdfFileCache.length()==0) {
+							if (pdfFileCache.length() == 0) {
 								pdfFileCache.delete();
 							}
 
@@ -957,9 +962,9 @@ public class AccessServlet extends HttpServlet implements IVersion {
 
 							/** check content **/
 							if (!ctx.isContentFound()) {
-								globalContext.log("url", "page not found : "+ctx.getPath());
+								globalContext.log("url", "page not found : " + ctx.getPath());
 								globalContext.add404Url(ctx, ContentManager.getPath(request));
-								
+
 								if (staticConfig.isRedirectWidthName()) {
 									String pageName = StringHelper.getFileNameWithoutExtension(StringHelper.getFileNameFromPath(request.getRequestURI()));
 									MenuElement newPage = content.getNavigation(ctx).searchChildFromName(pageName);

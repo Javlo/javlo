@@ -100,7 +100,7 @@ public class ModulesContext {
 		} finally {
 			VFSHelper.closeFileSystem(jarFS);
 			VFSHelper.closeFileSystem(targetRoot);
-			VFSHelper.closeManager(manager);
+			//VFSHelper.closeManager(manager);
 		}
 	}
 

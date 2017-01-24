@@ -19,7 +19,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.fileupload.FileItem;
-import org.codehaus.plexus.util.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.javlo.bean.Link;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;

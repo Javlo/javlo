@@ -19,7 +19,7 @@ import javax.mail.internet.InternetAddress;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.codehaus.plexus.util.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.javlo.bean.LinkToRenderer;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;

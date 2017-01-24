@@ -17,6 +17,7 @@ import org.apache.commons.vfs2.VFS;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
+import org.javlo.helper.NetHelper;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
@@ -32,7 +33,7 @@ public class VFSServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
 	public void init() throws ServletException {
-		super.init();
+		super.init();		
 	}
 
 	public void destroy() {
@@ -66,6 +67,12 @@ public class VFSServlet extends HttpServlet {
 				StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession().getServletContext());
 				String dataFolder = globalContext.getDataFolder();
 				File zipFile = new File(URLHelper.mergePath(dataFolder, zipFileName));
+				long lastModified = zipFile.lastModified();
+				long lastModifiedInBrowser = request.getDateHeader(NetHelper.HEADER_IF_MODIFIED_SINCE);
+				if (lastModified > 0 && lastModified / 1000 <= lastModifiedInBrowser / 1000) {
+					response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
+					return;
+				}
 				if (!zipFile.exists()) {
 					response.sendError(HttpServletResponse.SC_NOT_FOUND, "file not found : " + zipFileName);
 				} else {
@@ -95,7 +102,7 @@ public class VFSServlet extends HttpServlet {
 			ResourceHelper.closeResource(in);
 			ResourceHelper.closeResource(out);
 			VFSHelper.closeFileSystem(file);
-			VFSHelper.closeManager(fsManager);
+			//VFSHelper.closeManager(fsManager);
 		}
 	}
 
