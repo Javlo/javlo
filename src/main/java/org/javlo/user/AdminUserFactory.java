@@ -99,6 +99,9 @@ public class AdminUserFactory extends UserFactory {
 
 	@Override
 	public User login(HttpServletRequest request, String login, String password) {
+		
+		logger.info("admin login trying : "+login);
+		
 		User outUser = super.login(request, login, password);
 		
 		if (DEFAULT_PASSWORD.equals(password)) {
