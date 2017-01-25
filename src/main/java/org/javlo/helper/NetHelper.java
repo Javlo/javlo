@@ -73,6 +73,7 @@ public class NetHelper {
 
 	private static final int MIN_IMAGE_SIZE = 640 * 480;
 
+	public static final String HEADER_DATE = "Date";
 	public static final String HEADER_LAST_MODIFIED = "Last-Modified";
 	public static final String HEADER_IF_MODIFIED_SINCE = "If-Modified-Since";
 

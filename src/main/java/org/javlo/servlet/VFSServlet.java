@@ -54,7 +54,6 @@ public class VFSServlet extends HttpServlet {
 		FileSystemManager fsManager = null;
 		FileObject file = null;
 		try {
-			String PARAM_NAME = "file";
 			String pathInfo = request.getPathInfo().substring(1);
 
 			String[] pathInfoTab = pathInfo.split(".zip");
@@ -72,10 +71,13 @@ public class VFSServlet extends HttpServlet {
 				if (lastModified > 0 && lastModified / 1000 <= lastModifiedInBrowser / 1000) {
 					response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
 					return;
-				}
+				}				
 				if (!zipFile.exists()) {
 					response.sendError(HttpServletResponse.SC_NOT_FOUND, "file not found : " + zipFileName);
 				} else {
+					if (lastModified > 0) {
+						response.setDateHeader(NetHelper.HEADER_LAST_MODIFIED, lastModified);
+					}
 					if (pathInfo.startsWith(staticConfig.getShareDataFolderKey())) {
 						pathInfo = pathInfo.substring(staticConfig.getShareDataFolderKey().length() + 1);
 						dataFolder = globalContext.getSharedDataFolder(request.getSession());

@@ -245,7 +245,7 @@ public class BeanHelper {
 	public static void copy(Object bean1, Object bean2) throws SecurityException, IllegalArgumentException, IllegalAccessException, InvocationTargetException {
 
 		BeanUtils.copyProperties(bean2, bean1);
-
+		
 		/*
 		 * Method[] methods = bean1.getClass().getDeclaredMethods(); int
 		 * notFound = 0; for (int i = 0; i < methods.length; i++) { if
