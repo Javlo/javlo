@@ -399,8 +399,10 @@ public class XMLManipulationHelper {
 						remplacement.addReplacement(tags[i].getOpenStart() - 1, tags[i].getOpenStart() - 1, prefix);
 						remplacement.addReplacement(tags[i].getOpenEnd() + 1, tags[i].getCloseStart(), "<jsp:include page=\"/jsp/view/content_view.jsp?area=" + area + "\" />");
 						remplacement.addReplacement(tags[i].getCloseEnd() + 1, tags[i].getCloseEnd() + 1, sufix);
+						
+						String checkEmptyArea = "${empty info.areaEmpty."+area+"?' _not_empty_area':' _empty_area'}";						
 						String cssClass = StringHelper.neverNull(tags[i].getAttributes().get("class"));
-						tags[i].getAttributes().put("class", (cssClass + " _area").trim());
+						tags[i].getAttributes().put("class", (cssClass + " _area").trim()+checkEmptyArea);
 						remplacement.addReplacement(tags[i].getOpenStart(), tags[i].getOpenEnd() + 1, tags[i].renderOpen());
 					} else if (idValue != null && areaContainer != null && idValue.trim().equals(areaContainer)) {
 						remplacement.addReplacement(tags[i].getOpenStart() - 1, tags[i].getOpenStart() - 1, prefix);

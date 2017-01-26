@@ -109,7 +109,7 @@ IContentVisualComponent previousElem = null;
 		%><div lang="<%=ctx.getContentLanguage()%>"><%
 	}	
 	if (!elems.hasNext(ctx) && EditContext.getInstance(globalContext, session).isEditPreview() && ctx.isAsPreviewMode() && editPage || displayZone) {
-		%><div class="_empty_area"><span><%=ctx.getArea()%></span></div><%
+		%><span><%=ctx.getArea()%></span><%
 	} else {
 		if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE && specificComp == null && editPage) {
 			%><div id="comp_0" class="free-edit-zone editable-component"><span>${i18n.edit['component.insert.first']}</span></div><%

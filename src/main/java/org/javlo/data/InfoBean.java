@@ -312,6 +312,10 @@ public class InfoBean {
 	public Date getNow() {
 		return new Date();
 	}
+	
+	public String getNowSortable() {
+		return StringHelper.renderSortableDate(new Date());
+	}
 
 	public String getCurrentDate() {
 		try {

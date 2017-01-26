@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -15,11 +16,15 @@ import java.util.Set;
 import org.apache.commons.lang3.NotImplementedException;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
+import org.javlo.i18n.I18nAccess;
 import org.javlo.navigation.MenuElement;
+import org.javlo.service.exception.ServiceException;
 
 public class ListService {
 
 	Map<String, List<Item>> localLists = new Hashtable<String, List<Item>>();
+	
+	private static final Map<String, List<Item>> hardCodedCache = new HashMap<String, List<Item>>();
 
 	public static class OrderList implements Comparator<Item> {
 
@@ -204,7 +209,29 @@ public class ListService {
 				e.printStackTrace();
 			}
 		}
+		if (outList == null) {
+			outList = getHardCodedList(ctx, name);
+		}
 		return outList;
+	}
+	
+	private synchronized List<Item> getHardCodedList(ContentContext ctx, String name) throws IOException, ServiceException, Exception {
+		
+		if (hardCodedCache.get(name) != null) {
+			return hardCodedCache.get(name);
+		}		
+		
+		if (name.equals("countries")) {
+			List<ListService.Item> countriesList = new LinkedList<ListService.Item>();
+			Collection<Map.Entry<Object, Object>> entries = I18nAccess.getInstance(ctx).getCountries().entrySet();
+			for (Map.Entry entry : entries) {				
+				countriesList.add(new ListService.Item(entry));
+			}
+			Collections.sort(countriesList, new OrderList());
+			hardCodedCache.put(name, countriesList);			
+			return countriesList;
+		}
+		return null;
 	}
 	
 	public List<Item> getNavigationList(ContentContext ctx, String name) throws Exception {

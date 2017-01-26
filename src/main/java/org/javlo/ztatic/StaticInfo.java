@@ -1063,9 +1063,14 @@ public class StaticInfo {
 						Point point = null;
 						BufferedImage img = null;
 						try {
-							img = ImageIO.read(getFile());
+							//img = ImageIO.read(getFile());
 							if (ctx.getGlobalContext().getStaticConfig().isAutoFocus()) {
-								point = InitInterest.getPointOfInterest(img);
+								logger.info("search point on interest on START : "+getFile()+" ["+ctx.getGlobalContext().getContextKey()+"]");								
+								//point = InitInterest.getPointOfInterest(img);
+								content.setAttribute(editCtx, getKey("focus-zone-x"), "" + DEFAULT_FOCUS_X);
+								content.setAttribute(editCtx, getKey("focus-zone-y"), "" + DEFAULT_FOCUS_Y);
+								InitInterest.setPointOfInterestWidthThread(ctx, getFile(), getKey("focus-zone-x"), getKey("focus-zone-y"));
+								logger.info("search point on interest on DONE : "+getFile()+" ["+ctx.getGlobalContext().getContextKey()+"]");
 							}
 						} catch (Throwable t) {
 							logger.warning(t.getMessage());

@@ -1,4 +1,4 @@
-	var PREVIEWLOG = false;
+	var PREVIEWLOG = true;
 
 var editPreview = editPreview||{};
 
@@ -30,7 +30,7 @@ var editPreview = editPreview||{};
 			var parent = comp.parent();
 			var area = "";
 			c = 1;
-			while (parent.attr("id") != "top" && c < 20) {
+			while (comp.attr("id") != "top" && c < 20) {
 				c++;
 				if (parent.hasClass("_area")) {
 					area = parent.attr("id");
@@ -564,15 +564,15 @@ var editPreview = editPreview||{};
 						var compId = rowData[1];
 						if (rowData.length > 2) {
 							var sharedId = rowData[2];
-						}
+						}					
 					}
+					var area = editPreview.searchArea(pjq(this));
 					if (PREVIEWLOG) {
 						console.log("compId   = ",compId);
 						console.log("compType = ",compType);
 						console.log("area     = ",area);
 						console.log("sharedId = ",sharedId);
-					}
-					var area = editPreview.searchArea(pjq(this).parent());
+					}					
 					if (sharedId != null && sharedId.length > 0) {
 						var ajaxURL = editPreview.addParam(currentURL, "webaction=edit.insertShared&sharedContent="
 							+ sharedId + "&previous=0"

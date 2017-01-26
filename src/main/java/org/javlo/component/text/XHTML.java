@@ -8,6 +8,7 @@ import java.io.StringWriter;
 
 import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.context.ContentContext;
+import org.javlo.helper.StringHelper;
 import org.javlo.helper.XHTMLHelper;
 
 /**
@@ -80,6 +81,11 @@ public class XHTML extends AbstractVisualComponent {
 			}
 			return cachable;
 		}
+	}
+	
+	@Override
+	public boolean isRealContent(ContentContext ctx) {
+		return !StringHelper.isEmpty(getValue());
 	}
 
 }
