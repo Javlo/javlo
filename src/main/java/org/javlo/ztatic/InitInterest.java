@@ -47,15 +47,17 @@ public class InitInterest {
 				PointAction action = todo.remove();
 				if (action.file.exists()) {
 					BufferedImage img;
-					try {
-						logger.info("search point of interest : "+action.file+" #todo:"+todo.size());
-						img = ImageIO.read(action.file);					
-						Point point = getPointOfInterest(img);
-						if (point != null) {
-						int focusX = (point.getX() * 1000) / img.getWidth();
-						int focusY = (point.getY() * 1000) / img.getHeight();
-						action.content.setAttribute(action.ctx, action.keyX, ""+focusX);
-						action.content.setAttribute(action.ctx, action.keyY, ""+focusY);
+					try {						
+						if (action.content.getAttribute(action.ctx, action.keyX).equals("" + StaticInfo.DEFAULT_FOCUS_X) && action.content.getAttribute(action.ctx, action.keyY).equals("" + StaticInfo.DEFAULT_FOCUS_Y)) {
+							logger.info("search point of interest : "+action.file+" #todo:"+todo.size());
+							img = ImageIO.read(action.file);
+							Point point = getPointOfInterest(img);
+							if (point != null) {
+								int focusX = (point.getX() * 1000) / img.getWidth();
+								int focusY = (point.getY() * 1000) / img.getHeight();
+								action.content.setAttribute(action.ctx, action.keyX, "" + focusX);
+								action.content.setAttribute(action.ctx, action.keyY, ""+focusY);
+							}
 						}
 					} catch (IOException e) {
 						e.printStackTrace();

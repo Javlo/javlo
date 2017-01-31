@@ -51,6 +51,7 @@ import org.javlo.navigation.MenuElement;
 import org.javlo.service.CaptchaService;
 import org.javlo.service.ContentService;
 import org.javlo.service.ListService;
+import org.javlo.service.ParticipationListService;
 import org.javlo.service.RequestService;
 import org.javlo.user.IUserFactory;
 import org.javlo.user.UserFactory;
@@ -478,6 +479,30 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 		if (fakeFilled) {
 			logger.warning("spam detected fake field filled : " + comp.getPage().getPath());
 		}
+		
+		if (errorFields.size() == 0) {
+			/** participation code **/
+			if (StringHelper.isTrue(comp.getLocalConfig(false).getProperty("pcode.activate"))) {
+				String pcode = requestService.getParameter("pcode", null);
+				if (StringHelper.isEmpty(pcode)) {
+						errorFields.add("pcode");
+						GenericMessage msg = new GenericMessage(comp.getLocalConfig(false).getProperty("message.no-code", "set participation code."), GenericMessage.ERROR);
+						request.setAttribute("msg", msg);
+						return null;				
+				} else {
+					if (ParticipationListService.getInstance(ctx).checkNumber(pcode)) {
+						GenericMessage msg = new GenericMessage(comp.getLocalConfig(false).getProperty("message.participation.thanks", "thanks for your participation."), GenericMessage.INFO);
+						request.setAttribute("msg", msg);
+						return null;	
+					} else {
+						errorFields.add("pcode");
+						GenericMessage msg = new GenericMessage(comp.getLocalConfig(false).getProperty("message.bad-code", "bad participation code."), GenericMessage.ERROR);
+						request.setAttribute("msg", msg);
+						return null;	
+					}
+				}
+			}
+		}
 
 		if (errorFields.size() == 0) {
 			String mailContent = new String(outStream.toByteArray());
@@ -493,7 +518,6 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 			}
 
 			if (comp.isSendEmail() && !fakeFilled) {
-
 				String emailFrom = comp.getLocalConfig(false).getProperty("mail.from", StringHelper.neverEmpty(globalContext.getAdministratorEmail(), StaticConfig.getInstance(request.getSession()).getSiteEmail()));				
 				String emailFromField = comp.getLocalConfig(false).getProperty("mail.from.field", null);
 				if (emailFromField != null && requestService.getParameter(emailFromField, "") != null) {
@@ -564,11 +588,7 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 					email.setContent(mailContent);
 					email.setHtml(comp.isHTMLMail());	
 					email.setDkim(globalContext.getDKIMBean());
-					mailService.sendMail(null, email);
-					//mailService.sendMail(null, fromEmail, adminEmail, ccList, bccList, subject, mailContent, comp.isHTMLMail(), null, null);
-					// remove
-					// debug
-					// trace
+					mailService.sendMail(null, email);					
 
 					if (pageConfirmation != null) {
 						logger.info("send mailing from:" + emailFrom + " to:" + emailTo);

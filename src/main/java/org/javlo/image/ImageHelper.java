@@ -23,11 +23,12 @@ import javax.servlet.ServletContext;
 
 import org.apache.commons.lang3.StringUtils;
 import org.javlo.component.core.IImageFilter;
+import org.javlo.context.ContentContextBean;
 import org.javlo.helper.LangHelper;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
-import org.javlo.rendering.Device;
+import org.javlo.navigation.MenuElement;
 import org.javlo.template.Template;
 
 /**
@@ -65,7 +66,7 @@ public class ImageHelper {
 		return createSpecialDirectory(width, 0);
 	}
 
-	public static String createSpecialDirectory(Device device, String context, String filter, String area,
+	public static String createSpecialDirectory(ContentContextBean ctxb, String context, String filter, String area,
 			String deviceCode, Template template, IImageFilter comp, ImageConfig.ImageParameters param) {
 		context = StringHelper.createFileName(context);
 		String pageIndice = "";
@@ -84,7 +85,11 @@ public class ImageHelper {
 		}
 		String compFilterKey = null;
 		if (comp != null) {
-			compFilterKey = StringHelper.trimAndNullify(comp.getImageFilterKey(device));
+			try {
+				compFilterKey = StringHelper.trimAndNullify(comp.getImageFilterKey(ctxb	));
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 		if (compFilterKey == null) {
 			out += "/none";

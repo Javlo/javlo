@@ -76,7 +76,7 @@ body.edit-preview, body.preview-only {
 	background-color: #cfcfcf;
 }
 
-._empty_area {
+body.edit-preview ._empty_area {
 	margin: 5px;
 	border-radius: 3px 3px 3px 3px;
 	border: 1px dashed #5B5B5B;
@@ -84,7 +84,7 @@ body.edit-preview, body.preview-only {
 	background-color: #EBEBEB;
 }
 
-._empty_area span {
+body.edit-preview ._empty_area span {
 	height: 40px;
 	vertical-align: middle;
 	text-align: center;

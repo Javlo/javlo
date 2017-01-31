@@ -27,6 +27,7 @@ import org.javlo.component.core.IImageFilter;
 import org.javlo.component.core.IReverseLinkComponent;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
+import org.javlo.context.ContentContextBean;
 import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.exception.ResourceNotFoundException;
@@ -102,7 +103,7 @@ public class GlobalImage extends Image implements IImageFilter {
 			e.printStackTrace();
 		}
 	}
-	
+
 	@Override
 	protected boolean canUpload(ContentContext ctx) {
 		try {
@@ -174,7 +175,7 @@ public class GlobalImage extends Image implements IImageFilter {
 	protected String getDefaultFilter() {
 		return "standard";
 	}
-	
+
 	public String getAlt(ContentContext ctx) {
 		String alt = getLabel();
 		if (StringHelper.isEmpty(alt)) {
@@ -183,9 +184,9 @@ public class GlobalImage extends Image implements IImageFilter {
 			String description = staticInfo.getDescription(ctx);
 			String sep = " - ";
 			if (StringHelper.isEmpty(title) || StringHelper.isEmpty(description)) {
-				sep="";
+				sep = "";
 			}
-			alt = title+sep+description;
+			alt = title + sep + description;
 		}
 		if (StringHelper.isEmpty(alt)) {
 			alt = StringHelper.neverNull(getTitle());
@@ -198,7 +199,7 @@ public class GlobalImage extends Image implements IImageFilter {
 		try {
 			String url = null;
 			try {
-				url = URLHelper.createTransformURL(ctx, ctx.getVirtualCurrentPage(), TemplateFactory.getTemplate(ctx, ctx.getVirtualCurrentPage()), getResourceURL(ctx, getFileName()), filter, this);				
+				url = URLHelper.createTransformURL(ctx, ctx.getVirtualCurrentPage(), TemplateFactory.getTemplate(ctx, ctx.getVirtualCurrentPage()), getResourceURL(ctx, getFileName()), filter, this);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -210,12 +211,12 @@ public class GlobalImage extends Image implements IImageFilter {
 	}
 
 	@Override
-	public String getImageHash(Device device) {
+	public String getImageHash(ContentContextBean ctx) {		
 		String hash = "" + getFileName().hashCode();
-		if (getWidth(device) < 0) {
+		if (getWidth(ctx) < 0) {
 			return hash;
 		} else {
-			return hash + '_' + getWidth(device);
+			return hash + '_' + getWidth(ctx);
 		}
 	}
 
@@ -224,12 +225,12 @@ public class GlobalImage extends Image implements IImageFilter {
 		if (decoImage != null && decoImage.trim().length() > 0) {
 			String imageLink = getResourceURL(ctx, getDecorationImage());
 			String imageFilter = getConfig(ctx).getProperty("image.filter", getDefaultFilter());
-			return URLHelper.addParam(URLHelper.createTransformURL(ctx, imageLink, imageFilter), "hash", getImageHash(ctx.getDevice()));
+			return URLHelper.addParam(URLHelper.createTransformURL(ctx, imageLink, imageFilter), "hash", getImageHash(ctx.getBean()));
 		} else {
 			return null;
 		}
 	}
-	
+
 	protected boolean isEditImage(ContentContext ctx) {
 		return StringHelper.isTrue(getConfig(ctx).getProperty("image.edit", null), true) && canUpload(ctx);
 	}
@@ -252,7 +253,7 @@ public class GlobalImage extends Image implements IImageFilter {
 				link = URLHelper.createURL(ctx, targetPage);
 			}
 		}
-		
+
 		ctx.getRequest().setAttribute("link", link);
 		ctx.getRequest().setAttribute("alt", getAlt(ctx));
 		String imageURL = getImageURL(ctx);
@@ -276,7 +277,7 @@ public class GlobalImage extends Image implements IImageFilter {
 
 		ctx.getRequest().setAttribute("location", getLocation(ctx));
 		ctx.getRequest().setAttribute("filter", getFilter(ctx));
-		int width = getWidth(ctx.getDevice());
+		int width = getWidth(ctx.getBean());
 		if (width >= 0) {
 			ctx.getRequest().setAttribute("imageWidth", width);
 		}
@@ -305,7 +306,7 @@ public class GlobalImage extends Image implements IImageFilter {
 
 		StringBuffer finalCode = new StringBuffer();
 		finalCode.append(getSpecialInputTag());
-		
+
 		finalCode.append("<div class=\"js-change-submit image row form-group\"><div class=\"col-sm-5\">");
 
 		finalCode.append(getPreviewCode(ctx));
@@ -465,7 +466,7 @@ public class GlobalImage extends Image implements IImageFilter {
 			if (isEditImage(ctx)) {
 				staticLinkURL = URLHelper.addParam(staticLinkURL, "editFile", fileName);
 				staticLinkURL = URLHelper.addParam(staticLinkURL, "backDirect", "true");
-				finalCode.append("<div class=\"col-sm-2\"><a name=\"upload\" type=\"submit\" class=\"btn btn-default btn-xs\" href=\""+staticLinkURL+"\">" + i18nAccess.getText("global.edit", "edit") + "</a></div>");
+				finalCode.append("<div class=\"col-sm-2\"><a name=\"upload\" type=\"submit\" class=\"btn btn-default btn-xs\" href=\"" + staticLinkURL + "\">" + i18nAccess.getText("global.edit", "edit") + "</a></div>");
 			}
 			finalCode.append("</div>");
 		}
@@ -1089,21 +1090,31 @@ public class GlobalImage extends Image implements IImageFilter {
 	@Override
 	public void setRenderer(ContentContext ctx, String renderer) {
 		if (properties != null) {
-			properties.remove(getWidthKey(ctx.getDevice()));
+			try {
+				properties.remove(getWidthKey(ctx.getBean()));
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 		super.setRenderer(ctx, renderer);
 	}
 
-	private String getWidthKey(Device device) {
-		if (device == null) {
-			return "width-" + Device.DEFAULT;
-		} else {
-			return "width-" + device.getCode();
+	private String getWidthKey(ContentContextBean ctx) {
+		Device device = ctx.getDevice();
+		try {
+			if (device == null) {
+				return "width-" + Device.DEFAULT + '-' + getPage().getId();
+			} else {
+				return "width-" + device.getCode() + '-' + getPage().getId();
+			}
+		} catch (Exception e) {			
+			e.printStackTrace();
+			return null;
 		}
 	}
 
-	public int getWidth(Device device) {
-		return Integer.parseInt(properties.getProperty(getWidthKey(device), "-1"));
+	public int getWidth(ContentContextBean ctx) {
+		return Integer.parseInt(properties.getProperty(getWidthKey(ctx), "-1"));
 	}
 
 	public String getFirstText() {
@@ -1137,9 +1148,9 @@ public class GlobalImage extends Image implements IImageFilter {
 		}
 	}
 
-	public void setWidth(ContentContext ctx, int width) {
-		if (getWidth(ctx.getDevice()) != width) {
-			properties.setProperty(getWidthKey(ctx.getDevice()), "" + width);
+	public void setWidth(ContentContext ctx, int width) throws Exception {
+		if (getWidth(ctx.getBean()) != width) {
+			properties.setProperty(getWidthKey(ctx.getBean()), "" + width);
 			setModify();
 		}
 	}
@@ -1161,7 +1172,6 @@ public class GlobalImage extends Image implements IImageFilter {
 		 * (GlobalImage)((MirrorComponent) comp).getMirrorComponent(ctx); }
 		 */
 		if (image != null && image.getConfig(ctx).isDataFeedBack() && currentUser != null && currentUser.validForRoles(AdminUserSecurity.CONTENT_ROLE)) {
-
 			logger.info("exec data feed back (template:" + ctx.getCurrentTemplate().getName() + ").");
 			String firstText = rs.getParameter("firsttext", null);
 			String secondText = rs.getParameter("secondtext", null);
@@ -1186,7 +1196,7 @@ public class GlobalImage extends Image implements IImageFilter {
 			}
 			if (width != null && width.trim().length() > 0) {
 				int inWidth = Integer.parseInt(width);
-				if (inWidth != image.getWidth(ctx.getDevice())) {
+				if (inWidth != image.getWidth(ctx.getBean())) {
 					image.setModify();
 					image.setWidth(ctx, inWidth);
 				}
@@ -1308,21 +1318,22 @@ public class GlobalImage extends Image implements IImageFilter {
 	}
 
 	@Override
-	public String getImageFilterKey(Device device) {
-		if (getWidth(device) < 0) {
+	public String getImageFilterKey(ContentContextBean ctx) {
+		if (getWidth(ctx) < 0) {
 			return null;
 		} else {
-			return "" + getWidth(device);
+			return "" + getWidth(ctx);
 		}
 	}
 
 	@Override
-	public BufferedImage filterImage(Device device, BufferedImage image) {
-		if (device.getCode().equalsIgnoreCase("pdf")) {
+	public BufferedImage filterImage(ContentContextBean ctx, BufferedImage image) {
+		Device device = ctx.getDevice();
+		if (device != null && device.getCode().equalsIgnoreCase("pdf")) {
 			return image;
 		} else {
 			reloadProperties();
-			return ImageEngine.resizeWidth(image, getWidth(device), false);
+			return ImageEngine.resizeWidth(image, getWidth(ctx), false);
 		}
 	}
 

@@ -2097,5 +2097,14 @@ public class ContentContext {
 	public void setContentContent(ContentContext ctx) {
 		ctx.storeInRequest(request);
 	}
+	
+	public ContentContextBean getBean() {
+		try {
+			return new ContentContextBean(this);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
 
 }

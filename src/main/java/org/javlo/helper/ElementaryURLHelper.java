@@ -415,7 +415,7 @@ public abstract class ElementaryURLHelper {
 			} else {
 				templateName = template.getId();
 			}
-			url = createTransformURLInternal(ctx, referencePage, url, filter, templateName, comp, (comp != null ? comp.getImageHash(ctx.getDevice()) : null));
+			url = createTransformURLInternal(ctx, referencePage, url, filter, templateName, comp, (comp != null ? comp.getImageHash(ctx.getBean()) : null));
 		} else {
 			if (filter.equals("template")) {
 				url = ElementaryURLHelper.mergePath(TRANSFORM + '/' + filter, url);

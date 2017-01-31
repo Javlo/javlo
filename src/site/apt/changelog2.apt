@@ -826,5 +826,5 @@ hange log
   
   * 4/ compare event to the end of the current day / remove special char method / VFS optimisation
   
-  * 5/ update library / info.getNowSortable / interest thread / countries as list
- 1
+  * 5/ update library / info.getNowSortable / interest thread / countries as list / update lib / ComponentContextBean / GlobalImage set page in with key / GenericForm participation
+ 
