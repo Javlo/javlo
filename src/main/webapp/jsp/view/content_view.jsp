@@ -192,11 +192,12 @@ if (ColContext.isInstance(ctx)) {
 		%><%=OpenCol.closeRow(ctx, colContext)%><%
 	}
 }
-
-if (pageEmpty) {
-	%><script>$("#<%=area%>").addClass("_empty_area");</script><%
-} else {
-	%><script>$("#<%=area%>").removeClass("_empty_area"); $("#<%=area%>").removeClass("drop-selected");</script><%
+if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE) {
+	if (pageEmpty) {
+		%><script>$("#<%=area%>").addClass("_empty_area");</script><%
+	} else {
+		%><script>$("#<%=area%>").removeClass("_empty_area"); $("#<%=area%>").removeClass("drop-selected");</script><%
+	}
 }
 
 currentPage.endRendering(ctx);
