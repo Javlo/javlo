@@ -1102,10 +1102,14 @@ public class GlobalImage extends Image implements IImageFilter {
 	private String getWidthKey(ContentContextBean ctx) {
 		Device device = ctx.getDevice();
 		try {
+			String pageId = "noid";
+			if (getPage() != null) {
+				pageId = getPage().getId();
+			}
 			if (device == null) {
-				return "width-" + Device.DEFAULT + '-' + getPage().getId();
+				return "width-" + Device.DEFAULT + '-' + pageId;
 			} else {
-				return "width-" + device.getCode() + '-' + getPage().getId();
+				return "width-" + device.getCode() + '-' + pageId;
 			}
 		} catch (Exception e) {			
 			e.printStackTrace();

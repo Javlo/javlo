@@ -37,6 +37,11 @@ public class CloseCol extends AbstractVisualComponent{
 	public String getEmptyXHTMLCode(ContentContext ctx) throws Exception {
 		return getViewXHTMLCode(ctx);
 	}
+
+	@Override
+	public boolean isDefaultValue(ContentContext ctx) {
+		return false;
+	}
 	
 
 }

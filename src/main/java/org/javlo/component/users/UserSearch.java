@@ -347,11 +347,6 @@ public class UserSearch extends AbstractVisualComponent implements IAction {
 	}
 
 	@Override
-	public boolean isEmpty(ContentContext ctx) {
-		return false;
-	}
-
-	@Override
 	public String getActionGroupName() {
 		return getType();
 	}

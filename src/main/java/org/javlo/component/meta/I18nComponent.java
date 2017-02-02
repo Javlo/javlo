@@ -31,11 +31,6 @@ public class I18nComponent extends AbstractVisualComponent {
 	}
 	
 	@Override
-	public boolean isEmpty(ContentContext ctx) {
-		return true;
-	}
-
-	@Override
 	public boolean isRealContent(ContentContext ctx) {
 		return false;		
 	}

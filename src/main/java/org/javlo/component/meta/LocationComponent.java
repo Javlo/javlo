@@ -35,15 +35,10 @@ public class LocationComponent extends AbstractVisualComponent {
 	public int getSearchLevel() {
 		return SEARCH_LEVEL_HIGH;
 	}
-
-	@Override
-	public boolean isEmpty(ContentContext ctx) {
-		return true;
-	}
 	
 	@Override
 	public boolean isDefaultValue(ContentContext ctx) {
-		return super.isEmpty(ctx); // this component is never not empty -> use empty parent method
+		return true;
 	}
 	
 	@Override

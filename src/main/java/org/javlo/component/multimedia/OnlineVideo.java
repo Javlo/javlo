@@ -409,11 +409,6 @@ public class OnlineVideo extends GlobalImage implements IAction, IVideo {
 	}
 
 	@Override
-	public boolean isEmpty(ContentContext ctx) {
-		return false;
-	}
-
-	@Override
 	protected String getImageChangeTitle(ContentContext ctx) throws FileNotFoundException, IOException {
 		I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
 		return i18nAccess.getText("content.video.label");

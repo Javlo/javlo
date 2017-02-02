@@ -930,11 +930,6 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 		return true;
 	}
 
-	@Override
-	public boolean isEmpty(ContentContext ctx) {
-		return getFileName().trim().length() == 0;
-	}
-
 	protected boolean isFileNameValid(ContentContext ctx, String fileName) {
 		return true;
 	}

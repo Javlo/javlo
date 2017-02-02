@@ -206,11 +206,6 @@ public class SiteMap extends AbstractVisualComponent {
 	}
 
 	@Override
-	public boolean isEmpty(ContentContext ctx) {
-		return false;
-	}
-
-	@Override
 	public int getComplexityLevel(ContentContext ctx) {
 		return COMPLEXITY_STANDARD;
 	}

@@ -339,11 +339,6 @@ public class AgendaImport extends AbstractVisualComponent {
 	}
 
 	@Override
-	public boolean isEmpty(ContentContext ctx) {
-		return false;
-	}
-
-	@Override
 	public String getHexColor() {
 		return LINK_COLOR;
 	}

@@ -949,11 +949,6 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 	}
 
 	@Override
-	public boolean isEmpty(ContentContext ctx) {
-		return false;
-	}
-
-	@Override
 	public boolean isContentCachable(ContentContext ctx) {
 		return false;
 	}

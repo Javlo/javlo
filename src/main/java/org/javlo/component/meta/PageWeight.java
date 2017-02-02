@@ -82,11 +82,6 @@ public class PageWeight extends AbstractVisualComponent implements IPageRank {
 	}
 
 	@Override
-	public boolean isEmpty(ContentContext ctx) {
-		return true;
-	}
-
-	@Override
 	public boolean isVisible() {
 		return false;
 	}

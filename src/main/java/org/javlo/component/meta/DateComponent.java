@@ -178,16 +178,6 @@ public class DateComponent extends AbstractVisualComponent implements IDate {
 	}
 
 	@Override
-	public boolean isEmpty(ContentContext ctx) {
-		return true;
-	}
-
-	@Override
-	public boolean isDefaultValue(ContentContext ctx) {
-		return super.isEmpty(ctx); // this component is never not empty -> use empty parent method
-	}
-
-	@Override
 	public String getHexColor() {
 		return META_COLOR;
 	}

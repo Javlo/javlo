@@ -525,10 +525,6 @@ public class SmartExternalLink extends ComplexPropertiesLink implements IReverse
 				}
 			}
 
-			if (isEmpty(ctx)) {
-				return "";
-			}
-
 			if (mustBeRemoved(ctx) || isURLinRequest(ctx, getLinkURL(ctx))) {
 				MenuElement elem = ctx.getCurrentPage();
 				// elem.removeContent(ctx, getId(), false);
@@ -661,14 +657,6 @@ public class SmartExternalLink extends ComplexPropertiesLink implements IReverse
 	}
 
 	@Override
-	public boolean isEmpty(ContentContext ctx) {
-		if (getStyle(ctx) != null && getStyle(ctx).equals(STYLE_UNVISIBLE)) {
-			return true;
-		}
-		return false; // not display if thread is running
-	}
-
-	@Override
 	public boolean isImageValid(ContentContext ctx) {
 		try {
 			loadData(ctx);
@@ -710,11 +698,6 @@ public class SmartExternalLink extends ComplexPropertiesLink implements IReverse
 	@Override
 	public boolean isOnlyThisPage() {
 		return properties.getProperty(REVERSE_LINK_KEY, "none").equals(ReverseLinkService.ONLY_THIS_PAGE);
-	}
-
-	@Override
-	public boolean isRealContent(ContentContext ctx) {
-		return !isEmpty(ctx);
 	}
 
 	@Override

@@ -192,11 +192,6 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 	}
 
 	@Override
-	public boolean isEmpty(ContentContext ctx) {
-		return false;
-	}
-
-	@Override
 	public boolean isRealContent(ContentContext ctx) {
 		return true;
 	}
@@ -427,7 +422,7 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 				}
 
 				/* validation */
-				if (finalValue != null && finalValue.length() > comp.getMaxSize(ctx, key)) {
+				if (finalValue.length() > comp.getMaxSize(ctx, key)) {
 					errorFields.add(key);
 					GenericMessage msg = new GenericMessage(comp.getConfigMessage(ctx, key, "max-size"), GenericMessage.ERROR);
 					request.setAttribute("msg", msg);
@@ -492,8 +487,7 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 				} else {
 					if (ParticipationListService.getInstance(ctx).checkNumber(pcode)) {
 						GenericMessage msg = new GenericMessage(comp.getLocalConfig(false).getProperty("message.participation.thanks", "thanks for your participation."), GenericMessage.INFO);
-						request.setAttribute("msg", msg);
-						return null;	
+						request.setAttribute("msg", msg);							
 					} else {
 						errorFields.add("pcode");
 						GenericMessage msg = new GenericMessage(comp.getLocalConfig(false).getProperty("message.bad-code", "bad participation code."), GenericMessage.ERROR);

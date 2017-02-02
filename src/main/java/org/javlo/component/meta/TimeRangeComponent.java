@@ -152,11 +152,6 @@ public class TimeRangeComponent extends DateComponent {
 	}
 
 	@Override
-	public boolean isEmpty(ContentContext ctx) {
-		return true;
-	}
-
-	@Override
 	public String getHexColor() {
 		return TEXT_COLOR;
 	}

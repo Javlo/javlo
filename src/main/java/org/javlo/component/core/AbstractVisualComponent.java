@@ -2039,12 +2039,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 
 	@Override
 	public boolean isDefaultValue(ContentContext ctx) {
-		return isEmpty(ctx);
-	}
-
-	@Override
-	public boolean isEmpty(ContentContext ctx) {
-		return getValue().trim().length() == 0;
+		return StringHelper.isEmpty(getValue());
 	}
 
 	protected boolean isFirstElementOfRepeatSequence(ContentContext ctx) throws Exception {

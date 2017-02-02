@@ -57,11 +57,6 @@ public class LinkLabel extends AbstractVisualComponent {
 	}
 
 	@Override
-	public boolean isEmpty(ContentContext ctx) {
-		return true;
-	}
-
-	@Override
 	public boolean isUnique() {
 		return true;
 	}

@@ -202,14 +202,6 @@ public interface IContentVisualComponent extends Comparable<IContentVisualCompon
 	public boolean isUnique();
 
 	/**
-	 * check if the component content pertinent content. Some component as title
-	 * is never pertinent.
-	 * 
-	 * @return true if component don't content pertinent content
-	 */
-	public boolean isEmpty(ContentContext ctx);
-
-	/**
 	 * return true if component is considered as realContent and the page that
 	 * contain the component is also considered as real content.
 	 * 

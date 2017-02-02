@@ -40,15 +40,6 @@ public class MenuTitle extends AbstractVisualComponent {
 	public String getHexColor() {
 		return META_COLOR;
 	}
-
-	/*public String getHelpURL(String lang) {
-		return getBaseHelpURL()+"/view/"+lang+"/components/title.html";
-	}*/
-	
-	@Override
-	public boolean isEmpty(ContentContext ctx) {
-		return true; /* page with only a title is never pertinent */
-	}
 	
 	@Override
 	public String getEmptyXHTMLCode(ContentContext ctx) throws Exception {

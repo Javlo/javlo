@@ -136,17 +136,6 @@ public class Title extends AbstractVisualComponent {
 	}
 
 	@Override
-	public boolean isEmpty(ContentContext ctx) {
-		return true; /* page with only a title is never pertinent */
-	}
-
-	@Override
-	public boolean isDefaultValue(ContentContext ctx) {
-		return super.isEmpty(ctx); // this component is never not empty -> use
-									// empty parent method
-	}
-
-	@Override
 	public boolean isUnique() {
 		return true;
 	}

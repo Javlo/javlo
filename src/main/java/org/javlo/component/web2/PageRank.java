@@ -96,11 +96,6 @@ public class PageRank extends AbstractVisualComponent implements IPageRank, IAct
 	}
 
 	@Override
-	public boolean isEmpty(ContentContext ctx) {
-		return false;
-	}
-
-	@Override
 	protected String getEditXHTMLCode(ContentContext ctx) throws Exception {
 		StringWriter writer = new StringWriter();
 		PrintWriter out = new PrintWriter(writer);

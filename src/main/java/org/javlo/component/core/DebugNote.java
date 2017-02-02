@@ -205,11 +205,6 @@ public class DebugNote extends AbstractPropertiesComponent {
 	}
 
 	@Override
-	public boolean isEmpty(ContentContext ctx) {
-		return ctx.getRenderMode() != ContentContext.PREVIEW_MODE;
-	}
-
-	@Override
 	public String getHexColor() {
 		return DEFAULT_COLOR;
 	}

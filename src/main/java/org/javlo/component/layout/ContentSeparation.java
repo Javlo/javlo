@@ -103,11 +103,6 @@ public class ContentSeparation extends AbstractVisualComponent {
 	}
 	
 	@Override
-	public boolean isEmpty(ContentContext ctx) {
-		return true;
-	}
-	
-	@Override
 	public boolean isContentCachable(ContentContext ctx) {
 		return true;
 	}

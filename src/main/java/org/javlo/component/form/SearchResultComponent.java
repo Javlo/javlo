@@ -45,11 +45,6 @@ public class SearchResultComponent extends AbstractVisualComponent {
 	}
 
 	@Override
-	public boolean isEmpty(ContentContext ctx) {
-		return false;
-	}
-
-	@Override
 	public String getPrefixViewXHTMLCode(ContentContext ctx) {
 		return "";
 	}

@@ -193,6 +193,12 @@ if (ColContext.isInstance(ctx)) {
 	}
 }
 
+if (pageEmpty) {
+	%><script>$("#<%=area%>").addClass("_empty_area");</script><%
+} else {
+	%><script>$("#<%=area%>").removeClass("_empty_area"); $("#<%=area%>").removeClass("drop-selected");</script><%
+}
+
 currentPage.endRendering(ctx);
 } /* end else getSpecialContentRenderer() */
 

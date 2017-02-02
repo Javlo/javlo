@@ -28,18 +28,15 @@ public class DeleteSameComponent extends AbstractMacro {
 		ContentElementList content = page.getContent(noAreaCtx);
 		while (content.hasNext(noAreaCtx)) {
 			IContentVisualComponent comp = content.next(noAreaCtx);
-
 			int code = comp.getValue(ctx).hashCode();
 			if (comp instanceof DynamicComponent) {
 				code = ((DynamicComponent) comp).contentHashCode();
 			}
 
-			if (!comp.isEmpty(ctx)) {
-				if (allValue.contains(code)) {
-					tobeDeleted.add(comp.getId());
-				} else {
-					allValue.add(code);
-				}
+			if (allValue.contains(code)) {
+				tobeDeleted.add(comp.getId());
+			} else {
+				allValue.add(code);
 			}
 		}
 

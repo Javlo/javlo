@@ -189,7 +189,11 @@ public class MailingBuilder {
 			m.setFrom(new InternetAddress(sender));
 			m.setReceivers(Collections.singleton(receiver.getKey()));
 			m.setSubject(subject);
-			m.setAdminEmail(globalContext.getAdministratorEmail());
+			m.setAdminEmail(globalContext.getAdministratorEmail());			
+			m.setSmtpHost(ctx.getGlobalContext().getSMTPHost());
+			m.setSmtpPort(ctx.getGlobalContext().getSMTPPort());
+			m.setSmtpUser(ctx.getGlobalContext().getSMTPUser());
+			m.setSmtpPassword(ctx.getGlobalContext().getSMTPPassword());
 			DKIMBean bean = globalContext.getDKIMBean();
 			if (bean != null) {
 				m.setDkimDomain(bean.getSigningdomain());

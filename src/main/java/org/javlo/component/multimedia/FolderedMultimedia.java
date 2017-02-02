@@ -854,11 +854,6 @@ public class FolderedMultimedia extends TimeRangeComponent implements IImageTitl
 		return true;
 	}
 
-	@Override
-	public boolean isEmpty(ContentContext ctx) {
-		return false;
-	}
-
 	boolean isFolder() {
 		return true;
 	}

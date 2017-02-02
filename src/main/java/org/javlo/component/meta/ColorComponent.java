@@ -39,11 +39,6 @@ public class ColorComponent extends AbstractVisualComponent {
 	public String getType() {
 		return TYPE;
 	}
-
-	@Override
-	public boolean isEmpty(ContentContext ctx) {
-		return true;
-	}
 	
 	@Override
 	public boolean isContentCachable(ContentContext ctx) {

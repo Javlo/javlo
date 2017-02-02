@@ -1043,11 +1043,6 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle, IStat
 		return true;
 	}
 
-	@Override
-	public boolean isEmpty(ContentContext ctx) {
-		return false;
-	}
-
 	boolean isFolder() {
 		return true;
 	}

@@ -186,11 +186,6 @@ public class EditBasketComponent extends AbstractPropertiesComponent implements 
 	}
 
 	@Override
-	public boolean isEmpty(ContentContext ctx) {
-		return false;
-	}
-
-	@Override
 	public List<String> getFields(ContentContext ctx) throws Exception {
 		return FIELDS;
 	}

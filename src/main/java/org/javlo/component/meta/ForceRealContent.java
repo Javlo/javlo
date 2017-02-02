@@ -64,11 +64,6 @@ public class ForceRealContent extends AbstractVisualComponent {
 	}
 
 	@Override
-	public boolean isEmpty(ContentContext ctx) {
-		return false;
-	}
-
-	@Override
 	public boolean isRealContent(ContentContext ctx) {
 		return true;
 	}

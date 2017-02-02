@@ -2656,7 +2656,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 		int bestPriority = Integer.MIN_VALUE;
 		while (contentList.hasNext(ctx)) {
 			IContentVisualComponent elem = contentList.next(specialCtx);
-			if ((elem instanceof ImageHeader) && !elem.isEmpty(specialCtx)) {
+			if ((elem instanceof ImageHeader) && elem.isRealContent(specialCtx)) {
 				IImageTitle imageComp = (IImageTitle) elem;
 				if (imageComp.isImageValid(specialCtx)) {
 					int priority = imageComp.getPriority(specialCtx);
@@ -2689,7 +2689,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 		int bestPriority = Integer.MIN_VALUE;
 		while (contentList.hasNext(ctx)) {
 			IContentVisualComponent elem = contentList.next(specialCtx);
-			if ((elem instanceof IImageTitle) && !(elem instanceof ImageHeader) && (!elem.isEmpty(specialCtx)) && (!elem.isRepeat())) {
+			if ((elem instanceof IImageTitle) && !(elem instanceof ImageHeader) && (elem.isRealContent(specialCtx)) && (!elem.isRepeat())) {
 				IImageTitle imageComp = (IImageTitle) elem;
 				if (imageComp.isImageValid(specialCtx)) {
 					int priority = imageComp.getPriority(specialCtx);
@@ -2711,7 +2711,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 			bestPriority = Integer.MIN_VALUE;
 			while (contentList.hasNext(ctx)) {
 				IContentVisualComponent elem = contentList.next(specialCtx);
-				if ((elem instanceof IImageTitle) && (!elem.isEmpty(specialCtx)) && (!elem.isRepeat())) {
+				if ((elem instanceof IImageTitle) && (elem.isRealContent(specialCtx)) && (!elem.isRepeat())) {
 					IImageTitle imageComp = (IImageTitle) elem;
 					if (imageComp.isImageValid(specialCtx)) {
 						int priority = imageComp.getPriority(specialCtx);
@@ -2745,7 +2745,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 		IContentComponentsList contentList = getAllContent(ctx);
 		while (contentList.hasNext(ctx)) {
 			IContentVisualComponent elem = contentList.next(ctx);
-			if ((elem instanceof IImageTitle) && (!elem.isEmpty(ctx)) && (!elem.isRepeat())) {
+			if ((elem instanceof IImageTitle) && (elem.isRealContent(ctx)) && (!elem.isRepeat())) {
 				IImageTitle imageComp = (IImageTitle) elem;
 				if (imageComp.isImageValid(ctx)) {
 					res.add(new ImageTitleBean(imageComp.getImageDescription(ctx), imageComp.getResourceURL(ctx), imageComp.getImageLinkURL(ctx), elem.getArea().equals(ComponentBean.DEFAULT_AREA) ? 6 : 4));
@@ -2757,7 +2757,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 				contentList = child.getAllContent(ctx);
 				while (contentList.hasNext(ctx)) {
 					IContentVisualComponent elem = contentList.next(ctx);
-					if ((elem instanceof IImageTitle) && (!elem.isEmpty(ctx)) && (!elem.isRepeat())) {
+					if ((elem instanceof IImageTitle) && (elem.isRealContent(ctx)) && (!elem.isRepeat())) {
 						IImageTitle imageComp = (IImageTitle) elem;
 						if (imageComp.isImageValid(ctx)) {
 							res.add(new ImageTitleBean(imageComp.getImageDescription(ctx), imageComp.getResourceURL(ctx), imageComp.getImageLinkURL(ctx)));
@@ -2784,7 +2784,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 		IContentComponentsList contentList = getAllContent(ctx);
 		while (contentList.hasNext(ctx)) {
 			IContentVisualComponent elem = contentList.next(ctx);
-			if (!(elem instanceof IImageTitle) && (elem instanceof IStaticContainer) && (!elem.isEmpty(ctx)) && (!elem.isRepeat())) {
+			if (!(elem instanceof IImageTitle) && (elem instanceof IStaticContainer) && (elem.isRealContent(ctx)) && (!elem.isRepeat())) {
 				IStaticContainer resourcesContainer = (IStaticContainer) elem;
 				res.addAll(resourcesContainer.getAllResourcesLinks(ctx));
 			}
@@ -3958,29 +3958,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 		ContentContext ctxForceArea = new ContentContext(ctx);
 		ctxForceArea.setArea(area);
 
-		boolean empty = true;
-		IContentComponentsList contentList = getContent(ctxForceArea);
-		while ((contentList.hasNext(ctxForceArea))) {
-			IContentVisualComponent component = contentList.next(ctxForceArea);
-			if (component != null) {
-				if (ctx.getCurrentTemplate() == null || ctx.getCurrentTemplate().getAreas().contains(component.getArea())) {
-					if (!component.isEmpty(ctxForceArea) || (ctx.getCurrentTemplate() != null && ctx.getCurrentTemplate().isMailing())) {
-						if (!component.isRepeat() || withRepeat) {
-							empty = false;
-						}
-						if (!component.isRepeat() || component.getType() == ForceRealContent.TYPE) {
-							boolean realContent = false;
-							if (component instanceof ForceRealContent) {
-								ForceRealContent fComp = (ForceRealContent) component;
-								realContent = StringHelper.isTrue(fComp.getValue());
-							}
-							desc.setEmpty(area, realContent);
-							return realContent;
-						}
-					}
-				}
-			}
-		}
+		boolean empty = true;	
 
 		if (isChildrenAssociation()) {
 			for (MenuElement child : getChildMenuElements()) {
@@ -3989,6 +3967,9 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 					return false;
 				}
 			}
+		} else {
+			IContentVisualComponent comp = getContent(ctxForceArea).next(ctxForceArea);
+			empty = !getContent(ctxForceArea).hasNext(ctxForceArea);
 		}
 
 		desc.setEmpty(area, empty);
@@ -4205,7 +4186,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 
 			while (content.hasNext(contentAreaCtx)) {
 				IContentVisualComponent comp = content.next(contentAreaCtx);
-				if (!comp.isEmpty(contentAreaCtx)) {
+				if (comp.isRealContent(contentAreaCtx)) {
 					return isInsideTimeRange();
 				}
 			}
@@ -4213,10 +4194,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 			for (MenuElement child : getAllChildrenList()) {
 				content = child.getContent(ctx);
 				while (content.hasNext(contentAreaCtx)) {
-					if (!content.next(contentAreaCtx).isEmpty(
-							contentAreaCtx) /*
-											 * && child . isVisible ( )
-											 */) { // TODO:
+					if (content.next(contentAreaCtx).isRealContent(contentAreaCtx)) {
 						return isInsideTimeRange();
 					}
 				}

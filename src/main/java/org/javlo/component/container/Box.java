@@ -265,11 +265,6 @@ public class Box extends AbstractVisualComponent implements IContainer {
 	}
 
 	@Override
-	public boolean isEmpty(ContentContext ctx) {
-		return false;
-	}
-
-	@Override
 	public boolean isDispayEmptyXHTMLCode(ContentContext ctx) throws Exception {
 		return false;
 	}

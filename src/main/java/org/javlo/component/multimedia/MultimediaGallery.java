@@ -504,11 +504,6 @@ public class MultimediaGallery extends TimeRangeComponent {
 		return true;
 	}
 
-	@Override
-	public boolean isEmpty(ContentContext ctx) {
-		return false;
-	}
-
 	protected boolean isRenderInfo(ContentContext ctx) {
 		return true;
 	}

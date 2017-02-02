@@ -1,15 +1,11 @@
 package org.javlo.component.title;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.PrintStream;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Properties;
 
-import org.apache.commons.lang3.StringEscapeUtils;
 import org.javlo.component.core.ComponentLayout;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.core.ISubTitle;
@@ -388,11 +384,6 @@ public class Heading extends AbstractPropertiesComponent implements ISubTitle {
 	@Override
 	public boolean isDefaultValue(ContentContext ctx) {
 		return getValue().trim().length() == 0;
-	}
-	
-	@Override
-	public boolean isEmpty(ContentContext ctx) {
-		return true; /* page with only a title is never pertinent */
 	}
 
 }

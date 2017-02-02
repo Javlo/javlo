@@ -46,11 +46,6 @@ public class WebSiteTitle extends AbstractVisualComponent {
 	public String getHexColor() {
 		return META_COLOR;
 	}
-
-	@Override
-	public boolean isEmpty(ContentContext ctx) {
-		return true; /* page with only a title is never pertinent */
-	}
 	
 	@Override
 	public boolean isUnique() {

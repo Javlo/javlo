@@ -66,9 +66,4 @@ public class Breadcrumb extends AbstractVisualComponent {
 		return true;
 	}
 
-	@Override
-	public boolean isEmpty(ContentContext ctx) {
-		return false;
-	}
-
 }

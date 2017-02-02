@@ -52,7 +52,7 @@ public class Keywords extends AbstractVisualComponent {
 
 	@Override
 	public boolean isDefaultValue(ContentContext ctx) {
-		return super.isEmpty(ctx); // this component is never not empty -> use empty parent method
+		return true; // this component is never not empty -> use empty parent method
 	}
 
 	@Override
