@@ -639,6 +639,9 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 
 		public ImageBean getImageBean() throws Exception {
 			IImageTitle image = page.getImage(ctx);
+			if (image == null) {
+				return null;
+			}
 			ContentContext absCtx = this.ctx.getContextForAbsoluteURL();
 			return new ImageBean(URLHelper.createResourceURL(absCtx, image.getResourceURL(absCtx)), URLHelper.createTransformURL(absCtx, image.getResourceURL(absCtx), "preview"), image.getImageDescription(absCtx), image.getImageLinkURL(absCtx));
 		}

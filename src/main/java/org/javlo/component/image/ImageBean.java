@@ -1,6 +1,7 @@
 package org.javlo.component.image;
 
 import org.javlo.context.ContentContext;
+import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 
 public class ImageBean {
@@ -23,6 +24,9 @@ public class ImageBean {
 		this.description = image.getImageDescription(ctx);
 		this.link = image.getImageLinkURL(ctx);
 		this.setPreviewURL(URLHelper.createTransformURL(ctx, ctx.getCurrentPage(), image.getResourceURL(ctx), filter));
+	}
+	public String getName() {
+		return StringHelper.getFileNameFromPath(url);
 	}
 	public String getUrl() {
 		return url;

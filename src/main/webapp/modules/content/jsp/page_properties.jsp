@@ -105,32 +105,41 @@
 
 </div>
 </div>
-
+<div class="row">
+<div class="col-sm-4">
 <div class="line">
 	<label>${i18n.edit['item.path']}</label>
 	<span>${page.path}</span>
 </div>
+</div><div class="col-sm-4">
 <c:if test="${not globalContext.mailingPlatform}">
 <div class="line">
 	<label>${i18n.edit['item.last-access']}</label>
 	<span>${page.lastAccess}</span>
 </div>
+</div><div class="col-sm-4">
 <div class="line">
 	<label>${i18n.edit['item.page-rank']}</label>
 	<span>${page.pageRank}</span>
 </div>
-
 </c:if>
+</div></div>
+<div class="row">
+<div class="col-sm-4">
 <div class="line">
 	<label>Cachable?</label>
 	<span>${page.cacheable} <c:if test="${!page.cacheable}">(${page.notCacheableComponent})</c:if></span>
 </div>
-
+</div><div class="col-sm-4">
 <div class="line">
 	<label>Real Content?</label>
 	<span>${page.realContent} <c:if test="${page.realContent}">(${page.realContentComponent})</c:if><c:if test="${!page.realContent && not empty page.realContentLanguage}"> [content found : ${page.realContentLanguage}]</c:if></span>
 </div>
-
+</div><div class="col-sm-4">
+<div class="line">
+	<label>Image</label>	
+	<span><c:if test="${empty page.info.imageBean}">-</c:if><c:if test="${not empty page.info.imageBean}"><a href="${page.info.imageBean.url}" target="_blank">${page.info.imageBean.name}</a></c:if></span></div>
+</div></div>
 
 </div>
 <div class="one_half last">

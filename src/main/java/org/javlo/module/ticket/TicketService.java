@@ -48,7 +48,7 @@ public class TicketService {
 		return service;
 	}
 
-	private void loadTickets() throws IOException {
+	private void loadTickets() throws IOException {		
 		tickets = new HashMap<String, TicketBean>();
 		File[] files = folder.listFiles((FileFilter) FileFilterUtils.suffixFileFilter(".xml"));
 		if (files != null) {
@@ -61,7 +61,7 @@ public class TicketService {
 		}
 	}
 
-	private TicketBean loadTicket(File file) throws IOException {
+	private TicketBean loadTicket(File file) throws IOException {	
 		if (file == null || !file.exists()) {
 			return null;
 		}
