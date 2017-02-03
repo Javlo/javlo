@@ -2692,7 +2692,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 		int bestPriority = Integer.MIN_VALUE;
 		while (contentList.hasNext(ctx)) {
 			IContentVisualComponent elem = contentList.next(specialCtx);
-			if ((elem instanceof IImageTitle) && !(elem instanceof ImageHeader) && (elem.isRealContent(specialCtx)) && (!elem.isRepeat())) {
+			if ((elem instanceof IImageTitle) && !(elem instanceof ImageHeader) && (!elem.isRepeat())) {
 				IImageTitle imageComp = (IImageTitle) elem;
 				if (imageComp.isImageValid(specialCtx)) {
 					int priority = imageComp.getPriority(specialCtx);

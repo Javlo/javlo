@@ -1297,9 +1297,4 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 		return latestValidDate;
 	}
 	
-	@Override
-	public boolean isRealContent(ContentContext ctx) {
-		return !StringHelper.isEmpty(getValue());
-	}
-
 }
