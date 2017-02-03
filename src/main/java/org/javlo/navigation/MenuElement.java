@@ -2714,7 +2714,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 			bestPriority = Integer.MIN_VALUE;
 			while (contentList.hasNext(ctx)) {
 				IContentVisualComponent elem = contentList.next(specialCtx);
-				if ((elem instanceof IImageTitle) && (elem.isRealContent(specialCtx)) && (!elem.isRepeat())) {
+				if ((elem instanceof IImageTitle) && (!elem.isRepeat())) {
 					IImageTitle imageComp = (IImageTitle) elem;
 					if (imageComp.isImageValid(specialCtx)) {
 						int priority = imageComp.getPriority(specialCtx);
@@ -2748,7 +2748,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 		IContentComponentsList contentList = getAllContent(ctx);
 		while (contentList.hasNext(ctx)) {
 			IContentVisualComponent elem = contentList.next(ctx);
-			if ((elem instanceof IImageTitle) && (elem.isRealContent(ctx)) && (!elem.isRepeat())) {
+			if ((elem instanceof IImageTitle) && (!elem.isRepeat())) {
 				IImageTitle imageComp = (IImageTitle) elem;
 				if (imageComp.isImageValid(ctx)) {
 					res.add(new ImageTitleBean(imageComp.getImageDescription(ctx), imageComp.getResourceURL(ctx), imageComp.getImageLinkURL(ctx), elem.getArea().equals(ComponentBean.DEFAULT_AREA) ? 6 : 4));
@@ -2760,7 +2760,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 				contentList = child.getAllContent(ctx);
 				while (contentList.hasNext(ctx)) {
 					IContentVisualComponent elem = contentList.next(ctx);
-					if ((elem instanceof IImageTitle) && (elem.isRealContent(ctx)) && (!elem.isRepeat())) {
+					if ((elem instanceof IImageTitle) && (!elem.isRepeat())) {
 						IImageTitle imageComp = (IImageTitle) elem;
 						if (imageComp.isImageValid(ctx)) {
 							res.add(new ImageTitleBean(imageComp.getImageDescription(ctx), imageComp.getResourceURL(ctx), imageComp.getImageLinkURL(ctx)));
