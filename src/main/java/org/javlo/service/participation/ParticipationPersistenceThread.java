@@ -12,7 +12,7 @@ public class ParticipationPersistenceThread extends Thread {
 	
 	private static Logger logger = Logger.getLogger(ParticipationPersistenceThread.class.getName());
 	
-	private static final long TIME_BEFORE_SAFE = 10*1000; // 10 Sec
+	private static final long TIME_BEFORE_SAFE = 5*1000; // 5 Sec
 	
 	private Properties prop;
 	private File file;
