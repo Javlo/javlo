@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.lang.ref.WeakReference;
 import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Collections;
@@ -19,7 +20,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
-import javax.imageio.ImageIO;
 import javax.naming.ConfigurationException;
 import javax.servlet.http.HttpServletRequest;
 
@@ -584,7 +584,7 @@ public class StaticInfo {
 
 	private String staticURL = null;
 
-	private MenuElement linkedPage = null;
+	private WeakReference<MenuElement> linkedPageRef = null;
 
 	private Date linkedDate;
 
@@ -1160,11 +1160,16 @@ public class StaticInfo {
 	}
 
 	public MenuElement getLinkedPage(ContentContext ctx) {
+		MenuElement linkedPage = null;
+		if (linkedPageRef != null) {
+			linkedPage = linkedPageRef.get();
+		}
 		if (getLinkedPageId(ctx) != null && linkedPage == null) {
 			try {
 				GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 				NavigationService navigationService = NavigationService.getInstance(globalContext);
 				linkedPage = navigationService.getPage(ctx, getLinkedPageId(ctx));
+				linkedPageRef = new WeakReference<MenuElement>(linkedPage);
 				// linkedPage =
 				// content.getNavigation(ctx).searchChildFromId(getLinkedPageId(ctx));
 			} catch (Exception e) {

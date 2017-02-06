@@ -1127,9 +1127,7 @@ public class Edit extends AbstractModuleAction {
 		if (!canModifyCurrentPage(ctx) || !checkPageSecurity(ctx)) {
 			messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("action.block"), GenericMessage.ERROR), false);
 		} else {
-
 			boolean isView = requestService.getParameter("view", null) != null;
-
 			String pageName = requestService.getParameter("name", null);
 			String newName = requestService.getParameter("new_name", null);
 			if (pageName == null || newName == null) {

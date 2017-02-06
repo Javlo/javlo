@@ -74,6 +74,7 @@ import org.javlo.context.ContentManager;
 import org.javlo.context.GlobalContext;
 import org.javlo.data.rest.IRestItem;
 import org.javlo.helper.BeanHelper;
+import org.javlo.helper.DebugHelper;
 import org.javlo.helper.NavigationHelper;
 import org.javlo.helper.NetHelper;
 import org.javlo.helper.StringHelper;
@@ -108,6 +109,10 @@ import org.javlo.ztatic.StaticInfo;
  * @author pvanderm
  */
 public class MenuElement implements Serializable, IPrintInfo, IRestItem {
+	
+	public static int instance = 0;
+	
+	public static Set<String> reference = new HashSet<String>();
 
 	public static final String PAGE_TYPE_DEFAULT = "default";
 
@@ -1000,6 +1005,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 	}
 
 	public static MenuElement getInstance(GlobalContext globalContext) {
+		String caller = DebugHelper.getCaller();
 		MenuElement outMenuElement = new MenuElement();
 		outMenuElement.releaseCache = true;
 		outMenuElement.lock = globalContext.getLockLoadContent();
@@ -1196,6 +1202,12 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 	private Object lock = null;
 
 	protected MenuElement() {
+		instance++;
+	}
+	
+	@Override
+	protected void finalize() throws Throwable {
+		instance--;
 	}
 
 	public void addAccess(ContentContext ctx) {

@@ -826,7 +826,7 @@ hange log
   
   * 4/ compare event to the end of the current day / remove special char method / VFS optimisation
   
-  * 5/ update library / info.getNowSortable / interest thread / countries as list / update lib / ComponentContextBean / GlobalImage set page in with key / GenericForm participation / simplification of isempty / set mailing config 
+  * 5/ update library / info.getNowSortable / interest thread / countries as list / update lib / ComponentContextBean / GlobalImage set page in with key / GenericForm participation / simplification of isempty / set mailing config / StaticInfo weekref to MenuElement
   
  * 2.1.0.3.22 02/02/17
  

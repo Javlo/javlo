@@ -223,8 +223,6 @@ public class StaticInfoContent {
 
 	private final long size = -1;
 
-	private Collection<MenuElement> containers = null;
-
 	private File file;
 
 	private String getKey(String key) {
@@ -456,14 +454,6 @@ public class StaticInfoContent {
 
 	public String getStaticURL() {
 		return staticURL;
-	}
-
-	public Collection<MenuElement> getContainers() {
-		return containers;
-	}
-
-	public void setContainers(Collection<MenuElement> containers) {
-		this.containers = containers;
 	}
 
 	public int getFocusZoneX(ContentContext ctx) {

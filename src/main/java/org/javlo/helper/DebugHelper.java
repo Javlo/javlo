@@ -112,6 +112,12 @@ public class DebugHelper {
 		out.println("**** THREAD COUNT      :  " + threads.getThreadCount());
 		out.println("**** THREAD STR COUNT  :  " + threads.getTotalStartedThreadCount());
 		out.println("**** THREAD DMN COUNT  :  " + threads.getDaemonThreadCount());
+		out.println("**** #MenuElement      :  " + MenuElement.instance);
+		
+		for (String ref : MenuElement.reference) {
+			out.println("**** MenuElement r :  " +ref);
+		}
+		
 		out.println("****");
 		out.println("****************************************************************");
 		out.println("****************************************************************");

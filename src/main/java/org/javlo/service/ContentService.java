@@ -31,8 +31,6 @@ import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.context.GlobalContextFactory;
 import org.javlo.data.InfoBean;
-import org.javlo.helper.DebugHelper;
-import org.javlo.helper.LangHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.i18n.I18nResource;
 import org.javlo.module.core.IPrintInfo;
@@ -130,14 +128,10 @@ public class ContentService implements IPrintInfo {
 
 	public static ContentService getInstance(GlobalContext globalContext) {
 		ContentService content = null;
-		if (globalContext != null) {
-			content = (ContentService) globalContext.getAttribute(ContentService.class.getName());
-		}
+		content = (ContentService) globalContext.getAttribute(ContentService.class.getName());		
 		if (content == null) {
 			content = new ContentService();
-			if (globalContext != null) {
-				globalContext.setAttribute(ContentService.class.getName(), content);
-			}
+			globalContext.setAttribute(ContentService.class.getName(), content);			
 		}
 		content.previewMode = globalContext.isPreviewMode();
 		return content;
