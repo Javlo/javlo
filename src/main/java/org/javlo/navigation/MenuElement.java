@@ -3371,20 +3371,6 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 		return replacement;
 	}
 
-	public Collection<StaticInfo> getResources(ContentContext ctx) throws Exception {
-		Collection<StaticInfo> pageResources = new LinkedList<StaticInfo>();
-		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-		Collection<StaticInfo> resources = globalContext.getResources(ctx);
-		for (StaticInfo staticInfo : resources) {
-			if (staticInfo.getLinkedPage(ctx) != null) {
-				if (this.getId().equals(staticInfo.getLinkedPageId(ctx))) {
-					pageResources.add(staticInfo);
-				}
-			}
-		}
-		return pageResources;
-	}
-
 	public String getReversedLink() {
 		return reversedLink;
 	}

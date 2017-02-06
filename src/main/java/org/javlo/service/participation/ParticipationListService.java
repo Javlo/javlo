@@ -1,4 +1,4 @@
-package org.javlo.service;
+package org.javlo.service.participation;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -25,11 +25,12 @@ public class ParticipationListService {
 	private static final int SIZE = 8;
 	private File file;
 	private Properties prop = new Properties();
+	private ParticipationPersistenceThread thread = null;
 	
 	public static final ParticipationListService getInstance(ContentContext ctx) throws IOException {
 		final File defaultFile = new File(URLHelper.mergePath(ctx.getGlobalContext().getStaticFolder(), "participation_number.properties"));
 		return getInstance(ctx, defaultFile);
-	}
+	}	
 
 	public static final ParticipationListService getInstance(ContentContext ctx, File listFile) throws IOException {
 		String KEY = listFile.getAbsolutePath();
@@ -79,11 +80,15 @@ public class ParticipationListService {
 	}
 	
 	public boolean checkNumber(String number) {
-		System.out.println("***** ParticipationListService.checkNumber : prop.get("+number+") = "+prop.get(number)); //TODO: remove debug trace
 		if (StringHelper.isTrue(prop.get(number), true)) {
+			logger.warning("refuse code : "+number);
 			return false;
 		} else {
 			prop.setProperty(number, "true");
+			if (thread == null || !thread.isThreadWait()) {
+				thread = new ParticipationPersistenceThread(prop, file);
+				thread.start();
+			}
 			return true;
 		}
 	}

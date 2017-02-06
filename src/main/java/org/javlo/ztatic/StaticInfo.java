@@ -120,7 +120,7 @@ public class StaticInfo {
 
 		public String getDescription() {
 			return staticInfo.getManualDescription(ctx);
-		}					
+		}
 
 		public String getHtmlDescription() {
 			return Encode.forHtmlAttribute(staticInfo.getManualDescription(ctx));
@@ -231,6 +231,7 @@ public class StaticInfo {
 		public int getFocusZoneY() {
 			return staticInfo.getFocusZoneY(ctx);
 		}
+
 		public boolean isEmptyInfo() {
 			if (!StringHelper.isEmpty(getTitle())) {
 				return false;
@@ -246,6 +247,7 @@ public class StaticInfo {
 			}
 			return true;
 		}
+
 		private String getAllInfo(boolean html) {
 			ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 			PrintStream out = new PrintStream(outStream);
@@ -254,48 +256,48 @@ public class StaticInfo {
 			if (!html) {
 				baseSep = " - ";
 			}
-			String title = getTitle();				
+			String title = getTitle();
 			if (!StringHelper.isEmpty(title)) {
 				if (html) {
-					out.print("<span class=\"title\">"+Encode.forHtml(title)+"</span>");
+					out.print("<span class=\"title\">" + Encode.forHtml(title) + "</span>");
 				} else {
 					out.print(title);
 				}
 				sep = baseSep;
 			}
-			Date date = staticInfo.getManualDate(ctx);				
+			Date date = staticInfo.getManualDate(ctx);
 			if (date != null) {
 				if (html) {
-					out.print(sep+"<span class=\"date\">"+getShortDate()+"</span>");
+					out.print(sep + "<span class=\"date\">" + getShortDate() + "</span>");
 				} else {
-					out.print(sep+getShortDate());
+					out.print(sep + getShortDate());
 				}
 				sep = baseSep;
 			}
-			String description = getDescription();				
+			String description = getDescription();
 			if (!StringHelper.isEmpty(description)) {
 				if (html) {
-					out.print(sep+"<span class=\"description\">"+Encode.forHtml(description)+"</span>");
+					out.print(sep + "<span class=\"description\">" + Encode.forHtml(description) + "</span>");
 				} else {
-					out.print(sep+description);
+					out.print(sep + description);
 				}
 				sep = baseSep;
 			}
-			String location = getLocation();				
+			String location = getLocation();
 			if (!StringHelper.isEmpty(location)) {
 				if (html) {
-					out.print(sep+"<span class=\"location\">"+Encode.forHtml(location)+"</span>");
+					out.print(sep + "<span class=\"location\">" + Encode.forHtml(location) + "</span>");
 				} else {
-					out.print(sep+location);
+					out.print(sep + location);
 				}
 				sep = baseSep;
 			}
-			String copyright = getCopyright();				
+			String copyright = getCopyright();
 			if (!StringHelper.isEmpty(copyright)) {
 				if (html) {
-					out.print(sep+"<span class=\"copyright\">"+Encode.forHtml(copyright)+"</span>");
+					out.print(sep + "<span class=\"copyright\">" + Encode.forHtml(copyright) + "</span>");
 				} else {
-					out.print(sep+copyright);
+					out.print(sep + copyright);
 				}
 				sep = baseSep;
 			}
@@ -307,27 +309,29 @@ public class StaticInfo {
 			}
 			return outStr;
 		}
+
 		public String getAllInfoHtml() {
 			return getAllInfo(true);
 		}
+
 		public String getAllInfoText() {
 			return getAllInfo(false);
 		}
 	}
-	
+
 	public ContentContext getContextWithContent(ContentContext ctx) {
-		String content = (getTitle(ctx)+getDescription(ctx)+getCopyright(ctx)).trim();
-		if (content.length()>0) {
+		String content = (getTitle(ctx) + getDescription(ctx) + getCopyright(ctx)).trim();
+		if (content.length() > 0) {
 			return ctx;
 		} else {
 			ContentContext lgCtx = new ContentContext(ctx);
 			for (String lg : ctx.getGlobalContext().getDefaultLanguages()) {
 				lgCtx.setAllLanguage(lg);
-				content = (getTitle(lgCtx)+getDescription(lgCtx)+getCopyright(lgCtx)).trim();
+				content = (getTitle(lgCtx) + getDescription(lgCtx) + getCopyright(lgCtx)).trim();
 				if (content.length() > 0) {
 					return lgCtx;
 				}
-			}			
+			}
 		}
 		return ctx;
 	}
@@ -788,7 +792,7 @@ public class StaticInfo {
 		if (getManualDescription(ctx).length() > 0) {
 			return getManualDescription(ctx);
 		} else {
-			return getLinkedDescription(ctx);
+			return "";
 		}
 	}
 
@@ -817,7 +821,7 @@ public class StaticInfo {
 		if (getManualLocation(ctx).length() > 0) {
 			return getManualLocation(ctx);
 		} else {
-			return getLinkedLocation(ctx);
+			return "";
 		}
 	}
 
@@ -964,13 +968,8 @@ public class StaticInfo {
 				if (getExifDate() != null) {
 					date = getExifDate();
 				} else {
-					Date linkedDate = getLinkedDate(ctx);
-					if (linkedDate == null) {
-						dateFromData = false;
-						date = getFileDate(ctx);
-					} else {
-						date = linkedDate;
-					}
+					dateFromData = false;
+					date = getFileDate(ctx);
 				}
 			}
 		}
@@ -1049,7 +1048,7 @@ public class StaticInfo {
 	 * @return
 	 */
 	public int getFocusZoneX(ContentContext ctx) {
-		
+
 		ContentService content = ContentService.getInstance(ctx.getGlobalContext());
 
 		ContentContext editCtx = ctx.getContextWithOtherRenderMode(ContentContext.EDIT_MODE);
@@ -1063,14 +1062,14 @@ public class StaticInfo {
 						Point point = null;
 						BufferedImage img = null;
 						try {
-							//img = ImageIO.read(getFile());
+							// img = ImageIO.read(getFile());
 							if (ctx.getGlobalContext().getStaticConfig().isAutoFocus()) {
-								logger.info("search point on interest on START : "+getFile()+" ["+ctx.getGlobalContext().getContextKey()+"]");								
-								//point = InitInterest.getPointOfInterest(img);
+								logger.info("search point on interest on START : " + getFile() + " [" + ctx.getGlobalContext().getContextKey() + "]");
+								// point = InitInterest.getPointOfInterest(img);
 								content.setAttribute(editCtx, getKey("focus-zone-x"), "" + DEFAULT_FOCUS_X);
 								content.setAttribute(editCtx, getKey("focus-zone-y"), "" + DEFAULT_FOCUS_Y);
 								InitInterest.setPointOfInterestWidthThread(ctx, getFile(), getKey("focus-zone-x"), getKey("focus-zone-y"));
-								logger.info("search point on interest on DONE : "+getFile()+" ["+ctx.getGlobalContext().getContextKey()+"]");
+								logger.info("search point on interest on DONE : " + getFile() + " [" + ctx.getGlobalContext().getContextKey() + "]");
 							}
 						} catch (Throwable t) {
 							logger.warning(t.getMessage());
@@ -1159,41 +1158,6 @@ public class StaticInfo {
 		}
 	}
 
-	public MenuElement getLinkedPage(ContentContext ctx) {
-		MenuElement linkedPage = null;
-		if (linkedPageRef != null) {
-			linkedPage = linkedPageRef.get();
-		}
-		if (getLinkedPageId(ctx) != null && linkedPage == null) {
-			try {
-				GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-				NavigationService navigationService = NavigationService.getInstance(globalContext);
-				linkedPage = navigationService.getPage(ctx, getLinkedPageId(ctx));
-				linkedPageRef = new WeakReference<MenuElement>(linkedPage);
-				// linkedPage =
-				// content.getNavigation(ctx).searchChildFromId(getLinkedPageId(ctx));
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-		return linkedPage;
-	}
-
-	public Date getLinkedDate(ContentContext ctx) {
-		if (getLinkedPage(ctx) != null) {
-			if (linkedDate == null) {
-				try {
-					linkedDate = getLinkedPage(ctx).getContentDate(ctx);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-			return linkedDate;
-		} else {
-			return null;
-		}
-	}
-
 	private Date getFileDate() {
 		if (fileDate == null) {
 			fileDate = new Date(getFile().lastModified());
@@ -1205,38 +1169,8 @@ public class StaticInfo {
 		this.linkedDate = linkedDate;
 	}
 
-	public String getLinkedTitle(ContentContext ctx) {
-		if (getLinkedPage(ctx) != null) {
-			if (linkedTitle == null) {
-				try {
-					linkedTitle = getLinkedPage(ctx).getTitle(ctx);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-			return linkedTitle;
-		} else {
-			return "";
-		}
-	}
-
 	public void setLinkedTitle(String linkedTitle) {
 		this.linkedTitle = linkedTitle;
-	}
-
-	public String getLinkedDescription(ContentContext ctx) {
-		if (getLinkedPage(ctx) != null) {
-			if (linkedDescription == null) {
-				try {
-					linkedDescription = getLinkedPage(ctx).getDescription(ctx);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-			return linkedDescription;
-		} else {
-			return "";
-		}
 	}
 
 	public void setLinkedDescription(String linkedDescription) {
@@ -1245,21 +1179,6 @@ public class StaticInfo {
 
 	public void setLinkedLocation(String linkedLocation) {
 		this.linkedLocation = linkedLocation;
-	}
-
-	public String getLinkedLocation(ContentContext ctx) {
-		if (getLinkedPage(ctx) != null) {
-			if (linkedLocation == null) {
-				try {
-					linkedLocation = getLinkedPage(ctx).getLocation(ctx);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-			return linkedLocation;
-		} else {
-			return "";
-		}
 	}
 
 	public boolean isPertinent(ContentContext ctx) {
