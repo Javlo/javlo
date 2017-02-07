@@ -830,3 +830,5 @@ hange log
   
  * 2.1.0.3.22 02/02/17
  
+  * 1/ get title and label from not main area if not found in main area
+ 
