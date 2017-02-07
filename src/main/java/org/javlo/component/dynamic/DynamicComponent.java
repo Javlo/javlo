@@ -884,7 +884,7 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 		try {
 			for (Field field : getFields(ctx)) {
 				if (field.isTitle()) {
-					return HIGH_LABEL_LEVEL-1;
+					return HIGH_LABEL_LEVEL;
 				}
 			}
 		} catch (Exception e) {

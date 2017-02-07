@@ -253,7 +253,28 @@ public class ContentElementList implements IContentComponentsList {
 			if (firstSubtitle == null && comp instanceof SubTitle) {
 				firstSubtitle = comp.getTextLabel(ctx);
 			}
-		
+
+		}
+		elems = contentElements.iterator();
+		while (elems.hasNext()) {
+			IContentVisualComponent comp = (IContentVisualComponent) elems.next();
+			if (comp.getLabelLevel(ctx) > 0 && comp.getLabelLevel(ctx) >= currentLabelLevel) {
+				if (comp.getLabelLevel(ctx) > currentLabelLevel && !comp.getArea().equals(ComponentBean.DEFAULT_AREA)) {
+					res = comp.getTextLabel(ctx);
+					if (res == null) {
+						res = "";
+					} else {
+						currentLabelLevel = comp.getLabelLevel(ctx);
+					}
+				}
+			}
+			if (comp instanceof MenuTitle && !comp.isRepeat()) {
+				return comp.getTextLabel(ctx);
+			}
+			if (firstSubtitle == null && comp instanceof SubTitle) {
+				firstSubtitle = comp.getTextLabel(ctx);
+			}
+
 		}
 		if (res.length() == 0) { // if no element not repeat search with repeat
 									// element
@@ -434,23 +455,39 @@ public class ContentElementList implements IContentComponentsList {
 		String res = "";
 		Iterator elems = contentElements.iterator();
 		int maxLabelLevel = 0;
-		
+
 		while (elems.hasNext() && maxLabelLevel < IContentVisualComponent.HIGH_LABEL_LEVEL) {
 			IContentVisualComponent comp = (IContentVisualComponent) elems.next();
+
 			if (comp.getLabelLevel(ctx) > 0 && comp.getLabelLevel(ctx) >= maxLabelLevel && !comp.isRepeat()) {
-				if (!(comp instanceof MirrorComponent)) {
-					if (comp.getLabelLevel(ctx) > maxLabelLevel && comp.getArea().equals(ComponentBean.DEFAULT_AREA)) {
-						res = comp.getTextTitle(ctx);
-						if (res == null) {
-							res = "";
-						} else {
-							maxLabelLevel = comp.getLabelLevel(ctx);
-						}
-					}
+				// if (!(comp instanceof MirrorComponent)) {
+				if (comp.getLabelLevel(ctx) > maxLabelLevel && comp.getArea().equals(ComponentBean.DEFAULT_AREA)) {
+					res = comp.getTextTitle(ctx);
+					maxLabelLevel = comp.getLabelLevel(ctx);
 				}
+				// }
+			}
+
+		}
+
+		elems = contentElements.iterator();
+		while (maxLabelLevel < IContentVisualComponent.HIGH_LABEL_LEVEL && elems.hasNext()) {
+			IContentVisualComponent comp = (IContentVisualComponent) elems.next();
+			if (comp.getLabelLevel(ctx) > 0 && comp.getLabelLevel(ctx) >= maxLabelLevel && !comp.isRepeat()) {
+				// if (!(comp instanceof MirrorComponent)) {
+				if (comp.getLabelLevel(ctx) > maxLabelLevel && !comp.getArea().equals(ComponentBean.DEFAULT_AREA)) {
+
+					res = comp.getTextTitle(ctx);
+					maxLabelLevel = comp.getLabelLevel(ctx);
+				}
+				// }
 			}
 		}
-		
+
+		if (res == null) {
+			res = "";
+		}
+
 		if (repeat) {
 			if (res.length() == 0) { // if no element not repeat search with
 										// repeat element

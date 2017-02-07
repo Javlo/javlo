@@ -592,10 +592,7 @@ public class MirrorComponent extends AbstractVisualComponent implements IFieldCo
 		try {
 			comp = getMirrorComponent(ctx);
 			if (comp != null) {
-				/*
-				 * If we find the component on the page, we take this one --> -1
-				 */
-				return comp.getLabelLevel(ctx) - 1;
+				return comp.getLabelLevel(ctx);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
