@@ -272,29 +272,23 @@ public class UserAction extends AbstractModuleAction {
 	}
 
 	public String performUpdate(ContentContext ctx, GlobalContext globalContext, RequestService requestService, StaticConfig staticConfig, AdminUserSecurity adminUserSecurity, AdminUserFactory adminUserFactory, HttpSession session, Module currentModule, I18nAccess i18nAccess, MessageRepository messageRepository) {
-		if (requestService.getParameter("ok", null) != null) {
+		if (requestService.getParameter("back", null) == null) {
 			UserModuleContext userContext = UserModuleContext.getInstance(ctx.getRequest());
 			IUserFactory userFactory = userContext.getUserFactory(ctx);
-
 			User user = userFactory.getUser(requestService.getParameter("user", null));
 			if (user == null) {
 				return "user not found : " + requestService.getParameter("user", null);
 			}
-
 			IUserInfo userInfo = user.getUserInfo();
 			String pwd = user.getPassword();
-
 			try {
 				BeanHelper.copy(new RequestParameterMap(ctx.getRequest()), userInfo);
-
 				if (staticConfig.isPasswordEncryt()) {
 					if (!userInfo.getPassword().equals(pwd)) {
 						userInfo.setPassword(StringHelper.encryptPassword(userInfo.getPassword()));
 					}
 				}
-
 				userFactory.updateUserInfo(userInfo);
-
 				Set<String> newRoles = new HashSet<String>();
 				Set<String> allRoles = userFactory.getAllRoles(globalContext, session);
 				for (String role : allRoles) {
@@ -302,7 +296,6 @@ public class UserAction extends AbstractModuleAction {
 						newRoles.add(role);
 					}
 				}
-
 				boolean admin = userFactory instanceof AdminUserFactory;
 				IUserInfo ui = user.getUserInfo();
 				if (!admin || adminUserSecurity.haveRight(adminUserFactory.getCurrentUser(ctx.getRequest().getSession()), AdminUserSecurity.ADMIN_USER_ROLE, AdminUserSecurity.GENERAL_ADMIN)) {
@@ -314,15 +307,12 @@ public class UserAction extends AbstractModuleAction {
 						messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("global.message.noright"), GenericMessage.ERROR));
 					}
 				}
-
 			} catch (Exception e) {
 				e.printStackTrace();
 				return e.getMessage();
 			}
-
 			messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("user.message.updated", new String[][] { { "user", user.getLogin() } }), GenericMessage.INFO));
 		}
-
 		return null;
 	}
 

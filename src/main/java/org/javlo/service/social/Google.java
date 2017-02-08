@@ -51,10 +51,11 @@ public class Google extends AbstractSocialNetwork {
 	}
 
 	@Override
-	protected SocialUser getSocialUser(String accessToken, OAuthClient oAuthClient) throws Exception {
+	public SocialUser getSocialUser(String accessToken, OAuthClient oAuthClient) throws Exception {	
 		OAuthClientRequest oAuthRequest = new OAuthBearerClientRequest("https://www.googleapis.com/oauth2/v2/userinfo").setAccessToken(accessToken).buildHeaderMessage();
 		OAuthResourceResponse resourceResponse = oAuthClient.resource(oAuthRequest, OAuth.HttpMethod.GET, OAuthResourceResponse.class);
-		Map<String, Object> userInformation = JSONMap.parseMap(resourceResponse.getBody());
+		String body = resourceResponse.getBody();	
+		Map<String, Object> userInformation = JSONMap.parseMap(body);
 		SocialUser user = new SocialUser();
 		user.setEmail((String) userInformation.get("email")).setFirstName((String) userInformation.get("given_name")).setLastName((String) userInformation.get("family_name")).setAvatarURL((String) userInformation.get("picture"));
 		return user;

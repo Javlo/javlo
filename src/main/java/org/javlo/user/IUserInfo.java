@@ -94,6 +94,8 @@ public interface IUserInfo {
 	
 	public String getAvatarURL();
 	
+	public void setAvatarURL(String avatarURL);
+	
 	public String getUserFolder();
 	
 	public InternetAddress getInternetAddress();

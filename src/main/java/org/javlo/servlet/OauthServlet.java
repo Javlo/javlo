@@ -1,6 +1,7 @@
 package org.javlo.servlet;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
 
@@ -15,12 +16,18 @@ import org.javlo.context.ContentContext;
 import org.javlo.helper.NavigationHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
+import org.javlo.i18n.I18nAccess;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.social.ISocialNetwork;
 import org.javlo.service.social.SocialService;
+import org.javlo.service.social.SocialUser;
+import org.javlo.user.AdminUserFactory;
+import org.javlo.user.IUserInfo;
+import org.javlo.user.User;
 
 public class OauthServlet extends HttpServlet {
 
+	private static final long serialVersionUID = 1L;
 	private static Logger logger = Logger.getLogger(OauthServlet.class.getName());
 
 	public OauthServlet() {
@@ -29,6 +36,7 @@ public class OauthServlet extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String socialNetworkName;
+		boolean admin = request.getServletPath().contains("admin");
 		if (request.getParameter("state") != null) {
 			Map<String, String> params = StringHelper.stringToMap(request.getParameter("state"));
 			socialNetworkName = params.get("name");
@@ -46,7 +54,35 @@ public class OauthServlet extends HttpServlet {
 					response.setStatus(HttpServletResponse.SC_NOT_FOUND);
 				} else {
 					social.performRedirect(request, response);
-					response.sendRedirect(URLHelper.createURL(ctx, targetPage));
+					ctx.setUser();
+					params = new HashMap<String,String>();
+					if (admin) {
+						params.put("oauth", "true");
+						ctx = ctx.getContextWithOtherRenderMode(ContentContext.EDIT_MODE);
+						AdminUserFactory userFactory = AdminUserFactory.createUserFactory(ctx.getGlobalContext(), request.getSession());
+						User adminUser = userFactory.getCurrentUser(request.getSession());
+						if (adminUser == null) {
+							I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
+							params.put("err", i18nAccess.getText("user.error.msg"));
+						} else {
+							if (StringHelper.isEmpty(adminUser.getUserInfo().getPassword())) {								
+								SocialUser socialUser = social.getSocialUser(request);
+								if (socialUser != null) {
+									logger.info("oauth login : "+socialUser.getFirstName());
+									IUserInfo userInfo = adminUser.getUserInfo();
+									userInfo.setFirstName(socialUser.getFirstName());
+									userInfo.setLastName(socialUser.getLastName());
+									userInfo.setAvatarURL(socialUser.getAvatarURL());
+									userInfo.setPassword(StringHelper.getRandomId());
+									userFactory.updateUserInfo(userInfo);
+									userFactory.store();
+								} else {
+									logger.warning("socialUser not found.");
+								}
+							}
+						}
+					}										
+					response.sendRedirect(URLHelper.createURL(ctx, targetPage, params));
 				}
 			} catch (Exception e) {
 				throw new ServletException(e);
@@ -56,14 +92,9 @@ public class OauthServlet extends HttpServlet {
 			try {
 				oar = OAuthAuthzResponse.oauthCodeAuthzResponse(request);
 				String code = oar.getCode();
-				System.out.println("***** OauthServlet.doGet : code = "+code); //TODO: remove debug trace
 			} catch (OAuthProblemException e) {
 				e.printStackTrace();
-			}
-			
-		}
-
-		
+			}			
+		}		
 	}
-
 }

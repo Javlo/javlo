@@ -30,7 +30,11 @@ public interface ISocialNetwork {
 	
 	public String getClientSecret();
 	
+	public void setClientSecret(String client);
+	
 	public String getClientId();
+	
+	public void setClientId(String client);
 
 	/**
 	 * update value with a map.
@@ -47,8 +51,12 @@ public interface ISocialNetwork {
 	
 	public String getSigninURL(ContentContext ctx) throws Exception;
 	
+	public String getRedirectURL();
+	
 	public void setRedirectURL(String url);
 	
 	public void performRedirect(HttpServletRequest request, HttpServletResponse response);
+
+	public SocialUser getSocialUser(HttpServletRequest request);
 
 }

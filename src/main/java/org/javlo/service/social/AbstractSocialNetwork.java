@@ -23,6 +23,7 @@ import org.apache.oltu.oauth2.common.message.types.GrantType;
 import org.javlo.context.ContentContext;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
+import org.javlo.user.AdminUserFactory;
 import org.javlo.user.IUserFactory;
 import org.javlo.user.TransientUserInfo;
 import org.javlo.user.User;
@@ -31,42 +32,6 @@ import org.javlo.user.UserInfo;
 import org.javlo.user.exception.UserAllreadyExistException;
 
 public abstract class AbstractSocialNetwork implements ISocialNetwork {
-
-	protected static class SocialUser {
-		private String email;
-		private String firstName;
-		private String lastName;
-		private String avatarURL;
-		public String getEmail() {
-			return email;
-		}
-		public SocialUser setEmail(String email) {
-			this.email = email;
-			return this;
-		}
-		public String getFirstName() {
-			return firstName;
-		}
-		public SocialUser setFirstName(String firstName) {
-			this.firstName = firstName;
-			return this;
-		}
-		public String getLastName() {
-			return lastName;
-		}
-		public SocialUser setLastName(String lastName) {
-			this.lastName = lastName;
-			return this;
-		}
-		public String getAvatarURL() {
-			return avatarURL;
-		}
-		public SocialUser setAvatarURL(String avatarURL) {
-			this.avatarURL = avatarURL;
-			return this;
-		}
-
-	}
 
 	private static java.util.logging.Logger logger = java.util.logging.Logger.getLogger(AbstractSocialNetwork.class.getName());
 
@@ -159,10 +124,10 @@ public abstract class AbstractSocialNetwork implements ISocialNetwork {
 		return StringHelper.mapToString(params);
 	}
 
-	//public abstract OAuthProviderType getProviderType();
-	
-	public abstract String getAuthzEndpoint(); 
-	
+	// public abstract OAuthProviderType getProviderType();
+
+	public abstract String getAuthzEndpoint();
+
 	public abstract String getTokenEndpoint();
 
 	@Override
@@ -186,11 +151,7 @@ public abstract class AbstractSocialNetwork implements ISocialNetwork {
 	}
 
 	protected void configureAuthenticationRequest(AuthenticationRequestBuilder builder, String clientId, ContentContext ctx) throws Exception {
-		builder
-				.setClientId(clientId)
-				.setResponseType(OAuth.OAUTH_CODE)
-				.setState(getState(ctx))
-				.setRedirectURI(getRedirectURL());
+		builder.setClientId(clientId).setResponseType(OAuth.OAUTH_CODE).setState(getState(ctx)).setRedirectURI(getRedirectURL());
 	}
 
 	protected OAuthClientRequest buildAuthenticationRequest(AuthenticationRequestBuilder builder) throws OAuthSystemException {
@@ -232,7 +193,27 @@ public abstract class AbstractSocialNetwork implements ISocialNetwork {
 		}
 	}
 
-	private String getAccessToken(String code, OAuthClient oAuthClient) throws OAuthSystemException, OAuthProblemException {
+	public SocialUser getSocialUser(HttpServletRequest request) {
+		HttpClient httpClient = null;
+		try {
+			httpClient = new URLConnectionClient();
+			OAuthClient oAuthClient = new OAuthClient(httpClient);
+			OAuthAuthzResponse oar = OAuthAuthzResponse.oauthCodeAuthzResponse(request);
+			String code = oar.getCode();
+			String accessToken = getAccessToken(code, oAuthClient);
+			TransientUserInfo.getInstance(request.getSession()).setToken(accessToken);
+			return getSocialUser(accessToken, oAuthClient);			
+		} catch (Exception e) {
+			e.printStackTrace();
+			return  null;
+		} finally {
+			if (httpClient != null) {
+				httpClient.shutdown();
+			}
+		}		
+	}
+
+	public String getAccessToken(String code, OAuthClient oAuthClient) throws OAuthSystemException, OAuthProblemException {
 		String clientId = getClientId();
 		if (clientId == null || clientId.isEmpty()) {
 			return null;
@@ -250,7 +231,7 @@ public abstract class AbstractSocialNetwork implements ISocialNetwork {
 		String accessToken = response.getAccessToken();
 		Long expiresIn = response.getExpiresIn();
 
-		//TODO remove sysouts
+		// TODO remove sysouts
 		System.out.println("accessToken = " + accessToken);
 		System.out.println("expiresIn = " + expiresIn);
 
@@ -266,12 +247,7 @@ public abstract class AbstractSocialNetwork implements ISocialNetwork {
 	}
 
 	protected void configureTokenRequest(TokenRequestBuilder builder, String clientId, String clientSecret, String code) {
-		builder
-				.setGrantType(GrantType.AUTHORIZATION_CODE)
-				.setClientId(clientId)
-				.setClientSecret(clientSecret)
-				.setRedirectURI(getRedirectURL())
-				.setCode(code);
+		builder.setGrantType(GrantType.AUTHORIZATION_CODE).setClientId(clientId).setClientSecret(clientSecret).setRedirectURI(getRedirectURL()).setCode(code);
 	}
 
 	protected OAuthClientRequest buildTokenRequest(TokenRequestBuilder builder) throws OAuthSystemException {
@@ -283,26 +259,30 @@ public abstract class AbstractSocialNetwork implements ISocialNetwork {
 	}
 
 	protected void login(ContentContext ctx, SocialUser socialUser) throws UserAllreadyExistException, IOException {
-		IUserFactory userFactory = UserFactory.createUserFactory(ctx.getGlobalContext(), ctx.getRequest().getSession());
+		IUserFactory userFactory = AdminUserFactory.createUserFactory(ctx.getGlobalContext(), ctx.getRequest().getSession());
 		User user = userFactory.getUser(socialUser.getEmail());
-		if (user == null) {
-			UserInfo userInfo = new UserInfo();
-			userInfo.setLogin(socialUser.getEmail());
-			userInfo.setEmail(socialUser.getEmail());
-			userInfo.setFirstName(socialUser.getFirstName());
-			userInfo.setLastName(socialUser.getLastName());
-			userInfo.setAvatarURL(socialUser.getAvatarURL());
-			userInfo.setAccountType("oauth");
-			fillUserInfo(userInfo, socialUser);
-			userFactory.addUserInfo(userInfo);
-			userFactory.store();
+		if (user == null) { // admin not found
+			userFactory = UserFactory.createUserFactory(ctx.getGlobalContext(), ctx.getRequest().getSession());
+			user = userFactory.getUser(socialUser.getEmail());
+			if (user == null) {
+				UserInfo userInfo = new UserInfo();
+				userInfo.setLogin(socialUser.getEmail());
+				userInfo.setEmail(socialUser.getEmail());
+				userInfo.setFirstName(socialUser.getFirstName());
+				userInfo.setLastName(socialUser.getLastName());
+				userInfo.setAvatarURL(socialUser.getAvatarURL());
+				userInfo.setAccountType("oauth");
+				fillUserInfo(userInfo, socialUser);
+				userFactory.addUserInfo(userInfo);
+				userFactory.store();
+			}
 		}
 		userFactory.autoLogin(ctx.getRequest(), socialUser.getEmail());
 	}
 
 	protected void fillUserInfo(UserInfo userInfo, SocialUser socialUser) {
 	}
-	
+
 	public String getLoginURL() {
 		String url = getAuthzEndpoint();
 		url = URLHelper.addParam(url, "client_id", getClientId());
@@ -310,5 +290,4 @@ public abstract class AbstractSocialNetwork implements ISocialNetwork {
 		url = URLHelper.addParam(url, "response_type", "code");
 		return url;
 	}
-	
 }

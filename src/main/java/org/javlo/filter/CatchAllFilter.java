@@ -539,13 +539,11 @@ public class CatchAllFilter implements Filter {
 
 			if (request.getParameter("edit-login") != null || request.getParameter("j_token") != null || (httpRequest.getUserPrincipal() != null && fact.getCurrentUser(((HttpServletRequest) request).getSession()) == null && logoutUser == null)) {
 				String login = request.getParameter("j_username");
-
 				if (login == null && httpRequest.getUserPrincipal() != null) {
 					login = httpRequest.getUserPrincipal().getName();
-				}
+				}				
 				AdminUserFactory adminFactory = AdminUserFactory.createUserFactory(globalContext, httpRequest.getSession());
 				User editUser = adminFactory.login(httpRequest, login, request.getParameter("j_password"));
-
 				if (editUser != null) {
 					if (request.getParameter("autologin") != null) {
 						DataToIDService service = DataToIDService.getInstance(httpRequest.getSession().getServletContext());

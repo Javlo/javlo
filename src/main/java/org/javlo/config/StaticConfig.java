@@ -1198,6 +1198,14 @@ public class StaticConfig extends Observable {
 	public boolean isFirstPasswordMustBeChanged() {
 		return properties.getBoolean("security.change-password", true);
 	}
+	
+	public String getOauthGoogleIdClient() {
+		return properties.getString("security.oauth.google-id-client", null);
+	}
+	
+	public String getOauthGoogleSecret() {
+		return properties.getString("security.oauth.google-secret", null);
+	}
 
 	public String getFirstPasswordEncryptedIfNeeded() {
 		if (encryptedFirstPassword == null) {
