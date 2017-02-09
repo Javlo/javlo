@@ -45,6 +45,7 @@ import org.javlo.message.MessageRepository;
 import org.javlo.navigation.MenuElement;
 import org.javlo.navigation.PageBean;
 import org.javlo.service.resource.Resource;
+import org.javlo.template.Template;
 import org.javlo.ztatic.IStaticContainer;
 
 /**
@@ -1044,6 +1045,33 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 	@Override
 	public Date getLatestValidDate() {
 		return latestValidDate;
+	}
+	
+	@Override
+	public Collection<String> getExternalResources(ContentContext ctx) {
+		String resources = properties.getProperty("resources");
+		Template template = null;
+		try {
+			template = ctx.getCurrentTemplate();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		if (resources != null && template != null) {
+			List<String> linkResource = StringHelper.stringToCollection(resources, ",");
+			List<String> outResource  = new LinkedList<String>();
+			for (String uri : linkResource) {				
+				if (uri.startsWith("/")) {
+					try {
+						outResource.add(URLHelper.createStaticTemplateURLWithoutContext(ctx, template, uri));
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+			}
+			return outResource;	
+		} else {
+			return super.getExternalResources(ctx);
+		}		
 	}
 	
 }
