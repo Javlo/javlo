@@ -168,7 +168,7 @@ public class NavigationService {
 		}
 	}
 
-	public static void checkSameUrl(ContentContext ctx) throws Exception {
+	public static void checkSameUrl(ContentContext ctx, Collection<MenuElement> allPages) throws Exception {
 		ContentContext lgCtx = new ContentContext(ctx);
 		IURLFactory urlFactory = ctx.getGlobalContext().getURLFactory(lgCtx);
 		if (urlFactory != null) {
@@ -176,15 +176,15 @@ public class NavigationService {
 			Map<String, String> pages = new HashMap<String, String>();
 			for (String lg : lgs) {
 				lgCtx.setRequestContentLanguage(lg);				
-				for (MenuElement menuElement : ContentService.getInstance(ctx.getGlobalContext()).getNavigation(lgCtx).getAllChildrenList()) {
+				for (MenuElement menuElement : allPages) {
 					String url = lgCtx.getRequestContentLanguage() + urlFactory.createURL(lgCtx, menuElement);
 					int i = 0;
-					if (!menuElement.isLikeRoot(lgCtx)) {
+					if (!menuElement.isLikeRoot(lgCtx)) {						
 						while (pages.keySet().contains(url) && i < 1000) {
 							menuElement.setUrlNumber(menuElement.getUrlNumber() + 1);
 							url = lgCtx.getRequestContentLanguage() + urlFactory.createURL(lgCtx, menuElement);
 							i++;
-						}
+						}					
 					}
 					if (i == 1000) {
 						logger.severe("impossible to create different url for all pages width : " + urlFactory.getClass().getName());

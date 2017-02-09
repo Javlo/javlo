@@ -60,7 +60,7 @@ public class TitleAndSectionURLCreator extends AbstractURLFactory {
 				title = StringHelper.collectionToString(currentPage.getSubTitles(freeCtx,2), " / ");
 			}
 		}
-		if (currentPage.getUrlNumber() > 0) {
+		if (currentPage.getUrlNumber() > 0) {			
 			title = title + '-' +currentPage.getUrlNumber();
 		}
 		if (StringHelper.isEmpty(title)) {

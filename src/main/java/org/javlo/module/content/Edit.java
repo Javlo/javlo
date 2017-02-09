@@ -1509,10 +1509,11 @@ public class Edit extends AbstractModuleAction {
 				Map<String, String> pages = new HashMap<String, String>();
 				errorPageNames = new LinkedList<String>();
 				// correct identical URL.
-				NavigationService.checkSameUrl(ctx);
+				List<MenuElement> children = ContentService.getInstance(globalContext).getNavigation(lgCtx).getAllChildrenList();
+				NavigationService.checkSameUrl(ctx,children);
 				for (String lg : lgs) {
 					lgCtx.setRequestContentLanguage(lg);
-					for (MenuElement menuElement : ContentService.getInstance(globalContext).getNavigation(lgCtx).getAllChildrenList()) {
+					for (MenuElement menuElement : children) {
 						if (menuElement.isRealContent(lgCtx)) {
 							String url = lgCtx.getRequestContentLanguage() + urlFactory.createURL(lgCtx, menuElement);
 							String otherPageName = pages.get(url);

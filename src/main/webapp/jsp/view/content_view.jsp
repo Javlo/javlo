@@ -194,9 +194,9 @@ if (ColContext.isInstance(ctx)) {
 }
 if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE) {
 	if (pageEmpty) {
-		%><script>$("#<%=area%>").addClass("_empty_area");</script><%
+		%><script>pjq("#<%=area%>").addClass("_empty_area");</script><%
 	} else {
-		%><script>$("#<%=area%>").removeClass("_empty_area"); $("#<%=area%>").removeClass("drop-selected");</script><%
+		%><script>pjq("#<%=area%>").removeClass("_empty_area"); pjq("#<%=area%>").removeClass("drop-selected");</script><%
 	}
 }
 
