@@ -2649,7 +2649,7 @@ public class XHTMLHelper {
 		File file = new File("c:/trans/mail.html");
 		Map map = new HashMap();
 		map.put("first", "patrick");
-		ResourceHelper.writeStringToFile(file, createAdminMail("coucou", "on tire un coup ?", map, "http://www.javlo.com", "link"), null);
+		ResourceHelper.writeStringToFile(file, createAdminMail("coucou", "on tire un coup ?", map, "http://www.javlo.com", "link", null), null);
 	}
 	
 	public static String renderStaticInfo(ContentContext ctx, StaticInfo info) throws FileNotFoundException, IOException {		
