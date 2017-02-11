@@ -832,5 +832,5 @@ hange log
  
   * 1/ get title and label from not main area if not found in main area 
   
-  * 2/ google login
+  * 2/ google login / update ticket layout and email + imageheader realcontent correction
  
