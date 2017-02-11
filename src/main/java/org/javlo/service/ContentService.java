@@ -596,7 +596,7 @@ public class ContentService implements IPrintInfo {
 						Map<String, String> contentAttributeMap = new HashMap<String, String>();
 						MenuElement page = persistenceService.load(ctx, ContentContext.VIEW_MODE, contentAttributeMap, null);											
 						setViewNav(page);
-						NavigationService.checkSameUrl(ctx, page.getAllChildrenList()); // important to be afther setViewNav otherwise --> recursive
+						//NavigationService.checkSameUrl(ctx, page.getAllChildrenList()); // important to be afther setViewNav otherwise --> recursive
 						res=page;
 						viewGlobalMap = contentAttributeMap;						
 						logger.info("load view of '" + globalContext.getContextKey() + "' nav in " + StringHelper.renderTimeInSecond((System.currentTimeMillis() - startTime) / 1000) + " sec.");						

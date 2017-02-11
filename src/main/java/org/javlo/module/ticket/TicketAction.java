@@ -299,15 +299,19 @@ public class TicketAction extends AbstractModuleAction {
 			if (email != null) {
 				String siteTitle = ctx.getGlobalContext().getGlobalTitle();				
 				String baseUrl = URLHelper.createInterModuleURL(ctx.getContextForAbsoluteURL().getContextWithOtherRenderMode(ContentContext.EDIT_MODE), "/", "ticket");
-				Map ticketsMap = new HashMap();
-				for (TicketBean ticket : tickets) {	
+				Map ticketsMap = new HashMap();				
+				for (TicketBean ticket : tickets) {
+					String messageHTML = "";
+					if (!StringHelper.isEmpty(ticket.getMessage())) {
+						messageHTML = "<div class=\"message\"><b>"+XHTMLHelper.textToXHTML(ticket.getMessage())+"</b></div>";
+					}
 					if (ticket.getComments().size() == 0) {
-						ticketsMap.put("["+ticket.getAuthors()+"] - "+ticket.getTitle(), XHTMLHelper.collectionToList(ticket.getComments()));
+						ticketsMap.put("["+ticket.getAuthors()+"] - "+ticket.getTitle(), messageHTML+XHTMLHelper.collectionToList(ticket.getComments()));
 					} else {
-						ticketsMap.put("["+ticket.getAuthors()+"] - "+ticket.getTitle(), XHTMLHelper.collectionToList(ticket.getComments()));
+						ticketsMap.put("["+ticket.getAuthors()+"] - "+ticket.getTitle(), messageHTML+XHTMLHelper.collectionToList(ticket.getComments()));
 					}
 				}				
-				String content = XHTMLHelper.createAdminMail("Ticket updates on " + siteTitle, ticketsMap.size()+" tickets updated.", ticketsMap, baseUrl, "go on site");				
+				String content = XHTMLHelper.createAdminMail("Ticket updates on " + siteTitle, ticketsMap.size()+" tickets updated.", ticketsMap, baseUrl, "go on site", null);				
 				NetHelper.sendXHTMLMail(ctx, new InternetAddress(globalContext.getAdministratorEmail()), new InternetAddress(email), null, null, "Ticket updates on " + siteTitle, content.toString(), null);
 				
 			}

@@ -1,6 +1,7 @@
 package org.javlo.component.image;
 
 import org.javlo.context.ContentContext;
+import org.javlo.helper.StringHelper;
 
 public class ImageHeader extends GlobalImage {
 
@@ -48,6 +49,11 @@ public class ImageHeader extends GlobalImage {
 	@Override
 	public int getComplexityLevel(ContentContext ctx) {
 		return getConfig(ctx).getComplexity(COMPLEXITY_STANDARD);
+	}
+	
+	@Override
+	public boolean isRealContent(ContentContext ctx) {
+		return !StringHelper.isEmpty(getValue());
 	}
 	
 }

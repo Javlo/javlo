@@ -3,32 +3,20 @@
 <div class="content">
 <form class="standard-form" id="create-ticket" method="post" action="${info.currentURL}">
 <div class="row">
-	<div class="col-md-12">
+	<div class="col-md-6">
 		<c:if test="${not empty newTicket}">
-			<div class="form-group"><input type="text" name="title" placeholder="title" /></div>
+			<div class="form-group"><input class="form-control" type="text" name="title" placeholder="title" /></div>
 		</c:if><c:if test="${empty newTicket}">
 			<h2>${ticket.title}</h2>
 		</c:if>		
 		<div class="form-group">
 			<textarea class="form-control" rows="4" cols="20" name="message" placeholder="message"></textarea>
 		</div>
-	</div>
-</div>
-
-<div class="col-container">
-<div class="one_half">
-		<input type="hidden" name="webaction" value="ticket.update" />
-		<input type="hidden" name="id" value="${ticket.id}" />
-		<div class="line">
-			<label>authors :</label>${ticket.authors}
-		</div>		
-		<c:if test="${info.editContext.lightInterface}">
-			<input type="hidden" name="priority" value="${empty ticket.priority ? '1' : ticket.priority}" />
-		</c:if>
+		<div class="row">
 		<c:if test="${not info.editContext.lightInterface}">
-			<div class="line">
+			<div class="col-sm-4">
 				<label for="priority">priority : </label>
-				<select id="priority" name="priority">
+				<select id="priority" name="priority"  class="form-control">
 					<option value="0" ${ticket.priority == 0?'selected="selected"':''}>none</option>
 					<option value="1" ${ticket.priority == 1?'selected="selected"':''}>low</option>
 					<option value="2" ${ticket.priority == 2?'selected="selected"':''}>middle</option>
@@ -36,14 +24,14 @@
 				</select>
 			</div>
 		</c:if>
-		<div class="line">
+		<div class="col-sm-4">
 			<label for="status">status : </label>
 			<c:if test="${info.editContext.lightInterface}">
 				<span>${ticket.status}</span>
 				<input type="hidden" name="status" value="${empty ticket.status ? 'new' : ticket.status}" />
 			</c:if>
 			<c:if test="${not info.editContext.lightInterface}">
-				<select id="status" name="status">
+				<select id="status" name="status" class="form-control">
 					<option ${ticket.status == 'new'?'selected="selected"':''}>new</option>
 					<option ${ticket.status == 'working'?'selected="selected"':''}>working</option>
 					<option value="onhold" ${ticket.status == 'onhold'?'selected="selected"':''}>on hold</option>
@@ -57,9 +45,9 @@
 			<input type="hidden" name="share" value="${empty ticket.share ? 'site' : ticket.share}" />
 		</c:if>
 		<c:if test="${not info.editContext.lightInterface}">
-			<div class="line">
+			<div class="col-sm-4">
 				<label for="share">share : </label>
-				<select id="share" name="share" ${ticket.debugNote ? 'disabled="disabled"' : ''}>
+				<select id="share" name="share" ${ticket.debugNote ? 'disabled="disabled"' : ''} class="form-control">
 					<option value="">none</option>
 					<option value="site" ${ticket.share == 'site'?'selected="selected"':''}>${ticket.context}</option>
 					<option value="allsites" ${ticket.share == 'allsites'?'selected="selected"':''}>all sites</option>
@@ -67,8 +55,11 @@
 				</select>
 			</div>
 		</c:if>
-</div><div class="one_half">			
-		<c:if test="${not info.editContext.lightInterface}">
+</div>	
+	</div>
+	<div class="col-md-6">
+		<strong><div class="authors" title="authors">${ticket.authors}</div></strong>
+	    <c:if test="${not info.editContext.lightInterface}">
 			<div class="line">
 				<label>creation date :</label>${ticket.creationDateLabel}
 			</div>
@@ -76,12 +67,25 @@
 		<div class="line">
 			<label>last update date :</label>${ticket.lastUpdateDateLabel}
 		</div>
-		<c:if test="${not info.editContext.lightInterface}">			
+		<c:if test="${not info.editContext.lightInterface}">
+			<c:if test="${not empty ticket.category}">			
 			<div class="line">
 				<label>category : </label>${ticket.category}			
+			</div></c:if>
+		</c:if><c:if test="${not empty ticket.url}">	
+			<div class="line">
+				<label>url : </label><a target="_blank" href="${ticket.url}">${ticket.url}</a>
 			</div>
 		</c:if>
-</div></div>
+	</div>
+</div>
+
+		<input type="hidden" name="webaction" value="ticket.update" />
+		<input type="hidden" name="id" value="${ticket.id}" />	
+		<c:if test="${info.editContext.lightInterface}">
+			<input type="hidden" name="priority" value="${empty ticket.priority ? '1' : ticket.priority}" />
+		</c:if>
+		
 <c:if test="${not info.editContext.lightInterface}">
 		<c:set var="strListSeparator" value="|||"/>
 		<c:set var="knownUsers" value="${strListSeparator}"/>
@@ -116,21 +120,11 @@
 		</c:set>
 		<c:if test="${minOne}"><c:out value="${buffer}" escapeXml="false" /></c:if>
 </c:if>
-		<div class="frame">
-		
-		<c:if test="${not empty ticket.url}">	
-		
-		<div class="line">
-			<label>url : </label><a target="_blank" href="${ticket.url}">${ticket.url}</a>			
-		</div>
-		</c:if>					
-		<c:if test="${empty newTicket}">
+		<c:if test="${empty newTicket}"><div class="frame">
 		<div class="line">
 			<label>message</label>
 			<div class="message">${ticket.message}</div>			
-		</div>
-		</c:if>
-		</div>
+		</div></div></c:if>
 		
 	<c:if test="${empty newTicket}">
 	<h2>comments</h2>
@@ -150,9 +144,9 @@
 	</c:if>
 	
 	<div class="action">
-		<input type="submit" name="delete" class="warning needconfirm" title="${i18n.edit['global.delete']}" value="${i18n.edit['global.delete']}" />
-		<input type="submit" name="back" title="${i18n.edit['global.back']}" value="${i18n.edit['global.back']}" />
-		<input type="submit" name="ok" value="${i18n.edit['global.ok']}" />		
+		<input type="submit" name="delete" class="warning needconfirm btn btn-default" title="${i18n.edit['global.delete']}" value="${i18n.edit['global.delete']}" />
+		<input type="submit" name="back" title="${i18n.edit['global.back']}" value="${i18n.edit['global.back']}" class="btn btn-default" />
+		<input type="submit" name="ok" value="${i18n.edit['global.ok']}" class="btn btn-default" />		
 	</div>
 	
 </form>

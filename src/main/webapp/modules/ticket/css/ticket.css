@@ -48,3 +48,11 @@ a.unread {
 #create-ticket h2 {
 	margin-bottom: 5px;
 }
+
+.content input.form-control {
+	width: 100%;
+}
+
+.content textarea {
+	width: 100%;
+}

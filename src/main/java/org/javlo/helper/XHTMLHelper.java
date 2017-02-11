@@ -2693,7 +2693,7 @@ public class XHTMLHelper {
 		}
 	}
 
-	public static String createAdminMail(String title, String content, Map data, String link, String linkLabel) {		
+	public static String createAdminMail(String title, String content, Map data, String link, String linkLabel, String footer) {		
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(outStream);
 		out.println("<html xmlns='http://www.w3.org/1999/xhtml'><body paddingwidth='0' paddingheight='0' bgcolor='#d2d4d5'  style='padding: 0; background-repeat: repeat; width: 100% !important; -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; -webkit-font-smoothing: antialiased;' offset='0' toppadding='0' leftpadding='0'>  <table width='100%' border='0' cellspacing='0' cellpadding='0' class='tableContent bgBody' align='center'  style='font-family:Helvetica, sans-serif; font-size: 14px;'><tr><td align='center'><table width='600' border='0' cellspacing='0' cellpadding='0' align='center'><tr><td align='center'><table width='678' border='0' cellspacing='0' cellpadding='0' align='center'><tr><td align='center'>");
@@ -2709,6 +2709,9 @@ public class XHTMLHelper {
 				out.println("<tr><td style='font-weight: bold; padding: 10px; font-family:Helvetica, sans-serif; vertical-align: top; font-size: 12px;'>"+key+" : </td><td style='padding: 10px; font-family:Helvetica, sans-serif;  vertical-align: top; font-size: 12px;'>"+data.get(key)+"</td></tr>");
 			}
 			out.println("</table>");
+		}
+		if (!StringHelper.isEmpty(footer)) {			
+			out.println("<table><tr><td>&nbsp;</td></tr><tr><td class=\"footer\"><div style='display: block; margin: 10px 20px;  color: #dddddd; font-family:Helvetica, sans-serif;'>"+footer+"</div></td></tr></table>");
 		}
 		if (!StringHelper.isEmpty(link)) {			
 			out.println("<table><tr><td>&nbsp;</td></tr><tr><td><a href='"+link+"' style='border: 1px #E329A6 solid; border-radius: 4px; display: block; text-decoration: none; background-color: #D31996; margin: 10px;'><div style='display: block; margin: 10px 20px;  color: #dddddd; font-family:Helvetica, sans-serif;'>"+StringHelper.neverNull(linkLabel, link)+"</div></a></td></tr></table>");

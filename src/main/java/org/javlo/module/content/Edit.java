@@ -1499,47 +1499,47 @@ public class Edit extends AbstractModuleAction {
 				ComponentFactory.cleanComponentList(request.getSession().getServletContext(), globalContext);
 			}
 
-			/*** check url ***/
-			ContentContext lgCtx = new ContentContext(ctx);
-			Collection<String> lgs = globalContext.getContentLanguages();
-			IURLFactory urlFactory = globalContext.getURLFactory(lgCtx);
-			String dblURL = null;
-			Collection<String> errorPageNames = null;
-			if (urlFactory != null) {
-				Map<String, String> pages = new HashMap<String, String>();
-				errorPageNames = new LinkedList<String>();
-				// correct identical URL.
-				List<MenuElement> children = ContentService.getInstance(globalContext).getNavigation(lgCtx).getAllChildrenList();
-				NavigationService.checkSameUrl(ctx,children);
-				for (String lg : lgs) {
-					lgCtx.setRequestContentLanguage(lg);
-					for (MenuElement menuElement : children) {
-						if (menuElement.isRealContent(lgCtx)) {
-							String url = lgCtx.getRequestContentLanguage() + urlFactory.createURL(lgCtx, menuElement);
-							String otherPageName = pages.get(url);
-							if (otherPageName != null && !otherPageName.equals(menuElement.getName())) {
-								if (!errorPageNames.contains(menuElement.getName())) {
-									errorPageNames.add(menuElement.getName());
-								}
-								if (!errorPageNames.contains(pages.get(url))) {
-									errorPageNames.add(pages.get(url));
-								}
-								if (menuElement.isRealContent(lgCtx)) {
-									dblURL = url;
-								}
-								logger.warning("page : " + menuElement.getName() + " is refered by a url already used : " + url + " (page : " + otherPageName + ")");
-							} else {
-								pages.put(url, menuElement.getName());
-							}
-						}
-					}
-				}
-			}
-
-			if (dblURL != null) {
-				String msg = i18nAccess.getText("action.publish.error.same-url", new String[][] { { "url", dblURL }, { "pages", StringHelper.collectionToString(errorPageNames, ",") } });
-				MessageRepository.getInstance(ctx).setGlobalMessageAndNotification(ctx, new GenericMessage(msg, GenericMessage.ALERT), false);
-			}
+//			/*** check url ***/
+//			ContentContext lgCtx = new ContentContext(ctx);
+//			Collection<String> lgs = globalContext.getContentLanguages();
+//			IURLFactory urlFactory = globalContext.getURLFactory(lgCtx);
+//			String dblURL = null;
+//			Collection<String> errorPageNames = null;
+//			if (urlFactory != null) {
+//				Map<String, String> pages = new HashMap<String, String>();
+//				errorPageNames = new LinkedList<String>();
+//				// correct identical URL.
+//				List<MenuElement> children = ContentService.getInstance(globalContext).getNavigation(lgCtx).getAllChildrenList();
+//				NavigationService.checkSameUrl(ctx,children);
+//				for (String lg : lgs) {
+//					lgCtx.setRequestContentLanguage(lg);
+//					for (MenuElement menuElement : children) {
+//						if (menuElement.isRealContent(lgCtx)) {
+//							String url = lgCtx.getRequestContentLanguage() + urlFactory.createURL(lgCtx, menuElement);
+//							String otherPageName = pages.get(url);
+//							if (otherPageName != null && !otherPageName.equals(menuElement.getName())) {
+//								if (!errorPageNames.contains(menuElement.getName())) {
+//									errorPageNames.add(menuElement.getName());
+//								}
+//								if (!errorPageNames.contains(pages.get(url))) {
+//									errorPageNames.add(pages.get(url));
+//								}
+//								if (menuElement.isRealContent(lgCtx)) {
+//									dblURL = url;
+//								}
+//								logger.warning("page : " + menuElement.getName() + " is refered by a url already used : " + url + " (page : " + otherPageName + ")");
+//							} else {
+//								pages.put(url, menuElement.getName());
+//							}
+//						}
+//					}
+//				}
+//			}
+//
+//			if (dblURL != null) {
+//				String msg = i18nAccess.getText("action.publish.error.same-url", new String[][] { { "url", dblURL }, { "pages", StringHelper.collectionToString(errorPageNames, ",") } });
+//				MessageRepository.getInstance(ctx).setGlobalMessageAndNotification(ctx, new GenericMessage(msg, GenericMessage.ALERT), false);
+//			}
 
 			// trick for PortletManager to clear view data, but should be
 			// generalized in some PublishManager
