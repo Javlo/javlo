@@ -3,6 +3,34 @@
 var editPreview = editPreview||{};
 
 +function($,jQuery,pjq) {
+	
+	document.onpaste = function (event) {
+	  var items = (event.clipboardData  || event.originalEvent.clipboardData).items;	  
+	  var blob = null;
+	  for (var i = 0; i < items.length; i++) {
+	    if (items[i].type.indexOf("image/png") === 0) {
+	      blob = items[i].getAsFile();
+	    }
+	  }
+	  // load image if there is a pasted image
+	  if (blob !== null) {
+	    var reader = new FileReader();
+	    reader.onload = function(event) {	      
+	      /* upload clipboard */
+	       var ajaxURL = editPreview.addParam(currentURL,"webaction=data.upload&rename=true");
+		   var fd=new FormData();
+		   var fieldName = "clipboard";			
+		   var sameName = false;
+		   var blob = new Blob([event.target.result], {type: "image/png"});
+		   fd.append(fieldName,blob);						
+		   editPreview.ajaxPreviewRequest(ajaxURL, function() {editPreview.reloadPreviewPage();}, fd);			
+		   event.preventDefault();			
+		   return false;
+	      
+	    };
+	    reader.readAsDataURL(blob);
+	  }
+	}
 
 	function handleDragStart(e) {
 		this.style.opacity = '0.4';  // this / e.target is the source node.

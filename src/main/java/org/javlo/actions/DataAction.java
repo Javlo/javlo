@@ -43,6 +43,7 @@ import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.BeanHelper;
 import org.javlo.helper.ContentHelper;
+import org.javlo.helper.JavaScriptBlob;
 import org.javlo.helper.LangHelper;
 import org.javlo.helper.NavigationHelper;
 import org.javlo.helper.ResourceHelper;
@@ -176,11 +177,13 @@ public class DataAction implements IAction {
 		serverInfo.put("version", IVersion.VERSION);
 
 		long now = System.currentTimeMillis();
-//		//TODO remove trace
-//		System.out.println("======================= Process data.serverInfo webaction: clientSynchroCode=" + clientSynchroCode
-//				+ ", now=" + now
-//				+ ", staticConfig.getSynchroCode()=" + staticConfig.getSynchroCode()
-//				+ ", staticConfig.getSynchroTokenValidityMinutes()=" + staticConfig.getSynchroTokenValidityMinutes());
+		// //TODO remove trace
+		// System.out.println("======================= Process data.serverInfo
+		// webaction: clientSynchroCode=" + clientSynchroCode
+		// + ", now=" + now
+		// + ", staticConfig.getSynchroCode()=" + staticConfig.getSynchroCode()
+		// + ", staticConfig.getSynchroTokenValidityMinutes()=" +
+		// staticConfig.getSynchroTokenValidityMinutes());
 		if (clientSynchroCode == null) {
 			logger.warning("no synchro code sent to webaction data.serverInfo");
 			serverInfo.put("message", "No synchro code!");
@@ -200,9 +203,9 @@ public class DataAction implements IAction {
 			CountService countService = CountService.getInstance(ctx.getRequest().getSession().getServletContext());
 			serverInfo.put("countServiceCount", "" + countService.getCount());
 			serverInfo.put("countServiceAverage", "" + countService.getAverage());
-			
+
 			serverInfo.put("systemUser", System.getProperty("user.name"));
-			
+
 			serverInfo.put("serverCharge", CountService.getInstance(request.getSession().getServletContext()).getCount());
 			serverInfo.put("siteCharge", globalContext.getCount());
 
@@ -310,7 +313,7 @@ public class DataAction implements IAction {
 	public static String performUploadShared(RequestService rs, ContentContext ctx, GlobalContext gc, ContentService cs, User user, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
 		SharedContentService sharedContentService = SharedContentService.getInstance(ctx);
 		SharedContentContext sharedContentContext = SharedContentContext.getInstance(ctx.getRequest().getSession());
-		ISharedContentProvider provider = sharedContentService.getProvider(ctx, sharedContentContext.getProvider());	
+		ISharedContentProvider provider = sharedContentService.getProvider(ctx, sharedContentContext.getProvider());
 		boolean rename = StringHelper.isTrue(rs.getParameter("rename", null), true);
 		if (!AdminUserSecurity.isCurrentUserCanUpload(ctx) && !sharedContentContext.getProvider().equals(ImportedImageSharedContentProvider.NAME)) {
 			return "you have no right to upload file here.";
@@ -320,7 +323,7 @@ public class DataAction implements IAction {
 		}
 		if (provider != null) {
 			for (FileItem item : rs.getAllFileItem()) {
-				InputStream in = item.getInputStream();				
+				InputStream in = item.getInputStream();
 				provider.upload(ctx, item.getName(), in, sharedContentContext.getCategory(), rename);
 				ResourceHelper.closeResource(in);
 			}
@@ -339,14 +342,14 @@ public class DataAction implements IAction {
 	 * @return
 	 * @throws Exception
 	 */
-	protected static File createImage(ContentContext ctx, String importFolder, FileItem imageItem, ImportConfigBean config, boolean content, String previousId, boolean rename) throws Exception {		
+	protected static File createImage(ContentContext ctx, String importFolder, FileItem imageItem, ImportConfigBean config, boolean content, String previousId, boolean rename) throws Exception {
 		GlobalContext gc = ctx.getGlobalContext();
 		String imageRelativeFolder = URLHelper.mergePath(gc.getStaticConfig().getStaticFolder(), ctx.getGlobalContext().getStaticConfig().getImportImageFolder(), importFolder);
 		File targetFolder = new File(URLHelper.mergePath(gc.getDataFolder(), imageRelativeFolder));
 		if (!targetFolder.exists()) {
 			targetFolder.mkdirs();
-		}				
-		File newFile = ResourceHelper.writeFileItemToFolder(imageItem, targetFolder, true, rename);		
+		}
+		File newFile = ResourceHelper.writeFileItemToFolder(imageItem, targetFolder, true, rename);
 		if (newFile != null && newFile.exists()) {
 			ContentService cs = ContentService.getInstance(gc);
 			String dir = imageRelativeFolder.replaceFirst(gc.getStaticConfig().getImageFolder(), "");
@@ -354,7 +357,7 @@ public class DataAction implements IAction {
 			PrintStream out = new PrintStream(outStream);
 			out.println("dir=" + dir);
 			out.println("file-name=" + StringHelper.getFileNameFromPath(newFile.getName()));
-			out.println(GlobalImage.IMAGE_FILTER + "="+ctx.getCurrentTemplate().getDefaultImageFilter());
+			out.println(GlobalImage.IMAGE_FILTER + "=" + ctx.getCurrentTemplate().getDefaultImageFilter());
 			out.close();
 			if (config.isCreateContentOnImportImage() || content) {
 				ComponentBean image = new ComponentBean(GlobalImage.TYPE, new String(outStream.toByteArray()), ctx.getRequestContentLanguage());
@@ -476,7 +479,7 @@ public class DataAction implements IAction {
 
 		return targetFolder;
 	}
-	
+
 	public static final String createImportFolder(String pageName) throws Exception {
 		String importFolder = StringHelper.createFileName(pageName);
 		importFolder = StringHelper.trimOn(importFolder.trim(), "_");
@@ -488,7 +491,7 @@ public class DataAction implements IAction {
 		MenuElement page = inPage.getRootOfChildrenAssociation();
 		if (page == null) {
 			page = inPage;
-		}		
+		}
 		return createImportFolder(page.getName());
 	}
 
@@ -499,29 +502,51 @@ public class DataAction implements IAction {
 
 		if (!Edit.checkPageSecurity(ctx)) {
 			return "no suffisant right.";
-		}		
+		}
 		String importFolder = createImportFolder(ctx.getCurrentPage());
-		
+
 		int countImages = 0;
 		FileItem imageItem = null;
 		String msg = null;
 		try {
 			String previousId = rs.getParameter("previous", "0");
 
-			IContentVisualComponent comp = cs.getCachedComponent(ctx, previousId);			
+			IContentVisualComponent comp = cs.getCachedComponent(ctx, previousId);
 			if (comp != null && comp instanceof IUploadResource && ((IUploadResource) comp).isUploadOnDrop()) {
 				msg = ((IUploadResource) comp).performUpload(ctx);
 				ctx.setNeedRefresh(true);
 			} else {
-				boolean content = StringHelper.isTrue(rs.getParameter("content", null));				
+				boolean content = StringHelper.isTrue(rs.getParameter("content", null));
 				ctx = ctx.getContextWithArea(rs.getParameter("area", ctx.getArea()));
 				for (FileItem item : rs.getAllFileItem()) {
 					logger.info("try to import (" + ctx.getCurrentUserId() + ") : " + item.getName());
-					
+
+					if (item.getName().equals("blob")) {
+						String resourceRelativeFolder = URLHelper.mergePath(gc.getStaticConfig().getStaticFolder(), ctx.getGlobalContext().getStaticConfig().getImportImageFolder(), importFolder);
+						File targetFolder = new File(URLHelper.mergePath(gc.getDataFolder(), resourceRelativeFolder));
+						File targetImage = new File(URLHelper.mergePath(targetFolder.getAbsolutePath(), "clipboard.png"));
+						targetFolder.getParentFile().mkdirs();
+						targetImage = ResourceHelper.getFreeFileName(targetImage);
+						JavaScriptBlob blob = new JavaScriptBlob(new String(item.get()));
+						if (blob.getContentType().equalsIgnoreCase("image/png")) {
+							ResourceHelper.writeBytesToFile(targetImage, blob.getData());
+							SharedContentContext sharedContentContext = SharedContentContext.getInstance(ctx.getRequest().getSession());
+							sharedContentContext.setProvider(ImportedImageSharedContentProvider.NAME);
+							SharedContentService.getInstance(ctx).clearCache(ctx);
+//							ISharedContentProvider provider = SharedContentService.getInstance(ctx).getProvider(ctx, sharedContentContext.getProvider());
+//							provider.refresh(ctx);
+//							provider.getContent(ctx); // refresh categories list
+						} else {
+							msg = "bad blog format : " + blob.getContentType();
+							logger.warning(msg);
+							return msg;
+						}
+					}
+
 					if (!ResourceHelper.isDocument(ctx, item.getName())) {
-						logger.warning("try to import bad file format : "+item.getName());						
-						messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("global.message.file-format-error")+" : "+StringHelper.getFileExtension(item.getName()), GenericMessage.ERROR));
-						return "bad file format : "+item.getName();
+						logger.warning("try to import bad file format : " + item.getName());
+						messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("global.message.file-format-error") + " : " + StringHelper.getFileExtension(item.getName()), GenericMessage.ERROR));
+						return "bad file format : " + item.getName();
 					}
 
 					if (StringHelper.isImage(item.getName())) {
@@ -565,7 +590,7 @@ public class DataAction implements IAction {
 						boolean isArray = StringHelper.getFileExtension(item.getName()).equalsIgnoreCase("xls") || StringHelper.getFileExtension(item.getName()).equalsIgnoreCase("xlsx") || StringHelper.getFileExtension(item.getName()).equalsIgnoreCase("ods") || StringHelper.getFileExtension(item.getName()).equalsIgnoreCase("csv");
 						String resourceRelativeFolder = URLHelper.mergePath(gc.getStaticConfig().getStaticFolder(), ctx.getGlobalContext().getStaticConfig().getImportResourceFolder(), importFolder);
 						File targetFolder = new File(URLHelper.mergePath(gc.getDataFolder(), resourceRelativeFolder));
-						
+
 						if (!targetFolder.exists()) {
 							targetFolder.mkdirs();
 						}
@@ -584,14 +609,14 @@ public class DataAction implements IAction {
 							if (ResourceHelper.isSound(ctx, newFile.getName()) && ctx.getGlobalContext().hasComponent(Sound.class.getCanonicalName())) {
 								beanType = Sound.TYPE;
 							}
-							
+
 							StaticInfo staticInfo = StaticInfo.getInstance(ctx, newFile);
 							SharedContentContext sharedContentContext = SharedContentContext.getInstance(ctx.getRequest().getSession());
 							SharedContentService sharedContentService = SharedContentService.getInstance(ctx);
 							ComponentBean bean = new ComponentBean(beanType, new String(outStream.toByteArray()), ctx.getRequestContentLanguage());
 							if (sharedContentService.getActiveProviderNames(ctx).contains(ImportedFileSharedContentProvider.NAME)) {
 								sharedContentContext.setProvider(ImportedFileSharedContentProvider.NAME);
-								sharedContentService.clearCache(ctx);								
+								sharedContentService.clearCache(ctx);
 							} else if (!content) {
 								cs.createContentAtEnd(ctx, bean, true);
 							}
@@ -618,7 +643,7 @@ public class DataAction implements IAction {
 					countImages = 2;
 				}
 				if (countImages == 1) {
-					if (!config.isImagesAsGallery()) {						
+					if (!config.isImagesAsGallery()) {
 						folderSelection = createImage(ctx, importFolder, imageItem, config, content, previousId, rename);
 						if (folderSelection != null) {
 							folderSelection = folderSelection.getParentFile();
@@ -685,7 +710,7 @@ public class DataAction implements IAction {
 		session.setAttribute("tab", rs.getParameter("tab", null));
 		return null;
 	}
-	
+
 	public static String performMemory(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws NumberFormatException, IOException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		Map memory = BeanUtils.describe(new MemoryBean());
 		memory.remove("class");
@@ -706,7 +731,7 @@ public class DataAction implements IAction {
 			return null;
 		}
 	}
-	
+
 	public static String performCreateFileName(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) {
 		String fileName = rs.getParameter("filename", null);
 		if (fileName == null) {
@@ -716,7 +741,7 @@ public class DataAction implements IAction {
 		}
 		return null;
 	}
-	
+
 	public static String performFileExist(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
 		String fileName = rs.getParameter("filename", null);
 		boolean exist = false;
@@ -727,9 +752,9 @@ public class DataAction implements IAction {
 		} else {
 			String imageRelativeFolder = URLHelper.mergePath(ctx.getGlobalContext().getStaticFolder(), ctx.getGlobalContext().getStaticConfig().getImportResourceFolder(), createImportFolder(ctx.getCurrentPage()));
 			File file = new File(URLHelper.mergePath(imageRelativeFolder, StringHelper.createFileName(fileName)));
-			exist = file.exists();			
+			exist = file.exists();
 		}
-		ctx.getAjaxData().put("exist", exist);		
+		ctx.getAjaxData().put("exist", exist);
 		return null;
 	}
 }

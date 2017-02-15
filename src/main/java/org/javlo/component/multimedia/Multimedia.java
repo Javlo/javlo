@@ -1,6 +1,7 @@
 package org.javlo.component.multimedia;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Calendar;
@@ -18,6 +19,7 @@ import java.util.Map;
 import org.apache.commons.io.FilenameUtils;
 import org.javlo.bean.Link;
 import org.javlo.component.core.AbstractVisualComponent;
+import org.javlo.component.core.ComponentBean;
 import org.javlo.component.core.ContentElementList;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.core.IVideo;
@@ -269,10 +271,10 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle, IStat
 				IVideo video = (IVideo) comp;
 				if (video.isShared(lgCtx) || !contentVideoOnlyShared(lgCtx)) {
 					MultimediaResource resource = createResource(ctx, video);
-					outResources.add(resource);	
+					outResources.add(resource);
 				}
 			}
-		}		
+		}
 		for (MenuElement child : page.getAllChildrenList()) {
 			lgCtx = freeCtx.getContextWithContent(child);
 			if (lgCtx == null) {
@@ -390,7 +392,7 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle, IStat
 			return "/";
 		}
 	}
-	
+
 	public void setCurrentRootFolder(ContentContext ctx, String folder) {
 		String[] values = getValue().split(VALUE_SEPARATOR);
 		if (values.length >= 4) {
@@ -398,11 +400,11 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle, IStat
 		} else {
 			values = new String[] { "", "", "", folder };
 		}
-		setValue(StringHelper.arrayToString(values, VALUE_SEPARATOR));		
+		setValue(StringHelper.arrayToString(values, VALUE_SEPARATOR));
 		File targetFolder = new File(getFilesDirectory(ctx));
 		if (!targetFolder.exists()) {
 			targetFolder.mkdirs();
-			logger.info("create folder  : "+targetFolder);
+			logger.info("create folder  : " + targetFolder);
 		}
 	}
 
@@ -1007,11 +1009,45 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle, IStat
 	@Override
 	protected void init() throws ResourceNotFoundException {
 		initDate = false;
-		super.init();		
+		super.init();
+	}
+
+	protected boolean isImported(ContentContext ctx) {		
+		return getDirSelected().contains(ctx.getGlobalContext().getStaticConfig().getImportFolder()+'/');
 	}
 
 	@Override
-	public boolean isContentCachable(ContentContext ctx) {		
+	protected void init(ComponentBean bean, ContentContext ctx) throws Exception {
+		super.init(bean, ctx);
+		if (isImported(ctx) && getPage() != null) {
+			String importFolder = getImportFolderPath(ctx);
+			if (!getDirSelected().equals(importFolder)) {
+				try {
+					File sourceDir = new File(getFilesDirectory(ctx));
+					setCurrentRootFolder(ctx, importFolder);
+					File targetDir = new File(getFilesDirectory(ctx));
+					for (File file : sourceDir.listFiles())
+						if (file.exists()) {
+							File targetFile = new File(URLHelper.mergePath(targetDir.getAbsolutePath(), file.getName()));
+							if (!targetFile.exists()) {
+								ResourceHelper.writeFileToFile(file, targetFile);
+								ResourceHelper.copyResourceData(ctx, file, targetFile);
+								ResourceHelper.cleanImportResource(ctx, targetFile);
+							}
+						}
+				} catch (IOException e) {
+					e.printStackTrace();
+				}				
+			}
+		}
+	}
+	
+	public String getImportFolderPath(ContentContext ctx) throws Exception {
+		return URLHelper.mergePath("/",ctx.getGlobalContext().getStaticConfig().getGalleryFolder(), getImportFolderPath(ctx, getPage()));
+	}
+
+	@Override
+	public boolean isContentCachable(ContentContext ctx) {
 		String contentCache = getConfig(ctx).getProperty("cache.content", null);
 		if (contentCache != null) {
 			return StringHelper.isTrue(contentCache);
@@ -1019,7 +1055,7 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle, IStat
 		if (isOrderRandom(ctx)) {
 			return false;
 		}
-		return !isOrderByAccess(ctx);		
+		return !isOrderByAccess(ctx);
 	}
 
 	@Override
@@ -1028,7 +1064,7 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle, IStat
 	}
 
 	@Override
-	public boolean isContentCachableByQuery(ContentContext ctx) {		
+	public boolean isContentCachableByQuery(ContentContext ctx) {
 		return !isRepeat();
 	}
 
@@ -1182,7 +1218,7 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle, IStat
 			return Integer.parseInt(getConfig(ctx).getProperty("image.priority", null));
 		}
 	}
-	
+
 	@Override
 	public String getEmptyXHTMLCode(ContentContext ctx) throws Exception {
 		if (isHiddenInMode(ctx.getRenderMode()) || !AdminUserSecurity.getInstance().canModifyConponent(ctx, getId())) {
@@ -1195,26 +1231,26 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle, IStat
 				prefix = getForcedPrefixViewXHTMLCode(ctx);
 				suffix = getForcedSuffixViewXHTMLCode(ctx);
 			}
-			if (getCurrentRootFolder() != null && getCurrentRootFolder().length()>2) {
+			if (getCurrentRootFolder() != null && getCurrentRootFolder().length() > 2) {
 				return prefix + "<div class=\"empty\">[" + i18nAccess.getText("preview.upload-here", "upload here") + "]</div>" + suffix;
 			} else {
 				return prefix + "<div class=\"empty\" ondrop=\"return false;\">[" + i18nAccess.getText("preview.choose-folder", "choose a folder to upload") + "]</div>" + suffix;
 			}
 		}
 	}
-	
+
 	@Override
-	public boolean isMirroredByDefault(ContentContext ctx) {	
+	public boolean isMirroredByDefault(ContentContext ctx) {
 		return true;
 	}
-	
+
 	@Override
-	public boolean initContent(ContentContext ctx) throws Exception {	
+	public boolean initContent(ContentContext ctx) throws Exception {
 		boolean out = super.initContent(ctx);
 		setStyle(ctx, IMAGE);
 		return out;
 	}
-	
+
 	@Override
 	public int getComplexityLevel(ContentContext ctx) {
 		return getConfig(ctx).getComplexity(COMPLEXITY_STANDARD);
@@ -1222,13 +1258,26 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle, IStat
 
 	@Override
 	public boolean contains(ContentContext ctx, String uri) {
-		return uri.startsWith(getCurrentRootFolder());		
+		return uri.startsWith(getCurrentRootFolder());
 	}
 
 	@Override
 	public Collection<Resource> getAllResources(ContentContext ctx) {
-		// TODO Auto-generated method stub
-		return null;
+		Collection<Resource> outResources = new LinkedList<Resource>();
+		try {
+			for (MultimediaResource mulRes : getMultimediaResources(ctx)) {
+				Resource res = new Resource();
+				res.setName(mulRes.getName());
+				String url = mulRes.getPath().replace(ctx.getGlobalContext().getDataFolder(), "");
+				res.setUri(url);
+				res.setDescription(mulRes.getTitle());
+				res.setId(mulRes.getPath());
+				outResources.add(res);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return outResources;
 	}
 
 	@Override
@@ -1242,7 +1291,7 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle, IStat
 	}
 
 	@Override
-	public int getPopularity(ContentContext ctx) { 
+	public int getPopularity(ContentContext ctx) {
 		return 0;
 	}
 
@@ -1259,11 +1308,10 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle, IStat
 	public List<File> getFiles(ContentContext ctx) {
 		return null;
 	}
-	
+
 	@Override
 	public boolean isValidDate(ContentContext ctx) {
 		return false;
 	}
-
 
 }

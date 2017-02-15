@@ -37,6 +37,17 @@ public class XMLFactory {
 	}
 	
 	/**
+	 * get the root node from an input stream (grh)
+	 */
+	public static NodeXML getFirstNode(String xml) throws Exception {
+		DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
+		// docBuilderFactory.setNamespaceAware(false);
+		DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
+		Document doc = docBuilder.parse(new InputSource(xml));
+		return new NodeXML(doc);
+	}
+	
+	/**
 	 * get the root node from an input stream (pvdm)
 	 */
 	public static NodeXML getFirstNode(Reader inXML) throws Exception {

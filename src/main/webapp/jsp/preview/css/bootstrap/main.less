@@ -394,7 +394,7 @@ body #preview_command .btn[disabled] {
 	background-color: #eeeeee;
 }
 
-#preview_command .drop-files {
+#preview_command .drop-files, #preview_command #paste {
 	margin-top: 20px;
 	font-size: 2em;
 	color: #B5B5B7;
@@ -402,14 +402,18 @@ body #preview_command .btn[disabled] {
     padding: 6px;
 }
 
-#preview_command .drop-files h3 {
+#preview_command #paste:hover {
+	    border-color: #c3c3c3;
+}
+
+#preview_command .drop-files h3, #preview_command #paste h3 {
 	font-size: 14px;
 	margin: 0 0 2px 0;
 	color: #3b3b3b;
 	text-align: center;
 }
 
-#preview_command .drop-files .picto {
+#preview_command .drop-files .picto, #preview_command #paste .picto {
 	text-align: center;
     margin-top: 5px;
     position: relative;

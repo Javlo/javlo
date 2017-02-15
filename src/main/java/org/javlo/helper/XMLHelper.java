@@ -3,6 +3,7 @@
  */
 package org.javlo.helper;
 
+import java.io.File;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
@@ -15,7 +16,6 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
 
 import org.javlo.component.core.ComponentBean;
@@ -27,8 +27,9 @@ import org.javlo.service.ContentService;
 import org.javlo.service.PersistenceService;
 import org.javlo.service.resource.Resource;
 import org.javlo.servlet.AccessServlet;
+import org.javlo.servlet.IVersion;
+import org.javlo.ztatic.StaticInfo;
 import org.owasp.encoder.Encode;
-import org.xhtmlrenderer.util.GenerateBigFile;
 
 /**
  * @author pvandermaesen
@@ -61,7 +62,7 @@ public class XMLHelper {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 
 		out.println("<?xml version=\"1.0\" encoding=\"" + ContentContext.CHARACTER_ENCODING + "\"?>");
-		out.println("<export key=\"" + globalContext.getContextKey() + "\" path=\"" + page.getPath() + "\">");
+		out.println("<export key=\"" + globalContext.getContextKey() + "\" path=\"" + page.getPath() + "\" version=\""+IVersion.VERSION+"\">");
 		Collection<MenuElement> allCreatePage = new LinkedList<MenuElement>();
 		insertXMLPage(out, allCreatePage, Arrays.asList(new MenuElement[] { page }), ctx.getContentLanguage(), true);
 		ContentContext absoluteURLCtx = new ContentContext(ctx);
@@ -73,13 +74,18 @@ public class XMLHelper {
 			for (Resource resource : resources) {
 				if (!allResources.contains(resource)) {
 					allResources.add(resource);
-					out.println("<resource id=\"" + StringHelper.neverNull(resource.getId()) + "\" uri=\"" + resource.getUri() + "\"/>");
+					File file = new File(URLHelper.mergePath(globalContext.getDataFolder(), resource.getUri()));
+					StaticInfo staticInfo = StaticInfo.getInstance(ctx, file);
+					if (ctx.getCurrentEditUser() != null || staticInfo.getReadRoles(absoluteURLCtx).size() == 0) {
+						staticInfo.toXML(ctx, out);
+					}
+					//out.println("<resource id=\"" + StringHelper.neverNull(resource.getId()) + "\" uri=\"" + resource.getUri() + "\"/>");
 				}
 			}
 		}
 		out.println("</resources>");
-		ContentService content = ContentService.getInstance(ctx.getRequest());
-		insertMap(out, content.getGlobalMap(ctx), PersistenceService.GLOBAL_MAP_NAME);
+		//ContentService content = ContentService.getInstance(ctx.getRequest());
+		//insertMap(out, content.getGlobalMap(ctx), PersistenceService.GLOBAL_MAP_NAME);
 		out.println("</export>");
 
 		out.close();

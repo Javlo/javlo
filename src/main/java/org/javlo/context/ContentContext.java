@@ -1082,6 +1082,10 @@ public class ContentContext {
 	public IURLFactory getURLFactory() {
 		return urlFactory;
 	}
+	
+	public void setURLFactory(IURLFactory urlFactory) {
+		this.urlFactory = urlFactory;
+	}
 
 	public String getURLProtocolPrefix() {
 		if (protocol != null) {

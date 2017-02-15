@@ -4,9 +4,26 @@
 <div class="well drop-files">		
 	<div class="upload-zone" data-url="${info.uploadURL}">
 	<h3>${i18n.edit['preview.upload-here']}</h3>
-	<div class="picto"><span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span></div>
-	</div>
-</div><c:if test="${not empty provider && provider.search}">
+	<div class="picto"><span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span></div>	
+	</div>	
+</div>
+
+<!-- <div id="paste" class="well"> -->
+<%-- <h3>${i18n.edit['preview.paste-here']}</h3> --%>
+<!-- <div class="picto"><span class="glyphicon glyphicon-paste" aria-hidden="true"></span></div> -->
+<!-- </div> -->
+<!-- <script type="text/javascript"> 
+//   console.log(window.Clipboard);
+//   var items = window.clipboardData.items;	  
+//   var blob = null;
+//   for (var i = 0; i < items.length; i++) {
+//     if (items[i].type.indexOf("image/png") === 0) {
+//       pjq('#paste').removeClass('hidden');
+//     }
+//   }	
+</script> -->
+
+<c:if test="${not empty provider && provider.search}">
 <form id="shared-content-search-form" class="ajax" action="${info.currentURL}" method="post">
 <div>
 	<input type="hidden" name="webaction" value="shared-content.search" />

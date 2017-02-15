@@ -140,6 +140,22 @@ public class InfoBean {
 	public String getCurrentAbsoluteURL() {
 		return URLHelper.createURL(ctx.getContextForAbsoluteURL());
 	}
+	
+	public String getCurrentAbsoluteURLZIP() {
+		ContentContext ZIPCtx = ctx.getContextForAbsoluteURL();
+		ZIPCtx.setURLFactory(null);
+		ZIPCtx.setRenderMode(ContentContext.VIEW_MODE);
+		ZIPCtx.setFormat("zip");
+		return URLHelper.createURL(ZIPCtx);
+	}
+	
+	public String getCurrentAbsoluteURLXML() {
+		ContentContext XMLCtx = ctx.getContextForAbsoluteURL();
+		XMLCtx.setURLFactory(null);
+		XMLCtx.setRenderMode(ContentContext.VIEW_MODE);
+		XMLCtx.setFormat("xml");
+		return URLHelper.createURL(XMLCtx);
+	}
 
 	public String getCurrentAbsolutePreviewURL() {
 		ContentContext previewCtx = ctx.getContextForAbsoluteURL();

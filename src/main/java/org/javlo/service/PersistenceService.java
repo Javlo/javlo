@@ -950,7 +950,12 @@ public class PersistenceService {
 					ResourceHelper.closeResource(reader);
 				}
 				for (Map.Entry<Object, Object> entry : prop.entrySet()) {
-					contentAttributeMap.put(entry.getKey().toString(), entry.getValue().toString());
+					/*** remove static as prefix for static info */
+					String key = entry.getKey().toString();
+					if (key.startsWith("staticinfo-/static")) {
+						key = key.replaceFirst("staticinfo-/static", "staticinfo-");
+					}
+					contentAttributeMap.put(key, entry.getValue().toString());
 				}
 			}
 		} catch (SAXParseException e) {

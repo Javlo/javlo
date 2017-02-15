@@ -1,6 +1,7 @@
 package org.javlo.servlet;
 
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -25,6 +26,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.zip.ZipOutputStream;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -32,10 +34,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.vfs2.FileSystemException;
-import org.apache.commons.vfs2.VFS;
-import org.apache.commons.vfs2.impl.DefaultFileSystemManager;
-import org.apache.commons.vfs2.provider.zip.ZipFileProvider;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.component.core.ComponentFactory;
 import org.javlo.config.StaticConfig;
@@ -77,9 +75,11 @@ import org.javlo.service.event.Event;
 import org.javlo.service.integrity.IntegrityFactory;
 import org.javlo.service.remote.RemoteMessage;
 import org.javlo.service.remote.RemoteMessageService;
+import org.javlo.service.resource.Resource;
 import org.javlo.service.shared.SharedContentService;
 import org.javlo.service.social.SocialService;
 import org.javlo.service.syncro.SynchroThread;
+import org.javlo.servlet.zip.ZipManagement;
 import org.javlo.template.Template;
 import org.javlo.template.TemplateFactory;
 import org.javlo.thread.ThreadManager;
@@ -233,8 +233,6 @@ public class AccessServlet extends HttpServlet implements IVersion {
 
 		MultiReadRequestWrapper.clearTempDir(getServletContext());
 		TemplateFactory.copyDefaultTemplate(getServletContext());
-
-		
 
 	}
 
@@ -713,12 +711,35 @@ public class AccessServlet extends HttpServlet implements IVersion {
 
 					String path = ctx.getPath();
 
-					if (ctx.getFormat().equalsIgnoreCase("xml")) {
-
+					if (ctx.getFormat().equalsIgnoreCase("zip")) {
+						response.setContentType("application/zip; charset=" + ContentContext.CHARACTER_ENCODING);
+						ZipOutputStream outZip = new ZipOutputStream(response.getOutputStream());
+						outZip.setLevel(9);
+						ZipManagement.addFileInZip(outZip, "content.xml", new ByteArrayInputStream(XMLHelper.getPageXML(ctx, elem).getBytes(ContentContext.CHARSET_DEFAULT)));
+						Collection<Resource> resources = ctx.getCurrentPage().getAllResources(ctx);
+						logger.info("prepare zip file with " + resources.size() + " resources.");
+						File mainFolder = new File(ctx.getGlobalContext().getDataFolder());
+						if (mainFolder.exists()) {
+							for (Resource resource : resources) {
+								File file = new File(URLHelper.mergePath(mainFolder.getAbsolutePath(), resource.getUri()));
+								if (file.exists()) {									
+									try {										
+										ZipManagement.zipFile(outZip, file, mainFolder);
+									} catch (IOException e) {
+										logger.warning("error zip file : " + file + " (" + e.getMessage() + ')');
+									}
+								} else {
+									logger.warning("file not found for create zip : " + file);
+								}
+							}
+						}
+						outZip.finish();
+						outZip.flush();
+						outZip.close();
+					} else if (ctx.getFormat().equalsIgnoreCase("xml")) {
 						response.setContentType("text/xml; charset=" + ContentContext.CHARACTER_ENCODING);
 						Writer out = response.getWriter();
 						out.write(XMLHelper.getPageXML(ctx, elem));
-
 					} else if (ctx.getFormat().equalsIgnoreCase("png") || ctx.getFormat().equalsIgnoreCase("jpg")) {
 						if (ctx.getGlobalContext().getStaticConfig().isConvertHTMLToImage()) {
 							logger.warning("convert image convertion : " + request.getRequestURI());

@@ -1515,7 +1515,7 @@ public class StaticConfig extends Observable {
 			return false;
 		} else {
 			if (contentExtension == null) {
-				String rawExtension = properties.getString("content.extension", "html,pdf,png,jpg,xml,cxml");
+				String rawExtension = properties.getString("content.extension", "html,pdf,png,jpg,xml,cxml,zip");
 				if (rawExtension.trim().length() == 0 || rawExtension.trim().equals("*")) {
 					contentExtension = Collections.EMPTY_SET;
 				} else {
@@ -1587,7 +1587,7 @@ public class StaticConfig extends Observable {
 	}
 
 	public String getImportGalleryFolder() {
-		return properties.getString("import.gallery", "/gallery" + getImportFolder());
+		return properties.getString("import.gallery", getGalleryFolderName() + getImportFolder());
 	}
 
 	public String getImportResourceFolder() {

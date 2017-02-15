@@ -63,7 +63,6 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.io.FileExistsException;
-import org.apache.commons.io.FileSystemUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -89,9 +88,11 @@ import org.javlo.service.PersistenceService;
 import org.javlo.service.resource.Resource;
 import org.javlo.user.AdminUserSecurity;
 import org.javlo.utils.ConfigurationProperties;
+import org.javlo.xml.NodeXML;
 import org.javlo.ztatic.FileCache;
 import org.javlo.ztatic.IStaticContainer;
 import org.javlo.ztatic.StaticInfo;
+import org.owasp.encoder.Encode;
 
 import com.google.gson.JsonElement;
 
@@ -171,49 +172,54 @@ public class ResourceHelper {
 		return returnDelete;
 	}
 
-	public static void downloadResource(ContentContext ctx, String localDir, String baseURL, Collection<Resource> resources) throws Exception {
-		for (Resource resource : resources) {
-			URL url = new URL(URLHelper.mergePath(baseURL, resource.getUri()));
+	public static void downloadResource(ContentContext ctx, String localDir, String baseURL, NodeXML nodeXML) throws Exception {
+		NodeXML child = nodeXML.getChild("resource");
+		while (child != null) {
+			Resource resource = new Resource();
+			resource.setUri(child.getAttributeValue("uri"));
+			URL url = new URL(Encode.forUri(URLHelper.mergePath(baseURL, resource.getUri())));
 			File localFile = new File(URLHelper.mergePath(localDir, resource.getUri()));
-			if (!localFile.exists()) {
-				InputStream in = null;
-				try {
+			InputStream in = null;
+			try {
+				if (!localFile.exists()) {
 					in = url.openStream();
 					ResourceHelper.writeStreamToFile(in, localFile);
-					try {
-						/** load static info **/
-						StaticInfo staticInfo = StaticInfo.getInstance(ctx, localFile);
-						ContentContext lgCtx = new ContentContext(ctx);
-						for (String lg : ctx.getGlobalContext().getContentLanguages()) {
-							lgCtx.setAllLanguage(lg);
-							String jsonURL = url.toString() + ".json?lg=" + lg;
-							JsonElement jsonElement = NetHelper.readJson(new URL(jsonURL));
-							Map<String, String> jsonMap = new HashMap<String, String>();
-							for (Entry entry : jsonElement.getAsJsonObject().entrySet()) {
-								jsonMap.put((String) entry.getKey(), "" + entry.getValue());
-							}
-							staticInfo.setTitle(lgCtx, StringHelper.removeQuote(jsonMap.get("title")));
-							staticInfo.setDescription(lgCtx, StringHelper.removeQuote(jsonMap.get("description")));
-							staticInfo.setLocation(lgCtx, StringHelper.removeQuote(jsonMap.get("location")));
-							staticInfo.setCopyright(lgCtx, StringHelper.removeQuote(jsonMap.get("copyright")));
-							staticInfo.setDate(lgCtx, StringHelper.parseSortableTime(StringHelper.removeQuote(jsonMap.get("sortableDate"))));
-							staticInfo.setFocusZoneX(lgCtx, Integer.parseInt(StringHelper.removeQuote(jsonMap.get("focusZoneX"))));
-							staticInfo.setFocusZoneY(lgCtx, Integer.parseInt(StringHelper.removeQuote(jsonMap.get("focusZoneY"))));
-						}
-					} catch (Throwable t) {
-						t.printStackTrace();
-					}
 					logger.info("download resource : " + url + " in " + localFile);
-				} finally {
-					if (in != null) {
-						in.close();
-					}
 				}
-			} else {
-				logger.warning("download url error : file already exists locally : " + localFile);
+				/** load static info **/
+				StaticInfo staticInfo = StaticInfo.getInstance(ctx, localFile);
+				ContentContext lgCtx = new ContentContext(ctx);
+				if (child.getAttributeValue("id") != null) {
+					for (String lg : ctx.getGlobalContext().getContentLanguages()) {
+						lgCtx.setAllLanguage(lg);
+						String jsonURL = url.toString() + ".json?lg=" + lg;
+						JsonElement jsonElement = NetHelper.readJson(new URL(jsonURL));
+						Map<String, String> jsonMap = new HashMap<String, String>();
+						for (Entry entry : jsonElement.getAsJsonObject().entrySet()) {
+							jsonMap.put((String) entry.getKey(), "" + entry.getValue());
+						}
+						staticInfo.setTitle(lgCtx, StringHelper.removeQuote(jsonMap.get("title")));
+						staticInfo.setDescription(lgCtx, StringHelper.removeQuote(jsonMap.get("description")));
+						staticInfo.setLocation(lgCtx, StringHelper.removeQuote(jsonMap.get("location")));
+						staticInfo.setCopyright(lgCtx, StringHelper.removeQuote(jsonMap.get("copyright")));
+						staticInfo.setDate(lgCtx, StringHelper.parseSortableTime(StringHelper.removeQuote(jsonMap.get("sortableDate"))));
+						staticInfo.setFocusZoneX(lgCtx, Integer.parseInt(StringHelper.removeQuote(jsonMap.get("focusZoneX"))));
+						staticInfo.setFocusZoneY(lgCtx, Integer.parseInt(StringHelper.removeQuote(jsonMap.get("focusZoneY"))));
+					}
+				} else {
+					staticInfo.fromXML(ctx, child);
+				}
+			} catch (Throwable t) {
+				t.printStackTrace();
+			} finally {
+				if (in != null) {
+					in.close();
+				}
 			}
 
+			child = child.getNext("resource");
 		}
+
 	}
 
 	public static String downloadResourceAsString(URL workURL) throws IOException {
@@ -601,7 +607,7 @@ public class ResourceHelper {
 		try {
 			if (ext.toLowerCase().equals("doc")) {
 				WordExtractor we = new WordExtractor(new FileInputStream(file));
-				outContent = we.getText();				 
+				outContent = we.getText();
 			} else if (ext.toLowerCase().equals("pdf")) {
 				PDDocument doc = PDDocument.load(file);
 
@@ -638,7 +644,7 @@ public class ResourceHelper {
 			return "video/mp4";
 		} else if (ext.equals("m4a")) {
 			return "audio/mp4";
-		}else if (ext.equals("avi") || ext.equals("wmv")) {
+		} else if (ext.equals("avi") || ext.equals("wmv")) {
 			return "video/msvideo";
 		} else if (ext.equals("qt") || ext.equals("mov")) {
 			return "video/quicktime";
@@ -835,12 +841,12 @@ public class ResourceHelper {
 			if (StringHelper.isEmpty(ext)) {
 				return false;
 			} else {
-				ext = ext.trim();				
+				ext = ext.trim();
 				return ctx.getGlobalContext().getStaticConfig().getDocumentExtension().contains(ext.toLowerCase());
 			}
 		}
 	}
-	
+
 	/**
 	 * check if this file is a document (list of extenion define in
 	 * static-config.properties
@@ -1271,7 +1277,7 @@ public class ResourceHelper {
 	}
 
 	public static final void writeStringToFile(File file, String content, String encoding) throws IOException {
-		if (encoding==null) {
+		if (encoding == null) {
 			encoding = ContentContext.CHARACTER_ENCODING;
 		}
 		if (!file.exists()) {
@@ -1609,11 +1615,10 @@ public class ResourceHelper {
 	}
 
 	public static void main(String[] args) throws Exception {
-		JsonElement jsonElement = NetHelper.readJson(new URL("http://localhost/javlo/mailing/resource/static/images/import/test_pages_moving/0560bg.jpg.json"));
-		for (Entry entry : jsonElement.getAsJsonObject().entrySet()) {
-			System.out.println("item:" + entry.getKey() + "  value:" + entry.getValue());
-		}
-
+		URL url = new URL("http://localhost/javlo/sexy/resource/static/images/anette dawn/05.jpg");
+		url.openConnection();
+		System.out.println("***** ResourceHelper.main : END"); // TODO: remove
+																// debug trace
 	}
 
 	/**

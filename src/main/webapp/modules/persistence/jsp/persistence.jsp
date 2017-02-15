@@ -18,15 +18,32 @@
 </ul>
 </fieldset>
 <fieldset>
-<legend>${i18n.edit['persistence.title.remote-import']}</legend>
-<form action="${info.currentURL}" method="post">
-<div class="line">
-	<label for="static-url">${i18n.edit['persistence.title.static-import']}</label>
+<legend>${i18n.edit['persistence.title.page-import']}</legend>
+<form action="${info.currentURL}" method="post" enctype="multipart/form-data">
+<label for="static-url">${i18n.edit['persistence.title.static-import']}</label>
+<div class="row"><div class="col-sm-10">
+<div class="form-group">	
 	<input type="hidden" name="webaction" value="persistence.importPage" />
-	<input id="static-url" type="text" name="import-url" />
-	<input type="submit" value="${i18n.edit['global.ok']}" />
+	<input class="form-control" id="static-url" type="text" name="import-url" />	
 </div>
+</div><div class="col-sm-2">
+<input class="btn btn-default btn-xs pull-right" type="submit" value="${i18n.edit['global.ok']}" />
+</div></div>
+<label for="static-url">${i18n.edit['persistence.title.static-import-file']}</label>
+<div class="row"><div class="col-sm-10">
+<div class="form-group">	
+	<input class="form-control" id="static-file" type="file" name="import-file" />	
+</div>
+</div><div class="col-sm-2">
+<input type="submit" class="btn btn-default btn-xs pull-right" value="${i18n.edit['global.ok']}" />
+</div></div>
 </form>
+
+<h4>${i18n.edit['persistence.title.download-page']}</h4>
+<div class="form-group">
+<a href="${info.currentAbsoluteURLXML}" class="btn btn-default btn-xs">XML</a>
+<a href="${info.currentAbsoluteURLZIP}" class="btn btn-default btn-xs">ZIP</a>
+</div>
 </fieldset>
 
 <c:if test="${fn:length(exportLinks) > 0}">

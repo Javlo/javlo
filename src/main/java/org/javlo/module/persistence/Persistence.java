@@ -1,5 +1,6 @@
 package org.javlo.module.persistence;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Collection;
@@ -7,11 +8,14 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Logger;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.fileupload.FileItem;
+import org.apache.xmlgraphics.image.loader.util.ImageInputStreamAdapter;
 import org.javlo.actions.AbstractModuleAction;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.dynamic.DynamicComponent;
@@ -32,8 +36,10 @@ import org.javlo.service.PersistenceService;
 import org.javlo.service.RequestService;
 import org.javlo.service.resource.Resource;
 import org.javlo.servlet.zip.ZipManagement;
+import org.javlo.utils.UnclosableInputStream;
 import org.javlo.xml.NodeXML;
 import org.javlo.xml.XMLFactory;
+import org.javlo.ztatic.StaticInfo;
 
 public class Persistence extends AbstractModuleAction {
 
@@ -123,7 +129,7 @@ public class Persistence extends AbstractModuleAction {
 	public static String performUpload(RequestService requestService, HttpServletRequest request, HttpServletResponse response, ContentContext ctx, ContentService content, I18nAccess i18nAccess) throws Exception {
 
 		Collection<FileItem> fileItems = requestService.getAllFileItem();
-		
+
 		String urlParam = requestService.getParameter("url", "");
 		if (urlParam.trim().length() > 0) {
 			URL url = new URL(urlParam);
@@ -164,8 +170,54 @@ public class Persistence extends AbstractModuleAction {
 			return null;
 		}
 		String importURL = requestService.getParameter("import-url", null);
-
-		if (importURL != null) {
+		String importZIP = requestService.getParameter("import-file", null);
+		if (importZIP != null) {
+			int countResources = 0;
+			for (FileItem item : requestService.getAllFileItem()) {
+				if (StringHelper.getFileExtension(item.getName()).equals("zip")) {
+					ZipInputStream zipIn = new ZipInputStream(item.getInputStream());
+					ZipEntry entry = zipIn.getNextEntry();
+					NodeXML node = null;
+					while (entry != null) {
+						try {
+							if (entry.getName().equals("content.xml")) {
+								InputStream in = new UnclosableInputStream(zipIn);
+								node = XMLFactory.getFirstNode(in);
+								NodeXML pageNode = node.getChild("page");
+								GlobalContext globalContext = GlobalContext.getInstance(request);
+								PersistenceService persistenceService = PersistenceService.getInstance(globalContext);
+								NavigationHelper.importPage(ctx, persistenceService, pageNode, currentPage, ctx.getLanguage(), true);
+							} else {
+								ZipManagement.saveFile(request.getSession().getServletContext(), ctx.getGlobalContext().getDataFolder(), entry.getName(), zipIn);
+								countResources++;
+							}
+						} catch (Exception e) {
+							e.printStackTrace();
+							logger.warning("Error on file : " + entry.getName() + " (" + e.getMessage() + ')');
+						} 
+						entry = zipIn.getNextEntry();
+					}
+					if (node != null) {
+						NodeXML resourcesNode = node.getChild("resources");
+						if (resourcesNode != null) {
+							String baseURL = resourcesNode.getAttributeValue("url");
+							if (baseURL != null) {
+								/*
+								 * files will not realy downloaded because he
+								 * already exist, this method is call for update
+								 * metadata
+								 */
+								ResourceHelper.downloadResource(ctx, ctx.getGlobalContext().getDataFolder(), baseURL, resourcesNode);
+							}
+						} else {
+							logger.warning("resources node not found in zip : " + importZIP);
+						}
+					}
+					zipIn.close();
+					MessageRepository.getInstance(ctx).setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("persistence.message.imported", new String[][] { { "countResources", "" + countResources } }), GenericMessage.INFO), false);
+				}
+			}
+		} else if (importURL != null) {
 			String XMLURL = StringHelper.changeFileExtension(importURL, "xml");
 			InputStream in = null;
 
@@ -182,21 +234,9 @@ public class Persistence extends AbstractModuleAction {
 				NodeXML resourcesNode = node.getChild("resources");
 				if (resourcesNode != null) {
 					String baseURL = resourcesNode.getAttributeValue("url");
-					Collection<Resource> resources = new LinkedList<Resource>();
-					NodeXML resourceNode = resourcesNode.getChild("resource");
-					if (resourceNode == null) {
-						logger.warning("resource node not found in : " + url);
-					}
-					while (resourceNode != null) {
-						if (baseURL != null) {
-							Resource resource = new Resource();
-							resource.setId(resourceNode.getAttributeValue("id"));
-							resource.setUri(resourceNode.getAttributeValue("uri"));
-							resources.add(resource);
-							ResourceHelper.downloadResource(ctx, globalContext.getDataFolder(), baseURL, resources);
-							countResources++;
-						}
-						resourceNode = resourceNode.getNext("resource");
+					if (baseURL != null) {
+						ResourceHelper.downloadResource(ctx, globalContext.getDataFolder(), baseURL, resourcesNode);
+						countResources++;
 					}
 				} else {
 					logger.warning("resources node not found in : " + url);
@@ -228,6 +268,13 @@ public class Persistence extends AbstractModuleAction {
 		MessageRepository.getInstance(ctx).setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("persistence.message.new-version", new String[][] { { "version", "" + newVersion } }), GenericMessage.INFO), false);
 
 		return null;
+	}
+
+	public static void main(String[] args) throws IOException {
+		URL url = new URL("http://localhost/javlo/sexy/resource/static/images/anette dawn/05.jpg");
+		url.openConnection();
+		System.out.println("***** Persistence.main : DONE"); // TODO: remove
+																// debug trace
 	}
 
 }

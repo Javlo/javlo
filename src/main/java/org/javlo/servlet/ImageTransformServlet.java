@@ -1018,7 +1018,7 @@ public class ImageTransformServlet extends HttpServlet {
 				staticInfo = StaticInfo.getInstance(ctx, new File(getServletContext().getRealPath(imageName)));
 			} else {
 				staticInfo = StaticInfo.getInstance(ctx, imageName);
-			}			
+			}		
 			
 			ImageConfig config = ImageConfig.getInstance(globalContext, request.getSession(), template);
 			

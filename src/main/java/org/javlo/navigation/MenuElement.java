@@ -103,7 +103,6 @@ import org.javlo.utils.TimeRange;
 import org.javlo.xml.NodeXML;
 import org.javlo.xml.XMLFactory;
 import org.javlo.ztatic.IStaticContainer;
-import org.javlo.ztatic.StaticInfo;
 
 /**
  * @author pvanderm
@@ -1690,8 +1689,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 	}
 
 	public Collection<Resource> getAllResources(ContentContext ctx) throws Exception {
-		ContentElementList contentList = getAllContent(ctx); // search date in
-		// all area
+		ContentElementList contentList = getAllContent(ctx);
 		Collection<Resource> outList = new LinkedList<Resource>();
 		while (contentList.hasNext(ctx)) {
 			IContentVisualComponent comp = contentList.next(ctx);

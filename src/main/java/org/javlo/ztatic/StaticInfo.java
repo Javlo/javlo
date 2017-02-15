@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.io.Writer;
 import java.lang.ref.WeakReference;
 import java.text.ParseException;
 import java.util.Calendar;
@@ -36,11 +37,11 @@ import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
-import org.javlo.service.NavigationService;
 import org.javlo.service.PersistenceService;
 import org.javlo.service.exception.ServiceException;
 import org.javlo.service.location.LocationService;
 import org.javlo.user.User;
+import org.javlo.xml.NodeXML;
 import org.javlo.ztatic.InitInterest.Point;
 import org.owasp.encoder.Encode;
 
@@ -674,7 +675,7 @@ public class StaticInfo {
 		if (!inStaticURL.startsWith("/")) {
 			inStaticURL = '/' + inStaticURL;
 		}
-		if (inStaticURL.startsWith("/static")) {
+		while (inStaticURL.startsWith("/static")) {
 			inStaticURL = inStaticURL.replaceFirst("/static", "");
 		}
 
@@ -888,6 +889,7 @@ public class StaticInfo {
 	public String getManualTitle(ContentContext ctx) {
 		ContentService content = ContentService.getInstance(ctx.getGlobalContext());
 		String key = getKey("title-" + ctx.getRequestContentLanguage());
+		//System.out.println("***** StaticInfo.getManualTitle : key = "+key); //TODO: remove debug trace
 		String title = content.getAttribute(ctx, key, "");
 		return title;
 	}
@@ -1514,6 +1516,96 @@ public class StaticInfo {
 
 	public void setStaticFolder(boolean staticFolder) {
 		this.staticFolder = staticFolder;
+	}
+
+	public void toXML(ContentContext ctx, Writer inWrt) {
+		PrintWriter out = new PrintWriter(inWrt);
+		String uri = file.getAbsolutePath();
+		uri = uri.replace(ctx.getGlobalContext().getDataFolder(), "");
+		out.println("<resource uri=\"" + uri + "\">");
+		if (!StringHelper.isEmpty(getTitle(ctx))) {
+			out.println("<title>"+Encode.forXml(getTitle(ctx))+"</title>");
+		}
+		if (!StringHelper.isEmpty(getDescription(ctx))) {
+			out.println("<description>"+Encode.forXml(getDescription(ctx))+"</description>");
+		}
+		if (!StringHelper.isEmpty(getManualDate(ctx))) {
+			out.println("<date>"+StringHelper.renderSortableTime(getManualDate(ctx))+"</date>");
+		}
+		if (!StringHelper.isEmpty(getLocation(ctx))) {
+			out.println("<location>"+Encode.forXml(getLocation(ctx))+"</location>");
+		}
+		if (!StringHelper.isEmpty(getCopyright(ctx))) {
+			out.println("<copyright>"+Encode.forXml(getCopyright(ctx))+"</copyright>");
+		}
+		if (getReadRoles(ctx).size() > 0) {
+			out.println("<roles>"+StringHelper.collectionToString(getReadRoles(ctx), ",")+"</roles>");
+		}
+		if (getFocusZoneX(ctx) != DEFAULT_FOCUS_X) {
+			out.println("<focusx>"+getFocusZoneX(ctx)+"</focusx>");
+		}
+		if (getFocusZoneY(ctx) != DEFAULT_FOCUS_Y) {
+			out.println("<focusy>"+getFocusZoneY(ctx)+"</focusy>");
+		}
+		if (getTags(ctx).size() > 0) {
+			out.println("<tags>"+StringHelper.collectionToString(getTags(ctx), ",")+"</tags>");
+		}
+		if (!isShared(ctx)) {
+			out.println("<shared>false</shared>");
+		}
+		out.println("</resource>");
+		out.flush();
+	}
+	
+	public void fromXML(ContentContext ctx, NodeXML node) {		
+		for (NodeXML child : node.getAllChildren()) {
+			if (child.getName().equals("title")) {
+				setTitle(ctx,  child.getContent());
+			}
+			if (child.getName().equals("description")) {
+				setDescription(ctx,  child.getContent());
+			}
+			if (child.getName().equals("location")) {
+				setLocation(ctx,  child.getContent());
+			}
+			if (child.getName().equals("copyright")) {
+				setCopyright(ctx,  child.getContent());
+			}
+			if (child.getName().equals("focusx")) {
+				setFocusZoneX(ctx,  Integer.parseInt(child.getContent()));
+			}
+			if (child.getName().equals("focusy")) {
+				setFocusZoneY(ctx,  Integer.parseInt(child.getContent()));
+			}
+			if (child.getName().equals("date")) {
+				try {
+					setDate(ctx, StringHelper.parseSortableTime(child.getContent()));
+				} catch (ParseException e) {
+					e.printStackTrace();
+				}
+			}
+			if (child.getName().equals("shared")) {
+				setShared(ctx, StringHelper.isTrue(child.getContent()));
+			}
+			if (child.getName().equals("roles")) {
+				try {
+					for (String role : StringHelper.stringToCollection(child.getContent())) {
+						addReadRole(ctx, role);
+					}					
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+			if (child.getName().equals("tags")) {
+				try {
+					for (String tag : StringHelper.stringToCollection(child.getContent())) {
+						addTag(ctx, tag);
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}
 	}
 
 }
