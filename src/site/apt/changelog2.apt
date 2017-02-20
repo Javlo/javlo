@@ -834,5 +834,7 @@ hange log
   
   * 2/ google login / update ticket layout and email + imageheader realcontent correction / import export page to zip file / remove static key / paste image in preview mode
   
-  * 3/
+  * 3/ change editable default template with a table based template / template editor amelioration (edit row name + resolve some bugs) / empty area design / background image and color in PDF
+  
+ * 2.1.0.3.23 20/02/17
  
