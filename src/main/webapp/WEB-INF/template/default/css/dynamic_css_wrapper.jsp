@@ -5,5 +5,6 @@
 <jsp:include page="dynamic_css.jsp" />
 <c:forEach var="page" items="${info.page.children}" varStatus="status">
 <c:set var="dynamicCSSTemplate" value="${page.template}" scope="request"/>
+<c:set var="currentPage" value="${page}" scope="request"/>
 <jsp:include page="dynamic_css.jsp?prefix=.page-${status.index+1} " />
 </c:forEach>

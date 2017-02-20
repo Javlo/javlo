@@ -8,7 +8,9 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -1594,7 +1596,18 @@ public class StringHelper {
 	}
 
 	public static void main(String[] args) throws Exception {
-		getTransliteration();
+		//getTransliteration();
+		File file = new File("C:/Users/pvand/Downloads/participation_number.properties");		
+		BufferedReader reader = new BufferedReader(new StringReader(ResourceHelper.loadStringFromFile(file)));
+		BufferedWriter writer = new BufferedWriter(new FileWriter(file));
+		String line = reader.readLine();
+		while (line != null) {
+			line = reader.readLine();
+			writer.write(line+"=false");
+			writer.newLine();
+		}
+		writer.close();
+		reader.close();		
 	}
 
 	/**

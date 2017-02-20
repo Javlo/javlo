@@ -1461,10 +1461,14 @@ public class InfoBean {
 	}
 
 	public ImageBean getImageHeader() throws Exception {
+		return getImageBackground();
+	}
+	
+	public ImageBean getImageBackground() throws Exception {
 		if (imageHeader != null) {
 			return imageHeader;
 		} else {
-			IImageTitle imageTitle = ctx.getCurrentPage().getImageHeader(ctx);
+			IImageTitle imageTitle = ctx.getCurrentPage().getImageBackground(ctx);
 			if (imageTitle != null) {
 				return new ImageBean(ctx, imageTitle, "main-banner");
 			} else {

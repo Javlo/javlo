@@ -3,9 +3,9 @@ package org.javlo.component.image;
 import org.javlo.context.ContentContext;
 import org.javlo.helper.StringHelper;
 
-public class ImageHeader extends GlobalImage {
+public class ImageBackground extends GlobalImage {
 
-	public static final String TYPE = "image-header";
+	public static final String TYPE = "image-background";
 	
 	@Override
 	public String getType() {

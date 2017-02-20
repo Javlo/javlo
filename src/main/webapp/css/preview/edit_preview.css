@@ -14,25 +14,20 @@ body.edit-preview, body.preview-only {
 	padding-bottom: 21px;
 }
 
-body.edit-preview ._empty_area {
+body.edit-preview ._empty_area span {
 	margin: 5px;
 	border-radius: 3px 3px 3px 3px;
-	border: 1px dashed #5B5B5B;
-	padding: 5px;
-	background-color: #EBEBEB;
-}
-
-body.edit-preview ._empty_area span {
-	height: 40px;
+	padding: 6px;
+	background-color: #cccccc;	
 	vertical-align: middle;
 	text-align: center;
 	font-family: sans-serif;
-	font-size: 30px;
-	color: #5B5B5B;
-	text-shadow: 1px -1px 0 #ffffff;
+	font-size: 24px;
+	color: #888888;
 	width: auto;
 	display: block;
-	border: 2px #eeeeee dashed;
+	border: 1px #888888 solid;
+	cursor: pointer;
 }
 
 .edit-preview .component-table td.empty .cell-wrapper, .edit-preview .open-col.empty .cell-wrapper {

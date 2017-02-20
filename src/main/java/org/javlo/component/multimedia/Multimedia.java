@@ -1012,8 +1012,8 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle, IStat
 		super.init();
 	}
 
-	protected boolean isImported(ContentContext ctx) {		
-		return getDirSelected().contains(ctx.getGlobalContext().getStaticConfig().getImportFolder()+'/');
+	protected boolean isImported(ContentContext ctx) {
+		return getDirSelected().contains(ctx.getGlobalContext().getStaticConfig().getImportFolder() + '/');
 	}
 
 	@Override
@@ -1022,28 +1022,30 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle, IStat
 		if (isImported(ctx) && getPage() != null) {
 			String importFolder = getImportFolderPath(ctx);
 			if (!getDirSelected().equals(importFolder)) {
-				try {
-					File sourceDir = new File(getFilesDirectory(ctx));
-					setCurrentRootFolder(ctx, importFolder);
-					File targetDir = new File(getFilesDirectory(ctx));
-					for (File file : sourceDir.listFiles())
-						if (file.exists()) {
-							File targetFile = new File(URLHelper.mergePath(targetDir.getAbsolutePath(), file.getName()));
-							if (!targetFile.exists()) {
-								ResourceHelper.writeFileToFile(file, targetFile);
-								ResourceHelper.copyResourceData(ctx, file, targetFile);
-								ResourceHelper.cleanImportResource(ctx, targetFile);
+				File sourceDir = new File(getFilesDirectory(ctx));
+				if (sourceDir.exists()) {
+					try {
+						setCurrentRootFolder(ctx, importFolder);
+						File targetDir = new File(getFilesDirectory(ctx));
+						for (File file : sourceDir.listFiles())
+							if (file.exists()) {
+								File targetFile = new File(URLHelper.mergePath(targetDir.getAbsolutePath(), file.getName()));
+								if (!targetFile.exists()) {
+									ResourceHelper.writeFileToFile(file, targetFile);
+									ResourceHelper.copyResourceData(ctx, file, targetFile);
+									ResourceHelper.cleanImportResource(ctx, targetFile);
+								}
 							}
-						}
-				} catch (IOException e) {
-					e.printStackTrace();
-				}				
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
 			}
 		}
 	}
-	
+
 	public String getImportFolderPath(ContentContext ctx) throws Exception {
-		return URLHelper.mergePath("/",ctx.getGlobalContext().getStaticConfig().getGalleryFolder(), getImportFolderPath(ctx, getPage()));
+		return URLHelper.mergePath("/", ctx.getGlobalContext().getStaticConfig().getGalleryFolder(), getImportFolderPath(ctx, getPage()));
 	}
 
 	@Override

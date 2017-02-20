@@ -6,9 +6,12 @@ import java.util.List;
 import java.util.Map;
 
 import org.javlo.component.core.IContentVisualComponent;
+import org.javlo.component.image.IImageTitle;
+import org.javlo.component.image.ImageBean;
 import org.javlo.context.ContentContext;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
+import org.javlo.image.ExtendedColor;
 import org.javlo.module.content.Edit;
 import org.javlo.navigation.MenuElement.PageDescription;
 import org.javlo.service.ContentService;
@@ -167,6 +170,24 @@ public class PageBean implements Serializable {
 		return page.getName();
 	}
 
+	public ImageBean getImageBackground() throws Exception {
+		IImageTitle imageTitle = page.getImageBackground(ctx);
+		if (imageTitle != null) {
+			return new ImageBean(ctx, imageTitle, "main-background");
+		} else {
+			return null;
+		}
+	}
+
+	public ExtendedColor getColor() {
+		try {
+			return page.getColor(ctx);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
 	public String getHumanName() {
 		return page.getHumanName();
 	}
@@ -187,7 +208,7 @@ public class PageBean implements Serializable {
 			return null;
 		}
 	}
-	
+
 	public String getContentDateValue() {
 		try {
 			return StringHelper.renderShortDate(ctx, page.getContentDate(ctx));
@@ -196,7 +217,6 @@ public class PageBean implements Serializable {
 			return null;
 		}
 	}
-
 
 	public String getCreationDate() {
 		try {
@@ -231,7 +251,7 @@ public class PageBean implements Serializable {
 			return false;
 		}
 	}
-	
+
 	public boolean isRealContentAnyLanguage() {
 		try {
 			return page.isRealContentAnyLanguage(ctx);
@@ -240,7 +260,7 @@ public class PageBean implements Serializable {
 			return false;
 		}
 	}
-	
+
 	public String getRealContentLanguage() {
 		try {
 			return page.getRealContentLanguage(ctx);
@@ -400,7 +420,7 @@ public class PageBean implements Serializable {
 			return false;
 		}
 	}
-	
+
 	public boolean isActive() {
 		try {
 			return page.isActive();
@@ -408,7 +428,7 @@ public class PageBean implements Serializable {
 			return false;
 		}
 	}
-	
+
 	public boolean isModel() {
 		try {
 			return page.isModel();
@@ -416,7 +436,6 @@ public class PageBean implements Serializable {
 			return false;
 		}
 	}
-
 
 	public boolean isVisibleForContext() {
 		try {
@@ -429,7 +448,7 @@ public class PageBean implements Serializable {
 	public boolean isChildrenAssociation() {
 		return page.isChildrenAssociation();
 	}
-	
+
 	public boolean isChildrenOfAssociation() {
 		return page.isChildrenOfAssociation();
 	}
@@ -451,7 +470,7 @@ public class PageBean implements Serializable {
 		}
 		return false;
 	}
-	
+
 	public boolean isHaveChildren() throws Exception {
 		return page.getChildMenuElements().size() > 0;
 	}
@@ -502,7 +521,7 @@ public class PageBean implements Serializable {
 			return "";
 		}
 	}
-	
+
 	public String getRealContentComponent() throws Exception {
 		IContentVisualComponent comp = page.getRealContentComponent(ctx);
 		if (comp != null) {
@@ -535,11 +554,12 @@ public class PageBean implements Serializable {
 				return getUrl();
 			}
 		}
-	}	
+	}
+
 	public int getSeoWeight() {
 		return page.getFinalSeoWeight();
 	}
-	
+
 	public void setContentContext(ContentContext ctx) {
 		this.ctx = ctx;
 	}

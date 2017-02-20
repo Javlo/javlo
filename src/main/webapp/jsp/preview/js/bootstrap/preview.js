@@ -1,4 +1,4 @@
-	var PREVIEWLOG = true;
+var PREVIEWLOG = false;
 
 var editPreview = editPreview||{};
 
@@ -113,7 +113,8 @@ var editPreview = editPreview||{};
 		});
 		var modalMargin = parseInt(pjq('#preview-modal .modal-dialog').css("margin-top").replace("px", ""))*2;
 		var bodyPadding = parseInt(pjq('#preview-modal .modal-body').css("padding-top").replace("px", ""))+parseInt(pjq('#preview-modal .modal-body').css("padding-bottom").replace("px", ""));
-		pjq('#preview-modal .modal-body iframe').height(pjq(window).height()-(pjq('#preview-modal .modal-header').outerHeight(true)+modalMargin+bodyPadding));
+		var viewportHeight = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
+		pjq('#preview-modal .modal-body iframe').height(viewportHeight-(pjq('#preview-modal .modal-header').outerHeight(true)+modalMargin+bodyPadding));
 	}
 
 	editPreview.openModalQuestion = function (title, question, secondaryActionLabel, primaryActionLabel, secondaryActionFunction, primaryActionFunction) {
@@ -168,6 +169,7 @@ var editPreview = editPreview||{};
 		pjq("._pdf_page_limit").remove();
 		if (pjq('body').hasClass('pdf')) {
 			setTimeout(function () {
+				console.log("--- realUpdatePDFPosition ---");
 				editPreview.realUpdatePDFPosition();
 			}, 1500);
 		}
@@ -969,6 +971,7 @@ var editPreview = editPreview||{};
 						xhtmlId = "#"+xhtmlId;
 					}
 					var item = jQuery(xhtmlId);
+					console.log(item);
 					if (item != null) {
 						item.html(xhtml);
 					} else {
@@ -1049,7 +1052,20 @@ var editPreview = editPreview||{};
 	});
 
 	pjq(window).load(function() {
-		pjq('.btn-wait-loading').removeAttr("disabled");
+		pjq('.btn-wait-loading').removeAttr("disabled");		
+		pjq('img.return-size').each(function() {
+			var img = pjq(this);	
+			if (!img.hasClass("refreshing") && !img.hasClass("refreshed") && img.attr("src").indexOf("/transform/")>=0) {		
+				img.addClass("refreshing");		
+				pjq.post( currentURL, { webaction: "global-image.dataFeedBack", compid: img.data('compid'), height: img.height(), width: img.width()}, {dataType: "json"}).done(function(data) {
+					img.addClass("refreshed");
+					img.removeClass("refreshing");
+					if (typeof data.data != "undefined") {
+						img.attr("src", data.data.previewURL);
+					}
+				});
+			}
+		});
 	});
 	
 	editPreview.addAlert = function(message,type) {

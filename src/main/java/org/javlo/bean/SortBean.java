@@ -16,7 +16,13 @@ public class SortBean<T> implements Comparable<SortBean<T>> {
 
 	@Override
 	public int compareTo(SortBean<T> o) {
-		return order-o.order;
+		if (order != o.order) {
+			return order-o.order;
+		} else if (o.obj instanceof Comparable) {
+			return ((Comparable)obj).compareTo(o.getObj());
+		} else {
+			return 0;
+		}
 	}
 	
 	public static <T> List<T> transformList(Collection<SortBean<T>> inList) {

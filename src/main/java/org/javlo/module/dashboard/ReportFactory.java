@@ -189,5 +189,10 @@ public class ReportFactory {
 	public static int getMaxMLinkCheck() {
 		return ReportBean.MAX_LINK_CHECK;
 	}
+	
+	public static void main(String[] args) throws MalformedURLException {
+		URL url = new URL("http://www.europarl.europa.eu/sides/getDoc.do?type=OQ&reference=O-2015-000038&language=ES");
+		System.out.println("***** ReportFactory.main : NetHelper.isURLValid(new URL(url), true) = "+NetHelper.isURLValid(url, true)); //TODO: remove debug trace
+	}
 
 }

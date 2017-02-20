@@ -306,9 +306,13 @@ public class FieldFile extends Field implements IStaticContainer {
 
 		String relativePath = URLHelper.mergePath(getFileTypeFolder(), getCurrentFolder());
 		String fileURL = URLHelper.createResourceURL(ctx, URLHelper.mergePath(relativePath, getCurrentFile()));
-
+		
+		String target="";
+		if (ctx.getGlobalContext().isOpenFileAsPopup()) {
+			target="target=\"_blank\"";
+		}
 		out.println("<div class=\"" + getType() + "\">");
-		out.println("<a href=\"" + fileURL + "\">" + getViewLabel() + "</a>");
+		out.println("<a "+target+" href=\"" + fileURL + "\">" + getViewLabel() + "</a>");
 		out.println("</div>");
 
 		out.close();

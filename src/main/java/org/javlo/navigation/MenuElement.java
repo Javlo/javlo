@@ -45,7 +45,7 @@ import org.javlo.component.core.IPageRank;
 import org.javlo.component.dynamic.DynamicComponent;
 import org.javlo.component.image.IImageTitle;
 import org.javlo.component.image.ImageBean;
-import org.javlo.component.image.ImageHeader;
+import org.javlo.component.image.ImageBackground;
 import org.javlo.component.image.ImageTitleBean;
 import org.javlo.component.image.SortImageTitleByPriority;
 import org.javlo.component.links.ChildrenLink;
@@ -2655,7 +2655,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 		return id;
 	}
 
-	public IImageTitle getImageHeader(ContentContext ctx) throws Exception {
+	public IImageTitle getImageBackground(ContentContext ctx) throws Exception {
 		PageDescription desc = getPageDescriptionCached(ctx, ctx.getRequestContentLanguage());
 		if (desc.imageHeader != null) {
 			if (desc.imageHeader == ImageTitleBean.EMPTY_BEAN) {
@@ -2669,7 +2669,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 		int bestPriority = Integer.MIN_VALUE;
 		while (contentList.hasNext(ctx)) {
 			IContentVisualComponent elem = contentList.next(specialCtx);
-			if ((elem instanceof ImageHeader) && elem.isRealContent(specialCtx)) {
+			if ((elem instanceof ImageBackground) && elem.isRealContent(specialCtx)) {
 				IImageTitle imageComp = (IImageTitle) elem;
 				if (imageComp.isImageValid(specialCtx)) {
 					int priority = imageComp.getPriority(specialCtx);
@@ -2702,7 +2702,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 		int bestPriority = Integer.MIN_VALUE;
 		while (contentList.hasNext(ctx)) {
 			IContentVisualComponent elem = contentList.next(specialCtx);
-			if ((elem instanceof IImageTitle) && !(elem instanceof ImageHeader) && (!elem.isRepeat())) {
+			if ((elem instanceof IImageTitle) && !(elem instanceof ImageBackground) && (!elem.isRepeat())) {
 				IImageTitle imageComp = (IImageTitle) elem;
 				if (imageComp.isImageValid(specialCtx)) {
 					int priority = imageComp.getPriority(specialCtx);

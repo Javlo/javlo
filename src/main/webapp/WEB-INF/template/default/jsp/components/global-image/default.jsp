@@ -11,28 +11,6 @@
 	</c:if>
 </c:if>
 <c:set var="imageId" value="i${compid}" />
-<c:if test="${contentContext.asPreviewMode && filter != 'raw'}">
-<script type="text/javascript">
-var localJQ = jQuery;
-if (typeof(pjq) !== 'undefined') {
-	localJQ = pjq;
-}
-	
-function loadImage${imageId}() {
-	var img = localJQ("#${imageId}");	
-	if (img.src != "${info.ajaxLoaderURL}" && !img.hasClass("refreshing") && !img.hasClass("refreshed") && img.attr("src").indexOf("/transform/")>=0) {		
-		img.addClass("refreshing");		
-		localJQ.post( "${info.currentAjaxURL}", { webaction: "global-image.dataFeedBack", compid: "${compid}", height: img.height(), width: img.width()}, {dataType: "json"}).done(function(data) {
-			img.addClass("refreshed");
-			img.removeClass("refreshing");
-			if (typeof data.data != "undefined") {
-				img.attr("src", data.data.previewURL);
-			}
-		});
-	}
-}
-</script>
-</c:if>
 <c:set var="styleWidth" value="" /><c:if test="${not empty componentWidth && !param['clean-html']}"><c:set var="styleWidth" value=' style="width: ${componentWidth};"' /></c:if>
 <c:choose>
 <c:when test="${link eq '#'}">
@@ -50,8 +28,8 @@ function loadImage${imageId}() {
 <a rel="${rel}" class="${type}" href="${url}" title="${not empty label?cleanLabel:cleanDescription}">
 	<c:set var="imageWidthTag" value='width="${imageWidth}" ' />
 	<c:set var="loadEvent" value="" />
-	<c:if test="${contentContext.asPreviewMode && filter != 'raw'}"><c:set var="loadEvent" value=' id="${imageId}" onLoad="loadImage${imageId}();"' /></c:if>
-	<img ${not empty imageWidth && filter!='raw'?imageWidthTag:''}src="${previewURL}" alt="${imageAlt}"${styleWidth}${loadEvent}/>	
+	<c:if test="${contentContext.asPreviewMode && filter != 'raw'}"><c:set var="imageClass" value='class="return-size" data-compid="${compid}"' /></c:if>
+	<img ${imageClass} ${not empty imageWidth && filter!='raw'?imageWidthTag:''}src="${previewURL}" alt="${imageAlt}"${styleWidth} />	
 </a>
 <c:set var="copyrightHTML" value="" />
 <c:if test="${not empty copyright}"><c:set var="copyrightHTML" value='<span class="copyright">${copyright}</span>' /></c:if>
@@ -59,4 +37,3 @@ function loadImage${imageId}() {
 </figure>
 </c:otherwise>
 </c:choose>
-

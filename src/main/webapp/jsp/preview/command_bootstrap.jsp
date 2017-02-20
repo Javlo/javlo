@@ -13,7 +13,8 @@
     	    org.javlo.module.content.Edit,
     	    org.javlo.context.EditContext,
     	    org.javlo.message.MessageRepository,
-    	    org.javlo.message.GenericMessage"
+    	    org.javlo.message.GenericMessage,
+    	    org.javlo.helper.StringHelper"
 %><%
 ContentContext ctx = ContentContext.getContentContext(request, response);
 ContentContext editCtx = new ContentContext(ctx);
@@ -54,7 +55,7 @@ if (!rightOnPage) {
 }
 request.setAttribute("editUser", ctx.getCurrentEditUser());
 request.setAttribute("editPreview", EditContext.getInstance(globalContext, session).isEditPreview());
-
+if (StringHelper.isTrue(request.getParameter("preview-command"), true)) {
 %><c:set var="pdf" value="${info.device.code == 'pdf'}" /><div id="preview_command" lang="${info.editLanguage}" class="edit-${not empty editUser} ${editPreview == 'true'?'edit':'preview'}">
 	<script type="text/javascript">	
 		var i18n_preview_edit = "${i18n.edit['component.preview-edit']}";	
@@ -161,4 +162,4 @@ request.setAttribute("editPreview", EditContext.getInstance(globalContext, sessi
 		</div>
 	</div>
 	
-</div>	 
+</div><%}%>

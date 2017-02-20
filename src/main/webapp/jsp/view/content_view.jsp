@@ -33,9 +33,7 @@
 ContentContext ctx = ContentContext.getContentContext ( request, response );
 GlobalContext globalContext = GlobalContext.getInstance(request);
 boolean pageEmpty = true;
-
 boolean editPage = !StringHelper.isTrue(request.getParameter(PageMirrorComponent.NOT_EDIT_PREVIEW_PARAM_NAME));
-
 IContentVisualComponent specificComp = (IContentVisualComponent)request.getAttribute("specific-comp");
 
 if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE && specificComp == null && editPage) {
@@ -192,11 +190,18 @@ if (ColContext.isInstance(ctx)) {
 		%><%=OpenCol.closeRow(ctx, colContext)%><%
 	}
 }
+if (displayZone) {
+	%><script>pjq("#<%=area%>").addClass("_empty_area");</script><%
+}%><%
+String pageClass = "";
+if (request.getAttribute("pageNumber") != null) {
+	pageClass = ".page-"+request.getAttribute("pageNumber");
+}
 if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE) {
 	if (pageEmpty) {
-		%><script>pjq("#<%=area%>").addClass("_empty_area");</script><%
+		%><script>pjq("<%=pageClass%> #<%=area%>").addClass("_empty_area");  pjq("<%=pageClass%> #<%=area%>").removeClass("_not_empty_area");</script><%
 	} else {
-		%><script>pjq("#<%=area%>").removeClass("_empty_area"); pjq("#<%=area%>").removeClass("drop-selected");</script><%
+		%><script>pjq("<%=pageClass%> #<%=area%>").removeClass("_empty_area"); pjq("#<%=area%>").removeClass("drop-selected");</script><%
 	}
 }
 

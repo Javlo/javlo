@@ -2,6 +2,6 @@
 	border-color: #FF5A00;
 }
 
-.area_active ._empty_area span {
+body.edit-preview ._empty_area.area_active span {
 	color: #FF5A00;
 }

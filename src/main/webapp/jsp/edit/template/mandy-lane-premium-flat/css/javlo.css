@@ -1687,3 +1687,20 @@ body.previewEdit {
 .line .form-control {
 	width: 98%;
 }
+
+/*** tab ***/
+
+.maincontent .ui-tabs-nav li a {
+	border: 0 none;
+	padding: 7px 16px 6px 16px;
+}
+
+.maincontent .ui-tabs-nav li.ui-state-active a {
+	border: 0 none;
+	background-color: #aaa;
+	color: #eee;
+}
+
+ul.ui-tabs-nav {
+	background-image: none;
+} 

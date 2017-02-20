@@ -66,12 +66,16 @@ public class TemplateEditorAction extends AbstractModuleAction {
 		ctx.getRequest().setAttribute("parentTemplates", editableTemplateValid);
 
 		TemplateEditorContext editorCtx = TemplateEditorContext.getInstance(ctx.getRequest().getSession());
-		String templateURL = URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE));
+		String templateURL = URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.PREVIEW_MODE));
 		if (editorCtx.getCurrentTemplate() != null) {
 			editorContext.getCurrentTemplate().resetRows();
 			templateURL = URLHelper.addParam(templateURL, Template.FORCE_TEMPLATE_PARAM_NAME, editorCtx.getCurrentTemplate().getId());
 			templateURL = URLHelper.addParam(templateURL, "_display-zone", "" + !editorCtx.isShowContent());
 			templateURL = URLHelper.addParam(templateURL, "hash", "" + editorCtx.getCurrentTemplate().hashCode());
+			templateURL = URLHelper.addParam(templateURL, "html-class", "edit-preview");
+			templateURL = URLHelper.addParam(templateURL, "preview-command", "false");
+			templateURL = URLHelper.addParam(templateURL, "webaction", "false");
+			templateURL = URLHelper.addParam(templateURL, "preview", "false");
 			ctx.getRequest().setAttribute("templateURL", templateURL);
 		}
 		ctx.getRequest().setAttribute("templates", editableTemplateUnvalid);
@@ -156,7 +160,6 @@ public class TemplateEditorAction extends AbstractModuleAction {
 				area.setFont(rs.getParameter("font", ""));
 				area.setBackgroundColor(rs.getParameter("backgroundColor", ""));
 				area.setResponsive(""+StringHelper.isTrue(rs.getParameter("responsive", "false")));
-
 				area.setH1Size(rs.getParameter("h1size", ""));
 				area.setH2Size(rs.getParameter("h2size", ""));
 				area.setH3Size(rs.getParameter("h3size", ""));
@@ -184,7 +187,8 @@ public class TemplateEditorAction extends AbstractModuleAction {
 			} else {
 				if (rs.getParameter("delete", null) != null) {
 					editorContext.getCurrentTemplate().deleteRow(row.getName());
-				} else {
+				} else {					
+					row.setName(rs.getParameter("name", row.getName()));
 					row.setWidth(rs.getParameter("width", ""));
 					row.setHeight(rs.getParameter("height", ""));
 					row.setMargin(rs.getParameter("margin", ""));
@@ -198,19 +202,17 @@ public class TemplateEditorAction extends AbstractModuleAction {
 					row.setBackgroundColor(rs.getParameter("backgroundColor", ""));
 					row.setLinkColor(rs.getParameter("linkColor", ""));
 					row.setResponsive(""+StringHelper.isTrue(rs.getParameter("responsive", "false")));
-
 					row.setH1Size(rs.getParameter("h1size", ""));
 					row.setH2Size(rs.getParameter("h2size", ""));
 					row.setH3Size(rs.getParameter("h3size", ""));
 					row.setH4Size(rs.getParameter("h4size", ""));
 					row.setH5Size(rs.getParameter("h5size", ""));
 					row.setH6Size(rs.getParameter("h6size", ""));
-
 					editorContext.getCurrentTemplate().storeRows(rows);
 				}
 			}
 		}
-		editorContext.getCurrentTemplate().clearRenderer(ctx);
+		editorContext.getCurrentTemplate().clearRenderer(ctx);		
 		return null;
 	}
 

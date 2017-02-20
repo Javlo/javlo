@@ -352,7 +352,7 @@ public class DefaultTemplate extends Template {
 
 	@Override
 	public int getPDFHeigth() {
-		return 1024;
+		return 1060;
 	}
 
 	@Override

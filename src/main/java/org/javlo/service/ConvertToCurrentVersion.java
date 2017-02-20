@@ -7,6 +7,7 @@ import java.util.logging.Logger;
 
 import org.javlo.component.core.ComponentBean;
 import org.javlo.component.image.GlobalImage;
+import org.javlo.component.image.ImageBackground;
 import org.javlo.component.links.ExternalLink;
 import org.javlo.component.links.PageReferenceComponent;
 import org.javlo.component.list.FreeTextList;
@@ -39,7 +40,7 @@ public class ConvertToCurrentVersion {
 			}
 			bean.setModify(true);
 			convertion++;
-		}
+		}		
 		if (version.startsWith("1") && bean.getType().equals("video")) {
 			convertion++;
 			bean.setType(XHTML.TYPE);
@@ -48,6 +49,11 @@ public class ConvertToCurrentVersion {
 		if (bean.getType().equals("page-teaser")) {
 			convertion++;
 			bean.setType(PageReferenceComponent.TYPE);
+			bean.setModify(true);
+		}
+		if (bean.getType().equals("image-header")) {
+			convertion++;
+			bean.setType(ImageBackground.TYPE);
 			bean.setModify(true);
 		}
 		if (bean.getType().equals("list")) {

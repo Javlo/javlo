@@ -1,0 +1,106 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<title></title>
+<style type="text/css">
+body {
+	margin: 0;
+	padding: 0;
+	-ms-text-size-adjust: 100%;
+	-webkit-text-size-adjust: 100%;
+}
+
+table {
+	border-spacing: 0;
+}
+
+table td {
+	border-collapse: collapse;
+}
+
+.ExternalClass {
+	width: 100%;
+}
+
+.ExternalClass, .ExternalClass p, .ExternalClass span, .ExternalClass font,
+	.ExternalClass td, .ExternalClass div {
+	line-height: 100%;
+}
+
+.ReadMsgBody {
+	width: 100%;
+	background-color: #ebebeb;
+}
+
+img {
+	-ms-interpolation-mode: bicubic;
+}
+
+.yshortcuts a {
+	border-bottom: none !important;
+}
+
+.ios-footer a {
+	color: #aaaaaa !important;
+	text-decoration: underline;
+}
+table {
+	color: ${info.template.style.finalTextColor};
+}
+<jsp:include page="css/integration.css" />
+<jsp:include page="css/style.css" />
+<c:set var="template" value="${info.template.style}" scope="request" />
+<!-- global style -->
+.style_wrapper {    
+	<jsp:include page="css/styles_pdf.jsp" />	
+}
+<jsp:include page="css/dynamic_css_wrapper.jsp" />
+<jsp:include page="css/pdf.css" />
+@page {
+    margin: 0;
+}
+.style_wrapper {
+	<c:if test="${not empty info.page.imageBackground}">background-image: url('${info.page.imageBackground.previewURL}'); background-position:left top; background-size: 100%;</c:if>
+	<c:if test="${not empty info.page.color}">background-color: ${info.page.color};</c:if>
+}
+<c:if test="${not empty info.template.style.backgroundColor}">
+html, body {
+  background-color: ${info.template.style.backgroundColor};
+}</c:if>
+</style>
+</head>
+<c:set var="outerBackgroundColor" value="" /><c:if test="${not empty info.template.style.outerBackgroundColor}"><c:set var="outerBackgroundColor" value="background-color: ${info.template.style.outerBackgroundColor}" /></c:if>
+<body class="pdf ${pageClass} responsive-${info.template.style.responsive}" style="-webkit-font-smoothing: antialiased; width: 100% !important; -webkit-text-size-adjust: none;${outerBackgroundColor}" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0">
+<div class="style_wrapper" style="width: 733px; min-height: 28.08485507965cm; margin: 0 auto; padding: 30px; border: 0 none; color: ${info.template.style.finalTextColor}; font-size: ${info.template.style.finalTextSize}; font-family: ${info.template.style.finalFont};">
+	<table border="0" width="100%" height="100%" cellpadding="0" cellspacing="0">
+		<tr>
+			<td align="center" valign="top"><br />
+			<div style="width: 720px; padding:0; margin:0;">
+			<div class="${not param.pageAssociation?'page-wrapper':'inside-wrapper'}" style="width: auto;">
+				<table border="0" width="100%" cellpadding="0" cellspacing="0" class="container" style="width: 100%; max-width: 100%; padding:0; margin:0;">					
+					<c:if test="${empty param.lastRowFooter}">
+				<tr id="header-container">
+					<td align="center">
+						<jsp:include page="/jsp/view/template/dynamic.jsp" />							
+					</td>
+				</tr>
+				</c:if>
+				<c:if test="${not empty param.lastRowFooter}">
+					<tr id="header-container">
+						<td align="center">
+							<jsp:include page="/jsp/view/template/dynamic.jsp?lastRow=false" />							
+						</td>
+					</tr>
+					<tr id="footer-row">
+						<td style="vertical-align: bottom;"><jsp:include page="/jsp/view/template/dynamic.jsp?lastRow=true" /></td>
+					</tr>
+				</c:if>
+				</table></div></div></td>
+		</tr>
+	</table>
+</div>
+</body>
+</html>

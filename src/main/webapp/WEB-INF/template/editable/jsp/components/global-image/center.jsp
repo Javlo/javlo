@@ -32,7 +32,7 @@ function loadImage${imageId}() {
 <c:when test="${link eq '#'}">
 <figure>
 <span class="nolink">
-<img src="${previewURL}" ${styleWidth} />
+<img src="${previewURL}" alt="${not empty label?cleanLabel:cleanDescription}"${styleWidth} />
 <c:if test="${empty param.nolabel}"><figcaption>${not empty label?label:description}</figcaption></c:if>
 </span>
 </figure>
@@ -41,11 +41,11 @@ function loadImage${imageId}() {
 <figure>
 <c:set var="rel" value="${fn:startsWith(url,'http://')?'external':'shadowbox'}" />
 <c:set var="rel" value="${fn:endsWith(url,'.pdf')?'pdf':rel}" />
-<a rel="${rel}" class="${type}" href="${url}">
+<a rel="${rel}" class="${type}" href="${url}" title="${not empty label?cleanLabel:cleanDescription}">
 	<c:set var="imageWidthTag" value='width="${imageWidth}" ' />
 	<c:set var="loadEvent" value="" />
 	<c:if test="${contentContext.asPreviewMode && filter != 'raw'}"><c:set var="loadEvent" value=' id="${imageId}" onLoad="loadImage${imageId}();"' /></c:if>
-	<img ${not empty imageWidth && filter!='raw'?imageWidthTag:''}src="${previewURL}" />	
+	<img ${not empty imageWidth && filter!='raw'?imageWidthTag:''}src="${previewURL}" alt="${not empty description?cleanDescription:cleanLabel}"${styleWidth}${loadEvent}/>	
 </a>
 <c:set var="copyrightHTML" value="" />
 <c:if test="${not empty copyright}"><c:set var="copyrightHTML" value='<span class="copyright">${copyright}</span>' /></c:if>

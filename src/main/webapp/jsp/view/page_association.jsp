@@ -36,6 +36,7 @@ for (MenuElement child : currentPage.getChildMenuElements()) {
 	String jspURI = childTemplate.getRendererFullName(ctx);
 	jspURI = URLHelper.addParam(jspURI, "pageAssociation", "true");
 	jspURI = URLHelper.addParam(jspURI, Template.FORCE_TEMPLATE_PARAM_NAME, childTemplate.getName());
+	request.setAttribute("pageNumber", ""+pageNumber);
 	request.setAttribute("pageClass", "page-"+pageNumber+positionStr);
 	if (pageNumber<lastPage) {
 		positionStr="";

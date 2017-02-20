@@ -71,5 +71,10 @@ public class ExtendedColor extends Color {
 	public boolean isFilled() {
 		return true;
 	}
+	
+	@Override
+	public String toString() {
+		return getHTMLCode();
+	}
 
 }

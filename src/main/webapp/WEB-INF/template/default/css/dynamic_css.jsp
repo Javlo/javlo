@@ -6,13 +6,20 @@ ${param.prefix}#${area.name} h1, ${param.prefix}#${area.name} h2, ${param.prefix
 	<c:if test="${not empty area.finalFont}">font-family: ${area.finalFont};</c:if>
 }</c:forEach></c:forEach>
 
+/* currentPage.color = ${currentPage.color} */
+
+<c:if test="${not empty currentPage}">${param.prefix} {
+	<c:if test="${not empty currentPage.imageBackground}">background-image: url('${currentPage.imageBackground.previewURL}'); background-position:left top; background-size: 100%;</c:if>
+	<c:if test="${not empty currentPage.color}">background-color: ${currentPage.color};</c:if>
+}</c:if>
+
 ${param.prefix}p,${param.prefix}ul,${param.prefix}ol,${param.prefix}.table-li td.internal-link,${param.prefix}.unsubscribe-link,${param.prefix}.date,.external-link,${param.prefix}.pdf-link,${param.prefix}.text,${param.prefix}.file,${param.prefix}.simple-internal-link,${param.prefix}.global-image,${param.prefix}.gs,${param.prefix}.qrcode td,${param.prefix}.pdf-head td, ${param.prefix}.table th, ${param.prefix}.table td {
 	<c:if test="${not empty dynamicCSSTemplate.style.finalTextColor}">color: ${dynamicCSSTemplate.style.finalTextColor};</c:if>
 	<c:if test="${not empty dynamicCSSTemplate.style.finalTextSize}">font-size: ${dynamicCSSTemplate.style.finalTextSize};</c:if>	
 	<c:if test="${not empty dynamicCSSTemplate.style.finalFont}">font-family: ${dynamicCSSTemplate.style.finalFont};</c:if>
 }
 
-${param.prefix}.visible-separation {
+${param.prefix}.visible-separation {	
 	margin: 10px 0;
 	padding: 0;
 	font-size: 0;

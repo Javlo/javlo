@@ -1073,6 +1073,7 @@ public class Template implements Comparable<Template> {
 	public void deleteArea(String area) {
 		properties.clearProperty(XMLManipulationHelper.AREA_PREFIX + area);
 		storeProperties();
+		resetRows();
 	}
 
 	protected String getNewAreaName() {
@@ -1087,6 +1088,7 @@ public class Template implements Comparable<Template> {
 	}
 
 	public void addArea(String rowName) {
+		System.out.println("***** Template.addArea : rowName = "+rowName); //TODO: remove debug trace
 		if (rowName.indexOf("-") >= 0) {
 			String areaName = getNewAreaName();
 			properties.setProperty("area." + areaName, areaName);
@@ -2798,6 +2800,7 @@ public class Template implements Comparable<Template> {
 
 	public synchronized void resetRows() {
 		rows = null;
+		areas = null;
 	}
 
 	public static Area getArea(Collection<Row> rows, String name) {
@@ -2840,7 +2843,7 @@ public class Template implements Comparable<Template> {
 			}
 		}
 		storeProperties();
-		this.rows = null;
+		resetRows();
 	}
 
 	public boolean isEditable() {

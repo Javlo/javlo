@@ -1,32 +1,9 @@
-.jcreator {
-	display: none;
-}
-
-.pdf-head {
-	margin-bottom: 10px;
-}
-
 .colored-wrapper {
 	margin-bottom: 15px;
 }
 	
 .colored-wrapper {	
-	padding: 0 15px;	
-}
-
-.ExternalClass {
-	width: 100%;
-}
-
-.ExternalClass, .ExternalClass p, .ExternalClass span, .ExternalClass font,
-	.ExternalClass td, .ExternalClass div {
-	line-height: 100%;
-}
-
-span.yshortcuts {
-	color: #000;
-	background-color: none;
-	border: none;
+	padding: 15px;	
 }
 
 body {
@@ -39,45 +16,17 @@ ul, ol, .table-ul, .table-ol {
 	padding: 0;
 }
 
-ul, ol {
-	margin-left: 24px;
-}
-
 li, .table-li {
 	padding-right: 12px;
 }
 
-p, ul, .table-list-wrapper, .global-image, .external-link, .internal-link,
-	.unsubscribe-link, .file {
-	margin-bottom: 10px;
+td {
+	vertical-align: top;
 }
 
-ul ul {
-	margin-bottom: 0;
-}
-
-.ReadMsgBody {
-	width: 100%;
-}
-
-.ExternalClass {
-	width: 100%;
-}
-
-body {
-	width: 100% !important;
-	-webkit-text-size-adjust: none;
-	-ms-text-size-adjust: none;
-	color: #000000;
-	margin: 0;
-	padding: 0;
-}
-
-img, figure {
-	margin: 0;
-	padding: 0;
-	display: block;
-	border: 0 none;
+.first-in-cell {
+	margin-top: 0;
+	padding-top: 0;	
 }
 
 .date {
@@ -85,52 +34,11 @@ img, figure {
 	font-style: italic;
 }
 
-.zone1 p {
-	margin-bottom: 0;
-}
-
-.zone2 p {
-	margin-top: 0;
-}
-
-.file .file, .external-link .external-link {
+img, figure {
 	margin: 0;
-}
-
-h1, h2, h3, h4, h5, h6 {
+	padding: 0;
 	display: block;
-	margin: 0 0 10px 0;
-}
-
-table {
-	border-collapse: collapse;
-	font-size: inherit;
-	font-style: inherit;
-}
-
-table td, table th {
-	border-collapse: collapse;
-	vertical-align: top;
-}
-
-#body table.table {
-	width: 100%;
-	border-collapse: collapse;
-	margin-bottom: 10px;
-}
-
-#body table.table th {
-	color: #000000;
-	background-color: #dddddd;
-	text-align: center;
-}
-
-table.table td, table.table th {
-	padding: 3px;
-	border-width: 1px;
-	border-style: solid;
-	border-color: #bbbbbb;
-	vertical-align: top;
+	border: 0 none;
 }
 
 .global-image.full img, .global-image.banner img, .global-image.full-flip img, .global-image.banner-flip img {

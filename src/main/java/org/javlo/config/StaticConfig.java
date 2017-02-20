@@ -358,6 +358,10 @@ public class StaticConfig extends Observable {
 	public int getCacheLinkedPage() {
 		return Integer.parseInt(properties.getString("cache.linked-page", "30"));
 	}
+	
+	public boolean isPDFCache() {
+		return properties.getBoolean("cache.pdf", false);
+	}
 
 	public String getContextFolder() {
 		String path = properties.getString("context-folder", "/WEB-INF/context");

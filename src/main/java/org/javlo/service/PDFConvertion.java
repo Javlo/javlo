@@ -60,11 +60,11 @@ public class PDFConvertion {
 			DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder builder = documentBuilderFactory.newDocumentBuilder();
 			builder.setEntityResolver(FSEntityResolver.instance());
-			Document doc = builder.parse(con.getInputStream());
+			Document doc = builder.parse(con.getInputStream());			
 			org.xhtmlrenderer.pdf.ITextRenderer pdfRenderer = new org.xhtmlrenderer.pdf.ITextRenderer();
 			pdfRenderer.setDocument(doc, null);
-			pdfRenderer.layout();
-			LayoutContext layoutContext = pdfRenderer.getSharedContext().newLayoutContextInstance();
+			pdfRenderer.layout();			
+			LayoutContext layoutContext = pdfRenderer.getSharedContext().newLayoutContextInstance();			
 			BlockBox rootBox = pdfRenderer.getRootBox();
 			correctAllLines(layoutContext, rootBox);
 			pdfRenderer.createPDF(out);
