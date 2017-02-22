@@ -200,6 +200,10 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 			}
 			return refBean;
 		}
+		
+		public String getSize() {
+			return Field.this.getSize(ctx);
+		}
 
 	}
 
@@ -1019,6 +1023,22 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 	
 	public boolean isRealContent(ContentContext ctx) {
 		return getValue() != null && getValue().trim().length() > 0;
+	}
+	
+	/**
+	 * return the size of the componen
+	 * @param ctx
+	 * @return large, small or normal
+	 */
+	public String getSize(ContentContext ctx) {
+		int size = getValue().length();
+		if (size < Integer.parseInt(getPropertyValue("size.small", "16"))) {
+			return "small";
+		} else if (size > Integer.parseInt(getPropertyValue("size.large", "64"))) {
+			return "large";
+		} else {
+			return "normal";
+		}		
 	}
 
 	@Override

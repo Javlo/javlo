@@ -212,7 +212,7 @@ public class FieldFile extends Field implements IStaticContainer {
 
 			String staticLinkURL = URLHelper.createModuleURL(ctx, ctx.getPath(), "file", filesParams);
 			
-			linkToResources = "<div class=\"col-sm-3\"><a class=\"browse-link btn btn-default btn-xs\" href=\"" + URLHelper.addParam(staticLinkURL, "select", "back") + "\">" + i18nAccess.getText("content.goto-static") + "</a></div>";
+			linkToResources = "<div class=\"col-sm-3\"><a class=\"browse-link btn btn-default btn-xs\" href=\"" + staticLinkURL + "\">" + i18nAccess.getText("content.goto-static") + "</a></div>";
 		}
 
 		out.println("<div class=\"row form-group\"><div class=\"col-sm-3\">");

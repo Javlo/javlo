@@ -141,7 +141,6 @@ public class ContentElementList implements IContentComponentsList {
 	}
 
 	protected void addElementAsFirst(IContentVisualComponent elem) {
-		/* need this test for repeat element */
 		if (addedElementId == null) {
 			addedElementId = new HashSet<String>();
 		}
@@ -152,7 +151,6 @@ public class ContentElementList implements IContentComponentsList {
 	}
 
 	public void addRepeatElement(IContentVisualComponent elem) {
-		/* need this test for repeat element */
 		if (repeatAddedElementId == null) {
 			repeatAddedElementId = new HashSet<String>();
 		}
