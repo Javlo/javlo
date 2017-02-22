@@ -315,6 +315,10 @@ public abstract class ElementaryURLHelper {
 		if (StringHelper.isMail(inUrl)) {
 			return "mailto:" + inUrl;
 		}
+		
+		if (StringHelper.isURL(inUrl)) {
+			return inUrl;
+		}
 
 		ContentContext newCtx = ctx;
 		if (referencePage != null && referencePage.isRemote()) {

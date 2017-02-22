@@ -65,7 +65,9 @@ import org.javlo.service.RequestService;
 import org.javlo.service.ReverseLinkService;
 import org.javlo.user.IUserInfo;
 import org.javlo.user.User;
+import org.javlo.utils.Cell;
 import org.javlo.utils.SuffixPrefix;
+import org.javlo.utils.XLSTools;
 import org.javlo.ztatic.StaticInfo;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -2645,11 +2647,12 @@ public class XHTMLHelper {
 		return remplacement.start(xhtml);
 	}
 
-	public static void main(String[] args) throws IOException {
-		File file = new File("c:/trans/mail.html");
-		Map map = new HashMap();
-		map.put("first", "patrick");
-		ResourceHelper.writeStringToFile(file, createAdminMail("coucou", "on tire un coup ?", map, "http://www.javlo.com", "link", null), null);
+	public static void main(String[] args) throws Exception {
+		File file = new File("c:/trans/countries.xlsx");
+		Cell[][] arrays = XLSTools.getArray(null, file);
+		for (Cell[] row : arrays) {
+			System.out.println("<option value=\""+row[0]+"\">"+row[3]+"</option>");
+		}
 	}
 	
 	public static String renderStaticInfo(ContentContext ctx, StaticInfo info) throws FileNotFoundException, IOException {		
