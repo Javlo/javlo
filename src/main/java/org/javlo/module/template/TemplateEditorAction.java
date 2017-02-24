@@ -166,8 +166,10 @@ public class TemplateEditorAction extends AbstractModuleAction {
 				area.setH4Size(rs.getParameter("h4size", ""));
 				area.setH5Size(rs.getParameter("h5size", ""));
 				area.setH6Size(rs.getParameter("h6size", ""));
+				area.setPriority(Integer.parseInt(rs.getParameter("priority", "10")));
 
 				editorContext.getCurrentTemplate().storeRows(rows);
+				editorContext.getCurrentTemplate().resetRows();
 			}
 		}
 		editorContext.getCurrentTemplate().clearRenderer(ctx);
@@ -208,6 +210,7 @@ public class TemplateEditorAction extends AbstractModuleAction {
 					row.setH4Size(rs.getParameter("h4size", ""));
 					row.setH5Size(rs.getParameter("h5size", ""));
 					row.setH6Size(rs.getParameter("h6size", ""));
+					row.setPriority(Integer.parseInt(rs.getParameter("priority", "10")));
 					editorContext.getCurrentTemplate().storeRows(rows);
 				}
 			}

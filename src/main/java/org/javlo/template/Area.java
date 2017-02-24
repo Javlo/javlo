@@ -25,7 +25,8 @@ public class Area extends TemplatePart {
 	public void setAutoWidth(String autoWidth) {
 		this.autoWidth = autoWidth;
 	}
-	
+
+
 	@Override
 	public String getFinalWidth() {
 		if (getAutoWidth() != null) {

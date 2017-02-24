@@ -85,7 +85,7 @@ public class ContentContext {
 
 	public static String PRODUCT_NAME = "Javlo 2";
 
-	public static String FORCED_CONTENT_PREFIX = "forced_content_";  
+	public static String FORCED_CONTENT_PREFIX = "forced_content_";
 
 	/**
 	 * param for render content with link to local server and not DMZ server.
@@ -112,9 +112,9 @@ public class ContentContext {
 	private int titleDepth = 1;
 
 	private boolean clearSession = false;
-	
+
 	private boolean forceCorrectPath = false;
-	
+
 	private static ContentContext createContentContext(HttpServletRequest request, HttpServletResponse response, boolean free) {
 		ContentContext ctx = new ContentContext();
 		ctx.setFree(free);
@@ -140,7 +140,7 @@ public class ContentContext {
 	public static ContentContext getContentContext(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		return getContentContext(request, response, true);
 	}
-	
+
 	public ContentContext getContentContextForInternalLink() {
 		if (getRenderMode() != ContentContext.PAGE_MODE) {
 			return this;
@@ -150,7 +150,7 @@ public class ContentContext {
 			return viewContext;
 		}
 	}
-	
+
 	/**
 	 * 
 	 * @param request
@@ -168,7 +168,7 @@ public class ContentContext {
 				ctx = createContentContext(request, response, true);
 				ctx.setFree(false);
 				ctx.correctPath = false;
-			} else {				
+			} else {
 				ctx.setRequest(request);
 				ctx.setResponse(response);
 			}
@@ -183,7 +183,7 @@ public class ContentContext {
 		if (globalContext.getForcedHost().length() > 0) {
 			ctx.setHostName(globalContext.getForcedHost());
 		}
-		
+
 		if (!ctx.isForceCorrectPath()) {
 			correctPath = false;
 		}
@@ -213,7 +213,7 @@ public class ContentContext {
 
 		return ctx;
 	}
-	
+
 	/**
 	 * check if there are a contentcontext in the request
 	 * 
@@ -353,7 +353,7 @@ public class ContentContext {
 					}
 				}
 			}
-
+			
 			if (ctx.getDevice() == null) {
 				ctx.setDevice(Device.getDevice(ctx));
 			}
@@ -624,6 +624,8 @@ public class ContentContext {
 		}
 	}
 
+	
+
 	/**
 	 * return a context with real content (if exist), it can be change the
 	 * language (and only this) of the current context. this method use only the
@@ -837,10 +839,10 @@ public class ContentContext {
 	}
 
 	private MenuElement getCurrentPage(boolean urlFacotry) throws Exception {
-		MenuElement outPage = getCurrentPageCached();		
+		MenuElement outPage = getCurrentPageCached();
 		if (outPage == null) {
 			GlobalContext globalContext = GlobalContext.getInstance(request);
-			globalContext.log("url", "current page : "+getPath());
+			globalContext.log("url", "current page : " + getPath());
 			MenuElement root = ContentService.getInstance(globalContext).getNavigation(this);
 			if (getPath().equals("/")) {
 				outPage = root;
@@ -851,7 +853,7 @@ public class ContentContext {
 					if (elem != null) {
 						if (getRenderMode() != EDIT_MODE && !NetHelper.isIPAccepted(this)) {
 							if (!StringHelper.isEmpty(elem.getIpSecurityErrorPageName())) {
-								response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);								
+								response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 								String pageName = elem.getIpSecurityErrorPageName();
 								elem = ContentService.getInstance(globalContext).getNavigation(this).searchChildFromName(pageName);
 								if (elem == null) {
@@ -866,17 +868,17 @@ public class ContentContext {
 						setCurrentPageCached(elem);
 						globalContext.storeUrl(this, getPath(), elem.getId());
 					} else {
-						globalContext.log("url", "url not found : "+getPath());
+						globalContext.log("url", "url not found : " + getPath());
 						elem = globalContext.convertOldURL(this, getPath());
 						if (elem != null) {
-							String newURL = URLHelper.createURL(this, elem);							
-							globalContext.log("url", "old redirect : "+getPath()+" >> "+newURL);							
+							String newURL = URLHelper.createURL(this, elem);
+							globalContext.log("url", "old redirect : " + getPath() + " >> " + newURL);
 							logger.info("redirect old url (" + getGlobalContext().getContextKey() + " - " + getPath() + ") --> = " + newURL + " - url renderer:" + globalContext.getURLFactoryClass());
 							response.sendRedirect(newURL);
 							setCurrentPageCached(elem);
 						} else {
-							globalContext.log("url", "redirect old url not found : "+getPath());
-							setContentFound(false);							
+							globalContext.log("url", "redirect old url not found : " + getPath());
+							setContentFound(false);
 							elem = root;
 							setPath(root.getPath());
 						}
@@ -1053,7 +1055,7 @@ public class ContentContext {
 			return requestContentLanguage;
 		}
 	}
-	
+
 	public String getRequestContentLanguageRAW() {
 		return requestContentLanguage;
 	}
@@ -1082,7 +1084,7 @@ public class ContentContext {
 	public IURLFactory getURLFactory() {
 		return urlFactory;
 	}
-	
+
 	public void setURLFactory(IURLFactory urlFactory) {
 		this.urlFactory = urlFactory;
 	}
@@ -1384,7 +1386,7 @@ public class ContentContext {
 		this.request = request;
 	}
 
-	public void setRequestContentLanguage(String lg) {		
+	public void setRequestContentLanguage(String lg) {
 		if (requestContentLanguage != null && requestContentLanguage.equals(lg)) {
 			return;
 		}
@@ -1763,9 +1765,9 @@ public class ContentContext {
 	}
 
 	public static void main(String[] args) {
-		String ip="123.34.54.12 ,34.23.12.34";
+		String ip = "123.34.54.12 ,34.23.12.34";
 		ip = ip.substring(0, ip.indexOf(","));
-		System.out.println("ip="+ip);
+		System.out.println("ip=" + ip);
 	}
 
 	public String getPathPrefix() {
@@ -2091,15 +2093,15 @@ public class ContentContext {
 	public void setForceCorrectPath(boolean forceCorrectPath) {
 		this.forceCorrectPath = forceCorrectPath;
 	}
-	
+
 	public ContentContext getNewContentContext() {
 		return new ContentContext(this);
 	}
-	
+
 	public void setContentContent(ContentContext ctx) {
 		ctx.storeInRequest(request);
 	}
-	
+
 	public ContentContextBean getBean() {
 		try {
 			return new ContentContextBean(this);

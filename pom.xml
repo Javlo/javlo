@@ -133,6 +133,7 @@
 			<groupId>commons-beanutils</groupId>
 			<artifactId>commons-beanutils</artifactId>
 			<version>1.9.3</version>
+			
 		</dependency>
 
 		<dependency>
@@ -230,11 +231,11 @@
 			<version>1.07.00</version>
 		</dependency>
 
-		<dependency>
+		<!-- <dependency>
 			<groupId>com.google.code.geocoder-java</groupId>
 			<artifactId>geocoder-java</artifactId>
 			<version>0.16</version>
-		</dependency>
+		</dependency> -->
 
 		<!-- MySQL database driver <dependency> <groupId>mysql</groupId> <artifactId>mysql-connector-java</artifactId> 
 			<version>5.1.9</version> </dependency> -->

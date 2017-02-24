@@ -2651,7 +2651,7 @@ public class XHTMLHelper {
 		File file = new File("c:/trans/countries.xlsx");
 		Cell[][] arrays = XLSTools.getArray(null, file);
 		for (Cell[] row : arrays) {
-			System.out.println("<option value=\""+row[0]+"\">"+row[3]+"</option>");
+			System.out.println("<option value=\""+row[0]+"\">"+row[1]+"</option>");
 		}
 	}
 	

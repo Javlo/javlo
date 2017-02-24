@@ -39,6 +39,7 @@ i18nAccess.changeViewLanguage(ctx);
 
 ContentService content = ContentService.getInstance(globalContext);
 Template template = ctx.getCurrentTemplate();
+InfoBean.updateInfoBean(ctx);
 if ((template != null)&&(template.getHomeRenderer(globalContext) != null)) {
 %><jsp:include page="<%=template.getHomeRendererFullName(globalContext)%>"></jsp:include><%	
 } else {

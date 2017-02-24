@@ -17,14 +17,14 @@
 		</c:if>
 		<c:set var="part" value="${templateEditorContext.currentTemplate.style}" scope="request" />
 		<c:set var="exclude" value="${templateEditorContext.currentTemplate.templateExcludeProperties}" scope="request" />
-		<div id="template"><jsp:include page="part.jsp?title=template&webaction=updateStyle${delete}&upload=true&parent=true" /></div>			
+		<div id="template"><jsp:include page="part.jsp?title=template&webaction=template-editor.updateStyle${delete}&upload=true&parent=true" /></div>			
 		<c:set var="delete" value="" />
 		<c:if test="${templateEditorContext.area.name != 'content'}">
 			<c:set var="delete" value="&delete=true" />
 		</c:if>	
 		<c:set var="part" value="${templateEditorContext.area}" scope="request" />
 		<c:set var="exclude" value="${templateEditorContext.currentTemplate.areaExcludeProperties}" scope="request" />
-		<div id="area"><jsp:include page="part.jsp?title=area&webaction=updateArea${delete}&editName=true" /></div>
+		<div id="area"><jsp:include page="part.jsp?title=area&webaction=template-editor.updateArea${delete}&editName=true&priority=true" /></div>
 		
 		<c:set var="delete" value="" />
 		<c:if test="${templateEditorContext.area.row.name != 'row-1'}">
@@ -32,12 +32,12 @@
 		</c:if>
 		<c:set var="part" value="${templateEditorContext.area.row}" scope="request" />
 		<c:set var="exclude" value="${templateEditorContext.currentTemplate.rowExcludeProperties}" scope="request" />
-		<div id="row"><jsp:include page="part.jsp?title=row&webaction=updateRow${delete}&editName=true" /></div>
+		<div id="row"><jsp:include page="part.jsp?title=row&webaction=template-editor.updateRow${delete}&editName=true" /></div>
 	</c:if>
 	</div>
 
 	<c:url var="url" value="${info.currentURL}" context="/">
-		<c:param name="webaction" value="selectArea"></c:param>
+		<c:param name="webaction" value="template-editor.selectArea"></c:param>
 	</c:url>
 	
 	<script type="text/javascript">

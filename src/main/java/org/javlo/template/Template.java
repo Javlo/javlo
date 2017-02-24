@@ -923,6 +923,19 @@ public class Template implements Comparable<Template> {
 	private String getMobileTemplate() {
 		return properties.getString("template.mobile", null);
 	}
+	
+	private int getAreaIndex(String html, String area) {
+		int index = html.indexOf("id=\"" + area + "\"");
+		if (index < 0) {
+			Area areaBean = new Area();
+			areaBean.setName(area);
+			loadTemplatePart(areaBean, "area." + area);
+			if (areaBean != null) {
+				index = areaBean.getPriority();
+			}
+		}		
+		return index;
+	}
 
 	@SuppressWarnings("unchecked")
 	public List<String> getAreas() {
@@ -949,18 +962,13 @@ public class Template implements Comparable<Template> {
 				String key = keys.next();
 				if (key.startsWith(XMLManipulationHelper.AREA_PREFIX) && StringUtils.countMatches(key, ".") < 2) {
 					String area = key.substring(XMLManipulationHelper.AREA_PREFIX.length());
-					int index = html.indexOf("id=\"" + area + "\"");
-					// if (index>=0) {
+					int index = getAreaIndex(html, area);
 					workAreas.add(new SortBean<String>(area, index));
-					// } else {
-					// logger.warning("area not found in template
-					// '"+getName()+"' : "+area );
-					// }
 				}
 			}
 			if (workAreas.size() == 0) {
 				if (getParent() == null) {
-					workAreas.add(new SortBean<String>(ComponentBean.DEFAULT_AREA, html.indexOf("id=\"" + ComponentBean.DEFAULT_AREA + "\"")));
+					workAreas.add(new SortBean<String>(ComponentBean.DEFAULT_AREA, getAreaIndex(html,  ComponentBean.DEFAULT_AREA)));
 				} else {
 					return getParent().getAreas();
 				}
@@ -2731,6 +2739,8 @@ public class Template implements Comparable<Template> {
 		part.setH4Size(properties.getString(prefix + ".h4.size", part.getDefaultH4Size()));
 		part.setH5Size(properties.getString(prefix + ".h5.size", part.getDefaultH5Size()));
 		part.setH6Size(properties.getString(prefix + ".h6.size", part.getDefaultH6Size()));
+		
+		part.setPriority(properties.getInt(prefix + ".priority", 10));
 	}
 
 	protected void saveTemplatePart(TemplatePart part, String prefix) {
@@ -2755,6 +2765,8 @@ public class Template implements Comparable<Template> {
 		properties.setProperty(prefix + ".h4.size", part.getH4Size());
 		properties.setProperty(prefix + ".h5.size", part.getH5Size());
 		properties.setProperty(prefix + ".h6.size", part.getH6Size());
+		
+		properties.setProperty(prefix + ".priority", part.getPriority());
 	}
 
 	public synchronized TemplateStyle getStyle() {

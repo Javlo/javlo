@@ -225,7 +225,7 @@ public class ContentService implements IPrintInfo {
 		if (ctx.contentExistForContext == null) {
 			MenuElement page = ctx.getCurrentPage();			
 			if (page != null) {				
-				ctx.contentExistForContext = !page.isLocalEmpty(ctx, ComponentBean.DEFAULT_AREA);
+				ctx.contentExistForContext = page.isRealContent(ctx);
 			} else {
 				ctx.contentExistForContext = false;
 			}

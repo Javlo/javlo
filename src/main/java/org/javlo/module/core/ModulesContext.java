@@ -133,7 +133,7 @@ public class ModulesContext {
 							Module module = new Module(configFile, new Locale(globalContext.getEditLanguage(session)), moduleRoot, globalContext.getPathPrefix());
 							if (module.haveRight(session, userFactory.getCurrentUser(session)) && globalContext.getModules().contains(module.getName())) {
 								localModules.add(module);
-							}
+							}							 
 							allModules.add(module);
 						} catch (IOException e) {
 							logger.severe(e.getMessage());

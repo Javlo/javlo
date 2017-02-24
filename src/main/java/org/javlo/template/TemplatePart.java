@@ -38,6 +38,7 @@ public class TemplatePart {
 	private String h5Size = null;
 	private String h6Size = null;
 	private String responsive = "false";
+	private int priority = 10;
 
 	public String getDefaultH1Size() {
 		return null;
@@ -468,6 +469,14 @@ public class TemplatePart {
 
 	public void setResponsive(String responsive) {
 		this.responsive = responsive;
+	}
+	
+	public int getPriority() {
+		return priority;
+	}
+
+	public void setPriority(int priority) {
+		this.priority = priority;
 	}
 
 }

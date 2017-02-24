@@ -4,6 +4,7 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -47,6 +48,7 @@ import org.javlo.component.core.ComponentBean;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
+import org.javlo.helper.XMLManipulationHelper.BadXMLException;
 import org.javlo.image.ImageHelper;
 import org.javlo.image.ImageSize;
 import org.javlo.mailing.MailConfig;
@@ -85,10 +87,11 @@ public class NetHelper {
 	}
 
 	public static String readPageForMailing(URL url, String login, String pwd) throws Exception {
+		logger.info("url="+url);
 		return readPage(url, true, true, null, login, pwd, null, false);
 	}
 
-	public static String readPageForMailing(URL url, String token) throws Exception {
+	public static String readPageForMailing(URL url, String token) throws Exception {		
 		return readPage(url, true, true, null, null, null, token, false);
 	}
 
@@ -299,10 +302,12 @@ public class NetHelper {
 			ResourceHelper.closeResource(in);
 		}
 		String content = new String(out.toByteArray(), ContentContext.CHARACTER_ENCODING);
+		
 		if (mailing) {
 			content = XHTMLHelper.prepareToMailing(content); // transform list
 																// -> array
 		}
+		
 		if (cssInline) {
 			return CSSParser.mergeCSS(content, false);
 		}
@@ -824,8 +829,10 @@ public class NetHelper {
 		return isURLValid(url, false);
 	}
 	
-	public static void main(String[] args) throws MalformedURLException {
-		boolean valid = isURLValid(new URL("http://www.lesoir.be/"), true);		
+	public static void main(String[] args) throws IOException, BadXMLException {
+		String content = ResourceHelper.loadStringFromFile(new File("c:/trans/mail.html"));
+		content = CSSParser.mergeCSS(content, false);
+		ResourceHelper.writeStringToFile(new File("c:/trans/mail_css_merged.html"), content);
 	}
 
 	public static boolean isURLValid(URL url, boolean only404) {

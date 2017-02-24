@@ -1219,6 +1219,10 @@ public class InfoBean {
 	public String getRootURLPageMode() {
 		return URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.PAGE_MODE), "/");
 	}
+	
+	public String getRootURLViewMode() {
+		return URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE), "/");
+	}
 
 	public String getRSSAllURL() {
 		try {

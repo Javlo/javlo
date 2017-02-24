@@ -68,6 +68,10 @@
 			<label for="textColor-${part.name}">text color<c:if test="${not empty part.finalTextColor}"> (${part.finalTextColor})</c:if></label>
 			<input class="color" type="text" id="textColor-${part.name}" name="textColor" value="${part.textColor}" />
 		</div>
+		<c:if test="${param.priority}"><div class="line">
+			<label for="priority-${part.name}">priority</label>
+			<input type="number" id="priority-${part.name}" name="priority" min="0" value="${part.priority}" />
+		</div></c:if>
 		<fieldset>	
 		<legend>	
 		<div class="checkline${not empty exclude.borderWidth?' disabled':''}">

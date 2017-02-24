@@ -185,8 +185,7 @@ public class CSSParser {
 		return false;
 	}
 
-	public static String mergeCSS(String html, boolean removeCSS) throws BadXMLException {
-		html = html.replace("<br>", "<br />");
+	public static String mergeCSS(String html, boolean removeCSS) throws BadXMLException {		
 		TagDescription[] tags = XMLManipulationHelper.searchAllTag(html, true);
 		StringBuffer css = new StringBuffer();
 		StringRemplacementHelper remp = new StringRemplacementHelper();
