@@ -128,3 +128,16 @@ table.float-image-width {
 .inside-wrapper {
 	width: 100%;
 }
+
+.array-file table {
+	width: 100%;
+}
+
+.array-file th, .array-file td {
+	text-align: left;
+	padding: 6px;
+}
+
+.array-file tr.odd {
+	background-color: #eeeeee;
+}

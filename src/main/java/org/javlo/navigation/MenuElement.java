@@ -44,8 +44,8 @@ import org.javlo.component.core.ILink;
 import org.javlo.component.core.IPageRank;
 import org.javlo.component.dynamic.DynamicComponent;
 import org.javlo.component.image.IImageTitle;
-import org.javlo.component.image.ImageBean;
 import org.javlo.component.image.ImageBackground;
+import org.javlo.component.image.ImageBean;
 import org.javlo.component.image.ImageTitleBean;
 import org.javlo.component.image.SortImageTitleByPriority;
 import org.javlo.component.links.ChildrenLink;
@@ -56,6 +56,7 @@ import org.javlo.component.meta.ColorComponent;
 import org.javlo.component.meta.DateComponent;
 import org.javlo.component.meta.EventDefinitionComponent;
 import org.javlo.component.meta.ForceRealContent;
+import org.javlo.component.meta.Forward;
 import org.javlo.component.meta.I18nComponent;
 import org.javlo.component.meta.Keywords;
 import org.javlo.component.meta.LocationComponent;
@@ -103,6 +104,7 @@ import org.javlo.utils.TimeRange;
 import org.javlo.xml.NodeXML;
 import org.javlo.xml.XMLFactory;
 import org.javlo.ztatic.IStaticContainer;
+import org.jfree.util.Log;
 
 /**
  * @author pvanderm
@@ -181,6 +183,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 		ExtendedColor color;
 		String linkLabel = null;
 		Map<String, String> i18n = null;
+		private String forward = null;
 
 		public ImageTitleBean imageLink;
 
@@ -491,6 +494,14 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 
 		public void setLikeRoot(Boolean likeRoot) {
 			this.likeRoot = likeRoot;
+		}
+
+		public String getForward() {
+			return forward;
+		}
+
+		public void setForward(String forward) {
+			this.forward = forward;
 		}
 
 	}
@@ -1809,6 +1820,46 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 		desc.category = StringUtils.replace(res, "\"", "&quot;");
 
 		return desc.category;
+	}
+	
+	/**
+	 * get the category of the page (category component)
+	 * 
+	 * @param ctx
+	 * @return
+	 * @throws Exception
+	 */
+	public String getForward(ContentContext ctx) throws Exception {
+		if (!ctx.isAsViewMode()) {
+			return null;
+		}
+
+		PageDescription desc = getPageDescriptionCached(ctx, ctx.getRequestContentLanguage());
+
+		if (desc.forward != null) {
+			return desc.forward;
+		}
+		String res = "";
+		ContentContext noAreaCtx = ctx.getContextWithoutArea();
+
+		IContentComponentsList contentList = getContent(noAreaCtx);
+		while (contentList.hasNext(noAreaCtx)) {
+			IContentVisualComponent elem = contentList.next(noAreaCtx);
+			if (elem.getType().equals(Forward.TYPE)) {
+				res = elem.getValue(noAreaCtx);
+			}
+		}
+		if (!res.contains("/")) {
+			ContentService content = ContentService.getInstance(ctx.getRequest());
+			MenuElement page = content.getNavigation(noAreaCtx).searchChildFromName(res);
+			if (page != null) {
+				res = URLHelper.createURL(ctx, page);				
+			} else {
+				logger.warning("page not found : "+res);
+			}
+		}
+		desc.forward = res;
+		return desc.forward;
 	}
 
 	/**

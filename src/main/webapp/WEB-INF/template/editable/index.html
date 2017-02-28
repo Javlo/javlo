@@ -75,8 +75,7 @@ body .association-wrapper, body .page-wrapper {
 	<jsp:include page="css/styles.jsp" />
 	margin-left: auto;
 	margin-right: auto;
-	border-spacing: 0;
-	<c:if test="${not empty info.imageBackground}"><c:set var="backgroundImageCSS" value="background-image: url('${info.imageBackground.previewURL}'); background-position:left top; background-size: cover;" /></c:if>
+	border-spacing: 0;	
 }
 html, body {
   <c:if test="${not empty template.backgroundColor}">background-color: ${template.backgroundColor};</c:if>
@@ -85,8 +84,7 @@ html, body {
 @media screen and (max-width: ${info.template.style.width}) {
 	.responsive-true table.association-wrapper {width: 100%;}
 }
-.page-wrapper {
-	<c:if test="${not empty info.page.imageBackground}">background-image: url('${info.page.imageBackground.previewURL}'); background-position:left top; background-size: cover;</c:if>
+.page-wrapper {	
 	<c:if test="${not empty info.page.color}">background-color: ${info.page.color};</c:if>
 }
 

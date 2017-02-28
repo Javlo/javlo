@@ -682,7 +682,11 @@ public class XMLManipulationHelper {
 						}
 					}
 					out.println("<!-- end template plugins -->");
-					out.println("<%}%>");
+					out.println("<%}");
+					
+					/** forward **/
+					out.println("if (!StringHelper.isEmpty(currentPage.getForward(ctx))) {%><meta http-equiv=\"refresh\" content=\"0; url=<%=currentPage.getForward(ctx)%>\" /><%}%>");
+					
 					out.close();
 
 					remplacement.addReplacement(tags[i].getCloseStart() - 1, tags[i].getCloseStart(), getHTMLSufixHead(globalContext.getStaticConfig(), template) + new String(outStream.toByteArray()));

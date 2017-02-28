@@ -4,7 +4,6 @@
 package org.javlo.component.title;
 
 import org.javlo.component.core.AbstractVisualComponent;
-import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.context.ContentContext;
 
 
