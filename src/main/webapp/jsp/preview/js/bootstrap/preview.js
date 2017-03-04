@@ -879,7 +879,7 @@ var editPreview = editPreview||{};
 			return outText;
 		}
 
-		editPreview.floatZone = function(source, zone1, zone2, image){
+		editPreview.floatZone = function(source, zone1, zone2, image) {
 			var zone1 = pjq(zone1);
 			var zone2 = pjq(zone2);
 			var image = pjq(image);

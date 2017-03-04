@@ -2650,8 +2650,12 @@ public class XHTMLHelper {
 	public static void main(String[] args) throws Exception {
 		File file = new File("c:/trans/countries.xlsx");
 		Cell[][] arrays = XLSTools.getArray(null, file);
-		for (Cell[] row : arrays) {
-			System.out.println("<option value=\""+row[0]+"\">"+row[1]+"</option>");
+		for (Cell[] row : arrays) {			
+			if (row[1] != null && row[1].toString() != null) {
+				System.out.println("<option ${param.country=='"+row[0]+"'?'selected=\"selected\"':''} value=\""+StringHelper.neverNull(row[0].toString())+"\">"+row[1]+"</option>");
+			} else {
+				System.out.println("<option disabled>&nbsp;</option>");
+			}
 		}
 	}
 	
