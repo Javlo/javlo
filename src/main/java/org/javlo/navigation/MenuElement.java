@@ -104,15 +104,14 @@ import org.javlo.utils.TimeRange;
 import org.javlo.xml.NodeXML;
 import org.javlo.xml.XMLFactory;
 import org.javlo.ztatic.IStaticContainer;
-import org.jfree.util.Log;
 
 /**
  * @author pvanderm
  */
 public class MenuElement implements Serializable, IPrintInfo, IRestItem {
-	
+
 	public static int instance = 0;
-	
+
 	public static Set<String> reference = new HashSet<String>();
 
 	public static final String PAGE_TYPE_DEFAULT = "default";
@@ -626,6 +625,15 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 			} catch (Exception e) {
 				logger.warning(e.getMessage());
 				return null;
+			}
+		}
+		
+		public boolean isLinkRealContent() {
+			try {
+				return page.isLinkRealContent(ctx);
+			} catch (Exception e) {
+				logger.warning(e.getMessage());
+				return false;
 			}
 		}
 
@@ -1214,7 +1222,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 	protected MenuElement() {
 		instance++;
 	}
-	
+
 	@Override
 	protected void finalize() throws Throwable {
 		instance--;
@@ -1821,7 +1829,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 
 		return desc.category;
 	}
-	
+
 	/**
 	 * get the category of the page (category component)
 	 * 
@@ -1853,9 +1861,9 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 			ContentService content = ContentService.getInstance(ctx.getRequest());
 			MenuElement page = content.getNavigation(noAreaCtx).searchChildFromName(res);
 			if (page != null) {
-				res = URLHelper.createURL(ctx, page);				
+				res = URLHelper.createURL(ctx, page);
 			} else {
-				logger.warning("page not found : "+res);
+				logger.warning("page not found : " + res);
 			}
 		}
 		desc.forward = res;
@@ -1894,7 +1902,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 
 		return desc.slogan;
 	}
-	
+
 	/**
 	 * get the slogan of the page (slogan component)
 	 * 
@@ -1927,7 +1935,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 				}
 			}
 		}
-		desc.color=res;
+		desc.color = res;
 		return desc.color;
 	}
 
@@ -2277,8 +2285,8 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 		} else {
 			ContentElementList contentList = getAllContent(localContext);
 			while (contentList.hasNext(ctx)) {
-				IContentVisualComponent comp = contentList.next(ctx);				
-				if (comp instanceof IDate && ((IDate) comp).isValidDate(ctx)) {					
+				IContentVisualComponent comp = contentList.next(ctx);
+				if (comp instanceof IDate && ((IDate) comp).isValidDate(ctx)) {
 					return ((IDate) comp).getDate(ctx);
 				}
 			}
@@ -2527,28 +2535,28 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 		// navigation
 		// language
 		desc.label = getLocalContent(newCtx).getLabel(newCtx);
-		
+
 		if (desc.label != null) {
 			if ((desc.label.trim().length() == 0) && (name != null)) {
 				GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 				if (globalContext.isAutoSwitchToDefaultLanguage()) {
 					ContentContext defaultLgCtx = newCtx.getContextWithContent(this);
-					if (defaultLgCtx != null) {						
-						desc.label = getContent(defaultLgCtx).getLabel(ctx);						
+					if (defaultLgCtx != null) {
+						desc.label = getContent(defaultLgCtx).getLabel(ctx);
 						if ((desc.label.trim().length() == 0) && (name != null)) {
 							desc.label = getSubTitle(defaultLgCtx);
 							if (StringHelper.isEmpty(desc.label)) {
-								desc.label = name;	
-							}						
+								desc.label = name;
+							}
 						}
-					}					
+					}
 				} else {
 					desc.label = name;
 				}
 
 			}
 		}
-		desc.label = StringHelper.removeTag(desc.label);		
+		desc.label = StringHelper.removeTag(desc.label);
 		return desc.label;
 	}
 
@@ -2960,6 +2968,16 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 		return desc.linkOn;
 	}
 
+	public boolean isLinkRealContent(ContentContext ctx) throws Exception {
+		if (isRealContent(ctx)) {
+			return true;
+		} else if (!StringHelper.isEmpty(getLinkOn(ctx))) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
 	/**
 	 * get content of the current area
 	 * 
@@ -3284,17 +3302,17 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 		PageDescription desc = getPageDescriptionCached(ctx, newCtx.getRequestContentLanguage());
 
 		if (desc.pageTitle != null) {
-			//return desc.pageTitle;
+			// return desc.pageTitle;
 		}
 
 		desc.pageTitle = getForcedPageTitle(newCtx);
-		
+
 		if (desc.pageTitle == null || desc.pageTitle.length() == 0) {
 			desc.pageTitle = getTitle(newCtx);
 			if (desc.pageTitle != null && desc.pageTitle.equals(getName())) {
 				desc.pageTitle = getLabel(newCtx);
 			}
-		}		
+		}
 		return desc.pageTitle;
 	}
 
@@ -3667,13 +3685,14 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 		if (desc.contentTitle != null) {
 			return desc.contentTitle;
 		}
-		
-		ContentContext newCtx = new ContentContext(ctx);		
+
+		ContentContext newCtx = new ContentContext(ctx);
 		newCtx.setArea(null);
 		desc.contentTitle = getContent(newCtx).getTitle(ctx);
-		
+
 		return desc.contentTitle;
 	}
+
 	public boolean isTitle(ContentContext ctx) throws Exception {
 		return !name.equals(getTitle(ctx));
 	}
@@ -3687,12 +3706,11 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 		if (desc.title != null) {
 			return desc.title;
 		}
-		
+
 		ContentContext newCtx = new ContentContext(ctx);
-		
+
 		newCtx.setArea(null);
 		desc.title = getContent(newCtx).getTitle(newCtx);
-		
 
 		if (desc.title != null) {
 			if ((desc.title.trim().length() == 0) && (name != null)) {
@@ -4008,7 +4026,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 		ContentContext ctxForceArea = new ContentContext(ctx);
 		ctxForceArea.setArea(area);
 
-		boolean empty = true;	
+		boolean empty = true;
 
 		if (isChildrenAssociation()) {
 			for (MenuElement child : getChildMenuElements()) {
@@ -4059,7 +4077,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 	}
 
 	public boolean isRealContent(ContentContext ctx) throws Exception {
-		
+
 		if (!isInsideTimeRange()) {
 			return false;
 		}
@@ -4072,11 +4090,11 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 		}
 
 		PageDescription desc = getPageDescriptionCached(ctx, lang);
-		
+
 		if (!desc.isRealContentNull()) {
 			return desc.isRealContent();
 		}
-		
+
 		ContentContext contentAreaCtx = new ContentContext(ctx);
 
 		if (template == null || !template.isRealContentFromAnyArea()) {
@@ -4130,7 +4148,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 		}
 		return false;
 	}
-	
+
 	public String getRealContentLanguage(ContentContext ctx) throws Exception {
 		if (isRealContent(ctx)) {
 			return ctx.getRequestContentLanguage();
@@ -4792,31 +4810,32 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 		}
 		return null;
 	}
-	
+
 	public IContentVisualComponent getRealContentComponent(ContentContext ctx) throws Exception {
-			Template template = TemplateFactory.getTemplate(ctx, this);
+		Template template = TemplateFactory.getTemplate(ctx, this);
 
-			ContentContext contentAreaCtx = new ContentContext(ctx);
-			if (template == null || !template.isRealContentFromAnyArea()) {
-				contentAreaCtx.setArea(ComponentBean.DEFAULT_AREA);
-			} else {
-				contentAreaCtx.setArea(null);
-			}
+		ContentContext contentAreaCtx = new ContentContext(ctx);
+		if (template == null || !template.isRealContentFromAnyArea()) {
+			contentAreaCtx.setArea(ComponentBean.DEFAULT_AREA);
+		} else {
+			contentAreaCtx.setArea(null);
+		}
 
-			ContentElementList comps = getContent(contentAreaCtx);
-			while (comps.hasNext(contentAreaCtx)) {
-				IContentVisualComponent comp = comps.next(contentAreaCtx);
-				if (comp instanceof ForceRealContent) {
-					if (StringHelper.isTrue(comp.getValue(contentAreaCtx))) {
-						return comp;
-					};					
-				}
-				if (comp.isRealContent(contentAreaCtx) && !comp.isRepeat()) {					
+		ContentElementList comps = getContent(contentAreaCtx);
+		while (comps.hasNext(contentAreaCtx)) {
+			IContentVisualComponent comp = comps.next(contentAreaCtx);
+			if (comp instanceof ForceRealContent) {
+				if (StringHelper.isTrue(comp.getValue(contentAreaCtx))) {
 					return comp;
 				}
+				;
 			}
+			if (comp.isRealContent(contentAreaCtx) && !comp.isRepeat()) {
+				return comp;
+			}
+		}
 
-			return null;	
+		return null;
 	}
 
 	public String getReferenceLanguage() {
@@ -5122,19 +5141,18 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 	public void setUrlNumber(int urlNumber) {
 		this.urlNumber = urlNumber;
 	}
-	
+
 	private IEventRegistration getEventRegistration(ContentContext ctx) throws Exception {
 		ContentContext noAreaCtx = ctx.getContextWithArea(null);
 		ContentElementList content = getContent(noAreaCtx);
 		while (content.hasNext(noAreaCtx)) {
 			IContentVisualComponent comp = content.next(noAreaCtx);
 			if (comp instanceof IEventRegistration) {
-				return (IEventRegistration)comp;
+				return (IEventRegistration) comp;
 			}
 		}
 		return null;
 	}
-	
 
 	/**
 	 * get event if menu element contains event info.

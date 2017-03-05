@@ -563,4 +563,8 @@ public class PageBean implements Serializable {
 	public void setContentContext(ContentContext ctx) {
 		this.ctx = ctx;
 	}
+	
+	public boolean isLinkRealContent() throws Exception {
+		return page.isLinkRealContent(ctx);
+	}
 }
