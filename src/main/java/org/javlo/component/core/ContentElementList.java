@@ -327,14 +327,10 @@ public class ContentElementList implements IContentComponentsList {
 	}
 
 	@Override
-	public String getPrefixXHTMLCode(ContentContext ctx) {
-
+	public String getPrefixXHTMLCode(ContentContext ctx) {		
 		StringBuffer prefix = new StringBuffer();
-
 		if (contentElements.size() != 0) {
-
 			if (ctx.getRenderMode() != ContentContext.EDIT_MODE) {
-
 				if (isPrevious(ctx)) {
 					if (!previousElem(ctx).getListGroup().equals(currentElem(ctx).getListGroup())) {
 						prefix.append(currentElem(ctx).getFirstPrefix(ctx));
