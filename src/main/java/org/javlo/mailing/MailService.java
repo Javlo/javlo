@@ -28,7 +28,6 @@ import javax.mail.MessagingException;
 import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.mail.Transport;
-import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
@@ -189,7 +188,27 @@ public class MailService {
 			return null;
 		} else {
 			Transport transport = mailSession.getTransport("smtp");
-			transport.connect(mailConfig.getSMTPHost(), mailConfig.getSMTPPortInt(), mailConfig.getLogin(), mailConfig.getPassword());
+			
+			try {
+				transport.connect(mailConfig.getSMTPHost(), mailConfig.getSMTPPortInt(), mailConfig.getLogin(), mailConfig.getPassword());
+			} catch (MessagingException e) {
+				logger.severe(e.getMessage());
+				
+				System.out.println("");
+				System.out.println("*********************************");
+				System.out.println("* ERROR MAIL TRANSPORT  : "+StringHelper.renderTime(new Date()));
+				System.out.println("* transport : "+transport);
+				System.out.println("* transport connected ? "+transport.isConnected());
+				System.out.println("* getSMTPHost : "+mailConfig.getSMTPHost());
+				System.out.println("* getSMTPPortInt : "+mailConfig.getSMTPPortInt());
+				System.out.println("* getLogin : "+mailConfig.getLogin());
+				System.out.println("* getPassword : "+!StringHelper.isEmpty(mailConfig.getPassword()));
+				System.out.println("*********************************");
+				System.out.println("");
+				
+				throw e;
+			}
+			
 			return transport;
 		}
 
@@ -646,16 +665,11 @@ public class MailService {
 
 	public static void main(String[] args) {
 		try {
-			InternetAddress mail = new InternetAddress("p&p@noctis.be");
-			System.out.println("***** MailService.main : ismail ? " + StringHelper.isMail("p&p@noctis.be")); // TODO:
-																												// remove
-																												// debug
-																												// trace
-			System.out.println("***** MailService.main : mail = " + mail); // TODO:
-																			// remove
-																			// debug
-																			// trace
-		} catch (AddressException e) {
+			Session mailSession = getMailSession(null);
+			Transport transport = mailSession.getTransport("smtp");
+			transport.connect("relay.javlo.org", 25, "", "");
+			System.out.println("connected ? "+transport.isConnected());
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
