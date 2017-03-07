@@ -28,6 +28,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.zip.ZipOutputStream;
 
+import javax.mail.Session;
+import javax.mail.Transport;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -58,6 +60,7 @@ import org.javlo.helper.URLHelper;
 import org.javlo.helper.XMLHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.macro.ClearDataAccessCount;
+import org.javlo.mailing.MailService;
 import org.javlo.mailing.MailingThread;
 import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
@@ -722,8 +725,8 @@ public class AccessServlet extends HttpServlet implements IVersion {
 						if (mainFolder.exists()) {
 							for (Resource resource : resources) {
 								File file = new File(URLHelper.mergePath(mainFolder.getAbsolutePath(), resource.getUri()));
-								if (file.exists()) {									
-									try {										
+								if (file.exists()) {
+									try {
 										ZipManagement.zipFile(outZip, file, mainFolder);
 									} catch (IOException e) {
 										logger.warning("error zip file : " + file + " (" + e.getMessage() + ')');
@@ -1090,6 +1093,21 @@ public class AccessServlet extends HttpServlet implements IVersion {
 		StaticConfig staticConfig = StaticConfig.getInstance(getServletContext());
 		Runtime runtime = Runtime.getRuntime();
 		ThreadMXBean threads = ManagementFactory.getThreadMXBean();
+
+		/** test email **/
+
+		boolean smtpConnect = false;
+		if (!StringHelper.isEmpty(staticConfig.getSMTPHost())) {
+			try {
+				Session mailSession = MailService.getMailSession(null);
+				Transport transport = mailSession.getTransport("smtp");
+				transport.connect(staticConfig.getSMTPHost(), Integer.parseInt(staticConfig.getSMTPPort()), staticConfig.getSMTPUser(), staticConfig.getSMTPPasswordParam());
+				smtpConnect = transport.isConnected();
+			} catch (Throwable t) {
+				t.printStackTrace();
+			}
+		}
+
 		out.println("****************************************************************");
 		out.println("****************************************************************");
 		out.println("****");
@@ -1119,6 +1137,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 		out.println("**** IMAGE AUTO FOCUS  :  " + staticConfig.isAutoFocus());
 		out.println("**** EHCACHE FILE      :  " + staticConfig.getEHCacheConfigFile());
 		out.println("**** MAIL THREAD       :  " + staticConfig.isMailingThread());
+		out.println("**** MAIL HOST         :  " + staticConfig.getSMTPHost()+':'+staticConfig.getSMTPPort()+" - test connection:"+smtpConnect); 
 		out.println("**** ALL LOG LVL       :  " + staticConfig.getAllLogLevel());
 		out.println("**** ACCESS LOG LVL    :  " + staticConfig.getAccessLogLevel());
 		out.println("**** NAV LOG LVL       :  " + staticConfig.getNavigationLogLevel());

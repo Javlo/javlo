@@ -669,6 +669,7 @@ public class MailService {
 			Transport transport = mailSession.getTransport("smtp");
 			transport.connect("relay.javlo.org", 25, "", "");
 			System.out.println("connected ? "+transport.isConnected());
+			System.out.println("* transport : "+transport);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
