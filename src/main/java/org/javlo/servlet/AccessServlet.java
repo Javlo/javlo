@@ -1137,7 +1137,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 		out.println("**** IMAGE AUTO FOCUS  :  " + staticConfig.isAutoFocus());
 		out.println("**** EHCACHE FILE      :  " + staticConfig.getEHCacheConfigFile());
 		out.println("**** MAIL THREAD       :  " + staticConfig.isMailingThread());
-		out.println("**** MAIL HOST         :  " + staticConfig.getSMTPHost()+':'+staticConfig.getSMTPPort()+" - test connection:"+smtpConnect); 
+		out.println("**** MAIL HOST         :  " + staticConfig.getSMTPHost()+':'+staticConfig.getSMTPPort()+" - [connection valid:"+smtpConnect+']'); 
 		out.println("**** ALL LOG LVL       :  " + staticConfig.getAllLogLevel());
 		out.println("**** ACCESS LOG LVL    :  " + staticConfig.getAccessLogLevel());
 		out.println("**** NAV LOG LVL       :  " + staticConfig.getNavigationLogLevel());

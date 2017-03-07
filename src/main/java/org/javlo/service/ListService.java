@@ -215,12 +215,11 @@ public class ListService {
 		return outList;
 	}
 	
-	private synchronized List<Item> getHardCodedList(ContentContext ctx, String name) throws IOException, ServiceException, Exception {
-		
-		if (hardCodedCache.get(name) != null) {
-			return hardCodedCache.get(name);
-		}		
-		
+	private synchronized List<Item> getHardCodedList(ContentContext ctx, String name) throws IOException, ServiceException, Exception {		
+		String key = name+'-'+ctx.getRequestContentLanguage();
+		if (hardCodedCache.get(key) != null) {
+			return hardCodedCache.get(key);
+		}
 		if (name.equals("countries")) {
 			List<ListService.Item> countriesList = new LinkedList<ListService.Item>();
 			Collection<Map.Entry<Object, Object>> entries = I18nAccess.getInstance(ctx).getCountries().entrySet();
@@ -228,7 +227,7 @@ public class ListService {
 				countriesList.add(new ListService.Item(entry));
 			}
 			Collections.sort(countriesList, new OrderList());
-			hardCodedCache.put(name, countriesList);			
+			hardCodedCache.put(key, countriesList);			
 			return countriesList;
 		}
 		return null;
