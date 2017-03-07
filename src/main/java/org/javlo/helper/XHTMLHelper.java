@@ -742,6 +742,10 @@ public class XHTMLHelper {
 
 		return getInputMultiSelect(name, contentArray, contentValue);
 	}
+	
+	public static String getInputMultiSelect(String name, Map<String, String> content, Collection value) {
+		return getInputMultiSelect(name, content, value, null);
+	}
 
 	/**
 	 * call .toString on all object, create String array and call the same
@@ -752,7 +756,7 @@ public class XHTMLHelper {
 	 * @param value
 	 * @return
 	 */
-	public static String getInputMultiSelect(String name, Map<String, String> content, Collection value) {
+	public static String getInputMultiSelect(String name, Map<String, String> content, Collection value, String cssClass) {
 
 		String[][] contentArray = new String[content.size()][];
 		Iterator entries = content.entrySet().iterator();
@@ -773,7 +777,7 @@ public class XHTMLHelper {
 			}
 		}
 
-		return getInputMultiSelect(name, contentArray, contentValue, null, null);
+		return getInputMultiSelect(name, contentArray, contentValue, cssClass, null);
 	}
 
 	public static String getInputMultiSelect(String name, String[] content, String[] value) {

@@ -161,7 +161,13 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 	public void prepareView(ContentContext ctx) throws Exception {
 		super.prepareView(ctx);
 		Properties prop = getLocalConfig(false);
-		ctx.getRequest().setAttribute("ci18n", prop);
+		Map<String,String> ci18n = new HashMap<String, String>();
+		for (Object key : prop.keySet()) {			
+			String value = prop.getProperty(key.toString());
+			value = XHTMLHelper.autoLink(value, ctx.getGlobalContext());
+			ci18n.put(key.toString(), value);
+		}
+		ctx.getRequest().setAttribute("ci18n", ci18n);
 
 		ListService listService = ListService.getInstance(ctx);
 		for (Object key : prop.keySet()) {
