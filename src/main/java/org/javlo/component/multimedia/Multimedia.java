@@ -61,7 +61,7 @@ import org.javlo.ztatic.StaticInfo;
  * </ul>
  * 
  * @author pvandermaesen
- */
+ */ 
 public class Multimedia extends TimeRangeComponent implements IImageTitle, IStaticContainer {
 
 	public static final String TYPE = "multimedia";
@@ -387,6 +387,9 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle, IStat
 	public String getCurrentRootFolder() {
 		String[] values = getValue().split(VALUE_SEPARATOR);
 		if (values.length >= 4) {
+			if (!values[3].startsWith("/")) {
+				values[3] = '/'+values[3];
+			}
 			return values[3];
 		} else {
 			return "/";
@@ -1019,14 +1022,16 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle, IStat
 	@Override
 	protected void init(ComponentBean bean, ContentContext ctx) throws Exception {
 		super.init(bean, ctx);
-		if (isImported(ctx) && getPage() != null) {
-			String importFolder = getImportFolderPath(ctx);
+		if (isImported(ctx) && getPage() != null && ctx.isAsModifyMode()) {
+			String importFolder = getImportFolderPath(ctx).replaceFirst("/"+ctx.getGlobalContext().getStaticConfig().getStaticFolder(), "");
+		
 			if (!getDirSelected().equals(importFolder)) {
 				File sourceDir = new File(getFilesDirectory(ctx));
 				if (sourceDir.exists()) {
 					try {
 						setCurrentRootFolder(ctx, importFolder);
 						File targetDir = new File(getFilesDirectory(ctx));
+						logger.info("transfert imported file : "+sourceDir+" >>> "+targetDir);
 						for (File file : sourceDir.listFiles())
 							if (file.exists()) {
 								File targetFile = new File(URLHelper.mergePath(targetDir.getAbsolutePath(), file.getName()));
@@ -1271,6 +1276,7 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle, IStat
 				Resource res = new Resource();
 				res.setName(mulRes.getName());
 				String url = mulRes.getPath().replace(ctx.getGlobalContext().getDataFolder(), "");
+				System.out.println("***** url = "+url);
 				res.setUri(url);
 				res.setDescription(mulRes.getTitle());
 				res.setId(mulRes.getPath());

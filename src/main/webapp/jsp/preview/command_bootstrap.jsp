@@ -117,6 +117,7 @@ if (StringHelper.isTrue(request.getParameter("preview-command"), true)) {
 			</c:if>
 		</div>
 	</div>
+	<jsp:include page="bootstrap/add.jsp"></jsp:include>
 	</c:if>	
 	<div class="modal fade fancybox-wrapper" id="preview-modal" tabindex="-1" role="dialog" aria-labelledby="previewModalTitle" aria-hidden="true">
 	  <div class="modal-dialog modal-full fancybox-skin">

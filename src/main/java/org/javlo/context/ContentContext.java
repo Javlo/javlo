@@ -1131,6 +1131,10 @@ public class ContentContext {
 	public boolean isArray() {
 		return array;
 	}
+	
+	public boolean isAsModifyMode() {
+		return getRenderMode() == PREVIEW_MODE || getRenderMode() == EDIT_MODE ;
+	}
 
 	public boolean isAsPreviewMode() {
 		return getRenderMode() == PREVIEW_MODE;
