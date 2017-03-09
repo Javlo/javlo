@@ -8,8 +8,8 @@ ContentContext editCtx = new ContentContext(ctx);
 editCtx.setRenderMode(ContentContext.EDIT_MODE);
 if (ctx.getGlobalContext().getStaticConfig().isAddButton()) {
 %><div class="add">
-	<a role="button" class="action" data-toggle="collapse" href="#addMacros" aria-expanded="false" aria-controls="addMacros"><span class="glyphicon glyphicon-plus-sign"></span></a>
-<div class="macros collapse" id="addMacros">
+	<a role="button" class="action prvCollapse" href="#addMacros" aria-expanded="false" aria-controls="addMacros"><span class="glyphicon glyphicon-plus-sign"></span></a>
+<div class="macros hiddenCollapse" id="addMacros">
 <c:forEach var="macro" items="${info.addMacro}">
 <c:if test="${!macro.interative}">
   <c:url var="url" value="${info.currentURL}" context="/">
@@ -41,7 +41,5 @@ if (ctx.getGlobalContext().getStaticConfig().isAddButton()) {
 	</button>
 </c:if>	
 </c:forEach></div></div>
-<script type="text/javascript">
-pjq('.collapse').collapse('hide');
-</script><%}%>
+<%}%>
 </c:if>
