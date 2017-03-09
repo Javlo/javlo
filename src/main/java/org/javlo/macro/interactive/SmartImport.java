@@ -86,4 +86,14 @@ public class SmartImport implements IInteractiveMacro, IAction {
 	public boolean isPreview() {
 		return true;
 	}
+	
+	@Override
+	public boolean isAdd() {
+		return true;
+	}
+	
+	@Override
+	public boolean isInterative() {	
+		return true;
+	}
 }

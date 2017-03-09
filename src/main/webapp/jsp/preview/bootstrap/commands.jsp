@@ -43,7 +43,7 @@ editCtx.setRenderMode(ContentContext.EDIT_MODE);
 		<c:param name="macro-${macro.name}" value="${macro.name}" />
 		<c:param name="previewEdit" value="true" />
 	</c:url>
-	<button type="button" class="btn btn-default" aria-label="Left Align" onclick="editPreview.openModal('Template', '${url}');">
+	<button type="button" class="btn btn-default" aria-label="Left Align" onclick="editPreview.openModal('${i18n.edit[key] != key?i18n.edit[key]:macro.name}', '${url}');">
 	  <c:set var="key" value="macro.${macro.name}" />
 	  <c:set var="descriptionKey" value="macro.description.${macro.name}" />
 	  <div class="label">${i18n.edit[key] != key?i18n.edit[key]:macro.name}</div>

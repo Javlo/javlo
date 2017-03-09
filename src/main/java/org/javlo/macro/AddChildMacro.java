@@ -83,5 +83,10 @@ public class AddChildMacro extends AbstractMacro {
 	public boolean isAdmin() {
 		return false;
 	}
+	
+	@Override
+	public boolean isAdd() {
+		return true;
+	}
 
 }

@@ -4320,6 +4320,9 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 		releaseCache = true;
 		getContentElementListMap().clear();
 		getLocalContentElementListMap().clear();
+		for (MenuElement child : getChildMenuElements())  {
+			child.releaseCache();
+		}
 	}
 
 	public void removeChild(MenuElement elem) {

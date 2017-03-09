@@ -19,14 +19,14 @@ public abstract class AbstractMacro implements IMacro {
 	public String toString() {
 		return getName();
 	}
-	
+
 	protected Properties getMacroProperties(ContentContext ctx) throws IOException, Exception {
-		return ctx.getCurrentTemplate().getMacroProperties(ctx.getGlobalContext(), getName() );
+		return ctx.getCurrentTemplate().getMacroProperties(ctx.getGlobalContext(), getName());
 	}
 
 	public List<IContentVisualComponent> getAllComponent(ContentContext ctx) throws Exception {
 		List<IContentVisualComponent> outList = new LinkedList<IContentVisualComponent>();
-		MenuElement root = ContentService.getInstance(ctx.getRequest()).getNavigation(ctx);		
+		MenuElement root = ContentService.getInstance(ctx.getRequest()).getNavigation(ctx);
 		ContentContext noAreaCtx = new ContentContext(ctx);
 		noAreaCtx.setArea(null);
 		for (MenuElement child : root.getAllChildrenList()) {
@@ -46,4 +46,13 @@ public abstract class AbstractMacro implements IMacro {
 		return true;
 	}
 
+	@Override
+	public boolean isAdd() {
+		return false;
+	}
+
+	@Override
+	public boolean isInterative() {	
+		return false;
+	}
 }

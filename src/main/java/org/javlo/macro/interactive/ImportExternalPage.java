@@ -333,6 +333,15 @@ public class ImportExternalPage implements IInteractiveMacro, IAction {
 		for (String img : images) {
 			System.out.println("   " + img);
 		}
-
+	}
+	
+	@Override
+	public boolean isAdd() {
+		return true;
+	}
+	
+	@Override
+	public boolean isInterative() {	
+		return true;
 	}
 }

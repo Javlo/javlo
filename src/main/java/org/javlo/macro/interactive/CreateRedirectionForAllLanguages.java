@@ -75,4 +75,13 @@ public class CreateRedirectionForAllLanguages implements IInteractiveMacro, IAct
 		return false;
 	}
 	
+	@Override
+	public boolean isAdd() {
+		return false;
+	}
+	
+	@Override
+	public boolean isInterative() {	
+		return true;
+	}
 }

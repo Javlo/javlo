@@ -14,5 +14,15 @@ public abstract class AbstractInteractiveMacro implements IInteractiveMacro {
 	public boolean isPreview() {
 		return false;
 	}
+	
+	@Override
+	public boolean isAdd() {
+		return false;
+	}
+	
+	@Override
+	public boolean isInterative() {	
+		return true;
+	}
 
 }

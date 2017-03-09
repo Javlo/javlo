@@ -1418,6 +1418,19 @@ public class InfoBean {
 		}
 		return macros;
 	}
+	
+	public List<IMacro> getAddMacro() {
+		List<IMacro> macros = new LinkedList<IMacro>();
+		List<String> macroName = globalContext.getMacros();
+		MacroFactory factory = MacroFactory.getInstance(StaticConfig.getInstance(ctx.getRequest().getSession().getServletContext()));
+		for (String name : macroName) {
+			IMacro macro = factory.getMacro(name);
+			if (macro.isAdd()) {
+				macros.add(macro);
+			}
+		}
+		return macros;
+	}
 
 	public List<IMacro> getMacro() {
 		List<IMacro> macros = new LinkedList<IMacro>();

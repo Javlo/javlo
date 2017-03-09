@@ -61,8 +61,9 @@ table {
 <jsp:include page="css/pdf.css" />
 @page {
     margin: 0;
+    size: A4;
 }
-.style_wrapper {
+.size_wrapper {
 	<c:if test="${not empty info.page.imageBackground}">background-image: url('${info.page.imageBackground.previewURL}'); background-position:left top; background-size: 100%;</c:if>
 	<c:if test="${not empty info.page.color}">background-color: ${info.page.color};</c:if>
 }
@@ -74,7 +75,8 @@ html, body {
 </head>
 <c:set var="outerBackgroundColor" value="" /><c:if test="${not empty info.template.style.outerBackgroundColor}"><c:set var="outerBackgroundColor" value="background-color: ${info.template.style.outerBackgroundColor}" /></c:if>
 <body class="pdf ${pageClass} responsive-${info.template.style.responsive}" style="-webkit-font-smoothing: antialiased; width: 100% !important; -webkit-text-size-adjust: none;${outerBackgroundColor}" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0">
-<div class="style_wrapper" style="width: 733px; min-height: 28.08485507965cm; margin: 0 auto; padding: 30px; border: 0 none; color: ${info.template.style.finalTextColor}; font-size: ${info.template.style.finalTextSize}; font-family: ${info.template.style.finalFont};">
+<div class="size_wrapper" style="width: 21cm; min-height: 29.67cm;">
+<div class="style_wrapper" style="width: 100%; margin: 0 auto; padding: 30px;  box-sizing: border-box; border: 0 none; color: ${info.template.style.finalTextColor}; font-size: ${info.template.style.finalTextSize}; font-family: ${info.template.style.finalFont};">
 	<table border="0" width="100%" height="100%" cellpadding="0" cellspacing="0">
 		<tr>
 			<td align="center" valign="top"><br />
@@ -101,6 +103,6 @@ html, body {
 				</table></div></div></td>
 		</tr>
 	</table>
-</div>
+</div></div>
 </body>
 </html>

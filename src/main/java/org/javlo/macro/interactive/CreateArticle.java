@@ -40,7 +40,7 @@ import org.javlo.user.AdminUserFactory;
 import org.javlo.user.IUserInfo;
 
 public class CreateArticle implements IInteractiveMacro, IAction {
-	
+
 	private static Logger logger = Logger.getLogger(CreateArticle.class.getName());
 
 	@Override
@@ -81,12 +81,12 @@ public class CreateArticle implements IInteractiveMacro, IAction {
 		}
 		rootPages = MapHelper.sortByValue(rootPages);
 		ctx.getRequest().setAttribute("pages", rootPages);
-		
+
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		if (globalContext.getTags().size() > 0) {
 			ctx.getRequest().setAttribute("tags", globalContext.getTags());
 		}
-		
+
 		List<String> roles = new LinkedList<String>();
 		Set<String> roleSet = new HashSet<String>();
 		for (String role : ctx.getGlobalContext().getAdminUserRoles()) {
@@ -95,7 +95,7 @@ public class CreateArticle implements IInteractiveMacro, IAction {
 			if (ctx.getCurrentEditUser().validForRoles(roleSet)) {
 				roles.add(role);
 			}
-		}			
+		}
 		Collections.sort(roles);
 		ctx.getRequest().setAttribute("adminRoles", roles);
 
@@ -105,20 +105,20 @@ public class CreateArticle implements IInteractiveMacro, IAction {
 	public static String performCreate(RequestService rs, EditContext editCtx, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) {
 		String pageName = rs.getParameter("root", null);
 		String date = rs.getParameter("date", null);
-		
+
 		boolean create = rs.getParameter("create", null) != null;
 		boolean duplicate = rs.getParameter("duplicate", null) != null;
 		String message = null;
 		String newURL = null;
 		String newEditURL = null;
-		
+
 		String lang = rs.getParameter("lang", null);
 		ContentContext ctxLg = ctx;
 		if (lang != null) {
 			ctxLg = new ContentContext(ctx);
 			ctxLg.setContentLanguage(lang);
 		}
-		
+
 		if (pageName == null) {
 			return "page or date not found.";
 		}
@@ -139,7 +139,7 @@ public class CreateArticle implements IInteractiveMacro, IAction {
 			cal.setTime(articleDate);
 			MenuElement rootPage = ContentService.getInstance(ctx.getRequest()).getNavigation(ctxLg).searchChildFromName(pageName);
 			MenuElement newPage = null;
-			if (rootPage != null) {				
+			if (rootPage != null) {
 				List<String> roles = new LinkedList<String>();
 				Set<String> roleSet = new HashSet<String>();
 				for (String role : ctx.getGlobalContext().getAdminUserRoles()) {
@@ -157,28 +157,28 @@ public class CreateArticle implements IInteractiveMacro, IAction {
 				if (mountPage != null) {
 					newPage = MacroHelper.createArticlePageName(ctx, mountPage);
 					if (newPage != null) {
-						if (duplicate) {						
+						if (duplicate) {
 							ContentService content = ContentService.getInstance(ctx.getRequest());
 							MenuElement page = content.getNavigation(ctx).searchChildFromName(ctx.getRequest().getParameter("page"));
 							ContentContext noAreaCtx = ctx.getContextWithArea(null);
 							ContentElementList contentList = page.getContent(noAreaCtx);
-							String parent="0";
+							String parent = "0";
 							while (contentList.hasNext(noAreaCtx)) {
 								IContentVisualComponent comp = contentList.next(noAreaCtx);
 								if (!comp.isRepeat()) {
 									ComponentBean bean = new ComponentBean(comp.getComponentBean());
-									bean.setId(StringHelper.getRandomId());									
+									bean.setId(StringHelper.getRandomId());
 									parent = content.createContent(ctx, bean, parent, false);
 								}
 							}
 							ctx.getCurrentPage().releaseCache();
-						} else if (create) {							
+						} else if (create) {
 							GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 							Collection<String> tags = null;
-							if (globalContext.getTags().size()>0) {
+							if (globalContext.getTags().size() > 0) {
 								tags = new LinkedList<String>();
 								for (String tag : globalContext.getTags()) {
-									if (rs.getParameter("tag-"+tag, null) != null) {
+									if (rs.getParameter("tag-" + tag, null) != null) {
 										tags.add(tag);
 									}
 								}
@@ -187,19 +187,19 @@ public class CreateArticle implements IInteractiveMacro, IAction {
 						}
 						newURL = URLHelper.createURL(ctxLg.getContextWithOtherRenderMode(ContentContext.PREVIEW_MODE), newPage);
 						newEditURL = URLHelper.createURL(ctxLg.getContextWithOtherRenderMode(ContentContext.EDIT_MODE), newPage);
-						
+
 						List<String> selectedRole = new LinkedList<String>();
-						for (String role :roles) {
-							if (rs.getParameter("role-"+role, null) != null) {
+						for (String role : roles) {
+							if (rs.getParameter("role-" + role, null) != null) {
 								newPage.addEditorRole(role);
 								selectedRole.add(role);
 							}
 						}
-						
+
 						if (rs.getParameter("email", null) != null) {
 							GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 							AdminUserFactory userFact = AdminUserFactory.createAdminUserFactory(globalContext, ctx.getRequest().getSession());
-							
+
 							Set<InternetAddress> receivers = new HashSet<InternetAddress>();
 							for (IUserInfo userInfo : userFact.getUserInfoList()) {
 								Set<String> userRoles = new HashSet<String>(userInfo.getRoles());
@@ -212,26 +212,26 @@ public class CreateArticle implements IInteractiveMacro, IAction {
 										}
 									} catch (Exception e) {
 										logger.warning(e.getMessage());
-									}								
+									}
 								}
 							}
-							
+
 							Mail mail = ctxLg.getCurrentTemplate().getMail(ctxLg, "create-article", ctxLg.getRequestContentLanguage());
 							if (mail == null) {
-								mail = new Mail("new page created.", "a new page was create on : "+URLHelper.createURL(ctxLg.getContextForAbsoluteURL().getContextWithOtherRenderMode(ContentContext.VIEW_MODE)));
+								mail = new Mail("new page created.", "a new page was create on : " + URLHelper.createURL(ctxLg.getContextForAbsoluteURL().getContextWithOtherRenderMode(ContentContext.VIEW_MODE)));
 							} else {
 								ContentContext mailContext = ctxLg.getContextWithOtherRenderMode(ContentContext.VIEW_MODE);
 								mailContext.setPath(newPage.getPath());
 								mail.setContent(XHTMLHelper.replaceJSTLData(mailContext, mail.getContent()));
 								mail.setSubject(XHTMLHelper.replaceJSTLData(mailContext, mail.getSubject()));
-							}							
-							
+							}
+
 							Mailing m = new Mailing();
 							m.setFrom(new InternetAddress(globalContext.getAdministratorEmail()));
 							m.setReceivers(receivers);
 							m.setSubject(mail.getSubject());
 							m.setAdminEmail(globalContext.getAdministratorEmail());
-							m.setNotif(null);							
+							m.setNotif(null);
 							m.setContent(mail.getContent());
 							m.setHtml(mail.isHtml());
 							Calendar calendar = Calendar.getInstance();
@@ -248,7 +248,7 @@ public class CreateArticle implements IInteractiveMacro, IAction {
 			}
 			MacroModuleContext.getInstance(ctx.getRequest()).setActiveMacro(null);
 			if (ctx.isEditPreview()) {
-				if (newURL != null && create) {					
+				if (newURL != null && create) {
 					newEditURL = URLHelper.addParam(newEditURL, "module", "content");
 					newEditURL = URLHelper.addParam(newEditURL, "webaction", "editPreview");
 					newEditURL = URLHelper.addParam(newEditURL, "webaction", "edit.changeArea");
@@ -258,17 +258,18 @@ public class CreateArticle implements IInteractiveMacro, IAction {
 				}
 				if (create) {
 					NetHelper.sendRedirectTemporarily(ctx.getResponse(), newEditURL);
-				} else {			
+				} else {
 					ctx.setParentURL(newURL);
 					ctx.setClosePopup(true);
 				}
-				
-				//ctx.getRequest().getRequestDispatcher(editPressrealseURL).forward(ctx.getRequest(), ctx.getResponse());
-				
-				/*ctx.setClosePopup(true);
-				if (newURL != null) {
-					ctx.setParentURL(newURL);
-				}*/
+
+				// ctx.getRequest().getRequestDispatcher(editPressrealseURL).forward(ctx.getRequest(),
+				// ctx.getResponse());
+
+				/*
+				 * ctx.setClosePopup(true); if (newURL != null) {
+				 * ctx.setParentURL(newURL); }
+				 */
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -279,6 +280,16 @@ public class CreateArticle implements IInteractiveMacro, IAction {
 
 	@Override
 	public boolean isPreview() {
+		return true;
+	}
+
+	@Override
+	public boolean isAdd() {
+		return true;
+	}
+
+	@Override
+	public boolean isInterative() {
 		return true;
 	}
 }

@@ -315,4 +315,9 @@ public class CreateArticleComposition extends AbstractInteractiveMacro implement
 	public boolean isPreview() {
 		return true;
 	}
+	
+	@Override
+	public boolean isAdd() {
+		return true;
+	}
 }

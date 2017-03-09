@@ -213,8 +213,8 @@ public class Image extends AbstractFileComponent implements IImageTitle, IPrevie
 	}
 
 	@Override
-	public boolean isImageValid(ContentContext ctx) {
-		return getValue().trim().length() > 0;
+	public boolean isImageValid(ContentContext ctx) {		
+		return StringHelper.isImage(getFileName());
 	}
 
 	@Override

@@ -58,5 +58,10 @@ public class CreateDefaultPageStructure extends AbstractMacro {
 	public boolean isPreview() {
 		return true;
 	}
+	
+	@Override
+	public boolean isAdd() {
+		return true;
+	}
 
 };

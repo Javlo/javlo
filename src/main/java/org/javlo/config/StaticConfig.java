@@ -1675,5 +1675,9 @@ public class StaticConfig extends Observable {
 		return properties.getString("site.log.group");
 	}
 	
+	public boolean isAddButton() {
+		return properties.getBoolean("preview.add-button", true);
+	}
+	
 	
 }

@@ -46,4 +46,6 @@ public class ReduceSubtitleLevelMacro extends AbstractMacro {
 	public boolean isPreview() {
 		return true;
 	}
+	
+	
 };

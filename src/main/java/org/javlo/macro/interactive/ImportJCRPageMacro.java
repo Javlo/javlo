@@ -264,6 +264,16 @@ public class ImportJCRPageMacro implements IInteractiveMacro, IAction {
 	public boolean isPreview() {
 		return true;
 	}
+	
+	@Override
+	public boolean isAdd() {
+		return false;
+	}
+	
+	@Override
+	public boolean isInterative() {	
+		return true;
+	}
 
 	public static void main(String[] args) {
 		System.out.println("***** ImportZIPPageMacro.main : locale = " + getLocalBySuffix("index_fr")); // TODO: remove debug trace

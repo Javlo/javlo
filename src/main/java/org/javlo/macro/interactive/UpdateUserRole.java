@@ -119,4 +119,14 @@ public class UpdateUserRole implements IInteractiveMacro, IAction {
 	public boolean isPreview() {
 		return true;
 	}
+	
+	@Override
+	public boolean isAdd() {
+		return false;
+	}
+	
+	@Override
+	public boolean isInterative() {	
+		return true;
+	}
 }

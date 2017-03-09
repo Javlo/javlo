@@ -23,6 +23,10 @@ public interface IMacro {
 	 * @return
 	 */
 	public boolean isPreview();
+	
+	public boolean isAdd();
+	
+	public boolean isInterative();
 
 
 }
