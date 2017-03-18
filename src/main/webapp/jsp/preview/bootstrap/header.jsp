@@ -200,8 +200,8 @@
 						</div>
 					</form>
 				</c:if> <c:if test="${!globalContext.previewMode}">
-					<div class="link-wrapper">
-						<a class="btn btn-default btn-sm btn-mode btn-wait-loading" href="${info.currentViewURL}"
+					<div class="link-wrapper">						
+						<a class="btn btn-default btn-sm btn-mode btn-wait-loading" href="${info.currentViewURLWidthDevice}"
 							target="_blank"><span class="glyphicon glyphicon-eye-open"
 							aria-hidden="true"></span>${i18n.edit['preview.label.not-edit-page']}</a>
 					</div>

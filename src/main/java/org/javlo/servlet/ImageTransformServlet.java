@@ -899,12 +899,10 @@ public class ImageTransformServlet extends HttpServlet {
 		ctx.setRenderMode(ContentContext.PREVIEW_MODE); // user for staticInfo
 														// storage
 		RequestHelper.traceMailingFeedBack(ctx);
-
+		
 		OutputStream out = null;
 
 		/* TRACKING */
-		
-
 		Thread.currentThread().setName("ImageTransformServlet-" + globalContext.getContextKey());
 
 		IUserFactory fact = UserFactory.createUserFactory(globalContext, request.getSession());

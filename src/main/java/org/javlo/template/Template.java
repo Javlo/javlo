@@ -1416,8 +1416,8 @@ public class Template implements Comparable<Template> {
 		if (device != null) {
 			deviceRenderer = properties.getString("html." + device.getCode(), null);
 		}
-		if (deviceRenderer != null) {
-			logger.fine("device renderer found : " + deviceRenderer + " (template:" + getId() + "");
+		if (deviceRenderer != null && !deviceRenderer.equals("-1")) {
+			logger.fine("device renderer found : " + deviceRenderer + " (template:" + getId() + " device:"+device+")");
 			return deviceRenderer;
 		} else {
 			String defaultRenderer = properties.getString("html", getParent().getHTMLFile(device));
@@ -1431,7 +1431,7 @@ public class Template implements Comparable<Template> {
 			deviceRenderer = properties.getString("html." + device.getCode() + ".params", null);
 		}
 		if (deviceRenderer != null) {
-			logger.fine("device renderer found : " + deviceRenderer + " (template:" + getId() + "");
+			logger.fine("device renderer found : " + deviceRenderer + " (template:" + getId() + " device:"+device+")");
 			return deviceRenderer;
 		} else {
 			String defaultRenderer = properties.getString("html.params", getParent().getHTMLFileParams(device));
@@ -1959,7 +1959,7 @@ public class Template implements Comparable<Template> {
 			e.printStackTrace();
 		}
 		if (renderer == null) {
-			logger.warning("renderer not found on template : " + getName() + " (parent:" + getParent() + ")");
+			logger.warning("renderer not found on template : " + getName() + " (parent:" + getParent() + " device:"+ctx.getDevice()+")");
 			return null;
 		}
 		String params = "";

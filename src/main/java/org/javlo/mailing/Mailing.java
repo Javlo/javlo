@@ -345,11 +345,13 @@ public class Mailing {
 		if (sentFile.exists()) {
 			Properties sentProperties = new Properties();
 			FileInputStream in = null;
+			InputStreamReader inReader = null;
 			try {
 				in = new FileInputStream(sentFile);
-				sentProperties.load(new InputStreamReader(in, ContentContext.CHARSET_DEFAULT));
+				inReader = new InputStreamReader(in, ContentContext.CHARSET_DEFAULT);
+				sentProperties.load(inReader);
 			} finally {
-				ResourceHelper.safeClose(in);
+				ResourceHelper.safeClose(in, inReader);
 			}
 			for (String key : sentProperties.stringPropertyNames()) {
 				out.put(key, sentProperties.getProperty(key));

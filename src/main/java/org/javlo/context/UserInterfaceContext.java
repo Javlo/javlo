@@ -86,7 +86,7 @@ public class UserInterfaceContext {
 
 		instance.lightInterface = AdminUserSecurity.getInstance().haveRole(user, AdminUserSecurity.LIGHT_INTERFACE_ROLE);
 		instance.contributor = AdminUserSecurity.getInstance().haveRole(user, AdminUserSecurity.CONTRIBUTOR_ROLE);
-		instance.setModel(AdminUserSecurity.getInstance().haveRight(user, AdminUserSecurity.MODEL_ROLE)); 
+		instance.setModel(AdminUserSecurity.getInstance().canRole(user, AdminUserSecurity.MODEL_ROLE)); 
 
 		return instance;
 	}

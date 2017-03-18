@@ -713,7 +713,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 					}
 
 					String path = ctx.getPath();
-
+					
 					if (ctx.getFormat().equalsIgnoreCase("zip")) {
 						response.setContentType("application/zip; charset=" + ContentContext.CHARACTER_ENCODING);
 						ZipOutputStream outZip = new ZipOutputStream(response.getOutputStream());

@@ -23,14 +23,14 @@ public class Device implements Serializable {
 
 	public static final Device getDevice(ContentContext ctx) {
 		HttpServletRequest request = ctx.getRequest();
-		Device currentDevice = (Device) request.getSession().getAttribute(Device.class.getCanonicalName());
+		Device currentDevice = (Device) request.getAttribute(Device.class.getCanonicalName());
 		if (currentDevice == null) {
 			StaticConfig staticConfig = StaticConfig.getInstance(request.getSession());
 			String userAgent = request.getHeader("User-Agent");
 			currentDevice = new Device();
 			currentDevice.devices = staticConfig.getDevices();
 			currentDevice.setUserAgent(userAgent);
-			request.getSession().setAttribute(Device.class.getCanonicalName(), currentDevice);
+			request.setAttribute(Device.class.getCanonicalName(), currentDevice);
 			logger.fine("Create new device : '" + currentDevice.getCode() + "' userAgent : " + userAgent);
 		}
 

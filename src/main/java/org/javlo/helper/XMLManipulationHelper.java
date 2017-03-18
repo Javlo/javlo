@@ -1082,6 +1082,10 @@ public class XMLManipulationHelper {
 		out.newLine();
 		out.append("var currentURL = \"<%=URLHelper.createURL(ctx)%>\";");
 		out.newLine();
+		out.append("var currentURLWidthDevice = \"${info.currentURLWidthDevice}\";");
+		out.newLine();
+		out.append("var currentAjaxURLWidthDevice = \"${info.currentAjaxURLWidthDevice}\";");
+		out.newLine();
 		out.append("var editPreviewURL = \"<%=URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.EDIT_MODE))%>?module=content&webaction=edit.editPreview&"+ContentContext.PREVIEW_EDIT_PARAM+"=true\";");
 		out.newLine();
 		out.append("</script><%}%>");

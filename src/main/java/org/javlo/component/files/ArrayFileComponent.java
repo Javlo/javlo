@@ -54,16 +54,16 @@ public class ArrayFileComponent extends GenericFile {
 		private int dataRaw = 0;
 
 		public ArrayMap(Cell[][] inData) {
-			System.out.println("length = " + inData.length);
-			System.out.println("length row = " + inData[0].length);
-			System.out.println("");
-			for (int x = 0; x < inData.length; x++) {
-				for (int y = 0; y < inData[x].length; y++) {
-					System.out.print(inData[x][y] + " - ");
-				}
-				System.out.println("");
-			}
-			System.out.println("");
+//			System.out.println("length = " + inData.length);
+//			System.out.println("length row = " + inData[0].length);
+//			System.out.println("");
+//			for (int x = 0; x < inData.length; x++) {
+//				for (int y = 0; y < inData[x].length; y++) {
+//					System.out.print(inData[x][y] + " - ");
+//				}
+//				System.out.println("");
+//			}
+//			System.out.println("");
 
 			this.data = inData;
 			for (int row = 0; row < Math.min(inData.length, 99); row++) {

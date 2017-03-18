@@ -4035,9 +4035,8 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 					return false;
 				}
 			}
-		} else {
-			IContentVisualComponent comp = getContent(ctxForceArea).next(ctxForceArea);
-			empty = !getContent(ctxForceArea).hasNext(ctxForceArea);
+		} else {			
+			empty = !getLocalContent(ctxForceArea).hasNext(ctxForceArea);
 		}
 
 		desc.setEmpty(area, empty);

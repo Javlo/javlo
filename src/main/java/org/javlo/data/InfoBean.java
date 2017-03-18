@@ -171,6 +171,26 @@ public class InfoBean {
 		}
 	}
 	
+	public String getCurrentURLWidthDevice() {
+		if (fakeCurrentURL != null) {
+			return fakeCurrentURL;
+		} else {
+			String url = URLHelper.createURL(ctx);
+			url = URLHelper.addParam(url, Device.FORCE_DEVICE_PARAMETER_NAME, ""+ctx.getDevice());
+			return url;
+		}
+	}
+	
+	public String getCurrentAjaxURLWidthDevice() {
+		if (fakeCurrentURL != null) {
+			return fakeCurrentURL;
+		} else {
+			String url = URLHelper.createAjaxURL(ctx);
+			url = URLHelper.addParam(url, Device.FORCE_DEVICE_PARAMETER_NAME, ""+ctx.getDevice());
+			return url;
+		}
+	}
+	
 	public String getCurrentCanonicalURL() {
 		ContentContext robotCtx = new ContentContext(ctx);
 		robotCtx.setDevice(Device.getFakeDevice("robot"));
@@ -223,6 +243,12 @@ public class InfoBean {
 
 	public String getCurrentViewURL() {
 		return URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE).getFreeContentContext());
+	}
+	
+	public String getCurrentViewURLWidthDevice() {
+		String url = URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE).getFreeContentContext());
+		url = URLHelper.addParam(url, Device.FORCE_DEVICE_PARAMETER_NAME, ""+ctx.getDevice());
+		return url;
 	}
 
 	public String getCurrentEditURL() {
@@ -1424,8 +1450,8 @@ public class InfoBean {
 		List<String> macroName = globalContext.getMacros();
 		MacroFactory factory = MacroFactory.getInstance(StaticConfig.getInstance(ctx.getRequest().getSession().getServletContext()));
 		for (String name : macroName) {
-			IMacro macro = factory.getMacro(name);
-			if (macro.isAdd()) {
+			IMacro macro = factory.getMacro(name);			
+			if (macro != null && macro.isAdd()) {
 				macros.add(macro);
 			}
 		}

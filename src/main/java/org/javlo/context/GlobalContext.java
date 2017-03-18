@@ -491,6 +491,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 							newInstance.setGlobalTitle(defaultContext.getGlobalTitle());
 							newInstance.setHelpLink(defaultContext.isHelpLink());
 							newInstance.setHelpURL(defaultContext.getHelpURL());
+							newInstance.setMainHelpURL(defaultContext.getMainHelpURL());
 							newInstance.setLook(defaultContext.getLook());
 							newInstance.setMacros(defaultContext.getMacros());
 							newInstance.setMailing(defaultContext.isMailing());
@@ -1433,6 +1434,14 @@ public class GlobalContext implements Serializable, IPrintInfo {
 
 	public String getHelpURL() {
 		return properties.getString("help-url", staticConfig.getHelpURL());
+	}
+	
+	public String getMainHelpURL() {
+		return properties.getString("main-help-url", "");
+	}
+	
+	public void setMainHelpURL(String helpURL) {
+		properties.setProperty("main-help-url", helpURL);
 	}
 
 	/**

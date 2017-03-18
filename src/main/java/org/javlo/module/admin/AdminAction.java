@@ -132,6 +132,7 @@ public class AdminAction extends AbstractModuleAction {
 		private String fullDateFormat;
 
 		private String helpURL;
+		private String mainHelpURL;
 		private String privateHelpURL;
 
 		private int countUser;
@@ -189,6 +190,7 @@ public class AdminAction extends AbstractModuleAction {
 			setFullDateFormat(globalContext.getFullDateFormat());
 
 			setHelpURL(globalContext.getHelpURL());
+			setMainHelpURL(globalContext.getMainHelpURL());
 			setPrivateHelpURL(globalContext.getPrivateHelpURL());
 
 			setForcedHost(globalContext.getForcedHost());
@@ -800,6 +802,14 @@ public class AdminAction extends AbstractModuleAction {
 			this.forcedHttps = forcedHttps;
 		}
 
+		public String getMainHelpURL() {
+			return mainHelpURL;
+		}
+
+		public void setMainHelpURL(String mainHelpURL) {
+			this.mainHelpURL = mainHelpURL;
+		}
+
 	}
 
 	public static class ComponentBean {
@@ -1180,6 +1190,7 @@ public class AdminAction extends AbstractModuleAction {
 					currentGlobalContext.setAdminUserRoles(new HashSet<String>(StringHelper.stringToCollection(requestService.getParameter("admin-user-roles", ""), ",")));
 
 					currentGlobalContext.setHelpURL(requestService.getParameter("help-url", ""));
+					currentGlobalContext.setMainHelpURL(requestService.getParameter("main-help-url", ""));
 					currentGlobalContext.setPrivateHelpURL(requestService.getParameter("private-help-url", ""));
 
 					currentGlobalContext.setOpenExernalLinkAsPopup(requestService.getParameter("link-as-popup", null) != null);
@@ -1742,3 +1753,5 @@ public class AdminAction extends AbstractModuleAction {
 	
 	
 }
+
+

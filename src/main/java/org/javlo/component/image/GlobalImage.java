@@ -248,7 +248,7 @@ public class GlobalImage extends Image implements IImageFilter {
 			ContentService content = ContentService.getInstance(ctx.getRequest());
 			MenuElement targetPage = content.getNavigation(ctx).searchChildFromName(link);
 			if (targetPage == null) {
-				link = "page_not _found";
+				link = "page_not_found";
 			} else {
 				link = URLHelper.createURL(ctx, targetPage);
 			}
@@ -1175,6 +1175,7 @@ public class GlobalImage extends Image implements IImageFilter {
 		 * } else if (comp instanceof MirrorComponent) { image =
 		 * (GlobalImage)((MirrorComponent) comp).getMirrorComponent(ctx); }
 		 */
+		
 		if (image != null && image.getConfig(ctx).isDataFeedBack() && currentUser != null && currentUser.validForRoles(AdminUserSecurity.CONTENT_ROLE)) {
 			logger.info("exec data feed back (template:" + ctx.getCurrentTemplate().getName() + ").");
 			String firstText = rs.getParameter("firsttext", null);
@@ -1212,6 +1213,7 @@ public class GlobalImage extends Image implements IImageFilter {
 				Edit.performSave(ctx, editContext, globalContext, content, componentContext, rs, i18nAccess, messageRepository, currentModule, adminUserFactory);
 			}
 			ctx.getAjaxData().put("previewURL", image.getPreviewURL(ctx, image.getFilter(ctx)));
+			ctx.getAjaxData().put("compId", comp.getId());
 		} else {
 			logger.fine("stop data feed back (template:" + ctx.getCurrentTemplate().getName() + ").");
 		}

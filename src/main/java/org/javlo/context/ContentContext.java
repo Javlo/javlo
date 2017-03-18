@@ -331,7 +331,7 @@ public class ContentContext {
 				if (!ctx.isPreview() || !editContext.isEditPreview()) {
 					try {
 						MenuElement page = ctx.getCurrentPage(true);
-						if (page != null) {	
+						if (page != null) {
 							while (page != null && !page.isRealContentAnyLanguage(ctx) && page.getChildMenuElements().size() > 0) {
 								Iterator<MenuElement> children = page.getChildMenuElements().iterator();
 								page = children.next();
@@ -343,7 +343,7 @@ public class ContentContext {
 								if (page.isRealContentAnyLanguage(ctx)) {
 									ctx.setCurrentPageCached(page);
 									ctx.setPath(page.getPath());
-								} 
+								}
 							} else {
 								page = ctx.getCurrentPage(true);
 							}
@@ -353,7 +353,7 @@ public class ContentContext {
 					}
 				}
 			}
-			
+
 			if (ctx.getDevice() == null) {
 				ctx.setDevice(Device.getDevice(ctx));
 			}
@@ -623,8 +623,6 @@ public class ContentContext {
 			return getLanguage();
 		}
 	}
-
-	
 
 	/**
 	 * return a context with real content (if exist), it can be change the
@@ -1131,9 +1129,9 @@ public class ContentContext {
 	public boolean isArray() {
 		return array;
 	}
-	
+
 	public boolean isAsModifyMode() {
-		return getRenderMode() == PREVIEW_MODE || getRenderMode() == EDIT_MODE ;
+		return getRenderMode() == PREVIEW_MODE || getRenderMode() == EDIT_MODE;
 	}
 
 	public boolean isAsPreviewMode() {

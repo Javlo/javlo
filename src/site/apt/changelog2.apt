@@ -840,5 +840,9 @@ hange log
  
   * 1/ editable with outlook with bug / splash screen googleanalytics jsp reference / forward component / add button / import gallery bug correction / editable template PDF size correction
   
-  * 2/ 
+  * 2/ image feed back js optimisation 
+  
+  * 3/ device stored in request in place of session
+  
+  * 4/
  

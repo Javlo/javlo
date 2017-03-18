@@ -443,7 +443,18 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		String eventLimistStr = localConfig.getProperty("event.alert-limit");
 		int countSubscription = getCountSubscription(ctx);
 		if (StringHelper.isDigit(eventLimistStr)) {
-			return Integer.parseInt(eventLimistStr) <= countSubscription;
+			return Integer.parseInt(eventLimistStr) == countSubscription;
+		} else {
+			return false;
+		}
+	}
+	
+	protected boolean isClosedEventSite(ContentContext ctx) throws IOException {
+		Properties localConfig = getLocalConfig(false);
+		String eventLimistStr = localConfig.getProperty("event.limit");
+		int countSubscription = getCountSubscription(ctx);
+		if (StringHelper.isDigit(eventLimistStr)) {
+			return Integer.parseInt(eventLimistStr) == countSubscription;
 		} else {
 			return false;
 		}
@@ -864,6 +875,36 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 						ContentContext absCtx = ctx.getContextForAbsoluteURL();
 						absCtx.setRenderMode(ContentContext.PREVIEW_MODE);
 						String adminMailContent = XHTMLHelper.createAdminMail(ctx.getCurrentPage().getTitle(ctx), "Please check you event, it will be automaticly closed soon.", data, URLHelper.createURL(absCtx), "go on page >>", null);
+						mailService.sendMail(null, new InternetAddress(globalContext.getAdministratorEmail()), toEmail, ccList, bccList, subject, adminMailContent, true, null, globalContext.getDKIMBean());
+					}
+					
+					if (comp.isClosedEventSite(ctx)) {
+						subject = globalContext.getContextKey() + " - WARNING Event full : " + ctx.getCurrentPage().getTitle(ctx);
+						Map data = new HashMap();
+						String eventLimistStr = comp.getLocalConfig(false).getProperty("event.alert-limit");
+						int countSubscription = comp.getCountSubscription(ctx);
+						data.put("event", ctx.getCurrentPage().getTitle(ctx));
+						data.put("subscription", countSubscription);
+						data.put("limit", comp.getLocalConfig(false).getProperty("event.limit", ""));
+						data.put("alert limit", eventLimistStr);
+						ContentContext absCtx = ctx.getContextForAbsoluteURL();
+						absCtx.setRenderMode(ContentContext.PREVIEW_MODE);
+						String adminMailContent = XHTMLHelper.createAdminMail(ctx.getCurrentPage().getTitle(ctx), "Please check you event, it has been closed.", data, URLHelper.createURL(absCtx), "go on page >>", null);
+						mailService.sendMail(null, new InternetAddress(globalContext.getAdministratorEmail()), toEmail, ccList, bccList, subject, adminMailContent, true, null, globalContext.getDKIMBean());
+					}
+					
+					if (eventClose) {
+						subject = globalContext.getContextKey() + " - WARNING registration on full event : " + ctx.getCurrentPage().getTitle(ctx);
+						Map data = new HashMap();
+						String eventLimistStr = comp.getLocalConfig(false).getProperty("event.alert-limit");
+						int countSubscription = comp.getCountSubscription(ctx);
+						data.put("event", ctx.getCurrentPage().getTitle(ctx));
+						data.put("subscription", countSubscription);
+						data.put("limit", comp.getLocalConfig(false).getProperty("event.limit", ""));
+						data.put("alert limit", eventLimistStr);
+						ContentContext absCtx = ctx.getContextForAbsoluteURL();
+						absCtx.setRenderMode(ContentContext.PREVIEW_MODE);
+						String adminMailContent = XHTMLHelper.createAdminMail(ctx.getCurrentPage().getTitle(ctx), "Please check you event, it is full.", data, URLHelper.createURL(absCtx), "go on page >>", null);
 						mailService.sendMail(null, new InternetAddress(globalContext.getAdministratorEmail()), toEmail, ccList, bccList, subject, adminMailContent, true, null, globalContext.getDKIMBean());
 					}
 

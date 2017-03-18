@@ -197,6 +197,11 @@
 </div>
 
 <div class="form-group">		
+	<label for="main-help-url">${i18n.edit['admin.title.main-help-url']}</label>
+	<input class="form-control" type="text" id="main-help-url" name="main-help-url" value="${currentContext.mainHelpURL}" />	
+</div>
+
+<div class="form-group">		
 	<label for="private-help-url">${i18n.edit['admin.title.private-help-url']}</label>
 	<input class="form-control" type="text" id="private-help-url" name="private-help-url" value="${currentContext.privateHelpURL}" />	
 </div>
