@@ -16,6 +16,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -193,6 +194,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		/** MESSAGE **/
 		out.println("<div class=\"one_half\"><fieldset><legend>message</legend>");
 		out.println(XHTMLHelper.renderLine("field required :", getInputName("message-required"), getLocalConfig(false).getProperty("message.required", "")));
+		out.println(XHTMLHelper.renderLine("error generic :", getInputName("error-generic"), getLocalConfig(false).getProperty("error.generic", "")));
 		out.println(XHTMLHelper.renderLine("error required :", getInputName("error-required"), getLocalConfig(false).getProperty("error.required", "")));
 		out.println(XHTMLHelper.renderLine("thanks :", getInputName("message-thanks"), getLocalConfig(false).getProperty("message.thanks", "")));
 		out.println(XHTMLHelper.renderLine("error :", getInputName("message-error"), getLocalConfig(false).getProperty("message.error", "")));
@@ -480,6 +482,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		getLocalConfig(false).setProperty("mail.subject.field", rs.getParameter(getInputName("subject-field"), ""));
 		getLocalConfig(false).setProperty("mail.from", rs.getParameter(getInputName("from"), ""));
 		getLocalConfig(false).setProperty("mail.from.field", rs.getParameter(getInputName("from-field"), ""));
+		getLocalConfig(false).setProperty("message.generic", rs.getParameter(getInputName("message-generic"), ""));
 		getLocalConfig(false).setProperty("message.required", rs.getParameter(getInputName("message-required"), ""));
 		getLocalConfig(false).setProperty("error.required", rs.getParameter(getInputName("error-required"), ""));
 		getLocalConfig(false).setProperty("message.thanks", rs.getParameter(getInputName("message-thanks"), ""));
@@ -722,7 +725,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 
 		Map<String, String> specialValues = new HashMap<String, String>();
 
-		String badFileFormatRAW = comp.getLocalConfig(false).getProperty("file.bad-file", "exe,bat,scr,bin,obj,lib,dll,bat,sh,com,cmd,msi,jsp,xml,html,htm,vbe,wsf,wsc,asp");
+		String badFileFormatRAW = comp.getLocalConfig(false).getProperty("file.bad-file", "exe,bat,scr,bin,obj,lib,dll,bat,sh,com,cmd,msi,jsp,xml,html,htm,vbe,wsf,wsc,asp,php");
 		List<String> badFileFormat = StringHelper.stringToCollection(badFileFormatRAW, ",");
 		long maxFileSize = comp.getMaxFileSize();
 
@@ -759,7 +762,9 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(outStream);
 		String errorFieldList = " (";
-		String errorFieldSep = "";
+		String errorFieldSep = "";	
+		Collection<String> errorKeyFound = new HashSet<String>();
+		boolean badFormatFound = false;
 		for (Field field : comp.getFields()) {
 			String key = field.getName();
 
@@ -776,14 +781,30 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 				fakeFilled = true;
 			} else if (!withXHTML && (finalValue.toLowerCase().contains("</a>") || finalValue.toLowerCase().contains("</div>"))) {
 				fakeFilled = true;
-			}
-
+			}	
+			
 			if (!field.isFilledWidth(finalValue) && StringHelper.containsUppercase(key.substring(0, 1))) {
+				errorKeyFound.add(key);
 				errorFields.add(key);
 				errorFieldList = errorFieldList + errorFieldSep + field.getLabel();
 				errorFieldSep = ",";
-				GenericMessage msg = new GenericMessage(comp.getLocalConfig(false).getProperty("error.required", "please could you fill all required fields.") + errorFieldList + ')', GenericMessage.ERROR);
+				if (badFormatFound) {
+					GenericMessage msg = new GenericMessage(comp.getLocalConfig(false).getProperty("error.generic", "please check all fields.") + errorFieldList + ')', GenericMessage.ERROR);
+					request.setAttribute("msg", msg);
+				} else {
+					GenericMessage msg = new GenericMessage(comp.getLocalConfig(false).getProperty("error.required", "please could you fill all required fields.") + errorFieldList + ')', GenericMessage.ERROR);
+					request.setAttribute("msg", msg);
+				}				
+			}
+
+			if (!field.isValueValid(finalValue) && !errorKeyFound.contains(key)) {				
+				errorKeyFound.add(key);
+				errorFields.add(key);
+				errorFieldList = errorFieldList + errorFieldSep + field.getLabel();
+				errorFieldSep = ",";
+				GenericMessage msg = new GenericMessage(comp.getLocalConfig(false).getProperty("error.generic", "please check all fields.") + errorFieldList + ')', GenericMessage.ERROR);
 				request.setAttribute("msg", msg);
+				badFormatFound = true;
 			}
 
 			if (value instanceof Object[]) {

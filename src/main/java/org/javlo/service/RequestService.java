@@ -19,6 +19,7 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.io.FileCleaningTracker;
 import org.javlo.context.ContentContext;
 import org.javlo.portlet.filter.MultiReadRequestWrapper;
+import org.owasp.encoder.Encode;
 
 public class RequestService {
 
@@ -27,7 +28,7 @@ public class RequestService {
 	private static final String KEY = "requestService";
 
 	private final Map<String, String[]> parameters = new HashMap<String, String[]>();
-	
+
 	private final Map<String, String[]> savedParameters = new HashMap<String, String[]>();
 
 	private final Map<String, FileItem[]> fileItems = new HashMap<String, FileItem[]>();
@@ -45,9 +46,9 @@ public class RequestService {
 		newValues[values.length] = value;
 		parameters.put(key, newValues);
 	}
-	
-	public void setParameter(String key, String value) {		
-		parameters.put(key, new String[] {value});
+
+	public void setParameter(String key, String value) {
+		parameters.put(key, new String[] { value });
 	}
 
 	@SuppressWarnings("unchecked")
@@ -127,7 +128,8 @@ public class RequestService {
 	public String getParameter(String key, String outDefault) {
 		String[] values = parameters.get(key);
 		if (values == null || values.length == 0 || values[0] == null) {
-			if (request.getParameter(key) == null) { // TODO: check why sometime we need this.
+			if (request.getParameter(key) == null) { // TODO: check why sometime
+														// we need this.
 				return outDefault;
 			} else {
 				return request.getParameter(key);
@@ -158,18 +160,42 @@ public class RequestService {
 		}
 	}
 
-	public Map<String, Object> getParameterMap() {
-		Map<String, Object> outMap = new HashMap<String, Object>();
+	Map<String, Object> parameterMap = null;
 
-		for (Map.Entry<String, String[]> entry : parameters.entrySet()) {
-			if (entry.getValue().length > 0) {
-				outMap.put(entry.getKey(), entry.getValue()[0]);
-			} else {
-				outMap.put(entry.getKey(), entry.getValue());
+	public Map<String, Object> getParameterMap() {
+		if (parameterMap == null) {
+			Map<String, Object> outMap = new HashMap<String, Object>();
+
+			for (Map.Entry<String, String[]> entry : parameters.entrySet()) {
+				if (entry.getValue().length > 0) {
+					outMap.put(entry.getKey(), entry.getValue()[0]);
+				} /*else {
+					outMap.put(entry.getKey(), entry.getValue());
+				}*/
 			}
+			
+			parameterMap = outMap;
 		}
 
-		return outMap;
+		return parameterMap;
+	}
+	
+	Map<String, Object> parameterForAttributeMap = null;
+
+	public Map<String, Object> getParameterForAttributeMap() {
+		if (parameterForAttributeMap == null) {
+			Map<String, Object> outMap = new HashMap<String, Object>();
+
+			for (Map.Entry<String, String[]> entry : parameters.entrySet()) {
+				if (entry.getValue().length > 0) {
+					outMap.put(entry.getKey(), Encode.forHtmlAttribute(entry.getValue()[0]));
+				}
+			}
+			
+			parameterForAttributeMap = outMap;
+		}
+
+		return parameterForAttributeMap;
 	}
 
 	public Map<String, String[]> getParametersMap() {
@@ -244,7 +270,7 @@ public class RequestService {
 	public HttpServletRequest getRequest() {
 		return request;
 	}
-	
+
 	/**
 	 * store parameter interal for restore after operations on request.
 	 */
@@ -252,14 +278,13 @@ public class RequestService {
 		savedParameters.clear();
 		savedParameters.putAll(parameters);
 	}
-	
+
 	/**
 	 * restore saved parameters after operations on request.
 	 */
 	public void restoreParameters() {
 		parameters.clear();
-		parameters.putAll(savedParameters);		
+		parameters.putAll(savedParameters);
 	}
-	
 
 }

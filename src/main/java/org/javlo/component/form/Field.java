@@ -34,8 +34,12 @@ public class Field {
 	private int width = 12;
 	private boolean last = false;
 	private boolean first = false;
+	
+	private static final String TYPE_EMAIL = "email";
+	
+	private static final String TYPE_NUMBER = "number";
 
-	protected static List<? extends Object> FIELD_TYPES = Arrays.asList(new String[] { "text", "large-text", "yes-no", "true-false", "email", "radio", "list", "registered-list", "file", "validation" });
+	protected static List<? extends Object> FIELD_TYPES = Arrays.asList(new String[] { "text", "large-text", "yes-no", "true-false", TYPE_EMAIL, TYPE_NUMBER, "radio", "list", "registered-list", "file", "validation" });
 
 	public Field(String name, String label, String type, String condition, String value, String list, String registeredList, int order, int width) {
 		this.name = name;
@@ -204,6 +208,16 @@ public class Field {
 			return getName().length() > 0 && !StringHelper.isEmpty(value);
 		} else {
 			return value != null && !list.iterator().next().equals(value);
+		}
+	}
+	
+	public boolean isValueValid(String value) {
+		if (getType().equals(TYPE_EMAIL)) {
+			return StringHelper.isMail(value);
+		} else if (getType().equals(TYPE_NUMBER)) {
+			return StringHelper.isDigit(value);
+		} else {
+			return true;
 		}
 	}
 
