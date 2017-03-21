@@ -565,7 +565,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		return null;
 	}
 
-	protected String getMailHeader(ContentContext ctx) {
+	protected String getMailHeader(ContentContext ctx) {		
 		return "";
 	}
 
@@ -759,8 +759,8 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 			}
 		}
 
-		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-		PrintStream out = new PrintStream(outStream);
+		
+		Map<String,String> adminMailData = new HashMap<String,String>();
 		String errorFieldList = " (";
 		String errorFieldSep = "";	
 		Collection<String> errorKeyFound = new HashSet<String>();
@@ -809,32 +809,22 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 
 			if (value instanceof Object[]) {
 				finalValue = StringHelper.arrayToString((Object[]) params.get(key), ",");
-				out.println(field.getLabel() + " (" + key + ") " + ':');
-				out.println(finalValue);
+				adminMailData.put(field.getLabel() + " (" + key + ") ", finalValue);				
 			} else {
-				out.println(field.getLabel() + " (" + key + ") " + ':');
-				out.println(finalValue);
-			}
-			out.println("");
+				adminMailData.put(field.getLabel() + " (" + key + ") ", finalValue);
+			}			
 			result.put(key, finalValue);
 
 		}
-		out.println("");
-		out.close();
 
 		if (fakeFilled) {
 			logger.warning("spam detected fake field filled : " + comp.getPage().getPath());
 		}
 
 		if (errorFields.size() == 0) {
-			String mailContent = new String(outStream.toByteArray());
-			if (comp.isHTMLMail()) {
-				mailContent = XHTMLHelper.textToXHTML(mailContent);
-			}
-			mailContent = comp.getMailHeader(ctx) + mailContent + comp.getMailFooter(ctx);
-
-			logger.info("mail content : " + mailContent);
-
+			
+			logger.info(adminMailData.toString());
+			
 			if (comp.isStorage()) {
 				comp.storeResult(ctx, result);
 			}
@@ -882,8 +872,10 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 					}
 
 					comp.countCache = null;
-
-					mailService.sendMail(null, fromEmail, toEmail, ccList, bccList, subject, mailContent, comp.isHTMLMail(), null, globalContext.getDKIMBean());
+					ContentContext absCtx = ctx.getContextForAbsoluteURL();
+					
+					mailService.sendMail(null, fromEmail, toEmail, ccList, bccList, subject, XHTMLHelper.createAdminMail(ctx.getCurrentPage().getTitle(ctx), "Event registration : "+comp.getCountSubscription(ctx)+"/"+comp.getLocalConfig(false).getProperty("event.alert-limit") , adminMailData, URLHelper.createURL(absCtx), "go on page >>", null), true, null, globalContext.getDKIMBean());
+					
 					if (comp.isWarningEventSite(ctx)) {
 						subject = globalContext.getContextKey() + " - WARNING Event almost full : " + ctx.getCurrentPage().getTitle(ctx);
 						Map data = new HashMap();
@@ -893,7 +885,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 						data.put("subscription", countSubscription);
 						data.put("limit", comp.getLocalConfig(false).getProperty("event.limit", ""));
 						data.put("alert limit", eventLimistStr);
-						ContentContext absCtx = ctx.getContextForAbsoluteURL();
+						
 						absCtx.setRenderMode(ContentContext.PREVIEW_MODE);
 						String adminMailContent = XHTMLHelper.createAdminMail(ctx.getCurrentPage().getTitle(ctx), "Please check you event, it will be automaticly closed soon.", data, URLHelper.createURL(absCtx), "go on page >>", null);
 						mailService.sendMail(null, new InternetAddress(globalContext.getAdministratorEmail()), toEmail, ccList, bccList, subject, adminMailContent, true, null, globalContext.getDKIMBean());
@@ -907,8 +899,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 						data.put("event", ctx.getCurrentPage().getTitle(ctx));
 						data.put("subscription", countSubscription);
 						data.put("limit", comp.getLocalConfig(false).getProperty("event.limit", ""));
-						data.put("alert limit", eventLimistStr);
-						ContentContext absCtx = ctx.getContextForAbsoluteURL();
+						data.put("alert limit", eventLimistStr);						
 						absCtx.setRenderMode(ContentContext.PREVIEW_MODE);
 						String adminMailContent = XHTMLHelper.createAdminMail(ctx.getCurrentPage().getTitle(ctx), "Please check you event, it has been closed.", data, URLHelper.createURL(absCtx), "go on page >>", null);
 						mailService.sendMail(null, new InternetAddress(globalContext.getAdministratorEmail()), toEmail, ccList, bccList, subject, adminMailContent, true, null, globalContext.getDKIMBean());
@@ -922,8 +913,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 						data.put("event", ctx.getCurrentPage().getTitle(ctx));
 						data.put("subscription", countSubscription);
 						data.put("limit", comp.getLocalConfig(false).getProperty("event.limit", ""));
-						data.put("alert limit", eventLimistStr);
-						ContentContext absCtx = ctx.getContextForAbsoluteURL();
+						data.put("alert limit", eventLimistStr);						
 						absCtx.setRenderMode(ContentContext.PREVIEW_MODE);
 						String adminMailContent = XHTMLHelper.createAdminMail(ctx.getCurrentPage().getTitle(ctx), "Please check you event, it is full.", data, URLHelper.createURL(absCtx), "go on page >>", null);
 						mailService.sendMail(null, new InternetAddress(globalContext.getAdministratorEmail()), toEmail, ccList, bccList, subject, adminMailContent, true, null, globalContext.getDKIMBean());

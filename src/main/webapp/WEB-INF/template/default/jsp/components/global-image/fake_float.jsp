@@ -19,17 +19,18 @@ function loadImage${compid}() {
 			editPreview.floatZone("#comp-${compid} .source .container", "#comp-${compid} .zone1 .container", "#comp-${compid} .zone2 .container", "#comp-${compid} img");
 			var firstText=localJQ("#comp-${compid} .zone1 .container").html();
 			var secondText = localJQ("#comp-${compid} .zone2 .container").html();
-			localJQ.post( "${info.currentAjaxURL}", { webaction: "global-image.dataFeedBack", compid: "${compid}", firsttext: firstText, secondtext: secondText, height: localJQ("#comp-${compid} img").height(), width: localJQ("#comp-${compid} img").width()}, {dataType: "json"}).done(function(data) {
+			localJQ.post( "${info.currentAjaxURL}", { webaction: "global-image.dataFeedBack", compid: "${compid}", firsttext: firstText, secondtext: secondText, height: localJQ("#comp-${compid} img").height(), width: localJQ("#comp-${compid} img").width()}, {dataType: "json", async: "false"}).done(function(data) {
 				localJQ("#comp-${compid} img").addClass("refreshed");		
 				localJQ("#comp-${compid} img").attr("src", data.data.previewURL);
 			});		
 		</c:if><c:if test="${info.device.code == 'pdf'}">
 			img.addClass("refreshing");		
-			localJQ.post( "${info.currentAjaxURL}", { webaction: "global-image.dataFeedBack", compid: "${compid}", height: img.height(), width: img.width()}, {dataType: "json"}).done(function(data) {			
-				img.addClass("refreshed");
-				img.removeClass("refreshing");
+			localJQ.post( "${info.currentAjaxURL}", { webaction: "global-image.dataFeedBack", compid: "${compid}", height: img.height(), width: img.width()}, {dataType: "json", async: "false"}).done(function(data) {
+				newImage = pjq('#cp_'+data.data.compId+' img');	
+				newImage.addClass("refreshed");
+				newImage.removeClass("refreshing");
 				if (typeof data.data != "undefined") {
-					img.attr("src", data.data.previewURL);
+					newImage.attr("src", data.data.previewURL);
 				}
 			});
 		</c:if>

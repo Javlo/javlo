@@ -277,11 +277,15 @@ public class ContentService implements IPrintInfo {
 		}
 		bean.setRepeat(inBean.isRepeat());
 		bean.setRenderer(inBean.getRenderer());
-		bean.setModify(true);
-		MenuElement elem = ctx.getCurrentPage();
-		if (elem.isChildrenAssociation() && elem.getChildMenuElements().size() > 0) {
-			elem = elem.getChildMenuElements().iterator().next();
-		}
+		bean.setModify(true);		
+		RequestService rs = RequestService.getInstance(ctx.getRequest());
+		MenuElement elem = getNavigation(ctx).searchChildFromId(rs.getParameter("pageContainerID", null));
+		if (elem == null) {
+			elem = ctx.getCurrentPage();
+			if (elem.isChildrenAssociation() && elem.getChildMenuElements().size() > 0) {
+				elem = elem.getChildMenuElements().iterator().next();
+			}
+		}	
 		elem.addContent(parentId, bean, releaseCache);
 		return id;
 	}

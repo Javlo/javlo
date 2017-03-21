@@ -209,9 +209,9 @@ public class Heading extends AbstractPropertiesComponent implements ISubTitle {
 	
 	protected String getTitle(ContentContext ctx) throws ServiceException, Exception {
 		String html = getFieldValue(TEXT);
-		if (!isNolink()) {
-			html = ReverseLinkService.getInstance(ctx.getGlobalContext()).replaceLink(ctx, this, html);
+		if (!isNolink()) {			
 			html = XHTMLHelper.autoLink(html, ctx.getGlobalContext());
+			html = ReverseLinkService.getInstance(ctx.getGlobalContext()).replaceLink(ctx, this, html);
 		}
 		return html;
 	}

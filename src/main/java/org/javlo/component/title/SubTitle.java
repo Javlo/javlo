@@ -89,8 +89,9 @@ public class SubTitle extends AbstractVisualComponent implements ISubTitle {
 			if (level.equals("7") || level.equals("8") || level.equals("9")) {				
 				res.append("<div id=\"" + getXHTMLId(ctx) + "\" class=\"subtitle-" + level + colored + "\">");
 				ReverseLinkService reverserLinkService = ReverseLinkService.getInstance(globalContext);
+				value = XHTMLHelper.textToXHTML(value);
 				value = reverserLinkService.replaceLink(ctx, this, value);
-				res.append(XHTMLHelper.textToXHTML(value));
+				res.append(value);
 				res.append("</div>");
 			} else {
 				String style="";

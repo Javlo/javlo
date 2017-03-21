@@ -1789,7 +1789,7 @@ public class ResourceHelper {
 				throw new Exception("you need at least one page for clean import file.");
 			}
 			for (File child : importFolder.listFiles()) {
-				cleanImportResource(ctx, child);
+				deleted += cleanImportResource(ctx, child);
 			}
 			return deleted;
 		}

@@ -794,14 +794,14 @@ var editPreview = editPreview||{};
 					pjq(this).removeClass("drop-selected");
 					return false;
 				});
-				el.addEventListener('drop', function(e) {
-					var ajaxURL = editPreview.addParam(currentURL,"webaction=data.upload");
-					var fd=new FormData();
-					var fieldName = pjq(this).data("fieldname");
+				el.addEventListener('drop', function(event) {					
+					var ajaxURL = editPreview.addParam(currentURL,"webaction=data.upload");					
+					var fd=new FormData();					
+					var fieldName = pjq(this).data("fieldname");					
 					if (fieldName == null) {
 						filedName = "files";
 					}
-					var sameName = false;
+					var sameName = false;					
 					jQuery.each( event.dataTransfer.files, function(index, file) {
 						if (i==0) {
 							fd.append(fieldName,file);
@@ -809,7 +809,7 @@ var editPreview = editPreview||{};
 							fd.append(fieldName+"_"+i,file);
 						}
 						i++;
-					});						
+					});											
 					pjq(event.dataTransfer.files).each(function() {							
 						var fileName = this.name;
 						sameName = editPreview.isFileExist(fileName);

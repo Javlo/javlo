@@ -91,11 +91,11 @@ public class Description extends AbstractVisualComponent {
 		StringBuffer finalCode = new StringBuffer();
 		String content = applyReplacement(getValue());
 		if (!isNotDisplayHTML(ctx)) {
-			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-			ReverseLinkService reverserLinkService = ReverseLinkService.getInstance(globalContext);
-			content = reverserLinkService.replaceLink(ctx, this, content);
+			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());						
 			content = XHTMLHelper.replaceJSTLData(ctx, content);
 			content = XHTMLHelper.textToXHTML(content, globalContext);
+			ReverseLinkService reverserLinkService = ReverseLinkService.getInstance(globalContext);
+			content = reverserLinkService.replaceLink(ctx, this, content);
 			finalCode.append(content);
 		}
 		ctx.getRequest().setAttribute("xhtml", finalCode.toString());

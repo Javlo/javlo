@@ -98,7 +98,8 @@ public class FreeTextList extends AbstractVisualComponent {
 		super.prepareView(ctx);
 		if (getRenderer(ctx) != null) {
 			ReverseLinkService reverserLinkService = ReverseLinkService.getInstance(ctx.getGlobalContext());
-			String value = XHTMLHelper.autoLink(reverserLinkService.replaceLink(ctx, this, getValue()));
+			String value = XHTMLHelper.autoLink(getValue());
+			value = reverserLinkService.replaceLink(ctx, this, value);
 			String sep = getSeparatorValue();
 			if (value.length() > 3) {
 				if (value.startsWith("{")) {
