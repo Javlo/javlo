@@ -17,6 +17,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -760,7 +761,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		}
 
 		
-		Map<String,String> adminMailData = new HashMap<String,String>();
+		Map<String,String> adminMailData = new LinkedHashMap<String,String>();
 		String errorFieldList = " (";
 		String errorFieldSep = "";	
 		Collection<String> errorKeyFound = new HashSet<String>();
