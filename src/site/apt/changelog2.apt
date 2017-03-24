@@ -848,5 +848,7 @@ hange log
   
   * 5/ drop file on page n+1 correction / reverse link correction / registration mail format
   
-  * 6/ 
+  * 6/ page-reference link to / stay pdf mode / area not empty if contain repeat item (infoBean) / generic form return email layout / drop page directly from navigation to content
+  
+ * 2.1.0.3.24 24/03/17
  

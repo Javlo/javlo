@@ -15,6 +15,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -411,8 +412,9 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 			}
 		}
 
-		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-		PrintStream out = new PrintStream(outStream);
+		//ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+		Map<String,String> adminMailData = new LinkedHashMap<String,String>();
+		//PrintStream out = new PrintStream(outStream);
 
 		boolean noAttach = requestService.getParameter("no_attach", null) != null;
 		String formEmail = null;
@@ -464,18 +466,20 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 
 				if (value instanceof Object[]) {
 					finalValue = StringHelper.arrayToString((Object[]) params.get(key), ",");
-					out.println(key + ':');
-					out.println(finalValue);
+					adminMailData.put(key, finalValue);
+//					out.println(key + ':');
+//					out.println(finalValue);
 				} else {
-					out.println(key + ':');
-					out.println(finalValue);
+					adminMailData.put(key, finalValue);
+//					out.println(key + ':');
+//					out.println(finalValue);
 				}
-				out.println("");
+//				out.println("");
 				result.put(key, finalValue);
 			}
 		}
-		out.println("");
-		out.close();
+//		out.println("");
+//		out.close();
 
 		if (fakeFilled) {
 			logger.warning("spam detected fake field filled : " + comp.getPage().getPath());
@@ -484,6 +488,7 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 		if (errorFields.size() == 0) {
 			/** participation code **/
 			if (StringHelper.isTrue(comp.getLocalConfig(false).getProperty("pcode.activate"))) {
+				String alwaysOkCode = comp.getLocalConfig(false).getProperty("pcode.alwaysok");
 				String pcode = requestService.getParameter("pcode", null);
 				if (StringHelper.isEmpty(pcode)) {
 						errorFields.add("pcode");
@@ -491,7 +496,7 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 						request.setAttribute("msg", msg);
 						return null;				
 				} else {
-					if (ParticipationListService.getInstance(ctx).checkNumber(pcode)) {
+					if ((!StringHelper.isEmpty(alwaysOkCode) && alwaysOkCode.equals(pcode)) || ParticipationListService.getInstance(ctx).checkNumber(pcode)) {
 						GenericMessage msg = new GenericMessage(comp.getLocalConfig(false).getProperty("message.participation.thanks", "thanks for your participation."), GenericMessage.INFO);
 						request.setAttribute("msg", msg);							
 					} else {
@@ -505,12 +510,9 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 		}
 
 		if (errorFields.size() == 0) {
-			String mailContent = new String(outStream.toByteArray());
-			if (comp.isHTMLMail()) {
-				mailContent = XHTMLHelper.textToXHTML(mailContent);
-			}
+			ContentContext absCtx = ctx.getContextForAbsoluteURL();
+			String mailContent = XHTMLHelper.createAdminMail(ctx.getCurrentPage().getTitle(ctx), "From submit : "+ctx.getCurrentPage().getPageTitle(ctx) , adminMailData, URLHelper.createURL(absCtx), "go on page >>", null);
 			mailContent = comp.getMailHeader(ctx) + mailContent + comp.getMailFooter(ctx);
-
 			logger.info("mail content : " + mailContent);
 
 			if (comp.isStorage()) {
@@ -586,7 +588,7 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 					email.setCcRecipients(ccList);
 					email.setBccRecipients(bccList);
 					email.setContent(mailContent);
-					email.setHtml(comp.isHTMLMail());	
+					email.setHtml(true);	
 					email.setDkim(globalContext.getDKIMBean());
 					mailService.sendMail(null, email);					
 

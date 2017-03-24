@@ -164,8 +164,11 @@
     	<ul>
     	    <c:forEach var="module" items="${modules}">
     	    <c:if test="${empty module.parent}">
-	        	<li class="module ${module.name} ${module.name == currentModule.name || module.name == currentModule.parent?'current':''} ${module.name == fromModule.name?'from':''}">        		
-	        		<a href="${info.currentURL}?module=${module.name}"><span class="title">${module.title}</span>        		
+	        	<li class="module ${module.name} ${module.name == currentModule.name || module.name == currentModule.parent?'current':''} ${module.name == fromModule.name?'from':''}">
+	        		<c:url var="moduleURL" value="${info.currentURL}" context="/">
+	        			<c:param name="module" value="${module.name}" />
+	        		</c:url>        		
+	        		<a href="${moduleURL}"><span class="title">${module.title}</span>        		
 	        		${module.name == currentModule.name || module.name == currentModule.parent?'<div id="ajax-loader"></div>':''}
 	        		<c:if test="${currentModule.name != module.name && module.name == currentModule.parent}">
 	        			<span class="subname">${currentModule.title}</span>

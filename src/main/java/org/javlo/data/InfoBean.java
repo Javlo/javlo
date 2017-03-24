@@ -163,10 +163,10 @@ public class InfoBean {
 		return URLHelper.createURL(previewCtx);
 	}
 
-	public String getCurrentURL() {
+	public String getCurrentURL() {		
 		if (fakeCurrentURL != null) {
 			return fakeCurrentURL;
-		} else {
+		} else {		
 			return URLHelper.createURL(ctx);
 		}
 	}
@@ -176,7 +176,9 @@ public class InfoBean {
 			return fakeCurrentURL;
 		} else {
 			String url = URLHelper.createURL(ctx);
-			url = URLHelper.addParam(url, Device.FORCE_DEVICE_PARAMETER_NAME, ""+ctx.getDevice());
+			if (!url.contains(Device.FORCE_DEVICE_PARAMETER_NAME)) {
+				url = URLHelper.addParam(url, Device.FORCE_DEVICE_PARAMETER_NAME, ""+ctx.getDevice());
+			}
 			return url;
 		}
 	}
@@ -1361,7 +1363,7 @@ public class InfoBean {
 		Map<String, Boolean> emptyArea = new HashMap<String, Boolean>();
 		try {
 			for (String area : ctx.getCurrentTemplate().getAreas()) {
-				if (ctx.getCurrentPage().isEmpty(ctx, area)) {
+				if (ctx.getCurrentPage().isEmpty(ctx, area, true)) {
 					emptyArea.put(area, new Boolean(true));
 				}
 			}

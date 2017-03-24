@@ -445,7 +445,17 @@ var editPreview = editPreview||{};
 					}
 
 					event.preventDefault();
-					var rowData = event.dataTransfer.getData("text").split(",");
+					var textData = event.dataTransfer.getData("text");
+					if (textData.startsWith("page:page-")) {						
+						textData=textData.substring("page:page-".length);
+						var ajaxURL = editPreview.addParam(currentURL, "webaction=edit.insert&type=clipboard-page&previous="+pjq(this).attr("id").substring(3)+"&area=" + editPreview.searchArea(pjq(this))+ "&render-mode=3&init=true&pagename="+textData);
+						if (editPreview.searchPageId(this) != null) {
+							ajaxURL = ajaxURL +'&pageContainerID='+ editPreview.searchPageId(this);
+						}
+						editPreview.ajaxPreviewRequest(ajaxURL, null, null);
+						return false;
+					}
+					var rowData = textData.split(",");
 					if (PREVIEWLOG) {
 						console.log("rowData   = ",rowData);
 					}
@@ -475,7 +485,7 @@ var editPreview = editPreview||{};
 						countDrop=0;
 						return false;
 					}
-
+					
 					if (sharedId != null && sharedId.length > 0) {
 						var previewId = subComp.attr("id").substring(3);
 						var area = editPreview.searchArea(subComp);
@@ -580,7 +590,18 @@ var editPreview = editPreview||{};
 					if (PREVIEWLOG) {
 						console.log("*** DROP AREA ***");
 					}
+					var area = editPreview.searchArea(pjq(this));
 					event.preventDefault();
+					var textData = event.dataTransfer.getData("text");
+					if (textData.startsWith("page:page-")) {
+						textData=textData.substring("page:page-".length);
+						var ajaxURL = editPreview.addParam(currentURL, "webaction=edit.insert&type=clipboard-page&previous=0&area=" + area+ "&render-mode=3&init=true&pagename="+textData);
+							if (editPreview.searchPageId(this) != null) {
+								ajaxURL = ajaxURL +'&pageContainerID='+ editPreview.searchPageId(this);
+							}
+							editPreview.ajaxPreviewRequest(ajaxURL, null, null);
+							return false;
+					}
 					var rowData = event.dataTransfer.getData("text").split(",");
 					if (PREVIEWLOG) {
 						console.log("rowData   = ",rowData);
@@ -596,7 +617,7 @@ var editPreview = editPreview||{};
 							var sharedId = rowData[2];
 						}					
 					}
-					var area = editPreview.searchArea(pjq(this));
+					
 					if (PREVIEWLOG) {
 						console.log("compId   = ",compId);
 						console.log("compType = ",compType);

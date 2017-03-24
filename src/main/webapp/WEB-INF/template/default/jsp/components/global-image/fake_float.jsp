@@ -12,7 +12,7 @@ var localJQ = jQuery;
 if (typeof(pjq) !== 'undefined') {
 	localJQ = pjq;
 }
-function loadImage${compid}() {
+localJQ( window ).load(function() {
 	img = localJQ("#comp-${compid} img");
 	if (localJQ(img).attr("src") != "${info.ajaxLoaderURL}" && !localJQ(img).hasClass("refreshed") && localJQ(img).attr("src").indexOf("/transform/")>=0) {
 		<c:if test="${info.device.code != 'pdf'}">
@@ -35,11 +35,9 @@ function loadImage${compid}() {
 			});
 		</c:if>
 	}
-}
+});
 </script>
-<c:set var="loadEvent" value=' onLoad="loadImage${compid}();"' />
 </c:if>
-
 <c:if test="${info.device.code != 'pdf'}">
 <c:if test="${!param.right}">
 <tr><td class="image-wrapper"${styleWidth}>
@@ -47,7 +45,7 @@ function loadImage${compid}() {
 <c:set var="rel" value="${fn:startsWith(url,'http://')?'external':'shadowbox'}" />
 <c:set var="rel" value="${fn:endsWith(url,'.pdf')?'pdf':rel}" />
 <a rel="${rel}" class="${type}" href="${url}"></c:if>
-<img src="${previewURL}"${loadEvent} />
+<img src="${previewURL}" />
 <c:if test="${link != '#'}"></a></c:if>
 </td><td class="sep" style="width: 10px; font-size: 0;">&nbsp;</td><td class="zone1" style="text-align: left; ${not empty styleOppositeWidth?styleOppositeWidth:''}"><span class="container">${comp.firstText}</span></td></tr>
 </c:if><c:if test="${param.right}">
@@ -58,7 +56,7 @@ function loadImage${compid}() {
 <c:set var="rel" value="${fn:startsWith(url,'http://')?'external':'shadowbox'}" />
 <c:set var="rel" value="${fn:endsWith(url,'.pdf')?'pdf':rel}" />
 <a rel="${rel}" class="${type}" href="${url}"></c:if>
-<img ${not empty imageWidth?imageWidthTag:''}src="${previewURL}"${loadEvent} />
+<img ${not empty imageWidth?imageWidthTag:''}src="${previewURL}" />
 <c:if test="${link != '#'}"></a></c:if>
 </td></tr>
 </c:if>
@@ -73,7 +71,7 @@ function loadImage${compid}() {
 <c:set var="rel" value="${fn:startsWith(url,'http://')?'external':'shadowbox'}" />
 <c:set var="rel" value="${fn:endsWith(url,'.pdf')?'pdf':rel}" />
 <a rel="${rel}" class="${type}" href="${url}"></c:if>
-<img ${not empty imageWidth?imageWidthTag:''}src="${previewURL}"${loadEvent} />
+<img ${not empty imageWidth?imageWidthTag:''}src="${previewURL}" />
 <c:if test="${link != '#'}"></a></c:if>
 </div><div class="text">${label}</div>
 </td></tr>

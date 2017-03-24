@@ -3,7 +3,13 @@
 
 <c:set var="rootAssociation" value="${info.page.rootOfChildrenAssociation}" />
 <c:if test="${not empty rootAssociation}">
-<h2><c:if test="${not empty info.page.rootOfChildrenAssociation}"><a class="newsletter-settings pull-right as-modal" href="${info.page.rootOfChildrenAssociation.page.editUrl}?module=content&webaction=changeMode&mode=3&previewEdit=true" title="newsletter settings" lang="en">
+<c:url var="propURL" value="${info.page.rootOfChildrenAssociation.page.editUrl}" context="/">
+	<c:param name="module" value="content" />
+	<c:param name="webaction" value="changeMode" />
+	<c:param name="mode" value="3" />
+	<c:param name="previewEdit" value="true" />
+ </c:url>
+<h2><c:if test="${not empty info.page.rootOfChildrenAssociation}"><a class="newsletter-settings pull-right as-modal" href="${propURL}" title="newsletter settings" lang="en">
 <span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
 </a></c:if><span class="glyphicon glyphicon-th-list" aria-hidden="true"></span>Navigation</h2>
 	<div class="height-to-bottom">

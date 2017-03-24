@@ -61,7 +61,6 @@ import org.javlo.module.core.Module.Box;
 import org.javlo.module.core.ModulesContext;
 import org.javlo.module.file.FileModuleContext;
 import org.javlo.module.mailing.MailingModuleContext;
-import org.javlo.navigation.IURLFactory;
 import org.javlo.navigation.MenuElement;
 import org.javlo.search.SearchResult;
 import org.javlo.search.SearchResult.SearchElement;
@@ -835,11 +834,21 @@ public class Edit extends AbstractModuleAction {
 			}
 		} else if (type.equals("clipboard-page")) {
 			EditContext editCtx = EditContext.getInstance(globalContext, session);
-			if (editCtx.getContextForCopy(ctx).getCurrentPage().getId().equals(targetPage.getId())) {
-				return i18nAccess.getText("edit.message.page_paste_it_self", "couldn't paste the page on it self");
+			MenuElement copiedPage;
+			if (rs.getParameter("pagename", null) != null) {
+				copiedPage = content.getNavigation(ctx).searchChildFromName(rs.getParameter("pagename", null));
 			} else {
-				ComponentBean mirrorComponentBean = new ComponentBean(PageMirrorComponent.TYPE, editCtx.getContextForCopy(ctx).getCurrentPage().getId(), ctx.getRequestContentLanguage());
-				newId = content.createContent(ctx, targetPage, areaKey, previousId, mirrorComponentBean, true);
+				copiedPage = content.getNavigation(ctx).searchChildFromId(editCtx.getContextForCopy(ctx).getCurrentPage().getId());
+			}
+			if (copiedPage != null) {
+				if (copiedPage.getId().equals(targetPage.getId())) {
+					return i18nAccess.getText("edit.message.page_paste_it_self", "couldn't paste the page on it self");
+				} else {
+					ComponentBean mirrorComponentBean = new ComponentBean(PageMirrorComponent.TYPE, copiedPage.getId(), ctx.getRequestContentLanguage());
+					newId = content.createContent(ctx, targetPage, areaKey, previousId, mirrorComponentBean, true);
+			}
+			} else {
+				return "error : page not found.";
 			}
 		} else {
 			boolean foundType = false;
@@ -1167,7 +1176,7 @@ public class Edit extends AbstractModuleAction {
 						modify = true;
 					}
 				}
-				if (!userInterface.isLight()) {
+				if (userInterface.isModel()) {
 					boolean isModel = StringHelper.isTrue(requestService.getParameter("model", null));
 					if (page.isModel() != isModel) {
 						page.setModel(isModel);

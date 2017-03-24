@@ -7,7 +7,6 @@
 <div class="template-preview">
 	<img src="${templateImageUrl}" alt="template preview" lang="en" />
 </div>
-
 <form id="form-page-properties" class="standard-form js-change-submit" action="${info.currentURL}" method="post">
 
 <div>

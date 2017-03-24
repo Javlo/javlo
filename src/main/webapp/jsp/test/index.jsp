@@ -67,7 +67,15 @@ EditContext editCtx = EditContext.getInstance(globalContext, request.getSession(
 <%if ((ctx.isInteractiveMode())&&(security.haveRight((User)editCtx.getUserPrincipal(), "update"))) {%><script type="text/javascript">
 var ajaxURL = "<%=URLHelper.createAjaxURL(ctx)%>";
 var currentURL = "<%=URLHelper.createURL(ctx)%>";
-var editPreviewURL = "<%=URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.EDIT_MODE))%>?module=content&webaction=editPreview&previewEdit=true";
+<%
+String url  = URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.EDIT_MODE));
+if (url.contains("?")) {
+	url = url + "&";
+} else {
+	url = url + "?";
+}
+%>
+var editPreviewURL = <%=url%>"module=content&webaction=editPreview&previewEdit=true";
 </script><%}%><%}%>
 <%if (currentPage.getHeaderContent(ctx) != null) {%><%=currentPage.getHeaderContent(ctx)%><%}%>
 <!-- template plugins -->

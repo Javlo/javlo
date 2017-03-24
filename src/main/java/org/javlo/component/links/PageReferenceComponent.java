@@ -1542,9 +1542,9 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 				newCtx.setArea(null);
 				ContentContext lgCtx = ctx;
 				MenuElement page = allChildren.get(i);
-				if (GlobalContext.getInstance(ctx.getRequest()).isAutoSwitchToDefaultLanguage()) {
-					lgCtx = page.getContentContextWithContent(ctx);
-				}
+//				if (GlobalContext.getInstance(ctx.getRequest()).isAutoSwitchToDefaultLanguage()) {
+//					lgCtx = page.getContentContextWithContent(ctx);
+//				}
 				if (filterPage(lgCtx, allChildren.get(i), currentSelection, commands, filter, true) && (page.getContentDateNeverNull(ctx).after(backDate.getTime()))) {
 					renderPageSelectLine(lgCtx, outTemp, currentSelection, page);
 					countPage++;

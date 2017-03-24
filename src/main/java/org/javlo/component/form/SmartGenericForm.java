@@ -555,7 +555,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 
 		if (rs.getParameter(getInputName("new-name"), "").trim().length() > 0) {
 			String fieldName = StringHelper.createFileName(rs.getParameter(getInputName("new-name"), null));
-			store(new Field(fieldName, "", "", "", "text", "", "", pos + 20, 6));
+			store(new Field(fieldName, "", "text", "", "text", "", "", pos + 20, 6));
 			ctx.getRequest().setAttribute(getNewFieldKey(), fieldName);
 		}
 

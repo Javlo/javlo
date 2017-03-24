@@ -2,9 +2,7 @@
 %><%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <div class="area-label">${info.area}</div>
 <div id="content-edit" class="full-height ${not empty userInterface.light?'light':''}">
-
 <c:url var="formURL" value="${info.currentURL}" context="/"><c:if test="${not empty requestService.parameterMap.previewEdit}"><c:param name="previewEdit" value="true" /></c:if></c:url>
-
 <form role="form" id="form-content" class="components ${empty requestService.parameterMap.previewEdit?'ajax':''}" action="${formURL}" enctype="multipart/form-data" method="post">
 	<input type="hidden" name="webaction" value="edit.save" />
 	<input type="hidden" name="render-mode" value="1" /><c:if test="${requestService.parameterMap.lightEdit}"><input type="hidden" name="lightEdit" value="true" /></c:if>

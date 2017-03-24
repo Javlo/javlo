@@ -250,6 +250,9 @@ public class URLHelper extends ElementaryURLHelper {
 	public static String createExpCompLink(ContentContext ctx, String compId) {
 		Map<String, String> params = new HashMap<String, String>();
 		params.put(ContentContext.FORCE_MODE_PARAMETER_NAME, "" + ctx.getRenderMode());
+		if (ctx.isEditPreview()) {
+			params.put(ContentContext.PREVIEW_EDIT_PARAM, "true");
+		}
 		return createStaticURL(ctx, "/expcomp/" + compId + ".html", params);
 	}
 

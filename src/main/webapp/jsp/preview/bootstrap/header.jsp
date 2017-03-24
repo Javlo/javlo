@@ -64,8 +64,7 @@
 			<div class="actions">
 				<c:if test="${fn:length(contentContext.deviceNames)>1}">
 					<div class="select">
-						<form id="renderers_form" action="${info.currentURL}"
-							method="post">
+						<form id="renderers_form" action="${info.currentURL}" method="post">
 							<div class="input-wrapper">
 								<c:url var="url" value="${info.currentURL}" context="/"><c:param name="${info.staticData.forceDeviceParameterName}" value=""></c:param></c:url>
 								<select class="form-control input-sm" id="renderers_button"
@@ -90,12 +89,9 @@
 							<c:set var="tooltip" value="" />
 							<c:if test="${i18n.edit['command.copy-page.tooltip'] != 'command.copy-page.tooltip'}">
 								<c:set var="tooltip" value="data-toggle=\"tooltip\" data-placement=\"left\" title=\"${i18n.edit['command.copy-page.tooltip']}\"" />
-							</c:if>
-						
-							<form class="${info.page.pageLocalEmpty || info.page.childrenAssociation?'no-access':''}"
-								id="copy_page"
-								action="${info.currentURL}?webaction=edit.copyPage"
-								method="post">
+							</c:if>						
+							<form class="${info.page.pageLocalEmpty || info.page.childrenAssociation?'no-access':''}" id="copy_page" action="${info.currentURL}?webaction=edit.copyPage" method="post">
+								<c:if test="${not empty param['force-device-code']}"><input type="hidden" name="force-device-code" value="${param['force-device-code']}" /></c:if>
 								<button ${tooltip} id="pc_copy_page" type="submit"
 									class="btn btn-default btn-sm" ${info.page.pageLocalEmpty || info.page.childrenAssociation?'disabled="disabled"':''}>
 									<span class="glyphicon glyphicon-copy" aria-hidden="true"></span><span
@@ -112,6 +108,7 @@
 								class="${empty info.contextForCopy || !info.page.pageLocalEmpty || info.page.childrenAssociation?'no-access':''}"
 								id="paste_page" action="${info.currentURL}" method="post">
 								<input type="hidden" name="webaction" value="edit.pastePage" />
+								<c:if test="${not empty param['force-device-code']}"><input type="hidden" name="force-device-code" value="${param['force-device-code']}" /></c:if>
 								<c:set var="tooltip" value="" />
 								<c:if test="${i18n.edit['action.paste-page-preview'] != 'action.paste-page-preview'}">
 									<c:set var="tooltip" value="data-toggle=\"tooltip\" data-placement=\"left\" title=\"${i18n.edit['action.paste-page-preview']}\"" />
@@ -127,6 +124,7 @@
 								class="${empty info.contextForCopy || !info.page.pageEmpty?'no-access':''}"
 								action="${info.currentURL}" method="get">
 								<div class="hidden"><input type="hidden" name="webaction" value="edit.refresh" /></div>
+								<c:if test="${not empty param['force-device-code']}"><input type="hidden" name="force-device-code" value="${param['force-device-code']}" /></c:if>
 								<c:set var="tooltip" value='' />
 								<c:if test="${i18n.edit['global.refresh'] != 'global.refresh'}">
 									<c:set var="tooltip" value="data-toggle=\"tooltip\" data-placement=\"left\" title=\"${i18n.edit['global.refresh']}\"" />
@@ -140,8 +138,10 @@
 						<li><form id="pc_del_page_form" class="<%=readOnlyClass%>"
 								action="${info.currentURL}" method="post">
 								<div>
+									<c:if test="${not empty param['force-device-code']}"><input type="hidden" name="force-device-code" value="${param['force-device-code']}" /></c:if>
 									<input type="hidden" value="${info.pageID}" name="page" /> <input
 										type="hidden" value="edit.movePageToTrash" name="webaction" />
+									<c:if test="${not empty param['force-device-code']}"><input type="hidden" name="force-device-code" value="${param['force-device-code']}" /></c:if>
 									<c:if test="${!info.page.root}">
 										<c:set var="tooltip" value="" />
 										<c:if test="${i18n.edit['preview.label.delete.tooltip'] != 'preview.label.delete.tooltip'}">
@@ -267,6 +267,7 @@
 			<li class="undo${contentContext.canUndo?'':' no-access'}"><form
 								class="${!info.page.pageLocalEmpty?'no-access':''}"
 								action="${info.currentURL}" method="get">
+								<c:if test="${not empty param['force-device-code']}"><input type="hidden" name="force-device-code" value="${param['force-device-code']}" /></c:if>
 								<div class="hidden"><input type="hidden" name="webaction" value="time.undoRedo" /><input type="hidden" name="previous" value="true" /></div>
 								<c:set var="tooltip" value="" />
 								<c:if test="${i18n.edit['command.undo.tooltip'] != 'command.undo.tooltip'}">
@@ -341,9 +342,9 @@
 			</a>
 			<div class="integrity-message collapse${integrities.error && contentContext.previewEdit?' in':''}" id="integrity-list">
 				<ul class="list-group"><c:forEach var="checker" items="${integrities.checker}"><c:if test="${checker.errorCount>0}">								
-							<li class="list-group-item list-group-item-${checker.levelLabel}">
- 								<span class="badge">${checker.errorCount}</span>${checker.errorMessage}    									
-							</li></c:if></c:forEach>
+					<li class="list-group-item list-group-item-${checker.levelLabel}">
+							<span class="badge">${checker.errorCount}</span>${checker.errorMessage}    									
+					</li></c:if></c:forEach>
 				</ul>
 			</div>	
 			</li>					
@@ -354,9 +355,9 @@
 			</a>
 			<div class="integrity-message collapse${integrities.error && contentContext.previewEdit?' in':''}" id="integrity-list">
 				<ul class="list-group">								
-							<li class="list-group-item list-group-item-success">
- 								${i18n.edit['integrity.no_error']}							
-							</li>
+					<li class="list-group-item list-group-item-success">
+							${i18n.edit['integrity.no_error']}							
+					</li>
 				</ul>
 			</div></li>
 			</c:if></c:if>					

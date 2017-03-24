@@ -88,7 +88,7 @@ public abstract class ElementaryURLHelper {
 	public static final String BACK_PARAM_NAME = "__back";
 
 	public static final String IMG_SERVLET_PATH = "img";
-	
+
 	public static final String RESOURCE_SERVLET_PATH = "file";
 
 	public static String addParam(String url, String name, String value) {
@@ -315,7 +315,7 @@ public abstract class ElementaryURLHelper {
 		if (StringHelper.isMail(inUrl)) {
 			return "mailto:" + inUrl;
 		}
-		
+
 		if (StringHelper.isURL(inUrl)) {
 			return inUrl;
 		}
@@ -470,7 +470,7 @@ public abstract class ElementaryURLHelper {
 			if (staticInfo != null && !StringHelper.isEmpty(staticInfo.getTitle(ctx))) {
 				fileName = staticInfo.getTitle(ctx);
 			}
-			url = URLHelper.mergePath(IMG_SERVLET_PATH, ctx.getGlobalContext().setTransformShortURL(url.replace(TRANSFORM + '/', ""),filter, fileName));
+			url = URLHelper.mergePath(IMG_SERVLET_PATH, ctx.getGlobalContext().setTransformShortURL(url.replace(TRANSFORM + '/', ""), filter, fileName));
 		}
 		if (ctx.getRenderMode() != ContentContext.VIEW_MODE) {
 			File file = new File(URLHelper.mergePath(ctx.getGlobalContext().getDataFolder(), fileURL));
@@ -490,9 +490,8 @@ public abstract class ElementaryURLHelper {
 		return createTransformURL(ctx, null, url, filter);
 	}
 
-	
 	public static String createTransformURL(ContentContext ctx, StaticInfo info, String filter) throws Exception {
-		return createTransformURL(ctx, null, URLHelper.mergePath(ctx.getGlobalContext().getStaticConfig().getStaticFolder(),info.getStaticURL()), filter);
+		return createTransformURL(ctx, null, URLHelper.mergePath(ctx.getGlobalContext().getStaticConfig().getStaticFolder(), info.getStaticURL()), filter);
 	}
 
 	public static String createTransformURLWithoutCountAccess(ContentContext ctx, String url, String filter) throws Exception {
@@ -506,7 +505,7 @@ public abstract class ElementaryURLHelper {
 		if (uri == null) {
 			return "";
 		}
-		
+
 		if (uri.length() < 1) {
 			uri = "/";
 		} else if (uri.charAt(0) != '/') {
@@ -530,8 +529,8 @@ public abstract class ElementaryURLHelper {
 			} else {
 				uri = uri + urlSuffix;
 			}
-		}		
-		String url = createNoProtocolURL(ctx, globalContext, uri, ajax, withPathPrefix, widthEncodeURL);		
+		}
+		String url = createNoProtocolURL(ctx, globalContext, uri, ajax, withPathPrefix, widthEncodeURL);
 		if (ctx.isAbsoluteURL()) {
 			url = addHost(ctx, url);
 		}
@@ -541,13 +540,20 @@ public abstract class ElementaryURLHelper {
 		} else {
 			url = url + params;
 		}
-
+		
 		if (forceTemplate) {
 			if (ctx.getRequest().getParameter(Template.FORCE_TEMPLATE_PARAM_NAME) != null) {
 				if ((ctx.getRenderMode() != ContentContext.EDIT_MODE)) {
 					if (!url.contains(Template.FORCE_TEMPLATE_PARAM_NAME)) {
 						url = addParam(url, Template.FORCE_TEMPLATE_PARAM_NAME, ctx.getRequest().getParameter(Template.FORCE_TEMPLATE_PARAM_NAME));
 					}
+				}
+			}
+		}
+		if (ctx.isAsModifyMode()) {
+			if (!StringHelper.isEmpty(ctx.getRequest().getParameter(Device.FORCE_DEVICE_PARAMETER_NAME))) {
+				if (!url.contains(Device.FORCE_DEVICE_PARAMETER_NAME)) {
+					url = addParam(url, Device.FORCE_DEVICE_PARAMETER_NAME, ctx.getRequest().getParameter(Device.FORCE_DEVICE_PARAMETER_NAME));
 				}
 			}
 		}
@@ -839,5 +845,5 @@ public abstract class ElementaryURLHelper {
 		}
 		return url.getProtocol() + "://" + url.getHost() + port + '/';
 	}
-	
+
 }

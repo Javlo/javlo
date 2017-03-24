@@ -54,16 +54,16 @@ public class ArrayFileComponent extends GenericFile {
 		private int dataRaw = 0;
 
 		public ArrayMap(Cell[][] inData) {
-//			System.out.println("length = " + inData.length);
-//			System.out.println("length row = " + inData[0].length);
-//			System.out.println("");
-//			for (int x = 0; x < inData.length; x++) {
-//				for (int y = 0; y < inData[x].length; y++) {
-//					System.out.print(inData[x][y] + " - ");
-//				}
-//				System.out.println("");
-//			}
-//			System.out.println("");
+			// System.out.println("length = " + inData.length);
+			// System.out.println("length row = " + inData[0].length);
+			// System.out.println("");
+			// for (int x = 0; x < inData.length; x++) {
+			// for (int y = 0; y < inData[x].length; y++) {
+			// System.out.print(inData[x][y] + " - ");
+			// }
+			// System.out.println("");
+			// }
+			// System.out.println("");
 
 			this.data = inData;
 			for (int row = 0; row < Math.min(inData.length, 99); row++) {
@@ -381,23 +381,25 @@ public class ArrayFileComponent extends GenericFile {
 		}
 		return outCell;
 	}
-	
-	protected static void calcMax (Cell[][] array) {
+
+	protected static void calcMax(Cell[][] array) {
 		for (int y = 0; y < array.length; y++) {
 			ColInfo info = new ColInfo();
-			for (int x = 0; x < array[y].length; x++) {
+			for (int x = 0; x < array.length; x++) {
 				if (array[x] != null) {
 					for (int posy = 0; posy < array[x].length; posy++) {
-						array[x][posy].info = info;
-						if (array[x][posy] != null && StringHelper.isDigit(array[x][posy].getValue())) {
-							if (array[x][posy] != null) {
-								double doubleVal = Double.parseDouble(array[x][posy].getValue());
-								if (info.total == null) {
-									info.total = (double) 0;
-								}
-								info.total = info.total + doubleVal;								
-								if (info.max < doubleVal) {
-									info.max = doubleVal;
+						if (array[x][posy] != null) {
+							array[x][posy].info = info;
+							if (StringHelper.isDigit(array[x][posy].getValue())) {
+								if (array[x][posy] != null) {
+									double doubleVal = Double.parseDouble(array[x][posy].getValue());
+									if (info.total == null) {
+										info.total = (double) 0;
+									}
+									info.total = info.total + doubleVal;
+									if (info.max < doubleVal) {
+										info.max = doubleVal;
+									}
 								}
 							}
 						}
@@ -434,7 +436,7 @@ public class ArrayFileComponent extends GenericFile {
 				}
 			}
 
-			calcMax(outArray);		
+			calcMax(outArray);
 
 			return outArray;
 		} finally {
@@ -882,13 +884,17 @@ public class ArrayFileComponent extends GenericFile {
 	}
 
 	public static void main(String[] args) {
-		File xlsFile = new File("c:/trans/test.xlsx");
+		File xlsFile = new File("c:/trans/DECs.xlsx");
 		Cell[][] inData;
 		try {
 			inData = getStaticXLSXArray(null, xlsFile);
 			for (int x = 0; x < inData.length; x++) {
 				for (int y = 0; y < inData[x].length; y++) {
-					System.out.print(inData[x][y] + " - ");
+					if( inData[x][y] != null) {
+						System.out.print(x+","+y+" = "+inData[x][y].getColSpan() + " - ");
+					} else {
+						System.out.print(x+","+y+" = NULL - ");
+					}
 				}
 				System.out.println("");
 			}

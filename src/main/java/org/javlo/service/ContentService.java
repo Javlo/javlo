@@ -128,10 +128,10 @@ public class ContentService implements IPrintInfo {
 
 	public static ContentService getInstance(GlobalContext globalContext) {
 		ContentService content = null;
-		content = (ContentService) globalContext.getAttribute(ContentService.class.getName());		
+		content = (ContentService) globalContext.getAttribute(ContentService.class.getName());
 		if (content == null) {
 			content = new ContentService();
-			globalContext.setAttribute(ContentService.class.getName(), content);			
+			globalContext.setAttribute(ContentService.class.getName(), content);
 		}
 		content.previewMode = globalContext.isPreviewMode();
 		return content;
@@ -223,8 +223,8 @@ public class ContentService implements IPrintInfo {
 	 */
 	public boolean contentExistForContext(ContentContext ctx) throws Exception {
 		if (ctx.contentExistForContext == null) {
-			MenuElement page = ctx.getCurrentPage();			
-			if (page != null) {				
+			MenuElement page = ctx.getCurrentPage();
+			if (page != null) {
 				ctx.contentExistForContext = page.isRealContent(ctx);
 			} else {
 				ctx.contentExistForContext = false;
@@ -277,7 +277,7 @@ public class ContentService implements IPrintInfo {
 		}
 		bean.setRepeat(inBean.isRepeat());
 		bean.setRenderer(inBean.getRenderer());
-		bean.setModify(true);		
+		bean.setModify(true);
 		RequestService rs = RequestService.getInstance(ctx.getRequest());
 		MenuElement elem = getNavigation(ctx).searchChildFromId(rs.getParameter("pageContainerID", null));
 		if (elem == null) {
@@ -285,7 +285,7 @@ public class ContentService implements IPrintInfo {
 			if (elem.isChildrenAssociation() && elem.getChildMenuElements().size() > 0) {
 				elem = elem.getChildMenuElements().iterator().next();
 			}
-		}	
+		}
 		elem.addContent(parentId, bean, releaseCache);
 		return id;
 	}
@@ -591,21 +591,23 @@ public class ContentService implements IPrintInfo {
 				}
 			}
 			res = previewNav;
-		} else {			
-				synchronized (ctx.getGlobalContext().getLockLoadContent()) {
-					res = getViewNav();
-					if (res == null) {
-						long startTime = System.currentTimeMillis();
-						PersistenceService persistenceService = PersistenceService.getInstance(globalContext);
-						Map<String, String> contentAttributeMap = new HashMap<String, String>();
-						MenuElement page = persistenceService.load(ctx, ContentContext.VIEW_MODE, contentAttributeMap, null);											
-						setViewNav(page);
-						//NavigationService.checkSameUrl(ctx, page.getAllChildrenList()); // important to be afther setViewNav otherwise --> recursive
-						res=page;
-						viewGlobalMap = contentAttributeMap;						
-						logger.info("load view of '" + globalContext.getContextKey() + "' nav in " + StringHelper.renderTimeInSecond((System.currentTimeMillis() - startTime) / 1000) + " sec.");						
-					}
+		} else {
+			synchronized (ctx.getGlobalContext().getLockLoadContent()) {
+				res = getViewNav();
+				if (res == null) {
+					long startTime = System.currentTimeMillis();
+					PersistenceService persistenceService = PersistenceService.getInstance(globalContext);
+					Map<String, String> contentAttributeMap = new HashMap<String, String>();
+					MenuElement page = persistenceService.load(ctx, ContentContext.VIEW_MODE, contentAttributeMap, null);
+					setViewNav(page);
+					// NavigationService.checkSameUrl(ctx,
+					// page.getAllChildrenList()); // important to be afther
+					// setViewNav otherwise --> recursive
+					res = page;
+					viewGlobalMap = contentAttributeMap;
+					logger.info("load view of '" + globalContext.getContextKey() + "' nav in " + StringHelper.renderTimeInSecond((System.currentTimeMillis() - startTime) / 1000) + " sec.");
 				}
+			}
 		}
 
 		return res;
@@ -794,20 +796,22 @@ public class ContentService implements IPrintInfo {
 	}
 
 	public synchronized int renameKeys(String oldKeyPrefix, String newKeyPrefix) {
-		Collection<String> keys = previewGlobalMap.keySet();
-		Collection<String> toBeModified = new LinkedList<String>();
 		int c = 0;
-		for (Object keyObj : keys) {
-			String key = (String) keyObj;
-			if (key.startsWith(oldKeyPrefix)) {
-				toBeModified.add(key);
+		if (previewGlobalMap != null) {
+			Collection<String> keys = previewGlobalMap.keySet();
+			Collection<String> toBeModified = new LinkedList<String>();
+			for (Object keyObj : keys) {
+				String key = (String) keyObj;
+				if (key.startsWith(oldKeyPrefix)) {
+					toBeModified.add(key);
+				}
 			}
-		}
-		for (String key : toBeModified) {
-			String newKey = StringUtils.replaceOnce(key, oldKeyPrefix, newKeyPrefix);
-			previewGlobalMap.put(newKey, previewGlobalMap.get(key));
-			previewGlobalMap.remove(key);
-			c++;
+			for (String key : toBeModified) {
+				String newKey = StringUtils.replaceOnce(key, oldKeyPrefix, newKeyPrefix);
+				previewGlobalMap.put(newKey, previewGlobalMap.get(key));
+				previewGlobalMap.remove(key);
+				c++;
+			}
 		}
 		return c;
 	}
