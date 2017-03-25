@@ -16,6 +16,8 @@ public class IntegrityFactory {
 
 	private int errorLevel = 0;
 
+	private boolean displayIntegrity = false;
+
 	private List<IntegrityBean> beans = new LinkedList<IntegrityFactory.IntegrityBean>();
 
 	public static class IntegrityBean {
@@ -42,11 +44,11 @@ public class IntegrityFactory {
 		public String getLevelLabel() {
 			return checker.getLevelLabel(ctx);
 		}
-		
+
 		public String getComponentId() {
 			return checker.getComponentId(ctx);
 		}
-		
+
 		public String getArea() {
 			return checker.getArea(ctx);
 		}
@@ -69,14 +71,18 @@ public class IntegrityFactory {
 	}
 
 	public boolean isError() {
-		for (IntegrityBean bean : beans) {
-			if (bean.getLevel() >= IIntegrityChecker.DANGER_LEVEL) {
-				return true;
+		if (!displayIntegrity) {
+			return false;
+		} else {
+			for (IntegrityBean bean : beans) {
+				if (bean.getLevel() >= IIntegrityChecker.DANGER_LEVEL) {
+					return true;
+				}
 			}
 		}
 		return false;
 	}
-	
+
 	public int getErrorCount() {
 		int error = 0;
 		for (IntegrityBean bean : beans) {
@@ -95,7 +101,8 @@ public class IntegrityFactory {
 				int maxErrorLevel = 0;
 				for (IIntegrityChecker checker : outFactory.getAllChecker(ctx)) {
 					try {
-						if ((ctx.getCurrentTemplate() != null && !ctx.getCurrentTemplate().isMailing()) || checker.isApplicableForMailing(ctx)) {
+						if ((ctx.getCurrentTemplate() != null && !ctx.getCurrentTemplate().isMailing())
+								|| checker.isApplicableForMailing(ctx)) {
 							if (ctx.getCurrentPage().isRealContent(ctx)
 									&& !checker.checkPage(ctx, ctx.getCurrentPage())) {
 								if (checker.getLevel(ctx) > maxErrorLevel) {
@@ -109,6 +116,7 @@ public class IntegrityFactory {
 					}
 				}
 				outFactory.errorLevel = maxErrorLevel;
+				outFactory.displayIntegrity = ctx.getGlobalContext().getStaticConfig().isDisplayIntegrity();
 				ctx.getRequest().setAttribute(KEY, outFactory);
 			}
 			return outFactory;

@@ -1541,6 +1541,10 @@ public class StaticConfig extends Observable {
 	public boolean isCheckContentIntegrity() {
 		return properties.getBoolean("content.check-integrity", false);
 	}
+	
+	public boolean isDisplayIntegrity() {
+		return properties.getBoolean("content.display-integrity", false);
+	}
 
 	public String getJSLibPreview() {
 		return properties.getString("preview.lib.js", null);
