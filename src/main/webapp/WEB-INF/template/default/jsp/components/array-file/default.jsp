@@ -8,7 +8,7 @@
 		<c:set var="tag" value="td" /><c:if test="${cell != null && cell.firstCol}"><c:set var="tag" value="${rowTag}" /></c:if>
 		<c:if test="${cell != null && cell.firstRow && tag eq 'td'}"><c:set var="tag" value="${colTag}" /></c:if>		 
 		<c:set var="line" value="${cellStatus.count % 2 == 0?'odd':'even'}" /><c:set var="cssClass" value=' class="${cell.type} ${line}"' />		
-		<c:set var="colHTML" value="${colHTML}<${tag}${cell.spanAttributes}${cssClass}>${cell.value}</${tag}>" />
+		<c:set var="colHTML" value="${colHTML}<${tag}${cell.spanAttributes}${cssClass} colspan='${cell.colSpan}'>${cell.value}</${tag}>" />
 		<c:set var="rowEmpty" value="false" /><c:set var="rowHTML" value="${rowHTML}${colHTML}" /><c:set var="colHTML" value="" />				
 	</c:if></c:forEach>
 <c:if test="${status.index > row[0].colTitleHeight && titlebloc}"><c:set var="titlebloc" value="false" /></${blocTag}><tbody><c:set var="closeLastBloc" value="</tbody>" /></c:if>

@@ -7,15 +7,19 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
+import java.awt.image.DataBufferByte;
 import java.awt.image.WritableRaster;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Logger;
 
 import javax.imageio.ImageIO;
@@ -28,8 +32,17 @@ import org.javlo.helper.LangHelper;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
-import org.javlo.navigation.MenuElement;
 import org.javlo.template.Template;
+import org.jcodec.api.FrameGrab;
+import org.jcodec.api.JCodecException;
+import org.jcodec.common.DemuxerTrack;
+import org.jcodec.common.FileChannelWrapper;
+import org.jcodec.common.NIOUtils;
+import org.jcodec.common.model.ColorSpace;
+import org.jcodec.common.model.Picture;
+import org.jcodec.containers.mp4.demuxer.MP4Demuxer;
+import org.jcodec.scale.ColorUtil;
+import org.jcodec.scale.Transform;
 
 /**
  * @author pvanderm
@@ -86,7 +99,7 @@ public class ImageHelper {
 		String compFilterKey = null;
 		if (comp != null) {
 			try {
-				compFilterKey = StringHelper.trimAndNullify(comp.getImageFilterKey(ctxb	));
+				compFilterKey = StringHelper.trimAndNullify(comp.getImageFilterKey(ctxb));
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -370,66 +383,121 @@ public class ImageHelper {
 		return outData;
 	}
 
-	public static void main(String[] args) throws IOException {
-		File src = new File("c:/trans/green5.jpg");
+	public static void main(String[] args) throws Exception {
+		BufferedImage bestImage = getBestImageFromVideo(new File("c:/trans/test2.mp4"));
+		ImageIO.write(bestImage, "png", new File("c:/trans/test2.png"));
+	}
 
-		int DISTANCE_MAX = ImageEngine.getColorDistance(Color.BLACK, Color.WHITE);
-		System.out.println("max distance : " + ImageEngine.getColorDistance(Color.BLACK, Color.WHITE));
+	public static BufferedImage toBufferedImage(Picture src) {
+		if (src.getColor() != ColorSpace.RGB) {
+			Transform transform = ColorUtil.getTransform(src.getColor(), ColorSpace.RGB);
+			Picture rgb = Picture.create(src.getWidth(), src.getHeight(), ColorSpace.RGB, src.getCrop());
+			transform.transform(src, rgb);
+			src = rgb;
+		}
 
-		ExtendedColor bgColor = new ExtendedColor(146, 196, 83);
-		System.out.println(bgColor.getGreenProportion());
+		BufferedImage dst = new BufferedImage(src.getCroppedWidth(), src.getCroppedHeight(),
+				BufferedImage.TYPE_3BYTE_BGR);
 
-		if (!src.exists()) {
-			System.out.println("*** file not found : " + src);
+		if (src.getCrop() == null)
+			toBufferedImage(src, dst);
+		else
+			toBufferedImageCropped(src, dst);
+
+		return dst;
+	}
+
+	private static void toBufferedImageCropped(Picture src, BufferedImage dst) {
+		byte[] data = ((DataBufferByte) dst.getRaster().getDataBuffer()).getData();
+		int[] srcData = src.getPlaneData(0);
+		int dstStride = dst.getWidth() * 3;
+		int srcStride = src.getWidth() * 3;
+		for (int line = 0, srcOff = 0, dstOff = 0; line < dst.getHeight(); line++) {
+			for (int id = dstOff, is = srcOff; id < dstOff + dstStride; id += 3, is += 3) {
+				data[id] = (byte) srcData[is];
+				data[id + 1] = (byte) srcData[is + 1];
+				data[id + 2] = (byte) srcData[is + 2];
+			}
+			srcOff += srcStride;
+			dstOff += dstStride;
+		}
+	}
+
+	public static void toBufferedImage(Picture src, BufferedImage dst) {
+		byte[] data = ((DataBufferByte) dst.getRaster().getDataBuffer()).getData();
+		int[] srcData = src.getPlaneData(0);
+		for (int i = 0; i < data.length; i++) {
+			data[i] = (byte) srcData[i];
+		}
+	}
+
+	private static int getContrast(BufferedImage image, int x, int y, int inRgb) {
+		int rgb = image.getRGB(x, y);
+		int red = Math.abs((rgb >> 16) & 0x000000FF - (inRgb >> 16) & 0x000000FF);
+		int green = Math.abs((rgb >> 8) & 0x000000FF - (inRgb >> 8) & 0x000000FF);
+		int blue = Math.abs((rgb) & 0x000000FF - (inRgb) & 0x000000FF);
+		return (red + green + blue) / 3;
+	}
+
+	public static double getContrastRatio(BufferedImage image) {
+		double allContrast = 0;
+		double ratio = image.getWidth() * image.getHeight() - (2 * image.getWidth() + 2 * image.getHeight());
+		if (image.getWidth() < 3 || image.getHeight() < 3) {
+			return -1;
 		} else {
-			BufferedImage img = ImageIO.read(src);
-			BufferedImage targetImg = new BufferedImage(img.getWidth(), img.getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
-			Color refColor = new Color(0, 174, 11);
-			int c = 0;
-			for (int x = 0; x < img.getWidth(); x++) {
-				for (int y = 0; y < img.getHeight(); y++) {
-					ExtendedColor col = new ExtendedColor(img.getRGB(x, y), true);
-					float maxColorDistance = (float) 0.20;
-					//System.out.println(ImageEngine.getColorDistanceFactor(refColor, col));
-					if (ImageEngine.getColorDistanceFactor(refColor, col) < maxColorDistance) {
-						if (ImageEngine.getColorDistanceFactor(refColor, col) < maxColorDistance - 0.1) {
-							col = new ExtendedColor(0, 0, 0, 0);
-						} else {
-							
-							ExtendedColor newColor = null;
-							int dec = 1;
-							while (newColor == null && dec < Math.max(img.getWidth(), img.getHeight()) / 2) {
-								if (ImageEngine.getColorDistanceFactor(refColor,
-										new ExtendedColor(ImageEngine.getColor(img, x - dec, y, null))) > maxColorDistance + 0.1) {
-									newColor = new ExtendedColor(ImageEngine.getColor(img, x - dec, y, null));
-								}
-								if (ImageEngine.getColorDistanceFactor(refColor,
-										new ExtendedColor(ImageEngine.getColor(img, x + dec, y, null))) > maxColorDistance  + 0.1) {
-									newColor = new ExtendedColor(ImageEngine.getColor(img, x + dec, y, null));
-								}
-								if (ImageEngine.getColorDistanceFactor(refColor,
-										new ExtendedColor(ImageEngine.getColor(img, x, y - dec, null))) > maxColorDistance  + 0.1) {
-									newColor = new ExtendedColor(ImageEngine.getColor(img, x, y - dec, null));
-								}
-								if (ImageEngine.getColorDistanceFactor(refColor,
-										new ExtendedColor(ImageEngine.getColor(img, x, y + dec, null))) > maxColorDistance  + 0.1) {
-									newColor = new ExtendedColor(ImageEngine.getColor(img, x, y + dec, null));
-								}
-								dec++;
-							}
-							//System.out.println("***** "+);
-							if (newColor != null) {
-								col = new ExtendedColor(newColor.getRed(), newColor.getGreen(), newColor.getBlue(), Math.round(255*(ImageEngine.getColorDistanceFactor(refColor, col))));
-								//col = new ExtendedColor(255, 0, 0);
-							}
-						}
-						c++;
-					}
-					targetImg.setRGB(x, y, col.getRGB());
+			for (int x = 1; x < image.getWidth() - 1; x++) {
+				for (int y = 1; y < image.getHeight() - 1; y++) {
+					int contrast = getContrast(image, x, y - 1, image.getRGB(x, y));
+					contrast += getContrast(image, x - 1, y, image.getRGB(x, y));
+					contrast += getContrast(image, x - 1, y, image.getRGB(x, y));
+					contrast += getContrast(image, x, y + 1, image.getRGB(x, y));
+					allContrast += (contrast / 4) * ratio;
 				}
 			}
-			System.out.println("c=" + c);
-			ImageIO.write(targetImg, "png", new File("c:/trans/out.png"));
 		}
+		return allContrast;
+	}
+
+	public static int getColorCount(BufferedImage image) {
+		Set<Integer> colors = new HashSet<Integer>();
+		for (int x = 1; x < image.getWidth() - 1; x++) {
+			for (int y = 1; y < image.getHeight() - 1; y++) {
+				int rgb = image.getRGB(x, y);
+				if (!colors.contains(rgb)) {
+					colors.add(rgb);
+				}
+
+			}
+		}
+		return colors.size();
+	}
+
+	/**
+	 * create a image for display video
+	 * 
+	 * @param file mp4 file
+	 * @return
+	 * @throws IOException 
+	 * @throws JCodecException 
+	 */
+	public static BufferedImage getBestImageFromVideo(File file) throws Exception {
+		FileChannelWrapper ch = NIOUtils.readableFileChannel(file);
+		MP4Demuxer demuxer = new MP4Demuxer(ch);
+		DemuxerTrack video_track = demuxer.getVideoTrack();
+		int numberOfFrame = video_track.getMeta().getTotalFrames();
+		int FRAME_SIZE = 4;
+		int bestScore = 0;
+		BufferedImage bestImage = null;
+		for (int i = 0; i < FRAME_SIZE; i++) {
+			int frameNumber = i * numberOfFrame / (FRAME_SIZE * 25);			
+			Picture frame = FrameGrab.getNativeFrame(file, frameNumber);
+			BufferedImage image = ImageHelper.toBufferedImage(frame);			
+			int currentScore = ImageHelper.getColorCount(image);			
+			if (currentScore > bestScore) {
+				bestScore = currentScore;
+				bestImage = image;
+			}			
+		}
+		return bestImage;
 	}
 }

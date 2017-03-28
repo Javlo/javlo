@@ -83,14 +83,16 @@ public class ArrayFileComponent extends GenericFile {
 			String key = data[titleRaw][0].toString();
 			Cell value = data[dataRaw][0];
 			int i = 0;
-			while ((!StringHelper.isEmpty(key) || !StringHelper.isEmpty(value)) && (i < data[titleRaw].length)) {
+			while (!StringHelper.isEmpty(value) && (i < data[titleRaw].length)) {
 				String colName = StringHelper.getColName(i);
 				internalMap.put("" + i, value.getValue());
 				internalMap.put(colName, value.getValue());
 				internalMap.put(key, value.getValue());
 				internalMap.put(colName + "_title", key);
 				value = data[dataRaw][i];
-				key = data[titleRaw][i].toString();
+				if (data[titleRaw][i] != null) {
+					key = data[titleRaw][i].toString();
+				}
 				i++;
 			}
 		}
@@ -435,6 +437,22 @@ public class ArrayFileComponent extends GenericFile {
 					}
 				}
 			}
+			
+			for (int i = 0; i < sheet.getNumMergedRegions(); i++) {
+				CellRangeAddress cellRange = sheet.getMergedRegion(i);
+				for (int x = cellRange.getFirstColumn(); x <= cellRange.getLastColumn(); x++) {
+					for (int y = cellRange.getFirstRow(); y <= cellRange.getLastRow(); y++) {
+						if (x > cellRange.getFirstColumn()) {
+							outArray[cellRange.getFirstRow()][cellRange.getFirstColumn()].setColSpan(outArray[cellRange.getFirstRow()][cellRange.getFirstColumn()].getColSpan() + 1);
+							outArray[y][x] = null;
+						}
+						if (y > cellRange.getFirstRow()) {
+							outArray[cellRange.getFirstRow()][cellRange.getFirstColumn()].setRowSpan(outArray[cellRange.getFirstRow()][cellRange.getFirstColumn()].getRowSpan() + 1);
+							outArray[y][x] = null;
+						}
+					}
+				}
+			}
 
 			calcMax(outArray);
 
@@ -521,6 +539,7 @@ public class ArrayFileComponent extends GenericFile {
 				}
 			}
 
+			System.out.println("***sheet.getNumMergedRegions() = " + sheet.getNumMergedRegions());
 			for (int i = 0; i < sheet.getNumMergedRegions(); i++) {
 				CellRangeAddress cellRange = sheet.getMergedRegion(i);
 				for (int x = cellRange.getFirstColumn(); x <= cellRange.getLastColumn(); x++) {

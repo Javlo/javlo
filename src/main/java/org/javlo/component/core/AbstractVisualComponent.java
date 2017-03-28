@@ -71,6 +71,7 @@ import org.javlo.rendering.Device;
 import org.javlo.service.PersistenceService;
 import org.javlo.service.RequestService;
 import org.javlo.servlet.IVersion;
+import org.javlo.template.Template;
 import org.javlo.user.AdminUserFactory;
 import org.javlo.user.AdminUserSecurity;
 import org.javlo.user.User;
@@ -895,7 +896,28 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 
 	@Override
 	public Collection<String> getExternalResources(ContentContext ctx) {
-		return Collections.emptyList();
+		String resources = getConfig(ctx).getProperty("resources", null);
+		Template template = null;
+		try {
+			template = ctx.getCurrentTemplate();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		if (resources != null && template != null) {
+			List<String> linkResource = StringHelper.stringToCollection(resources, ",");
+			List<String> outResource  = new LinkedList<String>();
+			for (String uri : linkResource) {				
+				if (uri.startsWith("/")) {
+					try {
+						outResource.add(URLHelper.createStaticTemplateURLWithoutContext(ctx, template, uri));
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+			}
+			return outResource;	
+		}	
+		return Collections.EMPTY_LIST;
 	}
 
 	@Override

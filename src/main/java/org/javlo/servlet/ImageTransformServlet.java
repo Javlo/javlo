@@ -567,7 +567,14 @@ public class ImageTransformServlet extends HttpServlet {
 			}
 		}
 		if (img == null) { // Image from content
-			if (inFileExtention.equalsIgnoreCase("pdf")) {
+			if (inFileExtention.equalsIgnoreCase("mp4")) {
+				try {
+					img = ImageHelper.getBestImageFromVideo(imageFile);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				imageType = DEFAULT_IMAGE_TYPE;
+			} else if (inFileExtention.equalsIgnoreCase("pdf")) {
 				img = PDFHelper.getPDFImage(imageFile, imageParam.getPage());
 				imageType = DEFAULT_IMAGE_TYPE;
 			} else if (inFileExtention.equalsIgnoreCase("svg")) {

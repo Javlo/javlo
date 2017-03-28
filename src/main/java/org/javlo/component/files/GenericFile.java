@@ -16,6 +16,7 @@ import org.javlo.context.GlobalContext;
 import org.javlo.helper.ElementaryURLHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
+import org.javlo.helper.XHTMLHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.service.ReverseLinkService;
 import org.javlo.ztatic.StaticInfo;
@@ -175,7 +176,7 @@ public class GenericFile extends AbstractFileComponent implements IReverseLinkCo
 		if (getLabel().trim().length() == 0) {
 			ctx.getRequest().setAttribute("label", getFileName());
 		} else {
-			ctx.getRequest().setAttribute("label", textToXHTML(getLabel()));
+			ctx.getRequest().setAttribute("label", XHTMLHelper.textToXHTML(getLabel()));
 		}
 	}
 
