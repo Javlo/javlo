@@ -21,6 +21,7 @@ import org.javlo.helper.URLHelper;
 import org.javlo.helper.XHTMLHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.service.ReverseLinkService;
+import org.javlo.template.TemplateFactory;
 import org.javlo.ztatic.StaticInfo;
 
 /**
@@ -160,7 +161,9 @@ public class SimpleVideo extends AbstractFileComponent implements IReverseLinkCo
 			String url = ElementaryURLHelper.mergePath(getDirSelected(), getFileName());
 			url = URLHelper.createResourceURL(ctx, getPage(), staticConfig.getFileFolder() + '/' + url);
 			ctx.getRequest().setAttribute("url", url);
+			ctx.getRequest().setAttribute("previewURL", getPreviewURL(ctx, "preview-video"));
 			ctx.getRequest().setAttribute("infoHTML", XHTMLHelper.renderStaticInfo(ctx, getStaticInfo(ctx)));
+			
 		}
 	}
 
@@ -295,6 +298,21 @@ public class SimpleVideo extends AbstractFileComponent implements IReverseLinkCo
 			return 5;
 		} else {
 			return Integer.parseInt(getConfig(ctx).getProperty("image.priority", null));
+		}
+	}
+	
+	public String getPreviewURL(ContentContext ctx, String filter) {
+		try {
+			String url = null;
+			try {
+				url = URLHelper.createTransformURL(ctx, ctx.getVirtualCurrentPage(), TemplateFactory.getTemplate(ctx, ctx.getVirtualCurrentPage()), getResourceURL(ctx, getFileName()), filter, null);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			return url;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
 		}
 	}
 
