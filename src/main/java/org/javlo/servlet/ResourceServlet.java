@@ -249,9 +249,7 @@ public class ResourceServlet extends HttpServlet {
 								response.setHeader("Accept-Ranges", "bytes");
 								response.setContentLength((int) file.length());
 								fileStream = new FileInputStream(file);
-								out = response.getOutputStream();
-								System.out.println("**** file = "+file);
-								System.out.println("**** out = "+out);
+								out = response.getOutputStream();								
 								ResourceHelper.writeStreamToStream(fileStream, out);
 							}
 						}
