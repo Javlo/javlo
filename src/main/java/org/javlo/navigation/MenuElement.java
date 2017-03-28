@@ -1857,7 +1857,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 				res = elem.getValue(noAreaCtx);
 			}
 		}
-		if (!res.contains("/")) {
+		if (!StringHelper.isEmpty(res) && !res.contains("/")) {
 			ContentService content = ContentService.getInstance(ctx.getRequest());
 			MenuElement page = content.getNavigation(noAreaCtx).searchChildFromName(res);
 			if (page != null) {

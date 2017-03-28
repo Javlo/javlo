@@ -685,7 +685,7 @@ public class XMLManipulationHelper {
 					out.println("<%}");
 					
 					/** forward **/
-					out.println("if (!StringHelper.isEmpty(currentPage.getForward(ctx))) {%><meta http-equiv=\"refresh\" content=\"0; url=<%=currentPage.getForward(ctx)%>\" /><%}%>");
+					out.println("if (!StringHelper.isEmpty(currentPage.getForward(ctx))) {%><!--FRW--><meta http-equiv=\"refresh\" content=\"0; url=<%=currentPage.getForward(ctx)%>\" /><%}%>");
 					
 					out.close();
 
