@@ -83,18 +83,19 @@ public class VFSFile extends AbstractFileComponent implements IReverseLinkCompon
 
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		String content;
+		
+		String prefixLink = URLHelper.mergePath(getRelativeFileDirectory(ctx), fullRelativeFileName);
 		try {
 			ResourceHelper.writeStreamToStream(in, out);
 			content = new String(out.toByteArray(), getEncoding());
+			content = content.replace("${vfs.url.root}",URLHelper.createVFSURL(ctx, prefixLink, ""));
 		} finally {			
 			ResourceHelper.closeResource(in);
 			ResourceHelper.closeResource(out);
 			VFSHelper.closeFileSystem(file);
 			//VFSHelper.closeManager(fsManager);
 		}
-
 		String body = XMLManipulationHelper.getHTMLBody(content.toString());
-		String prefixLink = URLHelper.mergePath(getRelativeFileDirectory(ctx), fullRelativeFileName);
 		return XMLManipulationHelper.changeLink(body, URLHelper.createVFSURL(ctx, prefixLink, ""));
 	}
 	

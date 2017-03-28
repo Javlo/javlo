@@ -250,6 +250,8 @@ public class ResourceServlet extends HttpServlet {
 								response.setContentLength((int) file.length());
 								fileStream = new FileInputStream(file);
 								out = response.getOutputStream();
+								System.out.println("**** file = "+file);
+								System.out.println("**** out = "+out);
 								ResourceHelper.writeStreamToStream(fileStream, out);
 							}
 						}
@@ -272,6 +274,7 @@ public class ResourceServlet extends HttpServlet {
 				}
 			}
 		} catch (Throwable e) {
+			logger.severe("error on : "+ctx.getRequest().getRequestURI());
 			e.printStackTrace();
 		} finally {
 			ResourceHelper.closeResource(fileStream);
@@ -280,3 +283,4 @@ public class ResourceServlet extends HttpServlet {
 	}
 
 }
+

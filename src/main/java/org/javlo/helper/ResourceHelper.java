@@ -1242,9 +1242,9 @@ public class ResourceHelper {
 	public static final int writeStreamToStream(InputStream in, OutputStream out, long maxSize) throws IOException {
 		final byte[] buffer = new byte[1024 * 4];
 		int size = 0;
-		int byteReaded = in.read(buffer);
-		while (byteReaded >= 0) {
-			size = size + byteReaded;
+		int byteReaded = in.read(buffer);		
+		while (byteReaded >= 0) {			
+			size = size + byteReaded;			
 			if (size > maxSize && maxSize > 0) {
 				return -1;
 			}

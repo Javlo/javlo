@@ -10,6 +10,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.javlo.component.core.IReverseLinkComponent;
+import org.javlo.component.image.IImageTitle;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
@@ -25,7 +26,7 @@ import org.javlo.ztatic.StaticInfo;
 /**
  * @author pvandermaesen
  */
-public class SimpleVideo extends AbstractFileComponent implements IReverseLinkComponent {
+public class SimpleVideo extends AbstractFileComponent implements IReverseLinkComponent, IImageTitle {
 
 	public static final String TYPE = "simple-video";
 
@@ -218,7 +219,7 @@ public class SimpleVideo extends AbstractFileComponent implements IReverseLinkCo
 
 	@Override
 	public boolean isRealContent(ContentContext ctx) {
-		return false;
+		return true;
 	}
 
 	@Override
@@ -269,6 +270,32 @@ public class SimpleVideo extends AbstractFileComponent implements IReverseLinkCo
 	protected String getMainFolder(ContentContext ctx) {
 		StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
 		return staticConfig.getFileFolderName();
+	}
+
+	@Override
+	public String getImageDescription(ContentContext ctx) {
+		return getLabel();
+	}
+
+	@Override
+	public String getImageLinkURL(ContentContext ctx) {
+		String url = ElementaryURLHelper.mergePath(getDirSelected(), getFileName());
+		url = URLHelper.createResourceURL(ctx, getPage(), ctx.getGlobalContext().getStaticConfig().getFileFolder() + '/' + url);
+		return url;
+	}
+
+	@Override
+	public boolean isImageValid(ContentContext ctx) {	
+		return "mp4".equalsIgnoreCase(StringHelper.getFileExtension(getFileName()));
+	}
+
+	@Override
+	public int getPriority(ContentContext ctx) {
+		if (getConfig(ctx).getProperty("image.priority", null) == null) {
+			return 5;
+		} else {
+			return Integer.parseInt(getConfig(ctx).getProperty("image.priority", null));
+		}
 	}
 
 }
