@@ -237,7 +237,7 @@ public class ResourceServlet extends HttpServlet {
 					}
 					String finalName = URLHelper.mergePath(dataFolder, resourceURI);
 					File file = new File(finalName);
-					if (!json) {
+					if (!json) {						
 						response.setContentType(ResourceHelper.getFileExtensionToMineType(fileExt));
 						response.setHeader("Cache-Control", "no-cache");
 						response.setDateHeader(NetHelper.HEADER_LAST_MODIFIED, file.lastModified());
@@ -246,7 +246,8 @@ public class ResourceServlet extends HttpServlet {
 							if (file.lastModified() > 0 && file.lastModified() / 1000 <= lastModifiedInBrowser / 1000) {
 								response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
 							} else {
-								response.setHeader("Accept-Ranges", "bytes");
+								//response.setHeader("Accept-Ranges", "bytes");
+								//response.setHeader("Content-disposition","attachment; filename="+file.getName());
 								response.setContentLength((int) file.length());
 								fileStream = new FileInputStream(file);
 								out = response.getOutputStream();								
