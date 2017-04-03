@@ -157,11 +157,13 @@ public class TemplateAction extends AbstractModuleAction {
 
 		if (templateName != null) {
 			Template template = TemplateFactory.getTemplates(ctx.getRequest().getSession().getServletContext()).get(templateName);
-			if (template == null) {
+			if (template == null) {				
 				msg = "template not found : " + templateName;
 				module.restoreAll();
-			} else {
+			} else {								
+				Map<String, List<String>> folders = template.getCSSByFolder(ctx.getRequest().getParameter("search"));				
 				ctx.getRequest().setAttribute("currentTemplate", new Template.TemplateBean(ctx, template));
+				ctx.getRequest().setAttribute("cssFolder", folders);
 				params.put("templateid", templateName);
 				FileModuleContext fileModuleContext = FileModuleContext.getInstance(ctx.getRequest());
 				fileModuleContext.clear();
@@ -174,7 +176,6 @@ public class TemplateAction extends AbstractModuleAction {
 				ctx.getRequest().setAttribute("filters", imageConfig.getFilters());
 
 				if (requestService.getParameter("filter", null) != null && requestService.getParameter("back", null) == null) {
-
 					ctx.getRequest().setAttribute("areas", template.getAreas());
 					ctx.getRequest().setAttribute("textProperties", getTextProperties());
 					ctx.getRequest().setAttribute("booleanProperties", getBooleanProperties());
@@ -186,9 +187,7 @@ public class TemplateAction extends AbstractModuleAction {
 						fileReader.close();
 						ctx.getRequest().setAttribute("values", values);
 					}
-
 					module.getMainBoxes().iterator().next().setRenderer("/jsp/images.jsp");
-
 					// module.setRenderer("/jsp/images.jsp");
 				} else if (requestService.getParameter("css", null) != null && requestService.getParameter("back", null) == null) {
 					if (module.getMainBoxes().size() > 0) {

@@ -122,6 +122,26 @@ input[readonly] {
 	margin-left: 5px;
 }
 
+.file-filter {
+	float: left;
+	width: 50%;
+	.btn {
+		margin: 0 0 1px 0;
+		line-height: auto;
+		height: 20px;
+	}
+	input {
+		max-width: 120px;
+		display: inline-block;
+	}	
+}
+
+.form-group {
+	margin-bottom: 0;
+	
+}
+
+
 /** edit images **/
 
 
@@ -191,8 +211,10 @@ input[readonly] {
 	}
 }
 
+
 @media screen and (max-width: 1700px) {
 	.gallery .display-list ul li {
 		width: 50%;
 	}
 }
+
