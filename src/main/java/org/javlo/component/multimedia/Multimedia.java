@@ -569,19 +569,6 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle, IStat
 		return writer.toString();
 	}
 
-	@Override
-	public Collection<String> getExternalResources(ContentContext ctx) {
-		Collection<String> resources = new LinkedList<String>();
-		/*
-		 * resources.add("/js/mootools.js"); resources.add("/js/global.js");
-		 * resources.add("/js/shadowbox/src/adapter/shadowbox-base.js");
-		 * resources.add("/js/shadowbox/src/shadowbox.js");
-		 * resources.add("/js/shadowboxOptions.js");
-		 * resources.add("/js/onLoadFunctions.js");
-		 */
-		return resources;
-	}
-
 	public String getFilesDirectory(ContentContext ctx) {
 		String fileDir = URLHelper.mergePath(getBaseStaticDir(ctx), getCurrentRootFolder());
 		return fileDir;
@@ -601,7 +588,7 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle, IStat
 	}
 
 	protected String getImageFilePath(ContentContext ctx, String fileLink) {
-		if (StringHelper.isImage(fileLink)) {
+		if (StringHelper.isImage(fileLink) || StringHelper.isVideo(fileLink)) {
 			return fileLink;
 		} else {
 			return FilenameUtils.getBaseName(fileLink) + ".jpg";
@@ -852,18 +839,11 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle, IStat
 
 				String previewURL = multimediaURL;
 				String fileName = ResourceHelper.removeDataFolderDir(globalContext, file.getAbsolutePath());
-				if (StringHelper.isImage(file.getName())) {
+				if (StringHelper.isImage(file.getName()) || StringHelper.isVideo(file.getName())) {
 					if (countAccess) {
 						previewURL = URLHelper.createTransformURL(lgCtx, getPage(), getImageFilePath(ctx, fileName), getPreviewFilter(file));
 					} else {
 						previewURL = URLHelper.createTransformURLWithoutCountAccess(lgCtx, getImageFilePath(ctx, fileName), getPreviewFilter(file));
-					}
-				} else if (StringHelper.isVideo(file.getName())) {
-					String imageName = StringHelper.getFileNameWithoutExtension(fileName) + ".jpg";
-					if (countAccess) {
-						previewURL = URLHelper.createTransformURL(lgCtx, getPage(), getImageFilePath(ctx, imageName), getPreviewFilter(file));
-					} else {
-						previewURL = URLHelper.createTransformURLWithoutCountAccess(lgCtx, getImageFilePath(ctx, imageName), getPreviewFilter(file));
 					}
 				} else {
 					previewURL = URLHelper.createTransformURL(lgCtx, getPage(), getImageFilePath(ctx, fileName), getTransformFilter(file));
@@ -871,18 +851,11 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle, IStat
 
 				String absolutePreviewURL = multimediaURL;
 				ContentContext absCtx = lgCtx.getContextForAbsoluteURL();
-				if (StringHelper.isImage(file.getName())) {
+				if (StringHelper.isImage(file.getName()) || StringHelper.isVideo(file.getName())) {
 					if (countAccess) {
 						absolutePreviewURL = URLHelper.createTransformURL(absCtx, getPage(), getImageFilePath(ctx, fileName), getPreviewFilter(file));
 					} else {
 						absolutePreviewURL = URLHelper.createTransformURLWithoutCountAccess(absCtx, getImageFilePath(ctx, fileName), getPreviewFilter(file));
-					}
-				} else if (StringHelper.isVideo(file.getName())) {
-					String imageName = StringHelper.getFileNameWithoutExtension(fileName) + ".jpg";
-					if (countAccess) {
-						absolutePreviewURL = URLHelper.createTransformURL(absCtx, getPage(), getImageFilePath(ctx, imageName), getPreviewFilter(file));
-					} else {
-						absolutePreviewURL = URLHelper.createTransformURLWithoutCountAccess(absCtx, getImageFilePath(ctx, imageName), getPreviewFilter(file));
 					}
 				} else {
 					absolutePreviewURL = URLHelper.createTransformURL(absCtx, getPage(), getImageFilePath(ctx, fileName), getTransformFilter(file));
@@ -903,6 +876,7 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle, IStat
 				resource.setDescription(info.getDescription(lgCtx));
 				resource.setFullDescription(StringHelper.removeTag(info.getFullDescription(lgCtx)));
 				resource.setDate(info.getDate(lgCtx));
+				resource.renderDate(lgCtx);
 				if (firstDate.getTime() > info.getDate(lgCtx).getTime()) {
 					firstDate = info.getDate(lgCtx);
 				}

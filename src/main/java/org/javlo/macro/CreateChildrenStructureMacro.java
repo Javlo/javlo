@@ -22,10 +22,10 @@ import org.javlo.template.Template;
  * create a children page structure under the current page. the structure is defined in the template in macro forder in children-structure.txt. sample file structure :
  * </p>
  * <code>
- * [parent]-general <br />
- * [parent]-technical <br />
- * >[parent]-tech-agri <br />
- * [parent]-[random] <br />
+ * >[parent]-general <br />
+ * =[parent]-technical <br />
+ * =[parent]-tech-agri <br />
+ * =[parent]-[random] <br />
  * <[parent]-financial <br />
  * </code>
  * <ul>

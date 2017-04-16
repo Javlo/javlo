@@ -1,7 +1,5 @@
 package org.javlo.component.multimedia;
 
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -103,6 +101,7 @@ public class MultimediaResource {
 	private String copyright;
 	private String mediumDate;
 	private String fullDate;
+	private String monthDate;
 	private String name;
 	private Date date;
 	private String cssClass;
@@ -263,6 +262,7 @@ public class MultimediaResource {
 			setShortDate(StringHelper.renderShortDate(ctx, getDate()));
 			setMediumDate(StringHelper.renderMediumDate(ctx, getDate()));
 			setFullDate(StringHelper.renderFullDate(ctx, getDate()));
+			setMonthDate(StringHelper.renderMonthDate(ctx, getDate()));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -461,5 +461,13 @@ public class MultimediaResource {
 		} else {
 			return null;
 		}
+	}
+
+	public String getMonthDate() {
+		return monthDate;
+	}
+
+	public void setMonthDate(String monthDate) {
+		this.monthDate = monthDate;
 	}
 }

@@ -2255,6 +2255,14 @@ public class StringHelper {
 
 		return dateFormat.format(date);
 	}
+	
+	public static String renderMonthDate(ContentContext ctx, Date date) {
+		if (date == null) {
+			return "";
+		}						
+		DateFormat dateFormat = new SimpleDateFormat("MMM yyyy", new Locale(ctx.getContextRequestLanguage()));
+		return dateFormat.format(date);
+	}
 
 	public static String renderNumber(int n, int size) {
 		NumberFormat nf = NumberFormat.getInstance();
