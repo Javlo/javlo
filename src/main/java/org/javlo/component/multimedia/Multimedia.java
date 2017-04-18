@@ -880,9 +880,9 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle, IStat
 				if (firstDate.getTime() > info.getDate(lgCtx).getTime()) {
 					firstDate = info.getDate(lgCtx);
 				}
-				resource.setShortDate(StringHelper.renderDate(resource.getDate(), globalContext.getShortDateFormat()));
-				resource.setMediumDate(StringHelper.renderDate(resource.getDate(), globalContext.getMediumDateFormat()));
-				resource.setFullDate(StringHelper.renderDate(resource.getDate(), globalContext.getFullDateFormat()));
+//				resource.setShortDate(StringHelper.renderDate(resource.getDate(), globalContext.getShortDateFormat()));
+//				resource.setMediumDate(StringHelper.renderDate(resource.getDate(), globalContext.getMediumDateFormat()));
+//				resource.setFullDate(StringHelper.renderDate(resource.getDate(), globalContext.getFullDateFormat()));
 				resource.setURL(multimediaURL);
 				resource.setAbsoluteURL(absoluteMultimediaURL);
 				resource.setTags(info.getTags(lgCtx));
