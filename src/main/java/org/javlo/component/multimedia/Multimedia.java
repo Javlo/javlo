@@ -876,7 +876,7 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle, IStat
 				resource.setDescription(info.getDescription(lgCtx));
 				resource.setFullDescription(StringHelper.removeTag(info.getFullDescription(lgCtx)));
 				resource.setDate(info.getDate(lgCtx));
-				resource.renderDate(lgCtx);
+				resource.renderDate(ctx);
 				if (firstDate.getTime() > info.getDate(lgCtx).getTime()) {
 					firstDate = info.getDate(lgCtx);
 				}
