@@ -4,6 +4,12 @@ import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.Locale;
 
+import com.google.code.geocoder.Geocoder;
+import com.google.code.geocoder.GeocoderRequestBuilder;
+import com.google.code.geocoder.model.GeocodeResponse;
+import com.google.code.geocoder.model.GeocoderAddressComponent;
+import com.google.code.geocoder.model.GeocoderRequest;
+
 public class LocationService {
 	
 	public static Location getLocation(double longitude, double latitude, String lg) throws IOException {		
@@ -13,7 +19,7 @@ public class LocationService {
 	}
 	
 	public static Location getLocation(String coord, String lg) throws IOException {
-		/*final Geocoder geocoder = new Geocoder();
+		final Geocoder geocoder = new Geocoder();
 		GeocoderRequest geocoderRequest = new GeocoderRequestBuilder().setAddress(coord).setLanguage(lg).getGeocoderRequest();
 		GeocodeResponse geocoderResponse = geocoder.geocode(geocoderRequest);
 		Location loc = new Location();
@@ -29,8 +35,7 @@ public class LocationService {
 				loc.setCountry(comp.getLongName());
 			}
 		}
-		return loc;*/
-		return null;
+		return loc;		
 	}
 	
 	public static void main(String[] args) throws IOException {

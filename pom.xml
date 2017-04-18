@@ -384,14 +384,20 @@
 			<version>1.2</version>
 		</dependency>
 		
-<!-- https://mvnrepository.com/artifact/org.jcodec/jcodec-javase -->
-<dependency>
-    <groupId>org.jcodec</groupId>
-    <artifactId>jcodec-javase</artifactId>
-    <version>0.1.9</version>
-</dependency>
-
-
+		<!-- https://mvnrepository.com/artifact/org.jcodec/jcodec -->
+		<dependency>
+		    <groupId>org.jcodec</groupId>
+		    <artifactId>jcodec</artifactId>
+		    <version>0.1.9</version>
+		</dependency>
+	
+		
+		<!-- https://mvnrepository.com/artifact/com.google.code.geocoder-java/geocoder-java -->
+		<dependency>
+    		<groupId>com.google.code.geocoder-java</groupId>
+    		<artifactId>geocoder-java</artifactId>
+    		<version>0.16</version>
+		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/org.openimaj/faces -->
 		<dependency>
