@@ -908,6 +908,10 @@ public class StaticConfig extends Observable {
 	public boolean isXSSHeader() {
 		return properties.getBoolean("security.header.xss", true);
 	}
+	
+	public boolean isLoginWithToken() {
+		return properties.getBoolean("security.login.token", false);
+	}
 
 	public String getRealPath(String path) {
 		return application.getRealPath(path);

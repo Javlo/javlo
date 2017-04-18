@@ -292,6 +292,11 @@ public class UserFactory implements IUserFactory, Serializable {
 		}
 
 		GlobalContext globalContext = GlobalContext.getInstance(request);
+		
+		if (!globalContext.getStaticConfig().isLoginWithToken()) {
+			return null;
+		}
+		
 		String realToken = globalContext.convertOneTimeToken(token);
 		if (realToken != null) {
 			token = realToken;

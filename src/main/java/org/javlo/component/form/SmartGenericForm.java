@@ -875,7 +875,13 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 					comp.countCache = null;
 					ContentContext absCtx = ctx.getContextForAbsoluteURL();
 					
-					mailService.sendMail(null, fromEmail, toEmail, ccList, bccList, subject, XHTMLHelper.createAdminMail(ctx.getCurrentPage().getTitle(ctx), "Event registration : "+comp.getCountSubscription(ctx)+"/"+comp.getLocalConfig(false).getProperty("event.alert-limit") , adminMailData, URLHelper.createURL(absCtx), "go on page >>", null), true, null, globalContext.getDKIMBean());
+					String mailAdminContent;
+					if (!StringHelper.isEmpty(comp.getLocalConfig(false).getProperty("event.alert-limit"))) {
+						mailAdminContent = XHTMLHelper.createAdminMail(ctx.getCurrentPage().getTitle(ctx), "Event registration : "+comp.getCountSubscription(ctx)+"/"+comp.getLocalConfig(false).getProperty("event.alert-limit") , adminMailData, URLHelper.createURL(absCtx), "go on page >>", null);
+					} else {
+						mailAdminContent = XHTMLHelper.createAdminMail(ctx.getCurrentPage().getTitle(ctx), "Form submit - "+comp.getCountSubscription(ctx), adminMailData, URLHelper.createURL(absCtx), "go on page >>", null);
+					}
+					mailService.sendMail(null, fromEmail, toEmail, ccList, bccList, subject, mailAdminContent, true, null, globalContext.getDKIMBean());
 					
 					if (comp.isWarningEventSite(ctx)) {
 						subject = globalContext.getContextKey() + " - WARNING Event almost full : " + ctx.getCurrentPage().getTitle(ctx);

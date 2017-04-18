@@ -14,6 +14,7 @@ import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.servlet.zip.ZipManagement;
+import org.javlo.user.AdminUserSecurity;
 
 public class ZIPServlet extends HttpServlet {
 
@@ -44,6 +45,15 @@ public class ZIPServlet extends HttpServlet {
 
 			ContentContext ctx = ContentContext.getContentContext(request, response);
 			if (ctx.getCurrentEditUser() == null) {
+				response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+				return;
+			}
+			
+			boolean right = AdminUserSecurity.getInstance().canRole(ctx.getCurrentEditUser() , AdminUserSecurity.CONTENT_ROLE);
+			right = right && !AdminUserSecurity.getInstance().canRole(ctx.getCurrentEditUser() , AdminUserSecurity.LIGHT_INTERFACE_ROLE);
+			right = right && !AdminUserSecurity.getInstance().canRole(ctx.getCurrentEditUser() , AdminUserSecurity.CONTRIBUTOR_ROLE);
+			
+			if (!right) {
 				response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 				return;
 			}
