@@ -1456,12 +1456,14 @@ public class Template implements Comparable<Template> {
 		}
 		if (deviceRenderer != null && !deviceRenderer.equals("-1")) {
 			logger.fine(
-					"device renderer found : " + deviceRenderer + " (template:" + getId() + " device:" + device + ")");
-			return deviceRenderer;
+					"device renderer found : " + deviceRenderer + " (template:" + getId() + " device:" + device + ")");			
 		} else {
-			String defaultRenderer = properties.getString("html", getParent().getHTMLFile(device));
-			return defaultRenderer;
+			deviceRenderer = properties.getString("html", getParent().getHTMLFile(device));			
 		}
+		if (!StringHelper.getFileExtension(deviceRenderer).equalsIgnoreCase("html")) {
+			throw new SecurityException("template main html file must be a '.html' file.");
+		}
+		return deviceRenderer;
 	}
 
 	public String getHTMLFileParams(Device device) {
@@ -2398,7 +2400,8 @@ public class Template implements Comparable<Template> {
 						templateTarget.getAbsolutePath()));
 				if (ctx != null) {
 					try {
-						if (FilenameUtils.getExtension(file.getName()).equalsIgnoreCase("jsp")) {
+						String fileExt = FilenameUtils.getExtension(file.getName());
+						if (fileExt.equalsIgnoreCase("jsp") || fileExt.equalsIgnoreCase("html")) {
 							ResourceHelper.filteredFileCopyEscapeScriplet(file, targetFile, map);
 						} else {
 							ResourceHelper.filteredFileCopy(file, targetFile, map);
