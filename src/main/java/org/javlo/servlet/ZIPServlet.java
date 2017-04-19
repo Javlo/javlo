@@ -50,8 +50,8 @@ public class ZIPServlet extends HttpServlet {
 			}
 			
 			boolean right = AdminUserSecurity.getInstance().canRole(ctx.getCurrentEditUser() , AdminUserSecurity.CONTENT_ROLE);
-			right = right && !AdminUserSecurity.getInstance().canRole(ctx.getCurrentEditUser() , AdminUserSecurity.LIGHT_INTERFACE_ROLE);
-			right = right && !AdminUserSecurity.getInstance().canRole(ctx.getCurrentEditUser() , AdminUserSecurity.CONTRIBUTOR_ROLE);
+			right = right && !AdminUserSecurity.getInstance().haveRole(ctx.getCurrentEditUser() , AdminUserSecurity.LIGHT_INTERFACE_ROLE);
+			right = right && !AdminUserSecurity.getInstance().haveRole(ctx.getCurrentEditUser() , AdminUserSecurity.CONTRIBUTOR_ROLE);
 			
 			if (!right) {
 				response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
