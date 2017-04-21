@@ -529,20 +529,6 @@ public class StaticConfig extends Observable {
 		return editUsers;
 	}
 
-	public String getEHCacheConfigFile() {
-		String path = properties.getString("ehcacheconfig-file", null);
-		if (path == null) {
-			return null;
-		}
-
-		path = replaceFolderVariable(path);
-
-		if (isDataFolderRelative()) {
-			path = application.getRealPath(path);
-		}
-		return path;
-	}
-
 	public String getEnv() {
 		return properties.getString("deploy.env", "prod");
 	}
@@ -1348,10 +1334,6 @@ public class StaticConfig extends Observable {
 
 	public boolean isDefaultTemplateImported() {
 		return properties.getBoolean("template.default-imported", true);
-	}
-
-	public boolean useEhCache() {
-		return properties.getBoolean("ehcache-active", false);
 	}
 
 	public int getShortURLSize() {

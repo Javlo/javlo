@@ -288,7 +288,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 				if (mainURL != null && !mainURL.endsWith(pageUrl)) {
 					// response.sendRedirect(pageUrl);
 					if (ctx.isPageRequest()) {
-						globalContext.log("url", "redirect : " + mainURL + " >> " + URLHelper.createURL(lgCtx, lgCtx.getCurrentPage()));
+						globalContext.log("url", "redirect : " + mainURL + " >> " + URLHelper.createURL(lgCtx, lgCtx.getCurrentPage())+" - ["+pageUrl+"]");
 					}
 					logger.info("redirect : " + mainURL + " >> " + URLHelper.createURL(lgCtx, lgCtx.getCurrentPage()));
 					NetHelper.sendRedirectPermanently(response, URLHelper.createURL(lgCtx, lgCtx.getCurrentPage()));
@@ -1134,7 +1134,6 @@ public class AccessServlet extends HttpServlet implements IVersion {
 		out.println("**** TEMP DIR          :  " + staticConfig.getTempDir());
 		out.println("**** IMAGE TEMP DIR    :  " + staticConfig.getImageCacheFolder());
 		out.println("**** IMAGE AUTO FOCUS  :  " + staticConfig.isAutoFocus());
-		out.println("**** EHCACHE FILE      :  " + staticConfig.getEHCacheConfigFile());
 		out.println("**** MAIL THREAD       :  " + staticConfig.isMailingThread());
 		out.println("**** MAIL HOST         :  " + staticConfig.getSMTPHost()+':'+staticConfig.getSMTPPort()+" - [connection valid:"+smtpConnect+']'); 
 		out.println("**** ALL LOG LVL       :  " + staticConfig.getAllLogLevel());
@@ -1149,7 +1148,6 @@ public class AccessServlet extends HttpServlet implements IVersion {
 		out.println("**** REDIRECT URL      :  " + staticConfig.isRedirectSecondaryURL());
 		out.println("**** INTEGRITY CHECKER :  " + staticConfig.isIntegrityCheck());
 		out.println("**** HARD USERS        :  " + StringHelper.collectionToString(staticConfig.getEditUsers().keySet(), ","));
-		out.println("**** USE EHCACHE       :  " + staticConfig.useEhCache());
 		out.println("**** TOTAL MEMORY      :  " + runtime.totalMemory() + " (" + runtime.totalMemory() / 1024 + " KB)" + " (" + runtime.totalMemory() / 1024 / 1024 + " MB)");
 		out.println("**** FREE MEMORY       :  " + runtime.freeMemory() + " (" + runtime.freeMemory() / 1024 + " KB)" + " (" + runtime.freeMemory() / 1024 / 1024 + " MB)");
 		out.println("**** THREAD ****");
