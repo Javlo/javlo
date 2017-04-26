@@ -24,6 +24,7 @@ public class GenericMessage {
 
 	int type;
 	String message = null;
+	String cleanMessage = null;
 	String key = null;
 	String URL = null;
 
@@ -57,6 +58,13 @@ public class GenericMessage {
 	public GenericMessage(String msg, String inKey, int newType) {
 		this(msg, inKey, newType, null);
 	}
+	
+	public GenericMessage(GenericMessage msg) {
+		message = msg.message;
+		key = msg.key;
+		type = msg.type;
+		URL = msg.URL;
+	}
 
 	public GenericMessage(String msg, String inKey, int newType, String inURL) {
 		message = msg;
@@ -75,8 +83,20 @@ public class GenericMessage {
 	public String getMessage() {
 		if (message == null) {
 			return "";
-		}		
-		return Encode.forHtmlContent(message); // secure CSS attack
+		}	
+		if (cleanMessage != null) {
+			return cleanMessage;
+		}
+		cleanMessage = Encode.forHtmlContent(message);
+		return  cleanMessage; // secure CSS attack
+	}
+	
+	public String getCleanMessage() {
+		return cleanMessage;
+	}
+	
+	public void setCleanMessage(String cleanMessage) {
+		this.cleanMessage = cleanMessage;
 	}
 
 	/**
@@ -157,7 +177,7 @@ public class GenericMessage {
 	}
 
 	public String getRawMessage() {
-		return StringHelper.collectionToString(Arrays.asList(new String[] { "" + type, message, StringHelper.neverNull(key), StringHelper.neverNull(URL) }), ",");
+		return StringHelper.collectionToString(Arrays.asList(new String[] { "" + type, getMessage(), StringHelper.neverNull(key), StringHelper.neverNull(URL) }), ",");
 	}
 
 	@Override

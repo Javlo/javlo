@@ -1,4 +1,4 @@
-hange log
+change log
 
 * 2.0 [15/06/2012]
 
@@ -852,5 +852,7 @@ hange log
   
  * 2.1.0.3.24 24/03/17
  
-  * 1/ expose mount date in multimedia resource / geocoder reactivation
+  * 1/ expose mount date in multimedia resource / geocoder reactivation / reverse link in message / breadcrumb as title in page reference
+  
+    
  

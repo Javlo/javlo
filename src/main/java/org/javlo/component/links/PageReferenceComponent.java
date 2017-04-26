@@ -39,6 +39,7 @@ import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.LocalLogger;
 import org.javlo.helper.MacroHelper;
+import org.javlo.helper.NavigationHelper;
 import org.javlo.helper.PaginationContext;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.TimeHelper;
@@ -1574,7 +1575,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 			params.put("parentURL", URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.PREVIEW_MODE), page.getPath()));
 			editPageURL = URLHelper.createURL(ctx, page.getPath(), params);
 		}
-		out.print("<tr class=\"filtered\"><td><a href=\"" + editPageURL + "\">" + page.getFullLabel(ctx) + "</a></td>");
+		out.print("<tr class=\"filtered\"><td><a data-toggle=\"tooltip\" data-placement=\"right\" title=\""+NavigationHelper.getBreadCrumb(ctx, page)+"\" href=\"" + editPageURL + "\">" + page.getFullLabel(ctx) + "</a></td>");
 		out.print("<td>" + StringHelper.neverNull(StringHelper.renderLightDate(page.getContentDate(ctx))) + "</td>");
 		out.println("<td>" + StringHelper.renderLightDate(page.getModificationDate()) + "</td><td>" + ctx.getRequestContentLanguage() + "</td>");
 		String contentCode = "";

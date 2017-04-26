@@ -278,7 +278,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 					}
 				}
 			}
-
+			
 			if (ctx.isAsViewMode() && ctx.isContentFound() && ctx.getCurrentPage() != null && staticConfig.isRedirectSecondaryURL() && !ctx.isPostRequest() && StringHelper.isEmpty(request.getQueryString())) {
 				ContentContext lgCtx = new ContentContext(ctx);
 				lgCtx.setContentLanguage(ctx.getRequestContentLanguage());

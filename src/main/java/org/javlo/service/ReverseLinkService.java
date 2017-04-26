@@ -265,7 +265,7 @@ public class ReverseLinkService {
 										linkInfo.append("</span>");
 										if (componentPage != null && ctx.getRequest().getAttribute("replaced-" + componentPage.hashCode()) == null) {
 											if (!componentPage.getComponent().isOnlyThisPage() || componentPage.getPage().equals(currentPage)) {
-												if (!url.equals(URLHelper.createURL(ctx, comp.getPage()))) {
+												if (comp  == null || !url.equals(URLHelper.createURL(ctx, comp.getPage()))) {
 													remplacement.addReplacementIfPossible(textPos, textPos + text.length(), linkInfo + "<a class=\"reverse-link-preview\" href=\"" + url + "\" id=\"link-" + randomId + "\">" + text + "</a>");
 												}
 											}
@@ -276,7 +276,7 @@ public class ReverseLinkService {
 									if (!componentPage.getComponent().isOnlyThisPage() || componentPage.getPage().getId().equals(currentPage.getId())) {
 										if (ctx.getRequest().getAttribute("replaced-" + componentPage.hashCode()) == null) {
 											/* no link on him self */
-											if (!url.equals(URLHelper.createURL(ctx, comp.getPage()))) {
+											if (comp == null || !url.equals(URLHelper.createURL(ctx, comp.getPage()))) {
 												remplacement.addReplacementIfPossible(textPos, textPos + text.length(), "<a href=\"" + url + "\"" + target + ">" + text + "</a>");
 											}
 										}

@@ -17,6 +17,9 @@ import org.javlo.helper.URLHelper;
 import org.javlo.i18n.I18nMessage;
 import org.javlo.service.NotificationService;
 import org.javlo.service.RequestService;
+import org.javlo.service.ReverseLinkService;
+import org.javlo.service.exception.ServiceException;
+import org.owasp.encoder.Encode;
 
 /**
  * contain the list of message.
@@ -35,6 +38,9 @@ public class MessageRepository {
 	private final HttpServletRequest request;
 
 	private GenericMessage globalMessage = GenericMessage.EMPTY_MESSAGE;
+	
+	private ReverseLinkService reverseLinkService = null;
+	private ContentContext ctx = null;
 
 	/**
 	 * create a static logger.
@@ -46,7 +52,15 @@ public class MessageRepository {
 	}
 
 	public static final MessageRepository getInstance(ContentContext inCtx) {
-		return getInstance(inCtx.getRequest());
+		MessageRepository outInstance = getInstance(inCtx.getRequest());
+		try {
+			outInstance.reverseLinkService = ReverseLinkService.getInstance(inCtx.getGlobalContext());
+			outInstance.ctx = inCtx;
+		} catch (ServiceException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 
+		return outInstance;
 	}
 
 	public static final MessageRepository getInstance(HttpServletRequest request) {
@@ -118,6 +132,18 @@ public class MessageRepository {
 	}
 
 	public GenericMessage getGlobalMessage() {
+		if (reverseLinkService != null && globalMessage != null) {
+			String message = globalMessage.getMessage();			
+			try {	
+				GenericMessage rlMsg= new GenericMessage(message, globalMessage.key, globalMessage.type, globalMessage.URL);
+				message = Encode.forHtmlContent(message);
+				message = reverseLinkService.replaceLink(ctx, null, message);	
+				rlMsg.setCleanMessage(message);
+				return rlMsg;
+			} catch (Exception e) {
+				e.printStackTrace();
+			}						
+		}
 		return globalMessage;
 	}
 

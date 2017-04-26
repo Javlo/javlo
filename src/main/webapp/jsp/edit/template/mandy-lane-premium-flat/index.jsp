@@ -281,7 +281,6 @@
 </c:if>
 </c:if>
 </div><!--maincontent-->
-
 <br />
 <c:if test="${empty param.previewEdit}">
 <div id="footer" class="footer footer_float">

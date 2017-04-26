@@ -487,4 +487,16 @@ public class NavigationHelper {
 		}
 		return page;
 	}
+	
+	public static String getBreadCrumb(ContentContext ctx, MenuElement page) throws Exception {
+		String outPath = "";
+		MenuElement parent = page;
+		String sep = "";
+		while (parent != null) {
+			outPath = parent.getLabel(ctx)+sep+outPath;
+			sep = " > ";
+			parent = parent.getParent();
+		}
+		return outPath;
+	}
 }
