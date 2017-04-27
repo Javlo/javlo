@@ -1,4 +1,4 @@
-change log
+hange log
 
 * 2.0 [15/06/2012]
 
@@ -852,7 +852,9 @@ change log
   
  * 2.1.0.3.24 24/03/17
  
-  * 1/ expose mount date in multimedia resource / geocoder reactivation / reverse link in message / breadcrumb as title in page reference
+  * 1/ expose mount date in multimedia resource / geocoder reactivation / reverse link in message
   
-    
+  * 2/ Resource description can be removed from config / remove '/' at the end of the url
+  
+  * 3/
  
