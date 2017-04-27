@@ -70,8 +70,12 @@ public class ExifHelper {
 				final TiffField field = jpegMetadata.findEXIFValueWithExactMatch(ExifTagConstants.EXIF_TAG_DATE_TIME_ORIGINAL);
 				if (field != null) {
 					try {
-						SimpleDateFormat format = new SimpleDateFormat("yyyy:MM:dd HH:mm:ss");
-						return format.parse(field.getValue().toString());
+						final String FORMAT = "yyyy:MM:dd HH:mm:ss";
+						SimpleDateFormat format = new SimpleDateFormat(FORMAT);
+						String dateStr = field.getValue().toString().trim();
+						if (dateStr.length() == FORMAT.length()) {
+							return format.parse(dateStr);
+						}
 					} catch (ParseException e) {
 						e.printStackTrace();
 					}
@@ -208,5 +212,10 @@ public class ExifHelper {
 				ResourceHelper.closeResource(os);
 			}
 		}
+	}
+	
+	public static void main(String[] args) throws ImageReadException, IOException {
+		File test = new File("c:/trans/_test.png");
+		System.out.println("date : "+readDate(test));
 	}
 }

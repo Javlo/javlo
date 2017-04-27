@@ -1180,6 +1180,10 @@ public class StaticConfig extends Observable {
 	public boolean isMailingThread() {
 		return StringHelper.isTrue(properties.getString("mailing.thread", "true"));
 	}
+	
+	public boolean isStaticInfoDescription() {
+		return StringHelper.isTrue(properties.getString("static-info.description", "true"));
+	}
 
 	public boolean isNotificationThread() {
 		return StringHelper.isTrue(properties.getString("noctification.thread", "true"));

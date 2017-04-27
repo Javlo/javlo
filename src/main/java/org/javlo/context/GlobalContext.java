@@ -1621,7 +1621,11 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		if (ctx.getRenderMode() == ContentContext.VIEW_MODE) {
 			String keyURL = url;
 			if (urlCreator != null) {
-				keyURL = urlCreator.createURLKey(url);
+				String urlRef = url;
+				if (urlRef.length()>1&&urlRef.endsWith("/")) {
+					urlRef = url.substring(0, urlRef.length()-1);
+				}
+				keyURL = urlCreator.createURLKey(urlRef);
 			}
 
 			MenuElement page = localViewPages.get(keyURL);

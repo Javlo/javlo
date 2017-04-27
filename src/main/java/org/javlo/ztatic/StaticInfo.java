@@ -52,6 +52,8 @@ public class StaticInfo {
 	public static final int DEFAULT_FOCUS_X = 500;
 
 	public static final int DEFAULT_FOCUS_Y = 500;
+	
+	private boolean isDescription = true;
 
 	/**
 	 * create a static logger.
@@ -685,6 +687,7 @@ public class StaticInfo {
 
 		if (outStaticInfo == null) {
 			StaticInfo staticInfo = new StaticInfo();
+			staticInfo.isDescription = ctx.getGlobalContext().getStaticConfig().isStaticInfoDescription();
 			// init creation data
 			staticInfo.getCreationDate(ctx);
 			staticInfo.staticURL = inStaticURL;
@@ -790,6 +793,9 @@ public class StaticInfo {
 	}
 
 	public String getDescription(ContentContext ctx) {
+		if (!isDescription) {
+			return "";
+		}
 		if (getManualDescription(ctx).length() > 0) {
 			return getManualDescription(ctx);
 		} else {
@@ -889,8 +895,15 @@ public class StaticInfo {
 	public String getManualTitle(ContentContext ctx) {
 		ContentService content = ContentService.getInstance(ctx.getGlobalContext());
 		String key = getKey("title-" + ctx.getRequestContentLanguage());
-		//System.out.println("***** StaticInfo.getManualTitle : key = "+key); //TODO: remove debug trace
-		String title = content.getAttribute(ctx, key, "");
+		String title = content.getAttribute(ctx, key, "");				
+		if (!isDescription && StringHelper.isEmpty(title)) {
+			String description = getManualDescription(ctx);
+			if (!StringHelper.isEmpty(description)) {
+				setDescription(ctx, "");
+				setTitle(ctx, description);
+				return description;
+			}
+		}
 		return title;
 	}
 

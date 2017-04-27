@@ -877,7 +877,11 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 
 	@Override
 	public boolean isImageValid(ContentContext ctx) {
-		return getImageField(ctx) != null;
+		FieldImage field = getImageField(ctx);
+		if (field != null) {
+			return StringHelper.isImage(field.getCurrentFile());
+		}
+		return false;
 	}
 
 	@Override

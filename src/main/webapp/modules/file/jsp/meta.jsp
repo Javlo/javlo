@@ -127,10 +127,10 @@
 			<label for="title-${file.id}">${i18n.edit["field.title"]}</label>			
 			<input ${metaReadOnly?'readonly="readonly"':''} class="file-title" type="text" id="title-${file.id}" name="title-${file.id}" value="<c:out value="${file.title}" escapeXml="true" />" />
 		</div>
-		<div class="line">
+		<c:if test="${globalContext.staticConfig.staticInfoDescription}"><div class="line">
 			<label for="description-${file.id}">${i18n.edit["field.description"]}</label>
 			<textarea ${metaReadOnly?'readonly="readonly"':''} class="file-description" id="description-${file.id}" name="description-${file.id}" rows="5" cols="10">${file.description}</textarea>
-		</div>
+		</div></c:if>
 		<div class="line">
 			<label for="location-${file.id}">${i18n.edit["field.location"]} <c:if test="${not empty file.position}">
 			<a class="set-location" title="get location from image" href="#" onclick="loadLocalisation('${info.currentAjaxURL}', ${file.position.longitude}, ${file.position.latitude},'${info.language}', '#location-${file.id}'); return false;">

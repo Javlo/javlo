@@ -847,7 +847,6 @@ public class ContentContext {
 			} else {
 				if (getPath().trim().length() > 0) {
 					MenuElement elem = globalContext.getPageIfExist(this, getPath(), urlFacotry);
-
 					if (elem != null) {
 						if (getRenderMode() != EDIT_MODE && !NetHelper.isIPAccepted(this)) {
 							if (!StringHelper.isEmpty(elem.getIpSecurityErrorPageName())) {

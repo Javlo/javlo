@@ -70,22 +70,29 @@ InfoBean.updateInfoBean(ctx);
 			</li>
 		</c:forEach>
 	</ul>
+	<br />
 	<form action="${info.editTemplateURL}/im.jsp" class="im-form">
 		<input type="hidden" name="lastMessageId" value="${lastMessageId}" />
-		<select name="receiver">
-			<option value="">-${i18n.edit['im.label.all-users']}-</option>
-			<c:forEach var="entry" items="${users}">
-				<c:if test="${entry.key != currentUser}">
-					<option style="color: ${entry.value.color};" value="${entry.value.username}">${entry.value.username}</option>
-				</c:if>
-			</c:forEach>
-		</select>
-		<input name="message" type="text" placeholder="${i18n.edit['im.label.message']}" />
-		<input type="submit" value="${i18n.edit['im.action.send']}" /><%
+		<div class="form-group">
+			<select name="receiver" class="form-control">
+				<option value="">-${i18n.edit['im.label.all-users']}-</option>
+				<c:forEach var="entry" items="${users}">
+					<c:if test="${entry.key != currentUser}">
+						<option style="color: ${entry.value.color};" value="${entry.value.username}">${entry.value.username}</option>
+					</c:if>
+				</c:forEach>
+			</select>
+		</div>
+		<div class="form-group">
+		<input name="message" type="text" placeholder="${i18n.edit['im.label.message']}" class="form-control" />
+		</div><div class="form-group">
+		
+		<input type="submit" value="${i18n.edit['im.action.send']}" class="btn btn-default btn-sm" /><%
 		if (globalContext.isWizz()) {
 		%>		
-		<input id="im-send-wizz" type="button" value="${i18n.edit['im.action.send-wizz']}" /><%
+		<input id="im-send-wizz" type="button" value="${i18n.edit['im.action.send-wizz']}" class="btn btn-default btn-sm" /><%
 		}%>		
+		</div>
 	</form>
 </div>
 <script>
