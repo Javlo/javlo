@@ -175,13 +175,12 @@ public class StaticConfig extends Observable {
 				staticConfigLocalisation = webappProps.getProperty(STATIC_CONFIG_KEY);
 				if (application != null) {
 					if (staticConfigLocalisation == null || staticConfigLocalisation.trim().length() == 0 || staticConfigLocalisation.contains("${")) {
-						staticConfigLocalisation = application.getRealPath(DEFAULT_CONFIG_DIR + "/" + FILE_NAME);
+						staticConfigLocalisation = ResourceHelper.getRealPath(application, DEFAULT_CONFIG_DIR + "/" + FILE_NAME);
 					} else {
-						staticConfigLocalisation = ElementaryURLHelper.mergePath(staticConfigLocalisation, FILE_NAME);
-
+						staticConfigLocalisation = ElementaryURLHelper.mergePath(staticConfigLocalisation, FILE_NAME);						
 						boolean staticConfigRelative = Boolean.parseBoolean(webappProps.getProperty(STATIC_CONFIG_RELATIVE_KEY));
 						if (staticConfigRelative) {
-							staticConfigLocalisation = application.getRealPath(staticConfigLocalisation);
+							staticConfigLocalisation = ResourceHelper.getRealPath(application,staticConfigLocalisation);
 						}
 					}
 				}
@@ -300,7 +299,7 @@ public class StaticConfig extends Observable {
 		String folder = properties.getString("data-folder", "/WEB-INF/data-ctx/");
 		folder = replaceFolderVariable(folder);
 		if (isDataFolderRelative() && application != null) {
-			folder = application.getRealPath(folder);
+			folder = ResourceHelper.getRealPath(application, folder);
 		}
 		return folder;
 	}
@@ -369,7 +368,7 @@ public class StaticConfig extends Observable {
 		path = replaceFolderVariable(path);
 
 		if (isDataFolderRelative()) {
-			path = application.getRealPath(path);
+			path = ResourceHelper.getRealPath(application, path);
 		}
 		return path;
 	}
@@ -607,7 +606,7 @@ public class StaticConfig extends Observable {
 	public String getI18nEditFile() {
 		String file = replaceFolderVariable(properties.getString("i18n.file.edit", "/WEB-INF/i18n/edit_"));
 		if (isI18nFileRelative() && application != null) {
-			file = application.getRealPath(file);
+			file = ResourceHelper.getRealPath(application, file);
 		}
 		return file;
 	}
@@ -617,7 +616,7 @@ public class StaticConfig extends Observable {
 	public String getI18nSpecificEditFile() {
 		String file = replaceFolderVariable(properties.getString("i18n.file.specific-edit", "/WEB-INF/i18n/specific_edit_"));
 		if (isI18nFileRelative() && application != null) {
-			file = application.getRealPath(file);
+			file = ResourceHelper.getRealPath(application, file);
 		}
 		return file;
 	}
@@ -625,7 +624,7 @@ public class StaticConfig extends Observable {
 	public String getI18nSpecificViewFile() {
 		String file = replaceFolderVariable(properties.getString("i18n.file.specific-view", "/WEB-INF/i18n/specific_view_"));
 		if (isI18nFileRelative() && application != null) {
-			file = application.getRealPath(file);
+			file = ResourceHelper.getRealPath(application, file);
 		}
 		return file;
 	}
@@ -633,7 +632,7 @@ public class StaticConfig extends Observable {
 	public String getI18nViewFile() {
 		String file = replaceFolderVariable(properties.getString("i18n.file.view", "/WEB-INF/i18n/view_"));
 		if (isI18nFileRelative() && application != null) {
-			file = application.getRealPath(file);
+			file = ResourceHelper.getRealPath(application, file);
 		}
 		return file;
 	}
@@ -776,7 +775,7 @@ public class StaticConfig extends Observable {
 	public String getMailingFolder() {
 		String outMailingFolder = getLocalMailingFolder();
 		if (isDataFolderRelative()) {
-			outMailingFolder = application.getRealPath(outMailingFolder);
+			outMailingFolder = ResourceHelper.getRealPath(application, outMailingFolder);
 		}
 		return outMailingFolder;
 	}
@@ -784,7 +783,7 @@ public class StaticConfig extends Observable {
 	public String getMailingHistoryFolder() {
 		String outMailingFolder = getLocalMailingHistoryFolder();
 		if (isDataFolderRelative()) {
-			outMailingFolder = application.getRealPath(outMailingFolder);
+			outMailingFolder = ResourceHelper.getRealPath(application, outMailingFolder);
 		}
 		return outMailingFolder;
 	}
@@ -792,14 +791,14 @@ public class StaticConfig extends Observable {
 	public String getMailingTrashFolder() {
 		String outMailingFolder = getLocalMailingTrashFolder();
 		if (isDataFolderRelative()) {
-			outMailingFolder = application.getRealPath(outMailingFolder);
+			outMailingFolder = ResourceHelper.getRealPath(application, outMailingFolder);
 		}
 		return outMailingFolder;
 	}
 
 	public String getMailingTemplateFolder() {
 		if (isDataFolderRelative()) {
-			return application.getRealPath(getLocalMailingTemplateFolder());
+			return ResourceHelper.getRealPath(application, getLocalMailingTemplateFolder());
 		} else {
 			return getLocalMailingTemplateFolder();
 		}
@@ -900,7 +899,7 @@ public class StaticConfig extends Observable {
 	}
 
 	public String getRealPath(String path) {
-		return application.getRealPath(path);
+		return ResourceHelper.getRealPath(application, path);
 	}
 
 	public String getSecretKey() {
@@ -993,7 +992,7 @@ public class StaticConfig extends Observable {
 			return null;
 		}
 		if (isDataFolderRelative()) {
-			return application.getRealPath(getLocalTempDir());
+			return ResourceHelper.getRealPath(application, getLocalTempDir());
 		} else {
 			return getLocalTempDir();
 		}
@@ -1001,7 +1000,7 @@ public class StaticConfig extends Observable {
 
 	public String getTemplateFolder() {
 		if (isDataFolderRelative()) {
-			return application.getRealPath(getLocalTemplateFolder());
+			return ResourceHelper.getRealPath(application, getLocalTemplateFolder());
 		} else {
 			return replaceFolderVariable(getLocalTemplateFolder());
 		}
@@ -1009,12 +1008,12 @@ public class StaticConfig extends Observable {
 
 	public String getDefaultTemplateFolder() {
 		String path = properties.getString("template-default", "/WEB-INF/config/default-template");
-		return application.getRealPath(path);
+		return ResourceHelper.getRealPath(application, path);
 	}
 
 	public String getTemplatePluginFolder() {
 		if (isDataFolderRelative()) {
-			return application.getRealPath(getLocalTemplatePluginFolder());
+			return ResourceHelper.getRealPath(application, getLocalTemplatePluginFolder());
 		} else {
 			return getLocalTemplatePluginFolder();
 		}
@@ -1023,10 +1022,10 @@ public class StaticConfig extends Observable {
 	public String getThreadFolder() {
 		String threadFolder;
 		if (isDataFolderRelative()) {
-			threadFolder = application.getRealPath(getLocalThreadFolder());
+			threadFolder = ResourceHelper.getRealPath(application, getLocalThreadFolder());
 		} else {
 			threadFolder = getLocalThreadFolder();
-		}
+		}		
 		File theadFolderFile = new File(threadFolder);
 		if (!theadFolderFile.exists()) {
 			theadFolderFile.mkdirs();
@@ -1038,7 +1037,7 @@ public class StaticConfig extends Observable {
 		String path = properties.getString("trash-context-folder", "/trash-context-folder");
 		path = replaceFolderVariable(path);
 		if (isDataFolderRelative()) {
-			path = application.getRealPath(path);
+			path = ResourceHelper.getRealPath(application, path);
 		}
 		return path;
 	}
@@ -1049,7 +1048,7 @@ public class StaticConfig extends Observable {
 		path = replaceFolderVariable(path);
 
 		if (isDataFolderRelative()) {
-			path = application.getRealPath(path);
+			path = ResourceHelper.getRealPath(application, path);
 		}
 		return path;
 	}

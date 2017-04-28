@@ -44,7 +44,7 @@ googleOauth.setClientSecret(ctx.getGlobalContext().getStaticConfig().getOauthGoo
         <style type="text/css">
 		@font-face {
     		font-family: "javloFont";
-    		src: url('${info.staticRootURL}fonts/Javlo-Italic.ttf') format("truetype");
+    		src: url('${info.staticRootURL}fonts/javlo-italic.ttf') format("truetype");
 		}
 		</style>
 		<c:if test="${not empty globalContext.staticConfig.oauthGoogleIdClient && not nogoogle}">

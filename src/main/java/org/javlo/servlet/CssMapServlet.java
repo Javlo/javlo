@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 
 import org.javlo.context.GlobalContext;
+import org.javlo.helper.ResourceHelper;
 
 public class CssMapServlet extends HttpServlet {
 
@@ -25,7 +26,7 @@ public class CssMapServlet extends HttpServlet {
 		}
 		String cssPath = path;
 		path = path.substring(0, path.length()-".css.map".length())+".less";		
-		File lessFile = new File(httpRequest.getSession().getServletContext().getRealPath(path));		
+		File lessFile = new File(ResourceHelper.getRealPath(httpRequest.getSession().getServletContext(),path));		
 		if (!lessFile.exists()) {			
 			resp.setStatus(404);
 			return;

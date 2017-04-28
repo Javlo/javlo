@@ -23,7 +23,7 @@ public class MimeTypeServlet  extends HttpServlet {
 	
 	private synchronized String getImage() throws IOException {
 		if (svg == null) {
-			File svgFile = new File(getServletContext().getRealPath(URLHelper.mergePath(URLHelper.MINETYPE_FOLDER, "generic.svg")));
+			File svgFile = new File(ResourceHelper.getRealPath(getServletContext(),URLHelper.mergePath(URLHelper.MINETYPE_FOLDER, "generic.svg")));
 			if (!svgFile.exists()) {
 				logger.warning("file not found : "+svgFile);
 				return null;

@@ -40,7 +40,8 @@ public class CssCompilationFilter implements Filter {
 		if (path.startsWith('/' + globalContext.getContextKey())) {
 			path = path.replaceFirst('/' + globalContext.getContextKey(), "");
 		}
-		File cssFile = new File(httpRequest.getSession().getServletContext().getRealPath(path));
+		//File cssFile = new File(httpRequest.getSession().getServletContext().getRealPath(path));
+		File cssFile = new File(ResourceHelper.getRealPath(httpRequest.getSession().getServletContext(), path));
 		boolean compileFile = !cssFile.exists();
 		File lessFile = new File(cssFile.getAbsolutePath().substring(0, cssFile.getAbsolutePath().length() - 4) + ".less");
 		File sassFile = new File(cssFile.getAbsolutePath().substring(0, cssFile.getAbsolutePath().length() - 4) + ".scss");

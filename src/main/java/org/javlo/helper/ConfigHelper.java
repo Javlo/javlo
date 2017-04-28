@@ -158,10 +158,10 @@ public class ConfigHelper {
 	}
 
 	public static final List<Properties> getDynamicComponentsProperties(ServletContext serveltContext) throws IOException {
-		if (serveltContext.getRealPath(COMPONENTS_PROPERTIES_FOLDER) == null) {
+		if (ResourceHelper.getRealPath(serveltContext,COMPONENTS_PROPERTIES_FOLDER) == null) {
 			return Collections.emptyList();
 		}
-		File dynCompDir = new File(serveltContext.getRealPath(COMPONENTS_PROPERTIES_FOLDER));
+		File dynCompDir = new File(ResourceHelper.getRealPath(serveltContext, COMPONENTS_PROPERTIES_FOLDER));
 		List<Properties> outProperties = new LinkedList<Properties>();
 		File[] propertiesFile = dynCompDir.listFiles(new PropertiesFilter());
 		if (propertiesFile != null) {

@@ -31,7 +31,7 @@ public class ImageIOLeakTest {
 		if (application == null) {
 			file = new File("d:/trans/test.jpg");
 		} else {
-			file = new File(application.getRealPath("/images/logo.png"));
+			file = new File(ResourceHelper.getRealPath(application,"/images/logo.png"));
 		}
 
 		if (!file.exists()) {

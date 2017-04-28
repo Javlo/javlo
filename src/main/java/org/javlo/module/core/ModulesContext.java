@@ -15,6 +15,7 @@ import java.util.Map;
 import java.util.TreeSet;
 import java.util.logging.Logger;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -27,6 +28,7 @@ import org.javlo.actions.IModuleAction;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.context.UserInterfaceContext;
+import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.helper.VFSHelper;
@@ -106,10 +108,12 @@ public class ModulesContext {
 
 	public void loadModule(HttpSession session, GlobalContext globalContext) throws ModuleException {
 		IUserFactory userFactory = AdminUserFactory.createUserFactory(globalContext, session);
-		File modulesFolder = new File(session.getServletContext().getRealPath(MODULES_FOLDER));
-		File externalModulesFolder = new File(session.getServletContext().getRealPath(EXTERNAL_MODULES_FOLDER));
+		ServletContext application = session.getServletContext();
+		
+		File modulesFolder = new File(ResourceHelper.getRealPath(application,MODULES_FOLDER));
+		File externalModulesFolder = new File(ResourceHelper.getRealPath(application,EXTERNAL_MODULES_FOLDER));
 
-		File externalModulesFolderJar = new File(session.getServletContext().getRealPath(EXTERNAL_MODULES_FOLDER_JAR));
+		File externalModulesFolderJar = new File(ResourceHelper.getRealPath(application,EXTERNAL_MODULES_FOLDER_JAR));
 		externalModulesFolderJar.mkdirs(); // TODO: remove this
 
 		List<Module> localModules = new LinkedList<Module>();
@@ -123,13 +127,13 @@ public class ModulesContext {
 			localModules.clear();
 			allModules.clear();
 			
-			String webappRoot = session.getServletContext().getRealPath("/");
+			String webappRoot = ResourceHelper.getRealPath(application,"/");
 			for (File dir : allModulesFolder) {
 				if (dir.isDirectory()) {
 					File configFile = new File(URLHelper.mergePath(dir.getAbsolutePath(), "config.properties"));
 					if (configFile.exists()) {
-						try {							
-							String moduleRoot = StringHelper.cleanPath(dir.getAbsolutePath().replace(webappRoot, "/"));
+						try {		
+							String moduleRoot = StringHelper.cleanPath(dir.getAbsolutePath()).replace(StringHelper.cleanPath(webappRoot), "/");
 							Module module = new Module(configFile, new Locale(globalContext.getEditLanguage(session)), moduleRoot, globalContext.getPathPrefix());
 							if (module.haveRight(session, userFactory.getCurrentUser(session)) && globalContext.getModules().contains(module.getName())) {
 								localModules.add(module);

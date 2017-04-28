@@ -1330,7 +1330,8 @@ public class URLHelper extends ElementaryURLHelper {
 			}
 		} else {
 			String mineType = ResourceHelper.getFileExtensionToMineType(fileType).replace('/', '-').toLowerCase();
-			File imageFile = new File(URLHelper.mergePath(ctx.getRequest().getSession().getServletContext().getRealPath(imageFolder), mineType + ".svg"));
+			//File imageFile = new File(URLHelper.mergePath(ctx.getRequest().getSession().getServletContext().getRealPath(imageFolder), mineType + ".svg"));
+			File imageFile = new File(URLHelper.mergePath(ResourceHelper.getRealPath(ctx.getRequest().getSession().getServletContext(),imageFolder), mineType + ".svg"));
 			if (imageFile.exists()) {
 				return createStaticURL(ctx, imageFolder + mineType + ".svg");
 			} else {

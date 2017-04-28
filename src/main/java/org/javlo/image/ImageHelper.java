@@ -85,7 +85,7 @@ public class ImageHelper {
 		if (param.getPage() > 1) {
 			pageIndice = "page_" + param.getPage() + "/";
 		}
-		String out = context + '/' + filter + '/' + deviceCode + '/' + area + '/' + pageIndice;
+		String out = StringHelper.createFileName(context) + '/' + StringHelper.createFileName(filter) + '/' + deviceCode + '/' + area + '/' + StringHelper.createFileName(pageIndice);
 		if (param.isLowDef()) {
 			out = URLHelper.mergePath(out, "low") + "/";
 		}

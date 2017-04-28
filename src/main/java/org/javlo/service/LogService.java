@@ -71,7 +71,7 @@ public class LogService {
 		StaticConfig staticConfig = StaticConfig.getInstance(application);
 		String path = staticConfig.getLogFile();
 		File logFile;
-		logFile = new File(application.getRealPath(path));
+		logFile = new File(ResourceHelper.getRealPath(application,path));
 		if (!logFile.exists()) {
 			addLine(Level.SEVERE, "Log file not found: " + logFile);
 			return;

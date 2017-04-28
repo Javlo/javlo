@@ -28,6 +28,7 @@ import org.javlo.context.GlobalContext;
 import org.javlo.helper.ElementaryURLHelper;
 import org.javlo.helper.NavigationHelper;
 import org.javlo.helper.NetHelper;
+import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.ServletHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
@@ -1202,7 +1203,8 @@ public class InfoBean {
 	}
 
 	public boolean isLocalModule() {
-		String localModulePath = ctx.getRequest().getSession().getServletContext().getRealPath("/webstart/localmodule.jnlp.jsp");
+		//String localModulePath = ctx.getRequest().getSession().getServletContext().getRealPath("/webstart/localmodule.jnlp.jsp");
+		String localModulePath = ResourceHelper.getRealPath(ctx.getRequest().getSession().getServletContext(), "/webstart/localmodule.jnlp.jsp");
 		return (new File(localModulePath)).isFile();
 	}
 

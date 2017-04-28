@@ -8,7 +8,6 @@ import java.io.OutputStream;
 import java.util.logging.Logger;
 
 import org.apache.commons.io.FileUtils;
-import org.javlo.helper.DebugHelper;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 
@@ -41,7 +40,8 @@ public class TransactionFile {
 		if (tempFile.exists()) {
 			throw new IOException("temp file : " + tempFile + " already exists.");
 		} else {
-			logger.fine("create temp file : "+tempFile);
+			logger.info("create temp file : "+tempFile);
+			logger.info("create temp file : "+tempFile.getParentFile());
 			tempFile.getParentFile().mkdirs();
 			tempFile.createNewFile();	
 			if (copySourceInInternalFile && targetFile.exists()) {

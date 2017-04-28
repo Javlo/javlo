@@ -473,7 +473,7 @@ public class XHTMLHelper {
 		String fileExt = StringHelper.getFileExtension(fileName).toLowerCase();
 		String iconeName = fileExt + ".png";
 		ServletContext application = ctx.getRequest().getSession().getServletContext();
-		File iconeFile = new File(application.getRealPath("/images/minetypes/64x64/" + iconeName));
+		File iconeFile = new File(ResourceHelper.getRealPath(application,"/images/minetypes/64x64/" + iconeName));
 		if (iconeFile.exists()) {
 			imageURL = URLHelper.createStaticURL(ctx, "/images/minetypes/64x64/" + iconeName);
 		} else {

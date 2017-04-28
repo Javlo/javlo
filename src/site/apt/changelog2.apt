@@ -856,5 +856,7 @@ hange log
   
   * 2/ Resource description can be removed from config / remove '/' at the end of the url
   
-  * 3/
+  * 3/ TOMCAT 8 / JDK 8 compatibility / component expose css and id info for edit
+  
+ * 2.1.0.3.25 28/04/17
  

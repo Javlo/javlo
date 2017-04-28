@@ -24,7 +24,7 @@ public class MailingFeedback extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {		
 		if (data == null) {
-			File imageFile = new File(getServletContext().getRealPath(IMAGE));
+			File imageFile = new File(ResourceHelper.getRealPath(getServletContext(),IMAGE));
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
 			ResourceHelper.writeFileToStream(imageFile, out);
 			data = out.toByteArray();

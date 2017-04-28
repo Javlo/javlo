@@ -538,7 +538,7 @@ public class ImageTransformServlet extends HttpServlet {
 		
 		BufferedImage layer = null;
 		if (config.getLayer(device, filter, area) != null) {
-			String layerName = application.getRealPath(config.getLayer(device, filter, area));
+			String layerName = ResourceHelper.getRealPath(application,config.getLayer(device, filter, area));
 			File layerFile = new File(layerName);
 			if (layerFile.exists()) {
 				layer = ImageIO.read(layerFile);
@@ -597,7 +597,7 @@ public class ImageTransformServlet extends HttpServlet {
 				StaticConfig staticConfig = globalContext.getStaticConfig();
 				String defaultMimeTypeImage = staticConfig.getEditDefaultMimeTypeImage();
 				defaultMimeTypeImage = URLHelper.mergePath(staticConfig.getEditTemplateFolder(), defaultMimeTypeImage);
-				defaultMimeTypeImage = application.getRealPath(defaultMimeTypeImage);
+				defaultMimeTypeImage = ResourceHelper.getRealPath(application,defaultMimeTypeImage);
 				mimeTypeImageFile = new File(defaultMimeTypeImage);
 			}
 			if (mimeTypeImageFile != null) {
@@ -1020,7 +1020,7 @@ public class ImageTransformServlet extends HttpServlet {
 			} else if (imageName.startsWith("/local")) {
 				localFile = true;
 				imageName = imageName.replaceFirst("/local", "");
-				staticInfo = StaticInfo.getInstance(ctx, new File(getServletContext().getRealPath(imageName)));
+				staticInfo = StaticInfo.getInstance(ctx, new File(ResourceHelper.getRealPath(getServletContext(),imageName)));
 			} else {
 				staticInfo = StaticInfo.getInstance(ctx, imageName);
 			}		
@@ -1080,14 +1080,14 @@ public class ImageTransformServlet extends HttpServlet {
 												// we do'nt need static folder
 												// ????
 				if (filter.startsWith("template") || localFile) {
-					baseFolder = getServletContext().getRealPath("/");
+					baseFolder = ResourceHelper.getRealPath(getServletContext(),"/");
 				}
 				
 				File imageFile = new File(URLHelper.mergePath(baseFolder, imageName));
 				String baseExtension = StringHelper.getFileExtension(imageFile.getName());
 				if (!imageFile.exists()) {
 					imageName = NO_IMAGE_FILE;
-					imageFile = new File(ctx.getRequest().getSession().getServletContext().getRealPath(imageName));
+					imageFile = new File(ResourceHelper.getRealPath(ctx.getRequest().getSession().getServletContext(), imageName));
 				}
 
 				if (!imageFile.exists() || imageFile.isDirectory()) {

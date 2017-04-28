@@ -957,7 +957,7 @@ public class XMLManipulationHelper {
 		BufferedWriter out = new BufferedWriter(outString);
 		
 		out.append("<%if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE) {%>");
-		out.append("<style type=\"text/css\">@font-face {font-family: \"javloFont\"; src: url('${info.staticRootURL}fonts/Javlo-Italic.ttf') format(\"truetype\");}</style>");
+		out.append("<style type=\"text/css\">@font-face {font-family: \"javloFont\"; src: url('${info.staticRootURL}fonts/javlo-italic.ttf') format(\"truetype\");}</style>");
 		out.append("<%}%>");
 
 		out.append("<%if (ctx.getRenderMode() != ContentContext.PAGE_MODE) {%>");
@@ -1101,8 +1101,8 @@ public class XMLManipulationHelper {
 		return outString.toString();
 	}
 
-	private static String getJSPHeader(ServletContext application) throws IOException {
-		File headerFile = new File(application.getRealPath("/jsp/view/page/header.jsp"));
+	private static String getJSPHeader(ServletContext application) throws IOException {		
+		File headerFile = new File(ResourceHelper.getRealPath(application, "/jsp/view/page/header.jsp"));
 		if (!headerFile.exists()) {
 			return "<!-- header file not found : '" + headerFile + "' -->";
 		} else {
@@ -1111,7 +1111,8 @@ public class XMLManipulationHelper {
 	}
 
 	private static String getPreviewCode(ServletContext application) throws FileNotFoundException, IOException {
-		File headerFile = new File(application.getRealPath("/jsp/view/page/preview.jsp"));
+		//File headerFile = new File(application.getRealPath("/jsp/view/page/preview.jsp"));
+		File headerFile = new File(ResourceHelper.getRealPath(application, "/jsp/view/page/preview.jsp"));
 		if (!headerFile.exists()) {
 			return "<!-- preview file not found : '" + headerFile + "' -->";
 		} else {

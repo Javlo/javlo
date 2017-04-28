@@ -43,7 +43,7 @@ public class FileCache {
 
 	public static final Object PDF_LOCK = new Object();
 
-	private final String baseDirName;
+	private String baseDirName;
 
 	ServletContext application = null;
 
@@ -57,7 +57,8 @@ public class FileCache {
 		baseDirName = staticConfig.getImageCacheFolder();
 		String realCacheFolder;
 		if (!baseDirName.startsWith("/")) {
-			realCacheFolder = application.getRealPath(baseDirName);
+			baseDirName = "/"+baseDirName; // tomcat 8			
+			realCacheFolder = ResourceHelper.getRealPath(application, baseDirName);
 		} else {
 			realCacheFolder = baseDirName;
 		}
@@ -277,7 +278,7 @@ public class FileCache {
 
 	protected File getCacheDir() {
 		if (baseDir == null) {
-			baseDir = new File(application.getRealPath(BASE_DIR));
+			baseDir = new File(ResourceHelper.getRealPath(application,BASE_DIR));
 		}
 		return baseDir;
 	}
@@ -348,7 +349,7 @@ public class FileCache {
 			e.printStackTrace();
 		}
 
-		File oldCacheDir = new File(application.getRealPath("/_dc_cache"));
+		File oldCacheDir = new File(ResourceHelper.getRealPath(application,"/_dc_cache"));
 		try {
 			FileUtils.deleteDirectory(oldCacheDir);
 		} catch (IOException e) {

@@ -11,6 +11,7 @@ import java.util.LinkedList;
 import javax.naming.ConfigurationException;
 import javax.servlet.ServletContext;
 
+import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.utils.ConfigurationProperties;
 
@@ -30,7 +31,7 @@ public class DataToIDService {
 		DataToIDService instance = (DataToIDService) application.getAttribute(KEY);
 		if (instance == null) {
 			instance = new DataToIDService();
-			instance.dataFile = new File(application.getRealPath(DATA_FILE));
+			instance.dataFile = new File(ResourceHelper.getRealPath(application,DATA_FILE));
 			if (!instance.dataFile.exists()) {
 				instance.dataFile.getParentFile().mkdirs();
 				try {

@@ -12,6 +12,7 @@ import javax.servlet.ServletContext;
 
 import org.javlo.config.StaticConfig;
 import org.javlo.filter.DirectoryFilter;
+import org.javlo.helper.ResourceHelper;
 
 public class TemplatePluginFactory {
 
@@ -29,7 +30,7 @@ public class TemplatePluginFactory {
 		if (fact == null) {
 			fact = new TemplatePluginFactory();
 			fact.dir = new File(StaticConfig.getInstance(application).getTemplatePluginFolder());
-			fact.localDir = new File(application.getRealPath(PLUGIN_LOCAL_FOLDER));
+			fact.localDir = new File(ResourceHelper.getRealPath(application,PLUGIN_LOCAL_FOLDER));
 			if (!fact.dir.isDirectory()) {
 				logger.fine("template plugin folder not found : " + fact.dir);
 			}

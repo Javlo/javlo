@@ -8,11 +8,13 @@ import java.io.OutputStream;
 import java.util.logging.Logger;
 
 import javax.imageio.ImageIO;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.javlo.helper.ResourceHelper;
 import org.javlo.image.ColorImageEngine;
 
 /**
@@ -59,11 +61,12 @@ public class ColorServlet extends HttpServlet {
 				int size = Integer.parseInt(data[2]);
 				Color bgColor = Color.decode('#' + data[3]);
 
-				File leftImage = new File(getServletContext().getRealPath(COLOR_SERVLET_FOLDER + "left_bottom_middle.png"));
-				File rightImage = new File(getServletContext().getRealPath(COLOR_SERVLET_FOLDER + "right_bottom_middle.png"));
+				ServletContext application = getServletContext();
+				File leftImage = new File(ResourceHelper.getRealPath(application,COLOR_SERVLET_FOLDER + "left_bottom_middle.png"));
+				File rightImage = new File(ResourceHelper.getRealPath(application,COLOR_SERVLET_FOLDER + "right_bottom_middle.png"));
 				if (top) {
-					leftImage = new File(getServletContext().getRealPath(COLOR_SERVLET_FOLDER + "left_top_middle.png"));
-					rightImage = new File(getServletContext().getRealPath(COLOR_SERVLET_FOLDER + "right_top_middle.png"));
+					leftImage = new File(ResourceHelper.getRealPath(application,COLOR_SERVLET_FOLDER + "left_top_middle.png"));
+					rightImage = new File(ResourceHelper.getRealPath(application,COLOR_SERVLET_FOLDER + "right_top_middle.png"));
 				}
 				BufferedImage result = ColorImageEngine.getCornerLine(size, leftImage, rightImage, bgColor);
 				response.setContentType("image/PNG");

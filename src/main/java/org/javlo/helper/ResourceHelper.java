@@ -1856,5 +1856,10 @@ public class ResourceHelper {
 			return ctx.getGlobalContext().getStaticConfig().getDocumentExtension().contains(StringHelper.getFileExtension(fileName).toLowerCase());
 		}
 	}
+	
+	public static String getRealPath(ServletContext application, String path) {
+		String rootPath = application.getRealPath("/");
+		return URLHelper.mergePath(rootPath, path); 
+	}
 
 }

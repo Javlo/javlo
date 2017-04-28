@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.javlo.config.StaticConfig;
+import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.servlet.zip.ZipManagement;
@@ -64,7 +65,7 @@ public class FolderServlet extends HttpServlet {
 			} else if (uri.startsWith(MAILING_TEMPLATE_PATH)) {
 				folder = new File(staticConfig.getMailingTemplateFolder() + uri.substring(MAILING_TEMPLATE_PATH.length()));
 			} else if (staticConfig.isDataFolderRelative()) {
-				folder = new File(getServletContext().getRealPath(uri));
+				folder = new File(ResourceHelper.getRealPath(getServletContext(),uri));
 			} else {
 				folder = new File(uri);
 			}

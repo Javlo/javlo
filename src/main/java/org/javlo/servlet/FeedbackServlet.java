@@ -87,7 +87,7 @@ public class FeedbackServlet extends HttpServlet {
 			}
 		}
 
-		String imageURL = getServletContext().getRealPath("/images/special/no_image.gif");
+		String imageURL = ResourceHelper.getRealPath(getServletContext(),"/images/special/no_image.gif");
 		InputStream fileStream = null;
 		OutputStream out;
 		try {
