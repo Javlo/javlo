@@ -116,7 +116,7 @@
     
     <div class="topheader">
         <ul class="notebutton">
-            <li class="note">
+            <c:if test="${userInterface.IM}"><li class="note">
                 <div class="im-wizz-message" style="display: none;" title="${i18n.edit['im.title']}">
                     ${i18n.edit['im.message.wizz']}
                 </div>
@@ -126,7 +126,7 @@
                         <span class="count" style="display: none;">0</span>
                     </span>
                 </a>
-            </li>
+            </li></c:if>
             <li class="note">
             	<a href="${info.editTemplateURL}/notifications.jsp" class="alertnotify">
                 	<span class="wrap">

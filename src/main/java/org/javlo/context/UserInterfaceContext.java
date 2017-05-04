@@ -204,4 +204,8 @@ public class UserInterfaceContext {
 		this.model = model;
 	}
 	
+	public boolean isIM() {
+		return globalContext.getStaticConfig().isIM();
+	}
+	
 }

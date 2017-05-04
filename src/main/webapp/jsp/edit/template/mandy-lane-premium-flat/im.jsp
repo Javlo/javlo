@@ -55,23 +55,19 @@ InfoBean.updateInfoBean(ctx);
 %>
 <div class="messagelist">
 	<h4>${i18n.edit['im.title']}</h4>
-	<ul class="im-messages" style="min-height: 50px; max-height: 200px; overflow: auto;">
+	<ul class="im-messages" style="min-height: 50px; max-height: 350px; overflow: auto;">
 		<c:forEach var="message" items="${messages}">
 			<li class="im-message ${message.wizz?'im-wizz':''}">
 				<span class="user" style="color: ${users[message.fromUser].color};">${message.fromUser}</span>
 				<c:if test="${(not empty message.receiverUser) && (message.receiverUser != '_ALL')}">
-					<small class="to" data-user="${message.receiverUser}" style="color: ${users[message.receiverUser].color};">
-						${message.receiverUser} >
-					</small>
+					<small class="to" data-user="${message.receiverUser}" style="color: ${users[message.receiverUser].color};">${message.receiverUser} ></small>
 				</c:if>
-				<small>
-					${message.message}
-					</small>
+				<div class="body"><small>${message.messageAutoLink}</small></div>
 			</li>
 		</c:forEach>
 	</ul>
 	<br />
-	<form action="${info.editTemplateURL}/im.jsp" class="im-form">
+	<form action="${info.editTemplateURL}/im.jsp" class="im-form form-inline">
 		<input type="hidden" name="lastMessageId" value="${lastMessageId}" />
 		<div class="form-group">
 			<select name="receiver" class="form-control">
@@ -84,17 +80,19 @@ InfoBean.updateInfoBean(ctx);
 			</select>
 		</div>
 		<div class="form-group">
-		<input name="message" type="text" placeholder="${i18n.edit['im.label.message']}" class="form-control" />
+		<input name="message" type="text" placeholder="${i18n.edit['im.label.message']}" class="form-control new-message" />
 		</div><div class="form-group">
-		
-		<input type="submit" value="${i18n.edit['im.action.send']}" class="btn btn-default btn-sm" /><%
+		&nbsp;
+		<button type="submit" title="${i18n.edit['im.action.send']}" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-menu-right"></span></button><%
 		if (globalContext.isWizz()) {
 		%>		
-		<input id="im-send-wizz" type="button" value="${i18n.edit['im.action.send-wizz']}" class="btn btn-default btn-sm" /><%
+		<button id="im-send-wizz" type="button" title="${i18n.edit['im.action.send-wizz']}" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-bell"></span></button><%
 		}%>		
 		</div>
 	</form>
 </div>
 <script>
-onIMLoad();
+preview = ${contentContext.preview}
+<c:if test="${contentContext.preview}">editPreview.onIMLoad();</c:if>
+<c:if test="${!contentContext.preview}">onIMLoad();</c:if>
 </script>

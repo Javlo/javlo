@@ -1,4 +1,4 @@
-hange log
+change log
 
 * 2.0 [15/06/2012]
 
@@ -800,63 +800,62 @@ hange log
  
  * 2/ independent bootstrap js for preview edition + image edition (crop+flip) / Persistence blocage correction / expose dynamiccomponet for jstl / ip security
  
- * 2.1.0.3.20 27/10/2015
+* 2.1.0.3.20 27/10/2015
+
+ * 1/ bug dynamiccomponent i18n field / ipsecurity null pointer
+  
+ * 2/ drop sound on page / dynamiccomponent : delete field on merge / Filed value with " / field date isPast method and getFormatedDate / Field : isPertient with contentcontext / persistence with date in properties file (desactivate by default) / update pdfbox / update file message correction /
+  
+ * 3/ clean history, clean only previous version for optimisation / update tinymce to 4.4.3 / add first-in-cell class on component if needed / LanguageMap / TableComponent padding as px
+  
+ * 4/ save template as structured properties / template css edition in accordeon / correct slide.jsp in default template / correction encoding for NoExtURLPathTitleCreatorOneLevel and NoExtURLCreator / PersistenceService bug analyse version correction
  
-  * 1/ bug dynamiccomponent i18n field / ipsecurity null pointer
+ * 5/ sort area / clouds link 
   
-  * 2/ drop sound on page / dynamiccomponent : delete field on merge / Filed value with " / field date isPast method and getFormatedDate / Field : isPertient with contentcontext / persistence with date in properties file (desactivate by default) / update pdfbox / update file message correction /
+ * 6/ Manual Description display as meta data / synchronize isTemplateImported / absolute url can start with '//' / globalImage integrity correctionglobalImage integrity correction
   
-  * 3/ clean history, clean only previous version for optimisation / update tinymce to 4.4.3 / add first-in-cell class on component if needed / LanguageMap / TableComponent padding as px
+ * 7/ error module for manage 404 url / isRedirectWidthName return false by default / getcontentdate from IDate components / toTheTopComponent / mineType in AbstractFileComponent / active face detection / 	
   
-  * 4/ save template as structured properties / template css edition in accordeon / correct slide.jsp in default template / correction encoding for NoExtURLPathTitleCreatorOneLevel and NoExtURLCreator / PersistenceService bug analyse version correction
-  
-  * 5/ sort area / clouds link 
-  
-  * 6/ Manual Description display as meta data / synchronize isTemplateImported / absolute url can start with '//' / globalImage integrity correctionglobalImage integrity correction
-  
-  * 7/ error module for manage 404 url / isRedirectWidthName return false by default / getcontentdate from IDate components / toTheTopComponent / mineType in AbstractFileComponent / active face detection / 	
-  
- * 2.1.0.3.21 28/11/2015
+* 2.1.0.3.21 28/11/2015
  
-  * 1/ retrieve meta data of picture from language with content / add filter in image url
+ * 1/ retrieve meta data of picture from language with content / add filter in image url
   
-  * 2/ meta color component / page association work with empty page / unescape text title of heading (for url factory) / duplicate article + template display info / no ticket without title and better email notification. / image internal links
+ * 2/ meta color component / page association work with empty page / unescape text title of heading (for url factory) / duplicate article + template display info / no ticket without title and better email notification. / image internal links
   
-  * 3/ create cookie manager before check url / title in default aria have proiority / auto redeploy template if index.html not found / correction real content any language detection / static parameter in template for create static site
-  
-  * 4/ compare event to the end of the current day / remove special char method / VFS optimisation
-  
-  * 5/ update library / info.getNowSortable / interest thread / countries as list / update lib / ComponentContextBean / GlobalImage set page in with key / GenericForm participation / simplification of isempty / set mailing config / StaticInfo weekref to MenuElement
-  
- * 2.1.0.3.22 02/02/17
+ * 3/ create cookie manager before check url / title in default aria have proiority / auto redeploy template if index.html not found / correction real content any language detection / static parameter in template for create static site
  
-  * 1/ get title and label from not main area if not found in main area 
+ * 4/ compare event to the end of the current day / remove special char method / VFS optimisation
   
-  * 2/ google login / update ticket layout and email + imageheader realcontent correction / import export page to zip file / remove static key / paste image in preview mode
+ * 5/ update library / info.getNowSortable / interest thread / countries as list / update lib / ComponentContextBean / GlobalImage set page in with key / GenericForm participation / simplification of isempty / set mailing config / StaticInfo weekref to MenuElement
   
-  * 3/ change editable default template with a table based template / template editor amelioration (edit row name + resolve some bugs) / empty area design / background image and color in PDF / ordre area with editable template
-  
- * 2.1.0.3.23 20/02/17
+* 2.1.0.3.22 02/02/17
  
-  * 1/ editable with outlook with bug / splash screen googleanalytics jsp reference / forward component / add button / import gallery bug correction / editable template PDF size correction
+ * 1/ get title and label from not main area if not found in main area 
   
-  * 2/ image feed back js optimisation 
+ * 2/ google login / update ticket layout and email + imageheader realcontent correction / import export page to zip file / remove static key / paste image in preview mode
   
-  * 3/ device stored in request in place of session
+ * 3/ change editable default template with a table based template / template editor amelioration (edit row name + resolve some bugs) / empty area design / background image and color in PDF / ordre area with editable template
   
-  * 4/ main help url / close event new return
-  
-  * 5/ drop file on page n+1 correction / reverse link correction / registration mail format
-  
-  * 6/ page-reference link to / stay pdf mode / area not empty if contain repeat item (infoBean) / generic form return email layout / drop page directly from navigation to content
-  
- * 2.1.0.3.24 24/03/17
+* 2.1.0.3.23 20/02/17
  
-  * 1/ expose mount date in multimedia resource / geocoder reactivation / reverse link in message
+ * 1/ editable with outlook with bug / splash screen googleanalytics jsp reference / forward component / add button / import gallery bug correction / editable template PDF size correction
   
-  * 2/ Resource description can be removed from config / remove '/' at the end of the url
+ * 2/ image feed back js optimisation 
   
-  * 3/ TOMCAT 8 / JDK 8 compatibility / component expose css and id info for edit
+ * 3/ device stored in request in place of session
   
- * 2.1.0.3.25 28/04/17
+ * 4/ main help url / close event new return
+  
+ * 5/ drop file on page n+1 correction / reverse link correction / registration mail format
+  
+ * 6/ page-reference link to / stay pdf mode / area not empty if contain repeat item (infoBean) / generic form return email layout / drop page directly from navigation to content
+  
+* 2.1.0.3.24 24/03/17
  
+ * 1/ expose mount date in multimedia resource / geocoder reactivation / reverse link in message
+  
+ * 2/ Resource description can be removed from config / remove '/' at the end of the url
+  
+ * 3/ TOMCAT 8 / JDK 8 compatibility / component expose css and id info for edit
+  
+* 2.1.0.3.25 28/04/17

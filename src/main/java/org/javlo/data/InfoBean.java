@@ -545,6 +545,10 @@ public class InfoBean {
 	public String getEditTemplateURL() {
 		return URLHelper.createStaticURL(ctx, ctx.getGlobalContext().getStaticConfig().getEditTemplateFolder());
 	}
+	
+	public String getEditTemplateFolder() {
+		return ctx.getGlobalContext().getStaticConfig().getEditTemplateFolder();
+	}
 
 	public String getEditTemplateModeURL() {
 		if (globalContext.getEditTemplateMode() != null && globalContext.getEditTemplateMode().trim().length() > 0) {

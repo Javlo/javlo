@@ -17,7 +17,7 @@ import org.javlo.utils.TimeMap;
 
 public class IMService {
 
-	private static final String IM_SERVICE_ATTRIBUTE_NAME = IMService.class.getName();
+	private static final String IM_SERVICE_ATTRIBUTE_NAME = "im";
 	public static final String ALL_SITES = "_ALL";
 	public static final String ALL_USERS = "_ALL";
 	private static final String WIZZ_MESSAGE = "*";
@@ -50,6 +50,10 @@ public class IMService {
 			IMItem item = new IMItem(++lastMessageId, new Date(), fromSite, fromUser, receiverSite, receiverUser, message, message.equals(WIZZ_MESSAGE));
 			messages.put(item.getId(), item);
 		}
+	}
+	
+	public int getMessagesSize() {
+		return messages.size();
 	}
 
 	public void fillMessageList(String site, String username, Date lastDate, List<IMItem> list) {
@@ -198,6 +202,10 @@ public class IMService {
 		}
 
 		public String getMessage() {
+			return message;
+		}
+		
+		public String getMessageAutoLink() {
 			return message;
 		}
 

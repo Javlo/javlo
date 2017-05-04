@@ -22,6 +22,7 @@ import org.javlo.module.core.ModulesContext;
 import org.javlo.service.IMService;
 import org.javlo.service.RequestService;
 import org.javlo.user.AdminUserSecurity;
+import org.owasp.encoder.Encode;
 
 public class CommunicationAction extends AbstractModuleAction {
 
@@ -131,7 +132,7 @@ public class CommunicationAction extends AbstractModuleAction {
 				}
 				String currentUser = ctx.getCurrentUserId();
 
-				message = XHTMLHelper.autoLink(XHTMLHelper.escapeXHTML(message));
+				message = XHTMLHelper.autoLink(Encode.forHtml(message), ctx.getGlobalContext());
 
 				IMService imService = IMService.getInstance(request.getSession());
 				imService.appendMessage(currentSite, currentUser, receiverSite, receiverUser, message);

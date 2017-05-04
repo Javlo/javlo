@@ -133,6 +133,7 @@ org.javlo.component.web2.Survey
 org.javlo.component.web2.EventRegistration
 org.javlo.component.web2.MessagingComponent
 org.javlo.component.social.FacebookChooseFriend
+org.javlo.component.web2.IMComponent
 
 --content.title.special
 

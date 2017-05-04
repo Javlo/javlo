@@ -1656,6 +1656,10 @@ public class StaticConfig extends Observable {
 		return StringHelper.isTrue(properties.getString("content.image-from-html"), false);
 	}
 	
+	public boolean isIM() {
+		return StringHelper.isTrue(properties.getString("interface.im"), false);
+	}
+	
 	public boolean isSiteLog() {
 		return StringHelper.isTrue(properties.getString("site.log.active"), false);
 	}

@@ -1192,6 +1192,114 @@ var editPreview = editPreview||{};
 		editPreview.stopAjax();
 	});
 	
+	
+	/** ** **/
+	/** IM **/
+	/** ** **/
+
+	var IM_QUERY_UNREAD_COUNT_TIME_INTERVAL = 10000;
+	var IM_QUERY_NEW_MESSAGES_TIME_INTERVAL = 2000;
+	var MAX_SCROLL_HEIGHT = 99999999;
+	var imInProgress = false;
+	var imTimeout = null;
+	pjq(window).load(function() {
+		pjq(".im-form").on("submit", function(e) {			
+			e.preventDefault();
+			editPreview.queryIM(true);		
+		});
+		pjq(".im-messages .user").on("click", function(e) {
+			e.preventDefault();
+			pjq(".im-form [name=receiver]").val(pjq(this).text());
+		});
+		pjq("#im-send-wizz").on("click", function(e) {
+			e.preventDefault();
+			editPreview.queryIM(false, "*");
+		});
+	});
+
+	
+	editPreview.onIMLoad = function() { // Called from im.jsp
+		if (!imInProgress) {
+			pjq("a.messagenotify .count").text(0).toggle(false);
+			pjq(".im-messages").scrollTop(MAX_SCROLL_HEIGHT);
+		}
+	}
+	editPreview.queryIM = function(submitted, manualMessage) {		
+		if (imInProgress) {
+			return;
+		}
+		imInProgress = true;		
+		if (imTimeout) {
+			clearTimeout(imTimeout);
+			imTimeout = null;
+		}
+		var form = pjq(".im-form");
+		var imForm = pjq(".im-form");
+		var url = imForm.attr('action');
+		if (url == null) {
+			//Link not present, so the chat is disabled
+			imInProgress = false;
+			return;
+		}
+		var datas;
+		var queryUnreadNumber = (form.length == 0);
+		if (submitted || manualMessage != null) {
+			datas = {
+				lastMessageId : form.find("[name=lastMessageId]").val(),
+				receiver : form.find("[name=receiver]").val(),
+				message : manualMessage || form.find("[name=message]").val()
+			};
+			datas
+		} else if(queryUnreadNumber) {
+			datas = {
+				lastMessageId : -1
+			};
+		} else {
+			datas = {
+				lastMessageId : form.find("[name=lastMessageId]").val()
+			};
+		}
+		pjq.ajax({
+			type : 'POST',
+			url : url,
+			data : datas,
+			dataType : 'html',
+			success : function(data) {
+				var dom = pjq("<div/>").html(data);
+				var newMessages = dom.find(".im-messages li");
+				if(newMessages.length > 0) {
+					pjq(".im-messages").append(newMessages).scrollTop(MAX_SCROLL_HEIGHT);
+				}
+				var form = pjq(".im-form");
+				var queryUnreadNumber = (form.length == 0)
+				if (queryUnreadNumber) {
+					pjq("a.messagenotify .count").text(newMessages.length)
+						.toggle(newMessages.length > 0);
+					if (newMessages.is(".im-wizz")) {
+						msg = pjq(".im-wizz-message");
+						jAlert(msg.text(), msg.attr("title"));
+					}
+				} else {
+					if (submitted) {
+						form.find("[name=message]").val("");
+					}
+					form.find("[name=lastMessageId]").val(dom.find("[name=lastMessageId]").val());
+					var receiver = form.find("[name=receiver]");
+					var receiverValue = receiver.val();
+					receiver.children().remove();
+					receiver.append(dom.find("[name=receiver] option"));
+					receiver.val(receiverValue);					
+				}
+				imInProgress = false;
+				imTimeout = setTimeout(editPreview.queryIM, (form.length == 0 ? IM_QUERY_UNREAD_COUNT_TIME_INTERVAL : IM_QUERY_NEW_MESSAGES_TIME_INTERVAL));
+			}
+		});
+	}
+	
+	pjq(function(){
+		editPreview.queryIM();
+	});
+	
 	/** ************ */
 	/** bootstrap * */
 	/** ************ */

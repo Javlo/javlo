@@ -32,7 +32,6 @@ public class MessagingComponent extends AbstractVisualComponent implements IActi
 	}
 	
 	public static String performRooms(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess, User user) throws InstantiationException, IllegalAccessException, ClassNotFoundException {
-		System.out.println("***** MessagingComponent.performRooms : PERFROM ROOMS"); //TODO: remove debug trace
 		if (user  == null || !ctx.isAjax()) {
 			return "no access to chat rooms";
 		}
