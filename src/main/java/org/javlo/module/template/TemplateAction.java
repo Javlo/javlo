@@ -137,19 +137,42 @@ public class TemplateAction extends AbstractModuleAction {
 
 		RoleWrapper roleWrapper = AdminUserFactory.createUserFactory(globalContext, ctx.getRequest().getSession()).getRoleWrapper(ctx, ctx.getCurrentEditUser());
 
-		for (Template template : allTemplate) {
-			if (!template.isTemplateInWebapp(ctx)) {
-				template.importTemplateInWebapp(StaticConfig.getInstance(ctx.getRequest().getSession().getServletContext()), ctx);
+		String webaction = StringHelper.neverNull(ctx.getRequest().getParameter("webaction"));
+		if (templateContext.getCurrentLink().equals("hierarchy") && (!webaction.equals("template.goEditTemplate") || ctx.getRequest().getParameter("back") != null)) {
+			Map<String, TemplateHierarchy> templatesH = new HashMap<String, TemplateHierarchy>();
+			List<TemplateHierarchy> rootTemplateH = new LinkedList<TemplateHierarchy>();
+			for (Template template : allTemplate) {
+				TemplateHierarchy.insertTemplateInHirarchy(ctx, rootTemplateH, templatesH, template);
 			}
-			Boolean acceptTemplate = roleWrapper.acceptTemplate(template.getName());
-			if (acceptTemplate == null) {
-				acceptTemplate = !templateContext.getCurrentLink().equals(TemplateContext.MY_TEMPLATES_LINK.getUrl()) || contextTemplates.contains(template.getName());
+			if (ctx.getRequest().getParameter("templateh") != null) {
+				rootTemplateH.clear();
+				rootTemplateH.add(templatesH.get(ctx.getRequest().getParameter("templateh")));				
 			}
-			if (template.visibleForRoles(ctx.getCurrentEditUser().getRoles()) && acceptTemplate) {
-				templates.add(new Template.TemplateBean(ctx, template));
+			ctx.getRequest().setAttribute("htemps", rootTemplateH);
+			
+			if (module.getMainBoxes().size() > 0) {
+				module.getMainBoxes().iterator().next().setRenderer("/jsp/hierarchy.jsp");
+				module.setRenderer(null);
+			} else {
+				module.createMainBox("hierarchy", "Hierarchy", "/jsp/hierarchy.jsp", false);
+				module.setRenderer(null);
 			}
+		} else {
+			for (Template template : allTemplate) {
+				if (!template.isTemplateInWebapp(ctx)) {
+					template.importTemplateInWebapp(StaticConfig.getInstance(ctx.getRequest().getSession().getServletContext()), ctx);
+				}
+				Boolean acceptTemplate = roleWrapper.acceptTemplate(template.getName());
+				if (acceptTemplate == null) {
+					acceptTemplate = !templateContext.getCurrentLink().equals(TemplateContext.MY_TEMPLATES_LINK.getUrl()) || contextTemplates.contains(template.getName());
+				}
+				if (template.visibleForRoles(ctx.getCurrentEditUser().getRoles()) && acceptTemplate) {
+					templates.add(new Template.TemplateBean(ctx, template));
+				}
 
+			}
 		}
+		
 		ctx.getRequest().setAttribute("templates", templates);
 
 		Map<String, String> params = new HashMap<String, String>();
@@ -157,11 +180,11 @@ public class TemplateAction extends AbstractModuleAction {
 
 		if (templateName != null) {
 			Template template = TemplateFactory.getTemplates(ctx.getRequest().getSession().getServletContext()).get(templateName);
-			if (template == null) {				
+			if (template == null) {
 				msg = "template not found : " + templateName;
 				module.restoreAll();
-			} else {								
-				Map<String, List<String>> folders = template.getCSSByFolder(ctx.getRequest().getParameter("search"));				
+			} else {
+				Map<String, List<String>> folders = template.getCSSByFolder(ctx.getRequest().getParameter("search"));
 				ctx.getRequest().setAttribute("currentTemplate", new Template.TemplateBean(ctx, template));
 				ctx.getRequest().setAttribute("cssFolder", folders);
 				params.put("templateid", templateName);

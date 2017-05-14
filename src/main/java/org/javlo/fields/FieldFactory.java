@@ -12,6 +12,10 @@ public class FieldFactory {
 	private static Field[] fields = new Field[] { new Field(), new FieldLargeText(), new FieldWysiwyg(), new FieldDescription(), new FieldDate(), new FieldFile(), new FieldList(), new OpenList(), new OpenMultiList(), new FieldMultiList(), new FieldImage(), new FieldExternalLink(), new FieldInternalLink(), new FieldEmail(), new FieldTextList(), new FieldBoolean(), new FieldNumber(), new Heading("h1"), new Heading("h2"), new Heading("h3"), new Heading("h4"), new Heading("h5"), new Heading("h6"), new DateOfPublication(), new EndDateOfPublication() };
 
 	public static Field getField(IContentVisualComponent component, StaticConfig staticConfig, GlobalContext globalContext, I18nAccess i18nAccess, Properties properties, String label, String name, String type, String id) {
+		return getField(component, staticConfig, globalContext, i18nAccess, properties, label, null, name, type, id);
+	}
+	
+	public static Field getField(IContentVisualComponent component, StaticConfig staticConfig, GlobalContext globalContext, I18nAccess i18nAccess, Properties properties, String label, String placeholder, String name, String type, String id) {
 		for (Field field : fields) {
 			if (field.getType().equals(type)) {
 				try {
@@ -27,6 +31,7 @@ public class FieldFactory {
 					newField.setGlobalContext(globalContext);
 					newField.setI18nAccess(i18nAccess);
 					newField.setLabel(label);
+					newField.setPlaceholder(placeholder);
 					return newField;
 				} catch (Exception e) {
 					e.printStackTrace();

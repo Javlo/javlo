@@ -131,7 +131,7 @@ public class User implements Principal, Serializable {
 	
 	public boolean isRightPassword(String pwd, boolean encrypt) {
 		if (encrypt) {
-			pwd = StringHelper.encryptPassword(pwd);
+			pwd = getUserInfo().encryptPassword(pwd);
 		}
 		return getPassword().equals(pwd);
 	}

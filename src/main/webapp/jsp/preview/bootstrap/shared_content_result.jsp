@@ -21,7 +21,7 @@
 <a href="${content.editURL}" title="edit" lang="en" onclick="editPreview.openModal('${content.title}', '${content.editURL}'); return false;">
 </c:if></c:if>	
 	<c:if test="${not empty content.imageURL}">
-		<figure><img id="img-${status.index}" src="${info.ajaxLoaderURL}"/></figure>
+		<figure><img id="img-${status.index}" src="${content.imageURL}"/></figure>
 	</c:if>	
 	<div class="caption">${content.title}</div>
 <c:if test="${not empty content.editURL}">
@@ -29,10 +29,6 @@
 </c:if>	
 </div>
 </div>
-<script type="text/javascript">
-pjq("#img-${status.index}").attr("src", "${content.imageURL}");
-</script>
-
 </c:forEach>
 </div>
 </div>

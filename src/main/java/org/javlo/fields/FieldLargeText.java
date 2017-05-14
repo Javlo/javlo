@@ -31,7 +31,7 @@ public class FieldLargeText extends Field {
 		if (isReadOnly()) {
 			readOnlyHTML = " readonly=\"readonly\"";
 		}
-		out.print("<textarea class=\"form-control\"" + readOnlyHTML + " id=\"" + getInputName() + "\" name=\"" + getInputName() + "\" rows=\"10\" cols=\"20\">");
+		out.print("<textarea "+(StringHelper.isEmpty(getPlaceholder())?"":" placeholder=\""+getPlaceholder()+"\"")+"class=\"form-control\"" + readOnlyHTML + " id=\"" + getInputName() + "\" name=\"" + getInputName() + "\" rows=\"10\" cols=\"20\">");
 		out.print(StringHelper.neverNull(getValue()));
 		out.println("</textarea>");
 		out.println("</div>");

@@ -43,6 +43,7 @@ import javax.servlet.ServletContext;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.poi.xwpf.converter.core.utils.ColorHelper;
 import org.javlo.component.core.ComponentFactory;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.form.FormComponent;
@@ -63,6 +64,7 @@ import org.javlo.service.ContentService;
 import org.javlo.service.ListService;
 import org.javlo.service.RequestService;
 import org.javlo.service.ReverseLinkService;
+import org.javlo.template.Template.TemplateData;
 import org.javlo.user.IUserInfo;
 import org.javlo.user.User;
 import org.javlo.utils.Cell;
@@ -2710,6 +2712,45 @@ public class XHTMLHelper {
 		out.println("<html xmlns='http://www.w3.org/1999/xhtml'><body paddingwidth='0' paddingheight='0' bgcolor='#d2d4d5'  style='padding: 0; background-repeat: repeat; width: 100% !important; -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; -webkit-font-smoothing: antialiased;' offset='0' toppadding='0' leftpadding='0'>  <table width='100%' border='0' cellspacing='0' cellpadding='0' class='tableContent bgBody' align='center'  style='font-family:Helvetica, sans-serif; font-size: 14px;'><tr><td align='center'><table width='600' border='0' cellspacing='0' cellpadding='0' align='center'><tr><td align='center'><table width='678' border='0' cellspacing='0' cellpadding='0' align='center'><tr><td align='center'>");
 		if (!StringHelper.isEmpty(title)) {
 			out.println("<h1 style='font-family:Helvetica, sans-serif; font-size: 24px;'>"+title+"</h1>");
+		}
+		if (!StringHelper.isEmpty(content)) {
+			out.println("<p style='font-family:Helvetica, sans-serif; font-size: 14px;'>"+content+"</p>");
+		}
+		if (data != null && data.size()>0) {
+			out.println("<table style='border-collapse: collapse;' border='1'>");
+			for (Object key : data.keySet()) {
+				out.println("<tr><td style='font-weight: bold; padding: 10px; font-family:Helvetica, sans-serif; vertical-align: top; font-size: 12px;'>"+key+" : </td><td style='padding: 10px; font-family:Helvetica, sans-serif;  vertical-align: top; font-size: 12px;'>"+data.get(key)+"</td></tr>");
+			}
+			out.println("</table>");
+		}
+		if (!StringHelper.isEmpty(footer)) {			
+			out.println("<table><tr><td>&nbsp;</td></tr><tr><td class=\"footer\"><div style='display: block; margin: 10px 20px;  color: #dddddd; font-family:Helvetica, sans-serif;'>"+footer+"</div></td></tr></table>");
+		}
+		if (!StringHelper.isEmpty(link)) {			
+			out.println("<table><tr><td>&nbsp;</td></tr><tr><td><a href='"+link+"' style='border: 1px #E329A6 solid; border-radius: 4px; display: block; text-decoration: none; background-color: #D31996; margin: 10px;'><div style='display: block; margin: 0 10px;  color: #dddddd; font-family:Helvetica, sans-serif;'><table><tr><td border=\"10\">"+StringHelper.neverNull(linkLabel, link)+"</td></tr></table></div></a></td></tr></table>");
+		}
+		out.println("</td></tr></table></td></tr></table></td></tr></table></body></html>");
+		return new String(outStream.toByteArray());
+	}
+	
+	public static String createUserMail(TemplateData templateData, String title, String content, Map data, String link, String linkLabel, String footer) {
+		
+		String backgroundColor = "#ffffff";
+		String titleColor = "#000000";
+		if (templateData != null) {
+			if (templateData.getBackground() != null) {
+				backgroundColor = ColorHelper.toHexString(templateData.getBackground());
+			}
+			if (templateData.getTitle() != null) {
+				titleColor = ColorHelper.toHexString(templateData.getTitle());
+			}
+		}
+		
+		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+		PrintStream out = new PrintStream(outStream);
+		out.println("<html xmlns='http://www.w3.org/1999/xhtml'><body paddingwidth='0' paddingheight='0' bgcolor='#ffffff'  style='padding: 0; background-repeat: repeat; width: 100% !important; -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; -webkit-font-smoothing: antialiased;' offset='0' toppadding='0' leftpadding='0'>  <table width='100%' border='0' cellspacing='0' cellpadding='0' class='tableContent bgBody' align='center'  style='font-family:Helvetica, sans-serif; font-size: 14px;'><tr><td align='center'><table width='600' border='0' cellspacing='0' cellpadding='0' align='center'><tr><td align='center'><table width='678' border='0' cellspacing='0' cellpadding='0' align='center'><tr><td align='center' style='background-color:"+backgroundColor+"'><br />");
+		if (!StringHelper.isEmpty(title)) {
+			out.println("<h1 style='font-family:Helvetica, sans-serif; font-size: 24px; color: "+titleColor+"'>"+title+"</h1>");
 		}
 		if (!StringHelper.isEmpty(content)) {
 			out.println("<p style='font-family:Helvetica, sans-serif; font-size: 14px;'>"+content+"</p>");

@@ -153,9 +153,14 @@ public class UserInfo implements Comparable<IUserInfo>, IUserInfo, Serializable 
 	}
 	
 	@Override
+	public String encryptPassword(String pwd) {	
+		return StringHelper.encryptPassword(pwd);
+	}
+	
+	@Override
 	public void setPassword(boolean encrypt, String password) {
 		if (encrypt) {
-			password = StringHelper.encryptPassword(password);
+			password = encryptPassword(password);
 		}
 		setPassword(password);		
 	}

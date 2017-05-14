@@ -475,7 +475,7 @@ public class UserFactory implements IUserFactory, Serializable {
 		if (user != null) {
 			if (staticConfig.isPasswordEncryt()) {
 				if (user.getPassword() != null) {
-					passwordEqual = user.getPassword().equals(StringHelper.encryptPassword(password));
+					passwordEqual = user.getPassword().equals(user.getUserInfo().encryptPassword(password));
 				}
 			} else {
 				if (user.getPassword() != null) {

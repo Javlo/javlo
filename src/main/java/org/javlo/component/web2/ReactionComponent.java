@@ -845,7 +845,7 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 				viewField.add(FieldFactory.getField(this, staticConfig, globalContext, i18nAccess, null, i18nAccess.getContentViewText("global.nickname"), "nickname", "text", fieldSetId));
 			}
 
-			viewField.add(FieldFactory.getField(this, staticConfig, globalContext, i18nAccess, null, i18nAccess.getContentViewText("global.text"), "text", "large-text", fieldSetId));
+			viewField.add(FieldFactory.getField(this, staticConfig, globalContext, i18nAccess, null, i18nAccess.getContentViewText("global.text"), i18nAccess.getViewText("reaction.add"), "text", "large-text", fieldSetId));
 
 			Collections.sort(viewField, new FieldOrderComparator());
 		}
@@ -902,7 +902,7 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 			}			
 			if (addAllowed) {
 				if (!ctx.isAsPageMode()) {
-					renderSendReactionForm(out, id, null, null, ctx, i18nAccess);
+					renderSendReactionForm(ctx.getCurrentUser(), out, id, null, null, ctx, i18nAccess);
 				}
 			} else {
 				out.println("<p>");
@@ -932,7 +932,7 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 				i++;
 				String htmlIdSuffix = parentHtmlIdSuffix + "-" + i;
 				if (first) {
-					out.println("<ul>");
+					out.println("<div class=\"messagelist\"><ul>");
 				}
 				out.println("<li id=\"message" + htmlIdSuffix + "\" class=\"comment-entry" + (first ? " first" : "") + "\">");
 
@@ -979,7 +979,7 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 				}
 
 				if (displayReply && !ctx.isAsPageMode()) {
-					renderSendReactionForm(out, id, reaction, userDisplayName, ctx, i18nAccess);
+					renderSendReactionForm(user, out, id, reaction, userDisplayName, ctx, i18nAccess);
 				}
 				out.println("</div>");
 				renderReactions(out, id, htmlIdSuffix, reaction.getId(), reactions, currentUser, ctx, i18nAccess, displayUserInfo, displayTitle, displayReply);
@@ -988,7 +988,7 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 			}
 		}
 		if (!first) {
-			out.println("</ul>");
+			out.println("</ul></div>");
 		}
 	}
 
@@ -1015,12 +1015,12 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 		out.println("<label for=\"info-" + getId() + "\" >stay empty.</label>");
 		out.println("<input id=\"info-" + getId() + "\" type=\"text\" name=\"fdata\" value=\"\" />");
 		out.println("</div>");
-		out.println("<input class=\"button light needconfirm\" type=\"submit\" name=\"ok\" value=\"" + i18nAccess.getViewText("global.delete") + "\" />");
+		out.println("<input class=\"button light needconfirm btn btn-default btn-sm\" type=\"submit\" name=\"ok\" value=\"" + i18nAccess.getViewText("global.delete") + "\" />");
 		out.println("</form>");
 		out.println("</div>");
 	}
 
-	private void renderSendReactionForm(PrintWriter out, String id, Reaction reaction, String replyToUser, ContentContext ctx, I18nAccess i18nAccess) throws Exception {
+	private void renderSendReactionForm(User user, PrintWriter out, String id, Reaction reaction, String replyToUser, ContentContext ctx, I18nAccess i18nAccess) throws Exception {
 		out.println("<div class=\"reaction-form\">");
 		String reactionIdParam = ctx.getRequest().getParameter("reactionId");
 		if ((reactionIdParam == null && reaction == null) || (reactionIdParam != null && reaction != null && reactionIdParam.equals(reaction.getId()))) {
@@ -1031,6 +1031,7 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 			out.println("</div>");
 			}
 		}
+		
 		String reactionId = reaction == null ? null : reaction.getId();
 		String formTitle = reaction == null ? "" : i18nAccess.getViewText("global.reply-to") + " " + replyToUser;
 		out.println("<form id=\"reaction-" + getId() + "\" method=\"post\" action=\"" + URLHelper.createURL(ctx) + "#" + id + "\" class=\"big_form\" title=\"" + formTitle + "\">");
@@ -1038,6 +1039,11 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 		out.println("<input type=\"hidden\" name=\"comp\" value=\"" + getId() + "\" />");
 		out.println("<input type=\"hidden\" name=\"httpPostId\" value=\"" + StringHelper.getRandomId() + "\" />");
 		out.println("<input type=\"hidden\" name=\"reactionId\" value=\"" + StringHelper.neverNull(reactionId) + "\" />");
+		if (user != null && !StringHelper.isEmpty(user.getUserInfo().getAvatarURL())) {
+			out.println("<figure class=\"avatar\"><img src=\""+user.getUserInfo().getAvatarURL()+"\" alt=\""+user.getName()+"\" /></figure>");
+		} else {
+			out.println("<figure class=\"avatar empty\"><span></span></figure>");
+		}
 		Collection<Field> fields = getViewFields(ctx, reactionId);
 		for (Field field : fields) {
 			if (field != null) {
@@ -1063,7 +1069,7 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 		out.println("</div>");
 
 		out.println("<div class=\"actions\">");
-		out.println("<input class=\"button light\" type=\"submit\" name=\"ok\" value=\"" + i18nAccess.getViewText("global.send") + "\" />");
+		out.println("<input class=\"button light btn btn-default\" type=\"submit\" name=\"ok\" value=\"" + i18nAccess.getViewText("global.send") + "\" />");
 		out.println("</div>");
 		out.println("</form>");
 		out.println("</div>");

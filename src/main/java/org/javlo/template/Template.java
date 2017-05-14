@@ -326,6 +326,7 @@ public class Template implements Comparable<Template> {
 		String HTMLFile;
 		String creationDate;
 		String downloadURL;
+		String rootURL;
 		List<String> ids;
 		List<String> css;
 		Map<String, String> areaMap;
@@ -349,6 +350,8 @@ public class Template implements Comparable<Template> {
 		List<String> renderers;
 		private Map<String, String> s = null;
 		private Map<String, List<String>> cssByFolder;
+		private Template template;
+		private TemplateBean parentBean;
 
 		public TemplateBean() {
 		};
@@ -357,6 +360,7 @@ public class Template implements Comparable<Template> {
 			StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
 
 			name = template.getName();
+			this.template = template;
 			previewURL = URLHelper.createTransformStaticTemplateURL(ctx, template, "template",
 					template.getVisualFile());
 			viewURL = URLHelper.createTransformStaticTemplateURL(ctx, template, "template_view",
@@ -365,6 +369,8 @@ public class Template implements Comparable<Template> {
 			HTMLFile = template.getHTMLFile(ctx.getDevice());
 			creationDate = StringHelper.renderDate(template.getCreationDate(), staticConfig.getDefaultDateFormat());
 			downloadURL = "/folder/template/" + template.getName() + ".zip";
+			
+			rootURL = URLHelper.createStaticTemplateURL(ctx, template, "");
 
 			ContentContext remoteCtx = ctx.getContextForAbsoluteURL();
 			downloadURL = URLHelper.createStaticURL(remoteCtx, downloadURL);
@@ -415,6 +421,10 @@ public class Template implements Comparable<Template> {
 
 		public String getHtmlUrl() throws Exception {
 			return HTMLURL;
+		}
+		
+		public String getRootURL() {
+			return rootURL;
 		}
 
 		public String getHtmlFile() {
@@ -595,6 +605,22 @@ public class Template implements Comparable<Template> {
 
 		public List<String> getHtmls() {
 			return htmls;
+		}
+
+		public Template getTemplate() {
+			return template;
+		}
+
+		public void setTemplate(Template template) {
+			this.template = template;
+		}
+
+		public TemplateBean getParentBean() {
+			return parentBean;
+		}
+
+		public void setParentBean(TemplateBean parentBean) {
+			this.parentBean = parentBean;
 		}
 
 	}
@@ -1089,7 +1115,9 @@ public class Template implements Comparable<Template> {
 
 	private void storePrivateProperties() {
 		try {
-			privateProperties.save();
+			if (privateProperties != null) {
+				privateProperties.save();
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -2326,9 +2354,11 @@ public class Template implements Comparable<Template> {
 				File templateSrc = new File(URLHelper.mergePath(templateFolder, getSourceFolderName()));
 				if (templateSrc.exists()) {
 					File templateTgt = new File(getTemplateTargetFolder(globalContext));
+					long startTime = System.currentTimeMillis();
 					logger.info("copy template from '" + templateSrc + "' to '" + templateTgt + "'");
 					FileUtils.deleteDirectory(templateTgt);
 					importTemplateInWebapp(config, ctx, globalContext, templateTgt, null, true, false);
+					logger.info("import template : "+getName()+" in "+StringHelper.renderTimeInSecond(System.currentTimeMillis()-startTime));
 				} else {
 					logger.severe("folder not found : " + templateSrc);
 					templateImportationError = true;
@@ -2396,8 +2426,7 @@ public class Template implements Comparable<Template> {
 
 			while (files.hasNext()) {
 				File file = files.next();
-				File targetFile = new File(file.getAbsolutePath().replace(templateSrc.getAbsolutePath(),
-						templateTarget.getAbsolutePath()));
+				File targetFile = new File(file.getAbsolutePath().replace(templateSrc.getAbsolutePath(),templateTarget.getAbsolutePath()));
 				if (ctx != null) {
 					try {
 						String fileExt = FilenameUtils.getExtension(file.getName());

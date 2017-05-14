@@ -232,7 +232,7 @@ public class URLHelper extends ElementaryURLHelper {
 				return url;
 			}
 		}
-		return null;
+		return URLHelper.createStaticURL(ctx,  "/images/avatar.png");
 	}
 
 	public static String createQRCodeLink(ContentContext ctx, IContentVisualComponent comp) {

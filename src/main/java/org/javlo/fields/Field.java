@@ -215,6 +215,7 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 	private String id;
 	private String message;
 	private String label = null;
+	private String placeholder = null;
 	private boolean readOnly = false;
 	private int messageType = MESSAGE_INFO;
 	protected transient StaticConfig staticConfig;
@@ -479,7 +480,7 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 		displayStr = reverserLinkService.replaceLink(ctx, comp, displayStr);
 
 		if (isWrapped()) {
-			out.println("<" + getTag() + " class=\"field-value\">" + displayStr + "</" + getTag() + ">");
+			out.println("<" + getTag() + (StringHelper.isEmpty(getPlaceholder())?"":" placeholder=\""+getPlaceholder()+"\"")+" class=\"field-value\">" + displayStr + "</" + getTag() + ">");
 		} else {
 			out.println(displayStr);
 		}
@@ -1072,5 +1073,13 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 	
 	public FieldBean getBean(ContentContext ctx) {
 		return newFieldBean(ctx);
+	}
+
+	public String getPlaceholder() {
+		return placeholder;
+	}
+
+	public void setPlaceholder(String placeholder) {
+		this.placeholder = placeholder;
 	}
 }

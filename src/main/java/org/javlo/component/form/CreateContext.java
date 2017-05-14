@@ -1,6 +1,10 @@
 package org.javlo.component.form;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.javlo.actions.IAction;
 import org.javlo.component.core.AbstractVisualComponent;
@@ -10,8 +14,13 @@ import org.javlo.helper.StringHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.message.MessageRepository;
 import org.javlo.service.RequestService;
+import org.javlo.user.IUserFactory;
+import org.javlo.user.IUserInfo;
+import org.javlo.user.exception.UserAllreadyExistException;
 
 public class CreateContext extends AbstractVisualComponent implements IAction {
+	
+	private static Set<String> DEFAULT_ROLES = new HashSet<String>(Arrays.asList(new String[] {"content", "light-interface", "contributor"}));
 	
 	public static final String TYPE  = "create-context";
 
@@ -25,9 +34,9 @@ public class CreateContext extends AbstractVisualComponent implements IAction {
 		return "createContext";
 	}
 	
-	public static String performCreate(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws IOException {
-		
+	public static String performCreate(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws IOException, SecurityException, NoSuchMethodException, ClassNotFoundException, IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException, UserAllreadyExistException {
 		String name = rs.getParameter("name", null);
+		String url = rs.getParameter("url", null);
 		if (GlobalContext.isExist(ctx.getRequest(), name)) {
 			return i18nAccess.getViewText("create-context.msg.error.exist");
 		}
@@ -42,10 +51,17 @@ public class CreateContext extends AbstractVisualComponent implements IAction {
 		}
 		if (!pwd.equals(pwd2)) {
 			return i18nAccess.getViewText("create-context.msg.error.pwd-same");
-		}
-		
-		GlobalContext newContext = GlobalContext.getInstance(ctx.getRequest().getSession(), name);
-		
+		}		
+		GlobalContext newContext = GlobalContext.getInstance(ctx.getRequest().getSession(), url);
+		newContext.setAdministrator(email);
+		newContext.setGlobalTitle(name);
+		IUserFactory userFactory = newContext.getAdminUserFactory(ctx.getRequest().getSession());
+		IUserInfo newUser = userFactory.createUserInfos();
+		newUser.setLogin(email);
+		newUser.setPassword(true, pwd);
+		newUser.addRoles(DEFAULT_ROLES);
+		userFactory.addUserInfo(newUser);	
+		userFactory.store();
 		return null;
 	}
 	
@@ -55,3 +71,4 @@ public class CreateContext extends AbstractVisualComponent implements IAction {
 	}
 
 }
+

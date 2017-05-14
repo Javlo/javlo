@@ -736,6 +736,8 @@ public class GlobalContext implements Serializable, IPrintInfo {
 																															// token
 																															// live
 																															// 1h
+	
+	private final Map<String, String> changePasswordToken = Collections.synchronizedMap(new TimeMap<String, String>(60 * 60));
 
 	public final Object RELEASE_CACHE = new Object();
 
@@ -3128,6 +3130,20 @@ public class GlobalContext implements Serializable, IPrintInfo {
 			return null;
 		}
 		return oneTimeTokens.remove(token);
+	}
+	
+	public String getChangePasswordToken(String user) {
+		String token = StringHelper.getRandomId()+StringHelper.getRandomString(8, StringHelper.ALPHANUM);
+		changePasswordToken.put(token, user);
+		return token;
+	}
+	
+	public String getChangePasswordTokenUser(String token) {
+		String user = changePasswordToken.get(token);
+		if (user != null) {
+			changePasswordToken.remove(token);
+		}
+		return user; 
 	}
 
 	public Object getLockImportTemplate() {

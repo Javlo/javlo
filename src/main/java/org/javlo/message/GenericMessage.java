@@ -27,6 +27,8 @@ public class GenericMessage {
 	String cleanMessage = null;
 	String key = null;
 	String URL = null;
+	boolean reverseLinkCreate = false;
+	boolean displayed = false;
 
 	public static final GenericMessage EMPTY_MESSAGE = new GenericMessage("", null, 0);
 
@@ -87,8 +89,28 @@ public class GenericMessage {
 		if (cleanMessage != null) {
 			return cleanMessage;
 		}
-		cleanMessage = Encode.forHtmlContent(message);
+		cleanMessage = Encode.forHtmlContent(message);	
 		return  cleanMessage; // secure CSS attack
+	}
+	
+	/**
+	 * @return
+	 */
+	public String getMessageDisplay() {		
+		setDisplayed(true);
+		return getMessage(); // secure CSS attack
+	}
+	
+	public boolean isNeedDisplay() {
+		return !isDisplayed() && !StringHelper.isEmpty(message);
+	}
+	
+	public boolean isDisplayed() {
+		return displayed;
+	}
+	
+	public void setDisplayed(boolean displayed) {
+		this.displayed = displayed;
 	}
 	
 	public String getCleanMessage() {

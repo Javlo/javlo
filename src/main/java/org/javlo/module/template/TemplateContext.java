@@ -21,6 +21,7 @@ public class TemplateContext {
 	private static final String KEY = "templateContext";	
 	public static ParentLink MY_TEMPLATES_LINK = null;
 	public static ParentLink ALL_TEMPLATES_LINK = null;
+	public static ParentLink HIERARCHY_LINK = null;
 	private I18nAccess i18nAccess = null;	
 	private String currentLink;
 	private boolean editPreview = false;
@@ -34,6 +35,7 @@ public class TemplateContext {
 			outCtx.i18nAccess = I18nAccess.getInstance(globalContext, session);			
 			TemplateContext.MY_TEMPLATES_LINK = new ParentLink("mytemplates", outCtx.i18nAccess.getText("template.renderer.home"));
 			TemplateContext.ALL_TEMPLATES_LINK = new ParentLink("allmtemplates", outCtx.i18nAccess.getText("template.renderer.all"));
+			TemplateContext.HIERARCHY_LINK = new ParentLink("hierarchy", outCtx.i18nAccess.getText("template.renderer.hierarchy", "Hierarchy"));
 			session.setAttribute(KEY, outCtx);
 		}
 		
@@ -47,6 +49,7 @@ public class TemplateContext {
 		List<ParentLink> outRenderers = new LinkedList<ParentLink>();		
 		outRenderers.add(MY_TEMPLATES_LINK);		
 		outRenderers.add(ALL_TEMPLATES_LINK);
+		outRenderers.add(HIERARCHY_LINK);
 		return outRenderers;
 	}
 	

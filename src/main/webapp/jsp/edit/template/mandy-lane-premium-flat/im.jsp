@@ -48,7 +48,7 @@ if (!queryUnreadNumber) {
 
 request.setAttribute("currentUser", currentUser);
 request.setAttribute("lastMessageId", lastMessageId);
-request.setAttribute("messages", messages);
+request.setAttribute("messagesList", messages);
 request.setAttribute("users", users);
 
 InfoBean.updateInfoBean(ctx);
@@ -56,7 +56,7 @@ InfoBean.updateInfoBean(ctx);
 <div class="messagelist">
 	<h4>${i18n.edit['im.title']}</h4>
 	<ul class="im-messages" style="min-height: 50px; max-height: 350px; overflow: auto;">
-		<c:forEach var="message" items="${messages}">
+		<c:forEach var="message" items="${messagesList}">
 			<li class="im-message ${message.wizz?'im-wizz':''}">
 				<span class="user" style="color: ${users[message.fromUser].color};">${message.fromUser}</span>
 				<c:if test="${(not empty message.receiverUser) && (message.receiverUser != '_ALL')}">

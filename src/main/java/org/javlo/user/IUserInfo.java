@@ -99,6 +99,8 @@ public interface IUserInfo {
 	public String getUserFolder();
 	
 	public InternetAddress getInternetAddress();
+	
+	public String encryptPassword(String pwd);
 
 	/**
 	 * get the type of account (default, facebook, google account...)

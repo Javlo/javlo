@@ -210,7 +210,7 @@ public class UserRegistration extends AbstractVisualComponent implements IAction
 				userInfo.setEmail(emailLogin);
 			}
 			if (globalContext.getStaticConfig().isPasswordEncryt()) {
-				userInfo.setPassword(StringHelper.encryptPassword(userInfo.getPassword()));
+				userInfo.setPassword(userInfo.encryptPassword(userInfo.getPassword()));
 			}
 			userFactory.addUserInfo(userInfo);
 			userFactory.store();
@@ -328,7 +328,7 @@ public class UserRegistration extends AbstractVisualComponent implements IAction
 				userInfo = ctx.getCurrentUser().getUserInfo();
 			}
 			if (globalContext.getStaticConfig().isPasswordEncryt()) {
-				password = StringHelper.encryptPassword(password2);
+				password = userInfo.encryptPassword(password2);
 			}
 			userInfo.setPassword(password);
 			userFactory.store();

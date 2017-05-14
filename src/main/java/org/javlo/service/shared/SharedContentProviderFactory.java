@@ -12,6 +12,7 @@ import java.util.List;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.context.INeedContentContext;
+import org.javlo.service.shared.pixabay.PixabaySharedContentProvider;
 import org.javlo.service.shared.stockvault.StockvaultSharedContentProvider;
 import org.javlo.service.shared.url.URLImageSharedContentProvider;
 
@@ -64,7 +65,8 @@ public class SharedContentProviderFactory {
 			addContentProvider(ctx, staticContentProviders,new GlobalImageSharedContentProvider());			
 			addContentProvider(ctx, staticContentProviders,new ImportedImageSharedContentProvider());
 			addContentProvider(ctx, staticContentProviders,new LocalFileSharedContentProvider());
-			addContentProvider(ctx, staticContentProviders,new ImportedFileSharedContentProvider());			
+			addContentProvider(ctx, staticContentProviders,new ImportedFileSharedContentProvider());
+			addContentProvider(ctx, staticContentProviders, new PixabaySharedContentProvider());
 			try {				
 				addContentProvider(ctx, staticContentProviders,new StockvaultSharedContentProvider());
 			} catch (Exception e) {

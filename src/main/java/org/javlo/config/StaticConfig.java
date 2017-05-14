@@ -144,6 +144,9 @@ public class StaticConfig extends Observable {
 					InputStream in = application.getResourceAsStream(StaticConfig.WEBAPP_CONFIG_FILE);
 					try {
 						webappProps.load(in);
+					} catch (Exception e ) {
+						logger.severe("error on read : "+StaticConfig.WEBAPP_CONFIG_FILE);
+						throw e;
 					} finally {
 						ResourceHelper.closeResource(in);
 					}
@@ -919,6 +922,10 @@ public class StaticConfig extends Observable {
 
 	public String getShareImageFolder() {
 		return properties.getString("share-image-folder", "images");
+	}
+	
+	public String getSharedPixaBayAPIKey() {
+		return properties.getString("shared.pixabay.key", null);
 	}
 
 	public String getSMTPHost() {

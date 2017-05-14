@@ -30,7 +30,7 @@ public class EncryptVisitorsPasswordMacro extends AbstractMacro {
 		Collection<IUserInfo> allUserInfo = userFactory.getUserInfoList();
 		for (IUserInfo iUserInfo : allUserInfo) {
 			if (iUserInfo.getPassword() != null && iUserInfo.getPassword().trim().length() > 0) {
-				iUserInfo.setPassword(StringHelper.encryptPassword(iUserInfo.getPassword()));
+				iUserInfo.setPassword(iUserInfo.encryptPassword(iUserInfo.getPassword()));
 			}
 		}
 		userFactory.store();

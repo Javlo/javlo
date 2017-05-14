@@ -14,10 +14,10 @@ import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 
 public class ConfigurationProperties {
-	
+
 	protected Properties prop;
 	private File file;
-	
+
 	public ConfigurationProperties() {
 		this.prop = new Properties();
 	}
@@ -25,7 +25,7 @@ public class ConfigurationProperties {
 	public ConfigurationProperties(Properties prop) {
 		this.prop = prop;
 	}
-	
+
 	public void load(File file) throws IOException {
 		this.file = file;
 		FileReader reader = new FileReader(file);
@@ -35,32 +35,32 @@ public class ConfigurationProperties {
 			ResourceHelper.safeClose(reader);
 		}
 	}
-	
+
 	public File getFile() {
 		return file;
 	}
-	
+
 	public Iterator getKeys() {
 		return prop.keySet().iterator();
 	}
-	
+
 	public void clear() {
 		prop.clear();
 	}
-	
+
 	public Properties getProperties() {
 		return prop;
 	}
-	
+
 	public int getInt(String key, int i) {
 		String val = prop.getProperty(key);
 		if (val == null) {
 			return i;
 		} else {
-			return Integer.parseInt(val);
+			return Integer.parseInt(val.trim());
 		}
 	}
-	
+
 	public String getString(String key, String defaultValue) {
 		String val = prop.getProperty(key);
 		if (val == null) {
@@ -69,19 +69,19 @@ public class ConfigurationProperties {
 			return val.trim();
 		}
 	}
-	
+
 	public String getString(String key) {
 		return prop.getProperty(key);
 	}
-	
+
 	public void setProperty(String key, int value) {
-		prop.setProperty(key, ""+value);
+		prop.setProperty(key, "" + value);
 	}
 
 	public void setProperty(String key, String value) {
 		if (key != null && value != null) {
-			prop.setProperty(key, value);	
-		}		
+			prop.setProperty(key, value);
+		}
 	}
 
 	public String getProperty(String key) {
@@ -111,7 +111,7 @@ public class ConfigurationProperties {
 	}
 
 	public void setProperty(String key, boolean adminManagement) {
-		prop.setProperty(key, ""+adminManagement);
+		prop.setProperty(key, "" + adminManagement);
 	}
 
 	public void clearProperty(String key) {
@@ -119,11 +119,11 @@ public class ConfigurationProperties {
 	}
 
 	public void setProperty(String key, Object value) {
-		prop.setProperty(key, ""+value);
+		prop.setProperty(key, "" + value);
 	}
 
 	public void addProperty(String key, Object object) {
-		prop.setProperty(key, ""+object);
+		prop.setProperty(key, "" + object);
 	}
 
 	public boolean containsKey(String key) {
@@ -139,12 +139,14 @@ public class ConfigurationProperties {
 	}
 
 	public void save() throws IOException {
-		OutputStream out = new FileOutputStream(file);
-		try {
-			prop.store(out, "");
-		} finally {
-			ResourceHelper.closeResource(out);
-		}		
+		if (file != null) {
+			OutputStream out = new FileOutputStream(file);
+			try {
+				prop.store(out, "");
+			} finally {
+				ResourceHelper.closeResource(out);
+			}
+		}
 	}
 
 	public void load(InputStream in) throws IOException {
@@ -152,7 +154,7 @@ public class ConfigurationProperties {
 	}
 
 	public void setEncoding(String cHARACTER_ENCODING) {
-		//TODO: check how implement that
+		// TODO: check how implement that
 	}
 
 	public void load(Reader reader) throws IOException {

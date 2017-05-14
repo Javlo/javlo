@@ -608,7 +608,7 @@ public class InfoBean {
 		if (ctx.getCurrentUser() != null) {
 			return URLHelper.createAvatarUrl(ctx, ctx.getCurrentUser().getUserInfo());
 		} else {
-			return null;
+			return URLHelper.createStaticURL(ctx,  "/images/avatar.png");
 		}
 	}
 
@@ -1027,6 +1027,14 @@ public class InfoBean {
 	public Template getTemplate() {
 		try {
 			return ctx.getCurrentTemplate();
+		} catch (Exception e) {
+			return null;
+		}
+	}
+	
+	public TemplateBean getTemplateBean() {
+		try {
+			return new TemplateBean(ctx,ctx.getCurrentTemplate());
 		} catch (Exception e) {
 			return null;
 		}

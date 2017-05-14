@@ -134,12 +134,17 @@ public class MessageRepository {
 	public GenericMessage getGlobalMessage() {
 		if (reverseLinkService != null && globalMessage != null) {
 			String message = globalMessage.getMessage();			
-			try {	
-				GenericMessage rlMsg= new GenericMessage(message, globalMessage.key, globalMessage.type, globalMessage.URL);
-				message = Encode.forHtmlContent(message);
-				message = reverseLinkService.replaceLink(ctx, null, message);	
-				rlMsg.setCleanMessage(message);
-				return rlMsg;
+			try {
+				if (!globalMessage.reverseLinkCreate) {
+					GenericMessage rlMsg= new GenericMessage(message, globalMessage.key, globalMessage.type, globalMessage.URL);
+					rlMsg.setDisplayed(globalMessage.isDisplayed());
+					message = Encode.forHtmlContent(message);
+					message = reverseLinkService.replaceLink(ctx, null, message);	
+					rlMsg.setCleanMessage(message);
+					globalMessage = rlMsg;
+					globalMessage.reverseLinkCreate = true;
+				}
+				return globalMessage;
 			} catch (Exception e) {
 				e.printStackTrace();
 			}						
@@ -157,7 +162,10 @@ public class MessageRepository {
 	public void setGlobalMessage(GenericMessage globalMessage) {
 		if (this.globalMessage != null) {
 			if (this.globalMessage.getType() == 0 || globalMessage.getType() < this.globalMessage.getType()) {
-				this.globalMessage = globalMessage;
+				// is message name, don't replace (for needDisplay function)
+				if (!this.getGlobalMessage().getMessage().equals(globalMessage.getMessage()) || this.getGlobalMessage().getType() != globalMessage.getType()) {
+					this.globalMessage = globalMessage;
+				}
 			}
 		} else {
 			this.globalMessage = globalMessage;

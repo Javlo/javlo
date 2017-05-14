@@ -341,6 +341,10 @@ public class StringHelperTest extends TestCase {
 		assertEquals("lorem", StringHelper.removeQuote("  \"lorem\"  "));
 	}
 	
+	public void testEncryptPasswordSHA256() {
+		assertEquals("d61730e9c8132d8e308fafdd9ae09999b54f65fa68bef1889e1f11e3fc9cda65", StringHelper.encryptPasswordSHA256("javlo"));
+	}
+	
 	public void testRemoveSpecialChars() {		
 		/*assertEquals("lorem", StringHelper.removeSpecialChars("lorem"));
 		assertEquals("ete", StringHelper.removeSpecialChars("été"));		
