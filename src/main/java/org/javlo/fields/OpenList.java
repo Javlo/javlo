@@ -56,7 +56,16 @@ public class OpenList extends Field {
 	}
 	
 	@Override
+	public String getSearchEditXHTMLCode(ContentContext ctx) throws Exception {
+		return getEditXHTMLCode(ctx, true);
+	}
+	
+	@Override
 	public String getEditXHTMLCode(ContentContext ctx) throws Exception {
+		return getEditXHTMLCode(ctx, false);		
+	}
+	
+	private String getEditXHTMLCode(ContentContext ctx, boolean search) throws Exception {
 		StringWriter writer = new StringWriter();
 		PrintWriter out = new PrintWriter(writer);
 		Map<String,String> valuesMap = getList(ctx);
@@ -71,6 +80,10 @@ public class OpenList extends Field {
 		out.println("<div class=\"row\"><div class=\"col-sm-3\"><label for=\"" + getInputName() + "\">" + getLabel(new Locale(ctx.getContextRequestLanguage())) + " : </label></div>");
 		out.println("<div class=\"col-sm-"+(ctx.isVisualMode()?"9":"7")+"\"><select class=\"form-control\" id=\"" + getInputName() + "\" name=\"" + getInputName() + "\" value=\"" + StringHelper.neverNull(getValue()) + "\">");
  
+		if (search) {
+			out.println("		<option></option>");
+		}
+		
 		for (Map.Entry<String, String> value : values) {
 			String selected = "";
 			if (getValue() != null) {

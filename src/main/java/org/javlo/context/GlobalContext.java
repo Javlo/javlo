@@ -1404,6 +1404,10 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		properties.setProperty("platform.type", type);
 		save();
 	}
+	
+	public boolean isOpenPlatform() {
+		return getPlatformType().equals(StaticConfig.OPEN_PLATFORM);
+	}
 
 	public boolean isMailingPlatform() {
 		return getPlatformType().equals(StaticConfig.MAILING_PLATFORM);

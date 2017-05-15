@@ -1057,7 +1057,7 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 
 	@Override
 	public int compareTo(Field o) {
-		if (o == null) {
+		if (o == null || o.getValue() == null) {
 			return -1;
 		}
 		if (getValue() == null) {

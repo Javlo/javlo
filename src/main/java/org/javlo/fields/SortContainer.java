@@ -14,6 +14,7 @@ public class SortContainer implements Comparator<IFieldContainer> {
 	private ContentContext ctx;
 
 	public SortContainer(ContentContext ctx, String field) {
+		try {
 		if (field.contains(",")) {
 			fields.addAll(Arrays.asList(field.split(",")));
 		} else {
@@ -21,9 +22,13 @@ public class SortContainer implements Comparator<IFieldContainer> {
 		}
 
 		this.ctx = ctx;
+		} catch (Throwable e) {
+			e.printStackTrace();
+		}
 	}
 	
 	private int compareTo(int number, Comparable obj1, Comparable obj2) {
+		try {
 		if (obj1==null && obj2==null) {
 			return 0;
 		}
@@ -40,8 +45,12 @@ public class SortContainer implements Comparator<IFieldContainer> {
 		} else {
 			return 0;
 		}
+		} catch (Throwable e) {
+			e.printStackTrace();
+			return 0;
+		}
 	}
-
+	
 	@Override
 	public int compare(IFieldContainer f1, IFieldContainer f2) {
 		if (f1==null && f2==null) {
@@ -70,14 +79,14 @@ public class SortContainer implements Comparator<IFieldContainer> {
 					field = field.substring(1);
 				}
 				number--;
-			}			
+			}
 			return compareTo(number, f1.getField(ctx, field), f2.getField(ctx, field))*multi;
 			/*return f1.getField(ctx, field).compareTo(f2.getField(ctx, field))*multi;
 			 * field1 = f1.getField(ctx, field); Field field2 = f2.getField(ctx,
 			 * field); if (field1 == null || field2 == null) { return 0; } else
 			 * { return field1.compareTo(field2); }
 			 */
-		} catch (Exception e) {
+		} catch (Throwable e) {
 			e.printStackTrace();
 			return 0;
 		}

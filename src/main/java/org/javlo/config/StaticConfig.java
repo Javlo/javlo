@@ -52,6 +52,7 @@ public class StaticConfig extends Observable {
 
 	public static String WEB_PLATFORM = "web";
 	public static String MAILING_PLATFORM = "mailing";
+	public static String OPEN_PLATFORM = "open";
 	private static final List<String> PLATFORMS = new LinkedList<String>(Arrays.asList(new String[] { WEB_PLATFORM, MAILING_PLATFORM }));
 
 	protected static Logger logger = Logger.getLogger(StaticConfig.class.getName());
@@ -1140,7 +1141,7 @@ public class StaticConfig extends Observable {
 	 * @return
 	 */
 	public boolean isAccountSize() {
-		return properties.getBoolean("account.size", true);
+		return properties.getBoolean("account.size", false);
 	}
 
 	public boolean isDataFolderRelative() {

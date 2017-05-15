@@ -150,7 +150,7 @@ public class DynamicComponentFilter extends AbstractPropertiesComponent implemen
 		DynamicComponentService service = DynamicComponentService.getInstance(globalContext);
 
 		List<IFieldContainer> containers = service.getFieldContainers(ctx, content.getNavigation(ctx), getSelectedType());
-
+		
 		if (!StringHelper.isEmpty(getSelectedField())) {
 			Collections.sort(containers, new SortContainer(ctx, getSelectedField()));
 		}
