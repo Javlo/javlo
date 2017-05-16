@@ -5,8 +5,10 @@ package org.javlo.component.form;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.InternetAddress;
@@ -24,6 +26,7 @@ import org.javlo.context.GlobalContext;
 import org.javlo.helper.PatternHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
+import org.javlo.helper.XHTMLHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.mailing.MailConfig;
 import org.javlo.mailing.MailService;
@@ -38,7 +41,7 @@ public class Contact extends AbstractVisualComponent implements ICSS, IAction {
 
 	@Override
 	public String getPrefixViewXHTMLCode(ContentContext ctx) {
-		return "<div class=\"" + getType() + "\" >";
+		return "<div id=\""+getPreviewCssId(ctx)+"\" class=\"" + getPreviewCssClass(ctx, getType()) + "\" >";
 	}
 
 	@Override
@@ -86,9 +89,9 @@ public class Contact extends AbstractVisualComponent implements ICSS, IAction {
 		value = StringEscapeUtils.escapeXml(value);
 
 		if (field.equals("body")) {
-			return "<textarea id=\"" + id + "\" name=\"" + id + "\">" + value + "</textarea>";
+			return "<textarea class=\"form-control\" id=\"" + id + "\" name=\"" + id + "\">" + value + "</textarea>";
 		} else {
-			return "<input type=\"text\" id=\"" + id + "\" name=\"" + id + "\" value=\"" + value + "\" />";
+			return "<input class=\"form-control\" type=\"text\" id=\"" + id + "\" name=\"" + id + "\" value=\"" + value + "\" />";
 		}
 	}
 
@@ -106,7 +109,7 @@ public class Contact extends AbstractVisualComponent implements ICSS, IAction {
 			msg = new GenericMessage("contact.intro", GenericMessage.INFO);
 		}
 
-		out.println("<div class=\"" + firstMessageClass + "message message-" + msg.getTypeLabel() + "\">");
+		out.println("<div class=\"" + firstMessageClass + "alert alert-"+ msg.getBootstrapType() +" message message-" + msg.getTypeLabel() + "\">");
 		out.println(i18nAccess.getContentViewText(msg.getMessage()));
 		out.println("</div>");
 
@@ -118,7 +121,7 @@ public class Contact extends AbstractVisualComponent implements ICSS, IAction {
 			RequestService requestService = RequestService.getInstance(ctx.getRequest());
 			boolean compulsoryFound = false;
 			for (String field : fields) {
-				out.println("<div class=\"line\">");
+				out.println("<div class=\"line form-group\">");
 				out.print("<label for=\"" + field + "\">");
 				out.print(i18nAccess.getContentViewText("field." + field));
 				if (getCompulsoryField().contains(field)) {
@@ -130,7 +133,7 @@ public class Contact extends AbstractVisualComponent implements ICSS, IAction {
 				out.println("</div>");
 			}
 			out.println("<div class=\"action\">");
-			out.println("<input type=\"submit\" value=\"" + i18nAccess.getContentViewText("global.send") + "\"/>");
+			out.println("<input type=\"submit\" class=\"btn btn-primary pull-right\" value=\"" + i18nAccess.getContentViewText("global.send") + "\"/>");
 			out.println("</div>");
 			if (compulsoryFound) {
 				out.println("<div class=\"message-permanent\">" + i18nAccess.getContentViewText("global.compulsory-field") + "</div>");
@@ -241,16 +244,12 @@ public class Contact extends AbstractVisualComponent implements ICSS, IAction {
 		RequestService requestService = RequestService.getInstance(request);
 		ContentContext ctx = ContentContext.getContentContext(request, response);
 
-		String targetMail = requestService.getParameter("send-to", null);
-		StringWriter res = new StringWriter();
-		PrintWriter out = new PrintWriter(res);
+		String targetMail = requestService.getParameter("send-to", null);				
 		if (targetMail != null) {
 			List<String> fields = getFields();
 			GlobalContext globalContext = GlobalContext.getInstance(request);
 			String title = "Contact : " + globalContext.getContextKey();
-			out.println(title);
-			out.println("");
-			out.println("");
+			Map<String,String> dataMap = new HashMap<String,String>();			
 			for (String field : fields) {
 				String info = requestService.getParameter(field, null);
 				if (info != null) {
@@ -260,15 +259,15 @@ public class Contact extends AbstractVisualComponent implements ICSS, IAction {
 						messageRepository.setGlobalMessage(genericMessage);
 						return null;
 					}
-					out.println("    " + field + " = " + info);
+					dataMap.put(field, info);					
 				}
 			}
+			String mail = XHTMLHelper.createAdminMail(title, "", dataMap, URLHelper.createURL(ctx.getContextForAbsoluteURL()), globalContext.getGlobalTitle(), "");
 			MailService mailService = MailService.getInstance(new MailConfig(globalContext, StaticConfig.getInstance(request.getSession()), null));
 			try {
 				InternetAddress to = new InternetAddress(targetMail);
-				InternetAddress from = new InternetAddress(globalContext.getAdministratorEmail());
-				out.close();
-				mailService.sendMail(from, to, title, res.toString(), false);
+				InternetAddress from = new InternetAddress(globalContext.getAdministratorEmail());				
+				mailService.sendMail(from, to, title, mail, true);
 				MessageRepository messageRepository = MessageRepository.getInstance(ctx);
 				GenericMessage genericMessage = new GenericMessage("contact.send-ok", GenericMessage.INFO);
 				messageRepository.setGlobalMessage(genericMessage);
