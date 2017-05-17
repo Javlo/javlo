@@ -62,7 +62,7 @@
 		</div>
 		<c:if test="${not empty editUser}">
 			<div class="actions">
-				<c:if test="${fn:length(contentContext.deviceNames)>1}">
+				<c:if test="${fn:length(contentContext.deviceNames)>1 && !globalContext.openPlatform}">
 					<div class="select">
 						<form id="renderers_form" action="${info.currentURL}" method="post">
 							<div class="input-wrapper">
@@ -84,7 +84,7 @@
 				</c:if>
 
 				<div class="btn-group">
-					<ul>
+					<ul><c:if test="${!globalContext.openPlatform}">
 						<li>
 							<c:set var="tooltip" value="" />
 							<c:if test="${i18n.edit['command.copy-page.tooltip'] != 'command.copy-page.tooltip'}">
@@ -134,13 +134,13 @@
 									<span class="glyphicon glyphicon-refresh" aria-hidden="true"></span><span
 										class="text">${i18n.edit['global.refresh']}</span>
 								</button>
-							</form></li>
+							</form></li></c:if>
 						<li><form id="pc_del_page_form" class="<%=readOnlyClass%>"
 								action="${info.currentURL}" method="post">
 								<div>
 									<c:if test="${not empty param['force-device-code']}"><input type="hidden" name="force-device-code" value="${param['force-device-code']}" /></c:if>
 									<input type="hidden" value="${info.pageID}" name="page" /> <input
-										type="hidden" value="edit.movePageToTrash" name="webaction" />
+										type="hidden" value="${globalContext.openPlatform?'edit.DeletePage':'edit.movePageToTrash'}" name="webaction" />
 									<c:if test="${not empty param['force-device-code']}"><input type="hidden" name="force-device-code" value="${param['force-device-code']}" /></c:if>
 									<c:if test="${!info.page.root}">
 										<c:set var="tooltip" value="" />

@@ -476,9 +476,13 @@ public class TemplateAction extends AbstractModuleAction {
 		if (!Edit.checkPageSecurity(ctx)) {
 			messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("action.block"), GenericMessage.ERROR));
 		} else {
-			String templateName = rs.getParameter("templateid", null);
+			String templateName = rs.getParameter("templateid", null);			
+			if (ctx.getGlobalContext().isOpenPlatform()) {
+				currentPage = currentPage.getRoot();
+			}	
+			System.out.println("*** type = "+ctx.getGlobalContext().getPlatformType());
+			System.out.println("*** current page = "+currentPage.getPath());
 			currentPage.setTemplateId(templateName);
-
 			MailingModuleContext mailingCtx = MailingModuleContext.getInstance(ctx.getRequest());
 			mailingCtx.setCurrentTemplate(null);
 		}

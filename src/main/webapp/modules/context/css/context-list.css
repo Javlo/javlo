@@ -1,0 +1,12 @@
+#main-renderer .content {
+	margin-top: 15px;
+}
+
+dl dt {
+	float: left;
+	font-weight: bold;
+}
+dl dt:AFTER {
+	padding: 0 5px;
+	content: ":";
+}

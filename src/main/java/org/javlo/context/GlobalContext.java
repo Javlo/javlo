@@ -1397,7 +1397,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	}
 
 	public String getPlatformType() {
-		return properties.getString("platform.type", staticConfig.getPlatformType());
+		return StringHelper.neverEmpty(properties.getString("platform.type", null), staticConfig.getPlatformType());
 	}
 
 	public void setPlatformType(String type) {

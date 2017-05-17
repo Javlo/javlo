@@ -10,8 +10,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.logging.Level;
@@ -175,6 +177,41 @@ public class ComponentFactory {
 			}
 		}
 		return outComps;
+	}
+
+	public static Map<String, IContentVisualComponent> getComponents(ServletContext application) throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException {
+		Map<String, IContentVisualComponent> array = new HashMap<String, IContentVisualComponent>();
+		String[] classes = ConfigHelper.getComponentsClasses(application);
+		for (String clazz : classes) {
+			logger.fine("load component : " + clazz);
+			if (clazz.startsWith("--")) {
+				array.put(clazz, new MetaTitle(clazz.substring(2).trim()));
+			} else {
+				try {
+					String className = clazz;
+					boolean visible = true;
+					if (className.startsWith(".")) {
+						className = className.substring(1);
+						visible = false;
+					}
+					IContentVisualComponent comp;
+					try {
+						Class c = ComponentFactory.class.getClassLoader().loadClass(className);
+						comp = (AbstractVisualComponent) c.newInstance();
+					} catch (Throwable t) {
+						logger.warning(t.getMessage());
+						ComponentBean bean = new ComponentBean();
+						bean.setValue(t.getMessage());
+						comp = new Unknown(null, bean);
+					}
+					comp.setValid(visible);
+					array.put(clazz, comp);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		return array;
 	}
 
 	public static IContentVisualComponent[] getComponents(GlobalContext globalContext) throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException {

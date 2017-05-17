@@ -6,12 +6,19 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.mail.internet.AddressException;
+import javax.mail.internet.InternetAddress;
+
 import org.javlo.actions.IAction;
 import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
+import org.javlo.helper.NetHelper;
 import org.javlo.helper.StringHelper;
+import org.javlo.helper.URLHelper;
+import org.javlo.helper.XHTMLHelper;
 import org.javlo.i18n.I18nAccess;
+import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
 import org.javlo.service.RequestService;
 import org.javlo.user.IUserFactory;
@@ -62,6 +69,24 @@ public class CreateContext extends AbstractVisualComponent implements IAction {
 		newUser.addRoles(DEFAULT_ROLES);
 		userFactory.addUserInfo(newUser);	
 		userFactory.store();
+		
+		String subject = i18nAccess.getViewText("create-context.msg.email.subject");
+		String content = i18nAccess.getViewText("create-context.msg.email.msg")+email;
+		
+		ContentContext newCtx = new ContentContext(ctx);
+		newCtx.setForceGlobalContext(newContext);
+		newCtx.setRenderMode(ContentContext.PREVIEW_MODE);
+		newCtx.setAbsoluteURL(true);
+		
+		String mail = XHTMLHelper.createAdminMail(name, content, null, URLHelper.createURL(newCtx), i18nAccess.getViewText("global.open"), null);
+		try {
+			NetHelper.sendMail(newContext, new InternetAddress(ctx.getGlobalContext().getAdministratorEmail()), new InternetAddress(email), null, null, subject, mail);
+		} catch (AddressException e) {
+			e.printStackTrace();
+			return e.getMessage();
+		}
+		
+		messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getViewText("create-context.msg.done"), GenericMessage.SUCCESS));
 		return null;
 	}
 	

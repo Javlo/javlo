@@ -44,7 +44,9 @@ public class ModulesContext {
 		@Override
 		public int compare(Module m1, Module m2) {
 			// TODO Auto-generated method stub
-			if (m1 == null) {
+			if (m1 == null && m2 == null) {
+				return 0;
+			} else if (m1 == null) {
 				return -1;
 			} else if (m2 == null) {
 				return 1;
