@@ -25,6 +25,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.config.StaticConfig;
 import org.javlo.helper.AjaxHelper.ScheduledRender;
+import org.javlo.helper.ElementaryURLHelper;
 import org.javlo.helper.NetHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
@@ -1908,6 +1909,7 @@ public class ContentContext {
 
 	public void setForceGlobalContext(GlobalContext forceGlobalContext) {
 		this.forceGlobalContext = forceGlobalContext;
+		ElementaryURLHelper.resetPathPrefix(this);
 	}
 
 	public boolean isContentFound() {

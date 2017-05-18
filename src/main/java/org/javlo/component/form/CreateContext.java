@@ -1,5 +1,6 @@
 package org.javlo.component.form;
 
+import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
@@ -9,6 +10,7 @@ import java.util.Set;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 
+import org.apache.commons.io.FileUtils;
 import org.javlo.actions.IAction;
 import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.context.ContentContext;
@@ -44,9 +46,19 @@ public class CreateContext extends AbstractVisualComponent implements IAction {
 	public static String performCreate(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws IOException, SecurityException, NoSuchMethodException, ClassNotFoundException, IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException, UserAllreadyExistException {
 		String name = rs.getParameter("name", null);
 		String url = rs.getParameter("url", null);
-		if (GlobalContext.isExist(ctx.getRequest(), name)) {
+		String contextName = StringHelper.createFileName(url);
+		if (GlobalContext.isExist(ctx.getRequest(), contextName)) {
 			return i18nAccess.getViewText("create-context.msg.error.exist");
 		}
+		if (name == null || name.length() < 3) {			
+			return i18nAccess.getViewText("create-context.msg.error.name-size-small");
+		}
+		if (url == null || url.length() < 2) {			
+			return i18nAccess.getViewText("create-context.msg.error.url-size-small");
+		}
+		if (url.length() > 32) {
+			return i18nAccess.getViewText("create-context.msg.error.url-size");
+		}	
 		String email = rs.getParameter("email", null);
 		if (!StringHelper.isMail(email)) {
 			return i18nAccess.getViewText("create-context.msg.error.email");
@@ -59,13 +71,8 @@ public class CreateContext extends AbstractVisualComponent implements IAction {
 		if (!pwd.equals(pwd2)) {
 			return i18nAccess.getViewText("create-context.msg.error.pwd-same");
 		}
-		if (url == null || url.length() < 2) {			
-			return i18nAccess.getViewText("create-context.msg.error.url-size-small");
-		}
-		if (url.length() > 32) {
-			return i18nAccess.getViewText("create-context.msg.error.url-size");
-		}		
-		GlobalContext newContext = GlobalContext.getInstance(ctx.getRequest().getSession(), StringHelper.createFileName(url));
+			
+		GlobalContext newContext = GlobalContext.getInstance(ctx.getRequest().getSession(), contextName);
 		newContext.setAdministrator(email);
 		newContext.setGlobalTitle(name);
 		IUserFactory userFactory = newContext.getAdminUserFactory(ctx.getRequest().getSession());
@@ -76,6 +83,10 @@ public class CreateContext extends AbstractVisualComponent implements IAction {
 		userFactory.addUserInfo(newUser);	
 		userFactory.store();
 		
+		/** copy default content **/
+		GlobalContext defaultContext = GlobalContext.getInstance(ctx.getRequest().getSession(), ctx.getGlobalContext().getStaticConfig().getDefaultContext());
+		FileUtils.copyDirectory(new File(defaultContext.getDataFolder()), new File(newContext.getDataFolder()));
+		
 		String subject = i18nAccess.getViewText("create-context.msg.email.subject")+name;
 		String content = i18nAccess.getViewText("create-context.msg.email.msg")+email;
 		
@@ -84,7 +95,10 @@ public class CreateContext extends AbstractVisualComponent implements IAction {
 		newCtx.setRenderMode(ContentContext.PREVIEW_MODE);
 		newCtx.setAbsoluteURL(true);
 		
-		String mail = XHTMLHelper.createAdminMail(name, content, null, URLHelper.createURL(newCtx), i18nAccess.getViewText("global.open"), null);
+		String newURL = URLHelper.createStaticURL(newCtx, "/");
+		newURL = URLHelper.mergePath(newURL, contextName, "/preview/");
+		
+		String mail = XHTMLHelper.createAdminMail(name, content, null, newURL, i18nAccess.getViewText("global.open"), null);
 		try {
 			NetHelper.sendMail(newContext, new InternetAddress(ctx.getGlobalContext().getAdministratorEmail()), new InternetAddress(email), null, null, subject, mail, null, true);
 		} catch (AddressException e) {
@@ -92,7 +106,7 @@ public class CreateContext extends AbstractVisualComponent implements IAction {
 			return e.getMessage();
 		}
 		
-		messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getViewText("create-context.msg.done")+" : "+URLHelper.createURL(newCtx), GenericMessage.SUCCESS));
+		messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getViewText("create-context.msg.done"), GenericMessage.SUCCESS));
 		return null;
 	}
 	
