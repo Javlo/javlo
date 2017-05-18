@@ -7,7 +7,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
 import org.javlo.actions.AbstractModuleAction;
@@ -34,7 +33,6 @@ public class ContextAction extends AbstractModuleAction {
 		HttpServletRequest request = ctx.getRequest();		
 		ContentContext viewCtx = new ContentContext(ctx);
 		Module currentModule = modulesContext.getCurrentModule();
-		String msg = "";
 		viewCtx.setRenderMode(ContentContext.VIEW_MODE);
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		if (globalContext.isMaster()) {			
