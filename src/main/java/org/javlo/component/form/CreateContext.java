@@ -29,7 +29,7 @@ import org.javlo.user.exception.UserAllreadyExistException;
 
 public class CreateContext extends AbstractVisualComponent implements IAction {
 	
-	private static Set<String> DEFAULT_ROLES = new HashSet<String>(Arrays.asList(new String[] {"content", "light-interface", "contributor"}));
+	private static Set<String> DEFAULT_ROLES = new HashSet<String>(Arrays.asList(new String[] {"content", "light-interface", "contributor", "navigation"}));
 	
 	public static final String TYPE  = "create-context";
 
@@ -100,7 +100,7 @@ public class CreateContext extends AbstractVisualComponent implements IAction {
 		
 		String mail = XHTMLHelper.createAdminMail(name, content, null, newURL, i18nAccess.getViewText("global.open"), null);
 		try {
-			NetHelper.sendMail(newContext, new InternetAddress(ctx.getGlobalContext().getAdministratorEmail()), new InternetAddress(email), null, null, subject, mail, null, true);
+			NetHelper.sendMail(ctx.getGlobalContext(), new InternetAddress(ctx.getGlobalContext().getAdministratorEmail()), new InternetAddress(email), null, null, subject, mail, null, true);
 		} catch (AddressException e) {
 			e.printStackTrace();
 			return e.getMessage();

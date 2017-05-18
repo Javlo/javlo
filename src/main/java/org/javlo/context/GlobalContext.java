@@ -509,6 +509,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 							newInstance.setOpenFileAsPopup(defaultContext.isOpenExternalLinkAsPopup());
 							newInstance.setNoPopupDomainRAW(defaultContext.getNoPopupDomainRAW());
 							newInstance.setModules(defaultContext.getModules());
+							newInstance.setData("shared-content-active", defaultContext.getData("shared-content-active"));
 							if (defaultContext.getDMZServerInter() != null) {
 								newInstance.setDMZServerInter(defaultContext.getDMZServerInter().toString());
 							}
