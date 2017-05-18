@@ -3,7 +3,7 @@
 <div class="create-context">
 
 <c:if test="${not empty messages.globalMessage && messages.globalMessage.type > 0 && !empty messages.globalMessage.message}">
-<div class="message ${messages.globalMessage.type}">${ messages.globalMessage.message}</div>
+<div class="message ${messages.globalMessage.type} alert alert-${messages.globalMessage.bootstrapType}">${ messages.globalMessage.message}</div>
 </c:if>
 
 	<form action="${info.currentURL}" method="post">

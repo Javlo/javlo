@@ -80,7 +80,7 @@ public class CreateContext extends AbstractVisualComponent implements IAction {
 		
 		String mail = XHTMLHelper.createAdminMail(name, content, null, URLHelper.createURL(newCtx), i18nAccess.getViewText("global.open"), null);
 		try {
-			NetHelper.sendMail(newContext, new InternetAddress(ctx.getGlobalContext().getAdministratorEmail()), new InternetAddress(email), null, null, subject, mail);
+			NetHelper.sendMail(newContext, new InternetAddress(ctx.getGlobalContext().getAdministratorEmail()), new InternetAddress(email), null, null, subject, mail, null, true);
 		} catch (AddressException e) {
 			e.printStackTrace();
 			return e.getMessage();
