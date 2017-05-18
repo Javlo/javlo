@@ -58,8 +58,14 @@ public class CreateContext extends AbstractVisualComponent implements IAction {
 		}
 		if (!pwd.equals(pwd2)) {
 			return i18nAccess.getViewText("create-context.msg.error.pwd-same");
+		}
+		if (url == null || url.length() < 2) {			
+			return i18nAccess.getViewText("create-context.msg.error.url-size-small");
+		}
+		if (url.length() > 32) {
+			return i18nAccess.getViewText("create-context.msg.error.url-size");
 		}		
-		GlobalContext newContext = GlobalContext.getInstance(ctx.getRequest().getSession(), url);
+		GlobalContext newContext = GlobalContext.getInstance(ctx.getRequest().getSession(), StringHelper.createFileName(url));
 		newContext.setAdministrator(email);
 		newContext.setGlobalTitle(name);
 		IUserFactory userFactory = newContext.getAdminUserFactory(ctx.getRequest().getSession());
@@ -70,7 +76,7 @@ public class CreateContext extends AbstractVisualComponent implements IAction {
 		userFactory.addUserInfo(newUser);	
 		userFactory.store();
 		
-		String subject = i18nAccess.getViewText("create-context.msg.email.subject");
+		String subject = i18nAccess.getViewText("create-context.msg.email.subject")+name;
 		String content = i18nAccess.getViewText("create-context.msg.email.msg")+email;
 		
 		ContentContext newCtx = new ContentContext(ctx);
@@ -86,7 +92,7 @@ public class CreateContext extends AbstractVisualComponent implements IAction {
 			return e.getMessage();
 		}
 		
-		messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getViewText("create-context.msg.done"), GenericMessage.SUCCESS));
+		messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getViewText("create-context.msg.done")+" : "+URLHelper.createURL(newCtx), GenericMessage.SUCCESS));
 		return null;
 	}
 	
