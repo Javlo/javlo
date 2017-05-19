@@ -278,7 +278,7 @@ public class MailService {
 
 				}
 			}
-			if (props != null) {
+			if (recipients != null) {
 				logger.info("Sending mail with subject: " + subject + " to: " + recipients.size() + " recipients: " + recipientsStr + " DKIM?=" + (dkim != null));
 			}
 			if (msg == null) {
