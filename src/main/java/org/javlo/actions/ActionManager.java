@@ -295,15 +295,16 @@ public class ActionManager {
 				message = e.getCause().getMessage();
 				logger.warning(message);
 			} else {
-				e.printStackTrace();				
-				message = "error - method : " + methodName + " on : " + action.getClass().getCanonicalName() + "  msg:" + e.getMessage();
+				e.printStackTrace();
+				String errorNum = StringHelper.getRandomId();
+				message = "error - method : " + methodName + " on : " + action.getClass().getCanonicalName() + "  msg:" + e.getMessage()+" num:"+errorNum;
 				try {
 					I18nAccess i18nAccess = I18nAccess.getInstance(ContentContext.getContentContext(request, response));
-					message = i18nAccess.getViewText("message.error.technical-error", message);
+					message = i18nAccess.getViewText("message.error.technical-error", message +" ["+errorNum+']');
 				} catch (Exception e1) {					
 					e1.printStackTrace();
 				}				
-				logger.fine(message);
+				logger.warning(message);
 			}
 		}
 		logger.warning("action '" + actionName + "' message : " + message);

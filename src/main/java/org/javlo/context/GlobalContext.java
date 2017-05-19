@@ -1920,6 +1920,9 @@ public class GlobalContext implements Serializable, IPrintInfo {
 			ResourceHelper.closeResource(in);
 		}
 		dataProperties = outProp;
+		if (storePropertyThread == null) {
+			startThread();
+		}
 		storePropertyThread.setDataProperties(dataProperties);
 		return outProp;
 	}
