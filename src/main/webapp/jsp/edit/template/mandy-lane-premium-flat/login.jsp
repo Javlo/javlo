@@ -36,6 +36,8 @@ googleOauth.setClientId(ctx.getGlobalContext().getStaticConfig().getOauthGoogleI
 googleOauth.setClientSecret(ctx.getGlobalContext().getStaticConfig().getOauthGoogleSecret());
 %><html>
     <head>
+    	<meta name="GOOGLEBOT" content="NOSNIPPET" />
+    	<meta name="robots" content="noindex, nofollow" />
     	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <title>Javlo (Login)</title>

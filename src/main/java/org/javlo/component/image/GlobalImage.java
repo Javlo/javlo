@@ -404,11 +404,7 @@ public class GlobalImage extends Image implements IImageFilter {
 				}
 				dirsCol.add(dir);
 			}
-			if (canUpload(ctx) && !ctx.getGlobalContext().isMailingPlatform()) {
-				finalCode.append("<div class=\"col-sm-7\">");
-			} else {
-				finalCode.append("<div class=\"col-sm-9\">");
-			}
+			finalCode.append("<div class=\"col-sm-7\">");
 			finalCode.append(XHTMLHelper.getInputOneSelect(getDirInputName(), dirsCol, folder, "form-control", getJSOnChange(ctx), true));
 			finalCode.append("</div>");
 		}
@@ -418,6 +414,8 @@ public class GlobalImage extends Image implements IImageFilter {
 			finalCode.append("<div class=\"col-sm-2\"><a class=\"" + EDIT_ACTION_CSS_CLASS + " btn btn-default btn-xs\" href=\"" + staticURL + "\">");
 			finalCode.append(i18nAccess.getText("content.goto-static"));
 			finalCode.append("</a></div>");
+		} else {
+			finalCode.append("<div class=\"col-sm-2\"><button type=\"submit\" name=\"active-upload\" value=\"true\" class=\"browse-link btn btn-default btn-xs\" href=\"#\">" + i18nAccess.getText("content.active-upload") + "</button></div>");
 		}
 		finalCode.append("</div>");
 
@@ -869,7 +867,7 @@ public class GlobalImage extends Image implements IImageFilter {
 		String title = requestService.getParameter(getInputNameTitle(), null);
 		String translationOf = requestService.getParameter(getInputNameTranslation(), null);
 		String embedCode = requestService.getParameter(getEmbedCodeName(), null);
-		String auto = requestService.getParameter(getTextAutoInputName(), null);
+		String auto = requestService.getParameter(getTextAutoInputName(), null);		
 
 		if (requestService.getParameter(getFirstTextInputName(), null) != null) {
 			setTextAuto(StringHelper.isTrue(auto));

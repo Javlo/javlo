@@ -383,26 +383,6 @@ public class MailService {
 			} else {
 				transport.sendMessage(msg, msg.getAllRecipients());
 			}
-
-			/*
-			 * System.out.println("Mail Header : ");
-			 * System.out.println("-------------"); System.out.println("");
-			 * Enumeration headers = msg.getAllHeaders(); while
-			 * (headers.hasMoreElements()) { javax.mail.Header header =
-			 * (javax.mail.Header)headers.nextElement(); System.out.println("  "
-			 * +header.getName()+" = "+header.getValue()); }
-			 * System.out.println(""); System.out.println("");
-			 * System.out.println("Mail content : ");
-			 * System.out.println("-------------"); System.out.println(""); try
-			 * { if (msg.getContent() instanceof MimeMultipart) {
-			 * System.out.println(messageToDKIMBody((MimeMultipart)msg.
-			 * getContent(), null)); } else {
-			 * System.out.println(msg.getContent()); }
-			 * 
-			 * } catch (IOException e) { // TODO Auto-generated catch block
-			 * e.printStackTrace(); } System.out.println("");
-			 */
-
 		} else {
 			FileOutputStream out = null;
 			try {

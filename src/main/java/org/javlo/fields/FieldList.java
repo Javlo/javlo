@@ -69,6 +69,20 @@ public class FieldList extends Field {
 		out.close();
 		return writer.toString();
 	}
+	
+	@Override
+	public boolean search(ContentContext ctx, String query) {
+		if (query != null && query.contains(";")) {
+			for (String subq : query.split(";")) {
+				if (super.search(ctx, subq.trim())) {
+					return true;
+				}
+			}
+			return false;
+		} else {
+			return super.search(ctx, query);
+		}
+	}
 
 	@Override
 	public String getType() {

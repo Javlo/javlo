@@ -96,9 +96,9 @@ public class ExternalLink extends ComplexPropertiesLink implements IReverseLinkC
 
 			StringBuffer res = new StringBuffer();
 			String cssClass = getStyle(ctx);
-			String insertCssClass = "";
+			String insertCssClass = getType();
 			if (cssClass != null) {
-				insertCssClass = cssClass;
+				insertCssClass = insertCssClass+" "+cssClass;
 			}
 
 			String target = "";
@@ -109,7 +109,7 @@ public class ExternalLink extends ComplexPropertiesLink implements IReverseLinkC
 				if (title.trim().length() > 0) {
 					target = target + "title=\"" + title + "\" ";
 				}
-			}
+			}		
 
 			res.append("<a" + getSpecialPreviewCssClass(ctx, insertCssClass) + getSpecialPreviewCssId(ctx) + " " + target + "href=\"");
 			res.append(link);

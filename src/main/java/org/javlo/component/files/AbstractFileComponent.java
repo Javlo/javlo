@@ -979,9 +979,14 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 		String selectedDir = requestService.getParameter(getDirInputName(), "");
 		String description = requestService.getParameter(getDescriptionName(), "");
 		String reverseLink = requestService.getParameter(getReverseLinkInputName(), ReverseLinkService.NONE);
+		boolean activeUpload = StringHelper.isTrue(requestService.getParameter("active-upload", null));
 
 		String initialFileName = fileName;
-
+		
+		if (activeUpload) {
+			selectedDir = getImportFolderPath(ctx);
+		}
+		
 		if (newDir.trim().length() > 0) {
 			String repositoryDir = getFileDirectory(ctx);
 
@@ -996,7 +1001,7 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 				}
 			} else {
 				MessageRepository messageRepository = MessageRepository.getInstance(ctx);
-				messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("content.file.error.bad-rep-name"), GenericMessage.ERROR));
+				messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("content.file.error.bad-rep-name")+" : "+newDir, GenericMessage.ERROR));
 			}
 		}
 
