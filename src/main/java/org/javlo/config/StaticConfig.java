@@ -1598,6 +1598,10 @@ public class StaticConfig extends Observable {
 	public String getImportResourceFolder() {
 		return properties.getString("import.resource", "/files" + getImportFolder());
 	}
+	
+	public String getImportVFSFolder() {
+		return properties.getString("import.vfs", "/vfs" + getImportFolder());
+	}
 
 	public long getSiteMapSizeLimit() {
 		return properties.getLong("sitemap.maxsite", 1024 * 1024 * 10);

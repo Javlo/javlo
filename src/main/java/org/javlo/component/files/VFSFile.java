@@ -33,6 +33,8 @@ import org.javlo.service.ReverseLinkService;
  * @author pvandermaesen
  */
 public class VFSFile extends AbstractFileComponent implements IReverseLinkComponent {
+	
+	public static final String TYPE = "vfs-file";
 
 	@Override
 	protected String getImageUploadTitle(ContentContext ctx) throws FileNotFoundException, IOException {
@@ -169,7 +171,7 @@ public class VFSFile extends AbstractFileComponent implements IReverseLinkCompon
 	 */
 	@Override
 	public String getType() {
-		return "vfs-file";
+		return TYPE;
 	}
 
 	@Override

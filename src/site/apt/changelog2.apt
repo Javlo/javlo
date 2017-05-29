@@ -862,4 +862,4 @@ change log
 
  * 1/ create context component update / encrypt password 256bit method / placeholder in field mecanism / GenericMessage no diplication method / im mecanisme update / defautl avatar image if empty / reset password methods / pixabay shared content / hierachy with of template
  
- * 2/ error message, check xhtml structure / vfs default encoding / check user on get user and not on action update / area level
+ * 2/ error message, check xhtml structure / vfs default encoding / check user on get user and not on action update / area level / import VFS file

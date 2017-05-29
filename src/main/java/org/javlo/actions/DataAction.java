@@ -18,6 +18,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -34,6 +36,7 @@ import org.javlo.component.files.ArrayFileComponent;
 import org.javlo.component.files.FileFinder;
 import org.javlo.component.files.GenericFile;
 import org.javlo.component.files.Sound;
+import org.javlo.component.files.VFSFile;
 import org.javlo.component.image.GlobalImage;
 import org.javlo.component.image.Image;
 import org.javlo.component.multimedia.Multimedia;
@@ -82,6 +85,7 @@ import org.javlo.user.AdminUserSecurity;
 import org.javlo.user.User;
 import org.javlo.utils.MemoryBean;
 import org.javlo.ztatic.StaticInfo;
+import org.lesscss.deps.org.apache.commons.io.FileUtils;
 
 public class DataAction implements IAction {
 
@@ -533,9 +537,12 @@ public class DataAction implements IAction {
 							SharedContentContext sharedContentContext = SharedContentContext.getInstance(ctx.getRequest().getSession());
 							sharedContentContext.setProvider(ImportedImageSharedContentProvider.NAME);
 							SharedContentService.getInstance(ctx).clearCache(ctx);
-//							ISharedContentProvider provider = SharedContentService.getInstance(ctx).getProvider(ctx, sharedContentContext.getProvider());
-//							provider.refresh(ctx);
-//							provider.getContent(ctx); // refresh categories list
+							// ISharedContentProvider provider =
+							// SharedContentService.getInstance(ctx).getProvider(ctx,
+							// sharedContentContext.getProvider());
+							// provider.refresh(ctx);
+							// provider.getContent(ctx); // refresh categories
+							// list
 						} else {
 							msg = "bad blog format : " + blob.getContentType();
 							logger.warning(msg);
@@ -596,9 +603,32 @@ public class DataAction implements IAction {
 						}
 						File newFile = ResourceHelper.writeFileItemToFolder(item, targetFolder, true, rename);
 						if (newFile != null && newFile.exists()) {
-							ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-							PrintStream out = new PrintStream(outStream);
+							boolean isStaticHTML = false;
 							String dir = resourceRelativeFolder.replaceFirst(gc.getStaticConfig().getFileFolder(), "");
+							if (StringHelper.getFileExtension(newFile.getName()).equalsIgnoreCase("zip")) {
+								ZipFile zip = null;
+								try {
+									zip = new ZipFile(newFile);
+									Enumeration<? extends ZipEntry> entries = zip.entries();
+									while (entries.hasMoreElements()) {
+										if (entries.nextElement().getName().equals("index.html")) {
+											isStaticHTML = true;
+										}
+									}
+								} finally {
+									ResourceHelper.closeResource(zip);
+								}
+								if (isStaticHTML) {									
+									resourceRelativeFolder = URLHelper.mergePath(gc.getStaticConfig().getStaticFolder(), ctx.getGlobalContext().getStaticConfig().getImportVFSFolder(), importFolder);
+									targetFolder = new File(URLHelper.mergePath(gc.getDataFolder(), resourceRelativeFolder));
+									File vfsFile = new File(URLHelper.mergePath(targetFolder.getAbsolutePath(), newFile.getName()));
+									System.out.println("move : "+newFile+" --> "+vfsFile);
+									FileUtils.moveFile(newFile, vfsFile);
+								}
+							}
+
+							ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+							PrintStream out = new PrintStream(outStream);							
 							out.println("dir=" + dir);
 							out.println("file-name=" + StringHelper.getFileNameFromPath(newFile.getName()));
 							out.close();
@@ -609,7 +639,9 @@ public class DataAction implements IAction {
 							if (ResourceHelper.isSound(ctx, newFile.getName()) && ctx.getGlobalContext().hasComponent(Sound.class.getCanonicalName())) {
 								beanType = Sound.TYPE;
 							}
-
+							if (isStaticHTML) {
+								beanType = VFSFile.TYPE;
+							}
 							StaticInfo staticInfo = StaticInfo.getInstance(ctx, newFile);
 							SharedContentContext sharedContentContext = SharedContentContext.getInstance(ctx.getRequest().getSession());
 							SharedContentService sharedContentService = SharedContentService.getInstance(ctx);
