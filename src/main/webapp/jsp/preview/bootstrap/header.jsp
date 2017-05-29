@@ -43,9 +43,9 @@
 		<c:if test="${not empty editUser && !globalContext.mailingPlatform}">	
 		<div class="pulse-wrapper" onclick="editPreview.openModal('${i18n.edit['preview.label.properties']}','${url}'); return false;">
 			<span class="pulse" title="${i18n.edit['preview.label.properties']}"></span>
-		</div>
-		<a target="_blank" href="<%=URLHelper.createViewURL(ctx.getPath(), ctx)%>">Javlo</a> <img class="ajax-loading" src="${info.ajaxLoaderURL}" alt="loading..." lang="en" />
-		</c:if>				
+		</div>		
+		</c:if>
+		<a target="_blank" href="<%=URLHelper.createViewURL(ctx.getPath(), ctx)%>">Javlo</a> <img class="ajax-loading" src="${info.ajaxLoaderURL}" alt="loading..." lang="en" />				
 	</div>	
 	<div class="menu">
 		<li ${info.page.root?'class="active home"':'class="home"'}><a
