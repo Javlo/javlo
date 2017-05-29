@@ -10,6 +10,11 @@ import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.context.ContentContext;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.XHTMLHelper;
+import org.javlo.helper.XMLHelper;
+import org.javlo.helper.XMLManipulationHelper;
+import org.javlo.helper.XMLManipulationHelper.BadXMLException;
+import org.jsoup.Jsoup;
+import org.owasp.encoder.Encode;
 
 /**
  * @author pvandermaesen
@@ -87,5 +92,10 @@ public class XHTML extends AbstractVisualComponent {
 	public boolean isRealContent(ContentContext ctx) {
 		return !StringHelper.isEmpty(getValue());
 	}
-
+	
+	@Override
+	protected boolean isXML() {
+		return true;
+	}
+	
 }

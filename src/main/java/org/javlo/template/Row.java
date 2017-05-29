@@ -64,5 +64,10 @@ public class Row extends TemplatePart {
 		}
 		return hash;
 	}
+	
+	@Override
+	public String getLevel() {
+		return "row";
+	}
 
 }

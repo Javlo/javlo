@@ -87,6 +87,34 @@ body.right-admin #page-404 {
 	box-shadow: inset 0 -2px 2px #dddddd;
 }
 
+.header-tabs {
+	position: relative;
+}
+
+.component-error-message {
+	position: absolute;
+	width: 60%;
+	left: 28%;	
+	bottom: 0;
+	max-height: 35px;
+	overflow: auto;
+}
+
+.component-error-message .body {
+	display: block;
+	float: left;
+	padding: 2px 12px;
+	border-top: 1px solid #ebccd1;
+	border-left: 1px solid #ebccd1;
+	border-right: 1px solid #ebccd1;
+	background-color: #f2dede;
+	margin-left: 12px;
+	box-shadow: inset 0 -2px 2px #dddddd;
+	font-size: 0.9em;
+	line-height: normal;
+}
+
+
 .component-title .authors {
 	font-style: italic;
 }

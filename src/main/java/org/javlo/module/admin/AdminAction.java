@@ -1130,6 +1130,15 @@ public class AdminAction extends AbstractModuleAction {
 			throw new org.javlo.user.exception.JavloSecurityException("You have no sufisant right.");
 		}
 	}
+	
+	public static String performUpdateGlobalContextLight(RequestService requestService, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess, Module currentModule, User user) throws Exception {		
+		AdminUserSecurity adminUserSecurity = AdminUserSecurity.getInstance();
+		if (adminUserSecurity.canRole(user, AdminUserSecurity.CONTENT_ROLE)) {
+			ctx.getGlobalContext().setGlobalTitle(requestService.getParameter("global-title", null));
+			ctx.setClosePopup(true);
+		}		
+		return null;
+	}
 
 	public static String performUpdateGlobalContext(RequestService requestService, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess, Module currentModule) throws Exception {
 		String msg = null;

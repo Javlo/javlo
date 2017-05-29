@@ -61,7 +61,9 @@ import org.javlo.helper.ServletHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.helper.XHTMLHelper;
+import org.javlo.helper.XMLManipulationHelper;
 import org.javlo.helper.Comparator.StringSizeComparator;
+import org.javlo.helper.XMLManipulationHelper.BadXMLException;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.message.GenericMessage;
 import org.javlo.module.file.FileAction;
@@ -2790,6 +2792,22 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 
 	public String getImportFolderPath(ContentContext ctx) throws Exception {
 		return getImportFolderPath(ctx, getPage());
+	}
+	
+	protected boolean isXML() {
+		return false;
+	}
+	
+	@Override
+	public String getErrorMessage(ContentContext ctx) {
+		if (isXML() && !StringHelper.isEmpty(getValue())) {			
+			try {
+				XMLManipulationHelper.searchAllTag("<div>"+getValue()+"</div>", true);
+			} catch (BadXMLException e) {
+				return Encode.forHtml(e.getMessage());
+			}			
+		}
+		return null;
 	}
 
 }

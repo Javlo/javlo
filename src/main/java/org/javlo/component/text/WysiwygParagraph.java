@@ -140,4 +140,9 @@ public class WysiwygParagraph extends AbstractVisualComponent {
 		return null;
 	}	
 	
+	@Override
+	protected boolean isXML() {
+		return true;
+	}
+	
 }

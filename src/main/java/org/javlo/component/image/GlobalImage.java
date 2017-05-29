@@ -38,6 +38,8 @@ import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.helper.XHTMLHelper;
+import org.javlo.helper.XMLManipulationHelper;
+import org.javlo.helper.XMLManipulationHelper.BadXMLException;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.image.ImageEngine;
 import org.javlo.message.GenericMessage;
@@ -56,6 +58,7 @@ import org.javlo.user.AdminUserFactory;
 import org.javlo.user.AdminUserSecurity;
 import org.javlo.user.User;
 import org.javlo.ztatic.StaticInfo;
+import org.owasp.encoder.Encode;
 
 /**
  * standard image component.
@@ -1374,6 +1377,18 @@ public class GlobalImage extends Image implements IImageFilter {
 	@Override
 	public boolean isLocal(ContentContext ctx) {
 		return isImported(ctx);
+	}
+	
+	@Override
+	public String getErrorMessage(ContentContext ctx) {
+		if (!StringHelper.isEmpty(getLabel())) {			
+			try {
+				XMLManipulationHelper.searchAllTag("<div>"+getLabel()+"</div>", true);
+			} catch (BadXMLException e) {
+				return Encode.forHtml(e.getMessage());
+			}			
+		}
+		return null;
 	}
 
 }

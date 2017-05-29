@@ -35,4 +35,9 @@ public class Area extends TemplatePart {
 			return getWidth();
 		}
 	}
+	
+	@Override
+	public String getLevel() {
+		return "area";
+	}
 }

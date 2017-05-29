@@ -1,8 +1,13 @@
 package org.javlo.template;
 
+import java.util.Collections;
+import java.util.Map;
+
 import org.javlo.helper.XHTMLHelper;
 
 public class TemplateStyle extends TemplatePart {
+	
+	private Map<String,String> config = Collections.EMPTY_MAP;
 
 	public TemplateStyle() {
 	}
@@ -50,6 +55,17 @@ public class TemplateStyle extends TemplatePart {
 	public String getDefaultWidth() {
 		return "550px";
 	}
+
+	public Map<String,String> getConfig() {
+		return config;
+	}
+
+	public void setConfig(Map<String,String> config) {
+		this.config = config;
+	}
 	
+	public String getLevel() {
+		return "style";
+	}
 
 }

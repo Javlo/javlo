@@ -52,7 +52,10 @@
 			<input class="color" type="text" id="linkColor-${part.name}" name="linkColor" value="${part.linkColor}" />
 		</div>
 		</div>
-		<div class="one_half last">	
+		<div class="one_half last">		
+		<c:if test="${part.level eq 'style'}"><div class="line">
+			<label for="pagination-${part.name}">pagination <input type="checkbox" id="pagination-${part.name}" name="pagination" ${part.config.pagination?'checked="checked"':''} /></label>			
+		</div></c:if>
 		<div class="line${not empty exclude.responsive?' disabled':''}">
 			<label for="responsive-${part.name}">responsive <input type="checkbox" id="responsive-${part.name}" name="responsive" ${part.responsive?'checked="checked"':''} /></label>			
 		</div>		

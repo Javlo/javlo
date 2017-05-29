@@ -131,7 +131,14 @@ for (IContentVisualComponent comp : components) {
  <div id="comp-<%=comp.getId()%>" class="<%=readOnlyClass%><%=comp.getType()%><%if (components.size()==1) {%> new<%}%><%if (comp.getId().equals(request.getParameter("pushcomp"))) {%> push<%}%> component-wrapper">
  <input type="hidden" name="components" value="<%=comp.getId()%>" />
  <div class="component-title"><a style="color: #<%=comp.getHexColor()%>" href="#" onclick="scrollToFirstQuarter(jQuery('#content-edit'),this); return false;"><%=comp.getComponentLabel(ctx, globalContext.getEditLanguage(request.getSession()))+authors%></a></div>
- <div class="tabs component"> 	    	  
+ <div class="tabs component">	 
+
+    <div class="header-tabs"> 
+     <%
+ String errorMessage = comp.getErrorMessage(ctx);
+ if (!StringHelper.isEmpty(errorMessage)) {%>
+ <div class="component-error-message"><span class="body"><span class="glyphicon glyphicon-alert"></span> <%=errorMessage%></div></span>
+ <%}%>
       <ul>      	  	
           <li><a href="#tab1<%=inputSuffix%>">${i18n.edit["global.content"]}</a></li>
           <%
@@ -147,6 +154,7 @@ for (IContentVisualComponent comp : components) {
           <li class="<%if (!comp.isConfig(ctx)) {%>disabled<%} else {%>enabled<%}%>"><a class="link"<%=linkTag%>>${i18n.edit["global.settings"]}</a></li>          
           <%if (admin) {%><li><a href="#tab4<%=inputSuffix%>">raw</a></li><%}%>
       </ul>
+    </div>
       <div class="header-action"><%
 	     Map<String,String> params = new Hashtable<String,String>();
 		 params.put("webaction", "edit.delete");

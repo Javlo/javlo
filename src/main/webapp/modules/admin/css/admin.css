@@ -63,3 +63,8 @@
 	border-left: 0 none;
 }
 
+form label:AFTER {
+	margin: 0 5px;
+	content: ":";
+}
+

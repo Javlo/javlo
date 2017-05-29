@@ -93,7 +93,6 @@ public class VFSFile extends AbstractFileComponent implements IReverseLinkCompon
 			ResourceHelper.closeResource(in);
 			ResourceHelper.closeResource(out);
 			VFSHelper.closeFileSystem(file);
-			//VFSHelper.closeManager(fsManager);
 		}
 		String body = XMLManipulationHelper.getHTMLBody(content.toString());
 		return XMLManipulationHelper.changeLink(body, URLHelper.createVFSURL(ctx, prefixLink, ""));

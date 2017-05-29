@@ -186,14 +186,6 @@ public class ActionManager {
 			AdminUserFactory adminUserFactory = AdminUserFactory.createUserFactory(globalContext, request.getSession());
 			User currentUser = adminUserFactory.getCurrentUser(request.getSession());
 			
-			if (currentUser != null && !currentUser.getContext().equals(globalContext.getContextKey())) {
-				GlobalContext userContext = GlobalContext.getInstance(request.getSession(), currentUser.getContext());
-				if (!userContext.isMaster()) {
-					adminUserFactory.logout(request.getSession());
-					return "security error : user logged on other site.";
-				}
-			}
-			
 			if (action != null) {
 				/** security **/				
 				if (action instanceof IModuleAction) { // if module action					

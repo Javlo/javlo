@@ -844,6 +844,11 @@ public interface IContentVisualComponent extends Comparable<IContentVisualCompon
 	 */
 	public boolean isDisplayHidden();
 	
+	/**
+	 * return error message on structure of the component.
+	 * @return null if no errors found
+	 */
+	public String getErrorMessage(ContentContext ctx);	
 	
 
 }

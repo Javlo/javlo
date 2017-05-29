@@ -7,7 +7,7 @@ import java.util.Comparator;
 import org.javlo.helper.StringHelper;
 
 public class TemplatePart {
-
+	
 	public static class SortByName implements Comparator<TemplatePart> {
 
 		@Override
@@ -477,6 +477,10 @@ public class TemplatePart {
 
 	public void setPriority(int priority) {
 		this.priority = priority;
+	}
+	
+	public String getLevel() {
+		return "part";
 	}
 
 }

@@ -85,3 +85,35 @@
 #preview_command .active, #preview_command .component-list .component .active { 
 	color: #999b98 !important;;
 }
+
+#preview_command .pulse {  
+  background: #D31996;
+  box-shadow: 0 0 0 rgba(211,25,150, 0.4);  
+}
+
+@-webkit-keyframes pulse {
+  0% {
+    -webkit-box-shadow: 0 0 0 0 rgba(211,25,150, 0.8);
+  }
+  70% {
+      -webkit-box-shadow: 0 0 0 10px rgba(211,25,150, 0);
+  }
+  100% {
+      -webkit-box-shadow: 0 0 0 0 rgba(211,25,150, 0);
+  }
+}
+@keyframes pulse {
+  0% {
+    -moz-box-shadow: 0 0 0 0 rgba(211,25,150, 0.8);
+    box-shadow: 0 0 0 0 rgba(211,25,150, 0.8);
+  }
+  70% {
+      -moz-box-shadow: 0 0 0 10px rgba(211,25,150, 0);
+      box-shadow: 0 0 0 10px rgba(211,25,150, 0);
+  }
+  100% {
+      -moz-box-shadow: 0 0 0 0 rgba(211,25,150, 0);
+      box-shadow: 0 0 0 0 rgba(211,25,150, 0);
+  }
+}
+

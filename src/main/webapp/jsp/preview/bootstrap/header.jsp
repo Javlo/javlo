@@ -1,6 +1,7 @@
  <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"
 %><%@ taglib uri="/WEB-INF/javlo.tld" prefix="jv"
-%><%@ taglib prefix="fn"
+%><%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%><%@ taglib
+	prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%><%@ taglib prefix="fn"
 	uri="http://java.sun.com/jsp/jstl/functions"%><%@page
 	contentType="text/html"
 	import="
@@ -33,19 +34,19 @@
 		accessType = "button";
 	}
 %><c:set var="logged" value="${not empty editUser}" /><c:set var="pdf" value="${info.device.code == 'pdf'}" />
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%><%@ taglib
-	prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%><div
-	class="header">
+<div class="header">	
 	<div class="logo">
-		<a target="_blank" href="<%=URLHelper.createViewURL(ctx.getPath(), ctx)%>">Javlo</a> <img class="ajax-loading"
-			src="${info.ajaxLoaderURL}" alt="loading..." lang="en" />
-	</div>
-	<%--  <div class="pulse">
-	<div id='c'>
-  	<div class='s'></div>  
-  	</div>
-	</div>  --%>
-
+		<c:url var="url" value="<%=URLHelper.createURL(editCtx)%>" context="/">
+			<c:param name="module" value="admin"></c:param>
+			<c:param name="previewEdit" value="true"></c:param>
+		</c:url>
+		<c:if test="${not empty editUser && !globalContext.mailingPlatform}">	
+		<div class="pulse-wrapper" onclick="editPreview.openModal('${i18n.edit['preview.label.properties']}','${url}'); return false;">
+			<span class="pulse" title="${i18n.edit['preview.label.properties']}"></span>
+		</div>
+		<a target="_blank" href="<%=URLHelper.createViewURL(ctx.getPath(), ctx)%>">Javlo</a> <img class="ajax-loading" src="${info.ajaxLoaderURL}" alt="loading..." lang="en" />
+		</c:if>				
+	</div>	
 	<div class="menu">
 		<li ${info.page.root?'class="active home"':'class="home"'}><a
 			class="home" title="home" href="<%=URLHelper.createURL(ctx, "/")%>"><span
@@ -388,7 +389,7 @@
 				</c:if>
 				<a ${tooltip} href="${info.currentEditURL}?module=users&webaction=user.changeMode&mode=myself&previewEdit=true" class="as-modal btn btn-default btn-sm"><span class="glyphicon glyphicon-user" aria-hidden="true"></span><span class="text">${info.userName}</span></a>					
 				<a class="btn btn-default btn-sm" title="${i18n.edit['global.logout']}" href="${logoutURL}"><span class="glyphicon glyphicon-log-out"></span><span class="text">${i18n.edit["global.logout"]}</span></a>				
-				</li>
+				</li>				
 			</c:if>
 			</div>	
 </div>

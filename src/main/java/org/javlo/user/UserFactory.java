@@ -245,9 +245,22 @@ public class UserFactory implements IUserFactory, Serializable {
 	 * "' context does'nt match."); session.removeAttribute(SESSION_KEY); return
 	 * null; } } return user; }
 	 **/
-	public User getCurrentUser(HttpSession session) {
-		User user = (User) session.getAttribute(SESSION_KEY);
+	public User getCurrentUser(HttpSession session) {		
+		User user = (User) session.getAttribute(SESSION_KEY);		
 		if (user != null) {
+			if (!user.getContext().equals(GlobalContext.getSessionContext(session).getContextKey())) {
+				GlobalContext userContext;
+				try {
+					userContext = GlobalContext.getInstance(session, user.getContext());
+					if (!userContext.isMaster()) {
+						logout(session);
+						return null;
+					}
+				} catch (IOException e) {
+					e.printStackTrace();
+					return null;
+				}				
+			}
 			return user;
 		} else {
 			return null;

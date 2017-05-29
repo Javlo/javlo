@@ -146,7 +146,6 @@ public class TemplateEditorAction extends AbstractModuleAction {
 						}
 					}
 				}
-
 				area.setWidth(rs.getParameter("width", ""));
 				area.setHeight(rs.getParameter("height", ""));
 				area.setMargin(rs.getParameter("margin", ""));
@@ -167,7 +166,6 @@ public class TemplateEditorAction extends AbstractModuleAction {
 				area.setH5Size(rs.getParameter("h5size", ""));
 				area.setH6Size(rs.getParameter("h6size", ""));
 				area.setPriority(Integer.parseInt(rs.getParameter("priority", "10")));
-
 				editorContext.getCurrentTemplate().storeRows(rows);
 				editorContext.getCurrentTemplate().resetRows();
 			}
@@ -254,6 +252,9 @@ public class TemplateEditorAction extends AbstractModuleAction {
 				style.setH4Size(rs.getParameter("h4size", ""));
 				style.setH5Size(rs.getParameter("h5size", ""));
 				style.setH6Size(rs.getParameter("h6size", ""));
+				
+				System.out.println("*** rs.getParameter('pagination', null) = "+rs.getParameter("pagination", null));
+				editorContext.getCurrentTemplate().setProperty("pagination", ""+StringHelper.isTrue(rs.getParameter("pagination", null)));
 
 				style.setBackgroundColor(rs.getParameter("backgroundColor", ""));
 				style.setOuterBackgroundColor(rs.getParameter("outerBackgroundColor", ""));

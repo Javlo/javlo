@@ -3,7 +3,38 @@
 %><div class="widgetbox site-properties">
 <h3><span>${i18n.edit['admin.site-properties']}</span></h3>
 <div class="content">
-
+<c:if test="${!info.admin}">
+<form id="form-page-properties" action="${info.currentURL}" method="post">
+	<div>
+		<input type="hidden" name="webaction" value="updateGlobalContextLight" />
+	</div>	
+	<fieldset>
+		<legend>${i18n.edit['admin.form.info']}</legend>
+		<div class="row">
+			<div class="col-sm-4">
+				<div class="form-group">
+					<label>${i18n.edit['global.name']}</label>
+					<span>${currentContext.key}</span>
+				</div>
+				</div><div class="col-sm-4">
+					<div class="form-group">
+						<label>${i18n.edit['admin.form.size']}</label>
+						<span>${currentContext.size}</span>
+					</div>
+				</div><div class="col-sm-4">
+				<div class="form-group">		
+					<label for="global-title">${i18n.edit['admin.form.global-title']}</label>
+					<input class="form-control" type="text" id="global-title" name="global-title" value="${currentContext.globalTitle}" />	
+				</div>
+			</div>
+		</div>
+		<div class="pull-right">
+			<button type="submit" class="btn btn-primary">${i18n.edit['global.ok']}</button>
+		 </div>
+	</fieldset>
+</form>
+</c:if>
+<c:if test="${info.admin}">
 <form id="form-page-properties" class="js-change-submit" action="${info.currentURL}" method="post" enctype="multipart/form-data">
 
 <div>
@@ -523,7 +554,7 @@
 	<button type="submit" class="btn btn-primary">${i18n.edit['global.ok']}</button>
 </div>
 </form>
-
+</c:if>
 
 </div>
 </div>

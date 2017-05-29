@@ -545,7 +545,11 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 	}
 
 	public String getEncoding() {
-		return properties.getProperty(ENCODING_KEY);
+		String encoding = properties.getProperty(ENCODING_KEY);
+		if (StringHelper.isEmpty(encoding) || encoding.equals("default")) {
+			return ContentContext.CHARACTER_ENCODING;
+		}
+		return encoding;
 	}
 
 	protected String getEncodingXHTMLInputName() {
