@@ -63,7 +63,7 @@
 	border-left: 0 none;
 }
 
-form label:AFTER {
+#form-page-properties label:AFTER {
 	margin: 0 5px;
 	content: ":";
 }

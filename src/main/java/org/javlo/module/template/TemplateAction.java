@@ -480,8 +480,6 @@ public class TemplateAction extends AbstractModuleAction {
 			if (ctx.getGlobalContext().isOpenPlatform()) {
 				currentPage = currentPage.getRoot();
 			}	
-			System.out.println("*** type = "+ctx.getGlobalContext().getPlatformType());
-			System.out.println("*** current page = "+currentPage.getPath());
 			currentPage.setTemplateId(templateName);
 			MailingModuleContext mailingCtx = MailingModuleContext.getInstance(ctx.getRequest());
 			mailingCtx.setCurrentTemplate(null);
