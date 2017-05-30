@@ -225,7 +225,7 @@ public class VFSFile extends AbstractFileComponent implements IReverseLinkCompon
 		return staticConfig.getVFSFolder();
 	}
 
-	@Override
+	/*@Override
 	public Collection<String> getExternalResources(ContentContext ctx) {
 		Collection<String> resources = new LinkedList<String>();
 		resources.add("/js/global.js");
@@ -235,7 +235,7 @@ public class VFSFile extends AbstractFileComponent implements IReverseLinkCompon
 		resources.add("/js/onLoadFunctions.js");
 		return resources;
 
-	}
+	}*/
 
 	@Override
 	public boolean isOnlyThisPage() {

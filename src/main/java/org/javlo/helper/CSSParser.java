@@ -221,12 +221,14 @@ public class CSSParser {
 					String style = tags[i].getAttributes().get("style");
 					if (style == null) {
 						style = StringHelper.removeCR(cssElement.getStyle());
+						style = style.replace("\"", "'");
 					} else {
 						style = style.trim();
 						if (!style.endsWith(";")) {
 							style = style + ';';
 						}
-						String newStyles = StringHelper.removeCR(cssElement.getStyle());						
+						String newStyles = StringHelper.removeCR(cssElement.getStyle());
+						newStyles = newStyles.replace("\"", "'");
 						
 						List<Style> styles = parseStyle(newStyles);
 						for (Style newStyle : styles) {
