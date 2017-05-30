@@ -622,7 +622,9 @@ public class DataAction implements IAction {
 									resourceRelativeFolder = URLHelper.mergePath(gc.getStaticConfig().getStaticFolder(), ctx.getGlobalContext().getStaticConfig().getImportVFSFolder(), importFolder);
 									targetFolder = new File(URLHelper.mergePath(gc.getDataFolder(), resourceRelativeFolder));
 									File vfsFile = new File(URLHelper.mergePath(targetFolder.getAbsolutePath(), newFile.getName()));
-									System.out.println("move : "+newFile+" --> "+vfsFile);
+									if (vfsFile.exists()) {
+										vfsFile.delete();
+									}									
 									FileUtils.moveFile(newFile, vfsFile);
 								}
 							}
