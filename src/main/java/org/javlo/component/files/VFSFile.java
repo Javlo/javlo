@@ -54,8 +54,17 @@ public class VFSFile extends AbstractFileComponent implements IReverseLinkCompon
 		return i18nAccess.getText("action.add-file.delete-file");
 	}
 
-	protected String getPreviewCode() throws Exception {
-		return "";
+	@Override
+	protected String getPreviewCode(ContentContext ctx) throws Exception {
+		String dirFile = URLHelper.mergePath(getFileDirectory(ctx), getDirSelected());
+		String fileName = StringHelper.createFileName(getFileName());
+		File zipFile = new File(URLHelper.mergePath(dirFile, fileName));		 
+		if (zipFile.exists()) {
+			String url = URLHelper.createResourceURL(ctx, URLHelper.mergePath(getRelativeFileDirectory(ctx), getDirSelected(), zipFile.getName()));
+			return "<a href=\""+url+"\" target=\"_blank\">"+zipFile.getName()+" ("+StringHelper.renderSize(zipFile.length())+")</a>";
+		} else {
+			return "";
+		}
 	}
 
 	@Override
