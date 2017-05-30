@@ -295,5 +295,10 @@ public class VFSFile extends AbstractFileComponent implements IReverseLinkCompon
 			
 		}
 	}
+	
+	@Override
+	public boolean isRealContent(ContentContext ctx) {	
+		return true;
+	}
 
 }
