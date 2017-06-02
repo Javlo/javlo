@@ -1,12 +1,11 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"
 %><%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"
 %><c:if test="${empty rows}"><c:set var="rows" value="${info.template.rows}" scope="request" /></c:if><c:forEach var="row" items="${rows}"><c:forEach var="area" items="${row.areas}">
-${param.prefix}#${area.name} h1, ${param.prefix}#${area.name} h2, ${param.prefix}#${area.name} h3, ${param.prefix}#${area.name} h4, ${param.prefix}#${area.name} h5, ${param.prefix}#${area.name} h6, ${param.prefix}#${area.name} h1 div, ${param.prefix}#${area.name} h2 div, ${param.prefix}#${area.name} h3 div, ${param.prefix}#${area.name} h4 div, ${param.prefix}#${area.name} h5 div, ${param.prefix}#${area.name} h6 div {	
+<c:forEach var = "i" begin = "1" end = "6" varStatus="status">${param.prefix}#${area.name} h${i}, ${param.prefix}#${area.name} h${i} div, ${param.prefix}#${area.name} h${i} a${status.last?'':','}</c:forEach> {	
 	color: ${area.finalTitleColor};
+	text-decoration: none;
 	<c:if test="${not empty area.finalFont}">font-family: ${area.finalFont};</c:if>
 }</c:forEach></c:forEach>
-
-/* currentPage.color = ${currentPage.color} */
 
 <c:if test="${not empty currentPage}">${param.prefix} {
 	<c:if test="${not empty currentPage.color}">background-color: ${currentPage.color};</c:if>
@@ -15,7 +14,6 @@ ${param.prefix}#${area.name} h1, ${param.prefix}#${area.name} h2, ${param.prefix
 <c:if test="${not empty currentPage}">.pdf ${param.prefix} {
 	<c:if test="${not empty currentPage.imageBackground}">background-image: url('${currentPage.imageBackground.previewURL}'); background-position:left top; background-size: 100%;</c:if>
 }</c:if>
-
 
 ${param.prefix}p,${param.prefix}ul,${param.prefix}ol,${param.prefix}.table-li td.internal-link,${param.prefix}.unsubscribe-link,${param.prefix}.date,.external-link,${param.prefix}.pdf-link,${param.prefix}.text,${param.prefix}.file,${param.prefix}.simple-internal-link,${param.prefix}.global-image,${param.prefix}.gs,${param.prefix}.qrcode td,${param.prefix}.pdf-head td, ${param.prefix}.table th, ${param.prefix}.table td {
 	<c:if test="${not empty dynamicCSSTemplate.style.finalTextColor}">color: ${dynamicCSSTemplate.style.finalTextColor};</c:if>

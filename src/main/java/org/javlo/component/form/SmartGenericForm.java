@@ -807,6 +807,10 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 				request.setAttribute("msg", msg);
 				badFormatFound = true;
 			}
+			
+			if (ctx.getCurrentUser() != null) {
+				adminMailData.put("user", ctx.getCurrentUser().getLogin());
+			}
 
 			if (value instanceof Object[]) {
 				finalValue = StringHelper.arrayToString((Object[]) params.get(key), ",");

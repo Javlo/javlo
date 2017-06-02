@@ -143,7 +143,7 @@ public class TimeMap<K, V> implements Map<K, V> {
 
 	public static void main(String[] args) {
 		TimeMap map = new TimeMap();
-		map.setDefaultLiveTimeValue(60 * 60);
+		map.setDefaultLiveTimeValue(4);
 		map.put("test", "test value");
 		System.out.println("value before : " + map.get("test"));
 		try {

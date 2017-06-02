@@ -171,7 +171,9 @@ public class ContentContext {
 				ctx.correctPath = false;
 			} else {
 				ctx.setRequest(request);
-				ctx.setResponse(response);
+				if (response != null) {
+					ctx.setResponse(response);
+				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -818,7 +820,7 @@ public class ContentContext {
 	public String getCookieLanguage() {
 		Cookie[] cookies = request.getCookies();
 		if (cookies == null) {
-			logger.warning("cookies not found.");
+			logger.fine("cookies not found.");
 			return null;
 		}
 
