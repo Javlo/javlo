@@ -305,3 +305,8 @@ div.wysiwyg-paragraph textarea {
 .component textarea.wysiwyg {
 	width: 98%;
 }
+
+.label-right label {
+	text-align: right;
+	display: block;
+}
