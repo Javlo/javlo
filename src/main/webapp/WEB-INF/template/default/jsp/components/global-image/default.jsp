@@ -31,8 +31,8 @@
 	<img ${imageClass} ${not empty imageWidth && filter!='raw'?imageWidthTag:''}src="${previewURL}" alt="${imageAlt}"${styleWidth} ${contentContext.ajax?"onload='editPreview.returnSize();'":""}/>	
 </a>
 <c:set var="copyrightHTML" value="" />
-<c:if test="${not empty copyright}"><c:set var="copyrightHTML" value='<span class="copyright">${copyright}</span>' /></c:if>
-<c:if test="${empty param.nolabel || not empty copyright}"><figcaption>${not empty label?label:description}${copyrightHTML}</figcaption></c:if>
+<c:if test="${not empty copyright}"><c:set var="copyrightHTML" value='<div class="copyright">&copy; ${copyright}</div>' /></c:if>
+<c:if test="${empty param.nolabel && not empty copyright}"><figcaption>${not empty label?label:description}${copyrightHTML}</figcaption></c:if>
 </figure>
 </c:otherwise>
 </c:choose>
