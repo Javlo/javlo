@@ -56,6 +56,7 @@ import org.javlo.user.IUserFactory;
 import org.javlo.user.UserFactory;
 import org.javlo.utils.CSVFactory;
 import org.javlo.utils.CollectionAsMap;
+import org.javlo.utils.JSONMap;
 import org.javlo.ztatic.StaticInfo;
 
 /**
@@ -90,6 +91,10 @@ import org.javlo.ztatic.StaticInfo;
  * 
  */
 public class GenericForm extends AbstractVisualComponent implements IAction {
+	
+	private static final String RECAPTCHASECRETKEY = "recaptchasecretkey";
+
+	private static final String RECAPTCHAKEY = "recaptchakey";
 
 	private static Logger logger = Logger.getLogger(GenericForm.class.getName());
 
@@ -309,25 +314,57 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 			return Integer.parseInt(maxSize);
 		}
 	}
+	
+	public String getRecaptchaKey() {
+		return getLocalConfig(false).getProperty(RECAPTCHAKEY, null);
+	}
+
+	public String getRecaptchaSecretKey() {
+		return getLocalConfig(false).getProperty(RECAPTCHASECRETKEY, null);
+	}
 
 	public static String performSubmit(HttpServletRequest request, HttpServletResponse response) throws Exception {
 
-		RequestService requestService = RequestService.getInstance(request);
+		RequestService rs = RequestService.getInstance(request);
 		ContentContext ctx = ContentContext.getContentContext(request, response);
 		ContentService content = ContentService.getInstance(request);
-		GenericForm comp = (GenericForm) content.getComponent(ctx, requestService.getParameter("comp_id", null));
+		GenericForm comp = (GenericForm) content.getComponent(ctx, rs.getParameter("comp_id", null));
 
 		/** check captcha **/
-		String captcha = requestService.getParameter("captcha", null);
+		String captcha = rs.getParameter("captcha", null);
 
 		if (comp.isCaptcha(ctx)) {
-			if (captcha == null || CaptchaService.getInstance(request.getSession()).getCurrentCaptchaCode() == null || !CaptchaService.getInstance(request.getSession()).getCurrentCaptchaCode().equals(captcha)) {
-				GenericMessage msg = new GenericMessage(comp.getLocalConfig(false).getProperty("error.captcha", "bad captcha."), GenericMessage.ERROR);
-				request.setAttribute("msg", msg);
-				request.setAttribute("error_captcha", "true");
-				return null;
+			
+			if (StringHelper.isEmpty(comp.getRecaptchaSecretKey())) {
+			
+				if (captcha == null || CaptchaService.getInstance(request.getSession()).getCurrentCaptchaCode() == null || !CaptchaService.getInstance(request.getSession()).getCurrentCaptchaCode().equals(captcha)) {
+					GenericMessage msg = new GenericMessage(comp.getLocalConfig(false).getProperty("error.captcha", "bad captcha."), GenericMessage.ERROR);
+					request.setAttribute("msg", msg);
+					request.setAttribute("error_captcha", "true");
+					return null;
+				} else {
+					CaptchaService.getInstance(request.getSession()).reset();
+				}
+			
 			} else {
-				CaptchaService.getInstance(request.getSession()).reset();
+			
+				String userIP = request.getHeader("x-real-ip");
+				Map<String, String> params = new HashMap<String, String>();
+				params.put("secret", comp.getRecaptchaKey());
+				params.put("response", rs.getParameter("g-recaptcha-response", ""));
+				params.put("remoteip", request.getRemoteAddr());
+				String url = URLHelper.addAllParams("https://www.google.com/recaptcha/api/siteverify", "secret=" + comp.getRecaptchaSecretKey(), "response=" + rs.getParameter("g-recaptcha-response", ""), "remoteip=" + userIP);
+				
+				String captchaResponse = NetHelper.readPage(new URL(url));
+				JSONMap map = JSONMap.parseMap(captchaResponse);
+				
+				if (map == null || !StringHelper.isTrue(map.get("success"))) {
+					GenericMessage msg = new GenericMessage(comp.getLocalConfig(false).getProperty("error.captcha", "bad captcha."), GenericMessage.ERROR);
+					request.setAttribute("msg", msg);
+					request.setAttribute("error_captcha", "true");
+					return null;
+				}
+			
 			}
 		}
 
@@ -337,13 +374,13 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 		String subject = "GenericForm submit : '" + globalContext.getGlobalTitle() + "' ";
 
 		String subjectField = comp.getLocalConfig(false).getProperty("mail.subject.field", null);
-		if (subjectField != null && requestService.getParameter(subjectField, null) != null) {
-			subject = comp.getLocalConfig(false).getProperty("mail.subject", "") + requestService.getParameter(subjectField, null);
+		if (subjectField != null && rs.getParameter(subjectField, null) != null) {
+			subject = comp.getLocalConfig(false).getProperty("mail.subject", "") + rs.getParameter(subjectField, null);
 		} else {			
 			subject = comp.getLocalConfig(false).getProperty("mail.subject", subject);
 		}
 		
-		Map<String, Object> params = requestService.getParameterMap();
+		Map<String, Object> params = rs.getParameterMap();
 		Map<String, String> result = new HashMap<String, String>();
 		List<String> errorFields = new LinkedList<String>();
 		result.put("__registration time", StringHelper.renderSortableTime(new Date()));
@@ -372,7 +409,7 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 		long maxFileSize = Long.parseLong(maxFileSizeRAW);
 
 		Set<String> attachField = new HashSet<String>();
-		for (FileItem file : requestService.getAllFileItem()) {
+		for (FileItem file : rs.getAllFileItem()) {
 			attachField.add(file.getFieldName());
 			String ext = StringHelper.getFileExtension(file.getName()).toLowerCase();
 			if (badFileFormat.contains(ext)) {
@@ -414,7 +451,7 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 		Map<String,String> adminMailData = new LinkedHashMap<String,String>();
 		//PrintStream out = new PrintStream(outStream);
 
-		boolean noAttach = requestService.getParameter("no_attach", null) != null;
+		boolean noAttach = rs.getParameter("no_attach", null) != null;
 		String formEmail = null;
 		for (String key : keys) {
 			if (!key.equals("webaction") && !key.equals("comp_id") && !key.equals("captcha")) {
@@ -422,7 +459,7 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 				if (specialValues.get(key) != null) {
 					value = specialValues.get(key);
 				}
-				String finalValue = requestService.getParameter(key, "");
+				String finalValue = rs.getParameter(key, "");
 				if (specialValues.get(key) != null) {
 					finalValue = specialValues.get(key);
 				}
@@ -487,7 +524,7 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 			/** participation code **/
 			if (StringHelper.isTrue(comp.getLocalConfig(false).getProperty("pcode.activate"))) {
 				String alwaysOkCode = comp.getLocalConfig(false).getProperty("pcode.alwaysok");
-				String pcode = requestService.getParameter("pcode", null);
+				String pcode = rs.getParameter("pcode", null);
 				if (StringHelper.isEmpty(pcode)) {
 						errorFields.add("pcode");
 						GenericMessage msg = new GenericMessage(comp.getLocalConfig(false).getProperty("message.no-code", "set participation code."), GenericMessage.ERROR);
@@ -520,8 +557,8 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 			if (comp.isSendEmail() && !fakeFilled) {
 				String emailFrom = comp.getLocalConfig(false).getProperty("mail.from", StringHelper.neverEmpty(globalContext.getAdministratorEmail(), StaticConfig.getInstance(request.getSession()).getSiteEmail()));				
 				String emailFromField = comp.getLocalConfig(false).getProperty("mail.from.field", null);
-				if (emailFromField != null && requestService.getParameter(emailFromField, "") != null) {
-					String tmpEmail = requestService.getParameter(emailFromField, "");
+				if (emailFromField != null && rs.getParameter(emailFromField, "") != null) {
+					String tmpEmail = rs.getParameter(emailFromField, "");
 					try {
 						new InternetAddress(tmpEmail);
 						emailFrom = tmpEmail;
@@ -533,8 +570,8 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 
 				String emailTo = null;
 				String emailToField = comp.getLocalConfig(false).getProperty("mail.to.field", null);
-				if (emailToField != null && requestService.getParameter(emailToField, "") != null) {
-					String tmpEmail = requestService.getParameter(emailToField, "");
+				if (emailToField != null && rs.getParameter(emailToField, "") != null) {
+					String tmpEmail = rs.getParameter(emailToField, "");
 					try {
 						new InternetAddress(tmpEmail);
 						emailTo = tmpEmail;

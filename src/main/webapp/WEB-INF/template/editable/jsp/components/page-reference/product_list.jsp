@@ -23,7 +23,7 @@
 					<c:if test="${empty image}">&nbsp;</c:if>
 					<c:if test="${not empty image}">
 						<figure style="width: 100%; margin: 0; padding: 0;">
-							<a title="${page.title}" href="${page.url}"> <img style="width: 100%;" src="${image.url}" class="frame" alt="${image.description}" /></a>
+							<a title="${page.attTitle}" href="${page.url}"> <img style="width: 100%;" src="${image.url}" class="frame" alt="${image.description}" /></a>
 						</figure>
 					</c:if></td>
 					<td width="10" style="width: 10px">&nbsp;</td>
@@ -33,7 +33,7 @@
 							<div class="authors">${page.creator}</div>
 						</c:if>
 						<div style="margin: 0 0 5px 0; padding: 0;">								
-						<h2 style="margin: 0; padding: 0;"><a title="${page.title}"	href="${page.url}">${page.title}</a></h2>
+						<h2 style="margin: 0; padding: 0;"><a title="${page.attTitle}"	href="${page.url}">${page.title}</a></h2>
 						<c:if test="${page.contentDate}"><div class="date" style="font-size: 10px; text-align: left;'">${page.date}</div></c:if>
 						</div></div>
 						<c:if test="${not empty page.description}">
