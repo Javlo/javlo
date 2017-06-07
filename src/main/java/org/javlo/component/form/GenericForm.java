@@ -346,15 +346,9 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 					CaptchaService.getInstance(request.getSession()).reset();
 				}
 			
-			} else {
-			
+			} else {			
 				String userIP = request.getHeader("x-real-ip");
-				Map<String, String> params = new HashMap<String, String>();
-				params.put("secret", comp.getRecaptchaKey());
-				params.put("response", rs.getParameter("g-recaptcha-response", ""));
-				params.put("remoteip", request.getRemoteAddr());
-				String url = URLHelper.addAllParams("https://www.google.com/recaptcha/api/siteverify", "secret=" + comp.getRecaptchaSecretKey(), "response=" + rs.getParameter("g-recaptcha-response", ""), "remoteip=" + userIP);
-				
+				String url = URLHelper.addAllParams("https://www.google.com/recaptcha/api/siteverify", "secret=" + comp.getRecaptchaSecretKey(), "response=" + rs.getParameter("g-recaptcha-response", ""), "remoteip=" + userIP);				
 				String captchaResponse = NetHelper.readPage(new URL(url));
 				JSONMap map = JSONMap.parseMap(captchaResponse);
 				

@@ -26,7 +26,7 @@ public class AdminUserSecurity implements Serializable {
 	public static String FULL_CONTROL_ROLE = "admin";
 
 	public static String CONTENT_ROLE = "content";
-	
+
 	public static String MODEL_ROLE = "model";
 
 	public static String CONTRIBUTOR_ROLE = "contributor";
@@ -56,7 +56,7 @@ public class AdminUserSecurity implements Serializable {
 	public static String SYNCHRO_ADMIN = "sync-admin";
 
 	public static String SYNCHRO_SERVER = "sync-server";
-	
+
 	public static String UPLOAD_RESOURCE = "upload-resource";
 
 	public static String MASTER = "master";
@@ -147,15 +147,13 @@ public class AdminUserSecurity implements Serializable {
 
 	public boolean canRole(User user, String inRole) {
 		if (user != null) {
-			if (user != null) {
-				Set<String> roles = user.getRoles();
-				for (String role : roles) {
-					if (role.equals(FULL_CONTROL_ROLE)) {
-						return true;
-					}
+			Set<String> roles = user.getRoles();
+			for (String role : roles) {
+				if (role.equals(FULL_CONTROL_ROLE)) {
+					return true;
 				}
-				return haveRole(user, inRole);
 			}
+			return haveRole(user, inRole);
 		}
 		return false;
 	}
@@ -222,7 +220,7 @@ public class AdminUserSecurity implements Serializable {
 		}
 		return false;
 	}
-	
+
 	public static boolean isCurrentUserCanUpload(ContentContext ctx) {
 		AdminUserSecurity adminUserSecurity = AdminUserSecurity.getInstance();
 		User user = ctx.getCurrentEditUser();
@@ -235,7 +233,6 @@ public class AdminUserSecurity implements Serializable {
 		}
 		return false;
 	}
-	
 
 	/**
 	 * check if the currentPage is editable by current user.
