@@ -455,7 +455,7 @@ if (!String.prototype.startsWith) {
 					event.preventDefault();
 					var textData = event.dataTransfer.getData("text");
 					if (textData.startsWith("page:page-")) {						
-						textData=textData.substring("page:page-".length);
+						textData=textData.substring("page:page-".length);						
 						var ajaxURL = editPreview.addParam(currentURL, "webaction=edit.insert&type=clipboard-page&previous="+pjq(this).attr("id").substring(3)+"&area=" + editPreview.searchArea(pjq(this))+ "&render-mode=3&init=true&pagename="+textData);
 						if (editPreview.searchPageId(this) != null) {
 							ajaxURL = ajaxURL +'&pageContainerID='+ editPreview.searchPageId(this);
@@ -496,7 +496,7 @@ if (!String.prototype.startsWith) {
 					
 					if (sharedId != null && sharedId.length > 0) {
 						var previewId = subComp.attr("id").substring(3);
-						var area = editPreview.searchArea(subComp);
+						var area = editPreview.searchArea(subComp);						
 						var ajaxURL = editPreview.addParam(currentURL, "webaction=edit.insertShared&sharedContent="
 							+ sharedId + "&previous=" + previewId
 							+ "&area=" + area+ "&render-mode=3&init=true");
@@ -507,7 +507,7 @@ if (!String.prototype.startsWith) {
 					} else if (compType != null && compType.length > 0) { // insert new component
 						pjq(this).removeClass("drop-selected");
 						var previewId = subComp.attr("id").substring(3);
-						var area = editPreview.searchArea(subComp);
+						var area = editPreview.searchArea(subComp);						
 						var url = "webaction=edit.insert&previewEdit=true&type=" + compType + "&previous=" + previewId + "&area=" + area+ "&render-mode=3&init=true";
 						if (editPreview.searchPageId(subComp) != null) {
 							url = url +'&pageContainerID='+ editPreview.searchPageId(subComp);
@@ -632,14 +632,16 @@ if (!String.prototype.startsWith) {
 						console.log("area     = ",area);
 						console.log("sharedId = ",sharedId);
 					}					
-					if (sharedId != null && sharedId.length > 0) {
+					if (sharedId != null && sharedId.length > 0) {						
 						var ajaxURL = editPreview.addParam(currentURL, "webaction=edit.insertShared&sharedContent="
 							+ sharedId + "&previous=0"
 							+ "&area=" + area+ "&render-mode=3&init=true");
 						if (editPreview.searchPageId(this) != null) {
 							ajaxURL = ajaxURL +'&pageContainerID='+ editPreview.searchPageId(this);
 						}
-						editPreview.ajaxPreviewRequest(ajaxURL, null, null);
+						if (jQuery('#'+area).hasClass("_empty_area")) {
+							editPreview.ajaxPreviewRequest(ajaxURL, null, null);
+						}
 					} else if (compType != null && compType.length > 0) {						
 						pjq(this).removeClass("drop-selected");
 						var url = "previewEdit=true&webaction=edit.insert&type=" + compType + "&previous=0&area=" + area+ "&render-mode=3&init=true";
@@ -1021,6 +1023,15 @@ if (!String.prototype.startsWith) {
 				if (doneFunction != null) {
 					doneFunction();
 				}
+				jQuery('._area').each(function() {					
+					if (jQuery(this).find(".editable-component, .repeat").size() > 0) {
+						jQuery(this).removeClass("_empty_area");
+						jQuery(this).addClass("_not_empty_area");						
+					} else {
+						jQuery(this).addClass("_empty_area");
+						jQuery(this).removeClass("_not_empty_area");
+					}
+				});
 			});
 		}
 		function scrollToMe() {
