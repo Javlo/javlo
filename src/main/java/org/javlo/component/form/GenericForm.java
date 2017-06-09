@@ -441,10 +441,7 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 			}
 		}
 
-		//ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		Map<String,String> adminMailData = new LinkedHashMap<String,String>();
-		//PrintStream out = new PrintStream(outStream);
-
 		boolean noAttach = rs.getParameter("no_attach", null) != null;
 		String formEmail = null;
 		for (String key : keys) {
@@ -495,20 +492,17 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 
 				if (value instanceof Object[]) {
 					finalValue = StringHelper.arrayToString((Object[]) params.get(key), ",");
-					adminMailData.put(key, finalValue);
-//					out.println(key + ':');
-//					out.println(finalValue);
+					if (!key.contains("g-recaptcha")) {
+						adminMailData.put(key, finalValue);
+					}
 				} else {
-					adminMailData.put(key, finalValue);
-//					out.println(key + ':');
-//					out.println(finalValue);
+					if (!key.contains("g-recaptcha")) {
+						adminMailData.put(key, finalValue);
+					}
 				}
-//				out.println("");
 				result.put(key, finalValue);
 			}
 		}
-//		out.println("");
-//		out.close();
 
 		if (fakeFilled) {
 			logger.warning("spam detected fake field filled : " + comp.getPage().getPath());
