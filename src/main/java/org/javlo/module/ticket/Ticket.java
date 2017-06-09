@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Set;
 
 public interface Ticket {
+	
+	public static final String DONE_STATUS = "done";
 
 	String getTitle();
 

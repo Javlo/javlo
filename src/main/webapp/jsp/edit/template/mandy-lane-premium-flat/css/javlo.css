@@ -1027,6 +1027,10 @@ ul,li {
 	padding-left: 16px;
 }
 
+.navigation a.unvalid  {
+	color: #bb0000;
+}
+
 .navigation .children a,.navigation .children .add-page form {
 	padding-left: 16px;
 }

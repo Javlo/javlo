@@ -61,6 +61,9 @@ import org.javlo.module.core.Module.Box;
 import org.javlo.module.core.ModulesContext;
 import org.javlo.module.file.FileModuleContext;
 import org.javlo.module.mailing.MailingModuleContext;
+import org.javlo.module.ticket.Ticket;
+import org.javlo.module.ticket.TicketBean;
+import org.javlo.module.ticket.TicketService;
 import org.javlo.navigation.MenuElement;
 import org.javlo.search.SearchResult;
 import org.javlo.search.SearchResult.SearchElement;
@@ -83,6 +86,7 @@ import org.javlo.template.TemplateFactory;
 import org.javlo.user.AdminUserFactory;
 import org.javlo.user.AdminUserSecurity;
 import org.javlo.user.IUserFactory;
+import org.javlo.user.IUserInfo;
 import org.javlo.utils.TimeTracker;
 import org.javlo.ztatic.FileCache;
 
@@ -405,6 +409,7 @@ public class Edit extends AbstractModuleAction {
 		EditContext editCtx = EditContext.getInstance(globalContext, ctx.getRequest().getSession());
 		currentPage.setLatestEditor(editCtx.getUserPrincipal().getName());
 		currentPage.setValid(false);
+		currentPage.setNeedValidation(false);
 		currentPage.releaseCache();
 	}
 
@@ -1252,6 +1257,11 @@ public class Edit extends AbstractModuleAction {
 						provider.refresh(ctx);
 					}
 				}
+				
+				/** need validation **/
+				if(AdminUserSecurity.getInstance().isAdmin(ctx.getCurrentEditUser())) {
+					page.setNoValidation(StringHelper.isTrue(requestService.getParameter("noval", null)));
+				}
 
 				/** ipsecurity **/
 				String ipsecurity = requestService.getParameter("ipsecurity", null);
@@ -1454,6 +1464,54 @@ public class Edit extends AbstractModuleAction {
 		}
 		editContext.setCurrentArea(area);
 		messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("edit.message.new-area") + " : " + area, GenericMessage.INFO));
+		return null;
+	}
+	
+	public static String performNeedValidation(ContentContext ctx, MenuElement currentPage, I18nAccess i18nAccess) throws Exception {
+		AdminUserSecurity userSecurity = AdminUserSecurity.getInstance();
+		if (userSecurity.canRole(ctx.getCurrentEditUser(), AdminUserSecurity.CONTENT_ROLE)) {
+			currentPage.setNeedValidation(true);
+			PersistenceService.getInstance(ctx.getGlobalContext()).setAskStore(true);
+			
+			AdminUserFactory userFact = AdminUserFactory.createAdminUserFactory(ctx.getGlobalContext(), ctx.getRequest().getSession());
+			TicketBean ticket = new TicketBean();
+			ticket.setAuthors(ctx.getCurrentEditUser().getLogin());			
+			ticket.setTitle(i18nAccess.getText("flow.ticket.title")+" : "+currentPage.getTitle(ctx));
+			ticket.setCategory("validation");
+			ticket.setContext(ctx.getGlobalContext().getContextKey());
+			ticket.setCreationDate(new Date());
+			ticket.setUrl(URLHelper.createURL(ctx));		
+			List<String> users = new  LinkedList<String>();
+			for (IUserInfo userInfo : userFact.getUserInfoList()) {
+				if (userSecurity.haveRole(userInfo, AdminUserSecurity.VALIDATION_ROLE)) {
+					users.add(userInfo.getLogin());
+				}
+			}
+			ticket.setUsers(users);
+			TicketService.getInstance(ctx.getGlobalContext()).updateTicket(ctx, ticket);
+		} else {
+			return "Security error !";
+		}		
+		return null;
+	}
+	
+	public static String performValidate(ContentContext ctx, MenuElement currentPage) throws Exception {
+		AdminUserSecurity userSecurity = AdminUserSecurity.getInstance();
+		if (userSecurity.canRole(ctx.getCurrentEditUser(), AdminUserSecurity.VALIDATION_ROLE)) {				
+			currentPage.setValid(true);
+			currentPage.setValidater(ctx.getCurrentEditUser().getLogin());
+			TicketService ticketService = TicketService.getInstance(ctx.getGlobalContext());
+			String pageURL = URLHelper.createURL(ctx);
+			for (Ticket ticket : ticketService.getTickets()) {
+				if (ticket.getUrl() != null && ticket.getUrl().equals(pageURL) && ticket instanceof TicketBean) {
+					((TicketBean)ticket).setStatus(Ticket.DONE_STATUS);
+					ticketService.updateTicket(ctx, (TicketBean)ticket);
+				}
+			}
+			PersistenceService.getInstance(ctx.getGlobalContext()).setAskStore(true);
+		} else {
+			return "Security error !";
+		}		
 		return null;
 	}
 

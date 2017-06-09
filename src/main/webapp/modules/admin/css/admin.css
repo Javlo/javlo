@@ -68,3 +68,8 @@
 	content: ":";
 }
 
+#form-page-properties .checkbox label:AFTER {
+	margin: 0;
+	content: "";
+}
+

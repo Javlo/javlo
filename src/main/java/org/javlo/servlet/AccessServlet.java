@@ -719,6 +719,9 @@ public class AccessServlet extends HttpServlet implements IVersion {
 						outZip.setLevel(9);
 						ZipManagement.addFileInZip(outZip, "content.xml", new ByteArrayInputStream(XMLHelper.getPageXML(ctx, elem).getBytes(ContentContext.CHARSET_DEFAULT)));
 						Collection<Resource> resources = ctx.getCurrentPage().getAllResources(ctx);
+						for (MenuElement page : ctx.getCurrentPage().getAllChildrenList()) {
+							resources.addAll(page.getAllResources(ctx));
+						}
 						logger.info("prepare zip file with " + resources.size() + " resources.");
 						File mainFolder = new File(ctx.getGlobalContext().getDataFolder());
 						if (mainFolder.exists()) {

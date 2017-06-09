@@ -29,7 +29,7 @@ import org.javlo.service.PersistenceService;
 import org.javlo.xml.NodeXML;
 
 public class NavigationHelper {
-	
+
 	private static java.util.logging.Logger logger = java.util.logging.Logger.getLogger(NavigationHelper.class.getName());
 
 	public static final boolean canMoveDown(MenuElement elem) {
@@ -178,7 +178,7 @@ public class NavigationHelper {
 	}
 
 	public static List<String> getAllRSSChannels(ContentContext ctx, MenuElement page) throws Exception {
-		List<String> pageChannel = getRSSChannels(ctx, page);		
+		List<String> pageChannel = getRSSChannels(ctx, page);
 		for (MenuElement menuElement : page.getAllChildrenList()) {
 			List<String> allChildrenChannels = getRSSChannels(ctx, menuElement);
 			for (String channel : allChildrenChannels) {
@@ -244,7 +244,7 @@ public class NavigationHelper {
 
 		while (child != null) {
 			String pageName = child.getAttributeValue("name");
-			if (pageName != null) {				
+			if (pageName != null) {
 				GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 				MenuElement newPage = persistenceService.insertPage(globalContext, child, currentPage, new HashMap<MenuElement, String[]>(), lang);
 				try {
@@ -260,47 +260,48 @@ public class NavigationHelper {
 			}
 			child = child.getNext("page");
 		}
-		/*NodeXML properties = pageNode.getParent().getChild("properties");
-		if (properties != null && properties.getAttributeValue("name", "").equals("global")) {
-			NodeXML property = properties.getChild("property");
-			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-			ContentService content = ContentService.getInstance(globalContext);
-			while (property != null) {
-				if (content.getAttribute(ctx, property.getAttributeValue("key")) == null) { // if this key doesn't exist locally -> set in global map
-					content.setAttribute(ctx, property.getAttributeValue("key"), property.getContent());
-				}
-				property = property.getNext("property");
-			}
-		}*/
+		/*
+		 * NodeXML properties = pageNode.getParent().getChild("properties"); if
+		 * (properties != null && properties.getAttributeValue("name",
+		 * "").equals("global")) { NodeXML property =
+		 * properties.getChild("property"); GlobalContext globalContext =
+		 * GlobalContext.getInstance(ctx.getRequest()); ContentService content =
+		 * ContentService.getInstance(globalContext); while (property != null) {
+		 * if (content.getAttribute(ctx, property.getAttributeValue("key")) ==
+		 * null) { // if this key doesn't exist locally -> set in global map
+		 * content.setAttribute(ctx, property.getAttributeValue("key"),
+		 * property.getContent()); } property = property.getNext("property"); }
+		 * }
+		 */
 		PersistenceService.getInstance(ctx.getGlobalContext()).setAskStore(true);
 	}
 
 	public static void publishNavigation(ContentContext ctx, MenuElement srcRoot, MenuElement targetRoot) throws Exception {
-
-		if (srcRoot.isValid()) {
+		if (srcRoot.isValid() || srcRoot.isNoValidation()) {
+			srcRoot.setNeedValidation(false);
 			copyElement(ctx, srcRoot, targetRoot);
-			Collection<MenuElement> children = srcRoot.getChildMenuElements();
-			for (MenuElement element : children) {
-				MenuElement oldVersion = targetRoot.searchChildFromId(element.getId());
-				if (oldVersion == null) {
-					if (element.isValid()) {
-						oldVersion = MenuElement.getInstance(GlobalContext.getInstance(ctx.getRequest()));
-						targetRoot.addChildMenuElement(oldVersion);
-					}
+		}
+		Collection<MenuElement> children = srcRoot.getChildMenuElements();
+		for (MenuElement element : children) {
+			MenuElement oldVersion = targetRoot.searchChildFromId(element.getId());
+			if (oldVersion == null) {
+				if (element.isValid()) {
+					oldVersion = MenuElement.getInstance(GlobalContext.getInstance(ctx.getRequest()));
+					targetRoot.addChildMenuElement(oldVersion);
 				}
-				if (oldVersion != null) {
-					publishNavigation(ctx, element, oldVersion);
-				}
-				// TODO: remove page in view mode when she is removed is edit
-				// mode (preview).
-
 			}
-			Collection<MenuElement> targetChildren = targetRoot.getChildMenuElements();
-			for (MenuElement element : targetChildren) {
-				MenuElement srcChild = srcRoot.searchChildFromId(element.getId());
-				if ((srcChild == null) || (!srcChild.getParent().getId().equals(targetRoot.getId()))) {
-					targetRoot.removeChild(element);
-				}
+			if (oldVersion != null) {
+				publishNavigation(ctx, element, oldVersion);
+			}
+			// TODO: remove page in view mode when she is removed is edit
+			// mode (preview).
+
+		}
+		Collection<MenuElement> targetChildren = targetRoot.getChildMenuElements();
+		for (MenuElement element : targetChildren) {
+			MenuElement srcChild = srcRoot.searchChildFromId(element.getId());
+			if ((srcChild == null) || (!srcChild.getParent().getId().equals(targetRoot.getId()))) {
+				targetRoot.removeChild(element);
 			}
 		}
 	}
@@ -401,29 +402,29 @@ public class NavigationHelper {
 		}
 		return false;
 	}
-	
+
 	private static void getPageLocalBookmark(PrintStream out, ContentContext ctx, MenuElement page, boolean childPage) throws Exception {
-		String href="#";
+		String href = "#";
 		if (childPage) {
-			href = "#page_"+page.getId();
+			href = "#page_" + page.getId();
 		}
 		List<IContentVisualComponent> subtitles = page.getContentByType(ctx, SubTitle.TYPE);
-		
-		out.print("<bookmark name=\""+page.getTitle(ctx).trim()+"\" href=\""+href+"\">");
+
+		out.print("<bookmark name=\"" + page.getTitle(ctx).trim() + "\" href=\"" + href + "\">");
 		for (IContentVisualComponent iContentVisualComponent : subtitles) {
-			SubTitle subTitle = (SubTitle)iContentVisualComponent;
+			SubTitle subTitle = (SubTitle) iContentVisualComponent;
 			if (subTitle.getTitleLevel(ctx) == 2) {
-				out.println("<bookmark name=\""+subTitle.getValue().trim()+"\" href=\"#"+subTitle.getXHTMLId(ctx)+"\"></bookmark>");
+				out.println("<bookmark name=\"" + subTitle.getValue().trim() + "\" href=\"#" + subTitle.getXHTMLId(ctx) + "\"></bookmark>");
 			}
 		}
-		out.println("</bookmark>");		
+		out.println("</bookmark>");
 	}
-	
+
 	/**
-	 * get the page bookmark for the html header.
-	 * used for pdf generation.
+	 * get the page bookmark for the html header. used for pdf generation.
+	 * 
 	 * @return
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	public static String getPageBookmark(ContentContext ctx, MenuElement page) throws Exception {
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
@@ -440,33 +441,33 @@ public class NavigationHelper {
 		out.close();
 		return new String(outStream.toByteArray());
 	}
-	
+
 	public static void movePage(ContentContext ctx, MenuElement parent, MenuElement previousBrother, MenuElement page) {
 		page.moveToParent(parent);
 		if (previousBrother != null) {
-			page.setPriority(previousBrother.getPriority()+1);
+			page.setPriority(previousBrother.getPriority() + 1);
 		} else {
 			page.setPriority(0);
 		}
 		NavigationHelper.changeStepPriority(page.getParent().getChildMenuElements(), 10);
 	}
-	
+
 	public static MenuElement createChildPageAutoName(MenuElement page, ContentContext ctx) throws Exception {
 		ContentService content = ContentService.getInstance(ctx.getRequest());
-		
-		String newPageName = page.getName()+"-1";
+
+		String newPageName = page.getName() + "-1";
 		int index = 2;
 		while (content.getNavigation(ctx).searchChildFromName(newPageName) != null) {
-			newPageName = page.getName()+'-'+index;
+			newPageName = page.getName() + '-' + index;
 			index++;
-		}		
-		MenuElement newPage = MacroHelper.addPageIfNotExist(ctx, page,newPageName, true, true);
+		}
+		MenuElement newPage = MacroHelper.addPageIfNotExist(ctx, page, newPageName, true, true);
 		boolean changeNotification = true;
-		
+
 		newPage.setChangeNotification(changeNotification);
 		return newPage;
 	}
-	
+
 	public static MenuElement getPageById(ContentContext ctx, String id) throws Exception {
 		ContentService content = ContentService.getInstance(ctx.getRequest());
 		MenuElement root = content.getNavigation(ctx);
@@ -476,24 +477,24 @@ public class NavigationHelper {
 			return root.searchChildFromId(id);
 		}
 	}
-	
+
 	public static MenuElement getChildWithContent(ContentContext ctx, MenuElement page) throws Exception {
 		while (page != null && !page.isRealContent(ctx) && page.getChildMenuElements().size() > 0) {
 			Iterator<MenuElement> children = page.getChildMenuElements().iterator();
 			page = children.next();
 			while (page != null && !page.isActive(ctx)) {
 				page = children.next();
-			}			
+			}
 		}
 		return page;
 	}
-	
+
 	public static String getBreadCrumb(ContentContext ctx, MenuElement page) throws Exception {
 		String outPath = "";
 		MenuElement parent = page;
 		String sep = "";
 		while (parent != null) {
-			outPath = parent.getLabel(ctx)+sep+outPath;
+			outPath = parent.getLabel(ctx) + sep + outPath;
 			sep = " > ";
 			parent = parent.getParent();
 		}

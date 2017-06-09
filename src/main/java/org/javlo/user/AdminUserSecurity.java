@@ -64,7 +64,6 @@ public class AdminUserSecurity implements Serializable {
 	private final Map<String, Set<String>> rights = new HashMap<String, Set<String>>();
 
 	private AdminUserSecurity() {
-
 		/* CONTENT RIGHT */
 		String[] contentRights = { "delete", "changeview", "changetype", "remove", "copy", "paste", "insert", "update", "blockpage", "visible", "copypagestructure", "pastepage", "updateone", "macro", "insertmsg", "selectarea", "mkdir", "persistenceopen", "cancelcopy", "savemetastaticfile", "previewedit" };
 		Set<String> contentSet = new HashSet<String>(Arrays.asList(contentRights));
@@ -90,7 +89,6 @@ public class AdminUserSecurity implements Serializable {
 		String[] userRights = { "upload", "ajaxUserList" };
 		Set<String> userRightsSet = new HashSet<String>(Arrays.asList(userRights));
 		rights.put(USER_ROLE, userRightsSet);
-
 	}
 
 	private static AdminUserSecurity instance;
@@ -159,6 +157,18 @@ public class AdminUserSecurity implements Serializable {
 	}
 
 	public boolean haveRole(User user, String inRole) {
+		if (user != null) {
+			Set<String> roles = user.getRoles();
+			for (String role : roles) {
+				if (role.equalsIgnoreCase(inRole)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	public boolean haveRole(IUserInfo user, String inRole) {
 		if (user != null) {
 			Set<String> roles = user.getRoles();
 			for (String role : roles) {

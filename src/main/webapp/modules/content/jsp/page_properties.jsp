@@ -4,10 +4,27 @@
 <h3><span>${i18n.edit['item.title']}</span></h3>
 <div class="content">
 
-<div class="template-preview">
-	<img src="${templateImageUrl}" alt="template preview" lang="en" />
-</div>
 <form id="form-page-properties" class="standard-form js-change-submit" action="${info.currentURL}" method="post">
+
+<c:if test="${globalContext.portail}">
+<div class="flow">
+	<h4>${i18n.edit['flow.title']}</h4>
+	<p>
+	<button class="btn btn-default btn-sm ${info.page.flowIndex==1?'btn-primary':'btn-disabled'}" disabled="disabled">Modify</button>&nbsp;
+	<span class="glyphicon glyphicon-arrow-right"></span>&nbsp;
+	<button class="btn btn-default btn-sm ${info.page.flowIndex==2?'btn-primary':''}" disabled="disabled">Ready</button>&nbsp;
+	<span class="glyphicon glyphicon-arrow-right"></span>&nbsp;	
+	<button class="btn btn-default btn-sm ${info.page.flowIndex==3?'btn-primary':''}" disabled="disabled">Valided</button>&nbsp;
+	<span class="glyphicon glyphicon-arrow-right"></span>&nbsp;	
+	<button class="btn btn-default btn-sm ${info.page.flowIndex==4?'btn-primary':''}" disabled="disabled">Live</button>
+	</p>		
+	<c:if test="${info.admin}">
+	<label class="checkbox-inline"><input type="checkbox" name="noval" id="noval" ${info.page.noValidation?' checked="checked"':''}>no validation</label>
+	</c:if>	
+</div>
+</c:if>
+
+
 
 <div>
 	<input type="hidden" name="webaction" value="pageProperties" />

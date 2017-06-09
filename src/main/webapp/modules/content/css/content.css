@@ -511,3 +511,14 @@ li.line {
 .message.error {
 	color: #cc0000;
 }
+
+.page-properties .flow {
+	float: right;
+    border-radius: 3px 3px 3px 3px;
+    background: none repeat scroll 0 0 #FCFCFC;
+    border: 1px solid #CCCCCC;
+    box-shadow: 1px 1px 2px #DDDDDD;
+    padding: 5px 10px 10px 10px;
+    margin-left: 24px;
+    z-index: 1; 
+}

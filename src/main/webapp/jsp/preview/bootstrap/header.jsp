@@ -281,16 +281,26 @@
 								</button>
 							</form></li>
 			<c:if test="${globalContext.previewMode}">
-				<li class="publish"><form id="pc_publish_form"
-						action="${info.currentURL}" method="post">
-						<input type="hidden" name="webaction" value="edit.publish" />
+			
+				<c:set var="webaction" value="edit.publish" />
+				<c:set var="label" value="${i18n.edit['command.publish']}" />
+				<c:if test="${info.page.flowIndex==1}"><c:set var="webaction" value="edit.needValidation" /><c:set var="label" value="${i18n.edit['command.need-validation']}" /></c:if>
+				<c:if test="${info.page.flowIndex==2}">
+				<c:if test="${info.page.validable}"><c:set var="webaction" value="edit.validate" /><c:set var="label" value="${i18n.edit['flow.validate']}" /></c:if>
+				<c:if test="${!info.page.validable}"><c:set var="webaction" value="" /><c:set var="label" value="${i18n.edit['flow.wait-validation']}" /></c:if>
+				</c:if>
+				<c:if test="${not empty param.button_publish and empty param.previewEdit and info.page.flowIndex>2}"><a class="action-button publish ajax" href="${info.currentURL}?webaction=publish&render-mode=1"><span>${i18n.edit['command.publish']}</span></a></c:if>
+			
+			
+				<li class="publish"><form id="pc_publish_form" action="${info.currentURL}" method="post">
+						<input type="hidden" name="webaction" value="${webaction}" />
 						<c:set var="tooltip" value="" />
 						<c:if test="${i18n.edit['command.publish.tooltip'] != 'command.publish.tooltip'}">
 							<c:set var="tooltip" value='data-toggle="tooltip" data-placement="left" title="${i18n.edit[\'command.publish.tooltip\']}"' />
 						</c:if>
-						<button type="submit" class="btn btn-default btn-sm" ${tooltip}>
+						<button type="submit" class="btn btn-default btn-sm" ${tooltip} ${empty webaction?'disabled="disabled"':''}>
 							<span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span>
-							<span class="text">${i18n.edit['command.publish']}</span>
+							<span class="text">${label}</span>
 						</button>
 					</form></li>
 			</c:if>

@@ -18,6 +18,7 @@ import org.javlo.service.ContentService;
 import org.javlo.service.exception.ServiceException;
 import org.javlo.template.Template;
 import org.javlo.template.TemplateFactory;
+import org.javlo.user.AdminUserSecurity;
 import org.javlo.utils.CollectionAsMap;
 
 import com.beust.jcommander.ParameterException;
@@ -51,10 +52,12 @@ public class PageBean implements Serializable {
 		}
 		this.ctx = ctx;
 		this.page = page;
+		this.portail = ctx.getGlobalContext().isPortail();
 	}
 
 	private final MenuElement page;
 	private ContentContext ctx;
+	private boolean portail = false;
 
 	public PageDescription getInfo() {
 		try {
@@ -566,5 +569,53 @@ public class PageBean implements Serializable {
 	
 	public boolean isLinkRealContent() throws Exception {
 		return page.isLinkRealContent(ctx);
+	}
+	
+	public boolean isValid() {
+		if (!portail) {
+			return true;
+		} else {
+			return page.isValid();
+		}
+	}
+	
+	public boolean isNeedValidation() {
+		return page.isNeedValidation();
+	}
+	
+	public boolean isNoValidation() {
+		return page.isNoValidation();
+	}
+	
+	/***
+	 * return the flow number of the page
+	 * @return 1: modified not ready, 2:ready for validation, 3:valided, 4:publish
+	 */
+	public int getFlowIndex() {
+		if (!portail || isNoValidation()) {
+			return 4;
+		}		
+		if (!isValid() && !isNeedValidation()) {
+			return 1;
+		} else if (!isValid() && isNeedValidation()) {
+			return 2;			
+		} else if (isValid() && isNeedValidation()) {
+			return 3;			
+		}else {
+			return 4;
+		}
+	}
+	
+	/**
+	 * current user can validated this page ?
+	 * @return
+	 */
+	public boolean isValidable() {
+		if (!portail) {
+			return true;
+		} else {
+			AdminUserSecurity userSecurity = AdminUserSecurity.getInstance();
+			return userSecurity.canRole(ctx.getCurrentEditUser(), AdminUserSecurity.VALIDATION_ROLE);
+		}
 	}
 }

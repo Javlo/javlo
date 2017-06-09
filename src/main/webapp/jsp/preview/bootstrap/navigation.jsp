@@ -15,24 +15,24 @@
 		<c:if test="${page.url eq info.currentURL}"><c:set var="asTitle" value="true" />		
 			<li class="parent ${!page.trash?'title':'trash'}">
 				<c:if test="${not empty info.contextForCopy && (child.url eq info.currentURL)}"><a title="${i18n.edit['navigation.insert-page']}" class="paste-page" href="${pasteURL}"><span class="glyphicon glyphicon-collapse-down" aria-hidden="true"></span></a></c:if>
-				<span><a class="draggable" id="page-${info.parent.name}" data-pageid="${info.parent.id}" href="${info.parent.url}" title="${info.parent.path}">${info.parent.info.label}${info.parent.haveChildren?'...':''}</a></span>			
+				<span><a class="draggable flow-${info.parent.flowIndex}" id="page-${info.parent.name}" data-pageid="${info.parent.id}" href="${info.parent.url}" title="${info.parent.path}">${info.parent.info.label}${info.parent.haveChildren?'...':''}</a></span>			
 			</li>
 		</c:if>
 		<c:if test="${!(page.url eq info.currentURL) && not empty info.parent.parent}"><c:set var="asTitle" value="true" />
 			<li class="parent ${!info.parent.parent.trash?'title':'trash'}">				
-				<span><a class="draggable" id="page-${info.parent.parent.name}" href="${info.parent.parent.url}" title="${info.parent.parent.path}">${info.parent.parent.info.label}${info.parent.parent.haveChildren?'...':''}</a></span>			
+				<span><a class="draggable flow-${info.parent.parent.flowIndex}" id="page-${info.parent.parent.name}" href="${info.parent.parent.url}" title="${info.parent.parent.path}">${info.parent.parent.info.label}${info.parent.parent.haveChildren?'...':''}</a></span>			
 			</li>
 		</c:if>		
 	</c:if>
 	
 	<c:forEach var="brother" items="${page.info.previousBrothers}"><li ${brother.trash?'class="trash"':''}>
-		<span><a id="page-${brother.name}" class="draggable ${!brother.trash?'editor':'trash'} ${brother.active?'active':'unactive'}" title="${brother.path}" href="${brother.url}">${brother.info.label}</a></span>
+		<span><a id="page-${brother.name}" class="draggable ${!brother.trash?'editor':'trash'} ${brother.active?'active':'unactive'} flow-${brother.flowIndex}" title="${brother.path}" href="${brother.url}">${brother.info.label}</a></span>
 		</li>
 	</c:forEach>
 	
 	<li class="${page.trash?'trash ':''}${page.url eq info.currentURL?'current ':''}${!asTitle?' title':''}${page.selected?' selected':''}">
 		<c:if test="${not empty info.contextForCopy && (page.url eq info.currentURL)}"><a title="${i18n.edit['navigation.insert-page']}" class="paste-page" href="${pasteURL}"><span class="glyphicon glyphicon-collapse-down" aria-hidden="true"></span></a></c:if>
-		<span><a class="editor draggable ${page.active?'active':'unactive'}" id="page-${page.name}" data-pageid="${child.id}" title="${page.path}" href="${page.url}">${page.info.label}${page.haveChildren?'...':''}</a></span>		
+		<span><a class="editor draggable ${page.active?'active':'unactive'} flow-${page.flowIndex}" id="page-${page.name}" data-pageid="${child.id}" title="${page.path}" href="${page.url}">${page.info.label}${page.haveChildren?'...':''}</a></span>		
 	</li>
 	<c:if test="${asTitle}">
 	<li><ul class="children sortable">
@@ -40,7 +40,7 @@
 	<c:forEach var="child" items="${page.children}">		
 	<li id="page-${child.name}" class="${child.trash?'trash ':''}${child.url eq info.currentURL?'current ':''}${child.info.realContent?'real-content':''} ${fn:length(child.children) > 0?'have-children ':''}">
 	<c:if test="${not empty info.contextForCopy && (child.url eq info.currentURL)}"><a title="${i18n.edit['navigation.insert-page']}" class="paste-page" href="${pasteURL}"><span class="glyphicon glyphicon-collapse-down" aria-hidden="true"></span></a></c:if>
-	<span><a href="${child.url}" id="page-${child.name}" data-pageid="${child.id}" class="draggable ${child.active?'active':'unactive'}" title="${child.path}">${child.info.label}${child.haveChildren?'...':''} </a></span>
+	<span><a href="${child.url}" id="page-${child.name}" data-pageid="${child.id}" class="draggable ${child.active?'active':'unactive'} flow-${child.flowIndex}" title="${child.path}">${child.info.label}${child.haveChildren?'...':''} </a></span>
 	</li></c:forEach>	
 	<c:if test="${asTitle}">
 	</ul></li>

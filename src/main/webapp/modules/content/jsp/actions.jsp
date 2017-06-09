@@ -64,11 +64,16 @@
 <c:if test="${not empty param.button_page and empty param.previewEdit}"><a class="action-button more page" href="${info.currentURL}?webaction=changeMode&mode=3"><span>${i18n.edit['item.title']}</span></a></c:if>
 <c:if test="${not empty param.button_copy}"><a class="action-button copy ajax more" href="${info.currentURL}?webaction=copyPage${not empty param.previewEdit?'&webaction=editPreview&previewEdit=true':''}"><span>${i18n.edit['action.copy-page']}</span></a></c:if>
 
-<c:if test="${not empty param.button_publish and empty param.previewEdit}"><a class="action-button publish ajax" href="${info.currentURL}?webaction=publish&render-mode=1"><span>${i18n.edit['command.publish']}</span></a></c:if>
+<c:if test="${not empty param.button_publish and empty param.previewEdit and info.page.flowIndex==1}"><a class="action-button needvalidation" href="${info.currentURL}?webaction=edit.needValidation&render-mode=1"><span><span class="glyphicon glyphicon-arrow-right"></span> ${i18n.edit['command.need-validation']}</span></a></c:if>
+<c:if test="${not empty param.button_publish and empty param.previewEdit and info.page.flowIndex==2}">
+<c:if test="${info.page.validable}">
+<a class="action-button validate" href="${info.currentURL}?webaction=edit.validate&render-mode=1"><span><span class="glyphicon glyphicon-ok"></span> ${i18n.edit['flow.validate']}</span></a>
+</c:if><c:if test="${!info.page.validable }">
+<a class="action-button validate disabled" href=""><span><span class="glyphicon glyphicon-option-horizontal"></span> ${i18n.edit['flow.wait-validation']}</span></a>
+</c:if>
+</c:if>
+<c:if test="${not empty param.button_publish and empty param.previewEdit and info.page.flowIndex>2}"><a class="action-button publish ajax" href="${info.currentURL}?webaction=publish&render-mode=1"><span>${i18n.edit['command.publish']}</span></a></c:if>
 <c:if test="${not empty param.button_preview and empty param.previewEdit}"><a class="action-button preview" href="${previewURL}"><span>${i18n.edit['command.preview']}</span></a></c:if>
-
 <c:if test="${not empty param.button_save}"><a class="action-button save" href="#save" onclick="jQuery('#button-content-submit').click(); return false;"><span>${i18n.edit['action.update']}</span></a></c:if>
-
 <c:if test="${not empty param.button_delete_page and empty param.previewEdit}"><a class="action-button delete-page needconfirm" href="${info.currentURL}?webaction=deletePage&page=${info.pageID}"><span>${i18n.edit['edit.action.delete-page']}</span></a></c:if>
-
 <div class="clear">&nbsp;</div>

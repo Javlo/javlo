@@ -413,6 +413,12 @@
 	${i18n.edit['admin.form.security-forced-https']}</label>
 </div>
 
+<div class="checkbox">	
+	<label><input type="checkbox" id="security-portail" name="security-portail" ${currentContext.portail?'checked="checked"':""}" />
+	${i18n.edit['admin.form.security-portail']}</label>
+</div>
+
+
 <div class="form-group">		
 	<label for="users-access">${i18n.edit['admin.form.users-access']}</label>
 	<textarea class="form-control" id="users-access" name="users-access">${currentContext.usersAccess}</textarea>	

@@ -746,7 +746,9 @@ public class PersistenceService {
 
 		page.setUserRoles(new HashSet<String>(StringHelper.stringToCollection(roles, ";")));
 
-		page.setValid(StringHelper.isTrue(pageXML.getAttributeValue("valid", "false")));
+		page.setValid(StringHelper.isTrue(pageXML.getAttributeValue("valid", "true")));
+		page.setNoValidation(StringHelper.isTrue(pageXML.getAttributeValue("noval", "false")));
+		page.setNeedValidation(StringHelper.isTrue(pageXML.getAttributeValue("ndval", "false")));
 		page.setValidater(pageXML.getAttributeValue("validater", ""));
 		page.setValidationDate(validationDate);
 		page.setBlocked(StringHelper.isTrue(pageXML.getAttributeValue("blocked", "false")));

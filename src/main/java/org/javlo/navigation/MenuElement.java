@@ -1152,6 +1152,10 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 	private String latestEditor = "";
 
 	private boolean valid = false;
+	
+	private boolean needValidation = false;
+	
+	private boolean noValidation = false;
 
 	private boolean blocked = false;
 
@@ -5412,6 +5416,22 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 
 	public void setIpSecurityErrorPageName(String ipSecurity) {
 		this.ipSecurityErrorPageName = ipSecurity;
+	}
+
+	public boolean isNeedValidation() {
+		return needValidation;
+	}
+
+	public void setNeedValidation(boolean needValidation) {
+		this.needValidation = needValidation;
+	}
+
+	public boolean isNoValidation() {
+		return noValidation;
+	}
+
+	public void setNoValidation(boolean noValidation) {
+		this.noValidation = noValidation;
 	}
 
 }

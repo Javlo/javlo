@@ -118,6 +118,7 @@ public class AdminAction extends AbstractModuleAction {
 		private boolean wizz = false;
 		private boolean onlyCreatorModify = false;
 		private boolean collaborativeMode = false;
+		private boolean portail;
 		private String noPopupDomain;
 		private String URIAlias;
 		private boolean master = false;
@@ -218,6 +219,8 @@ public class AdminAction extends AbstractModuleAction {
 
 			setOnlyCreatorModify(globalContext.isOnlyCreatorModify());
 			setCollaborativeMode(globalContext.isCollaborativeMode());
+			
+			setPortail(globalContext.isPortail());
 
 			setTemplateData(globalContext.getTemplateData());
 
@@ -810,6 +813,14 @@ public class AdminAction extends AbstractModuleAction {
 			this.mainHelpURL = mainHelpURL;
 		}
 
+		public boolean isPortail() {
+			return portail;
+		}
+
+		public void setPortail(boolean portail) {
+			this.portail = portail;
+		}
+
 	}
 
 	public static class ComponentBean {
@@ -1170,6 +1181,7 @@ public class AdminAction extends AbstractModuleAction {
 					currentGlobalContext.setPlatformType(requestService.getParameter("platform", StaticConfig.MAILING_PLATFORM));
 					currentGlobalContext.setReversedLink(requestService.getParameter("reversedlink", null) != null);
 					currentGlobalContext.setContentIntegrity(requestService.getParameter("integrity", ""));
+					
 					try {
 						currentGlobalContext.setURLFactory(requestService.getParameter("urlfactory", ""));
 					} catch (Exception e1) {
@@ -1225,6 +1237,7 @@ public class AdminAction extends AbstractModuleAction {
 					currentGlobalContext.setDKIMSelector(requestService.getParameter("mailing-dkimselector", ""));
 					
 					currentGlobalContext.setForcedHttps(StringHelper.isTrue(requestService.getParameter("security-forced-https", null), false));
+					currentGlobalContext.setPortail(StringHelper.isTrue(requestService.getParameter("security-portail", "")));
 					
 					if (requestService.getParameter("resetdkim", null) != null) {
 						DKIMFactory.resetKeys(currentGlobalContext);

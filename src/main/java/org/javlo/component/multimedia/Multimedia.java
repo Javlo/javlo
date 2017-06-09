@@ -1250,7 +1250,6 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle, IStat
 				Resource res = new Resource();
 				res.setName(mulRes.getName());
 				String url = mulRes.getPath().replace(ctx.getGlobalContext().getDataFolder(), "");
-				System.out.println("***** url = "+url);
 				res.setUri(url);
 				res.setDescription(mulRes.getTitle());
 				res.setId(mulRes.getPath());

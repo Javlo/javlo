@@ -506,10 +506,18 @@ public class XMLHelper {
 				out.print("\" validater=\"");
 				out.print(validater);
 			}
-			if (valid) {
+			if (!valid) {
 				out.print("\" valid=\"");
 				out.print(valid);
+			}			
+			if (page.isNeedValidation()) {
+				out.print("\" ndval=\"");
+				out.print(page.isNeedValidation());
 			}
+			if (page.isNoValidation()) {
+				out.print("\" noval=\"");
+				out.print(page.isNoValidation());
+			}			
 			if (reversedLink.trim().length() > 0) {
 				out.print("\" reversed-link=\"");
 				out.print(StringHelper.toXMLAttribute(StringHelper.arrayToString(StringHelper.readLines(reversedLink), "#")));
