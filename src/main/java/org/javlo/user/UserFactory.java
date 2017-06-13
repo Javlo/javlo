@@ -255,6 +255,7 @@ public class UserFactory implements IUserFactory, Serializable {
 				try {
 					userContext = GlobalContext.getInstance(session, user.getContext());
 					if (!userContext.isMaster()) {
+						new Exception().printStackTrace();
 						logger.info("logout user : "+user.getLogin()+" because context does'nt match ("+userContextName+" != "+currentContextName+')');
 						logout(session);
 						return null;
