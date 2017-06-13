@@ -428,6 +428,8 @@ public class CatchAllFilter implements Filter {
 			HttpServletResponse httpResponse = (HttpServletResponse) response;
 
 			GlobalContext globalContext = GlobalContext.getInstance(httpRequest);
+			
+			System.out.println("****** globalContext = "+globalContext.getContextKey());
 
 			RequestService requestService = RequestService.getInstance(httpRequest);
 
