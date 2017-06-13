@@ -137,7 +137,7 @@ public class ModulesContext {
 						try {		
 							String moduleRoot = StringHelper.cleanPath(dir.getAbsolutePath()).replace(StringHelper.cleanPath(webappRoot), "/");
 							Module module = new Module(configFile, new Locale(globalContext.getEditLanguage(session)), moduleRoot, globalContext.getPathPrefix());
-							if (module.haveRight(session, userFactory.getCurrentUser(session)) && globalContext.getModules().contains(module.getName())) {
+							if (module.haveRight(session, userFactory.getCurrentUser(globalContext, session)) && globalContext.getModules().contains(module.getName())) {
 								localModules.add(module);
 							}							 
 							allModules.add(module);
@@ -164,7 +164,7 @@ public class ModulesContext {
 								String moduleRoot = targetFolder.getAbsolutePath().replace(webappRoot, "/");
 								ExternalModule module = new ExternalModule(configFile, new Locale(globalContext.getEditLanguage(session)), moduleRoot, globalContext.getPathPrefix());
 								module.setAction(getExternalActionModule(module.getActionName(), extFile));
-								if (module.haveRight(session, userFactory.getCurrentUser(session)) && globalContext.getModules().contains(module.getName())) {
+								if (module.haveRight(session, userFactory.getCurrentUser(globalContext, session)) && globalContext.getModules().contains(module.getName())) {
 									localModules.add(module);
 								} else {
 									logger.info("user no right for module : "+module.getName());

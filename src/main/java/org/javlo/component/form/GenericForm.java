@@ -181,8 +181,8 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 		}
 		RequestService rs = RequestService.getInstance(ctx.getRequest());
 		IUserFactory userFactory = UserFactory.createUserFactory(ctx.getRequest());
-		if (userFactory.getCurrentUser(ctx.getRequest().getSession()) != null) {
-			Map<String, String> userInfo = BeanHelper.bean2Map(userFactory.getCurrentUser(ctx.getRequest().getSession()).getUserInfo());
+		if (userFactory.getCurrentUser(ctx.getGlobalContext(), ctx.getRequest().getSession()) != null) {
+			Map<String, String> userInfo = BeanHelper.bean2Map(userFactory.getCurrentUser(ctx.getGlobalContext(), ctx.getRequest().getSession()).getUserInfo());
 			for (String key : userInfo.keySet()) {
 				if (!StringHelper.isEmpty(userInfo.get(key)) && StringHelper.isEmpty(rs.getParameter(key, null))) {
 					rs.setParameter(key, userInfo.get(key));

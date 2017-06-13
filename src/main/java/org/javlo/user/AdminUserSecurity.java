@@ -256,19 +256,19 @@ public class AdminUserSecurity implements Serializable {
 		IUserFactory adminUserFactory = AdminUserFactory.createUserFactory(globalContext, ctx.getRequest().getSession());
 
 		if (page.isBlocked()) {
-			if (!page.getBlocker().equals(adminUserFactory.getCurrentUser(ctx.getRequest().getSession()).getName())) {
+			if (!page.getBlocker().equals(adminUserFactory.getCurrentUser(globalContext, ctx.getRequest().getSession()).getName())) {
 				return false;
 			}
 		}
 
 		AdminUserSecurity adminUserSecurity = AdminUserSecurity.getInstance();
-		if (adminUserFactory.getCurrentUser(ctx.getRequest().getSession()) == null) {
+		if (adminUserFactory.getCurrentUser(globalContext, ctx.getRequest().getSession()) == null) {
 			return false;
 		}
 		ContentService.getInstance(globalContext);
 		if (page.getEditorRoles().size() > 0) {
-			if (!adminUserSecurity.haveRight(adminUserFactory.getCurrentUser(ctx.getRequest().getSession()), AdminUserSecurity.FULL_CONTROL_ROLE)) {
-				if (!adminUserFactory.getCurrentUser(ctx.getRequest().getSession()).validForRoles(page.getEditorRoles())) {
+			if (!adminUserSecurity.haveRight(adminUserFactory.getCurrentUser(globalContext, ctx.getRequest().getSession()), AdminUserSecurity.FULL_CONTROL_ROLE)) {
+				if (!adminUserFactory.getCurrentUser(globalContext, ctx.getRequest().getSession()).validForRoles(page.getEditorRoles())) {
 					if (createMessage) {
 						MessageRepository messageRepository = MessageRepository.getInstance(ctx);
 						I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());

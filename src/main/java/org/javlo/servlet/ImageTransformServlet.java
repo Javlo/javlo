@@ -913,7 +913,7 @@ public class ImageTransformServlet extends HttpServlet {
 		Thread.currentThread().setName("ImageTransformServlet-" + globalContext.getContextKey());
 
 		IUserFactory fact = UserFactory.createUserFactory(globalContext, request.getSession());
-		User user = fact.getCurrentUser(request.getSession());
+		User user = fact.getCurrentUser(globalContext, request.getSession());
 		String userName = null;
 		if (user != null) {
 			userName = user.getLogin();
@@ -1041,7 +1041,7 @@ public class ImageTransformServlet extends HttpServlet {
 
 			if (staticInfo != null) {
 				if (AdminUserFactory.createUserFactory(ctx.getGlobalContext(), request.getSession()).getCurrentUser(request.getSession()) == null) {
-					if (!staticInfo.canRead(ctx, UserFactory.createUserFactory(globalContext, request.getSession()).getCurrentUser(request.getSession()), request.getParameter(RESOURCE_TOKEN_KEY))) {
+					if (!staticInfo.canRead(ctx, UserFactory.createUserFactory(globalContext, request.getSession()).getCurrentUser(globalContext, request.getSession()), request.getParameter(RESOURCE_TOKEN_KEY))) {
 						response.setStatus(HttpServletResponse.SC_FORBIDDEN);
 						TimeTracker.end(globalContext.getContextKey(), ImageTransformServlet.class.getName(), trackerNumber);
 						return;

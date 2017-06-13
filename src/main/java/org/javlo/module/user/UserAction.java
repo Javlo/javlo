@@ -79,7 +79,7 @@ public class UserAction extends AbstractModuleAction {
 
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		IUserFactory userFactory = userContext.getUserFactory(ctx);
-		if (userFactory.getCurrentUser(ctx.getRequest().getSession()) == null) {
+		if (userFactory.getCurrentUser(globalContext, ctx.getRequest().getSession()) == null) {
 			return null;
 		}
 
@@ -120,7 +120,7 @@ public class UserAction extends AbstractModuleAction {
 				Module currentModule = moduleContext.getCurrentModule();
 				currentModule.setToolsRenderer(null);
 				currentModule.setRenderer("/jsp/edit_current.jsp");
-				user = userFactory.getUser(userFactory.getCurrentUser(ctx.getRequest().getSession()).getLogin());
+				user = userFactory.getUser(userFactory.getCurrentUser(globalContext, ctx.getRequest().getSession()).getLogin());
 			}
 
 			if (user == null) {
@@ -525,7 +525,7 @@ public class UserAction extends AbstractModuleAction {
 
 		UserModuleContext userContext = UserModuleContext.getInstance(ctx.getRequest());
 		IUserFactory userFactory = userContext.getUserFactory(ctx);
-		User user = userFactory.getCurrentUser(session);
+		User user = userFactory.getCurrentUser(globalContext, session);
 
 		if (staticConfig.isPasswordEncryt()) {
 			pwd = user.getUserInfo().encryptPassword(pwd);
@@ -562,7 +562,7 @@ public class UserAction extends AbstractModuleAction {
 		return null;
 	}
 
-	public static String performChangePassword2Check(RequestService rs, HttpSession session, ContentContext ctx,
+	public static String performChangePassword2Check(RequestService rs, GlobalContext globalContext, HttpSession session, ContentContext ctx,
 			StaticConfig staticConfig, MessageRepository messageRepository, I18nAccess i18nAccess) throws IOException {
 		String newPwd = rs.getParameter("newpassword", "");
 		String newPwd2 = rs.getParameter("newpassword2", null);
@@ -576,7 +576,7 @@ public class UserAction extends AbstractModuleAction {
 				return i18nAccess.getViewText("login.message.password-not-same");
 			} else {
 				IUserFactory userFactory = UserFactory.createUserFactory(ctx.getGlobalContext(), session);
-				User user = userFactory.getCurrentUser(session);
+				User user = userFactory.getCurrentUser(globalContext, session);
 				IUserInfo ui = user.getUserInfo();
 				if (staticConfig.isPasswordEncryt()) {
 					newPwd = ui.encryptPassword(newPwd);
@@ -596,7 +596,7 @@ public class UserAction extends AbstractModuleAction {
 	public static String performToken(HttpServletRequest request, ContentContext ctx, GlobalContext globalContext,
 			HttpSession session) {
 		UserFactory factory = AdminUserFactory.createAdminUserFactory(globalContext, session);
-		User user = factory.getCurrentUser(session);
+		User user = factory.getCurrentUser(globalContext, session);
 		if (user == null) {
 			return "user not found.";
 		} else {
@@ -770,8 +770,8 @@ public class UserAction extends AbstractModuleAction {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		IUserFactory userFactory = userContext.getUserFactory(ctx);
 
-		if (userFactory.getCurrentUser(ctx.getRequest().getSession()) == null || !AdminUserSecurity.getInstance()
-				.canRole(userFactory.getCurrentUser(ctx.getRequest().getSession()), AdminUserSecurity.USER_ROLE)) {
+		if (userFactory.getCurrentUser(globalContext, ctx.getRequest().getSession()) == null || !AdminUserSecurity.getInstance()
+				.canRole(userFactory.getCurrentUser(globalContext, ctx.getRequest().getSession()), AdminUserSecurity.USER_ROLE)) {
 			return "no access";
 		}
 

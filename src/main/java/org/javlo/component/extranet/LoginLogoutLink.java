@@ -45,7 +45,7 @@ public class LoginLogoutLink extends AbstractVisualComponent {
 		} else {
 			userFactory = AdminUserFactory.createUserFactory(ctx.getGlobalContext(), ctx.getRequest().getSession());
 		}		
-		User user = userFactory.getCurrentUser(ctx.getRequest().getSession());
+		User user = userFactory.getCurrentUser(ctx.getGlobalContext(), ctx.getRequest().getSession());
 		if (user == null) {
 			if (getStyle().equals(VISITOR)) {
 				out.println("<form class=\"hidden-print\" id=\"loginform\" action=\""+URLHelper.createURL(ctx)+"\" method=\"post\">");
@@ -68,7 +68,7 @@ public class LoginLogoutLink extends AbstractVisualComponent {
 			out.println("</div>");
 			out.println("</form>");
 		} else {
-			out.println("<a class=\"btn btn-default btn-logout hidden-print\" href=\"" + URLHelper.createURL(ctx) + "?edit-logout=logout\">logout ("+userFactory.getCurrentUser(ctx.getRequest().getSession()).getLogin()+")</a>");
+			out.println("<a class=\"btn btn-default btn-logout hidden-print\" href=\"" + URLHelper.createURL(ctx) + "?edit-logout=logout\">logout ("+userFactory.getCurrentUser(ctx.getGlobalContext(), ctx.getRequest().getSession()).getLogin()+")</a>");
 		}
 		out.close();
 		return new String(outStream.toByteArray());

@@ -56,8 +56,8 @@ public class AddressFormRegisterComponent extends FormComponent {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		IUserFactory fact = UserFactory.createUserFactory(globalContext, ctx.getRequest().getSession());
 
-		if (fact.getCurrentUser(ctx.getRequest().getSession()) != null) {
-			IUserInfo userInfo = fact.getCurrentUser(ctx.getRequest().getSession()).getUserInfo();
+		if (fact.getCurrentUser(globalContext, ctx.getRequest().getSession()) != null) {
+			IUserInfo userInfo = fact.getCurrentUser(globalContext, ctx.getRequest().getSession()).getUserInfo();
 			getForm(ctx).setValues(BeanHelper.bean2Map(userInfo));
 			getForm(ctx).setValue("password2", userInfo.getPassword());
 		}
@@ -77,13 +77,13 @@ public class AddressFormRegisterComponent extends FormComponent {
 				Collection<IUserInfo> userInfos = fact.getUserInfoList();
 				for (IUserInfo iUserInfo : userInfos) {
 					String login = form.getValue("login");
-					if ((fact.getCurrentUser(request.getSession()) == null) && (iUserInfo.getLogin().equals(login))) {
+					if ((fact.getCurrentUser(globalContext, request.getSession()) == null) && (iUserInfo.getLogin().equals(login))) {
 						msg = "user.error.allready-exist";
 					}
 				}
 				if (msg == null) {
 					UserInfo userInfo;
-					if (fact.getCurrentUser(request.getSession()) == null) {
+					if (fact.getCurrentUser(globalContext, request.getSession()) == null) {
 						userInfo = (UserInfo) fact.createUserInfos();
 						userInfo.setId(StringHelper.getRandomId());
 						userInfo.setLogin(form.getValue("email"));
@@ -114,7 +114,7 @@ public class AddressFormRegisterComponent extends FormComponent {
 							userInfo.setRoles(rolesMailing);
 						}
 					} else {
-						userInfo = (UserInfo) fact.getCurrentUser(request.getSession()).getUserInfo();
+						userInfo = (UserInfo) fact.getCurrentUser(globalContext, request.getSession()).getUserInfo();
 					}
 					userInfo.setPassword("");
 					userInfo.setEmail(form.getValue("email"));
@@ -125,7 +125,7 @@ public class AddressFormRegisterComponent extends FormComponent {
 					userInfo.setPostCode(form.getValue("postcode"));
 					userInfo.setCity(form.getValue("city"));
 					try {
-						if (fact.getCurrentUser(request.getSession()) == null) {
+						if (fact.getCurrentUser(globalContext, request.getSession()) == null) {
 							fact.addUserInfo(userInfo);
 							fact.login(request, userInfo.getLogin(), userInfo.getPassword());
 						} else {
@@ -136,7 +136,7 @@ public class AddressFormRegisterComponent extends FormComponent {
 					} catch (UserAllreadyExistException e) {
 						msg = "user.error.allready-exist";
 					}
-					if (fact.getCurrentUser(request.getSession()) == null) {
+					if (fact.getCurrentUser(globalContext, request.getSession()) == null) {
 						fact.login(request, userInfo.getLogin(), userInfo.getPassword());
 					}
 				}

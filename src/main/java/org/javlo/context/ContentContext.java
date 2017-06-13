@@ -252,9 +252,9 @@ public class ContentContext {
 		/** set user **/
 		GlobalContext globalContext = getGlobalContext();
 		IUserFactory fact = UserFactory.createUserFactory(globalContext, getRequest().getSession());
-		currentUser = fact.getCurrentUser(request.getSession());
+		currentUser = fact.getCurrentUser(globalContext, request.getSession());
 		fact = AdminUserFactory.createUserFactory(globalContext, getRequest().getSession());
-		setCurrentEditUser(fact.getCurrentUser(request.getSession()));
+		setCurrentEditUser(fact.getCurrentUser(globalContext, request.getSession()));
 		storeInRequest(request);
 	}
 
@@ -377,7 +377,7 @@ public class ContentContext {
 			}
 			if (request.getParameter(FORCE_SPECIAL_RENDERER) != null) {
 				IUserFactory fact = UserFactory.createUserFactory(globalContext, ctx.getRequest().getSession());
-				if (AdminUserSecurity.getInstance().isAdmin(fact.getCurrentUser(request.getSession()))) {
+				if (AdminUserSecurity.getInstance().isAdmin(fact.getCurrentUser(globalContext, request.getSession()))) {
 					ctx.setSpecialContentRenderer(request.getParameter(FORCE_SPECIAL_RENDERER));
 				}
 			}

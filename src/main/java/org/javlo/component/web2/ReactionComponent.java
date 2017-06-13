@@ -865,7 +865,7 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 
 	private static User getCurrentUser(ContentContext ctx) {
 		IUserFactory userFactory = UserFactory.createUserFactory(ctx.getGlobalContext(), ctx.getRequest().getSession());
-		return userFactory.getCurrentUser(ctx.getRequest().getSession());
+		return userFactory.getCurrentUser(ctx.getGlobalContext(), ctx.getRequest().getSession());
 	}
 
 	/**

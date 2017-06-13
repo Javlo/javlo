@@ -27,7 +27,7 @@ public interface IUserFactory {
 
 	public abstract void logout(HttpSession session);
 
-	public abstract User getCurrentUser(HttpSession session);
+	public abstract User getCurrentUser(GlobalContext globalContext, HttpSession session);
 
 	public abstract void releaseUserInfoList();
 

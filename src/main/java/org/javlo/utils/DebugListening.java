@@ -55,8 +55,8 @@ public class DebugListening {
 			String userName = "undefined";
 			if (session != null) {
 				IUserFactory fact = AdminUserFactory.createUserFactory(globalContext, session);
-				if (fact.getCurrentUser(request.getSession()) != null) {
-					userName = fact.getCurrentUser(request.getSession()).getName();
+				if (fact.getCurrentUser(globalContext, request.getSession()) != null) {
+					userName = fact.getCurrentUser(globalContext, request.getSession()).getName();
 				}
 			}
 			ByteArrayOutputStream arrayOut = new ByteArrayOutputStream();

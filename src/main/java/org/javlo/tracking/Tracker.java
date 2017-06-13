@@ -78,7 +78,7 @@ public class Tracker {
 		GlobalContext globalContext = GlobalContext.getInstance(request);
 		Tracker tracker = Tracker.getTracker(globalContext, request.getSession());
 		IUserFactory fact = UserFactory.createUserFactory(globalContext, request.getSession());
-		User user = fact.getCurrentUser(request.getSession());
+		User user = fact.getCurrentUser(globalContext, request.getSession());
 		String userName = null;
 		if (user != null) {
 			userName = user.getLogin();

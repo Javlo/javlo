@@ -1103,7 +1103,7 @@ public class InfoBean {
 	}
 
 	public boolean isAccountSettings() {
-		User user = AdminUserFactory.createUserFactory(ctx.getRequest()).getCurrentUser(ctx.getRequest().getSession());
+		User user = AdminUserFactory.createUserFactory(ctx.getRequest()).getCurrentUser(ctx.getGlobalContext(), ctx.getRequest().getSession());
 		if ((!globalContext.isMaster() && AdminUserSecurity.getInstance().isMaster(user))) {
 			return false;
 		} else if (AdminUserSecurity.getInstance().isGod(user)) {

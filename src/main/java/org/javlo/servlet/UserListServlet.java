@@ -56,7 +56,7 @@ public class UserListServlet extends HttpServlet {
 
 			if (editContext.getUserPrincipal() != null) {
 				IUserFactory userFact = UserFactory.createUserFactory(globalContext, request.getSession());
-				User user = userFact.getCurrentUser(request.getSession());
+				User user = userFact.getCurrentUser(globalContext, request.getSession());
 
 				// TODO: check role
 				if (user != null) {

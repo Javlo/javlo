@@ -171,7 +171,7 @@ public class CatchAllFilter implements Filter {
 		/***************/
 
 		boolean newUser = doLoginFilter(request, response);
-		User user = UserFactory.createUserFactory(globalContext, httpRequest.getSession()).getCurrentUser(httpRequest.getSession());
+		User user = UserFactory.createUserFactory(globalContext, httpRequest.getSession()).getCurrentUser(globalContext, httpRequest.getSession());
 
 		/*****************/
 		/**** MODULES ****/
@@ -435,7 +435,7 @@ public class CatchAllFilter implements Filter {
 
 			if (request.getParameter("edit-logout") != null) {
 				IUserFactory fact = UserFactory.createUserFactory(globalContext, httpRequest.getSession());
-				logoutUser = fact.getCurrentUser(httpRequest.getSession());
+				logoutUser = fact.getCurrentUser(globalContext, httpRequest.getSession());
 				if (logoutUser != null) {
 					DataToIDService service = DataToIDService.getInstance(httpRequest.getSession().getServletContext());
 					service.clearData(logoutUser.getName());
@@ -450,7 +450,7 @@ public class CatchAllFilter implements Filter {
 
 			/** STANDARD LOGIN **/
 			IUserFactory fact = UserFactory.createUserFactory(globalContext, httpRequest.getSession());
-			User user = fact.getCurrentUser(((HttpServletRequest) request).getSession());
+			User user = fact.getCurrentUser(globalContext, ((HttpServletRequest) request).getSession());
 
 			if (user != null) {
 				EditContext editContext = EditContext.getInstance(GlobalContext.getInstance(((HttpServletRequest) request).getSession(), globalContext.getContextKey()), ((HttpServletRequest) request).getSession());
@@ -470,12 +470,12 @@ public class CatchAllFilter implements Filter {
 				}
 			}
 
-			if (fact.getCurrentUser(((HttpServletRequest) request).getSession()) == null) {
+			if (fact.getCurrentUser(globalContext, ((HttpServletRequest) request).getSession()) == null) {
 				String loginType = requestService.getParameter("login-type", null);
 
 				if ((loginType == null || !loginType.equals("adminlogin")) && logoutUser == null) {
 
-					if (fact.getCurrentUser(((HttpServletRequest) request).getSession()) == null) {
+					if (fact.getCurrentUser(globalContext, ((HttpServletRequest) request).getSession()) == null) {
 						if (request.getParameter("j_username") != null || httpRequest.getUserPrincipal() != null) {
 							String login = request.getParameter("j_username");
 
@@ -497,13 +497,13 @@ public class CatchAllFilter implements Filter {
 						}
 					}
 				}
-				fact.getCurrentUser(((HttpServletRequest) request).getSession());
+				fact.getCurrentUser(globalContext, ((HttpServletRequest) request).getSession());
 			}
 
 			boolean newUser = false;
 
 			/** EDIT LOGIN **/
-			if (fact.getCurrentUser(((HttpServletRequest) request).getSession()) == null) {
+			if (fact.getCurrentUser(globalContext, ((HttpServletRequest) request).getSession()) == null) {
 
 				/* AUTO LOGIN */
 				String autoLoginId = RequestHelper.getCookieValue(httpRequest, JAVLO_LOGIN_ID);
@@ -537,7 +537,7 @@ public class CatchAllFilter implements Filter {
 				UserInterfaceContext.getInstance(((HttpServletRequest) request).getSession(), globalContext);
 			}
 
-			if (request.getParameter("edit-login") != null || request.getParameter("j_token") != null || (httpRequest.getUserPrincipal() != null && fact.getCurrentUser(((HttpServletRequest) request).getSession()) == null && logoutUser == null)) {
+			if (request.getParameter("edit-login") != null || request.getParameter("j_token") != null || (httpRequest.getUserPrincipal() != null && fact.getCurrentUser(globalContext, ((HttpServletRequest) request).getSession()) == null && logoutUser == null)) {
 				String login = request.getParameter("j_username");
 				if (login == null && httpRequest.getUserPrincipal() != null) {
 					login = httpRequest.getUserPrincipal().getName();

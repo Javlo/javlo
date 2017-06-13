@@ -157,7 +157,7 @@ public class UserFactory implements IUserFactory, Serializable {
 	@Override
 	public User autoLogin(HttpServletRequest request, String login) {
 		GlobalContext globalContext = GlobalContext.getInstance(request);
-		User currentUser = getCurrentUser(request.getSession());
+		User currentUser = getCurrentUser(globalContext, request.getSession());
 		User user = getUser(login);
 		if (currentUser != null && user != null && currentUser.getPassword().equals(user.getPassword())) {
 			return null;
@@ -245,11 +245,11 @@ public class UserFactory implements IUserFactory, Serializable {
 	 * "' context does'nt match."); session.removeAttribute(SESSION_KEY); return
 	 * null; } } return user; }
 	 **/
-	public User getCurrentUser(HttpSession session) {		
+	public User getCurrentUser(GlobalContext globalContext, HttpSession session) {		
 		User user = (User) session.getAttribute(SESSION_KEY);		
 		if (user != null) {
-			String userContextName = user.getContext();
-			String currentContextName = GlobalContext.getSessionContext(session).getContextKey();
+			String userContextName = user.getContext();			
+			String currentContextName = globalContext.getContextKey();
 			if (!userContextName.equals(currentContextName)) {
 				GlobalContext userContext;
 				try {
@@ -600,8 +600,8 @@ public class UserFactory implements IUserFactory, Serializable {
 	@Override
 	public void reload(GlobalContext globalContext, HttpSession session) {
 		releaseUserInfoList();
-		if (getCurrentUser(session) != null) {
-			User newUser = getUser(getCurrentUser(session).getLogin());
+		if (getCurrentUser(globalContext, session) != null) {
+			User newUser = getUser(getCurrentUser(globalContext, session).getLogin());
 			if (newUser != null) {
 				newUser.setContext(globalContext.getContextKey());
 				session.setAttribute(SESSION_KEY, newUser);

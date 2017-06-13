@@ -364,13 +364,13 @@ public class Edit extends AbstractModuleAction {
 			AdminUserSecurity adminUserSecurity = AdminUserSecurity.getInstance();
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 			IUserFactory adminUserFactory = AdminUserFactory.createUserFactory(globalContext, ctx.getRequest().getSession());
-			if (adminUserFactory.getCurrentUser(ctx.getRequest().getSession()) == null) {
+			if (adminUserFactory.getCurrentUser(globalContext, ctx.getRequest().getSession()) == null) {
 				return false;
 			}
 			ContentService.getInstance(globalContext);
 			if (page.getEditorRoles().size() > 0) {
-				if (!adminUserSecurity.haveRight(adminUserFactory.getCurrentUser(ctx.getRequest().getSession()), AdminUserSecurity.FULL_CONTROL_ROLE)) {
-					if (!adminUserFactory.getCurrentUser(ctx.getRequest().getSession()).validForRoles(page.getEditorRoles())) {
+				if (!adminUserSecurity.haveRight(adminUserFactory.getCurrentUser(globalContext, ctx.getRequest().getSession()), AdminUserSecurity.FULL_CONTROL_ROLE)) {
+					if (!adminUserFactory.getCurrentUser(globalContext, ctx.getRequest().getSession()).validForRoles(page.getEditorRoles())) {
 						MessageRepository messageRepository = MessageRepository.getInstance(ctx);
 						I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
 						messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("action.security.noright-onpage"), GenericMessage.ERROR), false);
@@ -437,7 +437,7 @@ public class Edit extends AbstractModuleAction {
 		IUserFactory adminUserFactory = AdminUserFactory.createUserFactory(globalContext, ctx.getRequest().getSession());
 
 		if (currentPage.isBlocked()) {
-			if (!currentPage.getBlocker().equals(adminUserFactory.getCurrentUser(ctx.getRequest().getSession()).getName())) {
+			if (!currentPage.getBlocker().equals(adminUserFactory.getCurrentUser(globalContext, ctx.getRequest().getSession()).getName())) {
 				return false;
 			}
 		}
@@ -456,7 +456,7 @@ public class Edit extends AbstractModuleAction {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		IUserFactory adminUserFactory = AdminUserFactory.createUserFactory(globalContext, ctx.getRequest().getSession());
 		if (page.isBlocked()) {
-			if (!page.getBlocker().equals(adminUserFactory.getCurrentUser(ctx.getRequest().getSession()).getName())) {
+			if (!page.getBlocker().equals(adminUserFactory.getCurrentUser(globalContext, ctx.getRequest().getSession()).getName())) {
 				return false;
 			}
 		}

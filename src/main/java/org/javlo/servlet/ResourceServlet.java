@@ -133,7 +133,7 @@ public class ResourceServlet extends HttpServlet {
 		/* TRACKING */
 		GlobalContext globalContext = GlobalContext.getInstance(request);
 		IUserFactory fact = UserFactory.createUserFactory(globalContext, request.getSession());
-		User user = fact.getCurrentUser(ctx.getRequest().getSession());
+		User user = fact.getCurrentUser(globalContext, ctx.getRequest().getSession());
 		String userName = null;
 		if (user != null) {
 			userName = user.getLogin();
@@ -194,7 +194,7 @@ public class ResourceServlet extends HttpServlet {
 				File file = new File(URLHelper.mergePath(dataFolder, resourceURI));
 				StaticInfo info = StaticInfo.getInstance(ctx, file);
 				if (AdminUserFactory.createUserFactory(ctx.getGlobalContext(), request.getSession()).getCurrentUser(request.getSession()) == null) {
-					if (!info.canRead(ctx, UserFactory.createUserFactory(ctx.getGlobalContext(), request.getSession()).getCurrentUser(request.getSession()), request.getParameter(ImageTransformServlet.RESOURCE_TOKEN_KEY))) {
+					if (!info.canRead(ctx, UserFactory.createUserFactory(ctx.getGlobalContext(), request.getSession()).getCurrentUser(globalContext, request.getSession()), request.getParameter(ImageTransformServlet.RESOURCE_TOKEN_KEY))) {
 						response.setStatus(HttpServletResponse.SC_FORBIDDEN);
 						return;
 					}

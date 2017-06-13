@@ -83,7 +83,7 @@ public abstract class AbstractDBUserFactory extends UserFactory {
 	}
 
 	@Override
-	public User getCurrentUser(HttpSession session) {
+	public User getCurrentUser(GlobalContext globalContext, HttpSession session) {
 		return null;
 	}
 

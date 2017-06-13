@@ -106,7 +106,7 @@ public class SynchronisationServlet extends HttpServlet {
 			if (clientSynchroCode == null) {
 				GlobalContext globalContext = GlobalContext.getInstance(request);
 				IUserFactory adminUserFactory = AdminUserFactory.createUserFactory(globalContext, request.getSession());
-				User user = adminUserFactory.getCurrentUser(request.getSession());
+				User user = adminUserFactory.getCurrentUser(globalContext, request.getSession());
 				if (user == null) {
 					response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);					
 					return;

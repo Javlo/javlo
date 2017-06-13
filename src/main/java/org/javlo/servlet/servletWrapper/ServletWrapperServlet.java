@@ -68,7 +68,7 @@ public class ServletWrapperServlet extends HttpServlet {
 		/* TRACKING */
 		GlobalContext globalContext = GlobalContext.getInstance(request);
 		IUserFactory fact = UserFactory.createUserFactory(globalContext, request.getSession());
-		User user = fact.getCurrentUser(request.getSession());
+		User user = fact.getCurrentUser(globalContext, request.getSession());
 		String userName = null;
 		if (user != null) {
 			userName = user.getLogin();

@@ -148,7 +148,7 @@ public class UserRegistration extends AbstractVisualComponent implements IAction
 			userFactory = UserFactory.createUserFactory(globalContext, ctx.getRequest().getSession());
 		}
 
-		IUserInfo userInfo = userFactory.getCurrentUser(session).getUserInfo();
+		IUserInfo userInfo = userFactory.getCurrentUser(globalContext, session).getUserInfo();
 		BeanHelper.copy(new RequestParameterMap(ctx.getRequest()), userInfo);
 		userFactory.updateUserInfo(userInfo);
 		userFactory.store();
