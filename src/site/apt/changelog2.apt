@@ -865,3 +865,5 @@ change log
  * 2/ error message, check xhtml structure / vfs default encoding / check user on get user and not on action update / area level / import VFS file / export child resourece / flow : page validation
  
 * 2.1.0.4 09/06/17
+
+ * 1/ mailing stat by page with macro
