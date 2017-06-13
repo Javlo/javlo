@@ -248,12 +248,14 @@ public class UserFactory implements IUserFactory, Serializable {
 	public User getCurrentUser(HttpSession session) {		
 		User user = (User) session.getAttribute(SESSION_KEY);		
 		if (user != null) {
-			if (!user.getContext().equals(GlobalContext.getSessionContext(session).getContextKey())) {
+			String userContextName = user.getContext();
+			String currentContextName = GlobalContext.getSessionContext(session).getContextKey();
+			if (!userContextName.equals(currentContextName)) {
 				GlobalContext userContext;
 				try {
 					userContext = GlobalContext.getInstance(session, user.getContext());
 					if (!userContext.isMaster()) {
-						logger.info("logout user : "+user.getLogin()+" because context does'nt match ("+user.getContext()+" != "+GlobalContext.getSessionContext(session).getContextKey());
+						logger.info("logout user : "+user.getLogin()+" because context does'nt match ("+userContextName+" != "+currentContextName+')');
 						logout(session);
 						return null;
 					}
