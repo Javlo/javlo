@@ -53,6 +53,7 @@ import org.javlo.helper.LocalLogger;
 import org.javlo.helper.NetHelper;
 import org.javlo.helper.RequestHelper;
 import org.javlo.helper.ResourceHelper;
+import org.javlo.helper.SecurityHelper;
 import org.javlo.helper.ServletHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.TimeHelper;
@@ -280,28 +281,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 				}
 			}
 			
-			if (ctx.getCurrentEditUser() != null) {				
-				String userContextName = ctx.getCurrentEditUser().getContext();			
-				String currentContextName = globalContext.getContextKey();
-				if (!userContextName.equals(currentContextName)) {
-					GlobalContext userContext;
-					try {
-						userContext = GlobalContext.getInstance(request.getSession(), ctx.getCurrentEditUser().getContext());
-						if (!userContext.isMaster()) {
-							new Exception().printStackTrace();
-							logger.info("logout user : "+ctx.getCurrentEditUser().getLogin()+" because context does'nt match ("+userContextName+" != "+currentContextName+')');
-							UserFactory.createUserFactory(request).logout(request.getSession());		
-							ctx.setNeedRefresh(true);
-						}
-					} catch (IOException e) {
-						e.printStackTrace();
-					}				
-				}
-				System.out.println("*** login = "+ctx.getCurrentEditUser().getLogin());
-				System.out.println("*** context = "+ctx.getCurrentEditUser().getContext());
-			} else {
-				System.out.println("*** user not found.");
-			}
+			SecurityHelper.checkUserAccess(ctx);
 			
 			if (ctx.isAsViewMode() && ctx.isContentFound() && ctx.getCurrentPage() != null && staticConfig.isRedirectSecondaryURL() && !ctx.isPostRequest() && StringHelper.isEmpty(request.getQueryString())) {
 				ContentContext lgCtx = new ContentContext(ctx);

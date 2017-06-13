@@ -120,6 +120,7 @@ public class UserInterfaceContext {
 	}
 
 	private void store() throws IOException {
+		if (globalContext != null) {
 		AdminUserFactory userFact = AdminUserFactory.createUserFactory(globalContext, session);
 		User user = userFact.getCurrentUser(session);
 		if (user != null) {
@@ -130,6 +131,7 @@ public class UserInterfaceContext {
 				//ui.setUserInfo(toString());
 				userFact.updateUserInfo(ui);
 			}
+		}
 		}
 	}
 
