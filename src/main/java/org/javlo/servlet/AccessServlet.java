@@ -248,7 +248,8 @@ public class AccessServlet extends HttpServlet implements IVersion {
 																// debug trace
 
 			StaticConfig staticConfig = StaticConfig.getInstance(getServletContext());
-
+			
+			
 			/** init log **/
 			long startTime = System.currentTimeMillis();
 
@@ -277,6 +278,13 @@ public class AccessServlet extends HttpServlet implements IVersion {
 						return;
 					}
 				}
+			}
+			
+			if (ctx.getCurrentEditUser() != null) {
+				System.out.println("*** login = "+ctx.getCurrentEditUser().getLogin());
+				System.out.println("*** context = "+ctx.getCurrentEditUser().getContext());
+			} else {
+				System.out.println("*** user not found.");
 			}
 			
 			if (ctx.isAsViewMode() && ctx.isContentFound() && ctx.getCurrentPage() != null && staticConfig.isRedirectSecondaryURL() && !ctx.isPostRequest() && StringHelper.isEmpty(request.getQueryString())) {
