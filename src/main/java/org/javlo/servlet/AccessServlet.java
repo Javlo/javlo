@@ -281,6 +281,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 			}
 			
 			if (ctx.getCurrentEditUser() != null) {
+				ctx.setUser();
 				System.out.println("*** login = "+ctx.getCurrentEditUser().getLogin());
 				System.out.println("*** context = "+ctx.getCurrentEditUser().getContext());
 			} else {
