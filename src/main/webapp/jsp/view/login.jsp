@@ -4,11 +4,13 @@
 import="org.javlo.i18n.I18nAccess,
         org.javlo.user.User,
         org.javlo.user.IUserFactory,
-		org.javlo.user.UserFactory"
+		org.javlo.user.UserFactory,
+		org.javlo.context.ContentContext"
 %><%
+ContentContext ctx = ContentContext.getContentContext(request, response);
 I18nAccess i18nAccess = I18nAccess.getInstance ( request );
 IUserFactory userFactory = UserFactory.createUserFactory(request);
-User user = userFactory.getCurrentUser(session);
+User user = userFactory.getCurrentUser(ctx.getGlobalContext(), session);
 if ( user == null ) {
 %>
 <div class="login center-block">

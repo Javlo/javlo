@@ -429,8 +429,6 @@ public class CatchAllFilter implements Filter {
 
 			GlobalContext globalContext = GlobalContext.getInstance(httpRequest);
 			
-			System.out.println("****** globalContext = "+globalContext.getContextKey()+"   uri="+httpRequest.getRequestURI());
-
 			RequestService requestService = RequestService.getInstance(httpRequest);
 
 			Principal logoutUser = null;
@@ -456,7 +454,7 @@ public class CatchAllFilter implements Filter {
 
 			if (user != null) {
 				EditContext editContext = EditContext.getInstance(GlobalContext.getInstance(((HttpServletRequest) request).getSession(), globalContext.getContextKey()), ((HttpServletRequest) request).getSession());
-				if (!user.getContext().equals(globalContext.getContextKey())) {
+				/*if (!user.getContext().equals(globalContext.getContextKey())) {
 					if (!AdminUserSecurity.getInstance().isGod(user) && !AdminUserSecurity.getInstance().isMaster(user)) {
 						try {
 							editContext.setEditUser(null);
@@ -466,7 +464,7 @@ public class CatchAllFilter implements Filter {
 							e.printStackTrace();
 						}
 					}
-				}
+				}*/
 				if (editContext != null && user != null && editContext.getEditUser() == null && user.isEditor()) {
 					editContext.setEditUser(user);
 				}

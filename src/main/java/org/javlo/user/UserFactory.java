@@ -247,28 +247,7 @@ public class UserFactory implements IUserFactory, Serializable {
 	 **/
 	public User getCurrentUser(GlobalContext globalContext, HttpSession session) {		
 		User user = (User) session.getAttribute(SESSION_KEY);		
-		if (user != null) {
-			String userContextName = user.getContext();			
-			String currentContextName = globalContext.getContextKey();
-			if (!userContextName.equals(currentContextName)) {
-				GlobalContext userContext;
-				try {
-					userContext = GlobalContext.getInstance(session, user.getContext());
-					if (!userContext.isMaster()) {
-						new Exception().printStackTrace();
-						logger.info("logout user : "+user.getLogin()+" because context does'nt match ("+userContextName+" != "+currentContextName+')');
-						logout(session);
-						return null;
-					}
-				} catch (IOException e) {
-					e.printStackTrace();
-					return null;
-				}				
-			}
-			return user;
-		} else {
-			return null;
-		}
+		return user;
 	}
 
 	protected String getFileName() {

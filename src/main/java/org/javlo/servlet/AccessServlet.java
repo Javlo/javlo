@@ -280,8 +280,23 @@ public class AccessServlet extends HttpServlet implements IVersion {
 				}
 			}
 			
-			if (ctx.getCurrentEditUser() != null) {
-				ctx.setUser();
+			if (ctx.getCurrentEditUser() != null) {				
+				String userContextName = ctx.getCurrentEditUser().getContext();			
+				String currentContextName = globalContext.getContextKey();
+				if (!userContextName.equals(currentContextName)) {
+					GlobalContext userContext;
+					try {
+						userContext = GlobalContext.getInstance(request.getSession(), ctx.getCurrentEditUser().getContext());
+						if (!userContext.isMaster()) {
+							new Exception().printStackTrace();
+							logger.info("logout user : "+ctx.getCurrentEditUser().getLogin()+" because context does'nt match ("+userContextName+" != "+currentContextName+')');
+							UserFactory.createUserFactory(request).logout(request.getSession());		
+							ctx.setNeedRefresh(true);
+						}
+					} catch (IOException e) {
+						e.printStackTrace();
+					}				
+				}
 				System.out.println("*** login = "+ctx.getCurrentEditUser().getLogin());
 				System.out.println("*** context = "+ctx.getCurrentEditUser().getContext());
 			} else {
