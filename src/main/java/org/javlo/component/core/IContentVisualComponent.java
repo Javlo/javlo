@@ -83,6 +83,14 @@ public interface IContentVisualComponent extends Comparable<IContentVisualCompon
 	public String getXHTMLCode(ContentContext ctx) throws Exception;
 	
 	/**
+	 * true if the component can be displayed in preview mode	
+	 * @param ctx
+	 * @return
+	 * @throws Exception
+	 */
+	public boolean isDisplayable(ContentContext ctx) throws Exception;
+	
+	/**
 	 * display empty xhtml code if empty
 	 * @param ctx
 	 * @return

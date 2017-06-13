@@ -48,3 +48,32 @@ textarea.form-control {
 	text-align: left;
 }
 
+h2 {
+	margin-bottom: 5px;
+	font-weight: normal;
+}
+
+h2 .info {
+	display: block;
+	float: right;
+	color: #5bc0de;
+}
+
+.keyvalues {
+	max-width: 600px;		
+	.col {
+		padding: 10px;
+		border: 1px #ddd solid;
+		text-align: center;
+		h3 {			
+			font-size: 18px;
+			background-image : none;
+			background-color: transparent;
+			border: 0 none;
+			color: #5bc0de;		
+		}
+	p {
+		font-size: 14px;
+	}
+	
+}

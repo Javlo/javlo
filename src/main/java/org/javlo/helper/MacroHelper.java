@@ -30,7 +30,6 @@ import org.javlo.component.core.ComponentBean;
 import org.javlo.component.core.ContentElementList;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.files.AbstractFileComponent;
-import org.javlo.component.image.GlobalImage;
 import org.javlo.component.links.MirrorComponent;
 import org.javlo.component.meta.DateComponent;
 import org.javlo.component.meta.EventDefinitionComponent;
@@ -38,7 +37,6 @@ import org.javlo.component.meta.Tags;
 import org.javlo.component.meta.TimeRangeComponent;
 import org.javlo.component.multimedia.Multimedia;
 import org.javlo.component.text.Description;
-import org.javlo.component.text.Paragraph;
 import org.javlo.component.text.WysiwygParagraph;
 import org.javlo.component.title.SubTitle;
 import org.javlo.component.title.Title;
@@ -823,7 +821,7 @@ public class MacroHelper {
 						folder = folder.replace("${page.name}", page.getName());
 					}
 
-					String value = (String) componentsType.get(compName);
+					String value = (String) componentsType.get(compName);					
 					if (fakeContent) {
 						if (type.equals(Title.TYPE) || type.equals(SubTitle.TYPE)) {
 							value = LoremIpsumGenerator.getParagraph(3, false, true);
@@ -840,21 +838,22 @@ public class MacroHelper {
 					} else if (type.equals(Tags.TYPE) && tags != null) {
 						value = StringHelper.collectionToString(tags, ";");
 					}
-
+										
 					parentId = MacroHelper.addContent(lg, page, parentId, type, style, area, value, asList, ctx.getCurrentEditUser());
-					if (initContent) {
-						IContentVisualComponent comp = content.getComponent(ctx, parentId);
+					IContentVisualComponent comp = content.getComponent(ctx, parentId);
+					if (initContent) {						
 						comp.initContent(ctx);
 					}
+					if (comp instanceof AbstractFileComponent) {
+						((AbstractFileComponent) comp).init(comp.getComponentBean(), ctx);
+					}					
 
 					String renderer = (String) componentsType.get(compName + ".renderer");
-					if (renderer != null) {
-						IContentVisualComponent comp = content.getComponent(ctx, parentId);
+					if (renderer != null) {						
 						comp.setRenderer(ctx, renderer);
 					}
 
-					if (folder != null) {
-						IContentVisualComponent comp = content.getComponent(ctx, parentId);
+					if (folder != null) {						
 						if (comp instanceof AbstractFileComponent) {
 							((AbstractFileComponent) comp).setDirSelected(folder);
 						}
@@ -895,7 +894,7 @@ public class MacroHelper {
 				}
 				parentId = MacroHelper.addContent(lg, newPage, parentId, Title.TYPE, "", ctx.getCurrentEditUser());
 				parentId = MacroHelper.addContent(lg, newPage, parentId, Description.TYPE, "", ctx.getCurrentEditUser());
-				parentId = MacroHelper.addContent(lg, newPage, parentId, GlobalImage.TYPE, "", ctx.getCurrentEditUser());
+				//parentId = MacroHelper.addContent(lg, newPage, parentId, GlobalImage.TYPE, "", ctx.getCurrentEditUser());
 				parentId = MacroHelper.addContent(lg, newPage, parentId, WysiwygParagraph.TYPE, "", ctx.getCurrentEditUser());
 			}
 		} else {

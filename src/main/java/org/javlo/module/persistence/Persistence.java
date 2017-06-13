@@ -171,7 +171,10 @@ public class Persistence extends AbstractModuleAction {
 		}
 		String importURL = requestService.getParameter("import-url", null);
 		String importZIP = requestService.getParameter("import-file", null);
-		if (importZIP != null) {
+		
+		System.out.println("###### importZIP = "+importZIP);
+		
+		if (!StringHelper.isEmpty(importZIP)) {
 			int countResources = 0;
 			for (FileItem item : requestService.getAllFileItem()) {
 				if (StringHelper.getFileExtension(item.getName()).equals("zip")) {
@@ -228,6 +231,7 @@ public class Persistence extends AbstractModuleAction {
 				in = url.openStream();
 				NodeXML node = XMLFactory.getFirstNode(in);
 				NodeXML pageNode = node.getChild("page");
+				logger.info("import #pages : "+pageNode.getAllChildren().size());
 				GlobalContext globalContext = GlobalContext.getInstance(request);
 				PersistenceService persistenceService = PersistenceService.getInstance(globalContext);
 				NavigationHelper.importPage(ctx, persistenceService, pageNode, currentPage, ctx.getLanguage(), true);

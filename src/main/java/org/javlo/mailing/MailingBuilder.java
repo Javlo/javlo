@@ -189,6 +189,7 @@ public class MailingBuilder {
 			m.setFrom(new InternetAddress(sender));
 			m.setReceivers(Collections.singleton(receiver.getKey()));
 			m.setSubject(subject);
+			m.setPageId(pageCtx.getCurrentPage().getId());
 			m.setAdminEmail(globalContext.getAdministratorEmail());			
 			m.setSmtpHost(ctx.getGlobalContext().getSMTPHost());
 			m.setSmtpPort(ctx.getGlobalContext().getSMTPPort());

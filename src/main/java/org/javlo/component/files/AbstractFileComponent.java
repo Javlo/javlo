@@ -887,16 +887,16 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 		super.init(bean, ctx);
 		/* check if the content of db is correct version */
 		if (getValue().trim().length() == 0) {
-			if (!AdminUserSecurity.isCurrentUserCanUpload(ctx)) {
+//			if (!AdminUserSecurity.isCurrentUserCanUpload(ctx)) {
 				setDirSelected(getImportFolderPath(ctx));
 				File dir = new File(ElementaryURLHelper.mergePath(getFileDirectory(ctx), getDirSelected()));
 				if (!dir.exists()) {
 					logger.info("create import folder : "+dir);
 					dir.mkdirs();
 				}
-			} else {
-				setDirSelected("");
-			}
+//			} else {			
+//				setDirSelected("");
+//			}
 			setFileName("");
 			properties.setProperty(LABEL_KEY, "");
 			properties.setProperty(DESCRIPTION_KEY, "");
@@ -905,9 +905,9 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 			properties.load(stringToStream(getValue()));
 		}
 
-		if (isImported(ctx) && getPage() != null) {
+		if (isImported(ctx) && getPage() != null) {			
 			String importFolder = getImportFolderPath(ctx);
-			if (!getDirSelected().equals(importFolder)) {
+			if (!getDirSelected().equals(importFolder)) { 				
 				File oldFile = getFile(ctx);
 				setDirSelected(importFolder);
 				File newFile = getFile(ctx);
@@ -1304,6 +1304,11 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 	@Override
 	public Date getLatestValidDate() {
 		return latestValidDate;
+	}
+	
+	@Override
+	public boolean isDisplayable(ContentContext ctx) throws Exception {
+		return !StringHelper.isEmpty(getFileName());
 	}
 	
 }

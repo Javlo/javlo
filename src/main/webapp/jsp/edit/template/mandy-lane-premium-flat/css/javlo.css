@@ -261,6 +261,10 @@ a.popup span {
 	padding: 20px 15px;
 }
 
+.mainBox .no-title .content {
+	border-top: 1px solid #ddd;
+}
+
 .maincontent_inner {
     margin-bottom: 40px;
 }
@@ -640,6 +644,10 @@ ul,li {
 	background: url("../images/separator2.png") no-repeat scroll right
 		center transparent;
 	margin-right: 10px;
+}
+
+.breadcrumbs span.title:last-child {
+	background-image: none;
 }
 
 .breadcrumbs .children .container a {
@@ -1707,3 +1715,58 @@ body.previewEdit {
 ul.ui-tabs-nav {
 	background-image: none;
 } 
+
+/***PROGRESS BAR (dashboard.html)***/
+.progress .bar {
+  background: #ddd;
+  -moz-border-radius: 3px;
+  -webkit-border-radius: 3px;
+  border-radius: 3px;
+  padding: 1px;
+}
+.progress .bar {
+  -moz-box-shadow: inset 0 0 0 #999;
+  -webkit-box-shadow: inset 0 0 0 #999;
+  box-shadow: inset 0 0 0 #999;
+}
+.progress .bar .value {
+  height: 5px;
+  -moz-border-radius: 3px;
+  -webkit-border-radius: 3px;
+  border-radius: 3px;
+}
+.progress .bar2 {
+  background: #eee;
+  -moz-border-radius: 3px;
+  -webkit-border-radius: 3px;
+  border-radius: 3px;
+  padding: 0;
+}
+.progress .bar2 {
+ -moz-box-shadow: inset 0 0 0 #999;
+  -webkit-box-shadow: inset 0 0 0 #999;
+  box-shadow: inset 0 0 0 #999;
+}
+
+.progress .bar2 .value {
+  padding: 5px 0;
+  text-align: center;
+  -moz-border-radius: 0;
+  -webkit-border-radius: 0;
+  border-radius: 0;
+  color: #fff;
+}
+.progress .bar2 .value {
+  background-image: none;
+  background-repeat: repeat-x;
+  background-position: 0 0;
+}
+.progress .bluebar {
+  background-color: #5bc0de;
+}
+.progress .orangebar {
+  background-color: #f0ad4e;
+}
+.progress .redbar {
+  background-color: #d9534f;
+}

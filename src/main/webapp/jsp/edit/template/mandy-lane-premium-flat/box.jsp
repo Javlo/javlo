@@ -1,6 +1,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<div class="${box.action?'widgetbox2':'widgetbox'}">
-	<c:if test="${box.title != null}">
+<div class="${box.action?'widgetbox2':'widgetbox'} ${not empty box.title?'width-title':'no-title'}">
+	<c:if test="${not empty box.title}">
 	<h3>
 	<span>${box.title}</span>
 	</h3>

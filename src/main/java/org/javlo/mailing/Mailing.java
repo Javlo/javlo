@@ -134,6 +134,8 @@ public class Mailing {
 	private Date date = null;
 
 	private String templateId = null;
+	
+	private String pageId;
 
 	private String smtpHost;
 	private String smtpPort;
@@ -149,6 +151,10 @@ public class Mailing {
 	String getUnsubscribeURL(String mail) {
 		String params = "?webaction=mailing.Unsubscriberole&mail=" + mail + "&roles=" + StringHelper.collectionToString(roles);
 		return getUnsubscribeURL() + params;
+	}
+	
+	public Mailing() {
+		
 	}
 
 	public String getContent() {
@@ -275,6 +281,7 @@ public class Mailing {
 			language = config.getString("language", "en");
 			contextKey = config.getString("context-key", null);
 			encoding = config.getString("encoding", ContentContext.CHARACTER_ENCODING);
+			pageId = config.getString("page.id", null);
 			unsubscribeURL = config.getString("unsubscribeURL", null);
 			roles = StringHelper.stringToCollection(config.getString("roles", ""));
 			templateId = config.getString("template", null);
@@ -393,6 +400,7 @@ public class Mailing {
 			config.setProperty("send", new Boolean(isSend()));
 			config.setProperty("roles", StringHelper.collectionToString(roles));
 			config.setProperty("encoding", encoding);
+			config.setProperty("page.id", pageId);
 			config.setProperty("date", StringHelper.renderTime(new Date()));
 			config.setProperty("test", TEST);
 			config.setProperty("context-key", contextKey);
@@ -640,6 +648,15 @@ public class Mailing {
 		}
 		return outFB;
 	}
+	
+	public float getReadersRate() throws IOException {
+		float rate = (float)getCountReaders()/(float)getReceiversSize();
+		if (rate > 1) {
+			return 1;
+		} else {
+			return rate;
+		}
+	}
 
 	public int getCountReaders() throws IOException {
 		int c = 0;
@@ -861,6 +878,14 @@ public class Mailing {
 		} else {
 			return getWarningMessage();
 		}
+	}
+
+	public String getPageId() {
+		return pageId;
+	}
+
+	public void setPageId(String pageId) {
+		this.pageId = pageId;
 	}
 
 }

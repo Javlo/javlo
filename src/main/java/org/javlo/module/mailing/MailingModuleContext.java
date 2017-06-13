@@ -276,6 +276,7 @@ public class MailingModuleContext extends AbstractModuleContext {
 		m.setFrom(new InternetAddress(sender));
 		m.setReceivers(allRecipients);
 		m.setSubject(subject);
+		m.setPageId(ctx.getCurrentPage().getId());
 		m.setAdminEmail(globalContext.getAdministratorEmail());
 		m.setNotif(new InternetAddress(reportTo));
 		m.setContextKey(ctx.getGlobalContext().getContextKey());
@@ -334,9 +335,7 @@ public class MailingModuleContext extends AbstractModuleContext {
 			m.storePrivateKeyFile(DKIMFactory.getDKIMPrivateKeyFile(globalContext));
 		} else {
 			m.store(ctx.getRequest().getSession().getServletContext());	
-		}
-		
-		
+		}		
 	}
 
 	public String getStructuredRecipients() {

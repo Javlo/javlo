@@ -315,5 +315,10 @@ public class SimpleVideo extends AbstractFileComponent implements IReverseLinkCo
 			return null;
 		}
 	}
+	
+	@Override
+	protected String getEmptyCode(ContentContext ctx) throws Exception {
+		return getViewXHTMLCode(ctx);
+	}
 
 }

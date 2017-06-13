@@ -2809,5 +2809,11 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		}
 		return null;
 	}
+	
+	@Override
+	public boolean isDisplayable(ContentContext ctx) throws Exception {
+		String xhtmlCode = getXHTMLCode(ctx);		
+		return !(xhtmlCode != null && StringHelper.removeTag(xhtmlCode).trim().length() == 0 && !xhtmlCode.toLowerCase().contains("<img") && isDispayEmptyXHTMLCode(ctx));
+	}
 
 }

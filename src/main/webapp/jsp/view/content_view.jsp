@@ -159,7 +159,7 @@ if (globalContext.isCollaborativeMode() && ctx.getRenderMode() == ContentContext
 }
 String xhtmlCode = elem.getXHTMLCode(ctx);
 %><c:if test="${editPreview}"><%
-if (xhtmlCode != null && StringHelper.removeTag(xhtmlCode).trim().length() == 0 && !xhtmlCode.toLowerCase().contains("<img") && elem.isDispayEmptyXHTMLCode(ctx)) {
+if (!elem.isDisplayable(ctx)) {
 	I18nAccess i18nAccess = I18nAccess.getInstance(ctx);
 	xhtmlCode = elem.getEmptyXHTMLCode(ctx);	
 }%></c:if><%if (!elem.isHiddenInMode(ctx.getRenderMode())) {%><%=elem.getPrefixViewXHTMLCode(ctx)%><%=xhtmlCode%><%=elem.getSuffixViewXHTMLCode(ctx)%><%}
