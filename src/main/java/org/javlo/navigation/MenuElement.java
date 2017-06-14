@@ -3113,7 +3113,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 	 */
 	public String getName() {
 		if (nameKey == null) {
-			nameKey = StringHelper.createFileName(name).trim();
+			nameKey = StringHelper.createFileName(StringHelper.neverNull(name, "_NULL_")).trim();
 		}
 		return nameKey;
 	}
@@ -3841,7 +3841,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 				logger.severe("recursive vpath in :" + getPath() + "  context : " + globalContext.getContextKey());
 			} else {
 				MenuElement realParent = parent;
-				if (realParent != null) {
+				if (realParent != null) {					
 					return realParent.getVirtualPathRec(ctx, c + 1) + '/' + getName();
 				} else {
 					if (parent == null) {

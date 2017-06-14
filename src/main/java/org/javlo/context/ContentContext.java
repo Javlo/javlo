@@ -119,8 +119,8 @@ public class ContentContext {
 	private static ContentContext createContentContext(HttpServletRequest request, HttpServletResponse response, boolean free) {
 		ContentContext ctx = new ContentContext();
 		ctx.setFree(free);
-		init(ctx, request, response);
-		ctx.setUser();
+		init(ctx, request, response);		
+		ctx.storeInRequest(request);
 		return ctx;
 	}
 
@@ -246,16 +246,6 @@ public class ContentContext {
 		default:
 			return "unknown";
 		}
-	}
-
-	public void setUser() {
-		/** set user **/
-		GlobalContext globalContext = getGlobalContext();
-		IUserFactory fact = UserFactory.createUserFactory(globalContext, getRequest().getSession());
-		currentUser = fact.getCurrentUser(globalContext, request.getSession());
-		fact = AdminUserFactory.createUserFactory(globalContext, getRequest().getSession());
-		setCurrentEditUser(fact.getCurrentUser(globalContext, request.getSession()));
-		storeInRequest(request);
 	}
 
 	/**
@@ -480,9 +470,6 @@ public class ContentContext {
 	private Map<String, ScheduledRender> scheduledAjaxInsideZone = new HashMap<String, ScheduledRender>();
 	private final Map<String, String> ajaxZone = new HashMap<String, String>();;
 
-	private User currentUser = null;
-	private User currentEditUser = null;
-
 	private Map<? extends Object, ? extends Object> ajaxMap = null;
 
 	private boolean contentFound = true;
@@ -507,8 +494,6 @@ public class ContentContext {
 		dmzServerInter = ctx.dmzServerInter;
 		specialContentRenderer = ctx.specialContentRenderer;
 		pageRequest = ctx.pageRequest;
-		currentUser = ctx.currentUser;
-		currentEditUser = ctx.currentEditUser;
 		free = ctx.free;
 		device = ctx.getDevice();
 		format = ctx.format;
@@ -1488,25 +1473,18 @@ public class ContentContext {
 	}
 
 	public User getCurrentUser() {
-		if (currentUser != null) {
-			return currentUser;
+		User user = UserFactory.createUserFactory(getGlobalContext(), request.getSession()).getCurrentUser(getGlobalContext(), request.getSession());
+		if (user != null) {
+			return user;
 		} else {
-			return currentEditUser;
+			return getCurrentEditUser();
 		}
-	}
-
-	public void setCurrentUser(User currentUser) {
-		this.currentUser = currentUser;
-	}
+	}	
 
 	public User getCurrentEditUser() {
-		return currentEditUser;
+		return AdminUserFactory.createUserFactory(getGlobalContext(), request.getSession()).getCurrentUser(getGlobalContext(), request.getSession());	
 	}
-
-	public void setCurrentEditUser(User currentEditUser) {
-		this.currentEditUser = currentEditUser;
-	}
-
+	
 	/**
 	 * get the current user id. That can be the edit user or the view user.
 	 * 

@@ -69,7 +69,6 @@ public class UserLogin extends AbstractVisualComponent implements IAction {
 			IUserFactory userFactory= UserFactory.createUserFactory(globalContext, ctx.getRequest().getSession());			
 			userFactory.logout(session);
 			session.setAttribute("logoutDone", "true");			
-			ctx.setUser();
 		}
 		return null;
 	}
@@ -91,8 +90,7 @@ public class UserLogin extends AbstractVisualComponent implements IAction {
 			messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getViewText("user.message.facebook-login"), GenericMessage.INFO));			
 		} else {
 			messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getViewText("user.message.facebook-login"), GenericMessage.INFO));
-		}
-		ctx.setCurrentUser(userFactory.autoLogin(ctx.getRequest(), ui.getLogin()));
+		}		
 		return null;
 	}
 

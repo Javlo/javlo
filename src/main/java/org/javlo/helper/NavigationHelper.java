@@ -298,13 +298,19 @@ public class NavigationHelper {
 
 		}
 		Collection<MenuElement> targetChildren = targetRoot.getChildMenuElements();
+		Collection<MenuElement> needRemove = new LinkedList<MenuElement>();
 		for (MenuElement element : targetChildren) {
 			MenuElement srcChild = srcRoot.searchChildFromId(element.getId());
 			if ((srcChild == null) || (!srcChild.getParent().getId().equals(targetRoot.getId()))) {
-				targetRoot.removeChild(element);
+				//targetRoot.removeChild(element);
+				needRemove.add(element);
 			}
 		}
+		for (MenuElement element : needRemove) {
+			targetRoot.removeChild(element);			
+		}
 	}
+	
 
 	public static void publishOneComponent(ContentContext ctx, String componentId) throws Exception {
 

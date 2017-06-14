@@ -90,7 +90,7 @@ public class AjaxServlet extends HttpServlet {
 
 				Map<String, Object> outMap = new HashMap<String, Object>();
 				StringWriter strWriter = new StringWriter();
-
+				
 				if (ctx.getSpecificJson() == null) {
 					if (ctx.getAjaxMap() == null) {						
 						String msgXhtml = ServletHelper.executeJSP(ctx, editCtx.getMessageTemplate());

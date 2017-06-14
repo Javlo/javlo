@@ -48,7 +48,7 @@ public class VFSServlet extends HttpServlet {
 		process(request, response);
 	}
 
-	private void process(HttpServletRequest request, HttpServletResponse response) throws ServletException {
+	private synchronized void process(HttpServletRequest request, HttpServletResponse response) throws ServletException {
 		InputStream in = null;
 		OutputStream out = null;
 		FileSystemManager fsManager = null;

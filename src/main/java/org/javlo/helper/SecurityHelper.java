@@ -35,7 +35,7 @@ public class SecurityHelper {
 					userContext = GlobalContext.getInstance(ctx.getRequest().getSession(), ctx.getCurrentEditUser().getContext());
 					if (!userContext.isMaster()) {
 						logger.info("logout user : " + ctx.getCurrentEditUser().getLogin() + " because context does'nt match (" + userContextName + " != " + currentContextName + ')');
-						UserFactory.createUserFactory(ctx.getRequest()).logout(ctx.getRequest().getSession());
+						UserFactory.createUserFactory(ctx.getRequest()).logout(ctx.getRequest().getSession());						
 						ctx.setNeedRefresh(true);
 						return false;
 					}
