@@ -281,7 +281,9 @@ public class AccessServlet extends HttpServlet implements IVersion {
 				}
 			}
 			
-			SecurityHelper.checkUserAccess(ctx);
+			if (!ctx.isAsViewMode()) {
+				SecurityHelper.checkUserAccess(ctx);
+			}
 			
 			if (ctx.isAsViewMode() && ctx.isContentFound() && ctx.getCurrentPage() != null && staticConfig.isRedirectSecondaryURL() && !ctx.isPostRequest() && StringHelper.isEmpty(request.getQueryString())) {
 				ContentContext lgCtx = new ContentContext(ctx);

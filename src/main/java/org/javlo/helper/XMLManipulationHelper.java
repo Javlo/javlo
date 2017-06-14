@@ -937,7 +937,7 @@ public class XMLManipulationHelper {
 		TagDescription[] tags = searchAllTag(html, false);
 		StringRemplacementHelper remplacement = new StringRemplacementHelper();
 		for (TagDescription tag : tags) {
-			if (tag.getName().equalsIgnoreCase("title") || tag.getName().equalsIgnoreCase("meta")) {
+			if (tag.getName().equalsIgnoreCase("title")) {
 				remplacement.addReplacement(tag.getOpenStart(), tag.getCloseEnd() + 1, "");
 			}
 		}
