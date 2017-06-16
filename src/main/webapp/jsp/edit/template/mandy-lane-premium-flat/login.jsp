@@ -39,7 +39,9 @@ googleOauth.setClientSecret(ctx.getGlobalContext().getStaticConfig().getOauthGoo
     	<meta name="GOOGLEBOT" content="NOSNIPPET" />
     	<meta name="robots" content="noindex, nofollow" />
     	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />        
+    	<meta name="viewport" content="width=device-width, initial-scale=1" />
+        
         <title>Javlo (Login)</title>
         <link rel="shortcut icon" href="img/assets/favicon.ico" />
         <link href="${info.editTemplateURL}/css/login.css" rel="stylesheet" type="text/css" />

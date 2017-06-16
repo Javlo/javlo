@@ -177,7 +177,7 @@
 				<form id="pc_form" method="post" action="<%=URLHelper.createURL(editCtx)%>">
 					<div class="pc_line">				
 						<c:if test='${!editPreview}'>
-							<button class="btn btn-default btn-sm btn-user" type="submit">
+							<button class="btn btn-default btn-sm btn-login" type="submit">
 								<span class="glyphicon glyphicon-user" aria-hidden="true"></span>${i18n.edit['global.login']}</button>
 						</c:if>
 						<input type="hidden" name="backPreview" value="true" />
