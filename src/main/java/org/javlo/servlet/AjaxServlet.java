@@ -74,7 +74,7 @@ public class AjaxServlet extends HttpServlet {
 				ctx.setAjax(true);
 				EditContext editCtx = EditContext.getInstance(globalContext, request.getSession());
 				request.setAttribute("editUser", editCtx.getEditUser());
-				request.setAttribute("editPreview", editCtx.isEditPreview());
+				request.setAttribute("editPreview", editCtx.isPreviewEditionMode());
 
 				/*** update module status before action ***/
 				ModulesContext moduleContext = ModulesContext.getInstance(request.getSession(), globalContext);

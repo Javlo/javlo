@@ -392,7 +392,7 @@ public class XMLManipulationHelper {
 					String prefix = "";
 					String sufix = "";
 					if (!displayIfEmpty) {
-						prefix = "<%if (!currentPage.isNoComponent(ctx, \"" + area + "\") || (EditContext.getInstance(globalContext, session).isEditPreview() && ctx.isAsPreviewMode())) {%>";
+						prefix = "<%if (!currentPage.isNoComponent(ctx, \"" + area + "\") || (EditContext.getInstance(globalContext, session).isPreviewEditionMode() && ctx.isAsPreviewMode())) {%>";
 						sufix = "<%}%>";
 					}
 					if ((idValue != null) && (idValue.trim().equals(areaValue))) {
@@ -495,7 +495,7 @@ public class XMLManipulationHelper {
 
 				if (tags[i].getName().equalsIgnoreCase("html")) {
 					String cssClass = StringHelper.neverNull(tags[i].getAttributes().get("class"));
-					cssClass = cssClass + " " + " <%if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE) {%><%=(StringHelper.isTrue(request.getParameter(\"preview-command\"), true)?\"preview-command-visible\":\"preview-command-hidden\")%> <%=StringHelper.neverNull(request.getParameter(\"html-class\"))%> <%if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE) { if(EditContext.getInstance(globalContext, request.getSession()).isEditPreview() ) {%>edit-preview<%} else {%>preview-only<%} }%><%}%>";
+					cssClass = cssClass + " " + " <%if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE) {%><%=(StringHelper.isTrue(request.getParameter(\"preview-command\"), true)?\"preview-command-visible\":\"preview-command-hidden\")%> <%=StringHelper.neverNull(request.getParameter(\"html-class\"))%> <%if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE) { if(EditContext.getInstance(globalContext, request.getSession()).isPreviewEditionMode() ) {%>edit-preview<%} else {%>preview-only<%} }%><%}%>";
 					tags[i].getAttributes().put("class", cssClass.trim());
 					remplacement.addReplacement(tags[i].getOpenStart(), tags[i].getOpenEnd() + 1, tags[i].renderOpen());
 				}
@@ -505,7 +505,7 @@ public class XMLManipulationHelper {
 					String contentZone = getValue(options, AREA_PREFIX + "content", null);
 					String cssClass = StringHelper.neverNull(tags[i].getAttributes().get("class"));
 					cssClass = cssClass + ' ' + "<%if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE) { if(ctx.getGlobalContext().getStaticConfig().isFixPreview() ) {%>fix-preview<%} else {%>floating-preview<%} }%>";
-					cssClass = cssClass + ' ' + "<%if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE) { if(EditContext.getInstance(globalContext, request.getSession()).isEditPreview() ) {%>edit-preview<%} else {%>preview-only<%} }%>";
+					cssClass = cssClass + ' ' + "<%if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE) { if(EditContext.getInstance(globalContext, request.getSession()).isPreviewEditionMode() ) {%>edit-preview<%} else {%>preview-only<%} }%>";
 					cssClass = cssClass + ' ' + "<%if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE) { if(ctx.getCurrentEditUser() == null) {%>preview-notlogged<%} else {%>preview-logged<%} }%>";
 					cssClass = cssClass + ' ' + "${info.preview && !info.page.editable?'not-editable':''}";
 					cssClass = cssClass + ' ' + "${info.admin?'right-admin':''}";

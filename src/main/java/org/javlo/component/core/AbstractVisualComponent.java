@@ -880,7 +880,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		if ((ctx.getRenderMode() == ContentContext.PREVIEW_MODE)) {
 			GlobalContext globalContext = ctx.getGlobalContext();
 			EditContext editCtx = EditContext.getInstance(globalContext, ctx.getRequest().getSession());
-			if (editCtx.isEditPreview()) {
+			if (editCtx.isPreviewEditionMode()) {
 				MenuElement currentPage = ctx.getCurrentPage();
 				if (currentPage.equals(getPage())) { // not edit component
 					// is repeated and
@@ -1517,7 +1517,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 				}
 				RequestService rs = RequestService.getInstance(ctx.getRequest());
 				if (!StringHelper.isTrue(rs.getParameter(NOT_EDIT_PREVIEW_PARAM_NAME, null))) {
-					if (getConfig(ctx).isPreviewEditable() && editCtx.isEditPreview()
+					if (getConfig(ctx).isPreviewEditable() && editCtx.isPreviewEditionMode()
 							&& (!isRepeat() || getPage().equals(ctx.getCurrentPage()))
 							&& AdminUserSecurity.canModifyPage(ctx, ctx.getCurrentPage(), true)) {
 						I18nAccess i18nAccess = I18nAccess.getInstance(ctx);
@@ -1846,7 +1846,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	protected String renderViewXHTMLCode(ContentContext ctx) throws Exception {
 		if (HIDDEN.equals(getStyle()) || isDisplayHidden()) {
 			if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE
-					&& EditContext.getInstance(ctx.getGlobalContext(), ctx.getRequest().getSession()).isEditPreview()) {
+					&& EditContext.getInstance(ctx.getGlobalContext(), ctx.getRequest().getSession()).isPreviewEditionMode()) {
 				String prefix = "";
 				String suffix = "";
 				if (!isWrapped(ctx)) {
@@ -1908,7 +1908,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 
 			if ((ctx.getRenderMode() == ContentContext.PREVIEW_MODE)) {
 				EditContext editCtx = EditContext.getInstance(globalContext, ctx.getRequest().getSession());
-				if (editCtx.isEditPreview() && isDefaultValue(ctx)) {
+				if (editCtx.isPreviewEditionMode() && isDefaultValue(ctx)) {
 					String emptyCode = getEmptyCode(ctx);
 					if (emptyCode != null) {
 						return emptyCode;

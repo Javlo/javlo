@@ -169,6 +169,7 @@ public class ContentContext {
 				ctx = createContentContext(request, response, true);
 				ctx.setFree(false);
 				ctx.correctPath = false;
+
 			} else {
 				ctx.setRequest(request);
 				if (response != null) {
@@ -191,7 +192,7 @@ public class ContentContext {
 			correctPath = false;
 		}
 
-		if (ctx.getRenderMode() != ContentContext.EDIT_MODE && !editContext.isEditPreview() && !ctx.correctPath && correctPath || ctx.getRenderMode() == ContentContext.VIEW_MODE) {
+		if (ctx.getRenderMode() != ContentContext.EDIT_MODE && !editContext.isPreviewEditionMode() && !ctx.correctPath && correctPath || ctx.getRenderMode() == ContentContext.VIEW_MODE) {
 			if (!ctx.isAjax()) {
 				ctx.correctPath = correctPath;
 				ContentService content = ContentService.getInstance(GlobalContext.getInstance(request));
@@ -321,7 +322,7 @@ public class ContentContext {
 
 			if (!ctx.isEdit() && !ctx.isAjax()) {
 				EditContext editContext = EditContext.getInstance(globalContext, ctx.getRequest().getSession());
-				if (!ctx.isPreview() || !editContext.isEditPreview()) {
+				if (!ctx.isPreview() || !editContext.isPreviewEditionMode()) {
 					try {
 						MenuElement page = ctx.getCurrentPage(true);
 						if (page != null) {
@@ -1823,7 +1824,7 @@ public class ContentContext {
 	}
 
 	public boolean isEdition() {
-		return EditContext.getInstance(getGlobalContext(), getRequest().getSession()).isEditPreview() || isAsEditMode();
+		return EditContext.getInstance(getGlobalContext(), getRequest().getSession()).isPreviewEditionMode() || isAsEditMode();
 	}
 
 	/**
@@ -1837,15 +1838,6 @@ public class ContentContext {
 		} else {
 			return editPreview;
 		}
-	}
-
-	/**
-	 * preview in edit mode (component clickable)
-	 * 
-	 * @return
-	 */
-	public boolean isPreviewEdit() {
-		return EditContext.getInstance(getGlobalContext(), getRequest().getSession()).isEditPreview() && isAsPreviewMode();
 	}
 
 	public void setEditPreview(boolean editPreview) {

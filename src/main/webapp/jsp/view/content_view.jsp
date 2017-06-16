@@ -106,7 +106,7 @@ IContentVisualComponent previousElem = null;
 	if (languageChange) {
 		%><div lang="<%=ctx.getContentLanguage()%>"><%
 	}	
-	if (!elems.hasNext(ctx) && EditContext.getInstance(globalContext, session).isEditPreview() && ctx.isAsPreviewMode() && editPage || displayZone) {
+	if (!elems.hasNext(ctx) && EditContext.getInstance(globalContext, session).isPreviewEditionMode() && ctx.isAsPreviewMode() && editPage || displayZone) {
 		%><span><%=ctx.getArea()%></span><%
 	} else {
 		if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE && specificComp == null && editPage) {

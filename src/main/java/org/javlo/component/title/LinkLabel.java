@@ -22,7 +22,7 @@ public class LinkLabel extends AbstractVisualComponent {
 
 	@Override
 	public String getPrefixViewXHTMLCode(ContentContext ctx) {
-		if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE && EditContext.getInstance(GlobalContext.getInstance(ctx.getRequest()), ctx.getRequest().getSession()).isEditPreview()) {
+		if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE && EditContext.getInstance(GlobalContext.getInstance(ctx.getRequest()), ctx.getRequest().getSession()).isPreviewEditionMode()) {
 			return super.getPrefixViewXHTMLCode(ctx);
 		} else {
 			return "";
@@ -31,7 +31,7 @@ public class LinkLabel extends AbstractVisualComponent {
 
 	@Override
 	public String getSuffixViewXHTMLCode(ContentContext ctx) {
-		if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE && EditContext.getInstance(GlobalContext.getInstance(ctx.getRequest()), ctx.getRequest().getSession()).isEditPreview()) {
+		if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE && EditContext.getInstance(GlobalContext.getInstance(ctx.getRequest()), ctx.getRequest().getSession()).isPreviewEditionMode()) {
 			return super.getSuffixViewXHTMLCode(ctx);
 		} else {
 			return "";

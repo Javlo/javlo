@@ -117,7 +117,7 @@ public class MacroAction extends AbstractModuleAction {
 	public static String performCloseMacro(RequestService rs, ContentContext ctx, EditContext editContext, MessageRepository messageRepository, I18nAccess i18nAccess) throws FileNotFoundException, InstantiationException, IllegalAccessException, IOException, ModuleException {
 		MacroModuleContext macroContext = MacroModuleContext.getInstance(ctx.getRequest());
 		macroContext.setActiveMacro(null);
-		if (editContext.isEditPreview()) {
+		if (editContext.isPreviewEditionMode()) {
 			ctx.setClosePopup(true);
 		}
 		return null;

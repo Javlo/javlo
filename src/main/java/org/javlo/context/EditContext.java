@@ -113,7 +113,7 @@ public class EditContext implements Serializable {
 
 	UserEditFilter adminUserEditFilter = new UserEditFilter();
 
-	boolean editPreview = true;
+	boolean previewEditionMode = true;
 
 	// int menuCut = 18;
 
@@ -201,13 +201,13 @@ public class EditContext implements Serializable {
 
 	public static final EditContext getInstance(GlobalContext globalContext, HttpSession session) {
 		String key = SESSION_KEY+globalContext.getContextKey();
-		EditContext ctx = (EditContext) session.getAttribute(key);
-		if (ctx == null) {
-			ctx = new EditContext(globalContext, session);
-			session.setAttribute(key, ctx);
-			ctx.globalContext = globalContext;
+		EditContext editCtx = (EditContext) session.getAttribute(key);
+		if (editCtx == null) {
+			editCtx = new EditContext(globalContext, session);
+			session.setAttribute(key, editCtx);
+			editCtx.globalContext = globalContext;
 		}
-		return ctx;
+		return editCtx;
 	}
 
 	/**
@@ -548,15 +548,15 @@ public class EditContext implements Serializable {
 		this.lightInterface = isLightInterface;
 	}
 
-	public boolean isEditPreview() {
+	public boolean isPreviewEditionMode() {
 		if (getEditUser() == null) {
 			return false;
 		} else {
-			return editPreview;
+			return previewEditionMode;
 		}
 	}
 
-	public void setEditPreview(boolean editPreview) {
-		this.editPreview = editPreview;
+	public void setPreviewEditionMode(boolean editPreview) {
+		this.previewEditionMode = editPreview;
 	}
 }

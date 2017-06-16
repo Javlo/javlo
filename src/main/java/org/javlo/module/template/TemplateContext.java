@@ -40,7 +40,7 @@ public class TemplateContext {
 		}
 		
 		EditContext editContext = EditContext.getInstance(globalContext, session);
-		outCtx.editPreview = editContext.isEditPreview();		
+		outCtx.editPreview = editContext.isPreviewEditionMode();		
 
 		return outCtx;
 	}
@@ -57,7 +57,7 @@ public class TemplateContext {
 		if (ctx.isAsEditMode() && !ctx.isEditPreview()) {
 			editPreview = false;
 		} else {
-			editPreview = EditContext.getInstance(ctx.getGlobalContext(), ctx.getRequest().getSession()).isEditPreview();
+			editPreview = EditContext.getInstance(ctx.getGlobalContext(), ctx.getRequest().getSession()).isPreviewEditionMode();
 		}
 	}
 	

@@ -250,7 +250,6 @@ public class AccessServlet extends HttpServlet implements IVersion {
 
 			StaticConfig staticConfig = StaticConfig.getInstance(getServletContext());
 			
-			
 			/** init log **/
 			long startTime = System.currentTimeMillis();
 
@@ -270,6 +269,9 @@ public class AccessServlet extends HttpServlet implements IVersion {
 			Thread.currentThread().setName("AccessServlet-" + globalContext.getContextKey());
 
 			ContentContext ctx = ContentContext.getContentContext(request, response);
+			if (ctx.getDevice().isMobileDevice()) {
+				EditContext.getInstance(globalContext, request.getSession()).setPreviewEditionMode(false);
+			}
 			ctx.setPageRequest(true);
 			if (ctx.isAsEditMode() || ctx.isAsPreviewMode()) {
 				if (staticConfig.isEditIpSecurity()) {
@@ -561,7 +563,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 					boolean checkContentAviability = true;
 					if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE) {
 						EditContext editCtx = EditContext.getInstance(globalContext, request.getSession());
-						checkContentAviability = !editCtx.isEditPreview();
+						checkContentAviability = !editCtx.isPreviewEditionMode();
 					}
 					ContentContext newCtx = new ContentContext(ctx);
 					if (checkContentAviability) {
@@ -710,7 +712,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 
 					if (request.getServletPath().equals("/preview")) {
 						EditContext editCtx = EditContext.getInstance(globalContext, request.getSession());
-						request.setAttribute("editPreview", editCtx.isEditPreview());
+						request.setAttribute("editPreview", editCtx.isPreviewEditionMode());
 					}
 
 					if (!globalContext.isVisible()) {

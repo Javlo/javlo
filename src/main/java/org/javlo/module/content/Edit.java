@@ -1116,7 +1116,7 @@ public class Edit extends AbstractModuleAction {
 			messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("action.not-updated"), GenericMessage.ALERT));
 		}
 
-		if (requestService.getParameter("save", null) != null && editContext.isEditPreview() && !ResourceStatus.isResource(ctx.getRequest().getSession()) && requestService.getParameter("upload", null) == null) {
+		if (requestService.getParameter("save", null) != null && editContext.isPreviewEditionMode() && !ResourceStatus.isResource(ctx.getRequest().getSession()) && requestService.getParameter("upload", null) == null) {
 			ctx.setParentURL(URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.PREVIEW_MODE)));
 			if (message == null) {
 				ctx.setClosePopup(true);
@@ -1727,9 +1727,9 @@ public class Edit extends AbstractModuleAction {
 		GlobalContext globalContext = GlobalContext.getInstance(request);
 		if (globalContext.isPreviewMode()) {
 			if (rs.getParameter("preview", null) == null) {
-				editCtx.setEditPreview(!editCtx.isEditPreview());
+				editCtx.setPreviewEditionMode(!editCtx.isPreviewEditionMode());
 			} else {
-				editCtx.setEditPreview(StringHelper.isTrue(rs.getParameter("preview", null)));
+				editCtx.setPreviewEditionMode(StringHelper.isTrue(rs.getParameter("preview", null)));
 			}
 		}
 		return null;
@@ -2197,7 +2197,7 @@ public class Edit extends AbstractModuleAction {
 				return "error : bad file hash.";
 			}
 		}
-		if (editCtx.isEditPreview()) {
+		if (editCtx.isPreviewEditionMode()) {
 			ctx.setClosePopup(true);
 		}
 		return null;

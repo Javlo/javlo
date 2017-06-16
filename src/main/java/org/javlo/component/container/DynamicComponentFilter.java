@@ -141,7 +141,7 @@ public class DynamicComponentFilter extends AbstractPropertiesComponent implemen
 			}
 			out.println("<div class=\"action\"><input type=\"submit\" class=\"btn btn-default\" name=\"filter\" value=\"" + i18nAccess.getViewText("global.ok") + "\" /></div>");
 			out.println("</div></form>");
-		} else if (ctx.isPreviewEdit()) {
+		} else if (ctx.isAsPreviewMode()) {
 			out.println("[no - form]");
 		}
 

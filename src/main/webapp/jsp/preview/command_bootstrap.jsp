@@ -54,7 +54,7 @@ if (!rightOnPage) {
 	accessType = "button";
 }
 request.setAttribute("editUser", ctx.getCurrentEditUser());
-request.setAttribute("editPreview", EditContext.getInstance(globalContext, session).isEditPreview());
+request.setAttribute("editPreview", EditContext.getInstance(globalContext, session).isPreviewEditionMode());
 if (StringHelper.isTrue(request.getParameter("preview-command"), true)) {
 %><c:set var="pdf" value="${info.device.code == 'pdf'}" /><div id="preview_command" lang="${info.editLanguage}" class="edit-${not empty editUser} ${editPreview == 'true'?'edit':'preview'}">
 	<script type="text/javascript">	

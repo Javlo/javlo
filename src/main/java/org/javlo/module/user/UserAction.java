@@ -286,7 +286,7 @@ public class UserAction extends AbstractModuleAction {
 							GenericMessage.INFO));
 		}
 
-		if (editContext.isEditPreview()) {
+		if (editContext.isPreviewEditionMode()) {
 			ctx.setClosePopup(true);
 		}
 
@@ -505,7 +505,7 @@ public class UserAction extends AbstractModuleAction {
 					userFactory.store();
 					userFactory.reload(globalContext, session);
 					messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getViewText("user.message.ok-change-password"), GenericMessage.INFO));
-					if (editContext.isEditPreview()) {
+					if (editContext.isPreviewEditionMode()) {
 						ctx.setClosePopup(true);
 					}
 				} catch (IOException e) {
@@ -545,7 +545,7 @@ public class UserAction extends AbstractModuleAction {
 					messageRepository.setGlobalMessage(new GenericMessage(
 							i18nAccess.getText("user.message.ok-change-password"), GenericMessage.INFO));
 
-					if (editContext.isEditPreview()) {
+					if (editContext.isPreviewEditionMode()) {
 						ctx.setClosePopup(true);
 					}
 

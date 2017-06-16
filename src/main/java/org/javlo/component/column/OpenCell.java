@@ -53,7 +53,7 @@ public class OpenCell extends TableComponent {
 			out.println("<table "+border+"style=\""+tableStyle+"\" class=\"component-table\"><tr>");
 		}
 		out.println("<td"+getColSpanHTML(ctx)+' '+positionCSS+"style=\""+getTDStyle(ctx)+"\"><div class=\"cell-wrapper\">");
-		if (isCellEmpty(ctx) && ctx.isAsPreviewMode() && EditContext.getInstance(ctx.getGlobalContext(), ctx.getRequest().getSession()).isEditPreview()) {
+		if (isCellEmpty(ctx) && ctx.isAsPreviewMode() && EditContext.getInstance(ctx.getGlobalContext(), ctx.getRequest().getSession()).isPreviewEditionMode()) {
 			out.print("<span class=\"cell-name\">"+tableContext.getName(this)+"</span>");
 		}
 		out.close();

@@ -81,7 +81,7 @@ public class ExternalLink extends ComplexPropertiesLink implements IReverseLinkC
 		super.prepareView(ctx);
 		ctx.getRequest().setAttribute("link", getLink());
 		ctx.getRequest().setAttribute("label", getLabel());
-		if (StringHelper.isAllEmpty(getLink(), getLabel()) && ctx.isPreviewEdit()) {
+		if (StringHelper.isAllEmpty(getLink(), getLabel())) {
 			ctx.getRequest().setAttribute("label", "no link");
 		}
 	}

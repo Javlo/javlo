@@ -160,7 +160,7 @@ public class Box extends AbstractVisualComponent implements IContainer {
 		final String BOX_KEY = "_box_counter";
 		if (!isCloseBox()) {			
 			String suffix = "";
-			if (ctx.isAsPreviewMode() && EditContext.getInstance(ctx.getGlobalContext(), ctx.getRequest().getSession()).isEditPreview()) {				
+			if (ctx.isAsPreviewMode() && EditContext.getInstance(ctx.getGlobalContext(), ctx.getRequest().getSession()).isPreviewEditionMode()) {				
 				Integer boxCounter = (Integer)ctx.getRequest().getAttribute(BOX_KEY);
 				if (boxCounter == null) {
 					boxCounter = 0;
@@ -175,7 +175,7 @@ public class Box extends AbstractVisualComponent implements IContainer {
 			return  getOpenCode(ctx) + suffix + getInternalPrefix(ctx);
 		} else {
 			String prefix = "";			
-			if (ctx.isAsPreviewMode() && EditContext.getInstance(ctx.getGlobalContext(), ctx.getRequest().getSession()).isEditPreview()) {
+			if (ctx.isAsPreviewMode() && EditContext.getInstance(ctx.getGlobalContext(), ctx.getRequest().getSession()).isPreviewEditionMode()) {
 				if (!getBoxStack(ctx).isEmpty()) {
 					prefix = "<div " + getPreviewAttributes(ctx) + ">[Close box - "+getBoxStack(ctx).pop()+"]</div>";
 				}

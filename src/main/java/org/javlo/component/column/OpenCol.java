@@ -99,13 +99,13 @@ public class OpenCol extends AbstractVisualComponent {
 		int width = getWidth(ctx);
 		if (colContext.isOpen()) {
 			out.println("</div></div><div class=\"" + getColCssClass(ctx, width) + ' ' + positionCSS + "\"><div class=\"cell-wrapper\">");
-			if (isColEmpty(ctx) && ctx.isAsPreviewMode() && EditContext.getInstance(ctx.getGlobalContext(), ctx.getRequest().getSession()).isEditPreview()) {
+			if (isColEmpty(ctx) && ctx.isAsPreviewMode() && EditContext.getInstance(ctx.getGlobalContext(), ctx.getRequest().getSession()).isPreviewEditionMode()) {
 				out.print("<span class=\"cell-name\">col-" + width + "</span>");
 			}
 		} else {
 			colContext.setOpen(true);
 			out.println("<div class=\"" + getRowCssClass(ctx) + "\"><div class=\"" + getColCssClass(ctx, width) + ' ' + positionCSS + "\"><div class=\"cell-wrapper\">");
-			if (isColEmpty(ctx) && ctx.isAsPreviewMode() && EditContext.getInstance(ctx.getGlobalContext(), ctx.getRequest().getSession()).isEditPreview()) {
+			if (isColEmpty(ctx) && ctx.isAsPreviewMode() && EditContext.getInstance(ctx.getGlobalContext(), ctx.getRequest().getSession()).isPreviewEditionMode()) {
 				out.print("<span class=\"cell-name\">col-" + width + "</span>");
 			}
 		}

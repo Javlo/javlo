@@ -47,7 +47,7 @@ public class Title extends AbstractVisualComponent {
 	public String getPrefixViewXHTMLCode(ContentContext ctx) {
 		/* editable if hidden */
 		if (HIDDEN.equals(getStyle())) {
-			if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE && EditContext.getInstance(GlobalContext.getInstance(ctx.getRequest()), ctx.getRequest().getSession()).isEditPreview()) {				
+			if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE && EditContext.getInstance(GlobalContext.getInstance(ctx.getRequest()), ctx.getRequest().getSession()).isPreviewEditionMode()) {				
 				return super.getPrefixViewXHTMLCode(ctx);
 			}
 		}
@@ -57,7 +57,7 @@ public class Title extends AbstractVisualComponent {
 	@Override
 	public String getSuffixViewXHTMLCode(ContentContext ctx) {
 		if (HIDDEN.equals(getStyle())) {
-			if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE && EditContext.getInstance(GlobalContext.getInstance(ctx.getRequest()), ctx.getRequest().getSession()).isEditPreview()) {
+			if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE && EditContext.getInstance(GlobalContext.getInstance(ctx.getRequest()), ctx.getRequest().getSession()).isPreviewEditionMode()) {
 				return super.getSuffixViewXHTMLCode(ctx);
 			}
 		}

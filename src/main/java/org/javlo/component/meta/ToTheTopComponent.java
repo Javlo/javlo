@@ -91,7 +91,7 @@ public class ToTheTopComponent extends AbstractVisualComponent {
 
 	@Override
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
-		if (ctx.isPreviewEdit()) {
+		if (ctx.isEditPreview()) {
 			return getType()+" >> "+StringHelper.renderDate(getDate());
 		} else {
 			return "";

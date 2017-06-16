@@ -160,7 +160,7 @@ public class PageRank extends AbstractVisualComponent implements IPageRank, IAct
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		EditContext editContext = EditContext.getInstance(globalContext, ctx.getRequest().getSession());
 
-		if (DEBUG || editContext.isEditPreview()) {
+		if (DEBUG || editContext.isPreviewEditionMode()) {
 			out.println("<div class=\"debug\">");
 			out.println("rank value : " + getRankValue(ctx, currentPage.getPath()));
 			out.println("vote count : " + getVotes(ctx, currentPage.getPath()));

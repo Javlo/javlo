@@ -1147,7 +1147,7 @@ public class InfoBean {
 	}
 
 	public boolean isPreviewEdit() {
-		return EditContext.getInstance(globalContext, ctx.getRequest().getSession()).isEditPreview() && ctx.isAsPreviewMode();
+		return ctx.isEditPreview();
 	}
 
 	public EditContext getEditContext() {
