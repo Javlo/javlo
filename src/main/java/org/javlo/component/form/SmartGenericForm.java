@@ -796,7 +796,6 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 					request.setAttribute("msg", msg);
 				}
 			}
-
 			if (!StringHelper.isEmpty(finalValue)) {
 				if (!field.isValueValid(finalValue) && !errorKeyFound.contains(key)) {
 					errorKeyFound.add(key);

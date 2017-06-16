@@ -207,7 +207,12 @@ public class Field {
 		if (list.size() == 0) {
 			return getName().length() > 0 && !StringHelper.isEmpty(value);
 		} else {
-			return value != null && !list.iterator().next().equals(value);
+			String item = list.iterator().next();
+			if (item.startsWith(".") && StringHelper.isEmpty(value)) {
+				return false;
+			} else {
+				return value != null && !item.equals(value);
+			}
 		}
 	}
 	
