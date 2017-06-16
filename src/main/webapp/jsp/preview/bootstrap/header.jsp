@@ -177,7 +177,7 @@
 				<form id="pc_form" method="post" action="<%=URLHelper.createURL(editCtx)%>">
 					<div class="pc_line">				
 						<c:if test='${!editPreview}'>
-							<button class="btn btn-default btn-sm" type="submit">
+							<button class="btn btn-default btn-sm btn-user" type="submit">
 								<span class="glyphicon glyphicon-user" aria-hidden="true"></span>${i18n.edit['global.login']}</button>
 						</c:if>
 						<input type="hidden" name="backPreview" value="true" />
@@ -300,6 +300,7 @@
 						</c:if>
 						<button type="submit" class="btn btn-default btn-sm" ${tooltip} ${empty webaction?'disabled="disabled"':''}>
 							<span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span>
+							<c:if test="${globalContext.portail}"><span class="flow-status">${info.page.flowIndex}</span></c:if>
 							<span class="text">${label}</span>
 						</button>
 					</form></li>
@@ -397,7 +398,7 @@
 				<c:if test="${i18n.edit['preview.label.user.tooltip'] != 'preview.label.user.tooltip'}">
 					<c:set var="tooltip" value=' data-toggle="tooltip" data-placement="left" title="${i18n.edit[\'preview.label.user.tooltip\']}"' />
 				</c:if>
-				<a ${tooltip} href="${info.currentEditURL}?module=users&webaction=user.changeMode&mode=myself&previewEdit=true" class="as-modal btn btn-default btn-sm"><span class="glyphicon glyphicon-user" aria-hidden="true"></span><span class="text">${info.userName}</span></a>					
+				<a ${tooltip} href="${info.currentEditURL}?module=users&webaction=user.changeMode&mode=myself&previewEdit=true" class="as-modal btn btn-default btn-sm btn-user"><span class="glyphicon glyphicon-user" aria-hidden="true"></span><span class="text">${info.userName}</span></a>					
 				<a class="btn btn-default btn-sm" title="${i18n.edit['global.logout']}" href="${logoutURL}"><span class="glyphicon glyphicon-log-out"></span><span class="text">${i18n.edit["global.logout"]}</span></a>				
 				</li>				
 			</c:if>

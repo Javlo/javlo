@@ -391,7 +391,6 @@
 		    <version>0.1.9</version>
 		</dependency>
 	
-		
 		<!-- https://mvnrepository.com/artifact/com.google.code.geocoder-java/geocoder-java -->
 		<dependency>
     		<groupId>com.google.code.geocoder-java</groupId>
@@ -411,6 +410,8 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+		
+	
 
 	</dependencies>
 
