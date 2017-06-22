@@ -868,6 +868,6 @@ change log
 
  * 1/ mailing stat by page with macro / getCurrentUser with globalContext / remove reference to user in contentcontext / sunchronize process method in VFS / editPreview method correction
  
- * 2/ editable outlook optimisation / text float amelioration / remove special char on some url factory / image feedback correction / trace all url
+ * 2/ editable outlook optimisation / text float amelioration / remove special char on some url factory / image feedback correction / trace all url / unencode heading text before create url
  
  * 3/ 
