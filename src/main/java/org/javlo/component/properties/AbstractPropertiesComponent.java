@@ -277,5 +277,12 @@ public abstract class AbstractPropertiesComponent extends AbstractVisualComponen
 		out.close();
 		return new String(outStream.toByteArray());
 	}
+	
+	public static void main(String[] args) {
+		Properties properties = new Properties();
+		properties.setProperty("key", "été");
+				
+		System.out.println("été = "+properties.getProperty("key"));
+	}
 
 }

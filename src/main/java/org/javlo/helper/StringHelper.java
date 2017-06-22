@@ -100,7 +100,8 @@ public class StringHelper {
 
 	private static final char DEFAULT_ESCAPE = '\\';
 
-	public static final String[][] TXT2HTML = { { "\u00c1", "&Aacute;" }, { "\u00e1", "&aacute;" }, { "\u00c0", "&Agrave;" }, { "\u00e0", "&agrave;" }, { "\u00e7", "&ccedil;" }, { "\u00c7", "&Ccedil;" }, { "\u00c9", "&Eacute;" }, { "\u00e9", "&eacute;" }, { "\u00c8", "&Egrave;" }, { "\u00e8", "&egrave;" }, { "\u00ca", "&Ecirc;" }, { "\u00ea", "&ecirc;" }, { "\u00cf", "&Iuml;" }, { "\u00ef", "&iuml;" }, { "\u00f9", "&ugrave;" }, { "\u00d9", "&Ugrave;" }, { "\u2019", "'" }, { "\u00D6", "&Ouml;" }, { "\u00F6", "&ouml;" } };
+	public static final String[][] TXT2HTML = { { "\u00c1", "&Aacute;" }, { "\u00e1", "&aacute;" }, { "\u00c0", "&Agrave;" }, { "\u00e0", "&agrave;" }, { "\u00e7", "&ccedil;" }, { "\u00c7", "&Ccedil;" }, { "\u00c9", "&Eacute;" }, { "\u00e9", "&eacute;" }, { "\u00c8", "&Egrave;" }, { "\u00e8", "&egrave;" }, { "\u00ca", "&Ecirc;" }, { "\u00ea", "&ecirc;" }, { "\u00cf", "&Iuml;" }, { "\u00ef", "&iuml;" }, { "\u00f9", "&ugrave;" }, { "\u00d9", "&Ugrave;" }, { "\u2019", "'" }, { "\u00D6", "&Ouml;" },
+			{ "\u00F6", "&ouml;" } };
 
 	public static SimpleDateFormat RFC822DATEFORMAT = new SimpleDateFormat("EEE', 'dd' 'MMM' 'yyyy' 'HH:mm:ss' 'Z", Locale.US);
 
@@ -109,7 +110,7 @@ public class StringHelper {
 	private static final String EU_ACCEPTABLE_CHAR_NO_POINT = EU_ACCEPTABLE_CHAR.replace(".", "");
 
 	private static final String ISO_ACCEPTABLE_CHAR = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_.";
-	
+
 	private static Set<Character> ISO_ACCEPTABLE_CHAR_SET = null;
 
 	private static final String KEY_ACCEPTABLE_CHAR = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -125,8 +126,8 @@ public class StringHelper {
 	private static long previousShortRandomId = 0;
 
 	private static String previousDateId = "";
-	
-	private static Map<String,String> transliteration = null;
+
+	private static Map<String, String> transliteration = null;
 
 	public static final String[] EMPTY_STRING_ARRAY = new String[0];
 
@@ -351,11 +352,11 @@ public class StringHelper {
 	public static String createASCIIString(String text) {
 		return createCleanName(text, "azertyuiopqsdfghjklmwxcvbnAZERTYUIOPQSDFGHJKLMWXCVBN0123456789,._- ", '_');
 	}
-	
-	private static Map<String,String> getTransliteration() {
+
+	private static Map<String, String> getTransliteration() {
 		if (transliteration == null) {
 			Properties prop = new Properties();
-			InputStream in = StringHelper.class.getClassLoader().getResourceAsStream("/data/transliteration.properties");			
+			InputStream in = StringHelper.class.getClassLoader().getResourceAsStream("/data/transliteration.properties");
 			try {
 				prop.load(in);
 			} catch (IOException e) {
@@ -363,15 +364,23 @@ public class StringHelper {
 			} finally {
 				ResourceHelper.closeResource(in);
 			}
-			Map<String,String> encodedData = new HashMap<String,String>();
-			for (Object key : prop.keySet()) {				
-				encodedData.put(""+key, prop.getProperty(""+key));				
+			Map<String, String> encodedData = new HashMap<String, String>();
+			for (Object key : prop.keySet()) {
+				encodedData.put("" + key, prop.getProperty("" + key));
 			}
 			transliteration = encodedData;
-		}	
+		}
 		return transliteration;
 	}
-	
+
+	private static Map<String, String> getTransliteration(Properties prop) {
+		Map<String, String> encodedData = new HashMap<String, String>();
+		for (Object key : prop.keySet()) {
+			encodedData.put("" + key, prop.getProperty("" + key));
+		}
+		return encodedData;
+	}
+
 	private static Set<Character> getISOAcceptableChars() {
 		if (ISO_ACCEPTABLE_CHAR_SET == null) {
 			HashSet<Character> localSet = new HashSet<Character>();
@@ -382,9 +391,9 @@ public class StringHelper {
 		}
 		return ISO_ACCEPTABLE_CHAR_SET;
 	}
-	
+
 	public static String removeSpecialChars(char c) {
-		String key = Encode.forXmlAttribute(""+c);
+		String key = Encode.forXmlAttribute("" + c);
 		Object outStr = getTransliteration().get(key);
 		if (outStr == null) {
 			return null;
@@ -392,11 +401,11 @@ public class StringHelper {
 			return outStr.toString();
 		}
 	}
-	
-	public static String removeSpecialChars(String text) {		
-		Set<Character> okChar = getISOAcceptableChars();		
-		Map<Character,String> replacement = new HashMap<Character,String>();
-		for (char c : text.toCharArray()) {
+
+	public static String removeSpecialChars(String text) {
+		Set<Character> okChar = getISOAcceptableChars();
+		Map<Character, String> replacement = new HashMap<Character, String>();
+		for (char c : text.toCharArray()) {			
 			if (!okChar.contains(c) && replacement.get(c) == null) {
 				String newStr = removeSpecialChars(c);
 				if (newStr != null) {
@@ -404,11 +413,11 @@ public class StringHelper {
 				} else {
 					replacement.put(c, "_");
 				}
-			}
-		}		
-		for (Character c : replacement.keySet()) {
-			text = StringUtils.replace(text, ""+c, replacement.get(c));
+			}			
 		}
+		for (Character c : replacement.keySet()) {
+			text = StringUtils.replace(text, "" + c, replacement.get(c));
+		}		
 		return text;
 	}
 
@@ -780,11 +789,11 @@ public class StringHelper {
 		String hash = Base64.encodeBase64String(raw); // step 5
 		return hash.trim(); // step 6
 	}
-	
+
 	public synchronized static String encryptPasswordSHA256(String plaintext) {
-		return org.apache.commons.codec.digest.DigestUtils.sha256Hex(plaintext);		
+		return org.apache.commons.codec.digest.DigestUtils.sha256Hex(plaintext);
 	}
-	
+
 	public static String escapeWordChar(String text) {
 
 		if (text.startsWith("************")) {
@@ -1514,7 +1523,7 @@ public class StringHelper {
 	}
 
 	public static boolean isTrue(Object inBool, boolean defaultValue) {
-		if (inBool == null ) {
+		if (inBool == null) {
 			return defaultValue;
 		}
 		if (inBool instanceof Boolean) {
@@ -1522,7 +1531,7 @@ public class StringHelper {
 		}
 		if (inBool.toString().length() == 0) {
 			return defaultValue;
-		}		
+		}
 		String bool = "" + inBool;
 		boolean res = false;
 
@@ -1689,7 +1698,7 @@ public class StringHelper {
 			return defaultValue;
 		} else {
 			return Integer.parseInt(value);
-		} 
+		}
 	}
 
 	public static Date[] parseRangeDate(String date) throws ParseException {
@@ -2242,11 +2251,11 @@ public class StringHelper {
 
 		return dateFormat.format(date);
 	}
-	
+
 	public static String renderMonthDate(ContentContext ctx, Date date) {
 		if (date == null) {
 			return "";
-		}						
+		}
 		DateFormat dateFormat = new SimpleDateFormat("MMM yyyy", new Locale(ctx.getContextRequestLanguage()));
 		return dateFormat.format(date);
 	}

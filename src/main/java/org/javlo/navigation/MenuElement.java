@@ -2560,7 +2560,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 
 			}
 		}
-		desc.label = StringHelper.removeTag(desc.label);
+		desc.label = StringHelper.removeTag(desc.label);		
 		return desc.label;
 	}
 

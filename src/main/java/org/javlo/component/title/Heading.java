@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.javlo.component.core.ComponentLayout;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.core.ISubTitle;
@@ -139,14 +140,19 @@ public class Heading extends AbstractPropertiesComponent implements ISubTitle {
 
 	@Override
 	public String getTextTitle(ContentContext ctx) {
-		return StringHelper.removeTag(getFieldValue(TEXT));
+		String textTitle = getFieldValue(TEXT);		
+		textTitle = StringEscapeUtils.unescapeHtml(textTitle);
+		return StringHelper.removeTag(textTitle);
 	}
 	
 	@Override
 	public String getTextLabel(ContentContext ctx) {
 		String smText = getFieldValue(SMALL_TEXT);
-		if (StringHelper.isEmpty(smText)) {
-			return StringHelper.removeTag(getFieldValue(TEXT));
+		smText = StringEscapeUtils.unescapeHtml(smText);		
+		if (StringHelper.isEmpty(smText)) {	
+			String lgText = getFieldValue(TEXT);
+			lgText = StringEscapeUtils.unescapeHtml(lgText);
+			return StringHelper.removeTag(lgText);
 		} else {
 			return smText;
 		}
