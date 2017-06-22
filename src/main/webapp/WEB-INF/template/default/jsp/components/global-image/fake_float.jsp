@@ -4,7 +4,7 @@
 <c:set var="loadEvent" value="" />
 <c:set var="styleWidth" value="" /><c:set var="styleWidthWidthoutStyle" value="" /><c:if test="${not empty componentWidth && !param['clean-html']}"><c:set var="styleWidthWidthoutStyle" value='width: ${componentWidth};' /><c:set var="styleWidth" value=' style="width: ${componentWidth};"' /></c:if>
 <c:set var="styleOppositeWidth" value="" /><c:if test="${not empty componentOpositeWidth && !param['clean-html']}"><c:set var="styleOppositeWidth" value='width: ${componentOpositeWidth};' /></c:if>
-<div id="comp-${compid}"><table class="${empty componentWidth?'float-image':'float-image-width'} ${param.right?'right':'left'}">
+<div id="comp-${compid}"><table class="${empty componentWidth?'float-image':'float-image-width'} ${param.right?'right':'left'}" style="border-collapse: collapse;" cellpadding="0" cellspacing="0" >
 <c:if test="${contentContext.asPreviewMode}">
 <div class="source" style="display: none;"><span class="container">${label}</span></div>
 <script type="text/javascript">
@@ -18,8 +18,11 @@ localJQ( window ).load(function() {
 		<c:if test="${info.device.code != 'pdf'}">
 			editPreview.floatZone("#comp-${compid} .source .container", "#comp-${compid} .zone1 .container", "#comp-${compid} .zone2 .container", "#comp-${compid} img");
 			var firstText=localJQ("#comp-${compid} .zone1 .container").html();
-			var secondText = localJQ("#comp-${compid} .zone2 .container").html();
-			localJQ.post( "${info.currentAjaxURL}", { webaction: "global-image.dataFeedBack", compid: "${compid}", firsttext: firstText, secondtext: secondText, height: localJQ("#comp-${compid} img").height(), width: localJQ("#comp-${compid} img").width()}, {dataType: "json", async: "false"}).done(function(data) {
+			var secondText = localJQ("#comp-${compid} .zone2 .container").html();			
+			var textDist = localJQ("#comp-${compid} .zone2 .container").position().top-(localJQ("#comp-${compid} .zone1 .container").position().top+localJQ("#comp-${compid} .zone1 .container").height());			
+			//localJQ("#comp-${compid} img").css("height", localJQ("#comp-${compid} img").height()-textDist-6+"px");
+			textDist = localJQ("#comp-${compid} .zone2 .container").position().top-(localJQ("#comp-${compid} .zone1 .container").position().top+localJQ("#comp-${compid} .zone1 .container").height());
+ 			localJQ.post( "${info.currentAjaxURL}", { webaction: "global-image.dataFeedBack", compid: "${compid}", firsttext: firstText, secondtext: secondText, height: localJQ("#comp-${compid} img").height(), width: localJQ("#comp-${compid} img").width()}, {dataType: "json", async: "false"}).done(function(data) {
 				localJQ("#comp-${compid} img").addClass("refreshed");		
 				localJQ("#comp-${compid} img").attr("src", data.data.previewURL);
 			});		

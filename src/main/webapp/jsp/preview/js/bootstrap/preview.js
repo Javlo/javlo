@@ -916,12 +916,12 @@ if (!String.prototype.startsWith) {
 			var zone1 = pjq(zone1);
 			var zone2 = pjq(zone2);
 			var image = pjq(image);
-
-			zone1.css("display", "block");
 			var html = pjq(source).html();
 			var sep = html.length;
 			zone1.html(html);
 			zone2.html('');
+			var textDist = zone2.position().top-(zone1.position().top+zone1.height());
+			console.log("1.sep="+sep);
 			while (sep > 0 && zone1.height() > image.height()) {
 				sep = sep-1;
 				while (sep > 0 && html[sep] != ' ') {
@@ -930,7 +930,42 @@ if (!String.prototype.startsWith) {
 				var outText = editPreview.splitHtml(html, sep);
 				zone1.html(outText[0]);
 				zone2.html(outText[1]);
+				textDist = zone2.position().top-(zone1.position().top+zone1.height());
 			}
+			var saveHeight = zone1.height();
+			while (saveHeight == zone1.height()) {
+				sep = sep+1;
+				while (sep > 0 && html[sep] != ' ' && sep < html.length) {
+					sep = sep + 1;
+				}
+				var outText = editPreview.splitHtml(html, sep);
+				zone1.html(outText[0]);
+				zone2.html(outText[1]);
+				textDist = zone2.position().top-(zone1.position().top+zone1.height());
+			}
+			var storeHeight = zone1.height();
+			while (storeHeight == zone1.height() && sep < html.length) {				
+				sep = sep+1;				
+				while (sep > 0 && html[sep] != ' ' && sep < html.length) {					
+					sep = sep + 1;					
+				}
+				var outText = editPreview.splitHtml(html, sep);
+				zone1.html(outText[0]);
+				zone2.html(outText[1]);
+				textDist = zone2.position().top-(zone1.position().top+zone1.height());
+			}
+			var storeHeight = zone1.height();
+			while (storeHeight == zone1.height() && sep < html.length) {				
+				sep = sep-1;				
+				while (sep > 0 && html[sep] != ' ' && sep < html.length) {					
+					sep = sep - 1;					
+				}
+				var outText = editPreview.splitHtml(html, sep);
+				zone1.html(outText[0]);
+				zone2.html(outText[1]);
+				textDist = zone2.position().top-(zone1.position().top+zone1.height());
+			}
+			textDist = zone2.position().top-(zone1.position().top+zone1.height());
 			return sep;
 		};
 

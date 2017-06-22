@@ -1,3 +1,7 @@
+* {
+	line-height: 115%
+} 
+
 .colored-wrapper {
 	margin-bottom: 15px;
 }
@@ -22,6 +26,7 @@ li, .table-li {
 
 td {
 	vertical-align: top;
+	padding: 0;
 }
 
 .first-in-cell {
@@ -83,9 +88,9 @@ img, figure {
     padding-left: 2px;
 }
 
-table.float-image, table.float-image  td, table.float-image  th {
-	border-collapse: separate;
-}
+/* table.float-image, table.float-image  td, table.float-image  th { */
+/* 	border-collapse: separate; */
+/* } */
 
 .end-area {
 	font-size: 0;
@@ -102,7 +107,6 @@ table.float-image, table.float-image  td, table.float-image  th {
 .global-image .center img, .global-image .center figure {
 	display: inline;	
 	margin: 0 auto;
-	
 }
 
 table.float-image-width {

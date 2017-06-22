@@ -59,7 +59,7 @@ public class AjaxServlet extends HttpServlet {
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 			RequestService rs = RequestService.getInstance(request);
 			try {
-				Tracker.trace(request, response);				
+				//Tracker.trace(request, response);				
 				if (rs.getParameter(ContentContext.FORCE_MODE_PARAMETER_NAME, null) != null) {
 					ctx.setRenderMode(Integer.parseInt(rs.getParameter(ContentContext.FORCE_MODE_PARAMETER_NAME, null)));
 				} else {

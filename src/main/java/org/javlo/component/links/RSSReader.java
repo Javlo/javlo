@@ -98,6 +98,22 @@ public class RSSReader extends ComplexPropertiesLink {
 
 		@Override
 		public int compare(SyndEntry o1, SyndEntry o2) {
+			if (o1 == null && o2 == null) {
+				return 0;
+			} else if (o1 == null) {
+				return 1;
+			} else if (o2 == null) {
+				return -1;
+			}
+
+			if (o1.getPublishedDate() == null && o2.getPublishedDate() == null) {
+				return 0;
+			} else if (o1.getPublishedDate() == null) {
+				return 1;
+			} else if (o2.getPublishedDate() == null) {
+				return -1;
+			}
+
 			return o1.getPublishedDate().compareTo(o2.getPublishedDate()) * multi;
 		}
 
@@ -138,7 +154,8 @@ public class RSSReader extends ComplexPropertiesLink {
 	protected Calendar getBackDate(String style) {
 		Calendar backDate = Calendar.getInstance();
 		int backDay = 9999; /*
-							 * infinity back if no back day defined (all news included)
+							 * infinity back if no back day defined (all news
+							 * included)
 							 */
 		if (style.equals(STAY_1D)) {
 			backDay = 1;
@@ -186,18 +203,18 @@ public class RSSReader extends ComplexPropertiesLink {
 			I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
 			String linkTitle = i18nAccess.getText("component.link.link");
 			String labelTitle = i18nAccess.getText("component.link.label");
-			out.println("<div class=\"line\">");
+			out.println("<div class=\"form-group\">");
 			out.println("<label for=\"" + getRuleParamName() + "\">" + getRuleTitle(ctx) + " : </label>");
-			out.println(XHTMLHelper.getInputOneSelect(getRuleParamName(), getRuleList(ctx), getRuleLabelList(ctx), getRule(), null));
-			out.println("</div><div class=\"line\">");
+			out.println(XHTMLHelper.getInputOneSelect(getRuleParamName(), getRuleList(ctx), getRuleLabelList(ctx), getRule(), "form-control", null, true));
+			out.println("</div><div class=\"form-group\">");
 			out.println("<label for=\"" + getLinkName() + "\">" + linkTitle + "</label>");
-			out.print(" : <textarea" + " id=\"" + getLinkName() + "\" name=\"" + getLinkName() + "\">");
+			out.print(" : <textarea" + " class=\"form-control\" id=\"" + getLinkName() + "\" name=\"" + getLinkName() + "\">");
 			out.print(link);
 			out.println("</textarea></div>");
-			out.println("<div class=\"line\">");
+			out.println("<div class=\"form-group\">");
 			out.print("<label for=\"" + getLinkLabelName() + "\">" + labelTitle + "</label>");
 			out.print(" : ");
-			out.println(XHTMLHelper.getTextInput(getLinkLabelName(), label));
+			out.println(XHTMLHelper.getTextInput(getLinkLabelName(), label, "form-control"));
 			out.println("</div>");
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -262,12 +279,14 @@ public class RSSReader extends ComplexPropertiesLink {
 		} else if (style.equals(STAY_10N)) {
 			return 10;
 		}
-		return 99999; /* infinity news if no limit defined (all news included) */
+		return 99999; /*
+						 * infinity news if no limit defined (all news included)
+						 */
 	}
 
 	public String getRSSContent(DateFormat dateFormat, String rule, String style) throws Exception {
 
-		logger.fine("update RSS content type:" + rule);
+		logger.info("update RSS content type:" + rule + " url:" + getLinksURL());
 
 		StringWriter writer;
 		try {
@@ -296,7 +315,7 @@ public class RSSReader extends ComplexPropertiesLink {
 						if (i > maxNews) {
 							break;
 						}
-						if (backDate.getTime().before(syndEntry.getPublishedDate())) {
+						if (syndEntry.getPublishedDate() == null || backDate.getTime().before(syndEntry.getPublishedDate())) {
 							localEntries.add(syndEntry);
 						}
 					}
@@ -310,20 +329,24 @@ public class RSSReader extends ComplexPropertiesLink {
 					int index = 1;
 					for (SyndEntry syndEntry : localEntries) {
 						out.println("<li class=\"item-" + index + "\">");
-						out.println("<div class=\"date\">" + dateFormat.format(syndEntry.getPublishedDate()) + "</div>");
-						out.println("<h3><a href=\"" + syndEntry.getLink() + "\">" + syndEntry.getTitle() + "</a></h3>");
-						String description = syndEntry.getDescription().getValue();
-						try {
-							description = XHTMLHelper.removeTag(description, "div");
-						} catch (Exception e) {
-							// e.printStackTrace();
+						if (syndEntry.getPublishedDate() != null) {
+							out.println("<div class=\"date\">" + dateFormat.format(syndEntry.getPublishedDate()) + "</div>");
 						}
-						out.println("<p class=\"description\">" + description + "<div class=\"content_clear\"></div></p>");
+						out.println("<h3><a href=\"" + syndEntry.getLink() + "\">" + syndEntry.getTitle() + "</a></h3>");
+						if (syndEntry.getDescription() != null) {
+							String description = syndEntry.getDescription().getValue();
+							try {
+								description = XHTMLHelper.removeTag(description, "div");
+							} catch (Exception e) {
+								// e.printStackTrace();
+							}
+							out.println("<p class=\"description\">" + description + "<div class=\"content_clear\"></div></p>");
+						}
 						out.println("</li>");
 						index++;
 					}
 				}
-				out.println("</ul>");				
+				out.println("</ul>");
 			}
 
 			out.close();
@@ -384,7 +407,7 @@ public class RSSReader extends ComplexPropertiesLink {
 				contentThread = new ReadRSSThread(this, TimeHelper.getDefaultDateFormat(ctx), getRule(), getStyle(ctx));
 				contentThread.start();
 			} else {
-				GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());				
+				GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 				cachedContent = getRSSContent(new SimpleDateFormat(globalContext.getMediumDateFormat(), new Locale(ctx.getRequestContentLanguage())), getRule(), getStyle(ctx));
 			}
 		}
@@ -420,7 +443,7 @@ public class RSSReader extends ComplexPropertiesLink {
 			properties.setProperty(RULE_KEY, ALWAYS);
 		}
 	}
-	
+
 	@Override
 	public boolean isContentCachable(ContentContext ctx) {
 		return false;
@@ -451,7 +474,7 @@ public class RSSReader extends ComplexPropertiesLink {
 		}
 		return msg;
 	}
-	
+
 	@Override
 	public int getComplexityLevel(ContentContext ctx) {
 		return getConfig(ctx).getComplexity(COMPLEXITY_STANDARD);

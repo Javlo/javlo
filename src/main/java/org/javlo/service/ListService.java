@@ -241,7 +241,13 @@ public class ListService {
 		} else {
 			List<Item> outList = new LinkedList<ListService.Item>();
 			for (MenuElement child : page.getChildMenuElements()) {
-				outList.add(new Item(child.getName(), child.getTitle(ctx)));				
+				String key = child.getName();
+				String value = child.getTitle(ctx);
+				if (value.startsWith(".")) {
+					key="";
+					value = value.substring(1);
+				}
+				outList.add(new Item(key, value));				
 			}			
 			return outList;
 		}

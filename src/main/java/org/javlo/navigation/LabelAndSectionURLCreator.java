@@ -80,7 +80,7 @@ public class LabelAndSectionURLCreator extends AbstractURLFactory {
 		if (currentPage.getUrlNumber() > 0) {
 			label = label + '-' +currentPage.getUrlNumber();
 		}
-		String path = StringHelper.createI18NURL(label);
+		String path = StringHelper.createI18NURL(StringHelper.removeSpecialChars(label));
 		//String path = StringHelper.createI18NURL(label);
 		
 		String url = path;
@@ -91,7 +91,7 @@ public class LabelAndSectionURLCreator extends AbstractURLFactory {
 			if (contextWidthTitle != null) {
 				freeCtx = contextWidthTitle;			
 			}		
-			url = URLHelper.mergePath(StringHelper.createI18NURL(sectionPage.getLabel(freeCtx)), url);
+			url = URLHelper.mergePath(StringHelper.createI18NURL(StringHelper.removeSpecialChars(sectionPage.getLabel(freeCtx))), url);
 		}
 		url = '/' + url;
 		

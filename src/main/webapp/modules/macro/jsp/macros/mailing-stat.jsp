@@ -34,8 +34,14 @@
 					<td class="col">					
 						<h3>${mailing.countUnsubscribe}</h3>
 						<p>#unsubscribe</p>
-				</td>
+					</td>
 				</c:if>
+				<c:forEach var="click" items="${mailing.countClicks}">
+					<td class="col">					
+						<h3>${click.value}</h3>
+						<p>#${click.key}</p>
+					</td>
+				</c:forEach> 
 			</tr></table>			
 		</div>
 	</div>

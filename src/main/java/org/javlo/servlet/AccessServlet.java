@@ -630,7 +630,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 				/** ******* */
 
 				localLogger.startCount("tracking1");
-				Tracker.trace(request, response);
+//				Tracker.trace(request, response);
 				localLogger.endCount("tracking", "tracking user");
 
 				if (logger.isLoggable(Level.FINE)) {

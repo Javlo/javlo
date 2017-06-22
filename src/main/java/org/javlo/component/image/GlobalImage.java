@@ -284,6 +284,10 @@ public class GlobalImage extends Image implements IImageFilter {
 		if (width >= 0) {
 			ctx.getRequest().setAttribute("imageWidth", width);
 		}
+		int height = getHeight(ctx.getBean());
+		if (height >= 0) {
+			ctx.getRequest().setAttribute("imageHeight", height);
+		}
 
 	}
 
@@ -1093,6 +1097,7 @@ public class GlobalImage extends Image implements IImageFilter {
 		if (properties != null) {
 			try {
 				properties.remove(getWidthKey(ctx.getBean()));
+				properties.remove(getHeightKey(ctx.getBean()));
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -1117,10 +1122,32 @@ public class GlobalImage extends Image implements IImageFilter {
 			return null;
 		}
 	}
+	
+	private String getHeightKey(ContentContextBean ctx) {
+		Device device = ctx.getDevice();
+		try {
+			String pageId = "noid";
+			if (getPage() != null) {
+				pageId = getPage().getId();
+			}
+			if (device == null) {
+				return "height-" + Device.DEFAULT + '-' + pageId;
+			} else {
+				return "height-" + device.getCode() + '-' + pageId;
+			}
+		} catch (Exception e) {			
+			e.printStackTrace();
+			return null;
+		}
+	}
 
 	public int getWidth(ContentContextBean ctx) {
 		return Integer.parseInt(properties.getProperty(getWidthKey(ctx), "-1"));
 	}
+	
+	public int getHeight(ContentContextBean ctx) {
+		return Integer.parseInt(properties.getProperty(getHeightKey(ctx), "-1"));
+	}	
 
 	public String getFirstText() {
 		return properties.getProperty("first-text", getLabel());
@@ -1146,9 +1173,9 @@ public class GlobalImage extends Image implements IImageFilter {
 		}
 	}
 
-	public void setHeight(int height) {
+	public void setHeight(ContentContext ctx, int height) {
 		if (getHeight() != height) {
-			properties.setProperty("height", "" + height);
+			properties.setProperty(getHeightKey(ctx.getBean()), "" + height);
 			setModify();
 		}
 	}
@@ -1198,7 +1225,7 @@ public class GlobalImage extends Image implements IImageFilter {
 				int intHeight = Integer.parseInt(height);
 				if (intHeight != image.getHeight()) {
 					image.setModify();
-					image.setHeight(intHeight);
+					image.setHeight(ctx,intHeight);
 				}
 			}
 			if (width != null && width.trim().length() > 0) {
@@ -1341,7 +1368,11 @@ public class GlobalImage extends Image implements IImageFilter {
 			return image;
 		} else {
 			reloadProperties();
-			return ImageEngine.resizeWidth(image, getWidth(ctx), false);
+			if (getHeight(ctx)>0) {
+				return ImageEngine.resizeWidth(image, getWidth(ctx), false);
+			} else {
+				return ImageEngine.resize(image, getWidth(ctx), getHeight(ctx), false);
+			}
 		}
 	}
 

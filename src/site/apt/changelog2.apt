@@ -867,3 +867,7 @@ change log
 * 2.1.0.4 09/06/17
 
  * 1/ mailing stat by page with macro / getCurrentUser with globalContext / remove reference to user in contentcontext / sunchronize process method in VFS / editPreview method correction
+ 
+ * 2/ editable outlook optimisation / text float amelioration / remove special char on some url factory / image feedback correction / trace all url
+ 
+ * 3/ 

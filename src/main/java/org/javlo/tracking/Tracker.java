@@ -77,10 +77,10 @@ public class Tracker {
 		}
 		GlobalContext globalContext = GlobalContext.getInstance(request);
 		Tracker tracker = Tracker.getTracker(globalContext, request.getSession());
-		IUserFactory fact = UserFactory.createUserFactory(globalContext, request.getSession());
-		User user = fact.getCurrentUser(globalContext, request.getSession());
-		String userName = null;
-		if (user != null) {
+//		IUserFactory fact = UserFactory.createUserFactory(globalContext, request.getSession());
+//		User user = fact.getCurrentUser(globalContext, request.getSession());
+		String userName = ""+request.getUserPrincipal();
+		/*if (user != null) {
 			userName = user.getLogin();
 		}
 		ContentContext ctx = ContentContext.getContentContext(request, response);
@@ -89,7 +89,7 @@ public class Tracker {
 			if (editCtx.getUserPrincipal() != null) {
 				userName = editCtx.getUserPrincipal().getName();
 			}
-		}
+		}*/
 		RequestService requestService = RequestService.getInstance(request);
 		String action = requestService.getParameter("webaction", null);
 
@@ -133,11 +133,8 @@ public class Tracker {
 	 *         for the language
 	 */
 	public Map<String, Integer> getLanguage(StatContext statCtx) {
-
 		Map<String, Integer> res = new HashMap<String, Integer>();
-
 		Track[] tracks = getViewClickTracks(statCtx.getFrom(), statCtx.getTo());
-
 		for (Track track : tracks) {
 			String lg = getLanguage(track.getPath());
 			Integer c = res.get(lg);
@@ -151,12 +148,10 @@ public class Tracker {
 	}
 
 	String getLanguage(String path) {
-
 		String[] pathDec = StringUtils.split(path, "/");
 		if (pathDec.length < 2) {
 			return "undifined";
 		}
-
 		String lg = "undefined";
 		if (pathDec[1].length() == 2) {
 			return pathDec[1];

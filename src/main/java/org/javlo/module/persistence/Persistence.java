@@ -15,7 +15,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.fileupload.FileItem;
-import org.apache.xmlgraphics.image.loader.util.ImageInputStreamAdapter;
 import org.javlo.actions.AbstractModuleAction;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.dynamic.DynamicComponent;
@@ -34,12 +33,10 @@ import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
 import org.javlo.service.PersistenceService;
 import org.javlo.service.RequestService;
-import org.javlo.service.resource.Resource;
 import org.javlo.servlet.zip.ZipManagement;
 import org.javlo.utils.UnclosableInputStream;
 import org.javlo.xml.NodeXML;
 import org.javlo.xml.XMLFactory;
-import org.javlo.ztatic.StaticInfo;
 
 public class Persistence extends AbstractModuleAction {
 
@@ -171,9 +168,6 @@ public class Persistence extends AbstractModuleAction {
 		}
 		String importURL = requestService.getParameter("import-url", null);
 		String importZIP = requestService.getParameter("import-file", null);
-		
-		System.out.println("###### importZIP = "+importZIP);
-		
 		if (!StringHelper.isEmpty(importZIP)) {
 			int countResources = 0;
 			for (FileItem item : requestService.getAllFileItem()) {

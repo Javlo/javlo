@@ -36,6 +36,7 @@ import org.javlo.context.ContentContext;
 import org.javlo.helper.PatternHelper;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
+import org.javlo.service.ContentService;
 import org.javlo.user.IUserInfo;
 import org.javlo.user.UserFactory;
 import org.javlo.utils.CSVFactory;
@@ -668,6 +669,21 @@ public class Mailing {
 			}
 		}
 		return c;
+	}
+	
+	public Map<String,Integer> getCountClicks() throws IOException {
+		Map<String,Integer> outClicks = new HashMap<String, Integer>();				
+		for (FeedBackMailingBean feedBack : getFeedBack()) {
+			if (!StringHelper.isEmpty(feedBack.getUrl()) && !StringHelper.isImage(feedBack.getUrl())) {
+				Integer c = outClicks.get(feedBack.getUrl());
+				if (c == null) {
+					outClicks.put(feedBack.getUrl(), 1);
+				} else {
+					outClicks.put(feedBack.getUrl(), c+1);					
+				}
+			}			
+		}
+		return outClicks;
 	}
 
 	public int getCountUnsubscribe() throws IOException {

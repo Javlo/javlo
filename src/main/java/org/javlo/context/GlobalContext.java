@@ -2930,6 +2930,10 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	public String getBlockPassword() {
 		return properties.getString("security.block-password", null);
 	}
+	
+	public String getBlockPreviewPassword() {
+		return properties.getString("security.block-preview-password", null);
+	}
 
 	public String getForcedHost() {
 		return properties.getString("url.forced-host", "");

@@ -73,15 +73,15 @@ public class ServletWrapperServlet extends HttpServlet {
 		if (user != null) {
 			userName = user.getLogin();
 		}
-		try {
-			Tracker tracker = Tracker.getTracker(globalContext, request.getSession());
-			Track track = new Track(userName, "view picture", request.getRequestURI(), System.currentTimeMillis(), request.getHeader("referer"), request.getHeader("User-Agent"));
-			track.setIP(request.getRemoteAddr());
-			track.setSessionId(request.getSession().getId());
-			tracker.addTrack(track);
-		} catch (Exception e2) {
-			e2.printStackTrace();
-		}
+//		try {
+//			Tracker tracker = Tracker.getTracker(globalContext, request.getSession());
+//			Track track = new Track(userName, "view picture", request.getRequestURI(), System.currentTimeMillis(), request.getHeader("referer"), request.getHeader("User-Agent"));
+//			track.setIP(request.getRemoteAddr());
+//			track.setSessionId(request.getSession().getId());
+//			tracker.addTrack(track);
+//		} catch (Exception e2) {
+//			e2.printStackTrace();
+//		}
 		/* END TRACKING */
 
 		// TODO: check if that work for caching

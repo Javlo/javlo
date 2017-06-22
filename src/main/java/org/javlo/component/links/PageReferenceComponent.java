@@ -1490,7 +1490,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		out.println("<legend>" + i18nAccess.getText("content.page-teaser.page-list") + "</legend>");
 		/* array filter */
 		String tableID = "table-" + getId();
-		out.println("<div class=\"filter line\">");
+		out.println("<div class=\"array-filter line\">");
 		String ajaxURL = URLHelper.createExpCompLink(ctx, getId());
 		out.println("<input class=\"input\" type=\"text\" placeholder=\"" + i18nAccess.getText("global.filter") + "\" onkeyup=\"filterPage('" + ajaxURL + "',this.value, '." + tableID + " tbody');\"/>");
 		String resetFilterScript = "jQuery('#comp-" + getId() + " .filter .input').val(''); filterPage('" + ajaxURL + "',jQuery('#comp-" + getId() + " .filter .input').val(), '." + tableID + " tbody'); return false;";

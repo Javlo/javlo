@@ -1,4 +1,4 @@
-@import url("../../content/css/content.css");
+@import '../../content/css/content.scss';
 
 #macro li {
 	margin: 10px;
@@ -59,8 +59,7 @@ h2 .info {
 	color: #5bc0de;
 }
 
-.keyvalues {
-	max-width: 600px;		
+.keyvalues {			
 	.col {
 		padding: 10px;
 		border: 1px #ddd solid;
@@ -74,6 +73,5 @@ h2 .info {
 		}
 	p {
 		font-size: 14px;
-	}
-	
+	}	
 }

@@ -60,8 +60,6 @@ import org.javlo.rendering.Device;
 import org.javlo.service.ContentService;
 import org.javlo.template.Template;
 import org.javlo.template.TemplateFactory;
-import org.javlo.tracking.Track;
-import org.javlo.tracking.Tracker;
 import org.javlo.user.AdminUserFactory;
 import org.javlo.user.IUserFactory;
 import org.javlo.user.User;
@@ -918,15 +916,15 @@ public class ImageTransformServlet extends HttpServlet {
 		if (user != null) {
 			userName = user.getLogin();
 		}
-		try {
-			Tracker tracker = Tracker.getTracker(globalContext, request.getSession());
-			Track track = new Track(userName, VIEW_PICTURE_ACTION, request.getRequestURI(), System.currentTimeMillis(), request.getHeader("referer"), request.getHeader("User-Agent"));
-			track.setIP(request.getRemoteAddr());
-			track.setSessionId(request.getSession().getId());
-			tracker.addTrack(track);
-		} catch (Exception e2) {
-			e2.printStackTrace();
-		}
+//		try {
+//			Tracker tracker = Tracker.getTracker(globalContext, request.getSession());
+//			Track track = new Track(userName, VIEW_PICTURE_ACTION, request.getRequestURI(), System.currentTimeMillis(), request.getHeader("referer"), request.getHeader("User-Agent"));
+//			track.setIP(request.getRemoteAddr());
+//			track.setSessionId(request.getSession().getId());
+//			tracker.addTrack(track);
+//		} catch (Exception e2) {
+//			e2.printStackTrace();
+//		}
 		/* END TRACKING */
 
 		// org.javlo.helper.Logger.stepCount("transform", "end tracking");
@@ -1279,27 +1277,6 @@ public class ImageTransformServlet extends HttpServlet {
 		servletRun--;
 
 	}
-
-	public static void main(String[] args) {
-		File image1 = new File("c:/trans/11.jpg");
-		File image2 = new File("c:/trans/11_out.jpg");
-		long time = System.currentTimeMillis();
-		try {
-			BufferedImage image = ImageIO.read(image1);
-			System.out.println("1. read time  : " + StringHelper.renderTimeInSecond(System.currentTimeMillis() - time));
-			time = System.currentTimeMillis();
-			image = ImageEngine.resize(image, 1920, 1200, true);
-			System.out.println("2. resize     : " + StringHelper.renderTimeInSecond(System.currentTimeMillis() - time));
-			time = System.currentTimeMillis();
-
-			image = ImageEngine.resize(image, 512, 512, true, false, 0, 0, 0, 0, null, 512, 512, true, false);
-
-			ImageIO.write(image, "jpg", image2);
-			System.out.println("2. write time : " + StringHelper.renderTimeInSecond(System.currentTimeMillis() - time));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-	}
+	
 }
 

@@ -36,7 +36,7 @@ public class ModuleServlet extends HttpServlet {
 
 			ContentContext ctx = ContentContext.getContentContext(request, response);
 
-			Tracker.trace(request, response);
+			//Tracker.trace(request, response);
 
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 

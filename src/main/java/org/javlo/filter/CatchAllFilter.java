@@ -48,6 +48,7 @@ import org.javlo.service.CountService;
 import org.javlo.service.DataToIDService;
 import org.javlo.service.RequestService;
 import org.javlo.template.Template;
+import org.javlo.tracking.Tracker;
 import org.javlo.user.AdminUserFactory;
 import org.javlo.user.AdminUserSecurity;
 import org.javlo.user.IUserFactory;
@@ -172,6 +173,12 @@ public class CatchAllFilter implements Filter {
 
 		boolean newUser = doLoginFilter(request, response);
 		User user = UserFactory.createUserFactory(globalContext, httpRequest.getSession()).getCurrentUser(globalContext, httpRequest.getSession());
+		
+		try {
+			Tracker.trace(httpRequest, (HttpServletResponse)response);
+		} catch (Exception e2) {
+			e2.printStackTrace();
+		}
 
 		/*****************/
 		/**** MODULES ****/
@@ -427,7 +434,7 @@ public class CatchAllFilter implements Filter {
 			HttpServletRequest httpRequest = (HttpServletRequest) request;
 			HttpServletResponse httpResponse = (HttpServletResponse) response;
 
-			GlobalContext globalContext = GlobalContext.getInstance(httpRequest);
+			GlobalContext globalContext = GlobalContext.getInstance(httpRequest);			
 			
 			RequestService requestService = RequestService.getInstance(httpRequest);
 

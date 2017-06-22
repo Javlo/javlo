@@ -610,7 +610,7 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 	}
 
 	public int getOrder() {
-		String orderStr = properties.getProperty("field." + getUnicName() + ".order", "0");
+		String orderStr = properties.getProperty("field." + getUnicName() + ".order", "0").trim();
 		int order = 0;
 		try {
 			order = Integer.parseInt(orderStr);

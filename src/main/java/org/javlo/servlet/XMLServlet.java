@@ -121,12 +121,12 @@ public class XMLServlet extends HttpServlet {
 					ctx.setLanguage(lang);
 					ContentService content = ContentService.getInstance(request);
 
-					/* tracking */
-					Tracker tracker = Tracker.getTracker(globalContext, request.getSession());
-					Track track = new Track(null, null, request.getRequestURI(), System.currentTimeMillis(), request.getHeader("Referer"), request.getHeader("User-Agent"));
-					track.setIP(request.getRemoteAddr());
-					track.setSessionId(request.getSession().getId());
-					tracker.addTrack(track);
+//					/* tracking */
+//					Tracker tracker = Tracker.getTracker(globalContext, request.getSession());
+//					Track track = new Track(null, null, request.getRequestURI(), System.currentTimeMillis(), request.getHeader("Referer"), request.getHeader("User-Agent"));
+//					track.setIP(request.getRemoteAddr());
+//					track.setSessionId(request.getSession().getId());
+//					tracker.addTrack(track);
 
 					List<MenuElement> rssPages = content.getNavigation(ctx).getAllChildrenWithComponentType(ctx, RSSRegistration.TYPE);
 					List<MenuElement> pages = new ArrayList<MenuElement>(rssPages);

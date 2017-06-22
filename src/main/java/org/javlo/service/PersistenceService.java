@@ -528,7 +528,7 @@ public class PersistenceService {
 		int year = cal.get(Calendar.YEAR);
 		int mount = cal.get(Calendar.MONTH);
 		int day = cal.get(Calendar.DAY_OF_MONTH);
-
+		
 		File dir = new File(getTrackingDirectory() + '/' + year + '/' + mount);
 		File file = new File(getTrackingDirectory() + '/' + year + '/' + mount + "/tracks-" + day + ".csv");
 

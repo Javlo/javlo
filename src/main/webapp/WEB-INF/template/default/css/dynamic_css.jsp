@@ -33,6 +33,18 @@ ${param.prefix}.visible-separation {
 	<c:if test="${empty dynamicCSSTemplate.style.finalTextColor}">border-color: #000000;</c:if>
 }
 
+${param.prefix}.visible-large {	
+	margin: 10px 0;
+	padding: 0;
+	font-size: 0;
+	line-height: 0;
+	height: 0;
+	border-top-style: solid;
+	border-top-width: 3px;
+	<c:if test="${not empty dynamicCSSTemplate.style.finalTextColor}">border-color: ${dynamicCSSTemplate.style.finalTextColor};</c:if>
+	<c:if test="${empty dynamicCSSTemplate.style.finalTextColor}">border-color: #000000;</c:if>
+}
+
 <c:forEach var="row" items="${dynamicCSSTemplate.rows}"><c:forEach var="area" items="${row.areas}">
 ${param.prefix}#${area.name} p, ${param.prefix}#${area.name} ul, ${param.prefix}#${area.name} ol, ${param.prefix}#${area.name} .table-li td,${param.prefix}#${area.name} .internal-link, ${param.prefix}#${area.name} .unsubscribe-link, ${param.prefix}#${area.name} .date, ${param.prefix}#${area.name} .external-link,${param.prefix}#${area.name} .pdf-link,${param.prefix}#${area.name} .file, ${param.prefix}#${area.name} .text,${param.prefix}#${area.name} .simple-internal-link, ${param.prefix}#${area.name} .image-left,${param.prefix}#${area.name}  .image-right, ${param.prefix}#${area.name} .global-image,${param.prefix}#${area.name} .global-image,${param.prefix}#${area.name} .gs,${param.prefix}#${area.name} .qrcode td,${param.prefix}#${area.name} .pdf-head td,  ${param.prefix}#${area.name} .float-image .text,  ${param.prefix}#${area.name} .float-image .zone1,${param.prefix}#${area.name} .float-image .zone2, ${param.prefix}#${area.name} .table td, ${param.prefix}#${area.name} .table th {	
 	<c:if test="${not empty area.finalTextColor}">color: ${area.finalTextColor};</c:if>
