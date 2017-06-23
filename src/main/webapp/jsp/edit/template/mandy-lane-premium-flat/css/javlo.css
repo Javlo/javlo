@@ -496,6 +496,16 @@ ul,li {
 	width: auto;
 }
 
+@media (max-width: 640px) {
+	body #tools {
+		padding: 0;
+		background-image: none;
+	}
+	body #tools h3 {
+		display: none;
+	}		
+}
+
 .action-button span {
 	text-transform: uppercase;
 }
@@ -1276,6 +1286,7 @@ body.previewEdit {
 
 .previewEdit .maincontent {
 	margin: 0;
+	min-width: 120px;
 }
 
 .previewEdit .maincontent_inner {

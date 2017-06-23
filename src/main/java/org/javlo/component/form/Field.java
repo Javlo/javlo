@@ -39,7 +39,9 @@ public class Field {
 	
 	private static final String TYPE_NUMBER = "number";
 
-	protected static List<? extends Object> FIELD_TYPES = Arrays.asList(new String[] { "text", "large-text", "yes-no", "true-false", TYPE_EMAIL, TYPE_NUMBER, "radio", "list", "registered-list", "file", "validation" });
+	public static final String STATIC_TEXT = "static-text";
+
+	protected static List<? extends Object> FIELD_TYPES = Arrays.asList(new String[] { "text", "large-text", "yes-no", "true-false", TYPE_EMAIL, TYPE_NUMBER, "radio", "list", "registered-list", "file", "validation", STATIC_TEXT });
 
 	public Field(String name, String label, String type, String condition, String value, String list, String registeredList, int order, int width) {
 		this.name = name;

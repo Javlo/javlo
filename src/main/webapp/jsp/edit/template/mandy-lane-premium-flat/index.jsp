@@ -36,7 +36,11 @@
 <c:if test="${!contentContext.closePopup}">
 
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
 <title>Javlo : ${currentModule.title}</title>
+
 <link rel="stylesheet" media="screen" href="${info.editTemplateURL}/css/bootstrap/bootstrap.css?ts=${info.ts}" />
 <link rel="stylesheet" href="${info.editTemplateURL}/css/style.css?ts=${info.ts}" /><link rel="stylesheet" media="screen" href="${info.editTemplateURL}/css/style.css?ts=${info.ts}" />
 <link rel="stylesheet" media="screen" href="${info.editTemplateURL}/css/javlo.css?ts=${info.ts}" />
