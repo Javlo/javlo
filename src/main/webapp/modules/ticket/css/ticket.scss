@@ -56,3 +56,19 @@ a.unread {
 .content textarea {
 	width: 100%;
 }
+
+span.label {
+	display: inline-block;
+	width: 150px;
+	font-weight: bold;
+}
+
+.mobile-ticket {
+	.panel-body {
+		padding-top: 0;
+	}     
+	.status {
+		width: 120px;
+		float: right;
+	}
+}

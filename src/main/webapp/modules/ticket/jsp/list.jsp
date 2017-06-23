@@ -2,6 +2,7 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <div class="content">
 
+<c:if test="${!contentContext.device.mobileDevice}">
 <table cellpadding="0" cellspacing="0" border="0" class="dyntable" id="notes">
  <thead>
      <tr>       
@@ -63,26 +64,28 @@
 </c:forEach>
 </tbody>
 <tfoot>
-   <tr>       
-        <tr> 
-        <th class="head1">Authors</th>      
-        <th class="head0">title</th>                  
-        <c:if test="${not info.editContext.lightInterface}">
-        <th class="head1">priority</th>       
-        <th class="head0">create</th>
-        </c:if>
-        <th class="head1">update</th>       
-        <th class="head0">#comments</th>
-        <th class="head1 filter">status</th>
-        <c:if test="${globalContext.master}">
-        <th class="head0 filter">authors</th>
-        <th class="head1 filter">context</th>
-        <th class="head0">share</th>
-       </c:if>        
-     </tr> 
+   <tr> 
+      <th class="head1">Authors</th>      
+      <th class="head0">title</th>                  
+      <c:if test="${not info.editContext.lightInterface}">
+      <th class="head1">priority</th>       
+      <th class="head0">create</th>
+      </c:if>
+      <th class="head1">update</th>       
+      <th class="head0">#comments</th>
+      <th class="head1 filter">status</th>
+      <c:if test="${globalContext.master}">
+      <th class="head0 filter">authors</th>
+      <th class="head1 filter">context</th>
+      <th class="head0">share</th>
+     </c:if>        
    </tr>
 </tfoot>
 </table>
+</c:if>
+<c:if test="${contentContext.device.mobileDevice}">
+<jsp:include page="mobile-list.jsp"></jsp:include>
+</c:if>
 
 <script type="text/javascript">
 jQuery(document).ready(function() {

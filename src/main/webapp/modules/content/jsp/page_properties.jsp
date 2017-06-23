@@ -14,7 +14,7 @@
 	<span class="glyphicon glyphicon-arrow-right"></span>&nbsp;
 	<button class="btn btn-default btn-sm ${info.page.flowIndex==2?'btn-primary':''}" disabled="disabled">Ready</button>&nbsp;
 	<span class="glyphicon glyphicon-arrow-right"></span>&nbsp;	
-	<button class="btn btn-default btn-sm ${info.page.flowIndex==3?'btn-primary':''}" disabled="disabled">Valided</button>&nbsp;
+	<button class="btn btn-default btn-sm ${info.page.flowIndex==3?'btn-primary':''}" disabled="disabled">Validated</button>&nbsp;
 	<span class="glyphicon glyphicon-arrow-right"></span>&nbsp;	
 	<button class="btn btn-default btn-sm ${info.page.flowIndex==4?'btn-primary':''}" disabled="disabled">Live</button>
 	</p>		

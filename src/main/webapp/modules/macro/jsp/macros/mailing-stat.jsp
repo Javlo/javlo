@@ -42,9 +42,37 @@
 						<p>#${click.key}</p>
 					</td>
 				</c:forEach> 
-			</tr></table>			
+			</tr></table>	
+			<div class="byhours">
+			<h2>Read by hours</h2>
+			<div id="graph-${mailing.id}"></div>	
+			</div>		
+			<script type="text/javascript">
+				jQuery(document).ready(function () {
+				    var s1 = [<c:forEach var = "u" begin = "0" end = "23" varStatus="status">${mailing.countReadersByHour[u]}${!status.last?',':''}</c:forEach>];				    
+				    var ticks = [<c:forEach var = "u" begin = "0" end = "23" varStatus="status">'${u} > ${u+1}'${!status.last?',':''}</c:forEach>];
+				 
+				    plot1 = jQuery.jqplot('graph-${mailing.id}', [s1], {
+			            // Only animate if we're not using excanvas (not in IE 7 or IE 8)..
+			            animate: !jQuery.jqplot.use_excanvas,
+			            seriesDefaults:{
+			                renderer:jQuery.jqplot.BarRenderer,
+			                pointLabels: { show: true }
+			            },
+			            axes: {
+			                xaxis: {
+			                    renderer: jQuery.jqplot.CategoryAxisRenderer,
+			                    ticks: ticks
+			                }
+			            },
+			            highlighter: { show: false }
+			        });
+				});
+		</script>
+					
 		</div>
 	</div>
 </c:forEach>
+
 
 

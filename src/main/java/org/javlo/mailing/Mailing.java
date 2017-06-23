@@ -11,6 +11,7 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.text.ParseException;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -36,11 +37,11 @@ import org.javlo.context.ContentContext;
 import org.javlo.helper.PatternHelper;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
-import org.javlo.service.ContentService;
 import org.javlo.user.IUserInfo;
 import org.javlo.user.UserFactory;
 import org.javlo.utils.CSVFactory;
 import org.javlo.utils.ConfigurationProperties;
+import org.javlo.utils.NeverEmptyMap;
 
 public class Mailing {
 
@@ -671,6 +672,21 @@ public class Mailing {
 		return c;
 	}
 	
+	public Map<Integer, Integer> getCountReadersByHour() throws IOException {		
+		Map<Integer, Integer> outReaders = new NeverEmptyMap<Integer, Integer>(Integer.class);
+		Set<String> allReadyCounted = new HashSet<String>();
+		for (FeedBackMailingBean feedBack : getFeedBack()) {			
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(feedBack.getDate());
+			Integer key = cal.get(Calendar.HOUR_OF_DAY);
+			if (!allReadyCounted.contains(feedBack.getEmail())) {
+				outReaders.put(key, outReaders.get(key)+1);
+				allReadyCounted.add(feedBack.getEmail());
+			}
+		}
+		return outReaders;
+	}
+	
 	public Map<String,Integer> getCountClicks() throws IOException {
 		Map<String,Integer> outClicks = new HashMap<String, Integer>();				
 		for (FeedBackMailingBean feedBack : getFeedBack()) {
@@ -685,7 +701,7 @@ public class Mailing {
 		}
 		return outClicks;
 	}
-
+	
 	public int getCountUnsubscribe() throws IOException {
 		int c = 0;
 		Set<String> allReadyCounted = new HashSet<String>();

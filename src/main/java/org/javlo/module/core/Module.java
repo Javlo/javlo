@@ -5,6 +5,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -329,8 +330,8 @@ public class Module {
 	private String toolsRenderer = null;
 	private String defaultToolsRenderer = null;
 	protected IModuleAction action = emptyAction;
-	private final Collection<String> cssURI = new LinkedList<String>();
-	private final Collection<String> jsURI = new LinkedList<String>();
+	private final List<String> cssURI = new LinkedList<String>();
+	private final List<String> jsURI = new LinkedList<String>();
 	private String renderer;
 	private String defaultRenderer;
 	private String mobileRenderer;
@@ -430,7 +431,7 @@ public class Module {
 		File cssFolder = new File(URLHelper.mergePath(moduleRoot.getAbsolutePath(), CSS_FOLDER));
 		if (cssFolder.isDirectory()) {
 			File[] cssFiles = cssFolder.listFiles();
-			Arrays.sort(cssFiles, new FileComparator(FileComparator.NAME, true));
+			Arrays.sort(cssFiles, new FileComparator(FileComparator.NAME, true));			
 			for (File file : cssFiles) {
 				String ext = StringHelper.getFileExtension(file.getName());
 				if (file.isFile() && (ext.equalsIgnoreCase("css") || ext.equalsIgnoreCase("less") || ext.equalsIgnoreCase("scss"))) {
@@ -440,11 +441,13 @@ public class Module {
 					}
 					if (ext.equalsIgnoreCase("scss")) {
 						fileName = fileName.substring(0, fileName.length() - ".scss".length()) + ".css";
-					}
+					}					
 					String url = URLHelper.mergePath("/", getModuleFolder() + '/' + getName() + '/' + CSS_FOLDER + '/' + fileName);
-					cssURI.add(url);
+					if (!cssURI.contains(url)) {
+						cssURI.add(url);
+					}
 				}
-			}
+			}			
 		}
 
 		String[] allExternalCSS = null;
@@ -467,6 +470,7 @@ public class Module {
 				}
 			}
 		}
+		Collections.sort(cssURI);
 
 		/* js */
 		File jsFolder = new File(URLHelper.mergePath(moduleRoot.getAbsolutePath(), JS_FOLDER));
@@ -504,6 +508,7 @@ public class Module {
 				}
 			}
 		}
+		Collections.sort(jsURI);
 
 		/* main renderer */
 		renderer = config.get("renderer");
