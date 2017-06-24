@@ -76,3 +76,14 @@ span.label {
 .standard-form select {
 	height: 21px;
 }
+
+@media (max-width: 764px) {
+	#create-ticket {
+		select {
+			width: 200px;
+		}
+		.col-sm-4 {
+			margin-bottom: 3px;
+		}
+	}
+}
