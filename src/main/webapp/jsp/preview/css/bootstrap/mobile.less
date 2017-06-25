@@ -1,30 +1,38 @@
 @media (max-width: 768px) {
-	#preview_command .header {
-		.logo, .undo, .btn-mode, #pc_edit_mode_button, .btn-refresh, .btn-export, .select, .btn-search, .btn-send, .btn-user, #copy_page, #paste_page, #pc_del_page_form {
-			display: none;
-		}
-		.actions-wrapper {
-			padding: 10px 0;
-		}
-		li.home {
-			padding: 15px 5px 15px 10px;
-			margin: 0;
-		}
-		.users {
-			float: left;
-			padding: 10px 0;
+	#preview_command {
+		.header {
+			.logo, .undo, .btn-mode, #pc_edit_mode_button, .btn-refresh, .btn-export, .select, .btn-search, .btn-send, .btn-user, #copy_page, #paste_page, #pc_del_page_form {
+				display: none;
+			}
+			.actions-wrapper {
+				padding: 10px 0;
+			}
+			li.home {
+				padding: 15px 5px 15px 10px;
+				margin: 0;
+			}
+			.users {
+				float: left;
+				padding: 10px 0;
+			}	
+			.page-actions {
+				padding-right: 0;
+			}	
+			.publish .flow-status {
+				display: inline;
+			}
+			li {    
+	    		margin-right: 2px;
+			}
+			#pc_publish_form .text {
+	 		   display: inline;
+			}
 		}	
-		.page-actions {
-			padding-right: 0;
-		}	
-		.publish .flow-status {
-			display: inline;
-		}
-		li {    
-    		margin-right: 2px;
-		}
-		#pc_publish_form .text {
- 		   display: inline;
-		}		
-	}
+		.integrity-message, #discution {
+			position: fixed;
+			left: 3px;
+			top: 30px;
+			width: 92%;
+		}			
+	}	
 }
