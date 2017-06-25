@@ -1409,6 +1409,15 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	public boolean isOpenPlatform() {
 		return getPlatformType().equals(StaticConfig.OPEN_PLATFORM);
 	}
+	
+	public boolean isComponentsFiltered() {
+		return properties.getBoolean("components.filtered", staticConfig.isComponentsFiltered());
+	}
+	
+	public void setComponentsFiltered(boolean filtered) {
+		properties.setProperty("components.filtered", filtered);
+		save();
+	}
 
 	public boolean isMailingPlatform() {
 		return getPlatformType().equals(StaticConfig.MAILING_PLATFORM);

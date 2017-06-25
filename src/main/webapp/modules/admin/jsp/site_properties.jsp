@@ -131,7 +131,7 @@
 </div>
 
 <div class="checkbox">	
-	<label class="suffix"><input type="checkbox" name="switch-default-language" ${currentContext.autoSwitchToDefaultLanguage?'checked="checked"':""}" />
+	<label class="suffix"><input type="checkbox" name="switch-default-language" ${currentContext.autoSwitchToDefaultLanguage?'checked="checked"':""} />
 	${i18n.edit['admin.form.switch-default-language']}</label>
 </div>
 
@@ -169,6 +169,14 @@
 	<label for="platform">${i18n.edit['admin.title.platform']}</label>
 	<input class="form-control" type="text" id="platform" name="platform" value="${currentContext.platformType}" />	
 </div>
+
+<div class="checkbox">		
+	<label>
+		 <input type="checkbox" id="components-filtered" name="components-filtered" ${currentContext.componentsFiltered?'checked="checked"':""}>
+	     ${i18n.edit['admin.title.components-filtered']}		      
+	</label>
+</div>
+
 </div>
 
 <div class="col-sm-6">
@@ -207,7 +215,7 @@
 	${i18n.edit['admin.form.extend-menu']}</label>	
 </div>
 
-<div class="form-group">	
+<div class="checkbox">	
 	<label><input type="checkbox" id="preview-mode" name="preview-mode" ${currentContext.previewMode?'checked="checked"':""}" />
 	${i18n.edit['admin.form.preview-mode']}</label>	
 </div>

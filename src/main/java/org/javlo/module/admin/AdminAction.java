@@ -119,6 +119,7 @@ public class AdminAction extends AbstractModuleAction {
 		private boolean onlyCreatorModify = false;
 		private boolean collaborativeMode = false;
 		private boolean portail;
+		private boolean componentsFiltered;
 		private String noPopupDomain;
 		private String URIAlias;
 		private boolean master = false;
@@ -221,6 +222,8 @@ public class AdminAction extends AbstractModuleAction {
 			setCollaborativeMode(globalContext.isCollaborativeMode());
 			
 			setPortail(globalContext.isPortail());
+			
+			setComponentsFiltered(globalContext.isComponentsFiltered());
 
 			setTemplateData(globalContext.getTemplateData());
 
@@ -821,6 +824,14 @@ public class AdminAction extends AbstractModuleAction {
 			this.portail = portail;
 		}
 
+		public boolean isComponentsFiltered() {
+			return componentsFiltered;
+		}
+
+		public void setComponentsFiltered(boolean componentsFiltered) {
+			this.componentsFiltered = componentsFiltered;
+		}
+
 	}
 
 	public static class ComponentBean {
@@ -1181,6 +1192,7 @@ public class AdminAction extends AbstractModuleAction {
 					currentGlobalContext.setPlatformType(requestService.getParameter("platform", StaticConfig.MAILING_PLATFORM));
 					currentGlobalContext.setReversedLink(requestService.getParameter("reversedlink", null) != null);
 					currentGlobalContext.setContentIntegrity(requestService.getParameter("integrity", ""));
+					currentGlobalContext.setComponentsFiltered(StringHelper.isTrue(requestService.getParameter("components-filtered", null)));
 					
 					try {
 						currentGlobalContext.setURLFactory(requestService.getParameter("urlfactory", ""));
@@ -1690,7 +1702,7 @@ public class AdminAction extends AbstractModuleAction {
 		}
 		return null;
 	}
-
+	
 	public static final String performEditStaticConfig(HttpServletRequest request, RequestService requestService, ContentContext ctx, Module currentModule, StaticConfig staticConfig) throws FileNotFoundException, IOException, NoSuchMethodException, ClassNotFoundException, IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException {
 		request.setAttribute("config_content", staticConfig.getAllProperties());
 		String uri = request.getRequestURI();

@@ -28,7 +28,7 @@
 	</div>
 </div>
 </c:if>
-<c:if test="${globalContext.staticConfig.componentsFiltered}">
+<c:if test="${globalContext.componentsFiltered}">
 <script type="text/javascript">
 <!--
 function displayComplexity(l) {
@@ -45,7 +45,7 @@ function displayComplexity(l) {
 </c:if>
 <c:if test="${info.admin}"><button onclick="editPreview.openModal('Components', '${info.currentEditURL}?module=admin&context=${info.contextKey}&webaction=admin.previewEditComponent&previewEdit=true'); return false;" class="btn btn-default btn-xs pull-right"><span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span></button></c:if>
  <h2><span class="glyphicon glyphicon-briefcase" aria-hidden="true"></span>Content</h2>
-<c:if test="${globalContext.staticConfig.componentsFiltered}">
+<c:if test="${globalContext.componentsFiltered}">
 <div class="btn-group btn-group-justified components-group" role="group">
   <div class="btn-group" role="group"> 	
   <button type="button" class="btn btn-default btn-xs active btn-1" role="group" onclick="displayComplexity(1);">${i18n.edit['preview.component-group.basic']}</button>
@@ -58,7 +58,7 @@ function displayComplexity(l) {
   </div></c:if>
 </div>
 </c:if>
-<div class="component-list height-to-bottom ${globalContext.staticConfig.componentsFiltered?'display-1':''}">
+<div class="component-list height-to-bottom ${globalContext.componentsFiltered?'display-1':''}">
 <c:set var="cat" value="" />
 <c:forEach var="comp" items="${components}">
 <c:if test="${comp.metaTitle}">
