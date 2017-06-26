@@ -74,6 +74,8 @@ import org.xml.sax.SAXParseException;
 
 public class PersistenceService {
 
+	private static final String CACHE_TRACK_FILE = "/cache_dm.properties";
+
 	public static boolean STORE_DATA_PROPERTIES = false;
 
 	public static final class MetaPersistenceBean {
@@ -304,7 +306,7 @@ public class PersistenceService {
 					monthFound.add(key);
 				}
 			}
-		}		
+		}
 		if (!canRedo()) {
 			int workVersion = getVersion() + 1;
 			File file = new File(getPersistenceFilePrefix(ContentContext.PREVIEW_MODE) + '_' + workVersion + ".xml");
@@ -318,29 +320,26 @@ public class PersistenceService {
 				file = new File(getPersistenceFilePrefix(ContentContext.PREVIEW_MODE) + '_' + workVersion + ".xml");
 				propFile = new File(getPersistenceFilePrefix(ContentContext.PREVIEW_MODE) + '_' + workVersion + ".properties");
 			}
-		}		
+		}
 		int workVersion = getVersion() - UNDO_DEPTH;
 		File file = new File(getPersistenceFilePrefix(ContentContext.PREVIEW_MODE) + '_' + workVersion + ".xml");
 		File propFile = new File(getPersistenceFilePrefix(ContentContext.PREVIEW_MODE) + '_' + workVersion + ".properties");
 		if (file.exists()) {
 			file.delete();
-			workVersion=0;
+			workVersion = 0;
 		}
 		if (propFile.exists()) {
 			propFile.delete();
 		}
-		/*while (workVersion > 0) {
-			workVersion--;
-			if (file.exists()) {
-				file.delete();
-				workVersion=0;
-			}
-			if (propFile.exists()) {
-				propFile.delete();
-			}
-			file = new File(getPersistenceFilePrefix(ContentContext.PREVIEW_MODE) + '_' + workVersion + ".xml");
-			propFile = new File(getPersistenceFilePrefix(ContentContext.PREVIEW_MODE) + '_' + workVersion + ".properties");
-		}*/
+		/*
+		 * while (workVersion > 0) { workVersion--; if (file.exists()) {
+		 * file.delete(); workVersion=0; } if (propFile.exists()) {
+		 * propFile.delete(); } file = new
+		 * File(getPersistenceFilePrefix(ContentContext.PREVIEW_MODE) + '_' +
+		 * workVersion + ".xml"); propFile = new
+		 * File(getPersistenceFilePrefix(ContentContext.PREVIEW_MODE) + '_' +
+		 * workVersion + ".properties"); }
+		 */
 		LocalLogger.stepCount("store", "workVersion");
 	}
 
@@ -375,9 +374,9 @@ public class PersistenceService {
 		/** search preview elements **/
 		File[] backupPreview = new File(getDirectory()).listFiles(BackupPreviewFileFilter.instance);
 		if (backupPreview != null) {
-			for (File file : backupPreview) {				
+			for (File file : backupPreview) {
 				if (!file.getName().endsWith(".error")) {
-					String version = file.getName().replaceAll(STORE_FILE_PREFIX + ContentContext.PREVIEW_MODE + ".", "").replaceAll(".xml", "").replaceAll(".zip", "");					
+					String version = file.getName().replaceAll(STORE_FILE_PREFIX + ContentContext.PREVIEW_MODE + ".", "").replaceAll(".xml", "").replaceAll(".zip", "");
 					int versionInteger = -1;
 					try {
 						versionInteger = Integer.parseInt(version);
@@ -486,7 +485,7 @@ public class PersistenceService {
 	public synchronized Properties getTrackCache() {
 		if (trackCache == null) {
 			trackCache = new Properties();
-			File file = new File(getTrackingDirectory() + "/cache_dm.properties");
+			File file = new File(getTrackingDirectory() + CACHE_TRACK_FILE);
 			if (!file.exists()) {
 				file.getParentFile().mkdirs();
 				try {
@@ -508,11 +507,19 @@ public class PersistenceService {
 		return trackCache;
 	}
 
+	public synchronized void clearTrackCache() {
+		File file = new File(getTrackingDirectory() + CACHE_TRACK_FILE);
+		if (!file.exists()) {
+			file.delete();
+
+		}
+	}
+
 	public synchronized void storeTrackCache() {
 		if (trackCache == null) {
 			return;
 		}
-		File file = new File(getTrackingDirectory() + "/cache_dm.properties");
+		File file = new File(getTrackingDirectory() + CACHE_TRACK_FILE);
 		FileOutputStream out = null;
 		try {
 			out = new FileOutputStream(file);
@@ -528,7 +535,7 @@ public class PersistenceService {
 		int year = cal.get(Calendar.YEAR);
 		int mount = cal.get(Calendar.MONTH);
 		int day = cal.get(Calendar.DAY_OF_MONTH);
-		
+
 		File dir = new File(getTrackingDirectory() + '/' + year + '/' + mount);
 		File file = new File(getTrackingDirectory() + '/' + year + '/' + mount + "/tracks-" + day + ".csv");
 
@@ -1015,7 +1022,7 @@ public class PersistenceService {
 		int error = 0;
 		for (ComponentBean comp : comps) {
 			if (componentsId.contains(comp.getId())) {
-				out.println("2 comp with same id found (type:" + comp.getType() + " id:" + comp.getId()+" context:"+ctx.getGlobalContext().getContextKey());
+				out.println("2 comp with same id found (type:" + comp.getType() + " id:" + comp.getId() + " context:" + ctx.getGlobalContext().getContextKey());
 				error++;
 			} else {
 				componentsId.add(comp.getId());
@@ -1264,7 +1271,13 @@ public class PersistenceService {
 							String[] trackInfo = line.split(",");
 							String userAgent = null;
 							if (trackInfo.length > 7) {
-								userAgent = line.substring(line.indexOf(trackInfo[7])); // hack because user agent can contains ','
+								userAgent = line.substring(line.indexOf(trackInfo[7])); // hack
+																						// because
+																						// user
+																						// agent
+																						// can
+																						// contains
+																						// ','
 							}
 							if (trackInfo.length > 5) {
 								if (!NetHelper.isRobot(userAgent)) {

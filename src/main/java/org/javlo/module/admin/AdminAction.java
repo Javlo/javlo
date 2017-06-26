@@ -1541,7 +1541,7 @@ public class AdminAction extends AbstractModuleAction {
 		globalContext.resetURLFactory();
 		globalContext.storeRedirectUrlList();
 		globalContext.resetRedirectUrlMap();
-		globalContext.reset404UrlMap();
+		globalContext.reset404UrlMap();		
 		String currentContextKey = request.getParameter("context");
 		if (currentContextKey == null) { // param context is used only for check
 											// the type of call, but you can
@@ -1566,7 +1566,8 @@ public class AdminAction extends AbstractModuleAction {
 		staticConfig.clearCache();
 		TimeTracker.reset(staticConfig);
 		NotificationService.getInstance(globalContext).clearList();
-		PersistenceService.getInstance(globalContext).flush();
+		PersistenceService.getInstance(globalContext).flush();	
+		PersistenceService.getInstance(globalContext).clearTrackCache();
 		System.gc();
 		return null;
 	}
