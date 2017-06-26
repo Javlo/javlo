@@ -40,8 +40,8 @@ function updateYear(year) {
 	        },
 	        legend: {
                 show: true,
-                location: 'b',
-                placement: 'outside',
+                location: 'ne',
+                placement: 'inside',
 				labels:['desktop', 'mobile']
             },
             axes: {            
