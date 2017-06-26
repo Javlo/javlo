@@ -1264,7 +1264,7 @@ public class PersistenceService {
 							String[] trackInfo = line.split(",");
 							String userAgent = null;
 							if (trackInfo.length > 7) {
-								userAgent = trackInfo[7];
+								userAgent = line.substring(line.indexOf(trackInfo[7])); // hack because user agent can contains ','
 							}
 							if (trackInfo.length > 5) {
 								if (!NetHelper.isRobot(userAgent)) {
