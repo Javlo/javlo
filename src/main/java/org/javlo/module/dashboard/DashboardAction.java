@@ -234,16 +234,11 @@ public class DashboardAction extends AbstractModuleAction {
 			ObjectBuilder ajaxMap = LangHelper.object();
 			ListBuilder datas = ajaxMap.list("datas");
 			ListBuilder[] desktopAndMobile = new ListBuilder[] {datas.addList(), datas.addList()};
-			int size=0;
 			for (Map.Entry<Integer, Integer[]> input : map.entrySet()) {
 				desktopAndMobile[0].add(input.getValue()[0]);
 				desktopAndMobile[1].add(input.getValue()[1]);
-				size++;
+				
 			}
-//			for (int i=size; i<=12; i++) {
-//				desktopAndMobile[0].add(0);
-//				desktopAndMobile[1].add(0);				
-//			}
 			ctx.setAjaxMap(ajaxMap.getMap());
 
 		} else if (type.equals("languages")) {
