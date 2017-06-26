@@ -25,7 +25,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.ContentManager;
-import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.context.StatContext;
 import org.javlo.helper.NetHelper;
@@ -36,9 +35,6 @@ import org.javlo.service.PersistenceService;
 import org.javlo.service.RequestService;
 import org.javlo.service.exception.ServiceException;
 import org.javlo.servlet.ImageTransformServlet;
-import org.javlo.user.IUserFactory;
-import org.javlo.user.User;
-import org.javlo.user.UserFactory;
 import org.javlo.ztatic.StaticInfo;
 
 /**
@@ -501,6 +497,9 @@ public class Tracker {
 		}
 		final String CACHE_KEY_PREFIX = "sess2clk_";
 		Map<Integer, Integer[]> outStat = new HashMap<Integer, Integer[]>();
+		for (int i=0; i<12; i++) {
+			outStat.put(i, new Integer[] {0,0});
+		}
 		Calendar from = Calendar.getInstance();
 		from.setTime(statCtx.getFrom());
 		from = TimeHelper.convertRemoveAfterMonth(from);

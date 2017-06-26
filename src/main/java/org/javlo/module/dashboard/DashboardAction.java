@@ -240,10 +240,10 @@ public class DashboardAction extends AbstractModuleAction {
 				desktopAndMobile[1].add(input.getValue()[1]);
 				size++;
 			}
-			for (int i=size; i<=12; i++) {
-				desktopAndMobile[0].add(0);
-				desktopAndMobile[1].add(0);				
-			}
+//			for (int i=size; i<=12; i++) {
+//				desktopAndMobile[0].add(0);
+//				desktopAndMobile[1].add(0);				
+//			}
 			ctx.setAjaxMap(ajaxMap.getMap());
 
 		} else if (type.equals("languages")) {

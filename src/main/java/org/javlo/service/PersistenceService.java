@@ -73,7 +73,7 @@ import org.javlo.ztatic.StaticInfo;
 import org.xml.sax.SAXParseException;
 
 public class PersistenceService {
-	
+
 	public static boolean STORE_DATA_PROPERTIES = false;
 
 	public static final class MetaPersistenceBean {
@@ -512,7 +512,7 @@ public class PersistenceService {
 		if (trackCache == null) {
 			return;
 		}
-		File file = new File(getTrackingDirectory() + "/cache.properties");
+		File file = new File(getTrackingDirectory() + "/cache_dm.properties");
 		FileOutputStream out = null;
 		try {
 			out = new FileOutputStream(file);
