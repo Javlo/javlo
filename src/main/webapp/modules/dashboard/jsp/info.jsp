@@ -26,8 +26,6 @@
 		    	dataType: "json",
 		    	url: '${ajaxURL}'
 		    }).done(function(jsonObj) {
-		    	  console.log(jsonObj);
-		    	  console.log(jsonObj.data.usedMemoryPercent);
 		    	  jQuery('#memory-bar').attr("style", "width:"+jsonObj.data.usedMemoryPercent+"%");
 		    	  jQuery('#memory-bar').html("<html><small>"+jsonObj.data.usedMemoryLabel+"</small></html>")
 		    });		

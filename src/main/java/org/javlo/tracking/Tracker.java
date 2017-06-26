@@ -28,6 +28,7 @@ import org.javlo.context.ContentManager;
 import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.context.StatContext;
+import org.javlo.helper.NetHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.TimeHelper;
 import org.javlo.helper.URLHelper;
@@ -485,11 +486,11 @@ public class Tracker {
 		return getSessionByMoment(statCtx, Calendar.MONTH);
 	}
 	
-	public Map<Integer, Integer> _getSession2ClickByMonth(StatContext statCtx, GlobalContext globalContext) {
+	/*public Map<Integer, Integer> _getSession2ClickByMonth(StatContext statCtx, GlobalContext globalContext) {
 		return getSession2ClickByMoment(statCtx, Calendar.MONTH);
-	}
+	}*/
 
-	public Map<Integer, Integer> getSession2ClickByMonth(StatContext statCtx, GlobalContext globalContext) {
+	public Map<Integer, Integer[]> getSession2ClickByMonth(StatContext statCtx, GlobalContext globalContext) {
 		Properties cache = null;
 		if (globalContext != null) {
 			try {
@@ -499,7 +500,7 @@ public class Tracker {
 			}
 		}
 		final String CACHE_KEY_PREFIX = "sess2clk_";
-		Map<Integer, Integer> outStat = new HashMap<Integer, Integer>();
+		Map<Integer, Integer[]> outStat = new HashMap<Integer, Integer[]>();
 		Calendar from = Calendar.getInstance();
 		from.setTime(statCtx.getFrom());
 		from = TimeHelper.convertRemoveAfterMonth(from);
@@ -512,20 +513,23 @@ public class Tracker {
 			localTo.setTime(from.getTime());
 			localTo.add(Calendar.MONTH, 1);
 			String key = CACHE_KEY_PREFIX + from.get(Calendar.YEAR) + '-' + from.get(Calendar.MONTH);
-			String val = null;
+			String val0 = null;
+			String val1 = null;
 			if (cache != null) {
-				val = cache.getProperty(key);
+				val0 = cache.getProperty(key+"-0");
+				val1 = cache.getProperty(key+"-1");
 			}
-			if (val != null) {
-				outStat.put(from.get(Calendar.MONTH), Integer.parseInt(val));
+			if (val0 != null || val1 != null) {
+				outStat.put(from.get(Calendar.MONTH), new Integer[] {Integer.parseInt(StringHelper.neverNull(val0, "0")),Integer.parseInt(StringHelper.neverNull(val1, "0"))});
 			} else {				
 				statCtx.setFrom(from.getTime());
 				statCtx.setTo(localTo.getTime());
-				Map<Integer, Integer> data = getSession2ClickByMoment(statCtx, Calendar.MONTH);
+				Map<Integer, Integer[]> data = getSession2ClickByMoment(statCtx, Calendar.MONTH);
 				if (data.size() == 1) {
-					int click = data.entrySet().iterator().next().getValue();
+					Integer[] click = data.entrySet().iterator().next().getValue();
 					if (cache != null && localTo.before(now)) {
-						cache.setProperty(key, ""+click);
+						cache.setProperty(key+"-0", ""+click[0]);
+						cache.setProperty(key+"-1", ""+click[1]);
 					}
 					outStat.put(from.get(Calendar.MONTH), click);
 					try {
@@ -587,13 +591,13 @@ public class Tracker {
 	 * @return a map day (Calendar) is the key count of click is the value
 	 * @throws DAOException
 	 */
-	private Map<Integer, Integer> getSession2ClickByMoment(StatContext statCtx, int moment) {
+	private Map<Integer, Integer[]> getSession2ClickByMoment(StatContext statCtx, int moment) {
 		/*
 		 * get all tracks because a "real" session is a session with get html
 		 * AND ressources
 		 */
 		Track[] tracks = getClickTracks(statCtx.getFrom(), statCtx.getTo());
-		Map<Integer, Integer> res = new HashMap<Integer, Integer>();
+		Map<Integer, Integer[]> res = new HashMap<Integer, Integer[]>();
 		GregorianCalendar cal = new GregorianCalendar();
 		Set<String> sessionIdFound = new HashSet<String>();
 		Set<String> secondSessionIdFound = new HashSet<String>();
@@ -608,11 +612,16 @@ public class Tracker {
 			} else if (!secondSessionIdFound.contains(track.getSessionId()) && viewSessionFound.contains(track.getSessionId())) {
 				cal.setTimeInMillis(track.getTime());
 				Integer key = new Integer(cal.get(moment));
-				Integer clicks = res.get(key);
+				Integer[] clicks = res.get(key);
 				if (clicks == null) {
-					clicks = new Integer(0);
+					clicks = new Integer[] {0,0};
 				}
-				clicks = new Integer(clicks.intValue() + 1);
+				if (!NetHelper.isMobile(track.getUserAgent())) {
+					clicks[0] = new Integer(clicks[0].intValue() + 1);
+				} else {
+					clicks[1] = new Integer(clicks[1].intValue() + 1);	
+				}
+				
 				res.put(key, clicks);
 				secondSessionIdFound.add(tracks[i].getSessionId());
 			}

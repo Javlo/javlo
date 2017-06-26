@@ -486,7 +486,7 @@ public class PersistenceService {
 	public synchronized Properties getTrackCache() {
 		if (trackCache == null) {
 			trackCache = new Properties();
-			File file = new File(getTrackingDirectory() + "/cache.properties");
+			File file = new File(getTrackingDirectory() + "/cache_dm.properties");
 			if (!file.exists()) {
 				file.getParentFile().mkdirs();
 				try {

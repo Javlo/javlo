@@ -11,7 +11,6 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -44,7 +43,7 @@ import org.javlo.user.AdminUserSecurity;
 import org.javlo.utils.MemoryBean;
 
 public class DashboardAction extends AbstractModuleAction {
-	
+
 	public static class DebugNoteBean {
 		private String message;
 		private String authors;
@@ -148,15 +147,15 @@ public class DashboardAction extends AbstractModuleAction {
 
 		ModulesContext dashboardContext = ModulesContext.getInstance(ctx.getRequest().getSession(), ctx.getGlobalContext());
 		boolean report = false;
-		/*for (Box box : dashboardContext.getCurrentModule().getMainBoxes()) {
-			if (box.getName().equals("report")) {
-				report = true;
-				ctx.getRequest().setAttribute("report", ReportFactory.getReport(ctx));
-			}
-		}*/
+		/*
+		 * for (Box box : dashboardContext.getCurrentModule().getMainBoxes()) {
+		 * if (box.getName().equals("report")) { report = true;
+		 * ctx.getRequest().setAttribute("report",
+		 * ReportFactory.getReport(ctx)); } }
+		 */
 		if (dashboardContext.getCurrentModule().getRenderer() != null && dashboardContext.getCurrentModule().getRenderer().contains("report")) {
 			report = true;
-			ctx.getRequest().setAttribute("report", ReportFactory.getReport(ctx));			
+			ctx.getRequest().setAttribute("report", ReportFactory.getReport(ctx));
 		}
 		boolean pagelist = false;
 		if (dashboardContext.getCurrentModule().getRenderer() != null && dashboardContext.getCurrentModule().getRenderer().contains("pagelist")) {
@@ -176,10 +175,10 @@ public class DashboardAction extends AbstractModuleAction {
 			}
 		}
 
-		String trackerDate = ctx.getRequest().getParameter("date");		
+		String trackerDate = ctx.getRequest().getParameter("date");
 		if (trackerDate != null) {
-			Date date = StringHelper.smartParseDate(trackerDate);			
-			ctx.getRequest().setAttribute("date", StringHelper.renderDate(date));			
+			Date date = StringHelper.smartParseDate(trackerDate);
+			ctx.getRequest().setAttribute("date", StringHelper.renderDate(date));
 			ctx.getRequest().setAttribute("tracks", Tracker.getTracker(globalContext, ctx.getRequest().getSession()).getAllTrack(date));
 		} else {
 			/* debug notes */
@@ -197,7 +196,7 @@ public class DashboardAction extends AbstractModuleAction {
 			ctx.getRequest().setAttribute("debugNotes", debugNoteList);
 		}
 		return msg;
-	}	
+	}
 
 	public static String performReadTracker(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess, GlobalContext globalContext, HttpSession session, HttpServletRequest request) throws Exception {
 		String type = rs.getParameter("type", null);
@@ -211,12 +210,13 @@ public class DashboardAction extends AbstractModuleAction {
 		statCtx.setTo(new Date(now.getTime().getTime()));
 		now.add(Calendar.DAY_OF_YEAR, -30);
 		statCtx.setFrom(new Date(now.getTime().getTime()));
-		
+
 		if (type.equals("year")) {
-			//Map<String, Integer> ajaxMap = new LinkedHashMap<String, Integer>();
-			String year = rs.getParameter("y", ""+now.get(Calendar.YEAR));
+			// Map<String, Integer> ajaxMap = new LinkedHashMap<String,
+			// Integer>();
+			String year = rs.getParameter("y", "" + now.get(Calendar.YEAR));
 			Calendar cal = Calendar.getInstance();
-			cal.set(Calendar.YEAR, Integer.parseInt(year));			
+			cal.set(Calendar.YEAR, Integer.parseInt(year));
 			cal.set(Calendar.MONTH, 11);
 			cal.set(Calendar.DAY_OF_MONTH, 31);
 			cal.set(Calendar.HOUR, 23);
@@ -230,16 +230,22 @@ public class DashboardAction extends AbstractModuleAction {
 			cal.set(Calendar.MINUTE, 0);
 			cal.set(Calendar.SECOND, 0);
 			statCtx.setFrom(cal.getTime());
-			Map<Integer, Integer> map = tracker.getSession2ClickByMonth(statCtx, globalContext);
+			Map<Integer, Integer[]> map = tracker.getSession2ClickByMonth(statCtx, globalContext);
 			ObjectBuilder ajaxMap = LangHelper.object();
 			ListBuilder datas = ajaxMap.list("datas");
-			for (Map.Entry<Integer, Integer> input : map.entrySet()) {
-				cal.set(Calendar.MONTH, input.getKey());
-				String month = cal.getDisplayName(Calendar.MONTH, Calendar.LONG, new Locale(ctx.getGlobalContext().getEditLanguage(session)));
-				datas.addList().add(month).add(input.getValue());				
+			ListBuilder[] desktopAndMobile = new ListBuilder[] {datas.addList(), datas.addList()};
+			int size=0;
+			for (Map.Entry<Integer, Integer[]> input : map.entrySet()) {
+				desktopAndMobile[0].add(input.getValue()[0]);
+				desktopAndMobile[1].add(input.getValue()[1]);
+				size++;
+			}
+			for (int i=size; i<=12; i++) {
+				desktopAndMobile[0].add(0);
+				desktopAndMobile[1].add(0);				
 			}
 			ctx.setAjaxMap(ajaxMap.getMap());
-			
+
 		} else if (type.equals("languages")) {
 			ObjectBuilder ajaxMap = LangHelper.object();
 			List<Entry<String, Integer>> languages = new LinkedList<Map.Entry<String, Integer>>(tracker.getLanguage(statCtx).entrySet());
@@ -414,23 +420,24 @@ public class DashboardAction extends AbstractModuleAction {
 		return null;
 
 	}
-	
+
 	public static String performReportPage(RequestService rs, ContentContext ctx, HttpSession session, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
 		ModulesContext dashboardContext = ModulesContext.getInstance(session, ctx.getGlobalContext());
 		dashboardContext.getCurrentModule().clearAllBoxes();
 		dashboardContext.getCurrentModule().setRenderer("/jsp/report.jsp");
 		dashboardContext.getCurrentModule().createSideBox("report-filter", "Report actions", "/jsp/report-filter.jsp", true);
-		//dashboardContext.getCurrentModule().addMainBox("report", "report", "/jsp/report.jsp", false);
+		// dashboardContext.getCurrentModule().addMainBox("report", "report",
+		// "/jsp/report.jsp", false);
 		return null;
 	}
-	
+
 	public static String performListpage(RequestService rs, ContentContext ctx, HttpSession session, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
 		ModulesContext dashboardContext = ModulesContext.getInstance(session, ctx.getGlobalContext());
 		dashboardContext.getCurrentModule().clearAllBoxes();
 		dashboardContext.getCurrentModule().setRenderer("/jsp/pagelist.jsp");
 		return null;
 	}
-	
+
 	public static String performFilter(RequestService rs, ContentContext ctx, HttpSession session, MessageRepository messageRepository, I18nAccess i18nAccess) throws ParseException {
 		ReportFilter reportFilter = ReportFilter.getInstance(session);
 		String startDate = rs.getParameter("start-date", null);
@@ -439,8 +446,8 @@ public class DashboardAction extends AbstractModuleAction {
 		}
 		return null;
 	}
-	
-	public static String performGarbage (ContentContext ctx) throws Exception {
+
+	public static String performGarbage(ContentContext ctx) throws Exception {
 		if (!AdminUserSecurity.getInstance().isAdmin(ctx.getCurrentEditUser())) {
 			return "ERROR: you have not suffisant right to do this action.";
 		} else {
@@ -448,6 +455,5 @@ public class DashboardAction extends AbstractModuleAction {
 			return null;
 		}
 	}
-	
-	
+
 }

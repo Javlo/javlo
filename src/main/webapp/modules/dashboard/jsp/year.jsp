@@ -31,18 +31,25 @@ function updateYear(year) {
 	}
 }).done(function(jsonObj) {	 
 	jQuery.jqplot.config.enablePlugins = true;
-	    plot1 = jQuery.jqplot('year-chart', [jsonObj.datas], {        
+	    plot1 = jQuery.jqplot('year-chart', jsonObj.datas, {        
 	        animate: !jQuery.jqplot.use_excanvas,
+	        stackSeries: true,
 	        seriesDefaults:{
 	            renderer:jQuery.jqplot.BarRenderer,
 	            pointLabels: { show: true }
 	        },
-	        axes: {
-	            xaxis: {
-	                renderer: jQuery.jqplot.CategoryAxisRenderer,	                
-	            }
-	        },
-	        highlighter: { show: false }
+	        legend: {
+                show: true,
+                location: 'b',
+                placement: 'outside',
+				labels:['desktop', 'mobile']
+            },
+            axes: {            
+                xaxis: {
+                    renderer: jQuery.jqplot.CategoryAxisRenderer,
+                    ticks: ['${info.months[0]}', '${info.months[1]}', '${info.months[2]}', '${info.months[3]}', '${info.months[4]}', '${info.months[5]}', '${info.months[6]}', '${info.months[7]}', '${info.months[8]}', '${info.months[9]}', '${info.months[10]}', '${info.months[11]}']
+                }
+            }	        
 	    }); 
 	    
 });

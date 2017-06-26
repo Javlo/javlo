@@ -1122,6 +1122,15 @@ public class NetHelper {
 			return userAgent.contains("bot") || userAgent.contains("robot");
 		}
 	}
+	
+	public static boolean isMobile(String userAgent) {
+		if (userAgent == null) {
+			return false;
+		} else {
+			userAgent = userAgent.toLowerCase();
+			return userAgent.contains("mobile");
+		}
+	}
 
 	/**
 	 * remove params of a url
