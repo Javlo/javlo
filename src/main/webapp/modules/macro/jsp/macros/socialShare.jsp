@@ -2,6 +2,8 @@
 %><%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"
 %>
 
+<div class="alert alert-warning" role="alert">${i18n.edit['macro.socialshare.warning-published']}</div>
+
 <script>
 function pop(url, title) {
 	var w = 680;
