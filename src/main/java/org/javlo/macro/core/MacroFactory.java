@@ -69,6 +69,7 @@ import org.javlo.macro.interactive.ImportHTMLPageMacro;
 import org.javlo.macro.interactive.MailingStat;
 import org.javlo.macro.interactive.RenameChildren;
 import org.javlo.macro.interactive.SmartImport;
+import org.javlo.macro.interactive.SocialShare;
 import org.javlo.macro.interactive.UpdateUserRole;
 import org.javlo.macro.interactive.UploadGallery;
 
@@ -168,6 +169,7 @@ public class MacroFactory {
 		macros.add(new ClearTransformURLCache());
 		macros.add(new ChangeImageFilter());
 		macros.add(new MailingStat());
+		macros.add(new SocialShare());
 	}
 
 	public IMacro getMacro(String name) {
