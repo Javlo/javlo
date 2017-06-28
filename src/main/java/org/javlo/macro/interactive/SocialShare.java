@@ -54,7 +54,7 @@ public class SocialShare implements IInteractiveMacro, IAction {
 	public String prepare(ContentContext ctx) {		
 		try {
 			ctx.getRequest().setAttribute("facebookID", SocialService.getInstance(ctx).getFacebook().getClientId());
-			ctx.getRequest().setAttribute("title", Encode.forUri(ctx.getCurrentPage().getTitle(ctx)).replaceAll("'", "\'"));
+			ctx.getRequest().setAttribute("title", Encode.forJavaScriptAttribute(Encode.forUri(ctx.getCurrentPage().getTitle(ctx))));
 			ContentContext absCtx = new ContentContext(ctx);
 			absCtx.setRenderMode(ContentContext.VIEW_MODE);
 			absCtx.setAbsoluteURL(true);
