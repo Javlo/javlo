@@ -372,9 +372,34 @@
 </fieldset>
 <fieldset>
 <legend>${i18n.edit['admin.title.special-config']}</legend>
+<div class="form-group">
 <textarea class="form-control" id="specialconfig" rows="10" cols="10" name="specialconfig">${currentContext.specialConfig}</textarea>
+</div>
 </fieldset>
+<fieldset>
+<legend>${i18n.edit['admin.title.html']}</legend>
+<div class="row">
+<div class="col-sm-4">
+	<div class="form-group">
+		<label for="meta-bloc">${i18n.edit['admin.title.html.meta']}</label>
+		<textarea class="form-control"  rows="10" cols="30" id="meta-bloc" name="meta-bloc">${currentContext.metaBloc}</textarea>
+	</div>
+</div>
+<div class="col-sm-4">
+	<div class="form-group">
+		<label for="header-bloc">${i18n.edit['admin.title.html.header']}</label>
+		<textarea class="form-control"  rows="10" cols="30" id="header-bloc" name="header-bloc">${currentContext.headerBloc}</textarea>
+	</div>
+</div>
+<div class="col-sm-4">
+	<div class="form-group">
+		<label for="footer-bloc">${i18n.edit['admin.title.html.footer']}</label>
+		<textarea class="form-control"  rows="10" cols="30" id="footer-bloc" name="footer-bloc">${currentContext.footerBloc}</textarea>
+	</div>
+</div>
+</div>
 
+</fieldset>
 <fieldset>
 <legend>${i18n.edit['global.security']}</legend>
 <div class="row">

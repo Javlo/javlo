@@ -535,11 +535,11 @@ public class XMLManipulationHelper {
 					// tags[i].getOpenEnd() + 1, previewCode +
 					// getEscapeMenu(contentZone) + getResetTemplate() +
 					// getAfterBodyCode());
-					remplacement.addReplacement(tags[i].getOpenEnd() + 1, tags[i].getOpenEnd() + 1, getEscapeMenu(contentZone) + getResetTemplate() + getAfterBodyCode());
+					remplacement.addReplacement(tags[i].getOpenEnd() + 1, tags[i].getOpenEnd() + 1,  "<%=ctx.getGlobalContext().getHeaderBloc()%>" + getEscapeMenu(contentZone) + getResetTemplate() + getAfterBodyCode());
 					if (isMail && globalContext.getStaticConfig().isMailingUserTracking()) {						
 						previewCode = previewCode + "<%Map mParams = new HashMap();mParams.put(MailingAction.MAILING_FEEDBACK_PARAM_NAME, MailingAction.MAILING_FEEDBACK_VALUE_NAME);%><img class=\"empty_image\" style=\"height: 0; width: 0; margin:0; padding: 0;\" width=\"0\" height=\"0\" src=\"<%=URLHelper.createStaticURL(ctx, \"/mfb.png\", mParams)%>\" /> ";
 					}
-					remplacement.addReplacement(tags[i].getCloseStart() - 1, tags[i].getCloseStart() - 1, previewCode);					
+					remplacement.addReplacement(tags[i].getCloseStart() - 1, tags[i].getCloseStart() - 1, "<%=ctx.getGlobalContext().getFooterBloc()%>"+previewCode);					
 				}
 
 				/* link - StyleSheet */
@@ -686,6 +686,7 @@ public class XMLManipulationHelper {
 					
 					/** forward **/
 					out.println("if (!StringHelper.isEmpty(currentPage.getForward(ctx))) {%><!--FRW--><meta http-equiv=\"refresh\" content=\"0; url=<%=currentPage.getForward(ctx)%>\" /><%}%>");
+					out.println("<%=ctx.getGlobalContext().getMetaBloc()%>");
 					
 					out.close();
 

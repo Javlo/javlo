@@ -69,3 +69,15 @@ td.forme, td.priority {
 	overflow: hidden;
 	clear: both;
 }
+
+.width-title {
+	position: relative;
+}
+
+.export a {
+	display: block;
+	position: absolute;
+	color: #ffffff;
+	top: 15px;
+	right: 15px;
+}

@@ -3677,6 +3677,33 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		properties.setProperty("security.forced-https", https);
 		save();
 	}
+	
+	public void setMetaBloc(String bloc) {
+		properties.setProperty("bloc.meta", bloc);
+		save();
+	}
+	
+	public void setHeaderBloc(String bloc) {
+		properties.setProperty("bloc.header", bloc);
+		save();
+	}
+	
+	public void setFooterBloc(String bloc) {
+		properties.setProperty("bloc.footer", bloc);
+		save();
+	}
+	
+	public String getMetaBloc() {
+		return StringHelper.neverNull(properties.getProperty("bloc.meta"));
+	}
+	
+	public String getHeaderBloc() {
+		return StringHelper.neverNull(properties.getProperty("bloc.header"));
+	}
+	
+	public String getFooterBloc() {
+		return StringHelper.neverNull(properties.getProperty("bloc.footer"));
+	}
 
 	public SpecialConfigBean getSpecialConfig() {
 		if (config == null) {

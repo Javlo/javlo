@@ -157,6 +157,10 @@ public class AdminAction extends AbstractModuleAction {
 		private String dkimDomain;
 		private String dkimSelector;
 		
+		private String metaBloc;
+		private String headBloc;
+		private String footerBloc;		
+		
 		private boolean forcedHttps = false;
 		
 		private String specialConfig = "";
@@ -242,6 +246,10 @@ public class AdminAction extends AbstractModuleAction {
 			setSmtpport(globalContext.getSMTPPort());
 			setSmtpuser(globalContext.getSMTPUser());
 			setSmtppassword(globalContext.getSMTPPassword());
+			
+			setMetaBloc(globalContext.getMetaBloc());
+			setHeaderBloc(globalContext.getHeaderBloc());
+			setFooterBloc(globalContext.getFooterBloc());
 			
 			setForcedHttps(globalContext.isForcedHttps());
 			
@@ -832,6 +840,30 @@ public class AdminAction extends AbstractModuleAction {
 			this.componentsFiltered = componentsFiltered;
 		}
 
+		public String getMetaBloc() {
+			return metaBloc;
+		}
+
+		public void setMetaBloc(String metaBloc) {
+			this.metaBloc = metaBloc;
+		}
+
+		public String getHeaderBloc() {
+			return headBloc;
+		}
+
+		public void setHeaderBloc(String headBloc) {
+			this.headBloc = headBloc;
+		}
+
+		public String getFooterBloc() {
+			return footerBloc;
+		}
+
+		public void setFooterBloc(String footerBloc) {
+			this.footerBloc = footerBloc;
+		}
+
 	}
 
 	public static class ComponentBean {
@@ -1265,6 +1297,11 @@ public class AdminAction extends AbstractModuleAction {
 					currentGlobalContext.setSMTPHost(requestService.getParameter("mailing-smtphost",null));
 					currentGlobalContext.setSMTPPort(requestService.getParameter("mailing-smtpport",null));
 					currentGlobalContext.setSMTPUser(requestService.getParameter("mailing-smtpuser",null));
+					
+					currentGlobalContext.setMetaBloc(requestService.getParameter("meta-bloc",null));
+					currentGlobalContext.setHeaderBloc(requestService.getParameter("header-bloc",null));
+					currentGlobalContext.setFooterBloc(requestService.getParameter("footer-bloc",null));
+					
 					String pwd = requestService.getParameter("mailing-smtppassword","");
 					if (pwd.length() > 0) {					
 						currentGlobalContext.setSMTPPassword(pwd);

@@ -11,6 +11,7 @@ ${options}
 </select>
 <br /><br />
 <div id="year-chart"></div>
+<!-- <div class="export"><a href="#" onclick="downloadImage('#year-chart', 'year-${globalContext.contextKey}'); return false;"><span class="glyphicon glyphicon-cloud-download"></span></a></div>  -->
 </div>
 
 <script type="text/javascript">

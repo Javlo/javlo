@@ -1,7 +1,3 @@
-* {
-	line-height: 115%
-} 
-
 .colored-wrapper {
 	margin-bottom: 15px;
 }
@@ -144,4 +140,11 @@ table.float-image-width {
 
 .array-file tr.odd {
 	background-color: #eeeeee;
+}
+
+a,p,td,th,li {
+	mso-line-height-rule: exactly;
+	line-height: 15px;
+	letter-spacing: 0;
+	word-spacing: 0.25em;
 }
