@@ -54,6 +54,7 @@ import org.javlo.macro.SortChildren;
 import org.javlo.macro.UndeletePage;
 import org.javlo.macro.UnlinkMirrorComponent;
 import org.javlo.macro.UpDateMacro;
+import org.javlo.macro.ValidAllChildren;
 import org.javlo.macro.interactive.ChangeImageFilter;
 import org.javlo.macro.interactive.CreateArticle;
 import org.javlo.macro.interactive.CreateBusinessComponent;
@@ -170,6 +171,7 @@ public class MacroFactory {
 		macros.add(new ChangeImageFilter());
 		macros.add(new MailingStat());
 		macros.add(new SocialShare());
+		macros.add(new ValidAllChildren());
 	}
 
 	public IMacro getMacro(String name) {
