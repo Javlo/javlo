@@ -514,6 +514,10 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 			this.ctx = ctx;
 			this.page = page;
 		}
+		
+		public String getId() {
+			return page.getId();
+		}
 
 		@Override
 		public boolean isVisible() {
