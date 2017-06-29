@@ -51,7 +51,8 @@ public class MailingStat implements IInteractiveMacro, IAction {
 			List<Mailing> mailingList = mailingService.getOldMailingListByContext(ctx.getGlobalContext().getContextKey());
 			Iterator<Mailing> mailingIte = mailingList.iterator();
 			while (mailingIte.hasNext()) {
-				if (!mailingIte.next().getPageId().equals(pageId)) {
+				Mailing nextMailing = mailingIte.next(); 
+				if (nextMailing != null && nextMailing.getPageId() != null && !nextMailing.getPageId().equals(pageId)) {
 					mailingIte.remove();
 				}
 			}
