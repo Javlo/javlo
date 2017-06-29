@@ -52,7 +52,7 @@ public class MailingStat implements IInteractiveMacro, IAction {
 			Iterator<Mailing> mailingIte = mailingList.iterator();
 			while (mailingIte.hasNext()) {
 				Mailing nextMailing = mailingIte.next(); 
-				if (nextMailing.getPageId() == null || !nextMailing.getPageId().equals(pageId)) {
+				if (nextMailing.isTest() || nextMailing.getPageId() == null || !nextMailing.getPageId().equals(pageId)) {
 					mailingIte.remove();
 				}
 			}
