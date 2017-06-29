@@ -88,12 +88,12 @@
 <div class="one_half">
 
 <div class="row">
-<div class="col-sm-6">
+<div class="col-sm-8">
 <div class="line">
 	<label>${i18n.edit['global.title']}</label>
 	<span>${page.info.title}</span>
 </div>
-</div><c:if test="${info.admin}"><div class="col-sm-6">
+</div><c:if test="${info.admin}"><div class="col-sm-4">
 	<div class="line"><label>ID</label><span>${page.info.id}</span></div>
 </div></c:if></div>
 
