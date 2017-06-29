@@ -248,9 +248,9 @@
 		</dependency>
 
 		<dependency>
-			<groupId>org.xhtmlrenderer</groupId>
-			<artifactId>flying-saucer-pdf-itext5</artifactId>
-			<version>9.1.1</version>
+    		<groupId>org.xhtmlrenderer</groupId>
+    		<artifactId>flying-saucer-pdf-itext5</artifactId>
+   		 	<version>9.1.6</version>
 		</dependency>
 
 		<!-- <dependency> <groupId>jjil</groupId> <artifactId>jjil.core</artifactId> 
@@ -397,6 +397,20 @@
     		<artifactId>geocoder-java</artifactId>
     		<version>0.16</version>
 		</dependency>
+		
+		<!-- https://mvnrepository.com/artifact/net.sf.uadetector/uadetector-core -->
+		<dependency>
+    		<groupId>net.sf.uadetector</groupId>
+    		<artifactId>uadetector-core</artifactId>
+    		<version>0.9.22</version>
+		</dependency>
+		
+		<dependency>
+    		<groupId>net.sf.uadetector</groupId>
+    		<artifactId>uadetector-resources</artifactId>
+    		<version>2014.10</version>
+		</dependency>
+		
 
 		<!-- https://mvnrepository.com/artifact/org.openimaj/faces -->
 		<dependency>

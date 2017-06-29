@@ -4,6 +4,7 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -18,7 +19,9 @@ public class TimeMap<K, V> implements Map<K, V> {
 
 	private final Map<K, V> internalMap;
 	private final Map<K, Calendar> internalTimeMap = new HashMap<K, Calendar>();
+	private final List<K> order = new LinkedList<K>();
 	private int defaultTimeLiveValue = Integer.MAX_VALUE;
+	private int maxSize = 0;
 
 	public TimeMap() {
 		this(Integer.MAX_VALUE);
@@ -30,6 +33,10 @@ public class TimeMap<K, V> implements Map<K, V> {
 	public TimeMap(int inDefaultTimeLiveValueSecond) {
 		this(new HashMap<K, V>(), inDefaultTimeLiveValueSecond);
 	}
+	
+	public TimeMap(int inDefaultTimeLiveValueSecond, int maxSize) {
+		this(new HashMap<K, V>(), inDefaultTimeLiveValueSecond, maxSize);
+	}
 
 	public TimeMap(Map<K, V> internalMap) {
 		this(internalMap, Integer.MAX_VALUE);
@@ -38,6 +45,12 @@ public class TimeMap<K, V> implements Map<K, V> {
 	public TimeMap(Map<K, V> internalMap, int inDefaultTimeLiveValueSecond) {
 		this.internalMap = internalMap;
 		this.defaultTimeLiveValue = inDefaultTimeLiveValueSecond;
+	}
+	
+	public TimeMap(Map<K, V> internalMap, int inDefaultTimeLiveValueSecond, int maxSize) {
+		this.internalMap = internalMap;
+		this.defaultTimeLiveValue = inDefaultTimeLiveValueSecond;
+		this.maxSize = maxSize; 
 	}
 
 	public int getDefaultTimeValue() {
@@ -101,12 +114,18 @@ public class TimeMap<K, V> implements Map<K, V> {
 	}
 
 	public V put(K key, V value, int liveTime) {
+		if (maxSize > 0 && internalTimeMap.size() == maxSize) {
+			internalMap.remove(order.get(0));
+			internalTimeMap.remove(order.get(0));
+			order.remove(0);
+		}
 		synchronized (internalMap) {
 			V previousValue = internalMap.put(key, value);
 			if (liveTime != Integer.MAX_VALUE) {
 				Calendar cal = Calendar.getInstance();
 				cal.add(Calendar.SECOND, liveTime);
 				internalTimeMap.put(key, cal);
+				order.add(key);
 			}
 			clearCache();
 			return previousValue;
@@ -121,6 +140,7 @@ public class TimeMap<K, V> implements Map<K, V> {
 		
 	private V internalRemove(Object key) {		
 		internalTimeMap.remove(key);
+		order.remove(key);
 		return internalMap.remove(key);
 	}
 
@@ -174,10 +194,19 @@ public class TimeMap<K, V> implements Map<K, V> {
 					toBoRemoved.add(key);
 				}
 			}
+			order.removeAll(toBoRemoved);
 			for (Object key : toBoRemoved) {
 				internalRemove(key);
 			}
 		}
+	}
+
+	public int getMaxSize() {
+		return maxSize;
+	}
+
+	public void setMaxSize(int maxSize) {
+		this.maxSize = maxSize;
 	}
 
 }
