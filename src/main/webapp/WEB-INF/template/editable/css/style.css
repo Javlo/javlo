@@ -142,9 +142,8 @@ table.float-image-width {
 	background-color: #eeeeee;
 }
 
-a,p,td,th,li {
-	mso-line-height-rule: exactly;
-	line-height: 15px;
-	letter-spacing: 0;
-	word-spacing: 0.25em;
+.ExternalClass * {line-height: 14px}
+
+* {
+    line-height: 14px;
 }
