@@ -4,7 +4,7 @@
 <c:set var="loadEvent" value="" />
 <c:set var="styleWidth" value="" /><c:set var="styleWidthWidthoutStyle" value="" /><c:if test="${not empty componentWidth && !param['clean-html']}"><c:set var="styleWidthWidthoutStyle" value='width: ${componentWidth};' /><c:set var="styleWidth" value=' style="width: ${componentWidth};"' /></c:if>
 <c:set var="styleOppositeWidth" value="" /><c:if test="${not empty componentOpositeWidth && !param['clean-html']}"><c:set var="styleOppositeWidth" value='width: ${componentOpositeWidth};' /></c:if>
-<div id="comp-${compid}"><table class="${empty componentWidth?'float-image':'float-image-width'} ${param.right?'right':'left'}" style="width: 100%; border-collapse: collapse;">
+<div id="comp-${compid}"><table class="${empty componentWidth?'float-image':'float-image-width'} ${param.right?'right':'left'}" style="width: 100%; border-collapse:collapse; mso-table-lspace:0pt; mso-table-rspace:0pt;">
 <c:if test="${contentContext.asPreviewMode}">
 <div class="source" style="display: none;"><span class="container">${label}</span></div>
 <script type="text/javascript">

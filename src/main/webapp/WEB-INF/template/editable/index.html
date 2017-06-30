@@ -91,14 +91,14 @@ html, body {
 <c:set var="outerBackgroundColor" value="" /><c:if test="${not empty info.template.style.outerBackgroundColor}"><c:set var="outerBackgroundColor" value="background-color: ${info.template.style.outerBackgroundColor}" /></c:if>
 <body style="margin: 0; padding: 0;" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" style="-webkit-font-smoothing: antialiased; width: 100% !important; -webkit-text-size-adjust: none;${outerBackgroundColor}" class="${pageClass} responsive-${info.template.style.responsive}">
 <center>
-<table border="0" cellpadding="0" cellspacing="0"><tr><td class="${not ctx.pageAssociation?'page-wrapper':'inside-wrapper'}">
+<table border="0" cellpadding="0" cellspacing="0" style="border-collapse:collapse; mso-table-lspace:0pt; mso-table-rspace:0pt;"><tr><td class="${not ctx.pageAssociation?'page-wrapper':'inside-wrapper'}">
 <div class="style_wrapper" style="color: ${info.template.style.finalTextColor};	font-size: ${info.template.style.finalTextSize}; font-family: ${info.template.style.finalFont};">	
-	<table border="0" width="100%" height="100%" cellpadding="0" cellspacing="0"  style="width: 100%; border-collapse: collapse;">
+	<table border="0" width="100%" height="100%" cellpadding="0" cellspacing="0"  style="width: 100%; border-collapse:collapse; mso-table-lspace:0pt; mso-table-rspace:0pt;">
 		<c:if test="${not empty info.template.style.finalPadding}"><tr class="padding"><td colspan="3" height="${info.template.style.finalPadding}" style="height: ${info.template.style.finalPadding}; font-size: 0;">&nbsp;</td></tr></c:if>
 		<tr>			
 			<c:if test="${not empty info.template.style.finalPadding}"><td class="padding" width="${info.template.style.finalPadding}" style="width: ${info.template.style.finalPadding}; font-size: 0;">&nbsp;</td></c:if>
 			<td align="center" valign="top">				
-				<table class="container" border="0" cellpadding="0" cellspacing="0" width="100%"  style="width: 100%; border-collapse: collapse;">					
+				<table class="container" border="0" cellpadding="0" cellspacing="0" width="100%"  style="width: 100%; border-collapse:collapse; mso-table-lspace:0pt; mso-table-rspace:0pt;">					
 					<c:if test="${empty param.lastRowFooter}">
 				<tr id="header-container">
 					<td align="center">
