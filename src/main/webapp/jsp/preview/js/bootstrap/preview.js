@@ -933,7 +933,7 @@ if (!String.prototype.startsWith) {
 				textDist = zone2.position().top-(zone1.position().top+zone1.height());
 			}
 			var saveHeight = zone1.height();
-			while (saveHeight == zone1.height()) {
+			while (saveHeight == zone1.height() && sep < html.length) {
 				sep = sep+1;
 				while (sep > 0 && html[sep] != ' ' && sep < html.length) {
 					sep = sep + 1;
