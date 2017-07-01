@@ -97,12 +97,12 @@ public class XHTMLHelper {
 	// optional 'url(' part (non capturing subpattern) with optional quote
 			"(?:url\\(\\s*)?" + "[\"']?" +
 
-	// file path ending with '.?ss' in capturing subpattern 1
-	// word characters, slashes, dash, underscore, dot,
-	// colon and question mark (possible for absolute urls) are allowed
-	"([\\w\\\\/\\-_.:?]+?\\.?ss)" +
+			// file path ending with '.?ss' in capturing subpattern 1
+			// word characters, slashes, dash, underscore, dot,
+			// colon and question mark (possible for absolute urls) are allowed
+			"([\\w\\\\/\\-_.:?]+?\\.?ss)" +
 
-	// the rest of the line until semicolon or line break
+			// the rest of the line until semicolon or line break
 			"[^;$]*?(;|$)", Pattern.MULTILINE);
 
 	public static String _textToXHTML(String text, boolean popup) {
@@ -224,7 +224,7 @@ public class XHTMLHelper {
 		return out.toString();
 	}
 
-	private static String createHTMLLink(String url, boolean notFollow, GlobalContext globalContext) {		
+	private static String createHTMLLink(String url, boolean notFollow, GlobalContext globalContext) {
 		String suffix = "";
 		if (url.endsWith(".")) {
 			url = url.substring(0, url.length() - 1);
@@ -475,7 +475,7 @@ public class XHTMLHelper {
 		String fileExt = StringHelper.getFileExtension(fileName).toLowerCase();
 		String iconeName = fileExt + ".png";
 		ServletContext application = ctx.getRequest().getSession().getServletContext();
-		File iconeFile = new File(ResourceHelper.getRealPath(application,"/images/minetypes/64x64/" + iconeName));
+		File iconeFile = new File(ResourceHelper.getRealPath(application, "/images/minetypes/64x64/" + iconeName));
 		if (iconeFile.exists()) {
 			imageURL = URLHelper.createStaticURL(ctx, "/images/minetypes/64x64/" + iconeName);
 		} else {
@@ -744,7 +744,7 @@ public class XHTMLHelper {
 
 		return getInputMultiSelect(name, contentArray, contentValue);
 	}
-	
+
 	public static String getInputMultiSelect(String name, Map<String, String> content, Collection value) {
 		return getInputMultiSelect(name, content, value, null);
 	}
@@ -790,7 +790,7 @@ public class XHTMLHelper {
 		}
 		return getInputMultiSelect(name, newContent, value, null, (String) null);
 	}
-	
+
 	public static String getInputMultiSelect(String name, Collection<String> content, Collection<String> values, String cssClass) {
 		String[][] dblContent = new String[content.size()][];
 		Iterator<String> contentIt = content.iterator();
@@ -994,7 +994,7 @@ public class XHTMLHelper {
 		}
 		return getInputOneSelect(name, newContent, value, js, sort);
 	}
-	
+
 	public static String getInputOneSelect(String name, String[] ids, String[] labels, String value, String js) {
 		return getInputOneSelect(name, ids, labels, value, js, true);
 	}
@@ -1066,7 +1066,7 @@ public class XHTMLHelper {
 		}
 		return getInputOneSelect(inputName, values, currentValue, null, sort);
 	}
-	
+
 	public static String getInputOneSelectWithClass(String name, String[][] content, String value, String cssClass) {
 		return getInputOneSelectInternal(name, name, content, value, cssClass, null, null, true);
 	}
@@ -2124,31 +2124,31 @@ public class XHTMLHelper {
 		for (String param : params) {
 			xhtml = xhtml.replace("${param." + param + "}", URLDecoder.decode(requestService.getParameter(param, ""), ContentContext.CHARACTER_ENCODING));
 		}
-		
-		InfoBean infoBean = InfoBean.getCurrentInfoBean(ctx.getRequest());		
+
+		InfoBean infoBean = InfoBean.getCurrentInfoBean(ctx.getRequest());
 		if (infoBean == null) {
 			return xhtml;
-		}		
-		infoBean = InfoBean.createInfoBean(ctx);		
-		//Map<String, String> properties = BeanHelper.cachedDescribe(infoBean);
-		//Map<String, String> properties = BeanUtils.describe(infoBean);
-		params = StringHelper.extractItem(xhtml, "${"+InfoBean.REQUEST_KEY+".", "}");
-		for (String param : params) {			
-			String val = (String)BeanHelper.getProperty(infoBean, param);
+		}
+		infoBean = InfoBean.createInfoBean(ctx);
+		// Map<String, String> properties = BeanHelper.cachedDescribe(infoBean);
+		// Map<String, String> properties = BeanUtils.describe(infoBean);
+		params = StringHelper.extractItem(xhtml, "${" + InfoBean.REQUEST_KEY + ".", "}");
+		for (String param : params) {
+			String val = (String) BeanHelper.getProperty(infoBean, param);
 			if (val != null) {
-				xhtml = xhtml.replace("${"+InfoBean.REQUEST_KEY+"." + param + "}", val);
+				xhtml = xhtml.replace("${" + InfoBean.REQUEST_KEY + "." + param + "}", val);
 			}
 		}
-		/*for (String key : properties.keySet()) {
-			String jstlStr = "${" + InfoBean.REQUEST_KEY + '.' + key + '}';
-			if (properties.get(key) != null && xhtml.contains(jstlStr)) {
-				xhtml = xhtml.replace(jstlStr, properties.get(key).toString());
-			}
-		}*/
-		if (!xhtml.contains("${")) {		
+		/*
+		 * for (String key : properties.keySet()) { String jstlStr = "${" +
+		 * InfoBean.REQUEST_KEY + '.' + key + '}'; if (properties.get(key) !=
+		 * null && xhtml.contains(jstlStr)) { xhtml = xhtml.replace(jstlStr,
+		 * properties.get(key).toString()); } }
+		 */
+		if (!xhtml.contains("${")) {
 			return xhtml;
 		}
-		//properties = BeanHelper.cachedDescribe(infoBean.getPage());
+		// properties = BeanHelper.cachedDescribe(infoBean.getPage());
 		Map<String, String> properties = BeanUtils.describe(infoBean.getPage());
 		for (String key : properties.keySet()) {
 			String jstlStr = "${" + InfoBean.REQUEST_KEY + ".page." + key + '}';
@@ -2160,7 +2160,7 @@ public class XHTMLHelper {
 			return xhtml;
 		}
 		if (Basket.isInstance(ctx)) {
-			//properties = BeanHelper.cachedDescribe(Basket.getInstance(ctx));
+			// properties = BeanHelper.cachedDescribe(Basket.getInstance(ctx));
 			properties = BeanUtils.describe(Basket.getInstance(ctx));
 			for (String key : properties.keySet()) {
 				String jstlStr = "${" + Basket.KEY + '.' + key + '}';
@@ -2168,12 +2168,12 @@ public class XHTMLHelper {
 					xhtml = xhtml.replace(jstlStr, properties.get(key).toString());
 				}
 			}
-		}		
+		}
 		return xhtml;
 	}
 
 	public static String replaceJSTLUserInfo(String xhtml, IUserInfo userInfo) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, UnsupportedEncodingException {
-		//Map<String, String> properties = BeanHelper.cachedDescribe(userInfo);
+		// Map<String, String> properties = BeanHelper.cachedDescribe(userInfo);
 		Map<String, String> properties = BeanUtils.describe(userInfo);
 		for (String key : properties.keySet()) {
 			String jstlStr = "${user." + key + '}';
@@ -2547,13 +2547,13 @@ public class XHTMLHelper {
 		}
 		ResourceHelper.writeStringToFile(targetFile, newContent, ContentContext.CHARACTER_ENCODING);
 	}
-	
+
 	public static String removeComment(String text) {
-		return text.replaceAll("/\\*([^*]|[\\r\\n]|(\\*+([^*/]|[\\r\\n])))*\\*+/", "");	
+		return text.replaceAll("/\\*([^*]|[\\r\\n]|(\\*+([^*/]|[\\r\\n])))*\\*+/", "");
 	}
-	
+
 	public static void removeComment(File targetFile) throws IOException {
-		String newContent;					
+		String newContent;
 		newContent = ResourceHelper.loadStringFromFile(targetFile);
 		newContent = removeComment(newContent);
 		ResourceHelper.writeStringToFile(targetFile, newContent, ContentContext.CHARACTER_ENCODING);
@@ -2567,41 +2567,52 @@ public class XHTMLHelper {
 	}
 
 	public static void compressJS(final File targetFile) throws IOException {
-//		String newContent;
-//		FileInputStream in = null;
-//		StringWriter out = null;
-//		try {
-//			in = new FileInputStream(targetFile);
-//			InputStreamReader reader = new InputStreamReader(in, ContentContext.CHARACTER_ENCODING);
-//			out = new StringWriter();
-//			ErrorReporter reporter = new ErrorReporter() {
-//
-//				@Override
-//				public void warning(String message, String sourceName, int line, String lineSource, int lineOffset) {
-//					logger.warning("JS compressor warning: " + message + " (" + targetFile + " L:" + line + " C:" + lineOffset + ")");
-//				}
-//
-//				@Override
-//				public EvaluatorException runtimeError(String message, String sourceName, int line, String lineSource, int lineOffset) {
-//					logger.warning("JS compressor runtimeError: " + message + " (" + targetFile + " L:" + line + " C:" + lineOffset + ")");
-//					return new EvaluatorException(message, sourceName, line, lineSource, lineOffset);
-//				}
-//
-//				@Override
-//				public void error(String message, String sourceName, int line, String lineSource, int lineOffset) {
-//					logger.warning("JS compressor error: " + message + " (" + targetFile + " L:" + line + " C:" + lineOffset + ")");
-//				}
-//			};
-//			new JavaScriptCompressor(reader, reporter).compress(out, 0, false, false, false, false);
-//			newContent = out.toString();
-//		} catch (Exception ex) {
-//			logger.log(Level.WARNING, "Compress JS failed for '" + targetFile + "'.", ex);
-//			return; // Don't write on error, let the original as it is.
-//		} finally {
-//			ResourceHelper.closeResource(in);
-//			ResourceHelper.closeResource(out);
-//		}
-//		ResourceHelper.writeStringToFile(targetFile, newContent, ContentContext.CHARACTER_ENCODING);
+		// String newContent;
+		// FileInputStream in = null;
+		// StringWriter out = null;
+		// try {
+		// in = new FileInputStream(targetFile);
+		// InputStreamReader reader = new InputStreamReader(in,
+		// ContentContext.CHARACTER_ENCODING);
+		// out = new StringWriter();
+		// ErrorReporter reporter = new ErrorReporter() {
+		//
+		// @Override
+		// public void warning(String message, String sourceName, int line,
+		// String lineSource, int lineOffset) {
+		// logger.warning("JS compressor warning: " + message + " (" +
+		// targetFile + " L:" + line + " C:" + lineOffset + ")");
+		// }
+		//
+		// @Override
+		// public EvaluatorException runtimeError(String message, String
+		// sourceName, int line, String lineSource, int lineOffset) {
+		// logger.warning("JS compressor runtimeError: " + message + " (" +
+		// targetFile + " L:" + line + " C:" + lineOffset + ")");
+		// return new EvaluatorException(message, sourceName, line, lineSource,
+		// lineOffset);
+		// }
+		//
+		// @Override
+		// public void error(String message, String sourceName, int line, String
+		// lineSource, int lineOffset) {
+		// logger.warning("JS compressor error: " + message + " (" + targetFile
+		// + " L:" + line + " C:" + lineOffset + ")");
+		// }
+		// };
+		// new JavaScriptCompressor(reader, reporter).compress(out, 0, false,
+		// false, false, false);
+		// newContent = out.toString();
+		// } catch (Exception ex) {
+		// logger.log(Level.WARNING, "Compress JS failed for '" + targetFile +
+		// "'.", ex);
+		// return; // Don't write on error, let the original as it is.
+		// } finally {
+		// ResourceHelper.closeResource(in);
+		// ResourceHelper.closeResource(out);
+		// }
+		// ResourceHelper.writeStringToFile(targetFile, newContent,
+		// ContentContext.CHARACTER_ENCODING);
 		XHTMLHelper.removeComment(targetFile);
 	}
 
@@ -2656,85 +2667,97 @@ public class XHTMLHelper {
 	public static void main(String[] args) throws Exception {
 		File file = new File("c:/trans/countries.xlsx");
 		Cell[][] arrays = XLSTools.getArray(null, file);
-		for (Cell[] row : arrays) {			
+		for (Cell[] row : arrays) {
 			if (row[1] != null && row[1].toString() != null) {
-				System.out.println("<option ${param.country=='"+row[0]+"'?'selected=\"selected\"':''} value=\""+StringHelper.neverNull(row[0].toString())+"\">"+row[1]+"</option>");
+				System.out.println("<option ${param.country=='" + row[0] + "'?'selected=\"selected\"':''} value=\"" + StringHelper.neverNull(row[0].toString()) + "\">" + row[1] + "</option>");
 			} else {
 				System.out.println("<option disabled>&nbsp;</option>");
 			}
 		}
 	}
-	
-	public static String renderStaticInfo(ContentContext ctx, StaticInfo info) throws FileNotFoundException, IOException {		
+
+	public static String renderStaticInfo(ContentContext ctx, StaticInfo info) throws FileNotFoundException, IOException {
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(outStream);
 		ContentContext lgCtx = info.getContextWithContent(ctx);
-		
+
 		if (!StringHelper.isEmpty(info.getTitle(lgCtx))) {
-			out.println("<span class=\"title\">"+info.getTitle(lgCtx)+"</span>");
+			out.println("<span class=\"title\">" + info.getTitle(lgCtx) + "</span>");
 		}
 		if (!StringHelper.isEmpty(info.getManualDate(lgCtx))) {
-			out.println("<span class=\"date\">"+StringHelper.renderShortDate(lgCtx, info.getManualDate(lgCtx))+"</span>");
+			out.println("<span class=\"date\">" + StringHelper.renderShortDate(lgCtx, info.getManualDate(lgCtx)) + "</span>");
 		}
 		if (!StringHelper.isEmpty(info.getDescription(lgCtx))) {
-			out.println("<span class=\"descritpion\">"+info.getDescription(lgCtx)+"</span>");
+			out.println("<span class=\"descritpion\">" + info.getDescription(lgCtx) + "</span>");
 		}
 		if (!StringHelper.isEmpty(info.getLocation(lgCtx))) {
-			out.println("<span class=\"location\">"+info.getLocation(lgCtx)+"</span>");
+			out.println("<span class=\"location\">" + info.getLocation(lgCtx) + "</span>");
 		}
 		if (!StringHelper.isEmpty(info.getCopyright(lgCtx))) {
-			out.println("<span class=\"copyright\">"+info.getCopyright(lgCtx)+"</span>");
+			out.println("<span class=\"copyright\">" + info.getCopyright(lgCtx) + "</span>");
 		}
 		out.close();
 		String html = new String(outStream.toByteArray());
-		if (html.trim().length()>0) {
-			html = "<div class=\"resource-data\">"+html+"</div>"; 
+		if (html.trim().length() > 0) {
+			html = "<div class=\"resource-data\">" + html + "</div>";
 		}
 		return html;
 	}
-	
+
 	public static String collectionToList(Collection<? extends Object> col) {
-		if (col == null || col.size()==0) {
+		if (col == null || col.size() == 0) {
 			return "";
 		} else {
 			String outHTML = "<ul>";
 			for (Iterator iterator = col.iterator(); iterator.hasNext();) {
 				Object object = (Object) iterator.next();
-				outHTML = outHTML+"<li>"+object+"</li>";
+				outHTML = outHTML + "<li>" + object + "</li>";
 			}
-			return outHTML+"</ul>";
+			return outHTML + "</ul>";
 		}
 	}
 
-	public static String createAdminMail(String title, String content, Map data, String link, String linkLabel, String footer) {		
+	public static String createAdminMail(String title, String content, Map data, String link, String linkLabel, String footer) {
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(outStream);
-		out.println("<html xmlns='http://www.w3.org/1999/xhtml'><body paddingwidth='0' paddingheight='0' bgcolor='#d2d4d5'  style='padding: 0; background-repeat: repeat; width: 100% !important; -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; -webkit-font-smoothing: antialiased;' offset='0' toppadding='0' leftpadding='0'>  <table width='100%' border='0' cellspacing='0' cellpadding='0' class='tableContent bgBody' align='center'  style='font-family:Helvetica, sans-serif; font-size: 14px;'><tr><td align='center'><table width='600' border='0' cellspacing='0' cellpadding='0' align='center'><tr><td align='center'><table width='678' border='0' cellspacing='0' cellpadding='0' align='center'><tr><td align='center'>");
+		out.println(
+				"<html xmlns='http://www.w3.org/1999/xhtml'><body paddingwidth='0' paddingheight='0' bgcolor='#ffffff'  style='padding: 0; background-repeat: repeat; width: 100% !important; -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; -webkit-font-smoothing: antialiased;' offset='0' toppadding='0' leftpadding='0'>  <table width='100%' border='0' cellspacing='0' cellpadding='0' class='tableContent bgBody' align='center'  style='font-family:Helvetica, sans-serif; font-size: 14px;'><tr><td align='center'><table width='600' border='0' cellspacing='0' cellpadding='0' align='center'><tr><td align='center'><table width='678' border='0' cellspacing='0' cellpadding='0' align='center'><tr><td align='center'>");
 		if (!StringHelper.isEmpty(title)) {
-			out.println("<h1 style='font-family:Helvetica, sans-serif; font-size: 24px;'>"+title+"</h1>");
+			out.println("<p style='font-family:Helvetica; font-size: 18px; color: #D31996;'>" + title + "</p>");
 		}
 		if (!StringHelper.isEmpty(content)) {
-			out.println("<p style='font-family:Helvetica, sans-serif; font-size: 14px;'>"+content+"</p>");
+			out.println("<p style='font-family:Helvetica; font-size: 14px;'>" + content + "</p>");
 		}
-		if (data != null && data.size()>0) {
+		if (data != null && data.size() > 0) {
 			out.println("<table style='border-collapse: collapse;' border='1'>");
 			for (Object key : data.keySet()) {
-				out.println("<tr><td style='font-weight: bold; padding: 10px; font-family:Helvetica, sans-serif; vertical-align: top; font-size: 12px;'>"+key+" : </td><td style='padding: 10px; font-family:Helvetica, sans-serif;  vertical-align: top; font-size: 12px;'>"+data.get(key)+"</td></tr>");
+				out.println("<tr><td style='font-weight: bold; padding: 10px; font-family:Helvetica, sans-serif; vertical-align: top; font-size: 12px;'>" + key + "</td><td style='padding: 10px; font-family:Helvetica, sans-serif;  vertical-align: top; font-size: 12px;'>" + data.get(key) + "</td></tr>");
 			}
 			out.println("</table>");
 		}
-		if (!StringHelper.isEmpty(footer)) {			
-			out.println("<table><tr><td>&nbsp;</td></tr><tr><td class=\"footer\"><div style='display: block; margin: 10px 20px;  color: #dddddd; font-family:Helvetica, sans-serif;'>"+footer+"</div></td></tr></table>");
+		if (!StringHelper.isEmpty(footer)) {
+			out.println("<table><tr><td>&nbsp;</td></tr><tr><td class=\"footer\"><div style='display: block; margin: 10px 20px;  color: #dddddd; font-family:Helvetica, sans-serif;'>" + footer + "</div></td></tr></table>");
 		}
-		if (!StringHelper.isEmpty(link)) {			
-			out.println("<table><tr><td>&nbsp;</td></tr><tr><td><a href='"+link+"' style='border: 1px #E329A6 solid; border-radius: 4px; display: block; text-decoration: none; background-color: #D31996; margin: 10px;'><div style='display: block; margin: 0 10px;  color: #dddddd; font-family:Helvetica, sans-serif;'><table><tr><td border=\"10\">"+StringHelper.neverNull(linkLabel, link)+"</td></tr></table></div></a></td></tr></table>");
+
+		if (!StringHelper.isEmpty(link)) {
+//			out.println("<table><tr><td>&nbsp;</td></tr><tr><td><a href='" + link + "' style='border: 1px #E329A6 solid; border-radius: 4px; display: block; text-decoration: none; background-color: #D31996; margin: 10px;'>");
+//			out.println("<div style='display: block; margin: 0 10px;  color: #dddddd; font-family:Helvetica, sans-serif;'><table><tr><td border=\"10\" style='border: 10px #D31996 solid;'>" + StringHelper.neverNull(linkLabel, link) + "</td></tr></table></div></a></td></tr></table>");
+			out.println("<table><tr><td>&nbsp;</td></tr><tr><td align=\"center\" bgcolor=\"#FFFFFF\">");
+			out.println("<table width=\"280\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\">");
+			out.println("<tr>");
+			out.println("<td height=\"40\" valign=\"middle\" align=\"center\" bgcolor=\"#D31996\" style=\"font-family:Helvetica, sans-serif; font-size:13px; color:#FFFFFF; mso-line-height-rule:exactly; line-height:16px; font-weight:bold; border:1px solid #D31996; border-radius:2px; -moz-border-radius:2px; -ms-border-radius:2px; -o-border-radius:2px; -webkit-border-radius:2px;\">");
+			out.println("<a href=\""+link+"\" target=\"_blank\" style=\"color:#FFFFFF; text-decoration:underline; display:table-cell; text-align:center; height:40px; width:600px; vertical-align:middle;\">"+StringHelper.neverNull(linkLabel, link)+"</a>");
+			out.println("</td>");
+			out.println("</tr>");
+			out.println("</table>");
+			out.println("</td></tr></table>");
 		}
 		out.println("</td></tr></table></td></tr></table></td></tr></table></body></html>");
 		return new String(outStream.toByteArray());
 	}
-	
+
 	public static String createUserMail(TemplateData templateData, String title, String content, Map data, String link, String linkLabel, String footer) {
-		
+
 		String backgroundColor = "#ffffff";
 		String titleColor = "#000000";
 		if (templateData != null) {
@@ -2745,28 +2768,30 @@ public class XHTMLHelper {
 				titleColor = ColorHelper.toHexString(templateData.getTitle());
 			}
 		}
-		
+
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(outStream);
-		out.println("<html xmlns='http://www.w3.org/1999/xhtml'><body paddingwidth='0' paddingheight='0' bgcolor='#ffffff'  style='padding: 0; background-repeat: repeat; width: 100% !important; -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; -webkit-font-smoothing: antialiased;' offset='0' toppadding='0' leftpadding='0'>  <table width='100%' border='0' cellspacing='0' cellpadding='0' class='tableContent bgBody' align='center'  style='font-family:Helvetica, sans-serif; font-size: 14px;'><tr><td align='center'><table width='600' border='0' cellspacing='0' cellpadding='0' align='center'><tr><td align='center'><table width='678' border='0' cellspacing='0' cellpadding='0' align='center'><tr><td align='center' style='background-color:"+backgroundColor+"'><br />");
+		out.println(
+				"<html xmlns='http://www.w3.org/1999/xhtml'><body paddingwidth='0' paddingheight='0' bgcolor='#ffffff'  style='padding: 0; background-repeat: repeat; width: 100% !important; -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; -webkit-font-smoothing: antialiased;' offset='0' toppadding='0' leftpadding='0'>  <table width='100%' border='0' cellspacing='0' cellpadding='0' class='tableContent bgBody' align='center'  style='font-family:Helvetica, sans-serif; font-size: 14px;'><tr><td align='center'><table width='600' border='0' cellspacing='0' cellpadding='0' align='center'><tr><td align='center'><table width='678' border='0' cellspacing='0' cellpadding='0' align='center'><tr><td align='center' style='background-color:"
+						+ backgroundColor + "'><br />");
 		if (!StringHelper.isEmpty(title)) {
-			out.println("<h1 style='font-family:Helvetica, sans-serif; font-size: 24px; color: "+titleColor+"'>"+title+"</h1>");
+			out.println("<h1 style='font-family:Helvetica, sans-serif; font-size: 24px; color: " + titleColor + "'>" + title + "</h1>");
 		}
 		if (!StringHelper.isEmpty(content)) {
-			out.println("<p style='font-family:Helvetica, sans-serif; font-size: 14px;'>"+content+"</p>");
+			out.println("<p style='font-family:Helvetica, sans-serif; font-size: 14px;'>" + content + "</p>");
 		}
-		if (data != null && data.size()>0) {
+		if (data != null && data.size() > 0) {
 			out.println("<table style='border-collapse: collapse;' border='1'>");
 			for (Object key : data.keySet()) {
-				out.println("<tr><td style='font-weight: bold; padding: 10px; font-family:Helvetica, sans-serif; vertical-align: top; font-size: 12px;'>"+key+" : </td><td style='padding: 10px; font-family:Helvetica, sans-serif;  vertical-align: top; font-size: 12px;'>"+data.get(key)+"</td></tr>");
+				out.println("<tr><td style='font-weight: bold; padding: 10px; font-family:Helvetica, sans-serif; vertical-align: top; font-size: 12px;'>" + key + " : </td><td style='padding: 10px; font-family:Helvetica, sans-serif;  vertical-align: top; font-size: 12px;'>" + data.get(key) + "</td></tr>");
 			}
 			out.println("</table>");
 		}
-		if (!StringHelper.isEmpty(footer)) {			
-			out.println("<table><tr><td>&nbsp;</td></tr><tr><td class=\"footer\"><div style='display: block; margin: 10px 20px;  color: #dddddd; font-family:Helvetica, sans-serif;'>"+footer+"</div></td></tr></table>");
+		if (!StringHelper.isEmpty(footer)) {
+			out.println("<table><tr><td>&nbsp;</td></tr><tr><td class=\"footer\"><div style='display: block; margin: 10px 20px;  color: #dddddd; font-family:Helvetica, sans-serif;'>" + footer + "</div></td></tr></table>");
 		}
-		if (!StringHelper.isEmpty(link)) {			
-			out.println("<table><tr><td>&nbsp;</td></tr><tr><td><a href='"+link+"' style='border: 1px #E329A6 solid; border-radius: 4px; display: block; text-decoration: none; background-color: #D31996; margin: 10px;'><div style='display: block; margin: 0 10px;  color: #dddddd; font-family:Helvetica, sans-serif;'><table><tr><td border=\"10\">"+StringHelper.neverNull(linkLabel, link)+"</td></tr></table></div></a></td></tr></table>");
+		if (!StringHelper.isEmpty(link)) {
+			out.println("<table><tr><td>&nbsp;</td></tr><tr><td><a href='" + link + "' style='border: 1px #E329A6 solid; border-radius: 4px; display: block; text-decoration: none; background-color: #D31996; margin: 10px;'><div style='display: block; margin: 0 10px;  color: #dddddd; font-family:Helvetica, sans-serif;'><table><tr><td border=\"10\">" + StringHelper.neverNull(linkLabel, link) + "</td></tr></table></div></a></td></tr></table>");
 		}
 		out.println("</td></tr></table></td></tr></table></td></tr></table></body></html>");
 		return new String(outStream.toByteArray());

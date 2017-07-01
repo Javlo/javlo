@@ -300,19 +300,22 @@ public class TicketAction extends AbstractModuleAction {
 				String siteTitle = ctx.getGlobalContext().getGlobalTitle();				
 				String baseUrl = URLHelper.createInterModuleURL(ctx.getContextForAbsoluteURL().getContextWithOtherRenderMode(ContentContext.EDIT_MODE), "/", "ticket");
 				Map ticketsMap = new HashMap();				
-				for (TicketBean ticket : tickets) {
+				for (TicketBean ticket : tickets) {					
 					String messageHTML = "";
-					if (!StringHelper.isEmpty(ticket.getMessage())) {
-						messageHTML = "<div class=\"message\"><b>"+XHTMLHelper.textToXHTML(ticket.getMessage())+"</b></div>";
-					}
+					String url = URLHelper.createAbsoluteURL(ctx.getContextForAbsoluteURL(), ticket.getUrl());
+					messageHTML = "<div class=\"message\"><a href=\""+url+"\">"+XHTMLHelper.textToXHTML(ticket.getTitle())+"</a></div>";
 					if (ticket.getComments().size() == 0) {
-						ticketsMap.put("["+ticket.getAuthors()+"] - "+ticket.getTitle(), messageHTML+XHTMLHelper.collectionToList(ticket.getComments()));
+						ticketsMap.put("["+ticket.getAuthors()+"] - "+ticket.getTitle(), messageHTML);
 					} else {
 						ticketsMap.put("["+ticket.getAuthors()+"] - "+ticket.getTitle(), messageHTML+XHTMLHelper.collectionToList(ticket.getComments()));
 					}
-				}				
-				String content = XHTMLHelper.createAdminMail("Ticket updates on " + siteTitle, ticketsMap.size()+" tickets updated.", ticketsMap, baseUrl, "go on site", null);				
-				NetHelper.sendXHTMLMail(ctx, new InternetAddress(globalContext.getAdministratorEmail()), new InternetAddress(email), null, null, "Ticket updates on " + siteTitle, content.toString(), null);
+				}		
+				I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
+				String sujectPrefix = i18nAccess.getText("ticket.subject");
+				String ticketUpdate = i18nAccess.getText("ticket.update");
+				String goOnSite = i18nAccess.getText("ticket.go");
+				String content = XHTMLHelper.createAdminMail(sujectPrefix + ' ' + siteTitle, ticketsMap.size()+ticketUpdate, ticketsMap, baseUrl, goOnSite, null);				
+				NetHelper.sendXHTMLMail(ctx, new InternetAddress(globalContext.getAdministratorEmail()), new InternetAddress(email), null, null, ticketUpdate + ' ' + siteTitle, content.toString(), null);
 				
 			}
 		}

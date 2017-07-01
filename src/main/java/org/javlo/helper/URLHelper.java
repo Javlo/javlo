@@ -452,6 +452,14 @@ public class URLHelper extends ElementaryURLHelper {
 	public static String createStaticURL(ContentContext ctx, MenuElement referencePage, String inUrl) {
 		return createStaticURL(ctx, referencePage, inUrl, true);
 	}
+	
+	public static String createAbsoluteURL(ContentContext ctx, String inUrl) {
+		if (StringHelper.isURL(inUrl)) {
+			return inUrl;
+		} else {
+			return addHost(ctx, inUrl);
+		}		
+	}
 
 	public static String createStaticTemplateURL(ContentContext ctx, Template template, String url) throws Exception {
 		GlobalContext globalContext = ctx.getGlobalContext();

@@ -837,10 +837,9 @@ public class NetHelper {
 		return isURLValid(url, false);
 	}
 	
-	public static void main(String[] args) throws IOException, BadXMLException {
-		String content = ResourceHelper.loadStringFromFile(new File("c:/trans/mail.html"));
-		content = CSSParser.mergeCSS(content, false);
-		ResourceHelper.writeStringToFile(new File("c:/trans/mail_css_merged.html"), content);
+	public static void main(String[] args) throws Exception {
+		String content = readPage(new URL("https://www.javlo.be"));
+		System.out.println(content);
 	}
 
 	public static boolean isURLValid(URL url, boolean only404) {

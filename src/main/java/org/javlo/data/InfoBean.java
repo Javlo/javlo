@@ -1540,7 +1540,7 @@ public class InfoBean {
 		List<TicketUserWrapper> out = new LinkedList<TicketUserWrapper>();
 		Map<String, TicketUserWrapper> tickets = TicketAction.getMyTicket(ctx);
 		for (TicketUserWrapper ticket : tickets.values()) {
-			if (!ticket.isRead()) {
+			if (!ticket.isRead() && ticket.isForMe()) {
 				out.add(ticket);
 			}
 		}

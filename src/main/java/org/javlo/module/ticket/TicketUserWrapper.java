@@ -129,5 +129,20 @@ public class TicketUserWrapper implements Ticket {
 	public void onRead(String login) {
 		wrapped.onRead(login);
 	}
+	
+	public boolean isForMe() {
+		if (ctx.getCurrentEditUser() == null) {
+			return false;
+		} else {
+			List<String> users = getUsers();
+			if (getAuthors().equals(ctx.getCurrentEditUser().getLogin())) {
+				return true;
+			} else if (users == null || users.size() == 0 || users.contains(ctx.getCurrentEditUser().getLogin())) {
+				return true;
+			} else {
+				return false;
+			}
+		}
+	}
 
 }
