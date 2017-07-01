@@ -1332,7 +1332,11 @@ public class StaticConfig extends Observable {
 	}
 
 	public String getSiteEmail() {
-		return properties.getString("site.email", "webmaster@javlo.org");
+		String email = properties.getString("site.email", "webmaster@javlo.org");
+		if (!StringHelper.isMail(email)) {
+			logger.warning("bad email in static config : "+email);
+		}
+		return email;
 	}
 
 	public String getManualErrorEmail() {
