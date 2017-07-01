@@ -4,7 +4,6 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -40,6 +39,7 @@ import javax.net.ssl.SSLPeerUnverifiedException;
 import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
+import javax.security.cert.X509Certificate;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -48,7 +48,6 @@ import org.javlo.component.core.ComponentBean;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
-import org.javlo.helper.XMLManipulationHelper.BadXMLException;
 import org.javlo.image.ImageHelper;
 import org.javlo.image.ImageSize;
 import org.javlo.mailing.MailConfig;
@@ -71,6 +70,8 @@ import net.sf.uadetector.UserAgentType;
 import net.sf.uadetector.service.UADetectorServiceFactory;
 
 public class NetHelper {
+	
+	private static boolean INIT_HTTPS = false;
 	
 	private static final Map<String, Boolean> UserAgentCache = Collections.synchronizedMap(new TimeMap<String, Boolean>(60*60*24*30, 100000)); // cache for user agent, 1 month and max 100000 entry
 	
@@ -263,6 +264,38 @@ public class NetHelper {
 			url = removeParams(url);
 
 			HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+			
+			// skip https validation
+			if (connection instanceof HttpsURLConnection && !INIT_HTTPS) {				
+				 TrustManager[] trustAllCerts = new TrustManager[] {new X509TrustManager() {
+		                public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+		                    return null;
+		                }
+		                public void checkClientTrusted(X509Certificate[] certs, String authType) {
+		                }
+		                public void checkServerTrusted(X509Certificate[] certs, String authType) {
+		                }
+						@Override
+						public void checkClientTrusted(java.security.cert.X509Certificate[] chain, String authType) throws CertificateException {
+						}
+						@Override
+						public void checkServerTrusted(java.security.cert.X509Certificate[] chain, String authType) throws CertificateException {
+							
+						}
+		            }
+		        };
+		        SSLContext sc = SSLContext.getInstance("SSL");
+		        sc.init(null, trustAllCerts, new java.security.SecureRandom());
+		        HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());		        
+		        // Create all-trusting host name verifier
+		        HostnameVerifier allHostsValid = new HostnameVerifier() {
+		            public boolean verify(String hostname, SSLSession session) {
+		                return true;
+		            }
+		        };
+		        HttpsURLConnection.setDefaultHostnameVerifier(allHostsValid);
+			}
+			
 			connection.setRequestMethod("POST");
 			connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
 
@@ -838,8 +871,7 @@ public class NetHelper {
 	}
 	
 	public static void main(String[] args) throws Exception {
-		String content = readPage(new URL("https://www.javlo.be"));
-		System.out.println(content);
+		String content = readPage(new URL("https://www.javlo.be"));		
 	}
 
 	public static boolean isURLValid(URL url, boolean only404) {
