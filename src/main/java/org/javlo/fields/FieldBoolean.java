@@ -43,7 +43,7 @@ public class FieldBoolean extends Field {
 			checkedHTML = " checked=\"checked\"";
 		}
 		out.print("<input" + readOnlyHTML + " id=\"" + getInputName() + "\" name=\"" + getInputName() + "\" type=\"checkbox\" value=\"true\"" + checkedHTML + " />");
-		out.println(getLabel(new Locale(globalContext.getEditLanguage(ctx.getRequest().getSession()))));
+		out.println(getLabel(ctx, new Locale(globalContext.getEditLanguage(ctx.getRequest().getSession()))));
 		if (getMessage() != null && getMessage().trim().length() > 0) {
 			out.println("	<div class=\"message " + getMessageTypeCSSClass() + "\">" + getMessage() + "</div>");
 		}

@@ -1,6 +1,7 @@
 package org.javlo.module.ticket;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import org.javlo.helper.StringHelper;
 
@@ -9,6 +10,7 @@ public class Comment implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private String authors;
 	private String message;
+	private Date creationDate = new Date();
 
 	public Comment() {
 	}
@@ -36,6 +38,18 @@ public class Comment implements Serializable {
 	
 	@Override
 	public String toString() {
-		return '['+StringHelper.neverNull(authors)+"] - "+StringHelper.neverNull(message);
+		return StringHelper.neverNull(authors)+" : "+StringHelper.neverNull(message);
+	}
+
+	public Date getCreationDate() {
+		return creationDate;
+	}
+	
+	public String getCreationDateString() {
+		return StringHelper.renderTime(getCreationDate());
+	}
+
+	public void setCreationDate(Date creationDate) {
+		this.creationDate = creationDate;
 	}
 }

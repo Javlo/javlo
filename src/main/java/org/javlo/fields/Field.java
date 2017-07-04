@@ -62,7 +62,7 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 		}
 
 		public String getLabel() {
-			return Field.this.getLabel(contentLocale);
+			return Field.this.getLabel(ctx, contentLocale);
 		}
 
 		public String getValue() {
@@ -374,7 +374,7 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 	 * @throws Exception
 	 */
 	protected String getReferenceFieldView(ContentContext ctx) throws Exception {
-		return "<div class=\"slave-field line form-group\"><label>" + getLabel(new Locale(ctx.getContextRequestLanguage())) + "</label>" + getViewXHTMLCode(ctx) + "</div>";
+		return "<div class=\"slave-field line form-group\"><label>" + getLabel(ctx, new Locale(ctx.getContextRequestLanguage())) + "</label>" + getViewXHTMLCode(ctx) + "</div>";
 	}
 
 	protected String referenceEditCode(ContentContext ctx) throws Exception {
@@ -427,7 +427,7 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 		out.println("<div class=\"row form-group field-"+getName()+"\"><div class=\"col-sm-3\">");
 		out.println(getEditLabelCode());		
 		
-		out.println("	<label for=\"" + getInputName() + "\">" + getLabel(new Locale(ctx.getContextRequestLanguage())) + " : </label>");
+		out.println("	<label for=\"" + getInputName() + "\">" + getLabel(ctx, new Locale(ctx.getContextRequestLanguage())) + " : </label>");
 		String readOnlyHTML = "";
 		if (isReadOnly()) {
 			readOnlyHTML = " readonly=\"readonly\"";
@@ -451,7 +451,7 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 		Locale locale = new Locale(ctx.getRequestContentLanguage());
 		String prefix = properties.getProperty("field." + getUnicName() + ".prefix", "");
 		if (isLabelDisplayed()) {
-			return prefix + "<div class=\"label "+getUnicName()+"\">" + StringHelper.neverNull(getUserLabel(locale)) + "</div>";
+			return prefix + "<div class=\"label "+getUnicName()+"\">" + StringHelper.neverNull(getUserLabel(ctx, locale)) + "</div>";
 		} else {
 			return prefix;
 		}
@@ -705,7 +705,7 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 		this.name = name;
 	}
 
-	protected String getLabel(Locale locale) {
+	protected String getLabel(ContentContext ctx, Locale locale) {
 		if (getLabel().trim().length() != 0) {
 			return getLabel();
 		}
@@ -724,12 +724,12 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 		return label;
 	}
 	
-	protected String getSearchLabel(Locale locale) {
+	protected String getSearchLabel(ContentContext ctx, Locale locale) {
 		String label = properties.getProperty(createKey("label.search." + locale.getLanguage()));
 		if (label == null) {
 			label = properties.getProperty(createKey("label.search."));
 			if (label == null) {
-				label = getLabel(locale);
+				label = getLabel(ctx, locale);
 			}
 		}
 		String key = properties.getProperty(createKey("label.search.key"));
@@ -743,10 +743,10 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 		return properties.getProperty(createKey("user-label"), null);
 	}
 
-	public String getUserLabel(Locale locale) {
+	public String getUserLabel(ContentContext ctx, Locale locale) {
 		String label = getUserLabel();
 		if (label == null) {
-			label = getLabel(locale);
+			label = getLabel(ctx, locale);
 		}
 		return label;
 	}
@@ -932,7 +932,7 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 	}
 
 	public boolean initContent(ContentContext ctx) throws Exception {
-		String initialValue = getLabel(new Locale(ctx.getRequestContentLanguage()));
+		String initialValue = getLabel(ctx, new Locale(ctx.getRequestContentLanguage()));
 		if (getValue() == null || getValue().trim().length() == 0) {
 			setValue(initialValue);
 		}
@@ -988,7 +988,7 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 			Collections.sort(values, new JavaHelper.MapEntriesSortOnValue());
 		}
 		if (label == null) {
-			label = getLabel(new Locale(ctx.getContextRequestLanguage()));
+			label = getLabel(ctx, new Locale(ctx.getContextRequestLanguage()));
 		}
 
 		out.println("<div class=\"form-group "+StringHelper.neverNull(cssClass)+"\">");

@@ -31,7 +31,17 @@ public class OpenMultiList extends Field {
 		if (getValue() == null) {
 			return "";
 		} else {
-			return "<span class=\"" + StringHelper.createFileName(getValue()) + "\">" + StringHelper.collectionToString(getValues(), ", ") + "</span>";
+			return "<span class=\"" + StringHelper.createFileName(getValue()) + "\">" + getLabel(ctx, locale) + "</span>";
+		}
+	}
+	
+	@Override
+	protected String getLabel(ContentContext ctx, Locale locale) {
+		try {
+			return StringHelper.collectionToString(getValues(), ", ");
+		} catch (Exception e) {
+			e.printStackTrace();
+			return e.getMessage();
 		}
 	}
 
@@ -86,7 +96,7 @@ public class OpenMultiList extends Field {
 		Collections.sort(values, new JavaHelper.MapEntriesSortOnValue());
 		out.println("<div class=\"form-group field-"+getName()+"\">");
 		out.println(getEditLabelCode());
-		out.println("<div class=\"row\"><div class=\"col-sm-3\"><label for=\"" + getInputName() + "\">" + getLabel(new Locale(ctx.getContextRequestLanguage())) + " : </label></div>");
+		out.println("<div class=\"row\"><div class=\"col-sm-3\"><label for=\"" + getInputName() + "\">" + getLabel(ctx, new Locale(ctx.getContextRequestLanguage())) + " : </label></div>");
 		if (!ctx.isVisualMode()) {
 			out.println("<div class=\"col-sm-7\">");
 			for (Map.Entry<String, String> value : values) {

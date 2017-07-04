@@ -65,35 +65,37 @@ public class ArrayFileComponent extends GenericFile {
 			// }
 			// System.out.println("");
 
-			this.data = inData;
-			for (int row = 0; row < Math.min(inData.length, 99); row++) {
-				if (!StringHelper.isEmpty(data[row][0]) && !StringHelper.isEmpty(data[row][1])) {
-					titleRaw = row;
-					row = 99;
+			if (inData != null) {
+				this.data = inData;
+				for (int row = 0; row < Math.min(inData.length, 99); row++) {
+					if (!StringHelper.isEmpty(data[row][0]) && !StringHelper.isEmpty(data[row][1])) {
+						titleRaw = row;
+						row = 99;
+					}
 				}
-			}
-			dataRaw = titleRaw + 1;
-			for (int row = titleRaw + 1; row < Math.min(inData.length, 99); row++) {
-				if (!StringHelper.isEmpty(data[row][0]) && !StringHelper.isEmpty(data[row][1])) {
-					dataRaw = row;
-					row = 99;
+				dataRaw = titleRaw + 1;
+				for (int row = titleRaw + 1; row < Math.min(inData.length, 99); row++) {
+					if (!StringHelper.isEmpty(data[row][0]) && !StringHelper.isEmpty(data[row][1])) {
+						dataRaw = row;
+						row = 99;
+					}
 				}
-			}
 
-			String key = data[titleRaw][0].toString();
-			Cell value = data[dataRaw][0];
-			int i = 0;
-			while (!StringHelper.isEmpty(value) && (i < data[titleRaw].length)) {
-				String colName = StringHelper.getColName(i);
-				internalMap.put("" + i, value.getValue());
-				internalMap.put(colName, value.getValue());
-				internalMap.put(key, value.getValue());
-				internalMap.put(colName + "_title", key);
-				value = data[dataRaw][i];
-				if (data[titleRaw][i] != null) {
-					key = data[titleRaw][i].toString();
+				String key = data[titleRaw][0].toString();
+				Cell value = data[dataRaw][0];
+				int i = 0;
+				while (!StringHelper.isEmpty(value) && (i < data[titleRaw].length)) {
+					String colName = StringHelper.getColName(i);
+					internalMap.put("" + i, value.getValue());
+					internalMap.put(colName, value.getValue());
+					internalMap.put(key, value.getValue());
+					internalMap.put(colName + "_title", key);
+					value = data[dataRaw][i];
+					if (data[titleRaw][i] != null) {
+						key = data[titleRaw][i].toString();
+					}
+					i++;
 				}
-				i++;
 			}
 		}
 
@@ -437,7 +439,7 @@ public class ArrayFileComponent extends GenericFile {
 					}
 				}
 			}
-			
+
 			for (int i = 0; i < sheet.getNumMergedRegions(); i++) {
 				CellRangeAddress cellRange = sheet.getMergedRegion(i);
 				for (int x = cellRange.getFirstColumn(); x <= cellRange.getLastColumn(); x++) {
@@ -909,10 +911,10 @@ public class ArrayFileComponent extends GenericFile {
 			inData = getStaticXLSXArray(null, xlsFile);
 			for (int x = 0; x < inData.length; x++) {
 				for (int y = 0; y < inData[x].length; y++) {
-					if( inData[x][y] != null) {
-						System.out.print(x+","+y+" = "+inData[x][y].getColSpan() + " - ");
+					if (inData[x][y] != null) {
+						System.out.print(x + "," + y + " = " + inData[x][y].getColSpan() + " - ");
 					} else {
-						System.out.print(x+","+y+" = NULL - ");
+						System.out.print(x + "," + y + " = NULL - ");
 					}
 				}
 				System.out.println("");

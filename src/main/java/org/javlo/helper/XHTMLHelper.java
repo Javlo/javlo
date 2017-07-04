@@ -2729,7 +2729,7 @@ public class XHTMLHelper {
 			out.println("<p style='font-family:Helvetica; font-size: 14px;'>" + content + "</p>");
 		}
 		if (data != null && data.size() > 0) {
-			out.println("<table style='border-collapse: collapse;' border='1'>");
+			out.println("<table style='width: 100%; border-collapse: collapse;' border='1'>");
 			for (Object key : data.keySet()) {
 				out.println("<tr><td style='font-weight: bold; padding: 10px; font-family:Helvetica, sans-serif; vertical-align: top; font-size: 12px;'>" + key + "</td><td style='padding: 10px; font-family:Helvetica, sans-serif;  vertical-align: top; font-size: 12px;'>" + data.get(key) + "</td></tr>");
 			}
@@ -2740,8 +2740,6 @@ public class XHTMLHelper {
 		}
 
 		if (!StringHelper.isEmpty(link)) {
-//			out.println("<table><tr><td>&nbsp;</td></tr><tr><td><a href='" + link + "' style='border: 1px #E329A6 solid; border-radius: 4px; display: block; text-decoration: none; background-color: #D31996; margin: 10px;'>");
-//			out.println("<div style='display: block; margin: 0 10px;  color: #dddddd; font-family:Helvetica, sans-serif;'><table><tr><td border=\"10\" style='border: 10px #D31996 solid;'>" + StringHelper.neverNull(linkLabel, link) + "</td></tr></table></div></a></td></tr></table>");
 			out.println("<table><tr><td>&nbsp;</td></tr><tr><td align=\"center\" bgcolor=\"#FFFFFF\">");
 			out.println("<table width=\"280\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\">");
 			out.println("<tr>");

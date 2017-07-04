@@ -7,7 +7,7 @@
 <a class="action-button more page" href="${createURL}"><span>${i18n.edit['global.create']}</span></a>
 <c:if test="${not noFilter}">
 <div class="special">
-<form id="select-status js-submit" method="post" action="${info.currentURL}">
+<form id="select-status" class="js-submit" method="post" action="${info.currentURL}">
     <div class="line">
     <label for="filter_status">status</label>
 	<select name="filter_status" id="filter_status">

@@ -1435,7 +1435,7 @@ public class StaticConfig extends Observable {
 	 * @return
 	 */
 	public int getTimeBetweenChangeNotification() {
-		return Integer.parseInt(properties.getString("time-between-change-notification", "" + 5 * 60));
+		return Integer.parseInt(properties.getString("time-between-change-notification", "" + 3 * 60));
 	}
 
 	public String getApplicationLogin() {

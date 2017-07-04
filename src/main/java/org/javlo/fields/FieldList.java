@@ -17,7 +17,17 @@ public class FieldList extends Field {
 
 	@Override
 	public String getDisplayValue(ContentContext ctx, Locale locale) throws Exception {		
-		return "<span class=\"" + StringHelper.createFileName(getValue()) + "\">" + StringHelper.neverNull(getList(ctx, getListName(), locale).get(getValue()),"&nbsp;") + "</span>";
+		return "<span class=\"" + StringHelper.createFileName(getValue()) + "\">" + getLabel(ctx, locale) + "</span>";
+	}
+	
+	@Override
+	protected String getLabel(ContentContext ctx, Locale locale) {
+		try {
+			return StringHelper.neverNull(getList(ctx, getListName(), locale).get(getValue()));
+		} catch (Exception e) {
+			e.printStackTrace();
+			return e.getMessage();
+		}
 	}
 
 	@Override
@@ -43,7 +53,7 @@ public class FieldList extends Field {
 
 		out.println("<div class=\"form-group\">");
 		out.println(getEditLabelCode());
-		out.println("<div class=\"row field-"+getName()+"\"><div class=\"col-sm-3\"><label for=\"" + getInputName() + "\">" + getLabel(new Locale(ctx.getContextRequestLanguage())) + " : </label></div>");
+		out.println("<div class=\"row field-"+getName()+"\"><div class=\"col-sm-3\"><label for=\"" + getInputName() + "\">" + getLabel(ctx, new Locale(ctx.getContextRequestLanguage())) + " : </label></div>");
 		out.println("<div class=\"col-sm-9\"><select class=\"form-control\" id=\"" + getInputName() + "\" name=\"" + getInputName() + "\" value=\"" + StringHelper.neverNull(getValue()) + "\">");		
 
 		for (Map.Entry<String, String> value : values) {

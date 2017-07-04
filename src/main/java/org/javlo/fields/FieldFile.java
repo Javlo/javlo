@@ -186,7 +186,7 @@ public class FieldFile extends Field implements IStaticContainer {
 
 		out.println("<div class=\"form-group field-"+getName()+"\">");
 		out.println("<fieldset>");
-		out.println("<legend>" + getLabel(new Locale(globalContext.getEditLanguage(ctx.getRequest().getSession()))) + "</legend>");
+		out.println("<legend>" + getLabel(ctx, new Locale(globalContext.getEditLanguage(ctx.getRequest().getSession()))) + "</legend>");
 		out.println("<div class=\"commands\">");
 
 		out.println("<div class=\"row form-group\"><div class=\"col-sm-3\">");
@@ -260,7 +260,7 @@ public class FieldFile extends Field implements IStaticContainer {
 	 * @throws Exception 
 	 */
 	protected String getReferenceFieldView(ContentContext ctx) throws Exception {
-		return "<div class=\"slave-field line form-group\"><label>"+getLabel(new Locale(ctx.getContextRequestLanguage()))+"</label>"+getPreviewCode(ctx, false)+"</div>";
+		return "<div class=\"slave-field line form-group\"><label>"+getLabel(ctx, new Locale(ctx.getContextRequestLanguage()))+"</label>"+getPreviewCode(ctx, false)+"</div>";
 	}
 
 	public String getCurrentLink() {
@@ -509,7 +509,7 @@ public class FieldFile extends Field implements IStaticContainer {
 		Collection<Link> outList = new LinkedList<Link>();
 		if (getCurrentFile() != null && getCurrentFile().trim().length() > 0) {
 			String fileURI = getFileURL(ctx, getCurrentFile());
-			outList.add(new Link(fileURI, getLabel(new Locale(ctx.getRequestContentLanguage()))));
+			outList.add(new Link(fileURI, getLabel(ctx, new Locale(ctx.getRequestContentLanguage()))));
 		}
 		return outList;
 	}

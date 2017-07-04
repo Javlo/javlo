@@ -22,11 +22,14 @@ import java.util.logging.Logger;
 
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
+import javax.mail.Folder;
 import javax.mail.Header;
 import javax.mail.Message;
 import javax.mail.MessagingException;
+import javax.mail.NoSuchProviderException;
 import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
+import javax.mail.Store;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
@@ -645,11 +648,24 @@ public class MailService {
 
 	public static void main(String[] args) {
 		try {
-			Session mailSession = getMailSession(null);
-			Transport transport = mailSession.getTransport("smtp");
-			transport.connect("relay.javlo.org", 25, "", "");
-			System.out.println("connected ? "+transport.isConnected());
-			System.out.println("* transport : "+transport);
+			Properties props = System.getProperties();
+			props.setProperty("mail.imaps.host", "imap.gmail.com");
+			props.setProperty("mail.imaps.port", "993");
+			props.setProperty("mail.imaps.connectiontimeout", "5000");
+			props.setProperty("mail.imaps.timeout", "5000");
+			try {
+			  Session session = Session.getDefaultInstance(props, null);
+			  Store store = session.getStore("imaps");
+			  store.connect("imap.gmail.com", "pvandermaesen@gmail.com", "pvdm2312");
+			  Folder inbox = store.getFolder("inbox");
+			  System.out.println("#msg : "+inbox.getMessageCount());
+			} catch (NoSuchProviderException e) {
+			  e.printStackTrace();
+			  System.exit(1);
+			} catch (MessagingException e) {
+			  e.printStackTrace();
+			  System.exit(2);
+			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

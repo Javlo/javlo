@@ -2,6 +2,10 @@
 	margin-top: 20px;
 }
 
+.content .row label {
+	width: 140px;
+}
+
 a.unread {
 	font-weight: bold;
 }
@@ -75,6 +79,27 @@ span.label {
 
 .standard-form select {
 	height: 21px;
+}
+
+.authors {
+	font-weight: bold;
+}
+
+.comment .date {
+	float: right;
+	font-size: 0.9em;
+	font-style: italic;
+}
+
+.comment {
+	margin-left: 15px;
+	padding-bottom: 3px; 
+	border-bottom: 1px solid #cccccc;
+	margin-bottom: 3px;
+}
+
+h2 {
+	margin-top: 15px;
 }
 
 @media (max-width: 764px) {

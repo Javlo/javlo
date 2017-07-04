@@ -80,47 +80,47 @@
 	</div>
 </div>
 
-		<input type="hidden" name="webaction" value="ticket.update" />
-		<input type="hidden" name="id" value="${ticket.id}" />	
-		<c:if test="${info.editContext.lightInterface}">
-			<input type="hidden" name="priority" value="${empty ticket.priority ? '1' : ticket.priority}" />
-		</c:if>
+	<input type="hidden" name="webaction" value="ticket.update" />
+	<input type="hidden" name="id" value="${ticket.id}" />	
+	<c:if test="${info.editContext.lightInterface}">
+		<input type="hidden" name="priority" value="${empty ticket.priority ? '1' : ticket.priority}" />
+	</c:if>
 		
 <c:if test="${not info.editContext.lightInterface}">
-		<c:set var="strListSeparator" value="|||"/>
-		<c:set var="knownUsers" value="${strListSeparator}"/>
-		<c:set var="ticketUsers" value="${strListSeparator}"/>
-		<c:forEach var="userLogin" items="${ticket.users}">
-			<c:set var="ticketUsers" value="${ticketUsers}${userLogin}${strListSeparator}"/>
+	<c:set var="strListSeparator" value="|||"/>
+	<c:set var="knownUsers" value="${strListSeparator}"/>
+	<c:set var="ticketUsers" value="${strListSeparator}"/>
+	<c:forEach var="userLogin" items="${ticket.users}">
+		<c:set var="ticketUsers" value="${ticketUsers}${userLogin}${strListSeparator}"/>
+	</c:forEach>
+	<fieldset>
+		<legend>user</legend>
+		<c:forEach var="user" items="${ticketAvailableUsers}">
+			<c:set var="knownUsers" value="${knownUsers}${user.login}${strListSeparator}"/>
+			<c:set var="userKey" value="${strListSeparator}${user.login}${strListSeparator}" />
+			<label class="checkbox-inline">
+				<input type="checkbox" name="users" value="${user.login}" ${fn:contains(ticketUsers, userKey)?'checked="checked"':''} /> ${user.login}
+			</label>
 		</c:forEach>
+	</fieldset>
+	<c:set var="minOne" value="false" />
+	<c:set var="buffer">
 		<fieldset>
-			<legend>user</legend>
-			<c:forEach var="user" items="${ticketAvailableUsers}">
-				<c:set var="knownUsers" value="${knownUsers}${user.login}${strListSeparator}"/>
-				<c:set var="userKey" value="${strListSeparator}${user.login}${strListSeparator}" />
-				<label class="checkbox-inline">
-					<input type="checkbox" name="users" value="${user.login}" ${fn:contains(ticketUsers, userKey)?'checked="checked"':''} /> ${user.login}
-				</label>
+			<legend>Unknown/deleted users</legend>
+			<c:forEach var="userLogin" items="${ticket.users}">
+				<c:set var="userKey" value="${strListSeparator}${userLogin}${strListSeparator}" />
+				<c:if test="${not fn:contains(knownUsers,userKey)}">
+					<label class="checkbox-inline">
+						<input type="checkbox" name="users" value="${userLogin}" checked="checked" /> ${userLogin}
+					</label>
+					<c:set var="minOne" value="true" />
+				</c:if>
 			</c:forEach>
 		</fieldset>
-		<c:set var="minOne" value="false" />
-		<c:set var="buffer">
-			<fieldset>
-				<legend>Unknown/deleted users</legend>
-				<c:forEach var="userLogin" items="${ticket.users}">
-					<c:set var="userKey" value="${strListSeparator}${userLogin}${strListSeparator}" />
-					<c:if test="${not fn:contains(knownUsers,userKey)}">
-						<label class="checkbox-inline">
-							<input type="checkbox" name="users" value="${userLogin}" checked="checked" /> ${userLogin}
-						</label>
-						<c:set var="minOne" value="true" />
-					</c:if>
-				</c:forEach>
-			</fieldset>
-		</c:set>
-		<c:if test="${minOne}"><c:out value="${buffer}" escapeXml="false" /></c:if>
+	</c:set>
+	<c:if test="${minOne}"><c:out value="${buffer}" escapeXml="false" /></c:if>
 </c:if>
-		<c:if test="${empty newTicket}"><div class="frame">
+		<c:if test="${empty newTicket && not empty ticket.message}"><div class="frame">
 		<div class="line">
 			<label>message</label>
 			<div class="message">${ticket.message}</div>			
@@ -129,11 +129,10 @@
 	<c:if test="${empty newTicket}">
 	<h2>comments</h2>
 	<c:if test="${fn:length(ticket.comments) > 0}">
-	<c:forEach var="comment" items="${ticket.comments}">
-	<fieldset>
-		<legend>${comment.authors}</legend>
-		${comment.message}
-	</fieldset>
+	<c:forEach var="comment" items="${ticket.comments}" varStatus="status">
+	<div class="comment ${status.last?'last':''}">
+		<span class="date">${comment.creationDateString}</span><span class="authors">${comment.authors} : </span>${comment.message}		
+	</div>
 	</c:forEach>
 	</c:if>		
 	

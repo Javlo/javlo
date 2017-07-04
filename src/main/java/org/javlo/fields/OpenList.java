@@ -27,7 +27,18 @@ public class OpenList extends Field {
 
 	@Override
 	public String getDisplayValue(ContentContext ctx, Locale locale) throws Exception {
-		return "<span class=\"" + StringHelper.createFileName(getValue()) + "\">" + StringHelper.neverNull(getList(ctx, getListName(), locale).get(getValue()), "&nbsp;") + "</span>";
+		return "<span class=\"" + StringHelper.createFileName(getValue()) + "\">" + getLabel(ctx, locale) + "</span>";
+	}
+	
+	@Override
+	protected String getLabel(ContentContext ctx, Locale locale) {
+		try {
+			System.out.println("##### OpenList.getLabel : StringHelper.neverNull(getList(ctx, getListName(), locale).get(getValue())) = "+StringHelper.neverNull(getList(ctx, getListName(), locale).get(getValue()))); //TODO: remove debug trace
+			return StringHelper.neverNull(getList(ctx, getListName(), locale).get(getValue()));
+		} catch (Exception e) {
+			e.printStackTrace();
+			return e.getMessage();
+		}
 	}
 
 	public Map<String, String> getList(ContentContext ctx) throws Exception {
@@ -77,7 +88,7 @@ public class OpenList extends Field {
 
 		out.println("<div class=\"form-group field-"+getName()+"\">");
 		out.println(getEditLabelCode());
-		out.println("<div class=\"row\"><div class=\"col-sm-3\"><label for=\"" + getInputName() + "\">" + getLabel(new Locale(ctx.getContextRequestLanguage())) + " : </label></div>");
+		out.println("<div class=\"row\"><div class=\"col-sm-3\"><label for=\"" + getInputName() + "\">" + getLabel(ctx, new Locale(ctx.getContextRequestLanguage())) + " : </label></div>");
 		out.println("<div class=\"col-sm-"+(ctx.isVisualMode()?"9":"7")+"\"><select class=\"form-control\" id=\"" + getInputName() + "\" name=\"" + getInputName() + "\" value=\"" + StringHelper.neverNull(getValue()) + "\">");
  
 		if (search) {

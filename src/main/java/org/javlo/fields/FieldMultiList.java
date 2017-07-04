@@ -43,7 +43,7 @@ public class FieldMultiList extends Field {
 		StringWriter writer = new StringWriter();
 		PrintWriter out = new PrintWriter(writer);
 		out.println("<div class=\"form-group\"><div class=\"row\"><div class=\"col-sm-3\">");
-		out.println("<label>" + getLabel(new Locale(ctx.getContextRequestLanguage())) + " : </label></div>");
+		out.println("<label>" + getLabel(ctx, new Locale(ctx.getContextRequestLanguage())) + " : </label></div>");
 		out.println(getEditLabelCode());
 		out.println("<div class=\"col-sm-9\">");
 

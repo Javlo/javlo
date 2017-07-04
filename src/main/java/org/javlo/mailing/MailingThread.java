@@ -141,6 +141,7 @@ public class MailingThread extends Thread {
 			MailService mailingManager = MailService.getInstance(mailConfig);
 			
 			logger.info("send mailling '" + mailing.getSubject() + "' config:" + mailConfig+ " DKIM ? "+(dkimBean != null));
+			int countSending = 0;
 			while (to != null) {
 				DataToIDService dataToID = DataToIDService.getInstance(application);
 				String data = "mailing=" + mailing.getId() + "&to=" + to;
@@ -176,7 +177,11 @@ public class MailingThread extends Thread {
 					mailing.setErrorMessage(ex.getMessage()+" [to="+to+"]");
 				}
 				mailing.onMailSent(to);
-				Thread.sleep(20);
+				if (countSending%20!=0) {
+					Thread.sleep(20);
+				} else {
+					Thread.sleep(1000);
+				}
 				to = mailing.getNextReceiver();
 			}
 		} finally {

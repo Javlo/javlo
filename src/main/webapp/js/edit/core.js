@@ -241,7 +241,7 @@ jQuery(document).ready(function() {
 			});
 		}
 	});
-
+	
 	jQuery(".js-submit select").each(function() {
 		var item = jQuery(this);
 		item.live("change", function() {

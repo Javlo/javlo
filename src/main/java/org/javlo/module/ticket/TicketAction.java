@@ -303,11 +303,12 @@ public class TicketAction extends AbstractModuleAction {
 				for (TicketBean ticket : tickets) {					
 					String messageHTML = "";
 					String url = URLHelper.createAbsoluteURL(ctx.getContextForAbsoluteURL(), ticket.getUrl());
-					messageHTML = "<div class=\"message\"><a href=\""+url+"\">"+XHTMLHelper.textToXHTML(ticket.getTitle())+"</a></div>";
+					messageHTML = "<div class=\"message\">"+ticket.getAuthors()+" : "+"<a href=\""+url+"\">"+XHTMLHelper.textToXHTML(ticket.getTitle())+"</a></div>";
+					String key = ticket.getLastUpdateDateLabel()+" ["+ticket.getStatus()+']';
 					if (ticket.getComments().size() == 0) {
-						ticketsMap.put("["+ticket.getAuthors()+"] - "+ticket.getTitle(), messageHTML);
+						ticketsMap.put(key, messageHTML);
 					} else {
-						ticketsMap.put("["+ticket.getAuthors()+"] - "+ticket.getTitle(), messageHTML+XHTMLHelper.collectionToList(ticket.getComments()));
+						ticketsMap.put(key, messageHTML+XHTMLHelper.collectionToList(ticket.getComments()));
 					}
 				}		
 				I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());

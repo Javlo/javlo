@@ -340,6 +340,10 @@ a.popup span {
 	width: 220px;
 }
 
+.standard-form .row select {
+	width: auto;
+}
+
 .standard-form .line label.suffix {
 	display: inline-block;
 	padding-left: 3px;

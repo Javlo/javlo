@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.io.FileUtils;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
@@ -25,8 +26,6 @@ import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.navigation.RobotsTxt;
 import org.javlo.service.syncro.FileStructureFactory;
-import org.javlo.tracking.Track;
-import org.javlo.tracking.Tracker;
 import org.javlo.user.AdminUserFactory;
 import org.javlo.user.IUserFactory;
 import org.javlo.user.User;
@@ -199,6 +198,18 @@ public class ResourceServlet extends HttpServlet {
 						return;
 					}
 				}
+				
+//				System.out.println("");
+//				System.out.println("file : "+file);
+//				System.out.println("uri  : "+request.getRequestURI());
+//				Enumeration enumeration = request.getHeaderNames();
+//				while (enumeration.hasMoreElements()) {
+//					String headName = ""+enumeration.nextElement();
+//					System.out.println("   "+headName+" = "+request.getHeader(headName));
+//				}				
+//				System.out.println("");
+				
+				
 				if (!json) {
 					if (file.exists()) {
 						StaticInfo.getInstance(ctx, file).addAccess(ctx);
@@ -237,10 +248,14 @@ public class ResourceServlet extends HttpServlet {
 					}
 					String finalName = URLHelper.mergePath(dataFolder, resourceURI);
 					File file = new File(finalName);
+					
+					System.out.println("");
+					
+					
 					if (!json) {						
 						response.setContentType(ResourceHelper.getFileExtensionToMineType(fileExt));
 						response.setHeader("Cache-Control", "no-cache");
-						response.setDateHeader(NetHelper.HEADER_LAST_MODIFIED, file.lastModified());
+						response.setDateHeader(NetHelper.HEADER_LAST_MODIFIED, file.lastModified());						
 						long lastModifiedInBrowser = request.getDateHeader(NetHelper.HEADER_IF_MODIFIED_SINCE);
 						if (file.isFile()) {
 							if (file.lastModified() > 0 && file.lastModified() / 1000 <= lastModifiedInBrowser / 1000) {
@@ -248,10 +263,9 @@ public class ResourceServlet extends HttpServlet {
 							} else {
 								//response.setHeader("Accept-Ranges", "bytes");
 								//response.setHeader("Content-disposition","attachment; filename="+file.getName());
+								response.setHeader("Content-Disposition", "inline; filename="+ file.getName() +";");
 								response.setContentLength((int) file.length());
-								fileStream = new FileInputStream(file);
-								out = response.getOutputStream();								
-								ResourceHelper.writeStreamToStream(fileStream, out);
+								FileUtils.copyFile(file, response.getOutputStream());
 							}
 						}
 					} else {
@@ -269,7 +283,7 @@ public class ResourceServlet extends HttpServlet {
 						outMap.remove("URL");
 						outMap.remove("folder");
 						JSONMap.JSON.toJson(outMap, response.getWriter());
-					}
+					}	
 				}
 			}
 		} catch (Throwable e) {
@@ -278,8 +292,10 @@ public class ResourceServlet extends HttpServlet {
 		} finally {
 			ResourceHelper.closeResource(fileStream);
 		}
+		System.out.println("##### ResourceServlet.processRequest : END."); //TODO: remove debug trace
 		servletRun--;
 	}
 
 }
+
 

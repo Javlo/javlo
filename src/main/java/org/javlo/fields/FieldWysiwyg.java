@@ -47,7 +47,7 @@ public class FieldWysiwyg extends Field {
 		StringWriter writer = new StringWriter();
 		PrintWriter out = new PrintWriter(writer);
 		out.println("<div class=\"form-group " + getType() + "\">");
-		out.println("<label for=\""+getInputName()+"\">"+getLabel(new Locale(ctx.getGlobalContext().getEditLanguage(ctx.getRequest().getSession())))+"</label>");
+		out.println("<label for=\""+getInputName()+"\">"+getLabel(ctx, new Locale(ctx.getGlobalContext().getEditLanguage(ctx.getRequest().getSession())))+"</label>");
 		out.print("<textarea class=\"tinymce-light wysiwyg\" id=\"" + getInputName() + "\" name=\"" + getInputName() + "\"");
 		out.print(" rows=\"" + 10 + "\">");
 
