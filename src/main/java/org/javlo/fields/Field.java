@@ -64,7 +64,7 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 		public String getLabel() {
 			return Field.this.getLabel(ctx, contentLocale);
 		}
-
+		
 		public String getValue() {
 			return Field.this.getValue();
 		}

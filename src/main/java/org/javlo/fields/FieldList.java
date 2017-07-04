@@ -17,11 +17,6 @@ public class FieldList extends Field {
 
 	@Override
 	public String getDisplayValue(ContentContext ctx, Locale locale) throws Exception {		
-		return "<span class=\"" + StringHelper.createFileName(getValue()) + "\">" + getLabel(ctx, locale) + "</span>";
-	}
-	
-	@Override
-	protected String getLabel(ContentContext ctx, Locale locale) {
 		try {
 			return StringHelper.neverNull(getList(ctx, getListName(), locale).get(getValue()));
 		} catch (Exception e) {
@@ -29,7 +24,7 @@ public class FieldList extends Field {
 			return e.getMessage();
 		}
 	}
-
+	
 	@Override
 	public String getEditXHTMLCode(ContentContext ctx) throws Exception {
 		

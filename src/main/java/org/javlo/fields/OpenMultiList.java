@@ -28,15 +28,6 @@ public class OpenMultiList extends Field {
 
 	@Override
 	public String getDisplayValue(ContentContext ctx, Locale locale) throws Exception {
-		if (getValue() == null) {
-			return "";
-		} else {
-			return "<span class=\"" + StringHelper.createFileName(getValue()) + "\">" + getLabel(ctx, locale) + "</span>";
-		}
-	}
-	
-	@Override
-	protected String getLabel(ContentContext ctx, Locale locale) {
 		try {
 			return StringHelper.collectionToString(getValues(), ", ");
 		} catch (Exception e) {
@@ -44,7 +35,7 @@ public class OpenMultiList extends Field {
 			return e.getMessage();
 		}
 	}
-
+	
 	public Map<String, String> getList(ContentContext ctx) throws Exception {
 		Map<String, String> outList = new HashMap<String, String>();
 		ContentService content = ContentService.getInstance(ctx.getRequest());

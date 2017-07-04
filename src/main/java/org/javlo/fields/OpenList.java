@@ -27,13 +27,7 @@ public class OpenList extends Field {
 
 	@Override
 	public String getDisplayValue(ContentContext ctx, Locale locale) throws Exception {
-		return "<span class=\"" + StringHelper.createFileName(getValue()) + "\">" + getLabel(ctx, locale) + "</span>";
-	}
-	
-	@Override
-	protected String getLabel(ContentContext ctx, Locale locale) {
-		try {
-			System.out.println("##### OpenList.getLabel : StringHelper.neverNull(getList(ctx, getListName(), locale).get(getValue())) = "+StringHelper.neverNull(getList(ctx, getListName(), locale).get(getValue()))); //TODO: remove debug trace
+		try {			
 			return StringHelper.neverNull(getList(ctx, getListName(), locale).get(getValue()));
 		} catch (Exception e) {
 			e.printStackTrace();
