@@ -61,7 +61,7 @@ public class TicketAction extends AbstractModuleAction {
 			}
 		} else {
 			for (TicketBean ticket : tickets) {
-				if (ctx.getCurrentEditUser() != null && (AdminUserSecurity.getInstance().isAdmin(ctx.getCurrentEditUser()) || ticket.getAuthors().equals(ctx.getCurrentEditUser().getLogin())) &&  ticket.getContext() != null && ticket.getContext().equals(globalContext.getContextKey())) {
+				if (ctx.getCurrentEditUser() != null && (AdminUserSecurity.getInstance().isAdmin(ctx.getCurrentEditUser()) || ticket.getAuthors().equals(ctx.getCurrentEditUser().getLogin())) && ticket.getContext() != null && ticket.getContext().equals(globalContext.getContextKey())) {
 					if (status == null || status.trim().length() == 0 || ticket.getStatus().equals(status)) {
 						myTickets.put(ticket.getId(), new TicketUserWrapper(ticket, ctx));
 					}
@@ -151,14 +151,14 @@ public class TicketAction extends AbstractModuleAction {
 		TicketService ticketService = TicketService.getInstance(globalContext);
 		String id = rs.getParameter("id", "");
 		String title = rs.getParameter("title", null);
-		
+
 		TicketBean ticket;
 		if (id.trim().length() > 0) { // update
 			if ("new".equals(id)) {
 				ticket = new TicketBean();
 			} else {
 				TicketUserWrapper existing = getMyTicket(ctx).get(id);
-				if (existing == null) {					
+				if (existing == null) {
 					return "ticket not found : " + id;
 				}
 				ticket = new TicketBean(existing);
@@ -166,14 +166,14 @@ public class TicketAction extends AbstractModuleAction {
 				ticket.setLatestEditor(user.getLogin());
 			}
 		} else { // create
-			if (rs.getParameter("title", "").trim().length() == 0) {				
+			if (rs.getParameter("title", "").trim().length() == 0) {
 				return "please enter a title.";
 			}
 			ticket = new TicketBean();
 			ticket.setAuthors(user.getLogin());
 			ticket.setContext(globalContext.getContextKey());
 		}
-		
+
 		if (StringHelper.isAllEmpty(title, ticket.getTitle())) {
 			ctx.getRequest().setAttribute("newTicket", true);
 			return i18nAccess.getText("ticket.message.no-title");
@@ -193,7 +193,7 @@ public class TicketAction extends AbstractModuleAction {
 				ticket.setTitle(title);
 			}
 			ticket.setMessage(rs.getParameter("message", ticket.getMessage()));
-			ticket.setUsers(rs.getParameterListValues("users", Collections.<String> emptyList()));
+			ticket.setUsers(rs.getParameterListValues("users", Collections.<String>emptyList()));
 			if (ticket.getUsers() == null || ticket.getUsers().isEmpty()) {
 				AdminUserFactory userFactory = AdminUserFactory.createUserFactory(ctx.getGlobalContext(), ctx.getRequest().getSession());
 				List<String> users = new LinkedList<String>();
@@ -210,10 +210,10 @@ public class TicketAction extends AbstractModuleAction {
 		}
 		ticket.onUpdate(user.getLogin());
 		ticketService.updateTicket(ctx, ticket);
-		
+
 		messageRepository.addMessage(new GenericMessage("ticket updated.", GenericMessage.INFO));
 		NotificationService.getInstance(globalContext).notifExternalService(ctx, ticket.getTitle(), GenericMessage.INFO, ticket.getUrl(), ticket.getAuthors(), false, ticket.getUsers());
-		
+
 		return null;
 	}
 
@@ -285,6 +285,14 @@ public class TicketAction extends AbstractModuleAction {
 				}
 				list.add(ticket);
 			}
+			if (StringHelper.isMail(ticket.getAuthors())) {
+				List<TicketBean> list = ticketsByUser.get(ticket.getAuthors());
+				if (list == null) {
+					list = new LinkedList<TicketBean>();
+					ticketsByUser.put(ticket.getAuthors(), list);
+				}
+				list.add(ticket);
+			}
 		}
 		for (Entry<String, List<TicketBean>> entry : ticketsByUser.entrySet()) {
 			sendUserTicketSummaryNotification(ctx, userFactory, entry.getKey(), entry.getValue());
@@ -297,27 +305,27 @@ public class TicketAction extends AbstractModuleAction {
 		if (userInfo != null) {
 			String email = StringHelper.trimAndNullify(userInfo.getEmail());
 			if (email != null) {
-				String siteTitle = ctx.getGlobalContext().getGlobalTitle();				
+				String siteTitle = ctx.getGlobalContext().getGlobalTitle();
 				String baseUrl = URLHelper.createInterModuleURL(ctx.getContextForAbsoluteURL().getContextWithOtherRenderMode(ContentContext.EDIT_MODE), "/", "ticket");
-				Map ticketsMap = new HashMap();				
-				for (TicketBean ticket : tickets) {					
+				Map ticketsMap = new HashMap();
+				for (TicketBean ticket : tickets) {
 					String messageHTML = "";
 					String url = URLHelper.createAbsoluteURL(ctx.getContextForAbsoluteURL(), ticket.getUrl());
-					messageHTML = "<div class=\"message\">"+ticket.getAuthors()+" : "+"<a href=\""+url+"\">"+XHTMLHelper.textToXHTML(ticket.getTitle())+"</a></div>";
-					String key = ticket.getLastUpdateDateLabel()+" ["+ticket.getStatus()+']';
+					messageHTML = "<div class=\"message\">" + ticket.getAuthors() + " : " + "<a href=\"" + url + "\">" + XHTMLHelper.textToXHTML(ticket.getTitle()) + "</a></div>";
+					String key = ticket.getLastUpdateDateLabel() + " [" + ticket.getStatus() + ']';
 					if (ticket.getComments().size() == 0) {
 						ticketsMap.put(key, messageHTML);
 					} else {
-						ticketsMap.put(key, messageHTML+XHTMLHelper.collectionToList(ticket.getComments()));
+						ticketsMap.put(key, messageHTML + XHTMLHelper.collectionToList(ticket.getComments()));
 					}
-				}		
+				}
 				I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
 				String sujectPrefix = i18nAccess.getText("ticket.subject");
 				String ticketUpdate = i18nAccess.getText("ticket.update");
 				String goOnSite = i18nAccess.getText("ticket.go");
-				String content = XHTMLHelper.createAdminMail(sujectPrefix + ' ' + siteTitle, ticketsMap.size()+ticketUpdate, ticketsMap, baseUrl, goOnSite, null);				
+				String content = XHTMLHelper.createAdminMail(sujectPrefix + ' ' + siteTitle, ticketsMap.size() + ticketUpdate, ticketsMap, baseUrl, goOnSite, null);
 				NetHelper.sendXHTMLMail(ctx, new InternetAddress(globalContext.getAdministratorEmail()), new InternetAddress(email), null, null, ticketUpdate + ' ' + siteTitle, content.toString(), null);
-				
+
 			}
 		}
 	}
