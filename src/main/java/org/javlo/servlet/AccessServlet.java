@@ -87,7 +87,7 @@ import org.javlo.servlet.zip.ZipManagement;
 import org.javlo.template.Template;
 import org.javlo.template.TemplateFactory;
 import org.javlo.thread.ThreadManager;
-import org.javlo.tracking.Tracker;
+import org.javlo.user.MaxLoginService;
 import org.javlo.user.UserFactory;
 import org.javlo.user.VisitorContext;
 import org.javlo.utils.DebugListening;
@@ -199,6 +199,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 		}
 
 		StaticConfig staticConfig = StaticConfig.getInstance(getServletContext());
+		MaxLoginService.getInstance().setMaxErrorLoginByHours(staticConfig.getMaxErrorLoginByHour());
 		Integer undoDepth = staticConfig.getUndoDepth();
 		if (undoDepth != null) {
 			PersistenceService.UNDO_DEPTH = undoDepth;

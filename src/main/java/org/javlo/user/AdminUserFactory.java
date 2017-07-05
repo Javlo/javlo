@@ -104,15 +104,15 @@ public class AdminUserFactory extends UserFactory {
 		
 		User outUser = super.login(request, login, password);
 		
-		if (DEFAULT_PASSWORD.equals(password)) {
-			I18nAccess i18nAccess;
-			try {
-				i18nAccess = I18nAccess.getInstance(request);
-				MessageRepository.getInstance(request).setGlobalMessage(new GenericMessage(i18nAccess.getText("user.change-password", "Please change you password."), GenericMessage.ALERT));
-			} catch (Exception e) {
-				e.printStackTrace();					
-			}				
-		}
+//		if (DEFAULT_PASSWORD.equals(password)) {
+//			I18nAccess i18nAccess;
+//			try {
+//				i18nAccess = I18nAccess.getInstance(request);
+//				MessageRepository.getInstance(request).setGlobalMessage(new GenericMessage(i18nAccess.getText("user.change-password", "Please change you password."), GenericMessage.ALERT));
+//			} catch (Exception e) {
+//				e.printStackTrace();					
+//			}				
+//		}
 		
 		GlobalContext globalContext = GlobalContext.getInstance(request);
 		EditContext editContext = EditContext.getInstance(globalContext, request.getSession());

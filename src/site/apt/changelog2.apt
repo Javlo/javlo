@@ -872,4 +872,6 @@ change log
  
  * 3/ ticket responsive / html insertion (meta, header, footer) / padding with table (mailing)
  
- * 4/ ticket layout / getLabel with contentcontext for field
+ * 4/ ticket layout / getLabel with contentcontext for field / maximum login error
+ 
+ * 5/

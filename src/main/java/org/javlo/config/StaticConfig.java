@@ -901,6 +901,10 @@ public class StaticConfig extends Observable {
 	public boolean isLoginWithToken() {
 		return properties.getBoolean("security.login.token", false);
 	}
+	
+	public int getMaxErrorLoginByHour() {
+		return properties.getInt("security.login.max-error-hour", 100);
+	}
 
 	public String getRealPath(String path) {
 		return ResourceHelper.getRealPath(application, path);
@@ -908,6 +912,10 @@ public class StaticConfig extends Observable {
 
 	public String getSecretKey() {
 		return properties.getString("security.secret-key", "fju43l7m");
+	}
+	
+	public String getDefaultPassword() {
+		return properties.getString("security.default-password", "changeme");
 	}
 
 	/*

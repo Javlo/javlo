@@ -63,8 +63,6 @@ public class UserFactory implements IUserFactory, Serializable {
 
 	private String userInfoFile = null;
 
-	public String DEFAULT_PASSWORD = "changeme";
-
 	private static Map<String, IUserInfo> changePasswordReference = new TimeMap<String, IUserInfo>();
 
 	protected List<IUserInfo> userInfoList = null; // TODO: create a external
@@ -509,7 +507,7 @@ public class UserFactory implements IUserFactory, Serializable {
 			user.setContext(globalContext.getContextKey());
 			request.getSession().setAttribute(SESSION_KEY, user);
 
-			if (DEFAULT_PASSWORD.equals(password)) {
+			if (staticConfig.getDefaultPassword().equals(password)) {
 				I18nAccess i18nAccess;
 				try {
 					i18nAccess = I18nAccess.getInstance(request);
@@ -518,6 +516,20 @@ public class UserFactory implements IUserFactory, Serializable {
 					e.printStackTrace();
 				}
 			}
+		}
+		MaxLoginService maxLoginService = MaxLoginService.getInstance();
+		if (!maxLoginService.isLoginAuthorised()) {
+			I18nAccess i18nAccess;
+			try {
+				i18nAccess = I18nAccess.getInstance(request);
+				MessageRepository.getInstance(request).setGlobalMessage(new GenericMessage(i18nAccess.getText("user.too-many-errors", "Too many login failures, try again later."), GenericMessage.ERROR));
+			} catch (Exception e) {
+				e.printStackTrace();					
+			}
+			request.getSession().removeAttribute(SESSION_KEY);
+			return null;
+		} else if (user == null) {
+			maxLoginService.addBadPassword();
 		}
 		return user;
 	}
