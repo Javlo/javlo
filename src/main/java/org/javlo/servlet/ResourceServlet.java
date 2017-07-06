@@ -291,8 +291,7 @@ public class ResourceServlet extends HttpServlet {
 			e.printStackTrace();
 		} finally {
 			ResourceHelper.closeResource(fileStream);
-		}
-		System.out.println("##### ResourceServlet.processRequest : END."); //TODO: remove debug trace
+		}		
 		servletRun--;
 	}
 
