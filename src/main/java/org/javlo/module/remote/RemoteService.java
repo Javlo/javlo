@@ -16,6 +16,7 @@ import org.javlo.context.GlobalContext;
 import org.javlo.helper.PatternHelper;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.URLHelper;
+import org.javlo.helper.XHTMLHelper;
 import org.javlo.mailing.MailConfig;
 import org.javlo.mailing.MailService;
 import org.javlo.message.GenericMessage;
@@ -121,14 +122,16 @@ public class RemoteService {
 
 	void sendNotification() {
 		boolean errorFound = false;
+		Map<String,String> errorList = new HashMap<String, String>();
 		for(RemoteBean bean : getRemotes()) {			
 			if (!bean.isValid() && !sendedNotification.containsKey(bean.getId())) {
 				NotificationService service = NotificationService.getInstance(globalContext);
 				String details = bean.getUrl();
 				if(bean.getError() != null) {
 					details = details + " : " + bean.getError();
-				}
+				}				
 				service.addNotification("RC Error (" + details + ")", url, GenericMessage.ERROR, null, null, false);
+				errorList.put(bean.getServerHostname(), "<a href=\""+bean.getUrl()+"\">"+bean.getError()+"</a>");
 				errorFound = true;
 				sendedNotification.put(bean.getId(), bean.getId());
 			}
@@ -145,8 +148,9 @@ public class RemoteService {
 					MailService mailService = MailService.getInstance(new MailConfig(globalContext, globalContext.getStaticConfig(), null));
 					InternetAddress admin;
 					try {
-						admin = new InternetAddress(notificationEmail);
-						mailService.sendMail(admin, admin, "remote error on : "+globalContext.getContextKey(), "click here : "+url, false);
+						admin = new InternetAddress(notificationEmail);						
+						String mailContent = XHTMLHelper.createAdminMail("remote error from : "+globalContext.getContextKey(), null, errorList, url, globalContext.getContextKey(), null);						
+						mailService.sendMail(admin, admin, "remote error on : "+globalContext.getContextKey(), mailContent, true);
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
