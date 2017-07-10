@@ -126,7 +126,7 @@ public class RemoteBean implements Serializable {
 //						+ ", now=" + now
 //						+ ", synchroToken=" + synchroToken
 //						+ ", fullUrl=" + srvUrl);				
-				String content = NetHelper.readPageGet(new URL(srvUrl));
+				String content = NetHelper.readPageGetFollowRedirect(new URL(srvUrl));
 				if (content == null) {
 					serverInfoOut.put("message", "Error: No content read (The url targets a javlo server? Synchro code is correct?)");
 				} else {
@@ -135,12 +135,8 @@ public class RemoteBean implements Serializable {
 					if (dataMap == null) {
 						serverInfoOut.put("message", "No data map.");
 					} else {
-						Map<String, Object> serverInfo = dataMap.getValue("serverInfo",
-								new TypeToken<LinkedHashMap<String, Object>>() {
-								}.getType());
-						Map<String, List<String>> requestHeaders = dataMap.getValue("requestHeaders",
-								new TypeToken<LinkedHashMap<String, LinkedList<String>>>() {
-								}.getType());
+						Map<String, Object> serverInfo = dataMap.getValue("serverInfo",	new TypeToken<LinkedHashMap<String, Object>>() {}.getType());
+						Map<String, List<String>> requestHeaders = dataMap.getValue("requestHeaders",new TypeToken<LinkedHashMap<String, LinkedList<String>>>() {}.getType());
 						serverInfoOut.put(SERVER_INFO_LOADED, true);
 						serverInfoOut.remove("message");
 						serverInfoOut.putAll(serverInfo);

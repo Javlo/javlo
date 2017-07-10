@@ -1,11 +1,13 @@
 package org.javlo.helper;
 
 import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.CookieHandler;
 import java.net.CookieManager;
@@ -70,11 +72,20 @@ import net.sf.uadetector.UserAgentType;
 import net.sf.uadetector.service.UADetectorServiceFactory;
 
 public class NetHelper {
-	
+
 	private static boolean INIT_HTTPS = false;
-	
-	private static final Map<String, Boolean> UserAgentCache = Collections.synchronizedMap(new TimeMap<String, Boolean>(60*60*24*30, 100000)); // cache for user agent, 1 month and max 100000 entry
-	
+
+	private static final Map<String, Boolean> UserAgentCache = Collections.synchronizedMap(new TimeMap<String, Boolean>(60 * 60 * 24 * 30, 100000)); // cache
+																																						// for
+																																						// user
+																																						// agent,
+																																						// 1
+																																						// month
+																																						// and
+																																						// max
+																																						// 100000
+																																						// entry
+
 	/**
 	 * create a static logger.
 	 */
@@ -96,11 +107,11 @@ public class NetHelper {
 	}
 
 	public static String readPageForMailing(URL url, String login, String pwd) throws Exception {
-		logger.info("url="+url);
+		logger.info("url=" + url);
 		return readPage(url, true, true, null, login, pwd, null, false);
 	}
 
-	public static String readPageForMailing(URL url, String token) throws Exception {		
+	public static String readPageForMailing(URL url, String token) throws Exception {
 		return readPage(url, true, true, null, null, null, token, false);
 	}
 
@@ -124,6 +135,42 @@ public class NetHelper {
 			ResourceHelper.closeResource(in);
 		}
 		return new String(out.toByteArray(), ContentContext.CHARACTER_ENCODING);
+	}
+
+	public static String readPageGetFollowRedirect(URL url) throws Exception {
+		try {
+			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+			conn.setReadTimeout(5000);
+			boolean redirect = true;			
+			int countRedirect = 0;
+			while (redirect && countRedirect < 16) { 
+				int status = conn.getResponseCode();
+				redirect  = false;
+				if (status != HttpURLConnection.HTTP_OK) {
+					if (status == HttpURLConnection.HTTP_MOVED_TEMP || status == HttpURLConnection.HTTP_MOVED_PERM || status == HttpURLConnection.HTTP_SEE_OTHER)
+						redirect = true;
+				}
+				if (redirect) {					
+					String newUrl = conn.getHeaderField("Location");
+					conn.disconnect();
+					conn = (HttpURLConnection) new URL(newUrl).openConnection();
+				} else {					
+					BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+					String inputLine;
+					StringBuffer html = new StringBuffer();
+					while ((inputLine = in.readLine()) != null) {
+						html.append(inputLine);
+					}
+					in.close();
+					conn.disconnect();
+					return html.toString();
+				}					
+				countRedirect++;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();			
+		}
+		return null;
 	}
 
 	public static String readPageGet(URL url) throws Exception {
@@ -264,38 +311,41 @@ public class NetHelper {
 			url = removeParams(url);
 
 			HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-			
+
 			// skip https validation
-			if (connection instanceof HttpsURLConnection && !INIT_HTTPS) {				
-				 TrustManager[] trustAllCerts = new TrustManager[] {new X509TrustManager() {
-		                public java.security.cert.X509Certificate[] getAcceptedIssuers() {
-		                    return null;
-		                }
-		                public void checkClientTrusted(X509Certificate[] certs, String authType) {
-		                }
-		                public void checkServerTrusted(X509Certificate[] certs, String authType) {
-		                }
-						@Override
-						public void checkClientTrusted(java.security.cert.X509Certificate[] chain, String authType) throws CertificateException {
-						}
-						@Override
-						public void checkServerTrusted(java.security.cert.X509Certificate[] chain, String authType) throws CertificateException {
-							
-						}
-		            }
-		        };
-		        SSLContext sc = SSLContext.getInstance("SSL");
-		        sc.init(null, trustAllCerts, new java.security.SecureRandom());
-		        HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());		        
-		        // Create all-trusting host name verifier
-		        HostnameVerifier allHostsValid = new HostnameVerifier() {
-		            public boolean verify(String hostname, SSLSession session) {
-		                return true;
-		            }
-		        };
-		        HttpsURLConnection.setDefaultHostnameVerifier(allHostsValid);
+			if (connection instanceof HttpsURLConnection && !INIT_HTTPS) {
+				TrustManager[] trustAllCerts = new TrustManager[] { new X509TrustManager() {
+					public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+						return null;
+					}
+
+					public void checkClientTrusted(X509Certificate[] certs, String authType) {
+					}
+
+					public void checkServerTrusted(X509Certificate[] certs, String authType) {
+					}
+
+					@Override
+					public void checkClientTrusted(java.security.cert.X509Certificate[] chain, String authType) throws CertificateException {
+					}
+
+					@Override
+					public void checkServerTrusted(java.security.cert.X509Certificate[] chain, String authType) throws CertificateException {
+
+					}
+				} };
+				SSLContext sc = SSLContext.getInstance("SSL");
+				sc.init(null, trustAllCerts, new java.security.SecureRandom());
+				HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
+				// Create all-trusting host name verifier
+				HostnameVerifier allHostsValid = new HostnameVerifier() {
+					public boolean verify(String hostname, SSLSession session) {
+						return true;
+					}
+				};
+				HttpsURLConnection.setDefaultHostnameVerifier(allHostsValid);
 			}
-			
+
 			connection.setRequestMethod("POST");
 			connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
 
@@ -343,12 +393,12 @@ public class NetHelper {
 			ResourceHelper.closeResource(in);
 		}
 		String content = new String(out.toByteArray(), ContentContext.CHARACTER_ENCODING);
-		
+
 		if (mailing) {
 			content = XHTMLHelper.prepareToMailing(content); // transform list
 																// -> array
 		}
-		
+
 		if (cssInline) {
 			return CSSParser.mergeCSS(content, false);
 		}
@@ -869,9 +919,10 @@ public class NetHelper {
 	public static boolean isURLValid(URL url) {
 		return isURLValid(url, false);
 	}
-	
+
 	public static void main(String[] args) throws Exception {
-		String content = readPage(new URL("https://www.javlo.be"));		
+		String content = readPageGetFollowRedirect(new URL("http://www.javlo.be"));
+		System.out.println("#content = "+content.length());
 	}
 
 	public static boolean isURLValid(URL url, boolean only404) {
@@ -880,7 +931,7 @@ public class NetHelper {
 				CookieHandler.setDefault(new CookieManager(null, CookiePolicy.ACCEPT_ALL));
 			}
 			URLConnection urlConnection = url.openConnection();
-			if (urlConnection instanceof HttpURLConnection) {					
+			if (urlConnection instanceof HttpURLConnection) {
 				HttpURLConnection conn = ((HttpURLConnection) urlConnection);
 				if (conn instanceof HttpsURLConnection) {
 					logger.info("init https context");
@@ -931,8 +982,7 @@ public class NetHelper {
 			return false;
 		}
 
-	}	
-	
+	}
 
 	public static List<URL> getLinks(String content, String inURL) {
 		List<URL> urlList = new LinkedList<URL>();
@@ -1154,40 +1204,38 @@ public class NetHelper {
 	}
 
 	public static boolean isRobot(String userAgent) {
-		String cacheKey = userAgent+"-robot";
+		String cacheKey = userAgent + "-robot";
 		Boolean outVal = UserAgentCache.get(cacheKey);
-		if (outVal==null) {
+		if (outVal == null) {
 			UserAgentStringParser parser = UADetectorServiceFactory.getResourceModuleParser();
 			ReadableUserAgent agent = parser.parse(userAgent);
 			outVal = agent.getType() == UserAgentType.ROBOT;
-			UserAgentCache.put(cacheKey,outVal);
+			UserAgentCache.put(cacheKey, outVal);
 		}
 		return outVal;
-//		if (userAgent == null) {
-//			return false;
-//		} else {
-//			userAgent = userAgent.toLowerCase();
-//			return userAgent.contains("bot") || userAgent.contains("robot");
-//		}
+		// if (userAgent == null) {
+		// return false;
+		// } else {
+		// userAgent = userAgent.toLowerCase();
+		// return userAgent.contains("bot") || userAgent.contains("robot");
+		// }
 	}
-	
-	public static boolean isMobile(String userAgent) {		
-		String cacheKey = userAgent+"-mobile";
+
+	public static boolean isMobile(String userAgent) {
+		String cacheKey = userAgent + "-mobile";
 		Boolean outVal = UserAgentCache.get(cacheKey);
-		if (outVal==null) {
+		if (outVal == null) {
 			UserAgentStringParser parser = UADetectorServiceFactory.getResourceModuleParser();
 			ReadableUserAgent agent = parser.parse(userAgent);
 			outVal = agent.getType() == UserAgentType.MOBILE_BROWSER;
-			UserAgentCache.put(cacheKey,outVal);
+			UserAgentCache.put(cacheKey, outVal);
 		}
 		return outVal;
-		
-		/*if (userAgent == null) {
-			return false;
-		} else {
-			userAgent = userAgent.toLowerCase();
-			return userAgent.contains("mobile");
-		}*/
+
+		/*
+		 * if (userAgent == null) { return false; } else { userAgent =
+		 * userAgent.toLowerCase(); return userAgent.contains("mobile"); }
+		 */
 	}
 
 	/**
@@ -1270,7 +1318,7 @@ public class NetHelper {
 	 */
 	public static boolean ipInRange(String ip, String range) {
 		int index = range.indexOf('/');
-		if (index<0) {
+		if (index < 0) {
 			return ip.equals(range);
 		} else {
 			int subnet = getIpAsInt(range.substring(0, index));
@@ -1330,6 +1378,5 @@ public class NetHelper {
 		}
 		return false;
 	}
-	
-	
+
 }
