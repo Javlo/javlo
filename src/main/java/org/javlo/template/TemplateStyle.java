@@ -3,6 +3,7 @@ package org.javlo.template;
 import java.util.Collections;
 import java.util.Map;
 
+import org.javlo.helper.StringHelper;
 import org.javlo.helper.XHTMLHelper;
 
 public class TemplateStyle extends TemplatePart {
@@ -66,6 +67,18 @@ public class TemplateStyle extends TemplatePart {
 	
 	public String getLevel() {
 		return "style";
+	}
+	
+	public String getLineHeight() {
+		String textSize = getTextSize();
+		String lineHeight = "14px";
+		if (textSize != null && textSize.contains("px")) {
+			textSize = textSize.replace("px", "").trim();
+			if (StringHelper.isDigit(textSize)) {
+				lineHeight=(Integer.parseInt(textSize)+2)+"px";
+			}
+		}
+		return lineHeight;			
 	}
 
 }

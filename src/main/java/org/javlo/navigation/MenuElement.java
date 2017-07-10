@@ -1209,7 +1209,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 
 	private Map<String, ComponentBean> contentToBeAdded = Collections.EMPTY_MAP;
 
-	private final Set<String> editGroups = new HashSet<String>();
+	private Set<String> editGroups = new HashSet<String>();
 
 	private Date latestUpdateLinkedData = null;
 
@@ -2437,6 +2437,10 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 		} else {
 			return editGroups;
 		}
+	}
+	
+	public void setEditRoles(MenuElement page) {
+		editGroups = new HashSet<String>(page.editGroups);
 	}
 
 	public Set<String> getEditorRolesAndParent() {

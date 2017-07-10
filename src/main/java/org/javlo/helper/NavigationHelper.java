@@ -116,6 +116,13 @@ public class NavigationHelper {
 		target.setLatestEditor(src.getLatestEditor());
 		target.setPriority(src.getPriority());
 		target.setTemplateId(src.getTemplateId());
+		target.setBreakRepeat(src.isBreakRepeat());
+		target.setChangeNotification(src.isChangeNotification());
+		target.setStartPublishDate(src.getStartPublishDate());
+		target.setEndPublishDate(src.getEndPublishDate());
+		target.setActive(src.isActive());
+		target.setUserRoles(src.getUserRoles());
+		target.setEditRoles(src);
 		List<MenuElement> vParent = new LinkedList<MenuElement>();
 		vParent.addAll(src.getVirtualParent());
 		target.setVirtualParent(vParent);
@@ -302,7 +309,6 @@ public class NavigationHelper {
 		for (MenuElement element : targetChildren) {
 			MenuElement srcChild = srcRoot.searchChildFromId(element.getId());
 			if ((srcChild == null) || (!srcChild.getParent().getId().equals(targetRoot.getId()))) {
-				//targetRoot.removeChild(element);
 				needRemove.add(element);
 			}
 		}

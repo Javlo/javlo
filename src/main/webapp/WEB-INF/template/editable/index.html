@@ -68,6 +68,20 @@ img {
 /* style.css */
 <jsp:include page="css/style.css" />
 
+.ExternalClass * {
+	line-height: ${info.template.style.lineHeight};
+	mso-line-height-rule: exactly;
+}
+
+* {
+    line-height: ${info.template.style.lineHeight};
+}
+
+h1, h2, h3, h4, h5, h6, .ExternalClass h1, .ExternalClass h2, .ExternalClass h3, .ExternalClass h4, .ExternalClass h5, .ExternalClass h6 {
+	line-height: normal;
+	mso-line-height-rule: exactly;
+}
+
 <c:set var="template" value="${info.template.style}" scope="request" />
 body .association-wrapper, body .page-wrapper {    
 	<jsp:include page="css/styles.jsp" />

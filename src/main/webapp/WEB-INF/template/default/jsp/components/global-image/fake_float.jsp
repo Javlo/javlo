@@ -7,7 +7,7 @@
 <div id="comp-${compid}"><table class="${empty componentWidth?'float-image':'float-image-width'} ${param.right?'right':'left'}" style="width: 100%; border-collapse:collapse; mso-table-lspace:0pt; mso-table-rspace:0pt;">
 <c:if test="${contentContext.asPreviewMode}">
 <div class="source" style="display: none;"><span class="container">${label}</span></div>
-<script type="text/javascript">
+<c:if test="${comp.textAuto}"><script type="text/javascript">
 var localJQ = jQuery;
 if (typeof(pjq) !== 'undefined') {
 	localJQ = pjq;
@@ -36,7 +36,7 @@ localJQ( window ).load(function() {
 		</c:if>
 	}
 });
-</script>
+</script></c:if>
 </c:if>
 <c:if test="${info.device.code != 'pdf'}">
 <c:if test="${!param.right}">

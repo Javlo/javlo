@@ -795,12 +795,6 @@ public class StringHelper {
 	}
 
 	public static String escapeWordChar(String text) {
-
-		if (text.startsWith("************")) {
-			System.out.println("before text = " + text.charAt(text.length() - 1) + " " + (int) text.charAt(text.length() - 1));
-			String outText = text.replace((char) 146, '\'');
-			System.out.println("after text = " + outText.charAt(text.length() - 1) + " " + (int) outText.charAt(text.length() - 1));
-		}
 		String outText = text.replace((char) 146, '\'');
 		return outText;
 	}

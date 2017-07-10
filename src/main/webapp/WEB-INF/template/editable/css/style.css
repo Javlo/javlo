@@ -141,13 +141,3 @@ table.float-image-width {
 .array-file tr.odd {
 	background-color: #eeeeee;
 }
-
-.ExternalClass * {line-height: 14px}
-
-* {
-    line-height: 14px;
-}
-
-h1, h2, h3, h4, h5, h6 {
-	line-height: normal;
-}

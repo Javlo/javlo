@@ -1316,7 +1316,7 @@ public class Edit extends AbstractModuleAction {
 						messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("message.update-page-properties"), GenericMessage.INFO), false);
 					}
 				}
-
+				modifPage(ctx, page);
 				page.clearPageBean(ctx);
 				PersistenceService.getInstance(globalContext).setAskStore(true);
 			}
