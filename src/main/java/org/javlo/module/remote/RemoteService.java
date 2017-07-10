@@ -131,7 +131,7 @@ public class RemoteService {
 					details = details + " : " + bean.getError();
 				}				
 				service.addNotification("RC Error (" + details + ")", url, GenericMessage.ERROR, null, null, false);
-				errorList.put(bean.getServerHostname(), "<a href=\""+bean.getUrl()+"\">"+bean.getError()+"</a>");
+				errorList.put("RC Error (" + details + ")", "<a href=\""+bean.getUrl()+"\">"+bean.getError()+"</a>");
 				errorFound = true;
 				sendedNotification.put(bean.getId(), bean.getId());
 			}
