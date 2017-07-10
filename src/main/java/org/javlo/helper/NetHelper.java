@@ -136,6 +136,42 @@ public class NetHelper {
 		}
 		return new String(out.toByteArray(), ContentContext.CHARACTER_ENCODING);
 	}
+	
+	/**
+	 * follow redirection and return final url
+	 * @param url
+	 * @return
+	 * @throws Exception
+	 */
+	public static URL followURL(URL url) throws Exception {
+		try {
+			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+			conn.setReadTimeout(5000);
+			boolean redirect = true;			
+			int countRedirect = 0;
+			while (redirect && countRedirect < 16) { 
+				int status = conn.getResponseCode();
+				redirect  = false;
+				if (status != HttpURLConnection.HTTP_OK) {
+					if (status == HttpURLConnection.HTTP_MOVED_TEMP || status == HttpURLConnection.HTTP_MOVED_PERM || status == HttpURLConnection.HTTP_SEE_OTHER)
+						redirect = true;
+				}
+				if (redirect) {					
+					String newUrl = conn.getHeaderField("Location");
+					conn.disconnect();
+					conn = (HttpURLConnection) new URL(newUrl).openConnection();
+				} else {					
+					URL outURL = conn.getURL();
+					conn.disconnect();
+					return outURL;
+				}					
+				countRedirect++;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();			
+		}
+		return null;
+	}
 
 	public static String readPageGetFollowRedirect(URL url) throws Exception {
 		try {
@@ -923,6 +959,8 @@ public class NetHelper {
 	public static void main(String[] args) throws Exception {
 		String content = readPageGetFollowRedirect(new URL("http://www.javlo.be"));
 		System.out.println("#content = "+content.length());
+		URL newURL = followURL(new URL("http://www.javlo.be"));
+		System.out.println("newURL = "+newURL);
 	}
 
 	public static boolean isURLValid(URL url, boolean only404) {
