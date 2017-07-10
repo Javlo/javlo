@@ -120,6 +120,7 @@ public class NetHelper {
 	}
 
 	public static String readPageGet(URLConnection conn, boolean checkReturnCode) throws Exception {
+		nocheckCertificatHttps();
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		InputStream in = null;
 		try {
@@ -136,9 +137,10 @@ public class NetHelper {
 		}
 		return new String(out.toByteArray(), ContentContext.CHARACTER_ENCODING);
 	}
-	
+
 	/**
 	 * follow redirection and return final url
+	 * 
 	 * @param url
 	 * @return
 	 * @throws Exception
@@ -147,50 +149,51 @@ public class NetHelper {
 		try {
 			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 			conn.setReadTimeout(5000);
-			boolean redirect = true;			
+			boolean redirect = true;
 			int countRedirect = 0;
-			while (redirect && countRedirect < 16) { 
+			while (redirect && countRedirect < 16) {
 				int status = conn.getResponseCode();
-				redirect  = false;
+				redirect = false;
 				if (status != HttpURLConnection.HTTP_OK) {
 					if (status == HttpURLConnection.HTTP_MOVED_TEMP || status == HttpURLConnection.HTTP_MOVED_PERM || status == HttpURLConnection.HTTP_SEE_OTHER)
 						redirect = true;
 				}
-				if (redirect) {					
+				if (redirect) {
 					String newUrl = conn.getHeaderField("Location");
 					conn.disconnect();
 					conn = (HttpURLConnection) new URL(newUrl).openConnection();
-				} else {					
+				} else {
 					URL outURL = conn.getURL();
 					conn.disconnect();
 					return outURL;
-				}					
+				}
 				countRedirect++;
 			}
 		} catch (Exception e) {
-			e.printStackTrace();			
+			e.printStackTrace();
 		}
 		return null;
 	}
 
 	public static String readPageGetFollowRedirect(URL url) throws Exception {
 		try {
+			nocheckCertificatHttps();
 			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 			conn.setReadTimeout(5000);
-			boolean redirect = true;			
+			boolean redirect = true;
 			int countRedirect = 0;
-			while (redirect && countRedirect < 16) { 
+			while (redirect && countRedirect < 16) {
 				int status = conn.getResponseCode();
-				redirect  = false;
+				redirect = false;
 				if (status != HttpURLConnection.HTTP_OK) {
 					if (status == HttpURLConnection.HTTP_MOVED_TEMP || status == HttpURLConnection.HTTP_MOVED_PERM || status == HttpURLConnection.HTTP_SEE_OTHER)
 						redirect = true;
 				}
-				if (redirect) {					
+				if (redirect) {
 					String newUrl = conn.getHeaderField("Location");
 					conn.disconnect();
 					conn = (HttpURLConnection) new URL(newUrl).openConnection();
-				} else {					
+				} else {
 					BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
 					String inputLine;
 					StringBuffer html = new StringBuffer();
@@ -200,16 +203,16 @@ public class NetHelper {
 					in.close();
 					conn.disconnect();
 					return html.toString();
-				}					
+				}
 				countRedirect++;
 			}
 		} catch (Exception e) {
-			e.printStackTrace();			
+			e.printStackTrace();
 		}
 		return null;
 	}
 
-	public static String readPageGet(URL url) throws Exception {
+	public static String readPageGet(URL url) throws Exception {		
 		URLConnection conn = url.openConnection();
 		String content = readPageGet(conn, true);
 		return content;
@@ -304,6 +307,42 @@ public class NetHelper {
 		return content;
 	}
 
+	private static void nocheckCertificatHttps() throws NoSuchAlgorithmException, KeyManagementException {
+		if (!INIT_HTTPS) {
+			TrustManager[] trustAllCerts = new TrustManager[] { new X509TrustManager() {
+				public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+					return null;
+				}
+
+				public void checkClientTrusted(X509Certificate[] certs, String authType) {
+				}
+
+				public void checkServerTrusted(X509Certificate[] certs, String authType) {
+				}
+
+				@Override
+				public void checkClientTrusted(java.security.cert.X509Certificate[] chain, String authType) throws CertificateException {
+				}
+
+				@Override
+				public void checkServerTrusted(java.security.cert.X509Certificate[] chain, String authType) throws CertificateException {
+
+				}
+			} };
+			SSLContext sc = SSLContext.getInstance("SSL");
+			sc.init(null, trustAllCerts, new java.security.SecureRandom());
+			HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
+			// Create all-trusting host name verifier
+			HostnameVerifier allHostsValid = new HostnameVerifier() {
+				public boolean verify(String hostname, SSLSession session) {
+					return true;
+				}
+			};
+			HttpsURLConnection.setDefaultHostnameVerifier(allHostsValid);
+			INIT_HTTPS = true;
+		}
+	}
+
 	/**
 	 * read a page a put content in a String.
 	 * 
@@ -349,37 +388,8 @@ public class NetHelper {
 			HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
 			// skip https validation
-			if (connection instanceof HttpsURLConnection && !INIT_HTTPS) {
-				TrustManager[] trustAllCerts = new TrustManager[] { new X509TrustManager() {
-					public java.security.cert.X509Certificate[] getAcceptedIssuers() {
-						return null;
-					}
-
-					public void checkClientTrusted(X509Certificate[] certs, String authType) {
-					}
-
-					public void checkServerTrusted(X509Certificate[] certs, String authType) {
-					}
-
-					@Override
-					public void checkClientTrusted(java.security.cert.X509Certificate[] chain, String authType) throws CertificateException {
-					}
-
-					@Override
-					public void checkServerTrusted(java.security.cert.X509Certificate[] chain, String authType) throws CertificateException {
-
-					}
-				} };
-				SSLContext sc = SSLContext.getInstance("SSL");
-				sc.init(null, trustAllCerts, new java.security.SecureRandom());
-				HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
-				// Create all-trusting host name verifier
-				HostnameVerifier allHostsValid = new HostnameVerifier() {
-					public boolean verify(String hostname, SSLSession session) {
-						return true;
-					}
-				};
-				HttpsURLConnection.setDefaultHostnameVerifier(allHostsValid);
+			if (connection instanceof HttpsURLConnection) {
+				nocheckCertificatHttps();
 			}
 
 			connection.setRequestMethod("POST");
@@ -958,9 +968,9 @@ public class NetHelper {
 
 	public static void main(String[] args) throws Exception {
 		String content = readPageGetFollowRedirect(new URL("http://www.javlo.be"));
-		System.out.println("#content = "+content.length());
+		System.out.println("#content = " + content.length());
 		URL newURL = followURL(new URL("http://www.javlo.be"));
-		System.out.println("newURL = "+newURL);
+		System.out.println("newURL = " + newURL);
 	}
 
 	public static boolean isURLValid(URL url, boolean only404) {
