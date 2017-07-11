@@ -150,6 +150,11 @@ public class AdminAction extends AbstractModuleAction {
 		private String mailingReport = "";
 		private String unsubscribeLink = "";
 		
+		private String pophost;
+		private int popport;
+		private String popuser;
+		private String poppassword;
+		private boolean popssl;
 		private String smtphost;
 		private String smtpport;
 		private String smtpuser;
@@ -241,6 +246,13 @@ public class AdminAction extends AbstractModuleAction {
 			setUnsubscribeLink(globalContext.getUnsubscribeLink());
 			setDkimDomain(globalContext.getDKIMDomain());
 			setDkimSelector(globalContext.getDKIMSelector());
+			
+			setPophost(globalContext.getPOPHost());
+			setPopport(globalContext.getPOPPort());
+			setPoppassword(globalContext.getPOPPassword());
+			setPopuser(globalContext.getPOPUser());
+			setPoppassword(globalContext.getPOPPassword());
+			setPopssl(globalContext.isPOPSsl());
 			
 			setSmtphost(globalContext.getSMTPHost());
 			setSmtpport(globalContext.getSMTPPort());
@@ -864,6 +876,46 @@ public class AdminAction extends AbstractModuleAction {
 			this.footerBloc = footerBloc;
 		}
 
+		public String getPophost() {
+			return pophost;
+		}
+
+		public void setPophost(String pophost) {
+			this.pophost = pophost;
+		}
+
+		public int getPopport() {
+			return popport;
+		}
+
+		public void setPopport(int popport) {
+			this.popport = popport;
+		}
+
+		public String getPopuser() {
+			return popuser;
+		}
+
+		public void setPopuser(String popuser) {
+			this.popuser = popuser;
+		}
+
+		public String getPoppassword() {
+			return poppassword;
+		}
+
+		public void setPoppassword(String poppassword) {
+			this.poppassword = poppassword;
+		}
+
+		public boolean isPopssl() {
+			return popssl;
+		}
+
+		public void setPopssl(boolean popssl) {
+			this.popssl = popssl;
+		}
+
 	}
 
 	public static class ComponentBean {
@@ -1293,14 +1345,36 @@ public class AdminAction extends AbstractModuleAction {
 						ResourceHelper.writeStringToFile(currentGlobalContext.getSpecialConfigFile(), specialConfig);
 					}
 					
+					/** POP **/
+					String popHost = requestService.getParameter("mailing-pophost",null);
+					String popPort = requestService.getParameter("mailing-popport",null);
+					String popUser = requestService.getParameter("mailing-popuser",null);
+					boolean popSSL = StringHelper.isTrue(requestService.getParameter("mailing-popssl",null));
+					boolean resetPOPThread = false;
+					if (!currentGlobalContext.getPOPHost().equals(popHost) || !(""+currentGlobalContext.getPOPPort()).equals(popPort) || !currentGlobalContext.getPOPUser().equals(popUser) || currentGlobalContext.isPOPSsl() != popSSL) {
+						currentGlobalContext.setPOPHost(popHost);
+						currentGlobalContext.setPOPPort(popPort);
+						currentGlobalContext.setPOPUser(popUser);
+						currentGlobalContext.setPOPSsl(popSSL);
+						resetPOPThread = true;
+					}
+					
+					String popPwd = requestService.getParameter("mailing-poppassword","");
+					if (popPwd.length() > 0) {					
+						currentGlobalContext.setPOPPassword(popPwd);
+						resetPOPThread = true;
+					}
+					if (requestService.getParameter("mailing-resetpoppassword", null) != null) {
+						currentGlobalContext.setPOPPassword("");						
+					}
+					if (resetPOPThread) {
+						currentGlobalContext.activePopThread();
+					}
+					
 					/** SMTP **/
 					currentGlobalContext.setSMTPHost(requestService.getParameter("mailing-smtphost",null));
 					currentGlobalContext.setSMTPPort(requestService.getParameter("mailing-smtpport",null));
-					currentGlobalContext.setSMTPUser(requestService.getParameter("mailing-smtpuser",null));
-					
-					currentGlobalContext.setMetaBloc(requestService.getParameter("meta-bloc",null));
-					currentGlobalContext.setHeaderBloc(requestService.getParameter("header-bloc",null));
-					currentGlobalContext.setFooterBloc(requestService.getParameter("footer-bloc",null));
+					currentGlobalContext.setSMTPUser(requestService.getParameter("mailing-smtpuser",null));				
 					
 					String pwd = requestService.getParameter("mailing-smtppassword","");
 					if (pwd.length() > 0) {					
@@ -1327,6 +1401,9 @@ public class AdminAction extends AbstractModuleAction {
 						}
 					}
 					
+					currentGlobalContext.setMetaBloc(requestService.getParameter("meta-bloc",null));
+					currentGlobalContext.setHeaderBloc(requestService.getParameter("header-bloc",null));
+					currentGlobalContext.setFooterBloc(requestService.getParameter("footer-bloc",null));					
 
 					String dateFormat = requestService.getParameter("short-date", null);
 					if (dateFormat != null) {
@@ -1825,5 +1902,6 @@ public class AdminAction extends AbstractModuleAction {
 	
 	
 }
+
 
 

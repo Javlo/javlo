@@ -71,6 +71,7 @@ import org.javlo.mailing.DKIMBean;
 import org.javlo.mailing.DKIMFactory;
 import org.javlo.mailing.MailConfig;
 import org.javlo.mailing.MailService;
+import org.javlo.mailing.POPThread;
 import org.javlo.module.core.IPrintInfo;
 import org.javlo.module.core.ModuleException;
 import org.javlo.module.core.ModulesContext;
@@ -102,11 +103,11 @@ import org.javlo.utils.TimeMap;
 import org.javlo.ztatic.StaticInfo;
 
 public class GlobalContext implements Serializable, IPrintInfo {
-	
+
 	private final Integer[] countArrayMinute = new Integer[60];
-	
+
 	private long latestTime;
-	
+
 	private long allTouch = 0;
 
 	private static int COUNT_INSTANCE = 0;
@@ -129,7 +130,15 @@ public class GlobalContext implements Serializable, IPrintInfo {
 
 	private Properties url404Map = null;
 
+	private POPThread popThread = null;
+
 	private static final IURLFactory NO_URL_FACTORY = new NoURLFactory();
+
+	public static final String POP_HOST_PARAM = "mail.pop.host";
+	public static final String POP_PORT_PARAM = "mail.pop.port";
+	public static final String POP_USER_PARAM = "mail.pop.user";
+	public static final String POP_PASSWORD_PARAM = "mail.pop.password";
+	public static final String POP_SSL = "mail.pop.ssl";
 
 	private static class StorePropertyThread extends Thread {
 
@@ -280,6 +289,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 			storePropertyThread = new StorePropertyThread(this);
 			storePropertyThread.start();
 		}
+		activePopThread();
 	}
 
 	private static void addResources(ContentContext ctx, File dir, Collection<StaticInfo> resources) throws Exception {
@@ -471,7 +481,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 					}
 					String password = "" + (1000 + Math.round(Math.random() * 8999));
 					newInstance.setPassword(password);
-					newInstance.setFirstPassword(password);
+					newInstance.setFirstPassword(password);					
 
 					if (copyDefaultContext) {
 						GlobalContext defaultContext = getDefaultContext(session);
@@ -624,6 +634,19 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		if (remoteService != null) {
 			remoteService.stopService();
 		}
+		if (popThread != null) {
+			popThread.setStop(true);
+		}
+	}
+
+	public synchronized void activePopThread() {
+		if (!StringHelper.isEmpty(getPOPHost()) && getPOPPort() > 0) {
+			if (popThread != null && !popThread.isStop()) {				
+				popThread.setStop(true);
+			}
+			popThread = new POPThread(this);
+			popThread.start();			
+		}
 	}
 
 	/**
@@ -729,7 +752,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	private String dataFolder = null;
 
 	private String sharedDataFolder = null;
-	
+
 	private static AppendableTextFile specialLogFile = null;
 
 	private final Map<String, String> oneTimeTokens = Collections.synchronizedMap(new TimeMap<String, String>(60 * 60)); // one
@@ -737,7 +760,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 																															// token
 																															// live
 																															// 1h
-	
+
 	private final Map<String, String> changePasswordToken = Collections.synchronizedMap(new TimeMap<String, String>(60 * 60));
 
 	public final Object RELEASE_CACHE = new Object();
@@ -1405,15 +1428,15 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		properties.setProperty("platform.type", type);
 		save();
 	}
-	
+
 	public boolean isOpenPlatform() {
 		return getPlatformType().equals(StaticConfig.OPEN_PLATFORM);
 	}
-	
+
 	public boolean isComponentsFiltered() {
 		return properties.getBoolean("components.filtered", staticConfig.isComponentsFiltered());
 	}
-	
+
 	public void setComponentsFiltered(boolean filtered) {
 		properties.setProperty("components.filtered", filtered);
 		save();
@@ -1451,11 +1474,11 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	public String getHelpURL() {
 		return properties.getString("help-url", staticConfig.getHelpURL());
 	}
-	
+
 	public String getMainHelpURL() {
 		return properties.getString("main-help-url", "");
 	}
-	
+
 	public void setMainHelpURL(String helpURL) {
 		properties.setProperty("main-help-url", helpURL);
 	}
@@ -1638,8 +1661,8 @@ public class GlobalContext implements Serializable, IPrintInfo {
 			String keyURL = url;
 			if (urlCreator != null) {
 				String urlRef = url;
-				if (urlRef.length()>1&&urlRef.endsWith("/")) {
-					urlRef = url.substring(0, urlRef.length()-1);
+				if (urlRef.length() > 1 && urlRef.endsWith("/")) {
+					urlRef = url.substring(0, urlRef.length() - 1);
 				}
 				keyURL = urlCreator.createURLKey(urlRef);
 			}
@@ -1652,9 +1675,9 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		MenuElement root = ContentService.getInstance(ctx.getRequest()).getNavigation(ctx);
 		if (url.equals("/")) {
 			return root;
-		} else {			
+		} else {
 			Collection<MenuElement> pastNode = new LinkedList<MenuElement>();
-			MenuElement page = MenuElement.searchChild(root, ctx, url, pastNode);			
+			MenuElement page = MenuElement.searchChild(root, ctx, url, pastNode);
 			if (page != null && ctx.getRenderMode() == ContentContext.VIEW_MODE) {
 				localViewPages.put(url, page);
 			}
@@ -2131,7 +2154,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 
 	public void releaseAllCache() {
 		cleanDataAccess();
-		synchronized (RELEASE_CACHE) {			
+		synchronized (RELEASE_CACHE) {
 			for (String name : getAllCacheName()) {
 				getCache(name).removeAll();
 			}
@@ -2146,7 +2169,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 				e.printStackTrace();
 			}
 			dataFolder = null;
-			AppendableTextFile log = specialLogFile;			
+			AppendableTextFile log = specialLogFile;
 			specialLogFile = null;
 			if (log != null) {
 				try {
@@ -2939,7 +2962,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	public String getBlockPassword() {
 		return properties.getString("security.block-password", null);
 	}
-	
+
 	public String getBlockPreviewPassword() {
 		return properties.getString("security.block-preview-password", null);
 	}
@@ -3152,19 +3175,19 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		}
 		return oneTimeTokens.remove(token);
 	}
-	
+
 	public String getChangePasswordToken(String user) {
-		String token = StringHelper.getRandomId()+StringHelper.getRandomString(8, StringHelper.ALPHANUM);
+		String token = StringHelper.getRandomId() + StringHelper.getRandomString(8, StringHelper.ALPHANUM);
 		changePasswordToken.put(token, user);
 		return token;
 	}
-	
+
 	public String getChangePasswordTokenUser(String token) {
 		String user = changePasswordToken.get(token);
 		if (user != null) {
 			changePasswordToken.remove(token);
 		}
-		return user; 
+		return user;
 	}
 
 	public Object getLockImportTemplate() {
@@ -3479,10 +3502,10 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		// return StringHelper.createFileName(url);
 	}
 
-	public MenuElement convertOldURL(ContentContext ctx, String url) throws Exception {		
-		if (ctx.isAsViewMode()) {			
+	public MenuElement convertOldURL(ContentContext ctx, String url) throws Exception {
+		if (ctx.isAsViewMode()) {
 			String pageId = getRedirectUrlMap().getProperty(encodeURLAsKey(url));
-			if (pageId != null) {				
+			if (pageId != null) {
 				return NavigationHelper.getPageById(ctx, pageId);
 			} else {
 				return null;
@@ -3493,7 +3516,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	}
 
 	public void storeUrl(ContentContext ctx, String url, String pageId) throws Exception {
-		if (ctx.isAsViewMode()) {			
+		if (ctx.isAsViewMode()) {
 			String key = encodeURLAsKey(url);
 			if (getRedirectUrlMap().getProperty(key) == null) {
 				getRedirectUrlList().println(key + '=' + pageId);
@@ -3607,6 +3630,50 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		properties.setProperty("unsubscribeLink", link);
 	}
 
+	public String getPOPHost() {
+		return properties.getString(POP_HOST_PARAM, null);
+	}
+
+	public void setPOPHost(String host) {
+		properties.setProperty(POP_HOST_PARAM, host);
+	}
+
+	public String getPOPPassword() {
+		return properties.getString(POP_PASSWORD_PARAM, null);
+	}
+
+	public void setPOPPassword(String pwd) {
+		properties.setProperty(POP_PASSWORD_PARAM, pwd);
+	}
+
+	public String getPOPUser() {
+		return properties.getString(POP_USER_PARAM, null);
+	}
+
+	public void setPOPUser(String user) {
+		properties.setProperty(POP_USER_PARAM, user);
+	}
+
+	public int getPOPPort() {
+		if (StringHelper.isEmpty(properties.getString(POP_PORT_PARAM, ""))) {
+			return 0;
+		} else {
+			return Integer.parseInt(properties.getString(POP_PORT_PARAM, "0"));
+		}
+	}
+
+	public void setPOPPort(String port) {
+		properties.setProperty(POP_PORT_PARAM, port);
+	}
+
+	public void setPOPSsl(boolean ssl) {
+		properties.setProperty(POP_SSL, ssl);
+	}
+
+	public boolean isPOPSsl() {
+		return properties.getBoolean(POP_SSL);
+	}
+
 	public String getSMTPHost() {
 		return properties.getString(StaticConfig.SMTP_HOST_PARAM, null);
 	}
@@ -3677,30 +3744,30 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		properties.setProperty("security.forced-https", https);
 		save();
 	}
-	
+
 	public void setMetaBloc(String bloc) {
 		properties.setProperty("bloc.meta", bloc);
 		save();
 	}
-	
+
 	public void setHeaderBloc(String bloc) {
 		properties.setProperty("bloc.header", bloc);
 		save();
 	}
-	
+
 	public void setFooterBloc(String bloc) {
 		properties.setProperty("bloc.footer", bloc);
 		save();
 	}
-	
+
 	public String getMetaBloc() {
 		return StringHelper.neverNull(properties.getProperty("bloc.meta"));
 	}
-	
+
 	public String getHeaderBloc() {
 		return StringHelper.neverNull(properties.getProperty("bloc.header"));
 	}
-	
+
 	public String getFooterBloc() {
 		return StringHelper.neverNull(properties.getProperty("bloc.footer"));
 	}
@@ -3726,7 +3793,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		}
 		return config;
 	}
-	
+
 	private int getIndexArrayMinute(long infinityIndex) {
 		if (infinityIndex < 0) {
 			return countArrayMinute.length - (int) (infinityIndex % countArrayMinute.length);
@@ -3734,7 +3801,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 			return (int) infinityIndex % countArrayMinute.length;
 		}
 	}
-	
+
 	public synchronized void touch() {
 		touch(true);
 	}
@@ -3749,16 +3816,16 @@ public class GlobalContext implements Serializable, IPrintInfo {
 			countArrayMinute[getIndexArrayMinute(i)] = 0;
 		}
 		if (increment) {
-		allTouch++;
-		if (time == latestTime) {
-			countArrayMinute[getIndexArrayMinute(time)]++;
-		} else {
-			countArrayMinute[getIndexArrayMinute(time)] = 1;
-		}	
-		latestTime = time;
+			allTouch++;
+			if (time == latestTime) {
+				countArrayMinute[getIndexArrayMinute(time)]++;
+			} else {
+				countArrayMinute[getIndexArrayMinute(time)] = 1;
+			}
+			latestTime = time;
 		}
 	}
-	
+
 	public int getCount() {
 		touch(false);
 		int c = 0;
@@ -3767,7 +3834,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		}
 		return c;
 	}
-	
+
 	public final void log(String group, String text) {
 		if (!getStaticConfig().isSiteLog()) {
 			return;
@@ -3784,13 +3851,12 @@ public class GlobalContext implements Serializable, IPrintInfo {
 			}
 			String caller = "";
 			if (getStaticConfig().isSiteLogCaller()) {
-				caller = DebugHelper.getCaller()+" - ";
+				caller = DebugHelper.getCaller() + " - ";
 			}
-			specialLogFile.println(StringHelper.renderTime(new Date())+" - "+caller+group+" : "+text);
+			specialLogFile.println(StringHelper.renderTime(new Date()) + " - " + caller + group + " : " + text);
 		} catch (IOException e) {
-			e.printStackTrace();			
+			e.printStackTrace();
 		}
 	}
-
 
 }

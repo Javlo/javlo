@@ -6,7 +6,7 @@
 <c:if test="${!info.admin}">
 <form id="form-page-properties" action="${info.currentURL}" method="post">
 	<div>
-		<input type="hidden" name="webaction" value="updateGlobalContextLight" />
+		<input type="hidden" name="webaction" value="admin.updateGlobalContextLight" />
 	</div>	
 	<fieldset>
 		<legend>${i18n.edit['admin.form.info']}</legend>
@@ -304,6 +304,47 @@
 
 </div>
 </div>
+<!-- POP -->
+<div class="row">
+<div class="col-sm-6">
+<div class="form-group">		
+	<label for="mailing-pophost">POP host</label>
+	<input class="form-control" type="text" id="mailing-pophost" name="mailing-pophost" value="${currentContext.pophost}" />	
+</div>
+</div>
+<div class="col-sm-4"><div class="form-group">		
+	<label for="mailing-popport">POP port</label>
+	<input class="form-control" type="number" min="-1" max="65535" step="1" id="mailing-popport" name="mailing-popport" value="${currentContext.popport}" />	
+</div></div>
+<div class="col-sm-2"><div class="form-group">		
+	<label for="mailing-popssl">POP SSL</label>
+	<input class="checkbox" type="checkbox" id="mailing-popssl" name="mailing-popssl" ${currentContext.popssl?'checked="checked"':''} />	
+</div>
+</div>
+</div>
+<div class="row">
+<div class="col-sm-6">
+<div class="form-group">		
+	<label for="mailing-popuser">POP user</label>
+	<input class="form-control" type="text" id="mailing-popuser" name="mailing-popuser" value="${currentContext.popuser}" />	
+</div>
+</div>
+<div class="col-sm-6"><div class="form-group">		
+	<label for="mailing-smtppassword">POP password</label>
+	<div class="row">
+		<div class="col-sm-10">
+			<input class="form-control" type="text" id="mailing-poppassword" name="mailing-poppassword" value="" />
+		</div><div class="col-sm-2">
+			<c:if test="${not empty currentContext.poppassword}">	
+			<input type="checkbox" id="mailing-resetpoppassword" name="mailing-resetpoppassword" />
+			<label for="mailing-resetpoppassword">reset</label>
+			</c:if>
+		</div>
+	</div>	
+	</div></div>
+</div>
+
+<!-- /POP -->
 <div class="row">
 <div class="col-sm-6">
 <div class="form-group">		
@@ -313,7 +354,7 @@
 </div>
 <div class="col-sm-6"><div class="form-group">		
 	<label for="mailing-smtpport">${i18n.edit['admin.mailing.smtpport']}</label>
-	<input class="form-control" type="text" id="mailing-smtphost" name="mailing-smtpport" value="${currentContext.smtpport}" />	
+	<input class="form-control" type="number" min="-1" max="65535" step="1" id="mailing-smtphost" name="mailing-smtpport" value="${currentContext.smtpport}" />	
 </div>
 </div>
 </div>

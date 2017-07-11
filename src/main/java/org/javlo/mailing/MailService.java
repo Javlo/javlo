@@ -53,6 +53,8 @@ import org.javlo.helper.StringHelper;
  */
 public class MailService {
 
+	public static final String MAILING_ID_MAIL_KEY = "Mailing-ID";
+
 	public static class Attachment {
 		private String name;
 		private byte[] data;
@@ -218,7 +220,7 @@ public class MailService {
 	}
 
 	public String sendMail(Transport transport, EMail email) throws MessagingException {
-		return sendMail(transport, email.getSender(), email.getRecipients(), email.getCcRecipients(), email.getBccRecipients(), email.getSubject(), email.getContent(), email.getTxtContent(), email.isHtml(), email.getAttachments(), email.getUnsubscribeLink(), email.getDkim());
+		return sendMail(transport, email.getSender(), email.getRecipients(), email.getCcRecipients(), email.getBccRecipients(), email.getSubject(), email.getContent(), email.getTxtContent(), email.isHtml(), email.getAttachments(), email.getUnsubscribeLink(), email.getDkim(), null);
 	}
 
 	/**
@@ -247,7 +249,7 @@ public class MailService {
 	 *             if no recipient provided or no sender
 	 * @return return a warning message if needed.
 	 */
-	public String sendMail(Transport transport, InternetAddress sender, List<InternetAddress> recipients, List<InternetAddress> ccRecipients, List<InternetAddress> bccRecipients, String subject, String content, String txtContent, boolean isHTML, Collection<Attachment> attachments, String unsubscribeLink, DKIMBean dkim) throws MessagingException {
+	private String sendMail(Transport transport, InternetAddress sender, List<InternetAddress> recipients, List<InternetAddress> ccRecipients, List<InternetAddress> bccRecipients, String subject, String content, String txtContent, boolean isHTML, Collection<Attachment> attachments, String unsubscribeLink, DKIMBean dkim, String mailId) throws MessagingException {
 
 		String recipientsStr = new LinkedList<InternetAddress>(recipients).toString();
 		String warningMessage = null;
@@ -289,6 +291,9 @@ public class MailService {
 			}
 			if (!StringHelper.isEmpty(unsubscribeLink)) {
 				msg.setHeader("List-Unsubscribe", unsubscribeLink);
+			}
+			if (mailId != null) {
+				msg.setHeader(MAILING_ID_MAIL_KEY, mailId);
 			}
 			msg.setSentDate(sendDate);
 			msg.setFrom(sender);
@@ -469,7 +474,7 @@ public class MailService {
 		if (recipient != null) {
 			recipients = Arrays.asList(recipient);
 		}
-		return sendMail(transport, sender, recipients, ccRecipients, bccRecipients, subject, content, null, isHTML, null, unsubribeLink, dkinBean);
+		return sendMail(transport, sender, recipients, ccRecipients, bccRecipients, subject, content, null, isHTML, null, unsubribeLink, dkinBean, null);
 	}
 
 	public void sendMail(Transport transport, InternetAddress sender, InternetAddress recipient, InternetAddress ccRecipient, InternetAddress bccRecipient, String subject, String content, boolean isHTML) throws MessagingException {
@@ -495,7 +500,7 @@ public class MailService {
 		}
 		List<InternetAddress> recipientsList = new LinkedList<InternetAddress>();
 		recipientsList.add(recipient);
-		sendMail(transport, sender, recipientsList, ccRecipientsList, bccRecipientsList, subject, content, contentTxt, isHTML, null, null, dkimBean);
+		sendMail(transport, sender, recipientsList, ccRecipientsList, bccRecipientsList, subject, content, contentTxt, isHTML, null, null, dkimBean, null);
 	}
 
 	public MailConfig getMailConfig() {
@@ -528,8 +533,12 @@ public class MailService {
 		sendMail(transport, sender, recipient, (List<InternetAddress>) null, (List<InternetAddress>) null, subject, content, isHTML, unsubribeLink, null);
 	}
 
-	public String sendMail(Transport transport, InternetAddress sender, InternetAddress recipient, String subject, String content, boolean isHTML, String unsubribeLink, DKIMBean dkinBean) throws MessagingException {
-		return sendMail(transport, sender, recipient, (List<InternetAddress>) null, (List<InternetAddress>) null, subject, content, isHTML, unsubribeLink, dkinBean);
+	public String sendMail(Transport transport, InternetAddress sender, InternetAddress recipient, String subject, String content, boolean isHTML, String unsubribeLink, DKIMBean dkinBean, String mailId) throws MessagingException {
+		List<InternetAddress> recipients = null;
+		if (recipient != null) {
+			recipients = Arrays.asList(recipient);
+		}
+		return sendMail(transport, sender, recipients, null, null, subject, content, null, isHTML, null, unsubribeLink, dkinBean, mailId);
 	}
 
 	public void sendMail(InternetAddress sender, InternetAddress recipient, String subject, String content, boolean isHTML) throws MessagingException {

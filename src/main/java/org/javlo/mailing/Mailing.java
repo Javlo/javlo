@@ -60,6 +60,8 @@ public class Mailing {
 
 	private static final String RECEIVERS_FILE = "receivers.properties";
 	
+	private static final String ERROR_RECEIVERS_FILE = "errors_receivers.properties";
+	
 	private static final String PRIVATE_KEY_FILE = "privatekey.bin";
 
 	private static final String CONFIG_FILE = "mailing.properties";
@@ -90,6 +92,8 @@ public class Mailing {
 	private InternetAddress from;
 
 	private Set<InternetAddress> receivers;
+	
+	private LinkedHashSet<InternetAddress> errorReceivers = new LinkedHashSet<InternetAddress>();
 
 	private InternetAddress notif;
 
@@ -260,6 +264,15 @@ public class Mailing {
 		if (!contentFile.exists()) {
 			return;
 		}
+		File errorReceiversFile = new File(dir.getAbsolutePath() + '/' + ERROR_RECEIVERS_FILE);
+		errorReceivers = new LinkedHashSet<InternetAddress>();
+		for (String line : FileUtils.readLines(errorReceiversFile, ContentContext.CHARACTER_ENCODING)) {
+			try {
+				errorReceivers.add(new InternetAddress(line));
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+		}
 		File receiversFile = new File(dir.getAbsolutePath() + '/' + RECEIVERS_FILE);
 		receivers = new LinkedHashSet<InternetAddress>();
 		for (String line : FileUtils.readLines(receiversFile, ContentContext.CHARACTER_ENCODING)) {
@@ -368,6 +381,19 @@ public class Mailing {
 		}
 		return out;
 	}
+	
+	public boolean addErrorReceive(InternetAddress email) {
+		if (errorReceivers.contains(email)) {
+			return false;
+		} else {
+			errorReceivers.add(email);
+			return true;
+		}
+	}
+	
+	public Collection<InternetAddress> getErrorReveicers() {
+		return errorReceivers;
+	}
 
 	public void store(ServletContext application) throws IOException {
 
@@ -382,13 +408,23 @@ public class Mailing {
 
 			File contentFile = new File(dir.getAbsolutePath() + '/' + CONTENT_FILE);
 			ResourceHelper.writeStringToFile(contentFile, content, ContentContext.CHARACTER_ENCODING);
+			
+			File receiversErrorFile = new File(dir.getAbsolutePath() + '/' + ERROR_RECEIVERS_FILE);
+			Collection<String> errorLines = new LinkedList<String>();
+			for (InternetAddress receiver : errorReceivers) {
+				if (receiver != null) {
+					errorLines.add(receiver.toUnicodeString());
+				}
+			}			
+			FileUtils.writeLines(receiversErrorFile, errorLines);
+			
 			File receiversFile = new File(dir.getAbsolutePath() + '/' + RECEIVERS_FILE);
 			Collection<String> lines = new LinkedList<String>();
 			for (InternetAddress receiver : receivers) {
 				if (receiver != null) {
 					lines.add(receiver.toUnicodeString());
 				}
-			}
+			}			
 			FileUtils.writeLines(receiversFile, lines);
 
 			ConfigurationProperties config = new ConfigurationProperties();
@@ -516,13 +552,19 @@ public class Mailing {
 		return key.getAddress().toLowerCase();
 	}
 
-	public void onMailSent(InternetAddress to) throws IOException {
+	public void onMailSent(InternetAddress to, String error) throws IOException {
 		synchronized (sentOut) {
 			String key = getSentKey(to);
 			String value = StringHelper.renderSortableTime(new Date());
-			String line = StringHelper.escapeProperty(key, true, true) + "=" + StringHelper.escapeProperty(value, false, true);
+			if (error != null) {
+				value = value+" ["+error+"]";
+			}
+			String line = StringHelper.escapeProperty(key, true, true) + "=" + StringHelper.escapeProperty(value, false, true);			
 			sentOut.println(line);
 			sentOut.flush();
+			if (!StringHelper.isEmpty(error)) {
+				addErrorReceive(to);
+			}
 		}
 	}
 
@@ -653,6 +695,15 @@ public class Mailing {
 	
 	public float getReadersRate() throws IOException {
 		float rate = (float)getCountReaders()/(float)getReceiversSize();
+		if (rate > 1) {
+			return 1;
+		} else {
+			return rate;
+		}
+	}	
+	
+	public float getDeliveryErrorRate() throws IOException {
+		float rate = (float)getErrorReveicers().size()/(float)getReceiversSize();
 		if (rate > 1) {
 			return 1;
 		} else {

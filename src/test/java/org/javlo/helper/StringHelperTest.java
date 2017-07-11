@@ -314,7 +314,7 @@ public class StringHelperTest extends TestCase {
 		assertTrue(StringHelper.isMail("info&contact@javlo.org"));
 		assertTrue(StringHelper.isMail("info@23.23.23.23"));
 		assertFalse(StringHelper.isMail("info@.javlo.org"));
-		assertFalse(StringHelper.isMail("info"));
+		assertFalse(StringHelper.isMail("info"));		
 	}
 
 	

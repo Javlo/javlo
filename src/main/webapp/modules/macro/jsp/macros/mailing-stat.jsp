@@ -13,6 +13,13 @@
 				<h2>Open rate <span class="info">${rate}%</span></h2>
 				<div class="bar2"><div class="value" style="background-color: #4DA74D; width: ${rate}%;"><small>${rate}%</small></div></div>
 			</div>
+			<c:if test="${fn:length(mailing.errorReveicers)>0}">
+			<div class="progress">
+				<fmt:formatNumber var="deliveryErrorRate" value="${mailing.deliveryErrorRate*100}" maxFractionDigits="0" />
+				<h2>Not delivery rate <span class="info">${deliveryErrorRate}%</span></h2>
+				<div class="bar2"><div class="value" style="background-color: #d9534f; width: ${deliveryErrorRate}%;"><small>${deliveryErrorRate}%</small></div></div>
+			</div>
+			</c:if>
 			<table class="keyvalues"><tr>
 				<td class="col">					
 					<h3>${mailing.subject}</h3>

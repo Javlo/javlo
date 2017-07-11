@@ -1,13 +1,8 @@
 package org.javlo.mailing;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
-import java.security.NoSuchAlgorithmException;
 import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedList;
@@ -22,7 +17,6 @@ import javax.mail.internet.InternetAddress;
 import javax.naming.ConfigurationException;
 import javax.servlet.ServletContext;
 
-import org.apache.commons.codec.binary.Base64;
 import org.javlo.config.StaticConfig;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
@@ -165,18 +159,19 @@ public class MailingThread extends Thread {
 					}
 				}
 
+				String error = null;
 				try {
 					String unsubsribeLink = mailing.getManualUnsubscribeLink();
 					if (!StringHelper.isEmpty(unsubsribeLink)) {
 						unsubsribeLink = unsubsribeLink.replace("${email}", to.getAddress());
-					}				
-					
-					mailing.setWarningMessage(mailingManager.sendMail(transport, mailing.getFrom(), to, mailing.getSubject(), content, true, unsubsribeLink, dkimBean));
+					}					
+					mailing.setWarningMessage(mailingManager.sendMail(transport, mailing.getFrom(), to, mailing.getSubject(), content.replace("##MAILING-ID##", mailing.getId()), true, unsubsribeLink, dkimBean, mailing.getId()));
 				} catch (Exception ex) {
+					error=ex.getMessage();
 					ex.printStackTrace();
 					mailing.setErrorMessage(ex.getMessage()+" [to="+to+"]");
 				}
-				mailing.onMailSent(to);
+				mailing.onMailSent(to, error);
 				if (countSending%20!=0) {
 					Thread.sleep(20);
 				} else {
@@ -269,43 +264,6 @@ public class MailingThread extends Thread {
 		}
 	}
 	
-	public static void main(String[] args) throws AddressException, MessagingException, FileNotFoundException, IOException, NoSuchAlgorithmException {
-		MailConfig mailConfig = new MailConfig("relay.vandermaesen.name", 25, null, null);
-//		MailConfig mailConfig = new MailConfig("localhost", 25, null, null);
-		MailService mailingManager = MailService.getInstance(mailConfig);		
-		
-		File privateKeyFile = new File("c:/trans/security/privatekey.bin");
-		File publicKeyFile = new File("c:/trans/security/publickey.txt");
-		
-		if (!privateKeyFile.exists()) {
-			KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
-			keyPairGenerator.initialize(1024);
-			KeyPair keyPair = keyPairGenerator.genKeyPair();		
-			
-			ResourceHelper.writeBytesToFile(privateKeyFile, keyPair.getPrivate().getEncoded());			
-			ResourceHelper.writeBytesToFile(publicKeyFile, Base64.encodeBase64(keyPair.getPublic().getEncoded()));
-		}
-		
-		DKIMBean dkin = new DKIMBean("vandermaesen.name", "dkim", privateKeyFile.getAbsolutePath(), null);	
-		
-		
-		List<InternetAddress> to = new LinkedList<InternetAddress>();
-		to.add(new InternetAddress("lSeimh4YRj9Gb5@dkimvalidator.com"));
-//		to.add(new InternetAddress("patrick.vandermaesen@outlook.com"));
-//		to.add(new InternetAddress("pvandermaesen@noctis.be"));
-		
-		
-//		 System.out.println("");
-//		 System.out.println("***** TEXT *****");
-//		 System.out.println("");
-//		
-//		 mailingManager.sendMail(null, new InternetAddress("patrick@vandermaesen.name"), to, null, null, "dkim:"+(dkin != null)+" TEXT : "+StringHelper.renderTime(new Date()), "<p><b>HTML</b>test TEXT : "+StringHelper.renderTime(new Date())+"</p>", "test TEXT dkim", false, null, null, dkin);
-		 System.out.println("");
-		 System.out.println("***** HTML *****");
-		 System.out.println("");
-		
-		 mailingManager.sendMail(null, new InternetAddress("patrick@vandermaesen.name"), to, null, null, "dkim:"+(dkin != null)+" HTML : "+StringHelper.renderTime(new Date()), "<p><b>HTML</b>test dkim : "+StringHelper.renderTime(new Date())+"</p>", "test HTML dkim", true, null, null, dkin);
-		 System.out.println("done.");
-	}
+	
 
 }

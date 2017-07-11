@@ -1,5 +1,7 @@
 package org.javlo.macro.interactive;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -49,10 +51,17 @@ public class MailingStat implements IInteractiveMacro, IAction {
 				pageId = ctx.getCurrentPage().getRootOfChildrenAssociation().getFirstChild().getId();
 			}
 			List<Mailing> mailingList = mailingService.getOldMailingListByContext(ctx.getGlobalContext().getContextKey());
+			Collections.sort(mailingList, new Comparator<Mailing>() {
+				@Override
+				public int compare(Mailing o1, Mailing o2) {
+					return -o1.getDate().compareTo(o2.getDate());
+				}
+				
+			});
 			Iterator<Mailing> mailingIte = mailingList.iterator();
 			while (mailingIte.hasNext()) {
 				Mailing nextMailing = mailingIte.next(); 
-				if (nextMailing.isTest() || nextMailing.getPageId() == null || !nextMailing.getPageId().equals(pageId) || nextMailing.getReceivers().size() < 5) {
+				if (nextMailing.isTest() || nextMailing.getPageId() == null || !nextMailing.getPageId().equals(pageId) || nextMailing.getReceivers().size() < 3) {
 					mailingIte.remove();
 				}
 			}

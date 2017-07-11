@@ -874,4 +874,6 @@ change log
  
  * 4/ ticket layout / getLabel with contentcontext for field / maximum login error
  
- * 5/ send mail to authors of ticket
+ * 5/ send mail to authors of ticket / pop3 mail delivery failure analyse
+ 
+ * 6/ 
