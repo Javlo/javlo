@@ -881,7 +881,12 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 
 					String mailAdminContent;
 					if (!StringHelper.isEmpty(comp.getLocalConfig(false).getProperty("event.alert-limit"))) {
-						mailAdminContent = XHTMLHelper.createAdminMail(ctx.getCurrentPage().getTitle(ctx), "Event registration : " + comp.getCountSubscription(ctx) + "/" + comp.getLocalConfig(false).getProperty("event.alert-limit"), adminMailData, URLHelper.createURL(absCtx), "go on page >>", null);
+						String prefix = "Event registration :";
+						if (comp.isClosedEventSite(ctx)) {
+							prefix = "Waiting list : ";
+							subject = prefix+subject;
+						}
+						mailAdminContent = XHTMLHelper.createAdminMail(ctx.getCurrentPage().getTitle(ctx), prefix + comp.getCountSubscription(ctx) + "/" + comp.getLocalConfig(false).getProperty("event.alert-limit"), adminMailData, URLHelper.createURL(absCtx), "go on page >>", null);
 					} else {
 						mailAdminContent = XHTMLHelper.createAdminMail(ctx.getCurrentPage().getTitle(ctx), "Form submit - " + comp.getCountSubscription(ctx), adminMailData, URLHelper.createURL(absCtx), "go on page >>", null);
 					}
