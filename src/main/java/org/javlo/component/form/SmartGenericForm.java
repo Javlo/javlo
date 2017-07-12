@@ -462,6 +462,17 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 			return false;
 		}
 	}
+	
+	protected boolean isFullEventSite(ContentContext ctx) throws IOException {
+		Properties localConfig = getLocalConfig(false);
+		String eventLimistStr = localConfig.getProperty("event.limit");
+		int countSubscription = getCountSubscription(ctx);
+		if (StringHelper.isDigit(eventLimistStr)) {
+			return Integer.parseInt(eventLimistStr) < countSubscription;
+		} else {
+			return false;
+		}
+	}
 
 	@Override
 	public String performEdit(ContentContext ctx) throws Exception {
@@ -881,7 +892,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 
 					String mailAdminContent;
 					String prefix = "Event registration :";
-					if (comp.isClosedEventSite(ctx)) {
+					if (comp.isFullEventSite(ctx)) {
 						prefix = "Waiting list : ";
 						subject = prefix+subject;
 					}
