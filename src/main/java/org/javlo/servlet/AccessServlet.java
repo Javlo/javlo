@@ -247,8 +247,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 		try {
 			COUNT_ACCESS++;
 
-			logger.fine("uri : " + request.getRequestURI()); // TODO: remove
-																// debug trace
+			logger.fine("uri : " + request.getRequestURI());
 
 			StaticConfig staticConfig = StaticConfig.getInstance(getServletContext());
 			
@@ -494,9 +493,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 				request.setAttribute("_sid_", "true");
 				String decodeParam = URLHelper.httpDecryptData(encodedParam);
 				String url = request.getServletPath() + request.getPathInfo() + decodeParam;
-
 				response.setContentType("text/html; charset=" + ContentContext.CHARACTER_ENCODING);
-
 				getServletContext().getRequestDispatcher(url).include(request, response);
 				return;
 			}
@@ -541,11 +538,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 				}
 				MenuElement elem = content.getNavigation(ctx).getNoErrorFreeCurrentPage(ctx);
 				/** INIT TEMPLATE **/
-				if (ctx.getCurrentTemplate() == null || action != null) { // action
-																			// can
-																			// change
-																			// the
-																			// template
+				if (ctx.getCurrentTemplate() == null || action != null) {
 					Template template = null;
 					if (elem != null) {
 						template = ctx.getCurrentTemplate();
@@ -913,10 +906,8 @@ public class AccessServlet extends HttpServlet implements IVersion {
 							outPrint.close();
 						}
 					} else if (ctx.getFormat().equalsIgnoreCase("cxml")) {
-
 						String realPath = ContentManager.getPath(request);
 						MenuElement agendaPage = ContentService.getInstance(globalContext).getNavigation(ctx).searchChild(ctx, realPath);
-
 						response.setContentType("text/xml; charset=" + ContentContext.CHARACTER_ENCODING);
 						Date startDate = StringHelper.parseSortableDate(requestService.getParameter("start-date", "1900-01-01"));
 						Date endDate = StringHelper.parseSortableDate(requestService.getParameter("end-date", "2100-01-01"));
@@ -967,17 +958,12 @@ public class AccessServlet extends HttpServlet implements IVersion {
 
 							if (ctx.getGlobalContext().isCollaborativeMode()) {
 								Set<String> pageRoles = ctx.getCurrentPage().getEditorRolesAndParent();
-								if ((pageRoles.size() > 0 || ctx.getCurrentEditUser() == null) && !ctx.getCurrentPage().getName().equals("registration")) { // leave
-																																							// access
-																																							// to
-																																							// registration
-																																							// page.
+								if ((pageRoles.size() > 0 || ctx.getCurrentEditUser() == null) && !ctx.getCurrentPage().getName().equals("registration")) {
 									if (ctx.getCurrentEditUser() == null || !ctx.getCurrentEditUser().validForRoles(pageRoles)) {
 										MenuElement parent = ctx.getCurrentPage().getParent();
 										while (parent != null) {
 											parent = parent.getParent();
 										}
-
 										response.setStatus(HttpServletResponse.SC_FORBIDDEN);
 										ctx.setSpecialContentRenderer("/jsp/view/no_access.jsp");
 									}
@@ -985,7 +971,6 @@ public class AccessServlet extends HttpServlet implements IVersion {
 							}
 
 							ctx.setCurrentTemplate(template);
-
 							if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE && staticConfig.isFixPreview()) {
 								ctx.getRequest().setAttribute("components", ComponentFactory.getComponentForDisplay(ctx));
 
@@ -993,7 +978,6 @@ public class AccessServlet extends HttpServlet implements IVersion {
 								/**** Shared Content ****/
 								/************************/
 								SharedContentService.prepare(ctx);
-
 							}
 
 							/** check content **/

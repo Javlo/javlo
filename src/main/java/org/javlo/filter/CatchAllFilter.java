@@ -487,6 +487,7 @@ public class CatchAllFilter implements Filter {
 					} else if (fact.getCurrentUser(globalContext, ((HttpServletRequest) request).getSession()) == null) {
 						if (request.getParameter("j_username") != null || httpRequest.getUserPrincipal() != null) {
 							String login = request.getParameter("j_username");
+							System.out.println("##### CatchAllFilter.doLoginFilter : login = "+login); //TODO: remove debug trace
 							if (request.getParameter("autologin") != null) {
 								DataToIDService service = DataToIDService.getInstance(httpRequest.getSession().getServletContext());
 								String codeId = service.setData(login, IUserFactory.AUTO_LOGIN_AGE_SEC);
