@@ -436,6 +436,8 @@ public class UserFactory implements IUserFactory, Serializable {
 	public User login(HttpServletRequest request, String login, String password) {
 
 		logger.fine("try to log : " + login);
+		
+		System.out.println("##### 1.UserFactory.login : "+login); //TODO: remove debug trace
 
 		GlobalContext globalContext = GlobalContext.getInstance(request);
 		EditContext editCtx = EditContext.getInstance(globalContext, request.getSession());
@@ -445,13 +447,12 @@ public class UserFactory implements IUserFactory, Serializable {
 		if (user == null) {
 			user = getUserByEmail(login);
 		}
+		System.out.println("##### 2.UserFactory.login : "+login); //TODO: remove debug trace
 
 		boolean passwordEqual = false;
 		StaticConfig staticConfig = StaticConfig.getInstance(request.getSession());
 
-		if (user == null && !globalContext.isMaster()) { // check if user is in
-															// master
-															// globalContext
+		if (user == null && !globalContext.isMaster()) { 
 			IUserFactory masterUserFactory;
 			try {
 				masterUserFactory = AdminUserFactory.createUserFactory(GlobalContext.getMasterContext(request.getSession()), request.getSession());
@@ -476,14 +477,14 @@ public class UserFactory implements IUserFactory, Serializable {
 
 		if (user == null || (!logged && user.getPassword() != null && !passwordEqual)) {
 			if (globalContext.getAdministrator().equals(login) && (logged || globalContext.administratorLogin(login, password))) {
-				logger.fine("log user with password : " + login + " obtain full control role.");
+				logger.info("log user with password : " + login + " obtain full control role.");
 				user = createUser(login, (new HashSet(Arrays.asList(new String[] { AdminUserSecurity.FULL_CONTROL_ROLE }))));
 			} else if (editCtx.getEditUser(login) != null && (logged || editCtx.hardLogin(login, password))) {
-				logger.fine("log user with password : " + login + " obtain general addmin mode and full control role.");
+				logger.info("log user with password : " + login + " obtain general addmin mode and full control role.");
 				user = createUser(login, (new HashSet(Arrays.asList(new String[] { AdminUserSecurity.GENERAL_ADMIN, AdminUserSecurity.FULL_CONTROL_ROLE }))));
 				editCtx.setEditUser(user);
 			} else {
-				logger.fine("fail to log user with password : " + login + ".");
+				logger.info("fail to log user with password : " + login + ".");
 				user = null;
 			}
 		}

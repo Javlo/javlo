@@ -3731,5 +3731,10 @@ public class StringHelper {
 		} else {
 			return text;
 		}
-	}	
+	}
+	
+	public static void main(String[] args) {
+		System.out.println(encryptPassword("z9c4a4"));
+	}
+
 }

@@ -1172,7 +1172,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 		String adminUser = "";
 		String sep="";
 		for (User user : staticConfig.getEditUsers().values()) {
-			adminUser = adminUser+'['+user.getLogin()+","+user.getPassword()+']'+sep;
+			adminUser = adminUser+sep+'['+user.getLogin()+","+user.getPassword()+']';
 			sep=",";
 		}
 		out.println("**** ADMIN USER        :  " +adminUser);
