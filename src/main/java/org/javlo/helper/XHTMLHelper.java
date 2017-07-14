@@ -2635,6 +2635,12 @@ public class XHTMLHelper {
 				int ind = listDepth(tags, tag);
 				if (tag.getName().equalsIgnoreCase("ol")) {
 					liNumber[ind] = 1;
+					String startVal = tag.getAttribute("start", null);
+					if (startVal != null) {
+						if (StringHelper.isDigit(startVal)) {
+							liNumber[ind] = Integer.parseInt(startVal);
+						}
+					}
 				} else {
 					liNumber[ind] = 0;
 				}
