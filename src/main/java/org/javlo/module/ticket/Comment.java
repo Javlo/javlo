@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 import org.javlo.helper.StringHelper;
+import org.javlo.helper.XHTMLHelper;
 
 public class Comment implements Serializable {
 
@@ -31,6 +32,10 @@ public class Comment implements Serializable {
 	public String getMessage() {
 		return message;
 	}
+	
+	public String getHtmlMessage() {
+		return XHTMLHelper.textToXHTML(message);
+	}
 
 	public void setMessage(String message) {
 		this.message = message;
@@ -38,7 +43,7 @@ public class Comment implements Serializable {
 	
 	@Override
 	public String toString() {
-		return StringHelper.neverNull(authors)+" : "+StringHelper.neverNull(message);
+		return StringHelper.neverNull(authors)+" : "+StringHelper.neverNull(getHtmlMessage());
 	}
 
 	public Date getCreationDate() {

@@ -23,7 +23,9 @@
 					<c:if test="${empty image}">&nbsp;</c:if>
 					<c:if test="${not empty image}">
 						<figure style="margin: 0; padding: 0;">
-							<a title="${page.attTitle}" href="${page.url}"> <img src="${image.url}" class="frame" alt="${image.description}" /></a>
+							<a title="${page.attTitle}" href="${page.url}">
+							   <img src="${image.url}" class="frame" alt="${image.description}" />
+							</a>
 						</figure>
 					</c:if></td>
 					<td width="10" style="width: 10px">&nbsp;</td>

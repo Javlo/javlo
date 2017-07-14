@@ -285,8 +285,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		if (helpURL.contains("${language}")) {
 			helpURL = helpURL.replace("${language}", globalContext.getEditLanguage(ctx.getRequest().getSession()));
 		} else {
-			helpURL = URLHelper.mergePath(helpURL + 'v' + IVersion.VERSION.substring(0, 3).replace('.', '_'),
-					globalContext.getEditLanguage(ctx.getRequest().getSession()));
+			helpURL = URLHelper.mergePath(helpURL + 'v' + IVersion.VERSION.substring(0, 3).replace('.', '_'), globalContext.getEditLanguage(ctx.getRequest().getSession()));
 		}
 		return helpURL;
 	}
@@ -412,16 +411,14 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		String keySuffix = ctx.getGlobalContext().getContextKey() + '-' + ctx.getLanguage() + '-'
-				+ ctx.getRequestContentLanguage() + '-' + ctx.getRenderMode() + '-' + templateId + '-' + pageId;
+		String keySuffix = ctx.getGlobalContext().getContextKey() + '-' + ctx.getLanguage() + '-' + ctx.getRequestContentLanguage() + '-' + ctx.getRenderMode() + '-' + templateId + '-' + pageId;
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
 		if (requestService.getParameter(CACHE_KEY_SUFFIX_PARAM_NAME, null) != null) {
 			keySuffix = keySuffix + '-' + requestService.getParameter(CACHE_KEY_SUFFIX_PARAM_NAME, null);
 		}
 
 		if (isContentCachableByQuery(ctx)) {
-			keySuffix = keySuffix + '_' + ctx.getRequest().getQueryString() + '_'
-					+ StringHelper.neverNull(ctx.getCurrentUserId());
+			keySuffix = keySuffix + '_' + ctx.getRequest().getQueryString() + '_' + StringHelper.neverNull(ctx.getCurrentUserId());
 		}
 
 		if (ctx.getDevice() == null) { // TODO: check why this method can return
@@ -533,8 +530,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		StringBuffer finalCode = new StringBuffer();
 		finalCode.append(getDebugHeader(ctx));
 		finalCode.append(getSpecialInputTag());
-		finalCode.append("<textarea class=\"form-control resizable-textarea full-width\" id=\"" + getContentName()
-				+ "\" name=\"" + getContentName() + "\"");
+		finalCode.append("<textarea class=\"form-control resizable-textarea full-width\" id=\"" + getContentName() + "\" name=\"" + getContentName() + "\"");
 		finalCode.append(" rows=\"" + (countLine() + 1) + "\">");
 		finalCode.append(getValue());
 		finalCode.append("</textarea>");
@@ -548,8 +544,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			filesParams.put(ContentContext.PREVIEW_EDIT_PARAM, "true");
 
 			String chooseImageURL = URLHelper.createModuleURL(ctx, ctx.getPath(), "file", filesParams);
-			finalCode.append("<script type=\"text/javascript\">jQuery(document).ready(loadWysiwyg('#" + getContentName()
-					+ "','" + getEditorComplexity(ctx) + "','" + chooseImageURL + "'));</script>");
+			finalCode.append("<script type=\"text/javascript\">jQuery(document).ready(loadWysiwyg('#" + getContentName() + "','" + getEditorComplexity(ctx) + "','" + chooseImageURL + "'));</script>");
 		}
 		return finalCode.toString();
 	}
@@ -579,8 +574,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		String repeatHidden = "";
 		boolean showRepeat = true;
 		if (ctx.getGlobalContext().isMailingPlatform()) {
-			UserInterfaceContext uiContext = UserInterfaceContext.getInstance(ctx.getRequest().getSession(),
-					ctx.getGlobalContext());
+			UserInterfaceContext uiContext = UserInterfaceContext.getInstance(ctx.getRequest().getSession(), ctx.getGlobalContext());
 			if (uiContext.isLight()) {
 				repeatHidden = " hidden";
 				showRepeat = false;
@@ -590,8 +584,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		if (isRepeatable()) {
 			out.println("<div class=\"line" + repeatHidden + "\">");
 			if (showRepeat) {
-				out.println(
-						"<label for=\"repeat-" + getId() + "\">" + i18nAccess.getText("content.repeat") + "</label>");
+				out.println("<label for=\"repeat-" + getId() + "\">" + i18nAccess.getText("content.repeat") + "</label>");
 			}
 			out.println(XHTMLHelper.getCheckbox("repeat-" + getId(), isRepeat()));
 			out.println("</div>");
@@ -600,8 +593,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		if (isNoLinkable() && ctx.getGlobalContext().isReversedLink()) {
 			out.println("<div class=\"line\">");
 			if (showRepeat) {
-				out.println(
-						"<label for=\"nolink-" + getId() + "\">" + i18nAccess.getText("content.nolink") + "</label>");
+				out.println("<label for=\"nolink-" + getId() + "\">" + i18nAccess.getText("content.nolink") + "</label>");
 			}
 			out.println(XHTMLHelper.getCheckbox("nolink-" + getId(), isNolink()));
 			out.println("</div>");
@@ -624,9 +616,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			out.println("<div class=\"line\">");
 			String inputName = getInputName("width");
 			out.println("<label for=\"" + inputName + "\">" + i18nAccess.getText("component.width") + "</label>");
-			out.println("<input id=\"" + inputName + "\" name=\"" + inputName
-					+ "\" class=\"form-control\" type=\"text\" value=\"" + StringHelper.neverNull(getWidth())
-					+ "\" />");
+			out.println("<input id=\"" + inputName + "\" name=\"" + inputName + "\" class=\"form-control\" type=\"text\" value=\"" + StringHelper.neverNull(getWidth()) + "\" />");
 			out.println("</div>");
 		}
 		if (getLayout() != null) {
@@ -636,8 +626,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			String id = "layout-default-" + getId();
 			String name = "layout-align-" + getId();
 			out.println("<label for=\"" + id + "\">");
-			out.println(XHTMLHelper.getRadio(id, name, "default",
-					!layout.isLeft() && !layout.isRight() && !layout.isCenter()));
+			out.println(XHTMLHelper.getRadio(id, name, "default", !layout.isLeft() && !layout.isRight() && !layout.isCenter()));
 			out.println(i18nAccess.getText("global.default"));
 			out.println("</label>");
 			id = "layout-left-" + getId();
@@ -672,22 +661,16 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		if (getConfig(ctx).isChooseBackgoundColor()) {
 			out.println("<div class=\"line\">");
 			String bgColInputName = "bgcol-" + getId();
-			out.println("<label for=\"" + bgColInputName + "\">" + i18nAccess.getText("component.background-color")
-					+ "</label>");
-			out.println("<input id=\"" + bgColInputName + "\" name=\"" + bgColInputName
-					+ "\" class=\"color form-control\" type=\"text\" value=\""
-					+ StringHelper.neverNull(getBackgroundColor()) + "\" />");
+			out.println("<label for=\"" + bgColInputName + "\">" + i18nAccess.getText("component.background-color") + "</label>");
+			out.println("<input id=\"" + bgColInputName + "\" name=\"" + bgColInputName + "\" class=\"color form-control\" type=\"text\" value=\"" + StringHelper.neverNull(getBackgroundColor()) + "\" />");
 			out.println("</div>");
 		}
 
 		if (getConfig(ctx).isChooseTextColor()) {
 			out.println("<div class=\"line\">");
 			String textColInputName = "textcol-" + getId();
-			out.println("<label for=\"" + textColInputName + "\">" + i18nAccess.getText("component.text-color")
-					+ "</label>");
-			out.println("<input id=\"" + textColInputName + "\" name=\"" + textColInputName
-					+ "\" class=\"color form-control\" type=\"text\" value=\"" + StringHelper.neverNull(getTextColor())
-					+ "\" />");
+			out.println("<label for=\"" + textColInputName + "\">" + i18nAccess.getText("component.text-color") + "</label>");
+			out.println("<input id=\"" + textColInputName + "\" name=\"" + textColInputName + "\" class=\"color form-control\" type=\"text\" value=\"" + StringHelper.neverNull(getTextColor()) + "\" />");
 			out.println("</div>");
 		}
 
@@ -699,8 +682,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			}
 			out.println("<div class=\"line\">");
 			out.println("<label for=\"style-" + getId() + "\">" + getStyleTitle(ctx) + "</label>");
-			out.println(XHTMLHelper.getInputOneSelect("style-" + getId(), styles, stylesLabel, getStyle(),
-					"form-control", null, false));
+			out.println(XHTMLHelper.getInputOneSelect("style-" + getId(), styles, stylesLabel, getStyle(), "form-control", null, false));
 			out.println("</div>");
 		}
 		if (isFreeInputLayout()) {
@@ -710,8 +692,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			}
 			out.println("<div class=\"line\">");
 			out.println("<label for=\"style-" + getId() + "\">" + getStyleTitle(ctx) + "</label>");
-			out.println("<input id=\"" + "style-" + getId() + "\" name=\"" + "style-" + getId()
-					+ "\" class=\"form-control\" type=\"text\" value=\"" + getStyle() + "\" />");
+			out.println("<input id=\"" + "style-" + getId() + "\" name=\"" + "style-" + getId() + "\" class=\"form-control\" type=\"text\" value=\"" + getStyle() + "\" />");
 			out.println("</div>");
 		}
 
@@ -722,8 +703,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		if (AdminUserSecurity.getInstance().isAdmin(ctx.getCurrentEditUser())) {
 			out.println("<div class=\"line\">");
 			out.println("<label>" + i18nAccess.getText("component.display-modes") + "</label>");
-			for (int mode : new int[] { ContentContext.VIEW_MODE, ContentContext.PREVIEW_MODE, ContentContext.PAGE_MODE,
-					ContentContext.TIME_MODE }) {
+			for (int mode : new int[] { ContentContext.VIEW_MODE, ContentContext.PREVIEW_MODE, ContentContext.PAGE_MODE, ContentContext.TIME_MODE }) {
 				String id = "display-mode-" + mode + "-" + getId();
 				out.println("<label for=\"" + id + "\">");
 				out.println(XHTMLHelper.getCheckbox(id, !isHiddenInMode(mode)));
@@ -856,8 +836,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 
 		/** display modes **/
 		if (AdminUserSecurity.getInstance().isAdmin(ctx.getCurrentEditUser())) {
-			for (int mode : new int[] { ContentContext.VIEW_MODE, ContentContext.PREVIEW_MODE, ContentContext.PAGE_MODE,
-					ContentContext.TIME_MODE }) {
+			for (int mode : new int[] { ContentContext.VIEW_MODE, ContentContext.PREVIEW_MODE, ContentContext.PAGE_MODE, ContentContext.TIME_MODE }) {
 				String id = "display-mode-" + mode + "-" + getId();
 				boolean visible = requestService.getParameter(id, null) != null;
 				setHiddenInMode(mode, !visible);
@@ -893,8 +872,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 						prefix = getForcedPrefixViewXHTMLCode(ctx);
 						suffix = getForcedSuffixViewXHTMLCode(ctx);
 					}
-					return (prefix + "<div " + getSpecialPreviewCssClass(ctx, "pc_empty-component")
-							+ getSpecialPreviewCssId(ctx) + ">" + getEmptyXHTMLCode(ctx) + "</div>" + suffix);
+					return (prefix + "<div " + getSpecialPreviewCssClass(ctx, "pc_empty-component") + getSpecialPreviewCssId(ctx) + ">" + getEmptyXHTMLCode(ctx) + "</div>" + suffix);
 				}
 			}
 		}
@@ -983,8 +961,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 
 	@Override
 	public final String getHelpURL(ContentContext ctx) {
-		User user = AdminUserFactory.createUserFactory(ctx.getGlobalContext(), ctx.getRequest().getSession())
-				.getCurrentUser(ctx.getRequest().getSession());
+		User user = AdminUserFactory.createUserFactory(ctx.getGlobalContext(), ctx.getRequest().getSession()).getCurrentUser(ctx.getRequest().getSession());
 		if (user == null) {
 			return null;
 		}
@@ -1068,8 +1045,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		Collection<String> lgs = globalContext.getContentLanguages();
 		for (String lg : lgs) {
 			Locale locale = new Locale(lg);
-			sufixPreffix = new SuffixPrefix("<span lang=\"" + locale.getLanguage() + "\">", "</span>",
-					locale.getDisplayLanguage(new Locale(ctx.getRequestContentLanguage())));
+			sufixPreffix = new SuffixPrefix("<span lang=\"" + locale.getLanguage() + "\">", "</span>", locale.getDisplayLanguage(new Locale(ctx.getRequestContentLanguage())));
 			out.add(sufixPreffix);
 		}
 		return out;
@@ -1088,8 +1064,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	@Override
 	public String getLastSufix(ContentContext ctx) {
 		if (previousComponent != null) {
-			if (((AbstractVisualComponent) previousComponent).componentBean.isList()
-					&& previousComponent.getType().equals(getType())) {
+			if (((AbstractVisualComponent) previousComponent).componentBean.isList() && previousComponent.getType().equals(getType())) {
 				return "</" + getListTag(ctx) + ">";
 			}
 		}
@@ -1219,11 +1194,9 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		}
 		String style = contructViewStyle(ctx);
 		if (!componentBean.isList()) {
-			return "<" + getTag(ctx) + " " + getSpecialPreviewCssClass(ctx, style + getType())
-					+ getSpecialPreviewCssId(ctx) + " " + getInlineStyle(ctx) + ">";
+			return "<" + getTag(ctx) + " " + getSpecialPreviewCssClass(ctx, style + getType()) + getSpecialPreviewCssId(ctx) + " " + getInlineStyle(ctx) + ">";
 		} else {
-			return "<" + getListItemTag(ctx) + getSpecialPreviewCssClass(ctx, style + getType())
-					+ getSpecialPreviewCssId(ctx) + " >";
+			return "<" + getListItemTag(ctx) + getSpecialPreviewCssClass(ctx, style + getType()) + getSpecialPreviewCssId(ctx) + " >";
 		}
 	}
 
@@ -1319,8 +1292,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		Collection<String> lgs = globalContext.getContentLanguages();
 		for (String lg : lgs) {
 			Locale locale = new Locale(lg);
-			sufixPreffix = new SuffixPrefix("<span lang=\"" + locale.getLanguage() + "\">", "</span>",
-					locale.getDisplayLanguage(new Locale(ctx.getRequestContentLanguage())));
+			sufixPreffix = new SuffixPrefix("<span lang=\"" + locale.getLanguage() + "\">", "</span>", locale.getDisplayLanguage(new Locale(ctx.getRequestContentLanguage())));
 			out.add(sufixPreffix);
 		}
 		return out;
@@ -1381,8 +1353,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 				if (!renderer.startsWith('/' + workTemplateFolder)) {
 					ContentContext notAbsCtx = new ContentContext(ctx);
 					notAbsCtx.setAbsoluteURL(false);
-					renderer = URLHelper.createStaticTemplateURLWithoutContext(notAbsCtx, ctx.getCurrentTemplate(),
-							renderer);
+					renderer = URLHelper.createStaticTemplateURLWithoutContext(notAbsCtx, ctx.getCurrentTemplate(), renderer);
 				}
 			}
 		} catch (Exception e) {
@@ -1415,8 +1386,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		if (getRenderes(ctx).size() > 1) {
 
 			out.println("<fieldset class=\"display\">");
-			out.println("<legend>" + i18nAccess.getText("content.page-teaser.display-type")
-					+ "</legend><div class=\"line\">");
+			out.println("<legend>" + i18nAccess.getText("content.page-teaser.display-type") + "</legend><div class=\"line\">");
 
 			if (getRendererTitle() != null) { /*
 												 * for use title you must
@@ -1426,10 +1396,8 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 												 * null (default value).
 												 */
 				out.println("<div class=\"line\">");
-				out.println("<label for=\"" + getInputNameRendererTitle() + "\">" + i18nAccess.getText("global.title")
-						+ " : </label>");
-				out.println("<input type=\"text\" id=\"" + getInputNameRendererTitle() + "\" name=\""
-						+ getInputNameRendererTitle() + "\" value=\"" + getRendererTitle() + "\"  />");
+				out.println("<label for=\"" + getInputNameRendererTitle() + "\">" + i18nAccess.getText("global.title") + " : </label>");
+				out.println("<input type=\"text\" id=\"" + getInputNameRendererTitle() + "\" name=\"" + getInputNameRendererTitle() + "\" value=\"" + getRendererTitle() + "\"  />");
 				out.println("</div>");
 			}
 
@@ -1452,9 +1420,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 
 			out.println("</fieldset>");
 		} else {
-			out.println("<div class=\"line\"><span class=\"label\">"
-					+ i18nAccess.getText("content.page-teaser.display-type") + " : </span><span class=\"value\">"
-					+ getCurrentRenderer(ctx) + "</span></div>");
+			out.println("<div class=\"line\"><span class=\"label\">" + i18nAccess.getText("content.page-teaser.display-type") + " : </span><span class=\"value\">" + getCurrentRenderer(ctx) + "</span></div>");
 		}
 
 		out.close();
@@ -1505,25 +1471,17 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			EditContext editCtx = EditContext.getInstance(globalContext, ctx.getRequest().getSession());
 			try {
 				String classPrefix = "not-";
-				if (!globalContext.isOnlyCreatorModify() || (ctx.getCurrentEditUser() != null
-						&& (AdminUserSecurity.getInstance().isAdmin(ctx.getCurrentEditUser())
-								|| getAuthors().equals(ctx.getCurrentEditUser().getLogin())))) {
-					if (!AdminUserSecurity.getInstance().haveRole(ctx.getCurrentEditUser(),
-							AdminUserSecurity.LIGHT_INTERFACE_ROLE)
-							|| getComplexityLevel(ctx) == IContentVisualComponent.COMPLEXITY_EASY
-							|| getComplexityLevel(ctx) == IContentVisualComponent.COMPLEXITY_STANDARD) {
+				if (!globalContext.isOnlyCreatorModify() || (ctx.getCurrentEditUser() != null && (AdminUserSecurity.getInstance().isAdmin(ctx.getCurrentEditUser()) || getAuthors().equals(ctx.getCurrentEditUser().getLogin())))) {
+					if (!AdminUserSecurity.getInstance().haveRole(ctx.getCurrentEditUser(), AdminUserSecurity.LIGHT_INTERFACE_ROLE) || getComplexityLevel(ctx) == IContentVisualComponent.COMPLEXITY_EASY || getComplexityLevel(ctx) == IContentVisualComponent.COMPLEXITY_STANDARD) {
 						classPrefix = "";
 					}
 				}
 				RequestService rs = RequestService.getInstance(ctx.getRequest());
 				if (!StringHelper.isTrue(rs.getParameter(NOT_EDIT_PREVIEW_PARAM_NAME, null))) {
-					if (getConfig(ctx).isPreviewEditable() && editCtx.isPreviewEditionMode()
-							&& (!isRepeat() || getPage().equals(ctx.getCurrentPage()))
-							&& AdminUserSecurity.canModifyPage(ctx, ctx.getCurrentPage(), true)) {
+					if (getConfig(ctx).isPreviewEditable() && editCtx.isPreviewEditionMode() && (!isRepeat() || getPage().equals(ctx.getCurrentPage())) && AdminUserSecurity.canModifyPage(ctx, ctx.getCurrentPage(), true)) {
 						I18nAccess i18nAccess = I18nAccess.getInstance(ctx);
 						String type = i18nAccess.getText("content." + getType(), getType());
-						String hint = "<b>" + type + "</b><br />"
-								+ i18nAccess.getViewText("preview.hint", "click for edit or drag and drop to move.");
+						String hint = "<b>" + type + "</b><br />" + i18nAccess.getViewText("preview.hint", "click for edit or drag and drop to move.");
 						String newClass = "";
 						if (isNew(ctx)) {
 							newClass = " new-component";
@@ -1535,9 +1493,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 						if (AbstractVisualComponent.isMirrorWrapped(ctx, this)) {
 							mirror = "mirror-wrapped";
 						}
-						return specificClass + classPrefix + "editable-component " + mirror + currentClass + newClass
-								+ "\" data-hint=\"" + hint + "\" data-name=\""
-								+ i18nAccess.getText("content." + getType(), getType());
+						return specificClass + classPrefix + "editable-component " + mirror + currentClass + newClass + "\" data-hint=\"" + hint + "\" data-name=\"" + i18nAccess.getText("content." + getType(), getType());
 					}
 				}
 			} catch (Exception e) {
@@ -1577,7 +1533,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			ctx.getRequest().setAttribute(FORCE_COMPONENT_ID, id);
 		}
 	}
-	
+
 	public String getPreviewCssId(ContentContext ctx) {
 		if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE) {
 			return "cp_" + getForcedId(ctx);
@@ -1634,8 +1590,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	}
 
 	public boolean isColored() {
-		return (getBackgroundColor() != null && getBackgroundColor().length() > 2)
-				|| (getTextColor() != null && getTextColor().length() > 2);
+		return (getBackgroundColor() != null && getBackgroundColor().length() > 2) || (getTextColor() != null && getTextColor().length() > 2);
 	}
 
 	public boolean isBackgroundColored() {
@@ -1845,8 +1800,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 
 	protected String renderViewXHTMLCode(ContentContext ctx) throws Exception {
 		if (HIDDEN.equals(getStyle()) || isDisplayHidden()) {
-			if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE
-					&& EditContext.getInstance(ctx.getGlobalContext(), ctx.getRequest().getSession()).isPreviewEditionMode()) {
+			if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE && EditContext.getInstance(ctx.getGlobalContext(), ctx.getRequest().getSession()).isPreviewEditionMode()) {
 				String prefix = "";
 				String suffix = "";
 				if (!isWrapped(ctx)) {
@@ -1863,8 +1817,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		} else {
 			if (isNeedRenderer()) {
 				if (ctx.isAsPreviewMode()) {
-					return "<div class=\"error\">No renderer found for '" + getType() + "' in template '"
-							+ ctx.getCurrentTemplate().getName() + "'.</div>";
+					return "<div class=\"error\">No renderer found for '" + getType() + "' in template '" + ctx.getCurrentTemplate().getName() + "'.</div>";
 				}
 			}
 			return getViewXHTMLCode(ctx);
@@ -1927,8 +1880,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 					return emptyCode;
 				}
 				ctx.getRequest().setAttribute(COMP_ID_REQUEST_PARAM, getId());
-				if (ctx.getRenderMode() == ContentContext.VIEW_MODE && isContentCachable(ctx)
-						&& globalContext.isPreviewMode()) {
+				if (ctx.getRenderMode() == ContentContext.VIEW_MODE && isContentCachable(ctx) && globalContext.isPreviewMode()) {
 					if (getContentCache(ctx) != null) {
 						return getContentCache(ctx);
 					}
@@ -1938,12 +1890,11 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 						}
 					}
 				}
-				if (ctx.getRenderMode() == ContentContext.VIEW_MODE && isContentTimeCachable(ctx)
-						&& globalContext.isPreviewMode()) {
+				if (ctx.getRenderMode() == ContentContext.VIEW_MODE && isContentTimeCachable(ctx) && globalContext.isPreviewMode()) {
 					String timeContent = getContentTimeCache(ctx);
 					if (timeContent != null) {
 						return timeContent;
-					}
+					}					
 					synchronized (getLock(ctx)) {
 						timeContent = getContentTimeCache(ctx);
 						if (timeContent != null) {
@@ -1951,8 +1902,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 						}
 					}
 				}
-				if (ctx.getRenderMode() == ContentContext.VIEW_MODE && isContentCachable(ctx)
-						&& globalContext.isPreviewMode()) {
+				if (ctx.getRenderMode() == ContentContext.VIEW_MODE && isContentCachable(ctx) && globalContext.isPreviewMode()) {
 					logger.fine("add content in cache for component " + getType() + " in page : " + ctx.getPath());
 					long beforeTime = System.currentTimeMillis();
 					String content;
@@ -1963,8 +1913,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 						content = renderViewXHTMLCode(ctx);
 						setContentCache(ctx, content);
 					}
-					logger.fine("render content cache '" + getType() + "' : "
-							+ (System.currentTimeMillis() - beforeTime) / 1000 + " sec.");
+					logger.fine("render content cache '" + getType() + "' : " + (System.currentTimeMillis() - beforeTime) / 1000 + " sec.");
 					return content;
 				} else {
 					String content;
@@ -1975,8 +1924,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 								prepareView(ctx);
 							}
 							content = renderViewXHTMLCode(ctx);
-							logger.fine("render content time cache '" + getType() + "' : "
-									+ (System.currentTimeMillis() - beforeTime) / 1000 + " sec.");
+							logger.fine("render content time cache '" + getType() + "' : " + (System.currentTimeMillis() - beforeTime) / 1000 + " sec.");
 							setContentTimeCache(ctx, content);
 						}
 					} else {
@@ -2282,8 +2230,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	}
 
 	@Override
-	public IContentVisualComponent newInstance(ComponentBean bean, ContentContext newCtx, MenuElement page)
-			throws Exception {
+	public IContentVisualComponent newInstance(ComponentBean bean, ContentContext newCtx, MenuElement page) throws Exception {
 		AbstractVisualComponent res = (AbstractVisualComponent) this.clone();
 		res.setPage(page);
 		res.init(bean, newCtx);
@@ -2376,8 +2323,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			return;
 		}
 		if (contentCache.contains(";jsessionid=")) {
-			logger.fine("couldn't put content with jsession id in cache on : " + getPage().getPath() + " - comp:"
-					+ getType());
+			logger.fine("couldn't put content with jsession id in cache on : " + getPage().getPath() + " - comp:" + getType());
 			return;
 		}
 		GlobalContext globalContext = ctx.getGlobalContext();
@@ -2394,8 +2340,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			return;
 		}
 		if (contentCache.contains(";jsessionid=")) {
-			logger.fine("couldn't put content with jsession id in cache on : " + getPage().getPath() + " - comp:"
-					+ getType());
+			logger.fine("couldn't put content with jsession id in cache on : " + getPage().getPath() + " - comp:" + getType());
 			return;
 		}
 		GlobalContext globalContext = ctx.getGlobalContext();
@@ -2723,8 +2668,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	 * @return
 	 */
 	public boolean isNew(ContentContext ctx) {
-		return ctx.getRequest().getAttribute("new-component") != null
-				&& ctx.getRequest().getAttribute("new-component").equals(getId());
+		return ctx.getRequest().getAttribute("new-component") != null && ctx.getRequest().getAttribute("new-component").equals(getId());
 	}
 
 	/**
@@ -2793,26 +2737,26 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	public String getImportFolderPath(ContentContext ctx) throws Exception {
 		return getImportFolderPath(ctx, getPage());
 	}
-	
+
 	protected boolean isXML() {
 		return false;
 	}
-	
+
 	@Override
 	public String getErrorMessage(ContentContext ctx) {
-		if (isXML() && !StringHelper.isEmpty(getValue())) {			
+		if (isXML() && !StringHelper.isEmpty(getValue())) {
 			try {
-				XMLManipulationHelper.searchAllTag("<div>"+getValue()+"</div>", true);
+				XMLManipulationHelper.searchAllTag("<div>" + getValue() + "</div>", true);
 			} catch (BadXMLException e) {
 				return Encode.forHtml(e.getMessage());
-			}			
+			}
 		}
 		return null;
 	}
-	
+
 	@Override
 	public boolean isDisplayable(ContentContext ctx) throws Exception {
-		String xhtmlCode = getXHTMLCode(ctx);		
+		String xhtmlCode = getXHTMLCode(ctx);
 		return !(xhtmlCode != null && StringHelper.removeTag(xhtmlCode).trim().length() == 0 && !xhtmlCode.toLowerCase().contains("<img") && isDispayEmptyXHTMLCode(ctx));
 	}
 

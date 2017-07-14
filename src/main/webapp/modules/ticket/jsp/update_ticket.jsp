@@ -131,7 +131,7 @@
 	<c:if test="${fn:length(ticket.comments) > 0}">
 	<c:forEach var="comment" items="${ticket.comments}" varStatus="status">
 	<div class="comment ${status.last?'last':''}">
-		<span class="date">${comment.creationDateString}</span><span class="authors">${comment.authors} : </span>${comment.message}		
+		<span class="date">${comment.creationDateString}</span><span class="authors">${comment.authors} : </span>${comment.htmlMessage}		
 	</div>
 	</c:forEach>
 	</c:if>		
