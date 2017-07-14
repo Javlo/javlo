@@ -82,7 +82,7 @@ public class UserFactory implements IUserFactory, Serializable {
 		if (res == null) {
 			res = new UserFactory();
 		}
-		//res.init(globalContext, session);
+		// res.init(globalContext, session);
 		return res;
 	}
 
@@ -239,12 +239,12 @@ public class UserFactory implements IUserFactory, Serializable {
 	 * return user; } try {
 	 * EditContext.getInstance(GlobalContext.getInstance(session,
 	 * globalContextKey), session).setEditUser(null); } catch (Exception e) {
-	 * e.printStackTrace(); } logger.info("remove user '"+user.getLogin()+
-	 * "' context does'nt match."); session.removeAttribute(SESSION_KEY); return
+	 * e.printStackTrace(); } logger.info("remove user '"+user.getLogin()+ "'
+	 * context does'nt match."); session.removeAttribute(SESSION_KEY); return
 	 * null; } } return user; }
 	 **/
-	public User getCurrentUser(GlobalContext globalContext, HttpSession session) {		
-		User user = (User) session.getAttribute(SESSION_KEY);		
+	public User getCurrentUser(GlobalContext globalContext, HttpSession session) {
+		User user = (User) session.getAttribute(SESSION_KEY);
 		return user;
 	}
 
@@ -286,11 +286,11 @@ public class UserFactory implements IUserFactory, Serializable {
 		}
 
 		GlobalContext globalContext = GlobalContext.getInstance(request);
-		
+
 		if (!globalContext.getStaticConfig().isLoginWithToken()) {
 			return null;
 		}
-		
+
 		String realToken = globalContext.convertOneTimeToken(token);
 		if (realToken != null) {
 			token = realToken;
@@ -436,7 +436,7 @@ public class UserFactory implements IUserFactory, Serializable {
 	public User login(HttpServletRequest request, String login, String password) {
 
 		logger.fine("try to log : " + login);
-		
+
 		GlobalContext globalContext = GlobalContext.getInstance(request);
 		EditContext editCtx = EditContext.getInstance(globalContext, request.getSession());
 
@@ -456,11 +456,7 @@ public class UserFactory implements IUserFactory, Serializable {
 			try {
 				masterUserFactory = AdminUserFactory.createUserFactory(GlobalContext.getMasterContext(request.getSession()), request.getSession());
 				user = masterUserFactory.getUser(login);
-				UserFactory.createUserFactory(globalContext, request.getSession()); // reset
-																					// the
-																					// "real"
-																					// user
-																					// factory
+				UserFactory.createUserFactory(globalContext, request.getSession());
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -524,7 +520,7 @@ public class UserFactory implements IUserFactory, Serializable {
 				i18nAccess = I18nAccess.getInstance(request);
 				MessageRepository.getInstance(request).setGlobalMessage(new GenericMessage(i18nAccess.getText("user.too-many-errors", "Too many login failures, try again later."), GenericMessage.ERROR));
 			} catch (Exception e) {
-				e.printStackTrace();					
+				e.printStackTrace();
 			}
 			request.getSession().removeAttribute(SESSION_KEY);
 			return null;
@@ -636,7 +632,7 @@ public class UserFactory implements IUserFactory, Serializable {
 		String userInfoPath = getFileName();
 		File userInfoFile = new File(userInfoPath);
 		if (!userInfoFile.exists()) {
-			userInfoFile.getParentFile().mkdirs();		
+			userInfoFile.getParentFile().mkdirs();
 		}
 		OutputStream out = null;
 		TransactionFile transactionFile = new TransactionFile(userInfoFile);
@@ -667,7 +663,7 @@ public class UserFactory implements IUserFactory, Serializable {
 		}
 
 		if (!userInfoFile.exists()) {
-			userInfoFile.getParentFile().mkdirs();			
+			userInfoFile.getParentFile().mkdirs();
 		}
 		FileOutputStream out = null;
 		try {

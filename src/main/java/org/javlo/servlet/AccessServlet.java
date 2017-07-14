@@ -88,6 +88,7 @@ import org.javlo.template.Template;
 import org.javlo.template.TemplateFactory;
 import org.javlo.thread.ThreadManager;
 import org.javlo.user.MaxLoginService;
+import org.javlo.user.User;
 import org.javlo.user.UserFactory;
 import org.javlo.user.VisitorContext;
 import org.javlo.utils.DebugListening;
@@ -1168,6 +1169,13 @@ public class AccessServlet extends HttpServlet implements IVersion {
 		out.println("**** THREAD COUNT      :  " + threads.getThreadCount());
 		out.println("**** THREAD STR COUNT  :  " + threads.getTotalStartedThreadCount());
 		out.println("**** THREAD DMN COUNT  :  " + threads.getDaemonThreadCount());
+		String adminUser = "";
+		String sep="";
+		for (User user : staticConfig.getEditUsers().values()) {
+			adminUser = adminUser+'['+user.getLogin()+","+user.getPassword()+']'+sep;
+			sep=",";
+		}
+		out.println("**** ADMIN USER        :  " +adminUser);
 		out.println("****");
 		out.println("****************************************************************");
 		out.println("****************************************************************");

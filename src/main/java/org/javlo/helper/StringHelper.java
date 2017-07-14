@@ -3731,6 +3731,5 @@ public class StringHelper {
 		} else {
 			return text;
 		}
-	}
-
+	}	
 }
