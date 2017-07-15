@@ -830,11 +830,11 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		}
 	}
 
-	public boolean administratorLogin(String inLogin, String inPassword) {
+	/*public boolean administratorLogin(String inLogin, String inPassword) {
 		String login = properties.getString("admin", "admin");
 		String password = properties.getString("admin.password", "1234");
 		return login.equals(inLogin) && password.equals(StringHelper.encryptPassword(inPassword));
-	}
+	}*/
 
 	public void cleanFolder() {
 		properties.setProperty("folder", null);

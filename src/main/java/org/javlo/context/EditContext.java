@@ -347,6 +347,10 @@ public class EditContext implements Serializable {
 	 * @return true if user is logged.
 	 */
 	public boolean hardLogin(String inUser, String inPassword) {
+		
+		if (StringHelper.isEmpty(inPassword)) {
+			return false;
+		}
 
 		String pwd = inPassword;
 		if (staticConfig.isPasswordEncryt()) {
@@ -365,7 +369,7 @@ public class EditContext implements Serializable {
 					}
 				}
 			}*/
-			if (!found && pwd != null) {
+			if (!found) {
 				if (!pwd.equals(outUser.getPassword())) {
 					outUser = null;
 				}
