@@ -476,16 +476,21 @@ public class CatchAllFilter implements Filter {
 					editContext.setEditUser(user);
 				}
 			}
+			
+			System.out.println("##### CatchAllFilter.doLoginFilter : 1"); //TODO: remove debug trace
 
 			if (fact.getCurrentUser(globalContext, ((HttpServletRequest) request).getSession()) == null) {
 				String loginType = requestService.getParameter("login-type", null);
+				System.out.println("##### CatchAllFilter.doLoginFilter : 2"); //TODO: remove debug trace
 
 				if ((loginType == null || !loginType.equals("adminlogin")) && logoutUser == null) {
+					System.out.println("##### CatchAllFilter.doLoginFilter : 3"); //TODO: remove debug trace
 					if (globalContext.getStaticConfig().isLoginWithToken() && request.getParameter("j_token") != null) {
 						user = fact.login(httpRequest, request.getParameter("j_token"));
 						System.out.println("##### CatchAllFilter.doLoginFilter : user = "+user); //TODO: remove debug trace						
 					} else if (fact.getCurrentUser(globalContext, ((HttpServletRequest) request).getSession()) == null) {
-						if (request.getParameter("j_username") != null || httpRequest.getUserPrincipal() != null) {
+						System.out.println("##### CatchAllFilter.doLoginFilter : 4"); //TODO: remove debug trace
+						if (request.getParameter("j_username") != null || httpRequest.getUserPrincipal() != null) {							
 							String login = request.getParameter("j_username");
 							System.out.println("##### CatchAllFilter.doLoginFilter : login = "+login); //TODO: remove debug trace
 							if (request.getParameter("autologin") != null) {
