@@ -489,7 +489,8 @@ public class CatchAllFilter implements Filter {
 						user = fact.login(httpRequest, request.getParameter("j_token"));
 						System.out.println("##### CatchAllFilter.doLoginFilter : user = "+user); //TODO: remove debug trace						
 					} else if (fact.getCurrentUser(globalContext, ((HttpServletRequest) request).getSession()) == null) {
-						System.out.println("##### CatchAllFilter.doLoginFilter : 4"); //TODO: remove debug trace
+						System.out.println("##### CatchAllFilter.doLoginFilter : request.getParameter('j_username') = "+request.getParameter("j_username")); //TODO: remove debug trace
+						System.out.println("##### CatchAllFilter.doLoginFilter : httpRequest.getUserPrincipal() = "+httpRequest.getUserPrincipal()); //TODO: remove debug trace
 						if (request.getParameter("j_username") != null || httpRequest.getUserPrincipal() != null) {							
 							String login = request.getParameter("j_username");
 							System.out.println("##### CatchAllFilter.doLoginFilter : login = "+login); //TODO: remove debug trace
