@@ -481,7 +481,7 @@ public class CatchAllFilter implements Filter {
 				String loginType = requestService.getParameter("login-type", null);
 
 				if ((loginType == null || !loginType.equals("adminlogin")) && logoutUser == null) {
-					if (globalContext.getStaticConfig().isLoginWithToken() && request.getParameter("j_token") != null) {
+					if (globalContext.getStaticConfig().isLoginWithToken() && !StringHelper.isEmpty(request.getParameter("j_token"))) {
 						user = fact.login(httpRequest, request.getParameter("j_token"));
 					} else if (fact.getCurrentUser(globalContext, ((HttpServletRequest) request).getSession()) == null) {
 						if (request.getParameter("j_username") != null || httpRequest.getUserPrincipal() != null) {							
@@ -490,7 +490,7 @@ public class CatchAllFilter implements Filter {
 								DataToIDService service = DataToIDService.getInstance(httpRequest.getSession().getServletContext());
 								String codeId = service.setData(login, IUserFactory.AUTO_LOGIN_AGE_SEC);
 								RequestHelper.setCookieValue(httpResponse, JAVLO_LOGIN_ID, codeId, IUserFactory.AUTO_LOGIN_AGE_SEC, null);
-							}							
+							}						
 							if (login == null && httpRequest.getUserPrincipal() != null) {
 								login = httpRequest.getUserPrincipal().getName();
 							} else if (fact.login(httpRequest, login, request.getParameter("j_password")) == null) {
