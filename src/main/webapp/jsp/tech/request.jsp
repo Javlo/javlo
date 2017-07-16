@@ -54,8 +54,9 @@ while (headers.hasMoreElements()) {
 	<form method="post" action="">
 		<label for="field2">Field 1 : </label>
 		<input type="text" name="field1" />
+		<input type="submit" />
 	</form>
-	<input type="submit" />
+
 	<p>
 		field : <%=request.getParameter("field")%>
 	</p>
