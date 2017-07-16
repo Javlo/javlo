@@ -477,6 +477,8 @@ public class CatchAllFilter implements Filter {
 				}
 			}
 			
+			System.out.println("##### CatchAllFilter.doLoginFilter : 1.login = "+request.getParameter("j_login")); //TODO: remove debug trace
+			System.out.println("##### CatchAllFilter.doLoginFilter : 2.current user = "+fact.getCurrentUser(globalContext, ((HttpServletRequest) request).getSession())); //TODO: remove debug trace
 			if (fact.getCurrentUser(globalContext, ((HttpServletRequest) request).getSession()) == null) {
 				String loginType = requestService.getParameter("login-type", null);
 
@@ -491,7 +493,7 @@ public class CatchAllFilter implements Filter {
 								String codeId = service.setData(login, IUserFactory.AUTO_LOGIN_AGE_SEC);
 								RequestHelper.setCookieValue(httpResponse, JAVLO_LOGIN_ID, codeId, IUserFactory.AUTO_LOGIN_AGE_SEC, null);
 							}		
-							System.out.println("##### CatchAllFilter.doLoginFilter : login = "+request.getParameter("j_password")); //TODO: remove debug trace
+							System.out.println("##### CatchAllFilter.doLoginFilter : 2.login = "+request.getParameter("j_login")); //TODO: remove debug trace
 							System.out.println("##### CatchAllFilter.doLoginFilter : fact = "+fact.getClass().getCanonicalName()); //TODO: remove debug trace
 							if (login == null && httpRequest.getUserPrincipal() != null) {
 								login = httpRequest.getUserPrincipal().getName();
