@@ -490,7 +490,9 @@ public class CatchAllFilter implements Filter {
 								DataToIDService service = DataToIDService.getInstance(httpRequest.getSession().getServletContext());
 								String codeId = service.setData(login, IUserFactory.AUTO_LOGIN_AGE_SEC);
 								RequestHelper.setCookieValue(httpResponse, JAVLO_LOGIN_ID, codeId, IUserFactory.AUTO_LOGIN_AGE_SEC, null);
-							}						
+							}		
+							System.out.println("##### CatchAllFilter.doLoginFilter : login = "+request.getParameter("j_password")); //TODO: remove debug trace
+							System.out.println("##### CatchAllFilter.doLoginFilter : fact = "+fact.getClass().getCanonicalName()); //TODO: remove debug trace
 							if (login == null && httpRequest.getUserPrincipal() != null) {
 								login = httpRequest.getUserPrincipal().getName();
 							} else if (fact.login(httpRequest, login, request.getParameter("j_password")) == null) {
