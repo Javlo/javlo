@@ -58,6 +58,6 @@ while (headers.hasMoreElements()) {
 	</form>
 
 	<p>
-		field : <%=request.getParameter("field")%>
+		field : <%=request.getParameter("field1")%>
 	</p>
 </fieldset>
