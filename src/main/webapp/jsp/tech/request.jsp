@@ -48,3 +48,15 @@ while (headers.hasMoreElements()) {
 	%><li><%=headerKey%> : <%=((Enumeration)request.getHeaders(headerKey)).nextElement()%></li>	
 <%}%>
 </ul>
+
+<fieldset>	
+	<legend>TEST FORM</legend>
+	<form method="post" action="">
+		<label for="field2">Field 1 : </label>
+		<input type="text" name="field1" />
+	</form>
+	<input type="submit" />
+	<p>
+		field : <%=request.getParameter("field")%>
+	</p>
+</fieldset>
