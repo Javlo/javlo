@@ -1350,8 +1350,8 @@ public class AdminAction extends AbstractModuleAction {
 					String popPort = requestService.getParameter("mailing-popport",null);
 					String popUser = requestService.getParameter("mailing-popuser",null);
 					boolean popSSL = StringHelper.isTrue(requestService.getParameter("mailing-popssl",null));
-					boolean resetPOPThread = false;
-					if (!currentGlobalContext.getPOPHost().equals(popHost) || !(""+currentGlobalContext.getPOPPort()).equals(popPort) || !currentGlobalContext.getPOPUser().equals(popUser) || currentGlobalContext.isPOPSsl() != popSSL) {
+					boolean resetPOPThread = false;					
+					if (!(""+currentGlobalContext.getPOPHost()).equals(popHost) || !(""+currentGlobalContext.getPOPPort()).equals(popPort) || !(""+currentGlobalContext.getPOPUser()).equals(popUser) || currentGlobalContext.isPOPSsl() != popSSL) {
 						currentGlobalContext.setPOPHost(popHost);
 						currentGlobalContext.setPOPPort(popPort);
 						currentGlobalContext.setPOPUser(popUser);

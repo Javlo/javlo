@@ -2663,7 +2663,7 @@ public class XHTMLHelper {
 					bullet = "" + liNumber[ind] + ".";
 					liNumber[ind]++;
 				}
-				remplacement.addReplacement(tag.getOpenStart(), tag.getOpenEnd() + 1, "<tr class=\"table-li\"><td class=\"bullet\" valign=\"top\" style=\"padding-right:3px; width: 14px;\">" + bullet + "</td><td class=\"text\" valign=\"top\">");
+				remplacement.addReplacement(tag.getOpenStart(), tag.getOpenEnd() + 1, "<tr class=\"table-li\"><td class=\"bullet\" valign=\"top\" style=\"padding-right:3px; width: 14px;\">" + bullet + "</td><td class=\"list-text\" valign=\"top\">");
 				remplacement.addReplacement(tag.getCloseStart(), tag.getCloseEnd() + 1, "</td></tr>");
 			}
 		}
