@@ -266,11 +266,13 @@ public class Mailing {
 		}
 		File errorReceiversFile = new File(dir.getAbsolutePath() + '/' + ERROR_RECEIVERS_FILE);
 		errorReceivers = new LinkedHashSet<InternetAddress>();
-		for (String line : FileUtils.readLines(errorReceiversFile, ContentContext.CHARACTER_ENCODING)) {
-			try {
-				errorReceivers.add(new InternetAddress(line));
-			} catch (Exception ex) {
-				ex.printStackTrace();
+		if (errorReceiversFile.exists()) {
+			for (String line : FileUtils.readLines(errorReceiversFile, ContentContext.CHARACTER_ENCODING)) {
+				try {
+					errorReceivers.add(new InternetAddress(line));
+				} catch (Exception ex) {
+					ex.printStackTrace();
+				}
 			}
 		}
 		File receiversFile = new File(dir.getAbsolutePath() + '/' + RECEIVERS_FILE);
