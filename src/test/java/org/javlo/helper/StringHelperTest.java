@@ -341,6 +341,14 @@ public class StringHelperTest extends TestCase {
 		assertEquals("lorem", StringHelper.removeQuote("  \"lorem\"  "));
 	}
 	
+	public void testNormalizedPhone() {
+		assertEquals(StringHelper.normalizePhoneNumber("+32486123456", "+32"), "+32486123456");
+		assertEquals(StringHelper.normalizePhoneNumber("+32(486)12 34 56", "+32"), "+32486123456");
+		assertEquals(StringHelper.normalizePhoneNumber("0486-12-34-56", "+32"), "+32486123456");
+		assertEquals(StringHelper.normalizePhoneNumber("(0486) 12/34/56", "+32"), "+32486123456");
+		assertEquals(StringHelper.normalizePhoneNumber("0486.12.34.56", "+32"), "+32486123456");
+	}
+	
 	public void testEncryptPasswordSHA256() {
 		assertEquals("d61730e9c8132d8e308fafdd9ae09999b54f65fa68bef1889e1f11e3fc9cda65", StringHelper.encryptPasswordSHA256("javlo"));
 	}

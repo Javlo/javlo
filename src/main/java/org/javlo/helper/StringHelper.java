@@ -3734,7 +3734,28 @@ public class StringHelper {
 	}
 	
 	public static void main(String[] args) {
-		System.out.println(encryptPassword("z9c4a4"));
+		String phone = "(0486)/75 74.\\23";
+		phone = phone.replaceAll("\\(|\\)|\\.|\\,|\\ |\\/|\\\\", "");
+		System.out.println("##### StringHelper.main : phone = "+phone); //TODO: remove debug trace
+	}
+	
+	/**
+	 * format number to number like : +32486123456
+	 * @param phone
+	 * @param countryPrefix
+	 * @return
+	 */
+	public static String normalizePhoneNumber(String phone, String countryPrefix) {
+		phone = phone.replaceAll("\\(|\\)|\\.|\\,|\\ |\\/|\\\\|\\-", "");
+		if (phone.startsWith("00")) {
+			return phone.replaceFirst("00", "+");
+		} else if (phone.startsWith("0")) {
+			return phone.replaceFirst("0", countryPrefix);
+		} else if (phone.startsWith("+")) {
+			return phone;
+		} else {
+			return countryPrefix+phone;
+		}
 	}
 
 }
