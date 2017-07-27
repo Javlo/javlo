@@ -42,6 +42,10 @@ img, figure {
 	border: 0 none;
 }
 
+.global-image {
+	margin-bottom: 15px;
+}
+
 .global-image.full img, .global-image.banner img, .global-image.full-flip img, .global-image.banner-flip img {
 	border: 0 none;
 	display: block;

@@ -3734,9 +3734,9 @@ public class StringHelper {
 	}
 	
 	public static void main(String[] args) {
-		String phone = "(0486)/75 74.\\23";
-		phone = phone.replaceAll("\\(|\\)|\\.|\\,|\\ |\\/|\\\\", "");
-		System.out.println("##### StringHelper.main : phone = "+phone); //TODO: remove debug trace
+		System.out.println("##### StringHelper.main : 1 "+getColName(1)); //TODO: remove debug trace
+		System.out.println("##### StringHelper.main : 12 "+getColName(12)); //TODO: remove debug trace
+		System.out.println("##### StringHelper.main : 32 "+getColName(32)); //TODO: remove debug trace
 	}
 	
 	/**
