@@ -40,7 +40,7 @@
 </colgroup>
 <tbody> 
  <c:forEach var="ticket" items="${tickets}">
- <c:if test="${not empty ticket.title && ticket.forMe}">
+ <c:if test="${not empty ticket.title && (ticket.forMe || info.admin)}">
  <tr class="gradeX${ticket.deleted?' deleted':''} ${ticket.forMe?'forme':'notforme'}">
  	 <td class="con1">${ticket.authors}</td>
  	 <c:url var="ticketURL" value="${info.currentURL}" context="/">
