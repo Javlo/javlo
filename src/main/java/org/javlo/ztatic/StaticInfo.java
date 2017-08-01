@@ -223,7 +223,7 @@ public class StaticInfo {
 			return staticInfo.getFile().getName();
 		}
 
-		public String getURL() {
+		public String getURL() throws IOException {
 			return URLHelper.createResourceURL(ctx, staticInfo.getFile());
 		}
 
@@ -1519,7 +1519,7 @@ public class StaticInfo {
 		return token;
 	}
 
-	public String getURL(ContentContext ctx) {
+	public String getURL(ContentContext ctx) throws IOException {
 		return URLHelper.createResourceURL(ctx, getFile());
 	}
 

@@ -263,10 +263,11 @@ public class URLHelper extends ElementaryURLHelper {
 		return createStaticURL(ctx, "/qrcode/" + command + "/" + code + ".png");
 	}
 
-	public static String createResourceURL(ContentContext ctx, File file) {
+	public static String createResourceURL(ContentContext ctx, File file) throws IOException {
 		GlobalContext globalContext = ctx.getGlobalContext();
-		String url = file.getAbsolutePath();
-		url = StringUtils.removeStart(url, globalContext.getDataFolder());
+		String url = file.getCanonicalPath();
+		url = StringHelper.cleanPath(url);				
+		url = StringUtils.removeStart(url, StringHelper.cleanPath(globalContext.getDataFolder()));
 		return createResourceURL(ctx, url);
 	}
 

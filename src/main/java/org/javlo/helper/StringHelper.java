@@ -3734,9 +3734,10 @@ public class StringHelper {
 	}
 	
 	public static void main(String[] args) {
-		System.out.println("##### StringHelper.main : 1 "+getColName(1)); //TODO: remove debug trace
-		System.out.println("##### StringHelper.main : 12 "+getColName(12)); //TODO: remove debug trace
-		System.out.println("##### StringHelper.main : 32 "+getColName(32)); //TODO: remove debug trace
+		long date = 1501161114887l;
+		
+		System.out.println("##### StringHelper.main : 1 "+StringHelper.renderTime(new Date((1501159395411l)))); //TODO: remove debug trace
+		
 	}
 	
 	/**

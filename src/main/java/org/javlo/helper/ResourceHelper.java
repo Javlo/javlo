@@ -1614,13 +1614,6 @@ public class ResourceHelper {
 		}
 	}
 
-	public static void main(String[] args) throws Exception {
-		URL url = new URL("http://localhost/javlo/sexy/resource/static/images/anette dawn/05.jpg");
-		url.openConnection();
-		System.out.println("***** ResourceHelper.main : END"); // TODO: remove
-																// debug trace
-	}
-
 	/**
 	 * clear a folder list, remove '/' if found as first char and replace '\' by
 	 * '/'
@@ -1860,6 +1853,32 @@ public class ResourceHelper {
 	public static String getRealPath(ServletContext application, String path) {
 		String rootPath = application.getRealPath("/");
 		return URLHelper.mergePath(rootPath, path); 
+	}
+	
+	/**
+	 * normalize all file name from a dir
+	 * @param file
+	 * @return true one file name has changed
+	 * @throws IOException 
+	 */
+	public static boolean cleanAllFileName(File file) throws IOException {		 
+		if (!file.exists()) {
+			throw new FileNotFoundException(""+file);
+		}
+		boolean done = false;
+		if (file.isDirectory()) {
+			for (File child : file.listFiles()) {
+				done = cleanAllFileName(child) || done;
+			}
+		}	
+		String normalizedName = StringHelper.createFileName(file.getName());
+		if (!normalizedName.equals(file.getName())) {
+			File newFile =  new File (URLHelper.mergePath(file.getParentFile().getCanonicalPath(), normalizedName));
+			newFile = getFreeFileName(newFile);
+			file.renameTo(newFile);
+			done = true;
+		}
+		return done;
 	}
 
 }
