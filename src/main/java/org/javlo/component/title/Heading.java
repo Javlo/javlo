@@ -21,6 +21,7 @@ import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
 import org.javlo.service.ReverseLinkService;
 import org.javlo.service.exception.ServiceException;
+import org.owasp.encoder.Encode;
 
 public class Heading extends AbstractPropertiesComponent implements ISubTitle {
 
@@ -55,9 +56,7 @@ public class Heading extends AbstractPropertiesComponent implements ISubTitle {
 		PrintStream out = new PrintStream(outStream);
 		I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
 		
-		String depthHTML = "";
-		
-		depthHTML = depthHTML+"<div class=\"form-group\"><label>" + i18nAccess.getText("content.heading.depth", "depth") + "</label><div>";
+		String depthHTML = "<div class=\"form-group\"><label>" + i18nAccess.getText("content.heading.depth", "depth") + "</label><div>";
 		int depth = getDepth(ctx);
 		for (int i = 1; i < 7; i++) {
 			depthHTML = depthHTML+"<label class=\"radio-inline\">";
@@ -73,9 +72,9 @@ public class Heading extends AbstractPropertiesComponent implements ISubTitle {
 		out.println("<div class=\"form-group\">");
 		out.println("<label for=\"" + getInputName(TEXT) + "\">" + i18nAccess.getText("content.header.text", "text") + "</label>");
 		if (ctx.getGlobalContext().isMailingPlatform()) {
-			out.println("<input class=\"form-control\" type=\"text\" id=\"" + getInputName(TEXT) + "\" name=\"" + getInputName(TEXT) + "\" value=\"" + getFieldValue(TEXT) + "\" >");
+			out.println("<input class=\"form-control\" type=\"text\" id=\"" + getInputName(TEXT) + "\" name=\"" + getInputName(TEXT) + "\" value=\"" + Encode.forHtmlAttribute(getFieldValue(TEXT)) + "\" >");
 		} else {
-			out.println("<textarea rows=\"1\" class=\"form-control\" id=\"" + getInputName(TEXT) + "\" name=\"" + getInputName(TEXT) + "\">"+getFieldValue(TEXT)+"</textarea>");
+			out.println("<textarea rows=\"1\" class=\"form-control\" id=\"" + getInputName(TEXT) + "\" name=\"" + getInputName(TEXT) + "\">"+Encode.forHtmlContent(getFieldValue(TEXT))+"</textarea>");
 			out.println("<script type=\"text/javascript\">jQuery(document).ready(loadWysiwyg('#" + getInputName(TEXT) + "','soft',''));</script>");
 		}
 		out.println("</div>");
