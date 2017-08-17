@@ -2,7 +2,7 @@
 %><%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"
 %><c:if test="${empty rows}"><c:set var="rows" value="${info.template.rows}" scope="request" /></c:if><c:forEach var="row" items="${rows}"><c:forEach var="area" items="${row.areas}">
 <c:forEach var = "i" begin = "1" end = "6" varStatus="status">${param.prefix}#${area.name} h${i}, ${param.prefix}#${area.name} h${i} div, ${param.prefix}#${area.name} h${i} a${status.last?'':','}</c:forEach> {	
-	color: ${area.finalTitleColor};
+	<c:if test="${not empty area.finalTitleColor}">color: ${area.finalTitleColor};</c:if>
 	text-decoration: none;
 	<c:if test="${not empty area.finalFont}">font-family: ${area.finalFont};</c:if>
 }</c:forEach></c:forEach>

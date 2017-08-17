@@ -39,8 +39,13 @@ public class ImageEngine {
 	private static Logger logger = Logger.getLogger(ImageEngine.class.getName());
 
 	public final static Color NEUTRAL_COLOR = new Color(0.5f, 0.5f, 0.5f);
+
+	public final static Color TRANSPARENT_COLOR = new Color(0, 0, 0, 1);
 	
-	public final static Color TRANSPARENT_COLOR = new Color(0,0,0,1);
+	/**
+	 * special color to set automatic color (value is random)
+	 */
+	public final static Color DETECT_COLOR = new Color(235, 124, 32,15);
 
 	// This class overrides the setCompressionQuality() method to workaround
 	// a problem in compressing JPEG images using the javax.imageio package.
@@ -86,148 +91,155 @@ public class ImageEngine {
 		BufferedImageOp op = new ConvolveOp(new Kernel(20, 20, matrix));
 		return op.filter(img, target);
 	}
-	
-	 private static int colorToRGB(int alpha, int red, int green, int blue) {
-         int newPixel = 0;
-         newPixel += alpha;
-         newPixel = newPixel << 8;
-         newPixel += red; newPixel = newPixel << 8;
-         newPixel += green; newPixel = newPixel << 8;
-         newPixel += blue;
-         return newPixel;
-     }
-	
+
+	private static int colorToRGB(int alpha, int red, int green, int blue) {
+		int newPixel = 0;
+		newPixel += alpha;
+		newPixel = newPixel << 8;
+		newPixel += red;
+		newPixel = newPixel << 8;
+		newPixel += green;
+		newPixel = newPixel << 8;
+		newPixel += blue;
+		return newPixel;
+	}
+
 	// The luminance method
 	public static BufferedImage luminosity(BufferedImage original) {
-	 
-	    int alpha, red, green, blue;
-	    int newPixel;
-	 
-	    BufferedImage lum = new BufferedImage(original.getWidth(), original.getHeight(), original.getType());
-	 
-	    for(int i=0; i<original.getWidth(); i++) {
-	        for(int j=0; j<original.getHeight(); j++) {
-	 
-	            // Get pixels by R, G, B
-	            alpha = new Color(original.getRGB(i, j)).getAlpha();
-	            red = new Color(original.getRGB(i, j)).getRed();
-	            green = new Color(original.getRGB(i, j)).getGreen();
-	            blue = new Color(original.getRGB(i, j)).getBlue();
-	 
-	            red = (int) (0.21 * red + 0.71 * green + 0.07 * blue);
-	            // Return back to original format
-	            newPixel = colorToRGB(alpha, red, red, red);
-	 
-	            // Write pixels into image
-	            lum.setRGB(i, j, newPixel);
-	 
-	        }
-	    }
-	 
-	    return lum;
-	 
+
+		int alpha, red, green, blue;
+		int newPixel;
+
+		BufferedImage lum = new BufferedImage(original.getWidth(), original.getHeight(), original.getType());
+
+		for (int i = 0; i < original.getWidth(); i++) {
+			for (int j = 0; j < original.getHeight(); j++) {
+
+				// Get pixels by R, G, B
+				alpha = new Color(original.getRGB(i, j)).getAlpha();
+				red = new Color(original.getRGB(i, j)).getRed();
+				green = new Color(original.getRGB(i, j)).getGreen();
+				blue = new Color(original.getRGB(i, j)).getBlue();
+
+				red = (int) (0.21 * red + 0.71 * green + 0.07 * blue);
+				// Return back to original format
+				newPixel = colorToRGB(alpha, red, red, red);
+
+				// Write pixels into image
+				lum.setRGB(i, j, newPixel);
+
+			}
+		}
+
+		return lum;
+
 	}
-	
+
 	// The average grayscale method
 	public static BufferedImage avg(BufferedImage original) {
-	 
-	    int alpha, red, green, blue;
-	    int newPixel;
-	    
-	    System.out.println("***** ImageEngine.avg : original.getType() = "+original.getType()); //TODO: remove debug trace
-	    BufferedImage avg_gray = new BufferedImage(original.getWidth(), original.getHeight(), original.getType());
-	    int[] avgLUT = new int[766];
-	    for(int i=0; i<avgLUT.length; i++) avgLUT[i] = (int) (i / 3);
-	 
-	    for(int i=0; i<original.getWidth(); i++) {
-	        for(int j=0; j<original.getHeight(); j++) {
-	 
-	            // Get pixels by R, G, B
-	            alpha = new Color(original.getRGB(i, j)).getAlpha();
-	            red = new Color(original.getRGB(i, j)).getRed();
-	            green = new Color(original.getRGB(i, j)).getGreen();
-	            blue = new Color(original.getRGB(i, j)).getBlue();
-	 
-	            newPixel = red + green + blue;
-	            newPixel = avgLUT[newPixel];
-	            // Return back to original format
-	            newPixel = colorToRGB(alpha, newPixel, newPixel, newPixel);
-	 
-	            // Write pixels into image
-	            avg_gray.setRGB(i, j, newPixel);
-	 
-	        }
-	    }
-	 
-	    return avg_gray;
-	 
+
+		int alpha, red, green, blue;
+		int newPixel;
+
+		System.out.println("***** ImageEngine.avg : original.getType() = " + original.getType()); // TODO:
+																									// remove
+																									// debug
+																									// trace
+		BufferedImage avg_gray = new BufferedImage(original.getWidth(), original.getHeight(), original.getType());
+		int[] avgLUT = new int[766];
+		for (int i = 0; i < avgLUT.length; i++)
+			avgLUT[i] = (int) (i / 3);
+
+		for (int i = 0; i < original.getWidth(); i++) {
+			for (int j = 0; j < original.getHeight(); j++) {
+
+				// Get pixels by R, G, B
+				alpha = new Color(original.getRGB(i, j)).getAlpha();
+				red = new Color(original.getRGB(i, j)).getRed();
+				green = new Color(original.getRGB(i, j)).getGreen();
+				blue = new Color(original.getRGB(i, j)).getBlue();
+
+				newPixel = red + green + blue;
+				newPixel = avgLUT[newPixel];
+				// Return back to original format
+				newPixel = colorToRGB(alpha, newPixel, newPixel, newPixel);
+
+				// Write pixels into image
+				avg_gray.setRGB(i, j, newPixel);
+
+			}
+		}
+
+		return avg_gray;
+
 	}
-	
+
 	// The desaturation method
 	public static BufferedImage desaturation(BufferedImage original) {
-	 
-	    int alpha, red, green, blue;
-	    int newPixel;
-	 
-	    int[] pixel = new int[3];
-	 
-	    BufferedImage des = new BufferedImage(original.getWidth(), original.getHeight(), original.getType());
-	    int[] desLUT = new int[511];
-	    for(int i=0; i<desLUT.length; i++) desLUT[i] = (int) (i / 2);
-	 
-	    for(int i=0; i<original.getWidth(); i++) {
-	        for(int j=0; j<original.getHeight(); j++) {
-	 
-	            // Get pixels by R, G, B
-	            alpha = new Color(original.getRGB(i, j)).getAlpha();
-	            red = new Color(original.getRGB(i, j)).getRed();
-	            green = new Color(original.getRGB(i, j)).getGreen();
-	            blue = new Color(original.getRGB(i, j)).getBlue();
-	 
-	            pixel[0] = red;
-	            pixel[1] = green;
-	            pixel[2] = blue;
-	 
-	            int newval = (int) (findMax(pixel) + findMin(pixel));
-	            newval = desLUT[newval];
-	 
-	            // Return back to original format
-	            newPixel = colorToRGB(alpha, newval, newval, newval);
-	 
-	            // Write pixels into image
-	            des.setRGB(i, j, newPixel);
-	 
-	        }
-	    }
-	 
-	    return des;
-	 
-	}    
-	 
-	private static int findMin(int[] pixel) {
-	 
-	    int min = pixel[0];
-	 
-	    for(int i=0; i<pixel.length; i++) {
-	        if(pixel[i] < min)
-	                min = pixel[i];
-	    }
-	 
-	    return min;
-	 
+
+		int alpha, red, green, blue;
+		int newPixel;
+
+		int[] pixel = new int[3];
+
+		BufferedImage des = new BufferedImage(original.getWidth(), original.getHeight(), original.getType());
+		int[] desLUT = new int[511];
+		for (int i = 0; i < desLUT.length; i++)
+			desLUT[i] = (int) (i / 2);
+
+		for (int i = 0; i < original.getWidth(); i++) {
+			for (int j = 0; j < original.getHeight(); j++) {
+
+				// Get pixels by R, G, B
+				alpha = new Color(original.getRGB(i, j)).getAlpha();
+				red = new Color(original.getRGB(i, j)).getRed();
+				green = new Color(original.getRGB(i, j)).getGreen();
+				blue = new Color(original.getRGB(i, j)).getBlue();
+
+				pixel[0] = red;
+				pixel[1] = green;
+				pixel[2] = blue;
+
+				int newval = (int) (findMax(pixel) + findMin(pixel));
+				newval = desLUT[newval];
+
+				// Return back to original format
+				newPixel = colorToRGB(alpha, newval, newval, newval);
+
+				// Write pixels into image
+				des.setRGB(i, j, newPixel);
+
+			}
+		}
+
+		return des;
+
 	}
-	 
+
+	private static int findMin(int[] pixel) {
+
+		int min = pixel[0];
+
+		for (int i = 0; i < pixel.length; i++) {
+			if (pixel[i] < min)
+				min = pixel[i];
+		}
+
+		return min;
+
+	}
+
 	private static int findMax(int[] pixel) {
-	 
-	    int max = pixel[0];
-	 
-	    for(int i=0; i<pixel.length; i++) {
-	        if(pixel[i] > max)
-	                max = pixel[i];
-	    }
-	 
-	    return max;
-	 
+
+		int max = pixel[0];
+
+		for (int i = 0; i < pixel.length; i++) {
+			if (pixel[i] > max)
+				max = pixel[i];
+		}
+
+		return max;
+
 	}
 
 	public static BufferedImage lightBlurring(BufferedImage img) {
@@ -243,103 +255,103 @@ public class ImageEngine {
 		return op.filter(img, target);
 	}
 
-	public static BufferedImage resize(BufferedImage bi, Integer width, Integer height, boolean hq) {		
-		return scale(bi,width,height,hq);
+	public static BufferedImage resize(BufferedImage bi, Integer width, Integer height, boolean hq) {
+		return scale(bi, width, height, hq);
 	}
-	
+
 	public static BufferedImage zoom(BufferedImage img, double zoom, int interestX, int interestY) {
-		
+
 		int realInterestX = (interestX * img.getWidth()) / 1000;
 		int realInterestY = (interestY * img.getHeight()) / 1000;
-		
+
 		if (zoom < 1) {
 			return img;
 		}
-		int topX = (int)Math.round(realInterestX-realInterestX/zoom);
-		int bottomX = (int)Math.round(realInterestX+(img.getWidth()-realInterestX)/zoom);
-		
-		int topY = (int)Math.round(realInterestY-realInterestY/zoom);
-		int bottomY = (int)Math.round(realInterestY+(img.getHeight()-realInterestY)/zoom);
-		
-		return cropImage(img, bottomX-topX, bottomY-topY, topX, topY);
+		int topX = (int) Math.round(realInterestX - realInterestX / zoom);
+		int bottomX = (int) Math.round(realInterestX + (img.getWidth() - realInterestX) / zoom);
+
+		int topY = (int) Math.round(realInterestY - realInterestY / zoom);
+		int bottomY = (int) Math.round(realInterestY + (img.getHeight() - realInterestY) / zoom);
+
+		return cropImage(img, bottomX - topX, bottomY - topY, topX, topY);
 	}
-	
+
 	public static BufferedImage scale(BufferedImage img, Integer inTargetWidth, Integer inTargetHeight, boolean hq) {
-		if (hq) {		
-			return Scalr.resize(img, Scalr.Method.ULTRA_QUALITY, Scalr.Mode.FIT_EXACT,inTargetWidth, inTargetHeight);
+		if (hq) {
+			return Scalr.resize(img, Scalr.Method.ULTRA_QUALITY, Scalr.Mode.FIT_EXACT, inTargetWidth, inTargetHeight);
 		} else {
-			return Scalr.resize(img, Scalr.Method.AUTOMATIC, Scalr.Mode.FIT_EXACT,inTargetWidth, inTargetHeight);
-		}		
-	}
-	
-	public static BufferedImage _scale(BufferedImage img, Integer inTargetWidth, Integer inTargetHeight) {
-				
-		if (inTargetWidth == null && inTargetHeight == null) {
-			return img;			
+			return Scalr.resize(img, Scalr.Method.AUTOMATIC, Scalr.Mode.FIT_EXACT, inTargetWidth, inTargetHeight);
 		}
-		
+	}
+
+	public static BufferedImage _scale(BufferedImage img, Integer inTargetWidth, Integer inTargetHeight) {
+
+		if (inTargetWidth == null && inTargetHeight == null) {
+			return img;
+		}
+
 		int targetWidth;
 		if (inTargetWidth == null) {
-			targetWidth = (img.getWidth()*inTargetHeight)/img.getHeight();
+			targetWidth = (img.getWidth() * inTargetHeight) / img.getHeight();
 		} else {
 			targetWidth = inTargetWidth;
 		}
-		
+
 		int targetHeight;
 		if (inTargetHeight == null) {
-			targetHeight = (img.getHeight()*targetWidth)/img.getWidth();
+			targetHeight = (img.getHeight() * targetWidth) / img.getWidth();
 		} else {
 			targetHeight = inTargetHeight;
 		}
 
-	    int type = (img.getTransparency() == Transparency.OPAQUE) ? BufferedImage.TYPE_INT_RGB : BufferedImage.TYPE_INT_ARGB;
-	    BufferedImage ret = img;
-	    BufferedImage scratchImage = null;
-	    Graphics2D g2 = null;
+		int type = (img.getTransparency() == Transparency.OPAQUE) ? BufferedImage.TYPE_INT_RGB : BufferedImage.TYPE_INT_ARGB;
+		BufferedImage ret = img;
+		BufferedImage scratchImage = null;
+		Graphics2D g2 = null;
 
-	    int w = img.getWidth();
-	    int h = img.getHeight();
+		int w = img.getWidth();
+		int h = img.getHeight();
 
-	    int prevW = w;
-	    int prevH = h;
+		int prevW = w;
+		int prevH = h;
 
-	    do {
-	        if (w > targetWidth) {
-	            w /= 2;	            
-	        }
-	        w = (w < targetWidth) ? targetWidth : w;
+		do {
+			if (w > targetWidth) {
+				w /= 2;
+			}
+			w = (w < targetWidth) ? targetWidth : w;
 
-	        if (h > targetHeight) {
-	            h /= 2;	            
-	        }
-	        h = (h < targetHeight) ? targetHeight : h;
+			if (h > targetHeight) {
+				h /= 2;
+			}
+			h = (h < targetHeight) ? targetHeight : h;
 
-	        if (scratchImage == null) {
-	            scratchImage = new BufferedImage(w, h, type);
-	            g2 = scratchImage.createGraphics();
-	        }
+			if (scratchImage == null) {
+				scratchImage = new BufferedImage(w, h, type);
+				g2 = scratchImage.createGraphics();
+			}
 
-	        g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-	        g2.drawImage(ret, 0, 0, w, h, 0, 0, prevW, prevH, null);
+			g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+			g2.drawImage(ret, 0, 0, w, h, 0, 0, prevW, prevH, null);
 
-	        prevW = w;
-	        prevH = h;
-	        ret = scratchImage;
-	    } while (w != targetWidth || h != targetHeight);
+			prevW = w;
+			prevH = h;
+			ret = scratchImage;
+		} while (w != targetWidth || h != targetHeight);
 
-	    if (g2 != null) {
-	        g2.dispose();
-	    }
+		if (g2 != null) {
+			g2.dispose();
+		}
 
-	    if (targetWidth != ret.getWidth() || targetHeight != ret.getHeight()) {
-	        scratchImage = new BufferedImage(targetWidth, targetHeight, type);
-	        g2 = scratchImage.createGraphics();
-	        g2.drawImage(ret, 0, 0, null);
-	        g2.dispose();
-	        ret = scratchImage;
-	    }
+		if (targetWidth != ret.getWidth() || targetHeight != ret.getHeight()) {
+			scratchImage = new BufferedImage(targetWidth, targetHeight, type);
+			g2 = scratchImage.createGraphics();
+			g2.drawImage(ret, 0, 0, null);
+			g2.dispose();
+			ret = scratchImage;
+		}
 
-	    return ret;
+		return ret;
 
 	}
 
@@ -367,7 +379,7 @@ public class ImageEngine {
 
 		BufferedImage image = op.filter(bi, null);
 
-		if (bi.getType() == BufferedImage.TYPE_4BYTE_ABGR) {			
+		if (bi.getType() == BufferedImage.TYPE_4BYTE_ABGR) {
 			BufferedImage imgNew = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
 			for (int x = 0; x < image.getWidth(); x++) {
 				for (int y = 0; y < image.getHeight(); y++) {
@@ -461,20 +473,21 @@ public class ImageEngine {
 		}
 		return image.getRGB(x, y);
 	}
-	
+
 	/**
 	 * if color null return transparent.
+	 * 
 	 * @param color
 	 * @return
 	 */
 	public static Color neverNullColor(Color color) {
 		if (color != null) {
 			return color;
-		} else { 
+		} else {
 			return TRANSPARENT_COLOR;
 		}
 	}
-	
+
 	public static int getColor(BufferedImage image, int x, int y, Color outCol) {
 		if (outCol == null) {
 			outCol = TRANSPARENT_COLOR;
@@ -558,7 +571,7 @@ public class ImageEngine {
 	public static BufferedImage resizeHeight(BufferedImage bi, int height, Color bgColor, boolean hq) {
 		int width = Math.round(bi.getWidth() * ((float) height / (float) bi.getHeight()));
 		height = Math.round(bi.getHeight() * ((float) width / (float) bi.getWidth()));
-		BufferedImage image = resize(bi, width, height,hq);
+		BufferedImage image = resize(bi, width, height, hq);
 
 		if (bgColor != null && image.getColorModel().hasAlpha()) {
 			BufferedImage imgNew;
@@ -587,7 +600,7 @@ public class ImageEngine {
 		width = Math.round(bi.getWidth() * ((float) height / (float) bi.getHeight()));
 		BufferedImage image = resize(bi, width, height, hq);
 
-		if (bgColor != null && image.getColorModel().hasAlpha() && (mt > 0 || ml > 0 || mr > 0 || mb > 0)) {			
+		if (bgColor != null && image.getColorModel().hasAlpha() && (mt > 0 || ml > 0 || mr > 0 || mb > 0)) {
 			int inWidth = image.getWidth() + ml + mr;
 			int inHeight = image.getHeight() + mt + mb;
 
@@ -603,7 +616,7 @@ public class ImageEngine {
 				}
 			}
 			image = outImage;
-		} 
+		}
 		return image;
 	}
 
@@ -645,7 +658,7 @@ public class ImageEngine {
 		float blue = color.getBlue() * alpha + bg.getBlue() * (1 - alpha);
 		return new Color(red / 255, green / 255, blue / 255);
 	}
-	
+
 	static Color replaceAlpha(int color, int bg) {
 		return replaceAlpha(new Color(color), new Color(bg));
 	}
@@ -861,11 +874,11 @@ public class ImageEngine {
 
 		return workImage;
 	}
-	
+
 	private static final void fillImage(BufferedImage image, Color color) {
 		Graphics2D graphics = image.createGraphics();
-		graphics.setPaint (color );
-		graphics.fillRect ( 0, 0, image.getWidth(), image.getHeight() );
+		graphics.setPaint(color);
+		graphics.fillRect(0, 0, image.getWidth(), image.getHeight());
 	}
 
 	/**
@@ -898,7 +911,7 @@ public class ImageEngine {
 	 */
 	public static BufferedImage resize(BufferedImage source, int inWidth, int inHeight, boolean cropResize, boolean addBorder, int mt, int ml, int mr, int mb, Color bgColor, int interestX, int interestY, boolean focusZone, boolean hq) {
 
-		logger.fine("resize with:" + inWidth + " height:" + inHeight + " cropResize : "+cropResize + " addBorder : "+addBorder + " mt : "+mt + " ml : "+ml + " mr : "+mr + " mb : "+mb+ " bgColor:" + bgColor+ " interestX="+interestX+" interestY="+interestY+" focusZone="+focusZone+" hq="+hq);
+		logger.fine("resize with:" + inWidth + " height:" + inHeight + " cropResize : " + cropResize + " addBorder : " + addBorder + " mt : " + mt + " ml : " + ml + " mr : " + mr + " mb : " + mb + " bgColor:" + bgColor + " interestX=" + interestX + " interestY=" + interestY + " focusZone=" + focusZone + " hq=" + hq);
 
 		if (inWidth < 0) {
 			inWidth = Math.abs(source.getWidth() * inHeight / source.getHeight());
@@ -925,26 +938,26 @@ public class ImageEngine {
 			BufferedImage outImage = new BufferedImage(newWidth, newHeight, source.getType());
 			if (bgColor != null) {
 				fillImage(outImage, bgColor);
-			} 
+			}
 
 			for (int x = 0; x < source.getWidth(); x++) {
 				for (int y = 0; y < source.getHeight(); y++) {
-					int color = source.getRGB(x, y);					
+					int color = source.getRGB(x, y);
 					outImage.setRGB(x + borderWidth, y + borderHeight, color);
 				}
-			}			
-			source = outImage;			
+			}
+			source = outImage;
 		} else if (focusZone) {
 			source = centerInterest(source, interestX, interestY, inWidth, inHeight);
 		}
-		
+
 		BufferedImage workImage;
 
 		int workWith = inWidth - (ml + mr);
 		int workHeight = inHeight - (mt + mb);
 
 		if (!cropResize) {
-			workImage = resize(source, workWith, workHeight, hq);			
+			workImage = resize(source, workWith, workHeight, hq);
 		} else {
 			if ((float) source.getWidth() / (float) source.getHeight() < (float) workWith / (float) workHeight) {
 				int height = (source.getHeight() * workWith) / source.getWidth();
@@ -954,7 +967,7 @@ public class ImageEngine {
 				workImage = resize(source, width, workHeight, hq);
 			}
 		}
-		
+
 		// repositioning the image
 		int realInterestX = (interestX * workImage.getWidth()) / 1000;
 		int deltaX = realInterestX - inWidth / 2;
@@ -977,37 +990,37 @@ public class ImageEngine {
 
 		BufferedImage outImage = new BufferedImage(inWidth, inHeight, source.getType());
 		for (int x = deltaX; x < inWidth + deltaX; x++) {
-			int targetX = x - deltaX;			
+			int targetX = x - deltaX;
 			for (int y = deltaY; y < inHeight + deltaY; y++) {
-				int targetY = y - deltaY;				
+				int targetY = y - deltaY;
 				Integer imageColor = null;
 				if (bgColor != null) {
 					imageColor = bgColor.getRGB();
 				}
-				
+
 				if ((targetX >= ml) && (targetX < workWith + ml) && (targetY >= mt) && (targetY < workHeight + mt)) {
-					imageColor =  getColor(workImage, x+ml, y+mt, bgColor);
-				}				
-				Integer mixedColor = imageColor;				
-				
+					imageColor = getColor(workImage, x + ml, y + mt, bgColor);
+				}
+				Integer mixedColor = imageColor;
+
 				if (bgColor != null && imageColor != null) {
 					mixedColor = replaceAlpha(new Color(imageColor), bgColor).getRGB();
-				}				
+				}
 				if (mixedColor != null) {
-					
+
 					outImage.setRGB(targetX, targetY, mixedColor);
 				}
 			}
-		}	
-		workImage.flush();		
+		}
+		workImage.flush();
 		return outImage;
 	}
-	
+
 	public static void insertImage(BufferedImage source, BufferedImage target, int posx, int posy) {
 		for (int x = 0; x < source.getWidth(); x++) {
 			for (int y = 0; y < source.getHeight(); y++) {
 				int rgb = source.getRGB(x, y);
-				target.setRGB(posx+x, posy+y, rgb);					
+				target.setRGB(posx + x, posy + y, rgb);
 			}
 		}
 	}
@@ -1226,7 +1239,7 @@ public class ImageEngine {
 		}
 		return outImage;
 	}
-	
+
 	/**
 	 * create transparent dash
 	 * 
@@ -1234,34 +1247,36 @@ public class ImageEngine {
 	 * @return a image width same width and same height.
 	 */
 	public static BufferedImage resizeDashed(BufferedImage image, int factor) {
-		BufferedImage outImage = new BufferedImage(image.getWidth()*factor, image.getHeight()*factor, BufferedImage.TYPE_4BYTE_ABGR);
+		BufferedImage outImage = new BufferedImage(image.getWidth() * factor, image.getHeight() * factor, BufferedImage.TYPE_4BYTE_ABGR);
 		for (int x = 0; x < image.getWidth(); x++) {
 			for (int y = 0; y < image.getHeight(); y++) {
-				outImage.setRGB(x*factor, y*factor, image.getRGB(x, y));				
+				outImage.setRGB(x * factor, y * factor, image.getRGB(x, y));
 			}
 		}
 		return outImage;
 	}
-	
+
 	public static BufferedImage grayscale(BufferedImage inImage) {
-		ColorSpace cs = ColorSpace.getInstance(ColorSpace.CS_GRAY);  
-		ColorConvertOp op = new ColorConvertOp(cs, null);  
-		return op.filter(inImage, null); 
+		ColorSpace cs = ColorSpace.getInstance(ColorSpace.CS_GRAY);
+		ColorConvertOp op = new ColorConvertOp(cs, null);
+		return op.filter(inImage, null);
 	}
-	
+
 	/**
 	 * the "mathematical" distance between two color.
+	 * 
 	 * @param c1
 	 * @param c2
 	 * @return
 	 */
 	public static int getColorDistance(Color c1, Color c2) {
-		return Math.abs(c1.getRed()-c2.getRed())+Math.abs(c1.getGreen()-c2.getGreen())+Math.abs(c1.getBlue()-c2.getBlue());
+		return Math.abs(c1.getRed() - c2.getRed()) + Math.abs(c1.getGreen() - c2.getGreen()) + Math.abs(c1.getBlue() - c2.getBlue());
 	}
-	
+
 	/**
-	 * the "mathematical" distance between two color.
-	 * 1 : balck and white, 0 : same color
+	 * the "mathematical" distance between two color. 1 : balck and white, 0 :
+	 * same color
+	 * 
 	 * @param c1
 	 * @param c2
 	 * @return
@@ -1270,150 +1285,286 @@ public class ImageEngine {
 		if (c1 == null || c2 == null) {
 			return 1;
 		}
-		return ((float)Math.abs(c1.getRed()-c2.getRed())+(float)Math.abs(c1.getGreen()-c2.getGreen())+(float)Math.abs(c1.getBlue()-c2.getBlue()))/(float)(255*3);
+		return ((float) Math.abs(c1.getRed() - c2.getRed()) + (float) Math.abs(c1.getGreen() - c2.getGreen()) + (float) Math.abs(c1.getBlue() - c2.getBlue())) / (float) (255 * 3);
 	}
-	
+
 	/**
 	 * return white on dark background and black otherwise
+	 * 
 	 * @param backgroundColor
 	 * @return
 	 */
 	public static Color getTextColorOnBackground(Color backgroundColor) {
-		if (getColorDistance(backgroundColor, Color.BLACK)>0.5) {
+		if (getColorDistance(backgroundColor, Color.BLACK) > 0.5) {
 			return Color.WHITE;
-		} else  {	
+		} else {
 			return Color.BLACK;
-		}		
+		}
 	}
-	
+
 	/**
 	 * search a color inside a image.
+	 * 
 	 * @param image
 	 * @param color
-	 * @return the distance from all pixels to color (0:no difference (all pixel are the same and is exactly the color value) 1 : max difference (image in black and color is white)).
+	 * @return the distance from all pixels to color (0:no difference (all pixel
+	 *         are the same and is exactly the color value) 1 : max difference
+	 *         (image in black and color is white)).
 	 */
-	public static double closeColor(BufferedImage image, Color color) {		
-		double colorDistance = 0;		
+	public static double closeColor(BufferedImage image, Color color) {
+		double colorDistance = 0;
 		int STEP = 20;
-		if (image.getWidth()*4<STEP || image.getHeight()*4<STEP) {
+		if (image.getWidth() * 4 < STEP || image.getHeight() * 4 < STEP) {
 			STEP = 1;
 		}
 		int maxDistance = getColorDistance(Color.WHITE, Color.BLACK);
-		int imageSize = ((STEP+1)*(STEP+1));
-		int c = 0;		
-		for (int x = 0; x < image.getWidth(); x+=image.getWidth()/STEP) {
-			for (int y = 0; y < image.getHeight(); y+=image.getHeight()/STEP) {
-				Color imageColor = new Color(image.getRGB(x, y));				
-				colorDistance = colorDistance + ((double)getColorDistance(color,imageColor)/maxDistance)/imageSize;
+		int imageSize = ((STEP + 1) * (STEP + 1));
+		int c = 0;
+		for (int x = 0; x < image.getWidth(); x += image.getWidth() / STEP) {
+			for (int y = 0; y < image.getHeight(); y += image.getHeight() / STEP) {
+				Color imageColor = new Color(image.getRGB(x, y));
+				colorDistance = colorDistance + ((double) getColorDistance(color, imageColor) / maxDistance) / imageSize;
 				c++;
 			}
-		}		
+		}
 		return colorDistance;
+	}
+
+	/**
+	 *
+	 * @param img
+	 *            Image to modify
+	 * @param sepiaIntensity
+	 *            From 0-255, 30 produces nice results
+	 * @throws Exception
+	 */
+	public static void applySepiaFilter(BufferedImage img, int sepiaIntensity) {
+		// Play around with this. 20 works well and was recommended
+		// by another developer. 0 produces black/white image
+		int sepiaDepth = 20;
+
+		int w = img.getWidth();
+		int h = img.getHeight();
+
+		WritableRaster raster = img.getRaster();
+
+		// We need 3 integers (for R,G,B color values) per pixel.
+		int[] pixels = new int[w * h * 3];
+		raster.getPixels(0, 0, w, h, pixels);
+
+		// Process 3 ints at a time for each pixel.
+		// Each pixel has 3 RGB colors in array
+		for (int i = 0; i < pixels.length; i += 3) {
+			int r = pixels[i];
+			int g = pixels[i + 1];
+			int b = pixels[i + 2];
+
+			int gry = (r + g + b) / 3;
+			r = g = b = gry;
+			r = r + (sepiaDepth * 2);
+			g = g + sepiaDepth;
+
+			if (r > 255)
+				r = 255;
+			if (g > 255)
+				g = 255;
+			if (b > 255)
+				b = 255;
+
+			// Darken blue color to increase sepia effect
+			b -= sepiaIntensity;
+
+			// normalize if out of bounds
+			if (b < 0)
+				b = 0;
+			if (b > 255)
+				b = 255;
+
+			pixels[i] = r;
+			pixels[i + 1] = g;
+			pixels[i + 2] = b;
+		}
+		raster.setPixels(0, 0, w, h, pixels);
+	}
+
+	public static BufferedImage flip(BufferedImage image, boolean verticaly) {
+		BufferedImage outImage = new BufferedImage(image.getWidth(), image.getHeight(), image.getType());
+		for (int x = 0; x < image.getWidth(); x += 1) {
+			for (int y = 0; y < image.getHeight(); y += 1) {
+				if (verticaly) {
+					outImage.setRGB(x, image.getHeight() - y - 1, image.getRGB(x, y));
+				} else {
+					outImage.setRGB(image.getWidth() - x - 1, y, image.getRGB(x, y));
+				}
+			}
+		}
+		return outImage;
 	}
 	
 	/**
-	*
-	* @param img Image to modify
-	* @param sepiaIntensity From 0-255, 30 produces nice results
-	* @throws Exception
-	*/
-	public static void applySepiaFilter(BufferedImage img, int sepiaIntensity) {
-	    // Play around with this. 20 works well and was recommended
-	    // by another developer. 0 produces black/white image
-	    int sepiaDepth = 20;
-
-	    int w = img.getWidth();
-	    int h = img.getHeight();
-
-	    WritableRaster raster = img.getRaster();
-
-	    // We need 3 integers (for R,G,B color values) per pixel.
-	    int[] pixels = new int[w*h*3];
-	    raster.getPixels(0, 0, w, h, pixels);
-
-	    // Process 3 ints at a time for each pixel.
-	    // Each pixel has 3 RGB colors in array
-	    for (int i=0;i<pixels.length; i+=3) {
-	        int r = pixels[i];
-	        int g = pixels[i+1];
-	        int b = pixels[i+2];
-
-	        int gry = (r + g + b) / 3;
-	        r = g = b = gry;
-	        r = r + (sepiaDepth * 2);
-	        g = g + sepiaDepth;
-
-	        if (r>255) r=255;
-	        if (g>255) g=255;
-	        if (b>255) b=255;
-
-	        // Darken blue color to increase sepia effect
-	        b-= sepiaIntensity;
-
-	        // normalize if out of bounds
-	        if (b<0) b=0;
-	        if (b>255) b=255;
-
-	        pixels[i] = r;
-	        pixels[i+1]= g;
-	        pixels[i+2] = b;
-	    }
-	    raster.setPixels(0, 0, w, h, pixels);
+	 * test if two color is the same with tolerance
+	 * @param c1
+	 * @param c2
+	 * @param tolerance difference between two colors 0 >> 3*255
+	 * @return
+	 */
+	public static boolean equalColor(Color c1, Color c2, int tolerance) {
+		int diff = Math.abs(c1.getRed()-c2.getRed());
+		diff = diff + Math.abs(c1.getGreen()-c2.getGreen());
+		diff = diff + Math.abs(c1.getBlue()-c2.getBlue());
+		return diff > tolerance;
 	}
-	
-	public static BufferedImage flip(BufferedImage image, boolean verticaly) {
-		BufferedImage outImage = new BufferedImage(image.getWidth(), image.getHeight(), image.getType());
-		for (int x = 0; x < image.getWidth(); x+=1) {
-			for (int y = 0; y < image.getHeight(); y+=1) {
-				if (verticaly) {
-					outImage.setRGB(x, image.getHeight()-y-1, image.getRGB(x, y));
-				} else {
-					outImage.setRGB(image.getWidth()-x-1, y, image.getRGB(x, y));
-				}				
+
+	public static BufferedImage trimTop(BufferedImage image, Color color, int tolerance) {
+		if (color == DETECT_COLOR) {
+			color = new Color(image.getRGB(1, 1));
+		}
+		boolean trim = true;
+		int decaly=0;		
+		for (; decaly < image.getHeight() && trim; decaly+=1) {
+			for (int x=0; x < image.getWidth(); x+=1) {					
+				if (equalColor(new Color(image.getRGB(x, decaly)),color, tolerance)) {
+					trim = false;
+				}
 			}
+		}
+		if (trim) {
+			return new BufferedImage(1, 1, image.getType());
 		}		
+		BufferedImage outImage = new BufferedImage(image.getWidth(), image.getHeight()-decaly, image.getType());
+		for (int y = decaly; y < image.getHeight(); y += 1) {
+			for (int x = 0; x < image.getWidth(); x += 1) {			
+				outImage.setRGB(x, y-decaly, image.getRGB(x, y));
+			}
+		}
 		return outImage;
 	}
-
 	
+	public static BufferedImage trimLeft(BufferedImage image, Color color, int tolerance) {
+		if (color == DETECT_COLOR) {
+			color = new Color(image.getRGB(1, 1));
+		}
+		boolean trim = true;
+		int decalx=0;
+		for (; decalx < image.getWidth() && trim; decalx+=1) {
+			for (int y=0; y < image.getHeight(); y+=1) {					
+				if (equalColor(new Color(image.getRGB(decalx, y)),color, tolerance)) {
+					trim = false;
+				}
+			}
+		}
+		if (trim) {
+			return new BufferedImage(1, 1, image.getType());
+		}		
+		BufferedImage outImage = new BufferedImage(image.getWidth()-decalx, image.getHeight(), image.getType());
+		for (int x = decalx; x < image.getWidth(); x += 1) {
+			for (int y=0; y < image.getHeight(); y+=1) {			
+				outImage.setRGB(x-decalx, y, image.getRGB(x, y));
+			}
+		}
+		return outImage;
+	}
+	
+	public static BufferedImage trimBottom(BufferedImage image, Color color, int tolerance) {
+		if (color == DETECT_COLOR) {
+			color = new Color(image.getRGB(1, image.getHeight()-1));
+		}
+		boolean trim = true;
+		int decaly=0;
+		for (int y=image.getHeight()-1; y > 0 && trim; y-=1) {
+			for (int x=0; x < image.getWidth(); x+=1) {					
+				if (equalColor(new Color(image.getRGB(x, y)),color, tolerance)) {
+					trim = false;
+				}
+			}
+			if (trim) {
+				decaly++;
+			}			
+		}
+		if (trim) {
+			return new BufferedImage(1, 1, image.getType());
+		}
+		BufferedImage outImage = new BufferedImage(image.getWidth(), image.getHeight()-decaly, image.getType());
+		for (int y = 0; y < image.getHeight()-decaly; y += 1) {
+			for (int x = 0; x < image.getWidth(); x += 1) {			
+				outImage.setRGB(x, y, image.getRGB(x, y));
+			}
+		}
+		return outImage;
+	}
+	
+	public static BufferedImage trimRight(BufferedImage image, Color color, int tolerance) {
+		if (color == DETECT_COLOR) {
+			color = new Color(image.getRGB(image.getWidth()-1, 1));
+		}
+		boolean trim = true;
+		int decalx=0;
+		for (int x=image.getWidth()-1; x > 0 && trim; x-=1) {
+			for (int y=0; y < image.getHeight(); y+=1) {					
+				if (equalColor(new Color(image.getRGB(x, y)),color, tolerance)) {
+					trim = false;
+				}
+			}
+			if (trim) {
+				decalx++;
+			}			
+		}
+		if (trim) {
+			return new BufferedImage(1, 1, image.getType());
+		}
+		BufferedImage outImage = new BufferedImage(image.getWidth()-decalx, image.getHeight(), image.getType());
+		for (int y = 0; y < image.getHeight(); y += 1) {
+			for (int x = 0; x < image.getWidth()-decalx; x += 1) {				
+				outImage.setRGB(x, y, image.getRGB(x, y));
+			}
+		}
+		return outImage;
+	}
+	public static BufferedImage trim(BufferedImage image, Color color, int tolerance) {		
+		return trimBottom(trimLeft(trimRight(trimTop(image, color, tolerance),color, tolerance),color, tolerance),color, tolerance);
+	}
+
 	public static void main(String[] args) throws Exception {
-		System.out.println("***** ImageEngine.main : START"); //TODO: remove debug trace
-		File imageSource = new File("c:/trans/square.jpg");
-		File imageTarget = new File("c:/trans/sqr_target.jpg");
-		
+		System.out.println("***** ImageEngine.main : START"); // TODO: remove
+																// debug trace
+		File imageSource = new File("c:/trans/trim.jpg");
+		File imageTarget = new File("c:/trans/trimed.jpg");
+
 		BufferedImage img = ImageIO.read(imageSource);
-		img = resize(img, 80,80,true,false,0,0,0,0,null,500,500,true,true);
-		//img = resize(img, 119, 80, false);
+		img = trim(img, DETECT_COLOR,12);
+		// img = resize(img, 119, 80, false);
 		ImageIO.write(img, "jpg", imageTarget);
-		System.out.println("***** ImageEngine.main : END"); //TODO: remove debug trace
+		System.out.println("***** ImageEngine.main : END"); // TODO: remove
+															// debug trace
 	}
 
 	public static BufferedImage convertRGBAToIndexed(BufferedImage src) {
-	    BufferedImage outImage = new BufferedImage(src.getWidth(), src.getHeight(), BufferedImage.TYPE_BYTE_INDEXED);
-	    Graphics g = outImage.getGraphics();
-	    g.setColor(new Color(231, 20, 189));
-	    g.fillRect(0, 0, outImage.getWidth(), outImage.getHeight());
-	    outImage = makeTransparent(outImage, 0, 0);
-	    outImage.createGraphics().drawImage(src, 0, 0, null);
-	    return outImage;
+		BufferedImage outImage = new BufferedImage(src.getWidth(), src.getHeight(), BufferedImage.TYPE_BYTE_INDEXED);
+		Graphics g = outImage.getGraphics();
+		g.setColor(new Color(231, 20, 189));
+		g.fillRect(0, 0, outImage.getWidth(), outImage.getHeight());
+		outImage = makeTransparent(outImage, 0, 0);
+		outImage.createGraphics().drawImage(src, 0, 0, null);
+		return outImage;
 	}
 
 	private static BufferedImage makeTransparent(BufferedImage image, int x, int y) {
-	    ColorModel cm = image.getColorModel();
-	    if (!(cm instanceof IndexColorModel)) {
-	        return image;
-	    }
-	    IndexColorModel icm = (IndexColorModel) cm;
-	    WritableRaster raster = image.getRaster();
-	    int pixel = raster.getSample(x, y, 0); // pixel is offset in ICM's palette
-	    int size = icm.getMapSize();
-	    byte[] reds = new byte[size];
-	    byte[] greens = new byte[size];
-	    byte[] blues = new byte[size];
-	    icm.getReds(reds);
-	    icm.getGreens(greens);
-	    icm.getBlues(blues);
-	    IndexColorModel icm2 = new IndexColorModel(8, size, reds, greens, blues, pixel);
-	    return new BufferedImage(icm2, raster, image.isAlphaPremultiplied(), null);
+		ColorModel cm = image.getColorModel();
+		if (!(cm instanceof IndexColorModel)) {
+			return image;
+		}
+		IndexColorModel icm = (IndexColorModel) cm;
+		WritableRaster raster = image.getRaster();
+		int pixel = raster.getSample(x, y, 0); // pixel is offset in ICM's
+												// palette
+		int size = icm.getMapSize();
+		byte[] reds = new byte[size];
+		byte[] greens = new byte[size];
+		byte[] blues = new byte[size];
+		icm.getReds(reds);
+		icm.getGreens(greens);
+		icm.getBlues(blues);
+		IndexColorModel icm2 = new IndexColorModel(8, size, reds, greens, blues, pixel);
+		return new BufferedImage(icm2, raster, image.isAlphaPremultiplied(), null);
 	}
 }

@@ -1,5 +1,6 @@
 package org.javlo.template;
 
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -44,6 +45,7 @@ public class Row extends TemplatePart {
 				}				
 			}
 		}
+		Collections.sort(areas, new TemplatePart.SortByPriority());
 	}
 
 	@Override

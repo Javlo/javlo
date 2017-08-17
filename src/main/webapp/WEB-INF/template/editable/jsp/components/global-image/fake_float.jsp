@@ -47,10 +47,10 @@ localJQ( window ).load(function() {
 <a rel="${rel}" class="${type}" href="${url}"></c:if>
 <img src="${previewURL}" />
 <c:if test="${link != '#'}"></a></c:if>
-</td><td class="sep" style="width: 10px; font-size: 0;">&nbsp;</td><td class="zone1" style="text-align: left; ${not empty styleOppositeWidth?styleOppositeWidth:''}"><span class="container">${comp.firstText}</span></td></tr>
+</td><td class="sep" style="width: 10px; font-size: 10px; padding-right: 6px;">&nbsp;</td><td class="zone1" style="text-align: left; ${not empty styleOppositeWidth?styleOppositeWidth:''}"><span class="container">${comp.firstText}</span></td></tr>
 </c:if><c:if test="${param.right}">
 <tr><td class="zone1" style="text-align: left; ${not empty styleOppositeWidth?styleOppositeWidth:''}"><span class="container">${comp.firstText}</span></td>
-<td class="sep" style="width: 10px; font-size: 0;">&nbsp;</td>
+<td class="sep" style="width: 10px; font-size: 10px; padding-right: 6px;">&nbsp;</td>
 <td class="image-wrapper"${styleWidth}>
 <c:if test="${link != '#'}">
 <c:set var="rel" value="${fn:startsWith(url,'http://')?'external':'shadowbox'}" />

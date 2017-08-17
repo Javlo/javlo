@@ -4,7 +4,7 @@
 <h3><span>${i18n.edit['item.title']}</span></h3>
 <div class="content">
 
-<form id="form-page-properties" class="standard-form js-change-submit" action="${info.currentURL}" method="post">
+<form id="form-page-properties" class="standard-form" action="${info.currentURL}" method="post">
 
 <c:if test="${globalContext.portail}">
 <div class="flow">
@@ -23,8 +23,6 @@
 	</c:if>	
 </div>
 </c:if>
-
-
 
 <div>
 	<input type="hidden" name="webaction" value="pageProperties" />
@@ -82,6 +80,13 @@
 </div>
 </div>
 </fieldset>
+</c:if>
+
+<c:if test="${globalContext.taxonomy.active}">
+<div class="taxonomy">
+	<label for="taxonomy">${i18n.edit ['taxonomy']}</label>
+	${taxonomySelect}
+</div>
 </c:if>
 
 <div class="cols">

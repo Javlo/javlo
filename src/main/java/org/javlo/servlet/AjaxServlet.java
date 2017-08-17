@@ -93,7 +93,7 @@ public class AjaxServlet extends HttpServlet {
 				
 				if (ctx.getSpecificJson() == null) {
 					if (ctx.getAjaxMap() == null) {						
-						String msgXhtml = ServletHelper.executeJSP(ctx, editCtx.getMessageTemplate());
+						String msgXhtml = ServletHelper.executeJSP(ctx, editCtx.getMessageTemplate());						
 						ctx.addAjaxInsideZone("message-container", msgXhtml);
 						outMap.put("messageText", MessageRepository.getInstance(ctx).getGlobalMessage().getMessage());
 						outMap.put("messageType", MessageRepository.getInstance(ctx).getGlobalMessage().getBootstrapType());

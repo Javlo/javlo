@@ -399,6 +399,58 @@ public class ImageConfig {
 			return null;
 		}
 	}
+	
+	/**
+	 * return a bg color, the border with this color will be removed. (detect = automatic detect background color)
+	 * @param device
+	 * @param filter
+	 * @param area
+	 * @return
+	 */
+	public Color getTrimColor(Device device, String filter, String area) {
+
+		String key = getKey(device, filter, area, "trim-color");
+
+		String deviceValue = properties.getString(key, properties.getString(getKey(null, ALL,null, "trim-color"),null));
+		if (deviceValue != null && !deviceValue.equals("-1") && !deviceValue.equals("transparent")) {
+			try {
+				if (deviceValue.trim().equalsIgnoreCase("detect")) {
+					return ImageEngine.DETECT_COLOR;
+				} else {
+					return Color.decode(deviceValue);
+				}
+			} catch (NumberFormatException e) {
+				logger.warning("bad trim color found in image config file ( filter: " + filter + ", device: " + deviceValue + " area :" + area + " ) : " + deviceValue);
+				return null;
+			}
+		} else {
+			return null;
+		}
+	}
+	
+	/**
+	 * return tolerance for trim (0 >> 255*3)
+	 * @param device
+	 * @param filter
+	 * @param area
+	 * @return
+	 */
+	public int getTrimTolerance(Device device, String filter, String area) {
+
+		String key = getKey(device, filter, area, "trim-color.tolerance");
+
+		String deviceValue = properties.getString(key, properties.getString(getKey(null, ALL,null, "trim-color"),null));
+		if (deviceValue != null && !deviceValue.equals("-1")) {
+			try {
+				return Integer.parseInt(deviceValue);
+			} catch (NumberFormatException e) {
+				logger.warning("bad trim tolerance color found in image config file ( filter: " + filter + ", device: " + deviceValue + " area :" + area + " ) : " + deviceValue);
+				return 1;
+			}
+		} else {
+			return 1;
+		}
+	}
 
 	public Color getAdjustColor(Device device, String filter, String area) {
 

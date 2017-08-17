@@ -1,4 +1,4 @@
-jQuery.noConflict();
+ jQuery.noConflict();
 
 jQuery(document).ready(function(){
 	
@@ -18,7 +18,8 @@ jQuery(document).ready(function(){
 			jQuery(this).css({backgroundPosition: "0 -32px"});	
 		}
 	});
-	
+
+	jQuery(".chosen-select").chosen({disable_search_threshold: 10});
 	
 	/**
 	 * Message Notify Drop Down
@@ -29,16 +30,13 @@ jQuery(document).ready(function(){
 		if(t.hasClass('showmsg')) {
 			t.removeClass('showmsg');
 			t.find('.thicon').removeClass('thiconhover');
-			t.parent().find('.dropbox').remove();
-			
-		} else {
-			
+			t.parent().find('.dropbox').remove();			
+		} else {			
 			jQuery('.topheader li').each(function(){
 				jQuery(this).find('.showmsg').removeClass('showmsg');
 				jQuery(this).find('.thicon').removeClass('thiconhover');
 				jQuery(this).find('.dropbox').remove();
-			});
-			
+			});			
 			t.addClass('showmsg');
 			t.find('.thicon').addClass('thiconhover');
 			t.parent().append('<div class="dropbox"></div>');
@@ -47,8 +45,7 @@ jQuery(document).ready(function(){
 				jQuery('.dropbox').append(data);
 			});
 		}
-		return false;
-		
+		return false;		
 	});
 	
 	jQuery(document).click(function(event) {
@@ -117,13 +114,39 @@ jQuery(document).ready(function(){
 						  borderRadius: '3px 3px 0 0'});
 		return false;
 	});*/
-	
+ 
 	
 	/**
 	 * Notification
 	**/
-	jQuery('.notification .close').click(function(){
+	jQuery('.notification .close').live('click', function(){
 		jQuery(this).parent().fadeOut();
+	});	
+	
+	/**
+	 * collapse
+	**/
+	jQuery('.collapse .action').live('click', function(){
+		action = jQuery(this);
+		if (action.hasClass("open")) {
+			jQuery(this).parent().find(".bloc").addClass("hidden");
+			action.addClass("close");
+			action.removeClass("open");
+		} else {
+			jQuery(this).parent().find(".bloc").removeClass("hidden");
+			action.addClass("open");
+			action.removeClass("close");
+		}
+	});	
+	
+	jQuery('.hidden-input').live('focus',function(){
+		jQuery(this).removeClass("hidden-input");
+		jQuery(this).addClass("_show-input");
+	});
+	jQuery('._show-input').live('blur',function(){
+		jQuery(this).addClass("hidden-input");
+		jQuery(this).removeClass("_show-input");
+		
 	});	
 	
 	changeFooter();	

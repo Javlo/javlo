@@ -348,6 +348,7 @@ public class Template implements Comparable<Template> {
 		String imageFilter;
 		List<String> htmls;
 		List<String> renderers;
+		boolean bootstrap = false;
 		private Map<String, String> s = null;
 		private Map<String, List<String>> cssByFolder;
 		private Template template;
@@ -372,6 +373,7 @@ public class Template implements Comparable<Template> {
 
 			ContentContext remoteCtx = ctx.getContextForAbsoluteURL();
 			downloadURL = URLHelper.createStaticURL(remoteCtx, downloadURL);
+			bootstrap = template.isBootstrap();
 			ids = template.getHTMLIDS();
 			Collections.sort(ids);
 			areas = template.getAreas();
@@ -618,6 +620,10 @@ public class Template implements Comparable<Template> {
 
 		public void setParentBean(TemplateBean parentBean) {
 			this.parentBean = parentBean;
+		}
+		
+		public boolean isBootstrap() {
+			return bootstrap;
 		}
 
 	}
@@ -890,6 +896,28 @@ public class Template implements Comparable<Template> {
 			i18n.clear();
 		}
 	}
+	
+	public void reloadConfig(ContentContext ctx) {
+		synchronized (ctx.getGlobalContext().getLockImportTemplate()) {			
+			File templateSrc = new File(URLHelper.mergePath(config.getTemplateFolder(), getSourceFolderName()));
+			File templateTgt = new File(getTemplateTargetFolder(ctx.getGlobalContext()));			
+			try {
+				FileUtils.copyFile(new File(URLHelper.mergePath(templateSrc.getAbsolutePath(), CONFIG_FILE)), new File(URLHelper.mergePath(templateTgt.getAbsolutePath(), CONFIG_FILE)));
+				File renderedFile = new File(URLHelper.mergePath(templateTgt.getAbsolutePath(), getRendererFile(null)));
+				if (renderedFile.exists()) {
+					renderedFile.delete();
+				}
+				reload();
+				dynamicsComponents = null;
+				templateImportationError = false;
+				contextWithTemplateImported.clear();
+				i18n.clear();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			
+		}
+	}
 
 	public void delete() {
 		try {
@@ -1124,10 +1152,6 @@ public class Template implements Comparable<Template> {
 	}
 
 	public void addArea(String rowName) {
-		System.out.println("***** Template.addArea : rowName = " + rowName); // TODO:
-																				// remove
-																				// debug
-																				// trace
 		if (rowName.indexOf("-") >= 0) {
 			String areaName = getNewAreaName();
 			properties.setProperty("area." + areaName, areaName);
@@ -2580,6 +2604,7 @@ public class Template implements Comparable<Template> {
 		}
 		dynamicsComponents = null;
 		contextWithTemplateImported.clear();
+		resetRows();
 	}
 
 	public void setAuthors(String name) {
@@ -2845,7 +2870,7 @@ public class Template implements Comparable<Template> {
 	}
 
 	public synchronized List<Row> getRows() {
-		if (rows == null) {
+		if (rows == null) {			
 			rows = new HashMap<String, Row>();
 			for (String area : getAreas()) {
 				String rowName = properties.getString("area." + area + ".row", "");
@@ -2870,7 +2895,8 @@ public class Template implements Comparable<Template> {
 		return outRows;
 	}
 
-	public synchronized void resetRows() {
+	public synchronized void resetRows() {		
+		style = null;
 		rows = null;
 		areas = null;
 	}
@@ -2897,7 +2923,7 @@ public class Template implements Comparable<Template> {
 		resetRows();
 	}
 
-	public synchronized void storeRows(Collection<Row> rows) {
+	public synchronized void storeRows(Collection<Row> rows) {		
 		Iterator keys = properties.getKeys();
 		while (keys.hasNext()) {
 			String key = (String) keys.next();
@@ -2913,7 +2939,7 @@ public class Template implements Comparable<Template> {
 				properties.setProperty("area." + area.getName() + ".row", row.getName());
 				saveTemplatePart(area, "area." + area.getName());
 			}
-		}
+		}		
 		storeProperties();
 		resetRows();
 	}
@@ -2922,7 +2948,15 @@ public class Template implements Comparable<Template> {
 		if (getParent() != null && getParent().isEditable()) {
 			return true;
 		} else {
-			return getName().equalsIgnoreCase("editable");
+			return getName().contains("editable");
+		}
+	}
+	
+	public boolean isBootstrap() {
+		if (properties.getProperty("bootstrap") == null) {
+			return getParent().isBootstrap();
+		} else {
+			return StringHelper.isTrue(properties.getProperty("bootstrap"));
 		}
 	}
 

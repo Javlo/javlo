@@ -16,8 +16,7 @@ if (typeof jQuery == 'undefined') {
 		head.appendChild(script);	
 	};
 	
-	getScript('http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js', function() {
-	
+	getScript('http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js', function() {	
 		if (typeof jQuery=='undefined') {		
 			alert("error loading jQuery.");		
 		} else {
@@ -29,8 +28,16 @@ if (typeof jQuery == 'undefined') {
 					window.parent.updateProperties(jQuery(this).attr("id"));		
 				});
 			});		
-		}
-	
+		}	
+	});	
+} else {
+	jQuery(document).ready(function() {
+		jQuery("._area").click(function() {
+			var area = jQuery(this);
+			console.log(area);
+			jQuery("._area").removeClass("area_active");
+			area.addClass("area_active");		
+			window.parent.updateProperties(jQuery(this).attr("id"));		
+		});
 	});
-	
 }

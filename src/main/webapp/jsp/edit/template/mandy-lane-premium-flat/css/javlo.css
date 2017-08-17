@@ -1785,3 +1785,11 @@ ul.ui-tabs-nav {
 .progress .redbar {
   background-color: #d9534f;
 }
+.hidden-input {	
+	border: 0 none;
+	box-shadow: 0 0 0; 
+}
+select#taxonomy {
+	display: block;
+	width: 100%;
+}

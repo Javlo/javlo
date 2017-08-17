@@ -20,7 +20,7 @@ import javax.mail.internet.AddressException;
 
 import org.apache.commons.io.output.FileWriterWithEncoding;
 import org.javlo.context.ContentContext;
-import org.javlo.helper.LocalLogger;
+import org.javlo.data.taxonomy.TaxonomyBean;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.XMLHelper;
 import org.javlo.navigation.MenuElement;
@@ -41,6 +41,8 @@ public class PersistenceThread implements Runnable {
 	public Object lockReference = null;
 
 	private Map<String, String> globalContentMap;
+	
+	private TaxonomyBean taxonomyRoot;
 
 	private final Collection<File> folderToSave = new LinkedList<File>();
 
@@ -68,6 +70,14 @@ public class PersistenceThread implements Runnable {
 
 	public String getDefaultLg() {
 		return defaultLg;
+	}
+	
+	public TaxonomyBean getTaxonomyRoot() {
+		return taxonomyRoot;
+	}
+	
+	public void setTaxonomyRoot(TaxonomyBean taxonomyRoot) {
+		this.taxonomyRoot = taxonomyRoot;
 	}
 
 	public Map<String, String> getGlobalContentMap() {
@@ -184,7 +194,7 @@ public class PersistenceThread implements Runnable {
 			FileOutputStream fileStream = new FileOutputStream(file);
 			OutputStreamWriter fileWriter = new OutputStreamWriter(fileStream, ContentContext.CHARACTER_ENCODING);
 			try {
-				XMLHelper.storeXMLContent(fileWriter, menuElement, renderMode, localVersion, defaultLg, getGlobalContentMap());
+				XMLHelper.storeXMLContent(fileWriter, menuElement, renderMode, localVersion, defaultLg, getGlobalContentMap(), getTaxonomyRoot());
 			} finally {
 				fileWriter.close();
 				fileStream.close();
@@ -216,7 +226,7 @@ public class PersistenceThread implements Runnable {
 			FileOutputStream fileStream = new FileOutputStream(file);
 			OutputStreamWriter fileWriter = new OutputStreamWriter(fileStream, ContentContext.CHARACTER_ENCODING);
 			try {
-				XMLHelper.storeXMLContent(fileWriter, menuElement, renderMode, localVersion, defaultLg, getGlobalContentMap());
+				XMLHelper.storeXMLContent(fileWriter, menuElement, renderMode, localVersion, defaultLg, getGlobalContentMap(), getTaxonomyRoot());
 			} finally {
 				fileWriter.close();
 				fileStream.close();

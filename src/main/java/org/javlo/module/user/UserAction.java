@@ -449,8 +449,7 @@ public class UserAction extends AbstractModuleAction {
 	public static String performAskChangePassword(RequestService rs, ContentContext ctx, EditContext editContext,
 			GlobalContext globalContext, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
 
-		String email = rs.getParameter("email", null);
-		System.out.println("email = "+StringHelper.isMail(email));
+		String email = rs.getParameter("email", null);		
 		if (!StringHelper.isMail(email)) {
 			return i18nAccess.getText("mailing.error.email");
 		} else {			
@@ -467,7 +466,7 @@ public class UserAction extends AbstractModuleAction {
 				String mailBody = XHTMLHelper.createUserMail(globalContext.getTemplateData(), body, null, null, link, i18nAccess.getViewText("user.change-password"), null);
 				
 				MailService mailService = MailService.getInstance(new MailConfig(globalContext, globalContext.getStaticConfig(), null));
-				mailService.sendMail(new InternetAddress(globalContext.getAdministratorEmail()), new InternetAddress(email), subject, mailBody, true);				
+				mailService.sendMail(globalContext, new InternetAddress(globalContext.getAdministratorEmail()), new InternetAddress(email), subject, mailBody, true);				
 				messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getViewText("user.message.change-password-link"), GenericMessage.INFO));				
 			}
 		}

@@ -89,6 +89,7 @@ import org.javlo.user.IUserFactory;
 import org.javlo.user.IUserInfo;
 import org.javlo.utils.TimeTracker;
 import org.javlo.ztatic.FileCache;
+import org.python.antlr.PythonParser.for_stmt_return;
 
 public class Edit extends AbstractModuleAction {
 
@@ -538,6 +539,7 @@ public class Edit extends AbstractModuleAction {
 				case ContentModuleContext.PAGE_MODE:
 					currentModule.setToolsRenderer("/jsp/actions.jsp?button_edit=true&button_preview=true&button_delete_page=true" + publish);
 					request.setAttribute("page", ctx.getCurrentPage().getPageBean(ctx));
+					request.setAttribute("taxonomySelect", globalContext.getTaxonomy().getSelectHtml(ctx.getCurrentPage().getTaxonomy()));
 					currentModule.setRenderer("/jsp/page_properties.jsp");
 					currentModule.setBreadcrumbTitle(I18nAccess.getInstance(ctx.getRequest()).getText("item.title"));
 					break;
@@ -851,7 +853,7 @@ public class Edit extends AbstractModuleAction {
 				} else {
 					ComponentBean mirrorComponentBean = new ComponentBean(PageMirrorComponent.TYPE, copiedPage.getId(), ctx.getRequestContentLanguage());
 					newId = content.createContent(ctx, targetPage, areaKey, previousId, mirrorComponentBean, true);
-			}
+				}
 			} else {
 				return "error : page not found.";
 			}
@@ -1257,9 +1259,9 @@ public class Edit extends AbstractModuleAction {
 						provider.refresh(ctx);
 					}
 				}
-				
+
 				/** need validation **/
-				if(AdminUserSecurity.getInstance().isAdmin(ctx.getCurrentEditUser())) {
+				if (AdminUserSecurity.getInstance().isAdmin(ctx.getCurrentEditUser())) {
 					page.setNoValidation(StringHelper.isTrue(requestService.getParameter("noval", null)));
 				}
 
@@ -1272,6 +1274,22 @@ public class Edit extends AbstractModuleAction {
 					messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage("page not found  : " + ipsecurity, GenericMessage.ERROR), false);
 				} else {
 					page.setIpSecurityErrorPageName(ipsecurity);
+				}
+
+				/** taxonomy **/
+				if (ctx.getGlobalContext().getTaxonomy().isActive()) {
+					String[] taxonomies = requestService.getParameterValues("taxonomy", null);
+					if (taxonomies != null) {
+						if (page.getTaxonomy() == null) {
+							page.setTaxonomy(new HashSet<String>());
+						}
+						page.getTaxonomy().clear();
+						for (String taxonomy : taxonomies) {
+							page.getTaxonomy().add(taxonomy);
+						}
+					} else {
+						page.setTaxonomy(new HashSet<String>());
+					}
 				}
 
 				/** publish time range **/
@@ -1466,22 +1484,22 @@ public class Edit extends AbstractModuleAction {
 		messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("edit.message.new-area") + " : " + area, GenericMessage.INFO));
 		return null;
 	}
-	
+
 	public static String performNeedValidation(ContentContext ctx, MenuElement currentPage, I18nAccess i18nAccess) throws Exception {
 		AdminUserSecurity userSecurity = AdminUserSecurity.getInstance();
 		if (userSecurity.canRole(ctx.getCurrentEditUser(), AdminUserSecurity.CONTENT_ROLE)) {
 			currentPage.setNeedValidation(true);
 			PersistenceService.getInstance(ctx.getGlobalContext()).setAskStore(true);
-			
+
 			AdminUserFactory userFact = AdminUserFactory.createAdminUserFactory(ctx.getGlobalContext(), ctx.getRequest().getSession());
 			TicketBean ticket = new TicketBean();
-			ticket.setAuthors(ctx.getCurrentEditUser().getLogin());			
-			ticket.setTitle(i18nAccess.getText("flow.ticket.title")+" : "+currentPage.getTitle(ctx));
+			ticket.setAuthors(ctx.getCurrentEditUser().getLogin());
+			ticket.setTitle(i18nAccess.getText("flow.ticket.title") + " : " + currentPage.getTitle(ctx));
 			ticket.setCategory("validation");
 			ticket.setContext(ctx.getGlobalContext().getContextKey());
 			ticket.setCreationDate(new Date());
-			ticket.setUrl(URLHelper.createURL(ctx));		
-			List<String> users = new  LinkedList<String>();
+			ticket.setUrl(URLHelper.createURL(ctx));
+			List<String> users = new LinkedList<String>();
 			for (IUserInfo userInfo : userFact.getUserInfoList()) {
 				if (userSecurity.haveRole(userInfo, AdminUserSecurity.VALIDATION_ROLE)) {
 					users.add(userInfo.getLogin());
@@ -1491,27 +1509,27 @@ public class Edit extends AbstractModuleAction {
 			TicketService.getInstance(ctx.getGlobalContext()).updateTicket(ctx, ticket);
 		} else {
 			return "Security error !";
-		}		
+		}
 		return null;
 	}
-	
+
 	public static String performValidate(ContentContext ctx, MenuElement currentPage) throws Exception {
 		AdminUserSecurity userSecurity = AdminUserSecurity.getInstance();
-		if (userSecurity.canRole(ctx.getCurrentEditUser(), AdminUserSecurity.VALIDATION_ROLE)) {				
+		if (userSecurity.canRole(ctx.getCurrentEditUser(), AdminUserSecurity.VALIDATION_ROLE)) {
 			currentPage.setValid(true);
 			currentPage.setValidater(ctx.getCurrentEditUser().getLogin());
 			TicketService ticketService = TicketService.getInstance(ctx.getGlobalContext());
 			String pageURL = URLHelper.createURL(ctx);
 			for (Ticket ticket : ticketService.getTickets()) {
 				if (ticket.getUrl() != null && ticket.getUrl().equals(pageURL) && ticket instanceof TicketBean) {
-					((TicketBean)ticket).setStatus(Ticket.DONE_STATUS);
-					ticketService.updateTicket(ctx, (TicketBean)ticket);
+					((TicketBean) ticket).setStatus(Ticket.DONE_STATUS);
+					ticketService.updateTicket(ctx, (TicketBean) ticket);
 				}
 			}
 			PersistenceService.getInstance(ctx.getGlobalContext()).setAskStore(true);
 		} else {
 			return "Security error !";
-		}		
+		}
 		return null;
 	}
 
@@ -1566,47 +1584,55 @@ public class Edit extends AbstractModuleAction {
 				ComponentFactory.cleanComponentList(request.getSession().getServletContext(), globalContext);
 			}
 
-//			/*** check url ***/
-//			ContentContext lgCtx = new ContentContext(ctx);
-//			Collection<String> lgs = globalContext.getContentLanguages();
-//			IURLFactory urlFactory = globalContext.getURLFactory(lgCtx);
-//			String dblURL = null;
-//			Collection<String> errorPageNames = null;
-//			if (urlFactory != null) {
-//				Map<String, String> pages = new HashMap<String, String>();
-//				errorPageNames = new LinkedList<String>();
-//				// correct identical URL.
-//				List<MenuElement> children = ContentService.getInstance(globalContext).getNavigation(lgCtx).getAllChildrenList();
-//				NavigationService.checkSameUrl(ctx,children);
-//				for (String lg : lgs) {
-//					lgCtx.setRequestContentLanguage(lg);
-//					for (MenuElement menuElement : children) {
-//						if (menuElement.isRealContent(lgCtx)) {
-//							String url = lgCtx.getRequestContentLanguage() + urlFactory.createURL(lgCtx, menuElement);
-//							String otherPageName = pages.get(url);
-//							if (otherPageName != null && !otherPageName.equals(menuElement.getName())) {
-//								if (!errorPageNames.contains(menuElement.getName())) {
-//									errorPageNames.add(menuElement.getName());
-//								}
-//								if (!errorPageNames.contains(pages.get(url))) {
-//									errorPageNames.add(pages.get(url));
-//								}
-//								if (menuElement.isRealContent(lgCtx)) {
-//									dblURL = url;
-//								}
-//								logger.warning("page : " + menuElement.getName() + " is refered by a url already used : " + url + " (page : " + otherPageName + ")");
-//							} else {
-//								pages.put(url, menuElement.getName());
-//							}
-//						}
-//					}
-//				}
-//			}
-//
-//			if (dblURL != null) {
-//				String msg = i18nAccess.getText("action.publish.error.same-url", new String[][] { { "url", dblURL }, { "pages", StringHelper.collectionToString(errorPageNames, ",") } });
-//				MessageRepository.getInstance(ctx).setGlobalMessageAndNotification(ctx, new GenericMessage(msg, GenericMessage.ALERT), false);
-//			}
+			// /*** check url ***/
+			// ContentContext lgCtx = new ContentContext(ctx);
+			// Collection<String> lgs = globalContext.getContentLanguages();
+			// IURLFactory urlFactory = globalContext.getURLFactory(lgCtx);
+			// String dblURL = null;
+			// Collection<String> errorPageNames = null;
+			// if (urlFactory != null) {
+			// Map<String, String> pages = new HashMap<String, String>();
+			// errorPageNames = new LinkedList<String>();
+			// // correct identical URL.
+			// List<MenuElement> children =
+			// ContentService.getInstance(globalContext).getNavigation(lgCtx).getAllChildrenList();
+			// NavigationService.checkSameUrl(ctx,children);
+			// for (String lg : lgs) {
+			// lgCtx.setRequestContentLanguage(lg);
+			// for (MenuElement menuElement : children) {
+			// if (menuElement.isRealContent(lgCtx)) {
+			// String url = lgCtx.getRequestContentLanguage() +
+			// urlFactory.createURL(lgCtx, menuElement);
+			// String otherPageName = pages.get(url);
+			// if (otherPageName != null &&
+			// !otherPageName.equals(menuElement.getName())) {
+			// if (!errorPageNames.contains(menuElement.getName())) {
+			// errorPageNames.add(menuElement.getName());
+			// }
+			// if (!errorPageNames.contains(pages.get(url))) {
+			// errorPageNames.add(pages.get(url));
+			// }
+			// if (menuElement.isRealContent(lgCtx)) {
+			// dblURL = url;
+			// }
+			// logger.warning("page : " + menuElement.getName() + " is refered
+			// by a url already used : " + url + " (page : " + otherPageName +
+			// ")");
+			// } else {
+			// pages.put(url, menuElement.getName());
+			// }
+			// }
+			// }
+			// }
+			// }
+			//
+			// if (dblURL != null) {
+			// String msg = i18nAccess.getText("action.publish.error.same-url",
+			// new String[][] { { "url", dblURL }, { "pages",
+			// StringHelper.collectionToString(errorPageNames, ",") } });
+			// MessageRepository.getInstance(ctx).setGlobalMessageAndNotification(ctx,
+			// new GenericMessage(msg, GenericMessage.ALERT), false);
+			// }
 
 			// trick for PortletManager to clear view data, but should be
 			// generalized in some PublishManager
@@ -2057,7 +2083,7 @@ public class Edit extends AbstractModuleAction {
 			fromPage = comp.getPage();
 		}
 
-		String fromArea = comp.getArea();		
+		String fromArea = comp.getArea();
 
 		String area = null;
 		for (Map.Entry<String, String> templateArea : ctx.getCurrentTemplate().getAreasMap().entrySet()) {

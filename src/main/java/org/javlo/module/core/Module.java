@@ -1069,5 +1069,9 @@ public class Module {
 		fileName = fileName.substring(0, fileName.length() - ".less".length()) + ".css";
 		System.out.println(fileName);
 	}
+	
+	public String getJspPath(String jsp) {
+		return URLHelper.mergePath("/", getModuleFolder(), getName(), jsp);
+	}
 
 }

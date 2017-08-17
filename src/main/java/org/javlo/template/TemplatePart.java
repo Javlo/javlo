@@ -16,6 +16,15 @@ public class TemplatePart {
 		}
 
 	}
+	
+	public static class SortByPriority implements Comparator<TemplatePart> {
+
+		@Override
+		public int compare(TemplatePart o1, TemplatePart o2) {
+			return o1.getPriority() - o2.getPriority();
+		}
+
+	}
 
 	private String name = null;
 	private String width = null;

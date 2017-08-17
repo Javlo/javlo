@@ -55,6 +55,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.javlo.cache.ICache;
 import org.javlo.cache.MapCache;
 import org.javlo.config.StaticConfig;
+import org.javlo.data.taxonomy.TaxonomyDisplayBean;
+import org.javlo.data.taxonomy.TaxonomyService;
 import org.javlo.helper.ContentHelper;
 import org.javlo.helper.DebugHelper;
 import org.javlo.helper.ElementaryURLHelper;
@@ -3857,6 +3859,10 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public TaxonomyService getTaxonomy() {
+		return TaxonomyService.getInstance(this);
 	}
 
 }

@@ -119,7 +119,7 @@ public class InfoBean {
 	 */
 	public static InfoBean updateInfoBean(ContentContext ctx) throws Exception {
 		InfoBean info = createInfoBean(ctx);
-		ctx.getRequest().setAttribute(REQUEST_KEY, info);
+		ctx.getRequest().setAttribute(REQUEST_KEY, info);		
 		return info;
 	}
 
@@ -480,6 +480,15 @@ public class InfoBean {
 	public String getTime() {
 		try {
 			return StringHelper.renderTime(ctx, currentPage.getContentDateNeverNull(ctx));
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	public String getSortableTime() {
+		try {
+			return StringHelper.renderSortableTime(new Date());
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
@@ -1028,6 +1037,7 @@ public class InfoBean {
 		try {
 			return ctx.getCurrentTemplate();
 		} catch (Exception e) {
+			e.printStackTrace();
 			return null;
 		}
 	}
@@ -1051,6 +1061,10 @@ public class InfoBean {
 			e.printStackTrace();
 			return null;
 		}
+	}
+	
+	public Map<String, Template> getTemplatesMap() throws Exception {		
+		return TemplateFactory.getTemplates(ctx.getRequest().getSession().getServletContext());
 	}
 
 	public String getTemplateName() {

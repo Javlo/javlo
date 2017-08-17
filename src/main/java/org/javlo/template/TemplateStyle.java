@@ -54,7 +54,7 @@ public class TemplateStyle extends TemplatePart {
 	}
 	
 	public String getDefaultWidth() {
-		return "550px";
+		return "";
 	}
 
 	public Map<String,String> getConfig() {

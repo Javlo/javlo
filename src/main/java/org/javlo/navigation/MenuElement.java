@@ -74,6 +74,7 @@ import org.javlo.context.ContentContext;
 import org.javlo.context.ContentManager;
 import org.javlo.context.GlobalContext;
 import org.javlo.data.rest.IRestItem;
+import org.javlo.data.taxonomy.ITaxonomyContainer;
 import org.javlo.helper.BeanHelper;
 import org.javlo.helper.DebugHelper;
 import org.javlo.helper.NavigationHelper;
@@ -108,7 +109,7 @@ import org.javlo.ztatic.IStaticContainer;
 /**
  * @author pvanderm
  */
-public class MenuElement implements Serializable, IPrintInfo, IRestItem {
+public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxonomyContainer {
 
 	public static int instance = 0;
 
@@ -1186,6 +1187,8 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 	private boolean restWidthChildren = false;
 
 	private String ipSecurityErrorPageName = null;
+	
+	private Set<String> taxonomy = null;
 
 	/**
 	 * protect page localy if there are linked with other website.
@@ -5440,6 +5443,15 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem {
 
 	public void setNoValidation(boolean noValidation) {
 		this.noValidation = noValidation;
+	}
+
+	@Override
+	public Set<String> getTaxonomy() {
+		return taxonomy;
+	}
+
+	public void setTaxonomy(Set<String> taxonomy) {
+		this.taxonomy = taxonomy;
 	}
 
 }

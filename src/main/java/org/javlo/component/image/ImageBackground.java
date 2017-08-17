@@ -1,6 +1,7 @@
 package org.javlo.component.image;
 
 import org.javlo.context.ContentContext;
+import org.javlo.context.EditContext;
 import org.javlo.helper.StringHelper;
 
 public class ImageBackground extends GlobalImage {
@@ -42,8 +43,18 @@ public class ImageBackground extends GlobalImage {
 	}
 	
 	@Override
+	public boolean isDisplayHidden() {	
+		return true;
+	}
+	
+	@Override
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
-		return "";
+		EditContext editContext = EditContext.getInstance(ctx.getGlobalContext(), ctx.getRequest().getSession());
+		if (ctx.isAsPreviewMode() && editContext.isPreviewEditionMode()) {
+			return "["+getType()+"]";
+		} else {
+			return "";
+		}
 	}
 	
 	@Override

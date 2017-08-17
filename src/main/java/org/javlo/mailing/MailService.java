@@ -38,6 +38,7 @@ import javax.mail.internet.MimeMultipart;
 import javax.mail.util.ByteArrayDataSource;
 
 import org.javlo.context.ContentContext;
+import org.javlo.context.GlobalContext;
 import org.javlo.external.agitos.dkim.Canonicalization;
 import org.javlo.external.agitos.dkim.DKIMSigner;
 import org.javlo.external.agitos.dkim.SMTPDKIMMessage;
@@ -543,6 +544,10 @@ public class MailService {
 
 	public void sendMail(InternetAddress sender, InternetAddress recipient, String subject, String content, boolean isHTML) throws MessagingException {
 		sendMail(null, sender, recipient, (List<InternetAddress>) null, (List<InternetAddress>) null, subject, content, isHTML, null, null);
+	}
+	
+	public void sendMail(GlobalContext globalContext, InternetAddress sender, InternetAddress recipient, String subject, String content, boolean isHTML) throws MessagingException {
+		sendMail(null, sender, recipient, (List<InternetAddress>) null, (List<InternetAddress>) null, subject, content, isHTML, globalContext.getUnsubscribeLink(), globalContext.getDKIMBean());
 	}
 
 	public static void resetInstance() {

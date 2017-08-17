@@ -540,8 +540,7 @@ public class ArrayFileComponent extends GenericFile {
 					}
 				}
 			}
-
-			System.out.println("***sheet.getNumMergedRegions() = " + sheet.getNumMergedRegions());
+			
 			for (int i = 0; i < sheet.getNumMergedRegions(); i++) {
 				CellRangeAddress cellRange = sheet.getMergedRegion(i);
 				for (int x = cellRange.getFirstColumn(); x <= cellRange.getLastColumn(); x++) {

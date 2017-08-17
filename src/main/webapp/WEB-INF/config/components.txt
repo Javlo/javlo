@@ -26,6 +26,7 @@ org.javlo.component.meta.AutoNumberComponent
 org.javlo.component.meta.Slogan
 org.javlo.component.meta.I18nComponent
 org.javlo.component.meta.Forward
+org.javlo.component.meta.TaxonomyDisplayComponent
 
 --content.title.text
 

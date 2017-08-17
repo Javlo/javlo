@@ -37,7 +37,7 @@ public class XMLFactory {
 	}
 	
 	/**
-	 * get the root node from an input stream (grh)
+	 * get the root node from an url (grh)
 	 */
 	public static NodeXML getFirstNode(String xml) throws Exception {
 		DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();

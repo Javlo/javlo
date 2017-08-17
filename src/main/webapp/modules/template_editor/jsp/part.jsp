@@ -28,8 +28,17 @@
 		<div class="cols">
 		<div class="one_half">				
 		<div class="line ${not empty exclude.width?' disabled':''}">
-			<label for="width-${part.name}">width <c:if test="${not empty part.finalWidth}"> (${part.finalWidth})</c:if></label>
-			<input type="text" id="width-${part.name}" name="width" value="${part.width}" />
+			<label for="width-${part.name}">width <c:if test="${not empty part.finalWidth}"> (${part.finalWidth})</c:if></label>			
+			<c:if test="${!template.bootstrap}">
+			<input type="text" id="width-${part.name}" name="width" value="${part.width}" />			
+			</c:if><c:if test="${template.bootstrap}">
+				<select id="width-${part.name}" name="width">
+					<option<c:if test="${part.width==auto}"> selected="selected"</c:if>>auto</option>
+					<c:forEach var = "i" begin = "1" end = "12">
+						<option<c:if test="${part.width != 'auto' && part.width==i}"> selected="selected"</c:if>>${i}</option>
+					</c:forEach>
+				</select>
+			</c:if>
 		</div>
 		<div class="line ${not empty exclude.margin?' disabled':''}">
 			<label for="margin-${part.name}">margin</label>
@@ -128,12 +137,50 @@
 			</select>			
 		</div>
 		<c:if test="${not empty param.upload}">
-		<div class="line">
-			<label for="image-${part.name}">preview image</label>
-			<input type="file" id="image-${part.name}" name="image" />
+		<div class="line">			
+			<label for="image-${part.name}">preview image</label>			
+			<input type="file" id="image-${part.name}" name="image" />						
 		</div>
+		<script>		
+        (function () {
+           var watcher = new FileWatcher(),
+               resources = ResourceCollector.collect();
+           watcher.addListener(function () {
+             location.reload();
+           });
+           watcher.watch(resources);
+        }());		
+		function snapshot() {
+			var canvas = document.getElementById('template-canvas'),
+				context = canvas.getContext('2d');
+			canvas.width = 1280;
+			canvas.height = 1280;
+
+			// Grab the iframe
+			var inner = document.getElementById('template-iframe');
+
+			// Get the image
+			iframe2image(inner, function (err, img) {			  
+			  if (err) { return console.error(err); }
+			  context.drawImage(img, 0, 0);
+			});
+			
+			var dataURL = canvas.toDataURL();
+			jQuery.ajax({
+				  type: "POST",
+				  url: "${info.currentURL}?webaction=template-editor.snapshot",
+				  data: { 
+				     visual: dataURL
+				  }
+				}).done(function(o) {				  	
+				  jQuery("#template-image").attr("src", jQuery("#template-image").attr('src'));
+				});
+		}
+		</script>
 		<div class="preview">
-			<img src="${template.previewUrl}?random-id=${info.randomId}" alt="template preview" />
+			<!-- <button type="button" class="btn btn-default pull-right" onclick="snapshot(); return false;">snapshot</button>  -->
+			<img id="template-image" src="${template.previewUrl}?random-id=${info.randomId}" alt="template preview" />
+			<canvas id="template-canvas" class="hidden"></canvas>
 		</div>
 		</c:if>
 		

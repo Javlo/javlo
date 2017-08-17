@@ -18,6 +18,7 @@ import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.navigation.MenuElement;
+import org.javlo.service.ContentService;
 import org.javlo.service.social.ISocialNetwork;
 import org.javlo.service.social.SocialService;
 import org.javlo.service.social.SocialUser;
@@ -43,6 +44,10 @@ public class OauthServlet extends HttpServlet {
 			try {
 				ContentContext ctx = ContentContext.getContentContext(request, response);
 				MenuElement targetPage = NavigationHelper.getPageById(ctx, params.get("page"));
+				if (targetPage == null) {
+					ContentService contentService = ContentService.getInstance(ctx.getRequest());
+					targetPage = contentService.getNavigation(ctx);
+				}
 				ISocialNetwork social = SocialService.getInstance(ctx).getNetwork(socialNetworkName);
 				if (social == null || targetPage == null) {
 					if (social == null) {

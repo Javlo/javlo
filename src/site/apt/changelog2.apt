@@ -876,4 +876,6 @@ change log
  
  * 5/ send mail to authors of ticket / pop3 mail delivery failure analyse
  
- * 6/ login update 
+ * 6/ login update / getRessourceURL / trim image / taxonomy
+ 
+* 2.1.0.5 16/08/17

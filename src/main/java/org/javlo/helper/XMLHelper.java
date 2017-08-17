@@ -22,6 +22,7 @@ import org.javlo.component.core.ComponentBean;
 import org.javlo.component.image.IImageTitle;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
+import org.javlo.data.taxonomy.TaxonomyBean;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
 import org.javlo.service.PersistenceService;
@@ -473,6 +474,10 @@ public class XMLHelper {
 				out.print("\" breakrepeat=\"");
 				out.print(page.isBreakRepeat());
 			}
+			if (page.getTaxonomy() != null && page.getTaxonomy().size() > 0) {
+				out.print("\" taxonomy=\"");
+				out.print(StringHelper.collectionToString(page.getTaxonomy()));				
+			}
 			if (page.getIpSecurityErrorPageName() != null) {
 				out.print("\" ipsecpagename=\"");
 				out.print(page.getIpSecurityErrorPageName());
@@ -574,6 +579,17 @@ public class XMLHelper {
 	static void insertXMLPage(PrintWriter out, Collection<MenuElement> pages, String defaultLg) throws Exception {
 		insertXMLPage(out, null, pages, defaultLg, true);
 	}
+	
+	static void insertTaxonomy(PrintWriter out, TaxonomyBean node) throws Exception {
+		out.println("<taxo name=\""+Encode.forXmlAttribute(node.getName())+"\" id=\""+Encode.forXmlAttribute(node.getId())+"\">");
+		for (Map.Entry<String, String> label : node.getLabels().entrySet()) {
+			out.println("<label lang=\""+Encode.forXmlAttribute(label.getKey())+"\">"+Encode.forXmlContent(label.getValue())+"</label>");
+		}
+		for (TaxonomyBean child : node.getChildren()) {
+			insertTaxonomy(out, child);
+		}
+		out.println("</taxo>");
+	}
 
 	/**
 	 * return the content in a XML structure
@@ -582,13 +598,16 @@ public class XMLHelper {
 	 *            the contentContext
 	 * @return A string with a xml in.
 	 */
-	public static void storeXMLContent(Writer inOut, MenuElement menu, int renderMode, int version, String defaultLg, Map<String, String> contentMap) throws Exception {
+	public static void storeXMLContent(Writer inOut, MenuElement menu, int renderMode, int version, String defaultLg, Map<String, String> contentMap, TaxonomyBean taxonomyRoot) throws Exception {
 		PrintWriter out = new PrintWriter(inOut, true);
 		out.println("<?xml version=\"1.0\" encoding=\"" + ContentContext.CHARACTER_ENCODING + "\"?>");
 		out.println("<content cmsversion=\"" + AccessServlet.VERSION + "\" version=\"" + version + "\" date=\"" + PersistenceService.renderDate(new Date()) + "\">");
 		insertXMLPage(out, Arrays.asList(new MenuElement[] { menu }), defaultLg);
 		if (!PersistenceService.STORE_DATA_PROPERTIES) {
 			insertMap(out, contentMap, PersistenceService.GLOBAL_MAP_NAME);
+		}
+		if (taxonomyRoot != null) {
+			insertTaxonomy(out, taxonomyRoot);
 		}
 		out.println("</content>");
 		out.close();

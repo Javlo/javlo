@@ -17,6 +17,8 @@ import org.javlo.actions.AbstractModuleAction;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
+import org.javlo.helper.JavaScriptBlob;
+import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.ServletHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
@@ -57,7 +59,7 @@ public class TemplateEditorAction extends AbstractModuleAction {
 				editableTemplateUnvalid.add(template.getName());
 				// choose first template as current template.
 				if (editorContext.getCurrentTemplate() == null || editorContext.getCurrentTemplate().isValid() || editorContext.getCurrentTemplate().isDeleted()) {
-					editorContext.setCurrentTemplate(template);
+					editorContext.setCurrentTemplate(template.getName());
 				}
 			} else if (template.isEditable() && template.isValid()) {
 				editableTemplateValid.add(template.getName());
@@ -170,7 +172,7 @@ public class TemplateEditorAction extends AbstractModuleAction {
 				editorContext.getCurrentTemplate().resetRows();
 			}
 		}
-		editorContext.getCurrentTemplate().clearRenderer(ctx);
+		editorContext.getCurrentTemplate().reloadConfig(ctx);
 		return msg;
 	}
 
@@ -213,13 +215,14 @@ public class TemplateEditorAction extends AbstractModuleAction {
 				}
 			}
 		}
-		editorContext.getCurrentTemplate().clearRenderer(ctx);		
+		editorContext.getCurrentTemplate().reloadConfig(ctx);		
 		return null;
 	}
 
 	public static String performUpdateStyle(RequestService rs, ServletContext application, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
 		TemplateEditorContext editorContext = TemplateEditorContext.getInstance(ctx.getRequest().getSession());
 		TemplateStyle style = editorContext.getCurrentTemplate().getStyle();
+		boolean parentChange = false;
 
 		if (rs.getParameter("delete", null) != null) {
 			if (editorContext.getCurrentTemplate().getParent().getName().equals("default")) {
@@ -253,13 +256,13 @@ public class TemplateEditorAction extends AbstractModuleAction {
 				style.setH5Size(rs.getParameter("h5size", ""));
 				style.setH6Size(rs.getParameter("h6size", ""));
 				
-				System.out.println("*** rs.getParameter('pagination', null) = "+rs.getParameter("pagination", null));
 				editorContext.getCurrentTemplate().setProperty("pagination", ""+StringHelper.isTrue(rs.getParameter("pagination", null)));
 
 				style.setBackgroundColor(rs.getParameter("backgroundColor", ""));
 				style.setOuterBackgroundColor(rs.getParameter("outerBackgroundColor", ""));
-				String parent = rs.getParameter("parent", null);
+				String parent = rs.getParameter("parent", null);				
 				if (parent != null && !parent.equals(editorContext.getCurrentTemplate().getParentName())) {
+					parentChange = true;
 					Template template = TemplateFactory.getTemplates(ctx.getRequest().getSession().getServletContext()).get(parent);
 					if (template != null) {
 						style.setEmptyField(template.getStyle());
@@ -282,7 +285,11 @@ public class TemplateEditorAction extends AbstractModuleAction {
 					}
 				}
 			}
-			editorContext.getCurrentTemplate().clearRenderer(ctx);
+			if (parentChange) {
+				editorContext.getCurrentTemplate().clearRenderer(ctx);
+			} else {
+				editorContext.getCurrentTemplate().reloadConfig(ctx);
+			}
 		}
 		return null;
 	}
@@ -290,25 +297,44 @@ public class TemplateEditorAction extends AbstractModuleAction {
 	public static String performCreateArea(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws IOException {
 		TemplateEditorContext editorContext = TemplateEditorContext.getInstance(ctx.getRequest().getSession());
 		editorContext.getCurrentTemplate().addArea(editorContext.getArea().getRow().getName());
-		editorContext.getCurrentTemplate().clearRenderer(ctx);
+		editorContext.getCurrentTemplate().reloadConfig(ctx);
 		return null;
 	}
 
 	public static String performCreateRow(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws IOException {
 		TemplateEditorContext editorContext = TemplateEditorContext.getInstance(ctx.getRequest().getSession());
 		editorContext.getCurrentTemplate().addRow();
-		editorContext.getCurrentTemplate().clearRenderer(ctx);
+		editorContext.getCurrentTemplate().reloadConfig(ctx);
 		return null;
 	}
 
 	public static String performChangeTemplate(RequestService rs, ServletContext application, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
 		String templateName = rs.getParameter("template", "");
-		TemplateEditorContext editorContext = TemplateEditorContext.getInstance(ctx.getRequest().getSession());
-		Template template = TemplateFactory.getTemplates(application).get(templateName);
-		if (template == null) {
-			return "template not found : " + templateName;
+		TemplateEditorContext editorContext = TemplateEditorContext.getInstance(ctx.getRequest().getSession());				
+		editorContext.setCurrentTemplate(templateName);
+		return null;
+	}
+	
+	public static String performSnapshot(RequestService rs, StaticConfig staticConfig, ContentContext ctx, ServletContext application, MessageRepository messageRepository, I18nAccess i18nAccess) throws IOException {
+		for (FileItem item : rs.getAllFileItem()) {
+			System.out.println("##### TemplateEditorAction.performSnapshot : file item = "+item.getFieldName()); //TODO: remove debug trace
 		}
-		editorContext.setCurrentTemplate(template);
+		String base64Data = ""+rs.getParameterMap().get("visual");		
+		if (base64Data.length()>0) {
+			JavaScriptBlob blob = new JavaScriptBlob(base64Data);
+			if (blob.getContentType().equalsIgnoreCase("image/png")) {
+				TemplateEditorContext editorContext = TemplateEditorContext.getInstance(ctx.getRequest().getSession());
+				Template template = editorContext.getCurrentTemplate();	
+				System.out.println("##### TemplateEditorAction.performSnapshot : template.getVisualAbsoluteFile() = "+template.getVisualAbsoluteFile()); //TODO: remove debug trace
+				System.out.println("##### TemplateEditorAction.performSnapshot : #blob.getData() = "+blob.getData().length); //TODO: remove debug trace
+				ResourceHelper.writeBytesToFile(template.getVisualAbsoluteFile(), blob.getData());
+				FileCache fileCache = FileCache.getInstance(application);
+				fileCache.clear(ctx.getGlobalContext().getContextKey());
+				template.importTemplateInWebapp(staticConfig, ctx);
+			}
+		} else {
+			return "no data";
+		}
 		return null;
 	}
 
@@ -332,7 +358,7 @@ public class TemplateEditorAction extends AbstractModuleAction {
 			TemplateFactory.clearTemplate(application);
 			Template template = TemplateFactory.getTemplates(application).get(newTemplate.getName());
 			TemplateEditorContext editorContext = TemplateEditorContext.getInstance(ctx.getRequest().getSession());
-			editorContext.setCurrentTemplate(template);
+			editorContext.setCurrentTemplate(newTemplate.getName());
 			template.importTemplateInWebapp(staticConfig, ctx);
 
 		}
@@ -346,3 +372,4 @@ public class TemplateEditorAction extends AbstractModuleAction {
 	}
 
 }
+

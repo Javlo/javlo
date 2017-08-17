@@ -24,7 +24,7 @@ public class UserLogin extends AbstractVisualComponent implements IAction {
 
 	private static final String ADMIN = "administrators";
 
-	public static final String TYPE = "user-login";
+	public static final String TYPE = "b";
 
 	@Override
 	public String getType() {

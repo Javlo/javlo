@@ -24,8 +24,8 @@ public class ListService {
 
 	Map<String, List<Item>> localLists = new Hashtable<String, List<Item>>();
 	
-	private static final Map<String, List<Item>> hardCodedCache = new HashMap<String, List<Item>>();
-
+	private static final Map<String, List<Item>> hardNodeCache = new HashMap<String, List<Item>>();
+	
 	public static class OrderList implements Comparator<Item> {
 
 		@Override
@@ -126,8 +126,10 @@ public class ListService {
 	}
 
 	public static class Item {
-		private String key;
-		private String value;
+		String key;
+		String value;
+		
+		private Item(){};
 
 		public Item(Map.Entry mapEntry) {
 			super();
@@ -156,7 +158,21 @@ public class ListService {
 		public void setValue(String value) {
 			this.value = value;
 		}
-
+	}
+	
+	public static class I18nItem extends Item {
+		private String lg=null;
+		private Map<String, String> labels;
+		public I18nItem(String key, Map<String,String> labels) {
+			this.key = key;
+			this.labels = labels;
+		}
+		public String getLabel() {
+			return labels.get(lg);
+		}
+		public void setLg(String lg) {
+			this.lg = lg;
+		}
 	}
 
 	private static final String KEY = ListService.class.getName();
@@ -217,8 +233,8 @@ public class ListService {
 	
 	private synchronized List<Item> getHardCodedList(ContentContext ctx, String name) throws IOException, ServiceException, Exception {		
 		String key = name+'-'+ctx.getRequestContentLanguage();
-		if (hardCodedCache.get(key) != null) {
-			return hardCodedCache.get(key);
+		if (hardNodeCache.get(key) != null) {
+			return hardNodeCache.get(key);
 		}
 		if (name.equals("countries")) {
 			List<ListService.Item> countriesList = new LinkedList<ListService.Item>();
@@ -227,7 +243,7 @@ public class ListService {
 				countriesList.add(new ListService.Item(entry));
 			}
 			Collections.sort(countriesList, new OrderList());
-			hardCodedCache.put(key, countriesList);			
+			hardNodeCache.put(key, countriesList);			
 			return countriesList;
 		}
 		return null;

@@ -1367,5 +1367,18 @@ public class URLHelper extends ElementaryURLHelper {
 		}
 		return outText;
 	}
+	
+	/**
+	 * if url contains ? return & else return ?
+	 * @param url
+	 * @return
+	 */
+	public static final String getSep(String url) {
+		if (url == null || !url.contains("?")) {
+			return "?";
+		} else {
+			return "&";
+		}
+	}
 
 }

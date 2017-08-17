@@ -2766,10 +2766,10 @@ public class XHTMLHelper {
 		String titleColor = "#000000";
 		if (templateData != null) {
 			if (templateData.getBackground() != null) {
-				backgroundColor = ColorHelper.toHexString(templateData.getBackground());
+				backgroundColor = templateData.getBackground().toString();
 			}
 			if (templateData.getTitle() != null) {
-				titleColor = ColorHelper.toHexString(templateData.getTitle());
+				titleColor = templateData.getTitle().toString();
 			}
 		}
 

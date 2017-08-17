@@ -389,5 +389,10 @@ public class DefaultTemplate extends Template {
 	public List<InternetAddress> getSenders() {
 		return null;
 	}
+	
+	@Override
+	public boolean isBootstrap() {
+		return false;
+	}
 
 }

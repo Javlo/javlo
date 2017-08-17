@@ -1,6 +1,10 @@
 package org.javlo.template;
 
+import org.javlo.helper.StringHelper;
+
 public class Area extends TemplatePart {
+	
+	public static final int MAX_WIDTH = 12;
 	
 	private Row row;
 	private String autoWidth = null;
@@ -32,7 +36,17 @@ public class Area extends TemplatePart {
 		if (getAutoWidth() != null) {
 			return getAutoWidth();
 		} else {
-			return getWidth();
+			if ("auto".equals(getWidth())) {
+				int width = MAX_WIDTH;
+				for (Area area : getRow().getAreas()) {
+					if (area != this && StringHelper.isDigit(area.getWidth())) {
+						width = width - Integer.parseInt(area.getWidth());
+					}
+				}
+				return ""+width;
+			} else {
+				return getWidth();
+			}
 		}
 	}
 	

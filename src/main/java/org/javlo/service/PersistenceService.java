@@ -52,6 +52,8 @@ import org.javlo.component.core.ComponentLayout;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
+import org.javlo.data.taxonomy.TaxonomyBean;
+import org.javlo.data.taxonomy.TaxonomyService;
 import org.javlo.helper.DebugHelper;
 import org.javlo.helper.DebugHelper.StructureException;
 import org.javlo.helper.LocalLogger;
@@ -768,6 +770,10 @@ public class PersistenceService {
 		page.setSharedName(pageXML.getAttributeValue("sharedName", null));
 
 		page.setIpSecurityErrorPageName(pageXML.getAttributeValue("ipsecpagename"));
+		
+		if (pageXML.getAttributeValue("taxonomy") != null) {
+			page.setTaxonomy(new HashSet<String>(StringHelper.stringToCollection(pageXML.getAttributeValue("taxonomy"))));
+		}
 
 		String type = pageXML.getAttributeValue("type", null);
 		if (type != null) {
@@ -824,7 +830,7 @@ public class PersistenceService {
 	 * @throws ServiceException
 	 * @throws InterruptedException
 	 */
-	protected LoadingBean load(ContentContext ctx, Object in, File propFile, Map<String, String> contentAttributeMap, int renderMode) throws ServiceException, InterruptedException {
+	protected LoadingBean load(ContentContext ctx, Object in, File propFile, Map<String, String> contentAttributeMap, TaxonomyBean taxonomyBean, int renderMode) throws ServiceException, InterruptedException {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		MenuElement root = MenuElement.getInstance(globalContext);
 
@@ -878,6 +884,7 @@ public class PersistenceService {
 				root.setBreakRepeat(StringHelper.isTrue(page.getAttributeValue("breakrepeat", "false")));
 				root.setShortURL(page.getAttributeValue("shorturl", null));
 				root.setChildrenAssociation(StringHelper.isTrue(page.getAttributeValue("childrenAssociation", null)));
+				root.setTaxonomy(StringHelper.stringToSet(page.getAttributeValue("taxonomy")));
 
 				String[] editorRoles = StringHelper.stringToArray(page.getAttributeValue("editor-roles", ""), "#");
 				if (editorRoles != null) {
@@ -967,6 +974,11 @@ public class PersistenceService {
 					contentAttributeMap.put(key, entry.getValue().toString());
 				}
 			}
+			if (taxonomyBean != null) {
+				taxonomyBean.getChildren().clear();
+				taxonomyBean.getLabels().clear();
+				loadTaxonomy(firstNode.getChild("taxo"), taxonomyBean);
+			}
 		} catch (SAXParseException e) {
 			// e.printStackTrace();
 			MessageRepository.getInstance(ctx).setGlobalMessageAndNotification(ctx, new GenericMessage("error XML parsing (line:" + e.getLineNumber() + " col:" + e.getColumnNumber() + "): " + e.getMessage(), GenericMessage.ERROR, ""));
@@ -989,6 +1001,22 @@ public class PersistenceService {
 
 		return outBean;
 
+	}
+
+	private void loadTaxonomy(NodeXML node, TaxonomyBean taxonomyBean) {
+		if (node != null) {
+			taxonomyBean.setId(node.getAttributeValue("id"));
+			taxonomyBean.setName(node.getAttributeValue("name"));
+			for (NodeXML child : node.getChildren()) {				
+				if (child.getName().equals("label")) {					
+					taxonomyBean.updateLabel(child.getAttributeValue("lang"), child.getContent());
+				} else if (child.getName().equals("taxo")) {					
+					TaxonomyBean bean = new TaxonomyBean();
+					taxonomyBean.addChildAsLast(bean);
+					loadTaxonomy(child, bean);					
+				}
+			}
+		}
 	}
 
 	public MenuElement load(ContentContext ctx, int renderMode, Map<String, String> contentAttributeMap, Date timeTravelDate) throws Exception {
@@ -1148,13 +1176,13 @@ public class PersistenceService {
 					 * ); out.close();
 					 */
 				} else {
-					LoadingBean loadBean = load(ctx, in, propFile, contentAttributeMap, renderMode);
+					LoadingBean loadBean = load(ctx, in, propFile, contentAttributeMap, TaxonomyService.getInstance(globalContext).getRoot(), renderMode );
 					logger.info("load : " + xmlFile);
 					if (loadBean.isError() && correctXML && xmlFile != null) {
 						correctCharacterEncoding(xmlFile);
 						in.close();
 						in = new FileInputStream(xmlFile);
-						loadBean = load(ctx, in, propFile, contentAttributeMap, renderMode);
+						loadBean = load(ctx, in, propFile, contentAttributeMap, TaxonomyService.getInstance(globalContext).getRoot(), renderMode);
 					}
 					root = loadBean.getRoot();
 					try {
@@ -1464,6 +1492,7 @@ public class PersistenceService {
 			persThread.setPersistenceService(this);
 			persThread.setDefaultLg(defaultLg);
 			persThread.setGlobalContentMap(content.getGlobalMap(ctx));
+			persThread.setTaxonomyRoot(TaxonomyService.getInstance(ctx.getGlobalContext()).getRoot());
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 			persThread.setContextKey(globalContext.getContextKey());
 			persThread.setDataFolder(globalContext.getDataFolder());

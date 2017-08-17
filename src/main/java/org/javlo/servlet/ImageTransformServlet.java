@@ -1,5 +1,6 @@
 package org.javlo.servlet;
 
+import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
@@ -678,6 +679,11 @@ public class ImageTransformServlet extends HttpServlet {
 		// org.javlo.helper.Logger.stepCount("transform",
 		// "start - transformation - 2.5");
 		img = ImageEngine.RBGAdjust(img, config.getAdjustColor(device, filter, area));
+		
+		Color trimColor = config.getTrimColor(device, filter, area);		
+		if (trimColor != null) {
+			img = ImageEngine.trim(img, trimColor, config.getTrimTolerance(device, filter, area));
+		}
 		// org.javlo.helper.Logger.stepCount("transform",
 		// "start - transformation - 2.6");
 		img = ImageEngine.replaceAlpha(img, config.getReplaceAlpha(device, filter, area));
