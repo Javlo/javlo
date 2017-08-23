@@ -32,6 +32,8 @@ import org.javlo.template.Row;
 import org.javlo.template.Template;
 import org.javlo.template.TemplateFactory;
 import org.javlo.template.TemplateStyle;
+import org.javlo.user.AdminUserSecurity;
+import org.javlo.user.User;
 import org.javlo.ztatic.FileCache;
 
 public class TemplateEditorAction extends AbstractModuleAction {
@@ -53,10 +55,12 @@ public class TemplateEditorAction extends AbstractModuleAction {
 		if (editorContext.getCurrentTemplate() != null && (editorContext.getCurrentTemplate().isValid() || editorContext.getCurrentTemplate().isDeleted())) {
 			editorContext.setCurrentTemplate(null);
 		}
-
+		User user = ctx.getCurrentEditUser();
 		for (Template template : TemplateFactory.getAllTemplates(ctx.getRequest().getSession().getServletContext())) {
 			if (template.isEditable() && !template.isValid() && !template.isDeleted()) {
-				editableTemplateUnvalid.add(template.getName());
+				if (ctx.getGlobalContext().getTemplatesNames().contains(template.getName()) || AdminUserSecurity.getInstance().isAdmin(user)) {
+					editableTemplateUnvalid.add(template.getName());
+				}
 				// choose first template as current template.
 				if (editorContext.getCurrentTemplate() == null || editorContext.getCurrentTemplate().isValid() || editorContext.getCurrentTemplate().isDeleted()) {
 					editorContext.setCurrentTemplate(template.getName());
