@@ -20,8 +20,9 @@ import org.javlo.helper.URLHelper;
 import org.javlo.helper.XHTMLHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.message.MessageRepository;
+import org.javlo.service.IListItem;
 import org.javlo.service.ListService;
-import org.javlo.service.ListService.Item;
+import org.javlo.service.ListService.ListItem;
 import org.javlo.service.RequestService;
 import org.javlo.user.AdminUserFactory;
 import org.javlo.user.IUserInfo;
@@ -48,9 +49,9 @@ public class UserSearch extends AbstractVisualComponent implements IAction {
 
 		ListService listService = ListService.getInstance(ctx);
 
-		List<Item> countries = listService.getList(ctx, "countries");
-		List<Item> functions = listService.getList(ctx, "functions");
-		List<Item> organizations = listService.getList(ctx, "organization");
+		List<IListItem> countries = listService.getList(ctx, "countries");
+		List<IListItem> functions = listService.getList(ctx, "functions");
+		List<IListItem> organizations = listService.getList(ctx, "organization");
 
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(outStream);
@@ -69,7 +70,7 @@ public class UserSearch extends AbstractVisualComponent implements IAction {
 			} else {
 				out.println("<select id=\"country\" name=\"country\">");
 				out.println("<option></option>");
-				for (Item item : countries) {
+				for (IListItem item : countries) {
 					String selected = "";
 					if (rs.getParameter("country", "").equals(item.getKey())) {
 						selected = " selected=\"selected\"";
@@ -85,7 +86,7 @@ public class UserSearch extends AbstractVisualComponent implements IAction {
 			} else {
 				out.println("<select id=\"domain\" name=\"domain\">");
 				out.println("<option></option>");
-				for (Item item : functions) {
+				for (IListItem item : functions) {
 					String selected = "";
 					if (rs.getParameter("domain", "").equals(item.getKey())) {
 						selected = " selected=\"selected\"";
@@ -139,7 +140,7 @@ public class UserSearch extends AbstractVisualComponent implements IAction {
 		return new String(outStream.toByteArray());
 	}
 
-	private static String renderTable(ContentContext ctx, Collection<UserInfo> users, String emails, List<ListService.Item> countries, List<ListService.Item> functions, List<ListService.Item> organizations) throws FileNotFoundException, IOException {
+	private static String renderTable(ContentContext ctx, Collection<UserInfo> users, String emails, List<IListItem> countries, List<IListItem> functions, List<IListItem> organizations) throws FileNotFoundException, IOException {
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(outStream);
 		out.println("<table>");
@@ -189,7 +190,7 @@ public class UserSearch extends AbstractVisualComponent implements IAction {
 		return new String(outStream.toByteArray());
 	}
 
-	private static String renderList(ContentContext ctx, Collection<UserInfo> users, String emails, List<ListService.Item> countries, List<ListService.Item> functions, List<ListService.Item> organizations) throws Exception {
+	private static String renderList(ContentContext ctx, Collection<UserInfo> users, String emails, List<IListItem> countries, List<IListItem> functions, List<IListItem> organizations) throws Exception {
 		
 		
 		

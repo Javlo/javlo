@@ -879,3 +879,5 @@ change log
  * 6/ login update / getRessourceURL / trim image / taxonomy
  
 * 2.1.0.5 16/08/17
+
+ * 1/ field validation / taxonomy integration in list service 

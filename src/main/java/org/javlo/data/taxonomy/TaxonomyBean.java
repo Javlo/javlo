@@ -89,6 +89,15 @@ public class TaxonomyBean {
 	public List<TaxonomyBean> getChildren() {
 		return children;
 	}
+	
+	public TaxonomyBean searchChildByName(String name) {
+		for (TaxonomyBean taxonomyBean : children) {
+			if (taxonomyBean.getName().equals(name)) {
+				return taxonomyBean;
+			}
+		}
+		return null;
+	}
 
 	public void setChildren(List<TaxonomyBean> children) {
 		this.children = children;
@@ -151,4 +160,10 @@ public class TaxonomyBean {
 			}
 		}
 	}
+	
+	@Override
+	public String toString() {
+		return getName();
+	}
+	
 }

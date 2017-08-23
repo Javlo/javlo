@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.javlo.context.ContentContext;
 import org.javlo.data.InfoBean;
 import org.javlo.helper.StringHelper;
@@ -14,8 +15,17 @@ import org.javlo.module.file.FileAction;
 
 public class FieldWysiwyg extends Field {
 
-	protected String getEditorComplexity(ContentContext ctx) throws Exception {	
+	protected String getEditorComplexity(ContentContext ctx) throws Exception {
 		return getMetaData("editor-complexity", "soft");
+	}
+
+	protected int getMaxParagraph() {
+		String maxP = getMetaData("max-paragraph", null);
+		if (StringHelper.isDigit(maxP)) {
+			return Integer.parseInt(maxP);
+		} else {
+			return Integer.MAX_VALUE;
+		}
 	}
 
 	@Override
@@ -32,9 +42,24 @@ public class FieldWysiwyg extends Field {
 		return value;
 	}
 
+	public String getText() {
+		return getValue();
+	}
+
+	@Override
+	public boolean validate() {
+		if (getMaxParagraph() < Integer.MAX_VALUE) {
+			if (StringUtils.countMatches(StringHelper.neverNull(getText()).toLowerCase(), "</p") > getMaxParagraph()) {
+				setMessage(i18nAccess.getText("content.dynamic-component.error.max-paragraph") + getMaxParagraph());				
+				setMessageType(Field.MESSAGE_ERROR);
+				return false;				
+			}
+		}
+		return super.validate();
+	}
+
 	@Override
 	public String getEditXHTMLCode(ContentContext ctx) {
-
 		try {
 			String refCode = referenceEditCode(ctx);
 			if (refCode != null) {
@@ -47,8 +72,11 @@ public class FieldWysiwyg extends Field {
 		StringWriter writer = new StringWriter();
 		PrintWriter out = new PrintWriter(writer);
 		out.println("<div class=\"form-group " + getType() + "\">");
-		out.println("<label for=\""+getInputName()+"\">"+getLabel(ctx, new Locale(ctx.getGlobalContext().getEditLanguage(ctx.getRequest().getSession())))+"</label>");
-		out.print("<textarea class=\"tinymce-light wysiwyg\" id=\"" + getInputName() + "\" name=\"" + getInputName() + "\"");
+		out.println("<label for=\"" + getInputName() + "\"><strong>" + getLabel(ctx, new Locale(ctx.getGlobalContext().getEditLanguage(ctx.getRequest().getSession()))) + "</strong></label>");
+		if (getMessage() != null && getMessage().trim().length() > 0) {
+			out.println("	<div class=\"message " + getMessageTypeCSSClass() + "\">" + getMessage() + "</div>");
+		}
+		out.print("<textarea class=\"tinymce-light wysiwyg form-control\" id=\"" + getInputName() + "\" name=\"" + getInputName() + "\"");
 		out.print(" rows=\"" + 10 + "\">");
 
 		String hostPrefix;
@@ -65,7 +93,7 @@ public class FieldWysiwyg extends Field {
 			filesParams.put("select", "_TYPE_");
 			filesParams.put(ContentContext.PREVIEW_EDIT_PARAM, "true");
 			String chooseImageURL = URLHelper.createModuleURL(ctx, ctx.getPath(), "file", filesParams);
-			out.println("<script type=\"text/javascript\">jQuery(document).ready(loadWysiwyg('#" + getInputName() + "','" + getEditorComplexity(ctx) + "','" + chooseImageURL + "'));</script>");
+			out.println("<script type=\"text/javascript\">jQuery(document).ready(loadWysiwyg('#" + getInputName() + "','" + getEditorComplexity(ctx) + "','" + chooseImageURL + "'));</script>");			
 			out.flush();
 		} catch (Exception e) {
 			e.printStackTrace();

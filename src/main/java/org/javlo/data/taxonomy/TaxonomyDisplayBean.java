@@ -6,11 +6,13 @@ import java.util.List;
 
 import org.javlo.context.ContentContext;
 import org.javlo.helper.StringHelper;
+import org.javlo.service.IListItem;
 
-public class TaxonomyDisplayBean {
+public class TaxonomyDisplayBean implements IListItem {
 
 	private ContentContext ctx;
 	private TaxonomyBean bean;
+	private boolean displayParentLabel = false;
 	
 	public final static List<TaxonomyDisplayBean> convert (ContentContext ctx, List<TaxonomyBean> inBeans) {
 		if (inBeans == null) {
@@ -26,8 +28,7 @@ public class TaxonomyDisplayBean {
 		return outBeans;
 	}
 	
-	public TaxonomyDisplayBean(ContentContext ctx, TaxonomyBean bean) {
-		super();
+	public TaxonomyDisplayBean(ContentContext ctx, TaxonomyBean bean) {		
 		this.ctx = ctx;
 		this.bean = bean;
 	}
@@ -51,11 +52,33 @@ public class TaxonomyDisplayBean {
 	}
 	
 	public String getLabel() {
+		String parentLabel = "";
+		if (displayParentLabel) {
+			parentLabel = getParent().getLabel()+" > ";
+		}
 		String label = bean.getLabels().get(ctx.getRequestContentLanguage());
 		if (StringHelper.isEmpty(label)) {
-			return getName();
+			return parentLabel+getName();
 		} else {
-			return label;
+			return parentLabel+label;
 		}
+	}
+
+	@Override
+	public String getKey() {
+		return bean.getId();
+	}
+
+	@Override
+	public String getValue() {
+		return getLabel();
+	}
+
+	public boolean isDisplayParentLabel() {
+		return displayParentLabel;
+	}
+
+	public void setDisplayParentLabel(boolean displayParentLabel) {
+		this.displayParentLabel = displayParentLabel;
 	}
 }

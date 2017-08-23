@@ -54,6 +54,36 @@ jQuery(document).ready(function() {
 		}
 	});
 	
+	jQuery('form button.ajax, form input.ajax').live("click", function(event) {
+		var	form = jQuery(this).closest("form");
+		var ajaxSubmit = true;
+		if (form.data("ajaxSubmit") != null) {
+			ajaxSubmit = form.data("ajaxSubmit");
+		}
+		if (!canPostDataWithAjax()) {
+			jQuery.each(form.find("input[type='file']"), function() {			
+				if (jQuery(this).val().length > 0) {			
+					ajaxSubmit = false;				
+				}
+			});
+		}
+		if (ajaxSubmit) {			
+			event.preventDefault();
+			jQuery("#ajax-loader").addClass("active");
+			jQuery(".ajax-loader").addClass("active");
+			var queryString = form.attr("action");
+			sep="?";
+			if (queryString.indexOf("?")>=0) {
+				sep="&";
+			}
+			queryString = queryString + sep + jQuery(this).attr('name')+"="+jQuery(this).attr('value');
+			ajaxRequest(queryString, form[0]);
+			return false;
+		} else {
+			return true;
+		}
+	});
+	
 	initDropFile();	
 	
 	jQuery(document).trigger("ajaxUpdate");
@@ -75,7 +105,7 @@ function canPostDataWithAjax() {
 	}
 }
 
-function ajaxRequest(url, form, doneFunction) {	
+function ajaxRequest(url, form, doneFunction) {
 	if (url.indexOf("/edit-")>=0) {
 		url = url.replace("/edit-", "/ajax-");
 	} else {
@@ -116,6 +146,7 @@ function ajaxRequest(url, form, doneFunction) {
 			if (xhtmlId.indexOf("#") < 0 && xhtmlId.indexOf("#") < 0 && xhtmlId.indexOf(" ") < 0 ) { // if allready select don't add '#'
 				xhtmlId = "#"+xhtmlId;
 			}
+			
 			var item = jQuery(xhtmlId);			
 			if (item != null) {
 				jQuery(xhtmlId).replaceWith(xhtml);
@@ -131,7 +162,7 @@ function ajaxRequest(url, form, doneFunction) {
 			if (xhtmlId.indexOf("#") < 0 && xhtmlId.indexOf(".") < 0 && xhtmlId.indexOf(" ") < 0 ) { // if allready select don't add '#'				
 				xhtmlId = "#"+xhtmlId;
 			}			
-			var item = jQuery(xhtmlId);
+			var item = jQuery(xhtmlId);			
 			if (item != null) {
 				item.html(xhtml);	
 			} else {

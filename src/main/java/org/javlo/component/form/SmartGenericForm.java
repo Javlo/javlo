@@ -252,7 +252,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		return new String(outStream.toByteArray());
 	}
 
-	public String getEditXHTML(ContentContext ctx, Field field) {
+	private String getEditXHTML(ContentContext ctx, Field field) {
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(outStream);
 		String scrollToMe = "";
@@ -288,9 +288,9 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		}
 		out.println("<td class=\"required\"><input type=\"checkbox\" name=\"" + getInputName("require-" + field.getName()) + "\"" + required + " /></td>");
 		out.println("<td class=\"buttons\"><div  class=\"btn-group btn-group-sm\">");
-		out.println("  <button class=\"up btn btn-default btn-sm\" type=\"submit\" name=\"" + getInputName("up-" + field.getName()) + "\" ><span class=\"glyphicon glyphicon-menu-up\" aria-hidden=\"true\"></span></button>");
-		out.println("  <button class=\"down btn btn-default btn-sm\" type=\"submit\" name=\"" + getInputName("down-" + field.getName()) + "\"><span class=\"glyphicon glyphicon-menu-down\" aria-hidden=\"true\"></span></button>");
-		out.println("  <button class=\"needconfirm btn btn-default btn-sm\" type=\"submit\" name=\"" + getInputName("del-" + field.getName()) + "\" ><span class=\"glyphicon glyphicon-trash\" aria-hidden=\"true\"></span></button>");
+		out.println("  <button class=\"up btn btn-default btn-sm ajax\" type=\"submit\" name=\"" + getInputName("up-" + field.getName()) + "\" ><span class=\"glyphicon glyphicon-menu-up\" aria-hidden=\"true\"></span></button>");
+		out.println("  <button class=\"down btn btn-default btn-sm ajax\" type=\"submit\" name=\"" + getInputName("down-" + field.getName()) + "\"><span class=\"glyphicon glyphicon-menu-down\" aria-hidden=\"true\"></span></button>");
+		out.println("  <button class=\"needconfirm btn btn-default btn-sm ajax\" type=\"submit\" name=\"" + getInputName("del-" + field.getName()) + "\" ><span class=\"glyphicon glyphicon-trash\" aria-hidden=\"true\"></span></button>");
 		out.println("</div></td>");
 		out.println("</tr>");
 		out.close();
@@ -573,7 +573,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		store(ctx);
 
 		countCache = null;
-
+		
 		return null;
 	}
 

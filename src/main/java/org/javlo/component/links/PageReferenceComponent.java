@@ -1218,14 +1218,13 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		if (!validPageForCommand(ctx, page, currentSelection, commands)) {
 			return false;
 		}
-
-		if (ctx.getGlobalContext().getTaxonomy().isActive()) {
-			if (this.getTaxonomy() != null && this.getTaxonomy().size() > 0 && page.isRealContent(ctx)) {
-				// if taxonomy defined and page have no taxonomy >> page refuse
-				if (page.getTaxonomy() == null || page.getTaxonomy().size() == 0) {
+		
+		if (ctx.getGlobalContext().getAllTaxonomy(ctx).isActive()) {
+			if (this.getTaxonomy() != null && this.getTaxonomy().size() > 0) {
+				if (page.getTaxonomy() == null || page.getTaxonomy().size() == 0) {					
 					return false;
 				}
-				if (!ctx.getGlobalContext().getTaxonomy().isMatch(this, page)) {
+				if (!ctx.getGlobalContext().getAllTaxonomy(ctx).isMatch(this, page)) {					
 					return false;
 				}
 			}
@@ -1508,10 +1507,10 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		out.println("</fieldset>");
 		out.println("</div></div>"); // row
 
-		if (globalContext.getTaxonomy().isActive()) {
+		if (globalContext.getAllTaxonomy(ctx).isActive()) {
 			String taxoName = getTaxonomiesInputName();
 			out.println("<fieldset class=\"taxonomy\"><legend><label for=\"" + taxoName + "\">" + i18nAccess.getText("taxonomy") + "</label></legend>");
-			out.println(globalContext.getTaxonomy().getSelectHtml(taxoName, "form-control chosen-select", getTaxonomy()));
+			out.println(globalContext.getAllTaxonomy(ctx).getSelectHtml(taxoName, "form-control chosen-select", getTaxonomy()));
 			out.println("</fieldset>");
 		}
 
@@ -2200,8 +2199,8 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		ctx.getRequest().setAttribute("comp", this);
 		ctx.getRequest().setAttribute("months", months);
 		ctx.getRequest().setAttribute("tags", globalContext.getTags());
-		if (globalContext.getTaxonomy().isActive()) {
-			ctx.getRequest().setAttribute("taxonomyList", TaxonomyDisplayBean.convert(ctx, globalContext.getTaxonomy().convert(getTaxonomy())));
+		if (globalContext.getAllTaxonomy(ctx).isActive()) {
+			ctx.getRequest().setAttribute("taxonomyList", TaxonomyDisplayBean.convert(ctx, globalContext.getAllTaxonomy(ctx).convert(getTaxonomy())));
 		}		
 	}
 
@@ -2373,7 +2372,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 				setModify();
 			}
 
-			if (ctx.getGlobalContext().getTaxonomy().isActive()) {
+			if (ctx.getGlobalContext().getAllTaxonomy(ctx).isActive()) {
 				String[] taxonomy = requestService.getParameterValues(getTaxonomiesInputName(), null);
 				if (taxonomy != null) {
 					setTaxonomy(Arrays.asList(taxonomy));

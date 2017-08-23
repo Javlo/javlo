@@ -1,6 +1,7 @@
 package org.javlo.data.taxonomy;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.PrintStream;
 import java.util.AbstractMap;
 import java.util.Collection;
@@ -14,34 +15,65 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
 
+import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.helper.Comparator.MapEntryComparator;
+import org.javlo.service.IListItem;
+import org.jcodec.common.StringUtils;
 
 public class TaxonomyService {
-	
+
 	private static Logger logger = Logger.getLogger(TaxonomyService.class.getName());
-	
+
 	public static final String KEY = "taxonomy";
-	
+
 	private TaxonomyBean root = new TaxonomyBean("0", "root");
 	
+	private String context;
+
 	private Map<String, TaxonomyBean> taxonomyBeanMap = new HashMap<String, TaxonomyBean>();
 	private Map<String, TaxonomyBean> taxonomyBeanPathMap = new HashMap<String, TaxonomyBean>();
 	private List<Map.Entry<String, String>> options = null;
 
-	public static final TaxonomyService getInstance(GlobalContext globalContext) {
-		TaxonomyService outService = (TaxonomyService)globalContext.getAttribute(KEY);
+	public static final TaxonomyService getInstance(ContentContext ctx) {
+		return getInstance(ctx, ctx.getRenderMode());
+	}
+	
+	public static final TaxonomyService getMasterInstance(ContentContext ctx) throws IOException {
+		int renderMode = ctx.getRenderMode();		
+		if (renderMode == ContentContext.PREVIEW_MODE) {
+			renderMode = ContentContext.EDIT_MODE;
+		}
+		GlobalContext globalContext = ctx.getGlobalContext();
+		if (!globalContext.isMaster()) {
+			globalContext = globalContext.getMasterContext(ctx);
+		}
+		TaxonomyService outService = (TaxonomyService) globalContext.getAttribute(KEY+renderMode);
 		if (outService == null) {
 			outService = new TaxonomyService();
-			//outService.createDebugStructure();
-			globalContext.setAttribute(KEY, outService);
-		}
+			outService.context = "master:"+globalContext.getContextKey();
+			globalContext.setAttribute(KEY+renderMode, outService);
+		}		
 		return outService;
 	}
 	
-	private void createDebugStructure() {		
+	public static final TaxonomyService getInstance(ContentContext ctx, int renderMode) {
+		if (renderMode == ContentContext.PREVIEW_MODE) {
+			renderMode = ContentContext.EDIT_MODE;
+		}
+		TaxonomyService outService = (TaxonomyService) ctx.getGlobalContext().getAttribute(KEY+renderMode);
+		if (outService == null) {
+			outService = new TaxonomyService();
+			outService.context = "local:"+ctx.getGlobalContext().getContextKey();
+			ctx.getGlobalContext().setAttribute(KEY+renderMode, outService);
+		}
+		ctx.getRequest().setAttribute(KEY, outService);
+		return outService;
+	}
+
+	private void createDebugStructure() {
 		root.addChildAsFirst(new TaxonomyBean("1", "child 1"));
 		root.addChildAsFirst(new TaxonomyBean("2", "child 2"));
 		TaxonomyBean child = root.addChildAsFirst(new TaxonomyBean("3", "child 3"));
@@ -50,31 +82,31 @@ public class TaxonomyService {
 		child.updateLabel("fr", "second child");
 		child.addChildAsFirst(new TaxonomyBean("3_2", "subchild 2"));
 	}
-	
+
 	public TaxonomyBean getRoot() {
 		return root;
 	}
-	
+
 	public boolean isActive() {
-		return root.getChildren().size()>0;
+		return root.getChildren().size() > 0;
 	}
-	
+
 	private void recBean(List<TaxonomyBean> list, TaxonomyBean currentBean) {
 		list.add(currentBean);
 		for (TaxonomyBean bean : currentBean.getChildren()) {
 			recBean(list, bean);
 		}
 	}
-	
+
 	public List<TaxonomyBean> getAllBeans() {
 		List<TaxonomyBean> outBean = new LinkedList<TaxonomyBean>();
 		outBean.add(root);
 		for (TaxonomyBean bean : root.getChildren()) {
 			recBean(outBean, bean);
 		}
-		return outBean;		
+		return outBean;
 	}
-	
+
 	private boolean recDeleteBean(TaxonomyBean currentBean, String id) {
 		Iterator<TaxonomyBean> ite = currentBean.getChildren().iterator();
 		boolean deleted = false;
@@ -88,25 +120,28 @@ public class TaxonomyService {
 		}
 		return deleted;
 	}
-	
-	public boolean move(String srcId, String destId, boolean asChild) {		
+
+	public boolean move(String srcId, String destId, boolean asChild) {
 		TaxonomyBean src = getTaxonomyBeanMap().get(srcId);
 		TaxonomyBean target = getTaxonomyBeanMap().get(destId);
-		if (!asChild) {			
-			target = target.getParent();			
-		} else  {
+		if (!asChild) {
+			target = target.getParent();
+		} else {
 			destId = null;
 		}
-		if (src != null && target != null) {
-			delete(srcId);
-			target.addChild(src, destId);
-			return true;
+		if (src != null && target != null) {	
+			TaxonomyBean sameNameBean = target.searchChildByName(src.getName());
+			if (sameNameBean == null || sameNameBean.getId().equals(src.getId())) {
+				delete(srcId);
+				target.addChild(src, destId);
+				return true;
+			}
 		}
 		return false;
 	}
-	
-	public boolean delete(String id) {		 
-		synchronized(taxonomyBeanMap) {
+
+	public boolean delete(String id) {
+		synchronized (taxonomyBeanMap) {
 			boolean del;
 			if (root.getId().equals(id)) {
 				del = true;
@@ -115,31 +150,31 @@ public class TaxonomyService {
 				del = recDeleteBean(root, id);
 			}
 			clearCache();
-			return del;			
-		}		
+			return del;
+		}
 	}
-	
+
 	private void fillMap(TaxonomyBean currentBean) {
 		taxonomyBeanMap.put(currentBean.getId(), currentBean);
-		Iterator<TaxonomyBean> ite = currentBean.getChildren().iterator();		
+		Iterator<TaxonomyBean> ite = currentBean.getChildren().iterator();
 		while (ite.hasNext()) {
-			fillMap(ite.next());			
-		}		
+			fillMap(ite.next());
+		}
 	}
-	
+
 	private void fillMapPath(String path, TaxonomyBean currentBean) {
-		if (currentBean.getChildren().size()>0) {
+		if (currentBean.getChildren().size() > 0) {
 			String newPath = URLHelper.mergePath(path, currentBean.getName());
-			taxonomyBeanPathMap.put(newPath, currentBean);	
+			taxonomyBeanPathMap.put(newPath, currentBean);
 			for (TaxonomyBean child : currentBean.getChildren()) {
 				fillMapPath(newPath, child);
 			}
-		}		
+		}
 	}
-	
+
 	public Map<String, TaxonomyBean> getTaxonomyBeanPathMap() {
 		if (taxonomyBeanPathMap.size() == 0) {
-			synchronized(taxonomyBeanPathMap) {
+			synchronized (taxonomyBeanPathMap) {
 				if (taxonomyBeanPathMap.size() == 0) {
 					fillMapPath("/", root);
 				}
@@ -147,10 +182,10 @@ public class TaxonomyService {
 		}
 		return taxonomyBeanPathMap;
 	}
-	
+
 	public Map<String, TaxonomyBean> getTaxonomyBeanMap() {
 		if (taxonomyBeanMap.size() == 0) {
-			synchronized(taxonomyBeanMap) {
+			synchronized (taxonomyBeanMap) {
 				if (taxonomyBeanMap.size() == 0) {
 					fillMap(root);
 				}
@@ -161,52 +196,52 @@ public class TaxonomyService {
 	}
 
 	public void clearCache() {
-		synchronized(taxonomyBeanMap) {
+		synchronized (taxonomyBeanMap) {
 			taxonomyBeanMap.clear();
 			taxonomyBeanPathMap.clear();
 			options = null;
 		}
 	}
-	
+
 	public String getSelectHtml() {
 		return getSelectHtml("taxonomy", "form-control chosen-select", null);
 	}
-	
+
 	public String getSelectHtml(Collection<String> selection) {
 		return getSelectHtml("taxonomy", "form-control chosen-select", selection);
 	}
-	
+
 	public String getSelectHtml(String name, String cssClass, Collection<String> selection) {
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(outStream);
 		if (options == null) {
 			Map<String, TaxonomyBean> beans = getTaxonomyBeanMap();
-			options = new LinkedList<Map.Entry<String,String>>();
+			options = new LinkedList<Map.Entry<String, String>>();
 			for (Map.Entry<String, TaxonomyBean> bean : beans.entrySet()) {
 				options.add(new AbstractMap.SimpleEntry<String, String>(bean.getKey(), bean.getValue().getPath()));
 			}
 			Collections.sort(options, new MapEntryComparator(true));
 		}
-		out.println("<select id=\""+name+"\" name=\""+name+"\" class=\""+cssClass+"\" multiple>");
+		out.println("<select id=\"" + name + "\" name=\"" + name + "\" class=\"" + cssClass + "\" multiple>");
 		for (Map.Entry<String, String> option : options) {
-			String select ="";
+			String select = "";
 			if (selection != null && selection.contains(option.getKey())) {
 				select = " selected=\"selected\"";
 			}
-			out.println("<option value=\""+option.getKey()+"\""+select+">"+option.getValue()+"</option>");
+			out.println("<option value=\"" + option.getKey() + "\"" + select + ">" + option.getValue() + "</option>");
 		}
 		out.println("</select>");
 		out.close();
 		return new String(outStream.toByteArray());
 	}
-	
+
 	public boolean isMatch(ITaxonomyContainer cont1, ITaxonomyContainer cont2) {
 		if (cont1 == null || cont2 == null || cont1.getTaxonomy() == null || cont2.getTaxonomy() == null) {
 			return true;
 		}
 		if (!Collections.disjoint(cont1.getTaxonomy(), cont2.getTaxonomy())) {
 			return true;
-		} else {			
+		} else {
 			Set<String> allCont1 = new HashSet<String>(cont1.getTaxonomy());
 			for (String id : cont1.getTaxonomy()) {
 				TaxonomyBean bean = getTaxonomyBeanMap().get(id);
@@ -216,7 +251,7 @@ public class TaxonomyService {
 						allCont1.add(bean.getId());
 					}
 				} else {
-					logger.warning("taxonomy bean not found : "+id);
+					logger.warning("taxonomy bean not found : " + id);
 				}
 			}
 			Set<String> allCont2 = new HashSet<String>(cont2.getTaxonomy());
@@ -228,19 +263,20 @@ public class TaxonomyService {
 						allCont2.add(bean.getId());
 					}
 				} else {
-					logger.warning("taxonomy bean not found : "+id);
+					logger.warning("taxonomy bean not found : " + id);
 				}
 			}
 			return !Collections.disjoint(allCont1, allCont2);
-		}		
+		}
 	}
-	
+
 	/**
 	 * convert list of taxonomybean id to a list of taxonomybean instance.
+	 * 
 	 * @param ids
 	 * @return
 	 */
-	public List<TaxonomyBean> convert (Collection<String> ids) {
+	public List<TaxonomyBean> convert(Collection<String> ids) {
 		if (ids == null) {
 			return null;
 		} else if (ids.size() == 0) {
@@ -255,4 +291,53 @@ public class TaxonomyService {
 		}
 		return outBeans;
 	}
+	
+	private List<IListItem> getList(ContentContext ctx, String path, boolean displayParentLabel) {
+		String[] nodes;
+		if (path.contains("/")) {
+			nodes = StringUtils.split(path, '/');
+		} else if (path.contains("-")) {
+			nodes = StringUtils.split(path, '-');
+		} else {
+			nodes = StringUtils.split(path, '>');
+		}
+		TaxonomyBean bean = root;
+		for (int i = 0; i < nodes.length; i++) {
+			bean = bean.searchChildByName(nodes[i].trim());
+			if (bean == null) {
+				i = nodes.length;
+			}
+		}
+		if (bean == null) {
+			bean = getTaxonomyBeanMap().get(path);
+		}
+		if (bean == null || bean.getChildren().size() == 0) {
+			return null;
+		} else {
+			List<IListItem> outList = new LinkedList<IListItem>();
+			for (TaxonomyBean child : bean.getChildren()) {
+				TaxonomyDisplayBean displayBean = new TaxonomyDisplayBean(ctx, child);
+				displayBean.setDisplayParentLabel(displayParentLabel);
+				outList.add(displayBean);
+				if (child.getChildren().size() > 0) {					
+					outList.addAll(getList(ctx, child.getPath(), true));
+				}
+			}
+			return outList;
+		}
+	}
+
+	public List<IListItem> getList(ContentContext ctx, String path) {
+		return getList(ctx, path, false);
+	}
+
+	public void updateId(TaxonomyBean bean, String newId) {
+		bean.setId(newId);
+		clearCache();
+	}
+
+	public String getContext() {
+		return context;
+	}
+
 }

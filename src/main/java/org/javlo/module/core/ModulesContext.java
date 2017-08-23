@@ -350,6 +350,15 @@ public class ModulesContext {
 			}
 		}
 	}
+	
+	public Module getModule(String moduleName) {		
+		for (Module module : modules) {
+			if (module.getName().equals(moduleName)) {
+				return module;
+			}
+		}
+		return null;
+	}
 
 	private void setCurrentModule(Module currentModule) {
 		if (currentModule == null) {

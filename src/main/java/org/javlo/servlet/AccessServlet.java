@@ -46,6 +46,7 @@ import org.javlo.context.GlobalContext;
 import org.javlo.context.GlobalContextFactory;
 import org.javlo.data.EditInfoBean;
 import org.javlo.data.InfoBean;
+import org.javlo.data.taxonomy.TaxonomyService;
 import org.javlo.filter.CatchAllFilter;
 import org.javlo.helper.DebugHelper;
 import org.javlo.helper.ElementaryURLHelper;
@@ -269,7 +270,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 			GlobalContext globalContext = GlobalContext.getInstance(request);
 			Thread.currentThread().setName("AccessServlet-" + globalContext.getContextKey());
 
-			ContentContext ctx = ContentContext.getContentContext(request, response);
+			ContentContext ctx = ContentContext.getContentContext(request, response);			
 			if (ctx.getDevice().isMobileDevice()) {
 				EditContext.getInstance(globalContext, request.getSession()).setPreviewEditionMode(false);
 			}
@@ -287,6 +288,8 @@ public class AccessServlet extends HttpServlet implements IVersion {
 			if (!ctx.isAsViewMode()) {
 				SecurityHelper.checkUserAccess(ctx);
 			}
+			
+			TaxonomyService.getInstance(ctx);
 			
 			if (ctx.isAsViewMode() && ctx.isContentFound() && ctx.getCurrentPage() != null && staticConfig.isRedirectSecondaryURL() && !ctx.isPostRequest() && StringHelper.isEmpty(request.getQueryString())) {
 				ContentContext lgCtx = new ContentContext(ctx);

@@ -212,6 +212,8 @@ public class PersistenceService {
 	private String trackWriterFileName = null;
 
 	private Properties trackCache = null;
+	
+	private boolean loaded = false;
 
 	public static final Date parseDate(String date) throws ParseException {
 		synchronized (PERSISTENCE_DATE_FORMAT) {
@@ -978,6 +980,7 @@ public class PersistenceService {
 				taxonomyBean.getChildren().clear();
 				taxonomyBean.getLabels().clear();
 				loadTaxonomy(firstNode.getChild("taxo"), taxonomyBean);
+				TaxonomyService.getInstance(ctx, renderMode).clearCache();
 			}
 		} catch (SAXParseException e) {
 			// e.printStackTrace();
@@ -998,6 +1001,7 @@ public class PersistenceService {
 		}
 
 		outBean.setRoot(root);
+		loaded=true;
 
 		return outBean;
 
@@ -1006,7 +1010,8 @@ public class PersistenceService {
 	private void loadTaxonomy(NodeXML node, TaxonomyBean taxonomyBean) {
 		if (node != null) {
 			taxonomyBean.setId(node.getAttributeValue("id"));
-			taxonomyBean.setName(node.getAttributeValue("name"));
+			String name = node.getAttributeValue("name");
+			taxonomyBean.setName(name);
 			for (NodeXML child : node.getChildren()) {				
 				if (child.getName().equals("label")) {					
 					taxonomyBean.updateLabel(child.getAttributeValue("lang"), child.getContent());
@@ -1176,13 +1181,13 @@ public class PersistenceService {
 					 * ); out.close();
 					 */
 				} else {
-					LoadingBean loadBean = load(ctx, in, propFile, contentAttributeMap, TaxonomyService.getInstance(globalContext).getRoot(), renderMode );
+					LoadingBean loadBean = load(ctx, in, propFile, contentAttributeMap, TaxonomyService.getInstance(ctx, renderMode).getRoot(), renderMode );
 					logger.info("load : " + xmlFile);
 					if (loadBean.isError() && correctXML && xmlFile != null) {
 						correctCharacterEncoding(xmlFile);
 						in.close();
 						in = new FileInputStream(xmlFile);
-						loadBean = load(ctx, in, propFile, contentAttributeMap, TaxonomyService.getInstance(globalContext).getRoot(), renderMode);
+						loadBean = load(ctx, in, propFile, contentAttributeMap, TaxonomyService.getInstance(ctx, renderMode).getRoot(), renderMode);
 					}
 					root = loadBean.getRoot();
 					try {
@@ -1492,7 +1497,7 @@ public class PersistenceService {
 			persThread.setPersistenceService(this);
 			persThread.setDefaultLg(defaultLg);
 			persThread.setGlobalContentMap(content.getGlobalMap(ctx));
-			persThread.setTaxonomyRoot(TaxonomyService.getInstance(ctx.getGlobalContext()).getRoot());
+			persThread.setTaxonomyRoot(TaxonomyService.getInstance(ctx).getRoot());
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 			persThread.setContextKey(globalContext.getContextKey());
 			persThread.setDataFolder(globalContext.getDataFolder());
@@ -1661,4 +1666,7 @@ public class PersistenceService {
 
 	}
 
+	public boolean isLoaded() {
+		return loaded;
+	}
 }

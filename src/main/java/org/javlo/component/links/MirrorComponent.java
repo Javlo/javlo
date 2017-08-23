@@ -11,7 +11,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Properties;
 import java.util.logging.Logger;
 
 import org.javlo.component.core.AbstractVisualComponent;
@@ -29,6 +28,7 @@ import org.javlo.i18n.I18nAccess;
 import org.javlo.service.ClipBoard;
 import org.javlo.service.ContentService;
 import org.javlo.service.RequestService;
+import org.javlo.utils.StructuredProperties;
 
 /**
  * @author pvandermaesen
@@ -141,7 +141,7 @@ public class MirrorComponent extends AbstractVisualComponent implements IFieldCo
 		if (comp instanceof DynamicComponent) {
 			DynamicComponent dComp = (DynamicComponent)comp;			
 			if (dComp.getProperties() == null || dComp.getProperties().isEmpty()) {
-				Properties prop = new Properties();
+				StructuredProperties prop = new StructuredProperties();
 				prop.putAll(dComp.getConfigProperties());
 				dComp.setProperties(prop);
 				dComp.reloadProperties();

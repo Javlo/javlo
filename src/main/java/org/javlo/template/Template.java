@@ -62,6 +62,7 @@ import org.javlo.message.GenericMessage;
 import org.javlo.navigation.DefaultTemplate;
 import org.javlo.remote.IRemoteResource;
 import org.javlo.rendering.Device;
+import org.javlo.service.IListItem;
 import org.javlo.service.ListService;
 import org.javlo.service.exception.ServiceException;
 import org.javlo.utils.ConfigurationProperties;
@@ -1579,7 +1580,7 @@ public class Template implements Comparable<Template> {
 		return propI18n;
 	}
 
-	public synchronized Map<String, List<ListService.Item>> getAllList(GlobalContext globalContext, Locale locale) throws IOException {
+	public synchronized Map<String, List<IListItem>> getAllList(GlobalContext globalContext, Locale locale) throws IOException {
 		if (locale == null) {
 			return null;
 		}
@@ -1587,7 +1588,7 @@ public class Template implements Comparable<Template> {
 		if (!listFolder.isDirectory()) {
 			return Collections.EMPTY_MAP;
 		} else {
-			Map<String, List<ListService.Item>> linkedMap = new HashMap<String, List<ListService.Item>>();
+			Map<String, List<IListItem>> linkedMap = new HashMap<String, List<IListItem>>();
 			for (File list : listFolder.listFiles((FilenameFilter) new FileFilterUtils().suffixFileFilter(".properties"))) {
 				String lg = StringHelper.getLanguageFromFileName(list.getName());
 				if (list.isFile() && (lg == null || lg.equals(locale.getLanguage()))) {
@@ -1596,10 +1597,10 @@ public class Template implements Comparable<Template> {
 						Reader reader = new FileReader(list);
 						listProp.load(reader);
 						reader.close();
-						List<ListService.Item> serviceList = new LinkedList<ListService.Item>();
+						List<IListItem> serviceList = new LinkedList<IListItem>();
 
 						for (Map.Entry entry : listProp.entrySet()) {
-							serviceList.add(new ListService.Item(entry));
+							serviceList.add(new ListService.ListItem(entry));
 						}
 
 						Collections.sort(serviceList, new ListService.OrderList());

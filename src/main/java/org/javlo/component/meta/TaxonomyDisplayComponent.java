@@ -29,7 +29,7 @@ public class TaxonomyDisplayComponent extends AbstractVisualComponent {
 			if (!StringHelper.isEmpty(getValue())) {
 				out.println("<span class=\"prefix\">" + Encode.forHtmlContent(getValue()) + "</span>");
 			}
-			for (TaxonomyDisplayBean bean : TaxonomyDisplayBean.convert(ctx, ctx.getGlobalContext().getTaxonomy().convert(taxonomy))) {
+			for (TaxonomyDisplayBean bean : TaxonomyDisplayBean.convert(ctx, ctx.getGlobalContext().getAllTaxonomy(ctx).convert(taxonomy))) {
 				out.println("<span class=\"label label-default name-" + Encode.forHtmlAttribute(bean.getName()) + "\">" + Encode.forHtmlContent(bean.getLabel()) + "</span>");
 			}
 			out.println("</div>");

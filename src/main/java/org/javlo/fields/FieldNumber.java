@@ -9,20 +9,33 @@ import org.javlo.context.ContentContext;
 import org.javlo.helper.StringHelper;
 
 public class FieldNumber extends Field {
-	
+
 	private static Logger logger = Logger.getLogger(FieldNumber.class.getName());
 
 	@Override
 	public String getType() {
 		return "number";
 	}
-	
+
 	public int getMin(ContentContext ctx) {
-		return Integer.parseInt(properties.getProperty("field." + getUnicName() + ".min", ""+Integer.MIN_VALUE));
+		return Integer.parseInt(properties.getProperty("field." + getUnicName() + ".min", "" + Integer.MIN_VALUE));
 	}
 
 	public int getMax(ContentContext ctx) {
-		return Integer.parseInt(properties.getProperty("field." + getUnicName() + ".max", ""+Integer.MAX_VALUE));
+		return Integer.parseInt(properties.getProperty("field." + getUnicName() + ".max", "" + Integer.MAX_VALUE));
+	}
+
+	@Override
+	public boolean validate() {
+		boolean superValidation = super.validate();
+		if (superValidation) {
+			if (!StringHelper.isDigit(getValue())) {
+				setMessage(i18nAccess.getText("global.error"));
+				setMessageType(Field.MESSAGE_ERROR);
+				return false;
+			}
+		}
+		return superValidation;		
 	}
 
 	public String getEditXHTMLCode(ContentContext ctx) throws Exception {
@@ -41,7 +54,7 @@ public class FieldNumber extends Field {
 		if (isReadOnly()) {
 			readOnlyHTML = " readonly=\"readonly\"";
 		}
-		out.println("	<input class=\"form-control\" type=\"number\" min=\""+getMin(ctx)+"\" max=\""+getMax(ctx)+"\"" + readOnlyHTML + " id=\"" + getInputName() + "\" name=\"" + getInputName() + "\" value=\"" + StringHelper.neverNull(getValue()) + "\"/></div>");
+		out.println("	<input class=\"form-control\" type=\"number\" min=\"" + getMin(ctx) + "\" max=\"" + getMax(ctx) + "\"" + readOnlyHTML + " id=\"" + getInputName() + "\" name=\"" + getInputName() + "\" value=\"" + StringHelper.neverNull(getValue()) + "\"/></div>");
 		if (getMessage() != null && getMessage().trim().length() > 0) {
 			out.println("	<div class=\"message " + getMessageTypeCSSClass() + "\">" + getMessage() + "</div>");
 		}
@@ -50,7 +63,7 @@ public class FieldNumber extends Field {
 		out.close();
 		return writer.toString();
 	}
-	
+
 	@Override
 	public boolean search(ContentContext ctx, String query) {
 		if (!StringHelper.isDigit(getValue())) {
@@ -59,26 +72,26 @@ public class FieldNumber extends Field {
 		if (getSearchType().equals(DEFAULT_SEARCH_TYPE)) {
 			return super.search(ctx, query);
 		} else if (getSearchType().equals("<=")) {
-			return Integer.parseInt(getValue()) <= Integer.parseInt(query);			
+			return Integer.parseInt(getValue()) <= Integer.parseInt(query);
 		} else if (getSearchType().equals("<")) {
-			return Integer.parseInt(getValue()) < Integer.parseInt(query);			
+			return Integer.parseInt(getValue()) < Integer.parseInt(query);
 		} else if (getSearchType().equals(">=")) {
-			return Integer.parseInt(getValue()) >= Integer.parseInt(query);			
+			return Integer.parseInt(getValue()) >= Integer.parseInt(query);
 		} else if (getSearchType().equals(">")) {
-			return Integer.parseInt(getValue()) > Integer.parseInt(query);			
-		}  else {
-			logger.warning("bad search type : "+getSearchType());
+			return Integer.parseInt(getValue()) > Integer.parseInt(query);
+		} else {
+			logger.warning("bad search type : " + getSearchType());
 			return false;
 		}
 	}
-	
+
 	@Override
 	public boolean initContent(ContentContext ctx) throws Exception {
 		int min = getMin(ctx);
-		if (min<0) {
-			min=0;
+		if (min < 0) {
+			min = 0;
 		}
-		setValue(""+min);
+		setValue("" + min);
 		return true;
 	}
 

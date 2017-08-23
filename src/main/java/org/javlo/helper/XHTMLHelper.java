@@ -43,7 +43,6 @@ import javax.servlet.ServletContext;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.poi.xwpf.converter.core.utils.ColorHelper;
 import org.javlo.component.core.ComponentFactory;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.form.FormComponent;
@@ -61,6 +60,7 @@ import org.javlo.i18n.I18nAccess;
 import org.javlo.message.GenericMessage;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
+import org.javlo.service.IListItem;
 import org.javlo.service.ListService;
 import org.javlo.service.RequestService;
 import org.javlo.service.ReverseLinkService;
@@ -2365,11 +2365,11 @@ public class XHTMLHelper {
 	 * @return the key if list null, and empty string if key not found in the
 	 *         list.
 	 */
-	public static String renderListItem(List<ListService.Item> list, String key) {
+	public static String renderListItem(List<IListItem> list, String key) {
 		if (list == null) {
 			return key;
 		}
-		for (ListService.Item item : list) {
+		for (IListItem item : list) {
 			if (item.getKey().equals(key)) {
 				return "<span class=\"" + item.getKey() + "\">" + item.getValue() + "</span>";
 			}
@@ -2385,14 +2385,14 @@ public class XHTMLHelper {
 	 * @return the key if list null, and empty string if key not found in the
 	 *         list.
 	 */
-	public static String renderMultiListItem(List<ListService.Item> list, Collection<String> keys) {
+	public static String renderMultiListItem(List<IListItem> list, Collection<String> keys) {
 		if (list == null) {
 			return StringHelper.collectionToString(keys, ";");
 		}
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(outStream);
 		out.println("<ul>");
-		for (ListService.Item item : list) {
+		for (IListItem item : list) {
 			if (keys.contains(item.getKey())) {
 				out.println("<li class=\"" + item.getKey() + "\">" + item.getValue() + "</li>");
 			}

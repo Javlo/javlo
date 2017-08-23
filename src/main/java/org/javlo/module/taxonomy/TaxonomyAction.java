@@ -31,8 +31,7 @@ public class TaxonomyAction extends AbstractModuleAction {
 	@Override
 	public String prepare(ContentContext ctx, ModulesContext modulesContext) throws Exception {
 		String msg = super.prepare(ctx, modulesContext);
-		TaxonomyService taxonomyService = TaxonomyService.getInstance(ctx.getGlobalContext());
-		ctx.getRequest().setAttribute(TaxonomyService.KEY, taxonomyService);
+		TaxonomyService.getInstance(ctx);		
 		return msg;
 	}
 	
@@ -43,8 +42,7 @@ public class TaxonomyAction extends AbstractModuleAction {
 	}
 	
 	public static String performUpdate(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess, Module module) throws ServletException, IOException, ServiceException {
-		TaxonomyService taxonomyService = TaxonomyService.getInstance(ctx.getGlobalContext());
-		ctx.getRequest().setAttribute(TaxonomyService.KEY, taxonomyService);
+		TaxonomyService taxonomyService = TaxonomyService.getInstance(ctx);		
 		String deletedId = rs.getParameter("delete", "");
 		
 		String moveto = rs.getParameter("moveto", null);
@@ -54,6 +52,8 @@ public class TaxonomyAction extends AbstractModuleAction {
 		if (!StringHelper.isEmpty(moveto) && !StringHelper.isEmpty(moved)) {
 			if (taxonomyService.move(moved, moveto, asChild)) {
 				updateBean(ctx, module, moveto);
+			} else {
+				messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("taxonomy.move.error", "Error on move, check if there are not allready the name in the target list."), GenericMessage.ERROR));
 			}
 		}
 		
@@ -66,8 +66,14 @@ public class TaxonomyAction extends AbstractModuleAction {
 			boolean updateItem = false;
 			String name = rs.getParameter("name-"+bean.getId(), "");
 			if (name.length() > 0) {
-				name = StringHelper.createFileName(name);
-				if (bean.setName(name)) {
+				String newName = StringHelper.createFileName(name);
+				newName = newName.replace("-", "_");
+				if (!name.equals(newName)) {
+					messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("taxonomy.update.bad-name", "Name of node is updated but name was changed, because your name was unvalid."), GenericMessage.ALERT));
+				}
+				if (bean.getParent() != null && bean.getParent().searchChildByName(newName) != null && !bean.getName().equals(newName)) {
+					messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("taxonomy.name-exist", "Name already exist."), GenericMessage.ERROR));
+				} else if (bean.setName(newName)) {
 					updateItem=true;
 				}				
 			}
@@ -76,11 +82,29 @@ public class TaxonomyAction extends AbstractModuleAction {
 					updateList = true;
 				}
 			}			
-			if (!StringHelper.isEmpty(rs.getParameter("newname-"+bean.getId(), null))) {				
-				bean.addChildAsFirst(new TaxonomyBean(StringHelper.getRandomId(), rs.getParameter("newname-"+bean.getId(), null)));
-				taxonomyService.clearCache();
-				updateList=true;
-			}	
+			if (!StringHelper.isEmpty(rs.getParameter("newname-"+bean.getId(), null))) {
+				String nName = rs.getParameter("newname-"+bean.getId(), null);
+				String newName = StringHelper.createFileName(nName);
+				newName = newName.replace("-", "_");
+				if (!nName.equals(newName)) {
+					messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("taxonomy.create.bad-name", "Node is create but name was changed, because your name was unvalid."), GenericMessage.ALERT));
+				}
+				if (bean.searchChildByName(newName) != null) {
+					messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("taxonomy.name-exist", "Name already exist."), GenericMessage.ERROR));
+				} else {
+					bean.addChildAsFirst(new TaxonomyBean(StringHelper.getRandomId(),newName));
+					taxonomyService.clearCache();
+					updateList=true;
+				}
+			}
+			String newId = rs.getParameter("change-id-"+bean.getId(), "");
+			if (!newId.equals(bean.getId())) {
+				if (ctx.getGlobalContext().getAllTaxonomy(ctx).getBean(newId) != null) {
+					messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("taxonomy.changeid.error", "ID all ready exist."), GenericMessage.ERROR));
+				} else {					
+					taxonomyService.updateId(bean, newId);
+				}
+			}
 			if (updateItem) {
 				String jsp = module.getJspPath("/jsp/item.jsp?id="+bean.getId());
 				String html = ServletHelper.executeJSP(ctx, jsp);		

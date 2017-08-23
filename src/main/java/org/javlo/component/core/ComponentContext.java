@@ -28,8 +28,13 @@ public class ComponentContext {
 		return outInstance;
 	}
 
-	public void addNewComponent(IContentVisualComponent comp) {
+	public void addNewComponent(IContentVisualComponent comp) {		
 		if (comp != null) {
+			for (IContentVisualComponent iContentVisualComponent : newComponentId) {
+				if (iContentVisualComponent.getId().equals(comp.getId())) {
+					return;
+				}
+			}
 			newComponentId.add(comp);
 		}
 	}

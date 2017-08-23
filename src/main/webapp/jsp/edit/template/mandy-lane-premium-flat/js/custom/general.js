@@ -137,6 +137,7 @@ jQuery(document).ready(function(){
 			action.addClass("open");
 			action.removeClass("close");
 		}
+		return false;
 	});	
 	
 	jQuery('.hidden-input').live('focus',function(){

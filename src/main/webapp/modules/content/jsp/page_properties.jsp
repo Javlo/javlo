@@ -82,7 +82,7 @@
 </fieldset>
 </c:if>
 
-<c:if test="${globalContext.taxonomy.active}">
+<c:if test="${taxonomy.active}">
 <div class="taxonomy">
 	<label for="taxonomy">${i18n.edit ['taxonomy']}</label>
 	${taxonomySelect}

@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
+import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -31,13 +32,15 @@ import org.javlo.helper.XHTMLHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
+import org.javlo.service.IListItem;
 import org.javlo.service.ListService;
-import org.javlo.service.ListService.Item;
 import org.javlo.service.RequestService;
 import org.javlo.service.ReverseLinkService;
 import org.owasp.encoder.Encode;
 
 public class Field implements Cloneable, IRestItem, Comparable<Field> {
+	
+	private static Logger logger = Logger.getLogger(Field.class.getName());
 	
 	protected static final String DEFAULT_SEARCH_TYPE = "default";
 
@@ -298,9 +301,11 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 				}
 			}
 			if (keyValue.size() == 0) {				
-				List<Item> list = ListService.getInstance(ctx).getList(ctx,listName);		
+				List<IListItem> list = ListService.getInstance(ctx).getList(ctx,listName);		
 				if (list != null) {
 					keyValue = ListService.listToStringMap(list);
+				} else {
+					logger.warning("list not found : "+listName);
 				}
 			}
 		}
@@ -320,7 +325,32 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 	}
 
 	public boolean validate() {
+		Integer maxSize = getMaxSize();
+		if (maxSize != null) {
+			if (StringHelper.removeTag(getValue()).length() > maxSize) {
+				setMessage(i18nAccess.getText("content.dynamic-component.error.max-size")+maxSize);
+				setMessageType(Field.MESSAGE_ERROR);
+				return false;	
+			}			
+		}
+		Integer minSize = getMinSize();
+		if (minSize != null) {
+			if (StringHelper.removeTag(getValue()).length() < minSize) {
+				setMessage(i18nAccess.getText("content.dynamic-component.error.min-size")+minSize);
+				setMessageType(Field.MESSAGE_ERROR);
+				return false;	
+			}			
+		}
+		if (isNeeded() && StringHelper.isEmpty(getValue())) {
+			setMessage(i18nAccess.getText("content.dynamic-component.error.needed"));
+			setMessageType(Field.MESSAGE_ERROR);
+			return false;	
+		}		
 		return true;
+	}
+	
+	public boolean isValid() {
+		return getMessageType() != Field.MESSAGE_ERROR;
 	}
 
 	protected String getEditLabelCode() {
@@ -607,6 +637,24 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 
 	public boolean isNeeded() {
 		return StringHelper.isTrue(properties.getProperty("field." + getUnicName() + ".needed", "false"));
+	}
+	
+	public Integer getMaxSize() {
+		String maxSize = getPropertyValue("max-size", null);
+		if (maxSize == null || !StringHelper.isDigit(maxSize)) {
+			return null;
+		} else {
+			return Integer.parseInt(maxSize);
+		}
+	}
+	
+	public Integer getMinSize() {
+		String minSize = getPropertyValue("min-size", null);
+		if (minSize == null || !StringHelper.isDigit(minSize)) {
+			return null;
+		} else {
+			return Integer.parseInt(minSize);
+		}
 	}
 
 	public int getOrder() {
@@ -1027,7 +1075,7 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 	}
 	
 	/**
-	 * return the size of the componen
+	 * return the size of the component
 	 * @param ctx
 	 * @return large, small or normal
 	 */

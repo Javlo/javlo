@@ -46,6 +46,7 @@ import org.javlo.navigation.MenuElement;
 import org.javlo.navigation.PageBean;
 import org.javlo.service.resource.Resource;
 import org.javlo.template.Template;
+import org.javlo.utils.StructuredProperties;
 import org.javlo.ztatic.IStaticContainer;
 
 /**
@@ -109,7 +110,7 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 		}
 	}
 
-	private Properties properties = null;
+	private StructuredProperties properties = null;
 
 	private Properties configProperties = null;
 
@@ -310,7 +311,7 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 				if (keySplit.length > 1) {
 					String name = keySplit[1];
 					Field field = FieldFactory.getField(this, staticConfig, globalContext, i18nAccess, getProperties(), null, name, getType(name), getId());
-					if (field != null) {
+					if (field != null) {						
 						if (!fieldExecuted.contains(name)) {
 							outFields.add(field);
 						}
@@ -456,7 +457,7 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 		}
 		int colSize = 0;		
 		String firstItem = "first ";
-		for (Field field : fields) {
+		for (Field field : fields) {			
 			if (field != null) {				
 				colSize = colSize + field.getColsWidth(ctx);
 				String last = "";
@@ -487,7 +488,12 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 						out.println("<fieldset><legend>" + locale.getDisplayLanguage(new Locale(GlobalContext.getInstance(ctx.getRequest()).getEditLanguage(ctx.getRequest().getSession()))) + "</legend>");
 					}
 					field.setCurrentLocale(locale);
-					out.println(field.getEditXHTMLCode(ctx));
+					String editXHTML = field.getEditXHTMLCode(ctx);
+					if (editXHTML == null || editXHTML.trim().length() == 0) {
+						out.println("<div class=\"alert alert-danger\" role=\"alert\">field format error : "+field.getName()+".</div>");
+					} else {
+						out.println(editXHTML);
+					}
 					if (locale != null) {
 						out.println("</fieldset>");
 					}
@@ -525,6 +531,8 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 
 		java.util.List<Field> fieldsName = getFields(ctx);
 
+		boolean valid=true;
+		List<String> errorField = new LinkedList<String>();
 		for (Field field : fieldsName) {
 
 			Collection<Locale> languages;
@@ -545,10 +553,21 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 					}
 				}
 			}
+			;
+			if (!field.validate()) {
+				valid=false;				
+				errorField.add(field.getUserLabel(ctx, new Locale(ctx.getGlobalContext().getEditLanguage(ctx.getRequest().getSession()))));
+			}
 		}
 
 		if (isModify()) {
 			storeProperties();
+		}
+		
+		if (!valid) {
+			ctx.setClosePopup(false);
+			I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());			
+			return i18nAccess.getText("content.dynamic-component.error.global")+" ("+StringHelper.collectionToString(errorField, ",")+')';
 		}
 		
 		return null;
@@ -565,11 +584,11 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 		return properties.getProperty("component.color", IContentVisualComponent.DYN_COMP_COLOR);
 	}
 
-	public Properties getProperties() {
+	public StructuredProperties getProperties() {
 		return properties;
 	}
 
-	public void setProperties(Properties properties) {
+	public void setProperties(StructuredProperties properties) {
 		this.properties = properties;
 	}
 
@@ -584,7 +603,7 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 	@Override
 	public IContentVisualComponent newInstance(ComponentBean bean, ContentContext newCtx, MenuElement page) throws Exception {
 		DynamicComponent res = (DynamicComponent) this.clone();
-		Properties newProp = new Properties();
+		StructuredProperties newProp = new StructuredProperties();
 		newProp.putAll(getConfigProperties());
 		res.setProperties(newProp); // transfert meta-data of
 		// dynamiccomponent

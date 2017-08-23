@@ -2085,5 +2085,11 @@ public class ContentContext {
 			return null;
 		}
 	}
+	
+	public ContentContext getMasterContentContext() throws IOException {
+		ContentContext masterContentContext = new ContentContext(this);
+		masterContentContext.setForceGlobalContext(getGlobalContext().getMasterContext(this));
+		return masterContentContext;
+	}
 
 }

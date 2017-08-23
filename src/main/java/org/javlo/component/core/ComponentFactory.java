@@ -104,7 +104,7 @@ public class ComponentFactory {
 					for (Properties properties : propertiesClasses) {
 						logger.fine("load dynamic component : " + properties.getProperty("component.type") + " [total:" + array.size() + "]");
 						DynamicComponent comp = new DynamicComponent();
-						Properties newProp = new StructuredProperties();
+						StructuredProperties newProp = new StructuredProperties();
 						newProp.putAll(properties);
 						comp.setProperties(newProp);
 						comp.setConfigProperties(properties);
@@ -273,7 +273,7 @@ public class ComponentFactory {
 			for (Properties properties : propertiesClasses) {
 				logger.info("load dynamic component : " + properties.getProperty("component.type") + " [total:" + array.size() + "]");
 				DynamicComponent comp = new DynamicComponent();
-				Properties newProp = new StructuredProperties();
+				StructuredProperties newProp = new StructuredProperties();
 				newProp.putAll(properties);
 				comp.setProperties(newProp);
 				comp.setConfigProperties(properties);
@@ -514,7 +514,7 @@ public class ComponentFactory {
 			List<Properties> propertiesClasses = template.getDynamicComponentsProperties(globalContext);
 			for (Properties properties : propertiesClasses) {
 				DynamicComponent comp = new DynamicComponent();
-				Properties newProp = new StructuredProperties();
+				StructuredProperties newProp = new StructuredProperties();
 				newProp.putAll(properties);
 				comp.setProperties(newProp);
 				comp.setConfigProperties(properties);

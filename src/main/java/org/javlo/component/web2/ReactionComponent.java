@@ -15,7 +15,6 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.logging.Logger;
@@ -58,6 +57,7 @@ import org.javlo.user.AdminUserFactory;
 import org.javlo.user.IUserFactory;
 import org.javlo.user.User;
 import org.javlo.user.UserFactory;
+import org.javlo.utils.StructuredProperties;
 
 /**
  * @author pvandermaesen
@@ -1078,7 +1078,7 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 	@Override
 	protected void init() throws ResourceNotFoundException {
 		super.init();
-		setProperties(new Properties());
+		setProperties(new StructuredProperties());
 	}
 
 	@Override

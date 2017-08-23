@@ -9,7 +9,7 @@
 	<input type="hidden" name="delete" value="" id="input-delete" />		
 	<input type="hidden" name="moveto" value="" id="moveto" />
 	<input type="hidden" name="moved" value="" id="moved" />
-	<input type="hidden" name="aschild" value="false" id="aschild" />
+	<input type="hidden" name="aschild" value="false" id="aschild" />	
 	<jsp:include page="list.jsp?id=${taxonomy.root.id}" />		
 	</div>
 </form>

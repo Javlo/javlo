@@ -43,14 +43,14 @@ public class FieldList extends Field {
 		Collection<Map.Entry<String, String>> valuesCol = getList(ctx, getListName(), new Locale(ctx.getContextLanguage())).entrySet();
 		Collection<Map.Entry<String, String>> values = valuesCol;
 		if (values.size() == 0) {
-			return "";
+			return "<div class=\"alert alert-danger\" role=\"alert\">Error on field '"+getName()+"' list empty or not found : "+getListName()+"</div>";
 		}
 
 		out.println("<div class=\"form-group\">");
 		out.println(getEditLabelCode());
 		out.println("<div class=\"row field-"+getName()+"\"><div class=\"col-sm-3\"><label for=\"" + getInputName() + "\">" + getLabel(ctx, new Locale(ctx.getContextRequestLanguage())) + " : </label></div>");
-		out.println("<div class=\"col-sm-9\"><select class=\"form-control\" id=\"" + getInputName() + "\" name=\"" + getInputName() + "\" value=\"" + StringHelper.neverNull(getValue()) + "\">");		
-
+		out.println("<div class=\"col-sm-9\"><select class=\"form-control\" id=\"" + getInputName() + "\" name=\"" + getInputName() + "\" value=\"" + StringHelper.neverNull(getValue()) + "\">");
+		
 		for (Map.Entry<String, String> value : values) {
 			String selected = "";
 			if (getValue() != null) {

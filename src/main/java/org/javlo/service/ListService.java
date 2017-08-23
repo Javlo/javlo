@@ -22,14 +22,14 @@ import org.javlo.service.exception.ServiceException;
 
 public class ListService {
 
-	Map<String, List<Item>> localLists = new Hashtable<String, List<Item>>();
+	Map<String, List<IListItem>> localLists = new Hashtable<String, List<IListItem>>();
 	
-	private static final Map<String, List<Item>> hardNodeCache = new HashMap<String, List<Item>>();
+	private static final Map<String, List<IListItem>> hardNodeCache = new HashMap<String, List<IListItem>>();
 	
-	public static class OrderList implements Comparator<Item> {
+	public static class OrderList implements Comparator<IListItem> {
 
 		@Override
-		public int compare(Item item1, Item item2) {
+		public int compare(IListItem item1, IListItem item2) {
 			if (item1.getKey().startsWith("_")) {
 				if (!item2.getKey().startsWith("_")) {
 					return 1;
@@ -44,7 +44,7 @@ public class ListService {
 		}
 	}
 
-	public static class MapAllList implements Map<String, List<Item>> {
+	public static class MapAllList implements Map<String, List<IListItem>> {
 
 		private final ContentContext ctx;
 
@@ -75,12 +75,12 @@ public class ListService {
 		}
 
 		@Override
-		public Set<java.util.Map.Entry<String, List<Item>>> entrySet() {
+		public Set<java.util.Map.Entry<String, List<IListItem>>> entrySet() {
 			throw new NotImplementedException("entrySet");
 		}
 
 		@Override
-		public List<Item> get(Object key) {
+		public List<IListItem> get(Object key) {
 			try {
 				return getListService().getList(ctx, "" + key);
 			} catch (Exception e) {
@@ -99,17 +99,17 @@ public class ListService {
 		}
 
 		@Override
-		public List<Item> put(String key, List<Item> value) {
+		public List<IListItem> put(String key, List<IListItem> value) {
 			throw new NotImplementedException("put");
 		}
 
 		@Override
-		public void putAll(Map<? extends String, ? extends List<Item>> m) {
+		public void putAll(Map<? extends String, ? extends List<IListItem>> m) {
 			throw new NotImplementedException("putAll");
 		}
 
 		@Override
-		public List<Item> remove(Object key) {
+		public List<IListItem> remove(Object key) {
 			throw new NotImplementedException("remove");
 		}
 
@@ -119,25 +119,25 @@ public class ListService {
 		}
 
 		@Override
-		public Collection<List<Item>> values() {
+		public Collection<List<IListItem>> values() {
 			throw new NotImplementedException("values");
 		}
 
 	}
 
-	public static class Item {
+	public static class ListItem implements IListItem {
 		String key;
 		String value;
 		
-		private Item(){};
+		private ListItem(){};
 
-		public Item(Map.Entry mapEntry) {
+		public ListItem(Map.Entry mapEntry) {
 			super();
 			this.key = "" + mapEntry.getKey();
 			this.value = "" + mapEntry.getValue();
 		}
 
-		public Item(String key, String value) {
+		public ListItem(String key, String value) {
 			super();
 			this.key = key;
 			this.value = value;
@@ -157,10 +157,10 @@ public class ListService {
 
 		public void setValue(String value) {
 			this.value = value;
-		}
+		}		
 	}
 	
-	public static class I18nItem extends Item {
+	public static class I18nItem extends ListItem {
 		private String lg=null;
 		private Map<String, String> labels;
 		public I18nItem(String key, Map<String,String> labels) {
@@ -187,8 +187,8 @@ public class ListService {
 		return outService;
 	}
 
-	public List<Item> getList(ContentContext ctx, String name) throws IOException, Exception {
-		List<Item> outList = getNavigationList(ctx,name);
+	public List<IListItem> getList(ContentContext ctx, String name) throws IOException, Exception {
+		List<IListItem> outList = getNavigationList(ctx,name);
 		if (outList != null) {
 			return outList;
 		}
@@ -199,10 +199,10 @@ public class ListService {
 				ContentService content = ContentService.getInstance(ctx.getRequest());
 				MenuElement page = content.getNavigation(ctx).searchChildFromName(name);
 				if (page != null) {
-					outList = new LinkedList<Item>();
+					outList = new LinkedList<IListItem>();
 					Collection<MenuElement> children = page.getChildMenuElements();
 					for (MenuElement child : children) {
-						outList.add(new Item(child.getName(), child.getTitle(ctx)));
+						outList.add(new ListItem(child.getName(), child.getTitle(ctx)));
 					}
 				}
 			}
@@ -214,10 +214,10 @@ public class ListService {
 			try {
 				int start = Integer.parseInt(numbers[0]);
 				int end = Integer.parseInt(numbers[1]);
-				List<Item> numberedList = new LinkedList<Item>();
+				List<IListItem> numberedList = new LinkedList<IListItem>();
 				if (start<end) {
 					for (int i=start; i<=end; i++) {
-						numberedList.add(new Item(""+i,""+i));
+						numberedList.add(new ListItem(""+i,""+i));
 					}
 					return numberedList;
 				}
@@ -228,19 +228,23 @@ public class ListService {
 		if (outList == null) {
 			outList = getHardCodedList(ctx, name);
 		}
+		/** search taxonomy list **/
+		if (outList == null) {
+			outList = ctx.getGlobalContext().getAllTaxonomy(ctx).getList(ctx, name);
+		}
 		return outList;
 	}
 	
-	private synchronized List<Item> getHardCodedList(ContentContext ctx, String name) throws IOException, ServiceException, Exception {		
+	private synchronized List<IListItem> getHardCodedList(ContentContext ctx, String name) throws IOException, ServiceException, Exception {		
 		String key = name+'-'+ctx.getRequestContentLanguage();
 		if (hardNodeCache.get(key) != null) {
 			return hardNodeCache.get(key);
 		}
 		if (name.equals("countries")) {
-			List<ListService.Item> countriesList = new LinkedList<ListService.Item>();
+			List<IListItem> countriesList = new LinkedList<IListItem>();
 			Collection<Map.Entry<Object, Object>> entries = I18nAccess.getInstance(ctx).getCountries().entrySet();
 			for (Map.Entry entry : entries) {				
-				countriesList.add(new ListService.Item(entry));
+				countriesList.add(new ListService.ListItem(entry));
 			}
 			Collections.sort(countriesList, new OrderList());
 			hardNodeCache.put(key, countriesList);			
@@ -249,13 +253,13 @@ public class ListService {
 		return null;
 	}
 	
-	public List<Item> getNavigationList(ContentContext ctx, String name) throws Exception {
+	public List<IListItem> getNavigationList(ContentContext ctx, String name) throws Exception {
 		ContentService content = ContentService.getInstance(ctx.getRequest());
 		MenuElement page = content.getNavigation(ctx).searchChildFromName(name);
 		if (page == null) {
 			return null;
 		} else {
-			List<Item> outList = new LinkedList<ListService.Item>();
+			List<IListItem> outList = new LinkedList<IListItem>();
 			for (MenuElement child : page.getChildMenuElements()) {
 				String key = child.getName();
 				String value = child.getTitle(ctx);
@@ -263,32 +267,32 @@ public class ListService {
 					key="";
 					value = value.substring(1);
 				}
-				outList.add(new Item(key, value));				
+				outList.add(new ListItem(key, value));				
 			}			
 			return outList;
 		}
 	}
 	
 	public void addList(String name, Collection<String> list) {
-		List<Item> finalList = new LinkedList<ListService.Item>();
+		List<IListItem> finalList = new LinkedList<IListItem>();
 		for (String item : list) {
-			finalList.add(new Item(item,item));
+			finalList.add(new ListItem(item,item));
 		}
 		addList(name, finalList);
 	}
 	
-	public void addList(String name, List<Item> list) {
+	public void addList(String name, List<IListItem> list) {
 		localLists.put(name, list);
 	}
 
-	public Map<String, List<Item>> getAllList(ContentContext ctx) {
+	public Map<String, List<IListItem>> getAllList(ContentContext ctx) {
 		return new MapAllList(ctx);
 	}
 
-	public static Map<String, String> listToStringMap(List<Item> list) {
+	public static Map<String, String> listToStringMap(List<IListItem> list) {
 		Map<String, String> outMap = new LinkedHashMap<String, String>();
-		for (Item item : list) {			
-			outMap.put(item.getKey(), item.getValue());
+		for (IListItem item : list) {
+			outMap.put(item.getKey(), item.getValue());			
 		}
 		return outMap;
 	}

@@ -55,8 +55,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.javlo.cache.ICache;
 import org.javlo.cache.MapCache;
 import org.javlo.config.StaticConfig;
-import org.javlo.data.taxonomy.TaxonomyDisplayBean;
 import org.javlo.data.taxonomy.TaxonomyService;
+import org.javlo.data.taxonomy.TaxonomyServiceAgregation;
 import org.javlo.helper.ContentHelper;
 import org.javlo.helper.DebugHelper;
 import org.javlo.helper.ElementaryURLHelper;
@@ -310,7 +310,25 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	}
 
 	public static GlobalContext getMasterContext(HttpSession session) throws IOException {
-		return getRealInstance(session, StaticConfig.getInstance(session).getMasterContext(), true);
+		GlobalContext masterContext = getRealInstance(session, StaticConfig.getInstance(session).getMasterContext(), true);
+		return masterContext;
+	}
+
+	public static GlobalContext getMasterContext(ContentContext ctx) throws IOException {
+		GlobalContext masterContext = getRealInstance(ctx.getRequest().getSession(), StaticConfig.getInstance(ctx.getRequest().getSession()).getMasterContext(), true);
+		PersistenceService persistenceService;
+		try {
+			persistenceService = PersistenceService.getInstance(masterContext);
+			if (!persistenceService.isLoaded()) {
+				Map<String, String> contentAttributeMap = new HashMap<String, String>();
+				ContentContext masterContentContext = new ContentContext(ctx);
+				masterContentContext.setForceGlobalContext(masterContext);
+				persistenceService.load(masterContentContext, ctx.getRenderMode(), contentAttributeMap, null);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return masterContext;
 	}
 
 	public static GlobalContext getSessionInstance(HttpSession session) {
@@ -483,7 +501,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 					}
 					String password = "" + (1000 + Math.round(Math.random() * 8999));
 					newInstance.setPassword(password);
-					newInstance.setFirstPassword(password);					
+					newInstance.setFirstPassword(password);
 
 					if (copyDefaultContext) {
 						GlobalContext defaultContext = getDefaultContext(session);
@@ -643,11 +661,11 @@ public class GlobalContext implements Serializable, IPrintInfo {
 
 	public synchronized void activePopThread() {
 		if (!StringHelper.isEmpty(getPOPHost()) && getPOPPort() > 0) {
-			if (popThread != null && !popThread.isStop()) {				
+			if (popThread != null && !popThread.isStop()) {
 				popThread.setStop(true);
 			}
 			popThread = new POPThread(this);
-			popThread.start();			
+			popThread.start();
 		}
 	}
 
@@ -832,11 +850,13 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		}
 	}
 
-	/*public boolean administratorLogin(String inLogin, String inPassword) {
-		String login = properties.getString("admin", "admin");
-		String password = properties.getString("admin.password", "1234");
-		return login.equals(inLogin) && password.equals(StringHelper.encryptPassword(inPassword));
-	}*/
+	/*
+	 * public boolean administratorLogin(String inLogin, String inPassword) {
+	 * String login = properties.getString("admin", "admin"); String password =
+	 * properties.getString("admin.password", "1234"); return
+	 * login.equals(inLogin) &&
+	 * password.equals(StringHelper.encryptPassword(inPassword)); }
+	 */
 
 	public void cleanFolder() {
 		properties.setProperty("folder", null);
@@ -3860,9 +3880,14 @@ public class GlobalContext implements Serializable, IPrintInfo {
 			e.printStackTrace();
 		}
 	}
-	
-	public TaxonomyService getTaxonomy() {
-		return TaxonomyService.getInstance(this);
+
+	public TaxonomyServiceAgregation getAllTaxonomy(ContentContext ctx) throws IOException {
+		TaxonomyServiceAgregation outTaxonomy = new TaxonomyServiceAgregation(TaxonomyService.getInstance(ctx), TaxonomyService.getMasterInstance(ctx));
+		return outTaxonomy;
+	}
+
+	public TaxonomyService getTaxonomy(ContentContext ctx) {
+		return TaxonomyService.getInstance(ctx);
 	}
 
 }

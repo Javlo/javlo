@@ -13,6 +13,10 @@
 			<span class="glyphicon glyphicon-minus-sign"></span>			
 		</a>		
 		<ul class="translation bloc hidden">
+		<li class="label id">			
+				<label class="lang" for="change-id-${param.id}">ID</label>
+				<span class="text"><input type="text" name="change-id-${param.id}" id="change-id-${param.id}" class="hidden-input form-control" value="${param.id}" placeholder="ID" /></span>			
+			</li>
 		<c:forEach var="lang" items="${info.contentLanguages}">
 			<li class="label">			
 				<label class="lang" for="label-${lang}-${param.id}">${lang}</label>

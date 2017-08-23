@@ -89,8 +89,7 @@ import org.javlo.user.IUserFactory;
 import org.javlo.user.IUserInfo;
 import org.javlo.utils.TimeTracker;
 import org.javlo.ztatic.FileCache;
-import org.python.antlr.PythonParser.for_stmt_return;
-
+	
 public class Edit extends AbstractModuleAction {
 
 	public static String CONTENT_RENDERER = "/jsp/view/content_view.jsp";
@@ -165,11 +164,11 @@ public class Edit extends AbstractModuleAction {
 		ComponentContext compCtx = ComponentContext.getInstance(ctx.getRequest());
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		ContentService content = ContentService.getInstance(globalContext);
-		compCtx.addNewComponent(content.getComponent(ctx, newId)); // prepare
-																	// ajax
-																	// rendering
+		compCtx.addNewComponent(content.getComponent(ctx, newId)); // prepare ajax rendering
 		String componentRenderer = URLHelper.mergePath(currentModule.getPath() + "/jsp/content.jsp");
 		String newComponentXHTML = ServletHelper.executeJSP(ctx, componentRenderer);
+		/*** DEBUG ***/
+		//ResourceHelper.writeStringToFile(new File("c:/trans/comp.html"), newComponentXHTML);
 		compCtx.clearComponents();
 		if (previousId != null) {
 			ctx.addAjaxZone("comp-child-" + previousId, newComponentXHTML);
@@ -202,32 +201,32 @@ public class Edit extends AbstractModuleAction {
 		ctx.addAjaxZone("preview_command", previewCommandsXHTML);
 	}
 
-	/**
-	 * update component
-	 * 
-	 * @param ctx
-	 * @param currentModule
-	 * @param newId
-	 *            the id of the component
-	 * @param previousId
-	 *            the id, null for update and previous component for insert.
-	 * @throws Exception
-	 */
-	private static void updatePreviewComponent(ContentContext ctx, Module currentModule, String newId, String previousId) throws Exception {
-		ComponentContext compCtx = ComponentContext.getInstance(ctx.getRequest());
-		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-		ContentService content = ContentService.getInstance(globalContext);
-		IContentVisualComponent comp = content.getComponent(ctx, newId);
-		compCtx.addNewComponent(comp); // prepare ajax rendering
-		ctx.getRequest().setAttribute("specific-comp", comp);
-		String componentRenderer = "/jsp/view/content_view.jsp";
-		int mode = ctx.getRenderMode();
-		ctx.setRenderMode(ContentContext.PREVIEW_MODE);
-		String newComponentXHTML = ServletHelper.executeJSP(ctx, componentRenderer);
-		ctx.setRenderMode(mode);
-		compCtx.clearComponents();
-		ctx.addAjaxZone("cp_" + newId, newComponentXHTML);
-	}
+//	/**
+//	 * update component
+//	 * 
+//	 * @param ctx
+//	 * @param currentModule
+//	 * @param newId
+//	 *            the id of the component
+//	 * @param previousId
+//	 *            the id, null for update and previous component for insert.
+//	 * @throws Exception
+//	 */
+//	private static void updatePreviewComponent(ContentContext ctx, Module currentModule, String newId, String previousId) throws Exception {
+//		ComponentContext compCtx = ComponentContext.getInstance(ctx.getRequest());
+//		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+//		ContentService content = ContentService.getInstance(globalContext);
+//		IContentVisualComponent comp = content.getComponent(ctx, newId);
+//		compCtx.addNewComponent(comp); // prepare ajax rendering
+//		ctx.getRequest().setAttribute("specific-comp", comp);
+//		String componentRenderer = "/jsp/view/content_view.jsp";
+//		int mode = ctx.getRenderMode();
+//		ctx.setRenderMode(ContentContext.PREVIEW_MODE);
+//		String newComponentXHTML = ServletHelper.executeJSP(ctx, componentRenderer);
+//		ctx.setRenderMode(mode);
+//		compCtx.clearComponents();
+//		ctx.addAjaxZone("cp_" + newId, newComponentXHTML);
+//	}
 
 	private static boolean nameExist(String name, ContentContext ctx, ContentService content) throws Exception {
 		MenuElement page = content.getNavigation(ctx);
@@ -539,7 +538,7 @@ public class Edit extends AbstractModuleAction {
 				case ContentModuleContext.PAGE_MODE:
 					currentModule.setToolsRenderer("/jsp/actions.jsp?button_edit=true&button_preview=true&button_delete_page=true" + publish);
 					request.setAttribute("page", ctx.getCurrentPage().getPageBean(ctx));
-					request.setAttribute("taxonomySelect", globalContext.getTaxonomy().getSelectHtml(ctx.getCurrentPage().getTaxonomy()));
+					request.setAttribute("taxonomySelect", globalContext.getAllTaxonomy(ctx).getSelectHtml(ctx.getCurrentPage().getTaxonomy()));
 					currentModule.setRenderer("/jsp/page_properties.jsp");
 					currentModule.setBreadcrumbTitle(I18nAccess.getInstance(ctx.getRequest()).getText("item.title"));
 					break;
@@ -1277,7 +1276,7 @@ public class Edit extends AbstractModuleAction {
 				}
 
 				/** taxonomy **/
-				if (ctx.getGlobalContext().getTaxonomy().isActive()) {
+				if (ctx.getGlobalContext().getAllTaxonomy(ctx).isActive()) {
 					String[] taxonomies = requestService.getParameterValues("taxonomy", null);
 					if (taxonomies != null) {
 						if (page.getTaxonomy() == null) {

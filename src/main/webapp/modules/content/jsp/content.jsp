@@ -65,8 +65,24 @@ if (clipBoard.getCopiedComponent(ctx) != null) {
 	request.setAttribute("cleanClipBoard","true");
 }
 
-ComponentContext componentContext = ComponentContext.getInstance(request);
-Collection<IContentVisualComponent> components = componentContext.getNewComponents();
+boolean ajaxUpdateComponent = false;
+Collection<IContentVisualComponent> components = null;
+if (request.getParameter("ajaxCompId") != null) {
+	IContentVisualComponent ajaxComp = content.getComponent(ctx, request.getParameter("ajaxCompId"));
+	if (ajaxComp != null) {
+		components = new LinkedList<IContentVisualComponent>();
+		components.add(ajaxComp);
+		request.setAttribute("noinsert", true);
+		ajaxUpdateComponent = true;
+	} else {
+		%><div class="error">comp not found : <%=request.getParameter("ajaxCompId")%></div><%
+	}
+}
+
+if (components == null) {
+	ComponentContext componentContext = ComponentContext.getInstance(request);
+	components = componentContext.getNewComponents();	
+}
 
 if (components.size() == 0 || request.getParameter("firstLine") != null) { /* if no specific components asked than render all components for the current context or force first line */
 String previousId = "0";
@@ -104,7 +120,7 @@ components = allComponents;
  	if (components.iterator().next().getPreviousComponent() != null) {
  		previousId=components.iterator().next().getPreviousComponent().getId();
  	}
-	%><div class="new-component-container" id="comp-child-<%=previousId%>"></div><%
+	if (!ajaxUpdateComponent) {%><div class="new-component-container" id="comp-child-<%=previousId%>"></div><%}
 }
 
 if (components.size() > 60 && request.getParameter("display-all") == null) {
@@ -212,11 +228,8 @@ for (IContentVisualComponent comp : components) {
 	 closeContainerStack.pop();
     %><%=((IContainer)comp).getCloseCode(ctx)%><%
 }
-%>
- <div class="new-component-container" id="comp-child-<%=comp.getId()%>"></div><%
-  
-  %>  
-<%}
+if (!ajaxUpdateComponent) {%><div class="new-component-container" id="comp-child-<%=comp.getId()%>"></div><%}
+}
 for(String closeCode : closeContainerStack) {
 	%><%=closeCode%><%
 }

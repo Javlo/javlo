@@ -230,6 +230,10 @@ public class StringHelper {
 		}
 		return outExt + '.' + newExt;
 	}
+	
+	public static String collectionToString(String... values) {		
+		return collectionToString(Arrays.asList(values), DEFAULT_SEPARATOR);
+	}
 
 	public static String collectionToString(Collection<?> col) {
 		return collectionToString(col, DEFAULT_SEPARATOR);
