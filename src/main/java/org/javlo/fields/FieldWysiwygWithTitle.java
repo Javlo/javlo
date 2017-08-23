@@ -57,8 +57,8 @@ public class FieldWysiwygWithTitle extends FieldWysiwyg {
 	}
 	
 	public String getTitle() {
-		Collection<String> values = StringHelper.stringToCollection(getValue());
-		if (values.size()>1) {
+		Collection<String> values = StringHelper.stringToCollection(getValue());	
+		if (values != null && values.size()>1) {
 			return values.iterator().next();
 		} else {
 			return "";
@@ -68,7 +68,7 @@ public class FieldWysiwygWithTitle extends FieldWysiwyg {
 	@Override
 	public String getText() {
 		List<String> values = StringHelper.stringToCollection(getValue());
-		if (values.size()>1) {
+		if (values != null && values.size()>1) {
 			return values.get(1);
 		} else {
 			return "";
