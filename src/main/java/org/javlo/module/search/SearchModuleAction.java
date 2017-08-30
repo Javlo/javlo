@@ -13,6 +13,7 @@ import org.javlo.component.core.ComponentBean;
 import org.javlo.component.title.Heading;
 import org.javlo.component.title.Title;
 import org.javlo.context.ContentContext;
+import org.javlo.data.taxonomy.TaxonomyService;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.SecurityHelper;
 import org.javlo.helper.StringHelper;
@@ -67,28 +68,37 @@ public class SearchModuleAction extends AbstractModuleAction {
 		}
 		return false;
 	}
-
+	
+	protected static void addPage(ContentContext ctx, Map<MenuElement, SearchResultBean> outResult, MenuElement page, String lg, String authors) throws Exception {
+		String url = URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.PREVIEW_MODE), page);
+		if (ctx.isEditPreview()) {
+			Map<String, String> params = new HashMap<String, String>();
+			params.put("webaction", "edit.closepopup");
+			params.put("url", url);
+			url = URLHelper.createURL(ctx, params);
+		}
+		String previewURL = null;
+		if (page.getImage(ctx) != null) {
+			previewURL = URLHelper.createTransformURL(ctx, page.getImage(ctx).getResourceURL(ctx), "list");
+		}
+		outResult.put(page, new SearchResultBean("page", page.getTitle(ctx), lg , url, authors, StringHelper.renderSortableDate(page.getModificationDate()), previewURL, 1));
+	}
+	
 	public static Collection<SearchResultBean> searchInPage(ContentContext ctx, SearchFilter filter) throws Exception {
 		Map<MenuElement, SearchResultBean> outResult = new HashMap<MenuElement, SearchResultBean>();
 		for (MenuElement page : ctx.getCurrentPage().getRoot().getAllChildrenList()) {
-			if (SecurityHelper.userAccessPage(ctx, ctx.getCurrentEditUser(), page)) {
-				for (ComponentBean comp : page.getContent()) {
-					if (isMatching(comp, filter)) {
-						if (outResult.get(page) == null) {
-							String url = URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.PREVIEW_MODE), page);
-							if (ctx.isEditPreview()) {
-								Map<String, String> params = new HashMap<String, String>();
-								params.put("webaction", "edit.closepopup");
-								params.put("url", url);
-								url = URLHelper.createURL(ctx, params);
+			if (SecurityHelper.userAccessPage(ctx, ctx.getCurrentEditUser(), page)) {				
+				if (filter.getTaxonomy().size() == 0 || TaxonomyService.getInstance(ctx).isAllMatch(page, filter)) {
+					if (filter.isOnlyTaxonomy()) {						
+						addPage(ctx,outResult,page,"p",page.getCreator());
+					}
+					for (ComponentBean comp : page.getContent()) {
+						if (isMatching(comp, filter)) {
+							if (outResult.get(page) == null) {								
+								addPage(ctx,outResult,page,comp.getLanguage(),comp.getAuthors());
+							} else {
+								outResult.get(page).setMatching(outResult.get(page).getMatching() + 1);
 							}
-							String previewURL = null;
-							if (page.getImage(ctx) != null) {
-								previewURL = URLHelper.createTransformURL(ctx, page.getImage(ctx).getResourceURL(ctx), "list");
-							}
-							outResult.put(page, new SearchResultBean("page", page.getTitle(ctx), comp.getLanguage(), url, comp.getAuthors(), StringHelper.renderSortableDate(page.getModificationDate()), previewURL, 1));
-						} else {
-							outResult.get(page).setMatching(outResult.get(page).getMatching() + 1);
 						}
 					}
 				}
@@ -116,14 +126,14 @@ public class SearchModuleAction extends AbstractModuleAction {
 							url = URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.EDIT_MODE));
 							url = URLHelper.addParam(url, "webaction", "search-module.search");
 							url = URLHelper.addParam(url, "module", "file");
-							url = URLHelper.addParam(url, "page", "meta");							
+							url = URLHelper.addParam(url, "page", "meta");
 							url = URLHelper.addParam(url, "file", URLHelper.encodePathForAttribute(file.getPath()));
 							String folderFile = file.getParentFile().getAbsolutePath();
 							folderFile = folderFile.replace(ctx.getGlobalContext().getDataFolder(), "");
 							url = URLHelper.addParam(url, "path", folderFile);
 						} else {
-							
-							String formAction = URLHelper.createURL(ctx);							
+
+							String formAction = URLHelper.createURL(ctx);
 							formAction = URLHelper.addParam(formAction, "webaction", "search-module.search");
 							formAction = URLHelper.addParam(formAction, "title", filter.getTitle());
 							formAction = URLHelper.addParam(formAction, "type", filter.getType());
@@ -131,7 +141,7 @@ public class SearchModuleAction extends AbstractModuleAction {
 							formAction = URLHelper.addParam(formAction, "module", "search");
 							formAction = URLHelper.addParam(formAction, "previewEdit", "true");
 							formAction = URLHelper.addParam(formAction, "webaction", "edit.editPreview");
-							
+
 							url = URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.EDIT_MODE));
 							url = URLHelper.addParam(url, "webaction", "file.previewEdit");
 							url = URLHelper.addParam(url, "module", "file");
@@ -140,7 +150,7 @@ public class SearchModuleAction extends AbstractModuleAction {
 							url = URLHelper.addParam(url, "file", URLHelper.encodePathForAttribute(file.getPath()));
 							url = URLHelper.addParam(url, "previewEdit", "true");
 						}
-						String previewURL = URLHelper.createTransformURL(ctx, staticInfo, "list");						
+						String previewURL = URLHelper.createTransformURL(ctx, staticInfo, "list");
 						outResult.put(staticInfo, new SearchResultBean("file", title, ctx.getContentLanguage(), url, staticInfo.getAuthors(ctx), StringHelper.renderSortableDate(staticInfo.getCreationDate(ctx)), previewURL, 1));
 					} else {
 						outResult.get(staticInfo).setMatching(outResult.get(staticInfo).getMatching() + 1);
@@ -162,6 +172,7 @@ public class SearchModuleAction extends AbstractModuleAction {
 			items.addAll(searchInResource(ctx, searchFilter));
 		}
 		ctx.getRequest().setAttribute("items", items);
+		ctx.getRequest().setAttribute("taxoSelect", ctx.getGlobalContext().getAllTaxonomy(ctx).getSelectHtml("taxonomy", "form-control chosen-select", searchFilter.getTaxonomy()));
 		return null;
 	}
 
@@ -171,4 +182,3 @@ public class SearchModuleAction extends AbstractModuleAction {
 	}
 
 }
-

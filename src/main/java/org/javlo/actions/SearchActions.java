@@ -32,7 +32,7 @@ public class SearchActions implements IAction {
 	 * create a static logger.
 	 */
 	protected static Logger logger = Logger.getLogger(SearchActions.class.getName());
-
+	
 	public static String performSearch(HttpServletRequest request, HttpServletResponse response) {
 		String msg = null;
 

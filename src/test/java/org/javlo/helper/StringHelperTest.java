@@ -358,5 +358,55 @@ public class StringHelperTest extends TestCase {
 		assertEquals("ete", StringHelper.removeSpecialChars("été"));		
 		assertEquals("lorem_ss_ipsum", StringHelper.removeSpecialChars("lorem ß ipsum"));*/
 	}
+	
+	public void testMatchStarPattern() {
+		assertTrue(StringHelper.matchStarPattern("eeA", "ee*"));
+		assertFalse(StringHelper.matchStarPattern("eeA", "ee"));
+		assertTrue(StringHelper.matchStarPattern("Aee", "*ee"));
+		assertFalse(StringHelper.matchStarPattern("Aee", "ee"));
+		assertTrue(StringHelper.matchStarPattern("eAe", "e*e"));
+		assertFalse(StringHelper.matchStarPattern("eAe", "ee"));
+		assertTrue(StringHelper.matchStarPattern("ee", "ee"));
+	}
+	
+	public void testMatchQuestionPattern() {
+		assertTrue(StringHelper.matchQuestionPattern("eeA", "ee?"));
+		assertFalse(StringHelper.matchQuestionPattern("eeA", "ee"));
+		assertTrue(StringHelper.matchQuestionPattern("Aee", "?ee"));
+		assertFalse(StringHelper.matchQuestionPattern("Aee", "ee"));
+		assertTrue(StringHelper.matchQuestionPattern("eAe", "e?e"));
+		assertFalse(StringHelper.matchQuestionPattern("eAe", "ee"));
+		assertTrue(StringHelper.matchQuestionPattern("ee", "ee"));
+	}
+	
+	
+	
+	public void testMatchSimplePattern() {
+		assertTrue(StringHelper.matchSimplePattern("eeA", "ee*", false));
+		assertFalse(StringHelper.matchSimplePattern("eeA", "ee", false));
+		assertTrue(StringHelper.matchSimplePattern("Aee", "*ee", false));
+		assertFalse(StringHelper.matchSimplePattern("Aee", "ee", false));
+		assertTrue(StringHelper.matchSimplePattern("eAe", "e*e", false));
+		assertFalse(StringHelper.matchSimplePattern("eAe", "ee", false));
+		assertTrue(StringHelper.matchSimplePattern("ee", "ee", false));
+		assertTrue(StringHelper.matchSimplePattern("eeA", "ee?", false));
+		assertFalse(StringHelper.matchSimplePattern("eeA", "ee", false));
+		assertTrue(StringHelper.matchSimplePattern("Aee", "?ee", false));
+		assertFalse(StringHelper.matchSimplePattern("Aee", "ee", false));
+		assertTrue(StringHelper.matchSimplePattern("eAe", "e?e", false));
+		assertFalse(StringHelper.matchSimplePattern("eAe", "ee", false));
+		assertTrue(StringHelper.matchSimplePattern("ee", "ee", false));
+		
+		assertFalse(StringHelper.matchSimplePattern("Aee", "ee", false));
+		assertTrue(StringHelper.matchSimplePattern("eAe", "e?e*", false));
+		assertFalse(StringHelper.matchSimplePattern("eAe", "ee", false));
+		assertTrue(StringHelper.matchSimplePattern("eeaaa", "ee???", false));
+		assertTrue(StringHelper.matchSimplePattern("eeaaab", "ee?*b", false));
+		assertFalse(StringHelper.matchSimplePattern("eeaab", "ee???*b", false));
+		
+		assertFalse(StringHelper.matchSimplePattern("eeaab", "eE?*b", false));
+		assertTrue(StringHelper.matchSimplePattern("eeaab", "eE?*b", true));
+	}
+	
  
 }

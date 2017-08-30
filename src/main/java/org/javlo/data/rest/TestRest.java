@@ -15,11 +15,11 @@ public class TestRest implements IRestFactory {
 	}
 
 	@Override
-	public IRestItem search(ContentContext ctx, String query) {
+	public IRestItem search(ContentContext ctx, String path, String query) {
 		RestItemBean outItem = new RestItemBean();
-		outItem.setQuery("{\"path\" : \""+query+"\"}");
+		outItem.setQuery("{\"path\" : \""+path+"\"}");
 		Map<String,String> map = new HashMap<String, String>();
-		map.put("path", query);
+		map.put("path", path);
 		StringWriter strWriter = new StringWriter();
 		JSONMap.JSON.toJson(map, strWriter);
 		outItem.setQuery(strWriter.toString());

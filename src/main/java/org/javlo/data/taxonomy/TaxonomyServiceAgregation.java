@@ -75,7 +75,6 @@ public class TaxonomyServiceAgregation {
 
 	public String getSelectHtml(String name, String cssClass, Collection<String> selection) {
 		Map<String, TaxonomyBean> beans = new HashMap<String, TaxonomyBean>();
-		System.out.println("##### TaxonomyServiceAgregation.getSelectHtml : #services = "+services.size()); //TODO: remove debug trace
 		for (TaxonomyService taxonomyService : services) {			
 			beans.putAll(taxonomyService.getTaxonomyBeanMap());
 		}

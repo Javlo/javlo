@@ -76,7 +76,6 @@ import org.javlo.context.GlobalContext;
 import org.javlo.data.rest.IRestItem;
 import org.javlo.data.taxonomy.ITaxonomyContainer;
 import org.javlo.helper.BeanHelper;
-import org.javlo.helper.DebugHelper;
 import org.javlo.helper.NavigationHelper;
 import org.javlo.helper.NetHelper;
 import org.javlo.helper.StringHelper;
@@ -1027,8 +1026,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 		return new SmartPageDescription(ctx, this);
 	}
 
-	public static MenuElement getInstance(GlobalContext globalContext) {
-		String caller = DebugHelper.getCaller();
+	public static MenuElement getInstance(GlobalContext globalContext) {		
 		MenuElement outMenuElement = new MenuElement();
 		outMenuElement.releaseCache = true;
 		outMenuElement.lock = globalContext.getLockLoadContent();

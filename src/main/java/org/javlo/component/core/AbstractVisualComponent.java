@@ -676,7 +676,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			out.println("</div>");
 		}
 
-		String[] styles = getStyleList(ctx);
+		String[] styles = getStyleList(ctx);		
 		if (!isFreeInputLayout() && styles.length > 1) {
 			String[] stylesLabel = getStyleLabelList(ctx);
 			if (styles.length != stylesLabel.length) {
@@ -2772,6 +2772,17 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		String jsp = module.getJspPath("/jsp/list.jsp?ajaxCompId"+getId());
 		String html = ServletHelper.executeJSP(ctx, jsp);		
 		ctx.getAjaxZone().put("comp-"+getId(), html);
+	}
+	
+	@Override
+	public boolean isRestMatch(ContentContext ctx, Map<String, String> params) {
+		if (params.size() == 0) {
+			return true;
+		}
+		if (params.containsKey("content")) {			
+			return getValue().contains(params.get("content"));
+		}
+		return false;
 	}
 
 }

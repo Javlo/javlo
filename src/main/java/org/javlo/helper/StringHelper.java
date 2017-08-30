@@ -1632,6 +1632,50 @@ public class StringHelper {
 		}
 		return currentPos == str.length() || pattern.endsWith("*");
 	}
+	
+	/**
+	 * Test if a string match with a pattern using '?'. <br/>
+	 * @param str
+	 * @param pattern
+	 * @return
+	 */
+	public static boolean matchQuestionPattern(String str, String pattern) {
+		if (str == null || pattern == null) {
+			return false;
+		} else if (str.length() != pattern.length()) {
+			return false;
+		} else {
+			for (int i=0; i<str.length(); i++) {
+				if (pattern.charAt(i) != '?' && str.charAt(i) != pattern.charAt(i)) {
+					return false;
+				}
+			}
+			return true;
+		}
+	}
+	
+	/**
+	 * Test if a string match with a pattern using '?' and '*'. <br/>
+	 * @param str
+	 * @param pattern
+	 * @return
+	 */
+	public static boolean matchSimplePattern(String str, String pattern, boolean ignoreCase) {
+		if (ignoreCase) {
+			pattern = pattern.toLowerCase();
+			str = str.toLowerCase();
+		}
+		pattern = pattern.replace("\\", "\\\\");
+		pattern = pattern.replace(".", "\\.");
+		pattern = pattern.replace("+", "\\+");
+		pattern = pattern.replace("|", "\\|");
+		pattern = pattern.replace("$", "\\$");
+		pattern = pattern.replace("^", "\\^");
+		pattern = pattern.replace("?", ".");
+		pattern = pattern.replace("*", ".*");
+		return Pattern.matches(pattern, str);
+	}
+
 
 	/**
 	 * transform a string empty to a other string

@@ -36,12 +36,19 @@ public class RestDataServlet extends HttpServlet {
 	}
 	
 	public void process(HttpServletRequest request, HttpServletResponse response, boolean post) throws ServletException {
+		
+		if (!StaticConfig.getInstance(request.getSession().getServletContext()).isRestServer()) {
+			logger.warning("no rest server");
+			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+			return;
+		}
+		
 		String path = request.getPathInfo();
 		String[] pathItem = StringUtils.split(path, '/');
 		if (!StaticConfig.getInstance(request.getSession().getServletContext()).isRestServlet()) {
 			logger.warning("rest servlet not activated, change static-config to use.");
 			response.setStatus(HttpServletResponse.SC_NOT_FOUND);			
-		} else if (pathItem.length < 2) {
+		} else if (pathItem == null || pathItem.length < 2) {
 			logger.warning("bad rest url format : min size : 2");
 			response.setStatus(HttpServletResponse.SC_NOT_FOUND);			
 		} else {
@@ -56,7 +63,7 @@ public class RestDataServlet extends HttpServlet {
 					response.setContentType("application/json; charset=" + ContentContext.CHARACTER_ENCODING);					
 					ctx = ContentContext.getContentContext(request, response);
 					path = path.substring(pathItem[0].length()+2);					
-					IRestItem item = restFactory.search(ctx, path);					
+					IRestItem item = restFactory.search(ctx, path, request.getQueryString());					
 					if (item == null) {
 						logger.warning("Rest item not found : "+path);
 						response.setStatus(HttpServletResponse.SC_NOT_FOUND);

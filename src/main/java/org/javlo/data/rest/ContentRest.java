@@ -22,10 +22,10 @@ public class ContentRest implements IRestFactory {
 	}
 
 	@Override
-	public IRestItem search(ContentContext ctx, String query) throws Exception {
-		ContentService content = ContentService.getInstance(ctx.getRequest());
-		MenuElement root = content.getNavigation(ctx).searchChild(ctx, query);
-		if (root != null) {
+	public IRestItem search(ContentContext ctx, String path, String query) throws Exception {		
+		ContentService content = ContentService.getInstance(ctx.getRequest());		
+		MenuElement root = content.getNavigation(ctx).searchChild(ctx, '/'+path);		
+		if (root != null && root.isReadAccess(ctx, ctx.getCurrentUser())) {
 			root.setRestWidthChildren(children);
 		}
 		return root;

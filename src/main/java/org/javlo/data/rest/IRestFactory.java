@@ -6,6 +6,6 @@ public interface IRestFactory {
 
 	public String getName();
 	
-	public IRestItem search(ContentContext ctx, String query) throws Exception;
+	public IRestItem search(ContentContext ctx, String path, String query) throws Exception;
 	
 }

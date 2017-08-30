@@ -16,13 +16,13 @@ public class ThreadRunRest implements IRestFactory {
 	}
 
 	@Override
-	public IRestItem search(ContentContext ctx, String query) {
+	public IRestItem search(ContentContext ctx, String path, String query) {
 		RestItemBean outItem = new RestItemBean();
 		ThreadManager threadManager = ThreadManager.getInstance(ctx.getRequest().getSession().getServletContext());		
 		outItem.setQuery("{\"thread\" : \""+query+"\"}");
 		Map<String,Object> map = new HashMap<String, Object>();
-		if (query.startsWith("/")) {
-			query = query.substring(1);
+		if (path.startsWith("/")) {
+			path = path.substring(1);
 		}
 		map.put("running", ""+threadManager.isThreadRunning(query));
 		StringWriter strWriter = new StringWriter();

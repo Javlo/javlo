@@ -219,10 +219,6 @@ body .component-wrapper {
 	border: 1px #aa0000 solid;
 }
 
-.dynamic-component-list select, .dynamic-component-list input {
-	width: auto;
-}
-
 .dynamic-component .preview {
 	text-align: center;
 }

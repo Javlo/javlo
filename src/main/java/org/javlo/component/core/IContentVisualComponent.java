@@ -856,7 +856,7 @@ public interface IContentVisualComponent extends Comparable<IContentVisualCompon
 	 * return error message on structure of the component.
 	 * @return null if no errors found
 	 */
-	public String getErrorMessage(ContentContext ctx);	
+	public String getErrorMessage(ContentContext ctx);
 	
-
+	public boolean isRestMatch(ContentContext ctx, Map<String,String> params);
 }

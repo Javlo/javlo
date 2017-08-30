@@ -1097,4 +1097,24 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 		}		
 	}
 	
+	@Override
+	public boolean isRestMatch(ContentContext ctx, Map<String, String> params) {
+		if (params.size() == 0) {
+			return super.isRestMatch(ctx, params);
+		} else {
+			try {
+				for (Field field : getFields(ctx)) {
+					if (params.get(field.getName()) != null) {
+						if (!StringHelper.matchSimplePattern(field.getValue(), params.get(field.getName()), true)) {
+							return false;
+						}
+					}
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			return true;
+		}
+	}
+	
 }

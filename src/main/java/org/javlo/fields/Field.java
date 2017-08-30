@@ -5,6 +5,7 @@ import java.io.StringWriter;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -1110,6 +1111,16 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 		}
 		if (getValue() == null) {
 			return 1;
+		}
+		Date localDate = StringHelper.smartParseDate(getValue());
+		if (localDate != null) {
+			Date inDate = StringHelper.smartParseDate(o.getValue());
+			if (inDate != null) {
+				return localDate.compareTo(inDate);
+			}
+		}
+		if (StringHelper.isDigit(getValue()) && StringHelper.isDigit(o.getValue())) {
+			return Integer.parseInt(o.getValue()) - Integer.parseInt(getValue());
 		}
 		return getValue().compareTo(o.getValue());
 	}

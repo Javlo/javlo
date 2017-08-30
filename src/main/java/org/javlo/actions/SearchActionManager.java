@@ -15,7 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 public class SearchActionManager {
 
 	static final String METHOD_PREFIX = "perform";
-
+	
 	static final String formatActionName(String name) {
 		String start = name.substring(0, 1);
 		String end = "";

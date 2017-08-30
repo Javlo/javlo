@@ -1700,5 +1700,9 @@ public class StaticConfig extends Observable {
 		return properties.getBoolean("preview.add-button", true);
 	}
 	
+	public boolean isRestServer() {
+		return properties.getBoolean("security.rest-server", false);
+	}
+	
 	
 }

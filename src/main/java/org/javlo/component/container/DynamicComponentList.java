@@ -4,6 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -34,35 +35,46 @@ public class DynamicComponentList extends AbstractPropertiesComponent {
 
 	private static final String START = "start";
 
-	static final List<String> filtersType = Arrays.asList(new String[] { EQUALS, CONTAINS, START, MATCH });
+	private static final String SUP = "superior";
+
+	private static final String INF = "inferior";
+
+	static final List<String> filtersType = Arrays.asList(new String[] { EQUALS, CONTAINS, START, MATCH, SUP, INF });
 
 	private static final String FILTER_SUFFIX = "-filter";
 	private static final String FILTER_TYPE_SUFFIX = "-filter-type";
-	
+
+	private static final String MAX_SIZE_KEY = "__maxsize";
+
 	private Boolean realContent = null;
 
 	@Override
 	public String getType() {
 		return TYPE;
 	}
-	
+
 	@Override
 	public String getStyleTitle(ContentContext ctx) {
 		return "sort on";
 	}
 	
+
 	@Override
-	public String[] getStyleList(ContentContext ctx) {		
+	public String[] getStyleList(ContentContext ctx) {
 		IFieldContainer fieldContainer;
 		try {
 			fieldContainer = getFieldContainer(ctx);
 			if (fieldContainer != null) {
 				List<Field> fields = fieldContainer.getFields(ctx);
-				String[] outFields = new String[fields.size()+1];
-				outFields[0] = "";				
-				int i=1;
-				for (Field field : fields) {	
-					outFields[i] = field.getName();
+				String[] outFields = new String[fields.size()*2 + 1];
+				outFields[0] = "";
+				int i = 1;
+				for (Field field : fields) {
+					outFields[i] = "> "+field.getName();
+					i++;
+				}
+				for (Field field : fields) {
+					outFields[i] = "< "+field.getName();
 					i++;
 				}
 				return outFields;
@@ -72,7 +84,7 @@ public class DynamicComponentList extends AbstractPropertiesComponent {
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
-		}		
+		}
 	}
 
 	@Override
@@ -87,7 +99,12 @@ public class DynamicComponentList extends AbstractPropertiesComponent {
 		ContentService content = ContentService.getInstance(ctx.getRequest());
 		List<String> container = service.getAllType(ctx, content.getNavigation(ctx));
 
-		out.println(XHTMLHelper.getInputOneSelect(createKeyWithField("type"), container, getSelectedType()));
+		out.println("<div class=\"form-group\">" + XHTMLHelper.getInputOneSelect(createKeyWithField("type"), container, getSelectedType(), "form-control") + "</div>");
+
+		out.println("<div class=\"row\">");
+		out.println("<div class=\"col-sm-1\"><label for=\"" + getMaxSizeInputName() + "\">max</label></div>");
+		out.println("<div class=\"col-sm-3\"><div class=\"form-group\"><input class=\"form-control\" type=\"text\" id=\"" + getMaxSizeInputName() + "\" name=\"" + getMaxSizeInputName() + "\" value=\"" + (getMaxSize()>0?getMaxSize():"") + "\" /></div></div>");
+		out.println("</div>");
 
 		String childrenLabel = i18nAccess.getText("component.filter.children", "search only on children pages.");
 		out.println("<div class=\"checkbox\">");
@@ -95,7 +112,7 @@ public class DynamicComponentList extends AbstractPropertiesComponent {
 		if (isOnlyChildren()) {
 			checked = " checked=\"checked\"";
 		}
-		out.println("<label><input name=\"" + createKeyWithField("children") + "\" type=\"checkbox\"" + checked + " />");
+		out.println("<label><input class=\"form-group\" name=\"" + createKeyWithField("children") + "\" type=\"checkbox\"" + checked + " />");
 		out.println(childrenLabel + "</label>");
 		out.println("</div>");
 
@@ -105,10 +122,10 @@ public class DynamicComponentList extends AbstractPropertiesComponent {
 			out.println("<legend>" + i18nAccess.getText("global.filter") + "</legend>");
 			List<Field> fields = fieldContainer.getFields(ctx);
 			for (Field field : fields) {
-				out.println("<div class=\"line\">");
-				out.println("<label class=\"large\" for=\"" + createKeyWithField(field.getName() + FILTER_SUFFIX) + "\">" + field.getName() + "</label>");
-				out.println(XHTMLHelper.getInputOneSelect(createKeyWithField(field.getName() + FILTER_TYPE_SUFFIX), filtersType, properties.getProperty(field.getName() + FILTER_TYPE_SUFFIX)));
-				out.println("<input type=\"text\" id=\"" + createKeyWithField(field.getName() + FILTER_SUFFIX) + "\" name=\"" + createKeyWithField(field.getName() + FILTER_SUFFIX) + "\" value=\"" + properties.getProperty(field.getName() + FILTER_SUFFIX, "") + "\" />");
+				out.println("<div class=\"row\">");
+				out.println("<div class=\"col-sm-2\"><label class=\"large\" for=\"" + createKeyWithField(field.getName() + FILTER_SUFFIX) + "\">" + field.getName() + "</label></div>");
+				out.println("<div class=\"col-sm-2\"><div class=\"form-group\">" + XHTMLHelper.getInputOneSelect(createKeyWithField(field.getName() + FILTER_TYPE_SUFFIX), filtersType, properties.getProperty(field.getName() + FILTER_TYPE_SUFFIX), "form-control") + "</div></div>");
+				out.println("<div class=\"col-sm-8\"><div class=\"form-group\"><input class=\"form-control\" type=\"text\" id=\"" + createKeyWithField(field.getName() + FILTER_SUFFIX) + "\" name=\"" + createKeyWithField(field.getName() + FILTER_SUFFIX) + "\" value=\"" + properties.getProperty(field.getName() + FILTER_SUFFIX, "") + "\" /></div></div>");
 				out.println("</div>");
 			}
 		}
@@ -118,10 +135,14 @@ public class DynamicComponentList extends AbstractPropertiesComponent {
 		return new String(outStream.toByteArray());
 	}
 
+	protected String getMaxSizeInputName() {
+		return createKeyWithField(MAX_SIZE_KEY);
+	}
+
 	boolean fieldMatch(ContentContext ctx, String name, String value) {
 		String filterType = properties.getProperty(name + FILTER_TYPE_SUFFIX, CONTAINS);
 		String filter = properties.getProperty(name + FILTER_SUFFIX, "");
-		
+
 		if (value == null) {
 			return filter == null || filter.trim().length() == 0;
 		}
@@ -142,6 +163,30 @@ public class DynamicComponentList extends AbstractPropertiesComponent {
 			} else if (filterType.equals(MATCH)) {
 				Pattern p = Pattern.compile(filter);
 				return p.matcher(value).matches();
+			} else if (filterType.equals(SUP)) {
+				if (StringHelper.isDigit(value) && StringHelper.isDigit(filter)) {
+					return Integer.parseInt(value) > Integer.parseInt(filter);
+				} else {
+					Date valueDate = StringHelper.smartParseDate(value);
+					Date filterDate = StringHelper.smartParseDate(filter);
+					if (valueDate != null && filterDate != null) {
+						return valueDate.getTime() > filterDate.getTime();
+					} else {
+						return true;
+					}
+				}
+			} else if (filterType.equals(INF)) {
+				if (StringHelper.isDigit(value) && StringHelper.isDigit(filter)) {
+					return Integer.parseInt(value) < Integer.parseInt(filter);
+				} else {
+					Date valueDate = StringHelper.smartParseDate(value);
+					Date filterDate = StringHelper.smartParseDate(filter);
+					if (valueDate != null && filterDate != null) {
+						return valueDate.getTime() < filterDate.getTime();
+					} else {
+						return true;
+					}
+				}
 			}
 			return false;
 		}
@@ -149,9 +194,9 @@ public class DynamicComponentList extends AbstractPropertiesComponent {
 
 	@Override
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
-		
+
 		prepareView(ctx);
-		
+
 		realContent = false;
 
 		IFieldContainer fieldContainer = getFieldContainer(ctx);
@@ -170,10 +215,12 @@ public class DynamicComponentList extends AbstractPropertiesComponent {
 		if (isOnlyChildren()) {
 			rootPage = ctx.getCurrentPage();
 		}
-		
-		List<IFieldContainer> containers = service.getFieldContainers(ctx, rootPage, getSelectedType());		
+
+		List<IFieldContainer> containers = service.getFieldContainers(ctx, rootPage, getSelectedType());
 		List<IFieldContainer> visibleContainers = new LinkedList<IFieldContainer>();
-		
+
+		int count = 0;
+		int maxSize = getMaxSize();
 		for (IFieldContainer container : containers) {
 			if (container.isRealContent(ctx)) {
 				boolean display = true;
@@ -184,20 +231,24 @@ public class DynamicComponentList extends AbstractPropertiesComponent {
 					}
 				}
 				if (display) {
-					realContent = true;
-					visibleContainers.add(container);
+					if (maxSize <= 0 || count < maxSize) {
+						realContent = true;
+						visibleContainers.add(container);
+						count++;
+					}
 				}
+
 			}
 		}
 		int index = 0;
 		ctx.getRequest().setAttribute("componentSize", visibleContainers.size());
 		ctx.getRequest().setAttribute("first", true);
 		ctx.getRequest().setAttribute("last", false);
-		
-		if(!StringHelper.isEmpty(getStyle())) {
+
+		if (!StringHelper.isEmpty(getStyle())) {
 			Collections.sort(visibleContainers, new SortContainer(ctx, getStyle()));
 		}
-		
+
 		for (IFieldContainer container : visibleContainers) {
 			index++;
 			ctx.getRequest().setAttribute("componentIndex", index);
@@ -205,7 +256,7 @@ public class DynamicComponentList extends AbstractPropertiesComponent {
 				ctx.getRequest().setAttribute("last", true);
 			}
 			out.println(container.getViewListXHTMLCode(ctx));
-			ctx.getRequest().setAttribute("first", false);			
+			ctx.getRequest().setAttribute("first", false);
 		}
 
 		out.close();
@@ -217,16 +268,24 @@ public class DynamicComponentList extends AbstractPropertiesComponent {
 		return properties.getProperty("type");
 	}
 
+	private int getMaxSize() {
+		String maxSizeStr = StringHelper.neverEmpty(properties.getProperty(MAX_SIZE_KEY), "0");
+		if (StringHelper.isDigit(maxSizeStr)) {
+			return Integer.parseInt(maxSizeStr);
+		}
+		return 0;
+	}
+
 	IFieldContainer getFieldContainer(ContentContext ctx) throws Exception {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		DynamicComponentService service = DynamicComponentService.getInstance(globalContext);
-		
+
 		ContentService content = ContentService.getInstance(ctx.getRequest());
 		MenuElement rootPage = content.getNavigation(ctx);
 		if (isOnlyChildren()) {
 			rootPage = ctx.getCurrentPage();
 		}
-		
+
 		List<IFieldContainer> containers = service.getFieldContainers(ctx, rootPage, getSelectedType());
 		if (containers.size() > 0) {
 			return containers.iterator().next();
@@ -240,6 +299,7 @@ public class DynamicComponentList extends AbstractPropertiesComponent {
 		List<String> outList = new LinkedList<String>();
 		outList.add("type");
 		outList.add("children");
+		outList.add(MAX_SIZE_KEY);
 		if (getSelectedType() != null) {
 			IFieldContainer container = getFieldContainer(ctx);
 			if (container != null) {
@@ -287,11 +347,6 @@ public class DynamicComponentList extends AbstractPropertiesComponent {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return true;
-	}
-	
-	@Override
-	protected boolean isFreeInputLayout() {
 		return true;
 	}
 

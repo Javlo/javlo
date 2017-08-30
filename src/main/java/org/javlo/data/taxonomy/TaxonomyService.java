@@ -234,16 +234,35 @@ public class TaxonomyService {
 		out.close();
 		return new String(outStream.toByteArray());
 	}
+	
+	public boolean isAllMatch(ITaxonomyContainer container, ITaxonomyContainer filter) {
+		for (String taxonomy : filter.getTaxonomy()) {
+			if (!isMatch(container, new TaxonmyContainerBean(taxonomy))) {
+				return false;
+			}
+		}
+		return true;
+	}
 
-	public boolean isMatch(ITaxonomyContainer cont1, ITaxonomyContainer cont2) {
-		if (cont1 == null || cont2 == null || cont1.getTaxonomy() == null || cont2.getTaxonomy() == null) {
+	public boolean isMatch(ITaxonomyContainer container, ITaxonomyContainer filter) {
+		if (container == null || filter == null) {
 			return true;
 		}
-		if (!Collections.disjoint(cont1.getTaxonomy(), cont2.getTaxonomy())) {
+		if (container.getTaxonomy() == null || container.getTaxonomy().size() == 0) {
+			if (filter.getTaxonomy() == null || filter.getTaxonomy().size() == 0) {
+				return true;
+			} else {
+				return false;
+			}
+		}
+		if (filter.getTaxonomy() == null || filter.getTaxonomy().size() == 0) {
+			return false;			
+		}
+		if (!Collections.disjoint(container.getTaxonomy(), filter.getTaxonomy())) {
 			return true;
 		} else {
-			Set<String> allCont1 = new HashSet<String>(cont1.getTaxonomy());
-			for (String id : cont1.getTaxonomy()) {
+			Set<String> allCont1 = new HashSet<String>(container.getTaxonomy());
+			for (String id : container.getTaxonomy()) {
 				TaxonomyBean bean = getTaxonomyBeanMap().get(id);
 				if (bean != null && bean.getParent() != null) {
 					while (bean.getParent().getParent() != null) {
@@ -253,20 +272,8 @@ public class TaxonomyService {
 				} else {
 					logger.warning("taxonomy bean not found : " + id);
 				}
-			}
-			Set<String> allCont2 = new HashSet<String>(cont2.getTaxonomy());
-			for (String id : cont2.getTaxonomy()) {
-				TaxonomyBean bean = getTaxonomyBeanMap().get(id);
-				if (bean != null && bean.getParent() != null) {
-					while (bean.getParent().getParent() != null) {
-						bean = bean.getParent();
-						allCont2.add(bean.getId());
-					}
-				} else {
-					logger.warning("taxonomy bean not found : " + id);
-				}
-			}
-			return !Collections.disjoint(allCont1, allCont2);
+			}			
+			return !Collections.disjoint(allCont1, filter.getTaxonomy());
 		}
 	}
 
