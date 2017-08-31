@@ -61,6 +61,7 @@ import org.javlo.utils.CSVFactory;
 import org.javlo.ztatic.FileCache;
 import org.javlo.ztatic.StaticInfo;
 import org.javlo.ztatic.StaticInfo.StaticInfoBean;
+import org.owasp.encoder.Encode;
 
 public class UserAction extends AbstractModuleAction {
 
@@ -832,17 +833,16 @@ public class UserAction extends AbstractModuleAction {
 		for (IUserInfo userInfo : users) {
 			if (query == null || StringHelper.arrayToString(userInfo.getAllValues()).contains(query)) {
 				if (record >= displayStart && record < displayStart + pageSize) {
-					out.print(sep + '[' + '"' + "<input type=\\\"checkbox\\\" name=\\\"" + userInfo.getLogin()
+					out.print(sep + '[' + '"' + "<input type=\\\"checkbox\\\" name=\\\"" + Encode.forJavaScriptAttribute(userInfo.getLogin())
 							+ "\\\" />" + '"' + ',');
 					Map<String, String> params = new HashMap<String, String>();
 					params.put("webaction", "edit");
 					params.put("cuser", userInfo.getEncryptLogin());
-					String editURL = URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.EDIT_MODE),
-							params);
-					out.print('"' + "<a href=\\\"" + editURL + "\\\">" + userInfo.getLogin() + "</a>" + '"' + ',');
-					out.print('"' + userInfo.getFirstName() + '"' + ',');
-					out.print('"' + userInfo.getLastName() + '"' + ',');
-					out.print('"' + userInfo.getEmail() + '"' + ',');
+					String editURL = URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.EDIT_MODE), params);
+					out.print('"' + "<a href=\\\"" + editURL + "\\\">" + Encode.forJavaScriptSource(userInfo.getLogin()) + "</a>" + '"' + ',');
+					out.print('"' + Encode.forJavaScriptAttribute(userInfo.getFirstName()) + '"' + ',');
+					out.print('"' + Encode.forJavaScriptAttribute(userInfo.getLastName()) + '"' + ',');
+					out.print('"' + Encode.forJavaScriptAttribute(userInfo.getEmail()) + '"' + ',');
 					out.print('"' + StringHelper.renderSortableTime(userInfo.getCreationDate()) + '"' + ']');
 					sep = ",";
 				}
