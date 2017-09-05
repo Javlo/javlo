@@ -10,6 +10,7 @@ jQuery(document).ready(function(){
 			action.addClass('open');
 			action.parent().parent().find('> ul').removeClass("hidden");
 		}
+		return false;
 	});	
 	jQuery('#taxonomy-form').on('ajaxUpdate', function() {
 		console.log("- ",jQuery(this).find(".needfocus"));
