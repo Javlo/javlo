@@ -51,7 +51,13 @@ public class TaxonomyAction extends AbstractModuleAction {
 		
 		if (!StringHelper.isEmpty(moveto) && !StringHelper.isEmpty(moved)) {
 			if (taxonomyService.move(moved, moveto, asChild)) {
-				updateBean(ctx, module, moveto);
+				String parentId = moveto;
+				for (TaxonomyBean bean : taxonomyService.getAllBeans()) {
+					if (bean.getId().equals(moveto) && bean.getParent() != null) {
+						parentId = bean.getParent().getId();
+					}
+				}
+				updateBean(ctx, module, parentId);
 			} else {
 				messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("taxonomy.move.error", "Error on move, check if there are not allready the name in the target list."), GenericMessage.ERROR));
 			}
