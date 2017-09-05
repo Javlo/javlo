@@ -48,6 +48,12 @@ input, textarea, select {
 	color: #555555;
 }
 
+input[type=checkbox], input[type=radio] {
+	-webkit-box-shadow: none;
+	-moz-box-shadow: none;
+	box-shadow: none;
+}
+
 .colorpicker input, .colorpicker textarea, .colorpicker select {
 	box-shadow: 0 0 0;
 }

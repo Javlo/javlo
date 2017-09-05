@@ -408,5 +408,12 @@ public class StringHelperTest extends TestCase {
 		assertTrue(StringHelper.matchSimplePattern("eeaab", "eE?*b", true));
 	}
 	
+	public void testIsLetter() {
+		assertTrue(StringHelper.isAlpha("javlo"));
+		assertFalse(StringHelper.isAlpha("javlo1"));
+		assertTrue(StringHelper.isAlpha(""));
+		assertFalse(StringHelper.isAlpha("jav lo"));
+	}
+	
  
 }

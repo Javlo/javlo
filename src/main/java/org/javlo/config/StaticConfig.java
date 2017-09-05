@@ -1096,14 +1096,15 @@ public class StaticConfig extends Observable {
 	}
 
 	public boolean isInternetAccess() {
-		if (internetAccess == null) {
-			try {
-				internetAccess = NetHelper.isURLValid(new URL(getDefaultTestURL()));
-			} catch (MalformedURLException e) {
-				logger.severe("bad url format : " + getDefaultTestURL());
-			}
-		}
-		return internetAccess;
+//		if (internetAccess == null) {
+//			try {
+//				internetAccess = NetHelper.isURLValid(new URL(getDefaultTestURL()));
+//			} catch (MalformedURLException e) {
+//				logger.severe("bad url format : " + getDefaultTestURL());
+//			}
+//		}
+//		return internetAccess;
+		return false;
 	}
 
 	/**

@@ -159,7 +159,15 @@
 		<div class="line">
 			<label for="shared-${file.id}">${i18n.edit["field.shared"]}</label>
 			<input ${metaReadOnly?'readonly="readonly"':''} type="checkbox" id="shared-${file.id}" name="shared-${file.id}" ${file.shared?'checked="checked"':''} />
-		</div>				
+		</div>
+		<div class="line">
+			<label for="ref-${file.id}">${i18n.edit["field.reference"]}</label>
+			<input ${metaReadOnly?'readonly="readonly"':''} type="text" id="ref-${file.id}" name="ref-${file.id}" value="${file.reference}" />
+		</div>
+		<div class="line">
+			<label for="lg-${file.id}">${i18n.edit["field.language"]}</label>
+			<input ${metaReadOnly?'readonly="readonly"':''} type="text" id="lg-${file.id}" name="lg-${file.id}" value="${file.language}" />
+		</div>
 		</c:if>
 		<c:if test="${fn:length(tags) > 0}">
 		<fieldset class="tags">

@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.javlo.bean.Link;
+import org.javlo.comparator.LanguageListSorter;
+import org.javlo.comparator.LanguageListSorter.ILanguage;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
@@ -20,7 +22,7 @@ import org.javlo.user.AdminUserSecurity;
 import org.javlo.ztatic.StaticInfo;
 import org.javlo.ztatic.StaticInfo.Position;
 
-public class FileBean {
+public class FileBean implements ILanguage {
 
 	public static class FileBeanComparator implements Comparator<FileBean> {
 
@@ -52,18 +54,29 @@ public class FileBean {
 				return -file1.getStaticInfo().getDate(ctx).compareTo(file2.getStaticInfo().getDate(ctx))*order;
 			}
 		}
-
 	}
 
 	ContentContext ctx;
 	StaticInfo staticInfo;
 	Map<String, String> tags;
 	Map<String, String> readRoles;
+	private List<FileBean> translation = Collections.emptyList();
+	private String beanLanguage;
 
 	public FileBean(ContentContext ctx, File file) {
 		this.ctx = ctx;
 		try {
 			this.staticInfo = StaticInfo.getInstance(ctx, file);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public FileBean(ContentContext ctx, File file, String beanLanguage) {
+		this.ctx = ctx;
+		try {
+			this.staticInfo = StaticInfo.getInstance(ctx, file);
+			this.beanLanguage = beanLanguage;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -172,6 +185,14 @@ public class FileBean {
 
 	public String getDescription() {
 		return staticInfo.getManualDescription(ctx);
+	}
+	
+	public String getReference() {
+		return staticInfo.getReference(ctx);
+	}
+	
+	public String getLanguage() {
+		return staticInfo.getLanguage(ctx);
 	}
 
 	public String getLocation() {
@@ -291,6 +312,36 @@ public class FileBean {
 			e.printStackTrace();			
 		}
 		return Collections.EMPTY_LIST;
+	}
+	
+	public void addTranslation(FileBean fileBean) {
+		if (!StringHelper.isEmpty(fileBean.getLanguage())) {
+			if (translation == Collections.EMPTY_LIST) {
+				translation = new LinkedList<FileBean>();
+			}	
+			translation.add(fileBean);
+			if (fileBean.getLanguage().equals(getBeanLanguage())) {
+			    staticInfo=fileBean.staticInfo;
+			}
+		}		
+	}
+	
+	public List<FileBean> getTranslation() {
+		LanguageListSorter.sort(ctx.getGlobalContext(), translation);
+		return translation;
+	}
+
+	public String getBeanLanguage() {
+		return beanLanguage;
+	}
+
+	public void setBeanLanguage(String beanLanguage) {
+		this.beanLanguage = beanLanguage;
+	}
+
+	@Override
+	public String getSortLanguage() {		
+		return getBeanLanguage();
 	}
 
 }

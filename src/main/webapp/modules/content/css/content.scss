@@ -439,20 +439,32 @@ li.line {
 	margin-top: 35px;
 }
 
-.smart-generic-form table td {
-	width: auto;
-}
+#content-edit .smart-generic-form {
+	table td {
+		width: auto;
+		padding: 2px;
+		input {
+			margin: 0;
+		}
+	}
 
-.smart-generic-form td.buttons {
-	width: 170px;
-}
+	td.buttons {
+		width: 170px;
+	}
 
-.smart-generic-form td.required {
-	width: 50px;
-}
+	td.required {
+		width: 50px;
+	}
 
-.smart-generic-form td.width {
-	width: 50px;
+	td.width {
+		width: 50px;
+	}
+	td.label {
+		width: 40%;
+		input {			
+			width: 97%;
+		}
+	}
 }
 
 .validation-email .col-sm-3 {

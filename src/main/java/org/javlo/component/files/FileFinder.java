@@ -33,7 +33,7 @@ import org.javlo.ztatic.StaticInfo;
 public class FileFinder extends AbstractPropertiesComponent implements IUploadResource {
 
 	public static final String TYPE = "file-finder";
-	
+
 	private static String SORT_NAME = "sort_name";
 	private static String SORT_TITLE = "sort_title";
 	private static String SORT_DATE = "sort_creation_date";
@@ -43,8 +43,7 @@ public class FileFinder extends AbstractPropertiesComponent implements IUploadRe
 	private static String SORT_DATE_DESC = "sort_creation_date_desc";
 	private static String SORT_MODIFDATE_DESC = "sort_date_desc";
 
-	
-	private static String[] styleList = new String[] {SORT_NAME, SORT_TITLE, SORT_DATE, SORT_MODIFDATE, SORT_NAME_DESC, SORT_TITLE_DESC, SORT_DATE_DESC, SORT_MODIFDATE_DESC};
+	private static String[] styleList = new String[] { SORT_NAME, SORT_TITLE, SORT_DATE, SORT_MODIFDATE, SORT_NAME_DESC, SORT_TITLE_DESC, SORT_DATE_DESC, SORT_MODIFDATE_DESC };
 
 	private static class FileFilter {
 		private ContentContext ctx = null;
@@ -61,7 +60,7 @@ public class FileFinder extends AbstractPropertiesComponent implements IUploadRe
 			outFilter.text = ctx.getRequest().getParameter("text");
 			outFilter.root = new File(URLHelper.mergePath(ctx.getGlobalContext().getDataFolder(), ctx.getGlobalContext().getStaticConfig().getFileFolder()));
 			return outFilter;
-		}		
+		}
 
 		public boolean match(ContentContext ctx, StaticInfo file) {
 			if (file == null || file.getFile() == null) {
@@ -89,7 +88,7 @@ public class FileFinder extends AbstractPropertiesComponent implements IUploadRe
 			}
 			return false;
 		}
-		
+
 		public File getRoot() {
 			if (root == null) {
 
@@ -125,18 +124,37 @@ public class FileFinder extends AbstractPropertiesComponent implements IUploadRe
 			this.tags = tags;
 		}
 	}
-	
+
 	@Override
-	public String[] getStyleList(ContentContext ctx) {		
+	public String[] getStyleList(ContentContext ctx) {
 		return styleList;
 	}
 
 	protected List<FileBean> getFileList(ContentContext ctx, FileFilter filter) throws Exception {
+		Map<String, FileBean> fileWithRef = new HashMap<String, FileBean>();
 		List<FileBean> outFileList = new LinkedList<FileBean>();
+		// Set<String> ref = new HashSet<String>();
 		for (File file : ResourceHelper.getAllFiles(filter.getRoot(), null)) {
 			StaticInfo info = StaticInfo.getInstance(ctx, file);
 			if (filter.match(ctx, info)) {
-				outFileList.add(new FileBean(ctx, info));
+				StaticInfo.ReferenceBean refBean = info.getReferenceBean(ctx);				
+				FileBean fileBean = null;
+				if (refBean != null) {
+					fileBean = fileWithRef.get(refBean.getReference());
+					if (fileBean != null) {
+						fileBean.addTranslation(new FileBean(ctx, file, refBean.getLanguage()));						
+					}
+				}
+				if (fileBean == null) {
+					if (refBean == null) {
+						fileBean = new FileBean(ctx, info);
+					} else {
+						fileBean = new FileBean(ctx, file, ctx.getRequestContentLanguage());
+						fileWithRef.put(refBean.getReference(), fileBean);
+						fileBean.addTranslation(new FileBean(ctx, file, refBean.getLanguage()));
+					}
+					outFileList.add(fileBean);					
+				}
 			}
 			if (getStyle().contentEquals(SORT_NAME)) {
 				Collections.sort(outFileList, new FileBean.FileBeanComparator(ctx, 2, false));
@@ -156,7 +174,7 @@ public class FileFinder extends AbstractPropertiesComponent implements IUploadRe
 				Collections.sort(outFileList, new FileBean.FileBeanComparator(ctx, 3, true));
 			}
 		}
-		
+
 		return outFileList;
 	}
 
@@ -170,7 +188,7 @@ public class FileFinder extends AbstractPropertiesComponent implements IUploadRe
 		filter.setExt(StringHelper.stringToCollection(getFieldValue("ext"), ","));
 		filter.setNoext(StringHelper.stringToCollection(getFieldValue("noext"), ","));
 		filter.setRoot(new File(URLHelper.mergePath(filter.getRoot().getCanonicalPath(), getFieldValue("root"))));
-		ctx.getRequest().setAttribute("filter", filter);		
+		ctx.getRequest().setAttribute("filter", filter);
 		ctx.getRequest().setAttribute("files", getFileList(ctx, filter));
 	}
 
@@ -245,12 +263,11 @@ public class FileFinder extends AbstractPropertiesComponent implements IUploadRe
 	public List<String> getFields(ContentContext ctx) throws Exception {
 		return FIELDS;
 	}
-	
 
 	@Override
-	public String performUpload (ContentContext ctx) throws Exception {
+	public String performUpload(ContentContext ctx) throws Exception {
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
-		Collection<FileItem> items = requestService.getAllFileItem();		
+		Collection<FileItem> items = requestService.getAllFileItem();
 		for (FileItem item : items) {
 			File file = new File(item.getName());
 			FileFilter filter = FileFilter.getInstance(ctx);
@@ -266,16 +283,15 @@ public class FileFinder extends AbstractPropertiesComponent implements IUploadRe
 		}
 		return null;
 	}
-	
+
 	@Override
-	public boolean isUploadOnDrop() {	
+	public boolean isUploadOnDrop() {
 		return true;
 	}
-	
+
 	@Override
 	public int getComplexityLevel(ContentContext ctx) {
 		return getConfig(ctx).getComplexity(COMPLEXITY_STANDARD);
 	}
 
-	
 }

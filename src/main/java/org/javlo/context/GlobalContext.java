@@ -294,17 +294,6 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		activePopThread();
 	}
 
-	private static void addResources(ContentContext ctx, File dir, Collection<StaticInfo> resources) throws Exception {
-		File[] childrenFiles = dir.listFiles();
-		for (File file : childrenFiles) {
-			if (file.isFile()) {
-				resources.add(StaticInfo.getInstance(ctx, file));
-			} else {
-				addResources(ctx, file, resources);
-			}
-		}
-	}
-
 	public static GlobalContext getDefaultContext(HttpSession session) throws IOException {
 		return getRealInstance(session, StaticConfig.getInstance(session).getDefaultContext(), false);
 	}
@@ -1769,13 +1758,6 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		return properties.getString("languages", "fr;nl;en");
 	}
 
-	public Collection<StaticInfo> getResources(ContentContext ctx) throws Exception {
-		Collection<StaticInfo> resources = new LinkedList<StaticInfo>();
-		File staticDir = new File(ElementaryURLHelper.mergePath(getDataFolder(), staticConfig.getStaticFolder()));
-		addResources(ctx, staticDir, resources);
-		return resources;
-	}
-
 	public String getResourceId(String path) {
 		return resourcePathToId.get(path);
 	}
@@ -3176,7 +3158,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		}
 
 	}
-
+	
 	public String createOneTimeToken(String token) {
 		String newToken = StringHelper.getRandomIdBase64();
 		oneTimeTokens.put(newToken, token);

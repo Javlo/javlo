@@ -1789,26 +1789,12 @@ public class ResourceHelper {
 	}
 
 	public static List<IContentVisualComponent> getComponentsUseResource(ContentContext ctx, String uri) throws Exception {
-		System.out.println("***** ResourceHelper.getComponentsUseResource : START"); // TODO:
-																						// remove
-																						// debug
-																						// trace
 		ContentService content = ContentService.getInstance(ctx.getRequest());
 		List<IContentVisualComponent> outList = new LinkedList<IContentVisualComponent>();
 		ContentContext lgCtx = new ContentContext(ctx);
 		for (String lg : ctx.getGlobalContext().getContentLanguages()) {
 			lgCtx.setAllLanguage(lg);
 			for (IContentVisualComponent comp : content.getAllContent(lgCtx)) {
-				if (comp.getId().equals("147551884124890725710") && uri.contains("/61.jpg")) {
-					System.out.println("***** ResourceHelper.getComponentsUseResource : lg = " + lg); // TODO:
-																										// remove
-																										// debug
-																										// trace
-					System.out.println("***** ResourceHelper.getComponentsUseResource : comp = " + comp); // TODO:
-																											// remove
-																											// debug
-																											// trace
-				}
 				if (comp instanceof IStaticContainer) {
 					IStaticContainer container = (IStaticContainer) comp;
 					if (container.contains(lgCtx, uri)) {
@@ -1879,6 +1865,24 @@ public class ResourceHelper {
 			done = true;
 		}
 		return done;
+	}
+	
+	public static String getRelativeStaticURL(ContentContext ctx, File file) {
+		String fullURL = URLHelper.cleanPath(file.getPath(), false);
+		StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
+		GlobalContext globalContext = ctx.getGlobalContext();
+		String fullStaticFolder = URLHelper.mergePath(globalContext.getDataFolder(), staticConfig.getStaticFolder());
+		if (ResourceHelper.isTemplateFile(globalContext, file)) {
+			fullStaticFolder = staticConfig.getTemplateFolder();
+		} else if (!file.getAbsolutePath().contains('/' + staticConfig.getStaticFolder() + '/')) {
+			fullStaticFolder = globalContext.getDataFolder();		
+		}
+		fullStaticFolder = URLHelper.cleanPath(fullStaticFolder, false);
+		String relURL = "/";
+		if (fullURL.length() > fullStaticFolder.length()) {
+			relURL = StringUtils.replace(fullURL, fullStaticFolder, "");
+		}
+		return relURL;
 	}
 
 }

@@ -55,6 +55,7 @@ import org.javlo.user.AdminUserFactory;
 import org.javlo.user.AdminUserSecurity;
 import org.javlo.user.User;
 import org.javlo.ztatic.FileCache;
+import org.javlo.ztatic.ResourceFactory;
 import org.javlo.ztatic.StaticInfo;
 
 public class FileAction extends AbstractModuleAction {
@@ -92,19 +93,25 @@ public class FileAction extends AbstractModuleAction {
 		ctx.getRequest().setAttribute("pathPrefix", getROOTPath(ctx));
 		ctx.getRequest().setAttribute("sort", fileModuleContext.getSort());
 		ctx.getRequest().setAttribute("canUpload", AdminUserSecurity.isCurrentUserCanUpload(ctx));
-		
-		
-		/*File importFolder = new  File(URLHelper.mergePath(globalContext.getStaticFolder(), ctx.getGlobalContext().getStaticConfig().getImportResourceFolder(), DataAction.createImportFolder(ctx.getCurrentPage())));
-		if (importFolder.exists()) {
-			ctx.getRequest().setAttribute("importFolder", URLHelper.mergePath(globalContext.getStaticConfig().getStaticFolder(), ctx.getGlobalContext().getStaticConfig().getImportResourceFolder(), DataAction.createImportFolder(ctx.getCurrentPage())));
-		}*/		
-		
+
+		/*
+		 * File importFolder = new
+		 * File(URLHelper.mergePath(globalContext.getStaticFolder(),
+		 * ctx.getGlobalContext().getStaticConfig().getImportResourceFolder(),
+		 * DataAction.createImportFolder(ctx.getCurrentPage()))); if
+		 * (importFolder.exists()) {
+		 * ctx.getRequest().setAttribute("importFolder",
+		 * URLHelper.mergePath(globalContext.getStaticConfig().getStaticFolder()
+		 * , ctx.getGlobalContext().getStaticConfig().getImportResourceFolder(),
+		 * DataAction.createImportFolder(ctx.getCurrentPage()))); }
+		 */
+
 		String editFileName = ctx.getRequest().getParameter("editFile");
 		if (ctx.getRequest().getParameter("path") != null) {
 			fileModuleContext.setPath(ctx.getRequest().getParameter("path"));
 			performUpdateBreadCrumb(RequestService.getInstance(ctx.getRequest()), ctx, EditContext.getInstance(globalContext, ctx.getRequest().getSession()), modulesContext, modulesContext.getCurrentModule(), fileModuleContext);
 		}
-		if (editFileName != null) {	
+		if (editFileName != null) {
 			if (StringHelper.isImage(editFileName)) {
 				modulesContext.getCurrentModule().setToolsRenderer(null);
 				File editFile = new File(URLHelper.mergePath(getFolder(ctx).getAbsolutePath(), editFileName));
@@ -114,18 +121,18 @@ public class FileAction extends AbstractModuleAction {
 					StaticInfo staticInfo = StaticInfo.getInstance(ctx, editFile);
 					ctx.getRequest().setAttribute("imageURL", staticInfo.getURL(ctx));
 				} else {
-					logger.warning("file not found : "+editFile);
+					logger.warning("file not found : " + editFile);
 					ctx.getRequest().setAttribute("fileFound", false);
 				}
 				modulesContext.getCurrentModule().setRenderer("/jsp/image_editor.jsp");
 			} else {
 				modulesContext.getCurrentModule().setToolsRenderer(null);
 				File editFile = new File(URLHelper.mergePath(getFolder(ctx).getAbsolutePath(), editFileName));
-				ctx.getRequest().setAttribute("editFile", editFileName);			
+				ctx.getRequest().setAttribute("editFile", editFileName);
 				if (editFile.exists()) {
 					ctx.getRequest().setAttribute("fileFound", true);
 					ctx.getRequest().setAttribute("fileExt", StringHelper.getFileExtension(editFile.getName()));
-					String content = ResourceHelper.loadStringFromFile(editFile);				
+					String content = ResourceHelper.loadStringFromFile(editFile);
 					ctx.getRequest().setAttribute("content", content);
 				} else {
 					ctx.getRequest().setAttribute("fileFound", false);
@@ -167,7 +174,7 @@ public class FileAction extends AbstractModuleAction {
 				if (ctx.getRequest().getAttribute("files") == null) {
 					modulesContext.getCurrentModule().setToolsRenderer("/jsp/actions.jsp");
 					modulesContext.getCurrentModule().clearAllBoxes();
-					File folder = getFolder(ctx);					
+					File folder = getFolder(ctx);
 					if (folder.exists() && folder.listFiles(new DirectoryFilter()) != null) {
 						List<FileBean> allFileInfo = new LinkedList<FileBean>();
 						for (File file : folder.listFiles(new DirectoryFilter())) {
@@ -191,7 +198,7 @@ public class FileAction extends AbstractModuleAction {
 				if (modulesContext.getCurrentModule().getToolsRenderer() != null && modulesContext.getFromModule() == null) {
 					modulesContext.getCurrentModule().restoreAll();
 				}
-			}			
+			}
 		}
 		ctx.getRequest().setAttribute("metaReadOnly", !ResourceHelper.canModifFolder(ctx, getFolder(ctx).getAbsolutePath()));
 		return msg;
@@ -281,7 +288,7 @@ public class FileAction extends AbstractModuleAction {
 		if (rs.getParameter("image_path", null) != null) {
 			folder = new File(globalContext.getDataFolder(), rs.getParameter("image_path", null));
 		}
-		if (!canModifyFile(ctx, folder))  {
+		if (!canModifyFile(ctx, folder)) {
 			return "securtiy error.";
 		}
 		boolean found = false;
@@ -322,10 +329,11 @@ public class FileAction extends AbstractModuleAction {
 		if (!ResourceHelper.canModifFolder(ctx, getFolder(ctx).getAbsolutePath())) {
 			return "security error : you have not suffisant right to modify this file.";
 		}
-		if (!canModifyFile(ctx, folder))  {
+		if (!canModifyFile(ctx, folder)) {
 			return "securtiy error.";
 		}
 		if (folder.exists()) {
+			ResourceFactory resourceFactory = ResourceFactory.getInstance(ctx);
 			for (File file : folder.listFiles()) {
 				StaticInfo staticInfo = StaticInfo.getInstance(ctx, file);
 				FileBean fileBean = new FileBean(ctx, staticInfo);
@@ -381,6 +389,31 @@ public class FileAction extends AbstractModuleAction {
 					}
 				}
 
+				String ref = rs.getParameter("ref-" + fileBean.getId(), null);
+				String lg = rs.getParameter("lg-" + fileBean.getId(), null);
+				if (ref != null) {
+					StaticInfo.ReferenceBean refBean = new StaticInfo.ReferenceBean(ref, lg);
+					if (resourceFactory.getStaticInfo(ctx, refBean) != null && !resourceFactory.getStaticInfo(ctx, refBean).getId(ctx).equals(staticInfo.getId(ctx))) {
+						messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("file.message.error.reference-found") + ref, GenericMessage.ERROR));
+					} else {
+						if (StringHelper.isEmpty(lg) && !StringHelper.isEmpty(ref)) {
+							messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("file.message.error.reference-nolang"), GenericMessage.ERROR));
+						} else {
+							if (!globalContext.getContentLanguages().contains(lg)) {
+								messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("file.message.error.undefined-lang"), GenericMessage.ALERT));
+							}
+							staticInfo.setReference(ctx, ref);
+						}
+					}
+				}
+				if (!StringHelper.isEmpty(lg)) {
+					if (lg.length() != 2 || !StringHelper.isAlpha(lg)) {
+						messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("file.message.error.bad-lg-format"), GenericMessage.ERROR));
+					} else {
+						staticInfo.setLanguage(ctx, lg);
+					}
+				}
+
 				/* tags */
 				Collection<String> tags = globalContext.getTags();
 				for (String tag : tags) {
@@ -404,6 +437,7 @@ public class FileAction extends AbstractModuleAction {
 				if (StringHelper.isTrue(rs.getParameter("close", null))) {
 					ctx.setClosePopup(true);
 				}
+				resourceFactory.update(ctx, staticInfo);
 			}
 			PersistenceService.getInstance(globalContext).setAskStore(true);
 			messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("file.message.updatemeta"), GenericMessage.INFO));
@@ -422,7 +456,7 @@ public class FileAction extends AbstractModuleAction {
 		}
 
 	}
-	
+
 	public static String performClose(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) {
 		if (StringHelper.isTrue(rs.getParameter("close", null))) {
 			ctx.setClosePopup(true);
@@ -475,8 +509,8 @@ public class FileAction extends AbstractModuleAction {
 
 	public static String performUpload(ContentContext ctx, RequestService rs) throws FileNotFoundException, InstantiationException, IllegalAccessException, IOException, ModuleException {
 		String sourceFolder = getContextROOTFolder(ctx);
-		
-		if (!canModifyFile(ctx, null))  {
+
+		if (!canModifyFile(ctx, null)) {
 			return "securtiy error.";
 		}
 
@@ -527,23 +561,22 @@ public class FileAction extends AbstractModuleAction {
 			return "bad request structure : need file parameter.";
 		} else {
 			File file = new File(URLHelper.mergePath(globalContext.getStaticFolder(), filePath));
-			if (!canModifyFile(ctx, file))  {
+			if (!canModifyFile(ctx, file)) {
 				return "securtiy error.";
 			}
 			ResourceHelper.deleteResource(ctx, file);
-			/*if (file.isFile()) {				
-				file.delete();
-				if (StringHelper.isImage(file.getName())) {
-					FileCache.getInstance(ctx.getRequest().getSession().getServletContext()).deleteAllFile(globalContext.getContextKey(), file.getName());
-				}
-			} else if (file.isDirectory()) {
-				for (File child : file.listFiles()) {
-					if (StringHelper.isImage(child.getName())) {
-						FileCache.getInstance(ctx.getRequest().getSession().getServletContext()).deleteAllFile(globalContext.getContextKey(), child.getName());
-					}
-				}
-				FileUtils.deleteDirectory(file);
-			}*/
+			/*
+			 * if (file.isFile()) { file.delete(); if
+			 * (StringHelper.isImage(file.getName())) {
+			 * FileCache.getInstance(ctx.getRequest().getSession().
+			 * getServletContext()).deleteAllFile(globalContext.getContextKey(),
+			 * file.getName()); } } else if (file.isDirectory()) { for (File
+			 * child : file.listFiles()) { if
+			 * (StringHelper.isImage(child.getName())) {
+			 * FileCache.getInstance(ctx.getRequest().getSession().
+			 * getServletContext()).deleteAllFile(globalContext.getContextKey(),
+			 * child.getName()); } } FileUtils.deleteDirectory(file); }
+			 */
 		}
 		if (StringHelper.isTrue(rs.getParameter("close", null))) {
 			ctx.setClosePopup(true);
@@ -565,7 +598,7 @@ public class FileAction extends AbstractModuleAction {
 		return null;
 	}
 
-	public static String performSynchro(ContentContext ctx) throws Exception {		
+	public static String performSynchro(ContentContext ctx) throws Exception {
 		SynchroHelper.performSynchro(ctx);
 		return null;
 	}
@@ -594,7 +627,7 @@ public class FileAction extends AbstractModuleAction {
 
 	public static String performCreatefilestructure(RequestService rs, ContentContext ctx, GlobalContext globalContext, MessageRepository messageRepository, I18nAccess i18nAccess) throws IOException {
 		File file = new File(URLHelper.mergePath(globalContext.getStaticFolder(), "file-structure", StringHelper.createFileName("structure-" + StringHelper.renderSortableTime(new Date()) + ".html")));
-		if (!canModifyFile(ctx, file))  {
+		if (!canModifyFile(ctx, file)) {
 			return "securtiy error.";
 		}
 		file.getParentFile().mkdirs();
@@ -602,10 +635,10 @@ public class FileAction extends AbstractModuleAction {
 		ResourceHelper.writeStringToFile(file, ResourceHelper.fileStructureToHtml(new File(globalContext.getStaticConfig().getAllDataFolder())));
 		return null;
 	}
-	
-	public static String performModify(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws FileNotFoundException, InstantiationException, IllegalAccessException, IOException, ModuleException {		
+
+	public static String performModify(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws FileNotFoundException, InstantiationException, IllegalAccessException, IOException, ModuleException {
 		File file = new File(URLHelper.mergePath(getFolder(ctx).getAbsolutePath(), rs.getParameter("file", "-- param file undefined --")));
-		if (!canModifyFile(ctx, file))  {
+		if (!canModifyFile(ctx, file)) {
 			return "securtiy error.";
 		}
 		String content = rs.getParameter("content", null);
@@ -613,41 +646,41 @@ public class FileAction extends AbstractModuleAction {
 			return "File content not found.";
 		}
 		if (!file.exists()) {
-			return "File not found : "+file;
+			return "File not found : " + file;
 		} else {
 			ResourceHelper.writeStringToFile(file, content);
 		}
 		return null;
 	}
-	
+
 	private static boolean canModifyFile(ContentContext ctx, File file) {
 		return AdminUserSecurity.getInstance().canRole(ctx.getCurrentEditUser(), AdminUserSecurity.CONTENT_ROLE);
 	}
-	
+
 	public static String performEditimage(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
 		if (rs.getParameter("cancel", null) != null) {
 			return null;
 		}
-		
+
 		File file = new File(URLHelper.mergePath(getFolder(ctx).getAbsolutePath(), rs.getParameter("file", "-- param file undefined --")));
-		if (!canModifyFile(ctx, file))  {
+		if (!canModifyFile(ctx, file)) {
 			return "securtiy error.";
 		}
-		if (!file.exists() || !file.isFile()) {			
+		if (!file.exists() || !file.isFile()) {
 			return "file not found : " + file;
-		}		
+		}
 		BufferedImage image = ImageIO.read(file);
 		boolean transform = false;
 		if (StringHelper.isTrue(rs.getParameter("flip", null))) {
 			image = ImageEngine.flip(image, false);
 			StaticInfo staticInfo = StaticInfo.getInstance(ctx, file);
-			if (staticInfo.getFocusZoneX(ctx) != StaticInfo.DEFAULT_FOCUS_X) {				
-				staticInfo.setFocusZoneX(ctx, 2*StaticInfo.DEFAULT_FOCUS_X-staticInfo.getFocusZoneX(ctx));
+			if (staticInfo.getFocusZoneX(ctx) != StaticInfo.DEFAULT_FOCUS_X) {
+				staticInfo.setFocusZoneX(ctx, 2 * StaticInfo.DEFAULT_FOCUS_X - staticInfo.getFocusZoneX(ctx));
 			}
 			transform = true;
 		} else {
 			int rotate = Integer.parseInt(rs.getParameter("rotate", null));
-			if (rotate>0) {
+			if (rotate > 0) {
 				transform = true;
 				image = ImageEngine.rotate(image, rotate, null);
 			}
@@ -657,18 +690,18 @@ public class FileAction extends AbstractModuleAction {
 		int cropWidth = Integer.parseInt(rs.getParameter("crop-width", null));
 		int cropHeight = Integer.parseInt(rs.getParameter("crop-height", null));
 		final int REFERENCE_SIZE = 10000;
-		if (cropTop>0 || cropLeft>0 || cropWidth<REFERENCE_SIZE || cropHeight <REFERENCE_SIZE) {
+		if (cropTop > 0 || cropLeft > 0 || cropWidth < REFERENCE_SIZE || cropHeight < REFERENCE_SIZE) {
 			transform = true;
-			int width = Math.round(cropWidth*image.getWidth()/REFERENCE_SIZE);
-			int height =  Math.round(cropHeight*image.getHeight()/REFERENCE_SIZE);
-			int x = Math.round(cropLeft*image.getWidth()/REFERENCE_SIZE);
-			int y = Math.round(cropTop*image.getHeight()/REFERENCE_SIZE);			
-			image = ImageEngine.cropImage(image,width,height, x, y);
+			int width = Math.round(cropWidth * image.getWidth() / REFERENCE_SIZE);
+			int height = Math.round(cropHeight * image.getHeight() / REFERENCE_SIZE);
+			int x = Math.round(cropLeft * image.getWidth() / REFERENCE_SIZE);
+			int y = Math.round(cropTop * image.getHeight() / REFERENCE_SIZE);
+			image = ImageEngine.cropImage(image, width, height, x, y);
 		}
 		if (transform) {
-			logger.info("transform : "+file);
+			logger.info("transform : " + file);
 			FileCache.getInstance(ctx.getRequest().getSession().getServletContext()).deleteAllFile(ctx.getGlobalContext().getContextKey(), file.getName());
-			
+
 			TransactionFile transactionFile = new TransactionFile(file);
 			try {
 				ImageIO.write(image, StringHelper.getFileExtension(file.getName().toLowerCase()), transactionFile.getTempFile());
@@ -682,4 +715,3 @@ public class FileAction extends AbstractModuleAction {
 	}
 
 }
-

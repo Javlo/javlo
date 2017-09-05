@@ -73,6 +73,7 @@ import org.javlo.user.UserFactory;
 import org.javlo.user.exception.JavloSecurityException;
 import org.javlo.utils.TimeTracker;
 import org.javlo.ztatic.FileCache;
+import org.javlo.ztatic.ResourceFactory;
 
 public class AdminAction extends AbstractModuleAction {
 
@@ -1683,6 +1684,11 @@ public class AdminAction extends AbstractModuleAction {
 		PersistenceService.getInstance(globalContext).flush();	
 		PersistenceService.getInstance(globalContext).clearTrackCache();
 		System.gc();
+		
+		ResourceFactory.getInstance(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE)).clearCache();
+		ResourceFactory.getInstance(ctx.getContextWithOtherRenderMode(ContentContext.EDIT_MODE)).clearCache();
+		ResourceFactory.getInstance(ctx.getContextWithOtherRenderMode(ContentContext.PAGE_MODE)).clearCache();
+		
 		return null;
 	}
 

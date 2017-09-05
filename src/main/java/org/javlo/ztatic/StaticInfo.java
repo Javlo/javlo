@@ -54,6 +54,42 @@ public class StaticInfo {
 	public static final int DEFAULT_FOCUS_Y = 500;
 	
 	private boolean isDescription = true;
+	
+	private ReferenceBean refBean = null;
+	
+	public static class ReferenceBean {
+		private String reference;
+		private String language;
+		
+		public ReferenceBean(String reference, String language) {
+			super();
+			this.reference = reference;
+			this.language = language;
+		}
+		public String getReference() {
+			return reference;
+		}
+		public String getLanguage() {
+			return language;
+		}
+		@Override
+		public boolean equals(Object obj) {		
+			if (this == obj) {
+				return true;
+			} else if (!(obj instanceof ReferenceBean)) { 
+				return false;				
+			} else {
+				ReferenceBean refObj = (ReferenceBean)obj;
+				return StringHelper.compare(reference, refObj.reference) && StringHelper.compare(language, refObj.language);
+				
+			}
+		}
+		
+		@Override
+		public String toString() {
+			return reference+" - "+language;
+		}
+	}
 
 	/**
 	 * create a static logger.
@@ -123,6 +159,14 @@ public class StaticInfo {
 
 		public String getDescription() {
 			return staticInfo.getManualDescription(ctx);
+		}
+		
+		public String getReference() {
+			return staticInfo.getReference(ctx);
+		}
+		
+		public String getLanguage() {
+			return staticInfo.getLanguage(ctx);
 		}
 
 		public String getHtmlDescription() {
@@ -648,30 +692,14 @@ public class StaticInfo {
 	private String getKey(String inStaticURL, String key) {
 		return KEY + inStaticURL + '-' + key;
 	}
-
-	public static StaticInfo getInstance(ContentContext ctx, File file) throws Exception {
-		StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
-		GlobalContext globalContext = ctx.getGlobalContext();
-		String fullURL = URLHelper.cleanPath(file.getPath(), false);
-		boolean staticFolder = true;
-		String fullStaticFolder = URLHelper.mergePath(globalContext.getDataFolder(), staticConfig.getStaticFolder());
-		if (ResourceHelper.isTemplateFile(globalContext, file)) {
-			fullStaticFolder = staticConfig.getTemplateFolder();
-		} else if (!file.getAbsolutePath().contains('/' + staticConfig.getStaticFolder() + '/')) { // before
-																									// /static
-			fullStaticFolder = globalContext.getDataFolder();
-			// staticFolder = false;
-		}
-		fullStaticFolder = URLHelper.cleanPath(fullStaticFolder, false);
-		String relURL = "/";
-		if (fullURL.length() > fullStaticFolder.length()) {
-			relURL = StringUtils.replace(fullURL, fullStaticFolder, "");
-		}
+	
+	public static StaticInfo getInstance(ContentContext ctx, File file) throws Exception {		
+		String relURL = ResourceHelper.getRelativeStaticURL(ctx, file);
 		StaticInfo staticInfo = getInstance(ctx, relURL);
-		staticInfo.setStaticFolder(staticFolder);
+		staticInfo.setStaticFolder(true);
 		return staticInfo;
 	}
-
+	
 	public static StaticInfo getInstance(ContentContext ctx, String inStaticURL) throws Exception {
 		inStaticURL = inStaticURL.replace('\\', '/').replaceAll("//", "/").trim();
 		if (!inStaticURL.startsWith("/")) {
@@ -780,6 +808,53 @@ public class StaticInfo {
 	public String getManualDescription(ContentContext ctx) {
 		ContentService content = ContentService.getInstance(ctx.getGlobalContext());
 		return content.getAttribute(ctx, getKey("description-" + ctx.getRequestContentLanguage()), "");
+	}
+	
+	public String getReference(ContentContext ctx) {
+		ContentService content = ContentService.getInstance(ctx.getGlobalContext());
+		return content.getAttribute(ctx, getKey("ref-" + ctx.getRequestContentLanguage()), "");
+	}
+	
+	public void setReference(ContentContext ctx, String ref) {
+		ContentService content = ContentService.getInstance(ctx.getGlobalContext());
+		if (!StringHelper.isEmpty(ref)) {
+			if (!getReference(ctx).equals(ref)) {
+				content.setAttribute(ctx, getKey("ref-" + ctx.getRequestContentLanguage()), ref);
+				refBean=null;
+			}
+		} else {
+			content.removeAttribute(ctx, getKey("ref-" + ctx.getRequestContentLanguage()));
+			refBean=null;
+		}
+	}
+	
+	public String getLanguage(ContentContext ctx) {
+		ContentService content = ContentService.getInstance(ctx.getGlobalContext());
+		return content.getAttribute(ctx, getKey("lg-" + ctx.getRequestContentLanguage()), "");
+	}
+	
+	public ReferenceBean getReferenceBean(ContentContext ctx) {
+		if (refBean == null) {
+			if (!StringHelper.isEmpty(getReference(ctx)) || !StringHelper.isEmpty(getReference(ctx))) {				
+				refBean = new ReferenceBean(getReference(ctx), getLanguage(ctx));
+			} else {
+				return null;
+			}
+		}
+		return refBean;
+	}
+	
+	public void setLanguage(ContentContext ctx, String lg) {
+		ContentService content = ContentService.getInstance(ctx.getGlobalContext());
+		if (!StringHelper.isEmpty(lg)) {
+			if (!lg.equals(getLanguage(ctx))) {				
+				content.setAttribute(ctx, getKey("lg-" + ctx.getRequestContentLanguage()), lg);
+				refBean=null;
+			}
+		} else {
+			content.removeAttribute(ctx, getKey("lg-" + ctx.getRequestContentLanguage()));
+			refBean=null;
+		}
 	}
 
 	public boolean isResized(ContentContext ctx) {

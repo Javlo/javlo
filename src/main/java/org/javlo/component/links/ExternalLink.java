@@ -204,10 +204,12 @@ public class ExternalLink extends ComplexPropertiesLink implements IReverseLinkC
 
 			out.println("<div class=\"row form-group\"><div class=\"col-sm-3\">");
 			out.print("<label for=\"" + getLinkLabelName() + "\">" + labelTitle + "</label></div>");
-			out.print("<div class=\"col-sm-7\">");
-			out.print("<input class=\"form-control\" id=\"" + getLinkLabelName() + "\" name=\"" + getLinkLabelName() + "\" value=\"" + label + "\" /></div><div class=\"col-sm-2\">");
-			out.println("<input class=\"btn btn-default btn-xs pull-right\" type=\"submit\" name=\"" + getDownloadTitleInputName() + "\" value=\"" + i18nAccess.getText("action.read-title") + "\" />");
-			out.println("</div></div>");
+			out.print("<div class=\"col-sm-"+(ctx.getGlobalContext().getStaticConfig().isInternetAccess()?'7':'9')+"\">");
+			out.print("<input class=\"form-control\" id=\"" + getLinkLabelName() + "\" name=\"" + getLinkLabelName() + "\" value=\"" + label + "\" /></div>");
+			if (ctx.getGlobalContext().getStaticConfig().isInternetAccess()) {
+				out.println("<div class=\"col-sm-2\"><input class=\"btn btn-default btn-xs pull-right\" type=\"submit\" name=\"" + getDownloadTitleInputName() + "\" value=\"" + i18nAccess.getText("action.read-title") + "\" /></div>");
+			}
+			out.println("</div>");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

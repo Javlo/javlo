@@ -47,6 +47,11 @@ public class CSVArrayComponent extends AbstractFileComponent {
 		System.out.println(getEmptyLength(test2, 1));
 		System.out.println(getEmptyLength(test2, 2));
 	}
+	
+	protected String getImageLabelTitle(ContentContext ctx) throws FileNotFoundException, IOException {
+		I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
+		return i18nAccess.getText("action.array.label");
+	}
 
 	@Override
 	public String createFileURL(ContentContext ctx, String url) {

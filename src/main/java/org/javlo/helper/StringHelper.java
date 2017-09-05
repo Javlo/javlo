@@ -1237,6 +1237,10 @@ public class StringHelper {
 			return false;
 		}
 	}
+	
+	public static boolean isLetter(char c) {		
+		return ((c>='a')&&c<=('z'))||((c>='A')&&c<=('Z'));
+	}
 
 	/**
 	 * check if string contains somthing similar to digital number
@@ -1261,6 +1265,25 @@ public class StringHelper {
 		} else {
 			for (char c : str.toCharArray()) {
 				if (!isDigit(c)) {
+					return false;
+				}
+			}
+			return true;
+		}
+	}
+	
+	/**
+	 * check if stirng contains only digital number
+	 * 
+	 * @param str
+	 * @return
+	 */
+	public static boolean isAlpha(String str) {
+		if (str == null || str.length() == 0) {
+			return true;
+		} else {
+			for (char c : str.toCharArray()) {
+				if (!isLetter(c)) {
 					return false;
 				}
 			}
@@ -3814,5 +3837,12 @@ public class StringHelper {
 			return countryPrefix+phone;
 		}
 	}
+	
+	public static boolean compare(String str1, String str2) {
+	    return (str1 == null ? str2 == null : str1.equals(str2));
+	}
+
+	
+	
 
 }

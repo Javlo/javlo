@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.logging.Logger;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -13,7 +14,6 @@ import org.javlo.helper.StringHelper;
 import org.w3c.dom.Document;
 import org.xhtmlrenderer.layout.LayoutContext;
 import org.xhtmlrenderer.render.BlockBox;
-import org.xhtmlrenderer.render.InlineLayoutBox;
 import org.xhtmlrenderer.render.InlineText;
 import org.xhtmlrenderer.render.JustificationInfo;
 import org.xhtmlrenderer.render.LineBox;
@@ -64,9 +64,9 @@ public class PDFConvertion {
 			org.xhtmlrenderer.pdf.ITextRenderer pdfRenderer = new org.xhtmlrenderer.pdf.ITextRenderer();
 			pdfRenderer.setDocument(doc, null);
 			pdfRenderer.layout();			
-			LayoutContext layoutContext = pdfRenderer.getSharedContext().newLayoutContextInstance();			
-			BlockBox rootBox = pdfRenderer.getRootBox();
-			correctAllLines(layoutContext, rootBox);
+			//LayoutContext layoutContext = pdfRenderer.getSharedContext().newLayoutContextInstance();			
+			//BlockBox rootBox = pdfRenderer.getRootBox();
+			//correctAllLines(layoutContext, rootBox);
 			pdfRenderer.createPDF(out);
 		} catch (Exception e1) {
 			e1.printStackTrace();
@@ -99,23 +99,24 @@ public class PDFConvertion {
 	}
 
 	public static void main(String[] args) throws Exception {
-		URL url = new URL("http://localhost/javlo/mailing/en/data/test/test-16/test-16-august/3col_test/3col_test-composition.html?nodmz=true&j_token=y7kvR6c5V0g-&force-device-code=pdf&_clear_session=true&clean-html=true&_absolute-url=true");
-		java.net.HttpURLConnection con = (java.net.HttpURLConnection) url.openConnection();
-		DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
-		DocumentBuilder builder = documentBuilderFactory.newDocumentBuilder();
-		builder.setEntityResolver(FSEntityResolver.instance());
-		Document doc = builder.parse(con.getInputStream());
-		org.xhtmlrenderer.pdf.ITextRenderer pdfRenderer = new org.xhtmlrenderer.pdf.ITextRenderer();
+		//URL url = new URL("http://localhost/javlo/mailing/en/data/test/test-16/test-16-august/3col_test/3col_test-composition.html?nodmz=true&j_token=y7kvR6c5V0g-&force-device-code=pdf&_clear_session=true&clean-html=true&_absolute-url=true");
+URL url = new File("c:/trans/just.html").toURI().toURL();
+URLConnection con = (URLConnection) url.openConnection();
+DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+DocumentBuilder builder = documentBuilderFactory.newDocumentBuilder();
+builder.setEntityResolver(FSEntityResolver.instance());
+Document doc = builder.parse(con.getInputStream());
+org.xhtmlrenderer.pdf.ITextRenderer pdfRenderer = new org.xhtmlrenderer.pdf.ITextRenderer();
 
-		pdfRenderer.setDocument(doc, null);
-		System.out.println("* START *");
+pdfRenderer.setDocument(doc, null);
+System.out.println("* START *");
 
-		pdfRenderer.layout();
-		LayoutContext layoutContext = pdfRenderer.getSharedContext().newLayoutContextInstance();
-		BlockBox rootBox = pdfRenderer.getRootBox();
-		correctAllLines(layoutContext, rootBox);
+pdfRenderer.layout();
+LayoutContext layoutContext = pdfRenderer.getSharedContext().newLayoutContextInstance();
+BlockBox rootBox = pdfRenderer.getRootBox();
+//correctAllLines(layoutContext, rootBox);
 
-		pdfRenderer.createPDF(new FileOutputStream(new File("c:/trans/test-correction-starthere-nojustif.pdf")));
+pdfRenderer.createPDF(new FileOutputStream(new File("c:/trans/test-correction-starthere-nojustif.pdf")));
 
 	}
 
