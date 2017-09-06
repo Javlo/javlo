@@ -102,7 +102,6 @@ import org.javlo.utils.ConfigurationProperties;
 import org.javlo.utils.SmartMap;
 import org.javlo.utils.StructuredProperties;
 import org.javlo.utils.TimeMap;
-import org.javlo.ztatic.StaticInfo;
 
 public class GlobalContext implements Serializable, IPrintInfo {
 
@@ -222,7 +221,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		}
 	}
 
-	private final Map<String, ICache> cacheMaps = new Hashtable<String, ICache>();
+	private Map<String, ICache> cacheMaps = null;
 
 	private final Map<String, ICache> eternalCacheMaps = new Hashtable<String, ICache>();
 
@@ -414,6 +413,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 				if (newInstance == null) {
 					newInstance = new GlobalContext(contextKey);
 					newInstance.application = application;
+					newInstance.cacheMaps = new TimeMap<String, ICache>(staticConfig.getCacheMaxTime(), staticConfig.getCacheMaxSize());
 					synchronized (newInstance.properties) {
 						newInstance.staticConfig = staticConfig;
 						application.setAttribute(contextKey, newInstance);
@@ -466,6 +466,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 				newInstance = new GlobalContext(contextKey);
 				newInstance.staticConfig = staticConfig;
 				newInstance.application = session.getServletContext();
+				newInstance.cacheMaps = new TimeMap<String, ICache>(staticConfig.getCacheMaxTime(), staticConfig.getCacheMaxSize());
 			} else {
 				newInstance.staticConfig = staticConfig;
 				return newInstance;

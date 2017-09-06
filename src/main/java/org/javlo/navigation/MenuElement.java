@@ -3005,9 +3005,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 			localContentElementList = new ContentElementList(componentBean, ctx, this, false);
 		} else if (localContentElementList == null || !ctx.isAsViewMode()) {
 			localContentElementList = new ContentElementList(componentBean, ctx, this, false);
-
-			if (!ctx.isFree()) { // no reference to template >>> some component
-									// can be absent
+			if (!ctx.isFree()) { // no reference to template >>> some component  can be absent
 				getContentElementListMap().put(ctx.getRequestContentLanguage(), localContentElementList);
 			}
 

@@ -362,6 +362,22 @@ public class StaticConfig extends Observable {
 		return Integer.parseInt(properties.getString("cache.linked-page", "30"));
 	}
 	
+	/**
+	 * define the max size of the main cache
+	 * @return
+	 */
+	public int getCacheMaxSize() {
+		return Integer.parseInt(properties.getString("cache.max-size", "10000"));
+	}
+	
+	/**
+	 * return the max time in cache for item
+	 * @return
+	 */
+	public int getCacheMaxTime() {
+		return Integer.parseInt(properties.getString("cache.max-time", ""+(60*60*24))); // 1 day default value
+	}
+	
 	public boolean isPDFCache() {
 		return properties.getBoolean("cache.pdf", false);
 	}
