@@ -54,6 +54,7 @@ import org.javlo.helper.URLHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
+import org.javlo.module.admin.AdminAction;
 import org.javlo.module.core.AbstractModuleContext;
 import org.javlo.module.core.IMainModuleName;
 import org.javlo.module.core.Module;
@@ -1647,6 +1648,8 @@ public class Edit extends AbstractModuleAction {
 			globalContext.resetURLFactory();
 
 			FileCache.getInstance(application).clearPDF(ctx);
+			
+			AdminAction.clearCache(ctx);
 
 			TimeTracker.end(globalContext.getContextKey(), "publish", trackerNumber);
 

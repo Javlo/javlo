@@ -1647,43 +1647,49 @@ public class AdminAction extends AbstractModuleAction {
 		}
 		return msg;
 	}
-
+	
 	public static final String performClearCache(HttpServletRequest request, GlobalContext globalContext, HttpSession session, User user, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
+		messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("admin.message.clear cache"), GenericMessage.INFO));		
+		String msg = clearCache(ctx);
+		TemplateFactory.copyDefaultTemplate(session.getServletContext());
+		NotificationService.getInstance(globalContext).clearList();
+		PersistenceService.getInstance(globalContext).flush();	
+		PersistenceService.getInstance(globalContext).clearTrackCache();
+		AdminUserFactory.createUserFactory(globalContext, session).reload(globalContext, session);
+		UserFactory.createUserFactory(globalContext, session).reload(globalContext, session);
+		StaticConfig staticConfig = globalContext.getStaticConfig();
+		TimeTracker.reset(staticConfig);
+		System.gc();
+		return msg;
+	}
+
+	public static final String clearCache(ContentContext ctx) throws Exception {
+		User user = ctx.getCurrentEditUser();		
 		if (!AdminUserSecurity.getInstance().isAdmin(user)) {
 			return "security error !";
 		}
+		GlobalContext globalContext = ctx.getGlobalContext();
+		HttpServletRequest request = ctx.getRequest();
+		HttpSession session = request.getSession();
 		globalContext.clearTransformShortURL();
 		globalContext.resetURLFactory();
 		globalContext.storeRedirectUrlList();
 		globalContext.resetRedirectUrlMap();
 		globalContext.reset404UrlMap();		
 		String currentContextKey = request.getParameter("context");
-		if (currentContextKey == null) { // param context is used only for check
-											// the type of call, but you can
-											// clear only current context
+		if (currentContextKey == null && globalContext.isMaster()) {			
 			ContentService.clearAllContextCache(ctx);
 		} else {
 			if (!AdminUserSecurity.getInstance().isMaster(user) && !AdminUserSecurity.getInstance().isGod(user)) {
 				return "security error !";
 			}
 			ContentService.clearCache(ctx, globalContext);
-		}
-		messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("admin.message.clear cache"), GenericMessage.INFO));
+		}		
 		Tracker.getTracker(globalContext, session);
 		LogService.getInstance(session).clear();
-
-		AdminUserFactory.createUserFactory(globalContext, session).reload(globalContext, session);
-		UserFactory.createUserFactory(globalContext, session).reload(globalContext, session);
-
-		TemplateFactory.copyDefaultTemplate(session.getServletContext());
 		SharedContentService.getInstance(ctx).clearCache(ctx);
 		StaticConfig staticConfig = globalContext.getStaticConfig(); 
 		staticConfig.clearCache();
-		TimeTracker.reset(staticConfig);
-		NotificationService.getInstance(globalContext).clearList();
-		PersistenceService.getInstance(globalContext).flush();	
-		PersistenceService.getInstance(globalContext).clearTrackCache();
-		System.gc();
 		
 		ResourceFactory.getInstance(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE)).clearCache();
 		ResourceFactory.getInstance(ctx.getContextWithOtherRenderMode(ContentContext.EDIT_MODE)).clearCache();

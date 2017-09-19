@@ -882,4 +882,4 @@ change log
 
  * 1/ field validation / taxonomy integration in list service / update REST query possibility / document ref and lang / pdf correction justify / external link check internet connection 
  
-*  2/
+*  2/ clear cache on publish (partial)
