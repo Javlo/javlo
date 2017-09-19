@@ -627,6 +627,14 @@ public class GlobalImage extends Image implements IImageFilter {
 	public Date getDate() throws ParseException {
 		return StringHelper.parseDateOrTime(properties.getProperty(DATE, ""));
 	}
+	
+	public String getDisplayDate() throws ParseException {
+		Date date = getDate();
+		if (date != null) {
+			return StringHelper.renderDate(date);			
+		}
+		return null;
+	}
 
 	protected void setDate(String date) {
 		properties.setProperty(DATE, date);
