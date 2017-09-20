@@ -88,7 +88,7 @@ public class SearchActions implements IAction {
 					ctx.getRequest().getSession().setAttribute("searchList", result);
 					PaginationContext.getInstance(ctx.getRequest(), "searchPagination", result.size(), 10);
 				} else {
-					msg = "error search strign not defined";
+					msg = "error search string not defined";
 				}
 			}
 

@@ -6,6 +6,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.net.URI;
 import java.util.logging.Logger;
 
 import javax.servlet.Filter;
@@ -23,10 +24,11 @@ import org.javlo.context.GlobalContext;
 import org.javlo.helper.ResourceHelper;
 import org.lesscss.LessCompiler;
 
-import com.vaadin.sass.internal.ScssContext;
-import com.vaadin.sass.internal.ScssStylesheet;
-import com.vaadin.sass.internal.handler.SCSSDocumentHandlerImpl;
-import com.vaadin.sass.internal.handler.SCSSErrorHandler;
+import io.bit3.jsass.CompilationException;
+import io.bit3.jsass.Compiler;
+import io.bit3.jsass.Options;
+import io.bit3.jsass.Output;
+import io.bit3.jsass.context.FileContext;
 
 public class CssCompilationFilter implements Filter {
 
@@ -84,51 +86,72 @@ public class CssCompilationFilter implements Filter {
 		next.doFilter(request, response);
 	}
 
-	private static boolean compileSass(File in, File out) {
-		ScssContext.UrlMode urlMode = ScssContext.UrlMode.MIXED;
+//	private static boolean compileSass(File in, File out) {
+//		ScssContext.UrlMode urlMode = ScssContext.UrlMode.MIXED;
+//
+//		boolean minify = true;
+//		boolean ignoreWarnings = true;
+//		try {
+//
+//			if (!in.canRead()) {
+//				System.err.println(in.getCanonicalPath() + " could not be read!");
+//				System.exit(-1);
+//			}
+//			String input = in.getCanonicalPath();
+//
+//			SCSSErrorHandler errorHandler = new SCSSErrorHandler();
+//			errorHandler.setWarningsAreErrors(!ignoreWarnings);
+//
+//			// Parse stylesheet
+//			ScssStylesheet scss = ScssStylesheet.get(input, null, new SCSSDocumentHandlerImpl(), errorHandler);
+//			if (scss == null) {
+//				System.err.println("The scss file " + input + " could not be found.");
+//				return false;
+//			}
+//
+//			// Compile scss -> css
+//			scss.compile(urlMode);
+//
+//			// Write result
+//			Writer writer = null;
+//			try {
+//				writer = createOutputWriter(out.getAbsolutePath());
+//				scss.write(writer, minify);
+//				writer.close();
+//			} finally {
+//				ResourceHelper.safeClose(writer);
+//			}
+//
+//			if (errorHandler.isErrorsDetected()) {
+//				logger.warning("error on sass transform.");
+//				return false;
+//			}
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//			return false;
+//		}
+//		return true;
+//	}
+//	
+	private static boolean compileSass(File in, File out) throws IOException {
+		URI inputFile = in.toURI();	    	    
+	    if (!out.exists()) {
+	    	out.createNewFile();
+	    }
 
-		boolean minify = true;
-		boolean ignoreWarnings = true;
-		try {
+	    Compiler compiler = new Compiler();
+	    Options options = new Options();
+	    try {
+	      FileContext context = new FileContext(inputFile, null, options);
+	      Output output = compiler.compile(context);
+	      ResourceHelper.writeStringToFile(out, output.getCss());
 
-			if (!in.canRead()) {
-				System.err.println(in.getCanonicalPath() + " could not be read!");
-				System.exit(-1);
-			}
-			String input = in.getCanonicalPath();
-
-			SCSSErrorHandler errorHandler = new SCSSErrorHandler();
-			errorHandler.setWarningsAreErrors(!ignoreWarnings);
-
-			// Parse stylesheet
-			ScssStylesheet scss = ScssStylesheet.get(input, null, new SCSSDocumentHandlerImpl(), errorHandler);
-			if (scss == null) {
-				System.err.println("The scss file " + input + " could not be found.");
-				return false;
-			}
-
-			// Compile scss -> css
-			scss.compile(urlMode);
-
-			// Write result
-			Writer writer = null;
-			try {
-				writer = createOutputWriter(out.getAbsolutePath());
-				scss.write(writer, minify);
-				writer.close();
-			} finally {
-				ResourceHelper.safeClose(writer);
-			}
-
-			if (errorHandler.isErrorsDetected()) {
-				logger.warning("error on sass transform.");
-				return false;
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			return false;
-		}
-		return true;
+	      
+	    } catch (CompilationException e) {
+	      throw new IOException(e);
+	    }
+	    
+	    return true;
 	}
 
 	private static Writer createOutputWriter(String filename) throws IOException {
@@ -169,14 +192,14 @@ public class CssCompilationFilter implements Filter {
 	public void destroy() {
 	}
 
-	public static void main(String[] args) {
-		File sassFile = new File("c:/trans/test.scss");
+	public static void main(String[] args) throws IOException {
+		File sassFile = new File("C:/opt/tomcat8/webapps/javlo/wktp/bootstrap-4.0.0/sexy/scss/bootstrap.scss");
 		File lessFile = new File("c:/trans/test.less");
 		File cssFile = new File("c:/trans/test_sass.css");
 		//compileSass(sassFile, cssFile);
 		cssFile = new File("c:/trans/test_less.css");
-		System.out.println("less file exist : "+lessFile.exists());
-		compile(lessFile, cssFile, true);
+		System.out.println("sassFile file exist : "+sassFile.exists());
+		compileSass(sassFile, cssFile);
 	}
 
 }

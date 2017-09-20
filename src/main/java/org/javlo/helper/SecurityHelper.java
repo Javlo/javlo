@@ -29,7 +29,7 @@ public class SecurityHelper {
 		if (ctx.getCurrentEditUser() != null) {
 			String userContextName = ctx.getCurrentEditUser().getContext();
 			String currentContextName = ctx.getGlobalContext().getContextKey();
-			if (!userContextName.equals(currentContextName)) {
+			if (userContextName != null && !userContextName.equals(currentContextName)) {
 				GlobalContext userContext;
 				try {
 					userContext = GlobalContext.getInstance(ctx.getRequest().getSession(), ctx.getCurrentEditUser().getContext());
