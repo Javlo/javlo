@@ -68,7 +68,7 @@ public class UserInfo implements Comparable<IUserInfo>, IUserInfo, Serializable 
 	private String[] preferredLanguage = new String[0];
 	private Set<String> roles = new HashSet<String>();
 	private Date creationDate = new Date();
-	private Date modificationDate = new Date();	
+	private Date modificationDate = new Date();
 
 	@Override
 	public String getTitle() {
@@ -645,6 +645,5 @@ public class UserInfo implements Comparable<IUserInfo>, IUserInfo, Serializable 
 	public void setRegion(String region) {
 		this.region = region;
 	}
-	
-	
+
 }

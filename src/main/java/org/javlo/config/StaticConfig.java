@@ -49,7 +49,7 @@ import org.javlo.utils.ConfigurationProperties;
 import org.javlo.ztatic.FileCache;
 
 public class StaticConfig extends Observable {
-
+	
 	public static String WEB_PLATFORM = "web";
 	public static String MAILING_PLATFORM = "mailing";
 	public static String OPEN_PLATFORM = "open";

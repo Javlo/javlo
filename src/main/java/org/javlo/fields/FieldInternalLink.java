@@ -140,8 +140,8 @@ public class FieldInternalLink extends Field {
 	}
 
 	@Override
-	public boolean process(HttpServletRequest request) {
-		RequestService requestService = RequestService.getInstance(request);
+	public boolean process(ContentContext ctx) {
+		RequestService requestService = RequestService.getInstance(ctx.getRequest());
 
 		boolean modify = false;
 

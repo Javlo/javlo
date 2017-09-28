@@ -8,6 +8,7 @@ import org.javlo.macro.ActiveAllChildren;
 import org.javlo.macro.AddChildMacro;
 import org.javlo.macro.CleanDuplicatedId;
 import org.javlo.macro.CleanImportFolder;
+import org.javlo.macro.CleanPersistenceFolder;
 import org.javlo.macro.CleanResourceNameMacro;
 import org.javlo.macro.ClearContext;
 import org.javlo.macro.ClearDataAccessCount;
@@ -172,6 +173,7 @@ public class MacroFactory {
 		macros.add(new MailingStat());
 		macros.add(new SocialShare());
 		macros.add(new ValidAllChildren());
+		macros.add(new CleanPersistenceFolder());
 	}
 
 	public IMacro getMacro(String name) {

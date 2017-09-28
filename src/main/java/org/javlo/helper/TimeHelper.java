@@ -80,7 +80,6 @@ public class TimeHelper {
 		}
 		return true;
 	}
-	
 
 	/**
 	 * check if date is after other date, if the day is the same it is ok.
@@ -164,7 +163,7 @@ public class TimeHelper {
 		outCal.set(Calendar.MILLISECOND, 0);
 		return outCal;
 	}
-	
+
 	public static Calendar convertEndOfDay(Calendar cal) {
 		Calendar outCal = Calendar.getInstance();
 		outCal.setTimeInMillis(0);
@@ -185,7 +184,8 @@ public class TimeHelper {
 	}
 
 	/**
-	 * return the date format defined in the system, depend of rendering mode, globalContext config or default java config.
+	 * return the date format defined in the system, depend of rendering mode,
+	 * globalContext config or default java config.
 	 * 
 	 * @param ctx
 	 *            current content
@@ -237,7 +237,7 @@ public class TimeHelper {
 
 	public static String exportAgenda(ContentContext ctx, MenuElement agendaPage, Date startDate, Date endDate) throws Exception {
 		StringWriter writer = new StringWriter();
-		PrintWriter out = new PrintWriter(writer);		
+		PrintWriter out = new PrintWriter(writer);
 		out.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
 		out.println("<agenda lang=\"" + ctx.getRequestContentLanguage() + "\" start-date=\"" + StringHelper.renderSortableDate(startDate) + "\" end-date=\"" + StringHelper.renderSortableDate(endDate) + "\">");
 		for (MenuElement element : agendaPage.getAllChildrenList()) {
@@ -274,25 +274,47 @@ public class TimeHelper {
 		out.close();
 		return writer.toString();
 	}
-	
+
 	/**
 	 * get the distance between 2 dates in day
+	 * 
 	 * @param date1
 	 * @param date2
 	 * @return
 	 */
 	public static int getDaysDistance(Date date1, Date date2) {
-		double reduce = 1000*60*60*24;
-		long distMili = Math.abs(Math.round(Math.floor(date1.getTime()/reduce)-Math.floor(date2.getTime()/reduce)));		
-		return (int)Math.round(distMili);
+		double reduce = 1000 * 60 * 60 * 24;
+		long distMili = Math.abs(Math.round(Math.floor(date1.getTime() / reduce) - Math.floor(date2.getTime() / reduce)));
+		return (int) Math.round(distMili);
 	}
 
-	public static void main(String[] args) throws ParseException {
-		
-		 System.out.println("Math = "+Math.floor(1.6));
-		
-		  Date date1 = StringHelper.parseTime("01/01/1975 23:10:00");
-		  Date date2 = StringHelper.parseTime("10/01/1975 10:10:10");
-		  System.out.println("***** TimeHelperTest.testGetDaysDistance : TimeHelper.getDaysDistance(date1, date2) = "+TimeHelper.getDaysDistance(date1, date2)); //TODO: remove debug trace
+	public static int getAge(Date born) {
+		int age = 0;
+		try {
+			Calendar now = Calendar.getInstance();
+			Calendar dob = Calendar.getInstance();
+			dob.setTime(born);
+			if (dob.after(now)) {
+				throw new IllegalArgumentException("Can't be born in the future");
+			}
+			int year1 = now.get(Calendar.YEAR);
+			int year2 = dob.get(Calendar.YEAR);
+			age = year1 - year2;
+			int month1 = now.get(Calendar.MONTH);
+			int month2 = dob.get(Calendar.MONTH);
+			if (month2 > month1) {
+				age--;
+			} else if (month1 == month2) {
+				int day1 = now.get(Calendar.DAY_OF_MONTH);
+				int day2 = dob.get(Calendar.DAY_OF_MONTH);
+				if (day2 > day1) {
+					age--;
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return age;
 	}
+
 }

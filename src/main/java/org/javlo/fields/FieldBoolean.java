@@ -54,10 +54,10 @@ public class FieldBoolean extends Field {
 	}
 
 	@Override
-	public boolean process(HttpServletRequest request) {
-		boolean modify = super.process(request);
+	public boolean process(ContentContext ctx) {
+		boolean modify = super.process(ctx);
 		if (!modify) {
-			RequestService requestService = RequestService.getInstance(request);
+			RequestService requestService = RequestService.getInstance(ctx.getRequest());
 			String value = requestService.getParameter(getInputName(), null);
 			if (value == null) {
 				setValue("" + false);

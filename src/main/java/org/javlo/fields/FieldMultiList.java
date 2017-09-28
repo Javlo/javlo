@@ -79,8 +79,8 @@ public class FieldMultiList extends Field {
 	 * @return true if the field is modified.
 	 */
 	@Override
-	public boolean process(HttpServletRequest request) {
-		RequestService requestService = RequestService.getInstance(request);
+	public boolean process(ContentContext ctx) {
+		RequestService requestService = RequestService.getInstance(ctx.getRequest());
 		String[] values = requestService.getParameterValues(getInputName(), null);
 
 		boolean modify = false;

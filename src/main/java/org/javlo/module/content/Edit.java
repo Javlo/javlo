@@ -1403,7 +1403,6 @@ public class Edit extends AbstractModuleAction {
 			}
 			if (message == null) {
 				MenuElement elem = MenuElement.getInstance(globalContext);
-
 				elem.setCreator(editCtx.getUserPrincipal().getName());
 				elem.setVisible(globalContext.isNewPageVisible());
 				MenuElement parent = ctx.getCurrentPage();

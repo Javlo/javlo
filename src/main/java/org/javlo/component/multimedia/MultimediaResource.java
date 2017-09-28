@@ -9,6 +9,7 @@ import java.util.List;
 import org.javlo.context.ContentContext;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
+import org.javlo.image.ImageSize;
 import org.javlo.servlet.ImageTransformServlet;
 import org.javlo.ztatic.StaticInfo.StaticInfoBean;
 
@@ -469,5 +470,9 @@ public class MultimediaResource {
 
 	public void setMonthDate(String monthDate) {
 		this.monthDate = monthDate;
+	}
+	
+	public ImageSize getSize() {
+		return staticInfo.getStaticInfo().getImageSize();
 	}
 }

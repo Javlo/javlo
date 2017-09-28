@@ -2395,12 +2395,19 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	}
 
 	public synchronized void setData(String key, String value) {
+		if (key==null) {
+			return;
+		}	
 		Properties prop = dataProperties;
 		if (prop == null) {
 			prop = initDataFile();
 		}
 		synchronized (prop) {
-			prop.put(key, value);
+			if (value != null) {
+				prop.put(key, value);
+			} else {
+				prop.remove(key);
+			}
 			askStoreData();
 		}
 

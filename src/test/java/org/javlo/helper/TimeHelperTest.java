@@ -30,6 +30,6 @@ public class TimeHelperTest extends TestCase {
 	  date1 = StringHelper.parseTime("01/01/1975 23:10:00");
 	  date2 = StringHelper.parseTime("10/01/1976 10:10:10");
 	  assertEquals(TimeHelper.getDaysDistance(date1, date2), 374);
-  }   
+  }  
  
 }

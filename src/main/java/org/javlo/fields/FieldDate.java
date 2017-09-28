@@ -65,6 +65,15 @@ public class FieldDate extends Field implements IDate {
 			cal.setTime(getDate());
 			return cal.before(now);
 		}
+		
+		public int getAge() {
+			Date date = FieldDate.this.getDate(ctx);
+			if (date == null) {
+				return -1;
+			} else {
+				return TimeHelper.getAge(date);
+			}
+		}
 	}
 
 	@Override

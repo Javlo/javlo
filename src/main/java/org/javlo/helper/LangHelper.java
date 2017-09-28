@@ -337,4 +337,23 @@ public class LangHelper {
 		}
 	}
 	
+	/**
+	 * compare two objects with one of them null.
+	 * @param obj1
+	 * @param obj2
+	 * @return null if two objects != null
+	 */
+	public static Integer compareNull(Object obj1, Object obj2) {
+		  if (obj1 == null && obj2 == null)  {
+			  return 0;
+		  } else {
+			  if (obj1 == null) {
+				  return 1;
+			  } else if (obj2 == null) {
+				  return -1;
+			  }
+		  }
+		  return null;
+	}
+	
 }

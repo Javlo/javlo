@@ -370,6 +370,24 @@ public class InfoBean {
 			return null;
 		}
 	}
+	
+	public String getCurrentDateRFC3339() {
+		try {
+			return StringHelper.renderDate(new Date(),"yyyy-MM-dd");
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	public String getCurrentTimeRFC3339() {
+		try {
+			return StringHelper.renderDate(new Date(),"yyyy-MM-dd'T'HH:mm:ssXXX");
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
 
 	public String getSortableDate() {
 		try {

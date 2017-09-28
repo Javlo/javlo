@@ -35,6 +35,8 @@ import org.javlo.helper.ExifHelper;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
+import org.javlo.image.ImageHelper;
+import org.javlo.image.ImageSize;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
 import org.javlo.service.PersistenceService;
@@ -52,42 +54,45 @@ public class StaticInfo {
 	public static final int DEFAULT_FOCUS_X = 500;
 
 	public static final int DEFAULT_FOCUS_Y = 500;
-	
+
 	private boolean isDescription = true;
-	
+
 	private ReferenceBean refBean = null;
-	
+
 	public static class ReferenceBean {
 		private String reference;
 		private String language;
-		
+
 		public ReferenceBean(String reference, String language) {
 			super();
 			this.reference = reference;
 			this.language = language;
 		}
+
 		public String getReference() {
 			return reference;
 		}
+
 		public String getLanguage() {
 			return language;
 		}
+
 		@Override
-		public boolean equals(Object obj) {		
+		public boolean equals(Object obj) {
 			if (this == obj) {
 				return true;
-			} else if (!(obj instanceof ReferenceBean)) { 
-				return false;				
+			} else if (!(obj instanceof ReferenceBean)) {
+				return false;
 			} else {
-				ReferenceBean refObj = (ReferenceBean)obj;
+				ReferenceBean refObj = (ReferenceBean) obj;
 				return StringHelper.compare(reference, refObj.reference) && StringHelper.compare(language, refObj.language);
-				
+
 			}
 		}
-		
+
 		@Override
 		public String toString() {
-			return reference+" - "+language;
+			return reference + " - " + language;
 		}
 	}
 
@@ -160,11 +165,11 @@ public class StaticInfo {
 		public String getDescription() {
 			return staticInfo.getManualDescription(ctx);
 		}
-		
+
 		public String getReference() {
 			return staticInfo.getReference(ctx);
 		}
-		
+
 		public String getLanguage() {
 			return staticInfo.getLanguage(ctx);
 		}
@@ -663,6 +668,10 @@ public class StaticInfo {
 
 	private boolean staticFolder = true;
 
+	private ImageSize imageSize = null;
+
+	private static final ImageSize NO_IMAGE_SIZE = new ImageSize(0, 0);
+
 	/**
 	 * false if date come from last modified of the file.
 	 */
@@ -692,14 +701,14 @@ public class StaticInfo {
 	private String getKey(String inStaticURL, String key) {
 		return KEY + inStaticURL + '-' + key;
 	}
-	
-	public static StaticInfo getInstance(ContentContext ctx, File file) throws Exception {		
+
+	public static StaticInfo getInstance(ContentContext ctx, File file) throws Exception {
 		String relURL = ResourceHelper.getRelativeStaticURL(ctx, file);
 		StaticInfo staticInfo = getInstance(ctx, relURL);
 		staticInfo.setStaticFolder(true);
 		return staticInfo;
 	}
-	
+
 	public static StaticInfo getInstance(ContentContext ctx, String inStaticURL) throws Exception {
 		inStaticURL = inStaticURL.replace('\\', '/').replaceAll("//", "/").trim();
 		if (!inStaticURL.startsWith("/")) {
@@ -809,33 +818,33 @@ public class StaticInfo {
 		ContentService content = ContentService.getInstance(ctx.getGlobalContext());
 		return content.getAttribute(ctx, getKey("description-" + ctx.getRequestContentLanguage()), "");
 	}
-	
+
 	public String getReference(ContentContext ctx) {
 		ContentService content = ContentService.getInstance(ctx.getGlobalContext());
 		return content.getAttribute(ctx, getKey("ref-" + ctx.getRequestContentLanguage()), "");
 	}
-	
+
 	public void setReference(ContentContext ctx, String ref) {
 		ContentService content = ContentService.getInstance(ctx.getGlobalContext());
 		if (!StringHelper.isEmpty(ref)) {
 			if (!getReference(ctx).equals(ref)) {
 				content.setAttribute(ctx, getKey("ref-" + ctx.getRequestContentLanguage()), ref);
-				refBean=null;
+				refBean = null;
 			}
 		} else {
 			content.removeAttribute(ctx, getKey("ref-" + ctx.getRequestContentLanguage()));
-			refBean=null;
+			refBean = null;
 		}
 	}
-	
+
 	public String getLanguage(ContentContext ctx) {
 		ContentService content = ContentService.getInstance(ctx.getGlobalContext());
 		return content.getAttribute(ctx, getKey("lg-" + ctx.getRequestContentLanguage()), "");
 	}
-	
+
 	public ReferenceBean getReferenceBean(ContentContext ctx) {
 		if (refBean == null) {
-			if (!StringHelper.isEmpty(getReference(ctx)) || !StringHelper.isEmpty(getReference(ctx))) {				
+			if (!StringHelper.isEmpty(getReference(ctx)) || !StringHelper.isEmpty(getReference(ctx))) {
 				refBean = new ReferenceBean(getReference(ctx), getLanguage(ctx));
 			} else {
 				return null;
@@ -843,17 +852,17 @@ public class StaticInfo {
 		}
 		return refBean;
 	}
-	
+
 	public void setLanguage(ContentContext ctx, String lg) {
 		ContentService content = ContentService.getInstance(ctx.getGlobalContext());
 		if (!StringHelper.isEmpty(lg)) {
-			if (!lg.equals(getLanguage(ctx))) {				
+			if (!lg.equals(getLanguage(ctx))) {
 				content.setAttribute(ctx, getKey("lg-" + ctx.getRequestContentLanguage()), lg);
-				refBean=null;
+				refBean = null;
 			}
 		} else {
 			content.removeAttribute(ctx, getKey("lg-" + ctx.getRequestContentLanguage()));
-			refBean=null;
+			refBean = null;
 		}
 	}
 
@@ -970,7 +979,7 @@ public class StaticInfo {
 	public String getManualTitle(ContentContext ctx) {
 		ContentService content = ContentService.getInstance(ctx.getGlobalContext());
 		String key = getKey("title-" + ctx.getRequestContentLanguage());
-		String title = content.getAttribute(ctx, key, "");				
+		String title = content.getAttribute(ctx, key, "");
 		if (!isDescription && StringHelper.isEmpty(title)) {
 			String description = getManualDescription(ctx);
 			if (!StringHelper.isEmpty(description)) {
@@ -1612,31 +1621,31 @@ public class StaticInfo {
 		uri = uri.replace(ctx.getGlobalContext().getDataFolder(), "");
 		out.println("<resource uri=\"" + uri + "\">");
 		if (!StringHelper.isEmpty(getTitle(ctx))) {
-			out.println("<title>"+Encode.forXml(getTitle(ctx))+"</title>");
+			out.println("<title>" + Encode.forXml(getTitle(ctx)) + "</title>");
 		}
 		if (!StringHelper.isEmpty(getDescription(ctx))) {
-			out.println("<description>"+Encode.forXml(getDescription(ctx))+"</description>");
+			out.println("<description>" + Encode.forXml(getDescription(ctx)) + "</description>");
 		}
 		if (!StringHelper.isEmpty(getManualDate(ctx))) {
-			out.println("<date>"+StringHelper.renderSortableTime(getManualDate(ctx))+"</date>");
+			out.println("<date>" + StringHelper.renderSortableTime(getManualDate(ctx)) + "</date>");
 		}
 		if (!StringHelper.isEmpty(getLocation(ctx))) {
-			out.println("<location>"+Encode.forXml(getLocation(ctx))+"</location>");
+			out.println("<location>" + Encode.forXml(getLocation(ctx)) + "</location>");
 		}
 		if (!StringHelper.isEmpty(getCopyright(ctx))) {
-			out.println("<copyright>"+Encode.forXml(getCopyright(ctx))+"</copyright>");
+			out.println("<copyright>" + Encode.forXml(getCopyright(ctx)) + "</copyright>");
 		}
 		if (getReadRoles(ctx).size() > 0) {
-			out.println("<roles>"+StringHelper.collectionToString(getReadRoles(ctx), ",")+"</roles>");
+			out.println("<roles>" + StringHelper.collectionToString(getReadRoles(ctx), ",") + "</roles>");
 		}
 		if (getFocusZoneX(ctx) != DEFAULT_FOCUS_X) {
-			out.println("<focusx>"+getFocusZoneX(ctx)+"</focusx>");
+			out.println("<focusx>" + getFocusZoneX(ctx) + "</focusx>");
 		}
 		if (getFocusZoneY(ctx) != DEFAULT_FOCUS_Y) {
-			out.println("<focusy>"+getFocusZoneY(ctx)+"</focusy>");
+			out.println("<focusy>" + getFocusZoneY(ctx) + "</focusy>");
 		}
 		if (getTags(ctx).size() > 0) {
-			out.println("<tags>"+StringHelper.collectionToString(getTags(ctx), ",")+"</tags>");
+			out.println("<tags>" + StringHelper.collectionToString(getTags(ctx), ",") + "</tags>");
 		}
 		if (!isShared(ctx)) {
 			out.println("<shared>false</shared>");
@@ -1644,26 +1653,26 @@ public class StaticInfo {
 		out.println("</resource>");
 		out.flush();
 	}
-	
-	public void fromXML(ContentContext ctx, NodeXML node) {		
+
+	public void fromXML(ContentContext ctx, NodeXML node) {
 		for (NodeXML child : node.getAllChildren()) {
 			if (child.getName().equals("title")) {
-				setTitle(ctx,  child.getContent());
+				setTitle(ctx, child.getContent());
 			}
 			if (child.getName().equals("description")) {
-				setDescription(ctx,  child.getContent());
+				setDescription(ctx, child.getContent());
 			}
 			if (child.getName().equals("location")) {
-				setLocation(ctx,  child.getContent());
+				setLocation(ctx, child.getContent());
 			}
 			if (child.getName().equals("copyright")) {
-				setCopyright(ctx,  child.getContent());
+				setCopyright(ctx, child.getContent());
 			}
 			if (child.getName().equals("focusx")) {
-				setFocusZoneX(ctx,  Integer.parseInt(child.getContent()));
+				setFocusZoneX(ctx, Integer.parseInt(child.getContent()));
 			}
 			if (child.getName().equals("focusy")) {
-				setFocusZoneY(ctx,  Integer.parseInt(child.getContent()));
+				setFocusZoneY(ctx, Integer.parseInt(child.getContent()));
 			}
 			if (child.getName().equals("date")) {
 				try {
@@ -1679,7 +1688,7 @@ public class StaticInfo {
 				try {
 					for (String role : StringHelper.stringToCollection(child.getContent())) {
 						addReadRole(ctx, role);
-					}					
+					}
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -1693,6 +1702,27 @@ public class StaticInfo {
 					e.printStackTrace();
 				}
 			}
+		}
+	}
+
+	public ImageSize getImageSize() {
+		if (imageSize == NO_IMAGE_SIZE) {
+			return null;
+		}
+		if (imageSize != null) {
+			return imageSize;
+		} else {
+			try {
+				imageSize = ImageHelper.getImageSize(file);
+			} catch (Throwable e) {
+				logger.warning(e.getMessage());
+			}
+		}
+		if (imageSize == null) {
+			imageSize = NO_IMAGE_SIZE;
+			return null;
+		} else {
+			return imageSize;
 		}
 	}
 

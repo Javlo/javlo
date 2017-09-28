@@ -1655,6 +1655,19 @@ public class PersistenceService {
 			NetHelper.sendMailToAdministrator(globalContext, "Javlo persistence Error on : " + globalContext.getContextKey(), content);
 		}
 	}
+	
+	public boolean clean(ContentContext ctx) {
+		boolean fileDeleted = false;
+		for (File file : new File(getDirectory()).listFiles()) {
+			if (file.getName().startsWith("content_" + ContentContext.PREVIEW_MODE)) {
+				if (!file.getName().contains(""+getVersion())) {
+					file.delete();
+					fileDeleted=true;
+				}
+			}
+		}
+		return fileDeleted;
+	}
 
 	public static void main(String[] args) throws Exception {
 		File file = new File("c:/trans/test.csv");

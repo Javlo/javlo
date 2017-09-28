@@ -166,6 +166,7 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 
 	public String getViewXHTMLCode(ContentContext ctx, boolean asList) throws Exception {
 		ctx.getRequest().setAttribute("page", new PageBean(ctx, getContainerPage(ctx)));
+		ctx.getRequest().setAttribute("containerId", getId());
 		if (getStyle().equals(HIDDEN)) {
 			String emptyCode = getEmptyCode(ctx);
 			if (emptyCode != null) {
@@ -218,7 +219,7 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 					}
 					prefix = "<div class=\"" + cssClass + "\">";
 					suffix = "</div>";
-				}
+				}				
 				return prefix+executeJSP(ctx, linkToJSP)+suffix;
 			}
 		}
@@ -545,7 +546,7 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 
 			for (Locale locale : languages) {
 				field.setCurrentLocale(locale);
-				boolean modify = field.process(ctx.getRequest());
+				boolean modify = field.process(ctx);
 				if (modify) {
 					setModify();
 					if (field.isNeedRefresh()) {
@@ -553,7 +554,7 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 					}
 				}
 			}
-			;
+			
 			if (!field.validate()) {
 				valid=false;				
 				errorField.add(field.getUserLabel(ctx, new Locale(ctx.getGlobalContext().getEditLanguage(ctx.getRequest().getSession()))));

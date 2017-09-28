@@ -595,6 +595,10 @@ if (!String.prototype.startsWith) {
 				});
 				el.addEventListener('drop', function (event) {
 					
+					if (!pjq(this).hasClass("_empty_area")) {
+						return false;
+					}
+					
 					if (PREVIEWLOG) {
 						console.log("*** DROP AREA ***");
 					}
@@ -608,6 +612,7 @@ if (!String.prototype.startsWith) {
 								ajaxURL = ajaxURL +'&pageContainerID='+ editPreview.searchPageId(this);
 							}
 							editPreview.ajaxPreviewRequest(ajaxURL, null, null);
+							pjq(this).removeClass("_empty_area");
 							return false;
 					}
 					var rowData = event.dataTransfer.getData("text").split(",");
@@ -698,6 +703,9 @@ if (!String.prototype.startsWith) {
 						} else {
 							editPreview.ajaxPreviewRequest(ajaxURL, null, fd);
 						}	
+						
+						pjq(this).removeClass("_empty_area");
+						
 						/*var i = 0;
 						jQuery.each( event.dataTransfer.files, function(index, file) {
 							if (i==0) {

@@ -2,6 +2,7 @@ package org.javlo.component.container;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -43,9 +44,9 @@ public class DynamicComponentFilter extends AbstractPropertiesComponent implemen
 
 	private static final String STYLE_ALL = "default_all";
 
-	private static final String HIDE_FORM = "hide_form";
+	private static final String CURRENT_USER_ONLY = "current_user_only";
 
-	private Boolean realContent = null;
+	private static final String HIDE_FORM = "hide_form";
 
 	@Override
 	public String getType() {
@@ -54,7 +55,7 @@ public class DynamicComponentFilter extends AbstractPropertiesComponent implemen
 
 	@Override
 	public String[] getStyleList(ContentContext ctx) {
-		return new String[] { "default_none", STYLE_ALL, HIDE_FORM };
+		return new String[] { "default_none", STYLE_ALL, HIDE_FORM, CURRENT_USER_ONLY };
 	}
 
 	@Override
@@ -121,8 +122,6 @@ public class DynamicComponentFilter extends AbstractPropertiesComponent implemen
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
 		prepareView(ctx);
 
-		realContent = false;
-
 		IFieldContainer fieldContainer = getFieldContainer(ctx);
 		if (fieldContainer == null) {
 			return "";
@@ -133,14 +132,14 @@ public class DynamicComponentFilter extends AbstractPropertiesComponent implemen
 
 		I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
 		if (!getStyle().equals(HIDE_FORM)) {
-			out.println("<form role=\"form\" class=\"generic-form panel panel-default\" id=\"form-filter-" + getId() + "\" name=\"form-filter-" + getId() + "\" action=\"" + URLHelper.createURL(ctx) + "\" method=\"post\">");
-			out.println("<div class=\"fields panel-body\"><input type=\"hidden\" name=\"webaction\" value=\"" + getActionGroupName() + ".filter\" />");
-			out.println("<input type=\"hidden\" name=\"" + IContentVisualComponent.COMP_ID_REQUEST_PARAM + "\" value=\"" + getId() + "\">");
+			out.println("<div class=\"card panel panel-default\"><form role=\"form\" class=\"generic-form\" id=\"form-filter-" + getId() + "\" name=\"form-filter-" + getId() + "\" action=\"" + URLHelper.createURL(ctx) + "\" method=\"post\">");
+			out.println("<div class=\"fields panel-body card-body\"><input type=\"hidden\" name=\"webaction\" value=\"" + getActionGroupName() + ".filter\" />");
+			out.println("<input type=\"hidden\" name=\"" + IContentVisualComponent.COMP_ID_REQUEST_PARAM + "\" value=\"" + getId() + "\"><div class=\"row\">");
 			for (Field field : (List<Field>) ctx.getRequest().getAttribute("fields")) {
-				out.println(field.getSearchEditXHTMLCode(ctx));
+				out.println("<div class=\"col-lg-6\">" + field.getSearchEditXHTMLCode(ctx) + "</div>");
 			}
-			out.println("<div class=\"action\"><input type=\"submit\" class=\"btn btn-default\" name=\"filter\" value=\"" + i18nAccess.getViewText("global.ok") + "\" /></div>");
-			out.println("</div></form>");
+			out.println("</div><div class=\"form-group text-right\"><input type=\"submit\" class=\"btn btn-default\" name=\"filter\" value=\"" + i18nAccess.getViewText("global.search") + "\" /></div>");
+			out.println("</div></form></div>");
 		} else if (ctx.isAsPreviewMode()) {
 			out.println("[no - form]");
 		}
@@ -150,14 +149,14 @@ public class DynamicComponentFilter extends AbstractPropertiesComponent implemen
 		DynamicComponentService service = DynamicComponentService.getInstance(globalContext);
 
 		List<IFieldContainer> containers = service.getFieldContainers(ctx, content.getNavigation(ctx), getSelectedType());
-		
+
 		if (!StringHelper.isEmpty(getSelectedField())) {
 			Collections.sort(containers, new SortContainer(ctx, getSelectedField()));
 		}
 
 		Map<String, Field> fieldsSearch = new HashMap<String, Field>();
 
-		boolean isFilter = getStyle().equals(STYLE_ALL) || getStyle().equals(HIDE_FORM);
+		boolean isFilter = getStyle().equals(STYLE_ALL) || getStyle().equals(HIDE_FORM) || getStyle().equals(CURRENT_USER_ONLY);
 
 		for (Field field : getSearchField(ctx)) {
 			fieldsSearch.put(field.getName(), field);
@@ -167,33 +166,46 @@ public class DynamicComponentFilter extends AbstractPropertiesComponent implemen
 		}
 
 		if (isFilter) {
-			out.println("<ul class=\"filter-list\">");
+			// out.println("<ul class=\"filter-list\">");
 			ctx.getRequest().setAttribute("inList", true);
+			Collection<IFieldContainer> toDisplay = new LinkedList<IFieldContainer>();
+			boolean onlyUser = CURRENT_USER_ONLY.equals(getStyle());
 			for (IFieldContainer container : containers) {
-				if (container.isRealContent(ctx)) {
-					boolean display = true;
+				if (container.isRealContent(ctx)) {					
 					List<Field> fields = container.getFields(ctx);
-					for (Field field : fields) {
-						Field searchField = fieldsSearch.get(field.getName());
-						if (searchField != null && searchField.getValue() != null && searchField.getValue().trim().length() > 0) {
-							if (!field.search(ctx, searchField.getValue().trim())) {
-								display = false;
+					if (!onlyUser || container.getAuthors().equals(ctx.getCurrentUserId())) {
+						boolean display = true;
+						for (Field field : fields) {
+							Field searchField = fieldsSearch.get(field.getName());
+							if (searchField != null && searchField.getValue() != null && searchField.getValue().trim().length() > 0) {
+								if (!field.search(ctx, searchField.getValue().trim())) {
+									display = false;
+								}
 							}
 						}
-					}
-					if (display) {
-						realContent = true;
-						out.println("<li class=\"dynamic-component\">");
-						out.println(container.getPrefixViewXHTMLCode(ctx));
-						out.println(container.getViewListXHTMLCode(ctx));
-						out.println(container.getSuffixViewXHTMLCode(ctx));
-						out.println("</li>");
+						if (display) {
+							toDisplay.add(container);
+						}
 					}
 				}
 			}
+			ctx.getRequest().setAttribute("previousSame", false);
+			ctx.getRequest().setAttribute("nextSame", true);
+			int i = 0;
+			for (IFieldContainer container : toDisplay) {
+				if (i++ == toDisplay.size() - 1) {
+					ctx.getRequest().setAttribute("nextSame", false);
+				}
+				// out.println("<li class=\"dynamic-component\">");
+				out.println(container.getPrefixViewXHTMLCode(ctx));
+				out.println(container.getViewListXHTMLCode(ctx));
+				out.println(container.getSuffixViewXHTMLCode(ctx));
+				// out.println("</li>");
+				ctx.getRequest().setAttribute("previousSame", true);
+			}
 			ctx.getRequest().removeAttribute("inList");
-			out.println("</ul>");
-			if (!realContent) {
+			// out.println("</ul>");
+			if (toDisplay.size() == 0) {
 				out.println("<div class=\"alert alert-warning\" role=\"alert\">" + i18nAccess.getViewText("global.no-result") + "</div>");
 			}
 		}

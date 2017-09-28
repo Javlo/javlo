@@ -1,5 +1,6 @@
 package org.javlo.fields;
 
+import java.io.File;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
@@ -7,6 +8,7 @@ import org.javlo.context.ContentContext;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.helper.XHTMLHelper;
+import org.javlo.ztatic.StaticInfo;
 
 public class FieldImage extends FieldFile {
 	
@@ -26,6 +28,20 @@ public class FieldImage extends FieldFile {
 			String fileURL = URLHelper.mergePath(relativePath, FieldImage.this.getCurrentFile());
 			try {
 				return URLHelper.createTransformURL(ctx, '/' + fileURL, getImageFilter());
+			} catch (Exception e) {			
+				e.printStackTrace();
+				return null;
+			}
+		}
+		
+		public String getResourceURL() {
+			if ( FieldImage.this.getCurrentFile() == null || FieldImage.this.getCurrentFile().trim().length() == 0) {
+				return null;
+			}
+			String relativePath = URLHelper.mergePath(FieldImage.this.getFileTypeFolder(), FieldImage.this.getCurrentFolder());
+			String fileURL = URLHelper.mergePath(relativePath, FieldImage.this.getCurrentFile());
+			try {
+				return URLHelper.createResourceURL(ctx, '/' + fileURL);
 			} catch (Exception e) {			
 				e.printStackTrace();
 				return null;
@@ -52,12 +68,19 @@ public class FieldImage extends FieldFile {
 			return FieldImage.this.getViewXHTMLCode(ctx, getImageFilter());
 		}
 		
+		public StaticInfo getStaticInfo() throws Exception {
+			String relativePath = URLHelper.mergePath(FieldImage.this.getFileTypeFolder(), FieldImage.this.getCurrentFolder());
+			String fileURL = URLHelper.mergePath(relativePath, FieldImage.this.getCurrentFile());
+			File file = new File(URLHelper.mergePath(URLHelper.mergePath(ctx.getGlobalContext().getStaticFolder(), fileURL)));
+			return StaticInfo.getInstance(ctx, file);
+		}
+		
 	}
 
 	protected String getFilter() {
 		return properties.getProperty("field." + getUnicName() + ".image.filter", "standard");
 	}
-
+	
 	protected boolean isDisplayLabel() {
 		return StringHelper.isTrue(properties.getProperty("field." + getUnicName() + ".image.label", "true"));
 	}
@@ -69,7 +92,7 @@ public class FieldImage extends FieldFile {
 
 	@Override
 	protected boolean isWithLink() {
-		return true;
+		return !isLight();
 	}
 
 	@Override

@@ -269,7 +269,7 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 
 			for (Field field : fields) {
 				
-				field.process(request);
+				field.process(ctx);
 				System.out.println(field.getName() + " = "+field.getValue());
 				
 				if (field.getName().equals("title")) {
@@ -1124,7 +1124,7 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 		}
 
 		for (Field field : fieldsName) {
-			if (field.process(ctx.getRequest())) {
+			if (field.process(ctx)) {
 				setModify();
 			}
 		}

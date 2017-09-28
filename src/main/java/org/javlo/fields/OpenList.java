@@ -128,11 +128,11 @@ public class OpenList extends Field {
 	 * @param request
 	 * @return true if the field is modified.
 	 */
-	public boolean process(HttpServletRequest request) {
+	public boolean process(ContentContext ctx) {
 		
-		super.process(request);
+		super.process(ctx);
 		
-		RequestService requestService = RequestService.getInstance(request);
+		RequestService requestService = RequestService.getInstance(ctx.getRequest());
 		boolean modify = false;
 
 		String value = requestService.getParameter(getInputNewName(), "");

@@ -13,10 +13,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.logging.Logger;
-
-import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
 import org.javlo.component.core.IContentVisualComponent;
@@ -814,11 +813,10 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 	 * @param request
 	 * @return true if the field is modified.
 	 */
-	public boolean process(HttpServletRequest request) {
-		RequestService requestService = RequestService.getInstance(request);
+	public boolean process(ContentContext ctx) {
+		RequestService requestService = RequestService.getInstance(ctx.getRequest());
 		List<String> values = requestService.getParameterListValues(getInputName(), null);
 		String label = requestService.getParameter(getInputLabelName(), null);
-
 		boolean modify = false;
 		if (label != null) {
 			if (!label.equals(getUserLabel())) {
@@ -1032,7 +1030,7 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 		StringWriter writer = new StringWriter();
 		PrintWriter out = new PrintWriter(writer);
 		Map<String,String> valuesMap = inValues;				
-		List<Map.Entry<String, String>> values = new LinkedList(valuesMap.entrySet());
+		List<Map.Entry<String, String>> values = new LinkedList<Entry<String, String>>(valuesMap.entrySet());
 		if (sort) {
 			Collections.sort(values, new JavaHelper.MapEntriesSortOnValue());
 		}

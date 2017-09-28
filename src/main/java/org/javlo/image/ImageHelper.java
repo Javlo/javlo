@@ -12,6 +12,7 @@ import java.awt.image.WritableRaster;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
@@ -78,8 +79,7 @@ public class ImageHelper {
 		return createSpecialDirectory(width, 0);
 	}
 
-	public static String createSpecialDirectory(ContentContextBean ctxb, String context, String filter, String area,
-			String deviceCode, Template template, IImageFilter comp, ImageConfig.ImageParameters param) {
+	public static String createSpecialDirectory(ContentContextBean ctxb, String context, String filter, String area, String deviceCode, Template template, IImageFilter comp, ImageConfig.ImageParameters param) {
 		context = StringHelper.createFileName(context);
 		String pageIndice = "";
 		if (param.getPage() > 1) {
@@ -131,8 +131,7 @@ public class ImageHelper {
 		return res;
 	}
 
-	public static BufferedImage createAbsoluteLittleImage(ServletContext servletContext, String name, int width)
-			throws IOException {
+	public static BufferedImage createAbsoluteLittleImage(ServletContext servletContext, String name, int width) throws IOException {
 		BufferedImage image = null;
 		InputStream in = new FileInputStream(name);
 		try {
@@ -165,8 +164,7 @@ public class ImageHelper {
 		return image;
 	}
 
-	public static BufferedImage createLittleImage(ServletContext servletContext, String name, int width)
-			throws IOException {
+	public static BufferedImage createLittleImage(ServletContext servletContext, String name, int width) throws IOException {
 		BufferedImage image = loadImage(servletContext, name);
 		if (image != null) {
 			image = resize(image, width);
@@ -326,8 +324,7 @@ public class ImageHelper {
 		Map<String, String> exifData = getExifData(in);
 		ImageSize imageSize = null;
 		try {
-			imageSize = new ImageSize(Integer.parseInt(exifData.get("PixelXDimension")),
-					Integer.parseInt(exifData.get("PixelYDimension")));
+			imageSize = new ImageSize(Integer.parseInt(exifData.get("PixelXDimension")), Integer.parseInt(exifData.get("PixelYDimension")));
 		} catch (Throwable t) {
 		}
 		return imageSize;
@@ -348,10 +345,8 @@ public class ImageHelper {
 							j++;
 						}
 						if (j < 5) {
-							int height = LangHelper.unsigned(buffer[i + j + 1]) * 255
-									+ LangHelper.unsigned(buffer[i + j + 2]);
-							int width = LangHelper.unsigned(buffer[i + j + 3]) * 255
-									+ LangHelper.unsigned(buffer[i + j + 4]);
+							int height = LangHelper.unsigned(buffer[i + j + 1]) * 255 + LangHelper.unsigned(buffer[i + j + 2]);
+							int width = LangHelper.unsigned(buffer[i + j + 3]) * 255 + LangHelper.unsigned(buffer[i + j + 4]);
 							imageSize = new ImageSize(width, height);
 						}
 					}
@@ -363,6 +358,37 @@ public class ImageHelper {
 		}
 		return imageSize;
 
+	}
+
+	public static ImageSize getImageSize(File file) throws IOException {
+		if (!StringHelper.isImage(file.getName())) {
+			return null;
+		} else if (!file.exists()) {
+			return null;
+		} else {
+			ImageSize size = null;
+			InputStream in = null;
+			if (StringHelper.isJpeg(file.getName())) {				
+				try {
+					in = new FileInputStream(file);
+					size = getJpegSize(in);					
+				} finally {
+					ResourceHelper.closeResource(in);
+				}
+			} else {
+				try {
+					in = new FileInputStream(file);
+					size = getExifSize(in);					
+				} finally {
+					ResourceHelper.closeResource(in);
+				}
+			}
+			if (size == null) {
+				BufferedImage image = ImageIO.read(file);
+				size = new ImageSize(image.getWidth(), image.getHeight());
+			}
+			return size;
+		} 
 	}
 
 	public static Map<String, String> getExifData(InputStream in) throws IOException {
@@ -395,8 +421,7 @@ public class ImageHelper {
 			src = rgb;
 		}
 
-		BufferedImage dst = new BufferedImage(src.getCroppedWidth(), src.getCroppedHeight(),
-				BufferedImage.TYPE_3BYTE_BGR);
+		BufferedImage dst = new BufferedImage(src.getCroppedWidth(), src.getCroppedHeight(), BufferedImage.TYPE_3BYTE_BGR);
 
 		if (src.getCrop() == null)
 			toBufferedImage(src, dst);
@@ -474,10 +499,11 @@ public class ImageHelper {
 	/**
 	 * create a image for display video
 	 * 
-	 * @param file mp4 file
+	 * @param file
+	 *            mp4 file
 	 * @return
-	 * @throws IOException 
-	 * @throws JCodecException 
+	 * @throws IOException
+	 * @throws JCodecException
 	 */
 	public static BufferedImage getBestImageFromVideo(File file) throws Exception {
 		FileChannelWrapper ch = NIOUtils.readableFileChannel(file);
@@ -488,14 +514,14 @@ public class ImageHelper {
 		int bestScore = 0;
 		BufferedImage bestImage = null;
 		for (int i = 0; i < FRAME_SIZE; i++) {
-			int frameNumber = i * numberOfFrame / (FRAME_SIZE * 25);			
+			int frameNumber = i * numberOfFrame / (FRAME_SIZE * 25);
 			Picture frame = FrameGrab.getNativeFrame(file, frameNumber);
-			BufferedImage image = ImageHelper.toBufferedImage(frame);			
-			int currentScore = ImageHelper.getColorCount(image);			
+			BufferedImage image = ImageHelper.toBufferedImage(frame);
+			int currentScore = ImageHelper.getColorCount(image);
 			if (currentScore > bestScore) {
 				bestScore = currentScore;
 				bestImage = image;
-			}			
+			}
 		}
 		return bestImage;
 	}
