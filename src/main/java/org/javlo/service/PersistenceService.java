@@ -650,6 +650,9 @@ public class PersistenceService {
 			bean.setArea(contentNode.getAttributeValue("area", ComponentBean.DEFAULT_AREA));
 			bean.setBackgroundColor(contentNode.getAttributeValue("bgcol", null));
 			bean.setTextColor(contentNode.getAttributeValue("txtcol", null));
+			if (contentNode.getAttributeValue("displayCookiesStatus", null) != null) {
+				bean.setCookiesDisplayStatus(Integer.parseInt(contentNode.getAttributeValue("displayCookiesStatus", null)));
+			}
 			String layout = contentNode.getAttributeValue("layout", null);
 			if (layout != null) {
 				bean.setLayout(new ComponentLayout(layout));

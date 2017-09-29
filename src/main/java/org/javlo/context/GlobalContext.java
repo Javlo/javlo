@@ -1448,6 +1448,14 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	public boolean isComponentsFiltered() {
 		return properties.getBoolean("components.filtered", staticConfig.isComponentsFiltered());
 	}
+	
+	public boolean isCookies() {
+		return properties.getBoolean("security.cookies", true);
+	}
+	
+	public void setCookies(boolean cook) {
+		properties.setProperty("security.cookies", cook);
+	}
 
 	public void setComponentsFiltered(boolean filtered) {
 		properties.setProperty("components.filtered", filtered);

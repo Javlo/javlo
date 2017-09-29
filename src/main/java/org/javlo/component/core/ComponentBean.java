@@ -10,6 +10,7 @@ import java.util.Set;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.javlo.helper.StringHelper;
+import org.javlo.service.visitors.CookiesService;
 import org.javlo.user.User;
 
 /**
@@ -41,6 +42,7 @@ public class ComponentBean implements Serializable, Comparable<ComponentBean> {
 	private boolean modify = false;
 	private boolean nolink = false;
 	private Set<Integer> hiddenModes;
+	private int cookiesDisplayStatus = CookiesService.ALWAYS_STATUS;
 
 	private Date creationDate = new Date();
 	private Date modificationDate = new Date();
@@ -263,6 +265,14 @@ public class ComponentBean implements Serializable, Comparable<ComponentBean> {
 
 	public void setHidden(boolean hidden) {
 		this.hidden = hidden;
+	}
+
+	public int getCookiesDisplayStatus() {
+		return cookiesDisplayStatus;
+	}
+
+	public void setCookiesDisplayStatus(int cookiesDisplayStatus) {
+		this.cookiesDisplayStatus = cookiesDisplayStatus;
 	}
 
 }

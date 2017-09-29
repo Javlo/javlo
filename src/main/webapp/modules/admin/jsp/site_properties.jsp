@@ -216,6 +216,10 @@
 </div>
 
 <div class="checkbox">	
+	<label><input type="checkbox" id="cookies" name="cookies" ${currentContext.cookies?'checked="checked"':""}" />
+	${i18n.edit['admin.form.cookies']}</label>	
+</div>
+<div class="checkbox">	
 	<label><input type="checkbox" id="preview-mode" name="preview-mode" ${currentContext.previewMode?'checked="checked"':""}" />
 	${i18n.edit['admin.form.preview-mode']}</label>	
 </div>

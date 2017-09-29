@@ -6,6 +6,7 @@ package org.javlo.actions;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.Locale;
 import java.util.logging.Logger;
 
 import javax.servlet.http.Cookie;
@@ -25,6 +26,7 @@ import org.javlo.module.ticket.TicketAction;
 import org.javlo.navigation.MenuElement;
 import org.javlo.rendering.Device;
 import org.javlo.service.ContentService;
+import org.javlo.service.visitors.CookiesService;
 import org.javlo.service.visitors.VisitorsMessageService;
 import org.javlo.template.Template;
 
@@ -202,14 +204,34 @@ public class ViewActions implements IAction {
 	public static String performAcceptCookies(ContentContext ctx) throws Exception {
 		VisitorsMessageService.getInstance(ctx.getRequest().getSession()).markAsDisplayed("cookies");
 		Cookie cookie = new Cookie(ctx.getCurrentTemplate().getCookiesMessageName(), "1");		
-		String path = ctx.getCurrentTemplate().getCookiesMessagePath();
-		if (path == null) {
-			path = URLHelper.createStaticURL(ctx,"/");
-		}		
-		cookie.setPath(path);
+//		String path = ctx.getCurrentTemplate().getCookiesMessagePath();
+//		if (path == null) {
+//			path = URLHelper.createStaticURL(ctx,"/");
+//		}		
+		cookie.setPath("/");
 		cookie.setMaxAge(60*60*24*365); // 1 year
 		ctx.getResponse().addCookie(cookie);
+		CookiesService.getInstance(ctx).setAccepted(true);
 		return null;
+	}
+	
+	public static String performRefuseCookies(ContentContext ctx) throws Exception {
+		VisitorsMessageService.getInstance(ctx.getRequest().getSession()).markAsDisplayed("cookies");
+		Cookie cookie = new Cookie(ctx.getCurrentTemplate().getCookiesMessageName(), "0");		
+//		String path = ctx.getCurrentTemplate().getCookiesMessagePath();
+//		if (path == null) {
+//			path = URLHelper.createStaticURL(ctx,"/");
+//		}		
+		cookie.setPath("/");
+		cookie.setMaxAge(60*60*24*30); // 30 days
+		ctx.getResponse().addCookie(cookie);
+		CookiesService.getInstance(ctx).setAccepted(false);
+		return null;
+	}
+	
+	public static void main(String[] args) {
+		Locale locale = new Locale("sv");
+		System.out.println("##### ViewActions.main : locale = "+locale.getDisplayLanguage(Locale.FRENCH)); //TODO: remove debug trace
 	}
 	
 

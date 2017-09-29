@@ -168,6 +168,7 @@ public class AdminAction extends AbstractModuleAction {
 		private String footerBloc;		
 		
 		private boolean forcedHttps = false;
+		private boolean cookies = false;
 		
 		private String specialConfig = "";
 		
@@ -265,6 +266,7 @@ public class AdminAction extends AbstractModuleAction {
 			setFooterBloc(globalContext.getFooterBloc());
 			
 			setForcedHttps(globalContext.isForcedHttps());
+			setCookies(globalContext.isCookies());
 			
 			try {
 				setSpecialConfig(ResourceHelper.loadStringFromFile(globalContext.getSpecialConfigFile()));
@@ -917,6 +919,14 @@ public class AdminAction extends AbstractModuleAction {
 			this.popssl = popssl;
 		}
 
+		public boolean isCookies() {
+			return cookies;
+		}
+
+		public void setCookies(boolean cookies) {
+			this.cookies = cookies;
+		}
+
 	}
 
 	public static class ComponentBean {
@@ -1334,6 +1344,7 @@ public class AdminAction extends AbstractModuleAction {
 					currentGlobalContext.setDKIMSelector(requestService.getParameter("mailing-dkimselector", ""));
 					
 					currentGlobalContext.setForcedHttps(StringHelper.isTrue(requestService.getParameter("security-forced-https", null), false));
+					currentGlobalContext.setCookies(StringHelper.isTrue(requestService.getParameter("cookies", null), false));
 					currentGlobalContext.setPortail(StringHelper.isTrue(requestService.getParameter("security-portail", "")));
 					
 					if (requestService.getParameter("resetdkim", null) != null) {

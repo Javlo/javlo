@@ -51,6 +51,7 @@ import org.javlo.service.ContentService;
 import org.javlo.service.PersistenceService;
 import org.javlo.service.RequestService;
 import org.javlo.service.exception.ServiceException;
+import org.javlo.service.visitors.CookiesService;
 import org.javlo.service.visitors.VisitorsMessageService;
 import org.javlo.servlet.AccessServlet;
 import org.javlo.template.Template;
@@ -1460,7 +1461,11 @@ public class InfoBean {
 		}
 		return !VisitorsMessageService.getInstance(ctx.getRequest().getSession()).isAlReadyDisplayed("cookies");
 	}
-
+	
+	public Boolean isCookiesAccepted() throws Exception {
+		return CookiesService.getInstance(ctx).getAccepted();
+	}
+	
 	public ContentContext getContextForCopy() {
 		EditContext editCtx = EditContext.getInstance(globalContext, ctx.getRequest().getSession());
 		return editCtx.getContextForCopy(ctx);

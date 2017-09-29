@@ -74,6 +74,7 @@ import org.javlo.navigation.PageBean;
 import org.javlo.rendering.Device;
 import org.javlo.service.PersistenceService;
 import org.javlo.service.RequestService;
+import org.javlo.service.visitors.CookiesService;
 import org.javlo.servlet.IVersion;
 import org.javlo.template.Template;
 import org.javlo.user.AdminUserFactory;
@@ -714,6 +715,34 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			}
 			out.println("</div>");
 		}
+		
+		if (ctx.getGlobalContext().isCookies()) {
+			out.println("<div class=\"line\">");
+			out.println("<label>" + i18nAccess.getText("component.display-cookies") + "</label>");
+			
+			String id = "display-cookies-" + getId();
+			out.println("<label>");
+			out.println(XHTMLHelper.getRadio( id, ""+CookiesService.ALWAYS_STATUS, ""+getCookiesDisplayStatus()));
+			out.println(i18nAccess.getText("component.display-cookies.always"));
+			out.println("</label>");
+			
+			out.println("<label>");
+			out.println(XHTMLHelper.getRadio( id, ""+CookiesService.ACCEPTED_STATUS, ""+getCookiesDisplayStatus()));
+			out.println(i18nAccess.getText("component.display-cookies.accepted"));
+			out.println("</label>");
+			
+			out.println("<label>");
+			out.println(XHTMLHelper.getRadio( id, ""+CookiesService.REFUSED_STATUS, ""+getCookiesDisplayStatus()));
+			out.println(i18nAccess.getText("component.display-cookies.refused"));
+			out.println("</label>");
+			
+			out.println("<label>");
+			out.println(XHTMLHelper.getRadio( id, ""+CookiesService.NOCHOICE_STATUS, ""+getCookiesDisplayStatus()));
+			out.println(i18nAccess.getText("component.display-cookies.nochoice"));
+			out.println("</label>");
+			
+			out.println("</div>");
+		}
 
 		out.close();
 		return new String(outStream.toByteArray());
@@ -843,6 +872,11 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 				boolean visible = requestService.getParameter(id, null) != null;
 				setHiddenInMode(mode, !visible);
 			}
+		}
+		
+		/** cookies **/
+		if (ctx.getGlobalContext().isCookies()) {
+			getComponentBean().setCookiesDisplayStatus(Integer.parseInt(requestService.getParameter("display-cookies-" + getId(), "0")));
 		}
 
 		if (isModify()) {
@@ -2200,13 +2234,37 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	public boolean isVisible() {
 		return visible;
 	}
-
+	
 	/**
 	 * default : visible only in LARGE format.
 	 */
 	@Override
 	public boolean isVisible(ContentContext ctx) {
-		return true;
+		if (ctx.getGlobalContext().isCookies()) {
+			EditContext editContext = EditContext.getInstance(ctx.getGlobalContext(), ctx.getRequest().getSession());
+			if (editContext.isPreviewEditionMode()) {
+				return true;
+			}
+			try {
+				if (getCookiesDisplayStatus() == CookiesService.ALWAYS_STATUS) {
+					return true;
+				} else {
+					CookiesService cookiesService = CookiesService.getInstance(ctx);
+					if (cookiesService.getAccepted() == null) {
+						return getCookiesDisplayStatus() == CookiesService.NOCHOICE_STATUS;
+					} else if (cookiesService.getAccepted()) {
+						return getCookiesDisplayStatus() == CookiesService.ACCEPTED_STATUS;
+					} else {
+						return getCookiesDisplayStatus() == CookiesService.REFUSED_STATUS;
+					}
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+				return true;
+			}
+		} else {
+			return true;
+		}
 	}
 
 	@Override
@@ -2559,6 +2617,10 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		} else {
 			return componentBean.getHiddenModes().contains(mode);
 		}
+	}
+	
+	public int getCookiesDisplayStatus() {
+		return componentBean.getCookiesDisplayStatus();
 	}
 
 	public void setHiddenInMode(int mode, boolean hidden) {

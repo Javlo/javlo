@@ -1305,7 +1305,7 @@ public class XHTMLHelper {
 			addedTag = addedTag + " checked=\"checked\" ";
 		}
 
-		out.print("<input id=\"" + radioValue + "\" type=\"radio\" name=\"");
+		out.print("<input id=\"" + field+radioValue + "\" type=\"radio\" name=\"");
 		out.print(field);
 		out.print("\" value=\"" + radioValue + "\"" + addedTag + "/>");
 

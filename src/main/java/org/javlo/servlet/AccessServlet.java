@@ -84,6 +84,7 @@ import org.javlo.service.resource.Resource;
 import org.javlo.service.shared.SharedContentService;
 import org.javlo.service.social.SocialService;
 import org.javlo.service.syncro.SynchroThread;
+import org.javlo.service.visitors.CookiesService;
 import org.javlo.servlet.zip.ZipManagement;
 import org.javlo.template.Template;
 import org.javlo.template.TemplateFactory;
@@ -287,6 +288,10 @@ public class AccessServlet extends HttpServlet implements IVersion {
 			
 			if (!ctx.isAsViewMode()) {
 				SecurityHelper.checkUserAccess(ctx);
+			}
+			
+			if (ctx.getGlobalContext().isCookies()) {
+				CookiesService.getInstance(ctx); // init cookies service
 			}
 			
 			TaxonomyService.getInstance(ctx);

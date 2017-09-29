@@ -27,6 +27,7 @@ import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
 import org.javlo.service.PersistenceService;
 import org.javlo.service.resource.Resource;
+import org.javlo.service.visitors.CookiesService;
 import org.javlo.servlet.AccessServlet;
 import org.javlo.servlet.IVersion;
 import org.javlo.ztatic.StaticInfo;
@@ -347,6 +348,11 @@ public class XMLHelper {
 
 				out.print("\" modificationDate=\"");
 				out.print(StringHelper.renderTime(beans[j].getModificationDate()));
+				
+				if (beans[j].getCookiesDisplayStatus()!=CookiesService.ALWAYS_STATUS) {
+					out.print("\" displayCookiesStatus=\"");
+					out.print(beans[j].getCookiesDisplayStatus());
+				}
 
 				if (style != null && style.length() > 0) {
 					out.print("\" style=\"");
