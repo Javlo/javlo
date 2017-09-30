@@ -441,6 +441,15 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle, IStat
 	protected boolean isTag() {
 		return true;
 	}
+	
+	protected String getCurrentRootFolderForBrowse() {
+		return getCurrentRootFolder();
+	}
+	
+
+	protected boolean isSelectBrowse() {
+		return false;
+	}
 
 	@Override
 	protected String getEditXHTMLCode(ContentContext ctx) throws Exception {
@@ -471,13 +480,16 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle, IStat
 		String backURL = URLHelper.createModuleURL(ctx, ctx.getPath(), "content");
 		backURL = URLHelper.addParam(backURL, "comp_id", "cp_" + getId());
 		backURL = URLHelper.addParam(backURL, "webaction", "editPreview");
-		backURL = URLHelper.addParam(backURL, ContentContext.PREVIEW_EDIT_PARAM, "true");
+		backURL = URLHelper.addParam(backURL, ContentContext.PREVIEW_EDIT_PARAM, "true");		
 
 		Map<String, String> filesParams = new HashMap<String, String>();
-		filesParams.put("path", URLHelper.mergePath(FileAction.getPathPrefix(ctx), getCurrentRootFolder()));
+		filesParams.put("path", URLHelper.mergePath(FileAction.getPathPrefix(ctx), getCurrentRootFolderForBrowse()));
 		filesParams.put("webaction", "changeRenderer");
 		filesParams.put("page", "meta");
 		filesParams.put(ElementaryURLHelper.BACK_PARAM_NAME, backURL);
+		if (isSelectBrowse()) {
+			backURL = filesParams.put("select", "true");
+		}
 
 		String staticURL = URLHelper.createModuleURL(ctx, ctx.getPath(), "file", filesParams);
 		out.println("<a class=\"" + EDIT_ACTION_CSS_CLASS + " btn btn-default btn-xs\" href=\"" + staticURL + "\">");

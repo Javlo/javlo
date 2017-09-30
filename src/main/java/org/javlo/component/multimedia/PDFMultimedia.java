@@ -39,6 +39,11 @@ public class PDFMultimedia extends Multimedia {
 		return super.getRenderer(ctx);
 	}
 	
+	protected String getCurrentRootFolderForBrowse() {
+		File currentFolder = new File(getCurrentRootFolder());
+		return currentFolder.getParentFile().getPath();
+	}
+	
 	protected Collection<String> getSelection(ContentContext ctx) {
 		String baseDir = getBaseStaticDir(ctx);
 		File rootDir = new File(baseDir);
@@ -55,6 +60,11 @@ public class PDFMultimedia extends Multimedia {
 	
 	protected String getTransformFilter(File file) {
 		return "standard";
+	}
+	
+	@Override
+	protected boolean isSelectBrowse() {
+		return true;
 	}
 	
 	protected List<MultimediaResource> getMultimediaResources(ContentContext ctx) throws Exception {

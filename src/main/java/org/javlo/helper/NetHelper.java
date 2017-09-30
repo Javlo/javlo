@@ -882,7 +882,7 @@ public class NetHelper {
 					if (img != null) {
 						imageArray = null;
 
-						int readImageSize = img.getWidth() * img.getHeight();
+						long readImageSize = img.getWidth() * img.getHeight();
 
 						if ((float) img.getWidth() / (float) img.getHeight() > 0.40) { // no
 							// banner

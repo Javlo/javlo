@@ -130,3 +130,7 @@ body .el-finder {
 	background-color: #eeeeee;
 }
 
+.download .label {
+	height: 42px;
+	vertical-align: middle;
+}

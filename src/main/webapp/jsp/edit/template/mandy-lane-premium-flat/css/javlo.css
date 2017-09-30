@@ -1425,7 +1425,7 @@ body.previewEdit {
 
 .small .download {
 	width: 180px;
-	height: 220px;
+	min-height: 220px;
 }
 
 .small .download img {

@@ -4,6 +4,7 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -20,15 +21,18 @@ import org.apache.commons.imaging.formats.jpeg.exif.ExifRewriter;
 import org.apache.commons.imaging.formats.tiff.TiffField;
 import org.apache.commons.imaging.formats.tiff.TiffImageMetadata;
 import org.apache.commons.imaging.formats.tiff.constants.ExifTagConstants;
+import org.apache.commons.imaging.formats.tiff.fieldtypes.FieldType;
+import org.apache.commons.imaging.formats.tiff.taginfos.TagInfo;
 import org.apache.commons.imaging.formats.tiff.write.TiffOutputDirectory;
 import org.apache.commons.imaging.formats.tiff.write.TiffOutputSet;
 import org.apache.commons.imaging.util.IoUtils;
 import org.apache.commons.io.FileUtils;
+import org.javlo.image.ImageSize;
 import org.javlo.io.TransactionFile;
 import org.javlo.ztatic.StaticInfo.Position;
 
 public class ExifHelper {
-	
+
 	private static Logger logger = Logger.getLogger(ExifHelper.class.getName());
 
 	public ExifHelper() {
@@ -173,6 +177,43 @@ public class ExifHelper {
 		}
 	}
 
+	public static ImageSize getExifSize(InputStream in) {
+		try {
+			final ImageMetadata metadata = Imaging.getMetadata(in, "test.jpg");
+			if (metadata instanceof JpegImageMetadata) {
+				final JpegImageMetadata jpegMetadata = (JpegImageMetadata) metadata;
+				final TiffImageMetadata exifMetadata = jpegMetadata.getExif();
+				if (null != exifMetadata) {
+					ImageSize imageSize = new ImageSize(0, 0);
+					boolean width = false;
+					boolean height = false;
+					for (TiffField tag : jpegMetadata.getExif().getAllFields()) {						
+						if (tag.getTagName().equalsIgnoreCase("ExifImageWidth")) {
+							if (tag.getValue() instanceof Integer) {
+								imageSize.setWidth((Integer) tag.getValue());
+							} else {
+								imageSize.setWidth((Short) tag.getValue());
+							}
+							width = true;
+						} else if (tag.getTagName().equalsIgnoreCase("ExifImageLength")) {
+							if (tag.getValue() instanceof Integer) {
+								imageSize.setHeight((Integer) tag.getValue());
+							} else {
+								imageSize.setHeight((Short) tag.getValue());
+							}
+							height = true;
+						}
+						if (width && height) {
+							return imageSize;
+						}
+					}
+				}
+			} 
+		} catch (Exception e) {		
+		}
+		return null;
+	}
+
 	public static void writeMetadata(ImageMetadata metadata, final File file) throws ImageWriteException, ImageReadException, IOException {
 		if (metadata == null) {
 			return;
@@ -208,14 +249,14 @@ public class ExifHelper {
 				if (tFile != null) {
 					tFile.rollback();
 				}
-			} finally {				
+			} finally {
 				ResourceHelper.closeResource(os);
 			}
 		}
 	}
-	
+
 	public static void main(String[] args) throws ImageReadException, IOException {
 		File test = new File("c:/trans/_test.png");
-		System.out.println("date : "+readDate(test));
+		System.out.println("date : " + readDate(test));
 	}
 }

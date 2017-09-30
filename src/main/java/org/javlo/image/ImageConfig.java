@@ -631,9 +631,12 @@ public class ImageConfig {
 		return properties;
 	}
 	
-	public static void main(String[] args) {
-		ImageConfig imageConfig = new ImageConfig(new File("c:/trans/image.properties"));
-		System.out.println("***** ImageConfig.main : grayscale ? "+imageConfig.isGrayscaleLuminosity(null, "preview", ALL)); //TODO: remove debug trace
+	public static void main(String[] args) throws IOException {
+		File file = new File("c:/trans/test.jpg");
+//		File file = new File("c:/trans/dscf2053.jpg");
+//		File file = new File("c:/trans/dsc_0692.jpg");
+		ImageSize imageSize = ImageHelper.getImageSize(file);
+		System.out.println("##### ImageConfig.main : imageSize = "+imageSize); //TODO: remove debug trace
 	}
 	
 

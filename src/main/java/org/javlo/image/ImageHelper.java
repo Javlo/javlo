@@ -25,9 +25,11 @@ import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.servlet.ServletContext;
 
+import org.apache.commons.imaging.ImageReadException;
 import org.apache.commons.lang3.StringUtils;
 import org.javlo.component.core.IImageFilter;
 import org.javlo.context.ContentContextBean;
+import org.javlo.helper.ExifHelper;
 import org.javlo.helper.LangHelper;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
@@ -322,6 +324,7 @@ public class ImageHelper {
 	 */
 	public static ImageSize getExifSize(InputStream in) throws IOException {
 		Map<String, String> exifData = getExifData(in);
+		System.out.println("##### ImageHelper.getExifSize : #exifData = "+exifData.size()); //TODO: remove debug trace
 		ImageSize imageSize = null;
 		try {
 			imageSize = new ImageSize(Integer.parseInt(exifData.get("PixelXDimension")), Integer.parseInt(exifData.get("PixelYDimension")));
@@ -368,21 +371,23 @@ public class ImageHelper {
 		} else {
 			ImageSize size = null;
 			InputStream in = null;
-			if (StringHelper.isJpeg(file.getName())) {				
+			
+			try {
+				in = new FileInputStream(file);
+				//size = getExifSize(in);			
+				size = ExifHelper.getExifSize(in);								
+			} finally {
+				ResourceHelper.closeResource(in);
+			}
+			
+			if (size == null && StringHelper.isJpeg(file.getName())) {				
 				try {
 					in = new FileInputStream(file);
 					size = getJpegSize(in);					
 				} finally {
 					ResourceHelper.closeResource(in);
 				}
-			} else {
-				try {
-					in = new FileInputStream(file);
-					size = getExifSize(in);					
-				} finally {
-					ResourceHelper.closeResource(in);
-				}
-			}
+			} 
 			if (size == null) {
 				BufferedImage image = ImageIO.read(file);
 				size = new ImageSize(image.getWidth(), image.getHeight());
@@ -391,10 +396,28 @@ public class ImageHelper {
 		} 
 	}
 
+//	public static Map<String, String> getExifData(InputStream in) throws IOException {
+//		String rawData = ResourceHelper.loadStringFromStream(in, Charset.defaultCharset());
+//		Map<String, String> outData = new HashMap<String, String>();
+//		int index = 0;
+//		System.out.println(rawData);
+//		int exifIndex = rawData.indexOf("exif:", index);
+//		while (exifIndex >= 0) {
+//			String exifStr = rawData.substring(exifIndex, rawData.indexOf(' ', exifIndex + "exif:".length()));
+//			index = index + exifStr.length();
+//			String[] exifArray = StringUtils.split(exifStr, '=');
+//			if (exifArray.length == 2) {
+//				outData.put(exifArray[0].replace("exif:", ""), exifArray[1].replace("\"", ""));
+//			}
+//			exifIndex = rawData.indexOf("exif:", index);
+//		}
+//		return outData;
+//	}
+	
 	public static Map<String, String> getExifData(InputStream in) throws IOException {
 		String rawData = ResourceHelper.loadStringFromStream(in, Charset.defaultCharset());
 		Map<String, String> outData = new HashMap<String, String>();
-		int index = 0;
+		int index = 0;	
 		int exifIndex = rawData.indexOf("exif:", index);
 		while (exifIndex >= 0) {
 			String exifStr = rawData.substring(exifIndex, rawData.indexOf(' ', exifIndex + "exif:".length()));
