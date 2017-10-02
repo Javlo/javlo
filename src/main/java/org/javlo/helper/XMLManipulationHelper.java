@@ -521,8 +521,13 @@ public class XMLManipulationHelper {
 					String closePageCode = "<c:if test=\"${contentContext.pageAssociation}\"></div></c:if><c:if test=\"${not contentContext.pageAssociation}\">";
 
 					String renderBodyAsBody = tags[i].renderOpen();
-					tags[i].setName("div");
+					if (template.isMailing()) {
+						tags[i].setName("div");
+					} else {
+						tags[i].setName("section");
+					}
 					tags[i].addCssClass("page_association_fake_body");
+					tags[i].addCssClass("<%for (String layout : ctx.getCurrentPage().getLayouts(ctx)) {%><%=' '+layout%><%}%>");
 					String renderBodyAsDiv = tags[i].renderOpen();
 
 					String openBodyCode = "<c:if test=\"${not contentContext.pageAssociation}\">" + renderBodyAsBody + "</c:if><c:if test=\"${contentContext.pageAssociation}\">" + renderBodyAsDiv + "</c:if>";
@@ -546,19 +551,7 @@ public class XMLManipulationHelper {
 				if (tags[i].getName().equalsIgnoreCase("link")) {
 					String hrefValue = attributes.get("href");
 
-					if ((hrefValue != null) && !hrefValue.contains("${") && (!StringHelper.isURL(hrefValue)) && !hrefValue.toLowerCase().startsWith("https")) { // don't
-																																								// modify
-																																								// https
-																																								// because
-																																								// it
-																																								// is
-																																								// external
-																																								// api
-																																								// as
-																																								// facebook
-																																								// and
-																																								// not
-																																								// library
+					if ((hrefValue != null) && !hrefValue.contains("${") && (!StringHelper.isURL(hrefValue)) && !hrefValue.toLowerCase().startsWith("https")) {
 						String newLinkGeneratorIf = "<%if (!XHTMLHelper.alreadyInserted(ctx, \"" + hrefValue + "\")) {%>";
 						resources.add(hrefValue);
 						String templateVersionCode = "null";

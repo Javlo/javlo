@@ -2013,6 +2013,21 @@ public class Template implements Comparable<Template> {
 		}
 		return outRenderes;
 	}
+	
+	/**
+	 * return all renderer defined in the template.
+	 * 
+	 * @return
+	 */
+	public List<String> getLayouts() {
+		String rawLayouts = properties.getProperty("layouts");
+		if (rawLayouts == null) {
+			return null;
+		} else {
+			return StringHelper.stringToCollection(rawLayouts, ",");
+		}
+	}
+
 
 	public String getRendererFullName(ContentContext ctx) throws ServiceException {
 		GlobalContext globalContext = null;

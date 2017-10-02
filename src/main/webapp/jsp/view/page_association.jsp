@@ -19,7 +19,10 @@ if (ctx.isInteractiveMode() && ctx.getRenderMode() == ContentContext.PREVIEW_MOD
 		<div class="notification <%=messageRepository.getGlobalMessage().getTypeLabel()%>"><%=messageRepository.getGlobalMessage().getMessage()%></div>
 	<%}%></div><%
 }
-%><center><table class="association-wrapper" cellpadding="0" cellspacing="0"><tbody><tr><td><%
+boolean mailing = ctx.getCurrentTemplate().isMailing();
+%>
+<%if (mailing) {%><center><table class="association-wrapper" cellpadding="0" cellspacing="0"><tbody><tr><td><%}
+if (!mailing) {%><div class="association-wrapper"><%}
 MenuElement currentPage = ctx.getCurrentPage();
 boolean savePageAssocitation = ctx.isPageAssociation();
 
@@ -36,16 +39,24 @@ for (MenuElement child : currentPage.getChildMenuElements()) {
 	String jspURI = childTemplate.getRendererFullName(ctx);
 	jspURI = URLHelper.addParam(jspURI, "pageAssociation", "true");
 	jspURI = URLHelper.addParam(jspURI, Template.FORCE_TEMPLATE_PARAM_NAME, childTemplate.getName());
-	request.setAttribute("pageNumber", ""+pageNumber);
+	request.setAttribute("pageNumber", ""+pageNumber);	
+	if (child.getImageBackground(ctx) != null) {
+		String backgroundURL = URLHelper.createTransformURL(ctx, ctx.getCurrentPage(), child.getImageBackground(ctx).getResourceURL(ctx), "background");
+		request.setAttribute("backgroundImage", backgroundURL);
+		request.setAttribute("backgroundImageStyle", " background-image: url('"+backgroundURL+"');");
+	}
 	request.setAttribute("pageClass", "page-"+pageNumber+positionStr);
 	if (pageNumber<lastPage) {
 		positionStr="";
 	} else {
 		positionStr=" last-page";
+		request.setAttribute("lastAssociation", true);
 	}
 	pageNumber++;
 	ctx.setCurrentTemplate(null);
 	%><jsp:include page="<%=jspURI%>" /><%
+	request.removeAttribute("backgroundImage");
+	request.removeAttribute("backgroundImageStyle");
 }
 ctx.setPageAssociation(savePageAssocitation);
-%></td></tr></tbody></table></center>
+%><%if (mailing) {%></td></tr></tbody></table></center><%} if (!mailing) {%></div><%}%>

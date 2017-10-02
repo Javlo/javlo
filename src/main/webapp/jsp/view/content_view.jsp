@@ -20,8 +20,8 @@
 		org.javlo.component.column.TableBreak,
 		org.javlo.component.column.ColContext,
 		org.javlo.component.column.OpenCol,
-		org.javlo.context.GlobalContext,
-		org.javlo.context.GlobalContext,
+		org.javlo.context.GlobalContext,		
+		org.javlo.service.ContentService,
 		org.javlo.user.User,
 		org.javlo.user.UserFactory,
 		org.javlo.user.IUserFactory,
@@ -81,6 +81,15 @@ if ( ctx.getSpecialContentRenderer() != null && area.equals(ComponentBean.DEFAUL
 	%><!-- this area is empty because special renderer is defined. --><%
 } else {
 MenuElement currentPage = ctx.getCurrentPage();
+
+String forcePageName = request.getParameter("_force-page");
+if (forcePageName != null) {
+	ContentService contentService = ContentService.getInstance(ctx.getRequest()); 
+	MenuElement forcedPage = contentService.getNavigation(ctx).searchChildFromName(forcePageName);
+	if (forcedPage != null) {
+		currentPage = forcedPage;
+	}
+}
 
 Template template = ctx.getCurrentTemplate();
 Stack<IContainer> containers = new Stack<IContainer>();

@@ -59,6 +59,7 @@ import org.javlo.component.meta.ForceRealContent;
 import org.javlo.component.meta.Forward;
 import org.javlo.component.meta.I18nComponent;
 import org.javlo.component.meta.Keywords;
+import org.javlo.component.meta.Layouts;
 import org.javlo.component.meta.LocationComponent;
 import org.javlo.component.meta.MetaDescription;
 import org.javlo.component.meta.NotSearchPage;
@@ -161,6 +162,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 		String category = null;
 		Double pageRank = null;
 		List<String> tags = null;
+		List<String> layouts = null;
 		String headerContent = null;
 		List<String> groupID = null;
 		List<String> childrenCategories = null;
@@ -992,6 +994,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 			pageDescription.forcedPageTitle = getForcedPageTitle(ctx);
 			pageDescription.subTitle = getSubTitle(ctx);
 			pageDescription.tags = getTags(ctx);
+			pageDescription.layouts = getLayouts(ctx);
 			pageDescription.title = getTitle(ctx);
 			pageDescription.localTitle = getLocalTitle(ctx);
 			pageDescription.depth = getDepth();
@@ -1818,13 +1821,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 		ContentContext noAreaCtx = ctx.getContextWithoutArea();
 
 		if (noAreaCtx.getRenderMode() == ContentContext.EDIT_MODE) {
-			noAreaCtx.setRenderMode(ContentContext.PREVIEW_MODE); // get info
-																	// for
-																	// preview
-																	// mode
-																	// (with
-																	// repeat
-																	// elements)
+			noAreaCtx.setRenderMode(ContentContext.PREVIEW_MODE);
 		}
 
 		IContentComponentsList contentList = getContent(noAreaCtx);
@@ -1837,7 +1834,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 		desc.category = StringUtils.replace(res, "\"", "&quot;");
 
 		return desc.category;
-	}
+	}	
 
 	/**
 	 * get the category of the page (category component)
@@ -3598,13 +3595,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 		lgDefaultCtx.setArea(null);
 
 		if (lgDefaultCtx.getRenderMode() == ContentContext.EDIT_MODE) {
-			lgDefaultCtx.setRenderMode(ContentContext.PREVIEW_MODE); // get info
-																		// for
-																		// preview
-																		// mode
-																		// (with
-																		// repeat
-																		// elements)
+			lgDefaultCtx.setRenderMode(ContentContext.PREVIEW_MODE); 
 		}
 
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
@@ -3635,9 +3626,37 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 				outTags.addAll(((Tags) elem).getTags());
 			}
 		}
-		desc.tags = outTags;
+		if (outTags.size() == 0) {
+			desc.tags = Collections.emptyList();
+		} else {
+			desc.tags = outTags;
+		}		
 		return desc.tags;
 	}
+	
+	public List<String> getLayouts(ContentContext ctx) throws Exception {
+		PageDescription desc = getPageDescriptionCached(ctx, ctx.getRequestContentLanguage());
+		if (desc.layouts != null) {
+			return desc.layouts;
+		}
+		ContentContext lgDefaultCtx = new ContentContext(ctx);
+		lgDefaultCtx.setArea(null);
+		if (lgDefaultCtx.getRenderMode() == ContentContext.EDIT_MODE) {
+			lgDefaultCtx.setRenderMode(ContentContext.PREVIEW_MODE); 
+		}						
+		List<String> outLayouts = new LinkedList<String>();
+		Collection<IContentVisualComponent> layoutComps = getContentByType(lgDefaultCtx, Layouts.TYPE);
+		for (IContentVisualComponent comp : layoutComps) {
+			outLayouts.addAll(StringHelper.stringToCollection(comp.getValue(lgDefaultCtx), ","));
+		}		
+		if (outLayouts.size() == 0) {
+			desc.layouts = Collections.emptyList();
+		} else {
+			desc.layouts = outLayouts;
+		}
+		return desc.layouts;
+	}
+	
 
 	public String getTemplateId() {
 		return templateId;

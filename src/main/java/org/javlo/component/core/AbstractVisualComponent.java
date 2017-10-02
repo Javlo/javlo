@@ -677,7 +677,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			out.println("</div>");
 		}
 
-		String[] styles = getStyleList(ctx);		
+		String[] styles = getStyleList(ctx);
 		if (!isFreeInputLayout() && styles.length > 1) {
 			String[] stylesLabel = getStyleLabelList(ctx);
 			if (styles.length != stylesLabel.length) {
@@ -715,32 +715,32 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			}
 			out.println("</div>");
 		}
-		
+
 		if (ctx.getGlobalContext().isCookies()) {
 			out.println("<div class=\"line\">");
 			out.println("<label>" + i18nAccess.getText("component.display-cookies") + "</label>");
-			
+
 			String id = "display-cookies-" + getId();
 			out.println("<label>");
-			out.println(XHTMLHelper.getRadio( id, ""+CookiesService.ALWAYS_STATUS, ""+getCookiesDisplayStatus()));
+			out.println(XHTMLHelper.getRadio(id, "" + CookiesService.ALWAYS_STATUS, "" + getCookiesDisplayStatus()));
 			out.println(i18nAccess.getText("component.display-cookies.always"));
 			out.println("</label>");
-			
+
 			out.println("<label>");
-			out.println(XHTMLHelper.getRadio( id, ""+CookiesService.ACCEPTED_STATUS, ""+getCookiesDisplayStatus()));
+			out.println(XHTMLHelper.getRadio(id, "" + CookiesService.ACCEPTED_STATUS, "" + getCookiesDisplayStatus()));
 			out.println(i18nAccess.getText("component.display-cookies.accepted"));
 			out.println("</label>");
-			
+
 			out.println("<label>");
-			out.println(XHTMLHelper.getRadio( id, ""+CookiesService.REFUSED_STATUS, ""+getCookiesDisplayStatus()));
+			out.println(XHTMLHelper.getRadio(id, "" + CookiesService.REFUSED_STATUS, "" + getCookiesDisplayStatus()));
 			out.println(i18nAccess.getText("component.display-cookies.refused"));
 			out.println("</label>");
-			
+
 			out.println("<label>");
-			out.println(XHTMLHelper.getRadio( id, ""+CookiesService.NOCHOICE_STATUS, ""+getCookiesDisplayStatus()));
+			out.println(XHTMLHelper.getRadio(id, "" + CookiesService.NOCHOICE_STATUS, "" + getCookiesDisplayStatus()));
 			out.println(i18nAccess.getText("component.display-cookies.nochoice"));
 			out.println("</label>");
-			
+
 			out.println("</div>");
 		}
 
@@ -873,7 +873,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 				setHiddenInMode(mode, !visible);
 			}
 		}
-		
+
 		/** cookies **/
 		if (ctx.getGlobalContext().isCookies()) {
 			getComponentBean().setCookiesDisplayStatus(Integer.parseInt(requestService.getParameter("display-cookies-" + getId(), "0")));
@@ -1930,7 +1930,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 					String timeContent = getContentTimeCache(ctx);
 					if (timeContent != null) {
 						return timeContent;
-					}					
+					}
 					synchronized (getLock(ctx)) {
 						timeContent = getContentTimeCache(ctx);
 						if (timeContent != null) {
@@ -2005,7 +2005,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		ctx.getRequest().setAttribute("style", getStyle());
 		ctx.getRequest().setAttribute("value", getValue());
 		ctx.getRequest().setAttribute("type", getType());
-		ctx.getRequest().setAttribute("compid", getForcedId(ctx));		
+		ctx.getRequest().setAttribute("compid", getForcedId(ctx));
 		ctx.getRequest().setAttribute("renderer", getCurrentRenderer(ctx));
 		ctx.getRequest().setAttribute("previewAttributes", getPreviewAttributes(ctx));
 		ctx.getRequest().setAttribute("previewCSS", getPreviewCssClass(ctx, getStyle(ctx)));
@@ -2234,7 +2234,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	public boolean isVisible() {
 		return visible;
 	}
-	
+
 	/**
 	 * default : visible only in LARGE format.
 	 */
@@ -2327,9 +2327,16 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	@Override
 	public String performEdit(ContentContext ctx) throws Exception {
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
-		String newContent = requestService.getParameter(getContentName(), null);
-		if (getEditorComplexity(ctx) != null && getEditorComplexity(ctx).equals("soft")) {
-			newContent = XHTMLHelper.removeTag(newContent, "p");
+		List<String> arraysContent = requestService.getParameterListValues(getContentName(), Collections.EMPTY_LIST);
+		String newContent;
+		if (arraysContent.size() < 2) {
+			newContent = requestService.getParameter(getContentName(), null);
+			if (getEditorComplexity(ctx) != null && getEditorComplexity(ctx).equals("soft")) {
+				newContent = XHTMLHelper.removeTag(newContent, "p");
+			}
+			
+		} else {
+			newContent = StringHelper.collectionToString(arraysContent,",");
 		}
 		if (newContent != null) {
 			if (!componentBean.getValue().equals(newContent)) {
@@ -2618,7 +2625,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			return componentBean.getHiddenModes().contains(mode);
 		}
 	}
-	
+
 	public int getCookiesDisplayStatus() {
 		return componentBean.getCookiesDisplayStatus();
 	}
@@ -2823,25 +2830,26 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		String xhtmlCode = getXHTMLCode(ctx);
 		return !(xhtmlCode != null && StringHelper.removeTag(xhtmlCode).trim().length() == 0 && !xhtmlCode.toLowerCase().contains("<img") && isDispayEmptyXHTMLCode(ctx));
 	}
-	
+
 	/**
-	 * refresh edit form with standard ajax method 
-	 * @throws IOException 
-	 * @throws ServletException 
+	 * refresh edit form with standard ajax method
+	 * 
+	 * @throws IOException
+	 * @throws ServletException
 	 **/
 	public void refreshAjaxEdit(ContentContext ctx) throws Exception {
 		Module module = ModulesContext.getInstance(ctx.getRequest().getSession(), ctx.getGlobalContext()).getModule("content");
-		String jsp = module.getJspPath("/jsp/list.jsp?ajaxCompId"+getId());
-		String html = ServletHelper.executeJSP(ctx, jsp);		
-		ctx.getAjaxZone().put("comp-"+getId(), html);
+		String jsp = module.getJspPath("/jsp/list.jsp?ajaxCompId" + getId());
+		String html = ServletHelper.executeJSP(ctx, jsp);
+		ctx.getAjaxZone().put("comp-" + getId(), html);
 	}
-	
+
 	@Override
 	public boolean isRestMatch(ContentContext ctx, Map<String, String> params) {
 		if (params.size() == 0) {
 			return true;
 		}
-		if (params.containsKey("content")) {			
+		if (params.containsKey("content")) {
 			return getValue().contains(params.get("content"));
 		}
 		return false;

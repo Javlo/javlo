@@ -449,7 +449,7 @@ public class PageBean implements Serializable {
 	}
 
 	public boolean isChildrenAssociation() {
-		return page.isChildrenAssociation();
+		return page.isChildrenAssociation();		
 	}
 
 	public boolean isChildrenOfAssociation() {
