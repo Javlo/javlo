@@ -40,6 +40,7 @@ import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
 import org.javlo.service.RequestService;
 import org.javlo.ztatic.StaticInfo;
+import org.javlo.ztatic.StaticInfoBean;
 
 /**
  * standard image component. <h4>exposed variable :</h4>
@@ -678,11 +679,11 @@ public class FolderedMultimedia extends TimeRangeComponent implements IImageTitl
 
 		RequestService rs = RequestService.getInstance(ctx.getRequest());
 
-		List<StaticInfo.StaticInfoBean> folders = new LinkedList<StaticInfo.StaticInfoBean>();
+		List<StaticInfoBean> folders = new LinkedList<StaticInfoBean>();
 		File baseDir = new File(URLHelper.mergePath(getBaseStaticDir(ctx), getCurrentRootFolder()));
 		for (File dir : getAllMultimediaFolder(ctx)) {
 			StaticInfo info = StaticInfo.getInstance(ctx, dir);
-			StaticInfo.StaticInfoBean bean = new StaticInfo.StaticInfoBean(info.getContextWithContent(ctx), info);
+			StaticInfoBean bean = new StaticInfoBean(info.getContextWithContent(ctx), info);
 			bean.setKey(dir.getAbsolutePath().replace(baseDir.getAbsolutePath(), ""));
 			folders.add(bean);
 		}

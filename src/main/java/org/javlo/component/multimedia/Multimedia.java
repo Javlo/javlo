@@ -48,6 +48,7 @@ import org.javlo.service.resource.Resource;
 import org.javlo.user.AdminUserSecurity;
 import org.javlo.ztatic.IStaticContainer;
 import org.javlo.ztatic.StaticInfo;
+import org.javlo.ztatic.StaticInfoBean;
 
 /**
  * standard image component.
@@ -901,7 +902,7 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle, IStat
 				resource.setLanguage(lgCtx.getRequestContentLanguage());
 				resource.setIndex(info.getAccessFromSomeDays(lgCtx));
 				resource.setPath(info.getFile().getAbsolutePath());
-				resource.setStaticInfo(new StaticInfo.StaticInfoBean(info.getContextWithContent(absCtx), info));
+				resource.setStaticInfo(new StaticInfoBean(info.getContextWithContent(absCtx), info));
 				if (info.getPosition(lgCtx) != null) {
 					resource.setGpsPosition(info.getPosition(lgCtx).toString());
 				}

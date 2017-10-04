@@ -60,7 +60,7 @@ import org.javlo.user.exception.UserAllreadyExistException;
 import org.javlo.utils.CSVFactory;
 import org.javlo.ztatic.FileCache;
 import org.javlo.ztatic.StaticInfo;
-import org.javlo.ztatic.StaticInfo.StaticInfoBean;
+import org.javlo.ztatic.StaticInfoBean;
 import org.owasp.encoder.Encode;
 
 public class UserAction extends AbstractModuleAction {

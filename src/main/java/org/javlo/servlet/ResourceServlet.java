@@ -16,6 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
@@ -34,7 +35,7 @@ import org.javlo.utils.CSVFactory;
 import org.javlo.utils.JSONMap;
 import org.javlo.utils.XLSTools;
 import org.javlo.ztatic.StaticInfo;
-import org.javlo.ztatic.StaticInfo.StaticInfoBean;
+import org.javlo.ztatic.StaticInfoBean;
 
 /**
  * @author pvandermaesen
@@ -216,8 +217,16 @@ public class ResourceServlet extends HttpServlet {
 					} else {
 						if (StringHelper.isExcelFile(file.getName())) {
 							File csvFile = new File(ResourceHelper.changeExtention(file.getAbsolutePath(), "csv"));
-							if (csvFile.exists()) {
-								csvFile = new File(URLHelper.mergePath(dataFolder, ResourceHelper.changeExtention(resourceURI, "csv")));
+							File excelFile = new File(URLHelper.mergePath(dataFolder, resourceURI));
+							if (!excelFile.exists()) {
+								csvFile = new File(URLHelper.mergePath(dataFolder, ResourceHelper.changeExtention(resourceURI, "csv")));	
+								if (!csvFile.exists()) {
+									csvFile = new File(URLHelper.mergePath(dataFolder, FilenameUtils.removeExtension(resourceURI)));	
+								}
+								if (!csvFile.exists()) {
+									response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+									return;
+								}
 								response.setContentType(ResourceHelper.getFileExtensionToMineType(StringHelper.getFileExtension(file.getName())));
 								response.setHeader("Cache-Control", "no-cache");
 								response.setHeader("Accept-Ranges", "bytes");
@@ -248,10 +257,6 @@ public class ResourceServlet extends HttpServlet {
 					}
 					String finalName = URLHelper.mergePath(dataFolder, resourceURI);
 					File file = new File(finalName);
-					
-					System.out.println("");
-					
-					
 					if (!json) {						
 						response.setContentType(ResourceHelper.getFileExtensionToMineType(fileExt));
 						response.setHeader("Cache-Control", "no-cache");

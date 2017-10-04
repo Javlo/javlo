@@ -65,6 +65,7 @@ import org.javlo.servlet.AccessServlet;
 import org.javlo.user.AdminUserSecurity;
 import org.javlo.ztatic.IStaticContainer;
 import org.javlo.ztatic.StaticInfo;
+import org.javlo.ztatic.StaticInfoBean;
 import org.owasp.encoder.Encode;
 
 /**
@@ -217,7 +218,7 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 		}
 
 		if (staticInfo != null) {			
-			ctx.getRequest().setAttribute("file", new StaticInfo.StaticInfoBean(staticInfo.getContextWithContent(ctx), staticInfo));
+			ctx.getRequest().setAttribute("file", new StaticInfoBean(staticInfo.getContextWithContent(ctx), staticInfo));
 			ctx.getRequest().setAttribute("staticInfoHTML", XHTMLHelper.renderStaticInfo(infoCtx, staticInfo));
 		}
 

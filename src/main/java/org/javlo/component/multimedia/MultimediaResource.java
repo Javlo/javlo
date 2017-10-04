@@ -11,7 +11,7 @@ import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.image.ImageSize;
 import org.javlo.servlet.ImageTransformServlet;
-import org.javlo.ztatic.StaticInfo.StaticInfoBean;
+import org.javlo.ztatic.StaticInfoBean;
 
 public class MultimediaResource {
 

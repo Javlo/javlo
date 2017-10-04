@@ -1,5 +1,7 @@
 package org.javlo.component.form;
 
+import static j2html.TagCreator.*;
+
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -29,6 +31,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.javlo.actions.IAction;
 import org.javlo.actions.IEventRegistration;
@@ -67,6 +70,8 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 	private static final String RECAPTCHASECRETKEY = "recaptchasecretkey";
 
 	private static final String RECAPTCHAKEY = "recaptchakey";
+	
+	private static final String FOLDER = "dynamic-form-result";
 
 	private Properties bundle;
 
@@ -99,7 +104,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 			fileName = getLocalConfig(false).getProperty("filename");
 		}
 		fileName = StringHelper.getFileNameWithoutExtension(fileName);
-		File dir = new File(URLHelper.mergePath(globalContext.getDataFolder(), globalContext.getStaticConfig().getStaticFolder(), "dynamic-form-result", fileName));
+		File dir = new File(URLHelper.mergePath(globalContext.getDataFolder(), globalContext.getStaticConfig().getStaticFolder(), FOLDER, fileName));
 		if (!dir.exists()) {
 			dir.mkdirs();
 		}
@@ -170,8 +175,25 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 	protected String getEditXHTMLCode(ContentContext ctx) throws Exception {
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(outStream);
-		out.println(XHTMLHelper.renderLine("title", getInputName("title"), getLocalConfig(false).getProperty("title", "")));
-		out.println(XHTMLHelper.renderLine("filename", getInputName("filename"), getLocalConfig(false).getProperty("filename", "")));
+		StaticConfig staticConfig = ctx.getGlobalContext().getStaticConfig();
+		
+		//out.println(XHTMLHelper.renderLine("title", getInputName("title"), getLocalConfig(false).getProperty("title", "")));
+		//out.println(XHTMLHelper.renderLine("filename", getInputName("filename"), getLocalConfig(false).getProperty("filename", "")));
+		
+		out.println("<div class=\"row\">");
+		out.println(div(label("title").attr("for", getInputName("title"))).withClass("col-sm-2").render());
+		out.println(div(div(input().withClass("form-control").attr("id", getInputName("title")).attr("name", getInputName("title")).attr("value",getLocalConfig(false).getProperty("title", ""))).withClass("form-group")).withClass("col-sm-10").render());
+		out.println("</div>");
+
+		String inputName = getInputName("filename");
+		out.println("<div class=\"row\">");
+		out.println(div(label("filename").attr("for", inputName)).withClass("col-sm-2").render());
+		out.println(div(div(input().withClass("form-control").attr("id", inputName).attr("name", inputName).attr("value",getLocalConfig(false).getProperty("filename", ""))).withClass("form-group")).withClass("col-sm-8").render());
+		String csvLink = URLHelper.createResourceURL(ctx, URLHelper.mergePath("/",staticConfig.getStaticFolder(),FOLDER, getLocalConfig(false).getProperty("filename", "")));
+		String xlsxLink = FilenameUtils.removeExtension(csvLink)+".xlsx";
+		out.println(div(a("[XSLX]").attr("href", xlsxLink),span(" - "),a("[CSV]").attr("href", csvLink)).withClass("col-sm-2").render());
+		out.println("</div>");
+
 		out.println("<div class=\"row\"><div class=\"col-sm-2\">");
 		out.println(XHTMLHelper.renderLine("captcha", getInputName("captcha"), StringHelper.isTrue(getLocalConfig(false).getProperty("captcha", null))));
 		out.println("</div><div class=\"col-sm-5\">");
@@ -260,7 +282,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 			scrollToMe = " scroll-to-me";
 		}
 		out.println("<tr class=\"field-line" + scrollToMe + "\">");
-		out.println("<td class=\"input name\"><input class=\"form-control\" type=\"text\" name=\"" + getInputName("name-" + field.getName()) + "\" value=\"" + field.getName() + "\"/></td>");		
+		out.println("<td class=\"input name\"><input class=\"form-control\" type=\"text\" name=\"" + getInputName("name-" + field.getName()) + "\" value=\"" + field.getName() + "\"/></td>");
 		out.println("<td class=\"input label\"><input class=\"form-control\" type=\"text\" name=\"" + getInputName("label-" + field.getName()) + "\" value=\"" + field.getLabel() + "\"/></td>");
 		out.println("<td class=\"input condition\"><input class=\"form-control\" type=\"text\" name=\"" + getInputName("condition-" + field.getName()) + "\" value=\"" + field.getCondition() + "\"/></td>");
 		if (isList()) {
@@ -462,7 +484,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 			return false;
 		}
 	}
-	
+
 	protected boolean isFullEventSite(ContentContext ctx) throws IOException {
 		Properties localConfig = getLocalConfig(false);
 		String eventLimistStr = localConfig.getProperty("event.limit");
@@ -573,7 +595,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		store(ctx);
 
 		countCache = null;
-		
+
 		return null;
 	}
 
@@ -861,11 +883,8 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 				String emailTo = comp.getLocalConfig(false).getProperty("mail.to", globalContext.getAdministratorEmail());
 				String emailCC = comp.getLocalConfig(false).getProperty("mail.cc", null);
 				String emailBCC = comp.getLocalConfig(false).getProperty("mail.bcc", null);
-
 				MailService mailService = null;
-
 				try {
-
 					mailService = MailService.getInstance(new MailConfig(globalContext, globalContext.getStaticConfig(), null));
 					InternetAddress fromEmail = new InternetAddress(emailFrom);
 					InternetAddress toEmail = new InternetAddress(emailTo);
@@ -894,9 +913,9 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 					String prefix = "Event registration :";
 					if (comp.isFullEventSite(ctx)) {
 						prefix = "Waiting list : ";
-						subject = prefix+subject;
+						subject = prefix + subject;
 					}
-					if (!StringHelper.isEmpty(comp.getLocalConfig(false).getProperty("event.limit"))) {						
+					if (!StringHelper.isEmpty(comp.getLocalConfig(false).getProperty("event.limit"))) {
 						mailAdminContent = XHTMLHelper.createAdminMail(ctx.getCurrentPage().getTitle(ctx), prefix + comp.getCountSubscription(ctx) + "/" + comp.getLocalConfig(false).getProperty("event.limit"), adminMailData, URLHelper.createURL(absCtx), "go on page >>", null);
 					} else {
 						mailAdminContent = XHTMLHelper.createAdminMail(ctx.getCurrentPage().getTitle(ctx), "Form submit - " + comp.getCountSubscription(ctx), adminMailData, URLHelper.createURL(absCtx), "go on page >>", null);
