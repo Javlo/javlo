@@ -311,6 +311,7 @@ public class Heading extends AbstractPropertiesComponent implements ISubTitle {
 		return htmlID;
 	}
 
+	@Override
 	protected String getInlineStyle(ContentContext ctx) {
 		String inlineStyle = "";
 		if (getBackgroundColor() != null && getBackgroundColor().length() > 2) {

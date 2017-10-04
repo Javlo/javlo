@@ -1632,6 +1632,9 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 		if (obj == null) {
 			return false;
 		}
+		if (obj == this) {
+			return true;
+		}
 		MenuElement elem = (MenuElement) obj;
 		boolean res = true;
 		if (!isMetadataEquals(elem)) {
@@ -2176,7 +2179,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 				outComp.add(comp);
 			} else if (comp instanceof PageMirrorComponent) {
 				PageMirrorComponent pageMirror = (PageMirrorComponent) comp;
-				if (pageMirror.getArea().equals(ctx.getArea())) {
+				if (pageMirror.getArea().equals(ctx.getArea()) && !pageMirror.getPage().equals(this)) {
 					List<IContentVisualComponent> mirrorContent = pageMirror.getMirrorPage(ctx).getContentByImplementation(ctx, clazz);
 					for (IContentVisualComponent mComp : mirrorContent) {
 						mComp.setContainerPage(ctx, pageMirror.getPage());
@@ -4217,16 +4220,16 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 	}
 
 	public boolean isSelected(ContentContext ctx) throws Exception {
-		MenuElement page = ctx.getCurrentPage();
-		if (page == null) {
+		MenuElement currentPage = ctx.getCurrentPage();
+		if (currentPage == null) {
 			return false;
-		}
-		if (this.getId().equals(page.getId())) {
+		}		
+		if (this.getId().equals(currentPage.getId())) {
 			return true;
 		}
-		while (!this.getId().equals(page.getId()) && page.getParent() != null) {
-			page = page.getParent();
-			if (this.getId().equals(page.getId())) {
+		while (!this.getId().equals(currentPage.getId()) && currentPage.getParent() != null) {
+			currentPage = currentPage.getParent();
+			if (this.getId().equals(currentPage.getId())) {				
 				return true;
 			}
 		}

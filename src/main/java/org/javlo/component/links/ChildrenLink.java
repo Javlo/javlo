@@ -50,12 +50,24 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 		}
 
 		public boolean isSelected() {
-			try {
-				return child.isSelected(ctx);
-			} catch (Exception e) {
-				e.printStackTrace();
+			MenuElement cp = this.currentPage;
+			if (cp == null) {
 				return false;
+			}		
+			if (this.getId().equals(cp.getId())) {
+				return true;
 			}
+			while (!this.getId().equals(cp.getId()) && cp.getParent() != null) {
+				cp = cp.getParent();
+				if (this.getId().equals(cp.getId())) {				
+					return true;
+				}
+			}
+			return false;
+		}
+		
+		public String getId() {
+			return child.getId();
 		}
 
 		public boolean isLastSelected() {
@@ -363,11 +375,11 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 			for (MenuElement element : children) {
 				ContentContext lgCtx = ctx;
 				if (ctx.getGlobalContext().isAutoSwitchToDefaultLanguage()) {
-					lgCtx = ctx.getContextWithContent(element);
+					lgCtx = ctx.getContextWithContent(element);				
 				}
 				if (lgCtx == null) {
 					lgCtx = ctx;
-				}
+				}				
 				if ((element.isVisible(lgCtx) ^ showOnlyNotVisible) || showAll) {
 					ChildLinkBean bean = new ChildLinkBean(lgCtx, element, currentPage);
 					childrenList.add(bean);

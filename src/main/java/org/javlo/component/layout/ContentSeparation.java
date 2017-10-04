@@ -74,11 +74,20 @@ public class ContentSeparation extends AbstractVisualComponent {
 	
 	@Override
 	public String[] getStyleList(ContentContext ctx) {
-		return new String[] { HIDDEN_SEPARATION, "visible-separation", "visible-large"  };
+		String[] styles = super.getStyleList(ctx);
+		if (styles == null || styles.length == 0) {
+			return new String[] { HIDDEN_SEPARATION, "visible-separation", "visible-large"  };
+		} else {
+			return styles;
+		}
 	}
 	
 	@Override
 	public String[] getStyleLabelList(ContentContext ctx) {
+		String[] styles = super.getStyleList(ctx);
+		if (styles != null && styles.length > 0) {
+			return styles;
+		}
 		String visible = "visible";
 		String hidden = "hidden";		
 		String large = "large";

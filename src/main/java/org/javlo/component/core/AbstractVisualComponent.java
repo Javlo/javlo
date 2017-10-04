@@ -1224,7 +1224,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		return style;
 	}
 
-	protected String getForcedPrefixViewXHTMLCode(ContentContext ctx) {
+	protected String getForcedPrefixViewXHTMLCode(ContentContext ctx) {	
 		if (getConfig(ctx).getProperty("prefix", null) != null) {
 			return getConfig(ctx).getProperty("prefix", null);
 		}
