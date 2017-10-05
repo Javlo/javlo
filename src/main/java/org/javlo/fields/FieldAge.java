@@ -23,7 +23,7 @@ public class FieldAge extends FieldDate {
 		PrintStream out = new PrintStream(outStream);
 		out.println("<div class=\"row\">");
 		out.println("<div class=\"" + LABEL_SIZE + "\">");
-		out.println("	<label for=\"" + getInputName() + "\">" + getLabel(ctx, new Locale(ctx.getContextRequestLanguage())) + " : </label>");
+		out.println("	<label for=\"" + getInputName() + "\">" + getSearchLabel(ctx, new Locale(ctx.getContextRequestLanguage())) + " : </label>");
 		out.println("</div><div class=\"" + VALUE_SIZE + "\">");
 		RequestService rs = RequestService.getInstance(ctx.getRequest());
 		String currentValue = rs.getParameter(getInputName(), "");

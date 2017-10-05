@@ -779,7 +779,7 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 	protected String getSearchLabel(ContentContext ctx, Locale locale) {
 		String label = properties.getProperty(createKey("label.search." + locale.getLanguage()));
 		if (label == null) {
-			label = properties.getProperty(createKey("label.search."));
+			label = properties.getProperty(createKey("label.search"));
 			if (label == null) {
 				label = getLabel(ctx, locale);
 			}
