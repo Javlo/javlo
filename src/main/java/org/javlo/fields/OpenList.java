@@ -82,8 +82,8 @@ public class OpenList extends Field {
 
 		out.println("<div class=\"form-group field-"+getName()+"\">");
 		out.println(getEditLabelCode());
-		out.println("<div class=\"row\"><div class=\"col-sm-3\"><label for=\"" + getInputName() + "\">" + getLabel(ctx, new Locale(ctx.getContextRequestLanguage())) + " : </label></div>");
-		out.println("<div class=\"col-sm-"+(ctx.isVisualMode()?"9":"7")+"\"><select class=\"form-control\" id=\"" + getInputName() + "\" name=\"" + getInputName() + "\" value=\"" + StringHelper.neverNull(getValue()) + "\">");
+		out.println("<div class=\"row\"><div class=\""+LABEL_SIZE+"\"><label for=\"" + getInputName() + "\">" + getLabel(ctx, new Locale(ctx.getContextRequestLanguage())) + " : </label></div>");
+		out.println("<div class=\"col-sm-"+(ctx.isVisualMode()?VALUE_SIZE:SMALL_VALUE_SIZE)+"\"><select class=\"form-control\" id=\"" + getInputName() + "\" name=\"" + getInputName() + "\" value=\"" + StringHelper.neverNull(getValue()) + "\">");
  
 		if (search) {
 			out.println("		<option></option>");

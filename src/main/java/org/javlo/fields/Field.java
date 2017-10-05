@@ -43,6 +43,10 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 	private static Logger logger = Logger.getLogger(Field.class.getName());
 	
 	protected static final String DEFAULT_SEARCH_TYPE = "default";
+	
+	public static String LABEL_SIZE = "col-sm-4";
+	public static String VALUE_SIZE = "col-sm-8";
+	public static String SMALL_VALUE_SIZE = "col-sm-6";
 
 	public class FieldBean {
 
@@ -454,7 +458,7 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 		StringWriter writer = new StringWriter();
 		PrintWriter out = new PrintWriter(writer);
 
-		out.println("<div class=\"row form-group field-"+getName()+"\"><div class=\"col-sm-3\">");
+		out.println("<div class=\"row form-group field-"+getName()+"\"><div class=\""+LABEL_SIZE+"\">");
 		out.println(getEditLabelCode());		
 		
 		out.println("	<label for=\"" + getInputName() + "\">" + getLabel(ctx, new Locale(ctx.getContextRequestLanguage())) + " : </label>");
@@ -463,7 +467,7 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 			readOnlyHTML = " readonly=\"readonly\"";
 		}
 		String value = Encode.forHtmlAttribute(StringHelper.neverNull(getValue()));
-		out.println("</div><div class=\"col-sm-9\"><input" + readOnlyHTML + " id=\"" + getInputName() + "\" class=\"form-control"+getSpecialClass()+"\" name=\"" + getInputName() + "\" value=\"" + value + "\"/>");
+		out.println("</div><div class=\""+VALUE_SIZE+"\"><input" + readOnlyHTML + " id=\"" + getInputName() + "\" class=\"form-control"+getSpecialClass()+"\" name=\"" + getInputName() + "\" value=\"" + value + "\"/>");
 		if (getMessage() != null && getMessage().trim().length() > 0) {
 			out.println("	<div class=\"message " + getMessageTypeCSSClass() + "\">" + getMessage() + "</div>");
 		}
