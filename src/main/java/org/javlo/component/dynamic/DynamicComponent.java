@@ -167,6 +167,7 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 	public String getViewXHTMLCode(ContentContext ctx, boolean asList) throws Exception {
 		ctx.getRequest().setAttribute("page", new PageBean(ctx, getContainerPage(ctx)));
 		ctx.getRequest().setAttribute("containerId", getId());
+		ctx.getRequest().setAttribute("authors", getAuthors());
 		if (getStyle().equals(HIDDEN)) {
 			String emptyCode = getEmptyCode(ctx);
 			if (emptyCode != null) {

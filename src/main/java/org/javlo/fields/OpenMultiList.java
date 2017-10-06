@@ -10,8 +10,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.dynamic.DynamicComponent;
 import org.javlo.context.ContentContext;
@@ -87,9 +85,10 @@ public class OpenMultiList extends Field {
 		Collections.sort(values, new JavaHelper.MapEntriesSortOnValue());
 		out.println("<div class=\"form-group field-"+getName()+"\">");
 		out.println(getEditLabelCode());
-		out.println("<div class=\"row\"><div class=\""+LABEL_SIZE+"\"><label for=\"" + getInputName() + "\">" + getLabel(ctx, new Locale(ctx.getContextRequestLanguage())) + " : </label></div>");
+		out.println("<div class=\"row\"><div class=\""+LABEL_CSS+"\"><label for=\"" + getInputName() + "\">" + getLabel(ctx, new Locale(ctx.getContextRequestLanguage())) + " : </label></div>");
 		if (!ctx.isVisualMode()) {
-			out.println("<div class=\"col-sm-7\">");
+			out.println("<div class=\"col-sm-5\">");
+			out.println("<div class=\"form-check form-check-inline\">");
 			for (Map.Entry<String, String> value : values) {
 				String selected = "";
 				if (getValue() != null) {
@@ -97,19 +96,20 @@ public class OpenMultiList extends Field {
 						selected = " checked=\"checked\"";
 					}
 				}
+				
 				if (value.getKey() != null) {
-					out.println("<label class=\"checkbox-inline\"><input type=\"checkbox\" name=\"" + getInputName() + "\" value=\"" + value.getKey() + "\"" + selected + " />" + value.getValue() + "</label>");
+					out.println("<label class=\"checkbox-inline form-check-label\"><input class=\"form-check-input\" type=\"checkbox\" name=\"" + getInputName() + "\" value=\"" + value.getKey() + "\"" + selected + " /> " + value.getValue() + "</label>");
 				} else {
-					out.println("<label class=\"checkbox-inline\"><input type=\"checkbox\" name=\"" + getInputName() + "\" value=\"" + value.getValue() + "\"" + selected + " />" + value.getValue() + "</label>");
-				}
+					out.println("<label class=\"checkbox-inline form-check-label\"><input class=\"form-check-input\" type=\"checkbox\" name=\"" + getInputName() + "\" value=\"" + value.getValue() + "\"" + selected + " /> " + value.getValue() + "</label>");
+				}				
 			}
-			out.println("	</select>");
+			out.println("</div>");			
 			if (getMessage() != null && getMessage().trim().length() > 0) {
 				out.println("	<div class=\"message " + getMessageTypeCSSClass() + "\">" + getMessage() + "</div>");
 			}
 			out.println("</div>");
 		} else {
-			out.println("<div class=\""+VALUE_SIZE+"\"><select class=\"form-control\" id=\"" + getInputName() + "\" name=\"" + getInputName() + "\" value=\"" + StringHelper.neverNull(getValue()) + "\">");
+			out.println("<div class=\"col-sm-5\"><select class=\"form-control\" id=\"" + getInputName() + "\" name=\"" + getInputName() + "\" value=\"" + StringHelper.neverNull(getValue()) + "\">");
 
 			for (Map.Entry<String, String> value : values) {
 				String selected = "";
@@ -133,7 +133,7 @@ public class OpenMultiList extends Field {
 		}
 
 		if (!ctx.isVisualMode()) {
-			out.println("<div class=\"col-sm-2\"><input class=\"form-control\" id=\"" + getInputNewName() + "\" name=\"" + getInputNewName() + "\" type=\"text\" placeholder=\"" + i18nAccess.getText("global.create") + "...\" /></div>");
+			out.println("<div class=\"col-sm-2\"><input class=\"form-control pull-right\" id=\"" + getInputNewName() + "\" name=\"" + getInputNewName() + "\" type=\"text\" placeholder=\"" + i18nAccess.getText("global.create") + "...\" /></div>");
 		}
 		out.println("</div></div>");
 

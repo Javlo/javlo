@@ -572,6 +572,15 @@ public class URLHelper extends ElementaryURLHelper {
 	public static String createURL(ContentContext ctx) {
 		return createURL(ctx, ctx.getPath());
 	}
+	
+	public static String createPDFURL(ContentContext ctx) {
+		ContentContext pdfCtx = new ContentContext(ctx);
+		pdfCtx.setFormat("pdf");
+		if (pdfCtx.getRenderMode() == ContentContext.PAGE_MODE) {
+			pdfCtx.setRenderMode(ContentContext.VIEW_MODE);
+		}
+		return URLHelper.createURL(pdfCtx);
+	}
 
 	/**
 	 * create URL without context.
@@ -778,6 +787,17 @@ public class URLHelper extends ElementaryURLHelper {
 		}
 		return createURL(ctx, uri, lgFound);
 
+	}
+	
+	public static String createURLFromPageName(ContentContext ctx, String pageName, Map<String,String> params) throws Exception {
+		GlobalContext globalContext = ctx.getGlobalContext();
+		NavigationService navService = NavigationService.getInstance(globalContext);
+		MenuElement page = navService.getPage(ctx, pageName);
+		if (page != null) {
+			return createURL(ctx, page.getPath(), params);
+		} else {
+			return createURL(ctx, "/", params);
+		}
 	}
 
 	public static String createURLFromPageName(ContentContext ctx, String pageName) throws Exception {

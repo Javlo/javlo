@@ -1,6 +1,7 @@
 package org.javlo.utils;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -39,7 +40,7 @@ public class CollectionAsMap<K> implements Map<K, K> {
 
 	}
 
-	private final Collection<K> c;
+	private Collection<K> c;
 
 	public CollectionAsMap(Collection<K> collection) {
 		c = collection;
@@ -115,5 +116,12 @@ public class CollectionAsMap<K> implements Map<K, K> {
 			outSet.add(new Entry(key));
 		}
 		return outSet;
+	} 
+
+	public void setCollecion(Set<K> col) {
+		if (col==null) {
+			col = Collections.emptySet();
+		}
+		c=col;
 	}
 }

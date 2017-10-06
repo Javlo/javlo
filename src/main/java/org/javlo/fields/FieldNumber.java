@@ -47,7 +47,7 @@ public class FieldNumber extends Field {
 		StringWriter writer = new StringWriter();
 		PrintWriter out = new PrintWriter(writer);
 
-		out.println("<div class=\"row form-group\"><div class=\""+LABEL_SIZE+"\">");
+		out.println("<div class=\"row form-group\"><div class=\""+LABEL_CSS+"\">");
 		out.println(getEditLabelCode());
 		out.println("<label for=\"" + getInputName() + "\">" + getLabel(ctx, new Locale(ctx.getContextRequestLanguage())) + " : </label></div><div class=\""+VALUE_SIZE+"\">");
 		String readOnlyHTML = "";

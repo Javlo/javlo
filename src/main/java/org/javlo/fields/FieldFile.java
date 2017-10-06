@@ -190,7 +190,7 @@ public class FieldFile extends Field implements IStaticContainer {
 
 		if (!isLight()) {
 
-			out.println("<div class=\"row form-group\"><div class=\""+LABEL_SIZE+"\">");
+			out.println("<div class=\"row form-group\"><div class=\""+LABEL_CSS+"\">");
 			out.println("<label for=\"" + getInputCreateFolderName() + "\">" + getCreateFolderLabel() + " : </label>");
 			out.println("</div><div class=\""+VALUE_SIZE+"\"><input class=\"form-control\" type=\"text\" id=\"" + getInputCreateFolderName() + "\" name=\"" + getInputCreateFolderName() + "\" /></div>");
 			out.println("<div class=\"col-sm-1\"><input type=\"submit\" class=\"ajax_update_click btn btn-default btn-xs pull-right\" name=\"create\" value=\">>\" />");

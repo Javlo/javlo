@@ -222,6 +222,9 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	}
 
 	private Map<String, ICache> cacheMaps = null;
+	
+	private TimeMap<String, Object> sharingMap = new TimeMap<String, Object>(60*30);
+	private TimeMap<Object, String> reverseSharingMap = new TimeMap<Object, String>(60*30);
 
 	private final Map<String, ICache> eternalCacheMaps = new Hashtable<String, ICache>();
 
@@ -3886,6 +3889,25 @@ public class GlobalContext implements Serializable, IPrintInfo {
 
 	public TaxonomyService getTaxonomy(ContentContext ctx) {
 		return TaxonomyService.getInstance(ctx);
+	}
+	
+	public synchronized String addSharedObject(Object obj) {
+		String key = reverseSharingMap.get(obj); 
+		if (key != null) {
+			sharingMap.put(key, obj);
+			return key;
+		}
+		key = StringHelper.getRandomString(64);
+		while (sharingMap.containsKey(key)) {
+			key = StringHelper.getRandomString(64);
+		}
+		sharingMap.put(key, obj);
+		reverseSharingMap.put(obj, key);
+		return key;
+	}
+	
+	public Object getSharedObject(String key) {
+		return sharingMap.get(key);
 	}
 
 }

@@ -7,9 +7,11 @@ import java.io.Serializable;
 import java.security.Principal;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import org.javlo.helper.StringHelper;
+import org.javlo.utils.CollectionAsMap;
 
 /**
  * @author pvandermaesen
@@ -20,6 +22,7 @@ public class User implements Principal, Serializable {
 	String password;
 	private String context;
 	Set<String> roles = new HashSet<String>();
+	CollectionAsMap<String> rolesMap = new CollectionAsMap<String>(roles);
 	IUserInfo userInfo;
 	private boolean editor = false;
 
@@ -63,6 +66,11 @@ public class User implements Principal, Serializable {
 	 */
 	public Set<String> getRoles() {
 		return roles;
+	}
+	
+	public Map<String,String> getRolesMap() {
+		rolesMap.setCollecion(roles);
+		return rolesMap;
 	}
 	
 	

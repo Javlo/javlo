@@ -14,8 +14,7 @@ public class FieldEnormousText extends Field {
 	@Override
 	public String getEditXHTMLCode(ContentContext ctx) {
 		StringWriter writer = new StringWriter();
-		PrintWriter out = new PrintWriter(writer);
-		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+		PrintWriter out = new PrintWriter(writer);		
 
 		out.println("<div class=\"line\">");
 		out.println("<label for=\"" + getInputName() + "\">" + getLabel(ctx, new Locale(ctx.getContextRequestLanguage())) + " : </label>");

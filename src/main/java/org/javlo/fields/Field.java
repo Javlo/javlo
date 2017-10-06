@@ -44,7 +44,7 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 	
 	protected static final String DEFAULT_SEARCH_TYPE = "default";
 	
-	public static String LABEL_SIZE = "col-sm-4";
+	public static String LABEL_CSS = "col-sm-4 col-form-label";
 	public static String VALUE_SIZE = "col-sm-8";
 	public static String SMALL_VALUE_SIZE = "col-sm-6";
 
@@ -458,10 +458,10 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 		StringWriter writer = new StringWriter();
 		PrintWriter out = new PrintWriter(writer);
 
-		out.println("<div class=\"row form-group field-"+getName()+"\"><div class=\""+LABEL_SIZE+"\">");
+		out.println("<div class=\"row form-group field-"+getName()+"\"><div class=\""+LABEL_CSS+"\">");
 		out.println(getEditLabelCode());		
 		
-		out.println("	<label for=\"" + getInputName() + "\">" + getLabel(ctx, new Locale(ctx.getContextRequestLanguage())) + " : </label>");
+		out.println("	<label class=\"col-form-label\" for=\"" + getInputName() + "\">" + getLabel(ctx, new Locale(ctx.getContextRequestLanguage())) + " : </label>");
 		String readOnlyHTML = "";
 		if (isReadOnly()) {
 			readOnlyHTML = " readonly=\"readonly\"";

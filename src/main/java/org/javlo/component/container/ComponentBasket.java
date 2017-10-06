@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.javlo.context.ContentContext;
+import org.javlo.helper.StringHelper;
 import org.javlo.utils.CollectionAsMap;
 
 public class ComponentBasket {
@@ -17,8 +18,15 @@ public class ComponentBasket {
 	public static final ComponentBasket getComponentBasket(ContentContext ctx) {
 		ComponentBasket out = (ComponentBasket)ctx.getRequest().getSession().getAttribute(SESSION_KEY);
 		if (out == null) {
-			out = new ComponentBasket();
-			ctx.getRequest().getSession().setAttribute(SESSION_KEY, out);
+			out = (ComponentBasket)ctx.getGlobalContext().getSharedObject(ctx.getRequest().getParameter(SESSION_KEY));
+			if (out == null) {
+				out = new ComponentBasket();
+				ctx.getRequest().getSession().setAttribute(SESSION_KEY, out);
+			}			
+		}
+		if (ctx.getRequest().getParameter("selection") != null) {
+			out.components.clear();
+			out.components.addAll(StringHelper.stringToCollection(ctx.getRequest().getParameter("selection")));
 		}
 		return out;
 	}

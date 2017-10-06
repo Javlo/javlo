@@ -496,7 +496,7 @@ public class InfoBean {
 		}
 	}
 
-	public String getTime() {
+	public String getTime() {	
 		try {
 			return StringHelper.renderTime(ctx, currentPage.getContentDateNeverNull(ctx));
 		} catch (Exception e) {
@@ -1612,6 +1612,10 @@ public class InfoBean {
 		} else {
 			return null;
 		}
+	}
+	
+	public String getNoImageURL() throws Exception {
+		return URLHelper.createTransformURL(ctx, "/noimage.png", "standard");
 	}
 
 	
