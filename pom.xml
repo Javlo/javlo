@@ -102,7 +102,7 @@
 		<dependency>
 			<groupId>org.bouncycastle</groupId>
 			<artifactId>bcprov-jdk15on</artifactId>
-			<version>1.57</version>
+			<version>1.58</version>
 		</dependency>
 
 		<dependency>
@@ -421,6 +421,10 @@
 				<exclusion>
 					<groupId>org.slf4j</groupId>
 					<artifactId>slf4j-simple</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.bouncycastle</groupId>
+   					<artifactId>bcprov-jdk14</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>
