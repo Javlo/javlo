@@ -252,12 +252,15 @@ public class Video extends GlobalImage implements IAction, IVideo {
 			if (!imageFile.getParentFile().exists()) {
 				imageFile.getParentFile().mkdirs();
 			}
-			if (!imageFile.exists()) {
+			if (!imageFile.exists() && ctx.getGlobalContext().getStaticConfig().isInternetAccess()) {
 				imageFile.createNewFile();
-				URL url = new URL("http://img.youtube.com/vi/" + videoCode + "/0.jpg");
+				URL url = new URL("http://img.youtube.com/vi/" + videoCode + "/0.jpg");				
 				FileOutputStream out = new FileOutputStream(imageFile);
-				NetHelper.readPage(url, out);
-				ResourceHelper.closeResource(out);
+				try {
+					NetHelper.readPage(url, out);
+				} finally {
+					ResourceHelper.closeResource(out);
+				}
 				StaticInfo youTubeImageInfo = StaticInfo.getInstance(ctx, imageFile);
 				youTubeImageInfo.setShared(ctx, false);
 				youTubeImageInfo.save(ctx);
@@ -278,12 +281,16 @@ public class Video extends GlobalImage implements IAction, IVideo {
 			if (!imageFile.getParentFile().exists()) {
 				imageFile.getParentFile().mkdirs();
 			}
-			if (!imageFile.exists()) {
+			if (!imageFile.exists() && ctx.getGlobalContext().getStaticConfig().isInternetAccess()) {
 				JsonElement elem = NetHelper.readJson(new URL("http://vimeo.com/api/v2/video/" + videoCode + ".json"));
 				String imageURL = elem.getAsJsonArray().get(0).getAsJsonObject().get("thumbnail_large").getAsString();
 				imageFile.createNewFile();
-				FileOutputStream out = new FileOutputStream(imageFile);
-				NetHelper.readPage(new URL(imageURL), out);
+				FileOutputStream out = new FileOutputStream(imageFile);				
+				try {
+					NetHelper.readPage(new URL(imageURL), out);
+				} finally {
+					ResourceHelper.closeResource(out);
+				}
 				ResourceHelper.closeResource(out);
 				StaticInfo vimeoImageInfo = StaticInfo.getInstance(ctx, imageFile);
 				vimeoImageInfo.setShared(ctx, false);
@@ -644,7 +651,9 @@ public class Video extends GlobalImage implements IAction, IVideo {
 			if (StringHelper.isURL(getLink())) {
 				if (StringHelper.isEmpty(getTitle())) {
 					try {
-						setTitle(NetHelper.getPageTitle(new URL(getLink())));
+						if (ctx.getGlobalContext().getStaticConfig().isInternetAccess()) {
+							setTitle(NetHelper.getPageTitle(new URL(getLink())));
+						}
 					} catch (Exception e) {
 						logger.warning(e.getMessage());
 					}

@@ -1229,11 +1229,16 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			return getConfig(ctx).getProperty("prefix", null);
 		}
 		String style = contructViewStyle(ctx);
+		String prefix;
 		if (!componentBean.isList()) {
-			return "<" + getTag(ctx) + " " + getSpecialPreviewCssClass(ctx, style + getType()) + getSpecialPreviewCssId(ctx) + " " + getInlineStyle(ctx) + ">";
+			prefix =  "<" + getTag(ctx) + " " + getSpecialPreviewCssClass(ctx, style + getType()) + getSpecialPreviewCssId(ctx) + " " + getInlineStyle(ctx) + ">";
 		} else {
-			return "<" + getListItemTag(ctx) + getSpecialPreviewCssClass(ctx, style + getType()) + getSpecialPreviewCssId(ctx) + " >";
+			prefix = "<" + getListItemTag(ctx) + getSpecialPreviewCssClass(ctx, style + getType()) + getSpecialPreviewCssId(ctx) + " >";
 		}
+		if (isAjaxWrapper(ctx)) {
+			prefix = prefix + "<div id=\""+getAjaxId()+"\">";
+		}
+		return prefix;
 	}
 
 	protected String getInlineStyle(ContentContext ctx) {
@@ -1586,6 +1591,14 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			return "";
 		}
 	}
+	
+	public boolean isAjaxWrapper(ContentContext ctx) {
+		return false;
+	}
+	
+	public String getAjaxId() {
+		return "cp-"+getId();
+	}
 
 	public String getStyle() {
 		return componentBean.getStyle();
@@ -1708,11 +1721,16 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		if (getConfig(ctx).getProperty("suffix", null) != null) {
 			return getConfig(ctx).getProperty("suffix", null);
 		}
+		String suffix;
 		if (!componentBean.isList()) {
-			return "</" + getTag(ctx) + ">";
+			suffix = "</" + getTag(ctx) + ">";
 		} else {
-			return "</" + getListItemTag(ctx) + '>';
+			suffix = "</" + getListItemTag(ctx) + '>';
 		}
+		if (isAjaxWrapper(ctx)) {
+			suffix = suffix + "</div>";
+		}
+		return suffix;
 	}
 
 	@Override
