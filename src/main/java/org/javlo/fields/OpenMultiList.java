@@ -134,6 +134,7 @@ public class OpenMultiList extends Field {
 
 		if (!ctx.isVisualMode()) {
 			out.println("<div class=\"col-sm-2\"><input class=\"form-control pull-right\" id=\"" + getInputNewName() + "\" name=\"" + getInputNewName() + "\" type=\"text\" placeholder=\"" + i18nAccess.getText("global.create") + "...\" /></div>");
+			out.println("<input class=\"hidden\" type=\"submit\" />");
 		}
 		out.println("</div></div>");
 

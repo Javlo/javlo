@@ -185,7 +185,7 @@ public class FieldFile extends Field implements IStaticContainer {
 
 		out.println("<div class=\"form-group field-" + getName() + "\">");
 		out.println("<fieldset>");
-		out.println("<legend>" + getLabel(ctx, new Locale(globalContext.getEditLanguage(ctx.getRequest().getSession()))) + "</legend>");
+		out.println("<legend>" + getLabel(ctx, new Locale(ctx.getRequestContentLanguage())) + "</legend>");
 		out.println("<div class=\"commands\">");
 
 		if (!isLight()) {
@@ -210,9 +210,7 @@ public class FieldFile extends Field implements IStaticContainer {
 				}
 				backURL = URLHelper.addParam(backURL, "previewEdit", ctx.getRequest().getParameter("previewEdit"));
 				filesParams.put(ElementaryURLHelper.BACK_PARAM_NAME, backURL + "=/" + ctx.getGlobalContext().getStaticConfig().getStaticFolder() + '/');
-
 				String staticLinkURL = URLHelper.createModuleURL(ctx, ctx.getPath(), "file", filesParams);
-
 				linkToResources = "<div class=\"col-sm-3\"><a class=\"browse-link btn btn-default btn-xs\" href=\"" + staticLinkURL + "\">" + i18nAccess.getText("content.goto-static") + "</a></div>";
 			}
 
@@ -234,7 +232,8 @@ public class FieldFile extends Field implements IStaticContainer {
 		}
 
 		out.println("<div class=\"row form-group\"><div class=\"col-sm-3\">");
-		out.println("<label for=\"" + getInputAddFileName() + "\">" + getAddFileLabel() + " : </label>");
+		System.out.println("##### FieldFile.getEditXHTMLCode :  i18nAccess.getEditLg()  = "+ i18nAccess.getEditLg() ); //TODO: remove debug trace
+		out.println("<label for=\"" + getInputAddFileName() + "\">" + getAddFileLabel() + " " + i18nAccess.getEditLg() + " : </label>");
 		out.println("</div><div class=\"col-sm-3\"><input type=\"file\" id=\"" + getInputAddFileName() + "\" name=\"" + getInputAddFileName() + "\" /></div>");
 		out.println("</div>");
 
@@ -396,6 +395,7 @@ public class FieldFile extends Field implements IStaticContainer {
 			}
 		}		
 		if (delete) {
+			System.out.println("##### FieldFile.process : DELETE"); //TODO: remove debug trace
 			String dir = URLHelper.mergePath(getFileDirectory(), getCurrentFolder());
 			File file = new File(URLHelper.mergePath(dir, getCurrentFile()));		
 			if (file.exists()) {
@@ -403,6 +403,7 @@ public class FieldFile extends Field implements IStaticContainer {
 			}
 			setCurrentFile(null);
 		} else if (newFileName.trim().length() > 0) {
+			System.out.println("##### FieldFile.process : newFileName = "+newFileName); //TODO: remove debug trace
 			newFileName = StringHelper.createFileName(newFileName);
 			Collection<FileItem> fileItems = requestService.getAllFileItem();
 			try {

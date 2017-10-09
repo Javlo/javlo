@@ -19,11 +19,12 @@ public class FieldAge extends FieldDate {
 	}
 	
 	public String getFromName(ContentContext ctx) throws Exception {
-		return "from";
+		I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
+		return i18nAccess.getText("global.from", "from");		
 	}	
 	
 	public String getToName(ContentContext ctx) throws Exception {
-		return "to";
+		return i18nAccess.getText("global.to", "to");
 	}
 
 	@Override
@@ -43,38 +44,8 @@ public class FieldAge extends FieldDate {
 		out.println("<input type=\"number\" min=\"0\" max=\"99\" class=\"form-control\" id=\""+getToName(ctx)+"\" name=\""+getToName(ctx)+"\" value=\""+rs.getParameter(getToName(ctx), "99")+"\">");
 		out.println("</div>");
 		
-		out.println("</div></div>");
+		out.println("</div></div>");		
 		
-		// out.println("<select class=\"form-control\" name=\"" + getInputName()
-		// + "\" id=\"" + getInputName() + "\">");
-		// out.println("<option></option>");
-		// for (int y = 0; y < 10; y += 1) {
-		// String select = "";
-		// if (currentValue.equals(""+y+","+y )) {
-		// select = " selected=\"selected\"";
-		// }
-		// out.println("<option
-		// value=\""+y+","+y+"\""+select+">"+y+"</option>");
-		// }
-		// for (int y = 11; y < 25; y += 2) {
-		// String select = "";
-		// if (currentValue.equals(""+(y+1)+","+(y+5))) {
-		// select = " selected=\"selected\"";
-		// }
-		// out.println("<option
-		// value=\""+(y+1)+","+(y+5)+"\""+select+">"+(y+1)+" >
-		// "+(y+5)+"</option>");
-		// }
-		// for (int y = -1; y < 80; y += 5) {
-		// String select = "";
-		// if (currentValue.equals(""+(y+1)+","+(y+5))) {
-		// select = " selected=\"selected\"";
-		// }
-		// out.println("<option
-		// value=\""+(y+1)+","+(y+5)+"\""+select+">"+(y+1)+" >
-		// "+(y+5)+"</option>");
-		// }
-		// out.println("</select>");
 		out.close();
 		return new String(outStream.toByteArray());
 	}

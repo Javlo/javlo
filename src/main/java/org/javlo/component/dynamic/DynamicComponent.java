@@ -168,7 +168,7 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 		ctx.getRequest().setAttribute("page", new PageBean(ctx, getContainerPage(ctx)));
 		ctx.getRequest().setAttribute("containerId", getId());
 		ctx.getRequest().setAttribute("authors", getAuthors());
-		if (getStyle().equals(HIDDEN)) {
+		if (getStyle() != null && getStyle().equals(HIDDEN)) {
 			String emptyCode = getEmptyCode(ctx);
 			if (emptyCode != null) {
 				return emptyCode;
@@ -257,7 +257,7 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 							cssClass = ' ' + field.getCSSClass();
 						}
 						out.println(field.getFieldPrefix(ctx));
-						if (field.isWrapped()) {
+						if (field.isWrapped()) { 
 							out.println("<div class=\"field " + field.getName() + firstFiledClass + cssClass + "\">");
 						}
 						out.println(field.getViewXHTMLCode(ctx));

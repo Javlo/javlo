@@ -146,6 +146,8 @@ public class I18nAccess implements Serializable {
 	private Boolean moduleImported = false;
 
 	private String editLg = "";
+	
+	private String forceEditLg = null;
 
 	private String viewLg = "";
 
@@ -583,19 +585,39 @@ public class I18nAccess implements Serializable {
 
 	private void initEdit(GlobalContext globalContext, HttpSession session) throws IOException {
 		String newEditLg = globalContext.getEditLanguage(session);
-
-		if (!newEditLg.equals(editLg)) {
+		if (!newEditLg.equals(editLg) && forceEditLg == null) {
 			propEditMap = null;
 			editLg = newEditLg;
 			componentsPath.clear();
-
 			propEdit = i18nResource.getEditFile(newEditLg, true);
 			if (currentModule != null) {
 				moduleEdit = currentModule.loadEditI18n(globalContext, session);
 			}			
 			contextEdit = i18nResource.getContextI18nFile(ContentContext.EDIT_MODE, newEditLg, true);			
-		}
-		
+		}		
+	}
+	
+	public String getEditLg() {
+		return editLg;
+	}
+	
+	public void resetForceEditLg() {
+		editLg = null;
+		forceEditLg = null;
+	}
+	
+	public void forceReloadEdit(GlobalContext globalContext, HttpSession session, String lg) throws IOException {		
+		if (forceEditLg == null || !lg.equals(forceEditLg)) {
+			forceEditLg = lg;
+			propEditMap = null;
+			editLg = lg;
+			componentsPath.clear();
+			propEdit = i18nResource.getEditFile(lg, true);
+			if (currentModule != null) {
+				moduleEdit = currentModule.loadEditI18n(globalContext, session);
+			}			
+			contextEdit = i18nResource.getContextI18nFile(ContentContext.EDIT_MODE, lg, true);			
+		}		
 	}
 
 	private void initView(String newViewLg) throws IOException {

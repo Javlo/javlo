@@ -37,13 +37,16 @@ public class TaxonomyService {
 	private Map<String, TaxonomyBean> taxonomyBeanPathMap = new HashMap<String, TaxonomyBean>();
 	private List<Map.Entry<String, String>> options = null;
 
-	public static final TaxonomyService getInstance(ContentContext ctx) {
+	public static final TaxonomyService getInstance(ContentContext ctx) {		
 		return getInstance(ctx, ctx.getRenderMode());
 	}
 	
 	public static final TaxonomyService getMasterInstance(ContentContext ctx) throws IOException {
 		int renderMode = ctx.getRenderMode();		
 		if (renderMode == ContentContext.PREVIEW_MODE) {
+			renderMode = ContentContext.EDIT_MODE;
+		}
+		if (renderMode == ContentContext.VIEW_MODE && !ctx.getGlobalContext().isPreviewMode()) {
 			renderMode = ContentContext.EDIT_MODE;
 		}
 		GlobalContext globalContext = ctx.getGlobalContext();
@@ -61,6 +64,9 @@ public class TaxonomyService {
 	
 	public static final TaxonomyService getInstance(ContentContext ctx, int renderMode) {
 		if (renderMode == ContentContext.PREVIEW_MODE) {
+			renderMode = ContentContext.EDIT_MODE;
+		}		
+		if (renderMode == ContentContext.VIEW_MODE && !ctx.getGlobalContext().isPreviewMode()) {
 			renderMode = ContentContext.EDIT_MODE;
 		}
 		TaxonomyService outService = (TaxonomyService) ctx.getGlobalContext().getAttribute(KEY+renderMode);
@@ -299,17 +305,19 @@ public class TaxonomyService {
 		return outBeans;
 	}
 	
-	private List<IListItem> getList(ContentContext ctx, String path, boolean displayParentLabel) {
+	private List<IListItem> getList(ContentContext ctx, String path, boolean displayParentLabel) {		
 		String[] nodes;
 		if (path.contains("/")) {
 			nodes = StringUtils.split(path, '/');
 		} else if (path.contains("-")) {
 			nodes = StringUtils.split(path, '-');
-		} else {
+		} else if (path.contains(".")) {
+			nodes = StringUtils.split(path, '.');
+		}else {
 			nodes = StringUtils.split(path, '>');
 		}
 		TaxonomyBean bean = root;
-		for (int i = 0; i < nodes.length; i++) {
+		for (int i = 0; i < nodes.length; i++) {			
 			bean = bean.searchChildByName(nodes[i].trim());
 			if (bean == null) {
 				i = nodes.length;

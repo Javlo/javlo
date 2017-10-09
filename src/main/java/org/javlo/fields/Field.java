@@ -47,6 +47,7 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 	public static String LABEL_CSS = "col-sm-4 col-form-label";
 	public static String VALUE_SIZE = "col-sm-8";
 	public static String SMALL_VALUE_SIZE = "col-sm-6";
+	public static String SMALL_PART_SIZE = "col-sm-2";
 
 	public class FieldBean {
 
@@ -71,6 +72,10 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 		public String getLabel() {
 			return Field.this.getLabel(ctx, contentLocale);
 		}
+		
+		public String getUnity() {
+			return Field.this.getUnity(ctx, contentLocale);
+		}		
 		
 		public String getValue() {
 			return Field.this.getValue();
@@ -117,7 +122,7 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 
 		public String getSuffix() {
 			return Field.this.getFieldSuffix(ctx);
-		}
+		}		
 
 		public String getType() {
 			return Field.this.getType();
@@ -152,8 +157,12 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 			String suffix = "";
 			if (isWrapped()) {
 				prefix = "<div class=\"field " + getName() + cssClass + "\">";
-				suffix = "</div>";
+				suffix = "</div>";				
 			}				
+			String unity = getUnity();
+			if (!StringHelper.isEmpty(unity)) {
+				unity= "<span class=\"unity\">"+unity+"</span>";
+			}
 			return prefix+Field.this.getFieldPrefix(ctx)+Field.this.getViewXHTMLCode(ctx)+Field.this.getFieldSuffix(ctx)+suffix;
 		}
 
@@ -449,18 +458,14 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 	}
 
 	public String getEditXHTMLCode(ContentContext ctx) throws Exception {
-
 		String refCode = referenceEditCode(ctx);
 		if (refCode != null) {
 			return refCode;
 		}
-
 		StringWriter writer = new StringWriter();
 		PrintWriter out = new PrintWriter(writer);
-
 		out.println("<div class=\"row form-group field-"+getName()+"\"><div class=\""+LABEL_CSS+"\">");
 		out.println(getEditLabelCode());		
-		
 		out.println("	<label class=\"col-form-label\" for=\"" + getInputName() + "\">" + getLabel(ctx, new Locale(ctx.getContextRequestLanguage())) + " : </label>");
 		String readOnlyHTML = "";
 		if (isReadOnly()) {
@@ -569,7 +574,11 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 				outValue = StringUtils.replace(outValue, entry.getKey(), value);
 			}
 		}
-		return outValue;
+		String unity = getUnity(ctx);
+		if (!StringHelper.isEmpty(unity)) {
+			unity= "<span class=\"unity\">"+unity+"</span>";
+		}
+		return outValue+unity;
 	}
 	
 	public String getPropertyValue(String suffix, String defaultValue) {
@@ -757,23 +766,41 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 		this.name = name;
 	}
 
-	protected String getLabel(ContentContext ctx, Locale locale) {
+	protected String getLabel(ContentContext ctx, Locale locale) {		
 		if (getLabel().trim().length() != 0) {
 			return getLabel();
 		}
-		String label = properties.getProperty(createKey("label." + locale.getLanguage()));
+		String key = createKey("label." + locale.getLanguage());		
+		String label = properties.getProperty(key);		
 		if (label == null) {
 			label = properties.getProperty(createKey("label"));
 			if (label == null) {
 				label = getUnicName();
 			}
 		}
-		String key = properties.getProperty(createKey("label.key"));
+		key = properties.getProperty(createKey("label.key"));
 		if (key != null) {
 			label = i18nAccess.getAllText(key.trim(), label);
 		}
 
 		return label;
+	}
+	
+	protected String getUnity(ContentContext ctx, Locale locale) {		
+		String unity = properties.getProperty(createKey("unity." + locale.getLanguage()));
+		if (unity == null) {
+			unity = properties.getProperty(createKey("unity"));			
+		}
+		String key = properties.getProperty(createKey("unity.key"));
+		if (key != null) {
+			unity = i18nAccess.getAllText(key.trim(), unity);
+		}
+
+		return unity;
+	}
+	
+	protected String getUnity(ContentContext ctx) {
+		return getUnity(ctx, new Locale(ctx.getContextRequestLanguage()));
 	}
 	
 	protected String getSearchLabel(ContentContext ctx, Locale locale) {

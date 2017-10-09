@@ -67,9 +67,12 @@ public class DynamicComponentCreator extends AbstractVisualComponent implements 
 			}
 			compDef.getComponentBean().setId(id);
 			out.println("<div class=\"card\"><div class=\"card-body\"><h4 class=\"card-title\">" + i18nAccess.getViewText("global.new") + "</h4>");
-			ContentContext editCtx = new ContentContext(ctx);
+			ContentContext editCtx = new ContentContext(ctx);			
+			i18nAccess.forceReloadEdit(ctx.getGlobalContext(), ctx.getRequest().getSession(), ctx.getRequestContentLanguage());			
+			editCtx.setContextRequestLanguage(ctx.getRequestContentLanguage());
 			editCtx.setRenderMode(ContentContext.EDIT_MODE);
-			out.println(compDef.getEditXHTMLCode(editCtx));
+			out.println(compDef.getEditXHTMLCode(editCtx));			
+			i18nAccess.resetForceEditLg();			
 			out.println("<div><input type=\"hidden\" name=\"type\" value=\"" + getValue() + "\" />");
 			out.println("<input type=\"hidden\" name=\"id\" value=\"" + id + "\" />");
 			out.println("<input type=\"hidden\" name=\"webaction\" value=\"" + getActionGroupName() + ".createcomponent\" />");

@@ -478,6 +478,8 @@ public class ContentContext {
 
 	private GlobalContext forceGlobalContext = null;
 
+	private String contextRequestLanguage = null;
+
 	public ContentContext(ContentContext ctx) {
 		path = ctx.path;
 		language = ctx.language;
@@ -789,12 +791,18 @@ public class ContentContext {
 	 * @return
 	 */
 	public String getContextRequestLanguage() {
-		if (getRenderMode() == ContentContext.EDIT_MODE) {
+		if (contextRequestLanguage != null) {
+			return contextRequestLanguage;
+		} else if (getRenderMode() == ContentContext.EDIT_MODE) {
 			GlobalContext globalContext = GlobalContext.getInstance(getRequest());
 			return globalContext.getEditLanguage(getRequest().getSession());
 		} else {
 			return getRequestContentLanguage();
 		}
+	}
+	
+	public void setContextRequestLanguage(String lg) {
+		contextRequestLanguage  = lg;
 	}
 
 	public ContentContext getContextForDefaultLanguage() {

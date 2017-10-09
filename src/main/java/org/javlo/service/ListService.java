@@ -187,7 +187,7 @@ public class ListService {
 		return outService;
 	}
 
-	public List<IListItem> getList(ContentContext ctx, String name) throws IOException, Exception {
+	public List<IListItem> getList(ContentContext ctx, String name) throws IOException, Exception {		
 		List<IListItem> outList = getNavigationList(ctx,name);
 		if (outList != null) {
 			return outList;
@@ -228,7 +228,7 @@ public class ListService {
 		if (outList == null) {
 			outList = getHardCodedList(ctx, name);
 		}
-		/** search taxonomy list **/
+		/** search taxonomy list **/		
 		if (outList == null) {
 			outList = ctx.getGlobalContext().getAllTaxonomy(ctx).getList(ctx, name);
 		}
