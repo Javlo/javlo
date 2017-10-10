@@ -884,5 +884,5 @@ change log
  
  * 2/ clear cache on publish (partial) / change sass compiler / DynamicComponet creator
 
- * 3/ refuse cookies mecanism
+ * 3/ refuse cookies mecanism / DynamicComponent add sound field + edit layout
 
