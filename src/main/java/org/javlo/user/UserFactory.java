@@ -307,6 +307,8 @@ public class UserFactory implements IUserFactory, Serializable {
 		if (outUser != null) {
 			outUser.setContext(globalContext.getContextKey());
 			request.getSession().setAttribute(SESSION_KEY, outUser);
+		} else {
+			logger.warning("bad token : "+token);
 		}
 
 		return outUser;
