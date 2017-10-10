@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.javlo.actions.IAction;
 import org.javlo.component.core.AbstractVisualComponent;
+import org.javlo.component.core.ComponentBean;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.dynamic.DynamicComponent;
 import org.javlo.context.ContentContext;
@@ -51,8 +52,8 @@ public class DynamicComponentBasket extends AbstractVisualComponent implements I
 		String pdfURL = URLHelper.createPDFURL(ctx);
 		I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
 		pdfURL = URLHelper.addParam(pdfURL, ComponentBasket.SESSION_KEY, ctx.getGlobalContext().addSharedObject(ComponentBasket.getComponentBasket(ctx)));
-		out.println("<div class=\"btn-group pdf-link\"><a class=\"btn btn-secondary\" href=\"" +  pdfURL + "\"><i class=\"fa fa-file-pdf-o\" aria-hidden=\"true\"></i>&nbsp;"+i18nAccess.getViewText("global.download")+" PDF</a></div>");
-		int index=0;
+		out.println("<div class=\"btn-group pdf-link\"><a class=\"btn btn-secondary\" href=\"" + pdfURL + "\"><i class=\"fa fa-file-pdf-o\" aria-hidden=\"true\"></i>&nbsp;" + i18nAccess.getViewText("global.download") + " PDF</a></div>");
+		int index = 0;
 		ContentService contentService = ContentService.getInstance(ctx.getRequest());
 		ctx.getRequest().setAttribute("first", true);
 		ctx.getRequest().setAttribute("last", false);
@@ -65,25 +66,34 @@ public class DynamicComponentBasket extends AbstractVisualComponent implements I
 			if (index == size) {
 				ctx.getRequest().setAttribute("nextSame", false);
 			}
-			ctx.getRequest().setAttribute("componentIndex", index);			
-			DynamicComponent container = (DynamicComponent)contentService.getComponent(ctx, selctId);
+			ctx.getRequest().setAttribute("componentIndex", index);
+			DynamicComponent container = (DynamicComponent) contentService.getComponent(ctx, selctId);
 			if (container != null) {
 				out.println(container.getViewListXHTMLCode(ctx));
 				ctx.getRequest().setAttribute("first", false);
 				ctx.getRequest().setAttribute("previousSame", true);
 			}
-			
+
 		}
 		out.close();
 		return new String(outStream.toByteArray());
 	}
-	
+
 	@Override
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
 		if (isLong()) {
 			return getLargeViewXHTMLCode(ctx);
 		} else {
 			return getSmallViewXHTMLCode(ctx);
+		}
+	}
+
+	@Override
+	protected String getViewID(ContentContext ctx) {
+		if (!ctx.getArea().equals(ComponentBean.DEFAULT_AREA)) {
+			return "fixed-box";
+		} else {
+			return null;
 		}
 	}
 
@@ -96,8 +106,8 @@ public class DynamicComponentBasket extends AbstractVisualComponent implements I
 		out.println(ComponentBasket.getComponentBasket(ctx).size() + " " + getValue());
 		Map<String, String> params = new HashMap<String, String>();
 		params.put("selection", StringHelper.collectionToString(basket.getComponents()));
-		String basketURL = URLHelper.createURLFromPageName(ctx, "basket", params);		
-		out.println("<a class=\"share-link pull-right\" href=\"" + basketURL + "\"><i class=\"fa fa-share\" aria-hidden=\"true\"></i></a>");				
+		String basketURL = URLHelper.createURLFromPageName(ctx, "basket", params);
+		out.println("<a class=\"share-link pull-right\" href=\"" + basketURL + "\"><i class=\"fa fa-share\" aria-hidden=\"true\"></i></a>");
 		out.println("</div>");
 		if (basket.components.size() > 0) {
 			out.println("<ul class=\"list-group list-group-flush\">");

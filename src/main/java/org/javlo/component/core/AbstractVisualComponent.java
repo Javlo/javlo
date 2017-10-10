@@ -1588,8 +1588,16 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		if (!StringHelper.isEmpty(cssId)) {
 			return " id=\"" + cssId + "\"";
 		} else {
-			return "";
+			if (getViewID(ctx) != null) {
+				return " id=\"" + getViewID(ctx) + "\"";
+			} else {
+				return "";
+			}
 		}
+	}
+	
+	protected String getViewID(ContentContext ctx) {
+		return null;
 	}
 	
 	public boolean isAjaxWrapper(ContentContext ctx) {
