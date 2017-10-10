@@ -242,6 +242,8 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 	private Map<String, String> replacementCode = null;
 	private Locale currentLocale = null;
 	protected IContentVisualComponent comp = null;
+	private boolean last = false;
+	private boolean first = false;
 
 	/**
 	 * Filed can only be create with FieldFactory
@@ -463,7 +465,7 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 			return refCode;
 		}
 		StringWriter writer = new StringWriter();
-		PrintWriter out = new PrintWriter(writer);
+		PrintWriter out = new PrintWriter(writer);		
 		out.println("<div class=\"row form-group field-"+getName()+"\"><div class=\""+LABEL_CSS+"\">");
 		out.println(getEditLabelCode());		
 		out.println("	<label class=\"col-form-label\" for=\"" + getInputName() + "\">" + getLabel(ctx, new Locale(ctx.getContextRequestLanguage())) + " : </label>");
@@ -476,8 +478,7 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 		if (getMessage() != null && getMessage().trim().length() > 0) {
 			out.println("	<div class=\"message " + getMessageTypeCSSClass() + "\">" + getMessage() + "</div>");
 		}
-		out.println("</div></div>");
-
+		out.println("</div></div>");		
 		out.close();
 		return writer.toString();
 	}
@@ -494,10 +495,6 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 		} else {
 			return prefix;
 		}
-	}
-
-	public int getColsWidth(ContentContext ctx) {
-		return Integer.parseInt(properties.getProperty("field." + getUnicName() + ".col-width", "12"));
 	}
 
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
@@ -659,6 +656,75 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 		} else {
 			return Integer.parseInt(maxSize);
 		}
+	}
+	
+	public int getWidthEdit() {
+		String widthEdit = getPropertyValue("width-edit", null);
+		if (widthEdit == null || !StringHelper.isDigit(widthEdit)) {
+			return 12;
+		} else {
+			return Integer.parseInt(widthEdit);
+		}
+	}
+	
+	public int getWidthView() {
+		String widthView = getPropertyValue("width-view", null);
+		if (widthView == null || !StringHelper.isDigit(widthView)) {
+			return 12;
+		} else {
+			return Integer.parseInt(widthView);
+		}
+	}
+	
+	public String getOpenRow(ContentContext ctx) {
+		final String STATUS_KEY = "_widthStatus";
+		int width;		
+		if (ctx.isAsEditMode()) {
+			width = getWidthEdit();
+		} else {
+			width = getWidthView();		
+		}
+		Integer widthStatus = (Integer)ctx.getRequest().getAttribute(STATUS_KEY);		
+		if (widthStatus == null || width+widthStatus > 12) {
+			if (widthStatus == null) {
+				ctx.getRequest().setAttribute(STATUS_KEY, width);
+			} else {
+				ctx.getRequest().removeAttribute(STATUS_KEY);
+			}
+			if (isFirst()) {
+				return "<div class=\"row\"><div class=\"col-md-"+width+"\"> <!-- first open row -->";
+			} else {
+				return "</div><div class=\"row\"><div class=\"col-md-"+width+"\"> <!-- open row -->";
+			}
+		} else {
+			ctx.getRequest().setAttribute(STATUS_KEY, width + widthStatus);
+			return "<div class=\"col-md-"+width+"\">";
+		}
+	}
+	
+	public String getCloseRow(ContentContext ctx) {
+		if (last) {
+			return "</div></div> <!-- close row series -->";	
+		} else {
+			return "</div>";
+		}
+		
+	}
+	
+	public void setLast(boolean last) {
+		this.last = last;
+	}
+	
+	public boolean isLast() {
+		return last;
+	}
+	
+	public void setFirst(boolean first) {
+		this.first = first;
+	}
+	
+	public boolean isFirst() {
+		return first;
 	}
 	
 	public Integer getMinSize() {

@@ -232,7 +232,6 @@ public class FieldFile extends Field implements IStaticContainer {
 		}
 
 		out.println("<div class=\"row form-group\"><div class=\"col-sm-3\">");
-		System.out.println("##### FieldFile.getEditXHTMLCode :  i18nAccess.getEditLg()  = "+ i18nAccess.getEditLg() ); //TODO: remove debug trace
 		out.println("<label for=\"" + getInputAddFileName() + "\">" + getAddFileLabel() + " " + i18nAccess.getEditLg() + " : </label>");
 		out.println("</div><div class=\"col-sm-3\"><input type=\"file\" id=\"" + getInputAddFileName() + "\" name=\"" + getInputAddFileName() + "\" /></div>");
 		out.println("</div>");
@@ -394,16 +393,14 @@ public class FieldFile extends Field implements IStaticContainer {
 				setNeedRefresh(true);
 			}
 		}		
-		if (delete) {
-			System.out.println("##### FieldFile.process : DELETE"); //TODO: remove debug trace
+		if (delete) {			
 			String dir = URLHelper.mergePath(getFileDirectory(), getCurrentFolder());
 			File file = new File(URLHelper.mergePath(dir, getCurrentFile()));		
 			if (file.exists()) {
 				file.delete();
 			}
 			setCurrentFile(null);
-		} else if (newFileName.trim().length() > 0) {
-			System.out.println("##### FieldFile.process : newFileName = "+newFileName); //TODO: remove debug trace
+		} else if (newFileName.trim().length() > 0) {			
 			newFileName = StringHelper.createFileName(newFileName);
 			Collection<FileItem> fileItems = requestService.getAllFileItem();
 			try {

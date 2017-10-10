@@ -13,6 +13,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -245,8 +246,11 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 			}
 		}
 		String firstFiledClass = " first-field";
-		for (Field field : fields) {
+		Iterator<Field> ite = fields.iterator();
+		while (ite.hasNext()) {
+			Field field = ite.next();
 			if (field != null) {
+				field.setLast(ite.hasNext());
 				if (field.getTranslation() != null) {
 					field.setCurrentLocale(new Locale(ctx.getRequestContentLanguage()));
 				}
@@ -256,6 +260,7 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 						if (field.getCSSClass() != null && field.getCSSClass().trim().length() > 0) {
 							cssClass = ' ' + field.getCSSClass();
 						}
+						out.println(field.getOpenRow(ctx));
 						out.println(field.getFieldPrefix(ctx));
 						if (field.isWrapped()) { 
 							out.println("<div class=\"field " + field.getName() + firstFiledClass + cssClass + "\">");
@@ -265,6 +270,7 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 							out.println("</div>");
 						}
 						out.println(field.getFieldSuffix(ctx));
+						out.println(field.getCloseRow(ctx));
 						firstFiledClass = "";
 					}
 				}
@@ -459,15 +465,21 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 		}
 		int colSize = 0;		
 		String firstItem = "first ";
-		for (Field field : fields) {			
-			if (field != null) {				
-				colSize = colSize + field.getColsWidth(ctx);
+		Iterator<Field> iter = fields.iterator();
+		boolean first = true;
+		while (iter.hasNext()) {
+			Field field = iter.next();			
+			if (field != null) {
+				field.setFirst(first);
+				first=false;				
+				field.setLast(!iter.hasNext());				
 				String last = "";
 				if (colSize >= 12) {
 					colSize = 0;
 					last = "lastcol ";
 				}
-				out.println("<div class=\"" + firstItem + last + "col" + field.getColsWidth(ctx) + "\">");
+				out.println(field.getOpenRow(ctx));
+				out.println("<div class=\"" + firstItem + last + "\">");				
 				if (firstItem.length() == 0) {
 					out.println("<hr />");
 				}
@@ -490,7 +502,7 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 						out.println("<fieldset><legend>" + locale.getDisplayLanguage(new Locale(GlobalContext.getInstance(ctx.getRequest()).getEditLanguage(ctx.getRequest().getSession()))) + "</legend>");
 					}
 					field.setCurrentLocale(locale);
-					String editXHTML = field.getEditXHTMLCode(ctx);
+					String editXHTML = field.getEditXHTMLCode(ctx);					
 					if (editXHTML == null || editXHTML.trim().length() == 0) {
 						out.println("<div class=\"alert alert-danger\" role=\"alert\">field format error : "+field.getName()+".</div>");
 					} else {
@@ -505,6 +517,7 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 				}				
 				firstItem="";
 				out.println("</div>");
+				out.println(field.getCloseRow(ctx));
 			}
 		}
 		out.println("</div>");
@@ -535,8 +548,9 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 
 		boolean valid=true;
 		List<String> errorField = new LinkedList<String>();
-		for (Field field : fieldsName) {
-
+		Iterator<Field> iter = fieldsName.iterator();
+		while (iter.hasNext()) {
+			Field field = iter.next();			
 			Collection<Locale> languages;
 			if (field.getTranslation() == null) {
 				languages = new LinkedList<Locale>();

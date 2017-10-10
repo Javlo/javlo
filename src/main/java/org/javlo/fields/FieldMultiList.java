@@ -42,7 +42,7 @@ public class FieldMultiList extends Field {
 
 		StringWriter writer = new StringWriter();
 		PrintWriter out = new PrintWriter(writer);
-		out.println("<div class=\"form-group\"><div class=\"row\"><div class=\""+LABEL_CSS+"\">");
+		out.println("<div class=\"form-row\"><div class=\""+LABEL_CSS+"\">");
 		out.println("<label>" + getLabel(ctx, new Locale(ctx.getContextRequestLanguage())) + " : </label></div>");
 		out.println(getEditLabelCode());
 		out.println("<div class=\""+VALUE_SIZE+"\">");
@@ -56,12 +56,12 @@ public class FieldMultiList extends Field {
 			}
 			String key = StringHelper.neverNull(value.getKey(), value.getValue());
 			String label = StringHelper.neverEmpty(value.getValue(), i18nAccess.getViewText("global.none", "?"));
-			out.println("<label class=\"checkbox-inline\"><input type=\"checkbox\" name=\"" + getInputName() + "\" id=\"cb-" + key + "\" value=\"" + key + "\"" + checked + "/>" + label + "</label>");
+			out.println("<div class=\"form-check form-check-inline\"><label class=\"checkbox-inline form-check-label\"><input class=\"form-check-input\" type=\"checkbox\" name=\"" + getInputName() + "\" id=\"cb-" + key + "\" value=\"" + key + "\"" + checked + "/>" + label + "</label></div>");
 		}
 		if (getMessage() != null && getMessage().trim().length() > 0) {
 			out.println("	<div class=\"message " + getMessageTypeCSSClass() + "\">" + getMessage() + "</div>");
 		}
-		out.println("</div></div></div>");
+		out.println("</div></div>");
 
 		out.close();
 		return writer.toString();
