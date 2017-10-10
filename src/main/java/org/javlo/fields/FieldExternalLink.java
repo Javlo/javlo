@@ -6,8 +6,6 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.logging.Logger;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.javlo.component.core.ILink;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
@@ -102,7 +100,7 @@ public class FieldExternalLink extends MetaField implements ILink {
 	}
 
 	@Override
-	public String getEditXHTMLCode(ContentContext ctx) throws Exception {
+	public String getEditXHTMLCode(ContentContext ctx, boolean search) throws Exception {
 		StringWriter writer = new StringWriter();
 		PrintWriter out = new PrintWriter(writer);
 

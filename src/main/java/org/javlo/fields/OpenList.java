@@ -65,12 +65,9 @@ public class OpenList extends Field {
 		return getEditXHTMLCode(ctx, true);
 	}
 	
-	@Override
-	public String getEditXHTMLCode(ContentContext ctx) throws Exception {
-		return getEditXHTMLCode(ctx, false);		
-	}
 	
-	private String getEditXHTMLCode(ContentContext ctx, boolean search) throws Exception {
+	@Override
+	public String getEditXHTMLCode(ContentContext ctx, boolean search) throws Exception {
 		StringWriter writer = new StringWriter();
 		PrintWriter out = new PrintWriter(writer);
 		Map<String,String> valuesMap = getList(ctx);

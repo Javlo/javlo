@@ -459,16 +459,27 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 		return "";
 	}
 
-	public String getEditXHTMLCode(ContentContext ctx) throws Exception {
+	public final String getEditXHTMLCode(ContentContext ctx) throws Exception {
+		return getEditXHTMLCode(ctx, false);
+	}
+	
+	public String getEditXHTMLCode(ContentContext ctx, boolean search) throws Exception {
 		String refCode = referenceEditCode(ctx);
 		if (refCode != null) {
 			return refCode;
 		}
 		StringWriter writer = new StringWriter();
 		PrintWriter out = new PrintWriter(writer);		
-		out.println("<div class=\"row form-group field-"+getName()+"\"><div class=\""+LABEL_CSS+"\">");
-		out.println(getEditLabelCode());		
-		out.println("	<label class=\"col-form-label\" for=\"" + getInputName() + "\">" + getLabel(ctx, new Locale(ctx.getContextRequestLanguage())) + " : </label>");
+		out.println("<div class=\"row field-"+getName()+"\"><div class=\""+LABEL_CSS+"\">");
+		out.println(getEditLabelCode());	
+		String label=null;;
+		if (search) {
+			label = getSearchLabel(ctx, new Locale(ctx.getContextRequestLanguage()));
+		}
+		if (StringHelper.isEmpty(label)) {
+			label = getLabel(ctx, new Locale(ctx.getContextRequestLanguage()));
+		}
+		out.println("	<label class=\"col-form-label\" for=\"" + getInputName() + "\">" + label + " : </label>");
 		String readOnlyHTML = "";
 		if (isReadOnly()) {
 			readOnlyHTML = " readonly=\"readonly\"";
@@ -484,7 +495,7 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 	}
 	
 	public String getSearchEditXHTMLCode(ContentContext ctx) throws Exception {
-		return getEditXHTMLCode(ctx);
+		return getEditXHTMLCode(ctx, true);
 	}
 
 	public String getFieldPrefix(ContentContext ctx) {

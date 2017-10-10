@@ -26,7 +26,7 @@ public class FieldList extends Field {
 	}
 	
 	@Override
-	public String getEditXHTMLCode(ContentContext ctx) throws Exception {
+	public String getEditXHTMLCode(ContentContext ctx, boolean search) throws Exception {
 		
 		String refCode = referenceEditCode(ctx);
 		if (refCode != null) {

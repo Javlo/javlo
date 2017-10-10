@@ -5,14 +5,13 @@ import java.io.StringWriter;
 import java.util.Locale;
 
 import org.javlo.context.ContentContext;
-import org.javlo.context.GlobalContext;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.XHTMLHelper;
 
 public class FieldEnormousText extends Field {
 
 	@Override
-	public String getEditXHTMLCode(ContentContext ctx) {
+	public String getEditXHTMLCode(ContentContext ctx, boolean search) {
 		StringWriter writer = new StringWriter();
 		PrintWriter out = new PrintWriter(writer);		
 

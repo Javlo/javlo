@@ -36,16 +36,13 @@ public class FieldAge extends FieldDate {
 		out.println("	<label class=\"col-form-label\" for=\"" + getInputName() + "\">" + getSearchLabel(ctx, new Locale(ctx.getContextRequestLanguage())) + " : </label>");
 		out.println("</div><div class=\"col-sm-8\"><input type=\"hidden\" name=\""+getInputName()+"\" value=\"1\" />");
 		RequestService rs = RequestService.getInstance(ctx.getRequest());
-
 		out.println("<div class=\"form-group form-inline-2 text-right\">");
 		out.println("<label for=\""+getFromName(ctx)+"\" class=\"form-label text-left\">"+i18nAccess.getViewText("global.from")+"</label>");		
 		out.println("<input type=\"number\" min=\"0\" max=\"99\" class=\"form-control\" id=\""+getFromName(ctx)+"\" name=\""+getFromName(ctx)+"\" value=\""+rs.getParameter(getFromName(ctx), "0")+"\">");
 		out.println("<label for=\""+getToName(ctx)+"\" class=\"col-sm-4 col-form-label text-left\">"+i18nAccess.getViewText("global.to")+"</label>");		
 		out.println("<input type=\"number\" min=\"0\" max=\"99\" class=\"form-control\" id=\""+getToName(ctx)+"\" name=\""+getToName(ctx)+"\" value=\""+rs.getParameter(getToName(ctx), "99")+"\">");
-		out.println("</div>");
-		
-		out.println("</div></div>");		
-		
+		out.println("</div>");		
+		out.println("</div></div>");
 		out.close();
 		return new String(outStream.toByteArray());
 	}

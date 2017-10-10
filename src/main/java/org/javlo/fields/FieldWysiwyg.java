@@ -59,7 +59,7 @@ public class FieldWysiwyg extends Field {
 	}
 
 	@Override
-	public String getEditXHTMLCode(ContentContext ctx) {
+	public String getEditXHTMLCode(ContentContext ctx, boolean search) {
 		try {
 			String refCode = referenceEditCode(ctx);
 			if (refCode != null) {

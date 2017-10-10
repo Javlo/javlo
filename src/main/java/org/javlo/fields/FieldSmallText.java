@@ -8,7 +8,7 @@ import org.javlo.context.ContentContext;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.XHTMLHelper;
 
-public class FieldLargeText extends Field {
+public class FieldSmallText extends Field {
 
 	@Override
 	public String getEditXHTMLCode(ContentContext ctx, boolean search) {
@@ -31,7 +31,7 @@ public class FieldLargeText extends Field {
 		if (isReadOnly()) {
 			readOnlyHTML = " readonly=\"readonly\"";
 		}
-		out.print("<textarea "+(StringHelper.isEmpty(getPlaceholder())?"":" placeholder=\""+getPlaceholder()+"\"")+"class=\"form-control\"" + readOnlyHTML + " id=\"" + getInputName() + "\" name=\"" + getInputName() + "\" rows=\"10\" cols=\"20\">");
+		out.print("<textarea "+(StringHelper.isEmpty(getPlaceholder())?"":" placeholder=\""+getPlaceholder()+"\"")+"class=\"form-control\"" + readOnlyHTML + " id=\"" + getInputName() + "\" name=\"" + getInputName() + "\" rows=\"3\" cols=\"20\">");
 		out.print(StringHelper.neverNull(getValue()));
 		out.println("</textarea>");
 		out.println("</div>");
@@ -57,7 +57,7 @@ public class FieldLargeText extends Field {
 
 	@Override
 	public String getType() {
-		return "large-text";
+		return "small-text";
 	}
 
 }

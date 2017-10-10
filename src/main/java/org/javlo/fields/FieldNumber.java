@@ -105,14 +105,14 @@ public class FieldNumber extends Field {
 		}
 	}
 
-	public String getEditXHTMLCode(ContentContext ctx) throws Exception {
+	public String getEditXHTMLCode(ContentContext ctx, boolean search) throws Exception {
 		String refCode = referenceEditCode(ctx);
 		if (refCode != null) {
 			return refCode;
 		}
 		StringWriter writer = new StringWriter();
 		PrintWriter out = new PrintWriter(writer);
-		out.println("<div class=\"row form-group\"><div class=\"" + LABEL_CSS + "\">");
+		out.println("<div class=\"row\"><div class=\"" + LABEL_CSS + "\">");
 		out.println(getEditLabelCode());
 		boolean isUnity = !StringHelper.isEmpty(getUnity(ctx));
 		out.println("<label for=\"" + getInputName() + "\">" + getLabel(ctx, new Locale(ctx.getContextRequestLanguage())) + " : </label></div><div class=\"" + (isUnity ? SMALL_VALUE_SIZE : VALUE_SIZE) + "\">");

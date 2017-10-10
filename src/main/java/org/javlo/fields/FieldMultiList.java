@@ -28,7 +28,7 @@ public class FieldMultiList extends Field {
 	}
 
 	@Override
-	public String getEditXHTMLCode(ContentContext ctx) throws Exception {
+	public String getEditXHTMLCode(ContentContext ctx, boolean search) throws Exception {
 		if (getListName() == null) {
 			return "list not found !";
 		}

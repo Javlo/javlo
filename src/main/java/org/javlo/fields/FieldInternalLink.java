@@ -64,7 +64,7 @@ public class FieldInternalLink extends Field {
 	}
 
 	@Override
-	public String getEditXHTMLCode(ContentContext ctx) throws Exception {
+	public String getEditXHTMLCode(ContentContext ctx, boolean search) throws Exception {
 		StringWriter writer = new StringWriter();
 		PrintWriter out = new PrintWriter(writer);
 

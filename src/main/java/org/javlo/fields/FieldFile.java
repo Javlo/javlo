@@ -81,9 +81,9 @@ public class FieldFile extends Field implements IStaticContainer {
 	}
 
 	protected String getFileType() {
-		return this.properties.getProperty("field." + getName() + ".file.type", "file");
+		return this.properties.getProperty("field." + getName() + ".file.type", null);
 	}
-
+	
 	protected boolean isCategoryRecursive() {
 		return StringHelper.isTrue(this.properties.getProperty("field." + getName() + ".recursive", null), true);
 	}
@@ -173,7 +173,7 @@ public class FieldFile extends Field implements IStaticContainer {
 	}
 
 	@Override
-	public String getEditXHTMLCode(ContentContext ctx) throws Exception {
+	public String getEditXHTMLCode(ContentContext ctx, boolean search) throws Exception {
 
 		String refCode = referenceEditCode(ctx);
 		if (refCode != null) {
@@ -189,7 +189,6 @@ public class FieldFile extends Field implements IStaticContainer {
 		out.println("<div class=\"commands\">");
 
 		if (!isLight()) {
-
 			out.println("<div class=\"row form-group\"><div class=\""+LABEL_CSS+"\">");
 			out.println("<label for=\"" + getInputCreateFolderName() + "\">" + getCreateFolderLabel() + " : </label>");
 			out.println("</div><div class=\""+VALUE_SIZE+"\"><input class=\"form-control\" type=\"text\" id=\"" + getInputCreateFolderName() + "\" name=\"" + getInputCreateFolderName() + "\" /></div>");
@@ -392,7 +391,18 @@ public class FieldFile extends Field implements IStaticContainer {
 				modify = true;
 				setNeedRefresh(true);
 			}
-		}		
+		}
+		boolean upload = true;
+		if (!StringHelper.isEmpty(getFileType())) {
+			List<String> types = StringHelper.stringToCollection(getFileType(), ",");
+			if (!types.contains(StringHelper.getFileExtension(newFileName).toLowerCase())) {
+				setMessage(i18nAccess.getText("global.bad-file-type")+getFileType());
+				setMessageType(Field.MESSAGE_ERROR);
+				upload = false;
+			}
+		}
+		System.out.println("##### FieldFile.process : getFileType() = "+getFileType()); //TODO: remove debug trace
+		System.out.println("##### FieldFile.process : upload = "+upload); //TODO: remove debug trace
 		if (delete) {			
 			String dir = URLHelper.mergePath(getFileDirectory(), getCurrentFolder());
 			File file = new File(URLHelper.mergePath(dir, getCurrentFile()));		
@@ -400,7 +410,7 @@ public class FieldFile extends Field implements IStaticContainer {
 				file.delete();
 			}
 			setCurrentFile(null);
-		} else if (newFileName.trim().length() > 0) {			
+		} else if (upload && newFileName.trim().length() > 0) {			
 			newFileName = StringHelper.createFileName(newFileName);
 			Collection<FileItem> fileItems = requestService.getAllFileItem();
 			try {
@@ -570,6 +580,20 @@ public class FieldFile extends Field implements IStaticContainer {
 
 	protected boolean isLight() {
 		return StringHelper.isTrue(getPropertyValue("light", null));
+	}
+	
+	protected String getRessourceURL(ContentContext ctx) {
+		if ( getCurrentFile() == null || getCurrentFile().trim().length() == 0) {
+			return null;
+		}
+		String relativePath = URLHelper.mergePath(getFileTypeFolder(),getCurrentFolder());
+		String fileURL = URLHelper.mergePath(relativePath, getCurrentFile());
+		try {
+			return URLHelper.createResourceURL(ctx, '/' + fileURL);
+		} catch (Exception e) {			
+			e.printStackTrace();
+			return null;
+		}
 	}
 
 }

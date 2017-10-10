@@ -4,10 +4,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Locale;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.javlo.context.ContentContext;
-import org.javlo.context.GlobalContext;
 import org.javlo.helper.StringHelper;
 import org.javlo.service.RequestService;
 
@@ -19,21 +16,17 @@ public class FieldBoolean extends Field {
 	}
 
 	@Override
-	public String getEditXHTMLCode(ContentContext ctx) throws Exception {
+	public String getEditXHTMLCode(ContentContext ctx, boolean search) throws Exception {
 		
 		String refCode = referenceEditCode(ctx);
 		if (refCode != null) {
 			return refCode;
-		}
-		
+		}		
 		StringWriter writer = new StringWriter();
 		PrintWriter out = new PrintWriter(writer);
-
-		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-
-		out.println("<div class=\"form-group\"><div class=\"checkbox\">");
+		out.println("<div class=\"form-check\"><div class=\"checkbox\">");
 		out.println(getEditLabelCode());
-		out.println("<label>");
+		out.println("<label class=\"form-check-label\">");
 		String readOnlyHTML = "";
 		String checkedHTML = "";
 		if (isReadOnly()) {
@@ -42,13 +35,22 @@ public class FieldBoolean extends Field {
 		if (StringHelper.isTrue(getValue())) {
 			checkedHTML = " checked=\"checked\"";
 		}
-		out.print("<input" + readOnlyHTML + " id=\"" + getInputName() + "\" name=\"" + getInputName() + "\" type=\"checkbox\" value=\"true\"" + checkedHTML + " />");
-		out.println(getLabel(ctx, new Locale(globalContext.getEditLanguage(ctx.getRequest().getSession()))));
+		
+		String label=null;;
+		if (search) {
+			label = getSearchLabel(ctx, new Locale(ctx.getContextRequestLanguage()));
+		}
+		if (StringHelper.isEmpty(label)) {
+			label = getLabel(ctx, new Locale(ctx.getContextRequestLanguage()));
+		}
+
+		
+		out.print("<input" + readOnlyHTML + " id=\"" + getInputName() + "\" name=\"" + getInputName() + "\" type=\"checkbox\" value=\"true\"" + checkedHTML + " class=\"form-check-input\" />");
+		out.println(label);
 		if (getMessage() != null && getMessage().trim().length() > 0) {
 			out.println("	<div class=\"message " + getMessageTypeCSSClass() + "\">" + getMessage() + "</div>");
 		}
 		out.println("</label></div></div>");
-
 		out.close();
 		return writer.toString();
 	}
