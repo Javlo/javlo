@@ -584,9 +584,10 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 		}
 		String unity = getUnity(ctx);
 		if (!StringHelper.isEmpty(unity)) {
-			unity= "<span class=\"unity\">"+unity+"</span>";
+			return outValue+"<span class=\"unity\">"+unity+"</span>";
+		} else {
+			return outValue;
 		}
-		return outValue+unity;
 	}
 	
 	public String getPropertyValue(String suffix, String defaultValue) {
