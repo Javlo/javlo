@@ -436,6 +436,15 @@
 		    <artifactId>j2html</artifactId>
 		    <version>1.2.0</version>
 		</dependency>
+		
+		<!-- 12/10/2017  -->
+		<!-- https://mvnrepository.com/artifact/ch.astorm/jotlmsg -->
+		<dependency>
+		    <groupId>ch.astorm</groupId>
+		    <artifactId>jotlmsg</artifactId>
+		    <version>1.2.1</version>
+		</dependency>
+		
 
 	</dependencies>
 

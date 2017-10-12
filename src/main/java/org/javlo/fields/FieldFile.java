@@ -1,8 +1,10 @@
 package org.javlo.fields;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
@@ -254,6 +256,34 @@ public class FieldFile extends Field implements IStaticContainer {
 		out.close();
 		return writer.toString();
 	}
+	
+	@Override
+	public String getSearchEditXHTMLCode(ContentContext ctx) throws Exception {
+		String refCode = referenceEditCode(ctx);
+		if (refCode != null) {
+			return refCode;
+		}		
+		StringWriter writer = new StringWriter();
+		PrintWriter out = new PrintWriter(writer);
+		out.println("<div class=\"form-check\"><div class=\"checkbox\">");
+		out.println(getEditLabelCode());
+		out.println("<label class=\"form-check-label\">");
+		String checkedHTML = "";
+		if (StringHelper.isTrue(getValue())) {
+			checkedHTML = " checked=\"checked\"";
+		}
+		
+		String label=getSearchLabel(ctx, new Locale(ctx.getContextRequestLanguage()));
+		
+		out.print("<input id=\"" + getInputName() + "\" name=\"" + getInputName() + "\" type=\"checkbox\" value=\"true\"" + checkedHTML + " class=\"form-check-input\" />");
+		out.println(label);
+		if (getMessage() != null && getMessage().trim().length() > 0) {
+			out.println("	<div class=\"message " + getMessageTypeCSSClass() + "\">" + getMessage() + "</div>");
+		}
+		out.println("</label></div></div>");
+		out.close();
+		return writer.toString();	
+	}
 
 	/**
 	 * render the field when he is used as reference value in a other language.
@@ -289,6 +319,16 @@ public class FieldFile extends Field implements IStaticContainer {
 	@Override
 	public boolean isPertinent(ContentContext ctx) {
 		return getCurrentFile() != null && getCurrentFile().length() > 0;
+	}
+	
+	@Override
+	public boolean search(ContentContext ctx, String query) {
+		boolean needFile = StringHelper.isTrue(query);
+		if (needFile) {
+			return !StringHelper.isEmpty(getCurrentFile());
+		} else {
+			return true;
+		}
 	}
 
 	@Override

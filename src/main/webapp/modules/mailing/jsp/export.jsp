@@ -66,6 +66,7 @@ function openOutlook(p_recipient, p_subject, p_body) {
 		</div>
 		
 		<a target="_blank" class="btn btn-defaut" href="${exportURL}">Export HTML</a>
+		<a target="_blank" class="btn btn-defaut" href="${exportURLEML}">Export EML</a>
 		<c:url var="downloadURL" value="${exportURL}" context="/">
 			<c:param name="download" value="true" />
 		</c:url>

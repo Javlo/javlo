@@ -54,7 +54,7 @@ public class SiteMapServlet extends HttpServlet {
 		try {
 
 			GlobalContext globalContext = GlobalContext.getInstance(request);
-			if (globalContext.isPreviewMode()) {
+			if (globalContext.isPreviewMode() && globalContext.getPublishDate() != null) {
 				long lastModified = globalContext.getPublishDate().getTime();
 				response.setDateHeader(NetHelper.HEADER_LAST_MODIFIED, lastModified);
 				response.setHeader("Cache-Control", "max-age=60,must-revalidate");

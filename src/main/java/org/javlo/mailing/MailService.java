@@ -6,6 +6,7 @@ package org.javlo.mailing;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -659,31 +660,29 @@ public class MailService {
 		}
 		return outStr.toString();
 	}
+	
+	public static void writeEMLFile(String subject, String body, OutputStream out) throws MessagingException, IOException {		
+			Message message = new MimeMessage(Session.getInstance(System.getProperties()));
+			message.setSubject(subject);			
+			MimeBodyPart wrap = new MimeBodyPart();
+			MimeMultipart cover = new MimeMultipart("alternative");
+			MimeBodyPart bp = new MimeBodyPart();
+			String txtContent = StringHelper.html2txt(body);
+			bp.setText(txtContent, ContentContext.CHARACTER_ENCODING);
+			cover.addBodyPart(bp);
+			bp = new MimeBodyPart();
+			bp.setText(body, ContentContext.CHARACTER_ENCODING, "html");
+			cover.addBodyPart(bp);
+			wrap.setContent(cover);
+			MimeMultipart contentMail = new MimeMultipart("related");
+			contentMail.addBodyPart(wrap);
+			message.setContent(contentMail);
+			message.writeTo(out);
+			message.setSentDate(new Date());			
+	}
 
-	public static void main(String[] args) {
-		try {
-			Properties props = System.getProperties();
-			props.setProperty("mail.imaps.host", "imap.gmail.com");
-			props.setProperty("mail.imaps.port", "993");
-			props.setProperty("mail.imaps.connectiontimeout", "5000");
-			props.setProperty("mail.imaps.timeout", "5000");
-			try {
-			  Session session = Session.getDefaultInstance(props, null);
-			  Store store = session.getStore("imaps");
-			  store.connect("imap.gmail.com", "pvandermaesen@gmail.com", "pvdm2312");
-			  Folder inbox = store.getFolder("inbox");
-			  System.out.println("#msg : "+inbox.getMessageCount());
-			} catch (NoSuchProviderException e) {
-			  e.printStackTrace();
-			  System.exit(1);
-			} catch (MessagingException e) {
-			  e.printStackTrace();
-			  System.exit(2);
-			}
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+	public static void main(String[] args) throws FileNotFoundException, MessagingException, IOException {
+		writeEMLFile("test", "<b>coucou</b><br />Je m'appel Patrick.", new FileOutputStream(new File("c:/trans/test_email.eml")));
 	}
 
 }

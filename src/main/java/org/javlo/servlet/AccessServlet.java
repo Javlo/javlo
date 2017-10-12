@@ -252,7 +252,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 			logger.fine("uri : " + request.getRequestURI());
 
 			StaticConfig staticConfig = StaticConfig.getInstance(getServletContext());
-			
+
 			/** init log **/
 			long startTime = System.currentTimeMillis();
 
@@ -271,7 +271,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 			GlobalContext globalContext = GlobalContext.getInstance(request);
 			Thread.currentThread().setName("AccessServlet-" + globalContext.getContextKey());
 
-			ContentContext ctx = ContentContext.getContentContext(request, response);			
+			ContentContext ctx = ContentContext.getContentContext(request, response);
 			if (ctx.getDevice().isMobileDevice()) {
 				EditContext.getInstance(globalContext, request.getSession()).setPreviewEditionMode(false);
 			}
@@ -285,17 +285,17 @@ public class AccessServlet extends HttpServlet implements IVersion {
 					}
 				}
 			}
-			
+
 			if (!ctx.isAsViewMode()) {
 				SecurityHelper.checkUserAccess(ctx);
 			}
-			
+
 			if (ctx.getGlobalContext().isCookies()) {
 				CookiesService.getInstance(ctx); // init cookies service
 			}
-			
+
 			TaxonomyService.getInstance(ctx);
-			
+
 			if (ctx.isAsViewMode() && ctx.isContentFound() && ctx.getCurrentPage() != null && staticConfig.isRedirectSecondaryURL() && !ctx.isPostRequest() && StringHelper.isEmpty(request.getQueryString())) {
 				ContentContext lgCtx = new ContentContext(ctx);
 				lgCtx.setContentLanguage(ctx.getRequestContentLanguage());
@@ -305,7 +305,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 				if (mainURL != null && !mainURL.endsWith(pageUrl)) {
 					// response.sendRedirect(pageUrl);
 					if (ctx.isPageRequest()) {
-						globalContext.log("url", "redirect : " + mainURL + " >> " + URLHelper.createURL(lgCtx, lgCtx.getCurrentPage())+" - ["+pageUrl+"]");
+						globalContext.log("url", "redirect : " + mainURL + " >> " + URLHelper.createURL(lgCtx, lgCtx.getCurrentPage()) + " - [" + pageUrl + "]");
 					}
 					logger.info("redirect : " + mainURL + " >> " + URLHelper.createURL(lgCtx, lgCtx.getCurrentPage()));
 					NetHelper.sendRedirectPermanently(response, URLHelper.createURL(lgCtx, lgCtx.getCurrentPage()));
@@ -633,7 +633,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 				/** ******* */
 
 				localLogger.startCount("tracking1");
-//				Tracker.trace(request, response);
+				// Tracker.trace(request, response);
 				localLogger.endCount("tracking", "tracking user");
 
 				if (logger.isLoggable(Level.FINE)) {
@@ -723,7 +723,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 						return;
 					}
 
-					String path = ctx.getPath();					
+					String path = ctx.getPath();
 					if (ctx.getFormat().equalsIgnoreCase("zip")) {
 						response.setContentType("application/zip; charset=" + ContentContext.CHARACTER_ENCODING);
 						ZipOutputStream outZip = new ZipOutputStream(response.getOutputStream());
@@ -789,6 +789,39 @@ public class AccessServlet extends HttpServlet implements IVersion {
 							logger.warning("rejected content image convertion : " + request.getRequestURI());
 							return;
 						}
+					} else if (ctx.getFormat().equalsIgnoreCase("eml")) {
+						response.setContentType("message/rfc822");
+						OutputStream out = response.getOutputStream();
+						Map<String, String> params = new HashMap<String, String>();
+						ContentContext viewCtx = ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE);
+						viewCtx.setAbsoluteURL(true);
+						viewCtx.setFormat("html");
+						viewCtx.resetDMZServerInter();
+
+						for (Object key : ctx.getRequest().getParameterMap().keySet()) {
+							if (!key.equals("__check_context")) {
+								params.put(key.toString(), ctx.getRequest().getParameter(key.toString()));
+							}
+						}
+
+						if (ctx.getCurrentUser() != null) {
+							String userToken = UserFactory.createUserFactory(ctx.getGlobalContext(), request.getSession()).getTokenCreateIfNotExist(ctx.getCurrentUser());
+							String token = globalContext.createOneTimeToken(userToken);
+							params.put("j_token", token);
+						}
+						params.put(ContentContext.FORCE_ABSOLUTE_URL, "true");
+						params.put(ContentContext.NO_DMZ_PARAM_NAME, "true");
+						params.put(ContentContext.CLEAR_SESSION_PARAM, "true");
+						if (!globalContext.isView() && globalContext.getBlockPassword() != null) {
+							params.put("block-password", globalContext.getBlockPassword());
+						}
+						if (request.getParameter(Template.FORCE_TEMPLATE_PARAM_NAME) != null) {
+							params.put(Template.FORCE_TEMPLATE_PARAM_NAME, request.getParameter(Template.FORCE_TEMPLATE_PARAM_NAME));
+						}
+						params.put("clean-html", "true");
+						String url = URLHelper.createURL(viewCtx, params);
+						String html = NetHelper.readPageGet(new URL(url));
+						MailService.writeEMLFile(ctx.getCurrentPage().getTitle(viewCtx), html, out);
 					} else if (ctx.getFormat().equalsIgnoreCase("pdf")) {
 						if (ctx.getGlobalContext().isCollaborativeMode()) {
 							Set<String> pageRoles = ctx.getCurrentPage().getEditorRolesAndParent();
@@ -1140,7 +1173,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 		out.println("**** IMAGE TEMP DIR    :  " + staticConfig.getImageCacheFolder());
 		out.println("**** IMAGE AUTO FOCUS  :  " + staticConfig.isAutoFocus());
 		out.println("**** MAIL THREAD       :  " + staticConfig.isMailingThread());
-		out.println("**** MAIL HOST         :  " + staticConfig.getSMTPHost()+':'+staticConfig.getSMTPPort()+" - [connection valid:"+smtpConnect+']'); 
+		out.println("**** MAIL HOST         :  " + staticConfig.getSMTPHost() + ':' + staticConfig.getSMTPPort() + " - [connection valid:" + smtpConnect + ']');
 		out.println("**** ALL LOG LVL       :  " + staticConfig.getAllLogLevel());
 		out.println("**** ACCESS LOG LVL    :  " + staticConfig.getAccessLogLevel());
 		out.println("**** NAV LOG LVL       :  " + staticConfig.getNavigationLogLevel());
@@ -1162,12 +1195,12 @@ public class AccessServlet extends HttpServlet implements IVersion {
 		out.println("**** THREAD STR COUNT  :  " + threads.getTotalStartedThreadCount());
 		out.println("**** THREAD DMN COUNT  :  " + threads.getDaemonThreadCount());
 		String adminUser = "";
-		String sep="";
+		String sep = "";
 		for (User user : staticConfig.getEditUsers().values()) {
-			adminUser = adminUser+sep+'['+user.getLogin()+","+user.getPassword()+']';
-			sep=",";
+			adminUser = adminUser + sep + '[' + user.getLogin() + "," + user.getPassword() + ']';
+			sep = ",";
 		}
-		out.println("**** ADMIN USER        :  " +adminUser);
+		out.println("**** ADMIN USER        :  " + adminUser);
 		out.println("****");
 		out.println("****************************************************************");
 		out.println("****************************************************************");

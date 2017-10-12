@@ -121,8 +121,12 @@ public class MailingAction extends AbstractModuleAction {
 			}
 			request.setAttribute("content", content);			
 			request.setAttribute("outlookContent", XHTMLHelper.escapeXHTML(StringHelper.removeCR(content)));
-			url = new URL(URLHelper.addParam(URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.PAGE_MODE).getContextForAbsoluteURL()), "mailing", "true"));
+			url = new URL(URLHelper.addParam(URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.PAGE_MODE).getContextForAbsoluteURL()), "mailing", "true"));			
 			request.setAttribute("exportURL", url);
+			ContentContext emlCtx = new ContentContext(ctx);
+			emlCtx.setFormat("eml");
+			url = new URL(URLHelper.addParam(URLHelper.createURL(emlCtx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE).getContextForAbsoluteURL()), "mailing", "true"));
+			request.setAttribute("exportURLEML", url);
 			if (request.getParameter("wizardStep") != null && request.getParameter("wizardStep").equals("4")) {
 				String threadId = SynchroHelper.performSynchro(ctx);
 				request.setAttribute("threadId", threadId);
