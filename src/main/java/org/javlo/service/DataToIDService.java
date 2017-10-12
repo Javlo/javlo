@@ -8,7 +8,6 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-import javax.naming.ConfigurationException;
 import javax.servlet.ServletContext;
 
 import org.javlo.helper.ResourceHelper;

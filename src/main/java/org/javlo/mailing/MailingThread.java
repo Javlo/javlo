@@ -17,6 +17,7 @@ import javax.mail.internet.InternetAddress;
 import javax.naming.ConfigurationException;
 import javax.servlet.ServletContext;
 
+import org.javlo.config.MailingStaticConfig;
 import org.javlo.config.StaticConfig;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
@@ -33,12 +34,24 @@ public class MailingThread extends Thread {
 
 	private static final long SLEEP_BETWEEN_MAILING = 2000;
 
-	ServletContext application;
+	//ServletContext application;
+	
+	MailingFactory mailingFactory;
+	
+	private MailingStaticConfig mailingStaticConfig;
+	
+	private MailConfig mailConfig;
+	
+	private DataToIDService dataToIDService;
 
 	public Boolean stop = false;
 
 	public MailingThread(ServletContext inApplication) {
-		application = inApplication;
+//		application = inApplication;
+		mailingStaticConfig = StaticConfig.getInstance(inApplication).getMailingStaticConfig();
+		mailingFactory = MailingFactory.getInstance(inApplication);
+		mailConfig = new MailConfig(null, StaticConfig.getInstance(inApplication), null);
+		dataToIDService = DataToIDService.getInstance(inApplication);
 		setName("MailingThread");
 	}
 
@@ -49,7 +62,7 @@ public class MailingThread extends Thread {
 	 * @throws ConfigurationException
 	 */
 	public List<Mailing> getMailingList() throws IOException {
-		return MailingFactory.getInstance(application).getMailingList();
+		return mailingFactory.getMailingList();
 	}
 
 	public void sendReport(Mailing mailing) throws IOException {
@@ -58,7 +71,7 @@ public class MailingThread extends Thread {
 			return;
 		}
 
-		MailConfig mailConfig = new MailConfig(null, StaticConfig.getInstance(application), mailing);
+		MailConfig mailConfig = new MailConfig(mailing, this.mailConfig);
 
 		ByteArrayOutputStream mailBody = new ByteArrayOutputStream();
 		PrintWriter mailOut = new PrintWriter(mailBody);
@@ -119,27 +132,25 @@ public class MailingThread extends Thread {
 		return content;
 	}
 
-	public void sendMailing(Mailing mailing) throws IOException, InterruptedException, MessagingException {
-		StaticConfig staticConfig = StaticConfig.getInstance(application);
+	public void sendMailing(Mailing mailing) throws IOException, InterruptedException, MessagingException {		
 		Transport transport = null;
 		try {
 			DKIMBean dkimBean = null;
 			if (!StringHelper.isOneEmpty(mailing.getDkimDomain(), mailing.getDkimSelector())) {
 				dkimBean = new DKIMBean(mailing.getDkimDomain(), mailing.getDkimSelector(), mailing.getDkimPrivateKeyFile().getAbsolutePath(), null);
 			}
-			transport = MailService.getMailTransport(new MailConfig(null, staticConfig, mailing));
+			MailConfig mailConfig = new MailConfig(mailing,this.mailConfig);
+			transport = MailService.getMailTransport(mailConfig);
 			mailing.onStartMailing();
 			InternetAddress to = mailing.getNextReceiver();
-
-			MailConfig mailConfig = new MailConfig(null, StaticConfig.getInstance(application), mailing);
+			
 			MailService mailingManager = MailService.getInstance(mailConfig);
 			
 			logger.info("send mailling '" + mailing.getSubject() + "' config:" + mailConfig+ " DKIM ? "+(dkimBean != null));
 			int countSending = 0;
-			while (to != null) {
-				DataToIDService dataToID = DataToIDService.getInstance(application);
+			while (to != null) {				
 				String data = "mailing=" + mailing.getId() + "&to=" + to;
-				mailing.addData("data", dataToID.setData(data));
+				mailing.addData("data", dataToIDService.setData(data));
 				mailing.addData("roles", StringHelper.collectionToString(mailing.getRoles(), ";"));
 
 				String content = extractContent(mailing);
@@ -151,7 +162,7 @@ public class MailingThread extends Thread {
 						e.printStackTrace();
 						mailing.setErrorMessage(e.getMessage()+" [replaceJSTLUserInfo]");
 						try {
-							mailing.store(application);
+							mailing.store(mailingStaticConfig);
 						} catch (IOException e1) {
 							e1.printStackTrace();
 							mailing.setWarningMessage(e.getMessage());
@@ -217,9 +228,9 @@ public class MailingThread extends Thread {
 									}
 									if (itsTime) {
 										if (!currentMailing.isSend() && currentMailing.isValid()) {
-											if (!currentMailing.isExistInHistory(application, currentMailing.getId())) {
+											if (!currentMailing.isExistInHistory(mailingStaticConfig, currentMailing.getId())) {
 												sendMailing(currentMailing);
-												currentMailing.store(application);
+												currentMailing.store(mailingStaticConfig);
 												sendReport(currentMailing);
 											} else {
 												logger.severe("MailingThread have try to send a mailing founded in the history : " + currentMailing);
@@ -227,12 +238,12 @@ public class MailingThread extends Thread {
 										} else {
 											logger.info("mailing not send : " + currentMailing);
 										}
-										currentMailing.close(application);
+										currentMailing.close(mailingStaticConfig);
 									}
 								} catch (Throwable t) {
 									t.printStackTrace();
 									currentMailing.setErrorMessage(t.getMessage());
-									currentMailing.store(application);
+									currentMailing.store(mailingStaticConfig);
 									try {
 										Thread.sleep(500);
 									} catch (InterruptedException e) {
@@ -252,7 +263,7 @@ public class MailingThread extends Thread {
 				}
 			}
 			for (Mailing element : getMailingList()) {
-				element.store(application);
+				element.store(mailingStaticConfig);
 			}
 		} catch (IOException e) {
 			logger.severe(e.getMessage());

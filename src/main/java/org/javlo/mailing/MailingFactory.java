@@ -8,6 +8,7 @@ import java.util.logging.Logger;
 
 import javax.servlet.ServletContext;
 
+import org.javlo.config.MailingStaticConfig;
 import org.javlo.config.StaticConfig;
 import org.javlo.filter.NumericDirectoryFilter;
 
@@ -20,7 +21,9 @@ public class MailingFactory {
 
 	public static final String KEY = MailingFactory.class.getName();
 
-	private ServletContext application = null;
+	//private ServletContext application = null;
+	
+	private MailingStaticConfig mailingStaticConfig;
 
 	private String mailingFolder = null;
 	private String mailingHistoryFolder = null;
@@ -32,7 +35,9 @@ public class MailingFactory {
 
 			outInstance.mailingFolder = StaticConfig.getInstance(application).getMailingFolder();
 			outInstance.mailingHistoryFolder = StaticConfig.getInstance(application).getMailingHistoryFolder();
-			outInstance.application = application;
+			//outInstance.application = application;
+			
+			outInstance.mailingStaticConfig = StaticConfig.getInstance(application).getMailingStaticConfig();
 
 			application.setAttribute(KEY, outInstance);
 		}
@@ -53,9 +58,9 @@ public class MailingFactory {
 			for (int i = 0; i < currentMailingDir.length; i++) {
 				String mailingID = currentMailingDir[i].getName();
 				Mailing mailing = new Mailing();
-				mailing.setId(application, mailingID);
+				mailing.setId(mailingStaticConfig, mailingID);
 				if (mailing.isValid()) {
-					mailing.load(application, mailingID);
+					mailing.load(mailingStaticConfig, mailingID);
 					outMailing.add(mailing);
 				}
 			}
@@ -79,9 +84,9 @@ public class MailingFactory {
 			for (int i = 0; i < currentMailingDir.length; i++) {
 				String mailingID = currentMailingDir[i].getName();
 				Mailing mailing = new Mailing();
-				mailing.setId(application, mailingID);
+				mailing.setId(mailingStaticConfig, mailingID);
 				if (mailing.isValid()) {
-					mailing.load(application, mailingID);
+					mailing.load(mailingStaticConfig, mailingID);
 					outMailing.add(mailing);
 				}
 			}

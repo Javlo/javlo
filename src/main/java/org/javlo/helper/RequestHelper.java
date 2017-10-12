@@ -10,6 +10,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.mailing.FeedBackMailingBean;
 import org.javlo.module.mailing.MailingAction;
@@ -67,7 +68,7 @@ public class RequestHelper {
 				org.javlo.mailing.Mailing mailing = new org.javlo.mailing.Mailing();
 				try {
 					if (mailing.isExist(application, id)) {
-						mailing.setId(application, id);
+						mailing.setId(StaticConfig.getInstance(application).getMailingStaticConfig(), id);
 						FeedBackMailingBean bean = new FeedBackMailingBean();
 						bean.setEmail(params.get("to"));
 						bean.setAgent(userAgent);

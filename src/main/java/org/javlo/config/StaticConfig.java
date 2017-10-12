@@ -5,11 +5,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.net.MalformedURLException;
 import java.net.Proxy;
 import java.net.ProxySelector;
 import java.net.URI;
-import java.net.URL;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -35,7 +33,6 @@ import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.data.source.TestDataSource;
 import org.javlo.helper.ElementaryURLHelper;
-import org.javlo.helper.NetHelper;
 import org.javlo.helper.PatternHelper;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
@@ -806,6 +803,10 @@ public class StaticConfig extends Observable {
 			outMailingFolder = ResourceHelper.getRealPath(application, outMailingFolder);
 		}
 		return outMailingFolder;
+	}
+	
+	public MailingStaticConfig getMailingStaticConfig() {
+		return new MailingStaticConfig(this);
 	}
 
 	public String getMailingTrashFolder() {

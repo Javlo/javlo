@@ -47,6 +47,21 @@ public class MailConfig {
 			
 		}
 	}
+	
+	public MailConfig(Mailing mailing, MailConfig mailConfig) {		
+		if (mailing != null && !StringHelper.isEmpty(mailing.getSmtpHost())) {			
+			SMTPHost =  mailing.getSmtpHost();
+			SMTPPort = mailing.getSmtpPort();
+			login = mailing.getSmtpUser();
+			password = mailing.getSmtpPassword();
+		}  else if (mailConfig != null && !StringHelper.isEmpty(mailConfig.getSMTPHost())) {
+			SMTPHost =  mailConfig.getSMTPHost();
+			SMTPPort = mailConfig.getSMTPPort();
+			login = mailConfig.getLogin();
+			password = mailConfig.getPassword();			
+		}
+	}
+
 
 	public String getSMTPHost() {
 		if (StringHelper.isEmpty(SMTPHost)) {

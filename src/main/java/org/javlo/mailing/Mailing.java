@@ -32,6 +32,7 @@ import javax.mail.internet.InternetAddress;
 import javax.servlet.ServletContext;
 
 import org.apache.commons.io.FileUtils;
+import org.javlo.config.MailingStaticConfig;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.helper.PatternHelper;
@@ -246,10 +247,8 @@ public class Mailing {
 		return true;
 	}
 
-	public boolean isExistInHistory(ServletContext application, String inID) throws IOException {
-		StaticConfig staticConfig = StaticConfig.getInstance(application);
-
-		File historyDir = new File(staticConfig.getMailingHistoryFolder() + '/' + inID + '/');
+	public boolean isExistInHistory(MailingStaticConfig mailingStaticConfig, String inID) throws IOException {
+		File historyDir = new File(mailingStaticConfig.getMailingHistoryFolder() + '/' + inID + '/');
 		if (!historyDir.exists()) {
 			return false;
 		}
@@ -257,8 +256,8 @@ public class Mailing {
 		return true;
 	}
 
-	public void load(ServletContext application, String inID) throws IOException {
-		setId(application, inID);
+	public void load(MailingStaticConfig staticConfig, String inID) throws IOException {
+		setId(staticConfig, inID);
 		loadedDir = new File(dir.getAbsolutePath());
 		File contentFile = new File(dir.getAbsolutePath() + '/' + CONTENT_FILE);
 		if (!contentFile.exists()) {
@@ -398,9 +397,13 @@ public class Mailing {
 	}
 
 	public void store(ServletContext application) throws IOException {
+		store(StaticConfig.getInstance(application).getMailingStaticConfig());	
+	}
+	
+	public void store(MailingStaticConfig mailingStaticConfig) throws IOException {
 
 		synchronized (SYNCRO_LOCK) {
-			setId(application, getId());
+			setId(mailingStaticConfig, getId());
 			if (!dir.exists()) {
 				logger.info("create directory : " + dir);
 				dir.mkdirs();
@@ -501,17 +504,16 @@ public class Mailing {
 		}
 	}
 
-	public void close(ServletContext application) throws IOException {
-		StaticConfig staticConfig = StaticConfig.getInstance(application);
-		File sourceDir = new File(staticConfig.getMailingFolder() + '/' + id + '/');
-		File targetDir = new File(staticConfig.getMailingHistoryFolder() + '/' + id + '/');
+	public void close(MailingStaticConfig mailingStaticConfig) throws IOException {		
+		File sourceDir = new File(mailingStaticConfig.getMailingFolder() + '/' + id + '/');
+		File targetDir = new File(mailingStaticConfig.getMailingHistoryFolder() + '/' + id + '/');
 		FileUtils.copyDirectory(sourceDir, targetDir);
 		FileUtils.deleteDirectory(sourceDir);
 		loadedDir = targetDir;
 		if (!StringHelper.isEmpty(getErrorMessage())) {
 			setErrorMessage(null);
 			try {
-				store(application);
+				store(mailingStaticConfig);
 			} catch (IOException e) {
 				e.printStackTrace();
 				setWarningMessage(e.getMessage());
@@ -640,8 +642,7 @@ public class Mailing {
 		this.contextKey = contextKey;
 	}
 
-	public void setId(ServletContext application, String id) {
-		StaticConfig staticConfig = StaticConfig.getInstance(application);
+	public void setId(MailingStaticConfig staticConfig, String id) {		
 		this.id = id;
 		dir = new File(staticConfig.getMailingFolder() + '/' + id + '/');
 		if (!dir.exists()) {

@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.FilenameUtils;
+import org.javlo.config.StaticConfig;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.mailing.FeedBackMailingBean;
@@ -71,7 +72,7 @@ public class FeedbackServlet extends HttpServlet {
 		String id = params.get("mailing");
 		if (id != null) {
 			Mailing mailing = new Mailing();
-			mailing.setId(getServletContext(), id);
+			mailing.setId(StaticConfig.getInstance(getServletContext()).getMailingStaticConfig(), id);
 			FeedBackMailingBean bean = new FeedBackMailingBean();
 			bean.setEmail(params.get("to"));
 			bean.setAgent(userAgent);
