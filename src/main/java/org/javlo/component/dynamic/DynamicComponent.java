@@ -470,14 +470,12 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 			if (field != null) {
 				field.setFirst(first);
 				first=false;				
-				field.setLast(!iter.hasNext());				
-				String last = "";
+				field.setLast(!iter.hasNext());
 				if (colSize >= 12) {
 					colSize = 0;
-					last = "lastcol ";
 				}
 				out.println(field.getOpenRow(ctx));
-				out.println("<div class=\"" + firstItem + last + "\">");				
+//				out.println("<div class=\"" + firstItem + last + "\">");				
 				if (firstItem.length() == 0) {
 					out.println("<hr />");
 				}
@@ -514,7 +512,7 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 					out.println("</fieldset>");
 				}				
 				firstItem="";
-				out.println("</div>");
+//				out.println("</div>");
 				out.println(field.getCloseRow(ctx));
 			}
 		}

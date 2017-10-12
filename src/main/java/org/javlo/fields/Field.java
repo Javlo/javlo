@@ -685,24 +685,29 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 		Integer widthStatus = (Integer)ctx.getRequest().getAttribute(STATUS_KEY);		
 		if (widthStatus == null || width+widthStatus > 12) {
 			if (widthStatus == null) {
+				widthStatus=0;
 				ctx.getRequest().setAttribute(STATUS_KEY, width);
 			} else {
 				ctx.getRequest().removeAttribute(STATUS_KEY);
-			}
+			}			
 			if (isFirst()) {
-				return "<div class=\"row\"><div class=\"col-md-"+width+"\"> <!-- first open row -->";
+				return "<div class=\"row\"><div class=\"col-md-"+width+"\">";
 			} else {
-				return "</div><div class=\"row\"><div class=\"col-md-"+width+"\"> <!-- open row -->";
+				return "</div> <!-- close row "+(width+widthStatus)+" --> <div class=\"row\"><div class=\"col-md-"+width+"\">";
 			}
 		} else {
-			ctx.getRequest().setAttribute(STATUS_KEY, width + widthStatus);
+			if (width + widthStatus<12) {
+				ctx.getRequest().setAttribute(STATUS_KEY, width + widthStatus);
+			} else {
+				ctx.getRequest().removeAttribute(STATUS_KEY);
+			}
 			return "<div class=\"col-md-"+width+"\">";
 		}
 	}
 	
 	public String getCloseRow(ContentContext ctx) {
 		if (last) {
-			return "</div></div> <!-- close row series -->";	
+			return "</div></div>";	
 		} else {
 			return "</div>";
 		}
