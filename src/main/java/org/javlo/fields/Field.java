@@ -678,24 +678,10 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 			return Integer.parseInt(widthEdit);
 		}
 	}
-	
-	public int getWidthView() {
-		String widthView = getPropertyValue("width-view", null);
-		if (widthView == null || !StringHelper.isDigit(widthView)) {
-			return 12;
-		} else {
-			return Integer.parseInt(widthView);
-		}
-	}
-	
+
 	public String getOpenRow(ContentContext ctx) {
 		final String STATUS_KEY = "_widthStatus";
-		int width;		
-		if (ctx.isAsEditMode()) {
-			width = getWidthEdit();
-		} else {
-			width = getWidthView();		
-		}
+		int width = getWidthEdit();
 		Integer widthStatus = (Integer)ctx.getRequest().getAttribute(STATUS_KEY);		
 		if (widthStatus == null || width+widthStatus > 12) {
 			if (widthStatus == null) {
