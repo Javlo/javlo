@@ -179,6 +179,14 @@ public interface IContentVisualComponent extends Comparable<IContentVisualCompon
 	 * @return true if elment visible, false else
 	 */
 	public boolean isVisible(ContentContext ctx);
+	
+	
+	/**
+	 * visible or no, depend of the choice of visitor with cookies
+	 * @param ctx
+	 * @return
+	 */
+	public boolean isVisibleFromCookies(ContentContext ctx);
 
 	/**
 	 * return a unique id for the coponent

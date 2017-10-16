@@ -1221,6 +1221,9 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		if (nextComp == null || !nextComp.getType().equals(getType())) {
 			style = style + " last ";
 		}
+		if (getCookiesDisplayStatus() == CookiesService.NOCHOICE_STATUS) {
+			style = style + " _cookie-nochoice ";
+		}
 		return style;
 	}
 
@@ -1874,15 +1877,26 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 				return "";
 			}
 		}
+		String contentHTML;
 		if (getRenderer(ctx) != null) {
-			return executeCurrentRenderer(ctx);
+			contentHTML = executeCurrentRenderer(ctx);
 		} else {
 			if (isNeedRenderer()) {
 				if (ctx.isAsPreviewMode()) {
 					return "<div class=\"error\">No renderer found for '" + getType() + "' in template '" + ctx.getCurrentTemplate().getName() + "'.</div>";
 				}
 			}
-			return getViewXHTMLCode(ctx);
+			contentHTML = getViewXHTMLCode(ctx);
+		}
+		if (isVisibleFromCookies(ctx)) {
+			return contentHTML;
+		} else {
+			CookiesService cookiesService = CookiesService.getInstance(ctx);
+			if (cookiesService.getAccepted() == null) {
+				return "<div class=\"_cookie-cache\" data-status=\"" + getCookiesDisplayStatus() + "\" data-html=\"" + Encode.forHtmlAttribute(getPrefixViewXHTMLCode(ctx)+contentHTML+getPrefixViewXHTMLCode(ctx))+"\" style=\"display:none;\"></div>";
+			} else {
+				return "";
+			}
 		}
 	}
 
@@ -2260,12 +2274,13 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	public boolean isVisible() {
 		return visible;
 	}
-
-	/**
-	 * default : visible only in LARGE format.
-	 */
+	
 	@Override
 	public boolean isVisible(ContentContext ctx) {
+		return true;
+	}
+
+	public boolean isVisibleFromCookies(ContentContext ctx) {
 		if (ctx.getGlobalContext().isCookies()) {
 			EditContext editContext = EditContext.getInstance(ctx.getGlobalContext(), ctx.getRequest().getSession());
 			if (editContext.isPreviewEditionMode()) {

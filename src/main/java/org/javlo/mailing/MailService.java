@@ -664,6 +664,8 @@ public class MailService {
 	public static void writeEMLFile(String subject, String body, OutputStream out) throws MessagingException, IOException {		
 			Message message = new MimeMessage(Session.getInstance(System.getProperties()));
 			message.setSubject(subject);			
+			message.setHeader("X-Unsent", "1");
+			message.setHeader("Content-Type", "text/html");
 			MimeBodyPart wrap = new MimeBodyPart();
 			MimeMultipart cover = new MimeMultipart("alternative");
 			MimeBodyPart bp = new MimeBodyPart();
