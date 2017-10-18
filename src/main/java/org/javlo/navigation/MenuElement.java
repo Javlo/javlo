@@ -5471,5 +5471,15 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 	public void setTaxonomy(Set<String> taxonomy) {
 		this.taxonomy = taxonomy;
 	}
+	
+	public boolean isPublic(ContentContext ctx) {
+		boolean outPublic = getName().equals("registration") || getName().startsWith("pb_");
+		MenuElement parent = getParent();
+		while (!outPublic && parent != null) {
+			outPublic = parent.isPublic(ctx);
+			parent = parent.getParent();			
+		}
+		return outPublic;
+	}
 
 }

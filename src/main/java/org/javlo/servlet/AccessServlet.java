@@ -823,7 +823,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 						String html = NetHelper.readPageGet(new URL(url));
 						MailService.writeEMLFile(ctx.getCurrentPage().getTitle(viewCtx), html, out);
 					} else if (ctx.getFormat().equalsIgnoreCase("pdf")) {
-						if (ctx.getGlobalContext().isCollaborativeMode()) {
+						if (ctx.getGlobalContext().isCollaborativeMode() && !ctx.getCurrentPage().isPublic(ctx)) {
 							Set<String> pageRoles = ctx.getCurrentPage().getEditorRolesAndParent();
 							if ((pageRoles.size() > 0 || ctx.getCurrentEditUser() == null)) {
 								if (ctx.getCurrentEditUser() == null || !ctx.getCurrentEditUser().validForRoles(pageRoles)) {
@@ -999,7 +999,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 
 							if (ctx.getGlobalContext().isCollaborativeMode()) {
 								Set<String> pageRoles = ctx.getCurrentPage().getEditorRolesAndParent();
-								if ((pageRoles.size() > 0 || ctx.getCurrentEditUser() == null) && !ctx.getCurrentPage().getName().equals("registration")) {
+								if ((pageRoles.size() > 0 || ctx.getCurrentEditUser() == null) && !ctx.getCurrentPage().isPublic(ctx)) {
 									if (ctx.getCurrentEditUser() == null || !ctx.getCurrentEditUser().validForRoles(pageRoles)) {
 										MenuElement parent = ctx.getCurrentPage().getParent();
 										while (parent != null) {

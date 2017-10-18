@@ -314,9 +314,8 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 
 			MessageRepository messageRepository = MessageRepository.getInstance(ctx);
 			I18nAccess i18nAccess = I18nAccess.getInstance(ctx);
-			if (validReaction) {
-				
-				if (!reactionComp.isWithLink(ctx) && XHTMLHelper.containsLink(reaction.getAuthors()+' '+reaction.getTitle()+' '+reaction.getText())) {
+			if (validReaction) {			
+				if (!reactionComp.isWithLink(ctx) && XHTMLHelper.containsLink(reaction.getTitle()+' '+reaction.getText())) {
 					return i18nAccess.getViewText("reaction.error.no-link", "Message cound not contains link."); 
 				}
 				
@@ -1015,7 +1014,7 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 		out.println("<label for=\"info-" + getId() + "\" >stay empty.</label>");
 		out.println("<input id=\"info-" + getId() + "\" type=\"text\" name=\"fdata\" value=\"\" />");
 		out.println("</div>");
-		out.println("<input class=\"button light needconfirm btn btn-default btn-sm\" type=\"submit\" name=\"ok\" value=\"" + i18nAccess.getViewText("global.delete") + "\" />");
+		out.println("<input class=\"button light needconfirm btn btn-default btn-secondary btn-delete btn-sm\" type=\"submit\" name=\"ok\" value=\"" + i18nAccess.getViewText("global.delete") + "\" />");
 		out.println("</form>");
 		out.println("</div>");
 	}
@@ -1069,7 +1068,7 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 		out.println("</div>");
 
 		out.println("<div class=\"actions\">");
-		out.println("<input class=\"button light btn btn-default\" type=\"submit\" name=\"ok\" value=\"" + i18nAccess.getViewText("global.send") + "\" />");
+		out.println("<input class=\"button light btn btn-default btn-sm btn-secondary\" type=\"submit\" name=\"ok\" value=\"" + i18nAccess.getViewText("global.send") + "\" />");
 		out.println("</div>");
 		out.println("</form>");
 		out.println("</div>");
@@ -1214,5 +1213,9 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 
 	public int getReactionSize(ContentContext ctx) {
 		return getReactions(ctx).size();
+	}
+	
+	public static void main(String[] args) {
+		System.out.println("*** XHTMLHelper.containsLink(reaction.getTitle()+' '+reaction.getText() = "+XHTMLHelper.containsLink(""+' '+"c'est top"));
 	}
 }

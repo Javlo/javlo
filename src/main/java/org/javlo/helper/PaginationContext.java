@@ -34,7 +34,7 @@ public class PaginationContext {
 		PaginationContext service = (PaginationContext) request.getAttribute(key);
 		try {
 			String newPage = request.getParameter("page");
-			if (newPage != null && key.equals(request.getParameter("key"))) {
+			if (newPage != null && key.equals(request.getParameter("key")) && service != null) {
 				service.page = Integer.parseInt(newPage);
 			}
 		} catch (Throwable t) {

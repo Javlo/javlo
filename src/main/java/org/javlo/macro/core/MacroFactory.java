@@ -40,6 +40,7 @@ import org.javlo.macro.DuplicateChildren;
 import org.javlo.macro.DuplicatePage;
 import org.javlo.macro.EncryptPasswordComponent;
 import org.javlo.macro.EncryptVisitorsPasswordMacro;
+import org.javlo.macro.FileInListMacro;
 import org.javlo.macro.ImageAfterDescriptionChildrenMacro;
 import org.javlo.macro.ImageAfterDescriptionMacro;
 import org.javlo.macro.ImportDataBase;
@@ -174,6 +175,7 @@ public class MacroFactory {
 		macros.add(new SocialShare());
 		macros.add(new ValidAllChildren());
 		macros.add(new CleanPersistenceFolder());
+		macros.add(new FileInListMacro());
 	}
 
 	public IMacro getMacro(String name) {

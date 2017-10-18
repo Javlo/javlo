@@ -177,7 +177,9 @@ public class XHTMLHelper {
 		return autoLink(content, false, globalContext);
 	}
 
-	public static String autoLink(String content, boolean notFollow, GlobalContext globalContext) {
+	public static String autoLink(String inContent, boolean notFollow, GlobalContext globalContext) {
+		String content = inContent;
+		boolean linkFound = false;
 		if (content == null) {
 			return "";
 		}
@@ -208,6 +210,7 @@ public class XHTMLHelper {
 					}
 					if (!inLink) {
 						writer.append(createHTMLLink(element, notFollow, globalContext));
+						linkFound = true;
 					} else {
 						writer.append(element);
 					}
@@ -221,7 +224,11 @@ public class XHTMLHelper {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		return out.toString();
+		if (linkFound) {
+			return out.toString();
+		} else {
+			return inContent;
+		}
 	}
 
 	private static String createHTMLLink(String url, boolean notFollow, GlobalContext globalContext) {
@@ -1305,7 +1312,7 @@ public class XHTMLHelper {
 			addedTag = addedTag + " checked=\"checked\" ";
 		}
 
-		out.print("<input id=\"" + field+radioValue + "\" type=\"radio\" name=\"");
+		out.print("<input id=\"" + field + radioValue + "\" type=\"radio\" name=\"");
 		out.print(field);
 		out.print("\" value=\"" + radioValue + "\"" + addedTag + "/>");
 
@@ -2671,15 +2678,8 @@ public class XHTMLHelper {
 	}
 
 	public static void main(String[] args) throws Exception {
-		File file = new File("c:/trans/countries.xlsx");
-		Cell[][] arrays = XLSTools.getArray(null, file);
-		for (Cell[] row : arrays) {
-			if (row[1] != null && row[1].toString() != null) {
-				System.out.println("<option ${param.country=='" + row[0] + "'?'selected=\"selected\"':''} value=\"" + StringHelper.neverNull(row[0].toString()) + "\">" + row[1] + "</option>");
-			} else {
-				System.out.println("<option disabled>&nbsp;</option>");
-			}
-		}
+		String content = "c'est top";
+
 	}
 
 	public static String renderStaticInfo(ContentContext ctx, StaticInfo info) throws FileNotFoundException, IOException {
@@ -2750,7 +2750,7 @@ public class XHTMLHelper {
 			out.println("<table width=\"280\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\">");
 			out.println("<tr>");
 			out.println("<td height=\"40\" valign=\"middle\" align=\"center\" bgcolor=\"#D31996\" style=\"font-family:Helvetica, sans-serif; font-size:13px; color:#FFFFFF; mso-line-height-rule:exactly; line-height:16px; font-weight:bold; border:1px solid #D31996; border-radius:2px; -moz-border-radius:2px; -ms-border-radius:2px; -o-border-radius:2px; -webkit-border-radius:2px;\">");
-			out.println("<a href=\""+link+"\" target=\"_blank\" style=\"color:#FFFFFF; text-decoration:underline; display:table-cell; text-align:center; height:40px; width:600px; vertical-align:middle;\">"+StringHelper.neverNull(linkLabel, link)+"</a>");
+			out.println("<a href=\"" + link + "\" target=\"_blank\" style=\"color:#FFFFFF; text-decoration:underline; display:table-cell; text-align:center; height:40px; width:600px; vertical-align:middle;\">" + StringHelper.neverNull(linkLabel, link) + "</a>");
 			out.println("</td>");
 			out.println("</tr>");
 			out.println("</table>");

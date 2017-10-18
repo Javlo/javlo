@@ -19,9 +19,11 @@ if (user != null) {
 %>
 <div class="jcreator ${elem.authors} ${elem.type} ${samePrevious?'previous-same':'previous-different'}">
 	<c:if test="${not empty avatarURL}"><span class="avatar"><img src="${avatarURL}" alt="avatar ${elem.authors}" /></span></c:if>
+	<div class="text">
 	<span class="username">${elem.authors}</span>
 	<c:if test="${not empty user.userInfo.email}"><span class="email"><a href="mailto:${user.userInfo.email}">${user.userInfo.email}</a></span></c:if>
-	<span class="date">${date}</span>	
+	<span class="date">${date}</span>
+	</div>	
 </div>
 <%
 } else {%>

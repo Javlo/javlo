@@ -133,7 +133,6 @@
 			<groupId>commons-beanutils</groupId>
 			<artifactId>commons-beanutils</artifactId>
 			<version>1.9.3</version>
-
 		</dependency>
 
 		<dependency>
@@ -444,7 +443,6 @@
 		    <artifactId>jotlmsg</artifactId>
 		    <version>1.2.1</version>
 		</dependency>
-		
 
 	</dependencies>
 
@@ -559,7 +557,7 @@
 					<artifactId>maven-compiler-plugin</artifactId>
 					<configuration>
 						<source>1.6</source>
-						<target>1.6</target>
+						<target>1.8</target>
 					</configuration>
 				</plugin>
 				<plugin>
