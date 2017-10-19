@@ -1,10 +1,8 @@
 package org.javlo.ztatic;
 
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
@@ -432,7 +430,7 @@ public class StaticInfo {
 	private String id = null;
 
 	private boolean staticFolder = true;
-
+ 
 	private ImageSize imageSize = null;
 
 	private static final ImageSize NO_IMAGE_SIZE = new ImageSize(0, 0);

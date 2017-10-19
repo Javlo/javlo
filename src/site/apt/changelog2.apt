@@ -886,3 +886,6 @@ change log
 
  * 3/ refuse cookies mecanism / DynamicComponent add sound field + edit layout / download page as EML / search fileter on file field
 
+ * 4/ collaborative mode + null pointer in PaginationContext / correction memory leak with old link between page and ressources
+ 
+* 2.1.0.6 19/10/17

@@ -333,7 +333,7 @@ public class TaxonomyService {
 			for (TaxonomyBean child : bean.getChildren()) {
 				TaxonomyDisplayBean displayBean = new TaxonomyDisplayBean(ctx, child);
 				displayBean.setDisplayParentLabel(displayParentLabel);
-				outList.add(displayBean);
+				outList.add(displayBean.getListItem());
 				if (child.getChildren().size() > 0) {					
 					outList.addAll(getList(ctx, child.getPath(), true));
 				}

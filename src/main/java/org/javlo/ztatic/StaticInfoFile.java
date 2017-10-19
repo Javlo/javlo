@@ -216,7 +216,7 @@ public class StaticInfoFile {
 
 	private String staticURL = null;
 
-	private MenuElement linkedPage = null;
+	private String linkedPage = null;
 
 	private Date linkedDate;
 
@@ -307,20 +307,6 @@ public class StaticInfoFile {
 			File file = new File(realPath);
 			staticInfo.setFile(file);
 			staticInfo.size = file.length();
-
-			if (staticInfo.getLinkedPage() == null && staticInfo.getLinkedPageId() != null) {
-				ContentService content = ContentService.getInstance(ctx.getRequest());
-				MenuElement linkedPage = content.getNavigation(ctx).searchChildFromId(staticInfo.getLinkedPageId());
-				if (linkedPage != null) {
-					staticInfo.setLinkedPage(linkedPage);
-					/*
-					 * staticInfo.linkedDate = linkedPage.getContentDate(ctx); staticInfo.linkedTitle = linkedPage.getTitle(ctx); staticInfo.linkedDescription = linkedPage.getDescription(ctx); staticInfo.setLinkedLocation(linkedPage.getLocation(ctx));
-					 */
-				} /*
-				 * else { try to decoment this, but problem when download in view mode in imageTransformServlet the content loader is not preview so to new page can not be found. staticInfo.setLinkedPageId(null); }
-				 */
-
-			}
 
 			globalContext.setAttribute(key, staticInfo);
 		}
@@ -577,19 +563,25 @@ public class StaticInfoFile {
 		save();
 	}
 
-	public void setLinkedPage(MenuElement linkedPage) {
+	public void setLinkedPage(String linkedPage) {
 		this.linkedPage = linkedPage;
 	}
 
-	public MenuElement getLinkedPage() {
-		return linkedPage;
+	public MenuElement getLinkedPage(ContentContext ctx) {
+		ContentService contentService = ContentService.getInstance(ctx.getRequest());
+		try {
+			return contentService.getNavigation(ctx).searchChildFromId(getLinkedPageId());
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 
 	public Date getLinkedDate(ContentContext ctx) {
-		if (getLinkedPage() != null) {
+		if (getLinkedPage(ctx) != null) {
 			if (linkedDate == null) {
 				try {
-					linkedDate = getLinkedPage().getContentDate(ctx);
+					linkedDate = getLinkedPage(ctx).getContentDate(ctx);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -605,10 +597,10 @@ public class StaticInfoFile {
 	}
 
 	public String getLinkedTitle(ContentContext ctx) {
-		if (getLinkedPage() != null) {
+		if (getLinkedPage(ctx) != null) {
 			if (linkedTitle == null) {
 				try {
-					linkedTitle = getLinkedPage().getTitle(ctx);
+					linkedTitle = getLinkedPage(ctx).getTitle(ctx);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -624,10 +616,10 @@ public class StaticInfoFile {
 	}
 
 	public String getLinkedDescription(ContentContext ctx) {
-		if (getLinkedPage() != null) {
+		if (getLinkedPage(ctx) != null) {
 			if (linkedDescription == null) {
 				try {
-					linkedDescription = getLinkedPage().getDescription(ctx);
+					linkedDescription = getLinkedPage(ctx).getDescription(ctx);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -647,10 +639,10 @@ public class StaticInfoFile {
 	}
 
 	public String getLinkedLocation(ContentContext ctx) {
-		if (getLinkedPage() != null) {
+		if (getLinkedPage(ctx) != null) {
 			if (linkedLocation == null) {
 				try {
-					linkedLocation = getLinkedPage().getLocation(ctx);
+					linkedLocation = getLinkedPage(ctx).getLocation(ctx);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}

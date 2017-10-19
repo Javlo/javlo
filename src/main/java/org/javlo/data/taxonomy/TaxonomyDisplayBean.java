@@ -7,8 +7,9 @@ import java.util.List;
 import org.javlo.context.ContentContext;
 import org.javlo.helper.StringHelper;
 import org.javlo.service.IListItem;
+import org.javlo.service.ListService;
 
-public class TaxonomyDisplayBean implements IListItem {
+public class TaxonomyDisplayBean {
 
 	private ContentContext ctx;
 	private TaxonomyBean bean;
@@ -63,15 +64,9 @@ public class TaxonomyDisplayBean implements IListItem {
 			return parentLabel+label;
 		}
 	}
-
-	@Override
-	public String getKey() {
-		return bean.getId();
-	}
-
-	@Override
-	public String getValue() {
-		return getLabel();
+	
+	public IListItem getListItem() {
+		return new ListService.ListItem(bean.getId(), getLabel());
 	}
 
 	public boolean isDisplayParentLabel() {
