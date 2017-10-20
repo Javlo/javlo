@@ -5,8 +5,6 @@ import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -27,25 +25,15 @@ import java.security.NoSuchAlgorithmException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.util.Collections;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.zip.CRC32;
 
-import javax.activation.DataHandler;
-import javax.activation.DataSource;
-import javax.activation.FileDataSource;
 import javax.imageio.ImageIO;
-import javax.mail.Message;
-import javax.mail.Multipart;
-import javax.mail.Session;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeBodyPart;
-import javax.mail.internet.MimeMessage;
-import javax.mail.internet.MimeMultipart;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
@@ -58,6 +46,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.javlo.bean.Company;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
@@ -74,6 +63,9 @@ import org.javlo.user.IUserFactory;
 import org.javlo.utils.MapCollectionWrapper;
 import org.javlo.utils.TimeMap;
 import org.javlo.ztatic.FileCache;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
@@ -1430,6 +1422,26 @@ public class NetHelper {
 			}
 		}
 		return false;
+	}
+	
+	public static Company validVATEuroparlEU(ContentContext ctx, String vat) throws MalformedURLException, Exception {
+		if (!ctx.getGlobalContext().getStaticConfig().isCheckContentIntegrity() || vat == null) {
+			return null;
+		}
+		vat = vat.replace(".", "").trim();
+		if (vat.length() != 12) {
+			return null;
+		}
+		String country = vat.substring(0, 2);
+		String number = vat.substring(3);
+		if (!StringHelper.isDigit(number)) {
+			return null;
+		}
+		String url = "http://ec.europa.eu/taxation_customs/vies/vatResponse.html?number="+number+"&memberStateCode="+country;
+		String content = readPage(new URL(url));
+	    Document doc = Jsoup.parse(content);
+	    Element elem = doc.getElementById("vatResponseFormTable");
+	    return null;
 	}
 
 }

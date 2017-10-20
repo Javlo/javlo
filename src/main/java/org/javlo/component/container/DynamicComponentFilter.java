@@ -132,13 +132,25 @@ public class DynamicComponentFilter extends AbstractPropertiesComponent implemen
 
 		I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
 		if (!getStyle().equals(HIDE_FORM)) {
-			out.println("<div class=\"card panel panel-default\"><form role=\"form\" class=\"generic-form\" id=\"form-filter-" + getId() + "\" name=\"form-filter-" + getId() + "\" action=\"" + URLHelper.createURL(ctx) + "\" method=\"post\">");
+			out.println("<div class=\"filter-form card panel panel-default\"><form role=\"form\" class=\"generic-form\" id=\"form-filter-" + getId() + "\" name=\"form-filter-" + getId() + "\" action=\"" + URLHelper.createURL(ctx) + "\" method=\"post\">");
 			out.println("<div class=\"fields panel-body card-body\"><input type=\"hidden\" name=\"webaction\" value=\"" + getActionGroupName() + ".filter\" />");
-			out.println("<input type=\"hidden\" name=\"" + IContentVisualComponent.COMP_ID_REQUEST_PARAM + "\" value=\"" + getId() + "\"><div class=\"row\">");
-			for (Field field : (List<Field>) ctx.getRequest().getAttribute("fields")) {
-				out.println("<div class=\"col-lg-6\">" + field.getSearchEditXHTMLCode(ctx) + "</div>");
+			out.println("<input type=\"hidden\" name=\"" + IContentVisualComponent.COMP_ID_REQUEST_PARAM + "\" value=\"" + getId() + "\"><div class=\"row field-row first-row\">");
+			final int SIZE = 6;
+			int col = 0;
+			int size = 0;
+			List<Field> fields = (List<Field>) ctx.getRequest().getAttribute("fields");
+			for (Field field : fields) {
+				out.println("<div class=\"col-lg-"+SIZE+"\">" + field.getSearchEditXHTMLCode(ctx) + "</div>");
+				col = col + SIZE;
+				size = size + 1;
+				if (col == 12) {
+					if (size < fields.size()) {
+						out.println("</div><div class=\"row field-row\">");
+						col = 0;
+					}					
+				}
 			}
-			out.println("</div><div class=\"form-group text-right\"><input type=\"submit\" class=\"btn btn-default\" name=\"filter\" value=\"" + i18nAccess.getViewText("global.search") + "\" /></div>");
+			out.println("</div><div class=\"action-group form-group text-right\"><input type=\"submit\" class=\"btn btn-default\" name=\"filter\" value=\"" + i18nAccess.getViewText("global.search") + "\" /></div>");
 			out.println("</div></form></div>");
 		} else if (ctx.isAsPreviewMode()) {
 			out.println("[no - form]");

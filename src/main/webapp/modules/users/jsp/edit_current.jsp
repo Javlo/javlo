@@ -10,11 +10,11 @@
 	<input type="hidden" name="webaction" value="changePassword" />
 	<input type="hidden" name="user" value="${user.name}" />
 </div>
-<div class="col-xs-6">
+<div class="col-sm-6">
 <div class="form-group">
 	<label>${i18n.edit['user.current-password']}<input class="form-control" type="password" id="password" name="password" value="" /></label> 
 </div>
-</div><div class="col-xs-6">
+</div><div class="col-sm-6">
 <div class="form-group">
 	<label>${i18n.edit['user.new-password']}<input class="form-control" type="password" id="newpassword" name="newpassword" value="" /></label>	 
 </div>
@@ -47,7 +47,7 @@
 <fieldset>
 <legend>${i18n.edit['user.info']}</legend>
 <div class="row">
-<div class="col-xs-4">
+<div class="col-sm-4">
 	<div class="form-group login">
 		<label for="login">login
 		<input class="form-control" type="text" id="login" name="login" value="${userInfoMap["login"]}" /></label> 
@@ -98,7 +98,7 @@
 		<input type="text" id="mobile" class="form-control" name="mobile" value="${userInfoMap["mobile"]}" /></label> 
 	</div>
 </div>
-<div class="col-xs-4 address">
+<div class="col-sm-4 address">
 	<div class="form-group">
 		<label for="address">address
 		<input type="text" id="address" class="form-control" name="address" value="${userInfoMap["address"]}" /></label> 
@@ -153,7 +153,7 @@
 	</div>
 	</c:if>	
 </div>
-<div class="col-xs-4">
+<div class="col-sm-4">
 <div class="form-group">
 		<label for="experience">Experience
 		<textarea class="form-control" id="experience" name="experience">${userInfoMap['experience']}</textarea></label>
@@ -177,9 +177,9 @@
 		</c:if>
 		 <c:if test="${not empty list.functions}">
 		 	<div class="form-group">
-		 	<c:forEach var="function" items="${list.functions}" varStatus="status">
-	 		<label class="checkbox-inline" for="function-${status.index}"><input type="checkbox" name="function" id="function-${status.index}" value="${function.key}" ${not empty functions[function.key]?' checked="checked"':''}/>${function.value}</label>
-	 		</c:forEach>	 		
+		 	<c:forEach var="function" items="${list.functions}" varStatus="status"><div class="form-check form-check-inline">
+	 		<label class="checkbox-inline form-check-label" for="function-${status.index}"><input class="form-check-input" type="checkbox" name="function" id="function-${status.index}" value="${function.key}" ${not empty functions[function.key]?' checked="checked"':''}/> ${function.value}</label>
+	 		</div></c:forEach>	 		
 	 		</div>		
 		 </c:if>
 </div>
@@ -193,7 +193,7 @@
 
 <fieldset class="social">
 <legend>${i18n.edit['user.social']}</legend>
-	<div class="col-xs-4">
+	<div class="col-sm-4">
 		<div class="form-group">
 			<label for="facebook">facebook
 			<input class="form-control" type="text" id="facebook" name="facebook" value="${userInfoMap['facebook']}" /></label> 
@@ -203,7 +203,7 @@
 			<input class="form-control" type="text" id="googleplus" name="googleplus" value="${userInfoMap['googleplus']}" /></label> 
 		</div>
 	</div>
-	<div class="col-xs-4">
+	<div class="col-sm-4">
 	<div class="form-group">
 		<label for="linkedin">linkedin
 		<input class="form-control" type="text" id="linkedin" name="linkedin" value="${userInfoMap['linkedin']}" /></label> 
@@ -213,7 +213,7 @@
 		<input class="form-control" type="text" id="twitter" name="twitter" value="${userInfoMap['twitter']}" /></label> 
 	</div>
 	</div>
-	<div class="col-xs-4">
+	<div class="col-sm-4">
 	<div class="form-group">
 		<label for="pushbulletToken">pushbullet token
 		<input class="form-control" type="text" id="pushbulletToken" name="pushbulletToken" value="${userInfoMap['pushbulletToken']}" /></label> 
@@ -223,7 +223,7 @@
 
 <fieldset class="avatar">
 <legend>${i18n.edit['user.avatar']}</legend>
-	<div class="col-xs-6">
+	<div class="col-sm-6">
 		<div class="form-group">
 			<label>${i18n.edit['user.current-avatar']}</label>
 			<c:choose>
@@ -239,7 +239,7 @@
 			</c:choose>
 		</div>
 	</div>
-	<div class="col-xs-6">
+	<div class="col-sm-6">
 		<div class="form-group">
 			<label for="avatar">${i18n.edit['user.new-avatar']}</label>
 			<input type="file" id="avatar" name="avatar" /> 
@@ -249,7 +249,7 @@
 
 <fieldset class="Attachments">
 <legend>${i18n.edit['user.files']}</legend>
-	<div class="col-xs-6">
+	<div class="col-sm-6">
 		<div class="form-group">
 			<label>${i18n.edit['user.current-files']}</label>
 			<c:if test="${fn:length(files)>0}">
@@ -265,7 +265,7 @@
 			</c:if>
 		</div>
 	</div>
-	<div class="col-xs-6">
+	<div class="col-sm-6">
 		<div class="form-group">			
 			<label for="userFile">${i18n.edit['user.new-files']}</label>
 			<input type="file" id="userFile" name="userFile" /> 

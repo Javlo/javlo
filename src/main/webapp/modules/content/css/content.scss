@@ -2,6 +2,10 @@
 	max-width: none; /* hack ie 9 */
 }
 
+.component .ui-widget-content * {
+    box-sizing: border-box;
+}
+
 figure {
 	text-align: center;
 }
@@ -140,7 +144,7 @@ body.right-admin #page-404 {
 }
 
 .ui-tabs-nav {
-	position: inherit;
+	position: inherit;	
 }
 
 .component {
@@ -518,4 +522,8 @@ li.line {
     padding: 5px 10px 10px 10px;
     margin-left: 24px;
     z-index: 1; 
+}
+
+.dynamic-component .row {
+	margin-bottom: 3px;
 }
