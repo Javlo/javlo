@@ -105,7 +105,7 @@ public class DynamicComponentCreator extends AbstractVisualComponent implements 
 		String id = rs.getParameter("id", null);
 		boolean delete = StringHelper.isTrue(rs.getParameter("delete", null));
 		if (user == null || type == null) {
-			return "security error !";
+			return "security error ! ("+user+" - "+type+")";
 		}
 		String mainPageName = StringHelper.createFileName(NAME_PREFIX + user.getLogin()).replace('.', '-');
 		MenuElement localRoot = ctx.getCurrentPage().searchChildFromName(mainPageName);
@@ -134,15 +134,14 @@ public class DynamicComponentCreator extends AbstractVisualComponent implements 
 			comp = contentService.getComponent(ctx, id);
 		}
 		if (comp.getAuthors().equals(ctx.getCurrentUserId())) {
-			if (delete) {
-				System.out.println("##### DynamicComponentCreator.performCreatecomponent : DELETE"); //TODO: remove debug trace
+			if (delete) {				
 				comp.getPage().removeContent(ctx, id, true);
 			} else {
 				comp.performEdit(ctx);
 			}
 			PersistenceService.getInstance(ctx.getGlobalContext()).setAskStore(true);
 		} else {
-			return "security error!";
+			return "security error! ("+ctx.getCurrentUserId()+" - "+comp.getAuthors()+")";
 		}		
 		return null;
 	}

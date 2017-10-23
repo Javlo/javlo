@@ -104,6 +104,8 @@ import org.javlo.utils.StructuredProperties;
 import org.javlo.utils.TimeMap;
 
 public class GlobalContext implements Serializable, IPrintInfo {
+	
+	public static final String PAGE_TOKEN_PARAM = "p_token";
 
 	private final Integer[] countArrayMinute = new Integer[60];
 
@@ -768,12 +770,10 @@ public class GlobalContext implements Serializable, IPrintInfo {
 
 	private static AppendableTextFile specialLogFile = null;
 
-	private final Map<String, String> oneTimeTokens = Collections.synchronizedMap(new TimeMap<String, String>(60 * 60)); // one
-																															// time
-																															// token
-																															// live
-																															// 1h
-
+	private final Map<String, String> oneTimeTokens = Collections.synchronizedMap(new TimeMap<String, String>(60 * 60));
+	
+	private final Map<String, String> pageTimeToken = Collections.synchronizedMap(new TimeMap<String, String>(60 * 60 * 24 * 90));
+	
 	private final Map<String, String> changePasswordToken = Collections.synchronizedMap(new TimeMap<String, String>(60 * 60));
 
 	public final Object RELEASE_CACHE = new Object();
@@ -3190,6 +3190,20 @@ public class GlobalContext implements Serializable, IPrintInfo {
 			oneTimeToken = createOneTimeToken(token);
 		}
 		return oneTimeToken;
+	}
+	
+	public String createTokenForPage(String pageName) {
+		String token = pageTimeToken.get(pageName);
+		if (token == null) {
+			token = StringHelper.getRandomIdBase64();
+			pageTimeToken.put(token, pageName);
+			pageTimeToken.put(pageName, token);
+		}		
+		return token;
+	}
+
+	public String getPageToken(String token) {
+		return pageTimeToken.get(token);		
 	}
 
 	public String convertOneTimeToken(String token) {

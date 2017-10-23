@@ -3805,7 +3805,12 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 		return userRoles;
 	}
 
-	public boolean isReadAccess(ContentContext ctx, User user) {
+	public boolean isReadAccess(ContentContext ctx, User user) {		
+		RequestService rs = RequestService.getInstance(ctx.getRequest());
+		String token = rs.getParameter(GlobalContext.PAGE_TOKEN_PARAM, null);
+		if (token != null && getName().equals(ctx.getGlobalContext().getPageToken(token))) {
+			return true;
+		}		
 		if (userRoles.size() > 0) {
 			if (user == null) {
 				return false;

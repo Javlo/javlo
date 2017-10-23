@@ -618,4 +618,9 @@ public class PageBean implements Serializable {
 			return userSecurity.canRole(ctx.getCurrentEditUser(), AdminUserSecurity.VALIDATION_ROLE);
 		}
 	}
+	
+	public boolean isReadAccess() {
+		return page.isReadAccess(ctx, ctx.getCurrentUser());
+	}
+	
 }

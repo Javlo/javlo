@@ -323,7 +323,7 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 						}
 						fieldExecuted.add(name);
 					} else {
-						logger.severe("field not found : " + getType(name));
+						logger.fine("field not found : " + getType(name));
 					}
 				}
 			}

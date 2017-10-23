@@ -66,6 +66,7 @@ import org.javlo.ztatic.FileCache;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
@@ -79,16 +80,7 @@ public class NetHelper {
 
 	private static boolean INIT_HTTPS = false;
 
-	private static final Map<String, Boolean> UserAgentCache = Collections.synchronizedMap(new TimeMap<String, Boolean>(60 * 60 * 24 * 30, 100000)); // cache
-																																						// for
-																																						// user
-																																						// agent,
-																																						// 1
-																																						// month
-																																						// and
-																																						// max
-																																						// 100000
-																																						// entry
+	private static final Map<String, Boolean> UserAgentCache = Collections.synchronizedMap(new TimeMap<String, Boolean>(60 * 60 * 24 * 30, 100000)); 
 
 	/**
 	 * create a static logger.
@@ -1423,25 +1415,52 @@ public class NetHelper {
 		}
 		return false;
 	}
-	
+
 	public static Company validVATEuroparlEU(ContentContext ctx, String vat) throws MalformedURLException, Exception {
-		if (!ctx.getGlobalContext().getStaticConfig().isCheckContentIntegrity() || vat == null) {
+		if (ctx != null && !ctx.getGlobalContext().getStaticConfig().isCheckContentIntegrity() || vat == null) {
 			return null;
 		}
-		vat = vat.replace(".", "").trim();
+		vat = vat.replace(".", "");
+		vat = vat.replace(" ", "");
 		if (vat.length() != 12) {
 			return null;
 		}
 		String country = vat.substring(0, 2);
-		String number = vat.substring(3);
+		String number = vat.substring(2);
 		if (!StringHelper.isDigit(number)) {
 			return null;
 		}
-		String url = "http://ec.europa.eu/taxation_customs/vies/vatResponse.html?number="+number+"&memberStateCode="+country;
-		String content = readPage(new URL(url));
-	    Document doc = Jsoup.parse(content);
-	    Element elem = doc.getElementById("vatResponseFormTable");
-	    return null;
+		String url = "http://ec.europa.eu/taxation_customs/vies/vatResponse.html?number=" + number + "&memberStateCode=" + country;
+		String content = readPageGet(new URL(url));
+		Document doc = Jsoup.parse(content);
+		Element elem = doc.getElementById("vatResponseFormTable");
+		Company company = new Company();
+		if (elem != null) {
+			Elements tds = elem.getElementsByTag("td");
+			int i = 0;
+			for (Element td : tds) {
+				i++;				
+				if (i == 7) {
+					company.setNumber(td.text());
+				}
+				if (i == 11) {
+					company.setName(td.text());
+				}
+				if (i == 13) {
+					company.setAddresse(td.text());
+				}
+
+			}
+		}
+		return company;
+	}
+
+	public static void main(String[] args) throws MalformedURLException, Exception {
+		Company company = validVATEuroparlEU(null, "BE 0824.985.592");
+		System.out.println("##### NetHelper.main : company name = " + company.getName());
+		System.out.println("##### NetHelper.main : company adresse = " + company.getAddresse());
+		System.out.println("##### NetHelper.main : company number = " + company.getNumber());
 	}
 
 }
+

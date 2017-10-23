@@ -1,23 +1,17 @@
 package org.javlo.bean;
 
-import java.util.Date;
-
 public class Company {
-	private Date date;
+	private String number;
 	private String name;
 	private String addresse;
 	
-	public Company(Date date, String name, String addresse) {
-		super();
-		this.date = date;
-		this.name = name;
-		this.addresse = addresse;
+	public Company() {		
+	}	
+	public String getNumber() {
+		return number;
 	}
-	public Date getDate() {
-		return date;
-	}
-	public void setDate(Date date) {
-		this.date = date;
+	public void setNumber(String number) {
+		this.number = number;
 	}
 	public String getName() {
 		return name;

@@ -1901,7 +1901,6 @@ public class Template implements Comparable<Template> {
 		synchronized (ctx.getGlobalContext().getLockImportTemplate()) {
 			String renderer = getRendererFile(ctx.getDevice());
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-
 			String jspPath = URLHelper.mergePath(getTemplateTargetFolder(globalContext), renderer);
 			File jspFile = new File(jspPath);
 			if (!jspFile.exists()) {

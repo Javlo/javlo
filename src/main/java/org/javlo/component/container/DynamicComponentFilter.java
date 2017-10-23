@@ -47,6 +47,8 @@ public class DynamicComponentFilter extends AbstractPropertiesComponent implemen
 	private static final String CURRENT_USER_ONLY = "current_user_only";
 
 	private static final String HIDE_FORM = "hide_form";
+	
+	private static final String HIDE_FORM_USER_ONLY = "hide_form_user_only";
 
 	@Override
 	public String getType() {
@@ -55,7 +57,7 @@ public class DynamicComponentFilter extends AbstractPropertiesComponent implemen
 
 	@Override
 	public String[] getStyleList(ContentContext ctx) {
-		return new String[] { "default_none", STYLE_ALL, HIDE_FORM, CURRENT_USER_ONLY };
+		return new String[] { "default_none", STYLE_ALL, HIDE_FORM, CURRENT_USER_ONLY, HIDE_FORM_USER_ONLY };
 	}
 
 	@Override
@@ -131,7 +133,7 @@ public class DynamicComponentFilter extends AbstractPropertiesComponent implemen
 		PrintStream out = new PrintStream(outStream);
 
 		I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
-		if (!getStyle().equals(HIDE_FORM)) {
+		if (!getStyle().equals(HIDE_FORM) && !getStyle().equals(HIDE_FORM_USER_ONLY)) {
 			out.println("<div class=\"filter-form card panel panel-default\"><form role=\"form\" class=\"generic-form\" id=\"form-filter-" + getId() + "\" name=\"form-filter-" + getId() + "\" action=\"" + URLHelper.createURL(ctx) + "\" method=\"post\">");
 			out.println("<div class=\"fields panel-body card-body\"><input type=\"hidden\" name=\"webaction\" value=\"" + getActionGroupName() + ".filter\" />");
 			out.println("<input type=\"hidden\" name=\"" + IContentVisualComponent.COMP_ID_REQUEST_PARAM + "\" value=\"" + getId() + "\"><div class=\"row field-row first-row\">");
@@ -168,7 +170,7 @@ public class DynamicComponentFilter extends AbstractPropertiesComponent implemen
 
 		Map<String, Field> fieldsSearch = new HashMap<String, Field>();
 
-		boolean isFilter = getStyle().equals(STYLE_ALL) || getStyle().equals(HIDE_FORM) || getStyle().equals(CURRENT_USER_ONLY);
+		boolean isFilter = getStyle().equals(STYLE_ALL) || getStyle().equals(HIDE_FORM) || getStyle().equals(CURRENT_USER_ONLY) || getStyle().equals(HIDE_FORM_USER_ONLY);
 
 		for (Field field : getSearchField(ctx)) {
 			fieldsSearch.put(field.getName(), field);
@@ -181,7 +183,7 @@ public class DynamicComponentFilter extends AbstractPropertiesComponent implemen
 			// out.println("<ul class=\"filter-list\">");
 			ctx.getRequest().setAttribute("inList", true);
 			Collection<IFieldContainer> toDisplay = new LinkedList<IFieldContainer>();
-			boolean onlyUser = CURRENT_USER_ONLY.equals(getStyle());
+			boolean onlyUser = CURRENT_USER_ONLY.equals(getStyle()) || HIDE_FORM_USER_ONLY.equals(getStyle());
 			for (IFieldContainer container : containers) {
 				if (container.isRealContent(ctx)) {					
 					List<Field> fields = container.getFields(ctx);

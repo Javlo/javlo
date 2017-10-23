@@ -984,14 +984,16 @@ public class AccessServlet extends HttpServlet implements IVersion {
 							}
 
 							if (ctx.getCurrentPage() != null && ctx.getCurrentPage().getUserRoles().size() > 0) {
-								if (ctx.getCurrentUser() == null) {
-									ctx.setSpecialContentRenderer("/jsp/view/login.jsp");
-								} else {
-									if (ctx.getCurrentUser().getPassword() != null && staticConfig.isFirstPasswordMustBeChanged() && ctx.getCurrentUser().getPassword().equals(staticConfig.getFirstPasswordEncryptedIfNeeded())) {
-										ctx.setSpecialContentRenderer("/jsp/view/change_password.jsp");
+								if (!ctx.getCurrentPage().isReadAccess(ctx, ctx.getCurrentUser())) {
+									if (ctx.getCurrentUser() == null) {
+										ctx.setSpecialContentRenderer("/jsp/view/login.jsp");
 									} else {
-										if (!ctx.getCurrentPage().isReadAccess(ctx, ctx.getCurrentUser())) {
-											ctx.setSpecialContentRenderer("/jsp/view/login.jsp");
+										if (ctx.getCurrentUser().getPassword() != null && staticConfig.isFirstPasswordMustBeChanged() && ctx.getCurrentUser().getPassword().equals(staticConfig.getFirstPasswordEncryptedIfNeeded())) {
+											ctx.setSpecialContentRenderer("/jsp/view/change_password.jsp");
+										} else {
+											if (!ctx.getCurrentPage().isReadAccess(ctx, ctx.getCurrentUser())) {
+												ctx.setSpecialContentRenderer("/jsp/view/login.jsp");
+											}
 										}
 									}
 								}

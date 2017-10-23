@@ -11,6 +11,7 @@ import org.javlo.component.core.ComponentBean;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.dynamic.DynamicComponent;
 import org.javlo.context.ContentContext;
+import org.javlo.context.GlobalContext;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.i18n.I18nAccess;
@@ -50,9 +51,13 @@ public class DynamicComponentBasket extends AbstractVisualComponent implements I
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(outStream);
 		String pdfURL = URLHelper.createPDFURL(ctx);
+		String token = ctx.getRequest().getParameter(GlobalContext.PAGE_TOKEN_PARAM);
 		I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
 		pdfURL = URLHelper.addParam(pdfURL, ComponentBasket.SESSION_KEY, ctx.getGlobalContext().addSharedObject(ComponentBasket.getComponentBasket(ctx)));
-		out.println("<div class=\"btn-group pdf-link\"><a class=\"btn btn-secondary\" href=\"" + pdfURL + "\"><i class=\"fa fa-file-pdf-o\" aria-hidden=\"true\"></i>&nbsp;" + i18nAccess.getViewText("global.download") + " PDF</a></div>");
+		if (token != null) {
+			pdfURL = URLHelper.addParam(pdfURL, GlobalContext.PAGE_TOKEN_PARAM, token);
+		}
+		out.println("<div class=\"btn-group pdf-link\"><a class=\"btn btn-secondary\" href=\"" + URLHelper.cryptURL(ctx,pdfURL) + "\"><i class=\"fa fa-file-pdf-o\" aria-hidden=\"true\"></i>&nbsp;" + i18nAccess.getViewText("global.download") + " PDF</a></div>");
 		int index = 0;
 		ContentService contentService = ContentService.getInstance(ctx.getRequest());
 		ctx.getRequest().setAttribute("first", true);
@@ -60,20 +65,24 @@ public class DynamicComponentBasket extends AbstractVisualComponent implements I
 		ctx.getRequest().setAttribute("share", true);
 		ctx.getRequest().setAttribute("previousSame", false);
 		ctx.getRequest().setAttribute("nextSame", true);
-		int size = ComponentBasket.getComponentBasket(ctx).getComponents().size();
-		for (String selctId : ComponentBasket.getComponentBasket(ctx).getComponents()) {
+		ctx.getRequest().setAttribute("displayBasket", true);
+		int size = ComponentBasket.getComponentBasket(ctx).getComponents().size();		
+		for (String selectId : ComponentBasket.getComponentBasket(ctx).getComponents()) {
 			index++;
 			if (index == size) {
 				ctx.getRequest().setAttribute("nextSame", false);
 			}
 			ctx.getRequest().setAttribute("componentIndex", index);
-			DynamicComponent container = (DynamicComponent) contentService.getComponent(ctx, selctId);
+			DynamicComponent container = (DynamicComponent) contentService.getComponent(ctx, selectId);
 			if (container != null) {
 				out.println(container.getViewListXHTMLCode(ctx));
 				ctx.getRequest().setAttribute("first", false);
 				ctx.getRequest().setAttribute("previousSame", true);
 			}
 
+		}
+		if (size == 0) {
+			out.println("<div class=\"alert alert-warning\" role=\"alert\">"+i18nAccess.getViewText("content.no-selection")+"</div>");
 		}
 		out.close();
 		return new String(outStream.toByteArray());
@@ -106,7 +115,8 @@ public class DynamicComponentBasket extends AbstractVisualComponent implements I
 		out.println(ComponentBasket.getComponentBasket(ctx).size() + " " + getValue());
 		Map<String, String> params = new HashMap<String, String>();
 		params.put("selection", StringHelper.collectionToString(basket.getComponents()));
-		String basketURL = URLHelper.createURLFromPageName(ctx, "basket", params);
+		params.put(GlobalContext.PAGE_TOKEN_PARAM, ctx.getGlobalContext().createTokenForPage("basket"));
+		String basketURL = URLHelper.cryptURL(ctx,URLHelper.createURLFromPageName(ctx, "basket", params));
 		out.println("<a class=\"share-link pull-right\" href=\"" + basketURL + "\"><i class=\"fa fa-share\" aria-hidden=\"true\"></i></a>");
 		out.println("</div>");
 		if (basket.components.size() > 0) {
@@ -159,7 +169,7 @@ public class DynamicComponentBasket extends AbstractVisualComponent implements I
 		}
 		return null;
 	}
-
+	
 	public static String performDelete(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
 		if (ComponentBasket.getComponentBasket(ctx).removeComponent(rs.getParameter("comp", null))) {
 			for (IContentVisualComponent comp : ctx.getCurrentPage().getContentByType(ctx.getContextWithArea(null), DynamicComponentBasket.TYPE)) {
