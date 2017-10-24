@@ -56,6 +56,10 @@ img, figure {
 	margin-bottom: 15px;
 }
 
+.global-image.fix-height figure, .global-image.fix-height img {
+	display: inline;
+}
+
 .global-image.full img, .global-image.banner img, .global-image.full-flip img, .global-image.banner-flip img {
 	border: 0 none;
 	display: block;
