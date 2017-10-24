@@ -17,6 +17,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -44,6 +45,7 @@ import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
 import org.javlo.module.content.Edit;
 import org.javlo.module.core.Module;
+import org.javlo.module.core.Module.Box;
 import org.javlo.module.core.ModulesContext;
 import org.javlo.module.file.FileModuleContext;
 import org.javlo.module.mailing.MailingModuleContext;
@@ -210,7 +212,10 @@ public class TemplateAction extends AbstractModuleAction {
 						fileReader.close();
 						ctx.getRequest().setAttribute("values", values);
 					}
-					module.getMainBoxes().iterator().next().setRenderer("/jsp/images.jsp");
+					Iterator<Box> ite = module.getMainBoxes().iterator();
+					if (ite.hasNext()) {
+						ite.next().setRenderer("/jsp/images.jsp");	
+					}					
 					// module.setRenderer("/jsp/images.jsp");
 				} else if (requestService.getParameter("css", null) != null && requestService.getParameter("back", null) == null) {
 					if (module.getMainBoxes().size() > 0) {

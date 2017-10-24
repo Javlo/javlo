@@ -287,6 +287,8 @@ public class GlobalImage extends Image implements IImageFilter {
 		int width = getWidth(ctx.getBean());
 		if (width >= 0) {
 			ctx.getRequest().setAttribute("imageWidth", width);
+		} else {
+			ctx.getRequest().removeAttribute("imageWidth");
 		}
 		int height = getHeight(ctx.getBean());
 		if (height >= 0) {
