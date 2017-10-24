@@ -889,3 +889,5 @@ change log
  * 4/ collaborative mode + null pointer in PaginationContext / correction memory leak with old link between page and ressources
  
 * 2.1.0.6 19/10/17
+
+ * 1/ optimmisation crypted link
