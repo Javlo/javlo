@@ -48,6 +48,10 @@ img, figure {
 	margin-top: 0;
 }
 
+.first-component h1, .first-component h2, .first-component h3, .first-component h4, .first-component h5, .first-component h6 {
+	margin-top: 0;
+}
+
 .global-image {
 	margin-bottom: 15px;
 }

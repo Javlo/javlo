@@ -1521,9 +1521,9 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		out.println("<div class=\"array-filter line\">");
 		String ajaxURL = URLHelper.createExpCompLink(ctx, getId());
 		out.println("<input class=\"input\" type=\"text\" placeholder=\"" + i18nAccess.getText("global.filter") + "\" onkeyup=\"filterPage('" + ajaxURL + "',this.value, '." + tableID + " tbody');\"/>");
-		String resetFilterScript = "jQuery('#comp-" + getId() + " .filter .input').val(''); filterPage('" + ajaxURL + "',jQuery('#comp-" + getId() + " .filter .input').val(), '." + tableID + " tbody'); return false;";
+		String resetFilterScript = "jQuery('#comp-" + getId() + " .array-filter .input').val(''); filterPage('" + ajaxURL + "',jQuery('#comp-" + getId() + " .array-filter .input').val(), '." + tableID + " tbody'); return false;";
 		out.println("<input type=\"button\" onclick=\"" + resetFilterScript + "\" value=\"" + i18nAccess.getText("global.reset") + "\" />");
-		String allScript = "if (jQuery('#comp-" + getId() + " .filter .input').val().indexOf(':all')<0) {jQuery('#comp-" + getId() + " .filter .input').val(jQuery('#comp-" + getId() + " .filter .input').val()+' :all'); filterPage('" + ajaxURL + "',jQuery('#comp-" + getId() + " .filter .input').val(), '." + tableID + " tbody'); return false;}";
+		String allScript = "if (jQuery('#comp-" + getId() + " .array-filter .input').val().indexOf(':all')<0) {jQuery('#comp-" + getId() + " .array-filter .input').val(jQuery('#comp-" + getId() + " .array-filter .input').val()+' :all'); filterPage('" + ajaxURL + "',jQuery('#comp-" + getId() + " .array-filter .input').val(), '." + tableID + " tbody'); return false;}";
 		out.println("<input type=\"button\" onclick=\"" + allScript + "\" value=\"" + i18nAccess.getText("global.all") + "\" />");
 
 		out.println("</div>");
@@ -1542,7 +1542,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 
 		out.print("<div class=\"page-list-container\"><table class=\"");
 		out.print("page-list" + ' ' + tableID);
-		String onlyCheckedScript = "if (jQuery('#comp-" + getId() + " .filter .input').val().indexOf(':checked')<0) {jQuery('#comp-" + getId() + " .filter .input').val(jQuery('#comp-" + getId() + " .filter .input').val()+' :checked'); filterPage('" + ajaxURL + "',jQuery('#comp-" + getId() + " .filter .input').val(), '." + tableID + " tbody'); return false;}";
+		String onlyCheckedScript = "if (jQuery('#comp-" + getId() + " .array-filter .input').val().indexOf(':checked')<0) {jQuery('#comp-" + getId() + " .array-filter .input').val(jQuery('#comp-" + getId() + " .array-filter .input').val()+' :checked'); filterPage('" + ajaxURL + "',jQuery('#comp-" + getId() + " .array-filter .input').val(), '." + tableID + " tbody'); return false;}";
 		out.println("\"><thead><tr><th>" + i18nAccess.getText("global.label") + "</th><th>" + i18nAccess.getText("global.date") + "</th><th>" + i18nAccess.getText("global.modification") + "</th><th>" + i18nAccess.getText("content.page-teaser.language") + "</th><th title=\"" + i18nAccess.getText("content.page-reference.content.help") + "\">" + i18nAccess.getText("content.page-reference.content") + "</th><th>" + i18nAccess.getText("global.select") + " <a href=\"#\" onclick=\"" + onlyCheckedScript
 				+ "\">(" + currentSelection.size() + ")</a></th></tr></thead><tbody>");
 
@@ -1606,7 +1606,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 			params.put("parentURL", URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.PREVIEW_MODE), page.getPath()));
 			editPageURL = URLHelper.createURL(ctx, page.getPath(), params);
 		}
-		out.print("<tr class=\"filtered\"><td><a data-toggle=\"tooltip\" data-placement=\"right\" title=\"" + NavigationHelper.getBreadCrumb(ctx, page) + "\" href=\"" + editPageURL + "\">" + page.getFullLabel(ctx) + "</a></td>");
+		out.print("<tr class=\"filtered\"><td class=\"label\"><a data-toggle=\"tooltip\" data-placement=\"right\" title=\"" + NavigationHelper.getBreadCrumb(ctx, page) + "\" href=\"" + editPageURL + "\">" + page.getFullLabel(ctx) + "</a></td>");
 		out.print("<td>" + StringHelper.neverNull(StringHelper.renderLightDate(page.getContentDate(ctx))) + "</td>");
 		out.println("<td>" + StringHelper.renderLightDate(page.getModificationDate()) + "</td><td>" + ctx.getRequestContentLanguage() + "</td>");
 		String contentCode = "";

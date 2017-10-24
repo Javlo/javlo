@@ -35,6 +35,10 @@ body .component-wrapper {
 	width: auto;
 }
 
+.page-list .label {
+	max-width: 600px;
+}
+
 .component .list-container .image-selected {	
 	padding: 2px;	
 	margin: 2px;
