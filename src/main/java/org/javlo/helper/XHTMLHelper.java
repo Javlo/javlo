@@ -3,6 +3,7 @@
  */
 package org.javlo.helper;
 
+import java.awt.Color;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
@@ -61,15 +62,12 @@ import org.javlo.message.GenericMessage;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
 import org.javlo.service.IListItem;
-import org.javlo.service.ListService;
 import org.javlo.service.RequestService;
 import org.javlo.service.ReverseLinkService;
 import org.javlo.template.Template.TemplateData;
 import org.javlo.user.IUserInfo;
 import org.javlo.user.User;
-import org.javlo.utils.Cell;
 import org.javlo.utils.SuffixPrefix;
-import org.javlo.utils.XLSTools;
 import org.javlo.ztatic.StaticInfo;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -2708,6 +2706,23 @@ public class XHTMLHelper {
 			html = "<div class=\"resource-data\">" + html + "</div>";
 		}
 		return html;
+	}
+	
+	public static String renderColorChooser(String name, String cssValue, List<Color> colors, String value) {
+		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+		PrintStream out = new PrintStream(outStream);
+		out.println("<div class=\"color-chooser "+StringHelper.neverNull(cssValue)+"\">");
+		out.println("<input type=\"hidden\" id=\""+name+"\" name=\""+name+"\" value=\""+StringHelper.neverNull(value)+"\" />");
+		out.println("<button id=\"select-color-"+name+"\" class=\"select-color\" readonly=\"readonly\" style=\"background-color: "+value+"\" title=\""+value+"\">&nbsp</button>");
+		String js = "jQuery('#"+name+"').val(jQuery(this).val()); jQuery('#select-color-"+name+"').attr('style', 'background-color:'+jQuery(this).val()); return false;";
+		for (Color c : colors) {
+			String hex = "#"+Integer.toHexString(c.getRGB()).substring(2);
+			out.println("<button type=\"button\" class=\"color-choice\" value=\""+hex+"\" title=\""+hex+"\" style=\"background-color: "+hex+"\" onclick=\""+js+"\">&nbsp</button>");
+		}
+		out.println("&nbsp;&nbsp;&nbsp;&nbsp;<button type=\"button\" class=\"color-choice\" value=\"\" title=\"reset\" onclick=\""+js+"\">&nbsp</button>");
+		out.println("</div>");
+		out.close();
+		return new String(outStream.toByteArray());
 	}
 
 	public static String collectionToList(Collection<? extends Object> col) {

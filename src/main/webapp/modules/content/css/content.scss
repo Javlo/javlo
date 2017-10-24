@@ -527,3 +527,14 @@ li.line {
 .dynamic-component .row {
 	margin-bottom: 3px;
 }
+
+.color-chooser {
+	.select-color, .color-choice {
+		height: 18px;
+		width: 36px;
+	}
+	.select-color {
+		display: inline-block;
+		margin-right: 50px;
+	}
+}

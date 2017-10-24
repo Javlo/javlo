@@ -665,7 +665,12 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			out.println("<div class=\"line\">");
 			String bgColInputName = "bgcol-" + getId();
 			out.println("<label for=\"" + bgColInputName + "\">" + i18nAccess.getText("component.background-color") + "</label>");
-			out.println("<input id=\"" + bgColInputName + "\" name=\"" + bgColInputName + "\" class=\"color form-control\" type=\"text\" value=\"" + StringHelper.neverNull(getBackgroundColor()) + "\" />");
+			List<Color> colors = ctx.getCurrentTemplate().getColorList();
+			if (colors.size() > 0) {
+				out.println(XHTMLHelper.renderColorChooser(bgColInputName, "", colors, StringHelper.neverNull(getBackgroundColor())));
+			} else {
+				out.println("<input id=\"" + bgColInputName + "\" name=\"" + bgColInputName + "\" class=\"color form-control\" type=\"text\" value=\"" + StringHelper.neverNull(getBackgroundColor()) + "\" />");
+			}
 			out.println("</div>");
 		}
 
@@ -673,7 +678,12 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			out.println("<div class=\"line\">");
 			String textColInputName = "textcol-" + getId();
 			out.println("<label for=\"" + textColInputName + "\">" + i18nAccess.getText("component.text-color") + "</label>");
+			List<Color> colors = ctx.getCurrentTemplate().getColorList();
+			if (colors.size() > 0) {
+				out.println(XHTMLHelper.renderColorChooser(textColInputName, "", colors, StringHelper.neverNull(getTextColor())));
+			} else {
 			out.println("<input id=\"" + textColInputName + "\" name=\"" + textColInputName + "\" class=\"color form-control\" type=\"text\" value=\"" + StringHelper.neverNull(getTextColor()) + "\" />");
+			}
 			out.println("</div>");
 		}
 
@@ -1255,12 +1265,14 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	protected String getInlineStyle(ContentContext ctx) {
 		String inlineStyle = "";
 		if (getBackgroundColor() != null && getBackgroundColor().length() > 2) {
-			inlineStyle = " overflow: hidden; background-color: " + getBackgroundColor() + ';';
+			inlineStyle = " overflow: hidden; background-color: " + getBackgroundColor() + "; border-color: " + getBackgroundColor() + ';';
 		}
 		if (getTextColor() != null && getTextColor().length() > 2) {
 			inlineStyle = inlineStyle + " color: " + getTextColor() + ';';
 		}
-
+		if (getLayout() != null) {
+			inlineStyle = inlineStyle + ' ' + getLayout().getStyle();
+		}
 		if (inlineStyle.length() > 0) {
 			inlineStyle = " style=\"" + inlineStyle + "\"";
 		}

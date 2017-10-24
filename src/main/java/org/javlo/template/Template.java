@@ -3100,5 +3100,22 @@ public class Template implements Comparable<Template> {
 	public Map<String, String> getConfig() {
 		return configMap;
 	}
+	
+	public List<Color> getColorList() {
+		String rawList = properties.getProperty("charter.colors");
+		if (rawList == null) {
+			return getParent().getColorList();
+		} else {
+			List<Color> colors = new LinkedList<Color>();
+			for (String col : StringHelper.stringToCollection(rawList, ",")) {
+				try {
+					colors.add(Color.decode(col));
+				} catch (Exception e) {				
+					e.printStackTrace();
+				}
+			}
+			return colors;
+		}
+	}
 
 }

@@ -1,9 +1,11 @@
-.colored-wrapper {
-	margin-bottom: 15px;
+.colored-wrapper div {	
+	border-width: 10px;	
+	border-style: solid;    
 }
 	
 .colored-wrapper {	
-	padding: 15px;	
+	margin: 15px 0;	
+	text-decoration: none;
 }
 
 body {
@@ -42,6 +44,10 @@ img, figure {
 	border: 0 none;
 }
 
+.first-component {
+	margin-top: 0;
+}
+
 .global-image {
 	margin-bottom: 15px;
 }
@@ -50,6 +56,11 @@ img, figure {
 	border: 0 none;
 	display: block;
 	width: 100%;
+}
+
+.simple-internal-link, .external-link {
+	display: block;
+	margin: 15px 0;
 }
 
 .float-image.right {

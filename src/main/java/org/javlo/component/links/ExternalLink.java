@@ -11,6 +11,7 @@ import java.util.Date;
 
 import org.javlo.component.core.ComplexPropertiesLink;
 import org.javlo.component.core.ComponentBean;
+import org.javlo.component.core.ComponentLayout;
 import org.javlo.component.core.ILink;
 import org.javlo.component.core.IReverseLinkComponent;
 import org.javlo.config.StaticConfig;
@@ -19,11 +20,16 @@ import org.javlo.context.GlobalContext;
 import org.javlo.helper.NetHelper;
 import org.javlo.helper.PatternHelper;
 import org.javlo.helper.StringHelper;
+import org.javlo.helper.URLHelper;
 import org.javlo.helper.XHTMLHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.message.GenericMessage;
+import org.javlo.module.mailing.MailingAction;
+import org.javlo.navigation.MenuElement;
+import org.javlo.service.NavigationService;
 import org.javlo.service.RequestService;
 import org.javlo.service.ReverseLinkService;
+import org.javlo.service.exception.ServiceException;
 
 /**
  * @author pvandermaesen
@@ -48,13 +54,15 @@ public class ExternalLink extends ComplexPropertiesLink implements IReverseLinkC
 			properties.setProperty(LABEL_KEY, "");
 			properties.setProperty(REVERSE_LINK_KEY, ReverseLinkService.NONE);
 		}
+		if (getLayout() == null) {
+			getComponentBean().setLayout(new ComponentLayout(""));
+		}
 	}
 
 	public String getLabel() {
 		String label = properties.getProperty(LABEL_KEY, "");
 		if (label.trim().length() == 0) {
 			label = properties.getProperty(LINK_KEY, "");
-			;
 		}
 		label = label.replace("/", "/<wbr />");
 		return label;
@@ -85,6 +93,53 @@ public class ExternalLink extends ComplexPropertiesLink implements IReverseLinkC
 			ctx.getRequest().setAttribute("label", "no link");
 		}
 	}
+	
+	@Override
+	protected String getForcedPrefixViewXHTMLCode(ContentContext ctx) {
+		String prefix;
+		try {
+			if (getConfig(ctx).getProperty("prefix", null) != null) {
+				return getConfig(ctx).getProperty("prefix", null);
+			}
+			String style = contructViewStyle(ctx);
+			prefix = "";
+			if (getComponentBean().isList()) {
+				prefix = "<li>";
+			}
+			if (style == null) {
+				style = getType();
+			} else {
+				style = style+' '+getType();
+			}
+			
+			String target ="";
+			if (ctx.getGlobalContext().isOpenExternalLinkAsPopup(getLink())) {
+				target = "target=\"_blank\" ";
+				String title = I18nAccess.getInstance(ctx).getViewText("global.newwindow", "");
+				if (title.trim().length() > 0) {
+					target = target + "title=\"" + title + "\" ";
+				}
+			}	
+			
+			prefix = prefix + "<a "+target+' '+ getInlineStyle(ctx) + ' ' + getSpecialPreviewCssClass(ctx, style+' '+getStyle(ctx)) + getSpecialPreviewCssId(ctx) + " href=\"";
+			prefix = prefix + StringHelper.toXMLAttribute(getLink());				
+			prefix = prefix + "\">";
+			return prefix;
+		} catch (Exception e) {			
+			e.printStackTrace();
+			return null;
+		}		
+	}
+	
+	@Override
+	public String getSuffixViewXHTMLCode(ContentContext ctx) {		
+		if (getComponentBean().isList()) {
+			return "</a></li>";
+		} else {
+			return "</a>";
+		}
+	}
+
 
 	/**
 	 * @see org.javlo.itf.IContentVisualComponent#getXHTMLCode()
@@ -100,26 +155,11 @@ public class ExternalLink extends ComplexPropertiesLink implements IReverseLinkC
 			if (cssClass != null) {
 				insertCssClass = insertCssClass+" "+cssClass;
 			}
-
-			String target = "";
-			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-			if (globalContext.isOpenExternalLinkAsPopup(link)) {
-				target = "target=\"_blank\" ";
-				String title = I18nAccess.getInstance(ctx).getViewText("global.newwindow", "");
-				if (title.trim().length() > 0) {
-					target = target + "title=\"" + title + "\" ";
-				}
-			}		
-
-			res.append("<a" + getSpecialPreviewCssClass(ctx, insertCssClass) + getSpecialPreviewCssId(ctx) + " " + target + "href=\"");
-			res.append(link);
-			res.append("\">");
 			res.append(getLabel().trim().length() > 0 ? getLabel() : StringHelper.neverNull(link, "no link"));
 			if (getConfig(ctx).getProperty("wai.mark-external-link", null) != null && StringHelper.isTrue(getConfig(ctx).getProperty("wai.mark-external-link", "false"))) {
 				res.append("<span class=\"wai\">" + I18nAccess.getInstance(ctx.getRequest()).getViewText("wai.external-link") + "</span>");
-			}
-			res.append("</a>");
-			return res.toString();
+			}			
+			return "<div "+getInlineStyle(ctx)+" class=\"label\">"+res+"</div>";
 		} else {
 			return "";
 		}
@@ -127,7 +167,7 @@ public class ExternalLink extends ComplexPropertiesLink implements IReverseLinkC
 
 	@Override
 	protected boolean isWrapped(ContentContext ctx) {
-		return isList(ctx);
+		return true;
 	}
 
 	@Override

@@ -1,5 +1,6 @@
 package org.javlo.navigation;
 
+import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
@@ -393,6 +394,10 @@ public class DefaultTemplate extends Template {
 	@Override
 	public boolean isBootstrap() {
 		return false;
+	}
+	
+	public List<Color> getColorList() {
+		return Collections.emptyList();
 	}
 
 }

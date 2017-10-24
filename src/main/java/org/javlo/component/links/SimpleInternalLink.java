@@ -9,6 +9,7 @@ import java.util.logging.Logger;
 
 import org.javlo.component.core.ComplexPropertiesLink;
 import org.javlo.component.core.ComponentBean;
+import org.javlo.component.core.ComponentLayout;
 import org.javlo.component.core.IInternalLink;
 import org.javlo.component.core.IReverseLinkComponent;
 import org.javlo.context.ContentContext;
@@ -25,6 +26,7 @@ import org.javlo.service.ContentService;
 import org.javlo.service.NavigationService;
 import org.javlo.service.RequestService;
 import org.javlo.service.ReverseLinkService;
+import org.javlo.service.exception.ServiceException;
 
 /**
  * @author pvandermaesen
@@ -36,8 +38,6 @@ public class SimpleInternalLink extends ComplexPropertiesLink implements IIntern
 	 */
 	protected static Logger logger = Logger.getLogger(SimpleInternalLink.class.getName());
 
-	private static final String TITLE = "title";
-
 	private static final String REVERSE_LINK_KEY = "reverse-link";
 
 	public static final String TYPE = "simple-internal-link";
@@ -46,6 +46,9 @@ public class SimpleInternalLink extends ComplexPropertiesLink implements IIntern
 	public void init(ComponentBean bean, ContentContext newContext) throws Exception {
 		super.init(bean, newContext);
 		properties.load(stringToStream(getValue()));
+		if (getLayout() == null) {
+			getComponentBean().setLayout(new ComponentLayout(""));
+		}
 	}
 
 	@Override
@@ -65,7 +68,7 @@ public class SimpleInternalLink extends ComplexPropertiesLink implements IIntern
 		}
 		return super.getTag(ctx);
 	}
-	
+
 	@Override
 	public void prepareView(ContentContext ctx) throws Exception {
 		super.prepareView(ctx);
@@ -96,51 +99,85 @@ public class SimpleInternalLink extends ComplexPropertiesLink implements IIntern
 					ctx.getRequest().setAttribute("url", StringHelper.toXMLAttribute(url) + getParam() + "&" + MailingAction.MAILING_FEEDBACK_PARAM_NAME + "=" + MailingAction.MAILING_FEEDBACK_VALUE_NAME);
 				}
 			}
-		}}
+		}
+	}
+
+	@Override
+	protected String getForcedPrefixViewXHTMLCode(ContentContext ctx) {
+		if (getConfig(ctx).getProperty("prefix", null) != null) {
+			return getConfig(ctx).getProperty("prefix", null);
+		}
+		String style = contructViewStyle(ctx);
+		String prefix = "";
+		if (getComponentBean().isList()) {
+			prefix = "<li>";
+		}
+		if (style == null) {
+			style = getType();
+		} else {
+			style = style+' '+getType();
+		}
+
+		String linkId = properties.getProperty(LINK_KEY, "/");
+
+		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+		NavigationService navigationService;
+		try {
+			navigationService = NavigationService.getInstance(globalContext);
+			MenuElement child = navigationService.getPage(ctx, linkId);
+			if (child != null) {
+				String link = child.getPath();
+				String label = properties.getProperty(LABEL_KEY, "");
+				if (label.trim().length() == 0) {
+					label = child.getLabel(ctx);
+				}
+				String url = URLHelper.createURL(ctx, link);
+				prefix = prefix + "<a" + getInlineStyle(ctx) + ' ' + getSpecialPreviewCssClass(ctx, style+' '+getStyle(ctx)) + getSpecialPreviewCssId(ctx) + " href=\"";
+				if (ctx.getRenderMode() != ContentContext.PAGE_MODE) {
+					prefix = prefix + StringHelper.toXMLAttribute(url);
+				} else {
+					ContentContext viewCtx = new ContentContext(ctx);
+					viewCtx.setRenderMode(ContentContext.VIEW_MODE);
+					url = URLHelper.createURL(viewCtx, link);
+					if (getParam().trim().length() == 0) {
+						prefix = prefix + StringHelper.toXMLAttribute(url) + "?" + MailingAction.MAILING_FEEDBACK_PARAM_NAME + "=" + MailingAction.MAILING_FEEDBACK_VALUE_NAME;
+					} else {
+						prefix = prefix + StringHelper.toXMLAttribute(url) + getParam() + "&" + MailingAction.MAILING_FEEDBACK_PARAM_NAME + "=" + MailingAction.MAILING_FEEDBACK_VALUE_NAME;
+					}
+				}
+				prefix = prefix + "\">";
+			}
+			if (isAjaxWrapper(ctx)) {
+				prefix = prefix + "<div id=\"" + getAjaxId() + "\">";
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return prefix;
+	}
+	
+	@Override
+	public String getSuffixViewXHTMLCode(ContentContext ctx) {		
+		if (getComponentBean().isList()) {
+			return "</a></li>";
+		} else {
+			return "</a>";
+		}
+	}
 
 	/**
 	 * @see org.javlo.itf.IContentVisualComponent#getXHTMLCode()
 	 */
 	@Override
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
-
-		StringBuffer res = new StringBuffer();
-		String style = getStyle(ctx);
-		if (style == null) {
-			style = TITLE;
+		NavigationService navigationService = NavigationService.getInstance(ctx.getGlobalContext());
+		MenuElement child = navigationService.getPage(ctx, properties.getProperty(LINK_KEY, "/"));
+		String label = properties.getProperty(LABEL_KEY, "");
+		if (label.trim().length() == 0) {
+			label = child.getLabel(ctx);
 		}
-
-		String linkId = properties.getProperty(LINK_KEY, "/");
-
-		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-		NavigationService navigationService = NavigationService.getInstance(globalContext);
-		MenuElement child = navigationService.getPage(ctx, linkId);
-		if (child != null) {
-			String link = "#";
-			link = child.getPath();
-			String label = properties.getProperty(LABEL_KEY, "");
-			if (label.trim().length() == 0) {
-				label = child.getLabel(ctx);
-			}
-			String url = URLHelper.createURL(ctx, link);
-			res.append("<a " + getSpecialPreviewCssClass(ctx, getStyle(ctx)) + getSpecialPreviewCssId(ctx) + " href=\"");
-			if (ctx.getRenderMode() != ContentContext.PAGE_MODE) {
-				res.append(StringHelper.toXMLAttribute(url));
-			} else {
-				ContentContext viewCtx = new ContentContext(ctx);
-				viewCtx.setRenderMode(ContentContext.VIEW_MODE);
-				url = URLHelper.createURL(viewCtx, link);
-				if (getParam().trim().length() == 0) {
-					res.append(StringHelper.toXMLAttribute(url) + "?" + MailingAction.MAILING_FEEDBACK_PARAM_NAME + "=" + MailingAction.MAILING_FEEDBACK_VALUE_NAME);
-				} else {
-					res.append(StringHelper.toXMLAttribute(url) + getParam() + "&" + MailingAction.MAILING_FEEDBACK_PARAM_NAME + "=" + MailingAction.MAILING_FEEDBACK_VALUE_NAME);
-				}
-			}
-			res.append("\">");
-			res.append(label);
-			res.append("</a>");
-		}
-		return res.toString();
+		return "<div "+getInlineStyle(ctx)+" class=\"label\">"+label+"</div>";
 	}
 
 	protected String getParam() throws Exception {
@@ -191,15 +228,15 @@ public class SimpleInternalLink extends ComplexPropertiesLink implements IIntern
 			if (reverseLink == null) {
 				reverseLink = "none";
 			}
-			out.println("<div class=\"line\">");
-			out.println("<label for=\"" + getReverseLinkName() + "\">" + reverseLinkLabel + " : </label>");
+			out.println("<div class=\"form-group\"><div class=\"row\"><div class=\"col-sm-4\">");
+			out.println("<label for=\"" + getReverseLinkName() + "\">" + reverseLinkLabel + " : </label></div><div class=\"col-sm-8\">");
 			out.println(XHTMLHelper.getReverlinkSelectType(ctx, getReverseLinkName(), reverseLink));
 
-			out.println("</div>");
-			out.println("<div class=\"line\">");
+			out.println("</div></div></div>");
+			out.println("<div class=\"form-group\"><div class=\"row\"><div class=\"col-sm-4\">");
 
-			out.println("<label for=\"" + getLinkName() + "\">" + linkTitle + " : </label>");
-			out.println("<select id=\"" + getLinkName() + "\" name=\"" + getLinkName() + "\">");
+			out.println("<label for=\"" + getLinkName() + "\">" + linkTitle + " : </label></div><div class=\"col-sm-6\">");
+			out.println("<select class=\"form-control\" id=\"" + getLinkName() + "\" name=\"" + getLinkName() + "\">");
 			MenuElement elem = content.getNavigation(ctx);
 			String[] values = elem.getChildList();
 			String currentLink = null;
@@ -213,7 +250,7 @@ public class SimpleInternalLink extends ComplexPropertiesLink implements IIntern
 				out.println(value);
 				out.println("</option>");
 			}
-			out.println("</select>");
+			out.println("</select></div><div class=\"col-sm-2\">");
 			if (currentLink != null) {
 				out.print("<a href=\"");
 				out.print(URLHelper.createURL(ctx, currentLink));
@@ -222,12 +259,12 @@ public class SimpleInternalLink extends ComplexPropertiesLink implements IIntern
 			} else {
 				setMessage(new GenericMessage(i18nAccess.getText("component.message.help.choose_link"), GenericMessage.HELP));
 			}
-			out.println("</div>");
-			out.println("<div class=\"line\">");
+			out.println("</div></div></div>");
+			out.println("<div class=\"form-group\"><div class=\"row\"><div class=\"col-sm-4\">");
 
-			out.println("<label for=\"" + getLinkLabelName() + "\">" + labelTitle + " : </label>");
-			out.println(XHTMLHelper.getTextInput(getLinkLabelName(), label));
-			out.println("</div>");
+			out.println("<label for=\"" + getLinkLabelName() + "\">" + labelTitle + " : </label></div><div class=\"col-sm-8\">");
+			out.println(XHTMLHelper.getTextInput(getLinkLabelName(), label, "form-control"));
+			out.println("</div></div></div>");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -347,19 +384,19 @@ public class SimpleInternalLink extends ComplexPropertiesLink implements IIntern
 	public boolean isOnlyThisPage() {
 		return properties.getProperty(REVERSE_LINK_KEY, "none").equals(ReverseLinkService.ONLY_THIS_PAGE);
 	}
-	
+
 	@Override
 	public boolean isOnlyPreviousComponent() {
 		return properties.getProperty(REVERSE_LINK_KEY, "none").equals(ReverseLinkService.ONLY_PREVIOUS_COMPONENT);
-	}	
-	
+	}
+
 	@Override
 	public boolean initContent(ContentContext ctx) throws Exception {
-		properties.setProperty(LINK_KEY, "0");		
+		properties.setProperty(LINK_KEY, "0");
 		properties.setProperty(LABEL_KEY, getType());
 		return true;
 	}
-	
+
 	@Override
 	public String getListGroup() {
 		return "link";
