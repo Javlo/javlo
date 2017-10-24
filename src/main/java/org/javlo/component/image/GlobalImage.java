@@ -172,7 +172,11 @@ public class GlobalImage extends Image implements IImageFilter {
 
 	@Override
 	public void setWidth(String width) {
-		properties.setProperty("width", width);
+		if (width != null) {
+			properties.setProperty("width", width);
+		} else {
+			properties.remove("width");
+		}
 	}
 
 	protected String getDefaultFilter() {
@@ -1014,6 +1018,11 @@ public class GlobalImage extends Image implements IImageFilter {
 			if (StringHelper.isDigit(getWidth())) {
 				msg = I18nAccess.getInstance(ctx).getText("content.image.width-noext", "Image 'width' need unity like px or %.");
 			}
+		}
+		
+		if (isModify()) {
+			setWidth(ctx, -1);
+			setHeight(ctx, -1);
 		}
 
 		return msg;
