@@ -61,7 +61,7 @@ public class DynamicComponentBasket extends AbstractVisualComponent implements I
 				pdfURL = URLHelper.addParam(pdfURL, GlobalContext.PAGE_TOKEN_PARAM, token);
 			}
 			pdfURL = URLHelper.cryptURL(ctx, pdfURL);
-			out.println("<div class=\"btn-group pdf-link\"><a class=\"btn btn-secondary\" href=\"" + pdfURL + "\"><i class=\"fa fa-file-pdf-o\" aria-hidden=\"true\"></i>&nbsp;" + i18nAccess.getViewText("global.download") + " PDF (secure)</a></div>");
+			out.println("<div class=\"btn-group pdf-link\"><a class=\"btn btn-secondary\" href=\"" + pdfURL + "\"><i class=\"fa fa-file-pdf-o\" aria-hidden=\"true\"></i>&nbsp;" + i18nAccess.getViewText("global.download") + " PDF</a></div>");
 		}
 		int index = 0;
 		ContentService contentService = ContentService.getInstance(ctx.getRequest());
