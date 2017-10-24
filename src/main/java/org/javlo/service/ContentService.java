@@ -80,14 +80,6 @@ public class ContentService implements IPrintInfo {
 		// content.loadViewNav(ctx); // reload the content
 	}
 
-	public static void main(String[] args) {
-		StringBuffer test = new StringBuffer("patrick");
-		WeakReference<StringBuffer> weakTest = new WeakReference<StringBuffer>(test);
-		System.out.println("*** weakTest 1 : " + weakTest.get());
-		test = null;
-		System.out.println("*** weakTest 2 : " + weakTest.get());
-	}
-
 	private MenuElement viewNav = null;
 
 	private Map<String, MenuElement> shortURLMap = null;

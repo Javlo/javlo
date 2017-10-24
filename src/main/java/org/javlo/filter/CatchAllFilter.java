@@ -259,7 +259,7 @@ public class CatchAllFilter implements Filter {
 					url = URLHelper.addParam(url, MailingAction.MAILING_FEEDBACK_PARAM_NAME, "" + request.getAttribute(MailingAction.MAILING_FEEDBACK_PARAM_NAME));
 				}
 
-				URL newURL = new URL(url + decryptedData);
+				URL newURL = new URL(url + decryptedData);				
 				for (Map.Entry<String, String> entry : URLHelper.getParams(newURL).entrySet()) {
 					requestService.putParameter(entry.getKey(), entry.getValue());
 				}

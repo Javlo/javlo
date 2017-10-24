@@ -25,7 +25,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.config.StaticConfig;
 import org.javlo.helper.AjaxHelper.ScheduledRender;
-import org.javlo.helper.DebugHelper;
 import org.javlo.helper.ElementaryURLHelper;
 import org.javlo.helper.NetHelper;
 import org.javlo.helper.StringHelper;
@@ -1034,6 +1033,10 @@ public class ContentContext {
 	 */
 	public HttpServletRequest getRequest() {
 		return request;
+	}
+	
+	public RequestService getRequestService() {
+		return RequestService.getInstance(request);
 	}
 
 	public String getRequestContentLanguage() {

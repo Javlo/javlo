@@ -32,6 +32,8 @@ public class RequestService {
 	private final Map<String, String[]> savedParameters = new HashMap<String, String[]>();
 
 	private final Map<String, FileItem[]> fileItems = new HashMap<String, FileItem[]>();
+	
+	private static final String[] EMPTY_STRING_ARRAY = new String[0];
 
 	private HttpServletRequest request;
 
@@ -124,6 +126,10 @@ public class RequestService {
 		instance.request = request;
 		return instance;
 	}
+	
+	public String getParameter(String key) {
+		return getParameter(key, null);
+	}
 
 	public String getParameter(String key, String outDefault) {
 		String[] values = parameters.get(key);
@@ -138,6 +144,10 @@ public class RequestService {
 			return values[0];
 		}
 	}
+	
+	public String[] getParameterValues(String key) {
+		return  getParameterValues(key, EMPTY_STRING_ARRAY);
+	}
 
 	public String[] getParameterValues(String key, String[] defaultValue) {
 		String[] res = parameters.get(key);
@@ -145,6 +155,10 @@ public class RequestService {
 			res = defaultValue;
 		}
 		return res;
+	}
+	
+	public List<String> getParameterListValues(String key) {
+		return getParameterListValues(key, Collections.EMPTY_LIST);
 	}
 
 	public List<String> getParameterListValues(String key, List<String> defaultValue) {

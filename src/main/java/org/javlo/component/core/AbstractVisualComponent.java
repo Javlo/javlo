@@ -730,6 +730,11 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			out.println(XHTMLHelper.getRadio(id, "" + CookiesService.ACCEPTED_STATUS, "" + getCookiesDisplayStatus()));
 			out.println(i18nAccess.getText("component.display-cookies.accepted"));
 			out.println("</label>");
+			
+			out.println("<label>");
+			out.println(XHTMLHelper.getRadio(id, "" + CookiesService.NOT_ACCEPTED_STATUS, "" + getCookiesDisplayStatus()));
+			out.println(i18nAccess.getText("component.display-cookies.not-accepted"));
+			out.println("</label>");
 
 			out.println("<label>");
 			out.println(XHTMLHelper.getRadio(id, "" + CookiesService.REFUSED_STATUS, "" + getCookiesDisplayStatus()));
@@ -1223,6 +1228,9 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		}
 		if (getCookiesDisplayStatus() == CookiesService.NOCHOICE_STATUS) {
 			style = style + " _cookie-nochoice ";
+		}
+		if (getCookiesDisplayStatus() == CookiesService.NOT_ACCEPTED_STATUS) {
+			style = style + " _cookie-notacceptedchoice ";
 		}
 		return style;
 	}
@@ -1956,7 +1964,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 					return emptyCode;
 				}
 				ctx.getRequest().setAttribute(COMP_ID_REQUEST_PARAM, getId());
-				if (ctx.getRenderMode() == ContentContext.VIEW_MODE && isContentCachable(ctx) && globalContext.isPreviewMode()) {
+				if (ctx.getRenderMode() == ContentContext.VIEW_MODE && isContentCachable(ctx) && globalContext.isPreviewMode() && getCookiesDisplayStatus() == CookiesService.ALWAYS_STATUS) {
 					if (getContentCache(ctx) != null) {
 						return getContentCache(ctx);
 					}
@@ -1966,7 +1974,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 						}
 					}
 				}
-				if (ctx.getRenderMode() == ContentContext.VIEW_MODE && isContentTimeCachable(ctx) && globalContext.isPreviewMode()) {
+				if (ctx.getRenderMode() == ContentContext.VIEW_MODE && isContentTimeCachable(ctx) && globalContext.isPreviewMode() && getCookiesDisplayStatus() == CookiesService.ALWAYS_STATUS) {
 					String timeContent = getContentTimeCache(ctx);
 					if (timeContent != null) {
 						return timeContent;
@@ -1978,7 +1986,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 						}
 					}
 				}
-				if (ctx.getRenderMode() == ContentContext.VIEW_MODE && isContentCachable(ctx) && globalContext.isPreviewMode()) {
+				if (ctx.getRenderMode() == ContentContext.VIEW_MODE && isContentCachable(ctx) && globalContext.isPreviewMode() && getCookiesDisplayStatus() == CookiesService.ALWAYS_STATUS) {
 					logger.fine("add content in cache for component " + getType() + " in page : " + ctx.getPath());
 					long beforeTime = System.currentTimeMillis();
 					String content;
@@ -1993,7 +2001,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 					return content;
 				} else {
 					String content;
-					if (isContentTimeCachable(ctx) && globalContext.isPreviewMode()) {
+					if (isContentTimeCachable(ctx) && globalContext.isPreviewMode() && getCookiesDisplayStatus() == CookiesService.ALWAYS_STATUS) {
 						long beforeTime = System.currentTimeMillis();
 						synchronized (getLock(ctx)) {
 							if (getRenderer(ctx) != null) {
@@ -2292,11 +2300,11 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 				} else {
 					CookiesService cookiesService = CookiesService.getInstance(ctx);
 					if (cookiesService.getAccepted() == null) {
-						return getCookiesDisplayStatus() == CookiesService.NOCHOICE_STATUS;
+						return getCookiesDisplayStatus() == CookiesService.NOCHOICE_STATUS || getCookiesDisplayStatus() == CookiesService.NOT_ACCEPTED_STATUS;
 					} else if (cookiesService.getAccepted()) {
 						return getCookiesDisplayStatus() == CookiesService.ACCEPTED_STATUS;
 					} else {
-						return getCookiesDisplayStatus() == CookiesService.REFUSED_STATUS;
+						return getCookiesDisplayStatus() == CookiesService.REFUSED_STATUS || getCookiesDisplayStatus() == CookiesService.NOT_ACCEPTED_STATUS;
 					}
 				}
 			} catch (Exception e) {

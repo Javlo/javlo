@@ -11,6 +11,7 @@ public class CookiesService {
 	public static final int ALWAYS_STATUS = 9;
 	public static final int NOCHOICE_STATUS = 2;
 	public static final int ACCEPTED_STATUS = 1;
+	public static final int NOT_ACCEPTED_STATUS = 5;
 	public static final int REFUSED_STATUS = 0;
 
 	private Boolean accepted = null;

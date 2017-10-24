@@ -132,7 +132,7 @@ public abstract class AbstractSocialNetwork implements ISocialNetwork {
 
 	@Override
 	public String getSigninURL(ContentContext ctx) throws Exception {
-		String clientId = getClientId();
+		String clientId = getClientId();		
 		if (clientId == null || clientId.isEmpty()) {
 			return null;
 		}
