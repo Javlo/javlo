@@ -1,15 +1,28 @@
 package org.javlo.utils;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
+
+import org.javlo.helper.ResourceHelper;
+import org.javlo.helper.StringHelper;
+import org.javlo.servlet.IVersion;
 
 /**
  * map with item stay a specified time inside.
+ * 
  * @author Patrick Vandermaesen
  *
  * @param <K>
@@ -33,7 +46,7 @@ public class TimeMap<K, V> implements Map<K, V> {
 	public TimeMap(int inDefaultTimeLiveValueSecond) {
 		this(new HashMap<K, V>(), inDefaultTimeLiveValueSecond);
 	}
-	
+
 	public TimeMap(int inDefaultTimeLiveValueSecond, int maxSize) {
 		this(new HashMap<K, V>(), inDefaultTimeLiveValueSecond, maxSize);
 	}
@@ -46,11 +59,11 @@ public class TimeMap<K, V> implements Map<K, V> {
 		this.internalMap = internalMap;
 		this.defaultTimeLiveValue = inDefaultTimeLiveValueSecond;
 	}
-	
+
 	public TimeMap(Map<K, V> internalMap, int inDefaultTimeLiveValueSecond, int maxSize) {
 		this.internalMap = internalMap;
 		this.defaultTimeLiveValue = inDefaultTimeLiveValueSecond;
-		this.maxSize = maxSize; 
+		this.maxSize = maxSize;
 	}
 
 	public int getDefaultTimeValue() {
@@ -137,14 +150,13 @@ public class TimeMap<K, V> implements Map<K, V> {
 		for (Map.Entry<? extends K, ? extends V> e : m.entrySet())
 			put(e.getKey(), e.getValue());
 	}
-		
-	private V internalRemove(Object key) {		
+
+	private V internalRemove(Object key) {
 		internalTimeMap.remove(key);
 		order.remove(key);
 		return internalMap.remove(key);
 	}
 
-	
 	@Override
 	public V remove(Object key) {
 		clearCache();
@@ -153,6 +165,7 @@ public class TimeMap<K, V> implements Map<K, V> {
 
 	@Override
 	public int size() {
+		clearCache();
 		return internalMap.size();
 	}
 
@@ -161,11 +174,13 @@ public class TimeMap<K, V> implements Map<K, V> {
 		return internalMap.values();
 	}
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws Exception {
 		TimeMap map = new TimeMap();
 		map.setDefaultLiveTimeValue(4);
 		map.put("test", "test value");
+		map.put("test2", "value2", 1000);
 		System.out.println("value before : " + map.get("test"));
+		map.store(new File("c:/trans/map1.properties"));
 		try {
 			Thread.sleep(3 * 1000);
 		} catch (InterruptedException e) {
@@ -177,6 +192,7 @@ public class TimeMap<K, V> implements Map<K, V> {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
+		map.store(new File("c:/trans/map2.properties"));
 		System.out.println("value after 2 : " + map.get("test"));
 	}
 
@@ -185,9 +201,9 @@ public class TimeMap<K, V> implements Map<K, V> {
 	 */
 	public void clearCache() {
 		Collection keys = this.keySet();
-		Collection toBoRemoved = new LinkedList();		
+		Collection toBoRemoved = new LinkedList();
 		synchronized (internalMap) {
-			Calendar now =  Calendar.getInstance();
+			Calendar now = Calendar.getInstance();
 			for (Object key : keys) {
 				Calendar cal = internalTimeMap.get(key);
 				if (cal != null && now.after(cal)) {
@@ -207,6 +223,62 @@ public class TimeMap<K, V> implements Map<K, V> {
 
 	public void setMaxSize(int maxSize) {
 		this.maxSize = maxSize;
+	}
+
+	public void store(File file) throws Exception {
+		if (!file.exists()) {
+			file.getParentFile().mkdirs();
+			file.createNewFile();
+		}
+		OutputStream out = new FileOutputStream(file);
+		try {
+			store(out);
+		} finally {
+			ResourceHelper.closeResource(out);
+		}
+	}
+
+	public void store(OutputStream out) throws Exception {
+		clearCache();
+		Properties prop = new Properties();
+		for (K key : internalMap.keySet()) {
+			Collection<String> storeVal = new LinkedList();
+			V val = (V) internalMap.get(key);
+			if (!(val instanceof String)) {
+				throw new Exception("not storabe type in TimeMap : " + val.getClass().getCanonicalName());
+			}
+			storeVal.add("" + val);
+			storeVal.add("" + internalTimeMap.get(key).getTimeInMillis());
+			storeVal.add("" + order.indexOf(key));
+			prop.setProperty("" + key, StringHelper.collectionToString(storeVal));
+		}
+		prop.store(out, "TimeMap - " + IVersion.VERSION);
+	}
+	
+	public void load(File file) throws Exception {
+		InputStream in = new FileInputStream(file);
+		try {
+			load(in);
+		} finally {
+			ResourceHelper.closeResource(in);
+		}
+	}
+	
+	public void load(InputStream in) throws IOException {
+		Properties prop = new Properties();
+		prop.load(in);
+		String[] ordreArray = new String[prop.size()];
+		for (Object key : prop.keySet()) {
+			List<String> storeVal = StringHelper.stringToCollection(prop.getProperty(key.toString()));
+			internalMap.put((K)key, (V)storeVal.get(0));
+			long time = Long.parseLong(storeVal.get(1));
+			Calendar cal = Calendar.getInstance();
+			cal.setTimeInMillis(time);
+            internalTimeMap.put((K)key, cal);
+            ordreArray[Integer.parseInt(storeVal.get(2))] = key.toString();            			
+		}
+		order.addAll((Collection<? extends K>)Arrays.asList(ordreArray));
+		clearCache();		
 	}
 
 }

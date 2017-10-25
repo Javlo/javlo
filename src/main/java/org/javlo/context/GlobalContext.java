@@ -104,7 +104,7 @@ import org.javlo.utils.StructuredProperties;
 import org.javlo.utils.TimeMap;
 
 public class GlobalContext implements Serializable, IPrintInfo {
-	
+
 	public static final String PAGE_TOKEN_PARAM = "p_token";
 
 	private final Integer[] countArrayMinute = new Integer[60];
@@ -224,9 +224,9 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	}
 
 	private Map<String, ICache> cacheMaps = null;
-	
-	private TimeMap<String, Object> sharingMap = new TimeMap<String, Object>(60*30);
-	private TimeMap<Object, String> reverseSharingMap = new TimeMap<Object, String>(60*30);
+
+	private TimeMap<String, Object> sharingMap = new TimeMap<String, Object>(60 * 30);
+	private TimeMap<Object, String> reverseSharingMap = new TimeMap<Object, String>(60 * 30);
 
 	private final Map<String, ICache> eternalCacheMaps = new Hashtable<String, ICache>();
 
@@ -553,7 +553,8 @@ public class GlobalContext implements Serializable, IPrintInfo {
 								}
 							}
 						}
-					}
+					}		
+					
 				}
 			} else {
 				synchronized (newInstance.properties) {
@@ -561,6 +562,15 @@ public class GlobalContext implements Serializable, IPrintInfo {
 				}
 			}
 			newInstance.startThread();
+			
+			File tokenFile = newInstance.getTokenPageFile();
+			if (tokenFile.exists()) {
+				try {
+					newInstance.pageTimeToken.load(tokenFile);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
 
 			session.getServletContext().setAttribute(contextKey, newInstance);
 			session.setAttribute(KEY, newInstance);
@@ -771,9 +781,9 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	private static AppendableTextFile specialLogFile = null;
 
 	private final Map<String, String> oneTimeTokens = Collections.synchronizedMap(new TimeMap<String, String>(60 * 60));
-	
-	private final Map<String, String> pageTimeToken = Collections.synchronizedMap(new TimeMap<String, String>(60 * 60 * 24 * 90));
-	
+
+	private final TimeMap<String, String> pageTimeToken = new TimeMap<String, String>(60 * 60 * 24 * 90);
+
 	private final Map<String, String> changePasswordToken = Collections.synchronizedMap(new TimeMap<String, String>(60 * 60));
 
 	public final Object RELEASE_CACHE = new Object();
@@ -1451,11 +1461,11 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	public boolean isComponentsFiltered() {
 		return properties.getBoolean("components.filtered", staticConfig.isComponentsFiltered());
 	}
-	
+
 	public boolean isCookies() {
 		return properties.getBoolean("security.cookies", true);
 	}
-	
+
 	public void setCookies(boolean cook) {
 		properties.setProperty("security.cookies", cook);
 	}
@@ -2406,9 +2416,9 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	}
 
 	public synchronized void setData(String key, String value) {
-		if (key==null) {
+		if (key == null) {
 			return;
-		}	
+		}
 		Properties prop = dataProperties;
 		if (prop == null) {
 			prop = initDataFile();
@@ -3177,7 +3187,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		}
 
 	}
-	
+
 	public String createOneTimeToken(String token) {
 		String newToken = StringHelper.getRandomIdBase64();
 		oneTimeTokens.put(newToken, token);
@@ -3191,19 +3201,40 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		}
 		return oneTimeToken;
 	}
-	
-	public String createTokenForPage(String pageName) {
+
+	private File getTokenPageFile() {
+		return new File(URLHelper.mergePath(getDataFolder(), ResourceHelper.PRIVATE_DIR, "token_page.properties"));
+	}
+
+	public String getLatestTokenForPage(String pageName) {
 		String token = pageTimeToken.get(pageName);
 		if (token == null) {
 			token = StringHelper.getRandomIdBase64();
 			pageTimeToken.put(token, pageName);
 			pageTimeToken.put(pageName, token);
-		}		
+			try {
+				pageTimeToken.store(getTokenPageFile());
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return token;
+	}
+
+	public String getNewTokenForPage(String pageName) {
+		String token = StringHelper.getRandomIdBase64();
+		pageTimeToken.put(token, pageName);
+		pageTimeToken.put(pageName, token);
+		try {
+			pageTimeToken.store(getTokenPageFile());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		return token;
 	}
 
 	public String getPageToken(String token) {
-		return pageTimeToken.get(token);		
+		return pageTimeToken.get(token);
 	}
 
 	public String convertOneTimeToken(String token) {
@@ -3904,9 +3935,9 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	public TaxonomyService getTaxonomy(ContentContext ctx) {
 		return TaxonomyService.getInstance(ctx);
 	}
-	
+
 	public synchronized String addSharedObject(Object obj) {
-		String key = reverseSharingMap.get(obj); 
+		String key = reverseSharingMap.get(obj);
 		if (key != null) {
 			sharingMap.put(key, obj);
 			return key;
@@ -3919,7 +3950,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		reverseSharingMap.put(obj, key);
 		return key;
 	}
-	
+
 	public Object getSharedObject(String key) {
 		return sharingMap.get(key);
 	}

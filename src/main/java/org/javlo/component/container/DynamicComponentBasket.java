@@ -112,6 +112,15 @@ public class DynamicComponentBasket extends AbstractVisualComponent implements I
 			return null;
 		}
 	}
+	
+	public String getPageToken(ContentContext ctx) {
+		String token = (String)ctx.getRequest().getSession().getAttribute("_page_token");
+		if (token == null) {
+			token = ctx.getGlobalContext().getNewTokenForPage("basket");
+			ctx.getRequest().getSession().setAttribute("_page_token", token);
+		}
+		return token;
+	}
 
 	public String getSmallViewXHTMLCode(ContentContext ctx) throws Exception {
 		prepareView(ctx);
@@ -122,7 +131,7 @@ public class DynamicComponentBasket extends AbstractVisualComponent implements I
 		out.println(ComponentBasket.getComponentBasket(ctx).size() + " " + getValue());
 		Map<String, String> params = new HashMap<String, String>();
 		params.put("selection", StringHelper.collectionToString(basket.getComponents(), "-"));
-		params.put(GlobalContext.PAGE_TOKEN_PARAM, ctx.getGlobalContext().createTokenForPage("basket"));
+		params.put(GlobalContext.PAGE_TOKEN_PARAM, getPageToken(ctx));
 		String basketURL = URLHelper.cryptURL(ctx, URLHelper.createURLFromPageName(ctx, "basket", params));
 		out.println("<a class=\"share-link pull-right\" href=\"" + basketURL + "\"><i class=\"fa fa-share\" aria-hidden=\"true\"></i></a>");
 		out.println("</div>");

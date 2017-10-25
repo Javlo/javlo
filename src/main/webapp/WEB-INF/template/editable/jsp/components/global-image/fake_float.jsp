@@ -40,7 +40,7 @@ localJQ( window ).load(function() {
 </c:if>
 <c:if test="${info.device.code != 'pdf'}">
 <c:if test="${!param.right}">
-<tr><td class="image-wrapper"${styleWidth}>
+<tr><td class="image-wrapper"${styleWidth} align="${param.right?'right':'left'}">
 <c:if test="${link != '#'}">
 <c:set var="rel" value="${fn:startsWith(url,'http://')?'external':'shadowbox'}" />
 <c:set var="rel" value="${fn:endsWith(url,'.pdf')?'pdf':rel}" />
@@ -51,7 +51,7 @@ localJQ( window ).load(function() {
 </c:if><c:if test="${param.right}">
 <tr><td class="zone1" style="text-align: left; ${not empty styleOppositeWidth?styleOppositeWidth:''}"><span class="container">${comp.firstText}</span></td>
 <td class="sep" style="width: 10px; font-size: 10px; padding-right: 6px;">&nbsp;</td>
-<td class="image-wrapper"${styleWidth}>
+<td class="image-wrapper"${styleWidth} align="${param.right?'right':'left'}">
 <c:if test="${link != '#'}">
 <c:set var="rel" value="${fn:startsWith(url,'http://')?'external':'shadowbox'}" />
 <c:set var="rel" value="${fn:endsWith(url,'.pdf')?'pdf':rel}" />
@@ -63,7 +63,7 @@ localJQ( window ).load(function() {
 <tr><td class="zone2" colspan="3" style="text-align: left; ${areaStyle.textStyle}${styleWidthWidthoutStyle}"><span class="container">${comp.secondText}</span></td></tr>
 </c:if>
 <c:if test="${info.device.code == 'pdf'}">
-<tr><td>
+<tr><td align="${param.right?'right':'left'}">
 <c:set var="imageWidthTag" value='width="${imageWidth}" ' />
 <c:set var="imageWidthStyle" value='width:${imageWidth}px' />
 <div class="image-wrapper" style="float: ${param.right?'right':'left'};${styleWidthWidthoutStyle}${param['clean-html']?imageWidthStyle:''}">
