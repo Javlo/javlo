@@ -1867,7 +1867,8 @@ public class Template implements Comparable<Template> {
 		String parentId = getParentName();
 
 		if (parents.contains(parentId)) {
-			throw new RecursionException("template " + getName() + " create cylce with parent:" + parentId);
+			logger.warning("template " + getName() + " create cylce with parent:" + parentId);
+			return null;
 		}
 		parents.add(parentId);
 
