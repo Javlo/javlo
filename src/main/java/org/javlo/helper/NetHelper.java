@@ -5,6 +5,7 @@ import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -1452,13 +1453,6 @@ public class NetHelper {
 			}
 		}
 		return company;
-	}
-
-	public static void main(String[] args) throws MalformedURLException, Exception {
-		Company company = validVATEuroparlEU(null, "BE 0824.985.592");
-		System.out.println("##### NetHelper.main : company name = " + company.getName());
-		System.out.println("##### NetHelper.main : company adresse = " + company.getAddresse());
-		System.out.println("##### NetHelper.main : company number = " + company.getNumber());
 	}
 
 }

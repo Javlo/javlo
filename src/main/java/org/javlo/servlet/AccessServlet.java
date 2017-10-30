@@ -296,20 +296,22 @@ public class AccessServlet extends HttpServlet implements IVersion {
 
 			TaxonomyService.getInstance(ctx);
 
-			if (ctx.isAsViewMode() && ctx.isContentFound() && ctx.getCurrentPage() != null && staticConfig.isRedirectSecondaryURL() && !ctx.isPostRequest() && StringHelper.isEmpty(request.getQueryString())) {
-				ContentContext lgCtx = new ContentContext(ctx);
-				lgCtx.setContentLanguage(ctx.getRequestContentLanguage());
-				String pageUrl = URLHelper.createURL(lgCtx, lgCtx.getCurrentPage());
-				pageUrl = URLDecoder.decode(pageUrl, ContentContext.CHARACTER_ENCODING);
-				String mainURL = (String) request.getAttribute(CatchAllFilter.MAIN_URI_KEY);
-				if (mainURL != null && !mainURL.endsWith(pageUrl)) {
-					// response.sendRedirect(pageUrl);
-					if (ctx.isPageRequest()) {
-						globalContext.log("url", "redirect : " + mainURL + " >> " + URLHelper.createURL(lgCtx, lgCtx.getCurrentPage()) + " - [" + pageUrl + "]");
+			if (requestService.getParameter(ContentContext.FORCE_ABSOLUTE_URL) == null) {
+				if (ctx.isAsViewMode() && ctx.isContentFound() && ctx.getCurrentPage() != null && staticConfig.isRedirectSecondaryURL() && !ctx.isPostRequest() && StringHelper.isEmpty(request.getQueryString())) {
+					ContentContext lgCtx = new ContentContext(ctx);
+					lgCtx.setContentLanguage(ctx.getRequestContentLanguage());
+					String pageUrl = URLHelper.createURL(lgCtx, lgCtx.getCurrentPage());
+					pageUrl = URLDecoder.decode(pageUrl, ContentContext.CHARACTER_ENCODING);
+					String mainURL = (String) request.getAttribute(CatchAllFilter.MAIN_URI_KEY);
+					if (mainURL != null && !mainURL.endsWith(pageUrl)) {
+						// response.sendRedirect(pageUrl);
+						if (ctx.isPageRequest()) {
+							globalContext.log("url", "redirect : " + mainURL + " >> " + URLHelper.createURL(lgCtx, lgCtx.getCurrentPage()) + " - [" + pageUrl + "]");
+						}
+						logger.info("redirect : " + mainURL + " >> " + URLHelper.createURL(lgCtx, lgCtx.getCurrentPage()));
+						NetHelper.sendRedirectPermanently(response, URLHelper.createURL(lgCtx, lgCtx.getCurrentPage()));
+						return;
 					}
-					logger.info("redirect : " + mainURL + " >> " + URLHelper.createURL(lgCtx, lgCtx.getCurrentPage()));
-					NetHelper.sendRedirectPermanently(response, URLHelper.createURL(lgCtx, lgCtx.getCurrentPage()));
-					return;
 				}
 			}
 
@@ -802,7 +804,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 								params.put(key.toString(), ctx.getRequest().getParameter(key.toString()));
 							}
 						}
-						if (ctx.getCurrentUser() != null) { 
+						if (ctx.getCurrentUser() != null) {
 							String userToken = UserFactory.createUserFactory(ctx.getGlobalContext(), request.getSession()).getTokenCreateIfNotExist(ctx.getCurrentUser());
 							String token = globalContext.createOneTimeToken(userToken);
 							params.put("j_token", token);
@@ -818,7 +820,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 						}
 						params.put("clean-html", "true");
 						String url = URLHelper.createURL(viewCtx, params);
-						logger.info("create EML from : "+url);
+						logger.info("create EML from : " + url);
 						String html = NetHelper.readPageForMailing(new URL(url));
 						MailService.writeEMLFile(ctx.getCurrentPage().getTitle(viewCtx), html, out);
 					} else if (ctx.getFormat().equalsIgnoreCase("pdf")) {

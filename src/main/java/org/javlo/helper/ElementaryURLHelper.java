@@ -319,7 +319,7 @@ public abstract class ElementaryURLHelper {
 		if (StringHelper.isURL(inUrl)) {
 			return inUrl;
 		}
-
+		
 		ContentContext newCtx = ctx;
 		if (referencePage != null && referencePage.isRemote()) {
 			String linkedURLStr = NavigationHelper.getLinkedURL(referencePage);
@@ -345,7 +345,6 @@ public abstract class ElementaryURLHelper {
 			String pathPrefix = getPathPrefix(ctx);
 			url = URLHelper.mergePath("/", pathPrefix, inUrl);
 		}
-
 		if (newCtx.isAbsoluteURL()) {
 			url = addHost(ctx, url);
 		}
