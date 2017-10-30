@@ -100,8 +100,6 @@ import org.javlo.ztatic.FileCache;
 import org.xhtmlrenderer.swing.Java2DRenderer;
 import org.xhtmlrenderer.util.FSImageWriter;
 
-import ch.qos.logback.core.net.SyslogOutputStream;
-
 public class AccessServlet extends HttpServlet implements IVersion {
 
 	public static final String PERSISTENCE_PARAM = "persistence";
