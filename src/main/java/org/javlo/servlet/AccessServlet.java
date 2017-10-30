@@ -820,7 +820,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 						}
 						params.put("clean-html", "true");
 						String url = URLHelper.createURL(viewCtx, params);
-						String html = NetHelper.readPageGet(new URL(url));
+						String html = NetHelper.readPageForMailing(new URL(url));						
 						MailService.writeEMLFile(ctx.getCurrentPage().getTitle(viewCtx), html, out);
 					} else if (ctx.getFormat().equalsIgnoreCase("pdf")) {
 						if (ctx.getGlobalContext().isCollaborativeMode() && !ctx.getCurrentPage().isPublic(ctx)) {
