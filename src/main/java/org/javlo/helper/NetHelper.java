@@ -388,7 +388,7 @@ public class NetHelper {
 				nocheckCertificatHttps();
 			}
 
-			connection.setRequestMethod("POST");
+			connection.setRequestMethod("GET");
 			connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
 
 			connection.setRequestProperty("Content-Length", "" + Integer.toString(query.getBytes().length));
