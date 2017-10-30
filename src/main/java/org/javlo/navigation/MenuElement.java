@@ -3414,17 +3414,52 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 	 * 
 	 * @return a path.
 	 */
-	public String getPath() {
+	public String _getPath() {
 		try {
 			if (parent == this) {
 				throw new Exception("recursive reference !!!");
 			} else {
 				if (parent != null) {
+					System.out.println("##### MenuElement.getPath : path = "+parent.getPath() + '/' + getName()); //TODO: remove debug trace
 					return parent.getPath() + '/' + getName();
 				} else {
 					return "";
 				}
 			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	/**
+	 * return the page of this page
+	 * 
+	 * @return a path.
+	 */
+	public String getPath() {
+		try {
+			MenuElement workParent = parent;
+			MenuElement previousParent = this;
+			String path="";
+			while (workParent != null) {
+				path = previousParent.getName()+'/'+path;
+				if (workParent == this) {
+					throw new Exception("recursive reference : " + getName());
+				}	
+				previousParent = workParent;
+				workParent = workParent.parent;
+			}
+//			if (parent != null) {
+//				return parent.getPath() + '/' + getName();
+//			} else {
+//				return "";
+//			}
+			if (path.endsWith("/")) {
+				path = path.substring(0, path.length()-1);
+			}
+			path = '/'+path;			
+			return path;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
