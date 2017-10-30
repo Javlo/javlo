@@ -820,6 +820,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 						}
 						params.put("clean-html", "true");
 						String url = URLHelper.createURL(viewCtx, params);
+						logger.info("create EML from : "+url);
 						String html = NetHelper.readPageForMailing(new URL(url));						
 						MailService.writeEMLFile(ctx.getCurrentPage().getTitle(viewCtx), html, out);
 					} else if (ctx.getFormat().equalsIgnoreCase("pdf")) {
