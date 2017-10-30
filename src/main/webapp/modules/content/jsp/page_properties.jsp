@@ -227,13 +227,6 @@
 	${i18n.edit['item.children-association']}</label>
 </div>
 
-<c:if test="${globalContext.collaborativeMode}">
-<div class="checkbox">
-	<label><input type="checkbox" id="changeNotification" name="changeNotification" ${page.info.changeNotification?'checked="checked"':''} value="true" />
-	${i18n.edit['item.change-notification']}</label>
-</div>
-</c:if>
-
 <div class="form-group">
 	<label>${i18n.edit['item.short-url']}</label>
 	<c:if test="${!page.allreadyShortURL}">

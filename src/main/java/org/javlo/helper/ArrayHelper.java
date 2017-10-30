@@ -16,5 +16,22 @@ public class ArrayHelper {
 		}
 		return outArray;
 	}
+	
+	public static void addCol(String[][] array, String colName) {
+		if (array.length == 0) {
+			return;
+		} else {
+			for (int i = 0; i < array.length; i++) {
+				String[] line = array[i];
+				String[] newLine = new String[array[i].length+1];				
+				for (int j = 0; j < line.length; j++) {
+					newLine[j] = line[j];					
+				}
+				array[i] = newLine;
+				newLine[newLine.length-1] = "";
+			}
+			array[0][array[0].length-1]=colName;
+		}
+	}
 
 }

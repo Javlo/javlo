@@ -55,6 +55,15 @@ public class StringHelperTest extends TestCase {
 	  assertTrue(StringHelper.getLanguageFromFileName(null) == null);
   }
   
+  public void testisFloat() throws Exception {
+	  assertTrue(StringHelper.isFloat("2"));
+	  assertTrue(StringHelper.isFloat("2.3"));
+	  assertTrue(StringHelper.isFloat("0.22"));
+	  assertTrue(StringHelper.isFloat("-0.22"));
+	  assertFalse(StringHelper.isFloat("08-12-2011"));
+	  assertFalse(StringHelper.isFloat("abc"));
+  }
+  
   public void testStringToCollection() throws Exception {	  
 		List<String> testList = Arrays.asList(new String[] { "item1", "item\\, 2", "item3\\" });
 		String rawTest = StringHelper.collectionToString(testList, ", ");

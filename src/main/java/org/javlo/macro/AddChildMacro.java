@@ -40,8 +40,7 @@ public class AddChildMacro extends AbstractMacro {
 		boolean changeNotification = true;
 		if (getMacroProperties(ctx) != null) {
 			changeNotification = StringHelper.isTrue(getMacroProperties(ctx).getProperty("change-notification", "true"));
-		}
-		newPage.setChangeNotification(changeNotification);
+		}		
 
 		if (defaultPage != null) {
 			ContentElementList comps = defaultPage.getContent(ctx);

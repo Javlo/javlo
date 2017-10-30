@@ -67,8 +67,7 @@ public class CreateContentChildren implements IInteractiveMacro, IAction {
 			newPageName = currentPage.getName() + '-' + index;
 			index++;
 		}
-		MenuElement newPage = MacroHelper.addPageIfNotExist(ctx, ctx.getCurrentPage(), newPageName, true, true);
-		newPage.setChangeNotification(true);
+		MenuElement newPage = MacroHelper.addPageIfNotExist(ctx, ctx.getCurrentPage(), newPageName, true, true);		
 		String title = rs.getParameter("title", null);
 		String body = rs.getParameter("body", null);
 		if (title == null || body == null) {

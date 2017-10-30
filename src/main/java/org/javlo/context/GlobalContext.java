@@ -594,7 +594,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 					externalServiceInitalized = true;
 					// put here code to initialize external services
 					// Start "page changes notifications"
-					if (isCollaborativeMode() && getStaticConfig().isNotificationThread()) {
+					if (getStaticConfig().isNotificationThread()) {
 						int secBetweenCheck = getStaticConfig().getTimeBetweenChangeNotification();
 						Map<String, String> params = new HashMap<String, String>();
 						params.put("webaction", "view.checkChangesAndNotify");

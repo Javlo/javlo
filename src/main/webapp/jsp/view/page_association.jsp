@@ -20,9 +20,7 @@ if (ctx.isInteractiveMode() && ctx.getRenderMode() == ContentContext.PREVIEW_MOD
 	<%}%></div><%
 }
 boolean mailing = ctx.getCurrentTemplate().isMailing();
-%>
-<%if (mailing) {%><center><table class="association-wrapper" cellpadding="0" cellspacing="0"><tbody><tr><td><%}
-if (!mailing) {%><div class="association-wrapper"><%}
+if (mailing) {%><center><table class="association-wrapper" cellpadding="0" cellspacing="0"><tbody><tr><td><%}
 MenuElement currentPage = ctx.getCurrentPage();
 boolean savePageAssocitation = ctx.isPageAssociation();
 
@@ -59,4 +57,4 @@ for (MenuElement child : currentPage.getChildMenuElements()) {
 	request.removeAttribute("backgroundImageStyle");
 }
 ctx.setPageAssociation(savePageAssocitation);
-%><%if (mailing) {%></td></tr></tbody></table></center><%} if (!mailing) {%></div><%}%>
+%><%if (mailing) {%></td></tr></tbody></table></center><%}%>

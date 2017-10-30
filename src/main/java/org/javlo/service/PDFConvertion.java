@@ -1,7 +1,9 @@
 package org.javlo.service;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
 import java.net.URLConnection;
@@ -74,6 +76,27 @@ public class PDFConvertion {
 		}
 
 	}
+	
+	public static void convertXHTMLToPDF(InputStream in, OutputStream out) {		
+
+		try {			
+			DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder builder = documentBuilderFactory.newDocumentBuilder();
+			builder.setEntityResolver(FSEntityResolver.instance());
+			Document doc = builder.parse(in);			
+			org.xhtmlrenderer.pdf.ITextRenderer pdfRenderer = new org.xhtmlrenderer.pdf.ITextRenderer();
+			pdfRenderer.setDocument(doc, null);
+			pdfRenderer.layout();			
+			//LayoutContext layoutContext = pdfRenderer.getSharedContext().newLayoutContextInstance();			
+			//BlockBox rootBox = pdfRenderer.getRootBox();
+			//correctAllLines(layoutContext, rootBox);
+			pdfRenderer.createPDF(out);
+		} catch (Exception e1) {
+			e1.printStackTrace();
+
+		}
+
+	}
 
 	private static void correctAllLines(LayoutContext layout, Object box) {
 		if (box != null) {
@@ -99,24 +122,10 @@ public class PDFConvertion {
 	}
 
 	public static void main(String[] args) throws Exception {
-		//URL url = new URL("http://localhost/javlo/mailing/en/data/test/test-16/test-16-august/3col_test/3col_test-composition.html?nodmz=true&j_token=y7kvR6c5V0g-&force-device-code=pdf&_clear_session=true&clean-html=true&_absolute-url=true");
-URL url = new File("c:/trans/just.html").toURI().toURL();
-URLConnection con = (URLConnection) url.openConnection();
-DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
-DocumentBuilder builder = documentBuilderFactory.newDocumentBuilder();
-builder.setEntityResolver(FSEntityResolver.instance());
-Document doc = builder.parse(con.getInputStream());
-org.xhtmlrenderer.pdf.ITextRenderer pdfRenderer = new org.xhtmlrenderer.pdf.ITextRenderer();
-
-pdfRenderer.setDocument(doc, null);
-System.out.println("* START *");
-
-pdfRenderer.layout();
-LayoutContext layoutContext = pdfRenderer.getSharedContext().newLayoutContextInstance();
-BlockBox rootBox = pdfRenderer.getRootBox();
-//correctAllLines(layoutContext, rootBox);
-
-pdfRenderer.createPDF(new FileOutputStream(new File("c:/trans/test-correction-starthere-nojustif.pdf")));
+		InputStream testIn = new ByteArrayInputStream("<b>Blinkevičiūtė éèçà</b>".getBytes("utf-8"));
+		FileOutputStream out = new FileOutputStream(new File("c:/trans/test.pdf"));
+		convertXHTMLToPDF(testIn, out);
+		out.close();
 
 	}
 

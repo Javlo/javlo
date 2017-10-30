@@ -29,6 +29,7 @@ import org.javlo.service.ContentService;
 import org.javlo.service.visitors.CookiesService;
 import org.javlo.service.visitors.VisitorsMessageService;
 import org.javlo.template.Template;
+import org.javlo.user.UserFactory;
 
 /**
  * @author pvandermaesen list of actions for search in cms.
@@ -144,10 +145,7 @@ public class ViewActions implements IAction {
 	 * @param content
 	 * @return
 	 */
-	public static String performCheckChangesAndNotify(ContentContext ctx, GlobalContext globalContext, ContentService content) {
-		if (!globalContext.isCollaborativeMode()) {
-			return "Collaborative mode not enabled.";
-		}
+	public static String performCheckChangesAndNotify(ContentContext ctx, GlobalContext globalContext, ContentService content) {		
 		Date now = new Date();
 		Date timeA = (Date) globalContext.getAttribute(CHANGES_NOTIFICATION_TIME_A);
 		Date timeB = (Date) globalContext.getAttribute(CHANGES_NOTIFICATION_TIME_B);
@@ -162,9 +160,9 @@ public class ViewActions implements IAction {
 		}
 		try {
 			for (MenuElement page : content.getNavigation(ctx).getAllChildrenList()) {				
-				if (page.isChangeNotification()) {
+				if (page.getFollowers(ctx).size() > 0) {					
 					Date mod = page.getModificationDate();
-					if (mod != null && mod.after(timeB) && !mod.after(timeA)) {
+					if (mod != null && mod.after(timeB) && !mod.after(timeA)) {						
 						sendPageChangeNotification(ctx, page);
 					}
 				}
@@ -179,16 +177,18 @@ public class ViewActions implements IAction {
 
 		return null;
 	}
-	private static void sendPageChangeNotification(ContentContext ctx, MenuElement page) throws Exception {
+	
+	private static void sendPageChangeNotification(ContentContext ctx, MenuElement page) throws Exception {		
 		ctx = ctx.getContextOnPage(page);
 		GlobalContext globalContext = ctx.getGlobalContext();
 		I18nAccess i18nAccess = I18nAccess.getInstance(ctx);
 		MailingBuilder mb = new MailingBuilder();
 		mb.setSender(globalContext.getAdministratorEmail());
-		mb.setEditorGroups(new LinkedList<String>(page.getEditorRolesAndParent()));
+		//mb.setEditorGroups(new LinkedList<String>(page.getEditorRolesAndParent()));
+		mb.setAllRecipients(UserFactory.userListAsInternetAddressList(ctx, page.getFollowers(ctx)));
 		mb.getExcludedUsers().add(page.getLatestEditor());		
 		mb.setSubject(i18nAccess.getText("collaborative.mail.modified", "Page modified: ") + page.getTitle(ctx));
-		mb.prepare(ctx);
+		//mb.prepare(ctx);
 		mb.sendMailing(ctx);
 	}
 

@@ -119,10 +119,13 @@ public class ContentOnlyServlet extends HttpServlet {
 				if (templateID == null) {
 					if (ctx.getCurrentTemplate() != null) {
 						template = ctx.getCurrentTemplate();
-						if (!template.isMailing()) {							
-							for (Template mailingTemplate : TemplateFactory.getAllTemplatesFromContext(globalContext)){
-								if (mailingTemplate.isMailing()) {
-									templateID = mailingTemplate.getId();
+						if (!template.isMailing()) {
+							templateID = template.getMailingTemplate();
+							if (templateID == null) {
+								for (Template mailingTemplate : TemplateFactory.getAllTemplatesFromContext(globalContext)){
+									if (mailingTemplate.isMailing()) {
+										templateID = mailingTemplate.getId();
+									}
 								}
 							}
 						}
@@ -139,6 +142,8 @@ public class ContentOnlyServlet extends HttpServlet {
 				}
 			}
 
+			System.out.println("##### ContentOnlyServlet.process : templateID = "+templateID); //TODO: remove debug trace
+			
 			if (templateID != null) {				
 				template = TemplateFactory.getTemplates(request.getSession().getServletContext()).get(templateID);
 				ctx.setCurrentTemplate(template);				

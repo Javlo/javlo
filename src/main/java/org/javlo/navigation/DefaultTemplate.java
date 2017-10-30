@@ -399,5 +399,14 @@ public class DefaultTemplate extends Template {
 	public List<Color> getColorList() {
 		return Collections.emptyList();
 	}
-
+	
+	@Override
+	public List<String> getFonts() {
+		return Collections.EMPTY_LIST;
+	}
+	
+	@Override
+	public String getMailingTemplate() {	
+		return null;
+	}
 }

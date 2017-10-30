@@ -41,7 +41,6 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.filefilter.FileFilterUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.xmlbeans.impl.piccolo.util.RecursionException;
 import org.javlo.bean.SortBean;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.config.StaticConfig;
@@ -2968,6 +2967,18 @@ public class Template implements Comparable<Template> {
 		}
 	}
 	
+	public String getMailingTemplate() {
+		String mailingTemplate = properties.getProperty("mailing.template");
+		if (mailingTemplate == null) {
+			return getParent().getMailingTemplate(); 			
+		} else {
+			if (mailingTemplate.trim().equals("-1")) {
+				return null;				
+			}
+			return mailingTemplate;
+		}
+	}
+	
 	public boolean isBootstrap() {
 		if (properties.getProperty("bootstrap") == null) {
 			return getParent().isBootstrap();
@@ -3116,6 +3127,15 @@ public class Template implements Comparable<Template> {
 				}
 			}
 			return colors;
+		}
+	}
+	
+	public List<String> getFonts() {
+		String rawFonts = properties.getProperty("fonts");
+		if (rawFonts == null) {
+			return getParent().getFonts(); 
+		} else {
+			return StringHelper.stringToCollection(rawFonts, ",");
 		}
 	}
 

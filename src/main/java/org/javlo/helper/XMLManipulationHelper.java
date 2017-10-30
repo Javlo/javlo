@@ -521,17 +521,20 @@ public class XMLManipulationHelper {
 					String closePageCode = "<c:if test=\"${contentContext.pageAssociation}\"></div></c:if><c:if test=\"${not contentContext.pageAssociation}\">";
 
 					String renderBodyAsBody = tags[i].renderOpen();
-					if (template.isMailing()) {
-						tags[i].setName("div");
-					} else {
-						tags[i].setName("section");
+					String tag = "div";
+					if (!template.isMailing()) {
+						tag = "section";
 					}
+					tags[i].setName(tag);
 					tags[i].addCssClass("page_association_fake_body");
 					tags[i].addCssClass("<%for (String layout : ctx.getCurrentPage().getLayouts(ctx)) {%><%=' '+layout%><%}%>");
+					if (tags[i].getAttribute("id", null) == null) {
+						tags[i].getAttributes().put("id", "_page-${contentContext.currentPage.name}");
+					}
 					String renderBodyAsDiv = tags[i].renderOpen();
 
 					String openBodyCode = "<c:if test=\"${not contentContext.pageAssociation}\">" + renderBodyAsBody + "</c:if><c:if test=\"${contentContext.pageAssociation}\">" + renderBodyAsDiv + "</c:if>";
-					String closeBodyCode = "<%}%><c:if test=\"${not contentContext.pageAssociation}\">" + getGoogleAnalyticsCode() + "</body></c:if><c:if test=\"${contentContext.pageAssociation}\"></div></c:if>";
+					String closeBodyCode = "<%}%><c:if test=\"${not contentContext.pageAssociation}\">" + getGoogleAnalyticsCode() + "</body></c:if><c:if test=\"${contentContext.pageAssociation}\"></"+tag+"></c:if>";
 					remplacement.addReplacement(tags[i].getOpenStart(), tags[i].getOpenEnd() + 1, "</c:if>" + openBodyCode + openPageCode);
 					remplacement.addReplacement(tags[i].getCloseStart(), tags[i].getCloseEnd() + 1, closeBodyCode + closePageCode); 
 

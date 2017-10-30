@@ -206,7 +206,7 @@ public class GlobalImage extends Image implements IImageFilter {
 		try {
 			String url = null;
 			try {
-				url = URLHelper.createTransformURL(ctx, ctx.getVirtualCurrentPage(), TemplateFactory.getTemplate(ctx, ctx.getVirtualCurrentPage()), getResourceURL(ctx, getFileName()), filter, this);
+				url = URLHelper.createTransformURL(ctx, ctx.getVirtualCurrentPage(), ctx.getCurrentTemplate(), getResourceURL(ctx, getFileName()), filter, this);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

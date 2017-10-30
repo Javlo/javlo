@@ -496,10 +496,6 @@ public class XMLHelper {
 				out.print("\" childrenAssociation=\"");
 				out.print(page.isChildrenAssociation());
 			}
-			if (page.isChangeNotification()) {
-				out.print("\" changeNotification=\"");
-				out.print(page.isChangeNotification());
-			}
 			if (page.getSharedName() != null && page.getSharedName().trim().length() > 0) {
 				out.print("\" sharedName=\"");
 				out.print(page.getSharedName());
@@ -549,6 +545,10 @@ public class XMLHelper {
 				out.print("\" editor-roles=\"");
 				out.print(StringHelper.toXMLAttribute(StringHelper.collectionToString(page.getEditorRoles(), "#")));
 			}
+//			if (page.getFollowers().size() > 0) {
+//				out.print("\" followers=\"");
+//				out.print(StringHelper.toXMLAttribute(StringHelper.collectionToString(page.getFollowers(), "#")));
+//			}
 
 			/* vparent */
 			List<String> parentId = new LinkedList<String>();

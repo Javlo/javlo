@@ -125,6 +125,18 @@ public class MailingBuilder {
 	public void setAllRecipients(Map<InternetAddress, String> allRecipients) {
 		this.allRecipients = allRecipients;
 	}
+	
+	public void setAllRecipients(Collection<InternetAddress> address) {
+		if (allRecipients == null) {
+			allRecipients = new HashMap<InternetAddress, String>();
+		}
+		for (InternetAddress add : address) {
+			if (!allRecipients.containsKey(add)) {				
+				allRecipients.put(add, null);
+			}
+		}
+	}
+
 
 	public boolean prepare(ContentContext ctx) {
 		try {
@@ -184,7 +196,9 @@ public class MailingBuilder {
 			}					
 		}
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-		for (Entry<InternetAddress, String> receiver : allRecipients.entrySet()) {
+		if (allRecipients.size() == 0) {
+			logger.warning("no recipients for mailing : "+getSubject());
+		} else for (Entry<InternetAddress, String> receiver : allRecipients.entrySet()) {
 			Mailing m = new Mailing();
 			m.setFrom(new InternetAddress(sender));
 			m.setReceivers(Collections.singleton(receiver.getKey()));

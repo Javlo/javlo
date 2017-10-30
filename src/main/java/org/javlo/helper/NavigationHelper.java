@@ -116,8 +116,7 @@ public class NavigationHelper {
 		target.setLatestEditor(src.getLatestEditor());
 		target.setPriority(src.getPriority());
 		target.setTemplateId(src.getTemplateId());
-		target.setBreakRepeat(src.isBreakRepeat());
-		target.setChangeNotification(src.isChangeNotification());
+		target.setBreakRepeat(src.isBreakRepeat());		
 		target.setStartPublishDate(src.getStartPublishDate());
 		target.setEndPublishDate(src.getEndPublishDate());
 		target.setActive(src.isActive());
@@ -474,9 +473,6 @@ public class NavigationHelper {
 			index++;
 		}
 		MenuElement newPage = MacroHelper.addPageIfNotExist(ctx, page, newPageName, true, true);
-		boolean changeNotification = true;
-
-		newPage.setChangeNotification(changeNotification);
 		return newPage;
 	}
 

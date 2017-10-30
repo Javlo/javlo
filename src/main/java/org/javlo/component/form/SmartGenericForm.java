@@ -71,7 +71,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 
 	private static final String RECAPTCHAKEY = "recaptchakey";
 	
-	private static final String FOLDER = "dynamic-form-result";
+	public static final String FOLDER = "dynamic-form-result";
 
 	private Properties bundle;
 

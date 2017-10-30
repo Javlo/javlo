@@ -19,6 +19,7 @@ import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -29,6 +30,7 @@ import java.util.Map;
 import java.util.StringTokenizer;
 
 import org.javlo.context.ContentContext;
+import org.javlo.helper.ArrayHelper;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 
@@ -132,6 +134,15 @@ public class CSVFactory {
 
 	}
 
+	public void addCol(String name, String value) {
+		if (array != null) {
+			ArrayHelper.addCol(array, name);
+			for (int i = 1; i < array.length; i++) {
+				array[i][array[i].length - 1] = value;
+			}
+		}
+	}
+
 	/**
 	 * transform a CSV file as stream to a String array (pvdm)
 	 */
@@ -168,25 +179,26 @@ public class CSVFactory {
 		try {
 			PrintStream out = new PrintStream(outStream, false, ContentContext.CHARACTER_ENCODING);
 			synchronized (lock) {
-				for (String[] element : array) {
-					String sep = "";
-					String line = "";
-					if (element != null) {
-						for (String element2 : element) {
-							String elem = element2;
-							if (elem == null) {
-								elem = "\"\"";
-							} else {
-								elem = "\"" + replace(elem, "\"", "\"\"") + "\"";
+				if (array != null)
+					for (String[] element : array) {
+						String sep = "";
+						String line = "";
+						if (element != null) {
+							for (String element2 : element) {
+								String elem = element2;
+								if (elem == null) {
+									elem = "\"\"";
+								} else {
+									elem = "\"" + replace(elem, "\"", "\"\"") + "\"";
+								}
+								out.print(sep);
+								out.print(elem);
+								line = line + sep + elem;
+								sep = separator;
 							}
-							out.print(sep);
-							out.print(elem);
-							line = line + sep + elem;
-							sep = separator;
 						}
+						out.println();
 					}
-					out.println();
-				}
 				out.close();
 			}
 		} catch (UnsupportedEncodingException e) {
@@ -439,18 +451,67 @@ public class CSVFactory {
 
 	}
 
+	public CSVFactory merge(CSVFactory externalFile) {
+		if (array == null || array.length == 0) {
+			return externalFile;
+		}
+		if (externalFile.array == null || externalFile.array.length == 0) {
+			return this;
+		}
+		String[][] newArray = new String[array.length + externalFile.array.length][array[0].length];
+		for (int i = 0; i < newArray.length; i++) {
+			newArray[i] = new String[array[0].length];
+		}
+		ArrayList<String> cols = new ArrayList<String>();
+		for (int j = 0; j < array[0].length; j++) {
+			cols.add(StringHelper.neverNull(array[0][j]).trim().toLowerCase());
+		}
+
+		for (int j = 0; j < externalFile.array[0].length; j++) {
+			if (!cols.contains(StringHelper.neverNull(externalFile.array[0][j]).trim().toLowerCase())) {
+				ArrayHelper.addCol(newArray, externalFile.array[0][j]);
+				cols.add(StringHelper.neverNull(externalFile.array[0][j]).trim().toLowerCase());
+			}
+		}
+		for (int i = 0; i < array.length; i++) {
+			for (int j = 0; j < array[i].length; j++) {
+				newArray[i][j] = array[i][j];
+			}
+		}
+		for (int j = 0; j < newArray[0].length; j++) {
+			newArray[0][j] = cols.get(j);
+		}
+		for (int i = 1; i < externalFile.array.length; i++) {
+			for (int j = 0; j < externalFile.array[0].length; j++) {
+				int pos = cols.indexOf(StringHelper.neverNull(externalFile.array[0][j]).trim().toLowerCase());
+				newArray[array.length + (i - 1)][pos] = externalFile.array[i][j];
+			}
+		}
+		return new CSVFactory(newArray);
+	}
+
+	public int size() {
+		if (array == null) {
+			return 0;
+		} else {
+			return array.length;
+		}
+	}
+
 	public static void main(String[] args) {
 		try {
-			File file = new File("c:/trans/test.csv");
-			if (!file.exists()) {
-				file.createNewFile();
-			}
-			List<Map<String, String>> data = loadContentAsMap(file);
-			Map<String, String> newLine = new HashMap<String, String>();
-			newLine.put("lastname", "Patrick \"vandermaesen\"");
-			newLine.put("firstname", "Patrick\n\r vandermaesen");
-			data.add(newLine);
-			storeContentAsMap(file, data);
+			CSVFactory merge = new CSVFactory(new String[0][]);
+			File userf1 = new File("c:/trans/user1.csv");
+			File file1 = new File("c:/trans/file1.csv");
+			File file2 = new File("c:/trans/file2.csv");
+			CSVFactory csv1 = new CSVFactory(file1);
+			CSVFactory csv2 = new CSVFactory(file2);
+			CSVFactory user1 = new CSVFactory(userf1);
+			merge = merge.merge(csv1);
+			merge = merge.merge(csv2);
+			merge= csv1;
+			user1.addCol("test", "new value");
+			System.out.println(user1);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

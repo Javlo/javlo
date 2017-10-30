@@ -1,5 +1,6 @@
 package org.javlo.module.persistence;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -18,6 +19,7 @@ import org.apache.commons.fileupload.FileItem;
 import org.javlo.actions.AbstractModuleAction;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.dynamic.DynamicComponent;
+import org.javlo.component.form.SmartGenericForm;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.NavigationHelper;
@@ -118,6 +120,14 @@ public class Persistence extends AbstractModuleAction {
 		ctx.getRequest().setAttribute("exportLinks", beans);
 		if (ctx.getCurrentUser().getUserInfo().getToken() != null) {
 			ctx.getRequest().setAttribute("token", globalContext.getOneTimeToken(ctx.getCurrentUser().getUserInfo().getToken()));
+		}
+		
+		File genericFileFolder = new File(URLHelper.mergePath(globalContext.getDataFolder(), globalContext.getStaticConfig().getStaticFolder(), SmartGenericForm.FOLDER));
+		if (genericFileFolder.exists() && genericFileFolder.list().length > 0) {
+			String formCSVLink = URLHelper.createResourceURL(ctx, SmartGenericForm.FOLDER+".csv");		
+			String formXLSXLink = URLHelper.createResourceURL(ctx, SmartGenericForm.FOLDER+".xlsx");
+			ctx.getRequest().setAttribute("formCSVLink", formCSVLink);
+			ctx.getRequest().setAttribute("formXLSXLink", formXLSXLink);
 		}
 
 		return msg;

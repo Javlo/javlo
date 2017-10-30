@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.Collection;
@@ -20,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.mail.internet.InternetAddress;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
@@ -308,7 +310,7 @@ public class UserFactory implements IUserFactory, Serializable {
 			outUser.setContext(globalContext.getContextKey());
 			request.getSession().setAttribute(SESSION_KEY, outUser);
 		} else {
-			logger.warning("bad token : "+token);
+			logger.warning("bad token : " + token);
 		}
 
 		return outUser;
@@ -438,7 +440,7 @@ public class UserFactory implements IUserFactory, Serializable {
 	public User login(HttpServletRequest request, String login, String password) {
 
 		logger.fine("try to log : " + login);
-		
+
 		GlobalContext globalContext = GlobalContext.getInstance(request);
 		EditContext editCtx = EditContext.getInstance(globalContext, request.getSession());
 
@@ -451,7 +453,7 @@ public class UserFactory implements IUserFactory, Serializable {
 		boolean passwordEqual = false;
 		StaticConfig staticConfig = StaticConfig.getInstance(request.getSession());
 
-		if (user == null && !globalContext.isMaster()) { 
+		if (user == null && !globalContext.isMaster()) {
 			IUserFactory masterUserFactory;
 			try {
 				masterUserFactory = AdminUserFactory.createUserFactory(GlobalContext.getMasterContext(request.getSession()), request.getSession());
@@ -475,10 +477,13 @@ public class UserFactory implements IUserFactory, Serializable {
 		}
 
 		if (user == null || (!logged && user.getPassword() != null && !passwordEqual)) {
-//			if (globalContext.getAdministrator().equals(login) && (logged || globalContext.administratorLogin(login, password))) {
-//				logger.info("log user with password : " + login + " obtain full control role.");
-//				user = createUser(login, (new HashSet(Arrays.asList(new String[] { AdminUserSecurity.FULL_CONTROL_ROLE }))));
-//			} else			
+			// if (globalContext.getAdministrator().equals(login) && (logged ||
+			// globalContext.administratorLogin(login, password))) {
+			// logger.info("log user with password : " + login + " obtain full
+			// control role.");
+			// user = createUser(login, (new HashSet(Arrays.asList(new String[]
+			// { AdminUserSecurity.FULL_CONTROL_ROLE }))));
+			// } else
 			if (editCtx.getEditUser(login) != null && (logged || editCtx.hardLogin(login, password))) {
 				logger.info("log user with password : " + login + " obtain general admin mode and full control role.");
 				user = createUser(login, (new HashSet(Arrays.asList(new String[] { AdminUserSecurity.GENERAL_ADMIN, AdminUserSecurity.FULL_CONTROL_ROLE }))));
@@ -487,7 +492,7 @@ public class UserFactory implements IUserFactory, Serializable {
 				logger.info("fail to log user with password : " + login + ".");
 				user = null;
 			}
-		} else { 
+		} else {
 			logger.warning("no login.");
 		}
 		/*
@@ -749,6 +754,49 @@ public class UserFactory implements IUserFactory, Serializable {
 			store();
 		}
 		return token;
+	}
+
+	public static InternetAddress getInternetAddress (User user) {
+		if (user == null) {
+			return null;
+		} else {
+			return getInternetAddress(user.getUserInfo());
+		}		
+	}
+
+	public static InternetAddress getInternetAddress(IUserInfo userinfo) {
+		if (userinfo != null) {
+			if (StringHelper.isMail(userinfo.getEmail())) {
+				try {
+					String personal = (StringHelper.neverNull(userinfo.getFirstName()) + ' ' + StringHelper.neverNull(userinfo.getLastName())).trim();
+					if (personal.length() == 0) {
+						personal = userinfo.getEmail();
+					}
+					return new InternetAddress(userinfo.getEmail(), personal, ContentContext.CHARACTER_ENCODING);
+				} catch (UnsupportedEncodingException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		return null;
+	}
+
+	public static List<InternetAddress> userListAsInternetAddressList(ContentContext ctx, List<String> users) {
+		IUserFactory userFactory = UserFactory.createUserFactory(ctx.getGlobalContext(), ctx.getRequest().getSession());
+		IUserFactory adminUserFactory = AdminUserFactory.createUserFactory(ctx.getGlobalContext(), ctx.getRequest().getSession());
+		List<InternetAddress> outAdd = new LinkedList<InternetAddress>();
+		for (String login : users) {
+			User user = userFactory.getUser(login);
+			InternetAddress add = getInternetAddress(user);
+			if (add == null && ctx.getGlobalContext().isCollaborativeMode()) {
+				user = adminUserFactory .getUser(login);
+				add = getInternetAddress(user);
+			}
+			if (add != null) {
+				outAdd.add(add);
+			}
+ 		}
+		return outAdd;
 	}
 
 }

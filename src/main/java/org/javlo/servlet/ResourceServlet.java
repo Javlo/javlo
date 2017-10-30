@@ -17,9 +17,11 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.javlo.component.form.SmartGenericForm;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
+import org.javlo.helper.ArrayHelper;
 import org.javlo.helper.NetHelper;
 import org.javlo.helper.RequestHelper;
 import org.javlo.helper.ResourceHelper;
@@ -189,6 +191,31 @@ public class ResourceServlet extends HttpServlet {
 				resourceURI = resourceURI.substring(0, resourceURI.lastIndexOf("."));
 			} else {
 				response.setContentType(ResourceHelper.getFileExtensionToMineType(fileExt));
+			}			
+			if (FilenameUtils.removeExtension(pathInfo).equals(SmartGenericForm.FOLDER)) {
+				File dir = new File(URLHelper.mergePath(globalContext.getDataFolder(), globalContext.getStaticConfig().getStaticFolder(), SmartGenericForm.FOLDER));
+				StaticInfo info = StaticInfo.getInstance(ctx, dir);
+				if (!dir.exists() || !info.canRead(ctx, UserFactory.createUserFactory(ctx.getGlobalContext(), request.getSession()).getCurrentUser(globalContext, request.getSession()), request.getParameter(ImageTransformServlet.RESOURCE_TOKEN_KEY))) {
+					response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+					return;
+				}
+				CSVFactory outCSV = new CSVFactory(new String[0][]);
+				for (File file : ResourceHelper.getAllFilesList(dir)) {					
+					CSVFactory newCSV = new CSVFactory(file);		
+					newCSV.addCol("_filename", file.getName());					
+					outCSV = outCSV.merge(newCSV);
+				}
+				response.setContentType(ResourceHelper.getFileExtensionToMineType(StringHelper.getFileExtension(pathInfo)));
+				response.setHeader("Cache-Control", "no-cache");
+				response.setHeader("Accept-Ranges", "bytes");				
+				if (StringHelper.getFileExtension(pathInfo).equals("xls")) {
+					XLSTools.writeXLS(XLSTools.getCellArray(outCSV.getArray()), response.getOutputStream());
+				} if (StringHelper.getFileExtension(pathInfo).equals("xlsx")) {
+					XLSTools.writeXLSX(XLSTools.getCellArray(outCSV.getArray()), response.getOutputStream());
+				} else {
+					outCSV.exportCSV(response.getOutputStream());
+				}
+				return;
 			}
 			if (!pathInfo.equals(FILE_INFO)) {
 				File file = new File(URLHelper.mergePath(dataFolder, resourceURI));
@@ -270,7 +297,13 @@ public class ResourceServlet extends HttpServlet {
 								//response.setHeader("Content-disposition","attachment; filename="+file.getName());
 								response.setHeader("Content-Disposition", "inline; filename="+ file.getName() +";");
 								response.setContentLength((int) file.length());
-								FileUtils.copyFile(file, response.getOutputStream());
+								try {
+									FileUtils.copyFile(file, response.getOutputStream());
+								} catch (Exception e) {
+									logger.warning("error on file : "+file);
+									response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+									return;
+								}
 							}
 						}
 					} else {

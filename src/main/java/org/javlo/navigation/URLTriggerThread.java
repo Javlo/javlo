@@ -28,9 +28,9 @@ public class URLTriggerThread extends Thread {
 		sleepLatch = new CountDownLatch(1);
 		logger.info("START URL TRIGGER on " + urlToTrigger.toString());
 		try {
-			sleepLatch.await(30, TimeUnit.SECONDS); //Delay start to avoid overload
+			sleepLatch.await(5, TimeUnit.SECONDS); //Delay start to avoid overload
 
-			while (stoppingLatch == null) {
+			while (stoppingLatch == null) {				
 				try {
 					//Trig url
 					urlToTrigger.openConnection().getInputStream().close();

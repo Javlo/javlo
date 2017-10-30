@@ -46,9 +46,18 @@
 </div>
 </fieldset>
 
-<c:if test="${fn:length(exportLinks) > 0}">
+<c:if test="${fn:length(exportLinks) > 0 || not empty formCSVLink}">
 <fieldset>
 <legend>data</legend>
+<c:if test="${not empty formCSVLink}">
+<div class="form-group">
+<div class="row">
+	<div class="col-sm-4">form merge result</div>
+	<div class="col-sm-4"><a href="${formCSVLink}">CSV</a></div>
+	<div class="col-sm-4"><a href="${formXLSXLink}">Excel</a></div>
+</div>
+</div>
+</c:if>
 <div class="accordion">
 <c:forEach var="link" items="${exportLinks}">
 <h3><a href="#">${link.label}</a></h3>

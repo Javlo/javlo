@@ -116,7 +116,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 	public static Set<String> reference = new HashSet<String>();
 
 	public static final String PAGE_TYPE_DEFAULT = "default";
-
+	
 	public static final double VOTES_MULTIPLY = 100000;
 
 	private static final long serialVersionUID = 1L;
@@ -892,10 +892,6 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 			return page.isChildrenOfAssociation();
 		}
 
-		public boolean isChangeNotification() {
-			return page.isChangeNotification();
-		}
-
 		public Collection<PageBean> getPreviousBrothers() {
 			LinkedList<PageBean> outBean = new LinkedList<PageBean>();
 			MenuElement previous = page.getPreviousBrother();
@@ -1108,8 +1104,6 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 
 	boolean childrenAssociation = false;
 
-	boolean changeNotification = false;
-
 	// String path = null;
 	String id = StringHelper.getRandomId();
 
@@ -1133,9 +1127,9 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 
 	// ContentElementList localContentElementList = null;
 
-	List<MenuElement> virtualChild = new LinkedList<MenuElement>();
+	List<MenuElement> virtualChild = Collections.EMPTY_LIST;
 
-	List<MenuElement> childMenuElements = new LinkedList<MenuElement>();
+	List<MenuElement> childMenuElements = Collections.EMPTY_LIST;
 
 	/* date and user */
 
@@ -1498,6 +1492,9 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 	private void addVirtualChild(MenuElement vChild) {
 		if (vChild != null) {
 			if (!vChild.getId().equals(getId())) {
+				if (virtualChild == Collections.EMPTY_LIST) {
+					virtualChild = new LinkedList<MenuElement>();
+				}
 				virtualChild.add(vChild);
 			}
 		}
@@ -2451,6 +2448,35 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 		}
 		return roles;
 	}
+	
+	public List<String> getFollowers(ContentContext ctx) {
+		String followers = ctx.getGlobalContext().getData(getFollowersKey());
+		if (StringHelper.isEmpty(followers)) {
+			return new LinkedList<String>();
+		} else {
+			return StringHelper.stringToCollection(followers, ",");
+		}	
+	}
+	
+	private String getFollowersKey() {
+		return "_folowers_"+getId();
+	}
+	
+	public void addFollowers(ContentContext ctx, String userName) {
+		List<String> followers = getFollowers(ctx);
+		followers.add(userName);
+		ctx.getGlobalContext().setData(getFollowersKey(), StringHelper.collectionToString(followers, ","));
+	}
+	
+	public void removeFollowers(ContentContext ctx, String userName) {
+		List<String> followers = getFollowers(ctx);
+		if (followers.size() == 0) {
+			return;
+		} else {
+			followers.remove(userName);
+			ctx.getGlobalContext().setData(getFollowersKey(), StringHelper.collectionToString(followers, ","));		
+		}		
+	} 
 
 	public Collection<String> getExternalResources(ContentContext ctx) throws Exception {
 		PageDescription desc = getPageDescriptionCached(ctx, ctx.getRequestContentLanguage());
@@ -4525,12 +4551,6 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 		}
 	}
 
-	public void setChildMenuElements(Collection<MenuElement> childMenuElements) {
-		synchronized (getLock()) {
-			this.childMenuElements = new LinkedList<MenuElement>();
-		}
-	}
-
 	public void setContent(ComponentBean[] newContent) {
 		synchronized (getLock()) {
 			componentBean = newContent;
@@ -5071,14 +5091,6 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 	public void setChildrenAssociation(boolean childrenAssociation) {
 		this.childrenAssociation = childrenAssociation;
 		releaseCache();
-	}
-
-	public boolean isChangeNotification() {
-		return changeNotification;
-	}
-
-	public void setChangeNotification(boolean changeNotification) {
-		this.changeNotification = changeNotification;
 	}
 
 	public MenuElement getFirstChild() {

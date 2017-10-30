@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.text.ParseException;
 import java.util.Arrays;
@@ -972,6 +973,22 @@ public class Mailing {
 
 	public void setPageId(String pageId) {
 		this.pageId = pageId;
+	}
+	
+	public void printInfo(PrintStream out) {
+		out.println("");
+		out.println("*** mailing info ***");
+		out.println("*** from       : "+getFrom());
+		out.println("*** to         : "+getReceivers());
+		out.println("*** subject    : "+getSubject());
+		out.println("*** #content   : "+getContent().length());
+		out.println("-");
+		out.println("*** SMTP       : "+getSmtpHost()+':'+getSmtpPort());
+		out.println("*** SMTP User  : "+getSmtpUser());
+		out.println("-");
+		out.println("*** date       : "+StringHelper.renderTime(getDate()));
+		out.println("*** send date  : "+StringHelper.renderTime(getSendDate()));
+		out.println("");
 	}
 
 }

@@ -1292,12 +1292,18 @@ public class StringHelper {
 	}
 
 	public static boolean isFloat(String str) {
+		if (str == null) {
+			return false;
+		}		
 		int countSep = 0;
+		if (str.startsWith("-"))  {
+			str = str.substring(1);
+		}
 		if (str == null || str.length() == 0) {
 			return false;
 		} else {
 			for (char c : str.toCharArray()) {
-				if (!isDigit(c)) {
+				if (!isDigit(c)  || c == '-') {
 					if (c == '.') {
 						countSep++;
 					} else {

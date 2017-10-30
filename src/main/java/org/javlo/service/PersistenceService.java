@@ -702,6 +702,13 @@ public class PersistenceService {
 		String roles = pageXML.getAttributeValue("userRoles", "");
 		String layout = pageXML.getAttributeValue("layout", null);
 		String freeData = pageXML.getAttributeValue("savedParent", null);
+		
+//		String followers = pageXML.getAttributeValue("followers", null);
+//		if (followers != null) {
+//			for (String follower : StringHelper.stringToCollection(followers, "#")) {
+//				page.addFollowers(follower);
+//			}
+//		}
 
 		/* modification management */
 		String creator = pageXML.getAttributeValue("creator", "");
@@ -769,8 +776,7 @@ public class PersistenceService {
 		page.setBlocker(pageXML.getAttributeValue("blocker", ""));
 		page.setSeoWeight(StringHelper.parseInt(pageXML.getAttributeValue("seoWeight", null), MenuElement.SEO_HEIGHT_INHERITED));
 
-		page.setChildrenAssociation(StringHelper.isTrue(pageXML.getAttributeValue("childrenAssociation", null)));
-		page.setChangeNotification(StringHelper.isTrue(pageXML.getAttributeValue("changeNotification", "false")));
+		page.setChildrenAssociation(StringHelper.isTrue(pageXML.getAttributeValue("childrenAssociation", null)));		
 
 		page.setSharedName(pageXML.getAttributeValue("sharedName", null));
 

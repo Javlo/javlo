@@ -133,6 +133,7 @@ org.javlo.component.web2.ReactionComponent
 org.javlo.component.web2.PageRank
 org.javlo.component.web2.SimplePoll
 org.javlo.component.web2.Survey
+org.javlo.component.web2.FollowComponent
 org.javlo.component.web2.EventRegistration
 org.javlo.component.web2.MessagingComponent
 org.javlo.component.social.FacebookChooseFriend
@@ -159,4 +160,5 @@ org.javlo.component.ecom.MoneybookersPayement
 org.javlo.component.core.RendererReferenceComponent
 org.javlo.component.extranet.LaunchMacro
 org.javlo.component.extranet.LoginLogoutLink
+
 
