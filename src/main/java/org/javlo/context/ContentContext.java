@@ -366,10 +366,10 @@ public class ContentContext {
 			if (StringHelper.isTrue(requestService.getParameter(CLEAR_SESSION_PARAM, null))) {
 				ctx.clearSession = true;
 			}
-			if (request.getParameter(FORCE_SPECIAL_RENDERER) != null) {
+			if (requestService.getParameter(FORCE_SPECIAL_RENDERER) != null) {
 				IUserFactory fact = UserFactory.createUserFactory(globalContext, ctx.getRequest().getSession());
 				if (AdminUserSecurity.getInstance().isAdmin(fact.getCurrentUser(globalContext, request.getSession()))) {
-					ctx.setSpecialContentRenderer(request.getParameter(FORCE_SPECIAL_RENDERER));
+					ctx.setSpecialContentRenderer(requestService.getParameter(FORCE_SPECIAL_RENDERER));
 				}
 			}
 		} catch (RuntimeException e) {
