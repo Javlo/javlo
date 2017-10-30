@@ -100,6 +100,8 @@ import org.javlo.ztatic.FileCache;
 import org.xhtmlrenderer.swing.Java2DRenderer;
 import org.xhtmlrenderer.util.FSImageWriter;
 
+import ch.qos.logback.core.net.SyslogOutputStream;
+
 public class AccessServlet extends HttpServlet implements IVersion {
 
 	public static final String PERSISTENCE_PARAM = "persistence";
@@ -821,7 +823,12 @@ public class AccessServlet extends HttpServlet implements IVersion {
 						params.put("clean-html", "true");
 						String url = URLHelper.createURL(viewCtx, params);
 						logger.info("create EML from : "+url);
-						String html = NetHelper.readPageForMailing(new URL(url));						
+						String html = NetHelper.readPageForMailing(new URL(url));
+						
+						System.out.println("");
+						System.out.println(html);
+						System.out.println("");
+						
 						MailService.writeEMLFile(ctx.getCurrentPage().getTitle(viewCtx), html, out);
 					} else if (ctx.getFormat().equalsIgnoreCase("pdf")) {
 						if (ctx.getGlobalContext().isCollaborativeMode() && !ctx.getCurrentPage().isPublic(ctx)) {
