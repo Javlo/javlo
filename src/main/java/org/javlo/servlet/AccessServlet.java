@@ -797,14 +797,12 @@ public class AccessServlet extends HttpServlet implements IVersion {
 						viewCtx.setAbsoluteURL(true);
 						viewCtx.setFormat("html");
 						viewCtx.resetDMZServerInter();
-
 						for (Object key : ctx.getRequest().getParameterMap().keySet()) {
 							if (!key.equals("__check_context")) {
 								params.put(key.toString(), ctx.getRequest().getParameter(key.toString()));
 							}
 						}
-
-						if (ctx.getCurrentUser() != null) {
+						if (ctx.getCurrentUser() != null) { 
 							String userToken = UserFactory.createUserFactory(ctx.getGlobalContext(), request.getSession()).getTokenCreateIfNotExist(ctx.getCurrentUser());
 							String token = globalContext.createOneTimeToken(userToken);
 							params.put("j_token", token);
@@ -837,17 +835,14 @@ public class AccessServlet extends HttpServlet implements IVersion {
 								}
 							}
 						}
-
 						response.setContentType("application/pdf;");
 						OutputStream out = response.getOutputStream();
-
 						Map<String, String> params = new HashMap<String, String>();
 						boolean lowDef = false;
 						if (request.getParameter("lowdef") != null) {
 							params.put("lowdef", request.getParameter("lowdef"));
 							lowDef = true;
 						}
-
 						FileCache fileCache = FileCache.getInstance(getServletContext());
 						File pdfFileCache = fileCache.getPDFPage(ctx, ctx.getCurrentPage(), lowDef);
 						if (staticConfig.isPDFCache() && pdfFileCache.exists() && pdfFileCache.length() > 0) {

@@ -388,7 +388,7 @@ public class NetHelper {
 				nocheckCertificatHttps();
 			}
 
-			connection.setRequestMethod("GET");
+			connection.setRequestMethod("POST");
 			connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
 
 			connection.setRequestProperty("Content-Length", "" + Integer.toString(query.getBytes().length));
@@ -437,8 +437,7 @@ public class NetHelper {
 		String content = new String(out.toByteArray(), ContentContext.CHARACTER_ENCODING);
 
 		if (mailing) {
-			content = XHTMLHelper.prepareToMailing(content); // transform list
-																// -> array
+			content = XHTMLHelper.prepareToMailing(content);
 		}
 
 		if (cssInline) {

@@ -357,8 +357,8 @@ public class ContentContext {
 
 			ctx.urlFactory = globalContext.getURLFactory(ctx);
 			ctx.dmzServerInter = globalContext.getDMZServerInter();
-			if (request.getParameter(FORCE_ABSOLUTE_URL) != null) {
-				ctx.setAbsoluteURL(StringHelper.isTrue(request.getParameter(FORCE_ABSOLUTE_URL)));
+			if (requestService.getParameter(FORCE_ABSOLUTE_URL) != null) {
+				ctx.setAbsoluteURL(StringHelper.isTrue(requestService.getParameter(FORCE_ABSOLUTE_URL)));
 			}
 			if (StringHelper.isTrue(requestService.getParameter(NO_DMZ_PARAM_NAME, null))) {
 				ctx.resetDMZServerInter();

@@ -2675,11 +2675,6 @@ public class XHTMLHelper {
 		return remplacement.start(xhtml);
 	}
 
-	public static void main(String[] args) throws Exception {
-		String content = "c'est top";
-
-	}
-
 	public static String renderStaticInfo(ContentContext ctx, StaticInfo info) throws FileNotFoundException, IOException {
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(outStream);
