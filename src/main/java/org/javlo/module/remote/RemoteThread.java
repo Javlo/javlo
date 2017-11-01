@@ -34,7 +34,7 @@ public class RemoteThread extends Thread {
 						bean.check(defaulSynchroCode);
 					}
 					if (!bean.isValid()) {
-						logger.warning("error on : "+bean.getUrl()+" msg:"+bean.getError());
+						logger.fine("error on : "+bean.getUrl()+" msg:"+bean.getError());
 					}
 				}
 				remoteService.sendNotification();
