@@ -78,6 +78,8 @@ import org.javlo.context.GlobalContext;
 import org.javlo.data.rest.IRestItem;
 import org.javlo.data.taxonomy.ITaxonomyContainer;
 import org.javlo.helper.BeanHelper;
+import org.javlo.helper.DebugHelper;
+import org.javlo.helper.LangHelper;
 import org.javlo.helper.NavigationHelper;
 import org.javlo.helper.NetHelper;
 import org.javlo.helper.StringHelper;
@@ -2459,13 +2461,16 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 		return roles;
 	}
 	
-	public List<String> getFollowers(ContentContext ctx) {
-		String followers = ctx.getGlobalContext().getData(getFollowersKey());
-		if (StringHelper.isEmpty(followers)) {
-			return new LinkedList<String>();
-		} else {
-			return StringHelper.stringToCollection(followers, ",");
-		}	
+	public List<String> getFollowers(ContentContext ctx) {		
+		List<String> outFollowers = getLocalFollowers(ctx);			
+		if (getParent() != null) {
+			List<String> outFollowersParent = getParent().getFollowers(ctx);
+			if (outFollowersParent.size()>0) {
+				outFollowers = LangHelper.getModifiableList(outFollowers);
+				outFollowers.addAll(outFollowersParent);
+			}			
+		}
+		return outFollowers;
 	}
 	
 	private String getFollowersKey() {
@@ -2473,19 +2478,37 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 	}
 	
 	public void addFollowers(ContentContext ctx, String userName) {
-		List<String> followers = getFollowers(ctx);
-		followers.add(userName);
-		ctx.getGlobalContext().setData(getFollowersKey(), StringHelper.collectionToString(followers, ","));
+		List<String> followers = LangHelper.getModifiableList(getFollowers(ctx));
+		if (!followers.contains(userName)) {
+			followers.add(userName);
+			System.out.println("##### MenuElement.addFollowers : ADD Followers = "+StringHelper.collectionToString(followers, ",")); //TODO: remove debug trace
+			ctx.getGlobalContext().setData(getFollowersKey(), StringHelper.collectionToString(followers, ","));
+		}
+	}
+	
+	public List<String> getLocalFollowers(ContentContext ctx) {		
+		String followers = ctx.getGlobalContext().getData(getFollowersKey());
+		List<String> outFollowers;
+		if (StringHelper.isEmpty(followers)) {
+			outFollowers = Collections.emptyList();
+		} else {
+			outFollowers = StringHelper.stringToCollection(followers, ",");
+		}		
+		return outFollowers;
 	}
 	
 	public void removeFollowers(ContentContext ctx, String userName) {
-		List<String> followers = getFollowers(ctx);
-		if (followers.size() == 0) {
-			return;
-		} else {
-			followers.remove(userName);
-			ctx.getGlobalContext().setData(getFollowersKey(), StringHelper.collectionToString(followers, ","));		
+		
+		MenuElement parent = this;
+		while (parent != null) {
+			List<String> followers = parent.getLocalFollowers(ctx);
+			if (followers.size() > 0 && followers.contains(userName)) {
+				followers.remove(userName);
+				ctx.getGlobalContext().setData(parent.getFollowersKey(), StringHelper.collectionToString(followers, ","));		
+			}	
+			parent = parent.getParent();
 		}		
+			
 	} 
 
 	public Collection<String> getExternalResources(ContentContext ctx) throws Exception {

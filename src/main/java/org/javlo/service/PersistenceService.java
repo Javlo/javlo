@@ -544,7 +544,7 @@ public class PersistenceService {
 		File dir = new File(getTrackingDirectory() + '/' + year + '/' + mount);
 		File file = new File(getTrackingDirectory() + '/' + year + '/' + mount + "/tracks-" + day + ".csv");
 
-		if (file.getName().equals(trackWriterFileName)) {
+		if (file.getName().equals(trackWriterFileName) && trackWriter != null) {
 			return trackWriter;
 		} else {
 			ResourceHelper.closeResource(trackWriter);

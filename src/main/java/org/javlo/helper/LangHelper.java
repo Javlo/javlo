@@ -3,6 +3,7 @@ package org.javlo.helper;
 import java.lang.ref.WeakReference;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -334,6 +335,14 @@ public class LangHelper {
 			if (it.next().getValue().get() == null) {
 				it.remove();
 			}
+		}
+	}
+	
+	public static <E> List<E> getModifiableList(List<E> list) {
+		if (list == null || list == Collections.emptyList() || list == Collections.EMPTY_LIST) {
+			return new LinkedList<E>();
+		} else {
+			return list;
 		}
 	}
 	

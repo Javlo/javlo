@@ -1454,6 +1454,15 @@ public class InfoBean {
 			return URLHelper.createTransformURL(ctx, URLHelper.mergePath(ctx.getGlobalContext().getStaticConfig().getStaticFolder(), logo), "logo");
 		}
 	}
+	
+	public String getLogoRawUrl() throws Exception {
+		String logo = ctx.getGlobalContext().getTemplateData().getLogo();
+		if (logo == null || logo.equals("null")) {
+			return null;
+		} else {
+			return URLHelper.createResourceURL(ctx, URLHelper.mergePath(ctx.getGlobalContext().getStaticConfig().getStaticFolder(), logo));
+		}
+	}
 
 	public boolean isCookiesMessage() throws Exception {
 		if (NetHelper.getCookie(ctx.getRequest(), ctx.getCurrentTemplate().getCookiesMessageName()) != null) {

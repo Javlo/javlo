@@ -26,7 +26,7 @@ public class LaunchMacro extends AbstractVisualComponent {
 
 	@Override
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
-		return MacroHelper.getLaunchMacroXHTML(ctx, getMacro(), getLabel());
+		return MacroHelper.getLaunchMacroXHTML(ctx, getMacro(), getLabel(), null);
 	}
 	
 	@Override

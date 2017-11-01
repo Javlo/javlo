@@ -29,10 +29,10 @@ public class FollowComponent extends AbstractVisualComponent implements IAction 
 
 	}
 
-	private boolean isFollow(ContentContext ctx) {
+	private boolean isFollow(ContentContext ctx) throws Exception {
 		String currentUser = ctx.getCurrentUserId();
 		if (currentUser != null) {
-			return getPage().getFollowers(ctx).contains(currentUser);
+			return ctx.getCurrentPage().getFollowers(ctx).contains(currentUser);
 		} else {
 			return false;
 		}
@@ -63,16 +63,23 @@ public class FollowComponent extends AbstractVisualComponent implements IAction 
 
 	}
 
-	public static String performFollow(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
+	public static String performFollow(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {		
 		User currentUser = ctx.getCurrentUser();
+		System.out.println("##### FollowComponent.performFollow : currentUser ="+currentUser); //TODO: remove debug trace
 		if (currentUser != null) {
 			if (StringHelper.isTrue(rs.getParameter("follow"))) {
 				if (ctx.getCurrentPage().isReadAccess(ctx, currentUser)) {
+					System.out.println("##### FollowComponent.performFollow : follow"); //TODO: remove debug trace
 					ctx.getCurrentPage().addFollowers(ctx, currentUser.getLogin());
+				} else {
+					return "security error !";
 				}
 			} else {
 				if (ctx.getCurrentPage().isReadAccess(ctx, currentUser)) {
+					System.out.println("##### FollowComponent.performFollow : not follow"); //TODO: remove debug trace
 					ctx.getCurrentPage().removeFollowers(ctx, currentUser.getLogin());
+				} else {
+					return "security error !";
 				}
 			}
 		}		

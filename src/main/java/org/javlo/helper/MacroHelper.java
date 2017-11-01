@@ -983,7 +983,8 @@ public class MacroHelper {
 		}
 	}
 
-	public static String getLaunchMacroXHTML(ContentContext ctx, String macro, String label) {
+	public static String getLaunchMacroXHTML(ContentContext ctx, String macro, String label, String css) {
+		css = StringHelper.neverNull(css);
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(outStream);
 		IMacro macroClass = MacroFactory.getInstance(ctx.getGlobalContext().getStaticConfig()).getMacro(macro);
@@ -995,9 +996,9 @@ public class MacroHelper {
 			params.put("webaction", "macro.executeInteractiveMacro");
 			params.put("macro", macro);
 			String url = URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.EDIT_MODE), params);
-			String actionURL = "try{jQuery.colorbox({href : '" + url + "',opacity : 0.6,iframe : true,width : '95%',	height : '95%'});} catch(err) {}; return false;";
+			String actionURL = "try{jQuery.colorbox({href : '" + url + "',opacity : 0.6,iframe : true,width : '95%',	height : '95%'});} catch(err) {console.log(err)}; return false;";
 			out.println("<div class=\"macro\">");
-			out.println("<a class=\"as-modal\" href=\"" + url + "\" onclick=\"" + actionURL + "\">" + label + "</a>");
+			out.println("<a class=\"as-modal "+css+"\" href=\"" + url + "\" onclick=\"" + actionURL + "\">" + label + "</a>");
 			out.println("</div>");
 		} else {
 			out.println("<div class=\"macro\">");
@@ -1006,7 +1007,7 @@ public class MacroHelper {
 			out.println("<input type=\"hidden\" value=\"true\" name=\"" + ContentContext.PREVIEW_EDIT_PARAM + "\">");
 			out.println("<input type=\"hidden\" value=\"macro.executeMacro\" name=\"webaction\">");
 			out.println("<input type=\"hidden\" value=\"" + macro + "\" name=\"macro\">");
-			out.println("<input class=\"action-button\" type=\"submit\" value=\"" + label + "\">");
+			out.println("<input class=\"action-button "+css+"\" type=\"submit\" value=\"" + label + "\">");
 			out.println("</form>");
 			out.println("</div>");
 		}

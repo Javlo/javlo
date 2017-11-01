@@ -60,13 +60,13 @@ public class UserSearch extends AbstractVisualComponent implements IAction {
 			out.println("<form id=\"search-user\">");
 			out.println("<input type=\"hidden\" name=\"webaction\" value=\"user-search.search\" />");
 			out.println("<fieldset>");
-			out.println("<legend>search users</legend><div class=\"row\"><div class=\"col-xs-6\">");
-			out.println("<div class=\"line text\"><label id=\"user\">text</label>");
-			out.println("<input type=\"text\" id=\"user\" name=\"text\" value=\"" + rs.getParameter("text", "") + "\" />");
+			out.println("<legend>search users</legend><div class=\"row\"><div class=\"col-sm-6\">");
+			out.println("<div class=\"form-group\"><label id=\"user\">text</label>");
+			out.println("<input class=\"form-control\" type=\"text\" id=\"user\" name=\"text\" value=\"" + rs.getParameter("text", "") + "\" />");
 			out.println("</div>");
-			out.println("<div class=\"line country\"><label id=\"country\">country</label>");
+			out.println("<div class=\"form-group country\"><label id=\"country\">country</label>");
 			if (countries == null) {
-				out.println("<input type=\"text\" id=\"country\" name=\"country\" value=\"" + rs.getParameter("domain", "") + "\" />");
+				out.println("<input class=\"form-control\" type=\"text\" id=\"country\" name=\"country\" value=\"" + rs.getParameter("domain", "") + "\" />");
 			} else {
 				out.println("<select id=\"country\" name=\"country\">");
 				out.println("<option></option>");
@@ -79,7 +79,7 @@ public class UserSearch extends AbstractVisualComponent implements IAction {
 				}
 				out.println("</select>");
 			}
-			out.println("</div></div><div class=\"col-xs-6\">");
+			out.println("</div></div><div class=\"col-sm-6\">");
 			out.println("<div class=\"line\"><label id=\"domain\">domain</label>");
 			if (functions == null) {
 				out.println("<input type=\"text\" id=\"domain\" name=\"domain\" value=\"" + rs.getParameter("domain", "") + "\" />");
@@ -99,8 +99,8 @@ public class UserSearch extends AbstractVisualComponent implements IAction {
 
 			GlobalContext globalContext = ctx.getGlobalContext();
 			if (globalContext.getAdminUserRoles() != null && globalContext.getAdminUserRoles().size() > 0) {
-				out.println("<div class=\"line roles\"><label id=\"role\">group</label>");
-				out.println("<select id=\"role\" name=\"role\">");
+				out.println("<div class=\"form-group roles\"><label id=\"role\">group</label>");
+				out.println("<select class=\"form-control\" id=\"role\" name=\"role\">");
 				out.println("<option></option>");
 				for (String role : globalContext.getAdminUserRoles()) {
 					String selected = "";
@@ -112,7 +112,7 @@ public class UserSearch extends AbstractVisualComponent implements IAction {
 				out.println("</select></div>");
 			}
 
-			out.println("</div><div class=\"col-xs-12\"><input class=\"pull-right btn btn-primary\" type=\"submit\" value=\"search...\" /></div></div>");
+			out.println("</div><div class=\"col-12\"><input class=\"pull-right btn btn-primary\" type=\"submit\" value=\"search...\" /></div></div>");
 			out.println("</fieldset>");
 			out.println("</from>");
 		}
@@ -231,9 +231,9 @@ public class UserSearch extends AbstractVisualComponent implements IAction {
 					organization = "<a target=\"_blank\" href=\"" + url + "\">" + organization + "</a>";
 				}
 
-				out.println("<div class=\"panel panel-default user-item " + oddEven + "\">");
-				out.println("<div class=\"panel-heading\">" + user.getFirstName() + ' ' + user.getLastName() + "</div>");
-				out.println("<div class=\"panel-body\"><div class=\"row\">");
+				out.println("<div class=\"card user-item " + oddEven + "\"><div class=\"card-body\">");
+				out.println("<div class=\"card-title\">" + user.getFirstName() + ' ' + user.getLastName() + "</div>");
+				out.println("<div class=\"card-text\"><div class=\"row\">");
 				out.println("<div class=\"col-sm-2\">");
 				String avatarURL = URLHelper.createAvatarUrl(ctx, user);
 				String avatar = "&nbsp;";
@@ -302,7 +302,7 @@ public class UserSearch extends AbstractVisualComponent implements IAction {
 					out.println("<p>" + user.getInfo() + "</p>");
 				}
 
-				out.println("</div></div>");
+				out.println("</div></div></div>");
 			}
 		}
 		out.println("</div>");
