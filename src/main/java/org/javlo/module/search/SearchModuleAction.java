@@ -81,7 +81,7 @@ public class SearchModuleAction extends AbstractModuleAction {
 		if (page.getImage(ctx) != null) {
 			previewURL = URLHelper.createTransformURL(ctx, page.getImage(ctx).getResourceURL(ctx), "list");
 		}
-		outResult.put(page, new SearchResultBean("page", page.getTitle(ctx), lg , url, authors, StringHelper.renderSortableDate(page.getModificationDate()), previewURL, 1));
+		outResult.put(page, new SearchResultBean("page", page.getTitle(ctx), lg , url, authors, StringHelper.renderSortableDate(page.getModificationDate(ctx)), previewURL, 1));
 	}
 	
 	public static Collection<SearchResultBean> searchInPage(ContentContext ctx, SearchFilter filter) throws Exception {

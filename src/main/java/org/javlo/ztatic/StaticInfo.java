@@ -925,7 +925,7 @@ public class StaticInfo {
 						BufferedImage img = null;
 						try {
 							// img = ImageIO.read(getFile());
-							if (ctx.getGlobalContext().getStaticConfig().isAutoFocus()) {
+							if (ctx.getGlobalContext().getStaticConfig().isAutoFocus() && ctx.isAsPreviewMode()) {
 								logger.info("search point on interest on START : " + getFile() + " [" + ctx.getGlobalContext().getContextKey() + "]");
 								// point = InitInterest.getPointOfInterest(img);
 								content.setAttribute(editCtx, getKey("focus-zone-x"), "" + DEFAULT_FOCUS_X);

@@ -35,6 +35,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.Properties;
 import java.util.Set;
 import java.util.logging.Logger;
@@ -212,7 +213,7 @@ public class PersistenceService {
 	private String trackWriterFileName = null;
 
 	private Properties trackCache = null;
-	
+
 	private boolean loaded = false;
 
 	public static final Date parseDate(String date) throws ParseException {
@@ -702,13 +703,14 @@ public class PersistenceService {
 		String roles = pageXML.getAttributeValue("userRoles", "");
 		String layout = pageXML.getAttributeValue("layout", null);
 		String freeData = pageXML.getAttributeValue("savedParent", null);
-		
-//		String followers = pageXML.getAttributeValue("followers", null);
-//		if (followers != null) {
-//			for (String follower : StringHelper.stringToCollection(followers, "#")) {
-//				page.addFollowers(follower);
-//			}
-//		}
+
+		// String followers = pageXML.getAttributeValue("followers", null);
+		// if (followers != null) {
+		// for (String follower : StringHelper.stringToCollection(followers,
+		// "#")) {
+		// page.addFollowers(follower);
+		// }
+		// }
 
 		/* modification management */
 		String creator = pageXML.getAttributeValue("creator", "");
@@ -776,12 +778,12 @@ public class PersistenceService {
 		page.setBlocker(pageXML.getAttributeValue("blocker", ""));
 		page.setSeoWeight(StringHelper.parseInt(pageXML.getAttributeValue("seoWeight", null), MenuElement.SEO_HEIGHT_INHERITED));
 
-		page.setChildrenAssociation(StringHelper.isTrue(pageXML.getAttributeValue("childrenAssociation", null)));		
+		page.setChildrenAssociation(StringHelper.isTrue(pageXML.getAttributeValue("childrenAssociation", null)));
 
 		page.setSharedName(pageXML.getAttributeValue("sharedName", null));
 
 		page.setIpSecurityErrorPageName(pageXML.getAttributeValue("ipsecpagename"));
-		
+
 		if (pageXML.getAttributeValue("taxonomy") != null) {
 			page.setTaxonomy(new HashSet<String>(StringHelper.stringToCollection(pageXML.getAttributeValue("taxonomy"))));
 		}
@@ -1010,7 +1012,7 @@ public class PersistenceService {
 		}
 
 		outBean.setRoot(root);
-		loaded=true;
+		loaded = true;
 
 		return outBean;
 
@@ -1021,13 +1023,13 @@ public class PersistenceService {
 			taxonomyBean.setId(node.getAttributeValue("id"));
 			String name = node.getAttributeValue("name");
 			taxonomyBean.setName(name);
-			for (NodeXML child : node.getChildren()) {				
-				if (child.getName().equals("label")) {					
+			for (NodeXML child : node.getChildren()) {
+				if (child.getName().equals("label")) {
 					taxonomyBean.updateLabel(child.getAttributeValue("lang"), child.getContent());
-				} else if (child.getName().equals("taxo")) {					
+				} else if (child.getName().equals("taxo")) {
 					TaxonomyBean bean = new TaxonomyBean();
 					taxonomyBean.addChildAsLast(bean);
-					loadTaxonomy(child, bean);					
+					loadTaxonomy(child, bean);
 				}
 			}
 		}
@@ -1129,7 +1131,7 @@ public class PersistenceService {
 				version = previewVersion;
 			}
 
-			logger.info("load version : " + version + " in mode : " + renderMode);
+			logger.info("load version : " + version + " in mode : " + renderMode + " context:" + ctx.getGlobalContext().getContextKey());
 
 			MenuElement root;
 			InputStream in = null;
@@ -1190,7 +1192,7 @@ public class PersistenceService {
 					 * ); out.close();
 					 */
 				} else {
-					LoadingBean loadBean = load(ctx, in, propFile, contentAttributeMap, TaxonomyService.getInstance(ctx, renderMode).getRoot(), renderMode );
+					LoadingBean loadBean = load(ctx, in, propFile, contentAttributeMap, TaxonomyService.getInstance(ctx, renderMode).getRoot(), renderMode);
 					logger.info("load : " + xmlFile);
 					if (loadBean.isError() && correctXML && xmlFile != null) {
 						correctCharacterEncoding(xmlFile);
@@ -1313,7 +1315,7 @@ public class PersistenceService {
 							String[] trackInfo = line.split(",");
 							String userAgent = null;
 							if (trackInfo.length > 7) {
-								userAgent = line.substring(line.indexOf(trackInfo[7])); 
+								userAgent = line.substring(line.indexOf(trackInfo[7]));
 							}
 							if (trackInfo.length > 5) {
 								if (!NetHelper.isRobot(userAgent)) {
@@ -1490,34 +1492,43 @@ public class PersistenceService {
 		store(ctx, renderMode, true);
 	}
 
+	private AtomicInteger COUNT_STORAGE_THREAD = new AtomicInteger(0);
+
 	public void store(ContentContext ctx, int renderMode, boolean async) throws Exception {
 		setAskStore(false);
-		synchronized (ctx.getGlobalContext().getLockLoadContent()) {
-			logger.info("store in " + renderMode + " mode.");
-			PersistenceThread persThread = new PersistenceThread(globalContext.getLockLoadContent());
-			ContentService content = ContentService.getInstance(globalContext);
-			MenuElement menuElement = content.getNavigation(ctx);
-			String defaultLg = globalContext.getDefaultLanguages().iterator().next();
-			if (!globalContext.getLanguages().contains(defaultLg)) {
-				defaultLg = null;
+		COUNT_STORAGE_THREAD.incrementAndGet();
+		logger.info("waiting storage #Thread = " + COUNT_STORAGE_THREAD.get() + " context:" + ctx.getGlobalContext().getContextKey());
+		if (COUNT_STORAGE_THREAD.get() <= 2) {
+			synchronized (ctx.getGlobalContext().getLockLoadContent()) {
+				logger.info("store in " + renderMode + " mode.");
+				PersistenceThread persThread = new PersistenceThread(globalContext.getLockLoadContent());
+				ContentService content = ContentService.getInstance(globalContext);
+				MenuElement menuElement = content.getNavigation(ctx);
+				String defaultLg = globalContext.getDefaultLanguages().iterator().next();
+				if (!globalContext.getLanguages().contains(defaultLg)) {
+					defaultLg = null;
+				}
+				persThread.setMenuElement(menuElement);
+				persThread.setMode(renderMode);
+				persThread.setPersistenceService(this);
+				persThread.setDefaultLg(defaultLg);
+				persThread.setGlobalContentMap(content.getGlobalMap(ctx));
+				persThread.setTaxonomyRoot(TaxonomyService.getInstance(ctx).getRoot());
+				GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+				persThread.setContextKey(globalContext.getContextKey());
+				persThread.setDataFolder(globalContext.getDataFolder());
+				StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession().getServletContext());
+				if (StaticInfo._STATIC_INFO_DIR != null) {
+					String staticInfo = URLHelper.mergePath(globalContext.getDataFolder(), StaticInfo._STATIC_INFO_DIR);
+					persThread.addFolderToSave(new File(staticInfo));
+				}
+				persThread.addFolderToSave(new File(URLHelper.mergePath(globalContext.getDataFolder(), staticConfig.getUserInfoFile())));
+				persThread.start(async);				
 			}
-			persThread.setMenuElement(menuElement);
-			persThread.setMode(renderMode);
-			persThread.setPersistenceService(this);
-			persThread.setDefaultLg(defaultLg);
-			persThread.setGlobalContentMap(content.getGlobalMap(ctx));
-			persThread.setTaxonomyRoot(TaxonomyService.getInstance(ctx).getRoot());
-			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-			persThread.setContextKey(globalContext.getContextKey());
-			persThread.setDataFolder(globalContext.getDataFolder());
-			StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession().getServletContext());
-			if (StaticInfo._STATIC_INFO_DIR != null) {
-				String staticInfo = URLHelper.mergePath(globalContext.getDataFolder(), StaticInfo._STATIC_INFO_DIR);
-				persThread.addFolderToSave(new File(staticInfo));
-			}
-			persThread.addFolderToSave(new File(URLHelper.mergePath(globalContext.getDataFolder(), staticConfig.getUserInfoFile())));
-			persThread.start(async);
+		} else {
+			logger.warning("at least 2 threads waiting storage -> skip storage.");
 		}
+		COUNT_STORAGE_THREAD.decrementAndGet();
 	}
 
 	// public void store(InputStream in) throws Exception {
@@ -1664,14 +1675,14 @@ public class PersistenceService {
 			NetHelper.sendMailToAdministrator(globalContext, "Javlo persistence Error on : " + globalContext.getContextKey(), content);
 		}
 	}
-	
+
 	public boolean clean(ContentContext ctx) {
 		boolean fileDeleted = false;
 		for (File file : new File(getDirectory()).listFiles()) {
 			if (file.getName().startsWith("content_" + ContentContext.PREVIEW_MODE)) {
-				if (!file.getName().contains(""+getVersion())) {
+				if (!file.getName().contains("" + getVersion())) {
 					file.delete();
-					fileDeleted=true;
+					fileDeleted = true;
 				}
 			}
 		}

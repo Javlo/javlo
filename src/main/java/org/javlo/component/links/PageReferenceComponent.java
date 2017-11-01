@@ -39,6 +39,7 @@ import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.data.taxonomy.ITaxonomyContainer;
 import org.javlo.data.taxonomy.TaxonomyDisplayBean;
+import org.javlo.helper.DebugHelper;
 import org.javlo.helper.LocalLogger;
 import org.javlo.helper.MacroHelper;
 import org.javlo.helper.NavigationHelper;
@@ -266,11 +267,11 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 			bean.linkOn = page.getLinkOn(lgCtx);
 			bean.creationDate = StringHelper.renderShortDate(lgCtx, page.getCreationDate());
 			bean.setCreationTime(StringHelper.renderShortTime(lgCtx, page.getCreationDate()));
-			bean.modificationDate = StringHelper.renderShortDate(lgCtx, page.getModificationDate());
+			bean.modificationDate = StringHelper.renderShortDate(lgCtx, page.getModificationDate(ctx));
 			bean.contentDateValue = StringHelper.renderShortDate(lgCtx, page.getContentDate(lgCtx));
-			bean.modificationTime = StringHelper.renderShortTime(lgCtx, page.getModificationDate());
-			bean.sortableModificationDate = StringHelper.renderShortDate(lgCtx, page.getModificationDate());
-			bean.sortableModificationTime = StringHelper.renderShortTime(lgCtx, page.getModificationDate());
+			bean.modificationTime = StringHelper.renderShortTime(lgCtx, page.getModificationDate(ctx));
+			bean.sortableModificationDate = StringHelper.renderShortDate(lgCtx, page.getModificationDate(ctx));
+			bean.sortableModificationTime = StringHelper.renderShortTime(lgCtx, page.getModificationDate(ctx));
 			bean.sortableCreationDate = StringHelper.renderSortableDate(page.getCreationDate());
 			bean.sortableCreationTime = StringHelper.renderSortableTime(page.getCreationDate());
 			bean.priority = page.getPriority();
@@ -310,8 +311,8 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 				bean.sortableDate = StringHelper.renderSortableDate(page.getContentDate(lgCtx));
 				bean.contentDate = true;
 			} else {
-				bean.date = new DateBean(lgCtx, page.getModificationDate());
-				bean.sortableDate = StringHelper.renderSortableDate(page.getModificationDate());
+				bean.date = new DateBean(lgCtx, page.getModificationDate(ctx));
+				bean.sortableDate = StringHelper.renderSortableDate(page.getModificationDate(ctx));
 				bean.contentDate = false;
 			}
 			if (page.getTimeRange(lgCtx) != null) {
@@ -370,8 +371,8 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 			MenuElement firstChild = page.getFirstChild();
 			if (firstChild != null && firstChild.isChildrenAssociation()) {
 				bean.url = URLHelper.createURL(ctx, firstChild.getPath());
-				bean.modificationDate = StringHelper.renderShortDate(lgCtx, firstChild.getModificationDate());
-				bean.sortableModificationDate = StringHelper.renderShortDate(lgCtx, firstChild.getModificationDate());
+				bean.modificationDate = StringHelper.renderShortDate(lgCtx, firstChild.getModificationDate(ctx));
+				bean.sortableModificationDate = StringHelper.renderShortDate(lgCtx, firstChild.getModificationDate(ctx));
 				bean.publishURL = URLHelper.createAbsoluteViewURL(lgCtx, firstChild.getPath());
 			} else {
 				bean.url = URLHelper.createURL(ctx, page.getPath());
@@ -1608,7 +1609,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		}
 		out.print("<tr class=\"filtered\"><td class=\"label\"><a data-toggle=\"tooltip\" data-placement=\"right\" title=\"" + NavigationHelper.getBreadCrumb(ctx, page) + "\" href=\"" + editPageURL + "\">" + page.getFullLabel(ctx) + "</a></td>");
 		out.print("<td>" + StringHelper.neverNull(StringHelper.renderLightDate(page.getContentDate(ctx))) + "</td>");
-		out.println("<td>" + StringHelper.renderLightDate(page.getModificationDate()) + "</td><td>" + ctx.getRequestContentLanguage() + "</td>");
+		out.println("<td>" + StringHelper.renderLightDate(page.getModificationDate(ctx)) + "</td><td>" + ctx.getRequestContentLanguage() + "</td>");
 		String contentCode = "";
 		String sep = "";
 		if (page.isRealContent(ctx)) {
@@ -1703,12 +1704,12 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 	}
 
 	protected Set<String> getPagesId(ContentContext ctx, List<MenuElement> children) throws Exception {
-		String value = properties.getProperty(PAGE_REF_PROP_KEY, "");
+		String value = properties.getProperty(PAGE_REF_PROP_KEY, "");		
 		Set<String> out = new TreeSet<String>();
 		if (value.trim().length() == 0 && !isDefaultSelected()) {
 			return out;
 		}
-		String[] deserializedId = StringHelper.split(value, PAGE_SEPARATOR);
+		String[] deserializedId = StringHelper.split(value, PAGE_SEPARATOR);		
 
 		out.addAll(Arrays.asList(deserializedId));
 
@@ -1721,7 +1722,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 			// for (int i = 0; i < children.length; i++) {
 			for (MenuElement page : children) {
 				if (page.isActive(ctx)) {
-					if (!out.contains(page.getId()) && page.isActive()) {
+					if (!out.contains(page.getId())) {
 						if (parentNode == null || page.isChildOf(parentNode)) {
 							selectedPage.add(page.getId());
 						}
@@ -1999,9 +2000,9 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 
 	@Override
 	public void prepareView(ContentContext ctx) throws Exception {
-
+		
 		LocalLogger.startCount("pageref");
-
+		
 		super.prepareView(ctx);
 
 		LocalLogger.stepCount("pageref", "step 1");
@@ -2036,11 +2037,12 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 
 		LocalLogger.stepCount("pageref", "step 4");
 		Set<String> currentSelection = getPagesId(ctx, allChildren);
+		
 		for (String pageId : selectedPage) {
 			MenuElement page = navigationService.getPage(ctx, pageId);
 			if (page != null) {
 				ContentContext lgCtx = page.getContentContextWithContent(ctx);
-				Date pageDate = page.getModificationDate();
+				Date pageDate = page.getModificationDate(ctx);
 				Date contentDate;
 				contentDate = page.getContentDate(lgCtx);
 				if (contentDate != null) {
@@ -2127,7 +2129,8 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		List<PageBean> pageBeans = new LinkedList<PageBean>();
 		Collection<Calendar> allMonths = new LinkedList<Calendar>();
 		Collection<String> allMonthsKeys = new HashSet<String>();
-		for (MenuElement page : pages) {
+		for (MenuElement page : pages) {			
+			
 			ContentContext lgCtx = ctx;
 			if (GlobalContext.getInstance(ctx.getRequest()).isAutoSwitchToDefaultLanguage()) {
 				lgCtx = page.getContentContextWithContent(ctx);

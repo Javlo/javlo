@@ -107,7 +107,7 @@ public class SmartExternalLinkImportation extends AbstractVisualComponent {
 			Calendar cal = Calendar.getInstance();
 			cal.add(Calendar.DAY_OF_YEAR, -7);
 			Calendar pageModification = Calendar.getInstance();
-			pageModification.setTime(getPage().getModificationDate());
+			pageModification.setTime(getPage().getModificationDate(ctx));
 			if (pageModification.before(cal)) {
 				importLinks(ctx);
 			}

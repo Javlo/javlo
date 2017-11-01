@@ -142,8 +142,6 @@ public class ContentOnlyServlet extends HttpServlet {
 				}
 			}
 
-			System.out.println("##### ContentOnlyServlet.process : templateID = "+templateID); //TODO: remove debug trace
-			
 			if (templateID != null) {				
 				template = TemplateFactory.getTemplates(request.getSession().getServletContext()).get(templateID);
 				ctx.setCurrentTemplate(template);				

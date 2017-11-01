@@ -11,6 +11,7 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -2150,10 +2151,19 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 	}
 
 	public List<IContentVisualComponent> getContentByType(ContentContext ctx, String type) throws Exception {
+		return getContentByType(ctx, type, true);
+	}
+	
+	private List<IContentVisualComponent> getContentByType(ContentContext ctx, String type, boolean withRepeat) throws Exception {
 
 		List<IContentVisualComponent> outComp = new LinkedList<IContentVisualComponent>();
 
-		ContentElementList content = getAllContent(ctx);
+		ContentElementList content;
+		if (withRepeat) {
+			content = getAllContent(ctx);
+		} else {
+			content = getContent(ctx);
+		}
 		while (content.hasNext(ctx)) {
 			IContentVisualComponent comp = content.next(ctx);
 			if (comp.getType().equals(type)) {
@@ -2313,7 +2323,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 		if (contentDate != null) {
 			return contentDate;
 		} else {
-			return getModificationDate();
+			return getModificationDate(ctx);
 		}
 	}
 
@@ -3117,25 +3127,29 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 		desc.metaDescription = StringUtils.replace(res, "\"", "&quot;");
 		return desc.metaDescription;
 	}
+	
+	public Date getModificationDate() throws ParseException, Exception {
+		return getModificationDate(null);
+	}
 
-	public Date getModificationDate() {
+	public Date getModificationDate(ContentContext ctx) throws ParseException, Exception {
 		Date pageDate;
 		if (getManualModificationDate() != null) {
 			pageDate = getManualModificationDate();
 		} else {
-			pageDate = getRealModificationDate();
+			pageDate = getRealModificationDate(ctx);
 		}
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(pageDate);
 		if (isRootChildrenAssociation()) {
 			for (MenuElement child : getChildMenuElements()) {
 				Calendar childCat = Calendar.getInstance();
-				childCat.setTime(child.getModificationDate());
+				childCat.setTime(child.getModificationDate(ctx));
 				if (childCat.after(cal)) {
 					cal = childCat;
 				}
 			}
-		}
+		}		
 		return cal.getTime();
 	}
 
@@ -3420,7 +3434,6 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 				throw new Exception("recursive reference !!!");
 			} else {
 				if (parent != null) {
-					System.out.println("##### MenuElement.getPath : path = "+parent.getPath() + '/' + getName()); //TODO: remove debug trace
 					return parent.getPath() + '/' + getName();
 				} else {
 					return "";
@@ -3495,8 +3508,12 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 		}
 	}
 
-	public Date getRealModificationDate() {
-		return modificationDate;
+	public Date getRealModificationDate(ContentContext ctx) throws ParseException, Exception {
+		if (ctx != null && getContentByType(ctx, PageReferenceComponent.TYPE, false).size() > 0) {
+			return ctx.getGlobalContext().getPublishDate();
+		} else {
+			return modificationDate;
+		}
 	}
 
 	public Map<String, String> getReplacement() {
@@ -4514,12 +4531,18 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 		return searchChild(ctx, ctx.getPath());
 	}
 
-	public MenuElement searchChild(ContentContext ctx, String path) throws Exception {
-		/*
-		 * if (path.equals("/")) { return this; } else { Collection<MenuElement>
-		 * pastNode = new LinkedList<MenuElement>(); return searchChild(this,
-		 * ctx, path, pastNode); }
-		 */
+	public MenuElement searchChild(ContentContext ctx, String path) throws Exception {		
+		if (getParent() == null) {
+			if (path.equals("/")) {
+				return this;
+			}
+		}
+//		if (path.equals("/")) {
+//			return this;
+//		} else {
+//			Collection<MenuElement> pastNode = new LinkedList<MenuElement>();
+//			return searchChild(this, ctx, path, pastNode);
+//		}		
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		MenuElement page = globalContext.getPageIfExist(ctx, path, false);
 		return page;

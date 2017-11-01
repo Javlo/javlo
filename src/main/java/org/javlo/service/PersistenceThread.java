@@ -45,7 +45,7 @@ public class PersistenceThread implements Runnable {
 	private TaxonomyBean taxonomyRoot;
 
 	private final Collection<File> folderToSave = new LinkedList<File>();
-
+	
 	private String dataFolder = "";
 
 	private int mode;

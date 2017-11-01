@@ -161,7 +161,7 @@ public class ViewActions implements IAction {
 		try {
 			for (MenuElement page : content.getNavigation(ctx).getAllChildrenList()) {				
 				if (page.getFollowers(ctx).size() > 0) {					
-					Date mod = page.getModificationDate();
+					Date mod = page.getModificationDate(ctx);
 					if (mod != null && mod.after(timeB) && !mod.after(timeA)) {						
 						sendPageChangeNotification(ctx, page);
 					}

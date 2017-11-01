@@ -482,7 +482,7 @@ public class CSVFactory {
 			newArray[0][j] = cols.get(j);
 		}
 		for (int i = 1; i < externalFile.array.length; i++) {
-			for (int j = 0; j < externalFile.array[0].length; j++) {
+			for (int j = 0; j < Math.min(externalFile.array[i].length,externalFile.array[0].length); j++) {
 				int pos = cols.indexOf(StringHelper.neverNull(externalFile.array[0][j]).trim().toLowerCase());
 				newArray[array.length + (i - 1)][pos] = externalFile.array[i][j];
 			}

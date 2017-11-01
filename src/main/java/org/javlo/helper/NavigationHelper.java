@@ -112,7 +112,7 @@ public class NavigationHelper {
 		}
 		target.setCreationDate(src.getCreationDate());
 		target.setCreator(src.getCreator());
-		target.setModificationDate(src.getModificationDate());
+		target.setModificationDate(src.getModificationDate(ctx));
 		target.setLatestEditor(src.getLatestEditor());
 		target.setPriority(src.getPriority());
 		target.setTemplateId(src.getTemplateId());

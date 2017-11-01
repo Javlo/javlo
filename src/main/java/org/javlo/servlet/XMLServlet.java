@@ -162,8 +162,8 @@ public class XMLServlet extends HttpServlet {
 									}
 								}
 							}
-							if (page.getModificationDate().getTime() > latestDate.getTime()) {
-								latestDate = page.getModificationDate();
+							if (page.getModificationDate(ctx).getTime() > latestDate.getTime()) {
+								latestDate = page.getModificationDate(ctx);
 							}
 						}
 					}

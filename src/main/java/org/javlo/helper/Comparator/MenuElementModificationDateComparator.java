@@ -3,6 +3,7 @@
  */
 package org.javlo.helper.Comparator;
 
+import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Comparator;
 import java.util.GregorianCalendar;
@@ -30,9 +31,17 @@ public class MenuElementModificationDateComparator implements Comparator<MenuEle
 	 */
 	public int compare(MenuElement elem1, MenuElement elem2) {
 		Calendar cal1 = GregorianCalendar.getInstance();
-		cal1.setTime(elem1.getModificationDate());
+		try {
+			cal1.setTime(elem1.getModificationDate());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		Calendar cal2 = GregorianCalendar.getInstance();
-		cal2.setTime(elem2.getModificationDate());
+		try {
+			cal2.setTime(elem2.getModificationDate());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		return cal2.compareTo(cal1)*multiply;
 	}
 	

@@ -121,11 +121,11 @@ public class XMLHelper {
 					lgCtx.setFormat("html");
 					lgCtx.setPath(element.getPath());
 					lgCtx.setAbsoluteURL(true);
-					if (!element.notInSearch(lgCtx) && element.isRealContent(lgCtx) && (latestDate == null || element.getModificationDate().after(latestDate.getTime()) || element.getContentDateNeverNull(lgCtx).after(latestDate.getTime()))) {
+					if (!element.notInSearch(lgCtx) && element.isRealContent(lgCtx) && (latestDate == null || element.getModificationDate(ctx).after(latestDate.getTime()) || element.getContentDateNeverNull(lgCtx).after(latestDate.getTime()))) {
 						line.append("<url>");
 						line.append("<loc>" + URLHelper.createURL(lgCtx) + "</loc>");
 						SimpleDateFormat dataFormat = new SimpleDateFormat("yyyy-MM-dd");
-						line.append("<lastmod>" + dataFormat.format(element.getModificationDate()) + "</lastmod>");
+						line.append("<lastmod>" + dataFormat.format(element.getModificationDate(ctx)) + "</lastmod>");
 						String changefreq = "weekly";
 						if (element.getDepth() > 1 && element.getSeoWeight() == MenuElement.SEO_HEIGHT_LOW) {
 							changefreq = "monthly";
@@ -166,8 +166,8 @@ public class XMLHelper {
 						size = size + line.toString().getBytes().length;
 						if (size >= (i - 1) * sitemapMaxsize && size < i * sitemapMaxsize) {
 							out.println(line);
-							if (element.getModificationDate().getTime() > lastmod.getTime()) {
-								lastmod = element.getModificationDate();
+							if (element.getModificationDate(ctx).getTime() > lastmod.getTime()) {
+								lastmod = element.getModificationDate(ctx);
 							}
 						}
 					}
@@ -205,7 +205,7 @@ public class XMLHelper {
 					lgCtx.setFormat("html");
 					lgCtx.setPath(element.getPath());
 					lgCtx.setAbsoluteURL(true);
-					if (!element.notInSearch(lgCtx) && element.isRealContent(lgCtx) && (latestDate == null || element.getModificationDate().after(latestDate.getTime()) || element.getContentDateNeverNull(lgCtx).after(latestDate.getTime()))) {
+					if (!element.notInSearch(lgCtx) && element.isRealContent(lgCtx) && (latestDate == null || element.getModificationDate(ctx).after(latestDate.getTime()) || element.getContentDateNeverNull(lgCtx).after(latestDate.getTime()))) {
 						line.append("<url>");
 						line.append("<loc>" + URLHelper.createURL(lgCtx) + "</loc>");
 						line.append("<news:news>");
@@ -214,7 +214,7 @@ public class XMLHelper {
 						line.append("<news:language>" + lg + "</news:language>");
 						line.append("</news:publication>");
 						SimpleDateFormat dataFormat = new SimpleDateFormat("yyyy-MM-dd");
-						line.append("<news:publication_date>" + dataFormat.format(element.getModificationDate()) + "</news:publication_date>");
+						line.append("<news:publication_date>" + dataFormat.format(element.getModificationDate(ctx)) + "</news:publication_date>");
 						line.append("<news:title>" + Encode.forXmlContent(element.getTitle(lgCtx)) + "</news:title>");
 						if (!StringHelper.isEmpty(element.getKeywords(lgCtx))) {
 							line.append("<news:keywords>" + Encode.forXmlContent(element.getKeywords(lgCtx)) + "</news:keywords>");
@@ -239,8 +239,8 @@ public class XMLHelper {
 						size = size + line.toString().getBytes().length;
 						if (size >= (i - 1) * sitemapMaxsize && size < i * sitemapMaxsize) {
 							out.println(line);
-							if (element.getModificationDate().getTime() > lastmod.getTime()) {
-								lastmod = element.getModificationDate();
+							if (element.getModificationDate(ctx).getTime() > lastmod.getTime()) {
+								lastmod = element.getModificationDate(ctx);
 							}
 						}
 					}

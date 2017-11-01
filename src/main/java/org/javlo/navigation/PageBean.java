@@ -205,7 +205,7 @@ public class PageBean implements Serializable {
 
 	public String getModificationDate() {
 		try {
-			return StringHelper.renderShortDate(ctx, page.getModificationDate());
+			return StringHelper.renderShortDate(ctx, page.getModificationDate(ctx));
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;

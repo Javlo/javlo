@@ -3,6 +3,7 @@
  */
 package org.javlo.helper;
 
+import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadMXBean;
@@ -153,6 +154,17 @@ public class DebugHelper {
 		} else { 
 			return "unknow";
 		}
+	}
+	
+	public static String getCaller(int count) {
+		Exception e = new Exception();		
+		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+		PrintStream out = new PrintStream(outStream);
+		for (int i=2; i<Math.min(count+2, e.getStackTrace().length); i++) {
+			out.println(e.getStackTrace()[i].toString());
+		}
+		out.close();
+		return new String(outStream.toByteArray());
 	}
 
 }

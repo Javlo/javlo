@@ -119,12 +119,12 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 			return StringHelper.renderTimeOnly(child.getCreationDate());
 		}
 
-		public String getModificationDateString() throws FileNotFoundException, IOException {
-			return StringHelper.renderFullDate(ctx, child.getModificationDate());
+		public String getModificationDateString() throws Exception {
+			return StringHelper.renderFullDate(ctx, child.getModificationDate(ctx));
 		}
 
-		public String getModificationTimeString() throws FileNotFoundException, IOException {
-			return StringHelper.renderTimeOnly(child.getModificationDate());
+		public String getModificationTimeString() throws Exception {
+			return StringHelper.renderTimeOnly(child.getModificationDate(ctx));
 		}
 
 		public String getContentDateString() throws Exception {

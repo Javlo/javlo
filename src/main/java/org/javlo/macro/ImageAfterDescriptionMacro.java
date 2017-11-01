@@ -38,7 +38,7 @@ public class ImageAfterDescriptionMacro extends AbstractMacro {
 		boolean imageMoved = false;
 		String msg = "image not moved.";
 		if (imageComp != null && descriptionComp != null) {
-			Date modifDate = currentPage.getModificationDate();
+			Date modifDate = currentPage.getModificationDate(ctx);
 			currentPage.removeContent(ctx, imageComp.getId());
 			currentPage.addContent(descriptionComp.getId(), new ComponentBean(imageComp.getComponentBean()));
 			currentPage.setModificationDate(modifDate);
