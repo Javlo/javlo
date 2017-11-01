@@ -293,23 +293,23 @@
 			</exclusions>
 		</dependency>
 
-		<dependency>
-			<groupId>com.vaadin</groupId>
-			<artifactId>vaadin-sass-compiler</artifactId>
-			<version>0.9.13</version>
-			<exclusions>
-				<exclusion>
-					<groupId>rhino</groupId>
-					<artifactId>js</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-
 <!-- 		<dependency> -->
-<!-- 			<groupId>io.bit3</groupId> -->
-<!-- 			<artifactId>jsass</artifactId> -->
-<!-- 			<version>5.5.3</version> -->
+<!-- 			<groupId>com.vaadin</groupId> -->
+<!-- 			<artifactId>vaadin-sass-compiler</artifactId> -->
+<!-- 			<version>0.9.13</version> -->
+<!-- 			<exclusions> -->
+<!-- 				<exclusion> -->
+<!-- 					<groupId>rhino</groupId> -->
+<!-- 					<artifactId>js</artifactId> -->
+<!-- 				</exclusion> -->
+<!-- 			</exclusions> -->
 <!-- 		</dependency> -->
+
+		<dependency>
+			<groupId>io.bit3</groupId>
+			<artifactId>jsass</artifactId>
+			<version>5.5.3</version>
+		</dependency>
 
 		<dependency>
 			<groupId>net.glxn</groupId>
@@ -557,7 +557,7 @@
 					<artifactId>maven-compiler-plugin</artifactId>
 					<configuration>
 						<source>1.6</source>
-						<target>1.6</target>
+						<target>1.8</target>
 					</configuration>
 				</plugin>
 				<plugin>
