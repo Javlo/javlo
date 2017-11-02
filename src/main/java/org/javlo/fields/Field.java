@@ -584,6 +584,7 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 		}
 		outValue = XHTMLHelper.autoLink(outValue, globalContext);
 		outValue = XHTMLHelper.replaceJSTLData(ctx, outValue);
+		outValue = ReverseLinkService.getInstance(globalContext).replaceLink(ctx, comp, outValue);
 		String unity = getUnity(ctx);
 		if (!StringHelper.isEmpty(unity)) {
 			return outValue+"<span class=\"unity\">"+unity+"</span>";
