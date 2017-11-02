@@ -65,8 +65,17 @@ public class TaxonomyDisplayBean {
 		}
 	}
 	
+	public String getLocalLabel() {		
+		String label = bean.getLabels().get(ctx.getRequestContentLanguage());
+		if (StringHelper.isEmpty(label)) {
+			return getName();
+		} else {
+			return label;
+		}
+	}
+	
 	public IListItem getListItem() {
-		return new ListService.ListItem(bean.getId(), getLabel());
+		return new ListService.ListItem(bean.getId(), getLocalLabel());
 	}
 
 	public boolean isDisplayParentLabel() {

@@ -3,7 +3,7 @@ package org.javlo.bean;
 public class Company {
 	private String number;
 	private String name;
-	private String addresse;
+	private String address;
 	
 	public Company() {		
 	}	
@@ -19,11 +19,11 @@ public class Company {
 	public void setName(String name) {
 		this.name = name;
 	}
-	public String getAddresse() {
-		return addresse;
+	public String getAddress() {
+		return address;
 	}
-	public void setAddresse(String addresse) {
-		this.addresse = addresse;
+	public void setAddress(String address) {
+		this.address = address;
 	}
 	
 }

@@ -1,6 +1,10 @@
 package org.javlo.component.form;
 
-import static j2html.TagCreator.*;
+import static j2html.TagCreator.a;
+import static j2html.TagCreator.div;
+import static j2html.TagCreator.input;
+import static j2html.TagCreator.label;
+import static j2html.TagCreator.span;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
@@ -35,6 +39,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.javlo.actions.IAction;
 import org.javlo.actions.IEventRegistration;
+import org.javlo.bean.Company;
 import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
@@ -830,7 +835,33 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 				}
 			}
 			if (!StringHelper.isEmpty(finalValue)) {
-				if (!field.isValueValid(finalValue) && !errorKeyFound.contains(key)) {
+				if (field.getType().equals(Field.TYPE_VAT) && !StringHelper.isEmpty(finalValue)) {
+					Boolean errorVAT = false;
+					Company company = NetHelper.validVATEuroparlEU(ctx, finalValue);
+					if (ctx.getGlobalContext().getStaticConfig().isInternetAccess()) {
+						if (company == null) {
+							errorVAT = true;
+						} else {
+							for (Field f : comp.getFields()) {
+								if (f.getName().equalsIgnoreCase("adresse") || f.getName().equalsIgnoreCase("address") && StringHelper.isEmpty(f.getValue())) {
+									f.setValue(company.getAddress());
+								}
+							}
+						}
+					} else {
+						errorVAT = StringHelper.isVAT(field.getValue());
+					}
+					if (errorVAT) {
+						errorKeyFound.add(key);
+						errorFields.add(key);
+						errorFieldList = errorFieldList + errorFieldSep + field.getLabel();
+						errorFieldSep = ",";
+						I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
+						GenericMessage msg = new GenericMessage(i18nAccess.getViewText("error.vat", "VAT number not idenfied. (sample:BE0824.985.592)") + ')', GenericMessage.ERROR);
+						request.setAttribute("msg", msg);
+						badFormatFound = true;
+					}
+				} else if (!field.isValueValid(finalValue) && !errorKeyFound.contains(key)) {
 					errorKeyFound.add(key);
 					errorFields.add(key);
 					errorFieldList = errorFieldList + errorFieldSep + field.getLabel();

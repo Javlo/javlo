@@ -1415,9 +1415,9 @@ public class NetHelper {
 		}
 		return false;
 	}
-
+	
 	public static Company validVATEuroparlEU(ContentContext ctx, String vat) throws MalformedURLException, Exception {
-		if (ctx != null && !ctx.getGlobalContext().getStaticConfig().isCheckContentIntegrity() || vat == null) {
+		if (ctx != null && !ctx.getGlobalContext().getStaticConfig().isInternetAccess() || vat == null) {
 			return null;
 		}
 		vat = vat.replace(".", "");
@@ -1447,7 +1447,7 @@ public class NetHelper {
 					company.setName(td.text());
 				}
 				if (i == 13) {
-					company.setAddresse(td.text());
+					company.setAddress(td.text());
 				}
 
 			}

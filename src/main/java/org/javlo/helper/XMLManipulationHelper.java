@@ -520,14 +520,14 @@ public class XMLManipulationHelper {
 					String openPageCode = "<c:if test=\"${contentContext.pageAssociation}\"><div id=\"page_<%=currentPage.getId()%>\" class=\"_page_associate <%if (currentPage.getNextBrother() == null) {%>last<%}%>\"></c:if>" + mainPageAssociationCode;
 					String closePageCode = "<c:if test=\"${contentContext.pageAssociation}\"></div></c:if><c:if test=\"${not contentContext.pageAssociation}\">";
 
+					tags[i].addCssClass("<%for (String layout : ctx.getCurrentPage().getLayouts(ctx)) {%><%=' '+layout%><%}%>");
 					String renderBodyAsBody = tags[i].renderOpen();
 					String tag = "div";
 					if (!template.isMailing()) {
 						tag = "section";
 					}
 					tags[i].setName(tag);
-					tags[i].addCssClass("page_association_fake_body");
-					tags[i].addCssClass("<%for (String layout : ctx.getCurrentPage().getLayouts(ctx)) {%><%=' '+layout%><%}%>");
+					tags[i].addCssClass("page_association_fake_body");					
 					if (tags[i].getAttribute("id", null) == null) {
 						tags[i].getAttributes().put("id", "_page-${contentContext.currentPage.name}");
 					}

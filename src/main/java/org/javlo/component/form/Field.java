@@ -34,18 +34,20 @@ public class Field {
 	private int width = 12;
 	private boolean last = false;
 	private boolean first = false;
-	
+
 	private static final String TYPE_EMAIL = "email";
-	
+
 	private static final String TYPE_NUMBER = "number";
 
 	public static final String STATIC_TEXT = "static-text";
 
-	protected static List<? extends Object> FIELD_TYPES = Arrays.asList(new String[] { "text", "large-text", "yes-no", "true-false", TYPE_EMAIL, TYPE_NUMBER, "radio", "list", "registered-list", "file", "validation", STATIC_TEXT });
+	public static final String TYPE_VAT = "vat";
+
+	protected static List<? extends Object> FIELD_TYPES = Arrays.asList(new String[] { "text", "large-text", "yes-no", "true-false", TYPE_EMAIL, TYPE_NUMBER, "radio", "list", "registered-list", "file", "validation", STATIC_TEXT, TYPE_VAT });
 
 	public Field(String name, String label, String type, String condition, String value, String list, String registeredList, int order, int width) {
 		this.name = name;
-		this.label = label;		
+		this.label = label;
 		this.condition = condition;
 		this.type = type;
 		this.value = value;
@@ -153,8 +155,8 @@ public class Field {
 	}
 
 	/**
-	 * is the last element of cols sequence. That mean width with next field
-	 * is greater than 12.
+	 * is the last element of cols sequence. That mean width with next field is
+	 * greater than 12.
 	 * 
 	 * @return
 	 */
@@ -186,25 +188,25 @@ public class Field {
 	public void setCondition(String condition) {
 		this.condition = condition;
 	}
-	
+
 	public String getConditionField() {
 		if (condition == null || !condition.contains("=")) {
 			return null;
 		} else {
-			return condition.substring(0,condition.indexOf('='));
+			return condition.substring(0, condition.indexOf('='));
 		}
 	}
-	
+
 	public String getConditionTest() {
 		if (condition == null || !condition.contains("=")) {
 			return null;
 		} else {
-			return condition.substring(condition.indexOf('=')+1);
+			return condition.substring(condition.indexOf('=') + 1);
 		}
-		
+
 	}
-	
-	public boolean isFilledWidth( String value ) {
+
+	public boolean isFilledWidth(String value) {
 		List<String> list = getList();
 		if (list.size() == 0) {
 			return getName().length() > 0 && !StringHelper.isEmpty(value);
@@ -217,13 +219,13 @@ public class Field {
 			}
 		}
 	}
-	
+
 	public boolean isValueValid(String value) {
 		if (getType().equals(TYPE_EMAIL)) {
 			return StringHelper.isMail(value);
 		} else if (getType().equals(TYPE_NUMBER)) {
 			return StringHelper.isDigit(value);
-		} else {
+		}  else {
 			return true;
 		}
 	}

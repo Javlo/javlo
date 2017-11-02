@@ -60,6 +60,7 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.javlo.bean.Company;
 import org.javlo.component.list.FreeTextList;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
@@ -3847,8 +3848,19 @@ public class StringHelper {
 	public static boolean compare(String str1, String str2) {
 	    return (str1 == null ? str2 == null : str1.equals(str2));
 	}
+	
+	public static boolean isVAT(String vat) throws MalformedURLException, Exception {		
+		vat = vat.replace(".", "");
+		vat = vat.replace(" ", "");
+		if (vat.length() != 12) {
+			return false;
+		}		
+		String number = vat.substring(2);
+		if (!StringHelper.isDigit(number)) {
+			return false;
+		}
 
-	
-	
+		return true;
+	}	
 
 }
