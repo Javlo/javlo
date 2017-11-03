@@ -56,7 +56,6 @@ import org.javlo.exception.ResourceNotFoundException;
 import org.javlo.helper.BeanHelper;
 import org.javlo.helper.ComponentHelper;
 import org.javlo.helper.ConfigHelper;
-import org.javlo.helper.DebugHelper;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.ServletHelper;
 import org.javlo.helper.StringHelper;
@@ -1262,8 +1261,8 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		}
 		return prefix;
 	}
-
-	protected String getInlineStyle(ContentContext ctx) {
+	
+	protected String getCSSStyle(ContentContext ctx) {
 		String inlineStyle = "";
 		if (getBackgroundColor() != null && getBackgroundColor().length() > 2) {
 			inlineStyle = " overflow: hidden; background-color: " + getBackgroundColor() + "; border-color: " + getBackgroundColor() + ';';
@@ -1273,7 +1272,12 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		}
 		if (getLayout() != null) {
 			inlineStyle = inlineStyle + ' ' + getLayout().getStyle();
-		}
+		}		
+		return inlineStyle;
+	}
+
+	protected String getInlineStyle(ContentContext ctx) {
+		String inlineStyle = getCSSStyle(ctx);		
 		if (inlineStyle.length() > 0) {
 			inlineStyle = " style=\"" + inlineStyle + "\"";
 		}
@@ -2072,6 +2076,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		ctx.getRequest().setAttribute("previewAttributes", getPreviewAttributes(ctx));
 		ctx.getRequest().setAttribute("previewCSS", getPreviewCssClass(ctx, getStyle(ctx)));
 		ctx.getRequest().setAttribute("previewID", getPreviewCssId(ctx));
+		ctx.getRequest().setAttribute("cssStyle", getCSSStyle(ctx));
 		if (!AbstractVisualComponent.isMirrorWrapped(ctx, this)) {
 			ctx.getRequest().setAttribute(MIRROR_WRAPPED, false);
 			ctx.getRequest().setAttribute("nextSame", isNextSame(ctx));
