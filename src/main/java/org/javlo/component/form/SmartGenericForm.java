@@ -1007,7 +1007,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 					}
 					ContentContext pageCtx = ctx.getContextForAbsoluteURL();
 					pageCtx.setRenderMode(ContentContext.PAGE_MODE);
-					if (!StringHelper.isEmpty(mailPath)) {
+					if (!StringHelper.isEmpty(mailSubject)) {
 						logger.info("read mail from : "+mailPath);
 						String email = NetHelper.readPageForMailing(new URL(URLHelper.createURL(pageCtx, mailPath)));
 						if (email != null && email.length() > 0) {
