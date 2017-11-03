@@ -5,8 +5,11 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.InputStream;
 import java.io.PrintStream;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -17,9 +20,10 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.fileupload.FileItem;
 import org.javlo.actions.IAction;
-import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.component.core.ComponentBean;
+import org.javlo.component.core.MapComponent;
 import org.javlo.context.ContentContext;
+import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.BeanHelper;
 import org.javlo.helper.ComponentHelper;
@@ -54,11 +58,15 @@ import org.javlo.user.UserFactory;
 import org.javlo.user.UserInfo;
 import org.javlo.ztatic.FileCache;
 
-public class UserRegistration extends AbstractVisualComponent implements IAction {
+public class UserRegistration extends MapComponent implements IAction {
 
 	private static final String ADMIN = "administrators";
 
 	public static final String TYPE = "user-registration";
+
+	public static final String FIELD_SCOPE = "scope";
+
+	public static final String FIELD_SELECTED_ROLES = "roles";	
 
 	@Override
 	public String getType() {
@@ -72,7 +80,7 @@ public class UserRegistration extends AbstractVisualComponent implements IAction
 			setValue(ADMIN); // admin registration by default.
 		}
 	}
-	
+
 	@Override
 	public String getRenderer(ContentContext ctx) {
 		if (getValue().equals(ADMIN)) {
@@ -85,19 +93,19 @@ public class UserRegistration extends AbstractVisualComponent implements IAction
 	@Override
 	public void prepareView(ContentContext ctx) throws Exception {
 		super.prepareView(ctx);
-		
+
 		SocialService.getInstance(ctx).prepare(ctx);
-		
+
 		DeliveryPrice deliveryPrice = DeliveryPrice.getInstance(ctx);
 		if (deliveryPrice != null) {
-			ListService.getInstance(ctx).addList("countries", deliveryPrice.getZone());			
+			ListService.getInstance(ctx).addList("countries", deliveryPrice.getZone());
 		}
 
 		if (ctx.getCurrentUser() != null) {
 			ctx.getRequest().setAttribute("user", ctx.getCurrentUser());
 			ctx.getRequest().setAttribute("userInfoMap", ctx.getCurrentUser().getUserInfo());
 		} else {
-			RequestService requestService = RequestService.getInstance(ctx.getRequest());			
+			RequestService requestService = RequestService.getInstance(ctx.getRequest());
 			ctx.getRequest().setAttribute("userInfoMap", requestService.getParameterMap());
 		}
 
@@ -106,7 +114,7 @@ public class UserRegistration extends AbstractVisualComponent implements IAction
 	@Override
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
 		prepareView(ctx);
-		
+
 		I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
 		if (ctx.getRequest().getAttribute("registration-message") == null) {
 			Module userModule = ModulesContext.getInstance(ctx.getRequest().getSession(), ctx.getGlobalContext()).searchModule("users");
@@ -125,7 +133,7 @@ public class UserRegistration extends AbstractVisualComponent implements IAction
 			ctx.getRequest().setAttribute("functions", LangHelper.collectionToMap(functions));
 
 			String jsp = "/modules/users/jsp/edit_current.jsp";
-			
+
 			return ServletHelper.executeJSP(ctx, jsp);
 		} else {
 			return "<div class=\"message info\">" + ctx.getRequest().getAttribute("registration-message") + "</div>";
@@ -173,18 +181,18 @@ public class UserRegistration extends AbstractVisualComponent implements IAction
 			userFactory = UserFactory.createUserFactory(globalContext, ctx.getRequest().getSession());
 			userInfo = new UserInfo();
 		}
-		
+
 		String login = rs.getParameter("login", "").trim();
 		String email = rs.getParameter("email", "").trim();
-		
+
 		String emailLogin = rs.getParameter("email-login", null);
 		if (emailLogin != null) {
 			login = emailLogin;
 			email = emailLogin;
 		}
-		
+
 		String password = rs.getParameter("password", "").trim();
-		String password2 = rs.getParameter("password2", "").trim();		
+		String password2 = rs.getParameter("password2", "").trim();
 		ctx.getRequest().setAttribute("userInfoMap", new RequestParameterMap(ctx.getRequest()));
 
 		if (login.length() < 3) {
@@ -212,6 +220,7 @@ public class UserRegistration extends AbstractVisualComponent implements IAction
 			if (globalContext.getStaticConfig().isPasswordEncryt()) {
 				userInfo.setPassword(userInfo.encryptPassword(userInfo.getPassword()));
 			}
+			userInfo.addRoles(new HashSet<String>(comp.getFieldList(FIELD_SELECTED_ROLES)));
 			userFactory.addUserInfo(userInfo);
 			userFactory.store();
 
@@ -245,7 +254,7 @@ public class UserRegistration extends AbstractVisualComponent implements IAction
 			}
 			out.println("");
 			out.close();
-			
+
 			FileItem userFile = rs.getFileItem("userFile");
 			if (userFile != null && userFile.getSize() > 0) {
 				InputStream in = null;
@@ -286,7 +295,7 @@ public class UserRegistration extends AbstractVisualComponent implements IAction
 
 			ctx.getRequest().setAttribute("noform", "true");
 		} catch (Exception e) {
-			logger.severe("error on " + ctx.getGlobalContext().getContextKey()+" login:"+login);
+			logger.severe("error on " + ctx.getGlobalContext().getContextKey() + " login:" + login);
 			e.printStackTrace();
 			return i18nAccess.getViewText("global.technical-error");
 		}
@@ -300,13 +309,13 @@ public class UserRegistration extends AbstractVisualComponent implements IAction
 
 		UserFactory userFactory;
 		if (comp == null || comp.isAdminRegistration()) {
-			userFactory = (UserFactory)AdminUserFactory.createUserFactory(globalContext, ctx.getRequest().getSession());
+			userFactory = (UserFactory) AdminUserFactory.createUserFactory(globalContext, ctx.getRequest().getSession());
 		} else {
-			userFactory = (UserFactory)UserFactory.createUserFactory(globalContext, ctx.getRequest().getSession());
+			userFactory = (UserFactory) UserFactory.createUserFactory(globalContext, ctx.getRequest().getSession());
 		}
 
 		if (rs.getParameter("logout", null) != null) {
-			userFactory.logout(session);			
+			userFactory.logout(session);
 		} else {
 			String password = rs.getParameter("newpassword1", "").trim();
 			String password2 = rs.getParameter("newpassword2", "").trim();
@@ -314,17 +323,17 @@ public class UserRegistration extends AbstractVisualComponent implements IAction
 				return i18nAccess.getViewText("registration.error.password_notsame", "2 passwords must be the same.");
 			} else if (password.length() < 3) {
 				return i18nAccess.getViewText("registration.error.password_size", "password must be at least 3 characters.");
-			}			
+			}
 			IUserInfo userInfo;
 			if (rs.getParameter("pwkey", "").trim().length() > 2) {
 				userInfo = userFactory.getPasswordChangeWidthKey(rs.getParameter("pwkey", ""));
 				if (userInfo == null) {
 					return i18nAccess.getViewText("user.message.bad-password-key");
-				}				
-			} else {				
+				}
+			} else {
 				if (!ctx.getCurrentUser().isRightPassword(rs.getParameter("password", null), globalContext.getStaticConfig().isPasswordEncryt())) {
-					return i18nAccess.getViewText("user.message.bad-password");				
-				}  
+					return i18nAccess.getViewText("user.message.bad-password");
+				}
 				userInfo = ctx.getCurrentUser().getUserInfo();
 			}
 			if (globalContext.getStaticConfig().isPasswordEncryt()) {
@@ -348,26 +357,26 @@ public class UserRegistration extends AbstractVisualComponent implements IAction
 				userFactory = UserFactory.createUserFactory(globalContext, ctx.getRequest().getSession());
 			}
 			userFactory.logout(session);
-			session.setAttribute("logoutDone", "true");		
+			session.setAttribute("logoutDone", "true");
 		}
 		return null;
 	}
-	
-	public static String performResetPasswordWithEmail(RequestService rs, GlobalContext globalContext, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws AddressException {		
-		UserFactory userFactory = (UserFactory)UserFactory.createUserFactory(globalContext, ctx.getRequest().getSession());
-		String email = rs.getParameter("email", "").trim();		
+
+	public static String performResetPasswordWithEmail(RequestService rs, GlobalContext globalContext, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws AddressException {
+		UserFactory userFactory = (UserFactory) UserFactory.createUserFactory(globalContext, ctx.getRequest().getSession());
+		String email = rs.getParameter("email", "").trim();
 		String passwordRetrieveKey = null;
 		if (StringHelper.isMail(email)) {
-			for(IUserInfo user : userFactory.getUserInfoList()) {
+			for (IUserInfo user : userFactory.getUserInfoList()) {
 				if (user.getEmail().equals(email)) {
 					passwordRetrieveKey = userFactory.createPasswordChangeKey(user);
-					Map<String,String> params = new HashMap<String, String>();
-					params.put("pwkey", passwordRetrieveKey);					
-					String url = URLHelper.createURL(ctx.getContextForAbsoluteURL(), params);					
-					String subject = i18nAccess.getViewText("user.mail.reset-password-subject");					
+					Map<String, String> params = new HashMap<String, String>();
+					params.put("pwkey", passwordRetrieveKey);
+					String url = URLHelper.createURL(ctx.getContextForAbsoluteURL(), params);
+					String subject = i18nAccess.getViewText("user.mail.reset-password-subject");
 					InternetAddress from = new InternetAddress(globalContext.getAdministratorEmail());
 					InternetAddress to = new InternetAddress(email);
-					NetHelper.sendMail(globalContext, from, to, null, null, subject+' '+globalContext.getGlobalTitle(), url);
+					NetHelper.sendMail(globalContext, from, to, null, null, subject + ' ' + globalContext.getGlobalTitle(), url);
 					messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getViewText("user.message.change-password-link"), GenericMessage.INFO));
 					return null;
 				}
@@ -375,26 +384,26 @@ public class UserRegistration extends AbstractVisualComponent implements IAction
 			return i18nAccess.getViewText("user.message.error.change-mail-not-found");
 		} else {
 			return i18nAccess.getViewText("form.error.email");
-		}		
+		}
 	}
-	
-	public static String performFacebookLogin(RequestService rs, ContentContext ctx, HttpSession session, GlobalContext globalContext, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {		
-		String token = rs.getParameter("token", null);		
+
+	public static String performFacebookLogin(RequestService rs, ContentContext ctx, HttpSession session, GlobalContext globalContext, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
+		String token = rs.getParameter("token", null);
 		Facebook facebook = SocialService.getInstance(ctx).getFacebook();
 		IUserInfo ui = facebook.getInitialUserInfo(token);
 		if (!StringHelper.isMail(ui.getEmail())) {
-			return "technical error : facebook have not returned a valid email ("+ui.getEmail()+')';
+			return "technical error : facebook have not returned a valid email (" + ui.getEmail() + ')';
 		}
 		IUserFactory userFactory = UserFactory.createUserFactory(globalContext, session);
 		User user = userFactory.getUser(ui.getLogin());
 		if (user == null) {
-			ui.setExternalLoginUser();
-			userFactory.addUserInfo(ui);
+			ui.setExternalLoginUser();			
+			userFactory.addUserInfo(ui);			
 			userFactory.store();
-			messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getViewText("user.message.facebook-login"), GenericMessage.INFO));			
+			messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getViewText("user.message.facebook-login"), GenericMessage.INFO));
 		} else {
 			messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getViewText("user.message.facebook-login"), GenericMessage.INFO));
-		}		
+		}
 		return null;
 	}
 
@@ -404,7 +413,7 @@ public class UserRegistration extends AbstractVisualComponent implements IAction
 	}
 
 	protected boolean isAdminRegistration() {
-		return getValue().equals(ADMIN);
+		return getField(FIELD_SCOPE, ADMIN).equals(ADMIN);
 	}
 
 	@Override
@@ -413,18 +422,61 @@ public class UserRegistration extends AbstractVisualComponent implements IAction
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(outStream);
 
-		out.println("<div class=\"line\">");
+		out.println("<div class=\"form-group\">");
 		out.println("<label for=\"" + getContentName() + "\">");
 		out.println(i18nAccess.getText("user.registration.select", "Select user type"));
 		out.println("</label>");
 		Map<String, String> selection = new HashMap<String, String>();
 		selection.put(ADMIN, i18nAccess.getText("user.registration.admin", "Administrator"));
 		selection.put("visitors", i18nAccess.getText("user.registration.visotors", "Visitors"));
-		out.println(XHTMLHelper.getInputOneSelect(getContentName(), selection, getValue()));
+		out.println(XHTMLHelper.getInputOneSelect(getContentName(), selection, getField(FIELD_SCOPE, ADMIN), "form-control"));
+		out.println("</div>");
+		out.println("<div class=\"radio\">");
 
+		Collection<String> roles = getFieldList(FIELD_SELECTED_ROLES);
+		EditContext editContext = EditContext.getInstance(ctx.getGlobalContext(), ctx.getRequest().getSession());
+		if (getField(FIELD_SCOPE, ADMIN).equals(ADMIN)) {
+			out.println("<h3>" + i18nAccess.getText("user.roles.default", "default roles") + "</h3>");
+			for (String role : editContext.getDefaultAdminUserRoles()) {
+				out.println("<label class=\"checkbox-inline\"><input type=\"checkbox\" name=\"" + getInputName(role) + "\" " + (roles.contains(role) ? "checked=\"checked\"" : "") + ">" + role + "</label>");
+			}
+			out.println("<h3>" + i18nAccess.getText("user.roles.specific", "specific roles") + "</h3>");
+			for (String role : ctx.getGlobalContext().getAdminUserRoles()) {
+				out.println("<label class=\"checkbox-inline\"><input type=\"checkbox\" name=\"" + getInputName(role) + "\" " + (roles.contains(role) ? "checked=\"checked\"" : "") + ">" + role + "</label>");
+			}
+		} else {
+			out.println("<h3>" + i18nAccess.getText("user.roles.default", "default roles") + "</h3>");
+			for (String role : ctx.getGlobalContext().getUserRoles()) {
+				out.println("<label class=\"checkbox-inline\"><input type=\"checkbox\" name=\"" + getInputName(role) + "\" " + (roles.contains(role) ? "checked=\"checked\"" : "") + ">" + role + "</label>");
+			}
+		}
 		out.println("</div>");
 		out.close();
 		return new String(outStream.toByteArray());
 	}
 
+	@Override
+	public String performEdit(ContentContext ctx) throws Exception {
+		String previousValue = getValue();
+		RequestService rs = RequestService.getInstance(ctx.getRequest());
+		setField(FIELD_SCOPE, rs.getParameter(getContentName()));
+		Collection<String> roles = new LinkedList<String>();
+		Collection<String> possibleRoles;
+		if (getField(FIELD_SCOPE, ADMIN).equals(ADMIN)) {
+			EditContext editContext = EditContext.getInstance(ctx.getGlobalContext(), ctx.getRequest().getSession());
+			possibleRoles = editContext.getAdminUserRoles();
+		} else {
+			possibleRoles = ctx.getGlobalContext().getUserRoles();
+		}
+		for (String role : possibleRoles) {
+			if (StringHelper.isTrue(rs.getParameter(getInputName(role)))) {
+				roles.add(role);
+			}
+		}		
+		setField(FIELD_SELECTED_ROLES, roles);		
+		if (!previousValue.equals(getValue())) {
+			setModify();
+		}
+		return null;
+	}
 }

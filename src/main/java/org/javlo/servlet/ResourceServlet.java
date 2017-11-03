@@ -27,6 +27,7 @@ import org.javlo.helper.RequestHelper;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
+import org.javlo.module.admin.AdminAction;
 import org.javlo.navigation.RobotsTxt;
 import org.javlo.service.syncro.FileStructureFactory;
 import org.javlo.user.AdminUserFactory;
@@ -126,10 +127,12 @@ public class ResourceServlet extends HttpServlet {
 			e1.printStackTrace();
 			throw new ServletException(e1.getMessage());
 		}
-
+		
 		if (ctx.getGlobalContext().isCollaborativeMode() && ctx.getCurrentEditUser() == null) {
-			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-			return;
+			if (!request.getPathInfo().startsWith('/'+URLHelper.mergePath(staticConfig.getStaticFolder(), AdminAction.LOGO_PATH)+'/')) {
+				response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+				return;
+			}
 		}
 
 		/* TRACKING */

@@ -77,6 +77,7 @@ import org.javlo.ztatic.ResourceFactory;
 
 public class AdminAction extends AbstractModuleAction {
 
+	public static final String LOGO_PATH = "logo";
 	private static java.util.logging.Logger logger = java.util.logging.Logger.getLogger(AdminAction.class.getName());
 
 	public static class GlobalContextBean {
@@ -1151,7 +1152,7 @@ public class AdminAction extends AbstractModuleAction {
 					absoluteURLCtx.setAbsoluteURL(true);
 					String newLogoURL;
 					try {
-						newLogoURL = URLHelper.createTransformURL(absoluteURLCtx, null, URLHelper.mergePath(globalContext.getStaticConfig().getStaticFolder(), currentGlobalContext.getTemplateData().getLogo()), "logo", null);
+						newLogoURL = URLHelper.createTransformURL(absoluteURLCtx, null, URLHelper.mergePath(globalContext.getStaticConfig().getStaticFolder(), currentGlobalContext.getTemplateData().getLogo()), LOGO_PATH, null);
 						ctx.getRequest().setAttribute("logoPreview", newLogoURL);
 					} catch (Exception e) {
 						throw new IOException(e);
@@ -1527,13 +1528,13 @@ public class AdminAction extends AbstractModuleAction {
 					MailService.resetInstance();
 					
 					for (FileItem file : requestService.getAllFileItem()) {
-						if (file.getFieldName().equals("logo")) {							
+						if (file.getFieldName().equals(LOGO_PATH)) {							
 							File oldLogo = null;
 							if (td.getLink() != null) {
 								oldLogo = new File(URLHelper.mergePath(currentGlobalContext.getStaticFolder(), td.getLogo()));
 							}
 							if (file.getName().trim().length() > 0) {
-								String logoPath = URLHelper.mergePath("logo", file.getName());
+								String logoPath = URLHelper.mergePath(LOGO_PATH, file.getName());
 								File logo = new File(URLHelper.mergePath(currentGlobalContext.getStaticFolder(), logoPath));
 								td.setLogo(logoPath);
 								ResourceHelper.writeStreamToFile(file.getInputStream(), logo);								

@@ -424,5 +424,4 @@ public class StringHelperTest extends TestCase {
 		assertFalse(StringHelper.isAlpha("jav lo"));
 	}
 	
- 
 }

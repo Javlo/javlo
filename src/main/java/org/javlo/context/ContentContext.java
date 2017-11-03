@@ -1836,7 +1836,11 @@ public class ContentContext {
 	}
 
 	public boolean isEdition() {
-		return EditContext.getInstance(getGlobalContext(), getRequest().getSession()).isPreviewEditionMode() || isAsEditMode();
+		if (isAsViewMode()) {
+			return false;
+		} else {
+			return EditContext.getInstance(getGlobalContext(), getRequest().getSession()).isPreviewEditionMode() || isAsEditMode();
+		}
 	}
 
 	/**

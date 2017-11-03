@@ -456,6 +456,10 @@ public class EditContext implements Serializable {
 	public UserEditFilter getAdminUserEditFilter() {
 		return adminUserEditFilter;
 	}
+	
+	public Set<String> getDefaultAdminUserRoles() {
+		return adminUserRoles;
+	}
 
 	public Set<String> getAdminUserRoles() {
 		if (globalContext == null) {

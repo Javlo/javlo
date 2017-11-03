@@ -2741,6 +2741,8 @@ public class StringHelper {
 	public static List<String> stringToCollection(String str) {
 		if (str == null) {
 			return null;
+		} else if (str.length() == 0) {
+			return Collections.emptyList();
 		}
 		return stringToCollection(str, DEFAULT_LIST_SEPARATOR);
 	}
@@ -3651,13 +3653,23 @@ public class StringHelper {
 		return base64;
 	}
 
-	public static Map<String, String> stringToMap(String encodedMap) throws IOException {
-		String mapStr = new String(decodeBase64(encodedMap));
+	public static Map<String, String> stringToMap(String encodedMap) {
+		if (StringHelper.isEmpty(encodedMap)) {
+			return Collections.emptyMap();
+		}
+		String mapStr;
+		try {
+			mapStr = new String(decodeBase64(encodedMap));
+		} catch (IOException e) {
+			throw new RuntimeException("can't decode : "+encodedMap);
+		}
 		List<String> mapList = stringToCollection(mapStr);
 		Map<String, String> outMap = new HashMap<String, String>();
 		for (String mapEntry : mapList) {
 			String[] entry = stringToArray(mapEntry);
-			outMap.put(entry[0], entry[1]);
+			if (entry.length == 2) {
+				outMap.put(entry[0], entry[1]);
+			}
 		}
 		return outMap;
 	}
@@ -3862,5 +3874,5 @@ public class StringHelper {
 
 		return true;
 	}	
-
+	
 }
