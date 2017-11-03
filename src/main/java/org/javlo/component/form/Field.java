@@ -40,10 +40,12 @@ public class Field {
 	private static final String TYPE_NUMBER = "number";
 
 	public static final String STATIC_TEXT = "static-text";
+	
+	public static final String STATIC_TITLE = "static-title";
 
 	public static final String TYPE_VAT = "vat";
 
-	protected static List<? extends Object> FIELD_TYPES = Arrays.asList(new String[] { "text", "large-text", "yes-no", "true-false", TYPE_EMAIL, TYPE_NUMBER, "radio", "list", "registered-list", "file", "validation", STATIC_TEXT, TYPE_VAT });
+	protected static List<? extends Object> FIELD_TYPES = Arrays.asList(new String[] { "text", "large-text", "yes-no", "true-false", TYPE_EMAIL, TYPE_NUMBER, "radio", "list", "registered-list", "file", "validation", STATIC_TEXT, STATIC_TITLE, TYPE_VAT });
 
 	public Field(String name, String label, String type, String condition, String value, String list, String registeredList, int order, int width) {
 		this.name = name;
