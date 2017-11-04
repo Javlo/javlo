@@ -59,6 +59,8 @@ import org.javlo.mailing.MailService;
 import org.javlo.message.GenericMessage;
 import org.javlo.service.CaptchaService;
 import org.javlo.service.ContentService;
+import org.javlo.service.IListItem;
+import org.javlo.service.ListService;
 import org.javlo.service.RequestService;
 import org.javlo.service.event.Event;
 import org.javlo.user.IUserFactory;
@@ -322,6 +324,15 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		out.println("</tr>");
 		out.close();
 		return new String(outStream.toByteArray());
+	}
+	
+	protected Field getField(String fieldName) {
+		for (Field field : getFields()) {
+			if (field.getName().equalsIgnoreCase(fieldName)) {
+				return field;
+			}
+		}
+		return null;
 	}
 
 	public synchronized List<Field> getFields() {
@@ -871,12 +882,23 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 					badFormatFound = true;
 				}
 			}
-
+			
+			if (!StringHelper.isEmpty(field.getRegisteredList())) {
+				List<IListItem> list = ListService.getInstance(ctx).getList(ctx, field.getRegisteredList());
+				if (list != null) {
+					for (IListItem item : list) {
+						if (item.getKey().equals(finalValue)) {
+							finalValue = finalValue+" ("+item.getValue()+')';
+						}
+					}
+				}
+			}
+			 
 			if (ctx.getCurrentUser() != null) {
 				adminMailData.put("user", ctx.getCurrentUser().getLogin());
 			}
 
-			if (value instanceof Object[]) {
+			if (value instanceof Object[]) {				
 				finalValue = StringHelper.arrayToString((Object[]) params.get(key), ",");
 				adminMailData.put(field.getLabel() + " (" + key + ") ", finalValue);
 			} else {
