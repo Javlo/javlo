@@ -185,7 +185,9 @@ public class TicketAction extends AbstractModuleAction {
 			ticket.setTitle(rs.getParameter("title", ticket.getTitle()));
 			ticket.setPriority(Integer.parseInt(rs.getParameter("priority", "" + ticket.getPriority())));
 			ticket.setCategory(rs.getParameter("category", ticket.getCategory()));
-			ticket.setMessage(rs.getParameter("message", ticket.getMessage()));
+			if (!StringHelper.isEmpty(rs.getParameter("message"))) {
+				ticket.setMessage(rs.getParameter("message", ticket.getMessage()));
+			}
 			ticket.setStatus(rs.getParameter("status", ticket.getStatus()));
 			ticket.setShare(rs.getParameter("share", ticket.getShare()));
 			ticket.setUrl(rs.getParameter("url", ticket.getUrl()));
