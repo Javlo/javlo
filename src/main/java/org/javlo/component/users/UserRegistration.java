@@ -226,35 +226,7 @@ public class UserRegistration extends MapComponent implements IAction {
 
 			ctx.getRequest().setAttribute("registration-message", i18nAccess.getViewText("registration.message.registred", "Thanks for you registration.")); // depreciate
 			messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getViewText("registration.message.registred", "Thanks for you registration."), GenericMessage.INFO));
-
-			ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-			PrintStream out = new PrintStream(outStream);
-			out.println("Registration on : " + globalContext.getGlobalTitle());
-			out.println("");
-
-			out.println(i18nAccess.getViewText("form.login") + " : " + userInfo.getLogin());
-			out.println(i18nAccess.getViewText("form.firstName") + " : " + userInfo.getFirstName());
-			out.println(i18nAccess.getViewText("form.lastName") + " : " + userInfo.getLastName());
-			out.println(i18nAccess.getViewText("form.email") + " : " + userInfo.getEmail());
-			out.println(i18nAccess.getViewText("form.address.country") + " : " + userInfo.getCountry());
-			if (userInfo.getOrganization().trim().length() > 0) {
-				out.println(i18nAccess.getViewText("form.organization") + " : " + userInfo.getOrganization());
-			}
-			if (rs.getParameter("message", "").trim().length() > 0) {
-				out.println("");
-				out.println(i18nAccess.getViewText("form.comment") + " : ");
-				out.println(rs.getParameter("message", ""));
-				out.println("");
-			}
-			out.println("");
-			if (globalContext.isCollaborativeMode()) {
-				out.println(URLHelper.createURL(ctx.getContextForAbsoluteURL().getContextWithOtherRenderMode(ContentContext.PREVIEW_MODE), "/"));
-			} else {
-				out.println(URLHelper.createURL(ctx.getContextForAbsoluteURL().getContextWithOtherRenderMode(ContentContext.VIEW_MODE), "/"));
-			}
-			out.println("");
-			out.close();
-
+			
 			FileItem userFile = rs.getFileItem("userFile");
 			if (userFile != null && userFile.getSize() > 0) {
 				InputStream in = null;
@@ -289,9 +261,22 @@ public class UserRegistration extends MapComponent implements IAction {
 			MailService mailService = MailService.getInstance(new MailConfig(globalContext, globalContext.getStaticConfig(), null));
 			InternetAddress newUser = new InternetAddress(userInfo.getEmail());
 			InternetAddress admin = new InternetAddress(globalContext.getAdministratorEmail());
+			
+			Map<String, String> mapMailData = new HashMap<String, String>();
 
-			mailService.sendMail(newUser, admin, "new user : " + userInfo.getLogin(), new String(outStream.toByteArray()), false);
-			mailService.sendMail(admin, newUser, i18nAccess.getViewText("user.new-account") + globalContext.getGlobalTitle(), new String(outStream.toByteArray()), false);
+			mapMailData.put(i18nAccess.getViewText("form.login"), userInfo.getLogin() );
+			mapMailData.put(i18nAccess.getViewText("form.firstName"), userInfo.getFirstName());
+			mapMailData.put(i18nAccess.getViewText("form.lastName"), userInfo.getLastName());
+			mapMailData.put(i18nAccess.getViewText("form.email"), userInfo.getEmail());
+			mapMailData.put(i18nAccess.getViewText("form.address.country"), userInfo.getCountry());			
+			if (userInfo.getOrganization().trim().length() > 0) {				
+				mapMailData.put(i18nAccess.getViewText("form.organization"), userInfo.getOrganization());
+			}
+			
+			String mailAdminContent = XHTMLHelper.createAdminMail(ctx.getCurrentPage().getTitle(ctx), "Registration on : " + globalContext.getGlobalTitle(), mapMailData, URLHelper.createURL(ctx.getContextForAbsoluteURL().getContextWithOtherRenderMode(ContentContext.PREVIEW_MODE)), "go on page >>", null);
+
+			mailService.sendMail(newUser, admin, "new user : " + userInfo.getLogin(), mailAdminContent, true);
+			mailService.sendMail(admin, newUser, i18nAccess.getViewText("user.new-account") + globalContext.getGlobalTitle(), mailAdminContent, true);
 
 			ctx.getRequest().setAttribute("noform", "true");
 		} catch (Exception e) {
