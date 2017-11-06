@@ -91,7 +91,7 @@
 jQuery(document).ready(function() {
 	jQuery('#notes').dataTable( {
 		 "sPaginationType": "full_numbers",
-		 "aaSorting": [[ ${not info.editContext.lightInterface ? 4 : 1}, "desc" ]],
+		 "aaSorting": [[ ${not info.editContext.lightInterface ? 4 : 2}, "desc" ]],
 		 "aoColumns": [
 		               null,
 		               null,
