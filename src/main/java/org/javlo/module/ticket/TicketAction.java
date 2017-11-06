@@ -61,7 +61,8 @@ public class TicketAction extends AbstractModuleAction {
 			}
 		} else {
 			for (TicketBean ticket : tickets) {
-				if (ctx.getCurrentEditUser() != null && (AdminUserSecurity.getInstance().isAdmin(ctx.getCurrentEditUser()) || ticket.getAuthors().equals(ctx.getCurrentEditUser().getLogin())) && ticket.getContext() != null && ticket.getContext().equals(globalContext.getContextKey())) {
+				boolean toCurrentUser = ticket.getUsers().contains(ctx.getCurrentEditUser().getLogin());
+				if (ctx.getCurrentEditUser() != null && (AdminUserSecurity.getInstance().isAdmin(ctx.getCurrentEditUser()) || ticket.getAuthors().equals(ctx.getCurrentEditUser().getLogin()) || toCurrentUser) && ticket.getContext() != null && ticket.getContext().equals(globalContext.getContextKey())) {
 					if (status == null || status.trim().length() == 0 || ticket.getStatus().equals(status)) {
 						myTickets.put(ticket.getId(), new TicketUserWrapper(ticket, ctx));
 					}
@@ -101,7 +102,8 @@ public class TicketAction extends AbstractModuleAction {
 		Module ticketModule = modulesContext.getCurrentModule();
 		Map<String, TicketUserWrapper> myTickets = getMyTicket(ctx);
 		ctx.getRequest().setAttribute("tickets", myTickets.values());
-
+		
+		boolean onlymine = StringHelper.isTrue(rs.getParameter("mine"));
 		String ticketId = rs.getParameter("id", null);
 		if (ticketId != null) {
 			TicketService ticketService = TicketService.getInstance(ctx.getGlobalContext());

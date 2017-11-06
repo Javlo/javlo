@@ -103,8 +103,7 @@ public class TicketBean implements Serializable, Ticket {
 	}
 
 	public void setStatus(String status) {
-		this.status = status;
-		setLastUpdateDate(new Date());
+		this.status = status;		
 	}
 
 	@Override

@@ -9,6 +9,7 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -94,6 +95,7 @@ public class TicketService {
 				tickets.remove(ticket.getId());
 			}
 		}
+		ticket.setLastUpdateDate(new Date());
 		storeTicket(ctx, ticket);
 	}
 

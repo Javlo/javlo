@@ -8,7 +8,10 @@
 <c:if test="${not noFilter}">
 <div class="special">
 <form id="select-status" class="js-submit" method="post" action="${info.currentURL}">
-    <div class="line">
+	<div class="line">
+		
+	</div>
+    <div class="line">    
     <label for="filter_status">status</label>
 	<select name="filter_status" id="filter_status">
 		<option></option>
