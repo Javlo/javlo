@@ -2756,19 +2756,27 @@ public class XHTMLHelper {
 		}
 
 		if (!StringHelper.isEmpty(link)) {
-			out.println("<table><tr><td>&nbsp;</td></tr><tr><td align=\"center\" bgcolor=\"#FFFFFF\">");
-			out.println("<table width=\"280\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\">");
-			out.println("<tr>");
-			out.println("<td height=\"40\" valign=\"middle\" align=\"center\" bgcolor=\"#D31996\" style=\"font-family:Helvetica, sans-serif; font-size:13px; color:#FFFFFF; mso-line-height-rule:exactly; line-height:16px; font-weight:bold; border:1px solid #D31996; border-radius:2px; -moz-border-radius:2px; -ms-border-radius:2px; -o-border-radius:2px; -webkit-border-radius:2px;\">");
-			out.println("<a href=\"" + link + "\" target=\"_blank\" style=\"color:#FFFFFF; text-decoration:underline; display:table-cell; text-align:center; height:40px; width:600px; vertical-align:middle;\">" + StringHelper.neverNull(linkLabel, link) + "</a>");
-			out.println("</td>");
-			out.println("</tr>");
-			out.println("</table>");
-			out.println("</td></tr></table>");
+			out.println(getTableButton(link, linkLabel));
 		}
 		out.println("</td></tr></table></td></tr></table></td></tr></table></body></html>");
 		return new String(outStream.toByteArray());
 	}
+
+	private static String getTableButton(String link, String linkLabel) {
+		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+		PrintStream out = new PrintStream(outStream);
+		out.println("<table><tr><td>&nbsp;</td></tr><tr><td align=\"center\" bgcolor=\"#FFFFFF\">");
+		out.println("<table width=\"280\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\">");
+		out.println("<tr>");
+		out.println("<td height=\"40\" valign=\"middle\" align=\"center\" bgcolor=\"#D31996\" style=\"font-family:Helvetica, sans-serif; font-size:13px; color:#FFFFFF; mso-line-height-rule:exactly; line-height:16px; font-weight:bold; border:1px solid #D31996; border-radius:2px; -moz-border-radius:2px; -ms-border-radius:2px; -o-border-radius:2px; -webkit-border-radius:2px;\">");
+		out.println("<a href=\"" + link + "\" target=\"_blank\" style=\"color:#FFFFFF; text-decoration:underline; display:table-cell; text-align:center; height:40px; width:600px; vertical-align:middle;\">" + StringHelper.neverNull(linkLabel, link) + "</a>");
+		out.println("</td>");
+		out.println("</tr>");
+		out.println("</table>");
+		out.println("</td></tr></table>");
+		out.close();
+		return new String(outStream.toByteArray());
+}
 
 	public static String createUserMail(TemplateData templateData, String title, String content, Map data, String link, String linkLabel, String footer) {
 
@@ -2809,6 +2817,10 @@ public class XHTMLHelper {
 		}
 		out.println("</td></tr></table></td></tr></table></td></tr></table></body></html>");
 		return new String(outStream.toByteArray());
+	}
+	
+	public static void main(String[] args) {
+		System.out.println(getTableButton("##link##", "##label##"));
 	}
 
 }

@@ -517,6 +517,18 @@ public class InfoBean {
 	public String getUserName() {
 		return ctx.getCurrentUserId();
 	}
+	
+	public String getUserLabel() {
+		User user = ctx.getCurrentUser();
+		if (user == null) {
+			return "";
+		} else {
+			if (!StringHelper.isAllEmpty(user.getUserInfo().getFirstName(), user.getUserInfo().getLastName())) {
+				return (user.getUserInfo().getFirstName()+" "+user.getUserInfo().getLastName()).trim();
+			}
+		}
+		return ctx.getCurrentUserId();
+	}
 
 	public PageBean getPage() {
 		try {

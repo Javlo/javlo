@@ -105,7 +105,7 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 	public static final String TYPE = "abstractfile";
 
 	protected Properties properties = new Properties();
-	
+
 	private Date latestValidDate = null;
 
 	public AbstractFileComponent() {
@@ -121,7 +121,7 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 		String importFolder;
 		try {
 			importFolder = getImportFolderPath(ctx);
-			if (getDirSelected().equals(importFolder)) {		
+			if (getDirSelected().equals(importFolder)) {
 				return true;
 			}
 		} catch (Exception e) {
@@ -217,7 +217,7 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 			ctx.getRequest().setAttribute("resource", staticInfo);
 		}
 
-		if (staticInfo != null) {			
+		if (staticInfo != null) {
 			ctx.getRequest().setAttribute("file", new StaticInfoBean(staticInfo.getContextWithContent(ctx), staticInfo));
 			ctx.getRequest().setAttribute("staticInfoHTML", XHTMLHelper.renderStaticInfo(infoCtx, staticInfo));
 		}
@@ -373,9 +373,11 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 				out.println("<div class=\"row form-group\"><div class=\"col-sm-3\">" + i18nAccess.getText("field.title") + "</div>");
 				out.println("<div class=\"col-sm-9\">" + staticInfo.getTitle(ctx) + "</div>");
 				out.println("</div>");
-				out.println("<div class=\"row form-group\"><div class=\"col-sm-3\">" + i18nAccess.getText("field.description") + "</div>");
-				out.println("<div class=\"col-sm-9\">" + staticInfo.getManualDescription(ctx) + "</div>");
-				out.println("</div>");
+				if (ctx.getGlobalContext().getStaticConfig().isStaticInfoDescription()) {
+					out.println("<div class=\"row form-group\"><div class=\"col-sm-3\">" + i18nAccess.getText("field.description") + "</div>");
+					out.println("<div class=\"col-sm-9\">" + staticInfo.getManualDescription(ctx) + "</div>");
+					out.println("</div>");
+				}
 				out.println("<div class=\"row form-group\"><div class=\"col-sm-3\">" + i18nAccess.getText("field.location") + "</div>");
 				out.println("<div class=\"col-sm-9\">" + staticInfo.getLocation(ctx) + "</div>");
 				out.println("</div>");
@@ -866,7 +868,7 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 	public StaticInfo getStaticInfo(ContentContext ctx) {
 		StaticInfo staticInfo;
 		try {
-			staticInfo = StaticInfo.getInstance(ctx, getFileURL(ctx, getFileName()));			
+			staticInfo = StaticInfo.getInstance(ctx, getFileURL(ctx, getFileName()));
 			return staticInfo;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -888,16 +890,16 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 		super.init(bean, ctx);
 		/* check if the content of db is correct version */
 		if (getValue().trim().length() == 0) {
-//			if (!AdminUserSecurity.isCurrentUserCanUpload(ctx)) {
-				setDirSelected(getImportFolderPath(ctx));
-				File dir = new File(ElementaryURLHelper.mergePath(getFileDirectory(ctx), getDirSelected()));
-				if (!dir.exists()) {
-					logger.info("create import folder : "+dir);
-					dir.mkdirs();
-				}
-//			} else {			
-//				setDirSelected("");
-//			}
+			// if (!AdminUserSecurity.isCurrentUserCanUpload(ctx)) {
+			setDirSelected(getImportFolderPath(ctx));
+			File dir = new File(ElementaryURLHelper.mergePath(getFileDirectory(ctx), getDirSelected()));
+			if (!dir.exists()) {
+				logger.info("create import folder : " + dir);
+				dir.mkdirs();
+			}
+			// } else {
+			// setDirSelected("");
+			// }
 			setFileName("");
 			properties.setProperty(LABEL_KEY, "");
 			properties.setProperty(DESCRIPTION_KEY, "");
@@ -906,9 +908,9 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 			properties.load(stringToStream(getValue()));
 		}
 
-		if (isImported(ctx) && getPage() != null) {			
+		if (isImported(ctx) && getPage() != null) {
 			String importFolder = getImportFolderPath(ctx);
-			if (!getDirSelected().equals(importFolder)) { 				
+			if (!getDirSelected().equals(importFolder)) {
 				File oldFile = getFile(ctx);
 				setDirSelected(importFolder);
 				File newFile = getFile(ctx);
@@ -926,7 +928,7 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 
 	}
 
-	protected boolean isImported(ContentContext ctx) {		
+	protected boolean isImported(ContentContext ctx) {
 		return getDirSelected().startsWith(URLHelper.removeFirstSlash(ctx.getGlobalContext().getStaticConfig().getImportFolder()));
 	}
 
@@ -987,11 +989,11 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 		boolean activeUpload = StringHelper.isTrue(requestService.getParameter("active-upload", null));
 
 		String initialFileName = fileName;
-		
+
 		if (activeUpload) {
 			selectedDir = getImportFolderPath(ctx);
 		}
-		
+
 		if (newDir.trim().length() > 0) {
 			String repositoryDir = getFileDirectory(ctx);
 
@@ -1006,7 +1008,7 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 				}
 			} else {
 				MessageRepository messageRepository = MessageRepository.getInstance(ctx);
-				messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("content.file.error.bad-rep-name")+" : "+newDir, GenericMessage.ERROR));
+				messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("content.file.error.bad-rep-name") + " : " + newDir, GenericMessage.ERROR));
 			}
 		}
 
@@ -1296,7 +1298,7 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 	public List<File> getFiles(ContentContext ctx) {
 		return null;
 	}
-	
+
 	@Override
 	public void setLatestValidDate(Date date) {
 		latestValidDate = date;
@@ -1306,10 +1308,10 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 	public Date getLatestValidDate() {
 		return latestValidDate;
 	}
-	
+
 	@Override
 	public boolean isDisplayable(ContentContext ctx) throws Exception {
 		return !StringHelper.isEmpty(getFileName());
 	}
-	
+
 }

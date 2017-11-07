@@ -223,10 +223,6 @@ body.edit-preview, body.preview-only {
 	display: block;
 }
 
-.not-editable-component {
-	cursor:not-allowed;
-}
-
 .editable-component.table-break .table-break {
 	width: 100%;
 	height: 26px;

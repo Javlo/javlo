@@ -40,6 +40,11 @@ public class FollowComponent extends AbstractVisualComponent implements IAction 
 
 	@Override
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
+		
+		if (ctx.getRenderMode() == ContentContext.PAGE_MODE) {
+			return "";
+		}
+		
 		if (ctx.getCurrentEditUser() == null) {
 			return "";
 		} else {

@@ -908,7 +908,11 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 				out.println(i18nAccess.getViewText("reaction.login-to-add"));
 				out.println("</p>");
 			}
-			renderReactions(out, id, "", null, reactions, currentUser, ctx, i18nAccess, displayUserInfo, displayTitle, replyAllowed);
+			if (ctx.isAsPageMode()) {
+				renderReactionsForMailing(out, id, "", null, reactions, currentUser, ctx, i18nAccess, displayUserInfo, displayTitle, replyAllowed);
+			} else {
+				renderReactions(out, id, "", null, reactions, currentUser, ctx, i18nAccess, displayUserInfo, displayTitle, replyAllowed);
+			}
 		} else {
 			out.println("<p>");
 			out.println(i18nAccess.getViewText("reaction.login-to-view"));
@@ -988,6 +992,65 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 		}
 		if (!first) {
 			out.println("</ul></div>");
+		}
+	}
+	
+	private void renderReactionsForMailing(PrintWriter out, String id, String parentHtmlIdSuffix, 
+			String parentReactionId, Collection<Reaction> reactions, 
+			User currentUser, ContentContext ctx, I18nAccess i18nAccess,
+			boolean displayUserInfo, boolean displayTitle, boolean displayReply) throws Exception {
+		parentReactionId = StringHelper.neverNull(parentReactionId);
+		int i = 0;
+		boolean first = true;
+		for (Reaction reaction : reactions) {
+			if (reaction.isValidReaction() && parentReactionId.equals(StringHelper.neverNull(reaction.getReplyOf()))) {
+				i++;
+				String htmlIdSuffix = parentHtmlIdSuffix + "-" + i;
+				if (first) {
+					out.println("<table style=\"width: 100%\" class=\"messagelist\">");
+				}
+				out.println("<tr id=\"message" + htmlIdSuffix + "\" class=\"comment-entry" + (first ? " first" : "") + "\">");
+
+				out.println("<td class=\"authors\" width=\"80\" style=\"width: 80px;\">");
+				User user;
+				if (displayUserInfo) {
+					IUserFactory userFactory = AdminUserFactory.createUserFactory(ctx.getGlobalContext(), ctx.getRequest().getSession());
+					user = userFactory.getUser(reaction.getAuthors());
+					if (user == null) {
+						userFactory = UserFactory.createUserFactory(ctx.getGlobalContext(), ctx.getRequest().getSession());
+						user = userFactory.getUser(reaction.getAuthors());
+					}
+				} else {
+					user = null;
+				}				
+				out.println("<img src=\""+URLHelper.createAvatarUrl(ctx, user.getUserInfo())+"\" />");
+				out.println("</td><td><p>");
+				if (user != null) {
+					out.println("<div class=\"username\">"+user.getLabel()+"</div>");
+				}
+				out.println("<div class=\"first date\">"+StringHelper.renderTime(reaction.getDate())+"</div>");		
+
+				if (displayTitle) {
+					out.println("<div style=\"font-weight: bold\" class=\"title\">");
+					out.println(StringHelper.removeTag(reaction.getTitle()));
+					out.println("</div>");
+				}
+
+				out.println("<p class=\"text\">");
+				if (isAllowHtml(ctx)) {
+					out.println(XHTMLHelper.safeHTML(reaction.getText()));
+				} else {
+					out.println(XHTMLHelper.textToXHTML(StringHelper.removeTag(reaction.getText()), true, ctx.getGlobalContext()));
+				}
+				out.println("</p></p>");
+				out.println("</td></tr><tr><td>&nbsp;</td><td>");
+				renderReactionsForMailing(out, id, htmlIdSuffix, reaction.getId(), reactions, currentUser, ctx, i18nAccess, displayUserInfo, displayTitle, displayReply);
+				out.println("</td></tr>");
+				first = false;
+			}
+		}
+		if (!first) {
+			out.println("</table>");
 		}
 	}
 
@@ -1208,7 +1271,7 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 	}
 
 	protected boolean isWithLink(ContentContext ctx) {
-		return StringHelper.isTrue(getConfig(ctx).getProperty("with-link", null));
+		return StringHelper.isTrue(getConfig(ctx).getProperty("with-link",null),true);
 	}
 
 	public int getReactionSize(ContentContext ctx) {

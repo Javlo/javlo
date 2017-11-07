@@ -59,7 +59,7 @@ public class TicketAction extends AbstractModuleAction {
 					myTickets.put(ticket.getId(), new TicketUserWrapper(ticket, ctx));
 				}
 			}
-		} else {
+		} else if (ctx.getCurrentEditUser() != null) {
 			for (TicketBean ticket : tickets) {
 				boolean toCurrentUser = ticket.getUsers().contains(ctx.getCurrentEditUser().getLogin());
 				if (ctx.getCurrentEditUser() != null && (AdminUserSecurity.getInstance().isAdmin(ctx.getCurrentEditUser()) || ticket.getAuthors().equals(ctx.getCurrentEditUser().getLogin()) || toCurrentUser) && ticket.getContext() != null && ticket.getContext().equals(globalContext.getContextKey())) {

@@ -867,8 +867,7 @@ public class UserAction extends AbstractModuleAction {
 		return null;
 	}
 
-	public static String performDeleteFile(RequestService rs, User user, ContentContext ctx,
-			MessageRepository messageRepository, I18nAccess i18nAccess) {
+	public static String performDeleteFile(RequestService rs, User user, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) {
 		File userFolder = new File(ctx.getGlobalContext().getUserFolder(user));
 		String fileName = rs.getParameter("name", null);
 		if (userFolder.isDirectory()) {
@@ -878,6 +877,7 @@ public class UserAction extends AbstractModuleAction {
 				}
 			}
 		}
+		messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("global.delete-file", "file deleted."), GenericMessage.INFO));
 		return null;
 	}
 }

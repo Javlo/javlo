@@ -138,6 +138,7 @@ public class GenericFileList extends AbstractVisualComponent implements IAction 
 				ResourceHelper.writeStreamToFile(in, newFile);
 				StaticInfo info = StaticInfo.getInstance(ctx, newFile);
 				info.setAuthors(ctx, user.getLogin());
+				ctx.getCurrentPage().setModificationDate(new Date());
 				PersistenceService.getInstance(ctx.getGlobalContext()).setAskStore(true);
 			} catch (IOException e) {
 				e.printStackTrace();

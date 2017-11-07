@@ -146,6 +146,7 @@ public class ViewActions implements IAction {
 	 * @return
 	 */
 	public static String performCheckChangesAndNotify(ContentContext ctx, GlobalContext globalContext, ContentService content) {		
+		
 		Date now = new Date();
 		Date timeA = (Date) globalContext.getAttribute(CHANGES_NOTIFICATION_TIME_A);
 		Date timeB = (Date) globalContext.getAttribute(CHANGES_NOTIFICATION_TIME_B);

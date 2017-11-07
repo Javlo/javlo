@@ -94,7 +94,7 @@ public class CreateContentChildren implements IInteractiveMacro, IAction {
 			String newURL = URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.PREVIEW_MODE), newPage);
 			
 			messageRepository.clearGlobalMessage();
-			messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("macro.create-content-children.create", "You message is create."), GenericMessage.INFO));
+			messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("macro.create-content-children.create", "Your message is created."), GenericMessage.INFO));
 			
 			ctx.setParentURL(newURL);
 			ctx.setClosePopup(true);

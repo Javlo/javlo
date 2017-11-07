@@ -71,6 +71,9 @@ table {
 html, body {
   background-color: ${info.template.style.backgroundColor};
 }</c:if>
+p {
+    line-height: 112%;
+}
 </style>
 </head>
 <c:set var="outerBackgroundColor" value="" /><c:if test="${not empty info.template.style.outerBackgroundColor}"><c:set var="outerBackgroundColor" value="background-color: ${info.template.style.outerBackgroundColor}" /></c:if>

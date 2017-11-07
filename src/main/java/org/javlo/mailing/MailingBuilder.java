@@ -188,8 +188,10 @@ public class MailingBuilder {
 		Map<String, String> params = new HashMap<String, String>();
 		if (currentTemplate != null) {
 			params.put(ContentOnlyServlet.TEMPLATE_PARAM_NAME, currentTemplate);
+			
 		}
-		String url = URLHelper.createURL(pageCtx);
+		params.put(GlobalContext.PAGE_TOKEN_PARAM, ctx.getGlobalContext().getLatestTokenForPage(pageCtx.getCurrentPage().getName()));
+		String url = URLHelper.createURL(pageCtx, params);
 		if (getMaps() != null) {				
 			for (Map.Entry<String, Object> entry : getMaps().entrySet()) {
 				url = URLHelper.addParam(url, entry.getKey(),  URLEncoder.encode(""+entry.getValue(), "UTF-8"));	
@@ -218,14 +220,18 @@ public class MailingBuilder {
 			}
 			if (reportTo != null) {
 				m.setNotif(new InternetAddress(reportTo));
-			}
+			}						
 			User user = AdminUserFactory.createUserFactory(globalContext, ctx.getRequest().getSession()).getUser(receiver.getValue());
+			if (user == null) {
+				user = AdminUserFactory.createUserFactory(globalContext, ctx.getRequest().getSession()).getUserByEmail(receiver.getKey().getAddress());
+			}
 			if (user != null) {
 				if (user.getUserInfo().getToken() == null || user.getUserInfo().getToken().trim().length() == 0) {
 					user.getUserInfo().setToken(StringHelper.getRandomIdBase64());
 				}
 				url = URLHelper.addParam(url, IUserFactory.TOKEN_PARAM, user.getUserInfo().getToken());				
 			}			
+			System.out.println("##### MailingBuilder.sendMailing : url = "+url); //TODO: remove debug trace
 			String content = NetHelper.readPageForMailing(new URL(url));
 			if (content != null) {
 				m.setContent(content);

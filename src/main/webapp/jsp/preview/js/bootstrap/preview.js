@@ -44,7 +44,10 @@ if (!String.prototype.startsWith) {
 		this.style.opacity = '0.4';  // this / e.target is the source node.
 	}
 
-	editPreview.layerOver = function(item, title, drop) {		
+	editPreview.layerOver = function(item, title, drop) {
+		if (pjq('html').hasClass("intranet") && pjq('html').hasClass("admin-false")) {
+			return;
+		}
 		var layer = pjq("#preview-layer");
 		pjq("._ep_new-component-zone").remove();
 		var insideLayer = pjq("#preview-layer span");

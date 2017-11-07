@@ -399,7 +399,7 @@ public class FileAction extends AbstractModuleAction {
 						if (StringHelper.isEmpty(lg) && !StringHelper.isEmpty(ref)) {
 							messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("file.message.error.reference-nolang"), GenericMessage.ERROR));
 						} else {
-							if (!globalContext.getContentLanguages().contains(lg)) {
+							if (!StringHelper.isEmpty(lg) && !globalContext.getContentLanguages().contains(lg)) {
 								messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("file.message.error.undefined-lang"), GenericMessage.ALERT));
 							}
 							staticInfo.setReference(ctx, ref);

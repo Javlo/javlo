@@ -3,6 +3,7 @@ package org.javlo.component.users;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.util.Collection;
@@ -56,7 +57,10 @@ import org.javlo.user.IUserInfo;
 import org.javlo.user.User;
 import org.javlo.user.UserFactory;
 import org.javlo.user.UserInfo;
+import org.javlo.utils.CollectionAsMap;
 import org.javlo.ztatic.FileCache;
+import org.javlo.ztatic.StaticInfo;
+import org.javlo.ztatic.StaticInfoBean;
 
 public class UserRegistration extends MapComponent implements IAction {
 
@@ -104,6 +108,12 @@ public class UserRegistration extends MapComponent implements IAction {
 		if (ctx.getCurrentUser() != null) {
 			ctx.getRequest().setAttribute("user", ctx.getCurrentUser());
 			ctx.getRequest().setAttribute("userInfoMap", ctx.getCurrentUser().getUserInfo());
+			ctx.getRequest().setAttribute("functions", new CollectionAsMap(StringHelper.stringToCollection(((UserInfo)ctx.getCurrentUser().getUserInfo()).getFunction(), ",")));
+			List<StaticInfoBean> files = new LinkedList<StaticInfoBean>();
+			for (File file : new File(ctx.getGlobalContext().getUserFolder(ctx.getCurrentUser().getUserInfo())).listFiles()) {
+				files.add(new StaticInfoBean(ctx, StaticInfo.getInstance(ctx, file)));
+			}
+			ctx.getRequest().setAttribute("files", files);
 		} else {
 			RequestService requestService = RequestService.getInstance(ctx.getRequest());
 			ctx.getRequest().setAttribute("userInfoMap", requestService.getParameterMap());
@@ -155,16 +165,52 @@ public class UserRegistration extends MapComponent implements IAction {
 		} else {
 			userFactory = UserFactory.createUserFactory(globalContext, ctx.getRequest().getSession());
 		}
-
-		IUserInfo userInfo = userFactory.getCurrentUser(globalContext, session).getUserInfo();
+		IUserInfo userInfo = userFactory.getCurrentUser(globalContext, session).getUserInfo();		
 		BeanHelper.copy(new RequestParameterMap(ctx.getRequest()), userInfo);
-		userFactory.updateUserInfo(userInfo);
+		userFactory.updateUserInfo(userInfo);		
 		userFactory.store();
+		
+		uploadFile(ctx);
 
 		messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getViewText("registration.message.update", "User info is updated."), GenericMessage.INFO));
 
 		return null;
 
+	}
+	
+	protected static void uploadFile(ContentContext ctx) throws IOException {
+		RequestService rs = RequestService.getInstance(ctx.getRequest());
+		FileItem userFile = rs.getFileItem("userFile");
+		if (userFile != null && userFile.getSize() > 0) {
+			InputStream in = null;
+			try {
+				in = userFile.getInputStream();
+				File newFile = new File(URLHelper.mergePath(ctx.getGlobalContext().getUserFolder(ctx.getCurrentUser().getUserInfo()), userFile.getName()));
+				newFile.getParentFile().mkdirs();
+				ResourceHelper.writeStreamToFile(in, newFile);
+			} finally {
+				ResourceHelper.safeClose(in);
+			}
+		}
+		String avatarFileName = ctx.getCurrentUserId() + ".png";
+		File avatarFile = new File(URLHelper.mergePath(ctx.getGlobalContext().getDataFolder(), ctx.getGlobalContext().getStaticConfig().getAvatarFolder(), avatarFileName));
+		if (StringHelper.isTrue(rs.getParameter("deleteAvatar", null))) {
+			avatarFile.delete();
+		}
+		FileItem newAvatar = rs.getFileItem("avatar");
+		if (newAvatar != null && newAvatar.getSize() > 0) {
+			InputStream in = null;
+			try {
+				in = newAvatar.getInputStream();
+				BufferedImage img = ImageIO.read(in);
+				img = ImageEngine.resizeWidth(img, 255, true);
+				avatarFile.getParentFile().mkdirs();
+				ImageIO.write(img, "png", avatarFile);
+			} finally {
+				ResourceHelper.safeClose(in);
+			}
+			FileCache.getInstance(ctx.getRequest().getSession().getServletContext()).deleteAllFile(ctx.getGlobalContext().getContextKey(), avatarFileName);
+		}
 	}
 
 	public static String performRegister(RequestService rs, GlobalContext globalContext, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
@@ -227,36 +273,7 @@ public class UserRegistration extends MapComponent implements IAction {
 			ctx.getRequest().setAttribute("registration-message", i18nAccess.getViewText("registration.message.registred", "Thanks for you registration.")); // depreciate
 			messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getViewText("registration.message.registred", "Thanks for you registration."), GenericMessage.INFO));
 			
-			FileItem userFile = rs.getFileItem("userFile");
-			if (userFile != null && userFile.getSize() > 0) {
-				InputStream in = null;
-				try {
-					in = userFile.getInputStream();
-					File newFile = new File(URLHelper.mergePath(ctx.getGlobalContext().getUserFolder(userInfo), userFile.getName()));
-					ResourceHelper.writeStreamToFile(in, newFile);
-				} finally {
-					ResourceHelper.safeClose(in);
-				}
-			}
-			String avatarFileName = userInfo.getLogin() + ".png";
-			File avatarFile = new File(URLHelper.mergePath(globalContext.getDataFolder(), ctx.getGlobalContext().getStaticConfig().getAvatarFolder(), avatarFileName));
-			if (StringHelper.isTrue(rs.getParameter("deleteAvatar", null))) {
-				avatarFile.delete();
-			}
-			FileItem newAvatar = rs.getFileItem("avatar");
-			if (newAvatar != null && newAvatar.getSize() > 0) {
-				InputStream in = null;
-				try {
-					in = newAvatar.getInputStream();
-					BufferedImage img = ImageIO.read(in);
-					img = ImageEngine.resizeWidth(img, 255, true);
-					avatarFile.getParentFile().mkdirs();
-					ImageIO.write(img, "png", avatarFile);
-				} finally {
-					ResourceHelper.safeClose(in);
-				}
-				FileCache.getInstance(ctx.getRequest().getSession().getServletContext()).deleteAllFile(globalContext.getContextKey(), avatarFileName);
-			}
+			uploadFile(ctx);
 
 			MailService mailService = MailService.getInstance(new MailConfig(globalContext, globalContext.getStaticConfig(), null));
 			InternetAddress newUser = new InternetAddress(userInfo.getEmail());

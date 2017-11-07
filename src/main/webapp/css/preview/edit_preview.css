@@ -1278,10 +1278,6 @@ body.edit-preview ._empty_area span {
 	top: auto;
 }
 
-.not-editable-component {
-	cursor:not-allowed;
-}
-
 .editable-component.table-break {
 	width: 100%;
 	height: 26px;

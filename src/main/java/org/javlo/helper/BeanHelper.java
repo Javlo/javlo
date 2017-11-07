@@ -129,16 +129,16 @@ public class BeanHelper {
 		}
 		return res;
 	}
-	
+
 	public static List<String> beanSetList(Object bean) throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
-		List<String> outKeys = new LinkedList<String>();		
+		List<String> outKeys = new LinkedList<String>();
 		Method[] methods = bean.getClass().getMethods();
 		for (Method method : methods) {
 			if (method.getName().startsWith("set")) {
-				if (method.getParameterTypes().length > 0) {					
+				if (method.getParameterTypes().length > 0) {
 					if (method.getParameterTypes().length == 1 && method.getParameterTypes()[0].equals(String.class)) {
-						String name = method.getName().substring(3);						
-						name = StringHelper.firstLetterLower(name);					
+						String name = method.getName().substring(3);
+						name = StringHelper.firstLetterLower(name);
 						outKeys.add(name);
 					}
 				}
@@ -210,7 +210,13 @@ public class BeanHelper {
 					Method method = bean.getClass().getMethod(methodName, new Class[] { String[].class });
 					method.invoke(bean, new Object[] { value });
 				} catch (NoSuchMethodException e) {
-					notFound++;
+					Method method;
+					try {
+						method = bean.getClass().getMethod(methodName, new Class[] { String.class });						
+						method.invoke(bean, StringHelper.arrayToString(value, ","));
+					} catch (NoSuchMethodException e1) {						
+						notFound++;
+					}
 				}
 			}
 		}
@@ -245,7 +251,7 @@ public class BeanHelper {
 	public static void copy(Object bean1, Object bean2) throws SecurityException, IllegalArgumentException, IllegalAccessException, InvocationTargetException {
 
 		BeanUtils.copyProperties(bean2, bean1);
-		
+
 		/*
 		 * Method[] methods = bean1.getClass().getDeclaredMethods(); int
 		 * notFound = 0; for (int i = 0; i < methods.length; i++) { if
@@ -427,41 +433,39 @@ public class BeanHelper {
 				+ bean2.getPassword()); /* TODO: REMOVE TRACE */
 
 	}
-	
-	
-	public static Object getProperty (Object bean, String property) {
+
+	public static Object getProperty(Object bean, String property) {
 		try {
-			return (String)bean.getClass().getMethod("get"+WordUtils.capitalize(property), null).invoke(bean, null);
-		} catch (Exception e) {		
+			return (String) bean.getClass().getMethod("get" + WordUtils.capitalize(property), null).invoke(bean, null);
+		} catch (Exception e) {
 			return null;
 		}
 	}
-	
-	public static Object setProperty (Object bean, String property, Object value) {
+
+	public static Object setProperty(Object bean, String property, Object value) {
 		try {
-			Class cl = String.class;	
+			Class cl = String.class;
 			if (value != null) {
 				cl = value.getClass();
 			}
-			return (String)bean.getClass().getMethod("set"+WordUtils.capitalize(property), cl).invoke(bean, value);
-		} catch (Exception e) {	
+			return (String) bean.getClass().getMethod("set" + WordUtils.capitalize(property), cl).invoke(bean, value);
+		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
 		}
 	}
-	
-	/*private static Map<Class, Map<String,String>> beanDescribeCache = Collections.synchronizedMap(new HashMap<Class, Map<String,String>>());
-	
-	public static Map<String,String> cachedDescribe(Object bean) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-		if (bean == null) {
-			return null;
-		}
-		Map<String,String> beanDescription = beanDescribeCache.get(bean.getClass());
-		if (beanDescription == null) {
-			beanDescription = BeanUtils.describe(bean);
-			beanDescribeCache.put(bean.getClass(), beanDescription);
-		}
-		return beanDescription;
-	}*/
+
+	/*
+	 * private static Map<Class, Map<String,String>> beanDescribeCache =
+	 * Collections.synchronizedMap(new HashMap<Class, Map<String,String>>());
+	 * 
+	 * public static Map<String,String> cachedDescribe(Object bean) throws
+	 * IllegalAccessException, InvocationTargetException, NoSuchMethodException
+	 * { if (bean == null) { return null; } Map<String,String> beanDescription =
+	 * beanDescribeCache.get(bean.getClass()); if (beanDescription == null) {
+	 * beanDescription = BeanUtils.describe(bean);
+	 * beanDescribeCache.put(bean.getClass(), beanDescription); } return
+	 * beanDescription; }
+	 */
 
 }
