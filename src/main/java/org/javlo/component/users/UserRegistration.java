@@ -112,7 +112,7 @@ public class UserRegistration extends MapComponent implements IAction {
 			List<StaticInfoBean> files = new LinkedList<StaticInfoBean>();
 			if (ctx.getCurrentUser() != null) {
 				String fileDir = ctx.getGlobalContext().getUserFolder(ctx.getCurrentUser().getUserInfo());
-				if (fileDir != null) {
+				if (fileDir != null && new File(fileDir).listFiles() != null) {
 					for (File file : new File(fileDir).listFiles()) {
 						files.add(new StaticInfoBean(ctx, StaticInfo.getInstance(ctx, file)));
 					}
