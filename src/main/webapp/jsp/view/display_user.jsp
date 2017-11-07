@@ -1,3 +1,4 @@
+<%@page import="org.javlo.user.AdminUserSecurity"%>
 <%@page contentType="text/html"
 %><%@page import="
 org.javlo.context.GlobalContext,
@@ -14,7 +15,7 @@ if (user != null) {
 	String avatarURL = URLHelper.createAvatarUrl(ctx, user.getUserInfo());
 	pageContext.setAttribute("avatarURL", avatarURL);
 }
-if (user != null) {
+if (user != null && !AdminUserSecurity.getInstance().isAdmin(user)) {
 	request.setAttribute("user", user);
 %>
 <div class="jcreator ${elem.authors} ${elem.type} ${samePrevious?'previous-same':'previous-different'}">
