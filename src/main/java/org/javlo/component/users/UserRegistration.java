@@ -70,7 +70,7 @@ public class UserRegistration extends MapComponent implements IAction {
 
 	public static final String FIELD_SCOPE = "scope";
 
-	public static final String FIELD_SELECTED_ROLES = "roles";	
+	public static final String FIELD_SELECTED_ROLES = "roles";
 
 	@Override
 	public String getType() {
@@ -108,10 +108,15 @@ public class UserRegistration extends MapComponent implements IAction {
 		if (ctx.getCurrentUser() != null) {
 			ctx.getRequest().setAttribute("user", ctx.getCurrentUser());
 			ctx.getRequest().setAttribute("userInfoMap", ctx.getCurrentUser().getUserInfo());
-			ctx.getRequest().setAttribute("functions", new CollectionAsMap(StringHelper.stringToCollection(((UserInfo)ctx.getCurrentUser().getUserInfo()).getFunction(), ",")));
+			ctx.getRequest().setAttribute("functions", new CollectionAsMap(StringHelper.stringToCollection(((UserInfo) ctx.getCurrentUser().getUserInfo()).getFunction(), ",")));
 			List<StaticInfoBean> files = new LinkedList<StaticInfoBean>();
-			for (File file : new File(ctx.getGlobalContext().getUserFolder(ctx.getCurrentUser().getUserInfo())).listFiles()) {
-				files.add(new StaticInfoBean(ctx, StaticInfo.getInstance(ctx, file)));
+			if (ctx.getCurrentUser() != null) {
+				String fileDir = ctx.getGlobalContext().getUserFolder(ctx.getCurrentUser().getUserInfo());
+				if (fileDir != null) {
+					for (File file : new File(fileDir).listFiles()) {
+						files.add(new StaticInfoBean(ctx, StaticInfo.getInstance(ctx, file)));
+					}
+				}
 			}
 			ctx.getRequest().setAttribute("files", files);
 		} else {
@@ -165,11 +170,11 @@ public class UserRegistration extends MapComponent implements IAction {
 		} else {
 			userFactory = UserFactory.createUserFactory(globalContext, ctx.getRequest().getSession());
 		}
-		IUserInfo userInfo = userFactory.getCurrentUser(globalContext, session).getUserInfo();		
+		IUserInfo userInfo = userFactory.getCurrentUser(globalContext, session).getUserInfo();
 		BeanHelper.copy(new RequestParameterMap(ctx.getRequest()), userInfo);
-		userFactory.updateUserInfo(userInfo);		
+		userFactory.updateUserInfo(userInfo);
 		userFactory.store();
-		
+
 		uploadFile(ctx);
 
 		messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getViewText("registration.message.update", "User info is updated."), GenericMessage.INFO));
@@ -177,7 +182,7 @@ public class UserRegistration extends MapComponent implements IAction {
 		return null;
 
 	}
-	
+
 	protected static void uploadFile(ContentContext ctx) throws IOException {
 		RequestService rs = RequestService.getInstance(ctx.getRequest());
 		FileItem userFile = rs.getFileItem("userFile");
@@ -272,24 +277,24 @@ public class UserRegistration extends MapComponent implements IAction {
 
 			ctx.getRequest().setAttribute("registration-message", i18nAccess.getViewText("registration.message.registred", "Thanks for you registration.")); // depreciate
 			messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getViewText("registration.message.registred", "Thanks for you registration."), GenericMessage.INFO));
-			
+
 			uploadFile(ctx);
 
 			MailService mailService = MailService.getInstance(new MailConfig(globalContext, globalContext.getStaticConfig(), null));
 			InternetAddress newUser = new InternetAddress(userInfo.getEmail());
 			InternetAddress admin = new InternetAddress(globalContext.getAdministratorEmail());
-			
+
 			Map<String, String> mapMailData = new HashMap<String, String>();
 
-			mapMailData.put(i18nAccess.getViewText("form.login"), userInfo.getLogin() );
+			mapMailData.put(i18nAccess.getViewText("form.login"), userInfo.getLogin());
 			mapMailData.put(i18nAccess.getViewText("form.firstName"), userInfo.getFirstName());
 			mapMailData.put(i18nAccess.getViewText("form.lastName"), userInfo.getLastName());
 			mapMailData.put(i18nAccess.getViewText("form.email"), userInfo.getEmail());
-			mapMailData.put(i18nAccess.getViewText("form.address.country"), userInfo.getCountry());			
-			if (userInfo.getOrganization().trim().length() > 0) {				
+			mapMailData.put(i18nAccess.getViewText("form.address.country"), userInfo.getCountry());
+			if (userInfo.getOrganization().trim().length() > 0) {
 				mapMailData.put(i18nAccess.getViewText("form.organization"), userInfo.getOrganization());
 			}
-			
+
 			String mailAdminContent = XHTMLHelper.createAdminMail(ctx.getCurrentPage().getTitle(ctx), "Registration on : " + globalContext.getGlobalTitle(), mapMailData, URLHelper.createURL(ctx.getContextForAbsoluteURL().getContextWithOtherRenderMode(ContentContext.PREVIEW_MODE)), "go on page >>", null);
 
 			mailService.sendMail(newUser, admin, "new user : " + userInfo.getLogin(), mailAdminContent, true);
@@ -399,8 +404,8 @@ public class UserRegistration extends MapComponent implements IAction {
 		IUserFactory userFactory = UserFactory.createUserFactory(globalContext, session);
 		User user = userFactory.getUser(ui.getLogin());
 		if (user == null) {
-			ui.setExternalLoginUser();			
-			userFactory.addUserInfo(ui);			
+			ui.setExternalLoginUser();
+			userFactory.addUserInfo(ui);
 			userFactory.store();
 			messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getViewText("user.message.facebook-login"), GenericMessage.INFO));
 		} else {
@@ -474,8 +479,8 @@ public class UserRegistration extends MapComponent implements IAction {
 			if (StringHelper.isTrue(rs.getParameter(getInputName(role)))) {
 				roles.add(role);
 			}
-		}		
-		setField(FIELD_SELECTED_ROLES, roles);		
+		}
+		setField(FIELD_SELECTED_ROLES, roles);
 		if (!previousValue.equals(getValue())) {
 			setModify();
 		}
