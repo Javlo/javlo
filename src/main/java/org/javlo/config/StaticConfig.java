@@ -1648,6 +1648,10 @@ public class StaticConfig extends Observable {
 	public String getImageFormat() {
 		return properties.getString("content.image-format", "png,jpg,jpeg,gif");
 	}
+	
+	public String getVideoFormat() {
+		return properties.getString("content.video-format", "mp4");
+	}
 
 	/**
 	 * return true if javlo must be forward to the canonical URL. WARNING :

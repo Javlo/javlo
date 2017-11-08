@@ -38,9 +38,7 @@ import org.javlo.i18n.I18nAccess;
 import org.javlo.service.ContentService;
 import org.javlo.service.RequestService;
 import org.javlo.service.resource.Resource;
-import org.javlo.user.AdminUserSecurity;
 import org.javlo.ztatic.StaticInfo;
-import org.jsoup.select.Evaluator.IsEmpty;
 
 import com.google.gson.JsonElement;
 
@@ -674,6 +672,11 @@ public class Video extends GlobalImage implements IAction, IVideo {
 		}
 		return msg;
 	}
+	
+	@Override
+	protected boolean isDisplayMeta(ContentContext ctx) {
+		return false;
+	}
 
 	@Override
 	public int getComplexityLevel(ContentContext ctx) {
@@ -684,9 +687,10 @@ public class Video extends GlobalImage implements IAction, IVideo {
 	public String getPreviewURL(ContentContext ctx, String filter) {
 		String decoImage = getDecorationImage();
 		if (decoImage != null && decoImage.trim().length() > 0) {
-			String imageLink = getResourceURL(ctx, getDecorationImage());			
+			String imageLink = getResourceURL(ctx, getDecorationImage());		
 			try {
-				return URLHelper.addParam(URLHelper.createTransformURL(ctx, imageLink, filter), "hash", getImageHash(ctx.getBean()));
+				String link = URLHelper.addParam(URLHelper.createTransformURL(ctx, imageLink, filter), "hash", getImageHash(ctx.getBean()));				
+				return link;
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -701,6 +705,11 @@ public class Video extends GlobalImage implements IAction, IVideo {
 		} else  {
 			return super.isDispayEmptyXHTMLCode(ctx);
 		}
+	}
+	
+	@Override
+	protected boolean isFileNameValid(ContentContext ctx, String fileName) {
+		return ResourceHelper.isAcceptedVideo(ctx, fileName);
 	}
 
 }

@@ -1827,6 +1827,17 @@ public class ResourceHelper {
 			return extension.contains(',' + StringHelper.getFileExtension(fileName).toLowerCase() + ',');
 		}
 	}
+	
+	public static boolean isAcceptedVideo(ContentContext ctx, String fileName) {
+		if (StringHelper.isEmpty(fileName)) {
+			return true;
+		} else {
+			String extension = ',' + ctx.getGlobalContext().getStaticConfig().getVideoFormat() + ',';
+			return extension.contains(',' + StringHelper.getFileExtension(fileName).toLowerCase() + ',');
+		}
+	}
+	
+	
 
 	public static boolean isAcceptedDocument(ContentContext ctx, String fileName) {
 		if (StringHelper.isEmpty(fileName)) {
