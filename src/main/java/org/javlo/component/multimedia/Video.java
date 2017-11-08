@@ -513,7 +513,7 @@ public class Video extends GlobalImage implements IAction, IVideo {
 
 	@Override
 	protected boolean isMeta() {
-		return false;
+		return true;
 	}
 
 	@Override
@@ -678,6 +678,20 @@ public class Video extends GlobalImage implements IAction, IVideo {
 	@Override
 	public int getComplexityLevel(ContentContext ctx) {
 		return getConfig(ctx).getComplexity(COMPLEXITY_STANDARD);
+	}
+	
+	@Override
+	public String getPreviewURL(ContentContext ctx, String filter) {
+		String decoImage = getDecorationImage();
+		if (decoImage != null && decoImage.trim().length() > 0) {
+			String imageLink = getResourceURL(ctx, getDecorationImage());			
+			try {
+				return URLHelper.addParam(URLHelper.createTransformURL(ctx, imageLink, filter), "hash", getImageHash(ctx.getBean()));
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		} 
+		return null;		
 	}
 	
 	@Override
