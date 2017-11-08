@@ -300,5 +300,9 @@ public class RequestService {
 		parameters.clear();
 		parameters.putAll(savedParameters);
 	}
+	
+	public boolean removeParameter(String name) {
+		return parameters.remove(name) != null;
+	}
 
 }

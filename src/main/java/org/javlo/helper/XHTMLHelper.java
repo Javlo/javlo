@@ -2782,10 +2782,7 @@ public class XHTMLHelper {
 
 		String backgroundColor = "#ffffff";
 		String titleColor = "#000000";
-		if (templateData != null) {
-			if (templateData.getBackground() != null) {
-				backgroundColor = templateData.getBackground().toString();
-			}
+		if (templateData != null) {			
 			if (templateData.getTitle() != null) {
 				titleColor = templateData.getTitle().toString();
 			}
@@ -2813,7 +2810,7 @@ public class XHTMLHelper {
 			out.println("<table><tr><td>&nbsp;</td></tr><tr><td class=\"footer\"><div style='display: block; margin: 10px 20px;  color: #dddddd; font-family:Helvetica, sans-serif;'>" + footer + "</div></td></tr></table>");
 		}
 		if (!StringHelper.isEmpty(link)) {
-			out.println("<table><tr><td>&nbsp;</td></tr><tr><td><a href='" + link + "' style='border: 1px #E329A6 solid; border-radius: 4px; display: block; text-decoration: none; background-color: #D31996; margin: 10px;'><div style='display: block; margin: 0 10px;  color: #dddddd; font-family:Helvetica, sans-serif;'><table><tr><td border=\"10\">" + StringHelper.neverNull(linkLabel, link) + "</td></tr></table></div></a></td></tr></table>");
+			out.println(getTableButton(link, StringHelper.neverNull(linkLabel, link)));			
 		}
 		out.println("</td></tr></table></td></tr></table></td></tr></table></body></html>");
 		return new String(outStream.toByteArray());

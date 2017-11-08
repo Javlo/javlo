@@ -570,28 +570,28 @@ public class Video extends GlobalImage implements IAction, IVideo {
 		return null;
 	}
 
-	@Override
-	public String getPreviewURL(ContentContext ctx, String filter) {
-		if (filter == null) {
-			filter = getImageFilter(ctx);
-		}
-		try {
-			String decoImage = getDecorationImage();
-			if (decoImage != null && decoImage.trim().length() > 0) {
-				String imageLink = getResourceURL(ctx, getDecorationImage());
-				return URLHelper.createTransformURL(ctx, imageLink, filter);
-			} else if (isYouTube()) {
-				return getYoutubePreview(ctx, null);
-			} else if (isVimeo()) {
-				return getVimeoPreview(ctx, null);
-			}
-		} catch (Exception e) {
-			logger.warning(e.getMessage());
-			e.printStackTrace();
-		}
-
-		return null;
-	}
+//	@Override
+//	public String getPreviewURL(ContentContext ctx, String filter) {
+//		if (filter == null) {
+//			filter = getImageFilter(ctx);
+//		}
+//		try {
+//			String decoImage = getDecorationImage();
+//			if (decoImage != null && decoImage.trim().length() > 0) {
+//				String imageLink = getResourceURL(ctx, getDecorationImage());
+//				return URLHelper.createTransformURL(ctx, imageLink, filter);
+//			} else if (isYouTube()) {
+//				return getYoutubePreview(ctx, null);
+//			} else if (isVimeo()) {
+//				return getVimeoPreview(ctx, null);
+//			}
+//		} catch (Exception e) {
+//			logger.warning(e.getMessage());
+//			e.printStackTrace();
+//		}
+//
+//		return null;
+//	}
 
 	private boolean isVimeo() {
 		return getLink() != null && getLink().toLowerCase().contains("vimeo");

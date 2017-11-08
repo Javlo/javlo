@@ -929,25 +929,7 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle, IStat
 			List<MultimediaResource> contentVideos = getContentVideo(ctx);
 			for (MultimediaResource resource : contentVideos) {
 				if (acceptResource(ctx, resource)) {
-					if (allURL.get(resource.getURL()) != null) { // equals and
-																	// hash is
-																	// overidded
-																	// on
-																	// MultimediaResource
-																	// -> two
-																	// "equals"
-																	// resource
-																	// can be
-																	// different
-																	// (sample :
-																	// a static
-																	// resource
-																	// and a
-																	// component
-																	// resource
-																	// linked
-																	// with same
-																	// file).
+					if (allURL.get(resource.getURL()) != null) { 
 						allResource.remove(allURL.get(resource.getURL()));
 					}
 					allResource.add(resource);
