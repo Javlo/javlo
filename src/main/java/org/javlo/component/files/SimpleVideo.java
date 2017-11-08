@@ -184,6 +184,9 @@ public class SimpleVideo extends AbstractFileComponent implements IReverseLinkCo
 			StaticInfo info = getStaticInfo(ctx);
 			res.append(XHTMLHelper.renderStaticInfo(ctx, info));
 			res.append("<video controls><source src=\""+url+"\" type=\""+ResourceHelper.getFileExtensionToMineType(StringHelper.getFileExtension(url))+"\" />Your browser does not support the audio element.</video>");
+			if (!StringHelper.isEmpty(getLabel())) {
+				res.append("<div class=\"label\">"+getLabel()+"</div>");
+			}
 		} else {
 			res.append("&nbsp; <!--FILE NOT DEFINED--> ");
 		}

@@ -508,7 +508,7 @@ public class Video extends GlobalImage implements IAction, IVideo {
 
 	@Override
 	protected boolean isMeta() {
-		return true;
+		return false;
 	}
 
 	@Override
