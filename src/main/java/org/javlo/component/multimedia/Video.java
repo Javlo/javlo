@@ -38,7 +38,9 @@ import org.javlo.i18n.I18nAccess;
 import org.javlo.service.ContentService;
 import org.javlo.service.RequestService;
 import org.javlo.service.resource.Resource;
+import org.javlo.user.AdminUserSecurity;
 import org.javlo.ztatic.StaticInfo;
+import org.jsoup.select.Evaluator.IsEmpty;
 
 import com.google.gson.JsonElement;
 
@@ -206,13 +208,13 @@ public class Video extends GlobalImage implements IAction, IVideo {
 		} else {
 			return null;
 		}
-	}	
-	
+	}
+
 	@Override
 	protected boolean isAutoRenderer() {
 		return true;
 	}
-	
+
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
 		if (getEmbedCode() != null && getEmbedCode().trim().length() > 0 && (!getStyle().equals(LINK) || ctx.isExport())) {
 			return getEmbedCode();
@@ -223,13 +225,16 @@ public class Video extends GlobalImage implements IAction, IVideo {
 
 	@Override
 	protected String getImageURL(ContentContext ctx) throws Exception {
-		if (getLink() != null && getLinkVideoName(getLink()).equals("youtube")) {
-			return getYoutubePreview(ctx, getConfig(ctx).getProperty("image.filter", getDefaultFilter()));
-		} else if (getLink() != null && getLinkVideoName(getLink()).equals("vimeo")) {
-			return getVimeoPreview(ctx, getConfig(ctx).getProperty("image.filter", getDefaultFilter()));
-		} else {
+		if (StringHelper.isImage(super.getImageURL(ctx))) {
 			return super.getImageURL(ctx);
+		} else {
+			if (getLink() != null && getLinkVideoName(getLink()).equals("youtube")) {
+				return getYoutubePreview(ctx, getConfig(ctx).getProperty("image.filter", getDefaultFilter()));
+			} else if (getLink() != null && getLinkVideoName(getLink()).equals("vimeo")) {
+				return getVimeoPreview(ctx, getConfig(ctx).getProperty("image.filter", getDefaultFilter()));
+			}
 		}
+		return null;
 	}
 
 	@Override
@@ -254,7 +259,7 @@ public class Video extends GlobalImage implements IAction, IVideo {
 			}
 			if (!imageFile.exists() && ctx.getGlobalContext().getStaticConfig().isInternetAccess()) {
 				imageFile.createNewFile();
-				URL url = new URL("http://img.youtube.com/vi/" + videoCode + "/0.jpg");				
+				URL url = new URL("http://img.youtube.com/vi/" + videoCode + "/0.jpg");
 				FileOutputStream out = new FileOutputStream(imageFile);
 				try {
 					NetHelper.readPage(url, out);
@@ -285,7 +290,7 @@ public class Video extends GlobalImage implements IAction, IVideo {
 				JsonElement elem = NetHelper.readJson(new URL("http://vimeo.com/api/v2/video/" + videoCode + ".json"));
 				String imageURL = elem.getAsJsonArray().get(0).getAsJsonObject().get("thumbnail_large").getAsString();
 				imageFile.createNewFile();
-				FileOutputStream out = new FileOutputStream(imageFile);				
+				FileOutputStream out = new FileOutputStream(imageFile);
 				try {
 					NetHelper.readPage(new URL(imageURL), out);
 				} finally {
@@ -349,7 +354,7 @@ public class Video extends GlobalImage implements IAction, IVideo {
 	}
 
 	@Override
-	public void prepareView(ContentContext ctx) throws Exception {		
+	public void prepareView(ContentContext ctx) throws Exception {
 		super.prepareView(ctx);
 		renderInline(ctx, null, null, false, true);
 	}
@@ -527,14 +532,12 @@ public class Video extends GlobalImage implements IAction, IVideo {
 		return i18nAccess.getText("content.video.label");
 	}
 
-	/*@Override
-	protected String renderViewXHTMLCode(ContentContext ctx) throws Exception {
-		if (getRenderer(ctx) != null && getStyle(ctx).equals(LINK)) {
-			return executeCurrentRenderer(ctx);
-		} else {
-			return getViewXHTMLCode(ctx);
-		}
-	}*/
+	/*
+	 * @Override protected String renderViewXHTMLCode(ContentContext ctx) throws
+	 * Exception { if (getRenderer(ctx) != null && getStyle(ctx).equals(LINK)) {
+	 * return executeCurrentRenderer(ctx); } else { return
+	 * getViewXHTMLCode(ctx); } }
+	 */
 
 	public int getAccess(ContentContext ctx, int days) throws NumberFormatException, IOException {
 		Calendar cal = Calendar.getInstance();
@@ -570,28 +573,28 @@ public class Video extends GlobalImage implements IAction, IVideo {
 		return null;
 	}
 
-//	@Override
-//	public String getPreviewURL(ContentContext ctx, String filter) {
-//		if (filter == null) {
-//			filter = getImageFilter(ctx);
-//		}
-//		try {
-//			String decoImage = getDecorationImage();
-//			if (decoImage != null && decoImage.trim().length() > 0) {
-//				String imageLink = getResourceURL(ctx, getDecorationImage());
-//				return URLHelper.createTransformURL(ctx, imageLink, filter);
-//			} else if (isYouTube()) {
-//				return getYoutubePreview(ctx, null);
-//			} else if (isVimeo()) {
-//				return getVimeoPreview(ctx, null);
-//			}
-//		} catch (Exception e) {
-//			logger.warning(e.getMessage());
-//			e.printStackTrace();
-//		}
-//
-//		return null;
-//	}
+	// @Override
+	// public String getPreviewURL(ContentContext ctx, String filter) {
+	// if (filter == null) {
+	// filter = getImageFilter(ctx);
+	// }
+	// try {
+	// String decoImage = getDecorationImage();
+	// if (decoImage != null && decoImage.trim().length() > 0) {
+	// String imageLink = getResourceURL(ctx, getDecorationImage());
+	// return URLHelper.createTransformURL(ctx, imageLink, filter);
+	// } else if (isYouTube()) {
+	// return getYoutubePreview(ctx, null);
+	// } else if (isVimeo()) {
+	// return getVimeoPreview(ctx, null);
+	// }
+	// } catch (Exception e) {
+	// logger.warning(e.getMessage());
+	// e.printStackTrace();
+	// }
+	//
+	// return null;
+	// }
 
 	private boolean isVimeo() {
 		return getLink() != null && getLink().toLowerCase().contains("vimeo");
@@ -638,7 +641,7 @@ public class Video extends GlobalImage implements IAction, IVideo {
 		}
 		return 0;
 	}
-	
+
 	@Override
 	public String performEdit(ContentContext ctx) throws Exception {
 		String msg = super.performEdit(ctx);
@@ -671,10 +674,19 @@ public class Video extends GlobalImage implements IAction, IVideo {
 		}
 		return msg;
 	}
-	
+
 	@Override
 	public int getComplexityLevel(ContentContext ctx) {
 		return getConfig(ctx).getComplexity(COMPLEXITY_STANDARD);
+	}
+	
+	@Override
+	public boolean isDisplayable(ContentContext ctx) throws Exception {
+		if (StringHelper.isImage(getImageURL(ctx))) {
+			return true;
+		} else  {
+			return super.isDispayEmptyXHTMLCode(ctx);
+		}
 	}
 
 }
