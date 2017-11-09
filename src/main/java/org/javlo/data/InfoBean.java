@@ -1638,6 +1638,10 @@ public class InfoBean {
 	public String getNoImageURL() throws Exception {
 		return URLHelper.createTransformURL(ctx, "/noimage.png", "standard");
 	}
+	
+	public boolean isArchive() {
+		return ctx.getPath().toLowerCase().contains("archive");
+	}
 
 	
 }
