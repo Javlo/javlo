@@ -10,13 +10,13 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.javlo.context.ContentContext;
 import org.javlo.helper.StringHelper;
 import org.javlo.service.RequestService;
 
 public class FieldMultiList extends Field {
+	
+	public static final String TYPE = "list-multi";
 
 	public String getListName() {
 		return properties.getProperty("field." + getUnicName() + ".list");
@@ -38,7 +38,6 @@ public class FieldMultiList extends Field {
 		if (values.size() == 0) {
 			return "";
 		}
-
 
 		StringWriter writer = new StringWriter();
 		PrintWriter out = new PrintWriter(writer);
@@ -69,7 +68,7 @@ public class FieldMultiList extends Field {
 
 	@Override
 	public String getType() {
-		return "list-multi";
+		return TYPE;
 	}
 
 	/**
