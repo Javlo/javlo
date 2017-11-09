@@ -86,6 +86,7 @@ import org.javlo.navigation.URLTriggerThread;
 import org.javlo.service.ContentService;
 import org.javlo.service.NotificationService;
 import org.javlo.service.PersistenceService;
+import org.javlo.service.PersistenceThread;
 import org.javlo.service.RequestService;
 import org.javlo.service.ReverseLinkService;
 import org.javlo.service.exception.ServiceException;
@@ -125,7 +126,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 
 	private final Object lockImportTemplate = new Object();
 
-	private final Object lockLoadContent = new Object();
+	//private final Object lockLoadContent = new Object();
 
 	private PrintWriter redirectURLList = null;
 
@@ -3263,7 +3264,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	}
 
 	public Object getLockLoadContent() {
-		return lockLoadContent;
+		return PersistenceThread.LOCK;
 	}
 
 	public Map<String, String> getConfig() {

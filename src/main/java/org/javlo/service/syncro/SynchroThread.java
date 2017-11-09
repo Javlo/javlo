@@ -158,7 +158,8 @@ public class SynchroThread extends AbstractThread {
 					return;
 				}
 			}
-			synchronized (PersistenceThread.SYNCRO_LOCK) {
+			//synchronized (PersistenceThread.SYNCRO_LOCK) {
+			synchronized (PersistenceThread.LOCK) {
 				if (getDataCtxFolder() != null) {
 					ServerSynchroService synchroService = ServerSynchroService.getInstance(getLocalName(), getServerURL(), getProxyHost(), getProxyPort(), getSynchroCode(), getDataCtxFolder());					
 					if (!synchroService.synchronize()) {
@@ -175,7 +176,8 @@ public class SynchroThread extends AbstractThread {
 					return;
 				}
 			}
-			synchronized (Mailing.SYNCRO_LOCK) {
+			//synchronized (Mailing.SYNCRO_LOCK) {
+			synchronized (PersistenceThread.LOCK) {
 				if (getMailingFolder() != null) {
 					ServerSynchroService synchroService = ServerSynchroService.getInstanceForMailing(getLocalName(), getServerURL(), getProxyHost(), getProxyPort(), getSynchroCode(), getMailingFolder());
 					if (!synchroService.synchronize()) {

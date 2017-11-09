@@ -39,6 +39,7 @@ import org.javlo.context.ContentContext;
 import org.javlo.helper.PatternHelper;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
+import org.javlo.service.PersistenceThread;
 import org.javlo.user.IUserInfo;
 import org.javlo.user.UserFactory;
 import org.javlo.utils.CSVFactory;
@@ -154,7 +155,7 @@ public class Mailing {
 
 	private Map<InternetAddress, IUserInfo> users = null;
 
-	public static final Object SYNCRO_LOCK = new Object();
+	//public static final Object SYNCRO_LOCK = new Object();
 
 	String getUnsubscribeURL(String mail) {
 		String params = "?webaction=mailing.Unsubscriberole&mail=" + mail + "&roles=" + StringHelper.collectionToString(roles);
@@ -403,7 +404,8 @@ public class Mailing {
 	
 	public void store(MailingStaticConfig mailingStaticConfig) throws IOException {
 
-		synchronized (SYNCRO_LOCK) {
+		//synchronized (SYNCRO_LOCK) {
+		synchronized (PersistenceThread.LOCK) {
 			setId(mailingStaticConfig, getId());
 			if (!dir.exists()) {
 				logger.info("create directory : " + dir);

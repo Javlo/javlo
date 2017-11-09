@@ -41,11 +41,11 @@ public class PersistenceThread implements Runnable {
 	public Object lockReference = null;
 
 	private Map<String, String> globalContentMap;
-	
+
 	private TaxonomyBean taxonomyRoot;
 
 	private final Collection<File> folderToSave = new LinkedList<File>();
-	
+
 	private String dataFolder = "";
 
 	private int mode;
@@ -58,7 +58,7 @@ public class PersistenceThread implements Runnable {
 
 	private PersistenceService persistenceService;
 
-	public static final Object SYNCRO_LOCK = new Object();
+	public static final Object LOCK = new Object();
 
 	public void addFolderToSave(File file) {
 		folderToSave.add(file);
@@ -71,11 +71,11 @@ public class PersistenceThread implements Runnable {
 	public String getDefaultLg() {
 		return defaultLg;
 	}
-	
+
 	public TaxonomyBean getTaxonomyRoot() {
 		return taxonomyRoot;
 	}
-	
+
 	public void setTaxonomyRoot(TaxonomyBean taxonomyRoot) {
 		this.taxonomyRoot = taxonomyRoot;
 	}
@@ -109,28 +109,28 @@ public class PersistenceThread implements Runnable {
 	public void run() {
 		int timeTrackerNumber = TimeTracker.start(contextKey, PersistenceThread.class.getName());
 		COUNT_THREAD.incrementAndGet();
-		synchronized (SYNCRO_LOCK) {
-			File file = null;
-			try {
-				logger.info("before start persitence thread (#THREAD:" + COUNT_THREAD + ") - " + getContextKey());
-				synchronized (lockReference) {
-					logger.info("start persitence thread (#THREAD:" + COUNT_THREAD + ')');
-					long startTime = System.currentTimeMillis();
-					file = store(menuElement, mode, getDefaultLg());
-					logger.info("end persitence thread (" + StringHelper.renderTimeInSecond(System.currentTimeMillis() - startTime) + " sec.). #file=" + StringHelper.renderSize(file.length()));
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
-				try {
-					persistenceService.sendPersistenceErrorToAdministrator("Error in PersistanceThread.", file, e);
-				} catch (AddressException e1) {
-					e1.printStackTrace();
-				}
-			} finally {
-				running = false;
-				COUNT_THREAD.decrementAndGet();
+		// synchronized (SYNCRO_LOCK) {
+		File file = null;
+		try {
+			logger.info("before start persitence thread (#THREAD:" + COUNT_THREAD + ") - " + getContextKey());
+			synchronized (lockReference) {
+				logger.info("start persitence thread (#THREAD:" + COUNT_THREAD + ')');
+				long startTime = System.currentTimeMillis();
+				file = store(menuElement, mode, getDefaultLg());
+				logger.info("end persitence thread (" + StringHelper.renderTimeInSecond(System.currentTimeMillis() - startTime) + " sec.). #file=" + StringHelper.renderSize(file.length()));
 			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			try {
+				persistenceService.sendPersistenceErrorToAdministrator("Error in PersistanceThread.", file, e);
+			} catch (AddressException e1) {
+				e1.printStackTrace();
+			}
+		} finally {
+			running = false;
+			COUNT_THREAD.decrementAndGet();
 		}
+		// }
 		TimeTracker.end(contextKey, PersistenceThread.class.getName(), timeTrackerNumber);
 	}
 
@@ -210,7 +210,7 @@ public class PersistenceThread implements Runnable {
 					wrt.close();
 				}
 			}
-			persistenceService.setVersion(persistenceService.getVersion() + 1);			
+			persistenceService.setVersion(persistenceService.getVersion() + 1);
 			persistenceService.cleanFile();
 		} else {
 			file = getXMLPersistenceFile(renderMode);
