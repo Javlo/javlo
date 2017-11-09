@@ -2465,7 +2465,7 @@ public class StringHelper {
 				dateFormat = DateFormat.getDateInstance(DateFormat.FULL, locale);
 			}
 		} else {
-			dateFormat = new SimpleDateFormat(manualDateFormat);
+			dateFormat = new SimpleDateFormat(manualDateFormat, locale);
 		}
 		return dateFormat.format(date);
 	}
