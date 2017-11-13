@@ -1488,5 +1488,4 @@ public class StaticInfo {
 			return imageSize;
 		}
 	}
-
 }

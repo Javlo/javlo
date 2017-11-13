@@ -3909,8 +3909,12 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 	public boolean isReadAccess(ContentContext ctx, User user) {		
 		RequestService rs = RequestService.getInstance(ctx.getRequest());
 		String token = rs.getParameter(GlobalContext.PAGE_TOKEN_PARAM, null);
-		if (token != null && getName().equals(ctx.getGlobalContext().getPageToken(token))) {
-			return true;
+		if (token != null) {
+			if (getName().equals(ctx.getGlobalContext().getPageToken(token))) {
+				return true;
+			} else {
+				logger.warning("unvalid token : "+token);
+			}			 
 		}		
 		if (userRoles.size() > 0) {
 			if (user == null) {

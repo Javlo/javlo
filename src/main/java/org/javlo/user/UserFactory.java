@@ -249,7 +249,7 @@ public class UserFactory implements IUserFactory, Serializable {
 		User user = (User) session.getAttribute(SESSION_KEY);
 		return user;
 	}
-
+	
 	protected String getFileName() {
 		return URLHelper.mergePath(dataFolder, userInfoFile);
 	}

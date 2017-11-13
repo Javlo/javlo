@@ -17,6 +17,7 @@ import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
 import org.javlo.service.PersistenceService;
 import org.javlo.service.RequestService;
+import org.javlo.user.AdminUserSecurity;
 import org.javlo.user.User;
 
 public class DynamicComponentCreator extends AbstractVisualComponent implements IAction {
@@ -133,7 +134,7 @@ public class DynamicComponentCreator extends AbstractVisualComponent implements 
 			id = contentService.createContentWidthId(ctx, compRoot, ComponentBean.DEFAULT_AREA, "0", bean, true);
 			comp = contentService.getComponent(ctx, id);
 		}
-		if (comp.getAuthors().equals(ctx.getCurrentUserId())) {
+		if (comp.getAuthors().equals(ctx.getCurrentUserId()) || ctx.isUserWebSiteManager()) {
 			if (delete) {				
 				comp.getPage().removeContent(ctx, id, true);
 			} else {

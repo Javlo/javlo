@@ -42,6 +42,7 @@ import org.javlo.user.AdminUserSecurity;
 import org.javlo.user.IUserFactory;
 import org.javlo.user.User;
 import org.javlo.user.UserFactory;
+import org.javlo.user.UserSecurity;
 
 /**
  * @author pvanderm
@@ -2106,6 +2107,24 @@ public class ContentContext {
 		ContentContext masterContentContext = new ContentContext(this);
 		masterContentContext.setForceGlobalContext(getGlobalContext().getMasterContext(this));
 		return masterContentContext;
+	}
+	
+	/**
+	 * current user (edit or view) can manager the current site.
+	 * @return
+	 */
+	public boolean isUserWebSiteManager() {
+		if (AdminUserSecurity.getInstance().isAdmin(getCurrentEditUser())) {
+			return true;
+		} else {
+			User user = getCurrentUser();
+			if (user != null) {
+				if (user.getRoles().contains("admin") || user.getRoles().contains("manager")) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 }

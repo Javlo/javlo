@@ -380,14 +380,14 @@ public class ImageHelper {
 				ResourceHelper.closeResource(in);
 			}
 			
-			if (size == null && StringHelper.isJpeg(file.getName())) {				
-				try {
-					in = new FileInputStream(file);
-					size = getJpegSize(in);					
-				} finally {
-					ResourceHelper.closeResource(in);
-				}
-			} 
+//			if (size == null && StringHelper.isJpeg(file.getName())) {				
+//				try {
+//					in = new FileInputStream(file);
+//					size = getJpegSize(in);					
+//				} finally {
+//					ResourceHelper.closeResource(in);
+//				}
+//			} 
 			if (size == null) {
 				BufferedImage image = ImageIO.read(file);
 				size = new ImageSize(image.getWidth(), image.getHeight());

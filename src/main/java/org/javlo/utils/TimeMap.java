@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
+import org.javlo.helper.LocalLogger;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.servlet.IVersion;
@@ -254,7 +255,7 @@ public class TimeMap<K, V> implements Map<K, V> {
 		}
 		prop.store(out, "TimeMap - " + IVersion.VERSION);
 	}
-	
+
 	public void load(File file) throws Exception {
 		InputStream in = new FileInputStream(file);
 		try {
@@ -263,22 +264,27 @@ public class TimeMap<K, V> implements Map<K, V> {
 			ResourceHelper.closeResource(in);
 		}
 	}
-	
+
 	public void load(InputStream in) throws IOException {
 		Properties prop = new Properties();
 		prop.load(in);
 		String[] ordreArray = new String[prop.size()];
 		for (Object key : prop.keySet()) {
 			List<String> storeVal = StringHelper.stringToCollection(prop.getProperty(key.toString()));
-			internalMap.put((K)key, (V)storeVal.get(0));
-			long time = Long.parseLong(storeVal.get(1));
-			Calendar cal = Calendar.getInstance();
-			cal.setTimeInMillis(time);
-            internalTimeMap.put((K)key, cal);
-            ordreArray[Integer.parseInt(storeVal.get(2))] = key.toString();            			
+			if (storeVal.size() == 3) {
+				internalMap.put((K) key, (V) storeVal.get(0));
+				long time = Long.parseLong(storeVal.get(1));
+				Calendar cal = Calendar.getInstance();
+				cal.setTimeInMillis(time);
+				internalTimeMap.put((K) key, cal);
+				int orderPos = Integer.parseInt(storeVal.get(2));
+				if (orderPos>=0) {
+					ordreArray[orderPos] = key.toString();
+				}
+			}
 		}
-		order.addAll((Collection<? extends K>)Arrays.asList(ordreArray));
-		clearCache();		
+		order.addAll((Collection<? extends K>) Arrays.asList(ordreArray));
+		clearCache();
 	}
 
 }

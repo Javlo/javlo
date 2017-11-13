@@ -2,9 +2,11 @@ package org.javlo.component.users;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.mail.internet.InternetAddress;
 import javax.servlet.http.HttpServletRequest;
@@ -47,7 +49,10 @@ public class UserLogin extends AbstractPropertiesComponent implements IAction {
 	public static final String MSG = "message";
 	public static final String ROLES = "roles";
 
-	private static final List<String> FIELDS = new LinkedList<String>(Arrays.asList(new String[] { EMAIL, MSG, ROLES }));
+	public static final String OPTIN = "optin";
+	public static final String OPTOUT = "optout";
+
+	private static final List<String> FIELDS = new LinkedList<String>(Arrays.asList(new String[] { EMAIL, MSG, ROLES, OPTIN, OPTOUT }));
 
 	@Override
 	public String getType() {
@@ -164,10 +169,10 @@ public class UserLogin extends AbstractPropertiesComponent implements IAction {
 			if (!StringHelper.isEmpty(userInfo.getLastName())) {
 				data.put(i18nAccess.getText("user.lastanme"), userInfo.getLastName());
 			}
-			Map<String,String> params = new HashMap<String, String>();
+			Map<String, String> params = new HashMap<String, String>();
 			params.put("webaction1", "changemode");
-			params.put("webaction2", "edit");						
-			params.put("module", "users");			
+			params.put("webaction2", "edit");
+			params.put("module", "users");
 			params.put("mode", "view");
 			params.put("cuser", userInfo.getEncryptLogin());
 			ContentContext absCtx = ctx.getContextForAbsoluteURL();
@@ -176,7 +181,7 @@ public class UserLogin extends AbstractPropertiesComponent implements IAction {
 			MailService mailService = MailService.getInstance(new MailConfig(ctx.getGlobalContext(), ctx.getGlobalContext().getStaticConfig(), null));
 			InternetAddress fromEmail = new InternetAddress(ctx.getGlobalContext().getAdministratorEmail());
 			InternetAddress toEmail = new InternetAddress(comp.getFieldValue(EMAIL));
-			mailService.sendMail(null, fromEmail, toEmail, null, null, subject, adminMailContent, true, null, ctx.getGlobalContext() .getDKIMBean());
+			mailService.sendMail(null, fromEmail, toEmail, null, null, subject, adminMailContent, true, null, ctx.getGlobalContext().getDKIMBean());
 		}
 		if (!StringHelper.isEmpty(comp.getFieldValue(MSG))) {
 			messageRepository.setGlobalMessage(new GenericMessage(comp.getFieldValue(MSG), GenericMessage.INFO));
@@ -188,7 +193,7 @@ public class UserLogin extends AbstractPropertiesComponent implements IAction {
 		IUserFactory userFactory;
 		userFactory = UserFactory.createUserFactory(globalContext, ctx.getRequest().getSession());
 
-		User user = userFactory.getCurrentUser(globalContext, session);
+		User user = ctx.getCurrentUser();
 		IUserInfo userInfo = user.getUserInfo();
 		String email = rs.getParameter("email", "");
 		if (!userInfo.getLogin().equals(email)) {
@@ -199,9 +204,27 @@ public class UserLogin extends AbstractPropertiesComponent implements IAction {
 				userInfo.setLogin(email);
 			}
 		}
+
+		Set<String> newRoles = userInfo.getRoles();
+		if (!StringHelper.isEmpty(getFieldName(OPTIN))) {
+			if (rs.getParameter("optin") != null) {
+				newRoles.add(getFieldName(OPTIN));
+			} else {
+				newRoles.remove(getFieldName(OPTIN));
+			}
+		}
+		if (!StringHelper.isEmpty(getFieldName(OPTOUT))) {
+			if (rs.getParameter("optout") != null) {
+				newRoles.add(getFieldName(OPTOUT));
+			} else {
+				newRoles.remove(getFieldName(OPTOUT));
+			}
+		}
+		userInfo.setRoles(newRoles);
 		BeanHelper.copy(new RequestParameterMap(ctx.getRequest()), userInfo);
 		userFactory.updateUserInfo(userInfo);
 		userFactory.store();
+		user.setUserInfo(userInfo);
 
 		messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getViewText("registration.message.update", "User info is updated."), GenericMessage.INFO));
 

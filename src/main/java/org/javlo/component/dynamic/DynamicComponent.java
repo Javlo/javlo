@@ -45,6 +45,8 @@ import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
 import org.javlo.navigation.MenuElement;
 import org.javlo.navigation.PageBean;
+import org.javlo.service.PersistenceService;
+import org.javlo.service.exception.ServiceException;
 import org.javlo.service.resource.Resource;
 import org.javlo.template.Template;
 import org.javlo.utils.StructuredProperties;
@@ -440,6 +442,21 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 			return null;
 		}
 	}
+	
+	public boolean isNotififyCreation(ContentContext ctx) throws ServiceException {
+		boolean outNotif = StringHelper.isTrue(properties.getProperty("notify.creation"));
+		if (outNotif) {
+			properties.remove("notify.creation");
+			storeProperties();
+			PersistenceService.getInstance(ctx.getGlobalContext()).setAskStore(true);
+		}
+		return outNotif;
+	}
+	
+	public String getNotififyPageName(ContentContext ctx) throws ServiceException {
+		return properties.getProperty("notify.edit-page");
+	}
+
 
 	@Override
 	protected String getEditXHTMLCode(ContentContext ctx) throws Exception {

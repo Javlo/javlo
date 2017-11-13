@@ -1,3 +1,4 @@
+<%@page import="org.javlo.component.core.ComponentFactory"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"
 %><%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"
 %><%@page contentType="text/html"
@@ -35,6 +36,10 @@ GlobalContext globalContext = GlobalContext.getInstance(request);
 boolean pageEmpty = true;
 boolean editPage = !StringHelper.isTrue(request.getParameter(PageMirrorComponent.NOT_EDIT_PREVIEW_PARAM_NAME));
 IContentVisualComponent specificComp = (IContentVisualComponent)request.getAttribute("specific-comp");
+if (specificComp == null && request.getParameter("_only_component") != null) {
+	ContentService contentService = ContentService.getInstance(ctx.getRequest()); 
+	specificComp = contentService.getComponent(ctx, request.getParameter("_only_component"));
+}
 
 if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE && specificComp == null && editPage) {
 	%><div id="one-component-edit"></div><%
@@ -53,11 +58,15 @@ if (area != null) {
 	ctx.setArea(ComponentBean.DEFAULT_AREA);
 	area=ComponentBean.DEFAULT_AREA;
 }
-if (specificComp != null) {
-	area = specificComp.getArea();
-	ctx.setArea(area);
-}
 request.setAttribute("area", area);
+if (specificComp != null && !area.equals(specificComp.getArea())) {
+	specificComp=null;
+}
+
+// if (specificComp != null) {
+// 	area = specificComp.getArea();
+// 	ctx.setArea(area);
+// }
 
 String path = request.getParameter("_wcms_content_path");
 if (path!=null) {
@@ -115,7 +124,7 @@ IContentVisualComponent previousElem = null;
 	if (languageChange) {
 		%><div lang="<%=ctx.getContentLanguage()%>"><%
 	}	
-	if (!elems.hasNext(ctx) && EditContext.getInstance(globalContext, session).isPreviewEditionMode() && ctx.isAsPreviewMode() && editPage || displayZone) {
+	if (elems != null && !elems.hasNext(ctx) && EditContext.getInstance(globalContext, session).isPreviewEditionMode() && ctx.isAsPreviewMode() && editPage || displayZone) {
 		%><span><%=ctx.getArea()%></span><%
 	} else {
 		if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE && specificComp == null && editPage) {
@@ -155,7 +164,7 @@ IContentVisualComponent previousElem = null;
 					}
 				}
 			}			
-			%><%=elems.getPrefixXHTMLCode(ctx)%><%
+			if (elems != null) {%><%=elems.getPrefixXHTMLCode(ctx)%><%}
 if (globalContext.isCollaborativeMode() && ctx.getRenderMode() == ContentContext.PREVIEW_MODE) {
 	request.setAttribute("elem", elem);	
 	if (previousElem != null && previousElem.getAuthors().equals(elem.getAuthors())) {

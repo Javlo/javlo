@@ -260,7 +260,7 @@ public class UserAction extends AbstractModuleAction {
 				}
 
 				userFactory.updateUserInfo(userInfo);
-				userFactory.store();
+				userFactory.store();				
 			} catch (Exception e) {
 				e.printStackTrace();
 				return e.getMessage();
@@ -311,7 +311,7 @@ public class UserAction extends AbstractModuleAction {
 					if (newRoles.size() > 0) {
 						messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("global.message.noright"), GenericMessage.ERROR));
 					}
-				}
+				}				
 			} catch (Exception e) {
 				e.printStackTrace();
 				return e.getMessage();

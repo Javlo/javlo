@@ -7,7 +7,7 @@ ContentContext ctx = ContentContext.getContentContext(request, response);
 ContentContext editCtx = new ContentContext(ctx);
 editCtx.setRenderMode(ContentContext.EDIT_MODE);
 if (ctx.getGlobalContext().getStaticConfig().isAddButton()) {
-%><div class="add">
+%><c:if test="${fn:length(info.addMacro)>0}"><div class="add">
 	<a role="button" class="action prvCollapse" href="#addMacros" aria-expanded="false" aria-controls="addMacros"><span class="glyphicon glyphicon-plus-sign"></span></a>
 <div class="macros hiddenCollapse" id="addMacros">
 <c:forEach var="macro" items="${info.addMacro}">
@@ -40,6 +40,6 @@ if (ctx.getGlobalContext().getStaticConfig().isAddButton()) {
 	  ${i18n.edit[key] != key?i18n.edit[key]:macro.name}
 	</button>
 </c:if>	
-</c:forEach></div></div>
+</c:forEach></div></div></c:if>
 <%}%>
 </c:if>

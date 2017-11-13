@@ -121,12 +121,6 @@
 	</c:set>
 	<c:if test="${minOne}"><c:out value="${buffer}" escapeXml="false" /></c:if>
 </c:if>
-		<c:if test="${empty newTicket && not empty ticket.message}"><div class="frame">
-		<div class="line">
-			<label>message</label>
-			<div class="message">${ticket.message}</div>			
-		</div></div></c:if>
-		
 	<c:if test="${empty newTicket}">
 	<h2>comments</h2>
 	<c:if test="${fn:length(ticket.comments) > 0}">

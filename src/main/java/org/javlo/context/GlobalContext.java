@@ -62,6 +62,7 @@ import org.javlo.helper.DebugHelper;
 import org.javlo.helper.ElementaryURLHelper;
 import org.javlo.helper.ElementaryURLHelper.Code;
 import org.javlo.helper.LangHelper;
+import org.javlo.helper.LocalLogger;
 import org.javlo.helper.NavigationHelper;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.ServletHelper;
@@ -249,6 +250,8 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	private ServletContext application;
 
 	private URLTriggerThread pageChangeNotificationThread;
+	
+	private URLTriggerThread dynamicComponentChangeNotificationThread;
 
 	private URLTriggerThread ticketChangeNotificationThread;
 
@@ -432,12 +435,24 @@ public class GlobalContext implements Serializable, IPrintInfo {
 						newInstance.properties.setProperty("access-date", StringHelper.renderTime(new Date()));
 						newInstance.contextFile = configFile;
 						newInstance.save();
+						newInstance.loadFiles();
 					}
 					newInstance.startThread();
 				}
 			}
 		}
 		return newInstance;
+	}
+
+	private void loadFiles() {		
+		File tokenFile = getTokenPageFile();		
+		if (tokenFile.exists()) {
+			try {
+				pageTimeToken.load(tokenFile);				
+			} catch (Exception e) {			
+				e.printStackTrace();
+			}
+		}		
 	}
 
 	public static GlobalContext getRealInstance(HttpSession session, String contextKey) throws IOException {
@@ -460,6 +475,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	}
 
 	private static GlobalContext getRealInstance(HttpSession session, String contextKey, boolean copyDefaultContext) throws IOException {
+		
 		contextKey = StringHelper.stringToFileName(contextKey);
 
 		StaticConfig staticConfig = StaticConfig.getInstance(session.getServletContext());
@@ -474,7 +490,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 				newInstance.application = session.getServletContext();
 				newInstance.cacheMaps = new TimeMap<String, ICache>(staticConfig.getCacheMaxTime(), staticConfig.getCacheMaxSize());
 			} else {
-				newInstance.staticConfig = staticConfig;
+				newInstance.staticConfig = staticConfig;				
 				return newInstance;
 			}
 
@@ -564,23 +580,15 @@ public class GlobalContext implements Serializable, IPrintInfo {
 			}
 			newInstance.startThread();
 			
-			File tokenFile = newInstance.getTokenPageFile();
-			if (tokenFile.exists()) {
-				try {
-					newInstance.pageTimeToken.load(tokenFile);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-
 			session.getServletContext().setAttribute(contextKey, newInstance);
 			session.setAttribute(KEY, newInstance);
-
+			
 			synchronized (newInstance.properties) {
 				newInstance.properties.setProperty("access-date", StringHelper.renderTime(new Date()));
 			}
 			newInstance.writeInfo(session, System.out);
-			newInstance.cleanDataAccess();
+			newInstance.cleanDataAccess();			
+			newInstance.loadFiles();			
 
 			// TODO : init resource Id
 
@@ -608,6 +616,23 @@ public class GlobalContext implements Serializable, IPrintInfo {
 							pageChangeNotificationThread = new URLTriggerThread("PageChangeNotificationThread", secBetweenCheck, urlToTrigger);
 							pageChangeNotificationThread.start();
 							logger.info(pageChangeNotificationThread.getName() + " started.");
+						} catch (MalformedURLException ex) {
+							ex.printStackTrace();
+						}
+					}
+					if (getStaticConfig().isNotificationDyanamicComponentThread()) {
+						int secBetweenCheck = getStaticConfig().getTimeBetweenChangeNotificationForDynamicComponent();
+						Map<String, String> params = new HashMap<String, String>();
+						params.put("webaction", "view.checkChangesAndNotifyDynamicComponent");
+						params.put(ContentContext.FORWARD_AJAX, "true");
+						ContentContext absoluteCtx = ctx.getContextForAbsoluteURL();
+						absoluteCtx.setRenderMode(ContentContext.VIEW_MODE);
+						String url = URLHelper.createURL(absoluteCtx, "/", params);
+						try {
+							URL urlToTrigger = new URL(url);
+							dynamicComponentChangeNotificationThread = new URLTriggerThread("DynamicComponentChangeNotificationThread", secBetweenCheck, urlToTrigger);
+							dynamicComponentChangeNotificationThread.start();
+							logger.info(dynamicComponentChangeNotificationThread.getName() + " started.");
 						} catch (MalformedURLException ex) {
 							ex.printStackTrace();
 						}
@@ -655,6 +680,10 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		// Stop "ticket changes notifications"
 		if (ticketChangeNotificationThread != null) {
 			ticketChangeNotificationThread.stopThread();
+		}
+		// stop "dynamic component trigger"
+		if (dynamicComponentChangeNotificationThread != null) {
+			dynamicComponentChangeNotificationThread.stopThread();
 		}
 		// Stop remote service
 		if (remoteService != null) {

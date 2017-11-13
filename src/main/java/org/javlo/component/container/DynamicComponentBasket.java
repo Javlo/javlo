@@ -12,12 +12,14 @@ import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.dynamic.DynamicComponent;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
+import org.javlo.helper.NetHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.message.MessageRepository;
 import org.javlo.service.ContentService;
 import org.javlo.service.RequestService;
+import org.owasp.encoder.Encode;
 
 public class DynamicComponentBasket extends AbstractVisualComponent implements IAction {
 
@@ -50,18 +52,31 @@ public class DynamicComponentBasket extends AbstractVisualComponent implements I
 	public String getLargeViewXHTMLCode(ContentContext ctx) throws Exception {
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(outStream);
-		RequestService rs = RequestService.getInstance(ctx.getRequest());		
+		RequestService rs = RequestService.getInstance(ctx.getRequest());
 		I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
 		String selection = rs.getParameter("selection");
 		if (selection != null) {
-			String pdfURL = URLHelper.createPDFURL(ctx);
+			String htmlURL = URLHelper.createURL(ctx.getContextForAbsoluteURL());
 			String token = rs.getParameter(GlobalContext.PAGE_TOKEN_PARAM);
+			htmlURL = URLHelper.addParam(htmlURL, "selection", selection);
+			if (token != null) {
+				htmlURL = URLHelper.addParam(htmlURL, GlobalContext.PAGE_TOKEN_PARAM, token);
+			}
+			htmlURL = URLHelper.cryptURL(ctx, htmlURL);
+			String pdfURL = URLHelper.createPDFURL(ctx.getContextForAbsoluteURL());			
 			pdfURL = URLHelper.addParam(pdfURL, "selection", selection);
 			if (token != null) {
 				pdfURL = URLHelper.addParam(pdfURL, GlobalContext.PAGE_TOKEN_PARAM, token);
 			}
 			pdfURL = URLHelper.cryptURL(ctx, pdfURL);
 			out.println("<div class=\"btn-group pdf-link\"><a class=\"btn btn-secondary\" href=\"" + pdfURL + "\"><i class=\"fa fa-file-pdf-o\" aria-hidden=\"true\"></i>&nbsp;" + i18nAccess.getViewText("global.download") + " PDF</a></div>");
+			
+			if (ctx.getCurrentUser() != null) {			
+				String mailSubject = ctx.getGlobalContext().getGlobalTitle()+" : "+i18nAccess.getViewText("ecom.basket")+" ("+ctx.getCurrentUser().getLogin()+')';			
+				String mailLink = "mailto:"+ctx.getGlobalContext().getAdministratorEmail()+"?subject="+Encode.forHtmlAttribute(mailSubject)+"&body="+Encode.forHtmlAttribute(htmlURL);			
+				out.println("<div class=\"btn-group email-link\"><a class=\"btn btn-secondary\" href=\"" + mailLink + "\"><i class=\"fa fa-envelope-o\" aria-hidden=\"true\"></i>&nbsp;" + i18nAccess.getViewText("global.send-mail") + "</a></div>");
+			}
+			
 		}
 		int index = 0;
 		ContentService contentService = ContentService.getInstance(ctx.getRequest());
@@ -84,7 +99,7 @@ public class DynamicComponentBasket extends AbstractVisualComponent implements I
 				ctx.getRequest().setAttribute("first", false);
 				ctx.getRequest().setAttribute("previousSame", true);
 			} else {
-				out.println("<p class=\"alert alert-danger\">deleted : "+selectId+"</p>");
+				out.println("<p class=\"alert alert-danger\">deleted : " + selectId + "</p>");
 			}
 
 		}
@@ -112,14 +127,23 @@ public class DynamicComponentBasket extends AbstractVisualComponent implements I
 			return null;
 		}
 	}
-	
-	public String getPageToken(ContentContext ctx) {
-		String token = (String)ctx.getRequest().getSession().getAttribute("_page_token");
+
+	public static String getPageToken(ContentContext ctx) {
+		String token = (String) ctx.getRequest().getSession().getAttribute("_page_token");
 		if (token == null) {
 			token = ctx.getGlobalContext().getNewTokenForPage("basket");
 			ctx.getRequest().getSession().setAttribute("_page_token", token);
 		}
 		return token;
+	}
+
+	protected static String getBasketURL(ContentContext ctx) throws Exception {
+		ComponentBasket basket = ComponentBasket.getComponentBasket(ctx);
+		Map<String, String> params = new HashMap<String, String>();
+		params.put("selection", StringHelper.collectionToString(basket.getComponents(), "-"));
+		params.put(GlobalContext.PAGE_TOKEN_PARAM, getPageToken(ctx));
+		//return URLHelper.cryptURL(ctx, URLHelper.createURLFromPageName(ctx, "basket", params));
+		return URLHelper.createURLFromPageName(ctx, "basket", params);
 	}
 
 	public String getSmallViewXHTMLCode(ContentContext ctx) throws Exception {
@@ -129,11 +153,7 @@ public class DynamicComponentBasket extends AbstractVisualComponent implements I
 		PrintStream out = new PrintStream(outStream);
 		out.println("<div class=\"card ajax-group\"><div class=\"card-header\">");
 		out.println(ComponentBasket.getComponentBasket(ctx).size() + " " + getValue());
-		Map<String, String> params = new HashMap<String, String>();
-		params.put("selection", StringHelper.collectionToString(basket.getComponents(), "-"));
-		params.put(GlobalContext.PAGE_TOKEN_PARAM, getPageToken(ctx));
-		String basketURL = URLHelper.cryptURL(ctx, URLHelper.createURLFromPageName(ctx, "basket", params));
-		out.println("<a class=\"share-link pull-right\" href=\"" + basketURL + "\"><i class=\"fa fa-share\" aria-hidden=\"true\"></i></a>");
+		out.println("<a class=\"share-link pull-right\" href=\"" + getBasketURL(ctx) + "\"><i class=\"fa fa-share\" aria-hidden=\"true\"></i></a>");
 		out.println("</div>");
 		if (basket.components.size() > 0) {
 			out.println("<ul class=\"list-group list-group-flush\">");
@@ -141,7 +161,7 @@ public class DynamicComponentBasket extends AbstractVisualComponent implements I
 			for (String compid : basket.components) {
 				DynamicComponent comp = (DynamicComponent) contentService.getComponent(ctx, compid);
 				if (comp != null) {
-					params.clear();
+					Map<String, String> params = new HashMap<String, String>();
 					params.put("webaction", getActionGroupName() + ".delete");
 					params.put("comp", comp.getId());
 					String delURL = URLHelper.createAjaxURL(ctx, params);
@@ -188,11 +208,13 @@ public class DynamicComponentBasket extends AbstractVisualComponent implements I
 
 	public static String performDelete(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
 		if (ComponentBasket.getComponentBasket(ctx).removeComponent(rs.getParameter("comp", null))) {
-			for (IContentVisualComponent comp : ctx.getCurrentPage().getContentByType(ctx.getContextWithArea(null), DynamicComponentBasket.TYPE)) {
-				if (comp != null) {
+			if (!ctx.isAjax()) {
+				NetHelper.sendRedirectTemporarily(ctx.getResponse(), getBasketURL(ctx));
+				return null;
+			} else
+				for (IContentVisualComponent comp : ctx.getCurrentPage().getContentByType(ctx.getContextWithArea(null), DynamicComponentBasket.TYPE)) {
 					ctx.getAjaxInsideZone().put("cp-" + comp.getId(), ((AbstractVisualComponent) comp).getViewXHTMLCode(ctx));
 				}
-			}
 		}
 		return null;
 	}

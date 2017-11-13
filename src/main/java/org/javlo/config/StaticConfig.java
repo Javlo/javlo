@@ -1211,15 +1211,19 @@ public class StaticConfig extends Observable {
 	}
 
 	public boolean isMailingThread() {
-		return StringHelper.isTrue(properties.getString("mailing.thread", "true"));
+		return StringHelper.isTrue(properties.getString("mailing.thread"), true);
 	}
 	
 	public boolean isStaticInfoDescription() {
-		return StringHelper.isTrue(properties.getString("static-info.description", "true"));
+		return StringHelper.isTrue(properties.getString("static-info.description"), true);
 	}
 
 	public boolean isNotificationThread() {
-		return StringHelper.isTrue(properties.getString("noctification.thread", "false"));
+		return StringHelper.isTrue(properties.getString("noctification.thread"), false);
+	}
+	
+	public boolean isNotificationDyanamicComponentThread() {
+		return StringHelper.isTrue(properties.getString("noctification-dynamic-component.thread"), false);
 	}
 
 	public boolean isPasswordEncryt() {
@@ -1455,13 +1459,21 @@ public class StaticConfig extends Observable {
 	}
 
 	/**
-	 * return time between 2 modification check in second. default : 5 minutes
-	 * (300 sec.)
+	 * return time between 2 modification check in second. default : 3 minutes
 	 * 
 	 * @return
 	 */
 	public int getTimeBetweenChangeNotification() {
 		return Integer.parseInt(properties.getString("time-between-change-notification", "" + 3 * 60));
+	}
+	
+	/**
+	 * return time between 2 modification check of dynamic component in second. default : 10 minutes
+	 * 
+	 * @return
+	 */
+	public int getTimeBetweenChangeNotificationForDynamicComponent() {
+		return Integer.parseInt(properties.getString("time-between-change-notification", "" + 10 * 60));
 	}
 
 	public String getApplicationLogin() {

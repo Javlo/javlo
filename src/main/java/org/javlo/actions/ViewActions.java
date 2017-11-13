@@ -5,13 +5,19 @@ package org.javlo.actions;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 import java.util.logging.Logger;
 
+import javax.mail.internet.InternetAddress;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.javlo.component.core.ComponentFactory;
+import org.javlo.component.core.IContentVisualComponent;
+import org.javlo.component.dynamic.DynamicComponent;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
@@ -19,6 +25,7 @@ import org.javlo.helper.NetHelper;
 import org.javlo.helper.PaginationContext;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
+import org.javlo.helper.XHTMLHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.mailing.MailingBuilder;
 import org.javlo.module.ticket.TicketAction;
@@ -37,7 +44,10 @@ public class ViewActions implements IAction {
 
 	private static final String CHANGES_NOTIFICATION_TIME_A = ViewActions.class.getName() + ".TIME_A";
 	private static final String CHANGES_NOTIFICATION_TIME_B = ViewActions.class.getName() + ".TIME_B";
-
+	
+	private static final String CHANGES_NOTIFICATION_DYNAMIC_COMPONENT_TIME_A = ViewActions.class.getName() + ".TIME_DC_A";
+	private static final String CHANGES_NOTIFICATION_DYNAMIC_COMPONENT_TIME_B = ViewActions.class.getName() + ".TIME_DC_B";
+	
 	/**
 	 * create a static logger.
 	 */
@@ -174,6 +184,74 @@ public class ViewActions implements IAction {
 		timeA = now;
 		globalContext.setAttribute(CHANGES_NOTIFICATION_TIME_A, timeA);
 		globalContext.setAttribute(CHANGES_NOTIFICATION_TIME_B, timeB);
+
+		return null;
+	}
+	
+	/**
+	 * Send notifications for pages modified between TimeA and TimeB. The timeline is TimeB -> TimeA -> Now .
+	 * <br/>After the process: TimeA become TimeB and Now become TimeA. 
+	 * @param ctx
+	 * @param globalContext
+	 * @param content
+	 * @return
+	 */
+	public static String performCheckChangesAndNotifyDynamicComponent(ContentContext ctx, GlobalContext globalContext, ContentService content) {		
+		
+		Date now = new Date();
+		Date timeA = (Date) globalContext.getAttribute(CHANGES_NOTIFICATION_DYNAMIC_COMPONENT_TIME_A);
+		Date timeB = (Date) globalContext.getAttribute(CHANGES_NOTIFICATION_DYNAMIC_COMPONENT_TIME_B);
+		if (timeA == null || timeB == null) {			
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(now);
+			int interval = globalContext.getStaticConfig().getTimeBetweenChangeNotificationForDynamicComponent();
+			cal.add(Calendar.SECOND, -interval);
+			timeA = cal.getTime();
+			cal.add(Calendar.SECOND, -interval);
+			timeB = cal.getTime();
+		}
+		try {
+			
+			Map<String,String> mailData = new HashMap<String,String>();
+			
+			String type = null;
+			for (IContentVisualComponent comp : ComponentFactory.getAllComponentsFromContext(ctx)) {
+				if (comp instanceof DynamicComponent) {					
+					DynamicComponent dcomp = (DynamicComponent)comp;
+					if (dcomp.isNotififyCreation(ctx)) {
+						type = dcomp.getType();
+						String pageName = dcomp.getNotififyPageName(ctx);
+						ContentService contentService = ContentService.getInstance(ctx.getRequest());
+						MenuElement displayPage = contentService.getNavigation(ctx).searchChildFromName(pageName);
+						if (displayPage != null) {
+							String url = URLHelper.createURL(ctx.getContextForAbsoluteURL(), displayPage);
+							url = URLHelper.addParam(url, "id", dcomp.getId());
+							url = URLHelper.addParam(url, "edit", "1");
+							mailData.put(dcomp.getLabel(ctx), "<a href=\""+url+"\">"+dcomp.getTextTitle(ctx)+"</a>");	
+						} else {
+							String url = URLHelper.createURL(ctx.getContextForAbsoluteURL());
+							url = URLHelper.addParam(url, "_only_component", dcomp.getId());
+							mailData.put(dcomp.getLabel(ctx), "<a href=\""+url+"\">"+dcomp.getTextTitle(ctx)+"</a>");
+						}
+						
+					}
+				}
+			}			
+			
+			if (type != null) {
+				String subject = ctx.getGlobalContext().getGlobalTitle()+" : new "+type;
+				String mail = XHTMLHelper.createAdminMail(null , "new "+type+" created, please click on the link to visual it", mailData, URLHelper.createAbsoluteURL(ctx, "/"), ctx.getGlobalContext().getGlobalTitle(), null);
+				InternetAddress email = new InternetAddress(ctx.getGlobalContext().getAdministratorEmail());
+				NetHelper.sendMail(globalContext,email,email, null, null, subject, mail, null, true);
+			}
+			
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		timeB = timeA;
+		timeA = now;
+		globalContext.setAttribute(CHANGES_NOTIFICATION_DYNAMIC_COMPONENT_TIME_A, timeA);
+		globalContext.setAttribute(CHANGES_NOTIFICATION_DYNAMIC_COMPONENT_TIME_B, timeB);
 
 		return null;
 	}

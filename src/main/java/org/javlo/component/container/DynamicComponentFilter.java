@@ -134,7 +134,11 @@ public class DynamicComponentFilter extends AbstractPropertiesComponent implemen
 		PrintStream out = new PrintStream(outStream);
 
 		I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
-		if (!getStyle().equals(HIDE_FORM) && !getStyle().equals(HIDE_FORM_USER_ONLY)) {
+		
+		/* special, if no preview mode --> end user can create component --> admin user can manage it */
+		boolean componentManager = ctx.isUserWebSiteManager() && !ctx.getGlobalContext().isPreviewMode();
+		
+		if (!getStyle().equals(HIDE_FORM) && !getStyle().equals(HIDE_FORM_USER_ONLY) || componentManager) {
 			out.println("<div class=\"filter-form card panel panel-default\"><form role=\"form\" class=\"generic-form\" id=\"form-filter-" + getId() + "\" name=\"form-filter-" + getId() + "\" action=\"" + URLHelper.createURL(ctx) + "\" method=\"post\">");
 			out.println("<div class=\"fields panel-body card-body\"><input type=\"hidden\" name=\"webaction\" value=\"" + getActionGroupName() + ".filter\" />");
 			out.println("<input type=\"hidden\" name=\"" + IContentVisualComponent.COMP_ID_REQUEST_PARAM + "\" value=\"" + getId() + "\"><div class=\"row field-row first-row\">");
@@ -180,6 +184,11 @@ public class DynamicComponentFilter extends AbstractPropertiesComponent implemen
 		Map<String, Field> fieldsSearch = new HashMap<String, Field>();
 
 		boolean isFilter = getStyle().equals(STYLE_ALL) || getStyle().equals(HIDE_FORM) || getStyle().equals(CURRENT_USER_ONLY) || getStyle().equals(HIDE_FORM_USER_ONLY);
+		
+		if (componentManager) {
+			isFilter = false;
+		}
+		
 
 		for (Field field : getSearchField(ctx)) {
 			fieldsSearch.put(field.getName(), field);
@@ -196,7 +205,7 @@ public class DynamicComponentFilter extends AbstractPropertiesComponent implemen
 			for (IFieldContainer container : containers) {
 				if (container.isRealContent(ctx)) {					
 					List<Field> fields = container.getFields(ctx);
-					if (!onlyUser || container.getAuthors().equals(ctx.getCurrentUserId())) {
+					if (!onlyUser || container.getAuthors().equals(ctx.getCurrentUserId()) || ctx.isUserWebSiteManager()) {
 						boolean display = true;
 						for (Field field : fields) {
 							Field searchField = fieldsSearch.get(field.getName());
