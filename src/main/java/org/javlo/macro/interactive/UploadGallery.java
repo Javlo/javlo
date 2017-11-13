@@ -103,8 +103,6 @@ public class UploadGallery implements IInteractiveMacro, IAction {
 		return "/jsp/macros/upload_gallery/home.jsp";
 	}
 
-	
-
 	@Override
 	public String prepare(ContentContext ctx) {
 		

@@ -48,6 +48,7 @@ import org.javlo.macro.ImportDefaultLanguageMacro;
 import org.javlo.macro.IncreaseSubtitleLevelMacro;
 import org.javlo.macro.MacroRendererCorrection;
 import org.javlo.macro.MergeDynamicComponent;
+import org.javlo.macro.MergeGalleryAndGalleries;
 import org.javlo.macro.MergeImagesInGallery;
 import org.javlo.macro.NoClickableImageMacro;
 import org.javlo.macro.PasteCopiedElementInAllLanguageMacro;
@@ -176,6 +177,7 @@ public class MacroFactory {
 		macros.add(new ValidAllChildren());
 		macros.add(new CleanPersistenceFolder());
 		macros.add(new FileInListMacro());
+		macros.add(new MergeGalleryAndGalleries());
 	}
 
 	public IMacro getMacro(String name) {
