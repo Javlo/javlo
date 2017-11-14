@@ -87,7 +87,7 @@ public class TicketService {
 		}
 	}
 
-	public void updateTicket(ContentContext ctx, TicketBean ticket) throws Exception {
+	public void updateTicket(ContentContext ctx, TicketBean ticket, boolean updateDate) throws Exception {
 		if (!ticket.isDebugNote()) {
 			if (!ticket.isDeleted()) {
 				tickets.put(ticket.getId(), ticket);
@@ -95,7 +95,9 @@ public class TicketService {
 				tickets.remove(ticket.getId());
 			}
 		}
+		if (updateDate) {
 		ticket.setLastUpdateDate(new Date());
+		}
 		storeTicket(ctx, ticket);
 	}
 

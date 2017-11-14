@@ -113,7 +113,7 @@ public class TicketAction extends AbstractModuleAction {
 				newTicket.setAuthors(ctx.getCurrentUserId());
 				newTicket.setContext(ctx.getGlobalContext().getContextKey());
 				newTicket.setUrl(URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.PREVIEW_MODE)));
-				ticketService.updateTicket(ctx, newTicket);
+				ticketService.updateTicket(ctx, newTicket, false);
 				rs.setParameter("id", newTicket.getId());
 				ctx.getRequest().setAttribute("newTicket", true);
 				ticket = new TicketUserWrapper(newTicket, ctx);
@@ -122,7 +122,7 @@ public class TicketAction extends AbstractModuleAction {
 			}
 			if (ticket != null && rs.getParameter("back", null) == null && !StringHelper.isTrue(ctx.getRequest().getAttribute("back-list"))) {
 				ticket.onRead(ctx.getCurrentEditUser().getLogin());
-				ticketService.updateTicket(ctx, new TicketBean(ticket));
+				ticketService.updateTicket(ctx, new TicketBean(ticket), false);
 				ctx.getRequest().setAttribute("ticket", ticket);
 				if (ticketModule.getBox("main") == null) {
 					ticketModule.addMainBox("main", "update ticket : " + rs.getParameter("id", ""), "/jsp/update_ticket.jsp", true);
@@ -213,7 +213,7 @@ public class TicketAction extends AbstractModuleAction {
 			}
 		}
 		ticket.onUpdate(user.getLogin());
-		ticketService.updateTicket(ctx, ticket);
+		ticketService.updateTicket(ctx, ticket, true);
 
 		messageRepository.addMessage(new GenericMessage("ticket updated.", GenericMessage.INFO));
 		NotificationService.getInstance(globalContext).notifExternalService(ctx, ticket.getTitle(), GenericMessage.INFO, ticket.getUrl(), ticket.getAuthors(), false, ticket.getUsers());
