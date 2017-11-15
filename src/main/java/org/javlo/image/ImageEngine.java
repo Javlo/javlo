@@ -41,11 +41,11 @@ public class ImageEngine {
 	public final static Color NEUTRAL_COLOR = new Color(0.5f, 0.5f, 0.5f);
 
 	public final static Color TRANSPARENT_COLOR = new Color(0, 0, 0, 1);
-	
+
 	/**
 	 * special color to set automatic color (value is random)
 	 */
-	public final static Color DETECT_COLOR = new Color(235, 124, 32,15);
+	public final static Color DETECT_COLOR = new Color(235, 124, 32, 15);
 
 	// This class overrides the setCompressionQuality() method to workaround
 	// a problem in compressing JPEG images using the javax.imageio package.
@@ -141,10 +141,6 @@ public class ImageEngine {
 		int alpha, red, green, blue;
 		int newPixel;
 
-		System.out.println("***** ImageEngine.avg : original.getType() = " + original.getType()); // TODO:
-																									// remove
-																									// debug
-																									// trace
 		BufferedImage avg_gray = new BufferedImage(original.getWidth(), original.getHeight(), original.getType());
 		int[] avgLUT = new int[766];
 		for (int i = 0; i < avgLUT.length; i++)
@@ -1400,18 +1396,20 @@ public class ImageEngine {
 		}
 		return outImage;
 	}
-	
+
 	/**
 	 * test if two color is the same with tolerance
+	 * 
 	 * @param c1
 	 * @param c2
-	 * @param tolerance difference between two colors 0 >> 3*255
+	 * @param tolerance
+	 *            difference between two colors 0 >> 3*255
 	 * @return
 	 */
 	public static boolean equalColor(Color c1, Color c2, int tolerance) {
-		int diff = Math.abs(c1.getRed()-c2.getRed());
-		diff = diff + Math.abs(c1.getGreen()-c2.getGreen());
-		diff = diff + Math.abs(c1.getBlue()-c2.getBlue());
+		int diff = Math.abs(c1.getRed() - c2.getRed());
+		diff = diff + Math.abs(c1.getGreen() - c2.getGreen());
+		diff = diff + Math.abs(c1.getBlue() - c2.getBlue());
 		return diff > tolerance;
 	}
 
@@ -1420,120 +1418,150 @@ public class ImageEngine {
 			color = new Color(image.getRGB(1, 1));
 		}
 		boolean trim = true;
-		int decaly=0;		
-		for (; decaly < image.getHeight() && trim; decaly+=1) {
-			for (int x=0; x < image.getWidth(); x+=1) {					
-				if (equalColor(new Color(image.getRGB(x, decaly)),color, tolerance)) {
+		int decaly = 0;
+		for (; decaly < image.getHeight() && trim; decaly += 1) {
+			for (int x = 0; x < image.getWidth(); x += 1) {
+				if (equalColor(new Color(image.getRGB(x, decaly)), color, tolerance)) {
 					trim = false;
 				}
 			}
 		}
 		if (trim) {
 			return new BufferedImage(1, 1, image.getType());
-		}		
-		BufferedImage outImage = new BufferedImage(image.getWidth(), image.getHeight()-decaly, image.getType());
+		}
+		BufferedImage outImage = new BufferedImage(image.getWidth(), image.getHeight() - decaly, image.getType());
 		for (int y = decaly; y < image.getHeight(); y += 1) {
-			for (int x = 0; x < image.getWidth(); x += 1) {			
-				outImage.setRGB(x, y-decaly, image.getRGB(x, y));
+			for (int x = 0; x < image.getWidth(); x += 1) {
+				outImage.setRGB(x, y - decaly, image.getRGB(x, y));
 			}
 		}
 		return outImage;
 	}
-	
+
 	public static BufferedImage trimLeft(BufferedImage image, Color color, int tolerance) {
 		if (color == DETECT_COLOR) {
 			color = new Color(image.getRGB(1, 1));
 		}
 		boolean trim = true;
-		int decalx=0;
-		for (; decalx < image.getWidth() && trim; decalx+=1) {
-			for (int y=0; y < image.getHeight(); y+=1) {					
-				if (equalColor(new Color(image.getRGB(decalx, y)),color, tolerance)) {
+		int decalx = 0;
+		for (; decalx < image.getWidth() && trim; decalx += 1) {
+			for (int y = 0; y < image.getHeight(); y += 1) {
+				if (equalColor(new Color(image.getRGB(decalx, y)), color, tolerance)) {
 					trim = false;
 				}
 			}
 		}
 		if (trim) {
 			return new BufferedImage(1, 1, image.getType());
-		}		
-		BufferedImage outImage = new BufferedImage(image.getWidth()-decalx, image.getHeight(), image.getType());
+		}
+		BufferedImage outImage = new BufferedImage(image.getWidth() - decalx, image.getHeight(), image.getType());
 		for (int x = decalx; x < image.getWidth(); x += 1) {
-			for (int y=0; y < image.getHeight(); y+=1) {			
-				outImage.setRGB(x-decalx, y, image.getRGB(x, y));
+			for (int y = 0; y < image.getHeight(); y += 1) {
+				outImage.setRGB(x - decalx, y, image.getRGB(x, y));
 			}
 		}
 		return outImage;
 	}
-	
+
 	public static BufferedImage trimBottom(BufferedImage image, Color color, int tolerance) {
 		if (color == DETECT_COLOR) {
-			color = new Color(image.getRGB(1, image.getHeight()-1));
+			color = new Color(image.getRGB(1, image.getHeight() - 1));
 		}
 		boolean trim = true;
-		int decaly=0;
-		for (int y=image.getHeight()-1; y > 0 && trim; y-=1) {
-			for (int x=0; x < image.getWidth(); x+=1) {					
-				if (equalColor(new Color(image.getRGB(x, y)),color, tolerance)) {
+		int decaly = 0;
+		for (int y = image.getHeight() - 1; y > 0 && trim; y -= 1) {
+			for (int x = 0; x < image.getWidth(); x += 1) {
+				if (equalColor(new Color(image.getRGB(x, y)), color, tolerance)) {
 					trim = false;
 				}
 			}
 			if (trim) {
 				decaly++;
-			}			
+			}
 		}
 		if (trim) {
 			return new BufferedImage(1, 1, image.getType());
 		}
-		BufferedImage outImage = new BufferedImage(image.getWidth(), image.getHeight()-decaly, image.getType());
-		for (int y = 0; y < image.getHeight()-decaly; y += 1) {
-			for (int x = 0; x < image.getWidth(); x += 1) {			
+		BufferedImage outImage = new BufferedImage(image.getWidth(), image.getHeight() - decaly, image.getType());
+		for (int y = 0; y < image.getHeight() - decaly; y += 1) {
+			for (int x = 0; x < image.getWidth(); x += 1) {
 				outImage.setRGB(x, y, image.getRGB(x, y));
 			}
 		}
 		return outImage;
 	}
-	
+
 	public static BufferedImage trimRight(BufferedImage image, Color color, int tolerance) {
 		if (color == DETECT_COLOR) {
-			color = new Color(image.getRGB(image.getWidth()-1, 1));
+			color = new Color(image.getRGB(image.getWidth() - 1, 1));
 		}
 		boolean trim = true;
-		int decalx=0;
-		for (int x=image.getWidth()-1; x > 0 && trim; x-=1) {
-			for (int y=0; y < image.getHeight(); y+=1) {					
-				if (equalColor(new Color(image.getRGB(x, y)),color, tolerance)) {
+		int decalx = 0;
+		for (int x = image.getWidth() - 1; x > 0 && trim; x -= 1) {
+			for (int y = 0; y < image.getHeight(); y += 1) {
+				if (equalColor(new Color(image.getRGB(x, y)), color, tolerance)) {
 					trim = false;
 				}
 			}
 			if (trim) {
 				decalx++;
-			}			
+			}
 		}
 		if (trim) {
 			return new BufferedImage(1, 1, image.getType());
 		}
-		BufferedImage outImage = new BufferedImage(image.getWidth()-decalx, image.getHeight(), image.getType());
+		BufferedImage outImage = new BufferedImage(image.getWidth() - decalx, image.getHeight(), image.getType());
 		for (int y = 0; y < image.getHeight(); y += 1) {
-			for (int x = 0; x < image.getWidth()-decalx; x += 1) {				
+			for (int x = 0; x < image.getWidth() - decalx; x += 1) {
 				outImage.setRGB(x, y, image.getRGB(x, y));
 			}
 		}
 		return outImage;
 	}
-	public static BufferedImage trim(BufferedImage image, Color color, int tolerance) {		
-		return trimBottom(trimLeft(trimRight(trimTop(image, color, tolerance),color, tolerance),color, tolerance),color, tolerance);
+
+	public static BufferedImage trim(BufferedImage image, Color color, int tolerance) {
+		return trimBottom(trimLeft(trimRight(trimTop(image, color, tolerance), color, tolerance), color, tolerance), color, tolerance);
+	}
+
+	public static BufferedImage ultraLight(BufferedImage image) {
+		BufferedImage outImage = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_BYTE_BINARY);		
+		int delta = 8;
+		if (image.getWidth()<800) {
+			delta=1;
+		} else if (image.getWidth()<1200) {
+			delta=2;
+		} else if (image.getWidth()<2048) {
+			delta=4;
+		}
+		for (int y = 0; y < image.getHeight(); y += delta) {
+			for (int x = 0; x < image.getWidth(); x += delta) {
+				int rgb = image.getRGB(x, y);
+				Color c = new Color(rgb);
+				if (c.getRed() + c.getGreen() + c.getRed() < 128 * 3) {
+					rgb = Color.LIGHT_GRAY.getRGB();
+				} else {
+					rgb = Color.DARK_GRAY.getRGB();
+				}
+				for (int dx = 0; dx < delta; dx++) {
+					for (int dy = 0; dy < delta; dy++) {
+						outImage.setRGB(x + dx, y + dy, rgb);
+					}
+				}
+			}
+		}
+		return outImage;
 	}
 
 	public static void main(String[] args) throws Exception {
 		System.out.println("***** ImageEngine.main : START"); // TODO: remove
 																// debug trace
-		File imageSource = new File("c:/trans/trim.jpg");
-		File imageTarget = new File("c:/trans/trimed.jpg");
+		File imageSource = new File("c:/trans/test.jpg");
+		File imageTarget = new File("c:/trans/test_preview.png");
 
 		BufferedImage img = ImageIO.read(imageSource);
-		img = trim(img, DETECT_COLOR,12);
+		BufferedImage targetImg = ultraLight(img);
 		// img = resize(img, 119, 80, false);
-		ImageIO.write(img, "jpg", imageTarget);
+		ImageIO.write(targetImg, "png", imageTarget);
 		System.out.println("***** ImageEngine.main : END"); // TODO: remove
 															// debug trace
 	}

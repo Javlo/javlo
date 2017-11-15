@@ -52,6 +52,7 @@ import org.javlo.rendering.Device;
 import org.javlo.service.ContentService;
 import org.javlo.service.PersistenceService;
 import org.javlo.service.RequestService;
+import org.javlo.servlet.ImageTransformServlet;
 import org.javlo.template.Template;
 import org.javlo.template.TemplateFactory;
 import org.javlo.user.AdminUserFactory;
@@ -271,8 +272,10 @@ public class GlobalImage extends Image implements IImageFilter {
 		}
 		if (getFilter(ctx).equals(RAW_FILTER)) {
 			ctx.getRequest().setAttribute("previewURL", URLHelper.createResourceURL(ctx, getResourceURL(ctx, getFileName())));
+			ctx.getRequest().setAttribute("loadURL", URLHelper.createResourceURL(ctx, getResourceURL(ctx, getFileName())));
 		} else {
 			ctx.getRequest().setAttribute("previewURL", getPreviewURL(ctx, getFilter(ctx)));
+			ctx.getRequest().setAttribute("loadURL", getPreviewURL(ctx, getFilter(ctx)+ImageTransformServlet.PRELOAD_IMAGE_SUFFIX));
 		}
 		ctx.getRequest().setAttribute("largeURL", getPreviewURL(ctx, getLargeFilter(ctx)));
 		ctx.getRequest().setAttribute("media", this);

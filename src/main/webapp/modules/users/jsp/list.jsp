@@ -43,7 +43,7 @@
 			<input type="submit" name="delete" value="delete" class="js-hidden" />
 		</div>
 	</form>
-
+	
 	<script type="text/javascript">
 		jQuery(document)
 				.ready(
@@ -52,7 +52,7 @@
 									.dataTable(
 											{
 												"sPaginationType" : "full_numbers",
-												"aaSorting" : [ [ 1, "asc" ] ],
+												"aaSorting" : [ [ 5, "desc" ] ],
 												"aoColumns" : [  { "bSortable": false }, null,	null, null, null, null ],
 												"oLanguage" : {
 													"sUrl" : "${info.editTemplateURL}/js/plugins/i18n/datatable_${info.editLanguage}.txt"

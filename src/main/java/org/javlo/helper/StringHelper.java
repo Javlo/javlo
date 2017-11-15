@@ -60,6 +60,7 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.xml.utils.XMLChar;
 import org.javlo.bean.Company;
 import org.javlo.component.list.FreeTextList;
 import org.javlo.context.ContentContext;
@@ -3831,13 +3832,7 @@ public class StringHelper {
 		}
 	}
 	
-	public static void main(String[] args) {
-		long date = 1501161114887l;
-		
-		System.out.println("##### StringHelper.main : 1 "+StringHelper.renderTime(new Date((1501159395411l)))); //TODO: remove debug trace
-		
-	}
-	
+
 	/**
 	 * format number to number like : +32486123456
 	 * @param phone
@@ -3874,5 +3869,6 @@ public class StringHelper {
 
 		return true;
 	}	
+	
 	
 }

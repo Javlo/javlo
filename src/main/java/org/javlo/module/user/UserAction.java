@@ -11,6 +11,7 @@ import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -756,15 +757,15 @@ public class UserAction extends AbstractModuleAction {
 		} else {
 			users = userContext.getUserFactory(ctx).getUserInfoList();
 		}
-
+		
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(outStream);
 
 		int pageSize = Integer.parseInt(rs.getParameter("iDisplayLength", "10"));
 		int displayStart = Integer.parseInt(rs.getParameter("iDisplayStart", "0"));
-		int sortingCol = Integer.parseInt(rs.getParameter("iSortingCols", "0"));
+		int sortingCol = Integer.parseInt(rs.getParameter("iSortCol_0", "0"));
 		boolean ascSorting = rs.getParameter("sSortDir_0", "asc").equals("asc");
-
+		
 		switch (sortingCol) {
 		case 1:
 			Collections.sort(users, new UserInfoSorting(UserInfoSorting.LOGIN, ascSorting));
@@ -798,15 +799,15 @@ public class UserAction extends AbstractModuleAction {
 		for (IUserInfo userInfo : users) {
 			if (query == null || StringHelper.arrayToString(userInfo.getAllValues()).contains(query)) {
 				if (record >= displayStart && record < displayStart + pageSize) {
-					out.print(sep + '[' + '"' + "<input type=\\\"checkbox\\\" name=\\\"" + Encode.forJavaScriptAttribute(userInfo.getLogin()) + "\\\" />" + '"' + ',');
+					out.print(sep + '[' + '"' + "<input type=\\\"checkbox\\\" name=\\\"" + Encode.forHtmlAttribute(userInfo.getLogin()) + "\\\" />" + '"' + ',');
 					Map<String, String> params = new HashMap<String, String>();
 					params.put("webaction", "edit");
 					params.put("cuser", userInfo.getEncryptLogin());
 					String editURL = URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.EDIT_MODE), params);
-					out.print('"' + "<a href=\\\"" + editURL + "\\\">" + Encode.forJavaScriptSource(userInfo.getLogin()) + "</a>" + '"' + ',');
-					out.print('"' + Encode.forJavaScriptAttribute(userInfo.getFirstName()) + '"' + ',');
-					out.print('"' + Encode.forJavaScriptAttribute(userInfo.getLastName()) + '"' + ',');
-					out.print('"' + Encode.forJavaScriptAttribute(userInfo.getEmail()) + '"' + ',');
+					out.print('"' + "<a href=\\\"" + editURL + "\\\">" + Encode.forHtmlAttribute(userInfo.getLogin()) + "</a>" + '"' + ',');
+					out.print('"' + Encode.forHtmlAttribute(userInfo.getFirstName()) + '"' + ',');
+					out.print('"' + Encode.forHtmlAttribute(userInfo.getLastName()) + '"' + ',');
+					out.print('"' + Encode.forHtmlAttribute(userInfo.getEmail()) + '"' + ',');
 					out.print('"' + StringHelper.renderSortableTime(userInfo.getCreationDate()) + '"' + ']');
 					sep = ",";
 				}

@@ -89,6 +89,8 @@ import com.jhlabs.image.GrayscaleFilter;
 public class ImageTransformServlet extends HttpServlet {
 
 	public static final String RESOURCE_TOKEN_KEY = "rstk";
+	
+	public static final String PRELOAD_IMAGE_SUFFIX = "-load";
 
 	public static long COUNT_ACCESS = 0;
 
@@ -531,6 +533,15 @@ public class ImageTransformServlet extends HttpServlet {
 
 		// org.javlo.helper.Logger.stepCount("transform",
 		// "start - transformation");
+		
+		boolean preloadImage = false;
+		String originalFilter=null;
+		if (filter.endsWith(PRELOAD_IMAGE_SUFFIX)) {
+			originalFilter=filter;			
+			filter = filter.substring(0, filter.lastIndexOf(PRELOAD_IMAGE_SUFFIX));
+			preloadImage = true;
+			inFileExtention="png";
+		}	
 
 		int width = config.getWidth(device, filter, area);
 		int height = config.getHeight(device, filter, area);
@@ -835,6 +846,11 @@ public class ImageTransformServlet extends HttpServlet {
 		}
 		if (config.getResizeDashed(device, filter, area) > 0) {
 			img = ImageEngine.resizeDashed(img, config.getResizeDashed(device, filter, area));
+		}
+		
+		if (preloadImage) {
+			img = ImageEngine.ultraLight(img);
+			filter = originalFilter;
 		}
 
 		// org.javlo.helper.Logger.stepCount("transform",
