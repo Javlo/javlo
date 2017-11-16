@@ -1498,7 +1498,7 @@ public class Edit extends AbstractModuleAction {
 				}
 			}
 			ticket.setUsers(users);
-			TicketService.getInstance(ctx.getGlobalContext()).updateTicket(ctx, ticket);
+			TicketService.getInstance(ctx.getGlobalContext()).updateTicket(ctx, ticket, false);
 		} else {
 			return "Security error !";
 		}
@@ -1515,7 +1515,7 @@ public class Edit extends AbstractModuleAction {
 			for (Ticket ticket : ticketService.getTickets()) {
 				if (ticket.getUrl() != null && ticket.getUrl().equals(pageURL) && ticket instanceof TicketBean) {
 					((TicketBean) ticket).setStatus(Ticket.DONE_STATUS);
-					ticketService.updateTicket(ctx, (TicketBean) ticket);
+					ticketService.updateTicket(ctx, (TicketBean) ticket, true);
 				}
 			}
 			PersistenceService.getInstance(ctx.getGlobalContext()).setAskStore(true);
