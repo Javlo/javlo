@@ -643,6 +643,13 @@ public class ContentContext {
 						return lgCtx.getContextOnPage(page);
 					}
 				}
+				lgCtx = new ContentContext(this);
+				for (String lg : globalContext.getContentLanguages()) {
+					lgCtx.setContentLanguage(lg);
+					if (page.isRealContent(lgCtx)) {
+						return lgCtx.getContextOnPage(page);
+					}
+				}
 			}
 		}
 		return null;

@@ -370,12 +370,23 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 			 */
 			MenuElement firstChild = page.getFirstChild();
 			if (firstChild != null && firstChild.isChildrenAssociation()) {
-				bean.url = URLHelper.createURL(ctx, firstChild.getPath());
+				ContentContext ctxLg = ctx;
+				if (globalContext.isAutoSwitchToDefaultLanguage()) {
+					ctxLg = ctx.getContextWithContent(firstChild);
+				}
+				bean.url = URLHelper.createURL(ctxLg, firstChild.getPath());
 				bean.modificationDate = StringHelper.renderShortDate(lgCtx, firstChild.getModificationDate(ctx));
 				bean.sortableModificationDate = StringHelper.renderShortDate(lgCtx, firstChild.getModificationDate(ctx));
 				bean.publishURL = URLHelper.createAbsoluteViewURL(lgCtx, firstChild.getPath());
 			} else {
-				bean.url = URLHelper.createURL(ctx, page.getPath());
+				ContentContext ctxLg = ctx;
+				if (globalContext.isAutoSwitchToDefaultLanguage()) {
+					ctxLg = ctx.getContextWithContent(page);
+					if (ctxLg == null) {
+						ctxLg = ctx;
+					}
+				}
+				bean.url = URLHelper.createURL(ctxLg, page.getPath());
 				bean.publishURL = URLHelper.createAbsoluteViewURL(lgCtx, page.getPath());
 			}
 
