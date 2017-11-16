@@ -481,9 +481,13 @@ public class StaticInfo {
 			inStaticURL = inStaticURL.replaceFirst("/static", "");
 		}
 
-		HttpServletRequest request = ctx.getRequest();
+		GlobalContext globalContext = ctx.getGlobalContext();
 
-		StaticInfo outStaticInfo = (StaticInfo) request.getAttribute(inStaticURL);
+		//StaticInfo outStaticInfo = (StaticInfo) request.getAttribute(inStaticURL);
+		
+		final String KEY = "staticInfo-"+inStaticURL;
+		
+		StaticInfo outStaticInfo = (StaticInfo) globalContext.getTimeAttribute(KEY);
 
 		if (outStaticInfo == null) {
 			StaticInfo staticInfo = new StaticInfo();
@@ -495,8 +499,7 @@ public class StaticInfo {
 			StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
 			if (inStaticURL.startsWith(staticConfig.getStaticFolder())) {
 				inStaticURL = inStaticURL.substring(staticConfig.getStaticFolder().length());
-			}
-			GlobalContext globalContext = GlobalContext.getInstance(request);
+			}			
 			String realPath = URLHelper.mergePath(globalContext.getDataFolder(), staticConfig.getStaticFolder());
 			realPath = URLHelper.mergePath(realPath, inStaticURL);
 
@@ -505,7 +508,8 @@ public class StaticInfo {
 			staticInfo.size = file.length();
 
 			outStaticInfo = staticInfo;
-			request.setAttribute(inStaticURL, outStaticInfo);
+			//request.setAttribute(inStaticURL, outStaticInfo);
+			globalContext.setTimeAttribute(KEY, outStaticInfo);
 		}
 
 		return outStaticInfo;
@@ -1475,7 +1479,7 @@ public class StaticInfo {
 		if (imageSize != null) {
 			return imageSize;
 		} else {
-			try {
+			try {				
 				imageSize = ImageHelper.getImageSize(file);
 			} catch (Throwable e) {
 				logger.warning(e.getMessage());

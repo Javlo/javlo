@@ -892,4 +892,6 @@ change log
 
  * 1/ optimmisation crypted link / one page rendering + merge dynamic form result + follow page / get path optimisaiton and search child correction / follow inherited / component optimisation for mailing
  
- * 2/ correct transform url tag 
+ * 2/ correct transform url tag / image preload version + user list ajax sorting correction
+ 
+ * 3/ 

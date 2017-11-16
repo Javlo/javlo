@@ -136,6 +136,8 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	private Properties url404Map = null;
 
 	private POPThread popThread = null;
+	
+	private Calendar latestTicketNotificaitonTime = Calendar.getInstance();
 
 	private static final IURLFactory NO_URL_FACTORY = new NoURLFactory();
 
@@ -3983,6 +3985,14 @@ public class GlobalContext implements Serializable, IPrintInfo {
 
 	public Object getSharedObject(String key) {
 		return sharingMap.get(key);
+	}
+
+	public Calendar getLatestTicketNotificaitonTime() {
+		return latestTicketNotificaitonTime;
+	}
+
+	public void setLatestTicketNotificaitonTime(Calendar latestTicketNotificaitonTime) {
+		this.latestTicketNotificaitonTime = latestTicketNotificaitonTime;
 	}
 
 }

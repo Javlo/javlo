@@ -8,8 +8,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.javlo.helper.BeanHelper;
-import org.javlo.helper.DebugHelper;
-import org.javlo.helper.LocalLogger;
 import org.javlo.helper.StringHelper;
 
 public class TicketBean implements Serializable, Ticket {
@@ -238,6 +236,10 @@ public class TicketBean implements Serializable, Ticket {
 	@Override
 	public void onRead(String login) {
 		readers.add(login);
+	}
+	
+	public boolean isOpen() {
+		return getStatus().equals(STATUS_NEW) || getStatus().equals("working"); 
 	}
 
 }

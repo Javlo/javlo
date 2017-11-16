@@ -1222,6 +1222,10 @@ public class StaticConfig extends Observable {
 		return StringHelper.isTrue(properties.getString("noctification.thread"), false);
 	}
 	
+	public int getNotificationHours() {
+		return properties.getInt("noctification.hours", 9);
+	}
+	
 	public boolean isNotificationDyanamicComponentThread() {
 		return StringHelper.isTrue(properties.getString("noctification-dynamic-component.thread"), false);
 	}

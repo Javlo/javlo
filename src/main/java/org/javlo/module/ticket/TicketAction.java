@@ -102,7 +102,7 @@ public class TicketAction extends AbstractModuleAction {
 		Module ticketModule = modulesContext.getCurrentModule();
 		Map<String, TicketUserWrapper> myTickets = getMyTicket(ctx);
 		ctx.getRequest().setAttribute("tickets", myTickets.values());
-		
+
 		boolean onlymine = StringHelper.isTrue(rs.getParameter("mine"));
 		String ticketId = rs.getParameter("id", null);
 		if (ticketId != null) {
@@ -268,7 +268,7 @@ public class TicketAction extends AbstractModuleAction {
 													// between the 2 dates
 			globalContext.setAttribute(LAST_NOTIFICATION_TIME, lastNotificationTime);
 			if (!toNotify.isEmpty()) {
-				sendTicketSummaryNotification(ctx, toNotify);
+				sendTicketSummaryNotification(ctx, toNotify, null, true);
 			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -277,7 +277,44 @@ public class TicketAction extends AbstractModuleAction {
 		return null;
 	}
 
-	private static void sendTicketSummaryNotification(ContentContext ctx, List<TicketBean> tickets) throws Exception {
+	/**
+	 * Send notifications for tickets modified since the last notification time
+	 * ONLY if there is no modification since 5 min (defined in
+	 * {@link StaticConfig#getTimeBetweenChangeNotification()}) Not a webaction,
+	 * called from
+	 * {@link ViewActions#performSendTicketChangeNotifications(ContentContext, GlobalContext)}
+	 * 
+	 * @param ctx
+	 * @param globalContext
+	 * @return null
+	 */
+	public static String computeOpenAndSendNotifications(ContentContext ctx, GlobalContext globalContext) {
+		Calendar now = Calendar.getInstance();		
+		Calendar latestDate = globalContext.getLatestTicketNotificaitonTime();
+		if (now.get(Calendar.HOUR_OF_DAY) > ctx.getGlobalContext().getStaticConfig().getNotificationHours() && (latestDate==null || now.get(Calendar.DAY_OF_YEAR) != latestDate.get(Calendar.DAY_OF_YEAR))) {
+			globalContext.setLatestTicketNotificaitonTime(now);
+			try {
+				List<TicketBean> toNotify = new LinkedList<TicketBean>();
+				List<TicketBean> tickets = TicketService.getAllTickets(ctx);
+				for (TicketBean ticket : tickets) {
+					if (globalContext.getContextKey().equals(ticket.getContext())) {						
+						if (ticket.isOpen()) {
+							toNotify.add(ticket);
+						} 
+					}
+				}				
+				if (!toNotify.isEmpty()) {
+					sendTicketSummaryNotification(ctx, toNotify, "Tickets open on : "+globalContext.getGlobalTitle(), false);
+				}
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+		}
+
+		return null;
+	}
+
+	private static void sendTicketSummaryNotification(ContentContext ctx, List<TicketBean> tickets, String subject, boolean reply) throws Exception {
 		AdminUserFactory userFactory = AdminUserFactory.createUserFactory(ctx.getGlobalContext(), ctx.getRequest().getSession());
 		Map<String, List<TicketBean>> ticketsByUser = new HashMap<String, List<TicketBean>>();
 		for (TicketBean ticket : tickets) {
@@ -289,7 +326,7 @@ public class TicketAction extends AbstractModuleAction {
 				}
 				list.add(ticket);
 			}
-			if (StringHelper.isMail(ticket.getAuthors())) {
+			if (reply && StringHelper.isMail(ticket.getAuthors())) {
 				List<TicketBean> list = ticketsByUser.get(ticket.getAuthors());
 				if (list == null) {
 					list = new LinkedList<TicketBean>();
@@ -299,11 +336,11 @@ public class TicketAction extends AbstractModuleAction {
 			}
 		}
 		for (Entry<String, List<TicketBean>> entry : ticketsByUser.entrySet()) {
-			sendUserTicketSummaryNotification(ctx, userFactory, entry.getKey(), entry.getValue());
+			sendUserTicketSummaryNotification(ctx, userFactory, entry.getKey(), entry.getValue(), subject);
 		}
 	}
 
-	private static void sendUserTicketSummaryNotification(ContentContext ctx, AdminUserFactory userFactory, String userLogin, List<TicketBean> tickets) throws Exception {
+	private static void sendUserTicketSummaryNotification(ContentContext ctx, AdminUserFactory userFactory, String userLogin, List<TicketBean> tickets, String subject) throws Exception {
 		GlobalContext globalContext = ctx.getGlobalContext();
 		IUserInfo userInfo = userFactory.getUserInfos(userLogin);
 		if (userInfo != null) {
@@ -327,7 +364,7 @@ public class TicketAction extends AbstractModuleAction {
 				String sujectPrefix = i18nAccess.getText("ticket.subject");
 				String ticketUpdate = i18nAccess.getText("ticket.update");
 				String goOnSite = i18nAccess.getText("ticket.go");
-				String content = XHTMLHelper.createAdminMail(sujectPrefix + ' ' + siteTitle, ticketsMap.size() + ticketUpdate, ticketsMap, baseUrl, goOnSite, null);
+				String content = XHTMLHelper.createAdminMail(subject != null?subject:sujectPrefix + ' ' + siteTitle, ticketsMap.size() + ticketUpdate, ticketsMap, baseUrl, goOnSite, null);
 				NetHelper.sendXHTMLMail(ctx, new InternetAddress(globalContext.getAdministratorEmail()), new InternetAddress(email), null, null, ticketUpdate + ' ' + siteTitle, content.toString(), null);
 
 			}

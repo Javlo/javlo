@@ -1537,14 +1537,18 @@ public class ImageEngine {
 			for (int x = 0; x < image.getWidth(); x += delta) {
 				int rgb = image.getRGB(x, y);
 				Color c = new Color(rgb);
-				if (c.getRed() + c.getGreen() + c.getRed() < 128 * 3) {
+				if (c.getRed() + c.getGreen() + c.getRed() > 128 * 3) {
 					rgb = Color.LIGHT_GRAY.getRGB();
 				} else {
 					rgb = Color.DARK_GRAY.getRGB();
 				}
-				for (int dx = 0; dx < delta; dx++) {
-					for (int dy = 0; dy < delta; dy++) {
-						outImage.setRGB(x + dx, y + dy, rgb);
+				for (int dx = 0; dx < Math.min(delta, image.getWidth()-x); dx++) {
+					for (int dy = 0; dy < Math.min(delta, image.getHeight()-y); dy++) {
+						if ((x+dx)%2==0 || (y+dy)%2==0) {
+							outImage.setRGB(x + dx, y + dy, Color.LIGHT_GRAY.getRGB());
+						} else {
+							outImage.setRGB(x + dx, y + dy, rgb);
+						}
 					}
 				}
 			}

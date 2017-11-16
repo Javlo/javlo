@@ -270,8 +270,12 @@ public class ViewActions implements IAction {
 		mb.sendMailing(ctx);
 	}
 
-	public static String performSendTicketChangeNotifications(ContentContext ctx, GlobalContext globalContext) {
-		return TicketAction.computeChangesAndSendNotifications(ctx, globalContext);
+	public static String performSendTicketChangeNotifications(ContentContext ctx, GlobalContext globalContext) {		
+		String outMsg = TicketAction.computeOpenAndSendNotifications(ctx, globalContext);
+		if (outMsg == null) {
+			outMsg = TicketAction.computeChangesAndSendNotifications(ctx, globalContext);
+		}		
+		return outMsg;
 	}
 
 	@Override
