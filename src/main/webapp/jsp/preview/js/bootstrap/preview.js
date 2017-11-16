@@ -1,5 +1,6 @@
 var PREVIEWLOG = false;
 
+
 var editPreview = editPreview||{};
 
 if (!String.prototype.startsWith) {
@@ -281,8 +282,27 @@ if (!String.prototype.startsWith) {
 		});
 		return fd;
 	}
+	
+	function handleDragEnter(e) {
+		  // this / e.target is the current hover target.
+		  this.classList.add('_dragover');
+		}
+
+		function handleDragLeave(e) {
+		  this.classList.remove('_dragover');  // this / e.target is previous
+											// target element.
+		}
 
 	editPreview.initPreview = function() {
+		
+		
+		var cols = document.querySelectorAll('._area');
+		[].forEach.call(cols, function(col) {		  
+		  col.addEventListener('dragover', handleDragEnter, false)		  
+		  col.addEventListener('dragleave', handleDragLeave, false);
+		});
+
+		
 		
 		pjq('a.as-modal').on('click', function() {
 			var text = $(this).attr("title");
@@ -299,9 +319,9 @@ if (!String.prototype.startsWith) {
 
 		pjq('.slow-hide').delay(5000).fadeOut(500);
 
-		/**********************/
+		/** ******************* */
 		/** prepare preview * */
-		/**********************/
+		/** ******************* */
 
 		if (pjq("#preview-layer").length == 0) {
 			pjq("body").append('<div id="preview-layer"><div class="commands btn-group btn-group-sm area-actions" role="group"><span class=\"btn area-name\"><span class="mirror glyphicon glyphicon-paste" aria-hidden="true"></span><span class="not-mirror glyphicon glyphicon-th-large" aria-hidden="true"></span><span id=\"area-name\"></span></span>'+
@@ -343,9 +363,9 @@ if (!String.prototype.startsWith) {
 				return false;
 			});
 			
-			/*************************/
-			/** drag and drop layer **/
-			/*************************/
+			/** ********************** */
+			/** drag and drop layer * */
+			/** ********************** */
 			var drop = document.querySelectorAll('#preview-layer'), el = null;
 			el = drop[0];
 			el.addEventListener('dragover', function (event) {
@@ -370,9 +390,9 @@ if (!String.prototype.startsWith) {
 			});
 		}
 		
-		/******************************/
+		/** *************************** */
 		/** drag and drop component * */
-		/******************************/
+		/** *************************** */
 		var drag = document.querySelectorAll('#preview_command .component'), el = null;
 		for (var i = 0; i < drag.length; i++) {
 			el = drag[i];
@@ -481,6 +501,8 @@ if (!String.prototype.startsWith) {
 						}
 					}
 					var subComp = pjq(this);
+					
+					area=editPreview.searchArea(pjq(this));
 
 					countDrop++;
 					if (PREVIEWLOG) {
@@ -507,7 +529,9 @@ if (!String.prototype.startsWith) {
 							ajaxURL = ajaxURL +'&pageContainerID='+ editPreview.searchPageId(subComp);
 						}
 						editPreview.ajaxPreviewRequest(ajaxURL, null, null);
-					} else if (compType != null && compType.length > 0) { // insert new component
+					} else if (compType != null && compType.length > 0) { // insert
+																			// new
+																			// component
 						pjq(this).removeClass("drop-selected");
 						var previewId = subComp.attr("id").substring(3);
 						var area = editPreview.searchArea(subComp);						
@@ -526,7 +550,8 @@ if (!String.prototype.startsWith) {
 								editPreview.openModal(i18n_preview_edit, editURL);
 							}
 						}, null);
-					} else if (compId != null && compId.length > 0) { // move component
+					} else if (compId != null && compId.length > 0) { // move
+																		// component
 						var previewId = subComp.attr("id").substring(3);
 						var area = editPreview.searchArea(subComp);
 						var ajaxURL = editPreview.addParam(currentURL,"webaction=edit.moveComponent&comp-id=" + compId + "&previous=" + previewId + "&area=" + area+ "&render-mode=3&init=true");
@@ -536,7 +561,7 @@ if (!String.prototype.startsWith) {
 						editPreview.ajaxPreviewRequest(ajaxURL, null, null);
 					} else if (event.dataTransfer.files.length > 0) {						
 						var previewId = subComp.attr("id").substring(3);
-						var ajaxURL = editPreview.addParam(currentURL,"webaction=data.upload&content=true&previous=" + previewId);
+						var ajaxURL = editPreview.addParam(currentURL,"webaction=data.upload&content=true&previous=" + previewId+"&area="+area);
 						if (editPreview.searchPageId(subComp) != null) {
 							ajaxURL = ajaxURL +'&pageContainerID='+ editPreview.searchPageId(subComp);
 						}
@@ -578,9 +603,9 @@ if (!String.prototype.startsWith) {
 				})
 			}
 		}
-		/*************************/
+		/** ********************** */
 		/** drag and drop area * */
-		/********************** ***/
+		/** ******************** ** */
 		var drop = document.querySelectorAll('._empty_area'), el = null;
 		for (var i = 0; i < drop.length; i++) {
 			el = drop[i];
@@ -664,7 +689,8 @@ if (!String.prototype.startsWith) {
 								editPreview.openModal(i18n_preview_edit, editURL);
 							}
 						}, null);
-					} else if (compId != null && event.dataTransfer.files.length == 0) { // move component
+					} else if (compId != null && event.dataTransfer.files.length == 0) { // move
+																							// component
 						var ajaxURL = editPreview.addParam(currentURL,"previewEdit=true&webaction=edit.moveComponent&comp-id=" + compId + "&previous=0&area=" + area+ "&render-mode=3&init=true");
 						if (editPreview.searchPageId(this) != null) {
 							ajaxURL = ajaxURL +'&pageContainerID='+ editPreview.searchPageId(this);
@@ -709,25 +735,22 @@ if (!String.prototype.startsWith) {
 						
 						pjq(this).removeClass("_empty_area");
 						
-						/*var i = 0;
-						jQuery.each( event.dataTransfer.files, function(index, file) {
-							if (i==0) {
-								fd.append(fieldName,file);
-							} else {
-								fd.append(fieldName+"_"+i,file);
-							}
-							i++;
-						});
-						editPreview.ajaxPreviewRequest(ajaxURL, null, fd);*/
+						/*
+						 * var i = 0; jQuery.each( event.dataTransfer.files,
+						 * function(index, file) { if (i==0) {
+						 * fd.append(fieldName,file); } else {
+						 * fd.append(fieldName+"_"+i,file); } i++; });
+						 * editPreview.ajaxPreviewRequest(ajaxURL, null, fd);
+						 */
 					}
 					return false;
 				});
 			}
 		}
 
-		/*************************/
+		/** ********************** */
 		/** drag and drop page * */
-		/*************************/
+		/** ********************** */
 
 		var drop = document.querySelectorAll('#preview_command ul.navigation a.draggable'), el = null;
 		for (var i = 0; i < drop.length; i++) {
@@ -806,9 +829,9 @@ if (!String.prototype.startsWith) {
 			}
 		}
 
-		/************/
-		/** upload **/
-		/************/
+		/** ********* */
+		/** upload * */
+		/** ********* */
 		var drop = document.querySelectorAll('#preview_command .no-upload'), el = null;
 		for (var i = 0; i < drop.length; i++) {
 			el = drop[i];
@@ -1258,9 +1281,9 @@ if (!String.prototype.startsWith) {
 	});
 	
 	
-	/** ** **/
-	/** IM **/
-	/** ** **/
+	/** ** * */
+	/** IM * */
+	/** ** * */
 
 	var IM_QUERY_UNREAD_COUNT_TIME_INTERVAL = 10000;
 	var IM_QUERY_NEW_MESSAGES_TIME_INTERVAL = 2000;
@@ -1302,7 +1325,7 @@ if (!String.prototype.startsWith) {
 		var imForm = pjq(".im-form");
 		var url = imForm.attr('action');
 		if (url == null) {
-			//Link not present, so the chat is disabled
+			// Link not present, so the chat is disabled
 			imInProgress = false;
 			return;
 		}
@@ -1402,7 +1425,8 @@ if (!String.prototype.startsWith) {
 
 			if (!selector) {
 				selector = $this.attr('href')
-				selector = selector && selector.replace(/.*(?=#[^\s]*$)/, '') // strip for
+				selector = selector && selector.replace(/.*(?=#[^\s]*$)/, '') // strip
+																				// for
 																			  // ie7
 			}
 
@@ -1598,7 +1622,8 @@ if (!String.prototype.startsWith) {
 				var transition = $.support.transition && that.$element.hasClass('fade')
 
 				if (!that.$element.parent().length) {
-					that.$element.appendTo(that.$body) // don't move modals dom position
+					that.$element.appendTo(that.$body) // don't move modals dom
+														// position
 				}
 
 				that.$element
@@ -1621,7 +1646,8 @@ if (!String.prototype.startsWith) {
 				var e = $.Event('shown.bs.modal', { relatedTarget: _relatedTarget })
 
 				transition ?
-					that.$element.find('.modal-dialog') // wait for modal to slide in
+					that.$element.find('.modal-dialog') // wait for modal to
+														// slide in
 						.one('bsTransitionEnd', function () {
 							that.$element.trigger('focus').trigger(e)
 						})
@@ -1845,7 +1871,8 @@ if (!String.prototype.startsWith) {
 			if ($this.is('a')) e.preventDefault()
 
 			$target.one('show.bs.modal', function (showEvent) {
-				if (showEvent.isDefaultPrevented()) return // only register focus
+				if (showEvent.isDefaultPrevented()) return // only register
+															// focus
 				// restorer if modal will
 				// actually get shown
 				$target.one('hidden.bs.modal', function () {
@@ -1855,14 +1882,16 @@ if (!String.prototype.startsWith) {
 			Plugin.call($target, option, this)
 		})
 
-		/* ========================================================================
-		 * Bootstrap: tooltip.js v3.3.2
-		 * http://getbootstrap.com/javascript/#tooltip
-		 * Inspired by the original jQuery.tipsy by Jason Frame
+		/*
 		 * ========================================================================
-		 * Copyright 2011-2015 Twitter, Inc.
-		 * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
-		 * ======================================================================== */
+		 * Bootstrap: tooltip.js v3.3.2
+		 * http://getbootstrap.com/javascript/#tooltip Inspired by the original
+		 * jQuery.tipsy by Jason Frame
+		 * ========================================================================
+		 * Copyright 2011-2015 Twitter, Inc. Licensed under MIT
+		 * (https://github.com/twbs/bootstrap/blob/master/LICENSE)
+		 * ========================================================================
+		 */
 
 
 		+function ($) {
@@ -2084,7 +2113,8 @@ if (!String.prototype.startsWith) {
 				var width  = $tip[0].offsetWidth
 				var height = $tip[0].offsetHeight
 
-				// manually read margins because getBoundingClientRect includes difference
+				// manually read margins because getBoundingClientRect includes
+				// difference
 				var marginTop = parseInt($tip.css('margin-top'), 10)
 				var marginLeft = parseInt($tip.css('margin-left'), 10)
 
@@ -2108,7 +2138,8 @@ if (!String.prototype.startsWith) {
 
 				$tip.addClass('in')
 
-				// check to see if placing tip in new offset caused the tip to resize itself
+				// check to see if placing tip in new offset caused the tip to
+				// resize itself
 				var actualWidth  = $tip[0].offsetWidth
 				var actualHeight = $tip[0].offsetHeight
 
@@ -2192,7 +2223,9 @@ if (!String.prototype.startsWith) {
 
 				var elRect    = el.getBoundingClientRect()
 				if (elRect.width == null) {
-					// width and height are missing in IE8, so compute them manually; see https://github.com/twbs/bootstrap/issues/14093
+					// width and height are missing in IE8, so compute them
+					// manually; see
+					// https://github.com/twbs/bootstrap/issues/14093
 					elRect = $.extend({}, elRect, { width: elRect.right - elRect.left, height: elRect.bottom - elRect.top })
 				}
 				var elOffset  = isBody ? { top: 0, left: 0 } : $element.offset()
@@ -2220,17 +2253,21 @@ if (!String.prototype.startsWith) {
 				if (/right|left/.test(placement)) {
 					var topEdgeOffset    = pos.top - viewportPadding - viewportDimensions.scroll
 					var bottomEdgeOffset = pos.top + viewportPadding - viewportDimensions.scroll + actualHeight
-					if (topEdgeOffset < viewportDimensions.top) { // top overflow
+					if (topEdgeOffset < viewportDimensions.top) { // top
+																	// overflow
 						delta.top = viewportDimensions.top - topEdgeOffset
-					} else if (bottomEdgeOffset > viewportDimensions.top + viewportDimensions.height) { // bottom overflow
+					} else if (bottomEdgeOffset > viewportDimensions.top + viewportDimensions.height) { // bottom
+																										// overflow
 						delta.top = viewportDimensions.top + viewportDimensions.height - bottomEdgeOffset
 					}
 				} else {
 					var leftEdgeOffset  = pos.left - viewportPadding
 					var rightEdgeOffset = pos.left + viewportPadding + actualWidth
-					if (leftEdgeOffset < viewportDimensions.left) { // left overflow
+					if (leftEdgeOffset < viewportDimensions.left) { // left
+																	// overflow
 						delta.left = viewportDimensions.left - leftEdgeOffset
-					} else if (rightEdgeOffset > viewportDimensions.width) { // right overflow
+					} else if (rightEdgeOffset > viewportDimensions.width) { // right
+																				// overflow
 						delta.left = viewportDimensions.left + viewportDimensions.width - rightEdgeOffset
 					}
 				}

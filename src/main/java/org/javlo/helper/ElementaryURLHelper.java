@@ -817,9 +817,9 @@ public abstract class ElementaryURLHelper {
 	 */
 	public static URL getGravatarURL(String email, String alternativeURL) throws MalformedURLException {
 		if (alternativeURL != null) {
-			return new URL("http://www.gravatar.com/avatar/" + StringHelper.md5Hex(email) + "?d=" + alternativeURL);
+			return new URL("https://www.gravatar.com/avatar/" + StringHelper.md5Hex(email) + "?d=" + alternativeURL);
 		} else {
-			return new URL("http://www.gravatar.com/avatar/" + StringHelper.md5Hex(email));
+			return new URL("https://www.gravatar.com/avatar/" + StringHelper.md5Hex(email));
 		}
 	}
 

@@ -219,7 +219,7 @@ body.edit-preview, body.preview-only {
 	display: none;
 }
 
-.free-edit-zone.open {
+.free-edit-zone.open, ._dragover .free-edit-zone {
 	display: block;
 }
 

@@ -356,7 +356,7 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 
 		if (ctx.getGlobalContext().isCollaborativeMode()) {
 			I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
-			ctx.getRequest().setAttribute("createChildButton", MacroHelper.getLaunchMacroXHTML(ctx, "create-content-children", i18nAccess.getViewText("macro.add-child.label", "Create new discution."), "btn btn-secondary btn-create"));
+			ctx.getRequest().setAttribute("createChildButton", MacroHelper.getLaunchMacroXHTML(ctx, "create-content-children", i18nAccess.getViewText("macro.add-child.label", "create a discussion."), "btn btn-secondary btn-create"));
 		}
 
 		if (getStyle() != null) {
