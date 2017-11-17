@@ -12,7 +12,7 @@
 <h2><c:if test="${not empty info.page.rootOfChildrenAssociation}"><a class="newsletter-settings pull-right as-modal" href="${propURL}" title="newsletter settings" lang="en">
 <span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
 </a></c:if><span class="glyphicon glyphicon-th-list" aria-hidden="true"></span>Navigation</h2>
-	<div class="height-to-bottom">
+	<div class="height-to-bottom minus-50">
 	<form id="children_list" action="${info.currentURL}" method="post">
 	<div class="pages mailing">		
 	   <ul class="navigation">	   

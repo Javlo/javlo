@@ -7,7 +7,7 @@
 <c:url var="pasteURL" value="${info.currentURL}" context="/">
 	<c:param name="webaction" value="edit.insertPage" />
 </c:url>
-<div class="height-to-bottom">
+<div class="height-to-bottom minus-50">
 <div class="pages web">
 <ul class="navigation">
 	<c:set var="asTitle" value="false" />

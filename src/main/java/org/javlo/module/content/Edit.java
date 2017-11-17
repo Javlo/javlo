@@ -1384,7 +1384,8 @@ public class Edit extends AbstractModuleAction {
 			EditContext editCtx = EditContext.getInstance(globalContext, ctx.getRequest().getSession());
 
 			String path = ctx.getPath();
-			String nodeName = requestService.getParameter("name", null);
+			String title = requestService.getParameter("name", null);
+			String nodeName = StringHelper.createFileName(title);
 			String parentName = requestService.getParameter("parent", null);
 
 			if (nodeName != null) {
@@ -1431,9 +1432,9 @@ public class Edit extends AbstractModuleAction {
 					for (String lg : globalContext.getContentLanguages()) {
 						i18nAccess.requestInit(ctx);
 						if (globalContext.hasComponent(Title.class)) {
-							initContent.add(new ComponentBean("", Title.TYPE, elem.getName(), lg, false, ctx.getCurrentEditUser()));
+							initContent.add(new ComponentBean(title, Title.TYPE, elem.getName(), lg, false, ctx.getCurrentEditUser()));
 						} else if (globalContext.hasComponent(Heading.class)) {
-							initContent.add(new ComponentBean("", Heading.TYPE, "", lg, false, ctx.getCurrentEditUser()));
+							initContent.add(new ComponentBean(title, Heading.TYPE, "", lg, false, ctx.getCurrentEditUser()));
 						}
 					}
 					content.createContent(ctx, elem, initContent, "0", false);

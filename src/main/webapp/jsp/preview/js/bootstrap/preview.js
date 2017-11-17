@@ -254,7 +254,11 @@ if (!String.prototype.startsWith) {
 			var item = pjq(this);
 			var saveHeight = item.height();
 			var itemOffset = item.offset();
-			item.css("height", footerOffset.top-itemOffset.top);
+			newHeight = footerOffset.top-itemOffset.top;
+			if (item.hasClass("minus-50")) {
+				newHeight = newHeight-50;
+			}
+			item.css("height", newHeight);
 			if (saveHeight > item.height()) {
 				item.addClass("has-scrollbar");
 			} else {
@@ -283,22 +287,25 @@ if (!String.prototype.startsWith) {
 		return fd;
 	}
 	
-	function handleDragEnter(e) {
-		  // this / e.target is the current hover target.
+	var dragOverBody = false;
+	
+	function handleDragOver(e) {
+		  dragOverBody=true;
 		  this.classList.add('_dragover');
 		}
 
 		function handleDragLeave(e) {
-		  this.classList.remove('_dragover');  // this / e.target is previous
-											// target element.
+			dragOverBody=false;
+			var globalItem = this;
+		  setInterval(function(){globalItem.classList.remove('_dragover');},4000);
 		}
 
 	editPreview.initPreview = function() {
 		
 		
-		var cols = document.querySelectorAll('._area');
+		var cols = document.querySelectorAll('body');
 		[].forEach.call(cols, function(col) {		  
-		  col.addEventListener('dragover', handleDragEnter, false)		  
+		  col.addEventListener('dragover', handleDragOver, false );		  
 		  col.addEventListener('dragleave', handleDragLeave, false);
 		});
 
