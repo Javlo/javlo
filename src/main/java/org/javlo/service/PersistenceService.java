@@ -675,7 +675,7 @@ public class PersistenceService {
 		elem.setContent(elemContent);
 	}
 
-	public MenuElement insertPage(GlobalContext globalContext, NodeXML pageXML, MenuElement parent, Map<MenuElement, String[]> vparentPreparation, String defaultLg) throws StructureException, IOException {
+	public MenuElement insertPage(GlobalContext globalContext, NodeXML pageXML, MenuElement parent, Map<MenuElement, String[]> vparentPreparation, String defaultLg, boolean checkName) throws StructureException, IOException {
 		MenuElement page = MenuElement.getInstance(globalContext);
 
 		String id = pageXML.getAttributeValue("id");
@@ -685,14 +685,18 @@ public class PersistenceService {
 		DebugHelper.checkStructure(id == null, "no id defined in a page node.");
 		String name = pageXML.getAttributeValue("name");
 		String finalPageName = name;
-		int i = 1;
-		while (parent.getRoot().searchChildFromName(finalPageName) != null && i < 10000) {
-			finalPageName = name + "_" + i;
-			i++;
+
+		if (checkName) {
+			int i = 1;
+			while (parent.getRoot().searchChildFromName(finalPageName) != null && i < 10000) {
+				finalPageName = name + "_" + i;
+				i++;
+			}
+			if (i == 10000) {
+				logger.severe("problem on loading page check page : " + name + "  (context:" + globalContext.getContextKey() + ")");
+			}
 		}
-		if (i == 10000) {
-			logger.severe("problem on loading page check page : " + name + "  (context:" + globalContext.getContextKey() + ")");
-		}
+
 		name = finalPageName;
 		DebugHelper.checkStructure(name == null, "no path defined in a page node.");
 		String priority = pageXML.getAttributeValue("priority", "10");
@@ -824,7 +828,7 @@ public class PersistenceService {
 
 		NodeXML childPage = pageXML.getChild("page");
 		while (childPage != null) {
-			insertPage(globalContext, childPage, page, vparentPreparation, defaultLg);
+			insertPage(globalContext, childPage, page, vparentPreparation, defaultLg, checkName);
 			childPage = childPage.getNext("page");
 		}
 
@@ -942,7 +946,7 @@ public class PersistenceService {
 				Map<MenuElement, String[]> vparentPreparation = new HashMap<MenuElement, String[]>();
 
 				while (page != null) {
-					insertPage(globalContext, page, root, vparentPreparation, defaultLg);
+					insertPage(globalContext, page, root, vparentPreparation, defaultLg, false);
 					page = page.getNext("page");
 				}
 

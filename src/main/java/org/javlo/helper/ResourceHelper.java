@@ -356,7 +356,7 @@ public class ResourceHelper {
 		}
 	}
 
-	public static void filteredFileCopyEscapeScriplet(File file1, File file2, Map<String, String> filter) throws IOException {
+	public static void filteredFileCopyEscapeScriplet(File file1, File file2, Map<String, String> filter) throws IOException {		
 		if (!file2.exists()) {
 			file2.getParentFile().mkdirs();
 			file2.createNewFile();
@@ -371,6 +371,7 @@ public class ResourceHelper {
 
 		List<String> keys = new LinkedList<String>(filter.keySet());
 		// sort because big key must be replaced before little key.
+		
 		Collections.sort(keys, new Comparator<String>() {
 			public int compare(String s1, String s2) {
 				return s2.length() - s1.length();

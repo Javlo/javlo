@@ -252,7 +252,7 @@ public class NavigationHelper {
 			String pageName = child.getAttributeValue("name");
 			if (pageName != null) {
 				GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-				MenuElement newPage = persistenceService.insertPage(globalContext, child, currentPage, new HashMap<MenuElement, String[]>(), lang);
+				MenuElement newPage = persistenceService.insertPage(globalContext, child, currentPage, new HashMap<MenuElement, String[]>(), lang, true);
 				try {
 					for (ComponentBean data : newPage.getAllLocalContentBean()) {
 						ConvertToCurrentVersion.convert(ctx, data, version);

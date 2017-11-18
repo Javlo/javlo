@@ -659,7 +659,7 @@ public class Template implements Comparable<Template> {
 				return false;
 			}
 			String ext = FilenameUtils.getExtension(file.getName());
-			if ((ext.equalsIgnoreCase("html") && jsp) || ext.equalsIgnoreCase("html") || ext.equalsIgnoreCase("css") || ext.equalsIgnoreCase("scss") || ext.equalsIgnoreCase("htm") || ext.equalsIgnoreCase("js") || ext.equalsIgnoreCase("less")) {
+			if ((ext.equalsIgnoreCase("jsp") && jsp) || ext.equalsIgnoreCase("html") || ext.equalsIgnoreCase("css") || ext.equalsIgnoreCase("scss") || ext.equalsIgnoreCase("htm") || ext.equalsIgnoreCase("js") || ext.equalsIgnoreCase("less")) {
 				return accept;
 			} else {
 				return !accept;
@@ -2409,9 +2409,9 @@ public class Template implements Comparable<Template> {
 				File file = files.next();
 				File targetFile = new File(file.getAbsolutePath().replace(templateSrc.getAbsolutePath(), templateTarget.getAbsolutePath()));
 				if (ctx != null) {
-					try {
+					try {						
 						String fileExt = FilenameUtils.getExtension(file.getName());
-						if (fileExt.equalsIgnoreCase("jsp") || fileExt.equalsIgnoreCase("html")) {
+						if (fileExt.equalsIgnoreCase("jsp") || fileExt.equalsIgnoreCase("html")) {							
 							ResourceHelper.filteredFileCopyEscapeScriplet(file, targetFile, map);
 						} else {
 							ResourceHelper.filteredFileCopy(file, targetFile, map);
