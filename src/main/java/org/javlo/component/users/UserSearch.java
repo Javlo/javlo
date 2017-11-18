@@ -22,7 +22,6 @@ import org.javlo.i18n.I18nAccess;
 import org.javlo.message.MessageRepository;
 import org.javlo.service.IListItem;
 import org.javlo.service.ListService;
-import org.javlo.service.ListService.ListItem;
 import org.javlo.service.RequestService;
 import org.javlo.user.AdminUserFactory;
 import org.javlo.user.IUserInfo;
@@ -42,7 +41,12 @@ public class UserSearch extends AbstractVisualComponent implements IAction {
 	public boolean isUnique() {
 		return true;
 	}
-
+	
+	@Override
+	public boolean isDisplayable(ContentContext ctx) throws Exception {
+		return true;
+	}
+	
 	@Override
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
 		RequestService rs = RequestService.getInstance(ctx.getRequest());

@@ -1497,38 +1497,41 @@ public class PersistenceService {
 	public void store(ContentContext ctx, int renderMode, boolean async) throws Exception {
 		setAskStore(false);
 		COUNT_STORAGE_THREAD.incrementAndGet();
-		logger.info("waiting storage #Thread = " + COUNT_STORAGE_THREAD.get() + " context:" + ctx.getGlobalContext().getContextKey());
-		if (COUNT_STORAGE_THREAD.get() <= 2) {
-			synchronized (ctx.getGlobalContext().getLockLoadContent()) {
-				logger.info("store in " + renderMode + " mode.");
-				PersistenceThread persThread = new PersistenceThread(globalContext.getLockLoadContent());
-				ContentService content = ContentService.getInstance(globalContext);
-				MenuElement menuElement = content.getNavigation(ctx);
-				String defaultLg = globalContext.getDefaultLanguages().iterator().next();
-				if (!globalContext.getLanguages().contains(defaultLg)) {
-					defaultLg = null;
+		try {
+			logger.info("waiting storage #Thread = " + COUNT_STORAGE_THREAD.get() + " context:" + ctx.getGlobalContext().getContextKey());
+			if (COUNT_STORAGE_THREAD.get() <= 2) {
+				synchronized (ctx.getGlobalContext().getLockLoadContent()) {
+					logger.info("store in " + renderMode + " mode.");
+					PersistenceThread persThread = new PersistenceThread(globalContext.getLockLoadContent());
+					ContentService content = ContentService.getInstance(globalContext);
+					MenuElement menuElement = content.getNavigation(ctx);
+					String defaultLg = globalContext.getDefaultLanguages().iterator().next();
+					if (!globalContext.getLanguages().contains(defaultLg)) {
+						defaultLg = null;
+					}
+					persThread.setMenuElement(menuElement);
+					persThread.setMode(renderMode);
+					persThread.setPersistenceService(this);
+					persThread.setDefaultLg(defaultLg);
+					persThread.setGlobalContentMap(content.getGlobalMap(ctx));
+					persThread.setTaxonomyRoot(TaxonomyService.getInstance(ctx).getRoot());
+					GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+					persThread.setContextKey(globalContext.getContextKey());
+					persThread.setDataFolder(globalContext.getDataFolder());
+					StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession().getServletContext());
+					if (StaticInfo._STATIC_INFO_DIR != null) {
+						String staticInfo = URLHelper.mergePath(globalContext.getDataFolder(), StaticInfo._STATIC_INFO_DIR);
+						persThread.addFolderToSave(new File(staticInfo));
+					}
+					persThread.addFolderToSave(new File(URLHelper.mergePath(globalContext.getDataFolder(), staticConfig.getUserInfoFile())));
+					persThread.start(async);
 				}
-				persThread.setMenuElement(menuElement);
-				persThread.setMode(renderMode);
-				persThread.setPersistenceService(this);
-				persThread.setDefaultLg(defaultLg);
-				persThread.setGlobalContentMap(content.getGlobalMap(ctx));
-				persThread.setTaxonomyRoot(TaxonomyService.getInstance(ctx).getRoot());
-				GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-				persThread.setContextKey(globalContext.getContextKey());
-				persThread.setDataFolder(globalContext.getDataFolder());
-				StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession().getServletContext());
-				if (StaticInfo._STATIC_INFO_DIR != null) {
-					String staticInfo = URLHelper.mergePath(globalContext.getDataFolder(), StaticInfo._STATIC_INFO_DIR);
-					persThread.addFolderToSave(new File(staticInfo));
-				}
-				persThread.addFolderToSave(new File(URLHelper.mergePath(globalContext.getDataFolder(), staticConfig.getUserInfoFile())));
-				persThread.start(async);				
+			} else {
+				logger.warning("at least 2 threads waiting storage -> skip storage.");
 			}
-		} else {
-			logger.warning("at least 2 threads waiting storage -> skip storage.");
+		} finally {
+			COUNT_STORAGE_THREAD.decrementAndGet();
 		}
-		COUNT_STORAGE_THREAD.decrementAndGet();
 	}
 
 	// public void store(InputStream in) throws Exception {

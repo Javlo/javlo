@@ -266,6 +266,13 @@ if (!String.prototype.startsWith) {
 			}
 		});
 	}
+	
+	editPreview.updateImg = function() {
+		jQuery("img[data-src]").each(function() {
+			jQuery(this).attr('src', jQuery(this).data('src'));
+			jQuery(this).removeAttr('data-src');
+		} );
+	}
 
 	editPreview.searchArea = function(item) {
 		var parent = pjq(item);
@@ -1108,7 +1115,8 @@ if (!String.prototype.startsWith) {
 						jQuery(this).removeClass("_not_empty_area");
 					}
 				});
-			});
+			});			
+			setInterval(function(){editPreview.updateImg()},300);
 		}
 		function scrollToMe() {
 			editPreview.scrollToItem(pjq(".scroll-to-me"));
