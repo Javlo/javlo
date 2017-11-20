@@ -163,5 +163,10 @@ public class GenericFileList extends AbstractVisualComponent implements IAction 
 	public int getComplexityLevel(ContentContext ctx) {
 		return IContentVisualComponent.COMPLEXITY_STANDARD;
 	}
+	
+	@Override
+	public String getFontAwesome() {
+		return "th-list";
+	}
 
 }

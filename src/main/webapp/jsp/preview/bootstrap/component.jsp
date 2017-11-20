@@ -65,7 +65,7 @@ function displayComplexity(l) {
 <c:set var="cat" value="${i18n.edit[comp.value]}" />
 </c:if><c:if test="${!comp.metaTitle}"
 ><c:set var="toolTipKey" value="content.${comp.type}.description" /><c:set var="toolTip" value="data-toggle=\"tooltip\" data-placement=\"right\" title=\"${i18n.edit[toolTipKey]}\"" />
-<div ${i18n.edit[toolTipKey] != toolTipKey?toolTip:''} class="component${comp.selected?' selected':''} component-${comp.type} complexity-${comp.complexityLevel} business-${comp.dynamicComponent}" data-type="${comp.type}">
+<div ${i18n.edit[toolTipKey] != toolTipKey?toolTip:''} class="component${comp.selected?' selected':''} component-${comp.type} complexity-${comp.complexityLevel} business-${comp.dynamicComponent}" data-type="${comp.type}" title="${comp.label}">
 <div class="wrapper-in">
 <div class="figure"><i class="fa fa-${comp.fontAwesome}" aria-hidden="true"></i></div>
 <div class="text">

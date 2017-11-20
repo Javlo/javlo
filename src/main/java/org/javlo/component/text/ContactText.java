@@ -234,4 +234,9 @@ public class ContactText extends AbstractVisualComponent {
 	public boolean isListable() {
 		return true;
 	}
+	
+	@Override
+	public String getFontAwesome() {
+		return "envelope";
+	}
 }

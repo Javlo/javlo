@@ -344,5 +344,10 @@ public class DynamicComponentFilter extends AbstractPropertiesComponent implemen
 		storeProperties();
 		return msg;
 	}
+	
+	@Override
+	public String getFontAwesome() {
+		return "search";
+	}
 
 }

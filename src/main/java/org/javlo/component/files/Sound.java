@@ -270,5 +270,10 @@ public class Sound extends AbstractFileComponent implements IReverseLinkComponen
 		StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
 		return staticConfig.getFileFolderName();
 	}
+	
+	@Override
+	public String getFontAwesome() {
+		return "microphone";
+	}
 
 }

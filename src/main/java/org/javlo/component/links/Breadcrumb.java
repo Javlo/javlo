@@ -65,5 +65,10 @@ public class Breadcrumb extends AbstractVisualComponent {
 	public boolean isContentCachable(ContentContext ctx) {
 		return true;
 	}
+	
+	@Override
+	public String getFontAwesome() {
+		return "angle-double-right";
+	}
 
 }

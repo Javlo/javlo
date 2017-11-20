@@ -363,5 +363,10 @@ public class DynamicComponentList extends AbstractPropertiesComponent {
 	private boolean isOnlyChildren() {
 		return StringHelper.isTrue(properties.getProperty("children"));
 	}
+	
+	@Override
+	public String getFontAwesome() {
+		return "th";
+	}
 
 }

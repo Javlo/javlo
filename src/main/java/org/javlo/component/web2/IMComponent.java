@@ -10,5 +10,10 @@ public class IMComponent extends AbstractVisualComponent {
 	public String getType() {
 		return TYPE;
 	}
+	
+	@Override
+	public String getFontAwesome() {
+		return "comments";
+	}
 
 }

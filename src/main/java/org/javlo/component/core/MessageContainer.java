@@ -18,5 +18,10 @@ public class MessageContainer extends AbstractVisualComponent {
 	protected boolean isNeedRenderer() {
 		return true;
 	}
+	
+	@Override
+	public String getFontAwesome() {	
+		return "info-circle";
+	}
 
 }
