@@ -1146,4 +1146,9 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 		}
 	}
 	
+	@Override
+	public String getFontAwesome() {	
+		return properties.getProperty("font-awesome", "address-card");
+	}
+	
 }

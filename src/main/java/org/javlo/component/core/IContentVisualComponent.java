@@ -867,4 +867,6 @@ public interface IContentVisualComponent extends Comparable<IContentVisualCompon
 	public String getErrorMessage(ContentContext ctx);
 	
 	public boolean isRestMatch(ContentContext ctx, Map<String,String> params);
+	
+	public String getFontAwesome();
 }

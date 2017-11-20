@@ -10,7 +10,7 @@
 			<h2>${ticket.title}</h2>
 		</c:if>		
 		<div class="form-group">
-			<c:if test="${empty newTicket && not empty ticket.message}"><p class="message">${ticket.message}</p></c:if>
+			<c:if test="${empty newTicket && not empty ticket.message}"><p class="message">${ticket.htmlMessage}</p></c:if>
 			<c:if test="${not empty newTicket}"><textarea class="form-control" rows="4" cols="20" name="message" placeholder="message"></textarea></c:if>
 		</div>
 		<div class="row">

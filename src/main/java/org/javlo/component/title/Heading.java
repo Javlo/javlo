@@ -391,6 +391,11 @@ public class Heading extends AbstractPropertiesComponent implements ISubTitle {
 	public boolean isDefaultValue(ContentContext ctx) {
 		return getValue().trim().length() == 0;
 	}
+	
+	@Override
+	public String getFontAwesome() {	
+		return "header";
+	}
 
 }
 

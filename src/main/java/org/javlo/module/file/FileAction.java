@@ -697,6 +697,8 @@ public class FileAction extends AbstractModuleAction {
 			int x = Math.round(cropLeft * image.getWidth() / REFERENCE_SIZE);
 			int y = Math.round(cropTop * image.getHeight() / REFERENCE_SIZE);
 			image = ImageEngine.cropImage(image, width, height, x, y);
+			StaticInfo staticInfo = StaticInfo.getInstance(ctx, file);
+			staticInfo.resetImageSize(ctx);
 		}
 		if (transform) {
 			logger.info("transform : " + file);

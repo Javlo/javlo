@@ -166,5 +166,10 @@ public class Title extends AbstractVisualComponent {
 	protected String getDefaultHelpURI(ContentContext ctx) {
 		return null;
 	}
+	
+	@Override
+	public String getFontAwesome() {	
+		return "header";
+	}
 
 }

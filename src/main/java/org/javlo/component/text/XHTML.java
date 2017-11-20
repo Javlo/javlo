@@ -98,4 +98,9 @@ public class XHTML extends AbstractVisualComponent {
 		return true;
 	}
 	
+	@Override
+	public String getFontAwesome() {	
+		return "code";
+	}
+	
 }

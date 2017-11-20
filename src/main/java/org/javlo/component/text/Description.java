@@ -147,5 +147,10 @@ public class Description extends AbstractVisualComponent {
 			return getValue();
 		}*/
 	}
+	
+	@Override
+	public String getFontAwesome() {	
+		return "sticky-note";
+	}
 
 }

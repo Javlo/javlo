@@ -11,7 +11,7 @@
 		<c:if test="${not empty clipboard.copied}">
 		<div class="component" data-type="clipboard" data-deletable="true">
 			<div class="wrapper-in">
-				<div class="figure"></div>				
+				<div class="figure"><i class="fa fa-clipboard" aria-hidden="true"></i></div>				
 				<span>${clipboard.label}</span>
 				<div class="category">(${i18n.edit['global.clipboard']})</div>
 			</div>
@@ -19,7 +19,7 @@
 		</c:if><c:if test="${not empty editInfo.copiedPage}">
 		<div class="component page" data-type="clipboard-page" data-deletable="true">
 			<div class="wrapper-in" title="${editInfo.copiedPage}">
-				<div class="figure"></div>				
+				<div class="figure"><i class="fa fa-clone" aria-hidden="true"></i></div>				
 				<span>${editInfo.copiedPage}</span>
 				<div class="category">(page)</div>
 			</div>
@@ -67,7 +67,7 @@ function displayComplexity(l) {
 ><c:set var="toolTipKey" value="content.${comp.type}.description" /><c:set var="toolTip" value="data-toggle=\"tooltip\" data-placement=\"right\" title=\"${i18n.edit[toolTipKey]}\"" />
 <div ${i18n.edit[toolTipKey] != toolTipKey?toolTip:''} class="component${comp.selected?' selected':''} component-${comp.type} complexity-${comp.complexityLevel} business-${comp.dynamicComponent}" data-type="${comp.type}">
 <div class="wrapper-in">
-<div class="figure"></div>
+<div class="figure"><i class="fa fa-${comp.fontAwesome}" aria-hidden="true"></i></div>
 <div class="text">
 <span>${comp.label}</span>
 <div class="category">(${i18n.edit[cat]})</div>

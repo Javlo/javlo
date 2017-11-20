@@ -401,5 +401,10 @@ public class SimpleInternalLink extends ComplexPropertiesLink implements IIntern
 	public String getListGroup() {
 		return "link";
 	}
+	
+	@Override
+	public String getFontAwesome() {	
+		return "link";
+	}
 
 }

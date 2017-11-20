@@ -7,7 +7,12 @@ package org.javlo.helper;
  */
 public interface IStringSeralizable {
 	
-	public void loadFromString(String data);
+	/**
+	 * load from String
+	 * @param data 
+	 * @return false if unvalid data
+	 */
+	public boolean loadFromString(String data);
 	
 	public String storeToString();
 

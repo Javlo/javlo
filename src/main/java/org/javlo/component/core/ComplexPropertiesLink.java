@@ -111,5 +111,10 @@ public abstract class ComplexPropertiesLink extends AbstractVisualComponent {
 	public boolean isRealContent(ContentContext ctx) {	
 		return false;
 	}
+	
+	@Override
+	public String getFontAwesome() {	
+		return "link";
+	}
 
 }

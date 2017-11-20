@@ -337,4 +337,9 @@ public class CSVArrayComponent extends AbstractFileComponent {
 		return false;
 	}
 	
+	@Override
+	public String getFontAwesome() {	
+		return "table";
+	}
+	
 }

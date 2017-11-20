@@ -15,12 +15,14 @@ import org.owasp.encoder.Encode;
 public class StaticInfoBean {
 	private final ContentContext ctx;
 	private final StaticInfo staticInfo;
+	private final ImageSize imageSize;
 	private final StaticInfoBean folder;
 	private String key = null;
 
 	public StaticInfoBean(ContentContext ctx, StaticInfo staticInfo) throws Exception {
 		this.ctx = ctx;
 		this.staticInfo = staticInfo;
+		this.imageSize = staticInfo.getImageSize(ctx);
 		if (staticInfo.getFile().isFile()) {
 			this.folder = new StaticInfoBean(ctx, StaticInfo.getInstance(ctx, staticInfo.getFile().getParentFile()));
 		} else {
@@ -249,6 +251,6 @@ public class StaticInfoBean {
 	}
 	
 	public ImageSize getImageSize() {
-		return staticInfo.getImageSize();
+		return imageSize;
 	}
 }

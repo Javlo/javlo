@@ -293,5 +293,10 @@ public class FileFinder extends AbstractPropertiesComponent implements IUploadRe
 	public int getComplexityLevel(ContentContext ctx) {
 		return getConfig(ctx).getComplexity(COMPLEXITY_STANDARD);
 	}
+	
+	@Override
+	public String getFontAwesome() {	
+		return "files-o";
+	}
 
 }

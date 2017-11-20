@@ -614,5 +614,10 @@ public class MirrorComponent extends AbstractVisualComponent implements IFieldCo
 	public int getComplexityLevel(ContentContext ctx) {
 		return getConfig(ctx).getComplexity(COMPLEXITY_STANDARD);
 	}
+	
+	@Override
+	public String getFontAwesome() {	
+		return "clone";
+	}
 
 }

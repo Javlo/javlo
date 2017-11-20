@@ -22,6 +22,7 @@ import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
 import javax.imageio.ImageIO;
+import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -105,8 +106,16 @@ public class UserAction extends AbstractModuleAction {
 			moduleContext.getCurrentModule().restoreAll();
 		} else {
 			User user = null;
-			if (requestService.getParameter("user", null) != null) {
-				user = userFactory.getUser(requestService.getParameter("user", null));
+			String userName = requestService.getParameter("user", null); 
+			if (userName  != null) {
+				if (userName.contains("<")) {
+					try {
+						InternetAddress internetAddress = new InternetAddress(userName);
+						userName = internetAddress.getAddress();					
+					} catch (AddressException e) {
+					}
+				}	
+				user = userFactory.getUser(userName);
 			} else if (requestService.getParameter("cuser", null) != null) {
 				String cuser = requestService.getParameter("cuser", null);
 				for (IUserInfo userInfo : userContext.getUserFactory(ctx).getUserInfoList()) {
@@ -281,9 +290,10 @@ public class UserAction extends AbstractModuleAction {
 		if (requestService.getParameter("back", null) == null) {
 			UserModuleContext userContext = UserModuleContext.getInstance(ctx.getRequest());
 			IUserFactory userFactory = userContext.getUserFactory(ctx);
-			User user = userFactory.getUser(requestService.getParameter("user", null));
+			String userName = requestService.getParameter("user", null);				
+			User user = userFactory.getUser(userName);
 			if (user == null) {
-				return "user not found : " + requestService.getParameter("user", null);
+				return "user not found : " + userName;
 			}
 			IUserInfo userInfo = user.getUserInfo();
 			String pwd = user.getPassword();
@@ -346,7 +356,21 @@ public class UserAction extends AbstractModuleAction {
 		} else if (requestService.getParameter("type", "").equals("edit")) {
 			userFactory = AdminUserFactory.createUserFactory(ctx.getRequest());
 		}
+		
 		IUserInfo newUserInfo = userFactory.createUserInfos();
+		if (newUser.contains("<")) {
+			try {
+				InternetAddress internetAddress = new InternetAddress(newUser);
+				newUser = internetAddress.getAddress();
+				String personal = StringHelper.neverNull(internetAddress.getPersonal()).trim();
+				if (personal.contains(" ")) {
+					newUserInfo.setLastName(personal.substring(personal.indexOf(' ')+1));
+					personal = personal.substring(0,personal.indexOf(' '));
+				}
+				newUserInfo.setFirstName(personal);
+			} catch (AddressException e) {
+			}
+		}		
 		newUserInfo.setId(newUser);
 		newUserInfo.setLogin(newUser);
 		if (StringHelper.isMail(newUser)) {
@@ -844,5 +868,13 @@ public class UserAction extends AbstractModuleAction {
 		}
 		messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("global.delete-file", "file deleted."), GenericMessage.INFO));
 		return null;
+	}
+	
+	public static void main(String[] args) {
+		String name="Patrick Vandermaesen";
+		String lastName = name.substring(name.indexOf(' ')+1);
+		String firstName = name.substring(0,name.indexOf(' '));
+		System.out.println("##### UserAction.main : lastName = '"+lastName+"'"); //TODO: remove debug trace
+		System.out.println("##### UserAction.main : firstName = '"+firstName+"'"); //TODO: remove debug trace
 	}
 }

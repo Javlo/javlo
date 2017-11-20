@@ -424,5 +424,10 @@ public class ExternalLink extends ComplexPropertiesLink implements IReverseLinkC
 	public Date getLatestValidDate() {
 		return latestValidDate;
 	}
+	
+	@Override
+	public String getFontAwesome() {	
+		return "external-link";
+	}
 
 }

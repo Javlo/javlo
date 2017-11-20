@@ -1281,4 +1281,9 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 	public static void main(String[] args) {
 		System.out.println("*** XHTMLHelper.containsLink(reaction.getTitle()+' '+reaction.getText() = "+XHTMLHelper.containsLink(""+' '+"c'est top"));
 	}
+	
+	@Override
+	public String getFontAwesome() {	
+		return "comments";
+	}
 }

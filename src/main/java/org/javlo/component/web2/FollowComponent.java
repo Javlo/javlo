@@ -125,5 +125,10 @@ public class FollowComponent extends AbstractVisualComponent implements IAction 
 	public String getActionGroupName() {
 		return getType();
 	}
+	
+	@Override
+	public String getFontAwesome() {	
+		return "binoculars";
+	}
 
 }

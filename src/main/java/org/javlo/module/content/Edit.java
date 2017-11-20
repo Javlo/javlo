@@ -294,6 +294,10 @@ public class Edit extends AbstractModuleAction {
 		public IContentVisualComponent getComponent() {
 			return comp;
 		}
+		
+		public String getFontAwesome() {
+			return comp.getFontAwesome();
+		}
 	}
 
 	@Override

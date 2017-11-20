@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.javlo.context.ContentContext;
+import org.javlo.helper.XHTMLHelper;
 
 public class TicketUserWrapper implements Ticket {
 
@@ -28,6 +29,11 @@ public class TicketUserWrapper implements Ticket {
 	@Override
 	public String getMessage() {
 		return wrapped.getMessage();
+	}
+	
+	@Override
+	public String getHtmlMessage() {
+		return XHTMLHelper.textToXHTMLNewWin(wrapped.getMessage());
 	}
 
 	@Override

@@ -296,5 +296,10 @@ public class Contact extends AbstractVisualComponent implements ICSS, IAction {
 	public String getHexColor() {
 		return WEB2_COLOR;
 	}
+	
+	@Override
+	public String getFontAwesome() {	
+		return "info-circle";
+	}
 
 }

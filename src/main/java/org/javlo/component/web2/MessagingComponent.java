@@ -39,5 +39,10 @@ public class MessagingComponent extends AbstractVisualComponent implements IActi
 		ctx.getAjaxData().put("rooms", messagingService.getRooms(user.getUserInfo()));
 		return null;
 	}
+	
+	@Override
+	public String getFontAwesome() {	
+		return "comments";
+	}
 }
 

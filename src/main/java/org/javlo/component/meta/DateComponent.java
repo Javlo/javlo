@@ -221,4 +221,9 @@ public class DateComponent extends AbstractVisualComponent implements IDate {
 	public boolean isValidDate(ContentContext ctx) {
 		return !StringHelper.isEmpty(getValue());
 	}
+	
+	@Override
+	public String getFontAwesome() {	
+		return "calendar-o";
+	}
 }

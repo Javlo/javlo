@@ -1471,16 +1471,34 @@ public class StaticInfo {
 			}
 		}
 	}
+	
+	public void resetImageSize(ContentContext ctx) {
+		String key = getKey("imageSize-" + ctx.getRequestContentLanguage());
+		ContentService content = ContentService.getInstance(ctx.getGlobalContext());
+		content.removeAttribute(ctx, key);
+		imageSize = null;
+	}
 
-	public ImageSize getImageSize() {
+	public ImageSize getImageSize(ContentContext ctx) {
 		if (imageSize == NO_IMAGE_SIZE) {
 			return null;
 		}
 		if (imageSize != null) {
 			return imageSize;
 		} else {
-			try {				
+			try {
+				String key = getKey("imageSize-" + ctx.getRequestContentLanguage());
+				ContentService content = ContentService.getInstance(ctx.getGlobalContext());
+				String imageSizeRAW = content.getAttribute(ctx, key, null);
+				if (imageSizeRAW != null) {
+					ImageSize loadedImageSize = new ImageSize();
+					if (loadedImageSize.loadFromString(imageSizeRAW)) {
+						imageSize = loadedImageSize;
+						return imageSize;
+					}
+				}				
 				imageSize = ImageHelper.getImageSize(file);
+				content.setAttribute(ctx, key, imageSize.storeToString());
 			} catch (Throwable e) {
 				logger.warning(e.getMessage());
 			}

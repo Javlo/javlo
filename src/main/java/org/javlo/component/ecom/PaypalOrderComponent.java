@@ -382,5 +382,10 @@ public class PaypalOrderComponent extends AbstractOrderComponent implements IAct
 	public String getActionGroupName() {
 		return "paypal";
 	}
+	
+	@Override
+	public String getFontAwesome() {	
+		return "paypal";
+	}
 
 }

@@ -634,4 +634,9 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 	public int getComplexityLevel(ContentContext ctx) {
 		return getConfig(ctx).getComplexity(COMPLEXITY_STANDARD);
 	}
+	
+	@Override
+	public String getFontAwesome() {	
+		return "list";
+	}
 }

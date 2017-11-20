@@ -1158,4 +1158,9 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 	public String getUserLink(ContentContext ctx) throws Exception {
 		return null;
 	}
+	
+	@Override
+	public String getFontAwesome() {	
+		return "address-card";
+	}
 }

@@ -12,7 +12,9 @@ public interface Ticket {
 
 //	void setTitle(String title);
 
-	String getMessage();
+	String getMessage();	
+	
+	public String getHtmlMessage();
 
 //	void setMessage(String message);
 

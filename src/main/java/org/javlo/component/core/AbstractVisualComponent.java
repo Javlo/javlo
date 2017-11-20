@@ -2922,5 +2922,10 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		}
 		return false;
 	}
+	
+	@Override
+	public String getFontAwesome() {	
+		return "square";
+	}
 
 }

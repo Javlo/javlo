@@ -372,5 +372,10 @@ public class TableBreak extends TableComponent {
 		}
 		return msg;
 	}
+	
+	@Override
+	public String getFontAwesome() {	
+		return "table";
+	}
 
 }

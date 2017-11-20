@@ -34,7 +34,7 @@ public class Comment implements Serializable {
 	}
 	
 	public String getHtmlMessage() {
-		return XHTMLHelper.textToXHTML(message);
+		return XHTMLHelper.textToXHTMLNewWin(message);
 	}
 
 	public void setMessage(String message) {

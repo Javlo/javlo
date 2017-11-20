@@ -541,5 +541,10 @@ public class OnlineVideo extends GlobalImage implements IAction, IVideo {
 	public int getComplexityLevel(ContentContext ctx) {
 		return getConfig(ctx).getComplexity(COMPLEXITY_STANDARD);
 	}
+	
+	@Override
+	public String getFontAwesome() {	
+		return "video-camera";
+	}
 
 }

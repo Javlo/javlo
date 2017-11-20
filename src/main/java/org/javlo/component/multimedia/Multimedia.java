@@ -1295,5 +1295,10 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle, IStat
 	public boolean isValidDate(ContentContext ctx) {
 		return false;
 	}
+	
+	@Override
+	public String getFontAwesome() {	
+		return "th-large";
+	}
 
 }

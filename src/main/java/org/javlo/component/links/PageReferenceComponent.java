@@ -2561,5 +2561,10 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 	public Set<String> getTaxonomy() {
 		return StringHelper.stringToSet(properties.getProperty(TAXONOMY, null));
 	}
+	
+	@Override
+	public String getFontAwesome() {	
+		return "list-alt";
+	}
 
 }

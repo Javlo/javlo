@@ -1313,5 +1313,10 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 	public boolean isDisplayable(ContentContext ctx) throws Exception {
 		return !StringHelper.isEmpty(getFileName());
 	}
+	
+	@Override
+	public String getFontAwesome() {	
+		return "file";
+	}
 
 }

@@ -467,5 +467,10 @@ public class InternalLink extends ComplexPropertiesLink implements IInternalLink
 	public Date getLatestValidDate() {
 		return latestValidDate;
 	}
+	
+	@Override
+	public String getFontAwesome() {	
+		return "link";
+	}
 
 }

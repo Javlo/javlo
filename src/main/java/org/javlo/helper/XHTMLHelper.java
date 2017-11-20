@@ -164,18 +164,22 @@ public class XHTMLHelper {
 	}
 
 	public static String autoLink(String content) {
-		return autoLink(content, false, null);
+		return autoLink(content, false, false, null);
+	}
+	
+	public static String autoLinkNewWindow(String content) {
+		return autoLink(content, false, true, null);
 	}
 
 	public static String autoLink(String content, boolean notfollow) {
-		return autoLink(content, notfollow, null);
+		return autoLink(content, notfollow, false, null);
 	}
 
 	public static String autoLink(String content, GlobalContext globalContext) {
-		return autoLink(content, false, globalContext);
+		return autoLink(content, false, false, globalContext);
 	}
 
-	public static String autoLink(String inContent, boolean notFollow, GlobalContext globalContext) {
+	private static String autoLink(String inContent, boolean notFollow, boolean newWin, GlobalContext globalContext) {
 		String content = inContent;
 		boolean linkFound = false;
 		if (content == null) {
@@ -207,7 +211,7 @@ public class XHTMLHelper {
 						}
 					}
 					if (!inLink) {
-						writer.append(createHTMLLink(element, notFollow, globalContext));
+						writer.append(createHTMLLink(element, notFollow, newWin, globalContext));
 						linkFound = true;
 					} else {
 						writer.append(element);
@@ -229,7 +233,7 @@ public class XHTMLHelper {
 		}
 	}
 
-	private static String createHTMLLink(String url, boolean notFollow, GlobalContext globalContext) {
+	private static String createHTMLLink(String url, boolean notFollow, boolean newWin, GlobalContext globalContext) {
 		String suffix = "";
 		if (url.endsWith(".")) {
 			url = url.substring(0, url.length() - 1);
@@ -237,7 +241,7 @@ public class XHTMLHelper {
 		}
 		String outXHTML = url;
 		String target = "";
-		if (globalContext != null && globalContext.isOpenExternalLinkAsPopup(url)) {
+		if ((globalContext != null && globalContext.isOpenExternalLinkAsPopup(url)) || newWin) {
 			target = " target=\"blank\"";
 		}
 
@@ -2227,23 +2231,31 @@ public class XHTMLHelper {
 	public static String textToXHTML(String text) {
 		return textToXHTML(text, false, null, (GlobalContext) null);
 	}
+	
+	public static String textToXHTMLNewWin(String text) {
+		return textToXHTML(text, false, true,null, (GlobalContext) null);
+	}
 
 	public static String textToXHTML(String text, boolean notFollow) {
-		return textToXHTML(text, notFollow, null, (GlobalContext) null);
+		return textToXHTML(text, notFollow, false, null, (GlobalContext) null);
 	}
 
 	public static String textToXHTML(String text, GlobalContext globalContext) {
-		return textToXHTML(text, false, null, globalContext);
+		return textToXHTML(text, false, false, null, globalContext);
 	}
 
 	public static String textToXHTML(String text, boolean notFollow, GlobalContext globalContext) {
-		return textToXHTML(text, notFollow, null, globalContext);
+		return textToXHTML(text, notFollow, false, null, globalContext);
+	}
+	
+	public static String textToXHTML(String text, boolean notFollow, String cssClass, GlobalContext globalContext) {
+		return textToXHTML(text, notFollow, false, cssClass, globalContext);
 	}
 
 	// cssClass and popup not used
-	public static String textToXHTML(String text, boolean notFollow, String cssClass, GlobalContext globalContext) {
+	private static String textToXHTML(String text, boolean notFollow, boolean newWin, String cssClass, GlobalContext globalContext) {
 
-		String res = autoLink(text, notFollow, globalContext);
+		String res = autoLink(text, notFollow, newWin, globalContext);
 
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(outStream);

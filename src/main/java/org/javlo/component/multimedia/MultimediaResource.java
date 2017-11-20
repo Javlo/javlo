@@ -473,6 +473,6 @@ public class MultimediaResource {
 	}
 	
 	public ImageSize getSize() {
-		return staticInfo.getStaticInfo().getImageSize();
+		return staticInfo.getImageSize();
 	}
 }

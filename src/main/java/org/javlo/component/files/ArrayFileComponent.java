@@ -924,5 +924,10 @@ public class ArrayFileComponent extends GenericFile {
 		}
 
 	}
+	
+	@Override
+	public String getFontAwesome() {	
+		return "table";
+	}
 
 }

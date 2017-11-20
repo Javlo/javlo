@@ -9,6 +9,7 @@ import java.util.Set;
 
 import org.javlo.helper.BeanHelper;
 import org.javlo.helper.StringHelper;
+import org.javlo.helper.XHTMLHelper;
 
 public class TicketBean implements Serializable, Ticket {
 
@@ -64,6 +65,10 @@ public class TicketBean implements Serializable, Ticket {
 	@Override
 	public String getMessage() {
 		return message;
+	}
+	
+	public String getHtmlMessage() {
+		return XHTMLHelper.textToXHTMLNewWin(message);
 	}
 
 	public void setMessage(String message) {

@@ -1,20 +1,14 @@
 package org.javlo.component.image;
 
 import java.io.File;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
-import org.javlo.actions.IAction;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.component.core.IPreviewable;
 import org.javlo.component.core.IStaticResource;
 import org.javlo.component.files.AbstractFileComponent;
-import org.javlo.component.files.GenericFile;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
@@ -23,10 +17,6 @@ import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.image.ImageConfig;
-import org.javlo.message.MessageRepository;
-import org.javlo.module.file.FileBean;
-import org.javlo.service.ContentService;
-import org.javlo.service.RequestService;
 import org.javlo.ztatic.StaticInfo;
 
 /**
@@ -399,5 +389,10 @@ public class Image extends AbstractFileComponent implements IImageTitle, IPrevie
 	protected String getMainFolder(ContentContext ctx) {
 		StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
 		return staticConfig.getImageFolderName();
+	}
+	
+	@Override
+	public String getFontAwesome() {	
+		return "picture-o";
 	}
 }

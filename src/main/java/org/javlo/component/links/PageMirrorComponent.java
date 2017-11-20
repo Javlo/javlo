@@ -427,4 +427,9 @@ public class PageMirrorComponent extends AbstractVisualComponent implements IIma
 	public int getComplexityLevel(ContentContext ctx) {
 		return getConfig(ctx).getComplexity(COMPLEXITY_STANDARD);
 	}
+	
+	@Override
+	public String getFontAwesome() {	
+		return "clone";
+	}
 }

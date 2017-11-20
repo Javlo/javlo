@@ -116,5 +116,10 @@ public class Paragraph extends AbstractVisualComponent {
 		setModify();
 		return true;
 	}
+	
+	@Override
+	public String getFontAwesome() {	
+		return "align-left";
+	}
 
 }

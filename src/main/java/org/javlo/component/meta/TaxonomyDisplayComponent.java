@@ -62,5 +62,10 @@ public class TaxonomyDisplayComponent extends AbstractVisualComponent {
 	public boolean isDefaultValue(ContentContext ctx) {
 		return false;
 	}
+	
+	@Override
+	public String getFontAwesome() {	
+		return "sitemap";
+	}
 
 }

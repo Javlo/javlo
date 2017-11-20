@@ -54,7 +54,6 @@ import org.javlo.service.PersistenceService;
 import org.javlo.service.RequestService;
 import org.javlo.servlet.ImageTransformServlet;
 import org.javlo.template.Template;
-import org.javlo.template.TemplateFactory;
 import org.javlo.user.AdminUserFactory;
 import org.javlo.user.AdminUserSecurity;
 import org.javlo.user.User;
@@ -312,8 +311,12 @@ public class GlobalImage extends Image implements IImageFilter {
 	protected String getEditXHTMLCode(ContentContext ctx) throws Exception {
 
 		if (ctx.getRequest().getParameter("path") != null) {
-			String newFolder = URLHelper.removeStaticFolderPrefix(ctx, ctx.getRequest().getParameter("path"));
-			newFolder = newFolder.replaceFirst("/" + ctx.getGlobalContext().getStaticConfig().getImageFolderName() + '/', "");
+			String newFolder = URLHelper.removeStaticFolderPrefix(ctx, ctx.getRequest().getParameter("path"));		
+			String imageFolder = "/" + ctx.getGlobalContext().getStaticConfig().getImageFolderName();
+			newFolder = newFolder.replaceFirst(imageFolder + '/', "");
+			if (newFolder.equals(imageFolder)) {
+				newFolder = "/";
+			}
 			if (newFolder.trim().length() > 1 && !getDirSelected().equals(newFolder)) {
 				setDirSelected(newFolder);
 				setFileName("");
@@ -1443,5 +1446,9 @@ public class GlobalImage extends Image implements IImageFilter {
 		}
 		return null;
 	}
-
+	
+	@Override
+	public String getFontAwesome() {	
+		return "picture-o";
+	}
 }

@@ -145,4 +145,9 @@ public class WysiwygParagraph extends AbstractVisualComponent {
 		return true;
 	}
 	
+	@Override
+	public String getFontAwesome() {	
+		return "align-left";
+	}
+	
 }

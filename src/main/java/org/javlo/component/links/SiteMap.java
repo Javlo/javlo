@@ -219,5 +219,10 @@ public class SiteMap extends AbstractVisualComponent {
 	public boolean isRealContent(ContentContext ctx) {
 		return true;
 	}
+	
+	@Override
+	public String getFontAwesome() {	
+		return "sitemap";
+	}
 
 }

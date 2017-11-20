@@ -215,4 +215,9 @@ public class SubTitle extends AbstractVisualComponent implements ISubTitle {
 	protected String getDefaultHelpURI(ContentContext ctx) {
 		return null;
 	}
+	
+	@Override
+	public String getFontAwesome() {	
+		return "header";
+	}
 }

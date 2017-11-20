@@ -711,5 +711,10 @@ public class Video extends GlobalImage implements IAction, IVideo {
 	protected boolean isFileNameValid(ContentContext ctx, String fileName) {
 		return ResourceHelper.isAcceptedVideo(ctx, fileName);
 	}
+	
+	@Override
+	public String getFontAwesome() {	
+		return "video-camera";
+	}
 
 }
