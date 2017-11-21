@@ -230,6 +230,9 @@ public class DebugNote extends AbstractPropertiesComponent {
 		return msg;
 	}
 	
-	
+	@Override
+	public String getFontAwesome() {	
+		return "bug";
+	}
 
 }

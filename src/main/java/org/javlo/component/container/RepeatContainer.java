@@ -66,5 +66,10 @@ public class RepeatContainer extends AbstractVisualComponent {
 	public String getEmptyXHTMLCode(ContentContext ctx) throws Exception {
 		return '['+getType()+']';
 	}
+	
+	@Override
+	public String getFontAwesome() {
+		return "sign-in";
+	}
 
 }

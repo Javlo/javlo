@@ -82,5 +82,10 @@ public class ForceRealContent extends AbstractVisualComponent {
 	public boolean isContentCachable(ContentContext ctx) {
 		return true;
 	}
+	
+	@Override
+	public String getFontAwesome() {
+		return "file-text";
+	}
 
 }

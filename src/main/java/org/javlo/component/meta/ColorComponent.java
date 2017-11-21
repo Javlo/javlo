@@ -64,5 +64,10 @@ public class ColorComponent extends AbstractVisualComponent {
 			return super.getEmptyCode(ctx);
 		}
 	}
+	
+	@Override
+	public String getFontAwesome() {
+		return "paint-brush";
+	}
 
 }

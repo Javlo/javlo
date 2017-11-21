@@ -148,5 +148,10 @@ public class ToTheTopComponent extends AbstractVisualComponent {
 		}
 		return 0;
 	}
+	
+	@Override
+	public String getFontAwesome() {
+		return "arrow-up";
+	}
 
 }
