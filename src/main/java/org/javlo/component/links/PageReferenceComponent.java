@@ -1247,7 +1247,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		if (filter != null && !(page.getTitle(ctx) + ' ' + page.getName() + ' ' + page.getLabel(ctx)).contains(filter)) {
 			return false;
 		}
-		if (!page.isChildOf(getParentNode())) {
+		if (!page.isChildOf(getParentNode(ctx))) {
 			return false;
 		}
 		if (page.getEvent(ctx) == null && isOnlyEvent()) {
@@ -1449,7 +1449,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		/* parent node */
 		out.println("<div class=\"line\"><div class=\"row\"><div class=\"col-xs-10\">");
 		out.println("<label for=\"" + getParentNodeInputName() + "\">" + i18nAccess.getText("content.page-teaser.parent-node") + " : </label>");
-		out.println(XHTMLNavigationHelper.renderComboNavigation(ctx, menu, getParentNodeInputName(), getParentNode(), true));
+		out.println(XHTMLNavigationHelper.renderComboNavigation(ctx, menu, getParentNodeInputName(), getParentNode(ctx), true));
 		out.println("</div><div class=\"col-xs-2\">");
 		out.println("<input type=\"button\" class=\"btn btn-default btn-xs\" onclick=\"jQuery('#" + getParentNodeInputName() + "').val('" + ctx.getCurrentPage().getPath() + "');\" value=\"" + i18nAccess.getText("global.current-page") + "\" >");
 		out.println("</div></div></div>");
@@ -1541,8 +1541,8 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		out.println("</div>");
 
 		MenuElement basePage = null;
-		if (getParentNode().length() > 1) { // if parent node is not root node
-			basePage = menu.searchChild(ctx, getParentNode());
+		if (getParentNode(ctx).length() > 1) { // if parent node is not root node
+			basePage = menu.searchChild(ctx, getParentNode(ctx));
 		}
 		if (basePage != null) {
 			menu = basePage;
@@ -1728,7 +1728,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 			Set<String> selectedPage = new TreeSet<String>();
 			MenuElement parentNode = null;
 			if (children.size() > 0) {
-				parentNode = children.get(0).getRoot().searchChild(ctx, getParentNode());
+				parentNode = children.get(0).getRoot().searchChild(ctx, getParentNode(ctx));
 			}
 			// for (int i = 0; i < children.length; i++) {
 			for (MenuElement page : children) {
@@ -1745,8 +1745,22 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		return out;
 	}
 
-	protected String getParentNode() {
-		return properties.getProperty(PARENT_NODE_PROP_KEY, "/");
+	protected String getParentNode(ContentContext ctx) {
+		String parentNodePath = properties.getProperty(PARENT_NODE_PROP_KEY, "/");
+		ContentService contentService = ContentService.getInstance(ctx.getRequest());
+		MenuElement page;
+		try {
+			page = contentService.getNavigation(ctx).searchChild(ctx, parentNodePath);
+			if (page == null) {
+				page = contentService.getNavigation(ctx).searchChildFromName(URLHelper.extractFileName(parentNodePath));
+				if (page != null) {
+					parentNodePath = page.getPath();
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}		
+		return parentNodePath;
 	}
 
 	protected String getParentNodeInputName() {
@@ -2384,7 +2398,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 			setOnlyPageWithoutChildren(onlyWithoutChildren);
 
 			String basePage = requestService.getParameter(getParentNodeInputName(), "/");
-			if (!basePage.equals(getParentNode())) {
+			if (!basePage.equals(getParentNode(ctx))) {
 				setNeedRefresh(true);
 				setModify();
 			}
