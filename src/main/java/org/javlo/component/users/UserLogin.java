@@ -241,5 +241,10 @@ public class UserLogin extends AbstractPropertiesComponent implements IAction {
 	public int getComplexityLevel(ContentContext ctx) {
 		return getConfig(ctx).getComplexity(COMPLEXITY_ADMIN);
 	}
+	
+	@Override
+	public String getFontAwesome() {
+		return "user-circle";
+	}
 
 }

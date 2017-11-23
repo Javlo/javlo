@@ -17,7 +17,6 @@ import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
 import org.javlo.service.PersistenceService;
 import org.javlo.service.RequestService;
-import org.javlo.user.AdminUserSecurity;
 import org.javlo.user.User;
 
 public class DynamicComponentCreator extends AbstractVisualComponent implements IAction {
@@ -151,5 +150,9 @@ public class DynamicComponentCreator extends AbstractVisualComponent implements 
 	public int getComplexityLevel(ContentContext ctx) {
 		return COMPLEXITY_ADMIN;
 	}
-
+	
+	@Override
+	public String getFontAwesome() {
+		return "plus-circle";
+	}
 }

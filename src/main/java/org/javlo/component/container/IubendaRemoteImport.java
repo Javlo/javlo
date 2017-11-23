@@ -26,7 +26,11 @@ public class IubendaRemoteImport extends AbstractVisualComponent {
 		if (StringHelper.isURL(getValue())) {
 			Calendar cal = Calendar.getInstance();
 			cal.roll(Calendar.DAY_OF_YEAR, false);
-			String content = NetHelper.readPageGet(new URL(getValue()));
+			String url = getValue();
+			if (url.startsWith("http://")) {
+				url = url.replaceFirst("http", "https");
+			}
+			String content = NetHelper.readPageGet(new URL(url));
 			JSONMap map = JSONMap.parseMap(content);
 			cache = "" + map.get("content");
 			return cache;

@@ -113,6 +113,8 @@ import org.javlo.ztatic.IStaticContainer;
  * @author pvanderm
  */
 public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxonomyContainer {
+	
+	public static MenuElement NOT_FOUND_PAGE = new MenuElement();
 
 	public static int instance = 0;
 
@@ -2910,7 +2912,11 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 				}
 			}
 		}
-		Collections.sort(res, new SortImageTitleByPriority(ctx));
+		if (res.size() > 1) {
+			Collections.sort(res, new SortImageTitleByPriority(ctx));
+		} else if (res.size() == 0) {
+			res = Collections.emptyList();
+		}
 		desc.images = res;
 		return desc.images;
 	}

@@ -67,4 +67,9 @@ public class ImageBackground extends GlobalImage {
 		return !StringHelper.isEmpty(getValue());
 	}
 	
+	@Override
+	public String getFontAwesome() {
+		return "picture-o";
+	}
+	
 }

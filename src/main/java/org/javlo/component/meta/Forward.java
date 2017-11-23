@@ -51,4 +51,9 @@ public class Forward extends AbstractVisualComponent {
 	public boolean isRealContent(ContentContext ctx) {	
 		return true; // true for lauch the forward
 	}
+	
+	@Override
+	public String getFontAwesome() {
+		return "angle-double-right";
+	}
 }

@@ -6,6 +6,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 public class URLTriggerThread extends Thread {
+	
+	private static long COUNT = 0;
 
 	protected static Logger logger = Logger.getLogger(URLTriggerThread.class.getName());
 
@@ -24,7 +26,7 @@ public class URLTriggerThread extends Thread {
 	}
 
 	@Override
-	public synchronized void run() {
+	public synchronized void run() {		
 		sleepLatch = new CountDownLatch(1);
 		logger.info("START URL TRIGGER on " + urlToTrigger.toString());
 		try {

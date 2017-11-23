@@ -241,7 +241,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	/**
 	 * public for urls.jsp
 	 */
-	public Map<String, MenuElement> viewPages = null;
+	private Map<String, MenuElement> viewPages = null;
 
 	private boolean urlFromFactoryImported = false;
 
@@ -1734,17 +1734,23 @@ public class GlobalContext implements Serializable, IPrintInfo {
 
 			MenuElement page = localViewPages.get(keyURL);
 			if (page != null) {
-				return page;
+				if (page == MenuElement.NOT_FOUND_PAGE) {
+					return null;
+				} else {
+					return page;
+				}
 			}
 		}
 		MenuElement root = ContentService.getInstance(ctx.getRequest()).getNavigation(ctx);
 		if (url.equals("/")) {
 			return root;
 		} else {
-			Collection<MenuElement> pastNode = new LinkedList<MenuElement>();
+			Collection<MenuElement> pastNode = new LinkedList<MenuElement>();			
 			MenuElement page = MenuElement.searchChild(root, ctx, url, pastNode);
 			if (page != null && ctx.getRenderMode() == ContentContext.VIEW_MODE) {
 				localViewPages.put(url, page);
+			} else if (page == null && ctx.getRenderMode() == ContentContext.VIEW_MODE) {
+				localViewPages.put(url, MenuElement.NOT_FOUND_PAGE);
 			}
 
 			return page;

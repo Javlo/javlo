@@ -1976,7 +1976,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		if (isDynamicOrder(ctx) && StringHelper.isTrue(ctx.getRequest().getParameter("reverse_order"))) {
 			return true;
 		} else {
-			return StringHelper.isTrue(properties.getProperty(CHANGE_ORDER_KEY, "false"));
+			return StringHelper.isTrue(properties.getProperty(CHANGE_ORDER_KEY) , false);
 		}
 	}
 
@@ -1985,19 +1985,19 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 	}
 
 	private boolean isWidthEmptyPage() {
-		return StringHelper.isTrue(properties.getProperty(WIDTH_EMPTY_PAGE_PROP_KEY, "false"));
+		return StringHelper.isTrue(properties.getProperty(WIDTH_EMPTY_PAGE_PROP_KEY), false);
 	}
 
 	private boolean isOnlyPageWithoutChildren() {
-		return StringHelper.isTrue(properties.getProperty(ONLY_PAGE_WITHOUT_CHILDREN, "false"));
+		return StringHelper.isTrue(properties.getProperty(ONLY_PAGE_WITHOUT_CHILDREN), false);
 	}
 
 	private boolean isOnlyEvent() {
-		return StringHelper.isTrue(properties.getProperty(ONLY_EVENT, "false"));
+		return StringHelper.isTrue(properties.getProperty(ONLY_EVENT), false);
 	}
 
 	private boolean isIntranetMode() {
-		return StringHelper.isTrue(properties.getProperty(INTRANET_MODE_KEY, "false"));
+		return StringHelper.isTrue(properties.getProperty(INTRANET_MODE_KEY), false);
 	}
 
 	public int getPageSize(ContentContext ctx) {
@@ -2011,6 +2011,8 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 
 	@Override
 	public void prepareView(ContentContext ctx) throws Exception {
+		
+		LocalLogger.PRINT_TIME = true;
 		
 		LocalLogger.startCount("pageref");
 		
@@ -2141,7 +2143,6 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		Collection<Calendar> allMonths = new LinkedList<Calendar>();
 		Collection<String> allMonthsKeys = new HashSet<String>();
 		for (MenuElement page : pages) {			
-			
 			ContentContext lgCtx = ctx;
 			if (GlobalContext.getInstance(ctx.getRequest()).isAutoSwitchToDefaultLanguage()) {
 				lgCtx = page.getContentContextWithContent(ctx);
@@ -2215,7 +2216,9 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		ctx.getRequest().setAttribute("tags", globalContext.getTags());
 		if (globalContext.getAllTaxonomy(ctx).isActive()) {
 			ctx.getRequest().setAttribute("taxonomyList", TaxonomyDisplayBean.convert(ctx, globalContext.getAllTaxonomy(ctx).convert(getTaxonomy())));
-		}		
+		}
+		
+		LocalLogger.PRINT_TIME = false;
 	}
 
 	public static void main(String[] args) {

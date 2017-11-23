@@ -1,9 +1,13 @@
 package org.javlo.tag;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.BodyTagSupport;
 
+import org.javlo.context.ContentContext;
 import org.javlo.helper.XHTMLHelper;
+import org.javlo.service.ReverseLinkService;
 
 public class JVAutoLinkTag extends BodyTagSupport {
 
@@ -17,8 +21,13 @@ public class JVAutoLinkTag extends BodyTagSupport {
 	@Override
 	public int doAfterBody() throws JspException {
 		try {
-			String body = getBodyContent().getString();
-			getBodyContent().getEnclosingWriter().print(XHTMLHelper.autoLink(body));
+			String body = getBodyContent().getString();			
+			String html = body;		
+			ContentContext ctx = ContentContext.getContentContext((HttpServletRequest)pageContext.getRequest(), (HttpServletResponse)pageContext.getResponse());
+			ReverseLinkService rlx = ReverseLinkService.getInstance(ctx.getGlobalContext());
+			html=rlx.replaceLink(ctx, null, html);
+			html=XHTMLHelper.autoLink(html);
+			getBodyContent().getEnclosingWriter().print(html);
 		} catch (Exception ioe) {
 			throw new JspException("Error: " + ioe.getMessage());
 		}

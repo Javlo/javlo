@@ -1,4 +1,4 @@
-var PREVIEWLOG = false;
+var PREVIEWLOG = true;
 
 
 var editPreview = editPreview||{};
