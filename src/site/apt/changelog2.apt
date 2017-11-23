@@ -899,3 +899,5 @@ change log
  * 4/ create link in ticket / display components with http://fontawesome.io/
  
 * 2.1.0.7 [20/11/2017]
+
+ * 1/ autolink tag create reverse links
