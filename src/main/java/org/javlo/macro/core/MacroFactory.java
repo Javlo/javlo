@@ -30,6 +30,7 @@ import org.javlo.macro.DeleteChildrenAndContent;
 import org.javlo.macro.DeleteChildrenContent;
 import org.javlo.macro.DeleteComponentBadArea;
 import org.javlo.macro.DeleteComponentWithBadResourceReference;
+import org.javlo.macro.DeleteContentFiles;
 import org.javlo.macro.DeletePageFromSpecificUser;
 import org.javlo.macro.DeleteSameComponent;
 import org.javlo.macro.DeleteSmartExternalLinkMacro;
@@ -178,6 +179,7 @@ public class MacroFactory {
 		macros.add(new CleanPersistenceFolder());
 		macros.add(new FileInListMacro());
 		macros.add(new MergeGalleryAndGalleries());
+		macros.add(new DeleteContentFiles());
 	}
 
 	public IMacro getMacro(String name) {

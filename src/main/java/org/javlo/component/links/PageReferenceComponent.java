@@ -28,18 +28,14 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang3.StringUtils;
 import org.javlo.actions.IAction;
-import org.javlo.bean.DateBean;
-import org.javlo.bean.Link;
 import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.component.core.ComplexPropertiesLink;
 import org.javlo.component.core.ComponentBean;
-import org.javlo.component.image.IImageTitle;
 import org.javlo.component.meta.Tags;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.data.taxonomy.ITaxonomyContainer;
 import org.javlo.data.taxonomy.TaxonomyDisplayBean;
-import org.javlo.helper.DebugHelper;
 import org.javlo.helper.LocalLogger;
 import org.javlo.helper.MacroHelper;
 import org.javlo.helper.NavigationHelper;
@@ -55,19 +51,20 @@ import org.javlo.helper.Comparator.MenuElementModificationDateComparator;
 import org.javlo.helper.Comparator.MenuElementPopularityComparator;
 import org.javlo.helper.Comparator.MenuElementPriorityComparator;
 import org.javlo.helper.Comparator.MenuElementVisitComparator;
+import org.javlo.helper.Comparator.SmartPageBeanCreationDateComparator;
+import org.javlo.helper.Comparator.SmartPageBeanGlobalDateComparator;
+import org.javlo.helper.Comparator.SmartPageBeanPopularityComparator;
+import org.javlo.helper.Comparator.SmartPageBeanPriorityComparator;
+import org.javlo.helper.Comparator.SmartPageBeanVisitComparator;
 import org.javlo.i18n.I18nAccess;
-import org.javlo.image.ExtendedColor;
 import org.javlo.module.content.Edit;
 import org.javlo.navigation.MenuElement;
+import org.javlo.navigation.PageBean;
 import org.javlo.navigation.ReactionMenuElementComparator;
-import org.javlo.navigation.data.PageContentMap;
+import org.javlo.navigation.ReactionSmartPageBeanComparator;
 import org.javlo.service.ContentService;
 import org.javlo.service.NavigationService;
 import org.javlo.service.RequestService;
-import org.javlo.service.event.Event;
-import org.javlo.template.Template;
-import org.javlo.template.TemplateFactory;
-import org.javlo.user.AdminUserSecurity;
 
 /**
  * list of links to a subset of pages.
@@ -107,909 +104,6 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 
 		public void setEnd(Date endDate) {
 			this.end = endDate;
-		}
-
-	}
-
-	public static class PageBean {
-
-		public static class Image {
-			private String url;
-			private String viewURL;
-			private String linkURL;
-			private String description;
-			private String path;
-			private String cssClass;
-
-			public Image(String url, String viewURL, String linkURL, String cssClass, String description, String path) {
-				super();
-				this.url = url;
-				this.viewURL = viewURL;
-				this.linkURL = linkURL;
-				this.setCssClass(cssClass);
-				this.description = description;
-				this.path = path;
-			}
-
-			public String getCssClass() {
-				return cssClass;
-			}
-
-			public String getDescription() {
-				return description;
-			}
-
-			public String getLinkURL() {
-				return linkURL;
-			}
-
-			public String getPath() {
-				return path;
-			}
-
-			public String getUrl() {
-				return url;
-			}
-
-			public String getViewURL() {
-				return viewURL;
-			}
-
-			public void setCssClass(String cssClass) {
-				this.cssClass = cssClass;
-			}
-
-			public void setDescription(String description) {
-				this.description = description;
-			}
-
-			public void setLinkURL(String linkURL) {
-				this.linkURL = linkURL;
-			}
-
-			public void setPath(String path) {
-				this.path = path;
-			}
-
-			public void setUrl(String url) {
-				this.url = url;
-			}
-
-			public void setViewURL(String viewURL) {
-				this.viewURL = viewURL;
-			}
-		}
-
-		private MenuElement rootOfChildrenAssociation;
-		private String humanName;
-		private Image image;
-
-		/**
-		 * 
-		 * @param ctx
-		 *            the basic context, use for create URL
-		 * @param lgCtx
-		 *            context with language corrected.
-		 * @param page
-		 * @param comp
-		 * @return
-		 * @throws Exception
-		 */
-		private static PageBean getInstance(ContentContext ctx, ContentContext lgCtx, MenuElement page, PageReferenceComponent comp) throws Exception {
-
-			GlobalContext globalContext = GlobalContext.getInstance(lgCtx.getRequest());
-
-			Iterator<String> defaultLg = globalContext.getDefaultLanguages().iterator();
-
-			Template pageTemplate = TemplateFactory.getTemplate(lgCtx, page);
-
-			defaultLg = globalContext.getContentLanguages().iterator();
-			ContentContext tagCtx = new ContentContext(lgCtx);
-			while (page.getContentByType(tagCtx, Tags.TYPE).size() == 0 && defaultLg.hasNext()) {
-				String lg = defaultLg.next();
-				tagCtx.setContentLanguage(lg);
-				tagCtx.setRequestContentLanguage(lg);
-			}
-
-			PageBean bean = new PageBean();
-			bean.ctx = ctx;
-			bean.lgCtx = lgCtx;
-			bean.page = page;
-			bean.comp = comp;
-			bean.language = lgCtx.getRequestContentLanguage();
-			lgCtx.setRequestContentLanguage(bean.language);
-
-			bean.contentTitle = page.getContentTitle(lgCtx);
-			bean.title = page.getTitle(lgCtx);
-			if (page.isChildrenAssociation() && page.getChildMenuElements().size() > 0) {
-				bean.title = page.getChildMenuElements().iterator().next().getTitle(lgCtx);
-			}
-			bean.subTitle = page.getSubTitle(lgCtx);
-			bean.subTitles = page.getSubTitles(lgCtx, 2);
-			bean.label = page.getLabel(lgCtx);
-			// bean.realContent = page.isRealContent(lgCtx);
-			bean.attTitle = XHTMLHelper.stringToAttribute(page.getTitle(lgCtx));
-			/*
-			 * tagCtx.setCurrentPageCached(page); bean.description =
-			 * XHTMLHelper.replaceJSTLData(tagCtx, page.getDescription(lgCtx));
-			 * bean.xhtmlDescription = XHTMLHelper.replaceJSTLData(tagCtx,
-			 * page.getXHTMLDescription(lgCtx));
-			 */
-			bean.location = page.getLocation(lgCtx);
-			bean.category = page.getCategory(lgCtx);
-			bean.visible = page.isVisible();
-			bean.path = page.getPath();
-			bean.creator = page.getCreator();
-			bean.childrenOfAssociation = page.isChildrenOfAssociation();
-			bean.childrenAssociation = page.isChildrenAssociation();
-			bean.reactionSize = page.getReactionSize(lgCtx);
-			if (pageTemplate != null) {
-				bean.mailing = pageTemplate.isMailing();
-			}
-			bean.rootOfChildrenAssociation = page.getRootOfChildrenAssociation();
-			bean.setCategoryKey("category." + StringHelper.neverNull(page.getCategory(lgCtx)).toLowerCase().replaceAll(" ", ""));
-
-			I18nAccess i18nAccess = I18nAccess.getInstance(lgCtx.getRequest());
-			bean.categoryLabel = i18nAccess.getViewText(bean.getCategoryKey());
-
-			for (String tag : page.getTags(tagCtx)) {
-				bean.addTagLabel(i18nAccess.getViewText("tag." + tag));
-			}
-
-			// i18nAccess.changeViewLanguage(ctx);
-
-			ContentContext realContentCtx = new ContentContext(lgCtx);
-			realContentCtx.setLanguage(realContentCtx.getRequestContentLanguage());
-			bean.id = page.getId();
-			bean.name = page.getName();
-			bean.humanName = page.getHumanName();
-			bean.selected = page.isSelected(lgCtx);
-			bean.linkOn = page.getLinkOn(lgCtx);
-			bean.creationDate = StringHelper.renderShortDate(lgCtx, page.getCreationDate());
-			bean.setCreationTime(StringHelper.renderShortTime(lgCtx, page.getCreationDate()));
-			bean.modificationDate = StringHelper.renderShortDate(lgCtx, page.getModificationDate(ctx));
-			bean.contentDateValue = StringHelper.renderShortDate(lgCtx, page.getContentDate(lgCtx));
-			bean.modificationTime = StringHelper.renderShortTime(lgCtx, page.getModificationDate(ctx));
-			bean.sortableModificationDate = StringHelper.renderShortDate(lgCtx, page.getModificationDate(ctx));
-			bean.sortableModificationTime = StringHelper.renderShortTime(lgCtx, page.getModificationDate(ctx));
-			bean.sortableCreationDate = StringHelper.renderSortableDate(page.getCreationDate());
-			bean.sortableCreationTime = StringHelper.renderSortableTime(page.getCreationDate());
-			bean.priority = page.getPriority();
-			bean.event = new PageEvent();
-			bean.events = page.getEvents(realContentCtx);
-			bean.editable = page.isEditabled(realContentCtx);
-			bean.model = page.isModel();
-			bean.seoWeight = page.getSeoWeight();
-			bean.data = new PageContentMap(ctx, page);
-			bean.color = page.getColor(realContentCtx);
-
-			/** check right **/
-			Set<String> roles = page.getEditorRoles();
-			if (roles.size() == 0 && ctx.getCurrentUser() != null) {
-				bean.setCurrentUserAsRight(true);
-			} else {
-				if (AdminUserSecurity.getInstance().isAdmin(ctx.getCurrentEditUser())) {
-					bean.setCurrentUserAsRight(true);
-				} else if (ctx.getCurrentUser() != null && !Collections.disjoint(roles, ctx.getCurrentUser().getRoles())) {
-					bean.setCurrentUserAsRight(true);
-				} else {
-					bean.setCurrentUserAsRight(false);
-				}
-			}
-
-			bean.setLinkLabel(page.getLinkLabel(lgCtx));
-			Event event = page.getEvent(realContentCtx);
-			if (event != null) {
-				bean.event.setStart(event.getStart());
-				bean.event.setEnd(event.getEnd());
-			} else {
-				bean.event.setStart(page.getContentDate(realContentCtx));
-			}
-			bean.setToTheTopLevel(page.getToTheTopLevel(realContentCtx));
-			if (page.getContentDate(lgCtx) != null) {
-				bean.date = new DateBean(lgCtx, page.getContentDate(lgCtx));
-				bean.sortableDate = StringHelper.renderSortableDate(page.getContentDate(lgCtx));
-				bean.contentDate = true;
-			} else {
-				bean.date = new DateBean(lgCtx, page.getModificationDate(ctx));
-				bean.sortableDate = StringHelper.renderSortableDate(page.getModificationDate(ctx));
-				bean.contentDate = false;
-			}
-			if (page.getTimeRange(lgCtx) != null) {
-				bean.startDate = new DateBean(lgCtx, page.getTimeRange(lgCtx).getStartDate());
-				bean.endDate = new DateBean(lgCtx, page.getTimeRange(lgCtx).getEndDate());
-			} else {
-				bean.startDate = bean.date;
-				bean.endDate = bean.date;
-			}
-
-			if (page.getEvents(realContentCtx) != null) {
-				bean.dates = new LinkedList<DateBean>();
-				for (Event pageEvent : page.getEvents(realContentCtx)) {
-					Calendar startDate = Calendar.getInstance();
-					startDate.setTime(pageEvent.getStart());
-					Calendar endDate = Calendar.getInstance();
-					endDate.setTime(pageEvent.getEnd());
-					bean.dates.add(new DateBean(ctx, startDate.getTime()));
-					final int MAX_DAYS_OF_EVENTS = 400;
-					int i = 0;
-					while (TimeHelper.isBeforeForDay(startDate.getTime(), endDate.getTime()) && i < MAX_DAYS_OF_EVENTS) {
-						i++;
-						startDate.add(Calendar.DAY_OF_YEAR, 1);
-						bean.dates.add(new DateBean(ctx, startDate.getTime()));
-					}
-					if (i == MAX_DAYS_OF_EVENTS) {
-						logger.warning("to much days in event (max:" + MAX_DAYS_OF_EVENTS + ") : " + page.getPath() + " [" + globalContext.getContextKey() + ']');
-					}
-				}
-			} else {
-				bean.dates = new LinkedList<DateBean>();
-				Calendar startDate = Calendar.getInstance();
-				startDate.setTime(bean.startDate.getDate());
-				Calendar endDate = Calendar.getInstance();
-				endDate.setTime(bean.endDate.getDate());
-
-				bean.dates.add(new DateBean(ctx, startDate.getTime()));
-
-				final int MAX_DAYS_OF_EVENTS = 1000;
-				int i = 0;
-
-				/// while (startDate.before(endDate) && i<MAX_DAYS_OF_EVENTS) {
-				while (TimeHelper.isBeforeForDay(startDate.getTime(), endDate.getTime()) && i < MAX_DAYS_OF_EVENTS) {
-					startDate.add(Calendar.DAY_OF_YEAR, 1);
-					bean.dates.add(new DateBean(ctx, startDate.getTime()));
-					i++;
-				}
-				if (i == MAX_DAYS_OF_EVENTS) {
-					logger.warning("to much days in page (max:" + MAX_DAYS_OF_EVENTS + ") : " + page.getPath() + " [" + globalContext.getContextKey() + ']');
-				}
-			}
-
-			/**
-			 * for association link to association page and not root.
-			 */
-			MenuElement firstChild = page.getFirstChild();
-			if (firstChild != null && firstChild.isChildrenAssociation()) {
-				ContentContext ctxLg = ctx;
-				if (globalContext.isAutoSwitchToDefaultLanguage()) {
-					ctxLg = ctx.getContextWithContent(firstChild);
-				}
-				bean.url = URLHelper.createURL(ctxLg, firstChild.getPath());
-				bean.modificationDate = StringHelper.renderShortDate(lgCtx, firstChild.getModificationDate(ctx));
-				bean.sortableModificationDate = StringHelper.renderShortDate(lgCtx, firstChild.getModificationDate(ctx));
-				bean.publishURL = URLHelper.createAbsoluteViewURL(lgCtx, firstChild.getPath());
-			} else {
-				ContentContext ctxLg = ctx;
-				if (globalContext.isAutoSwitchToDefaultLanguage()) {
-					ctxLg = ctx.getContextWithContent(page);
-					if (ctxLg == null) {
-						ctxLg = ctx;
-					}
-				}
-				bean.url = URLHelper.createURL(ctxLg, page.getPath());
-				bean.publishURL = URLHelper.createAbsoluteViewURL(lgCtx, page.getPath());
-			}
-
-			String filter = comp.getConfig(lgCtx).getProperty("filter-image", "reference-list");
-
-			IImageTitle image = page.getImage(lgCtx);
-			if (image != null) {
-				bean.imagePath = image.getResourceURL(lgCtx);
-				bean.imageURL = URLHelper.createTransformURL(lgCtx, page, image.getResourceURL(lgCtx), filter);
-				bean.viewImageURL = URLHelper.createTransformURL(lgCtx, page, image.getResourceURL(lgCtx), "thumb-view");
-				bean.imageDescription = XHTMLHelper.stringToAttribute(image.getImageDescription(lgCtx));
-				PageBean.Image imageBean = new PageBean.Image(bean.imageURL, bean.viewImageURL, "", "", bean.imageDescription, bean.imagePath);
-				bean.setImage(imageBean);
-			}
-			Collection<IImageTitle> images = page.getImages(lgCtx);
-
-			for (IImageTitle imageItem : images) {
-				String imagePath = imageItem.getResourceURL(lgCtx);
-				String imageURL = URLHelper.createTransformURL(lgCtx, page, imageItem.getResourceURL(lgCtx), filter);
-				String viewImageURL = URLHelper.createTransformURL(lgCtx, page, imageItem.getResourceURL(lgCtx), "thumb-view");
-				String imageDescription = XHTMLHelper.stringToAttribute(imageItem.getImageDescription(lgCtx));
-				String cssClass = "";
-				String linkURL = imageItem.getImageLinkURL(lgCtx);
-				if (linkURL != null) {
-					if (linkURL.equals(IImageTitle.NO_LINK)) {
-						cssClass = "no-link";
-						linkURL = null;
-					} else {
-						cssClass = "link " + StringHelper.getPathType(linkURL, "");
-					}
-				}
-
-				PageBean.Image imageBean = new PageBean.Image(imageURL, viewImageURL, linkURL, cssClass, imageDescription, imagePath);
-				bean.getImages().add(imageBean);
-			}
-
-			bean.staticResources = page.getStaticResources(realContentCtx);
-
-			Collection<String> lgs = globalContext.getContentLanguages();
-			for (String lg : lgs) {
-				ContentContext localLGCtx = new ContentContext(lgCtx);
-				localLGCtx.setRequestContentLanguage(lg);
-				localLGCtx.setContentLanguage(lg);
-				if (page.isRealContent(localLGCtx)) {
-					Locale locale = new Locale(lg);
-					Link link = new Link(URLHelper.createURL(localLGCtx, page.getPath()), lg, lg + " - " + locale.getDisplayLanguage(locale));
-					bean.links.add(link);
-				}
-			}
-			if (bean.links.size() == 0) {
-				bean.links = null;
-			}
-			bean.setTags(page.getTags(tagCtx));
-			return bean;
-		}
-
-		private String id = null;
-		private String name = null;
-		private boolean selected = false;
-		private boolean contentDate = false;
-		private String title = null;
-		private String contentTitle = null;
-		private String subTitle = null;
-		private List<String> subTitles = null;
-		private String label = null;
-		private String attTitle = null;
-		/*
-		 * private String description = null; private String xhtmlDescription =
-		 * null;
-		 */
-		private String location = null;
-		private String category = null;
-		private String categoryLabel = null;
-		private String categoryKey = null;
-		private String imageURL = null;
-		private String imagePath = null;
-		private String imageDescription = null;
-		private DateBean date = null;
-		private String sortableDate = null;
-		private String creationDate = null;
-		private String creationTime = null;
-		private String modificationDate = null;
-		private String contentDateValue = null;
-		private String modificationTime = null;
-		private String sortableModificationDate = null;
-		private String sortableModificationTime = null;
-		private String sortableCreationDate = null;
-		private String sortableCreationTime = null;
-		private DateBean startDate = null;
-		private DateBean endDate = null;
-		private List<DateBean> dates = null;
-		private String url = null;
-		private String language;
-		private String viewImageURL = null;
-		private String linkOn = null;
-		private String rawTags = null;
-		private String path = null;
-		private String creator = null;
-		private String publishURL;
-		private String linkLabel = null;
-		private int priority = 0;
-		private boolean childrenOfAssociation = false;
-		private boolean childrenAssociation = false;
-		private boolean mailing = false;
-		// private boolean realContent = false;
-		private boolean visible = false;
-		private boolean currentUserAsRight = false;
-		private Collection<Link> links = new LinkedList<Link>();
-		private Collection<Link> staticResources = new LinkedList<Link>();
-		private final Collection<Image> images = new LinkedList<Image>();
-		private int reactionSize = 0;
-		private ContentContext ctx;
-		private ContentContext lgCtx;
-		private MenuElement page;
-		private PageReferenceComponent comp;
-		private List<PageBean> children = null;
-		private PageEvent event = null;
-		private List<Event> events = null;
-		private boolean editable;
-		private boolean model;
-		private int seoWeight;
-		private PageContentMap data;
-		private int toTheTopLevel;
-		private ExtendedColor color;
-
-		private Collection<String> tags = new LinkedList<String>();
-		private final Collection<String> tagsLabel = new LinkedList<String>();
-
-		public String getAttTitle() {
-			return attTitle;
-		}
-
-		public String getCategory() {
-			return category;
-		}
-
-		public DateBean getDate() {
-			return date;
-		}
-
-		public String getDescription() {
-			try {
-				ContentContext newPageCtx = new ContentContext(ctx);
-				newPageCtx.setCurrentPageCached(page);
-				return XHTMLHelper.replaceJSTLData(newPageCtx, page.getDescription(lgCtx));
-			} catch (Exception e) {
-				e.printStackTrace();
-				return null;
-			}
-		}
-
-		public String getXhtmlDescription() {
-			try {
-				ContentContext newPageCtx = new ContentContext(ctx);
-				newPageCtx.setCurrentPageCached(page);
-				return XHTMLHelper.replaceJSTLData(newPageCtx, page.getXHTMLDescription(lgCtx));
-			} catch (Exception e) {
-				e.printStackTrace();
-				return null;
-			}
-		}
-
-		public DateBean getEndDate() {
-			return endDate;
-		}
-
-		public String getId() {
-			return id;
-		}
-
-		public String getImageDescription() {
-			return imageDescription;
-		}
-
-		public String getImagePath() {
-			return imagePath;
-		}
-
-		public Collection<Image> getImages() {
-			return images;
-		}
-
-		/**
-		 * return one image. list is empty.
-		 * 
-		 * @return
-		 */
-		public Image getImage() {
-			return image;
-		}
-
-		public String getImageURL() {
-			return imageURL;
-		}
-
-		public String getLanguage() {
-			return language;
-		}
-
-		public String getForceLinkOn() {
-			return linkOn;
-		}
-
-		public String getLinkOn() {
-			if (!StringHelper.isEmpty(linkOn) && !isRealContent()) {
-				return linkOn;
-			} else {
-				return getUrl();
-			}
-		}
-
-		public boolean isLink() {
-			return isRealContent() || !StringHelper.isEmpty(linkOn);
-		}
-
-		public Collection<Link> getLinks() {
-			return links;
-		}
-
-		public String getLocation() {
-			return location;
-		}
-
-		public String getName() {
-			return name;
-		}
-
-		public String getRawTags() {
-			return rawTags;
-		}
-
-		public DateBean getStartDate() {
-			return startDate;
-		}
-
-		public List<DateBean> getDates() {
-			return dates;
-		}
-
-		public String getSubTitle() {
-			return subTitle;
-		}
-
-		public List<String> getSubTitles() {
-			return subTitles;
-		}
-
-		public Collection<String> getTags() {
-			return tags;
-		}
-
-		public Collection<String> getTagsLabel() {
-			return tagsLabel;
-		}
-
-		public String getTitle() {
-			return title;
-		}
-
-		public String getContentTitle() {
-			return contentTitle;
-		}
-
-		public String getUrl() {
-			return url;
-		}
-
-		public String getViewImageURL() {
-			return viewImageURL;
-		}
-
-		public boolean isRealContent() {
-			// return realContent;
-			try {
-				return page.isRealContent(ctx);
-			} catch (Exception e) {
-				e.printStackTrace();
-				return false;
-			}
-		}
-
-		public boolean isSelected() {
-			return selected;
-		}
-
-		public void setId(String id) {
-			this.id = id;
-		}
-
-		public void setImagePath(String imagePath) {
-			this.imagePath = imagePath;
-		}
-
-		public void setRawTags(String rawTags) {
-			this.rawTags = rawTags;
-		}
-
-		public void setSubTitle(String subTitle) {
-			this.subTitle = subTitle;
-		}
-
-		public void addTagLabel(String tagLabel) {
-			tagsLabel.add(tagLabel);
-		}
-
-		public void setTags(Collection<String> tags) {
-			String sep = "";
-			rawTags = "";
-			for (String tag : tags) {
-				rawTags = rawTags + sep + tag.toLowerCase().replace(' ', '-');
-				sep = " ";
-			}
-			this.tags = tags;
-		}
-
-		public String getCategoryKey() {
-			return categoryKey;
-		}
-
-		public void setCategoryKey(String categoryKey) {
-			this.categoryKey = categoryKey;
-		}
-
-		public String getCategoryLabel() {
-			return categoryLabel;
-		}
-
-		public void setCategoryLabel(String categoryLabel) {
-			this.categoryLabel = categoryLabel;
-		}
-
-		public boolean isVisible() {
-			return visible;
-		}
-
-		public void setVisible(boolean visible) {
-			this.visible = visible;
-		}
-
-		public Collection<Link> getStaticResources() {
-			return staticResources;
-		}
-
-		public String getPath() {
-			return path;
-		}
-
-		public void setPath(String path) {
-			this.path = path;
-		}
-
-		public String getCreator() {
-			return creator;
-		}
-
-		public void setCreator(String creator) {
-			this.creator = creator;
-		}
-
-		public boolean isContentDate() {
-			return contentDate;
-		}
-
-		public void setContentDate(boolean contentDate) {
-			this.contentDate = contentDate;
-		}
-
-		public String getPublishURL() {
-			return publishURL;
-		}
-
-		public void setPublishURL(String publishURL) {
-			this.publishURL = publishURL;
-		}
-
-		public boolean isChildrenOfAssociation() {
-			return childrenOfAssociation;
-		}
-
-		public void setChildrenOfAssociation(boolean childrenOfAssociation) {
-			this.childrenOfAssociation = childrenOfAssociation;
-		}
-
-		public MenuElement getRootOfChildrenAssociation() {
-			return rootOfChildrenAssociation;
-		}
-
-		public void setRootOfChildrenAssociation(MenuElement rootOfChildrenAssociation) {
-			this.rootOfChildrenAssociation = rootOfChildrenAssociation;
-		}
-
-		public String getCreationDate() {
-			return creationDate;
-		}
-
-		public void setCreationDate(String creationDate) {
-			this.creationDate = creationDate;
-		}
-
-		public String getSortableDate() {
-			return sortableDate;
-		}
-
-		public void setSortableDate(String sortableDate) {
-			this.sortableDate = sortableDate;
-		}
-
-		public String getSortableCreationDate() {
-			return sortableCreationDate;
-		}
-
-		public void setSortableCreationDate(String sortableCreationDate) {
-			this.sortableCreationDate = sortableCreationDate;
-		}
-
-		public boolean isMailing() {
-			return mailing;
-		}
-
-		public void setMailing(boolean mailing) {
-			this.mailing = mailing;
-		}
-
-		public boolean isChildrenAssociation() {
-			return childrenAssociation;
-		}
-
-		public void setChildrenAssociation(boolean childrenAssociation) {
-			this.childrenAssociation = childrenAssociation;
-		}
-
-		public String getHumanName() {
-			return humanName;
-		}
-
-		public void setHumanName(String humanName) {
-			this.humanName = humanName;
-		}
-
-		public int getReactionSize() {
-			return reactionSize;
-		}
-
-		public void setReactionSize(int reactionSize) {
-			this.reactionSize = reactionSize;
-		}
-
-		public String getModificationDate() {
-			return modificationDate;
-		}
-
-		public String getContentDateValue() {
-			return contentDateValue;
-		}
-
-		public void setModificationDate(String modificationDate) {
-			this.modificationDate = modificationDate;
-		}
-
-		public String getSortableModificationDate() {
-			return sortableModificationDate;
-		}
-
-		public void setSortableModificationDate(String sortableModificationDate) {
-			this.sortableModificationDate = sortableModificationDate;
-		}
-
-		public List<PageBean> getChildren() throws Exception {
-			if (children == null) {
-				List<PageBean> workChildren = new LinkedList<PageBean>();
-				if (page != null) {
-					for (MenuElement child : page.getChildMenuElementsList()) {
-						workChildren.add(PageBean.getInstance(ctx, lgCtx, child, comp));
-					}
-				}
-				children = workChildren;
-			}
-			return children;
-		}
-
-		public String getTechnicalTitle() {
-			ContentContext defaultLangCtx = ctx.getContextForDefaultLanguage();
-			String title;
-			try {
-				title = page.getTitle(defaultLangCtx);
-			} catch (Exception e) {
-				title = page.getName();
-				e.printStackTrace();
-			}
-			return StringHelper.createFileName(title).toLowerCase();
-		}
-
-		public void setImage(Image image) {
-			this.image = image;
-		}
-
-		public PageEvent getEvent() {
-			return event;
-		}
-
-		public void setEvent(PageEvent pageEvent) {
-			this.event = pageEvent;
-		}
-
-		public String getSortableCreationTime() {
-			return sortableCreationTime;
-		}
-
-		public void setSortableCreationTime(String sortableCreationTime) {
-			this.sortableCreationTime = sortableCreationTime;
-		}
-
-		public String getSortableModificationTime() {
-			return sortableModificationTime;
-		}
-
-		public void setSortableModificationTime(String sortableModificationTime) {
-			this.sortableModificationTime = sortableModificationTime;
-		}
-
-		public String getModificationTime() {
-			return modificationTime;
-		}
-
-		public void setModificationTime(String modificationTime) {
-			this.modificationTime = modificationTime;
-		}
-
-		public String getCreationTime() {
-			return creationTime;
-		}
-
-		public void setCreationTime(String creationTime) {
-			this.creationTime = creationTime;
-		}
-
-		public PageBean getParent() {
-			if (page.getParent() == null) {
-				return null;
-			} else {
-				try {
-					return PageBean.getInstance(ctx, lgCtx, page.getParent(), comp);
-				} catch (Exception e) {
-					e.printStackTrace();
-					return null;
-				}
-			}
-		}
-
-		public String getLinkLabel() {
-			return linkLabel;
-		}
-
-		public void setLinkLabel(String linkLabel) {
-			this.linkLabel = linkLabel;
-		}
-
-		public boolean isCurrentUserAsRight() {
-			return currentUserAsRight;
-		}
-
-		public void setCurrentUserAsRight(boolean currentUserAsRight) {
-			this.currentUserAsRight = currentUserAsRight;
-		}
-
-		public boolean isEditable() {
-			return editable;
-		}
-
-		public void setEditable(boolean editable) {
-			this.editable = editable;
-		}
-
-		public boolean isActive() {
-			return page.isActive(ctx);
-		}
-
-		public int getSeoWeight() {
-			return seoWeight;
-		}
-
-		public void setSeoWeight(int seoWeight) {
-			this.seoWeight = seoWeight;
-		}
-
-		public String getLabel() {
-			return label;
-		}
-
-		public void setLabel(String label) {
-			this.label = label;
-		}
-
-		public List<Event> getEvents() {
-			return events;
-		}
-
-		public boolean isModel() {
-			return model;
-		}
-
-		public void setModel(boolean model) {
-			this.model = model;
-		}
-
-		public PageContentMap getData() {
-			return data;
-		}
-
-		public int getToTheTopLevel() {
-			return toTheTopLevel;
-		}
-
-		public void setToTheTopLevel(int toTheTopLevel) {
-			this.toTheTopLevel = toTheTopLevel;
-		}
-
-		public ExtendedColor getColor() {
-			return color;
-		}
-
-		public void setColor(ExtendedColor color) {
-			this.color = color;
 		}
 
 	}
@@ -1107,6 +201,8 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 	private static final String INTRANET_MODE_KEY = "intranet_mode";
 
 	private static final int MAX_PAGES = 250;
+
+	private static final int MAX_NEWS = 99999;
 
 	public static final Integer getCurrentMonth(HttpSession session) {
 		return (Integer) session.getAttribute("___current_month");
@@ -1230,13 +326,13 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		if (!validPageForCommand(ctx, page, currentSelection, commands)) {
 			return false;
 		}
-		
+
 		if (ctx.getGlobalContext().getAllTaxonomy(ctx).isActive()) {
 			if (this.getTaxonomy() != null && this.getTaxonomy().size() > 0) {
-				if (page.getTaxonomy() == null || page.getTaxonomy().size() == 0) {					
+				if (page.getTaxonomy() == null || page.getTaxonomy().size() == 0) {
 					return false;
 				}
-				if (!ctx.getGlobalContext().getAllTaxonomy(ctx).isMatch(this, page)) {					
+				if (!ctx.getGlobalContext().getAllTaxonomy(ctx).isMatch(this, page)) {
 					return false;
 				}
 			}
@@ -1318,6 +414,39 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		if (backDate.get(Calendar.DAY_OF_YEAR) <= backDay) {
 			backDate.roll(Calendar.YEAR, false);
 			backDay = backDay + 365;
+		}
+		backDate.add(Calendar.DAY_OF_YEAR, -backDay);
+		return backDate;
+	}
+
+	protected Calendar getBackDateNullIfUndefined(ContentContext ctx) {
+		Calendar backDate = Calendar.getInstance();
+		int backDay = 9999; /*
+							 * infinity back if no back day defined (all news
+							 * included)
+							 */
+		String style = getStyle(ctx);
+		if (style.equals(STAY_1D)) {
+			backDay = 1;
+		} else if (style.equals(STAY_3D)) {
+			backDay = 3;
+		} else if (style.equals(STAY_1W)) {
+			backDay = 7;
+		} else if (style.equals(STAY_1M)) {
+			backDay = 30;
+		} else if (style.equals(STAY_1Y)) {
+			backDay = 365;
+		}
+		while (backDay > 365) {
+			backDate.roll(Calendar.YEAR, false);
+			backDay = backDay - 365;
+		}
+		if (backDate.get(Calendar.DAY_OF_YEAR) <= backDay) {
+			backDate.roll(Calendar.YEAR, false);
+			backDay = backDay + 365;
+		}
+		if (backDay == 9999) {
+			return null;
 		}
 		backDate.add(Calendar.DAY_OF_YEAR, -backDay);
 		return backDate;
@@ -1541,7 +670,8 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		out.println("</div>");
 
 		MenuElement basePage = null;
-		if (getParentNode(ctx).length() > 1) { // if parent node is not root node
+		if (getParentNode(ctx).length() > 1) { // if parent node is not root
+												// node
 			basePage = menu.searchChild(ctx, getParentNode(ctx));
 		}
 		if (basePage != null) {
@@ -1680,8 +810,8 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		return "last_page_number_" + getId();
 	}
 
-	protected int getMaxNews(ContentContext ctx) {
-		String style = getStyle(ctx);
+	protected int getMaxNews() {
+		String style = getStyle();
 		if (style.equals(STAY_3N)) {
 			return 3;
 		} else if (style.equals(STAY_6N)) {
@@ -1693,7 +823,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		} else if (style.equals(STAY_72N)) {
 			return 72;
 		}
-		return 99999; /*
+		return MAX_NEWS; /*
 						 * infinity news if no limit defined (all news included)
 						 */
 	}
@@ -1715,12 +845,12 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 	}
 
 	protected Set<String> getPagesId(ContentContext ctx, List<MenuElement> children) throws Exception {
-		String value = properties.getProperty(PAGE_REF_PROP_KEY, "");		
+		String value = properties.getProperty(PAGE_REF_PROP_KEY, "");
 		Set<String> out = new TreeSet<String>();
 		if (value.trim().length() == 0 && !isDefaultSelected()) {
 			return out;
 		}
-		String[] deserializedId = StringHelper.split(value, PAGE_SEPARATOR);		
+		String[] deserializedId = StringHelper.split(value, PAGE_SEPARATOR);
 
 		out.addAll(Arrays.asList(deserializedId));
 
@@ -1759,7 +889,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-		}		
+		}
 		return parentNodePath;
 	}
 
@@ -1990,7 +1120,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		if (isDynamicOrder(ctx) && StringHelper.isTrue(ctx.getRequest().getParameter("reverse_order"))) {
 			return true;
 		} else {
-			return StringHelper.isTrue(properties.getProperty(CHANGE_ORDER_KEY) , false);
+			return StringHelper.isTrue(properties.getProperty(CHANGE_ORDER_KEY), false);
 		}
 	}
 
@@ -2022,19 +1152,72 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 			return Integer.parseInt(size);
 		}
 	}
+	
+	private void sort (ContentContext ctx, List<MenuElement> pages, boolean ascending) throws Exception {
+		if (!isNoOrder(ctx)) {
+			if (isReactionOrder(ctx)) {
+				Collections.sort(pages, new ReactionMenuElementComparator(ctx, ascending));
+			} else if (isDateOrder(ctx)) {
+				Collections.sort(pages, new MenuElementGlobalDateComparator(ctx, ascending));
+			} else if (isCreationOrder(ctx)) {
+				Collections.sort(pages, new MenuElementCreationDateComparator(ascending));
+			} else if (isVisitOrder(ctx)) {
+				if (getMaxNews() > 100) {
+					Collections.sort(pages, new MenuElementVisitComparator(ctx, ascending));
+				} else {
+					visitSorting(ctx, pages, getMaxNews());
+				}
+			} else if (isPopularityOrder(ctx)) {
+				if (getMaxNews() > 100) {
+					Collections.sort(pages, new MenuElementPopularityComparator(ctx, ascending));
+				} else {
+					popularitySorting(ctx, pages, getMaxNews());
+				}
+			} else if (isContentOrder(ctx)) {
+				Collections.sort(pages, new MenuElementPriorityComparator(!ascending));
+			}
+		}
+	}
+	
+	private void sortSmartPageBean(ContentContext ctx, List<SmartPageBean> pages, boolean ascending) throws Exception {
+		if (!isNoOrder(ctx)) {
+			if (isReactionOrder(ctx)) {
+				Collections.sort(pages, new ReactionSmartPageBeanComparator(ascending));
+			} else if (isDateOrder(ctx)) {
+				Collections.sort(pages, new SmartPageBeanGlobalDateComparator(ctx, ascending));
+			} else if (isCreationOrder(ctx)) {
+				Collections.sort(pages, new SmartPageBeanCreationDateComparator(ascending));
+			} else if (isVisitOrder(ctx)) {
+				if (getMaxNews() > 100) {
+					Collections.sort(pages, new SmartPageBeanVisitComparator(ctx, ascending));
+				} else {
+					visitSortingSmartPageBean(ctx, pages, getMaxNews());
+				}
+			} else if (isPopularityOrder(ctx)) {
+				if (getMaxNews() > 100) {
+					Collections.sort(pages, new SmartPageBeanPopularityComparator(ctx, ascending));
+				} else {
+					popularitySortingSmartPageBean(ctx, pages, getMaxNews());
+				}
+			} else if (isContentOrder(ctx)) {
+				Collections.sort(pages, new SmartPageBeanPriorityComparator(!ascending));
+			}
+		}
+	}
+	
 
 	@Override
 	public void prepareView(ContentContext ctx) throws Exception {
-		
-		LocalLogger.PRINT_TIME = true;
-		
+
+//		LocalLogger.PRINT_TIME = true;
+
 		LocalLogger.startCount("pageref");
-		
+
 		super.prepareView(ctx);
 
 		LocalLogger.stepCount("pageref", "step 1");
 
-		Calendar backDate = getBackDate(ctx);
+		Calendar backDate = getBackDateNullIfUndefined(ctx);
 
 		SimpleDateFormat format = new SimpleDateFormat(MOUNT_FORMAT, new Locale(ctx.getRequestContentLanguage()));
 
@@ -2064,7 +1247,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 
 		LocalLogger.stepCount("pageref", "step 4");
 		Set<String> currentSelection = getPagesId(ctx, allChildren);
-		
+
 		for (String pageId : selectedPage) {
 			MenuElement page = navigationService.getPage(ctx, pageId);
 			if (page != null) {
@@ -2092,35 +1275,11 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		LocalLogger.stepCount("pageref", "step 5");
 
 		if (isReverseOrder(ctx)) {
-			ascending = !ascending;
+			ascending = !ascending;		
 		}
-
-		if (!isNoOrder(ctx)) {
-			if (isReactionOrder(ctx)) {
-				Collections.sort(pages, new ReactionMenuElementComparator(ctx, ascending));
-			} else if (isDateOrder(ctx)) {
-				Collections.sort(pages, new MenuElementGlobalDateComparator(ctx, ascending));
-			} else if (isCreationOrder(ctx)) {
-				Collections.sort(pages, new MenuElementCreationDateComparator(ascending));
-			} else if (isVisitOrder(ctx)) {
-				if (getMaxNews(ctx) > 100) {
-					Collections.sort(pages, new MenuElementVisitComparator(ctx, ascending));
-				} else {
-					visitSorting(ctx, pages, getMaxNews(ctx));
-				}
-			} else if (isPopularityOrder(ctx)) {
-				if (getMaxNews(ctx) > 100) {
-					Collections.sort(pages, new MenuElementPopularityComparator(ctx, ascending));
-				} else {
-					popularitySorting(ctx, pages, getMaxNews(ctx));
-				}
-			} else if (isContentOrder(ctx)) {
-				Collections.sort(pages, new MenuElementPriorityComparator(!ascending));
-			}
-		} else {
-			// Collections.sort(pages, new
-			// MenuElementPriorityComparator(!ascending));
-		}
+		
+		
+		sort(ctx, pages, ascending);			
 
 		LocalLogger.stepCount("pageref", "step 6");
 
@@ -2153,43 +1312,51 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 			}
 		}
 
-		List<PageBean> pageBeans = new LinkedList<PageBean>();
+		List<SmartPageBean> pageBeans = new LinkedList<SmartPageBean>();
 		Collection<Calendar> allMonths = new LinkedList<Calendar>();
 		Collection<String> allMonthsKeys = new HashSet<String>();
-		for (MenuElement page : pages) {			
+
+		boolean withEmptyPage = isWidthEmptyPage();
+		boolean onlyPageWithoutChildren = isOnlyPageWithoutChildren();
+		boolean intranetMode = isIntranetMode();
+
+		for (MenuElement page : pages) {
 			ContentContext lgCtx = ctx;
-			if (GlobalContext.getInstance(ctx.getRequest()).isAutoSwitchToDefaultLanguage()) {
+			boolean pageRealContent = page.isRealContent(lgCtx);
+			if (!pageRealContent && GlobalContext.getInstance(ctx.getRequest()).isAutoSwitchToDefaultLanguage()) {
 				lgCtx = page.getContentContextWithContent(ctx);
 			}
 			if (filterPage(lgCtx, page, currentSelection, Collections.EMPTY_LIST, "", false)) {
-				if (countPage < getMaxNews(lgCtx)) {
-					if ((isWidthEmptyPage() || page.isRealContentAnyLanguage(lgCtx)) && (page.getChildMenuElements().size() == 0 || page.isChildrenAssociation() || !isOnlyPageWithoutChildren()) && page.getContentDateNeverNull(lgCtx).after(backDate.getTime())) {
-						if (firstPage == null) {
-							firstPage = page;
-						}
-						boolean realContent = true;
-						if (!isWidthEmptyPage()) {
-							realContent = page.isRealContent(lgCtx);
-						}
-						if (realContent) {
-							realContentSize++;
-						}
-						if (!isIntranetMode() || page.getEditorRoles().size() == 0 || (ctx.getCurrentEditUser() != null && ctx.getCurrentEditUser().validForRoles(page.getEditorRoles()))) {
+				if (countPage < getMaxNews()) {
+					if (backDate == null || page.getContentDateNeverNull(lgCtx).after(backDate.getTime())) {
+						if ((withEmptyPage || page.isRealContentAnyLanguage(lgCtx)) && (!onlyPageWithoutChildren || page.getChildMenuElements().size() == 0 || page.isChildrenAssociation())) {
+							if (firstPage == null) {
+								firstPage = page;
+							}
+							boolean realContent = true;
+							if (!withEmptyPage) {
+								realContent = pageRealContent;
+							}
 							if (realContent) {
-								if (tagFilter == null || tagFilter.trim().length() == 0 || page.getTags(lgCtx).contains(tagFilter)) {
-									if (catFilter == null || catFilter.trim().length() == 0 || page.getCategory(lgCtx).equals(catFilter)) {
-										Calendar cal = Calendar.getInstance();
-										cal.setTime(page.getContentDateNeverNull(lgCtx));
-										cal = TimeHelper.convertRemoveAfterMonth(cal);
-										String key = ("" + cal.get(Calendar.YEAR)) + '-' + cal.get(Calendar.MONTH);
-										if (!allMonthsKeys.contains(key)) {
-											allMonths.add(cal);
-											allMonthsKeys.add(key);
-										}
-										if (monthFilter == null || TimeHelper.betweenInDay(page.getContentDateNeverNull(lgCtx), startDate.getTime(), endDate.getTime())) {
-											countPage++;
-											if (countPage >= firstPageNumber && countPage <= lastPageNumber) {
-												pageBeans.add(PageBean.getInstance(ctx, lgCtx, page, this));
+								realContentSize++;
+							}
+							if (!intranetMode || page.getEditorRoles().size() == 0 || (ctx.getCurrentEditUser() != null && ctx.getCurrentEditUser().validForRoles(page.getEditorRoles()))) {
+								if (realContent) {
+									if (tagFilter == null || tagFilter.trim().length() == 0 || page.getTags(lgCtx).contains(tagFilter)) {
+										if (catFilter == null || catFilter.trim().length() == 0 || page.getCategory(lgCtx).equals(catFilter)) {
+											Calendar cal = Calendar.getInstance();
+											cal.setTime(page.getContentDateNeverNull(lgCtx));
+											cal = TimeHelper.convertRemoveAfterMonth(cal);
+											String key = ("" + cal.get(Calendar.YEAR)) + '-' + cal.get(Calendar.MONTH);
+											if (!allMonthsKeys.contains(key)) {
+												allMonths.add(cal);
+												allMonthsKeys.add(key);
+											}
+											if (monthFilter == null || TimeHelper.betweenInDay(page.getContentDateNeverNull(lgCtx), startDate.getTime(), endDate.getTime())) {
+												countPage++;
+												if (countPage >= firstPageNumber && countPage <= lastPageNumber) {
+													pageBeans.add(SmartPageBean.getInstance(ctx, lgCtx, page, this));
+												}
 											}
 										}
 									}
@@ -2200,7 +1367,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 				}
 			}
 		}
-
+		
 		LocalLogger.stepCount("pageref", "step 7");
 
 		if (isDisplayFirstPage() && firstPage != null && ctx.getRequest().getParameter("_wcms_content_path") == null) {
@@ -2231,7 +1398,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		if (globalContext.getAllTaxonomy(ctx).isActive()) {
 			ctx.getRequest().setAttribute("taxonomyList", TaxonomyDisplayBean.convert(ctx, globalContext.getAllTaxonomy(ctx).convert(getTaxonomy())));
 		}
-		
+
 		LocalLogger.PRINT_TIME = false;
 	}
 
@@ -2259,6 +1426,27 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 			pages.remove(page);
 		}
 		for (MenuElement page : maxElement) {
+			pages.add(0, page);
+		}
+	}
+	
+	private void popularitySortingSmartPageBean(ContentContext ctx, List<SmartPageBean> pages, int pertinentPageToBeSort) throws Exception {
+		double minMaxPageRank = 0;
+		TreeSet<SmartPageBean> maxElement = new TreeSet<SmartPageBean>(new SmartPageBeanPopularityComparator(ctx, false));
+		for (SmartPageBean page : pages) {
+			double pageRank = page.getPage().getPageRank(ctx);
+			if (pageRank >= minMaxPageRank) {
+				if (maxElement.size() > pertinentPageToBeSort) {
+					maxElement.pollFirst();
+					minMaxPageRank = maxElement.first().getPage().getPageRank(ctx);
+				}
+				maxElement.add(page);
+			}
+		}
+		for (SmartPageBean page : maxElement) {
+			pages.remove(page);
+		}
+		for (SmartPageBean page : maxElement) {
 			pages.add(0, page);
 		}
 	}
@@ -2511,6 +1699,31 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 			pages.add(0, page);
 		}
 	}
+	
+	private void visitSortingSmartPageBean(ContentContext ctx, List<SmartPageBean> pages, int pertinentPageToBeSort) throws Exception {
+		int minMaxVisit = 0;
+		TreeSet<SmartPageBean> maxElement = new TreeSet<SmartPageBean>(new SmartPageBeanVisitComparator(ctx, false));
+
+		for (SmartPageBean page : pages) {
+			if (page.isRealContent()) {
+				int access = page.getPage().getLastAccess(ctx);
+				if (access >= minMaxVisit) {
+					if (maxElement.size() >= pertinentPageToBeSort) {
+						maxElement.pollFirst();
+						minMaxVisit = maxElement.first().getPage().getLastAccess(ctx);
+					}
+					maxElement.add(page);
+				}
+			}
+		}
+
+		for (SmartPageBean page : maxElement) {
+			pages.remove(page);
+		}
+		for (SmartPageBean page : maxElement) {
+			pages.add(0, page);
+		}
+	}
 
 	@Override
 	public boolean isRealContent(ContentContext ctx) {
@@ -2578,9 +1791,9 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 	public Set<String> getTaxonomy() {
 		return StringHelper.stringToSet(properties.getProperty(TAXONOMY, null));
 	}
-	
+
 	@Override
-	public String getFontAwesome() {	
+	public String getFontAwesome() {
 		return "list-alt";
 	}
 

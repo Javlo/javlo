@@ -204,7 +204,7 @@ public class PersistenceService {
 
 	public static final String GLOBAL_MAP_NAME = "global";
 
-	private static final String STORE_FILE_PREFIX = "content_";
+	public static final String STORE_FILE_PREFIX = "content_";
 
 	public static int UNDO_DEPTH = 255;
 
@@ -461,7 +461,7 @@ public class PersistenceService {
 		return out;
 	}
 
-	protected String getDirectory() {
+	public String getDirectory() {
 		return URLHelper.mergePath(globalContext.getDataFolder(), _DIRECTORY);
 	}
 

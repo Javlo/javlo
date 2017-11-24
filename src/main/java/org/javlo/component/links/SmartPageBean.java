@@ -1,46 +1,127 @@
 package org.javlo.component.links;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 import java.util.logging.Logger;
 
 import org.javlo.bean.DateBean;
 import org.javlo.bean.Link;
 import org.javlo.component.image.IImageTitle;
-import org.javlo.component.links.PageReferenceComponent.PageBean;
 import org.javlo.component.links.PageReferenceComponent.PageEvent;
+import org.javlo.component.meta.Tags;
 import org.javlo.context.ContentContext;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.TimeHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.helper.XHTMLHelper;
+import org.javlo.i18n.I18nAccess;
 import org.javlo.image.ExtendedColor;
 import org.javlo.navigation.MenuElement;
 import org.javlo.navigation.data.PageContentMap;
 import org.javlo.service.event.Event;
+import org.javlo.template.Template;
+import org.javlo.template.TemplateFactory;
+import org.javlo.user.AdminUserSecurity;
 
-public class SmartPageBean extends PageBean {
+public class SmartPageBean {
 
 	private static Logger logger = Logger.getLogger(SmartPageBean.class.getName());
 
-	ContentContext ctx;
-	ContentContext lgCtx;
-	MenuElement page;
-	PageReferenceComponent comp;
+	public static class Image {
+		private String url;
+		private String viewURL;
+		private String linkURL;
+		private String description;
+		private String path;
+		private String cssClass;
 
-	public SmartPageBean(ContentContext ctx, ContentContext lgCtx, MenuElement page, PageReferenceComponent comp) {
+		public Image(String url, String viewURL, String linkURL, String cssClass, String description, String path) {
+			super();
+			this.url = url;
+			this.viewURL = viewURL;
+			this.linkURL = linkURL;
+			this.setCssClass(cssClass);
+			this.description = description;
+			this.path = path;
+		}
+
+		public String getCssClass() {
+			return cssClass;
+		}
+
+		public String getDescription() {
+			return description;
+		}
+
+		public String getLinkURL() {
+			return linkURL;
+		}
+
+		public String getPath() {
+			return path;
+		}
+
+		public String getUrl() {
+			return url;
+		}
+
+		public String getViewURL() {
+			return viewURL;
+		}
+
+		public void setCssClass(String cssClass) {
+			this.cssClass = cssClass;
+		}
+
+		public void setDescription(String description) {
+			this.description = description;
+		}
+
+		public void setLinkURL(String linkURL) {
+			this.linkURL = linkURL;
+		}
+
+		public void setPath(String path) {
+			this.path = path;
+		}
+
+		public void setUrl(String url) {
+			this.url = url;
+		}
+
+		public void setViewURL(String viewURL) {
+			this.viewURL = viewURL;
+		}
+	}
+
+	private ContentContext ctx;
+	private ContentContext lgCtx;
+	private ContentContext realContentCtx;
+	private MenuElement page;
+	private PageReferenceComponent comp;
+
+	private List<SmartPageBean> children = null;
+	private int toTheTopLevel = -1;
+
+	private SmartPageBean(ContentContext ctx, ContentContext lgCtx, MenuElement page, PageReferenceComponent comp) {
 		this.ctx = ctx;
 		this.page = page;
 		this.lgCtx = lgCtx;
 		this.comp = comp;
+		realContentCtx = new ContentContext(lgCtx);
+		realContentCtx.setLanguage(realContentCtx.getRequestContentLanguage());
 	}
 
-	@Override
+	public static SmartPageBean getInstance(ContentContext ctx, ContentContext lgCtx, MenuElement page, PageReferenceComponent comp) {
+		return new SmartPageBean(ctx, lgCtx, page, comp);
+	}
+
 	public String getAttTitle() {
 		try {
 			return XHTMLHelper.stringToAttribute(page.getTitle(lgCtx));
@@ -50,7 +131,6 @@ public class SmartPageBean extends PageBean {
 		}
 	}
 
-	@Override
 	public String getCategory() {
 		try {
 			return page.getCategory(lgCtx);
@@ -60,7 +140,6 @@ public class SmartPageBean extends PageBean {
 		}
 	}
 
-	@Override
 	public DateBean getDate() {
 		try {
 			return new DateBean(lgCtx, page.getContentDate(lgCtx));
@@ -70,7 +149,6 @@ public class SmartPageBean extends PageBean {
 		return null;
 	}
 
-	@Override
 	public String getDescription() {
 		try {
 			ContentContext newPageCtx = new ContentContext(ctx);
@@ -82,7 +160,6 @@ public class SmartPageBean extends PageBean {
 		}
 	}
 
-	@Override
 	public String getXhtmlDescription() {
 		try {
 			ContentContext newPageCtx = new ContentContext(ctx);
@@ -94,7 +171,6 @@ public class SmartPageBean extends PageBean {
 		}
 	}
 
-	@Override
 	public DateBean getEndDate() {
 		try {
 			return new DateBean(lgCtx, page.getTimeRange(lgCtx).getEndDate());
@@ -104,12 +180,10 @@ public class SmartPageBean extends PageBean {
 		}
 	}
 
-	@Override
 	public String getId() {
 		return page.getId();
 	}
 
-	@Override
 	public String getImageDescription() {
 		try {
 			IImageTitle image = page.getImage(lgCtx);
@@ -120,7 +194,6 @@ public class SmartPageBean extends PageBean {
 		}
 	}
 
-	@Override
 	public String getImagePath() {
 		try {
 			IImageTitle image = page.getImage(lgCtx);
@@ -135,11 +208,10 @@ public class SmartPageBean extends PageBean {
 		return comp.getConfig(lgCtx).getProperty("filter-image", "reference-list");
 	}
 
-	@Override
 	public Collection<Image> getImages() {
 		try {
 			Collection<IImageTitle> images = page.getImages(lgCtx);
-			Collection<Image> imagesBean = new LinkedList<PageReferenceComponent.PageBean.Image>();
+			Collection<Image> imagesBean = new LinkedList<SmartPageBean.Image>();
 			for (IImageTitle imageItem : images) {
 				String imagePath = imageItem.getResourceURL(lgCtx);
 				String imageURL = URLHelper.createTransformURL(lgCtx, page, imageItem.getResourceURL(lgCtx), getImageFilter());
@@ -155,7 +227,7 @@ public class SmartPageBean extends PageBean {
 						cssClass = "link " + StringHelper.getPathType(linkURL, "");
 					}
 				}
-				PageBean.Image imageBean = new PageBean.Image(imageURL, viewImageURL, linkURL, cssClass, imageDescription, imagePath);
+				SmartPageBean.Image imageBean = new SmartPageBean.Image(imageURL, viewImageURL, linkURL, cssClass, imageDescription, imagePath);
 				imagesBean.add(imageBean);
 			}
 			return imagesBean;
@@ -165,12 +237,10 @@ public class SmartPageBean extends PageBean {
 		}
 	}
 
-	@Override
 	public Image getImage() {
-		return new PageBean.Image(getImageURL(), getViewImageURL(), "", "", getImageDescription(), getImagePath());
+		return new SmartPageBean.Image(getImageURL(), getViewImageURL(), "", "", getImageDescription(), getImagePath());
 	}
 
-	@Override
 	public String getImageURL() {
 		try {
 			IImageTitle image = page.getImage(lgCtx);
@@ -181,12 +251,10 @@ public class SmartPageBean extends PageBean {
 		}
 	}
 
-	@Override
 	public String getLanguage() {
 		return lgCtx.getRequestContentLanguage();
 	}
 
-	@Override
 	public String getForceLinkOn() {
 		try {
 			return page.getLinkOn(lgCtx);
@@ -196,7 +264,6 @@ public class SmartPageBean extends PageBean {
 		}
 	}
 
-	@Override
 	public String getLinkOn() {
 		String linkOn = getForceLinkOn();
 		if (!StringHelper.isEmpty(linkOn) && !isRealContent()) {
@@ -206,7 +273,6 @@ public class SmartPageBean extends PageBean {
 		}
 	}
 
-	@Override
 	public boolean isLink() {
 		try {
 			return isRealContent() || !StringHelper.isEmpty(page.getLinkOn(lgCtx));
@@ -216,7 +282,6 @@ public class SmartPageBean extends PageBean {
 		}
 	}
 
-	@Override
 	public Collection<Link> getLinks() {
 		try {
 			Collection<String> lgs = ctx.getGlobalContext().getContentLanguages();
@@ -241,18 +306,19 @@ public class SmartPageBean extends PageBean {
 		}
 	}
 
-	@Override
 	public String getLocation() {
-		// TODO Auto-generated method stub
-		return super.getLocation();
+		try {
+			return page.getLocation(lgCtx);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 
-	@Override
 	public String getName() {
 		return page.getName();
 	}
 
-	@Override
 	public String getRawTags() {
 		String rawTags = "";
 		String sep = "";
@@ -263,25 +329,21 @@ public class SmartPageBean extends PageBean {
 		return rawTags;
 	}
 
-	@Override
 	public DateBean getStartDate() {
 		try {
 			if (page.getTimeRange(lgCtx) != null) {
 				return new DateBean(lgCtx, page.getTimeRange(lgCtx).getStartDate());
 			}
 		} catch (Exception e) {
-			e.printStackTrace();			
+			e.printStackTrace();
 		}
 		return null;
 	}
 
-	@Override
 	public List<DateBean> getDates() {
 		List<DateBean> dates;
 		try {
-			ContentContext realContentCtx = new ContentContext(lgCtx);
 			dates = new LinkedList<DateBean>();
-			realContentCtx.setLanguage(realContentCtx.getRequestContentLanguage());
 			if (page.getEvents(realContentCtx) != null) {
 				dates = new LinkedList<DateBean>();
 				for (Event pageEvent : page.getEvents(realContentCtx)) {
@@ -324,569 +386,477 @@ public class SmartPageBean extends PageBean {
 				}
 			}
 			return dates;
-		} catch (Exception e) { 
-			e.printStackTrace();
-			return null;
-		} 		
-	}
-
-	@Override
-	public String getSubTitle() {
-		return super.getSubTitle();
-	}
-
-	@Override
-	public List<String> getSubTitles() {
-		try {
-			return page.getSubTitles(lgCtx, 2);
-		} catch (Exception e) {		
+		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
 		}
 	}
 
-	@Override
-	public Collection<String> getTags() {		
+	public String getSubTitle() {
+		try {
+			return page.getSubTitle(lgCtx);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	public List<String> getSubTitles() {
+		try {
+			return page.getSubTitles(lgCtx, 2);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	public Collection<String> getTags() {
 		try {
 			return page.getTags(ctx);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
-		}		
+		}
 	}
 
-	@Override
 	public Collection<String> getTagsLabel() {
-		// TODO Auto-generated method stub
-		return super.getTagsLabel();
+		ContentContext tagCtx = new ContentContext(lgCtx);
+		Iterator<String> defaultLg = ctx.getGlobalContext().getDefaultLanguages().iterator();
+		Collection<String> tags = new LinkedList<String>();
+		try {
+			while (page.getContentByType(tagCtx, Tags.TYPE).size() == 0 && defaultLg.hasNext()) {
+				String lg = defaultLg.next();
+				tagCtx.setContentLanguage(lg);
+				tagCtx.setRequestContentLanguage(lg);
+			}
+			I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
+			for (String tag : page.getTags(tagCtx)) {
+				tags.add(i18nAccess.getViewText("tag." + tag));
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return tags;
 	}
 
-	@Override
 	public String getTitle() {
-		// TODO Auto-generated method stub
-		return super.getTitle();
+		try {
+			return page.getTitle(lgCtx);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 
-	@Override
 	public String getContentTitle() {
-		// TODO Auto-generated method stub
-		return super.getContentTitle();
+		try {
+			return page.getContentTitle(lgCtx);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 
-	@Override
 	public String getUrl() {
-		// TODO Auto-generated method stub
-		return super.getUrl();
+		try {
+			MenuElement firstChild = page.getFirstChild();
+			if (firstChild != null && firstChild.isChildrenAssociation()) {
+				ContentContext ctxLg = ctx;
+				if (ctx.getGlobalContext().isAutoSwitchToDefaultLanguage()) {
+					ctxLg = ctx.getContextWithContent(firstChild);
+				}
+				return URLHelper.createURL(ctxLg, firstChild.getPath());
+			} else {
+				ContentContext ctxLg = ctx;
+				if (ctx.getGlobalContext().isAutoSwitchToDefaultLanguage()) {
+					ctxLg = ctx.getContextWithContent(page);
+					if (ctxLg == null) {
+						ctxLg = ctx;
+					}
+				}
+				return URLHelper.createURL(ctxLg, page.getPath());
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 
-	@Override
 	public String getViewImageURL() {
-		// TODO Auto-generated method stub
-		return super.getViewImageURL();
+		try {
+			return URLHelper.createTransformURL(lgCtx, page, page.getImage(lgCtx).getResourceURL(lgCtx), "thumb-view");
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 
-	@Override
 	public boolean isRealContent() {
-		// TODO Auto-generated method stub
-		return super.isRealContent();
+		try {
+			return page.isRealContent(ctx);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
 	}
 
-	@Override
 	public boolean isSelected() {
-		// TODO Auto-generated method stub
-		return super.isSelected();
+		try {
+			return page.isSelected(lgCtx);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
 	}
 
-	@Override
-	public void setId(String id) {
-		// TODO Auto-generated method stub
-		super.setId(id);
-	}
-
-	@Override
-	public void setImagePath(String imagePath) {
-		// TODO Auto-generated method stub
-		super.setImagePath(imagePath);
-	}
-
-	@Override
-	public void setRawTags(String rawTags) {
-		// TODO Auto-generated method stub
-		super.setRawTags(rawTags);
-	}
-
-	@Override
-	public void setSubTitle(String subTitle) {
-		// TODO Auto-generated method stub
-		super.setSubTitle(subTitle);
-	}
-
-	@Override
-	public void addTagLabel(String tagLabel) {
-		// TODO Auto-generated method stub
-		super.addTagLabel(tagLabel);
-	}
-
-	@Override
-	public void setTags(Collection<String> tags) {
-		// TODO Auto-generated method stub
-		super.setTags(tags);
-	}
-
-	@Override
 	public String getCategoryKey() {
-		// TODO Auto-generated method stub
-		return super.getCategoryKey();
+		try {
+			return "category." + StringHelper.neverNull(page.getCategory(lgCtx)).toLowerCase().replaceAll(" ", "");
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 
-	@Override
-	public void setCategoryKey(String categoryKey) {
-		// TODO Auto-generated method stub
-		super.setCategoryKey(categoryKey);
-	}
-
-	@Override
 	public String getCategoryLabel() {
-		// TODO Auto-generated method stub
-		return super.getCategoryLabel();
+		try {
+			I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
+			return i18nAccess.getViewText(getCategoryKey());
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 
-	@Override
-	public void setCategoryLabel(String categoryLabel) {
-		// TODO Auto-generated method stub
-		super.setCategoryLabel(categoryLabel);
-	}
-
-	@Override
 	public boolean isVisible() {
-		// TODO Auto-generated method stub
-		return super.isVisible();
+		try {
+			return page.isVisible();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
 	}
 
-	@Override
-	public void setVisible(boolean visible) {
-		// TODO Auto-generated method stub
-		super.setVisible(visible);
-	}
-
-	@Override
 	public Collection<Link> getStaticResources() {
-		// TODO Auto-generated method stub
-		return super.getStaticResources();
+		try {
+			return page.getStaticResources(realContentCtx);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 
-	@Override
 	public String getPath() {
-		// TODO Auto-generated method stub
-		return super.getPath();
+		return page.getPath();
 	}
 
-	@Override
-	public void setPath(String path) {
-		// TODO Auto-generated method stub
-		super.setPath(path);
-	}
-
-	@Override
 	public String getCreator() {
-		// TODO Auto-generated method stub
-		return super.getCreator();
+		return page.getCreator();
 	}
 
-	@Override
-	public void setCreator(String creator) {
-		// TODO Auto-generated method stub
-		super.setCreator(creator);
-	}
-
-	@Override
 	public boolean isContentDate() {
-		// TODO Auto-generated method stub
-		return super.isContentDate();
+		try {
+			if (page.getContentDate(lgCtx) != null) {
+				return true;
+			} else {
+				return false;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
 	}
 
-	@Override
-	public void setContentDate(boolean contentDate) {
-		// TODO Auto-generated method stub
-		super.setContentDate(contentDate);
-	}
-
-	@Override
 	public String getPublishURL() {
-		// TODO Auto-generated method stub
-		return super.getPublishURL();
+		try {
+			MenuElement firstChild = page.getFirstChild();
+			if (firstChild != null && firstChild.isChildrenAssociation()) {
+				return URLHelper.createAbsoluteViewURL(lgCtx, firstChild.getPath());
+			} else {
+				ContentContext ctxLg = ctx;
+				if (ctx.getGlobalContext().isAutoSwitchToDefaultLanguage()) {
+					ctxLg = ctx.getContextWithContent(page);
+					if (ctxLg == null) {
+						ctxLg = ctx;
+					}
+				}
+				return URLHelper.createAbsoluteViewURL(lgCtx, page.getPath());
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 
-	@Override
-	public void setPublishURL(String publishURL) {
-		// TODO Auto-generated method stub
-		super.setPublishURL(publishURL);
-	}
-
-	@Override
 	public boolean isChildrenOfAssociation() {
-		// TODO Auto-generated method stub
-		return super.isChildrenOfAssociation();
+		return page.isChildrenOfAssociation();
 	}
 
-	@Override
-	public void setChildrenOfAssociation(boolean childrenOfAssociation) {
-		// TODO Auto-generated method stub
-		super.setChildrenOfAssociation(childrenOfAssociation);
-	}
-
-	@Override
 	public MenuElement getRootOfChildrenAssociation() {
-		// TODO Auto-generated method stub
-		return super.getRootOfChildrenAssociation();
+		return page.getRootOfChildrenAssociation();
 	}
 
-	@Override
-	public void setRootOfChildrenAssociation(MenuElement rootOfChildrenAssociation) {
-		// TODO Auto-generated method stub
-		super.setRootOfChildrenAssociation(rootOfChildrenAssociation);
-	}
-
-	@Override
 	public String getCreationDate() {
-		// TODO Auto-generated method stub
-		return super.getCreationDate();
+		try {
+			return StringHelper.renderShortDate(lgCtx, page.getCreationDate());
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 
-	@Override
-	public void setCreationDate(String creationDate) {
-		// TODO Auto-generated method stub
-		super.setCreationDate(creationDate);
-	}
-
-	@Override
 	public String getSortableDate() {
-		// TODO Auto-generated method stub
-		return super.getSortableDate();
+		try {
+			if (page.getContentDate(lgCtx) != null) {
+				return StringHelper.renderSortableDate(page.getContentDate(lgCtx));
+			} else {
+				return StringHelper.renderSortableDate(page.getModificationDate(ctx));
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 
-	@Override
-	public void setSortableDate(String sortableDate) {
-		// TODO Auto-generated method stub
-		super.setSortableDate(sortableDate);
-	}
-
-	@Override
 	public String getSortableCreationDate() {
-		// TODO Auto-generated method stub
-		return super.getSortableCreationDate();
+		return StringHelper.renderSortableDate(page.getCreationDate());
 	}
 
-	@Override
-	public void setSortableCreationDate(String sortableCreationDate) {
-		// TODO Auto-generated method stub
-		super.setSortableCreationDate(sortableCreationDate);
-	}
-
-	@Override
 	public boolean isMailing() {
-		// TODO Auto-generated method stub
-		return super.isMailing();
+		try {
+			Template pageTemplate = TemplateFactory.getTemplate(lgCtx, page);
+			if (pageTemplate != null) {
+				return pageTemplate.isMailing();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return false;
 	}
 
-	@Override
-	public void setMailing(boolean mailing) {
-		// TODO Auto-generated method stub
-		super.setMailing(mailing);
-	}
-
-	@Override
 	public boolean isChildrenAssociation() {
-		// TODO Auto-generated method stub
-		return super.isChildrenAssociation();
+		return page.isChildrenAssociation();
 	}
 
-	@Override
-	public void setChildrenAssociation(boolean childrenAssociation) {
-		// TODO Auto-generated method stub
-		super.setChildrenAssociation(childrenAssociation);
-	}
-
-	@Override
 	public String getHumanName() {
-		// TODO Auto-generated method stub
-		return super.getHumanName();
+		return page.getHumanName();
 	}
 
-	@Override
-	public void setHumanName(String humanName) {
-		// TODO Auto-generated method stub
-		super.setHumanName(humanName);
-	}
-
-	@Override
 	public int getReactionSize() {
-		// TODO Auto-generated method stub
-		return super.getReactionSize();
+		try {
+			return page.getReactionSize(lgCtx);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return -1;
+		}
 	}
 
-	@Override
-	public void setReactionSize(int reactionSize) {
-		// TODO Auto-generated method stub
-		super.setReactionSize(reactionSize);
-	}
-
-	@Override
 	public String getModificationDate() {
-		// TODO Auto-generated method stub
-		return super.getModificationDate();
+		try {
+			return StringHelper.renderShortDate(lgCtx, page.getModificationDate(ctx));
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 
-	@Override
 	public String getContentDateValue() {
-		// TODO Auto-generated method stub
-		return super.getContentDateValue();
+		try {
+			return StringHelper.renderShortDate(lgCtx, page.getContentDate(lgCtx));
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 
-	@Override
-	public void setModificationDate(String modificationDate) {
-		// TODO Auto-generated method stub
-		super.setModificationDate(modificationDate);
-	}
-
-	@Override
 	public String getSortableModificationDate() {
-		// TODO Auto-generated method stub
-		return super.getSortableModificationDate();
+		try {
+			return StringHelper.renderShortDate(lgCtx, page.getModificationDate(ctx));
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 
-	@Override
-	public void setSortableModificationDate(String sortableModificationDate) {
-		// TODO Auto-generated method stub
-		super.setSortableModificationDate(sortableModificationDate);
+	public List<SmartPageBean> getChildren() throws Exception {
+		if (children == null) {
+			List<SmartPageBean> workChildren = new LinkedList<SmartPageBean>();
+			if (page != null) {
+				for (MenuElement child : page.getChildMenuElementsList()) {
+					workChildren.add(SmartPageBean.getInstance(ctx, lgCtx, child, comp));
+				}
+			}
+			children = workChildren;
+		}
+		return children;
 	}
 
-	@Override
-	public List<PageBean> getChildren() throws Exception {
-		// TODO Auto-generated method stub
-		return super.getChildren();
-	}
-
-	@Override
 	public String getTechnicalTitle() {
-		// TODO Auto-generated method stub
-		return super.getTechnicalTitle();
+		ContentContext defaultLangCtx = ctx.getContextForDefaultLanguage();
+		String title;
+		try {
+			title = page.getTitle(defaultLangCtx);
+		} catch (Exception e) {
+			title = page.getName();
+			e.printStackTrace();
+		}
+		return StringHelper.createFileName(title).toLowerCase();
 	}
 
-	@Override
-	public void setImage(Image image) {
-		// TODO Auto-generated method stub
-		super.setImage(image);
-	}
-
-	@Override
 	public PageEvent getEvent() {
-		// TODO Auto-generated method stub
-		return super.getEvent();
+		try {
+			PageEvent outEvent = new PageEvent();
+			Event event = page.getEvent(realContentCtx);
+			if (event != null) {
+				outEvent.setStart(event.getStart());
+				outEvent.setEnd(event.getEnd());
+			} else {
+				outEvent.setStart(page.getContentDate(realContentCtx));
+			}
+			return outEvent;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 
-	@Override
-	public void setEvent(PageEvent pageEvent) {
-		// TODO Auto-generated method stub
-		super.setEvent(pageEvent);
-	}
-
-	@Override
 	public String getSortableCreationTime() {
-		// TODO Auto-generated method stub
-		return super.getSortableCreationTime();
+		return StringHelper.renderSortableTime(page.getCreationDate());
 	}
 
-	@Override
-	public void setSortableCreationTime(String sortableCreationTime) {
-		// TODO Auto-generated method stub
-		super.setSortableCreationTime(sortableCreationTime);
-	}
-
-	@Override
 	public String getSortableModificationTime() {
-		// TODO Auto-generated method stub
-		return super.getSortableModificationTime();
+		try {
+			return StringHelper.renderShortTime(lgCtx, page.getModificationDate(ctx));
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 
-	@Override
-	public void setSortableModificationTime(String sortableModificationTime) {
-		// TODO Auto-generated method stub
-		super.setSortableModificationTime(sortableModificationTime);
-	}
-
-	@Override
 	public String getModificationTime() {
-		// TODO Auto-generated method stub
-		return super.getModificationTime();
+		try {
+			return StringHelper.renderShortTime(lgCtx, page.getModificationDate(ctx));
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 
-	@Override
-	public void setModificationTime(String modificationTime) {
-		// TODO Auto-generated method stub
-		super.setModificationTime(modificationTime);
-	}
-
-	@Override
 	public String getCreationTime() {
-		// TODO Auto-generated method stub
-		return super.getCreationTime();
+		try {
+			return StringHelper.renderShortTime(lgCtx, page.getCreationDate());
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 
-	@Override
-	public void setCreationTime(String creationTime) {
-		// TODO Auto-generated method stub
-		super.setCreationTime(creationTime);
+	public SmartPageBean getParent() {
+		if (page.getParent() == null) {
+			return null;
+		} else {
+			try {
+				return SmartPageBean.getInstance(ctx, lgCtx, page.getParent(), comp);
+			} catch (Exception e) {
+				e.printStackTrace();
+				return null;
+			}
+		}
 	}
 
-	@Override
-	public PageBean getParent() {
-		// TODO Auto-generated method stub
-		return super.getParent();
-	}
-
-	@Override
 	public String getLinkLabel() {
-		// TODO Auto-generated method stub
-		return super.getLinkLabel();
+		try {
+			return page.getLinkLabel(lgCtx);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 
-	@Override
-	public void setLinkLabel(String linkLabel) {
-		// TODO Auto-generated method stub
-		super.setLinkLabel(linkLabel);
-	}
-
-	@Override
 	public boolean isCurrentUserAsRight() {
-		// TODO Auto-generated method stub
-		return super.isCurrentUserAsRight();
+		Set<String> roles = page.getEditorRoles();
+		if (roles.size() == 0 && ctx.getCurrentUser() != null) {
+			return true;
+		} else {
+			if (AdminUserSecurity.getInstance().isAdmin(ctx.getCurrentEditUser())) {
+				return true;
+			} else if (ctx.getCurrentUser() != null && !Collections.disjoint(roles, ctx.getCurrentUser().getRoles())) {
+				return true;
+			} else {
+				return false;
+			}
+		}
 	}
 
-	@Override
-	public void setCurrentUserAsRight(boolean currentUserAsRight) {
-		// TODO Auto-generated method stub
-		super.setCurrentUserAsRight(currentUserAsRight);
-	}
-
-	@Override
 	public boolean isEditable() {
-		// TODO Auto-generated method stub
-		return super.isEditable();
+		try {
+			return page.isEditabled(realContentCtx);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
 	}
 
-	@Override
-	public void setEditable(boolean editable) {
-		// TODO Auto-generated method stub
-		super.setEditable(editable);
-	}
-
-	@Override
 	public boolean isActive() {
-		// TODO Auto-generated method stub
-		return super.isActive();
+		return page.isActive(ctx);
 	}
 
-	@Override
 	public int getSeoWeight() {
-		// TODO Auto-generated method stub
-		return super.getSeoWeight();
+		return page.getSeoWeight();
 	}
 
-	@Override
-	public void setSeoWeight(int seoWeight) {
-		// TODO Auto-generated method stub
-		super.setSeoWeight(seoWeight);
-	}
-
-	@Override
 	public String getLabel() {
-		// TODO Auto-generated method stub
-		return super.getLabel();
+		try {
+			return page.getLabel(lgCtx);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 
-	@Override
-	public void setLabel(String label) {
-		// TODO Auto-generated method stub
-		super.setLabel(label);
-	}
-
-	@Override
 	public List<Event> getEvents() {
-		// TODO Auto-generated method stub
-		return super.getEvents();
+		try {
+			return page.getEvents(realContentCtx);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 
-	@Override
 	public boolean isModel() {
-		// TODO Auto-generated method stub
-		return super.isModel();
+		return page.isModel();
 	}
 
-	@Override
-	public void setModel(boolean model) {
-		// TODO Auto-generated method stub
-		super.setModel(model);
-	}
-
-	@Override
 	public PageContentMap getData() {
-		// TODO Auto-generated method stub
-		return super.getData();
+		return new PageContentMap(ctx, page);
 	}
 
-	@Override
 	public int getToTheTopLevel() {
-		// TODO Auto-generated method stub
-		return super.getToTheTopLevel();
+		if (toTheTopLevel == -1) {
+			try {
+				toTheTopLevel = page.getToTheTopLevel(realContentCtx);
+			} catch (Exception e) {
+				e.printStackTrace();
+				return -1;
+			}
+		}
+		return toTheTopLevel;
 	}
 
-	@Override
-	public void setToTheTopLevel(int toTheTopLevel) {
-		// TODO Auto-generated method stub
-		super.setToTheTopLevel(toTheTopLevel);
-	}
-
-	@Override
 	public ExtendedColor getColor() {
-		// TODO Auto-generated method stub
-		return super.getColor();
+		try {
+			return page.getColor(realContentCtx);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
-
-	@Override
-	public void setColor(ExtendedColor color) {
-		// TODO Auto-generated method stub
-		super.setColor(color);
+	
+	public int getPriority() {
+		return page.getPriority();
 	}
-
-	@Override
-	public int hashCode() {
-		// TODO Auto-generated method stub
-		return super.hashCode();
+	
+	public MenuElement getPage() {
+		return page;
 	}
-
-	@Override
-	public boolean equals(Object obj) {
-		// TODO Auto-generated method stub
-		return super.equals(obj);
-	}
-
-	@Override
-	protected Object clone() throws CloneNotSupportedException {
-		// TODO Auto-generated method stub
-		return super.clone();
-	}
-
-	@Override
-	public String toString() {
-		// TODO Auto-generated method stub
-		return super.toString();
-	}
-
-	@Override
-	protected void finalize() throws Throwable {
-		// TODO Auto-generated method stub
-		super.finalize();
-	}
-
 }
