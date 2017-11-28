@@ -689,5 +689,14 @@ public class ContentElementList implements IContentComponentsList {
 	public LinkedList<IContentVisualComponent> getContentElements() {
 		return contentElements;
 	}
+	
+	public IContentVisualComponent getComponent(String id) {
+		for (IContentVisualComponent comp : contentElements) {
+			if (comp.getId().equals(id)) {
+				return comp;
+			}
+		}
+		return null;
+	}
 
 }

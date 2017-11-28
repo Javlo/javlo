@@ -1,21 +1,33 @@
 package org.javlo.component.core;
 
+import org.javlo.helper.StringHelper;
+
 /**
- * represent a simple layout.
- * center, left, right, justify, bold, italic...
+ * represent a simple layout. center, left, right, justify, bold, italic...
+ * 
  * @author pvandermaesen
  *
  */
 public class ComponentLayout {
 
 	private String layout = "";
+	private String font = null;
 
 	public ComponentLayout(String layout) {
-		this.layout = layout;
+		if (layout.contains("#")) {
+			this.layout = layout.substring(0, layout.indexOf("#"));
+			this.font = layout.substring(layout.indexOf("#") + 1);
+		} else {
+			this.layout = layout;
+		}
 	}
-	
+
 	public String getLayout() {
-		return layout;
+		if (StringHelper.isEmpty(font)) {
+			return layout;
+		} else {
+			return layout + '#' + font;
+		}
 	}
 
 	public boolean isLeft() {
@@ -101,9 +113,18 @@ public class ComponentLayout {
 	public void setLineThrough(boolean lineTrough) {
 		setValue(lineTrough, 't');
 	}
+	
+	public String getFont() {
+		return font;
+	}
+	
+	public void setFont(String font) {
+		this.font = font;
+	}
 
 	/**
 	 * get the layout as css style.
+	 * 
 	 * @return
 	 */
 	public String getStyle() {
@@ -122,6 +143,9 @@ public class ComponentLayout {
 		}
 		if (isItalic()) {
 			outStyle.append("font-style: italic; ");
+		}
+		if (!StringHelper.isEmpty(font)) {
+			outStyle.append("font-family: " + font + "; ");
 		}
 		if (isUnderline()) {
 			outStyle.append("text-decoration:underline; ");

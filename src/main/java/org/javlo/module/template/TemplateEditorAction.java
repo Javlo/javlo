@@ -88,9 +88,7 @@ public class TemplateEditorAction extends AbstractModuleAction {
 		if (editorCtx.getCurrentTemplate() != null) {
 			Template.TemplateBean templateBean = new Template.TemplateBean(ctx, editorCtx.getCurrentTemplate());
 			ctx.getRequest().setAttribute("template", templateBean);			
-			Collection<String> fonts = new LinkedList(XHTMLHelper.WEB_FONTS);
-			fonts.addAll(ctx.getCurrentTemplate().getFonts());
-			ctx.getRequest().setAttribute("fonts", fonts);
+			ctx.getRequest().setAttribute("fonts", editorCtx.getCurrentTemplate().getFonts());
 		}
 	}
 

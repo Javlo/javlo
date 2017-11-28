@@ -19,6 +19,7 @@ import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
+import org.javlo.helper.XHTMLHelper;
 import org.javlo.helper.XMLManipulationHelper.BadXMLException;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.rendering.Device;
@@ -402,7 +403,7 @@ public class DefaultTemplate extends Template {
 	
 	@Override
 	public List<String> getFonts() {
-		return Collections.EMPTY_LIST;
+		return XHTMLHelper.WEB_FONTS;
 	}
 	
 	@Override

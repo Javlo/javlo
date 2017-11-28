@@ -1,4 +1,4 @@
-var PREVIEWLOG = true;
+var PREVIEWLOG = false;
 
 
 var editPreview = editPreview||{};
@@ -9,7 +9,6 @@ if (!String.prototype.startsWith) {
 	    return this.indexOf(searchString, position) === position;
 	  };
 	}
-
 
 +function($,jQuery,pjq) {
 	

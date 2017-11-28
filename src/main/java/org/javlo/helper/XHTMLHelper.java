@@ -166,7 +166,7 @@ public class XHTMLHelper {
 	public static String autoLink(String content) {
 		return autoLink(content, false, false, null);
 	}
-	
+
 	public static String autoLinkNewWindow(String content) {
 		return autoLink(content, false, true, null);
 	}
@@ -351,7 +351,7 @@ public class XHTMLHelper {
 				listContent[i][0] = inComp.getStyleList(ctx)[i];
 				listContent[i][1] = inComp.getStyleLabelList(ctx)[i];
 			}
-			outXHTML.append(getInputOneSelectInternal(xhtmlID, xhtmlID, listContent, inComp.getStyle(ctx), null, null, null, false));
+			outXHTML.append(getInputOneSelectInternal(xhtmlID, xhtmlID, listContent, inComp.getStyle(ctx), null, null, null, null, false));
 			outXHTML.append("</span>");
 		}
 		return outXHTML.toString();
@@ -930,6 +930,19 @@ public class XHTMLHelper {
 		content.toArray(contentArray);
 		return getInputOneSelect(name, contentArray, value, null, sorting);
 	}
+	
+	
+	public static String getInputOneSelectFirstItem(String name, Collection<? extends Object> content, String value, String firstItem, String cssClass) {
+		Object[] contentArray = new Object[content.size()];
+		content.toArray(contentArray);
+		String[][] newContent = new String[contentArray.length][2];
+		for (int i = 0; i < contentArray.length; i++) {
+			newContent[i][0] = contentArray[i].toString();
+			newContent[i][1] = contentArray[i].toString();
+		}
+		return getInputOneSelectInternal(name, name, newContent, value, firstItem, cssClass, null, null, true);
+	}
+	
 
 	public static String getInputOneSelect(String name, Collection<? extends Object> content, String value, String cssClass) {
 		Object[] contentArray = new Object[content.size()];
@@ -939,7 +952,7 @@ public class XHTMLHelper {
 			newContent[i][0] = contentArray[i].toString();
 			newContent[i][1] = contentArray[i].toString();
 		}
-		return getInputOneSelectInternal(name, name, newContent, value, cssClass, null, null, true);
+		return getInputOneSelectInternal(name, name, newContent, value, null, cssClass, null, null, true);
 	}
 
 	public static String getInputOneSelect(String name, Collection<String> content, String value, String js, boolean sort) {
@@ -956,7 +969,7 @@ public class XHTMLHelper {
 			contentArray[i][0] = (String) content.get(i);
 			contentArray[i][1] = (String) content.get(i);
 		}
-		return getInputOneSelectInternal(name, name, contentArray, value, cssClass, js, null, sort);
+		return getInputOneSelectInternal(name, name, contentArray, value, null, cssClass, js, null, sort);
 	}
 
 	public static String getInputOneSelect(String name, Map<String, String> content, String value) {
@@ -970,7 +983,7 @@ public class XHTMLHelper {
 			i++;
 		}
 
-		return getInputOneSelectInternal(name, name, newContent, value, null, null, null, true);
+		return getInputOneSelectInternal(name, name, newContent, value, null, null, null, null, true);
 	}
 
 	public static String getInputOneSelect(String name, Map<String, String> content, String value, String cssClass) {
@@ -984,7 +997,7 @@ public class XHTMLHelper {
 			i++;
 		}
 
-		return getInputOneSelectInternal(name, name, newContent, value, cssClass, null, null, true);
+		return getInputOneSelectInternal(name, name, newContent, value, null, cssClass, null, null, true);
 	}
 
 	public static String getInputOneSelect(String name, String[] content, String value) {
@@ -1001,7 +1014,7 @@ public class XHTMLHelper {
 			newContent[i][0] = content[i];
 			newContent[i][1] = content[i];
 		}
-		return getInputOneSelect(name, newContent, value, js, sort);
+		return getInputOneSelectInternal(name, name, newContent, value, null, null, js, null, sort);
 	}
 
 	public static String getInputOneSelect(String name, String[] ids, String[] labels, String value, String js) {
@@ -1014,7 +1027,7 @@ public class XHTMLHelper {
 			newContent[i][0] = ids[i];
 			newContent[i][1] = labels[i];
 		}
-		return getInputOneSelectInternal(name, name, newContent, value, null, js, null, sort);
+		return getInputOneSelectInternal(name, name, newContent, value, null, null, js, null, sort);
 	}
 
 	public static String getInputOneSelect(String name, String[] ids, String value, String cssClass, String js, boolean sort) {
@@ -1027,7 +1040,7 @@ public class XHTMLHelper {
 			newContent[i][0] = ids[i];
 			newContent[i][1] = labels[i];
 		}
-		return getInputOneSelectInternal(name, name, newContent, value, cssClass, js, null, sort);
+		return getInputOneSelectInternal(name, name, newContent, value, null, cssClass, js, null, sort);
 	}
 
 	public static String getInputOneSelect(String name, String[][] content, String value) {
@@ -1055,11 +1068,11 @@ public class XHTMLHelper {
 	 * @return
 	 */
 	public static String getInputOneSelect(String name, String[][] content, String value, String jsOnChange, boolean sorting) {
-		return getInputOneSelectInternal(name, name, content, value, null, jsOnChange, null, sorting);
+		return getInputOneSelectInternal(name, name, content, value, null, null, jsOnChange, null, sorting);
 	}
 
 	public static String getInputOneSelect(String name, String[][] content, String value, String jsOnChange, String popupMessage, boolean sorting) {
-		return getInputOneSelectInternal(name, name, content, value, null, jsOnChange, popupMessage, sorting);
+		return getInputOneSelectInternal(name, name, content, value, null, null, jsOnChange, popupMessage, sorting);
 	}
 
 	public static String getInputOneSelectFirstEnpty(String inputName, Collection<String> inValues, String currentValue) throws FileNotFoundException, IOException {
@@ -1077,7 +1090,7 @@ public class XHTMLHelper {
 	}
 
 	public static String getInputOneSelectWithClass(String name, String[][] content, String value, String cssClass) {
-		return getInputOneSelectInternal(name, name, content, value, cssClass, null, null, true);
+		return getInputOneSelectInternal(name, name, content, value, null, cssClass, null, null, true);
 	}
 
 	/**
@@ -1092,7 +1105,7 @@ public class XHTMLHelper {
 	 * @param sorting
 	 * @return
 	 */
-	private static String getInputOneSelectInternal(String name, String id, String[][] content, String value, String cssClass, String jsOnChange, String popupMessage, boolean sorting) {
+	private static String getInputOneSelectInternal(String name, String id, String[][] content, String value, String firstItemLabel, String cssClass, String jsOnChange, String popupMessage, boolean sorting) {
 		StringWriter res = new StringWriter();
 		PrintWriter out = new PrintWriter(res);
 
@@ -1117,6 +1130,9 @@ public class XHTMLHelper {
 			out.println("\" onchange=\"" + jsOnChange + "\">");
 		} else {
 			out.println("\">");
+		}
+		if (!StringHelper.isEmpty(firstItemLabel)) {
+			out.println("<option value=\"\">" + firstItemLabel + "</option>");
 		}
 		for (String[] element : content) {
 			if ((value != null) && (value.equals(element[0]))) {
@@ -1152,7 +1168,7 @@ public class XHTMLHelper {
 			newContent[i][1] = entry.getValue();
 			i++;
 		}
-		return getInputOneSelectInternal(name, name, newContent, value, null, js, null, false);
+		return getInputOneSelectInternal(name, name, newContent, value, null, null, js, null, false);
 	}
 
 	public static String getIntegerInput(ContentContext ctx, String form, String name, int min, int max, String jsOnChange) {
@@ -1708,7 +1724,7 @@ public class XHTMLHelper {
 				listContent[i][0] = inComp.getStyleList(ctx)[i];
 				listContent[i][1] = inComp.getStyleLabelList(ctx)[i];
 			}
-			outXHTML.append(getInputOneSelectInternal(xhtmlID, xhtmlID, listContent, inComp.getStyle(ctx), null, null, null, false));
+			outXHTML.append(getInputOneSelectInternal(xhtmlID, xhtmlID, listContent, inComp.getStyle(ctx), null, null, null, null, false));
 			outXHTML.append("</span>");
 		}
 		return outXHTML.toString();
@@ -2231,9 +2247,9 @@ public class XHTMLHelper {
 	public static String textToXHTML(String text) {
 		return textToXHTML(text, false, null, (GlobalContext) null);
 	}
-	
+
 	public static String textToXHTMLNewWin(String text) {
-		return textToXHTML(text, false, true,null, (GlobalContext) null);
+		return textToXHTML(text, false, true, null, (GlobalContext) null);
 	}
 
 	public static String textToXHTML(String text, boolean notFollow) {
@@ -2247,7 +2263,7 @@ public class XHTMLHelper {
 	public static String textToXHTML(String text, boolean notFollow, GlobalContext globalContext) {
 		return textToXHTML(text, notFollow, false, null, globalContext);
 	}
-	
+
 	public static String textToXHTML(String text, boolean notFollow, String cssClass, GlobalContext globalContext) {
 		return textToXHTML(text, notFollow, false, cssClass, globalContext);
 	}
@@ -2714,19 +2730,19 @@ public class XHTMLHelper {
 		}
 		return html;
 	}
-	
+
 	public static String renderColorChooser(String name, String cssValue, List<Color> colors, String value) {
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(outStream);
-		out.println("<div class=\"color-chooser "+StringHelper.neverNull(cssValue)+"\">");
-		out.println("<input type=\"hidden\" id=\""+name+"\" name=\""+name+"\" value=\""+StringHelper.neverNull(value)+"\" />");
-		out.println("<button id=\"select-color-"+name+"\" class=\"select-color\" readonly=\"readonly\" style=\"background-color: "+value+"\" title=\""+value+"\">&nbsp</button>");
-		String js = "jQuery('#"+name+"').val(jQuery(this).val()); jQuery('#select-color-"+name+"').attr('style', 'background-color:'+jQuery(this).val()); return false;";
+		out.println("<div class=\"color-chooser " + StringHelper.neverNull(cssValue) + "\">");
+		out.println("<input type=\"hidden\" id=\"" + name + "\" name=\"" + name + "\" value=\"" + StringHelper.neverNull(value) + "\" />");
+		out.println("<button id=\"select-color-" + name + "\" class=\"select-color\" readonly=\"readonly\" style=\"background-color: " + value + "\" title=\"" + value + "\">&nbsp</button>");
+		String js = "jQuery('#" + name + "').val(jQuery(this).val()); jQuery('#select-color-" + name + "').attr('style', 'background-color:'+jQuery(this).val()); return false;";
 		for (Color c : colors) {
-			String hex = "#"+Integer.toHexString(c.getRGB()).substring(2);
-			out.println("<button type=\"button\" class=\"color-choice\" value=\""+hex+"\" title=\""+hex+"\" style=\"background-color: "+hex+"\" onclick=\""+js+"\">&nbsp</button>");
+			String hex = "#" + Integer.toHexString(c.getRGB()).substring(2);
+			out.println("<button type=\"button\" class=\"color-choice\" value=\"" + hex + "\" title=\"" + hex + "\" style=\"background-color: " + hex + "\" onclick=\"" + js + "\">&nbsp</button>");
 		}
-		out.println("&nbsp;&nbsp;&nbsp;&nbsp;<button type=\"button\" class=\"color-choice\" value=\"\" title=\"reset\" onclick=\""+js+"\">&nbsp</button>");
+		out.println("&nbsp;&nbsp;&nbsp;&nbsp;<button type=\"button\" class=\"color-choice\" value=\"\" title=\"reset\" onclick=\"" + js + "\">&nbsp</button>");
 		out.println("</div>");
 		out.close();
 		return new String(outStream.toByteArray());
@@ -2788,13 +2804,13 @@ public class XHTMLHelper {
 		out.println("</td></tr></table>");
 		out.close();
 		return new String(outStream.toByteArray());
-}
+	}
 
 	public static String createUserMail(TemplateData templateData, String title, String content, Map data, String link, String linkLabel, String footer) {
 
 		String backgroundColor = "#ffffff";
 		String titleColor = "#000000";
-		if (templateData != null) {			
+		if (templateData != null) {
 			if (templateData.getTitle() != null) {
 				titleColor = templateData.getTitle().toString();
 			}
@@ -2822,12 +2838,12 @@ public class XHTMLHelper {
 			out.println("<table><tr><td>&nbsp;</td></tr><tr><td class=\"footer\"><div style='display: block; margin: 10px 20px;  color: #dddddd; font-family:Helvetica, sans-serif;'>" + footer + "</div></td></tr></table>");
 		}
 		if (!StringHelper.isEmpty(link)) {
-			out.println(getTableButton(link, StringHelper.neverNull(linkLabel, link)));			
+			out.println(getTableButton(link, StringHelper.neverNull(linkLabel, link)));
 		}
 		out.println("</td></tr></table></td></tr></table></td></tr></table></body></html>");
 		return new String(outStream.toByteArray());
 	}
-	
+
 	public static void main(String[] args) {
 		System.out.println(getTableButton("##link##", "##label##"));
 	}

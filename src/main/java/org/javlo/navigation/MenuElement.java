@@ -78,7 +78,6 @@ import org.javlo.context.GlobalContext;
 import org.javlo.data.rest.IRestItem;
 import org.javlo.data.taxonomy.ITaxonomyContainer;
 import org.javlo.helper.BeanHelper;
-import org.javlo.helper.DebugHelper;
 import org.javlo.helper.LangHelper;
 import org.javlo.helper.NavigationHelper;
 import org.javlo.helper.NetHelper;
@@ -4246,6 +4245,11 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 		if (!desc.isRealContentNull()) {
 			return desc.isRealContent();
 		}
+		
+		if (isEmpty(ctx)) {
+			desc.realContent = false;
+			return false;
+		}
 
 		ContentContext contentAreaCtx = new ContentContext(ctx);
 
@@ -5588,6 +5592,10 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 			parent = parent.getParent();			
 		}
 		return outPublic;
+	}
+	
+	public IContentVisualComponent getComponent(ContentContext ctx, String id) throws Exception {		
+		return getLocalContent(ctx).getComponent(id);
 	}
 
 }

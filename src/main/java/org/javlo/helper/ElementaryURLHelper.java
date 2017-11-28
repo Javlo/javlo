@@ -549,10 +549,11 @@ public abstract class ElementaryURLHelper {
 				}
 			}
 		}
-		if (ctx.isAsModifyMode()) {
+		EditContext editContext = EditContext.getInstance(globalContext, ctx.getRequest().getSession());
+		if (ctx.isLikeEditRenderMode()) {
 			if (!StringHelper.isEmpty(ctx.getRequest().getParameter(Device.FORCE_DEVICE_PARAMETER_NAME))) {
-				if (!url.contains(Device.FORCE_DEVICE_PARAMETER_NAME)) {
-					url = addParam(url, Device.FORCE_DEVICE_PARAMETER_NAME, ctx.getRequest().getParameter(Device.FORCE_DEVICE_PARAMETER_NAME));
+				if (!url.contains(Device.FORCE_DEVICE_PARAMETER_NAME)) {					
+					url = addParam(url, Device.FORCE_DEVICE_PARAMETER_NAME, ctx.getRequest().getParameter(Device.FORCE_DEVICE_PARAMETER_NAME));					
 				}
 			}
 		}

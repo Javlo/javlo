@@ -649,6 +649,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			out.println("</label>");
 			if (getConfig(ctx).isFontStyle()) {
 				id = "layout-bold-" + getId();
+				out.println("<div class=\"line layout\">");
 				out.println("<label for=\"" + id + "\">");
 				out.println(XHTMLHelper.getCheckbox(id, layout.isBold()));
 				out.println(i18nAccess.getText("component.layout.bold", "bold"));
@@ -657,7 +658,12 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 				out.println("<label for=\"" + id + "\">");
 				out.println(XHTMLHelper.getCheckbox(id, layout.isItalic()));
 				out.println(i18nAccess.getText("component.layout.italic", "italic"));
-				out.println("</label>");
+				out.println("</label></div>");
+				id = "font-family-" + getId();
+				out.println("<div class=\"line layout\">");
+				out.println("<label for=\"" + id + "\">"+i18nAccess.getText("font")+"</label>");
+				out.println(XHTMLHelper.getInputOneSelectFirstItem(id, ctx.getCurrentTemplate().getFonts(), layout.getFont(), i18nAccess.getText("global.inherited"), "form-control"));
+				out.println("</label></div>");
 			}
 			out.println("</div>");
 		}
@@ -843,6 +849,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			layout.setCenter(requestService.getParameter("layout-align-" + getId(), "").equals("center"));
 			layout.setBold(requestService.getParameter("layout-bold-" + getId(), null) != null);
 			layout.setItalic(requestService.getParameter("layout-italic-" + getId(), null) != null);
+			layout.setFont(requestService.getParameter( "font-family-" + getId()));
 			layout.setLineThrough(requestService.getParameter("layout-linethrough-" + getId(), null) != null);
 			layout.setUnderline(requestService.getParameter("layout-underline-" + getId(), null) != null);
 			if (!getLayout().getLayout().equals(layout.getLayout())) {

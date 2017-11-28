@@ -1899,7 +1899,7 @@ public class Template implements Comparable<Template> {
 
 	public synchronized String getRenderer(ContentContext ctx) throws IOException, BadXMLException {
 		synchronized (ctx.getGlobalContext().getLockImportTemplate()) {
-			String renderer = getRendererFile(ctx.getDevice());
+			String renderer = getRendererFile(ctx.getDevice());		
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 			String jspPath = URLHelper.mergePath(getTemplateTargetFolder(globalContext), renderer);
 			File jspFile = new File(jspPath);
@@ -3135,7 +3135,7 @@ public class Template implements Comparable<Template> {
 		if (rawFonts == null) {
 			return getParent().getFonts(); 
 		} else {
-			return StringHelper.stringToCollection(rawFonts, ",");
+			return StringHelper.stringToCollection(rawFonts, ";");
 		}
 	}
 

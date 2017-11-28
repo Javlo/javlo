@@ -24,7 +24,10 @@ public class DeleteTestPage extends AbstractMacro {
 	@Override
 	public String perform(ContentContext ctx, Map<String, Object> params) throws Exception {
 		
-		String token = getMacroProperties(ctx).getProperty("token", TEST_PAGE_TOKEN);
+		String token = TEST_PAGE_TOKEN;
+		if (getMacroProperties(ctx) != null) {
+			token = getMacroProperties(ctx).getProperty("token", TEST_PAGE_TOKEN);
+		}
 
 		ContentService content = ContentService.getInstance(ctx.getRequest());
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());

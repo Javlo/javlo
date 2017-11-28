@@ -58,10 +58,12 @@
 </div>
 </c:if>
 
-<c:if test="${not empty param.button_edit and empty param.previewEdit}"><a class="action-button more edit" href="${info.currentURL}?webaction=changeMode&mode=1"><span>${i18n.edit['action.edit-content']}</span></a></c:if>
+<c:if test="${not empty param.button_edit and empty param.previewEdit}">
+<c:url var="editModeURL" value="${info.currentURL}" context="/"><c:param name="webaction" value="edit.changeMode" /><c:param name="mode" value="1" /></c:url>
+<a class="action-button more edit" href="${editModeURL}"><span>${i18n.edit['action.edit-content']}</span></a></c:if>
 <%--<c:if test="${not empty param.button_preview and empty param.previewEdit}"><a class="action-button more preview" href="${info.currentURL}?webaction=changeMode&mode=2"><span>${i18n.edit['command.preview']}</span></a></c:if>--%>
-
-<c:if test="${not empty param.button_page and empty param.previewEdit}"><a class="action-button more page" href="${info.currentURL}?webaction=changeMode&mode=3"><span>${i18n.edit['item.title']}</span></a></c:if>
+<c:url var="pagePropertiesURL" value="${info.currentURL}" context="/"><c:param name="webaction" value="edit.changeMode" /><c:param name="mode" value="3" /></c:url>
+<c:if test="${not empty param.button_page and empty param.previewEdit}"><a class="action-button more page" href="${pagePropertiesURL}"><span>${i18n.edit['item.title']}</span></a></c:if>
 <c:if test="${not empty param.button_copy}"><a class="action-button copy ajax more" href="${info.currentURL}?webaction=copyPage${not empty param.previewEdit?'&webaction=editPreview&previewEdit=true':''}"><span>${i18n.edit['action.copy-page']}</span></a></c:if>
 
 <c:if test="${not empty param.button_publish and empty param.previewEdit and info.page.flowIndex==1}"><a class="action-button needvalidation" href="${info.currentURL}?webaction=edit.needValidation&render-mode=1"><span><span class="glyphicon glyphicon-arrow-right"></span> ${i18n.edit['command.need-validation']}</span></a></c:if>

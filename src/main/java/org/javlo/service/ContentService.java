@@ -132,8 +132,7 @@ public class ContentService implements IPrintInfo {
 	private static IContentVisualComponent searchComponent(ContentContext ctx, MenuElement page, String id, boolean noRealContentType) throws Exception {
 		ContentContext noAreaCtx = ctx.getContextWithoutArea();
 
-		/** search on current language **/
-		ContentElementList content = page.getAllContent(noAreaCtx);
+		
 		/*
 		 * while (content.hasNext(noAreaCtx)) { IContentVisualComponent elem =
 		 * content.next(noAreaCtx); if (elem.getId().equals(id)) { return elem;
@@ -141,6 +140,8 @@ public class ContentService implements IPrintInfo {
 		 */
 
 		if (noRealContentType) {
+			/** search on current language **/
+			ContentElementList content = page.getAllContent(noAreaCtx);
 			ContentContext ctxLg = new ContentContext(noAreaCtx);
 			for (String lg : ctx.getGlobalContext().getContentLanguages()) {
 				ctxLg.setAllLanguage(lg);
@@ -162,38 +163,48 @@ public class ContentService implements IPrintInfo {
 				}
 			}
 		} else {
-			ContentContext ctxWithContent = noAreaCtx.getContextWithContent(page);
-			if (ctxWithContent == null) {
-				ctxWithContent = noAreaCtx;
+//			ContentContext ctxWithContent = noAreaCtx.getContextWithContent(page);
+//			if (ctxWithContent == null) {
+//				ctxWithContent = noAreaCtx;
+//			}
+//			/** search on content with real content **/
+//			content = page.getAllContent(ctxWithContent);
+//			while (content.hasNext(ctxWithContent)) {
+//				IContentVisualComponent elem = content.next(ctxWithContent);
+//				if (elem.getId().equals(id)) {
+//					return elem;
+//				}
+//			}
+			IContentVisualComponent elem = page.getComponent(ctx,id);
+			if (elem != null) {
+				return elem;
 			}
-			/** search on content with real content **/
-			content = page.getAllContent(ctxWithContent);
-			while (content.hasNext(ctxWithContent)) {
-				IContentVisualComponent elem = content.next(ctxWithContent);
-				if (elem.getId().equals(id)) {
+			for (MenuElement menuElement : page.getAllChildrenList()) {
+				elem = menuElement.getComponent(ctx,id);
+				if (elem != null) {
 					return elem;
 				}
 			}
-			for (MenuElement menuElement : page.getAllChildrenList()) {
-				ctxWithContent = noAreaCtx.getContextWithContent(menuElement);
-				if (ctxWithContent == null) {
-					ctxWithContent = noAreaCtx;
-				}
-				content = menuElement.getAllContent(noAreaCtx);
-				while (content.hasNext(noAreaCtx)) {
-					IContentVisualComponent elem = content.next(noAreaCtx);
-					if (elem.getId().equals(id)) {
-						return elem;
-					}
-				}
-				content = menuElement.getAllContent(ctxWithContent);
-				while (content.hasNext(ctxWithContent)) {
-					IContentVisualComponent elem = content.next(ctxWithContent);
-					if (elem.getId().equals(id)) {
-						return elem;
-					}
-				}
-			}
+//			for (MenuElement menuElement : page.getAllChildrenList()) {
+//				ctxWithContent = noAreaCtx.getContextWithContent(menuElement);
+//				if (ctxWithContent == null) {
+//					ctxWithContent = noAreaCtx;
+//				}
+//				content = menuElement.getAllContent(noAreaCtx);
+//				while (content.hasNext(noAreaCtx)) {
+//					IContentVisualComponent elem = content.next(noAreaCtx);
+//					if (elem.getId().equals(id)) {
+//						return elem;
+//					}
+//				}
+//				content = menuElement.getAllContent(ctxWithContent);
+//				while (content.hasNext(ctxWithContent)) {
+//					IContentVisualComponent elem = content.next(ctxWithContent);
+//					if (elem.getId().equals(id)) {
+//						return elem;
+//					}
+//				}
+//			}
 		}
 		return null;
 	}

@@ -624,7 +624,7 @@ public class ContentContext {
 	 * @return null if no content found.
 	 * @throws Exception
 	 */
-	public ContentContext getContextWithContent(MenuElement page) throws Exception {
+	public ContentContext getContextWithContent(MenuElement page) throws Exception {		
 		if (page.isRealContent(this)) {
 			return getContextOnPage(page);
 		} else {

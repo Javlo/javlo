@@ -92,7 +92,12 @@
                     <a href="${selectUrl}&template=${template.name}" class="select" title="select"></a>
                     </c:if>
                     
-                    <a href="${info.currentURL}?webaction=template.commitChildren&templateid=${template.name}" class="push" title="commit"></a>
+                    <c:url value="${info.currentURL}" var="pushURL" context="/">
+                    	<c:param name="webaction" value="template.commitChildren" />
+                    	<c:param name="templateid" value="${template.name}" />
+                    </c:url>
+                    
+                    <a href="${pushURL}" class="push" title="commit"></a>
                     
                     <c:if test="${not template.valid}">
                     <c:url value="${info.currentURL}" var="validURL" context="/">

@@ -124,6 +124,14 @@ public class TemplatePart {
 			return padding;
 		}
 	}
+	
+	public String getFinalMargin() {
+		if (getParent() != null && (margin == null || margin.trim().length() == 0)) {
+			return getParent().getFinalMargin();
+		} else {
+			return margin;
+		}
+	}
 
 	public void setPadding(String padding) {
 		this.padding = padding;
