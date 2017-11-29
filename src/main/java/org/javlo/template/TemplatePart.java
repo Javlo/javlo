@@ -48,6 +48,8 @@ public class TemplatePart {
 	private String h6Size = null;
 	private String responsive = "false";
 	private int priority = 10;
+	private boolean first;
+	private boolean last;
 
 	public String getDefaultH1Size() {
 		return null;
@@ -498,6 +500,22 @@ public class TemplatePart {
 	
 	public String getLevel() {
 		return "part";
+	}
+
+	public boolean isFirst() {
+		return first;
+	}
+
+	public void setFirst(boolean first) {
+		this.first = first;
+	}
+
+	public boolean isLast() {
+		return last;
+	}
+
+	public void setLast(boolean last) {
+		this.last = last;
 	}
 
 }

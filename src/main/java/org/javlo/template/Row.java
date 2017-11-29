@@ -18,7 +18,7 @@ public class Row extends TemplatePart {
 		return areas;
 	}
 
-	public void addArea(Area inArea) {		
+	public void addArea(Area inArea) {
 		areas.add(inArea);
 		boolean freeWidth = true;
 		for (Area area : areas) {
@@ -33,19 +33,27 @@ public class Row extends TemplatePart {
 				areas.get(1).setAutoWidth("34%");
 				areas.get(2).setAutoWidth("33%");
 			} else {
-				int autoWidth = 100/areas.size();
-				int modWidth = 100%areas.size();
+				int autoWidth = 100 / areas.size();
+				int modWidth = 100 % areas.size();
 				for (Area area : areas) {
-					if (modWidth>0) {
-						area.setAutoWidth(""+(autoWidth+1)+'%');
+					if (modWidth > 0) {
+						area.setAutoWidth("" + (autoWidth + 1) + '%');
 						modWidth--;
 					} else {
-						area.setAutoWidth(""+autoWidth+'%');
+						area.setAutoWidth("" + autoWidth + '%');
 					}
-				}				
+				}
 			}
 		}
 		Collections.sort(areas, new TemplatePart.SortByPriority());
+		if (areas.size() > 0) {
+			for (int i = 1; i < areas.size() - 1; i++) {
+				areas.get(i).setFirst(false);
+				areas.get(i).setLast(false);
+			}
+			areas.get(0).setFirst(true);
+			areas.get(areas.size()-1).setLast(true);
+		}
 	}
 
 	@Override
@@ -56,17 +64,17 @@ public class Row extends TemplatePart {
 			return null;
 		}
 	}
-	
+
 	@Override
-	public int hashCode() {	
+	public int hashCode() {
 		int hash = super.hashCode();
 		int prime = 15;
 		for (Area area : getAreas()) {
-			hash = hash+prime*area.hashCode();
+			hash = hash + prime * area.hashCode();
 		}
 		return hash;
 	}
-	
+
 	@Override
 	public String getLevel() {
 		return "row";

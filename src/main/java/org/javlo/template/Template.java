@@ -2907,6 +2907,14 @@ public class Template implements Comparable<Template> {
 		}
 		List<Row> outRows = new LinkedList(rows.values());
 		Collections.sort(outRows, new TemplatePart.SortByName());
+		if (outRows.size() > 0) {
+			for (int i = 1; i < outRows.size() - 1; i++) {
+				outRows.get(i).setFirst(false);
+				outRows.get(i).setLast(false);
+			}
+			outRows.get(0).setFirst(true);
+			outRows.get(outRows.size()-1).setLast(true);
+		}
 		return outRows;
 	}
 
