@@ -440,6 +440,7 @@ public class XMLHelper {
 			out.print("<page id=\"");
 			out.print(id);
 			out.print("\" name=\"");
+			
 			out.print(StringHelper.toXMLAttribute(name));
 			out.print("\" creationDate=\"");
 			out.print(creationDate);
@@ -618,6 +619,10 @@ public class XMLHelper {
 		}
 		out.println("</content>");
 		out.close();
+	}
+	
+	public static void main(String[] args) {
+		System.out.println("##### XMLHelper.main : StringHelper.toXMLAttribute(name) = "+StringHelper.toHTMLAttribute("p&p global")); //TODO: remove debug trace
 	}
 
 }

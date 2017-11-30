@@ -3016,8 +3016,9 @@ public class StringHelper {
 		if (value == null) {
 			return "";
 		}
-		value = value.replace("&", "&amp;");
-		return Encode.forXmlAttribute(XHTMLHelper.escapeXML(removeTag(value).replace("\"", "&quot;").replace("\n", "")));
+		//value = value.replace("&", "&amp;");
+		//return Encode.forXmlAttribute(XHTMLHelper.escapeXML(removeTag(value).replace("\"", "&quot;").replace("\n", "")));
+		return Encode.forXmlAttribute(value.replace("\n", ""));
 	}
 
 	/**

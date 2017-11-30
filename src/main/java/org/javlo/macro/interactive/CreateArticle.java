@@ -161,14 +161,19 @@ public class CreateArticle implements IInteractiveMacro, IAction {
 							ContentService content = ContentService.getInstance(ctx.getRequest());
 							MenuElement page = content.getNavigation(ctx).searchChildFromName(ctx.getRequest().getParameter("page"));
 							ContentContext noAreaCtx = ctx.getContextWithArea(null);
-							ContentElementList contentList = page.getContent(noAreaCtx);
-							String parent = "0";
+							ContentElementList contentList = page.getContent(noAreaCtx);						
+							Map<String,String> parents = new HashMap<String, String>();
 							while (contentList.hasNext(noAreaCtx)) {
 								IContentVisualComponent comp = contentList.next(noAreaCtx);
 								if (!comp.isRepeat()) {
 									ComponentBean bean = new ComponentBean(comp.getComponentBean());
 									bean.setId(StringHelper.getRandomId());
+									String parent = parents.get(bean.getArea());
+									if (parent == null) {
+										parent = "0";
+									}
 									parent = content.createContent(ctx, bean, parent, false);
+									parents.put(bean.getArea(), parent);
 								}
 							}
 							ctx.getCurrentPage().releaseCache();

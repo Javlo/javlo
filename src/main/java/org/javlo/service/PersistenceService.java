@@ -19,6 +19,7 @@ import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.Reader;
 import java.io.Writer;
+import java.net.URLDecoder;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.text.ParseException;
@@ -35,9 +36,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.Properties;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -684,7 +685,7 @@ public class PersistenceService {
 		}
 		DebugHelper.checkStructure(id == null, "no id defined in a page node.");
 		String name = pageXML.getAttributeValue("name");
-		String finalPageName = name;
+		String finalPageName = URLDecoder.decode(name);
 
 		if (checkName) {
 			int i = 1;
@@ -1697,12 +1698,7 @@ public class PersistenceService {
 	}
 
 	public static void main(String[] args) throws Exception {
-		File file = new File("c:/trans/test.csv");
-		FileWriter fw = new FileWriter("c:/trans/test.csv", true);
-		BufferedWriter bw = new BufferedWriter(fw);
-		PrintWriter out = new PrintWriter(bw);
-		out.println("APPEND");
-		out.close();
+		System.out.println("##### PersistenceService.main : URLDecoder.decode(P&P global) = "+StringHelper.toXMLAttribute("P&P global\n\"coucou\"--")); //TODO: remove debug trace
 
 	}
 

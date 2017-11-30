@@ -145,7 +145,7 @@ public class NodeXML extends Object implements Cloneable {
 			error("Attribute '" + attribute + "' not found on '" + node.getNodeName() + "' node.");
 		} else {
 			if (node instanceof Element) {
-				return ((Element) node).getAttributeNode(attribute).getValue();
+				return ((Element) node).getAttributeNode(attribute).getNodeValue();
 			}
 		}
 		return null;

@@ -18,7 +18,11 @@ public class Space extends AbstractVisualComponent {
 	@Override
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
 		StringBuffer finalCode = new StringBuffer();
-		finalCode.append("<div class=\"" + getType() + "\" style=\"font-size: 0px;height: " + getStyle(ctx) + "px;\">&nbsp;.</div>");
+		if (ctx.getCurrentTemplate().isMailing()) {
+			finalCode.append("<table class=\"" + getType() + "\"><tr><td height=\""+getStyle()+"\"  style=\"font-size: 0px; height: " + getStyle() + "px;\">&nbsp;.</td></tr></table>");
+		} else {
+			finalCode.append("<div class=\"" + getType() + "\" style=\"font-size: 0px; height: " + getStyle() + "px;\">&nbsp;.</div>");
+		}
 		return finalCode.toString();
 	}
 
@@ -76,5 +80,10 @@ public class Space extends AbstractVisualComponent {
 	@Override
 	public boolean isContentCachable(ContentContext ctx) {
 		return true;
+	}
+	
+	@Override
+	public String getFontAwesome() {
+		return "arrows-v";
 	}
 }
