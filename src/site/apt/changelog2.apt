@@ -900,4 +900,4 @@ change log
  
 * 2.1.0.7 [20/11/2017]
 
- * 1/ autolink tag create reverse links / SmartPageBean optimisation / font selection in title, tinymce 4.7.3, update flying saucer
+ * 1/ autolink tag create reverse links / SmartPageBean optimisation / font selection in title, tinymce 4.7.3, update flying saucer / xml attribute encoding correction
