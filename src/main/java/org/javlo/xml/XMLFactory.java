@@ -24,6 +24,10 @@ import org.xml.sax.SAXException;
  */
 
 public class XMLFactory {
+	
+	public static NodeXML getFirstNodeFromXML(String xml) throws Exception {
+		return getFirstNode(new ByteArrayInputStream(xml.getBytes()));
+	}
 
 	/**
 	 * get the root node from an input stream (grh)
@@ -81,6 +85,9 @@ public class XMLFactory {
 	 * get the root node from an URL (grh)
 	 */
 	public static NodeXML getFirstNode(URL myURL) throws Exception {
+		if (myURL == null) {
+			return null;
+		}
 		InputStream stream = null;
 		try {
 			stream = myURL.openStream();
@@ -92,7 +99,7 @@ public class XMLFactory {
 		} catch (IOException e) {
 			throw new Exception("error reading XML from URL : " + e.getMessage());
 		} finally {
-			stream.close();
+			ResourceHelper.closeResource(stream);
 		}
 	}
 

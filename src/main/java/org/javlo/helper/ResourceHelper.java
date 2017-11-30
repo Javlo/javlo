@@ -147,6 +147,18 @@ public class ResourceHelper {
 			}
 		}
 	}
+	
+	public static void closeResource(HttpURLConnection... connections) {
+		for (HttpURLConnection conn : connections) {
+			if (conn != null) {
+				try {
+					conn.disconnect();
+				} catch (Throwable t) {
+					logger.warning(t.getMessage());
+				}
+			}
+		}
+	}
 
 	/**
 	 * Return the standard checksum of the specified file. <br/>

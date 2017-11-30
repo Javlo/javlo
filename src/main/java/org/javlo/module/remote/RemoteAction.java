@@ -1,5 +1,7 @@
 package org.javlo.module.remote;
 
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -11,29 +13,50 @@ import javax.servlet.http.HttpSession;
 import org.javlo.actions.AbstractModuleAction;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
+import org.javlo.helper.NetHelper;
+import org.javlo.helper.ResourceHelper;
+import org.javlo.helper.StringHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.message.MessageRepository;
 import org.javlo.module.core.Module;
 import org.javlo.module.core.ModulesContext;
 import org.javlo.service.RequestService;
+import org.javlo.utils.TimeMap;
+import org.javlo.xml.NodeXML;
+import org.javlo.xml.XMLFactory;
 
 public class RemoteAction extends AbstractModuleAction {
+
+	private static final TimeMap<String, SiteMapURL> testedURL = new TimeMap<String, SiteMapURL>(60 * 60, 100000);
 
 	private static final String UNKNOWN_SERVER = "[unknown]";
 	private static final String RENDER_MODE = "renderMode";
 	private static final String RENDER_MODE_LIST = "list";
 	private static final String RENDER_MODE_TREE = "tree";
+	private static final String SITEMAP_TREE = "sitemap";
 
 	@Override
 	public String getActionGroupName() {
 		return "remote";
 	}
+	
+	private static void loadSiteMap(NodeXML node, List<SiteMapURL> urls) throws Exception {
+		if (node == null) {
+			return;
+		}
+		for (NodeXML n : node.getAllChildren()) {
+			SiteMapURL url = new SiteMapURL(n);
+			if (!StringHelper.isEmpty(url.getLink())) {
+				urls.add(url);
+			}
+		}
+	}
 
 	@Override
 	public String prepare(ContentContext ctx, ModulesContext modulesContext) throws Exception {
-		String msg = super.prepare(ctx, modulesContext);		
+		String msg = super.prepare(ctx, modulesContext);
 		RemoteService remoteService = RemoteService.getInstance(ctx);
-		List<RemoteBean> remotes = new LinkedList(remoteService.getRemotes());		
+		List<RemoteBean> remotes = new LinkedList(remoteService.getRemotes());
 		ctx.getRequest().setAttribute("remotes", remotes);
 		String currentRenderMode = getCurrentRenderMode(modulesContext.getCurrentModule());
 		ctx.getRequest().setAttribute("currentRemoteRenderMode", currentRenderMode);
@@ -43,6 +66,29 @@ public class RemoteAction extends AbstractModuleAction {
 		if ("charge".equals(currentRenderMode)) {
 			Collections.sort(remotes, new RemoteBeanComparator());
 		}
+
+		String siteMapURL = ctx.getRequest().getParameter("sitemap");		
+		if (StringHelper.isURL(siteMapURL)) {
+			List<SiteMapURL> urls = new LinkedList<SiteMapURL>();			
+			NodeXML node = XMLFactory.getFirstNode(NetHelper.followURL(new URL(siteMapURL)));	
+			if (node != null && node.getName().equalsIgnoreCase("sitemapindex")) {
+				for (NodeXML siteMapNode : node.getAllChildren()) {
+					if (siteMapNode.getName().equalsIgnoreCase("sitemap")) {
+						if (siteMapNode.getChild("loc") != null) {
+							String siteMapUrl = siteMapNode.getChild("loc").getContent();
+							if (StringHelper.isURL(siteMapUrl)) {								
+								node = XMLFactory.getFirstNode(NetHelper.followURL(new URL(siteMapUrl)));
+								loadSiteMap(node, urls);
+							}
+						}
+					}
+				}
+			} else  {
+				loadSiteMap(node, urls);
+			}			
+			ctx.getRequest().setAttribute("urls", urls);
+		}
+
 		if (RENDER_MODE_TREE.equals(currentRenderMode) || "charge".equals(currentRenderMode)) {
 
 			for (RemoteBean remote : remotes) {
@@ -80,7 +126,7 @@ public class RemoteAction extends AbstractModuleAction {
 				instance.getSites().add(remote);
 			}
 		}
-		
+
 		ctx.getRequest().setAttribute("remoteServers", remoteServers);
 
 		return msg;
@@ -149,6 +195,8 @@ public class RemoteAction extends AbstractModuleAction {
 		} else if ("charge".equals(newRenderMode)) {
 			newRenderMode = "charge";
 			renderer = "jsp/charge.jsp";
+		} else if (SITEMAP_TREE.equals(newRenderMode)) {
+			renderer = "jsp/sitemap.jsp";
 		} else {
 			newRenderMode = RENDER_MODE_LIST;
 			renderer = "jsp/list.jsp";
@@ -168,6 +216,40 @@ public class RemoteAction extends AbstractModuleAction {
 
 	private void setCurrentRenderMode(Module module, String renderMode) {
 		module.setAttribute(RENDER_MODE, renderMode);
+	}
+
+	public static String performTesturl(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
+		String url = rs.getParameter("url");
+		SiteMapURL bean;
+		synchronized (testedURL) {
+			bean = testedURL.get(url);
+			if (bean == null) {
+				bean = new SiteMapURL();
+				testedURL.put(url, bean);
+			}
+		}		
+		synchronized (bean) {
+			if (bean.getResponseTime() < 0) {
+				long beforeTime = System.currentTimeMillis();
+				HttpURLConnection connection = null;
+				try {
+					URL urlAccess = new URL(url);
+					urlAccess = NetHelper.followURL(urlAccess);
+					connection = (HttpURLConnection) urlAccess.openConnection();
+					connection.setRequestMethod("GET");
+					connection.connect();					
+					bean.setResponseCode(connection.getResponseCode());
+					bean.setResponseTime(System.currentTimeMillis()-beforeTime);
+				} finally {
+					ResourceHelper.closeResource(connection);
+				}
+			}
+		}
+		
+		ctx.getAjaxData().put("responsecode", bean.getResponseCode());
+		ctx.getAjaxData().put("responsetime", bean.getResponseTime());
+	
+		return null;
 	}
 
 }

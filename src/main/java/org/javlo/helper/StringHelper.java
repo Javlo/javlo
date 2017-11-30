@@ -124,6 +124,8 @@ public class StringHelper {
 	public static final String DEFAULT_LIST_SEPARATOR = "?";
 
 	private static long previousRandomId = System.currentTimeMillis();
+	
+	private static long previousRandomIdLarge = System.currentTimeMillis();
 
 	private static long previousShortRandomId = 0;
 
@@ -428,6 +430,9 @@ public class StringHelper {
 	}
 
 	private static String createCleanName(String fileName, String acceptableCharacters, char defaultReplaceChar) {
+		if (fileName == null) {
+			return null;
+		}
 		fileName = fileName.trim();
 
 		StringBuffer res = new StringBuffer();
@@ -560,6 +565,9 @@ public class StringHelper {
 	}
 
 	private static String createFileName(String fileName, char defaultReplaceChar) {
+		if (fileName==null) {
+			return null;
+		}
 		return createCleanName(fileName, ISO_ACCEPTABLE_CHAR, defaultReplaceChar).toLowerCase();
 	}
 
@@ -1129,6 +1137,29 @@ public class StringHelper {
 		previousRandomId = newId;
 		String randomBase10 = "" + newId + Math.round(Math.random() * 89999999 + 10000000);
 		return randomBase10;
+	}
+	
+	/**
+	 * generate a id in a String.
+	 * 
+	 * @return a unique id.
+	 */
+	public synchronized static String getLargeRandomIdBase64() {
+		long newId = System.currentTimeMillis();
+		if (newId <= previousRandomIdLarge) {
+			newId = previousRandomIdLarge + Math.round(Math.random() * 10000000) + 1;
+		}
+		previousRandomIdLarge = newId;
+		long randomBase10 = newId * 10000000 + Math.round(Math.random() * 89999999 + 10000000);
+		byte[] b = new byte[8];
+		for (int i = 0; i < 8; i++) {
+			b[7 - i] = (byte) (randomBase10 >>> (i * 8));
+		}
+		String base64code = Base64.encodeBase64String(b);
+		base64code = base64code.replace('=', '-');
+		base64code = base64code.replace('+', '_');
+		base64code = base64code.replace('/', ',');
+		return base64code;
 	}
 
 	/**

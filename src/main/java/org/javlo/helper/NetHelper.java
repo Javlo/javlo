@@ -148,7 +148,7 @@ public class NetHelper {
 			conn.setReadTimeout(5000);
 			boolean redirect = true;
 			int countRedirect = 0;
-			while (redirect && countRedirect < 16) {
+			while (redirect && countRedirect < 32) {
 				int status = conn.getResponseCode();
 				redirect = false;
 				if (status != HttpURLConnection.HTTP_OK) {

@@ -3,6 +3,7 @@
  */
 package org.javlo.helper;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -121,16 +122,16 @@ public class XMLHelper {
 					lgCtx.setFormat("html");
 					lgCtx.setPath(element.getPath());
 					lgCtx.setAbsoluteURL(true);
-					if (!element.notInSearch(lgCtx) && element.isRealContent(lgCtx) && (latestDate == null || element.getModificationDate(ctx).after(latestDate.getTime()) || element.getContentDateNeverNull(lgCtx).after(latestDate.getTime()))) {
+					if (element.getFinalSeoWeight() != MenuElement.SEO_HEIGHT_NULL && !element.notInSearch(lgCtx) && element.isRealContent(lgCtx) && (latestDate == null || element.getModificationDate(ctx).after(latestDate.getTime()) || element.getContentDateNeverNull(lgCtx).after(latestDate.getTime()))) {
 						line.append("<url>");
-						line.append("<loc>" + URLHelper.createURL(lgCtx) + "</loc>");
+						line.append("<loc>" + Encode.forXmlAttribute(URLHelper.createURL(lgCtx)) + "</loc>");
 						SimpleDateFormat dataFormat = new SimpleDateFormat("yyyy-MM-dd");
 						line.append("<lastmod>" + dataFormat.format(element.getModificationDate(ctx)) + "</lastmod>");
 						String changefreq = "weekly";
-						if (element.getDepth() > 1 && element.getSeoWeight() == MenuElement.SEO_HEIGHT_LOW) {
+						if (element.getDepth() > 1 && element.getFinalSeoWeight() == MenuElement.SEO_HEIGHT_LOW) {
 							changefreq = "monthly";
 						}
-						if (element.isReference(lgCtx) || element.getSeoWeight() == MenuElement.SEO_HEIGHT_HIGHT) {
+						if (element.isReference(lgCtx) || element.getFinalSeoWeight() == MenuElement.SEO_HEIGHT_HIGHT) {
 							changefreq = "daily";
 						}
 						line.append("<changefreq>" + changefreq + "</changefreq>");
@@ -144,7 +145,7 @@ public class XMLHelper {
 							locLgCtx.setFormat("html");
 							locLgCtx.setAbsoluteURL(true);
 							if (element.isRealContent(locLgCtx)) {
-								line.append("<xhtml:link rel=\"alternate\" hreflang=\"" + locLg + "\" href=\"" + URLHelper.createURL(locLgCtx) + "\" />");
+								line.append("<xhtml:link rel=\"alternate\" hreflang=\"" + locLg + "\" href=\"" + Encode.forXmlAttribute(URLHelper.createURL(locLgCtx)) + "\" />");
 							}
 						}
 						for (IImageTitle image : element.getImages(lgCtx)) {
@@ -155,7 +156,7 @@ public class XMLHelper {
 									imageURL = URLHelper.createResourceURL(lgCtx, imageURL);
 								}
 								
-								line.append("<image:loc>" + imageURL + "</image:loc>");
+								line.append("<image:loc>" + Encode.forXmlAttribute(imageURL) + "</image:loc>");
 								if (!StringHelper.isEmpty(image.getImageDescription(lgCtx))) {
 									line.append("<image:title>" + Encode.forXmlContent(image.getImageDescription(lgCtx)) + "</image:title>");
 								}

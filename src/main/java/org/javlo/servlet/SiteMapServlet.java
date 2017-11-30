@@ -1,6 +1,8 @@
 package org.javlo.servlet;
 
-import java.io.PrintStream;
+import java.io.BufferedWriter;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Collections;
@@ -114,19 +116,25 @@ public class SiteMapServlet extends HttpServlet {
 					lastestDate.roll(Calendar.DAY_OF_YEAR, false);					
 				}				
 				SiteMapBloc sitemap = XMLHelper.getSiteMapNewsBloc(ctx, root, 1, lastestDate);
-				PrintStream out = new PrintStream(response.getOutputStream());					
-				out.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-				out.println("<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\" xmlns:news=\"http://www.google.com/schemas/sitemap-news/0.9\" xmlns:image=\"http://www.google.com/schemas/sitemap-image/1.1\" >");
-				out.println(sitemap.getText());
-				out.println("</urlset>");
+				Writer writer = new OutputStreamWriter(response.getOutputStream(), "UTF8");
+				BufferedWriter out = new BufferedWriter(writer);					
+				out.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+				out.newLine();
+				out.write("<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\" xmlns:news=\"http://www.google.com/schemas/sitemap-news/0.9\" xmlns:image=\"http://www.google.com/schemas/sitemap-image/1.1\" >");
+				out.write(sitemap.getText());
+				out.write("</urlset>");
+				out.newLine();
 				out.flush();
 				return;
-			}  else if (ctx.getRequest().getServletPath().equalsIgnoreCase("/images-sitemap.xml")) {
-				PrintStream out = new PrintStream(response.getOutputStream());					
-				out.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-				out.println("<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\"  xmlns:xhtml=\"http://www.w3.org/1999/xhtml\" xmlns:image=\"http://www.google.com/schemas/sitemap-image/1.1\">");
-				out.println();
-				out.println("</urlset>");
+			}  else if (ctx.getRequest().getServletPath().equalsIgnoreCase("/images-sitemap.xml")) {				
+				Writer writer = new OutputStreamWriter(response.getOutputStream(), "UTF8");		
+				BufferedWriter out = new BufferedWriter(writer);		
+				out.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+				out.newLine();
+				out.write("<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\"  xmlns:xhtml=\"http://www.w3.org/1999/xhtml\" xmlns:image=\"http://www.google.com/schemas/sitemap-image/1.1\">");
+				out.newLine();
+				out.write("</urlset>");
+				out.newLine();
 				out.flush();
 				return;
 			} else {
@@ -138,33 +146,44 @@ public class SiteMapServlet extends HttpServlet {
 				if (StringHelper.isEmpty(sitemap.getText())) {
 					response.setStatus(HttpServletResponse.SC_NOT_FOUND);
 				} else {
-					PrintStream out = new PrintStream(response.getOutputStream());					
-					out.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-					out.println("<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\"  xmlns:xhtml=\"http://www.w3.org/1999/xhtml\" xmlns:image=\"http://www.google.com/schemas/sitemap-image/1.1\">");
-					out.println(sitemap.getText());
-					out.println("</urlset>");
+					Writer writer = new OutputStreamWriter(response.getOutputStream(), "UTF8");		
+					BufferedWriter out = new BufferedWriter(writer);							
+					out.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+					out.newLine();
+					out.write("<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\"  xmlns:xhtml=\"http://www.w3.org/1999/xhtml\" xmlns:image=\"http://www.google.com/schemas/sitemap-image/1.1\">");
+					out.newLine();
+					out.write(sitemap.getText());
+					out.write("</urlset>");
+					out.newLine();
 					out.flush();
 				}
-			} else {
-				PrintStream out = new PrintStream(response.getOutputStream());				
-				out.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-				out.println("<sitemapindex xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">");
+			} else {		
+				Writer writer = new OutputStreamWriter(response.getOutputStream(), "UTF8");
+				BufferedWriter out = new BufferedWriter(writer);
+				out.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+				out.newLine();
+				out.write("<sitemapindex xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">");
+				out.newLine();
 				int i = 1;
 				SiteMapBloc sitemap = XMLHelper.getSiteMapBloc(ctx, root, i, lastestDate);
 				SimpleDateFormat dataFormat = new SimpleDateFormat("yyyy-MM-dd");
 				while (!StringHelper.isEmpty(sitemap.getText())) {
-					out.println("<sitemap>");
+					out.write("<sitemap>");
+					out.newLine();
 					if (pageName == null) {						
-						out.println("<loc>" + URLHelper.createStaticURL(ctx.getContextForAbsoluteURL(), "/sitemap/sitemap-" + i + ".xml") + "</loc>");
+						out.write("<loc>" + URLHelper.createStaticURL(ctx.getContextForAbsoluteURL(), "/sitemap/sitemap-" + i + ".xml") + "</loc>");
 					} else {
-						out.println("<loc>" + URLHelper.createStaticURL(ctx.getContextForAbsoluteURL(), "/sitemap/sitemap-" + pageName + '-' + i + ".xml") + "</loc>");
+						out.write("<loc>" + URLHelper.createStaticURL(ctx.getContextForAbsoluteURL(), "/sitemap/sitemap-" + pageName + '-' + i + ".xml") + "</loc>");
 					}
-					out.println("<lastmod>" + dataFormat.format(sitemap.getLastmod()) + "</lastmod>");
-					out.println("</sitemap>");
+					out.write("<lastmod>" + dataFormat.format(sitemap.getLastmod()) + "</lastmod>");
+					out.newLine();
+					out.write("</sitemap>");
+					out.newLine();
 					i++;
 					sitemap = XMLHelper.getSiteMapBloc(ctx, root, i, lastestDate);
 				}
-				out.println("</sitemapindex>");
+				out.newLine();
+				out.write("</sitemapindex>");
 
 				out.flush();
 

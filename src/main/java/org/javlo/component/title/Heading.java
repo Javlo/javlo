@@ -359,7 +359,11 @@ public class Heading extends AbstractPropertiesComponent implements ISubTitle {
 
 	@Override
 	public String getSuffixViewXHTMLCode(ContentContext ctx) {
-		return "</" + getTag(ctx) + '>';
+		if (isWrapped(ctx)) {
+			return "</" + getTag(ctx) + '>';
+		} else {
+			return "";
+		}
 	}
 
 	@Override
