@@ -24,7 +24,13 @@
 				<div><div class="files">
 					<c:forEach var="css" items="${folder.value}">
 						<c:set var="file" value="${folder.key}/${css}" />
-						<a ${file == param.css?' class="btn btn-sm btn-primary"':'class="btn btn-sm btn-default"'} id="${folder.key}" href="${info.currentURL}?css=${file}&templateid=${currentTemplate.name}&webaction=editCSS&search=${param.search}">${css}</a>
+						<c:url var="cssUrl" value="${info.currentURL}" context="/">
+							<c:param name="css" value="${file}" />
+							<c:param name="templateid" value="${currentTemplate.name}" />
+							<c:param name="webaction" value="editCSS" />
+							<c:param name="search" value="${param.search}" />
+						</c:url>
+						<a ${file == param.css?' class="btn btn-sm btn-primary"':'class="btn btn-sm btn-default"'} id="${folder.key}" href="${cssUrl}">${css}</a>
 					</c:forEach>
 				</div></div>
 			</c:forEach>
