@@ -1,6 +1,5 @@
 var PREVIEWLOG = false;
 
-
 var editPreview = editPreview||{};
 
 if (!String.prototype.startsWith) {
@@ -11,6 +10,17 @@ if (!String.prototype.startsWith) {
 	}
 
 +function($,jQuery,pjq) {
+	
+	
+	/** hack for drag&drop error on chrome (62.0.3202.94), test remove afther chrome update 01/12/2017 */
+	pjq(function () {
+        var win = pjq(window);
+        win.scroll(function () {
+            if (win.height() + win.scrollTop() == $(document).height()) {
+            	win.scrollTop(win.scrollTop()-1);
+            }
+        });
+    });
 	
 	document.onpaste = function (event) {
 	  var items = (event.clipboardData  || event.originalEvent.clipboardData).items;	  
@@ -411,7 +421,8 @@ if (!String.prototype.startsWith) {
 			el = drag[i];
 			el.setAttribute('draggable', 'true');
 			el.addEventListener('dragstart', function (event) {
-				var scrollBottom = editPreview.isScrollBottom(pjq('html'));
+				pjq(this).addClass("draging");
+				var scrollBottom = editPreview.isScrollBottom(pjq('html'));				
 				event.dataTransfer.setData("text", this.getAttribute("data-type"));
 				pjq(".free-edit-zone").addClass("open");
 				if (scrollBottom) {
@@ -419,6 +430,7 @@ if (!String.prototype.startsWith) {
 				}
 			});
 			el.addEventListener('dragend', function (event)  {
+				pjq(this).removeClass("draging");				
 				pjq(".free-edit-zone").removeClass("open");
 			});
 			el.addEventListener('drop', function (event) {
@@ -427,7 +439,7 @@ if (!String.prototype.startsWith) {
 				}
 				event.preventDefault();
 			})
-		}
+		}		
 		var drag = document.querySelectorAll('#preview_command .shared-content-item'), el = null;
 		for (var i = 0; i < drag.length; i++) {
 			el = drag[i];
@@ -970,8 +982,7 @@ if (!String.prototype.startsWith) {
 			var sep = html.length;
 			zone1.html(html);
 			zone2.html('');
-			var textDist = zone2.position().top-(zone1.position().top+zone1.height());
-			console.log("1.sep="+sep);
+			var textDist = zone2.position().top-(zone1.position().top+zone1.height());			
 			while (sep > 0 && zone1.height() > image.height()) {
 				sep = sep-1;
 				while (sep > 0 && html[sep] != ' ') {

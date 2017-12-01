@@ -9,16 +9,6 @@
 ContentContext ctx = ContentContext.getContentContext(request, response, false);
 ctx.setForceCorrectPath(false);
 StaticConfig staticConfig = ctx.getGlobalContext().getStaticConfig();
-if (ctx.isInteractiveMode() && ctx.getRenderMode() == ContentContext.PREVIEW_MODE) {%>
-<jsp:include page="<%=staticConfig.getPreviewCommandFilePath()%>" /><%
-} else if (ctx.isInteractiveMode() && ctx.getRenderMode() == ContentContext.TIME_MODE) {%>
-	<jsp:include page="<%=staticConfig.getTimeTravelerFilePath()%>" />
-	<%MessageRepository messageRepository = MessageRepository.getInstance(ctx);
-    %><div id="message-container" class="standard"><%
-	if (messageRepository.getGlobalMessage().getMessage().trim().length() > 0) {%>
-		<div class="notification <%=messageRepository.getGlobalMessage().getTypeLabel()%>"><%=messageRepository.getGlobalMessage().getMessage()%></div>
-	<%}%></div><%
-}
 boolean mailing = ctx.getCurrentTemplate().isMailing();
 if (mailing) {%><center><table class="association-wrapper" cellpadding="0" cellspacing="0"><tbody><tr><td><%}
 MenuElement currentPage = ctx.getCurrentPage();
@@ -57,4 +47,14 @@ for (MenuElement child : currentPage.getChildMenuElements()) {
 	request.removeAttribute("backgroundImageStyle");
 }
 ctx.setPageAssociation(savePageAssocitation);
-%><%if (mailing) {%></td></tr></tbody></table></center><%}%>
+%><%if (mailing) {%></td></tr></tbody></table></center><%}
+if (ctx.isInteractiveMode() && ctx.getRenderMode() == ContentContext.PREVIEW_MODE) {%>
+<jsp:include page="<%=staticConfig.getPreviewCommandFilePath()%>" /><%
+} else if (ctx.isInteractiveMode() && ctx.getRenderMode() == ContentContext.TIME_MODE) {%>
+	<jsp:include page="<%=staticConfig.getTimeTravelerFilePath()%>" />
+	<%MessageRepository messageRepository = MessageRepository.getInstance(ctx);
+    %><div id="message-container" class="standard"><%
+	if (messageRepository.getGlobalMessage().getMessage().trim().length() > 0) {%>
+		<div class="notification <%=messageRepository.getGlobalMessage().getTypeLabel()%>"><%=messageRepository.getGlobalMessage().getMessage()%></div>
+	<%}%></div><%
+}%>
