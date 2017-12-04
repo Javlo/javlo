@@ -2221,6 +2221,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		cleanDataAccess();
 		synchronized (RELEASE_CACHE) {
 			for (String name : getAllCacheName()) {
+				logger.info("reset cache : "+name);
 				getCache(name).removeAll();
 			}
 			cacheMaps.clear();

@@ -462,7 +462,6 @@ public class TemplateAction extends AbstractModuleAction {
 
 	public String performCommitChildren(RequestService requestService, ServletContext application, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
 		Template template = TemplateFactory.getDiskTemplate(application, requestService.getParameter("templateid", null));
-		System.out.println("##### TemplateAction.performCommitChildren : template = "+template.getName()); //TODO: remove debug trace
 		template.clearRenderer(ctx);
 		Collection<Template> children = TemplateFactory.getTemplateAllChildren(application, template);
 		for (Template child : children) {

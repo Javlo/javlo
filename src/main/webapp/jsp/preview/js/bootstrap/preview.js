@@ -11,7 +11,6 @@ if (!String.prototype.startsWith) {
 
 +function($,jQuery,pjq) {
 	
-	
 	/** hack for drag&drop error on chrome (62.0.3202.94), test remove afther chrome update 01/12/2017 */
 	pjq(function () {
         var win = pjq(window);
