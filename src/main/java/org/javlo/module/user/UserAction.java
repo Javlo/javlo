@@ -76,7 +76,6 @@ public class UserAction extends AbstractModuleAction {
 
 	@Override
 	public String prepare(ContentContext ctx, ModulesContext moduleContext) throws Exception {
-
 		UserModuleContext userContext = UserModuleContext.getInstance(ctx.getRequest());
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
 
@@ -106,8 +105,10 @@ public class UserAction extends AbstractModuleAction {
 			moduleContext.getCurrentModule().restoreAll();
 		} else {
 			User user = null;
+			boolean userSet = false;
 			String userName = requestService.getParameter("user", null); 
 			if (userName  != null) {
+				userSet=true;
 				if (userName.contains("<")) {
 					try {
 						InternetAddress internetAddress = new InternetAddress(userName);
@@ -117,6 +118,7 @@ public class UserAction extends AbstractModuleAction {
 				}	
 				user = userFactory.getUser(userName);
 			} else if (requestService.getParameter("cuser", null) != null) {
+				userSet=true;
 				String cuser = requestService.getParameter("cuser", null);
 				for (IUserInfo userInfo : userContext.getUserFactory(ctx).getUserInfoList()) {
 					if (userInfo.getEncryptLogin().equals(cuser)) {
@@ -132,7 +134,11 @@ public class UserAction extends AbstractModuleAction {
 			}
 
 			if (user == null) {
-				return "user not found : " + requestService.getParameter("user", null);
+				if (userSet) {
+					return "user not found (prepare) : " + requestService.getParameter("user", null);
+				} else {
+					return null;
+				}
 			}
 
 			Map<String, String> userInfoMap = BeanHelper.bean2Map(user.getUserInfo());
@@ -217,7 +223,7 @@ public class UserAction extends AbstractModuleAction {
 			}
 			User user = userFactory.getUser(requestService.getParameter("user", null));
 			if (user == null) {
-				return "user not found : " + requestService.getParameter("user", null);
+				return "user not found (update current) : " + requestService.getParameter("user", null);
 			}
 			IUserInfo userInfo = user.getUserInfo();
 			try {
@@ -293,7 +299,7 @@ public class UserAction extends AbstractModuleAction {
 			String userName = requestService.getParameter("user", null);				
 			User user = userFactory.getUser(userName);
 			if (user == null) {
-				return "user not found : " + userName;
+				return "user not found (update)  : " + userName;
 			}
 			IUserInfo userInfo = user.getUserInfo();
 			String pwd = user.getPassword();

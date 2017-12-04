@@ -1896,6 +1896,24 @@ public class Template implements Comparable<Template> {
 			storeProperties();
 		}
 	}
+	
+	public String getMessageContainerId() {
+		String htmlID = properties.getProperty("renderer.message.htmlid");
+		if (htmlID == null) {
+			return getParent().getMessageContainerId();
+		} else {
+			return htmlID;
+		}
+	}
+	
+	public String getMessageTemplate(ContentContext ctx) {
+		String renderer = properties.getProperty("renderer.message");
+		if (renderer == null) {
+			return getParent().getMessageTemplate(ctx);
+		} else {
+			return URLHelper.mergePath(getTemplateTargetFolder(ctx.getGlobalContext()), renderer);
+		}
+	}
 
 	public synchronized String getRenderer(ContentContext ctx) throws IOException, BadXMLException {
 		synchronized (ctx.getGlobalContext().getLockImportTemplate()) {

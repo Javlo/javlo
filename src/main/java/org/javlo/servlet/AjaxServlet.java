@@ -59,13 +59,13 @@ public class AjaxServlet extends HttpServlet {
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 			RequestService rs = RequestService.getInstance(request);
 			try {
-				//Tracker.trace(request, response);				
+				// Tracker.trace(request, response);
 				if (rs.getParameter(ContentContext.FORCE_MODE_PARAMETER_NAME, null) != null) {
 					ctx.setRenderMode(Integer.parseInt(rs.getParameter(ContentContext.FORCE_MODE_PARAMETER_NAME, null)));
 				} else {
 					ctx.setRenderMode(ContentContext.PREVIEW_MODE);
 				}
-				
+
 				if (ctx.getCurrentEditUser() != null) {
 					// edit edit info bean
 					EditInfoBean.getCurrentInfoBean(ctx);
@@ -90,16 +90,30 @@ public class AjaxServlet extends HttpServlet {
 
 				Map<String, Object> outMap = new HashMap<String, Object>();
 				StringWriter strWriter = new StringWriter();
-				
+
 				if (ctx.getSpecificJson() == null) {
-					if (ctx.getAjaxMap() == null) {						
-						String msgXhtml = ServletHelper.executeJSP(ctx, editCtx.getMessageTemplate());						
-						ctx.addAjaxInsideZone("message-container", msgXhtml);
-						outMap.put("messageText", MessageRepository.getInstance(ctx).getGlobalMessage().getMessage());
-						outMap.put("messageType", MessageRepository.getInstance(ctx).getGlobalMessage().getBootstrapType());
+					if (ctx.getAjaxMap() == null) {
+						if (MessageRepository.getInstance(ctx).getGlobalMessage().isNeedDisplay()) {
+							String msgXhtml;
+							String htmlId = "message-container";
+							if (ctx.isAsEditMode()) {
+								msgXhtml = ServletHelper.executeJSP(ctx, editCtx.getMessageTemplate());
+							} else {
+								String msgJsp = ctx.getCurrentTemplate().getMessageTemplate(ctx);
+								htmlId = ctx.getCurrentTemplate().getMessageContainerId();
+								if (msgJsp != null) {
+									msgXhtml = ServletHelper.executeJSP(ctx, msgJsp);
+								} else {
+									msgXhtml = "<div class=\"alert alert-" + MessageRepository.getInstance(ctx).getGlobalMessage().getBootstrapType() + "\" role=\"alert\">" + MessageRepository.getInstance(ctx).getGlobalMessage().getMessage() + "</div>";
+								}
+							}
+							ctx.addAjaxInsideZone(htmlId, msgXhtml);
+							outMap.put("messageText", MessageRepository.getInstance(ctx).getGlobalMessage().getMessage());
+							outMap.put("messageType", MessageRepository.getInstance(ctx).getGlobalMessage().getBootstrapType());
+						}
 						if (editCtx.getUserPrincipal() != null) {
 							AdminUserSecurity userSecurity = AdminUserSecurity.getInstance();
-							int unreadNotification = NotificationService.getInstance(globalContext).getUnreadNotificationSize(editCtx.getUserPrincipal().getName(),userSecurity.isAdmin(editCtx.getEditUser()), 99);
+							int unreadNotification = NotificationService.getInstance(globalContext).getUnreadNotificationSize(editCtx.getUserPrincipal().getName(), userSecurity.isAdmin(editCtx.getEditUser()), 99);
 							ctx.addAjaxInsideZone("notification-count", "" + unreadNotification);
 						}
 						AjaxHelper.render(ctx, ctx.getAjaxInsideZone(), ctx.getScheduledAjaxInsideZone());
@@ -135,10 +149,10 @@ public class AjaxServlet extends HttpServlet {
 				DebugListening.getInstance().sendError(ctx, t, "path=" + request.getRequestURI());
 			} finally {
 				PersistenceService persistenceService = PersistenceService.getInstance(globalContext);
-				String persistenceParam = rs.getParameter(AccessServlet.PERSISTENCE_PARAM, null);				
-				if (persistenceService.isAskStore() && StringHelper.isTrue(persistenceParam, true)) {					
+				String persistenceParam = rs.getParameter(AccessServlet.PERSISTENCE_PARAM, null);
+				if (persistenceService.isAskStore() && StringHelper.isTrue(persistenceParam, true)) {
 					persistenceService.store(ctx);
-				}				
+				}
 				if (ctx.isClearSession()) {
 					HttpSession session = ctx.getRequest().getSession();
 					session.invalidate();

@@ -410,4 +410,12 @@ public class DefaultTemplate extends Template {
 	public String getMailingTemplate() {	
 		return null;
 	}
+	
+	public String getMessageContainerId() {
+		return "message-container";
+	}
+	
+	public String getMessageTemplate(ContentContext ctx) {
+		return null;
+	}
 }
