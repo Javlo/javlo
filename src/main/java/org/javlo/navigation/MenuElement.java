@@ -3980,7 +3980,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 	 */
 	private String getVirtualPathRec(ContentContext ctx, int c) {
 		try {
-			if (parent == this && c > 1000) {
+			if (parent == this && c > 25) {
 				GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 				logger.severe("recursive vpath in :" + getPath() + "  context : " + globalContext.getContextKey());
 			} else {
