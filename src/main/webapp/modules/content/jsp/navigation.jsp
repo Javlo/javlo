@@ -21,11 +21,13 @@
 	</ul>	
 	</li>
 	<li class="add-page">
-		<form id="form-add-page" action="${info.currentURL}" method="post">
-			<div>
+		<form id="form-add-page" action="${info.currentURL}" method="post">		
+			<div class="row"><div class="col-xs-8">
 			<input type="hidden" name="webaction" value="edit.addPage" />
-			<input type="text" class="label-inside label" name="name" value="${i18n.edit['navigation.add-page']}..." />
-			<input type="submit" value="${i18n.edit['global.ok']}" />
+			<input type="text" class="form-control" name="name" placeholder="${i18n.edit['navigation.add-page']}..." />
+			</div><div class="col-xs-4">
+				<input class="btn btn-default btn-xs" type="submit" value="${i18n.edit['global.ok']}" />
+			</div>			
 			</div>
 		</form>
 	</li>	

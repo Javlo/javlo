@@ -39,12 +39,13 @@ public class Layouts extends AbstractVisualComponent {
 			int i = 0;
 			List<String> currentlayout = getLayouts();
 			out.print("<input type=\"hidden\" name=\"layout-" + getId() + "\" value=\"layout\"/>");
-			out.println("<ul>");
+			out.print("<input type=\"hidden\" name=\"" + getContentName() + "\" value=\"___emptylayout\"/>");
+			out.println("<ul>");			
 			for (String layout : layouts) {
 				String checked = "";
 				if (currentlayout.contains(layout)) {
 					checked = " checked=\"checked\"";
-				}
+				}				
 				out.print("<li class=\"line\"><input type=\"checkbox\"" + checked + " id=\"" + getContentName() + i + "\" name=\"" + getContentName() + "\" value=\"" + layout + "\"/>");
 				out.print("<label for=\"" + getContentName() + i + "\" >" + layout + "</label></li>");
 				i++;
@@ -116,6 +117,11 @@ public class Layouts extends AbstractVisualComponent {
 	@Override
 	public int getComplexityLevel(ContentContext ctx) {
 		return COMPLEXITY_STANDARD;
+	}
+	
+	@Override
+	public String getFontAwesome() {
+		return "columns";
 	}
 
 }

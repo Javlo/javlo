@@ -155,5 +155,5 @@ public class ComponentLayout {
 		}
 		return outStyle.toString();
 	}
-
+	
 }
