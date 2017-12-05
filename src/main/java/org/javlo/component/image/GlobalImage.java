@@ -339,7 +339,7 @@ public class GlobalImage extends Image implements IImageFilter {
 			finalCode.append("</div>");
 		}
 
-		if (isLabel() && !ctx.getGlobalContext().isMailingPlatform()) {
+		if (isLabel() && StringHelper.isEmpty(getSpecialTagTitle(ctx))) {
 			finalCode.append("<div class=\"row form-group\"><div class=\"col-sm-3\">");
 			finalCode.append("<label for=\"" + getLabelXHTMLInputName() + "\">" + getImageLabelTitle(ctx) + " : </label></div><div class=\"col-sm-9\">");
 			final String[][] params = { { "rows", "3" }, { "cols", "40" }, { "class", "form-control" } };
@@ -1281,11 +1281,11 @@ public class GlobalImage extends Image implements IImageFilter {
 	}
 
 	@Override
-	public String getSpecialTagTitle(ContentContext ctx) {
-		if (ctx.getGlobalContext().isMailingPlatform()) {
+	public String getSpecialTagTitle(ContentContext ctx) throws Exception {
+		if (ctx.getGlobalContext().isMailingPlatform() || (getCurrentRenderer(ctx) != null && getCurrentRenderer(ctx).contains("text"))) {
 			return "text";
 		} else {
-			return null;
+			return super.getSpecialTagTitle(ctx);
 		}
 	}
 
@@ -1331,7 +1331,11 @@ public class GlobalImage extends Image implements IImageFilter {
 
 		out.println("<div class=\"line label-text" + disabled + "\"><label for=\"" + getLabelTextInputName() + "\">label text : </label>");
 		String id = "special-label-" + getId();
-		String[][] paramsLabelText = new String[][] { { "rows", "3" }, { "cols", "100" }, { "class", "tinymce-light" }, { "id", id } };
+		String rows = "3";
+		if (!isFloatText(ctx)) {
+			rows = "9";
+		}
+		String[][] paramsLabelText = new String[][] { { "rows", rows }, { "cols", "100" }, { "class", "tinymce-light" }, { "id", id } };
 		out.println(XHTMLHelper.getTextArea(getLabelTextInputName(), getLabel(), paramsLabelText));
 		out.println("<script type=\"text/javascript\">jQuery(document).ready(loadWysiwyg('#" + id + "','" + getEditorComplexity(ctx) + "','" + chooseImageURL + "'));</script>");
 		out.println("</div>");

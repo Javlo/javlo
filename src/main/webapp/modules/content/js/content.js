@@ -22,6 +22,7 @@ function loadWysiwyg(cssQuery, complexity, chooseFileURL) {
 		    menubar : false,
 		    nonbreaking_force_tab: true,
 		    content_css: wysiwygCss,
+		    height : "180",
 		    plugins: [
 		        "advlist autolink lists link image charmap print preview anchor",
 		        "searchreplace visualblocks code fullscreen",
@@ -38,6 +39,7 @@ function loadWysiwyg(cssQuery, complexity, chooseFileURL) {
 		    menubar : false,
 		    nonbreaking_force_tab: true,
 		    theme: "modern",
+		    height : "280",
 		    content_css: wysiwygCss,
 		    textcolor_map : ["111111","MyBlack","993300","My Burnt orange"],
 		    plugins: [

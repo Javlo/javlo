@@ -193,8 +193,8 @@ public class FieldFile extends Field implements IStaticContainer {
 		if (!isLight()) {
 			out.println("<div class=\"row form-group\"><div class=\""+LABEL_CSS+"\">");
 			out.println("<label for=\"" + getInputCreateFolderName() + "\">" + getCreateFolderLabel() + " : </label>");
-			out.println("</div><div class=\""+VALUE_SIZE+"\"><input class=\"form-control\" type=\"text\" id=\"" + getInputCreateFolderName() + "\" name=\"" + getInputCreateFolderName() + "\" /></div>");
-			out.println("<div class=\"col-sm-1\"><input type=\"submit\" class=\"ajax_update_click btn btn-default btn-xs pull-right\" name=\"create\" value=\">>\" />");
+			out.println("</div><div class=\""+SMALL_VALUE_SIZE+"\"><input class=\"form-control\" type=\"text\" id=\"" + getInputCreateFolderName() + "\" name=\"" + getInputCreateFolderName() + "\" /></div>");
+			out.println("<div class=\""+SMALL_PART_SIZE+"\"><input type=\"submit\" class=\"ajax_update_click btn btn-default btn-xs\" name=\"create\" value=\">>\" />");
 			out.println("</div></div>");
 
 			String linkToResources = "";
@@ -212,35 +212,35 @@ public class FieldFile extends Field implements IStaticContainer {
 				backURL = URLHelper.addParam(backURL, "previewEdit", ctx.getRequest().getParameter("previewEdit"));
 				filesParams.put(ElementaryURLHelper.BACK_PARAM_NAME, backURL + "=/" + ctx.getGlobalContext().getStaticConfig().getStaticFolder() + '/');
 				String staticLinkURL = URLHelper.createModuleURL(ctx, ctx.getPath(), "file", filesParams);
-				linkToResources = "<div class=\"col-sm-3\"><a class=\"browse-link btn btn-default btn-xs\" href=\"" + staticLinkURL + "\">" + i18nAccess.getText("content.goto-static") + "</a></div>";
+				linkToResources = "<div class=\""+SMALL_PART_SIZE+"\"><a class=\"browse-link btn btn-default btn-xs\" href=\"" + staticLinkURL + "\">" + i18nAccess.getText("content.goto-static") + "</a></div>";
 			}
 
-			out.println("<div class=\"row form-group\"><div class=\"col-sm-3\">");
-			out.println("<label for=\"" + getInputFolderName() + "\">" + getFolderLabel() + " : </label></div><div class=\"col-sm-6\">");
+			out.println("<div class=\"row form-group\"><div class=\""+LABEL_CSS+"\">");
+			out.println("<label for=\"" + getInputFolderName() + "\">" + getFolderLabel() + " : </label></div><div class=\""+SMALL_VALUE_SIZE+"\">");
 			out.println(XHTMLHelper.getInputOneSelect(getInputFolderName(), getFolderListForSelection(), getCurrentFolder(), "form-control", "jQuery(this.form).trigger('submit');", true));
 			out.println("</div>" + linkToResources + "</div>");
 
-			out.println("<div class=\"row form-group\"><div class=\"col-sm-3\">");
-			out.println("<label for=\"" + getInputFileName() + "\">" + getFileLabel() + " : </label></div><div class=\"col-sm-9\">");
+			out.println("<div class=\"row form-group\"><div class=\""+LABEL_CSS+"\">");
+			out.println("<label for=\"" + getInputFileName() + "\">" + getFileLabel() + " : </label></div><div class=\""+VALUE_SIZE+"\">");
 			out.println(XHTMLHelper.getInputOneSelect(getInputFileName(), getFileList(), getCurrentFile(), "form-control", "jQuery(this.form).trigger('submit');", true));
 			out.println("</div></div>");
 
-			out.println("<div class=\"row form-group\"><div class=\"col-sm-3\">");
+			out.println("<div class=\"row form-group\"><div class=\""+LABEL_CSS+"\">");
 			out.println("<label for=\"" + getInputLabelFileName() + "\">" + getLabelLabel() + " : </label>");
-			out.println("</div><div class=\"col-sm-9\"><input class=\"form-control\" type=\"text\" id=\"" + getInputLabelFileName() + "\" name=\"" + getInputLabelFileName() + "\" value=\"" + getCurrentLabel() + "\" />");
+			out.println("</div><div class=\""+VALUE_SIZE+"\"><input class=\"form-control\" type=\"text\" id=\"" + getInputLabelFileName() + "\" name=\"" + getInputLabelFileName() + "\" value=\"" + getCurrentLabel() + "\" />");
 			out.println("</div></div>");
 
 		}
 
-		out.println("<div class=\"row form-group\"><div class=\"col-sm-3\">");
+		out.println("<div class=\"row form-group\"><div class=\""+LABEL_CSS+"\">");
 		out.println("<label for=\"" + getInputAddFileName() + "\">" + getAddFileLabel() + " " + i18nAccess.getEditLg() + " : </label>");
-		out.println("</div><div class=\"col-sm-3\"><input type=\"file\" id=\"" + getInputAddFileName() + "\" name=\"" + getInputAddFileName() + "\" /></div>");
+		out.println("</div><div class=\""+VALUE_SIZE+"\"><input type=\"file\" id=\"" + getInputAddFileName() + "\" name=\"" + getInputAddFileName() + "\" /></div>");
 		out.println("</div>");
 
 		if (isWithLink()) {
-			out.println("<div class=\"row form-group\"><div class=\"col-sm-3\">");
+			out.println("<div class=\"row form-group\"><div class=\""+LABEL_CSS+"\">");
 			out.println("<label for=\"" + getInputLabelLinkName() + "\">" + getLinkLabel() + " : </label>");
-			out.println("</div><div class=\"col-sm-9\"><input class=\"form-control\" type=\"text\" id=\"" + getInputLabelLinkName() + "\" name=\"" + getInputLabelLinkName() + "\" value=\"" + getCurrentLink() + "\" />");
+			out.println("</div><div class=\""+VALUE_SIZE+"\"><input class=\"form-control\" type=\"text\" id=\"" + getInputLabelLinkName() + "\" name=\"" + getInputLabelLinkName() + "\" value=\"" + getCurrentLink() + "\" />");
 			out.println("</div></div>");
 		}
 

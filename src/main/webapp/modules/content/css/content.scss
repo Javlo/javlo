@@ -410,9 +410,14 @@ li.line {
 	width: 80%;
 }
 
-.component .text textarea {
+.component .text textarea[rows="3"] {
 	width: 98%;
 	height: 160px;
+}
+
+.component .text textarea[rows="9"] {
+	width: 98%;
+	height: 500px;
 }
 
 .text img {
