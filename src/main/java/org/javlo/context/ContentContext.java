@@ -42,7 +42,6 @@ import org.javlo.user.AdminUserSecurity;
 import org.javlo.user.IUserFactory;
 import org.javlo.user.User;
 import org.javlo.user.UserFactory;
-import org.javlo.user.UserSecurity;
 
 /**
  * @author pvanderm

@@ -126,4 +126,9 @@ public class ImportGalleryMacro implements IInteractiveMacro, IAction {
 	public boolean isInterative() {	
 		return true;
 	}
+	
+	@Override
+	public boolean haveRight(ContentContext ctx, String action) {
+		return ctx.getCurrentEditUser() != null;
+	}
 }

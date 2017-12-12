@@ -1,4 +1,4 @@
-.label {
+.bt-label {
   display: inline;
   padding: .2em .6em .3em;
   font-size: 75%;
@@ -10,59 +10,59 @@
   vertical-align: baseline;
   border-radius: .25em;
 }
-a.label:hover,
-a.label:focus {
+a.bt-label:hover,
+a.bt-label:focus {
   color: #fff;
   text-decoration: none;
   cursor: pointer;
 }
-.label:empty {
+.bt-label:empty {
   display: none;
 }
-.btn .label {
+.btn .bt-label {
   position: relative;
   top: -1px;
 }
-.label-default {
+.bt-label-default {
   background-color: #777;
 }
-.label-default[href]:hover,
-.label-default[href]:focus {
+.bt-label-default[href]:hover,
+.bt-label-default[href]:focus {
   background-color: #5e5e5e;
 }
-.label-primary {
+.bt-label-primary {
   background-color: #337ab7;
 }
-.label-primary[href]:hover,
-.label-primary[href]:focus {
+.bt-label-primary[href]:hover,
+.bt-label-primary[href]:focus {
   background-color: #286090;
 }
-.label-success {
+.bt-label-success {
   background-color: #5cb85c;
 }
-.label-success[href]:hover,
-.label-success[href]:focus {
+.bt-label-success[href]:hover,
+.bt-label-success[href]:focus {
   background-color: #449d44;
 }
-.label-info {
+.bt-label-info {
   background-color: #5bc0de;
 }
-.label-info[href]:hover,
-.label-info[href]:focus {
+.bt-label-info[href]:hover,
+.bt-label-info[href]:focus {
   background-color: #31b0d5;
 }
-.label-warning {
+.bt-label-warning {
   background-color: #f0ad4e;
 }
-.label-warning[href]:hover,
-.label-warning[href]:focus {
+.bt-label-warning[href]:hover,
+.bt-label-warning[href]:focus {
   background-color: #ec971f;
 }
-.label-danger {
+.bt-label-danger {
   background-color: #d9534f;
 }
-.label-danger[href]:hover,
-.label-danger[href]:focus {
+.bt-label-danger[href]:hover,
+.bt-label-danger[href]:focus {
   background-color: #c9302c;
 }
 

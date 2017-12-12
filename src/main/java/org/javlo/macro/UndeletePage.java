@@ -147,4 +147,9 @@ public class UndeletePage extends AbstractInteractiveMacro implements IAction {
 	public boolean isPreview() {
 		return true;
 	}
+	
+	@Override
+	public boolean haveRight(ContentContext ctx, String action) {
+		return ctx.getCurrentEditUser() != null;
+	}
 }

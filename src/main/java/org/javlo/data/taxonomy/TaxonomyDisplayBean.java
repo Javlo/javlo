@@ -75,7 +75,7 @@ public class TaxonomyDisplayBean {
 	}
 	
 	public IListItem getListItem() {
-		return new ListService.ListItem(bean.getId(), getLocalLabel());
+		return new ListService.ListItem(bean.getName(), getLocalLabel());
 	}
 
 	public boolean isDisplayParentLabel() {

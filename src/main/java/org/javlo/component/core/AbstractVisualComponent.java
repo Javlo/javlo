@@ -2934,5 +2934,9 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	public String getFontAwesome() {	
 		return "square";
 	}
+	
+	public boolean haveRight(ContentContext ctx, String action) {
+		return true;
+	}
 
 }

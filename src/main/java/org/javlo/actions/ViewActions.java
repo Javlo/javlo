@@ -311,6 +311,11 @@ public class ViewActions implements IAction {
 		return null;
 	}
 	
+	@Override
+	public boolean haveRight(ContentContext ctx, String action) {
+		return true;
+	}
+	
 	public static void main(String[] args) {
 		Locale locale = new Locale("sv");
 		System.out.println("##### ViewActions.main : locale = "+locale.getDisplayLanguage(Locale.FRENCH)); //TODO: remove debug trace

@@ -130,5 +130,10 @@ public class FollowComponent extends AbstractVisualComponent implements IAction 
 	public String getFontAwesome() {	
 		return "binoculars";
 	}
+	
+	@Override
+	public boolean haveRight(ContentContext ctx, String action) {
+		return true;
+	}
 
 }

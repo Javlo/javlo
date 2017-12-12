@@ -1,0 +1,106 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto:100,100i,300,300i,400,400i,500,500i,700,700i,900,900i');
+
+.calendar {
+    table {
+    	border-collapse: separate;
+    	font-size: 1em;
+		font-family: "Helvetica Neue",Helvetica;
+		width: 100%;
+    }
+	h2 {
+ 	   margin-top: 0;
+    	white-space: nowrap;
+    	font-size: 32px;
+    	font-weight: 100;
+	    margin-bottom: 10px;
+	    font-family: 'Roboto', sans-serif;
+	}
+
+	td.day {
+		background:#FFF;
+		font-family: 'Roboto', sans-serif;
+	}
+	
+	td.today {
+		background:#FFF;
+		position: relative;
+	}
+	
+	thead {
+		th {
+			border-bottom-width: 1px;
+			border-color: #cdcdcd;
+			font-size: 14px;
+			font-weight: 300;
+			line-height: 30px;
+			width: 14.2857%;
+			text-align: center;
+			background-color: #e5e5e5;
+		}
+	}
+	tbody {
+		td {
+			border: 1px solid #e5e5e5;
+			height: 100px;
+			width: 14.2857%;
+			vertical-align: top;
+		}
+		.day-number {
+    		font-size: 11px;
+    		margin: 5px;
+    		min-width: 19px;
+    		padding: 0;
+    		text-align: center;    		
+    		float: right;
+		}
+		.today .day-number {
+			background-color: #777777;
+			border-radius: 50%;
+			color: #ffffff;
+		}
+		.unactive {
+			.day-number {
+				color: #cdcdcd;
+			}
+		}
+		.prepare-event {
+			margin: 5px 0 0 5px;
+			display: none;
+			float: left;
+			font-size: 1.1em;
+		}
+		td:hover {
+			.prepare-event {				
+				display: block;
+			}
+		}
+		ul.events {
+			margin: 0;
+			padding: 0;
+			list-style: none;
+			clear: both;
+			li {
+			   margin: 2px 4px;
+			   padding: 0 3px;
+			   font-size: 0.9em;
+			   border: 1px solid #cdcdcd;
+			   color: #1d1d1d;
+			   background-color: #e5e5e5;
+			   max-width: 100%;
+			   overflow: hidden;
+			   height: 21px;
+			   .summary {
+			        padding: 0;
+			        margin: 0;			        
+				    width: 90%;
+			   		overflow: hidden;							   
+			   }
+			   .action {
+			        margin-top: 5px;
+			   		float: right;
+			   }
+			}
+		}		
+	}
+	
+}

@@ -174,6 +174,8 @@ public class ActionManager {
 
 		String group = getActionGroup(actionName);
 		String message = null;
+		
+		ContentContext ctx = ContentContext.getContentContext(request, response);
 
 		try {
 			IAction action;
@@ -188,8 +190,7 @@ public class ActionManager {
 			
 			if (action != null) {
 				/** security **/				
-				if (action instanceof IModuleAction) { // if module action					
-					ContentContext ctx = ContentContext.getContentContext(request, response);			
+				if (action instanceof IModuleAction) { // if module action								
 					if (currentUser == null) {
 						ctx.setNeedRefresh(true);
 					}
@@ -202,15 +203,16 @@ public class ActionManager {
 						}
 					}
 				}
-				message = invokeAction(request, response, action, actionName);
-				logger.fine("executed action : '" + actionName + "' return : " + message);
-			} else {
-				ContentContext ctx = ContentContext.getContentContext(request, response);				
-				message = "actions class not found : " + actionName + " - group:"+group+"  (user:"+ctx.getCurrentEditUser()+")";
-				
-				logger.severe(message);
-				
-				
+				if (action.haveRight(ctx, actionName)) {
+					message = invokeAction(request, response, action, actionName);
+					logger.fine("executed action : '" + actionName + "' return : " + message);
+				} else {
+					logger.warning("executed action refused : '" + actionName + "' user : " + currentUser+" on "+globalContext.getContextKey());
+					message = "security error.";
+				}
+			} else {								
+				message = "actions class not found : " + actionName + " - group:"+group+"  (user:"+ctx.getCurrentEditUser()+")";				
+				logger.severe(message);				
 				if (!ctx.isAsViewMode() && currentUser == null && actionName != null) {					
 					ctx.setNeedRefresh(true);
 				}
@@ -231,7 +233,6 @@ public class ActionManager {
 			}
 		}
 
-		ContentContext ctx = ContentContext.getContentContext(request, response);
 		MessageRepository msgRepo = MessageRepository.getInstance(ctx);
 		if (message != null) {
 			msgRepo.setGlobalMessageAndNotification(ctx, new GenericMessage(message, GenericMessage.ERROR), true);
@@ -248,7 +249,7 @@ public class ActionManager {
 	private static String invokeAction(HttpServletRequest request, HttpServletResponse response, IAction action, String actionName) {
 		Method method = null;
 		String methodName = METHOD_PREFIX + formatActionComponentName(actionName);
-		String message = null;
+		String message = null;		
 		try {
 			Method[] methods = action.getClass().getDeclaredMethods();
 			for (Method m : methods) {

@@ -791,4 +791,9 @@ public class DataAction implements IAction {
 		ctx.getAjaxData().put("exist", exist);
 		return null;
 	}
+	
+	@Override
+	public boolean haveRight(ContentContext ctx, String action) {
+		return true;
+	}
 }

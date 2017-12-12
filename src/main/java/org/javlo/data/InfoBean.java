@@ -1587,7 +1587,7 @@ public class InfoBean {
 		} else {
 			IImageTitle imageTitle = ctx.getCurrentPage().getImageBackground(ctx);
 			if (imageTitle != null) {
-				return new ImageBean(ctx, imageTitle, "main-banner");
+				return new ImageBean(ctx, imageTitle, "main-background");
 			} else {
 				return null;
 			}

@@ -109,5 +109,9 @@ public abstract class AbstractModuleAction implements IModuleAction {
 	public Boolean haveRight(HttpSession session, User user) throws ModuleException {
 		return null;
 	}
+	
+	public boolean haveRight(ContentContext ctx, String action) {
+		return true;
+	}
 
 }

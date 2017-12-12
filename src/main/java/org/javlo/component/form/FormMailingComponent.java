@@ -259,6 +259,11 @@ public class FormMailingComponent extends AbstractVisualComponent implements IAc
 		ctx.getRequest().setAttribute("comp", this);
 		needForm = true;
 	}
+	
+	@Override
+	public boolean haveRight(ContentContext ctx, String action) {
+		return true;
+	}
 
 	/*
 	 * ACTION

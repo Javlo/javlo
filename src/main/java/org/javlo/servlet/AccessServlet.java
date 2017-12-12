@@ -1182,7 +1182,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 		out.println("**** ABST COMP LOG LVL :  " + staticConfig.getAbstractComponentLogLevel());
 		out.println("**** BACKUP EXCL. PAT. :  " + staticConfig.getBackupExcludePatterns());
 		out.println("**** BACKUP INCL. PAT. :  " + staticConfig.getBackupIncludePatterns());
-		out.println("**** HIGH SECURE      	:  " + staticConfig.isHighSecure());
+		out.println("**** HIGH SECURE       :  " + staticConfig.isHighSecure());
 		out.println("**** REDIRECT URL      :  " + staticConfig.isRedirectSecondaryURL());
 		out.println("**** INTEGRITY CHECKER :  " + staticConfig.isIntegrityCheck());
 		out.println("**** HARD USERS        :  " + StringHelper.collectionToString(staticConfig.getEditUsers().keySet(), ","));

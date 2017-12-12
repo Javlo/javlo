@@ -7,12 +7,31 @@ jQuery(document).ready(function(){
 	jQuery(".readonly input, .readonly textarea, .readonly select").attr("readonly", "readonly");
 });
 
-function loadWysiwyg(cssQuery, complexity, chooseFileURL) {
-	var wysiwygCss = staticRootURL+"modules/content/js/tinymce.css";
+function loadWysiwyg(cssQuery, complexity, chooseFileURL, format, fontsize, wysiwygCss) {
+	if (wysiwygCss == null) {
+		wysiwygCss = staticRootURL+"modules/content/js/tinymce.css";
+	}
 	
 	tinymce.init({
 	    paste_as_text: true
 	});
+	
+	if (format == null) {
+		format = [		    	
+	    	{ title: 'h1', block: 'h1', classes: 'heading' },
+	    	{ title: 'h2', block: 'h2', classes: 'heading' },
+	    	{ title: 'h3', block: 'h3', classes: 'heading' },
+	    	{ title: 'h4', block: 'h4', classes: 'heading' },
+	    	{ title: 'h5', block: 'h5', classes: 'heading' },
+	    	{ title: 'h6', block: 'h6', classes: 'heading' },
+	        { title: 'highlight', inline: 'span', classes: 'text-highlight' },
+	        { title: 'whisper', inline: 'span', classes: 'text-whisper' }
+	      ];
+	}
+	
+	if (fontsize == null) {
+		fontsize = "10px 11px 12px 13px 14px 16px 18px 20px 22px 24px 26px 28px 30px 32px 34px 36px 38px 40px 42px";
+	}
 	
 	if (complexity == "middle") {
 		tinymce.init({
@@ -28,7 +47,7 @@ function loadWysiwyg(cssQuery, complexity, chooseFileURL) {
 		        "searchreplace visualblocks code fullscreen",
 		        "insertdatetime media table paste textcolor colorpicker nonbreaking textlang"
 		    ],
-		    fontsize_formats: "10px 11px 12px 13px 14px 16px 18px 20px 22px 24px 26px 28px 30px 32px 34px 36px 38px 40px 42px",
+		    fontsize_formats: fontsize,
 		    toolbar: "textlang | undo redo searchreplace | bold italic underline fontsizeselect forecolor backcolor removeformat | charmap nonbreaking | alignleft aligncenter alignright alignjustify | link | bullist numlist outdent indent"
 		});
 	} else if (complexity == "high") {		
@@ -48,19 +67,10 @@ function loadWysiwyg(cssQuery, complexity, chooseFileURL) {
 		        "insertdatetime media nonbreaking save table directionality",
 		        "emoticons template paste colorpicker nonbreaking textlang"
 		    ],
-		    style_formats: [		    	
-		    	{ title: 'h1', block: 'h1', classes: 'heading' },
-		    	{ title: 'h2', block: 'h2', classes: 'heading' },
-		    	{ title: 'h3', block: 'h3', classes: 'heading' },
-		    	{ title: 'h4', block: 'h4', classes: 'heading' },
-		    	{ title: 'h5', block: 'h5', classes: 'heading' },
-		    	{ title: 'h6', block: 'h6', classes: 'heading' },
-		        { title: 'highlight', inline: 'span', classes: 'text-highlight' },
-		        { title: 'whisper', inline: 'span', classes: 'text-whisper' }
-		      ],
+		    style_formats: format,
 		    toolbar1: "textlang | styleselect bold italic underline strikethrough fontsizeselect removeformat | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | table charmap nonbreaking code",		    
 		    image_advtab: true,
-		    fontsize_formats: "10px 11px 12px 13px 14px 16px 18px 20px 22px 24px 26px 28px 30px 32px 34px 36px 38px 40px 42px",
+		    fontsize_formats: fontsize,
 		    //paste_word_valid_elements: "b,strong,i,em,h1,h2,h3,h4,h5,h6,table,tr,th,td,ul,ol,li,p,a,div",
 		    file_browser_callback: function(field_name, url, type, win) {
 		    	
@@ -114,7 +124,7 @@ function loadWysiwyg(cssQuery, complexity, chooseFileURL) {
 		menubar : false,
 		selector: cssQuery,
 		plugins: "paste link nonbreaking textlang",
-		fontsize_formats: "10px 11px 12px 13px 14px 16px 18px 20px 22px 24px 26px 28px 30px 32px 34px 36px 38px 40px 42px",
+		fontsize_formats: fontsize,
 	    nonbreaking_force_tab: true,
 		//paste_word_valid_elements: "b,strong,i,em,h1,h2,h3,h4,h5,h6,table,tr,th,td,ul,ol,li,p,a,div",
 		toolbar: "textlang | undo redo | bold italic underline fontsizeselect removeformat | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link pastetext nonbreaking"

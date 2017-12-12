@@ -320,4 +320,9 @@ public class CreateArticleComposition extends AbstractInteractiveMacro implement
 	public boolean isAdd() {
 		return true;
 	}
+	
+	@Override
+	public boolean haveRight(ContentContext ctx, String action) {
+		return ctx.getCurrentEditUser() != null;
+	}
 }

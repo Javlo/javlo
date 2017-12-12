@@ -60,8 +60,6 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.xml.utils.XMLChar;
-import org.javlo.bean.Company;
 import org.javlo.component.list.FreeTextList;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
@@ -3902,5 +3900,13 @@ public class StringHelper {
 		return true;
 	}	
 	
-	
+	public static String propertiesToString(Properties p) {
+		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+		PrintStream out = new PrintStream(outStream);
+		for (Object key : p.keySet()) {
+			out.println(key+"="+p.getProperty(key.toString()));
+		}
+		out.close();
+		return new String(outStream.toByteArray());
+	}
 }

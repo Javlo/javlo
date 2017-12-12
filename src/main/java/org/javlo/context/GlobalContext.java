@@ -127,7 +127,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 
 	private final Object lockImportTemplate = new Object();
 
-	//private final Object lockLoadContent = new Object();
+	// private final Object lockLoadContent = new Object();
 
 	private PrintWriter redirectURLList = null;
 
@@ -136,7 +136,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	private Properties url404Map = null;
 
 	private POPThread popThread = null;
-	
+
 	private Calendar latestTicketNotificaitonTime = Calendar.getInstance();
 
 	private static final IURLFactory NO_URL_FACTORY = new NoURLFactory();
@@ -252,7 +252,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	private ServletContext application;
 
 	private URLTriggerThread pageChangeNotificationThread;
-	
+
 	private URLTriggerThread dynamicComponentChangeNotificationThread;
 
 	private URLTriggerThread ticketChangeNotificationThread;
@@ -309,12 +309,14 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	}
 
 	public static GlobalContext getMasterContext(HttpSession session) throws IOException {
-		GlobalContext masterContext = getRealInstance(session, StaticConfig.getInstance(session).getMasterContext(), true);
+		GlobalContext masterContext = getRealInstance(session, StaticConfig.getInstance(session).getMasterContext(),
+				true);
 		return masterContext;
 	}
 
 	public static GlobalContext getMasterContext(ContentContext ctx) throws IOException {
-		GlobalContext masterContext = getRealInstance(ctx.getRequest().getSession(), StaticConfig.getInstance(ctx.getRequest().getSession()).getMasterContext(), true);
+		GlobalContext masterContext = getRealInstance(ctx.getRequest().getSession(),
+				StaticConfig.getInstance(ctx.getRequest().getSession()).getMasterContext(), true);
 		PersistenceService persistenceService;
 		try {
 			persistenceService = PersistenceService.getInstance(masterContext);
@@ -415,7 +417,8 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		return newInstance;
 	}
 
-	public static GlobalContext getInstance(ServletContext application, StaticConfig staticConfig, File configFile) throws IOException {
+	public static GlobalContext getInstance(ServletContext application, StaticConfig staticConfig, File configFile)
+			throws IOException {
 		String contextKey = FilenameUtils.getBaseName(configFile.getName());
 		GlobalContext newInstance = (GlobalContext) application.getAttribute(contextKey);
 		if (newInstance == null) {
@@ -424,7 +427,8 @@ public class GlobalContext implements Serializable, IPrintInfo {
 				if (newInstance == null) {
 					newInstance = new GlobalContext(contextKey);
 					newInstance.application = application;
-					newInstance.cacheMaps = new TimeMap<String, ICache>(staticConfig.getCacheMaxTime(), staticConfig.getCacheMaxSize());
+					newInstance.cacheMaps = new TimeMap<String, ICache>(staticConfig.getCacheMaxTime(),
+							staticConfig.getCacheMaxSize());
 					synchronized (newInstance.properties) {
 						newInstance.staticConfig = staticConfig;
 						application.setAttribute(contextKey, newInstance);
@@ -446,15 +450,15 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		return newInstance;
 	}
 
-	private void loadFiles() {		
-		File tokenFile = getTokenPageFile();		
+	private void loadFiles() {
+		File tokenFile = getTokenPageFile();
 		if (tokenFile.exists()) {
 			try {
-				pageTimeToken.load(tokenFile);				
-			} catch (Exception e) {			
+				pageTimeToken.load(tokenFile);
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		}		
+		}
 	}
 
 	public static GlobalContext getRealInstance(HttpSession session, String contextKey) throws IOException {
@@ -476,8 +480,9 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		}
 	}
 
-	private static GlobalContext getRealInstance(HttpSession session, String contextKey, boolean copyDefaultContext) throws IOException {
-		
+	private static GlobalContext getRealInstance(HttpSession session, String contextKey, boolean copyDefaultContext)
+			throws IOException {
+
 		contextKey = StringHelper.stringToFileName(contextKey);
 
 		StaticConfig staticConfig = StaticConfig.getInstance(session.getServletContext());
@@ -490,14 +495,16 @@ public class GlobalContext implements Serializable, IPrintInfo {
 				newInstance = new GlobalContext(contextKey);
 				newInstance.staticConfig = staticConfig;
 				newInstance.application = session.getServletContext();
-				newInstance.cacheMaps = new TimeMap<String, ICache>(staticConfig.getCacheMaxTime(), staticConfig.getCacheMaxSize());
+				newInstance.cacheMaps = new TimeMap<String, ICache>(staticConfig.getCacheMaxTime(),
+						staticConfig.getCacheMaxSize());
 			} else {
-				newInstance.staticConfig = staticConfig;				
+				newInstance.staticConfig = staticConfig;
 				return newInstance;
 			}
 
 			String fileName = contextKey + ".properties";
-			newInstance.contextFile = new File(ElementaryURLHelper.mergePath(staticConfig.getContextFolder(), fileName));
+			newInstance.contextFile = new File(
+					ElementaryURLHelper.mergePath(staticConfig.getContextFolder(), fileName));
 			if (!newInstance.contextFile.exists()) {
 				if (!newInstance.contextFile.getParentFile().exists()) {
 					newInstance.contextFile.getParentFile().mkdirs();
@@ -527,7 +534,8 @@ public class GlobalContext implements Serializable, IPrintInfo {
 							newInstance.setChangeMenu(defaultContext.isChangeMenu());
 							newInstance.setComponents(defaultContext.getComponents());
 							newInstance.setCSSInline(defaultContext.isCSSInline());
-							newInstance.setDefaultLanguages(StringHelper.collectionToString(defaultContext.getDefaultLanguages(), ";"));
+							newInstance.setDefaultLanguages(
+									StringHelper.collectionToString(defaultContext.getDefaultLanguages(), ";"));
 							newInstance.setDefaultTemplate(defaultContext.getDefaultTemplate());
 							newInstance.setDownloadContent(defaultContext.isDownloadContent());
 							newInstance.setEasy(defaultContext.isEasy());
@@ -553,7 +561,8 @@ public class GlobalContext implements Serializable, IPrintInfo {
 							newInstance.setOpenFileAsPopup(defaultContext.isOpenExternalLinkAsPopup());
 							newInstance.setNoPopupDomainRAW(defaultContext.getNoPopupDomainRAW());
 							newInstance.setModules(defaultContext.getModules());
-							newInstance.setData("shared-content-active", defaultContext.getData("shared-content-active"));
+							newInstance.setData("shared-content-active",
+									defaultContext.getData("shared-content-active"));
 							if (defaultContext.getDMZServerInter() != null) {
 								newInstance.setDMZServerInter(defaultContext.getDMZServerInter().toString());
 							}
@@ -572,8 +581,8 @@ public class GlobalContext implements Serializable, IPrintInfo {
 								}
 							}
 						}
-					}		
-					
+					}
+
 				}
 			} else {
 				synchronized (newInstance.properties) {
@@ -581,16 +590,16 @@ public class GlobalContext implements Serializable, IPrintInfo {
 				}
 			}
 			newInstance.startThread();
-			
+
 			session.getServletContext().setAttribute(contextKey, newInstance);
 			session.setAttribute(KEY, newInstance);
-			
+
 			synchronized (newInstance.properties) {
 				newInstance.properties.setProperty("access-date", StringHelper.renderTime(new Date()));
 			}
 			newInstance.writeInfo(session, System.out);
-			newInstance.cleanDataAccess();			
-			newInstance.loadFiles();			
+			newInstance.cleanDataAccess();
+			newInstance.loadFiles();
 
 			// TODO : init resource Id
 
@@ -615,7 +624,8 @@ public class GlobalContext implements Serializable, IPrintInfo {
 						String url = URLHelper.createURL(absoluteCtx, "/", params);
 						try {
 							URL urlToTrigger = new URL(url);
-							pageChangeNotificationThread = new URLTriggerThread("PageChangeNotificationThread", secBetweenCheck, urlToTrigger);
+							pageChangeNotificationThread = new URLTriggerThread("PageChangeNotificationThread",
+									secBetweenCheck, urlToTrigger);
 							pageChangeNotificationThread.start();
 							logger.info(pageChangeNotificationThread.getName() + " started.");
 						} catch (MalformedURLException ex) {
@@ -632,7 +642,8 @@ public class GlobalContext implements Serializable, IPrintInfo {
 						String url = URLHelper.createURL(absoluteCtx, "/", params);
 						try {
 							URL urlToTrigger = new URL(url);
-							dynamicComponentChangeNotificationThread = new URLTriggerThread("DynamicComponentChangeNotificationThread", secBetweenCheck, urlToTrigger);
+							dynamicComponentChangeNotificationThread = new URLTriggerThread(
+									"DynamicComponentChangeNotificationThread", secBetweenCheck, urlToTrigger);
 							dynamicComponentChangeNotificationThread.start();
 							logger.info(dynamicComponentChangeNotificationThread.getName() + " started.");
 						} catch (MalformedURLException ex) {
@@ -653,7 +664,8 @@ public class GlobalContext implements Serializable, IPrintInfo {
 						String url = URLHelper.createURL(absoluteCtx, "/", params);
 						try {
 							URL urlToTrigger = new URL(url);
-							ticketChangeNotificationThread = new URLTriggerThread("TicketChangeNotificationThread", secBetweenCheck, urlToTrigger);
+							ticketChangeNotificationThread = new URLTriggerThread("TicketChangeNotificationThread",
+									secBetweenCheck, urlToTrigger);
 							ticketChangeNotificationThread.start();
 							logger.info(ticketChangeNotificationThread.getName() + " started.");
 						} catch (MalformedURLException ex) {
@@ -816,7 +828,8 @@ public class GlobalContext implements Serializable, IPrintInfo {
 
 	private final TimeMap<String, String> pageTimeToken = new TimeMap<String, String>(60 * 60 * 24 * 90);
 
-	private final Map<String, String> changePasswordToken = Collections.synchronizedMap(new TimeMap<String, String>(60 * 60));
+	private final Map<String, String> changePasswordToken = Collections
+			.synchronizedMap(new TimeMap<String, String>(60 * 60));
 
 	public final Object RELEASE_CACHE = new Object();
 
@@ -886,11 +899,10 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	}
 
 	/*
-	 * public boolean administratorLogin(String inLogin, String inPassword) {
-	 * String login = properties.getString("admin", "admin"); String password =
-	 * properties.getString("admin.password", "1234"); return
-	 * login.equals(inLogin) &&
-	 * password.equals(StringHelper.encryptPassword(inPassword)); }
+	 * public boolean administratorLogin(String inLogin, String inPassword) { String
+	 * login = properties.getString("admin", "admin"); String password =
+	 * properties.getString("admin.password", "1234"); return login.equals(inLogin)
+	 * && password.equals(StringHelper.encryptPassword(inPassword)); }
 	 */
 
 	public void cleanFolder() {
@@ -1307,11 +1319,16 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		return dataFolder;
 	}
 
+	public String getCalendarFolder() {
+		return URLHelper.mergePath(getDataFolder(), "_calendar");
+	}
+
 	public String getSharedDataFolder(HttpSession session) throws IOException {
 		if (sharedDataFolder == null) {
 			sharedDataFolder = staticConfig.getLocalShareDataFolder();
 			if (getFolder() != null) {
-				sharedDataFolder = ElementaryURLHelper.mergePath(getMasterContext(session).getDataFolder(), sharedDataFolder);
+				sharedDataFolder = ElementaryURLHelper.mergePath(getMasterContext(session).getDataFolder(),
+						sharedDataFolder);
 			}
 			try {
 				File folderFile = new File(sharedDataFolder);
@@ -1431,7 +1448,9 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		return lg;
 	}
 
-	public AdminUserFactory getAdminUserFactory(HttpSession session) throws SecurityException, NoSuchMethodException, ClassNotFoundException, IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException {
+	public AdminUserFactory getAdminUserFactory(HttpSession session)
+			throws SecurityException, NoSuchMethodException, ClassNotFoundException, IllegalArgumentException,
+			InstantiationException, IllegalAccessException, InvocationTargetException {
 		if (admimUserFactory == null) {
 			Constructor<IUserFactory> construct = getAdminUserFactoryClass().getConstructor();
 			admimUserFactory = (AdminUserFactory) construct.newInstance();
@@ -1455,7 +1474,8 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	}
 
 	public String getAdminUserFactoryClassName() {
-		String userFactoryClass = properties.getString("adminuserfactory.class", getDefaultAdminUserFactoryClassName()).trim();
+		String userFactoryClass = properties.getString("adminuserfactory.class", getDefaultAdminUserFactoryClassName())
+				.trim();
 		return userFactoryClass;
 	}
 
@@ -1619,7 +1639,8 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	}
 
 	public File getLogo() {
-		File logo = new File(ElementaryURLHelper.mergePath(ElementaryURLHelper.mergePath(getDataFolder(), staticConfig.getStaticFolder()), LOGO_FILE_NAME));
+		File logo = new File(ElementaryURLHelper.mergePath(
+				ElementaryURLHelper.mergePath(getDataFolder(), staticConfig.getStaticFolder()), LOGO_FILE_NAME));
 		if (logo.exists()) {
 			return logo;
 		} else {
@@ -1629,9 +1650,8 @@ public class GlobalContext implements Serializable, IPrintInfo {
 
 	/*
 	 * public String getDefaultLanguage() { String defaultLg = "en"; if
-	 * (getLanguages().size() > 0) { defaultLg =
-	 * getLanguages().iterator().next(); } return
-	 * properties.getString("default.language", defaultLg); }
+	 * (getLanguages().size() > 0) { defaultLg = getLanguages().iterator().next(); }
+	 * return properties.getString("default.language", defaultLg); }
 	 */
 
 	public String getLook() {
@@ -1697,7 +1717,8 @@ public class GlobalContext implements Serializable, IPrintInfo {
 								lgCtx.setContentLanguage(contentLg);
 								lgCtx.setRequestContentLanguage(contentLg);
 								lgCtx.setFormat(null);
-								for (MenuElement menuElement : ContentService.getInstance(ctx.getRequest()).getNavigation(lgCtx).getAllChildrenList()) {
+								for (MenuElement menuElement : ContentService.getInstance(ctx.getRequest())
+										.getNavigation(lgCtx).getAllChildrenList()) {
 									String pageURL = urlCreator.createURL(lgCtx, menuElement);
 									String pageKeyURL = urlCreator.createURLKey(pageURL);
 									if (pageKeyURL.contains(".")) {
@@ -1707,7 +1728,8 @@ public class GlobalContext implements Serializable, IPrintInfo {
 								}
 							}
 						}
-						logger.info("url cache initialized with '" + urlCreator.getClass().getName() + "' url created : " + localViewPages.size() + " [lgs=" + contentLanguages + "]");
+						logger.info("url cache initialized with '" + urlCreator.getClass().getName()
+								+ "' url created : " + localViewPages.size() + " [lgs=" + contentLanguages + "]");
 						viewPages = localViewPages;
 						urlFromFactoryImported = true;
 					} else {
@@ -1745,8 +1767,9 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		if (url.equals("/")) {
 			return root;
 		} else {
-			Collection<MenuElement> pastNode = new LinkedList<MenuElement>();	
-			//System.out.println("##### GlobalContext.getPageIfExist : "+DebugHelper.getCaller(10)); //TODO: remove debug trace
+			Collection<MenuElement> pastNode = new LinkedList<MenuElement>();
+			// System.out.println("##### GlobalContext.getPageIfExist :
+			// "+DebugHelper.getCaller(10)); //TODO: remove debug trace
 			MenuElement page = MenuElement.searchChild(root, ctx, url, pastNode);
 			if (page != null && ctx.getRenderMode() == ContentContext.VIEW_MODE) {
 				localViewPages.put(url, page);
@@ -1812,7 +1835,8 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	}
 
 	public String getRAWEncodings() {
-		return properties.getString("encodings", "utf-8;utf-16;unicode;iso-8859-1;iso-8859-2;iso-8859-3;iso-8859-4;iso-8859-5;iso-8859-6;iso-8859-7;iso-8859-8;iso-8859-9;iso-8859-10;iso-8859-11;iso-8859-12;iso-8859-13;iso-8859-14;iso-8859-15");
+		return properties.getString("encodings",
+				"utf-8;utf-16;unicode;iso-8859-1;iso-8859-2;iso-8859-3;iso-8859-4;iso-8859-5;iso-8859-6;iso-8859-7;iso-8859-8;iso-8859-9;iso-8859-10;iso-8859-11;iso-8859-12;iso-8859-13;iso-8859-14;iso-8859-15");
 	}
 
 	public String getRAWLanguages() {
@@ -1943,7 +1967,9 @@ public class GlobalContext implements Serializable, IPrintInfo {
 
 	}
 
-	public IUserFactory getUserFactory(HttpSession session) throws SecurityException, NoSuchMethodException, ClassNotFoundException, IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException {
+	public IUserFactory getUserFactory(HttpSession session)
+			throws SecurityException, NoSuchMethodException, ClassNotFoundException, IllegalArgumentException,
+			InstantiationException, IllegalAccessException, InvocationTargetException {
 		if (userFactory == null) {
 			Constructor<IUserFactory> construct = getUserFactoryClass().getConstructor();
 			userFactory = construct.newInstance();
@@ -2221,7 +2247,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		cleanDataAccess();
 		synchronized (RELEASE_CACHE) {
 			for (String name : getAllCacheName()) {
-				logger.info("reset cache : "+name);
+				logger.info("reset cache : " + name);
 				getCache(name).removeAll();
 			}
 			cacheMaps.clear();
@@ -2315,7 +2341,8 @@ public class GlobalContext implements Serializable, IPrintInfo {
 
 	public void sendMailToAdministrator(String subjet, String body) throws MessagingException {
 		MailService mailService = MailService.getInstance(new MailConfig(null, staticConfig, null));
-		mailService.sendMail(new InternetAddress(getAdministratorEmail()), new InternetAddress(getAdministratorEmail()), subjet, body, false);
+		mailService.sendMail(new InternetAddress(getAdministratorEmail()), new InternetAddress(getAdministratorEmail()),
+				subjet, body, false);
 	}
 
 	public void setAdministrator(String admin) {
@@ -2391,7 +2418,11 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	}
 
 	public void setAttribute(String key, Object att) {
-		attributes.put(key, att);
+		if (att == null) {
+			attributes.remove(key);
+		} else {
+			attributes.put(key, att);
+		}
 	}
 
 	public void setAutoSwitchToDefaultLanguage(boolean value) {
@@ -2497,7 +2528,8 @@ public class GlobalContext implements Serializable, IPrintInfo {
 					dataProperties.store(tf.getOutputStream(), contextKey);
 					tf.commit();
 
-					logger.fine("store data for : " + contextKey + " size:" + dataProperties.size() + " time:" + StringHelper.renderTimeInSecond(System.currentTimeMillis() - startTime));
+					logger.fine("store data for : " + contextKey + " size:" + dataProperties.size() + " time:"
+							+ StringHelper.renderTimeInSecond(System.currentTimeMillis() - startTime));
 				} catch (Exception e) {
 					try {
 						if (tf != null) {
@@ -2919,7 +2951,8 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		timeTravelerContext = timeContext;
 	}
 
-	public void setURLFactory(String className) throws InstantiationException, IllegalAccessException, ClassNotFoundException {
+	public void setURLFactory(String className)
+			throws InstantiationException, IllegalAccessException, ClassNotFoundException {
 		properties.setProperty("url-factory", className);
 		if (className != null && className.trim().length() > 0) {
 			urlFactory = (IURLFactory) (Class.forName(className).newInstance());
@@ -2992,7 +3025,8 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	 */
 	public void storeLogo(ContentContext ctx, InputStream in) throws IOException {
 		StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
-		File logo = new File(ElementaryURLHelper.mergePath(ElementaryURLHelper.mergePath(getDataFolder(), staticConfig.getStaticFolder()), LOGO_FILE_NAME));
+		File logo = new File(ElementaryURLHelper.mergePath(
+				ElementaryURLHelper.mergePath(getDataFolder(), staticConfig.getStaticFolder()), LOGO_FILE_NAME));
 		if (in != null) {
 			if (!logo.exists()) {
 				logo.getParentFile().mkdirs();
@@ -3199,7 +3233,8 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		}
 		if (session != null) {
 			try {
-				out.println("**** Modules            :  " + StringHelper.collectionToString(ModulesContext.getInstance(session, this).getAllModules(), ", "));
+				out.println("**** Modules            :  " + StringHelper
+						.collectionToString(ModulesContext.getInstance(session, this).getAllModules(), ", "));
 			} catch (ModuleException e) {
 				out.println("**** Error load Modules :  " + e.getMessage());
 				e.printStackTrace();
@@ -3220,10 +3255,13 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		out.println("****");
 
 		if (ImageTransformServlet.COUNT_ACCESS > 0) {
-			out.println("**** Resources 304       : " + ImageTransformServlet.COUNT_304 + " on " + ImageTransformServlet.COUNT_ACCESS + " Access (" + Math.round(ImageTransformServlet.COUNT_304 * 100 / ImageTransformServlet.COUNT_ACCESS) + "%).");
+			out.println("**** Resources 304       : " + ImageTransformServlet.COUNT_304 + " on "
+					+ ImageTransformServlet.COUNT_ACCESS + " Access ("
+					+ Math.round(ImageTransformServlet.COUNT_304 * 100 / ImageTransformServlet.COUNT_ACCESS) + "%).");
 		}
 		if (AccessServlet.COUNT_ACCESS > 0) {
-			out.println("**** Content 304         : " + AccessServlet.COUNT_304 + " on " + AccessServlet.COUNT_ACCESS + " Access (" + Math.round(AccessServlet.COUNT_304 * 100 / AccessServlet.COUNT_ACCESS) + "%).");
+			out.println("**** Content 304         : " + AccessServlet.COUNT_304 + " on " + AccessServlet.COUNT_ACCESS
+					+ " Access (" + Math.round(AccessServlet.COUNT_304 * 100 / AccessServlet.COUNT_ACCESS) + "%).");
 		}
 
 	}
@@ -3485,7 +3523,8 @@ public class GlobalContext implements Serializable, IPrintInfo {
 					try {
 						File redirectURLListFile = getRedirectURLListFile();
 						if (redirectURLListFile.exists()) {
-							reader = new InputStreamReader(new FileInputStream(redirectURLListFile), ContentContext.CHARACTER_ENCODING);
+							reader = new InputStreamReader(new FileInputStream(redirectURLListFile),
+									ContentContext.CHARACTER_ENCODING);
 							prop.load(reader);
 						}
 					} catch (Exception e) {
@@ -3509,7 +3548,8 @@ public class GlobalContext implements Serializable, IPrintInfo {
 					try {
 						File redirectURLListFile = get404URLListFile();
 						if (redirectURLListFile.exists()) {
-							reader = new InputStreamReader(new FileInputStream(redirectURLListFile), ContentContext.CHARACTER_ENCODING);
+							reader = new InputStreamReader(new FileInputStream(redirectURLListFile),
+									ContentContext.CHARACTER_ENCODING);
 							prop.load(reader);
 						}
 					} catch (Exception e) {
@@ -3533,7 +3573,8 @@ public class GlobalContext implements Serializable, IPrintInfo {
 					if (redirectURLListFile.exists()) {
 						redirectURLListFile.createNewFile();
 					}
-					writer = new OutputStreamWriter(new FileOutputStream(redirectURLListFile), ContentContext.CHARACTER_ENCODING);
+					writer = new OutputStreamWriter(new FileOutputStream(redirectURLListFile),
+							ContentContext.CHARACTER_ENCODING);
 					url404Map.store(writer, getContextKey());
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -3593,7 +3634,8 @@ public class GlobalContext implements Serializable, IPrintInfo {
 			Writer writer = null;
 			if (redirectURLListFile.exists()) {
 				try {
-					writer = new OutputStreamWriter(new FileOutputStream(redirectURLListFile), ContentContext.CHARACTER_ENCODING);
+					writer = new OutputStreamWriter(new FileOutputStream(redirectURLListFile),
+							ContentContext.CHARACTER_ENCODING);
 					prop.store(writer, ctx.getGlobalContext().getContextKey());
 					redirectURLMap = null;
 				} catch (Exception e) {
@@ -3820,7 +3862,8 @@ public class GlobalContext implements Serializable, IPrintInfo {
 
 	public DKIMBean getDKIMBean() {
 		if (!StringHelper.isEmpty(getDKIMDomain())) {
-			return new DKIMBean(getDKIMDomain(), getDKIMSelector(), DKIMFactory.getDKIMPrivateKeyFile(this).getAbsolutePath(), null);
+			return new DKIMBean(getDKIMDomain(), getDKIMSelector(),
+					DKIMFactory.getDKIMPrivateKeyFile(this).getAbsolutePath(), null);
 		} else {
 			return null;
 		}
@@ -3968,7 +4011,8 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	}
 
 	public TaxonomyServiceAgregation getAllTaxonomy(ContentContext ctx) throws IOException {
-		TaxonomyServiceAgregation outTaxonomy = new TaxonomyServiceAgregation(TaxonomyService.getInstance(ctx), TaxonomyService.getMasterInstance(ctx));
+		TaxonomyServiceAgregation outTaxonomy = new TaxonomyServiceAgregation(TaxonomyService.getInstance(ctx),
+				TaxonomyService.getMasterInstance(ctx));
 		return outTaxonomy;
 	}
 

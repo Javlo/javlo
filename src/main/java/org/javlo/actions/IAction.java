@@ -3,6 +3,8 @@
  */
 package org.javlo.actions;
 
+import org.javlo.context.ContentContext;
+
 /**
  * @author pvandermaesen when a composent implement this interface, the action manager can call perform${action-name} method in the component when this action groupe is called. For call an action you must specify a parameter in the request 'webaction' = ${group-name}.${action-name}.
  */
@@ -14,5 +16,7 @@ public interface IAction {
 	 * @return a group name.
 	 */
 	public String getActionGroupName();
+	
+	public boolean haveRight(ContentContext ctx, String action);
 
 }

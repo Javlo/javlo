@@ -86,6 +86,10 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 		public String getUrl() {
 			return URLHelper.createURL(ctx, child);
 		}
+		
+		public String getLinkOn() throws Exception {
+			return child.getLinkOn(ctx);
+		}
 
 		public String getDescription() throws Exception {
 			return child.getDescription(ctx);

@@ -129,5 +129,10 @@ public class SearchActions implements IAction {
 	public String getActionGroupName() {
 		return "search";
 	}
+	
+	@Override
+	public boolean haveRight(ContentContext ctx, String action) {
+		return true;
+	}
 
 }

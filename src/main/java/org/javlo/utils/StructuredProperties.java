@@ -1,6 +1,9 @@
 package org.javlo.utils;
 
 import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -15,6 +18,7 @@ import java.util.List;
 import java.util.Properties;
 
 import org.apache.commons.lang3.StringUtils;
+import org.javlo.helper.ResourceHelper;
 
 public class StructuredProperties extends Properties {
 
@@ -192,5 +196,26 @@ public class StructuredProperties extends Properties {
 			}
 		}
 		bw.flush();
+	}
+	
+	public void save (File file) throws IOException {
+		FileOutputStream out = new FileOutputStream(file);
+		try {
+			store(out, "structured properties");
+		} finally {
+			ResourceHelper.closeResource(out);
+		}		
+	}
+	
+	public void load (File file) throws IOException {
+		if (!file.exists()) {
+			return;
+		}
+		FileInputStream in = new FileInputStream(file);
+		try {
+			load(in);
+		} finally {
+			ResourceHelper.closeResource(in);
+		}		
 	}
 }

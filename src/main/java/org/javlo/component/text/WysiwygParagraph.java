@@ -53,7 +53,26 @@ public class WysiwygParagraph extends AbstractVisualComponent {
 		filesParams.put(ContentContext.PREVIEW_EDIT_PARAM, "true");
 				
 		String chooseImageURL = URLHelper.createModuleURL(ctx, ctx.getPath(), "file", filesParams);
-		finalCode.append("<script type=\"text/javascript\">jQuery(document).ready(loadWysiwyg('#" + getContentName() + "','"+getEditorComplexity(ctx)+"','"+chooseImageURL+"'));</script>");
+		
+		String wysiwygCss = getConfig(ctx).getProperty("wysiwyg-css", null);
+		String jsWysiwygCss = "var wysiwygCss=null;";
+		if (wysiwygCss != null) {
+			jsWysiwygCss = "var wysiwygCss='"+URLHelper.createStaticTemplateURL(ctx, wysiwygCss)+"';";
+		}
+		
+		String fontsize = getConfig(ctx).getProperty("fontsize", null);
+		String jsFontsize = "var fontsize=null;";
+		if(fontsize != null) {
+			jsFontsize = "var fontsize="+fontsize+";";
+		}
+		
+		String format = getConfig(ctx).getProperty("format", null);
+		String jsFormat = "var format=null;";
+		if(format != null) {
+			jsFormat = "var format="+format+";";
+		}
+		
+		finalCode.append("<script type=\"text/javascript\">"+jsFormat+jsFontsize+jsWysiwygCss+"jQuery(document).ready(loadWysiwyg('#" + getContentName() + "','"+getEditorComplexity(ctx)+"','"+chooseImageURL+"', format, fontsize, wysiwygCss));</script>");
 		return finalCode.toString();
 	}
 

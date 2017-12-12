@@ -2,13 +2,21 @@ package org.javlo.module.event;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.List;
 
 import org.javlo.actions.AbstractModuleAction;
 import org.javlo.context.ContentContext;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
+import org.javlo.i18n.I18nAccess;
+import org.javlo.message.MessageRepository;
+import org.javlo.module.core.Module;
 import org.javlo.module.core.ModulesContext;
+import org.javlo.service.RequestService;
+import org.javlo.service.calendar.CalendarBean;
+import org.javlo.service.calendar.CalendarService;
+import org.javlo.service.calendar.ICal;
 import org.javlo.service.event.Event;
 import org.javlo.service.event.EventFactory;
 import org.javlo.service.event.IEventsProvider;
@@ -69,22 +77,76 @@ public class EventAction extends AbstractModuleAction {
 
 	@Override
 	public String getActionGroupName() {
-		return "events-module";
+		return "event";
 	}
 	
 	@Override
 	public String prepare(ContentContext ctx, ModulesContext modulesContext) throws Exception {	
 		String msg = super.prepare(ctx, modulesContext);
 		IEventsProvider eventService = EventFactory.getEventProvider(ctx);
-		ctx.getRequest().setAttribute("events", eventService.getEvents(ctx));
-		if (ctx.getRequest().getParameter("event") != null) {
-			ctx.getRequest().setAttribute("event", new EventBean(ctx, eventService.getEvent(ctx, ctx.getRequest().getParameter("event"))));
+		ModulesContext moduleContext = ModulesContext.getInstance(ctx.getRequest().getSession(), ctx.getGlobalContext());
+		Module currentModule = moduleContext.getCurrentModule();		
+		if (ctx.getRequest().getParameter("calkey") != null) {
+			CalendarBean.getInstance(ctx, ctx.getRequest().getParameter("calkey"));
+			ctx.getRequest().setAttribute("calendarPage", true);
 		} else {
-			if (eventService.getEvents(ctx).size() > 0) {
-				ctx.getRequest().setAttribute("event", new EventBean(ctx, eventService.getEvents(ctx).iterator().next()));
-			}
+			CalendarBean.getInstance(ctx);
 		}
+		boolean calendar = StringHelper.isTrue(ctx.getRequest().getParameter("calendar"));
+		ctx.getRequest().setAttribute("events", eventService.getEvents(ctx));
+		if (!calendar) {			
+			if (ctx.getRequest().getParameter("event") != null) {
+				ctx.getRequest().setAttribute("event", new EventBean(ctx, eventService.getEvent(ctx, ctx.getRequest().getParameter("event"))));
+			} else {
+				calendar = true;
+			}
+		}	
+		ctx.getRequest().setAttribute("icalproviders", StringHelper.propertiesToString(CalendarService.getInstance(ctx).getICalProviders()));		
+		if (calendar) {
+			currentModule.clearAllBoxes();
+			currentModule.addMainBox("calendar", "calendar", "/jsp/calendar.jsp", false);
+			currentModule.createSideBox("add-event", "add event", "/jsp/addevent.jsp", true);
+			ctx.getRequest().setAttribute("calendarPage", true);
+		} else {
+			currentModule.restoreAll();
+		}		
 		return msg;
 	}
-
+	
+	public static String performAddical(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {		
+		String startdate = rs.getParameter("startdate");
+		String enddate = rs.getParameter("enddate");		
+		if (StringHelper.isAllEmpty(startdate, enddate)) {
+			return "no date defined.";
+		}
+		ICal ical = new ICal(true);
+		if (startdate != null) {
+			ical.setStartDate(StringHelper.parseSortableDate(startdate));
+		}
+		if (enddate != null) {
+			ical.setEndDate(StringHelper.parseSortableDate(enddate));
+		}
+		ical.setSummary(rs.getParameter("summary"));
+		ical.setCategories(rs.getParameter("categories"));
+		
+		CalendarService.getInstance(ctx).store(ical);
+		
+		return null;
+	}
+	
+	public static String performAddicalurl(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {		
+		String urllist = rs.getParameter("urllist");
+		if (urllist != null) {
+			CalendarService.getInstance(ctx).setICalProviders(ctx, urllist);
+		}
+		return null;
+	}
+	
+	public static String performDeleteical(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws IOException, Exception {
+		String icalId=rs.getParameter("ical");
+		if (icalId != null) {
+			CalendarService.getInstance(ctx).deleteICal(icalId);
+		}
+		return null;
+	}
 }

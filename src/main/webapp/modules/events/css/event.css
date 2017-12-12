@@ -5,3 +5,12 @@
 #content img {
 	width: 100%;
 }
+
+form {
+	overflow: hidden;
+}
+
+hr {
+	clear: both;
+	margin: 10px 0;
+}

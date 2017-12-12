@@ -45,6 +45,10 @@
 	<link rel="stylesheet" media="screen" href="${info.editTemplateURL}/css/javlo.css?ts=${info.ts}" />
 	<link rel="stylesheet" media="screen" href="${info.editTemplateURL}/css/plugins/colorbox.css" />
 	<link rel="stylesheet" media="print" href="${info.editTemplateURL}/css/print.css" />
+	<link rel="stylesheet" href="${info.editTemplateURL}/scss/fontawesome.css" />
+	<link rel="stylesheet" href="${info.editTemplateURL}/scss/fa-brands.css" />
+	<link rel="stylesheet" href="${info.editTemplateURL}/scss/fa-regular.css" />
+	<link rel="stylesheet" href="${info.editTemplateURL}/scss/fa-solid.css" />	
 
 	<style type="text/css">
 @font-face {

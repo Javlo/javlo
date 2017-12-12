@@ -1924,6 +1924,11 @@ public class AdminAction extends AbstractModuleAction {
 		return null;
 	}
 	
+	@Override
+	public boolean haveRight(ContentContext ctx, String action) {
+		return ctx.getCurrentEditUser() != null;
+	}
+	
 	
 }
 

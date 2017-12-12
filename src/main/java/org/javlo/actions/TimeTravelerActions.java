@@ -250,6 +250,11 @@ public class TimeTravelerActions implements IAction {
 
 		return null;
 	}
+	
+	@Override
+	public boolean haveRight(ContentContext ctx, String action) {
+		return ctx.getCurrentEditUser() != null;
+	}
 
 }
 

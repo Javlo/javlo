@@ -12,5 +12,5 @@
 			</c:if>
 		</div>
 	</div>
-</div>
 </c:if>
+</div>

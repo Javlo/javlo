@@ -32,5 +32,10 @@ public class Action extends AbstractModuleAction {
 	public Boolean haveRight(HttpSession session, User user) throws ModuleException {
 		return true;
 	}
+	
+	@Override
+	public boolean haveRight(ContentContext ctx, String action) {
+		return true;
+	}
 
 }

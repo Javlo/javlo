@@ -63,6 +63,11 @@ public class Module {
 		public Boolean haveRight(HttpSession session, User user) {
 			return null;
 		}
+		
+		@Override
+		public boolean haveRight(ContentContext ctx, String action) {
+			return true;
+		}
 
 	}
 
