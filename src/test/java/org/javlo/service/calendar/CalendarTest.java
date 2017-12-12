@@ -10,7 +10,7 @@ import junit.framework.TestCase;
 public class CalendarTest extends TestCase {
 
 	public void testICal() throws Exception {
-		ICal ical = new ICal();
+		ICal ical = new ICal(true);
 
 		ical.setStartDate(StringHelper.parseDate("27/11/1975"));
 		assertTrue(ical.storeToString().contains("19751127"));
@@ -32,7 +32,7 @@ public class CalendarTest extends TestCase {
 		out.println("END:VEVENT");
 		out.println("END:VCALENDAR");
 		out.close();
-		ical = new ICal();
+		ical = new ICal(true);
 		ical.loadFromString(new String(outStream.toByteArray()));
 		 
 		assertEquals(ical.getSummary(), "Fête à la Bastille");
