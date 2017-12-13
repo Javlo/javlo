@@ -529,8 +529,8 @@ public class XMLManipulationHelper {
 					tags[i].setName(tag);
 					tags[i].addCssClass("page_association_fake_body");					
 					if (tags[i].getAttribute("id", null) == null) {
-						tags[i].getAttributes().put("id", "_page-${contentContext.currentPage.name}");
-					}
+						tags[i].getAttributes().put("id", "<%=ctx.getCurrentPage().getHtmlSectionId(ctx)%>");
+					} 
 					String renderBodyAsDiv = tags[i].renderOpen();
 
 					String openBodyCode = "<c:if test=\"${not contentContext.pageAssociation}\">" + renderBodyAsBody + "</c:if><c:if test=\"${contentContext.pageAssociation}\">" + renderBodyAsDiv + "</c:if>";

@@ -5601,5 +5601,11 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 	public String getHtmlId(ContentContext ctx) {
 		return "page_"+getName();
 	}
+	
+	public String getHtmlSectionId(ContentContext ctx) {
+		return "section_"+getHtmlId(ctx);
+	}
+	
+	
 
 }

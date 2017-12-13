@@ -748,7 +748,7 @@ public class Edit extends AbstractModuleAction {
 		String area = rs.getParameter("area", null);
 
 		MenuElement parentPage = ctx.getCurrentPage();
-		MenuElement targetPage = content.getNavigation(ctx).searchChildFromId(rs.getParameter("pageContainerID", null));
+		MenuElement targetPage = NavigationHelper.searchPage(ctx, rs.getParameter("pageContainerID", null));
 
 		if (targetPage == null) {
 			targetPage = ctx.getCurrentPage();
@@ -954,7 +954,7 @@ public class Edit extends AbstractModuleAction {
 				return null;
 			}
 
-			MenuElement targetPage = content.getNavigation(ctx).searchChildFromId(request.getParameter("pageCompID"));
+			MenuElement targetPage = NavigationHelper.searchPage(ctx, request.getParameter("pageCompID"));
 			if (targetPage == null) {
 				targetPage = ctx.getCurrentPage();
 			}
@@ -1984,7 +1984,7 @@ public class Edit extends AbstractModuleAction {
 			return "nothing to paste.";
 		}
 
-		MenuElement targetPage = content.getNavigation(ctx).searchChildFromId(rs.getParameter("pageContainerID", null));
+		MenuElement targetPage = NavigationHelper.searchPage(ctx, rs.getParameter("pageContainerID", null));
 		if (targetPage == null) {
 			targetPage = ctx.getCurrentPage();
 		}
@@ -2026,7 +2026,7 @@ public class Edit extends AbstractModuleAction {
 			return "nothing to paste.";
 		}
 
-		MenuElement targetPage = content.getNavigation(ctx).searchChildFromId(rs.getParameter("pageContainerID", null));
+		MenuElement targetPage = NavigationHelper.searchPage(ctx, rs.getParameter("pageContainerID", null));
 		if (targetPage == null) {
 			targetPage = ctx.getCurrentPage();
 		}
@@ -2091,7 +2091,7 @@ public class Edit extends AbstractModuleAction {
 			}
 		}
 
-		MenuElement targetPage = content.getNavigation(ctx).searchChildFromId(rs.getParameter("pageContainerID", null));
+		MenuElement targetPage = NavigationHelper.searchPage(ctx, rs.getParameter("pageContainerID", null));
 		if (targetPage == null) {
 			targetPage = ctx.getCurrentPage();
 		}
@@ -2265,7 +2265,7 @@ public class Edit extends AbstractModuleAction {
 			sharedContent.loadContent(ctx);
 
 			MenuElement parentPage = ctx.getCurrentPage();
-			MenuElement targetPage = content.getNavigation(ctx).searchChildFromId(rs.getParameter("pageContainerID", null));
+			MenuElement targetPage = NavigationHelper.searchPage(ctx, rs.getParameter("pageContainerID", null));
 			if (targetPage == null) {
 				targetPage = ctx.getCurrentPage();
 			}

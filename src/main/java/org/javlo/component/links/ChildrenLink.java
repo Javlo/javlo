@@ -187,6 +187,10 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 		public String getContentLanguage() {
 			return ctx.getContextRequestLanguage();
 		}
+		
+		public boolean isChildOfAssocitation() {
+			return child.isChildrenAssociation();
+		}
 
 	}
 

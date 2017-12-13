@@ -31,6 +31,7 @@ import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.context.GlobalContextFactory;
 import org.javlo.data.InfoBean;
+import org.javlo.helper.NavigationHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.i18n.I18nResource;
 import org.javlo.module.core.IPrintInfo;
@@ -283,7 +284,7 @@ public class ContentService implements IPrintInfo {
 		bean.setModify(true);
 		bean.setCookiesDisplayStatus(inBean.getCookiesDisplayStatus());
 		RequestService rs = RequestService.getInstance(ctx.getRequest());
-		MenuElement elem = getNavigation(ctx).searchChildFromId(rs.getParameter("pageContainerID", null));
+		MenuElement elem = NavigationHelper.searchPage(ctx, rs.getParameter("pageContainerID", null));
 		if (elem == null) {
 			elem = ctx.getCurrentPage();
 			if (elem.isChildrenAssociation() && elem.getChildMenuElements().size() > 0) {

@@ -269,7 +269,21 @@ public class SmartPageBean {
 		if (!StringHelper.isEmpty(linkOn) && !isRealContent()) {
 			return linkOn;
 		} else {
-			return getUrl();
+			if (page.isChildrenOfAssociation()) {
+				try {
+					if (getParent().getId().equals(ctx.getCurrentPage().getId())) {
+						return "#"+page.getHtmlSectionId(ctx);
+					} else {
+						return getParent().getUrl()+"#"+page.getHtmlSectionId(ctx);
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+					return "error:"+e.getMessage();
+				}
+				
+			} else {
+				return getUrl();
+			}
 		}
 	}
 
@@ -858,5 +872,13 @@ public class SmartPageBean {
 	
 	public MenuElement getPage() {
 		return page;
+	}
+	
+	public String getHtmlId() {
+		return page.getHtmlId(ctx);
+	}
+	
+	public String getHtmlSectionId() {
+		return page.getHtmlSectionId(ctx);
 	}
 }

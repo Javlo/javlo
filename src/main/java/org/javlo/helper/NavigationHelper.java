@@ -508,4 +508,19 @@ public class NavigationHelper {
 		}
 		return outPath;
 	}
+	
+	public static MenuElement searchPage (ContentContext ctx, String idOrNameOrPath) throws Exception {
+		if (idOrNameOrPath == null) {
+			return null;
+		}
+		ContentService content = ContentService.getInstance(ctx.getRequest());
+		MenuElement page = content.getNavigation(ctx).searchChildFromId(idOrNameOrPath);
+		if (page == null) {
+			page = content.getNavigation(ctx).searchChildFromName(idOrNameOrPath);
+			if (page == null) {
+				page = content.getNavigation(ctx).searchChild(ctx, idOrNameOrPath);
+			}
+		} 
+		return page;
+	} 
 }
