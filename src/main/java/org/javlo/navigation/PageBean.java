@@ -623,4 +623,8 @@ public class PageBean implements Serializable {
 		return page.isReadAccess(ctx, ctx.getCurrentUser());
 	}
 	
+	public String getHtmlId() {
+		return page.getHtmlId(ctx);
+	}
+	
 }

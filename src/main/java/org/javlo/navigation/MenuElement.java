@@ -5598,4 +5598,8 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 		return getLocalContent(ctx).getComponent(id);
 	}
 
+	public String getHtmlId(ContentContext ctx) {
+		return "page_"+getName();
+	}
+
 }
