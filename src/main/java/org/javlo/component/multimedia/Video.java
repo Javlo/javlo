@@ -163,7 +163,12 @@ public class Video extends GlobalImage implements IAction, IVideo {
 
 	@Override
 	protected String getPreviewCode(ContentContext ctx) throws Exception {
-		return "<a href=\"" + getURL(ctx) + "\"><figure><img src=\"" + getPreviewURL(ctx, "thumbnails") + "\" /><figcaption>" + getFile(ctx).getName() + " #" + getAccess(ctx, 30) + "</figcaption></figure></a>";
+		String imageURL = getPreviewURL(ctx, "thumbnails");
+		if (StringHelper.isImage(imageURL)) {
+			return "<a href=\"" + getURL(ctx) + "\"><figure><img src=\"" + imageURL + "\" /><figcaption>" + getFile(ctx).getName() + " #" + getAccess(ctx, 30) + "</figcaption></figure></a>";
+		} else {
+			return "<a target=\"_blanck\" class=\"embedlink\" href=\"" + getURL(ctx) + "\">"+getURL(ctx) +"</a>";
+		}
 	}
 
 	@Override
@@ -464,6 +469,7 @@ public class Video extends GlobalImage implements IAction, IVideo {
 				ctx.getRequest().setAttribute("url", "http://www.youtube.com/embed/" + videoCode);
 				ctx.getRequest().setAttribute("width", StringHelper.neverNull(width, getConfig(ctx).getProperty("youtube.width", "420")));
 				ctx.getRequest().setAttribute("height", StringHelper.neverNull(height, getConfig(ctx).getProperty("youtube.height", "315")));
+				ctx.getRequest().setAttribute("videoProvider", "youtube");
 				if (!onlyPrepare) {
 					return executeJSP(ctx, getConfig(ctx).getRenderes().get("youtube"));
 				}
@@ -472,8 +478,10 @@ public class Video extends GlobalImage implements IAction, IVideo {
 					String videoCode = link.split("/")[link.split("/").length - 1];
 					String url = "http://www.dailymotion.com/embed/video/" + videoCode;
 					ctx.getRequest().setAttribute("url", url);
+					ctx.getRequest().setAttribute("vid", videoCode);
 					ctx.getRequest().setAttribute("width", StringHelper.neverNull(width, getConfig(ctx).getProperty("dailymotion.width", "420")));
 					ctx.getRequest().setAttribute("height", StringHelper.neverNull(height, getConfig(ctx).getProperty("dailymotion.height", "315")));
+					ctx.getRequest().setAttribute("videoProvider", "dailymotion");
 					if (!onlyPrepare) {
 						return executeJSP(ctx, getConfig(ctx).getRenderes().get("dailymotion"));
 					}
@@ -484,6 +492,7 @@ public class Video extends GlobalImage implements IAction, IVideo {
 					ctx.getRequest().setAttribute("vid", videoCode);
 					ctx.getRequest().setAttribute("width", StringHelper.neverNull(width, getConfig(ctx).getProperty("europarltv.width", "420")));
 					ctx.getRequest().setAttribute("height", StringHelper.neverNull(height, getConfig(ctx).getProperty("europarltv.height", "315")));
+					ctx.getRequest().setAttribute("videoProvider", "europarltv");
 					if (!onlyPrepare) {
 						return executeJSP(ctx, getConfig(ctx).getRenderes().get("europarltv"));
 					}
@@ -494,6 +503,7 @@ public class Video extends GlobalImage implements IAction, IVideo {
 					ctx.getRequest().setAttribute("vid", videoCode);
 					ctx.getRequest().setAttribute("width", StringHelper.neverNull(width, getConfig(ctx).getProperty("vimeo.width", "420")));
 					ctx.getRequest().setAttribute("height", StringHelper.neverNull(height, getConfig(ctx).getProperty("vimeo.height", "315")));
+					ctx.getRequest().setAttribute("videoProvider", "vimeo");
 					if (!onlyPrepare) {
 						return executeJSP(ctx, getConfig(ctx).getRenderes().get("vimeo"));
 					}
