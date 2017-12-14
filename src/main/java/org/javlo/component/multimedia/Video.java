@@ -726,5 +726,10 @@ public class Video extends GlobalImage implements IAction, IVideo {
 	public String getFontAwesome() {	
 		return "video-camera";
 	}
+	
+	@Override
+	public String getSpecialTagTitle(ContentContext ctx) throws Exception {	
+		return getConfig(ctx).getProperty("special-tag-title", null);
+	}
 
 }
