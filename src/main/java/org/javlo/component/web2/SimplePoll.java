@@ -488,5 +488,10 @@ public class SimplePoll extends AbstractVisualComponent implements IAction {
 	public boolean isContentCachable(ContentContext ctx) {
 		return !getStyle(ctx).equals(INTERACTIVE);
 	}
+	
+	@Override
+	public String getFontAwesome() {	
+		return "check-square-o";
+	}
 
 }
