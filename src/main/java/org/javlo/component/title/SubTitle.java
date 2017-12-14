@@ -179,7 +179,9 @@ public class SubTitle extends AbstractVisualComponent implements ISubTitle {
 	@Override
 	public int getTitleLevel(ContentContext ctx) {
 		try {
-			return Integer.parseInt(getStyle());
+			if (StringHelper.isDigit(getStyle())) {
+				return Integer.parseInt(getStyle());
+			}
 		} catch (NumberFormatException e) {
 			e.printStackTrace();
 		}
