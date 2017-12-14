@@ -731,5 +731,10 @@ public class Video extends GlobalImage implements IAction, IVideo {
 	public String getSpecialTagTitle(ContentContext ctx) throws Exception {	
 		return getConfig(ctx).getProperty("special-tag-title", null);
 	}
+	
+	@Override
+	public boolean isAskWidth(ContentContext ctx) {
+		return false;
+	}
 
 }
