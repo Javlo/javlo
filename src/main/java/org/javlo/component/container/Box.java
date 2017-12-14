@@ -268,5 +268,10 @@ public class Box extends AbstractVisualComponent implements IContainer {
 	public boolean isDispayEmptyXHTMLCode(ContentContext ctx) throws Exception {
 		return false;
 	}
+	
+	@Override
+	public String getFontAwesome() {
+		return "square-o";
+	}
 
 }
