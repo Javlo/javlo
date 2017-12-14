@@ -346,4 +346,9 @@ public class CSVArrayComponent extends AbstractFileComponent {
 		return "table";
 	}
 	
+	@Override
+	public boolean isRealContent(ContentContext ctx) {
+		return getFile(ctx) != null;
+	}
+	
 }
