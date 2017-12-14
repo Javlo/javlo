@@ -19,6 +19,9 @@ import org.javlo.helper.URLHelper;
 import org.javlo.helper.XHTMLHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.utils.CSVFactory;
+import org.javlo.ztatic.StaticInfo;
+import org.javlo.ztatic.StaticInfoBean;
+import org.owasp.encoder.Encode;
 
 public class CSVArrayComponent extends AbstractFileComponent {
 
@@ -203,13 +206,8 @@ public class CSVArrayComponent extends AbstractFileComponent {
 
 	@Override
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
-
-		
-
 		CSVFactory csvFactory;
-
 		File csvFile = getFile(ctx);
-
 		String colTH = "th";
 		String rowTH = "th";
 		String style = getStyle();
@@ -242,7 +240,7 @@ public class CSVArrayComponent extends AbstractFileComponent {
 		StringWriter stringWriter = new StringWriter();
 		stringWriter.append("<div " + getSpecialPreviewCssClass(ctx, getStyle(ctx) + " " + getType()) + getSpecialPreviewCssId(ctx) + ">");
 		if (getLabel().trim().length() > 0) {
-			stringWriter.append("<table summary=\"" + getLabel() + "\" class=\"" + getStyle(ctx) + "\">");
+			stringWriter.append("<table class=\"" + getStyle(ctx) + "\"><caption>"+Encode.forHtml(getLabel())+"</caption>");
 		} else {
 			stringWriter.append("<table class=\"" + getStyle(ctx) + "\">");
 		}
@@ -300,7 +298,13 @@ public class CSVArrayComponent extends AbstractFileComponent {
 			stringWriter.append("</tr>");
 		}
 
-		stringWriter.append("</table></div>");
+		stringWriter.append("</table>");		
+		StaticInfo staticInfo = getStaticInfo(ctx);
+		if (staticInfo != null) {
+			ContentContext infoCtx = staticInfo.getContextWithContent(ctx);			
+			stringWriter.append(XHTMLHelper.renderStaticInfo(infoCtx, staticInfo));
+		}
+		stringWriter.append("</div>");
 
 		return stringWriter.toString();
 	}

@@ -2707,21 +2707,27 @@ public class XHTMLHelper {
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(outStream);
 		ContentContext lgCtx = info.getContextWithContent(ctx);
+		boolean isPreview = false;
 
 		if (!StringHelper.isEmpty(info.getTitle(lgCtx))) {
-			out.println("<span class=\"title\">" + info.getTitle(lgCtx) + "</span>");
+			out.println("<span class=\"title "+(isPreview?"not-first-item":"first-item")+"\">" + info.getTitle(lgCtx) + "</span>");
+			isPreview=true;
 		}
 		if (!StringHelper.isEmpty(info.getManualDate(lgCtx))) {
-			out.println("<span class=\"date\">" + StringHelper.renderShortDate(lgCtx, info.getManualDate(lgCtx)) + "</span>");
+			out.println("<span class=\"date "+(isPreview?"not-first-item":"first-item")+"\">" + StringHelper.renderShortDate(lgCtx, info.getManualDate(lgCtx)) + "</span>");
+			isPreview=true;
 		}
 		if (!StringHelper.isEmpty(info.getDescription(lgCtx))) {
-			out.println("<span class=\"descritpion\">" + info.getDescription(lgCtx) + "</span>");
+			out.println("<span class=\"descritpion "+(isPreview?"not-first-item":"first-item")+"\">" + info.getDescription(lgCtx) + "</span>");
+			isPreview=true;
 		}
 		if (!StringHelper.isEmpty(info.getLocation(lgCtx))) {
-			out.println("<span class=\"location\">" + info.getLocation(lgCtx) + "</span>");
+			out.println("<span class=\"location "+(isPreview?"not-first-item":"first-item")+"\">" + info.getLocation(lgCtx) + "</span>");
+			isPreview=true;
 		}
 		if (!StringHelper.isEmpty(info.getCopyright(lgCtx))) {
-			out.println("<span class=\"copyright\">" + info.getCopyright(lgCtx) + "</span>");
+			out.println("<span class=\"copyright "+(isPreview?"not-first-item":"first-item")+"\">" + info.getCopyright(lgCtx) + "</span>");
+			isPreview=true;
 		}
 		out.close();
 		String html = new String(outStream.toByteArray());
