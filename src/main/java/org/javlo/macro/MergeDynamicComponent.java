@@ -14,6 +14,7 @@ import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.dynamic.DynamicComponent;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
+import org.javlo.helper.StringHelper;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
 import org.javlo.service.PersistenceService;
@@ -27,7 +28,7 @@ import org.javlo.service.PersistenceService;
  */
 public class MergeDynamicComponent extends AbstractMacro {
 
-	private static boolean DELETE_FIELD = false;
+	private static boolean DELETE_FIELD = true;
 
 	private static Logger logger = Logger.getLogger(MergeDynamicComponent.class.getName());
 
@@ -63,16 +64,32 @@ public class MergeDynamicComponent extends AbstractMacro {
 						if (newComp != null) {
 							Properties compProp = dynComp.getProperties();
 							Properties newProp = newComp.getProperties();
+							String oldValue = null;							
 							if (compProp != null && newProp != null) {
-								Enumeration<Object> keys = newProp.keys();
+								Enumeration<Object> keys = newProp.keys();								
 								while (keys.hasMoreElements()) {
 									String key = (String) keys.nextElement();
-									if (compProp.get(key) != null) {
+									if (key.endsWith(".old-name")) {
+										String oldValueKey = "field."+newProp.get(key)+".value";
+										System.out.println(">>>>>>>>> MergeDynamicComponent.perform : oldValueKey = "+oldValueKey); //TODO: remove debug trace
+										System.out.println(">>>>>>>>> MergeDynamicComponent.perform : new key = "+key.replace(".old-name", ".value")); //TODO: remove debug trace
+										String fieldValue = compProp.getProperty(oldValueKey);
+										System.out.println(">>>>>>>>> MergeDynamicComponent.perform : fieldValue = "+fieldValue); //TODO: remove debug trace
+										if (fieldValue != null) {
+											compProp.setProperty(key.replace(".old-name", ".value"), fieldValue);
+										} else {
+											logger.warning("field value not found : "+fieldValue);
+										}
+									} else if (compProp.get(key) != null) {
 										compProp.remove(key);
 										compProp.put(key, newProp.get(key));
 										dynComp.setModify();
 									} else if (!key.endsWith(".value")) {
-										compProp.put(key, newProp.get(key));
+										if (!StringHelper.isEmpty(oldValue)) {
+											compProp.put(key, newProp.get(key));
+										} else {
+											compProp.put(key, newProp.get(key));
+										}
 									}
 								}
 							}

@@ -130,8 +130,7 @@ if (!String.prototype.startsWith) {
 		pjq('#preview-modal').on('hidden.bs.modal', function (e) {
 			pjq('#previewModalTitle').html('');
 			pjq('#preview-modal-frame').attr("src", pjq('#preview-modal-frame').data("wait"));
-		});
-		concole.log("pjq('#preview-modal .modal-dialog') = ", pjq('#preview-modal .modal-dialog'));
+		});		
 		var modalMargin = parseInt(pjq('#preview-modal .modal-dialog').css("margin-top").replace("px", ""))*2;		
 		var bodyPadding = parseInt(pjq('#preview-modal .modal-body').css("padding-top").replace("px", ""))+parseInt(pjq('#preview-modal .modal-body').css("padding-bottom").replace("px", ""));
 		var viewportHeight = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
