@@ -71,10 +71,7 @@ public class MergeDynamicComponent extends AbstractMacro {
 									String key = (String) keys.nextElement();
 									if (key.endsWith(".old-name")) {
 										String oldValueKey = "field."+newProp.get(key)+".value";
-										System.out.println(">>>>>>>>> MergeDynamicComponent.perform : oldValueKey = "+oldValueKey); //TODO: remove debug trace
-										System.out.println(">>>>>>>>> MergeDynamicComponent.perform : new key = "+key.replace(".old-name", ".value")); //TODO: remove debug trace
 										String fieldValue = compProp.getProperty(oldValueKey);
-										System.out.println(">>>>>>>>> MergeDynamicComponent.perform : fieldValue = "+fieldValue); //TODO: remove debug trace
 										if (fieldValue != null) {
 											compProp.setProperty(key.replace(".old-name", ".value"), fieldValue);
 										} else {
