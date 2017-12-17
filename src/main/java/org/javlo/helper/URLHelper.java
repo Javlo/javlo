@@ -182,8 +182,8 @@ public class URLHelper extends ElementaryURLHelper {
 			} catch (Exception e) { 
 				e.printStackTrace();
 			}
-		} else {
-			if (url.charAt(0) == '/') {
+		} else if (url != null) {
+			if (url.length() > 0 && url.charAt(0) == '/') {
 				url = createStaticURL(ctx, currentPage, RESOURCE + url);
 			} else {
 				url = createStaticURL(ctx, currentPage, RESOURCE + '/' + url);
