@@ -757,7 +757,15 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle, IStat
 		if (resources.size() == 0) {
 			return null;
 		} else {
-			MultimediaResource resource = resources.get(0);
+			MultimediaResource resource = null;
+			int i=0;
+			while (resources.get(i).getPath() == null && i<resources.size() && resource == null) {
+				resource = resources.get(i);
+				i++;
+			}			
+			if (resource == null || resource.getPath() == null) {
+				return null;
+			}
 			String fileName = ResourceHelper.removeDataFolderDir(ctx.getGlobalContext(), resource.getPath());
 			resource.setURL(fileName);
 			resource.setPreviewURL(fileName);
