@@ -750,7 +750,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		}
 		out.print("<tr class=\"filtered\"><td class=\"label\"><a data-toggle=\"tooltip\" data-placement=\"right\" title=\"" + NavigationHelper.getBreadCrumb(ctx, page) + "\" href=\"" + editPageURL + "\">" + page.getFullLabel(ctx) + "</a></td>");
 		out.print("<td>" + StringHelper.neverNull(StringHelper.renderLightDate(page.getContentDate(ctx))) + "</td>");
-		out.println("<td>" + StringHelper.renderLightDate(page.getModificationDate(ctx)) + "</td><td>" + ctx.getRequestContentLanguage() + "</td>");
+		out.println("<td>" + StringHelper.renderLightDate(page.getModificationDate(ctx)) + "</td><td>" +StringHelper.neverNull(page.getRealContentLanguage(ctx)) + "</td>");
 		String contentCode = "";
 		String sep = "";
 		if (page.isRealContent(ctx)) {
@@ -1325,6 +1325,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 			boolean pageRealContent = page.isRealContent(lgCtx);
 			if (!pageRealContent && GlobalContext.getInstance(ctx.getRequest()).isAutoSwitchToDefaultLanguage()) {
 				lgCtx = page.getContentContextWithContent(ctx);
+				pageRealContent = page.isRealContent(lgCtx);
 			}
 			if (filterPage(lgCtx, page, currentSelection, Collections.EMPTY_LIST, "", false)) {
 				if (countPage < getMaxNews()) {
