@@ -907,7 +907,7 @@ public class ImageEngine {
 	 */
 	public static BufferedImage resize(BufferedImage source, int inWidth, int inHeight, boolean cropResize, boolean addBorder, int mt, int ml, int mr, int mb, Color bgColor, int interestX, int interestY, boolean focusZone, boolean hq) {
 
-		logger.fine("resize with:" + inWidth + " height:" + inHeight + " cropResize : " + cropResize + " addBorder : " + addBorder + " mt : " + mt + " ml : " + ml + " mr : " + mr + " mb : " + mb + " bgColor:" + bgColor + " interestX=" + interestX + " interestY=" + interestY + " focusZone=" + focusZone + " hq=" + hq);
+		logger.info("resize with:" + inWidth + " height:" + inHeight + " cropResize : " + cropResize + " addBorder : " + addBorder + " mt : " + mt + " ml : " + ml + " mr : " + mr + " mb : " + mb + " bgColor:" + bgColor + " interestX=" + interestX + " interestY=" + interestY + " focusZone=" + focusZone + " hq=" + hq);
 
 		if (inWidth < 0) {
 			inWidth = Math.abs(source.getWidth() * inHeight / source.getHeight());
@@ -931,9 +931,12 @@ public class ImageEngine {
 				borderWidth = Math.abs((source.getWidth() - newWidth) / 2);
 			}
 
-			BufferedImage outImage = new BufferedImage(newWidth, newHeight, source.getType());
+			BufferedImage outImage = new BufferedImage(newWidth, newHeight, BufferedImage.TYPE_4BYTE_ABGR);			
 			if (bgColor != null) {
 				fillImage(outImage, bgColor);
+			} else {				
+				Color transparent = new Color(128,128,128,0);
+				fillImage(outImage, transparent);
 			}
 
 			for (int x = 0; x < source.getWidth(); x++) {
