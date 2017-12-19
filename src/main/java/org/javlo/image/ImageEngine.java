@@ -43,8 +43,8 @@ public class ImageEngine {
 	public final static Color TRANSPARENT_COLOR = new Color(0, 0, 0, 1);
 
 	/**
-	 * special color to set automatic color (value is random)
-	 */
+	* special color to set automatic color (value is random)
+	*/
 	public final static Color DETECT_COLOR = new Color(235, 124, 32, 15);
 
 	// This class overrides the setCompressionQuality() method to workaround
@@ -55,11 +55,11 @@ public class ImageEngine {
 		}
 
 		/*
-		 * public void setCompressionQuality(float quality) { if (quality < 0.0F
-		 * || quality > 1.0F) { throw new
-		 * IllegalArgumentException("Quality out-of-bounds!"); }
-		 * this.compressionQuality = 256 - (quality 256); }
-		 */
+		* public void setCompressionQuality(float quality) { if (quality < 0.0F
+		* || quality > 1.0F) { throw new
+		* IllegalArgumentException("Quality out-of-bounds!"); }
+		* this.compressionQuality = 256 - (quality 256); }
+		*/
 
 		public void setCompressionQuality(int quality) {
 			this.compressionQuality = quality;
@@ -78,9 +78,9 @@ public class ImageEngine {
 
 	public static BufferedImage blurring(BufferedImage img) {
 		/*
-		 * float[] matrix = { 0f, 0f, 0f, 1f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f,
-		 * 0f, 0f, 0f, 0f, };
-		 */
+		* float[] matrix = { 0f, 0f, 0f, 1f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f,
+		* 0f, 0f, 0f, 0f, };
+		*/
 		float[] matrix = new float[400];
 		for (int i = 0; i < matrix.length; i++) {
 			matrix[i] = (1f / matrix.length);
@@ -446,16 +446,16 @@ public class ImageEngine {
 	}
 
 	/**
-	 * get a color in a image, coord can be out of the image size.
-	 * 
-	 * @param image
-	 *            a standard java image
-	 * @param x
-	 *            if < 0 -> get 0 id > width -> get width-1
-	 * @param y
-	 *            if < 0 -> get 0 id > length -> get length-1
-	 * @return the color of a pixel
-	 */
+	* get a color in a image, coord can be out of the image size.
+	* 
+	* @param image
+	*            a standard java image
+	* @param x
+	*            if < 0 -> get 0 id > width -> get width-1
+	* @param y
+	*            if < 0 -> get 0 id > length -> get length-1
+	* @return the color of a pixel
+	*/
 	public static int getColor(BufferedImage image, int x, int y) {
 		if (x < 0) {
 			return NEUTRAL_COLOR.getRGB();
@@ -471,11 +471,11 @@ public class ImageEngine {
 	}
 
 	/**
-	 * if color null return transparent.
-	 * 
-	 * @param color
-	 * @return
-	 */
+	* if color null return transparent.
+	* 
+	* @param color
+	* @return
+	*/
 	public static Color neverNullColor(Color color) {
 		if (color != null) {
 			return color;
@@ -718,12 +718,12 @@ public class ImageEngine {
 	}
 
 	/**
-	 * replace bg color with transparency
-	 * 
-	 * @param image
-	 * @param bg
-	 * @return image with transparency
-	 */
+	* replace bg color with transparency
+	* 
+	* @param image
+	* @param bg
+	* @return image with transparency
+	*/
 	public static BufferedImage createAlpha(BufferedImage image, Color bg) {
 		if (bg == null) {
 			return image;
@@ -770,16 +770,16 @@ public class ImageEngine {
 		} else {
 			workImage = ImageEngine.resize(source, filter.getWidth(), filter.getHeight(), cropResize, addBorder, mt, ml, mr, mb, bgColor, fzx, fzy, isFocus, hq);
 			/*
-			 * if ((float) source.getWidth() / (float) source.getHeight() <
-			 * (float) workWith / (float) workHeight) { int height =
-			 * (source.getHeight() * workWith) / source.getWidth(); workImage =
-			 * resize(source, workWith, height); } else { int width =
-			 * (source.getWidth() * workHeight) / source.getHeight();
-			 * //workImage = resize(source, width, workHeight);
-			 * 
-			 * WARNING : test si on fait pas 2x la marge avec cette méthode the
-			 * resize }
-			 */
+			* if ((float) source.getWidth() / (float) source.getHeight() <
+			* (float) workWith / (float) workHeight) { int height =
+			* (source.getHeight() * workWith) / source.getWidth(); workImage =
+			* resize(source, workWith, height); } else { int width =
+			* (source.getWidth() * workHeight) / source.getHeight();
+			* //workImage = resize(source, width, workHeight);
+			* 
+			* WARNING : test si on fait pas 2x la marge avec cette méthode the
+			* resize }
+			*/
 		}
 		BufferedImage outImage = new BufferedImage(filter.getWidth(), filter.getHeight(), source.getType());
 		for (int x = 0; x < filter.getWidth(); x++) {
@@ -878,36 +878,36 @@ public class ImageEngine {
 	}
 
 	/**
-	 * resize a picture
-	 * 
-	 * @param source
-	 *            the source image
-	 * @param inWidth
-	 *            new with
-	 * @param inHeight
-	 *            new height
-	 * @param cropResize
-	 *            true if image must be croped or false if image must be
-	 *            deformed
-	 * @param mt
-	 *            margin top
-	 * @param ml
-	 *            margin left
-	 * @param mr
-	 *            margin right
-	 * @param mb
-	 *            margin bottom
-	 * @param bgColor
-	 *            background color (for margin and alpha)
-	 * @param interestX
-	 *            x position of the interest zone in the picture
-	 * @param interestY
-	 *            y position of the interest zone in the picture
-	 * @return a resized image
-	 */
+	* resize a picture
+	* 
+	* @param source
+	*            the source image
+	* @param inWidth
+	*            new with
+	* @param inHeight
+	*            new height
+	* @param cropResize
+	*            true if image must be croped or false if image must be
+	*            deformed
+	* @param mt
+	*            margin top
+	* @param ml
+	*            margin left
+	* @param mr
+	*            margin right
+	* @param mb
+	*            margin bottom
+	* @param bgColor
+	*            background color (for margin and alpha)
+	* @param interestX
+	*            x position of the interest zone in the picture
+	* @param interestY
+	*            y position of the interest zone in the picture
+	* @return a resized image
+	*/
 	public static BufferedImage resize(BufferedImage source, int inWidth, int inHeight, boolean cropResize, boolean addBorder, int mt, int ml, int mr, int mb, Color bgColor, int interestX, int interestY, boolean focusZone, boolean hq) {
 
-		logger.info("resize with:" + inWidth + " height:" + inHeight + " cropResize : " + cropResize + " addBorder : " + addBorder + " mt : " + mt + " ml : " + ml + " mr : " + mr + " mb : " + mb + " bgColor:" + bgColor + " interestX=" + interestX + " interestY=" + interestY + " focusZone=" + focusZone + " hq=" + hq);
+		logger.fine("resize with:" + inWidth + " height:" + inHeight + " cropResize : " + cropResize + " addBorder : " + addBorder + " mt : " + mt + " ml : " + ml + " mr : " + mr + " mb : " + mb + " bgColor:" + bgColor + " interestX=" + interestX + " interestY=" + interestY + " focusZone=" + focusZone + " hq=" + hq);
 
 		if (inWidth < 0) {
 			inWidth = Math.abs(source.getWidth() * inHeight / source.getHeight());
@@ -931,12 +931,11 @@ public class ImageEngine {
 				borderWidth = Math.abs((source.getWidth() - newWidth) / 2);
 			}
 
-			BufferedImage outImage = new BufferedImage(newWidth, newHeight, BufferedImage.TYPE_4BYTE_ABGR);			
+			BufferedImage outImage = new BufferedImage(newWidth, newHeight, BufferedImage.TYPE_4BYTE_ABGR);
 			if (bgColor != null) {
 				fillImage(outImage, bgColor);
-			} else {				
-				Color transparent = new Color(128,128,128,0);
-				fillImage(outImage, transparent);
+			} else {
+				fillImage(outImage, TRANSPARENT_COLOR);
 			}
 
 			for (int x = 0; x < source.getWidth(); x++) {
@@ -952,8 +951,8 @@ public class ImageEngine {
 
 		BufferedImage workImage;
 
-		int workWith = inWidth - (ml + mr);
-		int workHeight = inHeight - (mt + mb);
+		int workWith = inWidth;
+		int workHeight = inHeight;
 
 		if (!cropResize) {
 			workImage = resize(source, workWith, workHeight, hq);
@@ -987,28 +986,39 @@ public class ImageEngine {
 			}
 		}
 
-		BufferedImage outImage = new BufferedImage(inWidth, inHeight, source.getType());
-		for (int x = deltaX; x < inWidth + deltaX; x++) {
+		BufferedImage outImage = new BufferedImage(inWidth + ml + mr, inHeight + mt + mb, BufferedImage.TYPE_4BYTE_ABGR);
+		if (bgColor != null) {
+			fillImage(outImage, bgColor);
+		} else {
+			fillImage(outImage, TRANSPARENT_COLOR);
+		}
+		for (int x = deltaX+ml; x < inWidth + mr + deltaX; x++) {
 			int targetX = x - deltaX;
-			for (int y = deltaY; y < inHeight + deltaY; y++) {
+			for (int y = deltaY+mt; y < inHeight  + mb + deltaY; y++) {
 				int targetY = y - deltaY;
 				Integer imageColor = null;
 				if (bgColor != null) {
 					imageColor = bgColor.getRGB();
 				}
 
-				if ((targetX >= ml) && (targetX < workWith + ml) && (targetY >= mt) && (targetY < workHeight + mt)) {
-					imageColor = getColor(workImage, x + ml, y + mt, bgColor);
-				}
-				Integer mixedColor = imageColor;
+				// if ((targetX >= ml) && (targetX < workWith + ml) && (targetY
+				// >= mt) && (targetY < workHeight + mt)) {
+				imageColor = getColor(workImage, x - ml, y - mt, null);
+				// }
+				if (imageColor != null) {
+					Integer mixedColor = imageColor;
 
-				if (bgColor != null && imageColor != null) {
-					mixedColor = replaceAlpha(new Color(imageColor), bgColor).getRGB();
+					if (bgColor != null && imageColor != null) {
+						mixedColor = replaceAlpha(new Color(imageColor), bgColor).getRGB();
+					}
+					if (imageColor != null) {
+						outImage.setRGB(targetX, targetY, mixedColor);
+					}
+					
+				} else {
+					outImage.setRGB(targetX, targetY, bgColor.getRGB());
 				}
-				if (mixedColor != null) {
-
-					outImage.setRGB(targetX, targetY, mixedColor);
-				}
+				
 			}
 		}
 		workImage.flush();
@@ -1173,13 +1183,13 @@ public class ImageEngine {
 	}
 
 	/**
-	 * rotate the image with angle in degree. note than result can be bigger
-	 * than source.
-	 * 
-	 * @param image
-	 * @param angle
-	 * @return
-	 */
+	* rotate the image with angle in degree. note than result can be bigger
+	* than source.
+	* 
+	* @param image
+	* @param angle
+	* @return
+	*/
 	public static BufferedImage rotate(BufferedImage image, int angle, Color bg) {
 
 		int targetType = image.getType();
@@ -1222,11 +1232,11 @@ public class ImageEngine {
 	}
 
 	/**
-	 * create transparent dash on 1 pixel on 2
-	 * 
-	 * @param image
-	 * @return a image width same width and same height.
-	 */
+	* create transparent dash on 1 pixel on 2
+	* 
+	* @param image
+	* @return a image width same width and same height.
+	*/
 	public static BufferedImage dashed(BufferedImage image, int size) {
 		BufferedImage outImage = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
 		for (int x = 0; x < image.getWidth(); x++) {
@@ -1240,11 +1250,11 @@ public class ImageEngine {
 	}
 
 	/**
-	 * create transparent dash
-	 * 
-	 * @param image
-	 * @return a image width same width and same height.
-	 */
+	* create transparent dash
+	* 
+	* @param image
+	* @return a image width same width and same height.
+	*/
 	public static BufferedImage resizeDashed(BufferedImage image, int factor) {
 		BufferedImage outImage = new BufferedImage(image.getWidth() * factor, image.getHeight() * factor, BufferedImage.TYPE_4BYTE_ABGR);
 		for (int x = 0; x < image.getWidth(); x++) {
@@ -1262,24 +1272,24 @@ public class ImageEngine {
 	}
 
 	/**
-	 * the "mathematical" distance between two color.
-	 * 
-	 * @param c1
-	 * @param c2
-	 * @return
-	 */
+	* the "mathematical" distance between two color.
+	* 
+	* @param c1
+	* @param c2
+	* @return
+	*/
 	public static int getColorDistance(Color c1, Color c2) {
 		return Math.abs(c1.getRed() - c2.getRed()) + Math.abs(c1.getGreen() - c2.getGreen()) + Math.abs(c1.getBlue() - c2.getBlue());
 	}
 
 	/**
-	 * the "mathematical" distance between two color. 1 : balck and white, 0 :
-	 * same color
-	 * 
-	 * @param c1
-	 * @param c2
-	 * @return
-	 */
+	* the "mathematical" distance between two color. 1 : balck and white, 0 :
+	* same color
+	* 
+	* @param c1
+	* @param c2
+	* @return
+	*/
 	public static float getColorDistanceFactor(Color c1, Color c2) {
 		if (c1 == null || c2 == null) {
 			return 1;
@@ -1288,11 +1298,11 @@ public class ImageEngine {
 	}
 
 	/**
-	 * return white on dark background and black otherwise
-	 * 
-	 * @param backgroundColor
-	 * @return
-	 */
+	* return white on dark background and black otherwise
+	* 
+	* @param backgroundColor
+	* @return
+	*/
 	public static Color getTextColorOnBackground(Color backgroundColor) {
 		if (getColorDistance(backgroundColor, Color.BLACK) > 0.5) {
 			return Color.WHITE;
@@ -1302,14 +1312,14 @@ public class ImageEngine {
 	}
 
 	/**
-	 * search a color inside a image.
-	 * 
-	 * @param image
-	 * @param color
-	 * @return the distance from all pixels to color (0:no difference (all pixel
-	 *         are the same and is exactly the color value) 1 : max difference
-	 *         (image in black and color is white)).
-	 */
+	* search a color inside a image.
+	* 
+	* @param image
+	* @param color
+	* @return the distance from all pixels to color (0:no difference (all pixel
+	*         are the same and is exactly the color value) 1 : max difference
+	*         (image in black and color is white)).
+	*/
 	public static double closeColor(BufferedImage image, Color color) {
 		double colorDistance = 0;
 		int STEP = 20;
@@ -1330,13 +1340,13 @@ public class ImageEngine {
 	}
 
 	/**
-	 *
-	 * @param img
-	 *            Image to modify
-	 * @param sepiaIntensity
-	 *            From 0-255, 30 produces nice results
-	 * @throws Exception
-	 */
+	*
+	* @param img
+	*            Image to modify
+	* @param sepiaIntensity
+	*            From 0-255, 30 produces nice results
+	* @throws Exception
+	*/
 	public static void applySepiaFilter(BufferedImage img, int sepiaIntensity) {
 		// Play around with this. 20 works well and was recommended
 		// by another developer. 0 produces black/white image
@@ -1401,14 +1411,14 @@ public class ImageEngine {
 	}
 
 	/**
-	 * test if two color is the same with tolerance
-	 * 
-	 * @param c1
-	 * @param c2
-	 * @param tolerance
-	 *            difference between two colors 0 >> 3*255
-	 * @return
-	 */
+	* test if two color is the same with tolerance
+	* 
+	* @param c1
+	* @param c2
+	* @param tolerance
+	*            difference between two colors 0 >> 3*255
+	* @return
+	*/
 	public static boolean equalColor(Color c1, Color c2, int tolerance) {
 		int diff = Math.abs(c1.getRed() - c2.getRed());
 		diff = diff + Math.abs(c1.getGreen() - c2.getGreen());
@@ -1527,14 +1537,14 @@ public class ImageEngine {
 	}
 
 	public static BufferedImage ultraLight(BufferedImage image) {
-		BufferedImage outImage = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_BYTE_BINARY);		
+		BufferedImage outImage = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_BYTE_BINARY);
 		int delta = 8;
-		if (image.getWidth()<800) {
-			delta=1;
-		} else if (image.getWidth()<1200) {
-			delta=2;
-		} else if (image.getWidth()<2048) {
-			delta=4;
+		if (image.getWidth() < 800) {
+			delta = 1;
+		} else if (image.getWidth() < 1200) {
+			delta = 2;
+		} else if (image.getWidth() < 2048) {
+			delta = 4;
 		}
 		for (int y = 0; y < image.getHeight(); y += delta) {
 			for (int x = 0; x < image.getWidth(); x += delta) {
@@ -1545,9 +1555,9 @@ public class ImageEngine {
 				} else {
 					rgb = Color.DARK_GRAY.getRGB();
 				}
-				for (int dx = 0; dx < Math.min(delta, image.getWidth()-x); dx++) {
-					for (int dy = 0; dy < Math.min(delta, image.getHeight()-y); dy++) {
-						if ((x+dx)%2==0 || (y+dy)%2==0) {
+				for (int dx = 0; dx < Math.min(delta, image.getWidth() - x); dx++) {
+					for (int dy = 0; dy < Math.min(delta, image.getHeight() - y); dy++) {
+						if ((x + dx) % 2 == 0 || (y + dy) % 2 == 0) {
 							outImage.setRGB(x + dx, y + dy, Color.LIGHT_GRAY.getRGB());
 						} else {
 							outImage.setRGB(x + dx, y + dy, rgb);
@@ -1562,11 +1572,14 @@ public class ImageEngine {
 	public static void main(String[] args) throws Exception {
 		System.out.println("***** ImageEngine.main : START"); // TODO: remove
 																// debug trace
-		File imageSource = new File("c:/trans/test.jpg");
-		File imageTarget = new File("c:/trans/test_preview.png");
+		File imageSource = new File("c:/trans/test_source.jpg");
+		File imageTarget = new File("c:/trans/out.png");
 
 		BufferedImage img = ImageIO.read(imageSource);
-		BufferedImage targetImg = ultraLight(img);
+		// BufferedImage targetImg = ultraLight(img);
+		BufferedImage targetImg = ImageEngine.resize(img, 500, 500, false, true, 50, 50, 50, 50, Color.RED, 500, 250, true, true);
+		// BufferedImage targetImg = ImageEngine.resize(img, 500, 500, false,
+		// true, 0, 0, 0, 0, Color.RED, 500, 250, true, true);
 		// img = resize(img, 119, 80, false);
 		ImageIO.write(targetImg, "png", imageTarget);
 		System.out.println("***** ImageEngine.main : END"); // TODO: remove
