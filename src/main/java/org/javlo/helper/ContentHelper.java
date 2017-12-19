@@ -478,7 +478,7 @@ public class ContentHelper {
 			newBeans[i].setId(StringHelper.getRandomId());
 		}
 		target.setContent(newBeans);
-		target.setTemplateId(source.getTemplateId());
+		target.setTemplateId(source.getTemplateId());		
 
 		for (IContentVisualComponent comp : target.getContent(ctx).getContentElements()) {			
 			if (comp instanceof IStaticContainer) {

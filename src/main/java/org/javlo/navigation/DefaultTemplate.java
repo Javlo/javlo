@@ -418,4 +418,14 @@ public class DefaultTemplate extends Template {
 	public String getMessageTemplate(ContentContext ctx) {
 		return null;
 	}
+	
+	@Override
+	public List<String> getLayouts() {
+		return null;
+	}
+	
+	@Override
+	public List<String> getStructures() {
+		return null;
+	}
 }

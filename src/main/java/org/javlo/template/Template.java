@@ -2039,12 +2039,25 @@ public class Template implements Comparable<Template> {
 	public List<String> getLayouts() {
 		String rawLayouts = properties.getProperty("layouts");
 		if (rawLayouts == null) {
-			return null;
+			return getParent().getLayouts();
 		} else {
 			return StringHelper.stringToCollection(rawLayouts, ",");
 		}
 	}
-
+	
+	/**
+	 * return all renderer defined in the template.
+	 * 
+	 * @return
+	 */
+	public List<String> getStructures() {
+		String rawStructures = properties.getProperty("structures");
+		if (rawStructures == null) {
+			return getParent().getStructures();
+		} else {
+			return StringHelper.stringToCollection(rawStructures, ",");
+		}
+	}
 
 	public String getRendererFullName(ContentContext ctx) throws ServiceException {
 		GlobalContext globalContext = null;

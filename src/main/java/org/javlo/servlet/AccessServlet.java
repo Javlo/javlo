@@ -818,7 +818,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 						if (request.getParameter(Template.FORCE_TEMPLATE_PARAM_NAME) != null) {
 							params.put(Template.FORCE_TEMPLATE_PARAM_NAME, request.getParameter(Template.FORCE_TEMPLATE_PARAM_NAME));
 						}
-						params.put("clean-html", "true");
+						//params.put("clean-html", "true");
 						String url = URLHelper.createURL(viewCtx, params);
 						logger.info("create EML from : " + url);
 						String html = NetHelper.readPageForMailing(new URL(url));
