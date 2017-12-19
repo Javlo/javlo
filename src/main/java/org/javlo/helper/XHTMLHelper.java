@@ -185,7 +185,7 @@ public class XHTMLHelper {
 		if (content == null) {
 			return "";
 		}
-		content = content.replace("&nbsp;", " ");
+		//content = content.replace("&nbsp;", " ");
 		StringWriter out = new StringWriter();
 		BufferedWriter writer = new BufferedWriter(out);
 		BufferedReader reader = new BufferedReader(new StringReader(content));
@@ -193,7 +193,7 @@ public class XHTMLHelper {
 			String line = reader.readLine();
 			while (line != null) {
 
-				String[] splitLine = StringHelper.splitStaySeparator(line, " ,;()[]{}<>\n");
+				String[] splitLine = StringHelper.splitStaySeparator(line, " ,()[]{}<>\n");
 
 				boolean inLink = false;
 				boolean inTag = false;

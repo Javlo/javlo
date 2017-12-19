@@ -904,7 +904,9 @@ public class GlobalImage extends Image implements IImageFilter {
 		setSecondText(requestService.getParameter(getSecondTextInputName(), ""));
 
 		String label = requestService.getParameter(getLabelXHTMLInputName(), null);
+		
 		String textLabel = requestService.getParameter(getLabelTextInputName(), null);
+		
 		if (label != null && !label.equals(getLabel())) {
 			StaticInfo staticInfo = getStaticInfo(ctx);
 			if (staticInfo != null && StringHelper.isEmpty(staticInfo.getTitle(ctx))) {

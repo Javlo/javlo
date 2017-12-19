@@ -904,4 +904,4 @@ change log
  
  * 2/ htmlId on page / searchPage smart method / video inline optimisation / rename dynamic component field / correction pagereference page withtout content in current language not correctly corrected to default language
  
- * 3/ 
+ * 3/ don't remove &nbsp; in autolink method
