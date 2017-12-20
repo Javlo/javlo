@@ -43,7 +43,8 @@ body.edit-preview ._empty_area span {
 	border-radius: 3px 3px 3px 3px;
 	border: 1px dotted #5B5B5B;
 	padding: 0;
-	background-color: #EBEBEB;	
+	background-color: #EBEBEB;
+	position: relative;	
 }
 
 .edit-preview .close-col {
@@ -1303,10 +1304,6 @@ body.edit-preview ._empty_area span {
 
 .editable-component.row-break.error {
 	border: 1px red solid;
-}
-
-table.component-table .cell-wrapper {
-	position: relative;
 }
 
 table.component-table td {

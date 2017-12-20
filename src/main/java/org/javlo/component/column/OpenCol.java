@@ -8,6 +8,7 @@ import org.javlo.component.core.ContentElementList;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.context.ContentContext;
 import org.javlo.context.EditContext;
+import org.javlo.i18n.I18nAccess;
 
 public class OpenCol extends AbstractVisualComponent {
 
@@ -96,6 +97,13 @@ public class OpenCol extends AbstractVisualComponent {
 		if (isColEmpty(ctx)) {
 			positionCSS = positionCSS + "empty";
 		}
+		
+		EditContext editCtx = EditContext.getInstance(ctx.getGlobalContext(), ctx.getRequest().getSession());
+		if (editCtx.isPreviewEditionMode()) {
+			I18nAccess i18nAccess = I18nAccess.getInstance(ctx);
+			out.println("<span class=\"_component-title\">["+i18nAccess.getText("content."+getType(), getType())+"] - "+getStyle()+"</span>");
+		}
+		
 		int width = getWidth(ctx);
 		if (colContext.isOpen()) {
 			out.println("</div></div><div class=\"" + getColCssClass(ctx, width) + ' ' + positionCSS + "\"><div class=\"cell-wrapper\">");

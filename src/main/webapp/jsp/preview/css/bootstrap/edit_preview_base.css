@@ -35,6 +35,21 @@
 	filter: alpha(opacity = 100);	
 }
 
+._component_title {
+	overflow: hidden;
+	width: 100%;
+	padding: 3px;
+	text-align: center;
+	background-color: rgba(255,255,255,0.8);
+	color: #000000;
+	border-radius: 3px;
+	border: 1px #dddddd solid;
+}
+
+._component_row {
+	clear: both;
+}
+
 #preview_command a::after {
 	width: auto;
 	height: auto;
@@ -116,6 +131,7 @@ body.edit-preview, body.preview-only {
 	border: 1px dotted #5B5B5B;
 	padding: 0;
 	background-color: #EBEBEB;	
+	position: relative;
 }
 
 .edit-preview .close-col {
@@ -279,10 +295,6 @@ body.edit-preview, body.preview-only {
 	border: 1px red solid;
 }
 
-table.component-table .cell-wrapper {
-	position: relative;
-}
-
 .editable-component .table-component-preview {
 	margin-left: 3px;
 	text-align: left;
@@ -300,3 +312,9 @@ body.right-admin #preview_command #page-404 {
 	display: block;
 }
 
+_component-title {
+	display: block;
+	padding: 3px;
+	text-align: center;
+	font-weight: bold;
+}

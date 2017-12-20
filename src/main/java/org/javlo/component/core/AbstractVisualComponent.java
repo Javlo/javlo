@@ -2031,7 +2031,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 							if (getRenderer(ctx) != null) {
 								prepareView(ctx);
 							}
-							content = renderViewXHTMLCode(ctx);
+							content = renderViewXHTMLCode(ctx);							
 							logger.fine("render content time cache '" + getType() + "' : " + (System.currentTimeMillis() - beforeTime) / 1000 + " sec.");
 							setContentTimeCache(ctx, content);
 						}

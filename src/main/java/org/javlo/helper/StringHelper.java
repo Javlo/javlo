@@ -240,6 +240,24 @@ public class StringHelper {
 	public static String collectionToString(Collection<?> col) {
 		return collectionToString(col, DEFAULT_SEPARATOR);
 	}
+	
+	public static <T extends IStringSeralizable> String collectionStringSeralizableToString(Collection<T> col, String sep) {
+		List<String> list = new LinkedList<String>();
+		for (IStringSeralizable item : col) {
+			list.add(item.storeToString());
+		}
+		return collectionToString(list, sep);
+	}
+	
+	public static <T extends IStringSeralizable> List<T> stringToStringSeralizableCollection(String data, String sep, Class c) throws InstantiationException, IllegalAccessException {
+		List<T> outList = new LinkedList<T>();
+		for (String itemData : StringHelper.stringToCollection(data, sep)) {
+			T newItem = (T)c.newInstance();
+			newItem.loadFromString(itemData);
+			outList.add(newItem);
+		}
+		return outList;
+	}
 
 	/**
 	 * convert a collection to text. Each item of the collection will be a line

@@ -1,7 +1,9 @@
 package org.javlo.component.multimedia;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Calendar;
@@ -463,10 +465,12 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle, IStat
 		out.println(getSpecialInputTag());
 
 		Collection<String> folderSelection = getSelection(ctx);
-		out.println("<div class=\"form-group form-inline\">");
-		out.println("<label>" + i18nAccess.getText("global.title"));
-		out.println(" : <input class=\"form-control\" type=\"text\" id=\"" + getInputTitle() + "\" name=\"" + getInputTitle() + "\" value=\"" + getTitle() + "\"/></label>");
-		out.println("</div>");
+		if (StringHelper.isEmpty(getSpecialTagTitle(ctx))) {
+			out.println("<div class=\"form-group form-inline\">");
+			out.println("<label>" + i18nAccess.getText("global.title"));
+			out.println(" : <input class=\"form-control\" type=\"text\" id=\"" + getInputTitle() + "\" name=\"" + getInputTitle() + "\" value=\"" + getTitle() + "\"/></label>");
+			out.println("</div>");
+		}
 
 		out.println("<div class=\"form-group form-inline\">");
 		if (isFolder()) {
@@ -1307,6 +1311,50 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle, IStat
 	@Override
 	public String getFontAwesome() {	
 		return "th-large";
+	}
+	
+	@Override
+	public String getSpecialTagTitle(ContentContext ctx) throws Exception {
+		if (ctx.getGlobalContext().isMailingPlatform() || (getCurrentRenderer(ctx) != null && getCurrentRenderer(ctx).contains("text"))) {
+			return "text";
+		} else {
+			return super.getSpecialTagTitle(ctx);
+		}
+	}
+	
+	protected String getLabelTextInputName() {
+		return getId() + ID_SEPARATOR + "label-text";
+	}
+	
+	@Override
+	public String getSpecialTagXHTML(ContentContext ctx) throws Exception {
+		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+		PrintStream out = new PrintStream(outStream);
+
+		Map<String, String> filesParams = new HashMap<String, String>();
+		String path = FileAction.getPathPrefix(ctx);
+		filesParams.put("path", path);
+		filesParams.put("webaction", "changeRenderer");
+		filesParams.put("page", "meta");
+		filesParams.put("select", "_TYPE_");
+		filesParams.put(ContentContext.PREVIEW_EDIT_PARAM, "true");
+		String chooseImageURL = URLHelper.createModuleURL(ctx, ctx.getPath(), "file", filesParams);
+
+		out.println("<div class=\"text\">");
+
+		out.println("<div class=\"line label-text\"><label for=\"" + getInputTitle() + "\">label text : </label>");
+		String id = "special-label-" + getId();
+		String rows = "3";
+		
+		String[][] paramsLabelText = new String[][] { { "rows", rows }, { "cols", "100" }, { "class", "tinymce-light" }, { "id", id } };
+		out.println(XHTMLHelper.getTextArea(getInputTitle(), getTitle(), paramsLabelText));
+		out.println("<script type=\"text/javascript\">jQuery(document).ready(loadWysiwyg('#" + id + "','" + getEditorComplexity(ctx) + "','" + chooseImageURL + "'));</script>");
+		out.println("</div>");
+		
+		out.println("</div>");
+
+		out.close();
+		return new String(outStream.toByteArray());
 	}
 
 }
