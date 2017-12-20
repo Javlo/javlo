@@ -62,23 +62,10 @@ public class Row extends AbstractRowComponent {
 		return new RowBean(getValue());
 	}
 	
-	private String getInputNameCell(int c) {
-		return getInputName("cell-"+c);
-	}
-	
 	public List<String> getSizes(ContentContext ctx) {
 		return StringHelper.stringToCollection(getConfig(ctx).getProperty("sizes", "1,2,3,4,5,6,7,8,9,10,11,12"), ",");
 	}
-
-	@Override
-	public boolean initContent(ContentContext ctx) throws Exception {
-		RowBean row = new RowBean(null);
-		row.addCell();
-		row.addCell();
-		setValue(row.storeToString());
-		return super.initContent(ctx);
-	}
-	
+		
 	public String getOpenRowXHTML(ContentContext ctx) {
 		String cssClass = "";
 		if (!StringHelper.isEmpty(getStyle())) {
