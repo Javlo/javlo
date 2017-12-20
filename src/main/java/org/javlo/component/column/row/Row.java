@@ -11,7 +11,6 @@ import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.context.ContentContext;
 import org.javlo.context.EditContext;
 import org.javlo.helper.StringHelper;
-import org.javlo.helper.XHTMLHelper;
 import org.javlo.i18n.I18nAccess;
 
 public class Row extends AbstractRowComponent {
@@ -159,6 +158,6 @@ public class Row extends AbstractRowComponent {
 	@Override
 	public boolean isDisplayable(ContentContext ctx) throws Exception {
 		return true;
-	}
+	}	
 
 }

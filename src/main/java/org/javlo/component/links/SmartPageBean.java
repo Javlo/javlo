@@ -269,7 +269,7 @@ public class SmartPageBean {
 		if (!StringHelper.isEmpty(linkOn) && !isRealContent()) {
 			return linkOn;
 		} else {
-			if (page.isChildrenOfAssociation()) {
+			if (page.isDirectChildrenOfAssociation()) {
 				try {
 					if (getParent().getId().equals(ctx.getCurrentPage().getId())) {
 						return "#"+page.getHtmlSectionId(ctx);

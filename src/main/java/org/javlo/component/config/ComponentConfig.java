@@ -168,6 +168,14 @@ public class ComponentConfig {
 		}
 		return StringHelper.stringToArray(styleListLabel, ";");
 	}
+	
+	public String getDefaultStyle() {
+		if (properties == null) {
+			return null;
+		} else {
+			return properties.getProperty("style-default");
+		}
+	}
 
 	public String[] getStyleList() {
 		if (properties == null) {

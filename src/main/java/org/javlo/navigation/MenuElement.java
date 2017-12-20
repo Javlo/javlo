@@ -5169,6 +5169,26 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 		}
 		return false;
 	}
+	
+	/**
+	 * check if this page is a part of page association
+	 * 
+	 * @return
+	 */
+	public boolean isDirectChildrenOfAssociation() {
+		MenuElement root = getRootOfChildrenAssociation();
+		if (root != null) {
+			String rootId = root.getId();
+			MenuElement parent = getParent();
+			if (parent != null) {
+				if (parent.getId().equals(rootId)) {
+					return true;
+				}
+				parent = parent.getParent();
+			}
+		}
+		return false;
+	}
 
 	public MenuElement getRootOfChildrenAssociation() {
 		MenuElement parent = this;

@@ -1646,12 +1646,18 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	public String getStyle() {
 		return componentBean.getStyle();
 	}
+	
+	
 
 	@Override
 	public final String getStyle(ContentContext ctx) {
 		if (componentBean.getStyle() == null) {
 			if ((getStyleList(ctx) != null) && (getStyleList(ctx).length > 0)) {
-				componentBean.setStyle(getStyleList(ctx)[0]);
+				if (getConfig(ctx).getDefaultStyle() == null) {
+					componentBean.setStyle(getStyleList(ctx)[0]);
+				} else {
+					componentBean.setStyle(getConfig(ctx).getDefaultStyle());
+				}
 			}
 		}
 		String style = componentBean.getStyle();
