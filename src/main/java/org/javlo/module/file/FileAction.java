@@ -271,7 +271,11 @@ public class FileAction extends AbstractModuleAction {
 					}
 				}
 				Collections.sort(childrenLinks, new HtmlLink.SortOnLegend());
-				currentModule.pushBreadcrumb(new HtmlLink(staticURL, path, path, i == pathItems.length - 1, childrenLinks));
+				boolean readonly = false;
+				if (i<2 && rs.getParameter("select") != null) {
+					readonly=true;
+				}
+				currentModule.pushBreadcrumb(new HtmlLink(staticURL, path, path, i == pathItems.length - 1, childrenLinks, readonly));
 			}
 		}
 
@@ -292,8 +296,10 @@ public class FileAction extends AbstractModuleAction {
 			return "securtiy error.";
 		}
 		boolean found = false;
+		String latestFileName = "";
 		if (folder.exists()) {
 			for (File file : folder.listFiles((FileFilter) FileFileFilter.FILE)) {
+				latestFileName = file.getAbsolutePath();
 				StaticInfo staticInfo = StaticInfo.getInstance(ctx, file);
 				FileBean fileBean = new FileBean(ctx, staticInfo);
 
@@ -316,7 +322,7 @@ public class FileAction extends AbstractModuleAction {
 				}
 			}
 			if (!found) {
-				return "focus technical error : file not found.";
+				return "focus technical error - file not found : "+latestFileName;
 			}
 			return null;
 		} else {

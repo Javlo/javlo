@@ -88,12 +88,20 @@ public class Module {
 		private String legend;
 		private String title;
 		private boolean selected;
+		private boolean readonly = false;
 		private Collection<HtmlLink> children = new LinkedList<Module.HtmlLink>();
 
 		public HtmlLink(String url, String legend, String title) {
 			this.url = url;
 			this.legend = legend;
 			this.title = title;
+		}
+		
+		public HtmlLink(String url, String legend, String title, boolean readonly) {
+			this.url = url;
+			this.legend = legend;
+			this.title = title;
+			this.readonly=readonly;
 		}
 
 		public HtmlLink(String url, String legend, String title, boolean selected, Collection<HtmlLink> children) {
@@ -103,6 +111,16 @@ public class Module {
 			this.selected = selected;
 			this.children = children;
 		}
+		
+		public HtmlLink(String url, String legend, String title, boolean selected, Collection<HtmlLink> children, boolean readonly) {
+			this.url = url;
+			this.legend = legend;
+			this.title = title;
+			this.selected = selected;
+			this.children = children;
+			this.readonly=readonly;
+		}
+
 
 		public String getUrl() {
 			return url;
@@ -154,6 +172,14 @@ public class Module {
 
 		public void setSelected(boolean selected) {
 			this.selected = selected;
+		}
+
+		public boolean isReadonly() {
+			return readonly;
+		}
+
+		public void setReadonly(boolean readonly) {
+			this.readonly = readonly;
 		}
 
 	}

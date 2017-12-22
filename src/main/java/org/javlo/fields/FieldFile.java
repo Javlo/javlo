@@ -1,10 +1,8 @@
 package org.javlo.fields;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
@@ -56,6 +54,10 @@ public class FieldFile extends Field implements IStaticContainer {
 
 	protected String getInputFileName() {
 		return getName() + "-file-" + getId();
+	}
+	
+	protected String getInputFileNameSelect() {
+		return getName() + "-select-file-" + getId();
 	}
 
 	protected String getInputAddFileName() {
@@ -142,17 +144,13 @@ public class FieldFile extends Field implements IStaticContainer {
 	}
 
 	protected String getPreviewCode(ContentContext ctx, boolean title) throws Exception {
-
 		if ((getValue() != null && getValue().trim().length() == 0) || getCurrentFile() == null || getCurrentFile().trim().length() == 0) {
 			return "";
 		}
-
 		StringWriter writer = new StringWriter();
 		PrintWriter out = new PrintWriter(writer);
-
 		String relativePath = URLHelper.mergePath(getFileTypeFolder(), getCurrentFolder());
 		String fileURL = URLHelper.mergePath(relativePath, getCurrentFile());
-
 		String img;
 		String cssClass = "";
 		if (StringHelper.isImage(getCurrentFile())) {
@@ -164,12 +162,10 @@ public class FieldFile extends Field implements IStaticContainer {
 		} else {
 			img = XHTMLHelper.getFileBigIcone(ctx, fileURL);
 		}
-
-		out.println("<img" + cssClass + "  src=\"" + img + "\" alt=\"" + getCurrentFile() + " preview\"/>");
+		out.println("<img" + cssClass + "  src=\"" + img + "\" alt=\"" + getCurrentFile() + " preview\" />");
 		if (title) {
 			out.println("<div class=\"title\">" + getCurrentFile() + "</div>");
 		}
-
 		out.close();
 		return writer.toString();
 	}
@@ -188,7 +184,21 @@ public class FieldFile extends Field implements IStaticContainer {
 		out.println("<div class=\"form-group field-" + getName() + "\">");
 		out.println("<fieldset>");
 		out.println("<legend>" + getLabel(ctx, new Locale(ctx.getRequestContentLanguage())) + "</legend>");
-		out.println("<div class=\"commands\">");
+		out.println("<div class=\"commands\"><div class=\"row\"><div class=\"col-sm-9\">");
+		
+		/** select feed back **/
+		RequestService rs = RequestService.getInstance(ctx.getRequest());	
+		if (!StringHelper.isEmpty(rs.getParameter(getInputFileNameSelect())) && rs.getParameter("backreturn") == null) {
+			String file = StringHelper.getFileNameFromPath(rs.getParameter(getInputFileNameSelect()));					
+			setCurrentFile (file);
+			String folder = new File(rs.getParameter(getInputFileNameSelect())).getParentFile().getPath();					
+			folder = StringHelper.cleanPath(folder);
+			folder = folder.replace(ctx.getGlobalContext().getStaticConfig().getImageFolder(), "");
+			while (folder.length()>0 && folder.startsWith("/")) {
+				folder = folder.substring(1);
+			}					
+			setCurrentFolder(folder);
+		}
 
 		if (!isLight()) {
 			out.println("<div class=\"row form-group\"><div class=\""+LABEL_CSS+"\">");
@@ -196,46 +206,56 @@ public class FieldFile extends Field implements IStaticContainer {
 			out.println("</div><div class=\""+SMALL_VALUE_SIZE+"\"><input class=\"form-control\" type=\"text\" id=\"" + getInputCreateFolderName() + "\" name=\"" + getInputCreateFolderName() + "\" /></div>");
 			out.println("<div class=\""+SMALL_PART_SIZE+"\"><input type=\"submit\" class=\"ajax_update_click btn btn-default btn-xs\" name=\"create\" value=\">>\" />");
 			out.println("</div></div>");
+			
+			Map<String, String> filesParams = new HashMap<String, String>();
+			String path = URLHelper.mergePath(FileAction.getPathPrefix(ctx), StaticConfig.getInstance(ctx.getRequest().getSession()).getImageFolderName(), getCurrentFolder());
+			filesParams.put("path", path);
+			filesParams.put("webaction", "changeRenderer");
+			filesParams.put("page", "meta");
+			String backURL = URLHelper.createModuleURL(ctx, ctx.getPath(), "content");
+			if (ctx.isEditPreview()) {
+				backURL = URLHelper.addParam(backURL, "comp_id", "cp_" + getId());
+				backURL = URLHelper.addParam(backURL, "webaction", "editPreview");
+			}
+			backURL = URLHelper.addParam(backURL, "previewEdit", ctx.getRequest().getParameter("previewEdit"));
+			filesParams.put(ElementaryURLHelper.BACK_PARAM_NAME, backURL + "=/" + ctx.getGlobalContext().getStaticConfig().getStaticFolder() + '/');
+			String staticLinkURL = URLHelper.createModuleURL(ctx, ctx.getPath(), "file", filesParams);
 
 			String linkToResources = "";
-			if (!ctx.getGlobalContext().isMailingPlatform()) {
-				Map<String, String> filesParams = new HashMap<String, String>();
-				String path = URLHelper.mergePath(FileAction.getPathPrefix(ctx), StaticConfig.getInstance(ctx.getRequest().getSession()).getImageFolderName(), getCurrentFolder());
-				filesParams.put("path", path);
-				filesParams.put("webaction", "changeRenderer");
-				filesParams.put("page", "meta");
-				String backURL = URLHelper.createModuleURL(ctx, ctx.getPath(), "content");
+
+			out.println("<div class=\"row form-group folder\"><div class=\""+LABEL_CSS+"\">");
+			out.println("<label for=\"" + getInputFolderName() + "\">" + getFolderLabel() + " : </label></div><div class=\""+SMALL_VALUE_SIZE+"\">");
+			out.println(XHTMLHelper.getInputOneSelect(getInputFolderName(), getFolderListForSelection(), getCurrentFolder(), "form-control", "jQuery(this.form).trigger('submit');", true));
+			out.println("</div></div>");
+			
+			if (!ctx.getGlobalContext().isMailingPlatform()) {	
+				backURL = URLHelper.createModuleURL(ctx, ctx.getPath(), "content");
 				if (ctx.isEditPreview()) {
 					backURL = URLHelper.addParam(backURL, "comp_id", "cp_" + getId());
 					backURL = URLHelper.addParam(backURL, "webaction", "editPreview");
 				}
 				backURL = URLHelper.addParam(backURL, "previewEdit", ctx.getRequest().getParameter("previewEdit"));
-				filesParams.put(ElementaryURLHelper.BACK_PARAM_NAME, backURL + "=/" + ctx.getGlobalContext().getStaticConfig().getStaticFolder() + '/');
-				String staticLinkURL = URLHelper.createModuleURL(ctx, ctx.getPath(), "file", filesParams);
-				linkToResources = "<div class=\""+SMALL_PART_SIZE+"\"><a class=\"browse-link btn btn-default btn-xs\" href=\"" + staticLinkURL + "\">" + i18nAccess.getText("content.goto-static") + "</a></div>";
+				filesParams.put(ElementaryURLHelper.BACK_PARAM_NAME, backURL + '&' + getInputFileNameSelect() + "=/" + ctx.getGlobalContext().getStaticConfig().getStaticFolder() + '/');
+				staticLinkURL = URLHelper.createModuleURL(ctx, ctx.getPath(), "file", filesParams);
+				staticLinkURL = URLHelper.addParam(staticLinkURL, "select", "back");
+				linkToResources = "<div class=\""+SMALL_PART_SIZE+"\"><a class=\"browse-link btn btn-default btn-xs\" href=\"" + staticLinkURL + "\">" + i18nAccess.getText("global.select") + "</a></div>";
 			}
 
 			out.println("<div class=\"row form-group\"><div class=\""+LABEL_CSS+"\">");
-			out.println("<label for=\"" + getInputFolderName() + "\">" + getFolderLabel() + " : </label></div><div class=\""+SMALL_VALUE_SIZE+"\">");
-			out.println(XHTMLHelper.getInputOneSelect(getInputFolderName(), getFolderListForSelection(), getCurrentFolder(), "form-control", "jQuery(this.form).trigger('submit');", true));
-			out.println("</div>" + linkToResources + "</div>");
-
-			out.println("<div class=\"row form-group\"><div class=\""+LABEL_CSS+"\">");
-			out.println("<label for=\"" + getInputFileName() + "\">" + getFileLabel() + " : </label></div><div class=\""+VALUE_SIZE+"\">");
+			out.println("<label for=\"" + getInputFileName() + "\">" + getFileLabel() + " : </label></div><div class=\""+SMALL_VALUE_SIZE+"\">");
 			out.println(XHTMLHelper.getInputOneSelect(getInputFileName(), getFileList(), getCurrentFile(), "form-control", "jQuery(this.form).trigger('submit');", true));
-			out.println("</div></div>");
-
-			out.println("<div class=\"row form-group\"><div class=\""+LABEL_CSS+"\">");
-			out.println("<label for=\"" + getInputLabelFileName() + "\">" + getLabelLabel() + " : </label>");
-			out.println("</div><div class=\""+VALUE_SIZE+"\"><input class=\"form-control\" type=\"text\" id=\"" + getInputLabelFileName() + "\" name=\"" + getInputLabelFileName() + "\" value=\"" + getCurrentLabel() + "\" />");
-			out.println("</div></div>");
-
+			out.println("</div>" + linkToResources + "</div>");
 		}
 
 		out.println("<div class=\"row form-group\"><div class=\""+LABEL_CSS+"\">");
 		out.println("<label for=\"" + getInputAddFileName() + "\">" + getAddFileLabel() + " " + i18nAccess.getEditLg() + " : </label>");
 		out.println("</div><div class=\""+VALUE_SIZE+"\"><input type=\"file\" id=\"" + getInputAddFileName() + "\" name=\"" + getInputAddFileName() + "\" /></div>");
 		out.println("</div>");
+		
+		out.println("<div class=\"row form-group\"><div class=\""+LABEL_CSS+"\">");
+		out.println("<label for=\"" + getInputLabelFileName() + "\">" + getLabelLabel() + " : </label>");
+		out.println("</div><div class=\""+VALUE_SIZE+"\"><input class=\"form-control\" type=\"text\" id=\"" + getInputLabelFileName() + "\" name=\"" + getInputLabelFileName() + "\" value=\"" + getCurrentLabel() + "\" />");
+		out.println("</div></div>");
 
 		if (isWithLink()) {
 			out.println("<div class=\"row form-group\"><div class=\""+LABEL_CSS+"\">");
@@ -244,13 +264,12 @@ public class FieldFile extends Field implements IStaticContainer {
 			out.println("</div></div>");
 		}
 
-		out.println("</div>");
-		out.println("<div class=\"preview\">");
+		out.println("</div><div class=\"col-sm-3\"><div class=\"preview\">");
 		out.println(getPreviewCode(ctx, true));
 		if (!StringHelper.isEmpty(getCurrentFile())) {
 		out.println("<button type=\"submit\" name=\""+getDeleteLinkName()+"\" class=\"btn btn-default btn-xs\" value=\"1\">"+i18nAccess.getText("global.delete")+"</button>");
 		}
-		out.println("</div>");
+		out.println("</div></div></div></div>");
 		out.println("</fieldset></div>");
 
 		out.close();
@@ -588,6 +607,21 @@ public class FieldFile extends Field implements IStaticContainer {
 			outList.add(new Link(fileURI, getLabel(ctx, new Locale(ctx.getRequestContentLanguage()))));
 		}
 		return outList;
+	}
+	
+	protected String getRelativeFileDirectory(ContentContext ctx) {
+		StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
+		return staticConfig.getFileFolder();
+	}
+	
+	protected StaticInfo getStaticInfo(ContentContext ctx) throws Exception {		
+		File file = new File(URLHelper.mergePath(ctx.getGlobalContext().getDataFolder(), getRelativeFileDirectory(ctx),  getCurrentFolder(), getCurrentFile() ));
+		if (!file.exists()) {
+			logger.warning("file not found : "+file+" (path="+ctx.getPath()+ " - site:"+ctx.getGlobalContext().getContextKey()+")");
+			return null;
+		} else {
+			return StaticInfo.getInstance(ctx, file);
+		}
 	}
 
 	@Override

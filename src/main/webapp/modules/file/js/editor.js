@@ -118,21 +118,23 @@ function resetCorner() {
 		return;
 	}
 	rect = jQuery('.jeditor .crop-zone');
-	wrapper = rect.parent();
-	dec = jQuery('.jeditor .corner.topleft').outerHeight()/2
-	jQuery('.jeditor .corner.topleft').css('top', rect.offset().top-wrapper.offset().top-dec);
-	jQuery('.jeditor .corner.topleft').css('left', rect.offset().left-wrapper.offset().left-dec);
-	jQuery('.jeditor .corner.bottomleft').css('top', rect.offset().top+rect.outerHeight()-wrapper.offset().top-dec);
-	jQuery('.jeditor .corner.bottomleft').css('left', rect.offset().left-wrapper.offset().left-dec);
-	jQuery('.jeditor .corner.topright').css('top', rect.offset().top-wrapper.offset().top-dec);
-	jQuery('.jeditor .corner.topright').css('left', rect.offset().left+rect.outerWidth()-wrapper.offset().left-dec);
-	jQuery('.jeditor .corner.bottomright').css('top', rect.offset().top+rect.outerHeight()-wrapper.offset().top-dec);
-	jQuery('.jeditor .corner.bottomright').css('left', rect.offset().left+rect.outerWidth()-wrapper.offset().left-dec);
-	jQuery('.jeditor .corner').show();	
-	jQuery('.jeditor [name=crop-left]').val(absoluteWidth(rect.offset().left-wrapper.offset().left));
-	jQuery('[name=crop-top]').val(absoluteHeight(rect.offset().top-wrapper.offset().top));
-	jQuery('[name=crop-width]').val(absoluteWidth(rect.outerWidth()));
-	jQuery('[name=crop-height]').val(absoluteHeight(rect.outerHeight()));
+	if (rect.length > 0) {
+		wrapper = rect.parent();
+		dec = jQuery('.jeditor .corner.topleft').outerHeight()/2
+		jQuery('.jeditor .corner.topleft').css('top', rect.offset().top-wrapper.offset().top-dec);
+		jQuery('.jeditor .corner.topleft').css('left', rect.offset().left-wrapper.offset().left-dec);
+		jQuery('.jeditor .corner.bottomleft').css('top', rect.offset().top+rect.outerHeight()-wrapper.offset().top-dec);
+		jQuery('.jeditor .corner.bottomleft').css('left', rect.offset().left-wrapper.offset().left-dec);
+		jQuery('.jeditor .corner.topright').css('top', rect.offset().top-wrapper.offset().top-dec);
+		jQuery('.jeditor .corner.topright').css('left', rect.offset().left+rect.outerWidth()-wrapper.offset().left-dec);
+		jQuery('.jeditor .corner.bottomright').css('top', rect.offset().top+rect.outerHeight()-wrapper.offset().top-dec);
+		jQuery('.jeditor .corner.bottomright').css('left', rect.offset().left+rect.outerWidth()-wrapper.offset().left-dec);
+		jQuery('.jeditor .corner').show();	
+		jQuery('.jeditor [name=crop-left]').val(absoluteWidth(rect.offset().left-wrapper.offset().left));
+		jQuery('[name=crop-top]').val(absoluteHeight(rect.offset().top-wrapper.offset().top));
+		jQuery('[name=crop-width]').val(absoluteWidth(rect.outerWidth()));
+		jQuery('[name=crop-height]').val(absoluteHeight(rect.outerHeight()));
+	}
 }
 
 function editor() {	

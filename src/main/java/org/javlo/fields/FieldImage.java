@@ -1,13 +1,17 @@
 package org.javlo.fields;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
+import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.helper.XHTMLHelper;
+import org.javlo.module.file.FileBean;
 import org.javlo.ztatic.StaticInfo;
 
 public class FieldImage extends FieldFile {
@@ -157,6 +161,58 @@ public class FieldImage extends FieldFile {
 	protected FieldBean newFieldBean(ContentContext ctx) {
 		return new ImageBean(ctx);
 	}
+	
+	protected String getPreviewZoneId() {
+		return "picture-zone-" + getId();
+	}
+	
+	protected boolean isFromShared(ContentContext ctx, String filename) {
+		StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
+		return filename.startsWith(staticConfig.getShareDataFolderKey());
+	}
+	
+	@Override
+	protected String getRelativeFileDirectory(ContentContext ctx) {
+		StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
+		return staticConfig.getImageFolder();
+	}
+	
+	@Override
+	protected String getPreviewCode(ContentContext ctx, boolean title) throws Exception {
+		
+		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+		PrintStream out = new PrintStream(outStream);
+		
+		out.println("<div class=\"focus-zone\">");
+		out.println("<div id=\"" + getPreviewZoneId() + "\" class=\"list-container\">");
+		
+		String relativePath = URLHelper.mergePath(getFileTypeFolder(), getCurrentFolder());		
+		String fileURL = URLHelper.mergePath(relativePath, getCurrentFile());
+		URLHelper.createTransformURL(ctx, '/' + fileURL, "icon");
+
+		String url;
+		FileBean file = new FileBean(ctx, getStaticInfo(ctx));
+		if (getCurrentFile().trim().length() > 0 && file != null) {
+			url = URLHelper.createTransformURL(ctx, '/' + fileURL, "list-sm");
+			url = URLHelper.addParam(url, "hash", file.getVersionHash());
+			if (isFromShared(ctx, fileURL)) {
+				out.println("<img src=\"" + url + "\" />&nbsp;");
+			} else if (!isFromShared(ctx, fileURL)) {				
+				out.println("<div class=\"focus-image-wrapper\"><img src=\"" + url + "\" />");
+				out.println("<div class=\"focus-point\">x</div>");
+				out.println("<input class=\"posx\" type=\"hidden\" name=\"posx-" + file.getId() + "\" value=\"" + file.getFocusZoneX() + "\" />");
+				out.println("<input class=\"posy\" type=\"hidden\" name=\"posy-" + file.getId() + "\" value=\"" + file.getFocusZoneY() + "\" />");
+				out.println("<input class=\"path\" type=\"hidden\" name=\"image_path-" + file.getId() + "\" value=\"" + URLHelper.mergePath(getRelativeFileDirectory(ctx), getCurrentFolder()) + "\" /></div>&nbsp;");
+				out.println("<script type=\"text/javascript\">initFocusPoint();</script>");
+			}
+		} 
+		out.println("</div></div>");
+		
+	
+	out.close();
+	return new String(outStream.toByteArray());
+	}
+
 	
 	@Override
 	public String getType() {

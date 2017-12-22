@@ -21,6 +21,7 @@ import org.javlo.helper.URLHelper;
 import org.javlo.user.AdminUserSecurity;
 import org.javlo.ztatic.StaticInfo;
 import org.javlo.ztatic.StaticInfo.Position;
+import org.owasp.encoder.Encode;
 
 public class FileBean implements ILanguage {
 
@@ -219,9 +220,8 @@ public class FileBean implements ILanguage {
 		return staticInfo.getCopyright(ctx);
 	}
 
-
 	public String getId() {
-		return getName().replace('.', '_');
+		return Encode.forHtmlAttribute(getName().replace('.', '_'));
 	}
 
 	public int getFocusZoneX() {
@@ -342,6 +342,10 @@ public class FileBean implements ILanguage {
 	@Override
 	public String getSortLanguage() {		
 		return getBeanLanguage();
+	}
+	
+	public String getVersionHash() {
+		return staticInfo.getVersionHash(ctx);
 	}
 
 }

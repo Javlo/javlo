@@ -25,7 +25,7 @@
 </div>
 </c:if>
 
-<c:if test="${not empty param[BACK_PARAM_NAME]}"><a class="action-button back" href="${param[BACK_PARAM_NAME]}&path=${param.path}"><span>${i18n.edit['action.back']}</span></a></c:if>
+<c:if test="${not empty param[BACK_PARAM_NAME]}"><a class="action-button back" href="${param[BACK_PARAM_NAME]}&path=${param.path}&backreturn=true"><span>${i18n.edit['action.back']}</span></a></c:if>
 <c:if test="${empty param.templateid && empty param.select}"><a class="action-button save" href="#save" onclick="jQuery('#form-meta').submit(); return false;"><span>${i18n.edit['action.update']}</span></a></c:if>
 <c:if test="${not empty globalContext.DMZServerInter}">
 <c:url var="synchroURL" value="${info.currentURL}">
@@ -47,7 +47,7 @@
 <form id="form-sorted" action="${info.currentURL}" method="get" class="js-submit">
 <input type="hidden" name="webaction" value="file.order" />
 <c:if test="${not empty param[BACK_PARAM_NAME]}"><input type="hidden" name="${BACK_PARAM_NAME}" value="${param[BACK_PARAM_NAME]}" /></c:if>
-<c:if test="${not empty param['select']}"><input type="hidden" name="select" value="true" /></c:if>
+<c:if test="${not empty param['select']}"><input type="hidden" name="select" value="${param['select']}" /></c:if>
 <select class="action-field" name="order">
 	<option value="1"${sort == '1'?' selected="selected"':''}>${i18n.edit['action.sort.date']}</option>
 	<option value="2"${sort == '2'?' selected="selected"':''}>${i18n.edit['action.sort.name']}</option>

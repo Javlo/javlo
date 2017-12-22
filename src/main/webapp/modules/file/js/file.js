@@ -1,4 +1,7 @@
 function openEditor(textarea) {
+	
+	console.log(">>>> open editor");
+	
 	var container = jQuery(textarea).parent().parent();
 	
 	var title = container.find(".ui-dialog-titlebar").text();
@@ -20,10 +23,12 @@ function openEditor(textarea) {
 	ta.after('<pre id="ace-text-editor">'+escapeHTML(value)+'</pre>');
 	
 	var titleBar = jQuery(".ui-dialog-titlebar").text();
+	
+	//ta.height(box.height()-250);
 	container.width(box.width()-200);
-	ta.height(box.height()-250);
-	container.css("left", box.offset().left-100 );
-	container.css("top", box.offset().top-150 );
+	//container.height(box.height()-200);
+	container.css("left", box.offset().left-100 );	
+	container.css("top", box.offset().top-150 );	
 	var editor = ace.edit("ace-text-editor");
 	editor.setTheme("ace/theme/github");
 	if (titleBar.indexOf(".html")>0) {
@@ -48,10 +53,8 @@ function openEditor(textarea) {
 	editor.getSession().on('change', function(e) {
 		jQuery("#ace-text-editor").val(editor.getValue())
 	});	
-	
-	jQuery("#ace-text-editor").height(box.height()/2);
+	jQuery("#ace-text-editor").height(box.height()+80);
 	jQuery("#ace-text-editor").val(editor.getValue());
-	
 }
 
 function closeEditor(textarea) {

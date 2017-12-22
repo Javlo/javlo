@@ -54,7 +54,7 @@
 </c:if>
 <c:if test="${not empty currentModule.breadcrumbList}">
 	<c:forEach var="link" items="${currentModule.breadcrumbList}" varStatus="status">	
-		<c:if test="${not empty link.url}">	
+		<c:if test="${not empty link.url && !link.readonly}">	
 			<c:url var="url" value="${link.url}" context="/">
 				<c:if test="${not empty param[BACK_PARAM_NAME]}">
 					<c:param name="${BACK_PARAM_NAME}" value="${param[BACK_PARAM_NAME]}" />
@@ -64,13 +64,12 @@
 				</c:if>	
 			</c:url>
 		<a ${link.selected?'class="selected"':''} href="${url}" title="${link.title}">
-		</c:if>
-		${link.legend}
-		<c:if test="${not empty link.url}">
+		</c:if><span class="link">${link.legend}</span>
+		<c:if test="${not empty link.url  && !link.readonly}">
 			</a>
 		</c:if>
-		<c:if test="${fn:length(link.children) > 1 || (status.last && fn:length(link.children) > 0)}">
-			<div class="children">
+		<c:if test="${(fn:length(link.children) > 1 || (status.last && fn:length(link.children) > 0))}">
+			<div class="children">			
 			<div class="container">
 				<ul>
 				<c:forEach var="child" items="${link.children}">
@@ -82,10 +81,14 @@
 							<c:param name="select" value="${param['select']}" />
 						</c:if>	
 					</c:url>
-					<li><c:if test="${not empty child.url}"><a href="${url}" title="${child.title}"></c:if>${child.legend}<c:if test="${not empty child.url}"></a></c:if></li>
+					<c:if test="${!link.readonly}">
+						<li><c:if test="${not empty child.url}"><a href="${url}" title="${child.title}"></c:if>${child.legend}<c:if test="${not empty child.url}"></a></c:if></li>
+					</c:if><c:if test="${link.readonly}">
+					<li><span class="link">${child.legend}</span></li>
+					</c:if>
 				</c:forEach>
 				</ul>
-			</div>
+			</div>			
 			</div>
 		</c:if>				
 	</c:forEach>		

@@ -248,4 +248,3 @@ function filterPage(url, filter, cssSelector) {
 		jQuery(cssSelector).html(html);
 	});
 }
-w

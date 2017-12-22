@@ -1,4 +1,4 @@
-jQuery(document).ready(function() {	
+jQuery(window).load(function() {	
 
 	var value = jQuery("#text-editor").val();
 	
@@ -9,7 +9,7 @@ jQuery(document).ready(function() {
 	}
 	if (jQuery("#ace-text-editor").length > 0) {
 		fullHeight(jQuery("#ace-text-editor"));
-		var editor = ace.edit("ace-text-editor");
+		var editor = ace.edit("ace-text-editor");		
 		editor.setTheme("ace/theme/github");
 		if (ext == "css") {
 			editor.getSession().setMode("ace/mode/css");
@@ -19,7 +19,8 @@ jQuery(document).ready(function() {
 			editor.getSession().setMode("ace/mode/jsp");
 		}
 		editor.getSession().on('change', function(e) {
-			var editor = ace.edit("ace-text-editor");		
+			var editor = ace.edit("ace-text-editor");
+			editor.setOptions({maxLines: 40});
 			jQuery("#text-editor").val(editor.getValue());
 		});
 	}
@@ -28,11 +29,13 @@ jQuery(document).ready(function() {
 
 function fullHeight(item) {	
 	jQuery(item).each(function() {
+		item.hide();		
 		var footer = jQuery('#footer');
 		if (footer.length > 0) {
-			var height = footer.offset().top -  jQuery(this).offset().top - 95;		
+			var height = footer.offset().top -  jQuery(this).offset().top;		
 			jQuery(this).height(height);
 		}
+		item.show();
 	});	
 
 }

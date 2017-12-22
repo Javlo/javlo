@@ -963,10 +963,24 @@ h2.prize {
 	-moz-box-shadow: 1px 1px 0 #f3f3f3;
 }
 
-.breadcrumbs a {
-	display: inline-block;
-	color: #069;
-	padding: 5px 20px 5px 0;
+.breadcrumbs {
+	a {
+		display: inline-block;
+		color: #069;
+		padding: 5px 20px 5px 0;
+		background: url(../images/separator2.png) no-repeat right center;
+		margin-right: 10px;
+		.link {
+			padding: 0;
+			color: #069;
+		}
+		
+	}
+	.link {
+		margin-right: 10px;
+		padding: 5px 20px 5px 0;
+		color: #ccc;
+	}
 }
 
 .breadcrumbs a {
@@ -992,7 +1006,7 @@ h2.prize {
 	background: url('../images/arrow.png') no-repeat 1px -31px #F7F7F7;
 }
 
-.breadcrumbs .children .container a {
+.breadcrumbs .children .container a, .breadcrumbs .children .container .link {
 	margin: 0;
 	background: none;
 	display: block;

@@ -4,34 +4,35 @@ var mouseY = 0;
 initFocusPoint = function() {
 	/** * focus point ** */
 	jQuery(".focus-point").each(
-			function() {
-				var point = jQuery(this);				
-				point.parent().find("img").click(function() {				
-					var img = jQuery(this);					
-					var posx = Math.round(mouseX-img.offset().left-point.outerWidth()/2);
-					var posy = Math.round(mouseY-img.offset().top-point.outerHeight()/2);
-					point.css("position", "absolute");
-					point.css("display", "block");
-					point.css("left", posx);
-					point.css("top", posy);
-					sendFocus(point);
-					return false;
-				});
-				point.css("display", "none");		
-				var image = point.parent().find("img");
-				image.mouseenter(function() {					
-					if (!(this._init == 'done')) {
-						this._init = "done";
-						focusPosition(point);
-					}
-				});				
-				point.draggable({
-					containment : image
-				});
-				point.bind("dragstop", function(event, ui) {
-					sendFocus(point);
-				});
+		function() {
+			var point = jQuery(this);				
+			point.parent().find("img").click(function() {				
+				var img = jQuery(this);					
+				var posx = Math.round(mouseX-img.offset().left-point.outerWidth()/2);
+				var posy = Math.round(mouseY-img.offset().top-point.outerHeight()/2);
+				point.css("position", "absolute");
+				point.css("display", "block");
+				point.css("left", posx);
+				point.css("top", posy);
+				sendFocus(point);
+				return false;
 			});
+			point.css("display", "none");		
+			var image = point.parent().find("img");
+			image.mouseenter(function() {					
+				if (!(this._init == 'done')) {
+					this._init = "done";
+					focusPosition(point);
+				}
+			});				
+			point.draggable({
+				containment : image
+			});
+			point.bind("dragstop", function(event, ui) {
+				sendFocus(point);
+			});
+		}
+	);
 }
 
 focusPosition = function(point) {	
