@@ -94,6 +94,11 @@ public class JavloELFinder extends ELFinder {
 	protected ELFile hashToFile(String hash) {
 		return hashToFile.get(hash);
 	}
+	
+	@Override
+	protected void resetHash(String hash) {
+		hashToFile.remove(hash);		
+	}
 
 	@Override
 	protected String fileToHash(ELFile file) {

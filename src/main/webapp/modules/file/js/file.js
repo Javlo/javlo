@@ -1,7 +1,5 @@
 function openEditor(textarea) {
 	
-	console.log(">>>> open editor");
-	
 	var container = jQuery(textarea).parent().parent();
 	
 	var title = container.find(".ui-dialog-titlebar").text();

@@ -21,7 +21,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.fileupload.FileItem;
 import org.javlo.context.ContentContext;
-import org.javlo.helper.NetHelper;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
@@ -179,7 +178,7 @@ public abstract class ELFinder {
 	protected void transformFile(String fileHash, String mode, int width, int height, int x, int y, int degree, Map<String, Object> apiResponse) throws Exception {
 		ELFile file = hashToFile(fileHash);
 		if (file.getFile().exists()) {
-			IIOMetadata metadata = ResourceHelper.getImageMetadata(file.getFile());
+			IIOMetadata metadata = ResourceHelper.getImageMetadata(file.getFile());			
 			if ("resize".equals(mode)) {
 				BufferedImage img = ImageEngine.loadImage(file.getFile());
 				img = ImageEngine.resizeImage(img, width, height);
@@ -198,7 +197,7 @@ public abstract class ELFinder {
 				ImageEngine.storeImage(img, file.getFile());
 				ResourceHelper.writeImageMetadata(metadata, file.getFile());
 				apiResponse.put("changed", printFiles(Arrays.asList(new ELFile[] { file })));
-			}
+			}			
 		}
 	}
 
@@ -468,6 +467,8 @@ public abstract class ELFinder {
 	protected abstract ELFile hashToFile(String hash);
 
 	protected abstract String fileToHash(ELFile file);
+	
+	protected abstract void resetHash(String hash);
 
 	protected static List<ELFile> filterDirectories(List<ELFile> children) {
 		List<ELFile> out = new ArrayList<ELFile>();

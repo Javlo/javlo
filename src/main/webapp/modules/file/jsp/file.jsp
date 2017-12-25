@@ -36,7 +36,7 @@ jQuery(document).ready(function() {
 				// current directory file menu
 				files  : [
 					'getfile', '|','open','|', 'copy', 'cut', 'paste', 'duplicate', '|',
-					'rm', '|', 'edit', 'rename', 'resize', '|', 'archive', 'extract', '|', 'info'
+					'rm', '|', 'edit', 'rename', '|', 'archive', 'extract', '|', 'info'
 				]
 			},
 		toolbar : [
@@ -63,7 +63,7 @@ jQuery(document).ready(function() {
 	   		// current directory file menu
 	   		files  : [
 	   			'getfile', '|','open', '|', 'copy', 'cut', 'paste', 'duplicate', '|',
-	   			'rm', '|', 'edit', 'rename', 'resize', '|', 'archive', 'extract', '|', 'info'
+	   			'rm', '|', 'edit', 'rename', '|', 'archive', 'extract', '|', 'info'
 	   		]
 	   	},
 		commandsOptions : {
