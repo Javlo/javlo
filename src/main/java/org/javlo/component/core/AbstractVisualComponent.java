@@ -65,6 +65,7 @@ import org.javlo.helper.XMLManipulationHelper;
 import org.javlo.helper.XMLManipulationHelper.BadXMLException;
 import org.javlo.helper.Comparator.StringSizeComparator;
 import org.javlo.i18n.I18nAccess;
+import org.javlo.image.ExtendedColor;
 import org.javlo.message.GenericMessage;
 import org.javlo.module.core.Module;
 import org.javlo.module.core.ModulesContext;
@@ -671,7 +672,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			out.println("<div class=\"line\">");
 			String bgColInputName = "bgcol-" + getId();
 			out.println("<label for=\"" + bgColInputName + "\">" + i18nAccess.getText("component.background-color") + "</label>");
-			List<Color> colors = ctx.getCurrentTemplate().getColorList();
+			List<ExtendedColor> colors = ctx.getCurrentTemplate().getColorList();
 			if (colors.size() > 0) {
 				out.println(XHTMLHelper.renderColorChooser(bgColInputName, "", colors, StringHelper.neverNull(getBackgroundColor())));
 			} else {
@@ -684,7 +685,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			out.println("<div class=\"line\">");
 			String textColInputName = "textcol-" + getId();
 			out.println("<label for=\"" + textColInputName + "\">" + i18nAccess.getText("component.text-color") + "</label>");
-			List<Color> colors = ctx.getCurrentTemplate().getColorList();
+			List<ExtendedColor> colors = ctx.getCurrentTemplate().getColorList();
 			if (colors.size() > 0) {
 				out.println(XHTMLHelper.renderColorChooser(textColInputName, "", colors, StringHelper.neverNull(getTextColor())));
 			} else {

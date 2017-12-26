@@ -12,8 +12,8 @@ public class ExtendedColor extends Color {
 		super(rgb);
 	}
 	
-	public ExtendedColor(Color color) {
-		super(color.getRGB());
+	public ExtendedColor(Color c) {		
+		this((float)c.getRed()/255, (float)c.getGreen()/255, (float)c.getBlue()/255, (float)c.getAlpha()/255);
 	}
 
 	public ExtendedColor(int rgba, boolean hasalpha) {
@@ -56,6 +56,10 @@ public class ExtendedColor extends Color {
 		return String.format("#%02x%02x%02x", getRed(), getGreen(), getBlue());
 	}
 	
+	public String getAlphaHTMLCode() {
+		return "rgba("+getRed()+','+getGreen()+','+getBlue()+','+String.format("%s",getAlpha()/255)+')';
+	}
+	
 	public boolean isDark() {
 		return ImageEngine.getColorDistance(this, Color.BLACK)<0.5;
 	}
@@ -68,6 +72,19 @@ public class ExtendedColor extends Color {
 		}
 	}
 	
+	public static ExtendedColor decode(String str) {
+		float alpha = 1;
+		if (str.length() == "#000000a00".length()) {			
+			alpha = (float)Integer.parseInt(str.substring("#000000".length()+1, "#000000a00".length()), 16)/255;
+			str = str.substring(0, "#000000".length());
+		}
+		Color c = Color.decode(str);
+		if (alpha < 1) {		
+			c = new Color((float)c.getRed()/255, (float)c.getGreen()/255, (float)c.getBlue()/255, alpha);
+		}
+		return new ExtendedColor(c);
+	}
+	
 	public boolean isFilled() {
 		return true;
 	}
@@ -75,6 +92,12 @@ public class ExtendedColor extends Color {
 	@Override
 	public String toString() {
 		return getHTMLCode();
+	}
+	
+	public static void main(String[] args) {
+		ExtendedColor c = ExtendedColor.decode("#123456aFF");
+		System.out.println(">>>>>>>>> ExtendedColor.main : c     = "+c); //TODO: remove debug trace
+		System.out.println(">>>>>>>>> ExtendedColor.main : alpha = "+c.getAlpha()); //TODO: remove debug trace
 	}
 
 }

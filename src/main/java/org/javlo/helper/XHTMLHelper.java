@@ -58,6 +58,7 @@ import org.javlo.helper.XMLManipulationHelper.TagDescription;
 import org.javlo.helper.Comparator.DoubleArrayComparator;
 import org.javlo.helper.Comparator.MapEntryComparator;
 import org.javlo.i18n.I18nAccess;
+import org.javlo.image.ExtendedColor;
 import org.javlo.message.GenericMessage;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
@@ -2737,7 +2738,7 @@ public class XHTMLHelper {
 		return html;
 	}
 
-	public static String renderColorChooser(String name, String cssValue, List<Color> colors, String value) {
+	public static String renderColorChooser(String name, String cssValue, List<ExtendedColor> colors, String value) {
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(outStream);
 		out.println("<div class=\"color-chooser " + StringHelper.neverNull(cssValue) + "\">");

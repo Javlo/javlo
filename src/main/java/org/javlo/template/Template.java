@@ -56,6 +56,7 @@ import org.javlo.helper.XHTMLHelper;
 import org.javlo.helper.XMLManipulationHelper;
 import org.javlo.helper.XMLManipulationHelper.BadXMLException;
 import org.javlo.i18n.I18nAccess;
+import org.javlo.image.ExtendedColor;
 import org.javlo.mailing.Mail;
 import org.javlo.message.GenericMessage;
 import org.javlo.navigation.DefaultTemplate;
@@ -65,6 +66,7 @@ import org.javlo.service.IListItem;
 import org.javlo.service.ListService;
 import org.javlo.service.exception.ServiceException;
 import org.javlo.utils.ConfigurationProperties;
+import org.javlo.utils.ListAsMap;
 import org.javlo.utils.ReadOnlyPropertiesConfigurationMap;
 import org.javlo.utils.StructuredConfigurationProperties;
 
@@ -3152,21 +3154,29 @@ public class Template implements Comparable<Template> {
 		return configMap;
 	}
 	
-	public List<Color> getColorList() {
+	public boolean isColorPalette() {
+		return getColorList() != null && getColorList().size()>0;
+	}
+	
+	public List<ExtendedColor> getColorList() {
 		String rawList = properties.getProperty("charter.colors");
 		if (rawList == null) {
 			return getParent().getColorList();
 		} else {
-			List<Color> colors = new LinkedList<Color>();
+			List<ExtendedColor> colors = new LinkedList<ExtendedColor>();
 			for (String col : StringHelper.stringToCollection(rawList, ",")) {
 				try {
-					colors.add(Color.decode(col));
+					colors.add(ExtendedColor.decode(col));
 				} catch (Exception e) {				
 					e.printStackTrace();
 				}
 			}
 			return colors;
 		}
+	}
+	
+	public Map<Integer, ExtendedColor> getColorsMap() {		
+		return new ListAsMap<ExtendedColor>(getColorList());
 	}
 	
 	public List<String> getFonts() {

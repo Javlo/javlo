@@ -22,6 +22,7 @@ import org.javlo.helper.URLHelper;
 import org.javlo.helper.XHTMLHelper;
 import org.javlo.helper.XMLManipulationHelper.BadXMLException;
 import org.javlo.i18n.I18nAccess;
+import org.javlo.image.ExtendedColor;
 import org.javlo.rendering.Device;
 import org.javlo.template.Template;
 import org.javlo.utils.ConfigurationProperties;
@@ -397,7 +398,7 @@ public class DefaultTemplate extends Template {
 		return false;
 	}
 	
-	public List<Color> getColorList() {
+	public List<ExtendedColor> getColorList() {
 		return Collections.emptyList();
 	}
 	
