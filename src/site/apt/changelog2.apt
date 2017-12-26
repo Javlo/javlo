@@ -907,3 +907,5 @@ change log
  * 3/ don't remove &nbsp; in autolink method / row component / style-default can be set in config file / linkon link to # only if direct child of page association / preview.js : no scroll on drag start / update ace editor / update elfinder / update image field in dynamiccomponent
  
 * 2.1.0.8 [22/12/2017]
+
+ * 1/ null pointer correction if no image on page
