@@ -118,7 +118,8 @@ public class SmartPageBean {
 		realContentCtx.setLanguage(realContentCtx.getRequestContentLanguage());
 	}
 
-	public static SmartPageBean getInstance(ContentContext ctx, ContentContext lgCtx, MenuElement page, PageReferenceComponent comp) {
+	public static SmartPageBean getInstance(ContentContext ctx, ContentContext lgCtx, MenuElement page,
+			PageReferenceComponent comp) {
 		return new SmartPageBean(ctx, lgCtx, page, comp);
 	}
 
@@ -187,21 +188,25 @@ public class SmartPageBean {
 	public String getImageDescription() {
 		try {
 			IImageTitle image = page.getImage(lgCtx);
-			return XHTMLHelper.stringToAttribute(image.getImageDescription(lgCtx));
+			if (image != null) {
+				return XHTMLHelper.stringToAttribute(image.getImageDescription(lgCtx));
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			return null;
 		}
+		return null;
 	}
 
 	public String getImagePath() {
 		try {
 			IImageTitle image = page.getImage(lgCtx);
-			return image.getResourceURL(lgCtx);
+			if (image != null) {
+				return image.getResourceURL(lgCtx);
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			return null;
 		}
+		return null;
 	}
 
 	protected String getImageFilter() {
@@ -214,8 +219,10 @@ public class SmartPageBean {
 			Collection<Image> imagesBean = new LinkedList<SmartPageBean.Image>();
 			for (IImageTitle imageItem : images) {
 				String imagePath = imageItem.getResourceURL(lgCtx);
-				String imageURL = URLHelper.createTransformURL(lgCtx, page, imageItem.getResourceURL(lgCtx), getImageFilter());
-				String viewImageURL = URLHelper.createTransformURL(lgCtx, page, imageItem.getResourceURL(lgCtx), "thumb-view");
+				String imageURL = URLHelper.createTransformURL(lgCtx, page, imageItem.getResourceURL(lgCtx),
+						getImageFilter());
+				String viewImageURL = URLHelper.createTransformURL(lgCtx, page, imageItem.getResourceURL(lgCtx),
+						"thumb-view");
 				String imageDescription = XHTMLHelper.stringToAttribute(imageItem.getImageDescription(lgCtx));
 				String cssClass = "";
 				String linkURL = imageItem.getImageLinkURL(lgCtx);
@@ -227,7 +234,8 @@ public class SmartPageBean {
 						cssClass = "link " + StringHelper.getPathType(linkURL, "");
 					}
 				}
-				SmartPageBean.Image imageBean = new SmartPageBean.Image(imageURL, viewImageURL, linkURL, cssClass, imageDescription, imagePath);
+				SmartPageBean.Image imageBean = new SmartPageBean.Image(imageURL, viewImageURL, linkURL, cssClass,
+						imageDescription, imagePath);
 				imagesBean.add(imageBean);
 			}
 			return imagesBean;
@@ -244,11 +252,13 @@ public class SmartPageBean {
 	public String getImageURL() {
 		try {
 			IImageTitle image = page.getImage(lgCtx);
-			return URLHelper.createTransformURL(lgCtx, page, image.getResourceURL(lgCtx), getImageFilter());
+			if (image != null) {
+				return URLHelper.createTransformURL(lgCtx, page, image.getResourceURL(lgCtx), getImageFilter());
+			}
 		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
+			e.printStackTrace();			
 		}
+		return null;
 	}
 
 	public String getLanguage() {
@@ -272,15 +282,15 @@ public class SmartPageBean {
 			if (page.isDirectChildrenOfAssociation()) {
 				try {
 					if (getParent().getId().equals(ctx.getCurrentPage().getId())) {
-						return "#"+page.getHtmlSectionId(ctx);
+						return "#" + page.getHtmlSectionId(ctx);
 					} else {
-						return getParent().getUrl()+"#"+page.getHtmlSectionId(ctx);
+						return getParent().getUrl() + "#" + page.getHtmlSectionId(ctx);
 					}
 				} catch (Exception e) {
 					e.printStackTrace();
-					return "error:"+e.getMessage();
+					return "error:" + e.getMessage();
 				}
-				
+
 			} else {
 				return getUrl();
 			}
@@ -306,7 +316,8 @@ public class SmartPageBean {
 				localLGCtx.setContentLanguage(lg);
 				if (page.isRealContent(localLGCtx)) {
 					Locale locale = new Locale(lg);
-					Link link = new Link(URLHelper.createURL(localLGCtx, page.getPath()), lg, lg + " - " + locale.getDisplayLanguage(locale));
+					Link link = new Link(URLHelper.createURL(localLGCtx, page.getPath()), lg,
+							lg + " - " + locale.getDisplayLanguage(locale));
 					links.add(link);
 				}
 			}
@@ -368,13 +379,15 @@ public class SmartPageBean {
 					dates.add(new DateBean(ctx, startDate.getTime()));
 					final int MAX_DAYS_OF_EVENTS = 400;
 					int i = 0;
-					while (TimeHelper.isBeforeForDay(startDate.getTime(), endDate.getTime()) && i < MAX_DAYS_OF_EVENTS) {
+					while (TimeHelper.isBeforeForDay(startDate.getTime(), endDate.getTime())
+							&& i < MAX_DAYS_OF_EVENTS) {
 						i++;
 						startDate.add(Calendar.DAY_OF_YEAR, 1);
 						dates.add(new DateBean(ctx, startDate.getTime()));
 					}
 					if (i == MAX_DAYS_OF_EVENTS) {
-						logger.warning("to much days in event (max:" + MAX_DAYS_OF_EVENTS + ") : " + page.getPath() + " [" + ctx.getGlobalContext().getContextKey() + ']');
+						logger.warning("to much days in event (max:" + MAX_DAYS_OF_EVENTS + ") : " + page.getPath()
+								+ " [" + ctx.getGlobalContext().getContextKey() + ']');
 					}
 				}
 			} else {
@@ -396,7 +409,8 @@ public class SmartPageBean {
 					i++;
 				}
 				if (i == MAX_DAYS_OF_EVENTS) {
-					logger.warning("to much days in page (max:" + MAX_DAYS_OF_EVENTS + ") : " + page.getPath() + " [" + ctx.getGlobalContext().getContextKey() + ']');
+					logger.warning("to much days in page (max:" + MAX_DAYS_OF_EVENTS + ") : " + page.getPath() + " ["
+							+ ctx.getGlobalContext().getContextKey() + ']');
 				}
 			}
 			return dates;
@@ -498,11 +512,14 @@ public class SmartPageBean {
 
 	public String getViewImageURL() {
 		try {
-			return URLHelper.createTransformURL(lgCtx, page, page.getImage(lgCtx).getResourceURL(lgCtx), "thumb-view");
+			IImageTitle imageTitle = page.getImage(lgCtx);
+			if (imageTitle != null) {
+				return URLHelper.createTransformURL(lgCtx, page, imageTitle.getResourceURL(lgCtx), "thumb-view");
+			}
 		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
+			e.printStackTrace();			
 		}
+		return null;
 	}
 
 	public boolean isRealContent() {
@@ -865,19 +882,19 @@ public class SmartPageBean {
 			return null;
 		}
 	}
-	
+
 	public int getPriority() {
 		return page.getPriority();
 	}
-	
+
 	public MenuElement getPage() {
 		return page;
 	}
-	
+
 	public String getHtmlId() {
 		return page.getHtmlId(ctx);
 	}
-	
+
 	public String getHtmlSectionId() {
 		return page.getHtmlSectionId(ctx);
 	}
