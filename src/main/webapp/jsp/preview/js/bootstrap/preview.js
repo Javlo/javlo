@@ -20,8 +20,7 @@ if (!String.prototype.startsWith) {
         var win = pjq(window);
         win.scroll(function () {
         	if (realScroll) {        		
-        		previewHeight = pjq(document).height();
-        		console.log(">>>>> previewHeight = "+previewHeight);
+        		previewHeight = pjq(document).height();        		
         		previewScrollPos = win.scrollTop();
         	}
             if (win.height() + win.scrollTop() == $(document).height()) {
