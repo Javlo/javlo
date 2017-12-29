@@ -763,7 +763,7 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle, IStat
 		} else {
 			MultimediaResource resource = null;
 			int i=0;
-			while (resources.get(i).getPath() == null && i<resources.size() && resource == null) {
+			while (i<resources.size() && (resource == null || resource.getPath() == null)) {
 				resource = resources.get(i);
 				i++;
 			}			
@@ -1192,7 +1192,7 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle, IStat
 
 	@Override
 	public boolean isImageValid(ContentContext ctx) {
-		try {
+		try {			
 			return getFirstResource(ctx) != null;
 		} catch (Exception e) {
 			return false;
