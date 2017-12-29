@@ -192,7 +192,7 @@ public class FieldImage extends FieldFile {
 
 		String url;
 		FileBean file = new FileBean(ctx, getStaticInfo(ctx));
-		if (getCurrentFile().trim().length() > 0 && file != null) {
+		if (getCurrentFile() != null && getCurrentFile().trim().length() > 0) {
 			url = URLHelper.createTransformURL(ctx, '/' + fileURL, "list-sm");
 			url = URLHelper.addParam(url, "hash", file.getVersionHash());
 			if (isFromShared(ctx, fileURL)) {

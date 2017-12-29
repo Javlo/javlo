@@ -548,7 +548,7 @@ public class StaticInfoContent {
 		if (getLinkedPage() != null) {
 			if (linkedDescription == null) {
 				try {
-					linkedDescription = getLinkedPage().getDescription(ctx);
+					linkedDescription = getLinkedPage().getDescriptionAsText(ctx);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}

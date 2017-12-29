@@ -619,7 +619,7 @@ public class StaticInfoFile {
 		if (getLinkedPage(ctx) != null) {
 			if (linkedDescription == null) {
 				try {
-					linkedDescription = getLinkedPage(ctx).getDescription(ctx);
+					linkedDescription = getLinkedPage(ctx).getDescriptionAsText(ctx);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}

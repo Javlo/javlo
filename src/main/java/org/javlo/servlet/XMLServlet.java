@@ -235,7 +235,7 @@ public class XMLServlet extends HttpServlet {
 										largeImageURL = URLHelper.createTransformURL(lgCtx, page, template, page.getImage(lgCtx).getResourceURL(lgCtx), "thumb-view");
 										imageDescription = page.getImage(lgCtx).getImageDescription(lgCtx);
 									}
-									out.write("<description>" + executeRSSCurrentRenderer(lgCtx, template, imageURL, largeImageURL, imageDescription, page.getDescription(lgCtx)) + "</description>");
+									out.write("<description>" + executeRSSCurrentRenderer(lgCtx, template, imageURL, largeImageURL, imageDescription, page.getDescriptionAsText(lgCtx)) + "</description>");
 									if (template != null && template.isPDFRenderer()) {
 										String pdfLink = URLHelper.createURL(lgCtx.getContextWithOtherFormat("pdf"), page.getPath());
 										out.write("<enclosure url=\"" + pdfLink + "\" type=\"application/pdf\" />");

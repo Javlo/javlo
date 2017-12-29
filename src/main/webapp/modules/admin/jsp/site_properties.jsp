@@ -548,15 +548,7 @@
                 <p>
                     <label>${i18n.edit['global.name']}:</label>
                     <span>${template.name}</span>
-                </p>
-                <p>
-                    <label>${i18n.edit['admin.file-source']}:</label>
-                    <span><a href="${template.htmlUrl}">${template.htmlFile}</a></span>
-                </p>
-                <p>
-                    <label>${i18n.edit['global.author']}:</label>
-                    <span>${template.authors}</span>
-                </p>
+                </p>                             
                 <p>
                     <label>${i18n.edit['global.date']}:</label>
                     <span>${template.creationDate}</span>
@@ -619,6 +611,13 @@
 <jsp:include page="template_data.jsp?name=link&value=${currentContext.templateData.link}&style=color" />
 <jsp:include page="template_data.jsp?name=special&value=${currentContext.templateData.special}&style=color" />
 <jsp:include page="template_data.jsp?name=font&value=${currentContext.templateData.font}&style=font" />
+<h2>Message</h2>
+<jsp:include page="template_data.jsp?name=messagePrimary&value=${currentContext.templateData.messagePrimary}&style=color" />
+<jsp:include page="template_data.jsp?name=messageSecondary&value=${currentContext.templateData.messageSecondary}&style=color" />
+<jsp:include page="template_data.jsp?name=messageSuccess&value=${currentContext.templateData.messageSuccess}&style=color" />
+<jsp:include page="template_data.jsp?name=messageDanger&value=${currentContext.templateData.messageDanger}&style=color" />
+<jsp:include page="template_data.jsp?name=messageWarning&value=${currentContext.templateData.messageWarning}&style=color" />
+<jsp:include page="template_data.jsp?name=messageInfo&value=${currentContext.templateData.messageInfo}&style=color" />
 </div><div class="col-sm-6">
 <div class="form-group">
 	<label for="logo">logo : </label>

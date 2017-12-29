@@ -95,6 +95,12 @@ public class Template implements Comparable<Template> {
 		private CssColor textMenu = null;
 		private CssColor border = null;
 		private CssColor link = null;
+		private CssColor messagePrimary = null;
+		private CssColor messageSecondary = null;
+		private CssColor messageSuccess = null;
+		private CssColor messageDanger = null;
+		private CssColor messageWarning = null;
+		private CssColor messageInfo = null;
 		private String toolsServer = null;
 		private String logo = null;
 		private String font = null;
@@ -157,6 +163,33 @@ public class Template implements Comparable<Template> {
 					i++;
 					if (data.length > i && data[i].length() > 0) {
 						setFont(data[i]);
+					}
+					/** message **/
+					if (data.length > 8) {
+						i++;
+						if (data.length > i && data[i].length() > 0) {
+							setMessagePrimary(Color.decode('#' + data[i]));
+						}
+						i++;
+						if (data.length > i && data[i].length() > 0) {
+							setMessageSecondary(Color.decode('#' + data[i]));
+						}
+						i++;
+						if (data.length > i && data[i].length() > 0) {
+							setMessageSuccess(Color.decode('#' + data[i]));
+						}
+						i++;
+						if (data.length > i && data[i].length() > 0) {
+							setMessageDanger(Color.decode('#' + data[i]));
+						}
+						i++;
+						if (data.length > i && data[i].length() > 0) {
+							setMessageWarning(Color.decode('#' + data[i]));
+						}
+						i++;
+						if (data.length > i && data[i].length() > 0) {
+							setMessageInfo(Color.decode('#' + data[i]));
+						}
 					}
 				}
 			} catch (NumberFormatException e) {
@@ -288,6 +321,20 @@ public class Template implements Comparable<Template> {
 			out.append(';');
 			out.append(StringHelper.colorToHexStringNotNull(getBackgroundActive()));
 			out.append(';');
+			
+			out.append(StringHelper.colorToHexStringNotNull(getMessagePrimary()));
+			out.append(';');
+			out.append(StringHelper.colorToHexStringNotNull(getMessageSecondary()));
+			out.append(';');
+			out.append(StringHelper.colorToHexStringNotNull(getMessageSuccess()));
+			out.append(';');
+			out.append(StringHelper.colorToHexStringNotNull(getMessageDanger()));
+			out.append(';');
+			out.append(StringHelper.colorToHexStringNotNull(getMessageWarning()));
+			out.append(';');
+			out.append(StringHelper.colorToHexStringNotNull(getMessageInfo()));
+			out.append(';');
+			
 			out.append(getFont());
 			return out.toString();
 		}
@@ -308,6 +355,12 @@ public class Template implements Comparable<Template> {
 			result = prime * result + ((title == null) ? 0 : title.hashCode());
 			result = prime * result + ((toolsServer == null) ? 0 : toolsServer.hashCode());
 			result = prime * result + ((font == null) ? 0 : font.hashCode());
+			result = prime * result + ((messagePrimary == null) ? 0 : messagePrimary.hashCode());
+			result = prime * result + ((messageSecondary == null) ? 0 : messageSecondary.hashCode());
+			result = prime * result + ((messageSuccess == null) ? 0 : messageSuccess.hashCode());
+			result = prime * result + ((messageDanger == null) ? 0 : messageDanger.hashCode());
+			result = prime * result + ((messageWarning == null) ? 0 : messageWarning.hashCode());
+			result = prime * result + ((messageInfo == null) ? 0 : messageInfo.hashCode());
 			return result;
 		}
 
@@ -318,6 +371,56 @@ public class Template implements Comparable<Template> {
 		public void setFont(String font) {
 			this.font = font;
 		}
+
+		public CssColor getMessagePrimary() {
+			return messagePrimary;
+		}
+
+		public void setMessagePrimary(Color messagePrimary) {
+			this.messagePrimary = CssColor.getInstance(messagePrimary);
+		}
+
+		public CssColor getMessageSecondary() {
+			return messageSecondary;
+		}
+
+		public void setMessageSecondary(Color messageSecondary) {
+			this.messageSecondary = CssColor.getInstance(messageSecondary);
+		}
+
+		public CssColor getMessageSuccess() {
+			return messageSuccess;
+		}
+
+		public void setMessageSuccess(Color messageSuccess) {
+			this.messageSuccess = CssColor.getInstance(messageSuccess);
+		}
+
+		public CssColor getMessageDanger() {
+			return messageDanger;
+		}
+
+		public void setMessageDanger(Color messageDanger) {
+			this.messageDanger = CssColor.getInstance(messageDanger);
+		}
+
+		public CssColor getMessageWarning() {
+			return messageWarning;
+		}
+
+		public void setMessageWarning(Color messageWarning) {
+			this.messageWarning = CssColor.getInstance(messageWarning);
+		}
+
+		public CssColor getMessageInfo() {
+			return messageInfo;
+		}
+
+		public void setMessageInfo(Color messageInfo) {
+			this.messageInfo = CssColor.getInstance(messageInfo);
+		}
+		
+		
 	}
 
 	public static final class TemplateBean implements IRemoteResource {
@@ -2235,6 +2338,38 @@ public class Template implements Comparable<Template> {
 		if (font != null && !font.equals("null")) {
 			templateData.setFont(font);
 		}
+		
+		/** messages **/
+		String messagePrimary = properties.getString("data.color.message.primary", null);
+		if (messagePrimary != null) {
+			Color color = Color.decode('#' + messagePrimary);
+			templateData.setMessagePrimary(color);
+		}
+		String messageSecondary = properties.getString("data.color.message.secondary", null);
+		if (messageSecondary != null) {
+			Color color = Color.decode('#' + messageSecondary);
+			templateData.setMessageSecondary(color);
+		}
+		String messageSuccess = properties.getString("data.color.message.success", null);
+		if (messageSuccess != null) {
+			Color color = Color.decode('#' + messageSuccess);
+			templateData.setMessageSuccess(color);
+		}
+		String messageWarning = properties.getString("data.color.message.warning", null);
+		if (messageWarning != null) {
+			Color color = Color.decode('#' + messageWarning);
+			templateData.setMessageWarning(color);
+		}
+		String messageDanger = properties.getString("data.color.message.danger", null);
+		if (messageDanger != null) {
+			Color color = Color.decode('#' + messageDanger);
+			templateData.setMessageDanger(color);
+		}
+		String messageInfo = properties.getString("data.color.message.info", null);
+		if (messageInfo != null) {
+			Color color = Color.decode('#' + messageInfo);
+			templateData.setMessageInfo(color);
+		}
 
 		String freeDataPrefix = "data.free.";
 		Iterator keys = properties.getKeys();
@@ -2295,9 +2430,27 @@ public class Template implements Comparable<Template> {
 		if (templateData.getToolsServer() != null) {
 			templateDataMap.put(templateData.getToolsServer(), templateDataUser.getToolsServer());
 		}
-
 		if (templateData.getFont() != null) {
 			templateDataMap.put(templateData.getFont(), templateDataUser.getFont());
+		}
+		/** messages **/
+		if (templateData.getMessagePrimary() != null) {
+			templateDataMap.put(StringHelper.colorToHexStringNotNull(templateData.getMessagePrimary()), StringHelper.colorToHexStringNotNull(templateDataUser.getMessagePrimary()));
+		}
+		if (templateData.getMessageSecondary() != null) {
+			templateDataMap.put(StringHelper.colorToHexStringNotNull(templateData.getMessageSecondary()), StringHelper.colorToHexStringNotNull(templateDataUser.getMessageSecondary()));
+		}
+		if (templateData.getMessageDanger() != null) {
+			templateDataMap.put(StringHelper.colorToHexStringNotNull(templateData.getMessageDanger()), StringHelper.colorToHexStringNotNull(templateDataUser.getMessageDanger()));
+		}
+		if (templateData.getMessageSuccess() != null) {
+			templateDataMap.put(StringHelper.colorToHexStringNotNull(templateData.getMessageSuccess()), StringHelper.colorToHexStringNotNull(templateDataUser.getMessageSuccess()));
+		}
+		if (templateData.getMessageInfo() != null) {
+			templateDataMap.put(StringHelper.colorToHexStringNotNull(templateData.getMessageInfo()), StringHelper.colorToHexStringNotNull(templateDataUser.getMessageInfo()));
+		}
+		if (templateData.getMessageWarning() != null) {
+			templateDataMap.put(StringHelper.colorToHexStringNotNull(templateData.getMessageWarning()), StringHelper.colorToHexStringNotNull(templateDataUser.getMessageWarning()));
 		}
 		return templateDataMap;
 	}

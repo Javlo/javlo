@@ -154,7 +154,7 @@ public class SmartPageBean {
 		try {
 			ContentContext newPageCtx = new ContentContext(ctx);
 			newPageCtx.setCurrentPageCached(page);
-			return XHTMLHelper.replaceJSTLData(newPageCtx, page.getDescription(lgCtx));
+			return XHTMLHelper.replaceJSTLData(newPageCtx, page.getDescriptionAsText(lgCtx));
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;

@@ -87,7 +87,7 @@ public class SiteMap extends AbstractVisualComponent {
 		} else {
 			out.print("</span>");
 		}
-		String description = menu.getDescription(ctx);
+		String description = menu.getDescriptionAsText(ctx);
 		if ((description != null) && (description.trim().length() > 0)) {
 			out.print("<span> : ");
 			out.print(description);

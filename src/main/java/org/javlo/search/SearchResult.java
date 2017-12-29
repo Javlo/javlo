@@ -406,7 +406,7 @@ public class SearchResult {
 						}
 					}
 					if (searchLevel != 0) {
-						addResult(ctx, page, inSearchText, page.getName(), page.getFullLabel(ctxWithContent), URLHelper.createURL(ctxWithContent, page.getPath()), page.getDescription(ctxWithContent), searchLevel, componentsRenderer);
+						addResult(ctx, page, inSearchText, page.getName(), page.getFullLabel(ctxWithContent), URLHelper.createURL(ctxWithContent, page.getPath()), page.getDescriptionAsText(ctxWithContent), searchLevel, componentsRenderer);
 					}
 				}
 			}
@@ -433,7 +433,7 @@ public class SearchResult {
 				ctxWithContent.setArea(null);
 				int searchLevel = page.getContentByType(ctxWithContent, componentType).size();
 				if (searchLevel > 0) {
-					addResult(ctx, page, null, page.getName(), page.getFullLabel(ctxWithContent), URLHelper.createURL(ctxWithContent, page.getPath()), page.getDescription(ctxWithContent), searchLevel, null);
+					addResult(ctx, page, null, page.getName(), page.getFullLabel(ctxWithContent), URLHelper.createURL(ctxWithContent, page.getPath()), page.getDescriptionAsText(ctxWithContent), searchLevel, null);
 				}
 			}
 		}

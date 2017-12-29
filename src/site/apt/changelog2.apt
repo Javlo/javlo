@@ -908,4 +908,6 @@ change log
  
 * 2.1.0.8 [22/12/2017]
 
- * 1/ null pointer correction if no image on page
+ * 1/ null pointer correction if no image on page / HtmlPart for description / add message color in template data
+ 
+ * 2/ 

@@ -585,6 +585,20 @@ public class MirrorComponent extends AbstractVisualComponent implements IFieldCo
 		}
 		return false;
 	}
+	
+	@Override
+	public String getPageDescription(ContentContext ctx) {
+		IContentVisualComponent comp;
+		try {
+			comp = getMirrorComponent(ctx);
+			if (comp != null) {
+				return comp.getPageDescription(ctx);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
 
 	@Override
 	public int getLabelLevel(ContentContext ctx) {

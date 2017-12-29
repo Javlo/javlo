@@ -1389,6 +1389,16 @@ public class Edit extends AbstractModuleAction {
 
 			String path = ctx.getPath();
 			String title = requestService.getParameter("name", null);
+			
+			if (StringHelper.isEmpty(title)) {
+				int index = 1;
+				title = ctx.getCurrentPage().getName()+"_"+index;
+				while (content.getNavigation(ctx).searchChildFromName(title) != null) {
+					index++;
+					title = ctx.getCurrentPage().getName()+"_"+index;
+				}
+			}
+			
 			String nodeName = StringHelper.createFileName(title);
 			String parentName = requestService.getParameter("parent", null);
 
@@ -1438,7 +1448,7 @@ public class Edit extends AbstractModuleAction {
 						if (globalContext.hasComponent(Title.class)) {
 							initContent.add(new ComponentBean(title, Title.TYPE, elem.getName(), lg, false, ctx.getCurrentEditUser()));
 						} else if (globalContext.hasComponent(Heading.class)) {
-							initContent.add(new ComponentBean(title, Heading.TYPE, "", lg, false, ctx.getCurrentEditUser()));
+							initContent.add(new ComponentBean(title, Heading.TYPE, Heading.TEXT+'='+title, lg, false, ctx.getCurrentEditUser()));
 						}
 					}
 					content.createContent(ctx, elem, initContent, "0", false);

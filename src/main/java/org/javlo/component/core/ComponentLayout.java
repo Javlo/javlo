@@ -121,7 +121,7 @@ public class ComponentLayout {
 	public void setFont(String font) {
 		this.font = font;
 	}
-
+	
 	/**
 	 * get the layout as css style.
 	 * 

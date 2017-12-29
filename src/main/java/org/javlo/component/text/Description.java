@@ -27,7 +27,7 @@ public class Description extends AbstractVisualComponent {
 	public String getHexColor() {
 		return META_COLOR;
 	}
-	
+
 	@Override
 	public int getSearchLevel() {
 		return SEARCH_LEVEL_MIDDLE;
@@ -46,7 +46,7 @@ public class Description extends AbstractVisualComponent {
 			return "span";
 		}
 	}
-	
+
 	@Override
 	protected String getEditorComplexity(ContentContext ctx) {
 		return getConfig(ctx).getProperty("editor-complexity", "soft");
@@ -54,21 +54,31 @@ public class Description extends AbstractVisualComponent {
 
 	@Override
 	public String[] getStyleLabelList(ContentContext ctx) {
-		String visible = "visible";
-		String hidden = "hidden";
-		try {
-			I18nAccess i18n = I18nAccess.getInstance(ctx.getRequest());
-			visible = i18n.getText("global.visible");
-			hidden = i18n.getText("global.hidden");
-		} catch (Exception e) {
-			e.printStackTrace();
+		String[] styles = super.getStyleLabelList(ctx);
+		if (styles != null && styles.length > 0) {
+			return styles;
+		} else {
+			String visible = "visible";
+			String hidden = "hidden";
+			try {
+				I18nAccess i18n = I18nAccess.getInstance(ctx.getRequest());
+				visible = i18n.getText("global.visible");
+				hidden = i18n.getText("global.hidden");
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			return new String[] { visible, hidden };
 		}
-		return new String[] { visible, hidden };
 	}
 
 	@Override
 	public String[] getStyleList(ContentContext ctx) {
-		return new String[] { "visible", "hidden" };
+		String[] styles = super.getStyleList(ctx);	
+		if (styles != null && styles.length > 0) {
+			return styles;
+		} else {
+			return new String[] { "visible", "hidden" };
+		}
 	}
 
 	@Override
@@ -84,14 +94,14 @@ public class Description extends AbstractVisualComponent {
 	public String getType() {
 		return TYPE;
 	}
-	
+
 	@Override
 	public void prepareView(ContentContext ctx) throws Exception {
 		super.prepareView(ctx);
 		StringBuffer finalCode = new StringBuffer();
 		String content = applyReplacement(getValue());
 		if (!isNotDisplayHTML(ctx)) {
-			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());						
+			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 			content = XHTMLHelper.replaceJSTLData(ctx, content);
 			content = XHTMLHelper.textToXHTML(content, globalContext);
 			ReverseLinkService reverserLinkService = ReverseLinkService.getInstance(globalContext);
@@ -105,9 +115,9 @@ public class Description extends AbstractVisualComponent {
 	 * @see org.javlo.itf.IContentVisualComponent#getXHTMLCode()
 	 */
 	@Override
-	public String getViewXHTMLCode(ContentContext ctx) throws Exception {		
-		prepareView(ctx);		
-		return ""+ctx.getRequest().getAttribute("xhtml");
+	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
+		prepareView(ctx);
+		return "" + ctx.getRequest().getAttribute("xhtml");
 	}
 
 	private boolean isNotDisplayHTML(ContentContext ctx) {
@@ -125,31 +135,30 @@ public class Description extends AbstractVisualComponent {
 		setModify();
 		return true;
 	}
-	
+
 	@Override
 	public boolean isUnique() {
 		return true;
 	}
-	
+
 	@Override
-	public boolean isContentCachable(ContentContext ctx) {	
+	public boolean isContentCachable(ContentContext ctx) {
 		return true;
 	}
-	
+
 	@Override
-	public String getPageDescription(ContentContext ctx) {	
+	public String getPageDescription(ContentContext ctx) {
 		return getValue(ctx);
-		/*try {
-			ctx.getRequest().setAttribute(MenuElement.FAKE_DESCRIPTION+getPage().getId(), getValue());
-			return XHTMLHelper.replaceJSTLData(ctx, getValue(ctx));
-		} catch (Exception e) {
-			e.printStackTrace();
-			return getValue();
-		}*/
+		/*
+		 * try {
+		 * ctx.getRequest().setAttribute(MenuElement.FAKE_DESCRIPTION+getPage().getId(),
+		 * getValue()); return XHTMLHelper.replaceJSTLData(ctx, getValue(ctx)); } catch
+		 * (Exception e) { e.printStackTrace(); return getValue(); }
+		 */
 	}
-	
+
 	@Override
-	public String getFontAwesome() {	
+	public String getFontAwesome() {
 		return "sticky-note";
 	}
 

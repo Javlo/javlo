@@ -1213,21 +1213,21 @@ span.ajax-loader {
 	vertical-align: middle;
 	text-align: center;
 	line-height: 204px;
-	width: 204px;
-	height: 204px;
 }
 
 .gallery .thumbview .thumb .info {
 	text-align: left;
-	width: 182px;
-	height: 182px;
 }
 
 .gallery .thumbview .thumb img {
 	display: inline;
 	vertical-align: middle;
-	max-width: 200px;
-	max-height: 200px;
+	max-width: 150px;
+	max-height: 150px;
+}
+
+.gallery .thumbview p {
+	line-height: normal;
 }
 
 .gallery .thumbview .info .menu a.preview {

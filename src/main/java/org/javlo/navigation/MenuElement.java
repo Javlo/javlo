@@ -78,6 +78,7 @@ import org.javlo.context.GlobalContext;
 import org.javlo.data.rest.IRestItem;
 import org.javlo.data.taxonomy.ITaxonomyContainer;
 import org.javlo.helper.BeanHelper;
+import org.javlo.helper.ComponentHelper;
 import org.javlo.helper.LangHelper;
 import org.javlo.helper.NavigationHelper;
 import org.javlo.helper.NetHelper;
@@ -103,6 +104,7 @@ import org.javlo.template.Template;
 import org.javlo.template.TemplateFactory;
 import org.javlo.user.AdminUserSecurity;
 import org.javlo.user.User;
+import org.javlo.utils.HtmlPart;
 import org.javlo.utils.TimeRange;
 import org.javlo.xml.NodeXML;
 import org.javlo.xml.XMLFactory;
@@ -152,7 +154,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 		String linkOn = null;
 		List<IImageTitle> images = null;
 		Collection<Link> staticResources = null;
-		String description = null;
+		HtmlPart description = null;
 		String xhtmlDescription = null;
 		String metaDescription = null;
 		String keywords = null;
@@ -266,11 +268,11 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 			return images;
 		}
 
-		public String getDescription() {
+		public HtmlPart getDescription() {
 			return description;
 		}
 
-		public void setDescription(String description) {
+		public void setDescription(HtmlPart description) {
 			this.description = description;
 		}
 
@@ -680,7 +682,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 		}
 
 		@Override
-		public String getDescription() {
+		public HtmlPart getDescription() {
 			try {
 				return page.getDescription(ctx);
 			} catch (Exception e) {
@@ -2357,7 +2359,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 	 * @return
 	 * @throws Exception
 	 */
-	public String getDescription(ContentContext ctx) throws Exception {
+	public HtmlPart getDescription(ContentContext ctx) throws Exception {
 		PageDescription desc = getPageDescriptionCached(ctx, ctx.getRequestContentLanguage());
 
 		if (desc.description != null) {
@@ -2372,20 +2374,46 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 		}
 
 		IContentComponentsList contentList = getAllContent(newCtx);
+		PageMirrorComponent pageMirror = null;
 		while (contentList.hasNext(newCtx)) {
-			IContentVisualComponent elem = contentList.next(newCtx);
-			String description = elem.getPageDescription(ctx);
-			if (!StringHelper.isEmpty(description)) {
-				if (!elem.isRepeat()) {
-					desc.description = StringHelper.removeTag(StringUtils.replace(description, "\"", "&quot;"));
-					return desc.description;
+			IContentVisualComponent elem = ComponentHelper.getRealComponent(newCtx, contentList.next(newCtx));			
+			if (elem != null) {
+				if (elem instanceof PageMirrorComponent) {
+					pageMirror = (PageMirrorComponent)elem;
 				} else {
-					res = description;
+					String description = elem.getPageDescription(ctx);
+					if (!StringHelper.isEmpty(description)) {
+						if (!elem.isRepeat()) {						
+							desc.description = new HtmlPart(StringHelper.removeTag(StringUtils.replace(description, "\"", "&quot;")), "p", elem.getStyle(newCtx));;
+							return desc.description;
+						} else {
+							res = description;
+						}
+					}
 				}
 			}
 		}
-		desc.description = StringHelper.removeTag(StringUtils.replace(res, "\"", "&quot;"));
+		if (StringHelper.isEmpty(res) && pageMirror != null && pageMirror.getPage() != null) {
+			desc.description = pageMirror.getPage().getDescription(newCtx);
+		}
+		desc.description = new HtmlPart(StringHelper.removeTag(StringUtils.replace(res, "\"", "&quot;")));
 		return desc.description;
+	}
+	
+	/**
+	 * get description of the page (description component)
+	 * 
+	 * @param ctx
+	 * @return
+	 * @throws Exception
+	 */
+	public String getDescriptionAsText(ContentContext ctx) throws Exception {
+		HtmlPart description = getDescription(ctx);
+		if (description != null) {
+			return description.getText();
+		} else {
+			return "";
+		}
 	}
 
 	/**
@@ -3150,7 +3178,9 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 			}
 		}
 		if (res.trim().length() == 0) {
-			res = getDescription(ctx);
+			if (getDescription(ctx) != null) {
+				res = getDescription(ctx).getText();
+			}			
 		}
 		desc.metaDescription = StringUtils.replace(res, "\"", "&quot;");
 		return desc.metaDescription;
@@ -5348,7 +5378,11 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 				IContentVisualComponent comp = content.next(noAreaCtx);
 				if (comp instanceof EventDefinitionComponent) {
 					EventDefinitionComponent eventComp = (EventDefinitionComponent) comp;
-					Event event = new Event(ctx, getName(), eventComp.getId(), eventComp.getStartDate(), eventComp.getEndDate(), getTitle(ctx), getDescription(ctx), getImage(noAreaCtx));
+					String description = null;
+					if ( getDescription(ctx) != null) {
+						description = getDescription(ctx).getText();
+					}
+					Event event = new Event(ctx, getName(), eventComp.getId(), eventComp.getStartDate(), eventComp.getEndDate(), getTitle(ctx),description, getImage(noAreaCtx));
 					event.setCategory(getCategory(ctx));
 					event.setLocation(getLocation(ctx));
 					event.setUrl(new URL(URLHelper.createURL(ctx.getContextForAbsoluteURL(), this)));
@@ -5387,7 +5421,11 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 				IContentVisualComponent comp = content.next(noAreaCtx);
 				if (comp instanceof EventDefinitionComponent) {
 					EventDefinitionComponent eventComp = (EventDefinitionComponent) comp;
-					Event event = new Event(ctx, getName(), eventComp.getId(), eventComp.getStartDate(), eventComp.getEndDate(), getTitle(ctx), getDescription(ctx), getImage(noAreaCtx));
+					String description = null; 
+					if (getDescription(ctx) != null) {
+						description = getDescription(ctx).getText();
+					}
+					Event event = new Event(ctx, getName(), eventComp.getId(), eventComp.getStartDate(), eventComp.getEndDate(), getTitle(ctx), description, getImage(noAreaCtx));
 					event.setCategory(getCategory(ctx));
 					event.setLocation(getLocation(ctx));
 					event.setUrl(new URL(URLHelper.createURL(ctx.getContextForAbsoluteURL(), this)));
@@ -5624,8 +5662,6 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 	
 	public String getHtmlSectionId(ContentContext ctx) {
 		return "section_"+getHtmlId(ctx);
-	}
-	
-	
+	}	
 
 }

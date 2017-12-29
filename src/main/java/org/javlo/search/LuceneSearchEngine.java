@@ -111,7 +111,7 @@ public class LuceneSearchEngine implements ISearchEngine {
 			String pageId = doc.get(ID_FIELD);
 			MenuElement page = nav.searchChildFromId(pageId);
 			if (groupId == null || page.getGroupID(ctx).contains(groupId)) {
-				addResult(result, ctx, page, searchStr, page.getName(), page.getFullLabel(ctxWithContent), URLHelper.createURL(ctxWithContent, page.getPath()), page.getDescription(ctxWithContent), 1);
+				addResult(result, ctx, page, searchStr, page.getName(), page.getFullLabel(ctxWithContent), URLHelper.createURL(ctxWithContent, page.getPath()), page.getDescriptionAsText(ctxWithContent), 1);
 			}
 		}
 		if (result.size() == 0) {

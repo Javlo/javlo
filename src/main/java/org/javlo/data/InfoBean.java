@@ -63,6 +63,7 @@ import org.javlo.user.IUserFactory;
 import org.javlo.user.IUserInfo;
 import org.javlo.user.User;
 import org.javlo.user.UserFactory;
+import org.javlo.utils.HtmlPart;
 
 public class InfoBean {
 
@@ -440,14 +441,14 @@ public class InfoBean {
 		return ctx.getLanguage();
 	}
 
-	public String getPageDescription() {
+	public HtmlPart getPageDescription() {
 		try {
 			final String noRecursiveRequestKey = "_pageDescritionCalled";
 			if (ctx.getRequest().getAttribute(noRecursiveRequestKey) == null) {
 				ctx.getRequest().setAttribute(noRecursiveRequestKey, 1);
 				String description = XHTMLHelper.replaceJSTLData(ctx, currentPage.getMetaDescription(ctx));
 				ctx.getRequest().setAttribute(noRecursiveRequestKey, null);
-				return description;
+				return new HtmlPart(description);
 			} else {
 				return currentPage.getDescription(ctx);
 			}

@@ -323,7 +323,7 @@ public class InternalLink extends ComplexPropertiesLink implements IInternalLink
 				}
 				res.append("</a>");
 			}
-			if (style.contains(DESCRIPTION) && linkedPage.getDescription(ctx).trim().length() > 0) {
+			if (style.contains(DESCRIPTION) && linkedPage.getDescriptionAsText(ctx).trim().length() > 0) {
 				res.append(linkedPage.getDescription(ctx));
 			}
 			if (style.contains(DESCRIPTION) || style.contains(IMAGE)) {

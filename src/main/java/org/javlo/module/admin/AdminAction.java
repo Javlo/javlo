@@ -1524,6 +1524,13 @@ public class AdminAction extends AbstractModuleAction {
 					td.setTitle(StringHelper.parseColor(requestService.getParameter("title", "" + td.getTitle())));
 					td.setSpecial(StringHelper.parseColor(requestService.getParameter("special", "" + td.getSpecial())));
 					td.setFont(requestService.getParameter("font", "" + td.getFont()));
+					/** message **/
+					td.setMessagePrimary(StringHelper.parseColor(requestService.getParameter("messagePrimary", "" + td.getMessagePrimary())));
+					td.setMessageSecondary(StringHelper.parseColor(requestService.getParameter("messageSecondary", "" + td.getMessageSecondary())));
+					td.setMessageSuccess(StringHelper.parseColor(requestService.getParameter("messageSuccess", "" + td.getMessageSuccess())));
+					td.setMessageDanger(StringHelper.parseColor(requestService.getParameter("messageDanger", "" + td.getMessageDanger())));
+					td.setMessageWarning(StringHelper.parseColor(requestService.getParameter("messageWarning", "" + td.getMessageWarning())));
+					td.setMessageInfo(StringHelper.parseColor(requestService.getParameter("messageInfo", "" + td.getMessageInfo())));
 					
 					MailService.resetInstance();
 					

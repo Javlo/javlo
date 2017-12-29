@@ -26,6 +26,7 @@ import org.javlo.navigation.MenuElement;
 import org.javlo.service.RequestService;
 import org.javlo.user.AdminUserFactory;
 import org.javlo.user.User;
+import org.javlo.utils.HtmlPart;
 
 /**
  * @author pvandermaesen
@@ -119,7 +120,7 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 			}
 		}
 
-		public String getDescription() throws Exception {
+		public HtmlPart getDescription() throws Exception {
 			return child.getDescription(ctx);
 		}
 
@@ -141,6 +142,10 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 
 		public int getReactionSize() throws Exception {
 			return child.getReactionSize(ctx);
+		}
+		
+		public String getLayouts() throws Exception {
+			return StringHelper.collectionToString(child.getLayouts(ctx), " ");
 		}
 
 		public String getCreationDateString() throws FileNotFoundException, IOException {
@@ -512,12 +517,12 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 						out.print("<a" + title + " href=\"" + URLHelper.createURL(ctx, page.getVirtualPath(ctx)) + "\">");
 						if (isLabelListed()) {
 							String sep = "";
-							if (isDescription() && page.getDescription(ctx).trim().length() > 0) {
+							if (isDescription() && page.getDescriptionAsText(ctx).trim().length() > 0) {
 								sep = " : ";
 							}
 							out.print("<span class=\"label\">" + page.getFullLabel(ctx) + sep + "</span>");
 						}
-						if ((isImage() && (page.getImage(ctx) != null)) || (isDescription() && page.getDescription(ctx).trim().length() > 0)) {
+						if ((isImage() && (page.getImage(ctx) != null)) || (isDescription() && page.getDescriptionAsText(ctx).trim().length() > 0)) {
 							out.println("<span class=\"body\">");
 							if (isImage() && (page.getImage(ctx) != null)) {
 								String imgURL = page.getImage(ctx).getResourceURL(ctx);
@@ -527,7 +532,7 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 								out.print("</span>");
 							}
 
-							if (isDescription() && page.getDescription(ctx).trim().length() > 0) {
+							if (isDescription() && page.getDescriptionAsText(ctx).trim().length() > 0) {
 								out.print("<span class=\"description\">" + page.getDescription(ctx) + "</span>");
 							}
 							out.println("<span class=\"end-body\"></span></span>");

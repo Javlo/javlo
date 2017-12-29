@@ -54,13 +54,15 @@
 	</ul>
 	<c:if test="${userInterface.navigation}">		
 		<form class="preview-form" id="_pe_form-add-page" action="${info.currentURL}" method="post">
-			<div class="row"><div class="col-xs-9">
+			<div class="row"><div class="col-xs-7">
 			<div class="form-group">
 			<input type="hidden" name="webaction" value="edit.addPage" />
-			<input type="text" class="form-control input-sm" name="name" placeholder="${i18n.edit['navigation.add-page']}..." />
+			<input type="text" class="form-control input-sm" name="name" placeholder="${i18n.edit['navigation.add-page']}..." 
+				onkeyup="if ($(this).val().length == 0) {$('#plus-btn').prop('disabled', false); $('#ok-btn').prop('disabled', true);} else {$('#plus-btn').prop('disabled', true); $('#ok-btn').prop('disabled', false);}" />
 			</div>
-			</div><div class="col-xs-3">
-			<input class="btn btn-default btn-sm" type="submit" value="${i18n.edit['global.ok']}" />
+			</div><div class="col-xs-5">
+			<input id="ok-btn" class="btn btn-default btn-sm" type="submit" value="${i18n.edit['global.ok']}" disabled="disabled" />
+			<button id="plus-btn" class="btn btn-default btn-sm pull-right" name="auto-name" type="submit"><i class="fa fa-plus-circle"></i></button>
 			</div></div>
 		</form>
 		

@@ -28,6 +28,8 @@ import org.javlo.navigation.MenuElement;
 public class Layouts extends AbstractVisualComponent {
 
 	public static final String TYPE = "layouts";
+	
+	private static String EMPTY_LAYOUT = "___emptylayout";
 
 	@Override
 	protected String getEditXHTMLCode(ContentContext ctx) throws Exception {
@@ -39,7 +41,7 @@ public class Layouts extends AbstractVisualComponent {
 			int i = 0;
 			List<String> currentlayout = getLayouts();
 			out.print("<input type=\"hidden\" name=\"layout-" + getId() + "\" value=\"layout\"/>");
-			out.print("<input type=\"hidden\" name=\"" + getContentName() + "\" value=\"___emptylayout\"/>");
+			out.print("<input type=\"hidden\" name=\"" + getContentName() + "\" value=\""+EMPTY_LAYOUT+"\"/>");
 			out.println("<ul>");			
 			for (String layout : layouts) {
 				String checked = "";
@@ -74,9 +76,9 @@ public class Layouts extends AbstractVisualComponent {
 
 	public List<String> getLayouts() {
 		String[] tags = StringHelper.stringToArray(getValue(), ",");
-		List<String> tagsList = new LinkedList<String>();
-		for (String tag : tags) {
-			if (tag.trim().length() > 0) {
+		List<String> tagsList = new LinkedList<String>();		
+		for (String tag : tags) {			
+			if (tag.trim().length() > 0 && !tag.equals(EMPTY_LAYOUT)) {
 				tagsList.add(tag);
 			}
 		}
@@ -112,6 +114,11 @@ public class Layouts extends AbstractVisualComponent {
 	@Override
 	public boolean isRealContent(ContentContext ctx) {
 		return false;
+	}
+	
+	@Override
+	public String getEmptyXHTMLCode(ContentContext ctx) throws Exception {	
+		return '['+getType()+" : "+StringHelper.collectionToString(getLayouts())+']';		
 	}
 	
 	@Override

@@ -269,7 +269,7 @@ public class ProductComponent extends AbstractPropertiesComponent implements IAc
 				/* information from page */
 				product.setUrl(URLHelper.createURL(ctx, currentPage.getPath()));
 				product.setShortDescription(currentPage.getTitle(ctx));
-				product.setLongDescription(currentPage.getDescription(ctx));
+				product.setLongDescription(currentPage.getDescriptionAsText(ctx));
 				if (currentPage.getImage(ctx) != null) {
 					product.setImage(ctx, currentPage.getImage(ctx));
 				}

@@ -459,5 +459,20 @@ public class ComponentHelper {
 		return comp.getType();
 
 	}
+	
+	/**
+	 * return the component wrapped in the mirrror, or the component it self
+	 * @param comp
+	 * @return
+	 * @throws Exception 
+	 */
+	public static final IContentVisualComponent getRealComponent(ContentContext ctx, IContentVisualComponent comp) throws Exception {
+		if (comp != null && comp instanceof MirrorComponent) {
+			MirrorComponent mcomp = (MirrorComponent)comp;
+			return mcomp.getMirrorComponent(ctx);
+		} else {
+			return comp;
+		}
+	}
 
 }

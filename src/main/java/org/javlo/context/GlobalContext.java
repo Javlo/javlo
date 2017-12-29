@@ -62,7 +62,6 @@ import org.javlo.helper.DebugHelper;
 import org.javlo.helper.ElementaryURLHelper;
 import org.javlo.helper.ElementaryURLHelper.Code;
 import org.javlo.helper.LangHelper;
-import org.javlo.helper.LocalLogger;
 import org.javlo.helper.NavigationHelper;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.ServletHelper;
@@ -582,7 +581,6 @@ public class GlobalContext implements Serializable, IPrintInfo {
 							}
 						}
 					}
-
 				}
 			} else {
 				synchronized (newInstance.properties) {
@@ -828,8 +826,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 
 	private final TimeMap<String, String> pageTimeToken = new TimeMap<String, String>(60 * 60 * 24 * 90);
 
-	private final Map<String, String> changePasswordToken = Collections
-			.synchronizedMap(new TimeMap<String, String>(60 * 60));
+	private final Map<String, String> changePasswordToken = Collections .synchronizedMap(new TimeMap<String, String>(60 * 60));
 
 	public final Object RELEASE_CACHE = new Object();
 
@@ -1835,8 +1832,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	}
 
 	public String getRAWEncodings() {
-		return properties.getString("encodings",
-				"utf-8;utf-16;unicode;iso-8859-1;iso-8859-2;iso-8859-3;iso-8859-4;iso-8859-5;iso-8859-6;iso-8859-7;iso-8859-8;iso-8859-9;iso-8859-10;iso-8859-11;iso-8859-12;iso-8859-13;iso-8859-14;iso-8859-15");
+		return properties.getString("encodings","utf-8;utf-16;unicode;iso-8859-1;iso-8859-2;iso-8859-3;iso-8859-4;iso-8859-5;iso-8859-6;iso-8859-7;iso-8859-8;iso-8859-9;iso-8859-10;iso-8859-11;iso-8859-12;iso-8859-13;iso-8859-14;iso-8859-15");
 	}
 
 	public String getRAWLanguages() {
