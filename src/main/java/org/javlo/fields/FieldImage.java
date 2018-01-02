@@ -13,6 +13,7 @@ import org.javlo.helper.URLHelper;
 import org.javlo.helper.XHTMLHelper;
 import org.javlo.module.file.FileBean;
 import org.javlo.ztatic.StaticInfo;
+import org.javlo.ztatic.StaticInfoBean;
 
 public class FieldImage extends FieldFile {
 	
@@ -77,6 +78,13 @@ public class FieldImage extends FieldFile {
 			String fileURL = URLHelper.mergePath(relativePath, FieldImage.this.getCurrentFile());
 			File file = new File(URLHelper.mergePath(URLHelper.mergePath(ctx.getGlobalContext().getStaticFolder(), fileURL)));
 			return StaticInfo.getInstance(ctx, file);
+		}
+		
+		public StaticInfoBean getStaticInfoBean() throws Exception {
+			String relativePath = URLHelper.mergePath(FieldImage.this.getFileTypeFolder(), FieldImage.this.getCurrentFolder());
+			String fileURL = URLHelper.mergePath(relativePath, FieldImage.this.getCurrentFile());
+			File file = new File(URLHelper.mergePath(URLHelper.mergePath(ctx.getGlobalContext().getStaticFolder(), fileURL)));
+			return new StaticInfoBean (ctx, StaticInfo.getInstance(ctx, file));
 		}
 		
 	}
