@@ -16,7 +16,7 @@ if (typeof jQuery == 'undefined') {
 		head.appendChild(script);	
 	};
 	
-	getScript('http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js', function() {	
+	getScript('//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js', function() {	
 		if (typeof jQuery=='undefined') {		
 			alert("error loading jQuery.");		
 		} else {
