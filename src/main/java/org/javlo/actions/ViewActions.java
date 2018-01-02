@@ -232,8 +232,7 @@ public class ViewActions implements IAction {
 							String url = URLHelper.createURL(ctx.getContextForAbsoluteURL());
 							url = URLHelper.addParam(url, "_only_component", dcomp.getId());
 							mailData.put(dcomp.getLabel(ctx), "<a href=\""+url+"\">"+dcomp.getTextTitle(ctx)+"</a>");
-						}
-						
+						}						
 					}
 				}
 			}			

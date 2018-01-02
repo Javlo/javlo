@@ -60,6 +60,8 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 	public static final String HIDDEN = "hidden";
 	
 	private static final String DYNAMIC_ID_KEY = "_dynamic_id";
+
+	private static final String NOTIFY_CREATION = "notify.creation";
 	
 	private Date latestValidDate = null;
 
@@ -444,9 +446,9 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 	}
 	
 	public boolean isNotififyCreation(ContentContext ctx) throws ServiceException {
-		boolean outNotif = StringHelper.isTrue(properties.getProperty("notify.creation"));
+		boolean outNotif = StringHelper.isTrue(properties.getProperty(NOTIFY_CREATION), false);				
 		if (outNotif) {
-			properties.remove("notify.creation");
+			properties.setProperty(NOTIFY_CREATION, "false");
 			storeProperties();
 			PersistenceService.getInstance(ctx.getGlobalContext()).setAskStore(true);
 		}

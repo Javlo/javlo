@@ -978,17 +978,17 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle, IStat
 
 	@Override
 	public void prepareView(ContentContext ctx) throws Exception {
-		LocalLogger.cronoStart();
+//		LocalLogger.cronoStart();
 		List<MultimediaResource> allResource = getMultimediaResources(ctx);
-		LocalLogger.cronoStep(getType());
+//		LocalLogger.cronoStep(getType());
 		int max = Math.min(getMaxListSize(), allResource.size());
-		LocalLogger.cronoStep(getType());
+//		LocalLogger.cronoStep(getType());
 		PaginationContext pagination = PaginationContext.getInstance(ctx.getRequest(), getId(), max, getPageSize());
-		LocalLogger.cronoStep(getType());
+//		LocalLogger.cronoStep(getType());
 		ctx.getRequest().setAttribute("title", getTitle());
 		ctx.getRequest().setAttribute("pagination", pagination);
 		ctx.getRequest().setAttribute("resources", allResource.subList(0, max));
-		LocalLogger.cronoStep(getType());
+//		LocalLogger.cronoStep(getType());
 	}
 
 	@Override
