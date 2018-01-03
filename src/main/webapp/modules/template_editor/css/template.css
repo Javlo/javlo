@@ -14,3 +14,9 @@
 #navigation .add-page {
 	display: none;
 }
+
+.info span {
+	max-width: 110px;
+  	overflow: hidden;
+    	display: inline-block;
+}

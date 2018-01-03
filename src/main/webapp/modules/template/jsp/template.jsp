@@ -46,10 +46,10 @@
                     <label>${i18n.edit['global.name']}:</label>
                     <span>${template.name}</span>
                 </p>
-                <c:if test="${not empty template.parent}"><p>
+                <p>
                     <label>${i18n.edit['template.parent']}:</label>
-	                   <span>${template.parent}</span>
-                </p></c:if>
+	                   <span><c:if test="${not empty template.parent}">${template.parent}</c:if><c:if test="${empty template.parent}">/</c:if></span>
+                </p>
                 <p>
                     <label>${i18n.edit['global.version']}:</label>
                     <span>${template.version}</span>

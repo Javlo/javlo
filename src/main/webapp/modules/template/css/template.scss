@@ -210,6 +210,11 @@ input[readonly] {
 	}
 }
 
+.info span {
+	max-width: 110px;
+  	overflow: hidden;
+    	display: inline-block;
+}
 
 @media screen and (max-width: 1700px) {
 	.gallery .display-list ul li {
