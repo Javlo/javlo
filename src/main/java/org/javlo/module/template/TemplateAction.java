@@ -544,8 +544,7 @@ public class TemplateAction extends AbstractModuleAction {
 			MenuElement currentPage, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
 
 		if (!Edit.checkPageSecurity(ctx)) {
-			messageRepository.setGlobalMessageAndNotification(ctx,
-					new GenericMessage(i18nAccess.getText("action.block"), GenericMessage.ERROR));
+			messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("action.block"), GenericMessage.ERROR));
 		} else {
 			String templateName = rs.getParameter("templateid", null);
 			if (ctx.getGlobalContext().isOpenPlatform()) {

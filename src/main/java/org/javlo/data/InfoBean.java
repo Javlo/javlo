@@ -282,8 +282,8 @@ public class InfoBean {
 	public String getCurrentAjaxURL() {
 		String path = ctx.getPath();
 		try {
-			if (ctx.getVirtualCurrentPage() != null) {
-				path = ctx.getVirtualCurrentPage().getPath();
+			if (ctx.getCurrentPage() != null) {
+				path = ctx.getCurrentPage().getPath();
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
