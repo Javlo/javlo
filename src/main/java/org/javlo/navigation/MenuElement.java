@@ -2393,7 +2393,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 				}
 			}
 		}
-		if (StringHelper.isEmpty(res) && pageMirror != null && pageMirror.getPage() != null) {
+		if (StringHelper.isEmpty(res) && pageMirror != null && pageMirror.getPage() != null && !pageMirror.getPage().getId().equals(getId())) {
 			desc.description = pageMirror.getPage().getDescription(newCtx);
 		}
 		desc.description = new HtmlPart(StringHelper.removeTag(StringUtils.replace(res, "\"", "&quot;")));
