@@ -282,12 +282,15 @@ public class AccessServlet extends HttpServlet implements IVersion {
 						logger.warning("refuse access for ip : " + ctx.getRemoteIp());
 						response.setStatus(HttpServletResponse.SC_FORBIDDEN);
 						return;
-					}
+					} 
 				}
 			}
 
-			if (!ctx.isAsViewMode()) {
+			if (!ctx.isAsViewMode()) {				
 				SecurityHelper.checkUserAccess(ctx);
+				if (ctx.getCurrentEditUser() == null || ctx.getCurrentEditUser().getRoles().contains("content")) {
+					response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+				}				
 			}
 
 			if (ctx.getGlobalContext().isCookies()) {
