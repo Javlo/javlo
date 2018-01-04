@@ -460,8 +460,6 @@ public class FieldFile extends Field implements IStaticContainer {
 				upload = false;
 			}
 		}
-		System.out.println("##### FieldFile.process : getFileType() = "+getFileType()); //TODO: remove debug trace
-		System.out.println("##### FieldFile.process : upload = "+upload); //TODO: remove debug trace
 		if (delete) {			
 			String dir = URLHelper.mergePath(getFileDirectory(), getCurrentFolder());
 			File file = new File(URLHelper.mergePath(dir, getCurrentFile()));		
