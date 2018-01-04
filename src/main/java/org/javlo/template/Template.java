@@ -2121,7 +2121,7 @@ public class Template implements Comparable<Template> {
 			String key = (String) keys.next();
 			if (key.startsWith("html.")) {
 				String renderer = key.replaceFirst("html.", "");
-				if (!renderer.contains(".")) {
+				if (!renderer.contains(".") && !renderer.equals("params")) {
 					if (properties.getString(key).equals("-1")) {
 						unvalidatedRenderer = true;
 					} else {

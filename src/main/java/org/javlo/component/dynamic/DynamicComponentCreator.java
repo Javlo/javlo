@@ -62,6 +62,9 @@ public class DynamicComponentCreator extends AbstractVisualComponent implements 
 			String id = StringHelper.getRandomId();
 			if (compDef == null) {
 				compDef = (DynamicComponent) ComponentFactory.getComponentWithType(ctx, getValue());
+				if (compDef == null) {
+					return "<div class=\"alert alert-danger\" role=\"alert\">technical error : '"+getValue()+"' not found.</div>";
+				}
 			} else {
 				id = compDef.getId();
 			}
