@@ -527,9 +527,7 @@ public class TemplateAction extends AbstractModuleAction {
 		}
 		messageRepository.setGlobalMessageAndNotification(ctx,
 				new GenericMessage(
-						i18nAccess.getText("template.message.commited",
-								new String[][] { { "name", requestService.getParameter("templateid", null) } }),
-						GenericMessage.INFO));
+						i18nAccess.getText("template.message.commited",	new String[][] { { "name", requestService.getParameter("templateid", null) } }), GenericMessage.INFO));
 		return null;
 	}
 
