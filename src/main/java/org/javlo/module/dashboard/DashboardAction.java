@@ -236,8 +236,7 @@ public class DashboardAction extends AbstractModuleAction {
 			ListBuilder[] desktopAndMobile = new ListBuilder[] {datas.addList(), datas.addList()};
 			for (Map.Entry<Integer, Integer[]> input : map.entrySet()) {
 				desktopAndMobile[0].add(input.getValue()[0]);
-				desktopAndMobile[1].add(input.getValue()[1]);
-				
+				desktopAndMobile[1].add(input.getValue()[1]);				
 			}
 			ctx.setAjaxMap(ajaxMap.getMap());
 

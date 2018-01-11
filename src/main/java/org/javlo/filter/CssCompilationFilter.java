@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.logging.Logger;
 
 import javax.servlet.Filter;
@@ -22,6 +23,7 @@ import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.ResourceHelper;
+import org.javlo.helper.URLHelper;
 import org.lesscss.LessCompiler;
 
 import io.bit3.jsass.CompilationException;
@@ -79,7 +81,8 @@ public class CssCompilationFilter implements Filter {
 				}
 			}
 			if (sassFile.exists()) {
-				if (compileSass(sassFile, cssFile)) {
+				StaticConfig staticConfig = StaticConfig.getInstance(httpRequest.getSession().getServletContext());
+				if (compileSass(staticConfig.isProd(), sassFile, cssFile)) {
 					try {
 						Thread.sleep(5 * 1000); // check why on linux we need
 												// the sleep.
@@ -139,7 +142,7 @@ public class CssCompilationFilter implements Filter {
 //		return true;
 //	}
 	
-	private static boolean compileSass(File in, File out) throws IOException {
+	private static boolean compileSass(boolean prod, File in, File out) throws IOException {
 		URI inputFile = in.toURI();	    	    
 	    if (!out.exists()) {
 	    	out.createNewFile();
@@ -147,11 +150,23 @@ public class CssCompilationFilter implements Filter {
 
 	    Compiler compiler = new Compiler();
 	    Options options = new Options();
+//	    URI mapFile;
+//		try {
+//			mapFile = new URI(URLHelper.mergePath(out.getParentFile().getAbsolutePath(), out.getName()+".map"));
+//		} catch (URISyntaxException e1) {
+//			throw new IOException(e1);
+//		}
+//		System.out.println(">>>>>>>>> CssCompilationFilter.compileSass : mapFile = "+mapFile); //TODO: remove debug trace
+	    if (!prod) {
+	    	options.setSourceComments(true);
+	    	options.setSourceMapContents(true);
+	    	options.setSourceMapEmbed(true);
+	    }
+//	    options.setSourceMapFile(mapFile);
 	    try {
 	      FileContext context = new FileContext(inputFile, null, options);
-	      Output output = compiler.compile(context);
+	      Output output = compiler.compile(context);	      
 	      ResourceHelper.writeStringToFile(out, output.getCss());
-
 	      
 	    } catch (CompilationException e) {
 	      throw new IOException(e);
@@ -205,7 +220,7 @@ public class CssCompilationFilter implements Filter {
 		//compileSass(sassFile, cssFile);
 		cssFile = new File("c:/trans/test_less.css");
 		System.out.println("sassFile file exist : "+sassFile.exists());
-		compileSass(sassFile, cssFile);
+		compileSass(false, sassFile, cssFile);
 	}
 
 }

@@ -812,6 +812,8 @@ public class Template implements Comparable<Template> {
 
 	public static final String GZ_FILE_EXT = "httpgz";
 
+	public static final String DEFAULT_TEMPLATE_NAME = "wktp";
+
 	private final ConfigurationProperties properties = new StructuredConfigurationProperties();
 
 	private final ReadOnlyPropertiesConfigurationMap configMap = new ReadOnlyPropertiesConfigurationMap(properties, false);
@@ -1845,7 +1847,7 @@ public class Template implements Comparable<Template> {
 	}
 
 	public String getLocalWorkTemplateFolder() {
-		return properties.getString("work-folder", "/wktp");
+		return properties.getString("work-folder", "/"+DEFAULT_TEMPLATE_NAME);
 	}
 
 	public final File getMacroFile(GlobalContext globalContext, String fileName) throws IOException {

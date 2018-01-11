@@ -35,6 +35,7 @@ import org.javlo.service.PersistenceService;
 import org.javlo.service.RequestService;
 import org.javlo.service.exception.ServiceException;
 import org.javlo.servlet.ImageTransformServlet;
+import org.javlo.template.Template;
 import org.javlo.ztatic.StaticInfo;
 
 /**
@@ -577,6 +578,22 @@ public class Tracker {
 		}
 		return res;
 	}
+	
+	private static boolean isView(String url) {
+		if (url.contains("/preview")) {
+			return false;
+		} else if (url.contains("/edit")) {
+			return false;
+		} else if (url.contains("/"+Template.DEFAULT_TEMPLATE_NAME+"/")) {
+			return false;
+		} else if (url.contains("/img/")) {
+			return false;
+		} else if (url.contains("/transform/")) {
+			return false;
+		} else {
+			return true;
+		}
+	}
 
 	/**
 	 * return session open by a moment define by constant in Calendar object
@@ -601,9 +618,9 @@ public class Tracker {
 		Set<String> sessionIdFound = new HashSet<String>();
 		Set<String> secondSessionIdFound = new HashSet<String>();
 		Set<String> viewSessionFound = new HashSet<String>();
-		for (int i = 1; i < tracks.length - 1; i++) {
+		for (int i = 0; i < tracks.length - 1; i++) {
 			Track track = tracks[i];
-			if (track.getPath().contains("/view")) {
+			if (isView(track.getPath())) {
 				viewSessionFound.add(track.getSessionId());
 			}
 			if (!sessionIdFound.contains(track.getSessionId())) {
@@ -620,7 +637,6 @@ public class Tracker {
 				} else {
 					clicks[1] = new Integer(clicks[1].intValue() + 1);	
 				}
-				
 				res.put(key, clicks);
 				secondSessionIdFound.add(tracks[i].getSessionId());
 			}
