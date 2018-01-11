@@ -21,7 +21,6 @@ import org.javlo.component.form.SmartGenericForm;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
-import org.javlo.helper.ArrayHelper;
 import org.javlo.helper.NetHelper;
 import org.javlo.helper.RequestHelper;
 import org.javlo.helper.ResourceHelper;
