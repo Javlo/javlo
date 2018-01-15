@@ -1578,7 +1578,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			}
 		}
 		if (currentClass != null && currentClass.trim().length() > 0) {
-			return specificClass + currentClass.trim() + "";
+			return (specificClass + currentClass.trim() + ' ' + getType()).trim();
 		}
 		return "";
 	}
