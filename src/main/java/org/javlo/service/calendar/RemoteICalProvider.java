@@ -130,7 +130,7 @@ public class RemoteICalProvider extends AbstractICalProvider {
 	}
 	
 	public static void main(String[] args) throws IOException {
-		URL url = new URL("https://calendar.google.com/calendar/ical/noctis.be_l0k84f70odh297iujiga29392o%40group.calendar.google.com/private-92c5684c121b5e6a5b8836da16976335/basic.ics");				
+		URL url = new URL("https://calendar.google.com/calendar/ical/noctis.be_0281cn1e5cao5ra0ab1gk38008%40group.calendar.google.com/public/basic.ics");				
 		InputStream in = url.openStream();
 		try {
 			BufferedReader reader = new BufferedReader(new InputStreamReader(in, "UTF-8"));
@@ -138,6 +138,7 @@ public class RemoteICalProvider extends AbstractICalProvider {
 			while (ical.loadFromReader(reader)) {
 				System.out.println(">>>>>>>>> RemoteICalProvider.main : uid="+ical.getSummary()); //TODO: remove debug trace
 				System.out.println(">>>>>>>>> RemoteICalProvider.main : start date = "+StringHelper.renderDate(ical.getStartDate())); //TODO: remove debug trace
+				System.out.println(">>>>>>>>> RemoteICalProvider.main : end date = "+StringHelper.renderDate(ical.getEndDate())); //TODO: remove debug trace
 				ical = new ICal(true);				
 			}					
 		} finally {

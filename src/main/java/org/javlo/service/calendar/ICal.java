@@ -61,12 +61,12 @@ public class ICal implements IStringSeralizable {
 		try {			
 			boolean endEvent = false;
 			String line = reader.readLine();
-			while (!endEvent && line != null) {
+			while (!endEvent && line != null) {				
 				if (line.startsWith("DTSTART")) {
 					if (line.startsWith("DTSTART:")) {
 						line = line.substring("DTSTART:".length());
 					} else {
-						line = line.substring("DTSTART;VALUE=DATE:".length());
+						line = line.substring("DTSTART;VALUE=DATE:".length());						
 					}					
 					if (line.length() > 6) {
 						try {
@@ -77,14 +77,22 @@ public class ICal implements IStringSeralizable {
 					}
 				}
 				if (line.startsWith("DTEND")) {
+					boolean dateOnly=false;
 					if (line.startsWith("DTEND:")) {
 						line = line.substring("DTEND:".length());
 					} else {
 						line = line.substring("DTEND;VALUE=DATE:".length());
+						dateOnly=true;
 					}
 					if (line.length() > 6) {
 						try {
 							endDate = parseDate(line);
+							if (dateOnly) {
+								Calendar cal = Calendar.getInstance();
+								cal.setTime(endDate);
+								cal.add(Calendar.DAY_OF_MONTH, -1);
+								endDate = cal.getTime();
+							}
 						} catch (ParseException e) {
 							e.printStackTrace();
 						}

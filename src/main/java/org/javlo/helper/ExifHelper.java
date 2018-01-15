@@ -21,11 +21,8 @@ import org.apache.commons.imaging.formats.jpeg.exif.ExifRewriter;
 import org.apache.commons.imaging.formats.tiff.TiffField;
 import org.apache.commons.imaging.formats.tiff.TiffImageMetadata;
 import org.apache.commons.imaging.formats.tiff.constants.ExifTagConstants;
-import org.apache.commons.imaging.formats.tiff.fieldtypes.FieldType;
-import org.apache.commons.imaging.formats.tiff.taginfos.TagInfo;
 import org.apache.commons.imaging.formats.tiff.write.TiffOutputDirectory;
 import org.apache.commons.imaging.formats.tiff.write.TiffOutputSet;
-import org.apache.commons.imaging.util.IoUtils;
 import org.apache.commons.io.FileUtils;
 import org.javlo.image.ImageSize;
 import org.javlo.io.TransactionFile;
@@ -98,8 +95,7 @@ public class ExifHelper {
 			logger.warning("file not found : " + jpegImageFile);
 			return;
 		}
-		OutputStream os = null;
-		boolean canThrow = false;
+		OutputStream os = null;		
 		try {
 			TiffOutputSet outputSet = null;
 
@@ -131,10 +127,10 @@ public class ExifHelper {
 			os = new FileOutputStream(dst);
 			os = new BufferedOutputStream(os);
 
-			new ExifRewriter().updateExifMetadataLossless(jpegImageFile, os, outputSet);
-			canThrow = true;
+			new ExifRewriter().updateExifMetadataLossless(jpegImageFile, os, outputSet);			
 		} finally {
-			IoUtils.closeQuietly(canThrow, os);
+			ResourceHelper.closeResource(os);
+			//IoUtils.closeQuietly(arg0, arg1);(arg0, arg1);(canThrow, os);
 		}
 	}
 
@@ -144,7 +140,6 @@ public class ExifHelper {
 			return;
 		}
 		OutputStream os = null;
-		boolean canThrow = false;
 		try {
 			TiffOutputSet outputSet = null;
 			final ImageMetadata metadata = Imaging.getMetadata(jpegImageFile);
@@ -170,10 +165,9 @@ public class ExifHelper {
 			}
 			os = new FileOutputStream(dst);
 			os = new BufferedOutputStream(os);
-			new ExifRewriter().updateExifMetadataLossless(jpegImageFile, os, outputSet);
-			canThrow = true;
+			new ExifRewriter().updateExifMetadataLossless(jpegImageFile, os, outputSet);			
 		} finally {
-			IoUtils.closeQuietly(canThrow, os);
+			ResourceHelper.closeResource(os);			
 		}
 	}
 
@@ -256,7 +250,8 @@ public class ExifHelper {
 	}
 
 	public static void main(String[] args) throws ImageReadException, IOException {
-		File test = new File("c:/trans/_test.png");
+		File test = new File("c:/trans/gps.jpg");
 		System.out.println("date : " + readDate(test));
+		System.out.println("date : " + readPosition(test));
 	}
 }

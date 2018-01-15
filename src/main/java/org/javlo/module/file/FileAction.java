@@ -23,6 +23,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.imaging.common.ImageMetadata;
 import org.apache.commons.io.filefilter.FileFileFilter;
 import org.javlo.actions.AbstractModuleAction;
 import org.javlo.bean.LinkToRenderer;
@@ -31,6 +32,7 @@ import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.data.InfoBean;
 import org.javlo.filter.DirectoryFilter;
+import org.javlo.helper.ExifHelper;
 import org.javlo.helper.LangHelper;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.ServletHelper;
@@ -675,6 +677,8 @@ public class FileAction extends AbstractModuleAction {
 		if (!file.exists() || !file.isFile()) {
 			return "file not found : " + file;
 		}
+		
+		ImageMetadata md = ExifHelper.readMetadata(file);
 		BufferedImage image = ImageIO.read(file);
 		boolean transform = false;
 		if (StringHelper.isTrue(rs.getParameter("flip", null))) {
@@ -714,6 +718,7 @@ public class FileAction extends AbstractModuleAction {
 			try {
 				ImageIO.write(image, StringHelper.getFileExtension(file.getName().toLowerCase()), transactionFile.getTempFile());
 				transactionFile.commit();
+				ExifHelper.writeMetadata(md, file);
 			} catch (Exception e) {
 				transactionFile.rollback();
 				throw e;
