@@ -158,8 +158,4 @@ public class Track implements Comparable<Track> {
 	public String getSortableTime() {
 		return StringHelper.renderSortableTime(new Date(time));
 	}
-	public boolean isResource() {
-		return !(getPath().contains("/view/") || getPath().contains("/preview/") || getPath().contains("/edit/") || getPath().contains("/ajax/"));
-	}
-
 }
