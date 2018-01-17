@@ -130,7 +130,8 @@ public class RemoteICalProvider extends AbstractICalProvider {
 	}
 	
 	public static void main(String[] args) throws IOException {
-		URL url = new URL("https://calendar.google.com/calendar/ical/noctis.be_0281cn1e5cao5ra0ab1gk38008%40group.calendar.google.com/public/basic.ics");				
+		//URL url = new URL("https://calendar.google.com/calendar/ical/noctis.be_0281cn1e5cao5ra0ab1gk38008%40group.calendar.google.com/public/basic.ics");
+		URL url = new URL("https://calendar.google.com/calendar/ical/hh97h6q9a69eg2jf2jf6bndkjk@group.calendar.google.com/public/basic.ics");
 		InputStream in = url.openStream();
 		try {
 			BufferedReader reader = new BufferedReader(new InputStreamReader(in, "UTF-8"));

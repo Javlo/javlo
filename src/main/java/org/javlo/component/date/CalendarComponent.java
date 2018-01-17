@@ -118,5 +118,5 @@ public class CalendarComponent extends AbstractPropertiesComponent implements IA
 	public List<String> getFields(ContentContext ctx) throws Exception {
 		return FIELDS;
 	}
-
+	
 }

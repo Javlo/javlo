@@ -76,7 +76,7 @@ public class InfoBean {
 	private String fakeCurrentURL = null;
 
 	private ImageBean imageHeader = null;
-	
+
 	private static final Map<String, String> staticData = Collections.unmodifiableMap(new HashMap<String, String>() {
 		{
 			put("compId", IContentVisualComponent.COMP_ID_REQUEST_PARAM);
@@ -96,7 +96,7 @@ public class InfoBean {
 		}
 		return ib;
 	}
-	
+
 	/**
 	 * create info bean but don't put in request.
 	 * 
@@ -111,8 +111,7 @@ public class InfoBean {
 		info.globalContext = GlobalContext.getInstance(ctx.getRequest());
 		return info;
 	}
-	
-	
+
 	/**
 	 * create info bean in request (key=info) for jstp call in template.
 	 * 
@@ -121,7 +120,7 @@ public class InfoBean {
 	 */
 	public static InfoBean updateInfoBean(ContentContext ctx) throws Exception {
 		InfoBean info = createInfoBean(ctx);
-		ctx.getRequest().setAttribute(REQUEST_KEY, info);		
+		ctx.getRequest().setAttribute(REQUEST_KEY, info);
 		return info;
 	}
 
@@ -135,15 +134,15 @@ public class InfoBean {
 		StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
 		return staticConfig.getCmsName();
 	}
-	
+
 	public ContentContext getContentContext() {
 		return ctx;
 	}
-	
+
 	public String getCurrentAbsoluteURL() {
 		return URLHelper.createURL(ctx.getContextForAbsoluteURL());
 	}
-	
+
 	public String getCurrentAbsoluteURLZIP() {
 		ContentContext ZIPCtx = ctx.getContextForAbsoluteURL();
 		ZIPCtx.setURLFactory(null);
@@ -151,7 +150,7 @@ public class InfoBean {
 		ZIPCtx.setFormat("zip");
 		return URLHelper.createURL(ZIPCtx);
 	}
-	
+
 	public String getCurrentAbsoluteURLXML() {
 		ContentContext XMLCtx = ctx.getContextForAbsoluteURL();
 		XMLCtx.setURLFactory(null);
@@ -166,45 +165,45 @@ public class InfoBean {
 		return URLHelper.createURL(previewCtx);
 	}
 
-	public String getCurrentURL() {		
+	public String getCurrentURL() {
 		if (fakeCurrentURL != null) {
 			return fakeCurrentURL;
-		} else {		
+		} else {
 			return URLHelper.createURL(ctx);
 		}
 	}
-	
+
 	public String getCurrentURLWidthDevice() {
 		if (fakeCurrentURL != null) {
 			return fakeCurrentURL;
 		} else {
 			String url = URLHelper.createURL(ctx);
 			if (!url.contains(Device.FORCE_DEVICE_PARAMETER_NAME)) {
-				url = URLHelper.addParam(url, Device.FORCE_DEVICE_PARAMETER_NAME, ""+ctx.getDevice());
+				url = URLHelper.addParam(url, Device.FORCE_DEVICE_PARAMETER_NAME, "" + ctx.getDevice());
 			}
 			return url;
 		}
 	}
-	
+
 	public String getCurrentAjaxURLWidthDevice() {
 		if (fakeCurrentURL != null) {
 			return fakeCurrentURL;
 		} else {
 			String url = URLHelper.createAjaxURL(ctx);
-			url = URLHelper.addParam(url, Device.FORCE_DEVICE_PARAMETER_NAME, ""+ctx.getDevice());
+			url = URLHelper.addParam(url, Device.FORCE_DEVICE_PARAMETER_NAME, "" + ctx.getDevice());
 			return url;
 		}
 	}
-	
+
 	public String getCurrentCanonicalURL() {
 		ContentContext robotCtx = new ContentContext(ctx);
 		robotCtx.setDevice(Device.getFakeDevice("robot"));
 		robotCtx.setAbsoluteURL(true);
 		return URLHelper.createURL(robotCtx);
 	}
-	
-	public Map<String,String> getLanguageURLs() {
-		Map<String,String> urls = new HashMap<String, String>();
+
+	public Map<String, String> getLanguageURLs() {
+		Map<String, String> urls = new HashMap<String, String>();
 		for (String lg : ctx.getGlobalContext().getContentLanguages()) {
 			ContentContext lgCtx = new ContentContext(ctx);
 			lgCtx.setAllLanguage(lg);
@@ -249,10 +248,11 @@ public class InfoBean {
 	public String getCurrentViewURL() {
 		return URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE).getFreeContentContext());
 	}
-	
+
 	public String getCurrentViewURLWidthDevice() {
-		String url = URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE).getFreeContentContext());
-		url = URLHelper.addParam(url, Device.FORCE_DEVICE_PARAMETER_NAME, ""+ctx.getDevice());
+		String url = URLHelper
+				.createURL(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE).getFreeContentContext());
+		url = URLHelper.addParam(url, Device.FORCE_DEVICE_PARAMETER_NAME, "" + ctx.getDevice());
 		return url;
 	}
 
@@ -261,7 +261,8 @@ public class InfoBean {
 	}
 
 	public String getCurrentPreviewURL() {
-		return URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.PREVIEW_MODE).getFreeContentContext());
+		return URLHelper
+				.createURL(ctx.getContextWithOtherRenderMode(ContentContext.PREVIEW_MODE).getFreeContentContext());
 	}
 
 	public String getCurrentPageICalURL() throws Exception {
@@ -302,54 +303,58 @@ public class InfoBean {
 
 	public String getDate() {
 		try {
-			return StringHelper.renderDate(new Locale(ctx.getRequestContentLanguage()), currentPage.getContentDateNeverNull(ctx), globalContext.getShortDateFormat());
+			return StringHelper.renderDate(new Locale(ctx.getRequestContentLanguage()),
+					currentPage.getContentDateNeverNull(ctx), globalContext.getShortDateFormat());
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
 		}
 	}
-	
+
 	public String getMediumDate() {
 		try {
-			return StringHelper.renderDate(new Locale(ctx.getRequestContentLanguage()),currentPage.getContentDateNeverNull(ctx), globalContext.getMediumDateFormat());
+			return StringHelper.renderDate(new Locale(ctx.getRequestContentLanguage()),
+					currentPage.getContentDateNeverNull(ctx), globalContext.getMediumDateFormat());
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
 		}
 	}
-	
 
 	public String getFullDate() {
 		try {
-			return StringHelper.renderDate(new Locale(ctx.getRequestContentLanguage()), currentPage.getContentDateNeverNull(ctx), globalContext.getFullDateFormat());
+			return StringHelper.renderDate(new Locale(ctx.getRequestContentLanguage()),
+					currentPage.getContentDateNeverNull(ctx), globalContext.getFullDateFormat());
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
 		}
 	}
-	
+
 	public String getNowDate() {
 		try {
-			return StringHelper.renderDate(new Locale(ctx.getRequestContentLanguage()), new Date(), globalContext.getShortDateFormat());
+			return StringHelper.renderDate(new Locale(ctx.getRequestContentLanguage()), new Date(),
+					globalContext.getShortDateFormat());
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
 		}
 	}
-	
+
 	public String getNowMediumDate() {
 		try {
-			return StringHelper.renderDate(new Locale(ctx.getRequestContentLanguage()),new Date(), globalContext.getMediumDateFormat());
+			return StringHelper.renderDate(new Locale(ctx.getRequestContentLanguage()), new Date(),
+					globalContext.getMediumDateFormat());
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
 		}
 	}
-	
 
 	public String getNowFullDate() {
 		try {
-			return StringHelper.renderDate(new Locale(ctx.getRequestContentLanguage()), new Date(), globalContext.getFullDateFormat());
+			return StringHelper.renderDate(new Locale(ctx.getRequestContentLanguage()), new Date(),
+					globalContext.getFullDateFormat());
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
@@ -359,7 +364,7 @@ public class InfoBean {
 	public Date getNow() {
 		return new Date();
 	}
-	
+
 	public String getNowSortable() {
 		return StringHelper.renderSortableDate(new Date());
 	}
@@ -372,19 +377,19 @@ public class InfoBean {
 			return null;
 		}
 	}
-	
+
 	public String getCurrentDateRFC3339() {
 		try {
-			return StringHelper.renderDate(new Date(),"yyyy-MM-dd");
+			return StringHelper.renderDate(new Date(), "yyyy-MM-dd");
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
 		}
 	}
-	
+
 	public String getCurrentTimeRFC3339() {
 		try {
-			return StringHelper.renderDate(new Date(),"yyyy-MM-dd'T'HH:mm:ssXXX");
+			return StringHelper.renderDate(new Date(), "yyyy-MM-dd'T'HH:mm:ssXXX");
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
@@ -478,7 +483,7 @@ public class InfoBean {
 	public String getPageHumanName() {
 		return currentPage.getHumanName();
 	}
-	
+
 	public String getPageTitle() {
 		try {
 			return currentPage.getPageTitle(ctx);
@@ -487,7 +492,7 @@ public class InfoBean {
 			return null;
 		}
 	}
-	
+
 	public String getTitle() {
 		try {
 			return currentPage.getTitle(ctx);
@@ -497,7 +502,7 @@ public class InfoBean {
 		}
 	}
 
-	public String getTime() {	
+	public String getTime() {
 		try {
 			return StringHelper.renderTime(ctx, currentPage.getContentDateNeverNull(ctx));
 		} catch (Exception e) {
@@ -505,7 +510,7 @@ public class InfoBean {
 			return null;
 		}
 	}
-	
+
 	public String getSortableTime() {
 		try {
 			return StringHelper.renderSortableTime(new Date());
@@ -518,14 +523,14 @@ public class InfoBean {
 	public String getUserName() {
 		return ctx.getCurrentUserId();
 	}
-	
+
 	public String getUserLabel() {
 		User user = ctx.getCurrentUser();
 		if (user == null) {
 			return "";
 		} else {
 			if (!StringHelper.isAllEmpty(user.getUserInfo().getFirstName(), user.getUserInfo().getLastName())) {
-				return (user.getUserInfo().getFirstName()+" "+user.getUserInfo().getLastName()).trim();
+				return (user.getUserInfo().getFirstName() + " " + user.getUserInfo().getLastName()).trim();
 			}
 		}
 		return ctx.getCurrentUserId();
@@ -551,6 +556,7 @@ public class InfoBean {
 
 	/**
 	 * get the list of the pages from current to root
+	 * 
 	 * @return
 	 */
 	public List<PageBean> getPagePath() {
@@ -586,19 +592,22 @@ public class InfoBean {
 	public String getEditTemplateURL() {
 		return URLHelper.createStaticURL(ctx, ctx.getGlobalContext().getStaticConfig().getEditTemplateFolder());
 	}
-	
+
 	public String getEditTemplateFolder() {
 		return ctx.getGlobalContext().getStaticConfig().getEditTemplateFolder();
 	}
 
 	public String getEditTemplateModeURL() {
 		if (globalContext.getEditTemplateMode() != null && globalContext.getEditTemplateMode().trim().length() > 0) {
-			String cssLink = URLHelper.mergePath(globalContext.getStaticConfig().getEditTemplateFolder(), "css", "edit_" + globalContext.getEditTemplateMode() + ".css");
+			String cssLink = URLHelper.mergePath(globalContext.getStaticConfig().getEditTemplateFolder(), "css",
+					"edit_" + globalContext.getEditTemplateMode() + ".css");
 			return URLHelper.createStaticURL(ctx, cssLink);
 		} else {
 			try {
-				if (ctx.getCurrentTemplate() != null && !StringHelper.isEmpty(ctx.getCurrentTemplate().getEditTemplateMode())) {
-					String cssLink = URLHelper.mergePath(globalContext.getStaticConfig().getEditTemplateFolder(), "css", "edit_" + ctx.getCurrentTemplate().getEditTemplateMode() + ".css");
+				if (ctx.getCurrentTemplate() != null
+						&& !StringHelper.isEmpty(ctx.getCurrentTemplate().getEditTemplateMode())) {
+					String cssLink = URLHelper.mergePath(globalContext.getStaticConfig().getEditTemplateFolder(), "css",
+							"edit_" + ctx.getCurrentTemplate().getEditTemplateMode() + ".css");
 					return URLHelper.createStaticURL(ctx, cssLink);
 				} else {
 					return null;
@@ -609,14 +618,19 @@ public class InfoBean {
 			}
 		}
 	}
-	
+
 	public String getPreviewTemplateModeURL() {
 		if (globalContext.getEditTemplateMode() != null && globalContext.getEditTemplateMode().trim().length() > 0) {
-			return URLHelper.mergePath(URLHelper.createStaticURL(ctx, "/"), globalContext.getStaticConfig().getEditTemplateFolder(), "/preview/"+globalContext.getEditTemplateMode()+"/css/edit_preview.css");
+			return URLHelper.mergePath(URLHelper.createStaticURL(ctx, "/"),
+					globalContext.getStaticConfig().getEditTemplateFolder(),
+					"/preview/" + globalContext.getEditTemplateMode() + "/css/edit_preview.css");
 		} else {
 			try {
-				if (ctx.getCurrentTemplate() != null && !StringHelper.isEmpty(ctx.getCurrentTemplate().getEditTemplateMode())) {
-					return URLHelper.mergePath(URLHelper.createStaticURL(ctx, "/"), globalContext.getStaticConfig().getEditTemplateFolder(), "/preview/"+ctx.getCurrentTemplate().getEditTemplateMode()+"/css/edit_preview.css");
+				if (ctx.getCurrentTemplate() != null
+						&& !StringHelper.isEmpty(ctx.getCurrentTemplate().getEditTemplateMode())) {
+					return URLHelper.mergePath(URLHelper.createStaticURL(ctx, "/"),
+							globalContext.getStaticConfig().getEditTemplateFolder(),
+							"/preview/" + ctx.getCurrentTemplate().getEditTemplateMode() + "/css/edit_preview.css");
 				} else {
 					return null;
 				}
@@ -626,7 +640,7 @@ public class InfoBean {
 			}
 		}
 	}
-	
+
 	public String getResourceRootURL() {
 		return URLHelper.createResourceURL(ctx, "/");
 	}
@@ -651,7 +665,7 @@ public class InfoBean {
 		if (ctx.getCurrentUser() != null) {
 			return URLHelper.createAvatarUrl(ctx, ctx.getCurrentUser().getUserInfo());
 		} else {
-			return URLHelper.createStaticURL(ctx,  "/images/avatar.png");
+			return URLHelper.createStaticURL(ctx, "/images/avatar.png");
 		}
 	}
 
@@ -674,9 +688,11 @@ public class InfoBean {
 	}
 
 	public String getBackgroundURL() {
-		File bgFile = new File(URLHelper.mergePath(ctx.getGlobalContext().getDataFolder(), ctx.getGlobalContext().getStaticConfig().getStaticFolder(), "background.png"));
+		File bgFile = new File(URLHelper.mergePath(ctx.getGlobalContext().getDataFolder(),
+				ctx.getGlobalContext().getStaticConfig().getStaticFolder(), "background.png"));
 		if (!bgFile.exists()) {
-			bgFile = new File(URLHelper.mergePath(ctx.getGlobalContext().getDataFolder(), ctx.getGlobalContext().getStaticConfig().getStaticFolder(), "background.jpg"));
+			bgFile = new File(URLHelper.mergePath(ctx.getGlobalContext().getDataFolder(),
+					ctx.getGlobalContext().getStaticConfig().getStaticFolder(), "background.jpg"));
 		}
 		if (bgFile.exists()) {
 			try {
@@ -714,7 +730,8 @@ public class InfoBean {
 	}
 
 	public String getCopiedPath() {
-		ContentContext copyCtx = EditContext.getInstance(globalContext, ctx.getRequest().getSession()).getContextForCopy(ctx);
+		ContentContext copyCtx = EditContext.getInstance(globalContext, ctx.getRequest().getSession())
+				.getContextForCopy(ctx);
 		if (copyCtx != null) {
 			if (!ctx.getPath().startsWith(copyCtx.getPath())) {
 				return copyCtx.getPath();
@@ -761,7 +778,8 @@ public class InfoBean {
 
 	public String getRootTemplateURL() {
 		try {
-			return URLHelper.createStaticURL(ctx, URLHelper.mergePath(ctx.getCurrentTemplate().getLocalWorkTemplateFolder(), getTemplateFolder()));
+			return URLHelper.createStaticURL(ctx,
+					URLHelper.mergePath(ctx.getCurrentTemplate().getLocalWorkTemplateFolder(), getTemplateFolder()));
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
@@ -770,7 +788,8 @@ public class InfoBean {
 
 	public String getAbsoluteRootTemplateURL() {
 		try {
-			String url = URLHelper.createStaticURL(ctx.getContextForAbsoluteURL(), URLHelper.mergePath(ctx.getCurrentTemplate().getLocalWorkTemplateFolder(), getTemplateFolder()));
+			String url = URLHelper.createStaticURL(ctx.getContextForAbsoluteURL(),
+					URLHelper.mergePath(ctx.getCurrentTemplate().getLocalWorkTemplateFolder(), getTemplateFolder()));
 			return url;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -800,7 +819,8 @@ public class InfoBean {
 
 	public String getShortLanguageURL() {
 		try {
-			return URLHelper.createStaticURL(ctx.getContextForAbsoluteURL(), ctx.getCurrentPage().getShortLanguageURL(ctx));
+			return URLHelper.createStaticURL(ctx.getContextForAbsoluteURL(),
+					ctx.getCurrentPage().getShortLanguageURL(ctx));
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
@@ -837,7 +857,7 @@ public class InfoBean {
 		}
 		return page.getName();
 	}
-	
+
 	public int getSectionNumber() {
 		MenuElement page;
 		try {
@@ -886,8 +906,8 @@ public class InfoBean {
 	}
 
 	/**
-	 * return the name of the second level page active. "root" if current page
-	 * in root.
+	 * return the name of the second level page active. "root" if current page in
+	 * root.
 	 * 
 	 * @return
 	 * @throws Exception
@@ -940,8 +960,8 @@ public class InfoBean {
 	}
 
 	/**
-	 * return the name of the second level page active. "root" if current page
-	 * in root.
+	 * return the name of the second level page active. "root" if current page in
+	 * root.
 	 * 
 	 * @return
 	 * @throws Exception
@@ -972,8 +992,8 @@ public class InfoBean {
 	}
 
 	/**
-	 * return the name of the second level page active. "root" if current page
-	 * in root.
+	 * return the name of the second level page active. "root" if current page in
+	 * root.
 	 * 
 	 * @return
 	 * @throws Exception
@@ -1075,20 +1095,20 @@ public class InfoBean {
 			return null;
 		}
 	}
-	
+
 	public TemplateBean getTemplateBean() {
 		try {
-			return new TemplateBean(ctx,ctx.getCurrentTemplate());
+			return new TemplateBean(ctx, ctx.getCurrentTemplate());
 		} catch (Exception e) {
 			return null;
 		}
 	}
-	
+
 	public List<TemplateBean> getTemplates() {
 		try {
 			List<TemplateBean> templates = new LinkedList<Template.TemplateBean>();
 			for (Template template : TemplateFactory.getAllTemplatesFromContext(globalContext)) {
-				templates.add(new TemplateBean(ctx,template));
+				templates.add(new TemplateBean(ctx, template));
 			}
 			return templates;
 		} catch (Exception e) {
@@ -1096,8 +1116,8 @@ public class InfoBean {
 			return null;
 		}
 	}
-	
-	public Map<String, Template> getTemplatesMap() throws Exception {		
+
+	public Map<String, Template> getTemplatesMap() throws Exception {
 		return TemplateFactory.getTemplates(ctx.getRequest().getSession().getServletContext());
 	}
 
@@ -1151,7 +1171,8 @@ public class InfoBean {
 	}
 
 	public boolean isAccountSettings() {
-		User user = AdminUserFactory.createUserFactory(ctx.getRequest()).getCurrentUser(ctx.getGlobalContext(), ctx.getRequest().getSession());
+		User user = AdminUserFactory.createUserFactory(ctx.getRequest()).getCurrentUser(ctx.getGlobalContext(),
+				ctx.getRequest().getSession());
 		if ((!globalContext.isMaster() && AdminUserSecurity.getInstance().isMaster(user))) {
 			return false;
 		} else if (AdminUserSecurity.getInstance().isGod(user)) {
@@ -1171,8 +1192,7 @@ public class InfoBean {
 	}
 
 	/**
-	 * this method return true at the first call for current session and false
-	 * afer.
+	 * this method return true at the first call for current session and false afer.
 	 * 
 	 * @return
 	 */
@@ -1263,8 +1283,10 @@ public class InfoBean {
 	}
 
 	public boolean isLocalModule() {
-		//String localModulePath = ctx.getRequest().getSession().getServletContext().getRealPath("/webstart/localmodule.jnlp.jsp");
-		String localModulePath = ResourceHelper.getRealPath(ctx.getRequest().getSession().getServletContext(), "/webstart/localmodule.jnlp.jsp");
+		// String localModulePath =
+		// ctx.getRequest().getSession().getServletContext().getRealPath("/webstart/localmodule.jnlp.jsp");
+		String localModulePath = ResourceHelper.getRealPath(ctx.getRequest().getSession().getServletContext(),
+				"/webstart/localmodule.jnlp.jsp");
 		return (new File(localModulePath)).isFile();
 	}
 
@@ -1296,7 +1318,8 @@ public class InfoBean {
 	public PageBean getBackPage() throws Exception {
 		String page = ctx.getRequest().getParameter("_back_page");
 		if (page != null) {
-			return ContentService.getInstance(ctx.getGlobalContext()).getNavigation(ctx).searchChildFromName(page).getPageBean(ctx);
+			return ContentService.getInstance(ctx.getGlobalContext()).getNavigation(ctx).searchChildFromName(page)
+					.getPageBean(ctx);
 		} else {
 			return null;
 		}
@@ -1305,11 +1328,11 @@ public class InfoBean {
 	public String getRootURL() {
 		return URLHelper.createURL(ctx, "/");
 	}
-	
+
 	public String getRootURLPageMode() {
 		return URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.PAGE_MODE), "/");
 	}
-	
+
 	public String getRootURLViewMode() {
 		return URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE), "/");
 	}
@@ -1328,7 +1351,8 @@ public class InfoBean {
 	}
 
 	public String getRootAbsoluteViewURL() {
-		return URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE).getContextForAbsoluteURL(), "/");
+		return URLHelper
+				.createURL(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE).getContextForAbsoluteURL(), "/");
 	}
 
 	public Map<String, String> getStaticData() {
@@ -1412,7 +1436,8 @@ public class InfoBean {
 		if (ctx.getRequest().getSession().getAttribute(RSS_SESSION_KEY) == null) {
 			ContentService content = ContentService.getInstance(ctx.getRequest());
 			try {
-				ctx.getRequest().getSession().setAttribute(RSS_SESSION_KEY, content.getNavigation(ctx).getAllChildrenWithComponentType(ctx, RSSRegistration.TYPE).size() > 0);
+				ctx.getRequest().getSession().setAttribute(RSS_SESSION_KEY, content.getNavigation(ctx)
+						.getAllChildrenWithComponentType(ctx, RSSRegistration.TYPE).size() > 0);
 			} catch (Exception e) {
 				e.printStackTrace();
 				return false;
@@ -1457,7 +1482,8 @@ public class InfoBean {
 
 	public String getI18nAjaxURL() throws ModuleException, Exception {
 		Map<String, String> params = new HashMap<String, String>();
-		params.put("module", ModulesContext.getInstance(ctx.getRequest().getSession(), ctx.getGlobalContext()).getCurrentModule().getName());
+		params.put("module", ModulesContext.getInstance(ctx.getRequest().getSession(), ctx.getGlobalContext())
+				.getCurrentModule().getName());
 		return URLHelper.createStaticURL(ctx, "/i18n/" + ctx.getRequestContentLanguage(), params);
 	}
 
@@ -1466,16 +1492,18 @@ public class InfoBean {
 		if (logo == null || logo.equals("null")) {
 			return null;
 		} else {
-			return URLHelper.createTransformURL(ctx, URLHelper.mergePath(ctx.getGlobalContext().getStaticConfig().getStaticFolder(), logo), "logo");
+			return URLHelper.createTransformURL(ctx,
+					URLHelper.mergePath(ctx.getGlobalContext().getStaticConfig().getStaticFolder(), logo), "logo");
 		}
 	}
-	
+
 	public String getLogoRawUrl() throws Exception {
 		String logo = ctx.getGlobalContext().getTemplateData().getLogo();
 		if (logo == null || logo.equals("null")) {
 			return null;
 		} else {
-			return URLHelper.createResourceURL(ctx, URLHelper.mergePath(ctx.getGlobalContext().getStaticConfig().getStaticFolder(), logo));
+			return URLHelper.createResourceURL(ctx,
+					URLHelper.mergePath(ctx.getGlobalContext().getStaticConfig().getStaticFolder(), logo));
 		}
 	}
 
@@ -1485,11 +1513,11 @@ public class InfoBean {
 		}
 		return !VisitorsMessageService.getInstance(ctx.getRequest().getSession()).isAlReadyDisplayed("cookies");
 	}
-	
+
 	public Boolean isCookiesAccepted() throws Exception {
 		return CookiesService.getInstance(ctx).getAccepted();
 	}
-	
+
 	public ContentContext getContextForCopy() {
 		EditContext editCtx = EditContext.getInstance(globalContext, ctx.getRequest().getSession());
 		return editCtx.getContextForCopy(ctx);
@@ -1512,7 +1540,8 @@ public class InfoBean {
 	public List<IMacro> getInteractiveMacro() {
 		List<IMacro> macros = new LinkedList<IMacro>();
 		List<String> macroName = globalContext.getMacros();
-		MacroFactory factory = MacroFactory.getInstance(StaticConfig.getInstance(ctx.getRequest().getSession().getServletContext()));
+		MacroFactory factory = MacroFactory
+				.getInstance(StaticConfig.getInstance(ctx.getRequest().getSession().getServletContext()));
 		for (String name : macroName) {
 			IMacro macro = factory.getMacro(name);
 			if (macro instanceof IInteractiveMacro) {
@@ -1521,13 +1550,14 @@ public class InfoBean {
 		}
 		return macros;
 	}
-	
+
 	public List<IMacro> getAddMacro() {
 		List<IMacro> macros = new LinkedList<IMacro>();
 		List<String> macroName = globalContext.getMacros();
-		MacroFactory factory = MacroFactory.getInstance(StaticConfig.getInstance(ctx.getRequest().getSession().getServletContext()));
+		MacroFactory factory = MacroFactory
+				.getInstance(StaticConfig.getInstance(ctx.getRequest().getSession().getServletContext()));
 		for (String name : macroName) {
-			IMacro macro = factory.getMacro(name);			
+			IMacro macro = factory.getMacro(name);
 			if (macro != null && macro.isAdd()) {
 				macros.add(macro);
 			}
@@ -1538,7 +1568,8 @@ public class InfoBean {
 	public List<IMacro> getMacro() {
 		List<IMacro> macros = new LinkedList<IMacro>();
 		List<String> macroName = globalContext.getMacros();
-		MacroFactory factory = MacroFactory.getInstance(StaticConfig.getInstance(ctx.getRequest().getSession().getServletContext()));
+		MacroFactory factory = MacroFactory
+				.getInstance(StaticConfig.getInstance(ctx.getRequest().getSession().getServletContext()));
 		for (String name : macroName) {
 			if (name.trim().length() > 0) {
 				IMacro macro = factory.getMacro(name);
@@ -1583,7 +1614,7 @@ public class InfoBean {
 	public ImageBean getImageHeader() throws Exception {
 		return getImageBackground();
 	}
-	
+
 	public ImageBean getImageBackground() throws Exception {
 		if (imageHeader != null) {
 			return imageHeader;
@@ -1607,27 +1638,27 @@ public class InfoBean {
 		}
 		return out;
 	}
-	
+
 	public String getLibUrl() {
 		return URLHelper.createStaticURL(ctx, "/lib/");
 	}
-	
+
 	public boolean isInternetAccess() {
 		return ctx.getGlobalContext().getStaticConfig().isInternetAccess();
 	}
-	
-	public Map<String,String> getTranslateLanguageMap() {
+
+	public Map<String, String> getTranslateLanguageMap() {
 		LanguageMap langMap = new LanguageMap();
 		langMap.setLang(ctx.getLanguage());
 		return langMap;
 	}
-	
-	public Map<String,String> getLanguageMap() {
+
+	public Map<String, String> getLanguageMap() {
 		LanguageMap langMap = new LanguageMap();
 		langMap.setLang(null);
 		return langMap;
 	}
-	
+
 	public String getAccountPageUrl() throws Exception {
 		ContentService content = ContentService.getInstance(ctx.getRequest());
 		MenuElement elem = content.getNavigation(ctx).searchChildFromName("account");
@@ -1637,14 +1668,24 @@ public class InfoBean {
 			return null;
 		}
 	}
-	
+
 	public String getNoImageURL() throws Exception {
 		return URLHelper.createTransformURL(ctx, "/noimage.png", "standard");
 	}
-	
+
 	public boolean isArchive() {
 		return ctx.getPath().toLowerCase().contains("archive");
 	}
 
-	
+	public String getFacebookImageUrl() throws Exception {
+		ContentContext absCtx = ctx.getContextForAbsoluteURL();
+		IImageTitle image = ctx.getCurrentPage().getImage(absCtx);
+		if (image != null) {
+			ImageBean imageBean = new ImageBean(absCtx, image, "facebook");
+			return imageBean.getPreviewURL();
+		} else {
+			return null;
+		}
+	}
+
 }
