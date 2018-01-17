@@ -262,10 +262,10 @@ public class Heading extends AbstractPropertiesComponent implements ISubTitle {
 	@Override
 	public void init(ComponentBean bean, ContentContext newContext) throws Exception {
 		super.init(bean, newContext);
-		if ((StringHelper.isEmpty(getFieldValue(TEXT))) && !StringHelper.isEmpty(getFieldValue(SMALL_TEXT))) {			
-			setFieldValue(TEXT, getFieldValue(SMALL_TEXT));
-			setFieldValue(SMALL_TEXT, "");			
-		}
+//		if ((StringHelper.isEmpty(getFieldValue(TEXT))) && !StringHelper.isEmpty(getFieldValue(SMALL_TEXT))) {			
+//			setFieldValue(TEXT, getFieldValue(SMALL_TEXT));
+//			setFieldValue(SMALL_TEXT, "");			
+//		}
 	}
 
 	@Override

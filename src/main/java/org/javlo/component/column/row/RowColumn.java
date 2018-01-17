@@ -47,11 +47,20 @@ public class RowColumn extends AbstractRowComponent {
 	}
 
 	protected String getColClass(ContentContext ctx, String w) {
-		return getConfig(ctx).getProperty("class.prefix", "col-" + w);
+		String breakpoint = getColBreakpoint(ctx);
+		if (breakpoint.length() != 2) {
+			return getConfig(ctx).getProperty("class.prefix", "col-" + w);
+		} else {
+			return getConfig(ctx).getProperty("class.prefix", "col-"+breakpoint+"-" + w);
+		}
 	}
 
 	public List<String> getWidths(ContentContext ctx) {
 		return StringHelper.stringToCollection(getConfig(ctx).getProperty("widths", "1,2,3,4,5,6,7,8,9,10,11,12"), ",");
+	}
+	
+	public String getColBreakpoint(ContentContext ctx) {
+		return getConfig(ctx).getProperty("breakpoint", "").trim();
 	}
 	
 	@Override
