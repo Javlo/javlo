@@ -7,6 +7,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.commons.lang.StringEscapeUtils;
+import org.javlo.component.core.ComponentBean;
 import org.javlo.component.core.ComponentLayout;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.core.ISubTitle;
@@ -255,6 +256,15 @@ public class Heading extends AbstractPropertiesComponent implements ISubTitle {
 		super.init();
 		if (getLayout() == null) {
 			getComponentBean().setLayout(new ComponentLayout(""));
+		}
+	}
+	
+	@Override
+	public void init(ComponentBean bean, ContentContext newContext) throws Exception {
+		super.init(bean, newContext);
+		if ((StringHelper.isEmpty(getFieldValue(TEXT))) && !StringHelper.isEmpty(getFieldValue(SMALL_TEXT))) {			
+			setFieldValue(TEXT, getFieldValue(SMALL_TEXT));
+			setFieldValue(SMALL_TEXT, "");			
 		}
 	}
 
