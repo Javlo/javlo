@@ -93,11 +93,11 @@ public class CalendarBean {
 					day.setActive(true);
 					cal.add(Calendar.DAY_OF_YEAR, 1);
 				}
-				if (cal.get(Calendar.MONTH) == outBean.month) {
+//				if (cal.get(Calendar.MONTH) == outBean.month) {
 					int x = d / outBean.daysBloc[0].length;
 					int y = d % outBean.daysBloc[0].length;
 					outBean.daysBloc[x][y] = day;
-				}
+//				}
 			}
 			ctx.getRequest().setAttribute(KEY, outBean);
 		}
