@@ -73,7 +73,7 @@ public class CalendarBean {
 			next.setTime(cal.getTime());
 			next.add(Calendar.MONTH, 1);
 			int dayOfWeek = getDayOfWeekFromZeroAndMonday(cal);
-			int lastDay = cal.getMaximum(Calendar.DAY_OF_MONTH) + dayOfWeek - 1;
+			int lastDay = cal.getActualMaximum(Calendar.DAY_OF_MONTH) + dayOfWeek - 1;
 			for (int d = 0; d < outBean.daysBloc.length * outBean.daysBloc[0].length; d++) {
 				Day day;
 				/** days before current month **/
