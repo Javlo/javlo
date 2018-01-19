@@ -1,20 +1,23 @@
 package org.javlo.service;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Logger;
 
 import org.javlo.component.core.ContentElementList;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.dynamic.DynamicComponent;
 import org.javlo.component.links.MirrorComponent;
-import org.javlo.component.links.PageMirrorComponent;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.fields.IFieldContainer;
 import org.javlo.navigation.MenuElement;
 
 public class DynamicComponentService {
+	
+	private static Logger logger = Logger.getLogger(DynamicComponentService.class.getName());
 
 	GlobalContext globalContext;
 
@@ -63,6 +66,9 @@ public class DynamicComponentService {
 	}
 
 	public List<IFieldContainer> getFieldContainers(ContentContext ctx, MenuElement page, String fieldType) throws Exception {
+		if (page == null) {
+			return Collections.emptyList();
+		}			
 		String REQUEST_KEY = page.getId() + "__TYPE__" + fieldType;
 		List<IFieldContainer> outContainer = (List<IFieldContainer>) ctx.getRequest().getAttribute(REQUEST_KEY);
 		if (outContainer == null) {
