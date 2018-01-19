@@ -364,7 +364,7 @@ public class TicketAction extends AbstractModuleAction {
 				String sujectPrefix = i18nAccess.getText("ticket.subject");
 				String ticketUpdate = i18nAccess.getText("ticket.update");
 				String goOnSite = i18nAccess.getText("ticket.go");
-				String content = XHTMLHelper.createAdminMail(subject != null?subject:sujectPrefix + ' ' + siteTitle, ticketsMap.size() + ticketUpdate, ticketsMap, baseUrl, goOnSite, null);
+				String content = XHTMLHelper.createAdminMail(subject != null?subject:sujectPrefix + ' ' + siteTitle, ticketsMap.size() + ' ' + ticketUpdate, ticketsMap, baseUrl, goOnSite, null);
 				NetHelper.sendXHTMLMail(ctx, new InternetAddress(globalContext.getAdministratorEmail()), new InternetAddress(email), null, null, ticketUpdate + ' ' + siteTitle, content.toString(), null);
 
 			}

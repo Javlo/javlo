@@ -147,9 +147,9 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 	@Override
 	public String getSuffixViewXHTMLCode(ContentContext ctx) {
 		if (!isWrapped()) {
-			return "";
+			return ""+" <!-- empty suffix -->";
 		} else {
-			return super.getSuffixViewXHTMLCode(ctx);
+			return super.getSuffixViewXHTMLCode(ctx) +" <!-- fill suffix -->";
 		}
 	}
 
