@@ -310,7 +310,8 @@
 				<c:if test="${info.localModule}">
 					<span class="localmodule"><a href="${info.staticRootURL}webstart/localmodule.jnlp.jsp">Local Module</a></span>
 				</c:if>
-			</c:if>
+			</c:if> -
+			<span id="server-time">${contentContext.globalContext.staticConfig.env}</span>
 		</div>
 		<!-- footerinner -->
 	</div>
