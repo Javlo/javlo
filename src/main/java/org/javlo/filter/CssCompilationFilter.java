@@ -189,7 +189,7 @@ public class CssCompilationFilter implements Filter {
 		FileOutputStream out = null;
 		try {
 			lessCompiler.setEncoding(ContentContext.CHARACTER_ENCODING);
-			lessCompiler.setCompress(compress);
+			//lessCompiler.setCompress(compress);
 			String cssContent = lessCompiler.compile(lessFile);
 			out = new FileOutputStream(cssFile);
 			ResourceHelper.writeStringToStream(cssContent, out, ContentContext.CHARACTER_ENCODING);

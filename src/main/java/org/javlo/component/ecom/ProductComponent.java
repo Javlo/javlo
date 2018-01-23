@@ -129,7 +129,7 @@ public class ProductComponent extends AbstractPropertiesComponent implements IAc
 
 		List<String> fields = getFields(ctx);
 
-		out.println("<div class=\"edit\" style=\"padding: 3px;\">");
+		out.println("<div class=\"edit\" style=\"padding: 3px;\"><div class=\"row\">");
 		
 		for (String field : fields) {
 			renderField(ctx, out, field, getRowSize(field), getFieldValue(field));
@@ -137,7 +137,7 @@ public class ProductComponent extends AbstractPropertiesComponent implements IAc
 		renderField(ctx, out, "stock", 1, getRealStock(ctx));
 		renderField(ctx, out, "virtual", 1, getVirtualStock(ctx));
 
-		out.println("</div>");
+		out.println("</div></div>");
 
 		out.flush();
 		out.close();
@@ -148,14 +148,12 @@ public class ProductComponent extends AbstractPropertiesComponent implements IAc
 
 		String fieldId = createKeyWithField(field);
 		
-		out.println("<div class=\"field-label\">");
-		out.println("<label for=\"" + fieldId + "\">" + i18nAccess.getText("field." + field) + "</label>");
-		out.println("</div>");
-		out.println("<div class=\"field-input\">");
-		out.print("<textarea rows=\"" + rowSize + "\" id=\"" + fieldId + "\" name=\"" + fieldId + "\">");
+		out.println("<div class=\"col-md-4 col-lg-3\"><div class=\"form-group\">");
+		out.println("<label for=\"" + fieldId + "\">" + i18nAccess.getText("field." + field) + "</label>");		
+		out.print("<textarea class=\"form-control\" rows=\"" + rowSize + "\" id=\"" + fieldId + "\" name=\"" + fieldId + "\">");
 		out.print(String.valueOf(value));
 		out.println("</textarea>");
-		out.println("</div>");
+		out.println("</div></div>");
 	}
 
 	@Override

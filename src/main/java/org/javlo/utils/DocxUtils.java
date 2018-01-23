@@ -3,6 +3,7 @@ package org.javlo.utils;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
@@ -73,6 +74,14 @@ public class DocxUtils {
 		}
 		return false;
 	}
+	
+	public static void main(String[] args) throws XDocConverterException, IOException {
+		FileInputStream in = new FileInputStream(new File("c:/trans/docs/mailing.docx"));	
+		List<ComponentBean> content = extractContent(null, in, "c:/trans/docx/resouces");
+		for (ComponentBean bean : content) {
+			System.out.println(">>>>>>>>> DocxUtils.main : type="+bean.getType()); //TODO: remove debug trace
+		}
+	}
 
 	public static List<ComponentBean> extractContent(GlobalContext globalContext, InputStream in, String resourceFolder) throws XDocConverterException, IOException {
 		Options options = Options.getFrom(DocumentKind.DOCX).to(ConverterTypeTo.XHTML);
@@ -117,7 +126,7 @@ public class DocxUtils {
 						bean.setType(WysiwygParagraph.TYPE);
 						bean.setValue(text);
 					} else {
-						if (globalContext.hasComponent(Heading.TYPE)) {
+						if (globalContext != null && globalContext.hasComponent(Heading.TYPE)) {
 							bean.setType(Heading.TYPE);
 							bean.setValue("text=" + text + "\ndepth=" + titleLevel);
 						} else {
