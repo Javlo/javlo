@@ -47,9 +47,11 @@ public class ListService {
 	public static class MapAllList implements Map<String, List<IListItem>> {
 
 		private final ContentContext ctx;
+		private boolean sorted = false;
 
-		public MapAllList(ContentContext ctx) {
+		public MapAllList(ContentContext ctx, boolean sorted) {
 			this.ctx = ctx;
+			this.sorted = sorted;
 		}
 
 		private ListService getListService() {
@@ -82,7 +84,11 @@ public class ListService {
 		@Override
 		public List<IListItem> get(Object key) {
 			try {
-				return getListService().getList(ctx, "" + key);
+				List<IListItem> outList = getListService().getList(ctx, "" + key);
+				if (sorted) {
+					Collections.sort(outList, new OrderList());
+				}
+				return outList;
 			} catch (Exception e) {
 				return null;
 			}
@@ -286,7 +292,11 @@ public class ListService {
 	}
 
 	public Map<String, List<IListItem>> getAllList(ContentContext ctx) {
-		return new MapAllList(ctx);
+		return new MapAllList(ctx, false);
+	}
+	
+	public Map<String, List<IListItem>> getAllListSorted(ContentContext ctx) {
+		return new MapAllList(ctx, true);
 	}
 
 	public static Map<String, String> listToStringMap(List<IListItem> list) {

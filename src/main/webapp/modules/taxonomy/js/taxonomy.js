@@ -43,7 +43,7 @@ jQuery(document).ready(function(){
 			ajaxSubmit = form.data("ajaxSubmit");
 		}
 		if (ajaxSubmit) {			
-			event.preventDefault();
+//			event.preventDefault();
 			jQuery("#ajax-loader").addClass("active");
 			jQuery(".ajax-loader").addClass("active");
 			var queryString = form.attr("action"); 
@@ -75,9 +75,7 @@ jQuery(document).ready(function(){
 	  if (e.preventDefault) {
 	    e.preventDefault(); // Necessary. Allows us to drop.
 	  }
-
 	  e.dataTransfer.dropEffect = 'move';  // See the section on the DataTransfer object.
-
 	  return false;
 	}
 	

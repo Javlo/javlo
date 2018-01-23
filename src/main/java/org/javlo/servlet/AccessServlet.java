@@ -412,6 +412,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 
 			i18nAccess.requestInit(ctx);
 			ctx.getRequest().setAttribute("list", ListService.getInstance(ctx).getAllList(ctx));
+			ctx.getRequest().setAttribute("sortedList", ListService.getInstance(ctx).getAllListSorted(ctx));
 
 			/* ******** */
 			/* SECURITY */

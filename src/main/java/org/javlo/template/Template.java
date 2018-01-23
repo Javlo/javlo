@@ -2609,6 +2609,8 @@ public class Template implements Comparable<Template> {
 					}
 				}
 			}
+		} else {
+			logger.warning("template not found : "+templateSrc);
 		}
 		if (globalContext != null) {
 			if (compressResource && isCompressResources() && globalContext.getStaticConfig().isProd()) {
