@@ -910,4 +910,6 @@ change log
 
  * 1/ null pointer correction if no image on page / HtmlPart for description / add message color in template data
  
- * 2/ 
+ * 2/ product edit layout + update opensagres
+ 
+ * 3/ 
