@@ -20,7 +20,6 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 import javax.naming.ConfigurationException;
-import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.imaging.ImageReadException;
 import org.apache.commons.io.FileUtils;
@@ -402,8 +401,6 @@ public class StaticInfo {
 	public static final int ACCES_DAYS = 7;
 
 	private String staticURL = null;
-
-	private WeakReference<MenuElement> linkedPageRef = null;
 
 	private Date linkedDate;
 
@@ -886,17 +883,17 @@ public class StaticInfo {
 		return size;
 	}
 
-	public String getLinkedPageId(ContentContext ctx) {
-		ContentService content = ContentService.getInstance(ctx.getGlobalContext());
-		return content.getAttribute(ctx, getKey("linked-page-id"));
-	}
-
-	public void setLinkedPageId(ContentContext ctx, String pageId) {
-		if (pageId != null) {
-			ContentService content = ContentService.getInstance(ctx.getGlobalContext());
-			content.setAttribute(ctx, getKey("linked-page-id"), pageId);
-		}
-	}
+//	public String getLinkedPageId(ContentContext ctx) {
+//		ContentService content = ContentService.getInstance(ctx.getGlobalContext());
+//		return content.getAttribute(ctx, getKey("linked-page-id"));
+//	}
+//
+//	public void setLinkedPageId(ContentContext ctx, String pageId) {
+//		if (pageId != null) {
+//			ContentService content = ContentService.getInstance(ctx.getGlobalContext());
+//			content.setAttribute(ctx, getKey("linked-page-id"), pageId);
+//		}
+//	}
 
 	public String getStaticURL() {
 		return staticURL;

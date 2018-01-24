@@ -69,6 +69,7 @@ import org.javlo.user.UserFactory;
 import org.javlo.utils.CSVFactory;
 import org.javlo.utils.CollectionAsMap;
 import org.javlo.utils.JSONMap;
+import org.javlo.utils.StructuredProperties;
 import org.javlo.utils.TimeMap;
 import org.javlo.ztatic.StaticInfo;
 
@@ -94,7 +95,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 
 	public Properties getLocalConfig(boolean reload) {
 		if (bundle == null || reload) {
-			bundle = new Properties();
+			bundle = new StructuredProperties();
 			try {
 				bundle.load(new StringReader(getValue()));
 			} catch (IOException e) {

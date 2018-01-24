@@ -877,6 +877,9 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 
 	protected String getParentNode(ContentContext ctx) {
 		String parentNodePath = properties.getProperty(PARENT_NODE_PROP_KEY, "/");
+		if (StringHelper.isEmpty(parentNodePath)) {
+			parentNodePath = "/";
+		}
 		ContentService contentService = ContentService.getInstance(ctx.getRequest());
 		MenuElement page;
 		try {
@@ -1247,7 +1250,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 
 		LocalLogger.stepCount("pageref", "step 4");
 		Set<String> currentSelection = getPagesId(ctx, allChildren);
-
+		
 		for (String pageId : selectedPage) {
 			MenuElement page = navigationService.getPage(ctx, pageId);
 			if (page != null) {
@@ -1271,7 +1274,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 				logger.warning("page not found : " + pageId);
 			}
 		}
-
+		
 		LocalLogger.stepCount("pageref", "step 5");
 
 		if (isReverseOrder(ctx)) {
@@ -1326,8 +1329,8 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 			if (!pageRealContent && GlobalContext.getInstance(ctx.getRequest()).isAutoSwitchToDefaultLanguage()) {
 				lgCtx = page.getContentContextWithContent(ctx);
 				pageRealContent = page.isRealContent(lgCtx);
-			}
-			if (filterPage(lgCtx, page, currentSelection, Collections.EMPTY_LIST, "", false)) {
+			}			
+			if (filterPage(lgCtx, page, currentSelection, Collections.EMPTY_LIST, "", false)) {			
 				if (countPage < getMaxNews()) {
 					if (backDate == null || page.getContentDateNeverNull(lgCtx).after(backDate.getTime())) {
 						if ((withEmptyPage || page.isRealContentAnyLanguage(lgCtx)) && (!onlyPageWithoutChildren || page.getChildMenuElements().size() == 0 || page.isChildrenAssociation())) {
@@ -1342,9 +1345,9 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 								realContentSize++;
 							}
 							if (!intranetMode || page.getEditorRoles().size() == 0 || (ctx.getCurrentEditUser() != null && ctx.getCurrentEditUser().validForRoles(page.getEditorRoles()))) {
-								if (realContent) {
+								if (realContent) {									
 									if (tagFilter == null || tagFilter.trim().length() == 0 || page.getTags(lgCtx).contains(tagFilter)) {
-										if (catFilter == null || catFilter.trim().length() == 0 || page.getCategory(lgCtx).equals(catFilter)) {
+										if (catFilter == null || catFilter.trim().length() == 0 || page.getCategory(lgCtx).equals(catFilter)) {											
 											Calendar cal = Calendar.getInstance();
 											cal.setTime(page.getContentDateNeverNull(lgCtx));
 											cal = TimeHelper.convertRemoveAfterMonth(cal);

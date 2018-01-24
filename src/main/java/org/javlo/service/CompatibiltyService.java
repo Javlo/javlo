@@ -91,12 +91,12 @@ public class CompatibiltyService {
 					}
 				}
 
-				/* linked page */
-				if (staticInfoFile.getLinkedPageId() != null && staticInfoFile.getLinkedPageId().trim().length() > 0) {
-					if (staticInfo.getLinkedPageId(ctx) == null || staticInfo.getLinkedPageId(ctx).trim().length() == 0) {
-						staticInfo.setLinkedPageId(ctx, staticInfoFile.getLinkedPageId());
-					}
-				}
+//				/* linked page */
+//				if (staticInfoFile.getLinkedPageId() != null && staticInfoFile.getLinkedPageId().trim().length() > 0) {
+//					if (staticInfo.getLinkedPageId(ctx) == null || staticInfo.getLinkedPageId(ctx).trim().length() == 0) {
+//						staticInfo.setLinkedPageId(ctx, staticInfoFile.getLinkedPageId());
+//					}
+//				}
 
 				/* interest */
 				if (staticInfo.getFocusZoneX(ctx) == StaticInfo.DEFAULT_FOCUS_X) {
