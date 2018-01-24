@@ -1164,9 +1164,9 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 			out.close();
 
 			StaticInfo staticInfo = StaticInfo.getInstance(ctx, f);
-			MenuElement currentPage = ctx.getCurrentPage();
+			//MenuElement currentPage = ctx.getCurrentPage();
 
-			staticInfo.setLinkedPageId(ctx, currentPage.getId());
+			//staticInfo.setLinkedPageId(ctx, currentPage.getId());
 			staticInfo.setShared(ctx, false);
 		}
 		return fileName;
