@@ -912,4 +912,6 @@ change log
  
  * 2/ product edit layout + update opensagres
  
- * 3/ remove linked-page-id / structure smart-generic-form storage
+ * 3/ remove linked-page-id / structure smart-generic-form storage / user JAVLO_HOME env. var. for localise the static-config.properties folder
+ 
+* 2.1.1 [26/01/2018]

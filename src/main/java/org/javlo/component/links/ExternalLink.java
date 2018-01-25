@@ -93,53 +93,62 @@ public class ExternalLink extends ComplexPropertiesLink implements IReverseLinkC
 			ctx.getRequest().setAttribute("label", "no link");
 		}
 	}
-	
+
 	@Override
 	protected String getForcedPrefixViewXHTMLCode(ContentContext ctx) {
 		String prefix;
-		try {
-			if (getConfig(ctx).getProperty("prefix", null) != null) {
-				return getConfig(ctx).getProperty("prefix", null);
-			}
-			String style = contructViewStyle(ctx);
-			prefix = "";
-			if (getComponentBean().isList()) {
-				prefix = "<li>";
-			}
-			if (style == null) {
-				style = getType();
-			} else {
-				style = style+' '+getType();
-			}
-			
-			String target ="";
-			if (ctx.getGlobalContext().isOpenExternalLinkAsPopup(getLink())) {
-				target = "target=\"_blank\" ";
-				String title = I18nAccess.getInstance(ctx).getViewText("global.newwindow", "");
-				if (title.trim().length() > 0) {
-					target = target + "title=\"" + title + "\" ";
+		if (isWrapped(ctx)) {
+			try {
+				if (getConfig(ctx).getProperty("prefix", null) != null) {
+					return getConfig(ctx).getProperty("prefix", null);
 				}
-			}	
-			
-			prefix = prefix + "<a "+target+' '+ getInlineStyle(ctx) + ' ' + getSpecialPreviewCssClass(ctx, style+' '+getStyle(ctx)) + getSpecialPreviewCssId(ctx) + " href=\"";
-			prefix = prefix + StringHelper.toXMLAttribute(getLink());				
-			prefix = prefix + "\">";
-			return prefix;
-		} catch (Exception e) {			
-			e.printStackTrace();
-			return null;
-		}		
-	}
-	
-	@Override
-	public String getSuffixViewXHTMLCode(ContentContext ctx) {		
-		if (getComponentBean().isList()) {
-			return "</a></li>";
+				String style = contructViewStyle(ctx);
+				prefix = "";
+				if (getComponentBean().isList()) {
+					prefix = "<li>";
+				}
+				if (style == null) {
+					style = getType();
+				} else {
+					style = style + ' ' + getType();
+				}
+
+				String target = "";
+				if (ctx.getGlobalContext().isOpenExternalLinkAsPopup(getLink())) {
+					target = "target=\"_blank\" ";
+					String title = I18nAccess.getInstance(ctx).getViewText("global.newwindow", "");
+					if (title.trim().length() > 0) {
+						target = target + "title=\"" + title + "\" ";
+					}
+				}
+
+				prefix = prefix + "<a " + target + ' ' + getInlineStyle(ctx) + ' '
+						+ getSpecialPreviewCssClass(ctx, style + ' ' + getStyle(ctx)) + getSpecialPreviewCssId(ctx)
+						+ " href=\"";
+				prefix = prefix + StringHelper.toXMLAttribute(getLink());
+				prefix = prefix + "\">";
+				return prefix;
+			} catch (Exception e) {
+				e.printStackTrace();
+				return null;
+			}
 		} else {
-			return "</a>";
+			return "";
 		}
 	}
 
+	@Override
+	public String getSuffixViewXHTMLCode(ContentContext ctx) {
+		if (isWrapped(ctx)) {
+			if (getComponentBean().isList()) {
+				return "</a></li>";
+			} else {
+				return "</a>";
+			}
+		} else {
+			return "";
+		}
+	}
 
 	/**
 	 * @see org.javlo.itf.IContentVisualComponent#getXHTMLCode()
@@ -153,21 +162,18 @@ public class ExternalLink extends ComplexPropertiesLink implements IReverseLinkC
 			String cssClass = getStyle(ctx);
 			String insertCssClass = getType();
 			if (cssClass != null) {
-				insertCssClass = insertCssClass+" "+cssClass;
+				insertCssClass = insertCssClass + " " + cssClass;
 			}
 			res.append(getLabel().trim().length() > 0 ? getLabel() : StringHelper.neverNull(link, "no link"));
-			if (getConfig(ctx).getProperty("wai.mark-external-link", null) != null && StringHelper.isTrue(getConfig(ctx).getProperty("wai.mark-external-link", "false"))) {
-				res.append("<span class=\"wai\">" + I18nAccess.getInstance(ctx.getRequest()).getViewText("wai.external-link") + "</span>");
-			}			
-			return "<div "+getInlineStyle(ctx)+" class=\"label\">"+res+"</div>";
+			if (getConfig(ctx).getProperty("wai.mark-external-link", null) != null
+					&& StringHelper.isTrue(getConfig(ctx).getProperty("wai.mark-external-link", "false"))) {
+				res.append("<span class=\"wai\">"
+						+ I18nAccess.getInstance(ctx.getRequest()).getViewText("wai.external-link") + "</span>");
+			}
+			return "<div " + getInlineStyle(ctx) + " class=\"label\">" + res + "</div>";
 		} else {
 			return "";
 		}
-	}
-
-	@Override
-	protected boolean isWrapped(ContentContext ctx) {
-		return true;
 	}
 
 	@Override
@@ -200,21 +206,26 @@ public class ExternalLink extends ComplexPropertiesLink implements IReverseLinkC
 			if (link.trim().length() > 0) {
 				setMessage(null);
 				if (!PatternHelper.EXTERNAL_LINK_PATTERN.matcher(link).matches()) {
-					setMessage(new GenericMessage(i18nAccess.getText("component.error.external-link"), GenericMessage.ERROR));
-				} else if (latestValidDate == null && StaticConfig.getInstance(ctx.getRequest().getSession()).isInternetAccess()) {
-					try {						
+					setMessage(new GenericMessage(i18nAccess.getText("component.error.external-link"),
+							GenericMessage.ERROR));
+				} else if (latestValidDate == null
+						&& StaticConfig.getInstance(ctx.getRequest().getSession()).isInternetAccess()) {
+					try {
 						if (NetHelper.isURLValid(new URL(link), true)) {
 							latestValidDate = new Date();
 						} else {
-							setMessage(new GenericMessage(i18nAccess.getText("component.error.external-link.404"), GenericMessage.ERROR));
+							setMessage(new GenericMessage(i18nAccess.getText("component.error.external-link.404"),
+									GenericMessage.ERROR));
 						}
 					} catch (Exception e) {
-						setMessage(new GenericMessage(i18nAccess.getText("component.error.external-link"), GenericMessage.ERROR));
+						setMessage(new GenericMessage(i18nAccess.getText("component.error.external-link"),
+								GenericMessage.ERROR));
 						e.printStackTrace();
 					}
 				}
 			} else {
-				setMessage(new GenericMessage(i18nAccess.getText("component.message.help.external_link"), GenericMessage.HELP));
+				setMessage(new GenericMessage(i18nAccess.getText("component.message.help.external_link"),
+						GenericMessage.HELP));
 			}
 			out.println(getDisplayMessage());
 			String linkTitle = i18nAccess.getText("component.link.link");
@@ -228,26 +239,36 @@ public class ExternalLink extends ComplexPropertiesLink implements IReverseLinkC
 				if (StringHelper.isTrue(reverseLink)) {
 					reverseLink = ReverseLinkService.ALL;
 				}
-				out.println("<div class=\"col-sm-3\"><label for=\"" + getReverseLinkName() + "\">" + reverseLinkLabel + " : </label></div><div class=\"col-sm-9\">");
+				out.println("<div class=\"col-sm-3\"><label for=\"" + getReverseLinkName() + "\">" + reverseLinkLabel
+						+ " : </label></div><div class=\"col-sm-9\">");
 				out.println(XHTMLHelper.getReverlinkSelectType(ctx, getReverseLinkName(), reverseLink));
 				out.println("</div></div>");
 			}
 			out.println("<div class=\"row form-group\"><div class=\"col-sm-3\">");
 			out.println("<label for=\"" + getLinkName() + "\">" + linkTitle + "</label></div>");
-			out.print("<div class=\"col-sm-" + (StringHelper.isEmpty(link) ? '9' : '7') + "\"><input class=\"form-control\" id=\"" + getLinkName() + "\" name=\"" + getLinkName() + "\" value=\"");
+			out.print("<div class=\"col-sm-" + (StringHelper.isEmpty(link) ? '9' : '7')
+					+ "\"><input class=\"form-control\" id=\"" + getLinkName() + "\" name=\"" + getLinkName()
+					+ "\" value=\"");
 			out.print(link);
 			out.println("\"/></div>");
 			if (!StringHelper.isEmpty(link)) {
-				out.println("<div class=\"col-sm-2\"><a  target=\"_blank\" href=\"" + link + "\" class=\"btn btn-default btn-xs pull-right\">" + i18nAccess.getText("global.open") + "</a></div>");
+				out.println("<div class=\"col-sm-2\"><a  target=\"_blank\" href=\"" + link
+						+ "\" class=\"btn btn-default btn-xs pull-right\">" + i18nAccess.getText("global.open")
+						+ "</a></div>");
 			}
 			out.println("</div>");
 
 			out.println("<div class=\"row form-group\"><div class=\"col-sm-3\">");
 			out.print("<label for=\"" + getLinkLabelName() + "\">" + labelTitle + "</label></div>");
-			out.print("<div class=\"col-sm-"+(ctx.getGlobalContext().getStaticConfig().isInternetAccess()?'7':'9')+"\">");
-			out.print("<input class=\"form-control\" id=\"" + getLinkLabelName() + "\" name=\"" + getLinkLabelName() + "\" value=\"" + label + "\" /></div>");
+			out.print("<div class=\"col-sm-" + (ctx.getGlobalContext().getStaticConfig().isInternetAccess() ? '7' : '9')
+					+ "\">");
+			out.print("<input class=\"form-control\" id=\"" + getLinkLabelName() + "\" name=\"" + getLinkLabelName()
+					+ "\" value=\"" + label + "\" /></div>");
 			if (ctx.getGlobalContext().getStaticConfig().isInternetAccess()) {
-				out.println("<div class=\"col-sm-2\"><input class=\"btn btn-default btn-xs pull-right\" type=\"submit\" name=\"" + getDownloadTitleInputName() + "\" value=\"" + i18nAccess.getText("action.read-title") + "\" /></div>");
+				out.println(
+						"<div class=\"col-sm-2\"><input class=\"btn btn-default btn-xs pull-right\" type=\"submit\" name=\""
+								+ getDownloadTitleInputName() + "\" value=\"" + i18nAccess.getText("action.read-title")
+								+ "\" /></div>");
 			}
 			out.println("</div>");
 		} catch (Exception e) {
@@ -424,9 +445,9 @@ public class ExternalLink extends ComplexPropertiesLink implements IReverseLinkC
 	public Date getLatestValidDate() {
 		return latestValidDate;
 	}
-	
+
 	@Override
-	public String getFontAwesome() {	
+	public String getFontAwesome() {
 		return "external-link";
 	}
 

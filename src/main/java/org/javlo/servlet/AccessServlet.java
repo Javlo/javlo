@@ -1155,6 +1155,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 		out.println("**** Current Time      :  " + StringHelper.renderTime(new Date()));
 		out.println("**** Server info       :  " + getServletContext().getServerInfo());
 		out.println("**** JAVA_HOME         :  " + System.getenv("JAVA_HOME"));
+		out.println("**** JAVLO_HOME        :  " + StringHelper.neverNull(StaticConfig.getJavloHome()));
 		out.println("**** System encoding   :  " + System.getProperty("file.encoding"));
 		out.println("**** CMS encoding      :  " + ContentContext.CHARACTER_ENCODING);
 		out.println("**** VERSION           :  " + VERSION);
@@ -1197,14 +1198,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 		out.println("**** MAILING THREAD    :  " + staticConfig.isMailingThread());
 		out.println("**** THREAD COUNT      :  " + threads.getThreadCount());
 		out.println("**** THREAD STR COUNT  :  " + threads.getTotalStartedThreadCount());
-		out.println("**** THREAD DMN COUNT  :  " + threads.getDaemonThreadCount());
-		String adminUser = "";
-		String sep = "";
-		for (User user : staticConfig.getEditUsers().values()) {
-			adminUser = adminUser + sep + '[' + user.getLogin() + "," + user.getPassword() + ']';
-			sep = ",";
-		}
-		out.println("**** ADMIN USER        :  " + adminUser);
+		out.println("**** THREAD DMN COUNT  :  " + threads.getDaemonThreadCount());				
 		out.println("****");
 		out.println("****************************************************************");
 		out.println("****************************************************************");

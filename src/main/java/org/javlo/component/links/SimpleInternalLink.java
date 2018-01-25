@@ -94,9 +94,14 @@ public class SimpleInternalLink extends ComplexPropertiesLink implements IIntern
 				viewCtx.setRenderMode(ContentContext.VIEW_MODE);
 				url = URLHelper.createURL(viewCtx, link);
 				if (getParam().trim().length() == 0) {
-					ctx.getRequest().setAttribute("url", StringHelper.toXMLAttribute(url) + "?" + MailingAction.MAILING_FEEDBACK_PARAM_NAME + "=" + MailingAction.MAILING_FEEDBACK_VALUE_NAME);
+					ctx.getRequest().setAttribute("url",
+							StringHelper.toXMLAttribute(url) + "?" + MailingAction.MAILING_FEEDBACK_PARAM_NAME + "="
+									+ MailingAction.MAILING_FEEDBACK_VALUE_NAME);
 				} else {
-					ctx.getRequest().setAttribute("url", StringHelper.toXMLAttribute(url) + getParam() + "&" + MailingAction.MAILING_FEEDBACK_PARAM_NAME + "=" + MailingAction.MAILING_FEEDBACK_VALUE_NAME);
+					ctx.getRequest().setAttribute("url",
+							StringHelper.toXMLAttribute(url) + getParam() + "&"
+									+ MailingAction.MAILING_FEEDBACK_PARAM_NAME + "="
+									+ MailingAction.MAILING_FEEDBACK_VALUE_NAME);
 				}
 			}
 		}
@@ -115,7 +120,7 @@ public class SimpleInternalLink extends ComplexPropertiesLink implements IIntern
 		if (style == null) {
 			style = getType();
 		} else {
-			style = style+' '+getType();
+			style = style + ' ' + getType();
 		}
 
 		String linkId = properties.getProperty(LINK_KEY, "/");
@@ -132,7 +137,9 @@ public class SimpleInternalLink extends ComplexPropertiesLink implements IIntern
 					label = child.getLabel(ctx);
 				}
 				String url = URLHelper.createURL(ctx, link);
-				prefix = prefix + "<a" + getInlineStyle(ctx) + ' ' + getSpecialPreviewCssClass(ctx, style+' '+getStyle(ctx)) + getSpecialPreviewCssId(ctx) + " href=\"";
+				prefix = prefix + "<a" + getInlineStyle(ctx) + ' '
+						+ getSpecialPreviewCssClass(ctx, style + ' ' + getStyle(ctx)) + getSpecialPreviewCssId(ctx)
+						+ " href=\"";
 				if (ctx.getRenderMode() != ContentContext.PAGE_MODE) {
 					prefix = prefix + StringHelper.toXMLAttribute(url);
 				} else {
@@ -140,9 +147,13 @@ public class SimpleInternalLink extends ComplexPropertiesLink implements IIntern
 					viewCtx.setRenderMode(ContentContext.VIEW_MODE);
 					url = URLHelper.createURL(viewCtx, link);
 					if (getParam().trim().length() == 0) {
-						prefix = prefix + StringHelper.toXMLAttribute(url) + "?" + MailingAction.MAILING_FEEDBACK_PARAM_NAME + "=" + MailingAction.MAILING_FEEDBACK_VALUE_NAME;
+						prefix = prefix + StringHelper.toXMLAttribute(url) + "?"
+								+ MailingAction.MAILING_FEEDBACK_PARAM_NAME + "="
+								+ MailingAction.MAILING_FEEDBACK_VALUE_NAME;
 					} else {
-						prefix = prefix + StringHelper.toXMLAttribute(url) + getParam() + "&" + MailingAction.MAILING_FEEDBACK_PARAM_NAME + "=" + MailingAction.MAILING_FEEDBACK_VALUE_NAME;
+						prefix = prefix + StringHelper.toXMLAttribute(url) + getParam() + "&"
+								+ MailingAction.MAILING_FEEDBACK_PARAM_NAME + "="
+								+ MailingAction.MAILING_FEEDBACK_VALUE_NAME;
 					}
 				}
 				prefix = prefix + "\">";
@@ -156,13 +167,17 @@ public class SimpleInternalLink extends ComplexPropertiesLink implements IIntern
 
 		return prefix;
 	}
-	
+
 	@Override
-	public String getSuffixViewXHTMLCode(ContentContext ctx) {		
-		if (getComponentBean().isList()) {
-			return "</a></li>";
+	public String getSuffixViewXHTMLCode(ContentContext ctx) {
+		if (isWrapped(ctx)) {
+			if (getComponentBean().isList()) {
+				return "</a></li>";
+			} else {
+				return "</a>";
+			}
 		} else {
-			return "</a>";
+			return "";
 		}
 	}
 
@@ -177,7 +192,7 @@ public class SimpleInternalLink extends ComplexPropertiesLink implements IIntern
 		if (label.trim().length() == 0) {
 			label = child.getLabel(ctx);
 		}
-		return "<div "+getInlineStyle(ctx)+" class=\"label\">"+label+"</div>";
+		return "<div " + getInlineStyle(ctx) + " class=\"label\">" + label + "</div>";
 	}
 
 	protected String getParam() throws Exception {
@@ -229,13 +244,15 @@ public class SimpleInternalLink extends ComplexPropertiesLink implements IIntern
 				reverseLink = "none";
 			}
 			out.println("<div class=\"form-group\"><div class=\"row\"><div class=\"col-sm-4\">");
-			out.println("<label for=\"" + getReverseLinkName() + "\">" + reverseLinkLabel + " : </label></div><div class=\"col-sm-8\">");
+			out.println("<label for=\"" + getReverseLinkName() + "\">" + reverseLinkLabel
+					+ " : </label></div><div class=\"col-sm-8\">");
 			out.println(XHTMLHelper.getReverlinkSelectType(ctx, getReverseLinkName(), reverseLink));
 
 			out.println("</div></div></div>");
 			out.println("<div class=\"form-group\"><div class=\"row\"><div class=\"col-sm-4\">");
 
-			out.println("<label for=\"" + getLinkName() + "\">" + linkTitle + " : </label></div><div class=\"col-sm-6\">");
+			out.println(
+					"<label for=\"" + getLinkName() + "\">" + linkTitle + " : </label></div><div class=\"col-sm-6\">");
 			out.println("<select class=\"form-control\" id=\"" + getLinkName() + "\" name=\"" + getLinkName() + "\">");
 			MenuElement elem = content.getNavigation(ctx);
 			String[] values = elem.getChildList();
@@ -257,12 +274,14 @@ public class SimpleInternalLink extends ComplexPropertiesLink implements IIntern
 				out.println("\">&nbsp;&gt;&gt;</a>");
 				setMessage(null);
 			} else {
-				setMessage(new GenericMessage(i18nAccess.getText("component.message.help.choose_link"), GenericMessage.HELP));
+				setMessage(new GenericMessage(i18nAccess.getText("component.message.help.choose_link"),
+						GenericMessage.HELP));
 			}
 			out.println("</div></div></div>");
 			out.println("<div class=\"form-group\"><div class=\"row\"><div class=\"col-sm-4\">");
 
-			out.println("<label for=\"" + getLinkLabelName() + "\">" + labelTitle + " : </label></div><div class=\"col-sm-8\">");
+			out.println("<label for=\"" + getLinkLabelName() + "\">" + labelTitle
+					+ " : </label></div><div class=\"col-sm-8\">");
 			out.println(XHTMLHelper.getTextInput(getLinkLabelName(), label, "form-control"));
 			out.println("</div></div></div>");
 		} catch (Exception e) {
@@ -308,7 +327,8 @@ public class SimpleInternalLink extends ComplexPropertiesLink implements IIntern
 					properties.setProperty(LABEL_KEY, label);
 				}
 				String reverseLinkValue = requestService.getParameter(getReverseLinkName(), null);
-				if (reverseLinkValue != null && !properties.getProperty(REVERSE_LINK_KEY, "").equals(reverseLinkValue)) {
+				if (reverseLinkValue != null
+						&& !properties.getProperty(REVERSE_LINK_KEY, "").equals(reverseLinkValue)) {
 					properties.setProperty(REVERSE_LINK_KEY, reverseLinkValue);
 					setModify();
 					GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
@@ -371,7 +391,8 @@ public class SimpleInternalLink extends ComplexPropertiesLink implements IIntern
 
 	@Override
 	public boolean isReverseLink() {
-		boolean outIsReverseLink = !(properties.getProperty(REVERSE_LINK_KEY, "none").equals("none") || properties.getProperty(REVERSE_LINK_KEY, "").equals(""));
+		boolean outIsReverseLink = !(properties.getProperty(REVERSE_LINK_KEY, "none").equals("none")
+				|| properties.getProperty(REVERSE_LINK_KEY, "").equals(""));
 		return outIsReverseLink;
 	}
 
@@ -401,9 +422,9 @@ public class SimpleInternalLink extends ComplexPropertiesLink implements IIntern
 	public String getListGroup() {
 		return "link";
 	}
-	
+
 	@Override
-	public String getFontAwesome() {	
+	public String getFontAwesome() {
 		return "link";
 	}
 

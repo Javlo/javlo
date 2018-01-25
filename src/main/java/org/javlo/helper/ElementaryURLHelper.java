@@ -549,7 +549,7 @@ public abstract class ElementaryURLHelper {
 				}
 			}
 		}
-		EditContext editContext = EditContext.getInstance(globalContext, ctx.getRequest().getSession());
+//		EditContext editContext = EditContext.getInstance(globalContext, ctx.getRequest().getSession());
 		if (ctx.isLikeEditRenderMode()) {
 			if (!StringHelper.isEmpty(ctx.getRequest().getParameter(Device.FORCE_DEVICE_PARAMETER_NAME))) {
 				if (!url.contains(Device.FORCE_DEVICE_PARAMETER_NAME)) {					

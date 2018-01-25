@@ -132,6 +132,16 @@ public class StaticConfig extends Observable {
 	public static final List<String> BASIC_MODULES = Arrays.asList(new String[] { "admin", "content", "file" });
 
 	public Boolean internetAccess = null;
+	
+	public static String getJavloHome() {
+		Map<String, String> env = System.getenv();
+        for (String envName : env.keySet()) {
+            if (envName.equals("JAVLO_HOME")) {
+            	return env.get(envName);
+            }
+        }
+        return null;
+	}
 
 	private StaticConfig(ServletContext application) {
 		this.application = application;
@@ -150,8 +160,44 @@ public class StaticConfig extends Observable {
 					}
 				}
 
+				/** LOAD STATIC CONFIG FILE LOCATION * */
+				String JAVLO_HOME = getJavloHome();
+				if (JAVLO_HOME != null) {
+					staticConfigLocalisation = JAVLO_HOME;
+				} else {
+					staticConfigLocalisation = webappProps.getProperty(STATIC_CONFIG_KEY);
+				}
+				if (application != null) {
+					if (staticConfigLocalisation == null || staticConfigLocalisation.trim().length() == 0 || staticConfigLocalisation.contains("${")) {
+						staticConfigLocalisation = ResourceHelper.getRealPath(application, DEFAULT_CONFIG_DIR + "/" + FILE_NAME);
+					} else {
+						staticConfigLocalisation = ElementaryURLHelper.mergePath(staticConfigLocalisation, FILE_NAME);						
+						boolean staticConfigRelative = Boolean.parseBoolean(webappProps.getProperty(STATIC_CONFIG_RELATIVE_KEY));
+						if (staticConfigRelative && !staticConfigLocalisation.contains("$")) {
+							staticConfigLocalisation = ResourceHelper.getRealPath(application,staticConfigLocalisation);
+						}
+					}
+				}
+
+				staticConfigLocalisation = replaceFolderVariable(staticConfigLocalisation);
+
+				if (staticConfigLocalisation != null) {
+					File file = new File(staticConfigLocalisation);
+					logger.info("load static config : " + file);
+					if (!file.exists()) {
+						if (!file.getParentFile().exists()) {
+							file.getParentFile().mkdirs();
+						}
+						file.createNewFile();
+					}
+					properties.setFile(file);
+				}
+				
 				/** LOAD GOD USERS * */
 				String editUser = webappProps.getProperty(EDIT_USERS_KEY);
+				if (StringHelper.isEmpty(editUser) || editUser.startsWith("${")) {
+					editUser = properties.getProperty(EDIT_USERS_KEY);
+				}
 				if (editUser != null) {
 					if (editUser.startsWith("${")) {
 						editUser = DEFAULT_CREDENTIALS;
@@ -170,34 +216,6 @@ public class StaticConfig extends Observable {
 					}
 				} else {
 					logger.severe("no user found for edit.");
-				}
-
-				/** LOAD STATIC CONFIG FILE LOCATION * */
-				staticConfigLocalisation = webappProps.getProperty(STATIC_CONFIG_KEY);
-				if (application != null) {
-					if (staticConfigLocalisation == null || staticConfigLocalisation.trim().length() == 0 || staticConfigLocalisation.contains("${")) {
-						staticConfigLocalisation = ResourceHelper.getRealPath(application, DEFAULT_CONFIG_DIR + "/" + FILE_NAME);
-					} else {
-						staticConfigLocalisation = ElementaryURLHelper.mergePath(staticConfigLocalisation, FILE_NAME);						
-						boolean staticConfigRelative = Boolean.parseBoolean(webappProps.getProperty(STATIC_CONFIG_RELATIVE_KEY));
-						if (staticConfigRelative) {
-							staticConfigLocalisation = ResourceHelper.getRealPath(application,staticConfigLocalisation);
-						}
-					}
-				}
-
-				staticConfigLocalisation = replaceFolderVariable(staticConfigLocalisation);
-
-				if (staticConfigLocalisation != null) {
-					File file = new File(staticConfigLocalisation);
-					logger.info("load static config : " + file);
-					if (!file.exists()) {
-						if (!file.getParentFile().exists()) {
-							file.getParentFile().mkdirs();
-						}
-						file.createNewFile();
-					}
-					properties.setFile(file);
 				}
 
 				{ // Load product version
@@ -526,11 +544,7 @@ public class StaticConfig extends Observable {
 		}
 		return devices;
 	}
-
-	public String getDynamicContentPage() {
-		return properties.getString("mailing.dynamic-content-path", "/mailing/dynamic");
-	}
-
+	
 	public String[] getEditTemplate() {
 		String templateRaw = properties.getString("admin.edit-template", "javlo");
 		String[] templates = StringHelper.split(templateRaw, ",");
@@ -1197,11 +1211,7 @@ public class StaticConfig extends Observable {
 	public boolean isI18nFileRelative() {
 		return properties.getBoolean("i18n.file.relative", true);
 	}
-
-	public boolean isMailingAsContent() {
-		return properties.getBoolean("mailing.content", false);
-	}
-
+	
 	public boolean isMailingWidthUserInfo() {
 		return properties.getBoolean("mailing.users", true);
 	}
@@ -1309,6 +1319,10 @@ public class StaticConfig extends Observable {
 	public String replaceFolderVariable(String folder) {
 		if (folder != null) {
 			folder = folder.replace("$HOME", HOME);
+		}
+		String JAVLO_HOME = getJavloHome();
+		if (JAVLO_HOME != null) {
+			folder = folder.replace("$JAVLO_HOME", JAVLO_HOME);
 		}
 		return folder;
 	}
