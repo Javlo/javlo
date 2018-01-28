@@ -914,4 +914,6 @@ change log
  
  * 3/ remove linked-page-id / structure smart-generic-form storage / user JAVLO_HOME env. var. for localise the static-config.properties folder
  
-* 2.1.1 [26/01/2018]
+* 2.1.1.0 [26/01/2018]
+
+ * 1/ component structure html correction
