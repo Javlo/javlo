@@ -161,7 +161,7 @@ public class Edit extends AbstractModuleAction {
 	 *            the id, null for update and previous component for insert.
 	 * @throws Exception
 	 */
-	public static void updateComponent(ContentContext ctx, Module currentModule, String newId, String previousId) throws Exception {
+	private static void updateComponent(ContentContext ctx, Module currentModule, String newId, String previousId) throws Exception {
 		ComponentContext compCtx = ComponentContext.getInstance(ctx.getRequest());
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		ContentService content = ContentService.getInstance(globalContext);
@@ -1061,7 +1061,7 @@ public class Edit extends AbstractModuleAction {
 		List<String> components = requestService.getParameterListValues("components", Collections.EMPTY_LIST);
 
 		// boolean needRefresh = false;
-
+				
 		for (String compId : components) {
 			IContentVisualComponent elem = content.getComponent(ctx, compId);
 			if (elem != null && StringHelper.isTrue(requestService.getParameter("id-" + elem.getId(), null))) {
@@ -1080,6 +1080,12 @@ public class Edit extends AbstractModuleAction {
 					if (ctx.isEditPreview()) {
 						componentContext.addNewComponent(elem);
 					}
+					
+					if (ctx.isEditPreview() && componentContext.getNewComponents() != null && componentContext.getNewComponents().size() == 1) {
+						InfoBean.getCurrentInfoBean(ctx).setTools(false);
+						ctx.getRequest().setAttribute("noinsert", "true");
+					}
+					
 					String rawValue = requestService.getParameter("raw_value_" + elem.getId(), null);
 					if (rawValue != null) { // if elem not modified check
 											// modification via rawvalue
@@ -1104,7 +1110,7 @@ public class Edit extends AbstractModuleAction {
 
 			if (elem.isModify()) {
 				elem.stored();
-			}
+			}			
 		}
 
 		// ctx.setNeedRefresh(needRefresh);
@@ -1128,7 +1134,7 @@ public class Edit extends AbstractModuleAction {
 				ctx.setClosePopup(true);
 			}
 		}
-
+		
 		if (ctx.isEditPreview() && componentContext.getNewComponents() != null && componentContext.getNewComponents().size() == 1) {
 			InfoBean.getCurrentInfoBean(ctx).setTools(false);
 			ctx.getRequest().setAttribute("noinsert", "true");

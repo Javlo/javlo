@@ -90,7 +90,6 @@ if (components.size() > 0 && components.iterator().next().getPreviousComponent()
 	previousId = components.iterator().next().getPreviousComponent().getId();
 }
 
-/*** rendering ***/
 if (!StringHelper.isTrue(request.getParameter("noinsert")) && !StringHelper.isTrue(request.getAttribute("noinsert"))) {
 %>
 <div class="insert-line" id="insert-line-<%=previousId%>">
@@ -153,7 +152,7 @@ for (IContentVisualComponent comp : components) {
      <%
  String errorMessage = comp.getErrorMessage(ctx);
  if (!StringHelper.isEmpty(errorMessage)) {%>
- <div class="component-error-message"><span class="body"><span class="glyphicon glyphicon-alert"></span> <%=errorMessage%></div></span>
+ <div class="component-error-message"><span class="body"><span class="glyphicon glyphicon-alert"></span> <%=errorMessage%></div>
  <%}%>
       <ul>      	  	
           <li><a href="#tab1<%=inputSuffix%>">${i18n.edit["global.content"]}</a></li>
@@ -222,8 +221,8 @@ for (IContentVisualComponent comp : components) {
 	%><a class="btn btn-default btn-xs ajax" onclick="scrollToFirstQuarter(jQuery('#content-edit'),this);" href="${info.currentURL}?${info.editPreview?'previewEdit=true&':''}webaction=pasteComp&previous=<%=comp.getId()%>"><%=pasteHere%></a><%
 	}%>
   </div>
- </div><%
- }
+<%
+ }%> </div><%
  if (comp instanceof IContainer && !((IContainer)comp).isOpen(ctx) && closeContainerStack.size() > 0) {
 	 closeContainerStack.pop();
     %><%=((IContainer)comp).getCloseCode(ctx)%><%

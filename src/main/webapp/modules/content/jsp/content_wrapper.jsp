@@ -14,7 +14,7 @@
 		<c:if test="${not empty param.previewEdit}">
 			<c:set var="saveItem" value="${i18n.edit['preview.save']}" />
 		</c:if>
-		<input id="button-content-submit" type="submit" class="btn btn-default btn-xs" value="${saveItem}"  name="save"/>
+		<input id="button-content-submit" type="submit" class="btn btn-default btn-xs" value="${saveItem}"  name="save" />		
 	</div>
 </form>
 <c:if test="${not empty cleanClipBoard && not info.editPreview}">

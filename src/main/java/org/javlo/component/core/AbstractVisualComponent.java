@@ -67,8 +67,6 @@ import org.javlo.helper.Comparator.StringSizeComparator;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.image.ExtendedColor;
 import org.javlo.message.GenericMessage;
-import org.javlo.module.core.Module;
-import org.javlo.module.core.ModulesContext;
 import org.javlo.module.file.FileAction;
 import org.javlo.navigation.MenuElement;
 import org.javlo.navigation.PageBean;
@@ -2911,19 +2909,6 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	public boolean isDisplayable(ContentContext ctx) throws Exception {
 		String xhtmlCode = getXHTMLCode(ctx);
 		return !(xhtmlCode != null && StringHelper.removeTag(xhtmlCode).trim().length() == 0 && !xhtmlCode.toLowerCase().contains("<img") && isDispayEmptyXHTMLCode(ctx));
-	}
-
-	/**
-	 * refresh edit form with standard ajax method
-	 * 
-	 * @throws IOException
-	 * @throws ServletException
-	 **/
-	public void refreshAjaxEdit(ContentContext ctx) throws Exception {
-		Module module = ModulesContext.getInstance(ctx.getRequest().getSession(), ctx.getGlobalContext()).getModule("content");
-		String jsp = module.getJspPath("/jsp/list.jsp?ajaxCompId" + getId());
-		String html = ServletHelper.executeJSP(ctx, jsp);
-		ctx.getAjaxZone().put("comp-" + getId(), html);
 	}
 
 	@Override

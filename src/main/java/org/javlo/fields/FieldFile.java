@@ -198,6 +198,7 @@ public class FieldFile extends Field implements IStaticContainer {
 				folder = folder.substring(1);
 			}					
 			setCurrentFolder(folder);
+			out.println("<input type=\"hidden\" name=\""+getForceModifFieldName()+"\" value=\"true\" />");
 		}
 
 		if (!isLight()) {
@@ -397,7 +398,7 @@ public class FieldFile extends Field implements IStaticContainer {
 	@Override
 	public boolean process(ContentContext ctx) {
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
-		boolean modify = false;
+		boolean modify = StringHelper.isTrue(requestService.getParameter(getForceModifFieldName()));
 
 		String newFolderName = requestService.getParameter(getInputCreateFolderName(), "");
 		String folder = requestService.getParameter(getInputFolderName(), "");

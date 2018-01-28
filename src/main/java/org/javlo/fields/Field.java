@@ -135,7 +135,7 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 		public String getInputName() {
 			return Field.this.getInputName();
 		}
-
+		
 		public int getOrder() {
 			return Field.this.getOrder();
 		}
@@ -457,6 +457,10 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 	
 	public String getSpecialClass() {
 		return "";
+	}
+	
+	public String getForceModifFieldName() {
+		return "_force_modif_"+getId();
 	}
 
 	public final String getEditXHTMLCode(ContentContext ctx) throws Exception {
