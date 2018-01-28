@@ -91,18 +91,18 @@ public class XHTMLHelper {
 
 	public static final List<String> WEB_FONTS = Arrays.asList(new String[] { "Arial, sans-serif", "Courier, monospace, serif", "Myriad Pro, Myriad Pro Regular, PT Sans, sans-serif", "Times New Roman, serif", "Verdana, Geneva, sans-serif", "Open Sans, sans-serif" });
 
-	private static final Pattern CSS_IMPORT_PATTERN = Pattern.compile("@import\\s+" +
-
-	// optional 'url(' part (non capturing subpattern) with optional quote
-			"(?:url\\(\\s*)?" + "[\"']?" +
-
-			// file path ending with '.?ss' in capturing subpattern 1
-			// word characters, slashes, dash, underscore, dot,
-			// colon and question mark (possible for absolute urls) are allowed
-			"([\\w\\\\/\\-_.:?]+?\\.?ss)" +
-
-			// the rest of the line until semicolon or line break
-			"[^;$]*?(;|$)", Pattern.MULTILINE);
+//	private static final Pattern CSS_IMPORT_PATTERN = Pattern.compile("@import\\s+" +
+//
+//	// optional 'url(' part (non capturing subpattern) with optional quote
+//			"(?:url\\(\\s*)?" + "[\"']?" +
+//
+//			// file path ending with '.?ss' in capturing subpattern 1
+//			// word characters, slashes, dash, underscore, dot,
+//			// colon and question mark (possible for absolute urls) are allowed
+//			"([\\w\\\\/\\-_.:?]+?\\.?ss)" +
+//
+//			// the rest of the line until semicolon or line break
+//			"[^;$]*?(;|$)", Pattern.MULTILINE);
 
 	public static String _textToXHTML(String text, boolean popup) {
 		String res = autoLink(text);
@@ -2467,38 +2467,38 @@ public class XHTMLHelper {
 		return Jsoup.clean(html, Whitelist.relaxed());
 	}
 
-	public static void expandCSSImports(File css) throws IOException {
-		String expandedCSS;
-		try {
-			expandedCSS = expandCSSIncludesToString(css);
-		} catch (IOException ex) {
-			logger.log(Level.WARNING, "Expand CSS imports failed for '" + css + "'.", ex);
-			return; // Don't write on error, let the original as it is.
-		}
-		ResourceHelper.writeStringToFile(css, expandedCSS);
-	}
+//	public static void expandCSSImports(File css) throws IOException {
+//		String expandedCSS;
+//		try {
+//			expandedCSS = expandCSSIncludesToString(css);
+//		} catch (IOException ex) {
+//			logger.log(Level.WARNING, "Expand CSS imports failed for '" + css + "'.", ex);
+//			return; // Don't write on error, let the original as it is.
+//		}
+//		ResourceHelper.writeStringToFile(css, expandedCSS);
+//	}
 
-	public static String expandCSSIncludesToString(File css) throws IOException {
-		String content = ResourceHelper.loadStringFromFile(css);
-		Matcher m = CSS_IMPORT_PATTERN.matcher(content);
-		StringBuffer sb = new StringBuffer();
-		while (m.find()) {
-			String fileName = m.group(1);
-			if (!fileName.contains("/") && !fileName.contains("\\")) {
-				File importedFile = new File(css.getParentFile(), fileName);
-				if (importedFile.exists()) {
-					m.appendReplacement(sb, "");
-					sb.append("/* START " + fileName + " */\r\n");
-					sb.append(expandCSSIncludesToString(importedFile));
-					sb.append("/* END " + fileName + " */");
-					continue;
-				}
-			}
-			m.appendReplacement(sb, "$0");
-		}
-		m.appendTail(sb);
-		return sb.toString();
-	}
+//	public static String expandCSSIncludesToString(File css) throws IOException {
+//		String content = ResourceHelper.loadStringFromFile(css);
+//		Matcher m = CSS_IMPORT_PATTERN.matcher(content);
+//		StringBuffer sb = new StringBuffer();
+//		while (m.find()) {
+//			String fileName = m.group(1);
+//			if (!fileName.contains("/") && !fileName.contains("\\")) {
+//				File importedFile = new File(css.getParentFile(), fileName);
+//				if (importedFile.exists()) {
+//					m.appendReplacement(sb, "");
+//					sb.append("/* START " + fileName + " */\r\n");
+//					sb.append(expandCSSIncludesToString(importedFile));
+//					sb.append("/* END " + fileName + " */");
+//					continue;
+//				}
+//			}
+//			m.appendReplacement(sb, "$0");
+//		}
+//		m.appendTail(sb);
+//		return sb.toString();
+//	}
 
 	/**
 	 * replace link in xhtml with createURL call.

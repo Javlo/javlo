@@ -2612,28 +2612,28 @@ public class Template implements Comparable<Template> {
 		} else {
 			logger.warning("template not found : "+templateSrc);
 		}
-		if (globalContext != null) {
-			if (compressResource && isCompressResources() && globalContext.getStaticConfig().isProd()) {
-				Iterator<File> targetFiles = FileUtils.iterateFiles(templateTarget, new String[] { "js", "css", "less", "scss" }, true);
-				while (targetFiles.hasNext()) {
-					File targetFile = targetFiles.next();
-					String targetFileNameLowerCase = targetFile.getName().toLowerCase();
-					boolean isCss = targetFileNameLowerCase.endsWith(".css");
-					boolean isJs = targetFileNameLowerCase.endsWith(".js");
-					try {
-						if (isCss) {
-							XHTMLHelper.expandCSSImports(targetFile);
-							XHTMLHelper.compressCSS(targetFile);
-						}
-						if (isJs) {
-							XHTMLHelper.compressJS(targetFile);
-						}
-					} catch (Exception e) {
-						logger.warning("error on copy file : " + targetFile + " err:" + e.getMessage());
-					}
-				}
-			}
-		}
+//		if (globalContext != null) {
+//			if (compressResource && isCompressResources() && globalContext.getStaticConfig().isProd()) {
+//				Iterator<File> targetFiles = FileUtils.iterateFiles(templateTarget, new String[] { "js", "css", "less", "scss" }, true);
+//				while (targetFiles.hasNext()) {
+//					File targetFile = targetFiles.next();
+//					String targetFileNameLowerCase = targetFile.getName().toLowerCase();
+//					boolean isCss = targetFileNameLowerCase.endsWith(".css");
+//					boolean isJs = targetFileNameLowerCase.endsWith(".js");
+//					try {
+//						if (isCss) {
+////							XHTMLHelper.expandCSSImports(targetFile);
+//							XHTMLHelper.compressCSS(targetFile);
+//						}
+//						if (isJs) {
+//							XHTMLHelper.compressJS(targetFile);
+//						}
+//					} catch (Exception e) {
+//						logger.warning("error on copy file : " + targetFile + " err:" + e.getMessage());
+//					}
+//				}
+//			}
+//		}
 
 		/** clean file **/
 		Iterator<File> targetFiles = FileUtils.iterateFiles(templateTarget, new String[] { "scss" }, true);

@@ -560,7 +560,7 @@ public class StaticConfig extends Observable {
 	}
 
 	public String getEnv() {
-		return properties.getString("deploy.env", "prod");
+		return properties.getString("deploy.env", "dev");
 	}
 
 	public boolean isProd() {
