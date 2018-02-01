@@ -33,6 +33,7 @@ import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -1676,7 +1677,9 @@ public class ResourceHelper {
 		InputStream in = null;
 		FileOutputStream out = null;
 		try {
-			in = url.openStream();
+			URLConnection conn = url.openConnection();
+			conn.setRequestProperty("User-Agent", NetHelper.JAVLO_USER_AGENT);
+			in = conn.getInputStream();
 			out = new FileOutputStream(imageFile);
 			writeStreamToStream(in, out);
 		} finally {

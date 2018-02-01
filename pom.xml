@@ -438,7 +438,13 @@
 			<artifactId>uadetector-resources</artifactId>
 			<version>2014.10</version>
 		</dependency>
-
+		
+		<!-- https://mvnrepository.com/artifact/commons-net/commons-net -->
+		<dependency>
+		    <groupId>commons-net</groupId>
+		    <artifactId>commons-net</artifactId>
+		    <version>3.6</version>
+		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/org.openimaj/faces -->
 		<dependency>

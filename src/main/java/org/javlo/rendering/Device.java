@@ -12,6 +12,7 @@ import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.helper.NetHelper;
 import org.javlo.helper.StringHelper;
+import org.javlo.template.Template;
 
 public class Device implements Serializable {
 
@@ -42,6 +43,7 @@ public class Device implements Serializable {
 				currentDevice.setForcedCode(forcedCode);
 			}
 		}
+		
 		return currentDevice;
 	}
 
@@ -67,6 +69,16 @@ public class Device implements Serializable {
 	private String label = "pc";
 
 	private Device() {
+	}
+	
+	public void correctWithTemplate(Template template) {
+		try {
+			if (template != null && template.getRenderers() != null && template.getRenderers().size() > 0 && !template.getRenderers().contains(getCode())) {
+				setForcedCode(template.getRenderers().get(0));
+			} 
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	/**

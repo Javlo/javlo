@@ -204,6 +204,17 @@ public class I18nAccess implements Serializable {
 		}
 		updateTemplate(ctx);
 	}
+	
+	public void resetViewLanguage(ContentContext ctx) throws ServiceException, Exception {
+		latestViewTemplateId = "";
+		initView(ctx.getLanguage());
+		propViewMap = null;
+		latestViewTemplateId = "";
+		initContentView(ctx, ctx.getRequestContentLanguage());
+		propViewMap = null;
+		updateTemplate(ctx);
+	}
+
 
 	public String getComponentText(String componentPath, String key) {
 		if (displayKey) {

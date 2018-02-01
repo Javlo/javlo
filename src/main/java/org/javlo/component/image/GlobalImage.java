@@ -248,19 +248,7 @@ public class GlobalImage extends Image implements IImageFilter {
 
 		super.prepareView(ctx);
 		String link = getLink();
-		if (link.startsWith('/' + ctx.getGlobalContext().getStaticConfig().getStaticFolder())) {
-			link = URLHelper.createResourceURL(ctx, link);
-		} else if (link.startsWith("page:")) {
-			link = link.substring("page:".length());
-			ContentService content = ContentService.getInstance(ctx.getRequest());
-			MenuElement targetPage = content.getNavigation(ctx).searchChildFromName(link);
-			if (targetPage == null) {
-				link = "page_not_found";
-			} else {
-				link = URLHelper.createURL(ctx, targetPage);
-			}
-		}
-
+		URLHelper.convertLink(ctx, link);
 		ctx.getRequest().setAttribute("link", link);
 		ctx.getRequest().setAttribute("alt", getAlt(ctx));
 		String imageURL = getImageURL(ctx);

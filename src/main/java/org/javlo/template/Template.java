@@ -2108,6 +2108,10 @@ public class Template implements Comparable<Template> {
 		}
 		return renderer;
 	}
+	
+	protected boolean isDefaultRenderer() {
+		return StringHelper.isTrue(properties.getProperty("renderer.default"), getParent().isDefaultRenderer());
+	}
 
 	/**
 	 * return all renderer defined in the template.
@@ -2117,7 +2121,9 @@ public class Template implements Comparable<Template> {
 	public List<String> getRenderers() {
 		List<String> outRenderes = new LinkedList<String>();
 		Iterator keys = properties.getKeys();
-		outRenderes.add("");
+		if (isDefaultRenderer()) {
+			outRenderes.add("");
+		}
 		boolean unvalidatedRenderer = false;
 		while (keys.hasNext()) {
 			String key = (String) keys.next();
@@ -2126,13 +2132,13 @@ public class Template implements Comparable<Template> {
 				if (!renderer.contains(".") && !renderer.equals("params")) {
 					if (properties.getString(key).equals("-1")) {
 						unvalidatedRenderer = true;
-					} else {
+					} else {						
 						outRenderes.add(renderer);
 					}
 				}
 			}
-		}
-		if (outRenderes.size() == 1 && !unvalidatedRenderer) {
+		}		
+		if (outRenderes.size() == 0 && !unvalidatedRenderer) {			
 			return getParent().getRenderers();
 		}
 		return outRenderes;

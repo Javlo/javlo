@@ -1400,5 +1400,36 @@ public class URLHelper extends ElementaryURLHelper {
 			return "&";
 		}
 	}
+	
+	public static boolean isCorrectJavloLink(String link) {
+		if (link.startsWith("/") || link.startsWith("page:")) {
+			return true;
+		} else {			
+			return PatternHelper.EXTERNAL_LINK_PATTERN.matcher(link).matches();
+		}
+	}
+	
+	/**
+	 * convert external link if start with page: or / to internet link or relative link.
+	 * @param ctx
+	 * @param link
+	 * @return
+	 * @throws Exception 
+	 */
+	public static String convertLink(ContentContext ctx, String link) throws Exception {
+		if (link.startsWith('/' + ctx.getGlobalContext().getStaticConfig().getStaticFolder())) {
+			link = URLHelper.createResourceURL(ctx, link);
+		} else if (link.startsWith("page:")) {
+			link = link.substring("page:".length());
+			ContentService content = ContentService.getInstance(ctx.getRequest());
+			MenuElement targetPage = content.getNavigation(ctx).searchChildFromName(link);
+			if (targetPage == null) {
+				link = "page_not_found";
+			} else {
+				link = URLHelper.createURL(ctx, targetPage);
+			}
+		}
+		return link;
+	}
 
 }

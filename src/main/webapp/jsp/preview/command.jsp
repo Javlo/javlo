@@ -100,7 +100,7 @@ request.setAttribute("editUser", ctx.getCurrentEditUser());
 						<div class="pc_line">
 							<c:url var="url" value="${info.currentURL}" context="/">
 								<c:param name="${info.staticData.forceDeviceParameterName}" value=""></c:param>
-							</c:url>							
+							</c:url>													
 							<select id="renderers_button" onchange="window.location='${url}'+jQuery('#renderers_button option:selected').val();">
 								<c:forEach var="renderer" items="${contentContext.deviceNames}">
 									<c:url var="url" value="${info.currentURL}" context="/">

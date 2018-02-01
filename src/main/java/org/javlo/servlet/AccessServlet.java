@@ -272,6 +272,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 			Thread.currentThread().setName("AccessServlet-" + globalContext.getContextKey());
 
 			ContentContext ctx = ContentContext.getContentContext(request, response);
+			ctx.getDevice().correctWithTemplate(ctx.getCurrentTemplate());
 			if (ctx.getDevice().isMobileDevice()) {
 				EditContext.getInstance(globalContext, request.getSession()).setPreviewEditionMode(false);
 			}

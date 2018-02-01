@@ -13,6 +13,7 @@ import org.javlo.macro.CleanResourceNameMacro;
 import org.javlo.macro.ClearContext;
 import org.javlo.macro.ClearDataAccessCount;
 import org.javlo.macro.ClearTransformURLCache;
+import org.javlo.macro.ConvertUserForComansys;
 import org.javlo.macro.CopyLanguageStructureHereMacro;
 import org.javlo.macro.CopyLanguageStructureMacro;
 import org.javlo.macro.CreateAllContentSample;
@@ -72,6 +73,7 @@ import org.javlo.macro.interactive.ImportExternalPage;
 import org.javlo.macro.interactive.ImportGalleryMacro;
 import org.javlo.macro.interactive.ImportHTMLPageMacro;
 import org.javlo.macro.interactive.MailingStat;
+import org.javlo.macro.interactive.PushStaticOnFtp;
 import org.javlo.macro.interactive.RenameChildren;
 import org.javlo.macro.interactive.SmartImport;
 import org.javlo.macro.interactive.SocialShare;
@@ -180,6 +182,8 @@ public class MacroFactory {
 		macros.add(new FileInListMacro());
 		macros.add(new MergeGalleryAndGalleries());
 		macros.add(new DeleteContentFiles());
+		macros.add(new PushStaticOnFtp());
+		macros.add(new ConvertUserForComansys());
 	}
 
 	public IMacro getMacro(String name) {

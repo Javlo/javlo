@@ -5,7 +5,6 @@ import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -59,6 +58,7 @@ import org.javlo.mailing.MailService;
 import org.javlo.mailing.MailingBuilder;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.resource.VisualResource;
+import org.javlo.servlet.IVersion;
 import org.javlo.template.Template;
 import org.javlo.user.IUserFactory;
 import org.javlo.utils.MapCollectionWrapper;
@@ -78,6 +78,8 @@ import net.sf.uadetector.UserAgentType;
 import net.sf.uadetector.service.UADetectorServiceFactory;
 
 public class NetHelper {
+	
+	public static final String JAVLO_USER_AGENT = "Mozilla/5.0 bot Javlo/"+IVersion.VERSION;
 
 	private static boolean INIT_HTTPS = false;
 
@@ -145,6 +147,7 @@ public class NetHelper {
 	public static URL followURL(URL url) throws Exception {
 		try {
 			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+			conn.setRequestProperty("User-Agent", JAVLO_USER_AGENT);
 			conn.setReadTimeout(5000);
 			boolean redirect = true;
 			int countRedirect = 0;
@@ -163,6 +166,38 @@ public class NetHelper {
 					URL outURL = conn.getURL();
 					conn.disconnect();
 					return outURL;
+				}
+				countRedirect++;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	public static String getContentType(URL url) throws Exception {
+		try {
+			nocheckCertificatHttps();
+			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+			conn.setRequestProperty("User-Agent", JAVLO_USER_AGENT);
+			conn.setReadTimeout(5000);
+			boolean redirect = true;
+			int countRedirect = 0;
+			while (redirect && countRedirect < 16) {
+				int status = conn.getResponseCode();
+				redirect = false;
+				if (status != HttpURLConnection.HTTP_OK) {
+					if (status == HttpURLConnection.HTTP_MOVED_TEMP || status == HttpURLConnection.HTTP_MOVED_PERM || status == HttpURLConnection.HTTP_SEE_OTHER)
+						redirect = true;
+				}
+				if (redirect) {
+					String newUrl = conn.getHeaderField("Location");
+					conn.disconnect();
+					conn = (HttpURLConnection) new URL(newUrl).openConnection();
+				} else {
+					String contentType = conn.getHeaderField("Content-Type");
+					conn.disconnect();
+					return contentType;
 				}
 				countRedirect++;
 			}
@@ -383,6 +418,7 @@ public class NetHelper {
 			url = removeParams(url);
 
 			HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+			connection.setRequestProperty("User-Agent", JAVLO_USER_AGENT);
 
 			// skip https validation
 			if (connection instanceof HttpsURLConnection) {
@@ -461,6 +497,7 @@ public class NetHelper {
 		InputStream in = null;
 		try {
 			URLConnection conn = url.openConnection();
+			conn.setRequestProperty("User-Agent", JAVLO_USER_AGENT);
 
 			if (conn instanceof HttpURLConnection) {
 				if (((HttpURLConnection) conn).getResponseCode() != HttpURLConnection.HTTP_OK) {
@@ -501,7 +538,9 @@ public class NetHelper {
 	public static void readPage(URL url, OutputStream out) throws Exception {
 		InputStream in = null;
 		try {
-			in = url.openConnection().getInputStream();
+			URLConnection conn = url.openConnection(); 
+			conn.setRequestProperty("User-Agent", JAVLO_USER_AGENT);
+			in = conn.getInputStream();
 			ResourceHelper.writeStreamToStream(in, out);
 		} finally {
 			ResourceHelper.closeResource(in);
@@ -522,7 +561,9 @@ public class NetHelper {
 		}
 		InputStream in = null;
 		try {
-			in = url.openConnection().getInputStream();
+			URLConnection conn = url.openConnection(); 
+			conn.setRequestProperty("User-Agent", JAVLO_USER_AGENT);		
+			in = conn.getInputStream();
 			return ResourceHelper.writeStreamToString(in, ContentContext.CHARACTER_ENCODING);
 		} catch (Exception e) {
 			logger.warning(e.getMessage());
@@ -848,7 +889,8 @@ public class NetHelper {
 				try {
 					ByteArrayOutputStream imgBuffer = new ByteArrayOutputStream();
 					int imageSize = 0;
-					conn = (new URL(url)).openConnection();
+					conn = (new URL(url)).openConnection();					
+					conn.setRequestProperty("User-Agent", JAVLO_USER_AGENT);	
 					conn.setRequestProperty("Referer", pageURL.toString());
 					conn.setRequestProperty("Host", pageURL.getHost());
 					conn.setReadTimeout(5000);

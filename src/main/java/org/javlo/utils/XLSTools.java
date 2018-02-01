@@ -237,6 +237,17 @@ public class XLSTools {
 			ResourceHelper.closeResource(in);
 		}
 	}
+	
+	public static Cell[][] createArray(int x, int y) throws Exception {
+		Cell[][] outArray = new Cell[y][];
+		for (int i = 0; i < outArray.length; i++) {
+			outArray[i] = new Cell[x];
+			for (int j = 0; j < outArray[i].length; j++) {
+				outArray[i][j] = new Cell("", null, outArray, i, j);
+			}
+		}
+		return outArray;
+	}
 
 	protected static Cell[][] getXLSArray(ContentContext ctx, File xslxFile) throws Exception {
 		InputStream in = new FileInputStream(xslxFile);

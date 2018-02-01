@@ -1710,6 +1710,8 @@ public class AdminAction extends AbstractModuleAction {
 		StaticConfig staticConfig = globalContext.getStaticConfig(); 
 		staticConfig.clearCache();
 		
+		I18nAccess.getInstance(ctx).resetViewLanguage(ctx);
+		
 		ResourceFactory.getInstance(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE)).clearCache();
 		ResourceFactory.getInstance(ctx.getContextWithOtherRenderMode(ContentContext.EDIT_MODE)).clearCache();
 		ResourceFactory.getInstance(ctx.getContextWithOtherRenderMode(ContentContext.PAGE_MODE)).clearCache();

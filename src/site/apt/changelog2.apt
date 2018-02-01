@@ -770,7 +770,7 @@ change log
  
  * 6/ update common lang + remove common configuration
  
-* 2.1.0.3.17 18/09/2016
+* 2.1.0.3.17 18/09/2016  - [STABLE]
 
  * 1/ update file manager + edit text file
  
@@ -878,7 +878,7 @@ change log
  
  * 6/ login update / getRessourceURL / trim image / taxonomy
  
-* 2.1.0.5 16/08/17
+* 2.1.0.5 16/08/17  - [STABLE]
 
  * 1/ field validation / taxonomy integration in list service / update REST query possibility / document ref and lang / pdf correction justify / external link check internet connection 
  
@@ -914,6 +914,6 @@ change log
  
  * 3/ remove linked-page-id / structure smart-generic-form storage / user JAVLO_HOME env. var. for localise the static-config.properties folder
  
-* 2.1.1.0 [26/01/2018]
+* 2.1.1.0 [26/01/2018] - [STABLE]
 
- * 1/ component structure html correction
+ * 1/ component structure html correction / reset i18n on publish / add user-agent on internet connection / push static version of the site on ftp

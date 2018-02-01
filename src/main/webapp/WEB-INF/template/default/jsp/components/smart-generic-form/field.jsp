@@ -15,6 +15,10 @@
 				<label for="${field.name}">${field.label} ${field.require?requireHTML:''}</label>
 				<textarea class="form-control" name="${field.name}" id="${field.name}">${requestService.parameterMap[field.name]}</textarea>
 			</c:when>
+			<c:when test="${field.type eq 'number'}">
+				<label for="${field.name}">${field.label} ${field.require?requireHTML:''}</label>
+				<input class="form-control" type="number" name="${field.name}" id="${field.name}" value="${requestService.parameterMap[field.name]}">
+			</c:when>
 			<c:when test="${field.type eq 'yes-no'}">
 				<div class="radio">
 				<label for="${field.name}">${field.label} ${field.require?requireHTML:''}</label>

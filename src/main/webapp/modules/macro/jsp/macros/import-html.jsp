@@ -1,7 +1,6 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-
-<form method="post" action="${info.currentURL}" class="standard-form js-change-submit">
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"
+%><%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"
+%><form method="post" action="${info.currentURL}" class="standard-form js-change-submit">
 <c:if test="${not empty contexts}">
 <div class="line">
 	<label for="context">choose default context :</label>

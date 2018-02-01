@@ -9,7 +9,6 @@ import java.util.logging.Logger;
 import org.javlo.component.core.ILink;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
-import org.javlo.helper.PatternHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.helper.XHTMLHelper;
@@ -29,7 +28,12 @@ public class FieldExternalLink extends MetaField implements ILink {
 
 		@Override
 		public String getURL() {
-			return getCurrentLink().trim();
+			try {
+				return URLHelper.convertLink(ctx, getCurrentLink());
+			} catch (Exception e) {
+				e.printStackTrace();
+				return "error:"+e.getMessage();				
+			}
 		}
 
 		public String getTitle() {
@@ -78,10 +82,7 @@ public class FieldExternalLink extends MetaField implements ILink {
 		}
 
 		String link = getCurrentLink().trim();
-		if (link.startsWith("/")) { // relative link
-			link = XHTMLHelper.replaceJSTLData(ctx, link);
-			link = URLHelper.createURL(ctx, link);
-		}
+		link=URLHelper.convertLink(ctx, link);
 
 		if (label.trim().length() > 0) {
 			out.println("<span class=\"" + getType() + "\">");
@@ -142,7 +143,7 @@ public class FieldExternalLink extends MetaField implements ILink {
 
 		String newLink = requestService.getParameter(getInputLinkName(), "");
 		if (!newLink.equals(getCurrentLink())) { 			
-			if (!StringHelper.isEmpty(newLink) && !newLink.trim().startsWith("/") && !PatternHelper.EXTERNAL_LINK_PATTERN.matcher(newLink).matches()) {
+			if (!StringHelper.isEmpty(newLink) && !URLHelper.isCorrectJavloLink(newLink)) {
 				if (getCurrentLinkErrorMessage().trim().length() == 0) {
 					setNeedRefresh(true);
 				}
@@ -224,7 +225,7 @@ public class FieldExternalLink extends MetaField implements ILink {
 
 	@Override
 	public String getURL(ContentContext ctx) throws Exception {
-		return getCurrentLink();
+		return URLHelper.convertLink(ctx, getCurrentLink());
 	}
 	
 	@Override

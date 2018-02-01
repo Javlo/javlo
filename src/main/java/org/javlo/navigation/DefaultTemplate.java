@@ -429,4 +429,9 @@ public class DefaultTemplate extends Template {
 	public List<String> getStructures() {
 		return null;
 	}
+	
+	@Override
+	protected boolean isDefaultRenderer() {
+		return true;
+	}
 }
