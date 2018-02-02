@@ -32,7 +32,7 @@ public class ConvertUserForComansys extends AbstractMacro {
 		
 		IUserFactory uf = UserFactory.createUserFactory(ctx.getGlobalContext(), ctx.getRequest().getSession());
 		List<IUserInfo> users = uf.getUserInfoList();
-		Cell[][] arrays = XLSTools.createArray(users.size()+1, 29);
+		Cell[][] arrays = XLSTools.createArray(29, users.size()+1);
 		
 		int i=0;
 		arrays[0][i].setValue("Title"); i++;
