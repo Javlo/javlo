@@ -5,18 +5,22 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Path;
+import java.util.logging.Logger;
 
 import org.javlo.helper.NetHelper;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
-import org.jcodec.common.logging.Logger;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 public class Html2Directory {
+	
+	private static Logger logger = Logger.getLogger(Html2Directory.class.getName());
+	
+	public static final String STATIC_HEADER = "Content-Static";
 	
 	public static class Status {
 		int overwriteFiles = 0;		
@@ -38,6 +42,17 @@ public class Html2Directory {
 		return !StringHelper.neverNull(contentType.toLowerCase()).contains("html");
 	}
 	
+	private static boolean isCss(URL url) throws Exception {
+		if (url == null) {
+			return false;
+		}
+		String contentType = NetHelper.getContentType(url);
+		if (contentType == null) {
+			return false;
+		}
+		return !StringHelper.neverNull(contentType.toLowerCase()).contains("css");
+	}
+	
 	private static String getRelativePath (File base, File finalFile) throws IOException {
 		Path first = base.toPath();
 		Path second = finalFile.toPath();
@@ -57,7 +72,7 @@ public class Html2Directory {
 	}
 
 	public static File download (URL url, File baseDir, Status status, int depth) {	
-		Logger.info("download url = "+url);
+		logger.info("download url = "+url);
 		try {			
 			if (url == null) {
 				return null;
@@ -73,8 +88,13 @@ public class Html2Directory {
 				}
 				return file;
 			} else {		
-				Document doc = Jsoup.connect(url.toString()).userAgent(NetHelper.JAVLO_USER_AGENT).timeout(TIMEOUT).get();				
-				File file = new File(URLHelper.mergePath(baseDir.getAbsolutePath(), url.getPath()));
+				Document doc = Jsoup.connect(url.toString()).header(STATIC_HEADER, "true").userAgent(NetHelper.JAVLO_USER_AGENT).timeout(TIMEOUT).get();
+				File file;
+				if (depth == 0) {
+					file = new File(URLHelper.mergePath(baseDir.getAbsolutePath(), "index.html"));
+				} else {
+					file = new File(URLHelper.mergePath(baseDir.getAbsolutePath(), url.getPath()));
+				}
 				if (StringHelper.isEmpty(StringHelper.getFileExtension(file.getName()))) {
 					file = new File (file.getAbsolutePath()+".html");
 				}
@@ -85,24 +105,20 @@ public class Html2Directory {
 					for (Element link : links) {						
 						String path = link.attr("href");						
 						if (!StringHelper.isEmpty(path) && !StringHelper.isURL(path) && path.trim().length() > 1) {							
-//							if (depth==0) {								
-								File newFile = download(getNewUrl(url, path), baseDir, status, depth+1);
-								if (newFile != null) {
-								 	link.attr("href", getRelativePath(file.getParentFile(), newFile));
-								}
-//							}
+							File newFile = download(getNewUrl(url, path), baseDir, status, depth+1);
+							if (newFile != null) {
+							 	link.attr("href", getRelativePath(file.getParentFile(), newFile));
+							}
 						}
 					}
 					links = doc.select("[src]");					
 					for (Element link : links) {						
 						String path = link.attr("src");						
 						if (!StringHelper.isEmpty(path) && !StringHelper.isURL(path) && path.trim().length() > 1) {							
-//							if (depth==0) {								
-								File newFile = download(getNewUrl(url, path), baseDir, status, depth+1);
-								if (newFile != null) {
-									link.attr("src", getRelativePath(file.getParentFile(), newFile));
-								}
-//							}
+							File newFile = download(getNewUrl(url, path), baseDir, status, depth+1);
+							if (newFile != null) {
+								link.attr("src", getRelativePath(file.getParentFile(), newFile));
+							}
 						}
 					}
 					String html = doc.html();
@@ -113,7 +129,7 @@ public class Html2Directory {
 			}
 		} catch (Exception e) {
 			status.exception++;
-			e.printStackTrace();
+			logger.warning(e.getMessage());
 		}
 		return null;		
 	}
@@ -126,11 +142,6 @@ public class Html2Directory {
 		Status status = new Status();
 		//download(new URL("https://galleries.tease-pics.com/onlysecretaries/1080u-p/?id=2174460"), outDir, status, 0);
 		download(new URL("http://localhost/javlo/demo/"), outDir, status, 0);
-		
-		String ct = NetHelper.getContentType(new URL("https://content4.coedcherry.com/bryci/164210/03.jpg"));
-		System.out.println(">>>>>>>>> Html2Directory.ct =  : "+ct); //TODO: remove debug trace
-		ct = NetHelper.getContentType(new URL("https://www.coedcherry.com/models/bryci"));
-		System.out.println(">>>>>>>>> Html2Directory.ct =  : "+ct); //TODO: remove debug trace
 	}
 	
 }

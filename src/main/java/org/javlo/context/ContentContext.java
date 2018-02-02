@@ -42,6 +42,7 @@ import org.javlo.user.AdminUserSecurity;
 import org.javlo.user.IUserFactory;
 import org.javlo.user.User;
 import org.javlo.user.UserFactory;
+import org.javlo.utils.downloader.Html2Directory;
 
 /**
  * @author pvanderm
@@ -115,6 +116,8 @@ public class ContentContext {
 	private boolean clearSession = false;
 
 	private boolean forceCorrectPath = false;
+	
+	private Boolean contentStatic = null;
 
 	private static ContentContext createContentContext(HttpServletRequest request, HttpServletResponse response, boolean free) {
 		ContentContext ctx = new ContentContext();
@@ -2131,6 +2134,13 @@ public class ContentContext {
 			}
 		}
 		return false;
+	}
+	
+	public boolean isContentStatic() {
+		if (contentStatic == null) {
+			contentStatic = StringHelper.isTrue(request.getHeader(Html2Directory.STATIC_HEADER));
+		}
+		return contentStatic;
 	}
 
 }

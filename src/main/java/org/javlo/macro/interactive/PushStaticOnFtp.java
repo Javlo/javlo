@@ -99,12 +99,14 @@ public class PushStaticOnFtp implements IInteractiveMacro, IAction {
 			File folder = new File(URLHelper.mergePath(ctx.getGlobalContext().getFolder(), "_static_temp"));
 			if (thread != null && thread.running) {
 				return "Thread already lauched, please wait...";
-			}
-			System.out.println(">>>>>>>>> PushStaticOnFtp.performPush : URLHelper.createAbsoluteURL(ctx, \"/\") = "+URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE).getContextForAbsoluteURL(), "/")); //TODO: remove debug trace
-			thread = new TransfertStaticToFtp(folder, new URL(URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE).getContextForAbsoluteURL(), "/")), host, Integer.parseInt(port), username, password, path);
-			thread.run();
+			}	
 			
-			messageRepository.setGlobalMessage(new GenericMessage("connection established.", GenericMessage.INFO));
+			String url = URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE).getContextForAbsoluteURL(), "/");
+			logger.info("download : "+url);
+			thread = new TransfertStaticToFtp(folder, new URL(url), host, Integer.parseInt(port), username, password, path);
+			thread.start();			
+			messageRepository.setGlobalMessage(new GenericMessage("Push thread lauched.", GenericMessage.INFO));
+			ctx.setClosePopup(true);
 		}
 		return null;
 	}

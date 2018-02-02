@@ -51,7 +51,7 @@ function openEditor(textarea) {
 	editor.getSession().on('change', function(e) {
 		jQuery("#ace-text-editor").val(editor.getValue())
 	});	
-	jQuery("#ace-text-editor").height(box.height()+80);
+	jQuery("#ace-text-editor").height(box.height()-122);
 	jQuery("#ace-text-editor").val(editor.getValue());
 }
 
