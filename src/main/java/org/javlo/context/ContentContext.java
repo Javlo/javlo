@@ -118,6 +118,8 @@ public class ContentContext {
 	private boolean forceCorrectPath = false;
 	
 	private Boolean contentStatic = null;
+	
+	private boolean stopRendering = false;
 
 	private static ContentContext createContentContext(HttpServletRequest request, HttpServletResponse response, boolean free) {
 		ContentContext ctx = new ContentContext();
@@ -2141,6 +2143,14 @@ public class ContentContext {
 			contentStatic = StringHelper.isTrue(request.getHeader(Html2Directory.STATIC_HEADER));
 		}
 		return contentStatic;
+	}
+
+	public boolean isStopRendering() {
+		return stopRendering;
+	}
+
+	public void setStopRendering(boolean stopRendering) {
+		this.stopRendering = stopRendering;
 	}
 
 }

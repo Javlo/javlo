@@ -542,6 +542,9 @@ public class AccessServlet extends HttpServlet implements IVersion {
 
 			try {
 				String action = ServletHelper.execAction(ctx);
+				if (ctx.isStopRendering()) {
+					return;
+				}
 				if (logger.isLoggable(Level.FINE)) {
 					logger.fine(requestLabel + " : action " + df.format((double) (System.currentTimeMillis() - startTime) / (double) 1000) + " sec.");
 				}

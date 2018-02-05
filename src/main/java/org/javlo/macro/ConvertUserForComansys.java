@@ -91,6 +91,8 @@ public class ConvertUserForComansys extends AbstractMacro {
 		InputStream in = new ByteArrayInputStream(out.toByteArray());
 		ResourceHelper.writeStreamToStream(in, response.getOutputStream(), -1);
 		
+		ctx.setStopRendering(true);
+		
 		return null;
 	}
 
