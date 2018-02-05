@@ -84,6 +84,19 @@ public class StaticConfig extends Observable {
 	private Boolean redirectSecondaryURL = null;
 
 	private List<String> ipMaskList = null;
+	
+	private static class FolderBean {
+		String thread = null;
+		String data = null;
+		String context = null;
+		String share = null;
+		String template = null;
+		String mailing = null;
+		String mailingHistory = null;
+		String temp;
+	}
+	
+	FolderBean folderBean = new FolderBean();
 
 	/**
 	 * @Deprecated use getInstance (ServletContext application)
@@ -315,12 +328,16 @@ public class StaticConfig extends Observable {
 	 * @return the folder of data context.
 	 */
 	public String getAllDataFolder() {
-		String folder = properties.getString("data-folder", "/WEB-INF/data-ctx/");
-		folder = replaceFolderVariable(folder);
-		if (isDataFolderRelative() && application != null) {
-			folder = ResourceHelper.getRealPath(application, folder);
+		if (folderBean.data == null) {
+			synchronized (folderBean) {
+				folderBean.data = properties.getString("data-folder", "/WEB-INF/data-ctx/");
+				folderBean.data = replaceFolderVariable(folderBean.data);
+				if (isDataFolderRelative() && application != null) {
+					folderBean.data = ResourceHelper.getRealPath(application, folderBean.data);
+				}
+			}
 		}
-		return folder;
+		return folderBean.data;
 	}
 
 	public String getExternalComponentFolder() {
@@ -397,15 +414,17 @@ public class StaticConfig extends Observable {
 		return properties.getBoolean("cache.pdf", false);
 	}
 
-	public String getContextFolder() {
-		String path = properties.getString("context-folder", "/WEB-INF/context");
-
-		path = replaceFolderVariable(path);
-
-		if (isDataFolderRelative()) {
-			path = ResourceHelper.getRealPath(application, path);
+	public String getContextFolder() {		
+		if (folderBean.context == null) {	
+			synchronized (folderBean) {
+				folderBean.context = properties.getString("context-folder", "/WEB-INF/context");	
+				folderBean.context = replaceFolderVariable(folderBean.context);	
+				if (isDataFolderRelative()) {
+					folderBean.context = ResourceHelper.getRealPath(application, folderBean.context);
+				}
+			}
 		}
-		return path;
+		return folderBean.context;
 	}
 
 	public String getCSVFolder() {
@@ -753,8 +772,13 @@ public class StaticConfig extends Observable {
 	}
 
 	public String getLocalShareDataFolder() {
-		String path = properties.getString("local-share-folder", "/static/share-files");
-		return path;
+		if (folderBean.share == null) {
+			synchronized(folderBean) {
+				folderBean.share = properties.getString("local-share-folder", "/static/share-files");
+				folderBean.share = replaceFolderVariable(folderBean.share);
+			}
+		}
+		return folderBean.share;
 	}
 
 	public boolean isCreateContentOnImportImage() {
@@ -771,6 +795,7 @@ public class StaticConfig extends Observable {
 
 	public String getLocalTemplateFolder() {
 		String path = properties.getString("template-folder", "/template");
+		path = replaceFolderVariable(path);
 		return path;
 	}
 
@@ -803,20 +828,28 @@ public class StaticConfig extends Observable {
 		return uri;
 	}
 
-	public String getMailingFolder() {
-		String outMailingFolder = getLocalMailingFolder();
-		if (isDataFolderRelative()) {
-			outMailingFolder = ResourceHelper.getRealPath(application, outMailingFolder);
+	public String getMailingFolder() { 
+		if (folderBean.mailing == null) {
+			synchronized (folderBean) {
+				folderBean.mailing = getLocalMailingFolder();
+				if (isDataFolderRelative()) {
+					folderBean.mailing = ResourceHelper.getRealPath(application, folderBean.mailing);
+				}
+			}
 		}
-		return outMailingFolder;
+		return folderBean.mailing;
 	}
 
 	public String getMailingHistoryFolder() {
-		String outMailingFolder = getLocalMailingHistoryFolder();
-		if (isDataFolderRelative()) {
-			outMailingFolder = ResourceHelper.getRealPath(application, outMailingFolder);
+		if (folderBean.mailingHistory == null) {
+			synchronized (folderBean) {
+				folderBean.mailingHistory = getLocalMailingHistoryFolder();
+				if (isDataFolderRelative()) {
+					folderBean.mailingHistory = ResourceHelper.getRealPath(application, folderBean.mailingHistory);
+				}
+			}
 		}
-		return outMailingFolder;
+		return folderBean.mailingHistory;
 	}
 	
 	public MailingStaticConfig getMailingStaticConfig() {
@@ -1014,7 +1047,7 @@ public class StaticConfig extends Observable {
 	}
 
 	public String getSynchroCode() {
-		return properties.getString("synchro-code", "120857013478039430485203984").trim();
+		return properties.getString("synchro-code", null);
 	}
 
 	public int getSynchroTokenValidityMinutes() {
@@ -1046,11 +1079,14 @@ public class StaticConfig extends Observable {
 	}
 
 	public String getTemplateFolder() {
-		if (isDataFolderRelative()) {
-			return ResourceHelper.getRealPath(application, getLocalTemplateFolder());
-		} else {
-			return replaceFolderVariable(getLocalTemplateFolder());
+		if (folderBean.template == null) {
+			if (isDataFolderRelative()) {
+				folderBean.template = ResourceHelper.getRealPath(application, getLocalTemplateFolder());
+			} else {
+				folderBean.template = replaceFolderVariable(getLocalTemplateFolder());
+			}
 		}
+		return folderBean.template;
 	}
 
 	public String getDefaultTemplateFolder() {
@@ -1067,17 +1103,20 @@ public class StaticConfig extends Observable {
 	}
 
 	public String getThreadFolder() {
-		String threadFolder;
-		if (isDataFolderRelative()) {
-			threadFolder = ResourceHelper.getRealPath(application, getLocalThreadFolder());
-		} else {
-			threadFolder = getLocalThreadFolder();
-		}		
-		File theadFolderFile = new File(threadFolder);
-		if (!theadFolderFile.exists()) {
-			theadFolderFile.mkdirs();
+		if (folderBean.thread == null) {
+			synchronized (folderBean) {
+				if (isDataFolderRelative()) {
+					folderBean.thread = ResourceHelper.getRealPath(application, getLocalThreadFolder());
+				} else {
+					folderBean.thread = getLocalThreadFolder();
+				}		
+				File theadFolderFile = new File(folderBean.thread);
+				if (!theadFolderFile.exists()) {
+					theadFolderFile.mkdirs();
+				}
+			}
 		}
-		return threadFolder;
+		return folderBean.thread;
 	}
 
 	public String getTrashContextFolder() {
@@ -1292,8 +1331,9 @@ public class StaticConfig extends Observable {
 	}
 
 	public void reload() {
-		synchronized (FILE_NAME) {
+		synchronized (FILE_NAME) {			
 			properties.clear();
+			folderBean = null;
 			try {
 				properties.load();
 			} catch (IOException e) {
@@ -1319,10 +1359,11 @@ public class StaticConfig extends Observable {
 	public String replaceFolderVariable(String folder) {
 		if (folder != null) {
 			folder = folder.replace("$HOME", HOME);
+			folder = folder.replace("~", HOME);
 		}
 		String JAVLO_HOME = getJavloHome();
 		if (JAVLO_HOME != null) {
-			folder = folder.replace("$JAVLO_HOME", JAVLO_HOME);
+			folder = folder.replace("$JAVLO_HOME", JAVLO_HOME);			
 		}
 		return folder;
 	}
@@ -1548,7 +1589,7 @@ public class StaticConfig extends Observable {
 	}
 
 	public String getPreviewCommandFilePath() {
-		return properties.getString("preview.command-file", "/jsp/preview/command.jsp");
+		return properties.getString("preview.command-file", "/jsp/preview/command_bootstrap.jsp");
 	}
 
 	public String getTimeTravelerFilePath() {
@@ -1556,11 +1597,11 @@ public class StaticConfig extends Observable {
 	}
 
 	public String getCssPreview() {
-		return properties.getString("preview.css", "/css/preview/edit_preview.css");
+		return properties.getString("preview.css", "/jsp/preview/css/bootstrap/main.css");
 	}
 
 	public String getJSPreview() {
-		return properties.getString("preview.js", "/js/preview/edit_preview.js");
+		return properties.getString("preview.js", "/jsp/preview/js/bootstrap/preview.js");
 	}
 
 	public String getJSBootStrap() {

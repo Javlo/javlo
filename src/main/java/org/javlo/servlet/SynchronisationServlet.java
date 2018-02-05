@@ -95,10 +95,15 @@ public class SynchronisationServlet extends HttpServlet {
 	}
 
 	private void process(HttpServletRequest request, HttpServletResponse response) throws ServletException {
+		StaticConfig staticConfig = StaticConfig.getInstance(getServletContext());
+		if (staticConfig.getSynchroCode() == null) {
+			logger.warning("synchro request but no syncho code define.");
+			response.setStatus(HttpServletResponse.SC_FORBIDDEN);				
+			return;
+		}
 		OutputStream out = null;
 		InputStream fileStream = null;
-		try {
-			StaticConfig staticConfig = StaticConfig.getInstance(getServletContext());
+		try {			
 			RequestService requestService = RequestService.getInstance(request);
 			String clientSynchroCode = requestService.getParameter(SHYNCRO_CODE_PARAM_NAME, null);
 

@@ -900,8 +900,8 @@ public class ContentContext {
 
 		if (isAsViewMode() && outPage != null && !outPage.isActive(this)) {
 			if (outPage.isActive()) {
-				logger.info("page not found : " + getPath());
-			}
+				logger.info("page not found ("+getGlobalContext().getContextKey()+") : " + getPath());
+		}
 			if (!isFree()) {
 				response.setStatus(HttpServletResponse.SC_NOT_FOUND);
 			}

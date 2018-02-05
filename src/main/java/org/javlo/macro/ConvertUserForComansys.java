@@ -1,5 +1,8 @@
 package org.javlo.macro;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
@@ -28,7 +31,7 @@ public class ConvertUserForComansys extends AbstractMacro {
 		response.setContentType(ResourceHelper.getFileExtensionToMineType(StringHelper.getFileExtension(fileName)));
 		response.setHeader("Cache-Control", "no-cache");
 		response.setHeader("Accept-Ranges", "bytes");				
-		response.setHeader("Content-Disposition", "attachment; name=\""+fileName+"\"; filename=\""+fileName+"\"");
+		response.setHeader("Content-Disposition", "attachment; filename=\""+fileName+"\"");
 		
 		IUserFactory uf = UserFactory.createUserFactory(ctx.getGlobalContext(), ctx.getRequest().getSession());
 		List<IUserInfo> users = uf.getUserInfoList();
@@ -82,7 +85,11 @@ public class ConvertUserForComansys extends AbstractMacro {
 			j++;
 		}
 		
-		XLSTools.writeXLSX(arrays, response.getOutputStream());
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		XLSTools.writeXLSX(arrays, out);
+		response.setContentLength(out.size());
+		InputStream in = new ByteArrayInputStream(out.toByteArray());
+		ResourceHelper.writeStreamToStream(in, response.getOutputStream(), -1);
 		
 		return null;
 	}

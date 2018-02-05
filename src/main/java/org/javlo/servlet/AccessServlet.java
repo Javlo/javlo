@@ -90,7 +90,6 @@ import org.javlo.template.Template;
 import org.javlo.template.TemplateFactory;
 import org.javlo.thread.ThreadManager;
 import org.javlo.user.MaxLoginService;
-import org.javlo.user.User;
 import org.javlo.user.UserFactory;
 import org.javlo.user.VisitorContext;
 import org.javlo.utils.DebugListening;
@@ -792,8 +791,8 @@ public class AccessServlet extends HttpServlet implements IVersion {
 							FSImageWriter imageWriter = new FSImageWriter();
 							imageWriter.write(img, out);
 						} else {
-							response.setStatus(HttpServletResponse.SC_NOT_FOUND);
 							logger.warning("rejected content image convertion : " + request.getRequestURI());
+							response.setStatus(HttpServletResponse.SC_NOT_FOUND);							
 							return;
 						}
 					} else if (ctx.getFormat().equalsIgnoreCase("eml")) {
@@ -1041,7 +1040,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 										return;
 									}
 								}
-
+								logger.warning("page not found ("+globalContext.getContextKey()+") : " + ctx.getPath());
 								ctx.getResponse().setStatus(HttpServletResponse.SC_NOT_FOUND, "page not found : " + ctx.getPath());
 								if (ctx.isAsViewMode()) {
 									MenuElement page404 = content.getNavigation(ctx).searchChildFromName(staticConfig.get404PageName());
@@ -1075,6 +1074,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 									TimeTracker.end(globalContext.getContextKey(), "render", timeTrackerNumber);
 									VisitorContext.getInstance(request.getSession()).setPreviousPage(ctx.getCurrentPage().getPageBean(ctx));
 								} else {
+									logger.warning("page undefined ("+globalContext.getContextKey()+") : " + ctx.getPath());
 									response.setStatus(HttpServletResponse.SC_NOT_FOUND);
 								}
 							}
