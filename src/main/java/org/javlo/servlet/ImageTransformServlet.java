@@ -971,6 +971,7 @@ public class ImageTransformServlet extends HttpServlet {
 			Template template = null;
 			IImageFilter comp = null;
 			int slachIndex = pathInfo.indexOf('/');
+			
 			boolean imageFromTemplateFolder = false;
 			if (slachIndex > 0) {
 				try {

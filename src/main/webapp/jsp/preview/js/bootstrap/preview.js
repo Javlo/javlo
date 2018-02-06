@@ -475,6 +475,7 @@ if (!String.prototype.startsWith) {
 			});
 			el.addEventListener('dragend', function (event) {				
 				editPreview.correctScroll(false);
+				editPreview.displayInsertHere(false);
 			});
 			el.addEventListener('drop', function (event) {
 				if (PREVIEWLOG) {

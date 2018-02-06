@@ -92,11 +92,21 @@ public class SharedContentService {
 	}
 	
 	public SharedContent getSharedContent(ContentContext ctx, String id) {
+		if (id == null) {
+			return null;
+		}
 		if (latestReturnedContent == null) {			
 			latestReturnedContent = getAllSharedContent(ctx);
-		}
+		}		
 		for (SharedContent sharedContent : latestReturnedContent) {
-			if (sharedContent.getId().equals(id)) {
+			if (sharedContent != null && sharedContent.getId() != null && sharedContent.getId().equals(id)) {
+				return sharedContent;
+			}
+		}
+		/* if not foudn reset cache */
+		latestReturnedContent = getAllSharedContent(ctx);
+		for (SharedContent sharedContent : latestReturnedContent) {
+			if (sharedContent != null && sharedContent.getId() != null && sharedContent.getId().equals(id)) {
 				return sharedContent;
 			}
 		}

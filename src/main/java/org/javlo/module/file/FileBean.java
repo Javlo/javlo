@@ -157,7 +157,9 @@ public class FileBean implements ILanguage {
 	public String getThumbURL() throws Exception {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		if (StringHelper.isImage(getName()) || StringHelper.isPDF(getName()) || StringHelper.getFileExtension(getName()).equalsIgnoreCase("mp4")) {
-			return URLHelper.createTransformURL(ctx, (staticInfo.isStaticFolder()?globalContext.getStaticConfig().getStaticFolder():"") + staticInfo.getStaticURL(), "list") + "?ts=" + staticInfo.getFile().lastModified();
+			String fileURL = URLHelper.createTransformURL(ctx, (staticInfo.isStaticFolder()?globalContext.getStaticConfig().getStaticFolder():"") + staticInfo.getStaticURL(), "list");
+			fileURL = URLHelper.addParam(fileURL, "ts", ""+staticInfo.getFile().lastModified());
+			return  fileURL;
 		} else {
 			return URLHelper.getFileTypeURL(ctx, staticInfo.getFile());
 		}

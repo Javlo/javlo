@@ -46,11 +46,12 @@ import org.javlo.utils.ConfigurationProperties;
 import org.javlo.ztatic.FileCache;
 
 public class StaticConfig extends Observable {
-	
+
 	public static String WEB_PLATFORM = "web";
 	public static String MAILING_PLATFORM = "mailing";
 	public static String OPEN_PLATFORM = "open";
-	private static final List<String> PLATFORMS = new LinkedList<String>(Arrays.asList(new String[] { WEB_PLATFORM, MAILING_PLATFORM }));
+	private static final List<String> PLATFORMS = new LinkedList<String>(
+			Arrays.asList(new String[] { WEB_PLATFORM, MAILING_PLATFORM }));
 
 	protected static Logger logger = Logger.getLogger(StaticConfig.class.getName());
 
@@ -77,6 +78,8 @@ public class StaticConfig extends Observable {
 
 	private static final String HOME = System.getProperty("user.home");
 
+	private static String javloHome = null;
+
 	private Set<String> excludeContextDomain = null;
 
 	private Set<String> contentExtension = null;
@@ -84,7 +87,7 @@ public class StaticConfig extends Observable {
 	private Boolean redirectSecondaryURL = null;
 
 	private List<String> ipMaskList = null;
-	
+
 	private static class FolderBean {
 		String thread = null;
 		String data = null;
@@ -95,7 +98,7 @@ public class StaticConfig extends Observable {
 		String mailingHistory = null;
 		String temp;
 	}
-	
+
 	FolderBean folderBean = new FolderBean();
 
 	/**
@@ -145,16 +148,40 @@ public class StaticConfig extends Observable {
 	public static final List<String> BASIC_MODULES = Arrays.asList(new String[] { "admin", "content", "file" });
 
 	public Boolean internetAccess = null;
-	
+
 	public static String getJavloHome() {
-		Map<String, String> env = System.getenv();
-        for (String envName : env.keySet()) {
-            if (envName.equals("JAVLO_HOME")) {
-            	return env.get(envName);
-            }
+		if (javloHome == null) {
+			Map<String, String> env = System.getenv();			
+	        for (String envName : env.keySet()) {
+	            if (envName.equals("JAVLO_HOME")) {
+	            	String folder = env.get(envName);
+	            	if (folder != null) {
+	        			folder = folder.replace("$HOME", HOME);
+	        			folder = folder.replace("~", HOME);
+	        		}	            	 
+	            	File file = new File(folder);
+	            	if (!file.exists()) {
+	            		file.mkdirs();
+	            	}
+	            	try {
+						javloHome = file.getCanonicalPath();
+					} catch (IOException e) {
+						e.printStackTrace();
+						throw new RuntimeException(e);
+					}
+	            }
+	        }
+	        if (javloHome == null) {
+	        	javloHome = "";
+	        }
+		} 
+		if (javloHome.length()==0) {
+			return null;
+		} else {
+			return javloHome;
         }
-        return null;
 	}
+	
 
 	private StaticConfig(ServletContext application) {
 		this.application = application;
@@ -165,8 +192,8 @@ public class StaticConfig extends Observable {
 					InputStream in = application.getResourceAsStream(StaticConfig.WEBAPP_CONFIG_FILE);
 					try {
 						webappProps.load(in);
-					} catch (Exception e ) {
-						logger.severe("error on read : "+StaticConfig.WEBAPP_CONFIG_FILE);
+					} catch (Exception e) {
+						logger.severe("error on read : " + StaticConfig.WEBAPP_CONFIG_FILE);
 						throw e;
 					} finally {
 						ResourceHelper.closeResource(in);
@@ -181,13 +208,15 @@ public class StaticConfig extends Observable {
 					staticConfigLocalisation = webappProps.getProperty(STATIC_CONFIG_KEY);
 				}
 				if (application != null) {
-					if (staticConfigLocalisation == null || staticConfigLocalisation.trim().length() == 0 || staticConfigLocalisation.contains("${")) {
+					if (staticConfigLocalisation == null || staticConfigLocalisation.trim().length() == 0
+							|| staticConfigLocalisation.contains("${")) {
 						staticConfigLocalisation = ResourceHelper.getRealPath(application, DEFAULT_CONFIG_DIR + "/" + FILE_NAME);
 					} else {
-						staticConfigLocalisation = ElementaryURLHelper.mergePath(staticConfigLocalisation, FILE_NAME);						
-						boolean staticConfigRelative = Boolean.parseBoolean(webappProps.getProperty(STATIC_CONFIG_RELATIVE_KEY));
+						staticConfigLocalisation = ElementaryURLHelper.mergePath(staticConfigLocalisation, FILE_NAME);
+						boolean staticConfigRelative = Boolean
+								.parseBoolean(webappProps.getProperty(STATIC_CONFIG_RELATIVE_KEY));
 						if (staticConfigRelative && !staticConfigLocalisation.contains("$")) {
-							staticConfigLocalisation = ResourceHelper.getRealPath(application,staticConfigLocalisation);
+							staticConfigLocalisation = ResourceHelper.getRealPath(application, 	staticConfigLocalisation);
 						}
 					}
 				}
@@ -205,7 +234,7 @@ public class StaticConfig extends Observable {
 					}
 					properties.setFile(file);
 				}
-				
+
 				/** LOAD GOD USERS * */
 				String editUser = webappProps.getProperty(EDIT_USERS_KEY);
 				if (StringHelper.isEmpty(editUser) || editUser.startsWith("${")) {
@@ -232,7 +261,7 @@ public class StaticConfig extends Observable {
 				}
 
 				{ // Load product version
-					String productVersion = webappProps.getProperty("product.version");					
+					String productVersion = webappProps.getProperty("product.version");
 					if (productVersion != null) {
 						Pattern parser = Pattern.compile("Rev=(.*) BuildTime=(.*)");
 						Matcher m = parser.matcher(productVersion);
@@ -254,7 +283,8 @@ public class StaticConfig extends Observable {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			logger.log(Level.WARNING, "static config file location not found (" + staticConfigLocalisation + "), using default location inside webapp", e);
+			logger.log(Level.WARNING, "static config file location not found (" + staticConfigLocalisation
+					+ "), using default location inside webapp", e);
 		}
 
 	}
@@ -290,7 +320,9 @@ public class StaticConfig extends Observable {
 
 	}
 
-	public AdminUserFactory getAdminUserFactory(GlobalContext globalContext, HttpSession session) throws SecurityException, NoSuchMethodException, ClassNotFoundException, IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException {
+	public AdminUserFactory getAdminUserFactory(GlobalContext globalContext, HttpSession session)
+			throws SecurityException, NoSuchMethodException, ClassNotFoundException, IllegalArgumentException,
+			InstantiationException, IllegalAccessException, InvocationTargetException {
 		if (admimUserFactory == null) {
 			Constructor<IUserFactory> construct = getAdminUserFactoryClass().getConstructor();
 			admimUserFactory = (AdminUserFactory) construct.newInstance();
@@ -309,7 +341,8 @@ public class StaticConfig extends Observable {
 	}
 
 	public String getAdminUserFactoryClassName() {
-		String userFactoryClass = properties.getString("adminuserfactory.class", "org.javlo.user.AdminUserFactory").trim();
+		String userFactoryClass = properties.getString("adminuserfactory.class", "org.javlo.user.AdminUserFactory")
+				.trim();
 		return userFactoryClass;
 	}
 
@@ -341,7 +374,8 @@ public class StaticConfig extends Observable {
 	}
 
 	public String getExternalComponentFolder() {
-		return URLHelper.mergePath(getAllDataFolder(), properties.getString("external-components-folder", "external-components"));
+		return URLHelper.mergePath(getAllDataFolder(),
+				properties.getString("external-components-folder", "external-components"));
 	}
 
 	public Level getAllLogLevel() {
@@ -393,32 +427,34 @@ public class StaticConfig extends Observable {
 	public int getCacheLinkedPage() {
 		return Integer.parseInt(properties.getString("cache.linked-page", "30"));
 	}
-	
+
 	/**
 	 * define the max size of the main cache
+	 * 
 	 * @return
 	 */
 	public int getCacheMaxSize() {
 		return Integer.parseInt(properties.getString("cache.max-size", "10000"));
 	}
-	
+
 	/**
 	 * return the max time in cache for item
+	 * 
 	 * @return
 	 */
 	public int getCacheMaxTime() {
-		return Integer.parseInt(properties.getString("cache.max-time", ""+(60*60*24))); // 1 day default value
+		return Integer.parseInt(properties.getString("cache.max-time", "" + (60 * 60 * 24))); // 1 day default value
 	}
-	
+
 	public boolean isPDFCache() {
 		return properties.getBoolean("cache.pdf", false);
 	}
 
-	public String getContextFolder() {		
-		if (folderBean.context == null) {	
+	public String getContextFolder() {
+		if (folderBean.context == null) {
 			synchronized (folderBean) {
-				folderBean.context = properties.getString("context-folder", "/WEB-INF/context");	
-				folderBean.context = replaceFolderVariable(folderBean.context);	
+				folderBean.context = properties.getString("context-folder", "/WEB-INF/context");
+				folderBean.context = replaceFolderVariable(folderBean.context);
 				if (isDataFolderRelative()) {
 					folderBean.context = ResourceHelper.getRealPath(application, folderBean.context);
 				}
@@ -543,8 +579,8 @@ public class StaticConfig extends Observable {
 
 	/**
 	 * config the device. device config strucure : device.[device code].[config]
-	 * sample : device.phone = iphone device.phone = htc
-	 * device.phone.pointer-device = false
+	 * sample : device.phone = iphone device.phone = htc device.phone.pointer-device
+	 * = false
 	 *
 	 * @return
 	 */
@@ -563,7 +599,7 @@ public class StaticConfig extends Observable {
 		}
 		return devices;
 	}
-	
+
 	public String[] getEditTemplate() {
 		String templateRaw = properties.getString("admin.edit-template", "javlo");
 		String[] templates = StringHelper.split(templateRaw, ",");
@@ -572,8 +608,8 @@ public class StaticConfig extends Observable {
 
 	public Map<String, User> getEditUsers() {
 		/*
-		 * System.out.println("*** edit user : "); for (User user :
-		 * editUsers.values()) { System.out.println("* user : "+user); }
+		 * System.out.println("*** edit user : "); for (User user : editUsers.values())
+		 * { System.out.println("* user : "+user); }
 		 */
 		return editUsers;
 	}
@@ -615,11 +651,10 @@ public class StaticConfig extends Observable {
 	public String getFileFolderName() {
 		return properties.getString("file-folder", "files");
 	}
-	
+
 	public String getVFSFolderName() {
 		return properties.getString("file-folder", "VFS");
 	}
-
 
 	public String getImageCacheFolder() {
 		return replaceFolderVariable(properties.getString("image-cache-folder", FileCache.BASE_DIR));
@@ -640,7 +675,7 @@ public class StaticConfig extends Observable {
 	public String getGalleryFolder() {
 		return ElementaryURLHelper.mergePath(getStaticFolder(), getGalleryFolderName());
 	}
-	
+
 	public String getGalleryFolderName() {
 		return properties.getString("gallery-folder", "galleries");
 	}
@@ -664,7 +699,8 @@ public class StaticConfig extends Observable {
 	/* config values */
 
 	public String getI18nSpecificEditFile() {
-		String file = replaceFolderVariable(properties.getString("i18n.file.specific-edit", "/WEB-INF/i18n/specific_edit_"));
+		String file = replaceFolderVariable(
+				properties.getString("i18n.file.specific-edit", "/WEB-INF/i18n/specific_edit_"));
 		if (isI18nFileRelative() && application != null) {
 			file = ResourceHelper.getRealPath(application, file);
 		}
@@ -672,7 +708,8 @@ public class StaticConfig extends Observable {
 	}
 
 	public String getI18nSpecificViewFile() {
-		String file = replaceFolderVariable(properties.getString("i18n.file.specific-view", "/WEB-INF/i18n/specific_view_"));
+		String file = replaceFolderVariable(
+				properties.getString("i18n.file.specific-view", "/WEB-INF/i18n/specific_view_"));
 		if (isI18nFileRelative() && application != null) {
 			file = ResourceHelper.getRealPath(application, file);
 		}
@@ -744,7 +781,8 @@ public class StaticConfig extends Observable {
 	}
 
 	public String getLDAPSecurityPrincipal() {
-		return properties.getString("ldap.security.principal", "uid=RO-eCARD, ou=Applications, dc=parl, dc=union, dc=eu");
+		return properties.getString("ldap.security.principal",
+				"uid=RO-eCARD, ou=Applications, dc=parl, dc=union, dc=eu");
 	}
 
 	public String getLocalMailingFolder() {
@@ -773,7 +811,7 @@ public class StaticConfig extends Observable {
 
 	public String getLocalShareDataFolder() {
 		if (folderBean.share == null) {
-			synchronized(folderBean) {
+			synchronized (folderBean) {
 				folderBean.share = properties.getString("local-share-folder", "/static/share-files");
 				folderBean.share = replaceFolderVariable(folderBean.share);
 			}
@@ -828,7 +866,7 @@ public class StaticConfig extends Observable {
 		return uri;
 	}
 
-	public String getMailingFolder() { 
+	public String getMailingFolder() {
 		if (folderBean.mailing == null) {
 			synchronized (folderBean) {
 				folderBean.mailing = getLocalMailingFolder();
@@ -851,7 +889,7 @@ public class StaticConfig extends Observable {
 		}
 		return folderBean.mailingHistory;
 	}
-	
+
 	public MailingStaticConfig getMailingStaticConfig() {
 		return new MailingStaticConfig(this);
 	}
@@ -875,7 +913,7 @@ public class StaticConfig extends Observable {
 	public int getMaxMenuTitleSize() {
 		return properties.getInt("menu.title-size", 30);
 	}
-	
+
 	public int getMaxURLSize() {
 		return properties.getInt("navigation.url.max-size", 140);
 	}
@@ -961,11 +999,11 @@ public class StaticConfig extends Observable {
 	public boolean isXSSHeader() {
 		return properties.getBoolean("security.header.xss", true);
 	}
-	
+
 	public boolean isLoginWithToken() {
 		return properties.getBoolean("security.login.token", false);
 	}
-	
+
 	public int getMaxErrorLoginByHour() {
 		return properties.getInt("security.login.max-error-hour", 100);
 	}
@@ -977,7 +1015,7 @@ public class StaticConfig extends Observable {
 	public String getSecretKey() {
 		return properties.getString("security.secret-key", "fju43l7m");
 	}
-	
+
 	public String getDefaultPassword() {
 		return properties.getString("security.default-password", "changeme");
 	}
@@ -996,7 +1034,7 @@ public class StaticConfig extends Observable {
 	public String getShareImageFolder() {
 		return properties.getString("share-image-folder", "images");
 	}
-	
+
 	public String getSharedPixaBayAPIKey() {
 		return properties.getString("shared.pixabay.key", null);
 	}
@@ -1109,7 +1147,7 @@ public class StaticConfig extends Observable {
 					folderBean.thread = ResourceHelper.getRealPath(application, getLocalThreadFolder());
 				} else {
 					folderBean.thread = getLocalThreadFolder();
-				}		
+				}
 				File theadFolderFile = new File(folderBean.thread);
 				if (!theadFolderFile.exists()) {
 					theadFolderFile.mkdirs();
@@ -1166,14 +1204,14 @@ public class StaticConfig extends Observable {
 	}
 
 	public boolean isInternetAccess() {
-//		if (internetAccess == null) {
-//			try {
-//				internetAccess = NetHelper.isURLValid(new URL(getDefaultTestURL()));
-//			} catch (MalformedURLException e) {
-//				logger.severe("bad url format : " + getDefaultTestURL());
-//			}
-//		}
-//		return internetAccess;
+		// if (internetAccess == null) {
+		// try {
+		// internetAccess = NetHelper.isURLValid(new URL(getDefaultTestURL()));
+		// } catch (MalformedURLException e) {
+		// logger.severe("bad url format : " + getDefaultTestURL());
+		// }
+		// }
+		// return internetAccess;
 		return false;
 	}
 
@@ -1250,7 +1288,7 @@ public class StaticConfig extends Observable {
 	public boolean isI18nFileRelative() {
 		return properties.getBoolean("i18n.file.relative", true);
 	}
-	
+
 	public boolean isMailingWidthUserInfo() {
 		return properties.getBoolean("mailing.users", true);
 	}
@@ -1262,7 +1300,7 @@ public class StaticConfig extends Observable {
 	public boolean isMailingThread() {
 		return StringHelper.isTrue(properties.getString("mailing.thread"), true);
 	}
-	
+
 	public boolean isStaticInfoDescription() {
 		return StringHelper.isTrue(properties.getString("static-info.description"), true);
 	}
@@ -1270,11 +1308,11 @@ public class StaticConfig extends Observable {
 	public boolean isNotificationThread() {
 		return StringHelper.isTrue(properties.getString("noctification.thread"), false);
 	}
-	
+
 	public int getNotificationHours() {
 		return properties.getInt("noctification.hours", 9);
 	}
-	
+
 	public boolean isNotificationDyanamicComponentThread() {
 		return StringHelper.isTrue(properties.getString("noctification-dynamic-component.thread"), false);
 	}
@@ -1286,11 +1324,11 @@ public class StaticConfig extends Observable {
 	public boolean isFirstPasswordMustBeChanged() {
 		return properties.getBoolean("security.change-password", true);
 	}
-	
+
 	public String getOauthGoogleIdClient() {
 		return properties.getString("security.oauth.google-id-client", null);
 	}
-	
+
 	public String getOauthGoogleSecret() {
 		return properties.getString("security.oauth.google-secret", null);
 	}
@@ -1331,7 +1369,7 @@ public class StaticConfig extends Observable {
 	}
 
 	public void reload() {
-		synchronized (FILE_NAME) {			
+		synchronized (FILE_NAME) {
 			properties.clear();
 			folderBean = null;
 			try {
@@ -1356,14 +1394,14 @@ public class StaticConfig extends Observable {
 		internetAccess = null;
 	}
 
-	public String replaceFolderVariable(String folder) {
+	public static String replaceFolderVariable(String folder) {
 		if (folder != null) {
 			folder = folder.replace("$HOME", HOME);
 			folder = folder.replace("~", HOME);
 		}
 		String JAVLO_HOME = getJavloHome();
 		if (JAVLO_HOME != null) {
-			folder = folder.replace("$JAVLO_HOME", JAVLO_HOME);			
+			folder = folder.replace("$JAVLO_HOME", JAVLO_HOME);
 		}
 		return folder;
 	}
@@ -1423,7 +1461,7 @@ public class StaticConfig extends Observable {
 	public String getSiteEmail() {
 		String email = properties.getString("site.email", "webmaster@javlo.org");
 		if (!StringHelper.isMail(email)) {
-			logger.warning("bad email in static config : "+email);
+			logger.warning("bad email in static config : " + email);
 		}
 		return email;
 	}
@@ -1503,9 +1541,9 @@ public class StaticConfig extends Observable {
 	}
 
 	/**
-	 * default mode of the edit template (mode is defined in GlobalContext), can
-	 * be used in template renderer for include special css or js. preview css
-	 * is : edit_preview_[mode].css
+	 * default mode of the edit template (mode is defined in GlobalContext), can be
+	 * used in template renderer for include special css or js. preview css is :
+	 * edit_preview_[mode].css
 	 * 
 	 * @return
 	 */
@@ -1525,9 +1563,10 @@ public class StaticConfig extends Observable {
 	public int getTimeBetweenChangeNotification() {
 		return Integer.parseInt(properties.getString("time-between-change-notification", "" + 3 * 60));
 	}
-	
+
 	/**
-	 * return time between 2 modification check of dynamic component in second. default : 10 minutes
+	 * return time between 2 modification check of dynamic component in second.
+	 * default : 10 minutes
 	 * 
 	 * @return
 	 */
@@ -1577,7 +1616,8 @@ public class StaticConfig extends Observable {
 	}
 
 	public String getSearchEngineLucenePattern() {
-		return properties.getString("searchengine.lucene.pattern", "level3:{QUERY}^3 level2:{QUERY}^2 level1:{QUERY}^1").trim();
+		return properties.getString("searchengine.lucene.pattern", "level3:{QUERY}^3 level2:{QUERY}^2 level1:{QUERY}^1")
+				.trim();
 	}
 
 	public String getDropboxAppKey() {
@@ -1639,13 +1679,13 @@ public class StaticConfig extends Observable {
 	public boolean isCheckContentIntegrity() {
 		return properties.getBoolean("content.check-integrity", false);
 	}
-	
+
 	public boolean isDisplayIntegrity() {
 		return properties.getBoolean("content.display-integrity", false);
 	}
 
 	public String getJSLibPreview() {
-		return properties.getString("preview.lib.js", null);
+		return properties.getString("preview.lib.js", "/jsp/preview/js/preview_jquery-1.11.2.min.js");
 	}
 
 	public Boolean isTracked() {
@@ -1699,7 +1739,7 @@ public class StaticConfig extends Observable {
 	public String getImportResourceFolder() {
 		return properties.getString("import.resource", "/files" + getImportFolder());
 	}
-	
+
 	public String getImportVFSFolder() {
 		return properties.getString("import.vfs", "/vfs" + getImportFolder());
 	}
@@ -1719,14 +1759,14 @@ public class StaticConfig extends Observable {
 	public String getImageFormat() {
 		return properties.getString("content.image-format", "png,jpg,jpeg,gif");
 	}
-	
+
 	public String getVideoFormat() {
 		return properties.getString("content.video-format", "mp4");
 	}
 
 	/**
-	 * return true if javlo must be forward to the canonical URL. WARNING :
-	 * always false if isJsessionID return false
+	 * return true if javlo must be forward to the canonical URL. WARNING : always
+	 * false if isJsessionID return false
 	 * 
 	 * @return
 	 */
@@ -1746,13 +1786,17 @@ public class StaticConfig extends Observable {
 	}
 
 	public List<String> getDocumentExtension() {
-		return StringHelper.stringToCollection(properties.getString("content.document-format", getImageFormat() +','+properties.getString("content.document-format", "mp3,wav,m4a,aif,aiff,aifc")+ ",doc,docx,svg,odf,xls,xlsx,pdf,xml,zip,ppt,pptx,pub,eml,osd,odt,vcard,ppsx,sdw,mp4,mp3,avi,wpt,odm,mov,url,ept,stw,sdd,sds,odc,fax,vdx,wpa,ppv,sgf,wp5,xtd,psd,rar"), ",");
+		return StringHelper.stringToCollection(properties.getString("content.document-format", getImageFormat() + ','
+				+ properties.getString("content.document-format", "mp3,wav,m4a,aif,aiff,aifc")
+				+ ",doc,docx,svg,odf,xls,xlsx,pdf,xml,zip,ppt,pptx,pub,eml,osd,odt,vcard,ppsx,sdw,mp4,mp3,avi,wpt,odm,mov,url,ept,stw,sdd,sds,odc,fax,vdx,wpa,ppv,sgf,wp5,xtd,psd,rar"),
+				",");
 	}
-	
+
 	public List<String> getSoundExtension() {
-		return StringHelper.stringToCollection(properties.getString("content.document-format", "mp3,wav,m4a,aif,aiff,aifc"), ",");
+		return StringHelper
+				.stringToCollection(properties.getString("content.document-format", "mp3,wav,m4a,aif,aiff,aifc"), ",");
 	}
-	
+
 	public boolean isEditIpSecurity() {
 		return StringHelper.isTrue(properties.getString("security.ip.edit"), false);
 	}
@@ -1772,30 +1816,29 @@ public class StaticConfig extends Observable {
 	public boolean isConvertHTMLToImage() {
 		return StringHelper.isTrue(properties.getString("content.image-from-html"), false);
 	}
-	
+
 	public boolean isIM() {
 		return StringHelper.isTrue(properties.getString("interface.im"), false);
 	}
-	
+
 	public boolean isSiteLog() {
 		return StringHelper.isTrue(properties.getString("site.log.active"), false);
 	}
-	
+
 	public boolean isSiteLogCaller() {
 		return StringHelper.isTrue(properties.getString("site.log.caller"), false);
 	}
-	
+
 	public String getSiteLogGroup() {
 		return properties.getString("site.log.group");
 	}
-	
+
 	public boolean isAddButton() {
 		return properties.getBoolean("preview.add-button", true);
 	}
-	
+
 	public boolean isRestServer() {
 		return properties.getBoolean("security.rest-server", false);
 	}
-	
-	
+
 }

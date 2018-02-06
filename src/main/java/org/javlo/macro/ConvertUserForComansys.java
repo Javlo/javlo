@@ -81,7 +81,7 @@ public class ConvertUserForComansys extends AbstractMacro {
 			arrays[j][firstname].setValue(user.getFirstName());
 			arrays[j][email].setValue(user.getEmail());
 			arrays[j][tags].setValue(StringHelper.collectionToString(user.getRoles(), ","));
-			arrays[j][notes].setValue(StringHelper.renderDate(user.getCreationDate()));
+			arrays[j][notes].setValue("Creation date:"+StringHelper.renderDate(user.getCreationDate()));
 			j++;
 		}
 		

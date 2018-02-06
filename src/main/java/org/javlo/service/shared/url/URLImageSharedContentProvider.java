@@ -35,7 +35,12 @@ public class URLImageSharedContentProvider extends AbstractSharedContentProvider
 		if (content == null) {
 			content = new LinkedList<SharedContent>();
 			try {
-				String html = NetHelper.readPageGet(getURL());
+				String html = "";
+				try {
+					html = NetHelper.readPageGet(getURL());
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 				TagDescription[] tags = XMLManipulationHelper.searchAllTag(html, false);
 				
 				String urlPrefix = getURL().toString();

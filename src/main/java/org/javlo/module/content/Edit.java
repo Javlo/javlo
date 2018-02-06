@@ -2261,8 +2261,8 @@ public class Edit extends AbstractModuleAction {
 			SharedContent sharedContent = sharedContentService.getSharedContent(ctx, sharedData);
 			if (sharedContent == null) {
 				String activeProvider = StringHelper.collectionToString(sharedContentService.getAllActiveProvider(ctx));
-				String msg = "error : shared content not found : " + sharedData + " activeProvider : " + activeProvider;
-				logger.warning(msg);
+				String msg = "error : shared content not found : " + sharedData ;
+				logger.warning(msg + " activeProvider : " + activeProvider);
 				return msg;
 			}
 			String areaKey = null;
