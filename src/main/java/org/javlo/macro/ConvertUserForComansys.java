@@ -28,6 +28,7 @@ public class ConvertUserForComansys extends AbstractMacro {
 	public String perform(ContentContext ctx, Map<String, Object> params) throws Exception {
 		HttpServletResponse response = ctx.getResponse();
 		String fileName = "users.xlsx";
+		
 		response.setContentType(ResourceHelper.getFileExtensionToMineType(StringHelper.getFileExtension(fileName)));
 		response.setHeader("Cache-Control", "no-cache");
 		response.setHeader("Accept-Ranges", "bytes");				
