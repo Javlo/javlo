@@ -169,7 +169,9 @@ public class UserLogin extends AbstractPropertiesComponent implements IAction {
 			if (!StringHelper.isEmpty(userInfo.getLastName())) {
 				data.put(i18nAccess.getText("user.lastanme"), userInfo.getLastName());
 			}
-			data.put("roles", comp.getFieldValue(ROLES));
+			if (!StringHelper.isEmpty(comp.getFieldValue(ROLES))) {
+				data.put("roles", comp.getFieldValue(ROLES));
+			}
 			Map<String, String> params = new HashMap<String, String>();
 			params.put("webaction1", "changemode");
 			params.put("webaction2", "edit");
