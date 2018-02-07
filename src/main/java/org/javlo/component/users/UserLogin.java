@@ -133,7 +133,7 @@ public class UserLogin extends AbstractPropertiesComponent implements IAction {
 		return null;
 	}
 
-	public static String pv (RequestService rs, ContentContext ctx, HttpSession session, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
+	public static String performRegister(RequestService rs, ContentContext ctx, HttpSession session, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
 		String login = rs.getParameter("email", "").trim();
 		IUserFactory userFactory = UserFactory.createUserFactory(ctx.getGlobalContext(), session);
 		String password = rs.getParameter("password", "").trim();
