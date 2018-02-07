@@ -133,7 +133,7 @@ public class UserLogin extends AbstractPropertiesComponent implements IAction {
 		return null;
 	}
 
-	public static String performRegister(RequestService rs, ContentContext ctx, HttpSession session, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
+	public static String pv (RequestService rs, ContentContext ctx, HttpSession session, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
 		String login = rs.getParameter("email", "").trim();
 		IUserFactory userFactory = UserFactory.createUserFactory(ctx.getGlobalContext(), session);
 		String password = rs.getParameter("password", "").trim();
@@ -169,6 +169,7 @@ public class UserLogin extends AbstractPropertiesComponent implements IAction {
 			if (!StringHelper.isEmpty(userInfo.getLastName())) {
 				data.put(i18nAccess.getText("user.lastanme"), userInfo.getLastName());
 			}
+			data.put("roles", comp.getFieldValue(ROLES));
 			Map<String, String> params = new HashMap<String, String>();
 			params.put("webaction1", "changemode");
 			params.put("webaction2", "edit");
