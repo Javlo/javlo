@@ -1,7 +1,5 @@
 package org.javlo.component.meta;
 
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
 import java.util.Arrays;
 import java.util.List;
 
@@ -41,6 +39,11 @@ public class ContactInformation extends AbstractPropertiesComponent {
 	public void prepareView(ContentContext ctx) throws Exception {	
 		super.prepareView(ctx);
 		ctx.getRequest().setAttribute("contact", getContactBean());
+	}
+	
+	@Override
+	public String getFontAwesome() {	
+		return "info";
 	}
 
 }
