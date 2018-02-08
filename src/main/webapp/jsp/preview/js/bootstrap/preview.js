@@ -596,8 +596,7 @@ if (!String.prototype.startsWith) {
 								editPreview.openModal(i18n_preview_edit, editURL);
 							}
 						}, null);
-					} else if (compId != null && compId.length > 0) { // move
-																		// component
+					} else if (compId != null && compId.length > 0) { // move component
 						var previewId = subComp.attr("id").substring(3);
 						var area = editPreview.searchArea(subComp);
 						var ajaxURL = editPreview.addParam(currentURL,"webaction=edit.moveComponent&comp-id=" + compId + "&previous=" + previewId + "&area=" + area+ "&render-mode=3&init=true");
@@ -669,6 +668,12 @@ if (!String.prototype.startsWith) {
 				});
 				el.addEventListener('drop', function (event) {
 					
+					countDrop++;
+					if (countDrop>1 && event.dataTransfer.files.length==0) {
+						countDrop=0;
+						return false;
+					}					
+					
 					if (!pjq(this).hasClass("_empty_area")) {
 						return false;
 					}
@@ -711,7 +716,8 @@ if (!String.prototype.startsWith) {
 						console.log("area     = ",area);
 						console.log("sharedId = ",sharedId);
 					}					
-					if (sharedId != null && sharedId.length > 0) {						
+					if (sharedId != null && sharedId.length > 0) {
+						/** TODO: check multi insert **/
 						var ajaxURL = editPreview.addParam(currentURL, "webaction=edit.insertShared&sharedContent="
 							+ sharedId + "&previous=0"
 							+ "&area=" + area+ "&render-mode=3&init=true");
@@ -720,7 +726,7 @@ if (!String.prototype.startsWith) {
 						}
 						if (jQuery('#'+area).hasClass("_empty_area")) {
 							editPreview.ajaxPreviewRequest(ajaxURL, null, null);
-						}
+						}						
 					} else if (compType != null && compType.length > 0) {	
 						pjq(this).removeClass("drop-selected");
 						var url = "previewEdit=true&webaction=edit.insert&type=" + compType + "&previous=0&area=" + area+ "&render-mode=3&init=true";
