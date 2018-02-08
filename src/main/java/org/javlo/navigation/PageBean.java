@@ -8,6 +8,7 @@ import java.util.Map;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.image.IImageTitle;
 import org.javlo.component.image.ImageBean;
+import org.javlo.component.meta.ContactBean;
 import org.javlo.context.ContentContext;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
@@ -350,6 +351,15 @@ public class PageBean implements Serializable {
 	public String getPageTitle() {
 		try {
 			return page.getPageTitle(ctx);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	public ContactBean getConact() {
+		try {
+			return page.getContact(ctx);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;

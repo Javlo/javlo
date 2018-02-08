@@ -47,6 +47,11 @@ public class ImportHTMLPageMacro implements IInteractiveMacro, IAction {
 	public String getActionGroupName() {
 		return "macro-import-html";
 	}
+	
+	@Override
+	public String getInfo(ContentContext ctx) {	
+		return null;
+	}
 
 	public static String performImport(RequestService rs, ContentContext ctx, EditContext editCtx, GlobalContext globalContext, MessageRepository messageRepository, I18nAccess i18nAccess) throws MalformedURLException, Exception {
 		String url = rs.getParameter("url", null);

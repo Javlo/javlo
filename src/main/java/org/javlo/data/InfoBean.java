@@ -38,6 +38,7 @@ import org.javlo.macro.core.IMacro;
 import org.javlo.macro.core.MacroFactory;
 import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
+import org.javlo.module.admin.MacroBean;
 import org.javlo.module.content.Edit;
 import org.javlo.module.core.ModuleException;
 import org.javlo.module.core.ModulesContext;
@@ -1537,15 +1538,14 @@ public class InfoBean {
 		return URLHelper.createStaticURL(ctx, "/wait.html");
 	}
 
-	public List<IMacro> getInteractiveMacro() {
-		List<IMacro> macros = new LinkedList<IMacro>();
+	public List<MacroBean> getInteractiveMacro() {
+		List<MacroBean> macros = new LinkedList<MacroBean>();
 		List<String> macroName = globalContext.getMacros();
-		MacroFactory factory = MacroFactory
-				.getInstance(StaticConfig.getInstance(ctx.getRequest().getSession().getServletContext()));
+		MacroFactory factory = MacroFactory.getInstance(StaticConfig.getInstance(ctx.getRequest().getSession().getServletContext()));
 		for (String name : macroName) {
 			IMacro macro = factory.getMacro(name);
 			if (macro instanceof IInteractiveMacro) {
-				macros.add(macro);
+				macros.add(new MacroBean(macro.getName(), macro.getInfo(ctx)));
 			}
 		}
 		return macros;
@@ -1554,8 +1554,7 @@ public class InfoBean {
 	public List<IMacro> getAddMacro() {
 		List<IMacro> macros = new LinkedList<IMacro>();
 		List<String> macroName = globalContext.getMacros();
-		MacroFactory factory = MacroFactory
-				.getInstance(StaticConfig.getInstance(ctx.getRequest().getSession().getServletContext()));
+		MacroFactory factory = MacroFactory.getInstance(StaticConfig.getInstance(ctx.getRequest().getSession().getServletContext()));
 		for (String name : macroName) {
 			IMacro macro = factory.getMacro(name);
 			if (macro != null && macro.isAdd()) {
@@ -1565,16 +1564,15 @@ public class InfoBean {
 		return macros;
 	}
 
-	public List<IMacro> getMacro() {
-		List<IMacro> macros = new LinkedList<IMacro>();
+	public List<MacroBean> getMacro() {
+		List<MacroBean> macros = new LinkedList<MacroBean>();
 		List<String> macroName = globalContext.getMacros();
-		MacroFactory factory = MacroFactory
-				.getInstance(StaticConfig.getInstance(ctx.getRequest().getSession().getServletContext()));
+		MacroFactory factory = MacroFactory.getInstance(StaticConfig.getInstance(ctx.getRequest().getSession().getServletContext()));
 		for (String name : macroName) {
 			if (name.trim().length() > 0) {
 				IMacro macro = factory.getMacro(name);
 				if (!(macro instanceof IInteractiveMacro)) {
-					macros.add(macro);
+					macros.add(new MacroBean(macro.getName(), macro.getInfo(ctx)));
 				}
 			}
 		}

@@ -54,6 +54,8 @@ import org.javlo.component.links.PageMirrorComponent;
 import org.javlo.component.links.PageReferenceComponent;
 import org.javlo.component.meta.Category;
 import org.javlo.component.meta.ColorComponent;
+import org.javlo.component.meta.ContactBean;
+import org.javlo.component.meta.ContactInformation;
 import org.javlo.component.meta.DateComponent;
 import org.javlo.component.meta.EventDefinitionComponent;
 import org.javlo.component.meta.ForceRealContent;
@@ -190,6 +192,8 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 		ExtendedColor color;
 		String linkLabel = null;
 		Map<String, String> i18n = null;
+		ContactBean contactBean = null;
+		
 		private String forward = null;
 
 		public ImageTitleBean imageLink;
@@ -4960,6 +4964,33 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 
 		return desc.i18n;
 	}
+	
+	/**
+	 * get local i18n data
+	 * 
+	 * @param ctx
+	 * @return
+	 * @throws Exception
+	 */
+	public ContactBean getContact(ContentContext ctx) throws Exception {
+		PageDescription desc = getPageDescriptionCached(ctx, ctx.getRequestContentLanguage());
+		if (desc.contactBean == null) {
+			ContentContext noAreaCtx = new ContentContext(ctx);
+			noAreaCtx.setArea(null);
+			List<IContentVisualComponent> content = getContentByType(noAreaCtx, ContactInformation.TYPE);
+			desc.contactBean = ContactBean.EMPTY_CONTACT_BEAN;
+			for (IContentVisualComponent comp : content) {
+				ContactInformation contactComp = (ContactInformation)comp;
+				desc.contactBean = contactComp.getContactBean();
+			}
+		}
+		if (desc.contactBean == ContactBean.EMPTY_CONTACT_BEAN) {
+			return null; 
+		} else {
+			return desc.contactBean;
+		}
+	}
+
 
 	/**
 	 * check if the page is cacheable (static content)

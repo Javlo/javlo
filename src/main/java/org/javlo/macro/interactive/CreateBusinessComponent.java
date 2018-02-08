@@ -55,6 +55,11 @@ public class CreateBusinessComponent implements IInteractiveMacro, IAction {
 	public String getRenderer() {
 		return "/jsp/macros/create-business-component.jsp";
 	}
+	
+	@Override
+	public String getInfo(ContentContext ctx) {	
+		return null;
+	}
 
 	@Override
 	public String prepare(ContentContext ctx) {

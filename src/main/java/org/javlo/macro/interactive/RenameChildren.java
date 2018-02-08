@@ -46,6 +46,11 @@ public class RenameChildren implements IInteractiveMacro, IAction {
 	public String prepare(ContentContext ctx) {		
 		return null;
 	}
+	
+	@Override
+	public String getInfo(ContentContext ctx) {	
+		return null;
+	}
 
 	public static String performRename(RequestService rs, EditContext editCtx, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
 		String text = rs.getParameter("text", null);

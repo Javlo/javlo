@@ -61,6 +61,11 @@ public class PushStaticOnFtp implements IInteractiveMacro, IAction {
 	public String getActionGroupName() {
 		return getName();
 	}
+	
+	@Override
+	public String getInfo(ContentContext ctx) {	
+		return null;
+	}
 
 	public static String performPush(RequestService rs, ContentContext ctx, EditContext editCtx, GlobalContext globalContext, MessageRepository messageRepository, I18nAccess i18nAccess) throws MalformedURLException, Exception {
 		String host = rs.getParameter("host", "");

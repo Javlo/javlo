@@ -21,21 +21,21 @@ import org.javlo.service.RequestService;
 public abstract class AbstractPropertiesComponent extends AbstractVisualComponent {
 
 	protected Properties properties = new Properties();
-	
+
 	protected String createKeyWithField(String inField) {
 		return getInputName(inField);
 	}
-	
+
 	@Override
-	public void prepareView(ContentContext ctx) throws Exception {	
+	public void prepareView(ContentContext ctx) throws Exception {
 		super.prepareView(ctx);
-		Map<String,String> fields = new HashMap<String, String>();
+		Map<String, String> fields = new HashMap<String, String>();
 		for (String field : getFields(ctx)) {
 			fields.put(field, getFieldValue(field));
 		}
 		ctx.getRequest().setAttribute("fields", fields);
 	}
-	
+
 	protected static String getFieldName(String field) {
 		if (!field.contains("#")) {
 			return field;
@@ -43,15 +43,15 @@ public abstract class AbstractPropertiesComponent extends AbstractVisualComponen
 			return field.substring(0, field.indexOf('#'));
 		}
 	}
-	
+
 	protected static String getFieldType(String field) {
 		if (!field.contains("#")) {
 			return "text";
 		} else {
-			return field.substring(field.indexOf('#')+1);
+			return field.substring(field.indexOf('#') + 1);
 		}
 	}
-	
+
 	@Override
 	protected String getEditXHTMLCode(ContentContext ctx) throws Exception {
 		StringWriter writer = new StringWriter();
@@ -65,7 +65,7 @@ public abstract class AbstractPropertiesComponent extends AbstractVisualComponen
 			out.println("<div class=\"col-md-4 col-xs-6\">");
 			out.println("<div class=\"form-group\">");
 			if (fieldType.equals("text")) {
-				out.println("<label for=\"" + createKeyWithField(fieldName) + "\">");						
+				out.println("<label for=\"" + createKeyWithField(fieldName) + "\">");
 				out.println(i18nAccess.getText("field." + fieldName, fieldName));
 				out.println("</label>");
 				out.print("<textarea class=\"form-control\" rows=\"" + getRowSize(fieldName) + "\" id=\"");
@@ -74,23 +74,23 @@ public abstract class AbstractPropertiesComponent extends AbstractVisualComponen
 				out.print(createKeyWithField(fieldName));
 				out.print("\">");
 				out.print(getFieldValue(fieldName));
-				out.println("</textarea>");				
+				out.println("</textarea>");
 			} else if (fieldType.equals("checkbox")) {
-				out.println("<div class=\"checkbox\"><label>");				
+				out.println("<div class=\"checkbox\"><label>");
 				String checked = "";
-				if (getFieldValue(fieldName).length()>0) {
-					checked=" checked=\"checked\"";
+				if (getFieldValue(fieldName).length() > 0) {
+					checked = " checked=\"checked\"";
 				}
 				out.print("<input type=\"checkbox\" id=\"");
 				out.print(createKeyWithField(field));
 				out.print("\" name=\"");
 				out.print(createKeyWithField(fieldName));
-				out.print("\" "+checked+" />");
+				out.print("\" " + checked + " />");
 				out.println(i18nAccess.getText("field." + fieldName, fieldName));
-				out.println("</label>");				
+				out.println("</label>");
 				out.println("</div>");
 			} else {
-				out.println("type not found : "+fieldType);
+				out.println("type not found : " + fieldType);
 			}
 			out.println("</div></div>");
 		}
@@ -108,15 +108,15 @@ public abstract class AbstractPropertiesComponent extends AbstractVisualComponen
 	protected long getFieldLongValue(String inField) {
 		try {
 			return Long.parseLong(properties.getProperty(inField, "0"));
-		} catch (NumberFormatException e) {			
+		} catch (NumberFormatException e) {
 			logger.warning(e.getMessage());
 			return 0;
-		}		
+		}
 	}
 
 	public abstract List<String> getFields(ContentContext ctx) throws Exception;
 
-	protected String getFieldValue(String inField) {		
+	protected String getFieldValue(String inField) {
 		return properties.getProperty(getFieldName(inField), "");
 	}
 
@@ -144,15 +144,17 @@ public abstract class AbstractPropertiesComponent extends AbstractVisualComponen
 			StringBuffer out = new StringBuffer();
 			out.append("<div class=\"");
 			out.append(getType());
-			out.append("\">");
+			out.append("\"><ul class=\"list-group\">");
 			for (String field : fields) {
-				out.append("<div class=\"");
-				out.append(field);
-				out.append("\">");
-				out.append(getFieldValue(field));
-				out.append("</div>");
+				if (!StringHelper.isEmpty(getFieldValue(field))) {
+					out.append("<li  class=\"list-group-item ");
+					out.append(field);
+					out.append("\">");
+					out.append(getFieldValue(field));
+					out.append("</li>");
+				}
 			}
-			out.append("</div>");
+			out.append("</ul></div>");
 			return out.toString();
 		}
 	}
@@ -171,14 +173,14 @@ public abstract class AbstractPropertiesComponent extends AbstractVisualComponen
 
 	@Override
 	public void init(ComponentBean bean, ContentContext newContext) throws Exception {
-		super.init(bean, newContext);		
-		properties.load(stringToStream(getValue()));		
+		super.init(bean, newContext);
+		properties.load(stringToStream(getValue()));
 	}
 
 	protected String getListSeparator() {
 		return ",";
 	}
-	
+
 	public String validateField(ContentContext ctx, String fieldName, String fieldValue) throws Exception {
 		return null;
 	}
@@ -196,14 +198,14 @@ public abstract class AbstractPropertiesComponent extends AbstractVisualComponen
 			if (newMsg != null) {
 				msg = newMsg;
 			}
-			
+
 			String[] fieldValues = requestService.getParameterValues(createKeyWithField(field), null);
 			if (fieldValues != null && fieldValues.length > 1) {
 				fieldValue = StringHelper.arrayToString(fieldValues, getListSeparator());
 			}
 
 			if (fieldValue != null) {
-				if (!fieldValue.equals(getFieldValue(field))) {					
+				if (!fieldValue.equals(getFieldValue(field))) {
 					setModify();
 					properties.put(field, fieldValue);
 				}
@@ -219,12 +221,12 @@ public abstract class AbstractPropertiesComponent extends AbstractVisualComponen
 		if (isModify()) {
 			storeProperties();
 		}
-		
+
 		return msg;
 	}
 
 	protected void setFieldValue(String inField, String value) {
-		if (!properties.getProperty(inField, value+"diff").equals(value)) {
+		if (!properties.getProperty(inField, value + "diff").equals(value)) {
 			properties.setProperty(inField, value);
 			storeProperties();
 			setModify();
@@ -244,7 +246,7 @@ public abstract class AbstractPropertiesComponent extends AbstractVisualComponen
 		}
 		setValue(res);
 	}
-	
+
 	@Override
 	public boolean isRealContent(ContentContext ctx) {
 		try {
@@ -259,14 +261,14 @@ public abstract class AbstractPropertiesComponent extends AbstractVisualComponen
 		}
 		return false;
 	}
-	
+
 	@Override
-	public Map<String, Object> getContentAsMap(ContentContext ctx) throws Exception {		
-		Map<String, Object> content = super.getContentAsMap(ctx);		
+	public Map<String, Object> getContentAsMap(ContentContext ctx) throws Exception {
+		Map<String, Object> content = super.getContentAsMap(ctx);
 		content.put("value", properties);
 		return content;
 	}
-	
+
 	@Override
 	public String getContentAsText(ContentContext ctx) {
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
@@ -277,12 +279,12 @@ public abstract class AbstractPropertiesComponent extends AbstractVisualComponen
 		out.close();
 		return new String(outStream.toByteArray());
 	}
-	
+
 	public static void main(String[] args) {
 		Properties properties = new Properties();
 		properties.setProperty("key", "été");
-				
-		System.out.println("été = "+properties.getProperty("key"));
+
+		System.out.println("été = " + properties.getProperty("key"));
 	}
 
 }

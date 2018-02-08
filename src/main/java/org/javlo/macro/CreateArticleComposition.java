@@ -66,6 +66,11 @@ public class CreateArticleComposition extends AbstractInteractiveMacro implement
 	public String getRenderer() {
 		return "/jsp/macros/create-article-composition.jsp?canCreate=true";
 	}
+	
+	@Override
+	public String getInfo(ContentContext ctx) {
+		return null;
+	}
 
 	@Override
 	public String prepare(ContentContext ctx) {

@@ -69,7 +69,7 @@ public class UploadGallery implements IInteractiveMacro, IAction {
 		public void setUploadedFiles(Map<String, Set<File>> uploadedFiles) {
 			this.uploadedFiles = uploadedFiles;
 		}
-
+		
 		private Integer selectedYear;
 		private Integer selectedMonth;
 		private Map<String, Set<File>> uploadedFiles = new HashMap<String, Set<File>>();
@@ -202,5 +202,10 @@ public class UploadGallery implements IInteractiveMacro, IAction {
 	@Override
 	public boolean haveRight(ContentContext ctx, String action) {
 		return ctx.getCurrentEditUser() != null;
+	}
+
+	@Override
+	public String getInfo(ContentContext ctx) {
+		return null;
 	}
 }

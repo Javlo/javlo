@@ -45,6 +45,11 @@ public class ChangeImageFilter implements IInteractiveMacro, IAction {
 	public String getActionGroupName() {
 		return "change-image-filter";
 	}
+	
+	@Override
+	public String getInfo(ContentContext ctx) {	
+		return null;
+	}
 
 	public static String performChange(RequestService rs, ContentContext ctx, GlobalContext globalContext, MessageRepository messageRepository, I18nAccess i18nAccess) throws MalformedURLException, Exception {
 

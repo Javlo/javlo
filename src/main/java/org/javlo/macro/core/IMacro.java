@@ -27,6 +27,8 @@ public interface IMacro {
 	public boolean isAdd();
 	
 	public boolean isInterative();
+	
+	public String getInfo(ContentContext ctx);
 
 
 }

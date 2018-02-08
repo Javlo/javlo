@@ -53,6 +53,11 @@ public class DeleteDynamicComponent implements IInteractiveMacro, IAction {
 	public String prepare(ContentContext ctx) {
 		return null;
 	}
+	
+	@Override
+	public String getInfo(ContentContext ctx) {	
+		return null;
+	}
 
 	public static String performDelete(RequestService rs, ContentService content, EditContext editCtx, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws IOException, Exception {
 		String filter = rs.getParameter("filter", "").trim();

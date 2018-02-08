@@ -78,5 +78,6 @@ public class CurrentLgExpandMacro extends AbstractMacro {
 	public boolean isPreview() {
 		return true;
 	}
+	
 
 }

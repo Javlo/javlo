@@ -56,6 +56,11 @@ public class UndeletePage extends AbstractInteractiveMacro implements IAction {
 	public String getRenderer() {
 		return "/jsp/macros/undelete-page.jsp";
 	}
+	
+	@Override
+	public String getInfo(ContentContext ctx) {	
+		return null;
+	}
 
 	@Override
 	public String prepare(ContentContext ctx) {

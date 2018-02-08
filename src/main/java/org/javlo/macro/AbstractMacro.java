@@ -9,6 +9,7 @@ import java.util.Properties;
 import org.javlo.component.core.ContentElementList;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.context.ContentContext;
+import org.javlo.i18n.I18nAccess;
 import org.javlo.macro.core.IMacro;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
@@ -40,6 +41,17 @@ public abstract class AbstractMacro implements IMacro {
 		}
 		return outList;
 	}
+	
+	@Override
+	public String getInfo(ContentContext ctx) {
+		try {
+			I18nAccess i18nAccess = I18nAccess.getInstance(ctx);
+			return i18nAccess.getText("macro.info."+getName(), (String)null);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
 
 	@Override
 	public boolean isAdmin() {
@@ -54,5 +66,6 @@ public abstract class AbstractMacro implements IMacro {
 	@Override
 	public boolean isInterative() {	
 		return false;
-	}
+	}	
+	
 }

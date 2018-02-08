@@ -28,6 +28,7 @@ org.javlo.component.meta.I18nComponent
 org.javlo.component.meta.Forward
 org.javlo.component.meta.Layouts
 org.javlo.component.meta.TaxonomyDisplayComponent
+org.javlo.component.meta.ContactInformation
 
 --content.title.text
 

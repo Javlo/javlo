@@ -279,6 +279,11 @@ public class ImportJCRPageMacro implements IInteractiveMacro, IAction {
 	public boolean haveRight(ContentContext ctx, String action) {
 		return ctx.getCurrentEditUser() != null;
 	}
+	
+	@Override
+	public String getInfo(ContentContext ctx) {	
+		return null;
+	}
 
 	public static void main(String[] args) {
 		System.out.println("***** ImportZIPPageMacro.main : locale = " + getLocalBySuffix("index_fr")); // TODO: remove debug trace

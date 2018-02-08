@@ -48,7 +48,8 @@ editCtx.setRenderMode(ContentContext.EDIT_MODE);
 	  <c:set var="descriptionKey" value="macro.description.${macro.name}" />
 	  <div class="label">${i18n.edit[key] != key?i18n.edit[key]:macro.name}</div>
 	  <div class="value">${i18n.edit[descriptionKey] != descriptionKey?i18n.edit[descriptionKey]:''}</div>	  
-	  <span class="glyphicon glyphicon-modal-window" aria-hidden="true"></span>	  
+	  <span class="glyphicon glyphicon-modal-window" aria-hidden="true"></span>
+	  <c:if test="${not empty macro.info}"><p class="info">${macro.info}</p></c:if>	  
 	</button>	
 </c:forEach>
 <c:forEach var="macro" items="${info.macro}">
@@ -65,7 +66,8 @@ editCtx.setRenderMode(ContentContext.EDIT_MODE);
 	  <c:set var="descriptionKey" value="macro.description.${macro.name}" />
 	  <div class="label">${i18n.edit[key] != key?i18n.edit[key]:macro.name}</div>
 	  <div class="value">${i18n.edit[descriptionKey] != descriptionKey?i18n.edit[descriptionKey]:''}</div>
-	  <span class="glyphicon glyphicon-play-circle" aria-hidden="true"></span>	  	  
+	  <span class="glyphicon glyphicon-play-circle" aria-hidden="true"></span>
+	  <c:if test="${not empty macro.info}"><p class="info">${macro.info}</p></c:if>	  	  
 	</a>	
 </c:forEach>
 </c:if>

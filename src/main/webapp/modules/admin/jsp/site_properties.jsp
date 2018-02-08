@@ -526,7 +526,7 @@
 <c:forEach var="macro" items="${macros}">
 	<div class="col-lg-3 col-sm-6 small-col">
 		<div class="checkbox">
-		<label><input type="checkbox" id="${macro}" name="${macro}" ${not empty selectedMacros[macro]?'checked="checked"':''}/>
+		<label title="${macro.info}"><input type="checkbox" id="${macro}" name="${macro}" ${not empty selectedMacros[macro]?'checked="checked"':''} />
 		<c:set var="i18nKey" value="macro.${macro}" />
 		${not empty i18n.edit[i18nKey]?i18n.edit[i18nKey]:macro}</label>
 		</div>		

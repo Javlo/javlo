@@ -52,6 +52,11 @@ public class UpdateUserRole implements IInteractiveMacro, IAction {
 	public String getRenderer() {
 		return "/jsp/macros/update-user-role.jsp";
 	}
+	
+	@Override
+	public String getInfo(ContentContext ctx) {	
+		return null;
+	}
 
 	@Override
 	public String prepare(ContentContext ctx) {

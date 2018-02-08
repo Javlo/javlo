@@ -73,6 +73,11 @@ public class ImportExternalPage implements IInteractiveMacro, IAction {
 	public String prepare(ContentContext ctx) {
 		return null;
 	}
+	
+	@Override
+	public String getInfo(ContentContext ctx) {	
+		return null;
+	}
 
 	public static String performImport(RequestService rs, ContentContext ctx, EditContext editCtx, ContentService content, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
 		String url = ctx.getRequest().getParameter("url");

@@ -46,11 +46,14 @@ public class SmartImport implements IInteractiveMacro, IAction {
 	public String getRenderer() {
 		return "/jsp/macros/smart_import/home.jsp";
 	}
+	
+	@Override
+	public String getInfo(ContentContext ctx) {	
+		return null;
+	}
 
 	@Override
 	public String prepare(ContentContext ctx) {
-		
-
 		return null;
 	}
 

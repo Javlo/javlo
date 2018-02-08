@@ -47,6 +47,11 @@ public class CreateRedirectionForAllLanguages implements IInteractiveMacro, IAct
 	public String prepare(ContentContext ctx) {
 		return null;
 	}
+	
+	@Override
+	public String getInfo(ContentContext ctx) {	
+		return null;
+	}
 
 	public static String performCreate(RequestService rs, EditContext editCtx, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws IOException {
 		String source = rs.getParameter("source", null);

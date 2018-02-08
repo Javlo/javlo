@@ -67,6 +67,11 @@ public class CreateArticle implements IInteractiveMacro, IAction {
 	public String getRenderer() {
 		return "/jsp/macros/create-article.jsp";
 	}
+	
+	@Override
+	public String getInfo(ContentContext ctx) {	
+		return null;
+	}
 
 	@Override
 	public String prepare(ContentContext ctx) {
