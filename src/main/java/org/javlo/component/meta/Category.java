@@ -55,7 +55,7 @@ public class Category extends AbstractVisualComponent {
 	public String[] getStyleLabelList(ContentContext ctx) {
 		try {
 			I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
-			return new String[] { i18nAccess.getText("global.no", "no"), i18nAccess.getText("global.yes", "yes") };
+			return new String[] { i18nAccess.getText("global.no", "no"), i18nAccess.getText("global.yes", "yes"), "hidden" };
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -64,7 +64,7 @@ public class Category extends AbstractVisualComponent {
 
 	@Override
 	public String[] getStyleList(ContentContext ctx) {
-		return new String[] { "no", YES };
+		return new String[] { "no", YES, HIDDEN };
 	}
 
 	@Override
@@ -114,6 +114,11 @@ public class Category extends AbstractVisualComponent {
 	@Override
 	public int getComplexityLevel(ContentContext ctx) {
 		return getConfig(ctx).getComplexity(COMPLEXITY_STANDARD);
+	}
+	
+	@Override
+	public String getFontAwesome() {
+		return "bookmark";
 	}
 
 }

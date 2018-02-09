@@ -10,7 +10,7 @@ public class ContactInformation extends AbstractPropertiesComponent {
 	
 	private static final List<String> FIELDS = Arrays.asList(new String[] {"name", "addresse", "zip", "city", "country", "web", "phone", "email"});
 	
-	public static final String TYPE = "contact-inforamtion"; 
+	public static final String TYPE = "contact-information"; 
 
 	@Override
 	public String getType() {
