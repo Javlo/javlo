@@ -248,7 +248,7 @@ public class GlobalImage extends Image implements IImageFilter {
 
 		super.prepareView(ctx);
 		String link = getLink();
-		URLHelper.convertLink(ctx, link);
+		link = URLHelper.convertLink(ctx, link);
 		ctx.getRequest().setAttribute("link", link);
 		ctx.getRequest().setAttribute("alt", getAlt(ctx));
 		String imageURL = getImageURL(ctx);
