@@ -917,3 +917,5 @@ change log
 * 2.1.1.0 [26/01/2018] - [STABLE]
 
  * 1/ component structure html correction / reset i18n on publish / add user-agent on internet connection / push static version of the site on ftp / static config cache folder / contact information component
+ 
+ * 2/
