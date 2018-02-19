@@ -685,7 +685,17 @@ public class PersistenceService {
 		}
 		DebugHelper.checkStructure(id == null, "no id defined in a page node.");
 		String name = pageXML.getAttributeValue("name");
-		String finalPageName = URLDecoder.decode(name);
+		String finalPageName = null;
+		try {
+			finalPageName = URLDecoder.decode(name);
+		} catch (Exception e1) {			
+			finalPageName = "error_name_"+StringHelper.getRandomId();
+			name = finalPageName;
+			logger.warning("error : "+e1.getMessage());
+			logger.warning("parent : "+parent.getName());
+			logger.warning("new name generated : "+finalPageName);
+			e1.printStackTrace();
+		}
 
 		if (checkName) {
 			int i = 1;
@@ -1007,7 +1017,7 @@ public class PersistenceService {
 			root.setVisible(true);
 			outBean.setError(true);
 		} catch (Exception e) {
-			// e.printStackTrace();
+			e.printStackTrace();
 			MessageRepository.getInstance(ctx).setGlobalMessageAndNotification(ctx, new GenericMessage("error XML loading : " + e.getMessage(), GenericMessage.ERROR, ""));
 			root.setId("0");
 			root.setName("root");

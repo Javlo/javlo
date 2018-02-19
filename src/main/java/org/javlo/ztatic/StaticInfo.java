@@ -1497,7 +1497,7 @@ public class StaticInfo {
 				imageSize = ImageHelper.getImageSize(file);
 				content.setAttribute(ctx, key, imageSize.storeToString());
 			} catch (Throwable e) {
-				logger.warning(e.getMessage());
+				logger.fine(e.getMessage());
 			}
 		}
 		if (imageSize == null) {
