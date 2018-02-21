@@ -516,6 +516,10 @@ public class StaticConfig extends Observable {
 	public String getMasterContext() {
 		return properties.getString("master-context", "admin");
 	}
+	
+	public String getInstanceName() {
+		return properties.getString("instance-name", System.getProperty("user.name"));
+	}
 
 	public String getDefaultImage() {
 		return properties.getString("image.default", "default.png");

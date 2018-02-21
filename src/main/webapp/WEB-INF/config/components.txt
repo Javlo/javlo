@@ -112,6 +112,7 @@ org.javlo.component.dynamic.DynamicComponentFactory
 org.javlo.component.container.IubendaRemoteImport
 org.javlo.component.dynamic.DynamicComponentCreator
 org.javlo.component.date.CalendarComponent
+org.javlo.component.container.ArrayDisplayComponent
 
 --content.title.ecom
 

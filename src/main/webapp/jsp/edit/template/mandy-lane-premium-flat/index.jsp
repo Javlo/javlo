@@ -312,6 +312,8 @@
 				</c:if>
 			</c:if> -
 			<span id="server-time">${contentContext.globalContext.staticConfig.env}</span>
+			-
+			<span id="server-time">${contentContext.globalContext.staticConfig.instanceName}</span>
 		</div>
 		<!-- footerinner -->
 	</div>

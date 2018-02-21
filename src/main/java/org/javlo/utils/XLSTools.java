@@ -5,8 +5,12 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFDataFormatter;
@@ -247,6 +251,20 @@ public class XLSTools {
 			}
 		}
 		return outArray;
+	}
+	
+	public static final List<Map<String, Cell>> getItems(ContentContext ctx, Cell[][] data) { 
+		List<Map<String, Cell>> outList = new LinkedList<Map<String,Cell>>();		
+		Cell[] firstLine = data[0];
+		for (int i = 1; i < data.length; i++) {			
+			Map<String, Cell> item = new HashMap<String, Cell>();
+			Cell[] line = data[i];
+			for (int j = 0; j < line.length; j++) {
+				item.put(firstLine[j].getValue(), line[j]);
+			}
+			outList.add(item);
+		}
+		return outList;
 	}
 
 	protected static Cell[][] getXLSArray(ContentContext ctx, File xslxFile) throws Exception {

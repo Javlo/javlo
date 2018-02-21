@@ -6,6 +6,7 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.TagSupport;
 
 import org.javlo.context.ContentContext;
+import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 
 public class JVImageTransformTag extends TagSupport {
@@ -17,14 +18,38 @@ public class JVImageTransformTag extends TagSupport {
 	private String filter = null;
 	
 	private String src = null;
+	
+	private static final String RESOURCES_PATH = "/resource/";
 
 	@Override
 	public int doStartTag() throws JspException {
 		try {			
 			ContentContext ctx;
 			ctx = ContentContext.getContentContext((HttpServletRequest) pageContext.getRequest(), (HttpServletResponse) pageContext.getResponse());
-			String imageURL = URLHelper.createTransformLocalTemplateURL(ctx, ctx.getCurrentTemplate().getId(), getFilter(), getSrc());
-			ctx.getRequest().setAttribute(getVar(), imageURL);			
+			String src = getSrc();
+			boolean resource = false;
+			if (StringHelper.isURL(src)) {				
+				if (src.contains(RESOURCES_PATH)) {
+					resource = true;
+					src = src.substring(src.indexOf(RESOURCES_PATH)+RESOURCES_PATH.length());
+				} else {
+					ctx.getRequest().setAttribute(getVar(), src);
+					src = null;
+				}
+			}
+			if (src.contains(RESOURCES_PATH)) {
+				resource = true;
+				src = src.substring(src.indexOf(RESOURCES_PATH)+RESOURCES_PATH.length());
+			} 
+			if (src != null) {
+				String imageURL;
+				if (resource) {
+					imageURL = URLHelper.createTransformURL(ctx, src, getFilter());
+				} else {
+					imageURL = URLHelper.createTransformLocalTemplateURL(ctx, ctx.getCurrentTemplate().getId(), getFilter(), src);
+				}
+				ctx.getRequest().setAttribute(getVar(), imageURL);			
+			}
 		} catch (Exception ioe) {
 			throw new JspException("Error: " + ioe.getMessage());
 		}

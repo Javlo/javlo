@@ -30,7 +30,6 @@ import io.bit3.jsass.CompilationException;
 import io.bit3.jsass.Compiler;
 import io.bit3.jsass.Options;
 import io.bit3.jsass.Output;
-//import io.bit3.jsass.context.FileContext;
 import io.bit3.jsass.context.FileContext;
 
 //import com.vaadin.sass.internal.ScssContext;
@@ -95,7 +94,7 @@ public class CssCompilationFilter implements Filter {
 		next.doFilter(request, response);
 	}
 
-//	private static boolean compileSass(File in, File out) {
+//	private static boolean compileSass(boolean prod, File in, File out) {
 //		ScssContext.UrlMode urlMode = ScssContext.UrlMode.MIXED;
 //
 //		boolean minify = true;
