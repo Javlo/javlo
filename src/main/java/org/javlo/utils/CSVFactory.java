@@ -366,7 +366,8 @@ public class CSVFactory {
 
 	public static List<Map<String, String>> loadContentAsMap(InputStream in) throws IOException {
 		List<Map<String, String>> outMaps = new LinkedList<Map<String, String>>();
-		CSVParser csvParser = new CSVParser(in);
+		InputStreamReader reader = new InputStreamReader(in, ContentContext.CHARACTER_ENCODING);
+		CSVParser csvParser = new CSVParser(reader);		
 		String[][] content = csvParser.getAllValues();
 		if (content == null || content.length == 0) {
 			return new LinkedList<Map<String, String>>();

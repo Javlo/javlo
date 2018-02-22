@@ -1017,7 +1017,7 @@ public class StaticConfig extends Observable {
 	}
 
 	public String getSecretKey() {
-		return properties.getString("security.secret-key", "fju43l7m");
+		return properties.getString("security.secret-key", "???");
 	}
 
 	public String getDefaultPassword() {

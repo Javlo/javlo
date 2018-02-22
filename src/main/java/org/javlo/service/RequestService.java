@@ -51,6 +51,8 @@ public class RequestService {
 
 	public void setParameter(String key, String value) {
 		parameters.put(key, new String[] { value });
+		parameterForAttributeMap = null;
+		parameterMap = null;
 	}
 
 	@SuppressWarnings("unchecked")

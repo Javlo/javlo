@@ -6,6 +6,7 @@ package org.javlo.helper;
 import java.awt.image.BufferedImage;
 import java.beans.XMLDecoder;
 import java.beans.XMLEncoder;
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
@@ -1910,6 +1911,32 @@ public class ResourceHelper {
 			relURL = StringUtils.replace(fullURL, fullStaticFolder, "");
 		}
 		return relURL;
+	}
+	
+	public static int countLines(File file) throws IOException {
+	    InputStream is = new BufferedInputStream(new FileInputStream(file));
+	    try {
+	        byte[] c = new byte[1024];
+	        int count = 0;
+	        int readChars = 0;
+	        boolean empty = true;
+	        while ((readChars = is.read(c)) != -1) {
+	            empty = false;
+	            for (int i = 0; i < readChars; ++i) {
+	                if (c[i] == '\n') {
+	                    ++count;
+	                }
+	            }
+	        }
+	        return (count == 0 && !empty) ? 1 : count;
+	    } finally {
+	        is.close();
+	    }
+	}
+	
+	public static void main(String[] args) throws IOException {
+		File file = new File("c:/trans/towa.csv");
+		System.out.println(">>>>>>>>> ResourceHelper.main : #lines = "+countLines(file)); //TODO: remove debug trace
 	}
 
 }
