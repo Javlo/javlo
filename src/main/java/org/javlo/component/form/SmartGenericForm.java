@@ -48,7 +48,6 @@ import org.javlo.helper.BeanHelper;
 import org.javlo.helper.LangHelper;
 import org.javlo.helper.NetHelper;
 import org.javlo.helper.ResourceHelper;
-import org.javlo.helper.SecurityHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.StringSecurityUtil;
 import org.javlo.helper.URLHelper;
@@ -698,7 +697,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 			File file = getFile(ctx);
 			if (lineNumber < 0) {
 				if (!file.exists()) {
-					lineNumber = 0;
+					lineNumber = -1;
 				} else {
 					lineNumber = ResourceHelper.countLines(file)-2;
 					if (lineNumber<0) {
@@ -779,11 +778,6 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 
 		String code = rs.getParameter("_form-code", "");
 		if (!comp.cacheForm.containsKey(code) && !comp.isCaptcha(ctx)) {
-			System.out.println(">>>>>>>>> SmartGenericForm.performSubmit : code = "+code); //TODO: remove debug trace
-			System.out.println(">>>>>>>>> SmartGenericForm.performSubmit : #cacheForm = "+comp.cacheForm.size()); //TODO: remove debug trace
-			for (Map.Entry<String, String> e : comp.cacheForm.entrySet()) {
-				System.out.println(">>>>>>>>> SmartGenericForm.performSubmit : e = "+e); //TODO: remove debug trace	
-			}
 			I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
 			GenericMessage msg = new GenericMessage(i18nAccess.getViewText("error.bad-from-version", "This form has experied, try again."), GenericMessage.ERROR);
 			request.setAttribute("msg", msg);
@@ -876,7 +870,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 				try {
 					if (file.getName().trim().length() > 0) {
 						String fileName = URLHelper.mergePath(comp.getAttachFolder(ctx).getAbsolutePath(), StringHelper.createFileName(file.getName()));
-						File freeFile = ResourceHelper.getFreeFileName(new File(fileName));
+						File freeFile = ResourceHelper.getFreeFileName(new File(fileName));						
 						if (ResourceHelper.writeStreamToFile(in, freeFile, maxFileSize) < 0) {
 							GenericMessage msg = new GenericMessage(comp.getLocalConfig(false).getProperty("message.tobig-file", "file to big."), GenericMessage.ERROR);
 							request.setAttribute("msg", msg);
