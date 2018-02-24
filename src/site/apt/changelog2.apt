@@ -918,4 +918,4 @@ change log
 
  * 1/ component structure html correction / reset i18n on publish / add user-agent on internet connection / push static version of the site on ftp / static config cache folder / contact information component
  
- * 2/ imagetransform update tag, can reference resources / display array component / smart generic form editable
+ * 2/ imagetransform update tag, can reference resources / display array component / smart generic form editable / html.head

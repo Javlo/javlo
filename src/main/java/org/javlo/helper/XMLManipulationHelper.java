@@ -622,11 +622,13 @@ public class XMLManipulationHelper {
 
 				/* head - StyleSheet */
 				if (tags[i].getName().equalsIgnoreCase("head")) {
+					
+					String staticHeader = StringHelper.neverEmpty(globalContext.getStaticConfig().getHtmlHead(),"");
 
 					if (content.indexOf(HEADER_ZONE) > 0) {
-						remplacement.addReplacement(content.indexOf(HEADER_ZONE), content.indexOf(HEADER_ZONE) + HEADER_ZONE.length(), getHTMLPrefixHead(globalContext, headContext));
+						remplacement.addReplacement(content.indexOf(HEADER_ZONE), content.indexOf(HEADER_ZONE) + HEADER_ZONE.length(), getHTMLPrefixHead(globalContext, headContext)+staticHeader);
 					} else {
-						remplacement.addReplacement(tags[i].getOpenEnd() + 1, tags[i].getOpenEnd() + 1, getHTMLPrefixHead(globalContext, headContext));
+						remplacement.addReplacement(tags[i].getOpenEnd() + 1, tags[i].getOpenEnd() + 1, getHTMLPrefixHead(globalContext, headContext)+staticHeader);
 					}
 
 					/** template plugin **/

@@ -28,6 +28,7 @@
 		top.location.href = url; // close iframe and refresh parent frame
 	}
 </script>
+<c:if test="${not empty contentContext.globalContext.staticConfig.htmlHead}">${contentContext.globalContext.staticConfig.htmlHead}</c:if>
 	</head>
 	<body></body>
 </c:if>
@@ -124,6 +125,8 @@
 	<script type="text/javascript">
 		var i18nURL = "${info.i18nAjaxURL}";
 	</script>
+	
+	<c:if test="${not empty contentContext.globalContext.staticConfig.htmlHead}">${contentContext.globalContext.staticConfig.htmlHead}</c:if>
 
 	</head>
 

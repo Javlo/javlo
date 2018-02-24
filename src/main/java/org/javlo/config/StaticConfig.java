@@ -1620,12 +1620,18 @@ public class StaticConfig extends Observable {
 	}
 
 	public String getSearchEngineLucenePattern() {
-		return properties.getString("searchengine.lucene.pattern", "level3:{QUERY}^3 level2:{QUERY}^2 level1:{QUERY}^1")
-				.trim();
+		return properties.getString("searchengine.lucene.pattern", "level3:{QUERY}^3 level2:{QUERY}^2 level1:{QUERY}^1").trim();
 	}
 
 	public String getDropboxAppKey() {
 		return properties.getString("dropbox.app-key", null);
+	}
+	
+	public String getHtmlHead() {
+		if (isHighSecure()) {
+			return null;
+		}
+		return properties.getString("html.head", null);
 	}
 
 	public String getDropboxAppSecret() {
