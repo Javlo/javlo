@@ -424,4 +424,11 @@ public class StringHelperTest extends TestCase {
 		assertFalse(StringHelper.isAlpha("jav lo"));
 	}
 	
+	
+	public void testExtractHost() {
+		assertEquals(StringHelper.extractHost("https://getbootstrap.com/docs/4.0/components/badge/"), "getbootstrap.com");
+		assertEquals(StringHelper.extractHost("https://www.javlo.org/en/quickstart.html"), "javlo.org");
+		assertEquals(StringHelper.extractHost(null), "");
+		assertEquals(StringHelper.extractHost("/test/index.html"), "");
+	}
 }

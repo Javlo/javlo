@@ -1758,12 +1758,14 @@ public class XHTMLHelper {
 		out.print("<textarea" + cssClass + " name=\"");
 		out.print(name);
 		out.print("\"");
-		for (String[] attribute : attributes) {
-			out.print(" ");
-			out.print(attribute[0]);
-			out.print("=\"");
-			out.print(attribute[1]);
-			out.print("\"");
+		if (attributes != null) {
+			for (String[] attribute : attributes) {
+				out.print(" ");
+				out.print(attribute[0]);
+				out.print("=\"");
+				out.print(attribute[1]);
+				out.print("\"");
+			}
 		}
 		out.print(">");
 		out.print(value);

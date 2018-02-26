@@ -48,8 +48,9 @@ import org.javlo.utils.TimeMap;
  */
 
 public class SmartExternalLink extends ComplexPropertiesLink implements IReverseLinkComponent, IImageTitle {
-	
-	private static Map<String,String> BAD_LINKS = Collections.synchronizedMap(new TimeMap<String, String>(60*60*24)); // 1 day cache for bad link
+
+	private static Map<String, String> BAD_LINKS = Collections
+			.synchronizedMap(new TimeMap<String, String>(60 * 60 * 24)); // 1 day cache for bad link
 
 	public static class UndateInfo extends AbstractThread {
 
@@ -127,57 +128,62 @@ public class SmartExternalLink extends ComplexPropertiesLink implements IReverse
 			}
 
 			try {
-				URL url = new URL(getURL());
-				if (isValidConnection() == null || BAD_LINKS.containsKey(url.toString())) {					
-					setValidConnection(NetHelper.isURLValid(url));
-					storeViewData();
-
-					if (isValidConnection()) {						
-						timeout = 60 * 1000; // if connection valid thread can
-						// run more time
-						logInfo = "read : " + url;
-						URLConnection conn = url.openConnection();						
-						String pageContent = NetHelper.readPageGet(conn, true);
-						url = conn.getURL();						
-						if (pageContent == null) {
-							setLinkValid(false);
-							setMustBeRemoved(true);
-							logger.info("url: " + url + " must de removed because content unredeable.");
-						} else {
-							if (!isContentValid(pageContent)) {
-								BAD_LINKS.put(url.toString(), "");
+				System.out.println(">>>>>>>>> SmartExternalLink.UndateInfo.run : getURL() = "+getURL()); //TODO: remove debug trace
+				if (!StringHelper.isEmpty(getURL())) {
+					URL url = new URL(getURL());
+					System.out.println(">>>>>>>>> SmartExternalLink.UndateInfo.run : isValidConnection() = "+isValidConnection()); //TODO: remove debug trace
+					if (isValidConnection() == null || BAD_LINKS.containsKey(url.toString())) {
+						setValidConnection(NetHelper.isURLValid(url));
+						storeViewData();
+						if (isValidConnection()) {
+							timeout = 60 * 1000; // if connection valid thread can
+							// run more time
+							logInfo = "read : " + url;
+							URLConnection conn = url.openConnection();
+							String pageContent = NetHelper.readPageGet(conn, true);
+							url = conn.getURL();
+							if (pageContent == null) {
 								setLinkValid(false);
 								setMustBeRemoved(true);
-								logger.info("url: " + url + " must de removed because content unvalid.");
+								logger.info("url: " + url + " must de removed because content unredeable.");
 							} else {
-								setTitle(NetHelper.getPageTitle(pageContent));
-								setDescription(NetHelper.getPageDescription(pageContent));
-								CRC32 crc32 = new CRC32();
-								URL imageURL = null;
-								if (getForceImageURL() != null && getForceImageURL().trim().length() > 0) {
-									imageURL = new URL(getForceImageURL());
-								}
-								logInfo = "load image : " + StringHelper.neverNull(imageURL, "?");
-								String uri = NetHelper.getLocalCopyOfPageImage(getCacheFodler(), getDataFolder(), url, imageURL, pageContent, crc32, true, false);								
-								setImageCRC32(crc32.getValue());
-								if (uri != null) {
-									setImageURI(uri);
-									setLinkValid(true);
-									setMustBeRemoved(false);
-								} else {
+								if (!isContentValid(pageContent)) {
 									BAD_LINKS.put(url.toString(), "");
 									setLinkValid(false);
 									setMustBeRemoved(true);
-									logger.info("url: " + url + " must de removed because image not found.");
+									logger.info("url: " + url + " must de removed because content unvalid.");
+								} else {
+									setTitle(NetHelper.getPageTitle(pageContent));
+									setDescription(NetHelper.getPageDescription(pageContent));
+									CRC32 crc32 = new CRC32();
+									URL imageURL = null;
+									if (getForceImageURL() != null && getForceImageURL().trim().length() > 0) {
+										imageURL = new URL(getForceImageURL());
+									}
+									logInfo = "load image : " + StringHelper.neverNull(imageURL, "?");
+									String uri = NetHelper.getLocalCopyOfPageImage(getCacheFodler(), getDataFolder(),
+											url, imageURL, pageContent, crc32, true, false);
+									setImageCRC32(crc32.getValue());
+									if (uri != null) {
+										setImageURI(uri);
+										setLinkValid(true);
+										setMustBeRemoved(false);
+									} else {
+										BAD_LINKS.put(url.toString(), "");
+										setLinkValid(false);
+										setMustBeRemoved(true);
+										logger.info("url: " + url + " must de removed because image not found.");
+									}
 								}
 							}
+						} else {
+							BAD_LINKS.put(url.toString(), "");
+							setMustBeRemoved(true);
+							logger.info("url: " + url + " must de removed because unvalid connection.");
 						}
-					} else {
-						BAD_LINKS.put(url.toString(), "");
-						setMustBeRemoved(true);
-						logger.info("url: " + url + " must de removed because unvalid connection.");
+						logger.fine("refresh smart url info [END] : " + url + " [THREAD:"
+								+ CountThreadService.getInstance().getCountThread() + "]");
 					}
-					logger.fine("refresh smart url info [END] : " + url + " [THREAD:" + CountThreadService.getInstance().getCountThread() + "]");
 				}
 			} catch (Throwable t) {
 				t.printStackTrace();
@@ -188,7 +194,7 @@ public class SmartExternalLink extends ComplexPropertiesLink implements IReverse
 				storeViewData();
 			} catch (IOException e) {
 				e.printStackTrace();
-			}			
+			}
 		}
 
 		public void setCacheFolder(String url) {
@@ -244,7 +250,8 @@ public class SmartExternalLink extends ComplexPropertiesLink implements IReverse
 		}
 
 		public void storeViewData() throws IOException {
-			ResourceHelper.writePropertiesToFile(prop, getPropFile(), "create by smart external link thread at : " + StringHelper.renderTime(new Date()));
+			ResourceHelper.writePropertiesToFile(prop, getPropFile(),
+					"create by smart external link thread at : " + StringHelper.renderTime(new Date()));
 		}
 	}
 
@@ -307,7 +314,7 @@ public class SmartExternalLink extends ComplexPropertiesLink implements IReverse
 			}
 		}
 	}
-	
+
 	private String getLinkDescription(ContentContext ctx) throws IOException {
 		return getViewData(ctx).getProperty(DESCRIPTION_KEY, "");
 	}
@@ -325,7 +332,7 @@ public class SmartExternalLink extends ComplexPropertiesLink implements IReverse
 
 		if (!StringHelper.isTrue(getViewData(ctx).getProperty(VALID_LINK, "true"))) {
 			setMessage(null);
-			return "<div class=\"line\">" + i18nAccess.getText("global.working") + "</div>";
+			return "<div class=\"form-group\">" + i18nAccess.getText("global.working") + "</div>";
 		}
 
 		StringWriter writer = new StringWriter();
@@ -340,35 +347,33 @@ public class SmartExternalLink extends ComplexPropertiesLink implements IReverse
 
 			String linkTitle = i18nAccess.getText("component.link.link");
 			String imageLinkTitle = i18nAccess.getText("component.link.image");
-
-			out.println("<div class=\"edit three-col-layout\">");
-			if (getImageURI(ctx) != null) {
-				out.println("<span class=\"image\" style=\"vertical-align: center; float: right; margin-right: 10px;\">");
-				String imageURL = URLHelper.createTransformURL(ctx, getPage(), getImageURI(ctx), "list");
-				out.println("<img src=\"" + imageURL + "\" alt=\"" + getTitle(ctx) + "\" /></span>");
-			}
-			out.println("<div class=\"line\">");
+			
+			out.println("<div class=\"row\"><div class=\"col-sm-12\"><div class=\"form-group\">");
 			out.println("<label for=\"" + getLinkName() + "\">" + linkTitle + "</label>");
-			out.print(" : <input id=\"" + getLinkName() + "\" name=\"" + getLinkName() + "\" value=\"");
+			out.print("<input class=\"form-control\"  id=\"" + getLinkName() + "\" name=\"" + getLinkName() + "\" value=\"");
 			out.print(link);
 			out.println("\"/>");
 			if (link.trim().length() > 0) {
 				out.println("&nbsp;<a href=\"" + link + "\">&gt;&gt;</a>");
 			}
-			out.println("</div><div class=\"line\">");
+			out.println("</div></div></div><div class=\"row\"><div class=\"col-sm-4\"><div class=\"form-group\">");
 			out.print("<label for=\"" + getImageLink() + "\">" + imageLinkTitle + "</label>");
 			out.print(" : ");
-			out.println(XHTMLHelper.getTextInput(getImageLink(), imageLink));
-			out.println("</div><br /><br /><div class=\"line\">");
-			out.print("<label for=\"" + getTitleInputName() + "\">" + i18nAccess.getText("field.title") + "</label>");
-			out.print(" : ");
-			out.println(XHTMLHelper.getTextInput(getTitleInputName(), getTitle(ctx)));
-			out.println("</div><br /><div class=\"line\">");
-			out.print("<label for=\"" + getDescriptionInputName() + "\">" + i18nAccess.getText("global.description") + "</label>");
-			out.print(" : ");
-			out.println(XHTMLHelper.getTextArea(getDescriptionInputName(), getLinkDescription(ctx), new String[][] { { "style", "width: 220px; margin-top: 16px;" } }));
-			out.println("</div>");
-			out.println("<div class=\"content_clear\"><span></span></div></div>");
+			out.println(XHTMLHelper.getTextInput(getImageLink(), imageLink, "form-control"));
+			out.println("</div></div><div class=\"col-sm-4\"><div class=\"form-group\">");
+			out.print("<label for=\"" + getTitleInputName() + "\">" + i18nAccess.getText("field.title") + "</label>");			
+			out.println(XHTMLHelper.getTextInput(getTitleInputName(), getTitle(ctx), "form-control"));
+			out.println("</div></div>");
+			if (getImageURI(ctx) != null) {
+				out.println("<div class=\"col-sm-4\"><span class=\"image\">");
+				String imageURL = URLHelper.createTransformURL(ctx, getPage(), getImageURI(ctx), "list");
+				out.println("<img src=\"" + imageURL + "\" alt=\"" + getTitle(ctx) + "\" /></span></div></div>");
+			}
+			out.println("</div><div class=\"row\"><div class=\"col-sm-12\"><div class=\"form-group\">");
+			out.print("<label for=\"" + getDescriptionInputName() + "\">" + i18nAccess.getText("global.description")
+					+ "</label>");			
+			out.println(XHTMLHelper.getTextArea(getDescriptionInputName(), getLinkDescription(ctx), null, "form-control"));
+			out.println("</div></div>");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -377,10 +382,12 @@ public class SmartExternalLink extends ComplexPropertiesLink implements IReverse
 
 		if (link.trim().length() > 0) {
 			if (!PatternHelper.EXTERNAL_LINK_PATTERN.matcher(link).matches()) {
-				setMessage(new GenericMessage(i18nAccess.getText("component.error.external-link"), GenericMessage.ERROR));
+				setMessage(
+						new GenericMessage(i18nAccess.getText("component.error.external-link"), GenericMessage.ERROR));
 			}
 		} else {
-			setMessage(new GenericMessage(i18nAccess.getText("component.message.help.external_link"), GenericMessage.HELP));
+			setMessage(new GenericMessage(i18nAccess.getText("component.message.help.external_link"),
+					GenericMessage.HELP));
 		}
 
 		return writer.toString();
@@ -495,11 +502,11 @@ public class SmartExternalLink extends ComplexPropertiesLink implements IReverse
 	public String getType() {
 		return TYPE;
 	}
-	
+
 	@Override
 	public void prepareView(ContentContext ctx) throws Exception {
 		super.prepareView(ctx);
-		
+
 	}
 
 	/**
@@ -562,20 +569,25 @@ public class SmartExternalLink extends ComplexPropertiesLink implements IReverse
 				if (cssClass != null) {
 					insertCssClass = cssClass;
 				}
-				res.append("<div " + getSpecialPreviewCssClass(ctx, getStyle(ctx) + " " + getType()+" thumbnail") + getSpecialPreviewCssId(ctx) + " >");
-				res.append("<a" + getSpecialPreviewCssClass(ctx, insertCssClass) + getSpecialPreviewCssId(ctx) + " href=\" ");
+				res.append("<div " + getSpecialPreviewCssClass(ctx, getStyle(ctx) + " " + getType() + " thumbnail")
+						+ getSpecialPreviewCssId(ctx) + " >");
+				res.append("<a" + getSpecialPreviewCssClass(ctx, insertCssClass) + getSpecialPreviewCssId(ctx)
+						+ " href=\" ");
 				res.append(link);
 				res.append("\">");
 				if (getImageURI(ctx) != null) {
 					res.append("<span class=\"image\">");
 					String imageURL = URLHelper.createTransformURL(ctx, getImageURI(ctx), "extern");
-					String jsImage = "<img class=\"img-responsive lazy\" src=\""+InfoBean.getCurrentInfoBean(ctx).getViewAjaxLoaderURL()+"\" data-src=\"" + imageURL + "\" alt=\"" +getTitle(ctx).replace('\'', ' ') + "\" />";
-					String noJsImage = "<img class=\"img-responsive\" src=\"" + imageURL + "\" alt=\"" + getTitle(ctx).replace('\'', ' ') + "\" />";
-					res.append("<noscript>"+noJsImage+"</noscript>");
-					res.append("<script>document.write('"+jsImage+"');</script>");
+					String jsImage = "<img class=\"img-responsive lazy\" src=\""
+							+ InfoBean.getCurrentInfoBean(ctx).getViewAjaxLoaderURL() + "\" data-src=\"" + imageURL
+							+ "\" alt=\"" + getTitle(ctx).replace('\'', ' ') + "\" />";
+					String noJsImage = "<img class=\"img-responsive\" src=\"" + imageURL + "\" alt=\""
+							+ getTitle(ctx).replace('\'', ' ') + "\" />";
+					res.append("<noscript>" + noJsImage + "</noscript>");
+					res.append("<script>document.write('" + jsImage + "');</script>");
 					res.append("</span>");
 				}
-				res.append("<div class=\"caption\"><h3>"+getTitle(ctx)+"</h3></div>");								
+				res.append("<div class=\"caption\"><h3>" + getTitle(ctx) + "</h3></div>");
 				res.append("</a></div>");
 			} else {
 				refreshAutoInfo(ctx);
@@ -689,11 +701,11 @@ public class SmartExternalLink extends ComplexPropertiesLink implements IReverse
 		// TODO Auto-generated method stub
 		return false;
 	}
-	
+
 	@Override
 	public boolean isOnlyPreviousComponent() {
 		return properties.getProperty(REVERSE_LINK_KEY, "none").equals(ReverseLinkService.ONLY_PREVIOUS_COMPONENT);
-	}	
+	}
 
 	@Override
 	public boolean isOnlyThisPage() {
@@ -741,7 +753,7 @@ public class SmartExternalLink extends ComplexPropertiesLink implements IReverse
 
 		String currentLink = properties.getProperty(LINK_KEY, "");
 		String currentImageLink = properties.getProperty(IMAGE_LINK_KEY, "");
-		
+
 		boolean reverseLinkName = requestService.getParameter(getReverseLinkName(), null) != null;
 		if (imageLink != null) {
 			if (link != null) {
@@ -785,7 +797,8 @@ public class SmartExternalLink extends ComplexPropertiesLink implements IReverse
 		synchronized (properties) {
 			if (getViewData(ctx).getProperty("thread-start") == null) {
 				StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
-				UndateInfo updateInfo = (UndateInfo) AbstractThread.createInstance(staticConfig.getThreadFolder(), UndateInfo.class);
+				UndateInfo updateInfo = (UndateInfo) AbstractThread.createInstance(staticConfig.getThreadFolder(),
+						UndateInfo.class);
 				updateInfo.setCacheFolder(staticConfig.getCacheFolder());
 				updateInfo.setDataFolder(GlobalContext.getInstance(ctx.getRequest()).getDataFolder());
 				updateInfo.setURL(getLinkURL(ctx));
@@ -847,7 +860,7 @@ public class SmartExternalLink extends ComplexPropertiesLink implements IReverse
 	public String getImageLinkURL(ContentContext ctx) {
 		return null;
 	}
-	
+
 	@Override
 	public int getPriority(ContentContext ctx) {
 		if (getConfig(ctx).getProperty("image.priority", null) == null) {
@@ -856,11 +869,10 @@ public class SmartExternalLink extends ComplexPropertiesLink implements IReverse
 			return Integer.parseInt(getConfig(ctx).getProperty("image.priority", null));
 		}
 	}
-	
+
 	@Override
 	public int getComplexityLevel(ContentContext ctx) {
 		return getConfig(ctx).getComplexity(COMPLEXITY_STANDARD);
 	}
-	
 
 }

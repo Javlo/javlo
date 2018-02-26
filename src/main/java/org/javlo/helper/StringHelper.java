@@ -3927,4 +3927,22 @@ public class StringHelper {
 		out.close();
 		return new String(outStream.toByteArray());
 	}
+
+	public static String extractHost(String inUrl) {
+		if (!StringHelper.isURL(inUrl)) {
+			return "";
+		}
+		URL url;
+		try {
+			url = new URL(inUrl);
+		} catch (MalformedURLException e) {		
+			e.printStackTrace();
+			return "";
+		}
+		String host = url.getHost();
+		while (StringUtils.countMatches(host, ".") > 1) {
+			host = host.substring(host.indexOf('.')+1);
+		}
+		return host;
+	}
 }

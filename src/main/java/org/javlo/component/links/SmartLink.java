@@ -2,6 +2,7 @@ package org.javlo.component.links;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.ParseException;
 import java.util.Collection;
@@ -25,6 +26,7 @@ import org.javlo.module.core.ModulesContext;
 import org.javlo.service.ContentService;
 import org.javlo.service.RequestService;
 import org.javlo.service.resource.VisualResource;
+import org.owasp.encoder.Encode;
 
 public class SmartLink extends ComplexPropertiesLink implements ILink, IAction {
 
@@ -132,25 +134,28 @@ public class SmartLink extends ComplexPropertiesLink implements ILink, IAction {
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(outStream);
-		if (getDate().trim().length() > 0) {
-			String time = "";
-			if (!StringHelper.renderTimeOnly(getTime()).equals("00:00:00")) {
-				time = "<span class=\"time\"> " + StringHelper.renderTimeOnly(getTime()) + "</span>";
-			}
-			out.println("<span class=\"date\">" + StringHelper.renderDate(getTime()) + time + "</span>");
-		}
-		out.println("<a class=\"" + getType() + "\" href=\"" + getURL() + "\">");
-		out.println("<h4>" + getTitle() + "</h4>");
-		out.println("</a>");
 
 		String url = getImageURL();
 		out.println("<div class=\"row\">");
 		int colSize = 12;
 		if (!StringHelper.isEmpty(url)) {
 			colSize=9;
-			out.println("<div class=\"col-sm-3\"><figure><img class=\"img-responsive\" src=\"" + getImageURL() + "\" /></figure></div>");	
+			out.println("<div class=\"col-sm-3\"><figure><img class=\"img-responsive img-fluid\" src=\"" + getImageURL() + "\" /></figure></div>");	
 		}		
-		out.println("<div class=\"col-sm-"+colSize+"\">");
+		out.println("<div class=\"col-sm-"+colSize+"\">");	
+		out.println("<a class=\"" + getType() + "\" href=\"" + getURL() + "\">");
+		out.println("<h"+(ctx.getTitleDepth()+1)+">" + getTitle() + "</h"+(ctx.getTitleDepth()+1)+">");
+		out.println("</a>");
+		out.println("<div class=\"news-info\">");
+		if (getDate().trim().length() > 0) {
+			String time = "";
+			if (!StringHelper.renderTimeOnly(getTime()).equals("00:00:00")) {
+				time = "<span class=\"time\"> " + StringHelper.renderTimeOnly(getTime()) + "</span>";
+			}
+			out.println("<span class=\"date\">" + StringHelper.renderDate(getTime()) + time + "</span>");			
+		}
+		out.println("<span class=\"badge badge-secondary host\">"+StringHelper.extractHost(getURL())+"</span>");
+		out.println("</div>");
 		out.println("<p>" + getDescription() + "</p>");
 		out.println("</div></div>");
 		out.close();
@@ -173,22 +178,22 @@ public class SmartLink extends ComplexPropertiesLink implements ILink, IAction {
 			out.println("<input type=\"text\" class=\"link form-control\" placeholder=\"" + i18nAccess.getText("global.link") + "\" name=\"" + getURLInputName() + "\" value=\"" + getURL() + "\" />");
 			out.println("</div>");
 			out.println("<div class=\"body\" id=\"" + getBodyId() + "\">");
-			if (getTitle() != null && getTitle().trim().length() > 0) {
+			if (!StringHelper.isEmpty(getTitle()) || !StringHelper.isEmpty(getDescription())) {
 				ctx.getRequest().setAttribute("title", getTitle());
 				ctx.getRequest().setAttribute("description", getDescription());
 				ctx.getRequest().setAttribute("image", getImageURL());
 				ctx.getRequest().setAttribute("date", getDate());
 				String xhtml = ServletHelper.executeJSP(ctx, renderer);
 				out.println(xhtml);
-			} else {
-				out.println("<div class=\"waiting\" style=\"display: none;\">");
-				out.println("<div class=\"row\">");
-				out.println("<div class=\"col-sm-5\">&nbsp;</div>");
-				out.println("<div class=\"col-sm-2\"><img src=\""+InfoBean.getCurrentInfoBean(ctx).getAjaxLoaderURL()+"\" alt=\"waiting...\" /></div>");
-				out.println("<div class=\"col-sm-5\">&nbsp;</div>");
-				out.println("</div>");
-				out.println("</div>");
-			}
+			} 
+			out.println("<div class=\"waiting\" style=\"display: none;\">");
+			out.println("<div class=\"row\">");
+			out.println("<div class=\"col-sm-5\">&nbsp;</div>");
+			out.println("<div class=\"col-sm-2\"><img src=\""+InfoBean.getCurrentInfoBean(ctx).getAjaxLoaderURL()+"\" alt=\"waiting...\" /></div>");
+			out.println("<div class=\"col-sm-5\">&nbsp;</div>");
+			out.println("</div>");
+			out.println("</div>");
+			
 			out.println("</div>");
 			out.println("</div>");
 			out.println("<script type=\"text/javascript\">initSmartLink();</script>");
@@ -211,13 +216,17 @@ public class SmartLink extends ComplexPropertiesLink implements ILink, IAction {
 			if (comp != null) {
 				URL sourceURL = new URL(url);
 				String remoteXHTML = NetHelper.readPageWithGet(sourceURL);				
-				ctx.getRequest().setAttribute("title", NetHelper.getPageTitle(remoteXHTML));
-				ctx.getRequest().setAttribute("description", NetHelper.getPageDescription(remoteXHTML));
+				ctx.getRequest().setAttribute("title", Encode.forHtmlAttribute(NetHelper.getPageTitle(remoteXHTML)));
+				ctx.getRequest().setAttribute("description", Encode.forHtmlAttribute(NetHelper.getPageDescription(remoteXHTML)));
 				Collection<VisualResource> images = NetHelper.extractImage(sourceURL, remoteXHTML, true);
 				int biggerImageSize = 0;
 				VisualResource biggerImage = null;
 				for (VisualResource resource : images) {
-					if (biggerImageSize < resource.getWidth()*resource.getHeight()) {
+					float prop = (float)resource.getWidth()/(float)resource.getHeight();
+					if (prop>1) {
+						prop = (float)resource.getHeight()/(float)resource.getWidth();
+					}					
+					if (prop>0.4 && biggerImageSize < resource.getWidth()*resource.getHeight()) {
 						biggerImageSize = resource.getWidth()*resource.getHeight();
 						biggerImage = resource;
 					}
@@ -274,5 +283,20 @@ public class SmartLink extends ComplexPropertiesLink implements ILink, IAction {
 	@Override
 	public Date getLatestValidDate() {
 		return latestValidDate;
+	}
+	
+	public static void main(String[] args)  {
+		String title;
+		try {
+			title = NetHelper.getPageTitle(new URL("http://lesbian-bondage.net/gallery/bound-naked-and-spread-wide-open.html?23x21x785"));
+			System.out.println(">>>>>>>>> SmartLink.main : title = "+title); //TODO: remove debug trace
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
 }

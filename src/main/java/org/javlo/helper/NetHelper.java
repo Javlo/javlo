@@ -125,6 +125,7 @@ public class NetHelper {
 		try {
 			if (conn instanceof HttpURLConnection) {
 				HttpURLConnection httpConn = (HttpURLConnection) conn;
+				httpConn.setRequestProperty("User-Agent", JAVLO_USER_AGENT);
 				if (checkReturnCode && httpConn.getResponseCode() != HttpURLConnection.HTTP_OK) {
 					throw new NetException("Response code: " + httpConn.getResponseCode());
 				}
@@ -279,9 +280,7 @@ public class NetHelper {
 
 		InputStream in = null;
 		try {
-
 			url = removeParams(url);
-
 			HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 			connection.setRequestMethod("POST");
 			connection.setRequestProperty("Content-Type", "application/json");
@@ -642,8 +641,8 @@ public class NetHelper {
 		if (content == null) {
 			return Collections.EMPTY_LIST;
 		}
-		List<VisualResource> urlList = new LinkedList<VisualResource>();
-
+		List<VisualResource> urlList = new LinkedList<VisualResource>();		
+		
 		int srcIndex = content.toLowerCase().indexOf("src=\"") + "src=\"".length();
 		while (srcIndex >= "src=\"".length()) {
 			int closeLink = content.indexOf("\"", srcIndex + 1);
@@ -653,7 +652,10 @@ public class NetHelper {
 				int altIndex = content.toLowerCase().indexOf("alt=\"", srcIndex) + "alt=\"".length();
 				String description = "";
 				if (altIndex >= "alt=\"".length() && altIndex < closeTag) {
-					description = content.substring(altIndex, content.indexOf("\"", altIndex + 1));
+					try {
+						description = content.substring(altIndex, content.indexOf("\"", altIndex + 1));
+					} catch (Throwable e) {
+					}
 				}
 				if (StringHelper.isImage(url)) {
 					if (!URLHelper.isAbsoluteURL(url)) {
@@ -691,6 +693,57 @@ public class NetHelper {
 				}
 			}
 			srcIndex = content.toLowerCase().indexOf("src=\"", srcIndex) + "src=\"".length();
+		}
+		srcIndex = content.toLowerCase().indexOf("src='") + "src='".length();
+		while (srcIndex >= "src='".length()) {
+			int closeLink = content.indexOf("'", srcIndex + 1);
+			int closeTag = content.indexOf(">", srcIndex + 1);
+			if (closeLink >= 0) {
+				String url = content.substring(srcIndex, closeLink);
+				int altIndex = content.toLowerCase().indexOf("alt=\"", srcIndex) + "alt=\"".length();
+				String description = "";
+				if (altIndex >= "alt=\"".length() && altIndex < closeTag) {
+					try {
+						description = content.substring(altIndex, content.indexOf("\"", altIndex + 1));
+					} catch (Throwable e) {
+					}
+				}
+				if (StringHelper.isImage(url)) {
+					if (!URLHelper.isAbsoluteURL(url)) {
+						if (!url.trim().startsWith("/")) {
+							url = URLHelper.mergePath(URLHelper.extractPath(inURL.toString()), url);
+						} else {
+							url = "http://" + URLHelper.mergePath(URLHelper.extractHost(inURL.toString()), url);
+						}
+					}
+					VisualResource res = new VisualResource();
+					res.setId(url);
+					res.setUri(url);
+					res.setName(StringHelper.getFileNameFromPath(url));
+					res.setDescription(StringHelper.removeTag(description));
+					if (needSize) {
+						ByteArrayOutputStream out = null;
+						InputStream in = null;
+						try {
+							out = new ByteArrayOutputStream();
+							in = new URL(url).openStream();
+							ResourceHelper.writeStreamToStream(in, out);
+							res.setSize(out.toByteArray().length);
+							ByteArrayInputStream localIn = new ByteArrayInputStream(out.toByteArray());
+							BufferedImage image = ImageIO.read(localIn);
+							localIn.close();
+							res.setWidth(image.getWidth());
+							res.setHeight(image.getHeight());
+							urlList.add(res);
+						} catch (Exception e) {
+							e.printStackTrace();
+						} finally {
+							ResourceHelper.closeResource(in, out);
+						}
+					}
+				}
+			}
+			srcIndex = content.toLowerCase().indexOf("src='", srcIndex) + "src='".length();
 		}
 
 		return urlList;
@@ -1491,11 +1544,10 @@ public class NetHelper {
 				if (i == 13) {
 					company.setAddress(td.text());
 				}
-
 			}
 		}
 		return company;
 	}
-
+	
 }
 

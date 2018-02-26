@@ -274,18 +274,14 @@ body .component-wrapper {
 	text-align: center;
 }
 
-.smart-link-body a {	
-	border: 1px solid #CCCCCC;
-	background-color: #eeeeee;	
-}
-
 .smart-link-body a span {
 	display:  block;
 	color: #333333;
 	font-size: 28px;
 	font-weight: bold;
 	padding: 50px 5px 0 5px;
-	text-align: center;	
+	text-align: center;
+	font-style: arial;
 }
 
 .smart-link-body a.previous {
@@ -294,6 +290,14 @@ body .component-wrapper {
 
 .smart-link-body a.next {
 	margin-left: 15px;
+}
+
+.smart-link {	
+    .date {
+    	padding-top: 3px;
+    	font-size: 0.8em;
+    	color: #777777;
+    }   
 }
 
 div.wysiwyg-paragraph textarea {
