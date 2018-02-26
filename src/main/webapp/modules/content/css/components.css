@@ -292,12 +292,28 @@ body .component-wrapper {
 	margin-left: 15px;
 }
 
+.component-list {
+	ul {
+		margin: 0;
+		padding: 0;
+		li {
+			list-style: none;
+			margin: 15px 0 0 0;
+			border-top: 1px #cccccc solid;
+			padding: 15px 0 0 0;
+		}
+	}
+}
+
 .smart-link {	
     .date {
     	padding-top: 3px;
     	font-size: 0.8em;
     	color: #777777;
-    }   
+    } 
+    figure {
+    	margin: 0;
+    }  
 }
 
 div.wysiwyg-paragraph textarea {

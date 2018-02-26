@@ -16,7 +16,7 @@ import org.javlo.service.ContentService;
 
 public class ComponentList extends AbstractPropertiesComponent implements IAction {
 	
-	private static List<String> types = new LinkedList<String>(Arrays.asList(new String[] {"page", "type"}));
+	private static List<String> types = new LinkedList<String>(Arrays.asList(new String[] {"page", "type", "size"}));
 
 	public static final String TYPE = "component-list";
 
@@ -55,14 +55,24 @@ public class ComponentList extends AbstractPropertiesComponent implements IActio
 		ContentService content = ContentService.getInstance(ctx.getRequest());
 		MenuElement root = content.getNavigation(ctx);
 		MenuElement page = root.searchChildFromName(getFieldValue("page", null));
+		int size = Integer.MAX_VALUE;
+		if (StringHelper.isDigit(getFieldValue("size"))) {
+			size = Integer.parseInt(getFieldValue("size"));
+		};
+		int c=0;
 		if (page != null) {
 			List<IContentVisualComponent> data = page.getContentByType(ctx, getFieldValue("type", null));
 			if (data != null && data.size() > 0) {
 				ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 				PrintStream out = new PrintStream(outStream);
 				out.println("<ul>");
-				for (IContentVisualComponent comp : data) {
-					out.println("<li>"+comp.getXHTMLCode(ctx)+"</li>");
+				String cssClass = " class=\"first\"";
+				for (IContentVisualComponent comp : data) {					
+					if (c<size) {
+						out.println("<li"+cssClass+">"+comp.getPrefixViewXHTMLCode(ctx)+comp.getXHTMLCode(ctx)+comp.getSuffixViewXHTMLCode(ctx)+"</li>");
+						cssClass="";
+					}
+					c++;
 				}
 				out.println("</ul>");
 				out.close();
