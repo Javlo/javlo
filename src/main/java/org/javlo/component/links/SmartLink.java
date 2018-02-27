@@ -126,6 +126,11 @@ public class SmartLink extends ComplexPropertiesLink implements ILink, IAction {
 	public void setImageURL(String url) {
 		properties.setProperty("image", url);
 	}
+	
+	@Override
+	protected boolean isAutoDeletable() {
+		return true;
+	}
 
 	@Override
 	public String getTextForSearch(ContentContext ctx) {

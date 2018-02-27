@@ -565,6 +565,11 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	protected boolean isFreeInputLayout() {
 		return false;
 	}
+	
+	protected boolean isAutoDeletable() {
+		return false;
+	}
+	
 
 	@Override
 	public String getXHTMLConfig(ContentContext ctx) throws Exception {
@@ -605,6 +610,17 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			out.println("<div class=\"line\">");
 			out.println("<label for=\"inlist-" + getId() + "\">" + i18nAccess.getText("component.inlist") + "</label>");
 			out.println(XHTMLHelper.getCheckbox("inlist-" + getId(), isList(ctx)));
+			out.println("</div>");
+		}
+		if (isAutoDeletable() && !ctx.getGlobalContext().isMailing()) {
+			out.println("<div class=\"line\">");
+			out.println("<label for=\"deldate-" + getId() + "\">" + i18nAccess.getText("component.delete-date", "delete on") + "</label>");
+			Date delDate = getDeleteDate(ctx);
+			String value="";
+			if (delDate != null) {
+				value = " value=\""+StringHelper.renderSortableDate(delDate)+"\"";
+			}
+			out.println("<input type=\"date\" name=\"deldate-"+getId()+"\""+value+" />");
 			out.println("</div>");
 		}
 		if (isHiddable()) {
@@ -828,7 +844,18 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 				logger.warning(e.getLocalizedMessage());
 			}
 		}
-
+		
+		String delDate = requestService.getParameter("deldate-" + getId(), null);
+		if (delDate != null) {
+			if (StringHelper.isEmpty(delDate)) {
+				getComponentBean().setDeleteDate(null);
+			} else {
+				Date date = StringHelper.parseSortableDate(delDate);
+				getComponentBean().setDeleteDate(date);
+			}
+			setModify();
+		}
+		
 		String textCol = requestService.getParameter("textcol-" + getId(), null);
 		if (textCol != null && !textCol.equals(getTextColor())) {
 			try {
@@ -1960,11 +1987,14 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 
 	@Override
 	public final String getXHTMLCode(ContentContext ctx) {
-
-		setNeedRefresh(false);
-		ctx.getRequest().setAttribute("comp", this);
-
 		try {
+			
+			if (isNeedDelete(ctx)) {
+				return "";
+			}
+			
+			setNeedRefresh(false);
+			ctx.getRequest().setAttribute("comp", this);
 
 			if (ctx.getRenderMode() != ContentContext.EDIT_MODE) {
 				processView(ctx);
@@ -2254,6 +2284,24 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	@Override
 	public boolean isList(ContentContext ctx) {
 		return componentBean.isList();
+	}
+	
+	protected Date getDeleteDate(ContentContext ctx) {
+		return componentBean.getDeleteDate();
+	}
+	
+	protected boolean isNeedDelete(ContentContext ctx) throws Exception {
+		if (getDeleteDate(ctx) == null) {
+			return false;
+		} else {
+			Date now = new Date();
+			if (getDeleteDate(ctx).getTime() < now.getTime()) {
+				deleteMySelf(ctx);
+				return true;
+			} else {
+				return false;
+			}
+		}
 	}
 
 	@Override

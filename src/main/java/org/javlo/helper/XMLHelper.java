@@ -3,7 +3,6 @@
  */
 package org.javlo.helper;
 
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -349,6 +348,11 @@ public class XMLHelper {
 
 				out.print("\" modificationDate=\"");
 				out.print(StringHelper.renderTime(beans[j].getModificationDate()));
+				
+				if (beans[j].getDeleteDate() != null) {
+					out.print("\" delDate=\"");
+					out.print(StringHelper.renderTime(beans[j].getDeleteDate()));
+				}
 				
 				if (beans[j].getCookiesDisplayStatus()!=CookiesService.ALWAYS_STATUS) {
 					out.print("\" displayCookiesStatus=\"");

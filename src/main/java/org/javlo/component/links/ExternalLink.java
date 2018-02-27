@@ -450,5 +450,10 @@ public class ExternalLink extends ComplexPropertiesLink implements IReverseLinkC
 	public String getFontAwesome() {
 		return "external-link";
 	}
+	
+	@Override
+	protected boolean isAutoDeletable() {
+		return true;
+	}
 
 }

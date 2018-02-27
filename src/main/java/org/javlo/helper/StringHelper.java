@@ -1803,7 +1803,7 @@ public class StringHelper {
 	public static Date parseDate(String inDate) throws ParseException {
 		return parseDate(inDate, "dd/MM/yyyy");
 	}
-
+	
 	/**
 	 * null save parse int.
 	 * 
@@ -2012,6 +2012,9 @@ public class StringHelper {
 	 */
 
 	public static Date parseTime(String inDate) throws ParseException {
+		if (inDate == null) {
+			return null;
+		}
 		return parseDate(inDate, "dd/MM/yyyy HH:mm:ss");
 	}
 

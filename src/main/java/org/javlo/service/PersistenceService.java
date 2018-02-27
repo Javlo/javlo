@@ -218,6 +218,9 @@ public class PersistenceService {
 	private boolean loaded = false;
 
 	public static final Date parseDate(String date) throws ParseException {
+		if (date == null) {
+			return null;
+		}
 		synchronized (PERSISTENCE_DATE_FORMAT) {
 			try {
 				return PERSISTENCE_DATE_FORMAT.parse(date);
@@ -664,6 +667,11 @@ public class PersistenceService {
 			bean.setAuthors(authors);
 			try {
 				bean.setModificationDate(parseDate(contentNode.getAttributeValue("modificationDate", "01/01/1970 00:00:00")));
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+			try {
+				bean.setDeleteDate(StringHelper.parseTime(contentNode.getAttributeValue("delDate", null)));
 			} catch (ParseException e) {
 				e.printStackTrace();
 			}

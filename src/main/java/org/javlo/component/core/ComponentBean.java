@@ -46,6 +46,7 @@ public class ComponentBean implements Serializable, Comparable<ComponentBean> {
 
 	private Date creationDate = new Date();
 	private Date modificationDate = new Date();
+	private Date deleteDate = null;
 
 	private String area = DEFAULT_AREA;
 
@@ -273,6 +274,14 @@ public class ComponentBean implements Serializable, Comparable<ComponentBean> {
 
 	public void setCookiesDisplayStatus(int cookiesDisplayStatus) {
 		this.cookiesDisplayStatus = cookiesDisplayStatus;
+	}
+
+	public Date getDeleteDate() {
+		return deleteDate;
+	}
+
+	public void setDeleteDate(Date deleteDate) {
+		this.deleteDate = deleteDate;
 	}
 
 }

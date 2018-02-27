@@ -1153,4 +1153,8 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 		return properties.getProperty("font-awesome", "address-card");
 	}
 	
+	protected boolean isAutoDeletable() {
+		return true;
+	}
+	
 }
