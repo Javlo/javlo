@@ -24,10 +24,13 @@ import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
+import java.text.ParseException;
 import java.util.Collections;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.zip.CRC32;
 
@@ -78,12 +81,13 @@ import net.sf.uadetector.UserAgentType;
 import net.sf.uadetector.service.UADetectorServiceFactory;
 
 public class NetHelper {
-	
-	public static final String JAVLO_USER_AGENT = "Mozilla/5.0 bot Javlo/"+IVersion.VERSION;
+
+	public static final String JAVLO_USER_AGENT = "Mozilla/5.0 bot Javlo/" + IVersion.VERSION;
 
 	private static boolean INIT_HTTPS = false;
 
-	private static final Map<String, Boolean> UserAgentCache = Collections.synchronizedMap(new TimeMap<String, Boolean>(60 * 60 * 24 * 30, 100000)); 
+	private static final Map<String, Boolean> UserAgentCache = Collections
+			.synchronizedMap(new TimeMap<String, Boolean>(60 * 60 * 24 * 30, 100000));
 
 	/**
 	 * create a static logger.
@@ -156,7 +160,8 @@ public class NetHelper {
 				int status = conn.getResponseCode();
 				redirect = false;
 				if (status != HttpURLConnection.HTTP_OK) {
-					if (status == HttpURLConnection.HTTP_MOVED_TEMP || status == HttpURLConnection.HTTP_MOVED_PERM || status == HttpURLConnection.HTTP_SEE_OTHER)
+					if (status == HttpURLConnection.HTTP_MOVED_TEMP || status == HttpURLConnection.HTTP_MOVED_PERM
+							|| status == HttpURLConnection.HTTP_SEE_OTHER)
 						redirect = true;
 				}
 				if (redirect) {
@@ -175,7 +180,7 @@ public class NetHelper {
 		}
 		return null;
 	}
-	
+
 	public static String getContentType(URL url) throws Exception {
 		try {
 			nocheckCertificatHttps();
@@ -188,7 +193,8 @@ public class NetHelper {
 				int status = conn.getResponseCode();
 				redirect = false;
 				if (status != HttpURLConnection.HTTP_OK) {
-					if (status == HttpURLConnection.HTTP_MOVED_TEMP || status == HttpURLConnection.HTTP_MOVED_PERM || status == HttpURLConnection.HTTP_SEE_OTHER)
+					if (status == HttpURLConnection.HTTP_MOVED_TEMP || status == HttpURLConnection.HTTP_MOVED_PERM
+							|| status == HttpURLConnection.HTTP_SEE_OTHER)
 						redirect = true;
 				}
 				if (redirect) {
@@ -219,7 +225,8 @@ public class NetHelper {
 				int status = conn.getResponseCode();
 				redirect = false;
 				if (status != HttpURLConnection.HTTP_OK) {
-					if (status == HttpURLConnection.HTTP_MOVED_TEMP || status == HttpURLConnection.HTTP_MOVED_PERM || status == HttpURLConnection.HTTP_SEE_OTHER)
+					if (status == HttpURLConnection.HTTP_MOVED_TEMP || status == HttpURLConnection.HTTP_MOVED_PERM
+							|| status == HttpURLConnection.HTTP_SEE_OTHER)
 						redirect = true;
 				}
 				if (redirect) {
@@ -273,7 +280,8 @@ public class NetHelper {
 		return readPage(url, cssInline, cssInline, userAgent, null, null, null, false);
 	}
 
-	public static String postJsonRequest(URL url, String userAgent, Map<String, String> header, String json) throws Exception {
+	public static String postJsonRequest(URL url, String userAgent, Map<String, String> header, String json)
+			throws Exception {
 		logger.fine("postJsonRequest : " + url);
 
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -316,13 +324,18 @@ public class NetHelper {
 			if (conn instanceof HttpURLConnection) {
 				HttpURLConnection httpConn = (HttpURLConnection) conn;
 
-				if (httpConn.getResponseCode() != HttpURLConnection.HTTP_OK && httpConn.getResponseCode() != HttpURLConnection.HTTP_MOVED_TEMP && httpConn.getResponseCode() != HttpURLConnection.HTTP_MOVED_PERM) {
-					logger.warning("error readpage :  '" + url + "' return error code : " + ((HttpURLConnection) conn).getResponseCode());
+				if (httpConn.getResponseCode() != HttpURLConnection.HTTP_OK
+						&& httpConn.getResponseCode() != HttpURLConnection.HTTP_MOVED_TEMP
+						&& httpConn.getResponseCode() != HttpURLConnection.HTTP_MOVED_PERM) {
+					logger.warning("error readpage :  '" + url + "' return error code : "
+							+ ((HttpURLConnection) conn).getResponseCode());
 					return null;
 				}
 
 				if (url.getProtocol().equalsIgnoreCase("http") || url.getProtocol().equalsIgnoreCase("https")) {
-					if (httpConn.getResponseCode() != HttpURLConnection.HTTP_OK && httpConn.getResponseCode() != HttpURLConnection.HTTP_MOVED_TEMP && httpConn.getResponseCode() != HttpURLConnection.HTTP_MOVED_PERM) {
+					if (httpConn.getResponseCode() != HttpURLConnection.HTTP_OK
+							&& httpConn.getResponseCode() != HttpURLConnection.HTTP_MOVED_TEMP
+							&& httpConn.getResponseCode() != HttpURLConnection.HTTP_MOVED_PERM) {
 						logger.warning("error readpage : " + httpConn.getResponseCode());
 						return null;
 					}
@@ -352,11 +365,13 @@ public class NetHelper {
 				}
 
 				@Override
-				public void checkClientTrusted(java.security.cert.X509Certificate[] chain, String authType) throws CertificateException {
+				public void checkClientTrusted(java.security.cert.X509Certificate[] chain, String authType)
+						throws CertificateException {
 				}
 
 				@Override
-				public void checkServerTrusted(java.security.cert.X509Certificate[] chain, String authType) throws CertificateException {
+				public void checkServerTrusted(java.security.cert.X509Certificate[] chain, String authType)
+						throws CertificateException {
 
 				}
 			} };
@@ -382,9 +397,12 @@ public class NetHelper {
 	 * @return code returned by the http request on the URL.
 	 * @throws IOException
 	 */
-	private static String readPage(URL url, boolean cssInline, boolean mailing, String userAgent, final String userName, final String password, String userToken, boolean noError) throws Exception {
+	private static String readPage(URL url, boolean cssInline, boolean mailing, String userAgent, final String userName,
+			final String password, String userToken, boolean noError) throws Exception {
 
-		logger.info("readPage : " + url + "  user:" + userName + "  password found:" + (StringHelper.neverNull(password).length() > 1) + "  token found:" + (StringHelper.neverNull(userToken).length() > 1));
+		logger.info("readPage : " + url + "  user:" + userName + "  password found:"
+				+ (StringHelper.neverNull(password).length() > 1) + "  token found:"
+				+ (StringHelper.neverNull(userToken).length() > 1));
 
 		if (null != userName && userName.trim().length() != 0 && null != password && password.trim().length() != 0) {
 
@@ -452,13 +470,18 @@ public class NetHelper {
 			if (conn instanceof HttpURLConnection) {
 				HttpURLConnection httpConn = (HttpURLConnection) conn;
 				if (!noError) {
-					if (httpConn.getResponseCode() != HttpURLConnection.HTTP_OK && httpConn.getResponseCode() != HttpURLConnection.HTTP_MOVED_TEMP && httpConn.getResponseCode() != HttpURLConnection.HTTP_MOVED_PERM) {
-						logger.warning("error readpage :  '" + url + "' return error code : " + ((HttpURLConnection) conn).getResponseCode());
+					if (httpConn.getResponseCode() != HttpURLConnection.HTTP_OK
+							&& httpConn.getResponseCode() != HttpURLConnection.HTTP_MOVED_TEMP
+							&& httpConn.getResponseCode() != HttpURLConnection.HTTP_MOVED_PERM) {
+						logger.warning("error readpage :  '" + url + "' return error code : "
+								+ ((HttpURLConnection) conn).getResponseCode());
 						return null;
 					}
 
 					if (url.getProtocol().equalsIgnoreCase("http") || url.getProtocol().equalsIgnoreCase("https")) {
-						if (httpConn.getResponseCode() != HttpURLConnection.HTTP_OK && httpConn.getResponseCode() != HttpURLConnection.HTTP_MOVED_TEMP && httpConn.getResponseCode() != HttpURLConnection.HTTP_MOVED_PERM) {
+						if (httpConn.getResponseCode() != HttpURLConnection.HTTP_OK
+								&& httpConn.getResponseCode() != HttpURLConnection.HTTP_MOVED_TEMP
+								&& httpConn.getResponseCode() != HttpURLConnection.HTTP_MOVED_PERM) {
 							logger.warning("error readpage : " + httpConn.getResponseCode());
 							return null;
 						}
@@ -500,7 +523,8 @@ public class NetHelper {
 
 			if (conn instanceof HttpURLConnection) {
 				if (((HttpURLConnection) conn).getResponseCode() != HttpURLConnection.HTTP_OK) {
-					logger.warning("help url '" + url + "' return error code : " + ((HttpURLConnection) conn).getResponseCode());
+					logger.warning("help url '" + url + "' return error code : "
+							+ ((HttpURLConnection) conn).getResponseCode());
 					return null;
 				}
 			}
@@ -537,7 +561,7 @@ public class NetHelper {
 	public static void readPage(URL url, OutputStream out) throws Exception {
 		InputStream in = null;
 		try {
-			URLConnection conn = url.openConnection(); 
+			URLConnection conn = url.openConnection();
 			conn.setRequestProperty("User-Agent", JAVLO_USER_AGENT);
 			in = conn.getInputStream();
 			ResourceHelper.writeStreamToStream(in, out);
@@ -560,8 +584,8 @@ public class NetHelper {
 		}
 		InputStream in = null;
 		try {
-			URLConnection conn = url.openConnection(); 
-			conn.setRequestProperty("User-Agent", JAVLO_USER_AGENT);		
+			URLConnection conn = url.openConnection();
+			conn.setRequestProperty("User-Agent", JAVLO_USER_AGENT);
 			in = conn.getInputStream();
 			return ResourceHelper.writeStreamToString(in, ContentContext.CHARACTER_ENCODING);
 		} catch (Exception e) {
@@ -606,6 +630,80 @@ public class NetHelper {
 		return null;
 	}
 
+	private static final String getMeta(Document doc, String field) {
+		String value = null;
+		Elements meta = doc.select("meta[property=og:" + field + "]");
+		if (meta != null && !StringHelper.isEmpty(meta.attr("content"))) {
+			value = meta.attr("content");
+		} else {
+			meta = doc.select("meta[name=twitter:" + field + "]");
+			if (meta != null && !StringHelper.isEmpty(meta.attr("content"))) {
+				value = meta.attr("content");
+			} else {
+				meta = doc.select("meta[property=article:" + field + "]");
+				if (meta != null && !StringHelper.isEmpty(meta.attr("content"))) {
+					value = meta.attr("content");
+				} else {
+					return null;
+				} 
+			} 
+		}
+		return value;
+	}
+
+	public static PageMeta getPageMeta(URL url) throws Exception  {
+		String html = readPageGet(url);
+		PageMeta pageMeta = new PageMeta();
+		Document doc = Jsoup.parse(html);
+
+		String title = getMeta(doc, "title");		
+		if (StringHelper.isEmpty(title)) {
+			return null;
+		}
+		pageMeta.setTitle(title);
+		pageMeta.setUrl(url);
+		String description = getMeta(doc, "description");		
+		pageMeta.setDescription(description);
+
+		String imageUrl = getMeta(doc, "image");		
+		pageMeta.setImage(new URL(imageUrl));
+
+		Locale locale = null;
+		String locStr = getMeta(doc, "locale");;
+		if (locStr.contains("_")) {
+			String[] locArray = locStr.split("_");
+			if (locArray[0].length() == 2 && locArray[1].length() == 2) {
+				locale = new Locale(locArray[0], locArray[1]);
+			}
+		} else {
+			if (locStr.length() == 2) {
+				locale = new Locale(locStr);
+			}
+		}
+		pageMeta.setLocale(locale);
+		
+		String dateStr = getMeta(doc, "modified_time");	
+		if (StringHelper.isEmpty(dateStr)) {
+			dateStr = getMeta(doc, "published_time");
+			if (StringHelper.isEmpty(dateStr)) {
+				pageMeta.setDate(new Date(readDate(url)));
+			}			
+		}
+		if (!StringHelper.isEmpty(dateStr)) {
+			Date date = null;
+			try {
+				date = StringHelper.parseIso8601(dateStr);
+				pageMeta.setDate(date);
+			} catch (ParseException e) {
+				e.printStackTrace();
+				pageMeta.setDate(new Date(readDate(url)));
+			}
+			
+		}
+
+		return pageMeta;
+	}
+
 	/**
 	 * extract the title of a web page.
 	 * 
@@ -619,7 +717,7 @@ public class NetHelper {
 		String contentLowerCase = content.toLowerCase();
 		int indexDescriptionStart = contentLowerCase.indexOf("name=\"description\"");
 		if (indexDescriptionStart < 0) {
-			return null;
+			return "";
 		}
 		indexDescriptionStart = contentLowerCase.indexOf("content=\"", indexDescriptionStart) + "content=\"".length();
 		int indexDescriptionEnd = contentLowerCase.indexOf("\"", indexDescriptionStart + "content=\"".length() + 1);
@@ -641,8 +739,8 @@ public class NetHelper {
 		if (content == null) {
 			return Collections.EMPTY_LIST;
 		}
-		List<VisualResource> urlList = new LinkedList<VisualResource>();		
-		
+		List<VisualResource> urlList = new LinkedList<VisualResource>();
+
 		int srcIndex = content.toLowerCase().indexOf("src=\"") + "src=\"".length();
 		while (srcIndex >= "src=\"".length()) {
 			int closeLink = content.indexOf("\"", srcIndex + 1);
@@ -834,9 +932,11 @@ public class NetHelper {
 						try {
 							baseURLParser = new URL(baseURL);
 							if (baseURLParser.getPort() > 0) {
-								url = URLHelper.mergePath(baseURLParser.getProtocol() + ':' + baseURLParser.getPort() + "://" + baseURLParser.getHost(), url);
+								url = URLHelper.mergePath(baseURLParser.getProtocol() + ':' + baseURLParser.getPort()
+										+ "://" + baseURLParser.getHost(), url);
 							} else {
-								url = URLHelper.mergePath(baseURLParser.getProtocol() + "://" + baseURLParser.getHost(), url);
+								url = URLHelper.mergePath(baseURLParser.getProtocol() + "://" + baseURLParser.getHost(),
+										url);
 							}
 						} catch (MalformedURLException e) {
 							e.printStackTrace();
@@ -864,10 +964,12 @@ public class NetHelper {
 	 *            the content
 	 * @return the uri to the local file
 	 */
-	public static String getLocalCopyOfPageImage(ContentContext ctx, URL inURL, String content, CRC32 crc32, boolean preferVertical, boolean needVertical) {
+	public static String getLocalCopyOfPageImage(ContentContext ctx, URL inURL, String content, CRC32 crc32,
+			boolean preferVertical, boolean needVertical) {
 		StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-		return getLocalCopyOfPageImage(staticConfig.getCacheFolder(), globalContext.getDataFolder(), inURL, null, content, crc32, preferVertical, needVertical);
+		return getLocalCopyOfPageImage(staticConfig.getCacheFolder(), globalContext.getDataFolder(), inURL, null,
+				content, crc32, preferVertical, needVertical);
 	}
 
 	public static List<URL> extractMostSimilarLinks(URL url) throws Exception {
@@ -904,7 +1006,8 @@ public class NetHelper {
 	 *            the content
 	 * @return the uri to the local file
 	 */
-	public static String getLocalCopyOfPageImage(String cacheFolder, String dataFolder, URL pageURL, URL imageURL, String content, CRC32 crc32, boolean preferVertical, boolean needVertical) {
+	public static String getLocalCopyOfPageImage(String cacheFolder, String dataFolder, URL pageURL, URL imageURL,
+			String content, CRC32 crc32, boolean preferVertical, boolean needVertical) {
 
 		logger.info("read : " + pageURL);
 
@@ -942,8 +1045,8 @@ public class NetHelper {
 				try {
 					ByteArrayOutputStream imgBuffer = new ByteArrayOutputStream();
 					int imageSize = 0;
-					conn = (new URL(url)).openConnection();					
-					conn.setRequestProperty("User-Agent", JAVLO_USER_AGENT);	
+					conn = (new URL(url)).openConnection();
+					conn.setRequestProperty("User-Agent", JAVLO_USER_AGENT);
 					conn.setRequestProperty("Referer", pageURL.toString());
 					conn.setRequestProperty("Host", pageURL.getHost());
 					conn.setReadTimeout(5000);
@@ -1075,11 +1178,13 @@ public class NetHelper {
 							}
 
 							@Override
-							public void checkServerTrusted(java.security.cert.X509Certificate[] chain, String authType) throws CertificateException {
+							public void checkServerTrusted(java.security.cert.X509Certificate[] chain, String authType)
+									throws CertificateException {
 							}
 
 							@Override
-							public void checkClientTrusted(java.security.cert.X509Certificate[] chain, String authType) throws CertificateException {
+							public void checkClientTrusted(java.security.cert.X509Certificate[] chain, String authType)
+									throws CertificateException {
 							}
 						} };
 						SSLContext sc = SSLContext.getInstance("SSL");
@@ -1099,7 +1204,8 @@ public class NetHelper {
 				}
 				conn.setConnectTimeout(10 * 1000);
 				conn.setRequestMethod("GET");
-				conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows; U; Windows NT 6.0; en-US; rv:1.9.1.2) Gecko/20090729 Firefox/3.5.2 (.NET CLR 3.5.30729)");
+				conn.setRequestProperty("User-Agent",
+						"Mozilla/5.0 (Windows; U; Windows NT 6.0; en-US; rv:1.9.1.2) Gecko/20090729 Firefox/3.5.2 (.NET CLR 3.5.30729)");
 				int responseCode = ((HttpURLConnection) urlConnection).getResponseCode();
 				if (only404) {
 					return responseCode != 404;
@@ -1212,7 +1318,8 @@ public class NetHelper {
 	 * @return
 	 */
 	public static boolean isConnected() {
-		return canReach("http://www.google.com") || canReach("http://www.belgium.be") || canReach("http://www.javlo.org");
+		return canReach("http://www.google.com") || canReach("http://www.belgium.be")
+				|| canReach("http://www.javlo.org");
 	}
 
 	/**
@@ -1260,20 +1367,26 @@ public class NetHelper {
 		return false;
 	}
 
-	public static void sendMailToAdministrator(GlobalContext globalContext, String subject, String content) throws AddressException {
-		sendMailToAdministrator(globalContext, new InternetAddress(globalContext.getAdministratorEmail()), subject, content);
+	public static void sendMailToAdministrator(GlobalContext globalContext, String subject, String content)
+			throws AddressException {
+		sendMailToAdministrator(globalContext, new InternetAddress(globalContext.getAdministratorEmail()), subject,
+				content);
 	}
 
-	public static void sendMailToAdministrator(GlobalContext globalContext, InternetAddress from, String subject, String content) {
-		MailService mailService = MailService.getInstance(new MailConfig(globalContext, globalContext.getStaticConfig(), null));
+	public static void sendMailToAdministrator(GlobalContext globalContext, InternetAddress from, String subject,
+			String content) {
+		MailService mailService = MailService
+				.getInstance(new MailConfig(globalContext, globalContext.getStaticConfig(), null));
 		try {
-			mailService.sendMail(from, new InternetAddress(globalContext.getAdministratorEmail()), subject, content, false);
+			mailService.sendMail(from, new InternetAddress(globalContext.getAdministratorEmail()), subject, content,
+					false);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
-	public static void sendXHTMLMail(ContentContext ctx, InternetAddress from, InternetAddress to, InternetAddress cc, InternetAddress bcc, String subject, String content, String templateName) throws Exception {
+	public static void sendXHTMLMail(ContentContext ctx, InternetAddress from, InternetAddress to, InternetAddress cc,
+			InternetAddress bcc, String subject, String content, String templateName) throws Exception {
 		if (templateName == null) {
 			templateName = "basic_mailing";
 		}
@@ -1291,11 +1404,14 @@ public class NetHelper {
 		url = URLHelper.addParam(url, Template.FORCE_TEMPLATE_PARAM_NAME, templateName);
 		String XHTMLContent = NetHelper.readPageGet(new URL(url));
 		XHTMLContent = CSSParser.mergeCSS(XHTMLContent, false);
-		sendMail(ctx.getGlobalContext(), from, to, cc, bcc, subject, XHTMLContent, StringHelper.removeTag(content), true);
+		sendMail(ctx.getGlobalContext(), from, to, cc, bcc, subject, XHTMLContent, StringHelper.removeTag(content),
+				true);
 	}
 
-	public static void sendMail(GlobalContext globalContext, InternetAddress from, InternetAddress to, InternetAddress cc, InternetAddress bcc, String subject, String content) {
-		MailService mailService = MailService.getInstance(new MailConfig(globalContext, globalContext.getStaticConfig(), null));
+	public static void sendMail(GlobalContext globalContext, InternetAddress from, InternetAddress to,
+			InternetAddress cc, InternetAddress bcc, String subject, String content) {
+		MailService mailService = MailService
+				.getInstance(new MailConfig(globalContext, globalContext.getStaticConfig(), null));
 		try {
 			mailService.sendMail(null, from, to, cc, bcc, subject, content, false);
 		} catch (Exception e) {
@@ -1303,10 +1419,14 @@ public class NetHelper {
 		}
 	}
 
-	public static void sendMail(GlobalContext globalContext, InternetAddress from, InternetAddress to, InternetAddress cc, InternetAddress bcc, String subject, String content, String contentTxt, boolean isHTML) {
-		MailService mailService = MailService.getInstance(new MailConfig(globalContext, globalContext.getStaticConfig(), null));
+	public static void sendMail(GlobalContext globalContext, InternetAddress from, InternetAddress to,
+			InternetAddress cc, InternetAddress bcc, String subject, String content, String contentTxt,
+			boolean isHTML) {
+		MailService mailService = MailService
+				.getInstance(new MailConfig(globalContext, globalContext.getStaticConfig(), null));
 		try {
-			mailService.sendMail(null, from, to, cc, bcc, subject, content, contentTxt, isHTML, globalContext.getDKIMBean());
+			mailService.sendMail(null, from, to, cc, bcc, subject, content, contentTxt, isHTML,
+					globalContext.getDKIMBean());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -1387,7 +1507,8 @@ public class NetHelper {
 
 	}
 
-	public static void sendPageByMailing(ContentContext ctx, MenuElement page, String sender, String recipient, Map<String, Object> params) throws Exception {
+	public static void sendPageByMailing(ContentContext ctx, MenuElement page, String sender, String recipient,
+			Map<String, Object> params) throws Exception {
 		ctx = ctx.getContextOnPage(page);
 		MailingBuilder mb = new MailingBuilder();
 		mb.setSender(sender);
@@ -1510,7 +1631,7 @@ public class NetHelper {
 		}
 		return false;
 	}
-	
+
 	public static Company validVATEuroparlEU(ContentContext ctx, String vat) throws MalformedURLException, Exception {
 		if (ctx != null && !ctx.getGlobalContext().getStaticConfig().isInternetAccess() || vat == null) {
 			return null;
@@ -1525,7 +1646,8 @@ public class NetHelper {
 		if (!StringHelper.isDigit(number)) {
 			return null;
 		}
-		String url = "http://ec.europa.eu/taxation_customs/vies/vatResponse.html?number=" + number + "&memberStateCode=" + country;
+		String url = "http://ec.europa.eu/taxation_customs/vies/vatResponse.html?number=" + number + "&memberStateCode="
+				+ country;
 		String content = readPageGet(new URL(url));
 		Document doc = Jsoup.parse(content);
 		Element elem = doc.getElementById("vatResponseFormTable");
@@ -1534,7 +1656,7 @@ public class NetHelper {
 			Elements tds = elem.getElementsByTag("td");
 			int i = 0;
 			for (Element td : tds) {
-				i++;				
+				i++;
 				if (i == 7) {
 					company.setNumber(td.text());
 				}
@@ -1549,5 +1671,14 @@ public class NetHelper {
 		return company;
 	}
 	
-}
+	public static void main(String[] args) throws Exception {
+		URL url = new URL("https://www.rtbf.be/info/societe/detail_la-pilule-du-suicide-attire-les-hollandais?id=9699011");
+		PageMeta meta = getPageMeta(url);
+		System.out.println(">>>>>>>>> NetHelper.main : title = "+meta.getTitle()); //TODO: remove debug trace
+		System.out.println(">>>>>>>>> NetHelper.main : description = "+meta.getDescription()); //TODO: remove debug trace
+		System.out.println(">>>>>>>>> NetHelper.main : image = "+meta.getImage()); //TODO: remove debug trace
+		System.out.println(">>>>>>>>> NetHelper.main : url = "+meta.getUrl()); //TODO: remove debug trace
+		System.out.println(">>>>>>>>> NetHelper.main : date = "+StringHelper.renderDate(meta.getDate())); //TODO: remove debug trace
+	}
 
+}

@@ -7,6 +7,7 @@ import java.net.URL;
 import java.text.ParseException;
 import java.util.Collection;
 import java.util.Date;
+import java.util.LinkedList;
 
 import javax.servlet.ServletContext;
 
@@ -17,6 +18,7 @@ import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.data.InfoBean;
 import org.javlo.helper.NetHelper;
+import org.javlo.helper.PageMeta;
 import org.javlo.helper.ServletHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.i18n.I18nAccess;
@@ -143,7 +145,11 @@ public class SmartLink extends ComplexPropertiesLink implements ILink, IAction {
 			out.println("<div class=\"col-sm-3\"><figure><img class=\"img-responsive img-fluid\" src=\"" + getImageURL() + "\" /></figure></div>");	
 		}		
 		out.println("<div class=\"col-sm-"+colSize+"\">");	
-		out.println("<a class=\"" + getType() + "\" href=\"" + getURL() + "\">");
+		String target="";
+		if (ctx.getGlobalContext().isOpenExternalLinkAsPopup()) {
+			target=" target=\"_blank\"";
+		}
+		out.println("<a"+target+" class=\"" + getType() + "\" href=\"" + getURL() + "\">");
 		out.println("<h"+(ctx.getTitleDepth()+1)+">" + getTitle() + "</h"+(ctx.getTitleDepth()+1)+">");
 		out.println("</a>");
 		out.println("<div class=\"news-info\">");
@@ -214,30 +220,52 @@ public class SmartLink extends ComplexPropertiesLink implements ILink, IAction {
 			ContentService content = ContentService.getInstance(ctx.getRequest());
 			SmartLink comp = (SmartLink) content.getComponent(ctx, rs.getParameter("comp_id", null));
 			if (comp != null) {
-				URL sourceURL = new URL(url);
-				String remoteXHTML = NetHelper.readPageWithGet(sourceURL);				
-				ctx.getRequest().setAttribute("title", Encode.forHtmlAttribute(NetHelper.getPageTitle(remoteXHTML)));
-				ctx.getRequest().setAttribute("description", Encode.forHtmlAttribute(NetHelper.getPageDescription(remoteXHTML)));
-				Collection<VisualResource> images = NetHelper.extractImage(sourceURL, remoteXHTML, true);
-				int biggerImageSize = 0;
-				VisualResource biggerImage = null;
-				for (VisualResource resource : images) {
-					float prop = (float)resource.getWidth()/(float)resource.getHeight();
-					if (prop>1) {
-						prop = (float)resource.getHeight()/(float)resource.getWidth();
-					}					
-					if (prop>0.4 && biggerImageSize < resource.getWidth()*resource.getHeight()) {
-						biggerImageSize = resource.getWidth()*resource.getHeight();
-						biggerImage = resource;
+				URL sourceURL = new URL(url);				
+				String title;
+				String description;				
+				String date;
+				PageMeta pageMeta = NetHelper.getPageMeta(new URL(url));
+				Collection<VisualResource> images = new LinkedList<VisualResource>();
+				if (pageMeta != null) {
+					title = pageMeta.getTitle();
+					description = pageMeta.getDescription();
+					date = StringHelper.renderTime(pageMeta.getDate());
+					URL imageURL = pageMeta.getImage();
+					if(imageURL != null) {				 
+						VisualResource vr = new VisualResource();
+						vr.setUri(pageMeta.getImage().toString());
+						images.add(vr);	
+						comp.setImageURL(imageURL.toString());
 					}
+				} else {
+					String remoteXHTML = NetHelper.readPageWithGet(sourceURL);				
+					title = Encode.forHtmlAttribute(NetHelper.getPageTitle(remoteXHTML));					
+					description = Encode.forHtmlAttribute(NetHelper.getPageDescription(remoteXHTML));					
+					images = NetHelper.extractImage(sourceURL, remoteXHTML, true);
+					int biggerImageSize = 0;
+					VisualResource biggerImage = null;
+					for (VisualResource resource : images) {
+						float prop = (float)resource.getWidth()/(float)resource.getHeight();
+						if (prop>1) {
+							prop = (float)resource.getHeight()/(float)resource.getWidth();
+						}					
+						if (prop>0.4 && biggerImageSize < resource.getWidth()*resource.getHeight()) {
+							biggerImageSize = resource.getWidth()*resource.getHeight();
+							biggerImage = resource;
+						}
+						
+					}
+					if (biggerImage != null) {
+						comp.setImageURL(biggerImage.getUri());
+					}
+					date = StringHelper.renderTime(new Date(NetHelper.readDate(sourceURL)));
 				}
-				if (biggerImage != null) {
-					comp.setImageURL(biggerImage.getUri());
-				}
+				ctx.getRequest().setAttribute("title", title);
+				ctx.getRequest().setAttribute("description", description);
 				ctx.getRequest().setAttribute("images", images);
 				ctx.getRequest().setAttribute("comp", comp);
 				ctx.getRequest().setAttribute("image", comp.getImageURL());
-				ctx.getRequest().setAttribute("date", StringHelper.renderTime(new Date(NetHelper.readDate(sourceURL))));
+				ctx.getRequest().setAttribute("date", date);
 				String xhtml = ServletHelper.executeJSP(ctx, renderer);
 				ctx.getAjaxInsideZone().put(comp.getBodyId(), xhtml);
 			} else {

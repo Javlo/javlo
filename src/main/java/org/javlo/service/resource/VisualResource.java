@@ -7,6 +7,8 @@ public class VisualResource extends Resource {
 	private int height;
 	
 	private int size;
+	
+	private boolean principal = false;
 
 	public int getWidth() {
 		return width;
@@ -31,7 +33,12 @@ public class VisualResource extends Resource {
 	public void setSize(int size) {
 		this.size = size;
 	}
-	
-	
-	
+
+	public boolean isPrincipal() {
+		return principal;
+	}
+
+	public void setPrincipal(boolean principal) {
+		this.principal = principal;
+	}
 }
