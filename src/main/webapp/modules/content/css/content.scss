@@ -240,8 +240,9 @@ body.right-admin #page-404 {
 
 ul.inline {
 	display: flex;
+	flex-wrap: wrap;
 	li {
-		width: 20%;
+		width: 10%;
 	}
 }
 
