@@ -410,6 +410,27 @@ jQuery.fn.extend({
 	}
 });
 
+filterSub = function(filterStr, selector, filterSelector) {
+	// jQuery(selector).show();
+	if (jQuery(selector).length == 0) {
+		console.log("warning: no filtrable content.");
+	}
+	jQuery(selector).filter(function() {
+		item = jQuery(this);
+		if (item.find(filterSelector).text().toLowerCase().indexOf(filterStr.toLowerCase()) >= 0) {
+			item.show(400);
+			return false;
+		} else {
+			item.hide(400);
+			return true;
+		}
+	});
+	try {
+		updateLayout();
+	} catch (err) {
+	}
+}
+
 filter = function(filterStr, selector) {
 	// jQuery(selector).show();
 	if (jQuery(selector).length == 0) {

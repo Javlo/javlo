@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.logging.Logger;
 
 import javax.servlet.Filter;
@@ -23,7 +22,6 @@ import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.ResourceHelper;
-import org.javlo.helper.URLHelper;
 import org.lesscss.LessCompiler;
 
 import io.bit3.jsass.CompilationException;

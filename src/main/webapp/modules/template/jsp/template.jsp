@@ -1,8 +1,9 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"
 %><%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"
 %><li class="${template.valid?'valid':'unvalid'}${info.page.templateId == template.name?' active':''}">
-		<c:if test="${not empty selectUrl}"><a href="${selectUrl}&template=${template.name}" title="select ${template.name}" class="select-template"></c:if>
-        <div class="thumb">
+		<c:if test="${not empty selectUrl}"><a href="${selectUrl}&template=${template.name}" title="select ${template.name}" class="select-template"></c:if>		
+        <div class="thumb">  
+        	<h2>${template.name}</h2>      	        
         	<c:if test="${empty param.previewEdit}">
             	<img src="${template.previewUrl}" alt="${template.name}" />
             </c:if>
@@ -41,11 +42,7 @@
             </c:if>
             <c:if test="${empty param.previewEdit}">
             
-            <div class="info">
-                <p>
-                    <label>${i18n.edit['global.name']}:</label>
-                    <span>${template.name}</span>
-                </p>
+            <div class="info">                
                 <p>
                     <label>${i18n.edit['template.parent']}:</label>
 	                   <span><c:if test="${not empty template.parent}">${template.parent}</c:if><c:if test="${empty template.parent}">/</c:if></span>

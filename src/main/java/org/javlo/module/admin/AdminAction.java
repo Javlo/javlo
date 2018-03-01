@@ -1133,7 +1133,7 @@ public class AdminAction extends AbstractModuleAction {
 				Map<String, String> selectedMacros = new HashMap<String, String>();
 				for (String selected : currentGlobalContext.getMacros()) {
 					selectedMacros.put(selected, StringHelper.SOMETHING);
-				}
+				}				
 				request.setAttribute("selectedMacros", selectedMacros);
 
 				/** template plugin **/

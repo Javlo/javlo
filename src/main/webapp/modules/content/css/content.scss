@@ -238,6 +238,13 @@ body.right-admin #page-404 {
 	background-repeat: no-repeat;
 }
 
+ul.inline {
+	display: flex;
+	li {
+		width: 20%;
+	}
+}
+
 li.line {
 	width: 160px;
 	display: inline-block;

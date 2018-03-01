@@ -44,6 +44,7 @@ import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
+import org.javlo.data.InfoBean;
 import org.javlo.helper.BeanHelper;
 import org.javlo.helper.LangHelper;
 import org.javlo.helper.NetHelper;
@@ -105,15 +106,10 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		}
 		return bundle;
 	}
-
-	protected File getAttachFolder(ContentContext ctx) throws IOException {
-		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-		String fileName = "df-" + getId();
-		if (getLocalConfig(false).get("filename") != null) {
-			fileName = getLocalConfig(false).getProperty("filename");
-		}
-		fileName = StringHelper.getFileNameWithoutExtension(fileName);
-		File dir = new File(URLHelper.mergePath(globalContext.getDataFolder(), globalContext.getStaticConfig().getStaticFolder(), FOLDER, fileName));
+	
+	protected File getAttachFolder(ContentContext ctx) throws Exception {
+		File file = getFile(ctx);		
+		File dir = new File(URLHelper.mergePath(getFile(ctx).getParentFile().getAbsolutePath(), StringHelper.getFileNameWithoutExtension(file.getName())));
 		if (!dir.exists()) {
 			dir.mkdirs();
 		}
@@ -154,7 +150,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		return getLocalConfig(false).getProperty(RECAPTCHASECRETKEY, null);
 	}
 
-	public int getCountSubscription(ContentContext ctx) throws IOException {
+	public int getCountSubscription(ContentContext ctx) throws Exception {
 		if (countCache == null) {
 			File file = getFile(ctx);
 			if (!file.exists()) {
@@ -177,7 +173,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		return countCache;
 	}
 
-	public List<Map<String, String>> getData(ContentContext ctx) throws IOException {
+	public List<Map<String, String>> getData(ContentContext ctx) throws Exception {
 		File file = getFile(ctx);
 		if (!file.exists()) {
 			return Collections.EMPTY_LIST;
@@ -441,7 +437,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		}
 	}
 
-	public boolean isClose(ContentContext ctx) throws IOException {
+	public boolean isClose(ContentContext ctx) throws Exception {
 		Properties localConfig = getLocalConfig(false);
 		String eventLimistStr = localConfig.getProperty("event.limit");
 		if (StringHelper.isDigit(eventLimistStr)) {
@@ -524,7 +520,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		return "_new_field_" + getId();
 	}
 
-	protected boolean isWarningEventSite(ContentContext ctx) throws IOException {
+	protected boolean isWarningEventSite(ContentContext ctx) throws Exception {
 		Properties localConfig = getLocalConfig(false);
 		String eventLimistStr = localConfig.getProperty("event.alert-limit");
 		int countSubscription = getCountSubscription(ctx);
@@ -535,7 +531,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		}
 	}
 
-	protected boolean isClosedEventSite(ContentContext ctx) throws IOException {
+	protected boolean isClosedEventSite(ContentContext ctx) throws Exception {
 		Properties localConfig = getLocalConfig(false);
 		String eventLimistStr = localConfig.getProperty("event.limit");
 		int countSubscription = getCountSubscription(ctx);
@@ -546,7 +542,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		}
 	}
 
-	protected boolean isFullEventSite(ContentContext ctx) throws IOException {
+	protected boolean isFullEventSite(ContentContext ctx) throws Exception {
 		Properties localConfig = getLocalConfig(false);
 		String eventLimistStr = localConfig.getProperty("event.limit");
 		int countSubscription = getCountSubscription(ctx);
@@ -642,7 +638,6 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 				if (rs.getParameter(down, null) != null) {
 					field.setOrder(field.getOrder() + 15);
 				}
-
 				store(field);
 			}
 		}
@@ -676,9 +671,9 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		return true;
 	}
 
-	protected File getFile(ContentContext ctx) throws IOException {
+	protected File getFile(ContentContext ctx) throws Exception {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-		String fileName = "df-" + getId() + ".csv";
+		String fileName = StringHelper.createFileName(InfoBean.getCurrentInfoBean(ctx).getSection())+"/df-" + StringHelper.createFileName(getPage().getTitle(ctx)+"_"+StringHelper.renderDate(getPage().getContentDateNeverNull(ctx))) + ".csv";
 		if (getLocalConfig(false).get("filename") != null && getLocalConfig(false).get("filename").toString().trim().length() > 0) {
 			fileName = getLocalConfig(false).getProperty("filename");
 		}
@@ -829,7 +824,8 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		} else {
 			subject = comp.getLocalConfig(false).getProperty("mail.subject", subject);
 		}
-
+		InfoBean.getCurrentInfoBean(ctx); // create info bean if not exist
+		subject = XHTMLHelper.replaceJSTLData(ctx, subject);		
 		Map<String, Object> params = rs.getParameterMap();
 		Map<String, String> result = new HashMap<String, String>();
 		List<String> errorFields = new LinkedList<String>();
@@ -1023,7 +1019,6 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 				Map<String, String> paramsEdit = new HashMap<String, String>();
 				paramsEdit.put(comp.getInputEditLineName(ctx), comp.encodeEditNumber(ctx, lineNumber));
 				String editURL = URLHelper.createURL(ctx.getContextForAbsoluteURL(), ctx.getPath(), paramsEdit);
-
 				
 				try {
 					mailService = MailService.getInstance(new MailConfig(globalContext, globalContext.getStaticConfig(), null));
@@ -1064,7 +1059,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 					mailService.sendMail(null, fromEmail, toEmail, ccList, bccList, subject, mailAdminContent, true, null, globalContext.getDKIMBean());
 					
 					if (comp.isWarningEventSite(ctx)) {
-						subject = globalContext.getContextKey() + " - WARNING Event almost full : " + ctx.getCurrentPage().getTitle(ctx);
+						subject = globalContext.getContextKey() + " - WARNING Event almost full : " + ctx.getCurrentPage().getTitle(ctx) + " ["+StringHelper.renderDate(comp.getPage().getContentDateNeverNull(absCtx))+']';							
 						Map data = new HashMap();
 						String eventLimistStr = comp.getLocalConfig(false).getProperty("event.alert-limit");
 						int countSubscription = comp.getCountSubscription(ctx);
@@ -1078,7 +1073,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 					}
 
 					if (comp.isClosedEventSite(ctx)) {
-						subject = globalContext.getContextKey() + " - WARNING Event full : " + ctx.getCurrentPage().getTitle(ctx);
+						subject = globalContext.getContextKey() + " - WARNING Event full : " + ctx.getCurrentPage().getTitle(ctx) + " ["+StringHelper.renderDate(comp.getPage().getContentDateNeverNull(absCtx))+']';							
 						Map data = new HashMap();
 						String eventLimistStr = comp.getLocalConfig(false).getProperty("event.alert-limit");
 						int countSubscription = comp.getCountSubscription(ctx);
@@ -1092,7 +1087,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 					}
 
 					if (eventClose) {
-						subject = globalContext.getContextKey() + " - WARNING registration on full event : " + ctx.getCurrentPage().getTitle(ctx);
+						subject = globalContext.getContextKey() + " - WARNING registration on full event : " + ctx.getCurrentPage().getTitle(ctx) + " ["+StringHelper.renderDate(comp.getPage().getContentDateNeverNull(absCtx))+']';	
 						Map data = new HashMap();
 						String eventLimistStr = comp.getLocalConfig(false).getProperty("event.alert-limit");
 						int countSubscription = comp.getCountSubscription(ctx);
@@ -1117,6 +1112,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 					ContentContext pageCtx = ctx.getContextForAbsoluteURL();
 					pageCtx.setRenderMode(ContentContext.PAGE_MODE);
 					if (!StringHelper.isEmpty(mailSubject)) {
+						mailSubject = XHTMLHelper.replaceJSTLData(pageCtx, mailSubject);
 						logger.info("read mail from : "+mailPath);
 						String email = NetHelper.readPageForMailing(new URL(URLHelper.createURL(pageCtx, mailPath)));
 						if (email != null && email.length() > 0) {

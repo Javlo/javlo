@@ -45,14 +45,14 @@ public class Tags extends ComplexPropertiesLink {
 		int i = 0;
 		List<String> currentTags = getTags();
 		out.print("<input type=\"hidden\" name=\"tag-" + getId() + "\" value=\"tag\"/>");
-		out.println("<ul>");
+		out.println("<ul class=\"inline\">");
 		for (String tag : tags) {
 			String checked = "";
 			if (currentTags.contains(tag)) {
 				checked = " checked=\"checked\"";
 			}
-			out.print("<li class=\"line\"><input type=\"checkbox\"" + checked + " id=\"" + getInputName(i) + "\" name=\"" + getInputName(i) + "\" value=\"" + tag + "\"/>");
-			out.print("<label for=\"" + getInputName(i) + "\" >" + tag + "</label></li>");
+			out.print("<li><div class=\"checkbox\"><label><input type=\"checkbox\"" + checked + " id=\"" + getInputName(i) + "\" name=\"" + getInputName(i) + "\" value=\"" + tag + "\"/> ");
+			out.print(tag + "</label></li>");
 			i++;
 		}
 		out.println("</ul>");

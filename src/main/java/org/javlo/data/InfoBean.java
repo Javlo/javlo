@@ -304,8 +304,7 @@ public class InfoBean {
 
 	public String getDate() {
 		try {
-			return StringHelper.renderDate(new Locale(ctx.getRequestContentLanguage()),
-					currentPage.getContentDateNeverNull(ctx), globalContext.getShortDateFormat());
+			return StringHelper.renderDate(new Locale(ctx.getRequestContentLanguage()),currentPage.getContentDateNeverNull(ctx), globalContext.getShortDateFormat());
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
@@ -830,6 +829,10 @@ public class InfoBean {
 
 	public Collection<String> getTags() {
 		return globalContext.getTags();
+	}
+	
+	public String getTagsRaw() {
+		return StringHelper.collectionToString(globalContext.getTags(), ",");
 	}
 
 	/**

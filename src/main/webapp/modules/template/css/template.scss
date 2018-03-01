@@ -157,8 +157,17 @@ input[readonly] {
     ul li {
         float: left;
    		width: 25%;
-   		margin: 0 0 15px 0;
+   		margin: 0 0 15px 0;   		
    		.thumb {
+   			h2 {
+		     	line-height: normal;
+		     	font-size: 1em;
+		     	text-align: left;
+		     	padding: 3px 15px;		     	  		     	
+		     	font-weight: normal;   	
+		     	border-bottom: 1px #eeeeee solid;
+		     	margin-bottom: 3px;	     	
+	     	}
    			overflow: hidden;
    			margin: 5px 15px 5px 5px;
    			width: auto;
@@ -168,7 +177,7 @@ input[readonly] {
    			img {
    				float: left;
    				margin: 5px;
-   			}
+   			}   		     
    			.info {
    			    position: relative;
    				float: left;

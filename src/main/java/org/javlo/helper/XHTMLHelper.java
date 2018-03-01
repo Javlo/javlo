@@ -2144,14 +2144,15 @@ public class XHTMLHelper {
 	}
 
 	public static String replaceJSTLData(ContentContext ctx, String xhtml) throws Exception {
+		
 		if (!xhtml.contains("${")) {
 			return xhtml;
-		}
+		}		
 		Collection<String> params = StringHelper.extractItem(xhtml, "${param.", "}");
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
 		for (String param : params) {
 			xhtml = xhtml.replace("${param." + param + "}", URLDecoder.decode(requestService.getParameter(param, ""), ContentContext.CHARACTER_ENCODING));
-		}
+		}		
 
 		InfoBean infoBean = InfoBean.getCurrentInfoBean(ctx.getRequest());
 		if (infoBean == null) {
@@ -2166,7 +2167,7 @@ public class XHTMLHelper {
 			if (val != null) {
 				xhtml = xhtml.replace("${" + InfoBean.REQUEST_KEY + "." + param + "}", val);
 			}
-		}
+		}		
 		/*
 		 * for (String key : properties.keySet()) { String jstlStr = "${" +
 		 * InfoBean.REQUEST_KEY + '.' + key + '}'; if (properties.get(key) !=
@@ -2183,7 +2184,7 @@ public class XHTMLHelper {
 			if (properties.get(key) != null && xhtml.contains(jstlStr)) {
 				xhtml = xhtml.replace(jstlStr, properties.get(key).toString());
 			}
-		}
+		}		
 		if (!xhtml.contains("${")) {
 			return xhtml;
 		}
