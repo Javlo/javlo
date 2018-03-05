@@ -1325,9 +1325,28 @@ public class GlobalImage extends Image implements IImageFilter {
 		if (!isFloatText(ctx)) {
 			rows = "9";
 		}
+		
+		String wysiwygCss = getConfig(ctx).getProperty("wysiwyg-css", null);
+		String jsWysiwygCss = "var wysiwygCss=null;";
+		if (wysiwygCss != null) {
+			jsWysiwygCss = "var wysiwygCss='"+URLHelper.createStaticTemplateURL(ctx, wysiwygCss)+"';";
+		}
+		
+		String fontsize = getConfig(ctx).getProperty("fontsize", null);
+		String jsFontsize = "var fontsize=null;";
+		if(fontsize != null) {
+			jsFontsize = "var fontsize="+fontsize+";";
+		}
+		
+		String format = getConfig(ctx).getProperty("format", null);
+		String jsFormat = "var format=null;";
+		if(format != null) {
+			jsFormat = "var format="+format+";";
+		}
+		
 		String[][] paramsLabelText = new String[][] { { "rows", rows }, { "cols", "100" }, { "class", "tinymce-light" }, { "id", id } };
 		out.println(XHTMLHelper.getTextArea(getLabelTextInputName(), getLabel(), paramsLabelText));
-		out.println("<script type=\"text/javascript\">jQuery(document).ready(loadWysiwyg('#" + id + "','" + getEditorComplexity(ctx) + "','" + chooseImageURL + "'));</script>");
+		out.println("<script type=\"text/javascript\">"+jsFormat+jsFontsize+jsWysiwygCss+" jQuery(document).ready(loadWysiwyg('#" + id + "','" + getEditorComplexity(ctx) + "','" + chooseImageURL + "', format, fontsize, wysiwygCss));</script>");
 		out.println("</div>");
 
 		if (isFloatText(ctx)) {

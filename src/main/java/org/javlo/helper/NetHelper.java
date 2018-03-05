@@ -670,14 +670,16 @@ public class NetHelper {
 
 		Locale locale = null;
 		String locStr = getMeta(doc, "locale");;
-		if (locStr.contains("_")) {
-			String[] locArray = locStr.split("_");
-			if (locArray[0].length() == 2 && locArray[1].length() == 2) {
-				locale = new Locale(locArray[0], locArray[1]);
-			}
-		} else {
-			if (locStr.length() == 2) {
-				locale = new Locale(locStr);
+		if (locStr != null) {
+			if (locStr.contains("_")) {
+				String[] locArray = locStr.split("_");
+				if (locArray[0].length() == 2 && locArray[1].length() == 2) {
+					locale = new Locale(locArray[0], locArray[1]);
+				}
+			} else {
+				if (locStr.length() == 2) {
+					locale = new Locale(locStr);
+				}
 			}
 		}
 		pageMeta.setLocale(locale);

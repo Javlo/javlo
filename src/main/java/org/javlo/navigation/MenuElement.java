@@ -5237,7 +5237,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 	 * @return
 	 */
 	public boolean isDirectChildrenOfAssociation() {
-		MenuElement root = getRootOfChildrenAssociation();
+		MenuElement root = getChildrenAssociationPage();
 		if (root != null) {
 			String rootId = root.getId();
 			MenuElement parent = getParent();
@@ -5250,7 +5250,26 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 		}
 		return false;
 	}
+	
+	/**
+	 * get the children association page of the current page.
+	 * @return
+	 */
+	public MenuElement getChildrenAssociationPage() {
+		MenuElement parent = getParent();
+		while (parent != null) {
+			if (parent.isChildrenAssociation()) {
+				return parent;
+			}
+			parent = parent.getParent();
+		}
+		return null;
+	}
 
+	/**
+	 * get the root (parent) of the children association page
+	 * @return
+	 */
 	public MenuElement getRootOfChildrenAssociation() {
 		MenuElement parent = this;
 		while (parent != null) {
