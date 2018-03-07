@@ -675,11 +675,11 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		String loc = ctx.getCurrentPage().getLocation(ctx);
 		if (loc != null) {
-			loc = "_"+loc;
+			loc = "_"+StringHelper.createFileName(loc);
 		} else {
 			loc = "";
 		}
-		String fileName = StringHelper.createFileName(InfoBean.getCurrentInfoBean(ctx).getSection())+"/df-" + StringHelper.createFileName(getPage().getTitle(ctx)+"_"+StringHelper.renderDate(getPage().getContentDateNeverNull(ctx))) + "_"+loc+".csv";
+		String fileName = StringHelper.createFileName(InfoBean.getCurrentInfoBean(ctx).getSection())+"/df-" + StringHelper.createFileName(getPage().getTitle(ctx)+"_"+StringHelper.renderDate(getPage().getContentDateNeverNull(ctx))) +loc+".csv";
 		if (getLocalConfig(false).get("filename") != null && getLocalConfig(false).get("filename").toString().trim().length() > 0) {
 			fileName = getLocalConfig(false).getProperty("filename");
 		} else {
