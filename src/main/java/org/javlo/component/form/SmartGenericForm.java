@@ -682,6 +682,9 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		String fileName = StringHelper.createFileName(InfoBean.getCurrentInfoBean(ctx).getSection())+"/df-" + StringHelper.createFileName(getPage().getTitle(ctx)+"_"+StringHelper.renderDate(getPage().getContentDateNeverNull(ctx))) + "_"+loc+".csv";
 		if (getLocalConfig(false).get("filename") != null && getLocalConfig(false).get("filename").toString().trim().length() > 0) {
 			fileName = getLocalConfig(false).getProperty("filename");
+		} else {
+			getLocalConfig(false).setProperty("filename", fileName);	
+			store(ctx);
 		}
 		File file = new File(URLHelper.mergePath(globalContext.getDataFolder(), globalContext.getStaticConfig().getStaticFolder(), "dynamic-form-result", fileName));
 		if (!file.exists()) {
@@ -895,6 +898,12 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		Collection<String> errorKeyFound = new HashSet<String>();
 		boolean badFormatFound = false;
 		boolean update = comp.isUpdate(ctx);
+		
+		String loc = ctx.getCurrentPage().getLocation(ctx);
+		if (loc != null) {
+			adminMailData.put("location", loc);
+		}
+		
 		for (Field field : comp.getFields()) {
 			String key = field.getName();
 
@@ -980,6 +989,8 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 			if (ctx.getCurrentUser() != null) {
 				adminMailData.put("user", ctx.getCurrentUser().getLogin());
 			}
+			
+			
 
 			if (value instanceof Object[]) {				
 				finalValue = StringHelper.arrayToString((Object[]) params.get(key), ",");
@@ -1064,7 +1075,6 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 					}
 					mailService.sendMail(null, fromEmail, toEmail, ccList, bccList, subject, mailAdminContent, true, null, globalContext.getDKIMBean());
 					
-					String loc = ctx.getCurrentPage().getLocation(ctx);					
 					if (comp.isWarningEventSite(ctx)) {
 						subject = globalContext.getContextKey() + " - WARNING Event almost full : " + ctx.getCurrentPage().getTitle(ctx) + " ["+StringHelper.renderDate(comp.getPage().getContentDateNeverNull(absCtx))+']';							
 						Map data = new HashMap();
