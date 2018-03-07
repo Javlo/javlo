@@ -308,7 +308,7 @@ public class SimpleVideo extends AbstractFileComponent implements IReverseLinkCo
 		try {
 			String url = null;
 			try {
-				url = URLHelper.createTransformURL(ctx, ctx.getVirtualCurrentPage(), TemplateFactory.getTemplate(ctx, ctx.getVirtualCurrentPage()), getResourceURL(ctx, getFileName()), filter, null);
+				url = URLHelper.createTransformURL(ctx, ctx.getCurrentPage(), TemplateFactory.getTemplate(ctx, ctx.getCurrentPage()), getResourceURL(ctx, getFileName()), filter, null);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

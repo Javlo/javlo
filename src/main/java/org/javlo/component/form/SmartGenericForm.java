@@ -673,7 +673,13 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 
 	protected File getFile(ContentContext ctx) throws Exception {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-		String fileName = StringHelper.createFileName(InfoBean.getCurrentInfoBean(ctx).getSection())+"/df-" + StringHelper.createFileName(getPage().getTitle(ctx)+"_"+StringHelper.renderDate(getPage().getContentDateNeverNull(ctx))) + ".csv";
+		String loc = ctx.getCurrentPage().getLocation(ctx);
+		if (loc != null) {
+			loc = "_"+loc;
+		} else {
+			loc = "";
+		}
+		String fileName = StringHelper.createFileName(InfoBean.getCurrentInfoBean(ctx).getSection())+"/df-" + StringHelper.createFileName(getPage().getTitle(ctx)+"_"+StringHelper.renderDate(getPage().getContentDateNeverNull(ctx))) + "_"+loc+".csv";
 		if (getLocalConfig(false).get("filename") != null && getLocalConfig(false).get("filename").toString().trim().length() > 0) {
 			fileName = getLocalConfig(false).getProperty("filename");
 		}
@@ -1058,6 +1064,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 					}
 					mailService.sendMail(null, fromEmail, toEmail, ccList, bccList, subject, mailAdminContent, true, null, globalContext.getDKIMBean());
 					
+					String loc = ctx.getCurrentPage().getLocation(ctx);					
 					if (comp.isWarningEventSite(ctx)) {
 						subject = globalContext.getContextKey() + " - WARNING Event almost full : " + ctx.getCurrentPage().getTitle(ctx) + " ["+StringHelper.renderDate(comp.getPage().getContentDateNeverNull(absCtx))+']';							
 						Map data = new HashMap();
@@ -1067,6 +1074,9 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 						data.put("subscription", countSubscription);
 						data.put("limit", comp.getLocalConfig(false).getProperty("event.limit", ""));
 						data.put("alert limit", eventLimistStr);
+						if (loc != null) {
+							data.put("location", loc);
+						}
 						absCtx.setRenderMode(ContentContext.PREVIEW_MODE);
 						String adminMailContent = XHTMLHelper.createAdminMail(ctx.getCurrentPage().getTitle(ctx), "Please check you event, it will be automaticly closed soon.", data, editURL, "edit >>", null);
 						mailService.sendMail(null, new InternetAddress(globalContext.getAdministratorEmail()), toEmail, ccList, bccList, subject, adminMailContent, true, null, globalContext.getDKIMBean());
@@ -1081,6 +1091,9 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 						data.put("subscription", countSubscription);
 						data.put("limit", comp.getLocalConfig(false).getProperty("event.limit", ""));
 						data.put("alert limit", eventLimistStr);
+						if (loc != null) {
+							data.put("location", loc);
+						}
 						absCtx.setRenderMode(ContentContext.PREVIEW_MODE);
 						String adminMailContent = XHTMLHelper.createAdminMail(ctx.getCurrentPage().getTitle(ctx), "Please check you event, it has been closed.", data, editURL, "edit >>", null);
 						mailService.sendMail(null, new InternetAddress(globalContext.getAdministratorEmail()), toEmail, ccList, bccList, subject, adminMailContent, true, null, globalContext.getDKIMBean());
@@ -1095,6 +1108,9 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 						data.put("subscription", countSubscription);
 						data.put("limit", comp.getLocalConfig(false).getProperty("event.limit", ""));
 						data.put("alert limit", eventLimistStr);
+						if (loc != null) {
+							data.put("location", loc);
+						}
 						absCtx.setRenderMode(ContentContext.PREVIEW_MODE);
 						String adminMailContent = XHTMLHelper.createAdminMail(ctx.getCurrentPage().getTitle(ctx), "Please check you event, it is full.", data, editURL, "edit >>", null);
 						mailService.sendMail(null, new InternetAddress(globalContext.getAdministratorEmail()), toEmail, ccList, bccList, subject, adminMailContent, true, null, globalContext.getDKIMBean());
