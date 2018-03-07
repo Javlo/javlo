@@ -2369,6 +2369,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 		if (desc.description != null) {
 			return desc.description;
 		}
+		
 		String res = "";
 		ContentContext newCtx = new ContentContext(ctx);
 		newCtx.setArea(null);
@@ -2397,8 +2398,8 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 				}
 			}
 		}
-		if (StringHelper.isEmpty(res) && pageMirror != null && pageMirror.getPage() != null && !pageMirror.getPage().getId().equals(getId())) {
-			desc.description = pageMirror.getPage().getDescription(newCtx);
+		if (StringHelper.isEmpty(res) && pageMirror != null && pageMirror.getPage() != null && !pageMirror.getMirrorPage(newCtx).getId().equals(getId())) {
+			desc.description = pageMirror.getMirrorPage(newCtx).getDescription(newCtx);
 		} else {
 			desc.description = new HtmlPart(StringHelper.removeTag(StringUtils.replace(res, "\"", "&quot;")));
 		}
