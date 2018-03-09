@@ -13,6 +13,7 @@ import org.javlo.component.core.ComponentBean;
 import org.javlo.component.links.PageMirrorComponent;
 import org.javlo.context.ContentContext;
 import org.javlo.context.EditContext;
+import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.macro.core.AbstractInteractiveMacro;
@@ -67,7 +68,7 @@ public class UndeletePage extends AbstractInteractiveMacro implements IAction {
 		try {
 			ContentService content = ContentService.getInstance(ctx.getRequest());
 			MenuElement trash = content.getTrashPage(ctx);
-			List<PageBean> pages = new LinkedList<PageBean>();
+			List<PageBean> pages = new LinkedList<PageBean>();			
 			for (MenuElement child : trash.getChildMenuElements()) {
 				if (child.isEditAccess(ctx)) {
 					pages.add(new PageBean(ctx, child));
@@ -89,6 +90,15 @@ public class UndeletePage extends AbstractInteractiveMacro implements IAction {
 			}
 		}
 		return outIds;
+	}
+	
+	public static String performDeleteAll(RequestService rs, EditContext editCtx, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
+		ContentService content = ContentService.getInstance(ctx.getRequest());
+		MenuElement trash = content.getTrashPage(ctx);
+		NavigationService service = NavigationService.getInstance(ctx.getGlobalContext());
+		service.removeNavigation(ctx, trash);
+		ctx.setClosePopup(true);
+		return null;
 	}
 
 	public static String performAction(RequestService rs, EditContext editCtx, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {

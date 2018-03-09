@@ -1,6 +1,8 @@
 package org.javlo.navigation;
 
 import java.io.Serializable;
+import java.text.ParseException;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -211,6 +213,10 @@ public class PageBean implements Serializable {
 			e.printStackTrace();
 			return null;
 		}
+	}
+	
+	public Date getModificationDateSource() throws ParseException, Exception {
+		return page.getModificationDate(ctx);		
 	}
 
 	public String getContentDateValue() {

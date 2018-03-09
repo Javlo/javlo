@@ -14,9 +14,9 @@ public class ModificationDateComparator implements Comparator<PageBean> {
 	public int compare(PageBean page1, PageBean page2) {
 		try {
 			if (ascendent) {
-				return page1.getModificationDate().compareTo(page2.getModificationDate());
+				return page1.getModificationDateSource().compareTo(page2.getModificationDateSource());
 			} else {
-				return -page1.getModificationDate().compareTo(page2.getModificationDate());
+				return -page1.getModificationDateSource().compareTo(page2.getModificationDateSource());
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
