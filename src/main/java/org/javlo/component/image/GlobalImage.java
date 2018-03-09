@@ -245,6 +245,12 @@ public class GlobalImage extends Image implements IImageFilter {
 	@Override
 	public void prepareView(ContentContext ctx) throws Exception {
 		// ctx.setCurrentTemplate(null); // reset template
+		
+		ContentContextBean ctxBean = ctx.getBean();
+		
+		if (!ctx.getCurrentTemplate().isMailing()) {
+			clearSize(ctxBean);
+		}
 
 		super.prepareView(ctx);
 		String link = getLink();
@@ -274,13 +280,13 @@ public class GlobalImage extends Image implements IImageFilter {
 
 		ctx.getRequest().setAttribute("location", getLocation(ctx));
 		ctx.getRequest().setAttribute("filter", getFilter(ctx));
-		int width = getWidth(ctx.getBean());
+		int width = getWidth(ctxBean);
 		if (width >= 0) {
 			ctx.getRequest().setAttribute("imageWidth", width);
 		} else {
 			ctx.getRequest().removeAttribute("imageWidth");
 		}
-		int height = getHeight(ctx.getBean());
+		int height = getHeight(ctxBean);
 		if (height >= 0) {
 			ctx.getRequest().setAttribute("imageHeight", height);
 		}
@@ -1106,13 +1112,17 @@ public class GlobalImage extends Image implements IImageFilter {
 	public int getHeight() {
 		return Integer.parseInt(properties.getProperty("height", "-1"));
 	}
+	
+	private void clearSize(ContentContextBean ctxBean) {
+		properties.remove(getWidthKey(ctxBean));
+		properties.remove(getHeightKey(ctxBean));
+	}
 
 	@Override
 	public void setRenderer(ContentContext ctx, String renderer) {
 		if (properties != null) {
 			try {
-				properties.remove(getWidthKey(ctx.getBean()));
-				properties.remove(getHeightKey(ctx.getBean()));
+				clearSize(ctx.getBean());
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -1157,11 +1167,20 @@ public class GlobalImage extends Image implements IImageFilter {
 	}
 
 	public int getWidth(ContentContextBean ctx) {
-		return Integer.parseInt(properties.getProperty(getWidthKey(ctx), "-1"));
+		String width = properties.getProperty(getWidthKey(ctx));
+		if (width == null) {
+			return -1;
+		} else {
+			return Integer.parseInt(width);	
+		}		
 	}
 	
 	public int getHeight(ContentContextBean ctx) {
-		return Integer.parseInt(properties.getProperty(getHeightKey(ctx), "-1"));
+		String height = properties.getProperty(getHeightKey(ctx));
+		if (height == null) {
+			return -1;
+		}		
+		return Integer.parseInt(height);
 	}	
 
 	public String getFirstText() {
@@ -1400,7 +1419,16 @@ public class GlobalImage extends Image implements IImageFilter {
 	}
 
 	@Override
-	public BufferedImage filterImage(ContentContextBean ctx, BufferedImage image) {
+	public BufferedImage filterImage(ContentContextBean ctx, BufferedImage image) {		
+		try {
+			if (ctx.getCurrentPage().getTemplate() != null && !ctx.getCurrentPage().getTemplate().isMailing()) {
+				clearSize(ctx);
+				return image;
+			}
+		} catch (Exception e) { 
+			e.printStackTrace();
+			return image;
+		}
 		Device device = ctx.getDevice();
 		if (device != null && device.getCode().equalsIgnoreCase("pdf")) {
 			return image;

@@ -56,6 +56,7 @@ import org.javlo.helper.URLHelper;
 import org.javlo.image.ImageConfig;
 import org.javlo.image.ImageEngine;
 import org.javlo.image.ImageHelper;
+import org.javlo.image.ProjectionConfig;
 import org.javlo.io.TransactionFile;
 import org.javlo.rendering.Device;
 import org.javlo.service.ContentService;
@@ -634,6 +635,16 @@ public class ImageTransformServlet extends HttpServlet {
 		// "start - transformation - 2 (src image size :
 		// "+img.getWidth()+","+img.getHeight()+")");
 		
+		ProjectionConfig projection = config.getProjection(globalContext, template, device, filter, area);
+		if (projection != null) {
+			BufferedImage bgImage = ImageIO.read(projection.getBackground());
+			try {
+				img = ImageEngine.projectionImage(bgImage, img, projection.getPolygon(), projection.getAlpha());
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		
 		if (config.isBackGroudColor(device, filter, area) && img.getColorModel().hasAlpha()) {
 			img = ImageEngine.applyBgColor(img, config.getBGColor(device, filter, area));
 		}
@@ -873,10 +884,11 @@ public class ImageTransformServlet extends HttpServlet {
 				logger.info("write image : " + imageType + " width: " + img.getWidth() + " height: " + img.getHeight());
 
 				imageType = StringHelper.neverNull(config.getFileExtension(device, filter, area), imageType);
-
+				
 				if (comp != null && StringHelper.trimAndNullify(comp.getImageFilterKey(ctxb)) != null) {
 					img = ((IImageFilter) comp).filterImage(ctxb, img);
 				}
+				
 				if (!"png".equals(imageType) && !"gif".equals(imageType)) {
 					img = ImageEngine.removeAlpha(img);
 				}

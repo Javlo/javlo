@@ -14,6 +14,7 @@ import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
@@ -621,6 +622,40 @@ public class ImageConfig {
 	public int getWeb2Separation(Device device, String filter, String area) {
 		String key = getKey(device, filter, area, "web2.separation");
 		return properties.getInt(key, device!=null?getWeb2Separation(null,ALL,null):-1);
+	}
+	
+	public ProjectionConfig getProjection(GlobalContext globalContext, Template template, Device device, String filter, String area) {		
+		String key = getKey(device, filter, area, "projection.polygon");		
+		String polygon = properties.getString(key);		
+		String alpha = properties.getString(getKey(device, filter, area, "projection.alpha"));		
+		String bg = properties.getString(getKey(device, filter, area, "projection.background"));		
+		if (!StringHelper.isEmpty(polygon) && !StringHelper.isEmpty(bg)) {
+			String[] polyPoint = polygon.split(",");
+			File bgFile = new File(URLHelper.mergePath(template.getWorkTemplateRealPath(globalContext), bg));
+			if (bgFile.exists()) {				
+				if (polyPoint.length == 8) {
+					int[] polyPos = new int[8];
+					for (int i=0; i<8; i++) {
+						polyPos[i] = Integer.parseInt(polyPoint[i]);
+					}
+					Polygon4 p = new Polygon4(polyPos[0], polyPos[1], polyPos[2], polyPos[3], polyPos[4], polyPos[5], polyPos[6], polyPos[7]);
+					float alphaFloat = 1;
+					if (!StringHelper.isEmpty(alpha)) {
+						alphaFloat = Float.parseFloat(alpha);
+					}
+					if (alphaFloat >= 0 && alphaFloat <= 1) {
+						return new ProjectionConfig(p, alphaFloat, bgFile);
+					} else {
+						logger.severe("bad alpha ["+template.getName()+"] : "+alpha);
+					}				
+				} else {
+					logger.severe("bad polygon ["+template.getName()+"] : "+polygon);
+				}
+			} else {
+				logger.severe("bad background file ["+template.getName()+"] : "+bgFile);
+			}
+		} 
+		return  null;		
 	}
 
 	public List<String> getFilters() {
