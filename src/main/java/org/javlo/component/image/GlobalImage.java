@@ -32,6 +32,7 @@ import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.exception.ResourceNotFoundException;
 import org.javlo.helper.ComponentHelper;
+import org.javlo.helper.DebugHelper;
 import org.javlo.helper.ElementaryURLHelper;
 import org.javlo.helper.NetHelper;
 import org.javlo.helper.ResourceHelper;
@@ -1421,8 +1422,7 @@ public class GlobalImage extends Image implements IImageFilter {
 	@Override
 	public BufferedImage filterImage(ContentContextBean ctx, BufferedImage image) {		
 		try {
-			if (ctx.getCurrentPage().getTemplate() != null && !ctx.getCurrentPage().getTemplate().isMailing()) {
-				clearSize(ctx);
+			if (ctx.getCurrentPage().getTemplate() != null && !ctx.getCurrentPage().getTemplate().isMailing()) {				
 				return image;
 			}
 		} catch (Exception e) { 

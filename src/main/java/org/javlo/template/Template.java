@@ -1812,6 +1812,10 @@ public class Template implements Comparable<Template> {
 	public String getPageTypesRAW() {
 		return properties.getString("page-types", getParent().getPageTypesRAW());
 	}
+	
+	public String getSpecialAreaRenderer() {
+		return properties.getString("area-renderer", getParent().getSpecialAreaRenderer());
+	}
 
 	public void setImageFiltersRAW(String imageFilterRAW) {
 		properties.setProperty("images-filter", imageFilterRAW);

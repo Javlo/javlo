@@ -2770,6 +2770,20 @@ public class XHTMLHelper {
 			return outHTML + "</ul>";
 		}
 	}
+	
+   public static String createHTMLTable(Map data) {
+	   ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+	   PrintStream out = new PrintStream(outStream);
+	   if (data != null && data.size() > 0) {
+		   out.println("<table style='width: 100%; border-collapse: collapse;' border='1'>");
+		   for (Object key : data.keySet()) {
+			   out.println("<tr><td style='font-weight: bold; padding: 10px; font-family:Helvetica, sans-serif; vertical-align: top; font-size: 12px;'>" + key + "</td><td style='padding: 10px; font-family:Helvetica, sans-serif;  vertical-align: top; font-size: 12px;'>" + data.get(key) + "</td></tr>");
+		   }
+		   out.println("</table>");
+	   }
+	   out.close();
+	   return new String(outStream.toByteArray());
+   }
 
 	public static String createAdminMail(String title, String content, Map data, String link, String linkLabel, String footer) {
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
@@ -2782,17 +2796,10 @@ public class XHTMLHelper {
 		if (!StringHelper.isEmpty(content)) {
 			out.println("<p style='font-family:Helvetica; font-size: 14px;'>" + content + "</p>");
 		}
-		if (data != null && data.size() > 0) {
-			out.println("<table style='width: 100%; border-collapse: collapse;' border='1'>");
-			for (Object key : data.keySet()) {
-				out.println("<tr><td style='font-weight: bold; padding: 10px; font-family:Helvetica, sans-serif; vertical-align: top; font-size: 12px;'>" + key + "</td><td style='padding: 10px; font-family:Helvetica, sans-serif;  vertical-align: top; font-size: 12px;'>" + data.get(key) + "</td></tr>");
-			}
-			out.println("</table>");
-		}
+		out.println(createHTMLTable(data));
 		if (!StringHelper.isEmpty(footer)) {
 			out.println("<table><tr><td>&nbsp;</td></tr><tr><td class=\"footer\"><div style='display: block; margin: 10px 20px;  color: #dddddd; font-family:Helvetica, sans-serif;'>" + footer + "</div></td></tr></table>");
 		}
-
 		if (!StringHelper.isEmpty(link)) {
 			out.println(getTableButton(link, linkLabel));
 		}

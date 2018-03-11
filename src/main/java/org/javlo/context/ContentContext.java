@@ -880,7 +880,9 @@ public class ContentContext {
 							String newURL = URLHelper.createURL(this, elem);
 							globalContext.log("url", "old redirect : " + getPath() + " >> " + newURL);
 							logger.info("redirect old url (" + getGlobalContext().getContextKey() + " - " + getPath() + ") --> = " + newURL + " - url renderer:" + globalContext.getURLFactoryClass());
-							response.sendRedirect(newURL);
+							if (!response.isCommitted()) {
+								response.sendRedirect(newURL);
+							}
 							setCurrentPageCached(elem);
 						} else {
 							globalContext.log("url", "redirect old url not found : " + getPath());

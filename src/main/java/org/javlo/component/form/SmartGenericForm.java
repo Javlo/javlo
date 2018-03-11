@@ -84,6 +84,10 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 	public static final String FOLDER = "dynamic-form-result";
 	
 	private static final String EDIT_LINE_PARAM = "_el";
+	
+	private static final String VALID_LINE_PARAM = "_vl";
+	
+	private static final String VALIDED = "__valided";
 
 	private Properties bundle;
 
@@ -118,6 +122,10 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 	
 	protected String getInputEditLineName(ContentContext ctx) throws Exception {
 		return EDIT_LINE_PARAM+'_'+StringSecurityUtil.encode(getId(), ctx.getGlobalContext().getStaticConfig().getSecretKey());		
+	}
+	
+	protected String getInputValidLineName(ContentContext ctx) throws Exception {
+		return VALID_LINE_PARAM+'_'+StringSecurityUtil.encode(getId(), ctx.getGlobalContext().getStaticConfig().getSecretKey());		
 	}
 	
 	protected String encodeEditNumber (ContentContext ctx, int number) throws Exception {
@@ -482,7 +490,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		}
 		RequestService rs = RequestService.getInstance(ctx.getRequest());
 		String editLineStr = rs.getParameter(getInputEditLineName(ctx));		
-		int editLine = decodeEditNumber(ctx, editLineStr);		
+		int editLine = decodeEditNumber(ctx, editLineStr);	
 		if (editLine>0) {			
 			synchronized(LOCK_ACCESS_FILE) {
 				ctx.getRequest().setAttribute("editForm", "true");
@@ -496,6 +504,24 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 						rs.setParameter(entry.getKey(), entry.getValue());
 					}
 				}
+			}		
+		}
+		
+		String validLineStr = rs.getParameter(getInputValidLineName(ctx));		
+		int validLine = decodeEditNumber(ctx, validLineStr);	
+		if (validLine>0) {			
+			synchronized(LOCK_ACCESS_FILE) {
+				ctx.getRequest().setAttribute("validForm", "true");
+				ctx.getRequest().setAttribute("editLine", editLineStr);
+				ctx.getRequest().setAttribute("inputLine", getInputValidLineName(ctx));
+				File csvFile = getFile(ctx);
+				List<Map<String, String>> data = CSVFactory.loadContentAsMap(csvFile);		
+				System.out.println(">>>>>>>>> SmartGenericForm.prepareView : validLine = "+validLine); //TODO: remove debug trace
+				if (data.size()>=validLine) {
+					Map<String,String> line = data.get(validLine);					
+					line.put(VALIDED, "true");
+				}
+				CSVFactory.storeContentAsMap(csvFile, data);
 			}		
 		}
 	}
@@ -674,12 +700,12 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 	protected File getFile(ContentContext ctx) throws Exception {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		String loc = ctx.getCurrentPage().getLocation(ctx);
-		if (loc != null) {
+		if (!StringHelper.isEmpty(loc)) {
 			loc = "_"+StringHelper.createFileName(loc);
 		} else {
 			loc = "";
 		}
-		String fileName = StringHelper.createFileName(InfoBean.getCurrentInfoBean(ctx).getSection())+"/df-" + StringHelper.createFileName(getPage().getTitle(ctx)+"_"+StringHelper.renderDate(getPage().getContentDateNeverNull(ctx))) +loc+".csv";
+		String fileName = StringHelper.createFileName(InfoBean.getCurrentInfoBean(ctx).getSection())+"/df-" + StringHelper.createFileName(getPage().getTitle(ctx)+"_"+StringHelper.renderDate(getPage().getContentDateNeverNull(ctx))) +loc+".csv";		
 		if (getLocalConfig(false).get("filename") != null && getLocalConfig(false).get("filename").toString().trim().length() > 0) {
 			fileName = getLocalConfig(false).getProperty("filename");
 		} else {
@@ -847,6 +873,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		String registrationID = StringHelper.getShortRandomId();
 		result.put("_registrationID", registrationID);
 		result.put("_event-close", "" + comp.isClose(ctx));
+		result.put(VALIDED, "false");
 		String fakeField = comp.getLocalConfig(false).getProperty("field.fake", "fake");
 		boolean withXHTML = StringHelper.isTrue(comp.getLocalConfig(false).getProperty("field.xhtml", null));
 		boolean fakeFilled = false;
@@ -893,6 +920,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		}
 
 		Map<String, String> adminMailData = new LinkedHashMap<String, String>();
+		Map<String, String> userMailData = new LinkedHashMap<String, String>();
 		String errorFieldList = " (";
 		String errorFieldSep = "";
 		Collection<String> errorKeyFound = new HashSet<String>();
@@ -900,7 +928,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		boolean update = comp.isUpdate(ctx);
 		
 		String loc = ctx.getCurrentPage().getLocation(ctx);
-		if (loc != null) {
+		if (!StringHelper.isEmpty(loc)) {
 			adminMailData.put("location", loc);
 		}
 		
@@ -988,15 +1016,15 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 			 
 			if (ctx.getCurrentUser() != null) {
 				adminMailData.put("user", ctx.getCurrentUser().getLogin());
-			}
-			
-			
+			}		
 
 			if (value instanceof Object[]) {				
 				finalValue = StringHelper.arrayToString((Object[]) params.get(key), ",");
 				adminMailData.put(field.getLabel() + " (" + key + ") ", finalValue);
+				userMailData.put(field.getLabel(), finalValue);
 			} else {
 				adminMailData.put(field.getLabel() + " (" + key + ") ", finalValue);
+				userMailData.put(field.getLabel(), finalValue);
 			}
 			result.put(key, finalValue);
 
@@ -1036,7 +1064,9 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 				Map<String, String> paramsEdit = new HashMap<String, String>();
 				paramsEdit.put(comp.getInputEditLineName(ctx), comp.encodeEditNumber(ctx, lineNumber));
 				String editURL = URLHelper.createURL(ctx.getContextForAbsoluteURL(), ctx.getPath(), paramsEdit);
-				
+				paramsEdit = new HashMap<String, String>();
+				paramsEdit.put(comp.getInputValidLineName(ctx), comp.encodeEditNumber(ctx, lineNumber));
+				String validURL = URLHelper.createURL(ctx.getContextForAbsoluteURL(), ctx.getPath(), paramsEdit);				
 				try {
 					mailService = MailService.getInstance(new MailConfig(globalContext, globalContext.getStaticConfig(), null));
 					InternetAddress fromEmail = new InternetAddress(emailFrom);
@@ -1068,6 +1098,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 						prefix = "Waiting list : ";
 						subject = prefix + subject;
 					}
+					
 					if (!StringHelper.isEmpty(comp.getLocalConfig(false).getProperty("event.limit"))) {
 						mailAdminContent = XHTMLHelper.createAdminMail(ctx.getCurrentPage().getTitle(ctx), prefix + comp.getCountSubscription(ctx) + "/" + comp.getLocalConfig(false).getProperty("event.limit"), adminMailData, editURL, "edit >>", null);
 					} else {
@@ -1079,7 +1110,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 						subject = globalContext.getContextKey() + " - WARNING Event almost full : " + ctx.getCurrentPage().getTitle(ctx) + " ["+StringHelper.renderDate(comp.getPage().getContentDateNeverNull(absCtx))+']';							
 						Map data = new HashMap();
 						String eventLimistStr = comp.getLocalConfig(false).getProperty("event.alert-limit");
-						int countSubscription = comp.getCountSubscription(ctx);
+						int countSubscription = comp.getCountSubscription(ctx);						
 						data.put("event", ctx.getCurrentPage().getTitle(ctx));
 						data.put("subscription", countSubscription);
 						data.put("limit", comp.getLocalConfig(false).getProperty("event.limit", ""));
@@ -1149,8 +1180,10 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 								}
 								email = email.replace("${registrationID}", registrationID);								
 								email = email.replace("${communication}", StringHelper.encodeAsStructuredCommunicationMod97(registrationID));
+								email = email.replace("${htmlFields}", XHTMLHelper.createHTMLTable(userMailData));
 								
 								email = email.replace("${url.edit}", editURL);
+								email = email.replace("${url.valid}", validURL);
 								email = email.replace("${url.page}", URLHelper.createURL(ctx.getContextForAbsoluteURL()));
 								email = email.replace("${url.root}", URLHelper.createURL(ctx.getContextForAbsoluteURL(), "/"));
 
@@ -1179,11 +1212,9 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 					}
 					String errorID = "E" + StringHelper.getRandomId();
 					logger.severe("error id:" + errorID + " = " + e.getMessage());
-					e.printStackTrace();
-					GenericMessage msg = new GenericMessage(comp.getLocalConfig(false).getProperty("message.error", "technical error.") + " (" + errorID + ')', GenericMessage.ERROR);
-					request.setAttribute("msg", msg);
+					e.printStackTrace();					
 					request.setAttribute("valid", "false");
-					return null;
+					return comp.getLocalConfig(false).getProperty("message.error", "technical error.") + " (" + errorID + ')';
 				}
 			}
 
