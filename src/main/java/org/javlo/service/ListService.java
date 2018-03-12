@@ -59,7 +59,7 @@ public class ListService {
 		}
 
 		@Override
-		public void clear() {
+		public void clear() {						
 		}
 
 		@Override
@@ -248,7 +248,7 @@ public class ListService {
 		}
 		if (name.equals("countries")) {
 			List<IListItem> countriesList = new LinkedList<IListItem>();
-			Collection<Map.Entry<Object, Object>> entries = I18nAccess.getInstance(ctx).getCountries().entrySet();
+			Collection<Map.Entry<Object, Object>> entries = I18nAccess.getInstance(ctx).getCountries(ctx).entrySet();
 			for (Map.Entry entry : entries) {				
 				countriesList.add(new ListService.ListItem(entry));
 			}
@@ -305,5 +305,9 @@ public class ListService {
 			outMap.put(item.getKey(), item.getValue());			
 		}
 		return outMap;
+	}
+	
+	public void clear() {
+		hardNodeCache.clear();			
 	}
 }

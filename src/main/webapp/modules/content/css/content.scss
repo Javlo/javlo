@@ -316,8 +316,10 @@ li.line {
 	overflow: hidden;
 }
 
-.page-list .array-filter input {
-	width: 91%;
+.page-list .array-filter, .page-list .direct-link {
+	input {
+		width: 91%;
+	}
 }
 
 /* cols */

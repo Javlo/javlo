@@ -3,6 +3,7 @@
  */
 package org.javlo.i18n;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -34,6 +35,7 @@ import org.javlo.context.GlobalContext;
 import org.javlo.helper.ConfigHelper;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
+import org.javlo.helper.URLHelper;
 import org.javlo.module.core.Module;
 import org.javlo.module.core.ModulesContext;
 import org.javlo.service.RequestService;
@@ -66,8 +68,11 @@ public class I18nAccess implements Serializable {
 
 	public static final String KEY_NOT_FOUND = "[KEY NOT FOUND";
 
+	private static final Map<String, Map<String, String>> countries = Collections
+			.synchronizedMap(new HashMap<String, Map<String, String>>());
+
 	public static I18nAccess getInstance(ContentContext ctx) throws ServiceException, Exception {
-		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());		
+		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		I18nAccess i18n = getInstance(ctx.getRequest());
 		if (ctx.getRenderMode() == ContentContext.EDIT_MODE || ctx.getRenderMode() == ContentContext.PREVIEW_MODE) {
 			i18n.initEdit(globalContext, ctx.getRequest().getSession());
@@ -101,9 +106,10 @@ public class I18nAccess implements Serializable {
 	 * @throws IOException
 	 * @throws ConfigurationException
 	 */
-	public static final I18nAccess getInstance(GlobalContext globalContext, HttpSession session) throws FileNotFoundException, IOException {
+	public static final I18nAccess getInstance(GlobalContext globalContext, HttpSession session)
+			throws FileNotFoundException, IOException {
 		I18nAccess i18nAccess = (I18nAccess) session.getAttribute(SESSION_KEY);
-		if (i18nAccess == null || !i18nAccess.getContextKey().equals(globalContext.getContextKey())) { 
+		if (i18nAccess == null || !i18nAccess.getContextKey().equals(globalContext.getContextKey())) {
 			i18nAccess = new I18nAccess(globalContext);
 			i18nAccess.initEdit(globalContext, session);
 			session.setAttribute(SESSION_KEY, i18nAccess);
@@ -118,23 +124,23 @@ public class I18nAccess implements Serializable {
 	private ConfigurationProperties propContentView = null;
 
 	private String latestViewTemplateId = "";
-	
+
 	private String latestEditTemplateId = "";
 
 	private String latestViewTemplateLang = "";
-	
+
 	private String latestEditTemplateLang = "";
 
 	private final Properties templateView = new Properties();
-	
+
 	private final Properties templateEdit = new Properties();
 
 	private boolean templateViewImported = false;
-	
+
 	private boolean templateEditImported = false;
 
 	private Properties moduleEdit = null;
-	
+
 	private Properties contextEdit = null;
 
 	private ReadOnlyMultiMap propViewMap = null;
@@ -146,7 +152,7 @@ public class I18nAccess implements Serializable {
 	private Boolean moduleImported = false;
 
 	private String editLg = "";
-	
+
 	private String forceEditLg = null;
 
 	private String viewLg = "";
@@ -166,12 +172,13 @@ public class I18nAccess implements Serializable {
 	private Module currentModule;
 
 	private String contextKey;
-	
-	private Object lock = null;
-	
-	private Map<String,String> requestMap = Collections.EMPTY_MAP;
 
-	public synchronized void setCurrentModule(GlobalContext globalContext, HttpSession session, Module currentModule) throws IOException {
+	private Object lock = null;
+
+	private Map<String, String> requestMap = Collections.EMPTY_MAP;
+
+	public synchronized void setCurrentModule(GlobalContext globalContext, HttpSession session, Module currentModule)
+			throws IOException {
 		if (this.currentModule == null || !currentModule.getName().equals(this.currentModule.getName())) {
 			this.currentModule = currentModule;
 			moduleEdit = currentModule.loadEditI18n(globalContext, session);
@@ -186,7 +193,7 @@ public class I18nAccess implements Serializable {
 
 	private I18nAccess(GlobalContext globalContext) {
 		lock = globalContext.getI18nLock();
-		servletContext = globalContext.getServletContext();		
+		servletContext = globalContext.getServletContext();
 		i18nResource = I18nResource.getInstance(globalContext);
 		contextKey = globalContext.getContextKey();
 	};
@@ -203,8 +210,9 @@ public class I18nAccess implements Serializable {
 			propViewMap = null;
 		}
 		updateTemplate(ctx);
+		countries.clear();
 	}
-	
+
 	public void resetViewLanguage(ContentContext ctx) throws ServiceException, Exception {
 		latestViewTemplateId = "";
 		initView(ctx.getLanguage());
@@ -214,7 +222,6 @@ public class I18nAccess implements Serializable {
 		propViewMap = null;
 		updateTemplate(ctx);
 	}
-
 
 	public String getComponentText(String componentPath, String key) {
 		if (displayKey) {
@@ -272,20 +279,35 @@ public class I18nAccess implements Serializable {
 		return text;
 	}
 
-	public Map getCountries() throws IOException {
-		String fileName = I18N_COUNTRIES_FILE_NAME + viewLg + ".properties";
-		InputStream stream = servletContext.getResourceAsStream(fileName);
-		try {
-			if (stream != null) {
-				Properties countries = new Properties();
-				countries.load(stream);
-				return countries;
+	public Map getCountries(ContentContext ctx) throws Exception {
+		Map outCountries = countries.get(viewLg);
+		if (outCountries == null) {
+			Template template = ctx.getCurrentTemplate();
+			if (template != null) {
+				File i18nFile = new File (URLHelper.mergePath(template.getWorkTemplateRealPath(ctx.getGlobalContext()), "/i18n/countries_"+viewLg+".properties"));
+				if (i18nFile.exists()) {
+					outCountries = ResourceHelper.loadProperties(i18nFile);
+				}					
 			}
-		} finally {
-			ResourceHelper.closeResource(stream);
+			if (outCountries == null) {		
+				String fileName = I18N_COUNTRIES_FILE_NAME + viewLg + ".properties";
+				InputStream stream = servletContext.getResourceAsStream(fileName);
+				try {
+					if (stream != null) {
+						Properties countries = new Properties();
+						countries.load(stream);
+						outCountries = countries;
+					}
+				} finally {
+					ResourceHelper.closeResource(stream);
+				}
+				if (outCountries == null) {
+					outCountries = Countries.getCountriesList(viewLg);					
+				}
+			}
+			countries.put(viewLg, outCountries);
 		}
-		logger.warning("file : " + fileName + " not found.");
-		return Collections.emptyMap();
+		return outCountries;
 	}
 
 	public Map<String, String> getEdit() {
@@ -319,32 +341,32 @@ public class I18nAccess implements Serializable {
 				}
 			}
 		}
-		
+
 		if (contextEdit != null) {
 			Set<?> keysList = contextEdit.keySet();
 			for (Object key : keysList) {
 				propEditMap.put(key.toString(), "" + contextEdit.getProperty((String) key));
 			}
 		}
-		
+
 		if (templateEdit != null && !templateEditImported) {
 			for (Object key : templateEdit.keySet()) {
-				propEditMap.put((String)key, (String)templateEdit.get(key));	
-			}			
+				propEditMap.put((String) key, (String) templateEdit.get(key));
+			}
 			templateEditImported = true;
 		}
 
 		return propEditMap;
 	}
-	
+
 	public static void main(String[] args) {
 		ConfigurationProperties propEditMap = new ConfigurationProperties();
-		
+
 		propEditMap.addProperty("test", "patrick");
 		propEditMap.clearProperty("test");
 		propEditMap.addProperty("test", "catherine");
-		System.out.println("val="+propEditMap.getProperty("test"));
-		
+		System.out.println("val=" + propEditMap.getProperty("test"));
+
 	}
 
 	/* EDIT */
@@ -396,7 +418,10 @@ public class I18nAccess implements Serializable {
 	}
 
 	/**
-	 * replace the balise in text, value of balise is defined in the map. you can defined a balise as : ${balise_name}, this balise is replace with the value of balise name in the map. if the value is not found the balise is not replaced.
+	 * replace the balise in text, value of balise is defined in the map. you can
+	 * defined a balise as : ${balise_name}, this balise is replace with the value
+	 * of balise name in the map. if the value is not found the balise is not
+	 * replaced.
 	 * 
 	 * @param key
 	 *            the key of i18n text
@@ -417,18 +442,18 @@ public class I18nAccess implements Serializable {
 	/* VIEW */
 
 	public String getText(String key, String notFoundValue) {
-		
+
 		if (displayKey) {
 			return key;
 		}
-		
+
 		String text;
 		if (templateEdit != null) {
 			text = templateEdit.getProperty(key);
 			if (text != null) {
 				return text;
 			}
-		}		
+		}
 		text = propEdit.getString(key);
 		if (text == null) {
 			if (moduleEdit != null) {
@@ -437,19 +462,22 @@ public class I18nAccess implements Serializable {
 				text = notFoundValue;
 			}
 		}
-		
+
 		if (contextEdit != null) {
 			String contextText = contextEdit.getProperty(key);
 			if (contextText != null) {
-				text = contextText;	
+				text = contextText;
 			}
 		}
-		
+
 		return text;
 	}
 
 	/**
-	 * replace the balise in text, value of balise is defined in the array. you can defined a balise as : ${balise_name}, this balise is replace with the value of balise name in the array. if the value is not found the balise is not replaced.
+	 * replace the balise in text, value of balise is defined in the array. you can
+	 * defined a balise as : ${balise_name}, this balise is replace with the value
+	 * of balise name in the array. if the value is not found the balise is not
+	 * replaced.
 	 * 
 	 * @param key
 	 *            the key of i18n text
@@ -483,7 +511,8 @@ public class I18nAccess implements Serializable {
 				createPropViewMap = true;
 				ConfigurationProperties localPropView = propView;
 				if (localPropView != null) {
-					//propViewMap.addMap(new ReadOnlyPropertiesConfigurationMap(localPropView, displayKey));
+					// propViewMap.addMap(new ReadOnlyPropertiesConfigurationMap(localPropView,
+					// displayKey));
 					propViewMap.addMap(localPropView.getProperties());
 				}
 			}
@@ -492,10 +521,10 @@ public class I18nAccess implements Serializable {
 				templateViewImported = true;
 			}
 		}
-		
+
 		ReadOnlyMultiMap outMap = propViewMap;
 		if (getRequestMap().size() > 0) {
-			outMap = new ReadOnlyMultiMap(); 
+			outMap = new ReadOnlyMultiMap();
 			outMap.addMap(propViewMap);
 			outMap.addMap(getRequestMap());
 		}
@@ -527,9 +556,12 @@ public class I18nAccess implements Serializable {
 		}
 		return text;
 	}
-	
+
 	/**
-	 * replace the balise in text, value of balise is defined in the map. you can defined a balise as : ${balise_name}, this balise is replace with the value of balise name in the map. if the value is not found the balise is not replaced.
+	 * replace the balise in text, value of balise is defined in the map. you can
+	 * defined a balise as : ${balise_name}, this balise is replace with the value
+	 * of balise name in the map. if the value is not found the balise is not
+	 * replaced.
 	 * 
 	 * @param key
 	 *            the key of i18n text
@@ -570,7 +602,10 @@ public class I18nAccess implements Serializable {
 	}
 
 	/**
-	 * replace the balise in text, value of balise is defined in the array. you can defined a balise as : ${balise_name}, this balise is replace with the value of balise name in the array. if the value is not found the balise is not replaced.
+	 * replace the balise in text, value of balise is defined in the array. you can
+	 * defined a balise as : ${balise_name}, this balise is replace with the value
+	 * of balise name in the array. if the value is not found the balise is not
+	 * replaced.
 	 * 
 	 * @param key
 	 *            the key of i18n text
@@ -603,21 +638,21 @@ public class I18nAccess implements Serializable {
 			propEdit = i18nResource.getEditFile(newEditLg, true);
 			if (currentModule != null) {
 				moduleEdit = currentModule.loadEditI18n(globalContext, session);
-			}			
-			contextEdit = i18nResource.getContextI18nFile(ContentContext.EDIT_MODE, newEditLg, true);			
-		}		
+			}
+			contextEdit = i18nResource.getContextI18nFile(ContentContext.EDIT_MODE, newEditLg, true);
+		}
 	}
-	
+
 	public String getEditLg() {
 		return editLg;
 	}
-	
+
 	public void resetForceEditLg() {
 		editLg = null;
 		forceEditLg = null;
 	}
-	
-	public void forceReloadEdit(GlobalContext globalContext, HttpSession session, String lg) throws IOException {		
+
+	public void forceReloadEdit(GlobalContext globalContext, HttpSession session, String lg) throws IOException {
 		if (forceEditLg == null || !lg.equals(forceEditLg)) {
 			forceEditLg = lg;
 			propEditMap = null;
@@ -626,9 +661,9 @@ public class I18nAccess implements Serializable {
 			propEdit = i18nResource.getEditFile(lg, true);
 			if (currentModule != null) {
 				moduleEdit = currentModule.loadEditI18n(globalContext, session);
-			}			
-			contextEdit = i18nResource.getContextI18nFile(ContentContext.EDIT_MODE, lg, true);			
-		}		
+			}
+			contextEdit = i18nResource.getContextI18nFile(ContentContext.EDIT_MODE, lg, true);
+		}
 	}
 
 	private void initView(String newViewLg) throws IOException {
@@ -656,37 +691,39 @@ public class I18nAccess implements Serializable {
 		updateTemplate(ctx);
 		changeViewLanguage(ctx);
 	}
-	
+
 	public boolean isDisplayKey() {
 		return displayKey;
 	}
-	
+
 	private void updateTemplate(ContentContext ctx) throws IOException, ServiceException, Exception {
-		//updateTemplate(ctx, ContentContext.EDIT_MODE);
-		//updateTemplate(ctx, ContentContext.VIEW_MODE);
+		// updateTemplate(ctx, ContentContext.EDIT_MODE);
+		// updateTemplate(ctx, ContentContext.VIEW_MODE);
 		updateTemplate(ctx, ctx.getRenderMode());
 	}
 
-	private synchronized void updateTemplate(ContentContext ctx, int mode) throws IOException, ServiceException, Exception {
-		
+	private synchronized void updateTemplate(ContentContext ctx, int mode)
+			throws IOException, ServiceException, Exception {
+
 		String latestTemplateId = latestViewTemplateId;
 		String latestTemplateLang = latestViewTemplateLang;
 		if (mode == ContentContext.EDIT_MODE) {
 			latestTemplateId = latestEditTemplateId;
-			latestTemplateLang = latestEditTemplateLang;			
+			latestTemplateLang = latestEditTemplateLang;
 		}
-		
+
 		if (ctx.getLanguage() != null) {
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 			if (!ctx.isFree()) {
 				Template template = ctx.getCurrentTemplate();
-				
-				String lg = ctx.getLanguage();				
+
+				String lg = ctx.getLanguage();
 				if (mode == ContentContext.EDIT_MODE) {
 					lg = globalContext.getEditLanguage(ctx.getRequest().getSession());
 				}
-				
-				if (template != null && template.getId() != null && (!latestTemplateId.equals(template.getId()) || !latestTemplateLang.equals(lg))) {
+
+				if (template != null && template.getId() != null
+						&& (!latestTemplateId.equals(template.getId()) || !latestTemplateLang.equals(lg))) {
 					propViewMap = null;
 					latestTemplateId = template.getId();
 					latestTemplateLang = lg;
@@ -694,15 +731,15 @@ public class I18nAccess implements Serializable {
 					if (!template.isTemplateInWebapp(ctx)) {
 						template.importTemplateInWebapp(globalContext.getStaticConfig(), ctx);
 					}
-					Stack<Map> stack = new Stack<Map>();					
-					stack.push(template.getI18nProperties(globalContext, new Locale(lg),mode));
+					Stack<Map> stack = new Stack<Map>();
+					stack.push(template.getI18nProperties(globalContext, new Locale(lg), mode));
 					Template parent = template.getParent();
 					while (parent != null) {
 						if (!parent.isTemplateInWebapp(ctx)) {
 							parent.importTemplateInWebapp(globalContext.getStaticConfig(), ctx);
 						}
-						Map i18n = parent.getI18nProperties(globalContext, new Locale(lg),mode);						
-						if (i18n != null) {							
+						Map i18n = parent.getI18nProperties(globalContext, new Locale(lg), mode);
+						if (i18n != null) {
 							stack.push(i18n);
 						}
 						parent = parent.getParent();
@@ -714,22 +751,22 @@ public class I18nAccess implements Serializable {
 						}
 					} else {
 						templateView.clear();
-						while (!stack.empty()) {							
+						while (!stack.empty()) {
 							templateView.putAll(stack.pop());
-						}						
+						}
 					}
-					templateViewImported = false;					
+					templateViewImported = false;
 				}
 			}
-			
+
 		}
-		
+
 		if (mode == ContentContext.EDIT_MODE) {
 			latestEditTemplateId = latestTemplateId;
-			latestEditTemplateLang = latestTemplateLang;			
+			latestEditTemplateLang = latestTemplateLang;
 		} else {
 			latestViewTemplateId = latestTemplateId;
-			latestViewTemplateLang = latestTemplateLang;			
+			latestViewTemplateLang = latestTemplateLang;
 		}
 	}
 
@@ -754,17 +791,17 @@ public class I18nAccess implements Serializable {
 	}
 
 	public String getAllText(String key, String defautlValue) {
-		return getViewText(key,getText(key, defautlValue));
+		return getViewText(key, getText(key, defautlValue));
 	}
 
-	public Map<String,String> getRequestMap() {
+	public Map<String, String> getRequestMap() {
 		return requestMap;
 	}
 
-	public void setRequestMap(Map<String,String> requestMap) {
+	public void setRequestMap(Map<String, String> requestMap) {
 		this.requestMap = requestMap;
 	}
-	
+
 	public void resetRequestMap() {
 		requestMap = Collections.EMPTY_MAP;
 	}

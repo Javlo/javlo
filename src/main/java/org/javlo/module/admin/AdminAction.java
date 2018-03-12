@@ -55,6 +55,7 @@ import org.javlo.module.core.Module;
 import org.javlo.module.core.ModuleException;
 import org.javlo.module.core.ModulesContext;
 import org.javlo.service.ContentService;
+import org.javlo.service.ListService;
 import org.javlo.service.LogService;
 import org.javlo.service.NotificationService;
 import org.javlo.service.PersistenceService;
@@ -1679,6 +1680,7 @@ public class AdminAction extends AbstractModuleAction {
 		StaticConfig staticConfig = globalContext.getStaticConfig();
 		TimeTracker.reset(staticConfig);
 		System.gc();
+		ListService.getInstance(ctx).clear();
 		return msg;
 	}
 

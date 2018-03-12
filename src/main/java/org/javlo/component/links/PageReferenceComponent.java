@@ -659,7 +659,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		out.println("<legend>" + i18nAccess.getText("content.page-teaser.page-list") + "</legend>");
 		/* array filter */
 		String tableID = "table-" + getId();
-		out.println("<div class=\"array-filter line\">");
+		out.println("<div class=\"row\"><div class=\"col-sm-9\"><div class=\"array-filter line\">");
 		String ajaxURL = URLHelper.createExpCompLink(ctx, getId());
 		out.println("<input class=\"input\" type=\"text\" placeholder=\"" + i18nAccess.getText("global.filter") + "\" onkeyup=\"filterPage('" + ajaxURL + "',this.value, '." + tableID + " tbody');\"/>");
 		String resetFilterScript = "jQuery('#comp-" + getId() + " .array-filter .input').val(''); filterPage('" + ajaxURL + "',jQuery('#comp-" + getId() + " .array-filter .input').val(), '." + tableID + " tbody'); return false;";
@@ -667,7 +667,11 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		String allScript = "if (jQuery('#comp-" + getId() + " .array-filter .input').val().indexOf(':all')<0) {jQuery('#comp-" + getId() + " .array-filter .input').val(jQuery('#comp-" + getId() + " .array-filter .input').val()+' :all'); filterPage('" + ajaxURL + "',jQuery('#comp-" + getId() + " .array-filter .input').val(), '." + tableID + " tbody'); return false;}";
 		out.println("<input type=\"button\" onclick=\"" + allScript + "\" value=\"" + i18nAccess.getText("global.all") + "\" />");
 
-		out.println("</div>");
+		out.println("</div></div>");
+		out.println("<div class=\"col-sm-3\"><div class=\"direct-link\">");
+		out.println("<input class=\"input\" type=\"text\" name=\""+getDirectLinkInputName()+"\" placeholder=\"" + i18nAccess.getText("global.direct-link", "direct link with page id or page name") + "\" />");
+		out.println("<input type=\"submit\" value=\"" + i18nAccess.getText("global.ok") + "\" />");
+		out.println("</div></div></div>");
 
 		MenuElement basePage = null;
 		if (getParentNode(ctx).length() > 1) { // if parent node is not root
@@ -834,6 +838,10 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 
 	protected String getOrderInputName() {
 		return "orde-" + getId();
+	}
+	
+	protected String getDirectLinkInputName() {
+		return "direct-link-" + getId();
 	}
 
 	protected String getPageId(MenuElement page) {
@@ -1477,6 +1485,20 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 					}
 				}
 			}
+			
+			if (!StringHelper.isEmpty(requestService.getParameter(getDirectLinkInputName()))) {
+				String page = requestService.getParameter(getDirectLinkInputName());
+				MenuElement pageFound = menu.searchChildFromId(page);
+				if (pageFound == null) {
+					pageFound = menu.searchChildFromName(page);
+				}
+				if (pageFound != null) {
+					pagesSelected.add(pageFound.getId());
+				} else {
+					return I18nAccess.getInstance(ctx).getText("global.page-not-found") + " ("+page+")";
+				}
+			}
+			
 			pagesSelected.addAll(currentPageSelected);
 			pagesSelected.removeAll(pagesNotSelected);
 			if (!currentPageSelected.equals(pagesSelected)) {
@@ -1802,3 +1824,4 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 	}
 
 }
+

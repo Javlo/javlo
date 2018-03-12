@@ -1700,7 +1700,7 @@ public class XHTMLHelper {
 	public static String getSelectOneCountry(ContentContext ctx, String name, String country) {
 		Map<String, String> countries = null;
 		try {
-			countries = I18nAccess.getInstance(ctx.getRequest()).getCountries();
+			countries = I18nAccess.getInstance(ctx.getRequest()).getCountries(ctx);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
