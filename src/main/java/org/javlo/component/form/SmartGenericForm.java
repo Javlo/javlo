@@ -59,6 +59,7 @@ import org.javlo.i18n.I18nAccess;
 import org.javlo.mailing.MailConfig;
 import org.javlo.mailing.MailService;
 import org.javlo.message.GenericMessage;
+import org.javlo.message.MessageRepository;
 import org.javlo.service.CaptchaService;
 import org.javlo.service.ContentService;
 import org.javlo.service.IListItem;
@@ -511,17 +512,29 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		int validLine = decodeEditNumber(ctx, validLineStr);	
 		if (validLine>0) {			
 			synchronized(LOCK_ACCESS_FILE) {
-				ctx.getRequest().setAttribute("validForm", "true");
+				ctx.getRequest().setAttribute("validForm", true);				
 				ctx.getRequest().setAttribute("editLine", editLineStr);
 				ctx.getRequest().setAttribute("inputLine", getInputValidLineName(ctx));
+				
 				File csvFile = getFile(ctx);
-				List<Map<String, String>> data = CSVFactory.loadContentAsMap(csvFile);		
-				System.out.println(">>>>>>>>> SmartGenericForm.prepareView : validLine = "+validLine); //TODO: remove debug trace
+				List<Map<String, String>> data = CSVFactory.loadContentAsMap(csvFile);				
+				if (data.size()>=validLine) {
+					Map<String,String> line = data.get(validLine);					
+					for (Map.Entry<String, String> entry : line.entrySet()) {						
+						rs.setParameter(entry.getKey(), entry.getValue());
+					}
+				}
+				
 				if (data.size()>=validLine) {
 					Map<String,String> line = data.get(validLine);					
 					line.put(VALIDED, "true");
 				}
 				CSVFactory.storeContentAsMap(csvFile, data);
+				
+				MessageRepository messageRepository = MessageRepository.getInstance(ctx);
+				String msg = I18nAccess.getInstance(ctx).getViewText("form.confirm", "data is confirmed.");
+				messageRepository.setGlobalMessage(new GenericMessage(msg, GenericMessage.INFO));
+				System.out.println(">>>>>>>>> SmartGenericForm.prepareView : msg = "+msg); //TODO: remove debug trace
 			}		
 		}
 	}

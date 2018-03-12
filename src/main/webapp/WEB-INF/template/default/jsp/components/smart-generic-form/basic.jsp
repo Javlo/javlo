@@ -4,3 +4,9 @@
 <input type="hidden" name="_form-code" value="${formCode}" /><c:if test="${editForm}">	
 <input type="hidden" name="${inputLine}" value="${editLine}" /></c:if>
 <c:if test="${comp.captcha && not empty comp.recaptchaKey && not empty comp.recaptchaSecretKey}"><script src='https://www.google.com/recaptcha/api.js?hl=${info.requestContentLanguage}'></script></c:if>
+
+<c:if test="${info.template.config.message && not empty messages.globalMessage.message}">
+		<div class="alert alert-${messages.globalMessage.bootstrapType}" role="alert">
+			<span>${messages.globalMessage.message}</span>
+		</div>
+</c:if>

@@ -920,4 +920,4 @@ change log
  
  * 2/ imagetransform update tag, can reference resources / display array component / smart generic form editable / html.head / smart link and components list / macro list / smart generic form parametrable subject and auto file name
  
- * 3/ add location in generic form if defined / get desription from page mirror (bug corretion) / image transform projection / definitively delete del pages / sort pages in undelte macro
+ * 3/ add location in generic form if defined / get desription from page mirror (bug corretion) / image transform projection / definitively delete del pages / sort pages in undelte macro / default countries list from JDK / page reference : direct link with page id
