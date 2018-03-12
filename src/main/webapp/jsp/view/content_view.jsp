@@ -33,6 +33,7 @@
 %><%
 ContentContext ctx = ContentContext.getContentContext ( request, response );
 GlobalContext globalContext = GlobalContext.getInstance(request);
+
 boolean pageEmpty = true;
 boolean editPage = !StringHelper.isTrue(request.getParameter(PageMirrorComponent.NOT_EDIT_PREVIEW_PARAM_NAME));
 IContentVisualComponent specificComp = (IContentVisualComponent)request.getAttribute("specific-comp");

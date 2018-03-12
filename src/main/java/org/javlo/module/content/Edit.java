@@ -46,6 +46,7 @@ import org.javlo.helper.ComponentHelper;
 import org.javlo.helper.DebugHelper;
 import org.javlo.helper.ElementaryURLHelper;
 import org.javlo.helper.LangHelper;
+import org.javlo.helper.LocalLogger;
 import org.javlo.helper.NavigationHelper;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.ServletHelper;
@@ -921,7 +922,8 @@ public class Edit extends AbstractModuleAction {
 				ctx.setRenderMode(Integer.parseInt(mode));
 			}
 			ctx.getRequest().setAttribute(AbstractVisualComponent.SCROLL_TO_COMP_ID_ATTRIBUTE_NAME, newId);
-			ctx.getAjaxInsideZone().put(selecterPrefix + area, ServletHelper.executeJSP(ctx, "/jsp/view/content_view.jsp?area=" + areaKey));
+			
+			ctx.getAjaxInsideZone().put(selecterPrefix + area, ComponentHelper.renderArea(ctx, areaKey));
 		}
 		ctx.resetCurrentPageCached();
 		PersistenceService persistenceService = PersistenceService.getInstance(globalContext);
@@ -937,7 +939,8 @@ public class Edit extends AbstractModuleAction {
 	}
 
 	public static final String performDelete(ContentContext ctx, HttpServletRequest request, ContentService content, EditContext editContext, HttpServletResponse response, I18nAccess i18nAccess, MessageRepository messageRepository) throws Exception {
-
+		
+		
 		if (!canModifyCurrentPage(ctx) || !checkPageSecurity(ctx)) {
 			messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("action.block"), GenericMessage.ERROR), false);
 			return null;
@@ -1034,8 +1037,8 @@ public class Edit extends AbstractModuleAction {
 		selecterPrefix = StringHelper.neverNull(selecterPrefix);
 		Template template = TemplateFactory.getTemplate(ctx, comp.getPage());
 		if (template != null && template.getAreasMap() != null) {
-			String areaHTMLid = template.getAreasMap().get(comp.getArea());
-			ctx.getAjaxInsideZone().put(selecterPrefix + areaHTMLid, ServletHelper.executeJSP(ctx, "/jsp/view/content_view.jsp?area=" + comp.getArea()));
+			String areaHTMLid = template.getAreasMap().get(comp.getArea());			
+			ctx.getAjaxInsideZone().put(selecterPrefix + areaHTMLid, ComponentHelper.renderArea(ctx, comp.getArea()));
 		}
 	}
 
@@ -2155,7 +2158,7 @@ public class Edit extends AbstractModuleAction {
 			if (mode != null) {
 				ctx.setRenderMode(Integer.parseInt(mode));
 			}
-			ctx.getAjaxInsideZone().put(selecterPrefix + areaMap.get(areaId), ServletHelper.executeJSP(ctx, "/jsp/view/content_view.jsp?area=" + areaId));
+			ctx.getAjaxInsideZone().put(selecterPrefix + areaMap.get(areaId), ComponentHelper.renderArea(ctx, areaId));
 
 			ctx.setCurrentPageCached(fromPage);
 			String fromPageSelector = "";
@@ -2164,7 +2167,7 @@ public class Edit extends AbstractModuleAction {
 				ctx.setCurrentPageCached(fromPage);
 			}
 			String fromAreaId = TemplateFactory.getTemplate(ctx, fromPage).getAreasMap().get(fromArea);
-			ctx.getAjaxInsideZone().put(fromPageSelector + fromAreaId, ServletHelper.executeJSP(ctx, "/jsp/view/content_view.jsp?area=" + fromArea));
+			ctx.getAjaxInsideZone().put(fromPageSelector + fromAreaId, ComponentHelper.renderArea(ctx, fromArea));
 
 			ctx.setCurrentPageCached(parentPage);
 		}
@@ -2316,20 +2319,22 @@ public class Edit extends AbstractModuleAction {
 					ctx.setRenderMode(Integer.parseInt(mode));
 				}
 				
-				String specialRenderer = ctx.getCurrentTemplate().getSpecialAreaRenderer();
-				System.out.println(">>>>>>>>> Edit.performInsertShared : 1.specialRenderer = "+specialRenderer); //TODO: remove debug trace
-				
-				URLHelper.mergePath();
-				
-				specialRenderer = URLHelper.mergePath(ctx.getCurrentTemplate().getLocalWorkTemplateFolder(),ctx.getCurrentTemplate().getFolder(ctx.getGlobalContext()), specialRenderer);
-				System.out.println(">>>>>>>>> Edit.performInsertShared : 2.specialRenderer = "+specialRenderer); //TODO: remove debug trace				
-				if (specialRenderer == null) {
-					ctx.getAjaxInsideZone().put(selecterPrefix + area, ServletHelper.executeJSP(ctx, "/jsp/view/content_view.jsp?area=" + areaKey));	 
-				} else {
-					specialRenderer = URLHelper.mergePath(ctx.getCurrentTemplate().getWorkTemplateFolder(), specialRenderer);
-					System.out.println(">>>>>>>>> Edit.performInsertShared : 2.specialRenderer = "+specialRenderer); //TODO: remove debug trace
-					ctx.getAjaxInsideZone().put(selecterPrefix + area, ServletHelper.executeJSP(ctx, specialRenderer+"?area=" + areaKey));
-				}
+				ctx.getAjaxInsideZone().put(selecterPrefix + area, ComponentHelper.renderArea(ctx, areaKey));
+//				
+//				String specialRenderer = ctx.getCurrentTemplate().getSpecialAreaRenderer();
+//				System.out.println(">>>>>>>>> Edit.performInsertShared : 1.specialRenderer = "+specialRenderer); //TODO: remove debug trace
+//				
+//				URLHelper.mergePath();
+//				
+//				specialRenderer = URLHelper.mergePath(ctx.getCurrentTemplate().getLocalWorkTemplateFolder(),ctx.getCurrentTemplate().getFolder(ctx.getGlobalContext()), specialRenderer);
+//				System.out.println(">>>>>>>>> Edit.performInsertShared : 2.specialRenderer = "+specialRenderer); //TODO: remove debug trace				
+//				if (specialRenderer == null) {
+//					ctx.getAjaxInsideZone().put(selecterPrefix + area, ServletHelper.executeJSP(ctx, "/jsp/view/content_view.jsp?area=" + areaKey));	 
+//				} else {
+//					specialRenderer = URLHelper.mergePath(ctx.getCurrentTemplate().getWorkTemplateFolder(), specialRenderer);
+//					System.out.println(">>>>>>>>> Edit.performInsertShared : 2.specialRenderer = "+specialRenderer); //TODO: remove debug trace
+//					ctx.getAjaxInsideZone().put(selecterPrefix + area, ServletHelper.executeJSP(ctx, specialRenderer+"?area=" + areaKey));
+//				}
 				logger.info("update area : " + selecterPrefix + area);				
 			}
 		}

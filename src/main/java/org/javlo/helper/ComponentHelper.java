@@ -28,6 +28,8 @@ import org.javlo.i18n.I18nAccess;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
 import org.javlo.service.RequestService;
+import org.javlo.template.Area;
+import org.javlo.template.Template;
 import org.javlo.utils.Cell;
 
 /**
@@ -69,7 +71,6 @@ public class ComponentHelper {
 	 * < comps.length) && !(comps[j] instanceof SpecialTitle); j++) { if
 	 * (comps[j].isVisible()) { return true; } } return false; }
 	 */
-
 	public static IContentVisualComponent getComponentFromRequest(ContentContext ctx) throws Exception {
 		return getComponentFromRequest(ctx, IContentVisualComponent.COMP_ID_REQUEST_PARAM);
 	}
@@ -465,8 +466,7 @@ public class ComponentHelper {
 	 * @param comp
 	 * @return
 	 * @throws Exception 
-	 */
-	public static final IContentVisualComponent getRealComponent(ContentContext ctx, IContentVisualComponent comp) throws Exception {
+	 */	public static final IContentVisualComponent getRealComponent(ContentContext ctx, IContentVisualComponent comp) throws Exception {
 		if (comp != null && comp instanceof MirrorComponent) {
 			MirrorComponent mcomp = (MirrorComponent)comp;
 			return mcomp.getMirrorComponent(ctx);
@@ -474,5 +474,20 @@ public class ComponentHelper {
 			return comp;
 		}
 	}
+	
+	public static String renderArea(ContentContext ctx, String areaKey) throws Exception {		
+		String specialRenderer = ctx.getCurrentTemplate().getSpecialAreaRenderer();				
+		if (specialRenderer == null) {		
+			return ServletHelper.executeJSP(ctx, "/jsp/view/content_view.jsp?area=" + areaKey);	 
+		} else {
+			specialRenderer = URLHelper.mergePath(ctx.getCurrentTemplate().getFolder(ctx.getGlobalContext()), specialRenderer);
+			Template tpl = ctx.getCurrentTemplate();
+			Area area = tpl.getArea(tpl.getRows(), areaKey);			
+			ctx.getRequest().setAttribute("areaStyle", area);
+			specialRenderer = URLHelper.mergePath(ctx.getCurrentTemplate().getLocalWorkTemplateFolder(), specialRenderer);			
+			return ServletHelper.executeJSP(ctx, specialRenderer+"?area="+areaKey);
+		}				
+	}
+	
 
 }
