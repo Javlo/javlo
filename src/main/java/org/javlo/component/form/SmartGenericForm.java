@@ -533,8 +533,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 				
 				MessageRepository messageRepository = MessageRepository.getInstance(ctx);
 				String msg = I18nAccess.getInstance(ctx).getViewText("form.confirm", "data is confirmed.");
-				messageRepository.setGlobalMessage(new GenericMessage(msg, GenericMessage.INFO));
-				System.out.println(">>>>>>>>> SmartGenericForm.prepareView : msg = "+msg); //TODO: remove debug trace
+				messageRepository.setGlobalMessage(new GenericMessage(msg, GenericMessage.INFO));				
 			}		
 		}
 	}

@@ -58,7 +58,8 @@ public class XMLFactory {
 		DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
 		// docBuilderFactory.setNamespaceAware(false);
 		DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
-		Document doc = docBuilder.parse(new InputSource(inXML));
+		InputSource is = new InputSource(inXML);
+		Document doc = docBuilder.parse(is);
 		return new NodeXML(doc);
 	}
 
