@@ -14,6 +14,7 @@ import org.javlo.component.core.ISubTitle;
 import org.javlo.component.properties.AbstractPropertiesComponent;
 import org.javlo.context.ContentContext;
 import org.javlo.exception.ResourceNotFoundException;
+import org.javlo.helper.LoremIpsumGenerator;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.helper.XHTMLHelper;
@@ -270,11 +271,8 @@ public class Heading extends AbstractPropertiesComponent implements ISubTitle {
 
 	@Override
 	public boolean initContent(ContentContext ctx) throws Exception {
-		if (isEditOnCreate(ctx)) {
-			return false;
-		}
-		I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
-		setFieldValue(TEXT, i18nAccess.getText("content.heading"));
+		setFieldValue(TEXT, LoremIpsumGenerator.getParagraph(4, false, true));		
+		setModify();
 		storeProperties();
 		return true;
 	}
@@ -403,7 +401,7 @@ public class Heading extends AbstractPropertiesComponent implements ISubTitle {
 	
 	@Override
 	public boolean isDefaultValue(ContentContext ctx) {
-		return getValue().trim().length() == 0;
+		return getFieldValue(TEXT, "" ).trim().length() == 0;
 	}
 	
 	@Override

@@ -482,7 +482,7 @@ public class ComponentHelper {
 		} else {
 			specialRenderer = URLHelper.mergePath(ctx.getCurrentTemplate().getFolder(ctx.getGlobalContext()), specialRenderer);
 			Template tpl = ctx.getCurrentTemplate();
-			Area area = tpl.getArea(tpl.getRows(), areaKey);			
+			Area area = Template.getArea(tpl.getRows(), areaKey);			
 			ctx.getRequest().setAttribute("areaStyle", area);
 			specialRenderer = URLHelper.mergePath(ctx.getCurrentTemplate().getLocalWorkTemplateFolder(), specialRenderer);			
 			return ServletHelper.executeJSP(ctx, specialRenderer+"?area="+areaKey);

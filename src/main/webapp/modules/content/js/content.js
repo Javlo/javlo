@@ -138,6 +138,10 @@ function clipboardCopy(text) {
 
 
 function smartLinkAction(item) {
+	url = encodeURIComponent(jQuery(item).val());
+	if (url == null || !url.startsWith("http")) {
+		return;
+	}
 	var parent = jQuery(item).parent();		
 	while (parent != null && !jQuery(parent).is("form")) {
 		parent = jQuery(parent).parent();	
@@ -153,12 +157,12 @@ function smartLinkAction(item) {
 	if (parent == null) {
 		alert("smart-link not found.");
 	} else {
-		var compId = parent.attr("id").substring(5);
+		var compId = parent.attr("id").substring(5);		
 		if (urlPrefix.indexOf('webaction=smartlink.loadlink') < 0) {
 			if (urlPrefix.indexOf('?') < 0) {
-				var url = urlPrefix+"?webaction=smartlink.loadlink&url="+jQuery(item).val()+"&comp_id="+compId;
+				var url = urlPrefix+"?webaction=smartlink.loadlink&url="+url+"&comp_id="+compId;
 			} else {
-				var url = urlPrefix+"&webaction=smartlink.loadlink&url="+jQuery(item).val()+"&comp_id="+compId;
+				var url = urlPrefix+"&webaction=smartlink.loadlink&url="+url+"&comp_id="+compId;
 			}
 		}
 		ajaxRequest(url, null, function() {jQuery(".waiting").css('display', 'none');});

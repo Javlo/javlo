@@ -337,8 +337,21 @@ public class Image extends AbstractFileComponent implements IImageTitle, IPrevie
 
 	@Override
 	public String getActionGroupName() {
-		return "image";
+		return "image";		
 	}
+	
+	protected File getDefaultFile(ContentContext ctx) {		
+		File defaultFile = new File(URLHelper.mergePath(getFileDirectory(ctx), "default.jpg"));
+		if (defaultFile.exists()) {
+			return defaultFile;
+		} else {
+			defaultFile = new File(URLHelper.mergePath(getFileDirectory(ctx), "default.png"));
+			if (defaultFile.exists()) {
+				return defaultFile;
+			}
+		}
+		return null;
+	}	
 
 	@Override
 	public boolean initContent(ContentContext ctx) throws Exception {
@@ -346,13 +359,10 @@ public class Image extends AbstractFileComponent implements IImageTitle, IPrevie
 		if (isEditOnCreate(ctx)) {
 			return false;
 		}
-
-		String defaultFileName = "default.jpg";
-		File defaultFile = new File(URLHelper.mergePath(getFileDirectory(ctx), defaultFileName));
-
-		if (defaultFile.exists()) {
+		File defaultFile = getDefaultFile(ctx);
+		if (defaultFile != null) {
 			setDirSelected("");
-			setFileName("default.jpg");
+			setFileName(defaultFile.getName());
 			storeProperties();
 			setStyle(ctx, STYLE_CENTER);
 			setModify();

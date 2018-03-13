@@ -2165,18 +2165,6 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		return "display-as-" + getId();
 	}
 
-	private String getDisplayType() {
-		String[] values = getValue().split(VALUE_SEPARATOR);
-		String out = null;
-		if (values.length >= 5) {
-			out = values[4];
-			if (out.isEmpty()) {
-				out = null;
-			}
-		}
-		return out;
-	}
-
 	protected void includePage(ContentContext ctx, String jsp) throws ServletException, IOException {
 		// ctx.getResponse().flushBuffer();
 		try {

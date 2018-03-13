@@ -268,8 +268,13 @@ public class GlobalImage extends Image implements IImageFilter {
 			ctx.getRequest().setAttribute("previewURL", URLHelper.createResourceURL(ctx, getResourceURL(ctx, getFileName())));
 			ctx.getRequest().setAttribute("loadURL", URLHelper.createResourceURL(ctx, getResourceURL(ctx, getFileName())));
 		} else {
-			ctx.getRequest().setAttribute("previewURL", getPreviewURL(ctx, getFilter(ctx)));
-			ctx.getRequest().setAttribute("loadURL", getPreviewURL(ctx, getFilter(ctx)+ImageTransformServlet.PRELOAD_IMAGE_SUFFIX));
+			String previewURL = getPreviewURL(ctx, getFilter(ctx));
+			ctx.getRequest().setAttribute("previewURL", previewURL);			
+			if (ctx.isAjax()) {
+				ctx.getRequest().setAttribute("loadURL", previewURL);	
+			} else {
+				ctx.getRequest().setAttribute("loadURL", getPreviewURL(ctx, getFilter(ctx)+ImageTransformServlet.PRELOAD_IMAGE_SUFFIX));
+			}
 		}
 		ctx.getRequest().setAttribute("largeURL", getPreviewURL(ctx, getLargeFilter(ctx)));
 		ctx.getRequest().setAttribute("media", this);
@@ -1104,7 +1109,7 @@ public class GlobalImage extends Image implements IImageFilter {
 	public boolean initContent(ContentContext ctx) throws Exception {
 		super.initContent(ctx);
 		setFilter(ctx.getCurrentTemplate().getDefaultImageFilter());
-		setLink(getConfig(ctx).getProperty("content.link", ""));
+		setLink(getConfig(ctx).getProperty("content.link", ""));		
 		setModify();
 		storeProperties();
 		return true;

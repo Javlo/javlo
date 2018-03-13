@@ -30,6 +30,7 @@ import org.javlo.component.core.ComponentBean;
 import org.javlo.component.core.ContentElementList;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.files.AbstractFileComponent;
+import org.javlo.component.image.GlobalImage;
 import org.javlo.component.links.MirrorComponent;
 import org.javlo.component.meta.DateComponent;
 import org.javlo.component.meta.EventDefinitionComponent;
@@ -38,6 +39,7 @@ import org.javlo.component.meta.TimeRangeComponent;
 import org.javlo.component.multimedia.Multimedia;
 import org.javlo.component.text.Description;
 import org.javlo.component.text.WysiwygParagraph;
+import org.javlo.component.title.Heading;
 import org.javlo.component.title.SubTitle;
 import org.javlo.component.title.Title;
 import org.javlo.config.StaticConfig;
@@ -893,9 +895,13 @@ public class MacroHelper {
 				if (tags != null) {
 					parentId = MacroHelper.addContent(lg, newPage, parentId, Tags.TYPE, StringHelper.collectionToString(tags, ";"), ctx.getCurrentEditUser());
 				}
-				parentId = MacroHelper.addContent(lg, newPage, parentId, Title.TYPE, "", ctx.getCurrentEditUser());
+				if (ctx.getGlobalContext().hasComponent(Heading.class)) {
+					parentId = MacroHelper.addContent(lg, newPage, parentId, Heading.TYPE, "", ctx.getCurrentEditUser());
+				} else {
+					parentId = MacroHelper.addContent(lg, newPage, parentId, Title.TYPE, "", ctx.getCurrentEditUser());
+				}
 				parentId = MacroHelper.addContent(lg, newPage, parentId, Description.TYPE, "", ctx.getCurrentEditUser());
-				//parentId = MacroHelper.addContent(lg, newPage, parentId, GlobalImage.TYPE, "", ctx.getCurrentEditUser());
+				parentId = MacroHelper.addContent(lg, newPage, parentId, GlobalImage.TYPE, "", ctx.getCurrentEditUser());
 				parentId = MacroHelper.addContent(lg, newPage, parentId, WysiwygParagraph.TYPE, "", ctx.getCurrentEditUser());
 			}
 		} else {

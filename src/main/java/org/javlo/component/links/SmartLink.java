@@ -2,7 +2,6 @@ package org.javlo.component.links;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.ParseException;
 import java.util.Collection;
@@ -318,18 +317,9 @@ public class SmartLink extends ComplexPropertiesLink implements ILink, IAction {
 		return latestValidDate;
 	}
 	
-	public static void main(String[] args)  {
-		String title;
-		try {
-			title = NetHelper.getPageTitle(new URL("http://lesbian-bondage.net/gallery/bound-naked-and-spread-wide-open.html?23x21x785"));
-			System.out.println(">>>>>>>>> SmartLink.main : title = "+title); //TODO: remove debug trace
-		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
+	@Override
+	public boolean isRealContent(ContentContext ctx) {	
+		return !StringHelper.isEmpty(getValue());
 	}
+	
 }

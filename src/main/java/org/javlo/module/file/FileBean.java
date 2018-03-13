@@ -349,5 +349,5 @@ public class FileBean implements ILanguage {
 	public String getVersionHash() {
 		return staticInfo.getVersionHash(ctx);
 	}
-
+	
 }

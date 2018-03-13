@@ -6,6 +6,8 @@ var realScroll = true;
 
 var editPreview = editPreview||{};
 
+var countDrop = 0;
+
 if (!String.prototype.startsWith) {
 	  String.prototype.startsWith = function(searchString, position) {
 	    position = position || 0;
@@ -344,14 +346,11 @@ if (!String.prototype.startsWith) {
 
 	editPreview.initPreview = function() {
 		
-		
 		var cols = document.querySelectorAll('body');
 		[].forEach.call(cols, function(col) {		  
 		  col.addEventListener('dragover', handleDragOver, false );		  
 		  col.addEventListener('dragleave', handleDragLeave, false);
-		});
-
-		
+		});		
 		
 		pjq('a.as-modal').on('click', function() {
 			var text = $(this).attr("title");
@@ -484,8 +483,7 @@ if (!String.prototype.startsWith) {
 				event.preventDefault();
 			});
 		}
-		var drop = document.querySelectorAll('.editable-component'), el = null;
-		var countDrop = 0;
+		var drop = document.querySelectorAll('.editable-component'), el = null;		
 		var dragovercomp = false;
 		for (var i = 0; i < drop.length; i++) {
 			el = drop[i];
@@ -670,6 +668,7 @@ if (!String.prototype.startsWith) {
 					
 					countDrop++;
 					if (countDrop>1 && event.dataTransfer.files.length==0) {
+						event.preventDefault();
 						countDrop=0;
 						return false;
 					}					
@@ -725,6 +724,9 @@ if (!String.prototype.startsWith) {
 							ajaxURL = ajaxURL +'&pageContainerID='+ editPreview.searchPageId(this);
 						}
 						if (jQuery('#'+area).hasClass("_empty_area")) {
+							if (PREVIEWLOG) {
+								console.log("_empty_area ajaxURL = ",ajaxURL);
+							}
 							editPreview.ajaxPreviewRequest(ajaxURL, null, null);
 						}						
 					} else if (compType != null && compType.length > 0) {	
@@ -734,14 +736,17 @@ if (!String.prototype.startsWith) {
 							url = url +'&pageContainerID='+ editPreview.searchPageId(this);
 						}
 						if (jQuery('#'+area).hasClass("_empty_area")) {
-							jQuery('#'+area).removeClass("_empty_area")
+							jQuery('#'+area).removeClass("_empty_area");
 							var ajaxURL = editPreview.addParam(currentURL,url);
-							editPreview.ajaxPreviewRequest(ajaxURL, function() {                           
+							if (PREVIEWLOG) {
+								console.log("compType ajaxURL = ",ajaxURL);
+							}
+							editPreview.ajaxPreviewRequest(ajaxURL, function() {								
 								if (pjq(".edit-component").length > 0) {
 									var compId = pjq(".edit-component").attr("id").substring(3);
 									var editURL = editPreviewURL + "&comp_id=" + compId;								
 									editPreview.openModal(i18n_preview_edit, editURL);
-								}
+								}								
 							}, null);						
 						}
 					} else if (compId != null && event.dataTransfer.files.length == 0) { // move
@@ -1136,7 +1141,8 @@ if (!String.prototype.startsWith) {
 				});
 				jQuery(document).trigger("ajaxUpdate");
 				try {
-					editPreview.initPreview();
+					countDrop=0;
+					editPreview.initPreview();					
 				} catch (ex) {
 					if (console) {
 						console.log("Exception when calling initPreview()", ex);

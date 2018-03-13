@@ -13,10 +13,11 @@ import org.javlo.context.ContentContext;
 import org.javlo.helper.StringHelper;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
+import org.owasp.encoder.Encode;
 
 public class ComponentList extends AbstractPropertiesComponent implements IAction {
 	
-	private static List<String> types = new LinkedList<String>(Arrays.asList(new String[] {"page", "type", "size"}));
+	private static List<String> types = new LinkedList<String>(Arrays.asList(new String[] {"title", "page", "type", "size"}));
 
 	public static final String TYPE = "component-list";
 
@@ -54,7 +55,7 @@ public class ComponentList extends AbstractPropertiesComponent implements IActio
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
 		ContentService content = ContentService.getInstance(ctx.getRequest());
 		MenuElement root = content.getNavigation(ctx);
-		MenuElement page = root.searchChildFromName(getFieldValue("page", null));
+		MenuElement page = root.searchChildFromName(getFieldValue("page", null));		
 		int size = Integer.MAX_VALUE;
 		if (StringHelper.isDigit(getFieldValue("size"))) {
 			size = Integer.parseInt(getFieldValue("size"));
@@ -65,6 +66,10 @@ public class ComponentList extends AbstractPropertiesComponent implements IActio
 			if (data != null && data.size() > 0) {
 				ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 				PrintStream out = new PrintStream(outStream);
+				String title = getFieldValue("title", null);
+				if (!StringHelper.isEmpty(title)) {
+					out.println("<h"+(ctx.getTitleDepth()+1)+">"+Encode.forHtml(title)+"</h"+(ctx.getTitleDepth()+1)+">"); 
+				}
 				out.println("<ul>");
 				String cssClass = " class=\"first\"";
 				for (IContentVisualComponent comp : data) {					
@@ -78,6 +83,8 @@ public class ComponentList extends AbstractPropertiesComponent implements IActio
 				out.close();
 				return new String(outStream.toByteArray());
 			}
+		} else {
+			return "page not found : "+getFieldValue("page", null);
 		}
 		return "";
 	}
