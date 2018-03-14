@@ -260,7 +260,9 @@ public class XLSTools {
 			Map<String, Cell> item = new HashMap<String, Cell>();
 			Cell[] line = data[i];
 			for (int j = 0; j < line.length; j++) {
-				item.put(firstLine[j].getValue(), line[j]);
+				if (firstLine.length < j) {
+					item.put(firstLine[j].getValue(), line[j]);
+				}
 			}
 			outList.add(item);
 		}

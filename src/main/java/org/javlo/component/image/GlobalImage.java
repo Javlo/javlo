@@ -269,8 +269,9 @@ public class GlobalImage extends Image implements IImageFilter {
 			ctx.getRequest().setAttribute("loadURL", URLHelper.createResourceURL(ctx, getResourceURL(ctx, getFileName())));
 		} else {
 			String previewURL = getPreviewURL(ctx, getFilter(ctx));
-			ctx.getRequest().setAttribute("previewURL", previewURL);			
-			if (ctx.isAjax()) {
+			ctx.getRequest().setAttribute("previewURL", previewURL);
+			System.out.println(">>>>>>>>> GlobalImage.prepareView : ctx.isContentStatic() = "+ctx.isContentStatic()); //TODO: remove debug trace
+			if (ctx.isAjax() || ctx.isContentStatic()) {
 				ctx.getRequest().setAttribute("loadURL", previewURL);	
 			} else {
 				ctx.getRequest().setAttribute("loadURL", getPreviewURL(ctx, getFilter(ctx)+ImageTransformServlet.PRELOAD_IMAGE_SUFFIX));

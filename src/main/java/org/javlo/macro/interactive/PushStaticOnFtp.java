@@ -3,6 +3,7 @@ package org.javlo.macro.interactive;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Date;
 import java.util.Map;
 import java.util.logging.Logger;
 
@@ -25,7 +26,7 @@ public class PushStaticOnFtp implements IInteractiveMacro, IAction {
 	
 	private static final String NAME = "push-static-on-ftp";
 	
-	private static TransfertStaticToFtp thread = null;
+	private static Thread thread = null;
 
 	@Override
 	public String getName() {
@@ -73,6 +74,7 @@ public class PushStaticOnFtp implements IInteractiveMacro, IAction {
 		String username = rs.getParameter("username", "");
 		String password = rs.getParameter("password", "");
 		String path = rs.getParameter("path", "");
+		boolean zipOnly = StringHelper.isTrue(rs.getParameter("ziponly"));
 		
 		ctx.getGlobalContext().setData(NAME+"-host",  host);
 		ctx.getGlobalContext().setData(NAME+"-port", "21");
@@ -82,33 +84,39 @@ public class PushStaticOnFtp implements IInteractiveMacro, IAction {
 		} else {
 			ctx.getGlobalContext().setData(NAME+"-password", null);
 		}
-		ctx.getGlobalContext().setData(NAME+"-path", path);	
-
-		if (StringHelper.isEmpty(host) || !StringHelper.isDigit(port)) {
-			return "bad host or port";
-		}
-
-		FTPClient ftp = new FTPClient();		
-		ftp.connect(host, Integer.parseInt(port));
-		if (!ftp.isConnected()) {
-			return "could not connect to : " + host + ":" + port;
+		ctx.getGlobalContext().setData(NAME+"-path", path);
+		
+		File folder = new File(URLHelper.mergePath(ctx.getGlobalContext().getDataFolder(), "_static_temp"));
+		String url = URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE).getContextForAbsoluteURL(), "/");
+		if (zipOnly) {
+			File zipFile = new File(URLHelper.mergePath(ctx.getGlobalContext().getStaticFolder(), "_static_export/"+StringHelper.stringToFileName(globalContext.getContextKey()+"_"+StringHelper.renderSortableTime(new Date()))+".zip"));
+			zipFile.getParentFile().mkdirs();
+			zipFile.createNewFile();
+			thread = new TransfertStaticToZip(folder, new URL(url), zipFile, path);
 		} else {
-			if (!StringHelper.isEmpty(username)) {
-				if (!ftp.login(username, password)) {
-					return "could not log with username:" + username;
-				} else if (!ftp.changeWorkingDirectory(path)) {
-					return "path not found : " + path;
-				}
+			if (StringHelper.isEmpty(host) || !StringHelper.isDigit(port)) {
+				return "bad host or port";
 			}
-			
-			File folder = new File(URLHelper.mergePath(ctx.getGlobalContext().getFolder(), "_static_temp"));
-			if (thread != null && thread.running) {
-				return "Thread already lauched, please wait...";
-			}	
-			
-			String url = URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE).getContextForAbsoluteURL(), "/");
-			logger.info("download : "+url);
-			thread = new TransfertStaticToFtp(folder, new URL(url), host, Integer.parseInt(port), username, password, path);
+			FTPClient ftp = new FTPClient();		
+			ftp.connect(host, Integer.parseInt(port));
+			if (!ftp.isConnected()) {
+				return "could not connect to : " + host + ":" + port;
+			} else {
+				if (!StringHelper.isEmpty(username)) {
+					if (!ftp.login(username, password)) {
+						return "could not log with username:" + username;
+					} else if (!ftp.changeWorkingDirectory(path)) {
+						return "path not found : " + path;
+					}
+				}
+				if (thread != null && thread.isAlive()) {
+					return "Thread already lauched, please wait...";
+				}	
+				logger.info("download : "+url);
+				thread = new TransfertStaticToFtp(folder, new URL(url), host, Integer.parseInt(port), username, password, path);
+			}
+		}
+		if (thread != null) {
 			thread.start();			
 			messageRepository.setGlobalMessage(new GenericMessage("Push thread lauched.", GenericMessage.INFO));
 			ctx.setClosePopup(true);

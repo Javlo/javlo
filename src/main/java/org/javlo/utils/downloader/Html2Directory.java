@@ -7,6 +7,7 @@ import java.net.URL;
 import java.nio.file.Path;
 import java.util.logging.Logger;
 
+import org.javlo.context.ContentContext;
 import org.javlo.helper.NetHelper;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
@@ -20,7 +21,7 @@ public class Html2Directory {
 	
 	private static Logger logger = Logger.getLogger(Html2Directory.class.getName());
 	
-	public static final String STATIC_HEADER = "Content-Static";
+	public static final String STATIC_HEADER_AND_PARAM = "_Content-Static";
 	
 	public static class Status {
 		int overwriteFiles = 0;		
@@ -42,17 +43,6 @@ public class Html2Directory {
 		return !StringHelper.neverNull(contentType.toLowerCase()).contains("html");
 	}
 	
-	private static boolean isCss(URL url) throws Exception {
-		if (url == null) {
-			return false;
-		}
-		String contentType = NetHelper.getContentType(url);
-		if (contentType == null) {
-			return false;
-		}
-		return !StringHelper.neverNull(contentType.toLowerCase()).contains("css");
-	}
-	
 	private static String getRelativePath (File base, File finalFile) throws IOException {
 		Path first = base.toPath();
 		Path second = finalFile.toPath();
@@ -72,7 +62,7 @@ public class Html2Directory {
 	}
 
 	public static File download (URL url, File baseDir, Status status, int depth) {	
-		logger.info("download url = "+url);
+		
 		try {			
 			if (url == null) {
 				return null;
@@ -88,7 +78,9 @@ public class Html2Directory {
 				}
 				return file;
 			} else {		
-				Document doc = Jsoup.connect(url.toString()).header(STATIC_HEADER, "true").userAgent(NetHelper.JAVLO_USER_AGENT).timeout(TIMEOUT).get();
+				String pageURL = URLHelper.addParam(url.toString(), STATIC_HEADER_AND_PARAM, "true");
+				logger.info("download url = "+pageURL);
+				Document doc = Jsoup.connect(pageURL).header(STATIC_HEADER_AND_PARAM, "true").userAgent(NetHelper.JAVLO_USER_AGENT).timeout(TIMEOUT).get();
 				File file;
 				if (depth == 0) {
 					file = new File(URLHelper.mergePath(baseDir.getAbsolutePath(), "index.html"));
@@ -121,8 +113,18 @@ public class Html2Directory {
 							}
 						}
 					}
+					links = doc.select("[data-src]");					
+					for (Element link : links) {						
+						String path = link.attr("data-src");						
+						if (!StringHelper.isEmpty(path) && !StringHelper.isURL(path) && path.trim().length() > 1) {							
+							File newFile = download(getNewUrl(url, path), baseDir, status, depth+1);
+							if (newFile != null) {
+								link.attr("data-src", getRelativePath(file.getParentFile(), newFile));
+							}
+						}
+					}
 					String html = doc.html();
-					ResourceHelper.writeStringToFile(file, html);
+					ResourceHelper.writeStringToFile(file, html, ContentContext.CHARACTER_ENCODING);
 				}		
 				
 				return file;
@@ -135,13 +137,17 @@ public class Html2Directory {
 	}
 	
 	public static void main(String[] args) throws Exception {
-		File outDir = new File("c:/trans/test_html_download");
-		if (!outDir.getParentFile().exists()) {
-			outDir.getParentFile().mkdirs();
-		}
-		Status status = new Status();
-		//download(new URL("https://galleries.tease-pics.com/onlysecretaries/1080u-p/?id=2174460"), outDir, status, 0);
-		download(new URL("http://localhost/javlo/demo/"), outDir, status, 0);
+		
+		Document doc = Jsoup.connect("http://localhost/javlo/kce/fr/articles/articles-2018/articles-2018-mars/articles-2018-mars-3.html").header(STATIC_HEADER_AND_PARAM, "true").userAgent(NetHelper.JAVLO_USER_AGENT).timeout(TIMEOUT).get();
+		System.out.println(">>>>>>>>> Html2Directory.main : #children = "+doc.children().size()); //TODO: remove debug tracedoc.children()
+		
+//		File outDir = new File("c:/trans/test_html_download");
+//		if (!outDir.getParentFile().exists()) {
+//			outDir.getParentFile().mkdirs();
+//		}
+//		Status status = new Status();
+//		//download(new URL("https://galleries.tease-pics.com/onlysecretaries/1080u-p/?id=2174460"), outDir, status, 0);
+//		download(new URL("http://localhost/javlo/demo/"), outDir, status, 0);
 	}
 	
 }

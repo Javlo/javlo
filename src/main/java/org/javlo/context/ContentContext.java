@@ -2122,7 +2122,7 @@ public class ContentContext {
 	
 	public boolean isContentStatic() {
 		if (contentStatic == null) {
-			contentStatic = StringHelper.isTrue(request.getHeader(Html2Directory.STATIC_HEADER));
+			contentStatic = StringHelper.isTrue(request.getHeader(Html2Directory.STATIC_HEADER_AND_PARAM)) || StringHelper.isTrue(request.getParameter(Html2Directory.STATIC_HEADER_AND_PARAM));			
 		}
 		return contentStatic;
 	}

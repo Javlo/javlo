@@ -25,12 +25,18 @@
 			<input type="checkbox" name="storepassword" class="checkbox" ${fn:length(password)>0?'checked="checked"':''} /> store password
 		</label></div>
 	</div>
+	<div class="form-group">
+		<div class="checkbox"><label>
+			<input type="checkbox" name="ziponly" class="checkbox" /> create zip file (no upload)
+		</label></div>
+	</div>
 	</div></div>
 	<div class="form-group">
 		<label>path</label>
 		<input type="text" name="path" class="form-control" value="${path}" />
 	</div>
 	<div class="action">
+		
 		<button type="submit" class="btn btn-primary pull-right">push</button>
 	</div>
 </form>

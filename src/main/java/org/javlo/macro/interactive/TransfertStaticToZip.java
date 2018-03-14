@@ -6,64 +6,34 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.logging.Logger;
+import java.util.zip.ZipException;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
-import org.javlo.helper.StringHelper;
 import org.javlo.utils.downloader.Html2Directory;
 import org.javlo.utils.downloader.Html2Directory.Status;
+import org.zeroturnaround.zip.ZipUtil;
 
-public class TransfertStaticToFtp extends Thread {	
+public class TransfertStaticToZip extends Thread {	
 	
-	private static Logger logger = Logger.getLogger(TransfertStaticToFtp.class.getName());
+	private static Logger logger = Logger.getLogger(TransfertStaticToZip.class.getName());
 	
 	
 	public boolean running = true;
 
 	private File folder;
 	private URL url;
-	private String host;
-	private int port;
-	private String username;
-	private String password;
 	private String path;
+	private File zipFile = null;
 	
 	
-	public TransfertStaticToFtp(File folder, URL url, String host, int port, String username, String password, String path) {
+	public TransfertStaticToZip(File folder, URL url, File zipFile, String path) throws ZipException, IOException {
 		super();
 		this.folder = folder;
 		this.url = url;
-		this.host = host;
-		this.port = port;
-		this.username = username;
-		this.password = password;
+		this.zipFile = zipFile;		
 		this.path = path;
-	}
-	
-	public String getHost() {
-		return host;
-	}
-	public void setHost(String host) {
-		this.host = host;
-	}
-	public int getPort() {
-		return port;
-	}
-	public void setPort(int port) {
-		this.port = port;
-	}
-	public String getUsername() {
-		return username;
-	}
-	public void setUsername(String username) {
-		this.username = username;
-	}
-	public String getPassword() {
-		return password;
-	}
-	public void setPassword(String password) {
-		this.password = password;
 	}
 	public File getFolder() {
 		return folder;
@@ -175,21 +145,7 @@ public class TransfertStaticToFtp extends Thread {
 			folder.mkdirs();
 			Status status = new Status();
 			Html2Directory.download(url, folder, status, 0);
-			ftp = new FTPClient();		
-			ftp.connect(host, port);
-			if (!ftp.isConnected()) {
-				logger.severe("could not connect to : " + host + ":" + port);
-			} else {
-				if (!StringHelper.isEmpty(username)) {
-					if (!ftp.login(username, password)) {
-						logger.severe("could not log with username:" + username);
-					} else if (!ftp.changeWorkingDirectory(path)) {
-						logger.severe("path not found : " + path);
-					} else {
-						uploadDirectory(ftp, "/", folder, path);						
-					}
-				}
-			}
+			ZipUtil.pack(folder, zipFile);
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
