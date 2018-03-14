@@ -11,6 +11,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFDataFormatter;
@@ -29,6 +30,8 @@ import org.javlo.helper.StringHelper;
 import org.javlo.helper.XHTMLHelper;
 
 public class XLSTools {
+	
+	private static Logger logger = Logger.getLogger(XLSTools.class.getName());
 
 	public static final String REQUEST_ATTRIBUTE_KEY = "array";
 
@@ -260,8 +263,10 @@ public class XLSTools {
 			Map<String, Cell> item = new HashMap<String, Cell>();
 			Cell[] line = data[i];
 			for (int j = 0; j < line.length; j++) {
-				if (firstLine.length < j) {
+				if (j < firstLine.length) {
 					item.put(firstLine[j].getValue(), line[j]);
+				} else {
+					logger.warning("error line "+i+" too big  : "+line.length+" #title="+firstLine.length);
 				}
 			}
 			outList.add(item);

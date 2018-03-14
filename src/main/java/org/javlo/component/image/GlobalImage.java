@@ -270,7 +270,6 @@ public class GlobalImage extends Image implements IImageFilter {
 		} else {
 			String previewURL = getPreviewURL(ctx, getFilter(ctx));
 			ctx.getRequest().setAttribute("previewURL", previewURL);
-			System.out.println(">>>>>>>>> GlobalImage.prepareView : ctx.isContentStatic() = "+ctx.isContentStatic()); //TODO: remove debug trace
 			if (ctx.isAjax() || ctx.isContentStatic()) {
 				ctx.getRequest().setAttribute("loadURL", previewURL);	
 			} else {

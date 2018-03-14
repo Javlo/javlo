@@ -245,8 +245,6 @@ public class AccessServlet extends HttpServlet implements IVersion {
 
 	public void process(HttpServletRequest request, HttpServletResponse response, boolean post) throws ServletException {
 		
-		System.out.println(">>>>>>>>> AccessServlet.process : QUERY = "+request.getQueryString()); //TODO: remove debug trace
-		
 		try {
 			COUNT_ACCESS++;
 

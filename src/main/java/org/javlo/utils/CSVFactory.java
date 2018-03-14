@@ -161,7 +161,7 @@ public class CSVFactory {
 		char sep = separator.charAt(0);
 		synchronized (lock) {
 			ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
-			outArray = ExcelCSVParser.parse(new InputStreamReader(in, charset), sep);
+			outArray = CSVParser.parse(new InputStreamReader(in, charset), sep);			
 		}
 		return outArray;
 	}
