@@ -1586,7 +1586,7 @@ public class Template implements Comparable<Template> {
 		return URLHelper.mergePath(getLocalTemplateTargetFolder(globalContext), getHomeRenderer(globalContext));
 	}
 
-	public String getHTMLFile(Device device) {
+	protected String getHTMLFile(Device device) {
 		String deviceRenderer = null;
 		if (device != null) {
 			deviceRenderer = properties.getString("html." + device.getCode(), null);
