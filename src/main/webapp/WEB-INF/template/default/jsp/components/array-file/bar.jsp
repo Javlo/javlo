@@ -5,7 +5,7 @@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"
 <c:set var="max" value="${array[2][2].info.max}" />
 <c:set var="scale" value="${400/max}" />
 <c:set var="step" value="${((width-140)/(fn:length(array)-1))}" />
-<svg width='${width+60}' height='500' viewBox='0 0 ${width} 500' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' xmlns:a3='http://ns.adobe.com/AdobeSVGViewerExtensions/3.0/' a3:scriptImplementation='Adobe'>
+<svg width='100%' height='500' viewBox='0 0 ${width} 500' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' xmlns:a3='http://ns.adobe.com/AdobeSVGViewerExtensions/3.0/' a3:scriptImplementation='Adobe'>
   <defs/>
   <!--SVG Background-->
   <rect width='${width}' height='500' x='0' y='0' class='svgBackground' style='fill:#ffffff;'/>
@@ -31,4 +31,4 @@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"
   <text x='${width/2}' y='12' class='mainTitle' style='text-anchor: middle; fill: #000000; font-size: 14px; font-family: &quot;Arial&quot;, sans-serif; font-weight: normal;'>${summary}</text>
   <text x='${width-110}' y='480' class='xAxisTitle' style='fill: #000000; font-size: 14px; font-family: &quot;Arial&quot;, sans-serif; font-weight: normal;' text-anchor="end">${array[0][1].value}</text>
   <text x='0' y='15.0' class='yAxisTitle' style='fill: #000000; text-anchor: start; font-size: 14px; font-family: &quot;Arial&quot;, sans-serif; font-weight: normal;'>${array[1][0].value}</text>
-  </svg>
+</svg>

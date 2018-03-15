@@ -254,7 +254,12 @@ public class ArrayFileComponent extends GenericFile {
 		ctx.getRequest().setAttribute(REQUEST_ATTRIBUTE_MAP_KEY, null);
 		ctx.getRequest().setAttribute("summary", getLabel());
 
-		getArray(ctx);
+		Cell[][] array = getArray(ctx);
+		if (array.length>0 && array[0].length>0) {
+			if (array[0][0] != null && array[0][0].getValue() != null) {
+				ctx.getRequest().setAttribute("legend", array[0][0].getValue());	
+			}			
+		}
 		ctx.getRequest().setAttribute("colHead", "th");
 		ctx.getRequest().setAttribute("rowHead", "th");
 		ctx.getRequest().setAttribute("tableHead", true);

@@ -113,6 +113,16 @@ public class Cell {
 			return false;
 		}
 	}
+	
+	public Double getDoubleValue() {
+		String v = getValue();
+		v = v.replace(',', '.');
+		try {
+			return Double.parseDouble(v);
+		} catch (Throwable t) {
+			return null;
+		}
+	}
 
 	public String getType() {
 		String content = getValue();
