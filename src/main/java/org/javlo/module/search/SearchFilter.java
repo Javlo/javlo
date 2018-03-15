@@ -18,7 +18,7 @@ public class SearchFilter implements ITaxonomyContainer {
 	private Set<String> taxonomy = new HashSet<String>();
 
 	public static final SearchFilter getInstance(HttpServletRequest request) {
-		final String KEY = "searchFilter";
+		final String KEY = "searchFilterModule";
 		SearchFilter searchFilter = (SearchFilter) request.getSession().getAttribute(KEY);
 		if (searchFilter == null) {
 			searchFilter = new SearchFilter();

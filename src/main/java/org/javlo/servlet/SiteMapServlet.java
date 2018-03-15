@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.MacroHelper;
@@ -52,6 +53,10 @@ public class SiteMapServlet extends HttpServlet {
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException {
 		process(request, response);
+	}
+	
+	protected static String escapeJson (String text) {
+		return StringEscapeUtils.escapeJson(text);
 	}
 
 	private void process(HttpServletRequest request, HttpServletResponse response) throws ServletException {
@@ -160,17 +165,17 @@ public class SiteMapServlet extends HttpServlet {
 					if (page.isActive() && page.getFinalSeoWeight() > MenuElement.SEO_HEIGHT_NULL) {
 						out.write(sep);
 						out.write("{");						
-						out.write("\"page\":\""+Encode.forHtmlAttribute(page.getName())+"\",");
-						out.write("\"title\":\""+Encode.forHtmlAttribute(page.getTitle(ctx))+"\",");						
+						out.write("\"page\":\""+escapeJson(page.getName())+"\",");
+						out.write("\"title\":\""+escapeJson(page.getTitle(ctx))+"\",");						
 						HtmlPart description = page.getDescription(ctx);
 						if (description != null && !StringHelper.isEmpty(description.getText())) {
-							out.write("\"description\":\""+description.getText().replace("\"", "'")+"\",");
+							out.write("\"description\":\""+escapeJson(description.getText())+"\",");
 						}
-						out.write("\"date\":\""+Encode.forHtmlAttribute(StringHelper.renderDate(page.getContentDateNeverNull(ctx)))+"\",");
-						out.write("\"url\":\""+Encode.forHtmlAttribute(URLHelper.createURL(urlCtx, page))+"\",");
+						out.write("\"date\":\""+StringHelper.renderDate(page.getContentDateNeverNull(ctx))+"\",");
+						out.write("\"url\":\""+escapeJson(URLHelper.createURL(urlCtx, page))+"\",");
 						String contentToSeach = (page.getKeywords(ctx)+" "+StringHelper.collectionToString(page.getSubTitles(ctx, 2), " - ")).trim();
 						if (contentToSeach.length()>0) {
-							out.write("\"content\":\""+Encode.forHtmlAttribute(contentToSeach)+"\",");
+							out.write("\"content\":\""+escapeJson(contentToSeach)+"\",");
 						}
 						out.write("\"weight\":"+page.getFinalSeoWeight());
 						out.write("}");
