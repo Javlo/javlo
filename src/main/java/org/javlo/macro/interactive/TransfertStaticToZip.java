@@ -5,12 +5,25 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.logging.Logger;
 import java.util.zip.ZipException;
+
+import javax.mail.MessagingException;
+import javax.mail.internet.AddressException;
+import javax.mail.internet.InternetAddress;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
+import org.javlo.context.ContentContext;
+import org.javlo.helper.StringHelper;
+import org.javlo.helper.URLHelper;
+import org.javlo.helper.XHTMLHelper;
+import org.javlo.mailing.DKIMBean;
+import org.javlo.mailing.MailService;
 import org.javlo.utils.downloader.Html2Directory;
 import org.javlo.utils.downloader.Html2Directory.Status;
 import org.zeroturnaround.zip.ZipUtil;
@@ -26,14 +39,26 @@ public class TransfertStaticToZip extends Thread {
 	private URL url;
 	private String path;
 	private File zipFile = null;
+	private MailService mailService;
+	private String email;
+	private String downloadURL;
+	private String siteTitle;
+	private String sender;	
+	private DKIMBean dkimBean;
 	
 	
-	public TransfertStaticToZip(File folder, URL url, File zipFile, String path) throws ZipException, IOException {
+	public TransfertStaticToZip(ContentContext ctx, File folder, URL url, File zipFile, String path, MailService mailService, String email) throws ZipException, IOException {
 		super();
 		this.folder = folder;
 		this.url = url;
 		this.zipFile = zipFile;		
 		this.path = path;
+		this.mailService = mailService;
+		this.email = email;
+		this.downloadURL = URLHelper.createResourceURL(ctx.getContextForAbsoluteURL(), zipFile);
+		this.siteTitle = ctx.getGlobalContext().getGlobalTitle();
+		this.sender = ctx.getGlobalContext().getAdministratorEmail();
+		this.dkimBean = ctx.getGlobalContext().getDKIMBean();		
 	}
 	public File getFolder() {
 		return folder;
@@ -138,24 +163,36 @@ public class TransfertStaticToZip extends Thread {
 	}
 
 	@Override
-	public void run() {
-		FTPClient ftp = null;
+	public void run() {		
 		try {
+			Date start = new Date();
 			FileUtils.deleteDirectory(folder);
 			folder.mkdirs();
 			Status status = new Status();
 			Html2Directory.download(url, folder, status, 0);
 			ZipUtil.pack(folder, zipFile);
-		} catch (IOException e) {
-			e.printStackTrace();
-		} finally {
-			if (ftp != null) {
+			logger.info("zip created : "+zipFile);
+			if (mailService != null && StringHelper.isMail(email) && StringHelper.isMail(sender)) {
+				Map<String, String> data = new LinkedHashMap<String, String>();			
+				data.put("file name", zipFile.getName());
+				data.put("file size", StringHelper.renderSize(zipFile.length()));
+				data.put("start time", StringHelper.renderTime(start));
+				data.put("end time", StringHelper.renderTime(new Date()));
+				String adminMailContent = XHTMLHelper.createAdminMail("Zip file created.", null, data, downloadURL, "download zip", null);
 				try {
-					ftp.disconnect();
-				} catch (IOException e) {				
+					logger.info("send mail to : "+email);
+					mailService.sendMail( null, new InternetAddress(sender),  new InternetAddress(email),null,null,siteTitle+" : static site generated.", adminMailContent, true, null, dkimBean);					
+				} catch (AddressException e) {
+					e.printStackTrace();
+				} catch (MessagingException e) {
 					e.printStackTrace();
 				}
+			} else {
+				logger.info("no mail send.");
 			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {			
 			running = false;
 		}
 	}

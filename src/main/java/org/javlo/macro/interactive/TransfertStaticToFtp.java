@@ -5,12 +5,24 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.logging.Logger;
+
+import javax.mail.MessagingException;
+import javax.mail.internet.AddressException;
+import javax.mail.internet.InternetAddress;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
+import org.javlo.context.ContentContext;
 import org.javlo.helper.StringHelper;
+import org.javlo.helper.URLHelper;
+import org.javlo.helper.XHTMLHelper;
+import org.javlo.mailing.DKIMBean;
+import org.javlo.mailing.MailService;
 import org.javlo.utils.downloader.Html2Directory;
 import org.javlo.utils.downloader.Html2Directory.Status;
 
@@ -28,9 +40,17 @@ public class TransfertStaticToFtp extends Thread {
 	private String username;
 	private String password;
 	private String path;
+	private MailService mailService;
+	private String email;
+	private String siteTitle;
+	private String sender;
+	private DKIMBean dkimBean;
+	private String siteURL;
+	
+	private int error = 0;
 	
 	
-	public TransfertStaticToFtp(File folder, URL url, String host, int port, String username, String password, String path) {
+	public TransfertStaticToFtp(ContentContext ctx, File folder, URL url, String host, int port, String username, String password, String path, MailService mailService, String email) {
 		super();
 		this.folder = folder;
 		this.url = url;
@@ -39,6 +59,12 @@ public class TransfertStaticToFtp extends Thread {
 		this.username = username;
 		this.password = password;
 		this.path = path;
+		this.mailService = mailService;
+		this.email = email;	
+		this.siteTitle = ctx.getGlobalContext().getGlobalTitle();
+		this.sender = ctx.getGlobalContext().getAdministratorEmail();
+		this.dkimBean = ctx.getGlobalContext().getDKIMBean();
+		this.siteURL = URLHelper.createURL(ctx.getContextForAbsoluteURL(), "/");
 	}
 	
 	public String getHost() {
@@ -97,14 +123,17 @@ public class TransfertStaticToFtp extends Thread {
 	 * @throws IOException
 	 *             if any network or IO error occurred.
 	 */
-	public static boolean uploadSingleFile(FTPClient ftpClient,
-	        String localFilePath, String remoteFilePath) throws IOException {
+	public static boolean uploadSingleFile(FTPClient ftpClient, String localFilePath, String remoteFilePath) throws IOException {
 	    File localFile = new File(localFilePath);
 	 
 	    InputStream inputStream = new FileInputStream(localFile);
 	    try {
 	        ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
+	        ftpClient.deleteFile(remoteFilePath);
 	        return ftpClient.storeFile(remoteFilePath, inputStream);
+	    } catch (Exception e ) {
+	    	e.printStackTrace();
+	    	return false;
 	    } finally {
 	        inputStream.close();
 	    }
@@ -126,12 +155,11 @@ public class TransfertStaticToFtp extends Thread {
 	 * @throws IOException
 	 *             if any network or IO error occurred.
 	 */
-	public static void uploadDirectory(FTPClient ftpClient,
-	        String remoteDirPath, File localDir, String remoteParentDir)
-	        throws IOException {
+	public int uploadDirectory(FTPClient ftpClient, String remoteDirPath, File localDir, String remoteParentDir) throws IOException {
 	 
 	   logger.info("LISTING directory: " + localDir);
-	 
+	   
+	    int c=0;
 	    File[] subFiles = localDir.listFiles();
 	    if (subFiles != null && subFiles.length > 0) {
 	        for (File item : subFiles) {
@@ -144,16 +172,25 @@ public class TransfertStaticToFtp extends Thread {
 	                String localFilePath = item.getAbsolutePath();	                
 	                boolean uploaded = uploadSingleFile(ftpClient,  localFilePath, remoteFilePath);
 	                if (uploaded) {
+	                	c++;
 	                	logger.info("UPLOADED a file to: "+ remoteFilePath);
 	                } else {
+	                	error++;
 	                	logger.warning("COULD NOT upload the file: "+ localFilePath);
 	                }
 	            } else {
 	                // create directory on the server
-	                boolean created = ftpClient.makeDirectory(remoteFilePath);
+	            	boolean created; 
+	            	try {
+	            		created = ftpClient.makeDirectory(remoteFilePath);
+	            	} catch (Exception e) {
+	            		e.printStackTrace();
+	            		created = false;
+	            	}
 	                if (created) {
 	                	logger.info("CREATED the directory: " + remoteFilePath);
 	                } else {
+	                	error++;
 	                	logger.warning("COULD NOT create the directory: " + remoteFilePath);
 	                }
  	                // upload the sub directory
@@ -161,14 +198,17 @@ public class TransfertStaticToFtp extends Thread {
 	                if (remoteParentDir.equals("")) {
 	                    parent = item.getName();
 	                }
-	                uploadDirectory(ftpClient, remoteDirPath, new File(item.getAbsolutePath()),parent);
+	                c  = c + uploadDirectory(ftpClient, remoteDirPath, new File(item.getAbsolutePath()),parent);
 	            }
 	        }
 	    }
+	    return c;
 	}
 
 	@Override
 	public void run() {
+		Date start = new Date();
+		
 		FTPClient ftp = null;
 		try {
 			FileUtils.deleteDirectory(folder);
@@ -177,6 +217,8 @@ public class TransfertStaticToFtp extends Thread {
 			Html2Directory.download(url, folder, status, 0);
 			ftp = new FTPClient();		
 			ftp.connect(host, port);
+			
+			int c = 0;
 			if (!ftp.isConnected()) {
 				logger.severe("could not connect to : " + host + ":" + port);
 			} else {
@@ -186,8 +228,26 @@ public class TransfertStaticToFtp extends Thread {
 					} else if (!ftp.changeWorkingDirectory(path)) {
 						logger.severe("path not found : " + path);
 					} else {
-						uploadDirectory(ftp, "/", folder, path);						
+						c = uploadDirectory(ftp, "/", folder, path);						
 					}
+				}
+			}
+			
+			if (mailService != null && StringHelper.isMail(email) && StringHelper.isMail(sender)) {
+				Map<String, String> data = new LinkedHashMap<String, String>();			
+				data.put("ftp host", ""+ftp.getRemoteAddress());
+				data.put("ftp path", path);
+				data.put("# uploaded files", ""+c);
+				data.put("# error", ""+error);
+				data.put("start time", StringHelper.renderTime(start));
+				data.put("end time", StringHelper.renderTime(new Date()));
+				String adminMailContent = XHTMLHelper.createAdminMail("Ftp file uploaded.", null, data, siteURL, "back on source site", null);
+				try {
+					mailService.sendMail( null, new InternetAddress(sender),  new InternetAddress(email),null,null,siteTitle+" : static site generated.", adminMailContent, true, null, dkimBean);
+				} catch (AddressException e) {
+					e.printStackTrace();
+				} catch (MessagingException e) {
+					e.printStackTrace();
 				}
 			}
 		} catch (IOException e) {

@@ -30,6 +30,10 @@
 			<input type="checkbox" name="ziponly" class="checkbox" /> create zip file (no upload)
 		</label></div>
 	</div>
+	<div class="form-group">
+		<label>notification email : </label>
+		<input type="email" name="email" class="form-control" value="${email}"/>
+	</div>
 	</div></div>
 	<div class="form-group">
 		<label>path</label>

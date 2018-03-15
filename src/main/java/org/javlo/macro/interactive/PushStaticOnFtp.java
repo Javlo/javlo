@@ -16,6 +16,8 @@ import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.macro.core.IInteractiveMacro;
+import org.javlo.mailing.MailConfig;
+import org.javlo.mailing.MailService;
 import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
 import org.javlo.service.RequestService;
@@ -27,6 +29,7 @@ public class PushStaticOnFtp implements IInteractiveMacro, IAction {
 	private static final String NAME = "push-static-on-ftp";
 	
 	private static Thread thread = null;
+
 
 	@Override
 	public String getName() {
@@ -40,6 +43,7 @@ public class PushStaticOnFtp implements IInteractiveMacro, IAction {
 		ctx.getRequest().setAttribute("username", ctx.getGlobalContext().getData(getName()+"-username"));
 		ctx.getRequest().setAttribute("password", ctx.getGlobalContext().getData(getName()+"-password"));
 		ctx.getRequest().setAttribute("path", ctx.getGlobalContext().getData(getName()+"-path"));		
+		ctx.getRequest().setAttribute("email", ctx.getGlobalContext().getData(getName()+"-email"));
 		return null;
 	}
 
@@ -73,12 +77,14 @@ public class PushStaticOnFtp implements IInteractiveMacro, IAction {
 		String port = rs.getParameter("port", "");
 		String username = rs.getParameter("username", "");
 		String password = rs.getParameter("password", "");
+		String email = rs.getParameter("email", "");
 		String path = rs.getParameter("path", "");
 		boolean zipOnly = StringHelper.isTrue(rs.getParameter("ziponly"));
 		
 		ctx.getGlobalContext().setData(NAME+"-host",  host);
 		ctx.getGlobalContext().setData(NAME+"-port", "21");
 		ctx.getGlobalContext().setData(NAME+"-username", username);
+		ctx.getGlobalContext().setData(NAME+"-email", email);
 		if (StringHelper.isTrue(rs.getParameter("storepassword"))) {
 			ctx.getGlobalContext().setData(NAME+"-password", password);
 		} else {
@@ -86,13 +92,18 @@ public class PushStaticOnFtp implements IInteractiveMacro, IAction {
 		}
 		ctx.getGlobalContext().setData(NAME+"-path", path);
 		
+		MailService mailService = null;
+		if (StringHelper.isMail(email)) {
+			mailService = MailService.getInstance(new MailConfig(ctx.getGlobalContext(), ctx.getGlobalContext().getStaticConfig(), null ));
+		}
+		
 		File folder = new File(URLHelper.mergePath(ctx.getGlobalContext().getDataFolder(), "_static_temp"));
 		String url = URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE).getContextForAbsoluteURL(), "/");
 		if (zipOnly) {
 			File zipFile = new File(URLHelper.mergePath(ctx.getGlobalContext().getStaticFolder(), "_static_export/"+StringHelper.stringToFileName(globalContext.getContextKey()+"_"+StringHelper.renderSortableTime(new Date()))+".zip"));
 			zipFile.getParentFile().mkdirs();
 			zipFile.createNewFile();
-			thread = new TransfertStaticToZip(folder, new URL(url), zipFile, path);
+			thread = new TransfertStaticToZip(ctx,  folder, new URL(url), zipFile, path, mailService, email);
 		} else {
 			if (StringHelper.isEmpty(host) || !StringHelper.isDigit(port)) {
 				return "bad host or port";
@@ -113,7 +124,7 @@ public class PushStaticOnFtp implements IInteractiveMacro, IAction {
 					return "Thread already lauched, please wait...";
 				}	
 				logger.info("download : "+url);
-				thread = new TransfertStaticToFtp(folder, new URL(url), host, Integer.parseInt(port), username, password, path);
+				thread = new TransfertStaticToFtp(ctx, folder, new URL(url), host, Integer.parseInt(port), username, password, path, mailService, email);
 			}
 		}
 		if (thread != null) {
@@ -144,10 +155,5 @@ public class PushStaticOnFtp implements IInteractiveMacro, IAction {
 		return ctx.getCurrentEditUser() != null;
 	}
 	
-	public static void main(String[] args) throws MalformedURLException {		
-		TransfertStaticToFtp thread = new TransfertStaticToFtp(new File("c:/trans/temp_static"), new URL("http://localhost/javlo/empty/"), "localhost", 21, "test", null, "/javlo_static");
-		thread.run();
-	}
-
 	
 }
