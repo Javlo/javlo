@@ -38,26 +38,6 @@ import org.owasp.encoder.Encode;
  */
 public class XMLHelper {
 
-	public static final class SiteMapBloc {
-		private String text;
-		private Date lastmod;
-
-		public SiteMapBloc(String text, Date lastmod) {
-			super();
-			this.text = text;
-			this.lastmod = lastmod;
-		}
-
-		public String getText() {
-			return text;
-		}
-
-		public Date getLastmod() {
-			return lastmod;
-		}
-
-	}
-
 	public static String getPageXML(ContentContext ctx, MenuElement page) throws Exception {
 		StringWriter writer = new StringWriter();
 		PrintWriter out = new PrintWriter(writer);
@@ -164,7 +144,7 @@ public class XMLHelper {
 						}
 						line.append("</url>");
 						size = size + line.toString().getBytes().length;
-						if (size >= (i - 1) * sitemapMaxsize && size < i * sitemapMaxsize) {
+						if (i>=0 && (size >= (i - 1) * sitemapMaxsize && size < i * sitemapMaxsize)) {
 							out.println(line);
 							if (element.getModificationDate(ctx).getTime() > lastmod.getTime()) {
 								lastmod = element.getModificationDate(ctx);

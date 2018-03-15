@@ -51,7 +51,7 @@ public class Html2Directory {
 			url = url.substring(1);
 		}
 		return url;	
-	}
+	}	
 	
 	private static URL getNewUrl(URL url, String path) throws MalformedURLException {
 		if (url.getPort() > 0) {
@@ -93,6 +93,9 @@ public class Html2Directory {
 				file.getParentFile().mkdirs();			
 				if (!file.exists()) {
 					file.createNewFile();
+					
+					doc.select("head").append("<script>var staticRoot='"+getRelativePath(file.getParentFile(), baseDir).replace('\\', '/')+"';</script>");
+					
 					Elements links = doc.select("[href]");					
 					for (Element link : links) {						
 						String path = link.attr("href");						
@@ -138,8 +141,10 @@ public class Html2Directory {
 	
 	public static void main(String[] args) throws Exception {
 		
-		Document doc = Jsoup.connect("http://localhost/javlo/kce/fr/articles/articles-2018/articles-2018-mars/articles-2018-mars-3.html").header(STATIC_HEADER_AND_PARAM, "true").userAgent(NetHelper.JAVLO_USER_AGENT).timeout(TIMEOUT).get();
-		System.out.println(">>>>>>>>> Html2Directory.main : #children = "+doc.children().size()); //TODO: remove debug tracedoc.children()
+		File f1 = new File("c:/trans/");
+		File f2 = new File("c:/trans/index/main/");
+		System.out.println(">>>>>>>>> Html2Directory.main : rel = "+getRelativePath(f2, f1)); //TODO: remove debug trace
+		
 		
 //		File outDir = new File("c:/trans/test_html_download");
 //		if (!outDir.getParentFile().exists()) {

@@ -19,12 +19,14 @@ import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.MacroHelper;
 import org.javlo.helper.NetHelper;
+import org.javlo.helper.SiteMapBloc;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.helper.XMLHelper;
-import org.javlo.helper.XMLHelper.SiteMapBloc;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
+import org.javlo.utils.HtmlPart;
+import org.owasp.encoder.Encode;
 
 public class SiteMapServlet extends HttpServlet {
 	
@@ -135,6 +137,47 @@ public class SiteMapServlet extends HttpServlet {
 				out.newLine();
 				out.write("</urlset>");
 				out.newLine();
+				out.flush();
+				return;
+			} else if (ctx.getRequest().getServletPath().equalsIgnoreCase("/sitemap.json")) {
+				response.setContentType("application/json");
+				lastestDate = Calendar.getInstance();
+				for (int j=0; j<globalContext.getStaticConfig().getSiteMapNewsLimit(); j++) {
+					lastestDate.roll(Calendar.DAY_OF_YEAR, false);					
+				}				
+				Writer writer = new OutputStreamWriter(response.getOutputStream(), "UTF8");
+				BufferedWriter out = new BufferedWriter(writer);
+				
+				out.write('{');
+				out.write("\"name\": \""+Encode.forJavaScript(ctx.getGlobalContext().getGlobalTitle())+"\",");
+				out.write("\"lastmod\": \""+StringHelper.renderSortableTime(ctx.getGlobalContext().getPublishDate())+"\",");
+				out.write("\"url\":\""+Encode.forHtmlAttribute(URLHelper.createStaticURL(ctx.getContextForAbsoluteURL(), "/"))+"\",");
+				out.write("\"pages\": [");
+				String sep="";
+				ContentContext urlCtx = new ContentContext(ctx);
+				urlCtx.setFormat("html");
+				for (MenuElement page : content.getNavigation(ctx).getAllChildrenList()) {					
+					if (page.isActive() && page.getFinalSeoWeight() > MenuElement.SEO_HEIGHT_NULL) {
+						out.write(sep);
+						out.write("{");						
+						out.write("\"page\":\""+Encode.forHtmlAttribute(page.getName())+"\",");
+						out.write("\"title\":\""+Encode.forHtmlAttribute(page.getTitle(ctx))+"\",");						
+						HtmlPart description = page.getDescription(ctx);
+						if (description != null && !StringHelper.isEmpty(description.getText())) {
+							out.write("\"description\":\""+description.getText().replace("\"", "'")+"\",");
+						}
+						out.write("\"date\":\""+Encode.forHtmlAttribute(StringHelper.renderDate(page.getContentDateNeverNull(ctx)))+"\",");
+						out.write("\"url\":\""+Encode.forHtmlAttribute(URLHelper.createURL(urlCtx, page))+"\",");
+						String contentToSeach = (page.getKeywords(ctx)+" "+StringHelper.collectionToString(page.getSubTitles(ctx, 2), " - ")).trim();
+						if (contentToSeach.length()>0) {
+							out.write("\"content\":\""+Encode.forHtmlAttribute(contentToSeach)+"\",");
+						}
+						out.write("\"weight\":"+page.getFinalSeoWeight());
+						out.write("}");
+						sep=",";
+					}
+				}
+				out.write("]}");
 				out.flush();
 				return;
 			} else {
