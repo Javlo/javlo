@@ -1561,7 +1561,7 @@ public class Edit extends AbstractModuleAction {
 
 		synchronized (globalContext.getLockLoadContent()) {
 
-			DebugHelper.writeInfo(System.out);
+			DebugHelper.writeInfo(null, System.out);
 
 			String message = null;
 

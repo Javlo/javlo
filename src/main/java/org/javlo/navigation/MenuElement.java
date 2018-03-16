@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang3.StringUtils;
@@ -119,9 +120,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 	
 	public static MenuElement NOT_FOUND_PAGE = new MenuElement();
 
-	public static int instance = 0;
-
-	public static Set<String> reference = new HashSet<String>();
+	public static int INSTANCE = 0;
 
 	public static final String PAGE_TYPE_DEFAULT = "default";
 	
@@ -1236,12 +1235,13 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 	private Object lock = null;
 
 	protected MenuElement() {
-		instance++;
+		super();
+		INSTANCE++;
 	}
 
 	@Override
 	protected void finalize() throws Throwable {
-		instance--;
+		INSTANCE--;
 	}
 
 	public void addAccess(ContentContext ctx) {

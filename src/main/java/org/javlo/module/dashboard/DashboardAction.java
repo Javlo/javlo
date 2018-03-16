@@ -7,6 +7,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.LinkedList;
@@ -23,6 +24,7 @@ import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.context.StatContext;
+import org.javlo.helper.DebugHelper;
 import org.javlo.helper.LangHelper;
 import org.javlo.helper.LangHelper.ListBuilder;
 import org.javlo.helper.LangHelper.ObjectBuilder;
@@ -446,6 +448,10 @@ public class DashboardAction extends AbstractModuleAction {
 			return "ERROR: you have not suffisant right to do this action.";
 		} else {
 			System.gc();
+			
+			DebugHelper.writeInfo(ctx,System.out);
+			
+			
 			return null;
 		}
 	}

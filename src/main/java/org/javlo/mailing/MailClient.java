@@ -153,12 +153,16 @@ public class MailClient {
 
 	public void close() {
 		try {
-			folder.close(true);
+			if (folder != null) {
+				folder.close(true);
+			}
 		} catch (MessagingException e) {
 			e.printStackTrace();
 		}
 		try {
-			store.close();
+			if (store != null) {
+				store.close();
+			}		
 		} catch (MessagingException e) {
 			e.printStackTrace();
 		}

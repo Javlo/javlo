@@ -7,13 +7,16 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadMXBean;
+import java.util.Enumeration;
 import java.util.logging.Logger;
 
 import javax.servlet.ServletContext;
 
 import org.javlo.component.core.AbstractVisualComponent;
+import org.javlo.component.core.ComponentBean;
 import org.javlo.component.core.ComponentFactory;
 import org.javlo.config.StaticConfig;
+import org.javlo.context.ContentContext;
 import org.javlo.filter.CatchAllFilter;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.syncro.AbstractSynchroService;
@@ -101,7 +104,7 @@ public class DebugHelper {
 		}
 	}
 
-	public static void writeInfo(PrintStream out) {
+	public static void writeInfo(ContentContext ctx, PrintStream out) {
 		Runtime runtime = Runtime.getRuntime();
 		ThreadMXBean threads = ManagementFactory.getThreadMXBean();
 		out.println("****************************************************************");
@@ -113,15 +116,35 @@ public class DebugHelper {
 		out.println("**** THREAD COUNT      :  " + threads.getThreadCount());
 		out.println("**** THREAD STR COUNT  :  " + threads.getTotalStartedThreadCount());
 		out.println("**** THREAD DMN COUNT  :  " + threads.getDaemonThreadCount());
-		out.println("**** #MenuElement      :  " + MenuElement.instance);
-		
-		for (String ref : MenuElement.reference) {
-			out.println("**** MenuElement r :  " +ref);
-		}
-		
+		out.println("**** #MenuElement      :  " + MenuElement.INSTANCE);
+		out.println("**** #ComponentBean    :  " + ComponentBean.INSTANCE);
 		out.println("****");
 		out.println("****************************************************************");
+		if (ctx != null) {
+			out.println("**** SESSION  *****");			
+			Enumeration names = ctx.getRequest().getSession().getAttributeNames();
+			while (names.hasMoreElements()) {
+				String key = ""+names.nextElement();
+				System.out.println(key+" = "+ctx.getRequest().getSession().getAttribute(key).getClass()+" ["+ctx.getRequest().getSession().getAttribute(key).hashCode()+"]");
+			}
+			out.println("****");
+			out.println("**** APPLICATION  *****");
+			names = ctx.getRequest().getSession().getServletContext().getAttributeNames();
+			while (names.hasMoreElements()) {
+				String key = ""+names.nextElement();
+				System.out.println(key+" = "+ctx.getRequest().getSession().getServletContext().getAttribute(key).getClass()+" ["+ctx.getRequest().getSession().getServletContext().getAttribute(key).hashCode()+"]");
+			}
+			out.println("****");
+			out.println("**** GlobalContext  *****");			
+			for (Object key : ctx.getGlobalContext().getAttributesKeys()) {				
+				System.out.println(key+" = "+ctx.getGlobalContext().getAttribute(""+key).getClass()+" ["+ctx.getGlobalContext().getAttribute(""+key).hashCode()+"]");
+			}
+		
+			out.println("****************************************************************");
+		}
 		out.println("****************************************************************");
+		
+		
 	}
 
 	public static void updateLoggerLevel(ServletContext application) throws Exception {

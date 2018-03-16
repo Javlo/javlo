@@ -19,6 +19,16 @@ public class ContentContextBean {
 		device=ctx.getDevice();
 		renderMode=ctx.getRenderMode();
 	}
+	
+	public ContentContext createContentContext(ContentContext ctx) {
+		ContentContext outCtx = new ContentContext(ctx);
+		outCtx.resetCache();
+		outCtx.setPath(path);
+		outCtx.setArea(area);
+		outCtx.setDevice(device);
+		outCtx.setRenderMode(renderMode);
+		return outCtx;
+	}
 
 	public PageBean getCurrentPage() {
 		return currentPage;

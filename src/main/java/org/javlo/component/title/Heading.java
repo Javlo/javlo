@@ -5,6 +5,7 @@ import java.io.PrintStream;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Properties;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.javlo.component.core.ComponentBean;
@@ -141,9 +142,7 @@ public class Heading extends AbstractPropertiesComponent implements ISubTitle {
 
 	@Override
 	public String getTextTitle(ContentContext ctx) {
-		String textTitle = getFieldValue(TEXT);		
-		textTitle = StringEscapeUtils.unescapeHtml(textTitle);
-		return StringHelper.removeTag(textTitle);
+		return getFieldValue(TEXT);
 	}
 	
 	@Override
@@ -407,6 +406,13 @@ public class Heading extends AbstractPropertiesComponent implements ISubTitle {
 	@Override
 	public String getFontAwesome() {	
 		return "header";
+	}
+	
+	public static void main(String[] args) {
+		Properties p = new Properties();
+		String value = "mes articles d'été";
+		p.setProperty("text", value);
+		System.out.println("value = p.get ? "+value.equals(p.getProperty("text")));
 	}
 
 }

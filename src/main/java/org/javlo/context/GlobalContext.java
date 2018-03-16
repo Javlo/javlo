@@ -100,9 +100,9 @@ import org.javlo.user.IUserInfo;
 import org.javlo.user.User;
 import org.javlo.utils.BooleanBean;
 import org.javlo.utils.ConfigurationProperties;
-import org.javlo.utils.SmartMap;
 import org.javlo.utils.StructuredProperties;
 import org.javlo.utils.TimeMap;
+import org.owasp.encoder.Encode;
 
 public class GlobalContext implements Serializable, IPrintInfo {
 
@@ -111,8 +111,6 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	private final Integer[] countArrayMinute = new Integer[60];
 
 	private long latestTime;
-
-	private long allTouch = 0;
 
 	private static int COUNT_INSTANCE = 0;
 
@@ -245,8 +243,6 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	private boolean urlFromFactoryImported = false;
 
 	private Boolean externalServiceInitalized = false;
-
-	private final SmartMap frontCache = new SmartMap();
 
 	private ServletContext application;
 
@@ -2250,7 +2246,6 @@ public class GlobalContext implements Serializable, IPrintInfo {
 
 			viewPages = null;
 			urlFromFactoryImported = false;
-			frontCache.clear();
 			try {
 				ReverseLinkService.getInstance(this).clearCache();
 			} catch (ServiceException e) {
@@ -3147,32 +3142,6 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		}
 	}
 
-	public Map getFrontCache(ContentContext ctx) {
-		return new SmartMap(ctx, frontCache);
-	}
-
-	/**
-	 * put item in front cache.
-	 * 
-	 * @param key
-	 *            the key of item
-	 * @param value
-	 *            the value of item. If null item is removed.
-	 */
-	public void putItemInFrontCache(ContentContext ctx, String key, String value, String rendererKey) {
-		if (value != null) {
-			try {
-				String renderer = ctx.getCurrentTemplate().getRenderer(ctx, rendererKey);
-				frontCache.put(key, new SmartMap.JspSmartValue(renderer, value));
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-
-		} else {
-			frontCache.remove(key);
-		}
-	}
-
 	public Object getSessionAttribute(HttpSession session, String key) {
 		String sessionKey = getContextKey() + "___" + key;
 		return session.getAttribute(sessionKey);
@@ -3519,8 +3488,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 					try {
 						File redirectURLListFile = getRedirectURLListFile();
 						if (redirectURLListFile.exists()) {
-							reader = new InputStreamReader(new FileInputStream(redirectURLListFile),
-									ContentContext.CHARACTER_ENCODING);
+							reader = new InputStreamReader(new FileInputStream(redirectURLListFile),ContentContext.CHARACTER_ENCODING);
 							prop.load(reader);
 						}
 					} catch (Exception e) {
@@ -3644,7 +3612,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	}
 
 	private static String encodeURLAsKey(String url) {
-		return url;
+		return Encode.forUri(url);
 		// return StringHelper.createFileName(url);
 	}
 
@@ -3963,7 +3931,6 @@ public class GlobalContext implements Serializable, IPrintInfo {
 			countArrayMinute[getIndexArrayMinute(i)] = 0;
 		}
 		if (increment) {
-			allTouch++;
 			if (time == latestTime) {
 				countArrayMinute[getIndexArrayMinute(time)]++;
 			} else {

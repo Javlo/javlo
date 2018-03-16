@@ -7,6 +7,7 @@ import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Date;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.javlo.helper.StringHelper;
@@ -17,6 +18,8 @@ import org.javlo.user.User;
  * @author pvandermaesen component state less.
  */
 public class ComponentBean implements Serializable, Comparable<ComponentBean> {
+	
+	public static int INSTANCE = 0;
 
 	/**
 	 * 
@@ -50,11 +53,19 @@ public class ComponentBean implements Serializable, Comparable<ComponentBean> {
 
 	private String area = DEFAULT_AREA;
 
-	public ComponentBean() {		
+	public ComponentBean() {
+		super();
 		id = "";
 		type = "";
 		value = "";
 		language = "";
+		INSTANCE++;
+	}
+	
+	@Override
+	protected void finalize() throws Throwable {
+		super.finalize();
+		INSTANCE--;
 	}
 
 	public ComponentBean(String newType, String newValue, String newLanguague) {		

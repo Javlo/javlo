@@ -117,7 +117,7 @@ public class EditContext implements Serializable {
 
 	// int menuCut = 18;
 
-	ContentContext contextForCopy = null;
+	ContentContextBean contextForCopy = null;
 
 	Map<String, Set<String>> filters = new HashMap<String, Set<String>>();
 
@@ -259,26 +259,25 @@ public class EditContext implements Serializable {
 		if (contextForCopy == null) {
 			return null;
 		} else {
-			contextForCopy.setRequest(ctx.getRequest());
-			contextForCopy.setResponse(ctx.getResponse());
-			return contextForCopy;
+			return contextForCopy.createContentContext(ctx);
 		}
 	}
 
 	/**
 	 * @param string
+	 * @throws Exception 
 	 */
-	public void setPathForCopy(ContentContext ctx) {
+	public void setPathForCopy(ContentContext ctx) throws Exception {
 		if (ctx == null) {
 			contextForCopy = null;
 		} else {
-			contextForCopy = new ContentContext(ctx);
-			try {
-				contextForCopy.getCurrentPage(); // put page in cache
-			} catch (Exception e) {
-				contextForCopy = null;
-				e.printStackTrace();
-			}
+			contextForCopy = new ContentContextBean(ctx);
+//			try {
+//				contextForCopy.getCurrentPage(); // put page in cache
+//			} catch (Exception e) {
+//				contextForCopy = null;
+//				e.printStackTrace();
+//			}
 		}
 	}
 

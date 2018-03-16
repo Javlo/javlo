@@ -730,8 +730,7 @@ public class InfoBean {
 	}
 
 	public String getCopiedPath() {
-		ContentContext copyCtx = EditContext.getInstance(globalContext, ctx.getRequest().getSession())
-				.getContextForCopy(ctx);
+		ContentContext copyCtx = EditContext.getInstance(globalContext, ctx.getRequest().getSession()).getContextForCopy(ctx);
 		if (copyCtx != null) {
 			if (!ctx.getPath().startsWith(copyCtx.getPath())) {
 				return copyCtx.getPath();

@@ -335,6 +335,7 @@ public class StringHelperTest extends TestCase {
 	
 	public void testCreateI18NURL() {
 		assertEquals("lorem", StringHelper.createI18NURL("lorem"));
+		assertEquals("lorem-ipsum", StringHelper.createI18NURL("lorem ipsum"));
 		assertEquals("lorem", StringHelper.createI18NURL("lorem/-* $ "));
 		assertEquals("lorem-lorem", StringHelper.createI18NURL("lorem/lorem"));		
 		assertEquals("%C3%A9t%C3%A9-lorem-lorem", StringHelper.createI18NURL("$été+lorem/#;,'\"[lorem]"));

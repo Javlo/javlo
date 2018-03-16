@@ -84,7 +84,7 @@ public class POPThread extends Thread {
 				}				
 			} catch (Exception e) {
 				logger.warning("error connect pop [host="+host+" port="+port+" ssl="+ssl+" pwd?="+!StringHelper.isEmpty(password)+"]");
-				e.printStackTrace();
+				logger.warning(e.getMessage());
 			} finally {
 				mailClient.close();
 			}

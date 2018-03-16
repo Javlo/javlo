@@ -398,8 +398,6 @@ public class AccessServlet extends HttpServlet implements IVersion {
 			}
 
 			ctx.getCurrentTemplate();
-			request.setAttribute("frontCache", globalContext.getFrontCache(ctx));
-
 			if (logger.isLoggable(Level.FINE)) {
 				logger.fine(requestLabel + " : first ContentContext " + df.format((double) (System.currentTimeMillis() - startTime) / (double) 1000) + " sec.");
 				logger.fine("device : " + ctx.getDevice());
