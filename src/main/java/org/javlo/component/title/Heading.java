@@ -3,6 +3,8 @@ package org.javlo.component.title;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
@@ -107,10 +109,16 @@ public class Heading extends AbstractPropertiesComponent implements ISubTitle {
 		if (depthValue == null || depthValue.length() != 1) {
 			if (ctx != null) {
 				try {
-					for (IContentVisualComponent comp : ctx.getCurrentPage().getContentByType(ctx, getType())) {
-						if (((Heading) comp).getFieldValue(DEPTH).equals("1")) {
-							setFieldValue(DEPTH, "2");
-							return 2;
+					Collection<IContentVisualComponent> comps = null;
+					if (ctx.getCurrentPage() != null) {
+						comps = ctx.getCurrentPage().getContentByType(ctx, getType());
+					}
+					if (comps != null) {
+						for (IContentVisualComponent comp : comps) {
+							if (((Heading) comp).getFieldValue(DEPTH).equals("1")) {
+								setFieldValue(DEPTH, "2");
+								return 2;
+							}
 						}
 					}
 					setFieldValue(DEPTH, "1");

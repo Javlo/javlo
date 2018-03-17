@@ -451,7 +451,6 @@ public class DashboardAction extends AbstractModuleAction {
 			
 			DebugHelper.writeInfo(ctx,System.out);
 			
-			
 			return null;
 		}
 	}

@@ -922,7 +922,7 @@ change log
  
  * 3/ add location in generic form if defined / get desription from page mirror (bug corretion) / image transform projection / definitively delete del pages / sort pages in undelte macro / default countries list from JDK / page reference : direct link with page id / transfert to static file + excel export synchro on first line
  
- * 4/ use CSVParser in place of ExcelCSVParser / remove reference to contentContext in editContext / print info on publish on garbadge
+ * 4/ use CSVParser in place of ExcelCSVParser / remove reference to contentContext in editContext / print info on publish on garbadge / rhino 1.7R4 > rhino 1.7.9
  
 * 2.1.1.1 [16/03/2018]
 
