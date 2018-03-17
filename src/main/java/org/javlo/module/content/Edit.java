@@ -46,7 +46,6 @@ import org.javlo.helper.ComponentHelper;
 import org.javlo.helper.DebugHelper;
 import org.javlo.helper.ElementaryURLHelper;
 import org.javlo.helper.LangHelper;
-import org.javlo.helper.LocalLogger;
 import org.javlo.helper.NavigationHelper;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.ServletHelper;
@@ -73,7 +72,6 @@ import org.javlo.service.ClipBoard;
 import org.javlo.service.ContentService;
 import org.javlo.service.NavigationService;
 import org.javlo.service.PersistenceService;
-import org.javlo.service.PublishListener;
 import org.javlo.service.RequestService;
 import org.javlo.service.ReverseLinkService;
 import org.javlo.service.integrity.IntegrityFactory;
@@ -1651,13 +1649,7 @@ public class Edit extends AbstractModuleAction {
 			// }
 
 			// trick for PortletManager to clear view data, but should be
-			// generalized in some PublishManager
-			Collection<PublishListener> listeners = (Collection<PublishListener>) request.getSession().getServletContext().getAttribute(PublishListener.class.getName());
-			if (listeners != null) {
-				for (PublishListener listener : listeners) {
-					listener.onPublish(ctx);
-				}
-			}
+			// generalized in some PublishManager			
 
 			ReverseLinkService.getInstance(globalContext).clearCache();
 
