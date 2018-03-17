@@ -2160,19 +2160,20 @@ public class StringHelper {
 		if (text == null) {
 			return "";
 		}
-		StringBuffer notTagStr = new StringBuffer();
-		boolean inTag = false;
-		for (int i = 0; i < text.length(); i++) {
-			char c = text.charAt(i);
-			if ((!inTag) && (c == '<')) {
-				inTag = true;
-			} else if (inTag && (c == '>')) {
-				inTag = false;
-			} else if (!inTag) {
-				notTagStr.append(c);
-			}
-		}
-		return notTagStr.toString();
+		return text.replaceAll("\\<.*?>","");
+//		StringBuffer notTagStr = new StringBuffer();
+//		boolean inTag = false;
+//		for (int i = 0; i < text.length(); i++) {
+//			char c = text.charAt(i);
+//			if ((!inTag) && (c == '<')) {
+//				inTag = true;
+//			} else if (inTag && (c == '>')) {
+//				inTag = false;
+//			} else if (!inTag) {
+//				notTagStr.append(c);
+//			}
+//		}
+//		return notTagStr.toString();
 	}
 
 	public static String renderShortTime(ContentContext ctx, Date date) throws FileNotFoundException, IOException {

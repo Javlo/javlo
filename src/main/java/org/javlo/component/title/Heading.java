@@ -150,7 +150,7 @@ public class Heading extends AbstractPropertiesComponent implements ISubTitle {
 
 	@Override
 	public String getTextTitle(ContentContext ctx) {
-		return getFieldValue(TEXT);
+		return StringHelper.removeTag(getFieldValue(TEXT));
 	}
 	
 	@Override

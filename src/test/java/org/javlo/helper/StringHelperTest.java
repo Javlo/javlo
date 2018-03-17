@@ -146,7 +146,7 @@ public class StringHelperTest extends TestCase {
 	  assertEquals(StringHelper.removeTag(null), "");
 	  assertEquals(StringHelper.removeTag("test"), "test");
 	  assertEquals(StringHelper.removeTag("<p>test</p>"), "test");
-	  assertEquals(StringHelper.removeTag("<ptest</p>"), "");
+	  assertEquals(StringHelper.removeTag("<ptest</p>"), "");	  
 	  assertEquals(StringHelper.removeTag("<p>start <a href=\"#\">click</a> test</p>"), "start click test");	  
   }
   
