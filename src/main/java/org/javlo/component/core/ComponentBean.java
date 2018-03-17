@@ -7,7 +7,6 @@ import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Date;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.javlo.helper.StringHelper;
@@ -68,13 +67,15 @@ public class ComponentBean implements Serializable, Comparable<ComponentBean> {
 		INSTANCE--;
 	}
 
-	public ComponentBean(String newType, String newValue, String newLanguague) {		
+	public ComponentBean(String newType, String newValue, String newLanguague) {	
+		INSTANCE++;
 		type = newType;
 		value = newValue;
 		language = newLanguague;
 	}
 
 	public ComponentBean(String newId, String newType, String newValue, String newLanguague, boolean newRepeat, User authors) {
+		INSTANCE++;
 		id = newId;
 		type = newType;
 		value = newValue;
@@ -86,6 +87,7 @@ public class ComponentBean implements Serializable, Comparable<ComponentBean> {
 	}
 	
 	public ComponentBean(ComponentBean bean) throws SecurityException, IllegalArgumentException, IllegalAccessException, InvocationTargetException {
+		INSTANCE++;
 		BeanUtils.copyProperties(this, bean);
 	}
 
@@ -293,6 +295,12 @@ public class ComponentBean implements Serializable, Comparable<ComponentBean> {
 
 	public void setDeleteDate(Date deleteDate) {
 		this.deleteDate = deleteDate;
+	}
+	
+	public static void main(String[] args) {
+		ComponentBean c = new ComponentBean("sldkj","l", "d");
+		ComponentBean c2 = new ComponentBean();
+		System.out.println(">>>>>>>>> ComponentBean.main : instance = "+ComponentBean.INSTANCE); //TODO: remove debug trace
 	}
 
 }
