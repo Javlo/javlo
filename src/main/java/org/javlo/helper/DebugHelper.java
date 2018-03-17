@@ -7,6 +7,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadMXBean;
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.logging.Logger;
 
@@ -110,6 +111,7 @@ public class DebugHelper {
 		out.println("****************************************************************");
 		out.println("****************************************************************");
 		out.println("****");
+		out.println("**** TIME              :  " + StringHelper.renderTime(new Date()));
 		out.println("**** TOTAL MEMORY      :  " + runtime.totalMemory() + " (" + runtime.totalMemory() / 1024 + " KB)" + " (" + runtime.totalMemory() / 1024 / 1024 + " MB)");
 		out.println("**** FREE MEMORY       :  " + runtime.freeMemory() + " (" + runtime.freeMemory() / 1024 + " KB)" + " (" + runtime.freeMemory() / 1024 / 1024 + " MB)");		
 		out.println("**** THREAD ****");
