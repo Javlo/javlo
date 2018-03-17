@@ -1446,10 +1446,6 @@ public class StaticConfig extends Observable {
 		return properties.getString("default-date-format", "d/M/yy");
 	}
 
-	public String getMarketURL() {
-		return properties.getString("market.url", "http://market.javlo.org/market/");
-	}
-
 	public ServletContext getServletContext() {
 		return application;
 	}

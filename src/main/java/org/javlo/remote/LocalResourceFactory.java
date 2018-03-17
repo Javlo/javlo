@@ -152,7 +152,7 @@ public class LocalResourceFactory extends AbstractResourceFactory {
 				/**** components ****/
 				localeResourcesForProxy = new RemoteResourceList();
 				GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-				IContentVisualComponent[] components = ComponentFactory.getComponents(globalContext);
+				IContentVisualComponent[] components = ComponentFactory.getComponents(ctx);
 				String currentCategory = "undefined";
 				I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
 				for (IContentVisualComponent comp : components) {

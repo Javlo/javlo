@@ -313,11 +313,7 @@
 		<servlet-name>RemoteResourceServlet</servlet-name>
 		<servlet-class>org.javlo.servlet.RemoteResourceServlet</servlet-class>
 		<load-on-startup>0</load-on-startup>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>RemoteResourceServlet</servlet-name>
-		<url-pattern>/market/*</url-pattern>
-	</servlet-mapping>
+	</servlet>	
 
 	<servlet>
 		<servlet-name>FolderServlet</servlet-name>

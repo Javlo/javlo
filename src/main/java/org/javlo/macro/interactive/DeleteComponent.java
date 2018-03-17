@@ -67,7 +67,7 @@ public class DeleteComponent implements IInteractiveMacro, IAction {
 	public String prepare(ContentContext ctx) {
 		try {			
 			if (AdminUserSecurity.getInstance().isGod(ctx.getCurrentEditUser())) {
-				ctx.getRequest().setAttribute("components", ComponentFactory.getComponents(ctx.getGlobalContext()));
+				ctx.getRequest().setAttribute("components", ComponentFactory.getComponents(ctx));
 			} else {
 				if (AdminUserSecurity.getInstance().isGod(ctx.getCurrentEditUser())) {
 					ctx.getRequest().setAttribute("components", ComponentFactory.getGlobalContextComponent(ctx, IContentVisualComponent.COMPLEXITY_ADMIN));

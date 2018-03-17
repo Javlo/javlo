@@ -70,15 +70,16 @@ public class ActionManager {
 		return start.toUpperCase() + end.toLowerCase();
 	}
 
-	private static IAction getAction(HttpServletRequest request, String group) throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException, ModuleException {
-		IAction outAction = getActionModule(request, group);
+	private static IAction getAction(ContentContext ctx, String group) throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException, ModuleException {
+		
+		IAction outAction = getActionModule(ctx.getRequest(), group);
 		if (outAction == null) {
-			outAction = getActionComponent(request, group);
+			outAction = getActionComponent(ctx, group);
 		} else {			
-			ModulesContext.getInstance(request.getSession(), GlobalContext.getInstance(request)).setCurrentModuleByActionGroup(group);
+			ModulesContext.getInstance(ctx.getRequest().getSession(), ctx.getGlobalContext()).setCurrentModuleByActionGroup(group);
 		}
 		if (outAction == null) {
-			outAction = getActionMacro(request, group);
+			outAction = getActionMacro(ctx.getRequest(), group);
 		}
 		return outAction;
 	}
@@ -97,9 +98,8 @@ public class ActionManager {
 		return null;
 	}
 
-	public static IAction getActionComponent(HttpServletRequest request, String group) throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException {
-		GlobalContext globalContext = GlobalContext.getInstance(request);
-		Object[] comp = ComponentFactory.getComponents(globalContext);
+	public static IAction getActionComponent(ContentContext ctx, String group) throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException {		
+		Object[] comp = ComponentFactory.getComponents(ctx);
 		IAction action = null;
 		for (int i = 0; (i < comp.length) && (action == null); i++) {
 			if (comp[i] instanceof IAction) {
@@ -166,7 +166,7 @@ public class ActionManager {
 
 	static public final String perform(String actionName, HttpServletRequest request, HttpServletResponse response) throws Exception {
 		GlobalContext globalContext = GlobalContext.getInstance(request);
-		logger.fine("perform action : " + actionName);
+		logger.info("perform action : " + actionName);
 
 		/*
 		 * AdminUserSecurity adminUserSecurity = AdminUserSecurity.getInstance(request.getSession().getServletContext()); IUserFactory userFactory = AdminUserFactory.createAdminUserFactory(globalContext, request.getSession()); if (!adminUserSecurity.haveRight(userFactory.getCurrentUser(request.getSession()), removeGroup(actionName).toLowerCase() )) { I18nAccess i18nAccess = I18nAccess.getInstance(request); ContentContext ctx = ContentContext.getContentContext(request, response); MessageRepository msgRepo = MessageRepository.getInstance(ctx); msgRepo.setGlobalMessageAndNotification(ctx,new GenericMessage(i18nAccess.getText("global.message.noright")+ " ("+actionName+')', GenericMessage.ERROR)); return null; }
@@ -183,7 +183,7 @@ public class ActionManager {
 			if (group == null) {
 				action = moduleContext.getCurrentModule().getAction();
 			} else {
-				action = getAction(request, group);
+				action = getAction(ctx, group);
 			}			
 			AdminUserFactory adminUserFactory = AdminUserFactory.createUserFactory(globalContext, request.getSession());
 			User currentUser = adminUserFactory.getCurrentUser(request.getSession());

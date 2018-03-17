@@ -87,7 +87,7 @@ public class ComponentFactory {
 			Template template = null;
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 			array = new ArrayList<IContentVisualComponent>();
-			array.addAll(Arrays.asList(getComponents(globalContext)));
+			array.addAll(Arrays.asList(getComponents(ctx)));
 			if (page != null) {
 				template = TemplateFactory.getTemplate(ctx, page);
 				if (template != null) {
@@ -213,10 +213,15 @@ public class ComponentFactory {
 		}
 		return array;
 	}
+	
+	public static IContentVisualComponent[] getComponents(ContentContext ctx) throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException {
+		return getComponents(ctx, ctx.getGlobalContext());
+	}
 
-	public static IContentVisualComponent[] getComponents(GlobalContext globalContext) throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException {
+	public static IContentVisualComponent[] getComponents(ContentContext ctx, GlobalContext globalContext) throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException {		
 		String key = getKey(globalContext.getContextKey());
-		IContentVisualComponent[] components = (IContentVisualComponent[]) globalContext.getServletContext().getAttribute(key);
+		//IContentVisualComponent[] components = (IContentVisualComponent[]) globalContext.getServletContext().getAttribute(key);
+		IContentVisualComponent[] components = (IContentVisualComponent[])ctx.getRequest().getAttribute(key);
 
 		if (components == null) {
 			ArrayList<AbstractVisualComponent> array = new ArrayList<AbstractVisualComponent>();
@@ -284,13 +289,13 @@ public class ComponentFactory {
 			}
 
 			// Load external components
-			try {
-				FileSystemManager vfsManager = VFS.getManager();
-				List<String> jarClasses = new LinkedList<String>();
-				List<FileObject> jarFiles = new LinkedList<FileObject>();
+			try {			
+				
 				File externalComponentFolder = new File(globalContext.getStaticConfig().getExternalComponentFolder());
-
 				if (externalComponentFolder.exists() && externalComponentFolder.isDirectory()) {
+					FileSystemManager vfsManager = VFS.getManager();
+					List<String> jarClasses = new LinkedList<String>();
+					List<FileObject> jarFiles = new LinkedList<FileObject>();
 					FileObject rootFolder = vfsManager.resolveFile(externalComponentFolder.getAbsolutePath());
 					for (FileObject fo : rootFolder.getChildren()) {
 						if (vfsManager.canCreateFileSystem(fo)) {
@@ -316,24 +321,25 @@ public class ComponentFactory {
 							}
 						}
 					}
-				}
-				if (!jarFiles.isEmpty()) {
-					VFSClassLoader componentsClassLoader = new VFSClassLoader(jarFiles.toArray(new FileObject[jarFiles.size()]), vfsManager, AbstractVisualComponent.class.getClassLoader());
-					for (String jarClass : jarClasses) {
-						Class<?> cl = componentsClassLoader.loadClass(jarClass);
-						if (AbstractVisualComponent.class.isAssignableFrom(cl)) {
-							array.add((AbstractVisualComponent) cl.newInstance());
+					if (!jarFiles.isEmpty()) {
+						VFSClassLoader componentsClassLoader = new VFSClassLoader(jarFiles.toArray(new FileObject[jarFiles.size()]), vfsManager, AbstractVisualComponent.class.getClassLoader());
+						for (String jarClass : jarClasses) {
+							Class<?> cl = componentsClassLoader.loadClass(jarClass);
+							if (AbstractVisualComponent.class.isAssignableFrom(cl)) {
+								array.add((AbstractVisualComponent) cl.newInstance());
+							}
 						}
 					}
 				}
+				
 			} catch (Throwable e) {
 				logger.warning(e.getMessage());
 			}
 
 			components = new IContentVisualComponent[array.size()];
 			array.toArray(components);
-			globalContext.getServletContext().setAttribute(key, components);
-
+			//globalContext.getServletContext().setAttribute(key, components);
+			ctx.getRequest().setAttribute(key,components);
 		}
 		return components;
 
@@ -501,7 +507,7 @@ public class ComponentFactory {
 		List<String> currentComponents = null;
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		currentComponents = globalContext.getComponents();
-		IContentVisualComponent[] componentsType = ComponentFactory.getComponents(globalContext);
+		IContentVisualComponent[] componentsType = ComponentFactory.getComponents(ctx);
 		List<IContentVisualComponent> components = new LinkedList<IContentVisualComponent>();
 		for (int i = 0; i < componentsType.length; i++) {
 			if (!componentsType[i].isHidden(ctx) && !(componentsType[i] instanceof MetaTitle) && currentComponents.contains(componentsType[i].getClass().getName())) {

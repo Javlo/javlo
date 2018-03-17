@@ -1085,7 +1085,7 @@ public class AdminAction extends AbstractModuleAction {
 				/*** component list ***/
 				List<String> currentComponents = null;
 				currentComponents = currentGlobalContext.getComponents();
-				IContentVisualComponent[] componentsType = ComponentFactory.getComponents(currentGlobalContext);
+				IContentVisualComponent[] componentsType = ComponentFactory.getComponents(ctx, currentGlobalContext);
 				Collection<ComponentBean> components = new LinkedList<ComponentBean>();
 				for (int i = 0; i < componentsType.length; i++) {
 					if (!componentsType[i].isHidden(ctx) && !(componentsType[i] instanceof MetaTitle)) {
@@ -1612,7 +1612,7 @@ public class AdminAction extends AbstractModuleAction {
 				GlobalContext currentGlobalContext = GlobalContext.getRealInstance(request.getSession(), currentContextKey);
 				if (currentGlobalContext != null) {
 					checkRight(ctx, currentGlobalContext);
-					IContentVisualComponent[] componentsType = ComponentFactory.getComponents(currentGlobalContext);
+					IContentVisualComponent[] componentsType = ComponentFactory.getComponents(ctx, currentGlobalContext);
 					List<String> components = new LinkedList<String>();
 					for (IContentVisualComponent comp : componentsType) {
 						if (requestService.getParameter(comp.getClassName(), null) != null) {

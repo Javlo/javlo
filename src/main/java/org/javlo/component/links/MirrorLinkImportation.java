@@ -77,7 +77,7 @@ public class MirrorLinkImportation extends AbstractVisualComponent {
 			out.println("</div><div class=\"line\">");
 			out.print("<label for=\"" + getLanguageName() + "\">" + title + "</label>");
 			out.print(" : ");
-			IContentVisualComponent[] compArray = ComponentFactory.getComponents(globalContext);
+			IContentVisualComponent[] compArray = ComponentFactory.getComponents(ctx);
 			List<IContentVisualComponent> comps = new LinkedList<IContentVisualComponent>();
 			for (IContentVisualComponent element : compArray) {
 				if (element.isVisible()) {
