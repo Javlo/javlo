@@ -945,7 +945,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		}
 		
 		for (Field field : comp.getFields()) {
-			String key = field.getName();
+			String key = field.getName();			
 
 			Object value = params.get(key);
 			if (specialValues.get(key) != null) {
@@ -955,7 +955,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 			if (specialValues.get(key) != null) {
 				finalValue = specialValues.get(key);
 			}
-
+			
 			if (key.equals(fakeField) && finalValue.trim().length() > 0) {
 				fakeFilled = true;
 			} else if (!withXHTML && (finalValue.toLowerCase().contains("</a>") || finalValue.toLowerCase().contains("</div>"))) {
@@ -1015,16 +1015,16 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 				}
 			}
 			
-			if (!StringHelper.isEmpty(field.getRegisteredList())) {
-				List<IListItem> list = ListService.getInstance(ctx).getList(ctx, field.getRegisteredList());
-				if (list != null) {
-					for (IListItem item : list) {
-						if (item.getKey().equals(finalValue)) {
-							finalValue = finalValue+" ("+item.getValue()+')';
-						}
-					}
-				}
-			}
+//			if (!StringHelper.isEmpty(field.getRegisteredList())) {
+//				List<IListItem> list = ListService.getInstance(ctx).getList(ctx, field.getRegisteredList());
+//				if (list != null) {
+//					for (IListItem item : list) {
+//						if (item.getKey().equals(finalValue)) {
+//							finalValue = finalValue+" ("+item.getValue()+')';
+//						}
+//					}
+//				}
+//			}
 			 
 			if (ctx.getCurrentUser() != null) {
 				adminMailData.put("user", ctx.getCurrentUser().getLogin());
