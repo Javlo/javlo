@@ -1033,10 +1033,10 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 			if (value instanceof Object[]) {				
 				finalValue = StringHelper.arrayToString((Object[]) params.get(key), ",");
 				adminMailData.put(field.getLabel() + " (" + key + ") ", finalValue);
-				userMailData.put(field.getLabel(), finalValue);
+				userMailData.put(field.getLabel() + MailService.HIDDEN_DIV + key + "</div>", finalValue);
 			} else {
 				adminMailData.put(field.getLabel() + " (" + key + ") ", finalValue);
-				userMailData.put(field.getLabel(), finalValue);
+				userMailData.put(field.getLabel() + MailService.HIDDEN_DIV + key + "</div>", finalValue);
 			}
 			result.put(key, finalValue);
 

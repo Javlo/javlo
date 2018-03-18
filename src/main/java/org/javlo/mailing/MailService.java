@@ -55,6 +55,8 @@ import org.javlo.helper.StringHelper;
  */
 public class MailService {
 
+	public static final String HIDDEN_DIV = "<div style=\"display:none;width:0px;max-height:0px;overflow:hidden;mso-hide:all;height:0;font-size:0;max-height:0;line-height:0;margin:0 auto;\">";
+	
 	public static final String MAILING_ID_MAIL_KEY = "Mailing-ID";
 
 	public static class Attachment {
