@@ -103,10 +103,6 @@ public class ContentContext {
 
 	public static String CONTEXT_REQUEST_KEY = "contentContext";
 
-	public MenuElement currentPageCached = null;
-
-	private MenuElement virtualCurrentPage = null;
-
 	private boolean pageAssociation = false;
 
 	private boolean postRequest = false;
@@ -483,6 +479,8 @@ public class ContentContext {
 	private GlobalContext forceGlobalContext = null;
 
 	private String contextRequestLanguage = null;
+	
+	private static final String CURRENT_PAGE_REQUEST_ATTRIBUTE = "__CURRENT_PAGE__";
 
 	public ContentContext(ContentContext ctx) {
 		path = ctx.path;
@@ -517,8 +515,6 @@ public class ContentContext {
 		currentTemplate = ctx.currentTemplate;
 
 		editPreview = ctx.editPreview;
-
-		currentPageCached = ctx.currentPageCached;
 
 		pageAssociation = ctx.pageAssociation;
 
@@ -921,7 +917,7 @@ public class ContentContext {
 	};
 
 	public MenuElement getCurrentPageCached() {
-		return currentPageCached;
+		return (MenuElement)request.getAttribute(CURRENT_PAGE_REQUEST_ATTRIBUTE);
 	}
 
 	public Template getCurrentTemplate() throws Exception {
@@ -1296,12 +1292,12 @@ public class ContentContext {
 		response.addCookie(cookie);
 	}
 
-	public void setCurrentPageCached(MenuElement currentPageCached) throws Exception {		
-		this.currentPageCached = currentPageCached;
+	public void setCurrentPageCached(MenuElement currentPageCached) throws Exception {
+		request.setAttribute(CURRENT_PAGE_REQUEST_ATTRIBUTE, currentPageCached);		
 	}
 
 	public void resetCurrentPageCached() {
-		currentPageCached = null;
+		request.removeAttribute(CURRENT_PAGE_REQUEST_ATTRIBUTE);
 	}
 
 	/*
@@ -1933,11 +1929,6 @@ public class ContentContext {
 		} else {
 			return false;
 		}
-	}
-
-	public void setVirtualCurrentPage(MenuElement virtualCurrentPage) {
-		this.currentTemplate = null;
-		this.virtualCurrentPage = virtualCurrentPage;
 	}
 
 	/**

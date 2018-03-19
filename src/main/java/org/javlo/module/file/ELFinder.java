@@ -42,13 +42,15 @@ public abstract class ELFinder {
 	public void process(Writer out, HttpServletRequest request, HttpServletResponse response) throws Exception {
 
 		Map<String, Object> apiResponse = new LinkedHashMap<String, Object>();
+		
+		boolean writeJSON = true;
+		
 		try {
 			RequestService rs = RequestService.getInstance(request);
 			String command = rs.getParameter("cmd", null);
 			if ("file".equals(command)) {
-				ELFile file = getFile(request, "target");
-				if (file != null) {
-					ContentContext ctx = ContentContext.getContentContext(request, response);
+				ELFile file = getFile(request, "target");				
+				if (file != null) {					
 					response.addHeader("Content-Descriptionn", "File Transfer");
 					response.addHeader("Content-Type", ResourceHelper.getFileExtensionToMineType(StringHelper.getFileExtension(file.getFile().getName())));
 					response.addHeader("Content-Disposition", "attachment; filename="+ file.getFile().getName()); 
@@ -57,8 +59,9 @@ public abstract class ELFinder {
 					response.addHeader("Expires","0");
 					response.addHeader("Cache-Control", "must-revalidate, post-check=0, pre-check=0");
 					response.addHeader("Pragma","public");
-					response.addHeader("Content-Length",""+file.getFile().length());
+					response.addHeader("Content-Length",""+file.getFile().length());					
 					ResourceHelper.writeFileToStream(file.getFile(), response.getOutputStream());
+					writeJSON = false;
 				} else {
 					response.setStatus(HttpServletResponse.SC_NOT_FOUND);
 				}
@@ -108,6 +111,7 @@ public abstract class ELFinder {
 				request.getSession().removeAttribute("ELPath");
 			}
 		} catch (ELFinderException elEx) {
+			elEx.printStackTrace();
 			apiResponse.clear();
 			apiResponse.put("error", elEx.getMessage());
 		} catch (Throwable ex) {
@@ -116,7 +120,9 @@ public abstract class ELFinder {
 			apiResponse.put("error", "Exception: " + ex.toString());
 		}
 
-		JSONSerializer.writeJSONString(apiResponse, out);
+		if (writeJSON) {
+			JSONSerializer.writeJSONString(apiResponse, out);
+		}
 
 	}
 
@@ -340,6 +346,9 @@ public abstract class ELFinder {
 	}
 
 	public void tree(ELFile target, Map<String, Object> response) {
+		if (target == null) {
+			return;
+		}
 		List<ELFile> treeFiles = new ArrayList<ELFile>();
 		treeFiles.add(target);
 		treeFiles.addAll(filterDirectories(target.getChildren()));

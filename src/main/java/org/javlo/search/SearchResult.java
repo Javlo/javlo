@@ -6,6 +6,7 @@ package org.javlo.search;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.io.Serializable;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -56,7 +57,7 @@ public class SearchResult {
 	private final String SORT_RELEVANCE = "relevance";
 	private final String SORT_DATE = "date";
 
-	private ContentContext contentContext = null;
+	private WeakReference<ContentContext> refCtx = null;
 
 	public class DateComporator implements Comparator<SearchElement> {
 
@@ -90,18 +91,23 @@ public class SearchResult {
 			}
 
 			public String getXhtml() {
-				ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-				PrintStream out = new PrintStream(outStream);
-				out.println(comp.getPrefixViewXHTMLCode(searchResult.getContentContext()));
-				try {
-					out.println(comp.getXHTMLCode(searchResult.getContentContext()));
-				} catch (Exception e) {
-					e.printStackTrace();
-					return null;
+				ContentContext ctx = searchResult.getContentContext();
+				if (ctx != null) {
+					ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+					PrintStream out = new PrintStream(outStream);
+					out.println(comp.getPrefixViewXHTMLCode(ctx));
+					try {
+						out.println(comp.getXHTMLCode(ctx));
+					} catch (Exception e) {
+						e.printStackTrace();
+						return null;
+					}
+					out.println(comp.getSuffixViewXHTMLCode(ctx));
+					out.close();
+					return new String(outStream.toByteArray());
+				} else {
+					return "";
 				}
-				out.println(comp.getSuffixViewXHTMLCode(searchResult.getContentContext()));
-				out.close();
-				return new String(outStream.toByteArray());
 			}
 		}
 
@@ -124,7 +130,7 @@ public class SearchResult {
 		private List<Component> components;
 
 		// MenuElement page;
-		
+
 		public String getLocation() {
 			return location;
 		}
@@ -132,7 +138,7 @@ public class SearchResult {
 		public void setLocation(String location) {
 			this.location = location;
 		}
-		
+
 		public List<String> getTags() {
 			return tags;
 		}
@@ -148,7 +154,6 @@ public class SearchResult {
 		public void setCategory(String category) {
 			this.category = category;
 		}
-
 
 		public Date getDate() {
 			return date;
@@ -311,7 +316,8 @@ public class SearchResult {
 		result.clear();
 	}
 
-	private void addResult(ContentContext ctx, MenuElement page, String searchElement, String name, String title, String url, String description, int priority, List<Component> componentsRendered) {
+	private void addResult(ContentContext ctx, MenuElement page, String searchElement, String name, String title,
+			String url, String description, int priority, List<Component> componentsRendered) {
 		SearchElement rst = new SearchElement();
 		rst.setName(name);
 		rst.setUrl(url);
@@ -320,14 +326,14 @@ public class SearchResult {
 		rst.setDescription(description);
 		rst.setPriority(priority);
 		rst.setPath(page.getPath());
-		rst.setComponent(componentsRendered);		
+		rst.setComponent(componentsRendered);
 		try {
 			rst.setLocation(page.getLocation(ctx));
 			rst.setCategory(page.getCategory(ctx));
 			rst.setTags(page.getTags(ctx));
 		} catch (Exception e1) {
 			e1.printStackTrace();
-		}		
+		}
 		try {
 			if (page.getContentDateNeverNull(ctx) != null) {
 				Date date = page.getContentDateNeverNull(ctx);
@@ -367,7 +373,8 @@ public class SearchResult {
 		return result;
 	}
 
-	private void searchInPage(MenuElement page, ContentContext ctx, String groupId, String inSearchText, Collection<String> componentType, List<MenuElement> rootPage) throws Exception {
+	private void searchInPage(MenuElement page, ContentContext ctx, String groupId, String inSearchText,
+			Collection<String> componentType, List<MenuElement> rootPage) throws Exception {
 
 		SearchFilter searchFilter = SearchFilter.getInstance(ctx);
 		boolean tagOK = true;
@@ -375,7 +382,9 @@ public class SearchResult {
 			tagOK = false;
 		}
 
-		if ((!page.notInSearch(ctx) || (componentType != null && componentType.size() > 0)) && (rootPage == null || NavigationHelper.isParent(page, rootPage)) && tagOK && searchFilter.isInside(page.getContentDateNeverNull(ctx))) {
+		if ((!page.notInSearch(ctx) || (componentType != null && componentType.size() > 0))
+				&& (rootPage == null || NavigationHelper.isParent(page, rootPage)) && tagOK
+				&& searchFilter.isInside(page.getContentDateNeverNull(ctx))) {
 
 			if (groupId == null || groupId.trim().length() == 0 || page.getGroupID(ctx).contains(groupId)) {
 
@@ -395,9 +404,11 @@ public class SearchResult {
 
 						if (componentType == null || componentType.contains(cpt.getType())) {
 							if (cpt.getSearchLevel() > 0) {
-								String compSearchText = StringHelper.createFileName(cpt.getTextForSearch(ctx)).toLowerCase();
+								String compSearchText = StringHelper.createFileName(cpt.getTextForSearch(ctx))
+										.toLowerCase();
 
-								int cptSearchLevel = StringUtils.countMatches(compSearchText, searchText) * cpt.getSearchLevel();
+								int cptSearchLevel = StringUtils.countMatches(compSearchText, searchText)
+										* cpt.getSearchLevel();
 								searchLevel = searchLevel + cptSearchLevel;
 								if (cptSearchLevel > 0 && componentType != null) {
 									componentsRenderer.add(new Component(this, cpt));
@@ -406,7 +417,9 @@ public class SearchResult {
 						}
 					}
 					if (searchLevel != 0) {
-						addResult(ctx, page, inSearchText, page.getName(), page.getFullLabel(ctxWithContent), URLHelper.createURL(ctxWithContent, page.getPath()), page.getDescriptionAsText(ctxWithContent), searchLevel, componentsRenderer);
+						addResult(ctx, page, inSearchText, page.getName(), page.getFullLabel(ctxWithContent),
+								URLHelper.createURL(ctxWithContent, page.getPath()),
+								page.getDescriptionAsText(ctxWithContent), searchLevel, componentsRenderer);
 					}
 				}
 			}
@@ -433,7 +446,9 @@ public class SearchResult {
 				ctxWithContent.setArea(null);
 				int searchLevel = page.getContentByType(ctxWithContent, componentType).size();
 				if (searchLevel > 0) {
-					addResult(ctx, page, null, page.getName(), page.getFullLabel(ctxWithContent), URLHelper.createURL(ctxWithContent, page.getPath()), page.getDescriptionAsText(ctxWithContent), searchLevel, null);
+					addResult(ctx, page, null, page.getName(), page.getFullLabel(ctxWithContent),
+							URLHelper.createURL(ctxWithContent, page.getPath()),
+							page.getDescriptionAsText(ctxWithContent), searchLevel, null);
 				}
 			}
 		}
@@ -443,7 +458,8 @@ public class SearchResult {
 		}
 	}
 
-	public void search(ContentContext ctx, String groupId, String searchText, String sort, List<String> comps) throws Exception {
+	public void search(ContentContext ctx, String groupId, String searchText, String sort, List<String> comps)
+			throws Exception {
 		setQuery(searchText);
 		if (sort != null) {
 			setSort(sort);
@@ -454,7 +470,8 @@ public class SearchResult {
 		if (searchFilter.getRootPageName() != null) {
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 			for (String pageName : searchFilter.getRootPageName().keySet()) {
-				MenuElement rootSearch = ContentService.getInstance(globalContext).getNavigation(ctx).searchChildFromName(pageName);
+				MenuElement rootSearch = ContentService.getInstance(globalContext).getNavigation(ctx)
+						.searchChildFromName(pageName);
 				if (rootSearch != null) {
 					rootsSearch.add(rootSearch);
 				}
@@ -476,7 +493,8 @@ public class SearchResult {
 			if (result.size() == 0) {
 				I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
 				MessageRepository messageRepository = MessageRepository.getInstance(ctx);
-				messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("search.title.no-result") + ' ' + searchText, GenericMessage.ALERT));
+				messageRepository.setGlobalMessage(new GenericMessage(
+						i18nAccess.getText("search.title.no-result") + ' ' + searchText, GenericMessage.ALERT));
 			}
 		}
 	}
@@ -501,7 +519,8 @@ public class SearchResult {
 			if (result.size() == 0) {
 				I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
 				MessageRepository messageRepository = MessageRepository.getInstance(ctx);
-				messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("search.title.no-result") + ' ' + searchText, GenericMessage.ALERT));
+				messageRepository.setGlobalMessage(new GenericMessage(
+						i18nAccess.getText("search.title.no-result") + ' ' + searchText, GenericMessage.ALERT));
 			}
 		}
 	}
@@ -543,11 +562,15 @@ public class SearchResult {
 	}
 
 	public ContentContext getContentContext() {
-		return contentContext;
+		if (refCtx != null) {
+			return refCtx.get();
+		} else {
+			return null;
+		}
 	}
 
-	public void setContentContext(ContentContext contentContext) {
-		this.contentContext = contentContext;
+	public void setContentContext(ContentContext ctx) {
+		this.refCtx = new WeakReference<ContentContext>(ctx);
 	}
 
 }
