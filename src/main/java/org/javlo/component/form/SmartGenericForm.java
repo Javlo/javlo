@@ -530,11 +530,12 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 				}
 				CSVFactory.storeContentAsMap(csvFile, data);
 				
-				MessageRepository messageRepository = MessageRepository.getInstance(ctx);
-				String msg = I18nAccess.getInstance(ctx).getViewText("form.confirm", "data is confirmed.");
-				System.out.println(">>>>>>>>> SmartGenericForm.prepareView : msg = "+msg); //TODO: remove debug trace
-				messageRepository.setGlobalMessage(new GenericMessage(msg, GenericMessage.INFO));
-				System.out.println(">>>>>>>>> SmartGenericForm.prepareView : messageRepository.msg = "+messageRepository.getGlobalMessage().getMessage()); //TODO: remove debug trace
+				MessageRepository messageRepository = MessageRepository.getInstance(ctx);				
+				GenericMessage msg = new GenericMessage(I18nAccess.getInstance(ctx).getViewText("form.confirm", "data is confirmed."), GenericMessage.INFO);
+				messageRepository.setGlobalMessage(msg);
+				if (ctx.getRequest().getAttribute("msg") == null) {
+					ctx.getRequest().setAttribute("msg", msg);
+				}
 			}		
 		}
 	}
