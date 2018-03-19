@@ -1,3 +1,5 @@
+<%@page import="org.javlo.component.core.ComponentBean"%>
+<%@page import="org.javlo.navigation.MenuElement"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <div id="info" class="content">
 <fieldset>
@@ -41,6 +43,8 @@
 <ul class="server">
 <li><span class="label">Revision : </span>${globalContext.staticConfig.sourceRevision}</li>
 <li><span class="label">Build : </span>${globalContext.staticConfig.buildTime}</li>
+<li><span class="label">#MenuElement : </span><%=MenuElement.INSTANCE%></li>
+<li><span class="label">#ComponentBean : </span><%=ComponentBean.INSTANCE%></li>
 <li><span class="label">Request/minute (server) : </span>${globalCount.count} (${globalCount.average})</li>
 <li><span class="label">Request/minute (site) : </span>${globalContext.count}</li>
 </ul>
