@@ -157,7 +157,7 @@ public class PageMirrorComponent extends AbstractVisualComponent implements IIma
 				if (page.getId().equals(getPage().getId()) || page.getId().equals(ctx.getCurrentPage().getId())) {
 					ctx.getRequest().setAttribute("xhtml", "[!!! RECURSIVE MIRROR CALL !!!]");
 				} else {
-//					ctx.setVirtualCurrentPage(getPage()); 
+					ctx.setVirtualCurrentPage(getPage()); 
 					String area = ctx.getArea();
 					String path = ctx.getPath();
 					MenuElement currentPage = ctx.getCurrentPage();
@@ -174,7 +174,7 @@ public class PageMirrorComponent extends AbstractVisualComponent implements IIma
 					String param = Edit.CONTENT_RENDERER + '?' + NOT_EDIT_PREVIEW_PARAM_NAME + "=true";
 					String xhtml = executeJSP(ctx, param);
 					rs.setParameter(NOT_EDIT_PREVIEW_PARAM_NAME, "false");
-//					ctx.setVirtualCurrentPage(null);
+					ctx.setVirtualCurrentPage(null);
 					ctx.setArea(area);
 					ctx.setVirtualArea(null);
 					ctx.setPath(path);

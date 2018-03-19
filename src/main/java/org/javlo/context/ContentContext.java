@@ -103,6 +103,10 @@ public class ContentContext {
 
 	public static String CONTEXT_REQUEST_KEY = "contentContext";
 
+	public MenuElement currentPageCached = null;
+
+	private MenuElement virtualCurrentPage = null;
+
 	private boolean pageAssociation = false;
 
 	private boolean postRequest = false;
@@ -479,8 +483,6 @@ public class ContentContext {
 	private GlobalContext forceGlobalContext = null;
 
 	private String contextRequestLanguage = null;
-	
-	private static final String CURRENT_PAGE_REQUEST_ATTRIBUTE = "__CURRENT_PAGE__";
 
 	public ContentContext(ContentContext ctx) {
 		path = ctx.path;
@@ -515,6 +517,8 @@ public class ContentContext {
 		currentTemplate = ctx.currentTemplate;
 
 		editPreview = ctx.editPreview;
+
+		currentPageCached = ctx.currentPageCached;
 
 		pageAssociation = ctx.pageAssociation;
 
@@ -917,7 +921,23 @@ public class ContentContext {
 	};
 
 	public MenuElement getCurrentPageCached() {
-		return (MenuElement)request.getAttribute(CURRENT_PAGE_REQUEST_ATTRIBUTE);
+		return currentPageCached;
+	}
+	
+	/**
+	 * use for render page with some references to other page (sample :
+	 * mirrorPage, renderImage with filter rule of the template of mirror
+	 * component and not source page).
+	 * 
+	 * @return
+	 * @throws Exception
+	 */
+	public MenuElement getVirtualCurrentPage() throws Exception {
+		if (virtualCurrentPage != null) {
+			return virtualCurrentPage;
+		} else {
+			return getCurrentPage();
+		}
 	}
 
 	public Template getCurrentTemplate() throws Exception {
@@ -938,9 +958,12 @@ public class ContentContext {
 				template = Template.getApplicationInstance(getRequest().getSession().getServletContext(), this, forceTemplate);
 			}
 			if (template == null) {
-				template = TemplateFactory.getTemplate(this, getCurrentPage());
+				if (getVirtualCurrentPage() == null) {
+					template = TemplateFactory.getTemplate(this, getCurrentPage());
+				} else {
+					template = TemplateFactory.getTemplate(this, getVirtualCurrentPage());
+				}
 			}
-
 			if ((template == null) || !template.exist()) {
 				if (globalContext.getDefaultTemplate() != null) {
 					template = Template.getApplicationInstance(getRequest().getSession().getServletContext(), this, globalContext.getDefaultTemplate());
@@ -1292,12 +1315,12 @@ public class ContentContext {
 		response.addCookie(cookie);
 	}
 
-	public void setCurrentPageCached(MenuElement currentPageCached) throws Exception {
-		request.setAttribute(CURRENT_PAGE_REQUEST_ATTRIBUTE, currentPageCached);		
+	public void setCurrentPageCached(MenuElement currentPageCached) throws Exception {		
+		this.currentPageCached = currentPageCached;
 	}
 
 	public void resetCurrentPageCached() {
-		request.removeAttribute(CURRENT_PAGE_REQUEST_ATTRIBUTE);
+		currentPageCached = null;
 	}
 
 	/*
@@ -1929,6 +1952,11 @@ public class ContentContext {
 		} else {
 			return false;
 		}
+	}
+
+	public void setVirtualCurrentPage(MenuElement virtualCurrentPage) {
+		this.currentTemplate = null;
+		this.virtualCurrentPage = virtualCurrentPage;
 	}
 
 	/**
