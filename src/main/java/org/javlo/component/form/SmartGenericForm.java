@@ -62,8 +62,6 @@ import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
 import org.javlo.service.CaptchaService;
 import org.javlo.service.ContentService;
-import org.javlo.service.IListItem;
-import org.javlo.service.ListService;
 import org.javlo.service.RequestService;
 import org.javlo.service.event.Event;
 import org.javlo.user.IUserFactory;
@@ -510,7 +508,8 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		
 		String validLineStr = rs.getParameter(getInputValidLineName(ctx));		
 		int validLine = decodeEditNumber(ctx, validLineStr);	
-		if (validLine>0) {			
+		if (validLine>0) {
+			logger.info("valid line : "+validLine);
 			synchronized(LOCK_ACCESS_FILE) {
 				ctx.getRequest().setAttribute("validForm", true);				
 				ctx.getRequest().setAttribute("editLine", editLineStr);
