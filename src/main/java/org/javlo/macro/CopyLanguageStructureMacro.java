@@ -42,9 +42,9 @@ public class CopyLanguageStructureMacro extends AbstractMacro {
 			allLgStr = allLgStr + lgCtx.getLanguage() + ' ';
 		}
 		logger.info("copy language structure from "+ctx.getLanguage()+" to "+allLgStr.trim());		
-		MacroHelper.copyLanguageStructure(rootPage, ctx, otherLanguageContexts, true);		
+		MacroHelper.copyLanguageStructure(rootPage, ctx, otherLanguageContexts, true, false);		
 		for (MenuElement child : rootPage.getAllChildrenList()) {
-			MacroHelper.copyLanguageStructure(child, ctx, otherLanguageContexts, true);
+			MacroHelper.copyLanguageStructure(child, ctx, otherLanguageContexts, true, false);
 		}
 
 		PersistenceService persistenceService = PersistenceService.getInstance(globalContext);

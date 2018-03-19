@@ -32,7 +32,7 @@ public class CopyCurrentPageToOtherLanguages extends AbstractMacro {
 				}
 			}
 
-			MacroHelper.copyLanguageStructure(currentPage, ctx, otherLanguageContexts, true);
+			MacroHelper.copyLanguageStructure(currentPage, ctx, otherLanguageContexts, true, false);
 
 			PersistenceService persistenceService = PersistenceService.getInstance(globalContext);
 			persistenceService.setAskStore(true);

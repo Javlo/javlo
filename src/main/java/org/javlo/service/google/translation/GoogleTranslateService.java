@@ -48,8 +48,6 @@ public class GoogleTranslateService implements ITranslator {
 	 * @throws Exception 
 	 */
 	public static String translate(String sourceText, String sourceLang, String targetLang, String apiKey) throws Exception {
-		System.out.println(">>>>>>>>> GoogleTranslateService.translate : sourceText = "+sourceText); //TODO: remove debug trace
-		System.out.println(">>>>>>>>> GoogleTranslateService.translate : apiKey = "+apiKey); //TODO: remove debug trace
 		String cacheKey = sourceText + sourceLang + targetLang;
 		String translation = cache.get(cacheKey);
 		if (translation == null) {			
@@ -65,7 +63,6 @@ public class GoogleTranslateService implements ITranslator {
 			List translations = (List)data.get("translations");
 			translation = ""+((JSONMap)translations.get(0)).get("translatedText");
 		}
-		System.out.println(">>>>>>>>> GoogleTranslateService.translate : translation = "+translation); //TODO: remove debug trace
 		return translation;
 	}
 	
