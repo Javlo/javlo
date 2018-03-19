@@ -1548,6 +1548,10 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	public String getGoogleAnalyticsUACCT() {
 		return properties.getString("google.uacct", "");
 	}
+	
+	public String getGoogleApiKey() {
+		return properties.getString("google.api.key", "");
+	}
 
 	public String getHelpURL() {
 		return properties.getString("help-url", staticConfig.getHelpURL());
@@ -2649,6 +2653,13 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	public void setGoogleAnalyticsUACCT(String uacct) {
 		synchronized (properties) {
 			properties.setProperty("google.uacct", uacct);
+			save();
+		}
+	}
+	
+	public void setGoogleApiKey(String key) {
+		synchronized (properties) {
+			properties.setProperty("google.api.key", key);
 			save();
 		}
 	}

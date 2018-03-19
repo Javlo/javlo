@@ -17,6 +17,7 @@ import org.javlo.data.rest.IRestItem;
 import org.javlo.exception.ResourceNotFoundException;
 import org.javlo.message.GenericMessage;
 import org.javlo.navigation.MenuElement;
+import org.javlo.service.ITranslator;
 import org.javlo.utils.SuffixPrefix;
 
 /**
@@ -869,4 +870,14 @@ public interface IContentVisualComponent extends Comparable<IContentVisualCompon
 	public boolean isRestMatch(ContentContext ctx, Map<String,String> params);
 	
 	public String getFontAwesome();
+	
+	/**
+	 * translate the content of the component to the current language
+	 * @param ctx contextContext of the current rendering
+	 * @param translator class to translate
+	 * @param lang the language of the current content (source language)
+	 * @return
+	 */
+	public boolean transflateFrom(ContentContext ctx, ITranslator translator, String lang);
+	
 }

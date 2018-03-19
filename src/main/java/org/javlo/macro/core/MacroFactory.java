@@ -45,6 +45,7 @@ import org.javlo.macro.EncryptVisitorsPasswordMacro;
 import org.javlo.macro.FileInListMacro;
 import org.javlo.macro.ImageAfterDescriptionChildrenMacro;
 import org.javlo.macro.ImageAfterDescriptionMacro;
+import org.javlo.macro.ImportAndTranslateDefaultLanguageMacro;
 import org.javlo.macro.ImportDataBase;
 import org.javlo.macro.ImportDefaultLanguageMacro;
 import org.javlo.macro.IncreaseSubtitleLevelMacro;
@@ -136,6 +137,7 @@ public class MacroFactory {
 		macros.add(new CopyLanguageStructureMacro());
 		macros.add(new CopyLanguageStructureHereMacro());
 		macros.add(new ImportDefaultLanguageMacro());
+		macros.add(new ImportAndTranslateDefaultLanguageMacro());		
 		macros.add(new DeleteSmartExternalLinkMacro());		
 		macros.add(new ImageAfterDescriptionMacro());
 		macros.add(new MacroRendererCorrection());

@@ -400,7 +400,7 @@ public class NetHelper {
 	private static String readPage(URL url, boolean cssInline, boolean mailing, String userAgent, final String userName,
 			final String password, String userToken, boolean noError) throws Exception {
 
-		logger.info("readPage : " + url + "  user:" + userName + "  password found:"
+		logger.fine("readPage : " + url + "  user:" + userName + "  password found:"
 				+ (StringHelper.neverNull(password).length() > 1) + "  token found:"
 				+ (StringHelper.neverNull(userToken).length() > 1));
 

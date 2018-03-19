@@ -283,8 +283,8 @@
     		<groupId>org.mozilla</groupId>
     		<artifactId>rhino</artifactId>
     		<version>1.7.9</version>
-		</dependency>		
-
+		</dependency>
+		
 		<dependency>
 			<groupId>org.lesscss</groupId>
 			<artifactId>lesscss</artifactId>

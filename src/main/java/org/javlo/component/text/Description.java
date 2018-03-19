@@ -8,7 +8,6 @@ import java.util.List;
 import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
-import org.javlo.helper.LocalLogger;
 import org.javlo.helper.LoremIpsumGenerator;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.XHTMLHelper;
@@ -160,6 +159,11 @@ public class Description extends AbstractVisualComponent {
 	@Override
 	public String getFontAwesome() {
 		return "sticky-note";
+	}
+	
+	@Override
+	protected boolean isValueTranslatable() {
+		return true;
 	}
 
 }

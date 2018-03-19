@@ -926,5 +926,7 @@ change log
  
 * 2.1.1.1 [16/03/2018]
 
- * 1/ optimisation reference to contentContext (JavloELFile and SearchResult)
+ * 1/ optimisation reference to contentContext (JavloELFile and SearchResult) / import with translation
+ 
+ * 2/
 

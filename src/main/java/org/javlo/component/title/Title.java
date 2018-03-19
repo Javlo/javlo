@@ -171,5 +171,10 @@ public class Title extends AbstractVisualComponent {
 	public String getFontAwesome() {	
 		return "header";
 	}
+	
+	@Override
+	protected boolean isValueTranslatable() {
+		return true;
+	}
 
 }

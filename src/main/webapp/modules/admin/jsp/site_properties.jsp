@@ -146,6 +146,11 @@
 </div>
 
 <div class="form-group">		
+	<label for="google-key">Google API Key</label>
+	<input class="form-control" type="text" id="google-key" name="google-key" value="${currentContext.googleApiKey}" />	
+</div>
+
+<div class="form-group">		
 	<label for="short-date">${i18n.edit['admin.title.short-date']}</label>
 	<input class="form-control" type="text" id="short-date" name="short-date" value="${currentContext.shortDateFormat}" />	
 </div>

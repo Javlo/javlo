@@ -16,6 +16,7 @@ import org.javlo.component.core.ComponentBean;
 import org.javlo.context.ContentContext;
 import org.javlo.helper.StringHelper;
 import org.javlo.i18n.I18nAccess;
+import org.javlo.service.ITranslator;
 import org.javlo.service.RequestService;
 
 public abstract class AbstractPropertiesComponent extends AbstractVisualComponent {
@@ -285,6 +286,29 @@ public abstract class AbstractPropertiesComponent extends AbstractVisualComponen
 		properties.setProperty("key", "été");
 
 		System.out.println("été = " + properties.getProperty("key"));
+	}
+
+	@Override
+	public boolean transflateFrom(ContentContext ctx, ITranslator translator, String lang) {
+		if (isValueTranslatable()) {			
+			boolean translated = true;
+			try {
+				for (String field : getFields(ctx)) {
+					String value = getFieldValue(field);
+					String newValue = translator.translate(ctx, value, lang, ctx.getRequestContentLanguage());
+					if (newValue == null) {
+						translated = false;
+						newValue = ITranslator.ERROR_PREFIX + value;
+					}
+					setFieldValue(field, newValue);
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			return translated;
+		} else {
+			return false;
+		}
 	}
 
 }

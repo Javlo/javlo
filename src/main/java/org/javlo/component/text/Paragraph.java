@@ -121,5 +121,10 @@ public class Paragraph extends AbstractVisualComponent {
 	public String getFontAwesome() {	
 		return "align-left";
 	}
+	
+	@Override
+	protected boolean isValueTranslatable() {
+		return true;
+	}
 
 }

@@ -222,4 +222,9 @@ public class SubTitle extends AbstractVisualComponent implements ISubTitle {
 	public String getFontAwesome() {	
 		return "header";
 	}
+	
+	@Override
+	protected boolean isValueTranslatable() {
+		return true;
+	}
 }

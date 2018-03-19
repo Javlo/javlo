@@ -129,7 +129,7 @@ public abstract class ElementaryURLHelper {
 			}
 		}
 	}
-
+	
 	/**
 	 * add get attribute to a url.
 	 * 

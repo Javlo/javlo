@@ -106,6 +106,7 @@ public class AdminAction extends AbstractModuleAction {
 		private String folder;
 		private String usersAccess;
 		private String googleAnalyticsUACCT;
+		private String googleApiKey;
 		private String tags;
 		private String blockPassword;
 		private String homepage;
@@ -226,6 +227,7 @@ public class AdminAction extends AbstractModuleAction {
 			setAdminUserRoles(StringHelper.collectionToString(globalContext.getAdminUserRoles(), ","));
 
 			setGoogleAnalyticsUACCT(globalContext.getGoogleAnalyticsUACCT());
+			setGoogleApiKey(globalContext.getGoogleApiKey());
 			setTags(globalContext.getRAWTags());
 			setBlockPassword(globalContext.getBlockPassword());
 
@@ -929,6 +931,14 @@ public class AdminAction extends AbstractModuleAction {
 			this.cookies = cookies;
 		}
 
+		public String getGoogleApiKey() {
+			return googleApiKey;
+		}
+
+		public void setGoogleApiKey(String googleApiKey) {
+			this.googleApiKey = googleApiKey;
+		}
+
 	}
 
 	public static class ComponentBean {
@@ -1460,6 +1470,7 @@ public class AdminAction extends AbstractModuleAction {
 					currentGlobalContext.setExtendMenu(requestService.getParameter("extend-menu", null) != null);
 
 					currentGlobalContext.setGoogleAnalyticsUACCT(requestService.getParameter("google-ana", ""));
+					currentGlobalContext.setGoogleApiKey(requestService.getParameter("google-key", ""));
 
 					/** security **/
 					String userFacotryClass = requestService.getParameter("user-factory", null);

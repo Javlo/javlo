@@ -16,6 +16,7 @@ import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.helper.XHTMLHelper;
 import org.javlo.module.file.FileAction;
+import org.javlo.service.ITranslator;
 import org.javlo.service.RequestService;
 import org.javlo.service.ReverseLinkService;
 import org.javlo.utils.SuffixPrefix;
@@ -167,6 +168,11 @@ public class WysiwygParagraph extends AbstractVisualComponent {
 	@Override
 	public String getFontAwesome() {	
 		return "align-left";
+	}
+	
+	@Override
+	protected boolean isValueTranslatable() {
+		return true;
 	}
 	
 }

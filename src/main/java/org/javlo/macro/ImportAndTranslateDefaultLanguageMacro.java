@@ -10,13 +10,13 @@ import org.javlo.helper.MacroHelper;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.PersistenceService;
 
-public class ImportDefaultLanguageMacro extends AbstractMacro {
+public class ImportAndTranslateDefaultLanguageMacro extends AbstractMacro {
 
-	private static Logger logger = Logger.getLogger(ImportDefaultLanguageMacro.class.getName());
+	private static Logger logger = Logger.getLogger(ImportAndTranslateDefaultLanguageMacro.class.getName());
 
 	@Override
 	public String getName() {
-		return "import-default-language";
+		return "import-and-translate-default-language";
 	}
 	
 	@Override
@@ -35,7 +35,7 @@ public class ImportDefaultLanguageMacro extends AbstractMacro {
 			return null;
 		}
 
-		MacroHelper.copyLanguageStructure(currentPage, deftLanguageCtx, Arrays.asList(new ContentContext[] { ctx }), true, false);
+		MacroHelper.copyLanguageStructure(currentPage, deftLanguageCtx, Arrays.asList(new ContentContext[] { ctx }), true, true);
 
 		PersistenceService persistenceService = PersistenceService.getInstance(globalContext);
 		persistenceService.setAskStore(true);

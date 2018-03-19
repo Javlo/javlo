@@ -56,6 +56,7 @@ import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
 import org.javlo.service.NavigationService;
 import org.javlo.service.PersistenceService;
+import org.javlo.service.google.translation.GoogleTranslateService;
 import org.javlo.user.User;
 
 public class MacroHelper {
@@ -474,7 +475,7 @@ public class MacroHelper {
 	 * @param otherLanguageContexts
 	 * @throws Exception
 	 */
-	public static void copyLanguageStructure(MenuElement currentPage, ContentContext ctx, List<ContentContext> otherLanguageContexts, boolean withContent) throws Exception {
+	public static void copyLanguageStructure(MenuElement currentPage, ContentContext ctx, List<ContentContext> otherLanguageContexts, boolean withContent, boolean translate) throws Exception {
 		ContentContext ctxNoArea = new ContentContext(ctx);
 		ctxNoArea.setArea(null);
 		ContentElementList baseContent = currentPage.getLocalContentCopy(ctxNoArea);
@@ -490,6 +491,11 @@ public class MacroHelper {
 							content = comp.getValue(ctxNoArea);
 						}
 						parentId = addContent(lgCtx.getRequestContentLanguage(), currentPage, parentId, comp.getType(), comp.getStyle(ctxNoArea), comp.getArea(), comp.getCurrentRenderer(ctx), content, ctx.getCurrentEditUser());
+						if (translate) {
+							ContentService contentService = ContentService.getInstance(ctx.getRequest());
+							IContentVisualComponent newComp = contentService.getComponent(lgCtx, parentId);
+							newComp.transflateFrom(lgCtx, GoogleTranslateService.getTranslator(), ctx.getGlobalContext().getDefaultLanguage());
+						}
 					}
 				}
 			}

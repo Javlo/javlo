@@ -71,6 +71,7 @@ import org.javlo.module.file.FileAction;
 import org.javlo.navigation.MenuElement;
 import org.javlo.navigation.PageBean;
 import org.javlo.rendering.Device;
+import org.javlo.service.ITranslator;
 import org.javlo.service.PersistenceService;
 import org.javlo.service.RequestService;
 import org.javlo.service.visitors.CookiesService;
@@ -2965,6 +2966,26 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	
 	public boolean haveRight(ContentContext ctx, String action) {
 		return true;
+	}
+	
+	protected boolean isValueTranslatable() {
+		return false;
+	}
+	
+	@Override
+	public boolean transflateFrom(ContentContext ctx, ITranslator translator, String lang) {
+		if (!isValueTranslatable()) {
+			return false;
+		} else {
+			boolean translated = true;
+			String newValue = translator.translate(ctx, getValue(), lang, ctx.getRequestContentLanguage());
+			if (newValue == null) {
+				translated=false;
+				newValue = ITranslator.ERROR_PREFIX+getValue();
+			}
+			setValue(newValue);
+			return translated;
+		}
 	}
 
 }

@@ -24,6 +24,7 @@ import org.javlo.helper.XHTMLHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
+import org.javlo.service.ITranslator;
 import org.javlo.service.ReverseLinkService;
 import org.javlo.service.exception.ServiceException;
 import org.owasp.encoder.Encode;
@@ -421,6 +422,11 @@ public class Heading extends AbstractPropertiesComponent implements ISubTitle {
 		String value = "mes articles d'été";
 		p.setProperty("text", value);
 		System.out.println("value = p.get ? "+value.equals(p.getProperty("text")));
+	}
+	
+	@Override
+	protected boolean isValueTranslatable() {
+		return true;
 	}
 
 }
