@@ -154,8 +154,7 @@ public class LanguageMirrorComponent extends AbstractVisualComponent implements 
 		boolean rc = false;
 		try {
 			if (ctx.getGlobalContext().getContentLanguages().contains(getValue()) && !ctx.getRequestContentLanguage().equals(getValue())) {
-				rc = getPage().isRealContent(ctx);
-				System.out.println(">>>>>>>>> LanguageMirrorComponent.isRealContent : rc = "+rc); //TODO: remove debug trace
+				rc = getPage().isRealContent(ctx);				
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
