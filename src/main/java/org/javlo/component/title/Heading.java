@@ -9,7 +9,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 
-import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.component.core.ComponentLayout;
 import org.javlo.component.core.IContentVisualComponent;
@@ -157,10 +157,10 @@ public class Heading extends AbstractPropertiesComponent implements ISubTitle {
 	@Override
 	public String getTextLabel(ContentContext ctx) {
 		String smText = getFieldValue(SMALL_TEXT);
-		smText = StringEscapeUtils.unescapeHtml(smText);		
+		smText = StringEscapeUtils.unescapeHtml4(smText);		
 		if (StringHelper.isEmpty(smText)) {	
 			String lgText = getFieldValue(TEXT);
-			lgText = StringEscapeUtils.unescapeHtml(lgText);
+			lgText = StringEscapeUtils.unescapeHtml4(lgText);
 			return StringHelper.removeTag(lgText);
 		} else {
 			return smText;
@@ -427,6 +427,23 @@ public class Heading extends AbstractPropertiesComponent implements ISubTitle {
 	@Override
 	protected boolean isValueTranslatable() {
 		return true;
+	}
+	
+	@Override
+	public boolean transflateFrom(ContentContext ctx, ITranslator translator, String lang) {
+		if (!isValueTranslatable()) {
+			return false;
+		} else {
+			boolean translated = true;
+			String value =  StringEscapeUtils.unescapeHtml4(getValue());
+			String newValue = translator.translate(ctx, value, lang, ctx.getRequestContentLanguage());
+			if (newValue == null) {
+				translated=false;
+				newValue = ITranslator.ERROR_PREFIX+getValue();
+			}
+			setValue(XHTMLHelper.removeEscapeTag(newValue));
+			return translated;
+		}
 	}
 
 }

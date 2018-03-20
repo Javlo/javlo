@@ -83,9 +83,5 @@ public class GoogleTranslateService implements ITranslator {
 			return null;
 		}
 	}
-	
-	public static void main(String[] args) throws Exception {
-		System.out.println("translated : "+translate("le sens qui prévaut de nos jours se réfère au libertin de mœurs, c’est-à-dire celui qui s’adonne aux plaisirs charnels (voire à la sexualité de groupe) avec une liberté qui dépasse les limites de la morale conventionnelle.", "fr", "it", "AIzaSyBJ9W5-MZss8VXWFRlk6cjIPzjAX7czv3w"));
-	}
 
 }
