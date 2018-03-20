@@ -40,17 +40,17 @@ public class LanguageMirrorComponent extends AbstractVisualComponent implements 
 
 	@Override
 	public Collection<String> getExternalResources(ContentContext ctx) {
-		String svLg = ctx.getRequestContentLanguage();
-		ctx.setRequestContentLanguage(getValue());
 		Collection<String> rsc = null;
 		try {
 			if (ctx.getGlobalContext().getContentLanguages().contains(getValue()) && !ctx.getRequestContentLanguage().equals(getValue())) {
+				String svLg = ctx.getRequestContentLanguage();
+				ctx.setRequestContentLanguage(getValue());
 				rsc = getPage().getExternalResources(ctx);
+				ctx.setRequestContentLanguage(svLg);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-		}
-		ctx.setRequestContentLanguage(svLg);
+		}		
 		return rsc;
 	}
 
@@ -93,7 +93,7 @@ public class LanguageMirrorComponent extends AbstractVisualComponent implements 
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
 		setContainerPage(ctx, getPage());
 		prepareView(ctx);
-		return (String) ctx.getRequest().getAttribute("xhtml");
+		return "<div lang=\""+getValue()+"\">"+ctx.getRequest().getAttribute("xhtml")+"</div>";
 	}
 
 	@Override
@@ -116,18 +116,18 @@ public class LanguageMirrorComponent extends AbstractVisualComponent implements 
 	}
 		
 	@Override
-	public String getTextTitle(ContentContext ctx) {		
-		String svLg = ctx.getRequestContentLanguage();
-		ctx.setRequestContentLanguage(getValue());
+	public String getTextTitle(ContentContext ctx) {	
 		String title = null;
 		try {
 			if (ctx.getGlobalContext().getContentLanguages().contains(getValue()) && !ctx.getRequestContentLanguage().equals(getValue())) {
+				String svLg = ctx.getRequestContentLanguage();
+				ctx.setRequestContentLanguage(getValue());
 				title = getPage().getTitle(ctx);
+				ctx.setRequestContentLanguage(svLg);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		ctx.setRequestContentLanguage(svLg);
 		return title;
 	}
 	
@@ -148,82 +148,84 @@ public class LanguageMirrorComponent extends AbstractVisualComponent implements 
 	}
 	
 	@Override
-	public boolean isRealContent(ContentContext ctx) {
-		String svLg = ctx.getRequestContentLanguage();
-		ctx.setRequestContentLanguage(getValue());
+	public boolean isRealContent(ContentContext ctx) {		
 		boolean rc = false;
 		try {
 			if (ctx.getGlobalContext().getContentLanguages().contains(getValue()) && !ctx.getRequestContentLanguage().equals(getValue())) {
-				rc = getPage().isRealContent(ctx);				
+				String svLg = ctx.getRequestContentLanguage();
+				ctx.setRequestContentLanguage(getValue());
+				rc = getPage().isRealContent(ctx);			
+				ctx.setRequestContentLanguage(svLg);		
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		ctx.setRequestContentLanguage(svLg);
+		
 		return rc;
 	}
 	
 	@Override
-	public boolean isContentCachable(ContentContext ctx) {
-		String svLg = ctx.getRequestContentLanguage();
-		ctx.setRequestContentLanguage(getValue());
+	public boolean isContentCachable(ContentContext ctx) {		
 		boolean rc = false;
 		try {
 			if (ctx.getGlobalContext().getContentLanguages().contains(getValue()) && !ctx.getRequestContentLanguage().equals(getValue())) {
+				String svLg = ctx.getRequestContentLanguage();
+				ctx.setRequestContentLanguage(getValue());
 				rc = getPage().isCacheable(ctx);
+				ctx.setRequestContentLanguage(svLg);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		ctx.setRequestContentLanguage(svLg);
+		
 		return rc;
 	}
 
 	@Override
 	public int getPriority(ContentContext ctx) {
-		String svLg = ctx.getRequestContentLanguage();
-		ctx.setRequestContentLanguage(getValue());
 		int priority = 0;
 		try {
 			if (ctx.getGlobalContext().getContentLanguages().contains(getValue()) && !ctx.getRequestContentLanguage().equals(getValue())) {
+				String svLg = ctx.getRequestContentLanguage();
+				ctx.setRequestContentLanguage(getValue());
 				priority = getPage().getPriority();
+				ctx.setRequestContentLanguage(svLg);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-		}
-		ctx.setRequestContentLanguage(svLg);
+		}		
 		return priority;
 	}
 
 	@Override
-	public String getSubTitle(ContentContext ctx) {
-		String svLg = ctx.getRequestContentLanguage();
-		ctx.setRequestContentLanguage(getValue());
+	public String getSubTitle(ContentContext ctx) {		
 		String title = null;
 		try {
 			if (ctx.getGlobalContext().getContentLanguages().contains(getValue()) && !ctx.getRequestContentLanguage().equals(getValue())) {
+				String svLg = ctx.getRequestContentLanguage();
+				ctx.setRequestContentLanguage(getValue());
 				title = getPage().getSubTitle(ctx);
+				ctx.setRequestContentLanguage(svLg);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-		}
-		ctx.setRequestContentLanguage(svLg);
+		}		
 		return title;
 	}
 
 	@Override
 	public int getSubTitleLevel(ContentContext ctx) {
-		String svLg = ctx.getRequestContentLanguage();
-		ctx.setRequestContentLanguage(getValue());
 		int level = 0;
 		try {
 			if (ctx.getGlobalContext().getContentLanguages().contains(getValue()) && !ctx.getRequestContentLanguage().equals(getValue())) {
+				String svLg = ctx.getRequestContentLanguage();
+				ctx.setRequestContentLanguage(getValue());
 				level = getPage().getSubTitleLevel(ctx);
+				ctx.setRequestContentLanguage(svLg);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-		}
-		ctx.setRequestContentLanguage(svLg);
+		}		
 		return level;
 	}
 	
@@ -243,17 +245,18 @@ public class LanguageMirrorComponent extends AbstractVisualComponent implements 
 	}
 	
 	private IImageTitle getImageTitle(ContentContext ctx) {
-		String svLg = ctx.getRequestContentLanguage();
-		ctx.setRequestContentLanguage(getValue());
+		
 		IImageTitle image = null;
-		try {
+		try {			
 			if (ctx.getGlobalContext().getContentLanguages().equals(getValue()) && !ctx.getRequestContentLanguage().equals(getValue())) {
+				String svLg = ctx.getRequestContentLanguage();
+				ctx.setRequestContentLanguage(getValue());
 				image = getPage().getImage(ctx);
+				ctx.setRequestContentLanguage(svLg);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-		}
-		ctx.setRequestContentLanguage(svLg);
+		}		
 		return image;
 	}
 
