@@ -428,23 +428,6 @@ public class Heading extends AbstractPropertiesComponent implements ISubTitle {
 	protected boolean isValueTranslatable() {
 		return true;
 	}
-	
-	@Override
-	public boolean transflateFrom(ContentContext ctx, ITranslator translator, String lang) {
-		if (!isValueTranslatable()) {
-			return false;
-		} else {
-			boolean translated = true;
-			String value =  StringEscapeUtils.unescapeHtml4(getValue());
-			String newValue = translator.translate(ctx, value, lang, ctx.getRequestContentLanguage());
-			if (newValue == null) {
-				translated=false;
-				newValue = ITranslator.ERROR_PREFIX+getValue();
-			}
-			setValue(XHTMLHelper.removeEscapeTag(newValue));
-			return translated;
-		}
-	}
 
 }
 

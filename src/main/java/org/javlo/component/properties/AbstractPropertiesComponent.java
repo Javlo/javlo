@@ -11,10 +11,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.context.ContentContext;
 import org.javlo.helper.StringHelper;
+import org.javlo.helper.XHTMLHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.service.ITranslator;
 import org.javlo.service.RequestService;
@@ -293,8 +295,8 @@ public abstract class AbstractPropertiesComponent extends AbstractVisualComponen
 		if (isValueTranslatable()) {			
 			boolean translated = true;
 			try {
-				for (String field : getFields(ctx)) {
-					String value = getFieldValue(field);
+				for (String field : getFields(ctx)) {				
+					String value =  StringEscapeUtils.unescapeHtml4(getFieldValue(field));
 					String newValue = translator.translate(ctx, value, lang, ctx.getRequestContentLanguage());
 					if (newValue == null) {
 						translated = false;
