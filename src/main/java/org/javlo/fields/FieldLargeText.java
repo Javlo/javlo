@@ -59,5 +59,10 @@ public class FieldLargeText extends Field {
 	public String getType() {
 		return "large-text";
 	}
+	
+	@Override
+	protected boolean isValueTranslatable() {
+		return true;
+	}
 
 }

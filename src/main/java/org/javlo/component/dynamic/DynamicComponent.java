@@ -45,6 +45,7 @@ import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
 import org.javlo.navigation.MenuElement;
 import org.javlo.navigation.PageBean;
+import org.javlo.service.ITranslator;
 import org.javlo.service.PersistenceService;
 import org.javlo.service.exception.ServiceException;
 import org.javlo.service.resource.Resource;
@@ -1155,6 +1156,27 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 	
 	protected boolean isAutoDeletable() {
 		return true;
+	}
+	
+	@Override
+	protected boolean isValueTranslatable() {
+		return true;
+	}
+	
+	public boolean transflateFrom(ContentContext ctx, ITranslator translator, String lang) {
+		if (!isValueTranslatable()) {
+			return false;
+		} else {
+			try {
+				for (Field field : getFields(ctx)) {
+					field.transflateFrom(ctx, translator, lang);
+				}
+				return true;
+			} catch (Exception e) {
+				e.printStackTrace();
+				return false;				
+			}
+		}
 	}
 	
 }

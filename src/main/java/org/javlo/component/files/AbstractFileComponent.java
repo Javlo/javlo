@@ -56,6 +56,7 @@ import org.javlo.module.file.FileAction;
 import org.javlo.module.file.FileBean;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
+import org.javlo.service.ITranslator;
 import org.javlo.service.RequestService;
 import org.javlo.service.ReverseLinkService;
 import org.javlo.service.resource.LocalResource;
@@ -1317,6 +1318,19 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 	@Override
 	public String getFontAwesome() {	
 		return "file";
+	}
+	
+	@Override
+	public boolean transflateFrom(ContentContext ctx, ITranslator translator, String lang) {
+		String newLabel = translator.translate(ctx, getLabel(), lang, ctx.getRequestContentLanguage());
+		if (newLabel != null) {
+			setLabel(newLabel);
+			setModify();
+			storeProperties();
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 }

@@ -127,5 +127,10 @@ public class FieldMultiList extends Field {
 		}		
 		return out;
 	}
+	
+	@Override
+	protected boolean isValueTranslatable() {
+		return true;
+	}
 
 }

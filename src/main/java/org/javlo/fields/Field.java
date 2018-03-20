@@ -33,6 +33,7 @@ import org.javlo.i18n.I18nAccess;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
 import org.javlo.service.IListItem;
+import org.javlo.service.ITranslator;
 import org.javlo.service.ListService;
 import org.javlo.service.RequestService;
 import org.javlo.service.ReverseLinkService;
@@ -1245,5 +1246,28 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 
 	public void setPlaceholder(String placeholder) {
 		this.placeholder = placeholder;
+	}
+	
+	protected boolean isValueTranslatable() {
+		if (getType().equals("text")) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	public boolean transflateFrom(ContentContext ctx, ITranslator translator, String lang) {
+		if (!isValueTranslatable()) {
+			return false;
+		} else {
+			boolean translated = true;
+			String newValue = translator.translate(ctx, getValue(), lang, ctx.getRequestContentLanguage());
+			if (newValue == null) {
+				translated=false;
+				newValue = ITranslator.ERROR_PREFIX+getValue();
+			}
+			setValue(newValue);
+			return translated;
+		}
 	}
 }

@@ -120,5 +120,10 @@ public class FieldWysiwyg extends Field {
 	public String getType() {
 		return "wysiwyg-text";
 	}
+	
+	@Override
+	protected boolean isValueTranslatable() {
+		return true;
+	}
 
 }

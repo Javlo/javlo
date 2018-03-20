@@ -31,6 +31,7 @@ import org.javlo.helper.URLHelper;
 import org.javlo.helper.XHTMLHelper;
 import org.javlo.helper.Comparator.FileComparator;
 import org.javlo.module.file.FileAction;
+import org.javlo.service.ITranslator;
 import org.javlo.service.RequestService;
 import org.javlo.service.resource.Resource;
 import org.javlo.ztatic.IStaticContainer;
@@ -666,6 +667,26 @@ public class FieldFile extends Field implements IStaticContainer {
 		} catch (Exception e) {			
 			e.printStackTrace();
 			return null;
+		}
+	}
+	
+	@Override
+	protected boolean isValueTranslatable() {
+		return true;
+	}
+	
+	public boolean transflateFrom(ContentContext ctx, ITranslator translator, String lang) {
+		if (!isValueTranslatable()) {
+			return false;
+		} else {
+			boolean translated = true;
+			String newValue = translator.translate(ctx, getLabel(), lang, ctx.getRequestContentLanguage());
+			if (newValue == null) {
+				translated=false;
+				newValue = ITranslator.ERROR_PREFIX+getValue();
+			}
+			setLabel(newValue);
+			return translated;
 		}
 	}
 

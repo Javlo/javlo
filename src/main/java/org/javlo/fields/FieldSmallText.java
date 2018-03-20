@@ -59,5 +59,10 @@ public class FieldSmallText extends Field {
 	public String getType() {
 		return "small-text";
 	}
+	
+	@Override
+	protected boolean isValueTranslatable() {
+		return true;
+	}
 
 }

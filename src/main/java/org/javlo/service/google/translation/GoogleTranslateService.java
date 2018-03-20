@@ -58,10 +58,11 @@ public class GoogleTranslateService implements ITranslator {
 			query+="&key="+encode(apiKey);
 			URL googleURL = new URL (URLHelper.addParams(getGoogleUrl().toString(), query));			
 			String json = NetHelper.readPage(googleURL);			
-			cache.put(cacheKey, translation);
 			JSONMap data = JSONMap.parseMap(json).getMap("data");
 			List translations = (List)data.get("translations");
 			translation = ""+((JSONMap)translations.get(0)).get("translatedText");
+			translation = translation.replace("</ ", "</"); // strange google change close tag ?
+			cache.put(cacheKey, translation);
 		}
 		return translation;
 	}

@@ -41,6 +41,11 @@ public class Heading extends Field {
 	public boolean isTitle() {
 		return tag.equalsIgnoreCase("h1");
 	}
+	
+	@Override
+	protected boolean isValueTranslatable() {
+		return true;
+	}
 
 }
 
