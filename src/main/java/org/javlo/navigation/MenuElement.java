@@ -2515,8 +2515,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 	public void addFollowers(ContentContext ctx, String userName) {
 		List<String> followers = LangHelper.getModifiableList(getFollowers(ctx));
 		if (!followers.contains(userName)) {
-			followers.add(userName);
-			System.out.println("##### MenuElement.addFollowers : ADD Followers = "+StringHelper.collectionToString(followers, ",")); //TODO: remove debug trace
+			followers.add(userName);			
 			ctx.getGlobalContext().setData(getFollowersKey(), StringHelper.collectionToString(followers, ","));
 		}
 	}
@@ -2554,13 +2553,15 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 			while (content.hasNext(ctx)) {
 				IContentVisualComponent comp = content.next(ctx);
 				Collection<String> resources = comp.getExternalResources(ctx);
-				for (String res : resources) {
-					if (outResources.contains(res)) {
-						// TODO: check if this line can be removed
-						// outResources.remove(res);
-					}
-					if (!outResources.contains(res)) {
-						outResources.add(res);
+				if (resources != null) {
+					for (String res : resources) {
+						if (outResources.contains(res)) {
+							// TODO: check if this line can be removed
+							// outResources.remove(res);
+						}
+						if (!outResources.contains(res)) {
+							outResources.add(res);
+						}
 					}
 				}
 				// outResources.addAll(comp.getExternalResources());

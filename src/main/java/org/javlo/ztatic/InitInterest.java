@@ -59,7 +59,7 @@ public class InitInterest {
 								action.content.setAttribute(action.ctx, action.keyY, ""+focusY);
 							}
 						}
-					} catch (IOException e) {
+					} catch (Throwable e) {
 						e.printStackTrace();
 					}
 				} else {

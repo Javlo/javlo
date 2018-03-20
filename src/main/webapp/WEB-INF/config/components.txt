@@ -67,6 +67,7 @@ org.javlo.component.links.RSSLink
 org.javlo.component.links.RSSReader
 org.javlo.component.links.MirrorComponent
 org.javlo.component.links.PageMirrorComponent
+org.javlo.component.links.LanguageMirrorComponent
 org.javlo.component.links.AgendaImport
 org.javlo.component.links.SubtitleLink
 org.javlo.component.links.SmartExternalLink
