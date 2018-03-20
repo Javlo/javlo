@@ -374,7 +374,7 @@ public class CSVFactory {
 		}
 		for (int i = 1; i < content.length; i++) {
 			Map<String, String> line = new HashMap<String, String>();
-			for (int j = 0; j < content[i].length; j++) {
+			for (int j = 0; j < Math.min(content[i].length, content[0].length); j++) {
 				line.put(content[0][j], content[i][j]);
 			}
 			outMaps.add(line);
