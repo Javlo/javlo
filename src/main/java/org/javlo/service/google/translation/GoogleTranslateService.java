@@ -85,11 +85,7 @@ public class GoogleTranslateService implements ITranslator {
 	}
 	
 	public static void main(String[] args) throws Exception {
-		
-		System.out.println(">>>>>>>>> GoogleTranslateService.main : encode = "+encode("c'est moi & patrick toi")); //TODO: remove debug trace
-		
-		System.out.println("translated : "+translate("<p>Silence, ça tourne. La prochaine création originale de Canal +, \"<em>Vernon Subutex</em>\", vient de débuter son tournage et se déroulera entre Paris, Cannes et Barcelone, du 19 mars au 23 juin 2018, selon un communiqué de la chaîne. La nouvelle série, inspirée de la trilogie éponyme de Virginie Despentes, comptera neuf épisodes de 30 minutes et verra l'acteur Romain Duris dans la peau du héros.</p>\r\n" + 
-				"<p> </p>", "fr", "en", "AIzaSyBJ9W5-MZss8VXWFRlk6cjIPzjAX7czv3w"));
+		System.out.println("translated : "+translate("le sens qui prévaut de nos jours se réfère au libertin de mœurs, c’est-à-dire celui qui s’adonne aux plaisirs charnels (voire à la sexualité de groupe) avec une liberté qui dépasse les limites de la morale conventionnelle.", "fr", "it", "AIzaSyBJ9W5-MZss8VXWFRlk6cjIPzjAX7czv3w"));
 	}
 
 }

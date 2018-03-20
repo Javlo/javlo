@@ -6,12 +6,15 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.javlo.context.ContentContext;
 import org.javlo.data.InfoBean;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
+import org.javlo.helper.XHTMLHelper;
 import org.javlo.module.file.FileAction;
+import org.javlo.service.ITranslator;
 
 public class FieldWysiwyg extends Field {
 
@@ -124,6 +127,23 @@ public class FieldWysiwyg extends Field {
 	@Override
 	protected boolean isValueTranslatable() {
 		return true;
+	}
+	
+	@Override
+	public boolean transflateFrom(ContentContext ctx, ITranslator translator, String lang) {
+		if (!isValueTranslatable()) {
+			return false;
+		} else {
+			boolean translated = true;
+			String value =  StringEscapeUtils.unescapeHtml4(getValue());
+			String newValue = translator.translate(ctx, value, lang, ctx.getRequestContentLanguage());
+			if (newValue == null) {
+				translated=false;
+				newValue = ITranslator.ERROR_PREFIX+getValue();
+			}
+			setValue(XHTMLHelper.removeEscapeTag(newValue));
+			return translated;
+		}
 	}
 
 }

@@ -5,6 +5,7 @@ package org.javlo.component.text;
 
 import java.util.List;
 
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
@@ -12,6 +13,7 @@ import org.javlo.helper.LoremIpsumGenerator;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.XHTMLHelper;
 import org.javlo.i18n.I18nAccess;
+import org.javlo.service.ITranslator;
 import org.javlo.service.ReverseLinkService;
 import org.javlo.utils.SuffixPrefix;
 
@@ -164,6 +166,23 @@ public class Description extends AbstractVisualComponent {
 	@Override
 	protected boolean isValueTranslatable() {
 		return true;
+	}
+	
+	@Override
+	public boolean transflateFrom(ContentContext ctx, ITranslator translator, String lang) {
+		if (!isValueTranslatable()) {
+			return false;
+		} else {
+			boolean translated = true;
+			String value =  StringEscapeUtils.unescapeHtml4(getValue());
+			String newValue = translator.translate(ctx, value, lang, ctx.getRequestContentLanguage());
+			if (newValue == null) {
+				translated=false;
+				newValue = ITranslator.ERROR_PREFIX+getValue();
+			}
+			setValue(XHTMLHelper.removeEscapeTag(newValue));
+			return translated;
+		}
 	}
 
 }

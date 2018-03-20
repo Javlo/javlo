@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
@@ -173,6 +174,29 @@ public class WysiwygParagraph extends AbstractVisualComponent {
 	@Override
 	protected boolean isValueTranslatable() {
 		return true;
+	}
+	
+	@Override
+	public boolean transflateFrom(ContentContext ctx, ITranslator translator, String lang) {
+		if (!isValueTranslatable()) {
+			return false;
+		} else {
+			boolean translated = true;
+			String value =  StringEscapeUtils.unescapeHtml4(getValue());
+			String newValue = translator.translate(ctx, value, lang, ctx.getRequestContentLanguage());
+			if (newValue == null) {
+				translated=false;
+				newValue = ITranslator.ERROR_PREFIX+getValue();
+			}
+			setValue(XHTMLHelper.removeEscapeTag(newValue));
+			return translated;
+		}
+	}
+	
+	public static void main(String[] args) {		
+		String value = "<p>l'&eacute;té</p>";
+		System.out.println(">>>>>>>>> WysiwygParagraph.main : value="+StringEscapeUtils.unescapeHtml4(value)); //TODO: remove debug trace
+		
 	}
 	
 }
