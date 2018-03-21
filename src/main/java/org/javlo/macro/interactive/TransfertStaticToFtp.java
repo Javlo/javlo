@@ -50,6 +50,7 @@ public class TransfertStaticToFtp extends Thread {
 	
 	private int error = 0;
 	
+	private TransfertStaticToFtp() {};
 	
 	public TransfertStaticToFtp(ContentContext ctx, File folder, URL url, String host, int port, String username, String password, String path, MailService mailService, String email) {
 		super();
@@ -134,11 +135,77 @@ public class TransfertStaticToFtp extends Thread {
 	        return ftpClient.storeFile(remoteFilePath, inputStream);
 	    } catch (Exception e ) {
 	    	e.printStackTrace();
+	    	logger.warning("error on create : "+remoteFilePath+" ("+e.getMessage()+")");
 	    	return false;
 	    } finally {
 	        inputStream.close();
 	    }
 	}
+	
+	/**
+     * Creates a nested directory structure on a FTP server
+     * @param ftpClient an instance of org.apache.commons.net.ftp.FTPClient class.
+     * @param dirPath Path of the directory, i.e /projects/java/ftp/demo
+     * @return true if the directory was created successfully, false otherwise
+     * @throws IOException if any error occurred during client-server communication
+     */
+    public static boolean makeDirectories(FTPClient ftpClient, String dirPath) throws IOException {
+        String[] pathElements = dirPath.split("/");
+        if (pathElements != null && pathElements.length > 0) {
+            for (String singleDir : pathElements) {
+                boolean existed = ftpClient.changeWorkingDirectory(singleDir);
+                if (!existed) {
+                    boolean created = ftpClient.makeDirectory(singleDir);
+                    if (created) {                        
+                        ftpClient.changeWorkingDirectory(singleDir);
+                    } else {
+                        logger.warning("error on create : "+dirPath);
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
+    }
+    
+    public int createDirectories(FTPClient ftpClient, String remoteDirPath, File localDir, String remoteParentDir) throws IOException {
+   	 
+ 	   logger.fine("CREATING directory: " + localDir);
+ 	   
+ 	    int c=0;
+ 	    File[] subFiles = localDir.listFiles();
+ 	    if (subFiles != null && subFiles.length > 0) {
+ 	        for (File item : subFiles) {
+ 	            String remoteFilePath = remoteDirPath + "/" + remoteParentDir + "/" + item.getName();
+ 	            if (remoteParentDir.equals("")) {
+ 	                remoteFilePath = remoteDirPath + "/" + item.getName();
+ 	            }
+ 	            if (item.isDirectory()) { 	               
+ 	                // create directory on the server
+ 	            	boolean created; 
+ 	            	try {
+ 	            		created = makeDirectories(ftpClient,remoteFilePath);
+ 	            	} catch (Exception e) {
+ 	            		e.printStackTrace();
+ 	            		created = false;
+ 	            	}
+ 	                if (created) {
+ 	                	logger.fine("CREATED the directory: " + remoteFilePath);
+ 	                } else {
+ 	                	error++;
+ 	                	logger.warning("COULD NOT create the directory: " + remoteFilePath);
+ 	                }
+  	                // upload the sub directory
+ 	                String parent = remoteParentDir + "/" + item.getName();
+ 	                if (remoteParentDir.equals("")) {
+ 	                    parent = item.getName();
+ 	                }
+ 	                c  = c + createDirectories(ftpClient, remoteDirPath, new File(item.getAbsolutePath()),parent);
+ 	            }
+ 	        }
+ 	    }
+ 	    return c;
+ 	}
 	
 	/**
 	 * Upload a whole directory (including its nested sub directories and files)
@@ -158,7 +225,7 @@ public class TransfertStaticToFtp extends Thread {
 	 */
 	public int uploadDirectory(FTPClient ftpClient, String remoteDirPath, File localDir, String remoteParentDir) throws IOException {
 	 
-	   logger.info("LISTING directory: " + localDir);
+	   logger.fine("LISTING directory: " + localDir);
 	   
 	    int c=0;
 	    File[] subFiles = localDir.listFiles();
@@ -174,22 +241,22 @@ public class TransfertStaticToFtp extends Thread {
 	                boolean uploaded = uploadSingleFile(ftpClient,  localFilePath, remoteFilePath);
 	                if (uploaded) {
 	                	c++;
-	                	logger.info("UPLOADED a file to: "+ remoteFilePath);
+	                	logger.fine("UPLOADED a file to: "+ remoteFilePath);
 	                } else {
 	                	error++;
-	                	logger.warning("COULD NOT upload the file: "+ localFilePath);
+	                	logger.warning("COULD NOT upload the file to: "+ remoteFilePath);
 	                }
 	            } else {
 	                // create directory on the server
 	            	boolean created; 
 	            	try {
-	            		created = ftpClient.makeDirectory(remoteFilePath);
+	            		created = makeDirectories(ftpClient,remoteFilePath);
 	            	} catch (Exception e) {
 	            		e.printStackTrace();
 	            		created = false;
 	            	}
 	                if (created) {
-	                	logger.info("CREATED the directory: " + remoteFilePath);
+	                	logger.fine("CREATED the directory: " + remoteFilePath);
 	                } else {
 	                	error++;
 	                	logger.warning("COULD NOT create the directory: " + remoteFilePath);
@@ -239,10 +306,9 @@ public class TransfertStaticToFtp extends Thread {
                     // delete the file
                     boolean deleted = ftpClient.deleteFile(filePath);
                     if (deleted) {
-                        System.out.println("DELETED the file: " + filePath);
+                    	logger.info("DELETED the file: " + filePath);
                     } else {
-                        System.out.println("CANNOT delete the file: "
-                                + filePath);
+                        logger.warning("CANNOT delete the file: " + filePath);
                     }
                 }
             }
@@ -250,12 +316,28 @@ public class TransfertStaticToFtp extends Thread {
             // finally, remove the directory itself
             boolean removed = ftpClient.removeDirectory(dirToList);
             if (removed) {
-                System.out.println("REMOVED the directory: " + dirToList);
+            	logger.info("REMOVED the directory: " + dirToList);
             } else {
-                System.out.println("CANNOT remove the directory: " + dirToList);
+            	logger.warning("CANNOT remove the directory: " + dirToList);
             }
         }
     }
+    
+    public static void main(String[] args) throws IOException {
+    	System.out.println(">>>>>>>>> TransfertStaticToFtp.main : START..."); //TODO: remove debug trace
+    	FTPClient ftp = new FTPClient();		
+		ftp.connect("ftp.cluster014.ovh.net", 21);
+		ftp.login("immanencu", "Pvdm2312");
+		ftp.setFileType(FTP.BINARY_FILE_TYPE);
+		ftp.enterLocalPassiveMode();
+		System.out.println(">>>>>>>>> TransfertStaticToFtp.main : ftp.changeWorkingDirectory(\"/www\") = "+ftp.changeWorkingDirectory("/www")); //TODO: remove debug trace
+		File staticFile = new File("C:\\Users\\user\\data\\javlo\\data-ctx\\data-light\\_static_temp");
+		TransfertStaticToFtp instance = new TransfertStaticToFtp();
+		removeDirectory(ftp, "/", "/www");
+		ftp.makeDirectory("/www");
+		instance.createDirectories(ftp, "", staticFile, "www");
+		instance.uploadDirectory(ftp, "", staticFile, "www");
+	}
 	
 
 	@Override
@@ -270,7 +352,8 @@ public class TransfertStaticToFtp extends Thread {
 			Html2Directory.download(url, folder, status, 0);
 			ftp = new FTPClient();		
 			ftp.connect(host, port);
-			
+			ftp.setFileType(FTP.BINARY_FILE_TYPE);
+			ftp.enterLocalPassiveMode();
 			int c = 0;
 			if (!ftp.isConnected()) {
 				logger.severe("could not connect to : " + host + ":" + port);
@@ -281,7 +364,9 @@ public class TransfertStaticToFtp extends Thread {
 					} else if (!ftp.changeWorkingDirectory(path)) {
 						logger.severe("path not found : " + path);
 					} else {
-						removeDirectory(ftp, "/", "/");
+						removeDirectory(ftp, "", path);
+						ftp.makeDirectory(path);
+						createDirectories(ftp, "/", folder, path);
 						c = uploadDirectory(ftp, "/", folder, path);						
 					}
 				}
