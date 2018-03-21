@@ -247,20 +247,20 @@ public class TransfertStaticToFtp extends Thread {
 	                	logger.warning("COULD NOT upload the file to: "+ remoteFilePath);
 	                }
 	            } else {
-	                // create directory on the server
-	            	boolean created; 
-	            	try {
-	            		created = makeDirectories(ftpClient,remoteFilePath);
-	            	} catch (Exception e) {
-	            		e.printStackTrace();
-	            		created = false;
-	            	}
-	                if (created) {
-	                	logger.fine("CREATED the directory: " + remoteFilePath);
-	                } else {
-	                	error++;
-	                	logger.warning("COULD NOT create the directory: " + remoteFilePath);
-	                }
+//	                // create directory on the server
+//	            	boolean created; 
+//	            	try {
+//	            		created = makeDirectories(ftpClient,remoteFilePath);
+//	            	} catch (Exception e) {
+//	            		e.printStackTrace();
+//	            		created = false;
+//	            	}
+//	                if (created) {
+//	                	logger.fine("CREATED the directory: " + remoteFilePath);
+//	                } else {
+//	                	error++;
+//	                	logger.warning("COULD NOT create the directory: " + remoteFilePath);
+//	                }
  	                // upload the sub directory
 	                String parent = remoteParentDir + "/" + item.getName();
 	                if (remoteParentDir.equals("")) {
