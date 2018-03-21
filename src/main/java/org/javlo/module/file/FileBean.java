@@ -350,4 +350,16 @@ public class FileBean implements ILanguage {
 		return staticInfo.getVersionHash(ctx);
 	}
 	
+	public boolean isJpeg() {
+		return StringHelper.isJpeg(getName());
+	}
+	
+	public boolean isToJpeg() {
+		if (staticInfo == null || staticInfo.getFile().isDirectory()) {
+			return false;
+		} else {
+			return StringHelper.isPDF(getName()) || StringHelper.getFileExtension(getName()).equalsIgnoreCase("png");
+		}
+	}
+	
 }

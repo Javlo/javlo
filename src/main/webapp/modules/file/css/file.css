@@ -167,11 +167,16 @@ body .ui-dialog .ui-dialog-content {
 	box-shadow: none;
 }
 
-#main-renderer .btn-edit {
+#main-renderer .btn-edit, #main-renderer .btn-jpg {
 	display: inline-block;
 	width: auto;
 	margin-top: 10px;
-	line-height: normal;
+	line-height: normal;	
+	vertical-align: center;
+}
+
+#main-renderer .btn-jpg {
+	font-size: 0.9em;	
 }
 
 /** reset jquery ui **/

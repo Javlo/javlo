@@ -114,6 +114,22 @@
 			</c:url>
 			<c:if test="${!metaReadOnly}"><a class="btn btn-default btn-edit" href="${editFileURL}" title="${i18n.edit['global.modify']}"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></a></c:if>
 			</c:if>
+			<c:if test="${file.toJpeg}">
+			<c:url value="${info.currentURL}" var="jpegUrl" context="/">
+					<c:param name="webaction" value="file.jpeg" />
+					<c:param name="module" value="file" />
+					<c:param name="file" value="${file.path}" />
+					<c:if test="${not empty param['select']}"><c:param name="select" value="${param.select}" /></c:if>
+					<c:if test="${not empty param[BACK_PARAM_NAME]}">
+						<c:param name="${BACK_PARAM_NAME}" value="${param[BACK_PARAM_NAME]}" />
+					</c:if>
+					<c:if test="${param.nobreadcrumbs}">
+						<c:param name="close" value="true" />
+					</c:if>
+				</c:url>
+			
+			<a class="btn btn-default btn-jpg" href="${jpegUrl}" title="to jpeg">&gt; jpeg</a>
+			</c:if>
 			</div>
 		</div>		
 		

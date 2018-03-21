@@ -34,6 +34,7 @@ import org.javlo.data.InfoBean;
 import org.javlo.filter.DirectoryFilter;
 import org.javlo.helper.ExifHelper;
 import org.javlo.helper.LangHelper;
+import org.javlo.helper.PDFHelper;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.ServletHelper;
 import org.javlo.helper.StringHelper;
@@ -121,7 +122,7 @@ public class FileAction extends AbstractModuleAction {
 				if (editFile.exists()) {
 					ctx.getRequest().setAttribute("fileFound", true);
 					StaticInfo staticInfo = StaticInfo.getInstance(ctx, editFile);
-					ctx.getRequest().setAttribute("imageURL", staticInfo.getURL(ctx));
+					ctx.getRequest().setAttribute("imageURL", staticInfo.getURL(ctx));					
 				} else {
 					logger.warning("file not found : " + editFile);
 					ctx.getRequest().setAttribute("fileFound", false);
@@ -572,19 +573,35 @@ public class FileAction extends AbstractModuleAction {
 			if (!canModifyFile(ctx, file)) {
 				return "securtiy error.";
 			}
-			ResourceHelper.deleteResource(ctx, file);
-			/*
-			 * if (file.isFile()) { file.delete(); if
-			 * (StringHelper.isImage(file.getName())) {
-			 * FileCache.getInstance(ctx.getRequest().getSession().
-			 * getServletContext()).deleteAllFile(globalContext.getContextKey(),
-			 * file.getName()); } } else if (file.isDirectory()) { for (File
-			 * child : file.listFiles()) { if
-			 * (StringHelper.isImage(child.getName())) {
-			 * FileCache.getInstance(ctx.getRequest().getSession().
-			 * getServletContext()).deleteAllFile(globalContext.getContextKey(),
-			 * child.getName()); } } FileUtils.deleteDirectory(file); }
-			 */
+			ResourceHelper.deleteResource(ctx, file);			
+		}
+		if (StringHelper.isTrue(rs.getParameter("close", null))) {
+			ctx.setClosePopup(true);
+		}
+		return null;
+	}
+	
+	public static String performJpeg(GlobalContext globalContext, RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
+		String filePath = rs.getParameter("file", null);
+		if (filePath == null) {
+			return "bad request structure : need file parameter.";
+		} else {
+			File file = new File(URLHelper.mergePath(globalContext.getStaticFolder(), filePath));
+			if (!file.exists()) {
+				return "file not found : "+file;
+			}
+			if (!canModifyFile(ctx, file)) {
+				return "securtiy error.";
+			}
+			BufferedImage image;
+			if (!StringHelper.isPDF(file.getName())) {
+				image = ImageIO.read(file);
+			} else {
+				image = PDFHelper.getPDFImage(file, 1);
+			}
+			File jpeg = new File(StringHelper.getFileNameWithoutExtension(file.getAbsolutePath())+".jpg");			
+			jpeg = ResourceHelper.getFreeFileName(jpeg);
+			ImageIO.write(image, "jpg", jpeg);
 		}
 		if (StringHelper.isTrue(rs.getParameter("close", null))) {
 			ctx.setClosePopup(true);

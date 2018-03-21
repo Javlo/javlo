@@ -644,7 +644,7 @@ public class ResourceHelper {
 		if (ext.equals("gif")) {
 			return "image/GIF";
 		} else if (ext.equals("png")) {
-			return "image/GIF";
+			return "image/PNG";
 		} else if (ext.equals("ico")) {
 			return "image/x-icon";
 		} else if ((ext.equals("jpg")) || (ext.equals("jpeg"))) {
