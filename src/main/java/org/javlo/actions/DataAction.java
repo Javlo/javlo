@@ -605,18 +605,21 @@ public class DataAction implements IAction {
 						if (newFile != null && newFile.exists()) {
 							boolean isStaticHTML = false;
 							String dir = resourceRelativeFolder.replaceFirst(gc.getStaticConfig().getFileFolder(), "");
-							if (StringHelper.getFileExtension(newFile.getName()).equalsIgnoreCase("zip")) {
-								ZipFile zip = null;
-								try {
-									zip = new ZipFile(newFile);
-									Enumeration<? extends ZipEntry> entries = zip.entries();
-									while (entries.hasMoreElements()) {
-										if (entries.nextElement().getName().equals("index.html")) {
-											isStaticHTML = true;
+							if (StringHelper.getFileExtension(newFile.getName()).equalsIgnoreCase("zip") || StringHelper.isHTML(newFile.getName())) {
+								isStaticHTML = StringHelper.isHTML(newFile.getName());
+								if (!isStaticHTML) {
+									ZipFile zip = null;
+									try {
+										zip = new ZipFile(newFile);
+										Enumeration<? extends ZipEntry> entries = zip.entries();
+										while (entries.hasMoreElements()) {
+											if (entries.nextElement().getName().equals("index.html")) {
+												isStaticHTML = true;
+											}
 										}
+									} finally {
+										ResourceHelper.closeResource(zip);
 									}
-								} finally {
-									ResourceHelper.closeResource(zip);
 								}
 								if (isStaticHTML) {									
 									resourceRelativeFolder = URLHelper.mergePath(gc.getStaticConfig().getStaticFolder(), ctx.getGlobalContext().getStaticConfig().getImportVFSFolder(), importFolder);

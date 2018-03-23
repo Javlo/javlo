@@ -10,11 +10,9 @@ import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.context.ContentContext;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.XHTMLHelper;
-import org.javlo.helper.XMLHelper;
-import org.javlo.helper.XMLManipulationHelper;
-import org.javlo.helper.XMLManipulationHelper.BadXMLException;
 import org.jsoup.Jsoup;
-import org.owasp.encoder.Encode;
+import org.jsoup.nodes.Document;
+import org.jsoup.select.Elements;
 
 /**
  * @author pvandermaesen
@@ -70,10 +68,29 @@ public class XHTML extends AbstractVisualComponent {
 	public String getType() {
 		return TYPE;
 	}
+	
+	@Override
+	public String getHeaderContent(ContentContext ctx) {
+		String xhtml = getValue();
+		if (xhtml.toLowerCase().contains("<head")) {
+			Document doc = Jsoup.parse(xhtml);
+			Elements head = doc.select("head");
+			return head.html();
+		} else {
+			return null;
+		}
+	}
+
 
 	@Override
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
-		return XHTMLHelper.replaceLinks(ctx, XHTMLHelper.replaceJSTLData(ctx, getValue()));
+		String xhtml = getValue();
+		if (xhtml.toLowerCase().contains("<body")) {
+			Document doc = Jsoup.parse(xhtml);
+			Elements body = doc.select("body");
+			xhtml = body.html();
+		}
+		return XHTMLHelper.replaceLinks(ctx, XHTMLHelper.replaceJSTLData(ctx, xhtml));
 	}
 
 	@Override

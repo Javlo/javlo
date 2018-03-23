@@ -53,6 +53,10 @@ public class Cell {
 	public boolean isDigit() {
 		return StringHelper.isDigit(getValue());
 	}
+	
+	public boolean isFloatValue() {
+		return StringHelper.isFloat(getValue());
+	}
 
 	public void setColSpan(int colSpan) {
 		this.colSpan = colSpan;

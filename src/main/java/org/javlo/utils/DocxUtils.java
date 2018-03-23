@@ -75,24 +75,12 @@ public class DocxUtils {
 		return false;
 	}
 	
-	public static void main(String[] args) throws XDocConverterException, IOException {
-		FileInputStream in = new FileInputStream(new File("c:/trans/docs/mailing.docx"));	
-		List<ComponentBean> content = extractContent(null, in, "c:/trans/docx/resouces");
-		for (ComponentBean bean : content) {
-			System.out.println(">>>>>>>>> DocxUtils.main : type="+bean.getType()); //TODO: remove debug trace
-		}
-	}
-
 	public static List<ComponentBean> extractContent(GlobalContext globalContext, InputStream in, String resourceFolder) throws XDocConverterException, IOException {
 		Options options = Options.getFrom(DocumentKind.DOCX).to(ConverterTypeTo.XHTML);
 		IConverter converter = ConverterRegistry.getRegistry().getConverter(options);
 
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		converter.convert(in, out, options);
-
-		// ResourceHelper.writeStreamToFile(new
-		// ByteArrayInputStream(out.toByteArray()), new
-		// File("c:/trans/docx/test.html"));
 
 		List<ComponentBean> outContent = new LinkedList<ComponentBean>();
 
@@ -164,10 +152,6 @@ public class DocxUtils {
 		if (listBean != null) {
 			outContent.add(listBean);
 		}
-		System.out.println("***** DocxUtils.extractContent : size = " + outContent.size()); // TODO:
-																							// remove
-																							// debug
-																							// trace
 		return outContent;
 	}
 

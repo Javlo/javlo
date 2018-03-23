@@ -9,7 +9,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -77,34 +76,11 @@ public class VFSFile extends AbstractFileComponent implements IReverseLinkCompon
 	 */
 	@Override
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
-
-		String dirFile = URLHelper.mergePath(getFileDirectory(ctx), getDirSelected());
-
 		String fileName = StringHelper.createFileName(getFileName());
 		String fullRelativeFileName = URLHelper.mergePath(getDirSelected(), fileName);
-
-		File zipFile = new File(URLHelper.mergePath(dirFile, fileName));
-
-		FileSystemManager fsManager = VFS.getManager();
-		URL cleanPath = zipFile.toURI().toURL();
-		FileObject file = fsManager.resolveFile(StringHelper.getFileExtension(zipFile.getName()) + ":" + cleanPath );
-		file = file.resolveFile("/index.html");
-
-		InputStream in = file.getContent().getInputStream();
-
-		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		String content;
-		
+		String content = getHTMLContent(ctx);		
 		String prefixLink = URLHelper.mergePath(getRelativeFileDirectory(ctx), fullRelativeFileName);
-		try {
-			ResourceHelper.writeStreamToStream(in, out);
-			content = new String(out.toByteArray(), getEncoding());
-			content = content.replace("${vfs.url.root}",URLHelper.createVFSURL(ctx, prefixLink, ""));
-		} finally {			
-			ResourceHelper.closeResource(in);
-			ResourceHelper.closeResource(out);
-			VFSHelper.closeFileSystem(file);
-		}
+		content = content.replace("${vfs.url.root}",URLHelper.createVFSURL(ctx, prefixLink, ""));		
 		String body = XMLManipulationHelper.getHTMLBody(content.toString());
 		return XMLManipulationHelper.changeLink(body, URLHelper.createVFSURL(ctx, prefixLink, ""));
 	}
@@ -124,19 +100,16 @@ public class VFSFile extends AbstractFileComponent implements IReverseLinkCompon
 		}
 		return files;
 	}
-
-	@Override
-	public String getHeaderContent(ContentContext ctx) {
-		File zipFile = getFile(ctx);
-		String fullRelativeFileName = URLHelper.mergePath(getDirSelected(), zipFile.getName());
-		String outStr = null;
-		try {
+	
+	protected String getHTMLContent(ContentContext ctx) throws IOException {
+		File internalFile = getFile(ctx);
+		if (StringHelper.isHTML(internalFile.getName())) {
+			return ResourceHelper.loadStringFromFile(internalFile); 
+		} else {
 			FileSystemManager fsManager = VFS.getManager();
-			URL cleanPath = zipFile.toURI().toURL();
-			FileObject file = fsManager.resolveFile(StringHelper.getFileExtension(zipFile.getName()) + ":" + cleanPath);
-
+			URL cleanPath = internalFile.toURI().toURL();
+			FileObject file = fsManager.resolveFile(StringHelper.getFileExtension(internalFile.getName()) + ":" + cleanPath);
 			file = file.resolveFile("/index.html");
-
 			InputStream in = file.getContent().getInputStream();
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
 			String content;
@@ -149,7 +122,17 @@ public class VFSFile extends AbstractFileComponent implements IReverseLinkCompon
 				VFSHelper.closeFileSystem(file);
 				//VFSHelper.closeManager(fsManager);
 			}
+			return content;
+		}
+	}
 
+	@Override
+	public String getHeaderContent(ContentContext ctx) {
+		File zipFile = getFile(ctx);
+		String fullRelativeFileName = URLHelper.mergePath(getDirSelected(), zipFile.getName());
+		String outStr = null;
+		try {
+			String content = getHTMLContent(ctx);
 			String header = XMLManipulationHelper.getHTMLCleanedHead(content);
 			String prefixLink = URLHelper.mergePath(getRelativeFileDirectory(ctx), fullRelativeFileName);
 			outStr = XMLManipulationHelper.changeLink(header, URLHelper.createVFSURL(ctx, prefixLink, ""));
@@ -280,29 +263,6 @@ public class VFSFile extends AbstractFileComponent implements IReverseLinkCompon
 	@Override
 	public boolean isContentCachable(ContentContext ctx) {
 		return true;
-	}
-	
-	public static void main(String[] args) {
-		File file = new File("C:/Users/pvand/data/javlo/data-ctx/data-sonsdhiver/static/vfs/banner-2017-resp8.zip");
-		if (!file.exists()) {
-			System.out.println("file not found : "+file);
-		} else {
-			
-			URL cleanPath;
-			try {
-				FileSystemManager fsManager = VFS.getManager();
-				cleanPath = file.toURI().toURL();
-				System.out.println("***** cleanPath = "+cleanPath);
-				FileObject fileObject = fsManager.resolveFile(StringHelper.getFileExtension(file.getName()) + ":" + cleanPath);
-				for (FileObject child : fileObject.getChildren()) {
-					System.out.println(child.getName());
-				}
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			
-		}
 	}
 	
 	@Override
