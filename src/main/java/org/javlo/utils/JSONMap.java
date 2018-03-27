@@ -31,6 +31,9 @@ public class JSONMap implements Map<String, Object> {
 	}
 
 	public static JSONMap transformMap(JsonElement element) {
+		if (element == null) {
+			return null;
+		}
 		return new JSONMap(element.getAsJsonObject());
 	}
 
