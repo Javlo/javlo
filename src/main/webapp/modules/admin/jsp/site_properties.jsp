@@ -629,6 +629,10 @@
 	<input type="file" name="logo" id="logo" />
 </div>
 <c:if test="${not empty logoPreview}">
+	<c:url var="delURL" value="${info.currentURL}" context="/">
+		<c:param name="webaction" value="admin.removelogo" />
+	</c:url>
+	<div class="delete-link"><a href="${delURL}" title="remove logo"><i class="fa fa-times" aria-hidden="true"></i></a></div>
 	<img alt="logo" src="${logoPreview}" />
 </c:if>
 </div>

@@ -1922,6 +1922,14 @@ public class AdminAction extends AbstractModuleAction {
 		}
 		return null;
 	}
+	
+	
+	public static String performRemovelogo(RequestService rs, HttpSession session, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws IOException {
+		TemplateData td = ctx.getGlobalContext().getTemplateData();
+		td.setLogo(null);
+		ctx.getGlobalContext().setTemplateData(td);
+		return null;
+	}
 
 	public static String performUpload(RequestService rs, HttpSession session, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws IOException {
 		GlobalContext currentContext = GlobalContext.getInstance(session, rs.getParameter("context", null));
