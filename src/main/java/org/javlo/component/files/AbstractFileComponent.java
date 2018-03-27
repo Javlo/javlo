@@ -194,7 +194,7 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 		ctx.getRequest().setAttribute("linkToImage", StringHelper.isImage(url));
 		ctx.getRequest().setAttribute("blank", ctx.getGlobalContext().isOpenExternalLinkAsPopup(url));
 		ctx.getRequest().setAttribute("description", getDescription());
-		ctx.getRequest().setAttribute("cleanDescription", Encode.forHtmlAttribute(StringHelper.removeTag(getDescription())));
+		ctx.getRequest().setAttribute("cleanDescription", Encode.forHtmlAttribute(StringHelper.removeTag(getDescription())));		
 		ctx.getRequest().setAttribute("mineType", ResourceHelper.getFileExtensionToMineType(StringHelper.getFileExtension(url)));
 		StaticInfo staticInfo = getStaticInfo(ctx);
 		ContentContext infoCtx = staticInfo.getContextWithContent(ctx);
@@ -221,8 +221,18 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 		if (staticInfo != null) {
 			ctx.getRequest().setAttribute("file", new StaticInfoBean(staticInfo.getContextWithContent(ctx), staticInfo));
 			ctx.getRequest().setAttribute("staticInfoHTML", XHTMLHelper.renderStaticInfo(infoCtx, staticInfo));
+		}		
+		String value = cleanLabel;
+		if (StringHelper.isEmpty(value)) {
+			value = getLabel();
+			if (StringHelper.isEmpty(value)) {
+				value = getDescription();
+			}
 		}
-
+		ReverseLinkService reverserLinkService = ReverseLinkService.getInstance(ctx.getGlobalContext());
+		String text = XHTMLHelper.autoLink(XHTMLHelper.replaceLinks(ctx,XHTMLHelper.replaceJSTLData(ctx, value)),ctx.getGlobalContext());
+		text = reverserLinkService.replaceLink(ctx, this, text);
+		ctx.getRequest().setAttribute("text", text);
 	}
 
 	/**

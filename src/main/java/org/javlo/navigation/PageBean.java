@@ -612,6 +612,25 @@ public class PageBean implements Serializable {
 		return page.isNoValidation();
 	}
 	
+	/**
+	 * get the next page in the navigation.
+	 * @return null if current page is the last page
+	 */
+	public PageBean getNextPage() {
+		if (getParent() != null) {
+			boolean pageFound = false;
+			for (PageBean page : getParent().getChildren()) {
+				if (pageFound) {
+					return page;
+				}
+				if (page.getId().equals(getId())) {
+					pageFound = true;
+				}
+			}
+		}
+		return null;
+	}
+	
 	/***
 	 * return the flow number of the page
 	 * @return 1: modified not ready, 2:ready for validation, 3:valided, 4:publish

@@ -276,6 +276,8 @@ public class GlobalImage extends Image implements IImageFilter {
 				ctx.getRequest().setAttribute("loadURL", getPreviewURL(ctx, getFilter(ctx)+ImageTransformServlet.PRELOAD_IMAGE_SUFFIX));
 			}
 		}
+		String smURL = URLHelper.createTransformURL(ctx, ctx.getCurrentPage(), ctx.getCurrentTemplate(), getResourceURL(ctx, getFileName()), getFilter(ctx)+ImageTransformServlet.SMALL_IMAGE_SUFFIX, this);
+		ctx.getRequest().setAttribute("smURL", smURL);
 		ctx.getRequest().setAttribute("largeURL", getPreviewURL(ctx, getLargeFilter(ctx)));
 		ctx.getRequest().setAttribute("media", this);
 		ctx.getRequest().setAttribute("shortDate", StringHelper.renderShortDate(ctx, getDate()));
@@ -283,9 +285,9 @@ public class GlobalImage extends Image implements IImageFilter {
 			ctx.getRequest().setAttribute("cleanLabel", cleanValue(ctx, getTitle()));
 			ctx.getRequest().setAttribute("label", getTitle());
 		}
-
 		ctx.getRequest().setAttribute("location", getLocation(ctx));
-		ctx.getRequest().setAttribute("filter", getFilter(ctx));
+		ctx.getRequest().setAttribute("filter", getFilter(ctx));		
+
 		int width = getWidth(ctxBean);
 		if (width >= 0) {
 			ctx.getRequest().setAttribute("imageWidth", width);
@@ -296,7 +298,6 @@ public class GlobalImage extends Image implements IImageFilter {
 		if (height >= 0) {
 			ctx.getRequest().setAttribute("imageHeight", height);
 		}
-
 	}
 
 	protected String getNewLinkParamName() {

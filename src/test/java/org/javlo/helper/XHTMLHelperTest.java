@@ -21,5 +21,11 @@ public class XHTMLHelperTest extends TestCase {
 		assertEquals(XHTMLHelper.removeComment("/* cmt */border: 2px; "), "border: 2px; ");
 		assertEquals(XHTMLHelper.removeComment("border: 2px;"), "border: 2px;");
 	}
+	
+	public void testReplaceOutTag() throws Exception {		
+		assertEquals(XHTMLHelper.replaceOutTag("I love my cat", "cat", "wife"), "I love my wife");
+		assertEquals(XHTMLHelper.replaceOutTag("<p class=\"test\">test</p>", "test", "replace"), "<p class=\"test\">replace</p>");
+		assertEquals(XHTMLHelper.replaceOutTag("<p class=\"test\">table</p>", "test", "replace"), "<p class=\"test\">table</p>");		
+	}
 
 }

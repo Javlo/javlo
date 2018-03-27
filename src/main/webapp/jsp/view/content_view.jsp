@@ -100,7 +100,6 @@ if (forcePageName != null) {
 		currentPage = forcedPage;
 	}
 }
-
 Template template = ctx.getCurrentTemplate();
 Stack<IContainer> containers = new Stack<IContainer>();
 

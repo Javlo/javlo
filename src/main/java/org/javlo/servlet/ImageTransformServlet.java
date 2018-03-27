@@ -92,6 +92,8 @@ public class ImageTransformServlet extends HttpServlet {
 	public static final String RESOURCE_TOKEN_KEY = "rstk";
 	
 	public static final String PRELOAD_IMAGE_SUFFIX = "-load";
+	
+	public static final String SMALL_IMAGE_SUFFIX = "-sm";
 
 	public static long COUNT_ACCESS = 0;
 
@@ -543,7 +545,14 @@ public class ImageTransformServlet extends HttpServlet {
 			preloadImage = true;
 			inFileExtention="png";
 		}	
-
+		
+		boolean smallImage = false;		
+		if (filter.endsWith(SMALL_IMAGE_SUFFIX)) {
+			originalFilter=filter;
+			smallImage = true;
+			filter = filter.substring(0, filter.lastIndexOf(SMALL_IMAGE_SUFFIX));
+		}	
+		
 		int width = config.getWidth(device, filter, area);
 		int height = config.getHeight(device, filter, area);
 		
@@ -627,7 +636,7 @@ public class ImageTransformServlet extends HttpServlet {
 			metadata = ResourceHelper.getImageMetadata(imageFile);
 		} catch (Exception e) {
 			//e.printStackTrace();
-			logger.warning("error on reading méta data : "+imageFile);
+			logger.warning("error on reading meta data : "+imageFile);
 			logger.warning(e.getMessage());
 		}
 
@@ -863,6 +872,11 @@ public class ImageTransformServlet extends HttpServlet {
 			img = ImageEngine.ultraLight(img);
 			filter = originalFilter;
 		}
+		
+		if (smallImage) {
+			img = ImageEngine.resize(img, img.getWidth()/2, img.getHeight()/2, true);
+			filter = originalFilter;
+		}
 
 		// org.javlo.helper.Logger.stepCount("transform",
 		// "start - transformation - 7");
@@ -875,7 +889,7 @@ public class ImageTransformServlet extends HttpServlet {
 			String deviceCode = "no-device";
 			if (device != null) {
 				deviceCode = device.getCode();
-			}			
+			}						
 			String dir = ImageHelper.createSpecialDirectory(ctxb, globalContext.getContextKey(), filter, area, deviceCode, template, comp, imageParam);
 			TransactionFile transFile = fc.saveFileTransactional(dir, imageName);
 			OutputStream outImage = transFile.getOutputStream();
@@ -1166,7 +1180,7 @@ public class ImageTransformServlet extends HttpServlet {
 					return;
 				}
 
-				InputStream fileStream = null;
+				InputStream fileStream = null;				
 				File file = loadFileFromDisk(ctx, imageName, filter, area, ctx.getDevice(), template, comp, imageFile.lastModified(), imageParam);
 				if ((file != null)) {
 					if (file.length() > 0) {
@@ -1244,7 +1258,7 @@ public class ImageTransformServlet extends HttpServlet {
 						}
 						imageTransforming.put(imageKey, new ImageTransforming(ctx, imageFile));
 					}
-
+					
 					if (!foundInSet) {
 						file = loadFileFromDisk(ctx, imageName, filter, area, ctx.getDevice(), template, comp, imageFile.lastModified(), imageParam);
 						if ((file == null)) {
@@ -1258,15 +1272,15 @@ public class ImageTransformServlet extends HttpServlet {
 							}							
 							logger.info("transform image (" + StringHelper.renderSize(size) + ") : '" + imageName + "' in site '" + globalContext.getContextKey() + "' page : " + ctx.getRequestContentLanguage() + ctx.getPath() + " time : " + StringHelper.renderTimeInSecond(System.currentTimeMillis() - currentTime) + " sec.  #transformation:" + imageTransforming.size());
 							file = loadFileFromDisk(ctx, imageName, filter, area, ctx.getDevice(), template, comp, imageFile.lastModified(), imageParam);
-							if (file != null) {
+							if (file != null) {								
 								fileStream = new FileInputStream(file);
 							}
-						}
+						}						
 						imageTransforming.remove(imageKey);
 						imageKey = null;
 					} else {
 						synchronized (imageTransforming.get(imageKey)) {
-							file = loadFileFromDisk(ctx, imageName, filter, area, ctx.getDevice(), template, comp, imageFile.lastModified(), imageParam);
+							file = loadFileFromDisk(ctx, imageName, filter, area, ctx.getDevice(), template, comp, imageFile.lastModified(), imageParam);							
 							fileStream = new FileInputStream(file);							
 						}
 					}

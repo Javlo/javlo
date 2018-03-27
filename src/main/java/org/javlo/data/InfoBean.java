@@ -106,8 +106,6 @@ public class InfoBean {
 	 */
 	public static InfoBean createInfoBean(ContentContext ctx) throws Exception {
 		InfoBean info = new InfoBean();
-
-		info.currentPage = ctx.getCurrentPage();
 		info.ctx = ctx;
 		info.globalContext = GlobalContext.getInstance(ctx.getRequest());
 		return info;
@@ -124,8 +122,7 @@ public class InfoBean {
 		ctx.getRequest().setAttribute(REQUEST_KEY, info);
 		return info;
 	}
-
-	private MenuElement currentPage;
+	
 	private ContentContext ctx;
 	private GlobalContext globalContext;
 	private boolean tools = true;
@@ -301,10 +298,20 @@ public class InfoBean {
 		}
 		return URLHelper.createURL(pdfCtx);
 	}
+	
+	public MenuElement getCurrentPage() {
+		try {
+			return ctx.getCurrentPage();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+		
+	}
 
 	public String getDate() {
 		try {
-			return StringHelper.renderDate(new Locale(ctx.getRequestContentLanguage()),currentPage.getContentDateNeverNull(ctx), globalContext.getShortDateFormat());
+			return StringHelper.renderDate(new Locale(ctx.getRequestContentLanguage()),getCurrentPage().getContentDateNeverNull(ctx), globalContext.getShortDateFormat());
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
@@ -314,7 +321,7 @@ public class InfoBean {
 	public String getMediumDate() {
 		try {
 			return StringHelper.renderDate(new Locale(ctx.getRequestContentLanguage()),
-					currentPage.getContentDateNeverNull(ctx), globalContext.getMediumDateFormat());
+					getCurrentPage().getContentDateNeverNull(ctx), globalContext.getMediumDateFormat());
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
@@ -324,7 +331,7 @@ public class InfoBean {
 	public String getFullDate() {
 		try {
 			return StringHelper.renderDate(new Locale(ctx.getRequestContentLanguage()),
-					currentPage.getContentDateNeverNull(ctx), globalContext.getFullDateFormat());
+					getCurrentPage().getContentDateNeverNull(ctx), globalContext.getFullDateFormat());
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
@@ -398,7 +405,7 @@ public class InfoBean {
 
 	public String getSortableDate() {
 		try {
-			return StringHelper.renderSortableDate(currentPage.getContentDateNeverNull(ctx));
+			return StringHelper.renderSortableDate(getCurrentPage().getContentDateNeverNull(ctx));
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
@@ -423,7 +430,7 @@ public class InfoBean {
 
 	public String getGlobalTitle() {
 		try {
-			return currentPage.getGlobalTitle(ctx);
+			return getCurrentPage().getGlobalTitle(ctx);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
@@ -451,11 +458,11 @@ public class InfoBean {
 			final String noRecursiveRequestKey = "_pageDescritionCalled";
 			if (ctx.getRequest().getAttribute(noRecursiveRequestKey) == null) {
 				ctx.getRequest().setAttribute(noRecursiveRequestKey, 1);
-				String description = XHTMLHelper.replaceJSTLData(ctx, currentPage.getMetaDescription(ctx));
+				String description = XHTMLHelper.replaceJSTLData(ctx, getCurrentPage().getMetaDescription(ctx));
 				ctx.getRequest().setAttribute(noRecursiveRequestKey, null);
 				return new HtmlPart(description);
 			} else {
-				return currentPage.getDescription(ctx);
+				return getCurrentPage().getDescription(ctx);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -464,12 +471,12 @@ public class InfoBean {
 	}
 
 	public String getPageID() {
-		return currentPage.getId();
+		return getCurrentPage().getId();
 	}
 
 	public String getPageMetaDescription() {
 		try {
-			return currentPage.getMetaDescription(ctx);
+			return getCurrentPage().getMetaDescription(ctx);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
@@ -477,16 +484,16 @@ public class InfoBean {
 	}
 
 	public String getPageName() {
-		return currentPage.getName();
+		return getCurrentPage().getName();
 	}
 
 	public String getPageHumanName() {
-		return currentPage.getHumanName();
+		return getCurrentPage().getHumanName();
 	}
 
 	public String getPageTitle() {
 		try {
-			return currentPage.getPageTitle(ctx);
+			return getCurrentPage().getPageTitle(ctx);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
@@ -495,7 +502,7 @@ public class InfoBean {
 
 	public String getTitle() {
 		try {
-			return currentPage.getTitle(ctx);
+			return getCurrentPage().getTitle(ctx);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
@@ -504,7 +511,7 @@ public class InfoBean {
 
 	public String getTime() {
 		try {
-			return StringHelper.renderTime(ctx, currentPage.getContentDateNeverNull(ctx));
+			return StringHelper.renderTime(ctx, getCurrentPage().getContentDateNeverNull(ctx));
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
@@ -538,7 +545,25 @@ public class InfoBean {
 
 	public PageBean getPage() {
 		try {
-			return currentPage.getPageBean(ctx);
+			return getCurrentPage().getPageBean(ctx);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	/**
+	 * return the root page if the current page is a children of association
+	 * @return
+	 */
+	public PageBean getMainPage() {
+		try {
+			MenuElement page = getCurrentPage();
+			if (page.isChildrenOfAssociation()) {
+				return page.getMainChildrenAssociation().getPageBean(ctx);	
+			} else {
+				return page.getPageBean(ctx);
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
@@ -547,7 +572,7 @@ public class InfoBean {
 
 	public PageBean getRoot() {
 		try {
-			return currentPage.getRoot().getPageBean(ctx);
+			return getCurrentPage().getRoot().getPageBean(ctx);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
@@ -561,7 +586,7 @@ public class InfoBean {
 	 */
 	public List<PageBean> getPagePath() {
 
-		MenuElement page = currentPage;
+		MenuElement page = getCurrentPage();
 
 		List<PageBean> pagePath = new LinkedList<PageBean>();
 
@@ -719,9 +744,9 @@ public class InfoBean {
 	}
 
 	public PageBean getParent() {
-		if (currentPage.getParent() != null) {
+		if (getCurrentPage().getParent() != null) {
 			try {
-				return currentPage.getParent().getPageBean(ctx);
+				return getCurrentPage().getParent().getPageBean(ctx);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -1364,7 +1389,7 @@ public class InfoBean {
 
 	public String getPageBookmark() {
 		try {
-			return NavigationHelper.getPageBookmark(ctx, currentPage);
+			return NavigationHelper.getPageBookmark(ctx, getCurrentPage());
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;

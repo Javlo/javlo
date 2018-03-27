@@ -68,17 +68,25 @@ function loadWysiwyg(cssQuery, complexity, chooseFileURL, format, fontsize, wysi
 		        "emoticons template paste colorpicker nonbreaking textlang"
 		    ],
 		    style_formats: format,
-		    toolbar1: "textlang | styleselect bold italic underline strikethrough fontsizeselect removeformat | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | table charmap nonbreaking code",		    
+		    toolbar1: "textlang | styleselect bold italic underline strikethrough fontsizeselect removeformat | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | table charmap nonbreaking code",
+		    charmap_append: [
+		        [0x2600, 'sun'],
+		        [0x2601, 'cloud'],
+		        [0x010C, 'C with caron'],
+		        [0x010D, 'c with caron'],
+		        [0x01C5, "Latin Capital Letter D With Small Letter Z With Caron"],
+		        [0x01C6, "Latin Small Letter Dz With Caron"],
+		        [0x0110, 'Latin Capital Letter D With Stroke'],
+		        [0x0111, 'Latin Small Letter D With Stroke'],
+		        [0x0160, 'Latin Capital Letter S Hacek'],
+		        [0x0161, 'Latin Small Letter S Hacek']		        		
+		      ],
 		    image_advtab: true,
 		    fontsize_formats: fontsize,
 		    //paste_word_valid_elements: "b,strong,i,em,h1,h2,h3,h4,h5,h6,table,tr,th,td,ul,ol,li,p,a,div",
-		    file_browser_callback: function(field_name, url, type, win) {
-		    	
-	    	 	jQuery("body").data("fieldName", field_name);
-	    	 	
-	    	 	
-	    	 	var fileURL = chooseFileURL.replace("_TYPE_",type);
-	    	 	
+		    file_browser_callback: function(field_name, url, type, win) {		    	
+	    	 	jQuery("body").data("fieldName", field_name);	    	 	
+	    	 	var fileURL = chooseFileURL.replace("_TYPE_",type);	    	 	
 		    	tinyMCE.activeEditor.windowManager.open({
 		            file : fileURL,
 		            title : 'Select resouce',

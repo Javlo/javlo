@@ -221,7 +221,7 @@
 </div>
 </div>
 
-<%--<c:if test="${not empty param.select && param.select != 'back'}">
+<c:if test="${not empty param.select && param.select != 'back'}">
 	<script type="text/javascript">
 		jQuery(".select-item").click(function() {
 			if (parent.tinyMCE !== undefined) {
@@ -232,4 +232,4 @@
 			}
 		});
 	</script>	
-</c:if> --%>
+</c:if>

@@ -247,7 +247,7 @@ public class FileCache {
 	}
 
 	public File getFile(String key, String fileName, long latestModificationDate) throws IOException {
-		File file = getFileName(key, fileName);
+		File file = getFileName(key, fileName);		
 		if (latestModificationDate > file.lastModified()) {
 			return null;
 		}

@@ -29,6 +29,7 @@ org.javlo.component.meta.Forward
 org.javlo.component.meta.Layouts
 org.javlo.component.meta.TaxonomyDisplayComponent
 org.javlo.component.meta.ContactInformation
+org.javlo.component.meta.DefinitionComponent
 
 --content.title.text
 

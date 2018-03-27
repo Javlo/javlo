@@ -2243,6 +2243,45 @@ public class XHTMLHelper {
 		}
 		return new String(content);
 	}
+	
+	/**
+	 * replace text out test tag.
+	 * 
+	 * @param html
+	 *            a html
+	 * @param token
+	 *            the token to be replace
+	 * @param newToken
+	 *            the new token
+	 * @return
+	 */
+	public static String replaceOutTag(String html, String token, String newToken) {
+		boolean inTag = false;
+		char[] content = html.toCharArray();
+		int pos = html.indexOf(token);
+		int tokenSize = token.length();
+		StringRemplacementHelper replace = new StringRemplacementHelper();
+		if (pos>=0) {
+			for (int i = 0; i < html.length(); i++) {
+				if (i==pos) {
+					if (!inTag) {						
+						replace.addReplacement(pos, pos+tokenSize, newToken);
+					}
+					pos = html.substring(pos+1).indexOf(token)+pos+1;
+				}
+				if (inTag) {
+					if (content[i] == '>') {
+						inTag = false;
+					}
+				} else {					
+					if (content[i] == '<') {
+						inTag = true;
+					}
+				}
+			}
+		}
+		return replace.start(html);
+	}
 
 	public static final String stringToAttribute(String str) {
 		return escapeXHTML(str.replace("\"", "&quot;"));
@@ -2862,7 +2901,7 @@ public class XHTMLHelper {
 	}
 
 	public static void main(String[] args) {
-		System.out.println(getTableButton("##link##", "##label##"));
+		System.out.println(">>>>>>>>> XHTMLHelperTest.testReplaceOutTag : rep = "+XHTMLHelper.replaceOutTag("<p c=\"tt\">tt</p>", "tt", "rp")); //TODO: remove debug trace
 	}
 
 }

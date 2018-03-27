@@ -6,11 +6,13 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import org.apache.commons.lang3.CharUtils;
 import org.javlo.component.core.ContentElementList;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.core.IReverseLinkComponent;
+import org.javlo.component.meta.DefinitionComponent;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.ComponentHelper;
@@ -22,8 +24,13 @@ import org.javlo.helper.Comparator.StringSizeComparator;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.exception.ServiceException;
+import org.owasp.encoder.Encode;
+
+import fr.opensagres.xdocreport.core.utils.StringEscapeUtils;
 
 public class ReverseLinkService {
+	
+	private static Logger logger = Logger.getLogger(ReverseLinkService.class.getName());
 
 	private class ComponentPage {
 		private IReverseLinkComponent component;
@@ -89,6 +96,8 @@ public class ReverseLinkService {
 	private transient Map<String, MenuElement> reversedLinkCache = null;
 
 	private transient Map<String, ComponentPage> reversedLinkComponentCache = null;
+	
+	private transient Map<String, String> definitionCache = null;
 
 	private transient String reversedLinkComponentCacheLang = null;
 
@@ -98,6 +107,7 @@ public class ReverseLinkService {
 		synchronized (lock) {
 			reversedLinkCache = null;
 			reversedLinkComponentCache = null;
+			definitionCache = null;
 		}
 	}
 
@@ -126,6 +136,26 @@ public class ReverseLinkService {
 			}
 		}
 		return reversedLinkCache;
+	}
+	
+	public Map<String,String> getDefinitions(ContentContext ctx) throws Exception {
+		if (definitionCache == null) {
+			Map<String,String> definitions = new HashMap<String, String>();
+			ContentService content = ContentService.getInstance(ctx.getRequest());
+			for (IContentVisualComponent comp : content.getComponentByType(ctx, DefinitionComponent.TYPE)) {
+				String word = ((DefinitionComponent)comp).getWord();
+				String def = ((DefinitionComponent)comp).getDefinition();
+				if (!StringHelper.isOneEmpty(word, def)) {
+					if (!definitions.containsKey (word)) {
+						definitions.put(word, def);
+					} else {
+						logger.warning("word:'"+word+"' duplicated in the definitions components.");
+					}
+				}
+			}
+			definitionCache = definitions;
+		}
+		return definitionCache;
 	}
 
 	/* reverese link component */
@@ -261,7 +291,7 @@ public class ReverseLinkService {
 										String reverseLinkTitle = i18nAccess.getText("item.reversed-link.title");
 										linkInfo.append("<span class=\"title\">" + reverseLinkTitle + "</span>");
 										String pageURL = URLHelper.createURL(ctx, parentPage.getPath());
-										linkInfo.append("<a title=\"" + reverseLinkTitle + parentPage.getLabel(ctx) + "\" href=\"" + pageURL + "\"><span class=\"glyphicon glyphicon-link\" aria-hidden=\"true\"></span>" + parentPage.getLabel(ctx) + "</a>");
+										linkInfo.append("<a title=\"" + reverseLinkTitle + parentPage.getLabel(ctx) + "\" href=\"" + pageURL + "\"><i class=\"fa fa-link\" aria-hidden=\"true\"></i>" + parentPage.getLabel(ctx) + "</a>");
 										linkInfo.append("</span>");
 										if (componentPage != null && ctx.getRequest().getAttribute("replaced-" + componentPage.hashCode()) == null) {
 											if (!componentPage.getComponent().isOnlyThisPage() || componentPage.getPage().equals(currentPage)) {
@@ -299,6 +329,14 @@ public class ReverseLinkService {
 		}
 
 		String outText = remplacement.start(contentValue);
+
+		for (Map.Entry<String,String> entry : getDefinitions(ctx).entrySet()) {			
+			outText = XHTMLHelper.replaceOutTag(outText, entry.getKey(), "<span class=\"auto_definition\" title=\""+Encode.forHtmlAttribute(entry.getValue())+"\">"+entry.getKey()+"</span>");
+			String encodeKey = StringEscapeUtils.escapeHtml(entry.getKey());
+			if (!encodeKey.equals(entry.getKey())) {
+				outText = XHTMLHelper.replaceOutTag(outText, encodeKey, "<span class=\"auto_definition\" title=\""+Encode.forHtmlAttribute(entry.getValue())+"\">"+entry.getKey()+"</span>");
+			}
+		}
 
 		return outText;
 	}

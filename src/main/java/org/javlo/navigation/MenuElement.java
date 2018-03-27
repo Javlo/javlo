@@ -5285,6 +5285,23 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 		}
 		return null;
 	}
+	
+	/**
+	 * get the page marked as children association
+	 * @return
+	 */
+	public MenuElement getMainChildrenAssociation() {
+		MenuElement parent = this;
+		while (parent != null) {
+			for (MenuElement child : parent.getChildMenuElements()) {
+				if (child.isChildrenAssociation()) {
+					return child;
+				}
+			}
+			parent = parent.getParent();
+		}
+		return null;
+	}
 
 	public void setChildrenAssociation(boolean childrenAssociation) {
 		this.childrenAssociation = childrenAssociation;

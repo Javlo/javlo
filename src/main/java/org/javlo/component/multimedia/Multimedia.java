@@ -505,19 +505,19 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle, IStat
 
 		out.println("<div class=\"row\">");
 		if (isDateRange()) {
-			out.println("<div class=\"col-xs-3 form-inline\">");
+			out.println("<div class=\"col-lg-4 form-inline\">");
 			out.println("<div class=\"form-group\">");
 			out.println("<label for=\"" + getInputStartDateName() + "\">" + i18nAccess.getText("content.multimedia-gallery.date-range") + "</label>");
 			out.println(" : <input class=\"form-control\" id=\"contentdate\" type=\"text\" id=\"" + getInputStartDateName() + "\" name=\"" + getInputStartDateName() + "\" value=\"" + StringHelper.renderDateWithDefaultValue(getStartDate(), "") + "\"/> - ");
 			out.println("<input class=\"form-control\" type=\"text\" id=\"" + getInputEndDateName() + "\" name=\"" + getInputEndDateName() + "\" value=\"" + StringHelper.renderDateWithDefaultValue(getEndDate(), "") + "\"/>");
 			out.println("</div></div>");
 		}
-		out.println("<div class=\"col-xs-2 form-inline\">");
+		out.println("<div class=\"col-xs-3 form-inline\">");
 
 		out.println("<div class=\"form-group\">");
 		out.println("<label>" + i18nAccess.getText("content.multimedia-gallery.list-size"));
 		out.println(" : <input class=\"form-control\" type=\"text\" id=\"" + getInputMaxListSizeName() + "\" name=\"" + getInputMaxListSizeName() + "\" value=\"" + getMaxListSize() + "\"/></label>");
-		out.println("</div></div><div class=\"col-xs-2 form-inline\">");
+		out.println("</div></div><div class=\"col-xs-3 form-inline\">");
 
 		out.println("<div class=\"form-group\">");
 		out.println("<label>" + i18nAccess.getText("content.multimedia-gallery.page-size"));
