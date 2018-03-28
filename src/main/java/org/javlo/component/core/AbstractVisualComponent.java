@@ -1286,9 +1286,9 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		String style = contructViewStyle(ctx);
 		String prefix;
 		if (!componentBean.isList()) {
-			prefix =  "<" + getTag(ctx) + " " + getSpecialPreviewCssClass(ctx, style + getType()) + getSpecialPreviewCssId(ctx) + " " + getInlineStyle(ctx) + ">";
+			prefix =  "<" + getTag(ctx) + " " + getSpecialPreviewCssClass(ctx, style) + getSpecialPreviewCssId(ctx) + " " + getInlineStyle(ctx) + ">";
 		} else {
-			prefix = "<" + getListItemTag(ctx) + getSpecialPreviewCssClass(ctx, style + getType()) + getSpecialPreviewCssId(ctx) + " >";
+			prefix = "<" + getListItemTag(ctx) + getSpecialPreviewCssClass(ctx, style) + getSpecialPreviewCssId(ctx) + " >";
 		}
 		if (isAjaxWrapper(ctx)) {
 			prefix = prefix + "<div id=\""+getAjaxId()+"\">";
@@ -1557,6 +1557,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	}
 
 	protected String getPreviewCssClass(ContentContext ctx, String currentClass) {
+		
 		if (currentClass == null) {
 			currentClass = "";
 		} else {
@@ -1565,7 +1566,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		String specificClass = "";
 		if (getSpecificClass(ctx) != null) {
 			specificClass = getSpecificClass(ctx) + ' ';
-		}
+		}		
 		if (getId().equals(ctx.getRequest().getAttribute(SCROLL_TO_COMP_ID_ATTRIBUTE_NAME))) {
 			specificClass = specificClass + "scroll-to-me ";
 		}
@@ -1596,7 +1597,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 						if (AbstractVisualComponent.isMirrorWrapped(ctx, this)) {
 							mirror = "mirror-wrapped";
 						}
-						return specificClass + classPrefix + "editable-component " + mirror + currentClass + newClass + "\" data-hint=\"" + hint + "\" data-name=\"" + i18nAccess.getText("content." + getType(), getType());
+						return specificClass + classPrefix + "editable-component " + mirror + currentClass + newClass + ' '+getType() + "\" data-hint=\"" + hint + "\" data-name=\"" + i18nAccess.getText("content." + getType(), getType());
 					}
 				}
 			} catch (Exception e) {
@@ -1604,7 +1605,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			}
 		}
 		if (currentClass != null && currentClass.trim().length() > 0) {
-			return (specificClass + currentClass.trim() + ' ' + getType()).trim();
+			return specificClass + currentClass.trim()+' '+getType();
 		}
 		return "";
 	}
@@ -1673,11 +1674,9 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	public String getStyle() {
 		return componentBean.getStyle();
 	}
-	
-	
 
 	@Override
-	public final String getStyle(ContentContext ctx) {
+	public final String getStyle(ContentContext ctx) {		
 		if (componentBean.getStyle() == null) {
 			if ((getStyleList(ctx) != null) && (getStyleList(ctx).length > 0)) {
 				if (getConfig(ctx).getDefaultStyle() == null) {
@@ -1707,10 +1706,10 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		if (isColored()) {
 			style = style + " colored";
 		}
-		String currentRenderer = getCurrentRenderer(ctx);
+		String currentRenderer = getCurrentRenderer(ctx);		
 		if (currentRenderer != null) {
 			style = style + ' ' + currentRenderer;
-		}
+		}		
 		return style.trim();
 	}
 

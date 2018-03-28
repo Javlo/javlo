@@ -439,4 +439,9 @@ public class DefaultTemplate extends Template {
 	public String getSpecialAreaRenderer() {
 		return null;
 	}
+	
+	@Override
+	public TemplateData getTemplateData() {
+		return TemplateData.EMPTY;
+	}
 }

@@ -5,9 +5,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.net.MalformedURLException;
 import java.net.Proxy;
 import java.net.ProxySelector;
 import java.net.URI;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -33,6 +35,7 @@ import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.data.source.TestDataSource;
 import org.javlo.helper.ElementaryURLHelper;
+import org.javlo.helper.NetHelper;
 import org.javlo.helper.PatternHelper;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
@@ -151,37 +154,36 @@ public class StaticConfig extends Observable {
 
 	public static String getJavloHome() {
 		if (javloHome == null) {
-			Map<String, String> env = System.getenv();			
-	        for (String envName : env.keySet()) {
-	            if (envName.equals("JAVLO_HOME")) {
-	            	String folder = env.get(envName);
-	            	if (folder != null) {
-	        			folder = folder.replace("$HOME", HOME);
-	        			folder = folder.replace("~", HOME);
-	        		}	            	 
-	            	File file = new File(folder);
-	            	if (!file.exists()) {
-	            		file.mkdirs();
-	            	}
-	            	try {
+			Map<String, String> env = System.getenv();
+			for (String envName : env.keySet()) {
+				if (envName.equals("JAVLO_HOME")) {
+					String folder = env.get(envName);
+					if (folder != null) {
+						folder = folder.replace("$HOME", HOME);
+						folder = folder.replace("~", HOME);
+					}
+					File file = new File(folder);
+					if (!file.exists()) {
+						file.mkdirs();
+					}
+					try {
 						javloHome = file.getCanonicalPath();
 					} catch (IOException e) {
 						e.printStackTrace();
 						throw new RuntimeException(e);
 					}
-	            }
-	        }
-	        if (javloHome == null) {
-	        	javloHome = "";
-	        }
-		} 
-		if (javloHome.length()==0) {
+				}
+			}
+			if (javloHome == null) {
+				javloHome = "";
+			}
+		}
+		if (javloHome.length() == 0) {
 			return null;
 		} else {
 			return javloHome;
-        }
+		}
 	}
-	
 
 	private StaticConfig(ServletContext application) {
 		this.application = application;
@@ -210,13 +212,15 @@ public class StaticConfig extends Observable {
 				if (application != null) {
 					if (staticConfigLocalisation == null || staticConfigLocalisation.trim().length() == 0
 							|| staticConfigLocalisation.contains("${")) {
-						staticConfigLocalisation = ResourceHelper.getRealPath(application, DEFAULT_CONFIG_DIR + "/" + FILE_NAME);
+						staticConfigLocalisation = ResourceHelper.getRealPath(application,
+								DEFAULT_CONFIG_DIR + "/" + FILE_NAME);
 					} else {
 						staticConfigLocalisation = ElementaryURLHelper.mergePath(staticConfigLocalisation, FILE_NAME);
 						boolean staticConfigRelative = Boolean
 								.parseBoolean(webappProps.getProperty(STATIC_CONFIG_RELATIVE_KEY));
 						if (staticConfigRelative && !staticConfigLocalisation.contains("$")) {
-							staticConfigLocalisation = ResourceHelper.getRealPath(application, 	staticConfigLocalisation);
+							staticConfigLocalisation = ResourceHelper.getRealPath(application,
+									staticConfigLocalisation);
 						}
 					}
 				}
@@ -516,7 +520,7 @@ public class StaticConfig extends Observable {
 	public String getMasterContext() {
 		return properties.getString("master-context", "admin");
 	}
-	
+
 	public String getInstanceName() {
 		return properties.getString("instance-name", System.getProperty("user.name"));
 	}
@@ -1208,15 +1212,14 @@ public class StaticConfig extends Observable {
 	}
 
 	public boolean isInternetAccess() {
-		// if (internetAccess == null) {
-		// try {
-		// internetAccess = NetHelper.isURLValid(new URL(getDefaultTestURL()));
-		// } catch (MalformedURLException e) {
-		// logger.severe("bad url format : " + getDefaultTestURL());
-		// }
-		// }
-		// return internetAccess;
-		return false;
+		if (internetAccess == null) {
+			try {
+				internetAccess = NetHelper.isURLValid(new URL(getDefaultTestURL()));
+			} catch (MalformedURLException e) {
+				logger.severe("bad url format : " + getDefaultTestURL());
+			}
+		}
+		return internetAccess;
 	}
 
 	/**
@@ -1616,13 +1619,14 @@ public class StaticConfig extends Observable {
 	}
 
 	public String getSearchEngineLucenePattern() {
-		return properties.getString("searchengine.lucene.pattern", "level3:{QUERY}^3 level2:{QUERY}^2 level1:{QUERY}^1").trim();
+		return properties.getString("searchengine.lucene.pattern", "level3:{QUERY}^3 level2:{QUERY}^2 level1:{QUERY}^1")
+				.trim();
 	}
 
 	public String getDropboxAppKey() {
 		return properties.getString("dropbox.app-key", null);
 	}
-	
+
 	public String getHtmlHead() {
 		if (isHighSecure()) {
 			return null;

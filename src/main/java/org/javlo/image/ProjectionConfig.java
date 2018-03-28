@@ -7,12 +7,14 @@ public class ProjectionConfig {
 	private Polygon4 polygon;
 	private float alpha;
 	private File background;
+	private File foreground;
 	
-	public ProjectionConfig(Polygon4 polygon, float alpha, File background) {
+	public ProjectionConfig(Polygon4 polygon, float alpha, File background, File foreground) {
 		super();
 		this.polygon = polygon;
 		this.alpha = alpha;
 		this.background = background;
+		this.foreground = foreground;
 	}
 	public Polygon4 getPolygon() {
 		return polygon;
@@ -31,5 +33,11 @@ public class ProjectionConfig {
 	}
 	public void setBackground(File background) {
 		this.background = background;
+	}
+	public File getForeground() {
+		return foreground;
+	}
+	public void setForeground(File foreground) {
+		this.foreground = foreground;
 	}
 }

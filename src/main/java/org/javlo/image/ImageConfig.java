@@ -629,14 +629,19 @@ public class ImageConfig {
 		String polygon = properties.getString(key);		
 		String alpha = properties.getString(getKey(device, filter, area, "projection.alpha"));		
 		String bg = properties.getString(getKey(device, filter, area, "projection.background"));		
+		String fg = properties.getString(getKey(device, filter, area, "projection.foreground"));
 		if (!StringHelper.isEmpty(polygon) && !StringHelper.isEmpty(bg)) {
 			String[] polyPoint = polygon.split(",");
 			File bgFile = new File(URLHelper.mergePath(template.getWorkTemplateRealPath(globalContext), bg));
+			File fgFile = null;
+			if (fg != null) {
+				fgFile = new File(URLHelper.mergePath(template.getWorkTemplateRealPath(globalContext), fg));
+			}
 			if (bgFile.exists()) {				
 				if (polyPoint.length == 8) {
 					int[] polyPos = new int[8];
 					for (int i=0; i<8; i++) {
-						polyPos[i] = Integer.parseInt(polyPoint[i]);
+						polyPos[i] = Integer.parseInt(polyPoint[i].trim());
 					}
 					Polygon4 p = new Polygon4(polyPos[0], polyPos[1], polyPos[2], polyPos[3], polyPos[4], polyPos[5], polyPos[6], polyPos[7]);
 					float alphaFloat = 1;
@@ -644,7 +649,7 @@ public class ImageConfig {
 						alphaFloat = Float.parseFloat(alpha);
 					}
 					if (alphaFloat >= 0 && alphaFloat <= 1) {
-						return new ProjectionConfig(p, alphaFloat, bgFile);
+						return new ProjectionConfig(p, alphaFloat, bgFile, fgFile);
 					} else {
 						logger.severe("bad alpha ["+template.getName()+"] : "+alpha);
 					}				

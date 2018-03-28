@@ -2288,117 +2288,114 @@ public class Template implements Comparable<Template> {
 
 	public TemplateData getTemplateData() {
 		TemplateData templateData = new TemplateData();
-		String background = properties.getString("data.color.background", null);
-		if (background != null) {
-			Color backgroundColor = Color.decode('#' + background);
-			templateData.setBackground(backgroundColor);
-		}
-		String foreground = properties.getString("data.color.foreground", null);
-		if (foreground != null) {
-			Color foregroundColor = Color.decode('#' + foreground);
-			templateData.setForeground(foregroundColor);
-		}
-		String text = properties.getString("data.color.text", null);
-		if (text != null) {
-			Color color = Color.decode('#' + text);
-			templateData.setText(color);
-		}
-		String border = properties.getString("data.color.border", null);
-		if (border != null) {
-			Color color = Color.decode('#' + border);
-			templateData.setBorder(color);
-		}
-		String textMenu = properties.getString("data.color.menu.text", null);
-		if (textMenu != null) {
-			Color color = Color.decode('#' + textMenu);
-			templateData.setTextMenu(color);
-		}
-		String backgroundMenu = properties.getString("data.color.menu.background", null);
-		if (backgroundMenu != null) {
-			Color color = Color.decode('#' + backgroundMenu);
-			templateData.setBackgroundMenu(color);
-		}
-		String backgroundActive = properties.getString("data.color.menu.active", null);
-		if (backgroundActive != null) {
-			Color color = Color.decode('#' + backgroundActive);
-			templateData.setBackgroundActive(color);
-		}
-		String title = properties.getString("data.color.title", null);
-		if (title != null) {
-			Color color = Color.decode('#' + title);
-			templateData.setTitle(color);
-		}
-		String special = properties.getString("data.color.special", null);
-		if (special != null) {
-			Color color = Color.decode('#' + special);
-			templateData.setSpecial(color);
-		}
-		String link = properties.getString("data.color.link", null);
-		if (link != null) {
-			Color color = Color.decode('#' + link);
-			templateData.setLink(color);
-		}
-		String toolsURL = properties.getString("data.server.tools", null);
-		if (toolsURL != null) {
-			templateData.setToolsServer(toolsURL);
-		}
-		String logo = properties.getString("data.logo", null);
-		if (logo != null && !logo.equals("null")) {
-			templateData.setLogo(logo);
-		}
-		String font = properties.getString("data.font", null);
-		if (font != null && !font.equals("null")) {
-			templateData.setFont(font);
-		}
 		
-		/** messages **/
-		String messagePrimary = properties.getString("data.color.message.primary", null);
-		if (messagePrimary != null) {
-			Color color = Color.decode('#' + messagePrimary);
-			templateData.setMessagePrimary(color);
-		}
-		String messageSecondary = properties.getString("data.color.message.secondary", null);
-		if (messageSecondary != null) {
-			Color color = Color.decode('#' + messageSecondary);
-			templateData.setMessageSecondary(color);
-		}
-		String messageSuccess = properties.getString("data.color.message.success", null);
-		if (messageSuccess != null) {
-			Color color = Color.decode('#' + messageSuccess);
-			templateData.setMessageSuccess(color);
-		}
-		String messageWarning = properties.getString("data.color.message.warning", null);
-		if (messageWarning != null) {
-			Color color = Color.decode('#' + messageWarning);
-			templateData.setMessageWarning(color);
-		}
-		String messageDanger = properties.getString("data.color.message.danger", null);
-		if (messageDanger != null) {
-			Color color = Color.decode('#' + messageDanger);
-			templateData.setMessageDanger(color);
-		}
-		String messageInfo = properties.getString("data.color.message.info", null);
-		if (messageInfo != null) {
-			Color color = Color.decode('#' + messageInfo);
-			templateData.setMessageInfo(color);
-		}
-
-		String freeDataPrefix = "data.free.";
-		Iterator keys = properties.getKeys();
-		Map<String, String> freeData = new HashMap<String, String>();
+		boolean templateDataDefined = false;
+		Iterator<String> keys = properties.getKeys();
 		while (keys.hasNext()) {
-			String key = "" + keys.next();
-			if (key.startsWith(freeDataPrefix)) {
-				String value = "" + properties.getProperty(key);
-				key = key.substring(freeDataPrefix.length());
-				if (!freeData.containsKey(key)) {
-					freeData.put(key, value);
-				}
+			if( keys.next().startsWith("data.")) {
+				templateDataDefined = true;
 			}
 		}
-		setFreeData(freeData);
-
-		return templateData;
+		if (!templateDataDefined) {
+			return getParent().getTemplateData();
+		} else {		
+			String background = properties.getString("data.color.background", null);
+			if (background != null) {
+				Color backgroundColor = Color.decode('#' + background);
+				templateData.setBackground(backgroundColor);
+			}
+			String foreground = properties.getString("data.color.foreground", null);
+			if (foreground != null) {
+				Color foregroundColor = Color.decode('#' + foreground);
+				templateData.setForeground(foregroundColor);
+			}
+			String text = properties.getString("data.color.text", null);
+			if (text != null) {
+				Color color = Color.decode('#' + text);
+				templateData.setText(color);
+			}
+			String border = properties.getString("data.color.border", null);
+			if (border != null) {
+				Color color = Color.decode('#' + border);
+				templateData.setBorder(color);
+			}
+			String textMenu = properties.getString("data.color.menu.text", null);
+			if (textMenu != null) {
+				Color color = Color.decode('#' + textMenu);
+				templateData.setTextMenu(color);
+			}
+			String backgroundMenu = properties.getString("data.color.menu.background", null);
+			if (backgroundMenu != null) {
+				Color color = Color.decode('#' + backgroundMenu);
+				templateData.setBackgroundMenu(color);
+			}
+			String backgroundActive = properties.getString("data.color.menu.active", null);
+			if (backgroundActive != null) {
+				Color color = Color.decode('#' + backgroundActive);
+				templateData.setBackgroundActive(color);
+			}
+			String title = properties.getString("data.color.title", null);
+			if (title != null) {
+				Color color = Color.decode('#' + title);
+				templateData.setTitle(color);
+			}
+			String special = properties.getString("data.color.special", null);
+			if (special != null) {
+				Color color = Color.decode('#' + special);
+				templateData.setSpecial(color);
+			}
+			String link = properties.getString("data.color.link", null);
+			if (link != null) {
+				Color color = Color.decode('#' + link);
+				templateData.setLink(color);
+			}
+			String toolsURL = properties.getString("data.server.tools", null);
+			if (toolsURL != null) {
+				templateData.setToolsServer(toolsURL);
+			}
+			String logo = properties.getString("data.logo", null);
+			if (logo != null && !logo.equals("null")) {
+				templateData.setLogo(logo);
+			}
+			String font = properties.getString("data.font", null);
+			if (font != null && !font.equals("null")) {
+				templateData.setFont(font);
+			}
+			
+			/** messages **/
+			String messagePrimary = properties.getString("data.color.message.primary", null);
+			if (messagePrimary != null) {
+				Color color = Color.decode('#' + messagePrimary);
+				templateData.setMessagePrimary(color);
+			}
+			String messageSecondary = properties.getString("data.color.message.secondary", null);
+			if (messageSecondary != null) {
+				Color color = Color.decode('#' + messageSecondary);
+				templateData.setMessageSecondary(color);
+			}
+			String messageSuccess = properties.getString("data.color.message.success", null);
+			if (messageSuccess != null) {
+				Color color = Color.decode('#' + messageSuccess);
+				templateData.setMessageSuccess(color);
+			}
+			String messageWarning = properties.getString("data.color.message.warning", null);
+			if (messageWarning != null) {
+				Color color = Color.decode('#' + messageWarning);
+				templateData.setMessageWarning(color);
+			}
+			String messageDanger = properties.getString("data.color.message.danger", null);
+			if (messageDanger != null) {
+				Color color = Color.decode('#' + messageDanger);
+				templateData.setMessageDanger(color);
+			}
+			String messageInfo = properties.getString("data.color.message.info", null);
+			if (messageInfo != null) {
+				Color color = Color.decode('#' + messageInfo);
+				templateData.setMessageInfo(color);
+			}
+	
+			return templateData;
+		}
 	}
 
 	private Map<String, String> getTemplateDataMap(GlobalContext globalContext) {
@@ -2406,9 +2403,9 @@ public class Template implements Comparable<Template> {
 			return Collections.EMPTY_MAP;
 		}
 		TemplateData templateDataUser = globalContext.getTemplateData();
-		Map<String, String> templateDataMap = new HashMap<String, String>();
-		TemplateData templateData = getTemplateData();
+		Map<String, String> templateDataMap = new HashMap<String, String>();		
 		templateDataMap.putAll(getFreeData());
+		TemplateData templateData = getTemplateData();
 		if (templateData.getBackground() != null) {
 			templateDataMap.put(StringHelper.colorToHexStringNotNull(templateData.getBackground()), StringHelper.colorToHexStringNotNull(templateDataUser.getBackground()));
 		}
@@ -2611,7 +2608,7 @@ public class Template implements Comparable<Template> {
 						String fileExt = FilenameUtils.getExtension(file.getName());
 						if (fileExt.equalsIgnoreCase("jsp") || fileExt.equalsIgnoreCase("html")) {							
 							ResourceHelper.filteredFileCopyEscapeScriplet(file, targetFile, map);
-						} else {
+						} else {		
 							ResourceHelper.filteredFileCopy(file, targetFile, map);
 						}
 					} catch (Exception e) {
@@ -2819,6 +2816,7 @@ public class Template implements Comparable<Template> {
 		}
 		dynamicsComponents = null;
 		contextWithTemplateImported.clear();
+		freeData = null;
 		resetRows();
 	}
 
@@ -3009,11 +3007,23 @@ public class Template implements Comparable<Template> {
 	}
 
 	public Map<String, String> getFreeData() {
+		if (freeData == null) {
+			String freeDataPrefix = "data.free.";
+			Iterator keys = properties.getKeys();
+			Map<String, String> newFreeData = new HashMap<String, String>();
+			while (keys.hasNext()) {
+				String key = "" + keys.next();
+				if (key.startsWith(freeDataPrefix)) {
+					String value = "" + properties.getProperty(key);
+					key = key.substring(freeDataPrefix.length());
+					if (!newFreeData.containsKey(key)) {
+						newFreeData.put(key, value);
+					}
+				}
+			}
+			freeData = newFreeData;
+		}		
 		return freeData;
-	}
-
-	public void setFreeData(Map<String, String> freeData) {
-		this.freeData = freeData;
 	}
 
 	protected void loadTemplatePart(TemplatePart part, String prefix) {

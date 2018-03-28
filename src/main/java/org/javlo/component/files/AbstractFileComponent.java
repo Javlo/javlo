@@ -54,7 +54,6 @@ import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
 import org.javlo.module.file.FileAction;
 import org.javlo.module.file.FileBean;
-import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
 import org.javlo.service.ITranslator;
 import org.javlo.service.RequestService;

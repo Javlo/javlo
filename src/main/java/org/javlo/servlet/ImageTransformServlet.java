@@ -647,8 +647,12 @@ public class ImageTransformServlet extends HttpServlet {
 		ProjectionConfig projection = config.getProjection(globalContext, template, device, filter, area);
 		if (projection != null) {
 			BufferedImage bgImage = ImageIO.read(projection.getBackground());
+			BufferedImage fgImage = null;
+			if (projection.getForeground() != null) {
+				fgImage = ImageIO.read(projection.getForeground());
+			}
 			try {
-				img = ImageEngine.projectionImage(bgImage, img, projection.getPolygon(), projection.getAlpha());
+				img = ImageEngine.projectionImage(bgImage, fgImage, img, projection.getPolygon(), projection.getAlpha());
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

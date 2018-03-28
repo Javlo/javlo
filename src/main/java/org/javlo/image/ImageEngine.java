@@ -1616,7 +1616,7 @@ public class ImageEngine {
 	    }
 	}
 
-	public static BufferedImage projectionImage(BufferedImage back, BufferedImage source, Polygon4 p4, float alpha) throws Exception {		
+	public static BufferedImage projectionImage(BufferedImage back, BufferedImage top, BufferedImage source, Polygon4 p4, float alpha) throws Exception {		
 		int leftX = p4.getSquare().getX1();
 		int topY = p4.getSquare().getY1();
 		int rightX = p4.getSquare().getX3();
@@ -1638,6 +1638,9 @@ public class ImageEngine {
 		addAlpha(tempImage, alpha);
 		Graphics g = back.getGraphics();
 		g.drawImage(tempImage, 0, 0, null);
+		if (top != null) {
+			g.drawImage(top, 0, 0, null);
+		}
 		tempImage.flush();
 		source.flush();
 		
@@ -1711,13 +1714,14 @@ public class ImageEngine {
 		
 		System.out.println(">>>>>>>>> ImageEngine.main : float = "+Float.parseFloat("0.2")); //TODO: remove debug trace
 
-		File imageBack = new File("c:/trans/back.png");
+		File imageBack = new File("c:/trans/tablet_back.png");
+		File imageTop = new File("c:/trans/tablet_top.png");
 		File imageSource = new File("c:/trans/source.jpg");
 		File imageTarget = new File("c:/trans/out.png");
 
-		Polygon4 poly = new Polygon4(1498, 528, 2731, 271,2622 ,1295 ,1322 ,1279 );
+		Polygon4 poly = new Polygon4(1200, 560, 1841, 590,1635 ,1188 ,988 ,1090 );
 //		poly = new Polygon4(3000, 1000, 5000, 500, 6000, 2000, 3000, 2000);
-		BufferedImage targetImg = ImageEngine.projectionImage(ImageIO.read(imageBack), ImageIO.read(imageSource),poly, 0.7f);
+		BufferedImage targetImg = ImageEngine.projectionImage(ImageIO.read(imageBack), ImageIO.read(imageTop), ImageIO.read(imageSource), poly, 0.7f);
 		ImageIO.write(targetImg, "png", imageTarget);
 		System.out.println("***** ImageEngine.main : END"); // TODO: remove
 															// debug trace

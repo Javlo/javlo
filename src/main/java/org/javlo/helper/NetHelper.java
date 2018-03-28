@@ -5,6 +5,8 @@ import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -1674,13 +1676,14 @@ public class NetHelper {
 	}
 	
 	public static void main(String[] args) throws Exception {
-		URL url = new URL("https://www.rtbf.be/info/societe/detail_la-pilule-du-suicide-attire-les-hollandais?id=9699011");
-		PageMeta meta = getPageMeta(url);
-		System.out.println(">>>>>>>>> NetHelper.main : title = "+meta.getTitle()); //TODO: remove debug trace
-		System.out.println(">>>>>>>>> NetHelper.main : description = "+meta.getDescription()); //TODO: remove debug trace
-		System.out.println(">>>>>>>>> NetHelper.main : image = "+meta.getImage()); //TODO: remove debug trace
-		System.out.println(">>>>>>>>> NetHelper.main : url = "+meta.getUrl()); //TODO: remove debug trace
-		System.out.println(">>>>>>>>> NetHelper.main : date = "+StringHelper.renderDate(meta.getDate())); //TODO: remove debug trace
+		URL url = new URL("https://img.youtube.com/vi/PxNYvk_0Onw/0.jpg");
+		File file = new File("c:/trans/youtube.jpg");
+		FileOutputStream out = new FileOutputStream(file);
+		try {
+			NetHelper.readPage(url, out);
+		} finally {
+			ResourceHelper.closeResource(out);
+		}
 	}
 
 }
