@@ -5220,7 +5220,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 	 * @return
 	 */
 	public boolean isChildrenOfAssociation() {
-		MenuElement root = getRootOfChildrenAssociation();
+		MenuElement root = getChildrenAssociationPage();
 		if (root != null) {
 			String rootId = root.getId();
 			MenuElement parent = getParent();

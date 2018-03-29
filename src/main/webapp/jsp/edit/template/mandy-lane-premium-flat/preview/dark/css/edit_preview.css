@@ -2,6 +2,10 @@
     color: #D31996 !important;;
 }
 
+#preview_command .btn.active {
+	color: #333333 !important;
+}
+
 #preview_command .header, #preview_command .sidebar {
 	background-color: #464646;
 	color: #dddddd !important;
