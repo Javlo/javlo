@@ -118,6 +118,10 @@ public class Device implements Serializable {
 		}
 		return StringHelper.isTrue(pointerDevice);
 	}
+	
+	public boolean isPdf() {
+		return getCode().equalsIgnoreCase("pdf");
+	}
 
 	public boolean isPointerDevice() {
 		String pointerDevice = devices.get(getCode() + '.' + "pointer");

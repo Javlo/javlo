@@ -269,7 +269,7 @@ public class GlobalImage extends Image implements IImageFilter {
 		} else {
 			String previewURL = getPreviewURL(ctx, getFilter(ctx));
 			ctx.getRequest().setAttribute("previewURL", previewURL);
-			if (ctx.isAjax() || ctx.isContentStatic()) {
+			if (ctx.isAjax() || ctx.isContentStatic() || (ctx.getDevice() != null && ctx.getDevice().isPdf())) {
 				ctx.getRequest().setAttribute("loadURL", previewURL);	
 			} else {
 				ctx.getRequest().setAttribute("loadURL", getPreviewURL(ctx, getFilter(ctx)+ImageTransformServlet.PRELOAD_IMAGE_SUFFIX));
@@ -1423,7 +1423,7 @@ public class GlobalImage extends Image implements IImageFilter {
 			return "" + getWidth(ctx);
 		}
 	}
-
+	
 	@Override
 	public BufferedImage filterImage(ContentContextBean ctx, BufferedImage image) {		
 		try {
@@ -1435,7 +1435,7 @@ public class GlobalImage extends Image implements IImageFilter {
 			return image;
 		}
 		Device device = ctx.getDevice();
-		if (device != null && device.getCode().equalsIgnoreCase("pdf")) {
+		if (device != null && device.isPdf()) {
 			return image;
 		} else {
 			reloadProperties();
