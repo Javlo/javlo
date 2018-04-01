@@ -31,6 +31,8 @@ import org.owasp.encoder.Encode;
  * countain the method with efficient body for URLHelper.
  */
 public abstract class ElementaryURLHelper {
+	
+	public static final String EXPCOMP = "expcomp";
 
 	private static java.util.logging.Logger logger = java.util.logging.Logger.getLogger(ElementaryURLHelper.class.getName());
 

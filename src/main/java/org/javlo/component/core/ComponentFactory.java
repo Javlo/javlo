@@ -36,6 +36,7 @@ import org.javlo.context.GlobalContext;
 import org.javlo.context.UserInterfaceContext;
 import org.javlo.helper.BeanHelper;
 import org.javlo.helper.ConfigHelper;
+import org.javlo.helper.DebugHelper;
 import org.javlo.module.content.Edit;
 import org.javlo.module.content.Edit.ComponentWrapper;
 import org.javlo.navigation.MenuElement;
@@ -424,22 +425,21 @@ public class ComponentFactory {
 		}
 	}
 
-	public static IContentVisualComponent createComponent(ContentContext ctx, ComponentBean bean, MenuElement inPage, IContentVisualComponent previous, IContentVisualComponent next) throws Exception {
+	public static IContentVisualComponent createComponent(ContentContext ctx, ComponentBean bean, MenuElement inPage, IContentVisualComponent previous, IContentVisualComponent next) throws Exception {		
 		AbstractVisualComponent comp = CreateComponent(ctx, bean, inPage, previous, next);
 		comp.setStyle(ctx, bean.getStyle());
 		return comp;
 	}
 
-	public static AbstractVisualComponent CreateComponent(ContentContext ctx, ComponentBean bean, MenuElement inPage, IContentVisualComponent previous, IContentVisualComponent next) throws Exception {
+	public static AbstractVisualComponent CreateComponent(ContentContext ctx, ComponentBean bean, MenuElement inPage, IContentVisualComponent previous, IContentVisualComponent next) throws Exception {		
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		List<String> selectedComponents = globalContext.getComponents();
-
 		Collection<IContentVisualComponent> components = getComponents(ctx, inPage);
 		AbstractVisualComponent component = null;
-		for (IContentVisualComponent component2 : components) {
-			if (component2 != null && bean != null && component2.getType() != null) {
-				if (component2.getType().equals(bean.getType())) {
-					IContentVisualComponent newComp = component2.newInstance(bean, ctx, inPage);
+		for (IContentVisualComponent comp : components) {		
+			if (comp != null && bean != null && comp.getType() != null) {
+				if (comp.getType().equals(bean.getType())) {
+					IContentVisualComponent newComp = comp.newInstance(bean, ctx, inPage);
 					component = (AbstractVisualComponent) newComp;
 					if (selectedComponents.contains(component.getClass().getName())) {
 						break;
@@ -492,7 +492,7 @@ public class ComponentFactory {
 	 * @return
 	 * @throws Exception 
 	 */
-	public static IContentVisualComponent createUnlinkedComponentFromMap(ContentContext ctx, Map<String,String> data) throws Exception {
+	public static IContentVisualComponent createUnlinkedComponentFromMap(ContentContext ctx, Map<String,Object> data) throws Exception {
 		ComponentBean bean = new ComponentBean();
 		BeanHelper.copy(data, bean);
 		return createComponent(ctx, bean, null, null, null);

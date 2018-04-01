@@ -60,15 +60,20 @@ public class ExportComponents extends HttpServlet {
 					response.setContentType("text/html; charset=" + ContentContext.CHARACTER_ENCODING);
 					String compId = StringHelper.getFileNameWithoutExtension(StringHelper.getFileNameFromPath(request.getRequestURI()));
 					ContentService content = ContentService.getInstance(ctx.getRequest());
+					ctx.setAbsoluteURL(true);
 					IContentVisualComponent comp = content.getComponent(ctx, compId);
 					if (comp == null) { // if not found in view mode -> search in preview mode.
 						ctx.setRenderMode(ContentContext.PREVIEW_MODE);
 						comp = content.getComponent(ctx, compId);
-					}					
+					} 					
 					if (comp == null) {
 						response.setStatus(HttpServletResponse.SC_NOT_FOUND);
 						return;
-					} else {						
+					} else {
+						if (!comp.getPage().isReadAccess(ctx, ctx.getCurrentUser())) {
+							response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+							return;							
+						}
 						ctx.setFree(false);
 						ctx.setCurrentTemplate(TemplateFactory.getTemplate(ctx, comp.getPage()));
 						//comp.initContent(ctx);

@@ -18,6 +18,7 @@ import java.util.logging.Logger;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.component.core.ComponentBean;
+import org.javlo.component.core.ComponentFactory;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.core.ISubTitle;
 import org.javlo.component.dynamic.DynamicComponent;
@@ -25,6 +26,7 @@ import org.javlo.component.image.IImageTitle;
 import org.javlo.context.ContentContext;
 import org.javlo.fields.Field;
 import org.javlo.fields.IFieldContainer;
+import org.javlo.helper.DebugHelper;
 import org.javlo.helper.NetHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
@@ -41,6 +43,8 @@ import org.javlo.utils.StructuredProperties;
 public class MirrorComponent extends AbstractVisualComponent implements IFieldContainer, IImageTitle, ISubTitle {
 
 	public static final String TYPE = "mirror";
+	
+	private IContentVisualComponent remoteComp = null;
 
 	/**
 	 * create a static logger.
@@ -68,7 +72,7 @@ public class MirrorComponent extends AbstractVisualComponent implements IFieldCo
 		}
 	}
 	
-	public String getMirrorComponentId() {
+	public String getMirrorComponentId() throws MalformedURLException, Exception {
 		String value = getValue();
 		if (StringHelper.isEmpty(value) || StringHelper.isDigit(value)) {
 			return value;
@@ -184,8 +188,22 @@ public class MirrorComponent extends AbstractVisualComponent implements IFieldCo
 			}
 			return comp;
 		} else {
-			return null;
-		}
+			if (!getValue().contains('/'+URLHelper.EXPCOMP+'/')) {
+				if (remoteComp != null) {
+					return remoteComp;
+				} else  {
+					if (getValue().startsWith(URLHelper.createURL(ctx.getContextForAbsoluteURL(), "/"))) {						
+						String content = NetHelper.readPageGet(new URL(getValue()));						
+						JSONMap jsonMap = JSONMap.parseMap(content);						
+						remoteComp = ComponentFactory.createUnlinkedComponentFromMap(ctx, (Map<String, Object>)jsonMap);						
+						return remoteComp;
+					} else {
+						logger.warning("mirror url link to the same site, use mirror component. (path="+getPage().getPath()+")");
+					}
+				}
+			}
+			return null;			
+		}		
 	}
 
 	@Override
@@ -261,9 +279,14 @@ public class MirrorComponent extends AbstractVisualComponent implements IFieldCo
 			if (getMirrorComponentId() != null) {
 				deleteMySelf(ctx);
 			}
-			String content = NetHelper.readPageGet(new URL(getRemoteURL()));
-			JSONMap jsonMap = JSONMap.parseMap(content);
-			return StringEscapeUtils.unescapeHtml4(jsonMap.get("html").toString());
+			URL url = new URL(getRemoteURL());
+			if (url.toString().contains('/'+URLHelper.EXPCOMP+'/')) {
+				return NetHelper.readPageGet(url);
+			} else {
+				String content = NetHelper.readPageGet(url);
+				JSONMap jsonMap = JSONMap.parseMap(content);
+				return StringEscapeUtils.unescapeHtml4(jsonMap.get("html").toString());
+			}
 		}		
 	}
 

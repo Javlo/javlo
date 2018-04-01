@@ -2876,10 +2876,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	public Map<String, Object> getContentAsMap(ContentContext ctx) throws Exception {
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.putAll(BeanHelper.bean2Map(getComponentBean()));
-		map.put("path", getPage().getPath());
-		ctx.setRenderMode(ContentContext.VIEW_MODE);
-		ctx.setAbsoluteURL(true);
-		map.put("html", StringEscapeUtils.escapeHtml4(getXHTMLCode(ctx)));
+		map.put("path", getPage().getPath());				
 		return map;
 	}	
 
