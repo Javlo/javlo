@@ -2877,8 +2877,11 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.putAll(BeanHelper.bean2Map(getComponentBean()));
 		map.put("path", getPage().getPath());
+		ctx.setRenderMode(ContentContext.VIEW_MODE);
+		ctx.setAbsoluteURL(true);
+		map.put("html", StringEscapeUtils.escapeHtml4(getXHTMLCode(ctx)));
 		return map;
-	}
+	}	
 
 	public static void setMirrorWrapped(ContentContext ctx, IContentVisualComponent comp, MirrorComponent mirror) {
 		if (comp != null) {

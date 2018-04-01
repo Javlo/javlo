@@ -34,6 +34,7 @@ import org.javlo.context.ContentContext;
 import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.context.UserInterfaceContext;
+import org.javlo.helper.BeanHelper;
 import org.javlo.helper.ConfigHelper;
 import org.javlo.module.content.Edit;
 import org.javlo.module.content.Edit.ComponentWrapper;
@@ -483,6 +484,18 @@ public class ComponentFactory {
 			}
 		}
 		return outComp;
+	}
+	
+	/**
+	 * create component from map, map is created from IRestComponent
+	 * @param data
+	 * @return
+	 * @throws Exception 
+	 */
+	public static IContentVisualComponent createUnlinkedComponentFromMap(ContentContext ctx, Map<String,String> data) throws Exception {
+		ComponentBean bean = new ComponentBean();
+		BeanHelper.copy(data, bean);
+		return createComponent(ctx, bean, null, null, null);
 	}
 
 	public static List<IContentVisualComponent> getAllComponentsFromContext(ContentContext ctx) throws Exception {

@@ -5,6 +5,8 @@ package org.javlo.component.links;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -13,6 +15,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.logging.Logger;
 
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.component.core.IContentVisualComponent;
@@ -22,12 +25,14 @@ import org.javlo.component.image.IImageTitle;
 import org.javlo.context.ContentContext;
 import org.javlo.fields.Field;
 import org.javlo.fields.IFieldContainer;
+import org.javlo.helper.NetHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.service.ClipBoard;
 import org.javlo.service.ContentService;
 import org.javlo.service.RequestService;
+import org.javlo.utils.JSONMap;
 import org.javlo.utils.StructuredProperties;
 
 /**
@@ -49,11 +54,37 @@ public class MirrorComponent extends AbstractVisualComponent implements IFieldCo
 	public String getUnlinkInputName() {
 		return "unlink-comp-" + getId();
 	}
+	
+	public String getRemoteInputName() {
+		return "remote-comp-" + getId();
+	}
+	
+	public String getRemoteURL() {
+		String value = getValue();
+		if (StringHelper.isEmpty(value) || StringHelper.isDigit(value)) {
+			return null;
+		} else {
+			return value;
+		}
+	}
+	
+	public String getMirrorComponentId() {
+		String value = getValue();
+		if (StringHelper.isEmpty(value) || StringHelper.isDigit(value)) {
+			return value;
+		} else {
+			return null;
+		}
+	}
 
 	@Override
 	public void prepareView(ContentContext ctx) throws Exception {
 		AbstractVisualComponent.setMirrorWrapped(ctx, getMirrorComponent(ctx), this);
 		super.prepareView(ctx);
+	}
+	
+	protected boolean isRemote(ContentContext ctx) {
+		return StringHelper.isTrue(getConfig(ctx).getProperty("remote", null), true);
 	}
 
 	@Override
@@ -90,14 +121,21 @@ public class MirrorComponent extends AbstractVisualComponent implements IFieldCo
 			params.put("previewEdit", "true");
 			out.println("<div class=\"col-sm-4\"><a class=\"btn btn-default\" href=\"" + URLHelper.createURL(ctx, currentComp.getPage(), params) + "\">edit source : " + currentComp.getType() + "</a></div>");
 		}
-		if (getValue().trim().length() > 0) {
+		if (!StringHelper.isEmpty(getMirrorComponentId())) {
 			out.println("<div class=\"col-sm-4\">");
 			String label = i18nAccess.getText("content.mirror.unlink");
 			out.println("<input class=\"btn btn-default\" onclick=\"jQuery(this.form).data('ajaxSubmit', false); return true;\" type=\"submit\" value=\"" + label + "\" name=\"" + getUnlinkInputName() + "\" />");
 			out.println("</div>");
 		}
-
 		out.println("</div>");
+		
+		if (isRemote(ctx)) {			
+			out.println("<div class=\"form-group\">");
+			out.println("<input class=\"form-control\" type=\"text\" name=\""+getRemoteInputName()+"\" value=\""+StringHelper.neverNull(getRemoteURL())+"\" placeholder=\"remote URL\" />");
+			out.println("</div>");			
+		}
+
+		
 		out.close();
 		return writer.toString();
 	}
@@ -122,32 +160,32 @@ public class MirrorComponent extends AbstractVisualComponent implements IFieldCo
 		return LINK_COLOR;
 	}
 
-	protected String getMirrorComponentId() {
-		return getValue();
-	}
-
 	protected void setMirrorComponentId(String compId) {
 		setValue(compId);
 	}
 
 	public IContentVisualComponent getMirrorComponent(ContentContext ctx) throws Exception {
 		String compId = getMirrorComponentId();
-		ContentService content = ContentService.getInstance(ctx.getRequest());
-		IContentVisualComponent comp = content.getComponentNoRealContentType(ctx, compId);
-		if (comp == null && !StringHelper.isEmpty(compId)) {
-			logger.info("delete mirrorComponent with bad reference ("+compId+") : "+getId()+" (context:"+ctx.getGlobalContext().getContextKey()+" - page:"+getPage().getPath()+")");
-			deleteMySelf(ctx);
-		}
-		if (comp instanceof DynamicComponent) {
-			DynamicComponent dComp = (DynamicComponent)comp;			
-			if (dComp.getProperties() == null || dComp.getProperties().isEmpty()) {
-				StructuredProperties prop = new StructuredProperties();
-				prop.putAll(dComp.getConfigProperties());
-				dComp.setProperties(prop);
-				dComp.reloadProperties();
+		if (compId != null) {
+			ContentService content = ContentService.getInstance(ctx.getRequest());
+			IContentVisualComponent comp = content.getComponentNoRealContentType(ctx, compId);
+			if (comp == null && !StringHelper.isEmpty(compId)) {
+				logger.info("delete mirrorComponent with bad reference ("+compId+") : "+getId()+" (context:"+ctx.getGlobalContext().getContextKey()+" - page:"+getPage().getPath()+")");
+				deleteMySelf(ctx);
 			}
+			if (comp instanceof DynamicComponent) {
+				DynamicComponent dComp = (DynamicComponent)comp;			
+				if (dComp.getProperties() == null || dComp.getProperties().isEmpty()) {
+					StructuredProperties prop = new StructuredProperties();
+					prop.putAll(dComp.getConfigProperties());
+					dComp.setProperties(prop);
+					dComp.reloadProperties();
+				}
+			}
+			return comp;
+		} else {
+			return null;
 		}
-		return comp;
 	}
 
 	@Override
@@ -220,9 +258,13 @@ public class MirrorComponent extends AbstractVisualComponent implements IFieldCo
 			AbstractVisualComponent.setForcedId(ctx, null);
 			return xhtml;
 		} else {
-			deleteMySelf(ctx);
-		}
-		return "";
+			if (getMirrorComponentId() != null) {
+				deleteMySelf(ctx);
+			}
+			String content = NetHelper.readPageGet(new URL(getRemoteURL()));
+			JSONMap jsonMap = JSONMap.parseMap(content);
+			return StringEscapeUtils.unescapeHtml4(jsonMap.get("html").toString());
+		}		
 	}
 
 	@Override
@@ -290,12 +332,17 @@ public class MirrorComponent extends AbstractVisualComponent implements IFieldCo
 	@Override
 	public String performEdit(ContentContext ctx) throws Exception {
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
-		String newLink = requestService.getParameter(getCurrentInputName(), getMirrorComponentId());
+		String newLink = requestService.getParameter(getRemoteInputName(), null);		 
+		System.out.println(">>>>>>>>> MirrorComponent.performEdit : 1.newLink = "+newLink); //TODO: remove debug trace
+		if (StringHelper.isEmpty(newLink)) {
+			newLink = requestService.getParameter(getCurrentInputName(), null);
+		}
+		System.out.println(">>>>>>>>> MirrorComponent.performEdit : 2.newLink = "+newLink); //TODO: remove debug trace
 		if (requestService.getParameter(getUnlinkInputName(), null) != null) {
 			unlink(ctx);
 		} else if (newLink != null) {
-			if (!newLink.equals(getMirrorComponentId())) {
-				setMirrorComponentId(newLink);
+			if (!newLink.equals(getValue())) {
+				setValue(newLink);
 				setModify();
 				setNeedRefresh(true);
 			}
