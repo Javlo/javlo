@@ -192,8 +192,8 @@ public class MirrorComponent extends AbstractVisualComponent implements IFieldCo
 				if (remoteComp != null) {
 					return remoteComp;
 				} else  {
-					if (getValue().startsWith(URLHelper.createURL(ctx.getContextForAbsoluteURL(), "/"))) {						
-						String content = NetHelper.readPageGet(new URL(getValue()));						
+					if (!getValue().startsWith(URLHelper.createURL(ctx.getContextForAbsoluteURL(), "/"))) {						
+						String content = NetHelper.readPageGet(new URL(getValue()));	
 						JSONMap jsonMap = JSONMap.parseMap(content);						
 						remoteComp = ComponentFactory.createUnlinkedComponentFromMap(ctx, (Map<String, Object>)jsonMap);						
 						return remoteComp;
@@ -271,9 +271,17 @@ public class MirrorComponent extends AbstractVisualComponent implements IFieldCo
 			// comp.prepareView(ctx);
 			ctx.getRequest().setAttribute("nextSame", isNextSame(ctx));
 			ctx.getRequest().setAttribute("previousSame", isPreviousSame(ctx));
-			setContainerPage(ctx, getPage());			
+			setContainerPage(ctx, getPage());	
+			boolean emptyPage = false;
+			if (comp.getPage() == null) {
+				comp.setPage(getPage());
+				emptyPage=true;
+			}
 			String xhtml = comp.getXHTMLCode(ctx);
 			AbstractVisualComponent.setForcedId(ctx, null);
+			if (emptyPage) {
+				comp.setPage(null);
+			}
 			return xhtml;
 		} else {
 			if (getMirrorComponentId() != null) {
@@ -283,9 +291,8 @@ public class MirrorComponent extends AbstractVisualComponent implements IFieldCo
 			if (url.toString().contains('/'+URLHelper.EXPCOMP+'/')) {
 				return NetHelper.readPageGet(url);
 			} else {
-				String content = NetHelper.readPageGet(url);
-				JSONMap jsonMap = JSONMap.parseMap(content);
-				return StringEscapeUtils.unescapeHtml4(jsonMap.get("html").toString());
+				logger.warning("bad componet url : "+getValue());
+				return null;
 			}
 		}		
 	}
@@ -355,12 +362,10 @@ public class MirrorComponent extends AbstractVisualComponent implements IFieldCo
 	@Override
 	public String performEdit(ContentContext ctx) throws Exception {
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
-		String newLink = requestService.getParameter(getRemoteInputName(), null);		 
-		System.out.println(">>>>>>>>> MirrorComponent.performEdit : 1.newLink = "+newLink); //TODO: remove debug trace
+		String newLink = requestService.getParameter(getRemoteInputName(), null);
 		if (StringHelper.isEmpty(newLink)) {
 			newLink = requestService.getParameter(getCurrentInputName(), null);
-		}
-		System.out.println(">>>>>>>>> MirrorComponent.performEdit : 2.newLink = "+newLink); //TODO: remove debug trace
+		}		
 		if (requestService.getParameter(getUnlinkInputName(), null) != null) {
 			unlink(ctx);
 		} else if (newLink != null) {
