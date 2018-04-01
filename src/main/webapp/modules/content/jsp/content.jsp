@@ -208,7 +208,7 @@ for (IContentVisualComponent comp : components) {
       <div id="tab4<%=inputSuffix%>" class="raw">
       	<div class="json-link">
       		<a class="btn btn-default btn-sm" href="<%=URLHelper.createStaticURL(ctx, "/rest/component/"+comp.getId())%>">REST Link</a>
-      		<a class="btn btn-default btn-sm" href="<%=URLHelper.createStaticURL(ctx, "/"+URLHelper.EXPCOMP+"/"+comp.getId())%>">HTML Link</a>
+      		<a class="btn btn-default btn-sm" href="<%=URLHelper.createStaticURL(ctx, "/"+URLHelper.EXPCOMP+"/"+comp.getId()+".html")%>">HTML Link</a>
       	</div>
       	<textarea rows="5" cols="10" id="raw_value_<%=comp.getId()%>" name="" onchange="var item=jQuery('#raw_value_<%=comp.getId()%>'); item.attr('name', item.attr('id'));"><%=comp.getValue(ctx)%></textarea>
       </div><%}%>
