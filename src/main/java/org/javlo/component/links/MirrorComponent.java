@@ -45,6 +45,8 @@ public class MirrorComponent extends AbstractVisualComponent implements IFieldCo
 	
 	public Date latestError = null;
 	
+	private String latestErrorMessage = null;
+	
 	private IContentVisualComponent remoteComp = null;
 
 	/**
@@ -179,7 +181,7 @@ public class MirrorComponent extends AbstractVisualComponent implements IFieldCo
 			ContentService content = ContentService.getInstance(ctx.getRequest());
 			IContentVisualComponent comp = content.getComponentNoRealContentType(ctx, compId);
 			if (comp == null && !StringHelper.isEmpty(compId)) {
-				logger.info("delete mirrorComponent with bad reference ("+compId+") : "+getId()+" (context:"+ctx.getGlobalContext().getContextKey()+" - page:"+getPage().getPath()+")");
+				logger.info("delete mirrorComponent with bad reference ("+compId+") : "+getId()+" (context:"+ctx.getGlobalContext().getContextKey()+" - page:"+getPage().getPath()+") : "+latestErrorMessage);
 				deleteMySelf(ctx);
 			}
 			if (comp instanceof DynamicComponent) {
@@ -206,7 +208,8 @@ public class MirrorComponent extends AbstractVisualComponent implements IFieldCo
 							content = NetHelper.readPageGet(new URL(url));							
 						} catch (Exception e) {							
 							e.printStackTrace();
-							latestError = new Date();
+							latestErrorMessage = e.getMessage();
+							latestError = new Date();							
 							return null;
 						}	
 						JSONMap jsonMap = JSONMap.parseMap(content);						
