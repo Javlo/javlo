@@ -181,7 +181,7 @@ public class MirrorComponent extends AbstractVisualComponent implements IFieldCo
 			ContentService content = ContentService.getInstance(ctx.getRequest());
 			IContentVisualComponent comp = content.getComponentNoRealContentType(ctx, compId);
 			if (comp == null && !StringHelper.isEmpty(compId)) {
-				logger.info("delete mirrorComponent with bad reference ("+compId+") : "+getId()+" (context:"+ctx.getGlobalContext().getContextKey()+" - page:"+getPage().getPath()+") : "+latestErrorMessage);
+				logger.info("delete mirrorComponent with bad reference ("+compId+") : "+getId()+" (context:"+ctx.getGlobalContext().getContextKey()+" - page:"+getPage().getPath()+")");
 				deleteMySelf(ctx);
 			}
 			if (comp instanceof DynamicComponent) {
@@ -216,7 +216,7 @@ public class MirrorComponent extends AbstractVisualComponent implements IFieldCo
 						remoteComp = ComponentFactory.createUnlinkedComponentFromMap(ctx, (Map<String, Object>)jsonMap);						
 						return remoteComp;
 					} else {
-						logger.warning("mirror url link to the same site, use mirror component. (path="+getPage().getPath()+")");
+						logger.warning("mirror url link to the same site, use mirror component. (path="+getPage().getPath()+") >>> "+latestErrorMessage);
 					}
 				}
 			}
