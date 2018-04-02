@@ -207,8 +207,14 @@ for (IContentVisualComponent comp : components) {
       <%if (admin) {%>
       <div id="tab4<%=inputSuffix%>" class="raw">
       	<div class="json-link">
-      		<a class="btn btn-default btn-sm" href="<%=URLHelper.createStaticURL(ctx, "/rest/component/"+comp.getId())%>">REST Link</a>
-      		<a class="btn btn-default btn-sm" href="<%=URLHelper.createStaticURL(ctx, "/"+URLHelper.EXPCOMP+"/"+comp.getId()+".html")%>">HTML Link</a>
+      		<c:url var="restLink" value="<%=URLHelper.createStaticURL(ctx, "/rest/component/"+comp.getId())%>">
+      			<c:param name="<%=URLHelper.GLOBAL_CONTEXT_INSTANCE_ID_PARAM%>" value="<%=globalContext.getInstanceId()%>" />
+      		</c:url>
+      		<a class="btn btn-default btn-sm" href="${restLink}">REST Link</a>
+      		<c:url var="htmlLink" value="<%=URLHelper.createStaticURL(ctx, "/"+URLHelper.EXPCOMP+"/"+comp.getId()+".html")%>">
+      			<c:param name="<%=URLHelper.GLOBAL_CONTEXT_INSTANCE_ID_PARAM%>" value="<%=globalContext.getInstanceId()%>" />
+      		</c:url>
+      		<a class="btn btn-default btn-sm" href="${htmlLink}">HTML Link</a>
       	</div>
       	<textarea rows="5" cols="10" id="raw_value_<%=comp.getId()%>" name="" onchange="var item=jQuery('#raw_value_<%=comp.getId()%>'); item.attr('name', item.attr('id'));"><%=comp.getValue(ctx)%></textarea>
       </div><%}%>

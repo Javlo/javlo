@@ -33,6 +33,8 @@ import org.owasp.encoder.Encode;
 public abstract class ElementaryURLHelper {
 	
 	public static final String EXPCOMP = "expcomp";
+	
+	public static final String GLOBAL_CONTEXT_INSTANCE_ID_PARAM = "_globalContextInstanceId";
 
 	private static java.util.logging.Logger logger = java.util.logging.Logger.getLogger(ElementaryURLHelper.class.getName());
 

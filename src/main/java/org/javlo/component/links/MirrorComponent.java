@@ -24,6 +24,7 @@ import org.javlo.component.core.ISubTitle;
 import org.javlo.component.dynamic.DynamicComponent;
 import org.javlo.component.image.IImageTitle;
 import org.javlo.context.ContentContext;
+import org.javlo.context.GlobalContext;
 import org.javlo.fields.Field;
 import org.javlo.fields.IFieldContainer;
 import org.javlo.helper.DebugHelper;
@@ -191,9 +192,14 @@ public class MirrorComponent extends AbstractVisualComponent implements IFieldCo
 			if (!getValue().contains('/'+URLHelper.EXPCOMP+'/')) {
 				if (remoteComp != null) {
 					return remoteComp;
-				} else  {
-					if (!getValue().startsWith(URLHelper.createURL(ctx.getContextForAbsoluteURL(), "/"))) {						
-						String content = NetHelper.readPageGet(new URL(getValue()));	
+				} else  {					
+					String url = getValue();
+					url = URLHelper.addParam(url, URLHelper.GLOBAL_CONTEXT_INSTANCE_ID_PARAM, ctx.getGlobalContext().getInstanceId());
+					RequestService rs = RequestService.getInstance(ctx.getRequest());
+					
+					String baseURL = URLHelper.createStaticURL(ctx.getContextForAbsoluteURL(), "/");
+					if (!url.startsWith(baseURL)) {						
+						String content = NetHelper.readPageGet(new URL(url));	
 						JSONMap jsonMap = JSONMap.parseMap(content);						
 						remoteComp = ComponentFactory.createUnlinkedComponentFromMap(ctx, (Map<String, Object>)jsonMap);						
 						return remoteComp;

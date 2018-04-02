@@ -137,6 +137,8 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	private Calendar latestTicketNotificaitonTime = Calendar.getInstance();
 
 	private static final IURLFactory NO_URL_FACTORY = new NoURLFactory();
+	
+	private final String INSTANCE_ID = StringHelper.getLargeRandomIdBase64();
 
 	public static final String POP_HOST_PARAM = "mail.pop.host";
 	public static final String POP_PORT_PARAM = "mail.pop.port";
@@ -284,6 +286,10 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	public static final String LOGO_FILE_NAME = "dynamic_template/logo.png";
 
 	public static final String USERS_FOLDER = "users_files";
+	
+	public String getInstanceId() {
+		return INSTANCE_ID;
+	}
 
 	public GlobalContext(String contextKey) {
 		this.contextKey = contextKey;
