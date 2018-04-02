@@ -45,7 +45,7 @@ public class SearchModuleAction extends AbstractModuleAction {
 			}
 		}
 		if (outFilter && !StringHelper.isEmpty(filter.getGlobal())) {
-			if (comp.getValue().toLowerCase().contains(filter.getGlobal().toLowerCase())) {
+			if (comp.getValue().toLowerCase().contains(filter.getGlobal().toLowerCase()) || filter.getGlobal().contains(comp.getId())) {
 				outFilter = true;
 			} else {
 				outFilter = false;
