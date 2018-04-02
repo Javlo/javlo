@@ -203,10 +203,10 @@ public class MirrorComponent extends AbstractVisualComponent implements IFieldCo
 					if (!url.startsWith(baseURL)) {						
 						String content;
 						try {
-							content = NetHelper.readPageGet(new URL(url));
-							latestError = new Date();
+							content = NetHelper.readPageGet(new URL(url));							
 						} catch (Exception e) {							
 							e.printStackTrace();
+							latestError = new Date();
 							return null;
 						}	
 						JSONMap jsonMap = JSONMap.parseMap(content);						
@@ -371,6 +371,7 @@ public class MirrorComponent extends AbstractVisualComponent implements IFieldCo
 			ctx.setClosePopup(true);
 			setModify();
 			setNeedRefresh(true);
+			latestError = null;
 		}
 	}
 
