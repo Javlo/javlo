@@ -173,7 +173,7 @@ public class MirrorComponent extends AbstractVisualComponent implements IFieldCo
 
 	public IContentVisualComponent getMirrorComponent(ContentContext ctx) throws Exception {
 		if (latestError != null && latestError.getTime()+1000*60*60 > System.currentTimeMillis()) {
-			logger.warning("detect error on : "+ctx.getGlobalContext().getContextKey()+" - "+ctx.getPath()+" - "+getId());
+			logger.warning("detect error on : "+ctx.getGlobalContext().getContextKey()+" - "+ctx.getPath()+" - "+getId()+ " >>> "+latestErrorMessage);
 			return null;
 		}
 		String compId = getMirrorComponentId();
@@ -216,7 +216,7 @@ public class MirrorComponent extends AbstractVisualComponent implements IFieldCo
 						remoteComp = ComponentFactory.createUnlinkedComponentFromMap(ctx, (Map<String, Object>)jsonMap);						
 						return remoteComp;
 					} else {
-						logger.warning("mirror url link to the same site, use mirror component. (path="+getPage().getPath()+") >>> "+latestErrorMessage);
+						logger.warning("mirror url link to the same site, use mirror component. (path="+getPage().getPath()+")");
 					}
 				}
 			}
