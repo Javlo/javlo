@@ -172,6 +172,7 @@ public class MirrorComponent extends AbstractVisualComponent implements IFieldCo
 	public IContentVisualComponent getMirrorComponent(ContentContext ctx) throws Exception {
 		if (latestError != null && latestError.getTime()+1000*60*60 > System.currentTimeMillis()) {
 			logger.warning("detect error on : "+ctx.getGlobalContext().getContextKey()+" - "+ctx.getPath());
+			return null;
 		}
 		String compId = getMirrorComponentId();
 		if (compId != null) {
@@ -387,6 +388,7 @@ public class MirrorComponent extends AbstractVisualComponent implements IFieldCo
 				setValue(newLink);
 				setModify();
 				setNeedRefresh(true);
+				latestError = null;
 			}
 		}
 		return null;
