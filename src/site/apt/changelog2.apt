@@ -928,5 +928,5 @@ change log
 
  * 1/ optimisation reference to contentContext (JavloELFile and SearchResult) / import with translation
  
- * 2/ language mirror / convert pdf and png to jpg / definition
+ * 2/ language mirror / convert pdf and png to jpg / definition / persistence lock on global context and not on static variable
 
