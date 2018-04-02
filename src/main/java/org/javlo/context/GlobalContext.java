@@ -133,6 +133,8 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	private Properties url404Map = null;
 
 	private POPThread popThread = null;
+	
+	private Object localLock = new Object();
 
 	private Calendar latestTicketNotificaitonTime = Calendar.getInstance();
 
@@ -3323,7 +3325,11 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	}
 
 	public Object getLockLoadContent() {
-		return PersistenceThread.LOCK;
+		if (!StringHelper.isEmpty(getDMZServerInter()) || !StringHelper.isEmpty(getDMZServerIntra())) {
+			return PersistenceThread.LOCK;
+		} else {
+			return localLock;
+		}
 	}
 
 	public Map<String, String> getConfig() {
