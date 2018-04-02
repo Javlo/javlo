@@ -9,13 +9,13 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.logging.Logger;
 
-import org.apache.commons.lang3.StringEscapeUtils;
 import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.component.core.ComponentFactory;
@@ -24,10 +24,8 @@ import org.javlo.component.core.ISubTitle;
 import org.javlo.component.dynamic.DynamicComponent;
 import org.javlo.component.image.IImageTitle;
 import org.javlo.context.ContentContext;
-import org.javlo.context.GlobalContext;
 import org.javlo.fields.Field;
 import org.javlo.fields.IFieldContainer;
-import org.javlo.helper.DebugHelper;
 import org.javlo.helper.NetHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
@@ -44,6 +42,8 @@ import org.javlo.utils.StructuredProperties;
 public class MirrorComponent extends AbstractVisualComponent implements IFieldContainer, IImageTitle, ISubTitle {
 
 	public static final String TYPE = "mirror";
+	
+	public Date latestError = null;
 	
 	private IContentVisualComponent remoteComp = null;
 
@@ -170,6 +170,9 @@ public class MirrorComponent extends AbstractVisualComponent implements IFieldCo
 	}
 
 	public IContentVisualComponent getMirrorComponent(ContentContext ctx) throws Exception {
+		if (latestError != null && latestError.getTime()+1000*60*60 > System.currentTimeMillis()) {
+			logger.warning("detect error on : "+ctx.getGlobalContext().getContextKey()+" - "+ctx.getPath());
+		}
 		String compId = getMirrorComponentId();
 		if (compId != null) {
 			ContentService content = ContentService.getInstance(ctx.getRequest());
@@ -195,11 +198,16 @@ public class MirrorComponent extends AbstractVisualComponent implements IFieldCo
 				} else  {					
 					String url = getValue();
 					url = URLHelper.addParam(url, URLHelper.GLOBAL_CONTEXT_INSTANCE_ID_PARAM, ctx.getGlobalContext().getInstanceId());
-					RequestService rs = RequestService.getInstance(ctx.getRequest());
-					
 					String baseURL = URLHelper.createStaticURL(ctx.getContextForAbsoluteURL(), "/");
 					if (!url.startsWith(baseURL)) {						
-						String content = NetHelper.readPageGet(new URL(url));	
+						String content;
+						try {
+							content = NetHelper.readPageGet(new URL(url));
+							latestError = new Date();
+						} catch (Exception e) {							
+							e.printStackTrace();
+							return null;
+						}	
 						JSONMap jsonMap = JSONMap.parseMap(content);						
 						remoteComp = ComponentFactory.createUnlinkedComponentFromMap(ctx, (Map<String, Object>)jsonMap);						
 						return remoteComp;
