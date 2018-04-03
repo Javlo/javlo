@@ -34,6 +34,7 @@ import org.javlo.data.InfoBean;
 import org.javlo.filter.DirectoryFilter;
 import org.javlo.helper.ExifHelper;
 import org.javlo.helper.LangHelper;
+import org.javlo.helper.NetHelper;
 import org.javlo.helper.PDFHelper;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.ServletHelper;
@@ -111,11 +112,12 @@ public class FileAction extends AbstractModuleAction {
 
 		String editFileName = ctx.getRequest().getParameter("editFile");
 		if (ctx.getRequest().getParameter("path") != null) {
-			fileModuleContext.setPath(ctx.getRequest().getParameter("path"));
-			performUpdateBreadCrumb(RequestService.getInstance(ctx.getRequest()), ctx, EditContext.getInstance(globalContext, ctx.getRequest().getSession()), modulesContext, modulesContext.getCurrentModule(), fileModuleContext);
+			fileModuleContext.setPath(ctx.getRequest().getParameter("path"));			
 		}
+		updateBreadCrumb(RequestService.getInstance(ctx.getRequest()), ctx, EditContext.getInstance(globalContext, ctx.getRequest().getSession()), modulesContext, modulesContext.getCurrentModule(), fileModuleContext, false, null);
 		if (editFileName != null) {
 			if (StringHelper.isImage(editFileName)) {
+				updateBreadCrumb(RequestService.getInstance(ctx.getRequest()), ctx, EditContext.getInstance(globalContext, ctx.getRequest().getSession()), modulesContext, modulesContext.getCurrentModule(), fileModuleContext, true, editFileName);
 				modulesContext.getCurrentModule().setToolsRenderer(null);
 				File editFile = new File(URLHelper.mergePath(getFolder(ctx).getAbsolutePath(), editFileName));
 				ctx.getRequest().setAttribute("editFile", editFileName);
@@ -126,7 +128,8 @@ public class FileAction extends AbstractModuleAction {
 				} else {
 					logger.warning("file not found : " + editFile);
 					ctx.getRequest().setAttribute("fileFound", false);
-				}
+				}				
+				ctx.getRequest().setAttribute("jpeg", StringHelper.isJpeg(editFileName));
 				modulesContext.getCurrentModule().setRenderer("/jsp/image_editor.jsp");
 			} else {
 				modulesContext.getCurrentModule().setToolsRenderer(null);
@@ -211,8 +214,12 @@ public class FileAction extends AbstractModuleAction {
 		request.setAttribute("changeRoot", "true");
 		return null;
 	}
-
+	
 	public String performUpdateBreadCrumb(RequestService rs, ContentContext ctx, EditContext editContext, ModulesContext moduleContext, Module currentModule, FileModuleContext fileModuleContext) throws Exception {
+		return updateBreadCrumb(rs, ctx, editContext, moduleContext, currentModule, fileModuleContext, false, null);
+	}
+	
+	private String updateBreadCrumb(RequestService rs, ContentContext ctx, EditContext editContext, ModulesContext moduleContext, Module currentModule, FileModuleContext fileModuleContext, boolean readonly, String finalFile) throws Exception {
 
 		currentModule.clearBreadcrump();
 		currentModule.setBreadcrumbTitle("");
@@ -272,14 +279,17 @@ public class FileAction extends AbstractModuleAction {
 						}
 						childrenLinks.add(new HtmlLink(childURL, file.getName(), file.getName()));
 					}
-				}
-				Collections.sort(childrenLinks, new HtmlLink.SortOnLegend());
-				boolean readonly = false;
+				}				
+				Collections.sort(childrenLinks, new HtmlLink.SortOnLegend());				
 				if (i<2 && rs.getParameter("select") != null) {
 					readonly=true;
 				}
 				currentModule.pushBreadcrumb(new HtmlLink(staticURL, path, path, i == pathItems.length - 1, childrenLinks, readonly));
 			}
+		}
+		
+		if (finalFile != null) {
+			currentModule.pushBreadcrumb(new HtmlLink(currentPath+'/'+finalFile, finalFile, finalFile, readonly));
 		}
 
 		String componentRenderer = editContext.getBreadcrumbsTemplate();
@@ -686,7 +696,7 @@ public class FileAction extends AbstractModuleAction {
 		if (rs.getParameter("cancel", null) != null) {
 			return null;
 		}
-
+		
 		File file = new File(URLHelper.mergePath(getFolder(ctx).getAbsolutePath(), rs.getParameter("file", "-- param file undefined --")));
 		if (!canModifyFile(ctx, file)) {
 			return "securtiy error.";
@@ -695,53 +705,75 @@ public class FileAction extends AbstractModuleAction {
 			return "file not found : " + file;
 		}
 		
-		ImageMetadata md = ExifHelper.readMetadata(file);
-		BufferedImage image = ImageIO.read(file);
-		boolean transform = false;
-		if (StringHelper.isTrue(rs.getParameter("flip", null))) {
-			image = ImageEngine.flip(image, false);
-			StaticInfo staticInfo = StaticInfo.getInstance(ctx, file);
-			if (staticInfo.getFocusZoneX(ctx) != StaticInfo.DEFAULT_FOCUS_X) {
-				staticInfo.setFocusZoneX(ctx, 2 * StaticInfo.DEFAULT_FOCUS_X - staticInfo.getFocusZoneX(ctx));
+		if (rs.getParameter("duplicate", null) != null) {
+			File newFile = ResourceHelper.getFreeFileName(file);
+			ResourceHelper.writeFileToFile(file, newFile);
+			Map<String,String> params = new HashMap<String, String>();
+			params.put("editFile", newFile.getName());
+			if (rs.getParameter("previewEdit") != null) {
+				params.put("previewEdit", rs.getParameter("previewEdit"));
 			}
-			transform = true;
+			if (rs.getParameter("__back") != null) {
+				params.put("__back", rs.getParameter("__back"));
+			}
+			if (rs.getParameter("preview-edit-content") != null) {
+				params.put("preview-edit-content", rs.getParameter("preview-edit-content"));
+			}
+			if (rs.getParameter("comp_id") != null) {
+				params.put("comp_id", rs.getParameter("comp_id"));
+			}
+			NetHelper.sendRedirectTemporarily(ctx.getResponse(), URLHelper.createURL(ctx, params));			
 		} else {
-			int rotate = Integer.parseInt(rs.getParameter("rotate", null));
-			if (rotate > 0) {
+			ImageMetadata md = ExifHelper.readMetadata(file);
+			BufferedImage image = ImageIO.read(file);
+			boolean transform = false;
+			if (StringHelper.isTrue(rs.getParameter("flip", null))) {
+				image = ImageEngine.flip(image, false);
+				StaticInfo staticInfo = StaticInfo.getInstance(ctx, file);
+				if (staticInfo.getFocusZoneX(ctx) != StaticInfo.DEFAULT_FOCUS_X) {
+					staticInfo.setFocusZoneX(ctx, 2 * StaticInfo.DEFAULT_FOCUS_X - staticInfo.getFocusZoneX(ctx));
+				}
 				transform = true;
-				image = ImageEngine.rotate(image, rotate, null);
+			} else {
+				int rotate = Integer.parseInt(rs.getParameter("rotate", null));
+				if (rotate > 0) {
+					transform = true;
+					image = ImageEngine.rotate(image, rotate, null);
+				}
 			}
-		}
-		int cropTop = Integer.parseInt(rs.getParameter("crop-top", null));
-		int cropLeft = Integer.parseInt(rs.getParameter("crop-left", null));
-		int cropWidth = Integer.parseInt(rs.getParameter("crop-width", null));
-		int cropHeight = Integer.parseInt(rs.getParameter("crop-height", null));
-		final int REFERENCE_SIZE = 10000;
-		if (cropTop > 0 || cropLeft > 0 || cropWidth < REFERENCE_SIZE || cropHeight < REFERENCE_SIZE) {
-			transform = true;
-			int width = Math.round(cropWidth * image.getWidth() / REFERENCE_SIZE);
-			int height = Math.round(cropHeight * image.getHeight() / REFERENCE_SIZE);
-			int x = Math.round(cropLeft * image.getWidth() / REFERENCE_SIZE);
-			int y = Math.round(cropTop * image.getHeight() / REFERENCE_SIZE);
-			image = ImageEngine.cropImage(image, width, height, x, y);
-			StaticInfo staticInfo = StaticInfo.getInstance(ctx, file);
-			staticInfo.resetImageSize(ctx);
-		}
-		if (transform) {
-			logger.info("transform : " + file);
-			FileCache.getInstance(ctx.getRequest().getSession().getServletContext()).deleteAllFile(ctx.getGlobalContext().getContextKey(), file.getName());
-
-			TransactionFile transactionFile = new TransactionFile(file);
-			try {
-				ImageIO.write(image, StringHelper.getFileExtension(file.getName().toLowerCase()), transactionFile.getTempFile());
-				transactionFile.commit();
-				ExifHelper.writeMetadata(md, file);
-			} catch (Exception e) {
-				transactionFile.rollback();
-				throw e;
+			int cropTop = Integer.parseInt(rs.getParameter("crop-top", null));
+			int cropLeft = Integer.parseInt(rs.getParameter("crop-left", null));
+			int cropWidth = Integer.parseInt(rs.getParameter("crop-width", null));
+			int cropHeight = Integer.parseInt(rs.getParameter("crop-height", null));
+			final int REFERENCE_SIZE = 10000;
+			if (cropTop > 0 || cropLeft > 0 || cropWidth < REFERENCE_SIZE || cropHeight < REFERENCE_SIZE) {
+				transform = true;
+				int width = Math.round(cropWidth * image.getWidth() / REFERENCE_SIZE);
+				int height = Math.round(cropHeight * image.getHeight() / REFERENCE_SIZE);
+				int x = Math.round(cropLeft * image.getWidth() / REFERENCE_SIZE);
+				int y = Math.round(cropTop * image.getHeight() / REFERENCE_SIZE);
+				image = ImageEngine.cropImage(image, width, height, x, y);
+				StaticInfo staticInfo = StaticInfo.getInstance(ctx, file);
+				staticInfo.resetImageSize(ctx);
+			}
+			if (transform) {
+				logger.info("transform : " + file);
+				FileCache.getInstance(ctx.getRequest().getSession().getServletContext()).deleteAllFile(ctx.getGlobalContext().getContextKey(), file.getName());
+	
+				TransactionFile transactionFile = new TransactionFile(file);
+				try {
+					ImageIO.write(image, StringHelper.getFileExtension(file.getName().toLowerCase()), transactionFile.getTempFile());
+					transactionFile.commit();
+					ExifHelper.writeMetadata(md, file);
+				} catch (Exception e) {
+					transactionFile.rollback();
+					throw e;
+				}
 			}
 		}
 		return null;
 	}
 
 }
+
+	

@@ -52,6 +52,7 @@
 			<div class="form-group">				
 				<input type="submit" name="cancel" class="btn btn-default" value="${i18n.edit['global.cancel']}" />
 				<input type="submit" class="btn btn-primary" value="${i18n.edit['global.save']}" />
+				<input type="submit" name="duplicate" class="btn btn-default" value="${i18n.edit['global.duplicate']}" />
 				<c:if test="${!jpeg}"><input type="submit" class="btn btn-default" name="jpeg" value="> jpeg" /></c:if>				
 			</div>
 		</form>
