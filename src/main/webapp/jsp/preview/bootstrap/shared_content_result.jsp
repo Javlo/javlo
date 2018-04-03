@@ -6,13 +6,13 @@
 		<c:set var="colsClass" value="no-cols" />
 	</c:if>
 </c:forEach>
-<div class="provider-${provider.name} privider-type-${provider.type} height-to-bottom">
+<div class="provider-${provider.name} provider-type-${provider.type} height-to-bottom">
 <div class="row">
 <c:if test="${fn:length(sharedContent)==0}">
 <div class="col-md-12"><div class="alert alert-info" role="alert">${i18n.edit['global.empty-list']}</div></div>
 </c:if>
 <c:forEach var="content" items="${sharedContent}" varStatus="status">
-<div class="col-md-6 ${not empty content.description?'width-description':'without-description'}">
+<div class="col-md-${provider.large?'12':'6'} ${not empty content.description?'width-description':'without-description'}">
 <div class="thumbnail shared-content-item" data-shared="${content.id}">
 <c:if test="${not empty content.editURL}">
 <c:if test="${!content.editAsModal}">

@@ -45,5 +45,9 @@ public class SharedContentProviderBean {
 	public boolean isUploadable() {
 		return provider.isUploadable(ctx);
 	}
+	
+	public boolean isLarge() {
+		return provider.isLarge();
+	}
 
 }

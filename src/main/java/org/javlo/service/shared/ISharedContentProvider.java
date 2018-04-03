@@ -64,6 +64,8 @@ public interface ISharedContentProvider {
 	
 	public boolean isUploadable(ContentContext ctx);
 	
+	public boolean isLarge();
+	
 	public void upload(ContentContext ctx, String fileName, InputStream in, String category, boolean rename) throws IOException;
 
 }

@@ -17,6 +17,7 @@ import org.javlo.service.shared.SharedContent;
 import org.javlo.utils.TimeMap;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
@@ -43,8 +44,7 @@ public class PixabaySharedContentProvider extends AbstractSharedContentProvider 
 	@Override
 	public Collection<SharedContent> searchContent(ContentContext ctx, String query) {
 		StaticConfig staticConfig = ctx.getGlobalContext().getStaticConfig();
-		String basicURL = "https://pixabay.com/api/?key=" + staticConfig.getSharedPixaBayAPIKey() + "&q=" + query
-				+ "&image_type=photo&pretty=true&per_page=100";		
+		String basicURL = "https://pixabay.com/api/?key=" + staticConfig.getSharedPixaBayAPIKey() + "&q=" + query+ "&image_type=photo&pretty=true&per_page=100";		
 		Collection<SharedContent> outSharedContent = new LinkedList<SharedContent>();
 		try {
 			JsonObject json = cache.get(query);
@@ -60,9 +60,19 @@ public class PixabaySharedContentProvider extends AbstractSharedContentProvider 
 				PixabaySharedContent sharedContent = new PixabaySharedContent(id, null);
 				String title = StringHelper.neverNull(item.get("tags"));
 				title = title.replaceAll("\"", "");
-				sharedContent.setTitle(title.trim());
-				sharedContent.setImageUrl(item.get("webformatURL").getAsString());
-				sharedContent.setRemoteImageUrl(item.get("webformatURL").getAsString());
+				sharedContent.setTitle(title.trim());				
+				JsonElement el = item.get("imageURL");
+				if (el == null) {
+					el = item.get("fullHDURL");
+				} 
+				if (el == null) {
+					el = item.get("largeImageURL");
+				}
+				if (el == null) {
+					el = item.get("webformatURL");
+				}
+				sharedContent.setImageUrl(el.getAsString());
+				sharedContent.setRemoteImageUrl(el.getAsString());
 				outSharedContent.add(sharedContent);
 			}
 			return outSharedContent;
@@ -103,6 +113,11 @@ public class PixabaySharedContentProvider extends AbstractSharedContentProvider 
 			System.out.println(((JsonObject) hits.get(i)).get("previewURL"));
 		}
 		System.out.println("#=" + json.size());
+	}
+	
+	@Override
+	public boolean isLarge() {	
+		return true;
 	}
 
 }
