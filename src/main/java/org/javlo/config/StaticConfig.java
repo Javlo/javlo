@@ -1771,7 +1771,7 @@ public class StaticConfig extends Observable {
 	}
 
 	public String getImageFormat() {
-		return properties.getString("content.image-format", "png,jpg,jpeg,gif");
+		return properties.getString("content.image-format", "png,jpg,jpeg,gif,svg");
 	}
 
 	public String getVideoFormat() {

@@ -258,12 +258,13 @@ public class GlobalImage extends Image implements IImageFilter {
 		ctx.getRequest().setAttribute("link", link);
 		ctx.getRequest().setAttribute("alt", getAlt(ctx));
 		String imageURL = getImageURL(ctx);
+		String ext = StringHelper.getFileExtension(getFileName());
 		if (imageURL != null) {
 			ctx.getRequest().setAttribute("image", imageURL);
 		} else {
 			ctx.getRequest().setAttribute("image", null);
 		}
-		if (getFilter(ctx).equals(RAW_FILTER)) {
+		if (getFilter(ctx).equals(RAW_FILTER) || ext.equalsIgnoreCase("svg")) {
 			ctx.getRequest().setAttribute("previewURL", URLHelper.createResourceURL(ctx, getResourceURL(ctx, getFileName())));
 			ctx.getRequest().setAttribute("loadURL", URLHelper.createResourceURL(ctx, getResourceURL(ctx, getFileName())));
 		} else {
