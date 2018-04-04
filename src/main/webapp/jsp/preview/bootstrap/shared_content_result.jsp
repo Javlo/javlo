@@ -13,7 +13,7 @@
 </c:if>
 <c:forEach var="content" items="${sharedContent}" varStatus="status">
 <div class="col-md-${provider.large?'12':'6'} ${not empty content.description?'width-description':'without-description'}">
-<div class="thumbnail shared-content-item" data-shared="${content.id}">
+<div class="thumbnail shared-content-item ${provider.large?'large':'small'}" data-shared="${content.id}">
 <c:if test="${not empty content.editURL}">
 <c:if test="${!content.editAsModal}">
 <a href="${content.editURL}" title="edit" lang="en">
@@ -24,6 +24,7 @@
 		<figure><img id="img-${status.index}" src="${content.imageURL}"/></figure>
 	</c:if>	
 	<div class="caption">${content.title}</div>
+	<c:if test="${not empty content.photoPageLink}"><div class="links"><a target="_blank" href="${content.photoPageLink}"><i class="fa fa-external-link" aria-hidden="true"></i> download HD</a></div></c:if>
 <c:if test="${not empty content.editURL}">
 </a>
 </c:if>	

@@ -57,7 +57,7 @@ public class PixabaySharedContentProvider extends AbstractSharedContentProvider 
 			for (int i = 0; i < hits.size(); i++) {
 				JsonObject item = (JsonObject) hits.get(i);
 				String id = StringHelper.neverNull(item.get("id"));
-				PixabaySharedContent sharedContent = new PixabaySharedContent(id, null);
+				RemoteImageSharedContent sharedContent = new RemoteImageSharedContent(id, null, "pixabay");
 				String title = StringHelper.neverNull(item.get("tags"));
 				title = title.replaceAll("\"", "");
 				sharedContent.setTitle(title.trim());				
@@ -71,6 +71,7 @@ public class PixabaySharedContentProvider extends AbstractSharedContentProvider 
 				if (el == null) {
 					el = item.get("webformatURL");
 				}
+				sharedContent.setPhotoPageLink(item.get("pageURL").getAsString());
 				sharedContent.setImageUrl(el.getAsString());
 				sharedContent.setRemoteImageUrl(el.getAsString());
 				outSharedContent.add(sharedContent);

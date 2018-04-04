@@ -15,13 +15,17 @@ import org.javlo.context.GlobalContext;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.service.shared.SharedContent;
+import org.javlo.ztatic.StaticInfo;
 
-public class PixabaySharedContent extends SharedContent {
+public class RemoteImageSharedContent extends SharedContent {
 	
 	private String remoteImageUrl;
+	
+	private String folder;
 
-	public PixabaySharedContent(String id, Collection<ComponentBean> content) throws Exception {		
+	public RemoteImageSharedContent(String id, Collection<ComponentBean> content, String folder) throws Exception {		
 		super(id, content);
+		this.folder = folder;
 	}
 
 	public String getRemoteImageUrl() {
@@ -34,23 +38,20 @@ public class PixabaySharedContent extends SharedContent {
 	
 	@Override
 	public void loadContent(ContentContext ctx) {
-		super.loadContent(ctx);	
+		super.loadContent(ctx);
 		if (content == null) {
-			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-			
-			String baseStaticFolder = URLHelper.mergePath(SHARED_CONTENT_FOLDER, "pixabay");		
-			
-			String imageFolder = URLHelper.mergePath(globalContext.getDataFolder(), globalContext.getStaticConfig().getImageFolder(), baseStaticFolder);
-			
+			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());			
+			String baseStaticFolder = URLHelper.mergePath(SHARED_CONTENT_FOLDER, folder);			
+			String imageFolder = URLHelper.mergePath(globalContext.getDataFolder(), globalContext.getStaticConfig().getImageFolder(), baseStaticFolder);			
 			File imageFile = new File (URLHelper.mergePath(imageFolder, getId()+".jpg"));
-			
 			InputStream in = null;
 			try {
 				if (!imageFile.exists()) {
-					System.out.println("*** DOWNLOAD : "+getRemoteImageUrl());
 					URL imageURL = new URL(getRemoteImageUrl());				
 					in = imageURL.openStream();
 					ResourceHelper.writeStreamToFile(in, imageFile);
+					StaticInfo staticInfo = StaticInfo.getInstance(ctx, imageFile);
+					staticInfo.setTitle(ctx, getTitle());
 				}
 				ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 				PrintStream out = new PrintStream(outStream);

@@ -2092,6 +2092,10 @@ public class Edit extends AbstractModuleAction {
 		if (ctx.getCurrentPage().isChildrenAssociation()) {
 			fromPage = comp.getPage();
 		}
+		
+		if (comp == null) {
+			return "component not found : "+compId;
+		}
 
 		String fromArea = comp.getArea();
 

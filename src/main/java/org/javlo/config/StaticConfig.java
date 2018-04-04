@@ -1046,6 +1046,10 @@ public class StaticConfig extends Observable {
 	public String getSharedPixaBayAPIKey() {
 		return properties.getString("shared.pixabay.key", null);
 	}
+	
+	public String getSharedStockvaultAPIKey() {
+		return properties.getString("shared.stockvault.key", null);
+	}
 
 	public String getSMTPHost() {
 		return properties.getString(SMTP_HOST_PARAM, null);

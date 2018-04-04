@@ -44,6 +44,7 @@ public class SharedContent {
 	private String title = null;
 	private String description = null;
 	private String imageURL = null;
+	private String photoPageLink = null;
 	private String id = null;
 	private Collection<String> categories = new HashSet<String>();
 	private String linkInfo = null;
@@ -185,6 +186,14 @@ public class SharedContent {
 
 	public void setEditAsModal(boolean editAsPopup) {
 		this.editAsModal = editAsPopup;
+	}
+
+	public String getPhotoPageLink() {
+		return photoPageLink;
+	}
+
+	public void setPhotoPageLink(String photoPageLink) {
+		this.photoPageLink = photoPageLink;
 	}
 
 }
