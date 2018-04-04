@@ -274,6 +274,7 @@ public class StringHelperTest extends TestCase {
 		assertTrue(StringHelper.isLikeNumber("125"));
 		assertTrue(StringHelper.isLikeNumber("-12"));
 		assertFalse(StringHelper.isLikeNumber("abc"));
+		assertFalse(StringHelper.isLikeNumber("12-24"));
 		assertTrue(StringHelper.isLikeNumber("12 %"));
 		assertTrue(StringHelper.isLikeNumber("12,3 %"));
 		assertTrue(StringHelper.isLikeNumber("-12,3"));

@@ -1280,7 +1280,7 @@ public class StringHelper {
 		case '7':
 		case '8':
 		case '9':
-		case '-':
+		//case '-':
 			return true;
 		default:
 			return false;
@@ -1312,6 +1312,10 @@ public class StringHelper {
 		if (str == null || str.length() == 0) {
 			return false;
 		} else {
+			str=str.trim();
+			if (str.charAt(0)=='-') {
+				str=str.substring(1);
+			}
 			for (char c : str.toCharArray()) {
 				if (!isDigit(c)) {
 					return false;
