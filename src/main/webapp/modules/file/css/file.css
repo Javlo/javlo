@@ -90,17 +90,17 @@ body .elfinder-cwd-file .elfinder-cwd-select {
 	min-height: 15px;
 }
 
-.elfinder-dialog-icon {
-	width: 16px;
-	height: 16px;
-	background-size: 16px auto;
-	top: 0;
-	margin-top: 4px;
-}
+/* .elfinder-dialog-icon { */
+/* 	width: 16px; */
+/* 	height: 16px; */
+/* 	background-size: 16px auto; */
+/* 	top: 0; */
+/* 	margin-top: 4px; */
+/* } */
 
-body .ui-dialog .ui-dialog-content {
-	padding-left: 32px;	
-}
+/* body .ui-dialog .ui-dialog-content { */
+/* 	padding-left: 32px;	 */
+/* } */
 
 .form-list .title span.delete {
 	float: right;

@@ -55,7 +55,7 @@ public class FieldMultiList extends Field {
 			}
 			String key = StringHelper.neverNull(value.getKey(), value.getValue());
 			String label = StringHelper.neverEmpty(value.getValue(), i18nAccess.getViewText("global.none", "?"));
-			out.println("<div class=\"form-check form-check-inline\"><label class=\"checkbox-inline form-check-label\"><input class=\"form-check-input\" type=\"checkbox\" name=\"" + getInputName() + "\" id=\"cb-" + key + "\" value=\"" + key + "\"" + checked + "/>" + label + "</label></div>");
+			out.println("<div class=\"form-check form-check-inline\"><input class=\"form-check-input\" type=\"checkbox\" name=\"" + getInputName() + "\" id=\"cb-" + key + "\" value=\"" + key + "\"" + checked + "/><label for=\"cb-" + key + "\" class=\"checkbox-inline form-check-label\">" + label + "</label></div>");
 		}
 		if (getMessage() != null && getMessage().trim().length() > 0) {
 			out.println("	<div class=\"message " + getMessageTypeCSSClass() + "\">" + getMessage() + "</div>");
