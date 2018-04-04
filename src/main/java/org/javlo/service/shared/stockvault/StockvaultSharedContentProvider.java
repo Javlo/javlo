@@ -57,8 +57,8 @@ public class StockvaultSharedContentProvider extends AbstractSharedContentProvid
 			JsonArray hits = json;
 			for (int i = 0; i < hits.size(); i++) {
 				JsonObject item = (JsonObject) hits.get(i);
-				String url = item.get("photoPageLink").getAsString();
-				String id = StringHelper.stringToFileName(url);
+				String url = item.get("photoPageLink").getAsString();				
+				String id = StringHelper.stringToFileName(url.replace(getURL().toString(), ""));
 				RemoteImageSharedContent sharedContent = new RemoteImageSharedContent(id, null, "stockvault");
 				String title = StringHelper.neverNull(item.get("title"));
 				title = title.replaceAll("\"", "");
