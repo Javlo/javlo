@@ -3,6 +3,9 @@ package org.javlo.utils;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.logging.Logger;
 
 import javax.mail.internet.InternetAddress;
@@ -15,8 +18,10 @@ import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
+import org.javlo.helper.XHTMLHelper;
 import org.javlo.mailing.MailConfig;
 import org.javlo.mailing.MailService;
+import org.javlo.servlet.IVersion;
 import org.javlo.user.AdminUserFactory;
 import org.javlo.user.IUserFactory;
 
@@ -48,7 +53,7 @@ public class DebugListening {
 
 	public void sendError(ContentContext ctx, StaticConfig staticConfig, Throwable t, String info) {
 		HttpServletRequest request = ctx.getRequest();
-		HttpSession session = request.getSession(true);
+		HttpSession session = request.getSession(true);		
 		if (System.currentTimeMillis() - DELTA_SEND > latestSend) {
 			latestSend = System.currentTimeMillis();
 			GlobalContext globalContext = GlobalContext.getInstance(request);
@@ -59,32 +64,27 @@ public class DebugListening {
 					userName = fact.getCurrentUser(globalContext, request.getSession()).getName();
 				}
 			}
-			ByteArrayOutputStream arrayOut = new ByteArrayOutputStream();
-			PrintStream out = new PrintStream(arrayOut);
-
 			try {
-				String subject = "Javlo error : " + globalContext.getContextKey() + "  host:" + request.getRemoteHost();
-				out.println(subject);
-				out.println("");
-				out.println("local addr           : " + request.getLocalAddr());
-				out.println("local host           : " + request.getLocalName());
-				out.println("request method       : " + request.getMethod());
-				out.println("request path info    : " + request.getPathInfo());
-				out.println("direct link          : " + URLHelper.createAbsoluteURL(ctx, ctx.getPath()));
+				String subject = "Javlo error:" + globalContext.getContextKey() + "  host:" + request.getRemoteHost();				
+				Map<String, String> errorInfo = new LinkedHashMap<String, String>();
+				errorInfo.put("version", IVersion.VERSION);
+				errorInfo.put("local addr", request.getLocalAddr());
+				errorInfo.put("local host", request.getLocalName());
+				errorInfo.put("request method", request.getMethod());
+				errorInfo.put("request path info", request.getPathInfo());
+				errorInfo.put("direct link", URLHelper.createAbsoluteURL(ctx, ctx.getPath()));
 				if (session != null) {
-					out.println("session creation time : " + StringHelper.renderTime(new Date(session.getCreationTime())));
-					out.println("session last acces    : " + StringHelper.renderTime(new Date(session.getLastAccessedTime())));
-				} else {
-					out.println("session null");
+					errorInfo.put("session creation time", StringHelper.renderTime(new Date(session.getCreationTime())));
+					errorInfo.put("session last acces", StringHelper.renderTime(new Date(session.getLastAccessedTime())));					
 				}
-				out.println("time                  : " + StringHelper.renderTime(new Date()));
-				out.println("");
-				out.println("user name             : " + userName);
-
-				out.println("administrator         : " + globalContext.getAdministrator());
-				out.println("folder                : " + globalContext.getFolder());
-
-				out.println("info                  : " + info);
+				errorInfo.put("time", StringHelper.renderTime(new Date()));
+				errorInfo.put("user name", userName);
+				errorInfo.put("administrator", globalContext.getAdministrator());
+				errorInfo.put("folder", globalContext.getFolder());
+				errorInfo.put("info", info);
+				
+				ByteArrayOutputStream arrayOut = new ByteArrayOutputStream();
+				PrintStream out = new PrintStream(arrayOut);
 				out.println("");
 				out.println("CONTEXT INFO : ");
 				globalContext.writeInfo(session, out);
@@ -98,11 +98,13 @@ public class DebugListening {
 				}
 				
 				out.close();
+				
+				String adminEmail = XHTMLHelper.createAdminMail(subject, XHTMLHelper.textToXHTML(new String(arrayOut.toByteArray())), errorInfo, URLHelper.createStaticURL(ctx,  "/"), globalContext.getGlobalTitle(), "- Javlo -");
 
 				if (SEND_ERROR_MAIL) {
 					if (staticConfig.getErrorMailReport() != null) {
 						MailService mailService = MailService.getInstance(new MailConfig(globalContext, StaticConfig.getInstance(request.getSession()), null));
-						mailService.sendMail(new InternetAddress(staticConfig.getErrorMailReport()), new InternetAddress(staticConfig.getErrorMailReport()), subject, new String(arrayOut.toByteArray()), false);
+						mailService.sendMail(new InternetAddress(staticConfig.getErrorMailReport()), new InternetAddress(staticConfig.getErrorMailReport()), subject, adminEmail, true, globalContext.getDKIMBean());
 						logger.warning("SEND ERROR TO ADMINISTRATOR");
 					} else {
 						logger.warning("no error email defined, the error message will be displayed in log.");

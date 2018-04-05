@@ -9,6 +9,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintStream;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadMXBean;
@@ -77,6 +78,7 @@ import org.javlo.service.PDFConvertion;
 import org.javlo.service.PersistenceService;
 import org.javlo.service.RequestService;
 import org.javlo.service.event.Event;
+import org.javlo.service.exception.ServiceException;
 import org.javlo.service.integrity.IntegrityFactory;
 import org.javlo.service.remote.RemoteMessage;
 import org.javlo.service.remote.RemoteMessageService;
@@ -244,33 +246,37 @@ public class AccessServlet extends HttpServlet implements IVersion {
 	}
 
 	public void process(HttpServletRequest request, HttpServletResponse response, boolean post) throws ServletException {
-		
+
+		COUNT_ACCESS++;
+
+		logger.fine("uri : " + request.getRequestURI());
+
+		StaticConfig staticConfig = StaticConfig.getInstance(getServletContext());
+
+		/** init log **/
+		long startTime = System.currentTimeMillis();
+
+		String requestLabel = request.getPathInfo();
+
 		try {
-			COUNT_ACCESS++;
-
-			logger.fine("uri : " + request.getRequestURI());
-
-			StaticConfig staticConfig = StaticConfig.getInstance(getServletContext());
-
-			/** init log **/
-			long startTime = System.currentTimeMillis();
-
-			String requestLabel = request.getPathInfo();
-
 			request.setCharacterEncoding(ContentContext.CHARACTER_ENCODING);
+		} catch (UnsupportedEncodingException e1) {
+			e1.printStackTrace();
+		}
 
-			RequestService requestService = RequestService.getInstance(request);
+		RequestService requestService = RequestService.getInstance(request);
 
-			// content type cannot be set to html if portlet resource - TODO:
-			// clean process method (with filter ?)
-			if (requestService.getParameter("javlo-portlet-resource", null) == null || requestService.getParameter("javlo-portlet-id", null) == null) {
-				response.setContentType("text/html; charset=" + ContentContext.CHARACTER_ENCODING);
-			}
+		// content type cannot be set to html if portlet resource - TODO:
+		// clean process method (with filter ?)
+		if (requestService.getParameter("javlo-portlet-resource", null) == null || requestService.getParameter("javlo-portlet-id", null) == null) {
+			response.setContentType("text/html; charset=" + ContentContext.CHARACTER_ENCODING);
+		}
 
-			GlobalContext globalContext = GlobalContext.getInstance(request);
-			Thread.currentThread().setName("AccessServlet-" + globalContext.getContextKey());
-
-			ContentContext ctx = ContentContext.getContentContext(request, response);
+		GlobalContext globalContext = GlobalContext.getInstance(request);
+		Thread.currentThread().setName("AccessServlet-" + globalContext.getContextKey());
+		ContentContext ctx = null;
+		try {
+			ctx = ContentContext.getContentContext(request, response);
 			ctx.getDevice().correctWithTemplate(ctx.getCurrentTemplate());
 			if (ctx.getDevice().isMobileDevice()) {
 				EditContext.getInstance(globalContext, request.getSession()).setPreviewEditionMode(false);
@@ -282,15 +288,15 @@ public class AccessServlet extends HttpServlet implements IVersion {
 						logger.warning("refuse access for ip : " + ctx.getRemoteIp());
 						response.setStatus(HttpServletResponse.SC_FORBIDDEN);
 						return;
-					} 
+					}
 				}
 			}
 
-			if (!ctx.isAsViewMode()) {				
+			if (!ctx.isAsViewMode()) {
 				SecurityHelper.checkUserAccess(ctx);
 				if (ctx.getCurrentEditUser() == null || ctx.getCurrentEditUser().getRoles().contains("content")) {
 					response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-				}				
+				}
 			}
 
 			if (ctx.getGlobalContext().isCookies()) {
@@ -346,14 +352,11 @@ public class AccessServlet extends HttpServlet implements IVersion {
 								ClearDataAccessCount.clearDataAccess(ctx);
 							}
 							/*
-							 * if (globalContext.getDMZServerIntra() != null) {
-							 * SynchroThread synchro = (SynchroThread)
-							 * AbstractThread.createInstance(staticConfig.
+							 * if (globalContext.getDMZServerIntra() != null) { SynchroThread synchro =
+							 * (SynchroThread) AbstractThread.createInstance(staticConfig.
 							 * getThreadFolder(), SynchroThread.class);
-							 * synchro.initSynchronisationThread(staticConfig,
-							 * globalContext,
-							 * request.getSession().getServletContext());
-							 * synchro.store(); }
+							 * synchro.initSynchronisationThread(staticConfig, globalContext,
+							 * request.getSession().getServletContext()); synchro.store(); }
 							 */
 						} catch (Exception e) {
 							e.printStackTrace();
@@ -538,568 +541,565 @@ public class AccessServlet extends HttpServlet implements IVersion {
 				ctx.setArea(editCtx.getCurrentArea());
 			}
 
-			try {
-				String action = ServletHelper.execAction(ctx);
-				if (ctx.isStopRendering()) {
-					return;
-				}
-				if (logger.isLoggable(Level.FINE)) {
-					logger.fine(requestLabel + " : action " + df.format((double) (System.currentTimeMillis() - startTime) / (double) 1000) + " sec.");
-				}
+			String action = ServletHelper.execAction(ctx);
+			if (ctx.isStopRendering()) {
+				return;
+			}
+			if (logger.isLoggable(Level.FINE)) {
+				logger.fine(requestLabel + " : action " + df.format((double) (System.currentTimeMillis() - startTime) / (double) 1000) + " sec.");
+			}
 
-				ContentService content = ContentService.getInstance(globalContext);
-				if (ctx.getCurrentPage() != null) {
-					ctx.getCurrentPage().updateLinkedData(ctx);
+			ContentService content = ContentService.getInstance(globalContext);
+			if (ctx.getCurrentPage() != null) {
+				ctx.getCurrentPage().updateLinkedData(ctx);
+			}
+			MenuElement elem = content.getNavigation(ctx).getNoErrorFreeCurrentPage(ctx);
+			/** INIT TEMPLATE **/
+			if (ctx.getCurrentTemplate() == null || action != null) {
+				Template template = null;
+				if (elem != null) {
+					template = ctx.getCurrentTemplate();
+					if (template != null) {
+						template = template.getFinalTemplate(ctx);
+					}
+					ctx.setCurrentTemplate(template);
 				}
-				MenuElement elem = content.getNavigation(ctx).getNoErrorFreeCurrentPage(ctx);
-				/** INIT TEMPLATE **/
-				if (ctx.getCurrentTemplate() == null || action != null) {
-					Template template = null;
-					if (elem != null) {
-						template = ctx.getCurrentTemplate();
-						if (template != null) {
-							template = template.getFinalTemplate(ctx);
+			}
+			Template template = ctx.getCurrentTemplate();
+
+			if (!ctx.isAsViewMode()) {
+				IntegrityFactory.getInstance(ctx);
+			}
+			if (ctx.getRenderMode() != ContentContext.EDIT_MODE) {
+				/*** CHECK CONTENT AVAIBILITY ***/
+				boolean checkContentAviability = true;
+				if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE) {
+					EditContext editCtx = EditContext.getInstance(globalContext, request.getSession());
+					checkContentAviability = !editCtx.isPreviewEditionMode();
+				}
+				ContentContext newCtx = new ContentContext(ctx);
+				if (checkContentAviability) {
+					if (!content.contentExistForContext(newCtx)) {
+						newCtx.setContentLanguage(newCtx.getLanguage());
+						if (globalContext.isAutoSwitchToDefaultLanguage()) {
+							Iterator<String> defaultLgs = globalContext.getDefaultLanguages().iterator();
+							while (!content.contentExistForContext(newCtx) && defaultLgs.hasNext()) {
+								String lg = defaultLgs.next();
+								newCtx.setRequestContentLanguage(lg);
+							}
+						}
+						if (!content.contentExistForContext(newCtx)) {
+							logger.fine("content not found in " + ctx.getPath() + " lg:" + ctx.getRequestContentLanguage());
+							// ctx.setSpecialContentRenderer("/jsp/view/content_not_found.jsp");
+						} else {
+							ctx = newCtx;
+							ctx.storeInRequest(request);
+						}
+					}
+				}
+			}
+
+			if (logger.isLoggable(Level.FINE)) {
+				logger.fine(requestLabel + " : content integrity " + df.format((double) (System.currentTimeMillis() - startTime) / (double) 1000) + " sec.");
+			}
+
+			localLogger.endCount("execute action", "execute action = " + action);
+
+			if (StringHelper.isTrue(requestService.getParameter(RequestHelper.CLOSE_WINDOW_PARAMETER, "false"))) {
+				String newURL = requestService.getParameter(RequestHelper.CLOSE_WINDOW_URL_PARAMETER, null);
+
+				response.setContentType("text/html; charset=" + ContentContext.CHARACTER_ENCODING);
+
+				PrintWriter out = new PrintWriter(new OutputStreamWriter(response.getOutputStream()));
+				out.println("<script type=\"text/javascript\">");
+				out.println("if (window.opener != null) {");
+				if (newURL == null) {
+					out.println("	window.opener.location.href = window.opener.location.href;");
+				} else {
+					out.println("	window.opener.location.href = '" + newURL + "';");
+				}
+				out.println("	if (window.opener.progressWindow) {");
+				out.println("		window.opener.progressWindow.close();");
+				out.println("	}");
+				out.println("}");
+				out.println("if (window.parent != null) {");
+				if (newURL == null) {
+					out.println("	window.parent.location.href = window.parent.location.href;");
+				} else {
+					out.println("	window.parent.location.href = '" + newURL + "';");
+				}
+				out.println("}");
+				out.println("window.close();");
+				out.println("</script>");
+				out.close();
+				return;
+			}
+
+			localLogger.startCount("tracking");
+
+			/** ******* */
+			/* TRACKING */
+			/** ******* */
+
+			localLogger.startCount("tracking1");
+			// Tracker.trace(request, response);
+			localLogger.endCount("tracking", "tracking user");
+
+			if (logger.isLoggable(Level.FINE)) {
+				logger.fine(requestLabel + " : tracking " + df.format((double) (System.currentTimeMillis() - startTime) / (double) 1000) + " sec.");
+			}
+
+			InfoBean infoBean = InfoBean.updateInfoBean(ctx);
+
+			if (logger.isLoggable(Level.FINE)) {
+				logger.fine(requestLabel + " : InfoBean " + df.format((double) (System.currentTimeMillis() - startTime) / (double) 1000) + " sec.");
+			}
+
+			/* **** */
+			/* EDIT */
+			/* **** */
+
+			if (request.getServletPath().equals("/edit")) {
+
+				/* ********************* */
+				/* ****** MODULES ****** */
+				/* ********************* */
+				ServletHelper.prepareModule(ctx);
+
+				EditContext editCtx = EditContext.getInstance(globalContext, request.getSession());
+				ctx.setArea(editCtx.getCurrentArea());
+				if (editCtx.getAjaxRenderer() != null) {
+					response.setContentType("text/html; charset=" + ContentContext.CHARACTER_ENCODING);
+
+					getServletContext().getRequestDispatcher(editCtx.getAjaxRenderer()).include(request, response);
+					editCtx.setAjaxRenderer(null);
+				} else {
+					if (template != null) {
+						if (!template.getAreas().contains(ctx.getArea())) {
+							editCtx.setCurrentArea(ComponentBean.DEFAULT_AREA);
+							ctx.setArea(ComponentBean.DEFAULT_AREA);
 						}
 						ctx.setCurrentTemplate(template);
 					}
-				}
-				Template template = ctx.getCurrentTemplate();
-
-				if (!ctx.isAsViewMode()) {
-					IntegrityFactory.getInstance(ctx);
-				}
-				if (ctx.getRenderMode() != ContentContext.EDIT_MODE) {
-					/*** CHECK CONTENT AVAIBILITY ***/
-					boolean checkContentAviability = true;
-					if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE) {
-						EditContext editCtx = EditContext.getInstance(globalContext, request.getSession());
-						checkContentAviability = !editCtx.isPreviewEditionMode();
-					}
-					ContentContext newCtx = new ContentContext(ctx);
-					if (checkContentAviability) {
-						if (!content.contentExistForContext(newCtx)) {
-							newCtx.setContentLanguage(newCtx.getLanguage());
-							if (globalContext.isAutoSwitchToDefaultLanguage()) {
-								Iterator<String> defaultLgs = globalContext.getDefaultLanguages().iterator();
-								while (!content.contentExistForContext(newCtx) && defaultLgs.hasNext()) {
-									String lg = defaultLgs.next();
-									newCtx.setRequestContentLanguage(lg);
-								}
-							}
-							if (!content.contentExistForContext(newCtx)) {
-								logger.fine("content not found in " + ctx.getPath() + " lg:" + ctx.getRequestContentLanguage());
-								// ctx.setSpecialContentRenderer("/jsp/view/content_not_found.jsp");
-							} else {
-								ctx = newCtx;
-								ctx.storeInRequest(request);
-							}
-						}
-					}
-				}
-
-				if (logger.isLoggable(Level.FINE)) {
-					logger.fine(requestLabel + " : content integrity " + df.format((double) (System.currentTimeMillis() - startTime) / (double) 1000) + " sec.");
-				}
-
-				localLogger.endCount("execute action", "execute action = " + action);
-
-				if (StringHelper.isTrue(requestService.getParameter(RequestHelper.CLOSE_WINDOW_PARAMETER, "false"))) {
-					String newURL = requestService.getParameter(RequestHelper.CLOSE_WINDOW_URL_PARAMETER, null);
 
 					response.setContentType("text/html; charset=" + ContentContext.CHARACTER_ENCODING);
 
-					PrintWriter out = new PrintWriter(new OutputStreamWriter(response.getOutputStream()));
-					out.println("<script type=\"text/javascript\">");
-					out.println("if (window.opener != null) {");
-					if (newURL == null) {
-						out.println("	window.opener.location.href = window.opener.location.href;");
-					} else {
-						out.println("	window.opener.location.href = '" + newURL + "';");
+					File editCSS = new File(URLHelper.mergePath(globalContext.getStaticFolder(), "/edit/specific.css"));
+					if (editCSS.exists()) {
+						String savePathPrefix = ctx.getPathPrefix();
+						ContentContext.setForcePathPrefix(request, globalContext.getContextKey());
+						String cssURL = URLHelper.createResourceURL(ctx, URLHelper.mergePath(globalContext.getStaticConfig().getStaticFolder(), "/edit/specific.css"));
+						request.setAttribute("specificCSS", cssURL);
+						ContentContext.setForcePathPrefix(request, savePathPrefix);
 					}
-					out.println("	if (window.opener.progressWindow) {");
-					out.println("		window.opener.progressWindow.close();");
-					out.println("	}");
-					out.println("}");
-					out.println("if (window.parent != null) {");
-					if (newURL == null) {
-						out.println("	window.parent.location.href = window.parent.location.href;");
-					} else {
-						out.println("	window.parent.location.href = '" + newURL + "';");
+					if (request.getAttribute("specificCSS") == null) {
+						GlobalContext masterContext = GlobalContextFactory.getMasterGlobalContext(request.getSession().getServletContext());
+						if (masterContext != null) {
+							editCSS = new File(URLHelper.mergePath(masterContext.getStaticFolder(), "/edit/specific.css"));
+							if (editCSS.exists()) {
+								String savePathPrefix = ctx.getPathPrefix();
+								ContentContext.setForcePathPrefix(request, masterContext.getContextKey());
+								String cssURL = URLHelper.createResourceURL(ctx, URLHelper.mergePath(globalContext.getStaticConfig().getStaticFolder(), "/edit/specific.css"));
+								request.setAttribute("specificCSS", cssURL);
+								ContentContext.setForcePathPrefix(request, savePathPrefix);
+							}
+						} else {
+							logger.severe("master context not found.");
+						}
 					}
-					out.println("}");
-					out.println("window.close();");
-					out.println("</script>");
-					out.close();
+
+					getServletContext().getRequestDispatcher(editCtx.getEditTemplate()).include(request, response);
+				}
+				localLogger.endCount("edit", "include edit");
+			} else { // view
+
+				ContentContext robotCtx = new ContentContext(ctx);
+				robotCtx.setDevice(Device.getFakeDevice("robot"));
+				robotCtx.setAbsoluteURL(true);
+				response.setHeader("link", "<" + URLHelper.createURL(robotCtx) + ">; rel=\"canonical\"");
+
+				request.setAttribute("social", SocialService.getInstance(ctx));
+
+				localLogger.startCount("content");
+
+				if (request.getServletPath().equals("/preview")) {
+					EditContext editCtx = EditContext.getInstance(globalContext, request.getSession());
+					request.setAttribute("editPreview", editCtx.isPreviewEditionMode());
+				}
+
+				if (!globalContext.isVisible()) {
+					ServletHelper.includeBlocked(request, response);
 					return;
 				}
 
-				localLogger.startCount("tracking");
-
-				/** ******* */
-				/* TRACKING */
-				/** ******* */
-
-				localLogger.startCount("tracking1");
-				// Tracker.trace(request, response);
-				localLogger.endCount("tracking", "tracking user");
-
-				if (logger.isLoggable(Level.FINE)) {
-					logger.fine(requestLabel + " : tracking " + df.format((double) (System.currentTimeMillis() - startTime) / (double) 1000) + " sec.");
-				}
-
-				InfoBean infoBean = InfoBean.updateInfoBean(ctx);
-
-				if (logger.isLoggable(Level.FINE)) {
-					logger.fine(requestLabel + " : InfoBean " + df.format((double) (System.currentTimeMillis() - startTime) / (double) 1000) + " sec.");
-				}
-
-				/* **** */
-				/* EDIT */
-				/* **** */
-
-				if (request.getServletPath().equals("/edit")) {
-
-					/* ********************* */
-					/* ****** MODULES ****** */
-					/* ********************* */
-					ServletHelper.prepareModule(ctx);
-
-					EditContext editCtx = EditContext.getInstance(globalContext, request.getSession());
-					ctx.setArea(editCtx.getCurrentArea());
-					if (editCtx.getAjaxRenderer() != null) {
-						response.setContentType("text/html; charset=" + ContentContext.CHARACTER_ENCODING);
-
-						getServletContext().getRequestDispatcher(editCtx.getAjaxRenderer()).include(request, response);
-						editCtx.setAjaxRenderer(null);
-					} else {
-						if (template != null) {
-							if (!template.getAreas().contains(ctx.getArea())) {
-								editCtx.setCurrentArea(ComponentBean.DEFAULT_AREA);
-								ctx.setArea(ComponentBean.DEFAULT_AREA);
-							}
-							ctx.setCurrentTemplate(template);
-						}
-
-						response.setContentType("text/html; charset=" + ContentContext.CHARACTER_ENCODING);
-
-						File editCSS = new File(URLHelper.mergePath(globalContext.getStaticFolder(), "/edit/specific.css"));
-						if (editCSS.exists()) {
-							String savePathPrefix = ctx.getPathPrefix();
-							ContentContext.setForcePathPrefix(request, globalContext.getContextKey());
-							String cssURL = URLHelper.createResourceURL(ctx, URLHelper.mergePath(globalContext.getStaticConfig().getStaticFolder(), "/edit/specific.css"));
-							request.setAttribute("specificCSS", cssURL);
-							ContentContext.setForcePathPrefix(request, savePathPrefix);
-						}
-						if (request.getAttribute("specificCSS") == null) {
-							GlobalContext masterContext = GlobalContextFactory.getMasterGlobalContext(request.getSession().getServletContext());
-							if (masterContext != null) {
-								editCSS = new File(URLHelper.mergePath(masterContext.getStaticFolder(), "/edit/specific.css"));
-								if (editCSS.exists()) {
-									String savePathPrefix = ctx.getPathPrefix();
-									ContentContext.setForcePathPrefix(request, masterContext.getContextKey());
-									String cssURL = URLHelper.createResourceURL(ctx, URLHelper.mergePath(globalContext.getStaticConfig().getStaticFolder(), "/edit/specific.css"));
-									request.setAttribute("specificCSS", cssURL);
-									ContentContext.setForcePathPrefix(request, savePathPrefix);
+				String path = ctx.getPath();
+				if (ctx.getFormat().equalsIgnoreCase("zip")) {
+					response.setContentType("application/zip; charset=" + ContentContext.CHARACTER_ENCODING);
+					ZipOutputStream outZip = new ZipOutputStream(response.getOutputStream());
+					outZip.setLevel(9);
+					ZipManagement.addFileInZip(outZip, "content.xml", new ByteArrayInputStream(XMLHelper.getPageXML(ctx, elem).getBytes(ContentContext.CHARSET_DEFAULT)));
+					Collection<Resource> resources = ctx.getCurrentPage().getAllResources(ctx);
+					for (MenuElement page : ctx.getCurrentPage().getAllChildrenList()) {
+						resources.addAll(page.getAllResources(ctx));
+					}
+					logger.info("prepare zip file with " + resources.size() + " resources.");
+					File mainFolder = new File(ctx.getGlobalContext().getDataFolder());
+					if (mainFolder.exists()) {
+						for (Resource resource : resources) {
+							File file = new File(URLHelper.mergePath(mainFolder.getAbsolutePath(), resource.getUri()));
+							if (file.exists()) {
+								try {
+									ZipManagement.zipFile(outZip, file, mainFolder);
+								} catch (IOException e) {
+									logger.warning("error zip file : " + file + " (" + e.getMessage() + ')');
 								}
 							} else {
-								logger.severe("master context not found.");
+								logger.warning("file not found for create zip : " + file);
 							}
 						}
-
-						getServletContext().getRequestDispatcher(editCtx.getEditTemplate()).include(request, response);
 					}
-					localLogger.endCount("edit", "include edit");
-				} else { // view
+					outZip.finish();
+					outZip.flush();
+					outZip.close();
+				} else if (ctx.getFormat().equalsIgnoreCase("xml")) {
+					response.setContentType("text/xml; charset=" + ContentContext.CHARACTER_ENCODING);
+					Writer out = response.getWriter();
+					out.write(XMLHelper.getPageXML(ctx, elem));
+				} else if (ctx.getFormat().equalsIgnoreCase("png") || ctx.getFormat().equalsIgnoreCase("jpg")) {
+					if (ctx.getGlobalContext().getStaticConfig().isConvertHTMLToImage()) {
+						logger.warning("convert image convertion : " + request.getRequestURI());
+						String fileFormat = ctx.getFormat().toLowerCase();
+						response.setContentType("image/" + fileFormat + ";");
+						OutputStream out = response.getOutputStream();
+						ContentContext viewCtx = ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE);
+						viewCtx.setAbsoluteURL(true);
+						viewCtx.setFormat("html");
+						String url;
+						Map<String, String> params = new HashMap<String, String>();
+						params.put(Device.FORCE_DEVICE_PARAMETER_NAME, "image");
+						if (request.getParameter(Template.FORCE_TEMPLATE_PARAM_NAME) != null) {
+							params.put(Template.FORCE_TEMPLATE_PARAM_NAME, request.getParameter(Template.FORCE_TEMPLATE_PARAM_NAME));
+						}
+						params.put("clean-html", "true");
+						url = URLHelper.createURL(viewCtx, params);
 
-					ContentContext robotCtx = new ContentContext(ctx);
-					robotCtx.setDevice(Device.getFakeDevice("robot"));
-					robotCtx.setAbsoluteURL(true);
-					response.setHeader("link", "<" + URLHelper.createURL(robotCtx) + ">; rel=\"canonical\"");
+						int width = 1280;
+						String widthParam = request.getParameter("width");
+						if (widthParam != null) {
+							width = Integer.parseInt(widthParam);
+						}
 
-					request.setAttribute("social", SocialService.getInstance(ctx));
-
-					localLogger.startCount("content");
-
-					if (request.getServletPath().equals("/preview")) {
-						EditContext editCtx = EditContext.getInstance(globalContext, request.getSession());
-						request.setAttribute("editPreview", editCtx.isPreviewEditionMode());
-					}
-
-					if (!globalContext.isVisible()) {
-						ServletHelper.includeBlocked(request, response);
+						Java2DRenderer renderer = new Java2DRenderer(url, width);
+						BufferedImage img = renderer.getImage();
+						FSImageWriter imageWriter = new FSImageWriter();
+						imageWriter.write(img, out);
+					} else {
+						logger.warning("rejected content image convertion : " + request.getRequestURI());
+						response.setStatus(HttpServletResponse.SC_NOT_FOUND);
 						return;
 					}
-
-					String path = ctx.getPath();
-					if (ctx.getFormat().equalsIgnoreCase("zip")) {
-						response.setContentType("application/zip; charset=" + ContentContext.CHARACTER_ENCODING);
-						ZipOutputStream outZip = new ZipOutputStream(response.getOutputStream());
-						outZip.setLevel(9);
-						ZipManagement.addFileInZip(outZip, "content.xml", new ByteArrayInputStream(XMLHelper.getPageXML(ctx, elem).getBytes(ContentContext.CHARSET_DEFAULT)));
-						Collection<Resource> resources = ctx.getCurrentPage().getAllResources(ctx);
-						for (MenuElement page : ctx.getCurrentPage().getAllChildrenList()) {
-							resources.addAll(page.getAllResources(ctx));
+				} else if (ctx.getFormat().equalsIgnoreCase("eml")) {
+					response.setContentType("message/rfc822");
+					OutputStream out = response.getOutputStream();
+					Map<String, String> params = new HashMap<String, String>();
+					ContentContext viewCtx = ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE);
+					viewCtx.setAbsoluteURL(true);
+					viewCtx.setFormat("html");
+					viewCtx.resetDMZServerInter();
+					for (Object key : ctx.getRequest().getParameterMap().keySet()) {
+						if (!key.equals("__check_context")) {
+							params.put(key.toString(), ctx.getRequest().getParameter(key.toString()));
 						}
-						logger.info("prepare zip file with " + resources.size() + " resources.");
-						File mainFolder = new File(ctx.getGlobalContext().getDataFolder());
-						if (mainFolder.exists()) {
-							for (Resource resource : resources) {
-								File file = new File(URLHelper.mergePath(mainFolder.getAbsolutePath(), resource.getUri()));
-								if (file.exists()) {
-									try {
-										ZipManagement.zipFile(outZip, file, mainFolder);
-									} catch (IOException e) {
-										logger.warning("error zip file : " + file + " (" + e.getMessage() + ')');
-									}
-								} else {
-									logger.warning("file not found for create zip : " + file);
+					}
+					if (ctx.getCurrentUser() != null) {
+						String userToken = UserFactory.createUserFactory(ctx.getGlobalContext(), request.getSession()).getTokenCreateIfNotExist(ctx.getCurrentUser());
+						String token = globalContext.createOneTimeToken(userToken);
+						params.put("j_token", token);
+					}
+					params.put(ContentContext.FORCE_ABSOLUTE_URL, "true");
+					params.put(ContentContext.NO_DMZ_PARAM_NAME, "true");
+					params.put(ContentContext.CLEAR_SESSION_PARAM, "true");
+					if (!globalContext.isView() && globalContext.getBlockPassword() != null) {
+						params.put("block-password", globalContext.getBlockPassword());
+					}
+					if (request.getParameter(Template.FORCE_TEMPLATE_PARAM_NAME) != null) {
+						params.put(Template.FORCE_TEMPLATE_PARAM_NAME, request.getParameter(Template.FORCE_TEMPLATE_PARAM_NAME));
+					}
+					// params.put("clean-html", "true");
+					String url = URLHelper.createURL(viewCtx, params);
+					logger.info("create EML from : " + url);
+					String html = NetHelper.readPageForMailing(new URL(url));
+					MailService.writeEMLFile(ctx.getCurrentPage().getTitle(viewCtx), html, out);
+				} else if (ctx.getFormat().equalsIgnoreCase("pdf")) {
+					if (ctx.getGlobalContext().isCollaborativeMode() && !ctx.getCurrentPage().isPublic(ctx)) {
+						Set<String> pageRoles = ctx.getCurrentPage().getEditorRolesAndParent();
+						if ((pageRoles.size() > 0 || ctx.getCurrentEditUser() == null)) {
+							if (ctx.getCurrentEditUser() == null || !ctx.getCurrentEditUser().validForRoles(pageRoles)) {
+								MenuElement parent = ctx.getCurrentPage().getParent();
+								while (parent != null) {
+									parent = parent.getParent();
 								}
+								response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+								return;
 							}
 						}
-						outZip.finish();
-						outZip.flush();
-						outZip.close();
-					} else if (ctx.getFormat().equalsIgnoreCase("xml")) {
-						response.setContentType("text/xml; charset=" + ContentContext.CHARACTER_ENCODING);
-						Writer out = response.getWriter();
-						out.write(XMLHelper.getPageXML(ctx, elem));
-					} else if (ctx.getFormat().equalsIgnoreCase("png") || ctx.getFormat().equalsIgnoreCase("jpg")) {
-						if (ctx.getGlobalContext().getStaticConfig().isConvertHTMLToImage()) {
-							logger.warning("convert image convertion : " + request.getRequestURI());
-							String fileFormat = ctx.getFormat().toLowerCase();
-							response.setContentType("image/" + fileFormat + ";");
-							OutputStream out = response.getOutputStream();
-							ContentContext viewCtx = ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE);
-							viewCtx.setAbsoluteURL(true);
-							viewCtx.setFormat("html");
-							String url;
-							Map<String, String> params = new HashMap<String, String>();
-							params.put(Device.FORCE_DEVICE_PARAMETER_NAME, "image");
-							if (request.getParameter(Template.FORCE_TEMPLATE_PARAM_NAME) != null) {
-								params.put(Template.FORCE_TEMPLATE_PARAM_NAME, request.getParameter(Template.FORCE_TEMPLATE_PARAM_NAME));
+					}
+					response.setContentType("application/pdf;");
+					OutputStream out = response.getOutputStream();
+					Map<String, String> params = new HashMap<String, String>();
+					boolean lowDef = false;
+					if (request.getParameter("lowdef") != null) {
+						params.put("lowdef", request.getParameter("lowdef"));
+						lowDef = true;
+					}
+					FileCache fileCache = FileCache.getInstance(getServletContext());
+					File pdfFileCache = fileCache.getPDFPage(ctx, ctx.getCurrentPage(), lowDef);
+					if (staticConfig.isPDFCache() && pdfFileCache.exists() && pdfFileCache.length() > 0) {
+						synchronized (FileCache.PDF_LOCK) {
+							logger.info("pdf file found in cache : " + pdfFileCache);
+							if (pdfFileCache.exists()) {
+								ResourceHelper.writeFileToStream(pdfFileCache, out);
 							}
-							params.put("clean-html", "true");
-							url = URLHelper.createURL(viewCtx, params);
-
-							int width = 1280;
-							String widthParam = request.getParameter("width");
-							if (widthParam != null) {
-								width = Integer.parseInt(widthParam);
-							}
-
-							Java2DRenderer renderer = new Java2DRenderer(url, width);
-							BufferedImage img = renderer.getImage();
-							FSImageWriter imageWriter = new FSImageWriter();
-							imageWriter.write(img, out);
-						} else {
-							logger.warning("rejected content image convertion : " + request.getRequestURI());
-							response.setStatus(HttpServletResponse.SC_NOT_FOUND);							
-							return;
 						}
-					} else if (ctx.getFormat().equalsIgnoreCase("eml")) {
-						response.setContentType("message/rfc822");
-						OutputStream out = response.getOutputStream();
-						Map<String, String> params = new HashMap<String, String>();
+					} else {
 						ContentContext viewCtx = ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE);
 						viewCtx.setAbsoluteURL(true);
 						viewCtx.setFormat("html");
 						viewCtx.resetDMZServerInter();
+
 						for (Object key : ctx.getRequest().getParameterMap().keySet()) {
 							if (!key.equals("__check_context")) {
 								params.put(key.toString(), ctx.getRequest().getParameter(key.toString()));
 							}
 						}
+
 						if (ctx.getCurrentUser() != null) {
 							String userToken = UserFactory.createUserFactory(ctx.getGlobalContext(), request.getSession()).getTokenCreateIfNotExist(ctx.getCurrentUser());
 							String token = globalContext.createOneTimeToken(userToken);
 							params.put("j_token", token);
 						}
+
+						params.put(Device.FORCE_DEVICE_PARAMETER_NAME, "pdf");
 						params.put(ContentContext.FORCE_ABSOLUTE_URL, "true");
 						params.put(ContentContext.NO_DMZ_PARAM_NAME, "true");
 						params.put(ContentContext.CLEAR_SESSION_PARAM, "true");
 						if (!globalContext.isView() && globalContext.getBlockPassword() != null) {
 							params.put("block-password", globalContext.getBlockPassword());
 						}
+
 						if (request.getParameter(Template.FORCE_TEMPLATE_PARAM_NAME) != null) {
 							params.put(Template.FORCE_TEMPLATE_PARAM_NAME, request.getParameter(Template.FORCE_TEMPLATE_PARAM_NAME));
 						}
-						//params.put("clean-html", "true");
+
+						params.put("clean-html", "true");
+
 						String url = URLHelper.createURL(viewCtx, params);
-						logger.info("create EML from : " + url);
-						String html = NetHelper.readPageForMailing(new URL(url));
-						MailService.writeEMLFile(ctx.getCurrentPage().getTitle(viewCtx), html, out);
-					} else if (ctx.getFormat().equalsIgnoreCase("pdf")) {
-						if (ctx.getGlobalContext().isCollaborativeMode() && !ctx.getCurrentPage().isPublic(ctx)) {
+
+						// LocalLogger.log(url);
+
+						/*
+						 * if (staticConfig.getApplicationLogin() != null) { url =
+						 * URLHelper.addCredential(url, staticConfig.getApplicationLogin(),
+						 * staticConfig.getApplicationPassword()); }
+						 * PDFConvertion.getInstance().convertXHTMLToPDF( url, out);
+						 */
+						FileOutputStream outFile = new FileOutputStream(pdfFileCache);
+						try {
+							DoubleOutputStream outDbl = new DoubleOutputStream(out, outFile);
+							PDFConvertion.getInstance().convertXHTMLToPDF(new URL(url), staticConfig.getApplicationLogin(), staticConfig.getApplicationPassword(), outDbl);
+						} finally {
+							ResourceHelper.closeResource(outFile);
+						}
+						if (pdfFileCache.length() == 0) {
+							pdfFileCache.delete();
+						}
+
+					}
+
+				} else if (ctx.getFormat().equalsIgnoreCase("ics") || ctx.getFormat().equalsIgnoreCase("ical") || ctx.getFormat().equalsIgnoreCase("icalendar")) {
+					OutputStream out = response.getOutputStream();
+					Event event = ctx.getCurrentPage().getEvent(ctx);
+					if (event == null) {
+						logger.warning("event not found on page : " + ctx.getPath() + "  context:" + ctx.getGlobalContext().getContextKey());
+						response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+						return;
+					} else {
+						DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd'T'HHmmss");
+						response.setContentType("text/calendar;");
+						PrintWriter outPrint = new PrintWriter(out);
+						outPrint.println("BEGIN:VCALENDAR");
+						outPrint.println("VERSION:2.0");
+						if (event.getProdID() != null) {
+							outPrint.println("PRODID:" + event.getProdID());
+						}
+						outPrint.println("BEGIN:VEVENT");
+						if (event.getUser() != null) {
+							;
+							outPrint.println("UID:" + event.getUser());
+						}
+						outPrint.println("DTSTART:" + dateFormat.format(event.getStart()));
+						outPrint.println("DTEND:" + dateFormat.format(event.getEnd()));
+						outPrint.println("CATEGORIES:" + event.getCategory());
+						outPrint.println("SUMMARY:" + event.getSummary());
+						if (StringHelper.neverNull(event.getLocation()).trim().length() > 0) {
+							outPrint.println("LOCATION:" + event.getLocation());
+						}
+						outPrint.println("DESCRIPTION:" + event.getDescription());
+						outPrint.println("END:VEVENT");
+						outPrint.println("END:VCALENDAR");
+						outPrint.close();
+					}
+				} else if (ctx.getFormat().equalsIgnoreCase("cxml")) {
+					String realPath = ContentManager.getPath(request);
+					MenuElement agendaPage = ContentService.getInstance(globalContext).getNavigation(ctx).searchChild(ctx, realPath);
+					response.setContentType("text/xml; charset=" + ContentContext.CHARACTER_ENCODING);
+					Date startDate = StringHelper.parseSortableDate(requestService.getParameter("start-date", "1900-01-01"));
+					Date endDate = StringHelper.parseSortableDate(requestService.getParameter("end-date", "2100-01-01"));
+					String agendaXML = TimeHelper.exportAgenda(ctx, agendaPage, startDate, endDate);
+					response.getWriter().write(agendaXML);
+				} else {
+					if (elem == null) {
+						logger.warning("bad path : " + path);
+					}
+					if ((template == null) || (!template.exist()) || (template.getRendererFullName(ctx) == null)) {
+						ServletHelper.includeBlocked(request, response);
+					} else {
+						if (ctx.getRenderMode() == ContentContext.VIEW_MODE) {
+							content.getNavigation(ctx).getNoErrorFreeCurrentPage(ctx).addAccess(ctx);
+						}
+
+						if (ctx.getSpecialContentRenderer() != null) {
+							Template specialTemplate = TemplateFactory.getTemplates(getServletContext()).get(template.getSpecialRendererTemplate());
+							if (specialTemplate != null) {
+								template = specialTemplate;
+							}
+						}
+
+						/** check page security **/
+
+						if (globalContext.getActivationKey() != null) {
+							String activationKey = requestService.getParameter("activation-key", null);
+							if (activationKey != null && activationKey.equals(globalContext.getActivationKey())) {
+								globalContext.setActivationKey(null);
+							} else {
+								ctx.setSpecialContentRenderer("/jsp/view/activation.jsp");
+							}
+						}
+
+						if (ctx.getCurrentPage() != null && ctx.getCurrentPage().getUserRoles().size() > 0) {
+							if (!ctx.getCurrentPage().isReadAccess(ctx, ctx.getCurrentUser())) {
+								if (ctx.getCurrentUser() == null) {
+									ctx.setSpecialContentRenderer("/jsp/view/login.jsp");
+								} else {
+									if (ctx.getCurrentUser().getPassword() != null && staticConfig.isFirstPasswordMustBeChanged() && ctx.getCurrentUser().getPassword().equals(staticConfig.getFirstPasswordEncryptedIfNeeded())) {
+										ctx.setSpecialContentRenderer("/jsp/view/change_password.jsp");
+									} else {
+										if (!ctx.getCurrentPage().isReadAccess(ctx, ctx.getCurrentUser())) {
+											ctx.setSpecialContentRenderer("/jsp/view/login.jsp");
+										}
+									}
+								}
+							}
+						}
+
+						if (ctx.getGlobalContext().isCollaborativeMode()) {
 							Set<String> pageRoles = ctx.getCurrentPage().getEditorRolesAndParent();
-							if ((pageRoles.size() > 0 || ctx.getCurrentEditUser() == null)) {
+							if ((pageRoles.size() > 0 || ctx.getCurrentEditUser() == null) && !ctx.getCurrentPage().isPublic(ctx)) {
 								if (ctx.getCurrentEditUser() == null || !ctx.getCurrentEditUser().validForRoles(pageRoles)) {
 									MenuElement parent = ctx.getCurrentPage().getParent();
 									while (parent != null) {
 										parent = parent.getParent();
 									}
 									response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+									ctx.setSpecialContentRenderer("/jsp/view/no_access.jsp");
+								}
+							}
+						}
+
+						ctx.setCurrentTemplate(template);
+						if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE && staticConfig.isFixPreview()) {
+							ctx.getRequest().setAttribute("components", ComponentFactory.getComponentForDisplay(ctx));
+
+							/************************/
+							/**** Shared Content ****/
+							/************************/
+							SharedContentService.prepare(ctx);
+						}
+
+						/** check content **/
+						if (!ctx.isContentFound()) {
+							globalContext.log("url", "page not found : " + ctx.getPath());
+							globalContext.add404Url(ctx, ContentManager.getPath(request));
+
+							if (staticConfig.isRedirectWidthName()) {
+								String pageName = StringHelper.getFileNameWithoutExtension(StringHelper.getFileNameFromPath(request.getRequestURI()));
+								MenuElement newPage = content.getNavigation(ctx).searchChildFromName(pageName);
+								if (newPage != null) {
+									String forwardURL = URLHelper.createURL(ctx, newPage);
+									NetHelper.sendRedirectPermanently(response, forwardURL);
+									logger.info("redirect permanently : " + pageName + " to " + forwardURL);
 									return;
 								}
 							}
-						}
-						response.setContentType("application/pdf;");
-						OutputStream out = response.getOutputStream();
-						Map<String, String> params = new HashMap<String, String>();
-						boolean lowDef = false;
-						if (request.getParameter("lowdef") != null) {
-							params.put("lowdef", request.getParameter("lowdef"));
-							lowDef = true;
-						}
-						FileCache fileCache = FileCache.getInstance(getServletContext());
-						File pdfFileCache = fileCache.getPDFPage(ctx, ctx.getCurrentPage(), lowDef);
-						if (staticConfig.isPDFCache() && pdfFileCache.exists() && pdfFileCache.length() > 0) {
-							synchronized (FileCache.PDF_LOCK) {
-								logger.info("pdf file found in cache : " + pdfFileCache);
-								if (pdfFileCache.exists()) {
-									ResourceHelper.writeFileToStream(pdfFileCache, out);
-								}
-							}
-						} else {
-							ContentContext viewCtx = ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE);
-							viewCtx.setAbsoluteURL(true);
-							viewCtx.setFormat("html");
-							viewCtx.resetDMZServerInter();
-
-							for (Object key : ctx.getRequest().getParameterMap().keySet()) {
-								if (!key.equals("__check_context")) {
-									params.put(key.toString(), ctx.getRequest().getParameter(key.toString()));
-								}
-							}
-
-							if (ctx.getCurrentUser() != null) {
-								String userToken = UserFactory.createUserFactory(ctx.getGlobalContext(), request.getSession()).getTokenCreateIfNotExist(ctx.getCurrentUser());
-								String token = globalContext.createOneTimeToken(userToken);
-								params.put("j_token", token);
-							}
-
-							params.put(Device.FORCE_DEVICE_PARAMETER_NAME, "pdf");
-							params.put(ContentContext.FORCE_ABSOLUTE_URL, "true");
-							params.put(ContentContext.NO_DMZ_PARAM_NAME, "true");
-							params.put(ContentContext.CLEAR_SESSION_PARAM, "true");
-							if (!globalContext.isView() && globalContext.getBlockPassword() != null) {
-								params.put("block-password", globalContext.getBlockPassword());
-							}
-
-							if (request.getParameter(Template.FORCE_TEMPLATE_PARAM_NAME) != null) {
-								params.put(Template.FORCE_TEMPLATE_PARAM_NAME, request.getParameter(Template.FORCE_TEMPLATE_PARAM_NAME));
-							}
-
-							params.put("clean-html", "true");
-
-							String url = URLHelper.createURL(viewCtx, params);
-
-							// LocalLogger.log(url);
-
-							/*
-							 * if (staticConfig.getApplicationLogin() != null) {
-							 * url = URLHelper.addCredential(url,
-							 * staticConfig.getApplicationLogin(),
-							 * staticConfig.getApplicationPassword()); }
-							 * PDFConvertion.getInstance().convertXHTMLToPDF(
-							 * url, out);
-							 */
-							FileOutputStream outFile = new FileOutputStream(pdfFileCache);
-							try {
-								DoubleOutputStream outDbl = new DoubleOutputStream(out, outFile);
-								PDFConvertion.getInstance().convertXHTMLToPDF(new URL(url), staticConfig.getApplicationLogin(), staticConfig.getApplicationPassword(), outDbl);
-							} finally {
-								ResourceHelper.closeResource(outFile);
-							}
-							if (pdfFileCache.length() == 0) {
-								pdfFileCache.delete();
-							}
-
-						}
-
-					} else if (ctx.getFormat().equalsIgnoreCase("ics") || ctx.getFormat().equalsIgnoreCase("ical") || ctx.getFormat().equalsIgnoreCase("icalendar")) {
-						OutputStream out = response.getOutputStream();
-						Event event = ctx.getCurrentPage().getEvent(ctx);
-						if (event == null) {
-							logger.warning("event not found on page : " + ctx.getPath() + "  context:" + ctx.getGlobalContext().getContextKey());
-							response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-							return;
-						} else {
-							DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd'T'HHmmss");
-							response.setContentType("text/calendar;");
-							PrintWriter outPrint = new PrintWriter(out);
-							outPrint.println("BEGIN:VCALENDAR");
-							outPrint.println("VERSION:2.0");
-							if (event.getProdID() != null) {
-								outPrint.println("PRODID:" + event.getProdID());
-							}
-							outPrint.println("BEGIN:VEVENT");
-							if (event.getUser() != null) {
-								;
-								outPrint.println("UID:" + event.getUser());
-							}
-							outPrint.println("DTSTART:" + dateFormat.format(event.getStart()));
-							outPrint.println("DTEND:" + dateFormat.format(event.getEnd()));
-							outPrint.println("CATEGORIES:" + event.getCategory());
-							outPrint.println("SUMMARY:" + event.getSummary());
-							if (StringHelper.neverNull(event.getLocation()).trim().length() > 0) {
-								outPrint.println("LOCATION:" + event.getLocation());
-							}
-							outPrint.println("DESCRIPTION:" + event.getDescription());
-							outPrint.println("END:VEVENT");
-							outPrint.println("END:VCALENDAR");
-							outPrint.close();
-						}
-					} else if (ctx.getFormat().equalsIgnoreCase("cxml")) {
-						String realPath = ContentManager.getPath(request);
-						MenuElement agendaPage = ContentService.getInstance(globalContext).getNavigation(ctx).searchChild(ctx, realPath);
-						response.setContentType("text/xml; charset=" + ContentContext.CHARACTER_ENCODING);
-						Date startDate = StringHelper.parseSortableDate(requestService.getParameter("start-date", "1900-01-01"));
-						Date endDate = StringHelper.parseSortableDate(requestService.getParameter("end-date", "2100-01-01"));
-						String agendaXML = TimeHelper.exportAgenda(ctx, agendaPage, startDate, endDate);
-						response.getWriter().write(agendaXML);
-					} else {
-						if (elem == null) {
-							logger.warning("bad path : " + path);
-						}
-						if ((template == null) || (!template.exist()) || (template.getRendererFullName(ctx) == null)) {
-							ServletHelper.includeBlocked(request, response);
-						} else {
-							if (ctx.getRenderMode() == ContentContext.VIEW_MODE) {
-								content.getNavigation(ctx).getNoErrorFreeCurrentPage(ctx).addAccess(ctx);
-							}
-
-							if (ctx.getSpecialContentRenderer() != null) {
-								Template specialTemplate = TemplateFactory.getTemplates(getServletContext()).get(template.getSpecialRendererTemplate());
-								if (specialTemplate != null) {
-									template = specialTemplate;
-								}
-							}
-
-							/** check page security **/
-
-							if (globalContext.getActivationKey() != null) {
-								String activationKey = requestService.getParameter("activation-key", null);
-								if (activationKey != null && activationKey.equals(globalContext.getActivationKey())) {
-									globalContext.setActivationKey(null);
+							logger.warning("page not found (" + globalContext.getContextKey() + ") : " + ctx.getPath());
+							ctx.getResponse().setStatus(HttpServletResponse.SC_NOT_FOUND, "page not found : " + ctx.getPath());
+							if (ctx.isAsViewMode()) {
+								MenuElement page404 = content.getNavigation(ctx).searchChildFromName(staticConfig.get404PageName());
+								if (page404 != null) {
+									ctx.setCurrentPageCached(page404);
+									template = TemplateFactory.getTemplate(ctx, page404);
+									ctx.setCurrentTemplate(template);
 								} else {
-									ctx.setSpecialContentRenderer("/jsp/view/activation.jsp");
-								}
-							}
-
-							if (ctx.getCurrentPage() != null && ctx.getCurrentPage().getUserRoles().size() > 0) {
-								if (!ctx.getCurrentPage().isReadAccess(ctx, ctx.getCurrentUser())) {
-									if (ctx.getCurrentUser() == null) {
-										ctx.setSpecialContentRenderer("/jsp/view/login.jsp");
-									} else {
-										if (ctx.getCurrentUser().getPassword() != null && staticConfig.isFirstPasswordMustBeChanged() && ctx.getCurrentUser().getPassword().equals(staticConfig.getFirstPasswordEncryptedIfNeeded())) {
-											ctx.setSpecialContentRenderer("/jsp/view/change_password.jsp");
-										} else {
-											if (!ctx.getCurrentPage().isReadAccess(ctx, ctx.getCurrentUser())) {
-												ctx.setSpecialContentRenderer("/jsp/view/login.jsp");
-											}
+									Template defaultTemplate = TemplateFactory.getDiskTemplates(getServletContext()).get(globalContext.getDefaultTemplate());
+									if (defaultTemplate != null) {
+										defaultTemplate.importTemplateInWebapp(staticConfig, ctx);
+										File file404 = new File(URLHelper.mergePath(defaultTemplate.getWorkTemplateRealPath(globalContext), defaultTemplate.get404File()));
+										if (file404.exists()) {
+											response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+											ResourceHelper.writeFileToStream(file404, response.getOutputStream());
+											return;
 										}
 									}
 								}
 							}
+						}
 
-							if (ctx.getGlobalContext().isCollaborativeMode()) {
-								Set<String> pageRoles = ctx.getCurrentPage().getEditorRolesAndParent();
-								if ((pageRoles.size() > 0 || ctx.getCurrentEditUser() == null) && !ctx.getCurrentPage().isPublic(ctx)) {
-									if (ctx.getCurrentEditUser() == null || !ctx.getCurrentEditUser().validForRoles(pageRoles)) {
-										MenuElement parent = ctx.getCurrentPage().getParent();
-										while (parent != null) {
-											parent = parent.getParent();
-										}
-										response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-										ctx.setSpecialContentRenderer("/jsp/view/no_access.jsp");
-									}
-								}
-							}
-
-							ctx.setCurrentTemplate(template);
-							if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE && staticConfig.isFixPreview()) {
-								ctx.getRequest().setAttribute("components", ComponentFactory.getComponentForDisplay(ctx));
-
-								/************************/
-								/**** Shared Content ****/
-								/************************/
-								SharedContentService.prepare(ctx);
-							}
-
-							/** check content **/
-							if (!ctx.isContentFound()) {
-								globalContext.log("url", "page not found : " + ctx.getPath());
-								globalContext.add404Url(ctx, ContentManager.getPath(request));
-
-								if (staticConfig.isRedirectWidthName()) {
-									String pageName = StringHelper.getFileNameWithoutExtension(StringHelper.getFileNameFromPath(request.getRequestURI()));
-									MenuElement newPage = content.getNavigation(ctx).searchChildFromName(pageName);
-									if (newPage != null) {
-										String forwardURL = URLHelper.createURL(ctx, newPage);
-										NetHelper.sendRedirectPermanently(response, forwardURL);
-										logger.info("redirect permanently : " + pageName + " to " + forwardURL);
-										return;
-									}
-								}
-								logger.warning("page not found ("+globalContext.getContextKey()+") : " + ctx.getPath());
-								ctx.getResponse().setStatus(HttpServletResponse.SC_NOT_FOUND, "page not found : " + ctx.getPath());
-								if (ctx.isAsViewMode()) {
-									MenuElement page404 = content.getNavigation(ctx).searchChildFromName(staticConfig.get404PageName());
-									if (page404 != null) {
-										ctx.setCurrentPageCached(page404);
-										template = TemplateFactory.getTemplate(ctx, page404);
-										ctx.setCurrentTemplate(template);
-									} else {
-										Template defaultTemplate = TemplateFactory.getDiskTemplates(getServletContext()).get(globalContext.getDefaultTemplate());
-										if (defaultTemplate != null) {
-											defaultTemplate.importTemplateInWebapp(staticConfig, ctx);
-											File file404 = new File(URLHelper.mergePath(defaultTemplate.getWorkTemplateRealPath(globalContext), defaultTemplate.get404File()));
-											if (file404.exists()) {
-												response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-												ResourceHelper.writeFileToStream(file404, response.getOutputStream());
-												return;
-											}
-										}
-									}
-								}
-							}
-
-							String area = requestService.getParameter("only-area", null);
-							if (area != null) {
-								getServletContext().getRequestDispatcher("/jsp/view/content_view.jsp?area=" + area).include(request, response);
+						String area = requestService.getParameter("only-area", null);
+						if (area != null) {
+							getServletContext().getRequestDispatcher("/jsp/view/content_view.jsp?area=" + area).include(request, response);
+						} else {
+							if (ctx.getCurrentPage() != null) {
+								String jspPath = template.getRendererFullName(ctx);
+								int timeTrackerNumber = TimeTracker.start(globalContext.getContextKey(), "render");
+								getServletContext().getRequestDispatcher(jspPath).include(request, response);
+								TimeTracker.end(globalContext.getContextKey(), "render", timeTrackerNumber);
+								VisitorContext.getInstance(request.getSession()).setPreviousPage(ctx.getCurrentPage().getPageBean(ctx));
 							} else {
-								if (ctx.getCurrentPage() != null) {
-									String jspPath = template.getRendererFullName(ctx);
-									int timeTrackerNumber = TimeTracker.start(globalContext.getContextKey(), "render");
-									getServletContext().getRequestDispatcher(jspPath).include(request, response);
-									TimeTracker.end(globalContext.getContextKey(), "render", timeTrackerNumber);
-									VisitorContext.getInstance(request.getSession()).setPreviousPage(ctx.getCurrentPage().getPageBean(ctx));
-								} else {
-									logger.warning("page undefined ("+globalContext.getContextKey()+") : " + ctx.getPath());
-									response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-								}
+								logger.warning("page undefined (" + globalContext.getContextKey() + ") : " + ctx.getPath());
+								response.setStatus(HttpServletResponse.SC_NOT_FOUND);
 							}
 						}
-					}
-					localLogger.endCount("content", "include content");
-
-					if (logger.isLoggable(Level.FINE)) {
-						logger.fine(requestLabel + " : render " + df.format((double) (System.currentTimeMillis() - startTime) / (double) 1000) + " sec.");
 					}
 				}
+				localLogger.endCount("content", "include content");
 
 				if (logger.isLoggable(Level.FINE)) {
-					logger.fine(requestLabel + " : all process method " + df.format((double) (System.currentTimeMillis() - startTime) / (double) 1000) + " sec.");
+					logger.fine(requestLabel + " : render " + df.format((double) (System.currentTimeMillis() - startTime) / (double) 1000) + " sec.");
 				}
+			}
 
-				if (StringHelper.isTrue(request.getSession().getAttribute(InfoBean.NEW_SESSION_PARAM))) {
-					request.getSession().removeAttribute(InfoBean.NEW_SESSION_PARAM);
-				}
+			if (logger.isLoggable(Level.FINE)) {
+				logger.fine(requestLabel + " : all process method " + df.format((double) (System.currentTimeMillis() - startTime) / (double) 1000) + " sec.");
+			}
 
-				i18nAccess.resetRequestMap();
+			if (StringHelper.isTrue(request.getSession().getAttribute(InfoBean.NEW_SESSION_PARAM))) {
+				request.getSession().removeAttribute(InfoBean.NEW_SESSION_PARAM);
+			}
 
-			} catch (Throwable t) {
+			i18nAccess.resetRequestMap();
 
+		} catch (Throwable t) {
+			try {
 				if (!response.isCommitted()) {
 					response.setStatus(503);
 					Writer out = response.getWriter();
@@ -1116,8 +1116,13 @@ public class AccessServlet extends HttpServlet implements IVersion {
 				} else {
 					logger.warning(t.getMessage());
 				}
-			} finally {
-				PersistenceService persistenceService = PersistenceService.getInstance(globalContext);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		} finally {
+			PersistenceService persistenceService;
+			try {
+				persistenceService = PersistenceService.getInstance(globalContext);
 				String persistenceParam = requestService.getParameter(PERSISTENCE_PARAM, null);
 				if (persistenceService.isAskStore() && StringHelper.isTrue(persistenceParam, true)) {
 					persistenceService.store(ctx);
@@ -1126,9 +1131,9 @@ public class AccessServlet extends HttpServlet implements IVersion {
 					HttpSession session = ctx.getRequest().getSession();
 					session.invalidate();
 				}
-			}
-		} catch (Exception ioe) {
-			ioe.printStackTrace();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}			
 		}
 	}
 
@@ -1200,7 +1205,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 		out.println("**** MAILING THREAD    :  " + staticConfig.isMailingThread());
 		out.println("**** THREAD COUNT      :  " + threads.getThreadCount());
 		out.println("**** THREAD STR COUNT  :  " + threads.getTotalStartedThreadCount());
-		out.println("**** THREAD DMN COUNT  :  " + threads.getDaemonThreadCount());				
+		out.println("**** THREAD DMN COUNT  :  " + threads.getDaemonThreadCount());
 		out.println("****");
 		out.println("****************************************************************");
 		out.println("****************************************************************");

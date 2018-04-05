@@ -549,6 +549,10 @@ public class MailService {
 		sendMail(null, sender, recipient, (List<InternetAddress>) null, (List<InternetAddress>) null, subject, content, isHTML, null, null);
 	}
 	
+	public void sendMail(InternetAddress sender, InternetAddress recipient, String subject, String content, boolean isHTML, DKIMBean dkim) throws MessagingException {
+		sendMail(null, sender, recipient, (List<InternetAddress>) null, (List<InternetAddress>) null, subject, content, isHTML, null, dkim);
+	}
+	
 	public void sendMail(GlobalContext globalContext, InternetAddress sender, InternetAddress recipient, String subject, String content, boolean isHTML) throws MessagingException {
 		sendMail(null, sender, recipient, (List<InternetAddress>) null, (List<InternetAddress>) null, subject, content, isHTML, globalContext.getUnsubscribeLink(), globalContext.getDKIMBean());
 	}

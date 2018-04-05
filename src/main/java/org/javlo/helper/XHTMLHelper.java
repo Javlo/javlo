@@ -2823,17 +2823,25 @@ public class XHTMLHelper {
 	   out.close();
 	   return new String(outStream.toByteArray());
    }
+   
+   public static String createAdminMail(String title, String content, Map data, String link, String linkLabel, String footer) {
+	   return createAdminMail(title, content, data, link, linkLabel, footer, content.length() < 120);
+   }
 
-	public static String createAdminMail(String title, String content, Map data, String link, String linkLabel, String footer) {
+	public static String createAdminMail(String title, String content, Map data, String link, String linkLabel, String footer, boolean center) {
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(outStream);
+		String align="center";
+		if (!center) {
+			align="left";
+		}
 		out.println(
-				"<html xmlns='http://www.w3.org/1999/xhtml'><body paddingwidth='0' paddingheight='0' bgcolor='#ffffff'  style='padding: 0; background-repeat: repeat; width: 100% !important; -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; -webkit-font-smoothing: antialiased;' offset='0' toppadding='0' leftpadding='0'>  <table width='100%' border='0' cellspacing='0' cellpadding='0' class='tableContent bgBody' align='center'  style='font-family:Helvetica, sans-serif; font-size: 14px;'><tr><td align='center'><table width='600' border='0' cellspacing='0' cellpadding='0' align='center'><tr><td align='center'><table width='678' border='0' cellspacing='0' cellpadding='0' align='center'><tr><td align='center'>");
+				"<html xmlns='http://www.w3.org/1999/xhtml'><body paddingwidth='0' paddingheight='0' bgcolor='#ffffff'  style='padding: 0; background-repeat: repeat; width: 100% !important; -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; -webkit-font-smoothing: antialiased;' offset='0' toppadding='0' leftpadding='0'>  <table width='100%' border='0' cellspacing='0' cellpadding='0' class='tableContent bgBody' align='"+align+"'  style='font-family:Helvetica, sans-serif; font-size: 14px;'><tr><td align='"+align+"'><table width='600' border='0' cellspacing='0' cellpadding='0' align='"+align+"'><tr><td align='"+align+"'><table width='678' border='0' cellspacing='0' cellpadding='0' align='"+align+"'><tr><td align='"+align+"'>");
 		if (!StringHelper.isEmpty(title)) {
 			out.println("<p style='font-family:Helvetica; font-size: 18px; color: #D31996;'>" + title + "</p>");
 		}
 		if (!StringHelper.isEmpty(content)) {
-			out.println("<p style='font-family:Helvetica; font-size: 14px;'>" + content + "</p>");
+			out.println("<p style='font-family:Helvetica; font-size: 14px; text-align: "+align+";'>" + content + "</p>");
 		}
 		out.println(createHTMLTable(data));
 		if (!StringHelper.isEmpty(footer)) {

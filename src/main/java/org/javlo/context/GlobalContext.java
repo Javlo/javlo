@@ -3215,15 +3215,15 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		if (viewPages != null) {
 			out.println("**** # viewPages        :  " + viewPages.size());
 		}
-		if (session != null) {
-			try {
-				out.println("**** Modules            :  " + StringHelper
-						.collectionToString(ModulesContext.getInstance(session, this).getAllModules(), ", "));
-			} catch (ModuleException e) {
-				out.println("**** Error load Modules :  " + e.getMessage());
-				e.printStackTrace();
-			}
-		}
+//		if (session != null) {
+//			try {
+//				out.println("**** Modules            :  " + StringHelper
+//						.collectionToString(ModulesContext.getInstance(session, this).getAllModules(), ", "));
+//			} catch (ModuleException e) {
+//				out.println("**** Error load Modules :  " + e.getMessage());
+//				e.printStackTrace();
+//			}
+//		}
 		out.println("**** # attributes       :  " + attributes.size());
 		out.println("**** # time attributes  :  " + timeAttributes.size());
 		if (viewPages != null) {
