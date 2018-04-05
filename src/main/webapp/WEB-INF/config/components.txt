@@ -116,6 +116,7 @@ org.javlo.component.dynamic.DynamicComponentCreator
 org.javlo.component.date.CalendarComponent
 org.javlo.component.container.ArrayDisplayComponent
 org.javlo.component.container.ComponentList
+org.javlo.component.container.ShowTemplateComponent
 
 --content.title.ecom
 
