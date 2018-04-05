@@ -99,8 +99,8 @@ public class XMLManipulationHelper {
 	 * out.append("<script type=\"text/javascript\">"); out.newLine();
 	 * out.append("_uacct = \"<%=globalContext.getGoogleAnalyticsUACCT()%>\";");
 	 * out.newLine(); out.append("urchinTracker();"); out.newLine();
-	 * out.append("</script>"); out.newLine(); out.append("<%}%>");
-	 * out.newLine(); out.close();
+	 * out.append("</script>"); out.newLine(); out.append("<%}%>"); out.newLine();
+	 * out.close();
 	 * 
 	 * return outString.toString(); }
 	 */
@@ -304,8 +304,7 @@ public class XMLManipulationHelper {
 	 * @param htmlFile
 	 *            the source file
 	 * @param jspFile
-	 *            if jsp null no file is create -> just for test the HTML
-	 *            structure
+	 *            if jsp null no file is create -> just for test the HTML structure
 	 * @param options
 	 * @param areas
 	 * @param resources
@@ -374,9 +373,11 @@ public class XMLManipulationHelper {
 				}
 			}
 
+			boolean titleFound = false;
+			TagDescription tagHead = null;
 			for (int i = 0; i < tags.length; i++) {
 				Map<String, String> attributes = tags[i].getAttributes();
-				String idValue = attributes.get("id");				
+				String idValue = attributes.get("id");
 				if (ids != null && idValue != null) {
 					ids.add(idValue);
 				}
@@ -399,10 +400,10 @@ public class XMLManipulationHelper {
 						remplacement.addReplacement(tags[i].getOpenStart() - 1, tags[i].getOpenStart() - 1, prefix);
 						remplacement.addReplacement(tags[i].getOpenEnd() + 1, tags[i].getCloseStart(), "<jsp:include page=\"/jsp/view/content_view.jsp?area=" + area + "\" />");
 						remplacement.addReplacement(tags[i].getCloseEnd() + 1, tags[i].getCloseEnd() + 1, sufix);
-						
-						String checkEmptyArea = "${empty info.areaEmpty['"+area+"']?' _not_empty_area':' _empty_area'}";						
+
+						String checkEmptyArea = "${empty info.areaEmpty['" + area + "']?' _not_empty_area':' _empty_area'}";
 						String cssClass = StringHelper.neverNull(tags[i].getAttributes().get("class"));
-						tags[i].getAttributes().put("class", (cssClass + " _area").trim()+checkEmptyArea);
+						tags[i].getAttributes().put("class", (cssClass + " _area").trim() + checkEmptyArea);
 						remplacement.addReplacement(tags[i].getOpenStart(), tags[i].getOpenEnd() + 1, tags[i].renderOpen());
 					} else if (idValue != null && areaContainer != null && idValue.trim().equals(areaContainer)) {
 						remplacement.addReplacement(tags[i].getOpenStart() - 1, tags[i].getOpenStart() - 1, prefix);
@@ -417,7 +418,7 @@ public class XMLManipulationHelper {
 						boolean list = StringHelper.isTrue(getValue(options, "tagid.language.list", "true"));
 						boolean languageJS = StringHelper.isTrue(getValue(options, "tagid.language.auto-change", "true"));
 						if (list) {
-							remplacement.addReplacement(tags[i].getOpenEnd() + 1, tags[i].getCloseStart(), "<%=XHTMLHelper.renderLanguage(ctx, \""+getValue(options, "language.class", null)+"\" )%>");
+							remplacement.addReplacement(tags[i].getOpenEnd() + 1, tags[i].getCloseStart(), "<%=XHTMLHelper.renderLanguage(ctx, \"" + getValue(options, "language.class", null) + "\" )%>");
 						} else {
 							String selectID = getValue(options, "tagid.language.select-id", "select_language");
 							String selectInputID = getValue(options, "tagid.language.select-input-id", "select_language_submit");
@@ -527,27 +528,27 @@ public class XMLManipulationHelper {
 						tag = "section";
 					}
 					tags[i].setName(tag);
-					tags[i].addCssClass("page_association_fake_body");					
+					tags[i].addCssClass("page_association_fake_body");
 					if (tags[i].getAttribute("id", null) == null) {
 						tags[i].getAttributes().put("id", "<%=ctx.getCurrentPage().getHtmlSectionId(ctx)%>");
-					} 
+					}
 					String renderBodyAsDiv = tags[i].renderOpen();
 
 					String openBodyCode = "<c:if test=\"${not contentContext.pageAssociation}\">" + renderBodyAsBody + "</c:if><c:if test=\"${contentContext.pageAssociation}\">" + renderBodyAsDiv + "</c:if>";
-					String closeBodyCode = "<%}%><c:if test=\"${not contentContext.pageAssociation}\">" + getGoogleAnalyticsCode() + "</body></c:if><c:if test=\"${contentContext.pageAssociation}\"></"+tag+"></c:if>";
+					String closeBodyCode = "<%}%><c:if test=\"${not contentContext.pageAssociation}\">" + getGoogleAnalyticsCode() + "</body></c:if><c:if test=\"${contentContext.pageAssociation}\"></" + tag + "></c:if>";
 					remplacement.addReplacement(tags[i].getOpenStart(), tags[i].getOpenEnd() + 1, "</c:if>" + openBodyCode + openPageCode);
-					remplacement.addReplacement(tags[i].getCloseStart(), tags[i].getCloseEnd() + 1, closeBodyCode + closePageCode); 
+					remplacement.addReplacement(tags[i].getCloseStart(), tags[i].getCloseEnd() + 1, closeBodyCode + closePageCode);
 
 					String previewCode = "<c:if test=\"${not contentContext.pageAssociation}\">" + getPreviewCode(globalContext.getServletContext()) + "</c:if>";
 					// remplacement.addReplacement(tags[i].getOpenEnd() + 1,
 					// tags[i].getOpenEnd() + 1, previewCode +
 					// getEscapeMenu(contentZone) + getResetTemplate() +
 					// getAfterBodyCode());
-					remplacement.addReplacement(tags[i].getOpenEnd() + 1, tags[i].getOpenEnd() + 1,  "<%=ctx.getGlobalContext().getHeaderBloc()%>" + getEscapeMenu(contentZone) + getResetTemplate() + getAfterBodyCode());
-					if (isMail && globalContext.getStaticConfig().isMailingUserTracking()) {						
+					remplacement.addReplacement(tags[i].getOpenEnd() + 1, tags[i].getOpenEnd() + 1, "<%=ctx.getGlobalContext().getHeaderBloc()%>" + getEscapeMenu(contentZone) + getResetTemplate() + getAfterBodyCode());
+					if (isMail && globalContext.getStaticConfig().isMailingUserTracking()) {
 						previewCode = previewCode + "<%Map mParams = new HashMap();mParams.put(MailingAction.MAILING_FEEDBACK_PARAM_NAME, MailingAction.MAILING_FEEDBACK_VALUE_NAME);%><img class=\"empty_image\" style=\"height: 0; width: 0; margin:0; padding: 0;\" width=\"0\" height=\"0\" src=\"<%=URLHelper.createStaticURL(ctx, \"/mfb.png\", mParams)%>\" /> ";
 					}
-					remplacement.addReplacement(tags[i].getCloseStart() - 1, tags[i].getCloseStart() - 1, "<%=ctx.getGlobalContext().getFooterBloc()%>"+previewCode);					
+					remplacement.addReplacement(tags[i].getCloseStart() - 1, tags[i].getCloseStart() - 1, "<%=ctx.getGlobalContext().getFooterBloc()%>" + previewCode);
 				}
 
 				/* link - StyleSheet */
@@ -561,7 +562,7 @@ public class XMLManipulationHelper {
 						if (!template.isForStatic()) {
 							templateVersionCode = "\"" + templateVersion + "\"";
 						}
-						attributes.put("href", "<%=URLHelper.createStaticTemplateURL(ctx,\"/" + hrefValue + "\", "+templateVersionCode+")%>");
+						attributes.put("href", "<%=URLHelper.createStaticTemplateURL(ctx,\"/" + hrefValue + "\", " + templateVersionCode + ")%>");
 						remplacement.addReplacement(tags[i].getOpenStart(), tags[i].getOpenEnd() + 1, newLinkGeneratorIf + tags[i].toString() + "<%}%>");
 					}
 				}
@@ -622,19 +623,20 @@ public class XMLManipulationHelper {
 
 				/* head - StyleSheet */
 				if (tags[i].getName().equalsIgnoreCase("head")) {
-					
-					String staticHeader = StringHelper.neverEmpty(globalContext.getStaticConfig().getHtmlHead(),"");
+					tagHead = tags[i];
+
+					String staticHeader = StringHelper.neverEmpty(globalContext.getStaticConfig().getHtmlHead(), "");
 
 					if (content.indexOf(HEADER_ZONE) > 0) {
-						remplacement.addReplacement(content.indexOf(HEADER_ZONE), content.indexOf(HEADER_ZONE) + HEADER_ZONE.length(), getHTMLPrefixHead(globalContext, headContext)+staticHeader);
+						remplacement.addReplacement(content.indexOf(HEADER_ZONE), content.indexOf(HEADER_ZONE) + HEADER_ZONE.length(), getHTMLPrefixHead(globalContext, headContext) + staticHeader);
 					} else {
-						remplacement.addReplacement(tags[i].getOpenEnd() + 1, tags[i].getOpenEnd() + 1, getHTMLPrefixHead(globalContext, headContext)+staticHeader);
+						remplacement.addReplacement(tags[i].getOpenEnd() + 1, tags[i].getOpenEnd() + 1, getHTMLPrefixHead(globalContext, headContext) + staticHeader);
 					}
 
 					/** template plugin **/
 					ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 					PrintStream out = new PrintStream(outStream);
-					
+
 					out.println("<%if (ctx.getCurrentPage().isNoIndex()) {%><meta name=\"robots\" content=\"noindex, follow\" /><%}%>");
 
 					/** wysiwyg init css **/
@@ -681,11 +683,11 @@ public class XMLManipulationHelper {
 					}
 					out.println("<!-- end template plugins -->");
 					out.println("<%}");
-					
+
 					/** forward **/
 					out.println("if (!StringHelper.isEmpty(currentPage.getForward(ctx))) {%><!--FRW--><meta http-equiv=\"refresh\" content=\"0; url=<%=currentPage.getForward(ctx)%>\" /><%}%>");
 					out.println("<%=ctx.getGlobalContext().getMetaBloc()%>");
-					
+
 					out.close();
 
 					remplacement.addReplacement(tags[i].getCloseStart() - 1, tags[i].getCloseStart(), getHTMLSufixHead(globalContext.getStaticConfig(), template) + new String(outStream.toByteArray()));
@@ -694,16 +696,13 @@ public class XMLManipulationHelper {
 				/* title */
 				if (!isMail) {
 					if (tags[i].getName().equalsIgnoreCase("title")) {
-						if (tags[i].getCloseStart() - tags[i].getOpenEnd() > 1) { // if
-							// content
-							// in
-							// title
-							// tag
+						titleFound = true;
+						if (tags[i].getCloseStart() - tags[i].getOpenEnd() > 1) { // if content in title tag
 							if (!tags[i].getInside(content).toLowerCase().contains("title")) {
 								remplacement.addReplacement(tags[i].getCloseStart(), tags[i].getCloseStart(), " - <%=currentTitle%>");
 							}
 						} else {
-							remplacement.addReplacement(tags[i].getCloseStart(), tags[i].getCloseStart(), "<%=currentTitle%>");
+							remplacement.addReplacement(tags[i].getCloseStart(), tags[i].getCloseStart(), "<%=currentTitle%> | ${info.globalTitle}");
 						}
 					}
 				}
@@ -750,6 +749,12 @@ public class XMLManipulationHelper {
 						tags[i].getAttributes().put("data", "<%=URLHelper.createStaticTemplateURL(ctx,\"/" + tags[i].getAttributes().get("data") + "\")%>");
 						remplacement.addReplacement(tags[i].getOpenStart(), tags[i].getOpenEnd() + 1, tags[i].toString());
 					}
+				}
+			}
+			
+			if (!titleFound && !isMail) {
+				if (tagHead != null) {
+					remplacement.addReplacement(tagHead.getCloseStart(), tagHead.getCloseStart(), "<title><%=currentTitle%> | ${info.globalTitle}</title>");
 				}
 			}
 
@@ -885,35 +890,44 @@ public class XMLManipulationHelper {
 		 * ); out.println(
 		 * "document.write(unescape(\"%3Cscript src='\" + gaJsHost + \"google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E\"));"
 		 * ); out.println("</script>");
-		 * out.println("<script type=\"text/javascript\">");
-		 * out.println("try {"); out.println(
+		 * out.println("<script type=\"text/javascript\">"); out.println("try {");
+		 * out.println(
 		 * "var pageTracker = _gat._getTracker(\"<%=globalContext.getGoogleAnalyticsUACCT()%>\");"
 		 * ); out.println("pageTracker._trackPageview();");
 		 * out.println("} catch(err) {}</script>");
 		 */
 
-//		out.print("<%if (globalContext.getGoogleAnalyticsUACCT().length() > 4 && ctx.isTrackingContext()) {%><script type=\"text/javascript\">");
-//		out.println("var _gaq = _gaq || [];");
-//		out.println("_gaq.push(['_setAccount', '<%=globalContext.getGoogleAnalyticsUACCT()%>']);");
-//		out.println("_gaq.push(['_trackPageview']);");
-//		out.println("   (function() {");
-//		out.println("      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;");
-//		out.println("      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';");
-//		out.println("      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);");
-//		out.println("   })();");
-//		out.print("</script><%}%>");
+		// out.print("<%if (globalContext.getGoogleAnalyticsUACCT().length() > 4 &&
+		// ctx.isTrackingContext()) {%><script type=\"text/javascript\">");
+		// out.println("var _gaq = _gaq || [];");
+		// out.println("_gaq.push(['_setAccount',
+		// '<%=globalContext.getGoogleAnalyticsUACCT()%>']);");
+		// out.println("_gaq.push(['_trackPageview']);");
+		// out.println(" (function() {");
+		// out.println(" var ga = document.createElement('script'); ga.type =
+		// 'text/javascript'; ga.async = true;");
+		// out.println(" ga.src = ('https:' == document.location.protocol ?
+		// 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';");
+		// out.println(" var s = document.getElementsByTagName('script')[0];
+		// s.parentNode.insertBefore(ga, s);");
+		// out.println(" })();");
+		// out.print("</script><%}%>");
 
-//		out.print("<%if (globalContext.getGoogleAnalyticsUACCT().length() > 4 && ctx.isTrackingContext()) {%><script>");
-//		out.println("  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){");
-//		out.println("(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),");
-//		out.println("m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)");
-//		out.println("})(window,document,'script','//www.google-analytics.com/analytics.js','ga');");
-//
-//		out.println("ga('create', '<%=globalContext.getGoogleAnalyticsUACCT()%>', 'auto');");
-//		out.println("ga('send', 'pageview');");
-//
-//		out.println("</script><%}%>");
-		
+		// out.print("<%if (globalContext.getGoogleAnalyticsUACCT().length() > 4 &&
+		// ctx.isTrackingContext()) {%><script>");
+		// out.println("
+		// (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){");
+		// out.println("(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new
+		// Date();a=s.createElement(o),");
+		// out.println("m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)");
+		// out.println("})(window,document,'script','//www.google-analytics.com/analytics.js','ga');");
+		//
+		// out.println("ga('create', '<%=globalContext.getGoogleAnalyticsUACCT()%>',
+		// 'auto');");
+		// out.println("ga('send', 'pageview');");
+		//
+		// out.println("</script><%}%>");
+
 		out.print("<%if (globalContext.getGoogleAnalyticsUACCT().length() > 4 && ctx.isTrackingContext()) {%>");
 		out.print("<jsp:include page=\"${info.rootTemplateFolder}/jsp/googleanalytics.jsp\" />");
 		out.println("<%}%>");
@@ -954,7 +968,7 @@ public class XMLManipulationHelper {
 
 		StringWriter outString = new StringWriter();
 		BufferedWriter out = new BufferedWriter(outString);
-		
+
 		out.append("<%if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE) {%>");
 		out.append("<style type=\"text/css\">@font-face {font-family: \"javloFont\"; src: url('${info.staticRootURL}fonts/javlo-italic.ttf') format(\"truetype\");}</style>");
 		out.append("<%}%>");
@@ -1061,9 +1075,12 @@ public class XMLManipulationHelper {
 		String previewCSS = staticConfig.getCssPreview();
 		out.append("<%=(ctx.isInteractiveMode() ? \"<link rel=\\\"stylesheet\\\" type=\\\"text/css\\\" href=\\\"\"+URLHelper.createStaticURL(ctx,\"" + previewCSS + "\")+\"?ts=\"+infoBean.getTs()+\"\\\" />\" : \"\")  %>");
 		out.newLine();
-		//out.append("<%String cssPreviewURL = URLHelper.mergePath(URLHelper.createStaticURL(ctx,\"/\"), globalContext.getStaticConfig().getEditTemplateFolder(), \"/preview/\"+globalContext.getEditTemplateMode()+\"/css/edit_preview.css\");%>");
+		// out.append("<%String cssPreviewURL =
+		// URLHelper.mergePath(URLHelper.createStaticURL(ctx,\"/\"),
+		// globalContext.getStaticConfig().getEditTemplateFolder(),
+		// \"/preview/\"+globalContext.getEditTemplateMode()+\"/css/edit_preview.css\");%>");
 		out.append("<%=(ctx.isInteractiveMode() && !StringHelper.isEmpty(infoBean.getPreviewTemplateModeURL()) ? \"<link rel=\\\"stylesheet\\\" type=\\\"text/css\\\" href=\\\"\"+infoBean.getPreviewTemplateModeURL()+\"?ts=\"+infoBean.getTs()+\"\\\" />\" : \"\")  %>");
-		out.newLine();		
+		out.newLine();
 		out.append("<%=(ctx.isInteractiveMode() ? \"<script type=\\\"text/javascript\\\" src=\\\"\"+URLHelper.createStaticURL(ctx,\"" + staticConfig.getJSPreview() + "\")+\"\\\"></script>\" : \"\")  %>");
 		out.append("<%=(ctx.isInteractiveMode() ? \"<script type=\\\"text/javascript\\\" src=\\\"\"+URLHelper.createStaticURL(ctx,\"" + staticConfig.getJSBootStrap() + "\")+\"\\\"></script>\" : \"\")  %>");
 		out.newLine();
@@ -1086,8 +1103,8 @@ public class XMLManipulationHelper {
 		out.append("var currentAjaxURLWidthDevice = \"${info.currentAjaxURLWidthDevice}\";");
 		out.newLine();
 		out.append("<%String editPreviewURLJava = URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.EDIT_MODE)); if (editPreviewURLJava.contains(\"?\")) { editPreviewURLJava=editPreviewURLJava+\"&\"; } else { editPreviewURLJava=editPreviewURLJava+\"?\"; }%>");
-		out.newLine();		
-		out.append("var editPreviewURL = \"<%=editPreviewURLJava%>module=content&webaction=edit.editPreview&"+ContentContext.PREVIEW_EDIT_PARAM+"=true\";");
+		out.newLine();
+		out.append("var editPreviewURL = \"<%=editPreviewURLJava%>module=content&webaction=edit.editPreview&" + ContentContext.PREVIEW_EDIT_PARAM + "=true\";");
 		out.newLine();
 		out.append("</script><%}%>");
 
@@ -1100,7 +1117,7 @@ public class XMLManipulationHelper {
 		return outString.toString();
 	}
 
-	private static String getJSPHeader(ServletContext application) throws IOException {		
+	private static String getJSPHeader(ServletContext application) throws IOException {
 		File headerFile = new File(ResourceHelper.getRealPath(application, "/jsp/view/page/header.jsp"));
 		if (!headerFile.exists()) {
 			return "<!-- header file not found : '" + headerFile + "' -->";
@@ -1110,7 +1127,8 @@ public class XMLManipulationHelper {
 	}
 
 	private static String getPreviewCode(ServletContext application) throws FileNotFoundException, IOException {
-		//File headerFile = new File(application.getRealPath("/jsp/view/page/preview.jsp"));
+		// File headerFile = new
+		// File(application.getRealPath("/jsp/view/page/preview.jsp"));
 		File headerFile = new File(ResourceHelper.getRealPath(application, "/jsp/view/page/preview.jsp"));
 		if (!headerFile.exists()) {
 			return "<!-- preview file not found : '" + headerFile + "' -->";
@@ -1128,11 +1146,10 @@ public class XMLManipulationHelper {
 		 * ); out.append("<div id=\"_reset_template\">"); out.append(
 		 * "<a href=\"<%=URLHelper.createURLNoForceTemplate(ctx)%>\"><%=i18nAccess.getViewText(\"template.clean-force-template\")%> : <%=request.getParameter(PageConfiguration.FORCE_TEMPLATE_PARAM_NAME)%></a>"
 		 * ); out.append("<div class=\"_reset_template-close\">"); out.append(
-		 * "<%=XHTMLHelper.getIconesCode(ctx, \"close.gif\", \"start\")%>");
-		 * out.append(
+		 * "<%=XHTMLHelper.getIconesCode(ctx, \"close.gif\", \"start\")%>"); out.append(
 		 * "<a href=\"#\" onclick=\"document.getElementById('_reset_template').style.visibility='hidden';; return false;\">"
-		 * ); out.append("</a></div>"); out.append("</div>");
-		 * out.append("<%}%>"); out.newLine();
+		 * ); out.append("</a></div>"); out.append("</div>"); out.append("<%}%>");
+		 * out.newLine();
 		 */
 		out.close();
 		return outString.toString();
@@ -1149,12 +1166,10 @@ public class XMLManipulationHelper {
 
 	public static void main(String[] args) {
 		/*
-		 * try { List<String> areas = new LinkedList<String>();
-		 * areas.add("mainCol"); convertHTMLtoTemplate(new
-		 * File("c:/trans/index.html"), new File("c:/trans/index.jsp"), new
-		 * HashMap(), areas, new LinkedList<String>());
-		 * System.out.println("done."); } catch (Exception e) {
-		 * e.printStackTrace(); }
+		 * try { List<String> areas = new LinkedList<String>(); areas.add("mainCol");
+		 * convertHTMLtoTemplate(new File("c:/trans/index.html"), new
+		 * File("c:/trans/index.jsp"), new HashMap(), areas, new LinkedList<String>());
+		 * System.out.println("done."); } catch (Exception e) { e.printStackTrace(); }
 		 */
 		try {
 
