@@ -7,6 +7,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.javlo.component.core.AbstractVisualComponent;
+import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.helper.StringHelper;
 import org.javlo.template.Template;
@@ -23,6 +24,7 @@ public class ShowTemplateComponent extends AbstractVisualComponent {
 		Collection<TemplateBean> templates = new LinkedList<TemplateBean>();
 		for (String id : getTemplateIds(ctx)) {
 			Template template = TemplateFactory.getTemplates(ctx.getRequest().getSession().getServletContext()).get(id);
+			template.importTemplateInWebapp(StaticConfig.getInstance(ctx.getRequest().getSession()), ctx);
 			templates.add(new TemplateBean(ctx, template));
 		}
 		ctx.getRequest().setAttribute("templates", templates);
