@@ -91,5 +91,10 @@ public class ShowTemplateComponent extends AbstractVisualComponent {
 	public String getType() { 
 		return TYPE;
 	}
+	
+	@Override
+	public boolean isContentCachable(ContentContext ctx) {
+		return true;
+	}
 
 }
