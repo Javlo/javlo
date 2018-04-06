@@ -2825,7 +2825,11 @@ public class XHTMLHelper {
    }
    
    public static String createAdminMail(String title, String content, Map data, String link, String linkLabel, String footer) {
-	   return createAdminMail(title, content, data, link, linkLabel, footer, content.length() < 120);
+	   boolean center = true;
+	   if (content != null) {
+		   center = content.length() < 120;
+	   }
+	   return createAdminMail(title, content, data, link, linkLabel, footer, center);
    }
 
 	public static String createAdminMail(String title, String content, Map data, String link, String linkLabel, String footer, boolean center) {

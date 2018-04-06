@@ -1052,7 +1052,7 @@ public class Template implements Comparable<Template> {
 	}
 
 	public boolean exist() {
-		return dir != null;
+		return dir != null && dir.exists();
 	}
 
 	private String getAlternateTemplateSessionKey() {
@@ -2661,8 +2661,17 @@ public class Template implements Comparable<Template> {
 			if (childrenData == null) {
 				childrenData = new HashMap<String, String>();
 			}
-			LangHelper.putAllIfNotExist(childrenData, getTemplateDataMap(globalContext));
-			getParent().importTemplateInWebapp(config, ctx, globalContext, templateTarget, childrenData, false, true);
+			LangHelper.putAllIfNotExist(childrenData, getTemplateDataMap(globalContext));			
+			if (getParent().exist()) {
+				getParent().importTemplateInWebapp(config, ctx, globalContext, templateTarget, childrenData, false, true);
+			} else {
+				logger.warning("parent template not found : "+getParent().getName());
+				File indexFile = new File(URLHelper.mergePath(templateTarget.getAbsolutePath(), "index.jsp"));
+				File source = new File(ctx.getRequest().getSession().getServletContext().getRealPath("/jsp/index_error.html"));
+				String content = ResourceHelper.loadStringFromFile(source);
+				content = content.replace("#template#", getParent().getName());
+				ResourceHelper.writeStringToFile(indexFile, content);
+			}
 		}
 	}
 
