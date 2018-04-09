@@ -142,6 +142,60 @@ public class URLHelper extends ElementaryURLHelper {
 		otherContext.setLanguage(lg);
 		return createURL(otherContext);
 	}
+	
+	public static String createMediaURL(ContentContext ctx, String url) {
+		return createMediaURL(ctx, null, url);
+	}
+	
+	public static String createMediaURL(ContentContext ctx, MenuElement currentPage, String url) {
+		if (url == null) {
+			return null;
+		}
+		
+		GlobalContext globalContext = ctx.getGlobalContext();
+		String fullFileName = URLHelper.mergePath(globalContext.getDataFolder(), url);
+
+		if (StringHelper.isURLFile(url)) {						
+			try {
+				return FileUtils.readFileToString(new File(fullFileName));
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+
+		url = url.replace('\\', '/');
+		
+		
+		if (ctx.getRenderMode() == ContentContext.VIEW_MODE && ctx.getGlobalContext().getStaticConfig().isResourceShortURL()) {
+			File file = new File(fullFileName);
+			StaticInfo staticInfo;
+			try {
+				staticInfo = StaticInfo.getInstance(ctx, file);
+				String fileName = null;
+				if (staticInfo != null && !StringHelper.isEmpty(staticInfo.getTitle(ctx))) {
+					fileName = staticInfo.getTitle(ctx);
+					url = URLHelper.mergePath(RESOURCE_SERVLET_PATH, ctx.getGlobalContext().setTransformShortURL(url, "", fileName));
+					url = createStaticURL(ctx,url);
+				} else {
+					if (url.charAt(0) == '/') {
+						url = createStaticURL(ctx, currentPage, MEDIA + url);
+					} else {
+						url = createStaticURL(ctx, currentPage, MEDIA + '/' + url);
+					}
+				}				
+			} catch (Exception e) { 
+				e.printStackTrace();
+			}
+		} else if (url != null) {
+			if (url.length() > 0 && url.charAt(0) == '/') {
+				url = createStaticURL(ctx, currentPage, MEDIA + url);
+			} else {
+				url = createStaticURL(ctx, currentPage, MEDIA + '/' + url);
+			}
+		}
+		
+		return url;
+	}
 
 	public static String createResourceURL(ContentContext ctx, MenuElement currentPage, String url) {
 		if (url == null) {
