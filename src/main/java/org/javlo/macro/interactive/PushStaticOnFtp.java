@@ -80,6 +80,7 @@ public class PushStaticOnFtp implements IInteractiveMacro, IAction {
 		String email = rs.getParameter("email", "");
 		String path = rs.getParameter("path", "");
 		boolean zipOnly = StringHelper.isTrue(rs.getParameter("ziponly"));
+		boolean here = StringHelper.isTrue(rs.getParameter("here"));
 		
 		ctx.getGlobalContext().setData(NAME+"-host",  host);
 		ctx.getGlobalContext().setData(NAME+"-port", "21");
@@ -99,6 +100,10 @@ public class PushStaticOnFtp implements IInteractiveMacro, IAction {
 		
 		File folder = new File(URLHelper.mergePath(ctx.getGlobalContext().getDataFolder(), "_static_temp"));
 		String url = URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE).getContextForAbsoluteURL(), "/");
+		if (here) {
+			url = URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE).getContextForAbsoluteURL(), ctx.getCurrentPage());
+		}
+		
 		if (zipOnly) {
 			File zipFile = new File(URLHelper.mergePath(ctx.getGlobalContext().getStaticFolder(), "_static_export/"+StringHelper.stringToFileName(globalContext.getContextKey()+"_"+StringHelper.renderSortableTime(new Date()))+".zip"));
 			zipFile.getParentFile().mkdirs();

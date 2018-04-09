@@ -31,6 +31,11 @@
 		</label></div>
 	</div>
 	<div class="form-group">
+		<div class="checkbox"><label>
+			<input type="checkbox" name="here" class="checkbox" /> create from current page
+		</label></div>
+	</div>
+	<div class="form-group">
 		<label>notification email : </label>
 		<input type="email" name="email" class="form-control" value="${email}"/>
 	</div>
@@ -39,8 +44,7 @@
 		<label>path</label>
 		<input type="text" name="path" class="form-control" value="${path}" />
 	</div>
-	<div class="action">
-		
+	<div class="action">		
 		<button type="submit" class="btn btn-primary pull-right">push</button>
 	</div>
 </form>

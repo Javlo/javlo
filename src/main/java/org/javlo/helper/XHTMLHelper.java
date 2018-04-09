@@ -4,6 +4,8 @@
 package org.javlo.helper;
 
 import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
@@ -12,14 +14,17 @@ import java.io.CharArrayReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
+import java.net.URL;
 import java.net.URLDecoder;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -36,10 +41,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.logging.Level;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
+import javax.imageio.ImageIO;
 import javax.servlet.ServletContext;
+import javax.swing.JLabel;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
@@ -63,6 +68,7 @@ import org.javlo.message.GenericMessage;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
 import org.javlo.service.IListItem;
+import org.javlo.service.PDFConvertion;
 import org.javlo.service.RequestService;
 import org.javlo.service.ReverseLinkService;
 import org.javlo.template.Template.TemplateData;
@@ -74,6 +80,9 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Entities.EscapeMode;
 import org.jsoup.safety.Whitelist;
+import org.xhtmlrenderer.pdf.ITextRenderer;
+
+import com.itextpdf.text.DocumentException;
 
 /**
  * This class is a helper for construct XHTML code.
@@ -2911,9 +2920,52 @@ public class XHTMLHelper {
 		out.println("</td></tr></table></td></tr></table></td></tr></table></body></html>");
 		return new String(outStream.toByteArray());
 	}
+	
+	public static final void convert(final File xhtmlFile, final File pdfFile) throws IOException, DocumentException
+	{
+	    final String xhtmlUrl = xhtmlFile.toURI().toURL().toString();
+	    final OutputStream reportPdfStream = new FileOutputStream(pdfFile);
+	    final ITextRenderer renderer = new ITextRenderer();
+	    renderer.setDocument(xhtmlUrl);
+	    renderer.layout();	    
+	    renderer.createPDF(reportPdfStream);
+	    reportPdfStream.close();
+	}
 
-	public static void main(String[] args) {
-		System.out.println(">>>>>>>>> XHTMLHelperTest.testReplaceOutTag : rep = "+XHTMLHelper.replaceOutTag("<p c=\"tt\">tt</p>", "tt", "rp")); //TODO: remove debug trace
+	public static void main(String[] args) throws Exception {
+
+
+		    String html = "<html>" +
+		            "<h1>:)</h1>" +
+		            "Hello World!<br>" +
+		            "<img width=\"200\" src=\"http://galleries.skyemodel.com/pinkandgrey/009.jpg\">" +
+		            "</html>";
+		    
+		    //convert(new File("c:/trans/source.html"), new File("c:/trans/target.pdf"));
+		    
+		    PDFConvertion.getInstance().convertXHTMLToPDF(new FileInputStream(new File("c:/trans/source.html")),new FileOutputStream(new File("c:/trans/target.pdf")));
+
+		    JLabel label = new JLabel(html);
+		    label.setSize(800, 1400);
+
+		    BufferedImage image = new BufferedImage(
+		            label.getWidth(), label.getHeight(), 
+		            BufferedImage.TYPE_INT_RGB);
+
+		    {
+		        // paint the html to an image
+		        Graphics g = image.getGraphics();
+		        g.setColor(Color.BLACK);
+		        label.paint(g);
+		        g.dispose();
+		    }
+
+		    // get the byte array of the image (as jpeg)
+		    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		    ImageIO.write(image, "jpg", new File("c:/trans/html.jpg"));
+		    
+
+		   
 	}
 
 }

@@ -99,6 +99,8 @@ import org.owasp.encoder.Encode;
 import com.google.gson.JsonElement;
 
 public class ResourceHelper {
+	
+	public static final int DEFAULT_BUFFER_SIZE = 1024*4;
 
 	/**
 	 * create a static logger.
@@ -1255,7 +1257,7 @@ public class ResourceHelper {
 	 * @return the size of transfered data in byte.
 	 */
 	public static final int writeStreamToStream(InputStream in, OutputStream out, long maxSize) throws IOException {
-		final byte[] buffer = new byte[1024 * 4];
+		final byte[] buffer = new byte[DEFAULT_BUFFER_SIZE];
 		int size = 0;
 		int byteReaded = in.read(buffer);		
 		while (byteReaded >= 0) {			
@@ -1268,7 +1270,37 @@ public class ResourceHelper {
 		}
 		return size;
 	}
+	
+	 /**
+     * Copy the given byte range of the given input to the given output.
+     * @param input The input to copy the given range to the given output for.
+     * @param output The output to copy the given range from the given input for.
+     * @param start Start of the byte range.
+     * @param length Length of the byte range.
+     * @throws IOException If something fails at I/O level.
+     */
+    public static void copyStream(InputStream input, OutputStream output, long start, long length) throws IOException
+    {
+        byte[] buffer = new byte[DEFAULT_BUFFER_SIZE];
+        int read;
+       
+        // Write partial range.
+        if (start>0) {
+        	input.skip(start);
+        }
+        long toRead = length;
 
+        while ((read = input.read(buffer)) > 0) {
+            if ((toRead -= read) > 0) {
+                output.write(buffer, 0, read);
+            } else {
+                output.write(buffer, 0, (int) toRead + read);
+                break;
+            }
+        }
+        
+    }
+	
 	public static final void writeStringToFile(File file, String content) throws IOException {
 		if (!file.exists()) {
 			file.createNewFile();
