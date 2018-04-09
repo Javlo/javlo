@@ -159,7 +159,7 @@ public class SimpleVideo extends AbstractFileComponent implements IReverseLinkCo
 		if ((getValue() != null) && (getValue().trim().length() > 0)) {
 			StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
 			String url = ElementaryURLHelper.mergePath(getDirSelected(), getFileName());
-			url = URLHelper.createResourceURL(ctx, getPage(), staticConfig.getFileFolder() + '/' + url);
+			url = URLHelper.createMediaURL(ctx, getPage(), staticConfig.getFileFolder() + '/' + url);
 			ctx.getRequest().setAttribute("url", url);
 			ctx.getRequest().setAttribute("previewURL", getPreviewURL(ctx, "preview-video"));
 			ctx.getRequest().setAttribute("infoHTML", XHTMLHelper.renderStaticInfo(ctx, getStaticInfo(ctx)));
@@ -180,7 +180,7 @@ public class SimpleVideo extends AbstractFileComponent implements IReverseLinkCo
 		if ((getValue() != null) && (getValue().trim().length() > 0)) {
 			StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
 			String url = ElementaryURLHelper.mergePath(getDirSelected(), getFileName());
-			url = URLHelper.createResourceURL(ctx, getPage(), staticConfig.getFileFolder() + '/' + url);
+			url = URLHelper.createMediaURL(ctx, getPage(), staticConfig.getFileFolder() + '/' + url);
 			StaticInfo info = getStaticInfo(ctx);
 			res.append(XHTMLHelper.renderStaticInfo(ctx, info));
 			res.append("<video controls><source src=\""+url+"\" type=\""+ResourceHelper.getFileExtensionToMineType(StringHelper.getFileExtension(url))+"\" />Your browser does not support the audio element.</video>");

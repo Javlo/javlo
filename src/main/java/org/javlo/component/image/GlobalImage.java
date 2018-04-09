@@ -266,8 +266,8 @@ public class GlobalImage extends Image implements IImageFilter {
 		}
 		ctx.getRequest().setAttribute("svg", ext.equalsIgnoreCase("svg"));
 		if (getFilter(ctx).equals(RAW_FILTER) || ext.equalsIgnoreCase("svg")) {
-			ctx.getRequest().setAttribute("previewURL", URLHelper.createResourceURL(ctx, getResourceURL(ctx, getFileName())));
-			ctx.getRequest().setAttribute("loadURL", URLHelper.createResourceURL(ctx, getResourceURL(ctx, getFileName())));
+			ctx.getRequest().setAttribute("previewURL", URLHelper.createMediaURL(ctx, getResourceURL(ctx, getFileName())));
+			ctx.getRequest().setAttribute("loadURL", URLHelper.createMediaURL(ctx, getResourceURL(ctx, getFileName())));
 		} else {
 			String previewURL = getPreviewURL(ctx, getFilter(ctx));
 			ctx.getRequest().setAttribute("previewURL", previewURL);
