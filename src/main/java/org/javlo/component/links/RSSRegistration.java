@@ -132,11 +132,6 @@ public class RSSRegistration extends AbstractPropertiesComponent {
 	}
 
 	@Override
-	public int getComplexityLevel(ContentContext ctx) {
-		return COMPLEXITY_EASY;
-	}
-
-	@Override
 	public String performEdit(ContentContext ctx) {
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
 
@@ -172,6 +167,16 @@ public class RSSRegistration extends AbstractPropertiesComponent {
 	@Override
 	public boolean isContentCachable(ContentContext ctx) {
 		return true;
+	}
+	
+	@Override
+	public int getComplexityLevel(ContentContext ctx) {
+		return getConfig(ctx).getComplexity(COMPLEXITY_ADMIN);
+	}
+	
+	@Override
+	public String getFontAwesome() {	
+		return "rss";
 	}
 
 }
