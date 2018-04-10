@@ -20,6 +20,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.servlet.ServletContext;
 
@@ -650,6 +652,8 @@ public class XMLManipulationHelper {
 
 					out.println("<%if (ctx.getRenderMode() != ContentContext.PAGE_MODE) {%>");
 					out.println("<!-- template plugins -->");
+					String reg = ".*url\\('(.*)'\\).*";
+					Pattern p = Pattern.compile(reg);
 					for (TemplatePlugin plugin : templatePlugins) {
 						if (plugin != null) {
 							String headHTML = plugin.getHTMLHead(globalContext);
@@ -676,6 +680,14 @@ public class XMLManipulationHelper {
 								}
 								String homeRendercode = "<%=URLHelper.createStaticTemplatePluginURL(ctx, \"/\", \"" + plugin.getFolder() + "\")%>";
 								outHead = outHead.replace(TemplatePlugin.HOME_KEY, homeRendercode);
+
+								Matcher m = p.matcher(outHead);
+								if (m.matches()) {
+									String uri = m.group(1);
+									if (!StringHelper.isURL(uri)) {
+										outHead = outHead.replace(uri, "<%=URLHelper.createStaticTemplatePluginURL(ctx, \"" + uri + "\", \"" + plugin.getFolder() + "\")%>");
+									}
+								}
 
 								out.println(outHead);
 							}
@@ -751,7 +763,7 @@ public class XMLManipulationHelper {
 					}
 				}
 			}
-			
+
 			if (!titleFound && !isMail) {
 				if (tagHead != null) {
 					remplacement.addReplacement(tagHead.getCloseStart(), tagHead.getCloseStart(), "<title><%=currentTitle%> | ${info.globalTitle}</title>");
@@ -1165,25 +1177,18 @@ public class XMLManipulationHelper {
 	}
 
 	public static void main(String[] args) {
-		/*
-		 * try { List<String> areas = new LinkedList<String>(); areas.add("mainCol");
-		 * convertHTMLtoTemplate(new File("c:/trans/index.html"), new
-		 * File("c:/trans/index.jsp"), new HashMap(), areas, new LinkedList<String>());
-		 * System.out.println("done."); } catch (Exception e) { e.printStackTrace(); }
-		 */
-		try {
+		String html = "<style>font-family: \"javloFont\"; src:url('/font/javlo-italic.ttf') src:url('/font/javlo-italic2.ttf') format(\"truetype\");.navbar-brand, h1 {font-family: javloFont, Verdana;}</style>";
+		String reg = ".*url\\(['](.*)[']\\).*";
+		Pattern p = Pattern.compile(reg);
+		Matcher matcher = p.matcher(html);
+		System.out.println(">>>>>>>>> XMLManipulationHelper.main : html.matches = " + "daaaabdsfsfd".matches(".*ab.*")); // TODO: remove debug trace
+		System.out.println(">>>>>>>>> XMLManipulationHelper.main : match = " + matcher.matches()); // TODO: remove debug trace
+		System.out.println(">>>>>>>>> XMLManipulationHelper.main : " + matcher.group(2)); // TODO: remove debug tracematcher.group()
 
-			String html = "<body><ul><li>patrick</li><li>catherine<br>barbara</li></ul></body>";
-			TagDescription[] description = searchAllTag(html, false);
-			for (TagDescription element : description) {
-				System.out.println("tag : " + element.getName());
-				System.out.println("** " + element.getName() + " parent = " + searchParent(description, element));
-			}
-			System.out.println("HEAD:" + getHTMLCleanedHead(html));
-			System.out.println("BODY:" + getHTMLBody(html));
-		} catch (BadXMLException e) {
-			e.printStackTrace();
+		if (matcher.matches()) {
+			String url = matcher.group(1);
 		}
+
 	}
 
 	public static TagDescription[] searchAllTag(String xml, boolean validation) throws BadXMLException {
