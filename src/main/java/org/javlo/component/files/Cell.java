@@ -120,6 +120,9 @@ public class Cell {
 	
 	public Double getDoubleValue() {
 		String v = getValue();
+		if (v==null) {
+			return null;
+		}
 		v = v.replace(',', '.');
 		try {
 			return Double.parseDouble(v);
