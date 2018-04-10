@@ -242,6 +242,12 @@ public class AccessServlet extends HttpServlet implements IVersion {
 
 		MultiReadRequestWrapper.clearTempDir(getServletContext());
 		TemplateFactory.copyDefaultTemplate(getServletContext());
+		
+		try {
+			ResourceHelper.deleteFolder(staticConfig.getWebTempDir());
+		} catch (Throwable t) {
+			t.printStackTrace();
+		}
 
 	}
 

@@ -1,5 +1,8 @@
 package org.javlo.module.ticket;
 
+import java.awt.Color;
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
@@ -10,18 +13,23 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.imageio.ImageIO;
 import javax.mail.internet.InternetAddress;
 
+import org.apache.commons.fileupload.FileItem;
 import org.javlo.actions.AbstractModuleAction;
 import org.javlo.actions.ViewActions;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
+import org.javlo.helper.JavaScriptBlob;
 import org.javlo.helper.NetHelper;
+import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.helper.XHTMLHelper;
 import org.javlo.i18n.I18nAccess;
+import org.javlo.image.ImageEngine;
 import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
 import org.javlo.module.core.IMainModuleName;
@@ -142,6 +150,20 @@ public class TicketAction extends AbstractModuleAction {
 		ctx.getRequest().setAttribute("ticketAvailableUsers", userFactory.getUserInfoList());
 
 		return msg;
+	}
+	
+	public static String performUpload(RequestService rs, ContentContext ctx, GlobalContext globalContext, User user, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
+		File imageFile = TicketService.getTempImageFile(ctx);
+		imageFile.getParentFile().mkdirs();
+		imageFile.createNewFile();		
+		for (FileItem item : rs.getAllFileItem()) {
+			JavaScriptBlob blob = new JavaScriptBlob(new String(item.get()));
+			ResourceHelper.writeBytesToFile(imageFile, blob.getData());			
+		}	
+		BufferedImage img = ImageIO.read(imageFile);
+		img = ImageEngine.trim(img, Color.WHITE, 1);
+		ImageIO.write(img, "png", imageFile);
+		return null;
 	}
 
 	public static String performUpdate(RequestService rs, ContentContext ctx, GlobalContext globalContext, User user, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
@@ -313,7 +335,7 @@ public class TicketAction extends AbstractModuleAction {
 
 		return null;
 	}
-
+	
 	private static void sendTicketSummaryNotification(ContentContext ctx, List<TicketBean> tickets, String subject, boolean reply) throws Exception {
 		AdminUserFactory userFactory = AdminUserFactory.createUserFactory(ctx.getGlobalContext(), ctx.getRequest().getSession());
 		Map<String, List<TicketBean>> ticketsByUser = new HashMap<String, List<TicketBean>>();

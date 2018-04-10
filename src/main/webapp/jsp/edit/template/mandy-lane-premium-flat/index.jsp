@@ -80,6 +80,7 @@
 	<script type="text/javascript" src="${info.editTemplateURL}/js/plugins/jquery-1.7.2.min.js"></script>
 	<script type="text/javascript" src="${info.editTemplateURL}/js/plugins/jquery-ui-1.8.20.custom.min.js"></script>
 	<script type="text/javascript" src="${info.editTemplateURL}/js/plugins/jquery.alerts.js"></script>
+	<script type="text/javascript" src="${info.editTemplateURL}/js/plugins/jquery.alerts.js"></script>
 	<script type="text/javascript">
 		<jsp:include page="/jsp/edit/global/dynamic_js.jsp" />
 	</script>
@@ -90,6 +91,7 @@
 	<script type="text/javascript" src="${info.editTemplateURL}/js/plugins/jquery.form.js"></script>
 	<script type="text/javascript" src="${info.editTemplateURL}/js/plugins/jquery.elastic.source.js"></script>
 	<script type="text/javascript" src="${info.editTemplateURL}/js/custom/gallery.js"></script>
+	<!-- <script type="text/javascript" src="${info.editTemplateURL}/js/lib/html2canvas.min.js"></script>  -->
 	<script type="text/javascript" src="<jv:url value='/js/edit/ajax.js?ts=${info.ts}' />"></script>
 	<script type="text/javascript" src="<jv:url value='/js/edit/core.js?ts=${info.ts}' />"></script>
 

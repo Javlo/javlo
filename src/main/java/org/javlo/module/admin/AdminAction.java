@@ -1690,8 +1690,9 @@ public class AdminAction extends AbstractModuleAction {
 		UserFactory.createUserFactory(globalContext, session).reload(globalContext, session);
 		StaticConfig staticConfig = globalContext.getStaticConfig();
 		TimeTracker.reset(staticConfig);
+		ResourceHelper.deleteFolder(globalContext.getStaticConfig().getWebTempDir());
 		System.gc();
-		ListService.getInstance(ctx).clear();
+		ListService.getInstance(ctx).clear();		
 		return msg;
 	}
 

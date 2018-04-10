@@ -1094,6 +1094,9 @@ public class XMLManipulationHelper {
 		out.append("<%=(ctx.isInteractiveMode() && !StringHelper.isEmpty(infoBean.getPreviewTemplateModeURL()) ? \"<link rel=\\\"stylesheet\\\" type=\\\"text/css\\\" href=\\\"\"+infoBean.getPreviewTemplateModeURL()+\"?ts=\"+infoBean.getTs()+\"\\\" />\" : \"\")  %>");
 		out.newLine();
 		out.append("<%=(ctx.isInteractiveMode() ? \"<script type=\\\"text/javascript\\\" src=\\\"\"+URLHelper.createStaticURL(ctx,\"" + staticConfig.getJSPreview() + "\")+\"\\\"></script>\" : \"\")  %>");
+		if (!StringHelper.isEmpty(staticConfig.getHTML2Canvas())) {
+			out.append("<%=(ctx.isInteractiveMode() ? \"<script type=\\\"text/javascript\\\" src=\\\"\"+URLHelper.createStaticURL(ctx,\"" + staticConfig.getHTML2Canvas() + "\")+\"\\\"></script>\" : \"\")  %>");
+		}
 		out.append("<%=(ctx.isInteractiveMode() ? \"<script type=\\\"text/javascript\\\" src=\\\"\"+URLHelper.createStaticURL(ctx,\"" + staticConfig.getJSBootStrap() + "\")+\"\\\"></script>\" : \"\")  %>");
 		out.newLine();
 		if (staticConfig.getJSLibPreview() == null) {

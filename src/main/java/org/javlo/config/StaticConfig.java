@@ -1116,6 +1116,11 @@ public class StaticConfig extends Observable {
 	public String getTeaserFolder() {
 		return ElementaryURLHelper.mergePath(getStaticFolder(), properties.getString("teaser-folder", "teasers"));
 	}
+	
+	public File getWebTempDir() {
+		String path = properties.getString("temp-web-folder", "/web-tmp");			
+		return new File(ResourceHelper.getRealPath(application, path));		
+	}
 
 	public String getTempDir() {
 		if (getLocalTempDir() == null) {
@@ -1656,6 +1661,10 @@ public class StaticConfig extends Observable {
 
 	public String getJSPreview() {
 		return properties.getString("preview.js", "/jsp/preview/js/bootstrap/preview.js");
+	}
+	
+	public String getHTML2Canvas() {
+		return properties.getString("html2Canvas.js", "/jsp/preview/js/lib/html2canvas.min.js");
 	}
 
 	public String getJSBootStrap() {

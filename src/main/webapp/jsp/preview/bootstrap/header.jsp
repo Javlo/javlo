@@ -337,11 +337,12 @@
 						<button ${tooltip} class="btn btn-default btn-sm btn-tickets btn-color btn-notext badged"
 							type="<%=accessType%>"
 							value="${i18n.edit['preview.label.ticket']}"
-							onclick="editPreview.openModal('${i18n.edit['preview.label.ticket']}','${url}'); return false;"${tooltip}>
+							onclick="html2canvas(document.querySelector('body')).then(canvas => {document.querySelector('#screenshot').appendChild(canvas);editPreview.uploadScreenshot(canvas);editPreview.openModal('${i18n.edit['preview.label.ticket']}','${url}');}); return false;"${tooltip}>
 							<span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span><span class="text">${i18n.edit['preview.label.ticket']}</span>
 							<c:set var="unreadTicketsize" value="${fn:length(info.unreadTickets)}" />
 							<c:if test="${unreadTicketsize>0}"><div class="badge unread-count">${unreadTicketsize}</div></c:if>					
 						</button>
+						<div id="screenshot" style="display: none;"></div>
 				</form></li>
 			</c:if>
 						

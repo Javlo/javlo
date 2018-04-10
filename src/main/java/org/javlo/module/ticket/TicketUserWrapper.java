@@ -136,6 +136,11 @@ public class TicketUserWrapper implements Ticket {
 		wrapped.onRead(login);
 	}
 	
+	@Override
+	public String getScreenshot() {	
+		return wrapped.getScreenshot();
+	}
+	
 	public boolean isForMe() {
 		if (ctx.getCurrentEditUser() == null) {
 			return false;

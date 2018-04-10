@@ -33,6 +33,7 @@ public class TicketBean implements Serializable, Ticket {
 	private String authors;
 	private String latestEditor;
 	private String category;
+	private String screenshot;
 	private Set<String> readers = new HashSet<String>();
 	private boolean deleted = false;
 	private Date creationDate = new Date();
@@ -245,6 +246,15 @@ public class TicketBean implements Serializable, Ticket {
 	
 	public boolean isOpen() {
 		return getStatus().equals(STATUS_NEW) || getStatus().equals("working"); 
+	}
+
+	@Override
+	public String getScreenshot() {
+		return screenshot;
+	}
+
+	public void setScreenshot(String screenshot) {
+		this.screenshot = screenshot;
 	}
 
 }

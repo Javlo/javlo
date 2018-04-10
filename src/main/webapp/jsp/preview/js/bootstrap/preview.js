@@ -15,7 +15,18 @@ if (!String.prototype.startsWith) {
 	  };
 	}
 
-+function($,jQuery,pjq) {
++function($,jQuery,pjq) {	
+	editPreview.uploadScreenshot = function(canvas) {	
+		console.log(canvas);
+		var img    = canvas.toDataURL("image/png");		
+		var ajaxURL = editPreview.addParam(currentURL,"webaction=ticket.upload");
+	    var fd=new FormData();
+	    var fieldName = "screenshot";	    
+	    var blob = new Blob([img], {type: "image/png"});
+	    fd.append(fieldName,blob);						
+	    editPreview.ajaxPreviewRequest(ajaxURL, null, fd);	    			
+	    return false;
+	}
 	
 	/** hack for drag&drop error on chrome (62.0.3202.94), test remove afther chrome update 01/12/2017 */
 	pjq(function () {

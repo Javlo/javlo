@@ -83,6 +83,8 @@ public interface Ticket {
 //	void setShare(String share);
 
 	List<String> getUsers();
+	
+	String getScreenshot();
 
 //	void setUsers(List<String> users);
 

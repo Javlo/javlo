@@ -17,6 +17,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.FileFilterUtils;
 import org.javlo.component.core.DebugNote;
 import org.javlo.component.core.IContentVisualComponent;
@@ -70,11 +71,21 @@ public class TicketService {
 		TicketBean bean = (TicketBean) ResourceHelper.loadBeanFromXML(xml);
 		return bean;
 	}
+	
+	public static File getTempImageFile(ContentContext ctx) throws Exception {
+		return new File(URLHelper.mergePath(ctx.getGlobalContext().getStaticConfig().getWebTempDir().getAbsolutePath(), ctx.getGlobalContext().getContextKey()+'_'+ctx.getCurrentPage().getName()+".png"));
+	}
 
 	private void storeTicket(ContentContext ctx, TicketBean bean) throws Exception {
 		if (!bean.isDebugNote()) {
 			if (!StringHelper.isEmpty(bean.getTitle())) {
 				File ticketFile = new File(URLHelper.mergePath(folder.getAbsolutePath(), bean.getId() + ".xml"));
+				File ticketScreenshot = new File(URLHelper.mergePath(folder.getAbsolutePath(), bean.getId() + ".png"));
+				File tempScreenshot = getTempImageFile(ctx);
+				if (tempScreenshot.exists() && !ticketScreenshot.exists()) {
+					FileUtils.moveFile(tempScreenshot, ticketScreenshot);
+					bean.setScreenshot(URLHelper.createResourceURL(ctx, ticketScreenshot));
+				}
 				ticketFile.getParentFile().mkdirs();
 				String xml = ResourceHelper.storeBeanFromXML(bean);
 				ResourceHelper.writeStringToFile(ticketFile, xml, ContentContext.CHARACTER_ENCODING);
