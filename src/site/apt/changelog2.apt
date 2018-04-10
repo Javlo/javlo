@@ -928,7 +928,7 @@ change log
 
  * 1/ optimisation reference to contentContext (JavloELFile and SearchResult) / import with translation
  
- * 2/ language mirror / convert pdf and png to jpg / definition / persistence lock on global context and not on static variable / display bad template inheritance / media servlet 
+ * 2/ language mirror / convert pdf and png to jpg / definition / persistence lock on global context and not on static variable / display bad template inheritance / media servlet / javlo design plugin / plugin relative path in url:
  
 * 2.1.1.2 [09/04/2018]
 

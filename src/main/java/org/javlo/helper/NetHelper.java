@@ -292,6 +292,11 @@ public class NetHelper {
 		try {
 			url = removeParams(url);
 			HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+			// skip https validation
+			if (connection instanceof HttpsURLConnection) {
+				nocheckCertificatHttps();
+			}
+			
 			connection.setRequestMethod("POST");
 			connection.setRequestProperty("Content-Type", "application/json");
 
