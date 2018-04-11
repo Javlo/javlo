@@ -28,9 +28,9 @@ import org.javlo.context.GlobalContext;
  * @author BalusC
  * @link http://balusc.blogspot.com/2009/02/fileservlet-supporting-resume-and.html
  */
-public class MediaServlet extends HttpServlet {
+public class FileServlet extends HttpServlet {
 	
-	private static Logger logger = Logger.getLogger(MediaServlet.class.getName());
+	private static Logger logger = Logger.getLogger(FileServlet.class.getName());
 
     // Constants ----------------------------------------------------------------------------------
 

@@ -143,11 +143,19 @@ public class URLHelper extends ElementaryURLHelper {
 		return createURL(otherContext);
 	}
 	
-	public static String createMediaURL(ContentContext ctx, String url) {
+	public static String createFileURL(ContentContext ctx, String url) {
 		return createMediaURL(ctx, null, url);
 	}
 	
 	public static String createMediaURL(ContentContext ctx, MenuElement currentPage, String url) {
+		return createFileURL(ctx,currentPage,url);
+	}
+	
+	public static String createMediaURL(ContentContext ctx, String url) {
+		return createMediaURL(ctx, null, url);
+	}
+	
+	public static String createFileURL(ContentContext ctx, MenuElement currentPage, String url) {
 		if (url == null) {
 			return null;
 		}
