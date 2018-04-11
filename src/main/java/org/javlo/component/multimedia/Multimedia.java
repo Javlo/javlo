@@ -32,7 +32,6 @@ import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.exception.ResourceNotFoundException;
 import org.javlo.helper.ElementaryURLHelper;
-import org.javlo.helper.LocalLogger;
 import org.javlo.helper.PaginationContext;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
@@ -87,6 +86,8 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle, IStat
 	public static final String SOUND = "sound";
 	public static final String VIDEO = "video";
 	public static final String EMBED = "embed";
+	
+	private List<File> multimediaFiles = null;
 
 	protected boolean acceptStaticInfo(ContentContext ctx, StaticInfo info) {
 
@@ -301,6 +302,11 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle, IStat
 	}
 
 	public Collection<File> getAllMultimediaFiles(ContentContext ctx) {
+		
+		if (ctx.isAsViewMode() && multimediaFiles != null) {
+			return multimediaFiles;
+		}
+		
 		List<File> files = new LinkedList<File>();
 		/* Collection<String> filesName = new HashSet<String>(); */
 
@@ -377,6 +383,10 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle, IStat
 		 * StaticInfo.StaticFileSortByPopularity(ctx, false)); } else {
 		 * Collections.sort(files, new StaticInfo.StaticFileSort(ctx, false)); }
 		 */
+		
+		if (ctx.isAsViewMode()) {
+			multimediaFiles = files;
+		}
 
 		return files;
 	}
@@ -839,12 +849,15 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle, IStat
 			resource.setCssClass(cssClass);
 
 			String currentLg = ctx.getRequestContentLanguage();
-			File multimediaFile = new File(getMultimediaFilePath(ctx, currentLg, file));
-			if (!(multimediaFile.exists())) {
-				currentLg = globalContext.getDefaultLanguages().iterator().next();
-			} else {
-				file = multimediaFile;
+			if (ctx.getGlobalContext().getContentLanguages().size()>1) {				
+				File multimediaFile = new File(getMultimediaFilePath(ctx, currentLg, file));
+				if (!(multimediaFile.exists())) {
+					currentLg = globalContext.getDefaultLanguages().iterator().next();
+				} else {
+					file = multimediaFile;
+				}
 			}
+			
 			ContentContext lgCtx = new ContentContext(ctx);
 			Iterator<String> defaultLg = globalContext.getDefaultLanguages().iterator();
 			lgCtx.setRequestContentLanguage(lgCtx.getRequestContentLanguage());
@@ -896,6 +909,7 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle, IStat
 					resource.setFreeAccess(true);
 				}
 				resource.setTitle(info.getTitle(lgCtx));
+				resource.setParentTitle(info.getParent(lgCtx).getTitle(lgCtx));
 				resource.setRelation(getHTMLRelation(lgCtx));
 				resource.setLocation(info.getLocation(lgCtx));
 				resource.setCopyright(info.getCopyright(lgCtx));

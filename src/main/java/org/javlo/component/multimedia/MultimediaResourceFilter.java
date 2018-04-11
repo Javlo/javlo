@@ -99,7 +99,7 @@ public class MultimediaResourceFilter {
 			} else {
 				boolean outAccept = true;
 				if (!StringHelper.isEmpty(query)) {
-					outAccept = resource.getFullDescription().toLowerCase().contains(query.toLowerCase());
+					outAccept = resource.getFullDescription().toLowerCase().contains(query.toLowerCase()) || resource.getParentTitle().toLowerCase().contains(query.toLowerCase());
 				}
 				if (outAccept && tags.size() > 0) {
 					outAccept = !Collections.disjoint(resource.getTags(), tags);

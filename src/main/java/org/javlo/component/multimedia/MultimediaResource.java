@@ -107,6 +107,7 @@ public class MultimediaResource {
 	private Date date;
 	private String cssClass;
 	private String title;
+	private String parentTitle;
 	private String relation;
 	private String accessToken;
 	private int index;
@@ -474,5 +475,13 @@ public class MultimediaResource {
 	
 	public ImageSize getSize() {
 		return staticInfo.getImageSize();
+	}
+
+	public String getParentTitle() {
+		return StringHelper.neverNull(parentTitle);
+	}
+
+	public void setParentTitle(String parentTitle) {
+		this.parentTitle = parentTitle;
 	}
 }

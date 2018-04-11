@@ -38,5 +38,10 @@ public class MultimediaFilter extends AbstractVisualComponent {
 	public int getComplexityLevel(ContentContext ctx) {
 		return getConfig(ctx).getComplexity(COMPLEXITY_ADMIN);
 	}
+	
+	@Override
+	public String getFontAwesome() {
+		return "filter";
+	}
 
 }

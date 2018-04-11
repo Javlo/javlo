@@ -1469,6 +1469,10 @@ public class StaticInfo {
 		}
 	}
 	
+	public StaticInfo getParent(ContentContext ctx) throws Exception {
+		return StaticInfo.getInstance(ctx, file.getParentFile());
+	}
+	
 	public void resetImageSize(ContentContext ctx) {
 		String key = getKey("imageSize-" + ctx.getRequestContentLanguage());
 		ContentService content = ContentService.getInstance(ctx.getGlobalContext());
