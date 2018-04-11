@@ -251,8 +251,13 @@ public class GlobalImage extends Image implements IImageFilter {
 		if (!ctx.getCurrentTemplate().isMailing()) {
 			clearSize(ctxBean);
 		}
-
 		super.prepareView(ctx);
+		
+		String url = getURL(ctx);
+		if (url != null && url.startsWith('/' + ctx.getGlobalContext().getStaticConfig().getStaticFolder())) {
+			url = URLHelper.createMediaURL(ctx, url);
+		}
+		
 		String link = getLink();
 		link = URLHelper.convertLink(ctx, link);
 		ctx.getRequest().setAttribute("link", link);
@@ -736,12 +741,12 @@ public class GlobalImage extends Image implements IImageFilter {
 			}
 			String url = getLink();
 			if (!StringHelper.isURL(url)) {
-				url = URLHelper.createResourceURL(ctx, url);
+				url = URLHelper.createMediaURL(ctx, url);
 			}
 			return url;
 		} else if (getFileName() != null && !getLink().equals("#")) {
 			String fileLink = getResourceURL(ctx, getFileName());
-			return URLHelper.createResourceURL(ctx, getPage(), fileLink).replace('\\', '/');
+			return URLHelper.createMediaURL(ctx, getPage(), fileLink).replace('\\', '/');
 		}
 		return null;
 	}

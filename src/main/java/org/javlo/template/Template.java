@@ -1029,7 +1029,7 @@ public class Template implements Comparable<Template> {
 	public void delete() {
 		try {
 			FileUtils.deleteDirectory(new File(getTemplateRealPath()));
-			FileUtils.deleteDirectory(new File(URLHelper.mergePath(getWorkTemplateFolder(), getSourceFolderName())));
+			//FileUtils.deleteDirectory(new File(URLHelper.mergePath(getWorkTemplateFolder(), getSourceFolderName())));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

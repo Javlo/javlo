@@ -187,7 +187,7 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 		super.prepareView(ctx);
 		String url = getURL(ctx);
 		if (url != null && url.startsWith('/' + ctx.getGlobalContext().getStaticConfig().getStaticFolder())) {
-			url = URLHelper.createResourceURL(ctx, url);
+			url = URLHelper.createFileURL(ctx, url);
 		}
 		ctx.getRequest().setAttribute("url", url);
 		ctx.getRequest().setAttribute("linkToImage", StringHelper.isImage(url));

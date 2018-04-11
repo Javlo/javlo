@@ -65,6 +65,10 @@ public class FileServlet extends HttpServlet {
         // Process request with content.
         processRequest(request, response, true);
     }
+    
+    protected void processRequest (HttpServletRequest request, HttpServletResponse response, boolean content) throws IOException {
+    	processRequest(request, response, null, content);
+    }
 
     /**
      * Process the actual request.
@@ -73,10 +77,7 @@ public class FileServlet extends HttpServlet {
      * @param content Whether the request body should be written (GET) or not (HEAD).
      * @throws IOException If something fails at I/O level.
      */
-    private void processRequest (HttpServletRequest request, HttpServletResponse response, boolean content) throws IOException {
-    	
-    	GlobalContext globalContext = GlobalContext.getInstance(request);
-        this.basePath = globalContext.getDataFolder();
+    protected void processRequest (HttpServletRequest request, HttpServletResponse response, File file, boolean content) throws IOException {
 
         // Validate the requested file ------------------------------------------------------------
 
@@ -92,7 +93,11 @@ public class FileServlet extends HttpServlet {
         }
 
         // URL-decode the file name (might contain spaces and on) and prepare file object.
-        File file = new File(basePath, URLDecoder.decode(requestedFile, "UTF-8"));
+        if (file == null) {
+        	GlobalContext globalContext = GlobalContext.getInstance(request);
+        	String localBasePath = globalContext.getDataFolder();
+        	file = new File(localBasePath, URLDecoder.decode(requestedFile, "UTF-8"));
+        }
 
         // Check if file actually exists in filesystem.
         if (!file.exists()) {

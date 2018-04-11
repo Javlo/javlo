@@ -33,7 +33,6 @@ import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.stream.ImageOutputStream;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -87,7 +86,7 @@ import com.jhlabs.image.GrayscaleFilter;
  * 
  * 
  */
-public class ImageTransformServlet extends HttpServlet {
+public class ImageTransformServlet extends FileServlet {
 
 	public static final String RESOURCE_TOKEN_KEY = "rstk";
 	
@@ -295,7 +294,7 @@ public class ImageTransformServlet extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws ServletException, IOException {
 		try {
-			processRequest(httpServletRequest, httpServletResponse);
+			processRequest(httpServletRequest, httpServletResponse, true);
 		} catch (Throwable e) {
 			e.printStackTrace();
 			throw new ServletException(e.getMessage());
@@ -309,7 +308,7 @@ public class ImageTransformServlet extends HttpServlet {
 	@Override
 	protected void doPost(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws ServletException, IOException {
 		try {
-			processRequest(httpServletRequest, httpServletResponse);
+			processRequest(httpServletRequest, httpServletResponse, true);
 		} catch (Throwable e) {
 			e.printStackTrace();
 			throw new ServletException(e.getMessage());
@@ -933,13 +932,14 @@ public class ImageTransformServlet extends HttpServlet {
 		FileCache fc = FileCache.getInstance(getServletContext());
 		return fc.getFile(ImageHelper.createSpecialDirectory(ctx.getBean(), ctx.getGlobalContext().getContextKey(), filter, area, deviceCode, template, comp, imageParam), name, lastModificationDate);
 	}
-
+	
 	/**
 	 * get the text and the picture and build a button
 	 * 
 	 * @throws Exception
 	 */
-	protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
+	@Override
+	protected void processRequest(HttpServletRequest request, HttpServletResponse response, boolean content) throws IOException {
 		
 		// org.javlo.helper.Logger.startCount("transform");
 		// org.javlo.helper.Logger.stepCount("transform", "start");
@@ -952,7 +952,14 @@ public class ImageTransformServlet extends HttpServlet {
 		int trackerNumber = TimeTracker.start(globalContext.getContextKey(), ImageTransformServlet.class.getName());
 
 		StaticConfig staticConfig = StaticConfig.getInstance(request.getSession());
-		ContentContext ctx = ContentContext.getFreeContentContext(request, response);
+		ContentContext ctx=null;
+		try {
+			ctx = ContentContext.getFreeContentContext(request, response);
+		} catch (Exception e2) {			
+			e2.printStackTrace();
+			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			return;
+		}
 		ctx.setRenderMode(ContentContext.PREVIEW_MODE); // user for staticInfo
 														// storage
 		RequestHelper.traceMailingFeedBack(ctx);
@@ -1184,20 +1191,20 @@ public class ImageTransformServlet extends HttpServlet {
 					return;
 				}
 
-				InputStream fileStream = null;				
 				File file = loadFileFromDisk(ctx, imageName, filter, area, ctx.getDevice(), template, comp, imageFile.lastModified(), imageParam);
 				if ((file != null)) {
-					if (file.length() > 0) {
-						response.setContentLength((int) file.length());
-					}
-					fileStream = new FileInputStream(file);
-					try {
-						ResourceHelper.writeStreamToStream(fileStream, out);
-					} finally {
-						ResourceHelper.closeResource(fileStream);
-					}
-					// org.javlo.helper.Logger.stepCount("transform",
-					// "cache readed");
+					super.processRequest(request, response, file, content);
+//					if (file.length() > 0) {
+//						response.setContentLength((int) file.length());
+//					}
+//					fileStream = new FileInputStream(file);
+//					try {
+//						ResourceHelper.writeStreamToStream(fileStream, out);
+//					} finally {
+//						ResourceHelper.closeResource(fileStream);
+//					}
+//					// org.javlo.helper.Logger.stepCount("transform",
+//					// "cache readed");
 				} else {
 
 					/*** TRANSFORM IMAGE ***/
@@ -1277,30 +1284,32 @@ public class ImageTransformServlet extends HttpServlet {
 							logger.info("transform image (" + StringHelper.renderSize(size) + ") : '" + imageName + "' in site '" + globalContext.getContextKey() + "' page : " + ctx.getRequestContentLanguage() + ctx.getPath() + " time : " + StringHelper.renderTimeInSecond(System.currentTimeMillis() - currentTime) + " sec.  #transformation:" + imageTransforming.size());
 							file = loadFileFromDisk(ctx, imageName, filter, area, ctx.getDevice(), template, comp, imageFile.lastModified(), imageParam);
 							if (file != null) {								
-								fileStream = new FileInputStream(file);
-							}
+								//fileStream = new FileInputStream(file);
+								super.processRequest(request, response, file, content);
+							}							
 						}						
 						imageTransforming.remove(imageKey);
 						imageKey = null;
 					} else {
 						synchronized (imageTransforming.get(imageKey)) {
-							file = loadFileFromDisk(ctx, imageName, filter, area, ctx.getDevice(), template, comp, imageFile.lastModified(), imageParam);							
-							fileStream = new FileInputStream(file);							
+							file = loadFileFromDisk(ctx, imageName, filter, area, ctx.getDevice(), template, comp, imageFile.lastModified(), imageParam);
+							super.processRequest(request, response, file, content);
+							//fileStream = new FileInputStream(file);							
 						}
 					}
 
 					/*********************/
 
-					if (fileStream != null) {
-						if (file.length() > 0) {
-							response.setContentLength((int) file.length());
-						}
-						try {
-							ResourceHelper.writeStreamToStream(fileStream, out);
-						} finally {
-							ResourceHelper.closeResource(fileStream);
-						}
-					}
+//					if (fileStream != null) {
+//						if (file.length() > 0) {
+//							response.setContentLength((int) file.length());
+//						}
+//						try {
+//							ResourceHelper.writeStreamToStream(fileStream, out);
+//						} finally {
+//							ResourceHelper.closeResource(fileStream);
+//						}
+//					}
 
 				}
 			}

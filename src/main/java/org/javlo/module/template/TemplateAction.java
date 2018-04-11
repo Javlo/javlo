@@ -493,10 +493,8 @@ public class TemplateAction extends AbstractModuleAction {
 		return null;
 	}
 
-	public String performDelete(RequestService requestService, HttpSession session, ContentContext ctx)
-			throws Exception {
-		Template template = TemplateFactory.getDiskTemplate(session.getServletContext(),
-				requestService.getParameter("id", null));
+	public String performDelete(RequestService requestService, HttpSession session, ContentContext ctx)	throws Exception {
+		Template template = TemplateFactory.getDiskTemplate(session.getServletContext(), requestService.getParameter("id", null));
 		if (template != null) {
 			template.delete();
 		}
