@@ -560,7 +560,7 @@ public class InfoBean {
 		try {
 			MenuElement page = getCurrentPage();
 			if (page.isDirectChildrenOfAssociation()) {
-				return page.getMainChildrenAssociation().getPageBean(ctx);	
+				return page.getParent().getPageBean(ctx);	
 			} else {
 				return page.getPageBean(ctx);
 			}
