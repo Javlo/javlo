@@ -617,14 +617,11 @@ public class PageBean implements Serializable {
 	 * @return null if current page is the last page
 	 * @throws Exception 
 	 */
-	public PageBean getNextPage() throws Exception {
-		System.out.println(">>>>>>>>> PageBean.getNextPage : name="+page.getName()); //TODO: remove debug trace
+	public PageBean getNextPage() throws Exception {		
 		MenuElement parent = page.getParent();
 		if (parent != null) {
 			boolean pageFound = false;
 			for (MenuElement page : parent.getAllChildrenList()) {
-				System.out.println(">>>>>>>>> PageBean.getNextPage : name : "+page.getName()); //TODO: remove debug trace
-				System.out.println(">>>>>>>>> PageBean.getNextPage : pageFound = "+pageFound); //TODO: remove debug trace
 				if (pageFound) {
 					return page.getPageBean(ctx);
 				}
@@ -632,8 +629,6 @@ public class PageBean implements Serializable {
 					pageFound = true;
 				}
 			}
-		} else {
-			System.out.println(">>>>>>>>> PageBean.getNextPage : parent NULL"); //TODO: remove debug trace
 		}
 		
 		return null;
