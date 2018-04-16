@@ -270,14 +270,14 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		return outFilter.toString().trim();
 	}
 
-	private boolean validPageForCommand(ContentContext ctx, MenuElement page, Set<String> currentSelection, Collection<String> commands) throws Exception {
+	private boolean validPageForCommand(ContentContext ctx, MenuElement page, Collection<MenuElement> currentSelection, Collection<String> commands) throws Exception {
 		for (String command : commands) {
 			if (command.equals("checked")) {
-				if (!currentSelection.contains(page.getId())) {
+				if (!currentSelection.contains(page)) {
 					return false;
 				}
 			} else if (command.equals("unchecked")) {
-				if (currentSelection.contains(page.getId())) {
+				if (currentSelection.contains(page)) {
 					return false;
 				}
 			}
@@ -312,7 +312,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 	 * @return true if page is accepted
 	 * @throws Exception
 	 */
-	protected boolean filterPage(ContentContext ctx, MenuElement page, Set<String> currentSelection, Collection<String> commands, String filter, boolean widthUnactive) throws Exception {
+	protected boolean filterPage(ContentContext ctx, MenuElement page, Collection<MenuElement> currentSelection, Collection<String> commands, String filter, boolean widthUnactive) throws Exception {
 
 		if (!page.isActive(ctx) && !widthUnactive) {
 			return false;
@@ -392,8 +392,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 	protected Calendar getBackDate(ContentContext ctx) {
 		Calendar backDate = Calendar.getInstance();
 		int backDay = 9999; /*
-							 * infinity back if no back day defined (all news
-							 * included)
+							 * infinity back if no back day defined (all news included)
 							 */
 		String style = getStyle(ctx);
 		if (style.equals(STAY_1D)) {
@@ -422,8 +421,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 	protected Calendar getBackDateNullIfUndefined(ContentContext ctx) {
 		Calendar backDate = Calendar.getInstance();
 		int backDay = 9999; /*
-							 * infinity back if no back day defined (all news
-							 * included)
+							 * infinity back if no back day defined (all news included)
 							 */
 		String style = getStyle(ctx);
 		if (style.equals(STAY_1D)) {
@@ -669,7 +667,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 
 		out.println("</div></div>");
 		out.println("<div class=\"col-sm-3\"><div class=\"direct-link\">");
-		out.println("<input class=\"input\" type=\"text\" name=\""+getDirectLinkInputName()+"\" placeholder=\"" + i18nAccess.getText("global.direct-link", "direct link with page id or page name") + "\" />");
+		out.println("<input class=\"input\" type=\"text\" name=\"" + getDirectLinkInputName() + "\" placeholder=\"" + i18nAccess.getText("global.direct-link", "direct link with page id or page name") + "\" />");
 		out.println("<input type=\"submit\" value=\"" + i18nAccess.getText("global.ok") + "\" />");
 		out.println("</div></div></div>");
 
@@ -684,13 +682,12 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 
 		List<MenuElement> allChildren = menu.getAllChildrenList();
 		Collections.sort(allChildren, new MenuElementModificationDateComparator(true));
-		Set<String> currentSelection = getPagesId(ctx, allChildren);
+		Collection<MenuElement> currentSelection = getSelectedPages(ctx, allChildren);
 
 		out.print("<div class=\"page-list-container\"><table class=\"");
 		out.print("page-list" + ' ' + tableID);
 		String onlyCheckedScript = "if (jQuery('#comp-" + getId() + " .array-filter .input').val().indexOf(':checked')<0) {jQuery('#comp-" + getId() + " .array-filter .input').val(jQuery('#comp-" + getId() + " .array-filter .input').val()+' :checked'); filterPage('" + ajaxURL + "',jQuery('#comp-" + getId() + " .array-filter .input').val(), '." + tableID + " tbody'); return false;}";
-		out.println("\"><thead><tr><th>" + i18nAccess.getText("global.label") + "</th><th>" + i18nAccess.getText("global.date") + "</th><th>" + i18nAccess.getText("global.modification") + "</th><th>" + i18nAccess.getText("content.page-teaser.language") + "</th><th title=\"" + i18nAccess.getText("content.page-reference.content.help") + "\">" + i18nAccess.getText("content.page-reference.content") + "</th><th>" + i18nAccess.getText("global.select") + " <a href=\"#\" onclick=\"" + onlyCheckedScript
-				+ "\">(" + currentSelection.size() + ")</a></th></tr></thead><tbody>");
+		out.println("\"><thead><tr><th>" + i18nAccess.getText("global.label") + "</th><th>" + i18nAccess.getText("global.date") + "</th><th>" + i18nAccess.getText("global.modification") + "</th><th>" + i18nAccess.getText("content.page-teaser.language") + "</th><th title=\"" + i18nAccess.getText("content.page-reference.content.help") + "\">" + i18nAccess.getText("content.page-reference.content") + "</th><th>" + i18nAccess.getText("global.select") + " <a href=\"#\" onclick=\"" + onlyCheckedScript + "\">(" + currentSelection.size() + ")</a></th></tr></thead><tbody>");
 
 		int numberOfPage = 16384;
 		if (allChildren.size() < numberOfPage) {
@@ -744,7 +741,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		return new String(outStream.toByteArray());
 	}
 
-	private void renderPageSelectLine(ContentContext ctx, PrintStream out, Collection<String> currentSelection, MenuElement page) throws Exception {
+	private void renderPageSelectLine(ContentContext ctx, PrintStream out, Collection<MenuElement> currentSelection, MenuElement page) throws Exception {
 		String editPageURL = URLHelper.createEditURL(page.getPath(), ctx);
 		if (ctx.isEditPreview()) {
 			Map<String, String> params = new HashMap<String, String>();
@@ -754,7 +751,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		}
 		out.print("<tr class=\"filtered\"><td class=\"label\"><a data-toggle=\"tooltip\" data-placement=\"right\" title=\"" + NavigationHelper.getBreadCrumb(ctx, page) + "\" href=\"" + editPageURL + "\">" + page.getFullLabel(ctx) + "</a></td>");
 		out.print("<td>" + StringHelper.neverNull(StringHelper.renderLightDate(page.getContentDate(ctx))) + "</td>");
-		out.println("<td>" + StringHelper.renderLightDate(page.getModificationDate(ctx)) + "</td><td>" +StringHelper.neverNull(page.getRealContentLanguage(ctx)) + "</td>");
+		out.println("<td>" + StringHelper.renderLightDate(page.getModificationDate(ctx)) + "</td><td>" + StringHelper.neverNull(page.getRealContentLanguage(ctx)) + "</td>");
 		String contentCode = "";
 		String sep = "";
 		if (page.isRealContent(ctx)) {
@@ -775,7 +772,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		}
 		out.println("<td>" + contentCode + "</td>");
 		String checked = "";
-		if (currentSelection.contains(page.getId())) {
+		if (currentSelection.contains(page)) {
 			checked = " checked=\"checked\"";
 		}
 		out.print("<td><input type=\"hidden\" name=\"" + getPageDisplayedId(page) + "\" value=\"1\" /><input type=\"checkbox\" name=\"" + getPageId(page) + "\" value=\"" + page.getId() + "\"" + checked + "/></td></tr>");
@@ -828,8 +825,8 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 			return 72;
 		}
 		return MAX_NEWS; /*
-						 * infinity news if no limit defined (all news included)
-						 */
+							 * infinity news if no limit defined (all news included)
+							 */
 	}
 
 	protected String getOrder() {
@@ -839,7 +836,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 	protected String getOrderInputName() {
 		return "orde-" + getId();
 	}
-	
+
 	protected String getDirectLinkInputName() {
 		return "direct-link-" + getId();
 	}
@@ -852,28 +849,34 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		return "pd_" + getId() + "_" + page.getId();
 	}
 
-	protected Set<String> getPagesId(ContentContext ctx, List<MenuElement> children) throws Exception {
+	protected List<MenuElement> getSelectedPages(ContentContext ctx, List<MenuElement> children) throws Exception {
 		String value = properties.getProperty(PAGE_REF_PROP_KEY, "");
-		Set<String> out = new TreeSet<String>();
 		if (value.trim().length() == 0 && !isDefaultSelected()) {
-			return out;
+			return Collections.EMPTY_LIST;
 		}
-		String[] deserializedId = StringHelper.split(value, PAGE_SEPARATOR);
-
-		out.addAll(Arrays.asList(deserializedId));
-
-		if (isDefaultSelected()) {
-			Set<String> selectedPage = new TreeSet<String>();
+		List<MenuElement> out;
+		if (!isDefaultSelected()) {
+			out = new LinkedList<MenuElement>();
+			ContentService contentService = ContentService.getInstance(ctx.getRequest());
+			MenuElement root = contentService.getNavigation(ctx);
+			for (String id : Arrays.asList(StringHelper.split(value, PAGE_SEPARATOR))) {
+				MenuElement page = root.searchChildFromId(id);
+				if (page != null && !out.contains(page)) {
+					out.add(page);
+				}
+			}
+		} else {
+			List<MenuElement> selectedPage = new LinkedList<MenuElement>();
 			MenuElement parentNode = null;
 			if (children.size() > 0) {
 				parentNode = children.get(0).getRoot().searchChild(ctx, getParentNode(ctx));
 			}
-			// for (int i = 0; i < children.length; i++) {
+			List<String> selectedId = StringHelper.stringToCollection(value, PAGE_SEPARATOR);
 			for (MenuElement page : children) {
 				if (page.isActive(ctx)) {
-					if (!out.contains(page.getId())) {
-						if (parentNode == null || page.isChildOf(parentNode)) {
-							selectedPage.add(page.getId());
+					if (!selectedId.contains(page.getId())) {
+						if (parentNode == null || page.isChildOf(parentNode) && !page.isChildrenAssociation()) {
+							selectedPage.add(page);
 						}
 					}
 				}
@@ -1163,8 +1166,8 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 			return Integer.parseInt(size);
 		}
 	}
-	
-	private void sort (ContentContext ctx, List<MenuElement> pages, boolean ascending) throws Exception {
+
+	private void sort(ContentContext ctx, List<MenuElement> pages, boolean ascending) throws Exception {
 		if (!isNoOrder(ctx)) {
 			if (isReactionOrder(ctx)) {
 				Collections.sort(pages, new ReactionMenuElementComparator(ctx, ascending));
@@ -1189,7 +1192,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 			}
 		}
 	}
-	
+
 	private void sortSmartPageBean(ContentContext ctx, List<SmartPageBean> pages, boolean ascending) throws Exception {
 		if (!isNoOrder(ctx)) {
 			if (isReactionOrder(ctx)) {
@@ -1215,12 +1218,11 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 			}
 		}
 	}
-	
 
 	@Override
 	public void prepareView(ContentContext ctx) throws Exception {
 
-//		LocalLogger.PRINT_TIME = true;
+		// LocalLogger.PRINT_TIME = true;
 
 		LocalLogger.startCount("pageref");
 
@@ -1245,52 +1247,41 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		Calendar todayCal = Calendar.getInstance();
 		Calendar pageCal = Calendar.getInstance();
 
-		Set<String> selectedPage = getPagesId(ctx, allChildren);
+		List<MenuElement> selectedPage = getSelectedPages(ctx, allChildren);
 
 		LocalLogger.stepCount("pageref", "step 3");
-
-		List<MenuElement> pages = new LinkedList<MenuElement>();
 
 		int firstPageNumber = getFirstPageNumber();
 		int lastPageNumber = getLastPageNumber();
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-		NavigationService navigationService = NavigationService.getInstance(globalContext);
-
 		LocalLogger.stepCount("pageref", "step 4");
-		Set<String> currentSelection = getPagesId(ctx, allChildren);
-		
-		for (String pageId : selectedPage) {
-			MenuElement page = navigationService.getPage(ctx, pageId);
-			if (page != null) {
-				ContentContext lgCtx = page.getContentContextWithContent(ctx);
-				Date pageDate = page.getModificationDate(ctx);
-				Date contentDate;
-				contentDate = page.getContentDate(lgCtx);
-				if (contentDate != null) {
-					boolean futurPage = page.getCreationDate().getTime() - page.getContentDate(lgCtx).getTime() < 0;
-					if (!futurPage) {
-						ascending = true;
-					}
-					pageDate = page.getContentDate(lgCtx);
-				}
-				pageCal.setTime(pageDate);
-				if (todayCal.after(pageCal)) {
+		// Set<String> currentSelection = getPagesId(ctx, allChildren);
+
+		for (MenuElement page : selectedPage) {
+			ContentContext lgCtx = page.getContentContextWithContent(ctx);
+			Date pageDate = page.getModificationDate(ctx);
+			Date contentDate;
+			contentDate = page.getContentDate(lgCtx);
+			if (contentDate != null) {
+				boolean futurPage = page.getCreationDate().getTime() - page.getContentDate(lgCtx).getTime() < 0;
+				if (!futurPage) {
 					ascending = true;
 				}
-				pages.add(page);
-			} else {
-				logger.warning("page not found : " + pageId);
+				pageDate = page.getContentDate(lgCtx);
+			}
+			pageCal.setTime(pageDate);
+			if (todayCal.after(pageCal)) {
+				ascending = true;
 			}
 		}
-		
+
 		LocalLogger.stepCount("pageref", "step 5");
 
 		if (isReverseOrder(ctx)) {
-			ascending = !ascending;		
+			ascending = !ascending;
 		}
-		
-		
-		sort(ctx, pages, ascending);			
+
+		sort(ctx, selectedPage, ascending);
 
 		LocalLogger.stepCount("pageref", "step 6");
 
@@ -1331,14 +1322,14 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		boolean onlyPageWithoutChildren = isOnlyPageWithoutChildren();
 		boolean intranetMode = isIntranetMode();
 
-		for (MenuElement page : pages) {
+		for (MenuElement page : selectedPage) {
 			ContentContext lgCtx = ctx;
 			boolean pageRealContent = page.isRealContent(lgCtx);
 			if (!pageRealContent && GlobalContext.getInstance(ctx.getRequest()).isAutoSwitchToDefaultLanguage()) {
 				lgCtx = page.getContentContextWithContent(ctx);
 				pageRealContent = page.isRealContent(lgCtx);
-			}			
-			if (filterPage(lgCtx, page, currentSelection, Collections.EMPTY_LIST, "", false)) {			
+			}
+			if (filterPage(lgCtx, page, selectedPage, Collections.EMPTY_LIST, "", false)) {
 				if (countPage < getMaxNews()) {
 					if (backDate == null || page.getContentDateNeverNull(lgCtx).after(backDate.getTime())) {
 						if ((withEmptyPage || page.isRealContentAnyLanguage(lgCtx)) && (!onlyPageWithoutChildren || page.getChildMenuElements().size() == 0 || page.isChildrenAssociation())) {
@@ -1353,9 +1344,9 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 								realContentSize++;
 							}
 							if (!intranetMode || page.getEditorRoles().size() == 0 || (ctx.getCurrentEditUser() != null && ctx.getCurrentEditUser().validForRoles(page.getEditorRoles()))) {
-								if (realContent) {									
+								if (realContent) {
 									if (tagFilter == null || tagFilter.trim().length() == 0 || page.getTags(lgCtx).contains(tagFilter)) {
-										if (catFilter == null || catFilter.trim().length() == 0 || page.getCategory(lgCtx).equals(catFilter)) {											
+										if (catFilter == null || catFilter.trim().length() == 0 || page.getCategory(lgCtx).equals(catFilter)) {
 											Calendar cal = Calendar.getInstance();
 											cal.setTime(page.getContentDateNeverNull(lgCtx));
 											cal = TimeHelper.convertRemoveAfterMonth(cal);
@@ -1379,7 +1370,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 				}
 			}
 		}
-		
+
 		LocalLogger.stepCount("pageref", "step 7");
 
 		if (isDisplayFirstPage() && firstPage != null && ctx.getRequest().getParameter("_wcms_content_path") == null) {
@@ -1441,7 +1432,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 			pages.add(0, page);
 		}
 	}
-	
+
 	private void popularitySortingSmartPageBean(ContentContext ctx, List<SmartPageBean> pages, int pertinentPageToBeSort) throws Exception {
 		double minMaxPageRank = 0;
 		TreeSet<SmartPageBean> maxElement = new TreeSet<SmartPageBean>(new SmartPageBeanPopularityComparator(ctx, false));
@@ -1472,9 +1463,9 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 			MenuElement menu = content.getNavigation(ctx);
 			List<MenuElement> allChildren = menu.getAllChildrenList();
 			List<String> currentPageSelected = getPageSelected();
-			List<String> pagesSelected = new LinkedList<String>();
+			Collection<String> pagesSelected = new HashSet<String>();
 			List<String> pagesNotSelected = new LinkedList<String>();
-			Set<String> currentSelection = getPagesId(ctx, allChildren);
+			Collection<MenuElement> currentSelection = getSelectedPages(ctx, allChildren);
 			for (MenuElement element : allChildren) {
 				String selectedPage = requestService.getParameter(getPageId(element), null);
 				if (requestService.getParameter(getPageDisplayedId(element), null) != null) {
@@ -1485,7 +1476,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 					}
 				}
 			}
-			
+
 			if (!StringHelper.isEmpty(requestService.getParameter(getDirectLinkInputName()))) {
 				String page = requestService.getParameter(getDirectLinkInputName());
 				MenuElement pageFound = menu.searchChildFromId(page);
@@ -1495,10 +1486,10 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 				if (pageFound != null) {
 					pagesSelected.add(pageFound.getId());
 				} else {
-					return I18nAccess.getInstance(ctx).getText("global.page-not-found") + " ("+page+")";
+					return I18nAccess.getInstance(ctx).getText("global.page-not-found") + " (" + page + ")";
 				}
 			}
-			
+
 			pagesSelected.addAll(currentPageSelected);
 			pagesSelected.removeAll(pagesNotSelected);
 			if (!currentPageSelected.equals(pagesSelected)) {
@@ -1725,7 +1716,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 			pages.add(0, page);
 		}
 	}
-	
+
 	private void visitSortingSmartPageBean(ContentContext ctx, List<SmartPageBean> pages, int pertinentPageToBeSort) throws Exception {
 		int minMaxVisit = 0;
 		TreeSet<SmartPageBean> maxElement = new TreeSet<SmartPageBean>(new SmartPageBeanVisitComparator(ctx, false));
@@ -1756,7 +1747,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		ContentService content = ContentService.getInstance(ctx.getRequest());
 		try {
 			MenuElement menu = content.getNavigation(ctx);
-			return getPagesId(ctx, menu.getAllChildrenList()).size() > 0;
+			return getSelectedPages(ctx, menu.getAllChildrenList()).size() > 0;
 		} catch (Exception e) {
 			e.printStackTrace();
 			return false;
@@ -1824,4 +1815,3 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 	}
 
 }
-
