@@ -615,17 +615,59 @@ public class PageBean implements Serializable {
 	/**
 	 * get the next page in the navigation.
 	 * @return null if current page is the last page
+	 * @throws Exception 
 	 */
-	public PageBean getNextPage() {
-		if (getParent() != null) {
+	public PageBean getNextPage() throws Exception {
+		System.out.println(">>>>>>>>> PageBean.getNextPage : name="+page.getName()); //TODO: remove debug trace
+		MenuElement parent = page.getParent();
+		if (parent != null) {
 			boolean pageFound = false;
-			for (PageBean page : getParent().getChildren()) {
+			for (MenuElement page : parent.getAllChildrenList()) {
+				System.out.println(">>>>>>>>> PageBean.getNextPage : name : "+page.getName()); //TODO: remove debug trace
+				System.out.println(">>>>>>>>> PageBean.getNextPage : pageFound = "+pageFound); //TODO: remove debug trace
 				if (pageFound) {
-					return page;
+					return page.getPageBean(ctx);
 				}
 				if (page.getId().equals(getId())) {
 					pageFound = true;
 				}
+			}
+		} else {
+			System.out.println(">>>>>>>>> PageBean.getNextPage : parent NULL"); //TODO: remove debug trace
+		}
+		
+		return null;
+	}
+	
+	public int getSiblingsSize() {
+		return getParent().getChildren().size();
+	}
+	
+	public int getSiblingsPosition() {
+		if (page != null) {
+			int pos=0;
+			for (MenuElement p : getParent().page.getChildMenuElementsList()) {
+				pos++;
+				if (p.getId().equals(getId())) {
+					return pos;
+				}
+			}			
+		} 
+		return -1;
+	}
+	
+	/**
+	 * get the next page in the navigation.
+	 * @return null if current page is the last page
+	 */
+	public PageBean getPreviousPage() {
+		if (getParent() != null) {
+			PageBean previousPage = null;			
+			for (PageBean page : getParent().getChildren()) {
+				if (page.getId().equals(getId())) {
+					return previousPage;
+				}
+				previousPage = page;
 			}
 		}
 		return null;

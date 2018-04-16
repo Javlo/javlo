@@ -162,5 +162,9 @@ public class ChangeLanguageMenu extends AbstractVisualComponent {
 		return getConfig(ctx).getComplexity(COMPLEXITY_STANDARD);
 	}
 
+	@Override
+	public String getFontAwesome() {
+		return "language";
+	}
 
 }

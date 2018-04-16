@@ -181,6 +181,9 @@ public class ChangeLanguageLink extends ComplexPropertiesLink implements IIntern
 	public int getComplexityLevel(ContentContext ctx) {
 		return getConfig(ctx).getComplexity(COMPLEXITY_STANDARD);
 	}
-
-
+	
+	@Override
+	public String getFontAwesome() {
+		return "language";
+	}
 }
