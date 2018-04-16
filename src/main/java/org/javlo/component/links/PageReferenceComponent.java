@@ -875,7 +875,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 			for (MenuElement page : children) {
 				if (page.isActive(ctx)) {
 					if (!selectedId.contains(page.getId())) {
-						if (parentNode == null || page.isChildOf(parentNode) && !page.isChildrenAssociation()) {
+						if ((parentNode == null || page.isChildOf(parentNode)) && !page.isChildrenAssociation()) {
 							selectedPage.add(page);
 						}
 					}
