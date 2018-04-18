@@ -33,6 +33,7 @@ import org.javlo.context.GlobalContext;
 import org.javlo.exception.ResourceNotFoundException;
 import org.javlo.helper.ComponentHelper;
 import org.javlo.helper.ElementaryURLHelper;
+import org.javlo.helper.LocalLogger;
 import org.javlo.helper.NetHelper;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
@@ -248,7 +249,7 @@ public class GlobalImage extends Image implements IImageFilter {
 		
 		ContentContextBean ctxBean = ctx.getBean();
 		
-		if (!ctx.getCurrentTemplate().isMailing()) {
+		if (!ctx.getCurrentTemplate().isMailing() && !ctx.getDevice().isPdf()) {
 			clearSize(ctxBean);
 		}
 		super.prepareView(ctx);
@@ -294,15 +295,22 @@ public class GlobalImage extends Image implements IImageFilter {
 		ctx.getRequest().setAttribute("location", getLocation(ctx));
 		ctx.getRequest().setAttribute("filter", getFilter(ctx));		
 
-		int width = getWidth(ctxBean);
-		if (width >= 0) {
-			ctx.getRequest().setAttribute("imageWidth", width);
+		if (!getFilter(ctx).equals(RAW_FILTER)) {
+			int width = getWidth(ctxBean);		
+			if (width >= 0) {			
+				ctx.getRequest().setAttribute("imageWidth", width);
+			} else {
+				ctx.getRequest().removeAttribute("imageWidth");
+			}
+			int height = getHeight(ctxBean);
+			if (height >= 0) {
+				ctx.getRequest().setAttribute("imageHeight", height);
+			} else {
+				ctx.getRequest().removeAttribute("imageHeight");
+			}
 		} else {
+			ctx.getRequest().removeAttribute("imageHeight");
 			ctx.getRequest().removeAttribute("imageWidth");
-		}
-		int height = getHeight(ctxBean);
-		if (height >= 0) {
-			ctx.getRequest().setAttribute("imageHeight", height);
 		}
 	}
 
@@ -1155,7 +1163,7 @@ public class GlobalImage extends Image implements IImageFilter {
 			} else {
 				return "width-" + device.getCode() + '-' + pageId;
 			}
-		} catch (Exception e) {			
+		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
 		}
@@ -1179,7 +1187,7 @@ public class GlobalImage extends Image implements IImageFilter {
 		}
 	}
 
-	public int getWidth(ContentContextBean ctx) {
+	public int getWidth(ContentContextBean ctx) {		
 		String width = properties.getProperty(getWidthKey(ctx));
 		if (width == null) {
 			return -1;
@@ -1228,6 +1236,7 @@ public class GlobalImage extends Image implements IImageFilter {
 	}
 
 	public void setWidth(ContentContext ctx, int width) throws Exception {
+		LocalLogger.log(">>>>>>>>> GlobalImage.setWidth : width = "+width+"    key="+getWidthKey(ctx.getBean())+"   this="+this); //TODO: remove debug trace
 		if (getWidth(ctx.getBean()) != width) {
 			properties.setProperty(getWidthKey(ctx.getBean()), "" + width);
 			setModify();
@@ -1250,13 +1259,13 @@ public class GlobalImage extends Image implements IImageFilter {
 		 * } else if (comp instanceof MirrorComponent) { image =
 		 * (GlobalImage)((MirrorComponent) comp).getMirrorComponent(ctx); }
 		 */
-		
-		if (image != null && image.getConfig(ctx).isDataFeedBack() && currentUser != null && currentUser.validForRoles(AdminUserSecurity.CONTENT_ROLE)) {
+		if (image != null && (image.getConfig(ctx).isDataFeedBack() || ctx.getDevice().isPdf()) && currentUser != null && currentUser.validForRoles(AdminUserSecurity.CONTENT_ROLE)) {
 			logger.info("exec data feed back (template:" + ctx.getCurrentTemplate().getName() + ").");
 			String firstText = rs.getParameter("firsttext", null);
 			String secondText = rs.getParameter("secondtext", null);
 			String height = rs.getParameter("height", null);
 			String width = rs.getParameter("width", null);
+			LocalLogger.log(">>>>>>>>> GlobalImage.performDataFeedBack : ctx = "+ctx.getRenderMode()); //TODO: remove debug trace
 			
 			if (image.isTextAuto()) {
 				if (firstText != null && !firstText.equals(image.getFirstText())) {
@@ -1290,7 +1299,7 @@ public class GlobalImage extends Image implements IImageFilter {
 			ctx.getAjaxData().put("previewURL", image.getPreviewURL(ctx, image.getFilter(ctx)));
 			ctx.getAjaxData().put("compId", comp.getId());
 		} else {
-			logger.fine("stop data feed back (template:" + ctx.getCurrentTemplate().getName() + ").");
+			logger.info("stop data feed back (template:" + ctx.getCurrentTemplate().getName() + ").");
 		}
 		return null;
 	}

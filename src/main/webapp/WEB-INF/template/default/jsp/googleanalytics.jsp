@@ -1,4 +1,4 @@
-<!-- Google Analytics - 296/07/2016 -->
+<c:if test="${!info.device.pdf}"><!-- Google Analytics - 296/07/2016 -->
 <script>
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
   (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
@@ -8,4 +8,4 @@
   ga('create', '${globalContext.googleAnalyticsUACCT}', 'auto');
   ga('set', 'anonymizeIp', true);
   ga('send', 'pageview');
-</script>	
+</script></c:if>	

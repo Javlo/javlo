@@ -28,6 +28,7 @@ import org.javlo.service.event.Event;
 import org.javlo.template.Template;
 import org.javlo.template.TemplateFactory;
 import org.javlo.user.AdminUserSecurity;
+import org.owasp.encoder.Encode;
 
 public class SmartPageBean {
 
@@ -470,6 +471,15 @@ public class SmartPageBean {
 	public String getTitle() {
 		try {
 			return page.getTitle(lgCtx);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	public String getTitleForAttribute() {
+		try {
+			return Encode.forHtmlAttribute(page.getTitle(lgCtx));
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;

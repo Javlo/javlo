@@ -1589,7 +1589,7 @@ public class Template implements Comparable<Template> {
 	protected String getHTMLFile(Device device) {
 		String deviceRenderer = null;
 		if (device != null) {
-			deviceRenderer = properties.getString("html." + device.getCode(), null);
+			deviceRenderer = properties.getString("html." + device.getCode(), getParent().getHTMLFile(device));
 		}
 		if (deviceRenderer != null && !deviceRenderer.equals("-1")) {
 			logger.fine("device renderer found : " + deviceRenderer + " (template:" + getId() + " device:" + device + ")");
@@ -2129,6 +2129,7 @@ public class Template implements Comparable<Template> {
 			outRenderes.add("");
 		}
 		boolean unvalidatedRenderer = false;
+		boolean rendererDefined = false;
 		while (keys.hasNext()) {
 			String key = (String) keys.next();
 			if (key.startsWith("html.")) {
@@ -2138,11 +2139,12 @@ public class Template implements Comparable<Template> {
 						unvalidatedRenderer = true;
 					} else {						
 						outRenderes.add(renderer);
+						rendererDefined = true;
 					}
 				}
 			}
 		}		
-		if (outRenderes.size() == 0 && !unvalidatedRenderer) {			
+		if (!rendererDefined && !unvalidatedRenderer) {			
 			return getParent().getRenderers();
 		}
 		return outRenderes;

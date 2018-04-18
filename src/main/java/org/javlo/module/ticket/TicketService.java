@@ -107,7 +107,7 @@ public class TicketService {
 			}
 		}
 		if (updateDate) {
-		ticket.setLastUpdateDate(new Date());
+			ticket.setLastUpdateDate(new Date());
 		}
 		storeTicket(ctx, ticket);
 	}
