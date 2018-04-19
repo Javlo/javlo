@@ -66,7 +66,7 @@
 			</c:url>
 		<a ${link.selected?'class="selected"':''} href="${url}" title="${link.title}">
 		</c:if><span class="link">${link.legend}</span>
-		<c:if test="${not empty link.url  && !link.readonly && !status.last}">
+		<c:if test="${not empty link.url  && !link.readonly}">
 			</a>
 		</c:if><c:if test="${empty link.url || link.readonly}"></div></c:if>
 		<c:if test="${(fn:length(link.children) > 1 || (status.last && fn:length(link.children) > 0))}">

@@ -48,6 +48,12 @@ public class ResourceHelperTest extends TestCase {
 		assertEquals(ResourceHelper.changeExtention(null, null), null);
 		assertEquals(ResourceHelper.changeExtention(null, "png"), null);
 	}
+	
+	public void testRemovePath() {
+		assertEquals(ResourceHelper.removePath("c:/tmp/folder/test.jpg", "c:/tmp/folder/"), "test.jpg");		
+		assertEquals(ResourceHelper.removePath("c:/tmp/folder/test.jpg", "c:\\tmp\\folder\\"), "test.jpg");
+		assertEquals(ResourceHelper.removePath("/tmp/folder/test.jpg", "/tmp/folder/"), "test.jpg");
+	}
 
 }
 

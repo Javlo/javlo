@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
-import java.lang.ref.WeakReference;
 import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Collections;
@@ -34,7 +33,6 @@ import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.image.ImageHelper;
 import org.javlo.image.ImageSize;
-import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
 import org.javlo.service.PersistenceService;
 import org.javlo.service.exception.ServiceException;
@@ -45,6 +43,8 @@ import org.javlo.ztatic.InitInterest.Point;
 import org.owasp.encoder.Encode;
 
 public class StaticInfo {
+	
+	public static final StaticInfo EMPTY_INSTANCE = getFakeInstance();
 
 	public static final String _STATIC_INFO_DIR = null;
 
@@ -468,6 +468,13 @@ public class StaticInfo {
 		staticInfo.setStaticFolder(true);
 		return staticInfo;
 	}
+	
+	private static StaticInfo getFakeInstance() {
+		StaticInfo outInstance = new StaticInfo();
+		outInstance.setFile(new File(""));
+		return outInstance;
+	}
+
 
 	public static StaticInfo getInstance(ContentContext ctx, String inStaticURL) throws Exception {
 		inStaticURL = inStaticURL.replace('\\', '/').replaceAll("//", "/").trim();

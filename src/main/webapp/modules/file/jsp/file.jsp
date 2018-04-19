@@ -21,7 +21,7 @@ jQuery(document).ready(function() {
 		url : '${info.staticRootURL eq "/"?"":info.staticRootURL}${currentModule.path}/jsp/connector.jsp${not empty changeRoot?"?changeRoot=true":""}${params}',
 		lang : '${info.editLanguage}',
 		height: jQuery("#footer").offset().top - jQuery("#fileManager").offset().top - (jQuery(".maincontent .left").outerHeight(true) - jQuery(".maincontent .left").height()),
-		handlers : {	
+		handlers: {	
 			open: function(event) { ajaxRequest("${info.currentURL}?webaction=updateBreadcrumb${not empty changeRoot?"&changeRoot=true":""}${params}"); }
 		},
 		

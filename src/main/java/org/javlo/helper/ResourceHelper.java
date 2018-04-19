@@ -1028,12 +1028,14 @@ public class ResourceHelper {
 
 	/**
 	 * remove the path from a string this method is used for obtain a relative
-	 * file path from a ablute file path.
+	 * file path from a absolute file path.
 	 * 
 	 * @param path
 	 * @return
 	 */
-	public static String removePath(String pathCuted, String path) {
+	public static String removePath(String path, String pathCuted) {
+		pathCuted = StringHelper.cleanPath(pathCuted);
+		path = StringHelper.cleanPath(path);
 		int indexOfStaticPath = path.indexOf(pathCuted);
 		if (indexOfStaticPath < 0) {
 			return path;

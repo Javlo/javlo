@@ -515,6 +515,9 @@ public class FieldFile extends Field implements IStaticContainer {
 	}
 
 	public void setCurrentFolder(String folder) {
+		if (folder.startsWith("/")) {
+			folder = folder.substring(1);
+		}
 		properties.setProperty("field." + getUnicName() + ".value.folder", folder);
 	}
 
@@ -586,11 +589,16 @@ public class FieldFile extends Field implements IStaticContainer {
 		String currentFile = ElementaryURLHelper.mergePath(getFileDirectory(), getCurrentFolder());
 		currentFile = ElementaryURLHelper.mergePath(currentFile, getCurrentFile());
 		File file = new File(currentFile);
+		try {
+			file = file.getCanonicalFile();
+			oldName = oldName.getCanonicalFile();
+			newName = newName.getCanonicalFile();
+		} catch (IOException e) {
+			e.printStackTrace();
+			return false;
+		}
 		if (file.equals(oldName)) {
-			String relativeNewFileDir = newName.getParentFile().getAbsolutePath().replace(getFileDirectory(), "");
-			if (relativeNewFileDir.length() == newName.getParentFile().getAbsolutePath().length()) {
-				return false;
-			}
+			String relativeNewFileDir = ResourceHelper.removePath(newName.getParentFile().getAbsolutePath(), getFileDirectory());
 			setCurrentFile(newName.getName());
 			setCurrentFolder(relativeNewFileDir);
 			return true;

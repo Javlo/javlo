@@ -1235,9 +1235,7 @@ public class GlobalImage extends Image implements IImageFilter {
 		}
 	}
 
-	public void setWidth(ContentContext ctx, int width) throws Exception {
-		LocalLogger.log(">>>>>>>>> GlobalImage.setWidth : width = "+width+"    key="+getWidthKey(ctx.getBean())+"   this="+this); //TODO: remove debug trace
-		if (getWidth(ctx.getBean()) != width) {
+	public void setWidth(ContentContext ctx, int width) throws Exception {		if (getWidth(ctx.getBean()) != width) {
 			properties.setProperty(getWidthKey(ctx.getBean()), "" + width);
 			setModify();
 		}
@@ -1265,7 +1263,6 @@ public class GlobalImage extends Image implements IImageFilter {
 			String secondText = rs.getParameter("secondtext", null);
 			String height = rs.getParameter("height", null);
 			String width = rs.getParameter("width", null);
-			LocalLogger.log(">>>>>>>>> GlobalImage.performDataFeedBack : ctx = "+ctx.getRenderMode()); //TODO: remove debug trace
 			
 			if (image.isTextAuto()) {
 				if (firstText != null && !firstText.equals(image.getFirstText())) {

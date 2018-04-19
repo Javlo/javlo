@@ -753,6 +753,10 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		if (outRename) {
+			setModify();
+			storeProperties();
+		}
 		return outRename;
 	}
 

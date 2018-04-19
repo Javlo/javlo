@@ -58,7 +58,7 @@ public class FileBean implements ILanguage {
 	}
 
 	ContentContext ctx;
-	StaticInfo staticInfo;
+	StaticInfo staticInfo = null;
 	Map<String, String> tags;
 	Map<String, String> readRoles;
 	private List<FileBean> translation = Collections.emptyList();
@@ -179,66 +179,115 @@ public class FileBean implements ILanguage {
 	}
 
 	public StaticInfo getStaticInfo() {
-		return staticInfo;
+		if (staticInfo == StaticInfo.EMPTY_INSTANCE) {
+			return null;
+		} else {
+			return staticInfo;
+		}
 	}
 
 	public String getName() {
+		if (staticInfo == null) {
+			return null;
+		}
 		return staticInfo.getFile().getName();
 	}
 
 	public String getDescription() {
+		if (staticInfo == null) {
+			return null;
+		}
 		return staticInfo.getManualDescription(ctx);
 	}
 	
 	public String getReference() {
+		if (staticInfo == null) {
+			return null;
+		}
 		return staticInfo.getReference(ctx);
 	}
 	
 	public String getLanguage() {
+		if (staticInfo == null) {
+			return null;
+		}
 		return staticInfo.getLanguage(ctx);
 	}
 
 	public String getLocation() {
+		if (staticInfo == null) {
+			return null;
+		}
 		return staticInfo.getLocation(ctx);
 	}
 
 	public String getDate() {
+		if (staticInfo == null) {
+			return null;
+		}
 		return StringHelper.renderTime(staticInfo.getDate(ctx));
 	}
 
 	public String getManualDate() {
+		if (staticInfo == null) {
+			return null;
+		}
 		return StringHelper.renderTime(staticInfo.getManualDate(ctx));
 	}
 	
 	public String getCreationDate() {
+		if (staticInfo == null) {
+			return null;
+		}
 		return StringHelper.renderTime(staticInfo.getCreationDate(ctx));
 	}
 
 	public String getTitle() {
+		if (staticInfo == null) {
+			return null;
+		}
 		return staticInfo.getTitle(ctx);
 	}
 	
 	public String getCopyright() {
+		if (staticInfo == null) {
+			return null;
+		}
 		return staticInfo.getCopyright(ctx);
 	}
 
 	public String getId() {
+		if (getName() == null) {
+			return null;
+		}
 		return Encode.forHtmlAttribute(getName().replace('.', '_'));
 	}
 
 	public int getFocusZoneX() {
+		if (staticInfo == null) {
+			return -1;
+		}
 		return staticInfo.getFocusZoneX(ctx);
 	}
 
 	public int getFocusZoneY() {
+		if (staticInfo == null) {
+			return -1;
+		}
 		return staticInfo.getFocusZoneY(ctx);
 	}
 
 	public String getSize() {
+		if (staticInfo == null) {
+			return null;
+		}
 		return StringHelper.renderSize(staticInfo.getFile().length());
 	}
 	
 	public Position getPosition() {
+		if (staticInfo == null) {
+			return null;
+		}
 		return staticInfo.getPosition(ctx);
 	}
 
@@ -247,6 +296,9 @@ public class FileBean implements ILanguage {
 	}
 
 	public Map<String, String> getTags() {
+		if (staticInfo == null) {
+			return null;
+		}
 		if (tags == null) {
 			tags = new HashMap<String, String>();
 			for (String tag : staticInfo.getTags(ctx)) {
@@ -257,6 +309,9 @@ public class FileBean implements ILanguage {
 	}
 	
 	public Map<String, String> getReadRoles() {
+		if (staticInfo == null) {
+			return null;
+		}
 		if (readRoles == null) {
 			readRoles = new HashMap<String, String>();
 			for (String readRole : staticInfo.getReadRoles(ctx)) {
@@ -267,14 +322,23 @@ public class FileBean implements ILanguage {
 	}
 
 	public boolean isShared() {
+		if (staticInfo == null) {
+			return false;
+		}
 		return staticInfo.isShared(ctx);
 	}
 
 	public boolean isDirectory() {
+		if (staticInfo == null) {
+			return false;
+		}
 		return staticInfo.getFile().isDirectory();
 	}
 
 	public int getPopularity() {
+		if (staticInfo == null) {
+			return -1;
+		}
 		try {
 			return staticInfo.getAccessFromSomeDays(ctx);
 		} catch (Exception e) {
@@ -284,6 +348,9 @@ public class FileBean implements ILanguage {
 	}
 
 	public String getPath() {
+		if (staticInfo == null) {
+			return null;
+		}
 		return staticInfo.getStaticURL();
 	}
 	
@@ -297,6 +364,9 @@ public class FileBean implements ILanguage {
 	}
 	
 	public List<Link> getComponentWithReference() {
+		if (staticInfo == null) {
+			return null;
+		}
 		try {
 			List<Link> links = new LinkedList<Link>();
 			ContentContext lgCtx = new ContentContext(ctx);
@@ -317,6 +387,9 @@ public class FileBean implements ILanguage {
 	}
 	
 	public void addTranslation(FileBean fileBean) {
+		if (staticInfo == null) {
+			return;
+		}
 		if (!StringHelper.isEmpty(fileBean.getLanguage())) {
 			if (translation == Collections.EMPTY_LIST) {
 				translation = new LinkedList<FileBean>();
@@ -325,7 +398,10 @@ public class FileBean implements ILanguage {
 			if (fileBean.getLanguage().equals(getBeanLanguage())) {
 			    staticInfo=fileBean.staticInfo;
 			}
-		}		
+		}	
+		if (staticInfo == null) {
+			staticInfo = StaticInfo.EMPTY_INSTANCE;
+		}
 	}
 	
 	public List<FileBean> getTranslation() {
@@ -347,7 +423,11 @@ public class FileBean implements ILanguage {
 	}
 	
 	public String getVersionHash() {
-		return staticInfo.getVersionHash(ctx);
+		if (staticInfo != null) {
+			return staticInfo.getVersionHash(ctx);
+		} else {
+			return null;
+		}
 	}
 	
 	public boolean isJpeg() {
@@ -355,7 +435,7 @@ public class FileBean implements ILanguage {
 	}
 	
 	public boolean isToJpeg() {
-		if (staticInfo == null || staticInfo.getFile().isDirectory()) {
+		if (staticInfo == null || staticInfo == StaticInfo.EMPTY_INSTANCE || staticInfo.getFile().isDirectory()) {
 			return false;
 		} else {
 			return StringHelper.isPDF(getName()) || StringHelper.getFileExtension(getName()).equalsIgnoreCase("png");
