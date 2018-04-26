@@ -785,12 +785,22 @@ public class StaticConfig extends Observable {
 	}
 
 	public String getLDAPSecurityCredentials() {
-		return properties.getString("ldap.security.credentials", "RO-eCARD2010");
+		return properties.getString("ldap.security.credentials", null);
 	}
 
 	public String getLDAPSecurityPrincipal() {
-		return properties.getString("ldap.security.principal",
-				"uid=RO-eCARD, ou=Applications, dc=parl, dc=union, dc=eu");
+		return properties.getString("ldap.security.principal",null);
+	}
+	
+	/**
+	 * use #login# in place of login
+	 * @return
+	 */
+	public String getLDAPSecurityLogin(String login) {
+		if (StringHelper.isEmpty(login)) {
+			return null;
+		}
+		return properties.getString("ldap.security.login","").replace("#login#", login);
 	}
 
 	public String getLocalMailingFolder() {

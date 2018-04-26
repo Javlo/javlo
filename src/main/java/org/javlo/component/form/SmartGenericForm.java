@@ -613,7 +613,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		getLocalConfig(false).setProperty("mail.subject.field", rs.getParameter(getInputName("subject-field"), ""));
 		getLocalConfig(false).setProperty("mail.from", rs.getParameter(getInputName("from"), ""));
 		getLocalConfig(false).setProperty("mail.from.field", rs.getParameter(getInputName("from-field"), ""));
-		getLocalConfig(false).setProperty("message.generic", rs.getParameter(getInputName("message-generic"), ""));
+		getLocalConfig(false).setProperty("error.generic", rs.getParameter(getInputName("error-generic"), ""));
 		getLocalConfig(false).setProperty("message.required", rs.getParameter(getInputName("message-required"), ""));
 		getLocalConfig(false).setProperty("error.required", rs.getParameter(getInputName("error-required"), ""));
 		getLocalConfig(false).setProperty("message.thanks", rs.getParameter(getInputName("message-thanks"), ""));
@@ -1272,6 +1272,22 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 	public boolean initContent(ContentContext ctx) throws Exception {
 		boolean outB = super.initContent(ctx);
 		getLocalConfig(false).setProperty("title", getType());
+		
+		I18nAccess i18nAccess = I18nAccess.getInstance(ctx);
+		
+		getLocalConfig(false).setProperty("mail.subject", i18nAccess.getViewText("form.mail.subject", "Contact : ")+ctx.getGlobalContext().getGlobalTitle());		
+		getLocalConfig(false).setProperty("mail.from", ctx.getGlobalContext().getAdministratorEmail());		
+		getLocalConfig(false).setProperty("error.generic", i18nAccess.getViewText("form.error", ""));
+		getLocalConfig(false).setProperty("message.required", "* "+i18nAccess.getViewText("form.required", "required"));
+		
+		getLocalConfig(false).setProperty("error.required", i18nAccess.getViewText("form.error.required", ""));
+		getLocalConfig(false).setProperty("message.thanks", i18nAccess.getViewText("form.thanks", ""));
+		getLocalConfig(false).setProperty("message.error", i18nAccess.getViewText("contact.technical-error", "reset	"));
+		getLocalConfig(false).setProperty("message.reset", i18nAccess.getViewText("form.reset", "reset	"));
+		
+		getLocalConfig(false).setProperty("label.captcha", i18nAccess.getViewText("global.captcha",""));
+		getLocalConfig(false).setProperty("error.captcha", i18nAccess.getViewText("message.error.bad-captcha", ""));
+		
 		store(ctx);
 		return outB;
 	}

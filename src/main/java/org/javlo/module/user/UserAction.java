@@ -120,7 +120,7 @@ public class UserAction extends AbstractModuleAction {
 			} else if (requestService.getParameter("cuser", null) != null) {
 				userSet=true;
 				String cuser = requestService.getParameter("cuser", null);
-				for (IUserInfo userInfo : userContext.getUserFactory(ctx).getUserInfoList()) {
+				for (IUserInfo userInfo : userContext.getUserFactory(ctx).getUserInfoList()) {					
 					if (userInfo.getEncryptLogin().equals(cuser)) {
 						user = userFactory.getUser(userInfo.getLogin());
 					}
@@ -135,7 +135,7 @@ public class UserAction extends AbstractModuleAction {
 
 			if (user == null) {
 				if (userSet) {
-					return "user not found (prepare) : " + requestService.getParameter("user", null);
+					return "user not found (prepare) : " + requestService.getParameter("user", requestService.getParameter("cuser", null));
 				} else {
 					return null;
 				}

@@ -66,7 +66,7 @@ public class UserFactory implements IUserFactory, Serializable {
 	private String userInfoFile = null;
 
 	private static Map<String, IUserInfo> changePasswordReference = new TimeMap<String, IUserInfo>();
-
+	
 	protected List<IUserInfo> userInfoList = null; // TODO: create a external
 	// application scope class
 

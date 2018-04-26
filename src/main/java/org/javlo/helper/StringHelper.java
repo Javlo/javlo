@@ -25,6 +25,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.Normalizer;
@@ -3704,6 +3705,16 @@ public class StringHelper {
 		try {
 			MessageDigest md = MessageDigest.getInstance("MD5");
 			return hex(md.digest(message.getBytes("CP1252")));
+		} catch (NoSuchAlgorithmException e) {
+		} catch (UnsupportedEncodingException e) {
+		}
+		return null;
+	}
+	
+	public static String md5(String message) {
+		try {
+			MessageDigest md = MessageDigest.getInstance("MD5");
+			return new String(md.digest(message.getBytes("CP1252")));
 		} catch (NoSuchAlgorithmException e) {
 		} catch (UnsupportedEncodingException e) {
 		}

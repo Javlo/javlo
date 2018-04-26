@@ -1066,7 +1066,6 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 		} else {
 			return Integer.parseInt(level);	
 		}
-		 
 	}
 	
 	@Override
@@ -1074,7 +1073,7 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 		Map<String, Object> content = super.getContentAsMap(ctx);
 		List<Map<String, Object>> contentArray = new LinkedList<Map<String, Object>>();
 		for (Field field : getFields(ctx)) {
-			contentArray.add(field.getContentAsMap(ctx));
+			content.put(field.getName(), field.getContentAsMap(ctx));
 		}
 		content.put("value", contentArray);
 		return content;

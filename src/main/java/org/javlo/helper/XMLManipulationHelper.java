@@ -1056,11 +1056,6 @@ public class XMLManipulationHelper {
 		out.newLine();
 		out.append("<%}%>");
 
-		out.append("<%for (String uri : currentPage.getExternalResources(ctx)) {%>");
-		out.newLine();
-		out.append("<%=XHTMLHelper.renderHeaderResourceInsertion(ctx, uri)%>");
-		out.append("<%}%>");
-
 		out.close();
 
 		return outString.toString();
@@ -1126,6 +1121,11 @@ public class XMLManipulationHelper {
 		out.append("<%}%>");
 		out.newLine();
 		out.append("<%if (currentPage.getHeaderContent(ctx) != null) {%><%=currentPage.getHeaderContent(ctx)%><%}%>");
+		
+		out.append("<%for (String uri : currentPage.getExternalResources(ctx)) {%>");
+		out.newLine();
+		out.append("<%=XHTMLHelper.renderHeaderResourceInsertion(ctx, uri)%>");
+		out.append("<%}%>");
 
 		out.close();
 

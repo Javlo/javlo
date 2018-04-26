@@ -6,6 +6,7 @@ package org.javlo.context;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.lang.ref.WeakReference;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.Collection;
@@ -103,9 +104,9 @@ public class ContentContext {
 
 	public static String CONTEXT_REQUEST_KEY = "contentContext";
 
-	public MenuElement currentPageCached = null;
+	public WeakReference<MenuElement> currentPageCached = null;
 
-	private MenuElement virtualCurrentPage = null;
+	private WeakReference<MenuElement> virtualCurrentPage = null;
 
 	private boolean pageAssociation = false;
 
@@ -921,7 +922,11 @@ public class ContentContext {
 	};
 
 	public MenuElement getCurrentPageCached() {
-		return currentPageCached;
+		if (currentPageCached == null) {
+			return null;
+		} else {
+			return currentPageCached.get();			
+		}
 	}
 	
 	/**
@@ -933,8 +938,8 @@ public class ContentContext {
 	 * @throws Exception
 	 */
 	public MenuElement getVirtualCurrentPage() throws Exception {
-		if (virtualCurrentPage != null) {
-			return virtualCurrentPage;
+		if (virtualCurrentPage != null && virtualCurrentPage.get() != null) {
+			return virtualCurrentPage.get();
 		} else {
 			return getCurrentPage();
 		}
@@ -1316,7 +1321,7 @@ public class ContentContext {
 	}
 
 	public void setCurrentPageCached(MenuElement currentPageCached) throws Exception {		
-		this.currentPageCached = currentPageCached;
+		this.currentPageCached = new WeakReference<MenuElement>(currentPageCached);
 	}
 
 	public void resetCurrentPageCached() {
@@ -1956,7 +1961,7 @@ public class ContentContext {
 
 	public void setVirtualCurrentPage(MenuElement virtualCurrentPage) {
 		this.currentTemplate = null;
-		this.virtualCurrentPage = virtualCurrentPage;
+		this.virtualCurrentPage = new WeakReference(virtualCurrentPage);
 	}
 
 	/**
