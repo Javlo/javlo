@@ -1682,7 +1682,7 @@ public class StaticConfig extends Observable {
 	}
 
 	public String getStaticResourceCacheTime() {
-		return properties.getString("resources.cache-time", ""+(60*60));
+		return properties.getString("resources.cache-time", ""+(60*60*24));
 	}
 
 	public boolean isContentExtensionValid(String ext) {
