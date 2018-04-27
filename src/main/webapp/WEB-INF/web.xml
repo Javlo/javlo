@@ -3,22 +3,11 @@
 <web-app xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 	version="3.0" metadata-complete="true">
-
-	<error-page>
-		<error-code>404</error-code>
-		<location>/error-404.jsp</location>
-	</error-page>
-
-	<filter>
-		<filter-name>UrlRewriteFilter</filter-name>
-		<filter-class>org.tuckey.web.filters.urlrewrite.UrlRewriteFilter</filter-class>
-	</filter>
-	<filter-mapping>
-		<filter-name>UrlRewriteFilter</filter-name>
-		<url-pattern>/*</url-pattern>
-		<dispatcher>REQUEST</dispatcher>
-		<dispatcher>FORWARD</dispatcher>
-	</filter-mapping>
+	
+	 <error-page>
+       <error-code>404</error-code>
+       <location>/error-404.jsp</location>
+     </error-page>
 
 	<filter>
 		<filter-name>CharsetFilter</filter-name>
@@ -46,7 +35,7 @@
 		<filter-name>cssCompilation</filter-name>
 		<url-pattern>*.css</url-pattern>
 	</filter-mapping>
-
+	
 	<filter>
 		<filter-name>CatchAll</filter-name>
 		<filter-class>org.javlo.filter.CatchAllFilter</filter-class>
@@ -101,7 +90,7 @@
 		<servlet-name>ProxyServlet</servlet-name>
 		<url-pattern>/proxy/*</url-pattern>
 	</servlet-mapping>
-
+	
 	<servlet>
 		<servlet-name>mfb</servlet-name>
 		<servlet-class>org.javlo.servlet.MailingFeedback</servlet-class>
@@ -131,7 +120,7 @@
 		<servlet-name>VFSServlet</servlet-name>
 		<url-pattern>/vfs/*</url-pattern>
 	</servlet-mapping>
-
+	
 	<servlet>
 		<servlet-name>MimeType</servlet-name>
 		<servlet-class>org.javlo.servlet.MimeTypeServlet</servlet-class>
@@ -171,7 +160,7 @@
 	<servlet-mapping>
 		<servlet-name>SiteMapServlet</servlet-name>
 		<url-pattern>/sitemap.json</url-pattern>
-		<url-pattern>/sitemap.xml</url-pattern>
+		<url-pattern>/sitemap.xml</url-pattern>		
 		<url-pattern>/images-sitemap.xml</url-pattern>
 		<url-pattern>/news-sitemap.xml</url-pattern>
 		<url-pattern>/sitemap/*</url-pattern>
@@ -187,7 +176,7 @@
 		<servlet-name>oauth2callback</servlet-name>
 		<url-pattern>/oauth2callback</url-pattern>
 	</servlet-mapping>
-
+	
 	<servlet-mapping>
 		<servlet-name>oauth2callback</servlet-name>
 		<url-pattern>/oauth2callbackadmin</url-pattern>
@@ -202,7 +191,7 @@
 		<servlet-name>ZIPServlet</servlet-name>
 		<url-pattern>/zip/*</url-pattern>
 	</servlet-mapping>
-
+	
 	<servlet>
 		<servlet-name>rest</servlet-name>
 		<servlet-class>org.javlo.servlet.RestDataServlet</servlet-class>
@@ -255,7 +244,7 @@
 	<servlet-mapping>
 		<servlet-name>resource</servlet-name>
 		<url-pattern>/resource/*</url-pattern>
-	</servlet-mapping>
+	</servlet-mapping>	
 	<servlet-mapping>
 		<servlet-name>resource</servlet-name>
 		<url-pattern>/favicon.ico</url-pattern>
@@ -264,8 +253,8 @@
 		<servlet-name>resource</servlet-name>
 		<url-pattern>/robots.txt</url-pattern>
 	</servlet-mapping>
-
-
+	
+	
 	<servlet>
 		<servlet-name>file</servlet-name>
 		<servlet-class>org.javlo.servlet.FileServlet</servlet-class>
@@ -335,7 +324,7 @@
 		<servlet-name>RemoteResourceServlet</servlet-name>
 		<servlet-class>org.javlo.servlet.RemoteResourceServlet</servlet-class>
 		<load-on-startup>0</load-on-startup>
-	</servlet>
+	</servlet>	
 
 	<servlet>
 		<servlet-name>FolderServlet</servlet-name>

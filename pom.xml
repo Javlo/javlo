@@ -486,12 +486,6 @@
 		    <artifactId>jotlmsg</artifactId>
 		    <version>1.2.1</version>
 		</dependency>
-		
-		<dependency>
-			<groupId>org.tuckey</groupId>
-			<artifactId>urlrewritefilter</artifactId>
-			<version>4.0.4</version>
-		</dependency>
 
 	</dependencies>
 
