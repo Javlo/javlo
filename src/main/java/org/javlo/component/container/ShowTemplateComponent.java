@@ -24,8 +24,10 @@ public class ShowTemplateComponent extends AbstractVisualComponent {
 		Collection<TemplateBean> templates = new LinkedList<TemplateBean>();
 		for (String id : getTemplateIds(ctx)) {
 			Template template = TemplateFactory.getTemplates(ctx.getRequest().getSession().getServletContext()).get(id);
-			template.importTemplateInWebapp(StaticConfig.getInstance(ctx.getRequest().getSession()), ctx);
-			templates.add(new TemplateBean(ctx, template));
+			if (template != null) {
+				template.importTemplateInWebapp(StaticConfig.getInstance(ctx.getRequest().getSession()), ctx);
+				templates.add(new TemplateBean(ctx, template));
+			}
 		}
 		ctx.getRequest().setAttribute("templates", templates);
 	}

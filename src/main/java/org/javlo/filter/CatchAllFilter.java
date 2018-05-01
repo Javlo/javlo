@@ -481,8 +481,16 @@ public class CatchAllFilter implements Filter {
 				String loginType = requestService.getParameter("login-type", null);
 
 				if ((loginType == null || !loginType.equals("adminlogin")) && logoutUser == null) {
-					if (globalContext.getStaticConfig().isLoginWithToken() && !StringHelper.isEmpty(request.getParameter(IUserFactory.TOKEN_PARAM))) {
-						user = fact.login(httpRequest, request.getParameter(IUserFactory.TOKEN_PARAM));
+					String token = request.getParameter(IUserFactory.TOKEN_PARAM);
+					String realToken = globalContext.convertOneTimeToken(token);
+					if (realToken != null) {
+						token = realToken;
+					}
+					if (globalContext.getStaticConfig().isLoginWithToken() && !StringHelper.isEmpty(token)) {
+						user = fact.login(httpRequest, token);
+						if (user == null) {
+							user = AdminUserFactory.createUserFactory(globalContext, httpRequest.getSession()).login(httpRequest, token);
+						}
 					} else if (fact.getCurrentUser(globalContext, ((HttpServletRequest) request).getSession()) == null) {
 						if (request.getParameter("j_username") != null || httpRequest.getUserPrincipal() != null) {							
 							String login = request.getParameter("j_username");

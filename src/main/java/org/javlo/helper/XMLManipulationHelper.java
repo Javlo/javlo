@@ -550,7 +550,8 @@ public class XMLManipulationHelper {
 					if (isMail && globalContext.getStaticConfig().isMailingUserTracking()) {
 						previewCode = previewCode + "<%Map mParams = new HashMap();mParams.put(MailingAction.MAILING_FEEDBACK_PARAM_NAME, MailingAction.MAILING_FEEDBACK_VALUE_NAME);%><img class=\"empty_image\" style=\"height: 0; width: 0; margin:0; padding: 0;\" width=\"0\" height=\"0\" src=\"<%=URLHelper.createStaticURL(ctx, \"/mfb.png\", mParams)%>\" /> ";
 					}
-					remplacement.addReplacement(tags[i].getCloseStart() - 1, tags[i].getCloseStart() - 1, "<%=ctx.getGlobalContext().getFooterBloc()%>" + previewCode);
+					String footerResourceIndlue = "<!-- comp resources --><%for (String uri : currentPage.getExternalResources(ctx)) {%><%=XHTMLHelper.renderHeaderResourceInsertion(ctx, uri)%><%}%>";
+					remplacement.addReplacement(tags[i].getCloseStart() - 1, tags[i].getCloseStart() - 1, footerResourceIndlue+"<%=ctx.getGlobalContext().getFooterBloc()%>" + previewCode);
 				}
 
 				/* link - StyleSheet */
@@ -1121,11 +1122,6 @@ public class XMLManipulationHelper {
 		out.append("<%}%>");
 		out.newLine();
 		out.append("<%if (currentPage.getHeaderContent(ctx) != null) {%><%=currentPage.getHeaderContent(ctx)%><%}%>");
-		
-		out.append("<%for (String uri : currentPage.getExternalResources(ctx)) {%>");
-		out.newLine();
-		out.append("<%=XHTMLHelper.renderHeaderResourceInsertion(ctx, uri)%>");
-		out.append("<%}%>");
 
 		out.close();
 

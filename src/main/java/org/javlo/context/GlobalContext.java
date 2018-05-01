@@ -3303,7 +3303,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		if (token == null) {
 			return null;
 		}
-		return oneTimeTokens.remove(token);
+		return oneTimeTokens.get(token);
 	}
 
 	public String getChangePasswordToken(String user) {

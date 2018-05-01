@@ -12,6 +12,7 @@ import java.io.OutputStream;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
+import java.net.URLEncoder;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
@@ -42,6 +43,7 @@ import org.javlo.message.MessageRepository;
 import org.javlo.user.exception.UserAllreadyExistException;
 import org.javlo.utils.CSVFactory;
 import org.javlo.utils.TimeMap;
+import org.owasp.encoder.Encode;
 
 /**
  * @author pvandermaesen
@@ -283,21 +285,17 @@ public class UserFactory implements IUserFactory, Serializable {
 
 	@Override
 	public User login(HttpServletRequest request, String token) {
+		
 		if (token == null || token.trim().length() == 0) {
 			return null;
 		}
 
 		GlobalContext globalContext = GlobalContext.getInstance(request);
-
+		
 		if (!globalContext.getStaticConfig().isLoginWithToken()) {
 			return null;
 		}
-
-		String realToken = globalContext.convertOneTimeToken(token);
-		if (realToken != null) {
-			token = realToken;
-		}
-
+		
 		User outUser = null;
 		List<IUserInfo> users = getUserInfoList();
 		for (IUserInfo user : users) {
@@ -305,7 +303,6 @@ public class UserFactory implements IUserFactory, Serializable {
 				outUser = new User(user);
 			}
 		}
-
 		if (outUser != null) {
 			outUser.setContext(globalContext.getContextKey());
 			request.getSession().setAttribute(SESSION_KEY, outUser);
@@ -749,8 +746,9 @@ public class UserFactory implements IUserFactory, Serializable {
 	public String getTokenCreateIfNotExist(User user) throws IOException {
 		String token = user.getUserInfo().getToken();
 		if (StringHelper.isEmpty(token)) {
-			token = StringHelper.getRandomIdBase64();
+			token = URLEncoder.encode(StringHelper.getRandomIdBase64()+StringHelper.encryptPasswordSHA256(user.getLogin()),ContentContext.CHARACTER_ENCODING);
 			user.getUserInfo().setToken(token);
+			updateUserInfo(user.getUserInfo());
 			store();
 		}
 		return token;

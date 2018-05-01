@@ -43,12 +43,18 @@ public class UserSearch extends AbstractVisualComponent implements IAction {
 	}
 	
 	@Override
+	public boolean isDefaultValue(ContentContext ctx) {
+		return false;
+	}
+	
+	@Override
 	public boolean isDisplayable(ContentContext ctx) throws Exception {
 		return true;
 	}
 	
 	@Override
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
+		
 		RequestService rs = RequestService.getInstance(ctx.getRequest());
 
 		ListService listService = ListService.getInstance(ctx);
@@ -59,6 +65,8 @@ public class UserSearch extends AbstractVisualComponent implements IAction {
 
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(outStream);
+		
+		out.println("<h2>user search</h2>");
 
 		if (!ctx.getDevice().getCode().equals("pdf")) {
 			out.println("<form id=\"search-user\">");
