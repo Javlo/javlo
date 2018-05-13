@@ -13,9 +13,11 @@ import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadMXBean;
+import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.URL;
 import java.net.URLDecoder;
+import java.net.UnknownHostException;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -78,7 +80,6 @@ import org.javlo.service.PDFConvertion;
 import org.javlo.service.PersistenceService;
 import org.javlo.service.RequestService;
 import org.javlo.service.event.Event;
-import org.javlo.service.exception.ServiceException;
 import org.javlo.service.integrity.IntegrityFactory;
 import org.javlo.service.remote.RemoteMessage;
 import org.javlo.service.remote.RemoteMessageService;
@@ -1104,16 +1105,19 @@ public class AccessServlet extends HttpServlet implements IVersion {
 
 			i18nAccess.resetRequestMap();
 
-		} catch (Throwable t) {
-			try {
+		} catch (Throwable t) {		
 				if (!response.isCommitted()) {
-					response.setStatus(503);
-					Writer out = response.getWriter();
-					out.write("<div style=\"margin-top: 50px; margin-left: auto; margin-right: auto; border: 2px #ff0000 solid; width: 500px; padding: 3px;\" id=\"fatal-error\">");
-					out.write("<h1 style=\"margin: 0px; padding: 1px; font-size: 120%; text-align: center;\">Techinal error.</h1>");
-					out.write("<p style=\"text-align: center;\"><a href=\"mailto:" + staticConfig.getManualErrorEmail() + "?subject=fatal error in javlo : " + globalContext.getContextKey() + "\">Describe your error in a email.</a></p>");
-					out.write("<p style=\"padding: 10px 10px 10px 10px; margin-bottom: 10px; color: #000000; border: 1px solid #ff0000; background-color: #ffeaea;\">" + t.getMessage() + "</p>");
-					out.write("</div>");
+					try {
+						response.setStatus(503);
+						Writer out = response.getWriter();
+						out.write("<div style=\"margin-top: 50px; margin-left: auto; margin-right: auto; border: 2px #ff0000 solid; width: 500px; padding: 3px;\" id=\"fatal-error\">");
+						out.write("<h1 style=\"margin: 0px; padding: 1px; font-size: 120%; text-align: center;\">Techinal error.</h1>");
+						out.write("<p style=\"text-align: center;\"><a href=\"mailto:" + staticConfig.getManualErrorEmail() + "?subject=fatal error in javlo : " + globalContext.getContextKey() + "\">Describe your error in a email.</a></p>");
+						out.write("<p style=\"padding: 10px 10px 10px 10px; margin-bottom: 10px; color: #000000; border: 1px solid #ff0000; background-color: #ffeaea;\">" + t.getMessage() + "</p>");
+						out.write("</div>");
+					} catch (Throwable e) {
+						e.printStackTrace();
+					}
 				}
 
 				if (!(t instanceof SocketException)) {
@@ -1121,10 +1125,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 					DebugListening.getInstance().sendError(ctx, t, "path=" + request.getRequestURI());
 				} else {
 					logger.warning(t.getMessage());
-				}
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+				}			
 		} finally {
 			PersistenceService persistenceService;
 			try {
@@ -1172,7 +1173,11 @@ public class AccessServlet extends HttpServlet implements IVersion {
 		out.println("**** System encoding   :  " + System.getProperty("file.encoding"));
 		out.println("**** CMS encoding      :  " + ContentContext.CHARACTER_ENCODING);
 		out.println("**** VERSION           :  " + VERSION);
-		out.println("**** Platform type     :  " + staticConfig.getPlatformType());
+		try {
+			out.println("**** IP                :  " + InetAddress.getLocalHost().getHostAddress());
+		} catch (UnknownHostException e) {
+			e.printStackTrace();
+		}
 		out.println("**** ENV               :  " + staticConfig.getEnv());
 		out.println("**** Internet Access   :  " + staticConfig.isInternetAccess());
 		out.println("**** STATIC CONFIG DIR :  " + staticConfig.getStaticConfigLocalisation());

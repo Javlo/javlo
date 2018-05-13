@@ -24,12 +24,14 @@ org.javlo.component.meta.Keywords
 org.javlo.component.meta.PageWeight
 org.javlo.component.meta.AutoNumberComponent
 org.javlo.component.meta.Slogan
+org.javlo.component.meta.Font
 org.javlo.component.meta.I18nComponent
 org.javlo.component.meta.Forward
 org.javlo.component.meta.Layouts
 org.javlo.component.meta.TaxonomyDisplayComponent
 org.javlo.component.meta.ContactInformation
 org.javlo.component.meta.DefinitionComponent
+org.javlo.component.meta.HeadMeta
 
 --content.title.text
 

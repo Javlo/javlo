@@ -694,18 +694,19 @@ public class UserFactory implements IUserFactory, Serializable {
 	 */
 	@Override
 	public void updateUserInfo(IUserInfo userInfo) throws IOException {
-
 		synchronized (lock) {
 			userInfo.setModificationDate(new Date());
 			User user = getUser(userInfo.getLogin());
-			IUserInfo currentUserInfo = user.getUserInfo();
-			try {
-				if (currentUserInfo != null) {
-					BeanHelper.copy(userInfo, currentUserInfo);
+			if (user != null) {
+				IUserInfo currentUserInfo = user.getUserInfo();
+				try {
+					if (currentUserInfo != null) {
+						BeanHelper.copy(userInfo, currentUserInfo);
+					}
+					unlockStore();
+				} catch (Exception e) {
+					LocalLogger.log(e);
 				}
-				unlockStore();
-			} catch (Exception e) {
-				LocalLogger.log(e);
 			}
 		}
 

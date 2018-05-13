@@ -1029,6 +1029,11 @@ public class XMLManipulationHelper {
 		out.append("<meta name=\"ROBOTS\" content=\"NONE\" />");
 		out.append("<%}%>");
 		out.newLine();
+		
+		out.append("<%if (currentPage.getMetaHead(ctx) != null) {%>");
+		out.append("<%=currentPage.getMetaHead(ctx)%>");
+		out.append("<%}%>");
+		out.newLine();
 
 		out.append("<%if (ctx.isInteractiveMode()) {%>");
 		out.newLine();

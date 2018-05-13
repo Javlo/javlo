@@ -394,10 +394,14 @@ if (!String.prototype.startsWith) {
 			});
 			pjq("#preview-layer").hide();
 			pjq("#preview-layer").on('click', function (event) {
-				var compId = pjq(this).data("comp").attr("id").substring(3);
+				var compId = pjq(this).data("comp").attr("id").substring(3);				
 				var editURL = editPreviewURL + "&comp_id=" + compId;
+				var url = location.href, idx = url.indexOf("#")
+				var hash = idx != -1 ? url.substring(idx+1) : "";
+				if (hash!="") {
+					editURL = editURL+ "&forward_anchor="+hash;
+				}
 				editPreview.openModal(i18n_preview_edit, editURL);
-
 			});
 			pjq('#preview-layer .btn-delete').on('click', function (e) {
 				editPreview.layerOver(null);

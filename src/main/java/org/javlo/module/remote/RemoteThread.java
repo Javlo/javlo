@@ -2,6 +2,8 @@ package org.javlo.module.remote;
 
 import java.util.logging.Logger;
 
+import org.javlo.helper.StringHelper;
+
 public class RemoteThread extends Thread {
 	
 	private static Logger logger = Logger.getLogger(RemoteThread.class.getName());
@@ -25,6 +27,11 @@ public class RemoteThread extends Thread {
 			while (!stop) {
 				countCheck++;
 				String defaulSynchroCode = remoteService.getDefaultSynchroCode();
+				if (StringHelper.isEmpty(defaulSynchroCode)) {
+					logger.severe("no synchro core found.");
+					stop=true;
+					return;
+				}
 				for (RemoteBean bean : remoteService.getRemotes()) {
 					if (bean.getPriority() == RemoteBean.PRIORITY_HIGH) {
 						bean.check(defaulSynchroCode);

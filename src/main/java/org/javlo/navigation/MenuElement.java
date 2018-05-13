@@ -60,6 +60,7 @@ import org.javlo.component.meta.DateComponent;
 import org.javlo.component.meta.EventDefinitionComponent;
 import org.javlo.component.meta.ForceRealContent;
 import org.javlo.component.meta.Forward;
+import org.javlo.component.meta.HeadMeta;
 import org.javlo.component.meta.I18nComponent;
 import org.javlo.component.meta.Keywords;
 import org.javlo.component.meta.Layouts;
@@ -191,6 +192,8 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 		String linkLabel = null;
 		Map<String, String> i18n = null;
 		ContactBean contactBean = null;
+		String font = null;
+		String metaHead = null;
 		
 		private String forward = null;
 
@@ -224,6 +227,14 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 
 		public String getTitle() {
 			return title;
+		}
+		
+		public String getFont() {
+			return font;
+		}
+		
+		public void setFont(String font) {
+			this.font = font;
 		}
 
 		public String getLocalTitle() {
@@ -1844,6 +1855,39 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 
 		return desc.category;
 	}	
+	
+	/**
+	 * get the category of the page (category component)
+	 * 
+	 * @param ctx
+	 * @return
+	 * @throws Exception
+	 */
+	public String getFont(ContentContext ctx) throws Exception {
+
+		PageDescription desc = getPageDescriptionCached(ctx, ctx.getRequestContentLanguage());
+
+		if (desc.font != null) {
+			return desc.font;
+		}
+		String res = "";
+		ContentContext noAreaCtx = ctx.getContextWithoutArea();
+
+		if (noAreaCtx.getRenderMode() == ContentContext.EDIT_MODE) {
+			noAreaCtx.setRenderMode(ContentContext.PREVIEW_MODE);
+		}
+
+		IContentComponentsList contentList = getContent(noAreaCtx);
+		while (contentList.hasNext(noAreaCtx)) {
+			IContentVisualComponent elem = contentList.next(noAreaCtx);
+			if (elem.getType().equals(Category.TYPE)) {
+				res = elem.getValue(noAreaCtx);
+			}
+		}
+		desc.category = StringUtils.replace(res, "\"", "&quot;");
+
+		return desc.category;
+	}
 
 	/**
 	 * get the category of the page (category component)
@@ -3160,6 +3204,31 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 		return manualModificationDate;
 	}
 
+	/**
+	 * get the metaHead for meta tag (if no meta description defined return
+	 * the description)
+	 * 
+	 * @param ctx
+	 * @return
+	 * @throws Exception
+	 */
+	public String getMetaHead(ContentContext ctx) throws Exception {
+		PageDescription desc = getPageDescriptionCached(ctx, ctx.getRequestContentLanguage());
+		if (desc.metaHead != null) {
+			return desc.metaHead;
+		}
+		String res = "";
+		IContentComponentsList contentList = getAllContent(ctx);
+		while (contentList.hasNext(ctx)) {
+			IContentVisualComponent elem = contentList.next(ctx);
+			if (elem.getType().equals(HeadMeta.TYPE)) {
+				res = res + elem.getValue(ctx);
+			}
+		}
+		desc.metaHead = res;
+		return desc.metaHead;
+	}
+	
 	/**
 	 * get the description for meta tag (if no meta description defined return
 	 * the description)

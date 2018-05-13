@@ -658,6 +658,15 @@ public class SmartPageBean {
 			return null;
 		}
 	}
+	
+	public String getFont() {
+		try {
+			return page.getFont(ctx);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
 
 	public String getSortableCreationDate() {
 		return StringHelper.renderSortableDate(page.getCreationDate());

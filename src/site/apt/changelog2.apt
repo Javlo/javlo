@@ -932,5 +932,7 @@ change log
  
 * 2.1.1.2 [09/04/2018]
 
- * 1/ elfinder to 2.1.37 / LDAP login / default cache time to 3600
+ * 1/ elfinder to 2.1.37 / LDAP login / default cache time to 3600 / token correction / meta head component / return to anchor afther edit
+ 
+ * 2/
 

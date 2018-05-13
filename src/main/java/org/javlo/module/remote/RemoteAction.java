@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import javax.servlet.http.HttpSession;
 
@@ -26,6 +27,8 @@ import org.javlo.xml.NodeXML;
 import org.javlo.xml.XMLFactory;
 
 public class RemoteAction extends AbstractModuleAction {
+	
+	private static Logger logger = Logger.getLogger(RemoteAction.class.getName());
 
 	private static final TimeMap<String, SiteMapURL> testedURL = new TimeMap<String, SiteMapURL>(60 * 60, 100000);
 
@@ -135,6 +138,11 @@ public class RemoteAction extends AbstractModuleAction {
 	public static String performUpdate(RequestService rs, GlobalContext globalContext, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
 
 		RemoteService remoteSevice = RemoteService.getInstance(ctx);
+		
+		if (StringHelper.isEmpty(remoteSevice.getDefaultSynchroCode())) {
+			logger.severe("no synchro core found.");
+			return "no synchro code";
+		}
 
 		if (rs.getParameter("id", null) != null) {
 			// update
@@ -155,6 +163,10 @@ public class RemoteAction extends AbstractModuleAction {
 	public static String performCheck(RequestService rs, GlobalContext globalContext, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
 		String id = rs.getParameter("id", null);
 		RemoteService remoteService = RemoteService.getInstance(ctx);
+		if (StringHelper.isEmpty(remoteService.getDefaultSynchroCode())) {
+			logger.severe("no synchro core found.");
+			return "no synchro code";
+		}
 		String defaultSynchroCode = remoteService.getDefaultSynchroCode();
 		if (id != null) {
 			RemoteBean bean = remoteService.getRemote(id);

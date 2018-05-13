@@ -337,7 +337,7 @@ public class XHTMLHelper {
 			addedTag = addedTag + " checked=\"checked\" ";
 		}
 
-		out.print("<input id=\"" + field + "\"type=\"checkbox\" name=\"");
+		out.print("<input id=\"" + field + "\" type=\"checkbox\" name=\"");
 		out.print(field);
 		out.print("\" " + addedTag + "/>");
 

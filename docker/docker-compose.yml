@@ -1,0 +1,13 @@
+#
+# Services
+#
+
+#
+# javlo
+#
+javlo:
+  image: pvandermaesen/javlo:latest
+  volumes:
+    - "./data:/usr/local/tomcat/data"
+  ports: 
+    - "80:8080"

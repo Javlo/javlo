@@ -1130,7 +1130,11 @@ public class Edit extends AbstractModuleAction {
 		}
 
 		if (requestService.getParameter("save", null) != null && editContext.isPreviewEditionMode() && !ResourceStatus.isResource(ctx.getRequest().getSession()) && requestService.getParameter("upload", null) == null) {
-			ctx.setParentURL(URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.PREVIEW_MODE)));
+			String url = URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.PREVIEW_MODE));
+			if (!StringHelper.isEmpty(requestService.getParameter("forward_anchor")) && !url.contains("#")) {
+				url = url + '#' + requestService.getParameter("forward_anchor");
+			}
+			ctx.setParentURL(url);
 			if (message == null) {
 				ctx.setClosePopup(true);
 			}

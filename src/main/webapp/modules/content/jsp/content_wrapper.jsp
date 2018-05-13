@@ -5,6 +5,7 @@
 <c:url var="formURL" value="${info.currentURL}" context="/"><c:if test="${not empty requestService.parameterMap.previewEdit}"><c:param name="previewEdit" value="true" /></c:if></c:url>
 <form role="form" id="form-content" class="components ${empty requestService.parameterMap.previewEdit?'ajax':''}" action="${formURL}" enctype="multipart/form-data" method="post">
 	<input type="hidden" name="webaction" value="edit.save" />
+	<c:if test="${not empty requestService.parameterMap.forward_anchor}"><input type="hidden" name="forward_anchor" value="${requestService.parameterMap.forward_anchor}" /></c:if>
 	<input type="hidden" name="render-mode" value="1" /><c:if test="${requestService.parameterMap.lightEdit}"><input type="hidden" name="lightEdit" value="true" /></c:if>
 	
 	<jsp:include page="content.jsp${not empty requestService.parameterMap.previewEdit?'?firstLine=true':''}" />

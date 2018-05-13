@@ -299,6 +299,10 @@ public class SynchroHelper {
 	}
 	
 	public static void deletedRemoteCacheFile(ContentContext ctx, String fileName) {
+		if (StringHelper.isEmpty(ctx.getGlobalContext().getStaticConfig().getSynchroCode())) {
+			logger.severe("no synchro core found.");
+			return;
+		}
 		String url = URLHelper.mergePath(ctx.getGlobalContext().getDMZServerIntra().toString(), BaseSynchroService.SERVLET_RELATIVE_PATH, SynchronisationServlet.CLEAR_CACHE_SPECIAL_FILE_NAME);
 		url = URLHelper.addRawParam(url, "file", fileName);
 		url = URLHelper.addRawParam(url, SynchronisationServlet.SHYNCRO_CODE_PARAM_NAME, ctx.getGlobalContext().getStaticConfig().getSynchroCode());

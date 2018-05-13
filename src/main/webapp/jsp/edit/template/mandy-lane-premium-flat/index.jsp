@@ -4,9 +4,13 @@
 	<head>
 <script type="text/javascript">
 	var url = top.location.href; // close iframe and refresh parent frame
-
+	var anchor = "";
 	<c:if test="${not empty contentContext.parentURL}">
-	url = "${contentContext.parentURL}";
+	url = "${contentContext.parentURL}";	
+	if (url.indexOf('#') >= 0) {
+		anchor = url.substring(url.indexOf('#'));
+		url = url.substring(0, url.indexOf('#'));
+	}
 	</c:if>
 	<c:if test="${not empty messages.rawGlobalMessage}">
 	if (url.indexOf("?") >= 0) {
@@ -25,7 +29,7 @@
 			}
 			url = url + sep + "_scrollTo=" + topScroll;
 		}
-		top.location.href = url; // close iframe and refresh parent frame
+		top.location.href = url+anchor; // close iframe and refresh parent frame
 	}
 </script>
 <c:if test="${not empty contentContext.globalContext.staticConfig.htmlHead}">${contentContext.globalContext.staticConfig.htmlHead}</c:if>
