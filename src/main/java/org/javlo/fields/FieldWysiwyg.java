@@ -19,7 +19,7 @@ import org.javlo.service.ITranslator;
 public class FieldWysiwyg extends Field {
 
 	protected String getEditorComplexity(ContentContext ctx) throws Exception {
-		return getMetaData("editor-complexity", "soft");
+		return getMetaData("editor-complexity", "middle");
 	}
 
 	protected int getMaxParagraph() {

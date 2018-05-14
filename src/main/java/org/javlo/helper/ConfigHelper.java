@@ -20,6 +20,7 @@ import javax.servlet.ServletContext;
 
 import org.javlo.exception.ResourceNotFoundException;
 import org.javlo.filter.PropertiesFilter;
+import org.javlo.helper.filefilter.HTMLFileFilter;
 
 /**l
  * @author pvandermaesen
@@ -177,5 +178,20 @@ public class ConfigHelper {
 			}
 		}
 		return outProperties;
+	}
+	
+	public static final List<File> getDynamicComponentsHtml(ServletContext serveltContext) throws IOException {
+		if (ResourceHelper.getRealPath(serveltContext,COMPONENTS_PROPERTIES_FOLDER) == null) {
+			return Collections.emptyList();
+		}
+		File dynCompDir = new File(ResourceHelper.getRealPath(serveltContext, COMPONENTS_PROPERTIES_FOLDER));
+		List<File> outHtml = new LinkedList<File>();
+		File[] propertiesFile = dynCompDir.listFiles(new HTMLFileFilter());
+		if (propertiesFile != null) {
+			for (File element : propertiesFile) {
+				outHtml.add(element);
+			}
+		}
+		return outHtml;
 	}
 }

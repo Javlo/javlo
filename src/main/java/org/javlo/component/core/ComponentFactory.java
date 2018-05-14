@@ -18,6 +18,8 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.servlet.ServletContext;
 
@@ -36,7 +38,8 @@ import org.javlo.context.GlobalContext;
 import org.javlo.context.UserInterfaceContext;
 import org.javlo.helper.BeanHelper;
 import org.javlo.helper.ConfigHelper;
-import org.javlo.helper.DebugHelper;
+import org.javlo.helper.ResourceHelper;
+import org.javlo.helper.StringHelper;
 import org.javlo.module.content.Edit;
 import org.javlo.module.content.Edit.ComponentWrapper;
 import org.javlo.navigation.MenuElement;
@@ -289,7 +292,7 @@ public class ComponentFactory {
 					comp.setValid(true);
 				}
 			}
-
+			
 			// Load external components
 			try {			
 				
@@ -644,6 +647,17 @@ public class ComponentFactory {
 		}
 
 		return listWithoutEmptyTitle;
+	}
+	
+	public static void main(String[] args) {
+		String html = "<h1>${field.text.title}</h1>";
+		String title = "Titre";
+		Pattern fieldPattern = Pattern.compile("\\$\\{field.*?\\}");
+		Matcher matcher = fieldPattern.matcher(html);
+		while (matcher.find()) {
+			System.out.println(matcher.group());
+		}
+		System.out.println("html = "+html.replaceAll("\\$\\{field.*?\\}", title));
 	}
 
 }

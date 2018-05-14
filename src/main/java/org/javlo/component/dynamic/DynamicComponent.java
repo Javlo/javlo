@@ -38,6 +38,7 @@ import org.javlo.fields.FieldImage;
 import org.javlo.fields.IFieldContainer;
 import org.javlo.fields.MetaField;
 import org.javlo.helper.ComponentHelper;
+import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.i18n.I18nAccess;
@@ -57,6 +58,8 @@ import org.javlo.ztatic.IStaticContainer;
  * @author pvandermaesen
  */
 public class DynamicComponent extends AbstractVisualComponent implements IStaticContainer, IFieldContainer, IDate, ILink, IImageTitle, ISubTitle {
+	
+	public static final String JSP_HEADER = "<%@ taglib uri=\"http://java.sun.com/jsp/jstl/core\" prefix=\"c\"%><%@ taglib prefix=\"fn\" uri=\"http://java.sun.com/jsp/jstl/functions\"%><%@ taglib uri=\"/WEB-INF/javlo.tld\" prefix=\"jv\"%>";
 
 	public static final String HIDDEN = "hidden";
 	
@@ -217,6 +220,16 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 					ctx.setAbsoluteURL(false);
 				}
 				String linkToJSP = URLHelper.createStaticTemplateURLWithoutContext(ctx, ctx.getCurrentTemplate(), "" + getDynamicRenderer(ctx));
+				if (StringHelper.isHTMLStatic(linkToJSP)) {
+					File htmlFile = new File(ctx.getRequest().getSession().getServletContext().getRealPath(linkToJSP));
+					String html = JSP_HEADER+ResourceHelper.loadStringFromFile(htmlFile);
+					for (Field field : getFields(ctx)) {
+						html = html.replace("${field."+field.getType()+"."+field.getName(), "${"+field.getName());
+					}
+					File jspFile = new File(StringHelper.getFileNameWithoutExtension(htmlFile.getAbsolutePath())+".jsp");					
+					ResourceHelper.writeStringToFile(jspFile, html);
+					linkToJSP = StringHelper.getFileNameWithoutExtension(linkToJSP)+".jsp";
+				}
 				String prefix = "";
 				String suffix = "";
 				if (isWrapped()) {
@@ -1154,7 +1167,11 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 	
 	@Override
 	public String getFontAwesome() {	
-		return properties.getProperty("font-awesome", "address-card");
+		String defaultFont = "address-card";
+		if (StringHelper.isHTMLStatic(properties.getProperty("component.renderer", null))) {
+			defaultFont = "code";
+		}
+		return properties.getProperty("font-awesome", defaultFont);
 	}
 	
 	protected boolean isAutoDeletable() {

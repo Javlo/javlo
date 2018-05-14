@@ -1385,7 +1385,15 @@ public class StringHelper {
 		res = res || ext.equalsIgnoreCase("asp");
 		return res;
 	}
+	
+	public static final boolean isHTMLStatic(String fileName) {
+		String ext = getFileExtension(fileName);
+		boolean res = ext.equalsIgnoreCase("html");
+		res = res || ext.equalsIgnoreCase("htm");
+		return res;
+	}
 
+	
 	public static final boolean isProperties(String fileName) {
 		String ext = getFileExtension(fileName);
 		boolean res = ext.equalsIgnoreCase("properties");
