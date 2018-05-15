@@ -700,7 +700,10 @@ public class XMLManipulationHelper {
 					/** forward **/
 					out.println("if (!StringHelper.isEmpty(currentPage.getForward(ctx))) {%><!--FRW--><meta http-equiv=\"refresh\" content=\"0; url=<%=currentPage.getForward(ctx)%>\" /><%}%>");
 					out.println("<%=ctx.getGlobalContext().getMetaBloc()%>");
-
+					
+					out.print("<%if (currentPage.getMetaHead(ctx) != null) {%>");
+					out.print("<%=currentPage.getMetaHead(ctx)%>");
+					out.println("<%}%>");
 					out.close();
 
 					remplacement.addReplacement(tags[i].getCloseStart() - 1, tags[i].getCloseStart(), getHTMLSufixHead(globalContext.getStaticConfig(), template) + new String(outStream.toByteArray()));
@@ -1123,11 +1126,6 @@ public class XMLManipulationHelper {
 		out.newLine();
 		out.append("<%if (currentPage.getHeaderContent(ctx) != null) {%><%=currentPage.getHeaderContent(ctx)%><%}%>");
 		
-		out.append("<%if (currentPage.getMetaHead(ctx) != null) {%>");
-		out.append("<%=currentPage.getMetaHead(ctx)%>");
-		out.append("<%}%>");
-		out.newLine();
-
 		out.close();
 
 		return outString.toString();
