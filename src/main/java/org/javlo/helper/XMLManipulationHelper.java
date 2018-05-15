@@ -1030,11 +1030,6 @@ public class XMLManipulationHelper {
 		out.append("<%}%>");
 		out.newLine();
 		
-		out.append("<%if (currentPage.getMetaHead(ctx) != null) {%>");
-		out.append("<%=currentPage.getMetaHead(ctx)%>");
-		out.append("<%}%>");
-		out.newLine();
-
 		out.append("<%if (ctx.isInteractiveMode()) {%>");
 		out.newLine();
 		if (globalContext.getStaticConfig().getJSLibPreview() == null) {
@@ -1127,6 +1122,11 @@ public class XMLManipulationHelper {
 		out.append("<%}%>");
 		out.newLine();
 		out.append("<%if (currentPage.getHeaderContent(ctx) != null) {%><%=currentPage.getHeaderContent(ctx)%><%}%>");
+		
+		out.append("<%if (currentPage.getMetaHead(ctx) != null) {%>");
+		out.append("<%=currentPage.getMetaHead(ctx)%>");
+		out.append("<%}%>");
+		out.newLine();
 
 		out.close();
 
