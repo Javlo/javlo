@@ -616,6 +616,17 @@
 <jsp:include page="template_data.jsp?name=link&value=${currentContext.templateData.link}&style=color" />
 <jsp:include page="template_data.jsp?name=special&value=${currentContext.templateData.special}&style=color" />
 <jsp:include page="template_data.jsp?name=font&value=${currentContext.templateData.font}&style=font" />
+<div class="row">	
+	<div class="col-xs-4">
+	<label>color list</label>
+	</div><div class="col-xs-8">	
+		<div class="row">
+		<c:forEach begin="0" end="5" varStatus="status">
+		<div class="col-xs-2"><input class="form-control color" type="text" name="colorList${status.index}" value="${currentContext.templateData.colorList[status.index]}" /></div>
+		</c:forEach>
+		</div>
+	</div>	
+</div>
 <h2>Message</h2>
 <jsp:include page="template_data.jsp?name=messagePrimary&value=${currentContext.templateData.messagePrimary}&style=color" />
 <jsp:include page="template_data.jsp?name=messageSecondary&value=${currentContext.templateData.messageSecondary}&style=color" />

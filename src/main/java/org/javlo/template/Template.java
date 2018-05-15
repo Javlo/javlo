@@ -44,13 +44,11 @@ import org.apache.commons.io.filefilter.FileFilterUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.javlo.bean.SortBean;
 import org.javlo.component.core.ComponentBean;
-import org.javlo.component.dynamic.DynamicComponent;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.css.CssColor;
 import org.javlo.filter.PropertiesFilter;
-import org.javlo.helper.ConfigHelper;
 import org.javlo.helper.LangHelper;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
@@ -73,9 +71,10 @@ import org.javlo.utils.ConfigurationProperties;
 import org.javlo.utils.ListAsMap;
 import org.javlo.utils.ReadOnlyPropertiesConfigurationMap;
 import org.javlo.utils.StructuredConfigurationProperties;
-import org.javlo.utils.StructuredProperties;
 
 public class Template implements Comparable<Template> {
+	
+	public static final String PREVIEW_EDIT_CODE = "#PREVIEW-EDIT#";
 
 	public static final String FORCE_TEMPLATE_PARAM_NAME = "force-template";
 
@@ -106,6 +105,7 @@ public class Template implements Comparable<Template> {
 		private CssColor messageDanger = null;
 		private CssColor messageWarning = null;
 		private CssColor messageInfo = null;
+		private CssColor[] colorList = new CssColor[6];
 		private String toolsServer = null;
 		private String logo = null;
 		private String font = null;
@@ -195,12 +195,29 @@ public class Template implements Comparable<Template> {
 						if (data.length > i && data[i].length() > 0) {
 							setMessageInfo(Color.decode('#' + data[i]));
 						}
+						i++;
+						if (data.length > i && data[i].length() > 0) {
+							String[] colors = data[i].split(",");
+							int pos=0;
+							for (String c : colors) {
+								colorList[pos] = CssColor.getInstance(Color.decode('#'+c));
+								pos++;
+							}
+						}
 					}
 				}
 			} catch (NumberFormatException e) {
 				e.printStackTrace();
 			}
 
+		}
+		
+		public CssColor[] getColorList() {
+			return colorList;
+		}
+		
+		public void setColorList(Color color, int i) {
+			this.colorList[i] = CssColor.getInstance(color);
 		}
 
 		public Color getBackground() {
@@ -339,8 +356,14 @@ public class Template implements Comparable<Template> {
 			out.append(';');
 			out.append(StringHelper.colorToHexStringNotNull(getMessageInfo()));
 			out.append(';');
-
 			out.append(getFont());
+			out.append(';');
+			String sep = "";
+			for (int i=0; i<6; i++) {
+				out.append(sep);
+				out.append(StringHelper.colorToHexStringNotNull(getColorList()[i]));
+				sep=",";				
+			}
 			return out.toString();
 		}
 
@@ -1489,8 +1512,11 @@ public class Template implements Comparable<Template> {
 						} else if (StringHelper.isHTMLStatic(file.getName())) {
 							/* load dynamic component from HTML */
 							logger.info("load dynamic component html : "+file);
-							String html = ResourceHelper.loadStringFromFile(file);
+							String html = ResourceHelper.loadStringFromFile(file);							
 							Properties properties = new Properties();
+							if (html.contains(PREVIEW_EDIT_CODE)) {
+								properties.setProperty("component.wrapped", "false");
+							}
 							properties.setProperty("component.type", StringHelper.getFileNameWithoutExtension(file.getName()));
 							properties.setProperty("component.renderer", ResourceHelper.removePath(file.getAbsolutePath(), getFolder(globalContext)));
 							Matcher matcher = fieldPattern.matcher(html);
@@ -2332,6 +2358,12 @@ public class Template implements Comparable<Template> {
 				Color backgroundColor = Color.decode('#' + background);
 				templateData.setBackground(backgroundColor);
 			}
+			for (int i=0; i<6; i++) {
+				String color = properties.getString("data.color.colorList"+i, null);
+				if (!StringHelper.isEmpty(color)) {
+					templateData.setColorList(Color.decode('#' + color), i);
+				}
+			}
 			String foreground = properties.getString("data.color.foreground", null);
 			if (foreground != null) {
 				Color foregroundColor = Color.decode('#' + foreground);
@@ -2437,6 +2469,13 @@ public class Template implements Comparable<Template> {
 		if (templateData.getBackground() != null) {
 			templateDataMap.put(StringHelper.colorToHexStringNotNull(templateData.getBackground()), StringHelper.colorToHexStringNotNull(templateDataUser.getBackground()));
 		}
+		
+		for (int i=0; i<6; i++) {
+			if (templateData.getColorList()[i] != null) {
+				templateDataMap.put(StringHelper.colorToHexStringNotNull(templateData.getColorList()[i]), StringHelper.colorToHexStringNotNull(templateDataUser.getColorList()[i]));
+			}
+		}
+		
 		if (templateData.getForeground() != null) {
 			templateDataMap.put(StringHelper.colorToHexStringNotNull(templateData.getForeground()), StringHelper.colorToHexStringNotNull(templateDataUser.getForeground()));
 		}

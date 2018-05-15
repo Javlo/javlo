@@ -58,24 +58,24 @@ import org.javlo.ztatic.IStaticContainer;
  * @author pvandermaesen
  */
 public class DynamicComponent extends AbstractVisualComponent implements IStaticContainer, IFieldContainer, IDate, ILink, IImageTitle, ISubTitle {
-	
+
 	public static final String JSP_HEADER = "<%@ taglib uri=\"http://java.sun.com/jsp/jstl/core\" prefix=\"c\"%><%@ taglib prefix=\"fn\" uri=\"http://java.sun.com/jsp/jstl/functions\"%><%@ taglib uri=\"/WEB-INF/javlo.tld\" prefix=\"jv\"%>";
 
 	public static final String HIDDEN = "hidden";
-	
+
 	private static final String DYNAMIC_ID_KEY = "_dynamic_id";
 
 	private static final String NOTIFY_CREATION = "notify.creation";
-	
+
 	private Date latestValidDate = null;
 
 	/**
 	 * create a static logger.
 	 */
 	protected static Logger logger = Logger.getLogger(DynamicComponent.class.getName());
-	
+
 	@Override
-	public void prepareView(ContentContext ctx) throws Exception {		
+	public void prepareView(ContentContext ctx) throws Exception {
 		if (getNextComponent() == null) {
 			setNextComponent(ComponentHelper.getNextComponent(this, ctx));
 		}
@@ -96,7 +96,7 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 	}
 
 	@Override
-	public String[] getStyleLabelList(ContentContext ctx) {		
+	public String[] getStyleLabelList(ContentContext ctx) {
 		String[] superLabelStyle = super.getStyleLabelList(ctx);
 		if (superLabelStyle == null || superLabelStyle.length == 0) {
 			I18nAccess i18nAccess;
@@ -106,10 +106,10 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 			} catch (Exception e) {
 				e.printStackTrace();
 				return null;
-			}			
+			}
 		} else {
 			return superLabelStyle;
-		}		
+		}
 	}
 
 	public class FieldOrderComparator implements Comparator<Field> {
@@ -151,9 +151,9 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 	@Override
 	public String getSuffixViewXHTMLCode(ContentContext ctx) {
 		if (!isWrapped()) {
-			return ""+" <!-- empty suffix -->";
+			return "" + " <!-- empty suffix -->";
 		} else {
-			return super.getSuffixViewXHTMLCode(ctx) +" <!-- fill suffix -->";
+			return super.getSuffixViewXHTMLCode(ctx) + " <!-- fill suffix -->";
 		}
 	}
 
@@ -202,7 +202,7 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 					}
 				}
 				if (ctx.getCurrentTemplate() != null) {
-					String linkToJSP = URLHelper.createStaticTemplateURLWithoutContext(ctx, ctx.getCurrentTemplate(), "" + getListRenderer());					
+					String linkToJSP = URLHelper.createStaticTemplateURLWithoutContext(ctx, ctx.getCurrentTemplate(), "" + getListRenderer());
 					return executeJSP(ctx, linkToJSP);
 				} else {
 					return "";
@@ -222,13 +222,18 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 				String linkToJSP = URLHelper.createStaticTemplateURLWithoutContext(ctx, ctx.getCurrentTemplate(), "" + getDynamicRenderer(ctx));
 				if (StringHelper.isHTMLStatic(linkToJSP)) {
 					File htmlFile = new File(ctx.getRequest().getSession().getServletContext().getRealPath(linkToJSP));
-					String html = JSP_HEADER+ResourceHelper.loadStringFromFile(htmlFile);
-					for (Field field : getFields(ctx)) {
-						html = html.replace("${field."+field.getType()+"."+field.getName(), "${"+field.getName());
+					File jspFile = new File(StringHelper.getFileNameWithoutExtension(htmlFile.getAbsolutePath()) + ".jsp");
+					if (!jspFile.exists()) {
+						String html = JSP_HEADER + ResourceHelper.loadStringFromFile(htmlFile);
+						for (Field field : getFields(ctx)) {
+							html = html.replace("${field." + field.getType() + "." + field.getName(), "${" + field.getName());
+						}
+						if (!isWrapped()) {
+							html = html.replace(Template.PREVIEW_EDIT_CODE, "${previewAttributes}");
+						}
+						ResourceHelper.writeStringToFile(jspFile, html);
 					}
-					File jspFile = new File(StringHelper.getFileNameWithoutExtension(htmlFile.getAbsolutePath())+".jsp");					
-					ResourceHelper.writeStringToFile(jspFile, html);
-					linkToJSP = StringHelper.getFileNameWithoutExtension(linkToJSP)+".jsp";
+					linkToJSP = StringHelper.getFileNameWithoutExtension(linkToJSP) + ".jsp";
 				}
 				String prefix = "";
 				String suffix = "";
@@ -239,8 +244,8 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 					}
 					prefix = "<div class=\"" + cssClass + "\">";
 					suffix = "</div>";
-				}				
-				return prefix+executeJSP(ctx, linkToJSP)+suffix;
+				}
+				return prefix + executeJSP(ctx, linkToJSP) + suffix;
 			}
 		}
 		StringWriter writer = new StringWriter();
@@ -277,16 +282,16 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 						cssClass = "";
 						if (field.getCSSClass() != null && field.getCSSClass().trim().length() > 0) {
 							cssClass = ' ' + field.getCSSClass();
-						}						
+						}
 						out.println(field.getFieldPrefix(ctx));
-						if (field.isWrapped()) { 
+						if (field.isWrapped()) {
 							out.println("<div class=\"field " + field.getName() + firstFiledClass + cssClass + "\">");
 						}
 						out.println(field.getViewXHTMLCode(ctx));
 						if (field.isWrapped()) {
 							out.println("</div>");
 						}
-						out.println(field.getFieldSuffix(ctx));						
+						out.println(field.getFieldSuffix(ctx));
 						firstFiledClass = "";
 					}
 				}
@@ -335,7 +340,7 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 				if (keySplit.length > 1) {
 					String name = keySplit[1];
 					Field field = FieldFactory.getField(this, staticConfig, globalContext, i18nAccess, getProperties(), null, name, getType(name), getId());
-					if (field != null) {						
+					if (field != null) {
 						if (!fieldExecuted.contains(name)) {
 							outFields.add(field);
 						}
@@ -458,9 +463,9 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 			return null;
 		}
 	}
-	
+
 	public boolean isNotififyCreation(ContentContext ctx) throws ServiceException {
-		boolean outNotif = StringHelper.isTrue(properties.getProperty(NOTIFY_CREATION), false);				
+		boolean outNotif = StringHelper.isTrue(properties.getProperty(NOTIFY_CREATION), false);
 		if (outNotif) {
 			properties.setProperty(NOTIFY_CREATION, "false");
 			storeProperties();
@@ -468,11 +473,10 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 		}
 		return outNotif;
 	}
-	
+
 	public String getNotififyPageName(ContentContext ctx) throws ServiceException {
 		return properties.getProperty("notify.edit-page");
 	}
-
 
 	@Override
 	protected String getEditXHTMLCode(ContentContext ctx) throws Exception {
@@ -494,21 +498,21 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 		} else {
 			out.println("<div class=\"dynamic-component not-valid cols\">");
 		}
-		int colSize = 0;		
+		int colSize = 0;
 		String firstItem = "first ";
 		Iterator<Field> iter = fields.iterator();
 		boolean first = true;
 		while (iter.hasNext()) {
-			Field field = iter.next();			
+			Field field = iter.next();
 			if (field != null) {
 				field.setFirst(first);
-				first=false;				
+				first = false;
 				field.setLast(!iter.hasNext());
 				if (colSize >= 12) {
 					colSize = 0;
 				}
 				out.println(field.getOpenRow(ctx));
-//				out.println("<div class=\"" + firstItem + last + "\">");				
+				// out.println("<div class=\"" + firstItem + last + "\">");
 				if (firstItem.length() == 0) {
 					out.println("<hr />");
 				}
@@ -516,7 +520,7 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 					I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
 					out.println("<fieldset><legend>" + i18nAccess.getText("field.translated") + "</legend>");
 				}
-				if (field.getName().equalsIgnoreCase("info")) {				
+				if (field.getName().equalsIgnoreCase("info")) {
 					out.println("<div class=\"alert alert-danger\" role=\"alert\">field could not call 'info'.</div>");
 				}
 				Collection<Locale> translatedField = new LinkedList<Locale>();
@@ -531,9 +535,9 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 						out.println("<fieldset><legend>" + locale.getDisplayLanguage(new Locale(GlobalContext.getInstance(ctx.getRequest()).getEditLanguage(ctx.getRequest().getSession()))) + "</legend>");
 					}
 					field.setCurrentLocale(locale);
-					String editXHTML = field.getEditXHTMLCode(ctx);					
+					String editXHTML = field.getEditXHTMLCode(ctx);
 					if (editXHTML == null || editXHTML.trim().length() == 0) {
-						out.println("<div class=\"alert alert-danger\" role=\"alert\">field format error : "+field.getName()+".</div>");
+						out.println("<div class=\"alert alert-danger\" role=\"alert\">field format error : " + field.getName() + ".</div>");
 					} else {
 						out.println(editXHTML);
 					}
@@ -543,9 +547,9 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 				}
 				if (field.getTranslation() != null) {
 					out.println("</fieldset>");
-				}				
-				firstItem="";
-//				out.println("</div>");
+				}
+				firstItem = "";
+				// out.println("</div>");
 				out.println(field.getCloseRow(ctx));
 			}
 		}
@@ -575,11 +579,11 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 
 		java.util.List<Field> fieldsName = getFields(ctx);
 
-		boolean valid=true;
+		boolean valid = true;
 		List<String> errorField = new LinkedList<String>();
 		Iterator<Field> iter = fieldsName.iterator();
 		while (iter.hasNext()) {
-			Field field = iter.next();			
+			Field field = iter.next();
 			Collection<Locale> languages;
 			if (field.getTranslation() == null) {
 				languages = new LinkedList<Locale>();
@@ -598,9 +602,9 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 					}
 				}
 			}
-			
+
 			if (!field.validate()) {
-				valid=false;				
+				valid = false;
 				errorField.add(field.getUserLabel(ctx, new Locale(ctx.getGlobalContext().getEditLanguage(ctx.getRequest().getSession()))));
 			}
 		}
@@ -608,13 +612,13 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 		if (isModify()) {
 			storeProperties();
 		}
-		
+
 		if (!valid) {
 			ctx.setClosePopup(false);
-			I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());			
-			return i18nAccess.getText("content.dynamic-component.error.global")+" ("+StringHelper.collectionToString(errorField, ",")+')';
+			I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
+			return i18nAccess.getText("content.dynamic-component.error.global") + " (" + StringHelper.collectionToString(errorField, ",") + ')';
 		}
-		
+
 		return null;
 	}
 
@@ -678,7 +682,7 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 		return getType();
 	}
 
-	@Override	
+	@Override
 	public boolean isRealContent(ContentContext ctx) {
 		MenuElement page = getPage();
 		if (getMirrorWrapper(ctx, this) != null) {
@@ -695,7 +699,7 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-		}		
+		}
 		return false;
 	}
 
@@ -811,13 +815,13 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 		}
 		return null;
 	}
-	
+
 	@Override
 	public boolean isValidDate(ContentContext ctx) {
 		try {
 			for (Field field : getFields(ctx)) {
 				if (field instanceof IDate) {
-					if(((IDate) field).isValidDate(ctx)) {
+					if (((IDate) field).isValidDate(ctx)) {
 						return true;
 					}
 				}
@@ -893,7 +897,7 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 		}
 		return null;
 	}
-	
+
 	@Override
 	public boolean isLinkValid(ContentContext ctx) throws Exception {
 		return StringHelper.isEmpty(getURL(ctx));
@@ -925,8 +929,8 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 	public String getResourceURL(ContentContext ctx) {
 		FieldImage image = getImageField(ctx);
 		if (image != null) {
-			try {				
-				return ((FieldImage)image.getReference(ctx)).getFileURL(ctx);
+			try {
+				return ((FieldImage) image.getReference(ctx)).getFileURL(ctx);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -979,7 +983,7 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 		}
 		return null;
 	}
-	
+
 	@Override
 	public String getTextLabel(ContentContext ctx) {
 		return getTextTitle(ctx);
@@ -1023,7 +1027,7 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 	@Override
 	public int getSubTitleLevel(ContentContext ctx) {
 		int outHierarchy = 0;
-		try {			
+		try {
 			for (int i = 2; i < 6; i++) {
 				for (Field field : getFields(ctx)) {
 					if (field.getType().equals("h" + i)) {
@@ -1058,29 +1062,29 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 
 	@Override
 	public String getXHTMLId(ContentContext ctx) {
-		return getType()+'-'+getId();
+		return getType() + '-' + getId();
 	}
-	
+
 	public String getDynamicId() {
 		return properties.getProperty(DYNAMIC_ID_KEY);
 	}
-	
+
 	public void setDynamicId(String id) {
 		properties.setProperty(DYNAMIC_ID_KEY, id);
 		storeProperties();
 		setModify();
 	}
-	
+
 	@Override
 	public int getComplexityLevel(ContentContext ctx) {
 		String level = properties.getProperty("complexity");
 		if (level == null) {
 			return COMPLEXITY_STANDARD;
 		} else {
-			return Integer.parseInt(level);	
+			return Integer.parseInt(level);
 		}
 	}
-	
+
 	@Override
 	public Map<String, Object> getContentAsMap(ContentContext ctx) throws Exception {
 		Map<String, Object> content = super.getContentAsMap(ctx);
@@ -1091,23 +1095,22 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 		content.put("value", contentArray);
 		return content;
 	}
-	
+
 	@Override
 	public List<File> getFiles(ContentContext ctx) {
 		// TODO need real impplementation
 		return Collections.EMPTY_LIST;
 	}
-	
+
 	@Override
-	public String getDirSelected() {	
+	public String getDirSelected() {
 		return null;
 	}
-	
+
 	@Override
-	public void setDirSelected(String dir) {		
+	public void setDirSelected(String dir) {
 	}
-	
-	
+
 	@Override
 	public void setLatestValidDate(Date date) {
 		latestValidDate = date;
@@ -1117,7 +1120,7 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 	public Date getLatestValidDate() {
 		return latestValidDate;
 	}
-	
+
 	@Override
 	public Collection<String> getExternalResources(ContentContext ctx) {
 		String resources = properties.getProperty("resources");
@@ -1129,8 +1132,8 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 		}
 		if (resources != null && template != null) {
 			List<String> linkResource = StringHelper.stringToCollection(resources, ",");
-			List<String> outResource  = new LinkedList<String>();
-			for (String uri : linkResource) {				
+			List<String> outResource = new LinkedList<String>();
+			for (String uri : linkResource) {
 				if (uri.startsWith("/")) {
 					try {
 						outResource.add(URLHelper.createStaticTemplateURLWithoutContext(ctx, template, uri));
@@ -1139,12 +1142,12 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 					}
 				}
 			}
-			return outResource;	
+			return outResource;
 		} else {
 			return super.getExternalResources(ctx);
-		}		
+		}
 	}
-	
+
 	@Override
 	public boolean isRestMatch(ContentContext ctx, Map<String, String> params) {
 		if (params.size() == 0) {
@@ -1164,25 +1167,25 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 			return true;
 		}
 	}
-	
+
 	@Override
-	public String getFontAwesome() {	
+	public String getFontAwesome() {
 		String defaultFont = "address-card";
 		if (StringHelper.isHTMLStatic(properties.getProperty("component.renderer", null))) {
 			defaultFont = "code";
 		}
 		return properties.getProperty("font-awesome", defaultFont);
 	}
-	
+
 	protected boolean isAutoDeletable() {
 		return true;
 	}
-	
+
 	@Override
 	protected boolean isValueTranslatable() {
 		return true;
 	}
-	
+
 	public boolean transflateFrom(ContentContext ctx, ITranslator translator, String lang) {
 		if (!isValueTranslatable()) {
 			return false;
@@ -1194,9 +1197,9 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 				return true;
 			} catch (Exception e) {
 				e.printStackTrace();
-				return false;				
+				return false;
 			}
 		}
 	}
-	
+
 }

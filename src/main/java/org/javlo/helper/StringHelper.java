@@ -3626,6 +3626,9 @@ public class StringHelper {
 	 * @return
 	 */
 	public static Color parseColor(String color) {
+		if (StringHelper.isEmpty(color)) {
+			return null;
+		}
 		try {
 			color = color.trim();
 			if (!color.startsWith("#")) {

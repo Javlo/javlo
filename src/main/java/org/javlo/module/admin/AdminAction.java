@@ -1536,6 +1536,7 @@ public class AdminAction extends AbstractModuleAction {
 					td.setTitle(StringHelper.parseColor(requestService.getParameter("title", "" + td.getTitle())));
 					td.setSpecial(StringHelper.parseColor(requestService.getParameter("special", "" + td.getSpecial())));
 					td.setFont(requestService.getParameter("font", "" + td.getFont()));
+
 					/** message **/
 					td.setMessagePrimary(StringHelper.parseColor(requestService.getParameter("messagePrimary", "" + td.getMessagePrimary())));
 					td.setMessageSecondary(StringHelper.parseColor(requestService.getParameter("messageSecondary", "" + td.getMessageSecondary())));
@@ -1543,7 +1544,9 @@ public class AdminAction extends AbstractModuleAction {
 					td.setMessageDanger(StringHelper.parseColor(requestService.getParameter("messageDanger", "" + td.getMessageDanger())));
 					td.setMessageWarning(StringHelper.parseColor(requestService.getParameter("messageWarning", "" + td.getMessageWarning())));
 					td.setMessageInfo(StringHelper.parseColor(requestService.getParameter("messageInfo", "" + td.getMessageInfo())));
-					
+					for (int i=0; i<6; i++) {
+						td.setColorList(StringHelper.parseColor(requestService.getParameter("colorList"+i, null)), i);
+					}
 					MailService.resetInstance();
 					
 					for (FileItem file : requestService.getAllFileItem()) {
