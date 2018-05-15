@@ -37,5 +37,10 @@ public class HeadMeta extends AbstractVisualComponent {
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
 		return "";
 	}
+	
+	@Override
+	public int getComplexityLevel(ContentContext ctx) {
+		return COMPLEXITY_ADMIN;
+	}
 
 }
