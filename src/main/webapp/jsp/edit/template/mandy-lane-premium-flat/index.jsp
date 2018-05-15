@@ -6,7 +6,7 @@
 	var url = top.location.href; // close iframe and refresh parent frame
 	var anchor = "";
 	<c:if test="${not empty contentContext.parentURL}">
-	url = "${contentContext.parentURL}";	
+	url = "${contentContext.parentURL}";
 	if (url.indexOf('#') >= 0) {
 		anchor = url.substring(url.indexOf('#'));
 		url = url.substring(0, url.indexOf('#'));
@@ -28,7 +28,13 @@
 				sep = "&";
 			}
 			url = url + sep + "_scrollTo=" + topScroll;
+			
 		}
+		var sep = "?";
+		if (url.indexOf("?") >= 0) {
+			sep = "&";
+		}
+		url = url + sep+"__ts="+Date.now();
 		top.location.href = url+anchor; // close iframe and refresh parent frame
 	}
 </script>
