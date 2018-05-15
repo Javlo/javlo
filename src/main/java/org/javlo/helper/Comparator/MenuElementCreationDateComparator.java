@@ -31,14 +31,10 @@ public class MenuElementCreationDateComparator implements Comparator<MenuElement
 	 * compare two array of Comparable
 	 */
 	public int compare(MenuElement elem1, MenuElement elem2) {
-		
 		Calendar cal1 = GregorianCalendar.getInstance();
 		Calendar cal2 = GregorianCalendar.getInstance();
 		cal1.setTime(elem1.getCreationDate());
 		cal2.setTime(elem2.getCreationDate());
-		if ( cal2.compareTo(cal1) == 0 ) {
-			return 1;
-		}
 		return cal2.compareTo(cal1)*multiply;
 	}
 
