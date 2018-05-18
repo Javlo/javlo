@@ -43,7 +43,6 @@ import org.javlo.message.MessageRepository;
 import org.javlo.user.exception.UserAllreadyExistException;
 import org.javlo.utils.CSVFactory;
 import org.javlo.utils.TimeMap;
-import org.owasp.encoder.Encode;
 
 /**
  * @author pvandermaesen
@@ -184,7 +183,6 @@ public class UserFactory implements IUserFactory, Serializable {
 		UserInfo ui = createUserInfos();
 		ui.setLogin(login);
 		ui.setRoles(roles);
-
 		User user = new User(ui);
 		return user;
 	}
@@ -349,7 +347,7 @@ public class UserFactory implements IUserFactory, Serializable {
 		for (int i = 1; i < csvArray.length; i++) {
 			IUserInfo newUserInfo = new UserInfo();
 			Map<String, String> values = JavaHelper.createMap(csvArray[0], csvArray[i]);
-			BeanHelper.copy(values, newUserInfo);
+			BeanHelper.copy(values, newUserInfo);			
 			userInfoList.add(newUserInfo);
 		}
 		return userInfoList;

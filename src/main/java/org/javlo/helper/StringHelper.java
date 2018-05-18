@@ -2806,7 +2806,24 @@ public class StringHelper {
 		if (str == null) {
 			return null;
 		}
-		return str.split(token);
+		String[] out = str.split(Pattern.quote(token));		
+		if (str.startsWith(token)) {
+			String[] newOut = new String[out.length+1];
+			newOut[0]="";
+			for (int i = 0; i < out.length; i++) {
+				newOut[i+1] = out[i];
+			}
+			out = newOut;
+		}
+		if (str.endsWith(token)) {
+			String[] newOut = new String[out.length+1];
+			newOut[newOut.length-1]="";
+			for (int i = 0; i < out.length; i++) {
+				newOut[i] = out[i];
+			}
+			out=newOut;
+		}
+		return out;
 	}
 
 	public static String[] stringToArrayRemoveEmpty(String str) {

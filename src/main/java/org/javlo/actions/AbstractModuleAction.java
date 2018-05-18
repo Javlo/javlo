@@ -21,7 +21,7 @@ import org.javlo.user.User;
 public abstract class AbstractModuleAction implements IModuleAction {
 
 	protected static boolean isLightInterface(ContentContext ctx) {
-		AdminUserSecurity userSecurity = AdminUserSecurity.getInstance();
+		AdminUserSecurity userSecurity = AdminUserSecurity.getInstance();		
 		return userSecurity.haveRole(ctx.getCurrentEditUser(), AdminUserSecurity.LIGHT_INTERFACE_ROLE);
 	}
 

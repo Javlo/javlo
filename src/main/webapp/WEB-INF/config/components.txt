@@ -171,5 +171,3 @@ org.javlo.component.ecom.MoneybookersPayement
 org.javlo.component.core.RendererReferenceComponent
 org.javlo.component.extranet.LaunchMacro
 org.javlo.component.extranet.LoginLogoutLink
-
-

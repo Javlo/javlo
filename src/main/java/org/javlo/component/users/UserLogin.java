@@ -1,19 +1,24 @@
 package org.javlo.component.users;
 
+import java.io.File;
+import java.io.InputStream;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.mail.internet.InternetAddress;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.fileupload.FileItem;
 import org.javlo.actions.IAction;
 import org.javlo.component.core.ComponentBean;
+import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.properties.AbstractPropertiesComponent;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
@@ -21,6 +26,7 @@ import org.javlo.helper.BeanHelper;
 import org.javlo.helper.ComponentHelper;
 import org.javlo.helper.PatternHelper;
 import org.javlo.helper.RequestParameterMap;
+import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.helper.XHTMLHelper;
@@ -77,12 +83,24 @@ public class UserLogin extends AbstractPropertiesComponent implements IAction {
 		super.prepareView(ctx);
 
 		SocialService.getInstance(ctx).prepare(ctx);
-
+		
 		if (ctx.getCurrentUser() != null) {
 			ctx.getRequest().setAttribute("user", ctx.getCurrentUser());
-			ctx.getRequest().setAttribute("userInfoMap", ctx.getCurrentUser().getUserInfo());
+			ctx.getRequest().setAttribute("userInfoMap", ctx.getCurrentUser().getUserInfo());			
+			Collection<String> imageURL = new LinkedList<String>();
+			String userFolderName = ctx.getGlobalContext().getUserFolder(ctx.getCurrentUser());
+			if (userFolderName != null) {
+				File userFolder = new File(userFolderName);
+				if (userFolder != null && userFolder.exists()) {
+					for (File file : userFolder.listFiles()) {
+						if (StringHelper.isImage(file.getName())) {
+							imageURL.add(URLHelper.createTransformURL(ctx, file, "height-2"));
+						}
+					}
+				}
+			}
+			ctx.getRequest().setAttribute("images", imageURL);
 		}
-
 	}
 
 	@Override
@@ -100,6 +118,14 @@ public class UserLogin extends AbstractPropertiesComponent implements IAction {
 			IUserFactory userFactory = UserFactory.createUserFactory(globalContext, ctx.getRequest().getSession());
 			userFactory.logout(session);
 			session.setAttribute("logoutDone", "true");
+		}
+		return null;
+	}
+	
+	public static String performDeleteimage(RequestService rs, ContentContext ctx, GlobalContext globalContext, HttpSession session, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
+		File imageFile = new File (URLHelper.mergePath(ctx.getGlobalContext().getUserFolder(ctx.getCurrentUser()), StringHelper.getFileNameFromPath(rs.getParameter("file"))));
+		if (imageFile.exists()) {
+			imageFile.delete();
 		}
 		return null;
 	}
@@ -195,9 +221,10 @@ public class UserLogin extends AbstractPropertiesComponent implements IAction {
 	public static String performUpdate(RequestService rs, GlobalContext globalContext, ContentContext ctx, HttpSession session, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
 		IUserFactory userFactory;
 		userFactory = UserFactory.createUserFactory(globalContext, ctx.getRequest().getSession());
-
+		
 		User user = ctx.getCurrentUser();
 		IUserInfo userInfo = user.getUserInfo();
+
 		String email = rs.getParameter("email", "");
 		if (!userInfo.getLogin().equals(email)) {
 			if (userFactory.getUser(email) != null) {
@@ -223,14 +250,41 @@ public class UserLogin extends AbstractPropertiesComponent implements IAction {
 				newRoles.remove(getFieldName(OPTOUT));
 			}
 		}
+		
+		for (FileItem fileItem : rs.getAllFileItem()) {
+			if (StringHelper.isImage(fileItem.getName())) {
+				File image = new File(URLHelper.mergePath(globalContext.getUserFolder(ctx.getCurrentUser()), fileItem.getName()));
+				if (!image.exists()) {
+					image.getParentFile().mkdirs();
+					image.createNewFile();
+					InputStream in = null;
+					try {
+						in = fileItem.getInputStream();
+						ResourceHelper.writeStreamToFile(in, image);
+					} finally {
+						ResourceHelper.closeResource(in);
+					}
+				}
+			}
+		}
+		
+		
 		userInfo.setRoles(newRoles);
-		BeanHelper.copy(new RequestParameterMap(ctx.getRequest()), userInfo);
+		IContentVisualComponent comp = ComponentHelper.getComponentFromRequest(ctx);
+		List<String> fields = comp.extractFieldsFromRenderer(ctx);
+		if (fields != null && fields.size() > 0) {
+			Map<String,String> allValues = new HashMap<String, String>();
+			for (String field : fields) {
+				allValues.put(field, StringHelper.neverNull(rs.getParameter(field)));
+				BeanHelper.copy(allValues, userInfo);
+			}
+		} else {
+			BeanHelper.copy(new RequestParameterMap(ctx.getRequest()), userInfo);	
+		}
+		
 		userFactory.updateUserInfo(userInfo);
-		userFactory.store();
 		user.setUserInfo(userInfo);
-
 		messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getViewText("registration.message.update", "User info is updated."), GenericMessage.INFO));
-
 		return null;
 
 	}

@@ -1,6 +1,7 @@
 package org.javlo.user;
 
 import java.util.Date;
+import java.util.Map;
 import java.util.Set;
 
 import javax.mail.internet.InternetAddress;
@@ -23,7 +24,7 @@ public interface IUserInfo {
 	 */
 	public String getParent();
 
-	public String getTitle();
+	public String getTitle(); 
 
 	public String getFirstName();
 
@@ -42,7 +43,7 @@ public interface IUserInfo {
 	public String getToken();
 	
 	public String getBirthdate();
-
+	
 	public String[] getPreferredLanguage();
 
 	public Set<String> getRoles();
@@ -77,7 +78,7 @@ public interface IUserInfo {
 	public void setRoles(Set<String> strings);
 
 	public void addRoles(Set<String> strings);
-
+	
 	public void removeRoles(Set<String> strings);
 
 	public void setCreationDate(Date creationDate);

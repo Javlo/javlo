@@ -6,6 +6,7 @@ package org.javlo.user;
 import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.text.ParseException;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
@@ -69,6 +70,7 @@ public class UserInfo implements Comparable<IUserInfo>, IUserInfo, Serializable 
 	private Set<String> roles = new HashSet<String>();
 	private Date creationDate = new Date();
 	private Date modificationDate = new Date();
+	private Map<String,String> data = null;
 
 	@Override
 	public String getTitle() {
@@ -149,6 +151,7 @@ public class UserInfo implements Comparable<IUserInfo>, IUserInfo, Serializable 
 	 */
 	@Override
 	public void setLogin(String string) {
+		encryptLogin=""+login.hashCode();
 		login = string;
 	}
 	
@@ -274,7 +277,7 @@ public class UserInfo implements Comparable<IUserInfo>, IUserInfo, Serializable 
 
 		for (Method method : methods) {
 			if (method.getName().startsWith("get")) {
-				if (method.getReturnType().equals(String.class) || method.getReturnType().equals(Date.class)) {
+				if (method.getReturnType().equals(String.class) || method.getReturnType().equals(Date.class) || method.getReturnType().equals(Map.class)) {
 					String name = method.getName().substring(3);
 					if (name.equals("RolesRaw")) {
 						rolesFound = true;
@@ -295,6 +298,7 @@ public class UserInfo implements Comparable<IUserInfo>, IUserInfo, Serializable 
 		}
 		String[] res = new String[labels.size()];
 		labels.toArray(res);
+		Arrays.sort(res);
 		return res;
 	}
 
@@ -312,6 +316,12 @@ public class UserInfo implements Comparable<IUserInfo>, IUserInfo, Serializable 
 				} else if (method.getReturnType().equals(Date.class)) {
 					String value = StringHelper.renderTime((Date) method.invoke(this, (Object[]) null));
 					res[i] = value;
+				} else if (method.getReturnType().equals(Map.class)) {
+					Map map = (Map)method.invoke(this, (Object[]) null);
+					if (map != null) {
+						String value = StringHelper.mapToString(map);
+						res[i] = value;
+					}
 				}
 			} catch (Exception e) {
 				LocalLogger.log(e);
@@ -341,6 +351,12 @@ public class UserInfo implements Comparable<IUserInfo>, IUserInfo, Serializable 
 					Method method = this.getClass().getMethod(methodName, new Class[] { Date.class });
 					method.invoke(this, new Object[] { StringHelper.parseTime(values[i]) });
 				} catch (Exception e2) {
+					try {
+						Method method = this.getClass().getMethod(methodName, new Class[] { Map.class });
+						method.invoke(this, new Object[] { StringHelper.stringToMap(values[i]) });
+					} catch (Exception e1) {
+						e1.printStackTrace();
+					}					
 					LocalLogger.log(e2);
 				}
 			}
@@ -645,5 +661,4 @@ public class UserInfo implements Comparable<IUserInfo>, IUserInfo, Serializable 
 	public void setRegion(String region) {
 		this.region = region;
 	}
-
 }

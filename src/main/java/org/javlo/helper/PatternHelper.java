@@ -1,5 +1,6 @@
 package org.javlo.helper;
 
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class PatternHelper {
@@ -15,53 +16,18 @@ public class PatternHelper {
 	public static final Pattern HOST_PATTERN = Pattern.compile("([a-z]|[A-Z]|[0-9]|_|-|\\.)*");
 	
 	public static void main(String[] args) {
-		String testString = "pvandermaesen@gmail.com";
+		String xhtml = "<html><input name=\"test\"><select name=\"test2\"></html>";
 		
-		System.out.println("MAIL PATTERN");
-		System.out.println("");
-		System.out.println("host test 192.168.0.1 = "+HOST_PATTERN.matcher("192.168.0.1").matches());
-		System.out.println("");
-		System.out.println(testString+" : "+MAIL_PATTERN.matcher(testString).matches());
-		testString = "<Patrick Vandermaesen>p-vandermaesen@gmail.com";
-		System.out.println(testString+" : "+MAIL_PATTERN.matcher(testString).matches());
-		testString = "pvandermaesen@gmail.com";
-		System.out.println(testString+" : "+MAIL_PATTERN.matcher(testString).matches());
-		testString = "p@gmail.com";
-		System.out.println(testString+" : "+MAIL_PATTERN.matcher(testString).matches());
-		testString = "Maïté Gobert  <maite@melongalia.com>";
-		System.out.println(testString+" : "+MAIL_PATTERN.matcher(testString).matches());
-		System.out.println("");
-		System.out.println("");
-		System.out.println("MULTI MAIL PATTERN");
-		System.out.println("");
-		testString = "<Patrick Vandermaesen>pvandermaesen@gmail.com";
-		System.out.println(testString+" : "+MAIL_PATTERN.matcher(testString).matches());
-		testString = "pvandermaesen@gmail.com-";
-		System.out.println(testString+" : "+MAIL_PATTERN.matcher(testString).matches());
-		testString = "patrick Vandermaesen l'homme <pvandermaesen@gmail.com>";
-		System.out.println(testString+" : "+MAIL_PATTERN.matcher(testString).matches());
-		testString = "<Patrick Vandermaesen>pvandermaesen@gmail.com";
-		System.out.println(testString+" : "+MAIL_PATTERN.matcher(testString).matches());
-		testString = "pvandermaesen@gmail.com,plemarchand@gmail.com";
-		System.out.println(testString+" : "+MAIL_PATTERN.matcher(testString).matches());
-		testString = "patrick Vandermaesen <pvandermaesen@gmail.com>";
-		System.out.println(testString+" : "+MAIL_PATTERN.matcher(testString).matches());
-		System.out.println("");
-		System.out.println("");
-		System.out.println("PHONE PATTERN");
-		System.out.println("");
-		testString = "msmkj";
-		System.out.println(testString+" : "+PHONE_PATTERN.matcher(testString).matches());
-		testString = "+32 486 95 74 35";
-		System.out.println(testString+" : "+PHONE_PATTERN.matcher(testString).matches());
-		testString = "022157795";
-		System.out.println(testString+" : "+PHONE_PATTERN.matcher(testString).matches());
-		testString = "112+23";
-		System.out.println(testString+" : "+PHONE_PATTERN.matcher(testString).matches());
-		testString = "(02)2156696";
-		System.out.println(testString+" : "+PHONE_PATTERN.matcher(testString).matches());
-		testString = "21";
-		System.out.println(testString+" : "+PHONE_PATTERN.matcher(testString).matches());
+		
+		Pattern pattern = Pattern.compile("(name=\")(.+?)(\")");
+		Matcher matcher = pattern.matcher(xhtml);	
+
+		while (matcher.find()) {
+			String group = matcher.group();
+			group = group.substring(0, group.length()-1);	
+			String pageName = group.replaceFirst("name=\"", "");
+			System.out.println(pageName);
+		}
 	}
 
 }

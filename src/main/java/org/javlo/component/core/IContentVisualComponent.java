@@ -309,6 +309,13 @@ public interface IContentVisualComponent extends Comparable<IContentVisualCompon
 	 * @return java script code.
 	 */
 	public String getJSOnSubmit();
+	
+	/**
+	 * extract field define in the current renderer
+	 * @param ctx
+	 * @return a list of fields name, null if no renderer found
+	 */
+	public List<String> extractFieldsFromRenderer(ContentContext ctx) throws IOException;
 
 	/**
 	 * return a text represent the content of the component. sample all the

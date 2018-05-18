@@ -34,6 +34,8 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -482,7 +484,32 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			return componentBean.getRenderer();
 		}
 	}
-
+	
+	@Override
+	public List<String> extractFieldsFromRenderer(ContentContext ctx) throws IOException {
+		String cr = getRenderer(ctx);
+		if (cr != null) {
+			File renderer = new File(ctx.getRequest().getSession().getServletContext().getRealPath(cr));
+			if (renderer.exists()) {
+				Pattern pattern = Pattern.compile("(name=\")(.+?)(\")");
+				Matcher matcher = pattern.matcher(ResourceHelper.loadStringFromFile(renderer));
+				LinkedList<String> outFields = new LinkedList<String>();
+				while (matcher.find()) {
+					String group = matcher.group();
+					group = group.substring(0, group.length()-1);
+					String field = group.replaceFirst("name=\"", "");
+					if (!field.equals("webaction") && !field.equals("comp-id") && !outFields.contains(field)) {
+						outFields.add(field);
+					}
+				}
+				return outFields;
+			} else {
+				logger.warning("renderer not found : "+renderer);
+			}
+		}
+		return null;
+	}
+	
 	public String getDebugHeader(ContentContext ctx) {
 		StringWriter writer = new StringWriter();
 		PrintWriter out = new PrintWriter(writer);

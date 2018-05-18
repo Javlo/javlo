@@ -278,6 +278,28 @@ public class I18nAccess implements Serializable {
 		}
 		return text;
 	}
+	
+	public Map getCountries() throws Exception {
+		Map outCountries = countries.get(viewLg);
+			if (outCountries == null) {		
+				String fileName = I18N_COUNTRIES_FILE_NAME + viewLg + ".properties";
+				InputStream stream = servletContext.getResourceAsStream(fileName);
+				try {
+					if (stream != null) {
+						Properties countries = new Properties();
+						countries.load(stream);
+						outCountries = countries;
+					}
+				} finally {
+					ResourceHelper.closeResource(stream);
+				}
+				if (outCountries == null) {
+					outCountries = Countries.getCountriesList(viewLg);					
+				}
+			}
+			countries.put(viewLg, outCountries);
+		return outCountries;
+	}
 
 	public Map getCountries(ContentContext ctx) throws Exception {
 		Map outCountries = countries.get(viewLg);

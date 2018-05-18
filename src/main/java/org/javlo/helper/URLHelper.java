@@ -324,6 +324,15 @@ public class URLHelper extends ElementaryURLHelper {
 		ctx.getGlobalContext().setTimeAttribute(code, data);
 		return createStaticURL(ctx, "/qrcode/" + command + "/" + code + ".png");
 	}
+	
+	public static String createTransformURL(ContentContext ctx, File file, String filter) throws Exception {
+		GlobalContext globalContext = ctx.getGlobalContext();
+		String url = file.getCanonicalPath();
+		url = StringHelper.cleanPath(url);				
+		url = StringUtils.removeStart(url, StringHelper.cleanPath(globalContext.getDataFolder()));
+		return createTransformURL(ctx, url, filter);
+	}
+
 
 	public static String createResourceURL(ContentContext ctx, File file) throws IOException {
 		GlobalContext globalContext = ctx.getGlobalContext();
