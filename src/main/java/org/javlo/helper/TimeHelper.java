@@ -23,6 +23,8 @@ import org.javlo.i18n.I18nAccess;
 import org.javlo.navigation.MenuElement;
 
 public class TimeHelper {
+	
+	public static final Date NO_DATE = new Date(0);
 
 	private static java.util.logging.Logger logger = java.util.logging.Logger.getLogger(TimeHelper.class.getName());
 

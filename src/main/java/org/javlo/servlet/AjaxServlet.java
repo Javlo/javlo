@@ -135,14 +135,17 @@ public class AjaxServlet extends HttpServlet {
 
 				response.setContentType("application/json");
 				String jsonResult = strWriter.toString();
+			
 				if (ctx.getSpecificJson() != null) {
 					response.getWriter().write(ctx.getSpecificJson());
 				} else {
 					response.getWriter().write(jsonResult);
 				}
+			
 				response.flushBuffer();
 
 			} catch (Throwable t) {
+				t.printStackTrace();
 				logger.warning(t.getMessage());
 				response.setStatus(503);
 				DebugListening.getInstance().sendError(ctx, t, "path=" + request.getRequestURI());

@@ -80,7 +80,7 @@ public class UserSearch extends AbstractVisualComponent implements IAction {
 			if (countries == null) {
 				out.println("<input class=\"form-control\" type=\"text\" id=\"country\" name=\"country\" value=\"" + rs.getParameter("domain", "") + "\" />");
 			} else {
-				out.println("<select id=\"country\" name=\"country\">");
+				out.println("<select class=\"form-control\" id=\"country\" name=\"country\">");
 				out.println("<option></option>");
 				for (IListItem item : countries) {
 					String selected = "";
@@ -96,7 +96,7 @@ public class UserSearch extends AbstractVisualComponent implements IAction {
 			if (functions == null) {
 				out.println("<input type=\"text\" id=\"domain\" name=\"domain\" value=\"" + rs.getParameter("domain", "") + "\" />");
 			} else {
-				out.println("<select id=\"domain\" name=\"domain\">");
+				out.println("<select class=\"form-control\" id=\"domain\" name=\"domain\">");
 				out.println("<option></option>");
 				for (IListItem item : functions) {
 					String selected = "";

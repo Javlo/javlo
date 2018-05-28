@@ -174,7 +174,7 @@ public class XLSTools {
 		return outCell;
 	}
 
-	public static Cell[][] getCellArray(String[][] array) throws Exception {
+	public static Cell[][] getCellArray(String[][] array) {
 		Cell[][] outArray = new Cell[array.length][];
 		for (int y = 0; y < array.length; y++) {
 			outArray[y] = new Cell[array[y].length];
@@ -182,7 +182,11 @@ public class XLSTools {
 				String val = array[y][x];
 				Double dblVal = null;
 				if (StringHelper.isFloat(val)) {
-					dblVal = Double.parseDouble(val);
+					try {
+						dblVal = Double.parseDouble(val);
+					} catch (NumberFormatException e) {
+						dblVal = (double)-1;
+					}
 				}
 				if (val != null) {
 					outArray[y][x] = new Cell(val, dblVal, outArray, x, y);
