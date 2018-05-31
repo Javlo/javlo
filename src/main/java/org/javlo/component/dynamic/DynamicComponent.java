@@ -653,7 +653,9 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 	public IContentVisualComponent newInstance(ComponentBean bean, ContentContext newCtx, MenuElement page) throws Exception {
 		DynamicComponent res = (DynamicComponent) this.clone();
 		StructuredProperties newProp = new StructuredProperties();
-		newProp.putAll(getConfigProperties());
+		if (getConfigProperties() != null) {
+			newProp.putAll(getConfigProperties());
+		}
 		res.setProperties(newProp); // transfert meta-data of
 		// dynamiccomponent
 		res.setPage(page);

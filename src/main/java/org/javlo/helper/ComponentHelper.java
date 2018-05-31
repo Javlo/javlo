@@ -5,19 +5,29 @@ package org.javlo.helper;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.AbstractMap;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.TreeMap;
 import java.util.logging.Logger;
 
 import org.javlo.component.column.TableBreak;
 import org.javlo.component.container.IContainer;
 import org.javlo.component.core.ComponentBean;
+import org.javlo.component.core.ComponentFactory;
 import org.javlo.component.core.ContentElementList;
 import org.javlo.component.core.IContentVisualComponent;
+import org.javlo.component.core.Unknown;
 import org.javlo.component.dynamic.DynamicComponent;
 import org.javlo.component.links.MirrorComponent;
 import org.javlo.component.text.DynamicParagraph;
@@ -66,9 +76,9 @@ public class ComponentHelper {
 	}
 
 	/*
-	 * public static final boolean DisplayTitle(IContentVisualComponent[] comps,
-	 * int i) { if (i >= comps.length) { return false; } for (int j = i + 1; (j
-	 * < comps.length) && !(comps[j] instanceof SpecialTitle); j++) { if
+	 * public static final boolean DisplayTitle(IContentVisualComponent[] comps, int
+	 * i) { if (i >= comps.length) { return false; } for (int j = i + 1; (j <
+	 * comps.length) && !(comps[j] instanceof SpecialTitle); j++) { if
 	 * (comps[j].isVisible()) { return true; } } return false; }
 	 */
 	public static IContentVisualComponent getComponentFromRequest(ContentContext ctx) throws Exception {
@@ -109,7 +119,7 @@ public class ComponentHelper {
 			out.println("<table class=\"edit\"><tr><td style=\"text-align: center;\" width=\"50%\">");
 			out.println(linkTitle + " : ");
 			out.println("<select name=\"" + linkName + "\">");
-			MenuElement elem = content.getNavigation(ctx);			
+			MenuElement elem = content.getNavigation(ctx);
 			String currentLink = null;
 			for (MenuElement value : elem.getAllChildrenList()) {
 				if (linkIdStr.equals(value.getId())) {
@@ -209,7 +219,7 @@ public class ComponentHelper {
 						moveComponent(ctx, comp, newPrevious, targetPage, area);
 						return;
 					}
-					componentToMove.add(nextComp);					
+					componentToMove.add(nextComp);
 					if (nextComp != null) {
 						if (nextComp.getType().equals(openType)) {
 							if (((IContainer) nextComp).isOpen(ctx)) {
@@ -226,7 +236,7 @@ public class ComponentHelper {
 						closeFound = true;
 					}
 					nextComp = ComponentHelper.getNextComponent(nextComp, ctx);
-				}				
+				}
 				for (IContentVisualComponent moveComp : componentToMove) {
 					moveComponent(ctx, moveComp, newPrevious, targetPage, area);
 					newPrevious = moveComp;
@@ -339,8 +349,8 @@ public class ComponentHelper {
 	}
 
 	/**
-	 * get the the component with the position in the list of component with
-	 * same type with current ContentContext return null if position is to big
+	 * get the the component with the position in the list of component with same
+	 * type with current ContentContext return null if position is to big
 	 * 
 	 * @throws Exception
 	 */
@@ -460,34 +470,69 @@ public class ComponentHelper {
 		return comp.getType();
 
 	}
-	
+
 	/**
 	 * return the component wrapped in the mirrror, or the component it self
+	 * 
 	 * @param comp
 	 * @return
-	 * @throws Exception 
-	 */	public static final IContentVisualComponent getRealComponent(ContentContext ctx, IContentVisualComponent comp) throws Exception {
+	 * @throws Exception
+	 */
+	public static final IContentVisualComponent getRealComponent(ContentContext ctx, IContentVisualComponent comp) throws Exception {
 		if (comp != null && comp instanceof MirrorComponent) {
-			MirrorComponent mcomp = (MirrorComponent)comp;
+			MirrorComponent mcomp = (MirrorComponent) comp;
 			return mcomp.getMirrorComponent(ctx);
 		} else {
 			return comp;
 		}
 	}
-	
-	public static String renderArea(ContentContext ctx, String areaKey) throws Exception {		
-		String specialRenderer = ctx.getCurrentTemplate().getSpecialAreaRenderer();				
-		if (specialRenderer == null) {		
-			return ServletHelper.executeJSP(ctx, "/jsp/view/content_view.jsp?area=" + areaKey);	 
+
+	public static String renderArea(ContentContext ctx, String areaKey) throws Exception {
+		String specialRenderer = ctx.getCurrentTemplate().getSpecialAreaRenderer();
+		if (specialRenderer == null) {
+			return ServletHelper.executeJSP(ctx, "/jsp/view/content_view.jsp?area=" + areaKey);
 		} else {
 			specialRenderer = URLHelper.mergePath(ctx.getCurrentTemplate().getFolder(ctx.getGlobalContext()), specialRenderer);
 			Template tpl = ctx.getCurrentTemplate();
-			Area area = Template.getArea(tpl.getRows(), areaKey);			
+			Area area = Template.getArea(tpl.getRows(), areaKey);
 			ctx.getRequest().setAttribute("areaStyle", area);
-			specialRenderer = URLHelper.mergePath(ctx.getCurrentTemplate().getLocalWorkTemplateFolder(), specialRenderer);			
-			return ServletHelper.executeJSP(ctx, specialRenderer+"?area="+areaKey);
-		}				
+			specialRenderer = URLHelper.mergePath(ctx.getCurrentTemplate().getLocalWorkTemplateFolder(), specialRenderer);
+			return ServletHelper.executeJSP(ctx, specialRenderer + "?area=" + areaKey);
+		}
 	}
-	
 
+	public static Map<String, String> getCurrentContextComponentsList(ContentContext ctx) throws Exception {
+		ContentService content = ContentService.getInstance(ctx.getRequest());
+
+		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+		Collection<String> languages = globalContext.getContentLanguages();
+
+		Map<String, String> components = new TreeMap<String, String>();
+		Set<String> compType = new HashSet<String>();
+		I18nAccess i18nAccess = I18nAccess.getInstance(ctx);
+		if (!ctx.getGlobalContext().isMaster()) {
+			for (String lg : languages) {
+				ContentContext ctxLg = new ContentContext(ctx);
+				ctxLg.setLanguage(lg);
+				ctxLg.setContentLanguage(lg);
+				ctxLg.setRequestContentLanguage(lg);
+				ctxLg.setArea(null);
+				for (MenuElement page : content.getNavigation(ctxLg).getAllChildrenList()) {
+					ContentElementList comps = page.getContent(ctxLg);
+					while (comps.hasNext(ctxLg)) {
+						IContentVisualComponent comp = comps.next(ctxLg);					
+						if (!compType.contains(comp.getType()) && !comp.getType().equals(Unknown.TYPE)) {
+							compType.add(comp.getType());							
+							components.put(comp.getType(), i18nAccess.getText("content."+comp.getType(), comp.getType()));
+						}
+					}
+				}
+			}
+		} else {
+			for (Map.Entry<String, IContentVisualComponent> comps : ComponentFactory.getComponents(ctx.getRequest().getSession().getServletContext()).entrySet()) {
+				components.put(comps.getValue().getType(), i18nAccess.getText("content."+comps.getValue().getType(), comps.getValue().getType()));
+			}
+		}
+		return components;
+	}
 }

@@ -4,6 +4,8 @@ public class SearchResultBean {
 	
 	private String type;
 	
+	private String context;
+	
 	private String title;
 	
 	private String url;
@@ -18,8 +20,9 @@ public class SearchResultBean {
 	
 	private int matching = 0;
 	
-	public SearchResultBean(String type, String title, String lang, String url, String authors, String date, String previewURL, int matching) {
+	public SearchResultBean(String context, String type, String title, String lang, String url, String authors, String date, String previewURL, int matching) {
 		super();
+		this.context = context;
 		this.type = type;
 		this.title = title;
 		this.url = url;
@@ -92,5 +95,13 @@ public class SearchResultBean {
 
 	public void setPreviewURL(String previewURL) {
 		this.previewURL = previewURL;
+	}
+
+	public String getContext() {
+		return context;
+	}
+
+	public void setContext(String context) {
+		this.context = context;
 	}
 }

@@ -12,7 +12,7 @@ public class Unknown extends AbstractVisualComponent {
 	
 	public static final IContentVisualComponent INSTANCE = new Unknown();
 
-	String type = "unknow";
+	public static final String TYPE = "unknow";
 
 	public Unknown() {
 	}
@@ -65,6 +65,6 @@ public class Unknown extends AbstractVisualComponent {
 	 */
 	@Override
 	public String getType() {
-		return type;
+		return TYPE;
 	}
 }

@@ -1,10 +1,14 @@
 package org.javlo.module.search;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.PrintStream;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.logging.Logger;
+import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -13,7 +17,10 @@ import org.javlo.component.core.ComponentBean;
 import org.javlo.component.title.Heading;
 import org.javlo.component.title.Title;
 import org.javlo.context.ContentContext;
+import org.javlo.context.GlobalContext;
+import org.javlo.context.GlobalContextFactory;
 import org.javlo.data.taxonomy.TaxonomyService;
+import org.javlo.helper.ComponentHelper;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.SecurityHelper;
 import org.javlo.helper.StringHelper;
@@ -26,6 +33,8 @@ import org.javlo.service.RequestService;
 import org.javlo.ztatic.StaticInfo;
 
 public class SearchModuleAction extends AbstractModuleAction {
+	
+	private static Logger logger = Logger.getLogger(SearchModuleAction.class.getName());
 
 	@Override
 	public String getActionGroupName() {
@@ -33,10 +42,32 @@ public class SearchModuleAction extends AbstractModuleAction {
 	}
 
 	private static boolean isMatching(ComponentBean comp, SearchFilter filter) {
-		if (StringHelper.isEmpty(filter.getTitle()) && StringHelper.isEmpty(filter.getGlobal())) {
-			return false;
+		
+		
+		if (StringHelper.isEmpty(filter.getTitle()) && StringHelper.isEmpty(filter.getGlobal()) && StringHelper.isEmpty(filter.getSmartquery()) && StringHelper.isEmpty(filter.getSmartqueryre()) && filter.getComponents().size() == 0) {
+			return false;			
+		}
+		if (filter.getComponents().size()>0) {
+			if (!filter.getComponents().contains(comp.getType())) {
+				return false;
+			}
+		}
+		if (!StringHelper.isEmpty(filter.getSmartquery())) {
+			if (!StringHelper.matchStarPattern(comp.getValue().toLowerCase(), filter.getSmartquery().toLowerCase())) {
+				return false;
+			}
+		}
+		if (!StringHelper.isEmpty(filter.getSmartqueryre())) {
+			try {
+			if (!Pattern.matches(filter.getSmartqueryre(), StringHelper.removeCR(comp.getValue()))) {
+				return false;
+			}
+			} catch (Exception e ) {
+				logger.warning(e.getMessage());
+			}
 		}
 		boolean outFilter = true;
+		
 		if (!StringHelper.isEmpty(filter.getTitle())) {
 			if ((comp.getType().equals(Title.TYPE) || comp.getType().equals(Heading.TYPE)) && comp.getValue().toLowerCase().contains(filter.getTitle().toLowerCase())) {
 				outFilter = true;
@@ -70,6 +101,7 @@ public class SearchModuleAction extends AbstractModuleAction {
 	}
 	
 	protected static void addPage(ContentContext ctx, Map<MenuElement, SearchResultBean> outResult, MenuElement page, String lg, String authors) throws Exception {
+		ctx = ctx.getContextForAbsoluteURL();
 		String url = URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.PREVIEW_MODE), page);
 		if (ctx.isEditPreview()) {
 			Map<String, String> params = new HashMap<String, String>();
@@ -81,7 +113,7 @@ public class SearchModuleAction extends AbstractModuleAction {
 		if (page.getImage(ctx) != null) {
 			previewURL = URLHelper.createTransformURL(ctx, page.getImage(ctx).getResourceURL(ctx), "list");
 		}
-		outResult.put(page, new SearchResultBean("page", page.getTitle(ctx), lg , url, authors, StringHelper.renderSortableDate(page.getModificationDate(ctx)), previewURL, 1));
+		outResult.put(page, new SearchResultBean(ctx.getGlobalContext().getContextKey(), "page", page.getTitle(ctx), lg , url, authors, StringHelper.renderSortableDate(page.getModificationDate(ctx)), previewURL, 1));
 	}
 	
 	public static Collection<SearchResultBean> searchInPage(ContentContext ctx, SearchFilter filter) throws Exception {
@@ -108,6 +140,7 @@ public class SearchModuleAction extends AbstractModuleAction {
 	}
 
 	public static Collection<SearchResultBean> searchInResource(ContentContext ctx, SearchFilter filter) throws Exception {
+		ctx = ctx.getContextForAbsoluteURL();
 		Map<Object, SearchResultBean> outResult = new HashMap<Object, SearchResultBean>();
 		File staticFolder = new File(ctx.getGlobalContext().getStaticFolder());
 		if (staticFolder.exists()) {
@@ -119,7 +152,6 @@ public class SearchModuleAction extends AbstractModuleAction {
 						if (StringHelper.isEmpty(title)) {
 							title = staticInfo.getFile().getName();
 						}
-
 						// String url = staticInfo.getURL(ctx);
 						String url;
 						if (!ctx.isEditPreview()) {
@@ -151,7 +183,7 @@ public class SearchModuleAction extends AbstractModuleAction {
 							url = URLHelper.addParam(url, "previewEdit", "true");
 						}
 						String previewURL = URLHelper.createTransformURL(ctx, staticInfo, "list");
-						outResult.put(staticInfo, new SearchResultBean("file", title, ctx.getContentLanguage(), url, staticInfo.getAuthors(ctx), StringHelper.renderSortableDate(staticInfo.getCreationDate(ctx)), previewURL, 1));
+						outResult.put(staticInfo, new SearchResultBean(ctx.getGlobalContext().getContextKey(), "file", title, ctx.getContentLanguage(), url, staticInfo.getAuthors(ctx), StringHelper.renderSortableDate(staticInfo.getCreationDate(ctx)), previewURL, 1));
 					} else {
 						outResult.get(staticInfo).setMatching(outResult.get(staticInfo).getMatching() + 1);
 					}
@@ -163,22 +195,43 @@ public class SearchModuleAction extends AbstractModuleAction {
 
 	@Override
 	public String prepare(ContentContext ctx, ModulesContext modulesContext) throws Exception {
+		Collection<GlobalContext> contexts;
+		if (ctx.getGlobalContext().isMaster()) {
+			contexts = GlobalContextFactory.getAllGlobalContext(ctx.getRequest().getSession().getServletContext());
+		} else {
+			contexts = new LinkedList<GlobalContext>();
+			contexts.add(ctx.getGlobalContext());
+		}
 		Collection<SearchResultBean> items = new LinkedList<SearchResultBean>();
 		SearchFilter searchFilter = SearchFilter.getInstance(ctx.getRequest());
-		if (StringHelper.isEmpty(searchFilter.getType()) || searchFilter.getType().equals("page")) {
-			items.addAll(searchInPage(ctx, searchFilter));
-		}
-		if (StringHelper.isEmpty(searchFilter.getType()) || searchFilter.getType().equals("file")) {
-			items.addAll(searchInResource(ctx, searchFilter));
+		ContentContext localCtx = new ContentContext(ctx);
+		for (GlobalContext globalContext : contexts) {
+			localCtx.setForceGlobalContext(globalContext);
+			if (StringHelper.isEmpty(searchFilter.getType()) || searchFilter.getType().equals("page")) {
+				items.addAll(searchInPage(localCtx, searchFilter));
+			}
+			if (StringHelper.isEmpty(searchFilter.getType()) || searchFilter.getType().equals("file") && searchFilter.getComponents().size()==0) {
+				items.addAll(searchInResource(localCtx, searchFilter));
+			}
 		}
 		ctx.getRequest().setAttribute("items", items);
 		ctx.getRequest().setAttribute("taxoSelect", ctx.getGlobalContext().getAllTaxonomy(ctx).getSelectHtml("taxonomy", "form-control chosen-select", searchFilter.getTaxonomy()));
+		ctx.getRequest().setAttribute("components", ComponentHelper.getCurrentContextComponentsList(ctx));
 		return null;
 	}
 
 	public static String performSearch(RequestService rs, HttpServletRequest request, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
 		SearchFilter.getInstance(ctx.getRequest()).update(request);
 		return null;
+	}
+	
+	public static void main(String[] args) {
+		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+		PrintStream out = new PrintStream(outStream);
+		out.println("#heading");
+		out.println("Mes&nbsp;articles 2");
+		out.close();
+		System.out.println(">>>>>>>>> SearchModuleAction.main : match = "+Pattern.matches(".*(articles).*", StringHelper.removeCR(new String(outStream.toByteArray())))); //TODO: remove debug trace
 	}
 
 }

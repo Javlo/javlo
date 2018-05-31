@@ -26,7 +26,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.config.StaticConfig;
 import org.javlo.helper.AjaxHelper.ScheduledRender;
-import org.javlo.helper.ElementaryURLHelper;
 import org.javlo.helper.NetHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
@@ -528,6 +527,8 @@ public class ContentContext {
 		internalURL = ctx.internalURL;
 
 		checkContentArea = ctx.checkContentArea;
+		
+		forceGlobalContext = ctx.forceGlobalContext;
 	}
 
 	public String getArea() {
@@ -849,7 +850,7 @@ public class ContentContext {
 	private MenuElement getCurrentPage(boolean urlFacotry) throws Exception {
 		MenuElement outPage = getCurrentPageCached();
 		if (outPage == null) {
-			GlobalContext globalContext = GlobalContext.getInstance(request);
+			GlobalContext globalContext = getGlobalContext();
 			globalContext.log("url", "current page : " + getPath());
 			MenuElement root = ContentService.getInstance(globalContext).getNavigation(this);
 			if (getPath().equals("/")) {
@@ -1803,14 +1804,20 @@ public class ContentContext {
 		return getPathPrefix(request);
 	}
 
-	public static String getPathPrefix(HttpServletRequest request) {
+	public String getPathPrefix(HttpServletRequest request) {
+		if (isForceGlobalContext() && !getGlobalContext().isDefinedByHost()) {
+			return getGlobalContext().getContextKey();
+		}
+		return getPathPrefix(getGlobalContext(), request);
+	}
+	
+	public static String getPathPrefix(GlobalContext globalContext, HttpServletRequest request) {
 		if (isHostDefineSite(request)) {
 			return "";
 		}
 		if (request.getAttribute(FORCE_PATH_PREFIX) != null) {
 			return request.getAttribute(FORCE_PATH_PREFIX).toString();
 		} else {
-			GlobalContext globalContext = GlobalContext.getInstance(request);
 			return globalContext.getPathPrefix();
 		}
 	}
@@ -1931,7 +1938,11 @@ public class ContentContext {
 
 	public void setForceGlobalContext(GlobalContext forceGlobalContext) {
 		this.forceGlobalContext = forceGlobalContext;
-		ElementaryURLHelper.resetPathPrefix(this);
+		//ElementaryURLHelper.resetPathPrefix(this);
+	}
+	
+	public boolean isForceGlobalContext() {
+		return forceGlobalContext != null;
 	}
 
 	public boolean isContentFound() {

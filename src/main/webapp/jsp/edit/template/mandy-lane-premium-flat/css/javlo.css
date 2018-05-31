@@ -704,6 +704,25 @@ ul,li {
 	overflow: hidden;
 }
 
+#subtools {
+	clear: both;
+	font-size: 11px;
+	width: 100%;
+	display: block;
+	margin-left: -30px;
+}
+
+#subtools .row {
+	overflow: visible;
+}
+
+#subtools .inside {
+	margin-top: 6px;
+	padding-top: 6px;
+	margin-bottom: 6px;
+	padding-left: 30px;
+}
+
 #tools h3 {
 	font-size: 1em;
 	font-weight: normal;

@@ -628,8 +628,9 @@ public abstract class ElementaryURLHelper {
 	 * @return
 	 */
 	public static String getPathPrefix(ContentContext ctx) {
-		String CACHE_KEY = "javlo-path-prefix-" + ctx.getPathPrefix();
-		String res = (String) ctx.getRequest().getAttribute(CACHE_KEY);
+		String CACHE_KEY = "javlo-path-prefix-" + ctx.getPathPrefix() + ctx.getGlobalContext().getContextKey();
+		String res = null;
+		res = (String) ctx.getRequest().getAttribute(CACHE_KEY);
 		if (res == null) {
 			String requestPrefix = ctx.getRequest().getContextPath();
 			res = ctx.getPathPrefix();
@@ -649,7 +650,7 @@ public abstract class ElementaryURLHelper {
 	}
 
 	public static void resetPathPrefix(ContentContext ctx) {
-		String CACHE_KEY = "javlo-path-prefix-" + ctx.getPathPrefix();
+		String CACHE_KEY = "javlo-path-prefix-" + ctx.getPathPrefix() + ctx.getGlobalContext().getContextKey();
 		ctx.getRequest().removeAttribute(CACHE_KEY);
 	}
 

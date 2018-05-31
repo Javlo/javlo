@@ -92,14 +92,17 @@ public abstract class ComplexPropertiesLink extends AbstractVisualComponent {
 		}
 		ComplexPropertiesLink comp = (ComplexPropertiesLink) obj;
 
-		boolean eq = getComponentBean().getStyle().equals(comp.getComponentBean().getStyle());
-		eq = eq && getComponentBean().isList() == comp.getComponentBean().isList();
-		eq = eq && getComponentBean().isRepeat() == comp.getComponentBean().isRepeat();
-		eq = eq && getComponentBean().getLanguage().equals(comp.getComponentBean().getLanguage());
-		eq = eq && getComponentBean().getValue().equals(comp.getComponentBean().getValue());
-		eq = properties.equals(comp.properties);
-
-		return eq;
+		if (getComponentBean().getStyle() != null && comp.getComponentBean().getStyle() != null) {
+			boolean eq = getComponentBean().getStyle().equals(comp.getComponentBean().getStyle());
+			eq = eq && getComponentBean().isList() == comp.getComponentBean().isList();
+			eq = eq && getComponentBean().isRepeat() == comp.getComponentBean().isRepeat();
+			eq = eq && getComponentBean().getLanguage().equals(comp.getComponentBean().getLanguage());
+			eq = eq && getComponentBean().getValue().equals(comp.getComponentBean().getValue());
+			eq = properties.equals(comp.properties);
+			return eq;
+		} else {
+			return false;
+		}
 	}
 	
 	@Override

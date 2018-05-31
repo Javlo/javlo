@@ -1,6 +1,8 @@
 package org.javlo.helper;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.text.ParseException;
 import java.util.Arrays;
 import java.util.Date;
@@ -378,6 +380,14 @@ public class StringHelperTest extends TestCase {
 		assertTrue(StringHelper.matchStarPattern("eAe", "e*e"));
 		assertFalse(StringHelper.matchStarPattern("eAe", "ee"));
 		assertTrue(StringHelper.matchStarPattern("ee", "ee"));
+		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+		PrintStream out = new PrintStream(outStream);
+		out.println("#Mon Mar 26 11:23:53 CEST 2018");
+		out.println("text=Cinematograph");
+		out.println("depth=18");
+		out.println("");
+		out.close();
+		assertTrue(StringHelper.matchStarPattern(new String(outStream.toByteArray()), "*Cinematograph*"));
 	}
 	
 	public void testMatchQuestionPattern() {

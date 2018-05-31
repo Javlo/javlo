@@ -4065,4 +4065,8 @@ public class StringHelper {
         sb.append('"');
         return sb.toString();
     }
+	
+	public static void main(String[] args) {
+		System.out.println(">>>>>>>>> StringHelper.main : match = "+matchStarPattern("10-2015-12", "*2014*")); //TODO: remove debug trace
+	}
 }

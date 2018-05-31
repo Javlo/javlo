@@ -135,7 +135,6 @@ public class ComponentFactory {
 		String[] classes = ConfigHelper.getComponentsClasses(application);
 		for (String clazz : classes) {
 			Class comp = null;
-			;
 			try {
 				try {
 					comp = Class.forName(clazz);

@@ -157,13 +157,16 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 		}
 		AbstractFileComponent comp = (AbstractFileComponent) obj;
 
-		boolean eq = getComponentBean().getStyle().equals(comp.getComponentBean().getStyle());
-		eq = eq && getComponentBean().isList() == comp.getComponentBean().isList();
-		eq = eq && getComponentBean().isRepeat() == comp.getComponentBean().isRepeat();
-		eq = eq && getComponentBean().getLanguage().equals(comp.getComponentBean().getLanguage());
-		eq = properties.equals(comp.properties);
-
-		return eq;
+		if (getComponentBean().getStyle() != null && comp.getComponentBean().getStyle() != null) {
+			boolean eq = getComponentBean().getStyle().equals(comp.getComponentBean().getStyle());
+			eq = eq && getComponentBean().isList() == comp.getComponentBean().isList();
+			eq = eq && getComponentBean().isRepeat() == comp.getComponentBean().isRepeat();
+			eq = eq && getComponentBean().getLanguage().equals(comp.getComponentBean().getLanguage());
+			eq = properties.equals(comp.properties);
+			return eq;
+		} else {
+			return false;
+		}
 	}
 
 	protected boolean expandZip() {

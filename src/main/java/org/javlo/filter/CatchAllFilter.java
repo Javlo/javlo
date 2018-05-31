@@ -332,8 +332,8 @@ public class CatchAllFilter implements Filter {
 			Collection<Map.Entry<String, String>> entries = uriAlias.entrySet();
 			for (Map.Entry<String, String> entry : entries) {
 				String cmsURI = uri;
-				if (ContentContext.getPathPrefix((HttpServletRequest) request) != null && ContentContext.getPathPrefix((HttpServletRequest) request).length() > 0) {
-					cmsURI = cmsURI.replaceFirst("/" + ContentContext.getPathPrefix((HttpServletRequest) request), "");
+				if (ContentContext.getPathPrefix(globalContext, (HttpServletRequest) request) != null && ContentContext.getPathPrefix(globalContext, (HttpServletRequest) request).length() > 0) {
+					cmsURI = cmsURI.replaceFirst("/" + ContentContext.getPathPrefix(globalContext, (HttpServletRequest) request), "");
 				}
 				if (cmsURI.length() > 1) {
 					String pattern1 = entry.getKey();

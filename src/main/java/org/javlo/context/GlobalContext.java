@@ -338,6 +338,17 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	public static GlobalContext getSessionInstance(HttpSession session) {
 		return (GlobalContext) session.getAttribute(KEY);
 	}
+	
+	public boolean isDefinedByHost() {
+		return properties.getBoolean("define_by_host", true);
+	}
+	
+	public void setDefinedByHost(boolean define) {
+		if (isDefinedByHost() != define) {
+			properties.setProperty("define_by_host", define);
+			save();
+		}
+	}
 
 	public static GlobalContext getInstance(HttpServletRequest request) {
 		try {
@@ -359,6 +370,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 								ContentContext.setForcePathPrefix(request, contextURI);
 							}
 							ContentContext.setHostDefineSite(request, false);
+							globalContext.setDefinedByHost(false);
 						} else {
 							String host = ServletHelper.getSiteKey(request);
 							globalContext = GlobalContext.getInstance(request.getSession(), host);
@@ -369,6 +381,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 							}
 							if (!globalContext.getContextKey().equals(contextURI)) { // alias
 								ContentContext.setForcePathPrefix(request, contextURI);
+								globalContext.setDefinedByHost(false);
 							}
 							ContentContext.setHostDefineSite(request, true);
 						}
