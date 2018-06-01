@@ -164,7 +164,6 @@ public class SearchModuleAction extends AbstractModuleAction {
 							folderFile = folderFile.replace(ctx.getGlobalContext().getDataFolder(), "");
 							url = URLHelper.addParam(url, "path", folderFile);
 						} else {
-
 							String formAction = URLHelper.createURL(ctx);
 							formAction = URLHelper.addParam(formAction, "webaction", "search-module.search");
 							formAction = URLHelper.addParam(formAction, "title", filter.getTitle());
