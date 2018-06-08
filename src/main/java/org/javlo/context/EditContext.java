@@ -352,9 +352,7 @@ public class EditContext implements Serializable {
 		}
 
 		String pwd = inPassword;
-		if (staticConfig.isPasswordEncryt()) {
-			pwd = StringHelper.encryptPassword(pwd);
-		}
+		pwd = StringHelper.encryptPassword(pwd);
 
 		logger.info("try hard login : " + inUser);
 

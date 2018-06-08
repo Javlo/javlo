@@ -6,16 +6,20 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
-import java.util.Collections;
-import java.util.Comparator;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.logging.Logger;
 
 import org.javlo.context.GlobalContext;
+import org.javlo.helper.StringHelper;
 import org.javlo.service.database.DataBaseService;
 import org.javlo.social.bean.Post;
 
 public class SocialLocalService {
+	
+	private static Logger logger = Logger.getLogger(SocialLocalService.class.getName());
 
 	private static final String DATABASE_NAME = "social";
 
@@ -43,7 +47,7 @@ public class SocialLocalService {
 		Connection conn = dataBaseService.getConnection(DATABASE_NAME);
 		Statement st = conn.createStatement();
 		try {
-			st.execute("create table post (id bigint auto_increment PRIMARY KEY, author varchar(50), text varchar(1000), media varchar(255), parent int REFERENCES post(id), mainPost int REFERENCES post(id), time TIMESTAMP)");
+			st.execute("create table post (id bigint auto_increment PRIMARY KEY, groupName varchar(50), author varchar(50), text varchar(MAX), adminValid BOOLEAN DEFAULT TRUE, adminCheck BOOLEAN DEFAULT FALSE, adminMessage varchar(500), media varchar(255), parent int REFERENCES post(id), mainPost int REFERENCES post(id), time TIMESTAMP)");
 		} catch (Exception e) {
 		}
 		dataBaseService.releaseConnection(conn);
@@ -53,7 +57,7 @@ public class SocialLocalService {
 		List<Post> outPost = new LinkedList<Post>();
 		Connection conn = dataBaseService.getConnection(DATABASE_NAME);
 		try {
-			ResultSet rs = conn.createStatement().executeQuery("select * from post where author='" + author + "' and mainPost is null order by time desc");
+			ResultSet rs = conn.createStatement().executeQuery("select * from post where author='" + author + "' and mainPost is null order by time asc");
 			while (rs.next()) {
 				outPost.add(rsToPost(rs));
 			}
@@ -63,11 +67,24 @@ public class SocialLocalService {
 		return outPost;
 	}
 	
-	public List<Post> getReplies(long mainPost) throws Exception {
+	public long getPostListSize() throws Exception {
+		Connection conn = dataBaseService.getConnection(DATABASE_NAME);
+		try {
+			ResultSet rs = conn.createStatement().executeQuery("select count(id) from post where mainPost is null");
+			if (rs.next()) {
+				return rs.getLong(1);
+			}
+		} finally {
+			dataBaseService.releaseConnection(conn);
+		}
+		return -1;
+	}
+	
+	public List<Post> getPost() throws Exception {
 		List<Post> outPost = new LinkedList<Post>();
 		Connection conn = dataBaseService.getConnection(DATABASE_NAME);
 		try {
-			ResultSet rs = conn.createStatement().executeQuery("select * from post where mainPost='" + mainPost + "' order by time desc");
+			ResultSet rs = conn.createStatement().executeQuery("select * from post where mainPost is null order by time desc");
 			while (rs.next()) {
 				outPost.add(rsToPost(rs));
 			}
@@ -76,8 +93,80 @@ public class SocialLocalService {
 		}
 		return outPost;
 	}
+	
+	public List<Post> getPost(int size, int index) throws Exception {
+		List<Post> outPost = new LinkedList<Post>();
+		Connection conn = dataBaseService.getConnection(DATABASE_NAME);
+		try {
+			ResultSet rs = conn.createStatement().executeQuery("select * from post where mainPost is null order by time desc limit "+size+" offset "+index);
+			while (rs.next()) {
+				outPost.add(rsToPost(rs));
+			}
+		} finally {
+			dataBaseService.releaseConnection(conn);
+		}
+		return outPost;
+	}
+	
+	public Post getPost(Long id) throws Exception {
+		Connection conn = dataBaseService.getConnection(DATABASE_NAME);
+		try {
+			ResultSet rs = conn.createStatement().executeQuery("select * from post where id=" + id);
+			if (rs.next()) {
+				return rsToPost(rs);
+			}
+		} finally {
+			dataBaseService.releaseConnection(conn);
+		}
+		return null;
+	}
+	
+	private int countReplies(long mainPost) throws Exception {		
+		Connection conn = dataBaseService.getConnection(DATABASE_NAME);
+		try {
+			ResultSet rs = conn.createStatement().executeQuery("select count(id) from post where mainPost='" + mainPost+"'");
+			if (rs.next()) {
+				return rs.getInt(1);
+			}
+		} finally {
+			dataBaseService.releaseConnection(conn);
+		}
+		return -1;
+	}
+	
+	public List<Post> getReplies(long mainPost) throws Exception {
+		List<Post> workList = new LinkedList<Post>();
+		Connection conn = dataBaseService.getConnection(DATABASE_NAME);
+		try {
+			ResultSet rs = conn.createStatement().executeQuery("select * from post where mainPost='" + mainPost + "' order by time asc");
+			while (rs.next()) {
+				workList.add(rsToPost(rs));
+			}
+		} finally {
+			dataBaseService.releaseConnection(conn);
+		}
+		Map<Long,Post> masterPost = new HashMap<Long, Post>();
+		for (Post p : workList) {
+			masterPost.put(p.getId(), p);
+		}
+		Post mainPostBean = getPost(mainPost);
+		if (mainPostBean == null) {
+			return null;
+		} else {
+			masterPost.put(mainPostBean.getId(), mainPostBean);
+			for (Post p : workList) {
+				Post parent = masterPost.get(p.getParent());
+				if (parent != null) {
+					p.setParentPost(parent);
+				} else {
+					logger.warning("parent not found : "+p.getParent());
+				}
+			}
+			return workList;
+		}
+	}
 
-	protected Post rsToPost(ResultSet rs) throws SQLException {
+	protected Post rsToPost(ResultSet rs) throws Exception {
 		Post post = new Post();
 		post.setId(rs.getLong("id"));
 		post.setAuthor(rs.getString("author"));
@@ -86,27 +175,32 @@ public class SocialLocalService {
 		post.setParent(rs.getLong("parent"));
 		post.setMainPost(rs.getLong("mainPost"));
 		post.setCreationDate(rs.getTimestamp("time"));
+		post.setValid(rs.getBoolean("adminValid"));
+		post.setAdminMessage(rs.getString("adminMessage"));
+		post.setGroup(rs.getString("groupName"));
+		post.setCountReplies(countReplies(post.getId()));
 		return post;
 	}
 
 	public void createPost(Post post) throws Exception {
 		Connection conn = dataBaseService.getConnection(DATABASE_NAME);
-		PreparedStatement ps = conn.prepareStatement("insert into post (author, text, media, parent, mainPost, time) values (?,?,?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
+		PreparedStatement ps = conn.prepareStatement("insert into post (groupName, author, text, media, parent, mainPost, time) values (?,?,?,?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
 		try {
-			ps.setString(1, post.getAuthor());
-			ps.setString(2, post.getText());
-			ps.setString(3, post.getMedia());
+			ps.setString(1, post.getGroup());
+			ps.setString(2, post.getAuthor());
+			ps.setString(3, post.getText());
+			ps.setString(4, post.getMedia());
 			if (post.getParent() != null) {
-				ps.setLong(4, post.getParent());
-			} else {
-				ps.setNull(4, java.sql.Types.LONGVARCHAR);
-			}
-			if (post.getMainPost() != null) {
-				ps.setLong(5, post.getMainPost());
+				ps.setLong(5, post.getParent());
 			} else {
 				ps.setNull(5, java.sql.Types.LONGVARCHAR);
 			}
-			ps.setTimestamp(6, new Timestamp(post.getCreationDate().getTime()));
+			if (post.getMainPost() != null) {
+				ps.setLong(6, post.getMainPost());
+			} else {
+				ps.setNull(6, java.sql.Types.LONGVARCHAR);
+			}
+			ps.setTimestamp(7, new Timestamp(post.getCreationDate().getTime()));
 			ps.executeUpdate();
 			ResultSet generatedKeys = ps.getGeneratedKeys();
 			if (generatedKeys.next()) {
@@ -119,18 +213,32 @@ public class SocialLocalService {
 		}
 	}
 	
+	private static void deleteAllPostsChildren(Connection conn, long id) throws SQLException {
+		Statement st = conn.createStatement();
+		ResultSet rs = st.executeQuery("select * from post where parent="+id);
+		while (rs.next()) {
+			deleteAllPostsChildren(conn, rs.getLong("id"));			
+		}
+		st.execute("delete from post where id="+id);
+	}
+	
 	public void deletePost(String author, long id) throws Exception {
 		Connection conn = dataBaseService.getConnection(DATABASE_NAME);
 		try {
 			Statement st = conn.createStatement();
 			ResultSet rs = st.executeQuery("select * from post where id="+id+" and author='"+author+"'");
 			if (rs.next()) {
+				deleteAllPostsChildren(conn, id);
 				st.execute("delete from post where parent="+id);
 				st.execute("delete from post where id="+id);
 			}
 		} finally { 
 			dataBaseService.releaseConnection(conn);
 		}
+	}
+	
+	public static void main(String[] args) {
+		System.out.println(">>>>>>>>> SocialLocalService.main : password = "+StringHelper.md5Hex("23122312")); //TODO: remove debug trace
 	}
 
 }

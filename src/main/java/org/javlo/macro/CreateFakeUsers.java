@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.javlo.context.ContentContext;
+import org.javlo.helper.SecurityHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.user.IUserFactory;
 import org.javlo.user.IUserInfo;
@@ -42,7 +43,7 @@ public class CreateFakeUsers extends AbstractMacro {
 				userName = "login"+StringHelper.renderNumber(userNumber, 4);
 			}
 			userInfo.setLogin(userName);
-			userInfo.setPassword("changeme");
+			userInfo.setPassword(SecurityHelper.encryptPassword("changeme"));
 			userInfo.setFirstName(firstName.get((int) Math.round(Math.random() * (firstName.size()-1))));
 			userInfo.setLastName(lastName.get((int) Math.round(Math.random() * (lastName.size()-1))));
 			userInfo.setEmail(userInfo.getFirstName().toLowerCase() + '.' + userInfo.getLastName().toLowerCase() + "@javlo.org");

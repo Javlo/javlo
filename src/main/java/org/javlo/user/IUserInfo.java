@@ -58,13 +58,6 @@ public interface IUserInfo {
 
 	public void setLastName(String lastName);
 	
-	/**
-	 * set password and encrypt if needed&²
-	 * @param globalContext
-	 * @param password
-	 */
-	public void setPassword(boolean encrypt, String password);
-
 	public void setPassword(String password);
 
 	public void setEmail(String email);

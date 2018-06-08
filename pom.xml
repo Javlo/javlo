@@ -233,8 +233,13 @@
 		<!-- <dependency> <groupId>com.google.code.geocoder-java</groupId> <artifactId>geocoder-java</artifactId> 
 			<version>0.16</version> </dependency> -->
 
-		<!-- MySQL database driver <dependency> <groupId>mysql</groupId> <artifactId>mysql-connector-java</artifactId> 
-			<version>5.1.9</version> </dependency> -->
+		<!-- https://mvnrepository.com/artifact/mysql/mysql-connector-java -->
+		<dependency>
+		    <groupId>mysql</groupId>
+		    <artifactId>mysql-connector-java</artifactId>
+		    <version>8.0.11</version>
+		</dependency>
+
 
 		<dependency>
 			<groupId>javax.servlet.jsp</groupId>

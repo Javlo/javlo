@@ -2854,8 +2854,14 @@ public class StringHelper {
 		}
 		return new HashSet<String>(stringToCollection(str, DEFAULT_LIST_SEPARATOR));
 	}
-
-
+	
+	public static Set<String> stringToSet(String str, String sep) {
+		if (str == null) {
+			return null;
+		}
+		return new HashSet<String>(stringToCollection(str, sep));
+	}
+	
 	public static List<String> stringToCollectionTrim(String str) {
 		if (str == null) {
 			return null;

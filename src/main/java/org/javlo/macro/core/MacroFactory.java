@@ -48,6 +48,7 @@ import org.javlo.macro.ImageAfterDescriptionMacro;
 import org.javlo.macro.ImportAndTranslateDefaultLanguageMacro;
 import org.javlo.macro.ImportDataBase;
 import org.javlo.macro.ImportDefaultLanguageMacro;
+import org.javlo.macro.ImportMysqlDataBase;
 import org.javlo.macro.IncreaseSubtitleLevelMacro;
 import org.javlo.macro.InitContentMacro;
 import org.javlo.macro.MacroRendererCorrection;
@@ -188,6 +189,7 @@ public class MacroFactory {
 		macros.add(new PushStaticOnFtp());
 		macros.add(new ConvertUserForComansys());
 		macros.add(new InitContentMacro());
+		macros.add(new ImportMysqlDataBase());
 	}
 
 	public IMacro getMacro(String name) {

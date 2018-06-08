@@ -4,16 +4,22 @@ import java.util.Date;
 
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.TimeHelper;
+import org.javlo.helper.XHTMLHelper;
 
 public class Post {
 	private long id;
 	private Long mainPost;
+	private String group;
 	private String author;
 	private String text;
 	private String media;
 	private Long parent = null;
 	private Date creationDate = new Date();
 	private String creationDateString;
+	private Post parentPost = null;
+	private int countReplies = 0;
+	private boolean valid = true;
+	private String adminMessage = null;
 
 	public long getId() {
 		return id;
@@ -30,6 +36,7 @@ public class Post {
 	public String getText() {
 		return text;
 	}
+	
 	public void setText(String message) {
 		this.text = message;
 	}
@@ -41,6 +48,12 @@ public class Post {
 	}
 	public Long getParent() {
 		return parent;
+	}
+	public Post getParentPost() {
+		return parentPost;
+	}
+	public void setParentPost(Post parentPost) {
+		this.parentPost = parentPost;
 	}
 	public void setParent(Long parent) {
 		this.parent = parent;
@@ -69,4 +82,29 @@ public class Post {
 	public void setMainPost(Long mainPost) {
 		this.mainPost = mainPost;
 	}
+	public int getCountReplies() {
+		return countReplies;
+	}
+	public void setCountReplies(int countReplies) {
+		this.countReplies = countReplies;
+	}
+	public boolean isValid() {
+		return valid;
+	}
+	public void setValid(boolean valid) {
+		this.valid = valid;
+	}
+	public String getAdminMessage() {
+		return adminMessage;
+	}
+	public void setAdminMessage(String adminMessage) {
+		this.adminMessage = adminMessage;
+	}
+	public String getGroup() {
+		return group;
+	}
+	public void setGroup(String group) {
+		this.group = group;
+	}	
+	
 }

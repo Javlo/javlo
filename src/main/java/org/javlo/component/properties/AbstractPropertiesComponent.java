@@ -36,7 +36,8 @@ public abstract class AbstractPropertiesComponent extends AbstractVisualComponen
 		for (String field : getFields(ctx)) {
 			fields.put(field, getFieldValue(field));
 		}
-		ctx.getRequest().setAttribute("fields", fields);
+		ctx.getRequest().setAttribute("fields", fields); // depreciated
+		ctx.getRequest().setAttribute("field", fields);
 	}
 
 	protected static String getFieldName(String field) {

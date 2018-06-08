@@ -16,6 +16,7 @@ import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.NetHelper;
+import org.javlo.helper.SecurityHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.helper.XHTMLHelper;
@@ -78,7 +79,7 @@ public class CreateContext extends AbstractVisualComponent implements IAction {
 		IUserFactory userFactory = newContext.getAdminUserFactory(ctx.getRequest().getSession());
 		IUserInfo newUser = userFactory.createUserInfos();
 		newUser.setLogin(email);
-		newUser.setPassword(true, pwd);
+		newUser.setPassword(SecurityHelper.encryptPassword(pwd));
 		newUser.addRoles(DEFAULT_ROLES);
 		userFactory.addUserInfo(newUser);	
 		userFactory.store();

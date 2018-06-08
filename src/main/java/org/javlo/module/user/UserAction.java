@@ -38,6 +38,7 @@ import org.javlo.helper.JavaHelper;
 import org.javlo.helper.LangHelper;
 import org.javlo.helper.RequestParameterMap;
 import org.javlo.helper.ResourceHelper;
+import org.javlo.helper.SecurityHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.helper.XHTMLHelper;
@@ -305,10 +306,8 @@ public class UserAction extends AbstractModuleAction {
 			String pwd = user.getPassword();
 			try {
 				BeanHelper.copy(new RequestParameterMap(ctx.getRequest()), userInfo);
-				if (staticConfig.isPasswordEncryt()) {
-					if (!userInfo.getPassword().equals(pwd)) {
-						userInfo.setPassword(userInfo.encryptPassword(userInfo.getPassword()));
-					}
+				if (!userInfo.getPassword().equals(pwd)) {
+					userInfo.setPassword(SecurityHelper.encryptPassword(userInfo.getPassword()));
 				}
 				userFactory.updateUserInfo(userInfo);
 				Set<String> newRoles = new HashSet<String>();
@@ -391,7 +390,7 @@ public class UserAction extends AbstractModuleAction {
 		}
 
 		if (pwd1 != null) {
-			newUserInfo.setPassword(staticConfig.isPasswordEncryt(), pwd1);
+			newUserInfo.setPassword(SecurityHelper.encryptPassword(pwd1));
 		}
 
 		if (userContext.getCurrentRole() != null) {
@@ -518,7 +517,7 @@ public class UserAction extends AbstractModuleAction {
 						user = userFactory.getUserByEmail(userName);
 					}
 					IUserInfo ui = user.getUserInfo();
-					ui.setPassword(staticConfig.isPasswordEncryt(), pwd1);
+					ui.setPassword(SecurityHelper.encryptPassword(pwd1));
 					userFactory.updateUserInfo(ui);
 					userFactory.store();
 					userFactory.reload(globalContext, session);
@@ -543,16 +542,14 @@ public class UserAction extends AbstractModuleAction {
 		IUserFactory userFactory = userContext.getUserFactory(ctx);
 		User user = userFactory.getCurrentUser(globalContext, session);
 
-		if (staticConfig.isPasswordEncryt()) {
-			pwd = user.getUserInfo().encryptPassword(pwd);
-		}
+		pwd = StringHelper.encryptPassword(pwd);
 
 		if (user.getPassword().equals(pwd)) {
 			if (newPwd == null || newPwd.length() < 4) {
 				messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("user.message.password-to-short"), GenericMessage.ERROR));
 			} else {
 				IUserInfo ui = user.getUserInfo();
-				ui.setPassword(staticConfig.isPasswordEncryt(), newPwd);
+				ui.setPassword(SecurityHelper.encryptPassword(newPwd));
 				try {
 					userFactory.updateUserInfo(ui);
 					userFactory.store();
@@ -590,10 +587,8 @@ public class UserAction extends AbstractModuleAction {
 				IUserFactory userFactory = UserFactory.createUserFactory(ctx.getGlobalContext(), session);
 				User user = userFactory.getCurrentUser(globalContext, session);
 				IUserInfo ui = user.getUserInfo();
-				if (staticConfig.isPasswordEncryt()) {
-					newPwd = ui.encryptPassword(newPwd);
-				}
-				ui.setPassword(newPwd);
+				newPwd = SecurityHelper.encryptPassword(newPwd);
+				ui.setPassword(SecurityHelper.encryptPassword(newPwd));
 				userFactory.updateUserInfo(ui);
 				userFactory.store();
 				userFactory.reload(ctx.getGlobalContext(), session);

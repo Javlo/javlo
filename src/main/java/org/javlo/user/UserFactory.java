@@ -34,6 +34,7 @@ import org.javlo.helper.BeanHelper;
 import org.javlo.helper.JavaHelper;
 import org.javlo.helper.LocalLogger;
 import org.javlo.helper.ResourceHelper;
+import org.javlo.helper.SecurityHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.i18n.I18nAccess;
@@ -460,14 +461,12 @@ public class UserFactory implements IUserFactory, Serializable {
 		}
 
 		if (user != null) {
-			if (staticConfig.isPasswordEncryt()) {
-				if (user.getPassword() != null) {
-					passwordEqual = user.getPassword().equals(user.getUserInfo().encryptPassword(password));
-				}
-			} else {
-				if (user.getPassword() != null) {
-					passwordEqual = user.getPassword().equals(password);
-				}
+			if (user.getPassword() != null) {
+				passwordEqual = user.getPassword().equals(SecurityHelper.encryptPassword(password));
+				System.out.println(">>>>>>>>> UserFactory.login : password = "+password); //TODO: remove debug trace
+				System.out.println(">>>>>>>>> UserFactory.login : user.getPassword() = "+user.getPassword()); //TODO: remove debug trace
+				System.out.println(">>>>>>>>> UserFactory.login : SecurityHelper.encryptPassword(password) = "+SecurityHelper.encryptPassword(password)); //TODO: remove debug trace
+				System.out.println(">>>>>>>>> UserFactory.login : passwordEqual = "+passwordEqual); //TODO: remove debug trace
 			}
 		}
 

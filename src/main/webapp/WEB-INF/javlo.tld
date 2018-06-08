@@ -21,7 +21,7 @@
         <name>infoBean</name>
         <tag-class>org.javlo.tag.InfoBeanTag</tag-class>
         <body-content>empty</body-content>
-        <info>This Tag create info bean instance if not exists.</info>        
+        <info>This Tag create info bean instance if not exists.</info>
     </tag>
     <tag>
         <name>pageurl</name>

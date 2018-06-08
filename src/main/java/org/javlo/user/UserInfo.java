@@ -17,6 +17,7 @@ import java.util.Set;
 import javax.mail.internet.InternetAddress;
 
 import org.javlo.helper.LocalLogger;
+import org.javlo.helper.SecurityHelper;
 import org.javlo.helper.StringHelper;
 
 /**
@@ -37,7 +38,7 @@ public class UserInfo implements Comparable<IUserInfo>, IUserInfo, Serializable 
 	};
 
 	private String login = "";
-	private String encryptLogin = StringHelper.getRandomId();
+	private String encryptLogin = null;
 	private String password;
 	private String title = "";
 	private String url = "";
@@ -150,31 +151,24 @@ public class UserInfo implements Comparable<IUserInfo>, IUserInfo, Serializable 
 	 * @param string
 	 */
 	@Override
-	public void setLogin(String string) {
-		encryptLogin=""+login.hashCode();
-		login = string;
+	public void setLogin(String login) {
+		this.login = login;
+		encryptLogin=StringHelper.createFileName(login);
 	}
 	
 	@Override
 	public String encryptPassword(String pwd) {	
-		return StringHelper.encryptPassword(pwd);
-	}
-	
-	@Override
-	public void setPassword(boolean encrypt, String password) {
-		if (encrypt) {
-			password = encryptPassword(password);
-		}
-		setPassword(password);		
+		return SecurityHelper.encryptPassword(pwd);
 	}
 
 	/**
 	 * @param string
 	 */
 	@Override
-	public void setPassword(String string) {
-		password = string;
+	public void setPassword(String inPwd) {
+		password = inPwd;
 	}
+	
 
 	@Override
 	public String[] getPreferredLanguage() {

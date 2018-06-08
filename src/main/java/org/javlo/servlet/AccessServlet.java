@@ -74,6 +74,7 @@ import org.javlo.module.core.ModulesContext;
 import org.javlo.navigation.MenuElement;
 import org.javlo.portlet.filter.MultiReadRequestWrapper;
 import org.javlo.rendering.Device;
+import org.javlo.security.password.IPasswordEncryption;
 import org.javlo.service.ContentService;
 import org.javlo.service.ListService;
 import org.javlo.service.PDFConvertion;
@@ -210,6 +211,13 @@ public class AccessServlet extends HttpServlet implements IVersion {
 			PersistenceService.UNDO_DEPTH = undoDepth;
 		}
 		TimeTracker.reset(staticConfig);
+		
+		try {
+			SecurityHelper.passwordEncrypt = (IPasswordEncryption) Class.forName(staticConfig.getPasswordEncrytClass()).newInstance();
+		} catch (Exception e1) {
+			e1.printStackTrace();
+			throw new RuntimeException(e1.getMessage());
+		}
 
 		LocalLogger.SPECIAL_LOG_FILE = new File(staticConfig.getSpecialLogFile());
 

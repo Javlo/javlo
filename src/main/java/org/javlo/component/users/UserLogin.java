@@ -27,6 +27,7 @@ import org.javlo.helper.ComponentHelper;
 import org.javlo.helper.PatternHelper;
 import org.javlo.helper.RequestParameterMap;
 import org.javlo.helper.ResourceHelper;
+import org.javlo.helper.SecurityHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.helper.XHTMLHelper;
@@ -180,7 +181,7 @@ public class UserLogin extends AbstractPropertiesComponent implements IAction {
 		IUserInfo userInfo = new UserInfo();
 		userInfo.setLogin(login);
 		userInfo.setEmail(login);
-		userInfo.setPassword(ctx.getGlobalContext().getStaticConfig().isPasswordEncryt(), password);
+		userInfo.setPassword(SecurityHelper.encryptPassword(password));
 		userInfo.setRoles(StringHelper.stringToSet(comp.getFieldValue(ROLES)));
 		userFactory.addUserInfo(userInfo);
 		userFactory.store();

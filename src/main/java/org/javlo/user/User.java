@@ -6,10 +6,12 @@ package org.javlo.user;
 import java.io.Serializable;
 import java.security.Principal;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.javlo.helper.SecurityHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.utils.CollectionAsMap;
 
@@ -92,7 +94,7 @@ public class User implements Principal, Serializable {
 		return workingRoles.size() > 0;
 	}
 
-	public boolean validForRoles(Set<String> rolesSet) {
+	public boolean validForRoles(Collection<String> rolesSet) {
 		if (AdminUserSecurity.getInstance().isAdmin(this) || rolesSet.size() == 0) {
 			return true;
 		}
@@ -141,10 +143,8 @@ public class User implements Principal, Serializable {
 		this.context = context;
 	}
 	
-	public boolean isRightPassword(String pwd, boolean encrypt) {
-		if (encrypt) {
-			pwd = getUserInfo().encryptPassword(pwd);
-		}
+	public boolean isRightPassword(String pwd) {
+		pwd = SecurityHelper.encryptPassword(pwd);
 		return getPassword().equals(pwd);
 	}
 

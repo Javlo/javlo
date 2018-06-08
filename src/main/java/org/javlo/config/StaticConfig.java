@@ -38,6 +38,7 @@ import org.javlo.helper.ElementaryURLHelper;
 import org.javlo.helper.NetHelper;
 import org.javlo.helper.PatternHelper;
 import org.javlo.helper.ResourceHelper;
+import org.javlo.helper.SecurityHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.macro.core.IMacro;
@@ -1343,8 +1344,8 @@ public class StaticConfig extends Observable {
 		return StringHelper.isTrue(properties.getString("noctification-dynamic-component.thread"), false);
 	}
 
-	public boolean isPasswordEncryt() {
-		return properties.getBoolean("security.encrypt-password", true);
+	public String getPasswordEncrytClass() {
+		return properties.getString("security.encrypt-password.class", "org.javlo.security.password.SHAEncryt");
 	}
 
 	public boolean isFirstPasswordMustBeChanged() {
@@ -1361,11 +1362,7 @@ public class StaticConfig extends Observable {
 
 	public String getFirstPasswordEncryptedIfNeeded() {
 		if (encryptedFirstPassword == null) {
-			if (isPasswordEncryt()) {
-				encryptedFirstPassword = StringHelper.encryptPassword(getFirstPassword());
-			} else {
-				encryptedFirstPassword = getFirstPassword();
-			}
+			encryptedFirstPassword = SecurityHelper.encryptPassword(encryptedFirstPassword);
 		}
 		return encryptedFirstPassword;
 	}

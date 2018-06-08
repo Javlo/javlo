@@ -10,6 +10,7 @@ import javax.servlet.http.HttpSession;
 
 import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
+import org.javlo.helper.SecurityHelper;
 import org.javlo.user.exception.UserAllreadyExistException;
 
 public class HardUserFactory extends AdminUserFactory {
@@ -23,7 +24,7 @@ public class HardUserFactory extends AdminUserFactory {
 		ui.setId("test1");
 		ui.setLogin("test1");
 		ui.setEmail("test1@noctis.be");
-		ui.setPassword("test1");
+		ui.setPassword(SecurityHelper.encryptPassword("test1"));
 		ui.setRoles(new HashSet<String>());
 		ui.setPreferredLanguageRaw("fr");
 		userInfoList.add(ui);
@@ -31,7 +32,7 @@ public class HardUserFactory extends AdminUserFactory {
 		ui.setId("test2");
 		ui.setLogin("test2");
 		ui.setEmail("test2@noctis.be");
-		ui.setPassword("test2");
+		ui.setPassword(SecurityHelper.encryptPassword("test2"));
 		ui.setRoles(new HashSet<String>());
 		ui.setPreferredLanguageRaw("fr");
 		userInfoList.add(ui);

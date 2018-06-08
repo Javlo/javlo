@@ -7,6 +7,7 @@ import java.util.logging.Logger;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.navigation.MenuElement;
+import org.javlo.security.password.IPasswordEncryption;
 import org.javlo.user.AdminUserSecurity;
 import org.javlo.user.User;
 import org.javlo.user.UserFactory;
@@ -14,6 +15,8 @@ import org.javlo.user.UserFactory;
 public class SecurityHelper {
 
 	private static Logger logger = Logger.getLogger(SecurityHelper.class.getName());
+	
+	public static IPasswordEncryption passwordEncrypt = null;
 
 	public static boolean userAccessPage(ContentContext ctx, User user, MenuElement page) {
 		if (AdminUserSecurity.getInstance().isAdmin(user)) {
@@ -45,6 +48,10 @@ public class SecurityHelper {
 			}
 		}
 		return true;
+	}
+	
+	public static final String encryptPassword(String pwd) {
+		return passwordEncrypt.encrypt(pwd);
 	}
 
 }

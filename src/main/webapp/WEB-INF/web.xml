@@ -392,6 +392,16 @@
 		<servlet-name>ServletWrapper</servlet-name>
 		<url-pattern>/wrapper/*</url-pattern>
 	</servlet-mapping>
+	
+	<servlet>
+	<servlet-name>H2Console</servlet-name>
+		<servlet-class>org.h2.server.web.WebServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>H2Console</servlet-name>
+		<url-pattern>/h2console/*</url-pattern>
+	</servlet-mapping>
 
 
 	<!-- <security-constraint> <web-resource-collection> <web-resource-name>Javlo 

@@ -29,7 +29,7 @@ public class EncryptPasswordComponent extends AbstractMacro {
 		IUserFactory adminUserFactory = AdminUserFactory.createUserFactory(globalContext, ctx.getRequest().getSession());
 		Collection<IUserInfo> allUserInfo = adminUserFactory.getUserInfoList();
 		for (IUserInfo iUserInfo : allUserInfo) {
-			iUserInfo.setPassword(iUserInfo.encryptPassword(iUserInfo.getPassword()));
+			iUserInfo.setPassword(iUserInfo.getPassword());
 		}
 		adminUserFactory.store();
 

@@ -33,6 +33,7 @@ import org.javlo.helper.NetHelper;
 import org.javlo.helper.PatternHelper;
 import org.javlo.helper.RequestParameterMap;
 import org.javlo.helper.ResourceHelper;
+import org.javlo.helper.SecurityHelper;
 import org.javlo.helper.ServletHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
@@ -268,9 +269,9 @@ public class UserRegistration extends MapComponent implements IAction {
 				userInfo.setLogin(emailLogin);
 				userInfo.setEmail(emailLogin);
 			}
-			if (globalContext.getStaticConfig().isPasswordEncryt()) {
-				userInfo.setPassword(userInfo.encryptPassword(userInfo.getPassword()));
-			}
+
+			userInfo.setPassword(userInfo.getPassword());
+
 			userInfo.addRoles(new HashSet<String>(comp.getFieldList(FIELD_SELECTED_ROLES)));
 			userFactory.addUserInfo(userInfo);
 			userFactory.store();
@@ -338,15 +339,14 @@ public class UserRegistration extends MapComponent implements IAction {
 					return i18nAccess.getViewText("user.message.bad-password-key");
 				}
 			} else {
-				if (!ctx.getCurrentUser().isRightPassword(rs.getParameter("password", null), globalContext.getStaticConfig().isPasswordEncryt())) {
+				if (!ctx.getCurrentUser().isRightPassword(rs.getParameter("password", null))) {
 					return i18nAccess.getViewText("user.message.bad-password");
 				}
 				userInfo = ctx.getCurrentUser().getUserInfo();
 			}
-			if (globalContext.getStaticConfig().isPasswordEncryt()) {
-				password = userInfo.encryptPassword(password2);
-			}
-			userInfo.setPassword(password);
+			password = SecurityHelper.encryptPassword(password2);
+
+			userInfo.setPassword(SecurityHelper.encryptPassword(password));
 			userFactory.store();
 			messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getViewText("registration.message.password_changed", "Password changed."), GenericMessage.INFO));
 		}
