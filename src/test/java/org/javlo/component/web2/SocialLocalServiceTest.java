@@ -2,6 +2,7 @@ package org.javlo.component.web2;
 
 import java.util.Collection;
 
+import org.javlo.social.SocialFilter;
 import org.javlo.social.SocialLocalService;
 import org.javlo.social.bean.Post;
 
@@ -13,6 +14,9 @@ public class SocialLocalServiceTest extends TestCase {
 	private static final String AUTHOR_2 = "test_case_2";
 	private static final String AUTHOR_3 = "test_case_3";
 	private static final int POST_SIZE = 5;
+	
+	private static final String GROUP1 = "group1";
+	private static final String GROUP2 = "group2";
 
 	
 	public void testCreatePost() throws Exception {
@@ -21,14 +25,40 @@ public class SocialLocalServiceTest extends TestCase {
 			Post post = new Post();
 			post.setAuthor(AUTHOR_1);
 			post.setText("hello word - "+i);
+			post.setGroup(GROUP1);
 			socialService.createPost(post);
 		}
-		Collection<Post> posts = socialService.getPost();
+		SocialFilter filter = new SocialFilter();
+		Collection<Post> posts = socialService.getPost(filter, AUTHOR_1, GROUP1, 30, 0);
 		assertTrue(posts.size()>0);
+		
+		for (int i=1; i<=POST_SIZE-1; i++) {
+			Post post = new Post();
+			post.setAuthor(AUTHOR_2);
+			post.setText("hello word - "+i);
+			post.setGroup(GROUP2);
+			socialService.createPost(post);
+		}
+		Collection<Post> posts2 = socialService.getPost(filter, AUTHOR_2, GROUP2, 30, 0);
+		assertTrue(posts2.size()==POST_SIZE-1);
+		
 		Post post = posts.iterator().next();
 		assertEquals(post.getAuthor(), AUTHOR_1);
  		assertNotNull(post.getCreationDate());
+ 		
+ 		/** test filter ***/
+ 		filter.setQuery("word - 2");
+ 		Collection<Post> postsFilterd = socialService.getPost(filter, AUTHOR_2, GROUP1, 30, 0);
+ 		System.out.println(">>>>>>>>> SocialLocalServiceTest.testCreatePost : postsFilterd.size() = "+postsFilterd.size()); //TODO: remove debug trace
+ 		assertTrue(postsFilterd.size()==1);
+ 		filter.setOnlyMine(true);
+ 		postsFilterd = socialService.getPost(filter, AUTHOR_2, GROUP1, 30, 0);
+ 		assertTrue(postsFilterd.size()==0);
+ 		
  		for (Post delPost : posts) {
+ 			socialService.deletePost(delPost.getAuthor(), delPost.getId());
+		}
+ 		for (Post delPost : posts2) {
  			socialService.deletePost(delPost.getAuthor(), delPost.getId());
 		}
 	}
@@ -38,10 +68,11 @@ public class SocialLocalServiceTest extends TestCase {
 		for (int i=1; i<=POST_SIZE; i++) {
 			Post post = new Post();
 			post.setAuthor(AUTHOR_1);
+			post.setGroup(GROUP1);
 			post.setText("hello word - "+i);
 			socialService.createPost(post);
 		}
-		Collection<Post> posts = socialService.getPost(AUTHOR_1);
+		Collection<Post> posts = socialService.getPostByAuthor(GROUP1, AUTHOR_1);
 		assertTrue(posts.size()>0);
 		Post post = posts.iterator().next();
 		assertEquals(post.getAuthor(), AUTHOR_1);
@@ -88,24 +119,24 @@ public class SocialLocalServiceTest extends TestCase {
 		for (int i=1; i<=POST_SIZE; i++) {
 			Post post = new Post();
 			post.setAuthor(AUTHOR_1);
+			post.setGroup(GROUP1);
 			post.setText("hello word - "+i);
 			socialService.createPost(post);
 			Post reply = new Post();
-			reply.setAuthor(AUTHOR_2);
+			reply.setAuthor(AUTHOR_1);
+			reply.setGroup(GROUP2);
 			reply.setText("re: hello word - "+i);
 			reply.setParent(post.getId());
 			socialService.createPost(reply);
 		}
-		Collection<Post> posts = socialService.getPost(AUTHOR_1);
+		Collection<Post> posts = socialService.getPost(GROUP1);
 		assertTrue(posts.size()>0);
-		int saveSize1 = socialService.getPost(AUTHOR_1).size();
-		int saveSize2 = socialService.getPost(AUTHOR_2).size();
+		int saveSize1 = socialService.getPost(GROUP1).size();
+		int saveSize2 = socialService.getPost(GROUP2).size();
 		assertTrue(saveSize1>0);
 		assertTrue(saveSize2>0);
 		socialService.deletePost(AUTHOR_1, posts.iterator().next().getId());
 		// check if post is removed
-		assertEquals(saveSize1-1, socialService.getPost(AUTHOR_1).size());
-		// check if the replies of the post is removed
-		assertEquals(saveSize2-1, socialService.getPost(AUTHOR_2).size());
+		assertEquals(saveSize1-1, socialService.getPost(GROUP1).size());
 	}
 }

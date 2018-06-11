@@ -12,6 +12,7 @@ import org.javlo.context.ContentContext;
 import org.javlo.helper.ComponentHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.service.RequestService;
+import org.javlo.social.SocialFilter;
 import org.javlo.social.SocialLocalService;
 import org.javlo.social.bean.Post;
 import org.javlo.user.User;
@@ -39,20 +40,25 @@ public class Wall extends AbstractPropertiesComponent implements IAction {
 	public String getFontAwesome() {
 		return "comments-o";
 	}
+	
+	private String getWallName() {
+		return getFieldValue("name");
+	}
 
 	@Override
 	public void prepareView(ContentContext ctx) throws Exception {
 		super.prepareView(ctx);
+		SocialFilter.getInstance(ctx.getRequest().getSession());
 		User currentUser = ctx.getCurrentUser();
 		if (currentUser == null) {
 			ctx.getRequest().setAttribute("access", false);
 		} else {
 			SocialLocalService socialService = SocialLocalService.getInstance(ctx.getGlobalContext());
 			ctx.getRequest().setAttribute("pageSize", PAGE_SIZE);			
-			float pageCountFloat = ((float)socialService.getPostListSize()/(float)PAGE_SIZE);
+			float pageCountFloat = ((float)socialService.getPostListSize(getWallName())/(float)PAGE_SIZE);
 			int pageCount = Math.round(pageCountFloat);
-			if (pageCountFloat == pageCount) {
-				pageCount--;
+			if (pageCountFloat > pageCount) {
+				pageCount++;
 			}
 			ctx.getRequest().setAttribute("pageCount", pageCount);
 			List<String> roles = StringHelper.stringToCollection(getFieldValue("roles"));
@@ -77,7 +83,7 @@ public class Wall extends AbstractPropertiesComponent implements IAction {
 			Wall comp = (Wall)ComponentHelper.getComponentFromRequest(ctx);
 			SocialLocalService socialService = SocialLocalService.getInstance(ctx.getGlobalContext());
 			Post post = new Post();
-			post.setGroup(comp.getFieldValue("name"));
+			post.setGroup(comp.getWallName());
 			post.setAuthor(ctx.getCurrentUserId());
 			post.setText(text);
 			if (rs.getParameter("parent") != null) {
@@ -106,21 +112,21 @@ public class Wall extends AbstractPropertiesComponent implements IAction {
 		Map<String, Object> outMap = new HashMap<String, Object>();
 		String masterPost = rs.getParameter("master");
 		if (masterPost == null) {
-			int pageNumber = Integer.parseInt(rs.getParameter("page"));
-			outMap.put("posts", socialService.getPost(PAGE_SIZE, pageNumber*PAGE_SIZE));
+			Wall comp = (Wall)ComponentHelper.getComponentFromRequest(ctx);
+			int pageNumber = Integer.parseInt(rs.getParameter("page", "1"));
+			outMap.put("posts", socialService.getPost(SocialFilter.getInstance(ctx.getRequest().getSession()), ctx.getCurrentUser().getLogin(), comp.getWallName(), PAGE_SIZE, (pageNumber-1)*PAGE_SIZE));
 		} else {
 			outMap.put("posts", socialService.getReplies(Long.parseLong(masterPost)));
 		}
 		ctx.setSpecificJson(JSONMap.JSON.toJson(outMap));
 		return null;
 	}
-
-	public static String performGetreplies(ContentContext ctx, RequestService rs) throws Exception {
-		SocialLocalService socialService = SocialLocalService.getInstance(ctx.getGlobalContext());
-		Map<String, Object> outMap = new HashMap<String, Object>();
-		outMap.put("posts", socialService.getPost(ctx.getCurrentUserId()));
-		ctx.setSpecificJson(JSONMap.JSON.toJson(outMap));
-		return null;
+	
+	public static String performUpdatefilter(ContentContext ctx, RequestService rs) throws Exception {
+		SocialFilter socialFilter = SocialFilter.getInstance(ctx.getRequest().getSession());
+		socialFilter.setQuery(rs.getParameter("text-filter",null));
+		socialFilter.setOnlyMine(StringHelper.isTrue(rs.getParameter("filter-mine", null)));
+		return performGetpost(ctx, rs);
 	}
 
 	@Override
@@ -133,3 +139,4 @@ public class Wall extends AbstractPropertiesComponent implements IAction {
 		return FIELDS;
 	}
 }
+

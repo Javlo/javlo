@@ -1,6 +1,7 @@
 package org.javlo.service.database;
 
 import java.io.File;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.Driver;
 import java.sql.DriverManager;
@@ -8,6 +9,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.logging.Logger;
 
+import org.apache.commons.io.FileUtils;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.URLHelper;
 
@@ -28,7 +30,15 @@ public class DataBaseService {
 			if (globalContext != null) {
 				outService.dbFolder = new File(URLHelper.mergePath(globalContext.getDataBaseFolder().getAbsolutePath(), "h2"));
 			} else {
-				outService.dbFolder = new File("/tmp/test_javlo_h2");
+				File dir = new File("/tmp/test_javlo_h2");
+				if (dir.exists()) {
+					try {
+						FileUtils.deleteDirectory(dir);
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+				outService.dbFolder = dir;
 			}
 			if (globalContext != null) {
 				globalContext.setAttribute(KEY, outService);

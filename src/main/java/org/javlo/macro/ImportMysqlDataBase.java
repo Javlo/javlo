@@ -45,6 +45,7 @@ public class ImportMysqlDataBase extends AbstractMacro {
 				cal.setTimeInMillis(time * 1000);
 				
 				Post post = new Post();
+				post.setGroup("cps");
 				try {
 					long id = rs.getLong("message_id");
 					long thread = rs.getLong("thread");
@@ -63,6 +64,7 @@ public class ImportMysqlDataBase extends AbstractMacro {
 					}
 					out.println(rs.getString("body"));
 					out.close();
+					
 					post.setText(new String(outStream.toByteArray()));
 					post.setCreationDate(cal.getTime());
 					createdPost.put(post.getId(), post);

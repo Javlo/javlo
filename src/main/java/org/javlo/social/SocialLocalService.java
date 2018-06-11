@@ -53,11 +53,11 @@ public class SocialLocalService {
 		dataBaseService.releaseConnection(conn);
 	}
 
-	public List<Post> getPost(String author) throws Exception {
+	public List<Post> getPostByAuthor(String group, String author) throws Exception {
 		List<Post> outPost = new LinkedList<Post>();
 		Connection conn = dataBaseService.getConnection(DATABASE_NAME);
 		try {
-			ResultSet rs = conn.createStatement().executeQuery("select * from post where author='" + author + "' and mainPost is null order by time asc");
+			ResultSet rs = conn.createStatement().executeQuery("select * from post where groupname='"+group+"' and author='" + author + "' and mainPost is null order by time asc");
 			while (rs.next()) {
 				outPost.add(rsToPost(rs));
 			}
@@ -67,10 +67,10 @@ public class SocialLocalService {
 		return outPost;
 	}
 	
-	public long getPostListSize() throws Exception {
+	public long getPostListSize(String group) throws Exception {
 		Connection conn = dataBaseService.getConnection(DATABASE_NAME);
 		try {
-			ResultSet rs = conn.createStatement().executeQuery("select count(id) from post where mainPost is null");
+			ResultSet rs = conn.createStatement().executeQuery("select count(id) from post where groupname='"+group+"' and mainPost is null");
 			if (rs.next()) {
 				return rs.getLong(1);
 			}
@@ -80,11 +80,11 @@ public class SocialLocalService {
 		return -1;
 	}
 	
-	public List<Post> getPost() throws Exception {
+	private List<Post> getPost(String group) throws Exception {
 		List<Post> outPost = new LinkedList<Post>();
 		Connection conn = dataBaseService.getConnection(DATABASE_NAME);
 		try {
-			ResultSet rs = conn.createStatement().executeQuery("select * from post where mainPost is null order by time desc");
+			ResultSet rs = conn.createStatement().executeQuery("select * from post where groupname='"+group+"' and mainPost is null order by time desc");
 			while (rs.next()) {
 				outPost.add(rsToPost(rs));
 			}
@@ -94,11 +94,25 @@ public class SocialLocalService {
 		return outPost;
 	}
 	
-	public List<Post> getPost(int size, int index) throws Exception {
+	public List<Post> getPost(SocialFilter socialFilter, String username, String group, int size, int index) throws Exception {
 		List<Post> outPost = new LinkedList<Post>();
 		Connection conn = dataBaseService.getConnection(DATABASE_NAME);
 		try {
-			ResultSet rs = conn.createStatement().executeQuery("select * from post where mainPost is null order by time desc limit "+size+" offset "+index);
+			String filterSQL = "";
+			String sep = "";
+			if (socialFilter.isOnlyMine()) {
+				filterSQL = filterSQL + sep + "author='"+username+"'";
+				sep = " and ";
+			}
+			if (!StringHelper.isEmpty(socialFilter.getQuery())) {
+				filterSQL = filterSQL + sep + "text like '%"+socialFilter.getQuery()+"%'";
+				sep = " and ";
+			}
+			if (!StringHelper.isEmpty(filterSQL)) {
+				filterSQL = " and "+filterSQL;
+			}
+			String sql = "select * from post where groupname='"+group+"' and mainPost is null"+filterSQL+" order by time desc limit "+size+" offset "+index;
+			ResultSet rs = conn.createStatement().executeQuery(sql);
 			while (rs.next()) {
 				outPost.add(rsToPost(rs));
 			}
