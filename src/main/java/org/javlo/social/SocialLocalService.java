@@ -80,7 +80,7 @@ public class SocialLocalService {
 		return -1;
 	}
 	
-	private List<Post> getPost(String group) throws Exception {
+	public List<Post> getPost(String group) throws Exception {
 		List<Post> outPost = new LinkedList<Post>();
 		Connection conn = dataBaseService.getConnection(DATABASE_NAME);
 		try {
