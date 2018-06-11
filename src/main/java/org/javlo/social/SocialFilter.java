@@ -2,6 +2,8 @@ package org.javlo.social;
 
 import javax.servlet.http.HttpSession;
 
+import org.javlo.helper.StringHelper;
+
 public class SocialFilter {
 	
 	private String query;
@@ -16,6 +18,10 @@ public class SocialFilter {
 			session.setAttribute(KEY, instance);
 		}
 		return instance;
+	}
+	
+	public boolean isFilterEmpty() {
+		return StringHelper.isEmpty(query) && !onlyMine;
 	}
 
 	public String getQuery() {
@@ -32,6 +38,11 @@ public class SocialFilter {
 
 	public void setOnlyMine(boolean onlyMine) {
 		this.onlyMine = onlyMine;
+	}
+
+	public void reset() {
+		query = null;
+		onlyMine = false;
 	}
 
 }

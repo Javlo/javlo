@@ -54,13 +54,15 @@ public class Wall extends AbstractPropertiesComponent implements IAction {
 			ctx.getRequest().setAttribute("access", false);
 		} else {
 			SocialLocalService socialService = SocialLocalService.getInstance(ctx.getGlobalContext());
-			ctx.getRequest().setAttribute("pageSize", PAGE_SIZE);			
-			float pageCountFloat = ((float)socialService.getPostListSize(getWallName())/(float)PAGE_SIZE);
+			ctx.getRequest().setAttribute("pageSize", PAGE_SIZE);
+			long countResult = socialService.getPostListSize(SocialFilter.getInstance(ctx.getRequest().getSession()), ctx.getCurrentUserId(), getWallName());
+			float pageCountFloat = ((float)countResult/(float)PAGE_SIZE);
 			int pageCount = Math.round(pageCountFloat);
 			if (pageCountFloat > pageCount) {
 				pageCount++;
 			}
 			ctx.getRequest().setAttribute("pageCount", pageCount);
+			ctx.getRequest().setAttribute("countResult", countResult);
 			List<String> roles = StringHelper.stringToCollection(getFieldValue("roles"));
 			if (!currentUser.validForRoles(roles)) {
 				ctx.getRequest().setAttribute("access", false);
@@ -114,7 +116,7 @@ public class Wall extends AbstractPropertiesComponent implements IAction {
 		if (masterPost == null) {
 			Wall comp = (Wall)ComponentHelper.getComponentFromRequest(ctx);
 			int pageNumber = Integer.parseInt(rs.getParameter("page", "1"));
-			outMap.put("posts", socialService.getPost(SocialFilter.getInstance(ctx.getRequest().getSession()), ctx.getCurrentUser().getLogin(), comp.getWallName(), PAGE_SIZE, (pageNumber-1)*PAGE_SIZE));
+			outMap.put("posts", socialService.getPost(SocialFilter.getInstance(ctx.getRequest().getSession()), ctx.getCurrentUserId(), comp.getWallName(), PAGE_SIZE, (pageNumber-1)*PAGE_SIZE));
 		} else {
 			outMap.put("posts", socialService.getReplies(Long.parseLong(masterPost)));
 		}
@@ -124,9 +126,13 @@ public class Wall extends AbstractPropertiesComponent implements IAction {
 	
 	public static String performUpdatefilter(ContentContext ctx, RequestService rs) throws Exception {
 		SocialFilter socialFilter = SocialFilter.getInstance(ctx.getRequest().getSession());
-		socialFilter.setQuery(rs.getParameter("text-filter",null));
-		socialFilter.setOnlyMine(StringHelper.isTrue(rs.getParameter("filter-mine", null)));
-		return performGetpost(ctx, rs);
+		if (StringHelper.isTrue(rs.getParameter("reset"))) {
+			socialFilter.reset();
+		} else {			
+			socialFilter.setQuery(rs.getParameter("text-filter",null));
+			socialFilter.setOnlyMine(StringHelper.isTrue(rs.getParameter("filter-mine", null)));
+		}
+		return null;
 	}
 
 	@Override
