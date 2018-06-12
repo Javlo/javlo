@@ -29,7 +29,6 @@ public class ConvertUserForComansys extends AbstractMacro {
 
 	@Override
 	public String perform(ContentContext ctx, Map<String, Object> params) throws Exception {
-		HttpServletResponse response = ctx.getResponse();
 		String fileName = "users_to_comansys.xlsx";
 
 		File exportedFile = new File(URLHelper.mergePath(ctx.getGlobalContext().getStaticFolder(), EXPORT_FOLDER, fileName));
@@ -116,7 +115,7 @@ public class ConvertUserForComansys extends AbstractMacro {
 			arrays[j][firstname].setValue(user.getFirstName());
 			arrays[j][email].setValue(user.getEmail());
 			arrays[j][tags].setValue(StringHelper.collectionToString(user.getRoles(), ","));
-			arrays[j][notes].setValue(StringHelper.renderDate(user.getCreationDate()));
+			arrays[j][notes].setValue("Creation date:"+StringHelper.renderDate(user.getCreationDate()));
 			j++;
 		}
 

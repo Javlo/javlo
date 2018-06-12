@@ -463,10 +463,6 @@ public class UserFactory implements IUserFactory, Serializable {
 		if (user != null) {
 			if (user.getPassword() != null) {
 				passwordEqual = user.getPassword().equals(SecurityHelper.encryptPassword(password));
-				System.out.println(">>>>>>>>> UserFactory.login : password = "+password); //TODO: remove debug trace
-				System.out.println(">>>>>>>>> UserFactory.login : user.getPassword() = "+user.getPassword()); //TODO: remove debug trace
-				System.out.println(">>>>>>>>> UserFactory.login : SecurityHelper.encryptPassword(password) = "+SecurityHelper.encryptPassword(password)); //TODO: remove debug trace
-				System.out.println(">>>>>>>>> UserFactory.login : passwordEqual = "+passwordEqual); //TODO: remove debug trace
 			}
 		}
 
