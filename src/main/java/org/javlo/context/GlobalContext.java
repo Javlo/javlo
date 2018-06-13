@@ -3732,6 +3732,9 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	 */
 	public String getTransformShortURL(String shortURL) {
 		shortURL = URLHelper.removeParam(shortURL);
+		if (shortURL.startsWith("/")) {
+			shortURL = shortURL.substring(1);
+		}
 		return getData(TRANSFORM_LONG_KEY_PREFIX + shortURL);
 	}
 

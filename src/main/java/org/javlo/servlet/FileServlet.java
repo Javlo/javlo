@@ -91,12 +91,17 @@ public class FileServlet extends HttpServlet {
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
         }
+        
+        GlobalContext globalContext = GlobalContext.getInstance(request);
 
         // URL-decode the file name (might contain spaces and on) and prepare file object.
         if (file == null) {
-        	GlobalContext globalContext = GlobalContext.getInstance(request);
-        	String localBasePath = globalContext.getDataFolder();
-        	file = new File(localBasePath, URLDecoder.decode(requestedFile, "UTF-8"));
+        	file = new File(globalContext.getDataFolder(), URLDecoder.decode(requestedFile, "UTF-8"));
+        }
+        
+        if (!file.exists()) {        	
+        	String finalFile = globalContext.getTransformShortURL(requestedFile);
+        	file = new File(globalContext.getDataFolder(), finalFile);
         }
 
         // Check if file actually exists in filesystem.

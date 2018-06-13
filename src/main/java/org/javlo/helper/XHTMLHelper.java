@@ -2770,7 +2770,7 @@ public class XHTMLHelper {
 			isPreview=true;
 		}
 		if (!StringHelper.isEmpty(info.getDescription(lgCtx))) {
-			out.println("<span class=\"descritpion "+(isPreview?"not-first-item":"first-item")+"\">" + info.getDescription(lgCtx) + "</span>");
+			out.println("<span class=\"description "+(isPreview?"not-first-item":"first-item")+"\">" + info.getDescription(lgCtx) + "</span>");
 			isPreview=true;
 		}
 		if (!StringHelper.isEmpty(info.getLocation(lgCtx))) {

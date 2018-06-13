@@ -6,7 +6,7 @@
         java.util.Map,
         java.util.Stack,
         org.javlo.i18n.I18nAccess,
-        org.javlo.helper.StringHelper,        
+        org.javlo.helper.StringHelper,
         org.javlo.context.ContentContext,
         org.javlo.context.EditContext,
         org.javlo.context.ContentManager,
@@ -27,7 +27,7 @@
 		org.javlo.user.UserFactory,
 		org.javlo.user.IUserFactory,
 		org.javlo.user.AdminUserSecurity,
-		org.javlo.component.core.ComponentBean,				
+		org.javlo.component.core.ComponentBean,
 		org.javlo.helper.URLHelper,
 		org.javlo.helper.LocalLogger"
 %><%

@@ -119,6 +119,8 @@ public class ContentContext {
 	
 	private Boolean contentStatic = null;
 	
+	private Boolean onlyArea = null;
+	
 	private boolean stopRendering = false;
 
 	private static ContentContext createContentContext(HttpServletRequest request, HttpServletResponse response, boolean free) {
@@ -2170,4 +2172,10 @@ public class ContentContext {
 		this.stopRendering = stopRendering;
 	}
 
+	public boolean isOnlyArea() {
+		if (onlyArea == null) {
+			onlyArea = request.getParameter("only-area") != null;
+		}
+		return onlyArea;
+	}
 }
