@@ -153,21 +153,23 @@ public class UserLogin extends AbstractPropertiesComponent implements IAction {
 
 	public static String performLogin(RequestService rs, GlobalContext globalContext, ContentContext ctx, HttpServletRequest request, HttpSession session, MessageRepository messageRepository, I18nAccess i18nAccess) {
 		IUserFactory uf = UserFactory.createUserFactory(globalContext, session);
-		if (uf.login(request, rs.getParameter("email", null), rs.getParameter("password", "")) == null) {
+		if (uf.login(request, rs.getParameter("login", rs.getParameter("email", null)), rs.getParameter("password", "")) == null) {
 			return i18nAccess.getViewText("user.error.login");
 		}
 		return null;
 	}
 
 	public static String performRegister(RequestService rs, ContentContext ctx, HttpSession session, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
-		String login = rs.getParameter("email", "").trim();
+		String login = rs.getParameter("login", rs.getParameter("email", "").trim()).trim();
 		IUserFactory userFactory = UserFactory.createUserFactory(ctx.getGlobalContext(), session);
 		String password = rs.getParameter("password", "").trim();
 		String password2 = rs.getParameter("passwordbis", "").trim();
 		ctx.getRequest().setAttribute("userInfoMap", new RequestParameterMap(ctx.getRequest()));
+		
+		String email = rs.getParameter("email", null);
 
-		if (!PatternHelper.MAIL_PATTERN.matcher(login).matches()) {
-			return i18nAccess.getViewText("registration.error.password_size", "Please enter a valid email.");
+		if (email != null && !PatternHelper.MAIL_PATTERN.matcher(email).matches()) {
+			return i18nAccess.getViewText("registration.error.email", "Please enter a valid email.");
 		} else if (userFactory.getUser(login) != null) {
 			return i18nAccess.getViewText("registration.error.login_allreadyexist", "user already exists : ") + login;
 		} else if (!password.equals(password2)) {
@@ -179,7 +181,13 @@ public class UserLogin extends AbstractPropertiesComponent implements IAction {
 		UserLogin comp = (UserLogin) ComponentHelper.getComponentFromRequest(ctx);
 		IUserInfo userInfo = new UserInfo();
 		userInfo.setLogin(login);
-		userInfo.setEmail(login);
+		if (email != null) {
+			userInfo.setEmail(email);
+		} else {
+			if (PatternHelper.MAIL_PATTERN.matcher(login).matches()) {
+				userInfo.setEmail(login);
+			}
+		}
 		userInfo.setPassword(SecurityHelper.encryptPassword(password));
 		userInfo.setRoles(StringHelper.stringToSet(comp.getFieldValue(ROLES)));
 		userFactory.addUserInfo(userInfo);
