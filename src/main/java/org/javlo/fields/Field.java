@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.logging.Logger;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
 import org.javlo.component.core.IContentVisualComponent;
@@ -1269,5 +1270,9 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 			setValue(newValue);
 			return translated;
 		}
+	}
+	
+	public static void main(String[] args) {
+		System.out.println(">>>>>>>>> Field.main : "+Pattern.matches("[A-Z]*", "COUCOU")); //TODO: remove debug trace
 	}
 }

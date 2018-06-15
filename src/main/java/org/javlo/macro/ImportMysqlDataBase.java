@@ -6,13 +6,19 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 
 import org.javlo.context.ContentContext;
 import org.javlo.service.database.DataBaseService;
 import org.javlo.social.SocialLocalService;
 import org.javlo.social.bean.Post;
+import org.javlo.user.IUserFactory;
+import org.javlo.user.IUserInfo;
+import org.javlo.user.UserFactory;
+import org.javlo.user.UserInfo;
 import org.python.icu.util.Calendar;
 
 public class ImportMysqlDataBase extends AbstractMacro {
@@ -59,14 +65,13 @@ public class ImportMysqlDataBase extends AbstractMacro {
 					post.setAuthor(rs.getString("author"));
 					ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 					PrintStream out = new PrintStream(outStream);
-					if (post.getMainPost() == null) {
-						out.println(rs.getString("subject"));
-					}
+					post.setTitle(rs.getString("subject"));
 					out.println(rs.getString("body"));
 					out.close();
 					
 					post.setText(new String(outStream.toByteArray()));
 					post.setCreationDate(cal.getTime());
+					post.setAdminValided(rs.getInt("status") == 2);
 					createdPost.put(post.getId(), post);
 					if (post.getParent() != null && createdPost.get(post.getParent()) == null) {
 						System.out.println("parent not found  : "+post.getParent());
@@ -89,6 +94,21 @@ public class ImportMysqlDataBase extends AbstractMacro {
 					System.out.println("x > post error : "+post.getId()+" >>> "+e.getMessage());
 					error++;
 				}
+			}
+			
+			
+			IUserFactory userFactory = UserFactory.createUserFactory(ctx.getRequest());
+			for (IUserInfo userInfo : userFactory.getUserInfoList()) {
+				userFactory.deleteUser(userInfo.getLogin());
+			}
+			rs = st.executeQuery("select * from phorum_users");
+			while (rs.next()) {
+				IUserInfo userInfo = new UserInfo();
+				userInfo.setLogin(rs.getString("username"));
+				userInfo.setPassword(rs.getString("password"));
+				userInfo.setEmail(rs.getString("email"));
+				userInfo.setRoles(new HashSet<String>(Arrays.asList(new String[] {"forum"})));
+				userFactory.addUserInfo(userInfo);
 			}
 			mysqlConn.close();
 		} catch (Exception ex) {

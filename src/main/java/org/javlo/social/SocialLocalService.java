@@ -47,7 +47,7 @@ public class SocialLocalService {
 		Connection conn = dataBaseService.getConnection(DATABASE_NAME);
 		Statement st = conn.createStatement();
 		try {
-			st.execute("create table post (id bigint auto_increment PRIMARY KEY, groupName varchar(50), author varchar(50), text varchar(MAX), adminValid BOOLEAN DEFAULT TRUE, adminCheck BOOLEAN DEFAULT FALSE, adminMessage varchar(500), media varchar(255), parent int REFERENCES post(id), mainPost int REFERENCES post(id), time TIMESTAMP)");
+			st.execute("create table post (id bigint auto_increment PRIMARY KEY, groupName varchar(50), author varchar(50), title varchar(500), text varchar(MAX), adminValid BOOLEAN DEFAULT TRUE, adminCheck BOOLEAN DEFAULT FALSE, adminMessage varchar(500), media varchar(255), parent int REFERENCES post(id), mainPost int REFERENCES post(id), time TIMESTAMP)");
 		} catch (Exception e) {
 		}
 		dataBaseService.releaseConnection(conn);
@@ -87,7 +87,7 @@ public class SocialLocalService {
 	public long getPostListSize(SocialFilter socialFilter, String username, String group) throws Exception {
 		Connection conn = dataBaseService.getConnection(DATABASE_NAME);
 		try {
-			String sql = "select count(id) from post where groupname='"+group+"' and mainPost is null"+getSQLFilter(socialFilter, username);
+			String sql = "select count(id) from post where groupname='"+group+"' and (adminValid=1 or author='\"+username+\"') and mainPost is null"+getSQLFilter(socialFilter, username);
 			ResultSet rs = conn.createStatement().executeQuery(sql);
 			if (rs.next()) {
 				return rs.getLong(1);
@@ -112,11 +112,15 @@ public class SocialLocalService {
 		return outPost;
 	}
 	
-	public List<Post> getPost(SocialFilter socialFilter, String username, String group, int size, int index) throws Exception {
+	public List<Post> getPost(SocialFilter socialFilter, boolean admin, String username, String group, int size, int index) throws Exception {
 		List<Post> outPost = new LinkedList<Post>();
 		Connection conn = dataBaseService.getConnection(DATABASE_NAME);
 		try {
-			String sql = "select * from post where groupname='"+group+"' and mainPost is null"+getSQLFilter(socialFilter, username)+" order by time desc limit "+size+" offset "+index;
+			String notAdminQuery = "and (adminValid=1 or author='"+username+"')";
+			if (admin) {
+				notAdminQuery = "";
+			}
+			String sql = "select * from post where groupname='"+group+"' "+notAdminQuery+" and mainPost is null"+getSQLFilter(socialFilter, username)+" order by time desc limit "+size+" offset "+index;
 			ResultSet rs = conn.createStatement().executeQuery(sql);
 			while (rs.next()) {
 				outPost.add(rsToPost(rs));
@@ -143,7 +147,7 @@ public class SocialLocalService {
 	private int countReplies(long mainPost) throws Exception {		
 		Connection conn = dataBaseService.getConnection(DATABASE_NAME);
 		try {
-			ResultSet rs = conn.createStatement().executeQuery("select count(id) from post where mainPost='" + mainPost+"'");
+			ResultSet rs = conn.createStatement().executeQuery("select count(id) from post where mainPost='" + mainPost+"' and adminValid=1");
 			if (rs.next()) {
 				return rs.getInt(1);
 			}
@@ -153,11 +157,15 @@ public class SocialLocalService {
 		return -1;
 	}
 	
-	public List<Post> getReplies(long mainPost) throws Exception {
+	public List<Post> getReplies(String username, boolean admin, long mainPost) throws Exception {
 		List<Post> workList = new LinkedList<Post>();
 		Connection conn = dataBaseService.getConnection(DATABASE_NAME);
 		try {
-			ResultSet rs = conn.createStatement().executeQuery("select * from post where mainPost='" + mainPost + "' order by time asc");
+			String notAdminQuery = "and (adminValid=1 or author='"+username+"')";
+			if (admin) {
+				notAdminQuery = "";
+			}
+			ResultSet rs = conn.createStatement().executeQuery("select * from post where mainPost='" + mainPost + "' "+notAdminQuery+" order by time asc");
 			while (rs.next()) {
 				workList.add(rsToPost(rs));
 			}
@@ -190,36 +198,71 @@ public class SocialLocalService {
 		post.setId(rs.getLong("id"));
 		post.setAuthor(rs.getString("author"));
 		post.setMedia(rs.getString("media"));
+		post.setTitle(rs.getString("title"));
 		post.setText(rs.getString("text"));
 		post.setParent(rs.getLong("parent"));
 		post.setMainPost(rs.getLong("mainPost"));
 		post.setCreationDate(rs.getTimestamp("time"));
 		post.setValid(rs.getBoolean("adminValid"));
 		post.setAdminMessage(rs.getString("adminMessage"));
+		post.setAdminValided(rs.getBoolean("adminCheck"));
 		post.setGroup(rs.getString("groupName"));
 		post.setCountReplies(countReplies(post.getId()));
 		return post;
 	}
-
-	public void createPost(Post post) throws Exception {
+	
+	public void updatePost(Post post) throws Exception {
 		Connection conn = dataBaseService.getConnection(DATABASE_NAME);
-		PreparedStatement ps = conn.prepareStatement("insert into post (groupName, author, text, media, parent, mainPost, time) values (?,?,?,?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
+		PreparedStatement ps = conn.prepareStatement("update post set groupName=?, author=?, title=?, text=?, media=?, parent=?, mainPost=?, time=?, adminMessage=?, adminValid=?, adminCheck=? where id="+post.getId());
 		try {
 			ps.setString(1, post.getGroup());
 			ps.setString(2, post.getAuthor());
-			ps.setString(3, post.getText());
-			ps.setString(4, post.getMedia());
-			if (post.getParent() != null) {
-				ps.setLong(5, post.getParent());
-			} else {
-				ps.setNull(5, java.sql.Types.LONGVARCHAR);
-			}
-			if (post.getMainPost() != null) {
-				ps.setLong(6, post.getMainPost());
+			ps.setString(3, post.getTitle());
+			ps.setString(4, post.getText());
+			ps.setString(5, post.getMedia());
+			if (post.getParent() != null && post.getParent() > 0) {
+				ps.setLong(6, post.getParent());
 			} else {
 				ps.setNull(6, java.sql.Types.LONGVARCHAR);
 			}
-			ps.setTimestamp(7, new Timestamp(post.getCreationDate().getTime()));
+			if (post.getMainPost() != null && post.getMainPost() > 0) {
+				ps.setLong(7, post.getMainPost());
+			} else {
+				ps.setNull(7, java.sql.Types.LONGVARCHAR);
+			}
+			ps.setTimestamp(8, new Timestamp(post.getCreationDate().getTime()));
+			ps.setString(9, post.getAdminMessage());
+			ps.setBoolean(10, post.isValid());
+			ps.setBoolean(11, post.isAdminValided());
+			ps.executeUpdate();
+		} finally {
+			dataBaseService.releaseConnection(conn);
+		}
+	}
+
+	public void createPost(Post post) throws Exception {
+		Connection conn = dataBaseService.getConnection(DATABASE_NAME);
+		PreparedStatement ps = conn.prepareStatement("insert into post (groupName, author, title, text, media, parent, mainPost, time, adminMessage, adminValid, adminCheck) values (?,?,?,?,?,?,?,?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
+		try {
+			ps.setString(1, post.getGroup());
+			ps.setString(2, post.getAuthor());
+			ps.setString(3, post.getTitle());
+			ps.setString(4, post.getText());
+			ps.setString(5, post.getMedia());
+			if (post.getParent() != null) {
+				ps.setLong(6, post.getParent());
+			} else {
+				ps.setNull(6, java.sql.Types.LONGVARCHAR);
+			}
+			if (post.getMainPost() != null) {
+				ps.setLong(7, post.getMainPost());
+			} else {
+				ps.setNull(7, java.sql.Types.LONGVARCHAR);
+			}
+			ps.setTimestamp(8, new Timestamp(post.getCreationDate().getTime()));
+			ps.setString(9, post.getAdminMessage());
+			ps.setBoolean(10, post.isValid());
+			ps.setBoolean(11, post.isAdminValided());
 			ps.executeUpdate();
 			ResultSet generatedKeys = ps.getGeneratedKeys();
 			if (generatedKeys.next()) {

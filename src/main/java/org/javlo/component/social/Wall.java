@@ -15,6 +15,7 @@ import org.javlo.service.RequestService;
 import org.javlo.social.SocialFilter;
 import org.javlo.social.SocialLocalService;
 import org.javlo.social.bean.Post;
+import org.javlo.user.AdminUserSecurity;
 import org.javlo.user.User;
 import org.javlo.utils.JSONMap;
 
@@ -81,12 +82,17 @@ public class Wall extends AbstractPropertiesComponent implements IAction {
 		if (text == null) {
 			return "bad request structure, need at least 'text' as parameter";
 		}
-		if (!StringHelper.isEmpty(text)) {
+		String title = rs.getParameter("title");
+		if (title == null && rs.getParameter("parent") == null) {
+			return "bad request structure, need at least 'text' as parameter";
+		}
+		if (!StringHelper.isEmpty(text) && (!StringHelper.isEmpty(title) || rs.getParameter("parent") != null)) {
 			Wall comp = (Wall)ComponentHelper.getComponentFromRequest(ctx);
 			SocialLocalService socialService = SocialLocalService.getInstance(ctx.getGlobalContext());
 			Post post = new Post();
 			post.setGroup(comp.getWallName());
 			post.setAuthor(ctx.getCurrentUserId());
+			post.setTitle(title);
 			post.setText(text);
 			if (rs.getParameter("parent") != null) {
 				post.setParent(Long.parseLong(rs.getParameter("parent")));
@@ -108,17 +114,36 @@ public class Wall extends AbstractPropertiesComponent implements IAction {
 		;
 		return performGetpost(ctx, rs);
 	}
+	
+	public static String performAdmin(ContentContext ctx, RequestService rs) throws Exception {
+		if (!AdminUserSecurity.getInstance().isAdmin(ctx.getCurrentEditUser())) {
+			return "security error !";
+		}
+		if (rs.getParameter("valid", null) == null) {
+			return "bad request structure !";
+		}
+		long id = Long.parseLong(rs.getParameter("id"));
+		SocialLocalService socialService = SocialLocalService.getInstance(ctx.getGlobalContext());
+		Post post = socialService.getPost(id);
+		post.setAdminValided(true);
+		post.setAdminMessage(rs.getParameter("msg", ""));
+		post.setValid(StringHelper.isTrue(rs.getParameter("valid", null)));
+		socialService.updatePost(post);
+		ctx.setSpecificJson(JSONMap.JSON.toJson(post));
+		return null;
+	}
 
 	public static String performGetpost(ContentContext ctx, RequestService rs) throws Exception {
 		SocialLocalService socialService = SocialLocalService.getInstance(ctx.getGlobalContext());
 		Map<String, Object> outMap = new HashMap<String, Object>();
 		String masterPost = rs.getParameter("master");
+		boolean admin = AdminUserSecurity.getInstance().isAdmin(ctx.getCurrentEditUser());
 		if (masterPost == null) {
 			Wall comp = (Wall)ComponentHelper.getComponentFromRequest(ctx);
-			int pageNumber = Integer.parseInt(rs.getParameter("page", "1"));
-			outMap.put("posts", socialService.getPost(SocialFilter.getInstance(ctx.getRequest().getSession()), ctx.getCurrentUserId(), comp.getWallName(), PAGE_SIZE, (pageNumber-1)*PAGE_SIZE));
+			int pageNumber = Integer.parseInt(rs.getParameter("page", "1"));			
+			outMap.put("posts", socialService.getPost(SocialFilter.getInstance(ctx.getRequest().getSession()), admin, ctx.getCurrentUserId(), comp.getWallName(), PAGE_SIZE, (pageNumber-1)*PAGE_SIZE));
 		} else {
-			outMap.put("posts", socialService.getReplies(Long.parseLong(masterPost)));
+			outMap.put("posts", socialService.getReplies(ctx.getCurrentUserId(), admin, Long.parseLong(masterPost)));
 		}
 		ctx.setSpecificJson(JSONMap.JSON.toJson(outMap));
 		return null;

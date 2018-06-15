@@ -17,6 +17,7 @@ public class SocialLocalServiceTest extends TestCase {
 	
 	private static final String GROUP1 = "group1";
 	private static final String GROUP2 = "group2";
+	private static final String GROUP3 = "group3";
 
 	
 	public void testCreatePost() throws Exception {
@@ -24,35 +25,38 @@ public class SocialLocalServiceTest extends TestCase {
 		for (int i=1; i<=POST_SIZE; i++) {
 			Post post = new Post();
 			post.setAuthor(AUTHOR_1);
+			post.setTitle("title - "+i);
 			post.setText("hello word - "+i);
 			post.setGroup(GROUP1);
 			socialService.createPost(post);
 		}
 		SocialFilter filter = new SocialFilter();
-		Collection<Post> posts = socialService.getPost(filter, AUTHOR_1, GROUP1, 30, 0);
+		Collection<Post> posts = socialService.getPost(filter, false, AUTHOR_1, GROUP1, 30, 0);
 		assertTrue(posts.size()>0);
 		
 		for (int i=1; i<=POST_SIZE-1; i++) {
 			Post post = new Post();
 			post.setAuthor(AUTHOR_2);
+			post.setTitle("title - "+i);
 			post.setText("hello word - "+i);
 			post.setGroup(GROUP2);
 			socialService.createPost(post);
 		}
-		Collection<Post> posts2 = socialService.getPost(filter, AUTHOR_2, GROUP2, 30, 0);
+		Collection<Post> posts2 = socialService.getPost(filter, false, AUTHOR_2, GROUP2, 30, 0);
 		assertTrue(posts2.size()==POST_SIZE-1);
 		
 		Post post = posts.iterator().next();
+		assertEquals(post.getTitle(), "title - "+POST_SIZE);
+		assertEquals(post.getText(), "hello word - "+POST_SIZE);
 		assertEquals(post.getAuthor(), AUTHOR_1);
  		assertNotNull(post.getCreationDate());
  		
  		/** test filter ***/
  		filter.setQuery("word - 2");
- 		Collection<Post> postsFilterd = socialService.getPost(filter, AUTHOR_2, GROUP1, 30, 0);
- 		System.out.println(">>>>>>>>> SocialLocalServiceTest.testCreatePost : postsFilterd.size() = "+postsFilterd.size()); //TODO: remove debug trace
+ 		Collection<Post> postsFilterd = socialService.getPost(filter, false, AUTHOR_2, GROUP1, 30, 0);
  		assertTrue(postsFilterd.size()==1);
  		filter.setOnlyMine(true);
- 		postsFilterd = socialService.getPost(filter, AUTHOR_2, GROUP1, 30, 0);
+ 		postsFilterd = socialService.getPost(filter, false, AUTHOR_2, GROUP1, 30, 0);
  		assertTrue(postsFilterd.size()==0);
  		
  		for (Post delPost : posts) {
@@ -105,13 +109,47 @@ public class SocialLocalServiceTest extends TestCase {
 		replyReply.setMainPost(mainPost.getId());
 		socialService.createPost(replyReply);
 		
-		Collection<Post> posts = socialService.getReplies(mainPost.getId());
+		Collection<Post> posts = socialService.getReplies(AUTHOR_3, false, mainPost.getId());
 		assertEquals(posts.size(), POST_SIZE+1);
 		Post post = posts.iterator().next();
 		assertEquals(post.getAuthor(), AUTHOR_3);
  		assertNotNull(post.getCreationDate());
 		socialService.deletePost(mainPost.getAuthor(), mainPost.getId());
- 		assertEquals(socialService.getReplies(mainPost.getId()), null);
+ 		assertEquals(socialService.getReplies(AUTHOR_3, false, mainPost.getId()), null);
+	}
+	
+	public void testAdmin() throws Exception {
+		SocialLocalService socialService = SocialLocalService.getInstance(null);
+		
+		Post post1 = new Post();
+		post1.setAuthor(AUTHOR_1);
+		post1.setGroup(GROUP3);
+		post1.setText("hello word - 1");
+		socialService.createPost(post1);
+		
+		Collection<Post> posts = socialService.getPost(GROUP3);
+		assertTrue(posts.size()>0);
+		
+		Post post = posts.iterator().next();
+		post.setValid(true);
+		post.setAdminValided(true);
+		socialService.updatePost(post);
+		
+		posts = socialService.getPost(GROUP3);
+		assertTrue(posts.size()>0);
+		post = posts.iterator().next();
+		assertTrue(post.isValid());
+		assertTrue(post.isAdminValided());		
+		post.setValid(false);
+		post.setAdminMessage("admin msg");
+		socialService.updatePost(post);
+		
+		posts = socialService.getPost(GROUP3);
+		assertTrue(posts.size()>0);
+		post = posts.iterator().next();
+		assertFalse(post.isValid());
+		assertTrue(post.isAdminValided());
+		assertEquals(post.getAdminMessage(), "admin msg");
 	}
 	
 	public void testDeletePost() throws Exception {
