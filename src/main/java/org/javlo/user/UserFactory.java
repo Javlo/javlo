@@ -440,11 +440,10 @@ public class UserFactory implements IUserFactory, Serializable {
 		GlobalContext globalContext = GlobalContext.getInstance(request);
 		
 		MaxLoginService maxLoginService = MaxLoginService.getInstance();
-		if (!maxLoginService.isLoginAuthorised()) {
+		if (!maxLoginService.isLoginAuthorised(globalContext)) {
 			I18nAccess i18nAccess;
 			try {
 				i18nAccess = I18nAccess.getInstance(request);
-				logger.severe("Too many login failures : "+globalContext.getContextKey());
 				MessageRepository.getInstance(request).setGlobalMessage(new GenericMessage(i18nAccess.getText("user.too-many-errors", "Too many login failures, try again later."), GenericMessage.ERROR));
 			} catch (Exception e) {
 				e.printStackTrace();
