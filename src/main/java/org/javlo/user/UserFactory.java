@@ -441,6 +441,9 @@ public class UserFactory implements IUserFactory, Serializable {
 		
 		MaxLoginService maxLoginService = MaxLoginService.getInstance();
 		if (!maxLoginService.isLoginAuthorised(globalContext)) {
+			
+			logger.severe("to many login request : "+request.getRequestURL());
+			
 			I18nAccess i18nAccess;
 			try {
 				i18nAccess = I18nAccess.getInstance(request);
