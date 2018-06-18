@@ -437,12 +437,14 @@ public class UserFactory implements IUserFactory, Serializable {
 
 		logger.fine("try to log : " + login);
 		
+		GlobalContext globalContext = GlobalContext.getInstance(request);
+		
 		MaxLoginService maxLoginService = MaxLoginService.getInstance();
 		if (!maxLoginService.isLoginAuthorised()) {
 			I18nAccess i18nAccess;
 			try {
 				i18nAccess = I18nAccess.getInstance(request);
-				MessageRepository.getInstance(request).setGlobalMessage(new GenericMessage(i18nAccess.getText("user.too-many-errors", "Too many login failures, try again later."), GenericMessage.ERROR));
+				MessageRepository.getInstance(request).setGlobalMessage(new GenericMessage(i18nAccess.getText("user.too-many-errors", "Too many login failures, try again later. ["+globalContext.getContextKey()+"]"), GenericMessage.ERROR));
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -450,7 +452,7 @@ public class UserFactory implements IUserFactory, Serializable {
 			return null;
 		}
 
-		GlobalContext globalContext = GlobalContext.getInstance(request);
+		
 		EditContext editCtx = EditContext.getInstance(globalContext, request.getSession());
 
 		boolean logged = request.getUserPrincipal() != null && request.getUserPrincipal().getName().equals(login);
