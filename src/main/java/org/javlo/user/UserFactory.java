@@ -436,6 +436,19 @@ public class UserFactory implements IUserFactory, Serializable {
 	public User login(HttpServletRequest request, String login, String password) {
 
 		logger.fine("try to log : " + login);
+		
+		MaxLoginService maxLoginService = MaxLoginService.getInstance();
+		if (!maxLoginService.isLoginAuthorised()) {
+			I18nAccess i18nAccess;
+			try {
+				i18nAccess = I18nAccess.getInstance(request);
+				MessageRepository.getInstance(request).setGlobalMessage(new GenericMessage(i18nAccess.getText("user.too-many-errors", "Too many login failures, try again later."), GenericMessage.ERROR));
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			//request.getSession().removeAttribute(SESSION_KEY);
+			return null;
+		}
 
 		GlobalContext globalContext = GlobalContext.getInstance(request);
 		EditContext editCtx = EditContext.getInstance(globalContext, request.getSession());
@@ -511,18 +524,7 @@ public class UserFactory implements IUserFactory, Serializable {
 				}
 			}
 		}
-		MaxLoginService maxLoginService = MaxLoginService.getInstance();
-		if (!maxLoginService.isLoginAuthorised()) {
-			I18nAccess i18nAccess;
-			try {
-				i18nAccess = I18nAccess.getInstance(request);
-				MessageRepository.getInstance(request).setGlobalMessage(new GenericMessage(i18nAccess.getText("user.too-many-errors", "Too many login failures, try again later."), GenericMessage.ERROR));
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			request.getSession().removeAttribute(SESSION_KEY);
-			return null;
-		} else if (user == null) {
+		if (user == null) {
 			maxLoginService.addBadPassword();
 		}
 		return user;
