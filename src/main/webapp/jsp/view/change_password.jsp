@@ -1,4 +1,5 @@
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" 
+<%@page import="org.javlo.context.GlobalContext"
+%><%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" 
 %><%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" 
 %><%@page contentType="text/html"
 import="org.javlo.i18n.I18nAccess,
@@ -8,7 +9,7 @@ import="org.javlo.i18n.I18nAccess,
 %><%
 I18nAccess i18nAccess = I18nAccess.getInstance ( request );
 IUserFactory userFactory = UserFactory.createUserFactory(request);
-User user = userFactory.getCurrentUser(session);
+User user = userFactory.getCurrentUser(GlobalContext.getInstance(request),session);
 if ( user != null ) {
 %>
 <div class="login center-block">
@@ -37,5 +38,5 @@ if ( user != null ) {
 	</c:if>
 </div>
 <%} else {%>
-<div class="message"><div class="error alert alert-danger">Error, no user found.</div></div>
+<div class="message"><div class="alert alert-danger">Error, no user found.</div></div>
 <%}%>
