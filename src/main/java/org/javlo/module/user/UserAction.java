@@ -516,6 +516,9 @@ public class UserAction extends AbstractModuleAction {
 						userFactory = AdminUserFactory.createUserFactory(globalContext, ctx.getRequest().getSession());
 						user = userFactory.getUserByEmail(userName);
 					}
+					if (user == null) {
+						return "user not found : "+userName;
+					}
 					IUserInfo ui = user.getUserInfo();
 					ui.setPassword(SecurityHelper.encryptPassword(pwd1));
 					userFactory.updateUserInfo(ui);
