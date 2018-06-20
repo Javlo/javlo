@@ -30,10 +30,18 @@ import org.javlo.message.MessageRepository;
 import org.javlo.module.core.ModulesContext;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.RequestService;
+import org.javlo.utils.CSVFactory;
+import org.javlo.utils.Cell;
+import org.javlo.utils.XLSTools;
 import org.javlo.ztatic.StaticInfo;
 
+import com.flickr4java.flickr.activity.Item;
+import com.sun.mail.iap.Response;
+
+import net.sf.jasperreports.engine.export.ooxml.XlsxContentTypesHelper;
+
 public class SearchModuleAction extends AbstractModuleAction {
-	
+
 	private static Logger logger = Logger.getLogger(SearchModuleAction.class.getName());
 
 	@Override
@@ -42,12 +50,11 @@ public class SearchModuleAction extends AbstractModuleAction {
 	}
 
 	private static boolean isMatching(ComponentBean comp, SearchFilter filter) {
-		
-		
+
 		if (StringHelper.isEmpty(filter.getTitle()) && StringHelper.isEmpty(filter.getGlobal()) && StringHelper.isEmpty(filter.getSmartquery()) && StringHelper.isEmpty(filter.getSmartqueryre()) && filter.getComponents().size() == 0) {
-			return false;			
+			return false;
 		}
-		if (filter.getComponents().size()>0) {
+		if (filter.getComponents().size() > 0) {
 			if (!filter.getComponents().contains(comp.getType())) {
 				return false;
 			}
@@ -59,15 +66,15 @@ public class SearchModuleAction extends AbstractModuleAction {
 		}
 		if (!StringHelper.isEmpty(filter.getSmartqueryre())) {
 			try {
-			if (!Pattern.matches(filter.getSmartqueryre(), StringHelper.removeCR(comp.getValue()))) {
-				return false;
-			}
-			} catch (Exception e ) {
+				if (!Pattern.matches(filter.getSmartqueryre(), StringHelper.removeCR(comp.getValue()))) {
+					return false;
+				}
+			} catch (Exception e) {
 				logger.warning(e.getMessage());
 			}
 		}
 		boolean outFilter = true;
-		
+
 		if (!StringHelper.isEmpty(filter.getTitle())) {
 			if ((comp.getType().equals(Title.TYPE) || comp.getType().equals(Heading.TYPE)) && comp.getValue().toLowerCase().contains(filter.getTitle().toLowerCase())) {
 				outFilter = true;
@@ -99,7 +106,7 @@ public class SearchModuleAction extends AbstractModuleAction {
 		}
 		return false;
 	}
-	
+
 	protected static void addPage(ContentContext ctx, Map<MenuElement, SearchResultBean> outResult, MenuElement page, String lg, String authors) throws Exception {
 		ctx = ctx.getContextForAbsoluteURL();
 		String url = URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.PREVIEW_MODE), page);
@@ -113,21 +120,21 @@ public class SearchModuleAction extends AbstractModuleAction {
 		if (page.getImage(ctx) != null) {
 			previewURL = URLHelper.createTransformURL(ctx, page.getImage(ctx).getResourceURL(ctx), "list");
 		}
-		outResult.put(page, new SearchResultBean(ctx.getGlobalContext().getContextKey(), "page", page.getTitle(ctx), lg , url, authors, StringHelper.renderSortableDate(page.getModificationDate(ctx)), previewURL, 1));
+		outResult.put(page, new SearchResultBean(ctx.getGlobalContext().getContextKey(), "page", page.getTitle(ctx), lg, url, authors, StringHelper.renderSortableDate(page.getModificationDate(ctx)), previewURL, 1));
 	}
-	
+
 	public static Collection<SearchResultBean> searchInPage(ContentContext ctx, SearchFilter filter) throws Exception {
 		Map<MenuElement, SearchResultBean> outResult = new HashMap<MenuElement, SearchResultBean>();
 		for (MenuElement page : ctx.getCurrentPage().getRoot().getAllChildrenList()) {
-			if (SecurityHelper.userAccessPage(ctx, ctx.getCurrentEditUser(), page)) {				
+			if (SecurityHelper.userAccessPage(ctx, ctx.getCurrentEditUser(), page)) {
 				if (filter.getTaxonomy().size() == 0 || TaxonomyService.getInstance(ctx).isAllMatch(page, filter)) {
-					if (filter.isOnlyTaxonomy()) {						
-						addPage(ctx,outResult,page,"p",page.getCreator());
+					if (filter.isOnlyTaxonomy()) {
+						addPage(ctx, outResult, page, "p", page.getCreator());
 					}
 					for (ComponentBean comp : page.getContent()) {
 						if (isMatching(comp, filter)) {
-							if (outResult.get(page) == null) {								
-								addPage(ctx,outResult,page,comp.getLanguage(),comp.getAuthors());
+							if (outResult.get(page) == null) {
+								addPage(ctx, outResult, page, comp.getLanguage(), comp.getAuthors());
 							} else {
 								outResult.get(page).setMatching(outResult.get(page).getMatching() + 1);
 							}
@@ -209,9 +216,15 @@ public class SearchModuleAction extends AbstractModuleAction {
 			if (StringHelper.isEmpty(searchFilter.getType()) || searchFilter.getType().equals("page")) {
 				items.addAll(searchInPage(localCtx, searchFilter));
 			}
-			if (StringHelper.isEmpty(searchFilter.getType()) || searchFilter.getType().equals("file") && searchFilter.getComponents().size()==0) {
+			if (StringHelper.isEmpty(searchFilter.getType()) || searchFilter.getType().equals("file") && searchFilter.getComponents().size() == 0) {
 				items.addAll(searchInResource(localCtx, searchFilter));
 			}
+		}
+		if (items.size() > 0) {
+
+			Map<String, String> params = new HashMap<String, String>();
+			params.put("webaction", "downloadxlsx");
+			ctx.getRequest().setAttribute("downloadUrl", URLHelper.createURL(ctx, params));
 		}
 		ctx.getRequest().setAttribute("items", items);
 		ctx.getRequest().setAttribute("taxoSelect", ctx.getGlobalContext().getAllTaxonomy(ctx).getSelectHtml("taxonomy", "form-control chosen-select", searchFilter.getTaxonomy()));
@@ -223,14 +236,71 @@ public class SearchModuleAction extends AbstractModuleAction {
 		SearchFilter.getInstance(ctx.getRequest()).update(request);
 		return null;
 	}
-	
+
+	public static String performDownloadxlsx(RequestService rs, HttpServletRequest request, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
+		Collection<GlobalContext> contexts;
+		if (ctx.getGlobalContext().isMaster()) {
+			contexts = GlobalContextFactory.getAllGlobalContext(ctx.getRequest().getSession().getServletContext());
+		} else {
+			contexts = new LinkedList<GlobalContext>();
+			contexts.add(ctx.getGlobalContext());
+		}
+		Collection<SearchResultBean> items = new LinkedList<SearchResultBean>();
+		SearchFilter searchFilter = SearchFilter.getInstance(ctx.getRequest());
+		ContentContext localCtx = new ContentContext(ctx);
+		for (GlobalContext globalContext : contexts) {
+			localCtx.setForceGlobalContext(globalContext);
+			if (StringHelper.isEmpty(searchFilter.getType()) || searchFilter.getType().equals("page")) {
+				items.addAll(searchInPage(localCtx, searchFilter));
+			}
+			if (StringHelper.isEmpty(searchFilter.getType()) || searchFilter.getType().equals("file") && searchFilter.getComponents().size() == 0) {
+				items.addAll(searchInResource(localCtx, searchFilter));
+			}
+		}
+		String[][] stringArray = new String[items.size() + 1][10];
+		int p = 0;
+		stringArray[0][p++] = "title";
+		stringArray[0][p++] = "type";
+		stringArray[0][p++] = "context";
+		stringArray[0][p++] = "authors";
+		stringArray[0][p++] = "date";
+		stringArray[0][p++] = "url";
+		stringArray[0][p++] = "preview url";
+		stringArray[0][p++] = "language";
+		stringArray[0][p++] = "matching";
+		
+		int i = 1;
+		for (SearchResultBean item : items) {
+			p = 0;
+			stringArray[i][p++] = item.getTitle();
+			stringArray[i][p++] = item.getType();
+			stringArray[i][p++] = item.getContext();
+			stringArray[i][p++] = item.getAuthors();
+			stringArray[i][p++] = item.getDate();
+			stringArray[i][p++] = item.getUrl();
+			stringArray[i][p++] = item.getPreviewURL();
+			stringArray[i][p++] = item.getLanguage();
+			stringArray[i][p++] = ""+item.getMatching();
+			i++;
+		}
+
+		Cell[][] cells = XLSTools.getCellArray(stringArray);
+		ctx.getResponse().setContentType(ResourceHelper.getFileExtensionToMineType("xlsx"));
+		String filename = "search_" + StringHelper.stringToFileName(searchFilter.getSmartquery() + searchFilter.getSmartqueryre()) + ".xlsx";
+		ctx.getResponse().setHeader("Content-Disposition", "attachment; filename=\"" + filename); // fileName)
+		ctx.setStopRendering(true);
+
+		XLSTools.writeXLSX(cells, ctx.getResponse().getOutputStream());
+		return null;
+	}
+
 	public static void main(String[] args) {
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(outStream);
 		out.println("#heading");
 		out.println("Mes&nbsp;articles 2");
 		out.close();
-		System.out.println(">>>>>>>>> SearchModuleAction.main : match = "+Pattern.matches(".*(articles).*", StringHelper.removeCR(new String(outStream.toByteArray())))); //TODO: remove debug trace
+		System.out.println(">>>>>>>>> SearchModuleAction.main : match = " + Pattern.matches(".*(articles).*", StringHelper.removeCR(new String(outStream.toByteArray())))); // TODO: remove debug trace
 	}
 
 }

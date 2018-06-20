@@ -25,7 +25,9 @@ public class Wall extends AbstractPropertiesComponent implements IAction {
 
 	public static final String TYPE = "wall";
 
-	private static final List<String> FIELDS = new LinkedList<String>(Arrays.asList(new String[] { "name", "title", "roles", "noaccess" }));
+	private static final String UNVALIDED_NOT_VISIBLE = "unvalided_not_visible";
+
+	private static final List<String> FIELDS = new LinkedList<String>(Arrays.asList(new String[] { "name", "title", "roles", "noaccess", UNVALIDED_NOT_VISIBLE+"#checkbox" }));
 
 	@Override
 	public String getType() {
@@ -45,6 +47,10 @@ public class Wall extends AbstractPropertiesComponent implements IAction {
 	private String getWallName() {
 		return getFieldValue("name");
 	}
+	
+	private boolean isNeedCheck() {
+		return StringHelper.isTrue(getFieldValue(UNVALIDED_NOT_VISIBLE));
+	}
 
 	@Override
 	public void prepareView(ContentContext ctx) throws Exception {
@@ -56,7 +62,7 @@ public class Wall extends AbstractPropertiesComponent implements IAction {
 		} else {
 			SocialLocalService socialService = SocialLocalService.getInstance(ctx.getGlobalContext());
 			ctx.getRequest().setAttribute("pageSize", PAGE_SIZE);
-			long countResult = socialService.getPostListSize(SocialFilter.getInstance(ctx.getRequest().getSession()), ctx.getCurrentUserId(), getWallName());
+			long countResult = socialService.getPostListSize(SocialFilter.getInstance(ctx.getRequest().getSession()), ctx.getCurrentUserId(), getWallName(), AdminUserSecurity.getInstance().isAdmin(ctx.getCurrentUser()), isNeedCheck());
 			float pageCountFloat = ((float)countResult/(float)PAGE_SIZE);
 			int pageCount = Math.round(pageCountFloat);
 			if (pageCountFloat > pageCount) {
@@ -65,6 +71,9 @@ public class Wall extends AbstractPropertiesComponent implements IAction {
 			ctx.getRequest().setAttribute("pageCount", pageCount);
 			ctx.getRequest().setAttribute("countResult", countResult);
 			List<String> roles = StringHelper.stringToCollection(getFieldValue("roles"));
+			if (AdminUserSecurity.getInstance().isAdmin(ctx.getCurrentUser())) {
+				ctx.getRequest().setAttribute("uncheckSize", socialService.getUnvalidedPostListSize(getWallName()));
+			}
 			if (!currentUser.validForRoles(roles)) {
 				ctx.getRequest().setAttribute("access", false);
 			} else {
@@ -94,6 +103,7 @@ public class Wall extends AbstractPropertiesComponent implements IAction {
 			post.setAuthor(ctx.getCurrentUserId());
 			post.setTitle(title);
 			post.setText(text);
+			post.setAuthorIp(ctx.getRealRemoteIp(ctx.getGlobalContext().getStaticConfig().isAnonymisedTracking()));
 			if (rs.getParameter("parent") != null) {
 				post.setParent(Long.parseLong(rs.getParameter("parent")));
 			}
@@ -138,12 +148,12 @@ public class Wall extends AbstractPropertiesComponent implements IAction {
 		Map<String, Object> outMap = new HashMap<String, Object>();
 		String masterPost = rs.getParameter("master");
 		boolean admin = AdminUserSecurity.getInstance().isAdmin(ctx.getCurrentEditUser());
+		Wall comp = (Wall)ComponentHelper.getComponentFromRequest(ctx);
 		if (masterPost == null) {
-			Wall comp = (Wall)ComponentHelper.getComponentFromRequest(ctx);
 			int pageNumber = Integer.parseInt(rs.getParameter("page", "1"));			
-			outMap.put("posts", socialService.getPost(SocialFilter.getInstance(ctx.getRequest().getSession()), admin, ctx.getCurrentUserId(), comp.getWallName(), PAGE_SIZE, (pageNumber-1)*PAGE_SIZE));
+			outMap.put("posts", socialService.getPost(SocialFilter.getInstance(ctx.getRequest().getSession()), admin, comp.isNeedCheck(), ctx.getCurrentUserId(), comp.getWallName(), PAGE_SIZE, (pageNumber-1)*PAGE_SIZE));
 		} else {
-			outMap.put("posts", socialService.getReplies(ctx.getCurrentUserId(), admin, Long.parseLong(masterPost)));
+			outMap.put("posts", socialService.getReplies(ctx.getCurrentUserId(), admin, comp.isNeedCheck(), Long.parseLong(masterPost)));
 		}
 		ctx.setSpecificJson(JSONMap.JSON.toJson(outMap));
 		return null;

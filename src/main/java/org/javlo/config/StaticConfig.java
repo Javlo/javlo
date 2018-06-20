@@ -1870,5 +1870,9 @@ public class StaticConfig extends Observable {
 	public boolean isRestServer() {
 		return properties.getBoolean("security.rest-server", false);
 	}
+	
+	public boolean isAnonymisedTracking() {
+		return properties.getBoolean("security.tracking.anonymised", false);
+	}
 
 }

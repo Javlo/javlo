@@ -53,5 +53,9 @@ public class SecurityHelper {
 	public static final String encryptPassword(String pwd) {
 		return passwordEncrypt.encrypt(pwd);
 	}
+	
+	public String anonymisedIp(String ip) {
+		return ip;
+	}
 
 }

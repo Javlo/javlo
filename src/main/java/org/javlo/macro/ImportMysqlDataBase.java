@@ -72,6 +72,7 @@ public class ImportMysqlDataBase extends AbstractMacro {
 					post.setText(new String(outStream.toByteArray()));
 					post.setCreationDate(cal.getTime());
 					post.setAdminValided(rs.getInt("status") == 2);
+					post.setAuthorIp(rs.getString("ip"));
 					createdPost.put(post.getId(), post);
 					if (post.getParent() != null && createdPost.get(post.getParent()) == null) {
 						System.out.println("parent not found  : "+post.getParent());

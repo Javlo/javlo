@@ -299,10 +299,6 @@
 					<groupId>org.slf4j</groupId>
 					<artifactId>slf4j-simple</artifactId>
 				</exclusion>
-				<exclusion>
- 					<groupId>rhino</groupId>
-					<artifactId>js</artifactId>
- 				</exclusion>
 			</exclusions>
 		</dependency>
 

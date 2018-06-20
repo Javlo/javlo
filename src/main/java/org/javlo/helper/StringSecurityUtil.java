@@ -2,6 +2,8 @@ package org.javlo.helper;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
@@ -82,38 +84,6 @@ public class StringSecurityUtil {
 		return new String(original);
 	}
 
-	public static void main(String[] args) {
-		System.out.println("String Security test.");
-		System.out.println("=====================");
-		System.out.println("");
-		// for (int i = 0; i < 100; i++) {
-		try {
-			for (int i = 0; i < 1; i++) {
-				String data = "_dynpara_message_id=128574592114297345096&template=template-1";
-				data = "_dynpara_message_id=1285745k&template=template-1";
-				String key = StringHelper.getRandomString(10);
-				// String data = "k";
-				// String key = "sdlsjgc";
-
-				String encodedData = encode(data, key);
-				//encodedData = "XHXU56wmWZiWhVdTgSbJ/RlHj4rLvWVO+iYKrI7kPcFHze4521IenRx1yuswx3t1oFIMyz84WjL3N5mpP/k0I+7wmpKUaQpkJnc/y3yq9ZCkJHSM/J6OYE12RZyBwr2yiKQmKabAR7HsshvK1tfh4iRzCDMMxksJaGVeJ+Rarb0Ao8JWxEQvUvv0A4PRfo32qNgZqoloE6IcXMT2l5WHnXxfzsdKlPj356X/";
-				//String decodedData = decode(encodedData, key);
-				System.out.println("");
-				/*if (!decodedData.equals(data)) {
-					System.out.println("*** ERROR ***");
-				}*/
-				System.out.println("data        : " + data);
-				System.out.println("encodedData : " + encodedData);
-				System.out.println("decodedData : " + decode(encodedData, key));
-				//System.out.println("decodedData : " + decodedData);
-
-			}
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-	
 	/**
 	 * return a access token valid for specified time
 	 * @param time time in seconds
@@ -133,6 +103,31 @@ public class StringSecurityUtil {
 			endTokenCal.setTime(new Date(Long.parseLong(timeStr)));
 			return endTokenCal.after(now);
 		}
+	}
+	
+	/**
+	 * remove latest number if all IPs in the string
+	 * @param ip
+	 * @return
+	 */
+	public static final String anonymisedIp(String ip) {
+		Pattern ipv4Pattern = Pattern.compile("\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}");
+		Matcher matcherIp = ipv4Pattern.matcher(ip);
+		while(matcherIp.find()) {
+			ip = ip.replace(matcherIp.group(), matcherIp.group().substring(0, matcherIp.group().lastIndexOf(".")+1)+"0");
+		}
+		Pattern ipv6Pattern = Pattern.compile("([\\p{XDigit}]{1,4}:){7}[\\p{XDigit}]{1,4}");
+		matcherIp = ipv6Pattern.matcher(ip);
+		while(matcherIp.find()) {
+			String newIP = matcherIp.group().replaceAll("\\p{XDigit}{1,4}:[\\p{XDigit}]{1,4}$", "0000:0000");
+			ip = ip.replace(matcherIp.group(), newIP);
+		}
+		return ip;
+	}
+	
+	public static void main(String[] args) {
+		System.out.println(("2001:0db8:2564:85a3:0000:85B4:ac1f:8001".replaceAll("(\\p{XDigit}{1,4}:){7}[\\p{XDigit}]{1,4}", "><")));
+		System.out.println(">>> "+anonymisedIp("2001:0db8:2564:85a3:0000:85B4:ac1f:8001"));
 	}
 
 }

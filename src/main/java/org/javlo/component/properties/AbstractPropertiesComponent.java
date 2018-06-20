@@ -90,7 +90,7 @@ public abstract class AbstractPropertiesComponent extends AbstractVisualComponen
 				out.print("\" name=\"");
 				out.print(createKeyWithField(fieldName));
 				out.print("\" " + checked + " />");
-				out.println(i18nAccess.getText("field." + fieldName, fieldName));
+				out.println(i18nAccess.getText("field." + fieldName, fieldName.replace("_", " ")));
 				out.println("</label>");
 				out.println("</div>");
 			} else {

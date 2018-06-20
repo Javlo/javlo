@@ -21,6 +21,7 @@ public class Post {
 	private boolean valid = true;
 	private boolean adminValided = false;
 	private String adminMessage = null;
+	private String authorIp = null;
 
 	public long getId() {
 		return id;
@@ -145,6 +146,14 @@ public class Post {
 
 	public void setAdminValided(boolean adminValided) {
 		this.adminValided = adminValided;
+	}
+
+	public String getAuthorIp() {
+		return authorIp;
+	}
+
+	public void setAuthorIp(String authorIp) {
+		this.authorIp = authorIp;
 	}
 
 }

@@ -942,5 +942,5 @@ change log
  
  * 2/ correction file servlet / syntax erreur description in static info html
  
- * 3/ LoginLogout with login (pseudo)
+ * 3/ LoginLogout with login (pseudo) / tracking can be anonymised
 

@@ -28,6 +28,7 @@ import org.javlo.config.StaticConfig;
 import org.javlo.helper.AjaxHelper.ScheduledRender;
 import org.javlo.helper.NetHelper;
 import org.javlo.helper.StringHelper;
+import org.javlo.helper.StringSecurityUtil;
 import org.javlo.helper.URLHelper;
 import org.javlo.navigation.IURLFactory;
 import org.javlo.navigation.MenuElement;
@@ -2107,6 +2108,15 @@ public class ContentContext {
 		}
 		return request.getRemoteAddr();
 	}
+	
+	public String getRealRemoteIp(boolean anonymised) {
+		String ip = getRealRemoteIp();
+		if (anonymised) {
+			ip = StringSecurityUtil.anonymisedIp(ip);
+		}
+		return ip;
+	}
+
 
 	public boolean isForceCorrectPath() {
 		return forceCorrectPath;

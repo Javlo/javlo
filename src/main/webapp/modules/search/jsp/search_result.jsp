@@ -7,6 +7,7 @@
 			</c:if>
 </c:forEach>
 <div class="content search-result">
+	<c:if test="${not empty downloadUrl}"><a class="download-link" href="${downloadUrl}">download <i class="fa fa-file-excel" aria-hidden="true"></i></a></c:if>
     <c:if test="${empty items}">${i18n.edit['search.no-result']}</c:if>
 	<c:if test="${not empty items}">
 		<form id="form-select-user" action="${info.currentURL}" method="post">
