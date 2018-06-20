@@ -89,12 +89,12 @@ public class Tracker {
 				userName = editCtx.getUserPrincipal().getName();
 			}
 		}*/
-		ContentContext ctx = ContentContext.getContentContext(request, response);
+//		ContentContext ctx = ContentContext.getContentContext(request, response);
 		RequestService requestService = RequestService.getInstance(request);
 		String action = requestService.getParameter("webaction", null);
 
 		Track track = new Track(userName, action, request.getRequestURI(), System.currentTimeMillis(), request.getHeader("Referer"), request.getHeader("User-Agent"));
-		track.setIP(ctx.getRealRemoteIp(ctx.getGlobalContext().getStaticConfig().isAnonymisedTracking()));
+		track.setIP(ContentContext.getRealRemoteIp(request, StaticConfig.getInstance(request.getSession()).isAnonymisedTracking()));
 		track.setSessionId(request.getSession().getId());
 		tracker.addTrack(track);
 	}

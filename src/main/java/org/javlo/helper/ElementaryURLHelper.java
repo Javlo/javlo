@@ -218,7 +218,6 @@ public abstract class ElementaryURLHelper {
 				}
 			}
 		}
-
 		if (uri.length() < 1) {
 			uri = "/";
 		} else if (uri.charAt(0) != '/') {
@@ -260,7 +259,7 @@ public abstract class ElementaryURLHelper {
 				mode = "/time/";
 			}
 		}
-
+		
 		if (ajax) {
 			mode = "/ajax/";
 		}
@@ -280,7 +279,7 @@ public abstract class ElementaryURLHelper {
 				newUri = URLHelper.mergePath(mode, noNavigationAreaCheckCtx.getLanguage() + '-' + noNavigationAreaCheckCtx.getContentLanguage(), uri);
 			}
 		}
-
+		
 		if (!ctx.isAbsoluteURL() && widthEncodeURL && ctx.getDevice() != null && ctx.getDevice().isHuman() && ctx.getGlobalContext().getStaticConfig().isJsessionID()) {
 			newUri = ctx.getResponse().encodeURL(newUri);
 		}
@@ -293,6 +292,7 @@ public abstract class ElementaryURLHelper {
 		if (ctx.isEditPreview() && ctx.isAsPreviewMode()) {
 			newUri = URLHelper.addParam(newUri, "editPreview", "true");
 		}
+		
 		if (!ctx.isInternalURL() && ctx.getGlobalContext().getProxyPathPrefix().length() > 0) {
 			newUri = URLHelper.mergePath(ctx.getGlobalContext().getProxyPathPrefix(), newUri);
 		}

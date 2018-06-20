@@ -26,6 +26,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.config.StaticConfig;
 import org.javlo.helper.AjaxHelper.ScheduledRender;
+import org.javlo.helper.DebugHelper;
 import org.javlo.helper.NetHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.StringSecurityUtil;
@@ -2095,8 +2096,12 @@ public class ContentContext {
 	}
 
 	private static final String[] HEADERS_TO_TRY = { "X-Forwarded-For", "Proxy-Client-IP", "WL-Proxy-Client-IP", "HTTP_X_FORWARDED_FOR", "HTTP_X_FORWARDED", "HTTP_X_CLUSTER_CLIENT_IP", "HTTP_CLIENT_IP", "HTTP_FORWARDED_FOR", "HTTP_FORWARDED", "HTTP_VIA", "REMOTE_ADDR" };
-
+	
 	public String getRealRemoteIp() {
+		return getRealRemoteIp(request);
+	}
+
+	public static String getRealRemoteIp(HttpServletRequest request) {
 		for (String header : HEADERS_TO_TRY) {
 			String ip = request.getHeader(header);
 			if (ip != null && ip.length() != 0 && !"unknown".equalsIgnoreCase(ip)) {
@@ -2111,6 +2116,14 @@ public class ContentContext {
 	
 	public String getRealRemoteIp(boolean anonymised) {
 		String ip = getRealRemoteIp();
+		if (anonymised) {
+			ip = StringSecurityUtil.anonymisedIp(ip);
+		}
+		return ip;
+	}
+	
+	public static String getRealRemoteIp(HttpServletRequest request, boolean anonymised) {
+		String ip = getRealRemoteIp(request);
 		if (anonymised) {
 			ip = StringSecurityUtil.anonymisedIp(ip);
 		}
