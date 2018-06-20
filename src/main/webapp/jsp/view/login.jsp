@@ -22,9 +22,9 @@ if ( user == null ) {
 	<c:set var="notFound" value="<%=I18nAccess.KEY_NOT_FOUND%>" />
     <c:if test="${!fn:contains(i18n.view['login.message'],notFound) && not empty i18n.view['login.message']}"><div class="alert alert-info login-welcome" role="alert">${i18n.view['login.message']}</div></c:if>
 	<%if ( request.getParameter("j_username") == null  && request.getParameter("pwtoken") == null && request.getParameter("resetpwd") == null) {%><div class="message"><p class="alert alert-info"><%=i18nAccess.getViewText ( "login.intro" )%></p></div><%}
-	%><%if ( request.getParameter("j_username") != null) {%><div class="message"><p class="error alert alert-danger"><%=i18nAccess.getViewText ( "login.error" )%></p></div><%}
-	%><%if ( request.getParameter("pwtoken") != null ) {%><div class="message"><p class="alert alert-info"><%=i18nAccess.getViewText ( "login.change-password" )%></p></div><%}
-	%><%if ( request.getParameter("resetpwd") != null ) {%><div class="message"><p class="alert alert-info"><%=i18nAccess.getViewText ( "user.message.email-for-reset" )%></p></div><%}
+	%><%if ( request.getParameter("j_username") != null) {%><div class="message"><p class="alert alert-danger"><%=i18nAccess.getViewText ( "login.error" )%></p></div><%}
+	%><%if ( request.getParameter("pwtoken") != null ) {%><div class="message"><p class="alert-info"><%=i18nAccess.getViewText ( "login.change-password" )%></p></div><%}
+	%><%if ( request.getParameter("resetpwd") != null ) {%><div class="message"><p class="alert-info"><%=i18nAccess.getViewText ( "user.message.email-for-reset" )%></p></div><%}
 	%><%if (request.getParameter("pwtoken") == null && request.getParameter("resetpwd") == null) {%>	
 	<form name="login" method="post" action="${info.currentURL}">		
 		<div class="panel panel-default">
