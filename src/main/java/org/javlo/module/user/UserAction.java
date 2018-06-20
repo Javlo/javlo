@@ -509,6 +509,9 @@ public class UserAction extends AbstractModuleAction {
 						user = userFactory.getUserByEmail(userName);
 					}
 					if (user == null) {
+						user = userFactory.getUser(userName);
+					}
+					if (user == null) {
 						userFactory = AdminUserFactory.createUserFactory(globalContext, ctx.getRequest().getSession());
 						user = userFactory.getUser(userName);
 					}
