@@ -15,7 +15,7 @@ if ( user != null ) {
 <div class="login center-block">
 	<c:set var="notFound" value="<%=I18nAccess.KEY_NOT_FOUND%>" />
     <c:if test="${not (not empty messages.globalMessage && messages.globalMessage.type > 0 && !empty messages.globalMessage.message)}"><c:if test="${!fn:contains(i18n.view['login.password.change'],notFound) && not empty i18n.view['login.password.change']}"><div class="alert alert-info login-welcome" role="alert">${i18n.view['login.password.change']}</div></c:if></c:if>	
-	<c:if test="${not empty messages.globalMessage && messages.globalMessage.type > 0 && !empty messages.globalMessage.message}"><div class="error alert alert-${messages.globalMessage.bootstrapType}">${messages.globalMessage.message}</div></c:if>	
+	<c:if test="${not empty messages.globalMessage && messages.globalMessage.type > 0 && !empty messages.globalMessage.message}"><div class="alert alert-${messages.globalMessage.bootstrapType}">${messages.globalMessage.message}</div></c:if>	
 	<c:if test="${empty passwordChanged}">
 	<form name="login" method="post" action="${info.currentURL}">		
 		<div class="panel panel-default">
