@@ -18,6 +18,7 @@ public class Post {
 	private String creationDateString;
 	private Post parentPost = null;
 	private int countReplies = 0;
+	private boolean uncheckedChild = false;
 	private boolean valid = true;
 	private boolean adminValided = false;
 	private String adminMessage = null;
@@ -154,6 +155,14 @@ public class Post {
 
 	public void setAuthorIp(String authorIp) {
 		this.authorIp = authorIp;
+	}
+
+	public boolean isUncheckedChild() {
+		return uncheckedChild;
+	}
+
+	public void setUncheckedChild(boolean uncheckedChild) {
+		this.uncheckedChild = uncheckedChild;
 	}
 
 }

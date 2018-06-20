@@ -59,7 +59,7 @@ public class SocialLocalService {
 		try {
 			ResultSet rs = conn.createStatement().executeQuery("select * from post where groupname='"+group+"' and author='" + author + "' and mainPost is null order by time asc");
 			while (rs.next()) {
-				outPost.add(rsToPost(rs));
+				outPost.add(rsToPost(rs, author, false, false));
 			}
 		} finally {
 			dataBaseService.releaseConnection(conn);
@@ -130,7 +130,7 @@ public class SocialLocalService {
 		try {
 			ResultSet rs = conn.createStatement().executeQuery("select * from post where groupname='"+group+"' and mainPost is null order by time desc");
 			while (rs.next()) {
-				outPost.add(rsToPost(rs));
+				outPost.add(rsToPost(rs, null, true, false));
 			}
 		} finally {
 			dataBaseService.releaseConnection(conn);
@@ -152,7 +152,7 @@ public class SocialLocalService {
 			String sql = "select * from post where groupname='"+group+"' "+notAdminQuery+" and mainPost is null"+getSQLFilter(socialFilter, username)+" order by time desc limit "+size+" offset "+index;
 			ResultSet rs = conn.createStatement().executeQuery(sql);
 			while (rs.next()) {
-				outPost.add(rsToPost(rs));
+				outPost.add(rsToPost(rs, username, admin, needCheck));
 			}
 		} finally {
 			dataBaseService.releaseConnection(conn);
@@ -160,12 +160,12 @@ public class SocialLocalService {
 		return outPost;
 	}
 	
-	public Post getPost(Long id) throws Exception {
+	public Post getPost(Long id, String author, boolean admin, boolean needCheck) throws Exception {
 		Connection conn = dataBaseService.getConnection(DATABASE_NAME);
 		try {
 			ResultSet rs = conn.createStatement().executeQuery("select * from post where id=" + id);
 			if (rs.next()) {
-				return rsToPost(rs);
+				return rsToPost(rs, author, admin, needCheck);
 			}
 		} finally {
 			dataBaseService.releaseConnection(conn);
@@ -173,10 +173,17 @@ public class SocialLocalService {
 		return null;
 	}
 	
-	private int countReplies(long mainPost) throws Exception {		
+	private int countReplies(long mainPost, String username, boolean admin, boolean needCheck) throws Exception {		
 		Connection conn = dataBaseService.getConnection(DATABASE_NAME);
 		try {
-			ResultSet rs = conn.createStatement().executeQuery("select count(id) from post where mainPost='" + mainPost+"' and adminValid=1");
+			String notAdminQuery = "and (adminValid=1 or author='"+username+"')";
+			if (needCheck) {
+				notAdminQuery = "and (adminCheck=1 and adminValid=1 or author='"+username+"')";
+			}
+			if (admin) {
+				notAdminQuery = "";
+			}
+			ResultSet rs = conn.createStatement().executeQuery("select count(id) from post where mainPost='" + mainPost+"' "+notAdminQuery);
 			if (rs.next()) {
 				return rs.getInt(1);
 			}
@@ -184,6 +191,19 @@ public class SocialLocalService {
 			dataBaseService.releaseConnection(conn);
 		}
 		return -1;
+	}
+	
+	private boolean uncheckedReplies(long mainPost) throws Exception {		
+		Connection conn = dataBaseService.getConnection(DATABASE_NAME);
+		try {
+			ResultSet rs = conn.createStatement().executeQuery("select id from post where mainPost='" + mainPost+"' and adminCheck=0");
+			if (rs.next()) {
+				return true;
+			}
+		} finally {
+			dataBaseService.releaseConnection(conn);
+		}
+		return false;
 	}
 	
 	public List<Post> getReplies(String username, boolean admin, boolean needCheck, long mainPost) throws Exception {
@@ -199,7 +219,7 @@ public class SocialLocalService {
 			}
 			ResultSet rs = conn.createStatement().executeQuery("select * from post where mainPost='" + mainPost + "' "+notAdminQuery+" order by time asc");
 			while (rs.next()) {
-				workList.add(rsToPost(rs));
+				workList.add(rsToPost(rs, username, admin, needCheck));
 			}
 		} finally {
 			dataBaseService.releaseConnection(conn);
@@ -208,7 +228,7 @@ public class SocialLocalService {
 		for (Post p : workList) {
 			masterPost.put(p.getId(), p);
 		}
-		Post mainPostBean = getPost(mainPost);
+		Post mainPostBean = getPost(mainPost, username, admin, needCheck);
 		if (mainPostBean == null) {
 			return null;
 		} else {
@@ -225,7 +245,7 @@ public class SocialLocalService {
 		}
 	}
 
-	protected Post rsToPost(ResultSet rs) throws Exception {
+	protected Post rsToPost(ResultSet rs, String authors, boolean admin, boolean needCheck) throws Exception {
 		Post post = new Post();
 		post.setId(rs.getLong("id"));
 		post.setAuthor(rs.getString("author"));
@@ -239,7 +259,10 @@ public class SocialLocalService {
 		post.setAdminMessage(rs.getString("adminMessage"));
 		post.setAdminValided(rs.getBoolean("adminCheck"));
 		post.setGroup(rs.getString("groupName"));
-		post.setCountReplies(countReplies(post.getId()));
+		post.setCountReplies(countReplies(post.getId(), authors, admin, needCheck));
+		if (admin) {
+			post.setUncheckedChild(uncheckedReplies(post.getId()));
+		}
 		return post;
 	}
 	

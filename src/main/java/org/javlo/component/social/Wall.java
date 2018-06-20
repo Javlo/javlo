@@ -134,7 +134,7 @@ public class Wall extends AbstractPropertiesComponent implements IAction {
 		}
 		long id = Long.parseLong(rs.getParameter("id"));
 		SocialLocalService socialService = SocialLocalService.getInstance(ctx.getGlobalContext());
-		Post post = socialService.getPost(id);
+		Post post = socialService.getPost(id, ctx.getCurrentEditUser().getLogin(), true, false);
 		post.setAdminValided(true);
 		post.setAdminMessage(rs.getParameter("msg", ""));
 		post.setValid(StringHelper.isTrue(rs.getParameter("valid", null)));

@@ -140,6 +140,24 @@ public class SocialLocalServiceTest extends TestCase {
 		posts = socialService.getPost(null, false, true, AUTHOR_3, GROUP_VALIDATION, 10, 0);
 		assertEquals(posts.size(), 1);
 		assertEquals(socialService.getPostListSize(null, AUTHOR_3,  GROUP_VALIDATION, false, true), 1);
+		
+		
+		Post reply = new Post();
+		reply.setParent(mainPost.getId());
+		reply.setMainPost(mainPost.getId());
+		reply.setGroup(GROUP_VALIDATION);
+		reply.setAuthor(AUTHOR_2);
+		reply.setText("re:hello word to be reply");
+		reply.setAdminValided(false);
+		reply = socialService.createPost(reply);
+		posts = socialService.getPost(null, false, true, AUTHOR_3, GROUP_VALIDATION, 10, 0);
+		assertEquals(posts.iterator().next().getCountReplies(), 0);
+		reply.setValid(true);
+		reply.setAdminValided(true);
+		socialService.updatePost(reply);
+		posts = socialService.getPost(null, false, true, AUTHOR_3, GROUP_VALIDATION, 10, 0);
+		assertEquals(posts.iterator().next().getCountReplies(), 1);
+		
 		socialService.deletePost(mainPost.getAuthor(), mainPost.getId());
 	}
 
