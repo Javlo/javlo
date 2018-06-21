@@ -177,6 +177,8 @@ public class UserLogin extends AbstractPropertiesComponent implements IAction {
 			return i18nAccess.getViewText("registration.error.password_notsame", "2 passwords must be the same.");
 		} else if (password.length() < 3) {
 			return i18nAccess.getViewText("registration.error.password_size", "password must be at least 3 characters.");
+		} else if (StringHelper.isEmpty(login)) {
+			return i18nAccess.getViewText("registration.error.need-login", "please fill login field");
 		}
 
 		UserLogin comp = (UserLogin) ComponentHelper.getComponentFromRequest(ctx);
