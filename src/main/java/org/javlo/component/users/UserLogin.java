@@ -55,10 +55,11 @@ public class UserLogin extends AbstractPropertiesComponent implements IAction {
 	public static final String MSG = "message";
 	public static final String ROLES = "roles";
 
+	public static final String VALIDATION = "validation_msg";
 	public static final String OPTIN = "optin";
 	public static final String OPTOUT = "optout";
 
-	private static final List<String> FIELDS = new LinkedList<String>(Arrays.asList(new String[] { EMAIL, MSG, ROLES, OPTIN, OPTOUT }));
+	private static final List<String> FIELDS = new LinkedList<String>(Arrays.asList(new String[] { EMAIL, MSG, ROLES, VALIDATION, OPTIN, OPTOUT }));
 
 	@Override
 	public String getType() {
@@ -179,6 +180,9 @@ public class UserLogin extends AbstractPropertiesComponent implements IAction {
 		}
 
 		UserLogin comp = (UserLogin) ComponentHelper.getComponentFromRequest(ctx);
+		if (!StringHelper.isEmpty(comp.getFieldValue(UserLogin.VALIDATION)) && !StringHelper.isTrue(rs.getParameter("valid"))) {
+			return i18nAccess.getViewText("registration.error.check", "Please check : ")+'"'+comp.getFieldValue(UserLogin.VALIDATION)+'"';
+		}
 		IUserInfo userInfo = new UserInfo();
 		userInfo.setLogin(login);
 		if (email != null) {
