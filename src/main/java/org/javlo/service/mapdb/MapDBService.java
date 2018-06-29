@@ -55,9 +55,9 @@ public class MapDBService {
 
 	@Override
 	protected void finalize() throws Throwable {
-		if (!db.isClosed()) {
-			db.close();
-		}
+//		if (!db.isClosed()) {
+//			db.close();
+//		}
 	}
 
 	public static void main(String[] args) {		

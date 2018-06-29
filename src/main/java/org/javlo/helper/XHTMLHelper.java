@@ -2156,7 +2156,7 @@ public class XHTMLHelper {
 		
 		if (!xhtml.contains("${")) {
 			return xhtml;
-		}		
+		}
 		Collection<String> params = StringHelper.extractItem(xhtml, "${param.", "}");
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
 		for (String param : params) {

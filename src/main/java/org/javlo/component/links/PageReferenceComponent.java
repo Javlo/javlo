@@ -721,7 +721,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 				// lgCtx = page.getContentContextWithContent(ctx);
 				// }
 				if (filterPage(lgCtx, allChildren.get(i), currentSelection, commands, filter, true) && (page.getContentDateNeverNull(ctx).after(backDate.getTime()))) {
-					renderPageSelectLine(lgCtx, outTemp, currentSelection, page);
+					renderPageSelectLine(lgCtx, outTemp, currentSelection, page, i+1);
 					countPage++;
 				}
 			}
@@ -741,7 +741,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		return new String(outStream.toByteArray());
 	}
 
-	private void renderPageSelectLine(ContentContext ctx, PrintStream out, Collection<MenuElement> currentSelection, MenuElement page) throws Exception {
+	private void renderPageSelectLine(ContentContext ctx, PrintStream out, Collection<MenuElement> currentSelection, MenuElement page, int num) throws Exception {
 		String editPageURL = URLHelper.createEditURL(page.getPath(), ctx);
 		if (ctx.isEditPreview()) {
 			Map<String, String> params = new HashMap<String, String>();
@@ -749,7 +749,13 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 			params.put("parentURL", URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.PREVIEW_MODE), page.getPath()));
 			editPageURL = URLHelper.createURL(ctx, page.getPath(), params);
 		}
-		out.print("<tr class=\"filtered\"><td class=\"label\"><a data-toggle=\"tooltip\" data-placement=\"right\" title=\"" + NavigationHelper.getBreadCrumb(ctx, page) + "\" href=\"" + editPageURL + "\">" + page.getFullLabel(ctx) + "</a></td>");
+		String checked = "";
+		if (currentSelection.contains(page)) {
+			checked = " checked=\"checked\"";
+		}
+		out.print("<tr class=\"filtered"+(num%2==0?" odd":" even")+"\">");
+		out.print("<td><input type=\"hidden\" name=\"" + getPageDisplayedId(page) + "\" value=\"1\" /><input type=\"checkbox\" name=\"" + getPageId(page) + "\" value=\"" + page.getId() + "\"" + checked + "/></td>");
+		out.print("<td class=\"label\"><a data-toggle=\"tooltip\" data-placement=\"right\" title=\"" + NavigationHelper.getBreadCrumb(ctx, page) + "\" href=\"" + editPageURL + "\">" + page.getFullLabel(ctx) + "</a></td>");
 		out.print("<td>" + StringHelper.neverNull(StringHelper.renderLightDate(page.getContentDate(ctx))) + "</td>");
 		out.println("<td>" + StringHelper.renderLightDate(page.getModificationDate(ctx)) + "</td><td>" + StringHelper.neverNull(page.getRealContentLanguage(ctx)) + "</td>");
 		String contentCode = "";
@@ -771,11 +777,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 			sep = " - ";
 		}
 		out.println("<td>" + contentCode + "</td>");
-		String checked = "";
-		if (currentSelection.contains(page)) {
-			checked = " checked=\"checked\"";
-		}
-		out.print("<td><input type=\"hidden\" name=\"" + getPageDisplayedId(page) + "\" value=\"1\" /><input type=\"checkbox\" name=\"" + getPageId(page) + "\" value=\"" + page.getId() + "\"" + checked + "/></td></tr>");
+		out.print("</tr>");
 	}
 
 	private int getFirstPageNumber() {

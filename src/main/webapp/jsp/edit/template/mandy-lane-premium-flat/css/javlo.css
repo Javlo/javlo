@@ -15,7 +15,11 @@
 .login-page h1 {
 	display: none;
 }
- 
+
+
+table .odd {
+	background-color: #f1f1f1;
+}
 
 /*** general ***/
 

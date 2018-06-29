@@ -325,10 +325,10 @@ public class RSSReader extends ComplexPropertiesLink {
 					if (getLabel().length() > 0) {
 						out.println("<h2>" + getLabel() + "</h2>");
 					}
-					out.println("<ul>");
+					out.println("<ul class=\"list-group\">");
 					int index = 1;
 					for (SyndEntry syndEntry : localEntries) {
-						out.println("<li class=\"item-" + index + "\">");
+						out.println("<li class=\"list-group-item item-" + index + "\">");
 						if (syndEntry.getPublishedDate() != null) {
 							out.println("<div class=\"date\">" + dateFormat.format(syndEntry.getPublishedDate()) + "</div>");
 						}

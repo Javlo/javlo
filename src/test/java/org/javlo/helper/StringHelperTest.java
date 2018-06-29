@@ -443,4 +443,24 @@ public class StringHelperTest extends TestCase {
 		assertEquals(StringHelper.extractHost(null), "");
 		assertEquals(StringHelper.extractHost("/test/index.html"), "");
 	}
+	
+	public void testExtractItem() {
+		String html = "<div>${info.path}</div>";		
+		List<String> items = StringHelper.extractItem(html,"${info.", "}");
+		assertEquals(items.size(), 1);
+		assertEquals(items.iterator().next(), "path");
+		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+		PrintStream out = new PrintStream(outStream);
+		out.println("<html>");
+		out.println("<body>");
+		out.println("<div>${info.path}</div>");
+		out.println("<div>${info.currentYear}</div>");
+		out.println("</body>");
+		out.println("</html>");
+		out.close();
+		items = StringHelper.extractItem(new String(outStream.toByteArray()),"${info.", "}");
+		assertEquals(items.size(), 2);
+		assertEquals(items.get(0), "path");		
+		assertEquals(items.get(1), "currentYear");
+	}
 }
