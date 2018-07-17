@@ -73,6 +73,10 @@ public class SocialLocalService {
 		}
 		String filterSQL = "";
 		String sep = "";
+		if (socialFilter.isNotValided()) {
+			filterSQL = filterSQL + sep + "adminCheck=false";
+			sep = " and ";
+		}
 		if (socialFilter.isOnlyMine()) {
 			filterSQL = filterSQL + sep + "author='"+username+"'";
 			sep = " and ";
@@ -340,11 +344,16 @@ public class SocialLocalService {
 		st.execute("delete from post where id="+id);
 	}
 	
-	public void deletePost(String author, long id) throws Exception {
+	public void deletePost(boolean admin, String author, long id) throws Exception {
 		Connection conn = dataBaseService.getConnection(DATABASE_NAME);
 		try {
 			Statement st = conn.createStatement();
-			ResultSet rs = st.executeQuery("select * from post where id="+id+" and author='"+author+"'");
+			ResultSet rs;
+			if (!admin) {
+				rs = st.executeQuery("select * from post where id="+id+" and author='"+author+"'");
+			} else  {
+				rs = st.executeQuery("select * from post where id="+id);
+			}
 			if (rs.next()) {
 				deleteAllPostsChildren(conn, id);
 				st.execute("delete from post where parent="+id);
@@ -356,7 +365,7 @@ public class SocialLocalService {
 	}
 	
 	public static void main(String[] args) {
-		System.out.println(">>>>>>>>> SocialLocalService.main : password = "+StringHelper.md5Hex("23122312")); //TODO: remove debug trace
+		System.out.println(">>>>>>>>> SocialLocalService.main : password = "+StringHelper.md5Hex("coucou")); //TODO: remove debug trace
 	}
 
 }

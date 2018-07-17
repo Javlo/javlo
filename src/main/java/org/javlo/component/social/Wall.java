@@ -119,9 +119,19 @@ public class Wall extends AbstractPropertiesComponent implements IAction {
 		if (ctx.getCurrentUserId() == null) {
 			return "security error !";
 		}
+		boolean admin = AdminUserSecurity.getInstance().isAdmin(ctx.getCurrentEditUser());
 		long id = Long.parseLong(rs.getParameter("id"));
-		SocialLocalService.getInstance(ctx.getGlobalContext()).deletePost(ctx.getCurrentUserId(), id);
-		;
+		SocialLocalService.getInstance(ctx.getGlobalContext()).deletePost(admin, ctx.getCurrentUserId(), id);
+		return performGetpost(ctx, rs);
+	}
+	
+	public static String performDeletereply(ContentContext ctx, RequestService rs) throws Exception {
+		if (ctx.getCurrentUserId() == null) {
+			return "security error !";
+		}
+		boolean admin = AdminUserSecurity.getInstance().isAdmin(ctx.getCurrentEditUser());
+		long id = Long.parseLong(rs.getParameter("id"));
+		SocialLocalService.getInstance(ctx.getGlobalContext()).deletePost(admin, ctx.getCurrentUserId(), id);
 		return performGetpost(ctx, rs);
 	}
 	
@@ -166,6 +176,7 @@ public class Wall extends AbstractPropertiesComponent implements IAction {
 		} else {			
 			socialFilter.setQuery(rs.getParameter("text-filter",null));
 			socialFilter.setOnlyMine(StringHelper.isTrue(rs.getParameter("filter-mine", null)));
+			socialFilter.setNotValided(StringHelper.isTrue(rs.getParameter("notvalided", null)));
 		}
 		return null;
 	}

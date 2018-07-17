@@ -8,6 +8,7 @@ public class SocialFilter {
 	
 	private String query;
 	private boolean onlyMine = false;
+	private boolean notValided = false;
 	
 	private static final String KEY = "socialFilter";
 	
@@ -43,6 +44,15 @@ public class SocialFilter {
 	public void reset() {
 		query = null;
 		onlyMine = false;
+		notValided = false;
+	}
+
+	public boolean isNotValided() {
+		return notValided;
+	}
+
+	public void setNotValided(boolean notValided) {
+		this.notValided = notValided;
 	}
 
 }
