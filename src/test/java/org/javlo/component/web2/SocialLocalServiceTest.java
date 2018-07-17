@@ -59,10 +59,10 @@ public class SocialLocalServiceTest extends TestCase {
 		assertTrue(postsFilterd.size() == 0);
 
 		for (Post delPost : posts) {
-			socialService.deletePost(delPost.getAuthor(), delPost.getId());
+			socialService.deletePost(false, delPost.getAuthor(), delPost.getId());
 		}
 		for (Post delPost : posts2) {
-			socialService.deletePost(delPost.getAuthor(), delPost.getId());
+			socialService.deletePost(false,delPost.getAuthor(), delPost.getId());
 		}
 	}
 
@@ -81,7 +81,7 @@ public class SocialLocalServiceTest extends TestCase {
 		assertEquals(post.getAuthor(), AUTHOR_1);
 		assertNotNull(post.getCreationDate());
 		for (Post delPost : posts) {
-			socialService.deletePost(delPost.getAuthor(), delPost.getId());
+			socialService.deletePost(false,delPost.getAuthor(), delPost.getId());
 		}
 	}
 
@@ -113,7 +113,7 @@ public class SocialLocalServiceTest extends TestCase {
 		Post post = posts.iterator().next();
 		assertEquals(post.getAuthor(), AUTHOR_3);
 		assertNotNull(post.getCreationDate());
-		socialService.deletePost(mainPost.getAuthor(), mainPost.getId());
+		socialService.deletePost(false, mainPost.getAuthor(), mainPost.getId());
 		assertEquals(socialService.getReplies(AUTHOR_3, false, false, mainPost.getId()), null);
 	}
 
@@ -158,7 +158,7 @@ public class SocialLocalServiceTest extends TestCase {
 		posts = socialService.getPost(null, false, true, AUTHOR_3, GROUP_VALIDATION, 10, 0);
 		assertEquals(posts.iterator().next().getCountReplies(), 1);
 		
-		socialService.deletePost(mainPost.getAuthor(), mainPost.getId());
+		socialService.deletePost(false, mainPost.getAuthor(), mainPost.getId());
 	}
 
 	public void testAdmin() throws Exception {
@@ -216,7 +216,7 @@ public class SocialLocalServiceTest extends TestCase {
 		int saveSize2 = socialService.getPost(GROUP2).size();
 		assertTrue(saveSize1 > 0);
 		assertTrue(saveSize2 > 0);
-		socialService.deletePost(AUTHOR_1, posts.iterator().next().getId());
+		socialService.deletePost(false, AUTHOR_1, posts.iterator().next().getId());
 		// check if post is removed
 		assertEquals(saveSize1 - 1, socialService.getPost(GROUP1).size());
 	}
