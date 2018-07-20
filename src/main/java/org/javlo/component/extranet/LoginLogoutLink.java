@@ -62,13 +62,14 @@ public class LoginLogoutLink extends AbstractVisualComponent {
 					out.println("<input type=\"hidden\" value=\"edit-login\" name=\"edit-login\" />");
 					out.println("<input type=\"hidden\" name=\"" + ContentContext.PREVIEW_EDIT_PARAM + "\" value=\"true\" />");
 				}
-				out.println("<div class=\"form-group row\"><div class=\"col-sm-6\">");
-				out.println("<input class=\"username form-control\" id=\"j_username\" type=\"text\" name=\"j_username\" placeholder=\"" + i18nAccess.getAllText("form.login", "login") + "\" />");
-				out.println("</div><div class=\"col-sm-6\">");
+				out.println("<div class=\"form-group row\"><div class=\"col-sm-5\">");
+				out.println("<input class=\"username form-control\" id=\"j_username\" type=\"text\" name=\"j_username\" placeholder=\"" + i18nAccess.getAllText("form.email", "e-mail") + "\" />");
+				out.println("</div><div class=\"col-sm-5\">");
 				out.println("<input class=\"password form-control\" id=\"j_password\" type=\"password\" name=\"j_password\"  placeholder=\"" + i18nAccess.getAllText("form.password", "login") + "\" />");
-				out.println("</div></div><div class=\"checkbox\"><label>");
-				out.println("<input type=\"checkbox\" name=\"autologin\" /> " + i18nAccess.getAllText("login.auto", "Remember me on this computer"));
-				out.println("</label><button type=\"submit\" class=\"submit btn btn-primary btn-xs\" >" + i18nAccess.getViewText("user.login") + "</button>");
+				out.println("</div><div class=\"col-sm-2\"><button type=\"submit\" class=\"submit btn btn-primary btn-xs\" >" + i18nAccess.getViewText("global.ok") + "</button></div>");
+				out.println("</div><div class=\"checkbox\"><label>");
+				out.println(" <div class=\"form-group\"><input type=\"checkbox\" name=\"autologin\" /> " + i18nAccess.getAllText("login.auto", "Remember me on this computer") + "</div>");
+				out.println("</label>");
 				String js = " onmouseenter=\"$('#j_password').addClass('disabled'); $('#j_username').addClass('focus');\"  onmouseleave=\"$('#j_password').removeClass('disabled'); $('#j_username').removeClass('focus');\"";
 				out.println("&nbsp;<button type=\"submit\" name=\"webaction\" value=\"user.askChangePassword\" class=\"submit btn btn-secondary btn-xs\" " + js + ">" + i18nAccess.getViewText("login.change-password") + "</button>");
 				out.println("</div>");

@@ -12,6 +12,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -97,7 +98,7 @@ public class FileAction extends AbstractModuleAction {
 		ctx.getRequest().setAttribute("pathPrefix", getROOTPath(ctx));
 		ctx.getRequest().setAttribute("sort", fileModuleContext.getSort());
 		ctx.getRequest().setAttribute("canUpload", AdminUserSecurity.isCurrentUserCanUpload(ctx));
-
+		
 		/*
 		 * File importFolder = new
 		 * File(URLHelper.mergePath(globalContext.getStaticFolder(),
@@ -381,6 +382,13 @@ public class FileAction extends AbstractModuleAction {
 				if (location != null) {
 					staticInfo.setLocation(ctx, location);
 				}
+				
+				String[] taxonomy = rs.getParameterValues("taxonomy-" + fileBean.getId(), null);
+				System.out.println(">>>>>>>>> FileAction.performUpdateMeta : taxonomy = "+taxonomy); //TODO: remove debug trace
+				if (taxonomy != null) {
+					staticInfo.setTaxonomy(ctx, new HashSet<String>(Arrays.asList(taxonomy)));
+				}
+				
 				String copyright = rs.getParameter("copyright-" + fileBean.getId(), null);
 				if (copyright != null) {
 					staticInfo.setCopyright(ctx, copyright);

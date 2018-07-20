@@ -72,6 +72,10 @@ public class TaxonomyServiceAgregation {
 	public String getSelectHtml(Collection<String> selection) {
 		return getSelectHtml("taxonomy", "form-control chosen-select", selection);
 	}
+	
+	public String getSelectHtml(String name, Collection<String> selection) {
+		return getSelectHtml(name, "form-control chosen-select", selection);
+	}
 
 	public String getSelectHtml(String name, String cssClass, Collection<String> selection) {
 		Map<String, TaxonomyBean> beans = new HashMap<String, TaxonomyBean>();

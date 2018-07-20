@@ -9,15 +9,21 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.fileupload.FileItem;
 import org.javlo.component.core.IUploadResource;
 import org.javlo.component.properties.AbstractPropertiesComponent;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
+import org.javlo.data.taxonomy.ITaxonomyContainer;
+import org.javlo.data.taxonomy.TaxonomyBean;
+import org.javlo.data.taxonomy.TaxonomyService;
 import org.javlo.helper.ElementaryURLHelper;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
@@ -26,9 +32,11 @@ import org.javlo.helper.XHTMLHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.module.file.FileAction;
 import org.javlo.module.file.FileBean;
+import org.javlo.service.IListItem;
 import org.javlo.service.RequestService;
 import org.javlo.user.UserSecurity;
 import org.javlo.ztatic.StaticInfo;
+import org.javlo.ztatic.StaticInfoBean;
 
 public class FileFinder extends AbstractPropertiesComponent implements IUploadResource {
 
@@ -45,24 +53,27 @@ public class FileFinder extends AbstractPropertiesComponent implements IUploadRe
 
 	private static String[] styleList = new String[] { SORT_NAME, SORT_TITLE, SORT_DATE, SORT_MODIFDATE, SORT_NAME_DESC, SORT_TITLE_DESC, SORT_DATE_DESC, SORT_MODIFDATE_DESC };
 
-	private static class FileFilter {
-		private ContentContext ctx = null;
+	private static class FileFilter implements ITaxonomyContainer {
 		private String text = null;
 		private List<String> ext = Collections.emptyList();
 		private List<String> noext = Collections.emptyList();
 		private List<String> tags = Collections.emptyList();
+		private Set<String> taxonomy = Collections.emptySet();
 		private File root;
 		private boolean acceptDirectory = false;
 
 		public static FileFilter getInstance(ContentContext ctx) {
 			FileFilter outFilter = new FileFilter();
-			outFilter.ctx = ctx;
-			outFilter.text = ctx.getRequest().getParameter("text");
+			outFilter.text = ctx.getRequest().getParameter("text");	
 			outFilter.root = new File(URLHelper.mergePath(ctx.getGlobalContext().getDataFolder(), ctx.getGlobalContext().getStaticConfig().getFileFolder()));
+			String[] taxonomy = ctx.getRequest().getParameterValues("taxonomy");
+			if (taxonomy != null) {
+				outFilter.taxonomy = new HashSet(Arrays.asList(taxonomy));
+			}
 			return outFilter;
 		}
 
-		public boolean match(ContentContext ctx, StaticInfo file) {
+		public boolean match(ContentContext ctx, StaticInfo file) throws Exception {
 			if (file == null || file.getFile() == null) {
 				return false;
 			} else {
@@ -74,7 +85,14 @@ public class FileFinder extends AbstractPropertiesComponent implements IUploadRe
 								if (noext.size() == 0 || !noext.contains(fileExt)) {
 									if (tags.size() == 0 || !Collections.disjoint(file.getTags(ctx), tags)) {
 										if (file.getFile().getCanonicalPath().startsWith(getRoot().getCanonicalPath())) {
-											return text == null || text.trim().length() == 0 || (file.getFile().getAbsolutePath() + ' ' + file.getTitle(ctx) + ' ' + file.getDescription(ctx)).contains(text);
+											boolean outTest = text == null || text.trim().length() == 0 || (file.getFile().getAbsolutePath() + ' ' + file.getTitle(ctx) + ' ' + file.getDescription(ctx)).contains(text);
+											if (outTest && taxonomy.size()>0) {
+												StaticInfoBean staticInfoBean = new StaticInfoBean(ctx, file);
+												TaxonomyService taxonomyService = TaxonomyService.getInstance(ctx);
+												return taxonomyService.isMatch(staticInfoBean, this);
+											} else {
+												return outTest;
+											}
 										}
 									}
 								}
@@ -122,6 +140,11 @@ public class FileFinder extends AbstractPropertiesComponent implements IUploadRe
 
 		public void setTags(List<String> tags) {
 			this.tags = tags;
+		}
+
+		@Override
+		public Set<String> getTaxonomy() {
+			return taxonomy;
 		}
 	}
 

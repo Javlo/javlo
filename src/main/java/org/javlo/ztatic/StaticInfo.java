@@ -12,10 +12,12 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Logger;
 
 import javax.naming.ConfigurationException;
@@ -27,6 +29,7 @@ import org.javlo.cache.ICache;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
+import org.javlo.data.taxonomy.ITaxonomyContainer;
 import org.javlo.helper.ExifHelper;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
@@ -413,6 +416,8 @@ public class StaticInfo {
 	private String linkedLocation;
 
 	private List<String> tags = null;
+	
+	private Set<String> taxonomy = null;
 
 	private List<String> readRoles = null;
 
@@ -1167,6 +1172,32 @@ public class StaticInfo {
 		}
 		return tags;
 	}
+	
+	public Set<String> getTaxonomy(ContentContext ctx) {
+		if (taxonomy == null) {
+			String key = getKey("taxonomy");
+			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+			String rawTaxonomy = globalContext.getData(key);
+			if (rawTaxonomy == null) {
+				taxonomy = Collections.EMPTY_SET;
+			} else {
+				taxonomy = new HashSet(StringHelper.stringToCollection(rawTaxonomy));
+			}
+		}
+		return taxonomy;
+	}
+	
+	private void storeTaxonomy(ContentContext ctx) {
+		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+		String key = getKey("taxonomy");
+		String taxonomyTags = StringHelper.collectionToString(taxonomy);
+		globalContext.setData(key, taxonomyTags);
+	}
+	
+	public void setTaxonomy(ContentContext ctx, Set<String> taxonomy) {
+		this.taxonomy = taxonomy;
+		storeTaxonomy(ctx);
+	}
 
 	public void addTag(ContentContext ctx, String tag) {
 		if (tags == null || tags == Collections.EMPTY_LIST) {
@@ -1518,4 +1549,5 @@ public class StaticInfo {
 			return imageSize;
 		}
 	}
+
 }

@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.javlo.bean.Link;
 import org.javlo.comparator.LanguageListSorter;
@@ -15,6 +16,7 @@ import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.data.InfoBean;
+import org.javlo.data.taxonomy.ITaxonomyContainer;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
@@ -23,7 +25,7 @@ import org.javlo.ztatic.StaticInfo;
 import org.javlo.ztatic.StaticInfo.Position;
 import org.owasp.encoder.Encode;
 
-public class FileBean implements ILanguage {
+public class FileBean implements ILanguage, ITaxonomyContainer {
 
 	public static class FileBeanComparator implements Comparator<FileBean> {
 
@@ -439,6 +441,20 @@ public class FileBean implements ILanguage {
 			return false;
 		} else {
 			return StringHelper.isPDF(getName()) || StringHelper.getFileExtension(getName()).equalsIgnoreCase("png");
+		}
+	}
+	
+	@Override
+	public Set<String> getTaxonomy() {
+		return staticInfo.getTaxonomy(ctx);
+	}
+	
+	public String getTaxonomySelect() {
+		try {
+			return ctx.getGlobalContext().getAllTaxonomy(ctx).getSelectHtml("taxonomy-"+getId(), staticInfo.getTaxonomy(ctx));
+		} catch (Exception e) {
+			e.printStackTrace();
+			return e.getMessage();
 		}
 	}
 	

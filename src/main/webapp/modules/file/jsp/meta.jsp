@@ -196,11 +196,17 @@
 		<c:if test="${fn:length(readRoles) > 0}">
 		<fieldset class="roles">
 		<legend>${i18n.edit["field.read-roles"]}</legend>
-		    <c:forEach var="role" items="${readRoles}">		    	
+		    <c:forEach var="role" items="${readRoles}">
 				<span><input ${metaReadOnly?'readonly="readonly"':''} class="role-${role}" type="checkbox" id="readrole_${role}_${file.id}" name="readrole_${role}_${file.id}" ${not empty file.readRoles[role]?'checked="checked"':''}/><label for="readrole_${role}_${file.id}">${role}</label></span>
 			</c:forEach>
 		</fieldset>
 		</c:if>
+		</c:if>
+		<c:if test="${taxonomy.active}">
+			<div class="taxonomy">			
+			<label>${i18n.edit['taxonomy']}</label>
+			${file.taxonomySelect}
+			</div>
 		</c:if>
 		</div>
 		</c:if>

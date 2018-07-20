@@ -4,15 +4,17 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.Date;
+import java.util.Set;
 
 import org.javlo.context.ContentContext;
+import org.javlo.data.taxonomy.ITaxonomyContainer;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.image.ImageSize;
 import org.javlo.ztatic.StaticInfo.Position;
 import org.owasp.encoder.Encode;
 
-public class StaticInfoBean {
+public class StaticInfoBean implements ITaxonomyContainer {
 	private final ContentContext ctx;
 	private final StaticInfo staticInfo;
 	private final ImageSize imageSize;
@@ -252,5 +254,10 @@ public class StaticInfoBean {
 	
 	public ImageSize getImageSize() {
 		return imageSize;
+	}
+
+	@Override
+	public Set<String> getTaxonomy() {
+		return staticInfo.getTaxonomy(ctx);
 	}
 }

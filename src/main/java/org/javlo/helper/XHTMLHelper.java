@@ -1920,10 +1920,12 @@ public class XHTMLHelper {
 	}
 
 	public static boolean alreadyInserted(ContentContext ctx, String resource) {
-		if (resource.contains("jquery-1") || resource.contains("jquery-2") || resource.contains("jquery.min") || resource.endsWith("jquery.js")) {
-			resource = "_jquery-library_";
-		} else if (resource.contains("jquery-ui")) {
-			resource = "_jquery-ui_";
+		if (!resource.contains(".jquery.")) {
+			if (resource.contains("jquery-1") || resource.contains("jquery-2") || resource.contains("jquery.min") || resource.endsWith("jquery.js")) {
+				resource = "_jquery-library_";
+			} else if (resource.contains("jquery-ui")) {
+				resource = "_jquery-ui_";
+		}
 		}
 		String attKey = "_ari_" + resource;
 		if (ctx.getRequest().getAttribute(attKey) != null) {

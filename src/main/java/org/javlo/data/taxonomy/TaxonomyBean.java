@@ -14,6 +14,7 @@ public class TaxonomyBean {
 	private TaxonomyBean parent;
 	private List<TaxonomyBean> children = new LinkedList<TaxonomyBean>();
 	private Map<String, String> labels = new HashMap<String, String>();
+	private Map<String, String> pathLabels = null;
 
 	public TaxonomyBean() {
 	}
@@ -51,16 +52,40 @@ public class TaxonomyBean {
 			return false;
 		}
 	}
+	
+	public Map<String, String> getPathLabels() {
+		if (pathLabels == null) {
+			pathLabels = new HashMap<String,String>();
+			for (String lg : getLabels().keySet()) {
+				String label = getLabels().get(lg);
+				TaxonomyBean parent = getParent();
+				if (parent != null) {
+					while (parent.getParent() != null) {
+						String l = parent.getLabels().get(lg);
+						if (l == null) {
+							l = parent.getName();
+						}
+						label = l + " > "+label;
+						parent = parent.getParent();	
+					}
+				}
+				pathLabels.put(lg, label);
+			}
+		}
+		return pathLabels;
+	}
 
 	public Map<String, String> getLabels() {
 		return labels;
 	}
 
 	public void setLabels(Map<String, String> labels) {
+		pathLabels = null;
 		this.labels = labels;
 	}
 
 	public boolean updateLabel(String lang, String label) {
+		pathLabels = null;
 		if (StringHelper.isEmpty(label)) {
 			if (labels.get(lang) == null) {
 				return false;
@@ -88,6 +113,19 @@ public class TaxonomyBean {
 
 	public List<TaxonomyBean> getChildren() {
 		return children;
+	}
+	
+	private static final void addChildren(List<TaxonomyBean> list, TaxonomyBean bean) {		
+		for (TaxonomyBean child : bean.getChildren()) {
+			list.add(child);
+			addChildren(list, child);
+		}
+	}
+	
+	public List<TaxonomyBean> getAllChildren() {
+		List<TaxonomyBean> allChildren = new LinkedList<TaxonomyBean>();
+		addChildren(allChildren, this);
+		return allChildren;
 	}
 	
 	public TaxonomyBean searchChildByName(String name) {
@@ -167,3 +205,4 @@ public class TaxonomyBean {
 	}
 	
 }
+

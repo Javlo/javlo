@@ -201,3 +201,15 @@ body .el-finder {
 	height: 42px;
 	vertical-align: middle;
 }
+
+.maincontent .left {
+	overflow: visible;
+}
+
+.form-list .taxonomy li {
+	border-radius: 0px;
+	border: 0 none;
+	box-shadow: none;
+	width: auto;
+	background-color: transparent;
+}
