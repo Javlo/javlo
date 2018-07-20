@@ -105,6 +105,8 @@ import org.javlo.utils.TimeMap;
 import org.owasp.encoder.Encode;
 
 public class GlobalContext implements Serializable, IPrintInfo {
+	
+	private static final Date CREATION_DATE = new Date();
 
 	public static final String PAGE_TOKEN_PARAM = "p_token";
 
@@ -1820,7 +1822,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	public Date getPublishDate() throws ParseException {
 		String dateStr = properties.getString("publish-date", null);
 		if (dateStr == null) {
-			return null;
+			return CREATION_DATE;
 		}
 		return StringHelper.parseTime(dateStr);
 	}

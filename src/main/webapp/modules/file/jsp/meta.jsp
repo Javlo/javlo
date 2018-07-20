@@ -202,7 +202,7 @@
 		</fieldset>
 		</c:if>
 		</c:if>
-		<c:if test="${taxonomy.active}">
+		<c:if test="${taxonomy.active && empty param.select}">
 			<div class="taxonomy">			
 			<label>${i18n.edit['taxonomy']}</label>
 			${file.taxonomySelect}
