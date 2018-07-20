@@ -147,6 +147,7 @@ public class Persistence extends AbstractModuleAction {
 				ResourceHelper.closeResource(in);
 			}
 			content.releasePreviewNav(ctx);
+			ctx.getGlobalContext().initDataFile();
 			String msg = i18nAccess.getText("edit.message.uploaded");
 			MessageRepository.getInstance(ctx).setGlobalMessageAndNotification(ctx, new GenericMessage(msg, GenericMessage.INFO), false);
 		}
@@ -161,6 +162,7 @@ public class Persistence extends AbstractModuleAction {
 						ResourceHelper.closeResource(in);
 					}
 					content.releasePreviewNav(ctx);
+					ctx.getGlobalContext().initDataFile();
 					String msg = i18nAccess.getText("edit.message.uploaded");
 					MessageRepository.getInstance(ctx).setGlobalMessageAndNotification(ctx, new GenericMessage(msg, GenericMessage.INFO), false);
 				}
