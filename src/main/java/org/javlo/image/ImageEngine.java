@@ -1707,22 +1707,85 @@ public class ImageEngine {
 			image.setRGB(basicX+1, basicY+1, finalColor.getRGB());
 		}	
 	}
+	
+	/**
+	 * return true if picture is to close of black than white
+	 * @param image
+	 * @return
+	 */
+	public static boolean isDark(BufferedImage image) {
+		long darkPixel = 0;		
+		for (int x=0; x<image.getWidth(); x++) {
+			for (int y=0; y<image.getHeight(); y++) {
+				Color c = new Color(image.getRGB(x, y));
+				if (c.getRed() + c.getGreen() + c.getRed() < 128*3) {
+					darkPixel++;
+				}
+			}			
+		}
+		return darkPixel > (image.getWidth()*image.getHeight())/2;
+	}
+	
+	/**
+	 * add picture border (transform portrait (phone picture) to landscape).
+	 * @param image
+	 * @backgroundColors background color (under border)
+	 * @return
+	 */
+	
+	public static BufferedImage addPictureBorder(BufferedImage image, Color backgroundColors) {
+		if (backgroundColors == DETECT_COLOR) {
+			if (isDark(image)) {
+				backgroundColors = Color.BLACK;
+			} else {
+				backgroundColors = Color.WHITE;
+			}
+		} 
+		
+		int borderWidth = image.getWidth()/2;
+		int delta = image.getWidth() / borderWidth;
+		
+		BufferedImage outImage = new BufferedImage(image.getWidth()+2*borderWidth, image.getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
+		for (int y = 0; y < image.getHeight(); y += 1) {
+			for (int x = 0; x < image.getWidth(); x += 1) {
+				outImage.setRGB(x+borderWidth, y, image.getRGB(x, y));
+			}
+		}
+		for (int y = 0; y < image.getHeight(); y += 1) {
+			for (int x = 0; x < borderWidth; x += 1) {
+				if (x%2==0 && y%2==0) {
+					outImage.setRGB(x, y, image.getRGB(x/delta, (image.getHeight()-image.getHeight()/delta)/2 + y/delta));	
+				} else {
+					outImage.setRGB(x, y, backgroundColors.getRGB());
+				}
+				
+			}
+		}
+		for (int y = 0; y < image.getHeight(); y += 1) {
+			for (int x = image.getWidth()+borderWidth; x < image.getWidth()+2*borderWidth; x += 1) {
+				if (x%2==0 && y%2==0) {
+					int startX = x - (image.getWidth() + borderWidth);
+					int startRead = image.getWidth() - borderWidth/delta;
+					int readX = startRead+startX/delta;
+					if (readX >= image.getWidth()) {
+						readX = image.getWidth()-1;
+					}
+					outImage.setRGB(x, y, image.getRGB(readX, (image.getHeight()-image.getHeight()/delta)/2 + y/delta));	
+				} else {
+					outImage.setRGB(x, y, backgroundColors.getRGB());
+				}
+				
+			}
+		}
+		return outImage;
+	}
 
 	public static void main(String[] args) throws Exception {
 		System.out.println("***** ImageEngine.main : START"); // TODO: remove
-																// debug trace
-		
-		System.out.println(">>>>>>>>> ImageEngine.main : float = "+Float.parseFloat("0.2")); //TODO: remove debug trace
-
-		File imageBack = new File("c:/trans/tablet_back.png");
-		File imageTop = new File("c:/trans/tablet_top.png");
-		File imageSource = new File("c:/trans/source.jpg");
-		File imageTarget = new File("c:/trans/out.png");
-
-		Polygon4 poly = new Polygon4(1200, 560, 1841, 590,1635 ,1188 ,988 ,1090 );
-//		poly = new Polygon4(3000, 1000, 5000, 500, 6000, 2000, 3000, 2000);
-		BufferedImage targetImg = ImageEngine.projectionImage(ImageIO.read(imageBack), ImageIO.read(imageTop), ImageIO.read(imageSource), poly, 0.7f);
-		ImageIO.write(targetImg, "png", imageTarget);
+		File imageBack = new File("c:/trans/work/test6.jpg");
+		BufferedImage targetImg = ImageEngine.addPictureBorder(ImageIO.read(imageBack), DETECT_COLOR);
+		System.out.println(">>>>>>>>> ImageEngine.main : DARK ? = "+isDark(targetImg)); //TODO: remove debug trace
+		ImageIO.write(targetImg, "png", new File("c:/trans/work/target.jpg"));
 		System.out.println("***** ImageEngine.main : END"); // TODO: remove
 															// debug trace
 	}

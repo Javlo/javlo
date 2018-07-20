@@ -100,18 +100,19 @@ public class XHTMLHelper {
 
 	public static final List<String> WEB_FONTS = Arrays.asList(new String[] { "Arial, sans-serif", "Courier, monospace, serif", "Myriad Pro, Myriad Pro Regular, PT Sans, sans-serif", "Times New Roman, serif", "Verdana, Geneva, sans-serif", "Open Sans, sans-serif" });
 
-//	private static final Pattern CSS_IMPORT_PATTERN = Pattern.compile("@import\\s+" +
-//
-//	// optional 'url(' part (non capturing subpattern) with optional quote
-//			"(?:url\\(\\s*)?" + "[\"']?" +
-//
-//			// file path ending with '.?ss' in capturing subpattern 1
-//			// word characters, slashes, dash, underscore, dot,
-//			// colon and question mark (possible for absolute urls) are allowed
-//			"([\\w\\\\/\\-_.:?]+?\\.?ss)" +
-//
-//			// the rest of the line until semicolon or line break
-//			"[^;$]*?(;|$)", Pattern.MULTILINE);
+	// private static final Pattern CSS_IMPORT_PATTERN =
+	// Pattern.compile("@import\\s+" +
+	//
+	// // optional 'url(' part (non capturing subpattern) with optional quote
+	// "(?:url\\(\\s*)?" + "[\"']?" +
+	//
+	// // file path ending with '.?ss' in capturing subpattern 1
+	// // word characters, slashes, dash, underscore, dot,
+	// // colon and question mark (possible for absolute urls) are allowed
+	// "([\\w\\\\/\\-_.:?]+?\\.?ss)" +
+	//
+	// // the rest of the line until semicolon or line break
+	// "[^;$]*?(;|$)", Pattern.MULTILINE);
 
 	public static String _textToXHTML(String text, boolean popup) {
 		String res = autoLink(text);
@@ -195,7 +196,7 @@ public class XHTMLHelper {
 		if (content == null) {
 			return "";
 		}
-		//content = content.replace("&nbsp;", " ");
+		// content = content.replace("&nbsp;", " ");
 		StringWriter out = new StringWriter();
 		BufferedWriter writer = new BufferedWriter(out);
 		BufferedReader reader = new BufferedReader(new StringReader(content));
@@ -418,8 +419,8 @@ public class XHTMLHelper {
 	 * @param value
 	 *            the current value of the field.
 	 * @param emptyName
-	 *            the name of the first empty element (empty as value), if null
-	 *            no empty element.
+	 *            the name of the first empty element (empty as value), if null no
+	 *            empty element.
 	 * @return XHTML code with a dropdown.
 	 */
 	public static String getDropDownFromMap(String name, Map map, String value, String emptyName, boolean sortValue, String cssClass) {
@@ -739,8 +740,8 @@ public class XHTMLHelper {
 	}
 
 	/**
-	 * call .toString on all object, create String array and call the same
-	 * method with array as param.
+	 * call .toString on all object, create String array and call the same method
+	 * with array as param.
 	 * 
 	 * @param name
 	 * @param content
@@ -769,8 +770,8 @@ public class XHTMLHelper {
 	}
 
 	/**
-	 * call .toString on all object, create String array and call the same
-	 * method with array as param.
+	 * call .toString on all object, create String array and call the same method
+	 * with array as param.
 	 * 
 	 * @param name
 	 * @param content
@@ -891,8 +892,8 @@ public class XHTMLHelper {
 	 * @param jsOnChange
 	 * @param sorting
 	 * @param jsOnClick
-	 *            javascript when we click on a link (@value@ for the value of
-	 *            the current line)
+	 *            javascript when we click on a link (@value@ for the value of the
+	 *            current line)
 	 * @return
 	 */
 	public static String getInputMultiSelectList(ContentContext ctx, String[][] content, String value, String jsOnClick) {
@@ -940,8 +941,7 @@ public class XHTMLHelper {
 		content.toArray(contentArray);
 		return getInputOneSelect(name, contentArray, value, null, sorting);
 	}
-	
-	
+
 	public static String getInputOneSelectFirstItem(String name, Collection<? extends Object> content, String value, String firstItem, String cssClass) {
 		Object[] contentArray = new Object[content.size()];
 		content.toArray(contentArray);
@@ -952,7 +952,6 @@ public class XHTMLHelper {
 		}
 		return getInputOneSelectInternal(name, name, newContent, value, firstItem, cssClass, null, null, true);
 	}
-	
 
 	public static String getInputOneSelect(String name, Collection<? extends Object> content, String value, String cssClass) {
 		Object[] contentArray = new Object[content.size()];
@@ -1925,7 +1924,7 @@ public class XHTMLHelper {
 				resource = "_jquery-library_";
 			} else if (resource.contains("jquery-ui")) {
 				resource = "_jquery-ui_";
-		}
+			}
 		}
 		String attKey = "_ari_" + resource;
 		if (ctx.getRequest().getAttribute(attKey) != null) {
@@ -1944,10 +1943,12 @@ public class XHTMLHelper {
 	 * @return true if tag is'nt closed but opened.
 	 */
 	public static boolean alreadyClosedIfOpen(ContentContext ctx, String resource) {
-		if (resource.contains("jquery-1") || resource.contains("jquery-2") || resource.contains("jquery.min") || resource.endsWith("jquery.js")) {
-			resource = "_jquery-library_";
-		} else if (resource.contains("jquery-ui")) {
-			resource = "_jquery-ui_";
+		if (!resource.contains(".jquery.")) {
+			if (resource.contains("jquery-1") || resource.contains("jquery-2") || resource.contains("jquery.min") || resource.endsWith("jquery.js")) {
+				resource = "_jquery-library_";
+			} else if (resource.contains("jquery-ui")) {
+				resource = "_jquery-ui_";
+			}
 		}
 		String openKey = "_ari_" + resource;
 		String closeKey = "_arc_" + resource;
@@ -2155,7 +2156,7 @@ public class XHTMLHelper {
 	}
 
 	public static String replaceJSTLData(ContentContext ctx, String xhtml) throws Exception {
-		
+
 		if (!xhtml.contains("${")) {
 			return xhtml;
 		}
@@ -2163,7 +2164,7 @@ public class XHTMLHelper {
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
 		for (String param : params) {
 			xhtml = xhtml.replace("${param." + param + "}", URLDecoder.decode(requestService.getParameter(param, ""), ContentContext.CHARACTER_ENCODING));
-		}		
+		}
 
 		InfoBean infoBean = InfoBean.getCurrentInfoBean(ctx.getRequest());
 		if (infoBean == null) {
@@ -2178,11 +2179,11 @@ public class XHTMLHelper {
 			if (val != null) {
 				xhtml = xhtml.replace("${" + InfoBean.REQUEST_KEY + "." + param + "}", val);
 			}
-		}		
+		}
 		/*
 		 * for (String key : properties.keySet()) { String jstlStr = "${" +
-		 * InfoBean.REQUEST_KEY + '.' + key + '}'; if (properties.get(key) !=
-		 * null && xhtml.contains(jstlStr)) { xhtml = xhtml.replace(jstlStr,
+		 * InfoBean.REQUEST_KEY + '.' + key + '}'; if (properties.get(key) != null &&
+		 * xhtml.contains(jstlStr)) { xhtml = xhtml.replace(jstlStr,
 		 * properties.get(key).toString()); } }
 		 */
 		if (!xhtml.contains("${")) {
@@ -2195,7 +2196,7 @@ public class XHTMLHelper {
 			if (properties.get(key) != null && xhtml.contains(jstlStr)) {
 				xhtml = xhtml.replace(jstlStr, properties.get(key).toString());
 			}
-		}		
+		}
 		if (!xhtml.contains("${")) {
 			return xhtml;
 		}
@@ -2254,7 +2255,7 @@ public class XHTMLHelper {
 		}
 		return new String(content);
 	}
-	
+
 	/**
 	 * replace text out test tag.
 	 * 
@@ -2272,19 +2273,19 @@ public class XHTMLHelper {
 		int pos = html.indexOf(token);
 		int tokenSize = token.length();
 		StringRemplacementHelper replace = new StringRemplacementHelper();
-		if (pos>=0) {
+		if (pos >= 0) {
 			for (int i = 0; i < html.length(); i++) {
-				if (i==pos) {
-					if (!inTag) {						
-						replace.addReplacement(pos, pos+tokenSize, newToken);
+				if (i == pos) {
+					if (!inTag) {
+						replace.addReplacement(pos, pos + tokenSize, newToken);
 					}
-					pos = html.substring(pos+1).indexOf(token)+pos+1;
+					pos = html.substring(pos + 1).indexOf(token) + pos + 1;
 				}
 				if (inTag) {
 					if (content[i] == '>') {
 						inTag = false;
 					}
-				} else {					
+				} else {
 					if (content[i] == '<') {
 						inTag = true;
 					}
@@ -2449,8 +2450,7 @@ public class XHTMLHelper {
 	 * 
 	 * @param list
 	 * @param key
-	 * @return the key if list null, and empty string if key not found in the
-	 *         list.
+	 * @return the key if list null, and empty string if key not found in the list.
 	 */
 	public static String renderListItem(List<IListItem> list, String key) {
 		if (list == null) {
@@ -2469,8 +2469,7 @@ public class XHTMLHelper {
 	 * 
 	 * @param list
 	 * @param key
-	 * @return the key if list null, and empty string if key not found in the
-	 *         list.
+	 * @return the key if list null, and empty string if key not found in the list.
 	 */
 	public static String renderMultiListItem(List<IListItem> list, Collection<String> keys) {
 		if (list == null) {
@@ -2520,38 +2519,39 @@ public class XHTMLHelper {
 		return Jsoup.clean(html, Whitelist.relaxed());
 	}
 
-//	public static void expandCSSImports(File css) throws IOException {
-//		String expandedCSS;
-//		try {
-//			expandedCSS = expandCSSIncludesToString(css);
-//		} catch (IOException ex) {
-//			logger.log(Level.WARNING, "Expand CSS imports failed for '" + css + "'.", ex);
-//			return; // Don't write on error, let the original as it is.
-//		}
-//		ResourceHelper.writeStringToFile(css, expandedCSS);
-//	}
+	// public static void expandCSSImports(File css) throws IOException {
+	// String expandedCSS;
+	// try {
+	// expandedCSS = expandCSSIncludesToString(css);
+	// } catch (IOException ex) {
+	// logger.log(Level.WARNING, "Expand CSS imports failed for '" + css + "'.",
+	// ex);
+	// return; // Don't write on error, let the original as it is.
+	// }
+	// ResourceHelper.writeStringToFile(css, expandedCSS);
+	// }
 
-//	public static String expandCSSIncludesToString(File css) throws IOException {
-//		String content = ResourceHelper.loadStringFromFile(css);
-//		Matcher m = CSS_IMPORT_PATTERN.matcher(content);
-//		StringBuffer sb = new StringBuffer();
-//		while (m.find()) {
-//			String fileName = m.group(1);
-//			if (!fileName.contains("/") && !fileName.contains("\\")) {
-//				File importedFile = new File(css.getParentFile(), fileName);
-//				if (importedFile.exists()) {
-//					m.appendReplacement(sb, "");
-//					sb.append("/* START " + fileName + " */\r\n");
-//					sb.append(expandCSSIncludesToString(importedFile));
-//					sb.append("/* END " + fileName + " */");
-//					continue;
-//				}
-//			}
-//			m.appendReplacement(sb, "$0");
-//		}
-//		m.appendTail(sb);
-//		return sb.toString();
-//	}
+	// public static String expandCSSIncludesToString(File css) throws IOException {
+	// String content = ResourceHelper.loadStringFromFile(css);
+	// Matcher m = CSS_IMPORT_PATTERN.matcher(content);
+	// StringBuffer sb = new StringBuffer();
+	// while (m.find()) {
+	// String fileName = m.group(1);
+	// if (!fileName.contains("/") && !fileName.contains("\\")) {
+	// File importedFile = new File(css.getParentFile(), fileName);
+	// if (importedFile.exists()) {
+	// m.appendReplacement(sb, "");
+	// sb.append("/* START " + fileName + " */\r\n");
+	// sb.append(expandCSSIncludesToString(importedFile));
+	// sb.append("/* END " + fileName + " */");
+	// continue;
+	// }
+	// }
+	// m.appendReplacement(sb, "$0");
+	// }
+	// m.appendTail(sb);
+	// return sb.toString();
+	// }
 
 	/**
 	 * replace link in xhtml with createURL call.
@@ -2764,24 +2764,24 @@ public class XHTMLHelper {
 		boolean isPreview = false;
 
 		if (!StringHelper.isEmpty(info.getTitle(lgCtx))) {
-			out.println("<span class=\"title "+(isPreview?"not-first-item":"first-item")+"\">" + info.getTitle(lgCtx) + "</span>");
-			isPreview=true;
+			out.println("<span class=\"title " + (isPreview ? "not-first-item" : "first-item") + "\">" + info.getTitle(lgCtx) + "</span>");
+			isPreview = true;
 		}
 		if (!StringHelper.isEmpty(info.getManualDate(lgCtx))) {
-			out.println("<span class=\"date "+(isPreview?"not-first-item":"first-item")+"\">" + StringHelper.renderShortDate(lgCtx, info.getManualDate(lgCtx)) + "</span>");
-			isPreview=true;
+			out.println("<span class=\"date " + (isPreview ? "not-first-item" : "first-item") + "\">" + StringHelper.renderShortDate(lgCtx, info.getManualDate(lgCtx)) + "</span>");
+			isPreview = true;
 		}
 		if (!StringHelper.isEmpty(info.getDescription(lgCtx))) {
-			out.println("<span class=\"description "+(isPreview?"not-first-item":"first-item")+"\">" + info.getDescription(lgCtx) + "</span>");
-			isPreview=true;
+			out.println("<span class=\"description " + (isPreview ? "not-first-item" : "first-item") + "\">" + info.getDescription(lgCtx) + "</span>");
+			isPreview = true;
 		}
 		if (!StringHelper.isEmpty(info.getLocation(lgCtx))) {
-			out.println("<span class=\"location "+(isPreview?"not-first-item":"first-item")+"\">" + info.getLocation(lgCtx) + "</span>");
-			isPreview=true;
+			out.println("<span class=\"location " + (isPreview ? "not-first-item" : "first-item") + "\">" + info.getLocation(lgCtx) + "</span>");
+			isPreview = true;
 		}
 		if (!StringHelper.isEmpty(info.getCopyright(lgCtx))) {
-			out.println("<span class=\"copyright "+(isPreview?"not-first-item":"first-item")+"\">" + info.getCopyright(lgCtx) + "</span>");
-			isPreview=true;
+			out.println("<span class=\"copyright " + (isPreview ? "not-first-item" : "first-item") + "\">" + info.getCopyright(lgCtx) + "</span>");
+			isPreview = true;
 		}
 		out.close();
 		String html = new String(outStream.toByteArray());
@@ -2820,43 +2820,42 @@ public class XHTMLHelper {
 			return outHTML + "</ul>";
 		}
 	}
-	
-   public static String createHTMLTable(Map data) {
-	   ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-	   PrintStream out = new PrintStream(outStream);
-	   if (data != null && data.size() > 0) {
-		   out.println("<table style='width: 100%; border-collapse: collapse;' border='1'>");
-		   for (Object key : data.keySet()) {
-			   out.println("<tr><td style='font-weight: bold; padding: 10px; font-family:Helvetica, sans-serif; vertical-align: top; font-size: 12px;'>" + key + "</td><td style='padding: 10px; font-family:Helvetica, sans-serif;  vertical-align: top; font-size: 12px;'>" + data.get(key) + "</td></tr>");
-		   }
-		   out.println("</table>");
-	   }
-	   out.close();
-	   return new String(outStream.toByteArray());
-   }
-   
-   public static String createAdminMail(String title, String content, Map data, String link, String linkLabel, String footer) {
-	   boolean center = true;
-	   if (content != null) {
-		   center = content.length() < 120;
-	   }
-	   return createAdminMail(title, content, data, link, linkLabel, footer, center);
-   }
+
+	public static String createHTMLTable(Map data) {
+		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+		PrintStream out = new PrintStream(outStream);
+		if (data != null && data.size() > 0) {
+			out.println("<table style='width: 100%; border-collapse: collapse;' border='1'>");
+			for (Object key : data.keySet()) {
+				out.println("<tr><td style='font-weight: bold; padding: 10px; font-family:Helvetica, sans-serif; vertical-align: top; font-size: 12px;'>" + key + "</td><td style='padding: 10px; font-family:Helvetica, sans-serif;  vertical-align: top; font-size: 12px;'>" + data.get(key) + "</td></tr>");
+			}
+			out.println("</table>");
+		}
+		out.close();
+		return new String(outStream.toByteArray());
+	}
+
+	public static String createAdminMail(String title, String content, Map data, String link, String linkLabel, String footer) {
+		boolean center = true;
+		if (content != null) {
+			center = content.length() < 120;
+		}
+		return createAdminMail(title, content, data, link, linkLabel, footer, center);
+	}
 
 	public static String createAdminMail(String title, String content, Map data, String link, String linkLabel, String footer, boolean center) {
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(outStream);
-		String align="center";
+		String align = "center";
 		if (!center) {
-			align="left";
+			align = "left";
 		}
-		out.println(
-				"<html xmlns='http://www.w3.org/1999/xhtml'><body paddingwidth='0' paddingheight='0' bgcolor='#ffffff'  style='padding: 0; background-repeat: repeat; width: 100% !important; -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; -webkit-font-smoothing: antialiased;' offset='0' toppadding='0' leftpadding='0'>  <table width='100%' border='0' cellspacing='0' cellpadding='0' class='tableContent bgBody' align='"+align+"'  style='font-family:Helvetica, sans-serif; font-size: 14px;'><tr><td align='"+align+"'><table width='600' border='0' cellspacing='0' cellpadding='0' align='"+align+"'><tr><td align='"+align+"'><table width='678' border='0' cellspacing='0' cellpadding='0' align='"+align+"'><tr><td align='"+align+"'>");
+		out.println("<html xmlns='http://www.w3.org/1999/xhtml'><body paddingwidth='0' paddingheight='0' bgcolor='#ffffff'  style='padding: 0; background-repeat: repeat; width: 100% !important; -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; -webkit-font-smoothing: antialiased;' offset='0' toppadding='0' leftpadding='0'>  <table width='100%' border='0' cellspacing='0' cellpadding='0' class='tableContent bgBody' align='" + align + "'  style='font-family:Helvetica, sans-serif; font-size: 14px;'><tr><td align='" + align + "'><table width='600' border='0' cellspacing='0' cellpadding='0' align='" + align + "'><tr><td align='" + align + "'><table width='678' border='0' cellspacing='0' cellpadding='0' align='" + align + "'><tr><td align='" + align + "'>");
 		if (!StringHelper.isEmpty(title)) {
 			out.println("<p style='font-family:Helvetica; font-size: 18px; color: #D31996;'>" + title + "</p>");
 		}
 		if (!StringHelper.isEmpty(content)) {
-			out.println("<p style='font-family:Helvetica; font-size: 14px; text-align: "+align+";'>" + content + "</p>");
+			out.println("<p style='font-family:Helvetica; font-size: 14px; text-align: " + align + ";'>" + content + "</p>");
 		}
 		out.println(createHTMLTable(data));
 		if (!StringHelper.isEmpty(footer)) {
@@ -2897,9 +2896,7 @@ public class XHTMLHelper {
 
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(outStream);
-		out.println(
-				"<html xmlns='http://www.w3.org/1999/xhtml'><body paddingwidth='0' paddingheight='0' bgcolor='#ffffff'  style='padding: 0; background-repeat: repeat; width: 100% !important; -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; -webkit-font-smoothing: antialiased;' offset='0' toppadding='0' leftpadding='0'>  <table width='100%' border='0' cellspacing='0' cellpadding='0' class='tableContent bgBody' align='center'  style='font-family:Helvetica, sans-serif; font-size: 14px;'><tr><td align='center'><table width='600' border='0' cellspacing='0' cellpadding='0' align='center'><tr><td align='center'><table width='678' border='0' cellspacing='0' cellpadding='0' align='center'><tr><td align='center' style='background-color:"
-						+ backgroundColor + "'><br />");
+		out.println("<html xmlns='http://www.w3.org/1999/xhtml'><body paddingwidth='0' paddingheight='0' bgcolor='#ffffff'  style='padding: 0; background-repeat: repeat; width: 100% !important; -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; -webkit-font-smoothing: antialiased;' offset='0' toppadding='0' leftpadding='0'>  <table width='100%' border='0' cellspacing='0' cellpadding='0' class='tableContent bgBody' align='center'  style='font-family:Helvetica, sans-serif; font-size: 14px;'><tr><td align='center'><table width='600' border='0' cellspacing='0' cellpadding='0' align='center'><tr><td align='center'><table width='678' border='0' cellspacing='0' cellpadding='0' align='center'><tr><td align='center' style='background-color:" + backgroundColor + "'><br />");
 		if (!StringHelper.isEmpty(title)) {
 			out.println("<h1 style='font-family:Helvetica, sans-serif; font-size: 24px; color: " + titleColor + "'>" + title + "</h1>");
 		}
@@ -2922,52 +2919,42 @@ public class XHTMLHelper {
 		out.println("</td></tr></table></td></tr></table></td></tr></table></body></html>");
 		return new String(outStream.toByteArray());
 	}
-	
-	public static final void convert(final File xhtmlFile, final File pdfFile) throws IOException, DocumentException
-	{
-	    final String xhtmlUrl = xhtmlFile.toURI().toURL().toString();
-	    final OutputStream reportPdfStream = new FileOutputStream(pdfFile);
-	    final ITextRenderer renderer = new ITextRenderer();
-	    renderer.setDocument(xhtmlUrl);
-	    renderer.layout();	    
-	    renderer.createPDF(reportPdfStream);
-	    reportPdfStream.close();
+
+	public static final void convert(final File xhtmlFile, final File pdfFile) throws IOException, DocumentException {
+		final String xhtmlUrl = xhtmlFile.toURI().toURL().toString();
+		final OutputStream reportPdfStream = new FileOutputStream(pdfFile);
+		final ITextRenderer renderer = new ITextRenderer();
+		renderer.setDocument(xhtmlUrl);
+		renderer.layout();
+		renderer.createPDF(reportPdfStream);
+		reportPdfStream.close();
 	}
 
 	public static void main(String[] args) throws Exception {
 
+		String html = "<html>" + "<h1>:)</h1>" + "Hello World!<br>" + "<img width=\"200\" src=\"http://galleries.skyemodel.com/pinkandgrey/009.jpg\">" + "</html>";
 
-		    String html = "<html>" +
-		            "<h1>:)</h1>" +
-		            "Hello World!<br>" +
-		            "<img width=\"200\" src=\"http://galleries.skyemodel.com/pinkandgrey/009.jpg\">" +
-		            "</html>";
-		    
-		    //convert(new File("c:/trans/source.html"), new File("c:/trans/target.pdf"));
-		    
-		    PDFConvertion.getInstance().convertXHTMLToPDF(new FileInputStream(new File("c:/trans/source.html")),new FileOutputStream(new File("c:/trans/target.pdf")));
+		// convert(new File("c:/trans/source.html"), new File("c:/trans/target.pdf"));
 
-		    JLabel label = new JLabel(html);
-		    label.setSize(800, 1400);
+		PDFConvertion.getInstance().convertXHTMLToPDF(new FileInputStream(new File("c:/trans/source.html")), new FileOutputStream(new File("c:/trans/target.pdf")));
 
-		    BufferedImage image = new BufferedImage(
-		            label.getWidth(), label.getHeight(), 
-		            BufferedImage.TYPE_INT_RGB);
+		JLabel label = new JLabel(html);
+		label.setSize(800, 1400);
 
-		    {
-		        // paint the html to an image
-		        Graphics g = image.getGraphics();
-		        g.setColor(Color.BLACK);
-		        label.paint(g);
-		        g.dispose();
-		    }
+		BufferedImage image = new BufferedImage(label.getWidth(), label.getHeight(), BufferedImage.TYPE_INT_RGB);
 
-		    // get the byte array of the image (as jpeg)
-		    ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		    ImageIO.write(image, "jpg", new File("c:/trans/html.jpg"));
-		    
+		{
+			// paint the html to an image
+			Graphics g = image.getGraphics();
+			g.setColor(Color.BLACK);
+			label.paint(g);
+			g.dispose();
+		}
 
-		   
+		// get the byte array of the image (as jpeg)
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		ImageIO.write(image, "jpg", new File("c:/trans/html.jpg"));
+
 	}
 
 }

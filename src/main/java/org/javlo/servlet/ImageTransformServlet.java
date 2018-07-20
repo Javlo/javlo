@@ -638,6 +638,15 @@ public class ImageTransformServlet extends FileServlet {
 			logger.warning("error on reading meta data : "+imageFile);
 			logger.warning(e.getMessage());
 		}
+		
+		/** if add image border and vertical image >> add image border **/
+		if (config.isAddImageBorder(device, filter, area) && img.getWidth()<img.getHeight()) {
+			Color bgc = config.getBGColor(device, filter, area);
+			if (bgc == null) {
+				bgc = ImageEngine.DETECT_COLOR;
+			}
+			img = ImageEngine.addPictureBorder(img, bgc);
+		}
 
 		// org.javlo.helper.Logger.stepCount("transform",
 		// "start - transformation - 2 (src image size :
@@ -656,6 +665,8 @@ public class ImageTransformServlet extends FileServlet {
 				e.printStackTrace();
 			}
 		}
+		
+		
 		
 		if (config.isBackGroudColor(device, filter, area) && img.getColorModel().hasAlpha()) {
 			img = ImageEngine.applyBgColor(img, config.getBGColor(device, filter, area));

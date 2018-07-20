@@ -588,6 +588,11 @@ public class ImageConfig {
 		String key = getKey(device, filter, area, "add-border");
 		return properties.getBoolean(key, device!=null?isAddBorder(null,ALL,null):false);
 	}
+	
+	public boolean isAddImageBorder(Device device, String filter, String area) {
+		String key = getKey(device, filter, area, "add-image-border");
+		return properties.getBoolean(key, device!=null?isAddImageBorder(null,ALL,null):false);
+	}
 
 	public boolean isFocusZone(Device device, String filter, String area) {
 		String key = getKey(device, filter, area, ".focus-zone");
