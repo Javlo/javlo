@@ -3,10 +3,8 @@ package org.javlo.servlet;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -92,7 +90,7 @@ public class ImageTransformServlet extends FileServlet {
 	
 	public static final String PRELOAD_IMAGE_SUFFIX = "-load";
 	
-	public static final String SMALL_IMAGE_SUFFIX = "-sm";
+	public static final String SMALL_IMAGE_SUFFIX = "-small";
 
 	public static long COUNT_ACCESS = 0;
 
@@ -537,9 +535,8 @@ public class ImageTransformServlet extends FileServlet {
 		// "start - transformation");
 		
 		boolean preloadImage = false;
-		String originalFilter=null;
+		String originalFilter=filter;
 		if (filter.endsWith(PRELOAD_IMAGE_SUFFIX)) {
-			originalFilter=filter;			
 			filter = filter.substring(0, filter.lastIndexOf(PRELOAD_IMAGE_SUFFIX));
 			preloadImage = true;
 			inFileExtention="png";
@@ -547,7 +544,6 @@ public class ImageTransformServlet extends FileServlet {
 		
 		boolean smallImage = false;		
 		if (filter.endsWith(SMALL_IMAGE_SUFFIX)) {
-			originalFilter=filter;
 			smallImage = true;
 			filter = filter.substring(0, filter.lastIndexOf(SMALL_IMAGE_SUFFIX));
 		}	
@@ -903,7 +899,7 @@ public class ImageTransformServlet extends FileServlet {
 			String deviceCode = "no-device";
 			if (device != null) {
 				deviceCode = device.getCode();
-			}						
+			}	
 			String dir = ImageHelper.createSpecialDirectory(ctxb, globalContext.getContextKey(), filter, area, deviceCode, template, comp, imageParam);
 			TransactionFile transFile = fc.saveFileTransactional(dir, imageName);
 			OutputStream outImage = transFile.getOutputStream();
@@ -980,12 +976,12 @@ public class ImageTransformServlet extends FileServlet {
 		/* TRACKING */
 		Thread.currentThread().setName("ImageTransformServlet-" + globalContext.getContextKey());
 
-		IUserFactory fact = UserFactory.createUserFactory(globalContext, request.getSession());
-		User user = fact.getCurrentUser(globalContext, request.getSession());
-		String userName = null;
-		if (user != null) {
-			userName = user.getLogin();
-		}
+//		IUserFactory fact = UserFactory.createUserFactory(globalContext, request.getSession());
+//		User user = fact.getCurrentUser(globalContext, request.getSession());
+//		String userName = null;
+//		if (user != null) {
+//			userName = user.getLogin();
+//		}
 //		try {
 //			Tracker tracker = Tracker.getTracker(globalContext, request.getSession());
 //			Track track = new Track(userName, VIEW_PICTURE_ACTION, request.getRequestURI(), System.currentTimeMillis(), request.getHeader("referer"), request.getHeader("User-Agent"));
