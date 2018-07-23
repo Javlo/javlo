@@ -332,7 +332,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 				if (page.getTaxonomy() == null || page.getTaxonomy().size() == 0) {
 					return false;
 				}
-				if (!ctx.getGlobalContext().getAllTaxonomy(ctx).isMatch(this, page)) {
+				if (!ctx.getGlobalContext().getAllTaxonomy(ctx).isMatch(page, this)) {
 					return false;
 				}
 			}
