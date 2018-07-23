@@ -1,5 +1,6 @@
 package org.javlo.component.links;
 
+import java.io.IOException;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
@@ -16,6 +17,7 @@ import org.javlo.component.image.IImageTitle;
 import org.javlo.component.links.PageReferenceComponent.PageEvent;
 import org.javlo.component.meta.Tags;
 import org.javlo.context.ContentContext;
+import org.javlo.data.taxonomy.TaxonomyDisplayBean;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.TimeHelper;
 import org.javlo.helper.URLHelper;
@@ -916,5 +918,14 @@ public class SmartPageBean {
 
 	public String getHtmlSectionId() {
 		return page.getHtmlSectionId(ctx);
+	}
+	
+	public List<TaxonomyDisplayBean> getTaxonomy() {
+		try {
+			return TaxonomyDisplayBean.convert(ctx, ctx.getGlobalContext().getAllTaxonomy(ctx).convert(page.getTaxonomy()));
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 }

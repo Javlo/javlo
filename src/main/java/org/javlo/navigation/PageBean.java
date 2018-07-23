@@ -372,7 +372,7 @@ public class PageBean implements Serializable {
 		}
 	}
 	
-	public ContactBean getConact() {
+	public ContactBean getContact() {
 		try {
 			return page.getContact(ctx);
 		} catch (Exception e) {
