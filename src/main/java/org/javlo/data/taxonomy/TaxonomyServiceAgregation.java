@@ -127,6 +127,9 @@ public class TaxonomyServiceAgregation {
 	}
 
 	public boolean isMatch(ITaxonomyContainer cont1, ITaxonomyContainer cont2) {
+		if (cont2.getTaxonomy().size() == 0) {
+			return true;
+		}
 		for (TaxonomyService taxonomyService : services) {
 			if (taxonomyService.isMatch(cont1, cont2)) {
 				return true;
