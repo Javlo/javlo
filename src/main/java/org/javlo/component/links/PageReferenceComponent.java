@@ -340,7 +340,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 				}
 			}
 			if (isSessionTaxonomy(ctx)) {
-				if (!ctx.getGlobalContext().getAllTaxonomy(ctx).isMatch(page, TaxonomyService.getSessionFilter(ctx))) {
+				if (!ctx.getGlobalContext().getAllTaxonomy(ctx).isMatch(TaxonomyService.getSessionFilter(ctx), page)) {
 					return false;
 				}
 			}
