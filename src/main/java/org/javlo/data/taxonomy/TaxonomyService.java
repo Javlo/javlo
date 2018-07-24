@@ -255,6 +255,24 @@ public class TaxonomyService {
 		}
 		return true;
 	}
+	
+	/**
+	 * add all parent of the selection in the filter
+	 * @param container
+	 * @param filter
+	 * @return
+	 */
+	public boolean isMatchWidthParent(ITaxonomyContainer container, ITaxonomyContainer filter) {
+		Set<String> newFilter = new HashSet<String>(filter.getTaxonomy());
+		for (String id : filter.getTaxonomy()) {
+			TaxonomyBean bean = getTaxonomyBeanMap().get(id);
+			while (bean != null && bean.getParent() != null) {
+				newFilter.add(bean.getParent().getId());
+				bean = bean.getParent();
+			}
+		}
+		return !Collections.disjoint(container.getTaxonomy(), newFilter);
+	}
 
 	/**
 	 * check if a taxonomy group match

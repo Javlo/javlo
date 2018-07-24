@@ -125,9 +125,28 @@ public class TaxonomyServiceAgregation {
 		}
 		return outBeans;
 	}
+	
+	public boolean  isMatchWidthParent(ITaxonomyContainer cont1, ITaxonomyContainer cont2) {
+		if (cont1 == null || cont2 == null || cont2.getTaxonomy() == null || cont1.getTaxonomy() == null) {
+			return true;
+		}
+		if (cont1.getTaxonomy().size() == 0 || cont2.getTaxonomy().size() == 0) {
+			return true;
+		}
+		for (TaxonomyService taxonomyService : services) {
+			if (taxonomyService.isMatchWidthParent(cont1, cont2)) {
+				return true;
+			}
+		}
+		return false;
+	}
 
 	public boolean isMatch(ITaxonomyContainer cont1, ITaxonomyContainer cont2) {
-		if (cont2.getTaxonomy().size() == 0) {
+		if (cont1 == null || cont2 == null) {
+			return true;
+		}
+		
+		if (cont1.getTaxonomy().size() == 0 || cont2.getTaxonomy().size() == 0) {
 			return true;
 		}
 		for (TaxonomyService taxonomyService : services) {
