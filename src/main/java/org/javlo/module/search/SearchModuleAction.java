@@ -227,7 +227,7 @@ public class SearchModuleAction extends AbstractModuleAction {
 			ctx.getRequest().setAttribute("downloadUrl", URLHelper.createURL(ctx, params));
 		}
 		ctx.getRequest().setAttribute("items", items);
-		ctx.getRequest().setAttribute("taxoSelect", ctx.getGlobalContext().getAllTaxonomy(ctx).getSelectHtml("taxonomy", "form-control chosen-select", searchFilter.getTaxonomy()));
+		ctx.getRequest().setAttribute("taxoSelect", ctx.getGlobalContext().getAllTaxonomy(ctx).getSelectHtml("taxonomy", "form-control chosen-select", searchFilter.getTaxonomy(), true));
 		ctx.getRequest().setAttribute("components", ComponentHelper.getCurrentContextComponentsList(ctx));
 		return null;
 	}

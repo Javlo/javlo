@@ -66,18 +66,20 @@ public class TaxonomyServiceAgregation {
 	}
 
 	public String getSelectHtml() {
-		return getSelectHtml("taxonomy", "form-control chosen-select", null);
+		return getSelectHtml("taxonomy", "form-control chosen-select", null, true);
 	}
 
 	public String getSelectHtml(Collection<String> selection) {
-		return getSelectHtml("taxonomy", "form-control chosen-select", selection);
+		return getSelectHtml("taxonomy", "form-control chosen-select", selection, true);
 	}
 	
 	public String getSelectHtml(String name, Collection<String> selection) {
-		return getSelectHtml(name, "form-control chosen-select", selection);
+		return getSelectHtml(name, "form-control chosen-select", selection, true);
 	}
+	
+	
 
-	public String getSelectHtml(String name, String cssClass, Collection<String> selection) {
+	public String getSelectHtml(String name, String cssClass, Collection<String> selection, boolean multiple) {
 		Map<String, TaxonomyBean> beans = new HashMap<String, TaxonomyBean>();
 		for (TaxonomyService taxonomyService : services) {			
 			beans.putAll(taxonomyService.getTaxonomyBeanMap());
@@ -89,7 +91,7 @@ public class TaxonomyServiceAgregation {
 			options.add(new AbstractMap.SimpleEntry<String, String>(bean.getKey(), bean.getValue().getPath()));
 		}
 		Collections.sort(options, new MapEntryComparator(true));
-		out.println("<select id=\"" + name + "\" name=\"" + name + "\" class=\"" + cssClass + "\" multiple>");
+		out.println("<select id=\"" + name + "\" name=\"" + name + "\" class=\"" + cssClass + "\" "+(multiple?"multiple":"")+">");
 		for (Map.Entry<String, String> option : options) {
 			String select = "";
 			if (selection != null && selection.contains(option.getKey())) {

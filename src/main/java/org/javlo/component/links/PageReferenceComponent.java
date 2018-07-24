@@ -36,6 +36,7 @@ import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.data.taxonomy.ITaxonomyContainer;
 import org.javlo.data.taxonomy.TaxonomyDisplayBean;
+import org.javlo.data.taxonomy.TaxonomyService;
 import org.javlo.helper.LocalLogger;
 import org.javlo.helper.MacroHelper;
 import org.javlo.helper.NavigationHelper;
@@ -188,6 +189,8 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 
 	private static final String CHANGE_ORDER_KEY = "reverse-order";
 
+	private static final String SESSION_TAXONOMY_KEY = "session-taxonomy";
+
 	private static final String DYNAMIC_ORDER_KEY = "dynamic-order";
 
 	private static final String WIDTH_EMPTY_PAGE_PROP_KEY = "width_empty";
@@ -333,6 +336,11 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 					return false;
 				}
 				if (!ctx.getGlobalContext().getAllTaxonomy(ctx).isMatch(page, this)) {
+					return false;
+				}
+			}
+			if (isSessionTaxonomy(ctx)) {
+				if (!ctx.getGlobalContext().getAllTaxonomy(ctx).isMatch(page, TaxonomyService.getSessionFilter(ctx))) {
 					return false;
 				}
 			}
@@ -649,7 +657,10 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		if (globalContext.getAllTaxonomy(ctx).isActive()) {
 			String taxoName = getTaxonomiesInputName();
 			out.println("<fieldset class=\"taxonomy\"><legend><label for=\"" + taxoName + "\">" + i18nAccess.getText("taxonomy") + "</label></legend>");
-			out.println(globalContext.getAllTaxonomy(ctx).getSelectHtml(taxoName, "form-control chosen-select", getTaxonomy()));
+			out.println("<div class=\"line reverse\">");
+			out.println(XHTMLHelper.getCheckbox(getInputName("taxosession"), isSessionTaxonomy(ctx)));
+			out.println("<label for=\"" + getInputName("taxosession") + "\">" + i18nAccess.getText("content.page-teaser.session-taxonomy", "session taxonomy") + "</label></div>");
+			out.println(globalContext.getAllTaxonomy(ctx).getSelectHtml(taxoName, "form-control chosen-select", getTaxonomy(), true));
 			out.println("</fieldset>");
 		}
 
@@ -721,7 +732,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 				// lgCtx = page.getContentContextWithContent(ctx);
 				// }
 				if (filterPage(lgCtx, allChildren.get(i), currentSelection, commands, filter, true) && (page.getContentDateNeverNull(ctx).after(backDate.getTime()))) {
-					renderPageSelectLine(lgCtx, outTemp, currentSelection, page, i+1);
+					renderPageSelectLine(lgCtx, outTemp, currentSelection, page, i + 1);
 					countPage++;
 				}
 			}
@@ -753,7 +764,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		if (currentSelection.contains(page)) {
 			checked = " checked=\"checked\"";
 		}
-		out.print("<tr class=\"filtered"+(num%2==0?" odd":" even")+"\">");
+		out.print("<tr class=\"filtered" + (num % 2 == 0 ? " odd" : " even") + "\">");
 		out.print("<td><input type=\"hidden\" name=\"" + getPageDisplayedId(page) + "\" value=\"1\" /><input type=\"checkbox\" name=\"" + getPageId(page) + "\" value=\"" + page.getId() + "\"" + checked + "/></td>");
 		out.print("<td class=\"label\"><a data-toggle=\"tooltip\" data-placement=\"right\" title=\"" + NavigationHelper.getBreadCrumb(ctx, page) + "\" href=\"" + editPageURL + "\">" + page.getFullLabel(ctx) + "</a></td>");
 		out.print("<td>" + StringHelper.neverNull(StringHelper.renderLightDate(page.getContentDate(ctx))) + "</td>");
@@ -1140,6 +1151,10 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		}
 	}
 
+	protected boolean isSessionTaxonomy(ContentContext ctx) {
+		return StringHelper.isTrue(properties.getProperty(SESSION_TAXONOMY_KEY), true);
+	}
+
 	private boolean isVisitOrder(ContentContext ctx) {
 		return checkOrder(ctx, "visit");
 	}
@@ -1506,6 +1521,13 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 				setModify();
 			}
 
+			String sessionTaxo = requestService.getParameter(getInputName("taxosession"), null);
+			if (isSessionTaxonomy(ctx) != StringHelper.isTrue(sessionTaxo)) {
+				setSessionTaxonomy(StringHelper.isTrue(sessionTaxo));
+				storeProperties();
+				setModify();
+			}
+
 			String title = requestService.getParameter(getInputNameTitle(), "");
 			if (!getContentTitle().equals(title)) {
 				setContentTitle(title);
@@ -1645,6 +1667,10 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 
 	protected void setOrder(String order) {
 		properties.setProperty(ORDER_KEY, order);
+	}
+
+	protected void setSessionTaxonomy(boolean sessionTaxo) {
+		properties.setProperty(SESSION_TAXONOMY_KEY, "" + sessionTaxo);
 	}
 
 	private void setPageSelected(String pagesSelected) {

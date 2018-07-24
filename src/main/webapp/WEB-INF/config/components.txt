@@ -150,6 +150,7 @@ org.javlo.component.web2.MessagingComponent
 org.javlo.component.social.FacebookChooseFriend
 org.javlo.component.social.Wall
 org.javlo.component.web2.IMComponent
+org.javlo.component.web2.TaxonomySessionComponent
 
 --content.title.special
 

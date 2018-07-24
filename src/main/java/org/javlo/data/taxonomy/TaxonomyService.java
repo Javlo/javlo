@@ -28,6 +28,8 @@ public class TaxonomyService {
 	private static Logger logger = Logger.getLogger(TaxonomyService.class.getName());
 
 	public static final String KEY = "taxonomy";
+	
+	public static final String SESSION_KEY = "session-"+TaxonomyService.class.getName();
 
 	private TaxonomyBean root = new TaxonomyBean("0", "root");
 	
@@ -188,6 +190,10 @@ public class TaxonomyService {
 		}
 		return taxonomyBeanPathMap;
 	}
+	
+	public TaxonomyBean getTaxonomyBean(String id) {
+		return getTaxonomyBeanMap().get(id);
+	}
 
 	public Map<String, TaxonomyBean> getTaxonomyBeanMap() {
 		if (taxonomyBeanMap.size() == 0) {
@@ -243,13 +249,19 @@ public class TaxonomyService {
 	
 	public boolean isAllMatch(ITaxonomyContainer container, ITaxonomyContainer filter) {
 		for (String taxonomy : filter.getTaxonomy()) {
-			if (!isMatch(container, new TaxonmyContainerBean(taxonomy))) {
+			if (!isMatch(container, new TaxonomyContainerBean(taxonomy))) {
 				return false;
 			}
 		}
 		return true;
 	}
 
+	/**
+	 * check if a taxonomy group match
+	 * @param container
+	 * @param filter
+	 * @return
+	 */
 	public boolean isMatch(ITaxonomyContainer container, ITaxonomyContainer filter) {
 		if (container == null || filter == null) {
 			return true;
@@ -341,6 +353,43 @@ public class TaxonomyService {
 				}
 			}
 			return outList;
+		}
+	}
+	
+	public static ITaxonomyContainer getSessionFilter(ContentContext ctx) {
+		Map<String, String> outSessionFilter = (Map<String, String>)ctx.getRequest().getSession().getAttribute(SESSION_KEY);
+		if (outSessionFilter != null && outSessionFilter.size() > 0) {
+			return new TaxonomyContainerBean(new HashSet<String>(outSessionFilter.values()));
+		} else {
+			return TaxonomyContainerBean.EMPTY;
+		}
+	}
+	
+	public static String getSessionFilter(ContentContext ctx, String key) {
+		Map<String, String> outSessionFilter = (Map<String, String>)ctx.getRequest().getSession().getAttribute(SESSION_KEY);
+		if (outSessionFilter != null) {
+			return outSessionFilter.get(key);
+		} else {
+			return null;
+		}
+	}
+	
+	/**
+	 * add a taxonomy filter in the session
+	 * @param ctx
+	 * @param key a reference to the component or the filter generator
+	 * @param value the reference to a taxonomy entry
+	 */
+	public static void setSessionFilter(ContentContext ctx, String key, String value) {
+		Map<String, String> outSessionFilter = (Map<String, String>)ctx.getRequest().getSession().getAttribute(SESSION_KEY);
+		if (outSessionFilter == null) {
+			outSessionFilter = new HashMap<String, String>();
+			ctx.getRequest().getSession().setAttribute(SESSION_KEY, outSessionFilter);
+		}
+		if (StringHelper.isEmpty(value)) {
+			outSessionFilter.remove(key);
+		} else {
+			outSessionFilter.put(key, value);
 		}
 	}
 
