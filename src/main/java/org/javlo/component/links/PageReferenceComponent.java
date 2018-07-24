@@ -1086,14 +1086,14 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 
 	@Override
 	public boolean isContentCachableByQuery(ContentContext ctx) {
-		if (isSessionTaxonomy(ctx)) {
-			return false;
-		}
 		return StringHelper.isTrue(getConfig(ctx).getProperty("config.cache-query", null), true);
 	}
 
 	@Override
 	public boolean isContentTimeCachable(ContentContext ctx) {
+		if (isSessionTaxonomy(ctx)) {
+			return false;
+		}
 		return StringHelper.isTrue(getConfig(ctx).getProperty("config.time-cache", null), true);
 	}
 
