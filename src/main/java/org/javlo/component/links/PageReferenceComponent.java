@@ -1078,6 +1078,9 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 
 	@Override
 	public boolean isContentCachable(ContentContext ctx) {
+		if (isSessionTaxonomy(ctx)) {
+			return false;
+		}
 		return StringHelper.isTrue(getConfig(ctx).getProperty("config.cache", null), false);
 	}
 
