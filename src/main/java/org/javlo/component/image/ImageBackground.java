@@ -6,7 +6,34 @@ import org.javlo.helper.StringHelper;
 
 public class ImageBackground extends GlobalImage {
 
+	private static final String AREA = "area";
 	public static final String TYPE = "image-background";
+	
+	@Override
+	public String[] getStyleList(ContentContext ctx) {
+		return new String[] { "global", AREA };
+	}
+	
+	@Override
+	public String[] getStyleLabelList(ContentContext ctx) {
+		return getStyleList(ctx);
+	}
+	
+	@Override
+	public boolean isAskWidth(ContentContext ctx) {
+		return false;
+	}
+	
+	@Override
+	public boolean isListable() {
+		return false;
+	}
+	
+	public boolean isForArea() {
+		return AREA.equals(getStyle());
+	}
+	
+	
 	
 	@Override
 	public String getType() {

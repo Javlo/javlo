@@ -200,7 +200,9 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 		public ImageTitleBean imageLink;
 
 		public ImageTitleBean imageHeader;
-
+		
+		public Map<String,ImageTitleBean> imageAreaBackground;
+		
 		public Collection<String> needdedResources = null;
 
 		private Map<String, Boolean> emptyArea = Collections.EMPTY_MAP;
@@ -2880,15 +2882,17 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 		while (contentList.hasNext(ctx)) {
 			IContentVisualComponent elem = contentList.next(specialCtx);
 			if ((elem instanceof ImageBackground) && elem.isRealContent(specialCtx)) {
-				IImageTitle imageComp = (IImageTitle) elem;
-				if (imageComp.isImageValid(specialCtx)) {
-					int priority = imageComp.getPriority(specialCtx);
-					if (priority == 9) {
-						desc.imageHeader = new ImageTitleBean(specialCtx, imageComp);
-						return imageComp;
-					} else if (priority > bestPriority) {
-						desc.imageHeader = new ImageTitleBean(specialCtx, imageComp);
-						bestPriority = priority;
+				if (!((ImageBackground)elem).isForArea()) {
+					IImageTitle imageComp = (IImageTitle) elem;
+					if (imageComp.isImageValid(specialCtx)) {
+						int priority = imageComp.getPriority(specialCtx);
+						if (priority == 9) {
+							desc.imageHeader = new ImageTitleBean(specialCtx, imageComp);
+							return imageComp;
+						} else if (priority > bestPriority) {
+							desc.imageHeader = new ImageTitleBean(specialCtx, imageComp);
+							bestPriority = priority;
+						}
 					}
 				}
 			}
@@ -2899,6 +2903,35 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 		} else {
 			return desc.imageHeader;
 		}
+	}
+	
+	public Map<String,ImageTitleBean> getImageBackgroundForArea(ContentContext ctx) throws Exception {
+		PageDescription desc = getPageDescriptionCached(ctx, ctx.getRequestContentLanguage());
+		if (desc.imageAreaBackground != null) {
+			return desc.imageAreaBackground;
+		}
+		Map<String,ImageTitleBean> outImageBackground = new HashMap<String, ImageTitleBean>();
+		ContentContext specialCtx = ctx.getContextWithArea(ComponentBean.DEFAULT_AREA);
+		IContentComponentsList contentList = getAllContent(specialCtx);
+		while (contentList.hasNext(ctx)) {
+			IContentVisualComponent elem = contentList.next(specialCtx);
+			if ((elem instanceof ImageBackground) && elem.isRealContent(specialCtx)) {
+				if (((ImageBackground)elem).isForArea()) {
+					IImageTitle imageComp = (IImageTitle) elem;
+					if (imageComp.isImageValid(specialCtx)) {
+						if (outImageBackground.get(elem.getArea()) == null || !elem.isRepeat()) {
+							outImageBackground.put(elem.getArea(), new ImageTitleBean(specialCtx, imageComp));
+						}
+					}
+				}
+			}
+		}
+		if (outImageBackground.size() > 0) {
+			desc.imageAreaBackground = outImageBackground;
+		} else {
+			desc.imageAreaBackground = Collections.EMPTY_MAP;
+		}
+		return desc.imageAreaBackground;
 	}
 
 	public IImageTitle getImage(ContentContext ctx) throws Exception {

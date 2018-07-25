@@ -406,6 +406,12 @@ public class XMLManipulationHelper {
 						String checkEmptyArea = "${empty info.areaEmpty['" + area + "']?' _not_empty_area':' _empty_area'}";
 						String cssClass = StringHelper.neverNull(tags[i].getAttributes().get("class"));
 						tags[i].getAttributes().put("class", (cssClass + " _area").trim() + checkEmptyArea);
+						String style = StringHelper.neverNull(tags[i].getAttributes().get("style")).trim();
+						if (!style.endsWith(";") && style.length()>0) {
+							style = style + ';';
+						}
+						style+="<%if (currentPage.getImageBackgroundForArea(ctx).get(\""+area+"\") != null){%>background-image:url('<%=URLHelper.createFileURL(ctx,currentPage.getImageBackgroundForArea(ctx).get(\""+area+"\").getResourceURL(ctx))%>');<%}%>";
+						tags[i].getAttributes().put("style", style);
 						remplacement.addReplacement(tags[i].getOpenStart(), tags[i].getOpenEnd() + 1, tags[i].renderOpen());
 					} else if (idValue != null && areaContainer != null && idValue.trim().equals(areaContainer)) {
 						remplacement.addReplacement(tags[i].getOpenStart() - 1, tags[i].getOpenStart() - 1, prefix);
