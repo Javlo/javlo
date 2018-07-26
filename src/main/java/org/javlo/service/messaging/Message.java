@@ -3,14 +3,13 @@ package org.javlo.service.messaging;
 import java.util.Date;
 
 import org.javlo.helper.StringHelper;
-import org.javlo.user.IUserInfo;
 
 public class Message {
 	
 	private static final String SP = " - ";
 	
 	private String id = null;
-	private IUserInfo user;
+	private String userName;
 	private String body;
 	private Date date = null;
 
@@ -18,6 +17,13 @@ public class Message {
 		id = StringHelper.getRandomId();
 		date = new Date();
 	}
+	
+	public Message(String body) {
+		id = StringHelper.getRandomId();
+		date = new Date();
+		this.body = body;
+	}
+
 
 	public String getId() {
 		return id;
@@ -26,14 +32,7 @@ public class Message {
 	public void setId(String id) {
 		this.id = id;
 	}
-
-	public IUserInfo  getUser() {
-		return user;
-	}
-
-	public void setUser(IUserInfo user) {
-		this.user = user;
-	}
+	
 
 	public String getBody() {
 		return body;
@@ -53,7 +52,15 @@ public class Message {
 	
 	@Override
 	public String toString() {		
-		return StringHelper.renderTime(date)+SP+id+SP+user.getLogin()+SP+body;
+		return StringHelper.renderTime(date)+SP+id+SP+userName+SP+body;
+	}
+
+	public String getUserName() {
+		return userName;
+	}
+
+	public void setUserName(String userName) {
+		this.userName = userName;
 	}
 
 }

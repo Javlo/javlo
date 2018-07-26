@@ -1,6 +1,7 @@
 package org.javlo.service.messaging;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -13,7 +14,7 @@ import org.javlo.utils.TimeMap;
 
 public class Room {
 	
-	TimeMap<String, Message> messages = new TimeMap<String, Message>(60*60);
+	TimeMap<String, Message> messages = new TimeMap<String, Message>(60*60*24);
 	
 	private List<PublicUserInfo> member = new LinkedList<PublicUserInfo>();
 	
@@ -24,6 +25,13 @@ public class Room {
 	public Room(IUserInfo owner) {
 		this.owner = new PublicUserInfo(owner);
 	}
+	
+	/**
+	 * create a public room
+	 */
+	public Room() {
+	}
+	
 	
 	public List<PublicUserInfo> getMember() {
 		return member;
@@ -44,12 +52,14 @@ public class Room {
 	}
 	
 	public Collection<Message> getMessages() {
-		return messages.values();
+		List<Message> outMessages = new LinkedList<Message>(messages.values());
+		Collections.sort(outMessages, new SortMessageOnDate());
+		return outMessages;
 	}
 	
-	public void addMessages(IUserInfo user, String body) {
+	public void addMessages(String userName, String body) {
 		Message msg = new Message();
-		msg.setUser(user);
+		msg.setUserName(userName);
 		msg.setBody(body);
 		messages.put(msg.getId(), msg);
 	}

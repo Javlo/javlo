@@ -1550,6 +1550,17 @@ public class ContentContext {
 		}
 		return null;
 	}
+	
+	/**
+	 * return a identifiant for the user (session id can be use if no user logged)
+	 */
+	public String getCurrentUserIdNeverNull() {
+		String uid = getCurrentUserId();
+		if (uid == null) {
+			uid = request.getSession().getId();
+		}
+		return uid;
+	}
 
 	/**
 	 * get Ajax zone that will be updated.

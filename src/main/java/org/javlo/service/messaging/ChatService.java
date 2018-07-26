@@ -7,15 +7,26 @@ import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
+import org.javlo.context.ContentContext;
 import org.javlo.user.IUserInfo;
 
-public class ViewMessagingService {
+public class ChatService {
 	
 	private Map<String, List<Room>> userRooms = new HashMap<String, List<Room>>();
 
 	private static final String KEY = "messaging";
 
-	private ViewMessagingService() {
+	private ChatService() {
+	}
+	
+	public Room getSessionRoom(ContentContext ctx) {
+		final String KEY = ChatService.class.getName();
+		Room room = (Room)ctx.getRequest().getSession().getAttribute(KEY);
+		if (room == null) {
+			room = new Room();
+			ctx.getRequest().getSession().setAttribute(KEY, room);
+		}
+		return room;
 	}
 	
 	public List<Room> getRooms(IUserInfo user) {
@@ -27,13 +38,13 @@ public class ViewMessagingService {
 		return rooms;
 	}
 	
-	public static ViewMessagingService getInstance(HttpSession session) throws InstantiationException, IllegalAccessException, ClassNotFoundException {
+	public static ChatService getInstance(HttpSession session) throws InstantiationException, IllegalAccessException, ClassNotFoundException {
 		if (session == null) {						
-			return new ViewMessagingService();
+			return new ChatService();
 		} else {
-			ViewMessagingService outUserDAO = (ViewMessagingService) session.getAttribute(KEY);
+			ChatService outUserDAO = (ChatService) session.getAttribute(KEY);
 			if (outUserDAO == null) {
-				outUserDAO = new ViewMessagingService();		
+				outUserDAO = new ChatService();		
 				session.setAttribute(KEY, outUserDAO);
 			}			
 			return outUserDAO;
