@@ -364,6 +364,9 @@ public class Heading extends AbstractPropertiesComponent implements ISubTitle {
 	}
 	
 	protected String getForcedPrefixViewXHTMLCode(ContentContext ctx) {
+		if (isDisplayHidden() && ctx.isAsViewMode()) {
+			return "";
+		}
 		if (getConfig(ctx).getProperty("prefix", null) != null) {
 			return getConfig(ctx).getProperty("prefix", null);
 		}
@@ -373,6 +376,9 @@ public class Heading extends AbstractPropertiesComponent implements ISubTitle {
 
 	@Override
 	public String getSuffixViewXHTMLCode(ContentContext ctx) {
+		if (isDisplayHidden() && ctx.isAsViewMode()) {
+			return "";
+		}
 		if (isWrapped(ctx)) {
 			return "</" + getTag(ctx) + '>';
 		} else {

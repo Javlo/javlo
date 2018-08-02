@@ -50,6 +50,7 @@ import org.javlo.component.column.TableBreak;
 import org.javlo.component.column.TableComponent;
 import org.javlo.component.config.ComponentConfig;
 import org.javlo.component.links.MirrorComponent;
+import org.javlo.component.title.Heading;
 import org.javlo.context.ContentContext;
 import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
@@ -1255,7 +1256,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 
 	@Override
 	public String getPrefixViewXHTMLCode(ContentContext ctx) {
-		if (isHidden(ctx)) {
+		if (isDisplayHidden() && ctx.isAsViewMode()) {
 			return "";
 		}
 		if (isWrapped(ctx)) {
@@ -1815,7 +1816,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 
 	@Override
 	public String getSuffixViewXHTMLCode(ContentContext ctx) {
-		if (isHidden(ctx)) {
+		if (isDisplayHidden() && ctx.isAsViewMode()) {
 			return "";
 		}
 		if (isWrapped(ctx)) {
