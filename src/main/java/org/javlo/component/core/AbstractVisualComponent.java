@@ -1833,7 +1833,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		if (!componentBean.isList()) {
 			suffix = "</" + getTag(ctx) + ">";
 		} else {
-			suffix = "</" + getListItemTag(ctx) + '>';
+			suffix = "</" + getListItemTag(ctx) + '>'; 
 		}
 		if (isAjaxWrapper(ctx)) {
 			suffix = suffix + "</div>";
