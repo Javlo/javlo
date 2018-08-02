@@ -182,6 +182,16 @@
 	</label>
 </div>
 
+<div class="checkbox">	
+	<label><input type="checkbox" id="cookies" name="cookies" ${currentContext.cookies?'checked="checked"':""}" />
+	${i18n.edit['admin.form.cookies']}</label>	
+</div>
+
+<div class="form-group">		
+	<label for="cookies-url">${i18n.edit['admin.form.cookies.url']}</label>
+	<input class="form-control" type="text" id="cookies-url" name="cookies-url" value="${currentContext.cookiesPolicyUrl}" />	
+</div>
+
 </div>
 
 <div class="col-sm-6">
@@ -220,10 +230,6 @@
 	${i18n.edit['admin.form.extend-menu']}</label>	
 </div>
 
-<div class="checkbox">	
-	<label><input type="checkbox" id="cookies" name="cookies" ${currentContext.cookies?'checked="checked"':""}" />
-	${i18n.edit['admin.form.cookies']}</label>	
-</div>
 <div class="checkbox">	
 	<label><input type="checkbox" id="preview-mode" name="preview-mode" ${currentContext.previewMode?'checked="checked"':""}" />
 	${i18n.edit['admin.form.preview-mode']}</label>	

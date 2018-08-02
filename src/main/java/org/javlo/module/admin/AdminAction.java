@@ -172,6 +172,7 @@ public class AdminAction extends AbstractModuleAction {
 		
 		private boolean forcedHttps = false;
 		private boolean cookies = false;
+		private String cookiesPolicyUrl = null;
 		
 		private String specialConfig = "";
 		
@@ -271,6 +272,7 @@ public class AdminAction extends AbstractModuleAction {
 			
 			setForcedHttps(globalContext.isForcedHttps());
 			setCookies(globalContext.isCookies());
+			setCookiesPolicyUrl(globalContext.getCookiesPolicyUrl());
 			
 			try {
 				setSpecialConfig(ResourceHelper.loadStringFromFile(globalContext.getSpecialConfigFile()));
@@ -926,6 +928,14 @@ public class AdminAction extends AbstractModuleAction {
 		public boolean isCookies() {
 			return cookies;
 		}
+		
+		public String getCookiesPolicyUrl() {
+			return cookiesPolicyUrl;
+		}
+		
+		public void setCookiesPolicyUrl(String cookiesUrl) {
+			this.cookiesPolicyUrl = cookiesUrl;
+		}
 
 		public void setCookies(boolean cookies) {
 			this.cookies = cookies;
@@ -1357,6 +1367,8 @@ public class AdminAction extends AbstractModuleAction {
 					
 					currentGlobalContext.setForcedHttps(StringHelper.isTrue(requestService.getParameter("security-forced-https", null), false));
 					currentGlobalContext.setCookies(StringHelper.isTrue(requestService.getParameter("cookies", null), false));
+					currentGlobalContext.setCookiesPolicyUrl(requestService.getParameter("cookies-url", null));
+					
 					currentGlobalContext.setPortail(StringHelper.isTrue(requestService.getParameter("security-portail", "")));
 					
 					if (requestService.getParameter("resetdkim", null) != null) {

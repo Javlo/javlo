@@ -1537,6 +1537,14 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	public void setCookies(boolean cook) {
 		properties.setProperty("security.cookies", cook);
 	}
+	
+	public String getCookiesPolicyUrl() {
+		return properties.getString("security.cookies.url", null);
+	}
+
+	public void setCookiesPolicyUrl(String url) {
+		properties.setProperty("security.cookies.url", url);
+	}
 
 	public void setComponentsFiltered(boolean filtered) {
 		properties.setProperty("components.filtered", filtered);

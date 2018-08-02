@@ -20,6 +20,7 @@ import org.javlo.exception.ResourceNotFoundException;
 import org.javlo.helper.MacroHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
+import org.javlo.helper.XHTMLBootstrapFormBuilder;
 import org.javlo.helper.XHTMLHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.navigation.MenuElement;
@@ -192,7 +193,7 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 
 		public boolean isVisible() {
 			try {
-				return currentPage.isVisible(ctx);
+				return child.isVisible(ctx);
 			} catch (Exception e) {
 				e.printStackTrace();
 				return false;
@@ -228,6 +229,7 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 	}
 
 	private static final String LOCK_PARENT_PAGE = "lock-parent-page";
+	private static final String POPUP = "open-as-popup";
 	private static final String COMBO = "__combo__";
 	private static final String IMAGE = "__image__";
 	private static final String DESCRIPTION = "__description__";
@@ -260,19 +262,18 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 		out.println("<div class=\"line\">");
 		out.println("<label for=\"" + getInputNameRendererTitle() + "\">" + i18n.getText("global.title") + "</label>");
 		out.println("<input class=\"form-control\" type=\"text\" id=\"" + getInputNameRendererTitle() + "\" name=\"" + getInputNameRendererTitle() + "\" value=\"" + getRendererTitle() + "\"/>");
-		out.println("</div><div class=\"line\">");
+		out.println("</div>");
 		if (getRenderes(ctx).size() < 1) {
-			out.println("</div><div class=\"line\">");
+			out.println("<div class=\"line\">");
 			out.println(XHTMLHelper.getCheckbox(getInputNameLabel(), isLabelListed()) + " <label for=\"" + getInputNameLabel() + "\">" + i18n.getText("content.children-list.label") + "</label>");
 			out.println("</div><div class=\"line\">");
 			out.println(XHTMLHelper.getCheckbox(getInputNameImage(), isImage()) + " <label for=\"" + getInputNameImage() + "\">" + i18n.getText("content.children-list.image") + "</label>");
 			out.println("</div><div class=\"line\">");
 			out.println(XHTMLHelper.getCheckbox(getInputNameDescription(), isDescription()) + " <label for=\"" + getInputNameDescription() + "\">" + i18n.getText("content.children-list.description") + "</label>");
-			out.println("</div><div class=\"line\">");
+			out.println("</div>");
 		}
-		out.println(XHTMLHelper.getCheckbox(getInputLockParentPage(), isLockParentPage()) + " <label for=\"" + getInputLockParentPage() + "\">" + i18n.getText("content.children-list.linked") + "</label>");
-		out.println("</div>");
-
+		out.println(XHTMLBootstrapFormBuilder.renderCheckbox(i18n.getText("content.children-list.linked"), getInputLockParentPage(), isLockParentPage()));
+		out.println(XHTMLBootstrapFormBuilder.renderCheckbox(i18n.getText("content.children-list.popup", "open as popup"), getInputPopup(), isPopup()));
 		out.close();
 
 		return new String(outStream.toByteArray());
@@ -334,6 +335,10 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 
 	public String getInputLockParentPage() {
 		return "_lock_parent_page" + getId();
+	}
+	
+	public String getInputPopup() {
+		return "_open_as_popup" + getId();
 	}
 
 	public String getInputNameDescription() {
@@ -428,6 +433,7 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 			}
 			ctx.getRequest().setAttribute("title", getRendererTitle());
 			ctx.getRequest().setAttribute("children", childrenList);
+			ctx.getRequest().setAttribute("popup", isPopup());
 			ctx.getRequest().setAttribute("currentPageUrl", URLHelper.createURL(ctx));
 		}
 	}
@@ -595,6 +601,10 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 	public boolean isLockParentPage() {
 		return getValue().contains(LOCK_PARENT_PAGE);
 	}
+	
+	public boolean isPopup() {
+		return getValue().contains(POPUP);
+	}
 
 	@Override
 	public String performEdit(ContentContext ctx) throws Exception {
@@ -620,6 +630,9 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 		}
 		if (requestService.getParameter(getInputLockParentPage(), null) != null) {
 			newValue = newValue + DATA_SEPARATOR + LOCK_PARENT_PAGE;
+		}
+		if (requestService.getParameter(getInputPopup(), null) != null) {
+			newValue = newValue + DATA_SEPARATOR + POPUP;
 		}
 		String rendererTitle = requestService.getParameter(getInputNameRendererTitle(), "");
 

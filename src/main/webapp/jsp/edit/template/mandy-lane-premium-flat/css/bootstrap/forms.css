@@ -1032,3 +1032,23 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
 .input-group-btn:last-child > .btn-group {
   margin-left: -1px;
 }
+
+/** Bootstrap 4 - compatibility **/
+
+.form-check {
+    position: relative;
+    display: block;
+    padding-left: 1.25rem;
+}
+
+input.form-check-input[type], .form-check-input {
+    position: absolute;
+    margin-right: 0;
+    margin-bottom: 0;
+    margin-top: .3rem;
+    margin-left: -1.25rem;
+}
+
+.form-check-label {
+    margin-bottom: 0;
+}

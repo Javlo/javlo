@@ -10,7 +10,7 @@ import java.util.Map;
 
 import org.owasp.encoder.Encode;
 
-public class XHTMLFormBuilder {
+public class XHTMLBootstrapFormBuilder {
 	
 	private static final String renderSimpleField(String type, String label, String name, String value, String placeholder) {
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
@@ -20,6 +20,19 @@ public class XHTMLFormBuilder {
 			out.println("<label for=\""+name+"\">"+label+"</label>");
 		}
 		out.println("<input type=\""+type+"\" class=\"form-control\" name=\""+name+"\" value=\""+Encode.forHtmlAttribute(value)+"\" id=\""+name+"\" "+(!StringHelper.isEmpty(placeholder)?"placeholder=\""+placeholder+"\"":"")+" />");
+		out.println("</div>");
+		out.close();
+		return new String(outStream.toByteArray());
+	}
+	
+	public static final String renderCheckbox(String label, String name, boolean value) {
+		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+		PrintStream out = new PrintStream(outStream);
+		out.println("<div class=\"form-group form-check\">");		
+		out.println("<input type=\"checkbox\" class=\"form-check-input\" name=\""+name+"\" "+(value?"checked=\"checked\"":"")+" id=\""+name+"\" />");
+		if (!StringHelper.isEmpty(label)) {
+			out.println("<label class=\"form-check-label\" for=\""+name+"\">"+label+"</label>");
+		}
 		out.println("</div>");
 		out.close();
 		return new String(outStream.toByteArray());

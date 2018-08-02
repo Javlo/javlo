@@ -19,7 +19,7 @@ import org.javlo.data.taxonomy.TaxonomyService;
 import org.javlo.helper.ComponentHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
-import org.javlo.helper.XHTMLFormBuilder;
+import org.javlo.helper.XHTMLBootstrapFormBuilder;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.service.RequestService;
 
@@ -48,7 +48,7 @@ public class TaxonomySessionComponent extends AbstractPropertiesComponent implem
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(outStream);
 		I18nAccess i18nAccess = I18nAccess.getInstance(ctx);
-		out.println(XHTMLFormBuilder.renderSimpleText(i18nAccess.getViewText("global.label"), getInputName(LABEL), getFieldValue(LABEL), null));
+		out.println(XHTMLBootstrapFormBuilder.renderSimpleText(i18nAccess.getViewText("global.label"), getInputName(LABEL), getFieldValue(LABEL), null));
 		if (ctx.getGlobalContext().getAllTaxonomy(ctx).isActive()) {
 			String taxoName = getInputName(TAXONOMY);
 			out.println("<fieldset class=\"taxonomy\"><legend><label for=\"" + taxoName + "\">" + i18nAccess.getText(TAXONOMY) + "</label></legend>");
@@ -93,7 +93,7 @@ public class TaxonomySessionComponent extends AbstractPropertiesComponent implem
 		out.println("<form id=\"form-taxo-"+getId()+"\" action=\""+URLHelper.createURL(ctx)+"\" method=\"post\">");
 		out.println("<input type=\"hidden\" name=\"webaction\" value=\""+TYPE+".choose\" />");
 		out.println("<input type=\"hidden\" name=\""+COMP_ID_REQUEST_PARAM+"\" value=\""+getId()+"\" />");
-		out.println(XHTMLFormBuilder.renderSelect(getFieldValue(LABEL), getInputName(), values, TaxonomyService.getSessionFilter(ctx, getId()), true));
+		out.println(XHTMLBootstrapFormBuilder.renderSelect(getFieldValue(LABEL), getInputName(), values, TaxonomyService.getSessionFilter(ctx, getId()), true));
 		out.println("</form>");
 		out.close();
 		return new String(outStream.toByteArray());
