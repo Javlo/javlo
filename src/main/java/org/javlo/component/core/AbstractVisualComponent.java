@@ -1255,6 +1255,9 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 
 	@Override
 	public String getPrefixViewXHTMLCode(ContentContext ctx) {
+		if (isHidden(ctx)) {
+			return "";
+		}
 		if (isWrapped(ctx)) {
 			return getForcedPrefixViewXHTMLCode(ctx);
 		} else {
@@ -1812,6 +1815,9 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 
 	@Override
 	public String getSuffixViewXHTMLCode(ContentContext ctx) {
+		if (isHidden(ctx)) {
+			return "";
+		}
 		if (isWrapped(ctx)) {
 			return getForcedSuffixViewXHTMLCode(ctx);
 		} else {

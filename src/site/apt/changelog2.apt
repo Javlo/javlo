@@ -946,5 +946,5 @@ change log
  
  * 4/ resources taxonomy / TinyMCE 4.8.0 / add image border + correct close insered resource / rename -sm image like -small / taxonomy extension for pageBean / taxonomy session / image background on area / chat / children link can be open as popup + cookies policy link
  
- * 5/ accesibility escape menu parametrable target
+ * 5/ accesibility escape menu parametrable target / remove type="javascript" from script tag / don't display prefix and suffix if component hidden
 
