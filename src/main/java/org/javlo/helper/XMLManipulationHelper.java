@@ -89,24 +89,6 @@ public class XMLManipulationHelper {
 
 	}
 
-	/*
-	 * private static String getGoogleAnalyticsCode() throws IOException {
-	 * 
-	 * StringWriter outString = new StringWriter(); BufferedWriter out = new
-	 * BufferedWriter(outString);out.append(
-	 * "<%if ((globalContext.getGoogleAnalyticsUACCT().trim().length() > 3)&&(ctx.getRenderMode() == ContentContext.VIEW_MODE)) {%>"
-	 * );out.append(
-	 * " src=\"http://www.google-analytics.com/urchin.js\" type=\"text/javascript\">"
-	 * ); out.newLine(); out.append("</script>"); out.newLine();
-	 * out.append("<script type=\"text/javascript\">"); out.newLine();
-	 * out.append("_uacct = \"<%=globalContext.getGoogleAnalyticsUACCT()%>\";");
-	 * out.newLine(); out.append("urchinTracker();"); out.newLine();
-	 * out.append("</script>"); out.newLine(); out.append("<%}%>"); out.newLine();
-	 * out.close();
-	 * 
-	 * return outString.toString(); }
-	 */
-
 	public static class TagDescription {
 
 		private String name;
@@ -657,7 +639,7 @@ public class XMLManipulationHelper {
 					/** wysiwyg init css **/
 					if (template.getWysiwygCss() != null) {
 						out.println("<%if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE) {%>");
-						out.println("<script type=\"text/javascript\">");
+						out.println("<script>");
 						out.println("var wysiwygCss = '<%=URLHelper.createStaticTemplateURL(ctx,\"" + template.getWysiwygCss() + "\")%>';");
 						out.println("</script>");
 						out.println("<%}%>");
@@ -1003,7 +985,7 @@ public class XMLManipulationHelper {
 
 		out.append("<%if (ctx.getRenderMode() != ContentContext.PAGE_MODE) {%>");
 		out.newLine();
-		out.append("<script type=\"text/javascript\">");
+		out.append("<script>");
 		out.newLine();
 		out.append("<!--");
 		out.newLine();
@@ -1085,7 +1067,7 @@ public class XMLManipulationHelper {
 		if (template.isEditable()) {
 			out.append("<%if (StringHelper.isTrue(request.getParameter(\"_display-zone\"))) {%><link rel=\"stylesheet\" type=\"text/css\" href=\"<%=URLHelper.createStaticURL(ctx,\"/css/editable/edit_editable.css\")+\"?ts=\"+infoBean.getTs()%>\" /><%}%>");
 			out.newLine();
-			out.append("<%if (StringHelper.isTrue(request.getParameter(\"_display-zone\"))) {%><script type=\"text/javascript\" src=\"<%=URLHelper.createStaticURL(ctx,\"/js/editable/edit_editable.js\")%>\"></script><%}%>");
+			out.append("<%if (StringHelper.isTrue(request.getParameter(\"_display-zone\"))) {%><script src=\"<%=URLHelper.createStaticURL(ctx,\"/js/editable/edit_editable.js\")%>\"></script><%}%>");
 			out.newLine();
 		}
 
@@ -1104,21 +1086,21 @@ public class XMLManipulationHelper {
 		// \"/preview/\"+globalContext.getEditTemplateMode()+\"/css/edit_preview.css\");%>");
 		out.append("<%=(ctx.isInteractiveMode() && !StringHelper.isEmpty(infoBean.getPreviewTemplateModeURL()) ? \"<link rel=\\\"stylesheet\\\" type=\\\"text/css\\\" href=\\\"\"+infoBean.getPreviewTemplateModeURL()+\"?ts=\"+infoBean.getTs()+\"\\\" />\" : \"\")  %>");
 		out.newLine();
-		out.append("<%=(ctx.isInteractiveMode() ? \"<script type=\\\"text/javascript\\\" src=\\\"\"+URLHelper.createStaticURL(ctx,\"" + staticConfig.getJSPreview() + "\")+\"\\\"></script>\" : \"\")  %>");
+		out.append("<%=(ctx.isInteractiveMode() ? \"<script src=\\\"\"+URLHelper.createStaticURL(ctx,\"" + staticConfig.getJSPreview() + "\")+\"\\\"></script>\" : \"\")  %>");
 		if (!StringHelper.isEmpty(staticConfig.getHTML2Canvas())) {
-			out.append("<%=(ctx.isInteractiveMode() ? \"<script type=\\\"text/javascript\\\" src=\\\"\"+URLHelper.createStaticURL(ctx,\"" + staticConfig.getHTML2Canvas() + "\")+\"\\\"></script>\" : \"\")  %>");
+			out.append("<%=(ctx.isInteractiveMode() ? \"<script src=\\\"\"+URLHelper.createStaticURL(ctx,\"" + staticConfig.getHTML2Canvas() + "\")+\"\\\"></script>\" : \"\")  %>");
 		}
-		out.append("<%=(ctx.isInteractiveMode() ? \"<script type=\\\"text/javascript\\\" src=\\\"\"+URLHelper.createStaticURL(ctx,\"" + staticConfig.getJSBootStrap() + "\")+\"\\\"></script>\" : \"\")  %>");
+		out.append("<%=(ctx.isInteractiveMode() ? \"<script src=\\\"\"+URLHelper.createStaticURL(ctx,\"" + staticConfig.getJSBootStrap() + "\")+\"\\\"></script>\" : \"\")  %>");
 		out.newLine();
 		if (staticConfig.getJSLibPreview() == null) {
-			out.append("<%=(ctx.isInteractiveMode() ? \"<script type=\\\"text/javascript\\\" src=\\\"\"+URLHelper.createStaticURL(ctx,\"/js/edit/ajax.js\")+\"\\\"></script>\" : \"\")  %>");
+			out.append("<%=(ctx.isInteractiveMode() ? \"<script src=\\\"\"+URLHelper.createStaticURL(ctx,\"/js/edit/ajax.js\")+\"\\\"></script>\" : \"\")  %>");
 			out.newLine();
-			out.append("<%=(ctx.isInteractiveMode() ? \"<script type=\\\"text/javascript\\\" src=\\\"\"+URLHelper.createStaticURL(ctx,\"/js/edit/core.js\")+\"\\\"></script>\" : \"\")  %>");
+			out.append("<%=(ctx.isInteractiveMode() ? \"<script src=\\\"\"+URLHelper.createStaticURL(ctx,\"/js/edit/core.js\")+\"\\\"></script>\" : \"\")  %>");
 			out.newLine();
-			out.append("<%=(ctx.isInteractiveMode() ? \"<script type=\\\"text/javascript\\\" src=\\\"\"+URLHelper.createStaticURL(ctx,\"/js/lib/enscroll-0.6.0.min.js\")+\"\\\"></script>\" : \"\")  %>");
+			out.append("<%=(ctx.isInteractiveMode() ? \"<script src=\\\"\"+URLHelper.createStaticURL(ctx,\"/js/lib/enscroll-0.6.0.min.js\")+\"\\\"></script>\" : \"\")  %>");
 			out.newLine();
 		}
-		out.append("<%if ((ctx.isInteractiveMode())&&(security.haveRight((User)editCtx.getUserPrincipal(), \"update\"))) {%><script type=\"text/javascript\">");
+		out.append("<%if ((ctx.isInteractiveMode())&&(security.haveRight((User)editCtx.getUserPrincipal(), \"update\"))) {%><script>");
 		out.newLine();
 		out.append("var ajaxURL = \"<%=URLHelper.createAjaxURL(ctx)%>\";");
 		out.newLine();
