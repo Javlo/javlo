@@ -1355,7 +1355,7 @@ public class Template implements Comparable<Template> {
 	public String getAuthors() {
 		return properties.getString("authors", getParent().getAuthors());
 	}
-
+	
 	public Collection<String> getCategories() {
 		String categoriesRaw = properties.getString("categories");
 		if (categoriesRaw == null) {
@@ -1488,6 +1488,10 @@ public class Template implements Comparable<Template> {
 
 	public String getDominantColor() {
 		return properties.getString("color.dominant", getParent().getDominantColor());
+	}
+	
+	public String getEscapeMenuId() {		
+		return properties.getString("nav.escape_id", getParent().getEscapeMenuId());
 	}
 
 	public final List<Properties> getDynamicComponentsProperties(GlobalContext globalContext) throws IOException {

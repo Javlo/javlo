@@ -444,4 +444,9 @@ public class DefaultTemplate extends Template {
 	public TemplateData getTemplateData() {
 		return TemplateData.EMPTY;
 	}
+	
+	@Override
+	public String getEscapeMenuId() {
+		return null;
+	}
 }
