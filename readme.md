@@ -22,11 +22,11 @@ java / maven / tomcat
 
 ## Authors
 
-* **Patrick Vandermaesen** - *Java/Javascript Deleloper*
-* **Benoit Dumont de Chassart** - *Java/Javascript Deleloper*
-* **Gilles Hooghe** - *Java/Javascript Deleloper*
-* **Philippe Le Marchand** - *Java/Javascript Deleloper*
-* **Jean-Philippe Selleslagh** - *Java/Javascript Deleloper*
+* **Patrick Vandermaesen** - *Architect main developer*
+* **Benoit Dumont de Chassart** - *Architect developer*
+* **Gilles Hooghe** - *HTML/CSS/JS template developer*
+* **Philippe Le Marchand** - *developer*
+* **Jean-Philippe Selleslagh** - *developer*
 
 ## License
 
