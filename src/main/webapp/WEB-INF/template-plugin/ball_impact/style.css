@@ -1,0 +1,14 @@
+.ball {
+    width: 160px;
+    height: 160px;
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    border-radius: 50%;
+    background-color: #ffffff;
+    opacity: 0.1;
+    display: flex;    
+    justify-content: center;
+    align-items: center;
+    font-size: 0.5em;
+}
