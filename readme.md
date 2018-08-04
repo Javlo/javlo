@@ -8,8 +8,9 @@ Javlo is a CMS written in Java by default it does not use a database, the creati
 
 Javlo uses a J2EE server as tomcat. Just add the WAR file to a tomcat and the CMS works with the default values.
 
-[download and more info about getting statred](https://www.javlo.org/en/start.html)
-[general document and support site](http://help.javlo.org/)
+- [download and more info about getting statred](https://www.javlo.org/en/start.html)
+- [general document and support site](http://help.javlo.org/)
+- [quick start for contributor](http://help.javlo.org/en/javlo-quick-start-the-basics.html)
 
 ### Prerequisites
 
