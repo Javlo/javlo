@@ -653,6 +653,14 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 		return properties.getProperty(key);
 	}
 	
+	public String getInitValue() {
+		String key = createKey("init-value");
+		if (getCurrentLocale() != null) {
+			key = createKey("init-value-" + getCurrentLocale());
+		}
+		return properties.getProperty(key);
+	}
+	
 	public Collection<String> getValues() {
 		return StringHelper.stringToCollection(getValue(), ",", true);
 	}
@@ -1088,9 +1096,12 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 	}
 
 	public boolean initContent(ContentContext ctx) throws Exception {
-		String initialValue = getLabel(ctx, new Locale(ctx.getRequestContentLanguage()));
+		String initVal = getInitValue();
+		if (StringHelper.isEmpty(initVal)) {
+			initVal = getLabel(ctx, new Locale(ctx.getRequestContentLanguage()));
+		}
 		if (getValue() == null || getValue().trim().length() == 0) {
-			setValue(initialValue);
+			setValue(initVal);
 		}
 		return true;
 	}

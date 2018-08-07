@@ -620,6 +620,7 @@
 <jsp:include page="template_data.jsp?name=text&value=${currentContext.templateData.text}&style=color" />
 <jsp:include page="template_data.jsp?name=title&value=${currentContext.templateData.title}&style=color" />
 <jsp:include page="template_data.jsp?name=link&value=${currentContext.templateData.link}&style=color" />
+<jsp:include page="template_data.jsp?name=componentBackground&value=${currentContext.templateData.componentBackground}&style=color" />
 <jsp:include page="template_data.jsp?name=special&value=${currentContext.templateData.special}&style=color" />
 <jsp:include page="template_data.jsp?name=font&value=${currentContext.templateData.font}&style=font" />
 <div class="row">	

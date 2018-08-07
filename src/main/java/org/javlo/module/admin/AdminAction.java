@@ -1544,6 +1544,7 @@ public class AdminAction extends AbstractModuleAction {
 					td.setBackgroundMenu(StringHelper.parseColor(requestService.getParameter("backgroundMenu", "" + td.getBackgroundMenu())));
 					td.setText(StringHelper.parseColor(requestService.getParameter("text", "" + td.getText())));
 					td.setTextMenu(StringHelper.parseColor(requestService.getParameter("textMenu", "" + td.getTextMenu())));
+					td.setComponentBackground(StringHelper.parseColor(requestService.getParameter("componentBackground", "" + td.getComponentBackground())));
 					td.setLink(StringHelper.parseColor(requestService.getParameter("link", "" + td.getLink())));
 					td.setTitle(StringHelper.parseColor(requestService.getParameter("title", "" + td.getTitle())));
 					td.setSpecial(StringHelper.parseColor(requestService.getParameter("special", "" + td.getSpecial())));

@@ -90,6 +90,7 @@ public class Template implements Comparable<Template> {
 	public static class TemplateData {
 		public static final TemplateData EMPTY = new TemplateData();
 		private CssColor background = null;
+		private CssColor componentBackground = null;
 		private CssColor foreground = null;
 		private CssColor text = null;
 		private CssColor title = null;
@@ -203,6 +204,10 @@ public class Template implements Comparable<Template> {
 								colorList[pos] = CssColor.getInstance(Color.decode('#'+c));
 								pos++;
 							}
+						}
+						i++;
+						if (data.length > i && data[i].length() > 0) {
+							setComponentBackground(Color.decode('#' + data[i]));
 						}
 					}
 				}
@@ -343,7 +348,6 @@ public class Template implements Comparable<Template> {
 			out.append(';');
 			out.append(StringHelper.colorToHexStringNotNull(getBackgroundActive()));
 			out.append(';');
-
 			out.append(StringHelper.colorToHexStringNotNull(getMessagePrimary()));
 			out.append(';');
 			out.append(StringHelper.colorToHexStringNotNull(getMessageSecondary()));
@@ -364,6 +368,8 @@ public class Template implements Comparable<Template> {
 				out.append(StringHelper.colorToHexStringNotNull(getColorList()[i]));
 				sep=",";				
 			}
+			out.append(';');
+			out.append(StringHelper.colorToHexStringNotNull(getComponentBackground()));
 			return out.toString();
 		}
 
@@ -446,6 +452,14 @@ public class Template implements Comparable<Template> {
 
 		public void setMessageInfo(Color messageInfo) {
 			this.messageInfo = CssColor.getInstance(messageInfo);
+		}
+
+		public CssColor getComponentBackground() {
+			return componentBackground;
+		}
+
+		public void setComponentBackground(Color componentBackground) {
+			this.componentBackground = CssColor.getInstance(componentBackground);
 		}
 
 	}
@@ -2457,6 +2471,11 @@ public class Template implements Comparable<Template> {
 				Color color = Color.decode('#' + messageInfo);
 				templateData.setMessageInfo(color);
 			}
+			String componentBackground = properties.getString("data.color.component-background", null);
+			if (componentBackground != null) {
+				Color color = Color.decode('#' + componentBackground);
+				templateData.setComponentBackground(color);
+			}
 
 			return templateData;
 		}
@@ -2501,6 +2520,9 @@ public class Template implements Comparable<Template> {
 		}
 		if (templateData.getBorder() != null) {
 			templateDataMap.put(StringHelper.colorToHexStringNotNull(templateData.getBorder()), StringHelper.colorToHexStringNotNull(templateDataUser.getBorder()));
+		}
+		if (templateData.getComponentBackground() != null) {
+			templateDataMap.put(StringHelper.colorToHexStringNotNull(templateData.getComponentBackground()), StringHelper.colorToHexStringNotNull(templateDataUser.getComponentBackground()));
 		}
 		if (templateData.getTitle() != null) {
 			templateDataMap.put(StringHelper.colorToHexStringNotNull(templateData.getTitle()), StringHelper.colorToHexStringNotNull(templateDataUser.getTitle()));

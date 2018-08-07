@@ -89,7 +89,7 @@ public class GlobalImage extends Image implements IImageFilter {
 
 	public static final String TYPE = "global-image";
 
-	private static final String RAW_FILTER = "raw";
+	public static final String RAW_FILTER = "raw";
 
 	private static final String LOCATION = "location";
 
@@ -1123,7 +1123,7 @@ public class GlobalImage extends Image implements IImageFilter {
 	public boolean initContent(ContentContext ctx) throws Exception {
 		super.initContent(ctx);
 		setFilter(ctx.getCurrentTemplate().getDefaultImageFilter());
-		setLink(getConfig(ctx).getProperty("content.link", ""));		
+		setLink(getConfig(ctx).getProperty("content.link", ""));
 		setModify();
 		storeProperties();
 		return true;

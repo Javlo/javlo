@@ -2522,7 +2522,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 	}
 
 	public Set<String> getEditorRoles() {
-		if (isChildrenOfAssociation()) {
+		if (isChildrenOfAssociation() && getRootOfChildrenAssociation() != null) {
 			return getRootOfChildrenAssociation().getEditorRoles();
 		} else {
 			return editGroups;
