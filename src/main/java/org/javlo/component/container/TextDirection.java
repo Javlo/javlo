@@ -13,10 +13,10 @@ public class TextDirection extends Box {
 
 	@Override
 	protected String getCSSClass(ContentContext ctx) {
-		if (getStyle(ctx) == null || getStyle(ctx).trim().length() == 0) {
+		if (getComponentCssClass(ctx) == null || getComponentCssClass(ctx).trim().length() == 0) {
 			return "text-direction";
 		} else {
-			return "text-direction " + getStyle(ctx);
+			return "text-direction " + getComponentCssClass(ctx);
 		}
 	}
 
@@ -47,14 +47,14 @@ public class TextDirection extends Box {
 		if (getValue().trim().length() == 0) {
 			setValue("true");
 			if (prevComp != null) {
-				setStyle(ctx, prevComp.getStyle(ctx));
+				setStyle(ctx, prevComp.getComponentCssClass(ctx));
 			}
 			setModify();
 		}
 		out.println("<label for=\"" + getCloseBoxInputName() + "\">close box ?</label>");
 		if (isCloseBox()) {
 			if (prevComp != null) {
-				setStyle(ctx, prevComp.getStyle(ctx));
+				setStyle(ctx, prevComp.getComponentCssClass(ctx));
 			}
 			out.println("<input type=\"checkbox\" name=\"" + getCloseBoxInputName() + "\" checked=\"checked\" />");
 		} else {

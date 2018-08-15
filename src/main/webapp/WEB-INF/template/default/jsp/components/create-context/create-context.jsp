@@ -19,7 +19,7 @@
 			<label for="url">URL : </label>
 			<div class="input-group">
       			<div class="input-group-addon">http://javlo.io/</div>
-      			<input type="text" class="form-control" id="url" name="url">      			
+      			<input type="text" class="form-control" id="url" name="url">
     		</div>
 		</div>
 		<div class="line form-group">

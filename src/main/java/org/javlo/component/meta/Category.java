@@ -40,8 +40,8 @@ public class Category extends AbstractVisualComponent {
 	@Override
 	public String getPrefixViewXHTMLCode(ContentContext ctx) {
 		String style = "";
-		if (getStyle(ctx) != null) {
-			style = getStyle(ctx) + " ";
+		if (getComponentCssClass(ctx) != null) {
+			style = getComponentCssClass(ctx) + " ";
 		}
 		return "<div " + getSpecialPreviewCssClass(ctx, style + getType()) + getSpecialPreviewCssId(ctx) + ">";
 	}

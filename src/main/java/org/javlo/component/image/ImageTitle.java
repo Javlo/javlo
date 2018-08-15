@@ -111,7 +111,7 @@ public class ImageTitle extends Image {
 				StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
 				String fileLink = URLHelper.mergePath(getDirSelected(), getFileName());
 				String url = URLHelper.createResourceURL(ctx, getPage(), staticConfig.getImageFolder()+'/'+fileLink).replace('\\', '/');
-				res.append("<h1 class=\""+getStyle(ctx)+"\" style=\"background-image: url('"+url+"')\">");
+				res.append("<h1 class=\""+getComponentCssClass(ctx)+"\" style=\"background-image: url('"+url+"')\">");
 			} else {
 				res.append("<h1>");
 			}

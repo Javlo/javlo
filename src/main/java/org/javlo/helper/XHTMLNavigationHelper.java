@@ -318,7 +318,7 @@ public class XHTMLNavigationHelper {
 		ContentContext mainLgCtx = new ContentContext(ctx);
 		mainLgCtx.setRequestContentLanguage(mainLgCtx.getLanguage());
 		mainLgCtx.setContentLanguage(mainLgCtx.getLanguage());
-
+		
 		if (mainLgCtx.getCurrentTemplate() != null && mainLgCtx.getCurrentTemplate().getMenuRenderer(mainLgCtx.getDevice()) != null && !mainLgCtx.isAsEditMode()) {
 			mainLgCtx.getRequest().setAttribute("fromDepth", fromDepth);
 			mainLgCtx.getRequest().setAttribute("toDepth", toDepth);

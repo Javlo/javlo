@@ -188,7 +188,7 @@ public class GenericFile extends AbstractFileComponent implements IReverseLinkCo
 
 		prepareView(ctx);
 
-		if (getStyle(ctx).equals(HIDDEN)) {
+		if (getComponentCssClass(ctx).equals(HIDDEN)) {
 			return "";
 		}
 
@@ -206,7 +206,7 @@ public class GenericFile extends AbstractFileComponent implements IReverseLinkCo
 				openAsPopup = "target=\"_blank\" ";
 			}
 
-			res.append("<a " + getSpecialPreviewCssClass(ctx, getStyle(ctx)) + getSpecialPreviewCssId(ctx) + " " + rel + openAsPopup + "href=\"");
+			res.append("<a " + getSpecialPreviewCssClass(ctx, getComponentCssClass(ctx)) + getSpecialPreviewCssId(ctx) + " " + rel + openAsPopup + "href=\"");
 			if (ctx.getRenderMode() != ContentContext.PAGE_MODE) {
 				res.append(StringHelper.toXMLAttribute(url));
 			} else {
@@ -303,8 +303,8 @@ public class GenericFile extends AbstractFileComponent implements IReverseLinkCo
 			return getConfig(ctx).getProperty("prefix.first", "");
 		} else {
 			String cssClass = "";
-			if (getStyle(ctx) != null && getStyle(ctx).trim().length() > 0) {
-				cssClass = ' ' + getStyle(ctx);
+			if (getComponentCssClass(ctx) != null && getComponentCssClass(ctx).trim().length() > 0) {
+				cssClass = ' ' + getComponentCssClass(ctx);
 			}
 			if (getListClass(ctx) != null) {
 				cssClass = cssClass + ' ' + getListClass(ctx);

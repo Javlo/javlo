@@ -78,7 +78,7 @@ public class ImageBackground extends GlobalImage {
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
 		EditContext editContext = EditContext.getInstance(ctx.getGlobalContext(), ctx.getRequest().getSession());
 		if (ctx.isAsPreviewMode() && editContext.isPreviewEditionMode()) {
-			return "["+getType()+"]";
+			return "<span class=\""+EDIT_CLASS+"\">"+getType()+"</span>";
 		} else {
 			return "";
 		}

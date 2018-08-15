@@ -170,7 +170,7 @@ public class Sound extends AbstractFileComponent implements IReverseLinkComponen
 	@Override
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
 		prepareView(ctx);
-		if (getStyle(ctx).equals(HIDDEN)) {
+		if (getComponentCssClass(ctx).equals(HIDDEN)) {
 			return "";
 		}
 		StringBuffer res = new StringBuffer();
@@ -251,8 +251,8 @@ public class Sound extends AbstractFileComponent implements IReverseLinkComponen
 			return getConfig(ctx).getProperty("prefix.first", "");
 		} else {
 			String cssClass = "";
-			if (getStyle(ctx) != null && getStyle(ctx).trim().length() > 0) {
-				cssClass = ' ' + getStyle(ctx);
+			if (getComponentCssClass(ctx) != null && getComponentCssClass(ctx).trim().length() > 0) {
+				cssClass = ' ' + getComponentCssClass(ctx);
 			}
 			if (getListClass(ctx) != null) {
 				cssClass = cssClass + ' ' + getListClass(ctx);

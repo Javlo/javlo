@@ -12,14 +12,12 @@ import java.util.Map;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.InternetAddress;
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.javlo.actions.IAction;
 import org.javlo.component.core.AbstractVisualComponent;
-import org.javlo.component.core.ICSS;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
@@ -33,11 +31,12 @@ import org.javlo.mailing.MailService;
 import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
 import org.javlo.service.RequestService;
+import org.jsoup.select.Evaluator.IsEmpty;
 
 /**
  * @author pvandermaesen
  */
-public class Contact extends AbstractVisualComponent implements ICSS, IAction {
+public class Contact extends AbstractVisualComponent implements IAction {
 
 	@Override
 	public String getPrefixViewXHTMLCode(ContentContext ctx) {
@@ -94,6 +93,15 @@ public class Contact extends AbstractVisualComponent implements ICSS, IAction {
 			return "<input class=\"form-control\" type=\"text\" id=\"" + id + "\" name=\"" + id + "\" value=\"" + value + "\" />";
 		}
 	}
+	
+	@Override
+	public boolean isDispayEmptyXHTMLCode(ContentContext ctx) throws Exception {
+		return false;
+	}
+	
+	
+	
+	
 
 	@Override
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
@@ -113,7 +121,7 @@ public class Contact extends AbstractVisualComponent implements ICSS, IAction {
 		out.println(i18nAccess.getContentViewText(msg.getMessage()));
 		out.println("</div>");
 
-		if ((messageRepository.getGlobalMessage().getMessage().length() == 0) || (messageRepository.getGlobalMessage().getType() == GenericMessage.ERROR)) {
+		if ((messageRepository.getGlobalMessage().getMessage().length() == 0) || (messageRepository.getGlobalMessage().getType() == GenericMessage.ERROR) || ctx.isAsPreviewMode()) {
 			out.println("<form method=\"post\" action=\"" + URLHelper.createURL(ctx) + "\">");
 			out.println("<input type=\"hidden\" name=\"send-to\" value=\"" + StringEscapeUtils.escapeXml(getEmail()) + "\" />");
 			out.println("<input type=\"hidden\" name=\"webaction\" value=\"contact.send\" />");
@@ -157,16 +165,15 @@ public class Contact extends AbstractVisualComponent implements ICSS, IAction {
 		List<String> fields = getFields();
 		List<String> selectedFields = getSelectedFields();
 		I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
-		out.println("<fieldset>");
-		out.println("<legend>");
+		out.println("<div class=\"form-group\">");
+		out.println("<label for=\""+getInputNameString()+"\">");
 		out.println(i18nAccess.getText("content.contact.email-to-send"));
-		out.println("</legend>");
-		out.println("<input style=\"width: 220px;\" type=\"text\" id=\"" + getInputNameString() + "\" name=\"" + getInputNameString() + "\" value=\"" + getEmail() + "\"/>");
-		out.println("</fieldset>");
-		out.println("<fieldset>");
-		out.println("<legend>");
+		out.println("</label>");
+		out.println("<input class=\"form-control\" type=\"text\" id=\"" + getInputNameString() + "\" name=\"" + getInputNameString() + "\" value=\"" + getEmail() + "\"/>");
+		out.println("</div>");
+		out.println("<h2>");
 		out.println(i18nAccess.getText("content.contact.fields"));
-		out.println("</legend>");
+		out.println("</h2>");
 
 		for (String field : fields) {
 			String inputId = field + '-' + getId();
@@ -174,7 +181,7 @@ public class Contact extends AbstractVisualComponent implements ICSS, IAction {
 			if (selectedFields.contains(field)) {
 				checked = "checked=\"checked\"";
 			}
-			out.println("<input type=\"checkbox\" id=\"" + inputId + "\" name=\"" + inputId + "\" " + checked + "/> <label for=\"" + inputId + "\">" + i18nAccess.getText("field." + field) + "</label> ");
+			out.println("<div class=\"form-group form-check\"><input class=\"form-check-input\" type=\"checkbox\" id=\"" + inputId + "\" name=\"" + inputId + "\" " + checked + "/> <label for=\"" + inputId + "\">" + i18nAccess.getText("field." + field) + "</label></div>");
 
 		}
 		out.println("</fieldset>");
@@ -185,22 +192,6 @@ public class Contact extends AbstractVisualComponent implements ICSS, IAction {
 	@Override
 	public String getType() {
 		return "contact";
-	}
-
-	@Override
-	public String getCSSCode(ServletContext application) throws Exception {
-		StringWriter res = new StringWriter();
-		PrintWriter out = new PrintWriter(res);
-		out.println(".contact label { float: left; width: 150px; }");
-		out.println(".contact .line { margin-top: 8px; }");
-		out.println(".contact input { border: 1px #aaaaaa solid; }");
-		out.println(".contact .action { margin-left: 150px; margin-top: 5px; }");
-		out.println(".contact .message { margin-top: 10px; margin-bottom: 10px; padding: 5px; text-align: center; color: #ffffff;}");
-		out.println(".contact .message-error { background-color: #ff9999; border: 1px #ff4444 solid; }");
-		out.println(".contact .message-info { background-color: #339933; border: 1px #44cc44 solid; }");
-		out.println(".contact .message-permanent { padding: 3px 3px 3px 150px; color: #000000; font-size: 0.9em; }");
-		out.close();
-		return res.toString();
 	}
 
 	@Override
@@ -291,6 +282,11 @@ public class Contact extends AbstractVisualComponent implements ICSS, IAction {
 	public boolean isRealContent(ContentContext ctx) {
 		return true;
 	}
+	
+	@Override
+	public boolean isDisplayable(ContentContext ctx) throws Exception {
+		return true;
+	}
 
 	@Override
 	public String getHexColor() {
@@ -299,7 +295,13 @@ public class Contact extends AbstractVisualComponent implements ICSS, IAction {
 	
 	@Override
 	public String getFontAwesome() {	
-		return "info-circle";
+		return "envelope-o";
+	}
+	
+	@Override
+	public boolean initContent(ContentContext ctx) throws Exception {
+		setValue(ctx.getGlobalContext().getAdministratorEmail()+"?email?subject?body");
+		return true;
 	}
 
 }

@@ -238,11 +238,11 @@ public class CSVArrayComponent extends AbstractFileComponent {
 		}
 
 		StringWriter stringWriter = new StringWriter();
-		stringWriter.append("<div " + getSpecialPreviewCssClass(ctx, getStyle(ctx) + " " + getType()) + getSpecialPreviewCssId(ctx) + ">");
+		stringWriter.append("<div " + getSpecialPreviewCssClass(ctx, getComponentCssClass(ctx) + " " + getType()) + getSpecialPreviewCssId(ctx) + ">");
 		if (getLabel().trim().length() > 0) {
-			stringWriter.append("<table class=\"" + getStyle(ctx) + "\"><caption>"+Encode.forHtml(getLabel())+"</caption>");
+			stringWriter.append("<table class=\"" + getComponentCssClass(ctx) + "\"><caption>"+Encode.forHtml(getLabel())+"</caption>");
 		} else {
-			stringWriter.append("<table class=\"" + getStyle(ctx) + "\">");
+			stringWriter.append("<table class=\"" + getComponentCssClass(ctx) + "\">");
 		}
 
 		String[][] array = csvFactory.getArray();

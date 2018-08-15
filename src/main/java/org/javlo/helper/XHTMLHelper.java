@@ -4,8 +4,6 @@
 package org.javlo.helper;
 
 import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
@@ -24,7 +22,6 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
-import java.net.URL;
 import java.net.URLDecoder;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -42,9 +39,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.logging.Level;
 
-import javax.imageio.ImageIO;
 import javax.servlet.ServletContext;
-import javax.swing.JLabel;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
@@ -68,10 +63,9 @@ import org.javlo.message.GenericMessage;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
 import org.javlo.service.IListItem;
-import org.javlo.service.PDFConvertion;
 import org.javlo.service.RequestService;
 import org.javlo.service.ReverseLinkService;
-import org.javlo.template.Template.TemplateData;
+import org.javlo.template.TemplateData;
 import org.javlo.user.IUserInfo;
 import org.javlo.user.User;
 import org.javlo.utils.SuffixPrefix;
@@ -362,7 +356,7 @@ public class XHTMLHelper {
 				listContent[i][0] = inComp.getStyleList(ctx)[i];
 				listContent[i][1] = inComp.getStyleLabelList(ctx)[i];
 			}
-			outXHTML.append(getInputOneSelectInternal(xhtmlID, xhtmlID, listContent, inComp.getStyle(ctx), null, null, null, null, false));
+			outXHTML.append(getInputOneSelectInternal(xhtmlID, xhtmlID, listContent, inComp.getComponentCssClass(ctx), null, null, null, null, false));
 			outXHTML.append("</span>");
 		}
 		return outXHTML.toString();
@@ -1733,7 +1727,7 @@ public class XHTMLHelper {
 				listContent[i][0] = inComp.getStyleList(ctx)[i];
 				listContent[i][1] = inComp.getStyleLabelList(ctx)[i];
 			}
-			outXHTML.append(getInputOneSelectInternal(xhtmlID, xhtmlID, listContent, inComp.getStyle(ctx), null, null, null, null, false));
+			outXHTML.append(getInputOneSelectInternal(xhtmlID, xhtmlID, listContent, inComp.getComponentCssClass(ctx), null, null, null, null, false));
 			outXHTML.append("</span>");
 		}
 		return outXHTML.toString();
@@ -2919,7 +2913,7 @@ public class XHTMLHelper {
 		out.println("</td></tr></table></td></tr></table></td></tr></table></body></html>");
 		return new String(outStream.toByteArray());
 	}
-
+	
 	public static final void convert(final File xhtmlFile, final File pdfFile) throws IOException, DocumentException {
 		final String xhtmlUrl = xhtmlFile.toURI().toURL().toString();
 		final OutputStream reportPdfStream = new FileOutputStream(pdfFile);
@@ -2931,30 +2925,18 @@ public class XHTMLHelper {
 	}
 
 	public static void main(String[] args) throws Exception {
+		File file = new File("c:/trans/mail.html");
+		String html = createUserMail(null, "title", "ceci est le contenu", null, "http://www.javlo.org", "action", "ceci est le footer");
+		ResourceHelper.writeStringToFile(file,  html);
+	}
 
-		String html = "<html>" + "<h1>:)</h1>" + "Hello World!<br>" + "<img width=\"200\" src=\"http://galleries.skyemodel.com/pinkandgrey/009.jpg\">" + "</html>";
-
-		// convert(new File("c:/trans/source.html"), new File("c:/trans/target.pdf"));
-
-		PDFConvertion.getInstance().convertXHTMLToPDF(new FileInputStream(new File("c:/trans/source.html")), new FileOutputStream(new File("c:/trans/target.pdf")));
-
-		JLabel label = new JLabel(html);
-		label.setSize(800, 1400);
-
-		BufferedImage image = new BufferedImage(label.getWidth(), label.getHeight(), BufferedImage.TYPE_INT_RGB);
-
-		{
-			// paint the html to an image
-			Graphics g = image.getGraphics();
-			g.setColor(Color.BLACK);
-			label.paint(g);
-			g.dispose();
+	public static String compress(String newContent) {
+		newContent = newContent.replaceAll("[\n\r]", " ");
+		newContent = newContent.replaceAll("\t", " ");
+		while (newContent.contains("  ")) {
+			newContent = newContent.replace("  ", " ");
 		}
-
-		// get the byte array of the image (as jpeg)
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		ImageIO.write(image, "jpg", new File("c:/trans/html.jpg"));
-
+		return newContent;
 	}
 
 }

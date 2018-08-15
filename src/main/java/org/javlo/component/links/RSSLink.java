@@ -94,7 +94,7 @@ public class RSSLink extends ComplexPropertiesLink {
 
 	@Override
 	public String getPrefixViewXHTMLCode(ContentContext ctx) {
-		if (getStyle(ctx).equals(NOT_VISIBLE)) {
+		if (getComponentCssClass(ctx).equals(NOT_VISIBLE)) {
 			return "";
 		}
 		return super.getPrefixViewXHTMLCode(ctx) + "<div class=\"" + getType() + "\" >";
@@ -135,7 +135,7 @@ public class RSSLink extends ComplexPropertiesLink {
 
 	@Override
 	public String getSuffixViewXHTMLCode(ContentContext ctx) {
-		if (getStyle(ctx).equals(NOT_VISIBLE)) {
+		if (getComponentCssClass(ctx).equals(NOT_VISIBLE)) {
 			return "";
 		}
 		return "</div>" + super.getSuffixViewXHTMLCode(ctx);
@@ -152,14 +152,14 @@ public class RSSLink extends ComplexPropertiesLink {
 	@Override
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
 
-		if (getStyle(ctx).equals(NOT_VISIBLE)) {
+		if (getComponentCssClass(ctx).equals(NOT_VISIBLE)) {
 			return "";
 		}
 
 		String label = properties.getProperty(LABEL_KEY, "");
 
 		StringBuffer res = new StringBuffer();
-		res.append("<a " + getSpecialPreviewCssClass(ctx, getStyle(ctx)) + getSpecialPreviewCssId(ctx) + " href=\" ");
+		res.append("<a " + getSpecialPreviewCssClass(ctx, getComponentCssClass(ctx)) + getSpecialPreviewCssId(ctx) + " href=\" ");
 		res.append(getRSSURL(ctx));
 		res.append("\">");
 		res.append(XHTMLHelper.getIconesCode(ctx, "feed.png", "rss"));

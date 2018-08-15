@@ -32,7 +32,7 @@ public class Paragraph extends AbstractVisualComponent {
 		if (getConfig(ctx).getProperty("prefix", null) != null) {
 			return getConfig(ctx).getProperty("prefix", null);
 		} else {
-			String style = getStyle(ctx);
+			String style = getComponentCssClass(ctx);
 			if (style != null) {
 				style = style + " ";
 			} else {

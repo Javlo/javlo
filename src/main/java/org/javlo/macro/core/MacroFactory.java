@@ -10,9 +10,11 @@ import org.javlo.macro.CleanDuplicatedId;
 import org.javlo.macro.CleanImportFolder;
 import org.javlo.macro.CleanPersistenceFolder;
 import org.javlo.macro.CleanResourceNameMacro;
+import org.javlo.macro.CleanStaticInfoPersistence;
 import org.javlo.macro.ClearContext;
 import org.javlo.macro.ClearDataAccessCount;
 import org.javlo.macro.ClearTransformURLCache;
+import org.javlo.macro.CommitTemplate;
 import org.javlo.macro.ConvertUserForComansys;
 import org.javlo.macro.CopyLanguageStructureHereMacro;
 import org.javlo.macro.CopyLanguageStructureMacro;
@@ -190,6 +192,8 @@ public class MacroFactory {
 		macros.add(new ConvertUserForComansys());
 		macros.add(new InitContentMacro());
 		macros.add(new ImportMysqlDataBase());
+		macros.add(new CommitTemplate());
+		macros.add(new CleanStaticInfoPersistence());
 	}
 
 	public IMacro getMacro(String name) {

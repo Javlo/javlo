@@ -364,7 +364,7 @@ public interface IContentVisualComponent extends Comparable<IContentVisualCompon
 	 * 
 	 * @return the current style.
 	 */
-	public String getStyle(ContentContext ctx);
+	public String getComponentCssClass(ContentContext ctx);
 
 	/**
 	 * get the label of the current style

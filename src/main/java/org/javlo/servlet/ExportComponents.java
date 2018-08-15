@@ -170,7 +170,7 @@ public class ExportComponents extends HttpServlet {
 						List<String> values = new LinkedList<String>();
 						values.add(comp.getPage().getName());
 						values.add(comp.getAuthors());
-						values.add(comp.getStyle(ctx));
+						values.add(comp.getComponentCssClass(ctx));
 						values.add(comp.getArea());
 						List<Field> fields = dcomp.getFields(ctx);
 						for (Field field : fields) {
@@ -195,7 +195,7 @@ public class ExportComponents extends HttpServlet {
 						values.add(comp.getPage().getName());
 						values.add(comp.getAuthors());
 						values.add(comp.getValue(ctx));
-						values.add(comp.getStyle(ctx));
+						values.add(comp.getComponentCssClass(ctx));
 						values.add(comp.getArea());
 						String csvLine = CSVFactory.exportLine(values, rs.getParameter("separator", ","));
 						out.append(csvLine);

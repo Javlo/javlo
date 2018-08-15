@@ -66,7 +66,7 @@ public class Layouts extends AbstractVisualComponent {
 	
 	@Override
 	public String getPrefixViewXHTMLCode(ContentContext ctx) {
-		return super.getPrefixViewXHTMLCode(ctx) + "<div" + getSpecialPreviewCssClass(ctx, getStyle(ctx) + " list count" + getLayouts().size()) + getSpecialPreviewCssId(ctx) + ">";
+		return super.getPrefixViewXHTMLCode(ctx) + "<div" + getSpecialPreviewCssClass(ctx, getComponentCssClass(ctx) + " list count" + getLayouts().size()) + getSpecialPreviewCssId(ctx) + ">";
 	}
 
 	@Override
@@ -118,7 +118,7 @@ public class Layouts extends AbstractVisualComponent {
 	
 	@Override
 	public String getEmptyXHTMLCode(ContentContext ctx) throws Exception {	
-		return '['+getType()+" : "+StringHelper.collectionToString(getLayouts())+']';		
+		return "<span class=\""+EDIT_CLASS + "\">" + getType()+" : "+StringHelper.collectionToString(getLayouts()) + "</span>";
 	}
 	
 	@Override

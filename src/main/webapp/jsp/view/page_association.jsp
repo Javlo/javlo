@@ -46,6 +46,7 @@ for (MenuElement child : currentPage.getChildMenuElements()) {
 	request.removeAttribute("backgroundImage");
 	request.removeAttribute("backgroundImageStyle");
 }
+ctx.setCurrentPageCached(currentPage);
 ctx.setPageAssociation(savePageAssocitation);
 %><%if (mailing) {%></td></tr></tbody></table></center><%}
 if (ctx.isInteractiveMode() && ctx.getRenderMode() == ContentContext.PREVIEW_MODE) {%>

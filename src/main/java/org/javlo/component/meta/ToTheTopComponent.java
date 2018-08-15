@@ -81,7 +81,7 @@ public class ToTheTopComponent extends AbstractVisualComponent {
 	
 	@Override
 	public String getPrefixViewXHTMLCode(ContentContext ctx) {
-		return "<div " + getSpecialPreviewCssClass(ctx, getStyle(ctx) + " " + getType()) + getSpecialPreviewCssId(ctx) + ">";
+		return "<div " + getSpecialPreviewCssClass(ctx, getComponentCssClass(ctx) + " " + getType()) + getSpecialPreviewCssId(ctx) + ">";
 	}
 
 	@Override

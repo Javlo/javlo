@@ -1,6 +1,7 @@
 package org.javlo.navigation;
 
 import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.LinkedList;
@@ -109,6 +110,10 @@ public class PageBean implements Serializable {
 
 	public String getAbsoluteUrl() {
 		return URLHelper.createURL(ctx.getContextForAbsoluteURL(), page.getPath());
+	}
+	
+	public String getAbsoluteUrlEncoded() throws UnsupportedEncodingException {
+		return java.net.URLEncoder.encode(getAbsoluteUrl(), "UTF-8");
 	}
 
 	public String getAbsolutePreviewUrl() {
@@ -706,6 +711,10 @@ public class PageBean implements Serializable {
 	
 	public String getHtmlId() {
 		return page.getHtmlId(ctx);
+	}
+	
+	public int getIndex() {
+		return page.getIndex();
 	}
 	
 }

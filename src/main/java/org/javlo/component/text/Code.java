@@ -23,7 +23,7 @@ public class Code extends AbstractVisualComponent {
 
 	@Override
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
-		if (getStyle(ctx).equals("java")) {
+		if (getComponentCssClass(ctx).equals("java")) {
 			return Java2Html.convertToHtml(getValue());
 		} else {
 			return XHTMLHelper.textToXHTML(XHTMLHelper.escapeXHTML(getValue()));

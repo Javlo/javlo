@@ -29,7 +29,6 @@ import org.javlo.cache.ICache;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
-import org.javlo.data.taxonomy.ITaxonomyContainer;
 import org.javlo.helper.ExifHelper;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
@@ -46,7 +45,11 @@ import org.javlo.ztatic.InitInterest.Point;
 import org.owasp.encoder.Encode;
 
 public class StaticInfo {
-	
+
+	private static final String FOCUS_ZONE_Y = "focus-zone-y";
+
+	private static final String FOCUS_ZONE_X = "focus-zone-x";
+
 	public static final StaticInfo EMPTY_INSTANCE = getFakeInstance();
 
 	public static final String _STATIC_INFO_DIR = null;
@@ -133,8 +136,6 @@ public class StaticInfo {
 		}
 
 	}
-
-	
 
 	public ContentContext getContextWithContent(ContentContext ctx) {
 		String content = (getTitle(ctx) + getDescription(ctx) + getCopyright(ctx)).trim();
@@ -416,7 +417,7 @@ public class StaticInfo {
 	private String linkedLocation;
 
 	private List<String> tags = null;
-	
+
 	private Set<String> taxonomy = null;
 
 	private List<String> readRoles = null;
@@ -432,7 +433,7 @@ public class StaticInfo {
 	private String id = null;
 
 	private boolean staticFolder = true;
- 
+
 	private ImageSize imageSize = null;
 
 	private static final ImageSize NO_IMAGE_SIZE = new ImageSize(0, 0);
@@ -459,12 +460,49 @@ public class StaticInfo {
 		return getInstance(ctx, inStaticURL);
 	}
 
-	private String getKey(String key) {
-		return getKey(staticURL, key);
+	private String getKey(ContentContext ctx, String key) {
+		return getKey(ctx, staticURL, key);
 	}
 
-	private String getKey(String inStaticURL, String key) {
+	private String getKey(ContentContext ctx, String inStaticURL, String key) {
+//		if (key.contains("-")) {
+//			if (ctx != null) {
+//				ContentService content = ContentService.getInstance(ctx.getGlobalContext());
+//				String previousKey = key;
+//				key = key.replace("-", "_");
+//				content.setAttribute(ctx, key, content.getAttribute(ctx, previousKey));
+//				content.removeAttribute(ctx, previousKey);
+//			}
+//			key = key.replace("-", "_");
+//		}
 		return KEY + inStaticURL + '-' + key;
+	}
+
+	public static String getStaticUrlFromKey(Object key) {
+		if (!(""+key).contains(".")) {
+			return null;
+		}
+		String url = key.toString().substring(KEY.length());
+		String suffix = url.substring(url.lastIndexOf("."));
+		suffix = suffix.substring(suffix.indexOf("-"));
+		url = url.substring(0, url.lastIndexOf(suffix));
+		return url;
+	}
+
+	public static boolean isStaticInfoKey(Object key) {
+		return ("" + key).startsWith(KEY);
+	}
+
+	public static boolean isDefaultStaticKeyValue(Object key, String value) {
+		if (isStaticInfoKey(key)) {
+			if (key.toString().endsWith(FOCUS_ZONE_X)) {
+				return value.equals("" + DEFAULT_FOCUS_X);
+			}
+			if (key.toString().endsWith(FOCUS_ZONE_Y)) {
+				return value.equals("" + DEFAULT_FOCUS_Y);
+			}
+		}
+		return false;
 	}
 
 	public static StaticInfo getInstance(ContentContext ctx, File file) throws Exception {
@@ -473,13 +511,12 @@ public class StaticInfo {
 		staticInfo.setStaticFolder(true);
 		return staticInfo;
 	}
-	
+
 	private static StaticInfo getFakeInstance() {
 		StaticInfo outInstance = new StaticInfo();
 		outInstance.setFile(new File(""));
 		return outInstance;
 	}
-
 
 	public static StaticInfo getInstance(ContentContext ctx, String inStaticURL) throws Exception {
 		inStaticURL = inStaticURL.replace('\\', '/').replaceAll("//", "/").trim();
@@ -492,10 +529,10 @@ public class StaticInfo {
 
 		GlobalContext globalContext = ctx.getGlobalContext();
 
-		//StaticInfo outStaticInfo = (StaticInfo) request.getAttribute(inStaticURL);
-		
-		final String KEY = "staticInfo-"+inStaticURL;
-		
+		// StaticInfo outStaticInfo = (StaticInfo) request.getAttribute(inStaticURL);
+
+		final String KEY = "staticInfo-" + inStaticURL;
+
 		StaticInfo outStaticInfo = (StaticInfo) globalContext.getTimeAttribute(KEY);
 
 		if (outStaticInfo == null) {
@@ -508,7 +545,7 @@ public class StaticInfo {
 			StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
 			if (inStaticURL.startsWith(staticConfig.getStaticFolder())) {
 				inStaticURL = inStaticURL.substring(staticConfig.getStaticFolder().length());
-			}			
+			}
 			String realPath = URLHelper.mergePath(globalContext.getDataFolder(), staticConfig.getStaticFolder());
 			realPath = URLHelper.mergePath(realPath, inStaticURL);
 
@@ -517,7 +554,7 @@ public class StaticInfo {
 			staticInfo.size = file.length();
 
 			outStaticInfo = staticInfo;
-			//request.setAttribute(inStaticURL, outStaticInfo);
+			// request.setAttribute(inStaticURL, outStaticInfo);
 			globalContext.setTimeAttribute(KEY, outStaticInfo);
 		}
 
@@ -555,11 +592,11 @@ public class StaticInfo {
 		}
 
 		/*
-		 * if (getDescription() != null && getDescription().trim().length() > 0)
-		 * { String description = getDescription().trim(); if
+		 * if (getDescription() != null && getDescription().trim().length() > 0) {
+		 * String description = getDescription().trim(); if
 		 * (description.charAt(description.length() - 1) == '.') { description =
-		 * description.substring(0, description.length() - 1); } if (getTitle()
-		 * != null && getTitle().trim().length() > 0) { out.print(". "); }
+		 * description.substring(0, description.length() - 1); } if (getTitle() != null
+		 * && getTitle().trim().length() > 0) { out.print(". "); }
 		 * out.print(description); }
 		 */
 
@@ -592,30 +629,30 @@ public class StaticInfo {
 
 	public String getManualDescription(ContentContext ctx) {
 		ContentService content = ContentService.getInstance(ctx.getGlobalContext());
-		return content.getAttribute(ctx, getKey("description-" + ctx.getRequestContentLanguage()), "");
+		return content.getAttribute(ctx, getKey(ctx, "description-" + ctx.getRequestContentLanguage()), "");
 	}
 
 	public String getReference(ContentContext ctx) {
 		ContentService content = ContentService.getInstance(ctx.getGlobalContext());
-		return content.getAttribute(ctx, getKey("ref-" + ctx.getRequestContentLanguage()), "");
+		return content.getAttribute(ctx, getKey(ctx, "ref-" + ctx.getRequestContentLanguage()), "");
 	}
 
 	public void setReference(ContentContext ctx, String ref) {
 		ContentService content = ContentService.getInstance(ctx.getGlobalContext());
 		if (!StringHelper.isEmpty(ref)) {
 			if (!getReference(ctx).equals(ref)) {
-				content.setAttribute(ctx, getKey("ref-" + ctx.getRequestContentLanguage()), ref);
+				content.setAttribute(ctx, getKey(ctx, "ref-" + ctx.getRequestContentLanguage()), ref);
 				refBean = null;
 			}
 		} else {
-			content.removeAttribute(ctx, getKey("ref-" + ctx.getRequestContentLanguage()));
+			content.removeAttribute(ctx, getKey(ctx, "ref-" + ctx.getRequestContentLanguage()));
 			refBean = null;
 		}
 	}
 
 	public String getLanguage(ContentContext ctx) {
 		ContentService content = ContentService.getInstance(ctx.getGlobalContext());
-		return content.getAttribute(ctx, getKey("lg-" + ctx.getRequestContentLanguage()), "");
+		return content.getAttribute(ctx, getKey(ctx, "lg-" + ctx.getRequestContentLanguage()), "");
 	}
 
 	public ReferenceBean getReferenceBean(ContentContext ctx) {
@@ -633,23 +670,23 @@ public class StaticInfo {
 		ContentService content = ContentService.getInstance(ctx.getGlobalContext());
 		if (!StringHelper.isEmpty(lg)) {
 			if (!lg.equals(getLanguage(ctx))) {
-				content.setAttribute(ctx, getKey("lg-" + ctx.getRequestContentLanguage()), lg);
+				content.setAttribute(ctx, getKey(ctx, "lg-" + ctx.getRequestContentLanguage()), lg);
 				refBean = null;
 			}
 		} else {
-			content.removeAttribute(ctx, getKey("lg-" + ctx.getRequestContentLanguage()));
+			content.removeAttribute(ctx, getKey(ctx, "lg-" + ctx.getRequestContentLanguage()));
 			refBean = null;
 		}
 	}
 
 	public boolean isResized(ContentContext ctx) {
 		ContentService content = ContentService.getInstance(ctx.getGlobalContext());
-		return StringHelper.isTrue(content.getAttribute(ctx, getKey("resized"), null));
+		return StringHelper.isTrue(content.getAttribute(ctx, getKey(ctx, "resized"), null));
 	}
 
 	public void setResized(ContentContext ctx, boolean resized) {
 		ContentService content = ContentService.getInstance(ctx.getGlobalContext());
-		content.setAttribute(ctx, getKey("resized"), "" + resized);
+		content.setAttribute(ctx, getKey(ctx, "resized"), "" + resized);
 	}
 
 	public String getDescription(ContentContext ctx) {
@@ -671,15 +708,15 @@ public class StaticInfo {
 	public void setDescription(ContentContext ctx, String description) {
 		ContentService content = ContentService.getInstance(ctx.getGlobalContext());
 		if (!StringHelper.isEmpty(description)) {
-			content.setAttribute(ctx, getKey("description-" + ctx.getRequestContentLanguage()), description);
+			content.setAttribute(ctx, getKey(ctx, "description-" + ctx.getRequestContentLanguage()), description);
 		} else {
-			content.removeAttribute(ctx, getKey("description-" + ctx.getRequestContentLanguage()));
+			content.removeAttribute(ctx, getKey(ctx, "description-" + ctx.getRequestContentLanguage()));
 		}
 	}
 
 	public String getManualLocation(ContentContext ctx) {
 		ContentService content = ContentService.getInstance(ctx.getGlobalContext());
-		return content.getAttribute(ctx, getKey("location-" + ctx.getRequestContentLanguage()), "");
+		return content.getAttribute(ctx, getKey(ctx, "location-" + ctx.getRequestContentLanguage()), "");
 		// return properties.getString("location-" +
 		// ctx.getRequestContentLanguage(), "");
 	}
@@ -702,27 +739,24 @@ public class StaticInfo {
 		}
 
 		/*
-		 * System.out.println("***** StaticInfo.getPosition : name = "+file.
-		 * getName ()); //TODO: remove debug trace
+		 * System.out.println("***** StaticInfo.getPosition : name = "+file. getName
+		 * ()); //TODO: remove debug trace
 		 * 
 		 * Metadata md = getImageMetadata(); if (md != null &&
-		 * md.getDirectoriesOfType(GpsDirectory.class) != null) {
-		 * Iterator<GpsDirectory> directories =
-		 * md.getDirectoriesOfType(GpsDirectory.class).iterator(); if
+		 * md.getDirectoriesOfType(GpsDirectory.class) != null) { Iterator<GpsDirectory>
+		 * directories = md.getDirectoriesOfType(GpsDirectory.class).iterator(); if
 		 * (directories.hasNext()) { GpsDirectory gpsDirectory = (GpsDirectory)
-		 * directories.next(); GeoLocation geoLocation =
-		 * gpsDirectory.getGeoLocation(); if (geoLocation != null) {
-		 * System.out.println("***** StaticInfo.getPosition : OK"); //TODO:
-		 * remove debug trace return new Position(geoLocation.getLatitude(),
+		 * directories.next(); GeoLocation geoLocation = gpsDirectory.getGeoLocation();
+		 * if (geoLocation != null) {
+		 * System.out.println("***** StaticInfo.getPosition : OK"); //TODO: remove debug
+		 * trace return new Position(geoLocation.getLatitude(),
 		 * geoLocation.getLongitude()); } else {
-		 * System.out.println("***** StaticInfo.getPosition : no geo"); //TODO:
-		 * remove debug trace } }
-		 * System.out.println("***** StaticInfo.getPosition : NO NEXT"); //TODO:
-		 * remove debug trace } else {
-		 * System.out.println("***** StaticInfo.getPosition : md="+md); //TODO:
-		 * remove debug trace
-		 * System.out.println("***** StaticInfo.getPosition : NULL"); //TODO:
-		 * remove debug trace }
+		 * System.out.println("***** StaticInfo.getPosition : no geo"); //TODO: remove
+		 * debug trace } } System.out.println("***** StaticInfo.getPosition : NO NEXT");
+		 * //TODO: remove debug trace } else {
+		 * System.out.println("***** StaticInfo.getPosition : md="+md); //TODO: remove
+		 * debug trace System.out.println("***** StaticInfo.getPosition : NULL");
+		 * //TODO: remove debug trace }
 		 */
 		return null;
 	}
@@ -739,9 +773,9 @@ public class StaticInfo {
 	public void setLocation(ContentContext ctx, String location) {
 		ContentService content = ContentService.getInstance(ctx.getGlobalContext());
 		if (StringHelper.isEmpty(location)) {
-			content.removeAttribute(ctx, getKey("location-" + ctx.getRequestContentLanguage()));
+			content.removeAttribute(ctx, getKey(ctx, "location-" + ctx.getRequestContentLanguage()));
 		} else {
-			content.setAttribute(ctx, getKey("location-" + ctx.getRequestContentLanguage()), location);
+			content.setAttribute(ctx, getKey(ctx, "location-" + ctx.getRequestContentLanguage()), location);
 		}
 	}
 
@@ -754,7 +788,7 @@ public class StaticInfo {
 
 	public String getManualTitle(ContentContext ctx) {
 		ContentService content = ContentService.getInstance(ctx.getGlobalContext());
-		String key = getKey("title-" + ctx.getRequestContentLanguage());
+		String key = getKey(ctx, "title-" + ctx.getRequestContentLanguage());
 		String title = content.getAttribute(ctx, key, "");
 		if (!isDescription && StringHelper.isEmpty(title)) {
 			String description = getManualDescription(ctx);
@@ -770,7 +804,7 @@ public class StaticInfo {
 	public String getId(ContentContext ctx) {
 		if (id == null) {
 			ContentService content = ContentService.getInstance(ctx.getGlobalContext());
-			String key = getKey("id-" + ctx.getRequestContentLanguage());
+			String key = getKey(ctx, "id-" + ctx.getRequestContentLanguage());
 			id = content.getAttribute(ctx, key, "");
 			if (id.trim().length() == 0) {
 				id = StringHelper.getRandomId();
@@ -783,15 +817,15 @@ public class StaticInfo {
 	public void setTitle(ContentContext ctx, String title) {
 		ContentService content = ContentService.getInstance(ctx.getGlobalContext());
 		if (StringHelper.isEmpty(title)) {
-			content.removeAttribute(ctx, getKey("title-" + ctx.getRequestContentLanguage()));
+			content.removeAttribute(ctx, getKey(ctx, "title-" + ctx.getRequestContentLanguage()));
 		} else {
-			content.setAttribute(ctx, getKey("title-" + ctx.getRequestContentLanguage()), title);
+			content.setAttribute(ctx, getKey(ctx, "title-" + ctx.getRequestContentLanguage()), title);
 		}
 	}
 
 	public Date getManualDate(ContentContext ctx) {
 		ContentService content = ContentService.getInstance(ctx.getGlobalContext());
-		String dateStr = content.getAttribute(ctx, getKey("date"), null);
+		String dateStr = content.getAttribute(ctx, getKey(ctx, "date"), null);
 		if (dateStr != null) {
 			try {
 				return StringHelper.parseTime(dateStr);
@@ -803,10 +837,10 @@ public class StaticInfo {
 
 	public Date getCreationDate(ContentContext ctx) {
 		ContentService content = ContentService.getInstance(ctx.getGlobalContext());
-		String dateStr = content.getAttribute(ctx, getKey("creation-date"), null);
+		String dateStr = content.getAttribute(ctx, getKey(ctx, "creation-date"), null);
 		if (dateStr == null) {
 			dateStr = StringHelper.renderTime(new Date());
-			content.setAttribute(ctx, getKey("creation-date"), dateStr);
+			content.setAttribute(ctx, getKey(ctx, "creation-date"), dateStr);
 			try {
 				PersistenceService.getInstance(ctx.getGlobalContext()).setAskStore(true);
 			} catch (ServiceException e) {
@@ -823,15 +857,15 @@ public class StaticInfo {
 
 	public String getAuthors(ContentContext ctx) {
 		ContentService content = ContentService.getInstance(ctx.getGlobalContext());
-		return content.getAttribute(ctx, getKey("authors"), "");
+		return content.getAttribute(ctx, getKey(ctx, "authors"), "");
 	}
 
 	public void setAuthors(ContentContext ctx, String authors) {
 		ContentService content = ContentService.getInstance(ctx.getGlobalContext());
 		if (StringHelper.isEmpty(authors)) {
-			content.removeAttribute(ctx, getKey("authors"));
+			content.removeAttribute(ctx, getKey(ctx, "authors"));
 		} else {
-			content.setAttribute(ctx, getKey("authors"), authors);
+			content.setAttribute(ctx, getKey(ctx, "authors"), authors);
 		}
 	}
 
@@ -854,10 +888,10 @@ public class StaticInfo {
 	public Date getFileDate(ContentContext ctx) {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		ICache fileInfoCache = globalContext.getEternalCache("file-info");
-		Date outDate = (Date) fileInfoCache.get(getKey("file-date"));
+		Date outDate = (Date) fileInfoCache.get(getKey(ctx, "file-date"));
 		if (outDate == null) {
 			outDate = getFileDate();
-			fileInfoCache.put(getKey("file-date"), outDate);
+			fileInfoCache.put(getKey(ctx, "file-date"), outDate);
 		}
 		return outDate;
 	}
@@ -865,47 +899,47 @@ public class StaticInfo {
 	public void setDate(ContentContext ctx, Date date) {
 		ContentService content = ContentService.getInstance(ctx.getGlobalContext());
 		if (date == null) {
-			content.removeAttribute(ctx, getKey("date"));
+			content.removeAttribute(ctx, getKey(ctx, "date"));
 		} else {
-			content.setAttribute(ctx, getKey("date"), StringHelper.renderTime(date));
+			content.setAttribute(ctx, getKey(ctx, "date"), StringHelper.renderTime(date));
 		}
 	}
 
 	public String getResource(ContentContext ctx) {
 		ContentService content = ContentService.getInstance(ctx.getGlobalContext());
-		return content.getAttribute(ctx, getKey("resource"), "");
+		return content.getAttribute(ctx, getKey(ctx, "resource"), "");
 	}
 
 	public void setResource(ContentContext ctx, String resource) {
 		ContentService content = ContentService.getInstance(ctx.getGlobalContext());
-		content.setAttribute(ctx, getKey("resource"), resource);
+		content.setAttribute(ctx, getKey(ctx, "resource"), resource);
 	}
 
 	public void setEmptyDate(ContentContext ctx) {
 		ContentService content = ContentService.getInstance(ctx.getGlobalContext());
-		content.setAttribute(ctx, getKey("date"), "");
+		content.setAttribute(ctx, getKey(ctx, "date"), "");
 	}
 
 	public boolean isEmptyDate(ContentContext ctx) {
 		ContentService content = ContentService.getInstance(ctx.getGlobalContext());
-		return content.getAttribute(ctx, getKey("date"), null) == null;
+		return content.getAttribute(ctx, getKey(ctx, "date"), null) == null;
 	}
 
 	public long getSize() {
 		return size;
 	}
 
-//	public String getLinkedPageId(ContentContext ctx) {
-//		ContentService content = ContentService.getInstance(ctx.getGlobalContext());
-//		return content.getAttribute(ctx, getKey("linked-page-id"));
-//	}
-//
-//	public void setLinkedPageId(ContentContext ctx, String pageId) {
-//		if (pageId != null) {
-//			ContentService content = ContentService.getInstance(ctx.getGlobalContext());
-//			content.setAttribute(ctx, getKey("linked-page-id"), pageId);
-//		}
-//	}
+	// public String getLinkedPageId(ContentContext ctx) {
+	// ContentService content = ContentService.getInstance(ctx.getGlobalContext());
+	// return content.getAttribute(ctx, getKey(ctx, "linked-page-id"));
+	// }
+	//
+	// public void setLinkedPageId(ContentContext ctx, String pageId) {
+	// if (pageId != null) {
+	// ContentService content = ContentService.getInstance(ctx.getGlobalContext());
+	// content.setAttribute(ctx, getKey(ctx, "linked-page-id"), pageId);
+	// }
+	// }
 
 	public String getStaticURL() {
 		return staticURL;
@@ -916,8 +950,8 @@ public class StaticInfo {
 	}
 
 	/**
-	 * return the focus point of a image. Return always the focus point of edit
-	 * mode (problem with image cache).
+	 * return the focus point of a image. Return always the focus point of edit mode
+	 * (problem with image cache).
 	 * 
 	 * @param ctx
 	 * @return
@@ -930,7 +964,7 @@ public class StaticInfo {
 		if (!content.isNavigationLoaded(editCtx)) {
 			editCtx = ctx;
 		}
-		if (content.getAttribute(editCtx, getKey("focus-zone-x"), null) == null) {
+		if (content.getAttribute(editCtx, getKey(ctx,FOCUS_ZONE_X), null) == null) {
 			if (StringHelper.isImage(getFile().getName())) {
 				try {
 					if (getFile().exists()) {
@@ -941,9 +975,9 @@ public class StaticInfo {
 							if (ctx.getGlobalContext().getStaticConfig().isAutoFocus() && ctx.isAsPreviewMode()) {
 								logger.info("search point on interest on START : " + getFile() + " [" + ctx.getGlobalContext().getContextKey() + "]");
 								// point = InitInterest.getPointOfInterest(img);
-								content.setAttribute(editCtx, getKey("focus-zone-x"), "" + DEFAULT_FOCUS_X);
-								content.setAttribute(editCtx, getKey("focus-zone-y"), "" + DEFAULT_FOCUS_Y);
-								InitInterest.setPointOfInterestWidthThread(ctx, getFile(), getKey("focus-zone-x"), getKey("focus-zone-y"));
+								// content.setAttribute(editCtx, getKey(ctx, "focus-zone-x"), "" + DEFAULT_FOCUS_X);
+								// content.setAttribute(editCtx, getKey(ctx, "focus-zone-y"), "" + DEFAULT_FOCUS_Y);
+								InitInterest.setPointOfInterestWidthThread(ctx, getFile(), getKey(ctx,FOCUS_ZONE_X, "" + DEFAULT_FOCUS_X), getKey(ctx,FOCUS_ZONE_Y, "" + DEFAULT_FOCUS_Y));
 								logger.info("search point on interest on DONE : " + getFile() + " [" + ctx.getGlobalContext().getContextKey() + "]");
 							}
 						} catch (Throwable t) {
@@ -952,26 +986,29 @@ public class StaticInfo {
 						if (point != null && img != null) {
 							int focusX = (point.getX() * 1000) / img.getWidth();
 							int focusY = (point.getY() * 1000) / img.getHeight();
-
-							content.setAttribute(editCtx, getKey("focus-zone-x"), "" + focusX);
-							content.setAttribute(editCtx, getKey("focus-zone-y"), "" + focusY);
-						} else {
-							content.setAttribute(editCtx, getKey("focus-zone-x"), "" + DEFAULT_FOCUS_X);
-							content.setAttribute(editCtx, getKey("focus-zone-y"), "" + DEFAULT_FOCUS_Y);
+							content.setAttribute(editCtx, getKey(ctx,FOCUS_ZONE_X), "" + focusX);
+							/* check only y because x default value mark thread as done */
+							if (focusY != DEFAULT_FOCUS_Y) {
+								content.setAttribute(editCtx, getKey(ctx,FOCUS_ZONE_Y), "" + focusY);
+							}
 						}
+						// else {
+						// content.setAttribute(editCtx, getKey(ctx, "focus-zone-x"), "" + DEFAULT_FOCUS_X);
+						// content.setAttribute(editCtx, getKey(ctx, "focus-zone-y"), "" + DEFAULT_FOCUS_Y);
+						// }
 					}
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}
 		}
-		String kzx = content.getAttribute(editCtx, getKey("focus-zone-x"), "" + DEFAULT_FOCUS_X);
+		String kzx = content.getAttribute(editCtx, getKey(ctx,FOCUS_ZONE_X), "" + DEFAULT_FOCUS_X);
 		return Integer.parseInt(kzx);
 	}
 
 	/**
-	 * return the focus point of a image. Return always the focus point of edit
-	 * mode (problem with image cache).
+	 * return the focus point of a image. Return always the focus point of edit mode
+	 * (problem with image cache).
 	 * 
 	 * @param ctx
 	 * @return
@@ -982,24 +1019,24 @@ public class StaticInfo {
 		if (!content.isNavigationLoaded(editCtx)) {
 			editCtx = ctx;
 		}
-		if (content.getAttribute(editCtx, getKey("focus-zone-x"), null) == null) {
+		if (content.getAttribute(editCtx, getKey(ctx,FOCUS_ZONE_X), null) == null) {
 			getFocusZoneX(editCtx); // generate default value
 		}
-		String kzy = content.getAttribute(editCtx, getKey("focus-zone-y"), "" + DEFAULT_FOCUS_Y);
+		String kzy = content.getAttribute(editCtx, getKey(ctx,FOCUS_ZONE_Y), "" + DEFAULT_FOCUS_Y);
 		return Integer.parseInt(kzy);
 	}
 
 	public boolean isShared(ContentContext ctx) {
 		ContentService content = ContentService.getInstance(ctx.getGlobalContext());
-		return StringHelper.isTrue(content.getAttribute(ctx, getKey("shared"), "true"));
+		return StringHelper.isTrue(content.getAttribute(ctx, getKey(ctx, "shared"), "true"));
 	}
 
 	public void setShared(ContentContext ctx, boolean shared) {
 		ContentService content = ContentService.getInstance(ctx.getGlobalContext());
 		if (shared) {
-			content.removeAttribute(ctx, getKey("shared"));
+			content.removeAttribute(ctx, getKey(ctx, "shared"));
 		} else {
-			content.setAttribute(ctx, getKey("shared"), "" + shared);
+			content.setAttribute(ctx, getKey(ctx, "shared"), "" + shared);
 		}
 	}
 
@@ -1012,9 +1049,9 @@ public class StaticInfo {
 	public void setFocusZoneX(ContentContext ctx, int focusZoneX) {
 		ContentService content = ContentService.getInstance(ctx.getGlobalContext());
 		if (focusZoneX == DEFAULT_FOCUS_X) {
-			content.removeAttribute(ctx, getKey("focus-zone-x"));
+			content.removeAttribute(ctx, getKey(ctx,FOCUS_ZONE_X));
 		} else {
-			content.setAttribute(ctx, getKey("focus-zone-x"), "" + focusZoneX);
+			content.setAttribute(ctx, getKey(ctx,FOCUS_ZONE_X), "" + focusZoneX);
 		}
 	}
 
@@ -1027,9 +1064,9 @@ public class StaticInfo {
 	public void setFocusZoneY(ContentContext ctx, int focusZoneY) {
 		ContentService content = ContentService.getInstance(ctx.getGlobalContext());
 		if (focusZoneY == DEFAULT_FOCUS_Y) {
-			content.removeAttribute(ctx, getKey("focus-zone-y"));
+			content.removeAttribute(ctx, getKey(ctx,FOCUS_ZONE_Y));
 		} else {
-			content.setAttribute(ctx, getKey("focus-zone-y"), "" + focusZoneY);
+			content.setAttribute(ctx, getKey(ctx,FOCUS_ZONE_Y), "" + focusZoneY);
 		}
 	}
 
@@ -1064,7 +1101,7 @@ public class StaticInfo {
 
 	public boolean delete(ContentContext ctx) {
 		ContentService content = ContentService.getInstance(ctx.getGlobalContext());
-		content.deleteKeys(getKey(""));
+		content.deleteKeys(getKey(ctx, ""));
 		return true;
 	}
 
@@ -1096,18 +1133,18 @@ public class StaticInfo {
 	public void renameFile(ContentContext ctx, File newFile) throws Exception {
 		ContentService content = ContentService.getInstance(ctx.getGlobalContext());
 		StaticInfo newStaticInfo = StaticInfo.getInstance(ctx, newFile);
-		content.renameKeys(getKey(""), newStaticInfo.getKey(""));
+		content.renameKeys(getKey(ctx, ""), newStaticInfo.getKey(ctx, ""));
 	}
 
 	public void deleteFile(ContentContext ctx) throws Exception {
 		ContentService content = ContentService.getInstance(ctx.getGlobalContext());
-		content.deleteKeys(getKey(""));
+		content.deleteKeys(getKey(ctx, ""));
 	}
 
 	public void duplicateFile(ContentContext ctx, File newFile) throws Exception {
 		ContentService content = ContentService.getInstance(ctx.getGlobalContext());
 		StaticInfo newStaticInfo = StaticInfo.getInstance(ctx, newFile);
-		content.duplicateKeys(getKey(""), newStaticInfo.getKey(""));
+		content.duplicateKeys(getKey(ctx, ""), newStaticInfo.getKey(ctx, ""));
 	}
 
 	public int getAccessFromSomeDays(ContentContext ctx) throws Exception {
@@ -1132,7 +1169,7 @@ public class StaticInfo {
 
 	public int getAccess(ContentContext ctx, Date date) {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-		String key = getKey(getAccessKey(date));
+		String key = getKey(ctx, getAccessKey(date));
 		if (globalContext.getData(key) == null) {
 			return 0;
 		}
@@ -1142,7 +1179,7 @@ public class StaticInfo {
 	public void addAccess(ContentContext ctx) {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		if (globalContext.getSpecialConfig().isTrackingAccess()) {
-			String key = getKey(getAccessKey(new Date()));
+			String key = getKey(ctx, getAccessKey(new Date()));
 			int todayAccess = 0;
 			if (globalContext.getData(key) != null) {
 				todayAccess = Integer.parseInt(globalContext.getData(key));
@@ -1154,14 +1191,14 @@ public class StaticInfo {
 
 	private void storeTags(ContentContext ctx) {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-		String key = getKey("tags");
+		String key = getKey(ctx, "tags");
 		String rawTags = StringHelper.collectionToString(tags);
 		globalContext.setData(key, rawTags);
 	}
 
 	public List<String> getTags(ContentContext ctx) {
 		if (tags == null) {
-			String key = getKey("tags");
+			String key = getKey(ctx, "tags");
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 			String rawTags = globalContext.getData(key);
 			if (rawTags == null) {
@@ -1172,10 +1209,10 @@ public class StaticInfo {
 		}
 		return tags;
 	}
-	
+
 	public Set<String> getTaxonomy(ContentContext ctx) {
 		if (taxonomy == null) {
-			String key = getKey("taxonomy");
+			String key = getKey(ctx, "taxonomy");
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 			String rawTaxonomy = globalContext.getData(key);
 			if (rawTaxonomy == null) {
@@ -1186,14 +1223,14 @@ public class StaticInfo {
 		}
 		return taxonomy;
 	}
-	
+
 	private void storeTaxonomy(ContentContext ctx) {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-		String key = getKey("taxonomy");
+		String key = getKey(ctx, "taxonomy");
 		String taxonomyTags = StringHelper.collectionToString(taxonomy);
 		globalContext.setData(key, taxonomyTags);
 	}
-	
+
 	public void setTaxonomy(ContentContext ctx, Set<String> taxonomy) {
 		this.taxonomy = taxonomy;
 		storeTaxonomy(ctx);
@@ -1221,14 +1258,14 @@ public class StaticInfo {
 
 	private void storeReadRoles(ContentContext ctx) {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-		String key = getKey("read-roles");
+		String key = getKey(ctx, "read-roles");
 		String rawRoles = StringHelper.collectionToString(readRoles);
 		globalContext.setData(key, rawRoles);
 	}
 
 	public List<String> getReadRoles(ContentContext ctx) {
 		if (readRoles == null) {
-			String key = getKey("read-roles");
+			String key = getKey(ctx, "read-roles");
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 			String rawReadRole = globalContext.getData(key);
 			if (rawReadRole == null) {
@@ -1280,10 +1317,10 @@ public class StaticInfo {
 		}
 
 		/*
-		 * Metadata md = getImageMetadata(); if (md != null) { // obtain the
-		 * Exif directory ExifSubIFDDirectory directory =
-		 * md.getFirstDirectoryOfType(ExifSubIFDDirectory.class); // query the
-		 * tag's value if (directory != null) { return
+		 * Metadata md = getImageMetadata(); if (md != null) { // obtain the Exif
+		 * directory ExifSubIFDDirectory directory =
+		 * md.getFirstDirectoryOfType(ExifSubIFDDirectory.class); // query the tag's
+		 * value if (directory != null) { return
 		 * directory.getDate(ExifSubIFDDirectory.TAG_DATETIME_ORIGINAL); } }
 		 */
 		return null;
@@ -1291,13 +1328,13 @@ public class StaticInfo {
 
 	public String getCopyright(ContentContext ctx) {
 		ContentService content = ContentService.getInstance(ctx.getGlobalContext());
-		return content.getAttribute(ctx, getKey("copyright"), "");
+		return content.getAttribute(ctx, getKey(ctx, "copyright"), "");
 	}
 
 	public void setCopyright(ContentContext ctx, String copyright) {
 		if (copyright != null) {
 			ContentService content = ContentService.getInstance(ctx.getGlobalContext());
-			content.setAttribute(ctx, getKey("copyright"), copyright);
+			content.setAttribute(ctx, getKey(ctx, "copyright"), copyright);
 		}
 	}
 
@@ -1392,11 +1429,11 @@ public class StaticInfo {
 	}
 
 	public void setAccessToken(ContentContext ctx, String token) {
-		ctx.getGlobalContext().setTimeAttribute(getKey("accesstoken"), token, 120);
+		ctx.getGlobalContext().setTimeAttribute(getKey(ctx, "accesstoken"), token, 120);
 	}
 
 	public String getAccessToken(ContentContext ctx) {
-		String key = getKey("accesstoken");
+		String key = getKey(ctx, "accesstoken");
 		String token = (String) ctx.getGlobalContext().getTimeAttribute(key);
 		if (token == null) {
 			token = StringHelper.getRandomString(32, StringHelper.ALPHANUM);
@@ -1506,13 +1543,13 @@ public class StaticInfo {
 			}
 		}
 	}
-	
+
 	public StaticInfo getParent(ContentContext ctx) throws Exception {
 		return StaticInfo.getInstance(ctx, file.getParentFile());
 	}
-	
+
 	public void resetImageSize(ContentContext ctx) {
-		String key = getKey("imageSize-" + ctx.getRequestContentLanguage());
+		String key = getKey(ctx, "imageSize-" + ctx.getRequestContentLanguage());
 		ContentService content = ContentService.getInstance(ctx.getGlobalContext());
 		content.removeAttribute(ctx, key);
 		imageSize = null;
@@ -1526,7 +1563,7 @@ public class StaticInfo {
 			return imageSize;
 		} else {
 			try {
-				String key = getKey("imageSize-" + ctx.getRequestContentLanguage());
+				String key = getKey(ctx, "imageSize-" + ctx.getRequestContentLanguage());
 				ContentService content = ContentService.getInstance(ctx.getGlobalContext());
 				String imageSizeRAW = content.getAttribute(ctx, key, null);
 				if (imageSizeRAW != null) {
@@ -1535,7 +1572,7 @@ public class StaticInfo {
 						imageSize = loadedImageSize;
 						return imageSize;
 					}
-				}				
+				}
 				imageSize = ImageHelper.getImageSize(file);
 				content.setAttribute(ctx, key, imageSize.storeToString());
 			} catch (Throwable e) {

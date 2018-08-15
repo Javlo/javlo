@@ -113,7 +113,7 @@ public class DebugListening {
 				}
 
 			} catch (Exception e) {
-				e.printStackTrace();
+				//e.printStackTrace();
 			}
 		}
 	}

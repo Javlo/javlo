@@ -328,7 +328,7 @@ public class NavigationHelper {
 		IContentVisualComponent viewComp = content.getCachedComponent(viewCtx, componentId);
 		if (comp != null & viewComp != null) {
 			viewComp.setValue(comp.getValue(ctx));
-			viewComp.setStyle(viewCtx, comp.getStyle(ctx));
+			viewComp.setStyle(viewCtx, comp.getComponentCssClass(ctx));
 			viewComp.setRepeat(comp.isRepeat());
 		}
 	}

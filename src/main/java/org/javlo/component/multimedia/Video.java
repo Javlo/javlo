@@ -105,7 +105,7 @@ public class Video extends GlobalImage implements IAction, IVideo {
 	}
 
 	protected boolean isInline(ContentContext ctx) {
-		return StringHelper.neverNull(getStyle(ctx)).equalsIgnoreCase("inline");
+		return StringHelper.neverNull(getComponentCssClass(ctx)).equalsIgnoreCase("inline");
 	}
 
 	@Override
@@ -416,7 +416,7 @@ public class Video extends GlobalImage implements IAction, IVideo {
 
 		boolean renderAsLink = (getDecorationImage() != null && getDecorationImage().trim().length() > 0) && preview;
 		if (!renderAsLink) {
-			renderAsLink = !preview && LINK.equals(getStyle(ctx));
+			renderAsLink = !preview && LINK.equals(getComponentCssClass(ctx));
 		}
 		if (renderAsLink) {
 			ctx.getRequest().setAttribute("asLink", true);
@@ -538,13 +538,6 @@ public class Video extends GlobalImage implements IAction, IVideo {
 		I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
 		return i18nAccess.getText("content.video.label");
 	}
-
-	/*
-	 * @Override protected String renderViewXHTMLCode(ContentContext ctx) throws
-	 * Exception { if (getRenderer(ctx) != null && getStyle(ctx).equals(LINK)) {
-	 * return executeCurrentRenderer(ctx); } else { return
-	 * getViewXHTMLCode(ctx); } }
-	 */
 
 	public int getAccess(ContentContext ctx, int days) throws NumberFormatException, IOException {
 		Calendar cal = Calendar.getInstance();

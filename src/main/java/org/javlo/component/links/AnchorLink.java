@@ -39,7 +39,7 @@ public class AnchorLink extends ComplexPropertiesLink {
 
 	@Override
 	public String getPrefixViewXHTMLCode(ContentContext ctx) {
-		return super.getPrefixViewXHTMLCode(ctx) + "<div" + getSpecialPreviewCssClass(ctx, getStyle(ctx)) + getSpecialPreviewCssId(ctx) + ">";
+		return super.getPrefixViewXHTMLCode(ctx) + "<div" + getSpecialPreviewCssClass(ctx, getComponentCssClass(ctx)) + getSpecialPreviewCssId(ctx) + ">";
 	}
 
 	@Override

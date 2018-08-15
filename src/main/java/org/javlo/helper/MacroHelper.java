@@ -239,7 +239,7 @@ public class MacroHelper {
 			if (comp.getType().equals(newComp.getType())) {
 				if (comp.getValue(ctx).equals(newComp.getValue())) {
 					if (comp.getArea().equals(newComp.getArea())) {
-						if (comp.getStyle(ctx).equals(newComp.getStyle())) {
+						if (comp.getComponentCssClass(ctx).equals(newComp.getStyle())) {
 							return comp.getId();
 						}
 					}
@@ -490,7 +490,7 @@ public class MacroHelper {
 						if (withContent) {
 							content = comp.getValue(ctxNoArea);
 						}
-						parentId = addContent(lgCtx.getRequestContentLanguage(), currentPage, parentId, comp.getType(), comp.getStyle(ctxNoArea), comp.getArea(), comp.getCurrentRenderer(ctx), content, ctx.getCurrentEditUser());
+						parentId = addContent(lgCtx.getRequestContentLanguage(), currentPage, parentId, comp.getType(), comp.getComponentCssClass(ctxNoArea), comp.getArea(), comp.getCurrentRenderer(ctx), content, ctx.getCurrentEditUser());
 						if (translate) {
 							ContentService contentService = ContentService.getInstance(ctx.getRequest());
 							IContentVisualComponent newComp = contentService.getComponent(lgCtx, parentId);
@@ -516,7 +516,7 @@ public class MacroHelper {
 		ContentElementList sourceContent = fromPage.getLocalContentCopy(fromCtx);
 		String parentCompId = "0";
 		for (IContentVisualComponent component : sourceContent.asIterable(fromCtx)) {
-			parentCompId = MacroHelper.addContent(toCtx.getRequestContentLanguage(), toPage, parentCompId, component.getType(), component.getStyle(fromCtx), component.getArea(), component.getValue(fromCtx), fromCtx.getCurrentEditUser());
+			parentCompId = MacroHelper.addContent(toCtx.getRequestContentLanguage(), toPage, parentCompId, component.getType(), component.getComponentCssClass(fromCtx), component.getArea(), component.getValue(fromCtx), fromCtx.getCurrentEditUser());
 		}
 	}
 

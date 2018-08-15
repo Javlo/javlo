@@ -50,6 +50,8 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 	public static String VALUE_SIZE = "col-sm-8";
 	public static String SMALL_VALUE_SIZE = "col-sm-6";
 	public static String SMALL_PART_SIZE = "col-sm-2";
+	
+	private static final String OPEN_ROW_KEY = "_field_open_row";
 
 	public class FieldBean {
 
@@ -697,8 +699,20 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 	}
 
 	public String getOpenRow(ContentContext ctx) {
+		
+		boolean openRow = StringHelper.isTrue(ctx.getRequest().getAttribute(OPEN_ROW_KEY));
+		
 		final String STATUS_KEY = "_widthStatus";
 		int width = getWidthEdit();
+		
+		if (width == 12) {
+			if (openRow) {
+				ctx.getRequest().removeAttribute(OPEN_ROW_KEY);
+				return "</div>";
+			} else {
+				return "";
+			}
+		}
 		Integer widthStatus = (Integer)ctx.getRequest().getAttribute(STATUS_KEY);		
 		if (widthStatus == null || width+widthStatus > 12) {
 			if (widthStatus == null) {
@@ -706,12 +720,13 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 				ctx.getRequest().setAttribute(STATUS_KEY, width);
 			} else {
 				ctx.getRequest().removeAttribute(STATUS_KEY);
-			}			
-			if (isFirst()) {
+			}
+			ctx.getRequest().setAttribute(OPEN_ROW_KEY, true);
+			if (!openRow) {
 				return "<div class=\"row\"><div class=\"col-md-"+width+"\">";
 			} else {
 				return "</div> <!-- close row "+(width+widthStatus)+" --> <div class=\"row\"><div class=\"col-md-"+width+"\">";
-			}
+			}			
 		} else {
 			if (width + widthStatus<12) {
 				ctx.getRequest().setAttribute(STATUS_KEY, width + widthStatus);
@@ -723,7 +738,12 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 	}
 	
 	public String getCloseRow(ContentContext ctx) {
+		int width = getWidthEdit();
+		if (width == 12) {
+			return "";
+		}
 		if (last) {
+			ctx.getRequest().removeAttribute(OPEN_ROW_KEY);
 			return "</div></div>";	
 		} else {
 			return "</div>";
@@ -1287,3 +1307,4 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 		System.out.println(">>>>>>>>> Field.main : "+Pattern.matches("[A-Z]*", "COUCOU")); //TODO: remove debug trace
 	}
 }
+

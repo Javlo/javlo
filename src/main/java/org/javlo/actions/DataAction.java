@@ -364,7 +364,11 @@ public class DataAction implements IAction {
 			if (newFile.getName() != null && newFile.getName().toLowerCase().endsWith(".gif")) {
 				out.println(GlobalImage.IMAGE_FILTER + "=" + GlobalImage.RAW_FILTER);
 			} else {
-				out.println(GlobalImage.IMAGE_FILTER + "=" + ctx.getCurrentTemplate().getDefaultImageFilter());
+				if (ctx.getArea().contains("header") && ctx.getCurrentTemplate().getImageFilters().contains("banner")) {
+					out.println(GlobalImage.IMAGE_FILTER + "=" + "banner");
+				} else {
+					out.println(GlobalImage.IMAGE_FILTER + "=" + ctx.getCurrentTemplate().getDefaultImageFilter());
+				}
 			}
 			out.close();
 			if (config.isCreateContentOnImportImage() || content) {

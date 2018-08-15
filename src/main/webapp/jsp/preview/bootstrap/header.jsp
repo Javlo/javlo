@@ -36,15 +36,6 @@
 %><c:set var="logged" value="${not empty editUser}" /><c:set var="pdf" value="${info.device.code == 'pdf'}" />
 <div class="header">	
 	<div class="logo">
-		<c:url var="url" value="<%=URLHelper.createURL(editCtx)%>" context="/">
-			<c:param name="module" value="admin"></c:param>
-			<c:param name="previewEdit" value="true"></c:param>
-		</c:url>
-		<c:if test="${not empty editUser && !globalContext.mailingPlatform}">	
-		<div class="pulse-wrapper" onclick="editPreview.openModal('${i18n.edit['preview.label.properties']}','${url}'); return false;">
-			<span class="pulse" title="${i18n.edit['preview.label.properties']}"></span>
-		</div>		
-		</c:if>
 		<a target="_blank" href="<%=URLHelper.createViewURL(ctx.getPath(), ctx)%>">Javlo</a> <img class="ajax-loading" src="${info.ajaxLoaderURL}" alt="loading..." lang="en" />				
 	</div>	
 	<div class="menu">

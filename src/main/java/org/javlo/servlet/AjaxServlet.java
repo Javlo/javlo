@@ -24,6 +24,7 @@ import org.javlo.module.core.ModulesContext;
 import org.javlo.service.NotificationService;
 import org.javlo.service.PersistenceService;
 import org.javlo.service.RequestService;
+import org.javlo.service.social.SocialService;
 import org.javlo.user.AdminUserSecurity;
 import org.javlo.utils.DebugListening;
 import org.javlo.utils.JSONMap;
@@ -58,6 +59,7 @@ public class AjaxServlet extends HttpServlet {
 			ContentContext ctx = ContentContext.getContentContext(request, response);
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 			RequestService rs = RequestService.getInstance(request);
+			request.setAttribute("social", SocialService.getInstance(ctx));
 			try {
 				// Tracker.trace(request, response);
 				if (rs.getParameter(ContentContext.FORCE_MODE_PARAMETER_NAME, null) != null) {

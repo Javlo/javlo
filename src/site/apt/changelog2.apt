@@ -946,5 +946,6 @@ change log
  
  * 4/ resources taxonomy / TinyMCE 4.8.0 / add image border + correct close insered resource / rename -sm image like -small / taxonomy extension for pageBean / taxonomy session / image background on area / chat / children link can be open as popup + cookies policy link
  
- * 5/ accesibility escape menu parametrable target / remove type="javascript" from script tag / don't display prefix and suffix if component hidden
+ * 5/ accesibility escape menu parametrable target / remove type="javascript" from script tag / don't display prefix and suffix if component hidden / jsp minified / include font in graphics charter / template can be for dedicated for children association / component css class / social api key / clean resource reference macro / default filter banner in header and banner area
 
+* 2.1.1.4 [15/08/2018]

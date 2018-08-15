@@ -24,7 +24,7 @@ public class AnchorComponent extends AbstractVisualComponent {
 
 	@Override
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
-		return "<span id=\"" + getValue() + "\" " + getSpecialPreviewCssClass(ctx, getStyle(ctx)) + getSpecialPreviewCssId(ctx) + "></span>";
+		return "<span id=\"" + getValue() + "\" " + getSpecialPreviewCssClass(ctx, getComponentCssClass(ctx)) + getSpecialPreviewCssId(ctx) + "></span>";
 	}
 
 	@Override

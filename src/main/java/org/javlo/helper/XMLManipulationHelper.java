@@ -300,7 +300,7 @@ public class XMLManipulationHelper {
 	 * @throws IOException
 	 * @throws BadXMLException
 	 */
-	private static int convertHTMLtoJSP(GlobalContext globalContext, Template template, I18nAccess i18nAccess, File htmlFile, File jspFile, Map<String, String> options, List<String> areas, List<String> resources, List<TemplatePlugin> templatePlugins, List<GenericMessage> messages, List<String> ids, boolean isMail) throws IOException {
+	private static int convertHTMLtoJSP(GlobalContext globalContext, Template template, I18nAccess i18nAccess, File htmlFile, File jspFile, Map<String, String> options, List<String> areas, List<String> resources, List<TemplatePlugin> templatePlugins, List<GenericMessage> messages, List<String> ids, boolean isMail, String fontIncluding) throws IOException {
 
 		String templateVersion = StringHelper.getRandomId();
 
@@ -509,9 +509,11 @@ public class XMLManipulationHelper {
 					String mainPageAssociationCode = "<%if (currentPage.isChildrenAssociation() && (request.getParameter(\"" + Template.FORCE_TEMPLATE_PARAM_NAME + "\") == null)) {%><jsp:include page=\"/jsp/view/page_association.jsp\" /><%} else {%>";
 
 					String openPageCode = "<c:if test=\"${contentContext.pageAssociation}\"><div id=\"<%=currentPage.getHtmlId(ctx)%>\" class=\"_page_associate <%if (currentPage.getNextBrother() == null) {%>last<%}%>\"></c:if>" + mainPageAssociationCode;
-					String closePageCode = "<c:if test=\"${contentContext.pageAssociation}\"></div></c:if><c:if test=\"${not contentContext.pageAssociation}\">";
+					String closePageCode = "<%}%><c:if test=\"${contentContext.pageAssociation}\"></div></c:if>";
 
 					tags[i].addCssClass("<%for (String layout : ctx.getCurrentPage().getLayouts(ctx)) {%><%=' '+layout%><%}%>");
+					tags[i].addCssClass("${globalContext.templateData.large?'large-content':''} ${globalContext.templateData.small?'small-content':''}");
+					tags[i].addCssClass("page-index-${contentContext.currentPage.index} page-index-${contentContext.currentPage.index%2==0?'even':'odd'}");
 					String renderBodyAsBody = tags[i].renderOpen();
 					String tag = "div";
 					if (!template.isMailing()) {
@@ -525,9 +527,9 @@ public class XMLManipulationHelper {
 					String renderBodyAsDiv = tags[i].renderOpen();
 
 					String openBodyCode = "<c:if test=\"${not contentContext.pageAssociation}\">" + renderBodyAsBody + "</c:if><c:if test=\"${contentContext.pageAssociation}\">" + renderBodyAsDiv + "</c:if>";
-					String closeBodyCode = "<%}%><c:if test=\"${not contentContext.pageAssociation}\">" + getGoogleAnalyticsCode() + "</body></c:if><c:if test=\"${contentContext.pageAssociation}\"></" + tag + "></c:if>";
+					String closeBodyCode = "<c:if test=\"${not contentContext.pageAssociation}\">" + getGoogleAnalyticsCode() + "</body></c:if><c:if test=\"${contentContext.pageAssociation}\"></" + tag + "></c:if>";
 					remplacement.addReplacement(tags[i].getOpenStart(), tags[i].getOpenEnd() + 1, "</c:if>" + openBodyCode + openPageCode);
-					remplacement.addReplacement(tags[i].getCloseStart(), tags[i].getCloseEnd() + 1, closeBodyCode + closePageCode);
+					remplacement.addReplacement(tags[i].getCloseStart(), tags[i].getCloseEnd() + 1, closePageCode+closeBodyCode+"<c:if test=\"${not contentContext.pageAssociation}\">");
 
 					String previewCode = "<c:if test=\"${not contentContext.pageAssociation}\">" + getPreviewCode(globalContext.getServletContext()) + "</c:if>";
 					// remplacement.addReplacement(tags[i].getOpenEnd() + 1,
@@ -543,8 +545,8 @@ public class XMLManipulationHelper {
 					remplacement.addReplacement(tags[i].getOpenEnd() + 1, tags[i].getOpenEnd() + 1, "<%=ctx.getGlobalContext().getHeaderBloc()%>" + getEscapeMenu(targetEscapeMenu) + getResetTemplate() + getAfterBodyCode());
 					if (isMail && globalContext.getStaticConfig().isMailingUserTracking()) {
 						previewCode = previewCode + "<%Map mParams = new HashMap();mParams.put(MailingAction.MAILING_FEEDBACK_PARAM_NAME, MailingAction.MAILING_FEEDBACK_VALUE_NAME);%><img class=\"empty_image\" style=\"height: 0; width: 0; margin:0; padding: 0;\" width=\"0\" height=\"0\" src=\"<%=URLHelper.createStaticURL(ctx, \"/mfb.png\", mParams)%>\" /> ";
-					}
-					String footerResourceIndlue = "<!-- comp resources --><%for (String uri : currentPage.getExternalResources(ctx)) {%><%=XHTMLHelper.renderHeaderResourceInsertion(ctx, uri)%><%}%>";
+					}					
+					String footerResourceIndlue = StringHelper.neverNull(fontIncluding)+"<!-- comp resources --><%for (String uri : currentPage.getExternalResources(ctx)) {%><%=XHTMLHelper.renderHeaderResourceInsertion(ctx, uri)%><%}%>";
 					remplacement.addReplacement(tags[i].getCloseStart() - 1, tags[i].getCloseStart() - 1, footerResourceIndlue+"<%=ctx.getGlobalContext().getFooterBloc()%>" + previewCode);
 				}
 
@@ -684,7 +686,13 @@ public class XMLManipulationHelper {
 									}
 								}
 
+								if (!plugin.isActiveInEdition()) {
+									out.println("<%if (!ctx.isAsPreviewMode() || !EditContext.getInstance(globalContext, request.getSession()).isPreviewEditionMode()) {%>");
+								}
 								out.println(outHead);
+								if (!plugin.isActiveInEdition()) {
+									out.println("<%}%>");
+								}
 							}
 						}
 					}
@@ -817,8 +825,10 @@ public class XMLManipulationHelper {
 
 			newContent = newContent + "</c:if>"; // close pageAssociation test
 													// just after body close
-
 			if (jspFile != null) {
+				if (globalContext.getStaticConfig().isCompressJsp()) {
+					newContent = XHTMLHelper.compress(newContent);
+				}
 				ResourceHelper.writeStringToFile(jspFile, newContent, ContentContext.CHARACTER_ENCODING);
 			}
 		} catch (BadXMLException e) {
@@ -839,15 +849,15 @@ public class XMLManipulationHelper {
 	}
 
 	public static int convertHTMLtoMail(File htmlFile, Template template, File jspFile) throws IOException, BadXMLException {
-		return convertHTMLtoJSP(null, template, null, htmlFile, jspFile, Collections.EMPTY_MAP, Collections.EMPTY_LIST, Collections.EMPTY_LIST, Collections.EMPTY_LIST, null, null, true);
+		return convertHTMLtoJSP(null, template, null, htmlFile, jspFile, Collections.EMPTY_MAP, Collections.EMPTY_LIST, Collections.EMPTY_LIST, Collections.EMPTY_LIST, null, null, true, null);
 	}
 
-	public static int convertHTMLtoTemplate(GlobalContext globalContext, Template template, File htmlFile, File jspFile, Map<String, String> tagsID, List<String> areas, List<String> resources, List<TemplatePlugin> templatePlugins, List<String> ids, boolean isMailing) throws IOException, BadXMLException {
-		return convertHTMLtoJSP(globalContext, template, null, htmlFile, jspFile, tagsID, areas, resources, templatePlugins, null, ids, isMailing);
+	public static int convertHTMLtoTemplate(GlobalContext globalContext, Template template, File htmlFile, File jspFile, Map<String, String> tagsID, List<String> areas, List<String> resources, List<TemplatePlugin> templatePlugins, List<String> ids, boolean isMailing, String fontIncluding) throws IOException, BadXMLException {
+		return convertHTMLtoJSP(globalContext, template, null, htmlFile, jspFile, tagsID, areas, resources, templatePlugins, null, ids, isMailing, fontIncluding);
 	}
 
-	public static int convertHTMLtoTemplate(GlobalContext globalContext, Template template, I18nAccess i18nAccess, File htmlFile, File jspFile, Map<String, String> tagsID, List<String> areas, List<String> resources, List<TemplatePlugin> templatePlugins, List<GenericMessage> messages) throws IOException, BadXMLException {
-		return convertHTMLtoJSP(globalContext, template, i18nAccess, htmlFile, jspFile, tagsID, areas, resources, templatePlugins, messages, null, false);
+	public static int convertHTMLtoTemplate(GlobalContext globalContext, Template template, I18nAccess i18nAccess, File htmlFile, File jspFile, Map<String, String> tagsID, List<String> areas, List<String> resources, List<TemplatePlugin> templatePlugins, List<GenericMessage> messages, String fontIncluding) throws IOException, BadXMLException {
+		return convertHTMLtoJSP(globalContext, template, i18nAccess, htmlFile, jspFile, tagsID, areas, resources, templatePlugins, messages, null, false, fontIncluding);
 	}
 
 	private static String getAfterBodyCode() throws IOException {

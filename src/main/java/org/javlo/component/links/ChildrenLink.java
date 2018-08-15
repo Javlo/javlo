@@ -302,9 +302,9 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 
 		boolean showAll = false;
 		boolean showOnlyNotVisible = false;
-		if (getStyle(ctx) != null) {
-			showAll = getStyle(ctx).equalsIgnoreCase("all");
-			showOnlyNotVisible = getStyle(ctx).equalsIgnoreCase("not-visible");
+		if (getComponentCssClass(ctx) != null) {
+			showAll = getComponentCssClass(ctx).equalsIgnoreCase("all");
+			showOnlyNotVisible = getComponentCssClass(ctx).equalsIgnoreCase("not-visible");
 			if (showOnlyNotVisible) {
 				showAll = true;
 			}
@@ -456,9 +456,9 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 		boolean showAll = false;
 		boolean showOnlyNotVisible = false;
 		boolean displayChildren = false;
-		if (getStyle(ctx) != null) {
-			showAll = getStyle(ctx).equalsIgnoreCase("all");
-			showOnlyNotVisible = getStyle(ctx).equalsIgnoreCase("not-visible");
+		if (getComponentCssClass(ctx) != null) {
+			showAll = getComponentCssClass(ctx).equalsIgnoreCase("all");
+			showOnlyNotVisible = getComponentCssClass(ctx).equalsIgnoreCase("not-visible");
 			if (showOnlyNotVisible) {
 				showAll = true;
 			}
@@ -481,7 +481,7 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 			if (isCombo()) {
 				select = " select";
 			}
-			out.print("<div " + getSpecialPreviewCssClass(ctx, getStyle(ctx) + " " + getType() + select) + getSpecialPreviewCssId(ctx) + " >");
+			out.print("<div " + getSpecialPreviewCssClass(ctx, getComponentCssClass(ctx) + " " + getType() + select) + getSpecialPreviewCssId(ctx) + " >");
 			if (isCombo()) {
 				out.println("<form id=\"select_page\" action=\"" + URLHelper.createURL(ctx) + "\" method=\"get\">");
 				out.println("<select name=\"" + ContentContext.FORWARD_PATH_REQUEST_KEY + "\">");

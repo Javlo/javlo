@@ -37,7 +37,7 @@ public class PageBreak extends AbstractVisualComponent {
 	}
 	
 	public String getCSSClassName(ContentContext ctx) {
-		return getStyle(ctx);
+		return getComponentCssClass(ctx);
 	}
 
 	@Override

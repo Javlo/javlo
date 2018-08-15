@@ -47,7 +47,7 @@ public class AllImagesGallery extends MultimediaGallery {
 
 		List<File> outFiles = new LinkedList<File>();
 
-		if (ORDER_BY_ACCESS.equals(getStyle(ctx))) { 
+		if (ORDER_BY_ACCESS.equals(getComponentCssClass(ctx))) { 
 			outFiles.addAll(ResourceHelper.getAllFiles(new File(getFileImageDirectory(ctx, null)), new ImageSharedFileFilter(ctx)));
 			outFiles.addAll(ResourceHelper.getAllFiles(new File(getFileGalleriesDirectory(ctx, null)), new ImageSharedFileFilter(ctx)));
 		} else {
@@ -69,7 +69,7 @@ public class AllImagesGallery extends MultimediaGallery {
 
 		outFiles = filteredOutFiles;
 
-		if (getStyle(ctx).equals(ORDER_BY_ACCESS) && getMaxListSize() < 99) {
+		if (getComponentCssClass(ctx).equals(ORDER_BY_ACCESS) && getMaxListSize() < 99) {
 			try {
 				accessSorting(ctx, outFiles, getMaxListSize());
 				return outFiles;
@@ -78,7 +78,7 @@ public class AllImagesGallery extends MultimediaGallery {
 			}
 		}
 
-		if (getStyle(ctx).equals(ORDER_BY_ACCESS)) {
+		if (getComponentCssClass(ctx).equals(ORDER_BY_ACCESS)) {
 			Collections.sort(outFiles, (new StaticInfo.StaticFileSortByAccess(ctx, false)));
 		} else {
 			Collections.sort(outFiles, (new StaticInfo.StaticFileSort(ctx, false)));
@@ -88,7 +88,7 @@ public class AllImagesGallery extends MultimediaGallery {
 	}
 
 	public String getCSSClassName(ContentContext ctx) {
-		return getStyle(ctx);
+		return getComponentCssClass(ctx);
 	}
 
 	@Override
@@ -98,7 +98,7 @@ public class AllImagesGallery extends MultimediaGallery {
 
 	@Override
 	protected String getHTMLRelation(ContentContext ctx) {
-		if (!getStyle(ctx).equals("3D")) {
+		if (!getComponentCssClass(ctx).equals("3D")) {
 			return "shadowbox[thumb-" + getId() + "]";
 		} else {
 			return "shadowbox";
@@ -151,7 +151,7 @@ public class AllImagesGallery extends MultimediaGallery {
 
 	@Override
 	protected boolean isRenderInfo(ContentContext ctx) {
-		if (getStyle(ctx).equals("3D")) {
+		if (getComponentCssClass(ctx).equals("3D")) {
 			return true;
 		} else {
 			return false;

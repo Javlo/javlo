@@ -173,7 +173,7 @@ public class SimpleVideo extends AbstractFileComponent implements IReverseLinkCo
 	@Override
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
 		prepareView(ctx);
-		if (getStyle(ctx).equals(HIDDEN)) {
+		if (getComponentCssClass(ctx).equals(HIDDEN)) {
 			return "";
 		}
 		StringBuffer res = new StringBuffer();
@@ -257,8 +257,8 @@ public class SimpleVideo extends AbstractFileComponent implements IReverseLinkCo
 			return getConfig(ctx).getProperty("prefix.first", "");
 		} else {
 			String cssClass = "";
-			if (getStyle(ctx) != null && getStyle(ctx).trim().length() > 0) {
-				cssClass = ' ' + getStyle(ctx);
+			if (getComponentCssClass(ctx) != null && getComponentCssClass(ctx).trim().length() > 0) {
+				cssClass = ' ' + getComponentCssClass(ctx);
 			}
 			if (getListClass(ctx) != null) {
 				cssClass = cssClass + ' ' + getListClass(ctx);

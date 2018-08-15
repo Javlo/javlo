@@ -55,7 +55,7 @@ public class InitInterest {
 							if (point != null) {
 								int focusX = (point.getX() * 1000) / img.getWidth();
 								int focusY = (point.getY() * 1000) / img.getHeight();
-								action.content.setAttribute(action.ctx, action.keyX, "" + focusX);
+								action.content.setAttribute(action.ctx, action.keyX, ""+focusX);
 								action.content.setAttribute(action.ctx, action.keyY, ""+focusY);
 							}
 						}

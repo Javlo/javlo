@@ -564,12 +564,12 @@ public class SmartExternalLink extends ComplexPropertiesLink implements IReverse
 					pageURLList.add(link);
 				}
 
-				String cssClass = getStyle(ctx);
+				String cssClass = getComponentCssClass(ctx);
 				String insertCssClass = "";
 				if (cssClass != null) {
 					insertCssClass = cssClass;
 				}
-				res.append("<div " + getSpecialPreviewCssClass(ctx, getStyle(ctx) + " " + getType() + " thumbnail")
+				res.append("<div " + getSpecialPreviewCssClass(ctx, getComponentCssClass(ctx) + " " + getType() + " thumbnail")
 						+ getSpecialPreviewCssId(ctx) + " >");
 				res.append("<a" + getSpecialPreviewCssClass(ctx, insertCssClass) + getSpecialPreviewCssId(ctx)
 						+ " href=\" ");
@@ -654,7 +654,7 @@ public class SmartExternalLink extends ComplexPropertiesLink implements IReverse
 	public boolean isDisplayable(ContentContext ctx) throws IOException {
 		Boolean valid = isValidConnection(ctx);
 
-		if (getStyle(ctx) != null && getStyle(ctx).equals(STYLE_UNVISIBLE)) {
+		if (getComponentCssClass(ctx) != null && getComponentCssClass(ctx).equals(STYLE_UNVISIBLE)) {
 			valid = false;
 		}
 
@@ -675,7 +675,7 @@ public class SmartExternalLink extends ComplexPropertiesLink implements IReverse
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		if (getStyle(ctx) != null && getStyle(ctx).equals(STYLE_UNVISIBLE)) {
+		if (getComponentCssClass(ctx) != null && getComponentCssClass(ctx).equals(STYLE_UNVISIBLE)) {
 			return false;
 		}
 		try {

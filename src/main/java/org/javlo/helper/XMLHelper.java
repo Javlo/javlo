@@ -347,6 +347,10 @@ public class XMLHelper {
 					out.print("\" bgcol=\"");
 					out.print(beans[j].getBackgroundColor());
 				}
+				if (beans[j].getManualCssClass() != null && beans[j].getManualCssClass().trim().length() > 0) {
+					out.print("\" css=\"");
+					out.print(beans[j].getManualCssClass());
+				}
 				if (beans[j].getTextColor() != null && beans[j].getTextColor().trim().length() > 0) {
 					out.print("\" txtcol=\"");
 					out.print(beans[j].getTextColor());

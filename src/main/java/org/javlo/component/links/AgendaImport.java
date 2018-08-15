@@ -270,7 +270,7 @@ public class AgendaImport extends AbstractVisualComponent {
 
 	@Override
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
-		if (getStyle(ctx).equals(ONLY_TODAY)) {
+		if (getComponentCssClass(ctx).equals(ONLY_TODAY)) {
 			return getViewXHTMLCodeToday(ctx);
 		} else {
 			ContentService content = ContentService.getInstance(ctx.getRequest());

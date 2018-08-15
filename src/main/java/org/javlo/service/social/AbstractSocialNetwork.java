@@ -39,6 +39,7 @@ public abstract class AbstractSocialNetwork implements ISocialNetwork {
 
 	private static final String TOKEN = "token";
 	private static final String CLIENT_ID = "clientId";
+	private static final String API_KEY = "apikey";
 	private static final String CLIENT_SECRET = "clientSecret";
 	private static final String URL = "url";
 	private static final String LOGIN = "login";
@@ -97,6 +98,7 @@ public abstract class AbstractSocialNetwork implements ISocialNetwork {
 		setLogin(StringHelper.neverNull(map.get("login")));
 		setClientId(StringHelper.neverNull(map.get("clientid")));
 		setClientSecret(StringHelper.neverNull(map.get("clientsecret")));
+		setApiKey(StringHelper.neverNull(map.get("apikey")));
 	}
 
 	@Override
@@ -115,6 +117,15 @@ public abstract class AbstractSocialNetwork implements ISocialNetwork {
 
 	public void setClientSecret(String clientSecret) {
 		data.put(CLIENT_SECRET, clientSecret);
+	}
+	
+	@Override
+	public String getApiKey() {
+		return StringHelper.neverNull(data.get(API_KEY));
+	}
+
+	public void setApiKey(String clientSecret) {
+		data.put(API_KEY, clientSecret);
 	}
 
 	protected String getState(ContentContext ctx) throws Exception {

@@ -93,7 +93,7 @@ public class OnlineVideo extends GlobalImage implements IAction, IVideo {
 	}
 
 	protected boolean isInline(ContentContext ctx) {
-		return StringHelper.neverNull(getStyle(ctx)).equalsIgnoreCase("inline");
+		return StringHelper.neverNull(getComponentCssClass(ctx)).equalsIgnoreCase("inline");
 	}
 
 	@Override
@@ -265,7 +265,7 @@ public class OnlineVideo extends GlobalImage implements IAction, IVideo {
 	public void prepareView(ContentContext ctx) throws Exception {
 		super.prepareView(ctx);
 		boolean renderAsLink = (getDecorationImage() != null && getDecorationImage().trim().length() > 0);
-		if (!renderAsLink && !LINK.equals(getStyle(ctx))) {
+		if (!renderAsLink && !LINK.equals(getComponentCssClass(ctx))) {
 			renderInline(ctx, null, null, false, true);
 		}
 	}
@@ -324,7 +324,7 @@ public class OnlineVideo extends GlobalImage implements IAction, IVideo {
 
 		boolean renderAsLink = (getDecorationImage() != null && getDecorationImage().trim().length() > 0) && preview;
 		if (!renderAsLink) {
-			renderAsLink = !preview && LINK.equals(getStyle(ctx));
+			renderAsLink = !preview && LINK.equals(getComponentCssClass(ctx));
 		}
 		ContentContext notAbsCtx = ctx;
 		if (ctx.isAbsoluteURL()) {

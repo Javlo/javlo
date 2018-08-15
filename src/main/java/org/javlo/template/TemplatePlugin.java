@@ -68,9 +68,7 @@ public class TemplatePlugin {
 			}
 		}
 		out.close();
-		
 		String outHead = new String(outStream.toByteArray());
-		
 		/** load external config **/
 		Properties externalConfig = loadConfig(globalContext.getTemplatePluginConfig());		
 		for (Object key : externalConfig.keySet()) {
@@ -83,9 +81,11 @@ public class TemplatePlugin {
 				outHead = outHead.replace("${"+key+"}", config.getProperty(key.toString()));
 			}
 		}
-		
 		return outHead;
-
+	}
+	
+	public boolean isActiveInEdition() {
+		return StringHelper.isTrue(config.get("active-edit"), true);
 	}
 
 	public void importInTemplate(ContentContext ctx, File templateFolder) throws IOException {		
@@ -130,7 +130,7 @@ public class TemplatePlugin {
 		return URLHelper.mergePath(Template.PLUGIN_FOLDER, StringHelper.stringToFileName(getId()));
 	}
 	
-	protected Properties loadConfig (String config) {
+	protected Properties loadConfig(String config) {
 		Properties outConfig = new Properties();		
 		try {
 			ByteArrayOutputStream outStream = new ByteArrayOutputStream();

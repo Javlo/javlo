@@ -73,7 +73,7 @@ public class Image extends AbstractFileComponent implements IImageTitle, IPrevie
 	}
 
 	public String getCSSClassName(ContentContext ctx) {
-		return getStyle(ctx) + ' ' + getType();
+		return getComponentCssClass(ctx) + ' ' + getType();
 	}
 
 	protected ImageConfig config = null;

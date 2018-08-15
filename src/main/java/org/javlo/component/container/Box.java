@@ -30,10 +30,10 @@ public class Box extends AbstractVisualComponent implements IContainer {
 	}
 
 	protected String getCSSClass(ContentContext ctx) {
-		if (getStyle(ctx) == null || getStyle(ctx).trim().length() == 0) {
+		if (getComponentCssClass(ctx) == null || getComponentCssClass(ctx).trim().length() == 0) {
 			return "box";
 		} else {
-			return "box " + getStyle(ctx);
+			return "box " + getComponentCssClass(ctx);
 		}
 	}
 
@@ -72,14 +72,14 @@ public class Box extends AbstractVisualComponent implements IContainer {
 		if (getValue().trim().length() == 0) {
 			setValue("true");
 			if (prevComp != null) {
-				setStyle(ctx, prevComp.getStyle(ctx));
+				setStyle(ctx, prevComp.getComponentCssClass(ctx));
 			}
 			setModify();
 		}
 		out.println("<label>");
 		if (isCloseBox()) {
 			if (prevComp != null) {
-				setStyle(ctx, prevComp.getStyle(ctx));
+				setStyle(ctx, prevComp.getComponentCssClass(ctx));
 			}
 			out.println("<input type=\"checkbox\" name=\"" + getCloseBoxInputName() + "\" checked=\"checked\" />");
 		} else {
@@ -92,7 +92,7 @@ public class Box extends AbstractVisualComponent implements IContainer {
 			if (getValue().trim().length() == 0) {
 				setValue("true");
 				if (prevComp != null) {
-					setStyle(ctx, prevComp.getStyle(ctx));
+					setStyle(ctx, prevComp.getComponentCssClass(ctx));
 				}
 				setModify();
 			}

@@ -93,3 +93,37 @@ h2 {
 	text-align: right;
 }
 
+.fake-img {
+	font-size: 150px;
+	color: #cccccc;
+}
+
+.fonts {
+	text-align: center;
+	margin-bottom: 30px;
+}
+
+.fonts select {
+	margin-bottom: 15px;
+	background-color: #ffffff;
+	background-image: none;
+	border: 1px solid #cccccc;
+	border-radius: 4px;
+	box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset;
+	color: #555555;
+	font-size: 11px;
+	height: 20px;
+	line-height: 1.42857;
+	padding: 1px 3px;
+	transition: border-color 0.15s ease-in-out 0s, box-shadow 0.15s ease-in-out 0s;
+}
+
+.fonts .exemple {
+	font-size: 20px;
+}
+
+a.nav {
+	display: inline-block;
+	font-size: 1.4em;
+	padding: 0 3px 0 3px;
+}

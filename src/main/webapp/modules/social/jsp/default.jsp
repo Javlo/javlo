@@ -30,6 +30,10 @@
 		<div class="form-group">
 			<label for="clientsecret">client secret*</label>
 			<input class="form-control" type="text" name="clientsecret" id="clientsecret" value="${network.clientSecret}" />
+		</div>
+		<div class="form-group">
+			<label for="apikey">API KEY</label>
+			<input class="form-control" type="text" name="apikey" id="apikey" value="${network.apiKey}" />
 		</div>		
 		</div></div>	
 		<div class="form-group">			

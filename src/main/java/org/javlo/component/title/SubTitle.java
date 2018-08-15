@@ -168,7 +168,7 @@ public class SubTitle extends AbstractVisualComponent implements ISubTitle {
 	}
 
 	public String getCSSClassName(ContentContext ctx) {
-		return getStyle(ctx);
+		return getComponentCssClass(ctx);
 	}
 
 	@Override

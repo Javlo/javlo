@@ -75,8 +75,6 @@ import org.javlo.mailing.MailConfig;
 import org.javlo.mailing.MailService;
 import org.javlo.mailing.POPThread;
 import org.javlo.module.core.IPrintInfo;
-import org.javlo.module.core.ModuleException;
-import org.javlo.module.core.ModulesContext;
 import org.javlo.module.remote.RemoteService;
 import org.javlo.module.ticket.TicketAction;
 import org.javlo.navigation.IURLFactory;
@@ -93,6 +91,7 @@ import org.javlo.service.exception.ServiceException;
 import org.javlo.servlet.AccessServlet;
 import org.javlo.servlet.ImageTransformServlet;
 import org.javlo.template.Template;
+import org.javlo.template.TemplateData;
 import org.javlo.tracking.Tracker;
 import org.javlo.user.AdminUserFactory;
 import org.javlo.user.IUserFactory;
@@ -823,7 +822,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 
 	private final TimeMap<String, String> forcedContent = new TimeMap<String, String>(60 * 60);
 
-	private Template.TemplateData templateData = null;
+	private TemplateData templateData = null;
 
 	private TimeTravelerContext timeTravelerContext = new TimeTravelerContext();
 
@@ -1910,16 +1909,16 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		properties.setProperty("tags", tags);
 	}
 
-	public Template.TemplateData getTemplateData() {
+	public TemplateData getTemplateData() {
 		if (templateData != null) {
 			return templateData;
 		}
 		String templateDataRAW = properties.getString("template-data", null);
 		if (templateDataRAW == null) {
-			templateData = Template.TemplateData.EMPTY;
-			return Template.TemplateData.EMPTY;
+			templateData = TemplateData.EMPTY;
+			return TemplateData.EMPTY;
 		}
-		templateData = new Template.TemplateData(templateDataRAW);
+		templateData = new TemplateData(templateDataRAW);
 		return templateData;
 	}
 
@@ -2952,7 +2951,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		save();
 	}
 
-	public void setTemplateData(Template.TemplateData inTemplateData) {
+	public void setTemplateData(TemplateData inTemplateData) {
 		templateData = inTemplateData;
 		properties.setProperty("template-data", templateData.toString());
 		save();

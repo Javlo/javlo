@@ -211,7 +211,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 			PersistenceService.UNDO_DEPTH = undoDepth;
 		}
 		TimeTracker.reset(staticConfig);
-		
+
 		try {
 			SecurityHelper.passwordEncrypt = (IPasswordEncryption) Class.forName(staticConfig.getPasswordEncrytClass()).newInstance();
 		} catch (Exception e1) {
@@ -251,7 +251,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 
 		MultiReadRequestWrapper.clearTempDir(getServletContext());
 		TemplateFactory.copyDefaultTemplate(getServletContext());
-		
+
 		try {
 			ResourceHelper.deleteFolder(staticConfig.getWebTempDir());
 		} catch (Throwable t) {
@@ -1113,27 +1113,30 @@ public class AccessServlet extends HttpServlet implements IVersion {
 
 			i18nAccess.resetRequestMap();
 
-		} catch (Throwable t) {		
-				if (!response.isCommitted()) {
-					try {
-						response.setStatus(503);
-						Writer out = response.getWriter();
-						out.write("<div style=\"margin-top: 50px; margin-left: auto; margin-right: auto; border: 2px #ff0000 solid; width: 500px; padding: 3px;\" id=\"fatal-error\">");
-						out.write("<h1 style=\"margin: 0px; padding: 1px; font-size: 120%; text-align: center;\">Techinal error.</h1>");
-						out.write("<p style=\"text-align: center;\"><a href=\"mailto:" + staticConfig.getManualErrorEmail() + "?subject=fatal error in javlo : " + globalContext.getContextKey() + "\">Describe your error in a email.</a></p>");
-						out.write("<p style=\"padding: 10px 10px 10px 10px; margin-bottom: 10px; color: #000000; border: 1px solid #ff0000; background-color: #ffeaea;\">" + t.getMessage() + "</p>");
-						out.write("</div>");
-					} catch (Throwable e) {
-						e.printStackTrace();
-					}
+		} catch (Throwable t) {
+			if (!response.isCommitted()) {
+				try {
+					response.setStatus(503);
+					Writer out = response.getWriter();
+					out.write("<div style=\"margin-top: 50px; margin-left: auto; margin-right: auto; border: 2px #ff0000 solid; width: 500px; padding: 3px;\" id=\"fatal-error\">");
+					out.write("<h1 style=\"margin: 0px; padding: 1px; font-size: 120%; text-align: center;\">Techinal error.</h1>");
+					out.write("<p style=\"text-align: center;\"><a href=\"mailto:" + staticConfig.getManualErrorEmail() + "?subject=fatal error in javlo : " + globalContext.getContextKey() + "\">Describe your error in a email.</a></p>");
+					out.write("<p style=\"padding: 10px 10px 10px 10px; margin-bottom: 10px; color: #000000; border: 1px solid #ff0000; background-color: #ffeaea;\">" + t.getMessage() + "</p>");
+					out.write("</div>");
+				} catch (Throwable e) {
+					e.printStackTrace();
 				}
+			}
 
-				if (!(t instanceof SocketException)) {
-					t.printStackTrace();
+			if (!(t instanceof SocketException)) {
+				t.printStackTrace();
+				try {
 					DebugListening.getInstance().sendError(ctx, t, "path=" + request.getRequestURI());
-				} else {
-					logger.warning(t.getMessage());
-				}			
+				} catch (Throwable tmail) {
+				}
+			} else {
+				logger.warning(t.getMessage());
+			}
 		} finally {
 			PersistenceService persistenceService;
 			try {
@@ -1148,7 +1151,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
-			}			
+			}
 		}
 	}
 

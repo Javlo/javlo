@@ -258,7 +258,7 @@ public class TimeHelper {
 							out.print(contentVisualComponent.getValue(ctx));
 							out.println("</location>");
 						} else if (contentVisualComponent.getType().equals(SubTitle.TYPE)) {
-							out.print("<title type=\"" + contentVisualComponent.getStyle(ctx) + "\">");
+							out.print("<title type=\"" + contentVisualComponent.getComponentCssClass(ctx) + "\">");
 							out.print(contentVisualComponent.getValue(ctx));
 							out.println("</title>");
 						} else {

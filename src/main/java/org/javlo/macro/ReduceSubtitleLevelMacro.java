@@ -29,7 +29,7 @@ public class ReduceSubtitleLevelMacro extends AbstractMacro {
 		int countChange = 0;
 		for (IContentVisualComponent comp : comps) {
 			for (int level = 8; level >= 2; level--) {
-				if (StringHelper.neverEmpty(comp.getStyle(ctx), "").equals("" + level)) {
+				if (StringHelper.neverEmpty(comp.getComponentCssClass(ctx), "").equals("" + level)) {
 					comp.setStyle(ctx, "" + (level + 1));
 					countChange++;
 				}

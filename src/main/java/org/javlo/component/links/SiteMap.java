@@ -94,7 +94,7 @@ public class SiteMap extends AbstractVisualComponent {
 			out.print("</span>");
 		}
 
-		boolean showAll = getStyle(ctx).equalsIgnoreCase("all");
+		boolean showAll = getComponentCssClass(ctx).equalsIgnoreCase("all");
 		pastNode.add(menu);
 		if (childs.size() > 0) {
 			out.println("<ul>");
@@ -134,18 +134,18 @@ public class SiteMap extends AbstractVisualComponent {
 		boolean showAll = false;
 		boolean showVisible = false;
 		boolean virtual = false;
-		if (getStyle(ctx) != null) {
-			showAll = getStyle(ctx).equalsIgnoreCase("all");
-			if (getStyle(ctx).equalsIgnoreCase("children")) {
+		if (getComponentCssClass(ctx) != null) {
+			showAll = getComponentCssClass(ctx).equalsIgnoreCase("all");
+			if (getComponentCssClass(ctx).equalsIgnoreCase("children")) {
 				menu = ctx.getCurrentPage();
 				childs = menu.getChildMenuElements(ctx, false);
 				showVisible = true;
-			} else if (getStyle(ctx).equalsIgnoreCase("virtual-children")) {
+			} else if (getComponentCssClass(ctx).equalsIgnoreCase("virtual-children")) {
 				menu = ctx.getCurrentPage();
 				childs = menu.getChildMenuElementsWithVirtual(ctx, false, false);
 				showVisible = true;
 				virtual = true;
-			} else if (getStyle(ctx).equalsIgnoreCase("children-visible")) {
+			} else if (getComponentCssClass(ctx).equalsIgnoreCase("children-visible")) {
 				menu = ctx.getCurrentPage();
 				childs = menu.getChildMenuElements(ctx, true);
 				showVisible = false;

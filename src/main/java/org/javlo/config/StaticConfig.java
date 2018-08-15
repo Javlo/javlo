@@ -638,6 +638,10 @@ public class StaticConfig extends Observable {
 	public boolean isImageMetaEdition() {
 		return properties.getBoolean("image.meta", true);
 	}
+	
+	public boolean isEditRepeatComponent() {
+		return properties.getBoolean("content.edit-repeat", true);
+	}
 
 	public boolean isResourceShortURL() {
 		return properties.getBoolean("resource.short-url", false);
@@ -1873,6 +1877,10 @@ public class StaticConfig extends Observable {
 	
 	public boolean isAnonymisedTracking() {
 		return properties.getBoolean("security.tracking.anonymised", false);
+	}
+	
+	public boolean isCompressJsp() {
+		return properties.getBoolean("deploy.compress-jsp", false); 
 	}
 
 }

@@ -543,12 +543,24 @@ public class TemplateAction extends AbstractModuleAction {
 			messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("action.block"), GenericMessage.ERROR));
 		} else {
 			String templateName = rs.getParameter("templateid", null);
-			if (ctx.getGlobalContext().isOpenPlatform()) {
-				currentPage = currentPage.getRoot();
+			Template template = TemplateFactory.getDiskTemplate(ctx.getRequest().getSession().getServletContext(), templateName);
+			if (template == null) {
+				return "template not found : "+templateName;
+			} else {
+				if (ctx.getGlobalContext().isOpenPlatform()) {
+					currentPage = currentPage.getRoot();
+				}			
+				currentPage.setTemplateId(templateName);			
+				MailingModuleContext mailingCtx = MailingModuleContext.getInstance(ctx.getRequest());
+				mailingCtx.setCurrentTemplate(null);
+				if (!ctx.getGlobalContext().isMailingPlatform()) {
+				if (template.isOnePage()) {
+					currentPage.setChildrenAssociation(true);
+				} else {
+					currentPage.setChildrenAssociation(false);
+				}
+				}
 			}
-			currentPage.setTemplateId(templateName);
-			MailingModuleContext mailingCtx = MailingModuleContext.getInstance(ctx.getRequest());
-			mailingCtx.setCurrentTemplate(null);
 		}
 
 		if (ctx.isEditPreview()) {

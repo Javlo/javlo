@@ -107,7 +107,7 @@ public class TimeRangeComponent extends DateComponent {
 			return getConfig(ctx).getProperty("prefix", null) + "<div " + getSpecialPreviewCssClass(ctx, "") + getSpecialPreviewCssId(ctx) + ">";
 		}
 
-		return "<div " + getSpecialPreviewCssClass(ctx, getStyle(ctx) + " " + getType()) + getSpecialPreviewCssId(ctx) + ">";
+		return "<div " + getSpecialPreviewCssClass(ctx, getComponentCssClass(ctx) + " " + getType()) + getSpecialPreviewCssId(ctx) + ">";
 	}
 
 	@Override

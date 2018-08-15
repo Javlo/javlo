@@ -1,6 +1,6 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-<div class="content">
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"
+%><%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"
+%><div class="content">
 <form class="standard-form" id="create-ticket" method="post" action="${info.currentURL}">
 <div class="row">	
 	<div class="col-md-2">		
@@ -8,7 +8,10 @@
 			<c:if test="${not empty newTicket}"><c:url var="screenshot" value="/web-tmp/${globalContext.contextKey}_${info.page.name}.png" ></c:url></c:if>
 			<c:if test="${empty newTicket && not empty ticket.screenshot}"><c:set var="screenshot" value="${ticket.screenshot}" /></c:if>
 			<c:if test="${empty screenshot}">no screenshot</c:if>
-			<c:if test="${not empty screenshot}"><a href="${screenshot}" target="_blank"><img src="${screenshot}" alt="page screenshot" lang="en" /></a></c:if>
+			<c:if test="${not empty screenshot}"><a href="${screenshot}" target="_blank"><img id="screenshot-container" src="${info.ajaxLoaderURL}" alt="page screenshot" lang="en" /></a></c:if>
+			<script>setTimeout(function () {
+           		jQuery("#screenshot-container").attr("src", '${screenshot}');
+    		}, 3000);</script>
 		</div>
 	</div>
 	<div class="col-md-5">

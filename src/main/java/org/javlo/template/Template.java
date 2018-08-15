@@ -1,14 +1,18 @@
 package org.javlo.template;
 
 import java.awt.Color;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.io.Reader;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -47,7 +51,6 @@ import org.javlo.component.core.ComponentBean;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
-import org.javlo.css.CssColor;
 import org.javlo.filter.PropertiesFilter;
 import org.javlo.helper.LangHelper;
 import org.javlo.helper.ResourceHelper;
@@ -77,389 +80,16 @@ public class Template implements Comparable<Template> {
 	public static final String PREVIEW_EDIT_CODE = "#PREVIEW-EDIT#";
 
 	public static final String FORCE_TEMPLATE_PARAM_NAME = "force-template";
+	
+	private static final String FONT_REFERENCE_FILE = "fonts_reference.properties";
+	
+	private static final String RAW_CSS_FILE = "raw_css.txt";
 
 	private static class TemplateComparator implements Comparator<Template> {
 
 		@Override
 		public int compare(Template o1, Template o2) {
 			return o1.getName().compareTo(o2.getName());
-		}
-
-	}
-
-	public static class TemplateData {
-		public static final TemplateData EMPTY = new TemplateData();
-		private CssColor background = null;
-		private CssColor componentBackground = null;
-		private CssColor foreground = null;
-		private CssColor text = null;
-		private CssColor title = null;
-		private CssColor special = null;
-		private CssColor backgroundMenu = null;
-		private CssColor backgroundActive = null;
-		private CssColor textMenu = null;
-		private CssColor border = null;
-		private CssColor link = null;
-		private CssColor messagePrimary = null;
-		private CssColor messageSecondary = null;
-		private CssColor messageSuccess = null;
-		private CssColor messageDanger = null;
-		private CssColor messageWarning = null;
-		private CssColor messageInfo = null;
-		private CssColor[] colorList = new CssColor[6];
-		private String toolsServer = null;
-		private String logo = null;
-		private String font = null;
-
-		public TemplateData() {
-		};
-
-		public TemplateData(String rawData) {
-			String[] data = rawData.split(";");
-			try {
-				if (data.length > 7) {
-					int i = 0;
-					if (data[i].length() > 0) {
-						setBackground(Color.decode('#' + data[i]));
-					}
-					i++;
-					if (data[i].length() > 0) {
-						setForeground(Color.decode('#' + data[i]));
-					}
-					i++;
-					if (data[i].length() > 0) {
-						setText(Color.decode('#' + data[i]));
-					}
-					i++;
-					if (data[i].length() > 0) {
-						setBackgroundMenu(Color.decode('#' + data[i]));
-					}
-					i++;
-					if (data[i].length() > 0) {
-						setTextMenu(Color.decode('#' + data[i]));
-					}
-					i++;
-					if (data[i].length() > 0) {
-						setBorder(Color.decode('#' + data[i]));
-					}
-					i++;
-					if (data[i].length() > 0) {
-						setLink(Color.decode('#' + data[i]));
-					}
-					i++;
-					if (data[i].length() > 0) {
-						setTitle(Color.decode('#' + data[i]));
-					}
-					i++;
-					if (data[i].length() > 0) {
-						setSpecial(Color.decode('#' + data[i]));
-					}
-					i++;
-					if (data[i].length() > 0) {
-						setToolsServer(data[i]);
-					}
-					i++;
-					if (data[i].length() > 0) {
-						setLogo(data[i]);
-					}
-					i++;
-					if (data.length > i && data[i].length() > 0) {
-						setBackgroundActive(Color.decode('#' + data[i]));
-					}
-					i++;
-					if (data.length > i && data[i].length() > 0) {
-						setFont(data[i]);
-					}
-					/** message **/
-					if (data.length > 8) {
-						i++;
-						if (data.length > i && data[i].length() > 0) {
-							setMessagePrimary(Color.decode('#' + data[i]));
-						}
-						i++;
-						if (data.length > i && data[i].length() > 0) {
-							setMessageSecondary(Color.decode('#' + data[i]));
-						}
-						i++;
-						if (data.length > i && data[i].length() > 0) {
-							setMessageSuccess(Color.decode('#' + data[i]));
-						}
-						i++;
-						if (data.length > i && data[i].length() > 0) {
-							setMessageDanger(Color.decode('#' + data[i]));
-						}
-						i++;
-						if (data.length > i && data[i].length() > 0) {
-							setMessageWarning(Color.decode('#' + data[i]));
-						}
-						i++;
-						if (data.length > i && data[i].length() > 0) {
-							setMessageInfo(Color.decode('#' + data[i]));
-						}
-						i++;
-						if (data.length > i && data[i].length() > 0) {
-							String[] colors = data[i].split(",");
-							int pos=0;
-							for (String c : colors) {
-								colorList[pos] = CssColor.getInstance(Color.decode('#'+c));
-								pos++;
-							}
-						}
-						i++;
-						if (data.length > i && data[i].length() > 0) {
-							setComponentBackground(Color.decode('#' + data[i]));
-						}
-					}
-				}
-			} catch (NumberFormatException e) {
-				e.printStackTrace();
-			}
-
-		}
-		
-		public CssColor[] getColorList() {
-			return colorList;
-		}
-		
-		public void setColorList(Color color, int i) {
-			this.colorList[i] = CssColor.getInstance(color);
-		}
-
-		public Color getBackground() {
-			return background;
-		}
-
-		public Color getBackgroundMenu() {
-			return backgroundMenu;
-		}
-
-		public Color getBackgroundActive() {
-			return backgroundActive;
-		}
-
-		public Color getBorder() {
-			return border;
-		}
-
-		public Color getForeground() {
-			return foreground;
-		}
-
-		public Color getLink() {
-			return link;
-		}
-
-		public String getLogo() {
-			return logo;
-		}
-
-		public Color getText() {
-			return text;
-		}
-
-		public Color getTextMenu() {
-			return textMenu;
-		}
-
-		public String getToolsServer() {
-			return toolsServer;
-		}
-
-		public void setBackground(Color background) {
-			this.background = CssColor.getInstance(background);
-		}
-
-		public void setBackgroundMenu(Color backgroundMenu) {
-			this.backgroundMenu = CssColor.getInstance(backgroundMenu);
-		}
-
-		public void setBackgroundActive(Color backgroundActive) {
-			this.backgroundActive = CssColor.getInstance(backgroundActive);
-		}
-
-		public void setBorder(Color border) {
-			this.border = CssColor.getInstance(border);
-		}
-
-		public void setForeground(Color foreGround) {
-			foreground = CssColor.getInstance(foreGround);
-		}
-
-		public void setLink(Color link) {
-			this.link = CssColor.getInstance(link);
-		}
-
-		public void setLogo(String logo) {
-			this.logo = logo;
-		}
-
-		public void setText(Color text) {
-			this.text = CssColor.getInstance(text);
-		}
-
-		public void setTextMenu(Color textMenu) {
-			this.textMenu = CssColor.getInstance(textMenu);
-		}
-
-		public void setToolsServer(String toolsServer) {
-			this.toolsServer = toolsServer;
-		}
-
-		public CssColor getTitle() {
-			return title;
-		}
-
-		public void setTitle(Color title) {
-			this.title = CssColor.getInstance(title);
-		}
-
-		public CssColor getSpecial() {
-			return special;
-		}
-
-		public void setSpecial(Color special) {
-			this.special = CssColor.getInstance(special);
-		}
-
-		@Override
-		public String toString() {
-			StringBuffer out = new StringBuffer();
-			out.append(StringHelper.colorToHexStringNotNull(getBackground()));
-			out.append(';');
-			out.append(StringHelper.colorToHexStringNotNull(getForeground()));
-			out.append(';');
-			out.append(StringHelper.colorToHexStringNotNull(getText()));
-			out.append(';');
-			out.append(StringHelper.colorToHexStringNotNull(getBackgroundMenu()));
-			out.append(';');
-			out.append(StringHelper.colorToHexStringNotNull(getTextMenu()));
-			out.append(';');
-			out.append(StringHelper.colorToHexStringNotNull(getBorder()));
-			out.append(';');
-			out.append(StringHelper.colorToHexStringNotNull(getLink()));
-			out.append(';');
-			out.append(StringHelper.colorToHexStringNotNull(getTitle()));
-			out.append(';');
-			out.append(StringHelper.colorToHexStringNotNull(getSpecial()));
-			out.append(';');
-			out.append(getToolsServer());
-			out.append(';');
-			out.append(getLogo());
-			out.append(';');
-			out.append(StringHelper.colorToHexStringNotNull(getBackgroundActive()));
-			out.append(';');
-			out.append(StringHelper.colorToHexStringNotNull(getMessagePrimary()));
-			out.append(';');
-			out.append(StringHelper.colorToHexStringNotNull(getMessageSecondary()));
-			out.append(';');
-			out.append(StringHelper.colorToHexStringNotNull(getMessageSuccess()));
-			out.append(';');
-			out.append(StringHelper.colorToHexStringNotNull(getMessageDanger()));
-			out.append(';');
-			out.append(StringHelper.colorToHexStringNotNull(getMessageWarning()));
-			out.append(';');
-			out.append(StringHelper.colorToHexStringNotNull(getMessageInfo()));
-			out.append(';');
-			out.append(getFont());
-			out.append(';');
-			String sep = "";
-			for (int i=0; i<6; i++) {
-				out.append(sep);
-				out.append(StringHelper.colorToHexStringNotNull(getColorList()[i]));
-				sep=",";				
-			}
-			out.append(';');
-			out.append(StringHelper.colorToHexStringNotNull(getComponentBackground()));
-			return out.toString();
-		}
-
-		@Override
-		public int hashCode() {
-			final int prime = 31;
-			int result = 1;
-			result = prime * result + ((background == null) ? 0 : background.hashCode());
-			result = prime * result + ((backgroundMenu == null) ? 0 : backgroundMenu.hashCode());
-			result = prime * result + ((border == null) ? 0 : border.hashCode());
-			result = prime * result + ((foreground == null) ? 0 : foreground.hashCode());
-			result = prime * result + ((link == null) ? 0 : link.hashCode());
-			result = prime * result + ((logo == null) ? 0 : logo.hashCode());
-			result = prime * result + ((special == null) ? 0 : special.hashCode());
-			result = prime * result + ((text == null) ? 0 : text.hashCode());
-			result = prime * result + ((textMenu == null) ? 0 : textMenu.hashCode());
-			result = prime * result + ((title == null) ? 0 : title.hashCode());
-			result = prime * result + ((toolsServer == null) ? 0 : toolsServer.hashCode());
-			result = prime * result + ((font == null) ? 0 : font.hashCode());
-			result = prime * result + ((messagePrimary == null) ? 0 : messagePrimary.hashCode());
-			result = prime * result + ((messageSecondary == null) ? 0 : messageSecondary.hashCode());
-			result = prime * result + ((messageSuccess == null) ? 0 : messageSuccess.hashCode());
-			result = prime * result + ((messageDanger == null) ? 0 : messageDanger.hashCode());
-			result = prime * result + ((messageWarning == null) ? 0 : messageWarning.hashCode());
-			result = prime * result + ((messageInfo == null) ? 0 : messageInfo.hashCode());
-			return result;
-		}
-
-		public String getFont() {
-			return font;
-		}
-
-		public void setFont(String font) {
-			this.font = font;
-		}
-
-		public CssColor getMessagePrimary() {
-			return messagePrimary;
-		}
-
-		public void setMessagePrimary(Color messagePrimary) {
-			this.messagePrimary = CssColor.getInstance(messagePrimary);
-		}
-
-		public CssColor getMessageSecondary() {
-			return messageSecondary;
-		}
-
-		public void setMessageSecondary(Color messageSecondary) {
-			this.messageSecondary = CssColor.getInstance(messageSecondary);
-		}
-
-		public CssColor getMessageSuccess() {
-			return messageSuccess;
-		}
-
-		public void setMessageSuccess(Color messageSuccess) {
-			this.messageSuccess = CssColor.getInstance(messageSuccess);
-		}
-
-		public CssColor getMessageDanger() {
-			return messageDanger;
-		}
-
-		public void setMessageDanger(Color messageDanger) {
-			this.messageDanger = CssColor.getInstance(messageDanger);
-		}
-
-		public CssColor getMessageWarning() {
-			return messageWarning;
-		}
-
-		public void setMessageWarning(Color messageWarning) {
-			this.messageWarning = CssColor.getInstance(messageWarning);
-		}
-
-		public CssColor getMessageInfo() {
-			return messageInfo;
-		}
-
-		public void setMessageInfo(Color messageInfo) {
-			this.messageInfo = CssColor.getInstance(messageInfo);
-		}
-
-		public CssColor getComponentBackground() {
-			return componentBackground;
-		}
-
-		public void setComponentBackground(Color componentBackground) {
-			this.componentBackground = CssColor.getInstance(componentBackground);
 		}
 
 	}
@@ -891,6 +521,8 @@ public class Template implements Comparable<Template> {
 
 	private List<String> notAdminAreas = null;
 
+	private String fakeName = null;
+	
 	public static Template getApplicationInstance(ServletContext application, ContentContext ctx, String templateDir) throws Exception {
 
 		Template outTemplate = null;
@@ -918,6 +550,13 @@ public class Template implements Comparable<Template> {
 				outTemplate = outTemplate.getAlternativeTemplate(StaticConfig.getInstance(application), ctx);
 			}
 		}
+		return outTemplate;
+	}
+
+	public static Template getFakeTemplate(String name) {
+		Template outTemplate = new Template();
+		outTemplate.properties.setProperty("name", name);
+		outTemplate.fakeName = name;
 		return outTemplate;
 	}
 
@@ -1009,7 +648,7 @@ public class Template implements Comparable<Template> {
 
 		try {
 			TemplatePluginFactory templatePluginFactory = TemplatePluginFactory.getInstance(globalContext.getServletContext());
-			XMLManipulationHelper.convertHTMLtoTemplate(globalContext, this, i18nAccess, HTMLFile, null, getMap(), getAreas(), resources, templatePluginFactory.getAllTemplatePlugin(globalContext.getTemplatePlugin()), messages);
+			XMLManipulationHelper.convertHTMLtoTemplate(globalContext, this, i18nAccess, HTMLFile, null, getMap(), getAreas(), resources, templatePluginFactory.getAllTemplatePlugin(globalContext.getTemplatePlugin()), messages, getFontIncluding(globalContext));
 		} catch (Throwable t) {
 			messages.add(new GenericMessage(t.getMessage(), GenericMessage.ERROR));
 		}
@@ -1369,7 +1008,7 @@ public class Template implements Comparable<Template> {
 	public String getAuthors() {
 		return properties.getString("authors", getParent().getAuthors());
 	}
-	
+
 	public Collection<String> getCategories() {
 		String categoriesRaw = properties.getString("categories");
 		if (categoriesRaw == null) {
@@ -1503,8 +1142,8 @@ public class Template implements Comparable<Template> {
 	public String getDominantColor() {
 		return properties.getString("color.dominant", getParent().getDominantColor());
 	}
-	
-	public String getEscapeMenuId() {		
+
+	public String getEscapeMenuId() {
 		return properties.getString("nav.escape_id", getParent().getEscapeMenuId());
 	}
 
@@ -1529,8 +1168,8 @@ public class Template implements Comparable<Template> {
 							outProperties.add(prop);
 						} else if (StringHelper.isHTMLStatic(file.getName())) {
 							/* load dynamic component from HTML */
-							logger.info("load dynamic component html : "+file);
-							String html = ResourceHelper.loadStringFromFile(file);							
+							logger.info("load dynamic component html : " + file);
+							String html = ResourceHelper.loadStringFromFile(file);
 							Properties properties = new Properties();
 							if (html.contains(PREVIEW_EDIT_CODE)) {
 								properties.setProperty("component.wrapped", "false");
@@ -1621,6 +1260,55 @@ public class Template implements Comparable<Template> {
 			return dir.getName() + '/' + siteFolder;
 		}
 	}
+	
+	private File getRawCssFile(GlobalContext globalContext) {
+		return new File(URLHelper.mergePath(getWorkTemplateRealPath(globalContext), RAW_CSS_FILE));
+	}
+	
+	private String getRawCss(GlobalContext globalContext, File file) throws IOException {
+		return ResourceHelper.loadStringFromFile(file);
+	}
+	
+	private void appendRawCssFile(GlobalContext globalContext, String data, File file) throws IOException {
+		PrintWriter out = null;
+		try {
+			out = new PrintWriter(new BufferedWriter(new FileWriter(file, true)));
+			out.println(data);
+		} finally {
+			ResourceHelper.closeResource(out);
+		}
+	}
+	
+	public Properties getFontReference(GlobalContext globalContext) throws IOException {
+		File file = new File(URLHelper.mergePath(getWorkTemplateRealPath(globalContext), FONT_REFERENCE_FILE));		
+		return ResourceHelper.loadProperties(file);
+	}
+	
+	private String getFontIncluding(GlobalContext globalContext) throws Exception {
+		if (isAutoFontIncluding()) {
+			Properties fontList = getFontReference(globalContext);
+			String outIncluding = "";
+			String cssRaw = getRawCss(globalContext, getRawCssFile(globalContext));
+			for (Object key : fontList.keySet()) {
+				if (cssRaw != null && cssRaw.toString().contains(key.toString())) {
+					outIncluding += fontList.get(key);
+				}
+			}
+			if (globalContext.getTemplateData().getFontHeading() != null && fontList.get(globalContext.getTemplateData().getFontHeading()) != null) {
+				outIncluding += fontList.get(globalContext.getTemplateData().getFontHeading());
+			}
+			if (globalContext.getTemplateData().getFontText() != null && fontList.get(globalContext.getTemplateData().getFontText()) != null) {
+				outIncluding += fontList.get(globalContext.getTemplateData().getFontText());
+			}
+			return outIncluding;
+		} else {
+			return "";
+		}
+	}
+	
+	private boolean isAutoFontIncluding() {
+		return properties.getBoolean("font.auto-including", true);
+	}
 
 	public String getHomeRenderer(GlobalContext globalContext) {
 		if (getHTMLHomeFile() == null) {
@@ -1636,8 +1324,8 @@ public class Template implements Comparable<Template> {
 			}
 			try {
 				List<String> resources = new LinkedList<String>();
-				TemplatePluginFactory templatePluginFactory = TemplatePluginFactory.getInstance(globalContext.getServletContext());
-				int depth = XMLManipulationHelper.convertHTMLtoTemplate(globalContext, this, HTMLFile, jspFile, getMap(), getAreas(), resources, getTemplatePugin(globalContext), null, false);
+				TemplatePluginFactory templatePluginFactory = TemplatePluginFactory.getInstance(globalContext.getServletContext());				
+				int depth = XMLManipulationHelper.convertHTMLtoTemplate(globalContext, this, HTMLFile, jspFile, getMap(), getAreas(), resources, getTemplatePugin(globalContext), null, false, getFontIncluding(globalContext));
 				setDepth(depth);
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -2021,6 +1709,9 @@ public class Template implements Comparable<Template> {
 	}
 
 	public String getName() {
+		if (fakeName != null) {
+			return fakeName;
+		}
 		if (dir == null) {
 			return "";
 		} else {
@@ -2096,7 +1787,7 @@ public class Template implements Comparable<Template> {
 		}
 	}
 
-	public synchronized String getRenderer(ContentContext ctx) throws IOException, BadXMLException {
+	public synchronized String getRenderer(ContentContext ctx) throws Exception {
 		synchronized (ctx.getGlobalContext().getLockImportTemplate()) {
 			String renderer = getRendererFile(ctx.getDevice());
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
@@ -2117,7 +1808,7 @@ public class Template implements Comparable<Template> {
 					FileUtils.deleteDirectory(HTMLFile.getParentFile());
 					importTemplateInWebapp(config, ctx);
 				}
-				int depth = XMLManipulationHelper.convertHTMLtoTemplate(globalContext, this, HTMLFile, jspFile, getMap(), getAreas(), resources, getTemplatePugin(globalContext), ids, isMailing());
+				int depth = XMLManipulationHelper.convertHTMLtoTemplate(globalContext, this, HTMLFile, jspFile, getMap(), getAreas(), resources, getTemplatePugin(globalContext), ids, isMailing(), getFontIncluding(globalContext));
 				setHTMLIDS(ids);
 				setDepth(depth);
 			}
@@ -2267,10 +1958,14 @@ public class Template implements Comparable<Template> {
 			logger.warning("renderer not found on template : " + getName() + " (parent:" + getParent() + " device:" + ctx.getDevice() + ")");
 			return null;
 		}
-		String params = "";
+		String params = "?_menufix="+ctx.getGlobalContext().getTemplateData().isFixMenu();
+		params += "&_menularge="+ctx.getGlobalContext().getTemplateData().isLargeMenu();
+		params += "&_menusearch="+ctx.getGlobalContext().getTemplateData().isSearchMenu();
+		params += "&_menujssearch="+ctx.getGlobalContext().getTemplateData().isJssearchMenu();
+		params += "&_menudropdown="+ctx.getGlobalContext().getTemplateData().isDropdownMenu();
 		String templateParams = getHTMLFileParams(ctx.getDevice());
 		if (templateParams != null) {
-			params = '?' + templateParams;
+			params = params + '&' + templateParams;
 		}
 		return URLHelper.mergePath(getLocalTemplateTargetFolder(globalContext), renderer) + params;
 	}
@@ -2376,8 +2071,8 @@ public class Template implements Comparable<Template> {
 				Color backgroundColor = Color.decode('#' + background);
 				templateData.setBackground(backgroundColor);
 			}
-			for (int i=0; i<6; i++) {
-				String color = properties.getString("data.color.colorList"+i, null);
+			for (int i = 0; i < 6; i++) {
+				String color = properties.getString("data.color.colorList" + i, null);
 				if (!StringHelper.isEmpty(color)) {
 					templateData.setColorList(Color.decode('#' + color), i);
 				}
@@ -2435,9 +2130,13 @@ public class Template implements Comparable<Template> {
 			if (logo != null && !logo.equals("null")) {
 				templateData.setLogo(logo);
 			}
-			String font = properties.getString("data.font", null);
-			if (font != null && !font.equals("null")) {
-				templateData.setFont(font);
+			String fontText = properties.getString("data.font.text", null);
+			if (fontText != null && !fontText.equals("null")) {
+				templateData.setFontText(fontText);
+			}
+			String fontHeading = properties.getString("data.font.heading", null);
+			if (fontHeading != null && !fontHeading.equals("null")) {
+				templateData.setFontHeading(fontHeading);
 			}
 
 			/** messages **/
@@ -2492,13 +2191,13 @@ public class Template implements Comparable<Template> {
 		if (templateData.getBackground() != null) {
 			templateDataMap.put(StringHelper.colorToHexStringNotNull(templateData.getBackground()), StringHelper.colorToHexStringNotNull(templateDataUser.getBackground()));
 		}
-		
-		for (int i=0; i<6; i++) {
+
+		for (int i = 0; i < 6; i++) {
 			if (templateData.getColorList()[i] != null) {
 				templateDataMap.put(StringHelper.colorToHexStringNotNull(templateData.getColorList()[i]), StringHelper.colorToHexStringNotNull(templateDataUser.getColorList()[i]));
 			}
 		}
-		
+
 		if (templateData.getForeground() != null) {
 			templateDataMap.put(StringHelper.colorToHexStringNotNull(templateData.getForeground()), StringHelper.colorToHexStringNotNull(templateDataUser.getForeground()));
 		}
@@ -2508,7 +2207,7 @@ public class Template implements Comparable<Template> {
 		if (templateData.getBackgroundMenu() != null) {
 			templateDataMap.put(StringHelper.colorToHexStringNotNull(templateData.getBackgroundMenu()), StringHelper.colorToHexStringNotNull(templateDataUser.getBackgroundMenu()));
 		}
-		
+
 		if (templateData.getBackgroundActive() != null) {
 			templateDataMap.put(StringHelper.colorToHexStringNotNull(templateData.getBackgroundActive()), StringHelper.colorToHexStringNotNull(templateDataUser.getBackgroundActive()));
 		}
@@ -2533,8 +2232,11 @@ public class Template implements Comparable<Template> {
 		if (templateData.getToolsServer() != null) {
 			templateDataMap.put(templateData.getToolsServer(), templateDataUser.getToolsServer());
 		}
-		if (templateData.getFont() != null) {
-			templateDataMap.put(templateData.getFont(), templateDataUser.getFont());
+		if (templateData.getFontText() != null) {
+			templateDataMap.put(templateData.getFontText(), templateDataUser.getFontText());
+		}
+		if (templateData.getFontHeading() != null) {
+			templateDataMap.put(templateData.getFontHeading(), templateDataUser.getFontHeading());
 		}
 		/** messages **/
 		if (templateData.getMessagePrimary() != null) {
@@ -2632,7 +2334,7 @@ public class Template implements Comparable<Template> {
 					long startTime = System.currentTimeMillis();
 					logger.info("copy template from '" + templateSrc + "' to '" + templateTgt + "'");
 					FileUtils.deleteDirectory(templateTgt);
-					importTemplateInWebapp(config, ctx, globalContext, templateTgt, null, true, false);
+					importTemplateInWebapp(config, ctx, globalContext, templateTgt, null, true, false, getRawCssFile(globalContext));
 					logger.info("import template : " + getName() + " in " + StringHelper.renderTimeInSecond(System.currentTimeMillis() - startTime));
 				} else {
 					logger.severe("folder not found : " + templateSrc);
@@ -2642,7 +2344,7 @@ public class Template implements Comparable<Template> {
 		}
 	}
 
-	protected void importTemplateInWebapp(StaticConfig config, ContentContext ctx, GlobalContext globalContext, File templateTarget, Map<String, String> childrenData, boolean compressResource, boolean parent) throws IOException {
+	protected void importTemplateInWebapp(StaticConfig config, ContentContext ctx, GlobalContext globalContext, File templateTarget, Map<String, String> childrenData, boolean compressResource, boolean parent, File inRawCssFile) throws IOException {
 
 		String templateFolder = config.getTemplateFolder();
 		File templateSrc = new File(URLHelper.mergePath(templateFolder, getSourceFolderName()));
@@ -2700,8 +2402,11 @@ public class Template implements Comparable<Template> {
 				if (ctx != null) {
 					try {
 						String fileExt = FilenameUtils.getExtension(file.getName());
+						if (fileExt.equalsIgnoreCase("css") || fileExt.equalsIgnoreCase("scss") || fileExt.equalsIgnoreCase("less") || fileExt.equalsIgnoreCase("sass")) {
+							appendRawCssFile(globalContext, ResourceHelper.loadStringFromFile(file), inRawCssFile);
+						}
 						if (fileExt.equalsIgnoreCase("jsp") || fileExt.equalsIgnoreCase("html")) {
-							ResourceHelper.filteredFileCopyEscapeScriplet(file, targetFile, map);
+							ResourceHelper.filteredFileCopyEscapeScriplet(file, targetFile, map, ctx.getGlobalContext().getStaticConfig().isCompressJsp());
 						} else {
 							ResourceHelper.filteredFileCopy(file, targetFile, map);
 						}
@@ -2760,7 +2465,7 @@ public class Template implements Comparable<Template> {
 			}
 			LangHelper.putAllIfNotExist(childrenData, getTemplateDataMap(globalContext));
 			if (getParent().exist()) {
-				getParent().importTemplateInWebapp(config, ctx, globalContext, templateTarget, childrenData, false, true);
+				getParent().importTemplateInWebapp(config, ctx, globalContext, templateTarget, childrenData, false, true, inRawCssFile);
 			} else {
 				logger.warning("parent template not found : " + getParent().getName());
 				File indexFile = new File(URLHelper.mergePath(templateTarget.getAbsolutePath(), "index.jsp"));
@@ -2791,6 +2496,10 @@ public class Template implements Comparable<Template> {
 
 	public boolean isMailing() {
 		return properties.getBoolean("mailing", getParent().isMailing());
+	}
+	
+	public boolean isOnePage() {
+		return properties.getBoolean("onepage", getParent().isOnePage());
 	}
 
 	public boolean isForStatic() {
@@ -3465,5 +3174,38 @@ public class Template implements Comparable<Template> {
 			return StringHelper.stringToCollection(rawFonts, ";");
 		}
 	}
+	
+	public List<String> getWebFonts(GlobalContext globalContext) {
+		List<String> outFonts = new LinkedList<String>();
+		outFonts.addAll(XHTMLHelper.WEB_FONTS);
+		Properties fprop;
+		try {
+			fprop = getFontReference(globalContext);
+			if (fprop != null) {
+				if (fprop != null) {
+					outFonts.addAll(getFontReference(globalContext).stringPropertyNames());
+				}
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return outFonts;
+	}
 
+	public boolean isFake() {
+		return fakeName != null;
+	}
+	
+	public static void main(String[] args) throws IOException {
+		File file = new File("c:/trans/fonts_reference_src.properties");
+		
+		Properties prop = ResourceHelper.loadProperties(file);
+		for(Object key : prop.keySet()) {
+			prop.setProperty((String)key, "<link href=\"https://fonts.googleapis.com/css?family="+(key.toString().replace(" ", "+")+"\" rel=\"stylesheet\">"));
+		}
+		file = new File("c:/trans/fonts_reference.properties");
+		prop.store(new FileOutputStream(file), "");
+	}
+	
+	
 }

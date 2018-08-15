@@ -51,6 +51,7 @@ import org.javlo.component.column.TableComponent;
 import org.javlo.component.config.ComponentConfig;
 import org.javlo.component.links.MirrorComponent;
 import org.javlo.component.title.Heading;
+import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
@@ -105,7 +106,7 @@ import org.owasp.encoder.Encode;
  * <li>{@link String} style : the style selected for the component. See
  * <li>{@link String} previewAttributes : a string with attribute for preview
  * edition (class and data attribute).</li>
- * <li>{@link #getStyle(ContentContext)}</li>
+ * <li>{@link #getComponentCssClass(ContentContext)}</li>
  * </ul>
  * 
  * @author Patrick Vandermaesen
@@ -119,6 +120,8 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	public static final String NOT_EDIT_PREVIEW_PARAM_NAME = "_not_edit_preview";
 
 	public static final String CACHE_KEY_SUFFIX_PARAM_NAME = "_cache_key_suffix";
+	
+	protected static final String EDIT_CLASS = "_edit_empty_component";
 
 	public static Logger logger = Logger.getLogger(AbstractVisualComponent.class.getName());
 
@@ -609,8 +612,8 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 
 		String repeatHidden = "";
 		boolean showRepeat = true;
-		if (ctx.getGlobalContext().isMailingPlatform()) {
-			UserInterfaceContext uiContext = UserInterfaceContext.getInstance(ctx.getRequest().getSession(), ctx.getGlobalContext());
+		UserInterfaceContext uiContext = UserInterfaceContext.getInstance(ctx.getRequest().getSession(), ctx.getGlobalContext());
+		if (ctx.getGlobalContext().isMailingPlatform()) {			
 			if (uiContext.isLight()) {
 				repeatHidden = " hidden";
 				showRepeat = false;
@@ -711,6 +714,16 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			}
 			out.println("</div>");
 		}
+		
+		if (isCanAddClass() && !uiContext.isLight()) {
+			out.println("<div class=\"line\">");
+			String inputName = getInputName("cssclass");
+			out.println("<label for=\"" + inputName + "\">" + i18nAccess.getText("component.cssclass", "css class") + "</label>");
+			out.println("<input id=\"" + inputName + "\" name=\"" + inputName + "\" class=\"form-control\" type=\"text\" value=\"" + StringHelper.neverNull(getManualCssClass()) + "\" />");
+			out.println("</div>");
+		}
+		
+		
 		if (getConfig(ctx).isChooseBackgoundColor()) {
 			out.println("<div class=\"line\">");
 			String bgColInputName = "bgcol-" + getId();
@@ -861,6 +874,13 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			setModify();
 			setNeedRefresh(true);
 		}
+		
+		String cssClass = requestService.getParameter("cssclass-" + getId(), null);
+		if (cssClass != null && !cssClass.equals(getManualCssClass())) {
+			setManualCssClass(cssClass);
+			setModify();
+			setNeedRefresh(true);
+		}
 
 		String bgCol = requestService.getParameter("bgcol-" + getId(), null);
 		if (bgCol != null && !bgCol.equals(getBackgroundColor())) {
@@ -872,7 +892,8 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			} catch (Exception e) {
 				logger.warning(e.getLocalizedMessage());
 			}
-		}
+		}	
+		
 		
 		String delDate = requestService.getParameter("deldate-" + getId(), null);
 		if (delDate != null) {
@@ -1041,8 +1062,8 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			return getConfig(ctx).getProperty("prefix.first", "");
 		} else {
 			String cssClass = "";
-			if (getStyle(ctx) != null && getStyle(ctx).trim().length() > 0) {
-				cssClass = ' ' + getStyle(ctx);
+			if (getComponentCssClass(ctx) != null && getComponentCssClass(ctx).trim().length() > 0) {
+				cssClass = ' ' + getComponentCssClass(ctx);
 			}
 			if (getListClass(ctx) != null) {
 				cssClass = cssClass + ' ' + getListClass(ctx);
@@ -1279,7 +1300,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		String style = getStyle(ctx);
+		String style = getComponentCssClass(ctx);
 		if (style != null) {
 			style = style + ' ';
 		} else {
@@ -1293,8 +1314,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		}
 		if (previousComp != null && previousComp instanceof TableComponent && !(previousComp instanceof TableBreak)) {
 			style = style + " first-in-cell ";
-
-		}
+		}		
 		if (previousComp == null) {
 			style = style + " first-component ";
 		}
@@ -1613,7 +1633,9 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 				}				
 				RequestService rs = RequestService.getInstance(ctx.getRequest());
 				if (!StringHelper.isTrue(rs.getParameter(NOT_EDIT_PREVIEW_PARAM_NAME, null))) {
-					if (getConfig(ctx).isPreviewEditable() && editCtx.isPreviewEditionMode() && (!isRepeat() || getPage().equals(ctx.getCurrentPage())) && AdminUserSecurity.canModifyPage(ctx, ctx.getCurrentPage(), true)) {
+					StaticConfig sc = ctx.getGlobalContext().getStaticConfig();
+					if (getConfig(ctx).isPreviewEditable() && editCtx.isPreviewEditionMode() && (!isRepeat() || getPage().equals(ctx.getCurrentPage()) || sc.isEditRepeatComponent()) && AdminUserSecurity.canModifyPage(ctx, ctx.getCurrentPage(), true)) {
+					//if (getConfig(ctx).isPreviewEditable() && editCtx.isPreviewEditionMode() && AdminUserSecurity.canModifyPage(ctx, ctx.getCurrentPage(), true)) {
 						I18nAccess i18nAccess = I18nAccess.getInstance(ctx);
 						String type = i18nAccess.getText("content." + getType(), getType());
 						String hint = "<b>" + type + "</b><br />" + i18nAccess.getViewText("preview.hint", "click for edit or drag and drop to move.");
@@ -1644,7 +1666,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	protected String getSpecialPreviewCssClass(ContentContext ctx, String currentClass) {
 		String cssClass = getPreviewCssClass(ctx, currentClass);
 		if (cssClass.trim().length() > 0) {
-			return " class=\"" + getPreviewCssClass(ctx, currentClass) + "\"";
+			return " class=\"" + cssClass + "\"";
 		} else {
 			return "";
 		}
@@ -1707,7 +1729,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	}
 
 	@Override
-	public final String getStyle(ContentContext ctx) {		
+	public final String getComponentCssClass(ContentContext ctx) {		
 		if (componentBean.getStyle() == null) {
 			if ((getStyleList(ctx) != null) && (getStyleList(ctx).length > 0)) {
 				if (getConfig(ctx).getDefaultStyle() == null) {
@@ -1733,6 +1755,9 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
+		}
+		if (!StringHelper.isEmpty(getManualCssClass())) {
+			style = style + ' ' + getManualCssClass() + ' ';
 		}
 		if (isColored()) {
 			style = style + " colored";
@@ -1873,6 +1898,14 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	public String getBackgroundColor() {
 		return componentBean.getBackgroundColor();
 	}
+	
+	private String getManualCssClass() {
+		return componentBean.getManualCssClass();
+	}
+	
+	private void setManualCssClass(String css) {
+		componentBean.setManualCssClass(css);
+	}
 
 	public String getTextColor() {
 		return componentBean.getTextColor();
@@ -1970,7 +2003,8 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 					prefix = getForcedPrefixViewXHTMLCode(ctx);
 					suffix = getForcedSuffixViewXHTMLCode(ctx);
 				}
-				return prefix + '[' + getType() + ']' + suffix;
+				I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
+				return prefix + "<span class=\""+EDIT_CLASS + "\">" + i18nAccess.getText("content."+getType(), getType()) + "</span>" + suffix;
 			} else {
 				return "";
 			}
@@ -2127,7 +2161,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	}
 
 	protected String getPreviewAttributes(ContentContext ctx) {
-		return getSpecialPreviewCssClass(ctx, getStyle(ctx)) + getSpecialPreviewCssId(ctx);
+		return getSpecialPreviewCssClass(ctx, getComponentCssClass(ctx)) + getSpecialPreviewCssId(ctx);
 	}
 
 	/**
@@ -2150,9 +2184,10 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		ctx.getRequest().setAttribute("compid", getForcedId(ctx));
 		ctx.getRequest().setAttribute("renderer", getCurrentRenderer(ctx));
 		ctx.getRequest().setAttribute("previewAttributes", getPreviewAttributes(ctx));
-		ctx.getRequest().setAttribute("previewCSS", getPreviewCssClass(ctx, getStyle(ctx)));
+		ctx.getRequest().setAttribute("previewCSS", getPreviewCssClass(ctx, getComponentCssClass(ctx)));
 		ctx.getRequest().setAttribute("previewID", getPreviewCssId(ctx));
 		ctx.getRequest().setAttribute("cssStyle", getCSSStyle(ctx));
+		ctx.getRequest().setAttribute("cssClass", getComponentCssClass(ctx));
 		if (!AbstractVisualComponent.isMirrorWrapped(ctx, this)) {
 			ctx.getRequest().setAttribute(MIRROR_WRAPPED, false);
 			ctx.getRequest().setAttribute("nextSame", isNextSame(ctx));
@@ -2286,6 +2321,10 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	@Override
 	public boolean isInline() {
 		return false;
+	}
+	
+	protected boolean isCanAddClass() {
+		return true;
 	}
 
 	/**
@@ -2839,7 +2878,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 				prefix = getForcedPrefixViewXHTMLCode(ctx);
 				suffix = getForcedSuffixViewXHTMLCode(ctx);
 			}
-			return prefix + '[' + i18nAccess.getText("content." + getType(), getType()) + ']' + suffix;
+			return prefix + "<span class=\""+EDIT_CLASS+"\">"+getType()+"</span>" + i18nAccess.getText("content." + getType(), getType()) + "</span>" + suffix;
 		}
 	}
 

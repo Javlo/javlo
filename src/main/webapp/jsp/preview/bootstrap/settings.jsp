@@ -6,7 +6,19 @@
 ContentContext ctx = ContentContext.getContentContext(request, response);
 ContentContext editCtx = new ContentContext(ctx);
 editCtx.setRenderMode(ContentContext.EDIT_MODE);
-%><c:url var="url" value="<%=URLHelper.createURL(editCtx)%>" context="/">	
+%>
+<c:if test="${not empty editUser && !globalContext.mailingPlatform}">
+	<c:url var="url" value="<%=URLHelper.createURL(editCtx)%>" context="/">
+		<c:param name="module" value="admin"></c:param>
+		<c:param name="previewEdit" value="true"></c:param>
+	</c:url>
+	<button type="button" class="btn btn-default" aria-label="Left Align" onclick="editPreview.openModal('${i18n.edit['preview.label.properties']}','${url}'); return false;">
+		<div class="label">${i18n.edit['preview.label.properties']}</div>
+		<div class="value">${info.globalTitle}</div>
+		<span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
+	</button>
+</c:if>
+<c:url var="url" value="<%=URLHelper.createURL(editCtx)%>" context="/">	
 	<c:param name="module" value="template"></c:param>
 	<c:param name="webaction" value="template.changeFromPreview"></c:param>
 	<c:param name="previewEdit" value="true"></c:param>

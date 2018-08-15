@@ -43,11 +43,11 @@ public class FieldNumber extends Field {
 	}
 
 	public String getFromName(ContentContext ctx) throws Exception {
-		return "from_"+getUnicName();
+		return "from_" + getUnicName();
 	}
 
 	public String getToName(ContentContext ctx) throws Exception {
-		return "to_"+getUnicName();
+		return "to_" + getUnicName();
 	}
 
 	public boolean isSearchAsRange() {
@@ -64,7 +64,7 @@ public class FieldNumber extends Field {
 			out.println("<div class=\"row\"><div class=\"col-sm-4 align-middle\">");
 			String unity = "";
 			if (!StringHelper.isEmpty(getUnity(ctx))) {
-				unity = "<span class=\"\">("+getUnity(ctx)+")</span>";
+				unity = "<span class=\"\">(" + getUnity(ctx) + ")</span>";
 			}
 			out.println("	<label class=\"col-form-label\" for=\"" + getInputName() + "\">" + getSearchLabel(ctx, new Locale(ctx.getContextRequestLanguage())) + " " + unity + " : </label>");
 			out.println("</div><div class=\"col-sm-8\"><input type=\"hidden\" name=\"" + getInputName() + "\" value=\"1\" />");
@@ -161,11 +161,15 @@ public class FieldNumber extends Field {
 
 	@Override
 	public boolean initContent(ContentContext ctx) throws Exception {
-		int min = getMin(ctx);
-		if (min < 0) {
-			min = 0;
+		if (StringHelper.isDigit(getInitValue())) {
+			setValue(getInitValue());
+		} else {
+			int min = getMin(ctx);
+			if (min < 0) {
+				min = 0;
+			}
+			setValue("" + min);
 		}
-		setValue("" + min);
 		return true;
 	}
 

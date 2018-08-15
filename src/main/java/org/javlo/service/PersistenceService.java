@@ -654,6 +654,7 @@ public class PersistenceService {
 			bean.setHidden(StringHelper.isTrue(contentNode.getAttributeValue("hidden")));
 			bean.setArea(contentNode.getAttributeValue("area", ComponentBean.DEFAULT_AREA));
 			bean.setBackgroundColor(contentNode.getAttributeValue("bgcol", null));
+			bean.setManualCssClass(contentNode.getAttributeValue("css", null));
 			bean.setTextColor(contentNode.getAttributeValue("txtcol", null));
 			if (contentNode.getAttributeValue("displayCookiesStatus", null) != null) {
 				bean.setCookiesDisplayStatus(Integer.parseInt(contentNode.getAttributeValue("displayCookiesStatus", null)));

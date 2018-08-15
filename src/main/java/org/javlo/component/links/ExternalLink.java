@@ -70,8 +70,8 @@ public class ExternalLink extends ComplexPropertiesLink implements IReverseLinkC
 
 	@Override
 	public boolean isHidden(ContentContext ctx) {
-		if (getStyle(ctx) != null) {
-			return getStyle(ctx).equals("hidden");
+		if (getComponentCssClass(ctx) != null) {
+			return getComponentCssClass(ctx).equals("hidden");
 		}
 		return false;
 	}
@@ -123,7 +123,7 @@ public class ExternalLink extends ComplexPropertiesLink implements IReverseLinkC
 				}
 
 				prefix = prefix + "<a " + target + ' ' + getInlineStyle(ctx) + ' '
-						+ getSpecialPreviewCssClass(ctx, style + ' ' + getStyle(ctx)) + getSpecialPreviewCssId(ctx)
+						+ getSpecialPreviewCssClass(ctx, style + ' ' + getComponentCssClass(ctx)) + getSpecialPreviewCssId(ctx)
 						+ " href=\"";
 				prefix = prefix + StringHelper.toXMLAttribute(getLink());
 				prefix = prefix + "\">";
@@ -159,7 +159,7 @@ public class ExternalLink extends ComplexPropertiesLink implements IReverseLinkC
 			String link = getLink();
 
 			StringBuffer res = new StringBuffer();
-			String cssClass = getStyle(ctx);
+			String cssClass = getComponentCssClass(ctx);
 			String insertCssClass = getType();
 			if (cssClass != null) {
 				insertCssClass = insertCssClass + " " + cssClass;

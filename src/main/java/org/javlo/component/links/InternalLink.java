@@ -304,7 +304,7 @@ public class InternalLink extends ComplexPropertiesLink implements IInternalLink
 				res.append("<div class=\"body\"><p>");
 			}
 			if (style.contains(IMAGE)) {
-				res.append("<a " + getSpecialPreviewCssClass(ctx, getStyle(ctx)) + getSpecialPreviewCssId(ctx) + " href=\"");
+				res.append("<a " + getSpecialPreviewCssClass(ctx, getComponentCssClass(ctx)) + getSpecialPreviewCssId(ctx) + " href=\"");
 				if (ctx.getRenderMode() != ContentContext.PAGE_MODE) {
 					res.append(url);
 				} else {

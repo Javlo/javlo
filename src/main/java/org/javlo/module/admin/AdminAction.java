@@ -62,7 +62,7 @@ import org.javlo.service.PersistenceService;
 import org.javlo.service.RequestService;
 import org.javlo.service.shared.SharedContentService;
 import org.javlo.template.Template;
-import org.javlo.template.Template.TemplateData;
+import org.javlo.template.TemplateData;
 import org.javlo.template.TemplateFactory;
 import org.javlo.template.TemplatePlugin;
 import org.javlo.template.TemplatePluginFactory;
@@ -1117,6 +1117,11 @@ public class AdminAction extends AbstractModuleAction {
 
 				request.setAttribute("allModules", moduleContext.getAllModules());
 				request.setAttribute("currentModules", currentGlobalContext.getModules());
+				
+				List<String> fonts = ctx.getCurrentTemplate().getWebFonts(currentGlobalContext);
+				Collections.sort(fonts);
+				request.setAttribute("fonts", fonts);
+				request.setAttribute("fontsMap", ctx.getCurrentTemplate().getFontReference(currentGlobalContext));
 
 				List<String> templatesName = currentGlobalContext.getTemplatesNames();
 				List<Template.TemplateBean> selectedTemplate = new LinkedList<Template.TemplateBean>();
@@ -1128,7 +1133,8 @@ public class AdminAction extends AbstractModuleAction {
 						}
 						selectedTemplate.add(new Template.TemplateBean(ctx, template));
 					} else {
-						currentGlobalContext.removeTemplate(name);
+						//currentGlobalContext.removeTemplate(name);
+						selectedTemplate.add(new Template.TemplateBean(ctx, Template.getFakeTemplate(name)));
 						logger.warning("template not found : " + name);
 					}
 				}
@@ -1275,6 +1281,14 @@ public class AdminAction extends AbstractModuleAction {
 		if (adminUserSecurity.canRole(user, AdminUserSecurity.CONTENT_ROLE)) {
 			ctx.getGlobalContext().setGlobalTitle(requestService.getParameter("global-title", null));
 			ctx.setClosePopup(true);
+		}		
+		if (StringHelper.isTrue(requestService.getParameter("graphic-charter", null))) {
+			boolean updateCharte = updateGraphicCharter(ctx, ctx.getGlobalContext());
+
+			if (updateCharte) {				
+				ctx.getCurrentTemplate().clearRenderer(ctx);
+				ctx.setNeedRefresh(true);
+			};	
 		}		
 		return null;
 	}
@@ -1535,52 +1549,10 @@ public class AdminAction extends AbstractModuleAction {
 						importTemplate = true;
 					}
 
-					/** template data **/
-					TemplateData td = currentGlobalContext.getTemplateData();
-					td.setBackground(StringHelper.parseColor(requestService.getParameter("background", "" + td.getBackground())));
-					td.setBackgroundActive(StringHelper.parseColor(requestService.getParameter("backgroundActive", "" + td.getBackgroundActive())));
-					td.setForeground(StringHelper.parseColor(requestService.getParameter("foreground", "" + td.getForeground())));
-					td.setBorder(StringHelper.parseColor(requestService.getParameter("border", "" + td.getBorder())));
-					td.setBackgroundMenu(StringHelper.parseColor(requestService.getParameter("backgroundMenu", "" + td.getBackgroundMenu())));
-					td.setText(StringHelper.parseColor(requestService.getParameter("text", "" + td.getText())));
-					td.setTextMenu(StringHelper.parseColor(requestService.getParameter("textMenu", "" + td.getTextMenu())));
-					td.setComponentBackground(StringHelper.parseColor(requestService.getParameter("componentBackground", "" + td.getComponentBackground())));
-					td.setLink(StringHelper.parseColor(requestService.getParameter("link", "" + td.getLink())));
-					td.setTitle(StringHelper.parseColor(requestService.getParameter("title", "" + td.getTitle())));
-					td.setSpecial(StringHelper.parseColor(requestService.getParameter("special", "" + td.getSpecial())));
-					td.setFont(requestService.getParameter("font", "" + td.getFont()));
-
-					/** message **/
-					td.setMessagePrimary(StringHelper.parseColor(requestService.getParameter("messagePrimary", "" + td.getMessagePrimary())));
-					td.setMessageSecondary(StringHelper.parseColor(requestService.getParameter("messageSecondary", "" + td.getMessageSecondary())));
-					td.setMessageSuccess(StringHelper.parseColor(requestService.getParameter("messageSuccess", "" + td.getMessageSuccess())));
-					td.setMessageDanger(StringHelper.parseColor(requestService.getParameter("messageDanger", "" + td.getMessageDanger())));
-					td.setMessageWarning(StringHelper.parseColor(requestService.getParameter("messageWarning", "" + td.getMessageWarning())));
-					td.setMessageInfo(StringHelper.parseColor(requestService.getParameter("messageInfo", "" + td.getMessageInfo())));
-					for (int i=0; i<6; i++) {
-						td.setColorList(StringHelper.parseColor(requestService.getParameter("colorList"+i, null)), i);
+					if (StringHelper.isTrue(requestService.getParameter("graphic-charter", null))) {
+						updateGraphicCharter(ctx, currentGlobalContext);	
 					}
-					MailService.resetInstance();
 					
-					for (FileItem file : requestService.getAllFileItem()) {
-						if (file.getFieldName().equals(LOGO_PATH)) {							
-							File oldLogo = null;
-							if (td.getLink() != null) {
-								oldLogo = new File(URLHelper.mergePath(currentGlobalContext.getStaticFolder(), td.getLogo()));
-							}
-							if (file.getName().trim().length() > 0) {
-								String logoPath = URLHelper.mergePath(LOGO_PATH, file.getName());
-								File logo = new File(URLHelper.mergePath(currentGlobalContext.getStaticFolder(), logoPath));
-								td.setLogo(logoPath);
-								ResourceHelper.writeStreamToFile(file.getInputStream(), logo);								
-								if (oldLogo != null && oldLogo.exists() && !oldLogo.getName().equals(file.getName())) {
-									oldLogo.delete();
-								}
-							}
-						}
-					}
-
-					currentGlobalContext.setTemplateData(td);
 
 					if (importTemplate) {
 						TemplateFactory.cleanRenderer(ctx, currentGlobalContext.getTemplatesNames(), true);
@@ -1592,6 +1564,65 @@ public class AdminAction extends AbstractModuleAction {
 			}
 		}
 		return msg;
+	}
+	
+	private static boolean updateGraphicCharter(ContentContext ctx, GlobalContext currentGlobalContext) throws IOException {
+		/** template data **/
+		RequestService requestService = RequestService.getInstance(ctx.getRequest());
+		TemplateData td = currentGlobalContext.getTemplateData();
+		int tdHash = td.hashCodeForDeployTemplate();
+		td.setBackground(StringHelper.parseColor(requestService.getParameter("background", "" + td.getBackground())));
+		td.setBackgroundActive(StringHelper.parseColor(requestService.getParameter("backgroundActive", "" + td.getBackgroundActive())));
+		td.setForeground(StringHelper.parseColor(requestService.getParameter("foreground", "" + td.getForeground())));
+		td.setBorder(StringHelper.parseColor(requestService.getParameter("border", "" + td.getBorder())));
+		td.setBackgroundMenu(StringHelper.parseColor(requestService.getParameter("backgroundMenu", "" + td.getBackgroundMenu())));
+		td.setText(StringHelper.parseColor(requestService.getParameter("text", "" + td.getText())));
+		td.setTextMenu(StringHelper.parseColor(requestService.getParameter("textMenu", "" + td.getTextMenu())));
+		td.setComponentBackground(StringHelper.parseColor(requestService.getParameter("componentBackground", "" + td.getComponentBackground())));
+		td.setLink(StringHelper.parseColor(requestService.getParameter("link", "" + td.getLink())));
+		td.setTitle(StringHelper.parseColor(requestService.getParameter("title", "" + td.getTitle())));
+		td.setSpecial(StringHelper.parseColor(requestService.getParameter("special", "" + td.getSpecial())));
+		td.setFontText(requestService.getParameter("fontText", "" + td.getFontText()));
+		td.setFontHeading(requestService.getParameter("fontHeading", "" + td.getFontHeading()));
+		td.setFixMenu(StringHelper.isTrue(requestService.getParameter("fixMenu", null)));
+		td.setLargeMenu(StringHelper.isTrue(requestService.getParameter("largeMenu", null)));
+		td.setSearchMenu(StringHelper.isTrue(requestService.getParameter("searchMenu", null)));
+		td.setJssearchMenu(StringHelper.isTrue(requestService.getParameter("jssearchMenu", null)));
+		td.setDropdownMenu(StringHelper.isTrue(requestService.getParameter("dropdownMenu", null)));
+		td.setLarge(StringHelper.isTrue(requestService.getParameter("large", null)));
+		td.setSmall(StringHelper.isTrue(requestService.getParameter("small", null)));
+
+		/** message **/
+		td.setMessagePrimary(StringHelper.parseColor(requestService.getParameter("messagePrimary", "" + td.getMessagePrimary())));
+		td.setMessageSecondary(StringHelper.parseColor(requestService.getParameter("messageSecondary", "" + td.getMessageSecondary())));
+		td.setMessageSuccess(StringHelper.parseColor(requestService.getParameter("messageSuccess", "" + td.getMessageSuccess())));
+		td.setMessageDanger(StringHelper.parseColor(requestService.getParameter("messageDanger", "" + td.getMessageDanger())));
+		td.setMessageWarning(StringHelper.parseColor(requestService.getParameter("messageWarning", "" + td.getMessageWarning())));
+		td.setMessageInfo(StringHelper.parseColor(requestService.getParameter("messageInfo", "" + td.getMessageInfo())));
+		for (int i=0; i<6; i++) {
+			td.setColorList(StringHelper.parseColor(requestService.getParameter("colorList"+i, null)), i);
+		}
+		MailService.resetInstance();
+		
+		for (FileItem file : requestService.getAllFileItem()) {
+			if (file.getFieldName().equals(LOGO_PATH)) {							
+				File oldLogo = null;
+				if (td.getLink() != null) {
+					oldLogo = new File(URLHelper.mergePath(currentGlobalContext.getStaticFolder(), td.getLogo()));
+				}
+				if (file.getName().trim().length() > 0) {
+					String logoPath = URLHelper.mergePath(LOGO_PATH, file.getName());
+					File logo = new File(URLHelper.mergePath(currentGlobalContext.getStaticFolder(), logoPath));
+					td.setLogo(logoPath);
+					ResourceHelper.writeStreamToFile(file.getInputStream(), logo);								
+					if (oldLogo != null && oldLogo.exists() && !oldLogo.getName().equals(file.getName())) {
+						oldLogo.delete();
+					}
+				}
+			}
+		}
+		currentGlobalContext.setTemplateData(td);
+		return tdHash != td.hashCodeForDeployTemplate();
 	}
 
 	public static final String performReleaseContent(HttpServletRequest request, ContentContext ctx, RequestService requestService, GlobalContext globalContext, EditContext editCtx, MessageRepository messageRepository, I18nAccess i18nAccess, AdminUserSecurity security) throws Exception {

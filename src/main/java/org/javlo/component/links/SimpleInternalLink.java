@@ -138,7 +138,7 @@ public class SimpleInternalLink extends ComplexPropertiesLink implements IIntern
 				}
 				String url = URLHelper.createURL(ctx, link);
 				prefix = prefix + "<a" + getInlineStyle(ctx) + ' '
-						+ getSpecialPreviewCssClass(ctx, style + ' ' + getStyle(ctx)) + getSpecialPreviewCssId(ctx)
+						+ getSpecialPreviewCssClass(ctx, style + ' ' + getComponentCssClass(ctx)) + getSpecialPreviewCssId(ctx)
 						+ " href=\"";
 				if (ctx.getRenderMode() != ContentContext.PAGE_MODE) {
 					prefix = prefix + StringHelper.toXMLAttribute(url);

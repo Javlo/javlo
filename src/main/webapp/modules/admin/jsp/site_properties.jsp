@@ -4,7 +4,7 @@
 <h3><span>${i18n.edit['admin.site-properties']}</span></h3>
 <div class="content">
 <c:if test="${!info.admin}">
-<form id="form-page-properties" action="${info.currentURL}" method="post">
+<form id="form-page-properties" action="${info.currentURL}" method="post" enctype="multipart/form-data">
 	<div>
 		<input type="hidden" name="webaction" value="admin.updateGlobalContextLight" />
 	</div>	
@@ -28,14 +28,16 @@
 				</div>
 			</div>
 		</div>
-		<div class="pull-right">
-			<button type="submit" class="btn btn-primary">${i18n.edit['global.ok']}</button>
-		 </div>
 	</fieldset>
+	<jsp:include page="graphic_charter.jsp" />
+	<div class="pull-right">
+		<button type="submit" class="btn btn-primary">${i18n.edit['global.ok']}</button>
+	 </div>
+	
 </form>
 </c:if>
 <c:if test="${info.admin}">
-<form id="form-page-properties" class="js-change-submit" action="${info.currentURL}" method="post" enctype="multipart/form-data">
+<form id="form-page-properties" action="${info.currentURL}" method="post" enctype="multipart/form-data">
 
 <div>
 	<input type="hidden" name="webaction" value="updateGlobalContext" />
@@ -554,23 +556,27 @@
 <c:forEach var="template" items="${templates}">
     <li>
         <div class="thumb">
+        	<c:if test="${!template.template.fake}">
             <img src="${template.previewUrl}" alt="${template.name}" />
+            </c:if><c:if test="${template.template.fake}">
+            <span class="fake-img"><i class="fa fa-question-circle" aria-hidden="true"></i></span>
+            </c:if>
             <div class="info">
                 <p>
-                    <label>${i18n.edit['global.name']}:</label>
+                    <label>${i18n.edit['global.name']}</label>
                     <span>${template.name}</span>
                 </p>                             
                 <p>
-                    <label>${i18n.edit['global.date']}:</label>
+                    <label>${i18n.edit['global.date']}</label>
                     <span>${template.creationDate}</span>
                 </p>
-                <p>
-                	<a href="${template.downloadURL}">${i18n.edit['admin.download-template']}</a>
-                </p>
+               <c:if test="${!template.template.fake}"> <p>
+					<a href="${template.downloadURL}">${i18n.edit['admin.download-template']}</a>
+                </p></c:if>
                 <p class="menu">
-                    <a href="${template.viewUrl}" class="view" title="${template.name}"></a>                    
+                     <c:if test="${!template.template.fake}"><a href="${template.viewUrl}" class="view" title="${template.name}"></a></c:if>
                     <a href="${info.currentURL}?webaction=unlinkTemplate&context=${currentContext.key}&template=${template.name}&mailing=${template.mailing}" class="delete" title="${i18n.edit['global.unlinked']}"></a>
-                </p>                
+                </p>
             </div><!--info-->
         </div><!--thumb-->        
  	</li>
@@ -606,63 +612,13 @@
 <textarea class="form-control" id="integrity" rows="10" cols="10" name="integrity">${globalContext.contentIntegrity}</textarea>
 </fieldset>
 </c:if>
-<fieldset>
-<legend>${i18n.edit['admin.title.graphic-charter']}</legend>
-
-<div class="row">
-<div class="col-sm-6">
-<jsp:include page="template_data.jsp?name=background&value=${currentContext.templateData.background}&style=color" />
-<jsp:include page="template_data.jsp?name=backgroundMenu&value=${currentContext.templateData.backgroundMenu}&style=color" />
-<jsp:include page="template_data.jsp?name=backgroundActive&value=${currentContext.templateData.backgroundActive}&style=color" />
-<jsp:include page="template_data.jsp?name=foreground&value=${currentContext.templateData.foreground}&style=color" />
-<jsp:include page="template_data.jsp?name=border&value=${currentContext.templateData.border}&style=color" />
-<jsp:include page="template_data.jsp?name=textMenu&value=${currentContext.templateData.textMenu}&style=color" />
-<jsp:include page="template_data.jsp?name=text&value=${currentContext.templateData.text}&style=color" />
-<jsp:include page="template_data.jsp?name=title&value=${currentContext.templateData.title}&style=color" />
-<jsp:include page="template_data.jsp?name=link&value=${currentContext.templateData.link}&style=color" />
-<jsp:include page="template_data.jsp?name=componentBackground&value=${currentContext.templateData.componentBackground}&style=color" />
-<jsp:include page="template_data.jsp?name=special&value=${currentContext.templateData.special}&style=color" />
-<jsp:include page="template_data.jsp?name=font&value=${currentContext.templateData.font}&style=font" />
-<div class="row">	
-	<div class="col-xs-4">
-	<label>color list</label>
-	</div><div class="col-xs-8">	
-		<div class="row">
-		<c:forEach begin="0" end="5" varStatus="status">
-		<div class="col-xs-2"><input class="form-control color" type="text" name="colorList${status.index}" value="${currentContext.templateData.colorList[status.index]}" /></div>
-		</c:forEach>
-		</div>
-	</div>	
-</div>
-<h2>Message</h2>
-<jsp:include page="template_data.jsp?name=messagePrimary&value=${currentContext.templateData.messagePrimary}&style=color" />
-<jsp:include page="template_data.jsp?name=messageSecondary&value=${currentContext.templateData.messageSecondary}&style=color" />
-<jsp:include page="template_data.jsp?name=messageSuccess&value=${currentContext.templateData.messageSuccess}&style=color" />
-<jsp:include page="template_data.jsp?name=messageDanger&value=${currentContext.templateData.messageDanger}&style=color" />
-<jsp:include page="template_data.jsp?name=messageWarning&value=${currentContext.templateData.messageWarning}&style=color" />
-<jsp:include page="template_data.jsp?name=messageInfo&value=${currentContext.templateData.messageInfo}&style=color" />
-</div><div class="col-sm-6">
-<div class="form-group">
-	<label for="logo">logo : </label>
-	<input type="file" name="logo" id="logo" />
-</div>
-<c:if test="${not empty logoPreview}">
-	<c:url var="delURL" value="${info.currentURL}" context="/">
-		<c:param name="webaction" value="admin.removelogo" />
-	</c:url>
-	<div class="delete-link"><a href="${delURL}" title="remove logo"><i class="fa fa-times" aria-hidden="true"></i></a></div>
-	<img alt="logo" src="${logoPreview}" />
-</c:if>
-</div>
-</div>
-
-</fieldset>
-
+<jsp:include page="graphic_charter.jsp" />
 <div class="pull-right">
 	<a href="${info.currentURL}?webaction=removeSite&removed-context=${currentContext.key}" class="btn btn-default warning needconfirm" title="${i18n.edit['admin.button.remove']}"><span>${i18n.edit['admin.button.remove']}</span></a>
 	<button type="submit" name="back" class="btn btn-default">${i18n.edit['global.back']}</button>
 	<button type="submit" class="btn btn-primary">${i18n.edit['global.ok']}</button>
 </div>
+
 </form>
 </c:if>
 

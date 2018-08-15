@@ -27,6 +27,7 @@ import org.javlo.component.core.ComponentBean;
 import org.javlo.config.StaticConfig;
 import org.javlo.helper.AjaxHelper.ScheduledRender;
 import org.javlo.helper.DebugHelper;
+import org.javlo.helper.LocalLogger;
 import org.javlo.helper.NetHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.StringSecurityUtil;
@@ -861,21 +862,20 @@ public class ContentContext {
 				outPage = root;
 			} else {
 				if (getPath().trim().length() > 0) {
-					MenuElement elem = globalContext.getPageIfExist(this, getPath(), urlFacotry);
+					MenuElement elem = globalContext.getPageIfExist(this, getPath(), urlFacotry);					
 					if (elem != null) {
 						if (getRenderMode() != EDIT_MODE && !NetHelper.isIPAccepted(this)) {
 							if (!StringHelper.isEmpty(elem.getIpSecurityErrorPageName())) {
 								response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 								String pageName = elem.getIpSecurityErrorPageName();
-								elem = ContentService.getInstance(globalContext).getNavigation(this).searchChildFromName(pageName);
+								elem = root.searchChildFromName(pageName);
 								if (elem == null) {
-									logger.warning("no ip page not found : " + pageName);
+									logger.warning("no ip age not found : " + pageName);
 								}
 								return elem;
 							}
 						}
 					}
-
 					if (elem != null) {
 						setCurrentPageCached(elem);
 						globalContext.storeUrl(this, getPath(), elem.getId());
@@ -903,6 +903,7 @@ public class ContentContext {
 				}
 			}
 		}
+		
 
 		if (outPage == null) {
 			logger.warning("page not found : " + getPath());
@@ -1325,7 +1326,13 @@ public class ContentContext {
 		response.addCookie(cookie);
 	}
 
-	public void setCurrentPageCached(MenuElement currentPageCached) throws Exception {		
+	public void setCurrentPageCached(MenuElement currentPageCached) throws Exception {
+		if (currentPageCached.getName().equals("contact")) {
+			LocalLogger.log(DebugHelper.getCaller(10));
+			LocalLogger.log("---");
+		}
+		
+			
 		this.currentPageCached = new WeakReference<MenuElement>(currentPageCached);
 	}
 

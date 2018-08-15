@@ -372,7 +372,7 @@ public class ResourceHelper {
 		}
 	}
 
-	public static void filteredFileCopyEscapeScriplet(File file1, File file2, Map<String, String> filter) throws IOException {		
+	public static void filteredFileCopyEscapeScriplet(File file1, File file2, Map<String, String> filter, boolean compress) throws IOException {		
 		if (!file2.exists()) {
 			file2.getParentFile().mkdirs();
 			file2.createNewFile();
@@ -398,6 +398,9 @@ public class ResourceHelper {
 				content = content.replace(key, filter.get(key));
 				content = content.replace(key.toUpperCase(), filter.get(key));
 			}
+		}
+		if (compress && StringHelper.getFileExtension(file1.getName()).equalsIgnoreCase("jsp")) {
+			content = XHTMLHelper.compress(content);
 		}
 		FileUtils.writeStringToFile(file2, content, ContentContext.CHARACTER_ENCODING);
 	}
@@ -903,11 +906,13 @@ public class ResourceHelper {
 
 	public static Properties loadProperties(File file) throws IOException {
 		Properties properties = new Properties();
-		InputStream in = new FileInputStream(file);
-		try {
-			properties.load(in);
-		} finally {
-			ResourceHelper.closeResource(in);
+		if (file.exists()) {
+			InputStream in = new FileInputStream(file);
+			try {
+				properties.load(in);
+			} finally {
+				ResourceHelper.closeResource(in);
+			}
 		}
 		return properties;
 	}

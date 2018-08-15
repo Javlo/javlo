@@ -109,7 +109,7 @@ public class MultimediaGallery extends TimeRangeComponent {
 
 		}
 
-		if (getStyle(ctx).equals(ORDER_BY_ACCESS)) {
+		if (getComponentCssClass(ctx).equals(ORDER_BY_ACCESS)) {
 			Collections.sort(files, new StaticInfo.StaticFileSortByPopularity(ctx, false));
 		} else {
 			Collections.sort(files, new StaticInfo.StaticFileSort(ctx, false));
@@ -395,7 +395,7 @@ public class MultimediaGallery extends TimeRangeComponent {
 				 * if (title.trim().length() == 0) { title = file.getName(); }
 				 */
 
-				if (index < 1 || !getStyle(ctx).equals(IMAGE_AFTER_EXEPT_FIRST)) {
+				if (index < 1 || !getComponentCssClass(ctx).equals(IMAGE_AFTER_EXEPT_FIRST)) {
 					if (imageFile.exists()) {
 						String debugInfo = "";
 						if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE) {
@@ -428,7 +428,7 @@ public class MultimediaGallery extends TimeRangeComponent {
 					}
 				}
 
-				if (!(index < 1 || !getStyle(ctx).equals(IMAGE_AFTER_EXEPT_FIRST))) {
+				if (!(index < 1 || !getComponentCssClass(ctx).equals(IMAGE_AFTER_EXEPT_FIRST))) {
 					if (imageFile.exists()) {
 						out.println("<a href=\"" + previewURL + "\" rel=\"" + getHTMLRelation(ctx) + "\" title=\"" + StringHelper.removeTag(info.getFullDescription(ctx)) + "\"><img src=\"" + URLHelper.createTransformURL(lgCtx, getImageFileURL(ctx, file), getTransformFilter(file)) + "\" alt=\"" + StringHelper.removeTag(info.getTitle(ctx)) + "\" /></a>");
 					} else {
@@ -494,7 +494,7 @@ public class MultimediaGallery extends TimeRangeComponent {
 	}
 
 	protected boolean isCountAccess(ContentContext ctx) {
-		if (getStyle(ctx).equals(ORDER_BY_ACCESS)) {
+		if (getComponentCssClass(ctx).equals(ORDER_BY_ACCESS)) {
 			return false;
 		}
 		return true;

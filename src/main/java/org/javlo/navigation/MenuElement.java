@@ -1538,7 +1538,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 	}
 
 	public void clearEditorGroups() {
-		if (isChildrenOfAssociation()) {
+		if (isChildrenOfAssociation() && getRootOfChildrenAssociation() != null) {
 			getRootOfChildrenAssociation().clearEditorGroups();
 		} else {
 			editGroups.clear();
@@ -2434,7 +2434,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 					String description = elem.getPageDescription(ctx);
 					if (!StringHelper.isEmpty(description)) {
 						if (!elem.isRepeat()) {						
-							desc.description = new HtmlPart(StringHelper.removeTag(StringUtils.replace(description, "\"", "&quot;")), "p", elem.getStyle(newCtx));;
+							desc.description = new HtmlPart(StringHelper.removeTag(StringUtils.replace(description, "\"", "&quot;")), "p", elem.getComponentCssClass(newCtx));;
 							return desc.description;
 						} else {
 							res = description;
@@ -3074,7 +3074,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 					keywordsSet.add(elem.getValue(ctx));
 				}
 				Keywords keywords = (Keywords) elem;
-				if (keywords.getStyle(ctx).equals(Keywords.BOLD_IN_CONTENT)) {
+				if (keywords.getComponentCssClass(ctx).equals(Keywords.BOLD_IN_CONTENT)) {
 					String[] keys = keywords.getValue().split(",");
 					for (String key : keys) {
 						if (!keywordsSet.contains(key)) {
@@ -3447,6 +3447,19 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 			ctx.getRequest().setAttribute(requestKey, pageBean);
 		}
 		return pageBean;
+	}
+	
+	/**
+	 * get index of the page in the children list of the her parent page
+	 * @return
+	 */
+	public int getIndex() {
+		MenuElement parent = getParent();
+		if (parent != null) {
+			return parent.getChildMenuElements().indexOf(this)+1;
+		} else {
+			return 1;
+		}
 	}
 
 	/**
@@ -4264,7 +4277,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 			while (contentList.hasNext(ctx)) {
 				IContentVisualComponent comp = contentList.next(ctx);
 				if (comp.getType() == DateComponent.TYPE) {
-					if (((DateComponent) comp).getStyle(ctx).equals(DateComponent.NOT_VISIBLE_TYPE)) {
+					if (((DateComponent) comp).getComponentCssClass(ctx).equals(DateComponent.NOT_VISIBLE_TYPE)) {
 						desc.contentDateVisible = false;
 					}
 				}

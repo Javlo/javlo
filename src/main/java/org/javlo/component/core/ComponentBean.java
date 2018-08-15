@@ -39,6 +39,7 @@ public class ComponentBean implements Serializable, Comparable<ComponentBean> {
 	private String backgroundColor = null;
 	private String textColor = null;
 	private ComponentLayout layout = null;
+	private String manualCssClass = null; 
 
 	private boolean repeat = false;
 	private boolean modify = false;
@@ -301,6 +302,14 @@ public class ComponentBean implements Serializable, Comparable<ComponentBean> {
 		ComponentBean c = new ComponentBean("sldkj","l", "d");
 		ComponentBean c2 = new ComponentBean();
 		System.out.println(">>>>>>>>> ComponentBean.main : instance = "+ComponentBean.INSTANCE); //TODO: remove debug trace
+	}
+
+	public String getManualCssClass() {
+		return manualCssClass;
+	}
+
+	public void setManualCssClass(String manualCssClass) {
+		this.manualCssClass = manualCssClass;
 	}
 
 }

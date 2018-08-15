@@ -178,7 +178,7 @@ body.edit-preview, body.preview-only {
 	user-select: none;
 }
 
-._page_associate {
+body.edit-preview ._page_associate {
 	border-bottom: 2px #3333ef dotted;
 	overflow: hidden;
 }

@@ -27,7 +27,7 @@ public class DefaultLgExpandMacro extends AbstractMacro {
 
 			if (srcComp.getFileName().equals(trgComp.getFileName())) {
 				trgComp.setLink(srcComp.getLink());
-				trgComp.setStyle(ctx, srcComp.getStyle(ctx));
+				trgComp.setStyle(ctx, srcComp.getComponentCssClass(ctx));
 				return true;
 			}
 		}

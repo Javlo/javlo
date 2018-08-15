@@ -131,7 +131,7 @@ public class SmartExternalLinkImportation extends AbstractVisualComponent {
 		// the next SmartExternalLink is insered just before the first
 		// SmartExternalLink, at the end of list of comp if not found.
 
-		boolean highPriority = STYLE_PRIORITY.equals(getStyle(ctx));
+		boolean highPriority = STYLE_PRIORITY.equals(getComponentCssClass(ctx));
 
 		if (components.length > 0) {
 			comp = components[0];
@@ -152,7 +152,7 @@ public class SmartExternalLinkImportation extends AbstractVisualComponent {
 			String pageContent = getValue();
 			List<URL> extLinks = NetHelper.getExternalLinks(pageContent);
 			for (URL url : extLinks) {
-				parentId = currentPage.prepareAddContent(ctx.getRequestContentLanguage(), parentId, SmartExternalLink.TYPE, getStyle(ctx), ComplexPropertiesLink.LINK_KEY + "=" + url, ctx.getCurrentEditUser());
+				parentId = currentPage.prepareAddContent(ctx.getRequestContentLanguage(), parentId, SmartExternalLink.TYPE, getComponentCssClass(ctx), ComplexPropertiesLink.LINK_KEY + "=" + url, ctx.getCurrentEditUser());
 				countImport++;
 			}
 		} else {
@@ -171,7 +171,7 @@ public class SmartExternalLinkImportation extends AbstractVisualComponent {
 				List<URL> extLinks = StringHelper.searchLinks(pageContent);
 				logger.info("links found : "+extLinks.size());
 				for (URL url : extLinks) {
-					parentId = currentPage.prepareAddContent(ctx.getRequestContentLanguage(), parentId, SmartExternalLink.TYPE, getStyle(ctx), ComplexPropertiesLink.LINK_KEY + "=" + url, ctx.getCurrentEditUser());
+					parentId = currentPage.prepareAddContent(ctx.getRequestContentLanguage(), parentId, SmartExternalLink.TYPE, getComponentCssClass(ctx), ComplexPropertiesLink.LINK_KEY + "=" + url, ctx.getCurrentEditUser());
 				}				
 				countImport++;
 				} else {

@@ -4,7 +4,6 @@
 package org.javlo.service;
 
 import java.io.PrintStream;
-import java.lang.ref.WeakReference;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -408,6 +407,21 @@ public class ContentService implements IPrintInfo {
 			}
 			for (String delKey : toBeDeleted) {
 				previewGlobalMap.remove(delKey);
+			}
+		}
+	}
+	
+	public String getPreviewAttribute(String key) {
+		if (previewGlobalMap == null) {
+			return null;
+		}
+		return previewGlobalMap.get(key);
+	}
+	
+	public void removePreviewAttributes(Collection<Object> keys) {
+		if (previewGlobalMap != null) {
+			for (Iterator<Object> ite = keys.iterator(); ite.hasNext();) {
+					previewGlobalMap.remove(ite.next());
 			}
 		}
 	}
@@ -876,6 +890,10 @@ public class ContentService implements IPrintInfo {
 				previewGlobalMap.put(key, value);
 			}
 		}
+	}
+	
+	public Collection<String> getPreviewKeys() {
+		return previewGlobalMap.keySet();
 	}
 
 	public void setCachedComponent(ContentContext ctx, IContentVisualComponent comp) throws Exception {

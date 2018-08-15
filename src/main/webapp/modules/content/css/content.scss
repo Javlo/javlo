@@ -510,12 +510,11 @@ li.line {
 	width: 98%;
 }
 
-.dynamic-component hr {
-	display: none;
+.components hr {
     height: 1px;
-    border: 0;
-    border-top: 1px solid #cccccc;
-    margin: 0 0 1em 0;
+    border: 0 none;
+    background-color: #dddddd;
+    margin: 1em 0;
     padding: 0;	
 }
 

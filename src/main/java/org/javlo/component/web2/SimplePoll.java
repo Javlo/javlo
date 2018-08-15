@@ -153,7 +153,7 @@ public class SimplePoll extends AbstractVisualComponent implements IAction {
 		for (String response : responses) {
 			String id = "id_" + StringHelper.getRandomId();
 			double vote;
-			if (!getStyle(ctx).equalsIgnoreCase(INTERACTIVE)) {
+			if (!getComponentCssClass(ctx).equalsIgnoreCase(INTERACTIVE)) {
 				vote = Integer.parseInt(results.next());
 			} else {
 				vote = getVotes(ctx, "" + index);
@@ -314,7 +314,7 @@ public class SimplePoll extends AbstractVisualComponent implements IAction {
 
 		out.println("<form class=\"standard-form\" id=\"poll-" + getId() + "\" method=\"post\">");
 		String cssClass = "";
-		if (allReadyVoted(ctx, true) || !getStyle(ctx).equalsIgnoreCase(INTERACTIVE)) {
+		if (allReadyVoted(ctx, true) || !getComponentCssClass(ctx).equalsIgnoreCase(INTERACTIVE)) {
 			cssClass = " class=\"result\"";
 		}
 		out.println("<fieldset" + cssClass + ">");
@@ -324,7 +324,7 @@ public class SimplePoll extends AbstractVisualComponent implements IAction {
 		out.println("<label for=\"" + fakeFieldId + "\">stay empty</label>");
 		out.println("<input id=\"" + fakeFieldId + "\" type=\"text\" name=\"__email\" value=\"\" />");
 		out.println("</div>");
-		if (!allReadyVoted(ctx, true) && getStyle(ctx).equalsIgnoreCase(INTERACTIVE)) {
+		if (!allReadyVoted(ctx, true) && getComponentCssClass(ctx).equalsIgnoreCase(INTERACTIVE)) {
 			out.println("<input type=\"hidden\" name=\"webaction\" value=\"poll.vote\" />");
 			out.println("<input type=\"hidden\" name=\"comp-id\" value=\"" + getId() + "\" />");
 			List<String> responses = StringHelper.textToList(getResponses());
@@ -382,7 +382,7 @@ public class SimplePoll extends AbstractVisualComponent implements IAction {
 	}
 
 	protected synchronized int getVotesCount(ContentContext ctx) throws IOException {
-		if (!getStyle(ctx).equalsIgnoreCase(INTERACTIVE)) {
+		if (!getComponentCssClass(ctx).equalsIgnoreCase(INTERACTIVE)) {
 			Iterator<String> results = StringHelper.textToList(getResult()).iterator();
 			int intValue = 0;
 			while (results.hasNext()) {
@@ -412,7 +412,7 @@ public class SimplePoll extends AbstractVisualComponent implements IAction {
 	@Override
 	protected void onStyleChange(ContentContext ctx) {
 		try {
-			if (getStyle(ctx).equalsIgnoreCase(INTERACTIVE)) {
+			if (getComponentCssClass(ctx).equalsIgnoreCase(INTERACTIVE)) {
 				List<String> responses = StringHelper.textToList(getResponses());
 				if (getResult().trim().length() > 0) {
 					List<String> results = StringHelper.textToList(getResult());
@@ -486,7 +486,7 @@ public class SimplePoll extends AbstractVisualComponent implements IAction {
 
 	@Override
 	public boolean isContentCachable(ContentContext ctx) {
-		return !getStyle(ctx).equals(INTERACTIVE);
+		return !getComponentCssClass(ctx).equals(INTERACTIVE);
 	}
 	
 	@Override

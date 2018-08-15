@@ -402,7 +402,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		int backDay = 9999; /*
 							 * infinity back if no back day defined (all news included)
 							 */
-		String style = getStyle(ctx);
+		String style = getComponentCssClass(ctx);
 		if (style.equals(STAY_1D)) {
 			backDay = 1;
 		} else if (style.equals(STAY_3D)) {
@@ -431,7 +431,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		int backDay = 9999; /*
 							 * infinity back if no back day defined (all news included)
 							 */
-		String style = getStyle(ctx);
+		String style = getComponentCssClass(ctx);
 		if (style.equals(STAY_1D)) {
 			backDay = 1;
 		} else if (style.equals(STAY_3D)) {
@@ -472,7 +472,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 	}
 
 	public String getCSSClassName(ContentContext ctx) {
-		return getStyle(ctx);
+		return getComponentCssClass(ctx);
 	}
 
 	protected String getDefaultSelectedInputName() {
@@ -945,7 +945,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		} else if (isPopularityOrder(ctx)) {
 			specialClass = " popularity-order" + specialClass;
 		}
-		return "<div " + getSpecialPreviewCssClass(ctx, "page-reference" + specialClass + ' ' + getStyle(ctx)) + getSpecialPreviewCssId(ctx) + ">";
+		return "<div " + getSpecialPreviewCssClass(ctx, "page-reference" + specialClass + ' ' + getComponentCssClass(ctx)) + getSpecialPreviewCssId(ctx) + ">";
 	}
 
 	protected String getReverseOrderInput() {

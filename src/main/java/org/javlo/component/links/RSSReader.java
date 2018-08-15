@@ -400,15 +400,15 @@ public class RSSReader extends ComplexPropertiesLink {
 	@Override
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
 		if (contentThread == null) {
-			contentThread = new ReadRSSThread(this, TimeHelper.getDefaultDateFormat(ctx), getRule(), getStyle(ctx));
+			contentThread = new ReadRSSThread(this, TimeHelper.getDefaultDateFormat(ctx), getRule(), getComponentCssClass(ctx));
 		}
 		synchronized (lockCreationThread) {
 			if (cachedContent != null && !contentThread.isRunning()) {
-				contentThread = new ReadRSSThread(this, TimeHelper.getDefaultDateFormat(ctx), getRule(), getStyle(ctx));
+				contentThread = new ReadRSSThread(this, TimeHelper.getDefaultDateFormat(ctx), getRule(), getComponentCssClass(ctx));
 				contentThread.start();
 			} else {
 				GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-				cachedContent = getRSSContent(new SimpleDateFormat(globalContext.getMediumDateFormat(), new Locale(ctx.getRequestContentLanguage())), getRule(), getStyle(ctx));
+				cachedContent = getRSSContent(new SimpleDateFormat(globalContext.getMediumDateFormat(), new Locale(ctx.getRequestContentLanguage())), getRule(), getComponentCssClass(ctx));
 			}
 		}
 		return cachedContent;
@@ -432,8 +432,8 @@ public class RSSReader extends ComplexPropertiesLink {
 			properties.load(stringToStream(getValue()));
 
 			// legacy: get rule from former style
-			if (Arrays.asList(getRuleList(newContext)).contains(getStyle(newContext))) {
-				properties.setProperty(RULE_KEY, getStyle(newContext));
+			if (Arrays.asList(getRuleList(newContext)).contains(getComponentCssClass(newContext))) {
+				properties.setProperty(RULE_KEY, getComponentCssClass(newContext));
 				setStyle(newContext, null);
 			}
 		} else {

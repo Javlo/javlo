@@ -1,6 +1,5 @@
 package org.javlo.navigation;
 
-import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
@@ -25,6 +24,7 @@ import org.javlo.i18n.I18nAccess;
 import org.javlo.image.ExtendedColor;
 import org.javlo.rendering.Device;
 import org.javlo.template.Template;
+import org.javlo.template.TemplateData;
 import org.javlo.utils.ConfigurationProperties;
 
 public class DefaultTemplate extends Template {
@@ -303,7 +303,7 @@ public class DefaultTemplate extends Template {
 	public boolean isSubjectLocked() {
 		return false;
 	}
-
+	
 	@Override
 	public boolean visibleForRoles(Collection<String> inRoles) {
 		return false;
@@ -334,7 +334,7 @@ public class DefaultTemplate extends Template {
 	}
 
 	@Override
-	protected void importTemplateInWebapp(StaticConfig config, ContentContext ctx, GlobalContext globalContext, File templateTarget, Map<String, String> childrenData, boolean compressResource, boolean parent) throws IOException {
+	protected void importTemplateInWebapp(StaticConfig config, ContentContext ctx, GlobalContext globalContext, File templateTarget, Map<String, String> childrenData, boolean compressResource, boolean parent, File rawCss) throws IOException {
 		return;
 	}
 
@@ -370,6 +370,11 @@ public class DefaultTemplate extends Template {
 
 	@Override
 	public boolean isMailing() {
+		return false;
+	}
+	
+	@Override
+	public boolean isOnePage() {
 		return false;
 	}
 

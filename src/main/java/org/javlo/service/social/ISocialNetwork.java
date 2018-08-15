@@ -35,6 +35,11 @@ public interface ISocialNetwork {
 	public String getClientId();
 	
 	public void setClientId(String client);
+	
+	public String getApiKey();
+	
+	public void setApiKey(String key);
+	
 
 	/**
 	 * update value with a map.
