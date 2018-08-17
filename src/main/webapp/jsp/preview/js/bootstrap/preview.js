@@ -16,8 +16,7 @@ if (!String.prototype.startsWith) {
 	}
 
 +function($,jQuery,pjq) {	
-	editPreview.uploadScreenshot = function(canvas) {	
-		console.log(canvas);
+	editPreview.uploadScreenshot = function(canvas) {
 		var img    = canvas.toDataURL("image/png");		
 		var ajaxURL = editPreview.addParam(currentURL,"webaction=ticket.upload");
 	    var fd=new FormData();

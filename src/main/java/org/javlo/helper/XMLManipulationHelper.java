@@ -1068,6 +1068,18 @@ public class XMLManipulationHelper {
 
 		return outString.toString();
 	}
+	
+//	private static String getTakeScreenShortCode(ContentContext ctx) {
+//		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+//		PrintStream out = new PrintStream(outStream);
+//		out.println("<script src=\\\"\"+URLHelper.createStaticURL(ctx,\"" + ctx.getGlobalContext().getStaticConfig().getHTML2Canvas() + "\")+\"\\\"></script>");
+//		out.println("<script>window.onload = function() {");
+//		out.println("html2canvas(document.querySelector('body')).then(canvas => {alert('screenshot');}','${url}'); editPreview.uploadScreenshot(canvas); });return false;")
+//		out.println("}</script>");
+//		out.close();
+//		return new String(outStream.toByteArray());
+//		
+//	}
 
 	private static String getHTMLSufixHead(StaticConfig staticConfig, Template template) throws IOException {
 

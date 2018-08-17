@@ -125,6 +125,8 @@ public class ContentContext {
 	private Boolean onlyArea = null;
 	
 	private boolean stopRendering = false;
+	
+	private boolean takeScreenShort = false;
 
 	private static ContentContext createContentContext(HttpServletRequest request, HttpServletResponse response, boolean free) {
 		ContentContext ctx = new ContentContext();
@@ -2218,5 +2220,13 @@ public class ContentContext {
 			onlyArea = request.getParameter("only-area") != null;
 		}
 		return onlyArea;
+	}
+
+	public boolean isTakeScreenShort() {
+		return takeScreenShort;
+	}
+
+	public void setTakeScreenShort(boolean takeScreenShort) {
+		this.takeScreenShort = takeScreenShort;
 	}
 }
