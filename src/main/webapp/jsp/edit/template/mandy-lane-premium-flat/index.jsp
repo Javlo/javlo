@@ -1,47 +1,54 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%><%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%><%@ taglib uri="/WEB-INF/javlo.tld" prefix="jv"%><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
-<c:if test="${contentContext.closePopup}">
-	<head>
+<head>
 <script type="text/javascript">
-	var url = top.location.href; // close iframe and refresh parent frame
-	var anchor = "";
-	<c:if test="${not empty contentContext.parentURL}">
-	url = "${contentContext.parentURL}";
-	if (url.indexOf('#') >= 0) {
-		anchor = url.substring(url.indexOf('#'));
-		url = url.substring(0, url.indexOf('#'));
-	}
-	</c:if>
-	<c:if test="${not empty messages.rawGlobalMessage}">
-	if (url.indexOf("?") >= 0) {
-		url = url + "&${messages.parameterName}=${messages.rawGlobalMessage}";
-	} else {
-		url = url + "?${messages.parameterName}=${messages.rawGlobalMessage}";
-	}
-	</c:if>
-	if (url != null) {
-		var doc = top.document.documentElement, body = top.document.body;
-		var topScroll = (doc && doc.scrollTop || body && body.scrollTop || 0);
-		if (topScroll > 0) {
+	function closePopup() {
+		var url = top.location.href; // close iframe and refresh parent frame
+		var anchor = "";
+		<c:if test="${not empty contentContext.parentURL}">
+		url = "${contentContext.parentURL}";
+		if (url.indexOf('#') >= 0) {
+			anchor = url.substring(url.indexOf('#'));
+			url = url.substring(0, url.indexOf('#'));
+		}
+		</c:if>
+		<c:if test="${not empty messages.rawGlobalMessage}">
+		if (url.indexOf("?") >= 0) {
+			url = url + "&${messages.parameterName}=${messages.rawGlobalMessage}";
+		} else {
+			url = url + "?${messages.parameterName}=${messages.rawGlobalMessage}";
+		}
+		</c:if>
+		if (url != null) {
+			var doc = top.document.documentElement, body = top.document.body;
+			var topScroll = (doc && doc.scrollTop || body && body.scrollTop || 0);
+			if (topScroll > 0) {
+				var sep = "?";
+				if (url.indexOf("?") >= 0) {
+					sep = "&";
+				}
+				url = url + sep + "_scrollTo=" + topScroll;
+				
+			}
 			var sep = "?";
 			if (url.indexOf("?") >= 0) {
 				sep = "&";
 			}
-			url = url + sep + "_scrollTo=" + topScroll;
-			
+			url = url + sep+"__ts="+Date.now();
+			top.location.href = url+anchor; // close iframe and refresh parent frame
 		}
-		var sep = "?";
-		if (url.indexOf("?") >= 0) {
-			sep = "&";
-		}
-		url = url + sep+"__ts="+Date.now();
-		top.location.href = url+anchor; // close iframe and refresh parent frame
-	}
+	}	
+</script>
+<c:if test="${contentContext.closePopup}">	
+<script type="text/javascript">
+	closePopup();
 </script>
 <c:if test="${not empty contentContext.globalContext.staticConfig.htmlHead}">${contentContext.globalContext.staticConfig.htmlHead}</c:if>
-	</head>
-	<body></body>
+	
+	
 </c:if>
+</head>
+<c:if test="${contentContext.closePopup}"><body></body></c:if>
 <c:if test="${!contentContext.closePopup}">
 
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />

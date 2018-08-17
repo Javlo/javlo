@@ -175,16 +175,18 @@ public class AdminAction extends AbstractModuleAction {
 		private String cookiesPolicyUrl = null;
 		
 		private String specialConfig = "";
+		private boolean screenshot = false;
+		private String screenshotUrl = null;
 		
 		
 		private boolean reversedlink;
 
 		private TemplateData templateData = null;
 
-		public GlobalContextBean(GlobalContext globalContext, HttpSession session) throws NoSuchMethodException, ClassNotFoundException, IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException {
+		public GlobalContextBean(ContentContext ctx, GlobalContext globalContext, HttpSession session) throws NoSuchMethodException, ClassNotFoundException, IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException {
 			if (globalContext == null) {
 				return;
-			}
+			}			
 			setKey(globalContext.getContextKey());
 			setFolder(globalContext.getFolder());
 			setAdministrator(globalContext.getAdministrator());
@@ -273,6 +275,9 @@ public class AdminAction extends AbstractModuleAction {
 			setForcedHttps(globalContext.isForcedHttps());
 			setCookies(globalContext.isCookies());
 			setCookiesPolicyUrl(globalContext.getCookiesPolicyUrl());
+			
+			setScreenshot(globalContext.isScreenshot(ctx));
+			setScreenshotUrl(globalContext.getScreenshortUrl(ctx));
 			
 			try {
 				setSpecialConfig(ResourceHelper.loadStringFromFile(globalContext.getSpecialConfigFile()));
@@ -949,6 +954,22 @@ public class AdminAction extends AbstractModuleAction {
 			this.googleApiKey = googleApiKey;
 		}
 
+		public boolean isScreenshot() {
+			return screenshot;
+		}
+
+		public void setScreenshot(boolean screenshot) {
+			this.screenshot = screenshot;
+		}
+
+		public String getScreenshotUrl() {
+			return screenshotUrl;
+		}
+
+		public void setScreenshotUrl(String screenshotUrl) {
+			this.screenshotUrl = screenshotUrl;
+		}
+
 	}
 
 	public static class ComponentBean {
@@ -1043,10 +1064,10 @@ public class AdminAction extends AbstractModuleAction {
 			Collection<GlobalContext> allContext = GlobalContextFactory.getAllGlobalContext(request.getSession().getServletContext());
 			Map<String, GlobalContextBean> masterCtx = new HashMap<String, AdminAction.GlobalContextBean>();
 			for (GlobalContext context : allContext) {
-				logger.info("load context : "+context.getContextKey());
+				logger.fine("load context : "+context.getContextKey());
 				if (ctx.getCurrentEditUser() != null) {
 					if (adminUserSecurity.isAdmin(ctx.getCurrentEditUser()) || context.getUsersAccess().contains(ctx.getCurrentEditUser().getLogin())) {
-						GlobalContextBean contextBean = new GlobalContextBean(context, ctx.getRequest().getSession());
+						GlobalContextBean contextBean = new GlobalContextBean(ctx, context, ctx.getRequest().getSession());
 						ctxAllBean.add(contextBean);
 						if (context.getAliasOf() == null || context.getAliasOf().length() == 0) {
 							masterCtx.put(context.getContextKey(), contextBean);
@@ -1083,7 +1104,7 @@ public class AdminAction extends AbstractModuleAction {
 				currentGlobalContext = globalContext;
 				request.setAttribute("context", currentGlobalContext.getContextKey());
 			}
-			request.setAttribute("currentContext", new GlobalContextBean(currentGlobalContext, request.getSession()));
+			request.setAttribute("currentContext", new GlobalContextBean(ctx, currentGlobalContext, request.getSession()));
 			if (currentGlobalContext != null) {
 				List<Template> templates = TemplateFactory.getAllTemplates(request.getSession().getServletContext());
 				Collections.sort(templates);
@@ -1162,6 +1183,11 @@ public class AdminAction extends AbstractModuleAction {
 					selectedMacros.put(selected, StringHelper.SOMETHING);
 				}				
 				request.setAttribute("selectedMacros", selectedMacros);
+				
+				Map<String,String> screenshortParam = new HashMap<String, String>();
+				screenshortParam.put(ContentContext.TAKE_SCREENSHOT, "true");
+				ctx.getRequest().setAttribute("takeSreenshotUrl", URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE), screenshortParam));
+						
 
 				/** template plugin **/
 				ctx.getRequest().setAttribute("templatePlugins", TemplatePluginFactory.getInstance(application).getAllTemplatePlugin());

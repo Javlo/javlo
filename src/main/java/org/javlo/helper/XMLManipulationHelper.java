@@ -389,10 +389,10 @@ public class XMLManipulationHelper {
 						String cssClass = StringHelper.neverNull(tags[i].getAttributes().get("class"));
 						tags[i].getAttributes().put("class", (cssClass + " _area").trim() + checkEmptyArea);
 						String style = StringHelper.neverNull(tags[i].getAttributes().get("style")).trim();
-						if (!style.endsWith(";") && style.length()>0) {
+						if (!style.endsWith(";") && style.length() > 0) {
 							style = style + ';';
 						}
-						style+="<%if (currentPage.getImageBackgroundForArea(ctx).get(\""+area+"\") != null){%>background-image:url('<%=URLHelper.createFileURL(ctx,currentPage.getImageBackgroundForArea(ctx).get(\""+area+"\").getResourceURL(ctx))%>');<%}%>";
+						style += "<%if (currentPage.getImageBackgroundForArea(ctx).get(\"" + area + "\") != null){%>background-image:url('<%=URLHelper.createFileURL(ctx,currentPage.getImageBackgroundForArea(ctx).get(\"" + area + "\").getResourceURL(ctx))%>');<%}%>";
 						tags[i].getAttributes().put("style", style);
 						remplacement.addReplacement(tags[i].getOpenStart(), tags[i].getOpenEnd() + 1, tags[i].renderOpen());
 					} else if (idValue != null && areaContainer != null && idValue.trim().equals(areaContainer)) {
@@ -529,25 +529,25 @@ public class XMLManipulationHelper {
 					String openBodyCode = "<c:if test=\"${not contentContext.pageAssociation}\">" + renderBodyAsBody + "</c:if><c:if test=\"${contentContext.pageAssociation}\">" + renderBodyAsDiv + "</c:if>";
 					String closeBodyCode = "<c:if test=\"${not contentContext.pageAssociation}\">" + getGoogleAnalyticsCode() + "</body></c:if><c:if test=\"${contentContext.pageAssociation}\"></" + tag + "></c:if>";
 					remplacement.addReplacement(tags[i].getOpenStart(), tags[i].getOpenEnd() + 1, "</c:if>" + openBodyCode + openPageCode);
-					remplacement.addReplacement(tags[i].getCloseStart(), tags[i].getCloseEnd() + 1, closePageCode+closeBodyCode+"<c:if test=\"${not contentContext.pageAssociation}\">");
+					remplacement.addReplacement(tags[i].getCloseStart(), tags[i].getCloseEnd() + 1, closePageCode + closeBodyCode + "<c:if test=\"${not contentContext.pageAssociation}\">");
 
 					String previewCode = "<c:if test=\"${not contentContext.pageAssociation}\">" + getPreviewCode(globalContext.getServletContext()) + "</c:if>";
 					// remplacement.addReplacement(tags[i].getOpenEnd() + 1,
 					// tags[i].getOpenEnd() + 1, previewCode +
 					// getEscapeMenu(contentZone) + getResetTemplate() +
 					// getAfterBodyCode());
-					
+
 					String targetEscapeMenu = template.getEscapeMenuId();
 					if (targetEscapeMenu == null) {
 						targetEscapeMenu = contentZone;
 					}
-					
+
 					remplacement.addReplacement(tags[i].getOpenEnd() + 1, tags[i].getOpenEnd() + 1, "<%=ctx.getGlobalContext().getHeaderBloc()%>" + getEscapeMenu(targetEscapeMenu) + getResetTemplate() + getAfterBodyCode());
 					if (isMail && globalContext.getStaticConfig().isMailingUserTracking()) {
 						previewCode = previewCode + "<%Map mParams = new HashMap();mParams.put(MailingAction.MAILING_FEEDBACK_PARAM_NAME, MailingAction.MAILING_FEEDBACK_VALUE_NAME);%><img class=\"empty_image\" style=\"height: 0; width: 0; margin:0; padding: 0;\" width=\"0\" height=\"0\" src=\"<%=URLHelper.createStaticURL(ctx, \"/mfb.png\", mParams)%>\" /> ";
-					}					
-					String footerResourceIndlue = StringHelper.neverNull(fontIncluding)+"<!-- comp resources --><%for (String uri : currentPage.getExternalResources(ctx)) {%><%=XHTMLHelper.renderHeaderResourceInsertion(ctx, uri)%><%}%>";
-					remplacement.addReplacement(tags[i].getCloseStart() - 1, tags[i].getCloseStart() - 1, footerResourceIndlue+"<%=ctx.getGlobalContext().getFooterBloc()%>" + previewCode);
+					}
+					String footerResourceIndlue = StringHelper.neverNull(fontIncluding) + "<!-- comp resources --><%for (String uri : currentPage.getExternalResources(ctx)) {%><%=XHTMLHelper.renderHeaderResourceInsertion(ctx, uri)%><%}%>";
+					remplacement.addReplacement(tags[i].getCloseStart() - 1, tags[i].getCloseStart() - 1, footerResourceIndlue + "<%=ctx.getGlobalContext().getFooterBloc()%>" + previewCode);
 				}
 
 				/* link - StyleSheet */
@@ -702,7 +702,7 @@ public class XMLManipulationHelper {
 					/** forward **/
 					out.println("if (!StringHelper.isEmpty(currentPage.getForward(ctx))) {%><!--FRW--><meta http-equiv=\"refresh\" content=\"0; url=<%=currentPage.getForward(ctx)%>\" /><%}%>");
 					out.println("<%=ctx.getGlobalContext().getMetaBloc()%>");
-					
+
 					out.print("<%if (currentPage.getMetaHead(ctx) != null) {%>");
 					out.print("<%=currentPage.getMetaHead(ctx)%>");
 					out.println("<%}%>");
@@ -992,6 +992,8 @@ public class XMLManipulationHelper {
 		out.append("<%if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE) {%>");
 		out.append("<style type=\"text/css\">@font-face {font-family: \"javloFont\"; src: url('${info.staticRootURL}fonts/javlo-italic.ttf') format(\"truetype\");}</style>");
 		out.append("<%}%>");
+		
+		out.append(getTakeScreenShortCode(globalContext));
 
 		out.append("<%if (ctx.getRenderMode() != ContentContext.PAGE_MODE) {%>");
 		out.newLine();
@@ -1036,7 +1038,7 @@ public class XMLManipulationHelper {
 		out.append("<meta name=\"ROBOTS\" content=\"NONE\" />");
 		out.append("<%}%>");
 		out.newLine();
-		
+
 		out.append("<%if (ctx.isInteractiveMode()) {%>");
 		out.newLine();
 		if (globalContext.getStaticConfig().getJSLibPreview() == null) {
@@ -1068,18 +1070,31 @@ public class XMLManipulationHelper {
 
 		return outString.toString();
 	}
-	
-//	private static String getTakeScreenShortCode(ContentContext ctx) {
-//		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-//		PrintStream out = new PrintStream(outStream);
-//		out.println("<script src=\\\"\"+URLHelper.createStaticURL(ctx,\"" + ctx.getGlobalContext().getStaticConfig().getHTML2Canvas() + "\")+\"\\\"></script>");
-//		out.println("<script>window.onload = function() {");
-//		out.println("html2canvas(document.querySelector('body')).then(canvas => {alert('screenshot');}','${url}'); editPreview.uploadScreenshot(canvas); });return false;")
-//		out.println("}</script>");
-//		out.close();
-//		return new String(outStream.toByteArray());
-//		
-//	}
+
+	private static String getTakeScreenShortCode(GlobalContext globalContext) {
+		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+		PrintStream out = new PrintStream(outStream);
+		out.println("<%if (ctx.isTakeScreenShort()) {%><script src=\"<%=URLHelper.createStaticURL(ctx,\""+globalContext.getStaticConfig().getHTML2Canvas()+"\")%>\"></script>");
+		out.println("<script>");
+		out.println("__uploadScreenshot = function(canvas) {");
+		out.println("var img    = canvas.toDataURL('image/png');");
+		out.println("var ajaxURL = server+'?webaction=data.uploadscreenshot';");
+		out.println("var fd=new FormData();");
+		out.println("var fieldName = 'screenshot';");
+		out.println("var blob = new Blob([img], {type: 'image/png'});");
+		out.println("fd.append(fieldName,blob);");
+		out.println("var request = new XMLHttpRequest();"); 
+		out.println("request.open(\"POST\", ajaxURL);"); 
+		out.println("request.send(fd);");
+		out.println("window.close();");
+		out.println("return false;");
+		out.println("}");
+		out.println("window.onload = function() { setTimeout(function() { html2canvas(document.querySelector('body')).then(canvas => {__uploadScreenshot(canvas)})}, 3000)}");
+		out.println("</script><%}%>");
+		out.close();
+		return new String(outStream.toByteArray());
+
+	}
 
 	private static String getHTMLSufixHead(StaticConfig staticConfig, Template template) throws IOException {
 
@@ -1141,7 +1156,7 @@ public class XMLManipulationHelper {
 		out.append("<%}%>");
 		out.newLine();
 		out.append("<%if (currentPage.getHeaderContent(ctx) != null) {%><%=currentPage.getHeaderContent(ctx)%><%}%>");
-		
+
 		out.close();
 
 		return outString.toString();

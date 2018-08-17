@@ -57,6 +57,8 @@ public class ContentContext {
 	private static final String HOST_DEFINED_SITE = "____host-defined-site";
 
 	private static final String FORCE_PATH_PREFIX = "____force-path-prefix";
+	
+	public static final String TAKE_SCREENSHOT = "____screenshot";
 
 	private static final String FORCE_SPECIAL_RENDERER = "forced-renderer";
 
@@ -126,7 +128,7 @@ public class ContentContext {
 	
 	private boolean stopRendering = false;
 	
-	private boolean takeScreenShort = false;
+	private boolean takeScreenShort = true;
 
 	private static ContentContext createContentContext(HttpServletRequest request, HttpServletResponse response, boolean free) {
 		ContentContext ctx = new ContentContext();
@@ -2223,10 +2225,7 @@ public class ContentContext {
 	}
 
 	public boolean isTakeScreenShort() {
-		return takeScreenShort;
+		return StringHelper.isTrue(request.getParameter(TAKE_SCREENSHOT));
 	}
-
-	public void setTakeScreenShort(boolean takeScreenShort) {
-		this.takeScreenShort = takeScreenShort;
-	}
+	
 }

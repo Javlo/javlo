@@ -1,5 +1,7 @@
 package org.javlo.actions;
 
+import java.awt.Color;
+import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
@@ -21,6 +23,7 @@ import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -57,11 +60,13 @@ import org.javlo.helper.URLHelper;
 import org.javlo.helper.importation.ImportConfigBean;
 import org.javlo.helper.importation.TanukiImportTools;
 import org.javlo.i18n.I18nAccess;
+import org.javlo.image.ImageEngine;
 import org.javlo.macro.interactive.ImportJCRPageMacro;
 import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
 import org.javlo.module.content.Edit;
 import org.javlo.module.ticket.TicketAction;
+import org.javlo.module.ticket.TicketService;
 import org.javlo.navigation.MenuElement;
 import org.javlo.navigation.PageAssociationBean;
 import org.javlo.service.ContentService;
@@ -99,8 +104,8 @@ public class DataAction implements IAction {
 	}
 
 	/**
-	 * get the list of modification. option for request : markread=true, mark
-	 * all notification returned as read. this method need user logger.
+	 * get the list of modification. option for request : markread=true, mark all
+	 * notification returned as read. this method need user logger.
 	 * 
 	 * @return
 	 * @throws ParseException
@@ -629,19 +634,19 @@ public class DataAction implements IAction {
 										ResourceHelper.closeResource(zip);
 									}
 								}
-								if (isStaticHTML) {									
+								if (isStaticHTML) {
 									resourceRelativeFolder = URLHelper.mergePath(gc.getStaticConfig().getStaticFolder(), ctx.getGlobalContext().getStaticConfig().getImportVFSFolder(), importFolder);
 									targetFolder = new File(URLHelper.mergePath(gc.getDataFolder(), resourceRelativeFolder));
 									File vfsFile = new File(URLHelper.mergePath(targetFolder.getAbsolutePath(), newFile.getName()));
 									if (vfsFile.exists()) {
 										vfsFile.delete();
-									}									
+									}
 									FileUtils.moveFile(newFile, vfsFile);
 								}
 							}
 
 							ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-							PrintStream out = new PrintStream(outStream);							
+							PrintStream out = new PrintStream(outStream);
 							out.println("dir=" + dir);
 							out.println("file-name=" + StringHelper.getFileNameFromPath(newFile.getName()));
 							out.close();
@@ -802,7 +807,23 @@ public class DataAction implements IAction {
 		ctx.getAjaxData().put("exist", exist);
 		return null;
 	}
-	
+
+	public static String performUploadscreenshot(RequestService rs, ContentContext ctx, GlobalContext globalContext, User user, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
+		if (ctx.getCurrentEditUser() != null) {
+			File imageFile = globalContext.getScreenshotFile(ctx);
+			imageFile.getParentFile().mkdirs();
+			imageFile.createNewFile();
+			for (FileItem item : rs.getAllFileItem()) {
+				JavaScriptBlob blob = new JavaScriptBlob(new String(item.get()));
+				ResourceHelper.writeBytesToFile(imageFile, blob.getData());
+			}
+			BufferedImage img = ImageIO.read(imageFile);
+			img = ImageEngine.trim(img, Color.WHITE, 1);
+			ImageIO.write(img, "png", imageFile);		
+		}
+		return null;
+	}
+
 	@Override
 	public boolean haveRight(ContentContext ctx, String action) {
 		return true;

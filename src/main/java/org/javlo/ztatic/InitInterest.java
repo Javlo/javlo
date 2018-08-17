@@ -48,7 +48,7 @@ public class InitInterest {
 				if (action.file.exists()) {
 					BufferedImage img;
 					try {						
-						if (action.content.getAttribute(action.ctx, action.keyX).equals("" + StaticInfo.DEFAULT_FOCUS_X) && action.content.getAttribute(action.ctx, action.keyY).equals("" + StaticInfo.DEFAULT_FOCUS_Y)) {
+						if (("" + StaticInfo.DEFAULT_FOCUS_X).equals(action.content.getAttribute(action.ctx, action.keyX)) && ("" + StaticInfo.DEFAULT_FOCUS_Y).equals(action.content.getAttribute(action.ctx, action.keyY))) {
 							logger.info("search point of interest : "+action.file+" #todo:"+todo.size());
 							img = ImageIO.read(action.file);
 							Point point = getPointOfInterest(img);

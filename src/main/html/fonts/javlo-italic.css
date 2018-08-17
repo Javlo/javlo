@@ -1,4 +1,6 @@
 @font-face {
 	font-family: "javloFont";
-	src: url('http://static.javlo.org/fonts/javlo-italic.ttf') format("truetype");
+	font-style: normal;
+	font-weight: 400;
+	src: url('/fonts/javlo-italic.ttf') format("truetype");
 }

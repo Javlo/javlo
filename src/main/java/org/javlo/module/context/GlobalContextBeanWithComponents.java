@@ -140,7 +140,7 @@ public class GlobalContextBeanWithComponents extends GlobalContextBean {
 	}
 
 	public GlobalContextBeanWithComponents(ContentContext ctx, HttpSession session) throws Exception {
-		super(ctx.getGlobalContext(), session);
+		super(ctx, ctx.getGlobalContext(), session);
 		GlobalContext globalContext = ctx.getGlobalContext();
 		ContentService content = ContentService.getInstance(globalContext);
 		

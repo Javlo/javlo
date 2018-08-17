@@ -142,6 +142,8 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	private static final IURLFactory NO_URL_FACTORY = new NoURLFactory();
 	
 	private final String INSTANCE_ID = StringHelper.getLargeRandomIdBase64();
+	
+	public static final String SCREENSHOT_FILE_NAME = "screenshot.png";
 
 	public static final String POP_HOST_PARAM = "mail.pop.host";
 	public static final String POP_PORT_PARAM = "mail.pop.port";
@@ -4019,6 +4021,18 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public File getScreenshotFile(ContentContext ctx) {
+		return new File(URLHelper.mergePath(getStaticFolder(), SCREENSHOT_FILE_NAME));
+	}
+	
+	public boolean isScreenshot(ContentContext ctx) {
+		return getScreenshotFile(ctx).exists();
+	}
+	
+	public String getScreenshortUrl(ContentContext ctx) {
+		return URLHelper.addParam(URLHelper.createFileURL(ctx, URLHelper.mergePath(staticConfig.getStaticFolder(), SCREENSHOT_FILE_NAME)),"ts",""+getScreenshotFile(ctx).lastModified());
 	}
 
 	public TaxonomyServiceAgregation getAllTaxonomy(ContentContext ctx) throws IOException {

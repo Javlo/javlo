@@ -11,22 +11,28 @@
 	<fieldset>
 		<legend>${i18n.edit['admin.form.info']}</legend>
 		<div class="row">
-			<div class="col-sm-4">
+			<div class="col-sm-6">
 				<div class="form-group">
 					<label>${i18n.edit['global.name']}</label>
 					<span>${currentContext.key}</span>
-				</div>
-				</div><div class="col-sm-4">
+				</div>		
 					<div class="form-group">
 						<label>${i18n.edit['admin.form.size']}</label>
 						<span>${currentContext.size}</span>
+					</div><div class="form-group">		
+						<label for="global-title">${i18n.edit['admin.form.global-title']}</label>
+						<input class="form-control" type="text" id="global-title" name="global-title" value="${currentContext.globalTitle}" />	
 					</div>
-				</div><div class="col-sm-4">
-				<div class="form-group">		
-					<label for="global-title">${i18n.edit['admin.form.global-title']}</label>
-					<input class="form-control" type="text" id="global-title" name="global-title" value="${currentContext.globalTitle}" />	
+			</div><div class="col-sm-6">
+					<div class="screenshot">
+						<c:if test="${currentContext.screenshot}">
+							<a href="${currentContext.screenshotUrl}" target="_blank">
+								<img id="screenshot-img" src="${currentContext.screenshotUrl}" alt="screenshot" /><br />
+							</a>
+						</c:if>
+						<button class="btn btn-primary btn-sm" onclick="window.open('${takeSreenshotUrl}'); setTimeout(function() {closePopup()}, 3000); return false;">take a screenshot</button>
+					</div>
 				</div>
-			</div>
 		</div>
 	</fieldset>
 	<jsp:include page="graphic_charter.jsp" />
@@ -77,9 +83,6 @@
 	<label>${i18n.edit['admin.title.folder']}</label>
 	<span>${currentContext.folder}</span>
 </div>
-</div>
-
-<div class="col-sm-6">
 <div class="form-group">
 	<label>${i18n.edit['admin.form.size']}</label>
 	<span>${currentContext.size}</span>
@@ -89,6 +92,14 @@
 	<label for="global-title">${i18n.edit['admin.form.global-title']}</label>
 	<input class="form-control" type="text" id="global-title" name="global-title" value="${currentContext.globalTitle}" />	
 </div>
+</div>
+<div class="col-sm-6">
+	<div class="screenshot">
+		<c:if test="${currentContext.screenshot}">
+			<img id="screenshot-img" src="${currentContext.screenshotUrl}" alt="screenshot" /><br />
+		</c:if>
+		<button class="btn btn-primary btn-sm" onclick="window.open('${takeSreenshotUrl}'); return false;">take a screenshot</button>
+	</div>
 </div>
 </div>
 
