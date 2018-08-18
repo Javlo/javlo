@@ -689,8 +689,14 @@ public class XMLManipulationHelper {
 								if (!plugin.isActiveInEdition()) {
 									out.println("<%if (!ctx.isAsPreviewMode() || !EditContext.getInstance(globalContext, request.getSession()).isPreviewEditionMode()) {%>");
 								}
+								if (!plugin.isActiveOnScreenshot()) {
+									out.println("<%if (!StringHelper.isTrue(request.getParameter(\""+ContentContext.TAKE_SCREENSHOT+"\"))) {%>");
+								}
 								out.println(outHead);
 								if (!plugin.isActiveInEdition()) {
+									out.println("<%}%>");
+								}
+								if (!plugin.isActiveOnScreenshot()) {
 									out.println("<%}%>");
 								}
 							}

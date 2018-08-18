@@ -87,6 +87,11 @@ public class TemplatePlugin {
 	public boolean isActiveInEdition() {
 		return StringHelper.isTrue(config.get("active-edit"), true);
 	}
+	
+	public boolean isActiveOnScreenshot() {
+		return StringHelper.isTrue(config.get("active-screenshot"), false);
+	}
+
 
 	public void importInTemplate(ContentContext ctx, File templateFolder) throws IOException {		
 		if (!templateFolder.isDirectory()) {
