@@ -436,7 +436,7 @@ public class BeanHelper {
 
 	public static Object getProperty(Object bean, String property) {
 		try {
-			return (String) bean.getClass().getMethod("get" + WordUtils.capitalize(property), null).invoke(bean, null);
+			return ""+bean.getClass().getMethod("get" + WordUtils.capitalize(property), null).invoke(bean, null);
 		} catch (Exception e) {
 			return null;
 		}

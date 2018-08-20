@@ -40,14 +40,13 @@ public class PageBean implements Serializable {
 	/*
 	 * private PageDescription info; private String url; private String path;
 	 * private boolean selected = false; private boolean lastSelected = false;
-	 * private final List<PageBean> children = new LinkedList<PageBean>();
-	 * private final List<PageBean> realChildren = new LinkedList<PageBean>();
-	 * private String name = null; private String id = null; private String
-	 * latestEditor; private String creationDate; private String
-	 * modificationDate; private String templateId = null; private boolean
-	 * realContent = false; private Map<String, String> roles = new
-	 * HashMap<String, String>(); private Map<String, String> adminRoles = new
-	 * HashMap<String, String>();
+	 * private final List<PageBean> children = new LinkedList<PageBean>(); private
+	 * final List<PageBean> realChildren = new LinkedList<PageBean>(); private
+	 * String name = null; private String id = null; private String latestEditor;
+	 * private String creationDate; private String modificationDate; private String
+	 * templateId = null; private boolean realContent = false; private Map<String,
+	 * String> roles = new HashMap<String, String>(); private Map<String, String>
+	 * adminRoles = new HashMap<String, String>();
 	 */
 
 	public PageBean(ContentContext ctx, MenuElement page) {
@@ -111,7 +110,7 @@ public class PageBean implements Serializable {
 	public String getAbsoluteUrl() {
 		return URLHelper.createURL(ctx.getContextForAbsoluteURL(), page.getPath());
 	}
-	
+
 	public String getAbsoluteUrlEncoded() throws UnsupportedEncodingException {
 		return java.net.URLEncoder.encode(getAbsoluteUrl(), "UTF-8");
 	}
@@ -219,9 +218,9 @@ public class PageBean implements Serializable {
 			return null;
 		}
 	}
-	
+
 	public Date getModificationDateSource() throws ParseException, Exception {
-		return page.getModificationDate(ctx);		
+		return page.getModificationDate(ctx);
 	}
 
 	public String getContentDateValue() {
@@ -232,7 +231,7 @@ public class PageBean implements Serializable {
 			return null;
 		}
 	}
-	
+
 	public String getContentDateNeverNullValue() {
 		try {
 			return StringHelper.renderShortDate(ctx, page.getContentDateNeverNull(ctx));
@@ -376,7 +375,7 @@ public class PageBean implements Serializable {
 			return null;
 		}
 	}
-	
+
 	public ContactBean getContact() {
 		try {
 			return page.getContact(ctx);
@@ -479,7 +478,7 @@ public class PageBean implements Serializable {
 	}
 
 	public boolean isChildrenAssociation() {
-		return page.isChildrenAssociation();		
+		return page.isChildrenAssociation();
 	}
 
 	public boolean isChildrenOfAssociation() {
@@ -596,11 +595,11 @@ public class PageBean implements Serializable {
 	public void setContentContext(ContentContext ctx) {
 		this.ctx = ctx;
 	}
-	
+
 	public boolean isLinkRealContent() throws Exception {
 		return page.isLinkRealContent(ctx);
 	}
-	
+
 	public boolean isValid() {
 		if (!portail) {
 			return true;
@@ -608,21 +607,22 @@ public class PageBean implements Serializable {
 			return page.isValid();
 		}
 	}
-	
+
 	public boolean isNeedValidation() {
 		return page.isNeedValidation();
 	}
-	
+
 	public boolean isNoValidation() {
 		return page.isNoValidation();
 	}
-	
+
 	/**
 	 * get the next page in the navigation.
+	 * 
 	 * @return null if current page is the last page
-	 * @throws Exception 
+	 * @throws Exception
 	 */
-	public PageBean getNextPage() throws Exception {		
+	public PageBean getNextPage() throws Exception {
 		MenuElement parent = page.getParent();
 		if (parent != null) {
 			boolean pageFound = false;
@@ -635,34 +635,43 @@ public class PageBean implements Serializable {
 				}
 			}
 		}
-		
+
 		return null;
 	}
-	
+
 	public int getSiblingsSize() {
-		return getParent().getChildren().size();
+		if (getParent() != null) {
+			return getParent().getChildren().size();
+		} else {
+			return 1;
+		}
 	}
-	
+
 	public int getSiblingsPosition() {
-		if (page != null) {
-			int pos=0;
-			for (MenuElement p : getParent().page.getChildMenuElementsList()) {
-				pos++;
-				if (p.getId().equals(getId())) {
-					return pos;
+		if (getParent() != null) {
+			if (page != null) {
+				int pos = 0;
+				for (MenuElement p : getParent().page.getChildMenuElementsList()) {
+					pos++;
+					if (p.getId().equals(getId())) {
+						return pos;
+					}
 				}
-			}			
-		} 
+			}
+		} else {
+			return 1;
+		}
 		return -1;
 	}
-	
+
 	/**
 	 * get the next page in the navigation.
+	 * 
 	 * @return null if current page is the last page
 	 */
 	public PageBean getPreviousPage() {
 		if (getParent() != null) {
-			PageBean previousPage = null;			
+			PageBean previousPage = null;
 			for (PageBean page : getParent().getChildren()) {
 				if (page.getId().equals(getId())) {
 					return previousPage;
@@ -672,28 +681,30 @@ public class PageBean implements Serializable {
 		}
 		return null;
 	}
-	
+
 	/***
 	 * return the flow number of the page
+	 * 
 	 * @return 1: modified not ready, 2:ready for validation, 3:valided, 4:publish
 	 */
 	public int getFlowIndex() {
 		if (!portail || isNoValidation()) {
 			return 4;
-		}		
+		}
 		if (!isValid() && !isNeedValidation()) {
 			return 1;
 		} else if (!isValid() && isNeedValidation()) {
-			return 2;			
+			return 2;
 		} else if (isValid() && isNeedValidation()) {
-			return 3;			
-		}else {
+			return 3;
+		} else {
 			return 4;
 		}
 	}
-	
+
 	/**
 	 * current user can validated this page ?
+	 * 
 	 * @return
 	 */
 	public boolean isValidable() {
@@ -704,17 +715,17 @@ public class PageBean implements Serializable {
 			return userSecurity.canRole(ctx.getCurrentEditUser(), AdminUserSecurity.VALIDATION_ROLE);
 		}
 	}
-	
+
 	public boolean isReadAccess() {
 		return page.isReadAccess(ctx, ctx.getCurrentUser());
 	}
-	
+
 	public String getHtmlId() {
 		return page.getHtmlId(ctx);
 	}
-	
+
 	public int getIndex() {
 		return page.getIndex();
 	}
-	
+
 }

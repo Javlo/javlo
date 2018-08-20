@@ -544,7 +544,7 @@ public class TemplateAction extends AbstractModuleAction {
 		} else {
 			String templateName = rs.getParameter("templateid", null);
 			Template template = TemplateFactory.getDiskTemplate(ctx.getRequest().getSession().getServletContext(), templateName);
-			if (template == null) {
+			if (templateName != null && template == null) {
 				return "template not found : "+templateName;
 			} else {
 				if (ctx.getGlobalContext().isOpenPlatform()) {
@@ -553,7 +553,7 @@ public class TemplateAction extends AbstractModuleAction {
 				currentPage.setTemplateId(templateName);			
 				MailingModuleContext mailingCtx = MailingModuleContext.getInstance(ctx.getRequest());
 				mailingCtx.setCurrentTemplate(null);
-				if (!ctx.getGlobalContext().isMailingPlatform()) {
+				if (template != null && !ctx.getGlobalContext().isMailingPlatform()) {
 				if (template.isOnePage()) {
 					currentPage.setChildrenAssociation(true);
 				} else {

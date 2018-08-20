@@ -40,7 +40,12 @@ public class ListService {
 				}
 
 			}
-			return item1.getValue().compareTo(item2.getValue());
+			int compValue = item1.getValue().compareTo(item2.getValue());
+			if (compValue == 0) {
+				return item1.getKey().compareTo(item2.getKey());
+			} else {
+				return compValue;
+			}
 		}
 	}
 

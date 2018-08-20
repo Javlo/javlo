@@ -1420,7 +1420,7 @@ public class InfoBean {
 	public int getCurrentMonth() {
 		return Calendar.getInstance().get(Calendar.MONTH);
 	}
-
+ 
 	public String[] getMonths() {
 		String language = globalContext.getEditLanguage(ctx.getRequest().getSession());
 		return DateFormatSymbols.getInstance(new Locale(language)).getMonths();

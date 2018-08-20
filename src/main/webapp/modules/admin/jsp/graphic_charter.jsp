@@ -18,6 +18,7 @@
 <jsp:include page="template_data.jsp?name=link&value=${currentContext.templateData.link}&style=color" />
 <jsp:include page="template_data.jsp?name=componentBackground&value=${currentContext.templateData.componentBackground}&style=color" />
 <jsp:include page="template_data.jsp?name=special&value=${currentContext.templateData.special}&style=color" />
+<c:if test="${param.colorList}">
 <div class="row">	
 	<div class="col-xs-4">
 	<label>color list</label>
@@ -29,6 +30,8 @@
 		</div>
 	</div>	
 </div>
+</c:if>
+<c:if test="${param.colorMessages}">
 <h2>Message</h2>
 <jsp:include page="template_data.jsp?name=messagePrimary&value=${currentContext.templateData.messagePrimary}&style=color" />
 <jsp:include page="template_data.jsp?name=messageSecondary&value=${currentContext.templateData.messageSecondary}&style=color" />
@@ -36,11 +39,11 @@
 <jsp:include page="template_data.jsp?name=messageDanger&value=${currentContext.templateData.messageDanger}&style=color" />
 <jsp:include page="template_data.jsp?name=messageWarning&value=${currentContext.templateData.messageWarning}&style=color" />
 <jsp:include page="template_data.jsp?name=messageInfo&value=${currentContext.templateData.messageInfo}&style=color" />
-</div><div class="col-md-8">
-<div class="row"><div class="col-lg-4">
+</c:if>
+</div><div class="col-md-4">
 <div class="form-group">
 	<label for="logo">logo : </label>
-	<input type="file" name="logo" id="logo" />
+	<input class="form-control" type="file" name="logo" id="logo" />
 </div>
 <c:if test="${not empty logoPreview}">
 	<c:url var="delURL" value="${info.currentURL}" context="/">
@@ -49,37 +52,37 @@
 	<div class="delete-link"><a href="${delURL}" title="remove logo"><i class="fa fa-times" aria-hidden="true"></i></a></div>
 	<img alt="logo" src="${logoPreview}" />
 </c:if>
-
+</div><div class="col-md-4">
 <h2>Layout</h2>
 <div class="checkbox">	
-	<label><input type="checkbox" name="fixMenu" ${currentContext.templateData.fixMenu?'checked="checked"':""}" />
+	<label><input type="checkbox" name="fixMenu" ${currentContext.templateData.fixMenu?'checked="checked"':""} />
 	${i18n.edit['admin.template.fix-menu']}</label>
 </div>
 <div class="checkbox">	
-	<label><input type="checkbox" name="largeMenu" ${currentContext.templateData.largeMenu?'checked="checked"':""}" />
+	<label><input type="checkbox" name="largeMenu" ${currentContext.templateData.largeMenu?'checked="checked"':""} />
 	${i18n.edit['admin.template.large-menu']}</label>
 </div>
 <div class="checkbox">	
-	<label><input type="checkbox" name="dropdownMenu" ${currentContext.templateData.dropdownMenu?'checked="checked"':""}" />
+	<label><input type="checkbox" name="dropdownMenu" ${currentContext.templateData.dropdownMenu?'checked="checked"':""} />
 	${i18n.edit['admin.template.dropdown-menu']}</label>
 </div>
 <div class="checkbox">	
-	<label><input type="checkbox" name="searchMenu" ${currentContext.templateData.searchMenu?'checked="checked"':""}" />
+	<label><input type="checkbox" name="searchMenu" id="searchMenu" ${currentContext.templateData.searchMenu?'checked="checked"':""} onchange="document.getElementById('jssearchMenu').checked=false;" />
 	${i18n.edit['admin.template.search-menu']}</label>
 </div>
 <div class="checkbox">	
-	<label><input type="checkbox" name="jssearchMenu" ${currentContext.templateData.jssearchMenu?'checked="checked"':""}" />
+	<label><input type="checkbox" name="jssearchMenu" id="jssearchMenu" ${currentContext.templateData.jssearchMenu?'checked="checked"':""} onchange="document.getElementById('searchMenu').checked=false;" />
 	${i18n.edit['admin.template.jssearch-menu']}</label>
 </div>
 <div class="checkbox">	
-	<label><input type="checkbox" name="large" id="large-content" ${currentContext.templateData.large?'checked="checked"':""} onchange="jQuery('#small-content').removeProp('checked');" />
+	<label><input type="checkbox" name="large" id="large-content" ${currentContext.templateData.large?'checked="checked"':""} onchange="document.getElementById('small-content').checked=false;" />
 	${i18n.edit['admin.template.large']}</label>
 </div>
 <div class="checkbox">	
-	<label><input type="checkbox" name="small" id="small-content" ${currentContext.templateData.small?'checked="checked"':""} onchange="jQuery('#large-content').removeProp('checked');" />
+	<label><input type="checkbox" name="small" id="small-content" ${currentContext.templateData.small?'checked="checked"':""} onchange="document.getElementById('large-content').checked=false;" />
 	${i18n.edit['admin.template.small']}</label>
 </div>
-</div><div class="col-lg-8">
+</div></div>
 
 <script>
 	var fontRef = new Array();
@@ -88,6 +91,7 @@
 </script>
 
 <c:if test="${info.admin || not empty contentContext.currentTemplate.templateData['fontHeading']}">
+<div class="row"><div class="col-sm-6">
 <div class="fonts">
 	<h2>${i18n.edit['admin.title.font.heading']}</h2>
 	<script>
@@ -116,6 +120,7 @@
 	</div>
 </div></c:if>
 <c:if test="${info.admin || not empty contentContext.currentTemplate.templateData['fontText']}">
+</div><div class="col-sm-6">
 <div class="fonts">
 	<h2>${i18n.edit['admin.title.font.text']}</h2>
 	<script>
@@ -139,7 +144,8 @@
 		<p>ABCDEFGHIJKLMNOPQRSTUVWXYZ</p>
 		<p>ιθηΰλδοφω</p>
 	</div>
-</div></c:if>
+</div></div></c:if>
+</div>
 </div>
 </div>
 </div>

@@ -685,7 +685,6 @@ public class XMLManipulationHelper {
 										outHead = outHead.replace(uri, "<%=URLHelper.createStaticTemplatePluginURL(ctx, \"" + uri + "\", \"" + plugin.getFolder() + "\")%>");
 									}
 								}
-
 								if (!plugin.isActiveInEdition()) {
 									out.println("<%if (!ctx.isAsPreviewMode() || !EditContext.getInstance(globalContext, request.getSession()).isPreviewEditionMode()) {%>");
 								}
@@ -1090,7 +1089,7 @@ public class XMLManipulationHelper {
 		out.println("var blob = new Blob([img], {type: 'image/png'});");
 		out.println("fd.append(fieldName,blob);");
 		out.println("var request = new XMLHttpRequest();"); 
-		out.println("request.open(\"POST\", ajaxURL);"); 
+		out.println("request.open(\"POST\", ajaxURL, false);"); 
 		out.println("request.send(fd);");
 		out.println("window.close();");
 		out.println("return false;");

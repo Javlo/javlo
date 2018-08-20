@@ -32,6 +32,7 @@ org.javlo.component.meta.TaxonomyDisplayComponent
 org.javlo.component.meta.ContactInformation
 org.javlo.component.meta.DefinitionComponent
 org.javlo.component.meta.HeadMeta
+org.javlo.component.meta.GraphicCharter
 
 --content.title.text
 

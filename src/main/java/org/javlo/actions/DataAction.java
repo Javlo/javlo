@@ -819,7 +819,11 @@ public class DataAction implements IAction {
 			}
 			BufferedImage img = ImageIO.read(imageFile);
 			img = ImageEngine.trim(img, Color.WHITE, 1);
-			ImageIO.write(img, "png", imageFile);		
+			ImageIO.write(img, "png", imageFile);
+			StaticInfo staticInfo = StaticInfo.getInstance(ctx, imageFile);
+			staticInfo.setFocusZoneY(ctx, 10);
+			staticInfo.setFocusZoneX(ctx, 499);
+			PersistenceService.getInstance(globalContext).setAskStore(true);
 		}
 		return null;
 	}

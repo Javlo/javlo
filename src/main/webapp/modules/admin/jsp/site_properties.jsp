@@ -30,7 +30,7 @@
 								<img id="screenshot-img" src="${currentContext.screenshotUrl}" alt="screenshot" /><br />
 							</a>
 						</c:if>
-						<button class="btn btn-primary btn-sm" onclick="window.open('${takeSreenshotUrl}'); setTimeout(function() {closePopup()}, 3000); return false;">take a screenshot</button>
+						<button class="btn btn-primary btn-sm" onclick="closePopup(); window.open('${takeSreenshotUrl}'); return false;">take a screenshot</button>
 					</div>
 				</div>
 		</div>
@@ -98,7 +98,7 @@
 		<c:if test="${currentContext.screenshot}">
 			<img id="screenshot-img" src="${currentContext.screenshotUrl}" alt="screenshot" /><br />
 		</c:if>
-		<button class="btn btn-primary btn-sm" onclick="window.open('${takeSreenshotUrl}'); return false;">take a screenshot</button>
+		<button class="btn btn-primary btn-sm" onclick="closePopup(); window.open('${takeSreenshotUrl}'); return false;">take a screenshot</button>
 	</div>
 </div>
 </div>
