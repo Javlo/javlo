@@ -1139,10 +1139,12 @@ public class AdminAction extends AbstractModuleAction {
 				request.setAttribute("allModules", moduleContext.getAllModules());
 				request.setAttribute("currentModules", currentGlobalContext.getModules());
 				
-				List<String> fonts = ctx.getCurrentTemplate().getWebFonts(currentGlobalContext);
-				Collections.sort(fonts);
-				request.setAttribute("fonts", fonts);
-				request.setAttribute("fontsMap", ctx.getCurrentTemplate().getFontReference(currentGlobalContext));
+				if (ctx.getCurrentTemplate() != null) {
+					List<String> fonts = ctx.getCurrentTemplate().getWebFonts(currentGlobalContext);
+					Collections.sort(fonts);
+					request.setAttribute("fonts", fonts);
+					request.setAttribute("fontsMap", ctx.getCurrentTemplate().getFontReference(currentGlobalContext));
+				}
 
 				List<String> templatesName = currentGlobalContext.getTemplatesNames();
 				List<Template.TemplateBean> selectedTemplate = new LinkedList<Template.TemplateBean>();
