@@ -85,9 +85,7 @@ public class GraphicCharter extends AbstractVisualComponent implements IAction {
 		newContext.setAbsoluteURL(true);
 		newContext.setRenderMode(ContentContext.PREVIEW_MODE);
 		newGlobalContext.setDefinedByHost(false);
-		System.out.println(">>>>>>>>> GraphicCharter.performCreate : newContext.contextKey = "+newGlobalContext.getContextKey()); //TODO: remove debug trace
 		String newURL = URLHelper.createURL(newContext, "/");
-		System.out.println(">>>>>>>>> GraphicCharter.performCreate : newURL = "+newURL); //TODO: remove debug trace
 		NetHelper.sendRedirectTemporarily(ctx.getResponse(), newURL);
 		return null;
 	}
