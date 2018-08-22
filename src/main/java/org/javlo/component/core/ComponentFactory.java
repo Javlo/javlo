@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -644,6 +645,14 @@ public class ComponentFactory {
 			}
 
 		}
+		
+		Collections.sort(listWithoutEmptyTitle, new Comparator<ComponentWrapper>() {
+
+			@Override
+			public int compare(ComponentWrapper o1, ComponentWrapper o2) {
+				return o1.getComplexityLevel() - o2.getComplexityLevel();
+			}
+		});
 
 		return listWithoutEmptyTitle;
 	}

@@ -599,7 +599,6 @@ public class UserFactory implements IUserFactory, Serializable {
 				newUser.setContext(globalContext.getContextKey());
 				session.setAttribute(SESSION_KEY, newUser);
 			} else {
-				// TODO: check validy of this line
 				session.setAttribute(SESSION_KEY, null);
 			}
 		}
@@ -638,6 +637,7 @@ public class UserFactory implements IUserFactory, Serializable {
 		File userInfoFile = new File(userInfoPath);
 		if (!userInfoFile.exists()) {
 			userInfoFile.getParentFile().mkdirs();
+			userInfoFile.createNewFile();
 		}
 		OutputStream out = null;
 		TransactionFile transactionFile = new TransactionFile(userInfoFile);

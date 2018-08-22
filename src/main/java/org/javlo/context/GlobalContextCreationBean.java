@@ -16,6 +16,7 @@ import org.javlo.helper.XHTMLHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
+import org.javlo.user.AdminUserFactory;
 import org.javlo.user.IUserFactory;
 import org.javlo.user.IUserInfo;
 
@@ -80,11 +81,12 @@ public class GlobalContextCreationBean {
 		this.password = password;
 	}
 	
-	public void create(ContentContext ctx) throws Exception {
+	public GlobalContext create(ContentContext ctx) throws Exception {
 		GlobalContext newContext = GlobalContext.getInstance(ctx.getRequest().getSession(), getContextKey());
 		newContext.setAdministrator(getEmail());
 		newContext.setGlobalTitle(getTitle());
-		IUserFactory userFactory = newContext.getAdminUserFactory(ctx.getRequest().getSession());
+		newContext.initDataFile();
+		IUserFactory userFactory = AdminUserFactory.createUserFactory(newContext, ctx.getRequest().getSession());
 		IUserInfo newUser = userFactory.createUserInfos();
 		newUser.setLogin(email);
 		newUser.setPassword(getPassword());
@@ -115,5 +117,6 @@ public class GlobalContextCreationBean {
 			e.printStackTrace();
 		}
 		MessageRepository.getInstance(ctx).setGlobalMessage(new GenericMessage(i18nAccess.getViewText("create-context.msg.done"), GenericMessage.SUCCESS));
+		return newContext;
 	}
 }

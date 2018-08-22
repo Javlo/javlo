@@ -90,8 +90,9 @@
 	</c:forEach>
 </script>
 
+<div class="row">
 <c:if test="${info.admin || not empty contentContext.currentTemplate.templateData['fontHeading']}">
-<div class="row"><div class="col-sm-6">
+<div class="col-sm-6">
 <div class="fonts">
 	<h2>${i18n.edit['admin.title.font.heading']}</h2>
 	<script>
@@ -118,9 +119,9 @@
 		<p>ABCDEFGHIJKLMNOPQRSTUVWXYZ</p>
 		<p>ιθηΰλδοφω</p>
 	</div>
-</div></c:if>
+</div></div></c:if>
 <c:if test="${info.admin || not empty contentContext.currentTemplate.templateData['fontText']}">
-</div><div class="col-sm-6">
+<div class="col-sm-6">
 <div class="fonts">
 	<h2>${i18n.edit['admin.title.font.text']}</h2>
 	<script>
@@ -145,9 +146,5 @@
 		<p>ιθηΰλδοφω</p>
 	</div>
 </div></div></c:if>
-</div>
-</div>
-</div>
-</div>
 </div>
 </fieldset>

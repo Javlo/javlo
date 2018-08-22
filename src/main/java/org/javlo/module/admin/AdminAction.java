@@ -1594,7 +1594,7 @@ public class AdminAction extends AbstractModuleAction {
 		return msg;
 	}
 	
-	private static boolean updateGraphicCharter(ContentContext ctx, GlobalContext currentGlobalContext) throws IOException {
+	public static boolean updateGraphicCharter(ContentContext ctx, GlobalContext currentGlobalContext) throws IOException {
 		/** template data **/
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
 		TemplateData td = currentGlobalContext.getTemplateData();
