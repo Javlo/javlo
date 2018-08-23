@@ -58,7 +58,7 @@ public class GraphicCharter extends AbstractVisualComponent implements IAction {
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
 		List<String> fonts = ctx.getCurrentTemplate().getWebFonts(ctx.getGlobalContext());
 		Collections.sort(fonts);
-		ctx.getRequest().setAttribute("currentContext", ctx.getGlobalContext());
+		//ctx.getRequest().setAttribute("currentContext", ctx.getGlobalContext());
 		ctx.getRequest().setAttribute("fonts", fonts);
 		ctx.getRequest().setAttribute("fontsMap", ctx.getCurrentTemplate().getFontReference(ctx.getGlobalContext()));
 		String jsp = "/modules/admin/jsp/graphic_charter.jsp";
