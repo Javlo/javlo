@@ -3,11 +3,15 @@
  */
 package org.javlo.component.files;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintStream;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.javlo.component.core.IReverseLinkComponent;
 import org.javlo.config.StaticConfig;
@@ -19,6 +23,9 @@ import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.helper.XHTMLHelper;
 import org.javlo.i18n.I18nAccess;
+import org.javlo.navigation.MenuElement;
+import org.javlo.service.ContentService;
+import org.javlo.service.RequestService;
 import org.javlo.service.ReverseLinkService;
 import org.javlo.ztatic.StaticInfo;
 
@@ -95,6 +102,24 @@ public class Sound extends AbstractFileComponent implements IReverseLinkComponen
 		StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
 		return staticConfig.getFileFolder();
 	}
+	
+	private String getInputNamePageRef() {
+		return getInputName("page-ref");
+	}
+	
+	@Override
+	protected String getEditXHTMLCode(ContentContext ctx) throws Exception { 
+		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+		PrintStream out = new PrintStream(outStream);
+		I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
+		out.println("<div class=\"form-group\">");
+		out.println("<label for=\""+getInputNamePageRef()+"\">"+i18nAccess.getText("global.summary")+"</label>");
+		out.println("<input type=\"text\" name=\""+getInputNamePageRef()+"\" />");
+		out.println("</div>");
+		out.println(super.getEditXHTMLCode(ctx));
+		out.close();
+		return new String(outStream.toByteArray());
+	}
 
 	@Override
 	public String[] getStyleLabelList(ContentContext ctx) {
@@ -161,6 +186,17 @@ public class Sound extends AbstractFileComponent implements IReverseLinkComponen
 			ctx.getRequest().setAttribute("type", ResourceHelper.getFileExtensionToMineType(StringHelper.getFileExtension(url)));
 			ctx.getRequest().setAttribute("url", url);
 			ctx.getRequest().setAttribute("infoHTML", XHTMLHelper.renderStaticInfo(ctx, getStaticInfo(ctx)));
+			RequestService rs = RequestService.getInstance(ctx.getRequest());
+			String summary = rs.getParameter("summary");
+			if (summary != null) {
+				ContentService content = ContentService.getInstance(ctx.getRequest());
+				MenuElement sumPage = content.getNavigation(ctx).searchChildFromName(summary);
+				if (sumPage != null) {
+					Map<String,String> params = new HashMap<String,String>();
+					params.put("only-area", "content");
+					ctx.getRequest().setAttribute("summaryUrl", URLHelper.createURL(ctx, sumPage, params));
+				}
+			}
 		}
 	}
 
@@ -259,6 +295,16 @@ public class Sound extends AbstractFileComponent implements IReverseLinkComponen
 			}
 			return "<" + getListTag(ctx) + " class=\"" + getType() + cssClass + ' ' + getCurrentRenderer(ctx) + "\">";
 		}
+	}
+	
+	@Override
+	public boolean isContentCachable(ContentContext ctx) {
+		return false;
+	}
+	
+	@Override
+	public boolean isContentTimeCachable(ContentContext ctx) {
+		return false;
 	}
 	
 	@Override

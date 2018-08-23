@@ -609,13 +609,7 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 	@Override
 	public String performEdit(ContentContext ctx) throws Exception {
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
-		if (requestService.getParameter("comp-" + getId(), null) == null) { // this
-																			// component
-																			// is
-																			// not
-																			// in
-																			// edit
-																			// form
+		if (requestService.getParameter("comp-" + getId(), null) == null) {
 			return null;
 		}
 		String newValue = "";

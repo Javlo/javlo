@@ -86,17 +86,19 @@ public class GlobalContextCreationBean {
 		newContext.setAdministrator(getEmail());
 		newContext.setGlobalTitle(getTitle());
 		newContext.initDataFile();
-		IUserFactory userFactory = AdminUserFactory.createUserFactory(newContext, ctx.getRequest().getSession());
-		IUserInfo newUser = userFactory.createUserInfos();
-		newUser.setLogin(email);
-		newUser.setPassword(getPassword());
-		newUser.addRoles(DEFAULT_ROLES);
-		userFactory.addUserInfo(newUser);	
-		userFactory.store();
+		
 		
 		/** copy default content **/
 		GlobalContext defaultContext = GlobalContext.getInstance(ctx.getRequest().getSession(), getReferenceContext());
 		FileUtils.copyDirectory(new File(defaultContext.getDataFolder()), new File(newContext.getDataFolder()));
+		
+		IUserFactory userFactory = AdminUserFactory.createUserFactory(newContext, ctx.getRequest().getSession());
+		IUserInfo newUser = userFactory.createUserInfos();
+		newUser.setLogin(getEmail());
+		newUser.setPassword(getPassword());
+		newUser.addRoles(DEFAULT_ROLES);
+		userFactory.addUserInfo(newUser);	
+		userFactory.store();
 		
 		I18nAccess i18nAccess = I18nAccess.getInstance(ctx);
 		String subject = i18nAccess.getViewText("create-context.msg.email.subject")+getTitle();
@@ -106,6 +108,7 @@ public class GlobalContextCreationBean {
 		newCtx.setForceGlobalContext(newContext);
 		newCtx.setRenderMode(ContentContext.PREVIEW_MODE);
 		newCtx.setAbsoluteURL(true);
+			
 		
 		String newURL = URLHelper.createStaticURL(newCtx, "/");
 		newURL = URLHelper.mergePath(newURL, getContextKey(), "/preview/");
