@@ -80,7 +80,7 @@ public class ResourceServlet extends HttpServlet {
 	 */
 	protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		
-		if (StringHelper.isEmpty(request.getPathInfo())) {
+		if (StringHelper.isEmpty(request.getPathInfo()) || request.getPathInfo().equals("/")) {
 			response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
 		}
