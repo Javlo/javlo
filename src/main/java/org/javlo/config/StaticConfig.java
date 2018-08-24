@@ -1663,7 +1663,7 @@ public class StaticConfig extends Observable {
 	}
 
 	public String getTimeTravelerFilePath() {
-		return properties.getString("preview.timetraveler-file", "/jsp/time-traveler/command.jsp");
+		return properties.getString("preview.timetraveler-file", "/jsp/time-traveler/bootstrap/command.jsp");
 	}
 
 	public String getCssPreview() {
