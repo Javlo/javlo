@@ -29,4 +29,9 @@ public class SpecialConfigBean {
 		return StringHelper.isTrue(config.get("tracking.access"));  
 	}
 	
+	public boolean isNeedLogForPreview() {
+		return StringHelper.isTrue(config.get("security.need-log-for-preview"));
+	}
+
+	
 }

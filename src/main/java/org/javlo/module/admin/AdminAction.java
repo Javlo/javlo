@@ -1585,7 +1585,10 @@ public class AdminAction extends AbstractModuleAction {
 					if (importTemplate) {
 						TemplateFactory.cleanRenderer(ctx, currentGlobalContext.getTemplatesNames(), true);
 					}
-					messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("admin.message.context-updated"), GenericMessage.INFO));
+					
+					currentGlobalContext.reload();
+					
+					messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("admin.message.context-updated"), GenericMessage.INFO));					
 				} else {
 					msg = "context not found : " + currentContextKey;
 				}

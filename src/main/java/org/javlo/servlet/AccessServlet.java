@@ -466,7 +466,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 				}
 			}
 
-			if (request.getServletPath().equals("/edit")) {
+			if (request.getServletPath().equals("/edit") || (globalContext.getSpecialConfig().isNeedLogForPreview() && (request.getServletPath().equals("/preview") || request.getServletPath().equals("/time")))) {
 				EditContext editCtx = EditContext.getInstance(globalContext, request.getSession());
 				ctx.setArea(editCtx.getCurrentArea());
 				if (ctx.getCurrentEditUser() == null) {
