@@ -737,7 +737,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 
 				localLogger.startCount("content");
 
-				if (request.getServletPath().equals("/preview")) {
+				if (request.getServletPath().equals("/preview") && !ctx.isPreviewOnly()) {
 					EditContext editCtx = EditContext.getInstance(globalContext, request.getSession());
 					request.setAttribute("editPreview", editCtx.isPreviewEditionMode());
 				}

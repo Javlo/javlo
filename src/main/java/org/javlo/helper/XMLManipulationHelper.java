@@ -486,7 +486,7 @@ public class XMLManipulationHelper {
 
 				if (tags[i].getName().equalsIgnoreCase("html")) {
 					String cssClass = StringHelper.neverNull(tags[i].getAttributes().get("class"));
-					cssClass = cssClass + " " + " <%if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE) {%><%=(StringHelper.isTrue(request.getParameter(\"preview-command\"), true)?\"preview-command-visible\":\"preview-command-hidden\")%> <%=StringHelper.neverNull(request.getParameter(\"html-class\"))%> <%if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE) { if(EditContext.getInstance(globalContext, request.getSession()).isPreviewEditionMode() ) {%>edit-preview<%} else {%>preview-only<%} }%><%}%>";
+					cssClass = cssClass + " " + " <%if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE && !ctx.isPreviewOnly()) {%><%=(StringHelper.isTrue(request.getParameter(\"preview-command\"), true)?\"preview-command-visible\":\"preview-command-hidden\")%> <%=StringHelper.neverNull(request.getParameter(\"html-class\"))%> <%if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE && !ctx.isPreviewOnly()) { if(EditContext.getInstance(globalContext, request.getSession()).isPreviewEditionMode() ) {%>edit-preview<%} else {%>preview-only<%} }%><%}%>";
 					tags[i].getAttributes().put("class", cssClass.trim());
 					remplacement.addReplacement(tags[i].getOpenStart(), tags[i].getOpenEnd() + 1, tags[i].renderOpen());
 				}
@@ -495,9 +495,9 @@ public class XMLManipulationHelper {
 				if (tags[i].getName().equalsIgnoreCase("body")) {
 					String contentZone = getValue(options, AREA_PREFIX + "content", null);
 					String cssClass = StringHelper.neverNull(tags[i].getAttributes().get("class"));
-					cssClass = cssClass + ' ' + "<%if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE) { if(ctx.getGlobalContext().getStaticConfig().isFixPreview() ) {%>fix-preview<%} else {%>floating-preview<%} }%>";
-					cssClass = cssClass + ' ' + "<%if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE) { if(EditContext.getInstance(globalContext, request.getSession()).isPreviewEditionMode() ) {%>edit-preview<%} else {%>preview-only<%} }%>";
-					cssClass = cssClass + ' ' + "<%if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE) { if(ctx.getCurrentEditUser() == null) {%>preview-notlogged<%} else {%>preview-logged<%} }%>";
+					cssClass = cssClass + ' ' + "<%if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE && !ctx.isPreviewOnly()) { if(ctx.getGlobalContext().getStaticConfig().isFixPreview() ) {%>fix-preview<%} else {%>floating-preview<%} }%>";
+					cssClass = cssClass + ' ' + "<%if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE && !ctx.isPreviewOnly()) { if(EditContext.getInstance(globalContext, request.getSession()).isPreviewEditionMode() ) {%>edit-preview<%} else {%>preview-only<%} }%>";
+					cssClass = cssClass + ' ' + "<%if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE && !ctx.isPreviewOnly()) { if(ctx.getCurrentEditUser() == null) {%>preview-notlogged<%} else {%>preview-logged<%} }%>";
 					cssClass = cssClass + ' ' + "${info.preview && !info.page.editable?'not-editable':''}";
 					cssClass = cssClass + ' ' + "${info.admin?'right-admin':''}";
 					tags[i].getAttributes().put("class", cssClass.trim());
@@ -640,7 +640,7 @@ public class XMLManipulationHelper {
 
 					/** wysiwyg init css **/
 					if (template.getWysiwygCss() != null) {
-						out.println("<%if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE) {%>");
+						out.println("<%if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE && !ctx.isPreviewOnly()) {%>");
 						out.println("<script>");
 						out.println("var wysiwygCss = '<%=URLHelper.createStaticTemplateURL(ctx,\"" + template.getWysiwygCss() + "\")%>';");
 						out.println("</script>");
@@ -994,7 +994,7 @@ public class XMLManipulationHelper {
 		StringWriter outString = new StringWriter();
 		BufferedWriter out = new BufferedWriter(outString);
 
-		out.append("<%if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE) {%>");
+		out.append("<%if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE && !ctx.isPreviewOnly()) {%>");
 		out.append("<style type=\"text/css\">@font-face {font-family: \"javloFont\"; src: url('${info.staticRootURL}fonts/javlo-italic.ttf') format(\"truetype\");}</style>");
 		out.append("<%}%>");
 		
@@ -1115,7 +1115,7 @@ public class XMLManipulationHelper {
 
 		out.append("<%if (StringHelper.isTrue(request.getParameter(\"_display-zone\"))) {%><link rel=\"stylesheet\" type=\"text/css\" href=\"<%=URLHelper.createStaticURL(ctx,\"/css/preview/edit_preview.css\")+\"?ts=\"+infoBean.getTs()%>\" /><%}%>");
 		out.newLine();
-		out.append("<%if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE || ctx.getRenderMode() == ContentContext.TIME_MODE) {");
+		out.append("<%if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE || ctx.getRenderMode() == ContentContext.TIME_MODE && !ctx.isPreviewOnly()) {");
 		out.newLine();
 		out.append("EditContext editCtx = EditContext.getInstance(globalContext, request.getSession());%>");
 		out.newLine();

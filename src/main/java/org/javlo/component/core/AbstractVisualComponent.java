@@ -993,13 +993,9 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		if ((ctx.getRenderMode() == ContentContext.PREVIEW_MODE)) {
 			GlobalContext globalContext = ctx.getGlobalContext();
 			EditContext editCtx = EditContext.getInstance(globalContext, ctx.getRequest().getSession());
-			if (editCtx.isPreviewEditionMode()) {
+			if (editCtx.isPreviewEditionMode() && !ctx.isPreviewOnly()) {
 				MenuElement currentPage = ctx.getCurrentPage();
 				if (currentPage.equals(getPage())) { // not edit component
-					// is repeated and
-					// user is not on
-					// the definition
-					// page
 					String prefix = "";
 					String suffix = "";
 					if (!isWrapped(ctx)) {
@@ -1632,7 +1628,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 					}
 				}				
 				RequestService rs = RequestService.getInstance(ctx.getRequest());
-				if (!StringHelper.isTrue(rs.getParameter(NOT_EDIT_PREVIEW_PARAM_NAME, null))) {
+				if (!StringHelper.isTrue(rs.getParameter(NOT_EDIT_PREVIEW_PARAM_NAME, null)) && !ctx.isPreviewOnly()) {
 					StaticConfig sc = ctx.getGlobalContext().getStaticConfig();
 					if (getConfig(ctx).isPreviewEditable() && editCtx.isPreviewEditionMode() && (!isRepeat() || getPage().equals(ctx.getCurrentPage()) || sc.isEditRepeatComponent()) && AdminUserSecurity.canModifyPage(ctx, ctx.getCurrentPage(), true)) {
 					//if (getConfig(ctx).isPreviewEditable() && editCtx.isPreviewEditionMode() && AdminUserSecurity.canModifyPage(ctx, ctx.getCurrentPage(), true)) {
@@ -1996,7 +1992,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 
 	protected String renderViewXHTMLCode(ContentContext ctx) throws Exception {
 		if (HIDDEN.equals(getStyle()) || isDisplayHidden()) {
-			if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE && EditContext.getInstance(ctx.getGlobalContext(), ctx.getRequest().getSession()).isPreviewEditionMode()) {
+			if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE && EditContext.getInstance(ctx.getGlobalContext(), ctx.getRequest().getSession()).isPreviewEditionMode() && !ctx.isPreviewOnly()) {
 				String prefix = "";
 				String suffix = "";
 				if (!isWrapped(ctx)) {

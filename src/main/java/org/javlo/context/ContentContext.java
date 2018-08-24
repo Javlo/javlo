@@ -52,6 +52,8 @@ import org.javlo.utils.downloader.Html2Directory;
  */
 public class ContentContext {
 
+	public static final String PREVIEW_ONLY_MODE = "__preview_only_mode";
+
 	public static final String PREVIEW_EDIT_PARAM = "previewEdit";
 
 	private static final String HOST_DEFINED_SITE = "____host-defined-site";
@@ -1179,7 +1181,7 @@ public class ContentContext {
 	}
 
 	public boolean isAsPreviewMode() {
-		return getRenderMode() == PREVIEW_MODE;
+		return getRenderMode() == PREVIEW_MODE && !isPreviewOnly();
 	}
 
 	public boolean isAsPageMode() {
@@ -1191,7 +1193,7 @@ public class ContentContext {
 	}
 
 	public boolean isAsViewMode() {
-		return getRenderMode() == VIEW_MODE || getRenderMode() == TIME_MODE;
+		return getRenderMode() == VIEW_MODE || getRenderMode() == TIME_MODE && isPreviewOnly();
 	}
 
 	public boolean isVisualMode() {
@@ -1224,6 +1226,15 @@ public class ContentContext {
 
 	public boolean isPreview() {
 		return renderMode == PREVIEW_MODE;
+	}
+	
+	/**
+	 * return true if render mode in preview only (no tools displayed, like view mode with preview data)
+	 * @return
+	 */
+	public boolean isPreviewOnly() {
+		RequestService rs = RequestService.getInstance(request);
+		return StringHelper.isTrue(rs.getParameter(PREVIEW_ONLY_MODE));
 	}
 
 	public boolean isViewPrefix() {
@@ -1685,7 +1696,7 @@ public class ContentContext {
 	 * @return true if mode use "view" data. (page, time...)
 	 */
 	public boolean isLikeViewRenderMode() {
-		return getRenderMode() == VIEW_MODE || getRenderMode() == PAGE_MODE || getRenderMode() == TIME_MODE;
+		return getRenderMode() == VIEW_MODE || getRenderMode() == PAGE_MODE || getRenderMode() == TIME_MODE || isPreviewOnly();
 	}
 
 	/**

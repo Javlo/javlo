@@ -78,7 +78,14 @@ public class ResourceServlet extends HttpServlet {
 	/**
 	 * get the text and the picture and build a button
 	 */
-	protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException {
+	protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws IOException {
+		
+		if (StringHelper.isEmpty(request.getPathInfo())) {
+			response.sendError(HttpServletResponse.SC_NOT_FOUND);
+            return;
+		}
+		
+		
 		if (request.getServletPath().equals("/favicon.ico") || request.getServletPath().equals("/robots.txt")) {
 			response.setHeader("Cache-Control", "max-age=600,must-revalidate");
 			GlobalContext globalContext = GlobalContext.getSessionContext(request.getSession());
@@ -104,7 +111,7 @@ public class ResourceServlet extends HttpServlet {
 					}
 				} catch (Exception e) {
 					e.printStackTrace();
-					throw new ServletException(e);
+					throw new IOException(e);
 				} finally {
 					ResourceHelper.closeResource(fileStream);
 				}
@@ -124,7 +131,7 @@ public class ResourceServlet extends HttpServlet {
 			RequestHelper.traceMailingFeedBack(ctx);
 		} catch (Exception e1) {
 			e1.printStackTrace();
-			throw new ServletException(e1.getMessage());
+			throw new IOException(e1.getMessage());
 		}
 		
 		if (ctx.getGlobalContext().isCollaborativeMode() && ctx.getCurrentEditUser() == null) {

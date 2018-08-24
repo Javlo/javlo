@@ -42,7 +42,7 @@ if (specificComp == null && request.getParameter("_only_component") != null) {
 	specificComp = contentService.getComponent(ctx, request.getParameter("_only_component"));
 }
 
-if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE && specificComp == null && editPage) {
+if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE && !ctx.isPreviewOnly() && specificComp == null && editPage) {
 	%><div id="one-component-edit"></div><%
 }
 
@@ -127,7 +127,7 @@ IContentVisualComponent previousElem = null;
 	if (elems != null && !elems.hasNext(ctx) && EditContext.getInstance(globalContext, session).isPreviewEditionMode() && ctx.isAsPreviewMode() && editPage || displayZone) {
 		%><span><%=ctx.getArea()%></span><%
 	} else {
-		if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE && specificComp == null && editPage) {
+		if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE && !ctx.isPreviewOnly() && specificComp == null && editPage) {
 			%><div id="comp_0" class="free-edit-zone editable-component"><span>${i18n.edit['component.insert.first']}</span></div><%
 		}
 	}
@@ -165,7 +165,7 @@ IContentVisualComponent previousElem = null;
 				}
 			}			
 			if (elems != null) {%><%=elems.getPrefixXHTMLCode(ctx)%><%}
-if (globalContext.isCollaborativeMode() && ctx.getRenderMode() == ContentContext.PREVIEW_MODE) {
+if (globalContext.isCollaborativeMode() && ctx.getRenderMode() == ContentContext.PREVIEW_MODE && !ctx.isPreviewOnly()) {
 	request.setAttribute("elem", elem);	
 	if (previousElem != null && previousElem.getAuthors().equals(elem.getAuthors())) {
 		request.setAttribute("samePrevious", new Boolean(true));		
@@ -215,7 +215,7 @@ String pageClass = "";
 if (request.getAttribute("pageNumber") != null) {
 	pageClass = ".page-"+request.getAttribute("pageNumber");
 }
-if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE) {
+if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE && !ctx.isPreviewOnly()) {
 	if (pageEmpty) {
 		%><script>pjq("<%=pageClass%> #<%=area%>").addClass("_empty_area");  pjq("<%=pageClass%> #<%=area%>").removeClass("_not_empty_area");</script><%
 	} else {

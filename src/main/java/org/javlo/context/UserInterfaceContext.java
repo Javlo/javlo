@@ -38,6 +38,8 @@ public class UserInterfaceContext {
 	private boolean ticket = false;
 	
 	private boolean search = false;
+	
+	private boolean mobilePreview = true;
 
 	private String currentModule = null;
 
@@ -208,6 +210,14 @@ public class UserInterfaceContext {
 	
 	public boolean isIM() {
 		return globalContext.getStaticConfig().isIM();
+	}
+
+	public boolean isMobilePreview() {
+		return mobilePreview;
+	}
+
+	public void setMobilePreview(boolean mobilePreview) {
+		this.mobilePreview = mobilePreview;
 	}
 	
 }

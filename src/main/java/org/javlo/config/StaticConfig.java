@@ -1827,8 +1827,7 @@ public class StaticConfig extends Observable {
 	}
 
 	public List<String> getSoundExtension() {
-		return StringHelper
-				.stringToCollection(properties.getString("content.sound-format", "mp3,wav,m4a,aif,aiff,aifc"), ",");
+		return StringHelper.stringToCollection(properties.getString("content.sound-format", "mp3,wav,m4a,aif,aiff,aifc"), ",");
 	}
 
 	public boolean isEditIpSecurity() {
@@ -1881,6 +1880,14 @@ public class StaticConfig extends Observable {
 	
 	public boolean isCompressJsp() {
 		return properties.getBoolean("deploy.compress-jsp", false); 
+	}
+	
+	public boolean isMobilePreview() {
+		return properties.getBoolean("mobile.preview", true);
+	}
+	
+	public List<String> getPreviewLayout() {
+		return StringHelper.stringToCollection(properties.getString("preview.layout", "light,lightsm,dark"), ",");
 	}
 
 }

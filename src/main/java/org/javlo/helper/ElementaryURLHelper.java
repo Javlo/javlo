@@ -563,6 +563,10 @@ public abstract class ElementaryURLHelper {
 				}
 			}
 		}
+		
+		if (ctx.isPreviewOnly()) {
+			url = addParam(url, ContentContext.PREVIEW_ONLY_MODE, "true");
+		}
 		return url;
 	}
 

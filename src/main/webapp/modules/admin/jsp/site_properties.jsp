@@ -180,7 +180,11 @@
 
 <div class="form-group">		
 	<label for="template-mode">${i18n.edit['admin.title.template-mode']}</label>
-	<input class="form-control" type="text" id="template-mode" name="template-mode" value="${currentContext.editTemplateMode}" />	
+	<select class="form-control" id="template-mode" name="template-mode">
+		<c:forEach var="layout" items="${contentContext.globalContext.staticConfig.previewLayout}">
+			<option${layout == currentContext.editTemplateMode?' selected="selected"':''}>${layout}</option>
+		</c:forEach>
+	</select>
 </div>
 
 <div class="form-group">		

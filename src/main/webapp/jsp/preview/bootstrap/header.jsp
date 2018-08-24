@@ -331,8 +331,8 @@
 							onclick="html2canvas(document.querySelector('body')).then(canvas => {editPreview.openModal('${i18n.edit['preview.label.ticket']}','${url}'); editPreview.uploadScreenshot(canvas); });return false;"${tooltip}>
 							<span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span><span class="text">${i18n.edit['preview.label.ticket']}</span>
 							<c:set var="unreadTicketsize" value="${fn:length(info.unreadTickets)}" />
-							<c:if test="${unreadTicketsize>0}"><div class="badge unread-count">${unreadTicketsize}</div></c:if>					
-						</button>						
+							<c:if test="${unreadTicketsize>0}"><div class="badge unread-count">${unreadTicketsize}</div></c:if>
+						</button>
 				</form></li>
 			</c:if>
 						
@@ -343,12 +343,20 @@
 				<c:if test="${fn:length(integrities.checker)>0}"><div class="badge unread-count">${fn:length(integrities.checker)}</div></c:if>
 			</a>			
 			<div class="integrity-message collapse${integrities.error && contentContext.previewEdit?' in':''}" id="integrity-list">
-				<ul class="list-group"><c:forEach var="checker" items="${integrities.checker}"><c:if test="${checker.errorCount>0}">								
+				<ul class="list-group"><c:forEach var="checker" items="${integrities.checker}"><c:if test="${checker.errorCount>0}">
 					<li class="list-group-item list-group-item-${checker.levelLabel}">
-							<span class="badge">${checker.errorCount}</span>${checker.errorMessage}    									
+							<span class="badge">${checker.errorCount}</span>${checker.errorMessage}
 					</li></c:if></c:forEach>
 				</ul>
 			</div>
+			<c:if test="${userInterface.mobilePreview && contentContext.globalContext.staticConfig.mobilePreview}"><li>
+			<a id="_btn-mobile" class="btn btn-default btn-sm btn-mobile btn-color btn-notext badged" data-toggle="collapse" data-target="#_mobile_preview" href="#_mobile_preview"  aria-expanded="false" aria-controls="_mobile_preview">
+				<span class="glyphicon glyphicon-phone" aria-hidden="true"></span>				
+			</a>
+			<div class="discution collapse" id="discution">
+				<jsp:include page="${info.editTemplateFolder}/im.jsp" />
+			</div>	
+			</li></c:if>
 			</li><c:if test="${userInterface.IM}"><li>
 			<a class="btn btn-default btn-sm btn-discution btn-color btn-notext badged" data-toggle="_eprv_collapse" data-target="#discution" href="#discution"  aria-expanded="false" aria-controls="discution">
 				<span class="glyphicon glyphicon-comment" aria-hidden="true"></span>

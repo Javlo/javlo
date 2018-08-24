@@ -14,9 +14,6 @@
 	<c:if test="${not empty info.parent}">
 		<c:if test="${page.url eq info.currentURL}"><c:set var="asTitle" value="true" />		
 			<li class="parent ${!page.trash?'title':'trash'}">
-			
-				${info.currentPage.name} - ${info.parent.name}
-			
 				<c:if test="${not empty info.contextForCopy && (child.url eq info.currentURL)}"><a title="${i18n.edit['navigation.insert-page']}" class="paste-page" href="${pasteURL}"><span class="glyphicon glyphicon-collapse-down" aria-hidden="true"></span></a></c:if>
 				<span><a class="draggable flow-${info.parent.flowIndex}" id="page-${info.parent.name}" data-pageid="${info.parent.id}" href="${info.parent.url}" title="${info.parent.path}">${info.parent.info.label}${info.parent.haveChildren?'...':''}</a></span>			
 			</li>

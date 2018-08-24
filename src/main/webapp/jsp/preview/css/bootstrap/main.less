@@ -8,6 +8,7 @@
 @import url("im.less");
 @import url("pulse.less");
 @import url("mobile.less");
+@import url("mobile_preview.less");
 @import url("loader.less");
 html.preview-command-visible {
 	margin-top: @header-height !important;
@@ -23,7 +24,10 @@ html.preview-only {
   -ms-text-size-adjust: 100%;
   -webkit-text-size-adjust: 100%;
    box-sizing: content-box;
-   z-index: 11000;   
+   z-index: 11000;
+   #preview-modal-frame {
+		width: 100%;
+   }
 }
  
 #preview_command {
@@ -72,6 +76,12 @@ a {
 
 a:hover { 
 	color: @link-hover-color;
+}
+
+@media (max-width: 1910px) {
+	#pc_copy_page .text, #pc_paste_page .text {
+		display: none;
+	}
 }
 
 @media (max-width: 1780px) {
@@ -184,7 +194,7 @@ a:hover {
 
 .component {
 	cursor: pointer;
-}
+} 
 
 .modal-full {
     width: 98%;
@@ -197,7 +207,6 @@ a:hover {
 
 iframe {
 	border: 0 none;
-	width: 100%;
 	height: 700px;
 }
 
