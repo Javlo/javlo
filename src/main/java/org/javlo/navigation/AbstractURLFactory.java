@@ -2,6 +2,7 @@ package org.javlo.navigation;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -52,7 +53,7 @@ public abstract class AbstractURLFactory implements IURLFactory {
 	 */
 	protected boolean addAndCheckExistURL(MenuElement page, String url) {
 		if (urls == null) {
-			urls = new HashMap<String, String>();
+			urls = Collections.synchronizedMap(new HashMap<String, String>());
 		}
 		if (urls.keySet().contains(url)) {
 			if (urls.get(url).equals(page.getId())) {
