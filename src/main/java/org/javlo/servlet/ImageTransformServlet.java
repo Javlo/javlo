@@ -1030,6 +1030,10 @@ public class ImageTransformServlet extends FileServlet {
 					if (!filter.startsWith("template")) {						
 						pathInfo = pathInfo.substring(slachIndex + 1);
 						slachIndex = pathInfo.indexOf('/');
+						if (slachIndex<0) {
+							response.sendError(HttpServletResponse.SC_NOT_FOUND);
+							return;
+						}
 						area = pathInfo.substring(0, slachIndex);
 						pathInfo = pathInfo.substring(slachIndex);
 					}

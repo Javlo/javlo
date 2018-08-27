@@ -1028,7 +1028,7 @@ public class StaticConfig extends Observable {
 	}
 
 	public int getMaxErrorLoginByHour() {
-		return properties.getInt("security.login.max-error-hour", 100);
+		return properties.getInt("security.login.max-error-hour", isHighSecure()?10:100);
 	}
 
 	public String getRealPath(String path) {
@@ -1273,7 +1273,7 @@ public class StaticConfig extends Observable {
 
 	public boolean isAutoCreation() {
 		if (isHostDefineSite()) {
-			return properties.getBoolean("auto-creation", true);
+			return properties.getBoolean("auto-creation", !isHighSecure());
 		} else {
 			return properties.getBoolean("auto-creation", false);
 		}
@@ -1743,7 +1743,7 @@ public class StaticConfig extends Observable {
 	}
 
 	public boolean isRestServlet() {
-		return StringHelper.isTrue(properties.getString("security.rest-servlet", null), true);
+		return StringHelper.isTrue(properties.getString("security.rest-servlet", null), !isHighSecure());
 	}
 
 	public boolean isHighSecure() {
