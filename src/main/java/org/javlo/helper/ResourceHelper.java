@@ -1988,8 +1988,34 @@ public class ResourceHelper {
 	}
 	
 	public static void main(String[] args) throws IOException {
-		File file = new File("c:/trans/towa.csv");
-		System.out.println(">>>>>>>>> ResourceHelper.main : #lines = "+countLines(file)); //TODO: remove debug trace
+		File file = new File("c:/trans/changelog.txt");
+		File target= new File("c:/trans/changelog.md");
+		
+		PrintStream out = new PrintStream(new FileOutputStream(target));
+		try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+		    String line;
+		    while ((line = br.readLine()) != null) {
+		    	if (!StringHelper.isEmpty(line)) {
+		    		if (line.startsWith("*")) {
+		    			if (line.contains("[")) {
+		    				line = line.replace("[", "- ");
+		    				line = line.replace("]", "");
+		    				line = "## ["+line.substring(2).replaceFirst(" ", "] ");
+		    			} else {
+		    				line = "## ["+line.substring(2).replaceFirst(" ", "] - ");
+		    			}
+		    			out.println("");
+		    			out.println(line);
+		    			out.println("### Added");
+		    		} else if (line.startsWith(" *")) {
+		    			line = line.replaceFirst(" \\*", "-");
+		    			out.println(line);
+		    		}
+		    	}
+		    }
+		}
+		out.close();
+
 	}
 
 }
