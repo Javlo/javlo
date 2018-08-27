@@ -577,3 +577,25 @@ li.line {
 	font-size: 2.2em;
 	text-align: center;
 }	
+
+.column-selection {
+	display: flex;
+	justify-content: space-between;
+	margin-bottom: 15px;
+	
+	.select-col {
+		text-align: center;
+	}
+	.column {
+		table {
+			width: 100%;
+			border-collapse: collapse;
+			td {
+				background-color: #cccccc;
+				border: 2px #ffffff solid;
+				height: 30px;
+				width: auto;
+			}
+		}
+	}
+}

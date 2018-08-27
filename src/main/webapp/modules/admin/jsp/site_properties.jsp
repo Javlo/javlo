@@ -5,6 +5,9 @@
 <div class="content">
 <c:if test="${!info.admin}">
 <form id="form-page-properties" action="${info.currentURL}" method="post" enctype="multipart/form-data">
+<div class="pull-right">
+	<button type="submit" class="btn btn-primary">${i18n.edit['global.ok']}</button>
+</div>
 	<div>
 		<input type="hidden" name="webaction" value="admin.updateGlobalContextLight" />
 	</div>	
@@ -22,6 +25,13 @@
 					</div><div class="form-group">		
 						<label for="global-title">${i18n.edit['admin.form.global-title']}</label>
 						<input class="form-control" type="text" id="global-title" name="global-title" value="${currentContext.globalTitle}" />	
+					</div><div class="form-group">		
+						<label for="template-mode">${i18n.edit['admin.title.template-mode']}</label>
+						<select class="form-control" id="template-mode" name="template-mode">
+							<c:forEach var="layout" items="${contentContext.globalContext.staticConfig.previewLayout}">
+								<option${layout == currentContext.editTemplateMode?' selected="selected"':''}>${layout}</option>
+							</c:forEach>
+						</select>
 					</div>
 			</div><div class="col-sm-6">
 					<div class="screenshot">

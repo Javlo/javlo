@@ -1309,6 +1309,7 @@ public class AdminAction extends AbstractModuleAction {
 		if (adminUserSecurity.canRole(user, AdminUserSecurity.CONTENT_ROLE)) {
 			ctx.getGlobalContext().setGlobalTitle(requestService.getParameter("global-title", null));
 			ctx.setClosePopup(true);
+			ctx.getGlobalContext().setEditTemplateMode(requestService.getParameter("template-mode", null));
 		}		
 		if (StringHelper.isTrue(requestService.getParameter("graphic-charter", null))) {
 			boolean updateCharte = updateGraphicCharter(ctx, ctx.getGlobalContext());

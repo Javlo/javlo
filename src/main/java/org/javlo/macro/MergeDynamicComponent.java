@@ -66,7 +66,7 @@ public class MergeDynamicComponent extends AbstractMacro {
 							Properties newProp = newComp.getProperties();
 							String oldValue = null;							
 							if (compProp != null && newProp != null) {
-								Enumeration<Object> keys = newProp.keys();								
+								Enumeration<Object> keys = newProp.keys();
 								while (keys.hasMoreElements()) {
 									String key = (String) keys.nextElement();
 									if (key.endsWith(".old-name")) {

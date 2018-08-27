@@ -73,6 +73,11 @@
 	content: "";
 }
 
+#form-page-properties fieldset {
+	clear: both;
+	overflow: hidden;
+}
+
 .delete-link {
 	font-size: 1.2em;
 	margin-bottom: 5px;
