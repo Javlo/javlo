@@ -7,11 +7,10 @@
 %><div class="container"><br />
 <%
 ContentContext ctx = ContentContext.getContentContext(request, response);
-
-if (ctx.getCurrentEditUser() == null) {
-	%>Security error.<%
-	return;	
+if (ctx.getGlobalContext().getStaticConfig().isHighSecure()) {
+	throw new SecurityException("Security server");
 }
+
 GlobalContext gc = GlobalContext.getInstance(request);
 
 String pwd = request.getParameter("password");
