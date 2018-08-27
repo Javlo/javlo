@@ -7,9 +7,7 @@
 %><div class="container"><br />
 <%
 ContentContext ctx = ContentContext.getContentContext(request, response);
-if (ctx.getGlobalContext().getStaticConfig().isHighSecure()) {
-	throw new SecurityException("HIsh Security server");
-}
+
 if (ctx.getCurrentEditUser() == null) {
 	%>Security error.<%
 	return;	
