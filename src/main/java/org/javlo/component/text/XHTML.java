@@ -120,5 +120,9 @@ public class XHTML extends AbstractVisualComponent {
 		return "code";
 	}
 	
+	@Override
+	protected boolean getColumnableDefaultValue() {
+		return true;
+	}
 	
 }
