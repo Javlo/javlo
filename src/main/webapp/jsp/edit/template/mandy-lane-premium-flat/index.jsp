@@ -97,6 +97,11 @@
 	</script>
 	
 	<c:if test="${not empty contentContext.globalContext.staticConfig.htmlHead}">${contentContext.globalContext.staticConfig.htmlHead}</c:if>
+	
+	<!-- module '${currentModule.name}' JS -->
+	<c:forEach var="js" items="${currentModule.JS}">
+		<script type="text/javascript" src="<jv:url value='${js}?ts=${info.ts}' />"></script>
+	</c:forEach>
 
 	</head>
 
@@ -335,10 +340,6 @@
 	<link rel="stylesheet" href="<jv:url value='${css}?ts=${info.ts}' />" />
 </c:forEach>
 
-<!-- module '${currentModule.name}' JS -->
-<c:forEach var="js" items="${currentModule.JS}">
-	<script type="text/javascript" src="<jv:url value='${js}?ts=${info.ts}' />"></script>
-</c:forEach>	
 <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
 </body>
 </c:if>
