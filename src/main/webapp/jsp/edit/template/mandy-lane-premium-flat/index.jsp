@@ -102,7 +102,7 @@
 	<c:forEach var="js" items="${currentModule.JS}">
 		<script type="text/javascript" src="<jv:url value='${js}?ts=${info.ts}' />"></script>
 	</c:forEach>
-
+	<script type="text/javascript" src="${info.editTemplateURL}/js/plugins/jquery.jgrowl.js"></script>
 	</head>
 
 	<body class="bodygrey ${info.admin?'right-admin ':'noright-admin '}${not empty param.previewEdit?'previewEdit':''}${requestService.parameterMap.lightEdit?' light-edit':''}">
@@ -308,7 +308,6 @@
 <script type="text/javascript" src="${info.editTemplateURL}/js/plugins/jquery.alerts.js"></script>
 <script type="text/javascript" src="${info.editTemplateURL}/js/plugins/jquery.validate.min.js"></script>
 <script type="text/javascript" src="${info.editTemplateURL}/js/plugins/jquery.colorbox-min.js"></script>
-<script type="text/javascript" src="${info.editTemplateURL}/js/plugins/jquery.jgrowl.js"></script>
 <script type="text/javascript" src="${info.editTemplateURL}/js/plugins/jquery.dataTables.min.js"></script>
 <script type="text/javascript" src="${info.editTemplateURL}/js/plugins/jquery.form.js"></script>
 <script type="text/javascript" src="${info.editTemplateURL}/js/plugins/jquery.elastic.source.js"></script>
