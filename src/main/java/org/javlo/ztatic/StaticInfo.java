@@ -1,6 +1,5 @@
 package org.javlo.ztatic;
 
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -41,7 +40,6 @@ import org.javlo.service.exception.ServiceException;
 import org.javlo.service.location.LocationService;
 import org.javlo.user.User;
 import org.javlo.xml.NodeXML;
-import org.javlo.ztatic.InitInterest.Point;
 import org.owasp.encoder.Encode;
 
 public class StaticInfo {
@@ -444,6 +442,8 @@ public class StaticInfo {
 	private boolean dateFromData = true;
 
 	private int accessFromSomeDays = -1;
+	
+	private boolean searchFace = false;
 
 	// private Metadata imageMetadata = null;
 
@@ -964,38 +964,19 @@ public class StaticInfo {
 		if (!content.isNavigationLoaded(editCtx)) {
 			editCtx = ctx;
 		}
-		if (content.getAttribute(editCtx, getKey(ctx,FOCUS_ZONE_X), null) == null) {
+		if (!searchFace && content.getAttribute(editCtx, getKey(ctx,FOCUS_ZONE_X), null) == null) {
+			searchFace = true;
 			if (StringHelper.isImage(getFile().getName())) {
 				try {
 					if (getFile().exists()) {
-						Point point = null;
-						BufferedImage img = null;
-						try {
-							// img = ImageIO.read(getFile());
+						try { 
 							if (ctx.getGlobalContext().getStaticConfig().isAutoFocus() && ctx.isAsPreviewMode()) {
 								logger.info("search point on interest on START : " + getFile() + " [" + ctx.getGlobalContext().getContextKey() + "]");
-								// point = InitInterest.getPointOfInterest(img);
-								// content.setAttribute(editCtx, getKey(ctx, "focus-zone-x"), "" + DEFAULT_FOCUS_X);
-								// content.setAttribute(editCtx, getKey(ctx, "focus-zone-y"), "" + DEFAULT_FOCUS_Y);
-								InitInterest.setPointOfInterestWidthThread(ctx, getFile(), getKey(ctx,FOCUS_ZONE_X, "" + DEFAULT_FOCUS_X), getKey(ctx,FOCUS_ZONE_Y, "" + DEFAULT_FOCUS_Y));
-								logger.info("search point on interest on DONE : " + getFile() + " [" + ctx.getGlobalContext().getContextKey() + "]");
+								InitInterest.setPointOfInterestWidthThread(ctx, getFile(), getKey(ctx,FOCUS_ZONE_X), getKey(ctx,FOCUS_ZONE_Y));
 							}
 						} catch (Throwable t) {
 							logger.warning(t.getMessage());
-						}
-						if (point != null && img != null) {
-							int focusX = (point.getX() * 1000) / img.getWidth();
-							int focusY = (point.getY() * 1000) / img.getHeight();
-							content.setAttribute(editCtx, getKey(ctx,FOCUS_ZONE_X), "" + focusX);
-							/* check only y because x default value mark thread as done */
-							if (focusY != DEFAULT_FOCUS_Y) {
-								content.setAttribute(editCtx, getKey(ctx,FOCUS_ZONE_Y), "" + focusY);
-							}
-						}
-						// else {
-						// content.setAttribute(editCtx, getKey(ctx, "focus-zone-x"), "" + DEFAULT_FOCUS_X);
-						// content.setAttribute(editCtx, getKey(ctx, "focus-zone-y"), "" + DEFAULT_FOCUS_Y);
-						// }
+						}						
 					}
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -1048,11 +1029,7 @@ public class StaticInfo {
 	 */
 	public void setFocusZoneX(ContentContext ctx, int focusZoneX) {
 		ContentService content = ContentService.getInstance(ctx.getGlobalContext());
-		if (focusZoneX == DEFAULT_FOCUS_X) {
-			content.removeAttribute(ctx, getKey(ctx,FOCUS_ZONE_X));
-		} else {
-			content.setAttribute(ctx, getKey(ctx,FOCUS_ZONE_X), "" + focusZoneX);
-		}
+		content.setAttribute(ctx, getKey(ctx,FOCUS_ZONE_X), "" + focusZoneX);
 	}
 
 	/**

@@ -1,7 +1,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%><%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%><%@ taglib uri="/WEB-INF/javlo.tld" prefix="jv"%><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-<link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet"> 
+<head> 
 <script type="text/javascript">
 	function closePopup() {
 		var url = top.location.href; // close iframe and refresh parent frame
@@ -59,7 +58,7 @@
 
 	<link rel="stylesheet" media="screen" href="${info.editTemplateURL}/css/bootstrap/bootstrap.css?ts=${info.ts}" />
 	<link rel="stylesheet" href="${info.editTemplateURL}/css/style.css?ts=${info.ts}" />
-	<link rel="stylesheet" media="screen" href="${info.editTemplateURL}/css/style.css?ts=${info.ts}" />
+	<link rel="stylesheet" media="screen" href="${info.editTemplateURL}/css/javlo.css?ts=${info.ts}" />
 
 	<style type="text/css">
 @font-face {
@@ -294,7 +293,6 @@
 	<!-- footer -->
 </c:if>
 <div id="layer">&nbsp;</div>
-<link rel="stylesheet" media="screen" href="${info.editTemplateURL}/css/javlo.css?ts=${info.ts}" />
 <link rel="stylesheet" media="screen" href="${info.editTemplateURL}/css/plugins/colorbox.css" />
 <link rel="stylesheet" media="print" href="${info.editTemplateURL}/css/print.css" />
 <link rel="stylesheet" href="${info.editTemplateURL}/scss/fontawesome.css" />
@@ -341,7 +339,7 @@
 <c:forEach var="js" items="${currentModule.JS}">
 	<script type="text/javascript" src="<jv:url value='${js}?ts=${info.ts}' />"></script>
 </c:forEach>	
-
+<link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
 </body>
 </c:if>
 </html>

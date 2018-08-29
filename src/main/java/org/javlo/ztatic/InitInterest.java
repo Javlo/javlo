@@ -3,7 +3,6 @@ package org.javlo.ztatic;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
 import java.io.File;
-import java.io.IOException;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.logging.Logger;
 
@@ -22,12 +21,21 @@ public class InitInterest {
 	
 	private static PointThread pointThread = null;
 		
-	private static ConcurrentLinkedQueue<PointAction> todo = new ConcurrentLinkedQueue<PointAction>();
+	public static ConcurrentLinkedQueue<PointAction> todo = new ConcurrentLinkedQueue<PointAction>();
 	
 	public static class PointThread extends Thread {
 		
+		public static int INSTANCE = 0;
+		
 		public PointThread() {
-			setName("PointThread");
+			INSTANCE++;
+			setName("PointThread - "+INSTANCE);
+		}
+		
+		@Override
+		protected void finalize() throws Throwable {
+			super.finalize();
+			INSTANCE--;
 		}
 		
 		boolean run = true;
@@ -44,26 +52,28 @@ public class InitInterest {
 		public void run() {
 			super.run();
 			while (todo.size() > 0) {
-				PointAction action = todo.remove();
-				if (action.file.exists()) {
-					BufferedImage img;
-					try {						
-						if (("" + StaticInfo.DEFAULT_FOCUS_X).equals(action.content.getAttribute(action.ctx, action.keyX)) && ("" + StaticInfo.DEFAULT_FOCUS_Y).equals(action.content.getAttribute(action.ctx, action.keyY))) {
-							logger.info("search point of interest : "+action.file+" #todo:"+todo.size());
-							img = ImageIO.read(action.file);
-							Point point = getPointOfInterest(img);
-							if (point != null) {
-								int focusX = (point.getX() * 1000) / img.getWidth();
-								int focusY = (point.getY() * 1000) / img.getHeight();
-								action.content.setAttribute(action.ctx, action.keyX, ""+focusX);
-								action.content.setAttribute(action.ctx, action.keyY, ""+focusY);
+				PointAction action = todo.remove();				
+				if (action.content.getAttribute(action.ctx, action.keyX) == null) {
+					if (action.file.exists()) {
+						BufferedImage img;
+						try {						
+							if (action.content.getAttribute(action.ctx, action.keyX) == null) {
+								logger.info("search point of interest : "+action.file+" #todo:"+todo.size());
+								img = ImageIO.read(action.file);
+								Point point = getPointOfInterest(img);
+								if (point != null) {
+									int focusX = (point.getX() * 1000) / img.getWidth();
+									int focusY = (point.getY() * 1000) / img.getHeight();
+									action.content.setAttribute(action.ctx, action.keyX, ""+focusX);
+									action.content.setAttribute(action.ctx, action.keyY, ""+focusY);
+								}
 							}
+						} catch (Throwable e) {
+							e.printStackTrace();
 						}
-					} catch (Throwable e) {
-						e.printStackTrace();
+					} else {
+						logger.warning("file not found : "+action.file);
 					}
-				} else {
-					logger.warning("file not found : "+action.file);
 				}
 			}
 			run = false;
@@ -116,7 +126,10 @@ public class InitInterest {
 		}
 	}
 
-	public static Point getPointOfInterest(BufferedImage bufImage) {		
+	public static Point getPointOfInterest(BufferedImage bufImage) {
+		if (bufImage == null) {
+			return null;
+		}
 		if (bufImage.getType() != BufferedImage.TYPE_INT_ARGB) {
 			BufferedImage tmp = new BufferedImage(bufImage.getWidth(), bufImage.getHeight(), BufferedImage.TYPE_INT_ARGB);
 			tmp.getGraphics().drawImage(bufImage, 0, 0, null);

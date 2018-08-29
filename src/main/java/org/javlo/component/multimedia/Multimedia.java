@@ -68,6 +68,7 @@ import org.javlo.ztatic.StaticInfoBean;
 public class Multimedia extends TimeRangeComponent implements IImageTitle, IStaticContainer {
 
 	public static final String TYPE = "multimedia";
+	
 	protected static final String STATIC_VIDEO_FOLDER = "videos";
 	protected static final String STATIC_SOUND_FOLDER = "sounds";
 	protected static final String STATIC_IMAGE_FOLDER = "images";
@@ -1373,8 +1374,8 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle, IStat
 	}
 	
 	@Override
-	public boolean isColumnable(ContentContext ctx) {
-		return StringHelper.isTrue(getConfig(ctx).getProperty("columnable", null), true);
+	protected boolean getColumnableDefaultValue() {
+		return true;
 	}
 
 }

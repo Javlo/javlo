@@ -660,11 +660,14 @@ Security in case of vulnerabilities.
 ### Added
 - mobile preview
 - protect preview mode
+
+## [2.1.2.0] - 29/08/2018
+### Added
 - dynamic component colomnable
 - external component
 - components modules
 - load js optimisation in edit mode
+- face detection : display thread info on dashboard
 ### Fixed
 - resource servlet return 404 if no path defined
-
-## [2.1.2.0] - 29/08/2018
+- face detection thread managing
