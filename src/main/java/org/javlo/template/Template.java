@@ -1327,7 +1327,6 @@ public class Template implements Comparable<Template> {
 			}
 			try {
 				List<String> resources = new LinkedList<String>();
-				TemplatePluginFactory templatePluginFactory = TemplatePluginFactory.getInstance(globalContext.getServletContext());				
 				int depth = XMLManipulationHelper.convertHTMLtoTemplate(globalContext, this, HTMLFile, jspFile, getMap(), getAreas(), resources, getTemplatePugin(globalContext), null, false, getFontIncluding(globalContext));
 				setDepth(depth);
 			} catch (Exception e) {
@@ -1340,6 +1339,15 @@ public class Template implements Comparable<Template> {
 
 	public String getVersion() {
 		return properties.getString("version", "?");
+	}
+	
+	public Integer getBootstrapVersion() {
+		Integer version = properties.getInteger("bootstrap.verion", null);
+		if (version == null) {
+			return getParent().getBootstrapVersion();
+		} else {
+			return version;
+		}
 	}
 
 	public String getHomeRendererFullName(GlobalContext globalContext) {

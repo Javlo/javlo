@@ -195,8 +195,8 @@ public class WysiwygParagraph extends AbstractVisualComponent {
 	}
 	
 	@Override
-	public boolean isColumnable(ContentContext ctx) {
-		return StringHelper.isTrue(getConfig(ctx).getProperty("columnable", null), true);
+	protected boolean getColumnableDefaultValue() {
+		return true;
 	}
 	
 	public static void main(String[] args) {		

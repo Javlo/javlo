@@ -551,8 +551,21 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	}
 	
 	@Override
-	public boolean isColumnable(ContentContext ctx) {
-		return StringHelper.isTrue(getConfig(ctx).getProperty("columnable", null), false);
+	public final boolean isColumnable(ContentContext ctx) {
+		try {
+			if (ctx.getCurrentTemplate().getBootstrapVersion() != null) {
+				return StringHelper.isTrue(getConfig(ctx).getProperty("columnable", null), getColumnableDefaultValue());
+			} else {
+				return false;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+	
+	protected boolean getColumnableDefaultValue() {
+		return false;
 	}
 	
 	@Override
@@ -1344,14 +1357,16 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			return StringHelper.isTrue(getConfig(ctx).getProperty("wrapped", null), true);
 		}
 	}
+	
+	
 
 	@Override
 	public String getPrefixViewXHTMLCode(ContentContext ctx) {
 		String colPrefix = "";
-		if (isColumnable(ctx) && getColumnSize()>=0) {
+		if (isColumnable(ctx) && getColumnSize()>=0 && getColumnSize() != COL_MAX_SIZE) {
 			IContentVisualComponent prev = getPreviousComponent();
 			colPrefix = "<div class=\"row component-row\">";
-			if (prev != null && prev.isColumnable(ctx) && prev.getColumnSize()>=0) {
+			if (prev != null && prev.isColumnable(ctx) && prev.getColumnSize()>=0 && prev.getColumnSize() != COL_MAX_SIZE) {
 				if (prev.isColumnable(ctx)) {
 					colPrefix="<!-- NO START ROW -->";
 				}
@@ -1388,6 +1403,29 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			return colPrefix+getForcedPrefixViewXHTMLCode(ctx);
 		} else {
 			return colPrefix;
+		}
+	}
+	
+	@Override
+	public String getSuffixViewXHTMLCode(ContentContext ctx) {
+		String colSuffix = "";
+		if (isColumnable(ctx) && getColumnSize()>=0 && getColumnSize() != COL_MAX_SIZE) {
+			IContentVisualComponent next = getNextComponent();
+			colSuffix = "</div> <!-- /component-row -->";
+			if (next != null && next.isColumnable(ctx) && next.getColumnSize()>=0 && next.getColumnSize() != COL_MAX_SIZE) {
+				if (next.isColumnable(ctx)) {
+					colSuffix="";
+				}
+			}
+			colSuffix = "</div>"+colSuffix;
+		}
+		if (isDisplayHidden() && ctx.isAsViewMode()) {
+			return "";
+		}
+		if (isWrapped(ctx)) {
+			return colSuffix+getForcedSuffixViewXHTMLCode(ctx);
+		} else {
+			return colSuffix;
 		}
 	}
 
@@ -1941,29 +1979,6 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			e.printStackTrace();
 		}
 		return null;
-	}
-
-	@Override
-	public String getSuffixViewXHTMLCode(ContentContext ctx) {
-		String colSuffix = "";
-		if (isColumnable(ctx) && getColumnSize()>=0) {
-			IContentVisualComponent next = getNextComponent();
-			colSuffix = "</div> <!-- /component-row -->";
-			if (next != null && next.isColumnable(ctx) && next.getColumnSize()>=0) {
-				if (next.isColumnable(ctx)) {
-					colSuffix="";
-				}
-			}
-			colSuffix = "</div>"+colSuffix;
-		}
-		if (isDisplayHidden() && ctx.isAsViewMode()) {
-			return "";
-		}
-		if (isWrapped(ctx)) {
-			return colSuffix+getForcedSuffixViewXHTMLCode(ctx);
-		} else {
-			return colSuffix;
-		}
 	}
 
 	protected String getForcedSuffixViewXHTMLCode(ContentContext ctx) {

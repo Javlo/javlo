@@ -1032,7 +1032,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		return outCaches;
 	}
 
-	public synchronized ICache getMapCache(String cacheName) {
+	public ICache getMapCache(String cacheName) {
 		ICache cache = cacheMaps.get(cacheName);
 		if (cache == null) {
 			cache = new MapCache(new HashMap(), cacheName);
@@ -1352,11 +1352,11 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		File dataBaseFolder = new File(getDataFolder(), "db");
 		return dataBaseFolder;
 	}
-	
+
 	public String getExternComponentFolder() {
 		return URLHelper.mergePath(getDataFolder(), staticConfig.getExternComponentFolder());
 	}
-	
+
 	public List<File> getExternComponents() {
 		File dir = new File(getExternComponentFolder());
 		List<File> outFiles = new LinkedList<File>();
@@ -3104,7 +3104,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	public String getBlockPreviewPassword() {
 		return properties.getString("security.block-preview-password", null);
 	}
-	
+
 	public String getForcedHost() {
 		return properties.getString("url.forced-host", "");
 	}

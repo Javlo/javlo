@@ -454,4 +454,8 @@ public class DefaultTemplate extends Template {
 	public String getEscapeMenuId() {
 		return null;
 	}
+	
+	public Integer getBootstrapVersion() {
+		return null;
+	}
 }

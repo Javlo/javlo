@@ -153,10 +153,10 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 	public String getPrefixViewXHTMLCode(ContentContext ctx) {
 		if (!isWrapped()) {
 			String colPrefix = "";
-			if (isColumnable(ctx)) {
+			if (isColumnable(ctx) && getColumnSize()>=0 && getColumnSize() != COL_MAX_SIZE) {
 				IContentVisualComponent prev = getPreviousComponent();
 				colPrefix = "<div class=\"row component-row\">";
-				if (prev != null && prev.isColumnable(ctx) && prev.getColumnSize()>=0) {
+				if (prev != null && prev.isColumnable(ctx) && prev.getColumnSize()>=0 && prev.getColumnSize() != COL_MAX_SIZE) {
 					if (((DynamicComponent)prev).isColumnable(ctx)) {
 						colPrefix="<!-- NO START ROW -->";
 					}
@@ -199,7 +199,7 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 			if (isColumnable(ctx) && getColumnSize()>=0) {
 				IContentVisualComponent next = getNextComponent();
 				colSuffix = "</div> <!-- /component-row -->";
-				if (next != null && next.isColumnable(ctx) && next.getColumnSize()>=0) {
+				if (next != null && next.isColumnable(ctx) && next.getColumnSize()>=0 && next.getColumnSize() != COL_MAX_SIZE) {
 					colSuffix="";
 				}
 				colSuffix = "</div>"+colSuffix;
@@ -444,12 +444,8 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 		return StringHelper.isTrue(properties.getProperty("component.wrapped", "true"));
 	}
 	
-	public boolean isColumnable(ContentContext ctx) {
-		String column = properties.getProperty("component.columnable", null);
-		if (column == null) {
-			column = getConfig(ctx).getProperty("component.columnable", null);
-		}
-		return StringHelper.isTrue(column, true);
+	protected boolean getColumnableDefaultValue() {
+		return true;
 	}
 	
 

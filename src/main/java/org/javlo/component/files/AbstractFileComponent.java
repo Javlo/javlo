@@ -1353,9 +1353,8 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 		}
 	}
 	
-	@Override
-	public boolean isColumnable(ContentContext ctx) {
-		return StringHelper.isTrue(getConfig(ctx).getProperty("columnable", null), true);
+	protected boolean getColumnableDefaultValue() {
+		return true;
 	}
 
 }
