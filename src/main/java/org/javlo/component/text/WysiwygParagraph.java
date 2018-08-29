@@ -143,7 +143,8 @@ public class WysiwygParagraph extends AbstractVisualComponent {
 	}
 	
 	@Override
-	public String performEdit(ContentContext ctx) throws Exception {	
+	public String performEdit(ContentContext ctx) throws Exception {
+		performColumnable(ctx);
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
 		String newContent = requestService.getParameter(getContentName(), null);		
 		if (newContent != null) {

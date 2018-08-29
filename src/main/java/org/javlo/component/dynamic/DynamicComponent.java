@@ -134,6 +134,9 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 	public void init(ComponentBean bean, ContentContext newContext) throws Exception {
 		super.init(bean, newContext);
 		reloadProperties();
+		if (StringHelper.isDigit(properties.getProperty("component.column.size", null))) {
+			setColumnSize(Integer.parseInt(properties.getProperty("component.column.size", null)));
+		}
 	}
 
 	public void reloadProperties() {

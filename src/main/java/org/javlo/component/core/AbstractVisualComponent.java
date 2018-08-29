@@ -1348,11 +1348,11 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	@Override
 	public String getPrefixViewXHTMLCode(ContentContext ctx) {
 		String colPrefix = "";
-		if (isColumnable(ctx)) {
+		if (isColumnable(ctx) && getColumnSize()>=0) {
 			IContentVisualComponent prev = getPreviousComponent();
 			colPrefix = "<div class=\"row component-row\">";
 			if (prev != null && prev.isColumnable(ctx) && prev.getColumnSize()>=0) {
-				if (((DynamicComponent)prev).isColumnable(ctx)) {
+				if (prev.isColumnable(ctx)) {
 					colPrefix="<!-- NO START ROW -->";
 				}
 			}
@@ -1946,7 +1946,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	@Override
 	public String getSuffixViewXHTMLCode(ContentContext ctx) {
 		String colSuffix = "";
-		if (isColumnable(ctx)) {
+		if (isColumnable(ctx) && getColumnSize()>=0) {
 			IContentVisualComponent next = getNextComponent();
 			colSuffix = "</div> <!-- /component-row -->";
 			if (next != null && next.isColumnable(ctx) && next.getColumnSize()>=0) {
