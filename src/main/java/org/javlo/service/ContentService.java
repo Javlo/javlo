@@ -268,6 +268,7 @@ public class ContentService implements IPrintInfo {
 		bean.setList(inBean.isList());
 		bean.setHidden(inBean.isHidden());
 		bean.setStyle(inBean.getStyle());
+		bean.setColumnSize(inBean.getColumnSize());
 		IContentVisualComponent previousComp = ContentService.getInstance(ctx.getRequest()).getComponent(ctx, parentId);
 		if (previousComp != null) {
 			bean.setArea(previousComp.getArea());
@@ -299,6 +300,7 @@ public class ContentService implements IPrintInfo {
 		ComponentBean bean = new ComponentBean(id, inBean.getType(), inBean.getValue(), ctx.getRequestContentLanguage(), false, ctx.getCurrentEditUser());
 		bean.setList(inBean.isList());
 		bean.setHidden(inBean.isHidden());
+		bean.setColumnSize(inBean.getColumnSize());
 		bean.setStyle(inBean.getStyle());
 		bean.setArea(inBean.getArea());
 		bean.setRepeat(inBean.isRepeat());

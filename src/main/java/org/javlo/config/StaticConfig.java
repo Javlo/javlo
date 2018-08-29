@@ -1106,6 +1106,10 @@ public class StaticConfig extends Observable {
 	public String getStaticConfigLocalisation() {
 		return staticConfigLocalisation;
 	}
+	
+	public String getExternComponentFolder() {
+		return properties.getString("exter-component-folder", "components");
+	}
 
 	public String getStaticFolder() {
 		return properties.getString("static-folder", "static");

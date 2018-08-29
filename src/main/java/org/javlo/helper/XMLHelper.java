@@ -311,6 +311,10 @@ public class XMLHelper {
 				if (StringHelper.isTrue(hidden)) {
 					out.print("\" hidden=\"");
 					out.print(hidden);
+				}				
+				if (beans[j].getColumnSize()>=0) {
+					out.print("\" colSize=\"");
+					out.print(beans[j].getColumnSize());
 				}
 				if (!ComponentBean.DEFAULT_AREA.equals(beans[j].getArea())) {
 					out.print("\" area=\"");

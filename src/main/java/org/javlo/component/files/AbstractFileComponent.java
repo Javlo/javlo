@@ -987,6 +987,14 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 
 	@Override
 	public String performEdit(ContentContext ctx) throws Exception {
+		
+		if (isColumnable(ctx)) {
+			RequestService rs = RequestService.getInstance(ctx.getRequest());
+			String newWidth = rs.getParameter(getInputNameColomn(), ""+COL_MAX_SIZE);
+			if (StringHelper.isDigit(newWidth)) {
+				setColumnSize(Integer.parseInt(newWidth));
+			}
+		}
 
 		boolean fromShared = isFromShared(ctx);
 
@@ -1343,6 +1351,11 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 		} else {
 			return false;
 		}
+	}
+	
+	@Override
+	public boolean isColumnable(ContentContext ctx) {
+		return StringHelper.isTrue(getConfig(ctx).getProperty("columnable", null), true);
 	}
 
 }

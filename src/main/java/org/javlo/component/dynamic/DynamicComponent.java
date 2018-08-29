@@ -148,61 +148,62 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 
 	@Override
 	public String getPrefixViewXHTMLCode(ContentContext ctx) {
-		String colPrefix = "";
-		if (isColumnable(ctx)) {
-			IContentVisualComponent prev = getPreviousComponent();
-			colPrefix = "<div class=\"row dynamic-component-row\">";
-			if (prev != null && prev instanceof DynamicComponent) {
-				if (((DynamicComponent)prev).isColumnable(ctx)) {
-					colPrefix="<!-- NO START ROW -->";
-				}
-			}
-			String colClass = "col-lg-"+getColumnSize();
-			switch (getColumnSize()) {
-			case 6:
-				colClass = "col-sm-6";
-				break;
-			case 4: 
-				colClass = "col-sm-4";
-				break;
-			case 3:
-				colClass = colClass+" col-sm-6";
-				break;
-			case 2:
-				colClass = colClass+" col-sm-4 col-6";
-				break;
-			case 1:
-				colClass = colClass+" col-sm-2 col-4";
-				break;
-			default:
-				break;
-			}
-			colPrefix = colPrefix + "<div class=\"h100 "+colClass+"\">";
-		}
 		if (!isWrapped()) {
+			String colPrefix = "";
+			if (isColumnable(ctx)) {
+				IContentVisualComponent prev = getPreviousComponent();
+				colPrefix = "<div class=\"row component-row\">";
+				if (prev != null && prev.isColumnable(ctx) && prev.getColumnSize()>=0) {
+					if (((DynamicComponent)prev).isColumnable(ctx)) {
+						colPrefix="<!-- NO START ROW -->";
+					}
+				}
+				String colClass = "col-lg-"+getColumnSize();
+				switch (getColumnSize()) {
+				case 6:
+					colClass = "col-sm-6";
+					break;
+				case 4: 
+					colClass = "col-sm-4";
+					break;
+				case 3:
+					colClass = colClass+" col-sm-6";
+					break;
+				case 2:
+					colClass = colClass+" col-sm-4 col-6";
+					break;
+				case 1:
+					colClass = colClass+" col-sm-2 col-4";
+					break;
+				case 0:
+					colClass = colClass+" col-sm-auto";
+					break;
+				default:
+					break;
+				}
+				colPrefix = colPrefix + "<div class=\"h100 "+colClass+"\">";
+			}
 			return colPrefix;
 		} else {
-			return colPrefix+super.getPrefixViewXHTMLCode(ctx);
+			return super.getPrefixViewXHTMLCode(ctx);
 		}
 	}
 
 	@Override
-	public String getSuffixViewXHTMLCode(ContentContext ctx) {
-		String colSuffix = "";
-		if (isColumnable(ctx)) {
-			IContentVisualComponent next = getNextComponent();
-			colSuffix = "</div> <!-- /dynamic-component-row -->";
-			if (next != null && next instanceof DynamicComponent) {
-				if (((DynamicComponent)next).isColumnable(ctx)) {
+	public String getSuffixViewXHTMLCode(ContentContext ctx) {		
+		if (!isWrapped()) {
+			String colSuffix = "";
+			if (isColumnable(ctx) && getColumnSize()>=0) {
+				IContentVisualComponent next = getNextComponent();
+				colSuffix = "</div> <!-- /component-row -->";
+				if (next != null && next.isColumnable(ctx) && next.getColumnSize()>=0) {
 					colSuffix="";
 				}
+				colSuffix = "</div>"+colSuffix;
 			}
-			colSuffix = "</div>"+colSuffix;
-		}
-		if (!isWrapped()) {
-			return "" + " <!-- empty suffix -->" + colSuffix;
+			return colSuffix;
 		} else {
-			return super.getSuffixViewXHTMLCode(ctx) + " <!-- fill suffix -->"+ colSuffix;
+			return super.getSuffixViewXHTMLCode(ctx);
 		}
 	}
 
@@ -448,18 +449,6 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 		return StringHelper.isTrue(column, true);
 	}
 	
-	public int getColumnSize() {
-		return Integer.parseInt(properties.getProperty("component.column.size", properties.getProperty("component.column.default-size", "12")));
-	}
-	
-	public void setColumnSize(String size) {
-		properties.setProperty("component.column.size", size);
-		storeProperties();
-	}
-	
-	protected List<Integer> getColumnSizes() {
-		return DEFAULT_COLUMN_SIZE;
-	}
 
 	private String getDynamicRenderer(ContentContext ctx) {
 		String deviceRenderer = properties.getProperty("component.renderer." + ctx.getDevice().getCode());
@@ -548,43 +537,6 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 		return properties.getProperty("notify.edit-page");
 	}
 	
-	protected String drawColumn(int size) {
-		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-		PrintStream out = new PrintStream(outStream);
-		out.println("<div class=\"column column-"+size+"\">");
-		out.println("<table><tr>");
-		for (int i=0; i<size; i++) {
-			out.print("<td></td>");
-		}
-		out.println("</tr></table></div>");
-		out.close();
-		return new String(outStream.toByteArray());
-	}
-	
-	protected String getInputNameColomn() {
-		return getInputName("_columnSize");
-	}
-	
-	protected String getColumn(ContentContext ctx) {
-		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-		PrintStream out = new PrintStream(outStream);
-		out.println("<div class=\"column-selection\">");
-		for (Integer colSize : getColumnSizes()) {
-			out.println("<label for=\""+(getInputNameColomn()+colSize)+"\"  style=\"width: "+Math.round(100/getColumnSizes().size())+"%\" >");
-			out.println("<div class=\"select-col select-col-"+colSize+"\">");
-			String select = "";
-			if (getColumnSize() == colSize) {
-				select= " checked=\"checked\" ";
-			}
-			out.println("<input type=\"radio\" id=\""+(getInputNameColomn()+colSize)+"\" name=\""+getInputNameColomn()+"\""+select+"value=\""+colSize+"\" />");
-			out.println("<div class=\"fraction\">"+colSize+"/12</div></div>");
-			out.print(drawColumn(12/colSize)+"</label>");
-		}
-		out.println("</div><hr />");
-		out.close();
-		return new String(outStream.toByteArray());
-	}
-
 	@Override
 	protected String getEditXHTMLCode(ContentContext ctx) throws Exception {
 		StringWriter writer = new StringWriter();
@@ -605,9 +557,7 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 		} else {
 			out.println("<div class=\"dynamic-component not-valid cols\">");
 		}
-		if (isColumnable(ctx)) {
-			out.print(getColumn(ctx));
-		}
+		
 		int colSize = 0;
 		Iterator<Field> iter = fields.iterator();
 		boolean first = true;
@@ -679,21 +629,14 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 		String res = new String(out.toByteArray());
 		setValue(res);
 	}
-
+	
 	@Override
 	public String performEdit(ContentContext ctx) throws Exception {
 
 		java.util.List<Field> fieldsName = getFields(ctx);
 		
-		if (isColumnable(ctx)) {
-			RequestService rs = RequestService.getInstance(ctx.getRequest());
-			String newWidth = rs.getParameter(getInputNameColomn(), "12");
-			if (!newWidth.equals(""+getColumnSize())) {
-				setColumnSize(newWidth);
-				setModify();
-			}
-		}
-
+		performColumnable(ctx);
+		
 		boolean valid = true;
 		List<String> errorField = new LinkedList<String>();
 		Iterator<Field> iter = fieldsName.iterator();
@@ -1318,5 +1261,5 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 			}
 		}
 	}
-
+	
 }

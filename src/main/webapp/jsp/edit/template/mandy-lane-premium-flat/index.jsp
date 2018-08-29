@@ -1,6 +1,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%><%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%><%@ taglib uri="/WEB-INF/javlo.tld" prefix="jv"%><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
+<link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet"> 
 <script type="text/javascript">
 	function closePopup() {
 		var url = top.location.href; // close iframe and refresh parent frame
@@ -47,8 +48,7 @@
 	
 	
 </c:if>
-</head>
-<c:if test="${contentContext.closePopup}"><body></body></c:if>
+<c:if test="${contentContext.closePopup}"></head><body></body></c:if>
 <c:if test="${!contentContext.closePopup}">
 
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -60,13 +60,6 @@
 	<link rel="stylesheet" media="screen" href="${info.editTemplateURL}/css/bootstrap/bootstrap.css?ts=${info.ts}" />
 	<link rel="stylesheet" href="${info.editTemplateURL}/css/style.css?ts=${info.ts}" />
 	<link rel="stylesheet" media="screen" href="${info.editTemplateURL}/css/style.css?ts=${info.ts}" />
-	<link rel="stylesheet" media="screen" href="${info.editTemplateURL}/css/javlo.css?ts=${info.ts}" />
-	<link rel="stylesheet" media="screen" href="${info.editTemplateURL}/css/plugins/colorbox.css" />
-	<link rel="stylesheet" media="print" href="${info.editTemplateURL}/css/print.css" />
-	<link rel="stylesheet" href="${info.editTemplateURL}/scss/fontawesome.css" />
-	<link rel="stylesheet" href="${info.editTemplateURL}/scss/fa-brands.css" />
-	<link rel="stylesheet" href="${info.editTemplateURL}/scss/fa-regular.css" />
-	<link rel="stylesheet" href="${info.editTemplateURL}/scss/fa-solid.css" />	
 
 	<style type="text/css">
 @font-face {
@@ -96,50 +89,9 @@
 
 	<script type="text/javascript" src="${info.editTemplateURL}/js/plugins/jquery-1.7.2.min.js"></script>
 	<script type="text/javascript" src="${info.editTemplateURL}/js/plugins/jquery-ui-1.8.20.custom.min.js"></script>
-	<script type="text/javascript" src="${info.editTemplateURL}/js/plugins/jquery.alerts.js"></script>
-	<script type="text/javascript" src="${info.editTemplateURL}/js/plugins/jquery.alerts.js"></script>
 	<script type="text/javascript">
 		<jsp:include page="/jsp/edit/global/dynamic_js.jsp" />
 	</script>
-	<script type="text/javascript" src="${info.editTemplateURL}/js/plugins/jquery.validate.min.js"></script>
-	<script type="text/javascript" src="${info.editTemplateURL}/js/plugins/jquery.colorbox-min.js"></script>
-	<script type="text/javascript" src="${info.editTemplateURL}/js/plugins/jquery.jgrowl.js"></script>
-	<script type="text/javascript" src="${info.editTemplateURL}/js/plugins/jquery.dataTables.min.js"></script>
-	<script type="text/javascript" src="${info.editTemplateURL}/js/plugins/jquery.form.js"></script>
-	<script type="text/javascript" src="${info.editTemplateURL}/js/plugins/jquery.elastic.source.js"></script>
-	<script type="text/javascript" src="${info.editTemplateURL}/js/custom/gallery.js"></script>
-	<!-- <script type="text/javascript" src="${info.editTemplateURL}/js/lib/html2canvas.min.js"></script>  -->
-	<script type="text/javascript" src="<jv:url value='/js/edit/ajax.js?ts=${info.ts}' />"></script>
-	<script type="text/javascript" src="<jv:url value='/js/edit/core.js?ts=${info.ts}' />"></script>
-
-	<!-- color picker -->
-	<script type="text/javascript" src="<jv:url value='/js/lib/colorpicker/js/colorpicker.js' />"></script>
-	<link rel="stylesheet" media="screen" type="text/css" href="<jv:url value='/js/lib/colorpicker/css/colorpicker.css' />" />
-
-	<!-- chosen -->
-	<script type="text/javascript" src="<jv:url value='/js/lib/chosen/chosen.jquery.js' />"></script>
-	<link rel="stylesheet" media="screen" type="text/css" href="<jv:url value='/js/lib/chosen/chosen.css' />" />
-
-	<script type="text/javascript" src="${info.editTemplateURL}/js/javlo/core.js?ts=${info.ts}"></script>
-	<c:if test="${not info.editLanguage eq 'en'}">
-		<script type="text/javascript" src="${info.editTemplateURL}/js/plugins/jquery.ui.datepicker-${info.editLanguage}.js"></script>
-	</c:if>
-	<script type="text/javascript" src="${info.editTemplateURL}/js/custom/general.js?ts=${info.ts}"></script>
-	<script type="text/javascript" src="${info.editTemplateURL}/js/plugins/jquery.autosize-min.js"></script>
-
-
-	<link rel="stylesheet" href="<jv:url value='/js/lib/tooltipster-master/css/tooltipster.css' />" />
-	<script type="text/javascript" src="<jv:url value='/js/lib/tooltipster-master/js/jquery.tooltipster.min.js' />"></script>
-
-	<!-- module '${currentModule.name}' CSS -->
-	<c:forEach var="css" items="${currentModule.CSS}">
-		<link rel="stylesheet" href="<jv:url value='${css}?ts=${info.ts}' />" />
-	</c:forEach>
-
-	<!-- module '${currentModule.name}' JS -->
-	<c:forEach var="js" items="${currentModule.JS}">
-		<script type="text/javascript" src="<jv:url value='${js}?ts=${info.ts}' />"></script>
-	</c:forEach>
 
 	<script type="text/javascript">
 		var i18nURL = "${info.i18nAjaxURL}";
@@ -342,6 +294,54 @@
 	<!-- footer -->
 </c:if>
 <div id="layer">&nbsp;</div>
+<link rel="stylesheet" media="screen" href="${info.editTemplateURL}/css/javlo.css?ts=${info.ts}" />
+<link rel="stylesheet" media="screen" href="${info.editTemplateURL}/css/plugins/colorbox.css" />
+<link rel="stylesheet" media="print" href="${info.editTemplateURL}/css/print.css" />
+<link rel="stylesheet" href="${info.editTemplateURL}/scss/fontawesome.css" />
+<link rel="stylesheet" href="${info.editTemplateURL}/scss/fa-brands.css" />
+<link rel="stylesheet" href="${info.editTemplateURL}/scss/fa-regular.css" />
+<link rel="stylesheet" href="${info.editTemplateURL}/scss/fa-solid.css" />
+
+<script type="text/javascript" src="${info.editTemplateURL}/js/plugins/jquery.alerts.js"></script>
+<script type="text/javascript" src="${info.editTemplateURL}/js/plugins/jquery.validate.min.js"></script>
+<script type="text/javascript" src="${info.editTemplateURL}/js/plugins/jquery.colorbox-min.js"></script>
+<script type="text/javascript" src="${info.editTemplateURL}/js/plugins/jquery.jgrowl.js"></script>
+<script type="text/javascript" src="${info.editTemplateURL}/js/plugins/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="${info.editTemplateURL}/js/plugins/jquery.form.js"></script>
+<script type="text/javascript" src="${info.editTemplateURL}/js/plugins/jquery.elastic.source.js"></script>
+<script type="text/javascript" src="${info.editTemplateURL}/js/custom/gallery.js"></script>	
+<script type="text/javascript" src="<jv:url value='/js/edit/ajax.js?ts=${info.ts}' />"></script>
+<script type="text/javascript" src="<jv:url value='/js/edit/core.js?ts=${info.ts}' />"></script>
+
+<!-- color picker -->
+<script type="text/javascript" src="<jv:url value='/js/lib/colorpicker/js/colorpicker.js' />"></script>
+<link rel="stylesheet" media="screen" type="text/css" href="<jv:url value='/js/lib/colorpicker/css/colorpicker.css' />" />
+
+<!-- chosen -->
+<script type="text/javascript" src="<jv:url value='/js/lib/chosen/chosen.jquery.js' />"></script>
+<link rel="stylesheet" media="screen" type="text/css" href="<jv:url value='/js/lib/chosen/chosen.css' />" />
+
+<script type="text/javascript" src="${info.editTemplateURL}/js/javlo/core.js?ts=${info.ts}"></script>
+<c:if test="${not info.editLanguage eq 'en'}">
+	<script type="text/javascript" src="${info.editTemplateURL}/js/plugins/jquery.ui.datepicker-${info.editLanguage}.js"></script>
+</c:if>
+<script type="text/javascript" src="${info.editTemplateURL}/js/custom/general.js?ts=${info.ts}"></script>
+<script type="text/javascript" src="${info.editTemplateURL}/js/plugins/jquery.autosize-min.js"></script>
+
+
+<link rel="stylesheet" href="<jv:url value='/js/lib/tooltipster-master/css/tooltipster.css' />" />
+<script type="text/javascript" src="<jv:url value='/js/lib/tooltipster-master/js/jquery.tooltipster.min.js' />"></script>
+
+<!-- module '${currentModule.name}' CSS -->
+<c:forEach var="css" items="${currentModule.CSS}">
+	<link rel="stylesheet" href="<jv:url value='${css}?ts=${info.ts}' />" />
+</c:forEach>
+
+<!-- module '${currentModule.name}' JS -->
+<c:forEach var="js" items="${currentModule.JS}">
+	<script type="text/javascript" src="<jv:url value='${js}?ts=${info.ts}' />"></script>
+</c:forEach>	
+
 </body>
 </c:if>
 </html>

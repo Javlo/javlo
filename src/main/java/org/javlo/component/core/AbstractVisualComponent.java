@@ -21,6 +21,7 @@ import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
@@ -49,6 +50,7 @@ import org.javlo.cache.ICache;
 import org.javlo.component.column.TableBreak;
 import org.javlo.component.column.TableComponent;
 import org.javlo.component.config.ComponentConfig;
+import org.javlo.component.dynamic.DynamicComponent;
 import org.javlo.component.links.MirrorComponent;
 import org.javlo.component.title.Heading;
 import org.javlo.config.StaticConfig;
@@ -138,6 +140,10 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	protected static final String VALUE_SEPARATOR = "-";
 
 	public static final String HIDDEN = "hidden";
+	
+	private static final List<Integer> DEFAULT_COLUMN_SIZE = new LinkedList<Integer>(Arrays.asList(new Integer[] {0,1,2,3,4,6,8,10,12}));
+	
+	protected static final Integer COL_MAX_SIZE = DEFAULT_COLUMN_SIZE.get(DEFAULT_COLUMN_SIZE.size()-1);
 
 	public static final String FORCE_COMPONENT_ID = "___FORCE_COMPONENT_ID";
 
@@ -542,6 +548,74 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	 */
 	protected String getEditorComplexity(ContentContext ctx) {
 		return getConfig(ctx).getProperty("editor-complexity", null);
+	}
+	
+	@Override
+	public boolean isColumnable(ContentContext ctx) {
+		return StringHelper.isTrue(getConfig(ctx).getProperty("columnable", null), false);
+	}
+	
+	@Override
+	public int getColumnSize() {
+		return componentBean.getColumnSize();
+	}
+	
+	public void setColumnSize(int size) {
+		if (componentBean.getColumnSize() != size) {
+			componentBean.setColumnSize(size);
+			setModify();
+		}
+	}
+	
+	protected String getInputNameColomn() {
+		return getInputName("_columnSize");
+	}
+	
+	protected String drawColumn(int size) {
+		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+		PrintStream out = new PrintStream(outStream);
+		out.println("<div class=\"column column-"+size+"\">");
+		out.println("<table><tr>");
+		if (size==0) {
+			out.print("<td></td>");
+			out.print("<td class=\"main-col\" style=\"width:69%;\"></td>");
+		} else if (size<COL_MAX_SIZE) {
+			out.print("<td class=\"main-col\" style=\"width:"+Math.round(100*size/COL_MAX_SIZE)+"%;\"></td>");
+			out.print("<td></td>");
+		} else {
+			out.print("<td class=\"main-col\" ></td>");
+		}
+		out.println("</tr></table></div>");
+		out.close();
+		return new String(outStream.toByteArray());
+	}
+	
+	protected String getColumn(ContentContext ctx) {
+		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+		PrintStream out = new PrintStream(outStream);
+		out.println("<div class=\"column-selection\">");
+		for (Integer colSize : getColumnSizes()) {
+			String cssClass = "";
+			if (getColumnSize() == colSize) {
+				cssClass= " class=\"active\" ";
+			}
+			out.println("<label"+cssClass+" for=\""+(getInputNameColomn()+colSize)+"\"  style=\"width: "+Math.round(100/getColumnSizes().size())+"%\" >");
+			out.println("<div class=\"select-col select-col-"+colSize+"\">");
+			String select = "";
+			if (getColumnSize() == colSize) {
+				select= " checked=\"checked\" ";
+			}
+			out.println("<input type=\"radio\" id=\""+(getInputNameColomn()+colSize)+"\" name=\""+getInputNameColomn()+"\""+select+"value=\""+colSize+"\" />");
+			out.println("<div class=\"fraction\">"+(colSize==0?"auto":(colSize+"/"+COL_MAX_SIZE))+"</div></div>");
+			out.print(drawColumn(colSize)+"</label>");
+		}
+		out.println("</div><hr />");
+		out.close();
+		return new String(outStream.toByteArray());
+	}
+	
+	protected List<Integer> getColumnSizes() {
+		return DEFAULT_COLUMN_SIZE;
 	}
 
 	@Override
@@ -1273,13 +1347,47 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 
 	@Override
 	public String getPrefixViewXHTMLCode(ContentContext ctx) {
+		String colPrefix = "";
+		if (isColumnable(ctx)) {
+			IContentVisualComponent prev = getPreviousComponent();
+			colPrefix = "<div class=\"row component-row\">";
+			if (prev != null && prev.isColumnable(ctx) && prev.getColumnSize()>=0) {
+				if (((DynamicComponent)prev).isColumnable(ctx)) {
+					colPrefix="<!-- NO START ROW -->";
+				}
+			}
+			String colClass = "col-lg-"+getColumnSize();
+			switch (getColumnSize()) {
+			case 6:
+				colClass = "col-sm-6";
+				break;
+			case 4: 
+				colClass = "col-sm-4";
+				break;
+			case 3:
+				colClass = colClass+" col-sm-6";
+				break;
+			case 2:
+				colClass = colClass+" col-sm-4 col-6";
+				break;
+			case 1:
+				colClass = colClass+" col-sm-2 col-4";
+				break;
+			case 0:
+				colClass = "col";
+				break;
+			default:
+				break;
+			}
+			colPrefix = colPrefix + "<div class=\""+colClass+"\">";
+		}
 		if (isDisplayHidden() && ctx.isAsViewMode()) {
 			return "";
 		}
 		if (isWrapped(ctx)) {
-			return getForcedPrefixViewXHTMLCode(ctx);
+			return colPrefix+getForcedPrefixViewXHTMLCode(ctx);
 		} else {
-			return "";
+			return colPrefix;
 		}
 	}
 
@@ -1837,13 +1945,24 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 
 	@Override
 	public String getSuffixViewXHTMLCode(ContentContext ctx) {
+		String colSuffix = "";
+		if (isColumnable(ctx)) {
+			IContentVisualComponent next = getNextComponent();
+			colSuffix = "</div> <!-- /component-row -->";
+			if (next != null && next.isColumnable(ctx) && next.getColumnSize()>=0) {
+				if (next.isColumnable(ctx)) {
+					colSuffix="";
+				}
+			}
+			colSuffix = "</div>"+colSuffix;
+		}
 		if (isDisplayHidden() && ctx.isAsViewMode()) {
 			return "";
 		}
 		if (isWrapped(ctx)) {
-			return getForcedSuffixViewXHTMLCode(ctx);
+			return colSuffix+getForcedSuffixViewXHTMLCode(ctx);
 		} else {
-			return "";
+			return colSuffix;
 		}
 	}
 
@@ -2077,7 +2196,11 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			}
 
 			if (ctx.getRenderMode() == ContentContext.EDIT_MODE) {
-				return getEditXHTMLCode(ctx);
+				if (isColumnable(ctx)) {
+					return getColumn(ctx)+getEditXHTMLCode(ctx);
+				} else {
+					return getEditXHTMLCode(ctx);
+				}
 			} else {
 				if (isHiddenInMode(ctx.getRenderMode())) {
 					String emptyCode = getEmptyCode(ctx);
@@ -2508,10 +2631,24 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		// ctx.getRequest().setAttribute("viewXHTML", getViewXHTMLCode(ctx));
 		return null;
 	}
+	
+	protected void performColumnable(ContentContext ctx) {
+		if (isColumnable(ctx)) {
+			RequestService rs = RequestService.getInstance(ctx.getRequest());
+			String newWidth = rs.getParameter(getInputNameColomn(), ""+COL_MAX_SIZE);
+			if (StringHelper.isDigit(newWidth)) {
+				setColumnSize(Integer.parseInt(newWidth));
+			}
+		}
+	}
+
 
 	@Override
 	public String performEdit(ContentContext ctx) throws Exception {
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
+		
+		performColumnable(ctx);
+		
 		List<String> arraysContent = requestService.getParameterListValues(getContentName(), Collections.EMPTY_LIST);
 		String newContent;
 		if (arraysContent.size() < 2) {
@@ -2525,7 +2662,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		}
 		if (newContent != null) {
 			if (!componentBean.getValue().equals(newContent)) {
-				componentBean.setValue(newContent);
+				componentBean.setValue(newContent); 
 				setModify();
 			}
 		}

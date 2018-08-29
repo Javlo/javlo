@@ -2,6 +2,7 @@ package org.javlo.component.text;
 
 import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.context.ContentContext;
+import org.javlo.helper.StringHelper;
 import org.javlo.helper.XHTMLHelper;
 
 import de.java2html.Java2Html;
@@ -43,6 +44,11 @@ public class Code extends AbstractVisualComponent {
 	@Override
 	public String getFontAwesome() {	
 		return "file-code-o";
+	}
+	
+	@Override
+	public boolean isColumnable(ContentContext ctx) {
+		return StringHelper.isTrue(getConfig(ctx).getProperty("columnable", null), true);
 	}
 
 }

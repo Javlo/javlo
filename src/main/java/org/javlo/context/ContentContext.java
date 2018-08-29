@@ -1342,12 +1342,6 @@ public class ContentContext {
 	}
 
 	public void setCurrentPageCached(MenuElement currentPageCached) throws Exception {
-		if (currentPageCached.getName().equals("contact")) {
-			LocalLogger.log(DebugHelper.getCaller(10));
-			LocalLogger.log("---");
-		}
-		
-			
 		this.currentPageCached = new WeakReference<MenuElement>(currentPageCached);
 	}
 

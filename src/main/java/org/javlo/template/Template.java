@@ -12,6 +12,7 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.Reader;
 import java.text.ParseException;
@@ -74,6 +75,8 @@ import org.javlo.utils.ConfigurationProperties;
 import org.javlo.utils.ListAsMap;
 import org.javlo.utils.ReadOnlyPropertiesConfigurationMap;
 import org.javlo.utils.StructuredConfigurationProperties;
+
+import net.sf.jasperreports.engine.util.FileBufferedWriter;
 
 public class Template implements Comparable<Template> {
 	
@@ -2355,7 +2358,7 @@ public class Template implements Comparable<Template> {
 			ResourceHelper.copyDir(templateSrc, templateTarget, false, new WEBFileFilter(this, false, jsp, true));
 			/** filter html and css **/
 			Iterator<File> files = FileUtils.iterateFiles(templateSrc, new String[] { "html", "htm", "jsp", "js", "css", "scss", "less" }, true);
-
+			
 			/** plugins **/
 			if (globalContext != null && !parent) {
 				Collection<String> currentPlugin = getAllPluginsName(globalContext);
@@ -2415,6 +2418,30 @@ public class Template implements Comparable<Template> {
 					}
 				}
 			}
+			
+			/** import context **/
+			File componentFolderTarget = new File(URLHelper.mergePath(templateTarget.getAbsolutePath(), DYNAMIC_COMPONENTS_PROPERTIES_FOLDER));
+			File srcComp = new File(globalContext.getExternComponentFolder());
+			if (!srcComp.exists()) {
+				srcComp.mkdirs();
+			}
+			FileUtils.copyDirectory(srcComp, componentFolderTarget);
+
+			/** prepare merging of all sass component class **/			
+			if (componentFolderTarget.exists() && componentFolderTarget.isDirectory()) {
+				Iterator<File> cssFiles = FileUtils.iterateFiles(componentFolderTarget, new String[] { "css", "scss" }, true);
+				BufferedWriter outSassImport = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(new File(URLHelper.mergePath(templateTarget.getAbsolutePath(), "_components.scss")))));
+				try {
+					while (cssFiles.hasNext()) {
+						File cssFile = cssFiles.next();
+						outSassImport.write("@import '"+DYNAMIC_COMPONENTS_PROPERTIES_FOLDER+"/"+cssFile.getName()+"';");
+						outSassImport.newLine();
+					}
+				} finally {
+					ResourceHelper.closeResource(outSassImport);
+				}
+			}
+			
 		} else {
 			logger.warning("template not found : " + templateSrc);
 		}

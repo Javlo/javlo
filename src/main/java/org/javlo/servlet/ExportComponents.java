@@ -30,6 +30,8 @@ import org.javlo.utils.Cell;
 import org.javlo.utils.XLSTools;
 
 public class ExportComponents extends HttpServlet {
+	
+	private static final String TEMP_DYANAMIC_COMPONENT_FOLDER = "/components.temp";
 
 	private static Logger logger = Logger.getLogger(ExportComponents.class.getName());
 
@@ -42,6 +44,30 @@ public class ExportComponents extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException {
 		process(request, response);
 	}
+	
+//	private void renderDynamicComponent(String type, HttpServletRequest request, HttpServletResponse response) throws Exception {
+//		ContentContext ctx = ContentContext.getContentContext(request, response, false);		
+//		File compFile=null;
+//		for (File comp : ctx.getGlobalContext().getExternComponents()) {
+//			if (StringHelper.getFileNameWithoutExtension(comp.getName()).equals(type)) {
+//				compFile=comp;
+//			}
+//		}
+//		System.out.println(">>>>>>>>> ExportComponents.renderDynamicComponent : compFile = "+compFile); //TODO: remove debug trace
+//		if (compFile == null) {
+//			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+//			return;
+//		}
+//		File tempFolder = new File(getServletContext().getRealPath(URLHelper.mergePath(TEMP_DYANAMIC_COMPONENT_FOLDER, ctx.getGlobalContext().getContextKey())));
+//		if (!tempFolder.exists()) {
+//			tempFolder.mkdirs();
+//		}
+//		File destFile = new File(URLHelper.mergePath(tempFolder.getAbsolutePath(), compFile.getName()));
+//		FileUtils.copyFile(compFile, destFile);
+//		DynamicComponent dc = new DynamicComponent();
+//		dc.init(new ComponentBean(type, ResourceHelper.loadStringFromFile(destFile), "en"), ctx);
+//		response.getWriter().print(dc.getViewXHTMLCode(ctx));
+//	}
 
 	private void process(HttpServletRequest request, HttpServletResponse response) throws ServletException {
 
@@ -59,37 +85,39 @@ public class ExportComponents extends HttpServlet {
 				if (componentType.toLowerCase().endsWith(".html") || componentType.toLowerCase().endsWith(".js")) {
 					response.setContentType("text/html; charset=" + ContentContext.CHARACTER_ENCODING);
 					String compId = StringHelper.getFileNameWithoutExtension(StringHelper.getFileNameFromPath(request.getRequestURI()));
-					ContentService content = ContentService.getInstance(ctx.getRequest());
-					ctx.setAbsoluteURL(true);
-					IContentVisualComponent comp = content.getComponent(ctx, compId);
-					if (comp == null) { // if not found in view mode -> search in preview mode.
-						ctx.setRenderMode(ContentContext.PREVIEW_MODE);
-						comp = content.getComponent(ctx, compId);
-					} 					
-					if (comp == null) {
-						response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-						return;
-					} else {
-						if (!comp.getPage().isReadAccess(ctx, ctx.getCurrentUser())) {
-							response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-							return;							
+					if (compId != null) {
+						ContentService content = ContentService.getInstance(ctx.getRequest());
+						ctx.setAbsoluteURL(true);
+						IContentVisualComponent comp = content.getComponent(ctx, compId);
+						if (comp == null) { // if not found in view mode -> search in preview mode.
+							ctx.setRenderMode(ContentContext.PREVIEW_MODE);
+							comp = content.getComponent(ctx, compId);
 						}
-						ctx.setFree(false);
-						ctx.setCurrentTemplate(TemplateFactory.getTemplate(ctx, comp.getPage()));
-						//comp.initContent(ctx);
-						
-						String xhtml = comp.getXHTMLCode(ctx);
-						if (xhtml == null) {
-							logger.severe("content not found on component : "+compId);
+						if (comp == null) {
 							response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-							return;							
+							return;
+						} else {
+							if (!comp.getPage().isReadAccess(ctx, ctx.getCurrentUser())) {
+								response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+								return;
+							}
+							ctx.setFree(false);
+							ctx.setCurrentTemplate(TemplateFactory.getTemplate(ctx, comp.getPage()));
+							// comp.initContent(ctx);
+
+							String xhtml = comp.getXHTMLCode(ctx);
+							if (xhtml == null) {
+								logger.severe("content not found on component : " + compId);
+								response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+								return;
+							}
+							ResourceHelper.writeStringToStream(xhtml, response.getOutputStream(), ContentContext.CHARACTER_ENCODING);
 						}
-						ResourceHelper.writeStringToStream(xhtml, response.getOutputStream(), ContentContext.CHARACTER_ENCODING);
 					}
 				} else if (componentType.toLowerCase().endsWith(".xlsx")) {
 					response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
 					String[] splittedPath = StringUtils.split(request.getPathInfo(), '/');
-					GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());					
+					GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 					if (splittedPath.length > 1) {
 						if (splittedPath[0].length() == 2) {
 							if (!globalContext.getContentLanguages().contains(splittedPath[0])) {
@@ -106,7 +134,7 @@ public class ExportComponents extends HttpServlet {
 						return;
 					}
 					componentType = componentType.replace(".xlsx", "").replace("/", "");
-					ContentService content = ContentService.getInstance(request);					
+					ContentService content = ContentService.getInstance(request);
 					Cell[][] cells = ComponentHelper.componentsToArray(ctx, content.getAllContent(ctx), componentType);
 					XLSTools.writeXLSX(cells, response.getOutputStream());
 				} else {

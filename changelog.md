@@ -12,8 +12,6 @@ Fixed for any bug fixes.
 Security in case of vulnerabilities.
 
 ## [Unreleased]
-### Added
-- 1/ resource servlet return 404 if no path defined / mobile preview / protect preview mode / dynamic component colomnable
 
 
 ## [2.0] - 15/06/2012
@@ -659,3 +657,14 @@ Security in case of vulnerabilities.
 - 5/ accesibility escape menu parametrable target / remove type="javascript" from script tag / don't display prefix and suffix if component hidden / jsp minified / include font in graphics charter / template can be for dedicated for children association / component css class / social api key / clean resource reference macro / default filter banner in header and banner area
 
 ## [2.1.1.4] - 15/08/2018
+### Added
+- mobile preview
+- protect preview mode
+- dynamic component colomnable
+- external component
+- components modules
+- load js optimisation in edit mode
+### Fixed
+- resource servlet return 404 if no path defined
+
+## [2.1.2.0] - 29/08/2018

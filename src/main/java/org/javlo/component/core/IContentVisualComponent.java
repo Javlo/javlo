@@ -886,5 +886,19 @@ public interface IContentVisualComponent extends Comparable<IContentVisualCompon
 	 * @return
 	 */
 	public boolean transflateFrom(ContentContext ctx, ITranslator translator, String lang);
+
+	/**
+	 * contributor can select size of column to wrap component
+	 * @param ctx
+	 * @return 0:auto -1:undefined
+	 */
+	public boolean isColumnable(ContentContext ctx);
+
+	/**
+	 * get the size of the column, the column contains the component
+	 * @return
+	 */
+	public int getColumnSize();
+	
 	
 }

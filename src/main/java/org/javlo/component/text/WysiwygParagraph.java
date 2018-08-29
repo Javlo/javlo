@@ -193,6 +193,11 @@ public class WysiwygParagraph extends AbstractVisualComponent {
 		}
 	}
 	
+	@Override
+	public boolean isColumnable(ContentContext ctx) {
+		return StringHelper.isTrue(getConfig(ctx).getProperty("columnable", null), true);
+	}
+	
 	public static void main(String[] args) {		
 		String value = "<p>l'&eacute;té</p>";
 		System.out.println(">>>>>>>>> WysiwygParagraph.main : value="+StringEscapeUtils.unescapeHtml4(value)); //TODO: remove debug trace

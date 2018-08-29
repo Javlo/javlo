@@ -28,6 +28,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -1350,6 +1351,27 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	public File getDataBaseFolder() {
 		File dataBaseFolder = new File(getDataFolder(), "db");
 		return dataBaseFolder;
+	}
+	
+	public String getExternComponentFolder() {
+		return URLHelper.mergePath(getDataFolder(), staticConfig.getExternComponentFolder());
+	}
+	
+	public List<File> getExternComponents() {
+		File dir = new File(getExternComponentFolder());
+		List<File> outFiles = new LinkedList<File>();
+		for (File child : dir.listFiles()) {
+			if (StringHelper.getFileExtension(child.getName()).equalsIgnoreCase("jsp") || StringHelper.getFileExtension(child.getName()).equalsIgnoreCase("html")) {
+				outFiles.add(child);
+			}
+		}
+		Collections.sort(outFiles, new Comparator<File>() {
+			@Override
+			public int compare(File o1, File o2) {
+				return o1.getName().compareTo(o2.getName());
+			}
+		});
+		return outFiles;
 	}
 
 	public String getStaticFolder() {

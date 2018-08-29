@@ -1123,6 +1123,7 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle, IStat
 	@Override
 	public String performEdit(ContentContext ctx) throws Exception {
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
+		performColumnable(ctx);
 		String folder = requestService.getParameter(getInputBaseFolderName(), null);
 		String newStartDate = requestService.getParameter(getInputStartDateName(), null);
 		String newEndDate = requestService.getParameter(getInputEndDateName(), null);
@@ -1369,6 +1370,11 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle, IStat
 
 		out.close();
 		return new String(outStream.toByteArray());
+	}
+	
+	@Override
+	public boolean isColumnable(ContentContext ctx) {
+		return StringHelper.isTrue(getConfig(ctx).getProperty("columnable", null), true);
 	}
 
 }

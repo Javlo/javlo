@@ -40,6 +40,7 @@ public class ComponentBean implements Serializable, Comparable<ComponentBean> {
 	private String textColor = null;
 	private ComponentLayout layout = null;
 	private String manualCssClass = null; 
+	private int columnSize = -1;
 
 	private boolean repeat = false;
 	private boolean modify = false;
@@ -310,6 +311,14 @@ public class ComponentBean implements Serializable, Comparable<ComponentBean> {
 
 	public void setManualCssClass(String manualCssClass) {
 		this.manualCssClass = manualCssClass;
+	}
+
+	public int getColumnSize() {
+		return columnSize;
+	}
+
+	public void setColumnSize(int columnSize) {
+		this.columnSize = columnSize;
 	}
 
 }

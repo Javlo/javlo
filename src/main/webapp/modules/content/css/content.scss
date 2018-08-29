@@ -596,6 +596,18 @@ li.line {
 				height: 30px;
 				width: auto;
 			}
+			td.main-col {
+				background-color: #f0ad4e;
+			}
+		}
+	}
+	label:hover, label.active {
+		.column {
+			table {
+				td.main-col {
+					background-color: #4DA74D;
+				}
+			}
 		}
 	}
 }
