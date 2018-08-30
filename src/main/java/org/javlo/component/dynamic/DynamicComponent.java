@@ -6,7 +6,6 @@ package org.javlo.component.dynamic;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Arrays;
@@ -50,7 +49,6 @@ import org.javlo.navigation.MenuElement;
 import org.javlo.navigation.PageBean;
 import org.javlo.service.ITranslator;
 import org.javlo.service.PersistenceService;
-import org.javlo.service.RequestService;
 import org.javlo.service.exception.ServiceException;
 import org.javlo.service.resource.Resource;
 import org.javlo.template.Template;
@@ -152,41 +150,7 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 	@Override
 	public String getPrefixViewXHTMLCode(ContentContext ctx) {
 		if (!isWrapped()) {
-			String colPrefix = "";
-			if (isColumnable(ctx) && getColumnSize()>=0 && getColumnSize() != COL_MAX_SIZE) {
-				IContentVisualComponent prev = getPreviousComponent();
-				colPrefix = "<div class=\"row component-row component-row-"+getType()+"\"\">";
-				if (prev != null && prev.isColumnable(ctx) && prev.getColumnSize()>=0 && prev.getColumnSize() != COL_MAX_SIZE) {
-					if (((DynamicComponent)prev).isColumnable(ctx)) {
-						colPrefix="<!-- NO START ROW -->";
-					}
-				}
-				String colClass = "component-col col-lg-"+getColumnSize();
-				switch (getColumnSize()) {
-				case 6:
-					colClass = "component-col col-sm-6";
-					break;
-				case 4: 
-					colClass = "component-col col-sm-4";
-					break;
-				case 3:
-					colClass = colClass+" col-sm-6";
-					break;
-				case 2:
-					colClass = colClass+" col-sm-4 col-6";
-					break;
-				case 1:
-					colClass = colClass+" col-sm-2 col-4";
-					break;
-				case 0:
-					colClass = "component-col col";
-					break;
-				default:
-					break;
-				}
-				colPrefix = colPrefix + "<div class=\"h100 "+colClass+"\">";
-			}
-			return colPrefix;
+			return getColomnablePrefix(ctx);
 		} else {
 			return super.getPrefixViewXHTMLCode(ctx);
 		}
@@ -195,16 +159,7 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 	@Override
 	public String getSuffixViewXHTMLCode(ContentContext ctx) {		
 		if (!isWrapped()) {
-			String colSuffix = "";
-			if (isColumnable(ctx) && getColumnSize()>=0) {
-				IContentVisualComponent next = getNextComponent();
-				colSuffix = "</div> <!-- /component-row -->";
-				if (next != null && next.isColumnable(ctx) && next.getColumnSize()>=0 && next.getColumnSize() != COL_MAX_SIZE) {
-					colSuffix="";
-				}
-				colSuffix = "</div>"+colSuffix;
-			}
-			return colSuffix;
+			return getColomnableSuffix(ctx);
 		} else {
 			return super.getSuffixViewXHTMLCode(ctx);
 		}

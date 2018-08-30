@@ -526,6 +526,8 @@ public class Template implements Comparable<Template> {
 
 	private String fakeName = null;
 	
+	private List<Integer> sizes = null;
+	
 	public static Template getApplicationInstance(ServletContext application, ContentContext ctx, String templateDir) throws Exception {
 
 		Template outTemplate = null;
@@ -1349,7 +1351,136 @@ public class Template implements Comparable<Template> {
 			return version;
 		}
 	}
-
+	
+	public boolean isColumnable() {
+		return getColumnableRowTag() != null;
+	}
+	
+	public List<Integer> getColumnableSizes() {
+		if (sizes != null) {
+			return sizes;
+		}
+		String sizesRaw = properties.getString("columnable.sizes", null);
+		if (sizesRaw == null) {
+			return getParent().getColumnableSizes();
+		} else {
+			List<Integer> outSizes = new LinkedList<Integer>();
+			for (String strSize : StringHelper.stringToCollection(sizesRaw,",")) {
+				outSizes.add(Integer.parseInt(strSize));
+			}
+			sizes = outSizes;
+			return outSizes;
+		}
+	}
+	
+	public String getColumnableRowTag() {
+		String tag = properties.getString("columnable.row.tag", null);
+		if (tag == null) {
+			return getParent().getColumnableRowTag();
+		} else {
+			return tag;
+		}
+	}
+	
+	public String getColumnableRowTagIn() {
+		String tag = properties.getString("columnable.row.in.tag", null);
+		if (tag == null) {
+			return getParent().getColumnableRowTagIn();
+		} else {
+			return tag;
+		}
+	}
+	
+	public String getColumnableColTagIn() {
+		String tag = properties.getString("columnable.col.in.tag", null);
+		if (tag == null) {
+			return getParent().getColumnableColTagIn();
+		} else {
+			return tag;
+		}
+	}
+	
+	public String getColumnableStyleTagIn() {
+		String tag = properties.getString("columnable.col.in.style", null);
+		if (tag == null) {
+			return getParent().getColumnableStyleTagIn();
+		} else {
+			return tag;
+		}
+	}
+	
+	public String getColumnableClassTagIn() {
+		String tag = properties.getString("columnable.col.in.class", null);
+		if (tag == null) {
+			return getParent().getColumnableClassTagIn();
+		} else {
+			return tag;
+		}
+	}
+	
+	public String getColumnableColTag() {
+		String tag = properties.getString("columnable.col.tag", null);
+		if (tag == null) {
+			return getParent().getColumnableColTag();
+		} else {
+			return tag;
+		}
+	}
+	
+	public String getColumnableRowStyle() {
+		String tag = properties.getString("columnable.row.style", null);
+		if (tag == null) {
+			return getParent().getColumnableRowStyle();
+		} else {
+			return tag;
+		}
+	}
+	
+	public String getColumnableRowClass() {
+		String cssClass = properties.getString("columnable.row.class", null);
+		if (cssClass == null) {
+			return getParent().getColumnableRowClass();
+		} else {
+			return cssClass;
+		}
+	}
+	
+	public String getColumnableColStyleDefault() {
+		String style = properties.getString("columnable.col.style.default", null);
+		if (style == null) {
+			return getParent().getColumnableColStyleDefault();
+		} else {
+			return style;
+		}
+	}
+	
+	public String getColumnableColStyle(int size) {
+		String style = properties.getString("columnable.col.style."+size, null);
+		if (style == null) {
+			return StringHelper.neverNull(getParent().getColumnableColStyle(size),getColumnableColStyleDefault());
+		} else {
+			return style;
+		}
+	}
+	
+	public String getColumnableColClass(int size) {
+		String style = properties.getString("columnable.col.class."+size, null);
+		if (style == null) {
+			return StringHelper.neverNull(getParent().getColumnableColClass(size),getColumnableColClassDefault());
+		} else {
+			return style;
+		}
+	}
+	
+	public String getColumnableColClassDefault() {
+		String cssClass = properties.getString("columnable.col.class.default", null);
+		if (cssClass == null) {
+			return getParent().getColumnableColClassDefault();
+		} else {
+			return cssClass;
+		}
+	}
+	
 	public String getHomeRendererFullName(GlobalContext globalContext) {
 		if (dir == null) {
 			logger.warning("no valid dir : " + dir);

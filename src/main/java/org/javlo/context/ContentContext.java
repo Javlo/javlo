@@ -494,6 +494,8 @@ public class ContentContext {
 	private GlobalContext forceGlobalContext = null;
 
 	private String contextRequestLanguage = null;
+	
+	private int columnableSize = 0;
 
 	public ContentContext(ContentContext ctx) {
 		path = ctx.path;
@@ -2231,6 +2233,14 @@ public class ContentContext {
 
 	public boolean isTakeScreenShort() {
 		return StringHelper.isTrue(request.getParameter(TAKE_SCREENSHOT));
+	}
+
+	public int getColumnableSize() {
+		return columnableSize;
+	}
+
+	public void setColumnableSize(int columnableSize) {
+		this.columnableSize = columnableSize;
 	}
 	
 }

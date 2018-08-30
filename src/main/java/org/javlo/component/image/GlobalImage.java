@@ -33,6 +33,7 @@ import org.javlo.context.GlobalContext;
 import org.javlo.exception.ResourceNotFoundException;
 import org.javlo.helper.ComponentHelper;
 import org.javlo.helper.ElementaryURLHelper;
+import org.javlo.helper.LocalLogger;
 import org.javlo.helper.NetHelper;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
@@ -1257,12 +1258,11 @@ public class GlobalImage extends Image implements IImageFilter {
 		 * (GlobalImage)((MirrorComponent) comp).getMirrorComponent(ctx); }
 		 */
 		if (image != null && (image.getConfig(ctx).isDataFeedBack() || ctx.getDevice().isPdf()) && currentUser != null && currentUser.validForRoles(AdminUserSecurity.CONTENT_ROLE)) {
-			logger.info("exec data feed back (template:" + ctx.getCurrentTemplate().getName() + ").");
+			logger.fine("exec data feed back (template:" + ctx.getCurrentTemplate().getName() + ").");
 			String firstText = rs.getParameter("firsttext", null);
 			String secondText = rs.getParameter("secondtext", null);
 			String height = rs.getParameter("height", null);
 			String width = rs.getParameter("width", null);
-			
 			if (image.isTextAuto()) {
 				if (firstText != null && !firstText.equals(image.getFirstText())) {
 					image.setModify();

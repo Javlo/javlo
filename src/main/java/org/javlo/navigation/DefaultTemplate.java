@@ -458,4 +458,53 @@ public class DefaultTemplate extends Template {
 	public Integer getBootstrapVersion() {
 		return null;
 	}
+	
+	public String getColumnableRowTag() {
+		return null;
+	}
+	
+	public String getColumnableColTag() {
+		return null;
+	}
+	
+	public String getColumnableRowStyle() {
+		return "";
+	}
+	
+	public String getColumnableRowClass() {
+		return "";
+	}
+	
+	public String getColumnableColStyleDefault() {
+		return "";
+	}
+	
+	public String getColumnableColClassDefault() {
+		return "";
+	}
+	
+	public String getColumnableColStyle(int size) {
+		return "";
+	}
+	
+	public String getColumnableRowTagIn() {
+		return "";
+	}
+	
+	public String getColumnableColTagIn() {
+		return null;
+	}
+	
+	public String getColumnableStyleTagIn() {
+		return "";
+	}
+	
+	public String getColumnableClassTagIn() {
+		return "";
+	}
+	
+	@Override
+	public List<Integer> getColumnableSizes() {
+		return null;
+	}
 }

@@ -50,9 +50,7 @@ import org.javlo.cache.ICache;
 import org.javlo.component.column.TableBreak;
 import org.javlo.component.column.TableComponent;
 import org.javlo.component.config.ComponentConfig;
-import org.javlo.component.dynamic.DynamicComponent;
 import org.javlo.component.links.MirrorComponent;
-import org.javlo.component.title.Heading;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.EditContext;
@@ -62,6 +60,7 @@ import org.javlo.exception.ResourceNotFoundException;
 import org.javlo.helper.BeanHelper;
 import org.javlo.helper.ComponentHelper;
 import org.javlo.helper.ConfigHelper;
+import org.javlo.helper.LocalLogger;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.ServletHelper;
 import org.javlo.helper.StringHelper;
@@ -142,8 +141,6 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	public static final String HIDDEN = "hidden";
 	
 	private static final List<Integer> DEFAULT_COLUMN_SIZE = new LinkedList<Integer>(Arrays.asList(new Integer[] {0,1,2,3,4,6,8,10,12}));
-	
-	protected static final Integer COL_MAX_SIZE = DEFAULT_COLUMN_SIZE.get(DEFAULT_COLUMN_SIZE.size()-1);
 
 	public static final String FORCE_COMPONENT_ID = "___FORCE_COMPONENT_ID";
 
@@ -553,11 +550,10 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	@Override
 	public final boolean isColumnable(ContentContext ctx) {
 		try {
-			if (ctx.getCurrentTemplate().getBootstrapVersion() != null) {
-				return StringHelper.isTrue(getConfig(ctx).getProperty("columnable", null), getColumnableDefaultValue());
-			} else {
+			if (!ctx.getCurrentTemplate().isColumnable()) {
 				return false;
 			}
+			return StringHelper.isTrue(getConfig(ctx).getProperty("columnable", null), getColumnableDefaultValue());
 		} catch (Exception e) {
 			e.printStackTrace();
 			return false;
@@ -584,7 +580,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		return getInputName("_columnSize");
 	}
 	
-	protected String drawColumn(int size) {
+	protected String drawColumn(ContentContext ctx, int size) {
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(outStream);
 		out.println("<div class=\"column column-"+size+"\">");
@@ -592,8 +588,8 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		if (size==0) {
 			out.print("<td></td>");
 			out.print("<td class=\"main-col\" style=\"width:69%;\"></td>");
-		} else if (size<COL_MAX_SIZE) {
-			out.print("<td class=\"main-col\" style=\"width:"+Math.round(100*size/COL_MAX_SIZE)+"%;\"></td>");
+		} else if (size<getColumnMaxSize(ctx)) {
+			out.print("<td class=\"main-col\" style=\"width:"+Math.round(100*size/getColumnMaxSize(ctx))+"%;\"></td>");
 			out.print("<td></td>");
 		} else {
 			out.print("<td class=\"main-col\" ></td>");
@@ -607,28 +603,41 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(outStream);
 		out.println("<div class=\"column-selection\">");
-		for (Integer colSize : getColumnSizes()) {
+		for (Integer colSize : getColumnSizes(ctx)) {
 			String cssClass = "";
 			if (getColumnSize() == colSize) {
 				cssClass= " class=\"active\" ";
 			}
-			out.println("<label"+cssClass+" for=\""+(getInputNameColomn()+colSize)+"\"  style=\"width: "+Math.round(100/getColumnSizes().size())+"%\" >");
+			out.println("<label"+cssClass+" for=\""+(getInputNameColomn()+colSize)+"\"  style=\"width: "+Math.round(100/getColumnSizes(ctx).size())+"%\" >");
 			out.println("<div class=\"select-col select-col-"+colSize+"\">");
 			String select = "";
 			if (getColumnSize() == colSize) {
 				select= " checked=\"checked\" ";
 			}
 			out.println("<input type=\"radio\" id=\""+(getInputNameColomn()+colSize)+"\" name=\""+getInputNameColomn()+"\""+select+"value=\""+colSize+"\" />");
-			out.println("<div class=\"fraction\">"+(colSize==0?"auto":(colSize+"/"+COL_MAX_SIZE))+"</div></div>");
-			out.print(drawColumn(colSize)+"</label>");
+			out.println("<div class=\"fraction\">"+(colSize==0?"auto":(colSize+"/"+getColumnMaxSize(ctx)))+"</div></div>");
+			out.print(drawColumn(ctx, colSize)+"</label>");
 		}
 		out.println("</div><hr />");
 		out.close();
 		return new String(outStream.toByteArray());
 	}
 	
-	protected List<Integer> getColumnSizes() {
+	protected List<Integer> getColumnSizes(ContentContext ctx) {
+		List<Integer> colSizes;
+		try {
+			colSizes = ctx.getCurrentTemplate().getColumnableSizes();
+			if (colSizes != null) {
+				return colSizes;
+			}
+		} catch (Exception e) {
+			e.printStackTrace(); 
+		}
 		return DEFAULT_COLUMN_SIZE;
+	}
+	
+	protected Integer getColumnMaxSize(ContentContext ctx) {
+		return getColumnSizes(ctx).get(getColumnSizes(ctx).size()-1);
 	}
 
 	@Override
@@ -1358,44 +1367,89 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		}
 	}
 	
+	protected boolean isOpenRow(ContentContext ctx) {
+		int max = getColumnMaxSize(ctx);
+		IContentVisualComponent prev = getPreviousComponent();
+		boolean close = false;
+		if (ctx.getColumnableSize()==0) {
+			close = true;
+		}
+		if (ctx.getColumnableSize()+getColumnSize()>max || prev.getColumnSize()==0) {
+			close = true;
+		}
+		return close;
+	}
 	
+	protected boolean isCloseRow(ContentContext ctx) {
+		int max = getColumnMaxSize(ctx);
+		IContentVisualComponent next = getNextComponent();
+		boolean close = false;
+		if (next == null || !next.isColumnable(ctx)) {
+			close = true;
+		}
+		if (ctx.getColumnableSize()+next.getColumnSize() >= max || next.getColumnSize()==0) {
+			close = true;
+		}
+		if (close) {
+			ctx.setColumnableSize(0);
+		} else {
+			ctx.setColumnableSize(ctx.getColumnableSize()+getColumnSize());
+		}
+		return close;
+	}
+	
+	protected String getColomnablePrefix(ContentContext ctx) {
+		String colPrefix = "";
+		if (isColumnable(ctx) && getColumnSize()>=0 && getColumnSize() != getColumnMaxSize(ctx)) {
+			try {
+				Template tpl = ctx.getCurrentTemplate();
+				colPrefix = "<"+tpl.getColumnableRowTag()+" style=\""+tpl.getColumnableRowStyle()+"\" class=\""+tpl.getColumnableRowClass()+" component-row-"+getType()+"\">";
+				String firstClass="columnalbe-first-col ";
+				if (!StringHelper.isEmpty(tpl.getColumnableRowTagIn())) {
+					colPrefix = colPrefix+'<'+tpl.getColumnableRowTagIn()+'>';
+				}
+				if (!isOpenRow(ctx)) {
+					colPrefix="";
+					firstClass="";
+				}
+				colPrefix = colPrefix + "<"+tpl.getColumnableColTag()+" style=\""+tpl.getColumnableColStyle(getColumnSize())+"\" class=\""+firstClass+tpl.getColumnableColClass(getColumnSize())+"\">";
+				if (!StringHelper.isEmpty(tpl.getColumnableColTagIn())) {
+					colPrefix = colPrefix+'<'+tpl.getColumnableColTagIn()+" class=\""+tpl.getColumnableClassTagIn()+"\" style=\""+tpl.getColumnableStyleTagIn()+"\">";
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return colPrefix;
+	}
+	
+	protected String getColomnableSuffix(ContentContext ctx) {
+		String colSuffix = "";
+		if (isColumnable(ctx) && getColumnSize()>=0 && getColumnSize() != getColumnMaxSize(ctx)) {
+			Template tpl;
+			try {
+				tpl = ctx.getCurrentTemplate();
+				colSuffix = "</"+tpl.getColumnableRowTag()+">";
+				if (!StringHelper.isEmpty(tpl.getColumnableRowTagIn())) {
+					colSuffix = "</"+tpl.getColumnableRowTagIn()+'>'+colSuffix;
+				}
+				if (!isCloseRow(ctx)) {
+					colSuffix="";
+				}
+				colSuffix = "</"+tpl.getColumnableColTag()+">"+colSuffix;
+				if (!StringHelper.isEmpty(tpl.getColumnableColTagIn())) {
+					colSuffix = "</"+tpl.getColumnableColTagIn()+">"+colSuffix;
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return colSuffix;
+	}
 
 	@Override
 	public String getPrefixViewXHTMLCode(ContentContext ctx) {
-		String colPrefix = "";
-		if (isColumnable(ctx) && getColumnSize()>=0 && getColumnSize() != COL_MAX_SIZE) {
-			IContentVisualComponent prev = getPreviousComponent();
-			colPrefix = "<div class=\"row component-row component-row-"+getType()+"\">";
-			if (prev != null && prev.isColumnable(ctx) && prev.getColumnSize()>=0 && prev.getColumnSize() != COL_MAX_SIZE) {
-				if (prev.isColumnable(ctx)) {
-					colPrefix="<!-- NO START ROW -->";
-				}
-			}
-			String colClass = "component-col col-lg-"+getColumnSize();
-			switch (getColumnSize()) {
-			case 6:
-				colClass = "component-col col-sm-6";
-				break;
-			case 4: 
-				colClass = "component-col col-sm-4";
-				break;
-			case 3:
-				colClass = colClass+" col-sm-6";
-				break;
-			case 2:
-				colClass = colClass+" col-sm-4 col-6";
-				break;
-			case 1:
-				colClass = colClass+" col-sm-2 col-4";
-				break;
-			case 0:
-				colClass = "component-col col";
-				break;
-			default:
-				break;
-			}
-			colPrefix = colPrefix + "<div class=\""+colClass+"\">";
-		}
+		String colPrefix = getColomnablePrefix(ctx);
 		if (isDisplayHidden() && ctx.isAsViewMode()) {
 			return "";
 		}
@@ -1408,22 +1462,12 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	
 	@Override
 	public String getSuffixViewXHTMLCode(ContentContext ctx) {
-		String colSuffix = "";
-		if (isColumnable(ctx) && getColumnSize()>=0 && getColumnSize() != COL_MAX_SIZE) {
-			IContentVisualComponent next = getNextComponent();
-			colSuffix = "</div> <!-- /component-row -->";
-			if (next != null && next.isColumnable(ctx) && next.getColumnSize()>=0 && next.getColumnSize() != COL_MAX_SIZE) {
-				if (next.isColumnable(ctx)) {
-					colSuffix="";
-				}
-			}
-			colSuffix = "</div>"+colSuffix;
-		}
+		String colSuffix = getColomnableSuffix(ctx);
 		if (isDisplayHidden() && ctx.isAsViewMode()) {
 			return "";
 		}
 		if (isWrapped(ctx)) {
-			return colSuffix+getForcedSuffixViewXHTMLCode(ctx);
+			return getForcedSuffixViewXHTMLCode(ctx)+colSuffix;
 		} else {
 			return colSuffix;
 		}
@@ -1684,13 +1728,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			out.println("<fieldset class=\"display\">");
 			out.println("<legend>" + i18nAccess.getText("content.page-teaser.display-type") + "</legend><div class=\"line\">");
 
-			if (getRendererTitle() != null) { /*
-												 * for use title you must
-												 * implement method
-												 * getRendererTitle and return
-												 * empty string if empty and not
-												 * null (default value).
-												 */
+			if (getRendererTitle() != null) {
 				out.println("<div class=\"line\">");
 				out.println("<label for=\"" + getInputNameRendererTitle() + "\">" + i18nAccess.getText("global.title") + " : </label>");
 				out.println("<input type=\"text\" id=\"" + getInputNameRendererTitle() + "\" name=\"" + getInputNameRendererTitle() + "\" value=\"" + getRendererTitle() + "\"  />");
@@ -1792,7 +1830,11 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 						if (AbstractVisualComponent.isMirrorWrapped(ctx, this)) {
 							mirror = "mirror-wrapped";
 						}
-						return specificClass + classPrefix + "editable-component " + mirror + currentClass + newClass + ' '+getType() + "\" data-hint=\"" + hint + "\" data-name=\"" + i18nAccess.getText("content." + getType(), getType());
+						String name = i18nAccess.getText("content." + getType(), getType());
+						if (isColumnable(ctx)) {
+							name = name + " | <span class='glyphicon glyphicon-arrow-left'></span> "+(getColumnSize()==0?'A':getColumnSize())+" <span class='glyphicon glyphicon-arrow-right'></span>";
+						}
+						return specificClass + classPrefix + "editable-component " + mirror + currentClass + newClass + ' '+getType() + "\" data-hint=\"" + hint + "\" data-name=\"" + name;
 					}
 				}
 			} catch (Exception e) {
@@ -2650,13 +2692,12 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	protected void performColumnable(ContentContext ctx) {
 		if (isColumnable(ctx)) {
 			RequestService rs = RequestService.getInstance(ctx.getRequest());
-			String newWidth = rs.getParameter(getInputNameColomn(), ""+COL_MAX_SIZE);
+			String newWidth = rs.getParameter(getInputNameColomn(), ""+getColumnMaxSize(ctx));
 			if (StringHelper.isDigit(newWidth)) {
 				setColumnSize(Integer.parseInt(newWidth));
 			}
 		}
 	}
-
 
 	@Override
 	public String performEdit(ContentContext ctx) throws Exception {

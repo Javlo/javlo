@@ -165,3 +165,7 @@ table.float-image-width {
 	margin: 15px 0;
 	text-align: center;
 }
+
+.col-content-wrapper p {
+	margin: 0 0 15px 0;
+}

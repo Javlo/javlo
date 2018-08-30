@@ -1241,7 +1241,7 @@ if (!String.prototype.startsWith) {
 			if (!img.hasClass("refreshing") && !img.hasClass("refreshed") && img.attr("src").indexOf("/transform/")>=0 && (typeof currentURLWidthDevice  !== "undefined")) {		
 				img.addClass("refreshing");
 				pjq.post( currentAjaxURLWidthDevice
-						, { webaction: "global-image.dataFeedBack", compid: img.data('compid'), height: img.height(), width: img.width()}, {dataType: "json"}).done(function(data) {
+						, { webaction: "global-image.dataFeedBack", compid: img.data('compid'), width: img.width()}, {dataType: "json"}).done(function(data) {
 					if (typeof data.data != "undefined") {
 						newImage = pjq('#cp_'+data.data.compId+' img');						
 						newImage.addClass("refreshed");
@@ -1263,7 +1263,7 @@ if (!String.prototype.startsWith) {
 			              imageSrc=imageSrc+"?ts="+new Date().getTime();
 			            }
 			            img.attr("src", imageSrc);
-					}          
+					}
 				});
 			}
 		});

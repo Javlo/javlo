@@ -86,4 +86,9 @@ public class Space extends AbstractVisualComponent {
 	public String getFontAwesome() {
 		return "arrows-v";
 	}
+	
+	@Override
+	protected boolean getColumnableDefaultValue() {
+		return true;
+	}
 }
