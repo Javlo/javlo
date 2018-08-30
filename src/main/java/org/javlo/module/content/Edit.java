@@ -895,8 +895,9 @@ public class Edit extends AbstractModuleAction {
 		IContentVisualComponent comp = content.getComponent(ctx, newId);
 		if (comp != null) {
 			comp.markAsNew(ctx);
-			comp.setPreviousComponent(ComponentHelper.getPreviousComponent(comp, ctx));
-			comp.setNextComponent(ComponentHelper.getNextComponent(comp, ctx));
+//			comp.setPreviousComponent(ComponentHelper.getPreviousComponent(comp, ctx));
+//			comp.setNextComponent(ComponentHelper.getNextComponent(comp, ctx));
+			ComponentHelper.updateNextAndPrevious(ctx, comp.getPage(), comp.getArea());
 			if (!type.equals("clipboard") && StringHelper.isTrue(rs.getParameter("init", null))) {
 				comp.initContent(ctx);
 			}
@@ -1026,6 +1027,7 @@ public class Edit extends AbstractModuleAction {
 			if (ctx.isPreview()) {
 				updatePreviewCommands(ctx, null);
 			}
+			ComponentHelper.updateNextAndPrevious(ctx, comp.getPage(), comp.getArea());
 
 		}
 		return null;
@@ -2288,6 +2290,7 @@ public class Edit extends AbstractModuleAction {
 			if (targetPage == null) {
 				targetPage = ctx.getCurrentPage();
 			}
+			ComponentHelper.updateNextAndPrevious(ctx, targetPage, area);
 
 			if (sharedContent.getLinkInfo() == null) {
 				List<ComponentBean> beans = new LinkedList<ComponentBean>(sharedContent.getContent());

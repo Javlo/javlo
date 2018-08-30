@@ -261,7 +261,6 @@ public class AccessServlet extends HttpServlet implements IVersion {
 	}
 
 	public void process(HttpServletRequest request, HttpServletResponse response, boolean post) throws ServletException {
-
 		COUNT_ACCESS++;
 
 		logger.fine("uri : " + request.getRequestURI());

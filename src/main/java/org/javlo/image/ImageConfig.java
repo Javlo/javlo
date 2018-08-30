@@ -250,7 +250,7 @@ public class ImageConfig {
 				return StringHelper.isTrue(quality);
 			}
 		}
-		return properties.getBoolean(filter + ".hq", false);
+		return properties.getBoolean(filter + ".hq", true);
 	}
 	
 	public int getFolderWidth(Device device, String filter, String area) {

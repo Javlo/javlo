@@ -27,6 +27,17 @@ if (!String.prototype.startsWith) {
 	    return false;
 	}
 	
+	editPreview.updateArea = function(area) {
+		console.log("updateArea : "+area);
+		pjq.ajax({
+			url: editPreview.addParam(currentURL,"only-area="+area),
+			async: false
+		}).done(function(html) {
+			pjq('#'+area).html(html);
+			editPreview.reloadPreviewPage();
+		});
+	}
+	
 	/** hack for drag&drop error on chrome (62.0.3202.94), test remove afther chrome update 01/12/2017 */
 	pjq(function () {
         var win = pjq(window);
@@ -403,14 +414,15 @@ if (!String.prototype.startsWith) {
 				editPreview.openModal(i18n_preview_edit, editURL);
 			});
 			pjq('#preview-layer .btn-delete').on('click', function (e) {
-				editPreview.layerOver(null);
+				editPreview.layerOver(null);				
 				var subComp = pjq(this).parent().parent().data("comp");
+				var area = editPreview.searchArea(subComp);
 				var compId = subComp.attr("id").substring(3);
 				var ajaxURL = editPreview.addParam(currentURL,"webaction=edit.delete&previewEdit=true&id=" + compId);
 				if (editPreview.searchPageId(subComp) != null) {
 					ajaxURL = ajaxURL +'&pageCompID='+ editPreview.searchPageId(subComp);
 				}
-				editPreview.ajaxPreviewRequest(ajaxURL, function() {editPreview.layerOver(null);}, null);
+				editPreview.ajaxPreviewRequest(ajaxURL, function() {editPreview.layerOver(null);editPreview.updateArea(area);}, null);
 				return false;
 			});
 			pjq('#preview-layer .btn-copy').on('click', function (e) {
@@ -586,10 +598,8 @@ if (!String.prototype.startsWith) {
 						if (editPreview.searchPageId(subComp) != null) {
 							ajaxURL = ajaxURL +'&pageContainerID='+ editPreview.searchPageId(subComp);
 						}
-						editPreview.ajaxPreviewRequest(ajaxURL, null, null);
-					} else if (compType != null && compType.length > 0) { // insert
-																			// new
-																			// component
+						editPreview.ajaxPreviewRequest(ajaxURL, editPreview.updateArea(area), null);
+					} else if (compType != null && compType.length > 0) {
 						pjq(this).removeClass("drop-selected");
 						var previewId = subComp.attr("id").substring(3);
 						var area = editPreview.searchArea(subComp);						
@@ -1093,7 +1103,6 @@ if (!String.prototype.startsWith) {
 		}
 
 		editPreview.ajaxPreviewRequest = function(url, doneFunction, data) {
-			
 			editPreview.startAjax();
 			if (url.indexOf("/edit-")>=0) {
 				url = url.replace("/edit-", "/ajax-");
@@ -1112,7 +1121,8 @@ if (!String.prototype.startsWith) {
 				type : "post",
 				dataType : "json",
 				processData: false,
-				contentType: false
+				contentType: false,
+				async: false
 			}).done(function(jsonObj) {
 				if (jsonObj.data != null) {
 					if (jsonObj.data["need-refresh"]) {
@@ -1122,7 +1132,7 @@ if (!String.prototype.startsWith) {
 				editPreview.stopAjax();
 				if (jsonObj.messageText != null) {
 					editPreview.addAlert(jsonObj.messageText, jsonObj.messageType);
-				}				
+				}
 				jQuery.each(jsonObj.zone, function(xhtmlId, xhtml) {
 					/* if already select don't add '#' */
 					if (xhtmlId.indexOf("#") < 0 && xhtmlId.indexOf("#") < 0 && xhtmlId.indexOf(" ") < 0 ) {

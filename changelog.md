@@ -661,14 +661,18 @@ Security in case of vulnerabilities.
 - mobile preview
 - protect preview mode
 
-## [2.1.2.0] - 29/08/2018
+## [2.1.2.0] - 30/08/2018
 ### Added
-- dynamic component colomnable
+- dynamic component colomnable / columnanble tag and style configuration from template
 - external component
 - components modules
 - load js optimisation in edit mode
 - face detection : display thread info on dashboard
-- columnanble tag and style configuration from template
 ### Fixed
 - resource servlet return 404 if no path defined
 - face detection thread managing
+- image resize if high quality by default
+- reset preview and next component on delete and on insert
+- preview.js update area on delete and insert component
+### Removed
+- imgscalr-lib

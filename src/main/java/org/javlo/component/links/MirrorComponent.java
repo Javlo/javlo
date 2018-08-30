@@ -207,7 +207,7 @@ public class MirrorComponent extends AbstractVisualComponent implements IFieldCo
 						try {
 							content = NetHelper.readPageGet(new URL(url));							
 						} catch (Exception e) {							
-							e.printStackTrace();
+							logger.warning(e.getMessage());
 							latestErrorMessage = e.getMessage();
 							latestError = new Date();							
 							return null;

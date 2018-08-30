@@ -36,7 +36,7 @@
 %><c:set var="logged" value="${not empty editUser}" /><c:set var="pdf" value="${info.device.code == 'pdf'}" />
 <div class="header">	
 	<div class="logo">
-		<a target="_blank" href="<%=URLHelper.createViewURL(ctx.getPath(), ctx)%>">Javlo</a> <img class="ajax-loading" src="${info.ajaxLoaderURL}" alt="loading..." lang="en" />				
+		<a target="_blank" href="<%=URLHelper.createViewURL(ctx.getPath(), ctx)%>">Javlo</a> <img class="ajax-loading" src="${info.ajaxLoaderURL}" alt="loading..." lang="en" />
 	</div>	
 	<div class="menu">
 		<li ${info.page.root?'class="active home"':'class="home"'}><a

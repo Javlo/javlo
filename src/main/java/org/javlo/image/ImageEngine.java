@@ -16,7 +16,6 @@ import java.awt.image.ConvolveOp;
 import java.awt.image.IndexColorModel;
 import java.awt.image.Kernel;
 import java.awt.image.WritableRaster;
-import java.awt.image.renderable.ParameterBlock;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -29,13 +28,7 @@ import javax.imageio.ImageIO;
 import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
 import javax.imageio.plugins.jpeg.JPEGImageWriteParam;
-import javax.media.jai.Interpolation;
-import javax.media.jai.JAI;
-import javax.media.jai.PerspectiveTransform;
-import javax.media.jai.PlanarImage;
-import javax.media.jai.WarpPerspective;
 
-import org.imgscalr.Scalr;
 import org.javlo.helper.StringHelper;
 
 import com.jhlabs.image.RGBAdjustFilter;
@@ -257,8 +250,25 @@ public class ImageEngine {
 		return op.filter(img, target);
 	}
 
+	public static BufferedImage toBufferedImage(java.awt.Image img) {
+		if (img instanceof BufferedImage) {
+			return (BufferedImage) img;
+		}
+
+		// Create a buffered image with transparency
+		BufferedImage bimage = new BufferedImage(img.getWidth(null), img.getHeight(null), BufferedImage.TYPE_INT_ARGB);
+
+		// Draw the image on to the buffered image
+		Graphics2D bGr = bimage.createGraphics();
+		bGr.drawImage(img, 0, 0, null);
+		bGr.dispose();
+
+		// Return the buffered image
+		return bimage;
+	}
+
 	public static BufferedImage resize(BufferedImage bi, Integer width, Integer height, boolean hq) {
-		return scale(bi, width, height, hq);
+		return toBufferedImage(scale(bi, width, height, hq));
 	}
 
 	public static BufferedImage zoom(BufferedImage img, double zoom, int interestX, int interestY) {
@@ -278,11 +288,11 @@ public class ImageEngine {
 		return cropImage(img, bottomX - topX, bottomY - topY, topX, topY);
 	}
 
-	public static BufferedImage scale(BufferedImage img, Integer inTargetWidth, Integer inTargetHeight, boolean hq) {
+	public static java.awt.Image scale(java.awt.Image img, Integer inTargetWidth, Integer inTargetHeight, boolean hq) {
 		if (hq) {
-			return Scalr.resize(img, Scalr.Method.ULTRA_QUALITY, Scalr.Mode.FIT_EXACT, inTargetWidth, inTargetHeight);
+			return img.getScaledInstance(inTargetWidth, inTargetHeight, java.awt.Image.SCALE_SMOOTH);
 		} else {
-			return Scalr.resize(img, Scalr.Method.AUTOMATIC, Scalr.Mode.FIT_EXACT, inTargetWidth, inTargetHeight);
+			return img.getScaledInstance(inTargetWidth, inTargetHeight, java.awt.Image.SCALE_FAST);
 		}
 	}
 
@@ -1782,9 +1792,12 @@ public class ImageEngine {
 	 * 
 	 * @param image
 	 * @param backgroundColors
-	 * @param size size of border (in %)
-	 * @param degradedSize degraded size bewteen background and image
-	 * @param position 1:top 2: right 3:bottom 4:left
+	 * @param size
+	 *            size of border (in %)
+	 * @param degradedSize
+	 *            degraded size bewteen background and image
+	 * @param position
+	 *            1:top 2: right 3:bottom 4:left
 	 * @return
 	 */
 	public static BufferedImage addTransparanceBorder(BufferedImage image, Color backgroundColors, int size, int degradedSize, int position) {
@@ -1795,30 +1808,30 @@ public class ImageEngine {
 				backgroundColors = Color.WHITE;
 			}
 		}
-		
+
 		if (size <= 0) {
 			return image;
 		}
-		
+
 		if (size > 100) {
 			size = 100;
 		}
-		
+
 		BufferedImage outImage = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
-		if (position == 3 ) {
-			int borderWidth = Math.round((float)image.getWidth()*((float)size)/100);
+		if (position == 3) {
+			int borderWidth = Math.round((float) image.getWidth() * ((float) size) / 100);
 			if (degradedSize > borderWidth) {
 				degradedSize = borderWidth;
 			}
 			for (int y = 0; y < image.getHeight(); y += 1) {
 				for (int x = 0; x < image.getWidth(); x += 1) {
-					if (x<borderWidth-degradedSize) {						
+					if (x < borderWidth - degradedSize) {
 						Color c = combineColor(backgroundColors, new Color(image.getRGB(x, y)));
 						outImage.setRGB(x, y, c.getRGB());
-					} else if (x<borderWidth) {
-						int p = x-borderWidth+degradedSize;
-						int alpha = Math.round(backgroundColors.getAlpha()*((float)(degradedSize-p)/((float)degradedSize)));
-						Color c = combineColor(backgroundColors, new Color(image.getRGB(x, y)), ((float)alpha/255));
+					} else if (x < borderWidth) {
+						int p = x - borderWidth + degradedSize;
+						int alpha = Math.round(backgroundColors.getAlpha() * ((float) (degradedSize - p) / ((float) degradedSize)));
+						Color c = combineColor(backgroundColors, new Color(image.getRGB(x, y)), ((float) alpha / 255));
 						outImage.setRGB(x, y, c.getRGB());
 					} else {
 						outImage.setRGB(x, y, image.getRGB(x, y));

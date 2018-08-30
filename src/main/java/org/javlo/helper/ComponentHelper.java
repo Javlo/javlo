@@ -5,18 +5,13 @@ package org.javlo.helper;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.AbstractMap;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.logging.Logger;
@@ -194,7 +189,7 @@ public class ComponentHelper {
 			comp.setPage(targetPage);
 		}
 		ContentContext areaCtx = ctx.getContextWithArea(comp.getArea());
-		updateNextAndPreviouv(areaCtx, comp.getPage().getContent(areaCtx).getIterable(areaCtx));
+		updateNextAndPrevious(areaCtx, comp.getPage().getContent(areaCtx).getIterable(areaCtx));
 	}
 
 	public static void smartMoveComponent(ContentContext ctx, IContentVisualComponent comp, IContentVisualComponent newPrevious, MenuElement targetPage, String area) throws Exception {
@@ -370,10 +365,23 @@ public class ComponentHelper {
 		return null;
 	}
 
-	public static void updateNextAndPreviouv(ContentContext ctx, Iterable<IContentVisualComponent> comps) throws Exception {
+	public static void updateNextAndPrevious(ContentContext ctx, Iterable<IContentVisualComponent> comps) throws Exception {
 		for (IContentVisualComponent comp : comps) {
 			comp.setPreviousComponent(getPreviousComponent(comp, ctx));
 			comp.setNextComponent(getNextComponent(comp, ctx));
+		}
+	}
+
+	public static void updateNextAndPrevious(ContentContext ctx, MenuElement page, String area) throws Exception {
+		if (ctx != null && page != null && area != null) {
+			ContentContext areaContext = new ContentContext(ctx);
+			areaContext.setArea(area);
+			ContentElementList content = page.getContent(areaContext);
+			while (content.hasNext(areaContext)) {
+				IContentVisualComponent comp = content.next(areaContext);
+				comp.setPreviousComponent(getPreviousComponent(comp, ctx));
+				comp.setNextComponent(getNextComponent(comp, ctx));
+			}
 		}
 	}
 
@@ -520,17 +528,17 @@ public class ComponentHelper {
 				for (MenuElement page : content.getNavigation(ctxLg).getAllChildrenList()) {
 					ContentElementList comps = page.getContent(ctxLg);
 					while (comps.hasNext(ctxLg)) {
-						IContentVisualComponent comp = comps.next(ctxLg);					
+						IContentVisualComponent comp = comps.next(ctxLg);
 						if (!compType.contains(comp.getType()) && !comp.getType().equals(Unknown.TYPE)) {
-							compType.add(comp.getType());							
-							components.put(comp.getType(), i18nAccess.getText("content."+comp.getType(), comp.getType()));
+							compType.add(comp.getType());
+							components.put(comp.getType(), i18nAccess.getText("content." + comp.getType(), comp.getType()));
 						}
 					}
 				}
 			}
 		} else {
 			for (Map.Entry<String, IContentVisualComponent> comps : ComponentFactory.getComponents(ctx.getRequest().getSession().getServletContext()).entrySet()) {
-				components.put(comps.getValue().getType(), i18nAccess.getText("content."+comps.getValue().getType(), comps.getValue().getType()));
+				components.put(comps.getValue().getType(), i18nAccess.getText("content." + comps.getValue().getType(), comps.getValue().getType()));
 			}
 		}
 		return components;

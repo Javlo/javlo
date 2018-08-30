@@ -1371,10 +1371,10 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		int max = getColumnMaxSize(ctx);
 		IContentVisualComponent prev = getPreviousComponent();
 		boolean close = false;
-		if (ctx.getColumnableSize()==0) {
+		if (ctx.getColumnableSize()<=0) {
 			close = true;
 		}
-		if (ctx.getColumnableSize()+getColumnSize()>max || prev.getColumnSize()==0) {
+		if (ctx.getColumnableSize()+getColumnSize()>max || prev.getColumnSize()<=0) {
 			close = true;
 		}
 		return close;
@@ -1384,16 +1384,15 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		int max = getColumnMaxSize(ctx);
 		IContentVisualComponent next = getNextComponent();
 		boolean close = false;
-		if (next == null || !next.isColumnable(ctx)) {
-			close = true;
-		}
-		if (ctx.getColumnableSize()+next.getColumnSize() >= max || next.getColumnSize()==0) {
-			close = true;
-		}
-		if (close) {
-			ctx.setColumnableSize(0);
+		ctx.setColumnableSize(ctx.getColumnableSize()+getColumnSize());
+		if (next != null) {
+			if (ctx.getColumnableSize()+next.getColumnSize() > max || next.getColumnSize()<=0 || !next.isColumnable(ctx)) {
+				close = true;
+				ctx.setColumnableSize(0);
+			}
 		} else {
-			ctx.setColumnableSize(ctx.getColumnableSize()+getColumnSize());
+			close=true;
+			ctx.setColumnableSize(0);
 		}
 		return close;
 	}
@@ -1831,8 +1830,14 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 							mirror = "mirror-wrapped";
 						}
 						String name = i18nAccess.getText("content." + getType(), getType());
-						if (isColumnable(ctx)) {
-							name = name + " | <span class='glyphicon glyphicon-arrow-left'></span> "+(getColumnSize()==0?'A':getColumnSize())+" <span class='glyphicon glyphicon-arrow-right'></span>";
+						
+						//String debug = ""+getNextComponent().getColumnSize()+" <> "+getNextComponent().isColumnable(ctx)+" <> "+ctx.getColumnableSize();
+						
+						if (isColumnable(ctx) && getColumnSize()>=0) {
+							name = name + " <br /> <span class='glyphicon glyphicon-arrow-left'></span> "+(getColumnSize()==0?'A':getColumnSize())+" <span class='glyphicon glyphicon-arrow-right'></span>";
+//							if (debug != null) {
+//								name = name +" <br /> "+debug;
+//							}
 						}
 						return specificClass + classPrefix + "editable-component " + mirror + currentClass + newClass + ' '+getType() + "\" data-hint=\"" + hint + "\" data-name=\"" + name;
 					}
