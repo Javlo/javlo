@@ -32,7 +32,7 @@ public class CreateAllContentSample extends AbstractMacro {
 		String previousID = "0";
 		ContentContext contentCtx = ctx.getContextWithArea(ComponentBean.DEFAULT_AREA);
 		ContentService content = ContentService.getInstance(ctx.getRequest());
-		for (Edit.ComponentWrapper comp : ComponentFactory.getComponentForDisplay(ctx)) {
+		for (Edit.ComponentWrapper comp : ComponentFactory.getComponentForDisplay(ctx, false)) {
 			if (comp.getComponent() instanceof AbstractVisualComponent) {
 
 				ComponentBean heading = new ComponentBean(Heading.TYPE, "depth=2\ntext=" + comp.getType(), previousID);

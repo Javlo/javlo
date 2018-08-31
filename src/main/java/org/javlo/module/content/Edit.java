@@ -190,7 +190,7 @@ public class Edit extends AbstractModuleAction {
 	 */
 	public static void updatePreviewCommands(ContentContext ctx, String tab) throws Exception {
 		ctx.getRequest().setAttribute("editPreview", ctx.isEditPreview());
-		ctx.getRequest().setAttribute("components", ComponentFactory.getComponentForDisplay(ctx));
+		ctx.getRequest().setAttribute("components", ComponentFactory.getComponentForDisplay(ctx, false));
 		SharedContentService.prepare(ctx);
 		IntegrityFactory.getInstance(ctx);
 		String updateURL = ctx.getGlobalContext().getStaticConfig().getPreviewCommandFilePath();
@@ -296,6 +296,10 @@ public class Edit extends AbstractModuleAction {
 		
 		public String getFontAwesome() {
 			return comp.getFontAwesome();
+		}
+		
+		public String getGroup() {
+			return comp.getGroup();
 		}
 	}
 
@@ -418,7 +422,7 @@ public class Edit extends AbstractModuleAction {
 	}
 
 	private static void loadComponentList(ContentContext ctx) throws Exception {
-		Collection<Edit.ComponentWrapper> comps = ComponentFactory.getComponentForDisplay(ctx);
+		Collection<Edit.ComponentWrapper> comps = ComponentFactory.getComponentForDisplay(ctx, false);
 		/*
 		 * for (IContentComponentsList iContentComponentsList : comps) {
 		 * System.out .println(
@@ -862,7 +866,7 @@ public class Edit extends AbstractModuleAction {
 			}
 		} else {
 			boolean foundType = false;
-			for (ComponentWrapper comp : ComponentFactory.getComponentForDisplay(ctx)) {
+			for (ComponentWrapper comp : ComponentFactory.getComponentForDisplay(ctx, false)) {
 				if (comp.getType().equals(type)) {
 					foundType = true;
 				}

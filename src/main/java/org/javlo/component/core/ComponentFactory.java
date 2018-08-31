@@ -39,8 +39,6 @@ import org.javlo.context.GlobalContext;
 import org.javlo.context.UserInterfaceContext;
 import org.javlo.helper.BeanHelper;
 import org.javlo.helper.ConfigHelper;
-import org.javlo.helper.ResourceHelper;
-import org.javlo.helper.StringHelper;
 import org.javlo.module.content.Edit;
 import org.javlo.module.content.Edit.ComponentWrapper;
 import org.javlo.navigation.MenuElement;
@@ -92,7 +90,7 @@ public class ComponentFactory {
 		if (outComp == null) {
 			Template template = null;
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-			array = new ArrayList<IContentVisualComponent>();
+			array = new LinkedList<IContentVisualComponent>();
 			array.addAll(Arrays.asList(getComponents(ctx)));
 			if (page != null) {
 				template = TemplateFactory.getTemplate(ctx, page);
@@ -232,12 +230,12 @@ public class ComponentFactory {
 			ArrayList<AbstractVisualComponent> array = new ArrayList<AbstractVisualComponent>();
 			String[] classes = ConfigHelper.getComponentsClasses(globalContext.getServletContext());
 			List<String> selectedComponent = globalContext.getComponents();
+			String group = null;
 			for (String classe : classes) {
-
 				logger.fine("load component : " + classe);
-
 				if (classe.startsWith("--")) {
-					array.add(new MetaTitle(classe.substring(2).trim()));
+					group = classe.substring(2).trim();
+					array.add(new MetaTitle(group));
 				} else {
 					try {
 						String className = classe;
@@ -266,7 +264,7 @@ public class ComponentFactory {
 
 						comp.setValid(visible);
 						comp.setHidden(hidden);
-
+						comp.setGroup(group);
 						array.add(comp);
 					} catch (Exception e) {
 						e.printStackTrace();
@@ -547,14 +545,13 @@ public class ComponentFactory {
 		return components;
 	}
 
-	public static List<ComponentWrapper> getComponentForDisplay(ContentContext ctx) throws Exception {
+	public static List<ComponentWrapper> getComponentForDisplay(ContentContext ctx, boolean sort) throws Exception {
 
 		List<ComponentWrapper> comps = new LinkedList<ComponentWrapper>();
 		EditContext editCtx = EditContext.getInstance(ctx.getGlobalContext(), ctx.getRequest().getSession());
 		ComponentWrapper titleWrapper = null;
 
 		List<IContentVisualComponent> components = getComponents(ctx, ctx.getCurrentPage());
-
 		if (ctx.getCurrentTemplate() != null) {
 			Set<String> inludeComponents = null;
 			Set<String> excludeComponents = null;
@@ -571,9 +568,7 @@ public class ComponentFactory {
 				}
 			}
 
-			for (int i = 0; i < components.size() - 1; i++) { // remove title
-																// without
-																// component
+			for (int i = 0; i < components.size() - 1; i++) {
 				if (!components.get(i).isMetaTitle() || !components.get(i + 1).isMetaTitle()) {
 					IContentVisualComponent comp = components.get(i);
 					if (comp.isMetaTitle() || ctx.getGlobalContext().getComponents().contains(comp.getClass().getName()) || comp.getClass().equals(DynamicComponent.class)) {
@@ -646,13 +641,14 @@ public class ComponentFactory {
 
 		}
 		
-		Collections.sort(listWithoutEmptyTitle, new Comparator<ComponentWrapper>() {
-
-			@Override
-			public int compare(ComponentWrapper o1, ComponentWrapper o2) {
-				return o1.getComplexityLevel() - o2.getComplexityLevel();
-			}
-		});
+		if (sort) {
+			Collections.sort(listWithoutEmptyTitle, new Comparator<ComponentWrapper>() {
+				@Override
+				public int compare(ComponentWrapper o1, ComponentWrapper o2) {
+					return o1.getComplexityLevel() - o2.getComplexityLevel();
+				}
+			});
+		}
 
 		return listWithoutEmptyTitle;
 	}

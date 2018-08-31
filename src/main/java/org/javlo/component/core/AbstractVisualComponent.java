@@ -60,7 +60,6 @@ import org.javlo.exception.ResourceNotFoundException;
 import org.javlo.helper.BeanHelper;
 import org.javlo.helper.ComponentHelper;
 import org.javlo.helper.ConfigHelper;
-import org.javlo.helper.LocalLogger;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.ServletHelper;
 import org.javlo.helper.StringHelper;
@@ -169,6 +168,16 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	protected ComponentConfig config = null;
 
 	private String configTemplate = null;
+	
+	private String group = null;
+
+	public String getGroup() {
+		return group;
+	}
+
+	public void setGroup(String group) {
+		this.group = group;
+	}
 
 	public static final String getComponentId(HttpServletRequest request) {
 		return (String) request.getAttribute(COMP_ID_REQUEST_PARAM);

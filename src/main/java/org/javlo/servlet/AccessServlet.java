@@ -1032,7 +1032,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 
 						ctx.setCurrentTemplate(template);
 						if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE && staticConfig.isFixPreview()) {
-							ctx.getRequest().setAttribute("components", ComponentFactory.getComponentForDisplay(ctx));
+							ctx.getRequest().setAttribute("components", ComponentFactory.getComponentForDisplay(ctx, true));
 
 							/************************/
 							/**** Shared Content ****/

@@ -900,5 +900,13 @@ public interface IContentVisualComponent extends Comparable<IContentVisualCompon
 	 */
 	public int getColumnSize();
 	
+	/**
+	 * get the group of the component (meta, text, links, media,...)
+	 * @return
+	 */
+	public String getGroup();
+	
+	public void setGroup(String grp);
+	
 	
 }
