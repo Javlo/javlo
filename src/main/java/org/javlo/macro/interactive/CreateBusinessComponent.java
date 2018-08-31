@@ -65,7 +65,7 @@ public class CreateBusinessComponent implements IInteractiveMacro, IAction {
 	public String prepare(ContentContext ctx) {
 		try {
 			List<Pair<String, String>> dynamicComponents = new LinkedList<Pair<String, String>>();
-			List<ComponentWrapper> components = ComponentFactory.getComponentForDisplay(ctx);
+			List<ComponentWrapper> components = ComponentFactory.getComponentForDisplay(ctx, false);
 			for (ComponentWrapper wrapper : components) {
 				if (wrapper.isDynamicComponent()) {
 					DynamicComponent dynComp = ((DynamicComponent) wrapper.getComponent());
