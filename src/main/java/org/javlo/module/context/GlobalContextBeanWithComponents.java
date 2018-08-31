@@ -15,13 +15,12 @@ import org.javlo.component.core.ComponentFactory;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
-import org.javlo.module.admin.AdminAction.GlobalContextBean;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
 import org.javlo.template.Template;
 import org.javlo.template.TemplateFactory;
 
-public class GlobalContextBeanWithComponents extends GlobalContextBean {
+public class GlobalContextBeanWithComponents extends org.javlo.module.admin.GlobalContextBean {
 
 	private List<ComponentRefBean> components = new LinkedList<ComponentRefBean>();
 	private List<TemplateRefBean> templates = new LinkedList<TemplateRefBean>();

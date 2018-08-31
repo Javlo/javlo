@@ -16,7 +16,7 @@ import org.javlo.context.GlobalContextFactory;
 import org.javlo.helper.URLHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.module.admin.AdminAction;
-import org.javlo.module.admin.AdminAction.GlobalContextBean;
+import org.javlo.module.admin.GlobalContextBean;
 import org.javlo.module.core.Module;
 import org.javlo.module.core.ModulesContext;
 import org.javlo.user.AdminUserSecurity;
@@ -66,7 +66,7 @@ public class ContextAction extends AbstractModuleAction {
 				}
 			}
 
-			List<GlobalContextBean> sortedContext = new LinkedList<AdminAction.GlobalContextBean>(masterCtx.values());
+			List<GlobalContextBean> sortedContext = new LinkedList<GlobalContextBean>(masterCtx.values());
 			Collections.sort(sortedContext, new GlobalContextBean.SortOnKey());
 			request.setAttribute("contextList", sortedContext);
 		}
