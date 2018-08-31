@@ -375,15 +375,15 @@ public class XMLManipulationHelper {
 						displayIfEmpty = false;
 					}
 					String prefix = "";
-					String sufix = "";
+					String suffix = "";
 					if (!displayIfEmpty) {
-						prefix = "<%if (!currentPage.isNoComponent(ctx, \"" + area + "\") || (EditContext.getInstance(globalContext, session).isPreviewEditionMode() && ctx.isAsPreviewMode())) {%>";
-						sufix = "<%}%>";
+						prefix = "<%if ((!globalContext.getQuietArea().contains(\"" + area + "\")) && (!currentPage.isNoComponent(ctx, \"" + area + "\") || (EditContext.getInstance(globalContext, session).isPreviewEditionMode() && ctx.isAsPreviewMode()))) {%>";
+						suffix = "<%}%>";
 					}
 					if ((idValue != null) && (idValue.trim().equals(areaValue))) {
 						remplacement.addReplacement(tags[i].getOpenStart() - 1, tags[i].getOpenStart() - 1, prefix);
 						remplacement.addReplacement(tags[i].getOpenEnd() + 1, tags[i].getCloseStart(), "<jsp:include page=\"/jsp/view/content_view.jsp?area=" + area + "\" />");
-						remplacement.addReplacement(tags[i].getCloseEnd() + 1, tags[i].getCloseEnd() + 1, sufix);
+						remplacement.addReplacement(tags[i].getCloseEnd() + 1, tags[i].getCloseEnd() + 1, suffix);
 
 						String checkEmptyArea = "${empty info.areaEmpty['" + area + "']?' _not_empty_area':' _empty_area'}";
 						String cssClass = StringHelper.neverNull(tags[i].getAttributes().get("class"));
@@ -397,7 +397,7 @@ public class XMLManipulationHelper {
 						remplacement.addReplacement(tags[i].getOpenStart(), tags[i].getOpenEnd() + 1, tags[i].renderOpen());
 					} else if (idValue != null && areaContainer != null && idValue.trim().equals(areaContainer)) {
 						remplacement.addReplacement(tags[i].getOpenStart() - 1, tags[i].getOpenStart() - 1, prefix);
-						remplacement.addReplacement(tags[i].getCloseEnd() + 1, tags[i].getCloseEnd() + 1, sufix);
+						remplacement.addReplacement(tags[i].getCloseEnd() + 1, tags[i].getCloseEnd() + 1, suffix);
 						remplacement.addReplacement(tags[i].getOpenStart(), tags[i].getOpenEnd() + 1, tags[i].renderOpen());
 					}
 				}

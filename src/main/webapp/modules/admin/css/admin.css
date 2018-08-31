@@ -64,8 +64,7 @@
 }
 
 #form-page-properties label:AFTER {
-	margin: 0 5px;
-	content: ":";
+	margin: 0 3px;
 }
 
 #form-page-properties .checkbox label:AFTER {

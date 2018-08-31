@@ -91,7 +91,6 @@ import org.javlo.service.ReverseLinkService;
 import org.javlo.service.exception.ServiceException;
 import org.javlo.servlet.AccessServlet;
 import org.javlo.servlet.ImageTransformServlet;
-import org.javlo.template.Template;
 import org.javlo.template.TemplateData;
 import org.javlo.tracking.Tracker;
 import org.javlo.user.AdminUserFactory;
@@ -145,6 +144,9 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	private final String INSTANCE_ID = StringHelper.getLargeRandomIdBase64();
 
 	public static final String SCREENSHOT_FILE_NAME = "screenshot.png";
+	
+	
+	private List<String> quietArea = null;
 
 	public static final String POP_HOST_PARAM = "mail.pop.host";
 	public static final String POP_PORT_PARAM = "mail.pop.port";
@@ -159,7 +161,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		private static final int SLEEP_BETWEEN_STORAGE = 2 * 1000; // 10 sec
 
 		private Properties dataProperties = null;
-
+		
 		private Object lockDataFile;
 
 		private String contextKey;
@@ -2280,7 +2282,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 				getCache(name).removeAll();
 			}
 			cacheMaps.clear();
-
+			quietArea = null;
 			viewPages = null;
 			urlFromFactoryImported = false;
 			try {
@@ -4060,6 +4062,27 @@ public class GlobalContext implements Serializable, IPrintInfo {
 
 	public void setLatestTicketNotificaitonTime(Calendar latestTicketNotificaitonTime) {
 		this.latestTicketNotificaitonTime = latestTicketNotificaitonTime;
+	}
+	
+	public List<String> getQuietArea() {
+		if (quietArea != null) {
+			return quietArea;
+		}
+		String areaRaw = properties.getProperty("area.quiet");
+		if (StringHelper.isEmpty(areaRaw)) {
+			quietArea = Collections.EMPTY_LIST;
+		} else {
+			quietArea = StringHelper.stringToCollection(areaRaw, ",");
+		}
+		return quietArea;
+	}
+	
+	public void setQuitArea(List<String> quietArea) {
+		this.quietArea = quietArea;
+		synchronized (properties) {
+			properties.setProperty("area.quiet", StringHelper.collectionToString(quietArea, ","));
+			save();
+		}		
 	}
 
 }

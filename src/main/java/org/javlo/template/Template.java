@@ -73,6 +73,7 @@ import org.javlo.service.ListService;
 import org.javlo.service.exception.ServiceException;
 import org.javlo.utils.ConfigurationProperties;
 import org.javlo.utils.ListAsMap;
+import org.javlo.utils.ListMapValueValue;
 import org.javlo.utils.ReadOnlyPropertiesConfigurationMap;
 import org.javlo.utils.StructuredConfigurationProperties;
 
@@ -902,6 +903,18 @@ public class Template implements Comparable<Template> {
 			}
 		}
 		return areas;
+	}
+	
+	public Map<String, String> getQuietableAreaMap() {
+		String areasRaw = properties.getProperty("area-quietable");
+		if (areasRaw == null) {
+			getParent().getQuietableAreaMap();
+		}
+		if (StringHelper.isEmpty(areasRaw)) {
+			return Collections.EMPTY_MAP;
+		} else {
+			return new ListMapValueValue(StringHelper.stringToCollection(areasRaw,","));
+		}
 	}
 
 	public void setArea(String area, String id) {
@@ -3194,18 +3207,18 @@ public class Template implements Comparable<Template> {
 		}
 	}
 
-	public Map<String, String> getAreaExcludeProperties() {
-		String rawProp = getExcludeProperties("area");
-		if (rawProp == null) {
-			return Collections.EMPTY_MAP;
-		} else {
-			Map<String, String> outMaps = new HashMap<String, String>();
-			for (String prop : StringHelper.stringToCollection(rawProp, ",")) {
-				outMaps.put(prop, prop);
-			}
-			return outMaps;
-		}
-	}
+//	public Map<String, String> getAreaExcludeProperties() {
+//		String rawProp = getExcludeProperties("area");
+//		if (rawProp == null) {
+//			return Collections.EMPTY_MAP;
+//		} else {
+//			Map<String, String> outMaps = new HashMap<String, String>();
+//			for (String prop : StringHelper.stringToCollection(rawProp, ",")) {
+//				outMaps.put(prop, prop);
+//			}
+//			return outMaps;
+//		}
+//	}
 
 	protected String getExcludeProperties(String zone) {
 		return properties.getString("exclude-properties." + zone, getParent().getExcludeProperties(zone));

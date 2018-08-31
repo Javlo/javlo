@@ -42,9 +42,9 @@ public class ListMapValueValue<K> implements Map<K, K> {
 	}
 
 
-	private Set<K> l;
+	private Collection<K> l;
 
-	public ListMapValueValue(Set<K> components) {
+	public ListMapValueValue(Collection<K> components) {
 		l = components;
 	}
 

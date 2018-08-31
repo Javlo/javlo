@@ -668,6 +668,7 @@ Security in case of vulnerabilities.
 - components modules
 - load js optimisation in edit mode
 - face detection : display thread info on dashboard
+- Quiet area : area can be removed from site properties
 ### Fixed
 - resource servlet return 404 if no path defined
 - face detection thread managing

@@ -507,4 +507,9 @@ public class DefaultTemplate extends Template {
 	public List<Integer> getColumnableSizes() {
 		return null;
 	}
+	
+	@Override
+	public Map<String, String> getQuietableAreaMap() {
+		return Collections.EMPTY_MAP;
+	}
 }

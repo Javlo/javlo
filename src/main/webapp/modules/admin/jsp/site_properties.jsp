@@ -19,20 +19,34 @@
 					<label>${i18n.edit['global.name']}</label>
 					<span>${currentContext.key}</span>
 				</div>		
-					<div class="form-group">
-						<label>${i18n.edit['admin.form.size']}</label>
-						<span>${currentContext.size}</span>
-					</div><div class="form-group">		
-						<label for="global-title">${i18n.edit['admin.form.global-title']}</label>
-						<input class="form-control" type="text" id="global-title" name="global-title" value="${currentContext.globalTitle}" />	
-					</div><div class="form-group">		
-						<label for="template-mode">${i18n.edit['admin.title.template-mode']}</label>
-						<select class="form-control" id="template-mode" name="template-mode">
-							<c:forEach var="layout" items="${contentContext.globalContext.staticConfig.previewLayout}">
-								<option${layout == currentContext.editTemplateMode?' selected="selected"':''}>${layout}</option>
-							</c:forEach>
-						</select>
+				<div class="form-group">
+					<label>${i18n.edit['admin.form.size']}</label>
+					<span>${currentContext.size}</span>
+				</div><div class="form-group">		
+					<label for="global-title">${i18n.edit['admin.form.global-title']}</label>
+					<input class="form-control" type="text" id="global-title" name="global-title" value="${currentContext.globalTitle}" />	
+				</div><div class="form-group">		
+					<label for="template-mode">${i18n.edit['admin.title.template-mode']}</label>
+					<select class="form-control" id="template-mode" name="template-mode">
+						<c:forEach var="layout" items="${contentContext.globalContext.staticConfig.previewLayout}">
+							<option${layout == currentContext.editTemplateMode?' selected="selected"':''}>${layout}</option>
+						</c:forEach>
+					</select>
+				</div>
+				<c:if test="${fn:length(contentContext.currentTemplate.quietableAreaMap)>0}">
+					<div class="form-group">		
+						<label for="global-title">${i18n.edit['admin.form.quiet-area']} : </label>
+						<c:forEach var="area" items="${contentContext.currentTemplate.quietableAreaMap}" varStatus="status">
+							<c:if test="${area != 'content'}">
+								<div class="checkbox-inline">
+									<label>
+										<input name="quietAreas" type="checkbox" value="${area.value}" ${not empty currentContext.quietAreaMap[area.value]?'checked="checked"':''}/> ${area.value}
+									</label>
+								</div>
+							</c:if>
+						</c:forEach>
 					</div>
+				</c:if>
 			</div><div class="col-sm-6">
 					<div class="screenshot">
 						<c:if test="${currentContext.screenshot}">
@@ -102,6 +116,21 @@
 	<label for="global-title">${i18n.edit['admin.form.global-title']}</label>
 	<input class="form-control" type="text" id="global-title" name="global-title" value="${currentContext.globalTitle}" />	
 </div>
+
+<c:if test="${fn:length(contentContext.currentTemplate.quietableAreaMap)>0}">
+<div class="form-group">		
+	<label for="global-title">${i18n.edit['admin.form.quiet-area']} : </label>
+	<c:forEach var="area" items="${contentContext.currentTemplate.quietableAreaMap}" varStatus="status">
+		<c:if test="${area != 'content'}">
+			<div class="checkbox-inline">
+				<label>
+					<input name="quietAreas" type="checkbox" value="${area.value}" ${not empty currentContext.quietAreaMap[area.value]?'checked="checked"':''}/> ${area.value}
+				</label>
+			</div>
+		</c:if>
+	</c:forEach>
+</div>
+</c:if>
 </div>
 <div class="col-sm-6">
 	<div class="screenshot">
