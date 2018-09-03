@@ -669,6 +669,7 @@ Security in case of vulnerabilities.
 - load js optimisation in edit mode
 - face detection : display thread info on dashboard
 - Quiet area : area can be removed from site properties
+- transform external font in local font for PDF generation
 ### Fixed
 - resource servlet return 404 if no path defined
 - face detection thread managing
