@@ -86,7 +86,7 @@
 
 <script>
 	var fontRef = new Array();
-	<c:forEach var="font" items="${fonts}">fontRef['${font}'] = '${fontsMap[font]}';
+	<c:forEach var="font" items="${fonts}">fontRef['${font}'] = "${fontsMap[font]}";
 	</c:forEach>
 </script>
 

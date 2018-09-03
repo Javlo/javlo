@@ -460,7 +460,11 @@ public class StringHelperTest extends TestCase {
 		out.close();
 		items = StringHelper.extractItem(new String(outStream.toByteArray()),"${info.", "}");
 		assertEquals(items.size(), 2);
-		assertEquals(items.get(0), "path");		
+		assertEquals(items.get(0), "path");
 		assertEquals(items.get(1), "currentYear");
+		
+		items = StringHelper.extractItem("src: local('Vollkorn Regular'), local('Vollkorn-Regular'), url(https://wikipedia.org/font.ttf) format('truetype');","url(", ")");
+		assertEquals(items.size(), 1);
+		assertEquals(items.get(0), "https://wikipedia.org/font.ttf");
 	}
 }

@@ -303,6 +303,12 @@ public class XMLManipulationHelper {
 	private static int convertHTMLtoJSP(GlobalContext globalContext, Template template, I18nAccess i18nAccess, File htmlFile, File jspFile, Map<String, String> options, List<String> areas, List<String> resources, List<TemplatePlugin> templatePlugins, List<GenericMessage> messages, List<String> ids, boolean isMail, String fontIncluding) throws IOException {
 
 		String templateVersion = StringHelper.getRandomId();
+		
+		if (fontIncluding.contains("##BASE_URI##")) {
+			fontIncluding=fontIncluding.replace("##BASE_URI##", "${info.rootTemplateURL}");
+		} else {
+			fontIncluding = FontHelper.loadFont(fontIncluding);
+		}
 
 		if (resources == null) {
 			resources = new LinkedList<String>();
@@ -546,7 +552,8 @@ public class XMLManipulationHelper {
 					if (isMail && globalContext.getStaticConfig().isMailingUserTracking()) {
 						previewCode = previewCode + "<%Map mParams = new HashMap();mParams.put(MailingAction.MAILING_FEEDBACK_PARAM_NAME, MailingAction.MAILING_FEEDBACK_VALUE_NAME);%><img class=\"empty_image\" style=\"height: 0; width: 0; margin:0; padding: 0;\" width=\"0\" height=\"0\" src=\"<%=URLHelper.createStaticURL(ctx, \"/mfb.png\", mParams)%>\" /> ";
 					}
-					String footerResourceIndlue = StringHelper.neverNull(fontIncluding) + "<!-- comp resources --><%for (String uri : currentPage.getExternalResources(ctx)) {%><%=XHTMLHelper.renderHeaderResourceInsertion(ctx, uri)%><%}%>";
+					
+					String footerResourceIndlue = "<!-- comp resources --><%for (String uri : currentPage.getExternalResources(ctx)) {%><%=XHTMLHelper.renderHeaderResourceInsertion(ctx, uri)%><%}%>";
 					remplacement.addReplacement(tags[i].getCloseStart() - 1, tags[i].getCloseStart() - 1, footerResourceIndlue + "<%=ctx.getGlobalContext().getFooterBloc()%>" + previewCode);
 				}
 
@@ -689,7 +696,7 @@ public class XMLManipulationHelper {
 									out.println("<%if (!ctx.isAsPreviewMode() || !EditContext.getInstance(globalContext, request.getSession()).isPreviewEditionMode()) {%>");
 								}
 								if (!plugin.isActiveOnScreenshot()) {
-									out.println("<%if (!StringHelper.isTrue(request.getParameter(\""+ContentContext.TAKE_SCREENSHOT+"\"))) {%>");
+									out.println("<%if (!StringHelper.isTrue(request.getParameter(\"" + ContentContext.TAKE_SCREENSHOT + "\"))) {%>");
 								}
 								out.println(outHead);
 								if (!plugin.isActiveInEdition()) {
@@ -712,8 +719,7 @@ public class XMLManipulationHelper {
 					out.print("<%=currentPage.getMetaHead(ctx)%>");
 					out.println("<%}%>");
 					out.close();
-
-					remplacement.addReplacement(tags[i].getCloseStart() - 1, tags[i].getCloseStart(), getHTMLSufixHead(globalContext.getStaticConfig(), template) + new String(outStream.toByteArray()));
+					remplacement.addReplacement(tags[i].getCloseStart() - 1, tags[i].getCloseStart(), StringHelper.neverNull(fontIncluding) + getHTMLSufixHead(globalContext.getStaticConfig(), template) + new String(outStream.toByteArray()));
 				}
 
 				/* title */
@@ -997,7 +1003,7 @@ public class XMLManipulationHelper {
 		out.append("<%if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE && !ctx.isPreviewOnly()) {%>");
 		out.append("<style type=\"text/css\">@font-face {font-family: \"javloFont\"; src: url('${info.staticRootURL}fonts/javlo-italic.ttf') format(\"truetype\");}</style>");
 		out.append("<%}%>");
-		
+
 		out.append(getTakeScreenShortCode(globalContext));
 
 		out.append("<%if (ctx.getRenderMode() != ContentContext.PAGE_MODE) {%>");
@@ -1079,7 +1085,7 @@ public class XMLManipulationHelper {
 	private static String getTakeScreenShortCode(GlobalContext globalContext) {
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(outStream);
-		out.println("<%if (ctx.isTakeScreenShort()) {%><script src=\"<%=URLHelper.createStaticURL(ctx,\""+globalContext.getStaticConfig().getHTML2Canvas()+"\")%>\"></script>");
+		out.println("<%if (ctx.isTakeScreenShort()) {%><script src=\"<%=URLHelper.createStaticURL(ctx,\"" + globalContext.getStaticConfig().getHTML2Canvas() + "\")%>\"></script>");
 		out.println("<script>");
 		out.println("__uploadScreenshot = function(canvas) {");
 		out.println("var img    = canvas.toDataURL('image/png');");
@@ -1088,8 +1094,8 @@ public class XMLManipulationHelper {
 		out.println("var fieldName = 'screenshot';");
 		out.println("var blob = new Blob([img], {type: 'image/png'});");
 		out.println("fd.append(fieldName,blob);");
-		out.println("var request = new XMLHttpRequest();"); 
-		out.println("request.open(\"POST\", ajaxURL, false);"); 
+		out.println("var request = new XMLHttpRequest();");
+		out.println("request.open(\"POST\", ajaxURL, false);");
 		out.println("request.send(fd);");
 		out.println("window.close();");
 		out.println("return false;");
@@ -1212,21 +1218,6 @@ public class XMLManipulationHelper {
 		} else {
 			return out;
 		}
-	}
-
-	public static void main(String[] args) {
-		String html = "<style>font-family: \"javloFont\"; src:url('/font/javlo-italic.ttf') src:url('/font/javlo-italic2.ttf') format(\"truetype\");.navbar-brand, h1 {font-family: javloFont, Verdana;}</style>";
-		String reg = ".*url\\(['](.*)[']\\).*";
-		Pattern p = Pattern.compile(reg);
-		Matcher matcher = p.matcher(html);
-		System.out.println(">>>>>>>>> XMLManipulationHelper.main : html.matches = " + "daaaabdsfsfd".matches(".*ab.*")); // TODO: remove debug trace
-		System.out.println(">>>>>>>>> XMLManipulationHelper.main : match = " + matcher.matches()); // TODO: remove debug trace
-		System.out.println(">>>>>>>>> XMLManipulationHelper.main : " + matcher.group(2)); // TODO: remove debug tracematcher.group()
-
-		if (matcher.matches()) {
-			String url = matcher.group(1);
-		}
-
 	}
 
 	public static TagDescription[] searchAllTag(String xml, boolean validation) throws BadXMLException {

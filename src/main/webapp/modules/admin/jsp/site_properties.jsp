@@ -239,7 +239,7 @@
 </div>
 
 <div class="checkbox">	
-	<label><input type="checkbox" id="cookies" name="cookies" ${currentContext.cookies?'checked="checked"':""}" />
+	<label><input type="checkbox" id="cookies" name="cookies" ${currentContext.cookies?'checked="checked"':""} />
 	${i18n.edit['admin.form.cookies']}</label>	
 </div>
 
@@ -272,32 +272,32 @@
 </div>
 
 <div class="checkbox">
-	<label><input type="checkbox" id="link-as-popup" name="link-as-popup" ${currentContext.openExternalLinkAsPopup?'checked="checked"':""}" />
+	<label><input type="checkbox" id="link-as-popup" name="link-as-popup" ${currentContext.openExternalLinkAsPopup?'checked="checked"':""} />
 	${i18n.edit['admin.form.external-link-popup']}</label>	
 </div>
 
 <div class="checkbox">	
-	<label><input type="checkbox" id="file-as-popup" name="file-as-popup" ${currentContext.openFileAsPopup?'checked="checked"':""}" />
+	<label><input type="checkbox" id="file-as-popup" name="file-as-popup" ${currentContext.openFileAsPopup?'checked="checked"':""} />
 	${i18n.edit['admin.form.file-popup']}</label>	
 </div>
 
 <div class="checkbox">	
-	<label><input type="checkbox" id="extend-menu" name="extend-menu" ${currentContext.extendMenu?'checked="checked"':""}" />
+	<label><input type="checkbox" id="extend-menu" name="extend-menu" ${currentContext.extendMenu?'checked="checked"':""} />
 	${i18n.edit['admin.form.extend-menu']}</label>	
 </div>
 
 <div class="checkbox">	
-	<label><input type="checkbox" id="preview-mode" name="preview-mode" ${currentContext.previewMode?'checked="checked"':""}" />
+	<label><input type="checkbox" id="preview-mode" name="preview-mode" ${currentContext.previewMode?'checked="checked"':""} />
 	${i18n.edit['admin.form.preview-mode']}</label>	
 </div>
 
 <div class="checkbox">	
-	<label><input type="checkbox" id="wizz" name="wizz" ${currentContext.wizz?'checked="checked"':""}" />
+	<label><input type="checkbox" id="wizz" name="wizz" ${currentContext.wizz?'checked="checked"':""} />
 	${i18n.edit['admin.form.wizz']}</label>	
 </div>
 
 <div class="checkbox">	
-	<label><input type="checkbox" id="Reversedlink" name="reversedlink" ${currentContext.reversedlink?'checked="checked"':""}" />
+	<label><input type="checkbox" id="Reversedlink" name="reversedlink" ${currentContext.reversedlink?'checked="checked"':""} />
 	${i18n.edit['admin.form.reversedlink']}</label>	
 </div>
 
@@ -544,22 +544,22 @@
 </div><div class="col-sm-6">
 
 <div class="checkbox">		
-	<label><input type="checkbox" id="only-creator-modify" name="only-creator-modify" ${currentContext.onlyCreatorModify?'checked="checked"':""}" />
+	<label><input type="checkbox" id="only-creator-modify" name="only-creator-modify" ${currentContext.onlyCreatorModify?'checked="checked"':""} />
 	${i18n.edit['admin.form.only-creator-modify']}</label>
 </div>
 
 <div class="checkbox">	
-	<label><input type="checkbox" id="collaborative-mode" name="collaborative-mode" ${currentContext.collaborativeMode?'checked="checked"':""}" />
+	<label><input type="checkbox" id="collaborative-mode" name="collaborative-mode" ${currentContext.collaborativeMode?'checked="checked"':""} />
 	${i18n.edit['admin.form.collaborative-mode']}</label>
 </div>
 
 <div class="checkbox">	
-	<label><input type="checkbox" id="security-forced-https" name="security-forced-https" ${currentContext.forcedHttps?'checked="checked"':""}" />
+	<label><input type="checkbox" id="security-forced-https" name="security-forced-https" ${currentContext.forcedHttps?'checked="checked"':""} />
 	${i18n.edit['admin.form.security-forced-https']}</label>
 </div>
 
 <div class="checkbox">	
-	<label><input type="checkbox" id="security-portail" name="security-portail" ${currentContext.portail?'checked="checked"':""}" />
+	<label><input type="checkbox" id="security-portail" name="security-portail" ${currentContext.portail?'checked="checked"':""} />
 	${i18n.edit['admin.form.security-portail']}</label>
 </div>
 

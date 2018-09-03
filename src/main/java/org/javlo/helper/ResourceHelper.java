@@ -99,8 +99,8 @@ import org.owasp.encoder.Encode;
 import com.google.gson.JsonElement;
 
 public class ResourceHelper {
-	
-	public static final int DEFAULT_BUFFER_SIZE = 1024*4;
+
+	public static final int DEFAULT_BUFFER_SIZE = 1024 * 4;
 
 	/**
 	 * create a static logger.
@@ -151,7 +151,7 @@ public class ResourceHelper {
 			}
 		}
 	}
-	
+
 	public static void closeResource(HttpURLConnection... connections) {
 		for (HttpURLConnection conn : connections) {
 			if (conn != null) {
@@ -372,7 +372,7 @@ public class ResourceHelper {
 		}
 	}
 
-	public static void filteredFileCopyEscapeScriplet(File file1, File file2, Map<String, String> filter, boolean compress) throws IOException {		
+	public static void filteredFileCopyEscapeScriplet(File file1, File file2, Map<String, String> filter, boolean compress) throws IOException {
 		if (!file2.exists()) {
 			file2.getParentFile().mkdirs();
 			file2.createNewFile();
@@ -387,7 +387,7 @@ public class ResourceHelper {
 
 		List<String> keys = new LinkedList<String>(filter.keySet());
 		// sort because big key must be replaced before little key.
-		
+
 		Collections.sort(keys, new Comparator<String>() {
 			public int compare(String s1, String s2) {
 				return s2.length() - s1.length();
@@ -409,8 +409,7 @@ public class ResourceHelper {
 	 * Standart method to format the checksum into a {@link String}. <br/>
 	 * This method is private because, only the following functions can call it:
 	 * {@link #getChecksumInputStream(InputStream)},
-	 * {@link #getChecksumResult(InputStream)}, {@link #computeChecksum(File)}
-	 * <br/>
+	 * {@link #getChecksumResult(InputStream)}, {@link #computeChecksum(File)} <br/>
 	 * and because the implementation of the format can be changed in future.
 	 * 
 	 * @param crc32
@@ -507,12 +506,11 @@ public class ResourceHelper {
 	}
 
 	/*
-	 * public static final int writeStreamToStream(InputStream in, OutputStream
-	 * out) throws IOException { int read = in.read(); int size = 0; while (read
-	 * >= 0) { size++; out.write(read); byte[] buffer = new
-	 * byte[in.available()]; read = in.read(buffer); if (read >= 0) {
-	 * out.write(buffer); size = size + buffer.length; read = in.read(); } }
-	 * return size; }
+	 * public static final int writeStreamToStream(InputStream in, OutputStream out)
+	 * throws IOException { int read = in.read(); int size = 0; while (read >= 0) {
+	 * size++; out.write(read); byte[] buffer = new byte[in.available()]; read =
+	 * in.read(buffer); if (read >= 0) { out.write(buffer); size = size +
+	 * buffer.length; read = in.read(); } } return size; }
 	 */
 
 	public static Collection<File> getAllResources(ContentContext ctx) {
@@ -538,9 +536,9 @@ public class ResourceHelper {
 	 * {@link #formatChecksum(long)}
 	 * 
 	 * @param in
-	 * @return an {@link InputStream} computing the checksum during the read,
-	 *         call {@link #getChecksumResult(InputStream)} to retrieve the
-	 *         checksum result.
+	 * @return an {@link InputStream} computing the checksum during the read, call
+	 *         {@link #getChecksumResult(InputStream)} to retrieve the checksum
+	 *         result.
 	 */
 	public static InputStream getChecksumInputStream(InputStream in) {
 		return new CheckedInputStream(in, new CRC32());
@@ -550,8 +548,8 @@ public class ResourceHelper {
 	 * Exctract the result from a {@link InputStream} returned by
 	 * {@link #getChecksumInputStream(InputStream)}. <br/>
 	 * The following functions are complementary:
-	 * {@link #getChecksumInputStream(InputStream)},
-	 * {@link #computeChecksum(File)}, {@link #formatChecksum(long)}
+	 * {@link #getChecksumInputStream(InputStream)}, {@link #computeChecksum(File)},
+	 * {@link #formatChecksum(long)}
 	 * 
 	 * @param chkIn
 	 * @return the standard checksum of readed bytes from the given
@@ -729,8 +727,8 @@ public class ResourceHelper {
 	}
 
 	/**
-	 * convert a path to a correct path for current OS. sample: /static/images
-	 * on windows -> \static\images and on unix no change.
+	 * convert a path to a correct path for current OS. sample: /static/images on
+	 * windows -> \static\images and on unix no change.
 	 * 
 	 * @param path
 	 *            a path to a file
@@ -743,8 +741,8 @@ public class ResourceHelper {
 	}
 
 	/**
-	 * convert a path to a correct path for current OS. sample: /static/images
-	 * on windows -> \static\images and on unix no change.
+	 * convert a path to a correct path for current OS. sample: /static/images on
+	 * windows -> \static\images and on unix no change.
 	 * 
 	 * @param path
 	 *            a path to a file
@@ -806,8 +804,8 @@ public class ResourceHelper {
 	}
 
 	/**
-	 * with iexplorer the name of the file is all the path this method extract
-	 * the file name from a windows path
+	 * with iexplorer the name of the file is all the path this method extract the
+	 * file name from a windows path
 	 */
 	public static String getWindowsFileName(String fileName) {
 		String name = fileName;
@@ -819,14 +817,14 @@ public class ResourceHelper {
 	}
 
 	/**
-	 * check if a file (or a folder) is under a folder. sample :
-	 * /tmp/test/me.jpg with /tmp retrun true
+	 * check if a file (or a folder) is under a folder. sample : /tmp/test/me.jpg
+	 * with /tmp retrun true
 	 * 
 	 * @param file
 	 *            a file, this file must be a real file or method return false.
 	 * @param folder
-	 *            a folder (if file -> return false), this file must be a real
-	 *            file or method return false.
+	 *            a folder (if file -> return false), this file must be a real file
+	 *            or method return false.
 	 * @return true if the file is under the folder.
 	 * @throws IOException
 	 */
@@ -915,6 +913,19 @@ public class ResourceHelper {
 			}
 		}
 		return properties;
+	}
+
+	public static void storeProperties(Properties prop, File file) throws IOException {
+		if (!file.exists()) {
+			file.getParentFile().mkdirs();
+			file.createNewFile();
+		}
+		OutputStream out = new FileOutputStream(file);
+		try {
+			prop.store(out, "");
+		} finally {
+			ResourceHelper.closeResource(out);
+		}
 	}
 
 	public static final String loadStringFromStream(InputStream in, Charset encoding) throws IOException {
@@ -1017,8 +1028,8 @@ public class ResourceHelper {
 	}
 
 	/**
-	 * remove the data folder directory this method is used for obtain a
-	 * relative file path from a ablute file path.
+	 * remove the data folder directory this method is used for obtain a relative
+	 * file path from a ablute file path.
 	 * 
 	 * @param path
 	 * @return
@@ -1032,8 +1043,8 @@ public class ResourceHelper {
 	}
 
 	/**
-	 * remove the path from a string this method is used for obtain a relative
-	 * file path from a absolute file path.
+	 * remove the path from a string this method is used for obtain a relative file
+	 * path from a absolute file path.
 	 * 
 	 * @param path
 	 * @return
@@ -1132,8 +1143,8 @@ public class ResourceHelper {
 	}
 
 	/**
-	 * Close streams, writers, readers, etc without any exception even if they
-	 * are <code>null</code>.
+	 * Close streams, writers, readers, etc without any exception even if they are
+	 * <code>null</code>.
 	 * 
 	 * @param closeables
 	 *            the objects to close
@@ -1266,9 +1277,9 @@ public class ResourceHelper {
 	public static final int writeStreamToStream(InputStream in, OutputStream out, long maxSize) throws IOException {
 		final byte[] buffer = new byte[DEFAULT_BUFFER_SIZE];
 		int size = 0;
-		int byteReaded = in.read(buffer);		
-		while (byteReaded >= 0) {			
-			size = size + byteReaded;			
+		int byteReaded = in.read(buffer);
+		while (byteReaded >= 0) {
+			size = size + byteReaded;
 			if (size > maxSize && maxSize > 0) {
 				return -1;
 			}
@@ -1277,37 +1288,42 @@ public class ResourceHelper {
 		}
 		return size;
 	}
-	
-	 /**
-     * Copy the given byte range of the given input to the given output.
-     * @param input The input to copy the given range to the given output for.
-     * @param output The output to copy the given range from the given input for.
-     * @param start Start of the byte range.
-     * @param length Length of the byte range.
-     * @throws IOException If something fails at I/O level.
-     */
-    public static void copyStream(InputStream input, OutputStream output, long start, long length) throws IOException
-    {
-        byte[] buffer = new byte[DEFAULT_BUFFER_SIZE];
-        int read;
-       
-        // Write partial range.
-        if (start>0) {
-        	input.skip(start);
-        }
-        long toRead = length;
 
-        while ((read = input.read(buffer)) > 0) {
-            if ((toRead -= read) > 0) {
-                output.write(buffer, 0, read);
-            } else {
-                output.write(buffer, 0, (int) toRead + read);
-                break;
-            }
-        }
-        
-    }
-	
+	/**
+	 * Copy the given byte range of the given input to the given output.
+	 * 
+	 * @param input
+	 *            The input to copy the given range to the given output for.
+	 * @param output
+	 *            The output to copy the given range from the given input for.
+	 * @param start
+	 *            Start of the byte range.
+	 * @param length
+	 *            Length of the byte range.
+	 * @throws IOException
+	 *             If something fails at I/O level.
+	 */
+	public static void copyStream(InputStream input, OutputStream output, long start, long length) throws IOException {
+		byte[] buffer = new byte[DEFAULT_BUFFER_SIZE];
+		int read;
+
+		// Write partial range.
+		if (start > 0) {
+			input.skip(start);
+		}
+		long toRead = length;
+
+		while ((read = input.read(buffer)) > 0) {
+			if ((toRead -= read) > 0) {
+				output.write(buffer, 0, read);
+			} else {
+				output.write(buffer, 0, (int) toRead + read);
+				break;
+			}
+		}
+
+	}
+
 	public static final void writeStringToFile(File file, String content) throws IOException {
 		if (!file.exists()) {
 			file.createNewFile();
@@ -1669,8 +1685,7 @@ public class ResourceHelper {
 	}
 
 	/**
-	 * clear a folder list, remove '/' if found as first char and replace '\' by
-	 * '/'
+	 * clear a folder list, remove '/' if found as first char and replace '\' by '/'
 	 * 
 	 * @param folders
 	 * @return
@@ -1883,7 +1898,7 @@ public class ResourceHelper {
 			return extension.contains(',' + StringHelper.getFileExtension(fileName).toLowerCase() + ',');
 		}
 	}
-	
+
 	public static boolean isAcceptedVideo(ContentContext ctx, String fileName) {
 		if (StringHelper.isEmpty(fileName)) {
 			return true;
@@ -1892,8 +1907,6 @@ public class ResourceHelper {
 			return extension.contains(',' + StringHelper.getFileExtension(fileName).toLowerCase() + ',');
 		}
 	}
-	
-	
 
 	public static boolean isAcceptedDocument(ContentContext ctx, String fileName) {
 		if (StringHelper.isEmpty(fileName)) {
@@ -1902,38 +1915,39 @@ public class ResourceHelper {
 			return ctx.getGlobalContext().getStaticConfig().getDocumentExtension().contains(StringHelper.getFileExtension(fileName).toLowerCase());
 		}
 	}
-	
+
 	public static String getRealPath(ServletContext application, String path) {
 		String rootPath = application.getRealPath("/");
-		return URLHelper.mergePath(rootPath, path); 
+		return URLHelper.mergePath(rootPath, path);
 	}
-	
+
 	/**
 	 * normalize all file name from a dir
+	 * 
 	 * @param file
 	 * @return true one file name has changed
-	 * @throws IOException 
+	 * @throws IOException
 	 */
-	public static boolean cleanAllFileName(File file) throws IOException {		 
+	public static boolean cleanAllFileName(File file) throws IOException {
 		if (!file.exists()) {
-			throw new FileNotFoundException(""+file);
+			throw new FileNotFoundException("" + file);
 		}
 		boolean done = false;
 		if (file.isDirectory()) {
 			for (File child : file.listFiles()) {
 				done = cleanAllFileName(child) || done;
 			}
-		}	
+		}
 		String normalizedName = StringHelper.createFileName(file.getName());
 		if (!normalizedName.equals(file.getName())) {
-			File newFile =  new File (URLHelper.mergePath(file.getParentFile().getCanonicalPath(), normalizedName));
+			File newFile = new File(URLHelper.mergePath(file.getParentFile().getCanonicalPath(), normalizedName));
 			newFile = getFreeFileName(newFile);
 			file.renameTo(newFile);
 			done = true;
 		}
 		return done;
 	}
-	
+
 	public static String getRelativeStaticURL(ContentContext ctx, File file) {
 		String fullURL = URLHelper.cleanPath(file.getPath(), false);
 		StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
@@ -1942,7 +1956,7 @@ public class ResourceHelper {
 		if (ResourceHelper.isTemplateFile(globalContext, file)) {
 			fullStaticFolder = staticConfig.getTemplateFolder();
 		} else if (!file.getAbsolutePath().contains('/' + staticConfig.getStaticFolder() + '/')) {
-			fullStaticFolder = globalContext.getDataFolder();		
+			fullStaticFolder = globalContext.getDataFolder();
 		}
 		fullStaticFolder = URLHelper.cleanPath(fullStaticFolder, false);
 		String relURL = "/";
@@ -1951,68 +1965,68 @@ public class ResourceHelper {
 		}
 		return relURL;
 	}
-	
+
 	public static int countLines(File file) throws IOException {
-	    InputStream is = new BufferedInputStream(new FileInputStream(file));
-	    try {
-	        byte[] c = new byte[1024];
-	        int count = 0;
-	        int readChars = 0;
-	        boolean empty = true;
-	        while ((readChars = is.read(c)) != -1) {
-	            empty = false;
-	            for (int i = 0; i < readChars; ++i) {
-	                if (c[i] == '\n') {
-	                    ++count;
-	                }
-	            }
-	        }
-	        return (count == 0 && !empty) ? 1 : count;
-	    } finally {
-	        is.close();
-	    }
+		InputStream is = new BufferedInputStream(new FileInputStream(file));
+		try {
+			byte[] c = new byte[1024];
+			int count = 0;
+			int readChars = 0;
+			boolean empty = true;
+			while ((readChars = is.read(c)) != -1) {
+				empty = false;
+				for (int i = 0; i < readChars; ++i) {
+					if (c[i] == '\n') {
+						++count;
+					}
+				}
+			}
+			return (count == 0 && !empty) ? 1 : count;
+		} finally {
+			is.close();
+		}
 	}
-	
+
 	public static void deleteFolder(File folder) {
-	    File[] files = folder.listFiles();
-	    if(files!=null) { //some JVMs return null for empty dirs
-	        for(File f: files) {
-	            if(f.isDirectory()) {
-	                deleteFolder(f);
-	            } else {
-	                f.delete();
-	            }
-	        }
-	    }
-	    folder.delete();
+		File[] files = folder.listFiles();
+		if (files != null) { // some JVMs return null for empty dirs
+			for (File f : files) {
+				if (f.isDirectory()) {
+					deleteFolder(f);
+				} else {
+					f.delete();
+				}
+			}
+		}
+		folder.delete();
 	}
-	
+
 	public static void main(String[] args) throws IOException {
 		File file = new File("c:/trans/changelog.txt");
-		File target= new File("c:/trans/changelog.md");
-		
+		File target = new File("c:/trans/changelog.md");
+
 		PrintStream out = new PrintStream(new FileOutputStream(target));
 		try (BufferedReader br = new BufferedReader(new FileReader(file))) {
-		    String line;
-		    while ((line = br.readLine()) != null) {
-		    	if (!StringHelper.isEmpty(line)) {
-		    		if (line.startsWith("*")) {
-		    			if (line.contains("[")) {
-		    				line = line.replace("[", "- ");
-		    				line = line.replace("]", "");
-		    				line = "## ["+line.substring(2).replaceFirst(" ", "] ");
-		    			} else {
-		    				line = "## ["+line.substring(2).replaceFirst(" ", "] - ");
-		    			}
-		    			out.println("");
-		    			out.println(line);
-		    			out.println("### Added");
-		    		} else if (line.startsWith(" *")) {
-		    			line = line.replaceFirst(" \\*", "-");
-		    			out.println(line);
-		    		}
-		    	}
-		    }
+			String line;
+			while ((line = br.readLine()) != null) {
+				if (!StringHelper.isEmpty(line)) {
+					if (line.startsWith("*")) {
+						if (line.contains("[")) {
+							line = line.replace("[", "- ");
+							line = line.replace("]", "");
+							line = "## [" + line.substring(2).replaceFirst(" ", "] ");
+						} else {
+							line = "## [" + line.substring(2).replaceFirst(" ", "] - ");
+						}
+						out.println("");
+						out.println(line);
+						out.println("### Added");
+					} else if (line.startsWith(" *")) {
+						line = line.replaceFirst(" \\*", "-");
+						out.println(line);
+					}
+				}
+			}
 		}
 		out.close();
 

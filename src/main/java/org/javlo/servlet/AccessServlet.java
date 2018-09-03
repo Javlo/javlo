@@ -93,6 +93,7 @@ import org.javlo.servlet.zip.ZipManagement;
 import org.javlo.template.Template;
 import org.javlo.template.TemplateFactory;
 import org.javlo.thread.ThreadManager;
+import org.javlo.user.IUserFactory;
 import org.javlo.user.MaxLoginService;
 import org.javlo.user.UserFactory;
 import org.javlo.user.VisitorContext;
@@ -308,7 +309,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 
 			if (!ctx.isAsViewMode()) {
 				SecurityHelper.checkUserAccess(ctx);
-				if (ctx.getCurrentEditUser() == null || ctx.getCurrentEditUser().getRoles().contains("content")) {
+				if (ctx.getCurrentEditUser() == null || !ctx.getCurrentEditUser().getRoles().contains("content")) {
 					response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 				}
 			}
@@ -890,7 +891,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 						if (ctx.getCurrentUser() != null) {
 							String userToken = UserFactory.createUserFactory(ctx.getGlobalContext(), request.getSession()).getTokenCreateIfNotExist(ctx.getCurrentUser());
 							String token = globalContext.createOneTimeToken(userToken);
-							params.put("j_token", token);
+							params.put(IUserFactory.TOKEN_PARAM, token);
 						}
 
 						params.put(Device.FORCE_DEVICE_PARAMETER_NAME, "pdf");
@@ -908,8 +909,6 @@ public class AccessServlet extends HttpServlet implements IVersion {
 						params.put("clean-html", "true");
 
 						String url = URLHelper.createURL(viewCtx, params);
-
-						// LocalLogger.log(url);
 
 						/*
 						 * if (staticConfig.getApplicationLogin() != null) { url =

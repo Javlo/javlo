@@ -908,7 +908,7 @@ public class Template implements Comparable<Template> {
 	public Map<String, String> getQuietableAreaMap() {
 		String areasRaw = properties.getProperty("area-quietable");
 		if (areasRaw == null) {
-			getParent().getQuietableAreaMap();
+			return getParent().getQuietableAreaMap();
 		}
 		if (StringHelper.isEmpty(areasRaw)) {
 			return Collections.EMPTY_MAP;
@@ -2650,7 +2650,8 @@ public class Template implements Comparable<Template> {
 				File indexFile = new File(URLHelper.mergePath(templateTarget.getAbsolutePath(), "index.jsp"));
 				File source = new File(ctx.getRequest().getSession().getServletContext().getRealPath("/jsp/index_error.html"));
 				String content = ResourceHelper.loadStringFromFile(source);
-				content = content.replace("#template#", getParent().getName());
+				content = content.replace("#template#", getName());
+				content = content.replace("#parent-template#", getParent().getName());
 				ResourceHelper.writeStringToFile(indexFile, content);
 			}
 		}
@@ -3207,18 +3208,18 @@ public class Template implements Comparable<Template> {
 		}
 	}
 
-//	public Map<String, String> getAreaExcludeProperties() {
-//		String rawProp = getExcludeProperties("area");
-//		if (rawProp == null) {
-//			return Collections.EMPTY_MAP;
-//		} else {
-//			Map<String, String> outMaps = new HashMap<String, String>();
-//			for (String prop : StringHelper.stringToCollection(rawProp, ",")) {
-//				outMaps.put(prop, prop);
-//			}
-//			return outMaps;
-//		}
-//	}
+	public Map<String, String> getAreaExcludeProperties() {
+		String rawProp = getExcludeProperties("area");
+		if (rawProp == null) {
+			return Collections.EMPTY_MAP;
+		} else {
+			Map<String, String> outMaps = new HashMap<String, String>();
+			for (String prop : StringHelper.stringToCollection(rawProp, ",")) {
+				outMaps.put(prop, prop);
+			}
+			return outMaps;
+		}
+	}
 
 	protected String getExcludeProperties(String zone) {
 		return properties.getString("exclude-properties." + zone, getParent().getExcludeProperties(zone));

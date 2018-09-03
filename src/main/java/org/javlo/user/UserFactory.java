@@ -32,7 +32,6 @@ import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.BeanHelper;
 import org.javlo.helper.JavaHelper;
-import org.javlo.helper.LocalLogger;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.SecurityHelper;
 import org.javlo.helper.StringHelper;
@@ -305,10 +304,7 @@ public class UserFactory implements IUserFactory, Serializable {
 		if (outUser != null) {
 			outUser.setContext(globalContext.getContextKey());
 			request.getSession().setAttribute(SESSION_KEY, outUser);
-		} else {
-			logger.warning("bad token : " + token);
 		}
-
 		return outUser;
 	}
 
@@ -387,7 +383,6 @@ public class UserFactory implements IUserFactory, Serializable {
 								userInfoList.add(newUserInfo);
 							}
 						} catch (Exception e) {
-							LocalLogger.log(e);
 							userInfoList = new LinkedList<IUserInfo>();
 						}
 					}
@@ -681,7 +676,7 @@ public class UserFactory implements IUserFactory, Serializable {
 				try {
 					out.close();
 				} catch (IOException e1) {
-					LocalLogger.log(e1);
+//					LocalLogger.log(e1);
 				}
 			}
 		}
@@ -705,7 +700,7 @@ public class UserFactory implements IUserFactory, Serializable {
 					}
 					unlockStore();
 				} catch (Exception e) {
-					LocalLogger.log(e);
+//					LocalLogger.log(e);
 				}
 			}
 		}

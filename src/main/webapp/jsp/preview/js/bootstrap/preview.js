@@ -252,14 +252,14 @@ if (!String.prototype.startsWith) {
 				var page = pjq(this);
 				var currentTop = page.position().top;
 				pjq(".page-break").each(function() {
-					var currentBreak = jQuery(this);
+					var currentBreak = pjq(this);
 					if (currentTop + currentBreak.position().top < pdfHeight) {
 						currentTop = currentBreak.position().top;
 					}
 				});
 				if ((page.position().top+page.height())-currentTop > pdfHeight) {
 					page.prepend('<div class="_pdf_page_limit"><span>&nbsp;</span></div>');
-					var pdfLimit = jQuery(page.children()[0]);
+					var pdfLimit = pjq(page.children()[0]);
 					pdfLimit.css('top',(currentTop+pdfHeight)+'px');
 				}
 			});
@@ -326,16 +326,18 @@ if (!String.prototype.startsWith) {
 	}
 	
 	editPreview.updateImg = function() {
-		jQuery("img[data-src]").each(function() {
-			jQuery(this).attr('src', jQuery(this).data('src'));
-			jQuery(this).removeAttr('data-src');
+		pjq("img[data-src]").each(function() {
+			pjq(this).attr('src', pjq(this).data('src'));
+			pjq(this).removeAttr('data-src');
 		} );
 	}
 
 	editPreview.searchArea = function(item) {
+		console.log(">>> item ",item);
 		var parent = pjq(item);
+		console.log(">>> parent ",parent);
 		while (pjq(parent).get(0).tagName.toLowerCase() != "body" && !parent.hasClass("_area")) {
-			parent = pjq(parent).parent();
+			parent = parent.parent();
 		}
 		if (parent.hasClass("_area")) {
 			return pjq(parent).attr("id");
@@ -346,7 +348,7 @@ if (!String.prototype.startsWith) {
 	
 	editPreview.createFormData = function(dataTransfer) {
 		var fd=new FormData();
-		jQuery.each( dataTransfer.files, function(index, file) {
+		pjq.each( dataTransfer.files, function(index, file) {
 			fd.append(this.name,file);			
 		});
 		return fd;
@@ -612,6 +614,7 @@ if (!String.prototype.startsWith) {
 							ajaxURL = ajaxURL +'&pageContainerID='+ editPreview.searchPageId(subComp);
 						}
 						editPreview.ajaxPreviewRequest(ajaxURL, function() {
+							editPreview.updateArea(area);
 							if (pjq(".edit-component").length > 0) {
 								var compId = pjq(".edit-component").attr("id").substring(3);
 								var editURL = editPreviewURL + "&comp_id=" + compId;
@@ -625,7 +628,7 @@ if (!String.prototype.startsWith) {
 						if (editPreview.searchPageId(subComp) != null) {
 							ajaxURL = ajaxURL +'&pageContainerID='+ editPreview.searchPageId(subComp);
 						}
-						editPreview.ajaxPreviewRequest(ajaxURL, null, null);
+						editPreview.ajaxPreviewRequest(ajaxURL, editPreview.updateArea(area), null);
 					} else if (event.dataTransfer.files.length > 0) {						
 						var previewId = subComp.attr("id").substring(3);
 						var ajaxURL = editPreview.addParam(currentURL,"webaction=data.upload&content=true&previous=" + previewId+"&area="+area);
@@ -639,7 +642,7 @@ if (!String.prototype.startsWith) {
 						}
 						var i = 0;
 						var sameName = false;
-						jQuery.each( event.dataTransfer.files, function(index, file) {
+						pjq.each( event.dataTransfer.files, function(index, file) {
 							if (i==0) {
 								fd.append(fieldName,file);
 							} else {
@@ -663,7 +666,7 @@ if (!String.prototype.startsWith) {
 								pjq("#preview-modal-question").modal("hide");
 							});
 						} else {
-							editPreview.ajaxPreviewRequest(ajaxURL, null, fd);
+							editPreview.ajaxPreviewRequest(ajaxURL, editPreview.updateArea(area), fd);
 						}	
 					}
 					return false;
@@ -690,7 +693,7 @@ if (!String.prototype.startsWith) {
 				});
 				el.addEventListener('drop', function (event) {
 					
-					countDrop++;
+					countDrop++; 
 					if (countDrop>1 && event.dataTransfer.files.length==0) {
 						event.preventDefault();
 						countDrop=0;
@@ -713,7 +716,7 @@ if (!String.prototype.startsWith) {
 							if (editPreview.searchPageId(this) != null) {
 								ajaxURL = ajaxURL +'&pageContainerID='+ editPreview.searchPageId(this);
 							}
-							editPreview.ajaxPreviewRequest(ajaxURL, null, null);
+							editPreview.ajaxPreviewRequest(ajaxURL, editPreview.updateArea(area), null);
 							pjq(this).removeClass("_empty_area");
 							return false;
 					}
@@ -747,11 +750,11 @@ if (!String.prototype.startsWith) {
 						if (editPreview.searchPageId(this) != null) {
 							ajaxURL = ajaxURL +'&pageContainerID='+ editPreview.searchPageId(this);
 						}
-						if (jQuery('#'+area).hasClass("_empty_area")) {
+						if (pjq('#'+area).hasClass("_empty_area")) {
 							if (PREVIEWLOG) {
 								console.log("_empty_area ajaxURL = ",ajaxURL);
 							}
-							editPreview.ajaxPreviewRequest(ajaxURL, null, null);
+							editPreview.ajaxPreviewRequest(ajaxURL, editPreview.updateArea(area), null);
 						}						
 					} else if (compType != null && compType.length > 0) {	
 						pjq(this).removeClass("drop-selected");
@@ -759,13 +762,14 @@ if (!String.prototype.startsWith) {
 						if (editPreview.searchPageId(this) != null) {
 							url = url +'&pageContainerID='+ editPreview.searchPageId(this);
 						}
-						if (jQuery('#'+area).hasClass("_empty_area")) {
-							jQuery('#'+area).removeClass("_empty_area");
+						if (pjq('#'+area).hasClass("_empty_area")) {
+							pjq('#'+area).removeClass("_empty_area");
 							var ajaxURL = editPreview.addParam(currentURL,url);
 							if (PREVIEWLOG) {
 								console.log("compType ajaxURL = ",ajaxURL);
 							}
-							editPreview.ajaxPreviewRequest(ajaxURL, function() {								
+							editPreview.ajaxPreviewRequest(ajaxURL, function() {
+								editPreview.updateArea(area);
 								if (pjq(".edit-component").length > 0) {
 									var compId = pjq(".edit-component").attr("id").substring(3);
 									var editURL = editPreviewURL + "&comp_id=" + compId;								
@@ -773,13 +777,13 @@ if (!String.prototype.startsWith) {
 								}								
 							}, null);						
 						}
-					} else if (compId != null && event.dataTransfer.files.length == 0) { // move
-																							// component
+					} else if (compId != null && event.dataTransfer.files.length == 0) { // move component
+//						var fromArea = editPreview.searchArea(pjq("#cp_"+compId));
 						var ajaxURL = editPreview.addParam(currentURL,"previewEdit=true&webaction=edit.moveComponent&comp-id=" + compId + "&previous=0&area=" + area+ "&render-mode=3&init=true");
 						if (editPreview.searchPageId(this) != null) {
 							ajaxURL = ajaxURL +'&pageContainerID='+ editPreview.searchPageId(this);
 						}
-						editPreview.ajaxPreviewRequest(ajaxURL, null, null);
+						editPreview.ajaxPreviewRequest(ajaxURL, function() {editPreview.updateArea(area);}, null);
 					} else if (event.dataTransfer.files.length > 0) {
 						var ajaxURL = editPreview.addParam(currentURL,"webaction=data.upload&content=true&previous=0&area=" + area);
 						if (editPreview.searchPageId(this) != null) {
@@ -791,7 +795,7 @@ if (!String.prototype.startsWith) {
 							filedName = "files";
 						}
 						var sameName = false;
-						jQuery.each( event.dataTransfer.files, function(index, file) {
+						pjq.each( event.dataTransfer.files, function(index, file) {
 							if (i==0) {
 								fd.append(fieldName,file);
 							} else {
@@ -806,11 +810,11 @@ if (!String.prototype.startsWith) {
 						if (sameName) {
 							editPreview.openModalQuestion("Upload file", "File already exists !", "overwrite", "rename", function () {
 								ajaxURL = editPreview.addParam(ajaxURL, "rename=false");								
-								editPreview.ajaxPreviewRequest(ajaxURL, null, fd);
+								editPreview.ajaxPreviewRequest(ajaxURL, editPreview.updateArea(area), fd);
 								pjq("#preview-modal-question").modal("hide");
 							}, function () {
 								ajaxURL = editPreview.addParam(ajaxURL, "rename=true");
-								editPreview.ajaxPreviewRequest(ajaxURL, null, fd);
+								editPreview.ajaxPreviewRequest(ajaxURL, editPreview.updateArea(area), fd);
 								pjq("#preview-modal-question").modal("hide");
 							});
 						} else {
@@ -951,7 +955,7 @@ if (!String.prototype.startsWith) {
 						filedName = "files";
 					}
 					var sameName = false;					
-					jQuery.each( event.dataTransfer.files, function(index, file) {
+					pjq.each( event.dataTransfer.files, function(index, file) {
 						if (i==0) {
 							fd.append(fieldName,file);
 						} else {
@@ -1114,7 +1118,7 @@ if (!String.prototype.startsWith) {
 					url = url.replace("/preview/", "/ajax/");
 				}
 			}
-			jQuery.ajax({
+			pjq.ajax({
 				url : url,
 				cache : false,
 				data : data,
@@ -1133,28 +1137,28 @@ if (!String.prototype.startsWith) {
 				if (jsonObj.messageText != null) {
 					editPreview.addAlert(jsonObj.messageText, jsonObj.messageType);
 				}
-				jQuery.each(jsonObj.zone, function(xhtmlId, xhtml) {
+				pjq.each(jsonObj.zone, function(xhtmlId, xhtml) {
 					/* if already select don't add '#' */
 					if (xhtmlId.indexOf("#") < 0 && xhtmlId.indexOf("#") < 0 && xhtmlId.indexOf(" ") < 0 ) {
 						xhtmlId = "#"+xhtmlId;
 					}
-					var item = jQuery(xhtmlId);
+					var item = pjq(xhtmlId);
 					if (item != null) {
-						jQuery(xhtmlId).replaceWith(xhtml);
+						pjq(xhtmlId).replaceWith(xhtml);
 					} else {
-						jQuery.each(jsonObj.data, function(key, value) {
+						pjq.each(jsonObj.data, function(key, value) {
 						});
 						if (console) {
 							console.log("warning : component "+xhtmlId+" not found for zone.");
 						}
 					}
 				});
-				jQuery.each(jsonObj.insideZone, function(xhtmlId, xhtml) {
+				pjq.each(jsonObj.insideZone, function(xhtmlId, xhtml) {
 					/* if already select don't add '#' */
 					if (xhtmlId.indexOf("#") < 0 && xhtmlId.indexOf(".") < 0 && xhtmlId.indexOf(" ") < 0 ) {
 						xhtmlId = "#"+xhtmlId;
 					}
-					var item = jQuery(xhtmlId);
+					var item = pjq(xhtmlId);
 					if (item != null) {
 						item.html(xhtml);
 					} else {
@@ -1163,7 +1167,7 @@ if (!String.prototype.startsWith) {
 						}
 					}
 				});
-				jQuery(document).trigger("ajaxUpdate");
+				pjq(document).trigger("ajaxUpdate");
 				try {
 					countDrop=0;
 					editPreview.initPreview();					
@@ -1176,13 +1180,13 @@ if (!String.prototype.startsWith) {
 				if (doneFunction != null) {
 					doneFunction();
 				}
-				jQuery('._area').each(function() {					
-					if (jQuery(this).find(".editable-component, .repeat").size() > 0) {
-						jQuery(this).removeClass("_empty_area");
-						jQuery(this).addClass("_not_empty_area");						
+				pjq('._area').each(function() {					
+					if (pjq(this).find(".editable-component, .repeat").size() > 0) {
+						pjq(this).removeClass("_empty_area");
+						pjq(this).addClass("_not_empty_area");						
 					} else {
-						jQuery(this).addClass("_empty_area");
-						jQuery(this).removeClass("_not_empty_area");
+						pjq(this).addClass("_empty_area");
+						pjq(this).removeClass("_not_empty_area");
 					}
 				});
 			});			

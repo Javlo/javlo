@@ -477,15 +477,17 @@ public class CatchAllFilter implements Filter {
 				}
 			}
 			
+			String token = request.getParameter(IUserFactory.TOKEN_PARAM);
+			if (token != null) {
+				String realToken = globalContext.convertOneTimeToken(token);
+				if (realToken != null) {
+					token = realToken;
+				}
+			}
 			if (fact.getCurrentUser(globalContext, ((HttpServletRequest) request).getSession()) == null) {
 				String loginType = requestService.getParameter("login-type", null);
 
 				if ((loginType == null || !loginType.equals("adminlogin")) && logoutUser == null) {
-					String token = request.getParameter(IUserFactory.TOKEN_PARAM);
-					String realToken = globalContext.convertOneTimeToken(token);
-					if (realToken != null) {
-						token = realToken;
-					}
 					if (globalContext.getStaticConfig().isLoginWithToken() && !StringHelper.isEmpty(token)) {
 						user = fact.login(httpRequest, token);
 						if (user == null) {
@@ -570,9 +572,8 @@ public class CatchAllFilter implements Filter {
 
 					logger.fine(login + " is logged roles : [" + StringHelper.collectionToString(editUser.getRoles(), ",") + ']');
 
-				} else {
-					String token = request.getParameter("j_token");
-					if (token != null) {
+				} else {					
+					if (token != null) {						
 						user = adminFactory.login(httpRequest, token);
 					} else {
 						logger.info(login + " fail to login.");

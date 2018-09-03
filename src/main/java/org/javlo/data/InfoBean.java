@@ -20,6 +20,7 @@ import org.javlo.component.core.ISubTitle;
 import org.javlo.component.core.SubTitleBean;
 import org.javlo.component.image.IImageTitle;
 import org.javlo.component.image.ImageBean;
+import org.javlo.component.image.ImageTitleBean;
 import org.javlo.component.links.RSSRegistration;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
@@ -79,6 +80,8 @@ public class InfoBean {
 	private ImageBean imageHeader = null;
 
 	private Map<String, Boolean> areas = null;
+	
+	private Map<String,String> bgAreas = null;
 
 	private static final Map<String, String> staticData = Collections.unmodifiableMap(new HashMap<String, String>() {
 		{
@@ -1715,6 +1718,21 @@ public class InfoBean {
 		} else {
 			return null;
 		}
+	}
+	
+	public Map<String,String> getImageBackgroundForArea() throws Exception {
+		if (bgAreas == null) {
+			Map<String, ImageTitleBean> bg = ctx.getCurrentPage().getImageBackgroundForArea(ctx);
+			if (bg.size()==0) {
+				bgAreas = Collections.EMPTY_MAP;
+			} else {
+				bgAreas = new HashMap<String,String>();
+				for (String area : ctx.getCurrentPage().getImageBackgroundForArea(ctx).keySet()) {
+					bgAreas.put(area, URLHelper.createFileURL(ctx, bg.get(area).getResourceURL(ctx)));
+				}
+			}
+		}
+		return bgAreas;
 	}
 
 }

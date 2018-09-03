@@ -9,7 +9,8 @@
 	width: 256px;
 	height: 300px;
 	padding-top: 260px;
-	background-image: url("images/lock.png");
+	background-size: 256px 256px;
+	background-image: url("images/logo_sm.png");
 	background-repeat: no-repeat;
 	vertical-align: bottom;
 	

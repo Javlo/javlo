@@ -6,15 +6,20 @@ package org.javlo.component.meta;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 
 import org.javlo.actions.IAction;
 import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.context.GlobalContextCreationBean;
+import org.javlo.data.InfoBean;
 import org.javlo.helper.NetHelper;
 import org.javlo.helper.ServletHelper;
+import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.helper.XHTMLHelper;
 import org.javlo.i18n.I18nAccess;
@@ -60,7 +65,16 @@ public class GraphicCharter extends AbstractVisualComponent implements IAction {
 		Collections.sort(fonts);
 		//ctx.getRequest().setAttribute("currentContext", ctx.getGlobalContext());
 		ctx.getRequest().setAttribute("fonts", fonts);
-		ctx.getRequest().setAttribute("fontsMap", ctx.getCurrentTemplate().getFontReference(ctx.getGlobalContext()));
+		Properties mapFont = ctx.getCurrentTemplate().getFontReference(ctx.getGlobalContext());
+		String baseUrlTpl = InfoBean.getCurrentInfoBean(ctx).getRootTemplateURL();
+		Map<String,String> mapFontTranslated = new HashMap<String,String>();
+		for (Object key : mapFont.keySet()) {
+			String value = mapFont.getProperty(""+key);
+			value = StringHelper.removeCR(value.replace("##BASE_URI##", baseUrlTpl));
+			mapFontTranslated.put(""+key, value);
+		}
+		ctx.getRequest().setAttribute("fontsMap", mapFontTranslated);
+		
 		String jsp = "/modules/admin/jsp/graphic_charter.jsp";
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(outStream);

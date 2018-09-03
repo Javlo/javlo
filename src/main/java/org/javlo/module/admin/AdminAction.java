@@ -37,6 +37,7 @@ import org.javlo.context.ContentContext;
 import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.context.GlobalContextFactory;
+import org.javlo.data.InfoBean;
 import org.javlo.helper.DebugHelper;
 import org.javlo.helper.LangHelper;
 import org.javlo.helper.PatternHelper;
@@ -252,7 +253,15 @@ public class AdminAction extends AbstractModuleAction {
 					List<String> fonts = ctx.getCurrentTemplate().getWebFonts(currentGlobalContext);
 					Collections.sort(fonts);
 					request.setAttribute("fonts", fonts);
-					request.setAttribute("fontsMap", ctx.getCurrentTemplate().getFontReference(currentGlobalContext));
+					Map<String,String> mapFontTranslated = new HashMap<String,String>();
+					Properties mapFont = ctx.getCurrentTemplate().getFontReference(currentGlobalContext);
+					String baseUrlTpl = InfoBean.getCurrentInfoBean(ctx).getRootTemplateURL();
+					for (Object key : mapFont.keySet()) {
+						String value = mapFont.getProperty(""+key);
+						value = StringHelper.removeCR(value.replace("##BASE_URI##", baseUrlTpl));
+						mapFontTranslated.put(""+key, value);
+					}
+					request.setAttribute("fontsMap", mapFontTranslated);
 				}
 
 				List<String> templatesName = currentGlobalContext.getTemplatesNames();
@@ -417,7 +426,6 @@ public class AdminAction extends AbstractModuleAction {
 			ctx.getGlobalContext().setQuitArea(requestService.getParameterListValues("quietAreas"));
 			if (StringHelper.isTrue(requestService.getParameter("graphic-charter", null))) {
 				boolean updateCharte = updateGraphicCharter(ctx, ctx.getGlobalContext());
-
 				if (updateCharte) {
 					ctx.getCurrentTemplate().clearRenderer(ctx);
 					ctx.setNeedRefresh(true);
@@ -700,6 +708,9 @@ public class AdminAction extends AbstractModuleAction {
 					msg = "context not found : " + currentContextKey;
 				}
 			}
+		}
+		if (!messageRepository.haveGlobalMessage()) {
+			ctx.setClosePopup(true);
 		}
 		return msg;
 	}

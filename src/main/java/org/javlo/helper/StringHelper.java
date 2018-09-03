@@ -3261,7 +3261,7 @@ public class StringHelper {
 	}
 
 	/**
-	 * extract a subtext from a text. sample : Hi patrick how are you ?, extr
+	 * extract a subtext from a text.
 	 * 
 	 * @param text
 	 * @param prefix
@@ -3269,9 +3269,15 @@ public class StringHelper {
 	 * @return
 	 */
 	public static List<String> extractItem(String text, String prefix, String suffix) {
-		List<String> items = new LinkedList<String>();
 		int startIndex = text.indexOf(prefix);
-		int endIndex = text.indexOf(suffix);
+		if (startIndex<0) {
+			return Collections.EMPTY_LIST;
+		}
+		List<String> items = new LinkedList<String>();
+		int endIndex = text.substring(startIndex).indexOf(suffix);
+		if (endIndex>=0) {
+			endIndex += startIndex;
+		}
 		while (startIndex > -1 && endIndex > startIndex + prefix.length()) {
 			String item = text.substring(startIndex + prefix.length(), endIndex);
 			if (!items.contains(item)) {
