@@ -233,7 +233,6 @@ public class AdminUserFactory extends UserFactory {
 	@Override
 	public User login(HttpServletRequest request, String token) {
 		User outUser = super.login(request, token);
-
 		if (outUser == null && !master) {
 			IUserFactory masterUserFactory;
 			try {
@@ -244,16 +243,19 @@ public class AdminUserFactory extends UserFactory {
 				e.printStackTrace();
 			}
 		}
+		GlobalContext globalContext = GlobalContext.getInstance(request);
+		if (outUser == null) {
+			outUser = EditContext.getInstance(GlobalContext.getInstance(request), request.getSession()).hardLoginByToken(token);
+		}
 
-		if (outUser != null) {
-			GlobalContext globalContext = GlobalContext.getInstance(request);
+		if (outUser != null) {			
 			outUser.setContext(globalContext.getContextKey());
 			request.getSession().setAttribute(SESSION_KEY, outUser);
 		}
 
-		GlobalContext globalContext = GlobalContext.getInstance(request);
 		EditContext editContext = EditContext.getInstance(globalContext, request.getSession());
 		editContext.setEditUser(outUser);
+		
 
 		/** reload module **/
 		try {

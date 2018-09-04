@@ -1084,6 +1084,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 							if (ctx.getCurrentPage() != null) {
 								String jspPath = template.getRendererFullName(ctx);
 								int timeTrackerNumber = TimeTracker.start(globalContext.getContextKey(), "render");
+								request.getSession(); // create session
 								getServletContext().getRequestDispatcher(jspPath).include(request, response);
 								TimeTracker.end(globalContext.getContextKey(), "render", timeTrackerNumber);
 								VisitorContext.getInstance(request.getSession()).setPreviousPage(ctx.getCurrentPage().getPageBean(ctx));

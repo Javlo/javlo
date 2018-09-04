@@ -83,17 +83,33 @@ public class GenericFile extends AbstractFileComponent implements IReverseLinkCo
 		url = URLHelper.createResourceURL(ctx, getPage(), staticConfig.getFileFolder() + '/' + url);
 		return url;
 	}
-
+	
 	@Override
 	public String getPrefixViewXHTMLCode(ContentContext ctx) {
-		if (isWrapped(ctx)) {
-			return super.getPrefixViewXHTMLCode(ctx) + "<div class=\"" + getType() + ' ' + StringHelper.neverNull(StringHelper.getFileExtension(getFileName())) + "\">";
-		} else {
+		String colPrefix = getColomnablePrefix(ctx);
+		if (isDisplayHidden() && ctx.isAsViewMode()) {
 			return "";
+		}
+		if (isWrapped(ctx)) {
+			return colPrefix+super.getPrefixViewXHTMLCode(ctx) + "<div class=\"" + getType() + ' ' + StringHelper.neverNull(StringHelper.getFileExtension(getFileName())) + "\">";
+		} else {
+			return colPrefix;
 		}
 	}
 	
-
+	@Override
+	public String getSuffixViewXHTMLCode(ContentContext ctx) {
+		String colSuffix = getColomnableSuffix(ctx);
+		if (isDisplayHidden() && ctx.isAsViewMode()) {
+			return "";
+		}
+		if (isWrapped(ctx)) {
+			return colSuffix+"</div>" + super.getSuffixViewXHTMLCode(ctx);
+		} else {
+			return colSuffix;
+		}
+		
+	}
 
 	@Override
 	protected String getRelativeFileDirectory(ContentContext ctx) {
@@ -136,16 +152,6 @@ public class GenericFile extends AbstractFileComponent implements IReverseLinkCo
 		}
 	}
 
-	@Override
-	public String getSuffixViewXHTMLCode(ContentContext ctx) {
-		if (isWrapped(ctx)) {
-			return "</div>" + super.getSuffixViewXHTMLCode(ctx);
-		} else {
-			return "";
-		}
-		
-	}
-
 	/*
 	 * @see org.javlo.itf.IContentVisualComponent#getType()
 	 */
@@ -170,9 +176,9 @@ public class GenericFile extends AbstractFileComponent implements IReverseLinkCo
 		fullName = ElementaryURLHelper.mergePath(globalContext.getStaticConfig().getFileFolder(), fullName);
 		ctx.getRequest().setAttribute("imagePreview", URLHelper.createTransformURL(ctx, fullName, FILTER));
 		fullName = ElementaryURLHelper.mergePath(globalContext.getDataFolder(), fullName);
-		ctx.getRequest().setAttribute("ext", StringHelper.getFileExtension(getFileName()));
+		ctx.getRequest().setAttribute("ext", StringHelper.getFileExtension(getFileName()).toLowerCase());
 		ctx.getRequest().setAttribute("size", StringHelper.getFileSize(fullName));
-		ctx.getRequest().setAttribute("filter", FILTER);		
+		ctx.getRequest().setAttribute("filter", FILTER);
 		if (getLabel().trim().length() == 0) {
 			ctx.getRequest().setAttribute("label", getFileName());
 		} else {

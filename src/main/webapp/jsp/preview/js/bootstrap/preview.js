@@ -1,3 +1,5 @@
+/* preview.js V 2.0.0.2 */
+
 var PREVIEWLOG = false;
 
 var previewScrollPos;
@@ -333,9 +335,7 @@ if (!String.prototype.startsWith) {
 	}
 
 	editPreview.searchArea = function(item) {
-		console.log(">>> item ",item);
 		var parent = pjq(item);
-		console.log(">>> parent ",parent);
 		while (pjq(parent).get(0).tagName.toLowerCase() != "body" && !parent.hasClass("_area")) {
 			parent = parent.parent();
 		}
@@ -424,7 +424,7 @@ if (!String.prototype.startsWith) {
 				if (editPreview.searchPageId(subComp) != null) {
 					ajaxURL = ajaxURL +'&pageCompID='+ editPreview.searchPageId(subComp);
 				}
-				editPreview.ajaxPreviewRequest(ajaxURL, function() {editPreview.layerOver(null);editPreview.updateArea(area);}, null);
+				editPreview.ajaxPreviewRequest(ajaxURL, function() {editPreview.layerOver(null);}, null);
 				return false;
 			});
 			pjq('#preview-layer .btn-copy').on('click', function (e) {
@@ -600,7 +600,7 @@ if (!String.prototype.startsWith) {
 						if (editPreview.searchPageId(subComp) != null) {
 							ajaxURL = ajaxURL +'&pageContainerID='+ editPreview.searchPageId(subComp);
 						}
-						editPreview.ajaxPreviewRequest(ajaxURL, editPreview.updateArea(area), null);
+						editPreview.ajaxPreviewRequest(ajaxURL, null, null);
 					} else if (compType != null && compType.length > 0) {
 						pjq(this).removeClass("drop-selected");
 						var previewId = subComp.attr("id").substring(3);
@@ -614,7 +614,6 @@ if (!String.prototype.startsWith) {
 							ajaxURL = ajaxURL +'&pageContainerID='+ editPreview.searchPageId(subComp);
 						}
 						editPreview.ajaxPreviewRequest(ajaxURL, function() {
-							editPreview.updateArea(area);
 							if (pjq(".edit-component").length > 0) {
 								var compId = pjq(".edit-component").attr("id").substring(3);
 								var editURL = editPreviewURL + "&comp_id=" + compId;
@@ -628,7 +627,7 @@ if (!String.prototype.startsWith) {
 						if (editPreview.searchPageId(subComp) != null) {
 							ajaxURL = ajaxURL +'&pageContainerID='+ editPreview.searchPageId(subComp);
 						}
-						editPreview.ajaxPreviewRequest(ajaxURL, editPreview.updateArea(area), null);
+						editPreview.ajaxPreviewRequest(ajaxURL, null, null);
 					} else if (event.dataTransfer.files.length > 0) {						
 						var previewId = subComp.attr("id").substring(3);
 						var ajaxURL = editPreview.addParam(currentURL,"webaction=data.upload&content=true&previous=" + previewId+"&area="+area);
@@ -666,7 +665,7 @@ if (!String.prototype.startsWith) {
 								pjq("#preview-modal-question").modal("hide");
 							});
 						} else {
-							editPreview.ajaxPreviewRequest(ajaxURL, editPreview.updateArea(area), fd);
+							editPreview.ajaxPreviewRequest(ajaxURL, null, fd);
 						}	
 					}
 					return false;
@@ -716,7 +715,7 @@ if (!String.prototype.startsWith) {
 							if (editPreview.searchPageId(this) != null) {
 								ajaxURL = ajaxURL +'&pageContainerID='+ editPreview.searchPageId(this);
 							}
-							editPreview.ajaxPreviewRequest(ajaxURL, editPreview.updateArea(area), null);
+							editPreview.ajaxPreviewRequest(ajaxURL, null, null);
 							pjq(this).removeClass("_empty_area");
 							return false;
 					}
@@ -754,7 +753,7 @@ if (!String.prototype.startsWith) {
 							if (PREVIEWLOG) {
 								console.log("_empty_area ajaxURL = ",ajaxURL);
 							}
-							editPreview.ajaxPreviewRequest(ajaxURL, editPreview.updateArea(area), null);
+							editPreview.ajaxPreviewRequest(ajaxURL, null, null);
 						}						
 					} else if (compType != null && compType.length > 0) {	
 						pjq(this).removeClass("drop-selected");
@@ -769,7 +768,6 @@ if (!String.prototype.startsWith) {
 								console.log("compType ajaxURL = ",ajaxURL);
 							}
 							editPreview.ajaxPreviewRequest(ajaxURL, function() {
-								editPreview.updateArea(area);
 								if (pjq(".edit-component").length > 0) {
 									var compId = pjq(".edit-component").attr("id").substring(3);
 									var editURL = editPreviewURL + "&comp_id=" + compId;								
@@ -778,12 +776,13 @@ if (!String.prototype.startsWith) {
 							}, null);						
 						}
 					} else if (compId != null && event.dataTransfer.files.length == 0) { // move component
-//						var fromArea = editPreview.searchArea(pjq("#cp_"+compId));
+						var fromArea = editPreview.searchArea(pjq("#cp_"+compId));
 						var ajaxURL = editPreview.addParam(currentURL,"previewEdit=true&webaction=edit.moveComponent&comp-id=" + compId + "&previous=0&area=" + area+ "&render-mode=3&init=true");
 						if (editPreview.searchPageId(this) != null) {
 							ajaxURL = ajaxURL +'&pageContainerID='+ editPreview.searchPageId(this);
 						}
-						editPreview.ajaxPreviewRequest(ajaxURL, function() {editPreview.updateArea(area);}, null);
+						console.log(">>>>>>>>>>>>>>> 3 editPreview.searchPageId(this) = "+editPreview.searchPageId(this));
+						editPreview.ajaxPreviewRequest(ajaxURL, null, null);
 					} else if (event.dataTransfer.files.length > 0) {
 						var ajaxURL = editPreview.addParam(currentURL,"webaction=data.upload&content=true&previous=0&area=" + area);
 						if (editPreview.searchPageId(this) != null) {
@@ -810,11 +809,11 @@ if (!String.prototype.startsWith) {
 						if (sameName) {
 							editPreview.openModalQuestion("Upload file", "File already exists !", "overwrite", "rename", function () {
 								ajaxURL = editPreview.addParam(ajaxURL, "rename=false");								
-								editPreview.ajaxPreviewRequest(ajaxURL, editPreview.updateArea(area), fd);
+								editPreview.ajaxPreviewRequest(ajaxURL, null, fd);
 								pjq("#preview-modal-question").modal("hide");
 							}, function () {
 								ajaxURL = editPreview.addParam(ajaxURL, "rename=true");
-								editPreview.ajaxPreviewRequest(ajaxURL, editPreview.updateArea(area), fd);
+								editPreview.ajaxPreviewRequest(ajaxURL, null, fd);
 								pjq("#preview-modal-question").modal("hide");
 							});
 						} else {

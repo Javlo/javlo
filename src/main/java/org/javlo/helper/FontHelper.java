@@ -47,7 +47,7 @@ public class FontHelper {
 			if (line.startsWith("src:")) {
 				if (line.contains("url")) {
 					line = "src: "+line.substring(line.indexOf("url")).trim();
-					line = line.substring(0, line.indexOf(")")+1);
+					line = line.substring(0, line.indexOf(")")+1)+';';
 				}
 			}
 			out.println(line);

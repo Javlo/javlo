@@ -35,6 +35,7 @@ import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.data.source.TestDataSource;
 import org.javlo.helper.ElementaryURLHelper;
+import org.javlo.helper.LocalLogger;
 import org.javlo.helper.NetHelper;
 import org.javlo.helper.PatternHelper;
 import org.javlo.helper.ResourceHelper;
@@ -46,6 +47,7 @@ import org.javlo.servlet.AccessServlet;
 import org.javlo.user.AdminUserFactory;
 import org.javlo.user.IUserFactory;
 import org.javlo.user.User;
+import org.javlo.user.UserInfo;
 import org.javlo.utils.ConfigurationProperties;
 import org.javlo.ztatic.FileCache;
 
@@ -254,6 +256,15 @@ public class StaticConfig extends Observable {
 						try {
 							String[] userPassword = element.split(",");
 							User user = new User(userPassword[0], userPassword[1]);
+							UserInfo ui = new UserInfo();
+							ui.setLogin(user.getLogin());
+							ui.setPassword(user.getPassword());
+							String token = StringHelper.getRandomIdBase64()+StringHelper.getRandomIdBase64();
+							ui.setToken(token);
+							user.setUserInfo(ui);
+							LocalLogger.log("token >> "+token);
+							LocalLogger.log("login >> "+user.getLogin());
+							
 							logger.info("add edit user : " + user.getName());
 
 							editUsers.put(user.getName(), user);

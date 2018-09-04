@@ -198,6 +198,7 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 		ctx.getRequest().setAttribute("description", getDescription());
 		ctx.getRequest().setAttribute("cleanDescription", Encode.forHtmlAttribute(StringHelper.removeTag(getDescription())));		
 		ctx.getRequest().setAttribute("mineType", ResourceHelper.getFileExtensionToMineType(StringHelper.getFileExtension(url)));
+		ctx.getRequest().setAttribute("fileName", getFileName());
 		StaticInfo staticInfo = getStaticInfo(ctx);
 		ContentContext infoCtx = staticInfo.getContextWithContent(ctx);
 		String cleanLabel = null;

@@ -38,7 +38,7 @@ public class PDFConvertion {
 		pdfRenderer.createPDF(out);
 	}
 
-	public void convertXHTMLToPDF(URL url, final String userName, final String password, OutputStream out) {
+	public static void convertXHTMLToPDF(URL url, final String userName, final String password, OutputStream out) {
 
 		logger.info("create PDF from : " + url + "  user:" + userName + "  password found:" + (StringHelper.neverNull(password).length() > 1));
 
@@ -123,7 +123,7 @@ public class PDFConvertion {
 	public static void main(String[] args) throws Exception {
 		InputStream testIn = new ByteArrayInputStream("<b>Blinkevičiūtė éèçà</b>".getBytes("utf-8"));
 		FileOutputStream out = new FileOutputStream(new File("c:/trans/test.pdf"));
-		convertXHTMLToPDF(testIn, out);
+		convertXHTMLToPDF(new URL("http://localhost/javlo/document/en/data/anna/anna-18/anna-18-september/zero-dechet/zero-dechet-composition.html?nodmz=true&j_token=1Sjl1VMdpgg-&force-device-code=pdf&_clear_session=true&clean-html=true&editPreview=true&_absolute-url=true"), null,null, out);
 		out.close();
 
 	}

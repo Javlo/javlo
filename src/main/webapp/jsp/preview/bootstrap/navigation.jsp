@@ -58,7 +58,7 @@
 			<div class="form-group">
 			<input type="hidden" name="webaction" value="edit.addPage" />
 			<input type="text" class="form-control input-sm" name="name" placeholder="${i18n.edit['navigation.add-page']}..." 
-				onkeyup="if ($(this).val().length == 0) {$('#plus-btn').prop('disabled', false); $('#ok-btn').prop('disabled', true);} else {$('#plus-btn').prop('disabled', true); $('#ok-btn').prop('disabled', false);}" />
+				onkeyup="if (pjq(this).val().length == 0) {$('#plus-btn').prop('disabled', false); $('#ok-btn').prop('disabled', true);} else {pjq('#plus-btn').prop('disabled', true); pjq('#ok-btn').prop('disabled', false);}" />
 			</div>
 			</div><div class="col-xs-5">
 			<input id="ok-btn" class="btn btn-default btn-sm" type="submit" value="${i18n.edit['global.ok']}" disabled="disabled" />
