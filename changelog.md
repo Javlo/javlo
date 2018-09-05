@@ -670,6 +670,7 @@ Security in case of vulnerabilities.
 - face detection : display thread info on dashboard
 - Quiet area : area can be removed from site properties
 - transform external font in local font for PDF generation
+- code mirror editor
 ### Fixed
 - resource servlet return 404 if no path defined
 - face detection thread managing
@@ -678,3 +679,4 @@ Security in case of vulnerabilities.
 - preview.js update area on delete and insert component
 ### Removed
 - imgscalr-lib
+- ace editor
