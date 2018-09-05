@@ -854,6 +854,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 								while (parent != null) {
 									parent = parent.getParent();
 								}
+								logger.warning("no acces to : "+ctx.getCurrentPage().getName()+" (public:"+ctx.getCurrentPage().isPublic(ctx)+")");
 								response.setStatus(HttpServletResponse.SC_FORBIDDEN);
 								return;
 							}
