@@ -921,6 +921,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 						try {
 							DoubleOutputStream outDbl = new DoubleOutputStream(out, outFile);
 							PDFConvertion.getInstance().convertXHTMLToPDF(new URL(url), staticConfig.getApplicationLogin(), staticConfig.getApplicationPassword(), outDbl);
+							ctx.setContentFound(true);
 						} finally {
 							ResourceHelper.closeResource(outFile);
 						}
