@@ -7,6 +7,7 @@ import java.util.Collection;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.navigation.PageURL;
 import org.javlo.context.ContentContext;
+import org.javlo.helper.NavigationHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 
@@ -47,6 +48,13 @@ public class LabelAndSectionURLCreator extends AbstractURLFactory {
 		
 		if (currentPage == null) {
 			return "/";
+		}
+		
+		if (!currentPage.isRealContent(ctx)) {
+			MenuElement contentPage = NavigationHelper.getChildWithContent(ctx, currentPage);
+			if (contentPage != null) {
+				currentPage = contentPage; 
+			}
 		}
 
 		ContentContext freeCtx = ctx.getFreeContentContext();		

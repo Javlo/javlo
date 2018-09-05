@@ -539,7 +539,7 @@ public class Module {
 				}
 			}
 		}
-		Collections.sort(jsURI);
+		//Collections.sort(jsURI);
 
 		/* main renderer */
 		renderer = config.get("renderer");

@@ -487,14 +487,17 @@ public class NavigationHelper {
 	}
 
 	public static MenuElement getChildWithContent(ContentContext ctx, MenuElement page) throws Exception {
-		while (page != null && !page.isRealContent(ctx) && page.getChildMenuElements().size() > 0) {
-			Iterator<MenuElement> children = page.getChildMenuElements().iterator();
-			page = children.next();
-			while (page != null && !page.isActive(ctx)) {
-				page = children.next();
+		for (MenuElement child : page.getChildMenuElements()) {
+			if (child.isRealContent(ctx)) {
+				return child;
+			} else {
+				MenuElement subChild = getChildWithContent(ctx, child);
+				if (subChild != null) {
+					return subChild;
+				}
 			}
 		}
-		return page;
+		return null;
 	}
 
 	public static String getBreadCrumb(ContentContext ctx, MenuElement page) throws Exception {

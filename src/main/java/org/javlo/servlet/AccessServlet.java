@@ -1144,7 +1144,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 				if (persistenceService.isAskStore() && StringHelper.isTrue(persistenceParam, true)) {
 					persistenceService.store(ctx);
 				}
-				if (ctx.isClearSession()) {
+				if (ctx != null && ctx.isClearSession()) {
 					HttpSession session = ctx.getRequest().getSession();
 					session.invalidate();
 				}

@@ -392,7 +392,7 @@ public class XMLManipulationHelper {
 						remplacement.addReplacement(tags[i].getCloseEnd() + 1, tags[i].getCloseEnd() + 1, suffix);
 
 						String checkEmptyArea = "${empty info.areaEmpty['" + area + "']?' _not_empty_area':' _empty_area'}";
-						String cssClass = StringHelper.neverNull(tags[i].getAttributes().get("class"));
+						String cssClass = StringHelper.neverNull(tags[i].getAttributes().get("class")+"<%if (currentPage.getImageBackgroundForArea(ctx).get(\"" + area + "\") != null){%> width-background<%}%>");
 						tags[i].getAttributes().put("class", (cssClass + " _area").trim() + checkEmptyArea);
 						String style = StringHelper.neverNull(tags[i].getAttributes().get("style")).trim();
 						if (!style.endsWith(";") && style.length() > 0) {

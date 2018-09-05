@@ -37,11 +37,6 @@ public class CleanStaticInfoPersistence extends AbstractMacro {
 				String url = StaticInfo.getStaticUrlFromKey(key);
 				if (url != null) {
 					StaticInfo staticInfo = StaticInfo.getInstance(inCtx, url);
-					LocalLogger.log(">>>>>>>>> CleanStaticInfo.perform : key STATIC INFO key = " + key); // TODO: remove debug trace
-					LocalLogger.log(">>>>>>>>> CleanStaticInfo.perform : key STATIC INFO value = " + content.getPreviewAttribute("" + key)); // TODO: remove debug trace
-					LocalLogger.log(">>>>>>>>> CleanStaticInfo.perform : staticInfo = " + staticInfo.getFile().getAbsolutePath()); // TODO: remove debug trace
-					LocalLogger.log(">>>>>>>>> CleanStaticInfo.perform : file exist = " + staticInfo.getFile().exists()); // TODO: remove debug trace
-					LocalLogger.log("");
 					if (!staticInfo.getFile().exists()) {
 						willBeRemoved.add(key);
 					} else {

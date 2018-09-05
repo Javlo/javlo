@@ -4383,6 +4383,10 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 		if (!isInsideTimeRange()) {
 			return false;
 		}
+		
+		if (!isActive()) {
+			return false;
+		}
 
 		Template template = TemplateFactory.getTemplate(ctx, this);
 
