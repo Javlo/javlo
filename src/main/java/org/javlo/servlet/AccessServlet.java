@@ -309,7 +309,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 
 			if (!ctx.isAsViewMode()) {
 				SecurityHelper.checkUserAccess(ctx);
-				if (ctx.getCurrentEditUser() == null || !ctx.getCurrentEditUser().getRoles().contains("content")) {
+				if (ctx.getCurrentEditUser() == null || !ctx.getCurrentEditUser().getRoles().contains("content") && !ctx.getCurrentPage().isPublic(ctx)) {
 					response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 				}
 			}
@@ -340,6 +340,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 			}
 
 			if (!staticConfig.isContentExtensionValid(ctx.getFormat())) {
+				logger.warning("extension not found : "+ctx.getFormat()+ " url="+request.getRequestURL());
 				ctx.setFormat(staticConfig.getDefaultContentExtension());
 				ctx.setContentFound(false);
 			}
