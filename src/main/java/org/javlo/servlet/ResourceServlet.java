@@ -136,6 +136,7 @@ public class ResourceServlet extends HttpServlet {
 		
 		if (ctx.getGlobalContext().isCollaborativeMode() && ctx.getCurrentEditUser() == null) {
 			if (!request.getPathInfo().startsWith('/'+URLHelper.mergePath(staticConfig.getStaticFolder(), AdminAction.LOGO_PATH)+'/')) {
+				logger.warning("unauthorized access to ressource : "+request.getRequestURL());
 				response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 				return;
 			}

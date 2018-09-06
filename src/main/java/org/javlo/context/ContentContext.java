@@ -874,6 +874,7 @@ public class ContentContext {
 					if (elem != null) {
 						if (getRenderMode() != EDIT_MODE && !NetHelper.isIPAccepted(this)) {
 							if (!StringHelper.isEmpty(elem.getIpSecurityErrorPageName())) {
+								logger.warning("unauthorized access ip security : "+elem.getIpSecurityErrorPageName());
 								response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 								String pageName = elem.getIpSecurityErrorPageName();
 								elem = root.searchChildFromName(pageName);

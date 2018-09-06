@@ -310,6 +310,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 			if (!ctx.isAsViewMode()) {
 				SecurityHelper.checkUserAccess(ctx);
 				if (ctx.getCurrentEditUser() == null || !ctx.getCurrentEditUser().getRoles().contains("content") && !ctx.getCurrentPage().isPublic(ctx)) {
+					logger.warning("unauthorized access : "+request.getRequestURL());
 					response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 				}
 			}
