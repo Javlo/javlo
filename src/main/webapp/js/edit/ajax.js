@@ -176,9 +176,9 @@ function ajaxRequest(url, form, doneFunction) {
 		try {			
 			initPreview();			
 		} catch (ex) {
-			if (console) {
-				console.log("Exception when calling initPreview()", ex);
-			}
+//			if (console) {
+//				console.log("Exception when calling initPreview()", ex);
+//			}
 		}
 		if (doneFunction != null) {			
 			doneFunction();
