@@ -944,22 +944,6 @@ public class ContentContext {
 		}
 	}
 	
-	/**
-	 * use for render page with some references to other page (sample :
-	 * mirrorPage, renderImage with filter rule of the template of mirror
-	 * component and not source page).
-	 * 
-	 * @return
-	 * @throws Exception
-	 */
-	public MenuElement getVirtualCurrentPage() throws Exception {
-		if (virtualCurrentPage != null && virtualCurrentPage.get() != null) {
-			return virtualCurrentPage.get();
-		} else {
-			return getCurrentPage();
-		}
-	}
-
 	public Template getCurrentTemplate() throws Exception {
 
 		if (isFree()) {
@@ -978,11 +962,7 @@ public class ContentContext {
 				template = Template.getApplicationInstance(getRequest().getSession().getServletContext(), this, forceTemplate);
 			}
 			if (template == null) {
-				if (getVirtualCurrentPage() == null) {
-					template = TemplateFactory.getTemplate(this, getCurrentPage());
-				} else {
-					template = TemplateFactory.getTemplate(this, getVirtualCurrentPage());
-				}
+				template = TemplateFactory.getTemplate(this, getCurrentPage());
 			}
 			if ((template == null) || !template.exist()) {
 				if (globalContext.getDefaultTemplate() != null) {
@@ -1094,7 +1074,7 @@ public class ContentContext {
 		} else {
 			try {
 				if (isCheckContentArea() && getCurrentTemplate() != null && getCurrentTemplate().isNavigationArea(getArea())) {
-					return getLanguage();
+					requestContentLanguage = getLanguage();
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
