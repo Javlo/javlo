@@ -84,6 +84,7 @@ body .elfinder-cwd-file .elfinder-cwd-select {
 
 #fileManager .elfinder-dialog-edit .ui-dialog-content {
 	height: 60vh !important;
+	font-size: 0.9em;
 }
 
 .elfinder-dialog-confirm .ui-dialog-content, .elfinder-dialog-error .ui-dialog-content {
