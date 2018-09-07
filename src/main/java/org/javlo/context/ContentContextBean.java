@@ -11,6 +11,8 @@ public class ContentContextBean {
 	private int renderMode;
 	private String area;
 	private Device device;
+	private String language;
+	private String contentLanguage;
 	
 	public ContentContextBean(ContentContext ctx) throws Exception {
 		currentPage=ctx.getCurrentPage().getPageBean(ctx);		
@@ -18,6 +20,8 @@ public class ContentContextBean {
 		area=ctx.getArea();
 		device=ctx.getDevice();
 		renderMode=ctx.getRenderMode();
+		language=ctx.getLanguage();
+		contentLanguage=ctx.getContentLanguage();
 	}
 	
 	public ContentContext createContentContext(ContentContext ctx) {
@@ -27,6 +31,8 @@ public class ContentContextBean {
 		outCtx.setArea(area);
 		outCtx.setDevice(device);
 		outCtx.setRenderMode(renderMode);
+		outCtx.setLanguage(language);
+		outCtx.setContentLanguage(contentLanguage);
 		return outCtx;
 	}
 
@@ -78,5 +84,21 @@ public class ContentContextBean {
 
 	public void setDevice(Device device) {
 		this.device = device;
+	}
+
+	public String getLanguage() {
+		return language;
+	}
+
+	public void setLanguage(String language) {
+		this.language = language;
+	}
+
+	public String getContentLanguage() {
+		return contentLanguage;
+	}
+
+	public void setContentLanguage(String contentLanguage) {
+		this.contentLanguage = contentLanguage;
 	}	
 }

@@ -446,6 +446,17 @@ public class InfoBean {
 	public String getRequestContentLanguage() {
 		return ctx.getRequestContentLanguage();
 	}
+	
+	public String getRequestContentLanguageName() {
+		Locale locale;
+		if (ctx.isAsModifyMode()) {
+			locale = new Locale(ctx.getGlobalContext().getEditLanguage(ctx.getRequest().getSession()));
+		} else {
+			locale = new Locale(ctx.getLanguage());
+		}
+		Locale lg = new Locale(ctx.getRequestContentLanguage());
+		return lg.getDisplayName(locale);
+	}
 
 	public String getLanguage() {
 		return ctx.getLanguage();
@@ -611,6 +622,15 @@ public class InfoBean {
 
 	public Collection<String> getLanguages() {
 		return globalContext.getLanguages();
+	}
+	
+	public Collection<PageBean> getPagesForAnyLanguages() throws Exception {
+		Collection<PageBean> pages = new LinkedList<PageBean>();
+		for (ContentContext lgCtx : ctx.getContextForAllLanguage()) {
+			lgCtx.setAllLanguage(lgCtx.getRequestContentLanguage());
+			pages.add(ctx.getCurrentPage().getPageBean(lgCtx));
+		}
+		return pages;
 	}
 
 	public String getEditTemplateURL() {

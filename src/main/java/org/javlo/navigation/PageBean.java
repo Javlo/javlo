@@ -6,6 +6,7 @@ import java.text.ParseException;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.javlo.component.core.IContentVisualComponent;
@@ -726,6 +727,21 @@ public class PageBean implements Serializable {
 
 	public int getIndex() {
 		return page.getIndex();
+	}
+	
+	public String getContentLanguage() {
+		return ctx.getRequestContentLanguage();
+	}
+	
+	public String getContentLanguageName() {
+		Locale locale;
+		if (ctx.isAsModifyMode()) {
+			locale = new Locale(ctx.getGlobalContext().getEditLanguage(ctx.getRequest().getSession()));
+		} else {
+			locale = new Locale(ctx.getLanguage());
+		}
+		Locale lg = new Locale(ctx.getRequestContentLanguage());
+		return lg.getDisplayName(locale);
 	}
 
 }

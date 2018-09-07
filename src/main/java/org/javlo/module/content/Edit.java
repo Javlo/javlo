@@ -1888,6 +1888,7 @@ public class Edit extends AbstractModuleAction {
 		newCtx.setRenderMode(ContentContext.EDIT_MODE);
 		newCtx.setRequest(ctx.getRequest());
 		newCtx.setResponse(ctx.getResponse());
+		newCtx.setArea(null);
 
 		ContentElementList elems = newCtx.getCurrentPage().getContent(newCtx);
 
@@ -1897,11 +1898,11 @@ public class Edit extends AbstractModuleAction {
 			ctx = ctx.getContextWithArea(null);
 		}
 		IContentVisualComponent parent = content.getComponent(ctx, parentId);
-
+		
 		int c = 0;
 		String latestArea = null;
-		while (elems.hasNext(ctx)) {
-			IContentVisualComponent comp = elems.next(ctx);
+		while (elems.hasNext(newCtx)) {
+			IContentVisualComponent comp = elems.next(newCtx);
 			ComponentBean bean = new ComponentBean(comp.getComponentBean());
 			if (latestArea != null && !bean.getArea().equals(latestArea)) {
 				parentId = "0";

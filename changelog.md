@@ -671,12 +671,14 @@ Security in case of vulnerabilities.
 - Quiet area : area can be removed from site properties
 - transform external font in local font for PDF generation
 - code mirror editor
+- change language in preview mode
 ### Fixed
 - resource servlet return 404 if no path defined
 - face detection thread managing
 - image resize if high quality by default
 - reset preview and next component on delete and on insert
 - preview.js update area on delete and insert component
+- copy/paste from language to an other
 ### Removed
 - imgscalr-lib
 - ace editor

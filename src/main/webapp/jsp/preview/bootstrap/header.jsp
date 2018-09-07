@@ -43,10 +43,25 @@
 			class="home" title="home" href="<%=URLHelper.createURL(ctx, "/")%>"><span
 				aria-hidden="true" class="glyphicon glyphicon-home"
 				aria-hidden="true"></span></a></li>
-		<li
-			${!info.page.root?'class="active action-title"':'class="action-title"'}><span
-			class="inwrapper"><span class="glyphicon glyphicon-edit"
-				aria-hidden="true"></span>${info.template.mailing?'edit mailing':'edit content'}</span></li>
+		<c:if test="${fn:length(info.contentLanguages)>1}">		
+		<div class="language-list collapse" id="_language-list" aria-expanded="true" style="">
+		<c:set var="noemptypage" value="true" />
+		<div class="list-group">
+			<c:forEach var="page" items="${info.pagesForAnyLanguages}">
+				<c:set var="noemptypage" value="${noemptypage && page.realContent}" />
+				<a href="${page.url}" class="list-group-item ${page.realContent?'list-group-item-success':'list-group-item-danger'}">
+					<span class="badge">${page.contentLanguage}</span>${page.contentLanguageName}
+				</a>
+			</c:forEach>
+			</div>
+		</div>
+		<li class="_language">
+			<a class="btn btn-default btn-sm btn-languiages btn-notext ${noemptypage?'':'btn-color alert-warning'}" data-toggle="collapse" data-target="#_language-list" href="#_language-list" aria-expanded="true" aria-controls="_language-list">
+			<i class="fa fa-language"></i><span class="text"> ${info.requestContentLanguageName}</span>
+			</a>
+		</li>
+		</c:if>
+			
 	</div>
 	<div class="actions-wrapper">
 		<div class="page-title">
