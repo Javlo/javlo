@@ -256,7 +256,9 @@ public class UserRegistration extends MapComponent implements IAction {
 		} else if (password.length() < 3) {
 			return i18nAccess.getViewText("registration.error.password_size", "password must be at least 3 characters.");
 		} else if (!PatternHelper.MAIL_PATTERN.matcher(email).matches()) {
-			return i18nAccess.getViewText("registration.error.password_size", "Please enter a valid email.");
+			if (!comp.getRenderer(ctx).contains("anonym") && email.length()>0) {
+				return i18nAccess.getViewText("registration.error.password_size", "Please enter a valid email.");
+			}
 		}
 
 		List<String> functions = rs.getParameterListValues("function", Collections.EMPTY_LIST);
