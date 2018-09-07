@@ -270,7 +270,7 @@ public class UserRegistration extends MapComponent implements IAction {
 				userInfo.setEmail(emailLogin);
 			}
 
-			userInfo.setPassword(userInfo.getPassword());
+			userInfo.setPassword(SecurityHelper.encryptPassword(userInfo.getPassword()));
 
 			userInfo.addRoles(new HashSet<String>(comp.getFieldList(FIELD_SELECTED_ROLES)));
 			userFactory.addUserInfo(userInfo);
