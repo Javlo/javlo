@@ -364,7 +364,8 @@ public class ContentService implements IPrintInfo {
 		bean.setArea(area);
 		bean.setAuthors(ctx.getCurrentEditUser().getLogin());
 		bean.setLanguage(ctx.getRequestContentLanguage());
-		page.addContent(parentId, bean, releaseCache);
+		bean.setColumnSize(bean.getColumnSize());
+		page.addContent(parentId, bean, releaseCache);		
 		return bean.getId();
 	}
 	
