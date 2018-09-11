@@ -82,7 +82,7 @@ public class SocialLocalService {
 			sep = " and ";
 		}
 		if (!StringHelper.isEmpty(socialFilter.getQuery())) {
-			filterSQL = filterSQL + sep + "text like '%"+socialFilter.getQuery()+"%' or author like '%"+socialFilter.getQuery()+"%'";
+			filterSQL = filterSQL + sep + "UPPER(text) like UPPER('%"+socialFilter.getQuery()+"%') or UPPER(author) like UPPER('%"+socialFilter.getQuery()+"%')";
 			sep = " and ";
 		}
 		if (!StringHelper.isEmpty(filterSQL)) {
