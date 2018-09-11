@@ -57,7 +57,7 @@ public class SocialLocalService {
 		List<Post> outPost = new LinkedList<Post>();
 		Connection conn = dataBaseService.getConnection(DATABASE_NAME);
 		try {
-			ResultSet rs = conn.createStatement().executeQuery("select * from post where groupname='"+group+"' and author='" + author + "' and mainPost is null order by time asc");
+			ResultSet rs = conn.createStatement().executeQuery("select * from post where groupName='"+group+"' and author='" + author + "' and mainPost is null order by time asc");
 			while (rs.next()) {
 				outPost.add(rsToPost(rs, author, false, false));
 			}
@@ -82,7 +82,7 @@ public class SocialLocalService {
 			sep = " and ";
 		}
 		if (!StringHelper.isEmpty(socialFilter.getQuery())) {
-			filterSQL = filterSQL + sep + "UPPER(text) like UPPER('%"+socialFilter.getQuery()+"%') or UPPER(author) like UPPER('%"+socialFilter.getQuery()+"%')";
+			filterSQL = filterSQL + sep + "(UPPER(text) like UPPER('%"+socialFilter.getQuery()+"%') or UPPER(author) like UPPER('%"+socialFilter.getQuery()+"%'))";
 			sep = " and ";
 		}
 		if (!StringHelper.isEmpty(filterSQL)) {
