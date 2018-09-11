@@ -163,7 +163,7 @@ public class Wall extends AbstractPropertiesComponent implements IAction {
 			int pageNumber = Integer.parseInt(rs.getParameter("page", "1"));			
 			outMap.put("posts", socialService.getPost(SocialFilter.getInstance(ctx.getRequest().getSession()), admin, comp.isNeedCheck(), ctx.getCurrentUserId(), comp.getWallName(), PAGE_SIZE, (pageNumber-1)*PAGE_SIZE));
 		} else {
-			outMap.put("posts", socialService.getReplies(ctx.getCurrentUserId(), admin, comp.isNeedCheck(), Long.parseLong(masterPost)));
+			outMap.put("posts", socialService.getReplies(SocialFilter.getInstance(ctx.getRequest().getSession()), ctx.getCurrentUserId(), admin, comp.isNeedCheck(), Long.parseLong(masterPost)));
 		}
 		ctx.setSpecificJson(JSONMap.JSON.toJson(outMap));
 		return null;

@@ -41,6 +41,9 @@ public class PDFMultimedia extends Multimedia {
 	
 	protected String getCurrentRootFolderForBrowse() {
 		File currentFolder = new File(getCurrentRootFolder());
+		if (currentFolder == null || currentFolder.getParentFile() == null) {
+			return null;
+		}
 		return currentFolder.getParentFile().getPath();
 	}
 	

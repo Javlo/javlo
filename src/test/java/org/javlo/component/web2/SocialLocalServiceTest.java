@@ -108,13 +108,13 @@ public class SocialLocalServiceTest extends TestCase {
 		replyReply.setMainPost(mainPost.getId());
 		socialService.createPost(replyReply);
 
-		Collection<Post> posts = socialService.getReplies(AUTHOR_3, false, false, mainPost.getId());
+		Collection<Post> posts = socialService.getReplies(null, AUTHOR_3, false, false, mainPost.getId());
 		assertEquals(posts.size(), POST_SIZE + 1);
 		Post post = posts.iterator().next();
 		assertEquals(post.getAuthor(), AUTHOR_3);
 		assertNotNull(post.getCreationDate());
 		socialService.deletePost(false, mainPost.getAuthor(), mainPost.getId());
-		assertEquals(socialService.getReplies(AUTHOR_3, false, false, mainPost.getId()), null);
+		assertEquals(socialService.getReplies(null, AUTHOR_3, false, false, mainPost.getId()), null);
 	}
 
 	public void testValidation() throws Exception {

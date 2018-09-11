@@ -26,7 +26,11 @@ public class SocialFilter {
 	}
 
 	public String getQuery() {
-		return query;
+		if (query != null) {
+			return query.trim();
+		} else {
+			return null;
+		}
 	}
 
 	public void setQuery(String query) {

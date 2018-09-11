@@ -100,24 +100,24 @@ public class TimeRangeComponent extends DateComponent {
 		return date;
 	}
 
-	@Override
-	public String getPrefixViewXHTMLCode(ContentContext ctx) {
-		
-		if (getConfig(ctx).getProperty("prefix", null) != null) {
-			return getConfig(ctx).getProperty("prefix", null) + "<div " + getSpecialPreviewCssClass(ctx, "") + getSpecialPreviewCssId(ctx) + ">";
-		}
-
-		return "<div " + getSpecialPreviewCssClass(ctx, getComponentCssClass(ctx) + " " + getType()) + getSpecialPreviewCssId(ctx) + ">";
-	}
-
-	@Override
-	public String getSuffixViewXHTMLCode(ContentContext ctx) {
-		
-		if (getConfig(ctx).getProperty("suffix", null) != null) {
-			return "</div>" + getConfig(ctx).getProperty("suffix", null);
-		}
-		return "</div>";
-	}
+//	@Override
+//	public String getPrefixViewXHTMLCode(ContentContext ctx) {
+//		
+//		if (getConfig(ctx).getProperty("prefix", null) != null) {
+//			return getConfig(ctx).getProperty("prefix", null) + "<div " + getSpecialPreviewCssClass(ctx, "") + getSpecialPreviewCssId(ctx) + ">";
+//		}
+//
+//		return "<div " + getSpecialPreviewCssClass(ctx, getComponentCssClass(ctx) + " " + getType()) + getSpecialPreviewCssId(ctx) + ">";
+//	}
+//
+//	@Override
+//	public String getSuffixViewXHTMLCode(ContentContext ctx) {
+//		
+//		if (getConfig(ctx).getProperty("suffix", null) != null) {
+//			return "</div>" + getConfig(ctx).getProperty("suffix", null);
+//		}
+//		return "</div>";
+//	}
 	
 	@Override
 	public void prepareView(ContentContext ctx) throws Exception {	

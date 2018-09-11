@@ -137,15 +137,15 @@ public class DateComponent extends AbstractVisualComponent implements IDate {
 		setValue(StringHelper.renderTime(date));
 	}
 	
-	@Override
-	public String getPrefixViewXHTMLCode(ContentContext ctx) {
-		return "<div " + getSpecialPreviewCssClass(ctx, getComponentCssClass(ctx) + " " + getType()) + getSpecialPreviewCssId(ctx) + ">";
-	}
-
-	@Override
-	public String getSuffixViewXHTMLCode(ContentContext ctx) {
-		return "</div>";
-	}
+//	@Override
+//	public String getPrefixViewXHTMLCode(ContentContext ctx) {
+//		return "<div " + getSpecialPreviewCssClass(ctx, getComponentCssClass(ctx) + " " + getType()) + getSpecialPreviewCssId(ctx) + ">";
+//	}
+//
+//	@Override
+//	public String getSuffixViewXHTMLCode(ContentContext ctx) {
+//		return "</div>";
+//	}
 
 	protected String renderDate(ContentContext ctx, Date date) throws FileNotFoundException, IOException {
 		if (getStyle().equals(USER_FRIENDLY_DATE_TYPE)) {

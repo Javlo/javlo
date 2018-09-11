@@ -21,7 +21,7 @@ public class SocialLocalService {
 	
 	private static Logger logger = Logger.getLogger(SocialLocalService.class.getName());
 
-	private static final String DATABASE_NAME = "social";
+	public static final String DATABASE_NAME = "social";
 
 	private DataBaseService dataBaseService = null;
 
@@ -74,7 +74,7 @@ public class SocialLocalService {
 		String filterSQL = "";
 		String sep = "";
 		if (socialFilter.isNotValided()) {
-			filterSQL = filterSQL + sep + "adminCheck=false";
+			filterSQL = filterSQL + sep + " (admincheck=false or id in (select parent from POST where admincheck=false))";
 			sep = " and ";
 		}
 		if (socialFilter.isOnlyMine()) {
@@ -82,7 +82,7 @@ public class SocialLocalService {
 			sep = " and ";
 		}
 		if (!StringHelper.isEmpty(socialFilter.getQuery())) {
-			filterSQL = filterSQL + sep + "text like '%"+socialFilter.getQuery()+"%'";
+			filterSQL = filterSQL + sep + "text like '%"+socialFilter.getQuery()+"%' or author like '%"+socialFilter.getQuery()+"%'";
 			sep = " and ";
 		}
 		if (!StringHelper.isEmpty(filterSQL)) {
@@ -210,7 +210,7 @@ public class SocialLocalService {
 		return false;
 	}
 	
-	public List<Post> getReplies(String username, boolean admin, boolean needCheck, long mainPost) throws Exception {
+	public List<Post> getReplies(SocialFilter socialFilter, String username, boolean admin, boolean needCheck, long mainPost) throws Exception {
 		List<Post> workList = new LinkedList<Post>();
 		Connection conn = dataBaseService.getConnection(DATABASE_NAME);
 		try {
@@ -221,7 +221,11 @@ public class SocialLocalService {
 			if (admin) {
 				notAdminQuery = "";
 			}
-			ResultSet rs = conn.createStatement().executeQuery("select * from post where mainPost='" + mainPost + "' "+notAdminQuery+" order by time asc");
+			String filter = "";
+			if (socialFilter.isNotValided()) {
+				filter = " and admincheck=false";
+			}
+			ResultSet rs = conn.createStatement().executeQuery("select * from post where mainPost='" + mainPost + "' "+notAdminQuery+filter+" order by time asc");
 			while (rs.next()) {
 				workList.add(rsToPost(rs, username, admin, needCheck));
 			}
@@ -332,6 +336,37 @@ public class SocialLocalService {
 		} finally {
 			dataBaseService.releaseConnection(conn);
 		}
+		return post;
+	}
+	
+	public Post createPost(Post post, Connection conn) throws Exception {
+		PreparedStatement ps = conn.prepareStatement("insert into post (groupName, author, title, text, media, parent, mainPost, time, adminMessage, adminValid, adminCheck) values (?,?,?,?,?,?,?,?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
+			ps.setString(1, post.getGroup());
+			ps.setString(2, post.getAuthor());
+			ps.setString(3, post.getTitle());
+			ps.setString(4, post.getText());
+			ps.setString(5, post.getMedia());
+			if (post.getParent() != null) {
+				ps.setLong(6, post.getParent());
+			} else {
+				ps.setNull(6, java.sql.Types.LONGVARCHAR);
+			}
+			if (post.getMainPost() != null) {
+				ps.setLong(7, post.getMainPost());
+			} else {
+				ps.setNull(7, java.sql.Types.LONGVARCHAR);
+			}
+			ps.setTimestamp(8, new Timestamp(post.getCreationDate().getTime()));
+			ps.setString(9, post.getAdminMessage());
+			ps.setBoolean(10, post.isValid());
+			ps.setBoolean(11, post.isAdminValided());
+			ps.executeUpdate();
+			ResultSet generatedKeys = ps.getGeneratedKeys();
+			if (generatedKeys.next()) {
+				post.setId(generatedKeys.getLong(1));
+			} else {
+				throw new SQLException("Creating post failed, no ID obtained.");
+			}
 		return post;
 	}
 	

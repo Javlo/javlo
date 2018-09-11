@@ -4,6 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.Arrays;
@@ -36,87 +37,101 @@ public class ImportMysqlDataBase extends AbstractMacro {
 		} catch (Exception ex) {
 			// handle the error
 		}
-		int error = 0;
-		int parentNotFound = 0;
+//		int error = 0;
+//		int parentNotFound = 0;
 		try {
 			mysqlConn = DriverManager.getConnection("jdbc:mysql://192.168.0.6/cps?user=cps&password=pvdm2312&useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC");
-			DataBaseService dataBaseService = DataBaseService.getInstance(ctx.getGlobalContext());
-			SocialLocalService socialService = SocialLocalService.getInstance(ctx.getGlobalContext());
 			Statement st = mysqlConn.createStatement();
-			ResultSet rs = st.executeQuery("select * from phorum_messages order by datestamp asc");
-			Map<Long, Post> createdPost = new HashMap<Long, Post>();
-			while (rs.next()) {
-				Calendar cal = Calendar.getInstance();
-				long time = rs.getLong("datestamp");
-				cal.setTimeInMillis(time * 1000);
-				
-				Post post = new Post();
-				post.setGroup("cps");
-				try {
-					long id = rs.getLong("message_id");
-					long thread = rs.getLong("thread");
-					if (thread != id && thread != 0) {
-						post.setMainPost(thread);
-					}
-					long parent = rs.getLong("parent_id");
-					if (id != parent && parent != 0) {
-						post.setParent(parent);
-					}
-					post.setAuthor(rs.getString("author"));
-					ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-					PrintStream out = new PrintStream(outStream);
-					post.setTitle(rs.getString("subject"));
-					out.println(rs.getString("body"));
-					out.close();
-					
-					post.setText(new String(outStream.toByteArray()));
-					post.setCreationDate(cal.getTime());
-					post.setAdminValided(rs.getInt("status") == 2);
-					post.setAuthorIp(rs.getString("ip"));
-					createdPost.put(post.getId(), post);
-					if (post.getParent() != null && createdPost.get(post.getParent()) == null) {
-						System.out.println("parent not found  : "+post.getParent());
-						parentNotFound++;
-					} else if (post.getMainPost() != null && createdPost.get(post.getMainPost()) == null) {
-						System.out.println("main post not found  : "+post.getMainPost());
-						parentNotFound++;
-					} else {
-						if (post.getParent() != null) {
-							post.setParent(createdPost.get(post.getParent()).getId()); // convert old id to new id
-						}
-						if (post.getMainPost() != null) {
-							post.setMainPost(createdPost.get(post.getMainPost()).getId()); // convert old id to new id
-						}
-						socialService.createPost(post);
-						createdPost.put(id, post);
-						System.out.println("v > post created : "+post.getId());
-					}
-				} catch (Exception e) {
-					System.out.println("x > post error : "+post.getId()+" >>> "+e.getMessage());
-					error++;
-				}
-			}
-			
+//			DataBaseService dataBaseService = DataBaseService.getInstance(ctx.getGlobalContext());
+//			SocialLocalService socialService = SocialLocalService.getInstance(ctx.getGlobalContext());
+//			Statement st = mysqlConn.createStatement();
+//			ResultSet rs = st.executeQuery("select count(*) from phorum_messages order by datestamp asc");
+//			int c=-1;
+//			if (rs.next()) {
+//				c=rs.getInt(1);
+//			}
+//			rs = st.executeQuery("select * from phorum_messages order by datestamp asc");
+//			Map<Long, Post> createdPost = new HashMap<Long, Post>();
+//			Connection conn = dataBaseService.getConnection(SocialLocalService.DATABASE_NAME);
+//			while (rs.next()) {
+//				Calendar cal = Calendar.getInstance();
+//				long time = rs.getLong("datestamp");
+//				cal.setTimeInMillis(time * 1000);
+//				
+//				Post post = new Post();
+//				post.setGroup("cps");
+//				try {
+//					long id = rs.getLong("message_id");
+//					long thread = rs.getLong("thread");
+//					if (thread != id && thread != 0) {
+//						post.setMainPost(thread);
+//					}
+//					long parent = rs.getLong("parent_id");
+//					if (id != parent && parent != 0) {
+//						post.setParent(parent);
+//					}
+//					post.setAuthor(rs.getString("author"));
+//					ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+//					PrintStream out = new PrintStream(outStream);
+//					post.setTitle(rs.getString("subject"));
+//					out.println(rs.getString("body"));
+//					out.close();
+//					
+//					post.setText(new String(outStream.toByteArray()));
+//					post.setCreationDate(cal.getTime());
+//					post.setAdminValided(rs.getInt("status") == 2);
+//					post.setAuthorIp(rs.getString("ip"));
+//					createdPost.put(post.getId(), post);
+//					if (post.getParent() != null && createdPost.get(post.getParent()) == null) {
+//						System.out.println("parent not found  : "+post.getParent());
+//						parentNotFound++;
+//					} else if (post.getMainPost() != null && createdPost.get(post.getMainPost()) == null) {
+//						System.out.println("main post not found  : "+post.getMainPost());
+//						parentNotFound++;
+//					} else {
+//						if (post.getParent() != null) {
+//							post.setParent(createdPost.get(post.getParent()).getId()); // convert old id to new id
+//						}
+//						if (post.getMainPost() != null) {
+//							post.setMainPost(createdPost.get(post.getMainPost()).getId()); // convert old id to new id
+//						}
+//						socialService.createPost(post, conn);
+//						createdPost.put(id, post);
+//						System.out.println("v > post created : "+createdPost.size() + " / " + c);
+//					}
+//				} catch (Exception e) {
+//					System.out.println("x > post error : "+post.getId()+" >>> "+e.getMessage());
+//					error++;
+//				}
+//			}
+//			conn.close();
 			
 			IUserFactory userFactory = UserFactory.createUserFactory(ctx.getRequest());
-			for (IUserInfo userInfo : userFactory.getUserInfoList()) {
-				userFactory.deleteUser(userInfo.getLogin());
-			}
-			rs = st.executeQuery("select * from phorum_users");
+//			for (IUserInfo userInfo : userFactory.getUserInfoList()) {
+//				userFactory.deleteUser(userInfo.getLogin());
+//			}
+			st = mysqlConn.createStatement();
+			ResultSet rs = st.executeQuery("select * from phorum_users");
 			while (rs.next()) {
-				IUserInfo userInfo = new UserInfo();
-				userInfo.setLogin(rs.getString("username"));
-				userInfo.setPassword(rs.getString("password"));
-				userInfo.setEmail(rs.getString("email"));
-				userInfo.setRoles(new HashSet<String>(Arrays.asList(new String[] {"forum"})));
-				userFactory.addUserInfo(userInfo);
+				IUserInfo userInfo = new UserInfo();				
+				try {
+					userInfo.setLogin(rs.getString("username"));					
+					userInfo.setPassword(rs.getString("password"));
+					userInfo.setEmail(rs.getString("email"));
+					userInfo.setRoles(new HashSet<String>(Arrays.asList(new String[] {"forum"})));
+					userFactory.addUserInfo(userInfo);
+					System.out.println(">>>>>>>>> ImportMysqlDataBase.perform : login : "+userInfo.getLogin()); //TODO: remove debug trace
+				} catch (Exception e) {
+					System.out.println(e.getMessage());
+				}
 			}
+			userFactory.store();
 			mysqlConn.close();
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			return ex.getMessage();
 		}
-		return "errors="+error+"  parentNotFound="+parentNotFound;
+		return "";
 	}
 
 	@Override
