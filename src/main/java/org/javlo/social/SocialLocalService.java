@@ -160,6 +160,7 @@ public class SocialLocalService {
 	}
 	
 	public List<Post> getPost(SocialFilter socialFilter, boolean admin, boolean needCheck, String username, String group, int size, int index) throws Exception {
+		System.out.println(">>>>>>>>> SocialLocalService.getPost : admin = "+admin); //TODO: remove debug trace
 		List<Post> outPost = new LinkedList<Post>();
 		Connection conn = dataBaseService.getConnection(DATABASE_NAME);
 		try {
