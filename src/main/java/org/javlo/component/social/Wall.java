@@ -155,12 +155,12 @@ public class Wall extends AbstractPropertiesComponent implements IAction {
 	}
 
 	public static String performGetpost(ContentContext ctx, RequestService rs) throws Exception {
+		System.out.println(">>>>>>>>> Wall.performGetpost : ctx = "+ctx); //TODO: remove debug trace
 		SocialLocalService socialService = SocialLocalService.getInstance(ctx.getGlobalContext());
 		Map<String, Object> outMap = new HashMap<String, Object>();
 		String masterPost = rs.getParameter("master");
 		System.out.println(">>>>>>>>> Wall.performGetpost : masterPost = "+masterPost); //TODO: remove debug trace
 		boolean admin = AdminUserSecurity.getInstance().isAdmin(ctx.getCurrentEditUser());
-		System.out.println(">>>>>>>>> Wall.performGetpost : admin = "+admin); //TODO: remove debug trace
 		Wall comp = (Wall)ComponentHelper.getComponentFromRequest(ctx);
 		if (masterPost == null) {
 			int pageNumber = Integer.parseInt(rs.getParameter("page", "1"));
