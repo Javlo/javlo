@@ -160,7 +160,6 @@ public class SocialLocalService {
 	}
 	
 	public List<Post> getPost(SocialFilter socialFilter, boolean admin, boolean needCheck, String username, String group, int size, int index) throws Exception {
-		System.out.println(">>>>>>>>> SocialLocalService.getPost : admin = "+admin); //TODO: remove debug trace
 		List<Post> outPost = new LinkedList<Post>();
 		Connection conn = dataBaseService.getConnection(DATABASE_NAME);
 		try {
@@ -172,7 +171,6 @@ public class SocialLocalService {
 				notAdminQuery = "";
 			}
 			String sql = "select * from post where groupName='"+group+"' "+notAdminQuery+" and mainPost is null"+getSQLFilter(socialFilter, username)+" order by time desc limit "+size+" offset "+index;
-			System.out.println(">>>>>>>>> SocialLocalService.getPost : sql = "+sql); //TODO: remove debug trace
 			ResultSet rs = conn.createStatement().executeQuery(sql);
 			while (rs.next()) {
 				outPost.add(rsToPost(rs, username, admin, needCheck));
@@ -241,7 +239,7 @@ public class SocialLocalService {
 				notAdminQuery = "";
 			}
 			String filter = "";
-			if (socialFilter.isNotValided()) {
+			if (socialFilter != null && socialFilter.isNotValided()) {
 				filter = " and admincheck=false";
 			}
 			ResultSet rs = conn.createStatement().executeQuery("select * from post where mainPost='" + mainPost + "' "+notAdminQuery+filter+" order by time asc");
