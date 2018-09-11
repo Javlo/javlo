@@ -74,7 +74,7 @@ public class SocialLocalService {
 		String filterSQL = "";
 		String sep = "";
 		if (socialFilter.isNotValided()) {
-			filterSQL = filterSQL + sep + " (admincheck=false or id in (select parent from POST where admincheck=false))";
+			filterSQL = filterSQL + sep + " (adminCheck=false or id in (select parent from POST where adminCheck=false))";
 			sep = " and ";
 		}
 		if (socialFilter.isOnlyMine()) {
@@ -103,7 +103,7 @@ public class SocialLocalService {
 				notAdminQuery = "";
 			}
 			
-			String sql = "select count(id) from post where groupname='"+group+"' "+notAdminQuery+" and mainPost is null"+getSQLFilter(socialFilter, username);
+			String sql = "select count(id) from post where groupName='"+group+"' "+notAdminQuery+" and mainPost is null"+getSQLFilter(socialFilter, username);
 			ResultSet rs = conn.createStatement().executeQuery(sql);
 			if (rs.next()) {
 				return rs.getLong(1);
@@ -117,7 +117,7 @@ public class SocialLocalService {
 	public long getUnvalidedPostListSize(String group) throws Exception {
 		Connection conn = dataBaseService.getConnection(DATABASE_NAME);
 		try {
-			String sql = "select count(id) from post where groupname='"+group+"' and (adminCheck=0)";
+			String sql = "select count(id) from post where groupName='"+group+"' and (adminCheck=0)";
 			ResultSet rs = conn.createStatement().executeQuery(sql);
 			if (rs.next()) {
 				return rs.getLong(1);
@@ -132,7 +132,7 @@ public class SocialLocalService {
 		List<Post> outPost = new LinkedList<Post>();
 		Connection conn = dataBaseService.getConnection(DATABASE_NAME);
 		try {
-			ResultSet rs = conn.createStatement().executeQuery("select * from post where groupname='"+group+"' and mainPost is null order by time desc");
+			ResultSet rs = conn.createStatement().executeQuery("select * from post where groupName='"+group+"' and mainPost is null order by time desc");
 			while (rs.next()) {
 				outPost.add(rsToPost(rs, null, true, false));
 			}
@@ -153,7 +153,7 @@ public class SocialLocalService {
 			if (admin) {
 				notAdminQuery = "";
 			}
-			String sql = "select * from post where groupname='"+group+"' "+notAdminQuery+" and mainPost is null"+getSQLFilter(socialFilter, username)+" order by time desc limit "+size+" offset "+index;
+			String sql = "select * from post where groupName='"+group+"' "+notAdminQuery+" and mainPost is null"+getSQLFilter(socialFilter, username)+" order by time desc limit "+size+" offset "+index;
 			ResultSet rs = conn.createStatement().executeQuery(sql);
 			while (rs.next()) {
 				outPost.add(rsToPost(rs, username, admin, needCheck));
