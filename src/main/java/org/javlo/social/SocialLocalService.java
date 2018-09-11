@@ -74,7 +74,7 @@ public class SocialLocalService {
 		String filterSQL = "";
 		String sep = "";
 		if (socialFilter.isNotValided()) {
-			filterSQL = filterSQL + sep + " (adminCheck=false or id in (select parent from POST where adminCheck=false))";
+			filterSQL = filterSQL + sep + " (adminCheck=false or id in (select mainpost from POST where adminCheck=false))";
 			sep = " and ";
 		}
 		if (socialFilter.isOnlyMine()) {
@@ -82,13 +82,13 @@ public class SocialLocalService {
 			sep = " and ";
 		}
 		if (!StringHelper.isEmpty(socialFilter.getQuery())) {
-			filterSQL = filterSQL + sep + "(UPPER(text) like UPPER('%"+socialFilter.getQuery()+"%') or UPPER(author) like UPPER('%"+socialFilter.getQuery()+"%'))";
+			String qr = socialFilter.getQuery().replace("'", "''");
+			filterSQL = filterSQL + sep + "(UPPER(text) like UPPER('%"+qr+"%') or UPPER(title) like UPPER('%"+qr+"%') or UPPER(author) like UPPER('%"+qr+"%'))";
 			sep = " and ";
 		}
 		if (!StringHelper.isEmpty(filterSQL)) {
 			filterSQL = " and "+filterSQL;
 		}
-		System.out.println(">>>>>>>>> SocialLocalService.getSQLFilter : filterSQL = "+filterSQL); //TODO: remove debug trace
 		return filterSQL;
 	}
 	
@@ -240,7 +240,7 @@ public class SocialLocalService {
 			}
 			String filter = "";
 			if (socialFilter != null && socialFilter.isNotValided()) {
-				filter = " and admincheck=false";
+				filter = " and adminCheck=false";
 			}
 			ResultSet rs = conn.createStatement().executeQuery("select * from post where mainPost='" + mainPost + "' "+notAdminQuery+filter+" order by time asc");
 			while (rs.next()) {
@@ -263,7 +263,7 @@ public class SocialLocalService {
 				if (parent != null) {
 					p.setParentPost(parent);
 				} else {
-					logger.warning("parent not found : "+p.getParent());
+					p.setParentPost(mainPostBean);
 				}
 			}
 			return workList;
