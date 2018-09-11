@@ -171,6 +171,7 @@ public class SocialLocalService {
 				notAdminQuery = "";
 			}
 			String sql = "select * from post where groupName='"+group+"' "+notAdminQuery+" and mainPost is null"+getSQLFilter(socialFilter, username)+" order by time desc limit "+size+" offset "+index;
+			System.out.println(">>>>>>>>> SocialLocalService.getPost : sql = "+sql); //TODO: remove debug trace
 			ResultSet rs = conn.createStatement().executeQuery(sql);
 			while (rs.next()) {
 				outPost.add(rsToPost(rs, username, admin, needCheck));

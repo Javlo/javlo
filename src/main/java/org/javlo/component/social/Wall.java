@@ -158,10 +158,13 @@ public class Wall extends AbstractPropertiesComponent implements IAction {
 		SocialLocalService socialService = SocialLocalService.getInstance(ctx.getGlobalContext());
 		Map<String, Object> outMap = new HashMap<String, Object>();
 		String masterPost = rs.getParameter("master");
+		System.out.println(">>>>>>>>> Wall.performGetpost : masterPost = "+masterPost); //TODO: remove debug trace
 		boolean admin = AdminUserSecurity.getInstance().isAdmin(ctx.getCurrentEditUser());
+		System.out.println(">>>>>>>>> Wall.performGetpost : admin = "+admin); //TODO: remove debug trace
 		Wall comp = (Wall)ComponentHelper.getComponentFromRequest(ctx);
 		if (masterPost == null) {
-			int pageNumber = Integer.parseInt(rs.getParameter("page", "1"));			
+			int pageNumber = Integer.parseInt(rs.getParameter("page", "1"));
+			System.out.println(">>>>>>>>> Wall.performGetpost : pageNumnber = "+pageNumber); //TODO: remove debug trace
 			outMap.put("posts", socialService.getPost(SocialFilter.getInstance(ctx.getRequest().getSession()), admin, comp.isNeedCheck(), ctx.getCurrentUserId(), comp.getWallName(), PAGE_SIZE, (pageNumber-1)*PAGE_SIZE));
 		} else {
 			outMap.put("posts", socialService.getReplies(SocialFilter.getInstance(ctx.getRequest().getSession()), ctx.getCurrentUserId(), admin, comp.isNeedCheck(), Long.parseLong(masterPost)));
