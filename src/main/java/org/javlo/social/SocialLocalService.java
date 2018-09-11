@@ -88,6 +88,7 @@ public class SocialLocalService {
 		if (!StringHelper.isEmpty(filterSQL)) {
 			filterSQL = " and "+filterSQL;
 		}
+		System.out.println(">>>>>>>>> SocialLocalService.getSQLFilter : filterSQL = "+filterSQL); //TODO: remove debug trace
 		return filterSQL;
 	}
 	
