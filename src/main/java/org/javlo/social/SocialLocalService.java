@@ -128,6 +128,22 @@ public class SocialLocalService {
 		return -1;
 	}
 	
+	public long getPostListSize(String group) throws Exception {
+		Connection conn = dataBaseService.getConnection(DATABASE_NAME);
+		try {
+			String sql = "select count(id) from post where groupName='"+group+"'";
+			ResultSet rs = conn.createStatement().executeQuery(sql);
+			if (rs.next()) {
+				return rs.getLong(1);
+			}
+		} finally {
+			dataBaseService.releaseConnection(conn);
+		}
+		return -1;
+	}
+	
+	
+	
 	public List<Post> getPost(String group) throws Exception {
 		List<Post> outPost = new LinkedList<Post>();
 		Connection conn = dataBaseService.getConnection(DATABASE_NAME);

@@ -73,6 +73,7 @@ public class Wall extends AbstractPropertiesComponent implements IAction {
 			List<String> roles = StringHelper.stringToCollection(getFieldValue("roles"));
 			if (AdminUserSecurity.getInstance().isAdmin(ctx.getCurrentUser())) {
 				ctx.getRequest().setAttribute("uncheckSize", socialService.getUnvalidedPostListSize(getWallName()));
+				ctx.getRequest().setAttribute("countMessages", socialService.getPostListSize(getWallName()));
 			}
 			if (!currentUser.validForRoles(roles)) {
 				ctx.getRequest().setAttribute("access", false);
