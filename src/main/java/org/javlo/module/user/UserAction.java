@@ -521,6 +521,7 @@ public class UserAction extends AbstractModuleAction {
 					if (user == null) {
 						return "user not found : "+userName;
 					}
+					logger.info("change password of : "+user.getLogin());
 					IUserInfo ui = user.getUserInfo();
 					ui.setPassword(SecurityHelper.encryptPassword(pwd1));
 					userFactory.updateUserInfo(ui);
