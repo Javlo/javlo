@@ -587,8 +587,8 @@ public class ImageTransformServlet extends FileServlet {
 					e.printStackTrace();
 				}
 				imageType = DEFAULT_IMAGE_TYPE;
-			} else if (inFileExtention.equalsIgnoreCase("pdf")) {
-				img = PDFHelper.getPDFImage(imageFile, imageParam.getPage());
+			} else if (inFileExtention.equalsIgnoreCase("pdf")) {				
+				img = getPDFImage(globalContext, imageFile, imageParam.getPage());
 				imageType = DEFAULT_IMAGE_TYPE;
 			} else if (inFileExtention.equalsIgnoreCase("svg")) {
 				img = SVGHelper.getSVGImage(imageFile);
@@ -927,6 +927,10 @@ public class ImageTransformServlet extends FileServlet {
 			}
 		}
 
+	}
+
+	private static BufferedImage getPDFImage(GlobalContext globalContext, File imageFile, int page) {
+		return PDFHelper.getPDFImage(imageFile, page);
 	}
 
 	private File loadFileFromDisk(ContentContext ctx, String name, String filter, String area, Device device, Template template, IImageFilter comp, long lastModificationDate,ImageConfig.ImageParameters imageParam) throws IOException {

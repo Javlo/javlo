@@ -39,6 +39,14 @@ public class PDFMultimedia extends Multimedia {
 		return super.getRenderer(ctx);
 	}
 	
+	@Override
+	public void prepareView(ContentContext ctx) throws Exception {	
+		super.prepareView(ctx);
+		String folder = getCurrentRootFolder();
+		File pdfFile = new File(URLHelper.mergePath(ctx.getGlobalContext().getStaticFolder(), folder));
+		ctx.getRequest().setAttribute("pdfUrl", URLHelper.createResourceURL(ctx, pdfFile));
+	}
+	
 	protected String getCurrentRootFolderForBrowse() {
 		File currentFolder = new File(getCurrentRootFolder());
 		if (currentFolder == null || currentFolder.getParentFile() == null) {
