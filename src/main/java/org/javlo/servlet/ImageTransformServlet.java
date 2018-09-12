@@ -60,8 +60,6 @@ import org.javlo.service.ContentService;
 import org.javlo.template.Template;
 import org.javlo.template.TemplateFactory;
 import org.javlo.user.AdminUserFactory;
-import org.javlo.user.IUserFactory;
-import org.javlo.user.User;
 import org.javlo.user.UserFactory;
 import org.javlo.utils.NamedThreadFactory;
 import org.javlo.utils.TimeTracker;
@@ -1154,6 +1152,10 @@ public class ImageTransformServlet extends FileServlet {
 				
 				File imageFile = new File(URLHelper.mergePath(baseFolder, imageName));
 				String baseExtension = StringHelper.getFileExtension(imageFile.getName());
+				if (!imageFile.exists()) {
+					imageFile = new File(URLHelper.mergePath(baseFolder, StringHelper.getFileNameWithoutExtension(imageName)));
+					baseExtension = StringHelper.getFileExtension(imageFile.getName());
+				}
 				if (!imageFile.exists()) {
 					imageName = NO_IMAGE_FILE;
 					imageFile = new File(ResourceHelper.getRealPath(ctx.getRequest().getSession().getServletContext(), imageName));

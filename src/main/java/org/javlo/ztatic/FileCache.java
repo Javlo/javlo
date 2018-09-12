@@ -271,7 +271,7 @@ public class FileCache {
 	public long getLastModified(String key, String fileName) throws FileNotFoundException {
 		File file = getFileName(key, fileName);
 		if (!file.exists()) {
-			logger.warning("file not found : " + file);
+			logger.fine("file not found : " + file);
 		}
 		return file.lastModified();
 	}

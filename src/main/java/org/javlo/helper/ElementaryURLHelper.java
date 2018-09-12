@@ -16,6 +16,7 @@ import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
+import org.javlo.image.ImageConfig;
 import org.javlo.module.core.Module;
 import org.javlo.module.core.ModulesContext;
 import org.javlo.navigation.IURLFactory;
@@ -414,6 +415,22 @@ public abstract class ElementaryURLHelper {
 			return null;
 		}
 		url = url.replace('\\', '/');
+		
+		ImageConfig imageConfig = ImageConfig.getInstance(ctx.getGlobalContext(),  ctx.getRequest().getSession(), template);
+		String ext = imageConfig.getFileExtension(ctx.getDevice(), filter, ctx.getArea());
+		if (StringHelper.isEmpty(ext)) {
+			ext = "jpg";
+		}
+		
+		String currentExt = StringHelper.getFileExtension(url);
+		if (!currentExt.equalsIgnoreCase(ext)) {
+			if (url.contains("?")) {
+				url = StringUtils.replaceFirst(url, "?", '.'+ext+'?'); 
+			} else  {
+				url = url + '.'+ext;
+			}
+			
+		}
 
 		ContentService.getInstance(ctx.getRequest());
 
