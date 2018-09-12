@@ -672,6 +672,7 @@ Security in case of vulnerabilities.
 - transform external font in local font for PDF generation
 - code mirror editor
 - change language in preview mode
+- pdf-multimedia expose link to pdf file
 ### Fixed
 - resource servlet return 404 if no path defined
 - face detection thread managing
@@ -679,6 +680,8 @@ Security in case of vulnerabilities.
 - reset preview and next component on delete and on insert
 - preview.js update area on delete and insert component
 - copy/paste from language to an other
+- change password with login and not necessary with email
+- change image transform url with real extenstion (sp. : .pdf.jpg in place of .pdf for filtered images)
 ### Removed
 - imgscalr-lib
 - ace editor
