@@ -1,3 +1,12 @@
+<%--
+
+params:
+   select=image : select image
+   select=back : select a file
+   select=true : open file with small display
+
+
+ --%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"
 %><%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <c:url var="uploadURL" value="${info.currentURL}" context="/">
@@ -89,12 +98,12 @@
 				</c:if>
 			</c:url>
 			<c:if test="${param.select == 'back' && !file.directory}">
-				<c:set var="fileSelectURL" value="${param[BACK_PARAM_NAME]}${file.path}" />
+				<c:set var="fileSelectURL" value="${param[BACK_PARAM_NAME]}&path=${file.path}" />
 			</c:if>
 			<c:set var="dataURL" value="" />			
 			<c:if test="${not empty param.select && !file.directory}">
 				<c:set var="dataURL" value='data-url="${file.freeURL}"' />
-			</c:if>				
+			</c:if>
 			<a ${!file.directory && not empty param.select?'class="select-item"':''} href="${fileSelectURL}" ${dataURL}><img src="${file.thumbURL}" /></a>			
 			<c:if test="${file.image && !metaReadOnly && empty param.select}">
 			<div class="focus-point">x</div>			
@@ -114,7 +123,7 @@
 			</c:url>
 			<c:if test="${!metaReadOnly}"><a class="btn btn-default btn-edit" href="${editFileURL}" title="${i18n.edit['global.modify']}"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></a></c:if>
 			</c:if>
-			<c:if test="${file.toJpeg}">
+			<c:if test="${file.toJpeg && empty param.select}">
 			<c:url value="${info.currentURL}" var="jpegUrl" context="/">
 					<c:param name="webaction" value="file.jpeg" />
 					<c:param name="module" value="file" />

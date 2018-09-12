@@ -4,10 +4,10 @@
 		<c:if test="${not empty selectUrl}"><a href="${selectUrl}&template=${template.name}" title="select ${template.name}" class="select-template"></c:if>		
         <div class="thumb">  
         	<h2>${template.name}</h2>      	        
-        	<c:if test="${empty param.previewEdit}">
+        	<c:if test="${empty param.previewEdit || fromAdmin}">
             	<img src="${template.previewUrl}" alt="${template.name}" />
             </c:if>
-            <c:if test="${not empty param.previewEdit}">
+            <c:if test="${not empty param.previewEdit && !fromAdmin}">
             
              	<c:url value="${info.currentURL}" var="selectURL" context="/">
                     	<c:param name="webaction" value="template.selectTemplate" />
@@ -20,7 +20,7 @@
 				   <p>
                    <label>${i18n.edit['global.name']}:</label>
                    <span>${template.name}</span>
-	               </p>	               
+	               </p>
 	               <p>
 	                   <label>${i18n.edit['template.parent']}:</label>
 	                   <span>${template.parent}</span>
@@ -40,12 +40,11 @@
 	            </div>
 	            </a>
             </c:if>
-            <c:if test="${empty param.previewEdit}">
-            
-            <div class="info">                
+            <c:if test="${empty param.previewEdit || fromAdmin}">
+            <div class="info">
                 <p>
                     <label>${i18n.edit['template.parent']}:</label>
-	                   <span><c:if test="${not empty template.parent}">${template.parent}</c:if><c:if test="${empty template.parent}">/</c:if></span>
+                    <span><c:if test="${not empty template.parent}">${template.parent}</c:if><c:if test="${empty template.parent}">/</c:if></span>
                 </p>
                 <p>
                     <label>${i18n.edit['global.version']}:</label>
@@ -60,18 +59,17 @@
 	                   <span>${fn:length(template.renderers)}</span>
 	               </p>
                  <c:if test="${empty selectUrl}"><p>
-                	<a href="${template.downloadURL}">${i18n.edit['admin.download-template']}</a>                	
+                	<a href="${template.downloadURL}">${i18n.edit['admin.download-template']}</a>
                 </p></c:if>  
-                 <c:if test="${empty selectUrl}">              
+                 <c:if test="${empty selectUrl}">
                 <p class="menu">   
                 
                 	<c:url value="${info.currentModuleURL}/jsp/page_list.jsp" var="pageListURL" context="/">
 						<c:param name="name" value="${template.name}" />
-						<c:param name="webaction" value="template.pageTemplate" />						
+						<c:param name="webaction" value="template.pageTemplate" />
 					</c:url>
-                             	
                     <c:if test="${globalContext.master}"><a href="${pageListURL}" class="view popup" title="${template.name}"></a></c:if>
-                    
+
                     <c:url value="${info.currentURL}" var="editURL" context="/">
                     	<c:param name="webaction" value="template.goEditTemplate" />
                     	<c:param name="templateid" value="${template.name}" />

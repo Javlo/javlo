@@ -1,6 +1,8 @@
 package org.javlo.component.multimedia;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.PrintStream;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
@@ -21,7 +23,7 @@ public class PDFMultimedia extends Multimedia {
 	public String getType() {
 		return TYPE;
 	}
-	
+
 	protected boolean isDateRange() {
 		return false;
 	}
@@ -42,8 +44,7 @@ public class PDFMultimedia extends Multimedia {
 	@Override
 	public void prepareView(ContentContext ctx) throws Exception {	
 		super.prepareView(ctx);
-		String folder = getCurrentRootFolder();
-		File pdfFile = new File(URLHelper.mergePath(ctx.getGlobalContext().getStaticFolder(), folder));
+		File pdfFile = new File(URLHelper.mergePath(ctx.getGlobalContext().getStaticFolder(), getCurrentRootFolder()));
 		ctx.getRequest().setAttribute("pdfUrl", URLHelper.createResourceURL(ctx, pdfFile));
 	}
 	
@@ -76,6 +77,23 @@ public class PDFMultimedia extends Multimedia {
 	@Override
 	protected boolean isSelectBrowse() {
 		return true;
+	}
+	
+	protected String getEditPreview(ContentContext ctx) throws Exception {
+		File pdfFile = new File(URLHelper.mergePath(ctx.getGlobalContext().getStaticFolder(), getCurrentRootFolder()));
+		if (!pdfFile.exists()) {
+			return "";
+		} else {
+			ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+			PrintStream out = new PrintStream(outStream);
+			out.println("<div class=\"preview\">");
+			
+			ctx.getRequest().setAttribute("pdfUrl", URLHelper.createResourceURL(ctx, pdfFile));
+			out.println("<img src=\"" +URLHelper.createTransformURL(ctx, pdfFile, "preview") + "\" />");
+			out.println("</div>");
+			out.close();
+			return new String(outStream.toByteArray());
+		}
 	}
 	
 	protected List<MultimediaResource> getMultimediaResources(ContentContext ctx) throws Exception {

@@ -122,13 +122,12 @@ public class TemplateAction extends AbstractModuleAction {
 
 		String msg = null;
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-		Module module = ModulesContext.getInstance(ctx.getRequest().getSession(), globalContext).getCurrentModule();
+		Module module = moduleContext.getCurrentModule();
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
 		TemplateContext templateContext = TemplateContext.getInstance(ctx.getRequest().getSession(), globalContext,
 				module);
 
-		Collection<Template> allTemplate = TemplateFactory
-				.getAllDiskTemplates(ctx.getRequest().getSession().getServletContext());
+		Collection<Template> allTemplate = TemplateFactory.getAllDiskTemplates(ctx.getRequest().getSession().getServletContext());
 		Collection<String> contextTemplates = globalContext.getTemplatesNames();
 
 		Collection<Template.TemplateBean> templates = new LinkedList<Template.TemplateBean>();
@@ -166,14 +165,14 @@ public class TemplateAction extends AbstractModuleAction {
 		} else {
 			for (Template template : allTemplate) {
 				if (!template.isTemplateInWebapp(ctx)) {
-					template.importTemplateInWebapp(
-							StaticConfig.getInstance(ctx.getRequest().getSession().getServletContext()), ctx);
+					template.importTemplateInWebapp(StaticConfig.getInstance(ctx.getRequest().getSession().getServletContext()), ctx);
 				}
 				Boolean acceptTemplate = roleWrapper.acceptTemplate(template.getName());
 				if (acceptTemplate == null) {
-					acceptTemplate = !templateContext.getCurrentLink()
-							.equals(TemplateContext.MY_TEMPLATES_LINK.getUrl())
-							|| contextTemplates.contains(template.getName());
+					acceptTemplate = !templateContext.getCurrentLink().equals(TemplateContext.MY_TEMPLATES_LINK.getUrl()) || contextTemplates.contains(template.getName());
+					if (moduleContext.getFromModule() != null && moduleContext.getFromModule().getName().equals("admin")) {
+						acceptTemplate = true;
+					}
 				}
 				if (template.visibleForRoles(ctx.getCurrentEditUser().getRoles()) && acceptTemplate) {
 					templates.add(new Template.TemplateBean(ctx, template));
@@ -183,6 +182,7 @@ public class TemplateAction extends AbstractModuleAction {
 		}
 
 		ctx.getRequest().setAttribute("templates", templates);
+		ctx.getRequest().setAttribute("fromAdmin", moduleContext.getFromModule() != null && moduleContext.getFromModule().getName().equals("admin"));
 
 		Map<String, String> params = new HashMap<String, String>();
 		String templateName = requestService.getParameter("templateid", null);
