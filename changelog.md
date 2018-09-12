@@ -673,6 +673,7 @@ Security in case of vulnerabilities.
 - code mirror editor
 - change language in preview mode
 - pdf-multimedia expose link to pdf file
+- can remove ressource from site map with special option in global context
 ### Fixed
 - resource servlet return 404 if no path defined
 - face detection thread managing
