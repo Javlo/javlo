@@ -107,6 +107,7 @@ public class SiteMapServlet extends HttpServlet {
 			
 			List<MenuElement> root;
 			Calendar lastestDate = null;
+			boolean sitemapResource = globalContext.getSpecialConfig().isSitemapResources();
 			if (pageName != null) {				
 				MenuElement mainPage = content.getNavigation(ctx).searchChildFromName(pageName);				
 				if (mainPage == null) {
@@ -133,7 +134,7 @@ public class SiteMapServlet extends HttpServlet {
 				out.newLine();
 				out.flush();
 				return;
-			}  else if (ctx.getRequest().getServletPath().equalsIgnoreCase("/images-sitemap.xml")) {				
+			}  else if (ctx.getRequest().getServletPath().equalsIgnoreCase("/images-sitemap.xml") && sitemapResource) {				
 				Writer writer = new OutputStreamWriter(response.getOutputStream(), "UTF8");		
 				BufferedWriter out = new BufferedWriter(writer);		
 				out.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
@@ -190,7 +191,7 @@ public class SiteMapServlet extends HttpServlet {
 				root.add(content.getNavigation(ctx));
 			}			
 			if (number > 0) {
-				SiteMapBloc sitemap = XMLHelper.getSiteMapBloc(ctx, root, number, lastestDate);
+				SiteMapBloc sitemap = XMLHelper.getSiteMapBloc(ctx, root, number, lastestDate, sitemapResource);
 				if (StringHelper.isEmpty(sitemap.getText())) {
 					response.setStatus(HttpServletResponse.SC_NOT_FOUND);
 				} else {
@@ -213,7 +214,7 @@ public class SiteMapServlet extends HttpServlet {
 				out.write("<sitemapindex xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">");
 				out.newLine();
 				int i = 1;
-				SiteMapBloc sitemap = XMLHelper.getSiteMapBloc(ctx, root, i, lastestDate);
+				SiteMapBloc sitemap = XMLHelper.getSiteMapBloc(ctx, root, i, lastestDate, sitemapResource);
 				SimpleDateFormat dataFormat = new SimpleDateFormat("yyyy-MM-dd");
 				while (!StringHelper.isEmpty(sitemap.getText())) {
 					out.write("<sitemap>");
@@ -228,7 +229,7 @@ public class SiteMapServlet extends HttpServlet {
 					out.write("</sitemap>");
 					out.newLine();
 					i++;
-					sitemap = XMLHelper.getSiteMapBloc(ctx, root, i, lastestDate);
+					sitemap = XMLHelper.getSiteMapBloc(ctx, root, i, lastestDate, sitemapResource);
 				}
 				out.newLine();
 				out.write("</sitemapindex>");

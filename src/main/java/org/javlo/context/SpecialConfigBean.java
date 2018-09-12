@@ -33,5 +33,8 @@ public class SpecialConfigBean {
 		return StringHelper.isTrue(config.get("security.need-log-for-preview"));
 	}
 
+	public boolean isSitemapResources() {
+		return StringHelper.isTrue(config.get("sitemap.resources"), true);
+	}
 	
 }

@@ -82,7 +82,7 @@ public class XMLHelper {
 	 * @return a valid xml sitemap
 	 * @throws Exception
 	 */
-	public static SiteMapBloc getSiteMapBloc(ContentContext ctx, Collection<MenuElement> pages, int i, Calendar latestDate) throws Exception {
+	public static SiteMapBloc getSiteMapBloc(ContentContext ctx, Collection<MenuElement> pages, int i, Calendar latestDate, boolean withResources) throws Exception {
 		StringWriter writer = new StringWriter();
 		PrintWriter out = new PrintWriter(writer);
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
@@ -127,19 +127,21 @@ public class XMLHelper {
 								line.append("<xhtml:link rel=\"alternate\" hreflang=\"" + locLg + "\" href=\"" + Encode.forXmlAttribute(URLHelper.createURL(locLgCtx)) + "\" />");
 							}
 						}
-						for (IImageTitle image : element.getImages(lgCtx)) {
-							if (image.isImageValid(lgCtx)) {
-								line.append("<image:image>");
-								String imageURL = image.getResourceURL(lgCtx);
-								if (!StringHelper.isURL(imageURL)) {
-									imageURL = URLHelper.createResourceURL(lgCtx, imageURL);
+						if (withResources) {
+							for (IImageTitle image : element.getImages(lgCtx)) {
+								if (image.isImageValid(lgCtx)) {
+									line.append("<image:image>");
+									String imageURL = image.getResourceURL(lgCtx);
+									if (!StringHelper.isURL(imageURL)) {
+										imageURL = URLHelper.createResourceURL(lgCtx, imageURL);
+									}
+									
+									line.append("<image:loc>" + Encode.forXmlAttribute(imageURL) + "</image:loc>");
+									if (!StringHelper.isEmpty(image.getImageDescription(lgCtx))) {
+										line.append("<image:title>" + Encode.forXmlContent(image.getImageDescription(lgCtx)) + "</image:title>");
+									}
+									line.append("</image:image>");
 								}
-								
-								line.append("<image:loc>" + Encode.forXmlAttribute(imageURL) + "</image:loc>");
-								if (!StringHelper.isEmpty(image.getImageDescription(lgCtx))) {
-									line.append("<image:title>" + Encode.forXmlContent(image.getImageDescription(lgCtx)) + "</image:title>");
-								}
-								line.append("</image:image>");
 							}
 						}
 						line.append("</url>");
