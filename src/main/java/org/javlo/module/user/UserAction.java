@@ -455,7 +455,7 @@ public class UserAction extends AbstractModuleAction {
 			return i18nAccess.getText("mailing.error.email");
 		} else {
 			IUserFactory userFactory = UserFactory.createUserFactory(globalContext, ctx.getRequest().getSession());
-			User user = userFactory.getUserByEmail(email);
+			User user = userFactory.getUser(email);
 			if (user == null) {
 				user = userFactory.getUserByEmail(email);
 			}
@@ -503,7 +503,7 @@ public class UserAction extends AbstractModuleAction {
 				}
 				try {
 					IUserFactory userFactory = UserFactory.createUserFactory(globalContext, session);
-					User user = userFactory.getUserByEmail(userName);
+					User user = userFactory.getUser(userName);
 					if (user == null) {
 						user = userFactory.getUserByEmail(userName);
 					}
