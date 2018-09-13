@@ -7,6 +7,8 @@ import org.javlo.helper.StringHelper;
 public class SocialFilter {
 	
 	private String query;
+	private String author;
+	private String title;
 	private boolean onlyMine = false;
 	private boolean notValided = false;
 	
@@ -47,6 +49,8 @@ public class SocialFilter {
 
 	public void reset() {
 		query = null;
+		title = null;
+		title = null;
 		onlyMine = false;
 		notValided = false;
 	}
@@ -57,6 +61,22 @@ public class SocialFilter {
 
 	public void setNotValided(boolean notValided) {
 		this.notValided = notValided;
+	}
+
+	public String getTitle() {
+		return title;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
+	}
+
+	public String getAuthor() {
+		return author;
+	}
+
+	public void setAuthor(String author) {
+		this.author = author;
 	}
 
 }

@@ -1,8 +1,8 @@
 package org.javlo.social.bean;
 
+import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedList;
-import java.util.List;
 
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.TimeHelper;
@@ -18,6 +18,8 @@ public class Post {
 	private Long parent = null;
 	private Date creationDate = new Date();
 	private String creationDateString;
+	private Date latestUpdate = new Date();
+	private String latestUpdateString;
 	private Post parentPost = null;
 	private int countReplies = 0;
 	private boolean uncheckedChild = false;
@@ -25,7 +27,7 @@ public class Post {
 	private boolean adminValided = false;
 	private String adminMessage = null;
 	private String authorIp = null;
-	private List<String> contributors = new LinkedList<String>();
+	private Collection<String> contributors = new LinkedList<String>();
 
 	public long getId() {
 		return id;
@@ -168,12 +170,36 @@ public class Post {
 		this.uncheckedChild = uncheckedChild;
 	}
 
-	public List<String> getContributors() {
+	public Collection<String> getContributors() {
 		return contributors;
 	}
 
-	public void setContributors(List<String> contributors) {
+	public void setContributors(Collection<String> contributors) {
 		this.contributors = contributors;
+	}
+
+	public Date getLatestUpdate() {
+		if (latestUpdate == null) {
+			return creationDate;
+		} else {
+			return latestUpdate;
+		}
+	}
+
+	public void setLatestUpdate(Date latestUpdate) {
+		this.latestUpdate = latestUpdate;
+		latestUpdateString = StringHelper.renderTime(latestUpdate);
+	}
+
+	public String getLatestUpdateString() {
+		if (latestUpdateString == null) {
+			latestUpdateString = StringHelper.renderTime(getLatestUpdate());
+		}
+		return latestUpdateString;
+	}
+
+	public void setLatestUpdateString(String latestUpdateString) {
+		this.latestUpdateString = latestUpdateString;
 	}
 
 }

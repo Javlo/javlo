@@ -287,6 +287,8 @@ public class UserLogin extends AbstractPropertiesComponent implements IAction {
 		
 		
 		userInfo.setRoles(newRoles);
+		/* save password */
+		String pwd = userInfo.getPassword();
 		IContentVisualComponent comp = ComponentHelper.getComponentFromRequest(ctx);
 		List<String> fields = comp.extractFieldsFromRenderer(ctx);
 		if (fields != null && fields.size() > 0) {
@@ -298,7 +300,8 @@ public class UserLogin extends AbstractPropertiesComponent implements IAction {
 		} else {
 			BeanHelper.copy(new RequestParameterMap(ctx.getRequest()), userInfo);	
 		}
-		
+		/* restore password */
+		userInfo.setPassword(pwd);
 		userFactory.updateUserInfo(userInfo);
 		user.setUserInfo(userInfo);
 		messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getViewText("registration.message.update", "User info is updated."), GenericMessage.INFO));

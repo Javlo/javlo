@@ -175,6 +175,8 @@ public class Wall extends AbstractPropertiesComponent implements IAction {
 		if (StringHelper.isTrue(rs.getParameter("reset"))) {
 			socialFilter.reset();
 		} else {			
+			socialFilter.setAuthor(rs.getParameter("text-author",null));
+			socialFilter.setTitle(rs.getParameter("text-title",null));
 			socialFilter.setQuery(rs.getParameter("text-filter",null));
 			socialFilter.setOnlyMine(StringHelper.isTrue(rs.getParameter("filter-mine", null)));
 			socialFilter.setNotValided(StringHelper.isTrue(rs.getParameter("notvalided", null)));

@@ -455,9 +455,9 @@ public class UserFactory implements IUserFactory, Serializable {
 
 		boolean logged = request.getUserPrincipal() != null && request.getUserPrincipal().getName().equals(login);
 		User user = getUser(login);
-		if (user == null) {
-			user = getUserByEmail(login);
-		}
+//		if (user == null) {
+//			user = getUserByEmail(login);
+//		}
 
 		boolean passwordEqual = false;
 		StaticConfig staticConfig = StaticConfig.getInstance(request.getSession());
