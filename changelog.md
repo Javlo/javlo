@@ -683,6 +683,7 @@ Security in case of vulnerabilities.
 - copy/paste from language to an other
 - change password with login and not necessary with email
 - change image transform url with real extenstion (sp. : .pdf.jpg in place of .pdf for filtered images)
+- correct bug for link template to site in preview mode
 ### Removed
 - imgscalr-lib
 - ace editor

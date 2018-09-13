@@ -467,4 +467,12 @@ public class StringHelperTest extends TestCase {
 		assertEquals(items.size(), 1);
 		assertEquals(items.get(0), "https://wikipedia.org/font.ttf");
 	}
+	
+	public void testReplaceItem() {
+		assertEquals(StringHelper.replaceItem("aa [bb] dd", "cc", "[", "]"), "aa [cc] dd");
+		assertEquals(StringHelper.replaceItem("aa [bb dd", "cc", "[", "]"), "aa [bb dd");
+		assertEquals(StringHelper.replaceItem("aa bb] dd", "cc", "[", "]"), "aa bb] dd");
+		assertEquals(StringHelper.replaceItem("aa ]bb[ dd", "cc", "[", "]"), "aa ]bb[ dd");
+	}
+	
 }

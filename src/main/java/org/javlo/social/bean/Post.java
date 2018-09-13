@@ -1,6 +1,8 @@
 package org.javlo.social.bean;
 
 import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.TimeHelper;
@@ -23,6 +25,7 @@ public class Post {
 	private boolean adminValided = false;
 	private String adminMessage = null;
 	private String authorIp = null;
+	private List<String> contributors = new LinkedList<String>();
 
 	public long getId() {
 		return id;
@@ -163,6 +166,14 @@ public class Post {
 
 	public void setUncheckedChild(boolean uncheckedChild) {
 		this.uncheckedChild = uncheckedChild;
+	}
+
+	public List<String> getContributors() {
+		return contributors;
+	}
+
+	public void setContributors(List<String> contributors) {
+		this.contributors = contributors;
 	}
 
 }

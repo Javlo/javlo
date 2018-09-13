@@ -30,7 +30,6 @@
 </c:if>
 <c:if test="${globalContext.componentsFiltered}">
 <script type="text/javascript">
-<!--
 function displayComplexity(l) {
 	pjq('.components-group .btn').removeClass('active');
 	pjq('.components-group .btn-'+l).addClass('active');
@@ -39,8 +38,14 @@ function displayComplexity(l) {
 	pjq('#preview_command .component-list').removeClass("display-3");
 	pjq('#preview_command .component-list').removeClass("display-b");
 	pjq('#preview_command .component-list').addClass("display-"+l);
+	document.cookie="_component_tab="+l+";path=/";
 }
-//-->
+document.addEventListener("DOMContentLoaded", function(event) { 
+	var componentTab = editPreview.readCookie("_component_tab");
+	if (componentTab != null) {
+		displayComplexity(componentTab);
+	}
+});
 </script>
 </c:if>
 <c:if test="${info.admin}"><button onclick="editPreview.openModal('Components', '${info.currentEditURL}?module=admin&context=${info.contextKey}&webaction=admin.previewEditComponent&previewEdit=true'); return false;" class="btn btn-default btn-xs pull-right"><span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span></button></c:if>

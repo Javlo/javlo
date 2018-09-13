@@ -31,6 +31,10 @@ public class PDFMultimedia extends Multimedia {
 	protected boolean isOrder() {
 		return false;
 	}
+	
+	protected boolean isManualOrder() {
+		return false;
+	}
 
 	protected boolean isTag() {
 		return false;

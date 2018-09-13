@@ -173,7 +173,8 @@ public class SocialLocalService {
 			String sql = "select * from post where groupName='"+group+"' "+notAdminQuery+" and mainPost is null"+getSQLFilter(socialFilter, username)+" order by time desc limit "+size+" offset "+index;
 			ResultSet rs = conn.createStatement().executeQuery(sql);
 			while (rs.next()) {
-				outPost.add(rsToPost(rs, username, admin, needCheck));
+				Post post = rsToPost(rs, username, admin, needCheck);
+				outPost.add(post);
 			}
 		} finally {
 			dataBaseService.releaseConnection(conn);

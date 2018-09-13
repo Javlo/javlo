@@ -1327,7 +1327,7 @@ if (!String.prototype.startsWith) {
 		});
 		pjq('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
 			editPreview.heightToBottom(pjq(".height-to-bottom"));
-			document.cookie="preview_tab="+pjq(this).attr("href");
+			document.cookie="preview_tab="+pjq(this).attr("href")+";path=/";
 		});
 
 		editPreview.initPreview();

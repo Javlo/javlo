@@ -7,6 +7,18 @@ jQuery(document).ready(function(){
 	jQuery(".readonly input, .readonly textarea, .readonly select").attr("readonly", "readonly");
 });
 
+function updateOrder() {
+	jQuery(".order-item .btn-move").on( "mouseover", function() {
+		console.log("over");
+		jQuery(this).parent().parent().parent().parent().parent().addClass("move-mode");
+		jQuery(this).parent().parent().parent().addClass("current-item");
+	});
+	jQuery(".order-item .btn-move").on( "mouseleave", function() {
+		jQuery(this).parent().parent().parent().removeClass("current-item");
+		jQuery(this).parent().parent().parent().parent().parent().removeClass("move-mode");
+	});
+}
+
 function loadWysiwyg(cssQuery, complexity, chooseFileURL, format, fontsize, wysiwygCss) {
 	if (wysiwygCss == null) {
 		wysiwygCss = staticRootURL+"modules/content/js/tinymce.css";

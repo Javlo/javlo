@@ -53,13 +53,14 @@ public class UserLogin extends AbstractPropertiesComponent implements IAction {
 
 	private static final String EMAIL = "email";
 	public static final String MSG = "message";
+	public static final String LOGIN_MSG = "login_message";
 	public static final String ROLES = "roles";
 
 	public static final String VALIDATION = "validation_msg";
 	public static final String OPTIN = "optin";
 	public static final String OPTOUT = "optout";
 
-	private static final List<String> FIELDS = new LinkedList<String>(Arrays.asList(new String[] { EMAIL, MSG, ROLES, VALIDATION, OPTIN, OPTOUT }));
+	private static final List<String> FIELDS = new LinkedList<String>(Arrays.asList(new String[] { EMAIL, MSG, LOGIN_MSG, ROLES, VALIDATION, OPTIN, OPTOUT }));
 
 	@Override
 	public String getType() {
@@ -172,7 +173,9 @@ public class UserLogin extends AbstractPropertiesComponent implements IAction {
 		if (email != null && !PatternHelper.MAIL_PATTERN.matcher(email).matches()) {
 			return i18nAccess.getViewText("registration.error.email", "Please enter a valid email.");
 		} else if (userFactory.getUser(login) != null) {
-			return i18nAccess.getViewText("registration.error.login_allreadyexist", "user already exists : ") + login;
+			return i18nAccess.getViewText("registration.error.login_allreadyexist", "user already exists.");
+		} if (userFactory.getUserByEmail(email) != null) {
+			return i18nAccess.getViewText("registration.error.email_alreadyexist", "email already exists.");
 		} else if (!password.equals(password2)) {
 			return i18nAccess.getViewText("registration.error.password_notsame", "2 passwords must be the same.");
 		} else if (password.length() < 3) {

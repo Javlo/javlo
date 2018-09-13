@@ -101,8 +101,7 @@ public class StringHelper {
 
 	private static final char DEFAULT_ESCAPE = '\\';
 
-	public static final String[][] TXT2HTML = { { "\u00c1", "&Aacute;" }, { "\u00e1", "&aacute;" }, { "\u00c0", "&Agrave;" }, { "\u00e0", "&agrave;" }, { "\u00e7", "&ccedil;" }, { "\u00c7", "&Ccedil;" }, { "\u00c9", "&Eacute;" }, { "\u00e9", "&eacute;" }, { "\u00c8", "&Egrave;" }, { "\u00e8", "&egrave;" }, { "\u00ca", "&Ecirc;" }, { "\u00ea", "&ecirc;" }, { "\u00cf", "&Iuml;" }, { "\u00ef", "&iuml;" }, { "\u00f9", "&ugrave;" }, { "\u00d9", "&Ugrave;" }, { "\u2019", "'" }, { "\u00D6", "&Ouml;" },
-			{ "\u00F6", "&ouml;" } };
+	public static final String[][] TXT2HTML = { { "\u00c1", "&Aacute;" }, { "\u00e1", "&aacute;" }, { "\u00c0", "&Agrave;" }, { "\u00e0", "&agrave;" }, { "\u00e7", "&ccedil;" }, { "\u00c7", "&Ccedil;" }, { "\u00c9", "&Eacute;" }, { "\u00e9", "&eacute;" }, { "\u00c8", "&Egrave;" }, { "\u00e8", "&egrave;" }, { "\u00ca", "&Ecirc;" }, { "\u00ea", "&ecirc;" }, { "\u00cf", "&Iuml;" }, { "\u00ef", "&iuml;" }, { "\u00f9", "&ugrave;" }, { "\u00d9", "&Ugrave;" }, { "\u2019", "'" }, { "\u00D6", "&Ouml;" }, { "\u00F6", "&ouml;" } };
 
 	public static SimpleDateFormat RFC822DATEFORMAT = new SimpleDateFormat("EEE', 'dd' 'MMM' 'yyyy' 'HH:mm:ss' 'Z", Locale.US);
 
@@ -123,7 +122,7 @@ public class StringHelper {
 	public static final String DEFAULT_LIST_SEPARATOR = "?";
 
 	private static long previousRandomId = System.currentTimeMillis();
-	
+
 	private static long previousRandomIdLarge = System.currentTimeMillis();
 
 	private static long previousShortRandomId = 0;
@@ -233,15 +232,15 @@ public class StringHelper {
 		}
 		return outExt + '.' + newExt;
 	}
-	
-	public static String collectionToString(String... values) {		
+
+	public static String collectionToString(String... values) {
 		return collectionToString(Arrays.asList(values), DEFAULT_SEPARATOR);
 	}
 
 	public static String collectionToString(Collection<?> col) {
 		return collectionToString(col, DEFAULT_SEPARATOR);
 	}
-	
+
 	public static <T extends IStringSeralizable> String collectionStringSeralizableToString(Collection<T> col, String sep) {
 		List<String> list = new LinkedList<String>();
 		for (IStringSeralizable item : col) {
@@ -249,11 +248,11 @@ public class StringHelper {
 		}
 		return collectionToString(list, sep);
 	}
-	
+
 	public static <T extends IStringSeralizable> List<T> stringToStringSeralizableCollection(String data, String sep, Class c) throws InstantiationException, IllegalAccessException {
 		List<T> outList = new LinkedList<T>();
 		for (String itemData : StringHelper.stringToCollection(data, sep)) {
-			T newItem = (T)c.newInstance();
+			T newItem = (T) c.newInstance();
 			newItem.loadFromString(itemData);
 			outList.add(newItem);
 		}
@@ -261,8 +260,8 @@ public class StringHelper {
 	}
 
 	/**
-	 * convert a collection to text. Each item of the collection will be a line
-	 * if the text.
+	 * convert a collection to text. Each item of the collection will be a line if
+	 * the text.
 	 * 
 	 * @param col
 	 * @return
@@ -297,9 +296,9 @@ public class StringHelper {
 	}
 
 	/**
-	 * convert a string to another string if math pattern1 and convert to
-	 * pattern2. pattern is a String with one '*' for any characters. sample :
-	 * /*, /test/*, /view/fr --> /test/view/fr
+	 * convert a string to another string if math pattern1 and convert to pattern2.
+	 * pattern is a String with one '*' for any characters. sample : /*, /test/*,
+	 * /view/fr --> /test/view/fr
 	 * 
 	 * @param pattern1
 	 *            a pattern with one '*'
@@ -430,7 +429,7 @@ public class StringHelper {
 	public static String removeSpecialChars(String text) {
 		Set<Character> okChar = getISOAcceptableChars();
 		Map<Character, String> replacement = new HashMap<Character, String>();
-		for (char c : text.toCharArray()) {			
+		for (char c : text.toCharArray()) {
 			if (!okChar.contains(c) && replacement.get(c) == null) {
 				String newStr = removeSpecialChars(c);
 				if (newStr != null) {
@@ -438,11 +437,11 @@ public class StringHelper {
 				} else {
 					replacement.put(c, "_");
 				}
-			}			
+			}
 		}
 		for (Character c : replacement.keySet()) {
 			text = StringUtils.replace(text, "" + c, replacement.get(c));
-		}		
+		}
 		return text;
 	}
 
@@ -582,7 +581,7 @@ public class StringHelper {
 	}
 
 	private static String createFileName(String fileName, char defaultReplaceChar) {
-		if (fileName==null) {
+		if (fileName == null) {
 			return null;
 		}
 		return createCleanName(fileName, ISO_ACCEPTABLE_CHAR, defaultReplaceChar).toLowerCase();
@@ -605,8 +604,8 @@ public class StringHelper {
 	}
 
 	/**
-	 * replace trimChar at the start and the end of text string. sample :
-	 * --test-, - >>> test
+	 * replace trimChar at the start and the end of text string. sample : --test-, -
+	 * >>> test
 	 * 
 	 * @param text
 	 * @param trimChar
@@ -670,8 +669,7 @@ public class StringHelper {
 	}
 
 	/**
-	 * cut the end of a xhtml code. sample: "aaa&acute;coucou", 5 =
-	 * "aaa&acute;c"
+	 * cut the end of a xhtml code. sample: "aaa&acute;coucou", 5 = "aaa&acute;c"
 	 * 
 	 * @param str
 	 *            the string
@@ -855,8 +853,8 @@ public class StringHelper {
 	}
 
 	/**
-	 * split a String, if there are no character between two token this method
-	 * place a empty String ( != String.split )
+	 * split a String, if there are no character between two token this method place
+	 * a empty String ( != String.split )
 	 * 
 	 * @param str
 	 *            a standard str
@@ -1112,8 +1110,8 @@ public class StringHelper {
 	}
 
 	/**
-	 * transform a string of number (length 10) to a structured communication,
-	 * last number is the mod 97 of the first number
+	 * transform a string of number (length 10) to a structured communication, last
+	 * number is the mod 97 of the first number
 	 * 
 	 * @param code
 	 *            a string of length 10 with only number
@@ -1155,7 +1153,7 @@ public class StringHelper {
 		String randomBase10 = "" + newId + Math.round(Math.random() * 89999999 + 10000000);
 		return randomBase10;
 	}
-	
+
 	/**
 	 * generate a id in a String.
 	 * 
@@ -1281,15 +1279,15 @@ public class StringHelper {
 		case '7':
 		case '8':
 		case '9':
-		//case '-':
+			// case '-':
 			return true;
 		default:
 			return false;
 		}
 	}
-	
-	public static boolean isLetter(char c) {		
-		return ((c>='a')&&c<=('z'))||((c>='A')&&c<=('Z'));
+
+	public static boolean isLetter(char c) {
+		return ((c >= 'a') && c <= ('z')) || ((c >= 'A') && c <= ('Z'));
 	}
 
 	/**
@@ -1313,9 +1311,9 @@ public class StringHelper {
 		if (str == null || str.length() == 0) {
 			return false;
 		} else {
-			str=str.trim();
-			if (str.charAt(0)=='-') {
-				str=str.substring(1);
+			str = str.trim();
+			if (str.charAt(0) == '-') {
+				str = str.substring(1);
 			}
 			for (char c : str.toCharArray()) {
 				if (!isDigit(c)) {
@@ -1325,7 +1323,7 @@ public class StringHelper {
 			return true;
 		}
 	}
-	
+
 	/**
 	 * check if stirng contains only digital number
 	 * 
@@ -1348,16 +1346,16 @@ public class StringHelper {
 	public static boolean isFloat(String str) {
 		if (str == null) {
 			return false;
-		}		
+		}
 		int countSep = 0;
-		if (str.startsWith("-"))  {
+		if (str.startsWith("-")) {
 			str = str.substring(1);
 		}
 		if (str == null || str.length() == 0) {
 			return false;
 		} else {
 			for (char c : str.toCharArray()) {
-				if (!isDigit(c)  || c == '-') {
+				if (!isDigit(c) || c == '-') {
 					if (c == '.') {
 						countSep++;
 					} else {
@@ -1385,7 +1383,7 @@ public class StringHelper {
 		res = res || ext.equalsIgnoreCase("asp");
 		return res;
 	}
-	
+
 	public static final boolean isHTMLStatic(String fileName) {
 		String ext = getFileExtension(fileName);
 		boolean res = ext.equalsIgnoreCase("html");
@@ -1393,7 +1391,6 @@ public class StringHelper {
 		return res;
 	}
 
-	
 	public static final boolean isProperties(String fileName) {
 		String ext = getFileExtension(fileName);
 		boolean res = ext.equalsIgnoreCase("properties");
@@ -1401,8 +1398,8 @@ public class StringHelper {
 	}
 
 	/**
-	 * return true if the filename in a image for wcms (sp. : tif or psd in not
-	 * a image).
+	 * return true if the filename in a image for wcms (sp. : tif or psd in not a
+	 * image).
 	 * 
 	 * @param fileName
 	 *            file name with extension
@@ -1420,8 +1417,8 @@ public class StringHelper {
 	}
 
 	/**
-	 * return true if the filename in a image for wcms (sp. : tif or psd in not
-	 * a image).
+	 * return true if the filename in a image for wcms (sp. : tif or psd in not a
+	 * image).
 	 * 
 	 * @param fileName
 	 *            file name with extension
@@ -1439,8 +1436,8 @@ public class StringHelper {
 	}
 
 	/**
-	 * return true if the filename in a image for wcms (sp. : tif or psd in not
-	 * a image).
+	 * return true if the filename in a image for wcms (sp. : tif or psd in not a
+	 * image).
 	 * 
 	 * @param fileName
 	 *            file name with extension
@@ -1458,8 +1455,8 @@ public class StringHelper {
 	}
 
 	/**
-	 * return true if the filename in a image for wcms (sp. : tif or psd in not
-	 * a image).
+	 * return true if the filename in a image for wcms (sp. : tif or psd in not a
+	 * image).
 	 * 
 	 * @param fileName
 	 *            file name with extension
@@ -1477,8 +1474,8 @@ public class StringHelper {
 	}
 
 	/**
-	 * return true if the file extension is an image for wcms (sp. : tif or psd
-	 * is not an image).
+	 * return true if the file extension is an image for wcms (sp. : tif or psd is
+	 * not an image).
 	 * 
 	 * @param fileExtension
 	 *            file extension
@@ -1501,8 +1498,8 @@ public class StringHelper {
 	}
 
 	/**
-	 * return true if the file extension is an image for wcms (sp. : tif or psd
-	 * is not an image).
+	 * return true if the file extension is an image for wcms (sp. : tif or psd is
+	 * not an image).
 	 * 
 	 * @param fileExtension
 	 *            file extension
@@ -1723,9 +1720,10 @@ public class StringHelper {
 		}
 		return currentPos == str.length() || pattern.endsWith("*");
 	}
-	
+
 	/**
 	 * Test if a string match with a pattern using '?'. <br/>
+	 * 
 	 * @param str
 	 * @param pattern
 	 * @return
@@ -1736,7 +1734,7 @@ public class StringHelper {
 		} else if (str.length() != pattern.length()) {
 			return false;
 		} else {
-			for (int i=0; i<str.length(); i++) {
+			for (int i = 0; i < str.length(); i++) {
 				if (pattern.charAt(i) != '?' && str.charAt(i) != pattern.charAt(i)) {
 					return false;
 				}
@@ -1744,9 +1742,10 @@ public class StringHelper {
 			return true;
 		}
 	}
-	
+
 	/**
 	 * Test if a string match with a pattern using '?' and '*'. <br/>
+	 * 
 	 * @param str
 	 * @param pattern
 	 * @return
@@ -1766,7 +1765,6 @@ public class StringHelper {
 		pattern = pattern.replace("*", ".*");
 		return Pattern.matches(pattern, str);
 	}
-
 
 	/**
 	 * transform a string empty to a other string
@@ -1816,7 +1814,7 @@ public class StringHelper {
 	public static Date parseDate(String inDate) throws ParseException {
 		return parseDate(inDate, "dd/MM/yyyy");
 	}
-	
+
 	/**
 	 * null save parse int.
 	 * 
@@ -2173,20 +2171,20 @@ public class StringHelper {
 		if (text == null) {
 			return "";
 		}
-		return text.replaceAll("\\<.*?>","");
-//		StringBuffer notTagStr = new StringBuffer();
-//		boolean inTag = false;
-//		for (int i = 0; i < text.length(); i++) {
-//			char c = text.charAt(i);
-//			if ((!inTag) && (c == '<')) {
-//				inTag = true;
-//			} else if (inTag && (c == '>')) {
-//				inTag = false;
-//			} else if (!inTag) {
-//				notTagStr.append(c);
-//			}
-//		}
-//		return notTagStr.toString();
+		return text.replaceAll("\\<.*?>", "");
+		// StringBuffer notTagStr = new StringBuffer();
+		// boolean inTag = false;
+		// for (int i = 0; i < text.length(); i++) {
+		// char c = text.charAt(i);
+		// if ((!inTag) && (c == '<')) {
+		// inTag = true;
+		// } else if (inTag && (c == '>')) {
+		// inTag = false;
+		// } else if (!inTag) {
+		// notTagStr.append(c);
+		// }
+		// }
+		// return notTagStr.toString();
 	}
 
 	public static String renderShortTime(ContentContext ctx, Date date) throws FileNotFoundException, IOException {
@@ -2265,27 +2263,27 @@ public class StringHelper {
 		return format.format(date);
 
 	}
-	
-	public static Date parseIso8601( String input ) throws java.text.ParseException {
 
-        //NOTE: SimpleDateFormat uses GMT[-+]hh:mm for the TZ which breaks
-        //things a bit.  Before we go on we have to repair this.
-        SimpleDateFormat df = new SimpleDateFormat( "yyyy-MM-dd'T'HH:mm:ssz" );
-        
-        //this is zero time so we need to add that TZ indicator for 
-        if ( input.endsWith( "Z" ) ) {
-            input = input.substring( 0, input.length() - 1) + "GMT-00:00";
-        } else {
-            int inset = 6;        
-            String s0 = input.substring( 0, input.length() - inset );
-            String s1 = input.substring( input.length() - inset, input.length() );
+	public static Date parseIso8601(String input) throws java.text.ParseException {
 
-            input = s0 + "GMT" + s1;
-        }
-        
-        return df.parse( input );
-        
-    }
+		// NOTE: SimpleDateFormat uses GMT[-+]hh:mm for the TZ which breaks
+		// things a bit. Before we go on we have to repair this.
+		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssz");
+
+		// this is zero time so we need to add that TZ indicator for
+		if (input.endsWith("Z")) {
+			input = input.substring(0, input.length() - 1) + "GMT-00:00";
+		} else {
+			int inset = 6;
+			String s0 = input.substring(0, input.length() - inset);
+			String s1 = input.substring(input.length() - inset, input.length());
+
+			input = s0 + "GMT" + s1;
+		}
+
+		return df.parse(input);
+
+	}
 
 	/**
 	 * @param date
@@ -2698,8 +2696,8 @@ public class StringHelper {
 	}
 
 	/**
-	 * split a String, if there are no character between two token this method
-	 * place a empty String ( != String.split )
+	 * split a String, if there are no character between two token this method place
+	 * a empty String ( != String.split )
 	 * 
 	 * @param str
 	 *            a standard str
@@ -2723,8 +2721,8 @@ public class StringHelper {
 	}
 
 	/**
-	 * split a String, if there are no character between two token this method
-	 * place a empty String ( != String.split )
+	 * split a String, if there are no character between two token this method place
+	 * a empty String ( != String.split )
 	 * 
 	 * @param str
 	 *            a standard str
@@ -2751,8 +2749,8 @@ public class StringHelper {
 	}
 
 	/**
-	 * split a String, if there are no character between two token this method
-	 * place a empty String ( != String.split )
+	 * split a String, if there are no character between two token this method place
+	 * a empty String ( != String.split )
 	 * 
 	 * @param str
 	 *            a standard str
@@ -2806,22 +2804,22 @@ public class StringHelper {
 		if (str == null) {
 			return null;
 		}
-		String[] out = str.split(Pattern.quote(token));		
+		String[] out = str.split(Pattern.quote(token));
 		if (str.startsWith(token)) {
-			String[] newOut = new String[out.length+1];
-			newOut[0]="";
+			String[] newOut = new String[out.length + 1];
+			newOut[0] = "";
 			for (int i = 0; i < out.length; i++) {
-				newOut[i+1] = out[i];
+				newOut[i + 1] = out[i];
 			}
 			out = newOut;
 		}
 		if (str.endsWith(token)) {
-			String[] newOut = new String[out.length+1];
-			newOut[newOut.length-1]="";
+			String[] newOut = new String[out.length + 1];
+			newOut[newOut.length - 1] = "";
 			for (int i = 0; i < out.length; i++) {
 				newOut[i] = out[i];
 			}
-			out=newOut;
+			out = newOut;
 		}
 		return out;
 	}
@@ -2847,21 +2845,21 @@ public class StringHelper {
 		}
 		return stringToCollection(str, DEFAULT_LIST_SEPARATOR);
 	}
-	
+
 	public static Set<String> stringToSet(String str) {
 		if (str == null) {
 			return null;
 		}
 		return new HashSet<String>(stringToCollection(str, DEFAULT_LIST_SEPARATOR));
 	}
-	
+
 	public static Set<String> stringToSet(String str, String sep) {
 		if (str == null) {
 			return null;
 		}
 		return new HashSet<String>(stringToCollection(str, sep));
 	}
-	
+
 	public static List<String> stringToCollectionTrim(String str) {
 		if (str == null) {
 			return null;
@@ -2920,9 +2918,9 @@ public class StringHelper {
 	 *            separation between title and text. sample "1.2 great section"
 	 *            sep=" " -> "1.2" is title and "great section" is text.
 	 * @param layout
-	 *            the layout of the list : ("ul-ul", "ol-ol", "ul-ol", "ol-ul")
-	 *            the first element is the first level and the next is all the
-	 *            next level.
+	 *            the layout of the list : ("ul-ul", "ol-ol", "ul-ol", "ol-ul") the
+	 *            first element is the first level and the next is all the next
+	 *            level.
 	 * @return a xhtml list.
 	 */
 	public static String textToList(GlobalContext globalContext, String text, String sep, String layout, boolean autoLink, String ulClass) {
@@ -3060,8 +3058,8 @@ public class StringHelper {
 	}
 
 	/**
-	 * transform a String to a max size. sample: "Welcome in the new wave party"
-	 * --> "Welcome in the..."
+	 * transform a String to a max size. sample: "Welcome in the new wave party" -->
+	 * "Welcome in the..."
 	 * 
 	 * @param str
 	 *            the string must be cut.
@@ -3091,8 +3089,10 @@ public class StringHelper {
 		if (value == null) {
 			return "";
 		}
-		//value = value.replace("&", "&amp;");
-		//return Encode.forXmlAttribute(XHTMLHelper.escapeXML(removeTag(value).replace("\"", "&quot;").replace("\n", "")));
+		// value = value.replace("&", "&amp;");
+		// return
+		// Encode.forXmlAttribute(XHTMLHelper.escapeXML(removeTag(value).replace("\"",
+		// "&quot;").replace("\n", "")));
 		return Encode.forXmlAttribute(value.replace("\n", ""));
 	}
 
@@ -3270,12 +3270,12 @@ public class StringHelper {
 	 */
 	public static List<String> extractItem(String text, String prefix, String suffix) {
 		int startIndex = text.indexOf(prefix);
-		if (startIndex<0) {
+		if (startIndex < 0) {
 			return Collections.EMPTY_LIST;
 		}
 		List<String> items = new LinkedList<String>();
 		int endIndex = text.substring(startIndex).indexOf(suffix);
-		if (endIndex>=0) {
+		if (endIndex >= 0) {
 			endIndex += startIndex;
 		}
 		while (startIndex > -1 && endIndex > startIndex + prefix.length()) {
@@ -3288,6 +3288,25 @@ public class StringHelper {
 			endIndex = text.indexOf(suffix);
 		}
 		return items;
+	}
+
+	/**
+	 * replace text in larger text
+	 * @param text the original text
+	 * @param newItem the new text part
+	 * @param prefix the prefix before the replacement
+	 * @param suffix the suffix afther the replacement
+	 * @return
+	 */
+	public static String replaceItem(String text, String newItem, String prefix, String suffix) {
+		int prefixPos = text.indexOf(prefix);
+		if (prefixPos >= 0) {
+			int suffixPos = text.indexOf(suffix, prefixPos);
+			if (suffixPos > prefixPos) {
+				return text.substring(0, prefixPos+1)+newItem+text.substring(suffixPos);
+			}
+		}
+		return text;
 	}
 
 	public static Collection<? extends String> stringToCollectionRemoveEmpty(String addRolesAsRaw) {
@@ -3436,8 +3455,8 @@ public class StringHelper {
 	}
 
 	/**
-	 * check if a text contains uppercase char. test > false, Test > true, TEST
-	 * > true
+	 * check if a text contains uppercase char. test > false, Test > true, TEST >
+	 * true
 	 * 
 	 * @param text
 	 * @return
@@ -3452,8 +3471,7 @@ public class StringHelper {
 	}
 
 	/**
-	 * Method copied from the private method
-	 * java.util.Properties#saveConvert(...)
+	 * Method copied from the private method java.util.Properties#saveConvert(...)
 	 * 
 	 * @param theString
 	 * @param escapeSpace
@@ -3714,8 +3732,8 @@ public class StringHelper {
 	 * 
 	 * @param pxSize
 	 *            a size in px (sp. '12px').
-	 * @return null if bad param (sp. 12%, tralala, null) and the value in pixel
-	 *         if corrent param (12px, 0px, 23 px).
+	 * @return null if bad param (sp. 12%, tralala, null) and the value in pixel if
+	 *         corrent param (12px, 0px, 23 px).
 	 */
 	public static Integer getPixelValue(String pxSize) {
 		if (pxSize == null) {
@@ -3750,7 +3768,7 @@ public class StringHelper {
 		}
 		return null;
 	}
-	
+
 	public static String md5(String message) {
 		try {
 			MessageDigest md = MessageDigest.getInstance("MD5");
@@ -3788,7 +3806,7 @@ public class StringHelper {
 		try {
 			mapStr = new String(decodeBase64(encodedMap));
 		} catch (IOException e) {
-			throw new RuntimeException("can't decode : "+encodedMap);
+			throw new RuntimeException("can't decode : " + encodedMap);
 		}
 		List<String> mapList = stringToCollection(mapStr);
 		Map<String, String> outMap = new HashMap<String, String>();
@@ -3898,9 +3916,8 @@ public class StringHelper {
 		for (int i = 0; i < data.length(); i++) {
 			/*
 			 * JDK17 if (Character.isAlphabetic(data.charAt(i)) ||
-			 * Character.isDigit(data.charAt(i))) {
-			 * outCleanData.append(data.charAt(i)); } else if (stopOnBadChar) {
-			 * break; }
+			 * Character.isDigit(data.charAt(i))) { outCleanData.append(data.charAt(i)); }
+			 * else if (stopOnBadChar) { break; }
 			 */
 			if ((data.charAt(i) >= 'a' && data.charAt(i) <= 'z') || (data.charAt(i) >= '0' && data.charAt(i) <= '9') || (data.charAt(i) >= 'A' && data.charAt(i) <= 'Z')) {
 				outCleanData.append(data.charAt(i));
@@ -3957,10 +3974,10 @@ public class StringHelper {
 			return text;
 		}
 	}
-	
 
 	/**
 	 * format number to number like : +32486123456
+	 * 
 	 * @param phone
 	 * @param countryPrefix
 	 * @return
@@ -3974,33 +3991,33 @@ public class StringHelper {
 		} else if (phone.startsWith("+")) {
 			return phone;
 		} else {
-			return countryPrefix+phone;
+			return countryPrefix + phone;
 		}
 	}
-	
+
 	public static boolean compare(String str1, String str2) {
-	    return (str1 == null ? str2 == null : str1.equals(str2));
+		return (str1 == null ? str2 == null : str1.equals(str2));
 	}
-	
-	public static boolean isVAT(String vat) throws MalformedURLException, Exception {		
+
+	public static boolean isVAT(String vat) throws MalformedURLException, Exception {
 		vat = vat.replace(".", "");
 		vat = vat.replace(" ", "");
 		if (vat.length() != 12) {
 			return false;
-		}		
+		}
 		String number = vat.substring(2);
 		if (!StringHelper.isDigit(number)) {
 			return false;
 		}
 
 		return true;
-	}	
-	
+	}
+
 	public static String propertiesToString(Properties p) {
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(outStream);
 		for (Object key : p.keySet()) {
-			out.println(key+"="+p.getProperty(key.toString()));
+			out.println(key + "=" + p.getProperty(key.toString()));
 		}
 		out.close();
 		return new String(outStream.toByteArray());
@@ -4013,72 +4030,72 @@ public class StringHelper {
 		URL url;
 		try {
 			url = new URL(inUrl);
-		} catch (MalformedURLException e) {		
+		} catch (MalformedURLException e) {
 			e.printStackTrace();
 			return "";
 		}
 		String host = url.getHost();
 		while (StringUtils.countMatches(host, ".") > 1) {
-			host = host.substring(host.indexOf('.')+1);
+			host = host.substring(host.indexOf('.') + 1);
 		}
 		return host;
 	}
-	
+
 	public static String quote(String string) {
-        if (string == null || string.length() == 0) {
-            return "\"\"";
-        }
+		if (string == null || string.length() == 0) {
+			return "\"\"";
+		}
 
-        char         c = 0;
-        int          i;
-        int          len = string.length();
-        StringBuilder sb = new StringBuilder(len + 4);
-        String       t;
+		char c = 0;
+		int i;
+		int len = string.length();
+		StringBuilder sb = new StringBuilder(len + 4);
+		String t;
 
-        sb.append('"');
-        for (i = 0; i < len; i += 1) {
-            c = string.charAt(i);
-            switch (c) {
-            case '\\':
-            case '"':
-                sb.append('\\');
-                sb.append(c);
-                break;
-            case '/':
-//                if (b == '<') {
-                    sb.append('\\');
-//                }
-                sb.append(c);
-                break;
-            case '\b':
-                sb.append("\\b");
-                break;
-            case '\t':
-                sb.append("\\t");
-                break;
-            case '\n':
-                sb.append("\\n");
-                break;
-            case '\f':
-                sb.append("\\f");
-                break;
-            case '\r':
-               sb.append("\\r");
-               break;
-            default:
-                if (c < ' ') {
-                    t = "000" + Integer.toHexString(c);
-                    sb.append("\\u" + t.substring(t.length() - 4));
-                } else {
-                    sb.append(c);
-                }
-            }
-        }
-        sb.append('"');
-        return sb.toString();
-    }
-	
+		sb.append('"');
+		for (i = 0; i < len; i += 1) {
+			c = string.charAt(i);
+			switch (c) {
+			case '\\':
+			case '"':
+				sb.append('\\');
+				sb.append(c);
+				break;
+			case '/':
+				// if (b == '<') {
+				sb.append('\\');
+				// }
+				sb.append(c);
+				break;
+			case '\b':
+				sb.append("\\b");
+				break;
+			case '\t':
+				sb.append("\\t");
+				break;
+			case '\n':
+				sb.append("\\n");
+				break;
+			case '\f':
+				sb.append("\\f");
+				break;
+			case '\r':
+				sb.append("\\r");
+				break;
+			default:
+				if (c < ' ') {
+					t = "000" + Integer.toHexString(c);
+					sb.append("\\u" + t.substring(t.length() - 4));
+				} else {
+					sb.append(c);
+				}
+			}
+		}
+		sb.append('"');
+		return sb.toString();
+	}
+
 	public static void main(String[] args) {
-		System.out.println(">>>>>>>>> StringHelper.main : match = "+matchStarPattern("10-2015-12", "*2014*")); //TODO: remove debug trace
+		System.out.println(">>>>>>>>> StringHelper.main : match = " + matchStarPattern("10-2015-12", "*2014*")); // TODO: remove debug trace
 	}
 }
