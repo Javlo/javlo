@@ -348,7 +348,8 @@ public class JavloELFinder extends ELFinder {
 		List<ELFile> addedFiles = new LinkedList<ELFile>();
 		if (folder != null && folder.getFile().exists()) {
 			for (FileItem fileItem : filesItem) {
-				String newFileName = StringHelper.createFileName(fileItem.getName());
+				File tempFile = new File(fileItem.getName());
+				String newFileName = StringHelper.createFileName(tempFile.getName());
 				File newFile = new File(URLHelper.mergePath(folder.getFile().getAbsolutePath(), newFileName));
 				InputStream in = fileItem.getInputStream();
 				try {

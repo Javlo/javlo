@@ -30,11 +30,11 @@ if ( user == null ) {
 		<div class="panel panel-default">
 		  	<div class="panel-body">
 			<div class="line form-group">
-				<label for="login"><%=i18nAccess.getViewText ( "form.login" )%></label>
+				<label for="login"><%=i18nAccess.getViewText ( "form.login" )%> : </label>
 			    <div class="input"><input class="form-control" id="login" type="text" name="j_username" value="" /></div>
 			</div>
 			<div class="line form-group">
-				<label for="password"><%=i18nAccess.getViewText ( "form.password" )%>:</label>
+				<label for="password"><%=i18nAccess.getViewText ( "form.password" )%> : </label>
 				<div class="input"><input class="form-control" id="password" type="password" name="j_password" value="" /></div>
 			</div>
 			<a class="changelink" href="${info.currentURL}?resetpwd=true">${i18n.view['user.reset-password']}</a>			

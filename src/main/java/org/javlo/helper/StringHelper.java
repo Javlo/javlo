@@ -3303,7 +3303,7 @@ public class StringHelper {
 		if (prefixPos >= 0) {
 			int suffixPos = text.indexOf(suffix, prefixPos);
 			if (suffixPos > prefixPos) {
-				return text.substring(0, prefixPos+1)+newItem+text.substring(suffixPos);
+				return text.substring(0, prefixPos+prefix.length())+newItem+text.substring(suffixPos);
 			}
 		}
 		return text;

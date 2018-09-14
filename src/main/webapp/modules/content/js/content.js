@@ -7,15 +7,35 @@ jQuery(document).ready(function(){
 	jQuery(".readonly input, .readonly textarea, .readonly select").attr("readonly", "readonly");
 });
 
+var selectFile=null;
 function updateOrder() {
-	jQuery(".order-item .btn-move").on( "mouseover", function() {
-		console.log("over");
-		jQuery(this).parent().parent().parent().parent().parent().addClass("move-mode");
-		jQuery(this).parent().parent().parent().addClass("current-item");
+	jQuery(".manual-order .order-item .btn-move, .manual-order img").on( "click", function() {
+		jQuery(".manual-order").removeClass("move-mode");
+		jQuery(".manual-order .current-item").removeClass("current-item");
+		if (selectFile != jQuery(this).data("name")) {
+			jQuery(this).parent().parent().parent().parent().parent().addClass("move-mode");
+			jQuery(this).parent().parent().parent().addClass("current-item");
+			selectFile = jQuery(this).data("name");
+		} else {
+			selectFile=null;
+		}
+		return false;
 	});
-	jQuery(".order-item .btn-move").on( "mouseleave", function() {
-		jQuery(this).parent().parent().parent().removeClass("current-item");
-		jQuery(this).parent().parent().parent().parent().parent().removeClass("move-mode");
+	jQuery(".manual-order .order-item .btn-first").on( "click", function() {
+		var ajaxURL = jQuery(this).data("url");
+		ajaxURL = addParam(ajaxURL, "position=0&file="+jQuery(this).data("name"));
+		ajaxRequest(ajaxURL);
+		selectFile=null;
+		return false;
+	});
+	jQuery(".manual-order .order-drop").on( "click", function() {
+		if (selectFile != null) {
+			var ajaxURL = jQuery(this).attr("href");
+			ajaxURL = addParam(ajaxURL, "position="+jQuery(this).data("pos")+"&file="+selectFile);
+			ajaxRequest(ajaxURL);
+			selectFile=null;
+		}
+		return false;
 	});
 }
 

@@ -9,6 +9,7 @@ import java.io.StringWriter;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
@@ -31,9 +32,11 @@ import org.javlo.component.meta.TimeRangeComponent;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
+import org.javlo.data.InfoBean;
 import org.javlo.exception.ResourceNotFoundException;
 import org.javlo.helper.ComponentHelper;
 import org.javlo.helper.ElementaryURLHelper;
+import org.javlo.helper.LocalLogger;
 import org.javlo.helper.PaginationContext;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
@@ -454,7 +457,7 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle, IStat
 	protected boolean isOrder() {
 		return true;
 	}
-	
+
 	protected boolean isManualOrder() {
 		return true;
 	}
@@ -498,14 +501,13 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle, IStat
 		StringWriter writer = new StringWriter();
 		PrintWriter out = new PrintWriter(writer);
 		out.println(getSpecialInputTag());
-		
+
 		String preview = getEditPreview(ctx);
 		boolean displayPreview = !StringHelper.isEmpty(preview);
-		
+
 		if (displayPreview) {
-			out.println("<div class=\"row\"><div class=\"col-md-2\">"+preview+"</div><div class=\"col-md-10\">");
+			out.println("<div class=\"row\"><div class=\"col-md-2\">" + preview + "</div><div class=\"col-md-10\">");
 		}
-		
 
 		Collection<String> folderSelection = getSelection(ctx);
 		if (StringHelper.isEmpty(getSpecialTagTitle(ctx))) {
@@ -607,16 +609,16 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle, IStat
 			out.println(" random.</label>");
 			out.println("</div></fieldset>");
 		}
-		
+
 		if (isManualOrder()) {
-			out.println("<div id=\"order-"+getId()+"\">");
-			Map<String,String> params = new HashMap<String,String>();
+			out.println("<div class=\"manual-order-area\" id=\"order-" + getId() + "\">");
+			Map<String, String> params = new HashMap<String, String>();
 			params.put(IContentVisualComponent.COMP_ID_REQUEST_PARAM, getId());
-			params.put("webaction",getType()+".orderhtml");
-			String loadOrder = "ajaxRequest('"+URLHelper.createURL(ctx, params)+"')";
-			out.println("<button onclick=\""+loadOrder+"; return false;\" class=\"btn btn-standard\">"+i18nAccess.getText("global.manual-order")+"</button>");
+			params.put("webaction", getType() + ".orderhtml");
+			String loadOrder = "jQuery('.order input').prop('checked', false); jQuery(this).parent().css('background-image','url("+InfoBean.getCurrentInfoBean(ctx).getViewAjaxLoaderURL()+")'); jQuery(this).remove(); ajaxRequest('" + URLHelper.createURL(ctx, params) + "');";
+			out.println("<button onclick=\"" + loadOrder + "; return false;\" class=\"btn btn-standard\">" + i18nAccess.getText("global.manual-order") + "</button>");
 			out.println("</div>");
-			//out.println(getManualOrderXhtml(ctx));
+			// out.println(getManualOrderXhtml(ctx));
 		}
 
 		if (isTag()) {
@@ -650,30 +652,32 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle, IStat
 		PrintStream out = new PrintStream(outStream);
 		out.println("<fieldset class=\"manual-order\">");
 		out.println("<legend>" + i18nAccess.getText("global.manual-order", "manual order") + "</legend>");
-		
+
 		List<MultimediaResource> resources = getMultimediaResources(ctx);
-		int pos=1;
+		int pos = 1;
+		Map<String, String> params = new HashMap<String, String>();
+		params.put(IContentVisualComponent.COMP_ID_REQUEST_PARAM, getId());
+		params.put("webaction", getType() + ".orderhtml");
+		String ajaxURL = URLHelper.createAjaxURL(ctx, params);
 		for (MultimediaResource media : resources) {
 			out.println("<div class=\"order-item-wrapper\">");
 			out.println("<div class=\"order-item\">");
-			out.println("   <div class=\"name\">"+media.getName()+"</div>");
+			out.println("   <div class=\"name\">" + media.getName() + "</div>");
 			out.println("   <div class=\"ordre-row\">");
 			out.println("      <div class=\"order-preview\">");
 			String imageURL = URLHelper.createTransformURL(ctx, new File(media.getPath()), "_order");
-			out.println("         <img src=\""+imageURL+"\" />");
+			out.println("         <img style=\"background-image: url('"+InfoBean.getCurrentInfoBean(ctx).getViewAjaxLoaderURL()+"');\" width=\"160\" height=\"160\" data-name=\""+media.getName()+"\" src=\"" + imageURL + "\" />");
 			out.println("      </div>");
-			out.println("      <div class=\"commands\">");				
-			out.println("         <button class=\"btn btn-standard btn-first\">"+i18nAccess.getText("global.first")+"</button>");
-			out.println("         <button class=\"btn btn-standard btn-move\">"+i18nAccess.getText("global.move")+"</button>");
+			out.println("      <div class=\"commands\">");
+			out.println("         <button data-url=\""+ajaxURL+"\" class=\"btn btn-standard btn-first\" data-name=\""+media.getName()+"\">" + i18nAccess.getText("global.first") + "</button>");
+			out.println("         <button class=\"btn btn-standard btn-move\" data-name=\""+media.getName()+"\">" + i18nAccess.getText("global.move") + "</button>");
 			out.println("      </div>");
 			out.println("   </div>");
-			out.println("</div>");
-			out.println("<button class=\"order-drop\" data-pos=\""+pos+"\">"+pos);
-			out.println("</button>");
+			out.println("</div>");			
+			out.println("<a href=\""+ajaxURL+"\" class=\"order-drop\" data-pos=\"" + pos + "\"><i class=\"fa fa-angle-double-left\" aria-hidden=\"true\"></i>&nbsp;<i class=\"fa fa-angle-double-right\" aria-hidden=\"true\"></i></a>");
 			out.println("</div>");
 			pos++;
 		}
-		
 		out.println("</fieldset>");
 		out.println("<script>updateOrder();</script>");
 		out.close();
@@ -769,24 +773,27 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle, IStat
 		}
 		return pageSize;
 	}
-	
+
 	public List<String> getFileOrder() {
 		List<String> orderRaw = StringHelper.extractItem(getValue(), MANORD_PREFIX, MANORD_SUFFIX);
-		if (orderRaw.size()>0) {
+		if (orderRaw.size() > 0) {
 			return StringHelper.stringToCollection(orderRaw.get(0), ",");
-		} else  {
-			return Collections.EMPTY_LIST;
+		} else {
+			return new LinkedList<String>();
 		}
 	}
-	
+
 	public void setFileOrder(List<String> order) {
-		String value = getValue();
+		setValue(setFileOrder(order, getValue()));
+	}
+	
+	public String setFileOrder(List<String> order, String value) {
 		if (value.contains(MANORD_PREFIX)) {
 			value = StringHelper.replaceItem(value, StringHelper.collectionToString(order, ","), MANORD_PREFIX, MANORD_SUFFIX);
 		} else {
-			value = value+MANORD_PREFIX+StringHelper.collectionToString(order, ",")+MANORD_SUFFIX;
+			value = value + MANORD_PREFIX + StringHelper.collectionToString(order, ",") + MANORD_SUFFIX;
 		}
-		setValue(value);
+		return value;
 	}
 
 	public List<String> getTags() {
@@ -802,7 +809,12 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle, IStat
 	public String getTitle() {
 		String[] data = getValue().split(VALUE_SEPARATOR);
 		if (data.length > 6) {
-			return data[6];
+			String title = data[6];
+			int orderPos = title.indexOf(MANORD_PREFIX);
+			if (orderPos>=0) {
+				title = title.substring(0, orderPos);
+			}
+			return title;
 		} else {
 			return "";
 		}
@@ -922,7 +934,7 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle, IStat
 			return resource;
 		}
 	}
-	
+
 	protected List<String> getAllFileName(ContentContext ctx) throws Exception {
 		List<String> outNames = new LinkedList<String>();
 		for (MultimediaResource rsc : getMultimediaResources(ctx)) {
@@ -1087,16 +1099,31 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle, IStat
 				}
 			}
 		}
-
+		final List<String> orderList = getFileOrder();
+		boolean sort = false;
 		if (isOrderByAccess(ctx)) {
 			Collections.sort(allResource, new MultimediaResource.SortByIndex(true));
+			sort = true;
 		} else {
 			if (isNameOrder(ctx)) {
 				Collections.sort(allResource, new MultimediaResource.SortByName(isReverseOrder(ctx)));
+				sort = true;
 			} else if (isOrderRandom(ctx)) {
 				Collections.shuffle(allResource);
-			} else {
+				sort = true;
+			} else if (orderList != null && orderList.size()==0){
 				Collections.sort(allResource, new MultimediaResource.SortByDate(isReverseOrder(ctx)));
+				sort = true;
+			}
+		}
+		if (!sort) {
+			if (orderList != null && orderList.size() > 0) {
+				Collections.sort(allResource, new Comparator<MultimediaResource>() {
+					@Override
+					public int compare(MultimediaResource o1, MultimediaResource o2) {
+						return orderList.indexOf(o1.getName()) - orderList.indexOf(o2.getName());
+					}
+				});
 			}
 		}
 		return allResource;
@@ -1279,6 +1306,9 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle, IStat
 			if (isRandom) {
 				multimediaInfo = multimediaInfo + VALUE_SEPARATOR + RANDOM_ORDER;
 			}
+			
+			multimediaInfo = setFileOrder(getFileOrder(), multimediaInfo);
+			
 			if (!multimediaInfo.equals(getValue())) {
 				setValue(multimediaInfo);
 				setModify();
@@ -1286,21 +1316,45 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle, IStat
 		}
 		return null;
 	}
-	
+
 	public static String performOrderhtml(ContentContext ctx, RequestService rs) throws Exception {
-		Multimedia comp = (Multimedia)ComponentHelper.getComponentFromRequest(ctx);
-		String orderFile = rs.getParameter("file");
-		String orderPosition = rs.getParameter("position");
-		List<String> orderFiles = comp.getFileOrder();
-		List<String> allFiles = comp.getAllFileName(ctx);
-		if (orderFiles.size() != allFiles.size()) {
-			/* clean order list */
-//			for ()
-		}
-		
-		
+		Multimedia comp = (Multimedia) ComponentHelper.getComponentFromRequest(ctx);
 		if (comp != null) {
-			ctx.getAjaxInsideZone().put("order-"+comp.getId(), comp.getManualOrderXhtml(ctx));
+			String orderFile = rs.getParameter("file");
+			String orderPosition = rs.getParameter("position");
+			List<String> orderFiles = comp.getFileOrder();
+			List<String> allFiles = comp.getAllFileName(ctx);
+			if (orderFile != null) {
+				allFiles.remove(orderFile);
+				String value = comp.getValue(ctx);
+				value = value.replace(ORDER_BY_ACCESS,"");
+				value = value.replace(RANDOM_ORDER,"");
+				value = value.replace(REVERSE_ORDER,"");
+				value = value.replace(NAME_ORDER,"");
+				if (!value.equals(comp.getValue())) {
+					comp.setValue(value);
+				}
+			}
+			// synchronise sort list and list
+			for (Iterator iterator = orderFiles.iterator(); iterator.hasNext();) {
+				String item = (String) iterator.next();
+				if (!allFiles.contains(item) || item.equals(orderFile)) {
+					iterator.remove();
+				} else {
+					allFiles.remove(item);
+				}
+			}
+			orderFiles.addAll(allFiles);
+			if (orderFile != null && StringHelper.isDigit(orderPosition)) {
+				int pos = Integer.parseInt(orderPosition);
+				if (pos<=orderFiles.size()) {
+					orderFiles.add(pos, orderFile);
+				} else {
+					orderFiles.add(orderFile);
+				}
+			}
+			comp.setFileOrder(orderFiles);
+			ctx.getAjaxInsideZone().put("order-" + comp.getId(), comp.getManualOrderXhtml(ctx));			
 		}
 		return null;
 	}
@@ -1510,6 +1564,12 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle, IStat
 	@Override
 	public String getActionGroupName() {
 		return getType();
+	}
+	
+	public static void main(String[] args) {
+		String testData = "%%450,8%/galleries/test_gallerie%%%Photos%name orderMANORD[[1.jpg,2.jpg,3.jpg,4.jpg]]";
+		String value = StringHelper.replaceItem(testData, "***", MANORD_PREFIX, MANORD_SUFFIX);
+		System.out.println(">>>>>>>>> Multimedia.main : value = "+value); //TODO: remove debug trace
 	}
 
 }

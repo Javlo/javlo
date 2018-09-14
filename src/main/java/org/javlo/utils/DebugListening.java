@@ -96,7 +96,7 @@ public class DebugListening {
 				} else {
 					out.println("message : NO STACK TRACE.");
 				}
-				
+				out.flush();
 				out.close();
 				
 				String adminEmail = XHTMLHelper.createAdminMail(subject, XHTMLHelper.textToXHTML(new String(arrayOut.toByteArray())), errorInfo, URLHelper.createStaticURL(ctx,  "/"), globalContext.getGlobalTitle(), "- Javlo -");
@@ -116,6 +116,16 @@ public class DebugListening {
 				//e.printStackTrace();
 			}
 		}
+	}
+	
+	public static void main(String[] args) {
+		Throwable t = new Exception();
+		
+		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+		PrintStream out = new PrintStream(outStream);
+		t.printStackTrace(System.out);
+		out.close();
+		System.out.println(new String(outStream.toByteArray()));
 	}
 
 	public void sendError(ContentContext ctx, String info) {

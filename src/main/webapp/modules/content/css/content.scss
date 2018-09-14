@@ -620,9 +620,12 @@ li.line {
 }
 
 .multimedia {
+	button:hover, a:hover {
+		text-decoration: none;
+	}
 	.manual-order.move-mode {
 		.order-item {
-			opacity: 0.5;
+			opacity: 0.4;
 		}
 		.order-drop {
 			opacity: 0.9;
@@ -630,8 +633,24 @@ li.line {
 		.current-item {
 			opacity: 1;
 		}
+		button:hover, a:hover {
+			background-color: #4DA74D;
+			color: #ffffff;
+		}
+		img {
+			background-image: none !important;
+		}
+	}
+	.manual-order-area {
+		background-repeat: no-repeat;
+		background-position: center;
+		background-size: 64px 64px;
+		padding: 5px;
+		min-height: 50px;
+		text-align: center;
 	}
 	.manual-order {
+		background-color: #ffffff;
 		width: 100%;
 		display: flex;
 		align-items: stretch;
@@ -641,14 +660,20 @@ li.line {
 			border: 1px #cccccc solid;
 			border-radius: 3px;
 		}
+		img {
+			background-repeat: no-repeat;
+			background-position: center;
+			background-size: 64px 64px;
+		}
 		.order-drop {
 			background-color: #eeeeee;
-			width: 50px;
+			width: 40px;
 			text-align: center;
-			font-size: 2em;
+			font-size: 1.2em;
 			justify-content: center;
 			align-items: center;
 			opacity: 0.3;
+			display: flex;
 		}
 		.order-item-wrapper {
 			display: flex;
@@ -656,6 +681,11 @@ li.line {
 		}
 		.order-item {
 			width: 150px;
+			button:hover, a:hover {
+				background-color: #4DA74D;
+				color: #ffffff;
+				text-decoration: none;
+			}
 			.name {
 				overflow: hidden;
 				text-align: center;
@@ -669,9 +699,6 @@ li.line {
 				padding: 2px 4px;
 				font-size: 0.9em;
 				width: auto;
-			}
-			.btn:hover {
-				background-color: #ffffff;
 			}
 			.ordre-row {
 				.commands {

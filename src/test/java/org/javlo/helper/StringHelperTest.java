@@ -473,6 +473,7 @@ public class StringHelperTest extends TestCase {
 		assertEquals(StringHelper.replaceItem("aa [bb dd", "cc", "[", "]"), "aa [bb dd");
 		assertEquals(StringHelper.replaceItem("aa bb] dd", "cc", "[", "]"), "aa bb] dd");
 		assertEquals(StringHelper.replaceItem("aa ]bb[ dd", "cc", "[", "]"), "aa ]bb[ dd");
+		assertEquals(StringHelper.replaceItem("aa DATA[[bb]] dd", "cc", "DATA[[", "]]"), "aa DATA[[cc]] dd");
 	}
 	
 }

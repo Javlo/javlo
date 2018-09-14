@@ -675,6 +675,7 @@ Security in case of vulnerabilities.
 - pdf-multimedia expose link to pdf file
 - can remove ressource from site map with special option in global context
 - token ##BUILD_ID## reference the build id, can be use in html,css or js in template
+- manual order of gallery
 ### Fixed
 - resource servlet return 404 if no path defined
 - face detection thread managing

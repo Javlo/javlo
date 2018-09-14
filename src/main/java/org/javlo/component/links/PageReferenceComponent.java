@@ -813,7 +813,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 	}
 
 	private int getLastPageNumber() {
-		if (properties.getProperty(PAGE_END_PROP_KEY, "").trim().length() == 0) {
+		if (!StringHelper.isDigit(properties.getProperty(PAGE_END_PROP_KEY, ""))) {
 			return Integer.MAX_VALUE;
 		} else {
 			return Integer.parseInt(properties.getProperty(PAGE_END_PROP_KEY, "" + Integer.MAX_VALUE));

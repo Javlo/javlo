@@ -68,7 +68,7 @@ public class SharedContent {
 			this.content = new LinkedList<ComponentBean>();
 			for (ComponentBean bean : content) {
 				ComponentBean newBean = new ComponentBean(bean);
-				newBean.setArea(null);
+				newBean.resetArea();
 				this.content.add(newBean);
 			}
 			for (ComponentBean componentBean : this.content) {

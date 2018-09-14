@@ -68,7 +68,7 @@ public class SocialLocalService {
 				Date updateTime = rs.getTimestamp("updateTime");
 				if (updateTime == null) {
 					long id = rs.getLong("id");
-					ResultSet replies = conn.createStatement().executeQuery("select time from post where mainPost='" + id + "' order by time desc");
+					ResultSet replies = conn.createStatement().executeQuery("select time from post where mainPost='" + id + "' and adminCheck=true && adminCheck=true order by time desc");
 					if (replies.next()) {
 						updateTime = replies.getTimestamp("time");
 					} else {
