@@ -531,7 +531,12 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle, IStat
 			if (newFolder.trim().length() > 1) {
 				folder = newFolder;
 			}
-			out.println(XHTMLHelper.getInputOneSelect(getInputBaseFolderName(), folderSelection, folder, "form-control select-galleries submit_on_change", null, true));
+			params = new HashMap<String, String>();
+			params.put(IContentVisualComponent.COMP_ID_REQUEST_PARAM, getId());
+			params.put("webaction", getType() + ".changegallery");
+			String chgGalUrl = URLHelper.createAjaxURL(ctx, params)+"&folder=";
+			String js = "ajaxRequest('"+chgGalUrl+"'+jQuery(this).find('option:selected').val())";
+			out.println(XHTMLHelper.getInputOneSelect(getInputBaseFolderName(), folderSelection, folder, "form-control select-galleries", js, true));
 		}
 
 		String backURL = URLHelper.createModuleURL(ctx, ctx.getPath(), "content");
@@ -616,7 +621,7 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle, IStat
 			out.println("</div></fieldset>");
 		}
 
-		if (isManualOrder()) {
+		if (isManualOrder() && getAllResources(ctx).size()<255) {
 			out.println("<div class=\"manual-order-area\" id=\"manual-order-" + getId() + "\">");
 			out.println(changeOrderButton);
 			out.println("</div>");
@@ -1274,18 +1279,15 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle, IStat
 		String title = requestService.getParameter(getInputTitle(), null);
 
 		if (title != null) {
-
 			boolean isOrderByAcess = requestService.getParameter(getInputNameOrderByAccess(), null) != null;
 			boolean isReverseOrder = requestService.getParameter(getInputNameReverseOrder(), null) != null;
 			boolean isNameOrder = requestService.getParameter(getInputNameNameOrder(), null) != null;
 			boolean isRandom = requestService.getParameter(getInputNameRandomOrder(), null) != null;
-
 			Date startDate = StringHelper.parseDateOrTime(newStartDate);
 			Date endDate = StringHelper.parseDateOrTime(newEndDate);
 			if (newDisplayType == null) {
 				newDisplayType = "";
 			}
-
 			/* tags */
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 			List<String> selectedTags = new LinkedList<String>();
@@ -1294,7 +1296,6 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle, IStat
 					selectedTags.add(tag);
 				}
 			}
-
 			String multimediaInfo = StringHelper.neverNull(StringHelper.renderTime(startDate)) + VALUE_SEPARATOR + StringHelper.neverNull(StringHelper.renderTime(endDate)) + VALUE_SEPARATOR + newPageSize + ',' + newListSizeDate + VALUE_SEPARATOR + folder + VALUE_SEPARATOR + newDisplayType + VALUE_SEPARATOR + StringHelper.collectionToString(selectedTags) + VALUE_SEPARATOR + title;
 			if (isNameOrder) {
 				multimediaInfo = multimediaInfo + VALUE_SEPARATOR + NAME_ORDER;
@@ -1308,7 +1309,6 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle, IStat
 			if (isRandom) {
 				multimediaInfo = multimediaInfo + VALUE_SEPARATOR + RANDOM_ORDER;
 			}
-			
 			multimediaInfo = setFileOrder(getFileOrder(), multimediaInfo);
 			
 			if (!multimediaInfo.equals(getValue())) {
@@ -1316,7 +1316,19 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle, IStat
 				setModify();
 			}
 		}
-		ctx.getAjaxInsideZone().put("tab1-"+getId(), getEditXHTMLCode(ctx));
+		
+		return null;
+	}
+	
+	public static String performChangegallery(ContentContext ctx, RequestService rs) throws Exception {
+		Multimedia comp = (Multimedia) ComponentHelper.getComponentFromRequest(ctx);
+		if (comp != null) {
+			String folder = rs.getParameter("folder");
+			if (!StringHelper.isEmpty(folder)) {
+				comp.setCurrentRootFolder(ctx, folder);
+				ctx.getAjaxInsideZone().put("tab1-"+comp.getId(), comp.getEditXHTMLCode(ctx));
+			}
+		}
 		return null;
 	}
 

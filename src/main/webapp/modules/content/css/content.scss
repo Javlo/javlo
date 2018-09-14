@@ -678,6 +678,7 @@ li.line {
 		display: flex;
 		align-items: stretch;
 		flex-wrap: wrap;
+		min-height: 50px;
 		.order-item, .order-drop {
 			margin: 5px; 
 			border: 1px #cccccc solid;
