@@ -436,11 +436,11 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle, IStat
 		return "display-as-" + getId();
 	}
 
-	protected Collection<String> getSelection(ContentContext ctx) {
+	protected List<String> getSelection(ContentContext ctx) {
 		String baseDir = getBaseStaticDir(ctx);
 		File rootDir = new File(baseDir);
 		Collection<File> files = ResourceHelper.getAllFiles(rootDir, null);
-		Collection<String> folderSelection = new LinkedList<String>();
+		List<String> folderSelection = new LinkedList<String>();
 		folderSelection.add("/");
 		for (File file : files) {
 			if (file.isDirectory()/* && file.list().length > 0 */) {
@@ -509,13 +509,19 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle, IStat
 			out.println("<div class=\"row\"><div class=\"col-md-2\">" + preview + "</div><div class=\"col-md-10\">");
 		}
 
-		Collection<String> folderSelection = getSelection(ctx);
+		List<String> folderSelection = getSelection(ctx);
 		if (StringHelper.isEmpty(getSpecialTagTitle(ctx))) {
 			out.println("<div class=\"form-group form-inline\">");
 			out.println("<label>" + i18nAccess.getText("global.title"));
-			out.println(" : <input class=\"form-control\" type=\"text\" id=\"" + getInputTitle() + "\" name=\"" + getInputTitle() + "\" value=\"" + getTitle() + "\"/></label>");
+			out.println(" : <input class=\"form-control title\" type=\"text\" id=\"" + getInputTitle() + "\" name=\"" + getInputTitle() + "\" value=\"" + getTitle() + "\"/></label>");
 			out.println("</div>");
 		}
+		
+		Map<String, String> params = new HashMap<String, String>();
+		params.put(IContentVisualComponent.COMP_ID_REQUEST_PARAM, getId());
+		params.put("webaction", getType() + ".orderhtml");
+		String loadOrder = "jQuery('.order input').prop('checked', false); jQuery(this).parent().css('background-image','url("+InfoBean.getCurrentInfoBean(ctx).getViewAjaxLoaderURL()+")'); jQuery(this).remove(); ajaxRequest('" + URLHelper.createURL(ctx, params) + "');";
+		String changeOrderButton = "<button onclick=\"" + loadOrder + "; return false;\" class=\"btn btn-standard btn-manual-order\">" + i18nAccess.getText("global.manual-order") + "</button>";
 
 		out.println("<div class=\"form-group form-inline\">");
 		if (isFolder()) {
@@ -525,7 +531,7 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle, IStat
 			if (newFolder.trim().length() > 1) {
 				folder = newFolder;
 			}
-			out.println(XHTMLHelper.getInputOneSelect(getInputBaseFolderName(), folderSelection, folder, "form-control"));
+			out.println(XHTMLHelper.getInputOneSelect(getInputBaseFolderName(), folderSelection, folder, "form-control select-galleries submit_on_change", null, true));
 		}
 
 		String backURL = URLHelper.createModuleURL(ctx, ctx.getPath(), "content");
@@ -553,20 +559,20 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle, IStat
 			out.println("<div class=\"col-lg-4 form-inline\">");
 			out.println("<div class=\"form-group\">");
 			out.println("<label for=\"" + getInputStartDateName() + "\">" + i18nAccess.getText("content.multimedia-gallery.date-range") + "</label>");
-			out.println(" : <input class=\"form-control\" id=\"contentdate\" type=\"text\" id=\"" + getInputStartDateName() + "\" name=\"" + getInputStartDateName() + "\" value=\"" + StringHelper.renderDateWithDefaultValue(getStartDate(), "") + "\"/> - ");
-			out.println("<input class=\"form-control\" type=\"text\" id=\"" + getInputEndDateName() + "\" name=\"" + getInputEndDateName() + "\" value=\"" + StringHelper.renderDateWithDefaultValue(getEndDate(), "") + "\"/>");
+			out.println(" : <input class=\"date form-control\" id=\"contentdate-"+getId()+"\" type=\"text\" id=\"" + getInputStartDateName() + "\" name=\"" + getInputStartDateName() + "\" value=\"" + StringHelper.renderDateWithDefaultValue(getStartDate(), "") + "\"/> - ");
+			out.println("<input class=\"form-control date\" type=\"text\" id=\"" + getInputEndDateName() + "\" name=\"" + getInputEndDateName() + "\" value=\"" + StringHelper.renderDateWithDefaultValue(getEndDate(), "") + "\"/>");
 			out.println("</div></div>");
 		}
 		out.println("<div class=\"col-xs-3 form-inline\">");
 
 		out.println("<div class=\"form-group\">");
 		out.println("<label>" + i18nAccess.getText("content.multimedia-gallery.list-size"));
-		out.println(" : <input class=\"form-control\" type=\"text\" id=\"" + getInputMaxListSizeName() + "\" name=\"" + getInputMaxListSizeName() + "\" value=\"" + getMaxListSize() + "\"/></label>");
+		out.println(" : <input class=\"form-control number\" type=\"number\" id=\"" + getInputMaxListSizeName() + "\" min=\"0\" name=\"" + getInputMaxListSizeName() + "\" value=\"" + getMaxListSize() + "\"/></label>");
 		out.println("</div></div><div class=\"col-xs-3 form-inline\">");
 
 		out.println("<div class=\"form-group\">");
 		out.println("<label>" + i18nAccess.getText("content.multimedia-gallery.page-size"));
-		out.println(" : <input class=\"form-control\" type=\"text\" id=\"" + getInputPageSizeName() + "\" name=\"" + getInputPageSizeName() + "\" value=\"" + getPageSize() + "\"/></label>");
+		out.println(" : <input class=\"form-control number\" type=\"number\" id=\"" + getInputPageSizeName() + "\"  min=\"0\" name=\"" + getInputPageSizeName() + "\" value=\"" + getPageSize() + "\"/></label>");
 		out.println("</div></div></div>");
 
 		if (isOrder()) {
@@ -611,12 +617,8 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle, IStat
 		}
 
 		if (isManualOrder()) {
-			out.println("<div class=\"manual-order-area\" id=\"order-" + getId() + "\">");
-			Map<String, String> params = new HashMap<String, String>();
-			params.put(IContentVisualComponent.COMP_ID_REQUEST_PARAM, getId());
-			params.put("webaction", getType() + ".orderhtml");
-			String loadOrder = "jQuery('.order input').prop('checked', false); jQuery(this).parent().css('background-image','url("+InfoBean.getCurrentInfoBean(ctx).getViewAjaxLoaderURL()+")'); jQuery(this).remove(); ajaxRequest('" + URLHelper.createURL(ctx, params) + "');";
-			out.println("<button onclick=\"" + loadOrder + "; return false;\" class=\"btn btn-standard\">" + i18nAccess.getText("global.manual-order") + "</button>");
+			out.println("<div class=\"manual-order-area\" id=\"manual-order-" + getId() + "\">");
+			out.println(changeOrderButton);
 			out.println("</div>");
 			// out.println(getManualOrderXhtml(ctx));
 		}
@@ -1314,6 +1316,7 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle, IStat
 				setModify();
 			}
 		}
+		ctx.getAjaxInsideZone().put("tab1-"+getId(), getEditXHTMLCode(ctx));
 		return null;
 	}
 
@@ -1354,7 +1357,7 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle, IStat
 				}
 			}
 			comp.setFileOrder(orderFiles);
-			ctx.getAjaxInsideZone().put("order-" + comp.getId(), comp.getManualOrderXhtml(ctx));			
+			ctx.getAjaxInsideZone().put("manual-order-" + comp.getId(), comp.getManualOrderXhtml(ctx));			
 		}
 		return null;
 	}
