@@ -2526,6 +2526,7 @@ public class Template implements Comparable<Template> {
 			}
 
 			Map<String, String> map = getTemplateDataMap(globalContext);
+			map.put("##BUILD_ID##", getBuildId());
 			if (childrenData != null) {
 				map.putAll(childrenData);
 			}
