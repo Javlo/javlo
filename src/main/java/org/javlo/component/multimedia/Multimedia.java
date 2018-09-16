@@ -36,7 +36,6 @@ import org.javlo.data.InfoBean;
 import org.javlo.exception.ResourceNotFoundException;
 import org.javlo.helper.ComponentHelper;
 import org.javlo.helper.ElementaryURLHelper;
-import org.javlo.helper.LocalLogger;
 import org.javlo.helper.PaginationContext;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
@@ -475,7 +474,7 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle, IStat
 	}
 
 	protected String getEditPreview(ContentContext ctx) throws Exception {
-		if (!isManualOrder()) {
+		//if (!isManualOrder()) {
 			List<MultimediaResource> medias = getMultimediaResources(ctx);
 			if (medias.size() == 0) {
 				return "";
@@ -488,9 +487,9 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle, IStat
 				out.close();
 				return new String(outStream.toByteArray());
 			}
-		} else {
-			return null;
-		}
+//		} else {
+//			return null;
+//		}
 	}
 
 	@Override
