@@ -522,6 +522,8 @@ public class AdminAction extends AbstractModuleAction {
 					currentGlobalContext.setDKIMSelector(requestService.getParameter("mailing-dkimselector", ""));
 
 					currentGlobalContext.setForcedHttps(StringHelper.isTrue(requestService.getParameter("security-forced-https", null), false));
+					currentGlobalContext.setBackupThread(StringHelper.isTrue(requestService.getParameter("security-backup-thread", null), false));
+					
 					currentGlobalContext.setCookies(StringHelper.isTrue(requestService.getParameter("cookies", null), false));
 					currentGlobalContext.setCookiesPolicyUrl(requestService.getParameter("cookies-url", null));
 

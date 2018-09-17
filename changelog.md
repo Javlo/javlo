@@ -689,3 +689,6 @@ Security in case of vulnerabilities.
 ### Removed
 - imgscalr-lib
 - ace editor
+## [2.1.2.1] - 17/09/2018
+### Added
+- backup thread

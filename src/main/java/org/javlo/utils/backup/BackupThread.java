@@ -27,7 +27,7 @@ public class BackupThread extends Thread {
 	
 	public boolean run = true;
 
-	private static final long WAIT_BETWEEN = 1000 * 10;
+	private static final long WAIT_BETWEEN = 1000 * 60;
 	
 	private File targetFolder = null;
 	private List<BackupBean> backupList = new LinkedList<BackupBean>();

@@ -1916,7 +1916,7 @@ public class StaticConfig extends Observable {
 	public int getBackupInterval() {
 		String interval = properties.getProperty("backup.interval");
 		if (!StringHelper.isDigit(interval)) {
-			return 0;
+			return 60*60*24;
 		} else {
 			return Integer.parseInt(interval);
 		}
@@ -1925,7 +1925,7 @@ public class StaticConfig extends Observable {
 	public int getDbBackupCount() {
 		String backupCount = properties.getProperty("backup.count.db");
 		if (!StringHelper.isDigit(backupCount)) {
-			return 0;
+			return 7;
 		} else {
 			return Integer.parseInt(backupCount);
 		}
@@ -1943,7 +1943,7 @@ public class StaticConfig extends Observable {
 	public int getUsersBackupCount() {
 		String backupCount = properties.getProperty("backup.count.users");
 		if (!StringHelper.isDigit(backupCount)) {
-			return 0;
+			return 120;
 		} else {
 			return Integer.parseInt(backupCount);
 		}
@@ -1952,7 +1952,7 @@ public class StaticConfig extends Observable {
 	public int getUsersBackupInterval() {
 		String backupCount = properties.getProperty("backup.interval.users");
 		if (!StringHelper.isDigit(backupCount)) {
-			return getBackupInterval();
+			return 60*60*2;
 		} else {
 			return Integer.parseInt(backupCount);
 		}

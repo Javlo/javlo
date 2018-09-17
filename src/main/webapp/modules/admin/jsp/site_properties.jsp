@@ -559,6 +559,11 @@
 </div>
 
 <div class="checkbox">	
+	<label><input type="checkbox" id="security-backup-thread" name="security-backup-thread" ${currentContext.backupThread?'checked="checked"':""} />
+	${i18n.edit['admin.form.security-backup-thread']}</label>
+</div>
+
+<div class="checkbox">	
 	<label><input type="checkbox" id="security-portail" name="security-portail" ${currentContext.portail?'checked="checked"':""} />
 	${i18n.edit['admin.form.security-portail']}</label>
 </div>

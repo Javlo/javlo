@@ -1,7 +1,8 @@
-<%@page import="org.javlo.ztatic.InitInterest"%>
-<%@page import="org.javlo.component.core.ComponentBean"%>
-<%@page import="org.javlo.navigation.MenuElement"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@page import="org.javlo.utils.backup.BackupThread"
+%><%@page import="org.javlo.ztatic.InitInterest"
+%><%@page import="org.javlo.component.core.ComponentBean"
+%><%@page import="org.javlo.navigation.MenuElement"
+%><%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <div id="info" class="content">
 <fieldset>
 <legend>Site</legend>
@@ -16,7 +17,7 @@
 	<li><span class="label">Latest publisher</span>${globalContext.latestPublisher}</li>
 	<c:if test="${not empty threadManager && threadManager.countThread>0}">
 	<li><span class="label">#Thread : </span>${threadManager.countThread}</li>
-	<li><span class="label">Current Thread</span>${threadManager.currentThreadName}</li>
+	<li><span class="label">Current Thread</span>${threadManager.currentThreadName}</li>	
 	</c:if><c:if test="${empty lightInterface}">
 	<li><span class="label">Memory</span>${memory.totalMemoryLabel}<c:if test="${info.admin}"><a class="btn btn-default btn-xs pull-right" href="${info.currentURL}?webaction=dashboard.garbage">garbage</a></c:if>
 	<div class="progress"><div class="bar2"><div id="memory-bar" class="value redbar" style="width: ${memory.usedMemoryPercent}%;"><small>${memory.usedMemoryLabel}</small></div></div></div>
@@ -46,6 +47,7 @@
 <li><span class="label">Build : </span>${globalContext.staticConfig.buildTime}</li>
 <li><span class="label">#MenuElement : </span><%=MenuElement.INSTANCE%></li>
 <li><span class="label">#ComponentBean : </span><%=ComponentBean.INSTANCE%></li>
+<li><span class="label">#BackupThread : </span><%=BackupThread.INSTANCE_COUNT%></li>
 <%if (InitInterest.PointThread.INSTANCE>0) {%>
 	<li><span class="label">InitInterest #Thread : </span><%=InitInterest.PointThread.INSTANCE%></li>
 	<li><span class="label">InitInterest #Todo : </span><%=InitInterest.todo.size()%></li>

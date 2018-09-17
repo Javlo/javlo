@@ -24,32 +24,38 @@ import org.javlo.template.Template;
 import org.javlo.utils.ConfigurationProperties;
 
 public class ImageConfig {
-	
+
 	public static class ImageParameters {
 		private int page = 1;
 		private boolean lowDef = false;
+
 		public ImageParameters(HttpServletRequest request) {
 			if (request.getParameter("page") != null && StringHelper.isDigit(request.getParameter("page"))) {
 				page = Integer.parseInt(request.getParameter("page"));
 			}
 			lowDef = StringHelper.isTrue(request.getParameter("lowdef"));
 		}
+
 		public int getPage() {
 			return page;
 		}
+
 		public void setPage(int page) {
 			this.page = page;
 		}
+
 		public boolean isLowDef() {
 			return lowDef;
 		}
+
 		public void setLowDef(boolean lowDef) {
 			this.lowDef = lowDef;
 		}
+
 		public String getKey() {
-			return ""+page+'-'+lowDef;
+			return "" + page + '-' + lowDef;
 		}
-		
+
 	}
 
 	/**
@@ -59,13 +65,12 @@ public class ImageConfig {
 
 	ConfigurationProperties properties = new ConfigurationProperties();
 
-	private static final String FILE = "/WEB-INF/config/image-config.properties";
 	private static final String FILE_BASE = "/WEB-INF/config/image-config-base.properties";
 	private static final String KEY = ImageConfig.class.getName();
 	private static final String ALL = "all";
 
 	private List<String> filters = new LinkedList<String>();
-	
+
 	private ImageConfig(File file) {
 		try {
 			properties.load(file);
@@ -81,19 +86,6 @@ public class ImageConfig {
 		InputStream in = session.getServletContext().getResourceAsStream(FILE_BASE);
 		if (in == null) {
 			logger.warning("config file for image not found : " + FILE_BASE);
-		} else {
-			try {
-				properties.load(new InputStreamReader(in));
-			} catch (Exception e) {
-				logger.warning("config file for thumbnails can not be loaded (msg: " + e.getMessage() + ")");
-			} finally {
-				ResourceHelper.closeResource(in);
-			}
-		}
-
-		in = session.getServletContext().getResourceAsStream(FILE);
-		if (in == null) {
-			logger.warning("config file for thunbnails not found : " + FILE);
 		} else {
 			try {
 				properties.load(new InputStreamReader(in));
@@ -161,13 +153,11 @@ public class ImageConfig {
 		} else {
 			key = KEY + '-' + template.getId();
 		}
-		
-		synchronized (FILE) {
-			outCfg = (ImageConfig) globalContext.getAttribute(key);
-			if (outCfg == null) {
-				outCfg = new ImageConfig(globalContext, session, template);
-				globalContext.setAttribute(key, outCfg);
-			}
+
+		outCfg = (ImageConfig) globalContext.getAttribute(key);
+		if (outCfg == null) {
+			outCfg = new ImageConfig(globalContext, session, template);
+			globalContext.setAttribute(key, outCfg);
 		}
 		return outCfg;
 	}
@@ -234,14 +224,14 @@ public class ImageConfig {
 
 			String key = getKey(device, filter, area, "width");
 
-			int deviceWith = properties.getInt(key, device!=null?getWidth(null, ALL, null):-2);
+			int deviceWith = properties.getInt(key, device != null ? getWidth(null, ALL, null) : -2);
 			if (deviceWith != -2) {
 				return deviceWith;
 			}
 		}
 		return properties.getInt(filter + ".width", -1);
 	}
-	
+
 	public boolean isHighQuality(Device device, String filter, String area) {
 		if (device != null) {
 			String key = getKey(device, filter, area, "hq");
@@ -252,7 +242,7 @@ public class ImageConfig {
 		}
 		return properties.getBoolean(filter + ".hq", true);
 	}
-	
+
 	public int getFolderWidth(Device device, String filter, String area) {
 		if (device != null) {
 
@@ -265,7 +255,7 @@ public class ImageConfig {
 		}
 		return properties.getInt(filter + ".folder.width", -1);
 	}
-	
+
 	public int getFolderHeight(Device device, String filter, String area) {
 		if (device != null) {
 
@@ -278,7 +268,7 @@ public class ImageConfig {
 		}
 		return properties.getInt(filter + ".folder.height", -1);
 	}
-	
+
 	public int getFolderThumbWidth(Device device, String filter, String area) {
 		if (device != null) {
 
@@ -291,7 +281,7 @@ public class ImageConfig {
 		}
 		return properties.getInt(filter + ".folder.thumb.width", 100);
 	}
-	
+
 	public int getFolderThumbHeight(Device device, String filter, String area) {
 		if (device != null) {
 
@@ -304,7 +294,7 @@ public class ImageConfig {
 		}
 		return properties.getInt(filter + ".folder.thumb.height", 100);
 	}
-	
+
 	public boolean isFolderThumbShuffle(Device device, String filter, String area) {
 		if (device != null) {
 			String key = getKey(device, filter, area, "folder.thumb.shuffle");
@@ -321,74 +311,73 @@ public class ImageConfig {
 	public int getHeight(Device device, String filter, String area) {
 		if (device != null) {
 			String key = getKey(device, filter, area, "height");
-			int deviceHeigth = properties.getInt(key, device!=null?getHeight(null, ALL, null):-2);
+			int deviceHeigth = properties.getInt(key, device != null ? getHeight(null, ALL, null) : -2);
 			if (deviceHeigth != -2) {
 				return deviceHeigth;
 			}
 		}
 		return properties.getInt(filter + ".height", -1);
 	}
-	
+
 	public double getZoom(Device device, String filter, String area) {
 		if (device != null) {
 			String key = getKey(device, filter, area, "zoom");
-			Double deviceZoom = properties.getDouble(key, device!=null?getZoom(null, ALL, null):null);
+			Double deviceZoom = properties.getDouble(key, device != null ? getZoom(null, ALL, null) : null);
 			if (deviceZoom != null) {
 				return deviceZoom;
 			}
 		}
-		return properties.getDouble(filter + ".zoom", (double)1);
+		return properties.getDouble(filter + ".zoom", (double) 1);
 	}
-
 
 	public int getMaxHeight(Device device, String filter, String area) {
 		String key = getKey(device, filter, area, "max-height");
-		return properties.getInt(key, device!=null?getMaxHeight(null, ALL, null):-1);
+		return properties.getInt(key, device != null ? getMaxHeight(null, ALL, null) : -1);
 	}
 
 	public int getMarginLeft(Device device, String filter, String area) {
 		String key = getKey(device, filter, area, "margin-left");
-		return properties.getInt(key, device!=null?getMarginLeft(null, ALL, null):0);
+		return properties.getInt(key, device != null ? getMarginLeft(null, ALL, null) : 0);
 	}
 
 	public int getMarginRigth(Device device, String filter, String area) {
 		String key = getKey(device, filter, area, "margin-right");
-		return properties.getInt(key, device!=null?getMarginRigth(null, ALL, null):0);
+		return properties.getInt(key, device != null ? getMarginRigth(null, ALL, null) : 0);
 	}
 
 	public int getMarginTop(Device device, String filter, String area) {
 		String key = getKey(device, filter, area, "margin-top");
-		return properties.getInt(key, device!=null?getMarginTop(null, ALL, null):0);
+		return properties.getInt(key, device != null ? getMarginTop(null, ALL, null) : 0);
 	}
 
 	public int getMarginBottom(Device device, String filter, String area) {
 		String key = getKey(device, filter, area, "margin-bottom");
-		return properties.getInt(key, device!=null?getMarginBottom(null, ALL, null):0);
+		return properties.getInt(key, device != null ? getMarginBottom(null, ALL, null) : 0);
 	}
 
 	public String getFileExtension(Device device, String filter, String area) {
 		String key = getKey(device, filter, area, "file-extension");
-		String deviceValue = properties.getString(key, device!=null?getFileExtension(null, ALL, null):null);
+		String deviceValue = properties.getString(key, device != null ? getFileExtension(null, ALL, null) : null);
 		return deviceValue;
 	}
 
 	public String getLayer(Device device, String filter, String area) {
 		String key = getKey(device, filter, area, "layer");
-		String deviceValue = properties.getString(key, device!=null?getLayer(null, ALL, null):null);
+		String deviceValue = properties.getString(key, device != null ? getLayer(null, ALL, null) : null);
 		return deviceValue;
 	}
 
 	public boolean isBackGroudColor(Device device, String filter, String area) {
 		String key = getKey(device, filter, area, "background-color");
-		String bg = properties.getString(key,properties.getString(getKey(null, ALL,null, "background-color"),null));
-		return  bg != null && !bg.equals("transparent");	
+		String bg = properties.getString(key, properties.getString(getKey(null, ALL, null, "background-color"), null));
+		return bg != null && !bg.equals("transparent");
 	}
-	
+
 	public Color getBGColor(Device device, String filter, String area) {
 
 		String key = getKey(device, filter, area, "background-color");
 
-		String deviceValue = properties.getString(key, properties.getString(getKey(null, ALL,null, "background-color"),null));
+		String deviceValue = properties.getString(key, properties.getString(getKey(null, ALL, null, "background-color"), null));
 		if (deviceValue != null && !deviceValue.equals("-1") && !deviceValue.equals("transparent")) {
 			try {
 				return Color.decode(deviceValue);
@@ -400,9 +389,11 @@ public class ImageConfig {
 			return null;
 		}
 	}
-	
+
 	/**
-	 * return a bg color, the border with this color will be removed. (detect = automatic detect background color)
+	 * return a bg color, the border with this color will be removed. (detect =
+	 * automatic detect background color)
+	 * 
 	 * @param device
 	 * @param filter
 	 * @param area
@@ -412,7 +403,7 @@ public class ImageConfig {
 
 		String key = getKey(device, filter, area, "trim-color");
 
-		String deviceValue = properties.getString(key, properties.getString(getKey(null, ALL,null, "trim-color"),null));
+		String deviceValue = properties.getString(key, properties.getString(getKey(null, ALL, null, "trim-color"), null));
 		if (deviceValue != null && !deviceValue.equals("-1") && !deviceValue.equals("transparent")) {
 			try {
 				if (deviceValue.trim().equalsIgnoreCase("detect")) {
@@ -428,9 +419,10 @@ public class ImageConfig {
 			return null;
 		}
 	}
-	
+
 	/**
 	 * return tolerance for trim (0 >> 255*3)
+	 * 
 	 * @param device
 	 * @param filter
 	 * @param area
@@ -440,7 +432,7 @@ public class ImageConfig {
 
 		String key = getKey(device, filter, area, "trim-color.tolerance");
 
-		String deviceValue = properties.getString(key, properties.getString(getKey(null, ALL,null, "trim-color"),null));
+		String deviceValue = properties.getString(key, properties.getString(getKey(null, ALL, null, "trim-color"), null));
 		if (deviceValue != null && !deviceValue.equals("-1")) {
 			try {
 				return Integer.parseInt(deviceValue);
@@ -457,7 +449,7 @@ public class ImageConfig {
 
 		String key = getKey(device, filter, area, "adjust-color");
 
-		String deviceValue = properties.getString(key, properties.getString(getKey(null, ALL,null, "adjust-color"),null));
+		String deviceValue = properties.getString(key, properties.getString(getKey(null, ALL, null, "adjust-color"), null));
 		if (deviceValue != null) {
 			try {
 				return Color.decode(deviceValue);
@@ -474,7 +466,7 @@ public class ImageConfig {
 
 		String key = getKey(device, filter, area, "replace-alpha");
 
-		String deviceValue = properties.getString(key, properties.getString(getKey(null, ALL,null, "replace-alpha"),null));
+		String deviceValue = properties.getString(key, properties.getString(getKey(null, ALL, null, "replace-alpha"), null));
 		if (deviceValue != null) {
 			try {
 				return Color.decode(deviceValue);
@@ -486,12 +478,12 @@ public class ImageConfig {
 			return null;
 		}
 	}
-	
+
 	public Color getAlpha(Device device, String filter, String area) {
 
 		String key = getKey(device, filter, area, "alpha");
 
-		String deviceValue = properties.getString(key, properties.getString(getKey(null, ALL,null, "alpha"),null));
+		String deviceValue = properties.getString(key, properties.getString(getKey(null, ALL, null, "alpha"), null));
 		if (deviceValue != null) {
 			try {
 				return Color.decode(deviceValue);
@@ -506,134 +498,134 @@ public class ImageConfig {
 
 	public boolean isRoundCorner(Device device, String filter, String area) {
 		String key = getKey(device, filter, area, "round-corner");
-		return properties.getBoolean(key, device!=null?isRoundCorner(null, ALL, null):false);
+		return properties.getBoolean(key, device != null ? isRoundCorner(null, ALL, null) : false);
 	}
-	
+
 	public boolean isHorizontalFlip(Device device, String filter, String area) {
 		String key = getKey(device, filter, area, "horizontal-flip");
-		return properties.getBoolean(key, device!=null?isHorizontalFlip(null, ALL, null):false);
+		return properties.getBoolean(key, device != null ? isHorizontalFlip(null, ALL, null) : false);
 	}
-	
+
 	public boolean isVerticalFlip(Device device, String filter, String area) {
 		String key = getKey(device, filter, area, "vertical-flip");
-		return properties.getBoolean(key, device!=null?isVerticalFlip(null, ALL, null):false);
+		return properties.getBoolean(key, device != null ? isVerticalFlip(null, ALL, null) : false);
 	}
 
 	public boolean isGrayscale(Device device, String filter, String area) {
 		String key = getKey(device, filter, area, "grayscale");
-		return properties.getBoolean(key, device!=null?isGrayscale(null, ALL, null):false);
+		return properties.getBoolean(key, device != null ? isGrayscale(null, ALL, null) : false);
 	}
-	
+
 	public boolean isGrayscaleAveraging(Device device, String filter, String area) {
 		String key = getKey(device, filter, area, "grayscale-averaging");
-		return properties.getBoolean(key, device!=null?isGrayscaleAveraging(null, ALL, null):false);
+		return properties.getBoolean(key, device != null ? isGrayscaleAveraging(null, ALL, null) : false);
 	}
-	
+
 	public boolean isGrayscaleLuminosity(Device device, String filter, String area) {
 		String key = getKey(device, filter, area, "grayscale-luminosity");
-		return properties.getBoolean(key, device!=null?isGrayscaleLuminosity(null, ALL, null):false);
-	}	
-	
+		return properties.getBoolean(key, device != null ? isGrayscaleLuminosity(null, ALL, null) : false);
+	}
+
 	public boolean isGrayscaleDesaturation(Device device, String filter, String area) {
 		String key = getKey(device, filter, area, "grayscale-luminosity");
-		return properties.getBoolean(key, device!=null?isGrayscaleDesaturation(null, ALL, null):false);
+		return properties.getBoolean(key, device != null ? isGrayscaleDesaturation(null, ALL, null) : false);
 	}
 
 	public boolean isCrystallize(Device device, String filter, String area) {
 		String key = getKey(device, filter, area, "crystallize");
-		return properties.getBoolean(key, device!=null?isCrystallize(null,ALL,null):false);
+		return properties.getBoolean(key, device != null ? isCrystallize(null, ALL, null) : false);
 	}
-	
+
 	public boolean isGlow(Device device, String filter, String area) {
 		String key = getKey(device, filter, area, "glow");
-		return properties.getBoolean(key, device!=null?isGlow(null,ALL,null):false);
+		return properties.getBoolean(key, device != null ? isGlow(null, ALL, null) : false);
 	}
-	
+
 	public int getSepiaIntensity(Device device, String filter, String area) {
 		String key = getKey(device, filter, area, "sepia");
-		return properties.getInt(key, device!=null?getSepiaIntensity(null,ALL,null):0);
+		return properties.getInt(key, device != null ? getSepiaIntensity(null, ALL, null) : 0);
 	}
-	
+
 	public float getConstrast(Device device, String filter, String area) {
 		String key = getKey(device, filter, area, "contrast");
-		return properties.getFloat(key, device!=null?getConstrast(null,ALL,null):1);
+		return properties.getFloat(key, device != null ? getConstrast(null, ALL, null) : 1);
 	}
-	
-	public float getBrightness (Device device, String filter, String area) {
-		String key = getKey(device, filter, area, "brightness");												   
-		return properties.getFloat(key, device!=null?getBrightness(null,ALL,null):1);
+
+	public float getBrightness(Device device, String filter, String area) {
+		String key = getKey(device, filter, area, "brightness");
+		return properties.getFloat(key, device != null ? getBrightness(null, ALL, null) : 1);
 	}
-	
+
 	public int getDashed(Device device, String filter, String area) {
 		String key = getKey(device, filter, area, "dashed");
-		return properties.getInt(key, device!=null?getDashed(null,ALL,null):1);
+		return properties.getInt(key, device != null ? getDashed(null, ALL, null) : 1);
 	}
 
 	public boolean isEdge(Device device, String filter, String area) {
 		String key = getKey(device, filter, area, "edge");
-		return properties.getBoolean(key, device!=null?isEdge(null,ALL,null):false);
+		return properties.getBoolean(key, device != null ? isEdge(null, ALL, null) : false);
 	}
-	
+
 	public boolean isIndexed(Device device, String filter, String area) {
 		String key = getKey(device, filter, area, "indexed");
-		return properties.getBoolean(key, device!=null?isIndexed(null,ALL,null):false);
+		return properties.getBoolean(key, device != null ? isIndexed(null, ALL, null) : false);
 	}
 
 	public boolean isCropResize(Device device, String filter, String area) {
 		String key = getKey(device, filter, area, "crop-resize");
-		return properties.getBoolean(key, device!=null?isCropResize(null,ALL,null):false);
+		return properties.getBoolean(key, device != null ? isCropResize(null, ALL, null) : false);
 	}
 
 	public boolean isAddBorder(Device device, String filter, String area) {
 		String key = getKey(device, filter, area, "add-border");
-		return properties.getBoolean(key, device!=null?isAddBorder(null,ALL,null):false);
+		return properties.getBoolean(key, device != null ? isAddBorder(null, ALL, null) : false);
 	}
-	
+
 	public boolean isAddImageBorder(Device device, String filter, String area) {
 		String key = getKey(device, filter, area, "add-image-border");
-		return properties.getBoolean(key, device!=null?isAddImageBorder(null,ALL,null):false);
+		return properties.getBoolean(key, device != null ? isAddImageBorder(null, ALL, null) : false);
 	}
 
 	public boolean isFocusZone(Device device, String filter, String area) {
 		String key = getKey(device, filter, area, ".focus-zone");
-		return properties.getBoolean(key, device!=null?isFocusZone(null,ALL,null):false);
+		return properties.getBoolean(key, device != null ? isFocusZone(null, ALL, null) : false);
 	}
 
 	public boolean isFraming(Device device, String filter, String area) {
 		String key = getKey(device, filter, area, "framing");
-		return properties.getBoolean(key, device!=null?isFraming(null,ALL,null):false);
+		return properties.getBoolean(key, device != null ? isFraming(null, ALL, null) : false);
 	}
 
 	public boolean isEmboss(Device device, String filter, String area) {
 		String key = getKey(device, filter, area, "emboss");
-		return properties.getBoolean(key, device!=null?isEmboss(null,ALL,null):false);
+		return properties.getBoolean(key, device != null ? isEmboss(null, ALL, null) : false);
 	}
-	
+
 	public int getResizeDashed(Device device, String filter, String area) {
 		String key = getKey(device, filter, area, "resize-dashed");
-		return properties.getInteger(key, device!=null?getResizeDashed(null,ALL,null):1);
+		return properties.getInteger(key, device != null ? getResizeDashed(null, ALL, null) : 1);
 	}
 
 	public boolean isWeb2(Device device, String filter, String area) {
 		String key = getKey(device, filter, area, "web2");
-		return properties.getBoolean(key, device!=null?isWeb2(null,ALL,null):false);
+		return properties.getBoolean(key, device != null ? isWeb2(null, ALL, null) : false);
 	}
 
 	public int getWeb2Height(Device device, String filter, String area) {
 		String key = getKey(device, filter, area, "web2.height");
-		return properties.getInt(key, device!=null?getWeb2Height(null,ALL,null):-1);
+		return properties.getInt(key, device != null ? getWeb2Height(null, ALL, null) : -1);
 	}
 
 	public int getWeb2Separation(Device device, String filter, String area) {
 		String key = getKey(device, filter, area, "web2.separation");
-		return properties.getInt(key, device!=null?getWeb2Separation(null,ALL,null):-1);
+		return properties.getInt(key, device != null ? getWeb2Separation(null, ALL, null) : -1);
 	}
-	
-	public ProjectionConfig getProjection(GlobalContext globalContext, Template template, Device device, String filter, String area) {		
-		String key = getKey(device, filter, area, "projection.polygon");		
-		String polygon = properties.getString(key);		
-		String alpha = properties.getString(getKey(device, filter, area, "projection.alpha"));		
-		String bg = properties.getString(getKey(device, filter, area, "projection.background"));		
+
+	public ProjectionConfig getProjection(GlobalContext globalContext, Template template, Device device, String filter, String area) {
+		String key = getKey(device, filter, area, "projection.polygon");
+		String polygon = properties.getString(key);
+		String alpha = properties.getString(getKey(device, filter, area, "projection.alpha"));
+		String bg = properties.getString(getKey(device, filter, area, "projection.background"));
 		String fg = properties.getString(getKey(device, filter, area, "projection.foreground"));
 		if (!StringHelper.isEmpty(polygon) && !StringHelper.isEmpty(bg)) {
 			String[] polyPoint = polygon.split(",");
@@ -642,10 +634,10 @@ public class ImageConfig {
 			if (fg != null) {
 				fgFile = new File(URLHelper.mergePath(template.getWorkTemplateRealPath(globalContext), fg));
 			}
-			if (bgFile.exists()) {				
+			if (bgFile.exists()) {
 				if (polyPoint.length == 8) {
 					int[] polyPos = new int[8];
-					for (int i=0; i<8; i++) {
+					for (int i = 0; i < 8; i++) {
 						polyPos[i] = Integer.parseInt(polyPoint[i].trim());
 					}
 					Polygon4 p = new Polygon4(polyPos[0], polyPos[1], polyPos[2], polyPos[3], polyPos[4], polyPos[5], polyPos[6], polyPos[7]);
@@ -656,16 +648,16 @@ public class ImageConfig {
 					if (alphaFloat >= 0 && alphaFloat <= 1) {
 						return new ProjectionConfig(p, alphaFloat, bgFile, fgFile);
 					} else {
-						logger.severe("bad alpha ["+template.getName()+"] : "+alpha);
-					}				
+						logger.severe("bad alpha [" + template.getName() + "] : " + alpha);
+					}
 				} else {
-					logger.severe("bad polygon ["+template.getName()+"] : "+polygon);
+					logger.severe("bad polygon [" + template.getName() + "] : " + polygon);
 				}
 			} else {
-				logger.severe("bad background file ["+template.getName()+"] : "+bgFile);
+				logger.severe("bad background file [" + template.getName() + "] : " + bgFile);
 			}
-		} 
-		return  null;		
+		}
+		return null;
 	}
 
 	public List<String> getFilters() {
@@ -675,14 +667,13 @@ public class ImageConfig {
 	public ConfigurationProperties getProperties() {
 		return properties;
 	}
-	
+
 	public static void main(String[] args) throws IOException {
 		File file = new File("c:/trans/test.jpg");
-//		File file = new File("c:/trans/dscf2053.jpg");
-//		File file = new File("c:/trans/dsc_0692.jpg");
+		// File file = new File("c:/trans/dscf2053.jpg");
+		// File file = new File("c:/trans/dsc_0692.jpg");
 		ImageSize imageSize = ImageHelper.getImageSize(file);
-		System.out.println("##### ImageConfig.main : imageSize = "+imageSize); //TODO: remove debug trace
+		System.out.println("##### ImageConfig.main : imageSize = " + imageSize); // TODO: remove debug trace
 	}
-	
 
 }

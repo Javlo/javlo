@@ -120,6 +120,7 @@ public class GlobalContextBean {
 	private String screenshotUrl = null;
 	
 	private boolean reversedlink;
+	private boolean backupThread;
 	
 	private TemplateData templateData = null;
 	
@@ -222,6 +223,8 @@ public class GlobalContextBean {
 		setScreenshotUrl(globalContext.getScreenshortUrl(ctx));
 		
 		setQuietArea(globalContext.getQuietArea());
+		
+		setBackupThread(globalContext.isBackupThread());
 		
 		try {
 			setSpecialConfig(ResourceHelper.loadStringFromFile(globalContext.getSpecialConfigFile()));
@@ -924,6 +927,14 @@ public class GlobalContextBean {
 
 	public void setQuietArea(List<String> quietArea) {
 		this.quietArea = quietArea;
+	}
+
+	public boolean isBackupThread() {
+		return backupThread;
+	}
+
+	public void setBackupThread(boolean backupThread) {
+		this.backupThread = backupThread;
 	}
 
 }
