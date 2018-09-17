@@ -1223,9 +1223,17 @@ public class StaticConfig extends Observable {
 		}
 		return path;
 	}
+	
+	public String getUserFolder() {
+		return "users";
+	}
 
 	public String getUserInfoFile() {
-		return properties.getString("userinfo-file", "/users/view/users-list.csv");
+		return properties.getString("userinfo-file", "/"+getUserFolder()+"/view/users-list.csv");
+	}
+	
+	public String getAdminUserInfoFile() {
+		return properties.getString("adminuserinfo-file", "/"+getUserFolder()+"/admin/edit-users-list.csv");
 	}
 
 	public String getVFSFolder() {
@@ -1903,6 +1911,51 @@ public class StaticConfig extends Observable {
 	
 	public List<String> getPreviewLayout() {
 		return StringHelper.stringToCollection(properties.getString("preview.layout", "light,lightsm,dark"), ",");
+	}
+	
+	public int getBackupInterval() {
+		String interval = properties.getProperty("backup.interval");
+		if (!StringHelper.isDigit(interval)) {
+			return 0;
+		} else {
+			return Integer.parseInt(interval);
+		}
+	}
+	
+	public int getDbBackupCount() {
+		String backupCount = properties.getProperty("backup.count.db");
+		if (!StringHelper.isDigit(backupCount)) {
+			return 0;
+		} else {
+			return Integer.parseInt(backupCount);
+		}
+	}
+	
+	public int getDbBackupInterval() {
+		String backupCount = properties.getProperty("backup.interval.db");
+		if (!StringHelper.isDigit(backupCount)) {
+			return getBackupInterval();
+		} else {
+			return Integer.parseInt(backupCount);
+		}
+	}
+	
+	public int getUsersBackupCount() {
+		String backupCount = properties.getProperty("backup.count.users");
+		if (!StringHelper.isDigit(backupCount)) {
+			return 0;
+		} else {
+			return Integer.parseInt(backupCount);
+		}
+	}
+	
+	public int getUsersBackupInterval() {
+		String backupCount = properties.getProperty("backup.interval.users");
+		if (!StringHelper.isDigit(backupCount)) {
+			return getBackupInterval();
+		} else {
+			return Integer.parseInt(backupCount);
+		}
 	}
 
 }

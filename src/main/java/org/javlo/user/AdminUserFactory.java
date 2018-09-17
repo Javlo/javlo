@@ -22,7 +22,7 @@ public class AdminUserFactory extends UserFactory {
 
 	public static Logger logger = Logger.getLogger(AdminUserFactory.class.getName());
 
-	private static final String ADMIN_USER_INFO_FILE = "/users/admin/edit-users-list.csv";
+	public String adminUserInfoFile = null;
 
 	private static final Set<String> MASTER_ROLES = new HashSet<String>(Arrays.asList(new String[] { AdminUserSecurity.MASTER }));
 
@@ -33,7 +33,7 @@ public class AdminUserFactory extends UserFactory {
 	public static AdminUserFactory createUserFactory(GlobalContext globalContext, HttpSession session) {
 		AdminUserFactory res = null;
 		try {
-			res = globalContext.getAdminUserFactory(session);
+			res = globalContext.getAdminUserFactory(session);			
 			res.master = globalContext.isMaster();
 			logger.fine("create userFactory : " + res.getClass().getName());
 		} catch (Exception e) {
@@ -42,7 +42,7 @@ public class AdminUserFactory extends UserFactory {
 		}
 		res.dataFolder = globalContext.getDataFolder();
 		res.init(globalContext, session);
-		session.setAttribute(globalContext.getAdminUserFactoryClassName(), res);
+		session.setAttribute(globalContext.getAdminUserFactoryClassName(), res); 
 		return res;
 	}
 
@@ -72,7 +72,7 @@ public class AdminUserFactory extends UserFactory {
 
 	@Override
 	protected String getFileName() {
-		return URLHelper.mergePath(dataFolder, ADMIN_USER_INFO_FILE);
+		return URLHelper.mergePath(dataFolder, adminUserInfoFile);
 	}
 
 	@Override

@@ -101,6 +101,8 @@ import org.javlo.utils.BooleanBean;
 import org.javlo.utils.ConfigurationProperties;
 import org.javlo.utils.StructuredProperties;
 import org.javlo.utils.TimeMap;
+import org.javlo.utils.backup.BackupBean;
+import org.javlo.utils.backup.BackupThread;
 import org.owasp.encoder.Encode;
 
 public class GlobalContext implements Serializable, IPrintInfo {
@@ -271,6 +273,8 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	private Integer latestUndoVersion = null;
 
 	private StorePropertyThread storePropertyThread = null;
+	
+	private BackupThread backupThread = null;
 
 	private final Object i18nLock = new Object();
 
@@ -310,7 +314,29 @@ public class GlobalContext implements Serializable, IPrintInfo {
 			storePropertyThread = new StorePropertyThread(this);
 			storePropertyThread.start();
 		}
+		/** backup **/
+		if (isBackupThread()) {
+			startBackupThread();
+		}
 		activePopThread();
+	}
+	
+	private synchronized void startBackupThread() {
+		if (backupThread == null || !backupThread.run) {
+			File backupFolder = new File(URLHelper.mergePath(getBackupDirectory(), "thread"));
+			backupThread = new BackupThread(backupFolder);
+			if (staticConfig.getBackupInterval() > 0) {
+				if (staticConfig.getDbBackupCount() > 0) {
+					BackupBean backupBean = new BackupBean(getDataBaseFolder(), staticConfig.getDbBackupInterval(), staticConfig.getDbBackupCount());
+					backupThread.addBackup(backupBean);
+				}
+				if (staticConfig.getUsersBackupCount() > 0) {
+					BackupBean backupBean = new BackupBean(new File(URLHelper.mergePath(getDataFolder(), staticConfig.getUserFolder())), staticConfig.getUsersBackupInterval(), staticConfig.getUsersBackupCount());
+					backupThread.addBackup(backupBean);
+				}
+				backupThread.start();
+			}
+		}
 	}
 
 	public static GlobalContext getDefaultContext(HttpSession session) throws IOException {
@@ -946,6 +972,9 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		storePropertyThread.stopStoreThread = true;
 		ResourceHelper.closeResource(redirectURLList);
 		COUNT_INSTANCE--;
+		if (backupThread != null) {
+			backupThread.run = false;
+		}
 		super.finalize();
 	}
 
@@ -1326,6 +1355,10 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		}
 		return dataFolder;
 	}
+	
+	public String getBackupDirectory() {
+		return URLHelper.mergePath(getDataFolder(), getStaticConfig().getBackupFolder());
+	}
 
 	public String getCalendarFolder() {
 		return URLHelper.mergePath(getDataFolder(), "_calendar");
@@ -1481,6 +1514,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 			Constructor<IUserFactory> construct = getAdminUserFactoryClass().getConstructor();
 			admimUserFactory = (AdminUserFactory) construct.newInstance();
 			admimUserFactory.init(this, session);
+			admimUserFactory.adminUserInfoFile = getStaticConfig().getAdminUserInfoFile();
 		}
 		return admimUserFactory;
 	}
@@ -3900,6 +3934,20 @@ public class GlobalContext implements Serializable, IPrintInfo {
 
 	public void setForcedHttps(boolean https) {
 		properties.setProperty("security.forced-https", https);
+		save();
+	}
+	
+	public boolean isBackupThread() {
+		return properties.getBoolean("backup.thread", false);
+	}
+
+	public void setBackupThread(boolean backup) {
+		if (!backup && backupThread != null) {
+			backupThread.run = false;
+		} else if (backup) {
+			startBackupThread();
+		}
+		properties.setProperty("backup.thread", backup);
 		save();
 	}
 

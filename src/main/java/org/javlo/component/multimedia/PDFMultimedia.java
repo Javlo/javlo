@@ -60,11 +60,11 @@ public class PDFMultimedia extends Multimedia {
 		return currentFolder.getParentFile().getPath();
 	}
 	
-	protected Collection<String> getSelection(ContentContext ctx) {
+	protected List<String> getSelection(ContentContext ctx) {
 		String baseDir = getBaseStaticDir(ctx);
 		File rootDir = new File(baseDir);
 		Collection<File> files = ResourceHelper.getAllFiles(rootDir, null);
-		Collection<String> folderSelection = new LinkedList<String>();
+		List<String> folderSelection = new LinkedList<String>();
 		folderSelection.add("/");
 		for (File file : files) {
 			if (StringHelper.getFileExtension(file.getName()).equalsIgnoreCase("pdf")) {

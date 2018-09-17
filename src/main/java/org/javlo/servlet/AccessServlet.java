@@ -100,6 +100,7 @@ import org.javlo.user.VisitorContext;
 import org.javlo.utils.DebugListening;
 import org.javlo.utils.DoubleOutputStream;
 import org.javlo.utils.TimeTracker;
+import org.javlo.utils.backup.BackupThread;
 import org.javlo.ztatic.FileCache;
 import org.xhtmlrenderer.swing.Java2DRenderer;
 import org.xhtmlrenderer.util.FSImageWriter;
@@ -129,6 +130,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 
 	@Override
 	public void destroy() {
+		BackupThread.RUN = false;
 		Collection<GlobalContext> allGlobalContext = null;
 		try {
 			allGlobalContext = GlobalContextFactory.getAllGlobalContext(getServletContext());
@@ -258,7 +260,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 		} catch (Throwable t) {
 			t.printStackTrace();
 		}
-
+		
 	}
 
 	public void process(HttpServletRequest request, HttpServletResponse response, boolean post) throws ServletException {
