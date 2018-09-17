@@ -25,8 +25,7 @@
 		<c:if test="${not empty param.html}">	
 			<input type="hidden" name="file" value="${param.html}" />
 			<input type="hidden" name="html" value="${param.html}" />
-			<textarea name="text" id="text-editor" rows="10" cols="10" data-ext="html">${fn:escapeXml(text)}</textarea>
-			<pre id="ace-text-editor" data-ext="html">${fn:escapeXml(text)}</pre>
+			<textarea name="text" id="text-editor" rows="10" cols="10" data-ext="html" data-mode="text/html" class="text-editor" >${fn:escapeXml(text)}</textarea>
 		</c:if>
 		<div class="action">
 			<input type="submit" name="back" value="${i18n.edit['global.back']}" />

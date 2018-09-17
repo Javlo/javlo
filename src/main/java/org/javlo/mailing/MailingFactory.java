@@ -21,8 +21,8 @@ public class MailingFactory {
 
 	public static final String KEY = MailingFactory.class.getName();
 
-	//private ServletContext application = null;
-	
+	// private ServletContext application = null;
+
 	private MailingStaticConfig mailingStaticConfig;
 
 	private String mailingFolder = null;
@@ -35,8 +35,8 @@ public class MailingFactory {
 
 			outInstance.mailingFolder = StaticConfig.getInstance(application).getMailingFolder();
 			outInstance.mailingHistoryFolder = StaticConfig.getInstance(application).getMailingHistoryFolder();
-			//outInstance.application = application;
-			
+			// outInstance.application = application;
+
 			outInstance.mailingStaticConfig = StaticConfig.getInstance(application).getMailingStaticConfig();
 
 			application.setAttribute(KEY, outInstance);
@@ -55,14 +55,18 @@ public class MailingFactory {
 		File mailingDir = new File(mailingFolder + '/');
 		if (mailingDir.exists()) {
 			File[] currentMailingDir = mailingDir.listFiles(new NumericDirectoryFilter());
-			for (int i = 0; i < currentMailingDir.length; i++) {
-				String mailingID = currentMailingDir[i].getName();
-				Mailing mailing = new Mailing();
-				mailing.setId(mailingStaticConfig, mailingID);
-				if (mailing.isValid()) {
-					mailing.load(mailingStaticConfig, mailingID);
-					outMailing.add(mailing);
+			if (currentMailingDir != null) {
+				for (int i = 0; i < currentMailingDir.length; i++) {
+					String mailingID = currentMailingDir[i].getName();
+					Mailing mailing = new Mailing();
+					mailing.setId(mailingStaticConfig, mailingID);
+					if (mailing.isValid()) {
+						mailing.load(mailingStaticConfig, mailingID);
+						outMailing.add(mailing);
+					}
 				}
+			} else {
+				logger.severe("problem on access file in : '" + mailingDir + "' please check this folder.");
 			}
 		} else {
 			logger.finest("mailing directory: " + mailingDir + " not found.");
@@ -119,7 +123,7 @@ public class MailingFactory {
 		}
 		return outList;
 	}
-	
+
 	public List<Mailing> getMailingListByContext(String contextKey) throws IOException {
 		List<Mailing> outList = new LinkedList<Mailing>();
 		for (Mailing mailing : getMailingList()) {
@@ -142,7 +146,7 @@ public class MailingFactory {
 		}
 		return null;
 	}
-	
+
 	public Mailing getLiveMailing(String id) throws IOException {
 		for (Mailing mailing : getMailingList()) {
 			if (mailing.getId().equals(id)) {

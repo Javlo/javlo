@@ -4,6 +4,7 @@
 			lineNumbers: true,
 			mode: jQuery(this).data("mode"),
 			foldGutter: true,
+			matchBrackets: true,
 			extraKeys: {"Ctrl-Space": "autocomplete"},
 			gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"]
 		});
