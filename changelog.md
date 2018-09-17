@@ -692,3 +692,5 @@ Security in case of vulnerabilities.
 ## [2.1.2.1] - 17/09/2018
 ### Added
 - backup thread
+### Fixed
+- edit index.html of template, load CodeMirror
