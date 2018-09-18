@@ -692,5 +692,6 @@ Security in case of vulnerabilities.
 ## [2.1.2.1] - 17/09/2018
 ### Added
 - backup thread
+- insert bar (preview mode) position absolute and red (content don't move)
 ### Fixed
 - edit index.html of template, load CodeMirror
