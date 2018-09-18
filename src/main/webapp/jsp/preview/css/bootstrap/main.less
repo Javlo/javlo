@@ -510,13 +510,29 @@ body #preview_command .btn[disabled] {
 	border:1px solid rgba(18,139,243, .3);
 }
 
-._ep_new-component-zone, #preview_command ._ep_new-component-zone {
+#preview_command ._ep_new-component-zone {
 	display: block;
 	background:lighten(@layer-color, 20%);
 	border-radius:2px;
-	min-height:25px;
-	margin:10px -100px;
-	border:1px solid rgba(18,139,243, .3);
+	min-height:2px;
+	margin:-1 -100px;
+	border:1px solid rgba(18,139,243, .3);	
+}
+
+._ep_new-component-zone {
+	height: 0;
+	overflow: visible;
+	position: relative;
+	span {
+		position: absolute;
+		top: 0;
+		width: 100%;
+		background:#e83e8c;
+		border-radius:2px;
+		padding: 2px;
+		border:3px solid #ffffff;
+		z-index: 999999;
+	}
 }
 
 #preview_command ._ep_new-component-zone {

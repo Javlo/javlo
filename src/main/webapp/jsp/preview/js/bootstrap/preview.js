@@ -10,6 +10,8 @@ var editPreview = editPreview||{};
 
 var countDrop = 0;
 
+var EP_NEW_COMPONENT = '<div class="_ep_new-component-zone"><span></span></div>';
+
 if (!String.prototype.startsWith) {
 	  String.prototype.startsWith = function(searchString, position) {
 	    position = position || 0;
@@ -140,7 +142,7 @@ if (!String.prototype.startsWith) {
 			pjq('#area-name').text(area);
 
 			if (drop) {
-				comp.after('<div class="_ep_new-component-zone"></div>');
+				comp.after(EP_NEW_COMPONENT);
 			} else  {
 				if (item.getAttribute("data-name") != null && item.getAttribute("data-name").length > 0) {
 					pjq("#preview-layer h4").html(item.getAttribute("data-name"));
@@ -848,7 +850,7 @@ if (!String.prototype.startsWith) {
 				el.addEventListener('dragover', function (event) {
 					event.preventDefault();
 					pjq("._ep_new-component-zone").remove();
-					pjq(this).after('<div class="_ep_new-component-zone"></div>');
+					pjq(this).after(EP_NEW_COMPONENT);
 				});
 				el.addEventListener('dragleave', function (event) {
 					pjq("._ep_new-component-zone").remove();
@@ -871,7 +873,7 @@ if (!String.prototype.startsWith) {
 						fakefirst.addEventListener('dragover', function (event) {
 							event.preventDefault();
 							pjq("._ep_new-component-zone").remove();
-							pjq(this).after('<div class="_ep_new-component-zone"></div>');
+							pjq(this).after(EP_NEW_COMPONENT);
 						});
 						fakefirst.addEventListener('drop', function (event) {
 							if (PREVIEWLOG) {
