@@ -42,16 +42,6 @@ public class MenuTitle extends AbstractVisualComponent {
 	}
 	
 	@Override
-	public String getEmptyXHTMLCode(ContentContext ctx) throws Exception {
-		String emptyCode = super.getEmptyXHTMLCode(ctx);		
-		if (emptyCode != null && emptyCode.length()>0) {
-			return emptyCode.substring(0, emptyCode.length()-1)+" : "+getValue()+']';
-		} else {
-			return "";
-		}
-	}
-	
-	@Override
 	public boolean isContentCachable(ContentContext ctx) {
 		return true;
 	}
