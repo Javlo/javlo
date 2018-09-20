@@ -695,3 +695,4 @@ Security in case of vulnerabilities.
 - insert bar (preview mode) position absolute and red (content don't move)
 ### Fixed
 - edit index.html of template, load CodeMirror
+- reset navigation if navigation renderer change
