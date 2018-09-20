@@ -329,6 +329,10 @@ public class ContentManager {
 		}
 		return res;
 	}
+	
+	public static boolean isView(HttpServletRequest request) {
+		return isView(request, false);
+	}
 
 	public static boolean isTime(HttpServletRequest request) {
 		return isTime(request, false);

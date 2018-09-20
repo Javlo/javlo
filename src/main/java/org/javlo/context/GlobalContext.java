@@ -63,6 +63,7 @@ import org.javlo.helper.DebugHelper;
 import org.javlo.helper.ElementaryURLHelper;
 import org.javlo.helper.ElementaryURLHelper.Code;
 import org.javlo.helper.LangHelper;
+import org.javlo.helper.LocalLogger;
 import org.javlo.helper.NavigationHelper;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.ServletHelper;
@@ -252,7 +253,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	 */
 	private Map<String, MenuElement> viewPages = null;
 
-	private boolean urlFromFactoryImported = false;
+	private IURLFactory urlFromFactoryImported = NO_URL_FACTORY;
 
 	private Boolean externalServiceInitalized = false;
 
@@ -1769,14 +1770,16 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	public String getMediumDateFormat() {
 		return properties.getString("date.medium", staticConfig.getDefaultDateFormat());
 	}
+	
+	static int DEBC = 0;
 
 	public MenuElement getPageIfExist(ContentContext ctx, String url, boolean useURLCreator) throws Exception {
 		IURLFactory urlCreator = getURLFactory(ctx);
 		Map<String, MenuElement> localViewPages = viewPages;
-		if (ctx.getRenderMode() == ContentContext.VIEW_MODE && urlCreator != null && useURLCreator) {
-			if (!urlFromFactoryImported) {
+		if (ctx.getRenderMode() == ContentContext.VIEW_MODE && urlCreator != null && useURLCreator) {			
+			if (urlFromFactoryImported != urlCreator) {
 				synchronized (this.getLockLoadContent()) {
-					if (!urlFromFactoryImported) {
+					if (urlFromFactoryImported != urlCreator) {
 						localViewPages = new Hashtable<String, MenuElement>();
 						ContentContext lgCtx = new ContentContext(ctx);
 						Collection<String> mainLgs = getLanguages();
@@ -1799,7 +1802,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 						}
 						logger.info("url cache initialized with '" + urlCreator.getClass().getName() + "' url created : " + localViewPages.size() + " [lgs=" + contentLanguages + "]");
 						viewPages = localViewPages;
-						urlFromFactoryImported = true;
+						urlFromFactoryImported = urlCreator;
 					} else {
 						localViewPages = viewPages;
 					}
@@ -2318,7 +2321,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 			cacheMaps.clear();
 			quietArea = null;
 			viewPages = null;
-			urlFromFactoryImported = false;
+			urlFromFactoryImported = NO_URL_FACTORY;
 			try {
 				ReverseLinkService.getInstance(this).clearCache();
 			} catch (ServiceException e) {

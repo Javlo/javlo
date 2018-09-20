@@ -1095,7 +1095,12 @@ public class ImageTransformServlet extends FileServlet {
 			} else {
 				staticInfo = StaticInfo.getInstance(ctx, imageName);
 			}		
-			
+			if (!staticInfo.getFile().exists()) {
+				File newFile = new File(StringHelper.getFileNameWithoutExtension(staticInfo.getFile().getAbsolutePath()));
+				if (newFile.exists()) {
+					staticInfo = StaticInfo.getInstance(ctx, newFile);
+				}
+			}
 			ImageConfig config = ImageConfig.getInstance(globalContext, request.getSession(), template);
 			
 			ImageConfig.ImageParameters imageParam = new ImageConfig.ImageParameters(request);
@@ -1223,9 +1228,7 @@ public class ImageTransformServlet extends FileServlet {
 //					// org.javlo.helper.Logger.stepCount("transform",
 //					// "cache readed");
 				} else {
-
 					/*** TRANSFORM IMAGE ***/
-
 					int maxWidth = staticConfig.getImageMaxWidth();
 					if (maxWidth > 0) {
 						synchronized (LOCK_LARGE_TRANSFORM) {

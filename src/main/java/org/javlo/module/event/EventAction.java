@@ -2,7 +2,6 @@ package org.javlo.module.event;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.text.ParseException;
 import java.util.List;
 
 import org.javlo.actions.AbstractModuleAction;
