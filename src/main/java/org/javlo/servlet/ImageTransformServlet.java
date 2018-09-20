@@ -1095,7 +1095,7 @@ public class ImageTransformServlet extends FileServlet {
 			} else {
 				staticInfo = StaticInfo.getInstance(ctx, imageName);
 			}		
-			if (!staticInfo.getFile().exists()) {
+			if (staticInfo != null && staticInfo.getFile() != null && !staticInfo.getFile().exists()) {
 				File newFile = new File(StringHelper.getFileNameWithoutExtension(staticInfo.getFile().getAbsolutePath()));
 				if (newFile.exists()) {
 					staticInfo = StaticInfo.getInstance(ctx, newFile);
