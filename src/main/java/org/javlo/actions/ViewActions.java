@@ -32,8 +32,10 @@ import org.javlo.module.ticket.TicketAction;
 import org.javlo.navigation.MenuElement;
 import org.javlo.rendering.Device;
 import org.javlo.service.ContentService;
+import org.javlo.service.RequestService;
 import org.javlo.service.visitors.CookiesService;
 import org.javlo.service.visitors.VisitorsMessageService;
+import org.javlo.servlet.IVersion;
 import org.javlo.template.Template;
 import org.javlo.user.UserFactory;
 
@@ -90,6 +92,16 @@ public class ViewActions implements IAction {
 		staticConfig.reload();
 		GlobalContext globalContext = GlobalContext.getInstance(request);
 		globalContext.reload();
+		return null;
+	}
+	
+	public static String performTest(HttpServletRequest request, HttpServletResponse response, RequestService rs, ContentContext ctx) throws Exception {
+		System.out.println("***************");
+		System.out.println("*** TEST ACTION");
+		System.out.println("*** #params : "+rs.getParameterMap().size());
+		System.out.println("*** version : "+IVersion.VERSION);
+		System.out.println("*** uri     : "+request.getRequestURI());
+		System.out.println("***************");
 		return null;
 	}
 

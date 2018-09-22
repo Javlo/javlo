@@ -71,7 +71,19 @@ public class ImageEngine {
 	}
 
 	public static void storeImage(BufferedImage img, File file) throws IOException {
-		ImageIO.write(img, StringHelper.getFileExtension(file.getName()).toLowerCase(), file);
+		String ext = StringHelper.getFileExtension(file.getName()).toLowerCase();
+		if (img.getType() != BufferedImage.TYPE_3BYTE_BGR && (ext.equals("jpg") || ext.equals("jpeg"))) {
+			img = removeAlpha(img);
+		}
+		ImageIO.write(img, ext, file);
+		return;
+	}
+	
+	public static void storeImage(BufferedImage img, String ext, OutputStream outImage) throws IOException {
+		if (img.getType() != BufferedImage.TYPE_3BYTE_BGR && (ext.equals("jpg") || ext.equals("jpeg"))) {
+			img = removeAlpha(img);
+		}
+		ImageIO.write(img, ext, outImage);
 		return;
 	}
 
@@ -365,100 +377,6 @@ public class ImageEngine {
 
 		return ret;
 
-	}
-
-	private static BufferedImage resizeSmall(BufferedImage bi, int width, int height) {
-
-		width = Math.abs(width);
-		height = Math.abs(height);
-
-		AffineTransform tx = new AffineTransform();
-
-		double xsc = (width) / ((double) bi.getWidth());
-		double ysc = (height) / ((double) bi.getHeight());
-
-		if ((xsc < 0.4) && (ysc < 0.4)) { /* sufisant reduction of the size */
-			try {
-				bi = lightBlurring(bi); /* more beautiful image */
-			} catch (RuntimeException e) {
-				// TODO check why this method does'nt work always
-			}
-		}
-
-		tx.scale(xsc, ysc);
-
-		AffineTransformOp op = new AffineTransformOp(tx, AffineTransformOp.TYPE_BICUBIC);
-
-		BufferedImage image = op.filter(bi, null);
-
-		if (bi.getType() == BufferedImage.TYPE_4BYTE_ABGR) {
-			BufferedImage imgNew = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
-			for (int x = 0; x < image.getWidth(); x++) {
-				for (int y = 0; y < image.getHeight(); y++) {
-					int rgb = image.getRGB(x, y);
-					imgNew.setRGB(x, y, rgb);
-				}
-			}
-			return imgNew;
-		} else {
-			return image;
-		}
-
-	}
-
-	private static BufferedImage resizeBig(BufferedImage in, int width, int height) {
-		int imageWidth = in.getWidth();
-		int imageHeight = in.getHeight();
-
-		int[] pixels = in.getRGB(0, 0, imageWidth, imageHeight, null, 0, imageWidth);
-		int[] outPixels = new int[width * height];
-
-		int nw = Math.max(imageWidth / width + 1, 2);
-		int nh = Math.max(imageHeight / height + 1, 2);
-
-		int idx, i2, j2, argb, cnt;
-		int[] v = new int[4];
-
-		float kw = (float) imageWidth / (float) width;
-		float kh = (float) imageHeight / (float) height;
-
-		float nw2 = nw / 2.0F;
-		float nh2 = nh / 2.0F;
-
-		for (int i = 0; i < height; i++) {
-			for (int j = 0; j < width; j++) {
-				v[0] = v[1] = v[2] = v[3] = cnt = 0;
-
-				i2 = (int) ((i + 0.5F) * kh - nh2);
-				j2 = (int) ((j + 0.5F) * kw - nw2);
-
-				for (int k = 0; k < nh; k++) {
-					for (int l = 0; l < nw; l++) {
-						idx = (j2 + l) + (i2 + k) * imageWidth;
-
-						if (idx > -1 && idx < pixels.length) {
-							argb = pixels[idx];
-							v[0] += (argb >> 16) & 0xFF;
-							v[1] += (argb >> 8) & 0xFF;
-							v[2] += argb & 0xFF;
-							v[3] += (argb >> 24) & 0xFF; // alpha
-							cnt++;
-						}
-					}
-				}
-
-				outPixels[j + i * width] = ((v[3] / cnt) << 24) | ((v[0] / cnt) << 16) | ((v[1] / cnt) << 8) | (v[2] / cnt);
-			}
-		}
-
-		BufferedImage out;
-		if (in.getType() == BufferedImage.TYPE_4BYTE_ABGR) {
-			out = new BufferedImage(width, height, BufferedImage.TYPE_4BYTE_ABGR);
-		} else {
-			out = new BufferedImage(width, height, BufferedImage.TYPE_3BYTE_BGR);
-		}
-		out.setRGB(0, 0, width, height, outPixels, 0, width);
-		return out;
 	}
 
 	/**
@@ -1843,14 +1761,19 @@ public class ImageEngine {
 	}
 
 	public static void main(String[] args) throws Exception {
-		System.out.println("***** ImageEngine.main : START"); // TODO: remove
-		File imageBack = new File("c:/trans/work/test7.jpg");
-		Color bg = new Color(255, 255, 255, 200);
-		BufferedImage targetImg = ImageEngine.addTransparanceBorder(ImageIO.read(imageBack), bg, 30, 50, 3);
-		System.out.println(">>>>>>>>> ImageEngine.main : DARK ? = " + isDark(targetImg)); // TODO: remove debug trace
-		ImageIO.write(targetImg, "png", new File("c:/trans/work/target.jpg"));
-		System.out.println("***** ImageEngine.main : END"); // TODO: remove
+//		System.out.println("***** ImageEngine.main : START"); // TODO: remove
+//		File imageBack = new File("c:/trans/work/test7.jpg");
+//		Color bg = new Color(255, 255, 255, 200);
+//		BufferedImage targetImg = ImageEngine.addTransparanceBorder(ImageIO.read(imageBack), bg, 30, 50, 3);
+//		System.out.println(">>>>>>>>> ImageEngine.main : DARK ? = " + isDark(targetImg)); // TODO: remove debug trace
+//		ImageIO.write(targetImg, "png", new File("c:/trans/work/target.jpg"));
+//		System.out.println("***** ImageEngine.main : END"); // TODO: remove
 															// debug trace
+		
+		File src = new File("c:/trans/test.jpg");
+		BufferedImage img = ImageIO.read(src);
+		img = ImageEngine.resizeWidth(img, 512, true);
+		storeImage(img,  new File("c:/trans/test2.jpg"));
 	}
 
 	public static BufferedImage convertRGBAToIndexed(BufferedImage src) {

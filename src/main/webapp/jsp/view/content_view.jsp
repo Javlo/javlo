@@ -1,5 +1,6 @@
-<%@page import="org.javlo.component.core.ComponentFactory"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"
+<%@page import="java.util.List"
+%><%@page import="org.javlo.component.core.ComponentFactory"
+%><%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"
 %><%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"
 %><%@page contentType="text/html"
         import="
@@ -34,6 +35,28 @@
 ContentContext ctx = ContentContext.getContentContext ( request, response );
 GlobalContext globalContext = GlobalContext.getInstance(request);
 
+boolean areaWrapper = StringHelper.isTrue(request.getParameter("only-area-wrapper"), false);
+String area = (String)request.getAttribute(ContentContext.CHANGE_AREA_ATTRIBUTE_NAME);
+if (area==null) {
+	area = request.getParameter("area");
+} else {
+	request.removeAttribute(ContentContext.CHANGE_AREA_ATTRIBUTE_NAME);
+}
+MenuElement currentPage = ctx.getCurrentPage();
+if (areaWrapper && area != null) {
+	List<String> layouts = currentPage.getLayouts(ctx);
+	String layoutClass = "";
+	if (layouts.size() > 0) {
+		layoutClass="";
+		for (String layout : layouts) {
+			layoutClass+="layout-"+layout+' ';
+		}
+		layoutClass = " class=\""+layoutClass+"\"";
+	}
+	%><div id="<%=area%>"<%=layoutClass%>><%
+}
+
+
 boolean pageEmpty = true;
 boolean editPage = !StringHelper.isTrue(request.getParameter(PageMirrorComponent.NOT_EDIT_PREVIEW_PARAM_NAME));
 IContentVisualComponent specificComp = (IContentVisualComponent)request.getAttribute("specific-comp");
@@ -46,12 +69,7 @@ if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE && !ctx.isPreviewOnly() &
 	%><div id="one-component-edit"></div><%
 }
 
-String area = (String)request.getAttribute(ContentContext.CHANGE_AREA_ATTRIBUTE_NAME);
-if (area==null) {
-	area = request.getParameter("area");
-} else {
-	request.removeAttribute(ContentContext.CHANGE_AREA_ATTRIBUTE_NAME);
-}
+
 
 if (area != null) {
 	ctx.setArea(area);
@@ -90,7 +108,6 @@ if ( ctx.getSpecialContentRenderer() != null && area.equals(ComponentBean.DEFAUL
 } else if ( ctx.getSpecialContentRenderer() != null && !ctx.getCurrentTemplate().isNosecureArea(area)) {
 	%><!-- this area is empty because special renderer is defined. --><%
 } else {
-MenuElement currentPage = ctx.getCurrentPage();
 
 String forcePageName = request.getParameter("_force-page");
 if (forcePageName != null) {
@@ -226,4 +243,5 @@ if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE && !ctx.isPreviewOnly()) 
 currentPage.endRendering(ctx);
 } /* end else getSpecialContentRenderer() */
 
-%><%if (ctx.getCurrentTemplate().isEndAreaTag()) {%><div class="end-area end-area-<%=area%>">&nbsp;</div><%}%>
+%><%if (ctx.getCurrentTemplate().isEndAreaTag()) {%><div class="end-area end-area-<%=area%>">&nbsp;</div><%}%><%
+if (areaWrapper && area != null) {%></div><%}%>

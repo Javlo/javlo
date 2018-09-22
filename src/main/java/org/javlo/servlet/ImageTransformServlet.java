@@ -482,7 +482,8 @@ public class ImageTransformServlet extends FileServlet {
 					writer.setOutput(ios);
 					writer.write(img);
 				} else {
-					ImageIO.write(img, fileExtension, outImage);
+					//ImageIO.write(img, fileExtension, outImage);
+					ImageEngine.storeImage(img, fileExtension, outImage);
 				}
 
 			} finally {
@@ -914,7 +915,8 @@ public class ImageTransformServlet extends FileServlet {
 				if (!"png".equals(imageType) && !"gif".equals(imageType)) {
 					img = ImageEngine.removeAlpha(img);
 				}
-				ImageIO.write(img, imageType, outImage);
+				//ImageIO.write(img, imageType, outImage);
+				ImageEngine.storeImage(img, imageType, outImage);
 				if (metadata != null) {
 					ResourceHelper.writeImageMetadata(metadata, fc.getFileName(dir, dir).getCanonicalFile());
 				}
@@ -1240,7 +1242,7 @@ public class ImageTransformServlet extends FileServlet {
 										try {
 											ImageMetadata md = ExifHelper.readMetadata(imageFile);
 											image = ImageEngine.resizeWidth(image, maxWidth, true);
-											ImageIO.write(image, StringHelper.getFileExtension(imageFile.getName().toLowerCase()), imageFile);
+											ImageEngine.storeImage(image, imageFile);
 											ExifHelper.writeMetadata(md, imageFile);
 										} finally {
 											image.flush();

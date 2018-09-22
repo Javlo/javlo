@@ -86,7 +86,7 @@ public class AjaxServlet extends HttpServlet {
 
 				InfoBean.updateInfoBean(ctx);
 
-				ServletHelper.execAction(ctx);
+				ServletHelper.execAction(ctx, null);
 
 				ServletHelper.prepareModule(ctx);
 

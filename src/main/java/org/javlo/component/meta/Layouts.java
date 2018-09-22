@@ -103,7 +103,7 @@ public class Layouts extends AbstractVisualComponent {
 	 */
 	@Override
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
-		return "";
+		return "<span class=\"layout-inside "+StringHelper.collectionToString(getLayouts(), " ")+"\"></span>";
 	}
 
 	@Override

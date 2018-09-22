@@ -1379,6 +1379,9 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	protected boolean isOpenRow(ContentContext ctx) {
 		int max = getColumnMaxSize(ctx);
 		IContentVisualComponent prev = getPreviousComponent();
+		if (prev == null) {
+			return true;
+		}
 		boolean close = false;
 		if (ctx.getColumnableSize()<=0) {
 			close = true;

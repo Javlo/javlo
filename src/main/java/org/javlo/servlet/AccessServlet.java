@@ -560,7 +560,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 				ctx.setArea(editCtx.getCurrentArea());
 			}
 
-			String action = ServletHelper.execAction(ctx);
+			String action = ServletHelper.execAction(ctx, null);
 			if (ctx.isStopRendering()) {
 				return;
 			}

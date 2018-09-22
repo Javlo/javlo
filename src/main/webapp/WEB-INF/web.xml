@@ -318,6 +318,16 @@
 		<servlet-name>context</servlet-name>
 		<url-pattern>/context/*</url-pattern>
 	</servlet-mapping>
+	
+	<servlet>
+		<servlet-name>webaction</servlet-name>
+		<servlet-class>org.javlo.servlet.WebAction</servlet-class>
+		<load-on-startup>0</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>webaction</servlet-name>
+		<url-pattern>/webaction/*</url-pattern>
+	</servlet-mapping>
 
 	<servlet>
 		<servlet-name>FolderServlet</servlet-name>

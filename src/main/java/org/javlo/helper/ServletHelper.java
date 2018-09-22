@@ -36,7 +36,7 @@ public class ServletHelper {
 	 * @return the name of the action.
 	 * @throws Exception
 	 */
-	public static final String execAction(ContentContext ctx) throws Exception {
+	public static final String execAction(ContentContext ctx, String forceAction) throws Exception {
 
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
 
@@ -69,6 +69,10 @@ public class ServletHelper {
 		}
 
 		// String[] actions = requestService.getParameterValues("webaction", null);
+		
+		if (forceAction != null) {
+			actions.add(forceAction);
+		}
 
 		if (actions.size() == 0) {
 			return null;

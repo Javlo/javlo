@@ -46,7 +46,7 @@ public class ModuleServlet extends HttpServlet {
 
 			InfoBean.updateInfoBean(ctx);
 
-			String action = ServletHelper.execAction(ctx);
+			String action = ServletHelper.execAction(ctx, null);
 			if (action != null) {
 				logger.info("exec action : " + action);
 			}

@@ -693,6 +693,7 @@ Security in case of vulnerabilities.
 ### Added
 - backup thread
 - insert bar (preview mode) position absolute and red (content don't move)
+- webaction servlet, call webaction from path in place of parameter
 ### Fixed
 - edit index.html of template, load CodeMirror
 - reset navigation if navigation renderer change

@@ -79,19 +79,15 @@ public class ResourceServlet extends HttpServlet {
 	 * get the text and the picture and build a button
 	 */
 	protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws IOException {
-		
 		if (StringHelper.isEmpty(request.getPathInfo()) || request.getPathInfo().equals("/")) {
 			response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
 		}
-		
-		
 		if (request.getServletPath().equals("/favicon.ico") || request.getServletPath().equals("/robots.txt")) {
 			response.setHeader("Cache-Control", "max-age=600,must-revalidate");
 			GlobalContext globalContext = GlobalContext.getSessionContext(request.getSession());
 			if (globalContext != null) {
 				String filePath = URLHelper.mergePath(globalContext.getStaticConfig().getStaticFolder(), request.getServletPath());
-
 				String finalName = URLHelper.mergePath(globalContext.getDataFolder(), filePath);
 				InputStream fileStream = null;
 				try {
@@ -118,13 +114,9 @@ public class ResourceServlet extends HttpServlet {
 			}
 			return;
 		}
-
 		servletRun++;
-
 		OutputStream out = null;
-
 		StaticConfig staticConfig = StaticConfig.getInstance(request.getSession());
-
 		ContentContext ctx;
 		try {
 			ctx = ContentContext.getContentContext(request, response);
@@ -141,7 +133,6 @@ public class ResourceServlet extends HttpServlet {
 				return;
 			}
 		}
-
 		/* TRACKING */
 		GlobalContext globalContext = GlobalContext.getInstance(request);
 		IUserFactory fact = UserFactory.createUserFactory(globalContext, request.getSession());
@@ -172,7 +163,6 @@ public class ResourceServlet extends HttpServlet {
 		try {
 			String pathInfo;
 			String dataFolder = globalContext.getDataFolder();
-
 			pathInfo = request.getPathInfo().substring(1);
 			if (request.getPathInfo() != null && request.getPathInfo().length() > 1) {
 				String newPath = globalContext.getTransformShortURL(pathInfo);
@@ -180,7 +170,6 @@ public class ResourceServlet extends HttpServlet {
 					pathInfo = URLHelper.cleanPath(newPath, false);
 				}
 			}
-
 			if (pathInfo.startsWith(staticConfig.getShareDataFolderKey())) {
 				pathInfo = pathInfo.substring(staticConfig.getShareDataFolderKey().length() + 1);
 				dataFolder = globalContext.getSharedDataFolder(request.getSession());
@@ -189,12 +178,9 @@ public class ResourceServlet extends HttpServlet {
 				dataFolder = staticConfig.getTemplateFolder();
 			}
 			pathInfo = pathInfo.replace('\\', '/'); // for windows server
-
 			String resourceURI = pathInfo;
 			resourceURI = resourceURI.replace('\\', '/');
-
 			logger.fine("load static resource : " + resourceURI);
-
 			String fileExt = StringHelper.getFileExtension(resourceURI);
 			boolean json = fileExt.equalsIgnoreCase("json");
 			if (json) {
