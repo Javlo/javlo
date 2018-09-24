@@ -532,10 +532,14 @@ public class NavigationHelper {
 	public static MenuElement getPopupPage(ContentContext ctx) throws Exception {
 		String popupPath = ctx.getRequest().getParameter(POPUP_PARAM);
 		System.out.println(">>>>>>>>> NavigationHelper.getPopupPage : 1.popupPath = "+popupPath); //TODO: remove debug trace
-		if (popupPath != null && !popupPath.startsWith("http")) {
-			popupPath = ContentManager.getPath(popupPath);
+		if (popupPath != null && !popupPath.startsWith("http")) {			
 			if (popupPath.length()>3 && popupPath.charAt(3)=='/') {
 				popupPath = popupPath.substring(3);
+			} else {
+				popupPath = ContentManager.getPath(popupPath);
+				if (popupPath.length()>3 && popupPath.charAt(3)=='/') {
+					popupPath = popupPath.substring(3);
+				}
 			}
 			System.out.println(">>>>>>>>> NavigationHelper.getPopupPage : 2.popupPath = "+popupPath); //TODO: remove debug trace
 			ContentService content = ContentService.getInstance(ctx.getRequest());
