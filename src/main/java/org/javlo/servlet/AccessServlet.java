@@ -93,6 +93,7 @@ import org.javlo.servlet.zip.ZipManagement;
 import org.javlo.template.Template;
 import org.javlo.template.TemplateFactory;
 import org.javlo.thread.ThreadManager;
+import org.javlo.user.AdminUserSecurity;
 import org.javlo.user.IUserFactory;
 import org.javlo.user.MaxLoginService;
 import org.javlo.user.UserFactory;
@@ -311,7 +312,8 @@ public class AccessServlet extends HttpServlet implements IVersion {
 
 			if (!ctx.isAsViewMode()) {
 				SecurityHelper.checkUserAccess(ctx);
-				if ((ctx.getCurrentEditUser() == null || !ctx.getCurrentEditUser().getRoles().contains("content")) && !ctx.getCurrentPage().isPublic(ctx)) {
+				AdminUserSecurity userSec = AdminUserSecurity.getInstance();				
+				if (ctx.getCurrentEditUser() == null || !userSec.canRole(ctx.getCurrentEditUser(), "content") && !ctx.getCurrentPage().isPublic(ctx)) {
 					logger.warning("unauthorized access : "+request.getRequestURL());
 					response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 				}
