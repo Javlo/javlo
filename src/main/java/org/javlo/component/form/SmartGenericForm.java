@@ -1058,7 +1058,6 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 			}
 
 			if (comp.isSendEmail() && !fakeFilled) {
-
 				String emailFrom = comp.getLocalConfig(false).getProperty("mail.from", StaticConfig.getInstance(request.getSession()).getSiteEmail());
 				String emailFromField = comp.getLocalConfig(false).getProperty("mail.from.field", null);
 				if (emailFromField != null && rs.getParameter(emailFromField, "") != null) {
@@ -1184,8 +1183,9 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 					pageCtx.setRenderMode(ContentContext.PAGE_MODE);
 					if (!StringHelper.isEmpty(mailSubject)) {
 						mailSubject = XHTMLHelper.replaceJSTLData(pageCtx, mailSubject);
-						logger.info("read mail from : "+mailPath);
-						String email = NetHelper.readPageForMailing(new URL(URLHelper.createURL(pageCtx, mailPath)));
+						URL mailURL = new URL(URLHelper.createURL(pageCtx, mailPath));
+						logger.info("read mail from : "+mailURL);
+						String email = NetHelper.readPageForMailing(mailURL);
 						if (email != null && email.length() > 0) {
 							InternetAddress to = comp.getConfirmToEmail(ctx);
 							if (to != null) {
