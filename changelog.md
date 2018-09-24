@@ -694,6 +694,7 @@ Security in case of vulnerabilities.
 - backup thread
 - insert bar (preview mode) position absolute and red (content don't move)
 - webaction servlet, call webaction from path in place of parameter
+- role for smartgeneric form : count-participants, one inscription could count for more than one person.
 ### Fixed
 - edit index.html of template, load CodeMirror
 - reset navigation if navigation renderer change
