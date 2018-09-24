@@ -192,7 +192,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 			}
 			List<Map<String,String>> data = getData(ctx);
 			if (countField == null) {
-				countCache = data.size()-1;
+				countCache = data.size();
 			} else {
 				int countParticipal = 0;
 				for (Map<String,String> line : data) {
