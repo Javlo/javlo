@@ -514,7 +514,7 @@ public class NavigationHelper {
 		return outPath;
 	}
 	
-	public static MenuElement searchPage (ContentContext ctx, String idOrNameOrPath) throws Exception {
+	public static MenuElement searchPage (ContentContext ctx, String idOrNameOrPath) throws Exception { 
 		if (idOrNameOrPath == null) {
 			return null;
 		}
