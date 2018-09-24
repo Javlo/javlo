@@ -156,28 +156,29 @@ public class ContentManager {
 		String realPath = RequestService.getURI(request);
 
 		if (realPath != null) {
-			String[] splitedPath = StringHelper.split(realPath, "/");
-			int splitedPathMinSize = 3;
 			GlobalContext.getInstance(request);
-			/*
-			 * if (globalContext.getPathPrefix().trim().length() > 0) { splitedPathMinSize = 4; }
-			 */
+			path = getPath(realPath);
+		}
+		return path;
+	}
+	
+	public static String getPath(String realPath) {
+		String path = null;
+		if (realPath != null) {
+			String[] splitedPath = StringHelper.split(realPath, "/");
+			int splitedPathMinSize = 3;	
 			path = "";
 			for (int i = splitedPathMinSize; i < splitedPath.length; i++) {
 				path = path + '/' + splitedPath[i];
 			}
 		}
-
 		if (path == null || path.trim().length() == 0) {
 			path = "/";
-		}/*
-		 * else { path = path.split("\\?|\\#|\\;")[0]; }
-		 */
+		}
 		// remove extension if exist (.html)
 		if (path.indexOf('.') >= 0) {
 			path = path.substring(0, path.lastIndexOf('.'));
 		}
-
 		return path;
 	}
 

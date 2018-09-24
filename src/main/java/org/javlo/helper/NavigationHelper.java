@@ -7,7 +7,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -21,6 +20,7 @@ import org.javlo.component.core.IInternalLink;
 import org.javlo.component.links.RSSRegistration;
 import org.javlo.component.title.SubTitle;
 import org.javlo.context.ContentContext;
+import org.javlo.context.ContentManager;
 import org.javlo.context.GlobalContext;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
@@ -31,6 +31,8 @@ import org.javlo.xml.NodeXML;
 public class NavigationHelper {
 
 	private static java.util.logging.Logger logger = java.util.logging.Logger.getLogger(NavigationHelper.class.getName());
+	
+	public static final String POPUP_PARAM = "_popupurl";
 
 	public static final boolean canMoveDown(MenuElement elem) {
 		if (elem.getParent() == null) {
@@ -526,4 +528,19 @@ public class NavigationHelper {
 		} 
 		return page;
 	} 
+	
+	public static MenuElement getPopupPage(ContentContext ctx) throws Exception {
+		String popupPath = ctx.getRequest().getParameter(POPUP_PARAM);
+		if (popupPath != null && !popupPath.startsWith("http")) {
+			popupPath = ContentManager.getPath(popupPath);
+			if (popupPath.length()>3 && popupPath.charAt(3)=='/') {
+				popupPath = popupPath.substring(3);
+			}
+			ContentService content = ContentService.getInstance(ctx.getRequest());
+			MenuElement popupPage = content.getNavigation(ctx).searchChild(ctx, popupPath);
+			return popupPage;
+		}
+		return null;
+	}
+	
 }

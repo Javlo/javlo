@@ -119,7 +119,7 @@ import org.javlo.ztatic.IStaticContainer;
 public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxonomyContainer {
 	
 	public static MenuElement NOT_FOUND_PAGE = new MenuElement();
-
+	
 	public static int INSTANCE = 0;
 
 	public static final String PAGE_TYPE_DEFAULT = "default";

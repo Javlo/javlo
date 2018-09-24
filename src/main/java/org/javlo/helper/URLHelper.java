@@ -645,7 +645,12 @@ public class URLHelper extends ElementaryURLHelper {
 	}
 
 	public static String createURL(ContentContext ctx) {
-		return createURL(ctx, ctx.getPath());
+		try {
+			return createURL(ctx, ctx.getCurrentPage());
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 	
 	public static String createPDFURL(ContentContext ctx) {

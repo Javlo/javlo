@@ -143,10 +143,16 @@ public class InfoBean {
 	}
 
 	public String getCurrentAbsoluteURL() {
-		return URLHelper.createURL(ctx.getContextForAbsoluteURL());
+		Map<String,String> params = Collections.EMPTY_MAP;
+		String popupPath = ctx.getRequest().getParameter(NavigationHelper.POPUP_PARAM);
+		if (popupPath != null) {
+			params = new HashMap<String,String>();
+			params.put(NavigationHelper.POPUP_PARAM, popupPath);
+		}
+		return URLHelper.createURL(ctx.getContextForAbsoluteURL(), params);
 	}
 
-	public String getCurrentAbsoluteURLZIP() {
+	public String getCurrentAbsoluteURLZIP() throws Exception {
 		ContentContext ZIPCtx = ctx.getContextForAbsoluteURL();
 		ZIPCtx.setURLFactory(null);
 		ZIPCtx.setRenderMode(ContentContext.VIEW_MODE);
@@ -154,7 +160,7 @@ public class InfoBean {
 		return URLHelper.createURL(ZIPCtx);
 	}
 
-	public String getCurrentAbsoluteURLXML() {
+	public String getCurrentAbsoluteURLXML() throws Exception {
 		ContentContext XMLCtx = ctx.getContextForAbsoluteURL();
 		XMLCtx.setURLFactory(null);
 		XMLCtx.setRenderMode(ContentContext.VIEW_MODE);
@@ -162,13 +168,13 @@ public class InfoBean {
 		return URLHelper.createURL(XMLCtx);
 	}
 
-	public String getCurrentAbsolutePreviewURL() {
+	public String getCurrentAbsolutePreviewURL() throws Exception {
 		ContentContext previewCtx = ctx.getContextForAbsoluteURL();
 		previewCtx.setRenderMode(ContentContext.PREVIEW_MODE);
 		return URLHelper.createURL(previewCtx);
 	}
 
-	public String getCurrentURL() {
+	public String getCurrentURL() throws Exception {
 		if (fakeCurrentURL != null) {
 			return fakeCurrentURL;
 		} else {
@@ -176,7 +182,7 @@ public class InfoBean {
 		}
 	}
 
-	public String getCurrentURLWidthDevice() {
+	public String getCurrentURLWidthDevice() throws Exception {
 		if (fakeCurrentURL != null) {
 			return fakeCurrentURL;
 		} else {
@@ -198,14 +204,18 @@ public class InfoBean {
 		}
 	}
 
-	public String getCurrentCanonicalURL() {
+	public String getCurrentCanonicalURL() throws Exception {
 		ContentContext robotCtx = new ContentContext(ctx);
+		MenuElement popupPage = NavigationHelper.getPopupPage(ctx);
+		if (popupPage != null) {
+			robotCtx.setCurrentPageCached(popupPage);
+		}
 		robotCtx.setDevice(Device.getFakeDevice("robot"));
 		robotCtx.setAbsoluteURL(true);
 		return URLHelper.createURL(robotCtx);
 	}
 
-	public Map<String, String> getLanguageURLs() {
+	public Map<String, String> getLanguageURLs() throws Exception {
 		Map<String, String> urls = new HashMap<String, String>();
 		for (String lg : ctx.getGlobalContext().getContentLanguages()) {
 			ContentContext lgCtx = new ContentContext(ctx);
@@ -230,7 +240,7 @@ public class InfoBean {
 		return null;
 	}
 
-	public String getCurrentPDFURL() {
+	public String getCurrentPDFURL() throws Exception {
 		ContentContext pdfCtx = ctx.getFreeContentContext();
 		pdfCtx.setFormat("pdf");
 		return URLHelper.createURL(pdfCtx);
@@ -248,21 +258,21 @@ public class InfoBean {
 		return URLHelper.createAjaxURL(ctx, params);
 	}
 
-	public String getCurrentViewURL() {
+	public String getCurrentViewURL() throws Exception {
 		return URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE).getFreeContentContext());
 	}
 
-	public String getCurrentViewURLWidthDevice() {
+	public String getCurrentViewURLWidthDevice() throws Exception {
 		String url = URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE).getFreeContentContext());
 		url = URLHelper.addParam(url, Device.FORCE_DEVICE_PARAMETER_NAME, "" + ctx.getDevice());
 		return url;
 	}
 
-	public String getCurrentEditURL() {
+	public String getCurrentEditURL() throws Exception {
 		return URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.EDIT_MODE).getFreeContentContext());
 	}
 
-	public String getCurrentPreviewURL() {
+	public String getCurrentPreviewURL() throws Exception {
 		return URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.PREVIEW_MODE).getFreeContentContext());
 	}
 
@@ -277,7 +287,7 @@ public class InfoBean {
 		}
 	}
 
-	public String getCurrentPageURL() {
+	public String getCurrentPageURL() throws Exception {
 		return URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.PAGE_MODE).getFreeContentContext());
 	}
 
@@ -293,7 +303,7 @@ public class InfoBean {
 		return URLHelper.createAjaxURL(ctx, path);
 	}
 
-	public String getPDFURL() {
+	public String getPDFURL() throws Exception {
 		ContentContext pdfCtx = new ContentContext(ctx);
 		pdfCtx.setFormat("pdf");
 		if (pdfCtx.getRenderMode() == ContentContext.PAGE_MODE) {
@@ -464,10 +474,15 @@ public class InfoBean {
 
 	public HtmlPart getPageDescription() {
 		try {
+			String description = getCurrentPage().getMetaDescription(ctx);
+			MenuElement popupPage = NavigationHelper.getPopupPage(ctx);
+			if (popupPage != null) {
+				description =  popupPage.getMetaDescription(ctx);
+			}
 			final String noRecursiveRequestKey = "_pageDescritionCalled";
 			if (ctx.getRequest().getAttribute(noRecursiveRequestKey) == null) {
 				ctx.getRequest().setAttribute(noRecursiveRequestKey, 1);
-				String description = XHTMLHelper.replaceJSTLData(ctx, getCurrentPage().getMetaDescription(ctx));
+				description = XHTMLHelper.replaceJSTLData(ctx, description);
 				ctx.getRequest().setAttribute(noRecursiveRequestKey, null);
 				return new HtmlPart(description);
 			} else {
@@ -485,7 +500,12 @@ public class InfoBean {
 
 	public String getPageMetaDescription() {
 		try {
-			return getCurrentPage().getMetaDescription(ctx);
+			MenuElement popupPage = NavigationHelper.getPopupPage(ctx);
+			if (popupPage != null) {
+				return popupPage.getMetaDescription(ctx);
+			} else {
+				return getCurrentPage().getMetaDescription(ctx);
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
@@ -502,7 +522,12 @@ public class InfoBean {
 
 	public String getPageTitle() {
 		try {
-			return getCurrentPage().getPageTitle(ctx);
+			MenuElement popupPage = NavigationHelper.getPopupPage(ctx);
+			if (popupPage != null) {
+				return popupPage.getPageTitle(ctx);
+			} else {
+				return getCurrentPage().getPageTitle(ctx);
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
@@ -511,7 +536,12 @@ public class InfoBean {
 
 	public String getTitle() {
 		try {
-			return getCurrentPage().getTitle(ctx);
+			MenuElement popupPage = NavigationHelper.getPopupPage(ctx);
+			if (popupPage != null) {
+				return popupPage.getTitle(ctx);
+			} else {
+				return getCurrentPage().getTitle(ctx);
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
@@ -554,6 +584,10 @@ public class InfoBean {
 
 	public PageBean getPage() {
 		try {
+			MenuElement popupPage = NavigationHelper.getPopupPage(ctx);
+			if (popupPage != null) {
+				return popupPage.getPageBean(ctx);
+			}
 			return getCurrentPage().getPageBean(ctx);
 		} catch (Exception e) {
 			e.printStackTrace();
