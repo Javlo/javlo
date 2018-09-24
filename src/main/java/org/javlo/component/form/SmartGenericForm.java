@@ -87,6 +87,8 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 	private static final String VALID_LINE_PARAM = "_vl";
 	
 	private static final String VALIDED = "__valided";
+	
+	private static final Collection<String> roles = Arrays.asList(new String[] {"", "participant"});
 
 	private Properties bundle;
 
@@ -157,24 +159,48 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		return getLocalConfig(false).getProperty(RECAPTCHASECRETKEY, null);
 	}
 
+//	public int getCountSubscription(ContentContext ctx) throws Exception {
+//		if (countCache == null) {
+//			File file = getFile(ctx);
+//			if (!file.exists()) {
+//				countCache = 0;
+//			} else {
+//				BufferedReader reader = new BufferedReader(new FileReader(file));
+//				try {
+//					int countLine = 0;
+//					String read = reader.readLine();
+//					while (read != null) {
+//						countLine++;
+//						read = reader.readLine();
+//					}
+//					countCache = countLine - 1;
+//				} finally {
+//					ResourceHelper.closeResource(reader);
+//				}
+//			}
+//		}
+//		return countCache;
+//	}
+	
 	public int getCountSubscription(ContentContext ctx) throws Exception {
 		if (countCache == null) {
-			File file = getFile(ctx);
-			if (!file.exists()) {
-				countCache = 0;
-			} else {
-				BufferedReader reader = new BufferedReader(new FileReader(file));
-				try {
-					int countLine = 0;
-					String read = reader.readLine();
-					while (read != null) {
-						countLine++;
-						read = reader.readLine();
-					}
-					countCache = countLine - 1;
-				} finally {
-					ResourceHelper.closeResource(reader);
+			Field countField = null;
+			for (Field field : getFields()) {
+				if (field.getRole().equals(Field.ROLE_COUNT_PART)) {
+					countField = field;
 				}
+			}
+			List<Map<String,String>> data = getData(ctx);
+			if (countField == null) {
+				countCache = data.size()-1;
+			} else {
+				int countParticipal = 0;
+				for (Map<String,String> line : data) {
+					if (StringHelper.isDigit(line.get(countField.getName()))) {
+						countParticipal += Integer.parseInt(line.get(countField.getName()));
+					}
+				}
+				countCache = countParticipal;
 			}
 		}
 		return countCache;
@@ -290,7 +316,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 			if (isList()) {
 				listTitle = "<td>list</td>";
 			}
-			out.println("<thead><tr><td>name</td><td>label</td><td>condition</td>" + listTitle + "<td>type</td><td>width</td><td>required</td><td>action</td></tr></thead>");
+			out.println("<thead><tr><td>name</td><td>label</td><td>condition</td>" + listTitle + "<td>type</td><td>role</td><td>width</td><td>required</td><td>action</td></tr></thead>");
 			out.println("<tbody>");
 			List<Field> fields = getFields();
 			for (Field field : fields) {
@@ -325,6 +351,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 			}
 		}
 		out.println("<td class=\"type\">" + XHTMLHelper.getInputOneSelect(getInputName("type-" + field.getName()), field.getFieldTypes(), field.getType(), "form-control", (String) null, true) + "</td>");
+		out.println("<td class=\"role\">" + XHTMLHelper.getInputOneSelect(getInputName("role-" + field.getName()), field.getFieldRoles(), field.getRole(), "form-control", (String) null, true) + "</td>");
 		out.println("<td class=\"width\"><select class=\"form-control\" name=\"" + getInputName("width-" + field.getName()) + "\" >");
 		for (int i = 1; i <= 12; i++) {
 			String selected = "";
@@ -369,7 +396,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 				if (name.trim().length() > 0) {
 					String value = p.getProperty(key);
 					String[] data = StringUtils.splitPreserveAllTokens(value, Field.SEP);
-					Field field = new Field(name, (String) LangHelper.arrays(data, 0, ""), (String) LangHelper.arrays(data, 1, ""), (String) LangHelper.arrays(data, 8, ""), (String) LangHelper.arrays(data, 2, ""), (String) LangHelper.arrays(data, 3, ""), (String) LangHelper.arrays(data, 5, ""), Integer.parseInt("" + LangHelper.arrays(data, 6, "0")), Integer.parseInt("" + LangHelper.arrays(data, 7, "6")));
+					Field field = new Field(name, (String) LangHelper.arrays(data, 0, ""), (String) LangHelper.arrays(data, 1, ""), (String) LangHelper.arrays(data, 9, ""), (String) LangHelper.arrays(data, 8, ""), (String) LangHelper.arrays(data, 2, ""), (String) LangHelper.arrays(data, 3, ""), (String) LangHelper.arrays(data, 5, ""), Integer.parseInt("" + LangHelper.arrays(data, 6, "0")), Integer.parseInt("" + LangHelper.arrays(data, 7, "6")));
 					fields.add(field);
 				}
 			}
@@ -657,6 +684,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 				String cond = rs.getParameter(getInputName("condition-" + oldName), "");
 				field.setCondition(cond);
 				field.setType(rs.getParameter(getInputName("type-" + oldName), ""));
+				field.setRole(rs.getParameter(getInputName("role-" + oldName), ""));
 				field.setWidth(Integer.parseInt(rs.getParameter(getInputName("width-" + oldName), "6")));
 				if (!oldName.equals(field.getName())) {
 					delField(oldName);
@@ -684,7 +712,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 
 		if (rs.getParameter(getInputName("new-name"), "").trim().length() > 0) {
 			String fieldName = StringHelper.createFileName(rs.getParameter(getInputName("new-name"), null));
-			store(new Field(fieldName, "", "text", "", "text", "", "", pos + 20, 6));
+			store(new Field(fieldName, "", "text", "", "", "text", "", "", pos + 20, 6));
 			ctx.getRequest().setAttribute(getNewFieldKey(), fieldName);
 		}
 

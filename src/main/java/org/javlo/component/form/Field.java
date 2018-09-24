@@ -27,6 +27,7 @@ public class Field {
 	private String label;
 	private String condition = "";
 	private String type = "text";
+	private String role = "";
 	private String value;
 	private String list = "";
 	private String registeredList = "";
@@ -47,7 +48,11 @@ public class Field {
 
 	protected static List<? extends Object> FIELD_TYPES = Arrays.asList(new String[] { "text", "large-text", "yes-no", "true-false", TYPE_EMAIL, TYPE_NUMBER, "radio", "list", "registered-list", "file", "validation", STATIC_TEXT, STATIC_TITLE, TYPE_VAT });
 
-	public Field(String name, String label, String type, String condition, String value, String list, String registeredList, int order, int width) {
+	public static String ROLE_COUNT_PART = "count-participants";
+	
+	protected static List<? extends Object> FIELD_ROLES = Arrays.asList(new String[] { "", ROLE_COUNT_PART });
+	
+	public Field(String name, String label, String type, String role, String condition, String value, String list, String registeredList, int order, int width) {
 		this.name = name;
 		this.label = label;
 		this.condition = condition;
@@ -56,6 +61,7 @@ public class Field {
 		this.list = list;
 		this.registeredList = registeredList;
 		this.order = order;
+		this.role = role;
 		this.setWidth(width);
 	}
 
@@ -93,7 +99,7 @@ public class Field {
 
 	@Override
 	public String toString() {
-		return getLabel() + SEP + getType() + SEP + getValue() + SEP + list + SEP + getOrder() + SEP + getRegisteredList() + SEP + getOrder() + SEP + getWidth() + SEP + getCondition();
+		return getLabel() + SEP + getType() + SEP + getValue() + SEP + list + SEP + getOrder() + SEP + getRegisteredList() + SEP + getOrder() + SEP + getWidth() + SEP + getCondition() + SEP +getRole();
 	}
 
 	public boolean isRequire() {
@@ -138,6 +144,10 @@ public class Field {
 
 	public List<? extends Object> getFieldTypes() {
 		return FIELD_TYPES;
+	}
+	
+	public List<? extends Object> getFieldRoles() {
+		return FIELD_ROLES;
 	}
 
 	public String getRegisteredList() {
@@ -230,6 +240,14 @@ public class Field {
 		}  else {
 			return true;
 		}
+	}
+
+	public String getRole() {
+		return role;
+	}
+
+	public void setRole(String role) {
+		this.role = role;
 	}
 
 }

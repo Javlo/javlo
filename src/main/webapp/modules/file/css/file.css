@@ -171,7 +171,7 @@ body .elfinder-cwd-file .elfinder-cwd-select {
 #main-renderer .btn-edit, #main-renderer .btn-jpg {
 	display: inline-block;
 	width: auto;
-	margin-top: 10px;
+	margin: 10px 0;
 	line-height: normal;	
 	vertical-align: center;
 }
