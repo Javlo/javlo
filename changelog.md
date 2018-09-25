@@ -696,6 +696,7 @@ Security in case of vulnerabilities.
 - webaction servlet, call webaction from path in place of parameter
 - role for smartgeneric form : count-participants, one inscription could count for more than one person.
 - page reference columnalbe
+- page reference popup
 ### Fixed
 - edit index.html of template, load CodeMirror
 - reset navigation if navigation renderer change
