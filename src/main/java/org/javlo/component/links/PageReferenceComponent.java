@@ -470,6 +470,14 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 	private String getContentTitle() {
 		return properties.getProperty("content-title", "");
 	}
+	
+	private boolean isPopup() {
+		return StringHelper.isTrue(properties.getProperty("popup", null), false);
+	}
+	
+	private void setPopup(boolean popup) {
+		properties.setProperty("popup", ""+popup);
+	}
 
 	public String getCSSClassName(ContentContext ctx) {
 		return getComponentCssClass(ctx);
@@ -574,6 +582,10 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		out.println("<div class=\"line\">");
 		out.println(XHTMLHelper.getCheckbox(getEventInputName(), isOnlyEvent()));
 		out.println("<label for=\"" + getEventInputName() + "\">" + i18nAccess.getText("content.page-teaser.event") + "</label></div>");
+		
+		out.println("<div class=\"line\">");
+		out.println(XHTMLHelper.getCheckbox(getInputPopup(), isPopup()));
+		out.println("<label for=\"" + getInputPopup() + "\">" + i18nAccess.getText("content.page-teaser.popup", "popup") + "</label></div>");
 
 		if (isUIFilterOnEditUsers(ctx)) {
 			out.println("<div class=\"line\">");
@@ -811,6 +823,11 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 	private String getInputNameTitle() {
 		return "title_" + getId();
 	}
+	
+	private String getInputPopup() {
+		return "popup_" + getId();
+	}
+
 
 	private int getLastPageNumber() {
 		if (!StringHelper.isDigit(properties.getProperty(PAGE_END_PROP_KEY, ""))) {
@@ -1422,6 +1439,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		ctx.getRequest().setAttribute("comp", this);
 		ctx.getRequest().setAttribute("months", months);
 		ctx.getRequest().setAttribute("tags", globalContext.getTags());
+		ctx.getRequest().setAttribute("popup", isPopup());
 		if (globalContext.getAllTaxonomy(ctx).isActive()) {
 			ctx.getRequest().setAttribute("taxonomyList", TaxonomyDisplayBean.convert(ctx, globalContext.getAllTaxonomy(ctx).convert(getTaxonomy())));
 		}
@@ -1542,7 +1560,10 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 				storeProperties();
 				setModify();
 			}
-
+			
+			String popupRaw = requestService.getParameter(getInputPopup(), null);
+			setPopup(StringHelper.isTrue(popupRaw));
+			
 			List<String> tags = requestService.getParameterListValues(getTagsInputName(), null);
 			String tagRaw = StringHelper.collectionToString(tags, ",");
 			if (!properties.getProperty(TAG_KEY, "").equals(tagRaw)) {
