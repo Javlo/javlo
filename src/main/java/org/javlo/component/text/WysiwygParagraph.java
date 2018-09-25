@@ -199,10 +199,4 @@ public class WysiwygParagraph extends AbstractVisualComponent {
 		return true;
 	}
 	
-	public static void main(String[] args) {		
-		String value = "<p>l'&eacute;té</p>";
-		System.out.println(">>>>>>>>> WysiwygParagraph.main : value="+StringEscapeUtils.unescapeHtml4(value)); //TODO: remove debug trace
-		
-	}
-	
 }

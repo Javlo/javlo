@@ -926,13 +926,13 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 
 	@Override
 	public String getPrefixViewXHTMLCode(ContentContext ctx) {
-
+		String colPrefix = getColomnablePrefix(ctx);
 		if (getConfig(ctx).getProperty("prefix", null) != null) {
 			String prefix = "";
 			if (ctx.isPreview()) {
 				prefix = "<div " + getSpecialPreviewCssClass(ctx, "") + getSpecialPreviewCssId(ctx) + ">";
 			}
-			return prefix + getConfig(ctx).getProperty("prefix", null);
+			return colPrefix + prefix + getConfig(ctx).getProperty("prefix", null);
 		}
 
 		String specialClass = "";
@@ -945,7 +945,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		} else if (isPopularityOrder(ctx)) {
 			specialClass = " popularity-order" + specialClass;
 		}
-		return "<div " + getSpecialPreviewCssClass(ctx, "page-reference" + specialClass + ' ' + getComponentCssClass(ctx)) + getSpecialPreviewCssId(ctx) + ">";
+		return colPrefix + "<div " + getSpecialPreviewCssClass(ctx, "page-reference" + specialClass + ' ' + getComponentCssClass(ctx)) + getSpecialPreviewCssId(ctx) + ">";
 	}
 
 	protected String getReverseOrderInput() {
@@ -990,14 +990,15 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 
 	@Override
 	public String getSuffixViewXHTMLCode(ContentContext ctx) {
+		String colSuffix = getColomnableSuffix(ctx);
 		if (getConfig(ctx).getProperty("suffix", null) != null) {
 			String suffix = "";
 			if (ctx.isPreview()) {
 				suffix = "</div>";
 			}
-			return getConfig(ctx).getProperty("suffix", null) + suffix;
+			return getConfig(ctx).getProperty("suffix", null) + suffix + colSuffix;
 		}
-		return "</div>";
+		return "</div>"+colSuffix;
 	}
 
 	protected Collection<String> getSelectedTag(ContentContext ctx) {
@@ -1479,6 +1480,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 
 	@Override
 	public String performEdit(ContentContext ctx) throws Exception {
+		performColumnable(ctx);
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
 
 		if (requestService.getParameter(getCompInputName(), null) != null) {
@@ -1846,6 +1848,11 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 	@Override
 	public String getFontAwesome() {
 		return "list-alt";
+	}
+
+	@Override
+	protected boolean getColumnableDefaultValue() {
+		return true;
 	}
 
 }
