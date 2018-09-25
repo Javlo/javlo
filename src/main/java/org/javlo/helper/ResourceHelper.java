@@ -1107,7 +1107,7 @@ public class ResourceHelper {
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 
 			StaticInfo staticInfo = StaticInfo.getInstance(ctx, file);
-			staticInfo.renameFile(ctx, newFile);
+			staticInfo.duplicateFile(ctx, newFile);
 
 			// delete old ref in cache
 			String fromDataFolder = file.getAbsolutePath().replace(globalContext.getDataFolder(), "");
