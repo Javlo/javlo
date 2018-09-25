@@ -699,3 +699,4 @@ Security in case of vulnerabilities.
 ### Fixed
 - edit index.html of template, load CodeMirror
 - reset navigation if navigation renderer change
+- don't delete meta data of source when copy resources
