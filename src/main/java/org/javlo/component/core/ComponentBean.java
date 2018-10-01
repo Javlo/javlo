@@ -177,9 +177,6 @@ public class ComponentBean implements Serializable, Comparable<ComponentBean> {
 	}
 
 	public void setArea(String area) {
-		if (area == null) {
-			throw new NullPointerException("area count not be null");
-		}
 		this.area = area;
 	}
 

@@ -147,6 +147,7 @@ org.javlo.component.web2.SimplePoll
 org.javlo.component.web2.Survey
 org.javlo.component.web2.FollowComponent
 org.javlo.component.web2.EventRegistration
+org.javlo.component.web2.MyEvents
 org.javlo.component.web2.ChatComponent
 org.javlo.component.social.FacebookChooseFriend
 org.javlo.component.social.Wall

@@ -278,6 +278,30 @@ public class StringHelper {
 		out.close();
 		return new String(outStream.toByteArray());
 	}
+	
+	/**
+	 * convert a collection to text. Each item of the collection will be a line if
+	 * the text.
+	 * 
+	 * @param col
+	 * @return
+	 */
+	public static String collectionToTextarea(Collection<?> col) {
+		if (col == null || col.size() == 0) {
+			return "";
+		}
+		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+		PrintStream out = new PrintStream(outStream);
+		for (Object object : col) {
+			if (StringHelper.isEmpty(object)) {
+				out.println("&nbsp;");
+			} else {
+				out.println(object);
+			}
+		}
+		out.close();
+		return new String(outStream.toByteArray());
+	}
 
 	public static String collectionToString(Collection<?> col, String inSep) {
 		return concat(col, inSep, DEFAULT_ESCAPE);
@@ -4096,6 +4120,6 @@ public class StringHelper {
 	}
 
 	public static void main(String[] args) {
-		System.out.println(">>>>>>>>> StringHelper.main : match = " + matchStarPattern("10-2015-12", "*2014*")); // TODO: remove debug trace
+		System.out.println(">>>>>>>>> StringHelper.main : test replace CR = "+collectionToText(stringToCollection(replaceCR("\nJavlo\nCMS\n", "?")))); //TODO: remove debug trace
 	}
 }

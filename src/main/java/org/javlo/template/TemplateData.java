@@ -31,6 +31,7 @@ public class TemplateData {
 	private String logo = null;
 	private String fontText = null;
 	private String fontHeading = null;
+	private boolean loginMenu = false;
 	private boolean fixMenu = false;
 	private boolean largeMenu = false;
 	private boolean searchMenu = false;
@@ -190,6 +191,7 @@ public class TemplateData {
 			/* layout */
 			setFixMenu(StringHelper.isTrue(map.get("fixMenu")));
 			setLargeMenu(StringHelper.isTrue(map.get("largeMenu")));
+			setLoginMenu(StringHelper.isTrue(map.get("loginMenu")));
 			setSearchMenu(StringHelper.isTrue(map.get("search")));
 			setJssearchMenu(StringHelper.isTrue(map.get("jssearch")));
 			setDropdownMenu(StringHelper.isTrue(map.get("dropdown")));
@@ -224,6 +226,7 @@ public class TemplateData {
 		outData.put("fontText", getFontText());
 		outData.put("fontHeading", getFontHeading());
 		outData.put("fixMenu", ""+isFixMenu());
+		outData.put("loginMenu", ""+isLoginMenu());
 		outData.put("largeMenu", ""+isLargeMenu());
 		outData.put("large", ""+isLarge());
 		outData.put("small", ""+isSmall());
@@ -551,6 +554,14 @@ public class TemplateData {
 
 	public void setLarge(boolean large) {
 		this.large = large;
+	}
+
+	public boolean isLoginMenu() {
+		return loginMenu;
+	}
+
+	public void setLoginMenu(boolean login) {
+		this.loginMenu = login;
 	}
 
 }

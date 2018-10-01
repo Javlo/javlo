@@ -92,6 +92,8 @@ import org.javlo.ztatic.StaticInfo;
  */
 public class GenericForm extends AbstractVisualComponent implements IAction {
 	
+	public static final String DYNAMIC_FORM_RESULT_FOLDER = "dynamic-form-result";
+
 	private static final String RECAPTCHASECRETKEY = "recaptchasecretkey";
 
 	private static final String RECAPTCHAKEY = "recaptchakey";
@@ -224,7 +226,7 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 		if (getLocalConfig(false).get("filename") != null && getLocalConfig(false).get("filename").toString().trim().length() > 0) {
 			fileName = getLocalConfig(false).getProperty("filename");
 		}
-		File file = new File(URLHelper.mergePath(globalContext.getDataFolder(), globalContext.getStaticConfig().getStaticFolder(), "dynamic-form-result", fileName));
+		File file = new File(URLHelper.mergePath(globalContext.getDataFolder(), globalContext.getStaticConfig().getStaticFolder(), DYNAMIC_FORM_RESULT_FOLDER, fileName));
 		if (!file.exists()) {
 			file.getParentFile().mkdirs();
 			file.createNewFile();
@@ -239,7 +241,7 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 			fileName = getLocalConfig(false).getProperty("filename");
 		}
 		fileName = StringHelper.getFileNameWithoutExtension(fileName);
-		File dir = new File(URLHelper.mergePath(globalContext.getDataFolder(), globalContext.getStaticConfig().getStaticFolder(), "dynamic-form-result", fileName));
+		File dir = new File(URLHelper.mergePath(globalContext.getDataFolder(), globalContext.getStaticConfig().getStaticFolder(), DYNAMIC_FORM_RESULT_FOLDER, fileName));
 		if (!dir.exists()) {
 			dir.mkdirs();
 		}

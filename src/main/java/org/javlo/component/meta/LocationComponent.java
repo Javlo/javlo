@@ -56,4 +56,9 @@ public class LocationComponent extends AbstractVisualComponent {
 		return false;
 	}
 	
+	@Override
+	public String getFontAwesome() {
+		return "map-marker";
+	}
+	
 }

@@ -1948,11 +1948,29 @@ public class StaticConfig extends Observable {
 			return Integer.parseInt(backupCount);
 		}
 	}
-	
+		
 	public int getUsersBackupInterval() {
 		String backupCount = properties.getProperty("backup.interval.users");
 		if (!StringHelper.isDigit(backupCount)) {
 			return 60*60*2;
+		} else {
+			return Integer.parseInt(backupCount);
+		}
+	}
+	
+	public int getFormsBackupCount() {
+		String backupCount = properties.getProperty("backup.count.forms");
+		if (!StringHelper.isDigit(backupCount)) {
+			return 120;
+		} else {
+			return Integer.parseInt(backupCount);
+		}
+	}
+	
+	public int getFormsBackupInterval() {
+		String backupCount = properties.getProperty("backup.interval.forms");
+		if (!StringHelper.isDigit(backupCount)) {
+			return 60*60*24;
 		} else {
 			return Integer.parseInt(backupCount);
 		}

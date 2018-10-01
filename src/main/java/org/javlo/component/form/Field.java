@@ -1,6 +1,7 @@
 package org.javlo.component.form;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -50,7 +51,7 @@ public class Field {
 
 	public static String ROLE_COUNT_PART = "count-participants";
 	
-	protected static List<? extends Object> FIELD_ROLES = Arrays.asList(new String[] { "", ROLE_COUNT_PART });
+	protected static List<? extends Object> FIELD_ROLES = Arrays.asList(new String[] { "", ROLE_COUNT_PART, "user_firstName", "user_lastName", "user_email", "user_gender", "user_birthdate", "user_organization", "user_vat", "user_address", "user_postCode", "user_city", "user_country", "user_phone", "user_mobile", "user_function" });
 	
 	public Field(String name, String label, String type, String role, String condition, String value, String list, String registeredList, int order, int width) {
 		this.name = name;

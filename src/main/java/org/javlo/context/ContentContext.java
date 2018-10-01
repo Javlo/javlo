@@ -26,8 +26,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.config.StaticConfig;
 import org.javlo.helper.AjaxHelper.ScheduledRender;
-import org.javlo.helper.DebugHelper;
-import org.javlo.helper.LocalLogger;
 import org.javlo.helper.NetHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.StringSecurityUtil;
@@ -59,7 +57,7 @@ public class ContentContext {
 	private static final String HOST_DEFINED_SITE = "____host-defined-site";
 
 	private static final String FORCE_PATH_PREFIX = "____force-path-prefix";
-	
+
 	public static final String TAKE_SCREENSHOT = "____screenshot";
 
 	private static final String FORCE_SPECIAL_RENDERER = "forced-renderer";
@@ -123,19 +121,19 @@ public class ContentContext {
 	private boolean clearSession = false;
 
 	private boolean forceCorrectPath = false;
-	
+
 	private Boolean contentStatic = null;
-	
+
 	private Boolean onlyArea = null;
-	
+
 	private boolean stopRendering = false;
-	
+
 	private boolean takeScreenShort = true;
 
 	private static ContentContext createContentContext(HttpServletRequest request, HttpServletResponse response, boolean free) {
 		ContentContext ctx = new ContentContext();
 		ctx.setFree(free);
-		init(ctx, request, response);		
+		init(ctx, request, response);
 		ctx.storeInRequest(request);
 		return ctx;
 	}
@@ -173,8 +171,7 @@ public class ContentContext {
 	 * @param request
 	 * @param response
 	 * @param correctPath
-	 *            true for search real page and construct new path with this
-	 *            page.
+	 *            true for search real page and construct new path with this page.
 	 * @return
 	 * @throws Exception
 	 */
@@ -433,8 +430,8 @@ public class ContentContext {
 	// private MenuElement currentPageCached = null;
 
 	/**
-	 * contain a jsp page to be insered in the content place. content is insered
-	 * if this attribute is null.
+	 * contain a jsp page to be insered in the content place. content is insered if
+	 * this attribute is null.
 	 */
 	private String specialContentRenderer = null;
 
@@ -481,11 +478,11 @@ public class ContentContext {
 	private ContentContext() {
 	}
 
-	private Map<String, String> ajaxInsideZone = new HashMap<String, String>();
-	private Map<String, Object> ajaxData = new HashMap<String, Object>();
+	private Map<String, String> ajaxInsideZone = null;
+	private Map<String, Object> ajaxData = null;
 	private String specificJson = null;
-	private Map<String, ScheduledRender> scheduledAjaxInsideZone = new HashMap<String, ScheduledRender>();
-	private final Map<String, String> ajaxZone = new HashMap<String, String>();;
+	private Map<String, ScheduledRender> scheduledAjaxInsideZone = null;
+	private Map<String, String> ajaxZone = null;
 
 	private Map<? extends Object, ? extends Object> ajaxMap = null;
 
@@ -494,8 +491,10 @@ public class ContentContext {
 	private GlobalContext forceGlobalContext = null;
 
 	private String contextRequestLanguage = null;
-	
+
 	private int columnableSize = 0;
+
+	private Map<String, Object> attributes = null;
 
 	public ContentContext(ContentContext ctx) {
 		path = ctx.path;
@@ -540,7 +539,7 @@ public class ContentContext {
 		internalURL = ctx.internalURL;
 
 		checkContentArea = ctx.checkContentArea;
-		
+
 		forceGlobalContext = ctx.forceGlobalContext;
 	}
 
@@ -636,14 +635,14 @@ public class ContentContext {
 	}
 
 	/**
-	 * return a context with real content (if exist), it can be change the
-	 * language (and only this) of the current context. this method use only the
-	 * default language list.
+	 * return a context with real content (if exist), it can be change the language
+	 * (and only this) of the current context. this method use only the default
+	 * language list.
 	 * 
 	 * @return null if no content found.
 	 * @throws Exception
 	 */
-	public ContentContext getContextWithContent(MenuElement page) throws Exception {		
+	public ContentContext getContextWithContent(MenuElement page) throws Exception {
 		if (page.isRealContent(this)) {
 			return getContextOnPage(page);
 		} else {
@@ -675,9 +674,9 @@ public class ContentContext {
 	}
 
 	/**
-	 * return a context with at least one element (if exist), it can be change
-	 * the language (and only this) of the current context. this method use only
-	 * the default language list.
+	 * return a context with at least one element (if exist), it can be change the
+	 * language (and only this) of the current context. this method use only the
+	 * default language list.
 	 * 
 	 * @return null if no content found.
 	 * @throws Exception
@@ -738,9 +737,9 @@ public class ContentContext {
 	}
 
 	/**
-	 * return a context with language (if exist), it can be change the language
-	 * (and only this) of the current context). this method use only the default
-	 * language list.
+	 * return a context with language (if exist), it can be change the language (and
+	 * only this) of the current context). this method use only the default language
+	 * list.
 	 * 
 	 * @return null if no content found.
 	 * @throws Exception
@@ -768,9 +767,9 @@ public class ContentContext {
 	}
 
 	/**
-	 * return a context with language (if exist), it can be change the language
-	 * (and only this) of the current context). this method use only the default
-	 * language list.
+	 * return a context with language (if exist), it can be change the language (and
+	 * only this) of the current context). this method use only the default language
+	 * list.
 	 * 
 	 * @return null if no content found.
 	 * @throws Exception
@@ -826,9 +825,9 @@ public class ContentContext {
 			return getRequestContentLanguage();
 		}
 	}
-	
+
 	public void setContextRequestLanguage(String lg) {
-		contextRequestLanguage  = lg;
+		contextRequestLanguage = lg;
 	}
 
 	public ContentContext getContextForDefaultLanguage() {
@@ -870,11 +869,11 @@ public class ContentContext {
 				outPage = root;
 			} else {
 				if (getPath().trim().length() > 0) {
-					MenuElement elem = globalContext.getPageIfExist(this, getPath(), urlFacotry);					
+					MenuElement elem = globalContext.getPageIfExist(this, getPath(), urlFacotry);
 					if (elem != null) {
 						if (getRenderMode() != EDIT_MODE && !NetHelper.isIPAccepted(this)) {
 							if (!StringHelper.isEmpty(elem.getIpSecurityErrorPageName())) {
-								logger.warning("unauthorized access ip security : "+elem.getIpSecurityErrorPageName());
+								logger.warning("unauthorized access ip security : " + elem.getIpSecurityErrorPageName());
 								response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 								String pageName = elem.getIpSecurityErrorPageName();
 								elem = root.searchChildFromName(pageName);
@@ -912,7 +911,6 @@ public class ContentContext {
 				}
 			}
 		}
-		
 
 		if (outPage == null) {
 			logger.warning("page not found : " + getPath());
@@ -920,8 +918,8 @@ public class ContentContext {
 
 		if (isAsViewMode() && outPage != null && !outPage.isActive(this)) {
 			if (outPage.isActive()) {
-				logger.info("page not found ("+getGlobalContext().getContextKey()+") : " + getPath());
-		}
+				logger.info("page not found (" + getGlobalContext().getContextKey() + ") : " + getPath());
+			}
 			if (!isFree()) {
 				response.setStatus(HttpServletResponse.SC_NOT_FOUND);
 			}
@@ -940,10 +938,10 @@ public class ContentContext {
 		if (currentPageCached == null) {
 			return null;
 		} else {
-			return currentPageCached.get();			
+			return currentPageCached.get();
 		}
 	}
-	
+
 	public Template getCurrentTemplate() throws Exception {
 
 		if (isFree()) {
@@ -1063,7 +1061,7 @@ public class ContentContext {
 	public HttpServletRequest getRequest() {
 		return request;
 	}
-	
+
 	public RequestService getRequestService() {
 		return RequestService.getInstance(request);
 	}
@@ -1210,9 +1208,11 @@ public class ContentContext {
 	public boolean isPreview() {
 		return renderMode == PREVIEW_MODE;
 	}
-	
+
 	/**
-	 * return true if render mode in preview only (no tools displayed, like view mode with preview data)
+	 * return true if render mode in preview only (no tools displayed, like view
+	 * mode with preview data)
+	 * 
 	 * @return
 	 */
 	public boolean isPreviewOnly() {
@@ -1250,8 +1250,8 @@ public class ContentContext {
 	}
 
 	/**
-	 * return if the current request is for a page access and not a resource
-	 * (jsp, img, js...)
+	 * return if the current request is for a page access and not a resource (jsp,
+	 * img, js...)
 	 * 
 	 * @return
 	 */
@@ -1530,12 +1530,12 @@ public class ContentContext {
 		} else {
 			return getCurrentEditUser();
 		}
-	}	
+	}
 
 	public User getCurrentEditUser() {
-		return AdminUserFactory.createUserFactory(getGlobalContext(), request.getSession()).getCurrentUser(getGlobalContext(), request.getSession());	
+		return AdminUserFactory.createUserFactory(getGlobalContext(), request.getSession()).getCurrentUser(getGlobalContext(), request.getSession());
 	}
-	
+
 	/**
 	 * get the current user id. That can be the edit user or the view user.
 	 * 
@@ -1549,7 +1549,7 @@ public class ContentContext {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * return a identifiant for the user (session id can be use if no user logged)
 	 */
@@ -1567,6 +1567,9 @@ public class ContentContext {
 	 * @return a map with html id as key and xhtml as value.
 	 */
 	public Map<String, String> getAjaxInsideZone() {
+		if (ajaxInsideZone == null) {
+			ajaxInsideZone = new HashMap<String, String>();
+		}
 		return ajaxInsideZone;
 	}
 
@@ -1576,10 +1579,16 @@ public class ContentContext {
 	 * @return a map with html id as key and xhtml as value.
 	 */
 	public Map<String, Object> getAjaxData() {
+		if (ajaxData == null) {
+			ajaxData = new HashMap<String, Object>();
+		}
 		return ajaxData;
 	}
 
 	public Map<String, ScheduledRender> getScheduledAjaxInsideZone() {
+		if (scheduledAjaxInsideZone == null) {
+			scheduledAjaxInsideZone = new HashMap<String, ScheduledRender>();
+		}
 		return scheduledAjaxInsideZone;
 	}
 
@@ -1592,6 +1601,9 @@ public class ContentContext {
 	 *            the new content of the zone
 	 */
 	public void addAjaxData(String key, String value) {
+		if (ajaxData == null) {
+			ajaxData = new HashMap<String, Object>();
+		}
 		ajaxData.put(key, value);
 	}
 
@@ -1604,12 +1616,15 @@ public class ContentContext {
 	 *            the new content of the zone
 	 */
 	public void addAjaxInsideZone(String id, String xhtml) {
+		if (ajaxInsideZone == null) {
+			ajaxInsideZone = new HashMap<String, String>();
+		}
 		ajaxInsideZone.put(id, xhtml);
 	}
 
 	/**
-	 * Schedule an ajax zone for update. The uri will be called after the
-	 * prepare() of the current module actions.
+	 * Schedule an ajax zone for update. The uri will be called after the prepare()
+	 * of the current module actions.
 	 * 
 	 * @param id
 	 *            a xhtml id
@@ -1617,6 +1632,9 @@ public class ContentContext {
 	 *            the new content of the zone
 	 */
 	public void scheduleAjaxInsideZone(String id, String uri, Map<String, Object> attributes) {
+		if (scheduledAjaxInsideZone == null) {
+			scheduledAjaxInsideZone = new HashMap<String, ScheduledRender>();
+		}
 		scheduledAjaxInsideZone.put(id, new ScheduledRender(uri, attributes));
 	}
 
@@ -1626,6 +1644,9 @@ public class ContentContext {
 	 * @return a map with html id as key and xhtml as value.
 	 */
 	public Map<String, String> getAjaxZone() {
+		if (ajaxZone == null) {
+			ajaxZone = new HashMap<String, String>();
+		}
 		return ajaxZone;
 	}
 
@@ -1638,6 +1659,9 @@ public class ContentContext {
 	 *            the new content of the zone
 	 */
 	public void addAjaxZone(String id, String xhtml) {
+		if (ajaxZone == null) {
+			ajaxZone = new HashMap<String, String>();
+		}
 		ajaxZone.put(id, xhtml);
 	}
 
@@ -1764,11 +1788,11 @@ public class ContentContext {
 		 * 
 		 * if (!isAsViewMode()) { return false; }
 		 * 
-		 * boolean outValue = false; if (getCurrentTemplate() != null) {
-		 * outValue = getCurrentTemplate().isCompressResources(); } String
-		 * acceptEncoding = request.getHeader("Accept-Encoding"); if
-		 * (acceptEncoding != null) { outValue = outValue &&
-		 * acceptEncoding.toLowerCase().contains("gzip"); } return outValue;
+		 * boolean outValue = false; if (getCurrentTemplate() != null) { outValue =
+		 * getCurrentTemplate().isCompressResources(); } String acceptEncoding =
+		 * request.getHeader("Accept-Encoding"); if (acceptEncoding != null) { outValue
+		 * = outValue && acceptEncoding.toLowerCase().contains("gzip"); } return
+		 * outValue;
 		 */
 		return false;
 	}
@@ -1824,7 +1848,7 @@ public class ContentContext {
 		}
 		return getPathPrefix(getGlobalContext(), request);
 	}
-	
+
 	public static String getPathPrefix(GlobalContext globalContext, HttpServletRequest request) {
 		if (isHostDefineSite(request)) {
 			return "";
@@ -1952,9 +1976,9 @@ public class ContentContext {
 
 	public void setForceGlobalContext(GlobalContext forceGlobalContext) {
 		this.forceGlobalContext = forceGlobalContext;
-		//ElementaryURLHelper.resetPathPrefix(this);
+		// ElementaryURLHelper.resetPathPrefix(this);
 	}
-	
+
 	public boolean isForceGlobalContext() {
 		return forceGlobalContext != null;
 	}
@@ -1971,8 +1995,8 @@ public class ContentContext {
 	 * set content context if Object implement interface INeedContentContext.
 	 * 
 	 * @param object
-	 *            a object, if object don't implement INeedContentContext
-	 *            interface this method do nothing.
+	 *            a object, if object don't implement INeedContentContext interface
+	 *            this method do nothing.
 	 * @return true if object implement INeedContentContext, false otherwise.
 	 */
 	public boolean setContentContextIfNeeded(Object object) {
@@ -2056,8 +2080,7 @@ public class ContentContext {
 	}
 
 	/**
-	 * don't use proxy for rendering (URL don't use getProxyPrefix on
-	 * globalContext)
+	 * don't use proxy for rendering (URL don't use getProxyPrefix on globalContext)
 	 * 
 	 * @return
 	 */
@@ -2106,7 +2129,7 @@ public class ContentContext {
 	}
 
 	private static final String[] HEADERS_TO_TRY = { "X-Forwarded-For", "Proxy-Client-IP", "WL-Proxy-Client-IP", "HTTP_X_FORWARDED_FOR", "HTTP_X_FORWARDED", "HTTP_X_CLUSTER_CLIENT_IP", "HTTP_CLIENT_IP", "HTTP_FORWARDED_FOR", "HTTP_FORWARDED", "HTTP_VIA", "REMOTE_ADDR" };
-	
+
 	public String getRealRemoteIp() {
 		return getRealRemoteIp(request);
 	}
@@ -2123,7 +2146,7 @@ public class ContentContext {
 		}
 		return request.getRemoteAddr();
 	}
-	
+
 	public String getRealRemoteIp(boolean anonymised) {
 		String ip = getRealRemoteIp();
 		if (anonymised) {
@@ -2131,7 +2154,7 @@ public class ContentContext {
 		}
 		return ip;
 	}
-	
+
 	public static String getRealRemoteIp(HttpServletRequest request, boolean anonymised) {
 		String ip = getRealRemoteIp(request);
 		if (anonymised) {
@@ -2139,7 +2162,6 @@ public class ContentContext {
 		}
 		return ip;
 	}
-
 
 	public boolean isForceCorrectPath() {
 		return forceCorrectPath;
@@ -2165,15 +2187,16 @@ public class ContentContext {
 			return null;
 		}
 	}
-	
+
 	public ContentContext getMasterContentContext() throws IOException {
 		ContentContext masterContentContext = new ContentContext(this);
 		masterContentContext.setForceGlobalContext(getGlobalContext().getMasterContext(this));
 		return masterContentContext;
 	}
-	
+
 	/**
 	 * current user (edit or view) can manager the current site.
+	 * 
 	 * @return
 	 */
 	public boolean isUserWebSiteManager() {
@@ -2189,10 +2212,10 @@ public class ContentContext {
 		}
 		return false;
 	}
-	
+
 	public boolean isContentStatic() {
 		if (contentStatic == null) {
-			contentStatic = StringHelper.isTrue(request.getHeader(Html2Directory.STATIC_HEADER_AND_PARAM)) || StringHelper.isTrue(request.getParameter(Html2Directory.STATIC_HEADER_AND_PARAM));			
+			contentStatic = StringHelper.isTrue(request.getHeader(Html2Directory.STATIC_HEADER_AND_PARAM)) || StringHelper.isTrue(request.getParameter(Html2Directory.STATIC_HEADER_AND_PARAM));
 		}
 		return contentStatic;
 	}
@@ -2223,5 +2246,20 @@ public class ContentContext {
 	public void setColumnableSize(int columnableSize) {
 		this.columnableSize = columnableSize;
 	}
-	
+
+	public Object getAttribute(String key) {
+		if (attributes == null) {
+			return null;
+		} else {
+			return attributes.get(key);
+		}
+	}
+
+	public void setAttribute(String key, Object obj) {
+		if (attributes == null) {
+			attributes = new HashMap<String, Object>();
+		}
+		attributes.put(key, obj);
+	}
+
 }

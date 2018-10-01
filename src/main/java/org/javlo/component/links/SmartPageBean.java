@@ -8,11 +8,17 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
 
+import org.javlo.actions.IEventRegistration;
 import org.javlo.bean.DateBean;
 import org.javlo.bean.Link;
+import org.javlo.component.core.ContentElementList;
+import org.javlo.component.core.IContentVisualComponent;
+import org.javlo.component.core.IDataContainer;
+import org.javlo.component.form.SmartGenericForm;
 import org.javlo.component.image.IImageTitle;
 import org.javlo.component.links.PageReferenceComponent.PageEvent;
 import org.javlo.component.meta.Tags;
@@ -121,8 +127,7 @@ public class SmartPageBean {
 		realContentCtx.setLanguage(realContentCtx.getRequestContentLanguage());
 	}
 
-	public static SmartPageBean getInstance(ContentContext ctx, ContentContext lgCtx, MenuElement page,
-			PageReferenceComponent comp) {
+	public static SmartPageBean getInstance(ContentContext ctx, ContentContext lgCtx, MenuElement page, PageReferenceComponent comp) {
 		return new SmartPageBean(ctx, lgCtx, page, comp);
 	}
 
@@ -213,7 +218,11 @@ public class SmartPageBean {
 	}
 
 	protected String getImageFilter() {
-		return comp.getConfig(lgCtx).getProperty("filter-image", "reference-list");
+		if (comp == null) {
+			return "reference-list";
+		} else {
+			return comp.getConfig(lgCtx).getProperty("filter-image", "reference-list");
+		}
 	}
 
 	public Collection<Image> getImages() {
@@ -222,10 +231,8 @@ public class SmartPageBean {
 			Collection<Image> imagesBean = new LinkedList<SmartPageBean.Image>();
 			for (IImageTitle imageItem : images) {
 				String imagePath = imageItem.getResourceURL(lgCtx);
-				String imageURL = URLHelper.createTransformURL(lgCtx, page, imageItem.getResourceURL(lgCtx),
-						getImageFilter());
-				String viewImageURL = URLHelper.createTransformURL(lgCtx, page, imageItem.getResourceURL(lgCtx),
-						"thumb-view");
+				String imageURL = URLHelper.createTransformURL(lgCtx, page, imageItem.getResourceURL(lgCtx), getImageFilter());
+				String viewImageURL = URLHelper.createTransformURL(lgCtx, page, imageItem.getResourceURL(lgCtx), "thumb-view");
 				String imageDescription = XHTMLHelper.stringToAttribute(imageItem.getImageDescription(lgCtx));
 				String cssClass = "";
 				String linkURL = imageItem.getImageLinkURL(lgCtx);
@@ -237,8 +244,7 @@ public class SmartPageBean {
 						cssClass = "link " + StringHelper.getPathType(linkURL, "");
 					}
 				}
-				SmartPageBean.Image imageBean = new SmartPageBean.Image(imageURL, viewImageURL, linkURL, cssClass,
-						imageDescription, imagePath);
+				SmartPageBean.Image imageBean = new SmartPageBean.Image(imageURL, viewImageURL, linkURL, cssClass, imageDescription, imagePath);
 				imagesBean.add(imageBean);
 			}
 			return imagesBean;
@@ -259,7 +265,7 @@ public class SmartPageBean {
 				return URLHelper.createTransformURL(lgCtx, page, image.getResourceURL(lgCtx), getImageFilter());
 			}
 		} catch (Exception e) {
-			e.printStackTrace();			
+			e.printStackTrace();
 		}
 		return null;
 	}
@@ -319,8 +325,7 @@ public class SmartPageBean {
 				localLGCtx.setContentLanguage(lg);
 				if (page.isRealContent(localLGCtx)) {
 					Locale locale = new Locale(lg);
-					Link link = new Link(URLHelper.createURL(localLGCtx, page.getPath()), lg,
-							lg + " - " + locale.getDisplayLanguage(locale));
+					Link link = new Link(URLHelper.createURL(localLGCtx, page.getPath()), lg, lg + " - " + locale.getDisplayLanguage(locale));
 					links.add(link);
 				}
 			}
@@ -382,15 +387,13 @@ public class SmartPageBean {
 					dates.add(new DateBean(ctx, startDate.getTime()));
 					final int MAX_DAYS_OF_EVENTS = 400;
 					int i = 0;
-					while (TimeHelper.isBeforeForDay(startDate.getTime(), endDate.getTime())
-							&& i < MAX_DAYS_OF_EVENTS) {
+					while (TimeHelper.isBeforeForDay(startDate.getTime(), endDate.getTime()) && i < MAX_DAYS_OF_EVENTS) {
 						i++;
 						startDate.add(Calendar.DAY_OF_YEAR, 1);
 						dates.add(new DateBean(ctx, startDate.getTime()));
 					}
 					if (i == MAX_DAYS_OF_EVENTS) {
-						logger.warning("to much days in event (max:" + MAX_DAYS_OF_EVENTS + ") : " + page.getPath()
-								+ " [" + ctx.getGlobalContext().getContextKey() + ']');
+						logger.warning("to much days in event (max:" + MAX_DAYS_OF_EVENTS + ") : " + page.getPath() + " [" + ctx.getGlobalContext().getContextKey() + ']');
 					}
 				}
 			} else {
@@ -412,8 +415,7 @@ public class SmartPageBean {
 					i++;
 				}
 				if (i == MAX_DAYS_OF_EVENTS) {
-					logger.warning("to much days in page (max:" + MAX_DAYS_OF_EVENTS + ") : " + page.getPath() + " ["
-							+ ctx.getGlobalContext().getContextKey() + ']');
+					logger.warning("to much days in page (max:" + MAX_DAYS_OF_EVENTS + ") : " + page.getPath() + " [" + ctx.getGlobalContext().getContextKey() + ']');
 				}
 			}
 			return dates;
@@ -478,7 +480,7 @@ public class SmartPageBean {
 			return null;
 		}
 	}
-	
+
 	public String getTitleForAttribute() {
 		try {
 			return Encode.forHtmlAttribute(page.getTitle(lgCtx));
@@ -529,7 +531,7 @@ public class SmartPageBean {
 				return URLHelper.createTransformURL(lgCtx, page, imageTitle.getResourceURL(lgCtx), "thumb-view");
 			}
 		} catch (Exception e) {
-			e.printStackTrace();			
+			e.printStackTrace();
 		}
 		return null;
 	}
@@ -660,7 +662,7 @@ public class SmartPageBean {
 			return null;
 		}
 	}
-	
+
 	public String getFont() {
 		try {
 			return page.getFont(ctx);
@@ -919,7 +921,7 @@ public class SmartPageBean {
 	public String getHtmlSectionId() {
 		return page.getHtmlSectionId(ctx);
 	}
-	
+
 	public List<TaxonomyDisplayBean> getTaxonomy() {
 		try {
 			return TaxonomyDisplayBean.convert(ctx, ctx.getGlobalContext().getAllTaxonomy(ctx).convert(page.getTaxonomy()));
@@ -927,5 +929,26 @@ public class SmartPageBean {
 			e.printStackTrace();
 			return null;
 		}
+	}
+
+	private List<Map<String, String>> outData = null;
+
+	public List<Map<String, String>> getUserData() throws Exception {
+		if (outData == null) {
+			String userId = ctx.getCurrentUserId();
+			if (userId == null) {
+				outData = Collections.EMPTY_LIST;
+			} else {
+				outData = new LinkedList<Map<String, String>>();
+				ContentElementList content = page.getContent(ctx);
+				while (content.hasNext(ctx)) {
+					IContentVisualComponent comp = content.next(ctx);
+					if (comp instanceof IEventRegistration) {
+						outData.addAll(((IEventRegistration) comp).getData(ctx, userId));
+					}
+				}
+			}
+		}
+		return outData;
 	}
 }

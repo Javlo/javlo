@@ -1440,6 +1440,15 @@ public class InfoBean {
 			return null;
 		}
 	}
+	
+	public PageBean getRegistrationPage() throws Exception {
+		ContentService content = ContentService.getInstance(ctx.getRequest());
+		MenuElement regPage = content.getNavigation(ctx).searchChildFromName("register", "registered", "registration");
+		if (regPage != null) {
+			return regPage.getPageBean(ctx);
+		}
+		return null;
+	}
 
 	public int getHostPort() {
 		return ctx.getHostPort();

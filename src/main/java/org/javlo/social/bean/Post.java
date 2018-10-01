@@ -12,6 +12,7 @@ public class Post {
 	private Long mainPost;
 	private String group;
 	private String author;
+	private String latestContributor;
 	private String title;
 	private String text;
 	private String media;
@@ -200,6 +201,14 @@ public class Post {
 
 	public void setLatestUpdateString(String latestUpdateString) {
 		this.latestUpdateString = latestUpdateString;
+	}
+
+	public String getLatestContributor() {
+		return latestContributor;
+	}
+
+	public void setLatestContributor(String latestContributor) {
+		this.latestContributor = latestContributor;
 	}
 
 }

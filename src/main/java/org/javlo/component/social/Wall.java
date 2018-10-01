@@ -26,8 +26,10 @@ public class Wall extends AbstractPropertiesComponent implements IAction {
 	public static final String TYPE = "wall";
 
 	private static final String UNVALIDED_NOT_VISIBLE = "unvalided_not_visible";
+	
+	private static final String POST_DELETABLE = "post_deletable";
 
-	private static final List<String> FIELDS = new LinkedList<String>(Arrays.asList(new String[] { "name", "title", "roles", "noaccess", UNVALIDED_NOT_VISIBLE+"#checkbox", "msgAddReply" }));
+	private static final List<String> FIELDS = new LinkedList<String>(Arrays.asList(new String[] { "name", "title", "roles", "noaccess", "labelAddReply", "labelCreateOn", "labelLatestMsg","labelReplyAt", "labelToBottom", "labelToTop", UNVALIDED_NOT_VISIBLE+"#checkbox", POST_DELETABLE+"#checkbox" }));
 
 	@Override
 	public String getType() {

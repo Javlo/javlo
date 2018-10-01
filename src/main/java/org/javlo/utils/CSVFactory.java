@@ -435,7 +435,8 @@ public class CSVFactory {
 		BufferedWriter out = null;
 		Writer fstream = null;
 		try {
-			fstream = new FileWriter(file, true);
+			//fstream = new FileWriter(file, true);
+			fstream = new OutputStreamWriter(new FileOutputStream(file, true), ContentContext.CHARACTER_ENCODING); 
 			out = new BufferedWriter(fstream);
 			CSVPrinter printer = new CSVPrinter(out);
 			printer.setAlwaysQuote(true);

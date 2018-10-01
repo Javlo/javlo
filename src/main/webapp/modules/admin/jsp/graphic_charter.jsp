@@ -55,6 +55,10 @@
 </div><div class="col-md-4">
 <h2>Layout</h2>
 <div class="checkbox">	
+	<label><input type="checkbox" name="loginMenu" ${currentContext.templateData.loginMenu?'checked="checked"':""} />
+	${i18n.edit['admin.template.login-menu']}</label>
+</div>
+<div class="checkbox">	
 	<label><input type="checkbox" name="fixMenu" ${currentContext.templateData.fixMenu?'checked="checked"':""} />
 	${i18n.edit['admin.template.fix-menu']}</label>
 </div>

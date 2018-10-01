@@ -39,4 +39,14 @@ public class I18nComponent extends AbstractVisualComponent {
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
 		return "";
 	}
+	
+	@Override
+	public String getFontAwesome() {
+		return "globe";
+	}
+	
+	@Override
+	public int getComplexityLevel(ContentContext ctx) {
+		return COMPLEXITY_ADMIN;
+	}
 }

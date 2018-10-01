@@ -55,6 +55,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.javlo.cache.ICache;
 import org.javlo.cache.MapCache;
+import org.javlo.component.form.GenericForm;
 import org.javlo.config.StaticConfig;
 import org.javlo.data.taxonomy.TaxonomyService;
 import org.javlo.data.taxonomy.TaxonomyServiceAgregation;
@@ -333,6 +334,10 @@ public class GlobalContext implements Serializable, IPrintInfo {
 				}
 				if (staticConfig.getUsersBackupCount() > 0) {
 					BackupBean backupBean = new BackupBean(new File(URLHelper.mergePath(getDataFolder(), staticConfig.getUserFolder())), staticConfig.getUsersBackupInterval(), staticConfig.getUsersBackupCount());
+					backupThread.addBackup(backupBean);
+				}
+				if (staticConfig.getFormsBackupCount() > 0) {
+					BackupBean backupBean = new BackupBean(new File(URLHelper.mergePath(getDataFolder(), staticConfig.getStaticFolder(), GenericForm.DYNAMIC_FORM_RESULT_FOLDER)), staticConfig.getFormsBackupInterval(), staticConfig.getFormsBackupCount());
 					backupThread.addBackup(backupBean);
 				}
 				backupThread.start();
@@ -1000,7 +1005,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	public String getAliasOf() {
 		return properties.getString("alias", "");
 	}
-
+	
 	public List<Principal> getAllPrincipals() { // TODO: check this method, some
 		// element of the list is null
 		// ???

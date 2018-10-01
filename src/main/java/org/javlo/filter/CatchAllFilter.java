@@ -1,5 +1,6 @@
 package org.javlo.filter;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLDecoder;
@@ -47,6 +48,7 @@ import org.javlo.service.ContentService;
 import org.javlo.service.CountService;
 import org.javlo.service.DataToIDService;
 import org.javlo.service.RequestService;
+import org.javlo.servlet.FileServlet;
 import org.javlo.template.Template;
 import org.javlo.tracking.Tracker;
 import org.javlo.user.AdminUserFactory;
@@ -135,7 +137,7 @@ public class CatchAllFilter implements Filter {
 			if (globalContext == null) {
 				globalContext = GlobalContext.getInstance(httpRequest.getSession(), host);
 				hostDefineSite = true;
-			} 
+			}
 		}
 		if (staticConfig.isRequestWrapper()) {
 			if (httpRequest.getMethod().trim().equalsIgnoreCase("post")) {
@@ -153,13 +155,12 @@ public class CatchAllFilter implements Filter {
 			globalContext.touch();
 		}
 
-
 		if (StringHelper.isTrue(request.getParameter(ContentContext.FORWARD_AJAX))) {
 			try {
 				ContentContext ctx = ContentContext.getContentContext(httpRequest, (HttpServletResponse) response);
 				String url = URLHelper.createAjaxURL(ctx);
 				String forwardURL = URLHelper.removeSite(ctx, url);
-				globalContext.log("url", "forward ajax : "+httpRequest.getRequestURI()+" >> "+forwardURL);
+				globalContext.log("url", "forward ajax : " + httpRequest.getRequestURI() + " >> " + forwardURL);
 				((HttpServletRequest) request).getRequestDispatcher(forwardURL).forward(httpRequest, response);
 				return;
 			} catch (Exception e) {
@@ -173,9 +174,9 @@ public class CatchAllFilter implements Filter {
 
 		boolean newUser = doLoginFilter(request, response);
 		User user = UserFactory.createUserFactory(globalContext, httpRequest.getSession()).getCurrentUser(globalContext, httpRequest.getSession());
-		
+
 		try {
-			Tracker.trace(httpRequest, (HttpServletResponse)response);
+			Tracker.trace(httpRequest, (HttpServletResponse) response);
 		} catch (Exception e2) {
 			e2.printStackTrace();
 		}
@@ -259,7 +260,7 @@ public class CatchAllFilter implements Filter {
 					url = URLHelper.addParam(url, MailingAction.MAILING_FEEDBACK_PARAM_NAME, "" + request.getAttribute(MailingAction.MAILING_FEEDBACK_PARAM_NAME));
 				}
 
-				URL newURL = new URL(url + decryptedData);				
+				URL newURL = new URL(url + decryptedData);
 				for (Map.Entry<String, String> entry : URLHelper.getParams(newURL).entrySet()) {
 					requestService.putParameter(entry.getKey(), entry.getValue());
 				}
@@ -328,14 +329,14 @@ public class CatchAllFilter implements Filter {
 		globalContext = GlobalContext.getInstance(httpRequest);
 
 		if (!ContentManager.isEdit(httpRequest, !hostDefineSite) && !ContentManager.isPreview(httpRequest, !hostDefineSite)) {
+			String cmsURI = uri;
+			if (ContentContext.getPathPrefix(globalContext, (HttpServletRequest) request) != null && ContentContext.getPathPrefix(globalContext, (HttpServletRequest) request).length() > 0) {
+				cmsURI = cmsURI.replaceFirst("/" + ContentContext.getPathPrefix(globalContext, (HttpServletRequest) request), "");
+			}
 			Map<String, String> uriAlias = globalContext.getURIAlias();
 			Collection<Map.Entry<String, String>> entries = uriAlias.entrySet();
-			for (Map.Entry<String, String> entry : entries) {
-				String cmsURI = uri;
-				if (ContentContext.getPathPrefix(globalContext, (HttpServletRequest) request) != null && ContentContext.getPathPrefix(globalContext, (HttpServletRequest) request).length() > 0) {
-					cmsURI = cmsURI.replaceFirst("/" + ContentContext.getPathPrefix(globalContext, (HttpServletRequest) request), "");
-				}
-				if (cmsURI.length() > 1) {
+			if (cmsURI.length() > 1) {
+				for (Map.Entry<String, String> entry : entries) {
 					String pattern1 = entry.getKey();
 					String pattern2 = entry.getValue();
 					if (!pattern1.contains("*")) {
@@ -355,6 +356,16 @@ public class CatchAllFilter implements Filter {
 							return;
 						}
 					}
+				}
+				File staticFile = new File(URLHelper.mergePath(globalContext.getDataFolder(), "www", cmsURI));
+				if (staticFile.exists() && staticFile.isFile() && response instanceof HttpServletResponse) {
+					HttpServletResponse httpServletResponse = (HttpServletResponse)response;
+					httpServletResponse.setContentType(ResourceHelper.getFileExtensionToMineType(StringHelper.getFileExtension(staticFile.getName())));
+					httpServletResponse.setHeader("Accept-Ranges", "bytes");
+					httpServletResponse.setDateHeader("Last-Modified", staticFile.lastModified());
+					httpServletResponse.setDateHeader("Expires", System.currentTimeMillis() + FileServlet.DEFAULT_EXPIRE_TIME);
+					ResourceHelper.writeFileToStream(staticFile, response.getOutputStream());
+					return;
 				}
 			}
 		}
@@ -381,7 +392,7 @@ public class CatchAllFilter implements Filter {
 							httpRequest.getSession().setAttribute(InfoBean.NEW_SESSION_PARAM, true);
 						}
 						httpRequest.setAttribute(MAIN_URI_KEY, URLDecoder.decode(httpRequest.getRequestURI(), ContentContext.CHARACTER_ENCODING));
-						globalContext.log("url", "forward add view : "+httpRequest.getRequestURI()+" >> "+newPath);
+						globalContext.log("url", "forward add view : " + httpRequest.getRequestURI() + " >> " + newPath);
 						httpRequest.getRequestDispatcher(newPath).forward(httpRequest, response);
 						return;
 					}
@@ -415,12 +426,11 @@ public class CatchAllFilter implements Filter {
 			// JavloServletResponse((HttpServletResponse)response);
 			next.doFilter(httpRequest, response);
 			/*
-			 * if (javloResponse.isError()) { String viewURI = uri; String
-			 * newPath = "/"+globalContext.getDefaultLanguage() + viewURI; if
+			 * if (javloResponse.isError()) { String viewURI = uri; String newPath =
+			 * "/"+globalContext.getDefaultLanguage() + viewURI; if
 			 * (httpRequest.getSession().isNew()) {
-			 * httpRequest.getSession().setAttribute(InfoBean.NEW_SESSION_PARAM,
-			 * true); } NetHelper.sendRedirectTemporarily((HttpServletResponse)
-			 * response, newPath); }
+			 * httpRequest.getSession().setAttribute(InfoBean.NEW_SESSION_PARAM, true); }
+			 * NetHelper.sendRedirectTemporarily((HttpServletResponse) response, newPath); }
 			 */
 		}
 	}
@@ -434,8 +444,8 @@ public class CatchAllFilter implements Filter {
 			HttpServletRequest httpRequest = (HttpServletRequest) request;
 			HttpServletResponse httpResponse = (HttpServletResponse) response;
 
-			GlobalContext globalContext = GlobalContext.getInstance(httpRequest);			
-			
+			GlobalContext globalContext = GlobalContext.getInstance(httpRequest);
+
 			RequestService requestService = RequestService.getInstance(httpRequest);
 
 			Principal logoutUser = null;
@@ -461,22 +471,19 @@ public class CatchAllFilter implements Filter {
 
 			if (user != null) {
 				EditContext editContext = EditContext.getInstance(GlobalContext.getInstance(((HttpServletRequest) request).getSession(), globalContext.getContextKey()), ((HttpServletRequest) request).getSession());
-				/*if (!user.getContext().equals(globalContext.getContextKey())) {
-					if (!AdminUserSecurity.getInstance().isGod(user) && !AdminUserSecurity.getInstance().isMaster(user)) {
-						try {
-							editContext.setEditUser(null);
-							logger.info("remove user '" + user.getLogin() + "' context does'nt match.");
-							user = null;
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
-					}
-				}*/
+				/*
+				 * if (!user.getContext().equals(globalContext.getContextKey())) { if
+				 * (!AdminUserSecurity.getInstance().isGod(user) &&
+				 * !AdminUserSecurity.getInstance().isMaster(user)) { try {
+				 * editContext.setEditUser(null); logger.info("remove user '" + user.getLogin()
+				 * + "' context does'nt match."); user = null; } catch (Exception e) {
+				 * e.printStackTrace(); } } }
+				 */
 				if (editContext != null && user != null && editContext.getEditUser() == null && user.isEditor()) {
 					editContext.setEditUser(user);
 				}
 			}
-			
+
 			String token = request.getParameter(IUserFactory.TOKEN_PARAM);
 			if (token != null) {
 				String realToken = globalContext.convertOneTimeToken(token);
@@ -494,13 +501,13 @@ public class CatchAllFilter implements Filter {
 							user = AdminUserFactory.createUserFactory(globalContext, httpRequest.getSession()).login(httpRequest, token);
 						}
 					} else if (fact.getCurrentUser(globalContext, ((HttpServletRequest) request).getSession()) == null) {
-						if (request.getParameter("j_username") != null || httpRequest.getUserPrincipal() != null) {							
+						if (request.getParameter("j_username") != null || httpRequest.getUserPrincipal() != null) {
 							String login = request.getParameter("j_username");
 							if (request.getParameter("autologin") != null) {
 								DataToIDService service = DataToIDService.getInstance(httpRequest.getSession().getServletContext());
 								String codeId = service.setData(login, IUserFactory.AUTO_LOGIN_AGE_SEC);
 								RequestHelper.setCookieValue(httpResponse, JAVLO_LOGIN_ID, codeId, IUserFactory.AUTO_LOGIN_AGE_SEC, null);
-							}		
+							}
 							if (login == null && httpRequest.getUserPrincipal() != null) {
 								login = httpRequest.getUserPrincipal().getName();
 							} else if (fact.login(httpRequest, login, request.getParameter("j_password")) == null) {
@@ -557,7 +564,7 @@ public class CatchAllFilter implements Filter {
 				String login = request.getParameter("j_username");
 				if (login == null && httpRequest.getUserPrincipal() != null) {
 					login = httpRequest.getUserPrincipal().getName();
-				}				
+				}
 				AdminUserFactory adminFactory = AdminUserFactory.createUserFactory(globalContext, httpRequest.getSession());
 				User editUser = adminFactory.login(httpRequest, login, request.getParameter("j_password"));
 				if (editUser != null) {
@@ -572,8 +579,8 @@ public class CatchAllFilter implements Filter {
 
 					logger.fine(login + " is logged roles : [" + StringHelper.collectionToString(editUser.getRoles(), ",") + ']');
 
-				} else {					
-					if (token != null) {						
+				} else {
+					if (token != null) {
 						user = adminFactory.login(httpRequest, token);
 					} else {
 						logger.info(login + " fail to login.");

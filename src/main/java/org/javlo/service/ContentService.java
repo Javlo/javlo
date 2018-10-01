@@ -428,7 +428,7 @@ public class ContentService implements IPrintInfo {
 			}
 		}
 	}
-
+	
 	public String getAttribute(ContentContext ctx, String key) {
 		if (key != null) {
 			key = key.replace("&", "_and_");
@@ -447,12 +447,27 @@ public class ContentService implements IPrintInfo {
 			return viewGlobalMap.get(key);
 		} else if (ctx.getRenderMode() == ContentContext.TIME_MODE) {
 			if (timeTravelerGlobalMap == null) {
+				try {
+					getNavigation(ctx);
+					if (timeTravelerGlobalMap == null) {
+						return null;
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 				return null;
 			}
 			return timeTravelerGlobalMap.get(key);
 		} else {
 			if (previewGlobalMap == null) {
-				return null;
+				try {
+					getNavigation(ctx);
+					if (previewGlobalMap == null) {
+						return null;
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 			}
 			return previewGlobalMap.get(key);
 		}

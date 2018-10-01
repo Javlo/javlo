@@ -737,6 +737,7 @@ public class AdminAction extends AbstractModuleAction {
 		td.setFontHeading(requestService.getParameter("fontHeading", "" + td.getFontHeading()));
 		td.setFixMenu(StringHelper.isTrue(requestService.getParameter("fixMenu", null)));
 		td.setLargeMenu(StringHelper.isTrue(requestService.getParameter("largeMenu", null)));
+		td.setLoginMenu(StringHelper.isTrue(requestService.getParameter("loginMenu", null)));
 		td.setSearchMenu(StringHelper.isTrue(requestService.getParameter("searchMenu", null)));
 		td.setJssearchMenu(StringHelper.isTrue(requestService.getParameter("jssearchMenu", null)));
 		td.setDropdownMenu(StringHelper.isTrue(requestService.getParameter("dropdownMenu", null)));

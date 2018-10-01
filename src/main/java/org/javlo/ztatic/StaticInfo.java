@@ -733,7 +733,7 @@ public class StaticInfo {
 		try {
 			return ExifHelper.readPosition(getFile());
 		} catch (ImageReadException e) {
-			e.printStackTrace();
+			logger.warning(e.getMessage());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

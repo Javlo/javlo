@@ -697,7 +697,13 @@ Security in case of vulnerabilities.
 - role for smartgeneric form : count-participants, one inscription could count for more than one person.
 - page reference columnalbe
 - page reference popup
+- properties component label
+- login menu
+- static files in www folder
+- events list by user (MyEvents)
+- forms result backup thread
 ### Fixed
 - edit index.html of template, load CodeMirror
 - reset navigation if navigation renderer change
 - don't delete meta data of source when copy resources
+- paste element in edit mode, null pointer corrected

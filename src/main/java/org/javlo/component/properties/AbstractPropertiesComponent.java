@@ -19,6 +19,7 @@ import org.javlo.helper.StringHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.service.ITranslator;
 import org.javlo.service.RequestService;
+import org.javlo.service.exception.ServiceException;
 
 public abstract class AbstractPropertiesComponent extends AbstractVisualComponent {
 
@@ -33,7 +34,7 @@ public abstract class AbstractPropertiesComponent extends AbstractVisualComponen
 		super.prepareView(ctx);
 		Map<String, String> fields = new HashMap<String, String>();
 		for (String field : getFields(ctx)) {
-			fields.put(field, getFieldValue(field));
+			fields.put(getFieldName(field), getFieldValue(field));
 		}
 		ctx.getRequest().setAttribute("fields", fields); // depreciated
 		ctx.getRequest().setAttribute("field", fields);
@@ -54,51 +55,64 @@ public abstract class AbstractPropertiesComponent extends AbstractVisualComponen
 			return field.substring(field.indexOf('#') + 1);
 		}
 	}
+	
+	protected void renderField(PrintWriter out, ContentContext ctx, String field) throws ServiceException, Exception {
+		I18nAccess i18nAccess = I18nAccess.getInstance(ctx);
+		String fieldName = getFieldName(field);
+		String fieldType = getFieldType(field);
+		out.println("<div class=\"col-md-4 col-xs-6\">");
+		out.println("<div class=\"form-group\">");
+		if (fieldType.equals("text")) {
+			out.println("<label for=\"" + createKeyWithField(fieldName) + "\">");
+			out.println(i18nAccess.getText("field." + fieldName, fieldName));
+			out.println("</label>");
+			out.print("<textarea class=\"form-control\" rows=\"" + getRowSize(fieldName) + "\" id=\"");
+			out.print(createKeyWithField(field));
+			out.print("\" name=\"");
+			out.print(createKeyWithField(fieldName));
+			out.print("\">");
+			out.print(getFieldValue(fieldName));
+			out.println("</textarea>");
+		} else if (fieldType.equals("checkbox")) {
+			out.println("<div class=\"checkbox\"><label>");
+			String checked = "";
+			if (getFieldValue(fieldName).length() > 0) {
+				checked = " checked=\"checked\"";
+			}
+			out.print("<input type=\"checkbox\" id=\"");
+			out.print(createKeyWithField(field));
+			out.print("\" name=\"");
+			out.print(createKeyWithField(fieldName));
+			out.print("\" " + checked + " />");
+			out.println(i18nAccess.getText("field." + fieldName, fieldName.replace("_", " ")));
+			out.println("</label>");
+			out.println("</div>");
+		} else {
+			out.println("type not found : " + fieldType);
+		}
+		out.println("</div></div>");
+	}
 
 	@Override
 	protected String getEditXHTMLCode(ContentContext ctx) throws Exception {
 		StringWriter writer = new StringWriter();
 		PrintWriter out = new PrintWriter(writer);
-		I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
 		List<String> fields = getFields(ctx);
 		out.println("<div class=\"row\">");
 		for (String field : fields) {
-			String fieldName = getFieldName(field);
-			String fieldType = getFieldType(field);
-			out.println("<div class=\"col-md-4 col-xs-6\">");
-			out.println("<div class=\"form-group\">");
-			if (fieldType.equals("text")) {
-				out.println("<label for=\"" + createKeyWithField(fieldName) + "\">");
-				out.println(i18nAccess.getText("field." + fieldName, fieldName));
-				out.println("</label>");
-				out.print("<textarea class=\"form-control\" rows=\"" + getRowSize(fieldName) + "\" id=\"");
-				out.print(createKeyWithField(field));
-				out.print("\" name=\"");
-				out.print(createKeyWithField(fieldName));
-				out.print("\">");
-				out.print(getFieldValue(fieldName));
-				out.println("</textarea>");
-			} else if (fieldType.equals("checkbox")) {
-				out.println("<div class=\"checkbox\"><label>");
-				String checked = "";
-				if (getFieldValue(fieldName).length() > 0) {
-					checked = " checked=\"checked\"";
-				}
-				out.print("<input type=\"checkbox\" id=\"");
-				out.print(createKeyWithField(field));
-				out.print("\" name=\"");
-				out.print(createKeyWithField(fieldName));
-				out.print("\" " + checked + " />");
-				out.println(i18nAccess.getText("field." + fieldName, fieldName.replace("_", " ")));
-				out.println("</label>");
-				out.println("</div>");
-			} else {
-				out.println("type not found : " + fieldType);
+			if (!field.startsWith("label")) {
+				
+				renderField(out, ctx, field);
 			}
-			out.println("</div></div>");
 		}
 		out.println("</div>");
-
+		out.println("<h3>label</h3><div class=\"row\">");
+		for (String field : fields) {
+			if (field.startsWith("label")) {
+				renderField(out, ctx, field);
+			}
+		}
+		out.println("</div>");
 		out.flush();
 		out.close();
 		return writer.toString();

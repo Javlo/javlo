@@ -6,16 +6,15 @@ import static j2html.TagCreator.input;
 import static j2html.TagCreator.label;
 import static j2html.TagCreator.span;
 
-import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.Collection;
@@ -41,6 +40,7 @@ import org.javlo.actions.IAction;
 import org.javlo.actions.IEventRegistration;
 import org.javlo.bean.Company;
 import org.javlo.component.core.AbstractVisualComponent;
+import org.javlo.component.core.IDataContainer;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
@@ -74,7 +74,9 @@ import org.javlo.utils.StructuredProperties;
 import org.javlo.utils.TimeMap;
 import org.javlo.ztatic.StaticInfo;
 
-public class SmartGenericForm extends AbstractVisualComponent implements IAction, IEventRegistration {
+public class SmartGenericForm extends AbstractVisualComponent implements IAction, IEventRegistration, IDataContainer {
+
+	private static final String USER_FIELD = "_user";
 
 	private static final String RECAPTCHASECRETKEY = "recaptchasecretkey";
 
@@ -87,8 +89,6 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 	private static final String VALID_LINE_PARAM = "_vl";
 	
 	private static final String VALIDED = "__valided";
-	
-	private static final Collection<String> roles = Arrays.asList(new String[] {"", "participant"});
 
 	private Properties bundle;
 
@@ -141,6 +141,26 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		} catch (Throwable t) {					
 		}
 		return -1;		
+	}
+	
+	protected int decodeUserEditNumber(ContentContext ctx, String number) throws Exception {
+		if (ctx.getCurrentUserId() == null || !StringHelper.isDigit(number)) {
+			return -1;
+		}
+		int targetNumber = Integer.parseInt(number);
+		List<Map<String,String>> data = getData(ctx);
+		int userNumber = 0;
+		int lineNumber = 0;
+		for (Map<String,String> line : data) {
+			if (ctx.getCurrentUserId().equals(line.get(USER_FIELD))) {
+				if (userNumber == targetNumber) {
+					return lineNumber;
+				}
+				userNumber++;
+			}
+			lineNumber++;
+		}
+		return -1;
 	}
 
 	protected boolean isCaptcha(ContentContext ctx) {
@@ -206,6 +226,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		return countCache;
 	}
 
+	@Override
 	public List<Map<String, String>> getData(ContentContext ctx) throws Exception {
 		File file = getFile(ctx);
 		if (!file.exists()) {
@@ -343,7 +364,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		out.println("<td class=\"input condition\"><input class=\"form-control\" type=\"text\" name=\"" + getInputName("condition-" + field.getName()) + "\" value=\"" + field.getCondition() + "\"/></td>");
 		if (isList()) {
 			if (field.getType().equals("radio") || field.getType().equals("list")) {
-				out.println("<td class=\"list\"><textarea class=\"form-control\" name=\"" + getInputName("list-" + field.getName()) + "\">" + StringHelper.collectionToText(field.getList()) + "</textarea></td>");
+				out.println("<td class=\"list\"><textarea class=\"form-control\" name=\"" + getInputName("list-" + field.getName()) + "\">" + StringHelper.collectionToTextarea(field.getList()) + "</textarea></td>");
 			} else if (field.getType().equals("registered-list")) {
 				out.println("<td class=\"list\"><input class=\"form-control\" name=\"" + getInputName("registered-list-" + field.getName()) + "\" placeholder=\"list name\" value=\"" + field.getRegisteredList() + "\"/></td>");
 			} else {
@@ -516,7 +537,10 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		}
 		RequestService rs = RequestService.getInstance(ctx.getRequest());
 		String editLineStr = rs.getParameter(getInputEditLineName(ctx));		
-		int editLine = decodeEditNumber(ctx, editLineStr);	
+		int editLine = decodeEditNumber(ctx, editLineStr);
+		if (editLine<=0 && ctx.getCurrentUserId() != null) {
+			editLine = decodeUserEditNumber(ctx, rs.getParameter("line"));
+		}
 		if (editLine>0) {			
 			synchronized(LOCK_ACCESS_FILE) {
 				ctx.getRequest().setAttribute("editForm", "true");
@@ -564,6 +588,24 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 					ctx.getRequest().setAttribute("msg", msg);
 				}
 			}		
+		}
+		
+		if (ctx.getCurrentUser() != null) {
+			for (Field field : getFields()) {
+				if (field.getRole().startsWith("user_") && StringHelper.isEmpty(rs.getParameter(field.getName()))) {
+					String userAttribute = field.getRole().substring("user_".length());
+					userAttribute = userAttribute.substring(0, 1).toUpperCase() + userAttribute.substring(1);
+					IUserInfo userInfo = ctx.getCurrentUser().getUserInfo();
+					try {
+						Method method = userInfo.getClass().getMethod("get"+userAttribute);
+						if (method != null) {
+							rs.setParameter(field.getName(), ""+method.invoke(userInfo));
+						}
+					} catch (NoSuchMethodError e) {
+						
+					}
+				}
+			}
 		}
 	}
 	
@@ -754,7 +796,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 			getLocalConfig(false).setProperty("filename", fileName);	
 			store(ctx);
 		}
-		File file = new File(URLHelper.mergePath(globalContext.getDataFolder(), globalContext.getStaticConfig().getStaticFolder(), "dynamic-form-result", fileName));
+		File file = new File(URLHelper.mergePath(globalContext.getDataFolder(), globalContext.getStaticConfig().getStaticFolder(), GenericForm.DYNAMIC_FORM_RESULT_FOLDER, fileName));
 		if (!file.exists()) {
 			file.getParentFile().mkdirs();
 			file.createNewFile();
@@ -785,7 +827,17 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 				}
 			}			
 			RequestService rs = RequestService.getInstance(ctx.getRequest());
-			int editLineNumber = decodeEditNumber(ctx, rs.getParameter(getInputEditLineName(ctx)));
+			int editLineNumber=0;
+			if (StringHelper.isDigit(rs.getParameter("line")) && ctx.getCurrentUserId() != null) {
+				int lineNumber = decodeUserEditNumber(ctx, rs.getParameter("line"));
+				if (ctx.getCurrentUserId().equals(data.get(USER_FIELD))) {
+					editLineNumber = lineNumber;
+				} else {
+					throw new SecurityException("try to edit bad line data.");
+				}
+			} else {
+				editLineNumber = decodeEditNumber(ctx, rs.getParameter(getInputEditLineName(ctx)));
+			}
 			if (editLineNumber > 0) {
 				lineNumber = editLineNumber;
 				File csvFile = getFile(ctx);
@@ -915,6 +967,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		String registrationID = StringHelper.getShortRandomId();
 		result.put("_registrationID", registrationID);
 		result.put("_event-close", "" + comp.isClose(ctx));
+		result.put(USER_FIELD, StringHelper.neverNull(ctx.getCurrentUserId(), ""));
 		result.put(VALIDED, "false");
 		String fakeField = comp.getLocalConfig(false).getProperty("field.fake", "fake");
 		boolean withXHTML = StringHelper.isTrue(comp.getLocalConfig(false).getProperty("field.xhtml", null));
@@ -1364,5 +1417,20 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 	@Override
 	public String getFontAwesome() {	
 		return "address-card";
+	}
+	
+	@Override
+	public List<Map<String,String>> getData(ContentContext ctx, String login) throws Exception {
+		if (StringHelper.isEmpty(login)) {
+			return Collections.EMPTY_LIST;
+		}
+		List<Map<String,String>>  outData = new LinkedList<Map<String,String>>();
+		List<Map<String,String>> data = getData(ctx);
+		for (Map<String, String> line : data) {
+			if (login.equals(line.get(USER_FIELD))) {
+				outData.add(line);
+			}
+		}
+		return outData;
 	}
 }

@@ -2012,7 +2012,7 @@ public class Edit extends AbstractModuleAction {
 		}
 		if (!ctx.isEditPreview()) {
 			ctx.setArea(editContext.getCurrentArea());
-			comp.setArea(null); // paste in current area
+			comp.resetArea(); // paste in current area
 		}
 		comp.setLanguage(null);
 
