@@ -1084,15 +1084,17 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 	}
 
 	static MenuElement searchChildFromName(MenuElement elem, String... names) {
-		MenuElement res = null;
 		List<MenuElement> children = elem.getChildMenuElements();
-		for (int i = 0; (i < children.size()) && (res == null); i++) {
+		for (int i = 0; i < children.size(); i++) {
 			for (String name : names) {
 				if (children.get(i).getName().equals(name)) {
 					return children.get(i);
 				}
 			}
-			return searchChildFromName(children.get(i), names);
+			MenuElement res = searchChildFromName(children.get(i), names);
+			if (res != null) {
+				return res;
+			}
 		}
 		return null;
 	}
