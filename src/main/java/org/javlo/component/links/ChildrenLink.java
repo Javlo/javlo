@@ -199,6 +199,10 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 				return false;
 			}
 		}
+		
+		public int getPosition() {
+			return child.getPosition();
+		}
 
 		public ImageBean getImage() throws Exception {
 			IImageTitle image = child.getImage(ctx);
@@ -225,11 +229,13 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 		public boolean isChildOfAssocitation() {
 			return child.isChildrenAssociation();
 		}
-
+		
 	}
 
 	private static final String LOCK_PARENT_PAGE = "lock-parent-page";
 	private static final String POPUP = "open-as-popup";
+	private static final String CONTENT = "only-content-area";
+	
 	private static final String COMBO = "__combo__";
 	private static final String IMAGE = "__image__";
 	private static final String DESCRIPTION = "__description__";
@@ -274,6 +280,7 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 		}
 		out.println(XHTMLBootstrapFormBuilder.renderCheckbox(i18n.getText("content.children-list.linked"), getInputLockParentPage(), isLockParentPage()));
 		out.println(XHTMLBootstrapFormBuilder.renderCheckbox(i18n.getText("content.children-list.popup", "open as popup"), getInputPopup(), isPopup()));
+		out.println(XHTMLBootstrapFormBuilder.renderCheckbox(i18n.getText("content.children-list.content", "change only content"), getInputContent(), isContent()));
 		out.close();
 
 		return new String(outStream.toByteArray());
@@ -339,6 +346,10 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 	
 	public String getInputPopup() {
 		return "_open_as_popup" + getId();
+	}
+	
+	public String getInputContent() {
+		return "_content" + getId();
 	}
 
 	public String getInputNameDescription() {
@@ -434,6 +445,7 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 			ctx.getRequest().setAttribute("title", getRendererTitle());
 			ctx.getRequest().setAttribute("children", childrenList);
 			ctx.getRequest().setAttribute("popup", isPopup());
+			ctx.getRequest().setAttribute("contentArea", isContent());
 			ctx.getRequest().setAttribute("currentPageUrl", URLHelper.createURL(ctx));
 		}
 	}
@@ -605,6 +617,10 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 	public boolean isPopup() {
 		return getValue().contains(POPUP);
 	}
+	
+	public boolean isContent() {
+		return getValue().contains(CONTENT);
+	}
 
 	@Override
 	public String performEdit(ContentContext ctx) throws Exception {
@@ -627,6 +643,9 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 		}
 		if (requestService.getParameter(getInputPopup(), null) != null) {
 			newValue = newValue + DATA_SEPARATOR + POPUP;
+		}
+		if (requestService.getParameter(getInputContent(), null) != null) {
+			newValue = newValue + DATA_SEPARATOR + CONTENT;
 		}
 		String rendererTitle = requestService.getParameter(getInputNameRendererTitle(), "");
 

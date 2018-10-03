@@ -2094,6 +2094,18 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 			return pos + 1;
 		}
 	}
+	
+	/**
+	 * return the position on the page in the children list of her parent
+	 * @return
+	 */
+	public int getPosition() {
+		if (parent == null) {
+			return 1;
+		} else {
+			return parent.getChildPosition(this);
+		}
+	}
 
 	public List<MenuElement> getChildMenuElements(ContentContext ctx, boolean visible) throws Exception {
 		if (visible) {

@@ -45,15 +45,13 @@ if (area==null) {
 MenuElement currentPage = ctx.getCurrentPage();
 if (areaWrapper && area != null) {
 	List<String> layouts = currentPage.getLayouts(ctx);
-	String layoutClass = "";
+	String layoutClass = "pos-"+currentPage.getPosition();
 	if (layouts.size() > 0) {
-		layoutClass="";
 		for (String layout : layouts) {
-			layoutClass+="layout-"+layout+' ';
-		}
-		layoutClass = " class=\""+layoutClass+"\"";
+			layoutClass+=" layout-"+layout;
+		}		
 	}
-	%><div id="<%=area%>"<%=layoutClass%>><%
+	%><div id="<%=area%>" class="<%=layoutClass%>"><%
 }
 
 
