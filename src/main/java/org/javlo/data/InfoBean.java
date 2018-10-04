@@ -1774,6 +1774,7 @@ public class InfoBean {
 
 	public String getFacebookImageUrl() throws Exception {
 		ContentContext absCtx = ctx.getContextForAbsoluteURL();
+		absCtx.setRenderMode(ContentContext.PREVIEW_MODE); // image link not short
 		IImageTitle image = ctx.getCurrentPage().getImage(absCtx);
 		if (image != null) {
 			ImageBean imageBean = new ImageBean(absCtx, image, "facebook");
