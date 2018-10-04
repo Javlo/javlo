@@ -190,7 +190,7 @@ public class Heading extends AbstractPropertiesComponent implements ISubTitle {
 
 		String style = "";
 		if (link != null) {
-			if (getBackgroundColor() != null && getBackgroundColor().length() > 2) {
+			if (getBackgroundColor() != null && getBackgroundColor().length() > 2 && ctx.getGlobalContext().isMailing()) {
 				style = "border: 1px " + getBackgroundColor() + " solid; ";
 			}
 			if (getTextColor() != null && getTextColor().length() > 2) {
@@ -201,14 +201,16 @@ public class Heading extends AbstractPropertiesComponent implements ISubTitle {
 			}
 			return "<a" + style + " href=\"" + link + "\"" + target + ">" + getTitle(ctx) + "</a>";
 		} else {
-			if (getBackgroundColor() != null && getBackgroundColor().length() > 2) {
+			if (getBackgroundColor() != null && getBackgroundColor().length() > 2 && ctx.getGlobalContext().isMailing()) {
 				style = "border: 1px " + getBackgroundColor() + " solid; ";
 			}
 			if (getTextColor() != null && getTextColor().length() > 2) {
 				style = style + "color:" + getTextColor() + ";";
 			}
 			if (getBackgroundColor() != null && getBackgroundColor().length() > 2) {
-				style = " style=\"border: 1px " + getBackgroundColor() + " solid; "+style+"\"";
+				if (ctx.getGlobalContext().isMailing()) {
+					style = " style=\"border: 1px " + getBackgroundColor() + " solid; "+style+"\"";
+				}
 			} else if (style.trim().length() > 0) {
 				style=" style=\""+style+"\"";
 			}
@@ -329,7 +331,11 @@ public class Heading extends AbstractPropertiesComponent implements ISubTitle {
 	protected String getInlineStyle(ContentContext ctx) {
 		String inlineStyle = "";
 		if (getBackgroundColor() != null && getBackgroundColor().length() > 2) {
-			inlineStyle = " overflow: hidden; border: 1px " + getBackgroundColor() + " solid; background-color: " + getBackgroundColor() + ';';
+			if (ctx.getGlobalContext().isMailing()) {
+				inlineStyle = " overflow: hidden; border: 1px " + getBackgroundColor() + " solid; background-color: " + getBackgroundColor() + ';';
+			} else {
+				inlineStyle = " overflow: hidden; background-color: " + getBackgroundColor() + ';';
+			}
 		}
 		if (getTextColor() != null && getTextColor().length() > 2) {
 			inlineStyle = inlineStyle + " color: " + getTextColor() + ';';
