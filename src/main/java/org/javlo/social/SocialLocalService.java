@@ -124,7 +124,8 @@ public class SocialLocalService {
 		}
 		if (!StringHelper.isEmpty(socialFilter.getQuery())) {
 			String qr = socialFilter.getQuery().replace("'", "''");
-			filterSQL = filterSQL + sep + "UPPER(text) like UPPER('%" + qr + "%') or mainpost.id in (select mainpost from post where mainpost=mainpost.id and UPPER(text) like UPPER('%" + qr + "%') )";
+			filterSQL = filterSQL + sep + "UPPER(text) like UPPER('%" + qr + "%') or mainpost.id in (select mainpost from post where mainpost=mainpost.id and UPPER(text) like UPPER('%" + qr + "%'))";
+			filterSQL = filterSQL + " or mainpost.id in (select mainpost from post where mainpost=mainpost.id and UPPER(adminmessage) like UPPER('%" + qr + "%'))";
 			sep = " and ";
 		}
 		if (!StringHelper.isEmpty(socialFilter.getAuthor())) {
