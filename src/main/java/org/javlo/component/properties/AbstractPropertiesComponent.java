@@ -106,13 +106,15 @@ public abstract class AbstractPropertiesComponent extends AbstractVisualComponen
 			}
 		}
 		out.println("</div>");
-		out.println("<h3>label</h3><div class=\"row\">");
-		for (String field : fields) {
-			if (field.startsWith("label")) {
-				renderField(out, ctx, field);
+		if (fields.size()>0) {
+			out.println("<h3>label</h3><div class=\"row\">");
+			for (String field : fields) {
+				if (field.startsWith("label")) {
+					renderField(out, ctx, field);
+				}
 			}
+			out.println("</div>");
 		}
-		out.println("</div>");
 		out.flush();
 		out.close();
 		return writer.toString();

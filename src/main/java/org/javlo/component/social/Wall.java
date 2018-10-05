@@ -29,7 +29,7 @@ public class Wall extends AbstractPropertiesComponent implements IAction {
 	
 	private static final String POST_DELETABLE = "post_deletable";
 
-	private static final List<String> FIELDS = new LinkedList<String>(Arrays.asList(new String[] { "name", "title", "roles", "noaccess", "labelAddReply", "labelCreateOn", "labelLatestMsg","labelReplyAt", "labelToBottom", "labelToTop", UNVALIDED_NOT_VISIBLE+"#checkbox", POST_DELETABLE+"#checkbox" }));
+	private static final List<String> FIELDS = new LinkedList<String>(Arrays.asList(new String[] { "name", "title", "roles", "noaccess", "labelAddReply", "labelCreateOn", "labelLatestMsg","labelReplyAt", "labelToBottom", "labelToTop", "labelWaitValidation", UNVALIDED_NOT_VISIBLE+"#checkbox", POST_DELETABLE+"#checkbox" }));
 
 	@Override
 	public String getType() {
@@ -194,6 +194,15 @@ public class Wall extends AbstractPropertiesComponent implements IAction {
 	@Override
 	public List<String> getFields(ContentContext ctx) throws Exception {
 		return FIELDS;
+	}
+	
+	public static void main(String[] args) {
+		Post post = new Post();
+		List<Post> list = new LinkedList<>();
+		list.add(post);
+		Map<String,Object> map = new HashMap<>();
+		map.put("posts", list);
+		System.out.println(JSONMap.JSON.toJson(map));
 	}
 }
 

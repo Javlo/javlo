@@ -156,7 +156,6 @@ public class SocialLocalService {
 			}
 
 			String sql = "select count(id) from post mainpost where groupName='" + group + "' " + notAdminQuery + " and mainPost is null" + getSQLFilter(socialFilter, username);
-			System.out.println(">>>>>>>>> SocialLocalService.getPostListSize : sql = "+sql); //TODO: remove debug trace
 			ResultSet rs = conn.createStatement().executeQuery(sql);
 			if (rs.next()) {
 				return rs.getLong(1);
@@ -221,7 +220,6 @@ public class SocialLocalService {
 				notAdminQuery = "";
 			}
 			String sql = "select * from post mainpost where groupName='" + group + "' " + notAdminQuery + " and mainPost is null" + getSQLFilter(socialFilter, username) + " order by updateTime desc limit " + size + " offset " + index;
-			System.out.println(">>>>>>>>> SocialLocalService.getPost : sql = "+sql); //TODO: remove debug trace
 			ResultSet rs = conn.createStatement().executeQuery(sql);
 			while (rs.next()) {
 				Post post = rsToPost(conn, rs, username, admin, needCheck);

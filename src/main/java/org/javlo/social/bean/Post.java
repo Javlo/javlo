@@ -26,6 +26,7 @@ public class Post {
 	private boolean uncheckedChild = false;
 	private boolean valid = true;
 	private boolean adminValided = false;
+	private boolean adminTreated = false; // for json serialization
 	private String adminMessage = null;
 	private String authorIp = null;
 	private Collection<String> contributors = new LinkedList<String>();
@@ -88,7 +89,7 @@ public class Post {
 
 	public void setCreationDate(Date creationDate) {
 		this.creationDate = creationDate;
-		creationDateString = StringHelper.renderTime(getCreationDate());
+		creationDateString = StringHelper.renderTimeShort(getCreationDate());
 	}
 
 	public String getCreationDateString() {
@@ -121,6 +122,7 @@ public class Post {
 
 	public void setValid(boolean valid) {
 		this.valid = valid;
+		setAdminTreated();
 	}
 
 	public String getAdminMessage() {
@@ -129,6 +131,7 @@ public class Post {
 
 	public void setAdminMessage(String adminMessage) {
 		this.adminMessage = adminMessage;
+		setAdminTreated();
 	}
 
 	public String getGroup() {
@@ -150,9 +153,26 @@ public class Post {
 	public boolean isAdminValided() {
 		return adminValided;
 	}
+	
+	public boolean isAdminTreated() {
+		return adminTreated;
+	}
+	
+	public void setAdminTreated() {
+		if (!adminValided) {
+			adminTreated = false;
+		} else {
+			if (isValid() || !StringHelper.isEmpty(getAdminMessage())) {
+				adminTreated =  true;
+			} else {
+				adminTreated =  false;
+			}
+		}
+	};
 
 	public void setAdminValided(boolean adminValided) {
 		this.adminValided = adminValided;
+		setAdminTreated();
 	}
 
 	public String getAuthorIp() {
@@ -189,12 +209,12 @@ public class Post {
 
 	public void setLatestUpdate(Date latestUpdate) {
 		this.latestUpdate = latestUpdate;
-		latestUpdateString = StringHelper.renderTime(latestUpdate);
+		latestUpdateString = StringHelper.renderTimeShort(latestUpdate);
 	}
 
 	public String getLatestUpdateString() {
 		if (latestUpdateString == null) {
-			latestUpdateString = StringHelper.renderTime(getLatestUpdate());
+			latestUpdateString = StringHelper.renderTimeShort(getLatestUpdate());
 		}
 		return latestUpdateString;
 	}
@@ -212,3 +232,4 @@ public class Post {
 	}
 
 }
+

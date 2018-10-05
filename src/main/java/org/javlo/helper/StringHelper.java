@@ -25,7 +25,6 @@ import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.Normalizer;
@@ -2512,6 +2511,13 @@ public class StringHelper {
 			return null;
 		}
 		return renderDate(date, "dd/MM/yyyy HH:mm:ss");
+	}
+	
+	public static String renderTimeShort(Date date) {
+		if (date == null) {
+			return null;
+		}
+		return renderDate(date, "dd/MM/yy HH:mm");
 	}
 
 	public static String renderTimeOnly(Date date) {
