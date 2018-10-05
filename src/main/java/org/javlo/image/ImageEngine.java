@@ -19,6 +19,7 @@ import java.awt.image.WritableRaster;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.URL;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.logging.Logger;
@@ -29,6 +30,7 @@ import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
 import javax.imageio.plugins.jpeg.JPEGImageWriteParam;
 
+import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 
 import com.jhlabs.image.RGBAdjustFilter;
@@ -1770,10 +1772,15 @@ public class ImageEngine {
 //		System.out.println("***** ImageEngine.main : END"); // TODO: remove
 															// debug trace
 		
-		File src = new File("c:/trans/test.jpg");
-		BufferedImage img = ImageIO.read(src);
-		img = ImageEngine.resizeWidth(img, 512, true);
-		storeImage(img,  new File("c:/trans/test2.jpg"));
+//		File src = new File("c:/trans/test.jpg");
+//		BufferedImage img = ImageIO.read(src);
+//		img = ImageEngine.resizeWidth(img, 512, true);
+//		storeImage(img,  new File("c:/trans/test2.jpg"));
+		
+		
+		URL url = new URL("https://www.perwezensemble.be/img/facebook/home_1.jpg");
+		File outImage = new File("c:/trans/facebook.jpg");
+		ResourceHelper.writeStreamToFile(url.openStream(), outImage);
 	}
 
 	public static BufferedImage convertRGBAToIndexed(BufferedImage src) {

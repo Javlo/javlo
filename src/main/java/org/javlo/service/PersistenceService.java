@@ -688,8 +688,9 @@ public class PersistenceService {
 		elem.setContent(elemContent);
 	}
 
-	public MenuElement insertPage(GlobalContext globalContext, NodeXML pageXML, MenuElement parent, Map<MenuElement, String[]> vparentPreparation, String defaultLg, boolean checkName) throws StructureException, IOException {
-		MenuElement page = MenuElement.getInstance(globalContext);
+	public MenuElement insertPage(ContentContext ctx, NodeXML pageXML, MenuElement parent, Map<MenuElement, String[]> vparentPreparation, String defaultLg, boolean checkName) throws StructureException, IOException {
+		GlobalContext globalContext = ctx.getGlobalContext();
+		MenuElement page = MenuElement.getInstance(ctx);
 
 		String id = pageXML.getAttributeValue("id");
 		while (parent.getRoot().searchChildFromId(id) != null) {
@@ -851,7 +852,7 @@ public class PersistenceService {
 
 		NodeXML childPage = pageXML.getChild("page");
 		while (childPage != null) {
-			insertPage(globalContext, childPage, page, vparentPreparation, defaultLg, checkName);
+			insertPage(ctx, childPage, page, vparentPreparation, defaultLg, checkName);
 			childPage = childPage.getNext("page");
 		}
 
@@ -872,7 +873,7 @@ public class PersistenceService {
 	 */
 	protected LoadingBean load(ContentContext ctx, Object in, File propFile, Map<String, String> contentAttributeMap, TaxonomyBean taxonomyBean, int renderMode) throws ServiceException, InterruptedException {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-		MenuElement root = MenuElement.getInstance(globalContext);
+		MenuElement root = MenuElement.getInstance(ctx);
 
 		root.setValid(true);
 
@@ -969,7 +970,7 @@ public class PersistenceService {
 				Map<MenuElement, String[]> vparentPreparation = new HashMap<MenuElement, String[]>();
 
 				while (page != null) {
-					insertPage(globalContext, page, root, vparentPreparation, defaultLg, false);
+					insertPage(ctx, page, root, vparentPreparation, defaultLg, false);
 					page = page.getNext("page");
 				}
 
@@ -1206,7 +1207,7 @@ public class PersistenceService {
 					}
 				}
 				if (in == null) {
-					root = MenuElement.getInstance(globalContext);
+					root = MenuElement.getInstance(ctx);
 					root.setName("root");
 					root.setVisible(true);
 					root.setPriority(1);

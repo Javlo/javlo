@@ -512,9 +512,17 @@ public class StaticConfig extends Observable {
 	public String getDBLogin() {
 		return properties.getString("db.login", null);
 	}
-
+	
 	public String getDBPassword() {
 		return properties.getString("db.password", null);
+	}
+	
+	public String getDBInternalLogin() {
+		return properties.getString("db.internal.login", "sa");
+	}
+	
+	public String getDBInternalPassword() {
+		return properties.getString("db.internal.password", "");
 	}
 
 	public String getDBResourceName() {

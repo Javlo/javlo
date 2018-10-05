@@ -113,7 +113,7 @@ public class DynamicComponentCreator extends AbstractVisualComponent implements 
 		String mainPageName = StringHelper.createFileName(NAME_PREFIX + user.getLogin()).replace('.', '-');
 		MenuElement localRoot = ctx.getCurrentPage().searchChildFromName(mainPageName);
 		if (localRoot == null) {
-			localRoot = MenuElement.getInstance(ctx.getGlobalContext());
+			localRoot = MenuElement.getInstance(ctx);
 			localRoot.setName(mainPageName);
 			localRoot.setCreator(user.getLogin());
 			ctx.getCurrentPage().addChildMenuElementOnTop(localRoot);
@@ -122,7 +122,7 @@ public class DynamicComponentCreator extends AbstractVisualComponent implements 
 		String compPageName = StringHelper.createFileName(localRoot.getName() + '-' + StringHelper.createFileName(type));
 		MenuElement compRoot = localRoot.searchChildFromName(compPageName);
 		if (compRoot == null) {
-			compRoot = MenuElement.getInstance(ctx.getGlobalContext());
+			compRoot = MenuElement.getInstance(ctx);
 			compRoot.setName(compPageName);
 			compRoot.setCreator(user.getLogin());
 			localRoot.addChildMenuElementOnTop(compRoot);

@@ -1427,7 +1427,7 @@ public class Edit extends AbstractModuleAction {
 				message = i18nAccess.getText("action.validation.name-allready-exist", new String[][] { { "name", nodeName } });
 			}
 			if (message == null) {
-				MenuElement elem = MenuElement.getInstance(globalContext);
+				MenuElement elem = MenuElement.getInstance(ctx);
 				elem.setCreator(editCtx.getUserPrincipal().getName());
 				elem.setVisible(globalContext.isNewPageVisible());
 				MenuElement parent = ctx.getCurrentPage();

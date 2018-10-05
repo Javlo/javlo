@@ -1047,10 +1047,13 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 		return new SmartPageDescription(ctx, this);
 	}
 
-	public static MenuElement getInstance(GlobalContext globalContext) {
+	public static MenuElement getInstance(ContentContext ctx) {
 		MenuElement outMenuElement = new MenuElement();
 		outMenuElement.releaseCache = true;
-		outMenuElement.lock = globalContext.getLockLoadContent();
+		outMenuElement.lock = ctx.getGlobalContext().getLockLoadContent();
+		if (!ctx.isAsViewMode()) {
+			outMenuElement.useCache = false;
+		}
 		return outMenuElement;
 	}
 
@@ -1254,7 +1257,12 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 	
 	private Map<String, MenuElement> pageCache = null;
 	
+	private boolean useCache = true;
+	
 	protected MenuElement getPageCached(String key) {
+		if (!useCache) {
+			return null;
+		}
 		if (pageCache == null) {
 			return null;
 		} else  {
@@ -1263,6 +1271,9 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 	}
 	
 	protected void setPageCached(String key, MenuElement page) {
+		if (!useCache) {
+			return;
+		}	
 		if (pageCache == null) {
 			pageCache = new TimeMap<String, MenuElement>(5*60, 2048); // cache 5 minutes
 		}
@@ -4824,8 +4835,10 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 		if (page != null) {
 			setPageCached("name-"+page.getName(), page);
 		} else {
-			for (String name : names) {
-				setPageCached("name-"+name, NO_PAGE);
+			if (useCache) {
+				for (String name : names) {
+					setPageCached("name-"+name, NO_PAGE);
+				}
 			}
 		}
 		return page;

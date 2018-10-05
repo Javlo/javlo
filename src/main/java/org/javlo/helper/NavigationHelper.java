@@ -254,7 +254,7 @@ public class NavigationHelper {
 			String pageName = child.getAttributeValue("name");
 			if (pageName != null) {
 				GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-				MenuElement newPage = persistenceService.insertPage(globalContext, child, currentPage, new HashMap<MenuElement, String[]>(), lang, true);
+				MenuElement newPage = persistenceService.insertPage(ctx, child, currentPage, new HashMap<MenuElement, String[]>(), lang, true);
 				try {
 					for (ComponentBean data : newPage.getAllLocalContentBean()) {
 						ConvertToCurrentVersion.convert(ctx, data, version);
@@ -294,7 +294,7 @@ public class NavigationHelper {
 			MenuElement oldVersion = targetRoot.searchChildFromId(element.getId());
 			if (oldVersion == null) {
 				if (element.isValid()) {
-					oldVersion = MenuElement.getInstance(GlobalContext.getInstance(ctx.getRequest()));
+					oldVersion = MenuElement.getInstance(ctx);
 					targetRoot.addChildMenuElement(oldVersion);
 				}
 			}

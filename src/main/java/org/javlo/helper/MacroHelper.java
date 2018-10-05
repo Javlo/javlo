@@ -328,7 +328,7 @@ public class MacroHelper {
 
 		if (parentPage != null) {
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-			newPage = MenuElement.getInstance(globalContext);
+			newPage = MenuElement.getInstance(ctx);
 			EditContext editCtx = EditContext.getInstance(globalContext, ctx.getRequest().getSession());
 			newPage.setName(pageName);
 			newPage.addEditorRoles(parentPage.getEditorRoles());
@@ -445,7 +445,7 @@ public class MacroHelper {
 
 		if (parentPage != null) {
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-			newPage = MenuElement.getInstance(globalContext);
+			newPage = MenuElement.getInstance(ctx);
 			newPage.addEditorRoles(parentPage.getEditorRoles());
 			EditContext editCtx = EditContext.getInstance(globalContext, ctx.getRequest().getSession());
 			newPage.setName(pageName);
@@ -1032,7 +1032,7 @@ public class MacroHelper {
 		if (page.getName().equals(newname)) {
 			return null;
 		}
-		MenuElement outPage = MenuElement.getInstance(ctx.getGlobalContext());
+		MenuElement outPage = MenuElement.getInstance(ctx);
 		outPage.setId(StringHelper.getRandomId());
 		outPage.setName(newname);
 		ComponentBean[] sourceData = page.getContent();

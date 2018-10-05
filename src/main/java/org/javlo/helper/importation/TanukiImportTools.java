@@ -127,7 +127,7 @@ public class TanukiImportTools {
 					finalPageName = pageName+'_'+pageNumber;
 				}
 				
-				MenuElement newChild = MenuElement.getInstance(ctx.getGlobalContext());
+				MenuElement newChild = MenuElement.getInstance(ctx);
 				newChild.setName(finalPageName);				
 				newChild.setCreator(ctx.getCurrentUserId());
 				

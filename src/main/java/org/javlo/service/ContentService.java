@@ -664,7 +664,7 @@ public class ContentService implements IPrintInfo {
 		MenuElement root = getNavigation(ctx);
 		MenuElement trashPage = getNavigation(ctx).searchChildFromName(TRASH_PAGE_NAME);
 		if (trashPage == null) {
-			trashPage = MenuElement.getInstance(ctx.getGlobalContext());
+			trashPage = MenuElement.getInstance(ctx);
 			trashPage.setName(TRASH_PAGE_NAME);
 			trashPage.setPriority(9999);
 			trashPage.setActive(false);

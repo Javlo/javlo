@@ -65,27 +65,31 @@ public class SocialLocalService {
 			st.execute("alter table post add updateTime TIMESTAMP");
 		} catch (Exception e) {
 		}
-
+		int updated = 0;
 		try {
 			ResultSet rs = conn.createStatement().executeQuery("select * from post");
 			while (rs.next()) {
-				Date updateTime = rs.getTimestamp("updateTime");
-				if (updateTime == null) {
-					long id = rs.getLong("id");
-					ResultSet replies = conn.createStatement().executeQuery("select time from post where mainPost='" + id + "' and adminCheck=true && adminCheck=true order by time desc");
-					if (replies.next()) {
-						updateTime = replies.getTimestamp("time");
-					} else {
-						updateTime = rs.getTimestamp("time");
-					}
-					PreparedStatement psParent = conn.prepareStatement("update post set updateTime=? where id=" + id);
-					psParent.setTimestamp(1, new java.sql.Timestamp(updateTime.getTime()));
-					psParent.execute();
+				Date updateTime;
+				String author;
+				long id = rs.getLong("id");
+				ResultSet replies = conn.createStatement().executeQuery("select time, author from post where mainPost='" + id + "' and adminCheck=true order by time desc");
+				if (replies.next()) {
+					updateTime = replies.getTimestamp("time");
+					author = replies.getString("author");
+				} else {
+					updateTime = rs.getTimestamp("time");
+					author = rs.getString("author");
 				}
+				PreparedStatement psParent = conn.prepareStatement("update post set updateTime=?, latestcontributor=? where id=" + id);
+				psParent.setTimestamp(1, new java.sql.Timestamp(updateTime.getTime()));
+				psParent.setString(2, author);
+				psParent.execute();
+				updated++;
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		logger.info("updated post by init process : " + updated);
 
 		dataBaseService.releaseConnection(conn);
 	}
@@ -120,12 +124,12 @@ public class SocialLocalService {
 		}
 		if (!StringHelper.isEmpty(socialFilter.getQuery())) {
 			String qr = socialFilter.getQuery().replace("'", "''");
-			filterSQL = filterSQL + sep + "UPPER(text) like UPPER('%" + qr + "%')";
+			filterSQL = filterSQL + sep + "UPPER(text) like UPPER('%" + qr + "%') or mainpost.id in (select mainpost from post where mainpost=mainpost.id and UPPER(text) like UPPER('%" + qr + "%') )";
 			sep = " and ";
 		}
 		if (!StringHelper.isEmpty(socialFilter.getAuthor())) {
 			String qr = socialFilter.getAuthor().replace("'", "''");
-			filterSQL = filterSQL + sep + "UPPER(author) like UPPER('%" + qr + "%')";
+			filterSQL = filterSQL + sep + "UPPER(author) like UPPER('%" + qr + "%') or mainpost.id in (select mainpost from post where mainpost=mainpost.id and author='" + qr + "')";
 			sep = " and ";
 		}
 		if (!StringHelper.isEmpty(socialFilter.getTitle())) {
@@ -151,7 +155,8 @@ public class SocialLocalService {
 				notAdminQuery = "";
 			}
 
-			String sql = "select count(id) from post where groupName='" + group + "' " + notAdminQuery + " and mainPost is null" + getSQLFilter(socialFilter, username);
+			String sql = "select count(id) from post mainpost where groupName='" + group + "' " + notAdminQuery + " and mainPost is null" + getSQLFilter(socialFilter, username);
+			System.out.println(">>>>>>>>> SocialLocalService.getPostListSize : sql = "+sql); //TODO: remove debug trace
 			ResultSet rs = conn.createStatement().executeQuery(sql);
 			if (rs.next()) {
 				return rs.getLong(1);
@@ -215,7 +220,8 @@ public class SocialLocalService {
 			if (admin) {
 				notAdminQuery = "";
 			}
-			String sql = "select * from post where groupName='" + group + "' " + notAdminQuery + " and mainPost is null" + getSQLFilter(socialFilter, username) + " order by updateTime desc limit " + size + " offset " + index;
+			String sql = "select * from post mainpost where groupName='" + group + "' " + notAdminQuery + " and mainPost is null" + getSQLFilter(socialFilter, username) + " order by updateTime desc limit " + size + " offset " + index;
+			System.out.println(">>>>>>>>> SocialLocalService.getPost : sql = "+sql); //TODO: remove debug trace
 			ResultSet rs = conn.createStatement().executeQuery(sql);
 			while (rs.next()) {
 				Post post = rsToPost(conn, rs, username, admin, needCheck);
@@ -332,6 +338,7 @@ public class SocialLocalService {
 		post.setAdminValided(rs.getBoolean("adminCheck"));
 		post.setGroup(rs.getString("groupName"));
 		post.setCountReplies(countReplies(post.getId(), authors, admin, needCheck));
+		post.setLatestContributor(rs.getString("latestContributor"));
 
 		String contrib = rs.getString("contributors");
 		if (StringHelper.isEmpty(contrib)) {
@@ -368,8 +375,9 @@ public class SocialLocalService {
 			}
 			if (post.getMainPost() != null && post.getMainPost() > 0) {
 				ps.setLong(7, post.getMainPost());
-				PreparedStatement psParent = conn.prepareStatement("update post set updateTime=? where id=" + post.getMainPost());
+				PreparedStatement psParent = conn.prepareStatement("update post set updateTime=?, latestContributor=? where id=" + post.getMainPost());
 				psParent.setTimestamp(1, new java.sql.Timestamp(new Date().getTime()));
+				psParent.setString(2, post.getAuthor());
 				psParent.execute();
 			} else {
 				ps.setNull(7, java.sql.Types.LONGVARCHAR);
